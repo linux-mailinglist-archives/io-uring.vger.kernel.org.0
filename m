@@ -2,150 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE3F11E8FD
-	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2019 18:13:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2076B11EA1D
+	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2019 19:24:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbfLMRMD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Dec 2019 12:12:03 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36212 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728413AbfLMRMD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Dec 2019 12:12:03 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p17so361892wma.1;
-        Fri, 13 Dec 2019 09:12:01 -0800 (PST)
+        id S1728738AbfLMSWt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Dec 2019 13:22:49 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34368 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbfLMSWt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Dec 2019 13:22:49 -0500
+Received: by mail-io1-f66.google.com with SMTP id z193so399957iof.1
+        for <io-uring@vger.kernel.org>; Fri, 13 Dec 2019 10:22:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=oONWFSnEmppU5WkvOUIZSunVfuRDSeXJRgxaN4+F1B8=;
-        b=eOVvorSh6PzP1gVTIiv/kUdPIkLtH9Mg+PwB/vCkTQLl+XUrC/c3b/b5yx24S04wdH
-         N1UFFXd30YQB55l6z4ZcO8iYInRIBStYQjNELP2n7MtwNM6ARQxWQdOzndUHuSOdxkJq
-         p1Rus+TEaRt99hDwAzZxHX7M0dif0BeWLojqhnCguRYnSyzQ9NwxrLcBSKXZLQBrvuIb
-         izUFmQFGv0sLs2DFyrgxbLoGg5Svd5QFPFT8jBNv5dPrSgqBTY++LlUksOUAC4SUqSo6
-         M0dEaweI+5a2iUTpLeCUuimSebxjOzN1Cr5asIvX7UI9NqIDfHcET8IYOFxun3yvRUWG
-         I76A==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=HpocJd7ZVW8aqsXghWaXWyBEujhMqhHxlf0cK+XS6no=;
+        b=Rqg/OvmizrBtTm3kiJrpDSeR1+kUYCkrSayQpyg6tZ1FpM4zpcENIWmluYZCNiLQsf
+         mcnIyNhSdvU7L13bX7IFVftUuiEqUZ03dqGoWi8vAT+thWksY7jy0hD/05fwtmRGpZpx
+         WjDbYiPt23rEi9W6Ews0hOUuaFpAM+EGAK3+6VhoAqbuoSH4MJTJyZk91WRzw90R0SQk
+         3bvTUPIwgI/lq9J/QmW8xtf0t/Emw5AIqCvsQ5IOX1fQ6JqIeLyDUTR0cezcIeaCWFo3
+         MDPlTX3F8LKzr7Vjs62YyJNnydUO/HK/ZWS6tTYp5A5a0/xnamNwxE8HxxKMBgojXuBQ
+         2l4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oONWFSnEmppU5WkvOUIZSunVfuRDSeXJRgxaN4+F1B8=;
-        b=brDWOGapuz9O958KwVqXoFkwkUODOZ0pSxn0fhwdVWvk50wir3kurc+kYFiUQkm/Bz
-         RjZJ0ba5cJnm7xKZ+U7p34djtAiRVHQ15LuufARciCv958x8W0aR/lxbXg//BQrCV9MP
-         /mQyjDLt4WbPQAnF2JiGtxFbOVu0dn4MgHQOhqdnn4Ph/yIta0Zx26lbxlQhb0NI0D1V
-         wKwAeGgEyag7/Vo3wiwww/YYa5/IZ8/l3bGLYMpBh7SbR3JIZUYU9vlnERo7468/9XCB
-         2IRH+gx3SwfOVr+SA0PBskMbVBhiIR/xfVQoYv1DuvnKuFN/oCqV58lO7FUmimsKEM/G
-         b37g==
-X-Gm-Message-State: APjAAAUQe1OHn4qE8rv797KxDidG/75TotzEY4qlxgTJ7QGxj0UeVYin
-        NOUt7TBfGoJvEqKDH8/BIHbNtFDv
-X-Google-Smtp-Source: APXvYqxRKKH8jyEOW8ZQENkfmTbVlbRk+C0royRPuGNGNKgEE+mAphI3RpeWCIQlfrK9hSWb8lMhXQ==
-X-Received: by 2002:a1c:407:: with SMTP id 7mr14180821wme.29.1576257120865;
-        Fri, 13 Dec 2019 09:12:00 -0800 (PST)
-Received: from localhost.localdomain ([109.126.143.152])
-        by smtp.gmail.com with ESMTPSA id v188sm10963924wma.10.2019.12.13.09.11.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 09:12:00 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HpocJd7ZVW8aqsXghWaXWyBEujhMqhHxlf0cK+XS6no=;
+        b=WHRq5gN24mRwZa427UzaRJEAfkN4msbM+VVgCxgMlvYa51zwu+XNv9WUUu31270vw7
+         t0mp9aMITkvjI2amG+wb7Uzevg+mqZ1IngFICstF0ubu82WjtyMXSfqCeA2zBCGOEnjN
+         IQKMqhyhW2Idue1mu8yKzq6IlZCgudHA9qJWqoDcf2vBzHerZS6P2d9qr9orhmN7jGya
+         0vnxVUlA0z6If1xvfmqQaYpoVUMI9XeSf8Dz4vzdcux/BQHa4num91nrhLp5ZbQ/paCY
+         QTMYDss3YQBfCCvOjkiOcTNIEHY965PgqiZfP3/+wF2KPAK3RvOSxx1Mmasy3m/T/Zz2
+         ZTfg==
+X-Gm-Message-State: APjAAAWIIAbk04EPpbhCXyHPZ1KRAPN96eFk9TSoNHE7dqsaI764I3C6
+        iaqJy63gLnfumyZrCTQXVlWyFQ==
+X-Google-Smtp-Source: APXvYqz+nYGKX4SR4hvzE3Dwrf1y/0vzAsMTfcVHoDmJ3j+QwRWGkOVLGygSmd4UPTRiWG+hkQIUtw==
+X-Received: by 2002:a6b:7b41:: with SMTP id m1mr8002940iop.191.1576261368225;
+        Fri, 13 Dec 2019 10:22:48 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id d7sm3018102ilk.11.2019.12.13.10.22.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2019 10:22:47 -0800 (PST)
+Subject: Re: [PATCH 1/1] io_uring: don't wait when under-submitting
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 liburing] Test wait after under-consuming
-Date:   Fri, 13 Dec 2019 20:11:22 +0300
-Message-Id: <512741aa9160cc9648780a21a4bf4aa10a47193f.1576256964.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <e5579bbac4fcb4f0e9b6ba4fbf3a56bd9a925c6c.1576224356.git.asml.silence@gmail.com>
-References: <e5579bbac4fcb4f0e9b6ba4fbf3a56bd9a925c6c.1576224356.git.asml.silence@gmail.com>
+References: <5caa38be87f069eb4cc921d58ee1a98ff5d53978.1576223348.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <21ca72b0-c35d-96b7-399f-d4034d976c27@kernel.dk>
+Date:   Fri, 13 Dec 2019 11:22:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5caa38be87f069eb4cc921d58ee1a98ff5d53978.1576223348.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In case of an error submission won't consume all sqes. This tests that
-it will get back to the userspace even if (to_submit == to_wait)
+On 12/13/19 12:51 AM, Pavel Begunkov wrote:
+> There is no reliable way to submit and wait in a single syscall, as
+> io_submit_sqes() may under-consume sqes (in case of an early error).
+> Then it will wait for not-yet-submitted requests, deadlocking the user
+> in most cases.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+Why not just cap the wait_nr? If someone does to_submit = 8, wait_nr = 8,
+and we only submit 4, just wait for 4? Ala:
 
-since v1: don't leave ring dirty, as it will fail following tests
-
- test/link.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 1 deletion(-)
-
-diff --git a/test/link.c b/test/link.c
-index 8ec1649..6c8ae09 100644
---- a/test/link.c
-+++ b/test/link.c
-@@ -384,6 +384,50 @@ err:
- 	return 1;
- }
- 
-+static int test_early_fail_and_wait(void)
-+{
-+	struct io_uring ring;
-+	struct io_uring_sqe *sqe;
-+	int ret, invalid_fd = 42;
-+	struct iovec iov = { .iov_base = NULL, .iov_len = 0 };
-+
-+	/* create a new ring as it leaves it dirty */
-+	ret = io_uring_queue_init(8, &ring, 0);
-+	if (ret) {
-+		printf("ring setup failed\n");
-+		return 1;
-+	}
-+
-+	sqe = io_uring_get_sqe(&ring);
-+	if (!sqe) {
-+		printf("get sqe failed\n");
-+		goto err;
-+	}
-+
-+	io_uring_prep_readv(sqe, invalid_fd, &iov, 1, 0);
-+	sqe->flags |= IOSQE_IO_LINK;
-+
-+	sqe = io_uring_get_sqe(&ring);
-+	if (!sqe) {
-+		printf("get sqe failed\n");
-+		goto err;
-+	}
-+
-+	io_uring_prep_nop(sqe);
-+
-+	ret = io_uring_submit_and_wait(&ring, 2);
-+	if (ret <= 0 && ret != -EAGAIN) {
-+		printf("sqe submit failed: %d\n", ret);
-+		goto err;
-+	}
-+
-+	io_uring_queue_exit(&ring);
-+	return 0;
-+err:
-+	io_uring_queue_exit(&ring);
-+	return 1;
-+}
-+
- int main(int argc, char *argv[])
- {
- 	struct io_uring ring, poll_ring;
-@@ -400,7 +444,6 @@ int main(int argc, char *argv[])
- 	if (ret) {
- 		printf("poll_ring setup failed\n");
- 		return 1;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 81219a631a6d..4a76ccbb7856 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5272,6 +5272,10 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 		submitted = io_submit_sqes(ctx, to_submit, f.file, fd,
+ 					   &cur_mm, false);
+ 		mutex_unlock(&ctx->uring_lock);
++		if (submitted <= 0)
++			goto done;
++		if (submitted != to_submit && min_complete > submitted)
++			min_complete = submitted;
+ 	}
+ 	if (flags & IORING_ENTER_GETEVENTS) {
+ 		unsigned nr_events = 0;
+@@ -5284,7 +5288,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 			ret = io_cqring_wait(ctx, min_complete, sig, sigsz);
+ 		}
+ 	}
 -
- 	}
- 
- 	ret = test_single_link(&ring);
-@@ -439,5 +482,11 @@ int main(int argc, char *argv[])
- 		return ret;
- 	}
- 
-+	ret = test_early_fail_and_wait();
-+	if (ret) {
-+		fprintf(stderr, "test_early_fail_and_wait\n");
-+		return ret;
-+	}
-+
- 	return 0;
- }
++done:
+ 	percpu_ref_put(&ctx->refs);
+ out_fput:
+ 	fdput(f);
+
 -- 
-2.24.0
+Jens Axboe
 

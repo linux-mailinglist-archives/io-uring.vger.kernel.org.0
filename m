@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14C0411EA6C
+	by mail.lfdr.de (Postfix) with ESMTP id EA03111EA6E
 	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2019 19:36:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728820AbfLMSgj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Dec 2019 13:36:39 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38341 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728796AbfLMSgj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Dec 2019 13:36:39 -0500
-Received: by mail-io1-f66.google.com with SMTP id v3so646660ioj.5
-        for <io-uring@vger.kernel.org>; Fri, 13 Dec 2019 10:36:38 -0800 (PST)
+        id S1728712AbfLMSgk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Dec 2019 13:36:40 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46052 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728796AbfLMSgk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Dec 2019 13:36:40 -0500
+Received: by mail-io1-f67.google.com with SMTP id i11so585184ioi.12
+        for <io-uring@vger.kernel.org>; Fri, 13 Dec 2019 10:36:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hDUqcu+adYDMcMU6/EFVyAPb/sLSQjvOYyTK/khqmpA=;
-        b=Apjh+3ZVKDV4kZadKJmQliMsIUrKluPYMUj8+S2X6J/ARd5sgW3cXRIHTjM3Cypps+
-         8QnvPkIc1Ceo8ZwO0nsxskDf3cH1P8BEajfkve12A/af13r6lzxybM67FAyY0d/T/Uoa
-         9oFO9by1yDBEvjeovKkcWqYJE1WSIMtPkIaujjt9LVWX7BnoD7FpfFeXgK/qH4JpGLWW
-         r7mO0i+qdPp0ih6xMuK3kv0nMp4vLMv1/ZXh2MtjU6pJ8MGb9LgFKhkiWtuyYO9jxk0t
-         7kj1ZBXO9PxA9zHVPV/6XYQi1m4IHeajOMrbFIhdjOkf1vAHfJxcDHz65bWl5mfm/KEE
-         ii8Q==
+        bh=0OvI2ceVnasRg1nbXww4p2Pl+uJhucmp3XBabX0dc/U=;
+        b=BhxUsLDv0gMu5lRpN7mqlDEYuRP6HHUeW014jbkTw+9flF2Nkn42TQSrufK7bAT+iV
+         Wvduseg54kaBV3k57O65NCM0EpC3T4i2/JY9cx1FRxIg/JEtcwYbxIf1T01DXjZnC7Sj
+         KheFWP+/pACrV2IraDGgbby5HoR5MIwYw5B02b8e7YwV2trnX2pHorD8oL1Bn83KNCLA
+         Jvysyed2cJbpnxdNAZ/We/LGER2JRjX6A4fLv14ygW+BMYouIyseNWedE9nbBjroNqWx
+         P6hjS/kpiZU6DO/FbRybmIqvSLBRwOwJVgBGWi8zRfDCSeYbITxerUUiCWDTVzUzGRey
+         2W7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hDUqcu+adYDMcMU6/EFVyAPb/sLSQjvOYyTK/khqmpA=;
-        b=Z8oCwhGStowQhRoSGvwrunHLq/+PqJtUufU2nwfzLFUdBXw6/NYWzzG4gP12TyknkX
-         Y2Xtrr5GJWaxciZ1N//S2i0gW4SP/8TK2OPWmACT3mEolLlF7OVif5oHwTtw5rhPJ8YZ
-         HbhvLLfEg8ZWxKYrMsXWVyUUOaNamwH0AZP7gLdqWMv4dOLGbD6moP0odSk/DsJgGoNK
-         axLQ7JDY93sAXGdoHDCC5NGzM2vK2kGFwriAiNiV4HhhpbsfuOyr54WIN4wlG0KKr58g
-         TukeXtElHwYoao9GdW/RAbzsHBOhhlccz/4cFDdRWu8EFpxPNf4UrGuAXMGLMiZjcWrR
-         1eLw==
-X-Gm-Message-State: APjAAAVAsXxYojQ76olnRqeMFU/m0zEpN/5hLmebONUPIoreZiEcqXC5
-        s/NNnNARB4gRplaO1+lQdJKwMRV/LqYQ5A==
-X-Google-Smtp-Source: APXvYqyhYSrShu4t5lmex2rg/G6YW20jOm7tKkserSYRxDlssPaawHzLrCD3N1iKhaZNI7uSN3xXfQ==
-X-Received: by 2002:a02:9988:: with SMTP id a8mr767767jal.33.1576262197885;
-        Fri, 13 Dec 2019 10:36:37 -0800 (PST)
+        bh=0OvI2ceVnasRg1nbXww4p2Pl+uJhucmp3XBabX0dc/U=;
+        b=Cp3eqlmHkyZGrF39A8Gdq0BdORk+DcPI2rWjwWv+GToT5gFBhzO8GuOWQ0s9hQADhq
+         Ty9JL4z8gKAqL2U8Zyvw+k4Uyqm+frNXnpu2PL7eRtYQD9R7l5ZCQA4dbiQzoSVGShfT
+         D8qw5Aff4O2S+IDtJSbAVOEjodeDT0uRAQX9NNLQTg7R91mtQLn6GhD9kb17flcoo2Dj
+         zTujWLjXnSYmwqPy23XwINYjIV5qNhM6pr4R1kYb7rgpIHflUhzfaE8bcCmVyGQ1DdDd
+         e3mqagYUYpmcFPiiTtM3FvN2VI/9xlD+/TrVyOhbEd4oK4Zo+Cathb6E4p5paY/i1t20
+         w9Ww==
+X-Gm-Message-State: APjAAAUCIcdJCpeIc8a9P559ekfsNVUNIbDZeh3+sfP2JoxYuuY09cpD
+        1I1Km71nt8NTow/L9LfT5/MrsGy9r/Xr2w==
+X-Google-Smtp-Source: APXvYqxdntotcojq17jJOTxQjqVcqJ/GaUQgZ6euUZiAGzOTLLij3FJzE/gCyBcXZOROXYxo6OLPMQ==
+X-Received: by 2002:a6b:3b49:: with SMTP id i70mr336659ioa.106.1576262199176;
+        Fri, 13 Dec 2019 10:36:39 -0800 (PST)
 Received: from x1.thefacebook.com ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id w24sm2932031ilk.4.2019.12.13.10.36.36
+        by smtp.gmail.com with ESMTPSA id w24sm2932031ilk.4.2019.12.13.10.36.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 10:36:37 -0800 (PST)
+        Fri, 13 Dec 2019 10:36:38 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 02/10] io_uring: remove 'sqe' parameter to the OP helpers that take it
-Date:   Fri, 13 Dec 2019 11:36:24 -0700
-Message-Id: <20191213183632.19441-3-axboe@kernel.dk>
+Subject: [PATCH 03/10] fs: add namei support for doing a non-blocking path lookup
+Date:   Fri, 13 Dec 2019 11:36:25 -0700
+Message-Id: <20191213183632.19441-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191213183632.19441-1-axboe@kernel.dk>
 References: <20191213183632.19441-1-axboe@kernel.dk>
@@ -60,208 +60,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We pass in req->sqe for all of them, no need to pass it in as the
-request is always passed in.
+If the fast lookup fails, then return -EAGAIN to have the caller retry
+the path lookup. This is in preparation for supporting non-blocking
+open.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 70 ++++++++++++++++++++++++++++-----------------------
- 1 file changed, 38 insertions(+), 32 deletions(-)
+ fs/namei.c            | 2 ++
+ include/linux/namei.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d780477b9a56..93a967cf3f9f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1942,9 +1942,10 @@ static int io_prep_fsync(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return 0;
- }
+diff --git a/fs/namei.c b/fs/namei.c
+index 2dda552bcf7a..50899721f699 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1801,6 +1801,8 @@ static int walk_component(struct nameidata *nd, int flags)
+ 	if (unlikely(err <= 0)) {
+ 		if (err < 0)
+ 			return err;
++		if (nd->flags & LOOKUP_NONBLOCK)
++			return -EAGAIN;
+ 		path.dentry = lookup_slow(&nd->last, nd->path.dentry,
+ 					  nd->flags);
+ 		if (IS_ERR(path.dentry))
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 397a08ade6a2..a50ad21e3457 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -38,6 +38,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
+ #define LOOKUP_JUMPED		0x1000
+ #define LOOKUP_ROOT		0x2000
+ #define LOOKUP_ROOT_GRABBED	0x0008
++#define LOOKUP_NONBLOCK		0x10000	/* don't block for lookup */
  
--static int io_fsync(struct io_kiocb *req, const struct io_uring_sqe *sqe,
--		    struct io_kiocb **nxt, bool force_nonblock)
-+static int io_fsync(struct io_kiocb *req, struct io_kiocb **nxt,
-+		    bool force_nonblock)
- {
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	loff_t sqe_off = READ_ONCE(sqe->off);
- 	loff_t sqe_len = READ_ONCE(sqe->len);
- 	loff_t end = sqe_off + sqe_len;
-@@ -2016,11 +2017,10 @@ static int io_prep_sfr(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return ret;
- }
+ extern int path_pts(struct path *path);
  
--static int io_sync_file_range(struct io_kiocb *req,
--			      const struct io_uring_sqe *sqe,
--			      struct io_kiocb **nxt,
-+static int io_sync_file_range(struct io_kiocb *req, struct io_kiocb **nxt,
- 			      bool force_nonblock)
- {
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	loff_t sqe_off;
- 	loff_t sqe_len;
- 	unsigned flags;
-@@ -2063,10 +2063,11 @@ static int io_sendmsg_prep(struct io_kiocb *req, struct io_async_ctx *io)
- #endif
- }
- 
--static int io_sendmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
--		      struct io_kiocb **nxt, bool force_nonblock)
-+static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
-+		      bool force_nonblock)
- {
- #if defined(CONFIG_NET)
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	struct socket *sock;
- 	int ret;
- 
-@@ -2142,10 +2143,11 @@ static int io_recvmsg_prep(struct io_kiocb *req, struct io_async_ctx *io)
- #endif
- }
- 
--static int io_recvmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
--		      struct io_kiocb **nxt, bool force_nonblock)
-+static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
-+		      bool force_nonblock)
- {
- #if defined(CONFIG_NET)
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	struct socket *sock;
- 	int ret;
- 
-@@ -2207,10 +2209,11 @@ static int io_recvmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- #endif
- }
- 
--static int io_accept(struct io_kiocb *req, const struct io_uring_sqe *sqe,
--		     struct io_kiocb **nxt, bool force_nonblock)
-+static int io_accept(struct io_kiocb *req, struct io_kiocb **nxt,
-+		     bool force_nonblock)
- {
- #if defined(CONFIG_NET)
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	struct sockaddr __user *addr;
- 	int __user *addr_len;
- 	unsigned file_flags;
-@@ -2258,10 +2261,11 @@ static int io_connect_prep(struct io_kiocb *req, struct io_async_ctx *io)
- #endif
- }
- 
--static int io_connect(struct io_kiocb *req, const struct io_uring_sqe *sqe,
--		      struct io_kiocb **nxt, bool force_nonblock)
-+static int io_connect(struct io_kiocb *req, struct io_kiocb **nxt,
-+		      bool force_nonblock)
- {
- #if defined(CONFIG_NET)
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	struct io_async_ctx __io, *io;
- 	unsigned file_flags;
- 	int addr_len, ret;
-@@ -2361,8 +2365,9 @@ static int io_poll_cancel(struct io_ring_ctx *ctx, __u64 sqe_addr)
-  * Find a running poll command that matches one specified in sqe->addr,
-  * and remove it if found.
-  */
--static int io_poll_remove(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+static int io_poll_remove(struct io_kiocb *req)
- {
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
-@@ -2508,9 +2513,9 @@ static void io_poll_req_insert(struct io_kiocb *req)
- 	hlist_add_head(&req->hash_node, list);
- }
- 
--static int io_poll_add(struct io_kiocb *req, const struct io_uring_sqe *sqe,
--		       struct io_kiocb **nxt)
-+static int io_poll_add(struct io_kiocb *req, struct io_kiocb **nxt)
- {
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	struct io_poll_iocb *poll = &req->poll;
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_poll_table ipt;
-@@ -2648,9 +2653,9 @@ static int io_timeout_cancel(struct io_ring_ctx *ctx, __u64 user_data)
- /*
-  * Remove or update an existing timeout command
-  */
--static int io_timeout_remove(struct io_kiocb *req,
--			     const struct io_uring_sqe *sqe)
-+static int io_timeout_remove(struct io_kiocb *req)
- {
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	struct io_ring_ctx *ctx = req->ctx;
- 	unsigned flags;
- 	int ret;
-@@ -2710,8 +2715,9 @@ static int io_timeout_prep(struct io_kiocb *req, struct io_async_ctx *io,
- 	return 0;
- }
- 
--static int io_timeout(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+static int io_timeout(struct io_kiocb *req)
- {
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	unsigned count;
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_timeout_data *data;
-@@ -2857,9 +2863,9 @@ static void io_async_find_and_cancel(struct io_ring_ctx *ctx,
- 	io_put_req_find_next(req, nxt);
- }
- 
--static int io_async_cancel(struct io_kiocb *req, const struct io_uring_sqe *sqe,
--			   struct io_kiocb **nxt)
-+static int io_async_cancel(struct io_kiocb *req, struct io_kiocb **nxt)
- {
-+	const struct io_uring_sqe *sqe = req->sqe;
- 	struct io_ring_ctx *ctx = req->ctx;
- 
- 	if (unlikely(ctx->flags & IORING_SETUP_IOPOLL))
-@@ -2977,37 +2983,37 @@ static int io_issue_sqe(struct io_kiocb *req, struct io_kiocb **nxt,
- 		ret = io_write(req, nxt, force_nonblock);
- 		break;
- 	case IORING_OP_FSYNC:
--		ret = io_fsync(req, req->sqe, nxt, force_nonblock);
-+		ret = io_fsync(req, nxt, force_nonblock);
- 		break;
- 	case IORING_OP_POLL_ADD:
--		ret = io_poll_add(req, req->sqe, nxt);
-+		ret = io_poll_add(req, nxt);
- 		break;
- 	case IORING_OP_POLL_REMOVE:
--		ret = io_poll_remove(req, req->sqe);
-+		ret = io_poll_remove(req);
- 		break;
- 	case IORING_OP_SYNC_FILE_RANGE:
--		ret = io_sync_file_range(req, req->sqe, nxt, force_nonblock);
-+		ret = io_sync_file_range(req, nxt, force_nonblock);
- 		break;
- 	case IORING_OP_SENDMSG:
--		ret = io_sendmsg(req, req->sqe, nxt, force_nonblock);
-+		ret = io_sendmsg(req, nxt, force_nonblock);
- 		break;
- 	case IORING_OP_RECVMSG:
--		ret = io_recvmsg(req, req->sqe, nxt, force_nonblock);
-+		ret = io_recvmsg(req, nxt, force_nonblock);
- 		break;
- 	case IORING_OP_TIMEOUT:
--		ret = io_timeout(req, req->sqe);
-+		ret = io_timeout(req);
- 		break;
- 	case IORING_OP_TIMEOUT_REMOVE:
--		ret = io_timeout_remove(req, req->sqe);
-+		ret = io_timeout_remove(req);
- 		break;
- 	case IORING_OP_ACCEPT:
--		ret = io_accept(req, req->sqe, nxt, force_nonblock);
-+		ret = io_accept(req, nxt, force_nonblock);
- 		break;
- 	case IORING_OP_CONNECT:
--		ret = io_connect(req, req->sqe, nxt, force_nonblock);
-+		ret = io_connect(req, nxt, force_nonblock);
- 		break;
- 	case IORING_OP_ASYNC_CANCEL:
--		ret = io_async_cancel(req, req->sqe, nxt);
-+		ret = io_async_cancel(req, nxt);
- 		break;
- 	case IORING_OP_FALLOCATE:
- 		ret = io_fallocate(req, nxt, force_nonblock);
 -- 
 2.24.1
 

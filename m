@@ -2,168 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB9EF11F276
-	for <lists+io-uring@lfdr.de>; Sat, 14 Dec 2019 16:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E68F911F2E9
+	for <lists+io-uring@lfdr.de>; Sat, 14 Dec 2019 18:14:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbfLNPaR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 14 Dec 2019 10:30:17 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34917 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbfLNPaR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Dec 2019 10:30:17 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j6so2036456lja.2;
-        Sat, 14 Dec 2019 07:30:15 -0800 (PST)
+        id S1726636AbfLNRMb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 14 Dec 2019 12:12:31 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45334 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfLNRMb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Dec 2019 12:12:31 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 59so3212611otp.12
+        for <io-uring@vger.kernel.org>; Sat, 14 Dec 2019 09:12:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tKpbIIukiPmWkfZZ0EPYoAUPjMssF3lF5pcZV5QAq7w=;
-        b=FI9asMhypX+iTTK2QHrnbE/CnjXZpRBH0VnHuI7sg0lQ26kpoQhi+t/008a08zsTrp
-         +x2Zul36wICIbBvMHhGVj9qPVyKERWdJdI0h/k+4EWcyS793kujUGE47eEUrxjP2781y
-         B/PaRzBo0tQD5Oyljm1DWX7UBVzn8Q0RTs7/DMPBaDnX+zH4lM4qaPwxzMsyfewSSull
-         q/xwq5K3Misoy8QiJyf2y1HAoKvXmkyXYhSTkYwMSOgmFeOLSGscCx3g/rwsxEATgso+
-         TGGQoY/3nxR3HtGVG7hfQCUVtRNeUySrGD6XKIurkVsb3Fp/WICXidYOzsneqxdZrx4m
-         +uMw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LfuFNZhwpZHLnF3djKVjiT3EXeRjqk5hTlCJtr0Ug00=;
+        b=TlCmN7o1+fMNUBHz9erkJfWUoUdU6UO2mLwWb8l2OezOxScfm59l9mw928OPcn/yBa
+         Xhl+xxt7CRSQs9M26xhDkm0qpkDohbNZy5JaN5ECOL9h9XnMmCPoEBL1boRtojpbvgrc
+         Ght8Wj+dD1eb0lSCrS3fpEAdVkxj2pV3eVXKkOg2ENf8l6nkaINwPxGpfnRGOwnquFZc
+         pL+qz0HFXn0mlj4DE6458MEirDfF3fb7wxRjGscI3mH4+5qfrIvYwDZFGFMHTIVinPJ6
+         SeqqPws1nPIVuGyx08gfwwZCFxeSIBu8z58WeOa3KajNbYjPAgDuhFKblJLY/acUYb2P
+         EJ5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tKpbIIukiPmWkfZZ0EPYoAUPjMssF3lF5pcZV5QAq7w=;
-        b=lNbRWCK30LSrB1dJzE4auNJecrUuy+OKbpdrZVqd1pRdDoKGjyCgOhbd1bx/12KkCU
-         yHESvWhb+TSL8mWvmftC6L2gXtBAO58r8sbxswjyZgybHCdJ1h0glf83xDEt235jg32G
-         RxGnCv/9sK8EyKe6SToMIR0PeI41aR7S8n4KFv4rGClROIXAcetd1qRFbyGP9Hkdi6qF
-         CrETenNmeHt8dCvfHJ4g22EOgzUK2oommihRs6JCd2JtQ1H4xddXWcJWF19h9cZnUz4b
-         Otpf8+iiuyFYNDygRJ58qF+guY8XJjpmp58cTE2TYrKM2DCFi0exNOKUwa49nYdmUK2a
-         BAzA==
-X-Gm-Message-State: APjAAAWKasiRuAP6FOgFo/lf1idqB0INdKX1QDoy8kTD1v6/csCtcL7b
-        x12Od/ou1qrqTZFEJLKfwdo=
-X-Google-Smtp-Source: APXvYqz7YvUAePzepyy2r7W2pjTM1uI8FZQuy4Wu9rB+JMMJVUy09vzHbdSDCQDE0lbTZ4P7X6HP6A==
-X-Received: by 2002:a2e:b52a:: with SMTP id z10mr12828515ljm.178.1576337414874;
-        Sat, 14 Dec 2019 07:30:14 -0800 (PST)
-Received: from localhost.localdomain ([212.122.72.247])
-        by smtp.gmail.com with ESMTPSA id k5sm6007919lfd.86.2019.12.14.07.30.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2019 07:30:14 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] io_uring: add support for IORING_OP_IOCTL
-Date:   Sat, 14 Dec 2019 18:29:49 +0300
-Message-Id: <f77ac379ddb6a67c3ac6a9dc54430142ead07c6f.1576336565.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LfuFNZhwpZHLnF3djKVjiT3EXeRjqk5hTlCJtr0Ug00=;
+        b=MjsIY/0k0crflGkCbcLOPq7TMRBd/08bHUneLhkbf4+++12PSs3Uux4XVt7YI80eQS
+         0NxTyH2NDHf6vZ9OE+c5oWmlPZ7TIuxQ1JKaWaHRjoD5EsbL3ZMO36FoHWRyOPdl4IaP
+         NEds+EpVjL/8HJLbjBD44PDuOcBA9tWqkvvNJsvJGTpKAYURbw1CRALSB95MAXyBPTBV
+         +uhWNyMbpoyMYqNZ1Xz9YWvj+f3HICygi8Hdp1Xl3CALIZ3y1+yOZEW/Hb1L92Z3rLfK
+         usx2SVVpy+FhVgo/aXMT20GlHoB6NAQlDnM5BkUZjkn7lq/WkPpy6ZfqCGrIu5Ca5Zj5
+         DMhQ==
+X-Gm-Message-State: APjAAAXAyxnhhi7sErabrTHildFtKCcyyUiu6d2CzNTsZSf2yEnIb/mx
+        sy7pjPlewD8JEl0AXWf1tb/WqOWEG32xbRGVPnvjkBMYIWA=
+X-Google-Smtp-Source: APXvYqwwTQGCvVFuCI2TTbbAbQLnslTRGC4VFL+IaeZvnsp8ao1oG8F9eYiooFOo0Htw4V8HHQU3yDHWMVglPTU+OSw=
+X-Received: by 2002:a9d:4789:: with SMTP id b9mr22242455otf.110.1576343549895;
+ Sat, 14 Dec 2019 09:12:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <f77ac379ddb6a67c3ac6a9dc54430142ead07c6f.1576336565.git.asml.silence@gmail.com>
+In-Reply-To: <f77ac379ddb6a67c3ac6a9dc54430142ead07c6f.1576336565.git.asml.silence@gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Sat, 14 Dec 2019 18:12:03 +0100
+Message-ID: <CAG48ez0N_b+kjbddhHe+BUvSnOSvpm1vdfQ9cv+cgTLuCMXqug@mail.gmail.com>
+Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_IOCTL
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This works almost like ioctl(2), except it doesn't support a bunch of
-common opcodes, (e.g. FIOCLEX and FIBMAP, see ioctl.c), and goes
-straight to a device specific implementation.
+On Sat, Dec 14, 2019 at 4:30 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> This works almost like ioctl(2), except it doesn't support a bunch of
+> common opcodes, (e.g. FIOCLEX and FIBMAP, see ioctl.c), and goes
+> straight to a device specific implementation.
+>
+> The case in mind is dma-buf, drm and other ioctl-centric interfaces.
+>
+> Not-yet Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>
+> It clearly needs some testing first, though works fine with dma-buf,
+> but I'd like to discuss whether the use cases are convincing enough,
+> and is it ok to desert some ioctl opcodes. For the last point it's
+> fairly easy to add, maybe except three requiring fd (e.g. FIOCLEX)
+>
+> P.S. Probably, it won't benefit enough to consider using io_uring
+> in drm/mesa, but anyway.
+[...]
+> +static int io_ioctl(struct io_kiocb *req,
+> +                   struct io_kiocb **nxt, bool force_nonblock)
+> +{
+> +       const struct io_uring_sqe *sqe = req->sqe;
+> +       unsigned int cmd = READ_ONCE(sqe->ioctl_cmd);
+> +       unsigned long arg = READ_ONCE(sqe->ioctl_arg);
+> +       int ret;
+> +
+> +       if (!req->file)
+> +               return -EBADF;
+> +       if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+> +               return -EINVAL;
+> +       if (unlikely(sqe->ioprio || sqe->addr || sqe->buf_index
+> +               || sqe->rw_flags))
+> +               return -EINVAL;
+> +       if (force_nonblock)
+> +               return -EAGAIN;
+> +
+> +       ret = security_file_ioctl(req->file, cmd, arg);
+> +       if (!ret)
+> +               ret = (int)vfs_ioctl(req->file, cmd, arg);
 
-The case in mind is dma-buf, drm and other ioctl-centric interfaces.
+This isn't going to work. For several of the syscalls that were added,
+special care had to be taken to avoid bugs - like for RECVMSG, for the
+upcoming OPEN/CLOSE stuff, and so on.
 
-Not-yet Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+And in principle, ioctls handlers can do pretty much all of the things
+syscalls can do, and more. They can look at the caller's PID, they can
+open and close (well, technically that's slightly unsafe, but IIRC
+autofs does it anyway) things in the file descriptor table, they can
+give another process access to the calling process in some way, and so
+on. If you just allow calling arbitrary ioctls through io_uring, you
+will certainly get bugs, and probably security bugs, too.
 
-It clearly needs some testing first, though works fine with dma-buf,
-but I'd like to discuss whether the use cases are convincing enough,
-and is it ok to desert some ioctl opcodes. For the last point it's
-fairly easy to add, maybe except three requiring fd (e.g. FIOCLEX)
+Therefore, I would prefer to see this not happen at all; and if you do
+have a usecase where you think the complexity is worth it, then I
+think you'll have to add new infrastructure that allows each
+file_operations instance to opt in to having specific ioctls called
+via this mechanism, or something like that, and ensure that each of
+the exposed ioctls only performs operations that are safe from uring
+worker context.
 
-P.S. Probably, it won't benefit enough to consider using io_uring
-in drm/mesa, but anyway.
-
- fs/io_uring.c                 | 33 +++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  7 ++++++-
- 2 files changed, 39 insertions(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5dfc805ec31c..6269c51dd02f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -72,6 +72,7 @@
- #include <linux/highmem.h>
- #include <linux/namei.h>
- #include <linux/fsnotify.h>
-+#include <linux/security.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -3164,6 +3165,35 @@ static int io_req_defer(struct io_kiocb *req)
- 	return -EIOCBQUEUED;
- }
- 
-+static int io_ioctl(struct io_kiocb *req,
-+		    struct io_kiocb **nxt, bool force_nonblock)
-+{
-+	const struct io_uring_sqe *sqe = req->sqe;
-+	unsigned int cmd = READ_ONCE(sqe->ioctl_cmd);
-+	unsigned long arg = READ_ONCE(sqe->ioctl_arg);
-+	int ret;
-+
-+	if (!req->file)
-+		return -EBADF;
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (unlikely(sqe->ioprio || sqe->addr || sqe->buf_index
-+		|| sqe->rw_flags))
-+		return -EINVAL;
-+	if (force_nonblock)
-+		return -EAGAIN;
-+
-+	ret = security_file_ioctl(req->file, cmd, arg);
-+	if (!ret)
-+		ret = (int)vfs_ioctl(req->file, cmd, arg);
-+
-+	if (ret < 0)
-+		req_set_fail_links(req);
-+	io_cqring_add_event(req, ret);
-+	io_put_req_find_next(req, nxt);
-+	return 0;
-+}
-+
- __attribute__((nonnull))
- static int io_issue_sqe(struct io_kiocb *req, struct io_kiocb **nxt,
- 			bool force_nonblock)
-@@ -3237,6 +3267,9 @@ static int io_issue_sqe(struct io_kiocb *req, struct io_kiocb **nxt,
- 	case IORING_OP_FILES_UPDATE:
- 		ret = io_files_update(req, force_nonblock);
- 		break;
-+	case IORING_OP_IOCTL:
-+		ret = io_ioctl(req, nxt, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index cafee41efbe5..88d38364746a 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -22,9 +22,13 @@ struct io_uring_sqe {
- 	union {
- 		__u64	off;	/* offset into file */
- 		__u64	addr2;
-+		__u64	ioctl_arg;
- 	};
- 	__u64	addr;		/* pointer to buffer or iovecs */
--	__u32	len;		/* buffer size or number of iovecs */
-+	union {
-+		__u32	len;	/* buffer size or number of iovecs */
-+		__u32	ioctl_cmd;
-+	};
- 	union {
- 		__kernel_rwf_t	rw_flags;
- 		__u32		fsync_flags;
-@@ -81,6 +85,7 @@ enum {
- 	IORING_OP_OPENAT,
- 	IORING_OP_CLOSE,
- 	IORING_OP_FILES_UPDATE,
-+	IORING_OP_IOCTL,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-2.24.0
-
+Also, I'm not sure, but it might be a good idea to CC linux-api if you
+continue working on this.

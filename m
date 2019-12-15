@@ -2,55 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEDCC11F88B
-	for <lists+io-uring@lfdr.de>; Sun, 15 Dec 2019 16:42:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E15611F89D
+	for <lists+io-uring@lfdr.de>; Sun, 15 Dec 2019 16:52:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbfLOPkd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 15 Dec 2019 10:40:33 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45540 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbfLOPkd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Dec 2019 10:40:33 -0500
-Received: by mail-lj1-f195.google.com with SMTP id d20so3960306ljc.12;
-        Sun, 15 Dec 2019 07:40:30 -0800 (PST)
+        id S1726504AbfLOPsv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 15 Dec 2019 10:48:51 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:32994 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbfLOPsu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Dec 2019 10:48:50 -0500
+Received: by mail-lj1-f194.google.com with SMTP id 21so4038532ljr.0;
+        Sun, 15 Dec 2019 07:48:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=CTZ2pZB2wNwDLvTFUV0MMSr69q6DfDDe++sL8bn33HM=;
-        b=qQFUiJgE6rjoBLHuWl4eu+rn6IaW2QxlyU1wVQ4jjLF0yGStOGgdJb8cnK+jCDb3Mk
-         JqxZlAt/qkSLdpzaMhLYSSHzJUFOw9n+dagHB421JEKJqyGEpAQOfMhDEo4RMzhTJ/lt
-         6faNql1ibTpWGkztGsUOzCm8RZELLoVdNdBTo9OL2pqtJnOyjZRCrKnsJRkg+OQnlmXg
-         FeieohYlgInz5xtgCgN9bM++ZWkDZewgag5HsjbDdvTVGlC9G5i+yFcO3CAj/tpCesnF
-         ddI+/O47Dy5goWCVKZepxMm2p+lfEp7DKtlImNIZbLZ0942usgMZepXgufFBLYr5kAuH
-         TsLA==
+        bh=VkkUqKsHd2dwOIO/Xg/JSf/WkBogcFEzgjutQEh4zvc=;
+        b=WGeZdFYakxx+I5Qc7DKBe70qAlS295m82HC5vkft01iypiXw5abNpG0Z9PF3lR0k0m
+         srlU3LV96uUHqG/XQMBZCcecq/XXNKOYQq/p/ckSh2ZvyRll3aPXwd2aMNVkZ6hTtcDC
+         M7+NboIZ1TaegD4zOHPSHgDTbMp6qVsLV+Su9qmQRktVEfXxYmSiYiqqXucKJfOsKiq+
+         HL53SU1itbmMsS6dBzX9zpwm/JKPIR1Hcf2mp411Ul1e3yiJGaZnbSfCW7gQw0OgIwXh
+         s0qzo7a+dqQ3QarNc+a+Y2HtR0AzaRmwSgfWHlmNXZzgTEY+qrH6lC4UDHgOLxpQkHd6
+         +sdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to;
-        bh=CTZ2pZB2wNwDLvTFUV0MMSr69q6DfDDe++sL8bn33HM=;
-        b=plHaWCWwpahJQwsPfEW1ZnUbOU+QOOvkl/UVacuJJWM2zF92Z2zu1xXB6fFMp6Cgju
-         nQTEx37yB8Mb4+9pK+ENLT42XWqtPctCq6Tg5+w+28Pr4sOWWJ4JfFsN139ItxnAybnM
-         AkWCOVz6qpB7YyUiV8ivmxo5BVn0NAws3pzmrvcjmWb5lSk8wQ41B2xxz6hjHjL0uoUp
-         9fYnrFXij5ieTZcUfFYvc6FB0i30jpZdbB36S+34Uu3oNskvS8+2sYIAEgNvjAN9i662
-         HE0iWUkrPTQQMpKbk0FtnWq0Tnaim/0deCwGNI4h99FWsBxbD7nHnAWF0voNPYqBi4QC
-         fKZg==
-X-Gm-Message-State: APjAAAVZpiS9Attgf52ZM28d9tlbk3ZxkMDHg6F8HyVwk9TMqnrdRTHd
-        QWUa4OJN1yfIL4Q+XozvSj2uNLshOHs=
-X-Google-Smtp-Source: APXvYqybnVrDTZjwzdrCgVJb1SxcS98yw+tEPW8P7wT5WT/Bay7xwwFdYuOb46kLGzeQflMirC44KA==
-X-Received: by 2002:a05:651c:204f:: with SMTP id t15mr17318041ljo.240.1576424429552;
-        Sun, 15 Dec 2019 07:40:29 -0800 (PST)
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=VkkUqKsHd2dwOIO/Xg/JSf/WkBogcFEzgjutQEh4zvc=;
+        b=pUT9+iufcqkgEO5wgpAogO3yYAsVsryCIMALPpSSJW42iMRUWUvW6DYO7urRETSFtA
+         pDuHB/kf5cl3Ygy2jg0BRchuCAFD1fdOD5f+1ekJGeFbkoHqAhzZXoLp4jtCwOujVJ2n
+         KmZFnJtnTt0xwV0Hg+FfEE8jgC4Gte4VrFAoNbIkr+ftkmsRYyBkIuTYtpUR9gHvd89E
+         2CyLqSkPR21RI6/fumvB17NOGxKRDGHqEDbJ3Nkoi5cBKfzR2eEE6gohcj1byOh9MVXc
+         kPeAiGrQyICM45Vg7ehRvVljbnWL9/aHWVSA1czmQxkh9sIQR+o6IGo3WZE77a3LeWrL
+         +fnQ==
+X-Gm-Message-State: APjAAAVaq4JXronQcFlY6N6q1s4LSH7qnNC7iTVJCh3gXESJEtSlpXaA
+        m2FoSNDyCicVCcPnMKqIrs23Bq4It/U=
+X-Google-Smtp-Source: APXvYqyQ6HIGMLKPwJR4sMacmqi8wF/AyZX/+uOHY6plDkExZ8q5qC/8/33KkAet5deodRJSi15KIQ==
+X-Received: by 2002:a2e:9606:: with SMTP id v6mr16760530ljh.223.1576424927433;
+        Sun, 15 Dec 2019 07:48:47 -0800 (PST)
 Received: from [192.168.72.83] (h-235-202.litrail.lt. [109.205.235.202])
-        by smtp.gmail.com with ESMTPSA id t27sm8635967ljd.26.2019.12.15.07.40.27
+        by smtp.gmail.com with ESMTPSA id s22sm8599406ljm.41.2019.12.15.07.48.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Dec 2019 07:40:28 -0800 (PST)
-To:     Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-References: <f77ac379ddb6a67c3ac6a9dc54430142ead07c6f.1576336565.git.asml.silence@gmail.com>
- <CAG48ez0N_b+kjbddhHe+BUvSnOSvpm1vdfQ9cv+cgTLuCMXqug@mail.gmail.com>
- <9b4f56c1-dce9-1acd-2775-e64a3955d8ee@gmail.com>
- <1f995281-4a56-a7de-d20b-14b0f64536c0@kernel.dk>
+        Sun, 15 Dec 2019 07:48:46 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <6256169d519f72fe592e70be47a04aa0e9c3b9a1.1576333754.git.asml.silence@gmail.com>
+ <c6f625bdb27ea3b929d0717ebf2aaa33ad5410da.1576335142.git.asml.silence@gmail.com>
+ <a1f0a9ed-085f-dd6f-9038-62d701f4c354@kernel.dk>
+ <3a102881-3cc3-ba05-2f86-475145a87566@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -95,183 +94,94 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_IOCTL
-Message-ID: <3757f227-6ed9-b140-e367-69387f966874@gmail.com>
-Date:   Sun, 15 Dec 2019 18:40:02 +0300
+Subject: Re: [PATCH v3] io_uring: don't wait when under-submitting
+Message-ID: <900dbb63-ae9e-40e6-94f9-8faa1c14389e@gmail.com>
+Date:   Sun, 15 Dec 2019 18:48:20 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1f995281-4a56-a7de-d20b-14b0f64536c0@kernel.dk>
+In-Reply-To: <3a102881-3cc3-ba05-2f86-475145a87566@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="kd9uO3yyLTv5jAxAnQUrOTu0ZpLvd4uqK"
+ boundary="UMMulyKq9dUZjpD0zuVJ021dmaSoYrByv"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---kd9uO3yyLTv5jAxAnQUrOTu0ZpLvd4uqK
-Content-Type: multipart/mixed; boundary="NVRCSdkBgmwp8MM6y3E5YDSTAHw0M4qas";
+--UMMulyKq9dUZjpD0zuVJ021dmaSoYrByv
+Content-Type: multipart/mixed; boundary="DCNTUnmK3E0hZSIvJaRjxh8hQ2GTe7IcP";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>
-Cc: io-uring <io-uring@vger.kernel.org>,
- kernel list <linux-kernel@vger.kernel.org>
-Message-ID: <3757f227-6ed9-b140-e367-69387f966874@gmail.com>
-Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_IOCTL
-References: <f77ac379ddb6a67c3ac6a9dc54430142ead07c6f.1576336565.git.asml.silence@gmail.com>
- <CAG48ez0N_b+kjbddhHe+BUvSnOSvpm1vdfQ9cv+cgTLuCMXqug@mail.gmail.com>
- <9b4f56c1-dce9-1acd-2775-e64a3955d8ee@gmail.com>
- <1f995281-4a56-a7de-d20b-14b0f64536c0@kernel.dk>
-In-Reply-To: <1f995281-4a56-a7de-d20b-14b0f64536c0@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <900dbb63-ae9e-40e6-94f9-8faa1c14389e@gmail.com>
+Subject: Re: [PATCH v3] io_uring: don't wait when under-submitting
+References: <6256169d519f72fe592e70be47a04aa0e9c3b9a1.1576333754.git.asml.silence@gmail.com>
+ <c6f625bdb27ea3b929d0717ebf2aaa33ad5410da.1576335142.git.asml.silence@gmail.com>
+ <a1f0a9ed-085f-dd6f-9038-62d701f4c354@kernel.dk>
+ <3a102881-3cc3-ba05-2f86-475145a87566@kernel.dk>
+In-Reply-To: <3a102881-3cc3-ba05-2f86-475145a87566@kernel.dk>
 
---NVRCSdkBgmwp8MM6y3E5YDSTAHw0M4qas
+--DCNTUnmK3E0hZSIvJaRjxh8hQ2GTe7IcP
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 14/12/2019 21:52, Jens Axboe wrote:
-> On 12/14/19 10:56 AM, Pavel Begunkov wrote:
+On 15/12/2019 08:42, Jens Axboe wrote:
+> On 12/14/19 11:43 AM, Jens Axboe wrote:
+>> On 12/14/19 7:53 AM, Pavel Begunkov wrote:
+>>> There is no reliable way to submit and wait in a single syscall, as
+>>> io_submit_sqes() may under-consume sqes (in case of an early error).
+>>> Then it will wait for not-yet-submitted requests, deadlocking the use=
+r
+>>> in most cases.
+>>>
+>>> In such cases adjust min_complete, so it won't wait for more than
+>>> what have been submitted in the current call to io_uring_enter(). It
+>>> may be less than totally in-flight including previous submissions,
+>>> but this shouldn't do harm and up to a user.
 >>
->> On 14/12/2019 20:12, Jann Horn wrote:
->>> On Sat, Dec 14, 2019 at 4:30 PM Pavel Begunkov <asml.silence@gmail.co=
-m> wrote:
->>>> This works almost like ioctl(2), except it doesn't support a bunch o=
-f
->>>> common opcodes, (e.g. FIOCLEX and FIBMAP, see ioctl.c), and goes
->>>> straight to a device specific implementation.
->>>>
->>>> The case in mind is dma-buf, drm and other ioctl-centric interfaces.=
+>> Thanks, applied.
+>=20
+> This causes a behavioral change where if you ask to submit 1 but
+> there's nothing in the SQ ring, then you would get 0 before. Now
+> you get -EAGAIN. This doesn't make a lot of sense, since there's no
+> point in retrying as that won't change anything.
+>=20
+> Can we please just do something like the one I sent, instead of trying
+> to over-complicate it?
+>=20
 
->>>>
->>>> Not-yet Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>>> ---
->>>>
->>>> It clearly needs some testing first, though works fine with dma-buf,=
-
->>>> but I'd like to discuss whether the use cases are convincing enough,=
-
->>>> and is it ok to desert some ioctl opcodes. For the last point it's
->>>> fairly easy to add, maybe except three requiring fd (e.g. FIOCLEX)
->>>>
->>>> P.S. Probably, it won't benefit enough to consider using io_uring
->>>> in drm/mesa, but anyway.
->>> [...]
->>>> +static int io_ioctl(struct io_kiocb *req,
->>>> +                   struct io_kiocb **nxt, bool force_nonblock)
->>>> +{
->>>> +       const struct io_uring_sqe *sqe =3D req->sqe;
->>>> +       unsigned int cmd =3D READ_ONCE(sqe->ioctl_cmd);
->>>> +       unsigned long arg =3D READ_ONCE(sqe->ioctl_arg);
->>>> +       int ret;
->>>> +
->>>> +       if (!req->file)
->>>> +               return -EBADF;
->>>> +       if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
->>>> +               return -EINVAL;
->>>> +       if (unlikely(sqe->ioprio || sqe->addr || sqe->buf_index
->>>> +               || sqe->rw_flags))
->>>> +               return -EINVAL;
->>>> +       if (force_nonblock)
->>>> +               return -EAGAIN;
->>>> +
->>>> +       ret =3D security_file_ioctl(req->file, cmd, arg);
->>>> +       if (!ret)
->>>> +               ret =3D (int)vfs_ioctl(req->file, cmd, arg);
->>>
->>> This isn't going to work. For several of the syscalls that were added=
-,
->>> special care had to be taken to avoid bugs - like for RECVMSG, for th=
-e
->>> upcoming OPEN/CLOSE stuff, and so on.
->>>
->>> And in principle, ioctls handlers can do pretty much all of the thing=
-s
->>> syscalls can do, and more. They can look at the caller's PID, they ca=
-n
->>> open and close (well, technically that's slightly unsafe, but IIRC
->>> autofs does it anyway) things in the file descriptor table, they can
->>> give another process access to the calling process in some way, and s=
-o
->>> on. If you just allow calling arbitrary ioctls through io_uring, you
->>> will certainly get bugs, and probably security bugs, too.
->>>
->>> Therefore, I would prefer to see this not happen at all; and if you d=
-o
->>> have a usecase where you think the complexity is worth it, then I
->>> think you'll have to add new infrastructure that allows each
->>> file_operations instance to opt in to having specific ioctls called
->>> via this mechanism, or something like that, and ensure that each of
->>> the exposed ioctls only performs operations that are safe from uring
->>> worker context.
->>
->> Sounds like hell of a problem. Thanks for sorting this out!
->=20
-> While the ioctl approach is tempting, for the use cases where it makes
-> sense, I think we should just add a ioctl type opcode and have the
-> sub-opcode be somewhere else in the sqe. Because I do think there's
-> a large opportunity to expose a fast API that works with ioctl like
-> mechanisms. If we have
->=20
-> IORING_OP_IOCTL
->=20
-> and set aside an sqe field for the per-driver (or per-user) and
-> add a file_operations method for sending these to the fd, then we'll
-> have a much better (and faster + async) API than ioctls. We could
-> add fops->uring_issue() or something, and that passes the io_kiocb.
-> When it completes, the ->io_uring_issue() posts a completion by
-> calling io_uring_complete_req() or something.
->=20
-> Outside of the issues that Jann outlined, ioctls are also such a
-> decade old mess that we have to do the -EAGAIN punt for all of them
-> like you did in your patch. If it's opt-in like ->uring_issue(), then
-> care could be taken to do this right and just have it return -EAGAIN
-> if it does need async context.
-
-Right. But there is an overhead within io_uring, small but still. IMHO,
-there won't be much merit unless utilising batching/async. From my
-perspective, to justify the work there should be such a user (or one
-should be created) with a prototype and performance numbers.
-Any ideas where to look?
-
->=20
-> ret =3D fops->uring_issue(req, force_nonblock);
-> if (ret =3D=3D -EAGAIN) {
-> 	... usual punt ...
-> }
->=20
-> I think working on this would be great, and some of the more performanc=
-e
-> sensitive ioctl cases should flock to it.
->=20
+Ok, when I get to a compiler.
 
 --=20
 Pavel Begunkov
 
 
---NVRCSdkBgmwp8MM6y3E5YDSTAHw0M4qas--
+--DCNTUnmK3E0hZSIvJaRjxh8hQ2GTe7IcP--
 
---kd9uO3yyLTv5jAxAnQUrOTu0ZpLvd4uqK
+--UMMulyKq9dUZjpD0zuVJ021dmaSoYrByv
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl32U9YACgkQWt5b1Glr
-+6WdMQ/8CEzenz+hQrPakd0yL0Ku17zrTUgliZqFnLtDh1b+utEIrgcZdb7P7Kb4
-A/7fUSPfg+pH+E20waT/VitqEeJBJmozsXdRDYl515B+d9Ug7G0cLuSEy7cAPvIh
-UmpeUFakLsvncrxh8wOWW8aun50MKPp1Skj0S5bTibzoPw6qaR1r1p0CsTF5cdgC
-HUAgPIJRLZylVabRvJCFxwPI1R8HEvidHzURZhd6JsQk8OmYnTSYobGT/k5ox2XJ
-sBZuPRmoPF5qwfTJaQwfoZ4NBWI/ce1oqEhvW6k5OV0+ThCc2Nz14eHegU9NDL5M
-X/Y3SaMWuJFEdanuaP+AHgWxzsIqfDmPTWK5W4ZWkvrJ5vN+E8pZm5EKTohJoX+7
-2RWX/TVX6wv6CJ9YOHpwdGf/MZ79tAFpUjcbVkW16i/EGfU77EYBLJNa+ANr7cqI
-CaO71Il7ol2nN+G8iIb0szt3FlxKAPAD+P9jzMOpQV9ITQT6yeGYGCBnlMrnTkks
-Wk5LlSqfuNG1WpGwfxelBnMHh76M08/450D8Q16iEX+u1Eu6fTwrQ0/A3o3OMnwP
-vsUJf+l1Ebe8zsHDXfoDTwyX47BdXMWs3j7iqyGHUJoEzoocByzZA/wyb78j96hS
-WsHJvVxr/GULTzqanzUl99JSE2zuIHbXbWTTL/eG9wrUCYypfl0=
-=hMqm
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl32VcQACgkQWt5b1Glr
++6VgnA/7BhwDS0X1P/h88c7DGyl8y3VWkFH01TDMVwJVVXL/8Le2WCh3pW+Qga2p
+YcwlSES7mU24A0CEJiV6WQfQABOJWS4AQ/u7AP5vivktJAOO12t+ZiC2ln1d9FLV
+GllTtB+wNwK/RLWwa6v7Rhgokp/xdkTFkIl+jKBffMZg682qB5j5AIeLykRcxTKc
+rL40GT0EzzwSV5UOShYBYzH8xmCIJYpm3v/xxtYczqYf8by7PJEZt3bc+az4MXgb
+/CavUNK+L1mz08V2E4cYhAPUGnC0rP3eXHfAEqiEvEKcqAVSuDkvRriF5kOYA0es
+ZpgQt32TASsjj2NIJ0C3rsMvbG0rTTephpe6AAbBb7YtWlIBxOk1zlQVvnLutXst
+jIFbCILpD1l1egaUOyJ7lWVjXwsdHabwDe7RyzyXGwoF8j/J6nJf8oM6BKNcOPLS
+VWK68osVxKpiSBEQnu+AI0V8xf1Y8XoKe3WSBPSQAzWdNK6u1EZKgPOprDbkXJ0L
+nM3AbiQXvxz3gEELaE3A3+HBwQ5vQMVvpsxh+Cuwd5FVPnKkNMOLbpdLy7ejBtAM
+3DqD6LvAf9OnjjBOZgGACJekwljeTI5sdDggIuPWCycn/7qUjEXWNOg3H8hsuH+b
+G5kTNh4AhknG/yhuUp4RrG491v31dz4maEvDysqik8C7NC7BN28=
+=kKXG
 -----END PGP SIGNATURE-----
 
---kd9uO3yyLTv5jAxAnQUrOTu0ZpLvd4uqK--
+--UMMulyKq9dUZjpD0zuVJ021dmaSoYrByv--

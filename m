@@ -2,63 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CEEF122E52
-	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2019 15:16:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B5ED1232CE
+	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2019 17:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbfLQOQr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Dec 2019 09:16:47 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40046 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728554AbfLQOQr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Dec 2019 09:16:47 -0500
-Received: by mail-lf1-f65.google.com with SMTP id i23so7068822lfo.7;
-        Tue, 17 Dec 2019 06:16:46 -0800 (PST)
+        id S1727865AbfLQQpL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Dec 2019 11:45:11 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44878 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727764AbfLQQpL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Dec 2019 11:45:11 -0500
+Received: by mail-io1-f67.google.com with SMTP id b10so11691090iof.11
+        for <io-uring@vger.kernel.org>; Tue, 17 Dec 2019 08:45:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xlRkPJ2SEXs8vMsht2fGp1KJqPki3AeywUT3STRcBqE=;
-        b=pNerajbJfMbMciD+1btyom7lLX1CPk4VtH9PLBldrb/4MWc+pFhws6C8JRCjwOem3B
-         1xmxBvdXdmyxGrAl7ML9tWNAMI3i6omtt7Fb+ksrOs6u9VER5hAJnO0fOl6JDmHDyO2p
-         0Ito47Affr4qm7yUNkNbQmbiFwi+al+6aL429a1O773bP6KKve4Sl0qGTf3pvtImL2Od
-         3SkxVThHn8nqxPajDFmhylmcfSAbXn+yMU7YBRTw0HmXZomQdduDZpjXsK2o3eHKcO0w
-         cywyK95ghbpNCoU/xxz3CF+2QYF1bWunxgZ2B0cbH6zP0wQZcDNL5OYDzLAbnYGFqbfF
-         qxtA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=dQiPKpP3S9FIwfUkR7hFMyPyqAo/ESDrk4hUc6DOE7g=;
+        b=xDp+6jX5AJTxGGaCa8cyfR1qjybto1VdGwYSW1BF03PyL3fVXXhzWactXUed7gFVcZ
+         q9tdqfTSmCzDQMCvYZ360dOT4HMnKYWCS9pUyXaxAiDIRnu6TTUeLqCCIGezGa+QCk/5
+         D5GqUFmoOA/Mie4p3OLbbua6y0CJOXlZOLxkc3OwUCoP/J/MeED70CQ7CPPni3fS+nx5
+         aC96rGDjSTCde5jDveAXSdLUp4OlR21NJ3reMmyeLtweNYBbb+cp7YYsqWLgEjXj6onz
+         fb2/+j8Z0Rl59zlGFdyLSofDb9Pz/TA1F1o8f3KhfavCYXiaSdpqefM7DS8FLi30kYMT
+         tnqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=xlRkPJ2SEXs8vMsht2fGp1KJqPki3AeywUT3STRcBqE=;
-        b=PFTAmBI5Ac7DaTG7en+j5qiMdsRU/15pcN+cHHQAuWAsaAE65PKaycIWoVn2k+PNxR
-         iEQR+gBKcxgjxIt4/PNlg+rtASY3ysg3VYB1d9UsDVhLtp3gq4MzLYW1XANgizmeQyBm
-         ThYwbrW8vP9B2qSstERgKYM7JhZY49LWT+Y/vXT2MxRDWPbJpEoGe+Gub+URQX+CWUNe
-         VW1zXS/tU3PbKfeUSQgxyHalVcTfTtfY3mmWVWr9SBMOu2Drbhiu0CL2CapgfBbVyJ78
-         bDO9aZ21C1nJnj6OTXn8l1Q3PwKJOWUH1wzlZyEZo7VEp2116hsnh/tOep9uL8pVJ8pq
-         EzBg==
-X-Gm-Message-State: APjAAAVCdR+Us3U6+qNZItMUMqtaWFnBVkBBEv2DmI8ozyP/3Wrwdsi5
-        iUWCJjSw4s6D1o7nmNaFOYfaVnMVcPo=
-X-Google-Smtp-Source: APXvYqzZmO0QaN360MRudjlIAma561Iv+ukGoVeX405aX62AZOqAfm4KOdQWEx2sa3SkZdPmUapC0w==
-X-Received: by 2002:a19:7015:: with SMTP id h21mr2839860lfc.68.1576592204973;
-        Tue, 17 Dec 2019 06:16:44 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id h10sm1562537ljc.39.2019.12.17.06.16.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Dec 2019 06:16:44 -0800 (PST)
+        bh=dQiPKpP3S9FIwfUkR7hFMyPyqAo/ESDrk4hUc6DOE7g=;
+        b=qf9D+YOUHx7SDQi5lm0Lmvxl4lJ/L1IM36JTJfgmOyS3VXbYX8QWUO5EOuyHNEtDpw
+         ShI/letxvSTJetmy3WlNpdQfMl8klf+1fX7k86yDiUQWLGLZUj7wH4kPupib2UcauW7Z
+         c3Qfdi25Ava3KWi0Bx2Y9+9IGQ01v1QbqePOLemuJRhevnP1N9PTKHIXxraONaUX0Mto
+         A4Onuezfu5XPGecttIGtxTwW7xxEZ5IVw8Q0YYqhqzlS7IM912SQQheER5JctUQ7/1fq
+         sZRZ33eMALamHMzfz2sgd17S0/UlrektXsQRampLaiohdnpmft1TnLD7sxRWuLUyojoI
+         cqgA==
+X-Gm-Message-State: APjAAAW/p9lEQBrtS8I9VFwKMYjro33nNqXtyQjqDDgkLohY3WUvJGYB
+        od5YTaRJsJJQyPb9Jj/U/6l4pQ==
+X-Google-Smtp-Source: APXvYqy/XWydDF5JeQ8nKzBD8UR6uXeZScK+GXUgfSF9B0VAa4xtLghKAa4XUhfFdzOQtqzzr1JcSw==
+X-Received: by 2002:a02:c646:: with SMTP id k6mr18185938jan.34.1576601109939;
+        Tue, 17 Dec 2019 08:45:09 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id a7sm4995482iod.61.2019.12.17.08.45.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2019 08:45:09 -0800 (PST)
 Subject: Re: [PATCH 3/3] io_uring: move *queue_link_head() from common path
-To:     Dmitry Dolgov <9erthalion6@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <cover.1576538176.git.asml.silence@gmail.com>
  <eda17f0736faff0876c580f1cd841b61c92d7e39.1576538176.git.asml.silence@gmail.com>
- <20191217140057.vswyslavkmrbcebz@localhost>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <3d59d0ed-50c0-2308-7b6d-c3f5d4459638@gmail.com>
-Date:   Tue, 17 Dec 2019 17:16:43 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+ <17f7900c-385f-0dfa-11bf-af99d080f894@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <76917820-052d-9597-133d-424fee3edade@kernel.dk>
+Date:   Tue, 17 Dec 2019 09:45:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191217140057.vswyslavkmrbcebz@localhost>
+In-Reply-To: <17f7900c-385f-0dfa-11bf-af99d080f894@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,12 +66,12 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/17/2019 5:00 PM, Dmitry Dolgov wrote:
->> On Tue, Dec 17, 2019 at 02:22:09AM +0300, Pavel Begunkov wrote:
->>
+On 12/16/19 4:38 PM, Pavel Begunkov wrote:
+> On 17/12/2019 02:22, Pavel Begunkov wrote:
 >> Move io_queue_link_head() to links handling code in io_submit_sqe(),
 >> so it wouldn't need extra checks and would have better data locality.
 >>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 >> ---
 >>  fs/io_uring.c | 32 ++++++++++++++------------------
 >>  1 file changed, 14 insertions(+), 18 deletions(-)
@@ -87,16 +86,30 @@ On 12/17/2019 5:00 PM, Dmitry Dolgov wrote:
 >>  	struct io_ring_ctx *ctx = req->ctx;
 >> +	unsigned int sqe_flags;
 >>  	int ret;
->>
+>>  
 >> +	sqe_flags = READ_ONCE(req->sqe->flags);
-> 
-> Just out of curiosity, why READ_ONCE it necessary here? I though, that
-> since io_submit_sqes happens within a uring_lock, it's already
-> protected. Do I miss something?
-> 
-SQEs are rw-shared with the userspace, that's it. Probably, there are
-more places where proper READ_ONCE() annotations have been lost.
-
+>>  	req->user_data = READ_ONCE(req->sqe->user_data);
+>>  	trace_io_uring_submit_sqe(ctx, req->user_data, true, req->in_async);
+>>  
+>>  	/* enforce forwards compatibility on users */
+>> -	if (unlikely(req->sqe->flags & ~SQE_VALID_FLAGS)) {
+>> +	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS)) {
+>>  		ret = -EINVAL;
+>>  		goto err_req;
+>>  	}
+>> @@ -3402,10 +3404,10 @@ static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
+>>  	if (*link) {
+>>  		struct io_kiocb *head = *link;
+>>  
+>> -		if (req->sqe->flags & IOSQE_IO_DRAIN)
+>> +		if (sqe_flags & IOSQE_IO_DRAIN)
+>>  			head->flags |= REQ_F_DRAIN_LINK | REQ_F_IO_DRAIN;
+>>  
+>> -		if (req->sqe->flags & IOSQE_IO_HARDLINK)
+>> +		if (sqe_flags & IOSQE_IO_HARDLINK)
+>>  			req->flags |= REQ_F_HARDLINK;
+>>  
+>>  		if (io_alloc_async_ctx(req)) {
 >> @@ -3421,9 +3423,15 @@ static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
 >>  		}
 >>  		trace_io_uring_link(ctx, req, head);
@@ -106,13 +119,28 @@ more places where proper READ_ONCE() annotations have been lost.
 >> +		/* last request of a link, enqueue the link */
 >> +		if (!(sqe_flags & IOSQE_IO_LINK)) {
 > 
-> Yes, as you mentioned in the previous email, it seems correct that if
-> IOSQE_IO_HARDLINK imply IOSQE_IO_LINK, then here we need to check both.
+> This looks suspicious (as well as in the current revision). Returning back
+> to my questions a few days ago can sqe->flags have IOSQE_IO_HARDLINK, but not
+> IOSQE_IO_LINK? I don't find any check.
 > 
->> +			io_queue_link_head(head);
->> +			*link = NULL;
->> +		}
->> +	} else if (sqe_flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK)) {
+> In other words, should it be as follows?
+> !(sqe_flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK))
+
+Yeah, I think that should check for both. I'm fine with either approach
+in general:
+
+- IOSQE_IO_HARDLINK must have IOSQE_IO_LINK set
+
+or
+
+- IOSQE_IO_HARDLINK implies IOSQE_IO_LINK
+
+Seems like the former is easier to verify in terms of functionality,
+since we can rest easy if we check this early and -EINVAL if that isn't
+the case.
+
+What do you think?
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

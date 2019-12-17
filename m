@@ -2,85 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70A80123882
-	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2019 22:16:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E016123A01
+	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2019 23:29:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbfLQVP7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Dec 2019 16:15:59 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46625 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbfLQVP7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Dec 2019 16:15:59 -0500
-Received: by mail-io1-f67.google.com with SMTP id t26so12264319ioi.13
-        for <io-uring@vger.kernel.org>; Tue, 17 Dec 2019 13:15:58 -0800 (PST)
+        id S1726141AbfLQW3P (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Dec 2019 17:29:15 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37520 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbfLQW3P (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Dec 2019 17:29:15 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w15so170909wru.4;
+        Tue, 17 Dec 2019 14:29:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=xbAkSu6f1FSOslLya3pTTccEqoCnU4AjqEM/vMBrMyE=;
-        b=TLNJgIMJynuhiwVr1/XlYoykNt9D99M2LRmTmoeZKuT+fGTHSBOtQvEQGBrSY93YWe
-         LENtrKEX67EIvXBHGclFKGlMv8momP86nTJXhudBEVQTN0TiWYbk2d61WmLcUkW3TrbJ
-         uTDgcP0yPb3hDGhgWyCmOl1OCG4ZO3vfEnkDXjRkip3m11glDIrL18JiDBC65w2HV7rP
-         cnkQCIdZqFAOJT4/9c4EWzmBKgpdOBAvfT4/PfxFFQzBL4tLba8VNikgBcbt+zx4RxK+
-         1VYXvawDr+4td1qvdPZaaH1Az2jhug0IhWNu1s5g4hxnWB2/19ptSJEurfcm2NBTotVY
-         /NEA==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RWt3ExeYVb/xt0x3jVaJlfGbFsShLKuVbmttW51IueE=;
+        b=kfM6Q0/1Gf2mZKbm46WIyfVxZK8VpBb2002YJXgoY5oY0pkQKoFYaxNeD76WBF36XZ
+         JaCMcFiJ3gn2LW/ccGxtyXHZCZWMf64p4jPQb1akaVf3DmiV83a6r/Tho9FYz95HTrRn
+         ZA+MNFpNqMz8t6FYPl0ff7dFWEE513WBv1IJPrd5hS+JWt+eSFHvCgxkUs/ejHneYxX9
+         wyOyWBjeRQsrLdjuGqPydESb5/nmCI20QAZWucmTDo28d1D08dJcair4F7PsYHl9cZsR
+         GKS9qrx1siYqFAQFZrNz9EwS1/2FLVKCuXhohG9efCPfEh7DZ7oyCu0wzbgnjcYG7lIw
+         5oYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xbAkSu6f1FSOslLya3pTTccEqoCnU4AjqEM/vMBrMyE=;
-        b=T7+JSVp9BN8h0L/kmHt0TFKteJMz0T0zuBTMlmp/QhJVJtKASv1ZPMdwGGLaI9VsZi
-         rqiycuuWWYNr98FOV45504YdWlMAnHIZrtVevpZOfheBMOr6bGYBKOe6Ur1nmM/+BzwK
-         R50OccVBIsu4N2C/y/yTjukze8Uxs5SEYI5MY7Ih/nu/b+qdRRJd/06VKuq2bLebiZsK
-         vBm6d4/XFdCP7Q3gxUVNwgBUJ0LYat7ed4tuEnqZy16Ups50i+/8RjbO/YRQffnEX/Yu
-         jJCIvaV4SO5EOc0x4dFE9rMf8Ja1XOwQ8KJ8xPm1W4HMHdJEpy9yd51Mf9lUQY4BDdFt
-         9w6g==
-X-Gm-Message-State: APjAAAU0k4fPo+KI6/32m0UrBFzC3bhK8ezALGSKAY1t8H8QpdNjQtiK
-        U8EKaFBI/Sp55CTMPI5aU38C6Q==
-X-Google-Smtp-Source: APXvYqy0MlEoUx4H8cdLwfMVyi9Q6OhXqJUbWIVNTr7vmIKTkHeZfPGz32+NaXqhNDofDU6EhUxOHg==
-X-Received: by 2002:a05:6602:101:: with SMTP id s1mr5431540iot.262.1576617358453;
-        Tue, 17 Dec 2019 13:15:58 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id o70sm1421442ilb.8.2019.12.17.13.15.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 13:15:58 -0800 (PST)
-Subject: Re: [PATCH v2 0/3] io_uring: submission path cleanup
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        bh=RWt3ExeYVb/xt0x3jVaJlfGbFsShLKuVbmttW51IueE=;
+        b=asdpZ16F/IPe03qSz5lEMsBEhRtpgqPmJ34yucAHxdKJQ9P2t8ivGGlCWHO+SQxNlu
+         iO8WOtxtoajTq7uOAtA2UL+9CFi2Aod0avoe28q7pveWX1zA97PTSuh7xKfemBOPcZdZ
+         2Fld93o7n8ks1zAtJyAocrip9Mo1UQVec7H4vr6I2wU0844hFWx1oDpZ6ykdSaW4m7tB
+         J92MVzobEYY37uMCjxW3KDEy3MWp85BUlB7c2NTLFO/Dna2pJj7URTIzm4fTKj6PSH9S
+         YzcwKrfY9oAF5h7HUimbpci2zDZrwQOonFbYgCu04yWumg/HxNbkZVUbpgDKrKex7uUI
+         Dh3g==
+X-Gm-Message-State: APjAAAVTcznFCHe0gLtRwO/HfJOYBiJ479jyFWEGSR/jUTNu0YkNdzcB
+        Zt/bg/B7kmVuvEeXgAnWG+lTkFwt
+X-Google-Smtp-Source: APXvYqzFcZxyFVGyTB2tAeBNEcsOQevIlYU6VrSNZzKtZ13+c/sgnOzRyb/Y8ic3hwjDPsp338HrMg==
+X-Received: by 2002:adf:f508:: with SMTP id q8mr39712456wro.334.1576621752896;
+        Tue, 17 Dec 2019 14:29:12 -0800 (PST)
+Received: from localhost.localdomain ([109.126.149.134])
+        by smtp.gmail.com with ESMTPSA id q68sm306036wme.14.2019.12.17.14.29.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 14:29:12 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <cover.1576538176.git.asml.silence@gmail.com>
- <cover.1576610536.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a81b3a8f-562c-02f4-522e-9c2dd51e33f8@kernel.dk>
-Date:   Tue, 17 Dec 2019 14:15:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+Subject: [PATCH 0/2] optimise ctx's refs grabbing in io_uring
+Date:   Wed, 18 Dec 2019 01:28:37 +0300
+Message-Id: <cover.1576621553.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1576610536.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/17/19 12:26 PM, Pavel Begunkov wrote:
-> Pretty straighforward cleanups. The last patch saves the exact behaviour,
-> but do link enqueuing from a more suitable place.
-> 
-> v2: rebase
-> 
-> Pavel Begunkov (3):
->   io_uring: rename prev to head
->   io_uring: move trace_submit_sqe into submit_sqe
->   io_uring: move *queue_link_head() from common path
-> 
->  fs/io_uring.c | 47 +++++++++++++++++++++--------------------------
->  1 file changed, 21 insertions(+), 26 deletions(-)
+Optimise percpu_ref_tryget() by not calling it for each request, but
+batching it. This gave a measurable performance boost, though with
+a bit unconventional(/unrealistic?) workload.
 
-Applied, thanks.
+There is still one step to add, which is not implemented with
+patchset, and will amortise the effect calls to io_uring_enter().
+
+rebased on top of for-5.6/io_uring
+
+Pavel Begunkov (2):
+  pcpu_ref: add percpu_ref_tryget_many()
+  io_uring: batch getting pcpu references
+
+ fs/io_uring.c                   | 11 ++++++++---
+ include/linux/percpu-refcount.h | 24 ++++++++++++++++++++----
+ 2 files changed, 28 insertions(+), 7 deletions(-)
 
 -- 
-Jens Axboe
+2.24.0
 

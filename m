@@ -2,79 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD1EF124E75
-	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2019 17:56:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0902C124EE8
+	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2019 18:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbfLRQ4x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 Dec 2019 11:56:53 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44217 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727021AbfLRQ4x (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Dec 2019 11:56:53 -0500
-Received: by mail-io1-f67.google.com with SMTP id b10so2678535iof.11
-        for <io-uring@vger.kernel.org>; Wed, 18 Dec 2019 08:56:52 -0800 (PST)
+        id S1726985AbfLRRSo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 Dec 2019 12:18:44 -0500
+Received: from mail-io1-f51.google.com ([209.85.166.51]:33799 "EHLO
+        mail-io1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726996AbfLRRSo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Dec 2019 12:18:44 -0500
+Received: by mail-io1-f51.google.com with SMTP id z193so2800172iof.1
+        for <io-uring@vger.kernel.org>; Wed, 18 Dec 2019 09:18:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=rTEAWvowPGiFm5bG98LTp8ro86bKvhqp1ci3ULDNOxE=;
-        b=Cw3/cX10PPDAUYUM5rAGyGOME6Qu+RzUqAQmtd25Lg/C2gnl1JKPerg/GIHijZIZt9
-         XhVJDbh2y/2QKLauB6fy2cvWemLqWd9Gq+64D27LSHQYbz/b7QMsQIeYkfYl8IubuZk9
-         a2MaJhq1ioT8tZ7vxwy9ulLODP/ASjy0CZSXVW2jZSFR1Tov9j8Rcez5kHAi3VnQJZwQ
-         wOR1hvatDhTd4Wdoj6B241fKvUaoghBKN8S3fK8cO+sVjk6sgl503k/8I0AZqPCPLTRg
-         r3l9SeeB3eybTXsugdhUtMF11A9i59bZFyDvqpK/VIthYXb3OtSb5unN9+g2zlbDKBEs
-         1TWg==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r3vukti+CLw/8JrimF1c/PZLrrkMMeQEGucHUPA8JL8=;
+        b=pZ/i7gEKZtUqRTOdkkVusBMkchxIfTqE8AbodBMMZNfHZVRfjzsEChf1ctZ7sIek1h
+         PzM+v9Yb7IREcuVDtlZBC/g9ohauyN5y0m03aclm8p+F8y7HQ+o2W6dqtOAqWoZ1GD1d
+         Rb9ySznl8RaOy/qhrr0z4hbv6MGJFh7zxOGdqfZsT3ROYcciRj/lfBqqoigLVJL2Ol82
+         GAvxZWRHNZUuDqMK68y/Y1ADGXunk3gqKdIyQwYc6QmyaL13IcSsiNCIf1TvRqr139vm
+         aaXY5mq8fp7Kc+ucUKr0AdXgzFcq83bTHGi/4GE5lzDqExsUAF7A8+6bRi2tGmfILFva
+         kK2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=rTEAWvowPGiFm5bG98LTp8ro86bKvhqp1ci3ULDNOxE=;
-        b=Bxo2g+3uDy5NlJiLcBTeK/9/RYDJidFbRIiwcmSs5q/gep/o413v2y0jqsrJ7L+J66
-         j1YcYVmfIlmIkm9PrIvUNsn6JIObTzY6oaFvJIjeF2JXMMaaUIn9ryFibLbyVStFWraQ
-         6m5FslBRfhLtvyhQds2TeQ+3iD8U4RuJD6IkQq6PLv1KzJUe6loKUCv4PVrnVGLJ3afx
-         VEdsqp6AbSKMuroihENZboL7IlTqgzpDh0xu+kjtheEjHctZQ0nTmf/FcKy+Jd3LpEDs
-         Oi4U//EUejlqCUtbVPLHmNwxMYyeaF2oaXUDUG1Q1jdUXI7TViXRbcjIuNuK9v0x3bB2
-         dX0w==
-X-Gm-Message-State: APjAAAWrGab9woelgq/GQHyjYusPho7SNpFxusG2bZ2SYwPddo6W4rWD
-        eX2FYwzOKN3P+eOEcabxoa2JWQ==
-X-Google-Smtp-Source: APXvYqw6HgfbjWrkvdzzoP8foDMwN38PPf5JRmq4JvAUC33lN7IwtCTqA7XbBuU8q9KC3+R9uWtO9Q==
-X-Received: by 2002:a05:6638:97c:: with SMTP id o28mr3342377jaj.8.1576688212169;
-        Wed, 18 Dec 2019 08:56:52 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t15sm836936ili.50.2019.12.18.08.56.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Dec 2019 08:56:51 -0800 (PST)
-Subject: Re: [PATCH v5] io_uring: don't wait when under-submitting
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1576687827.git.asml.silence@gmail.com>
- <28aad565ed6c3a3a03975377aa62035b1b0a4d97.1576687827.git.asml.silence@gmail.com>
+        bh=r3vukti+CLw/8JrimF1c/PZLrrkMMeQEGucHUPA8JL8=;
+        b=VwDAylx9LJhcDdHDPAFwPznToq9eX4uR0JlTNF/ABjPbC1O37GY4aS90Hl2a0ztZCi
+         azvNlKiNhRWyI0QT7q8WzuaSOS9YJuV1nuQkN6JpEJaU1os0GpVIpMmXPHuZhr3O6Ucf
+         zGOLo7CNWZRedeYJozEG472OKoXwjh0cuxG591Ln1pZDhEnaJjtS377mzwQyU8DVI6NX
+         bjmJrx0+uWUaUO14pQhBfO9a3dn7GJj2YPZ699ofqAnumgrDPwanv1zZCdfYRt+WIYIM
+         Fe6p3C5c0yd7mFX0Zymj9pa/myGcniVuk0TSr79rTDONIKKnKqcI77LZvR6WzmGHNGVB
+         KAUg==
+X-Gm-Message-State: APjAAAV/ED2GWbRFl+27Zrg0UVQQr4qEjwX2jfNMokBzVno8bznEpesS
+        SCbUXQM6KiEY3Zi9pbTbU7Picj7AgmIiSg==
+X-Google-Smtp-Source: APXvYqyBiE5NoYNyprDzsWJXNHzzWY3lGEwcccPUfpnxVBZgXBCNy+Smza04ktblrhHLp/atQEyrEQ==
+X-Received: by 2002:a02:c942:: with SMTP id u2mr3402349jao.49.1576689523041;
+        Wed, 18 Dec 2019 09:18:43 -0800 (PST)
+Received: from x1.thefacebook.com ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id o12sm577488ioh.42.2019.12.18.09.18.42
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 09:18:42 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7b684479-d0f9-4e74-b947-5ceba577734a@kernel.dk>
-Date:   Wed, 18 Dec 2019 09:56:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET v3] io_uring fixes for 5.5-rc3
+Date:   Wed, 18 Dec 2019 10:18:22 -0700
+Message-Id: <20191218171835.13315-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <28aad565ed6c3a3a03975377aa62035b1b0a4d97.1576687827.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/18/19 9:53 AM, Pavel Begunkov wrote:
-> There is no reliable way to submit and wait in a single syscall, as
-> io_submit_sqes() may under-consume sqes (in case of an early error).
-> Then it will wait for not-yet-submitted requests, deadlocking the user
-> in most cases.
-> 
-> Don't wait/poll if can't submit all sqes
+This should be final for 5.5-rc3, I've run this through all the
+testing and we're solid. The main changes since v2 are:
 
-This looks great, thanks, applied.
+- Add Pavel's patch for the wait-and-submit issue
+- Drop the ->free_req() addition. We can do this without adding
+  extra io_async_ctx storage.
+- Fixed a missing check for CONFIG_NET
+
+I think this improves it all around, and it makes me more comfortable
+with the persistent state. There's three patches that deal with
+poll add/remove, cancel async, and timeout remove. Those are the three
+commands we still missed that need to retain state across a deferral,
+and then a patch that stuffs sqe->opcode in a io_kiocb hole, and
+ensures we assign ->opcode and ->user_data when we retrieve the SQE.
+
+Lastly, a patch that adds a warning about new commands that don't
+have a prep handler. We need that for ANY command that reads sqe
+fields, which is all of them obviously except NOP.
+
+ fs/io-wq.c    |   2 +-
+ fs/io-wq.h    |   8 +-
+ fs/io_uring.c | 703 ++++++++++++++++++++++++++++++++++----------------
+ 3 files changed, 485 insertions(+), 228 deletions(-)
 
 -- 
 Jens Axboe
+
 

@@ -2,206 +2,470 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 415DF123DE9
-	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2019 04:28:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF1EA123DEA
+	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2019 04:28:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbfLRD2H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Dec 2019 22:28:07 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40962 "EHLO
+        id S1726616AbfLRD2I (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Dec 2019 22:28:08 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45238 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726454AbfLRD2G (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Dec 2019 22:28:06 -0500
-Received: by mail-pf1-f194.google.com with SMTP id w62so399628pfw.8
-        for <io-uring@vger.kernel.org>; Tue, 17 Dec 2019 19:28:06 -0800 (PST)
+        with ESMTP id S1726454AbfLRD2I (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Dec 2019 22:28:08 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 2so389879pfg.12
+        for <io-uring@vger.kernel.org>; Tue, 17 Dec 2019 19:28:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CIDhRFx911RXCOCxlh1g5dx1iD+gfY13tbr6vP+V9Qo=;
-        b=JfGEmHnXZkGBFldCBdJV0o/LlhMsJAwo/mT1ezWnp0LyQPuihmrOvtbp7UoGPK4hy9
-         ZhwcqY0WQ8rysrEz940/ALbABHkXaZfUbIfPPnYhcvt63Hw4MeZIauBeGq/8MtsnJdOl
-         kqmgPTC9s3ZCGdR7YExqaKAYG0R5DW81849+DfYQfgeltXmF8UXSwslYX2kbbSKxu0Vt
-         RFinfekXvMAoWS/VIHQKVNvXqjhwUj4YF50w1nN6/p9PW46sd9t50aay0574Qvx4Qz1o
-         aaSeinGaCZEf6FSoh6+XgHJas2vchztvLJDEtEnTdeaEEL9NofViltW8yybaFBTnq7Nq
-         7p4A==
+        bh=Ccso41f8YwEJFiCiM3od0fRIeU32upmPiWzxkufDtzo=;
+        b=ZTvEl6uZHZfyUlA+s5MAO6SSkbdyp3ed48vaAZQes/VqQv+xGF65wPVJYEAZBnXFHI
+         aNVIv0hm+ibljZcZYaFH2b0VnI8COWU8c6TPNw0noySD5Wex8M8/4kD7hwbugXuhH/kf
+         M8Sapemj1ynw/31WtLDhWex9ysmfekXv6AYpiBM0FTQsKhX0DMAugmifOUjPlW8xmC6a
+         18/JZ1y9BeyQ5jYJQmyL+MlBboNFX3uNus1whPli4QkIVj44P9fPQYuMbKZJBD3FMpBS
+         3XXrIYiMXSHpe91pDXmMSfe94CZPrTetfYr1zYcqjpqA05Plg8INe7xFs8SRHkjxQRND
+         9ieQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CIDhRFx911RXCOCxlh1g5dx1iD+gfY13tbr6vP+V9Qo=;
-        b=ufwcT7rR1u8tjHQ0qOk4GQDMU9pMUn/CBqZCburr6FB5OBk8ieHKEYhUhAlYPysMkC
-         Xu/kbqVCDZyLkF/OETxVxd20tX9jQtxOYLZE1AV0lWGNnE2NZTbCmiPN7gDkoaSMA6wU
-         2AkF1ax/ph9aYJ5LrWpnrFJD2c3ynQjt/w6qfX2Vue/Orh90w+FbRIm3d4wQoDZnAZcE
-         Zq7H99mVIScFvxjdBna8uGRbX94qLWyQsyEolNNGZGZKKX9Yu4mj60FGWCLJ4zrhD8hD
-         u11TU4ufXb6xHY1KwQz/E3nkn4G0MLFvFF1/k7jb4oOgmWBRhTvWMgZSXvOkNlSwvqhk
-         EwwQ==
-X-Gm-Message-State: APjAAAUqnFrvQThgZQmvTVKgvyuuJnid20lTIuS6UszBEIY29Sbu1dOY
-        Yv7myLpB98FjWBBdVJ68iuA9LaM2wp92sQ==
-X-Google-Smtp-Source: APXvYqwgYiarKlyhT+bfzSsmFrMlQVDQUaNu7YCnJ1rxUlIo9Q8LX4tVZqTSyy7w23gH/CvHFWWcDQ==
-X-Received: by 2002:a63:b642:: with SMTP id v2mr383992pgt.126.1576639685224;
-        Tue, 17 Dec 2019 19:28:05 -0800 (PST)
+        bh=Ccso41f8YwEJFiCiM3od0fRIeU32upmPiWzxkufDtzo=;
+        b=PeQPXsgOITMwkiyfTFi9Dmm6HDVIoNzeTfs3UV275PY+Vc1M+t1lim5HwMIDQ6aHN9
+         Qb2xPYcvTWZ2oIX3R4gRo22AONEC4vfbqibZrV7Bx4ZJuHcMQDTeTTaEsrPT0xvSRNWW
+         s61Be58yuC9YwI25pIzXzg+VpdANi09Zo3sjYX4SaBWya5QG0YrUipwBzO/LH8w2ylow
+         gp6NvTGQi0ua6aXKB04R6rZJrrHiNmDXI46OFIUHtCch2FwTT07Miuq38Itlid5yky7z
+         cVjjRJzfXO98XYqlVOb4cCmGmnkArrdt8g4LacvFXrI37Ka3GMOKQ1CdfXKn5Xe4ohmJ
+         Q4dg==
+X-Gm-Message-State: APjAAAXZfbR/4fpcbhXg1R4najcfXDaHAZx9WJsk8mUkC1/iASuSSrfI
+        gxeTls1PLfJI1ujVMygpIVQf0xU7EaqpMg==
+X-Google-Smtp-Source: APXvYqwNKYAGBePC9njwjWepCh7Hg+eTBny62dAzF70t3EuPjZo1qO7Yaz+HhuWz/hMBJGdc/MCYmA==
+X-Received: by 2002:a63:154d:: with SMTP id 13mr390440pgv.248.1576639686601;
+        Tue, 17 Dec 2019 19:28:06 -0800 (PST)
 Received: from x1.thefacebook.com ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id g17sm596323pfb.180.2019.12.17.19.28.04
+        by smtp.gmail.com with ESMTPSA id g17sm596323pfb.180.2019.12.17.19.28.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 19:28:04 -0800 (PST)
+        Tue, 17 Dec 2019 19:28:06 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        =?UTF-8?q?=E6=9D=8E=E9=80=9A=E6=B4=B2?= <carter.li@eoitek.com>
-Subject: [PATCH 02/11] io_uring: fix sporadic -EFAULT from IORING_OP_RECVMSG
-Date:   Tue, 17 Dec 2019 20:27:50 -0700
-Message-Id: <20191218032759.13587-3-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 03/11] io_uring: fix pre-prepped issue with force_nonblock == true
+Date:   Tue, 17 Dec 2019 20:27:51 -0700
+Message-Id: <20191218032759.13587-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191218032759.13587-1-axboe@kernel.dk>
 References: <20191218032759.13587-1-axboe@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If we have to punt the recvmsg to async context, we copy all the
-context.  But since the iovec used can be either on-stack (if small) or
-dynamically allocated, if it's on-stack, then we need to ensure we reset
-the iov pointer. If we don't, then we're reusing old stack data, and
-that can lead to -EFAULTs if things get overwritten.
+Some of these code paths assume that any force_nonblock == true issue
+is not prepped, but that's not true if we did prep as part of link setup
+earlier. Check if we already have an async context allocate before
+setting up a new one.
 
-Ensure we retain the right pointers for the iov, and free it as well if
-we end up having to go beyond UIO_FASTIOV number of vectors.
+Cleanup the async context setup in general, we have a lot of duplicated
+code there.
+
+Finally, add an async context ->free_req() to handle the case where a
+request is cancelled. We still need to free private data outside of
+req->io for that case. To avoid the indirect free call for the fast
+path, do the free manually and clear ->free_req() for that case.
 
 Fixes: 03b1230ca12a ("io_uring: ensure async punted sendmsg/recvmsg requests copy data")
-Reported-by: 李通洲 <carter.li@eoitek.com>
+Fixes: f67676d160c6 ("io_uring: ensure async punted read/write requests copy iovec")
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 40 ++++++++++++++++++++++++++--------------
- 1 file changed, 26 insertions(+), 14 deletions(-)
+ fs/io_uring.c | 168 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 94 insertions(+), 74 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 04cff3870b3b..0e01cdc8a120 100644
+index 0e01cdc8a120..bd4c3ee73679 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2041,6 +2041,7 @@ static int io_sendmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		      struct io_kiocb **nxt, bool force_nonblock)
+@@ -324,6 +324,7 @@ struct io_async_rw {
+ 
+ struct io_async_ctx {
+ 	struct io_uring_sqe		sqe;
++	void (*free_req)(struct io_kiocb *);
+ 	union {
+ 		struct io_async_rw	rw;
+ 		struct io_async_msghdr	msg;
+@@ -879,8 +880,11 @@ static void __io_free_req(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 
+-	if (req->io)
++	if (req->io) {
++		if (req->io->free_req)
++			req->io->free_req(req);
+ 		kfree(req->io);
++	}
+ 	if (req->file && !(req->flags & REQ_F_FIXED_FILE))
+ 		fput(req->file);
+ 	if (req->flags & REQ_F_INFLIGHT) {
+@@ -1701,7 +1705,7 @@ static ssize_t loop_rw_iter(int rw, struct file *file, struct kiocb *kiocb,
+ 	return ret;
+ }
+ 
+-static void io_req_map_io(struct io_kiocb *req, ssize_t io_size,
++static void io_req_map_rw(struct io_kiocb *req, ssize_t io_size,
+ 			  struct iovec *iovec, struct iovec *fast_iov,
+ 			  struct iov_iter *iter)
+ {
+@@ -1715,19 +1719,35 @@ static void io_req_map_io(struct io_kiocb *req, ssize_t io_size,
+ 	}
+ }
+ 
+-static int io_setup_async_io(struct io_kiocb *req, ssize_t io_size,
+-			     struct iovec *iovec, struct iovec *fast_iov,
+-			     struct iov_iter *iter)
++static int io_alloc_async_ctx(struct io_kiocb *req)
+ {
+ 	req->io = kmalloc(sizeof(*req->io), GFP_KERNEL);
+ 	if (req->io) {
+-		io_req_map_io(req, io_size, iovec, fast_iov, iter);
+ 		memcpy(&req->io->sqe, req->sqe, sizeof(req->io->sqe));
+ 		req->sqe = &req->io->sqe;
++		req->io->free_req = NULL;
+ 		return 0;
+ 	}
+ 
+-	return -ENOMEM;
++	return 1;
++}
++
++static void io_rw_free_req(struct io_kiocb *req)
++{
++	if (req->io->rw.iov != req->io->rw.fast_iov)
++		kfree(req->io->rw.iov);
++}
++
++static int io_setup_async_rw(struct io_kiocb *req, ssize_t io_size,
++			     struct iovec *iovec, struct iovec *fast_iov,
++			     struct iov_iter *iter)
++{
++	if (!req->io && io_alloc_async_ctx(req))
++		return -ENOMEM;
++
++	io_req_map_rw(req, io_size, iovec, fast_iov, iter);
++	req->io->free_req = io_rw_free_req;
++	return 0;
+ }
+ 
+ static int io_read_prep(struct io_kiocb *req, struct iovec **iovec,
+@@ -1806,7 +1826,7 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+ 			kiocb_done(kiocb, ret2, nxt, req->in_async);
+ 		} else {
+ copy_iov:
+-			ret = io_setup_async_io(req, io_size, iovec,
++			ret = io_setup_async_rw(req, io_size, iovec,
+ 						inline_vecs, &iter);
+ 			if (ret)
+ 				goto out_free;
+@@ -1815,6 +1835,8 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	}
+ out_free:
+ 	kfree(iovec);
++	if (req->io)
++		req->io->free_req = NULL;
+ 	return ret;
+ }
+ 
+@@ -1900,7 +1922,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+ 			kiocb_done(kiocb, ret2, nxt, req->in_async);
+ 		} else {
+ copy_iov:
+-			ret = io_setup_async_io(req, io_size, iovec,
++			ret = io_setup_async_rw(req, io_size, iovec,
+ 						inline_vecs, &iter);
+ 			if (ret)
+ 				goto out_free;
+@@ -1909,6 +1931,8 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	}
+ out_free:
+ 	kfree(iovec);
++	if (req->io)
++		req->io->free_req = NULL;
+ 	return ret;
+ }
+ 
+@@ -2021,6 +2045,12 @@ static int io_sync_file_range(struct io_kiocb *req,
+ 	return 0;
+ }
+ 
++static void io_sendrecv_msg_free(struct io_kiocb *req)
++{
++	if (req->io->msg.iov != req->io->msg.fast_iov)
++		kfree(req->io->msg.iov);
++}
++
+ static int io_sendmsg_prep(struct io_kiocb *req, struct io_async_ctx *io)
  {
  #if defined(CONFIG_NET)
-+	struct io_async_msghdr *kmsg = NULL;
- 	struct socket *sock;
- 	int ret;
+@@ -2050,7 +2080,7 @@ static int io_sendmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  
-@@ -2051,7 +2052,6 @@ static int io_sendmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	sock = sock_from_file(req->file, &ret);
  	if (sock) {
- 		struct io_async_ctx io, *copy;
+-		struct io_async_ctx io, *copy;
++		struct io_async_ctx io;
  		struct sockaddr_storage addr;
--		struct msghdr *kmsg;
  		unsigned flags;
  
- 		flags = READ_ONCE(sqe->msg_flags);
-@@ -2061,17 +2061,21 @@ static int io_sendmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 			flags |= MSG_DONTWAIT;
+@@ -2077,15 +2107,12 @@ static int io_sendmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  
- 		if (req->io) {
--			kmsg = &req->io->msg.msg;
--			kmsg->msg_name = &addr;
-+			kmsg = &req->io->msg;
-+			kmsg->msg.msg_name = &addr;
-+			/* if iov is set, it's allocated already */
-+			if (!kmsg->iov)
-+				kmsg->iov = kmsg->fast_iov;
-+			kmsg->msg.msg_iter.iov = kmsg->iov;
- 		} else {
--			kmsg = &io.msg.msg;
--			kmsg->msg_name = &addr;
-+			kmsg = &io.msg;
-+			kmsg->msg.msg_name = &addr;
- 			ret = io_sendmsg_prep(req, &io);
- 			if (ret)
- 				goto out;
- 		}
- 
--		ret = __sys_sendmsg_sock(sock, kmsg, flags);
-+		ret = __sys_sendmsg_sock(sock, &kmsg->msg, flags);
+ 		ret = __sys_sendmsg_sock(sock, &kmsg->msg, flags);
  		if (force_nonblock && ret == -EAGAIN) {
- 			copy = kmalloc(sizeof(*copy), GFP_KERNEL);
- 			if (!copy) {
-@@ -2082,13 +2086,15 @@ static int io_sendmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 			req->io = copy;
- 			memcpy(&req->io->sqe, req->sqe, sizeof(*req->sqe));
- 			req->sqe = &req->io->sqe;
--			return ret;
-+			return -EAGAIN;
+-			copy = kmalloc(sizeof(*copy), GFP_KERNEL);
+-			if (!copy) {
+-				ret = -ENOMEM;
+-				goto out;
+-			}
+-			memcpy(&copy->msg, &io.msg, sizeof(copy->msg));
+-			req->io = copy;
+-			memcpy(&req->io->sqe, req->sqe, sizeof(*req->sqe));
+-			req->sqe = &req->io->sqe;
++			if (req->io)
++				return -EAGAIN;
++			if (io_alloc_async_ctx(req))
++				return -ENOMEM;
++			memcpy(&req->io->msg, &io.msg, sizeof(io.msg));
++			req->io->free_req = io_sendrecv_msg_free;
+ 			return -EAGAIN;
  		}
  		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
- 	}
- 
+@@ -2095,6 +2122,8 @@ static int io_sendmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  out:
-+	if (kmsg && kmsg->iov != kmsg->fast_iov)
-+		kfree(kmsg->iov);
+ 	if (kmsg && kmsg->iov != kmsg->fast_iov)
+ 		kfree(kmsg->iov);
++	if (req->io)
++		req->io->free_req = NULL;
  	io_cqring_add_event(req, ret);
  	if (ret < 0)
  		req_set_fail_links(req);
-@@ -2120,6 +2126,7 @@ static int io_recvmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		      struct io_kiocb **nxt, bool force_nonblock)
+@@ -2136,7 +2165,7 @@ static int io_recvmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	sock = sock_from_file(req->file, &ret);
+ 	if (sock) {
+ 		struct user_msghdr __user *msg;
+-		struct io_async_ctx io, *copy;
++		struct io_async_ctx io;
+ 		struct sockaddr_storage addr;
+ 		unsigned flags;
+ 
+@@ -2165,15 +2194,12 @@ static int io_recvmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 
+ 		ret = __sys_recvmsg_sock(sock, &kmsg->msg, msg, kmsg->uaddr, flags);
+ 		if (force_nonblock && ret == -EAGAIN) {
+-			copy = kmalloc(sizeof(*copy), GFP_KERNEL);
+-			if (!copy) {
+-				ret = -ENOMEM;
+-				goto out;
+-			}
+-			memcpy(copy, &io, sizeof(*copy));
+-			req->io = copy;
+-			memcpy(&req->io->sqe, req->sqe, sizeof(*req->sqe));
+-			req->sqe = &req->io->sqe;
++			if (req->io)
++				return -EAGAIN;
++			if (io_alloc_async_ctx(req))
++				return -ENOMEM;
++			memcpy(&req->io->msg, &io.msg, sizeof(io.msg));
++			req->io->free_req = io_sendrecv_msg_free;
+ 			return -EAGAIN;
+ 		}
+ 		if (ret == -ERESTARTSYS)
+@@ -2183,6 +2209,8 @@ static int io_recvmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ out:
+ 	if (kmsg && kmsg->iov != kmsg->fast_iov)
+ 		kfree(kmsg->iov);
++	if (req->io)
++		req->io->free_req = NULL;
+ 	io_cqring_add_event(req, ret);
+ 	if (ret < 0)
+ 		req_set_fail_links(req);
+@@ -2272,15 +2300,13 @@ static int io_connect(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	ret = __sys_connect_file(req->file, &io->connect.address, addr_len,
+ 					file_flags);
+ 	if ((ret == -EAGAIN || ret == -EINPROGRESS) && force_nonblock) {
+-		io = kmalloc(sizeof(*io), GFP_KERNEL);
+-		if (!io) {
++		if (req->io)
++			return -EAGAIN;
++		if (io_alloc_async_ctx(req)) {
+ 			ret = -ENOMEM;
+ 			goto out;
+ 		}
+-		memcpy(&io->connect, &__io.connect, sizeof(io->connect));
+-		req->io = io;
+-		memcpy(&io->sqe, req->sqe, sizeof(*req->sqe));
+-		req->sqe = &io->sqe;
++		memcpy(&req->io->connect, &__io.connect, sizeof(__io.connect));
+ 		return -EAGAIN;
+ 	}
+ 	if (ret == -ERESTARTSYS)
+@@ -2511,7 +2537,6 @@ static int io_poll_add(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	if (!poll->file)
+ 		return -EBADF;
+ 
+-	req->io = NULL;
+ 	INIT_IO_WORK(&req->work, io_poll_complete_work);
+ 	events = READ_ONCE(sqe->poll_events);
+ 	poll->events = demangle_poll(events) | EPOLLERR | EPOLLHUP;
+@@ -2692,7 +2717,6 @@ static int io_timeout_prep(struct io_kiocb *req, struct io_async_ctx *io,
+ 		data->mode = HRTIMER_MODE_REL;
+ 
+ 	hrtimer_init(&data->timer, CLOCK_MONOTONIC, data->mode);
+-	req->io = io;
+ 	return 0;
+ }
+ 
+@@ -2701,22 +2725,16 @@ static int io_timeout(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	unsigned count;
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_timeout_data *data;
+-	struct io_async_ctx *io;
+ 	struct list_head *entry;
+ 	unsigned span = 0;
++	int ret;
+ 
+-	io = req->io;
+-	if (!io) {
+-		int ret;
+-
+-		io = kmalloc(sizeof(*io), GFP_KERNEL);
+-		if (!io)
++	if (!req->io) {
++		if (io_alloc_async_ctx(req))
+ 			return -ENOMEM;
+-		ret = io_timeout_prep(req, io, false);
+-		if (ret) {
+-			kfree(io);
++		ret = io_timeout_prep(req, req->io, false);
++		if (ret)
+ 			return ret;
+-		}
+ 	}
+ 	data = &req->io->timeout;
+ 
+@@ -2858,23 +2876,35 @@ static int io_async_cancel(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	return 0;
+ }
+ 
+-static int io_req_defer_prep(struct io_kiocb *req, struct io_async_ctx *io)
++static int io_req_defer_prep(struct io_kiocb *req)
  {
- #if defined(CONFIG_NET)
-+	struct io_async_msghdr *kmsg = NULL;
- 	struct socket *sock;
+ 	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
++	struct io_async_ctx *io = req->io;
+ 	struct iov_iter iter;
+ 	ssize_t ret;
+ 
+-	memcpy(&io->sqe, req->sqe, sizeof(io->sqe));
+-	req->sqe = &io->sqe;
+-
+ 	switch (io->sqe.opcode) {
+ 	case IORING_OP_READV:
+ 	case IORING_OP_READ_FIXED:
++		/* ensure prep does right import */
++		req->io = NULL;
+ 		ret = io_read_prep(req, &iovec, &iter, true);
++		req->io = io;
++		if (ret < 0)
++			break;
++		io_req_map_rw(req, ret, iovec, inline_vecs, &iter);
++		ret = 0;
+ 		break;
+ 	case IORING_OP_WRITEV:
+ 	case IORING_OP_WRITE_FIXED:
++		/* ensure prep does right import */
++		req->io = NULL;
+ 		ret = io_write_prep(req, &iovec, &iter, true);
++		req->io = io;
++		if (ret < 0)
++			break;
++		io_req_map_rw(req, ret, iovec, inline_vecs, &iter);
++		ret = 0;
+ 		break;
+ 	case IORING_OP_SENDMSG:
+ 		ret = io_sendmsg_prep(req, io);
+@@ -2886,41 +2916,34 @@ static int io_req_defer_prep(struct io_kiocb *req, struct io_async_ctx *io)
+ 		ret = io_connect_prep(req, io);
+ 		break;
+ 	case IORING_OP_TIMEOUT:
+-		return io_timeout_prep(req, io, false);
++		ret = io_timeout_prep(req, io, false);
++		break;
+ 	case IORING_OP_LINK_TIMEOUT:
+-		return io_timeout_prep(req, io, true);
++		ret = io_timeout_prep(req, io, true);
++		break;
+ 	default:
+-		req->io = io;
+-		return 0;
++		ret = 0;
++		break;
+ 	}
+ 
+-	if (ret < 0)
+-		return ret;
+-
+-	req->io = io;
+-	io_req_map_io(req, ret, iovec, inline_vecs, &iter);
+-	return 0;
++	return ret;
+ }
+ 
+ static int io_req_defer(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	struct io_async_ctx *io;
  	int ret;
  
-@@ -2131,7 +2138,6 @@ static int io_recvmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		struct user_msghdr __user *msg;
- 		struct io_async_ctx io, *copy;
- 		struct sockaddr_storage addr;
--		struct msghdr *kmsg;
- 		unsigned flags;
+ 	/* Still need defer if there is pending req in defer list. */
+ 	if (!req_need_defer(req) && list_empty(&ctx->defer_list))
+ 		return 0;
  
- 		flags = READ_ONCE(sqe->msg_flags);
-@@ -2143,17 +2149,21 @@ static int io_recvmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		msg = (struct user_msghdr __user *) (unsigned long)
- 			READ_ONCE(sqe->addr);
- 		if (req->io) {
--			kmsg = &req->io->msg.msg;
--			kmsg->msg_name = &addr;
-+			kmsg = &req->io->msg;
-+			kmsg->msg.msg_name = &addr;
-+			/* if iov is set, it's allocated already */
-+			if (!kmsg->iov)
-+				kmsg->iov = kmsg->fast_iov;
-+			kmsg->msg.msg_iter.iov = kmsg->iov;
- 		} else {
--			kmsg = &io.msg.msg;
--			kmsg->msg_name = &addr;
-+			kmsg = &io.msg;
-+			kmsg->msg.msg_name = &addr;
- 			ret = io_recvmsg_prep(req, &io);
- 			if (ret)
- 				goto out;
+-	io = kmalloc(sizeof(*io), GFP_KERNEL);
+-	if (!io)
++	if (io_alloc_async_ctx(req))
+ 		return -EAGAIN;
+ 
+-	ret = io_req_defer_prep(req, io);
+-	if (ret < 0) {
+-		kfree(io);
++	ret = io_req_defer_prep(req);
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+ 	spin_lock_irq(&ctx->completion_lock);
+ 	if (!req_need_defer(req) && list_empty(&ctx->defer_list)) {
+@@ -3366,7 +3389,6 @@ static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
+ 	 */
+ 	if (*link) {
+ 		struct io_kiocb *prev = *link;
+-		struct io_async_ctx *io;
+ 
+ 		if (req->sqe->flags & IOSQE_IO_DRAIN)
+ 			(*link)->flags |= REQ_F_DRAIN_LINK | REQ_F_IO_DRAIN;
+@@ -3374,15 +3396,13 @@ static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
+ 		if (req->sqe->flags & IOSQE_IO_HARDLINK)
+ 			req->flags |= REQ_F_HARDLINK;
+ 
+-		io = kmalloc(sizeof(*io), GFP_KERNEL);
+-		if (!io) {
++		if (io_alloc_async_ctx(req)) {
+ 			ret = -EAGAIN;
+ 			goto err_req;
  		}
  
--		ret = __sys_recvmsg_sock(sock, kmsg, msg, io.msg.uaddr, flags);
-+		ret = __sys_recvmsg_sock(sock, &kmsg->msg, msg, kmsg->uaddr, flags);
- 		if (force_nonblock && ret == -EAGAIN) {
- 			copy = kmalloc(sizeof(*copy), GFP_KERNEL);
- 			if (!copy) {
-@@ -2164,13 +2174,15 @@ static int io_recvmsg(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 			req->io = copy;
- 			memcpy(&req->io->sqe, req->sqe, sizeof(*req->sqe));
- 			req->sqe = &req->io->sqe;
--			return ret;
-+			return -EAGAIN;
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
- 	}
- 
- out:
-+	if (kmsg && kmsg->iov != kmsg->fast_iov)
-+		kfree(kmsg->iov);
- 	io_cqring_add_event(req, ret);
- 	if (ret < 0)
- 		req_set_fail_links(req);
+-		ret = io_req_defer_prep(req, io);
++		ret = io_req_defer_prep(req);
+ 		if (ret) {
+-			kfree(io);
+ 			/* fail even hard links since we don't submit */
+ 			prev->flags |= REQ_F_FAIL_LINK;
+ 			goto err_req;
 -- 
 2.24.1
 

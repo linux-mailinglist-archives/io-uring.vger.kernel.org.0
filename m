@@ -2,61 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9689212980C
-	for <lists+io-uring@lfdr.de>; Mon, 23 Dec 2019 16:24:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 990CC129D32
+	for <lists+io-uring@lfdr.de>; Tue, 24 Dec 2019 05:04:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfLWPYQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Dec 2019 10:24:16 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:43166 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726733AbfLWPYP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Dec 2019 10:24:15 -0500
-Received: by mail-il1-f194.google.com with SMTP id v69so14261324ili.10
-        for <io-uring@vger.kernel.org>; Mon, 23 Dec 2019 07:24:14 -0800 (PST)
+        id S1726847AbfLXEEu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Dec 2019 23:04:50 -0500
+Received: from mail-pj1-f45.google.com ([209.85.216.45]:50337 "EHLO
+        mail-pj1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfLXEEu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Dec 2019 23:04:50 -0500
+Received: by mail-pj1-f45.google.com with SMTP id r67so652792pjb.0
+        for <io-uring@vger.kernel.org>; Mon, 23 Dec 2019 20:04:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WilbydB+UKr1SzkUHg8x3xXiGfhNAfLR7GuOgFshD5k=;
-        b=c2Vus433Q1Ju34z34fpGxMH2ROFDnDR10PD88nAoWNolKjtxFyw9T/Cp49WH8uPbpB
-         82nNyuWjP3HlBHcG+fj5phPKZH5bf44LvdKiEJdv01Zdqg5VbV6Bgu2wklQRJG/41oRl
-         CeTnWzKIYcUW3SMJEnCc69/tMTiYqI3ijkJGcetO7FAnIjxTwZnnqHvvqWFpLmoRVCgB
-         cxVxeJdyM0vgF6KxN+R8+k4DnnzHjAO+9IXyCpQbgxf1KvB7xEhRGiQqHv1VgKFgZCut
-         8+KhaRTtopx87SsQEIUywv3z8wpYxLX5L2GpVOxHKLMEzERPe2AfrJ3othe7PBsegL3w
-         ahzg==
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=OlwbwYhuOKaDGOvpdsdJwy7GnE3ZsTVTi80DGSMsYLg=;
+        b=KRij/4a3YAbckLbQCg88goIntchIHm5P/c8ksWw0udaVg5e7luJLLR3nE+OM5N3iAj
+         5CRjP3uDm/Xr3LaDNfcM7PYwap6nZO98V5eIuyRE+y6ccTruzhONn/C+89x2zGH7QVdv
+         nWR+AtJq4ZFs0uHxXwe4mjICTnORB5Jdf3vrL9JOzn+b0NBfCCtpeTs4HIP4Kq0gN+iP
+         8Ioo27+smLyMLRxXrBqJCCBbDoq8v3W4Ek+tq++yg4H1NCjAodqtAfFqx9W1MDhPUF6N
+         yylnVsN/1jmsHdPrmrQa9K/xRBVniQsE+UVvcRb/ZdJp4JYUDv2BA6TiAAAp1e5fCEco
+         A94A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=WilbydB+UKr1SzkUHg8x3xXiGfhNAfLR7GuOgFshD5k=;
-        b=RzPwOAQm2dU6tZqgfBWJhwuaqN6HKlhlH7EN7ywXQ4HGtdII2iKwg/v++GdPloFBDH
-         4iRvlae5DpOGjMB4W6RRje63o8iAeal8r+NaILIQlSwjjWkoGAvbTdwIH59Rm+edEZ/S
-         LVUj9Gk4rTLg8kBaR5R6n1cBCbTHn2DQnQwgYJgXCSKthJlQwe0Sos6F/Ufcis00M8uB
-         SZVewarTN4XnnuEiNlgL5ZFDtSRuDkB7w/698udY+ehchvKV7MwLla6n1J48M/tGSw0c
-         0DSCMKpCJG2XABx/7hoMsJm8HoPCdXsdZnX4NnJqZ7DRniYADii/87xms11OdFOXajGP
-         A5rA==
-X-Gm-Message-State: APjAAAVTQFx+LBJP1SMFq6EhdcysG4v0E7sdFQaCVK/rYHaYDjAuhPI3
-        xv2gGItJuHGCoqRzoGn6wdo2EbXzRTT8fQ==
-X-Google-Smtp-Source: APXvYqzJP/C8jMJ7kN2dKdauDk9qZyXpIrXvMJ8SYTiWmZgujuatSI/hrubMFa0zxrjasToaIcEIcg==
-X-Received: by 2002:a92:911b:: with SMTP id t27mr25430083ild.142.1577114654056;
-        Mon, 23 Dec 2019 07:24:14 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id a18sm9028671ilf.43.2019.12.23.07.24.13
+        bh=OlwbwYhuOKaDGOvpdsdJwy7GnE3ZsTVTi80DGSMsYLg=;
+        b=rahYbEgHxyvFiHQViiz/Z8vWgaXHivlaRY8XsmTBc3NrH30zBPcUYKj5PRj0mq/Bnr
+         yBKrLVNcAohorcVj14Q4cX/dpBuLy6V3P4Td4FRBas2shIrledqSchegr1QwZVBlTDhS
+         W30WUEfmz8sW6sRUwdVgoJzm+3v6FIA4XoBPwjNydsfFFfvtbEes3Sf2thlx4S58nkRC
+         YhEiGlAW1jv5sv+JCI3bXf2CCowJrge07AafOv8XYUUJbud+oj9FONUI1q9pPUcqQPUb
+         VqFWEoWD1f4Nw748MMXvKSM+LOInqb4O2uLVCNcLQx7vVUxqeRzIeNNS6XqweDgTO3Jg
+         09fg==
+X-Gm-Message-State: APjAAAVn+1x167YaxSaxQXgbFsAW8aA17Yy4Rlek30MBEZkxaNgyncH7
+        XyQ1sMEQUI4akhlS9nZe0Sy+CisEcRY=
+X-Google-Smtp-Source: APXvYqwhTs0yr1/gh26Qs5nvKyQKVmSpv5UZy1MluoDchzcUBHGCQMqFJ45ojYZSP9DrWhi6Zv5hTA==
+X-Received: by 2002:a17:90a:db0b:: with SMTP id g11mr3211849pjv.140.1577160289795;
+        Mon, 23 Dec 2019 20:04:49 -0800 (PST)
+Received: from ?IPv6:2620:10d:c081:1131::1225? ([2620:10d:c090:180::5b7e])
+        by smtp.gmail.com with ESMTPSA id l14sm23388030pgt.42.2019.12.23.20.04.49
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Dec 2019 07:24:13 -0800 (PST)
-Subject: Re: [RFC PATCH] io-wq: cut busy list off io_wqe
-To:     Hillf Danton <hdanton@sina.com>, io-uring@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
-References: <20191222144654.5060-1-hdanton@sina.com>
+        Mon, 23 Dec 2019 20:04:49 -0800 (PST)
+Subject: Re: [PATCHSET] Cleanup io_uring sqe handling
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c7985b10-52a2-5bb6-d393-f888c4658dd1@kernel.dk>
-Date:   Mon, 23 Dec 2019 08:24:12 -0700
+To:     io-uring@vger.kernel.org
+References: <20191220174742.7449-1-axboe@kernel.dk>
+Message-ID: <01c61b91-0d4f-caac-17cc-982b6fd7eacb@kernel.dk>
+Date:   Mon, 23 Dec 2019 21:04:48 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191222144654.5060-1-hdanton@sina.com>
+In-Reply-To: <20191220174742.7449-1-axboe@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,14 +64,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/22/19 7:46 AM, Hillf Danton wrote:
+On 12/20/19 10:47 AM, Jens Axboe wrote:
+> This series contains some prep work, then two patches that once and for
+> all cleanup the sqe handling. After this patchset, the prep and issue
+> handling is fully split, so each opcode has a prep handler that is called
+> in the same way, and an issue handler that doesn't call the prep handler.
 > 
-> Commit e61df66c69b1 ("io-wq: ensure free/busy list browsing see all
-> items") added a list for io workers in addition to the free and busy
-> lists, not only making worker walk cleaner but leaving the busy list
-> to be at most a nice vase. Time to remove it now.
+> The sqe pointer is removed from io_kiocb, so there cannot be any
+> accidental dereference after we've done prep. Prep is always done in the
+> original context, so we can have no reuse issues either.
+> 
+> I've rebased for-5.6/io_uring to have this series first, so this series
+> applies on top of io_uring-5.5. Ideally we'd put this into 5.5, but...
+> 
+> In any case, please take a look, I think this is a massive improvement
+> in terms of verifying that we're doing the right thing.
+> 
+>  fs/io_uring.c | 690 ++++++++++++++++++++++++++------------------------
+>  1 file changed, 355 insertions(+), 335 deletions(-)
 
-Thanks, applied.
+I've done various testing and everything seems to work just fine, no
+issues found.
+
+I'm tempted to push this to 5.5-rc4. It's a bit big, but I do think the
+end result is much cleaner and we'll be better of for it.
 
 -- 
 Jens Axboe

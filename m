@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE3D012BEA9
-	for <lists+io-uring@lfdr.de>; Sat, 28 Dec 2019 20:21:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 040D712BEAA
+	for <lists+io-uring@lfdr.de>; Sat, 28 Dec 2019 20:21:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbfL1TVW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 28 Dec 2019 14:21:22 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33628 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbfL1TVW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 28 Dec 2019 14:21:22 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 6so16102158pgk.0
-        for <io-uring@vger.kernel.org>; Sat, 28 Dec 2019 11:21:22 -0800 (PST)
+        id S1726455AbfL1TVY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 28 Dec 2019 14:21:24 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37132 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbfL1TVY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 28 Dec 2019 14:21:24 -0500
+Received: by mail-pg1-f193.google.com with SMTP id q127so16100470pga.4
+        for <io-uring@vger.kernel.org>; Sat, 28 Dec 2019 11:21:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=g7AxaW92arx9yT6vScWQcw783EksnKA+20RBNSBXEJ4=;
-        b=p7ilHNNLdGpT4626c86ElKBnCPYtmgVzZlBD/VNJ6A1rIIyz7S0vp1Pq2lU/YL8ZQk
-         8W4OcAwJyvSZbPNaEYHAHAde0Jiql2hmu92IZQAdKJ6gyCLruLzAClXbHvq6Hj0mSQE2
-         yxT5mS93jopL57MDELYdiLPzJYlezgRDAFSaBa4YOfMOCu7ezf1E/Qq5O61bWDeEMdfx
-         4eqky29HDk0ljxt89tWkc5d1OJ2GEKQc2E7yNXbevqvdb1tvRLedkmTYNL9Hzqx6NavY
-         Qj5e2CNIAS2zP46v/R1nQRVu5wfpZP3SHu4Wk1Rrlx6J/pbsKIZQkDwiW5IU2pfa2GVO
-         Omwg==
+        bh=1aUhtdil3rL+gH32qN402lmfSrdySv3dNFkkHxnrFik=;
+        b=b51XnSMiaebBDPpUw5eBoW8pAr4K2mgLL25IUpVh5YoNzsQDDqyrgZARGGKF3FEX/k
+         +M31Lq5Tn5ufFNw51c5NqY2CMhnDHT+ywxH2MNCVrnon5HP8QXSZQZJ1ooCTOO5BAMyx
+         F1bKxRn3BGM/mqOzXjOUBdj1xKvF9owgJTTFzuTOdHKaUtcr6kB40av1+OYp12y1u8m6
+         kCZoPnK+tGiOmtaP7JiaVHNbSRFOulg+pTotnUVgW64p9olPElCPogW5TuBwfTKYDU7p
+         ZiyHHlU8udBulKmevubkFCqUTbd7BY3/xv4he4yQVT+meyYw2s7/tTCr/NYmOE+xaXz1
+         RJqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=g7AxaW92arx9yT6vScWQcw783EksnKA+20RBNSBXEJ4=;
-        b=h42KCWN6zcdVmGXTaO3F7xb9K3rboejPXNiMx5BJpP7QcPyLW5K1zLxBoui1tpxw8Y
-         7DwPgaVRvHo6OtGy7MSCRN6HaaBzuIqcDUuwW3H9eaImNtQEoE3ssBL/HZwAKzG1pTZR
-         Sqr0eCb+kjAJY0VJSAHlsjaZD7aRLmtMRMC8rAD9cubU1i6tNoC8vAE6V8ZTSK0o3VGX
-         6db/v9GwTZg5K+nWiX0HXZIU/N4QDmwnvWi3/P4CLnriYih83wYQDYhNp7s0Rz5my60q
-         j10rdkJ0J7CwrXP/8x4TkeKHcIJACtOQ5AKnLGvqpI3fPp1bXFdT8LziUXawapCv0MkW
-         Snhw==
-X-Gm-Message-State: APjAAAWnzJpLscbwZ5JIOc77LBfZtljSvE6KjSP2VhcD2HF6T1YUDkQh
-        lwSHVp/8EcfZBHIoaHreA7IARcsscuA2aA==
-X-Google-Smtp-Source: APXvYqz4PPPh2NqZ85nH1CtRmMTE5suWBwmCU5KQMoU5c5F2QnS8k2w3c73J44KtmX5Bj3A6h/Zk4g==
-X-Received: by 2002:a63:5818:: with SMTP id m24mr62113792pgb.358.1577560881594;
-        Sat, 28 Dec 2019 11:21:21 -0800 (PST)
+        bh=1aUhtdil3rL+gH32qN402lmfSrdySv3dNFkkHxnrFik=;
+        b=dtt6BqGpSFswZDAT+wz24eAA1nyH1xpTTHY26a1zVzgQNVrF5Gpiz6hFzQzt3304Zm
+         wzfH1qIqcRJyBZoYjaOLMKTH2YRHbCkUOhk0a1z69sNNU4TH0ABNIKgH9K4DbizFpOZ6
+         Qgn1YIy1txlf72sf1K8wvqwXkHfLDsxIU9UZ+wohThwfBT9ofyXVIN50sZRK02+YyZSA
+         uKXEusViXsr3qek9wfrlaILzuBctOzu3skIGdHKX8CHtq80b4MAchM0S1IX0z/FXaHOp
+         Jlzqu/EwR1PTFIOva+DFJ3YMmMO3khugnpQMAlvXa9KY0EBmghiOH1B+Ku04jkDGLRxz
+         NA1w==
+X-Gm-Message-State: APjAAAVwThItNULXDETher/p7K1GDar5wwJE05kQIvgAn8ZEDPBjaWn0
+        JI/m06Sb2SP2a9+ZT9hWuPYCdnkZ2v32Og==
+X-Google-Smtp-Source: APXvYqwKraA9SwIUyjOhOEydhXrH5GGFozxYPKsVkEQwEAYCae8bODHZM19HZ1rZORQ/rlWHO3DpYw==
+X-Received: by 2002:a63:e17:: with SMTP id d23mr62553778pgl.173.1577560882649;
+        Sat, 28 Dec 2019 11:21:22 -0800 (PST)
 Received: from x1.localdomain ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id z30sm47067902pfq.154.2019.12.28.11.21.20
+        by smtp.gmail.com with ESMTPSA id z30sm47067902pfq.154.2019.12.28.11.21.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Dec 2019 11:21:21 -0800 (PST)
+        Sat, 28 Dec 2019 11:21:22 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/9] io_uring: remove two unnecessary function declarations
-Date:   Sat, 28 Dec 2019 12:21:10 -0700
-Message-Id: <20191228192118.4005-2-axboe@kernel.dk>
+Subject: [PATCH 2/9] io_uring: add lookup table for various opcode needs
+Date:   Sat, 28 Dec 2019 12:21:11 -0700
+Message-Id: <20191228192118.4005-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191228192118.4005-1-axboe@kernel.dk>
 References: <20191228192118.4005-1-axboe@kernel.dk>
@@ -60,28 +60,300 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-__io_free_req() and io_double_put_req() aren't used before they are
-defined, so we can kill these two forwards.
+We currently have various switch statements that check if an opcode needs
+a file, mm, etc. These are hard to keep in sync as opcodes are added. Add
+a struct io_op_def that holds all of this information, so we have just
+one spot to update when opcodes are added.
+
+This also enables us to NOT allocate req->io if a deferred command
+doesn't need it, and corrects some mistakes we had in terms of what
+commands need mm context.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/io_uring.c | 209 +++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 156 insertions(+), 53 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d787a97febf8..40735ecc09c9 100644
+index 40735ecc09c9..0ee6b3057895 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -518,9 +518,7 @@ struct io_submit_state {
+@@ -516,6 +516,137 @@ struct io_submit_state {
+ 	unsigned int		ios_left;
+ };
  
++struct io_op_def {
++	/* needs req->io allocated for deferral/async */
++	unsigned		async_ctx : 1;
++	/* needs current->mm setup, does mm access */
++	unsigned		needs_mm : 1;
++	/* needs req->file assigned */
++	unsigned		needs_file : 1;
++	/* needs req->file assigned IFF fd is >= 0 */
++	unsigned		fd_non_neg : 1;
++	/* hash wq insertion if file is a regular file */
++	unsigned		hash_reg_file : 1;
++	/* unbound wq insertion if file is a non-regular file */
++	unsigned		unbound_nonreg_file : 1;
++};
++
++static const struct io_op_def io_op_defs[IORING_OP_LAST] = {
++	{
++		/* IORING_OP_NOP */
++	},
++	{
++		/* IORING_OP_READV */
++		.async_ctx		= 1,
++		.needs_mm		= 1,
++		.needs_file		= 1,
++		.unbound_nonreg_file	= 1,
++	},
++	{
++		/* IORING_OP_WRITEV */
++		.async_ctx		= 1,
++		.needs_mm		= 1,
++		.needs_file		= 1,
++		.hash_reg_file		= 1,
++		.unbound_nonreg_file	= 1,
++	},
++	{
++		/* IORING_OP_FSYNC */
++		.needs_file		= 1,
++	},
++	{
++		/* IORING_OP_READ_FIXED */
++		.async_ctx		= 1,
++		.needs_file		= 1,
++		.unbound_nonreg_file	= 1,
++	},
++	{
++		/* IORING_OP_WRITE_FIXED */
++		.async_ctx		= 1,
++		.needs_file		= 1,
++		.hash_reg_file		= 1,
++		.unbound_nonreg_file	= 1,
++	},
++	{
++		/* IORING_OP_POLL_ADD */
++		.needs_file		= 1,
++		.unbound_nonreg_file	= 1,
++	},
++	{
++		/* IORING_OP_POLL_REMOVE */
++	},
++	{
++		/* IORING_OP_SYNC_FILE_RANGE */
++		.needs_file		= 1,
++	},
++	{
++		/* IORING_OP_SENDMSG */
++		.async_ctx		= 1,
++		.needs_mm		= 1,
++		.needs_file		= 1,
++		.unbound_nonreg_file	= 1,
++	},
++	{
++		/* IORING_OP_RECVMSG */
++		.async_ctx		= 1,
++		.needs_mm		= 1,
++		.needs_file		= 1,
++		.unbound_nonreg_file	= 1,
++	},
++	{
++		/* IORING_OP_TIMEOUT */
++		.async_ctx		= 1,
++		.needs_mm		= 1,
++	},
++	{
++		/* IORING_OP_TIMEOUT_REMOVE */
++	},
++	{
++		/* IORING_OP_ACCEPT */
++		.needs_mm		= 1,
++		.needs_file		= 1,
++		.unbound_nonreg_file	= 1,
++	},
++	{
++		/* IORING_OP_ASYNC_CANCEL */
++	},
++	{
++		/* IORING_OP_LINK_TIMEOUT */
++		.async_ctx		= 1,
++		.needs_mm		= 1,
++	},
++	{
++		/* IORING_OP_CONNECT */
++		.async_ctx		= 1,
++		.needs_mm		= 1,
++		.needs_file		= 1,
++		.unbound_nonreg_file	= 1,
++	},
++	{
++		/* IORING_OP_FALLOCATE */
++		.needs_file		= 1,
++	},
++	{
++		/* IORING_OP_OPENAT */
++		.needs_file		= 1,
++		.fd_non_neg		= 1,
++	},
++	{
++		/* IORING_OP_CLOSE */
++		.needs_file		= 1,
++	},
++	{
++		/* IORING_OP_FILES_UPDATE */
++		.needs_mm		= 1,
++	},
++	{
++		/* IORING_OP_STATX */
++		.needs_mm		= 1,
++		.needs_file		= 1,
++		.fd_non_neg		= 1,
++	},
++};
++
  static void io_wq_submit_work(struct io_wq_work **workptr);
  static void io_cqring_fill_event(struct io_kiocb *req, long res);
--static void __io_free_req(struct io_kiocb *req);
  static void io_put_req(struct io_kiocb *req);
--static void io_double_put_req(struct io_kiocb *req);
- static void __io_double_put_req(struct io_kiocb *req);
- static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req);
- static void io_queue_linked_timeout(struct io_kiocb *req);
+@@ -671,41 +802,20 @@ static void __io_commit_cqring(struct io_ring_ctx *ctx)
+ 	}
+ }
+ 
+-static inline bool io_req_needs_user(struct io_kiocb *req)
+-{
+-	return !(req->opcode == IORING_OP_READ_FIXED ||
+-		 req->opcode == IORING_OP_WRITE_FIXED);
+-}
+-
+ static inline bool io_prep_async_work(struct io_kiocb *req,
+ 				      struct io_kiocb **link)
+ {
++	const struct io_op_def *def = &io_op_defs[req->opcode];
+ 	bool do_hashed = false;
+ 
+-	switch (req->opcode) {
+-	case IORING_OP_WRITEV:
+-	case IORING_OP_WRITE_FIXED:
+-		/* only regular files should be hashed for writes */
+-		if (req->flags & REQ_F_ISREG)
++	if (req->flags & REQ_F_ISREG) {
++		if (def->hash_reg_file)
+ 			do_hashed = true;
+-		/* fall-through */
+-	case IORING_OP_READV:
+-	case IORING_OP_READ_FIXED:
+-	case IORING_OP_SENDMSG:
+-	case IORING_OP_RECVMSG:
+-	case IORING_OP_ACCEPT:
+-	case IORING_OP_POLL_ADD:
+-	case IORING_OP_CONNECT:
+-		/*
+-		 * We know REQ_F_ISREG is not set on some of these
+-		 * opcodes, but this enables us to keep the check in
+-		 * just one place.
+-		 */
+-		if (!(req->flags & REQ_F_ISREG))
++	} else {
++		if (def->unbound_nonreg_file)
+ 			req->work.flags |= IO_WQ_WORK_UNBOUND;
+-		break;
+ 	}
+-	if (io_req_needs_user(req))
++	if (def->needs_mm)
+ 		req->work.flags |= IO_WQ_WORK_NEEDS_USER;
+ 
+ 	*link = io_prep_linked_timeout(req);
+@@ -1826,6 +1936,8 @@ static void io_req_map_rw(struct io_kiocb *req, ssize_t io_size,
+ 
+ static int io_alloc_async_ctx(struct io_kiocb *req)
+ {
++	if (!io_op_defs[req->opcode].async_ctx)
++		return 0;
+ 	req->io = kmalloc(sizeof(*req->io), GFP_KERNEL);
+ 	return req->io == NULL;
+ }
+@@ -3773,29 +3885,13 @@ static void io_wq_submit_work(struct io_wq_work **workptr)
+ 	}
+ }
+ 
+-static bool io_req_op_valid(int op)
+-{
+-	return op >= IORING_OP_NOP && op < IORING_OP_LAST;
+-}
+-
+ static int io_req_needs_file(struct io_kiocb *req, int fd)
+ {
+-	switch (req->opcode) {
+-	case IORING_OP_NOP:
+-	case IORING_OP_POLL_REMOVE:
+-	case IORING_OP_TIMEOUT:
+-	case IORING_OP_TIMEOUT_REMOVE:
+-	case IORING_OP_ASYNC_CANCEL:
+-	case IORING_OP_LINK_TIMEOUT:
++	if (!io_op_defs[req->opcode].needs_file)
+ 		return 0;
+-	case IORING_OP_OPENAT:
+-	case IORING_OP_STATX:
+-		return fd != -1;
+-	default:
+-		if (io_req_op_valid(req->opcode))
+-			return 1;
+-		return -EINVAL;
+-	}
++	if (fd == -1 && io_op_defs[req->opcode].fd_non_neg)
++		return 0;
++	return 1;
+ }
+ 
+ static inline struct file *io_file_from_index(struct io_ring_ctx *ctx,
+@@ -3812,7 +3908,7 @@ static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	unsigned flags;
+-	int fd, ret;
++	int fd;
+ 
+ 	flags = READ_ONCE(sqe->flags);
+ 	fd = READ_ONCE(sqe->fd);
+@@ -3820,9 +3916,8 @@ static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
+ 	if (flags & IOSQE_IO_DRAIN)
+ 		req->flags |= REQ_F_IO_DRAIN;
+ 
+-	ret = io_req_needs_file(req, fd);
+-	if (ret <= 0)
+-		return ret;
++	if (!io_req_needs_file(req, fd))
++		return 0;
+ 
+ 	if (flags & IOSQE_FIXED_FILE) {
+ 		if (unlikely(!ctx->file_data ||
+@@ -4248,7 +4343,16 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+ 			break;
+ 		}
+ 
+-		if (io_req_needs_user(req) && !*mm) {
++		/* will complete beyond this point, count as submitted */
++		submitted++;
++
++		if (unlikely(req->opcode >= IORING_OP_LAST)) {
++			io_cqring_add_event(req, -EINVAL);
++			io_double_put_req(req);
++			break;
++		}
++
++		if (io_op_defs[req->opcode].needs_mm && !*mm) {
+ 			mm_fault = mm_fault || !mmget_not_zero(ctx->sqo_mm);
+ 			if (!mm_fault) {
+ 				use_mm(ctx->sqo_mm);
+@@ -4256,7 +4360,6 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+ 			}
+ 		}
+ 
+-		submitted++;
+ 		req->ring_file = ring_file;
+ 		req->ring_fd = ring_fd;
+ 		req->has_user = *mm != NULL;
 -- 
 2.24.1
 

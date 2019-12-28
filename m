@@ -2,57 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91A6712BD5F
-	for <lists+io-uring@lfdr.de>; Sat, 28 Dec 2019 12:13:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6304012BD63
+	for <lists+io-uring@lfdr.de>; Sat, 28 Dec 2019 12:14:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbfL1LNk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 28 Dec 2019 06:13:40 -0500
-Received: from mail-wm1-f41.google.com ([209.85.128.41]:40616 "EHLO
-        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbfL1LNk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 28 Dec 2019 06:13:40 -0500
-Received: by mail-wm1-f41.google.com with SMTP id t14so10273166wmi.5;
-        Sat, 28 Dec 2019 03:13:39 -0800 (PST)
+        id S1726597AbfL1LNn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 28 Dec 2019 06:13:43 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43052 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbfL1LNm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 28 Dec 2019 06:13:42 -0500
+Received: by mail-wr1-f66.google.com with SMTP id d16so28333467wre.10;
+        Sat, 28 Dec 2019 03:13:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=KElmZM5dkNAHQpTzzrjHnML4RPBEKGzTVPP1i0RJr8E=;
-        b=ZeVIBTUeg+eAWruRVTTD2sDc52dRhuO1XtufRbTQ6WWy3kCgKjw+SSwflPcflZ/IzK
-         j4Z5XNY0kaU43IoTsXvWJXDd65wQMAJiqQwtyjMAeGrEdLkwhHok45Ce3Kx7nFkJV4us
-         xmrssh1k7RteUSB2MAXLhUn9UW/MwAPumOPG6fX1Cj874GB2V/cua6XwYiFZdcsiBBeE
-         knB0ejaTWScka1/aciLT+4YCa5j2h7QjHRDfeCxEb+sUTDgRE5BX/lh68J2a79sBckFb
-         0o2jJHC8zR2xtC+luLHOXz5UW6Q55s2ct0u4+Sq3XprSRDEtG02/F97zWlTK4pzgETZg
-         Qg8A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Ncxg9b/1MfJvBW44JauWnlBevZqV28zJC8M4jJXK7AU=;
+        b=BaHAUPx+4KshLERmtGWu41IFl51q0SA9VBlPqlEA72NfKzWAQHE1Ajioq3dAxUXnNS
+         Yqd8ws/vsXQXDCFYiobkLscDXb56/cxBiPgQIk4qMZBFeSlyugKt5PKSywVZu5STZJy8
+         /3fvrCXOBS6rrcPoNzhmuQrTvaVDFCc5WdZyYWjsECP7UK+dez21MXz/IS1E+vS8ZU6A
+         NLoOKbifFbssMtUdDucMZ7zs1lwEB9gubRJPlIYQSxtT/8aDrTZmWIkiHQpUtDNg6+e/
+         v00kUGXHLrwNrHdtpPOMwWIo2aADULmrweBTjqytrqe2dkjmjQTWITT/lcbqupJybwqL
+         1zTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KElmZM5dkNAHQpTzzrjHnML4RPBEKGzTVPP1i0RJr8E=;
-        b=co2Ygu9080BoyNtF/gzCIPA9ximJa5vtPmwx5PPYrIdNTGTmf9+zqQxgyZnpb7qxqG
-         tsSfwZr3e4neZ5bwCfrTUqKW11mbPpp11U/KHJ8cmyj1v0B8ntXZCelRxSWL7AY3Dgm2
-         K/liNeTtCx0WnmW1j42+B7KSpUMf1d9c28V7O1tPCeOx2J1qimo7IfTM5J+eb/HLeQmm
-         XL/b2dHWA4KtaD6lm/6oKXpMdfY7wQ3ka/aOXxhVfozTArxIIjWdcZCRWYO/hh5MI8rc
-         TTfwt9/PJnnUi5W6hBont2INyEl1kaNFyRtivLDDAcJ8dEoXxtltuinpH3EbNqGz10aZ
-         ycPg==
-X-Gm-Message-State: APjAAAUALNUVVTAnfYP+fTYDtTdyd4ZLV+0caLYg6N617VSJa/fz3tE9
-        guA+Wo8sANHIi3JRq0uXIl9zRRkI
-X-Google-Smtp-Source: APXvYqwHDiWz56gLSReUATaFd7iR5Bga0tyJTpWEZW5vJa7oiLijQN3a2ZO8bnlvqdfjw0QIpQxDsA==
-X-Received: by 2002:a1c:f009:: with SMTP id a9mr23143964wmb.73.1577531618221;
-        Sat, 28 Dec 2019 03:13:38 -0800 (PST)
+        bh=Ncxg9b/1MfJvBW44JauWnlBevZqV28zJC8M4jJXK7AU=;
+        b=NElM8GodMPaEGDdRPP6SiNl7Xr9tl2FfLrnkQbjiBuXSF74ja8eNMdWg40apisqlxb
+         ErTo70xzTmZKRXKQ5bzsu1KLO+FufP5nutvZua0vpdyjhptgn1Dl4uP9w45h2ox9Hzam
+         ZhPt9GGJE4IPMx6TRHjZouR0w7DK+PZFlcSn9F4pCuiVjZKna4vLMb+jdwq4z9Xfx0rL
+         6r7PY9RMvhZr/bni4tGLawGnXFab6uGqa8FiJvy7Qdk1E1viwmcMZHv0fcAmH4Xw/R8S
+         555DzFrzQXB1Gq5FHl9lAbtV9zoHyBZprxtk2Ixtk9mi4zcMM5ys+NYGIcpJlSnf0TWW
+         pM1g==
+X-Gm-Message-State: APjAAAUmZgc61ds3uuun+ofxljovcTP8d+wUzugonGNZEAx7VIh9lYoG
+        bxsIaf2ilVj8O7nfp/tQeKk=
+X-Google-Smtp-Source: APXvYqxeq20SHzRUQ8hiISSOX/ARks7467N/F1xiBr4hbPZ4EfZEVbuBLR4Tw5V9CaBXOOFcoAYNNw==
+X-Received: by 2002:adf:f6c1:: with SMTP id y1mr59751007wrp.17.1577531620651;
+        Sat, 28 Dec 2019 03:13:40 -0800 (PST)
 Received: from localhost.localdomain ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id q11sm37432622wrp.24.2019.12.28.03.13.37
+        by smtp.gmail.com with ESMTPSA id q11sm37432622wrp.24.2019.12.28.03.13.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Dec 2019 03:13:37 -0800 (PST)
+        Sat, 28 Dec 2019 03:13:40 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/2] optimise ctx's refs grabbing in io_uring
-Date:   Sat, 28 Dec 2019 14:13:01 +0300
-Message-Id: <cover.1577528535.git.asml.silence@gmail.com>
+Cc:     Tejun Heo <tj@kernel.org>, Dennis Zhou <dennis@kernel.org>,
+        Christoph Lameter <cl@linux.com>
+Subject: [PATCH v4 1/2] pcpu_ref: add percpu_ref_tryget_many()
+Date:   Sat, 28 Dec 2019 14:13:02 +0300
+Message-Id: <9db688ebaea49de5e794d082aca351cc278ed2ed.1577528535.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1576958402.git.asml.silence@gmail.com>
-References: <cover.1576958402.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1577528535.git.asml.silence@gmail.com>
+References: <cover.1577528535.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -60,26 +62,76 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Optimise percpu_ref_tryget() by not calling it for each request, but
-batching it. This gave a measurable ~5% performance boost for large QD.
+Add percpu_ref_tryget_many(), which works the same way as
+percpu_ref_tryget(), but grabs specified number of refs.
 
-v2: fix uncommited plug (Jens Axboe)
-    better comments for percpu_ref_tryget_many (Dennis Zhou)
-    amortise across io_uring_enter() boundary
-
-v3: drop "batching across syscalls"
-    remove error handling in io_submit_sqes() from common path
-
-v4: fix error handling
-
-Pavel Begunkov (2):
-  pcpu_ref: add percpu_ref_tryget_many()
-  io_uring: batch getting pcpu references
-
- fs/io_uring.c                   | 26 +++++++++++++++++---------
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Acked-by: Dennis Zhou <dennis@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+---
  include/linux/percpu-refcount.h | 26 +++++++++++++++++++++-----
- 2 files changed, 38 insertions(+), 14 deletions(-)
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
+diff --git a/include/linux/percpu-refcount.h b/include/linux/percpu-refcount.h
+index 390031e816dc..22d9d183950d 100644
+--- a/include/linux/percpu-refcount.h
++++ b/include/linux/percpu-refcount.h
+@@ -210,15 +210,17 @@ static inline void percpu_ref_get(struct percpu_ref *ref)
+ }
+ 
+ /**
+- * percpu_ref_tryget - try to increment a percpu refcount
++ * percpu_ref_tryget_many - try to increment a percpu refcount
+  * @ref: percpu_ref to try-get
++ * @nr: number of references to get
+  *
+- * Increment a percpu refcount unless its count already reached zero.
++ * Increment a percpu refcount  by @nr unless its count already reached zero.
+  * Returns %true on success; %false on failure.
+  *
+  * This function is safe to call as long as @ref is between init and exit.
+  */
+-static inline bool percpu_ref_tryget(struct percpu_ref *ref)
++static inline bool percpu_ref_tryget_many(struct percpu_ref *ref,
++					  unsigned long nr)
+ {
+ 	unsigned long __percpu *percpu_count;
+ 	bool ret;
+@@ -226,10 +228,10 @@ static inline bool percpu_ref_tryget(struct percpu_ref *ref)
+ 	rcu_read_lock();
+ 
+ 	if (__ref_is_percpu(ref, &percpu_count)) {
+-		this_cpu_inc(*percpu_count);
++		this_cpu_add(*percpu_count, nr);
+ 		ret = true;
+ 	} else {
+-		ret = atomic_long_inc_not_zero(&ref->count);
++		ret = atomic_long_add_unless(&ref->count, nr, 0);
+ 	}
+ 
+ 	rcu_read_unlock();
+@@ -237,6 +239,20 @@ static inline bool percpu_ref_tryget(struct percpu_ref *ref)
+ 	return ret;
+ }
+ 
++/**
++ * percpu_ref_tryget - try to increment a percpu refcount
++ * @ref: percpu_ref to try-get
++ *
++ * Increment a percpu refcount unless its count already reached zero.
++ * Returns %true on success; %false on failure.
++ *
++ * This function is safe to call as long as @ref is between init and exit.
++ */
++static inline bool percpu_ref_tryget(struct percpu_ref *ref)
++{
++	return percpu_ref_tryget_many(ref, 1);
++}
++
+ /**
+  * percpu_ref_tryget_live - try to increment a live percpu refcount
+  * @ref: percpu_ref to try-get
 -- 
 2.24.0
 

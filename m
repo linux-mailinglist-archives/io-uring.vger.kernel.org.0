@@ -2,106 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 183D9133061
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2020 21:12:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BA05133089
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2020 21:27:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbgAGUMh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Jan 2020 15:12:37 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:33856 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728369AbgAGUMh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jan 2020 15:12:37 -0500
-Received: by mail-il1-f194.google.com with SMTP id s15so715409iln.1
-        for <io-uring@vger.kernel.org>; Tue, 07 Jan 2020 12:12:37 -0800 (PST)
+        id S1728566AbgAGU07 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Jan 2020 15:26:59 -0500
+Received: from mail-io1-f47.google.com ([209.85.166.47]:37266 "EHLO
+        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728451AbgAGU07 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jan 2020 15:26:59 -0500
+Received: by mail-io1-f47.google.com with SMTP id k24so748513ioc.4
+        for <io-uring@vger.kernel.org>; Tue, 07 Jan 2020 12:26:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=v1fOEbzCCkcMTp/P5J5L/1GHsaWacZss144GGq7KQxI=;
-        b=eedMbDOSWYPKF1t9RHhKiCMu8HMyilrd5/N7jlMytWqqHu9tcd78xU3p1Y36DmmT9w
-         APJe7+lJYXzb5RL7972qK1zGIefPKQSZ5KvgFyaC1Sn1vtko8HNNDzCu4ja39jsKHCvk
-         nwLy2HSwQ1WUzCFPTuqmitmP35rsKF//Tr7LhnFTwdkN6pVdJOLYvaS7IZH2/c1oB4iS
-         BMLLhqXs6HqALSLuS4d1JVMq1gcJZF/+sRNeJwo21flXx3lwZ5c20j3KqFkguE7aa3as
-         2ZrKIxvpbNQq28b9BNQQY6qDYJkRVpQYX1VCO+fJEUGyxR2on6EoZG4HvjTEXVMEMyzW
-         urrA==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=id+gtDK+jZn375gdvQYfg0Nc3nJqlYiiO4nllbp+BqY=;
+        b=Ku6ObxYzl9IPiU8uNHMpr2YNI//TrgrKir+S3czQCvYUd06cREwRfkNoXAsgxZET8L
+         UES1Z6cw3n0tD5r0TIyDNUVAo6y83LbOaOF6jqoe0H4hEZBIAlRwt6C0kmMld0EzJ7GS
+         8SExDFrZmbK6Xu1AZTmjv0yZOllZ+QHZ3bjcUlhUpbRZ1VU+upAPZ6va4x9ACC6G/+Bt
+         o45arE7nwiIaWy+q0WvCO80hnJpPFWwKkilc2VKQw1LbXtNMurIeby2o5NNw45RMFTIU
+         KnixTv0bqVVup4vLUgsikK8GjBlaIEQiJruweOkwJ4bsd20z00nJw8rW8gOHrusK+7/A
+         iZKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=v1fOEbzCCkcMTp/P5J5L/1GHsaWacZss144GGq7KQxI=;
-        b=jkI0j+k835qjhjOUV9KSiSDORlOJZay3mvpSG6SGtqdae1dRLSoAP0CRlg52Q13KKc
-         C8aJFn/6wXgg9rlPdgMoPZHQqfGXPxhzGITaD4a2Wiu2y9/N6Mf9INMKSMLWICn1n9yV
-         V8hyXgh2g12vga3Wb5tfg+panGhwh9g9/yjyNCpnRw7S9TF6Ic9SUp2iEEsi0WTd9+jy
-         4XtqgzHG6Ou1v04ngvWCJN+VVxswkVVQwhJ4EgYJFjosHPCKA9ntU/rxVfLndEuNss6M
-         tvJUCQ65n8jKy4BLGjHIssi1FJsccA2AgmktUlyXkPJI5jNs0r4FAMPRYngdHPawX2Pu
-         t7QA==
-X-Gm-Message-State: APjAAAUV30XBbKLd6EZcHd7vqbfGuS9H5177iZixlBAoqEQGyxTbuWCa
-        /umygH3rluH8HB2n5vlf2lSbpxleWCQ=
-X-Google-Smtp-Source: APXvYqwb33SSLmHQL94UhexkvE5jxTLK/777cswZHIUccWHETnUhUgK9mwdCtN9IvqB4b05m+eIFQw==
-X-Received: by 2002:a92:8511:: with SMTP id f17mr824427ilh.255.1578427956544;
-        Tue, 07 Jan 2020 12:12:36 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=id+gtDK+jZn375gdvQYfg0Nc3nJqlYiiO4nllbp+BqY=;
+        b=K4T1BoOO7/ZkJxahoTm9ZmC1TFgBkRpX1X3/OVDpZNvT2FApicWq/CuYpBWCni7N84
+         Y0DptSfIGup2OL3ehypHA3U78Av3bJNG28B5dWb15IJU+ofVUue8yQIbKjPGAlEl3rDo
+         kolzrOzBI6mdsyFEkaIHr+h4/H3jbJdlMHcAhPXEHiBFkeY6l1wemODiElI1dWJw2HAY
+         SONWDJi3Vhx8vqJ5lEERu/jnYJSSZUOawQ+I+/NJR7kshajUbE7ZNX2P6VQCkY5fwHlh
+         AKr6zM5trs2D8tfVcjqRxVVwMiNTbM5akmrPFN7ySDNeDqcnKQ1UVByqWYzS4P1Qzi8M
+         5MAw==
+X-Gm-Message-State: APjAAAX1Cry0UnQoSlYjx7YGbRKIr0TbwPK+Q8jJtnno923g8pAQzfs9
+        qmRVEZovKrcCMSOxTGBGOk781cC1WYw=
+X-Google-Smtp-Source: APXvYqxBgP02/8SB5Xk+7svVLv9mR7BE/T8aZ2kd/YesPKWv2/wMRg4jmRsafCEKH/pGl3KVw1gOCA==
+X-Received: by 2002:a6b:f206:: with SMTP id q6mr655868ioh.264.1578428818050;
+        Tue, 07 Jan 2020 12:26:58 -0800 (PST)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id n5sm193780ili.28.2020.01.07.12.12.36
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id i131sm120970iof.65.2020.01.07.12.26.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jan 2020 12:12:36 -0800 (PST)
-To:     io-uring <io-uring@vger.kernel.org>
+        Tue, 07 Jan 2020 12:26:57 -0800 (PST)
+Subject: Re: io_uring and spurious wake-ups from eventfd
+To:     Mark Papadakis <markuspapadakis@icloud.com>,
+        io-uring@vger.kernel.org
+References: <2005CB9A-0883-4C35-B975-1931C3640AA1@icloud.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: remove punt of short reads to async context
-Message-ID: <a61c54af-9e5b-6e5a-224d-60ad3a383054@kernel.dk>
-Date:   Tue, 7 Jan 2020 13:12:35 -0700
+Message-ID: <55243723-480f-0220-2b93-74cc033c6e1d@kernel.dk>
+Date:   Tue, 7 Jan 2020 13:26:56 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <2005CB9A-0883-4C35-B975-1931C3640AA1@icloud.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We currently punt any short read on a regular file to async context,
-but this fails if the short read is due to running into EOF. This is
-especially problematic since we only do the single prep for commands
-now, as we don't reset kiocb->ki_pos. This can result in a 4k read on
-a 1k file returning zero, as we detect the short read and then retry
-from async context. At the time of retry, the position is now 1k, and
-we end up reading nothing, and hence return 0.
+On 1/7/20 8:55 AM, Mark Papadakis wrote:
+> This is perhaps an odd request, but if it’s trivial to implement
+> support for this described feature, it could help others like it ‘d
+> help me (I ‘ve been experimenting with io_uring for some time now).
+> 
+> Being able to register an eventfd with an io_uring context is very
+> handy, if you e.g have some sort of reactor thread multiplexing I/O
+> using epoll etc, where you want to be notified when there are pending
+> CQEs to drain. The problem, such as it is, is that this can result in
+> un-necessary/spurious wake-ups.
+> 
+> If, for example, you are monitoring some sockets for EPOLLIN, and when
+> poll says you have pending bytes to read from their sockets, and said
+> sockets are non-blocking, and for each some reported event you reserve
+> an SQE for preadv() to read that data and then you io_uring_enter to
+> submit the SQEs, because the data is readily available, as soon as
+> io_uring_enter returns, you will have your completions available -
+> which you can process.  The “problem” is that poll will wake up
+> immediately thereafter in the next reactor loop iteration because
+> eventfd was tripped (which is reasonable but un-necessary).
+> 
+> What if there was a flag for io_uring_setup() so that the eventfd
+> would only be tripped for CQEs that were processed asynchronously, or,
+> if that’s non-trivial, only for CQEs that reference file FDs?
+> 
+> That’d help with that spurious wake-up.
 
-Instead of trying to patch around the fact that short reads can be
-legitimate and won't succeed in case of retry, remove the logic to punt
-a short read to async context. Simply return it.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-Also see: https://github.com/axboe/liburing/issues/52
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 562e3a1a1bf9..38b54051facd 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1863,18 +1863,6 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
- 		else
- 			ret2 = loop_rw_iter(READ, req->file, kiocb, &iter);
- 
--		/*
--		 * In case of a short read, punt to async. This can happen
--		 * if we have data partially cached. Alternatively we can
--		 * return the short read, in which case the application will
--		 * need to issue another SQE and wait for it. That SQE will
--		 * need async punt anyway, so it's more efficient to do it
--		 * here.
--		 */
--		if (force_nonblock && !(req->flags & REQ_F_NOWAIT) &&
--		    (req->flags & REQ_F_ISREG) &&
--		    ret2 > 0 && ret2 < io_size)
--			ret2 = -EAGAIN;
- 		/* Catch -EAGAIN return for forced non-blocking submission */
- 		if (!force_nonblock || ret2 != -EAGAIN) {
- 			kiocb_done(kiocb, ret2, nxt, req->in_async);
+One easy way to do that would be for the application to signal that it
+doesn't want eventfd notifications for certain requests. Like using an
+IOSQE_ flag for that. Then you could set that on the requests you submit
+in response to triggering an eventfd event.
 
 -- 
 Jens Axboe

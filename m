@@ -2,34 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 596E31343C0
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2020 14:25:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C44311343C8
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2020 14:26:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbgAHNZZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jan 2020 08:25:25 -0500
-Received: from hr2.samba.org ([144.76.82.148]:16174 "EHLO hr2.samba.org"
+        id S1726254AbgAHN0y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Jan 2020 08:26:54 -0500
+Received: from hr2.samba.org ([144.76.82.148]:16630 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726087AbgAHNZY (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 8 Jan 2020 08:25:24 -0500
-X-Greylist: delayed 1155 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Jan 2020 08:25:19 EST
+        id S1726087AbgAHN0x (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 8 Jan 2020 08:26:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
          s=42; h=Date:Message-ID:From:Cc:To;
-        bh=c+igvHG/PjMEma/Y/QBsb4AMPSzDcaYRhm8l86iSbmE=; b=Hshabq2kmeqZ6KyRkTQjKKYQs9
-        80IY0cZf+Zpz8zmfoqjO1OVju0dgQ7tQk+RgeKonhNBD93ms6gbjiw0SCdYQm9azGHVTxNVi92ass
-        5ipdXs/Chiw9B31p5wDifYrBJ7cgSx0eG+7MyOWgQo9GWQ+QrL/GCjRP2Da13GisMs1aGqrdtgM/N
-        4m8DZ2cwvYasEXDIeu8+39bfj4mKVd+6iobiLZp8UQ2e+GreomYAUuae4Zk6AAxCCFtoZgelFIPYb
-        PNswSGKuIEcSdUGdLCokpNL0KM6xf7hSg1CqFiak5wiji/J/Nt5Y3mzObwY7gH7UYOkByxh4JDEp8
-        7mjM6QLlJXfU+pCYWsnMjgH3W23tkJLl/VijYbfnattTNpewjiXXtBzOs3YrjctyGt34CeCBax9gh
-        Rctxc/E7QLhGrJEAQ9WDpQ9MjQoSibGSipFpu102MuFQywOw97r3h0vKuZV/mUwjIWRybNhVX0qCB
-        +ieQn/SlvXXq934m+YdRMypi;
+        bh=ZDYxWL50RNQJU2O7SHCktoJzv/TkcszM4wHCsOtJYME=; b=mqZEZHZcjF6rUVxaLegp/t27sG
+        k88FSCyS1o9aDV2ZsmOQLL93Or9krHs+xK8YMUbhLWU9HKwtpMeA3lpuB0YS9LU2mnD2BRdZ3huKX
+        p8x4J5lVxG9Ztbu8I/JRnQ62hyyUulaKVWSYhbLD8x5RdRl30YA7LNqDGUNdCOsAGL/8j6w/GXXQm
+        lBkewcmJJdhAzf1saTPXOTaPiQmfNvKZqqeCgNDy3JwPzRQP3ZpzMw6AsRzfhp3b80vs5drzFSytz
+        +NqDGz/r274VTZJsX8n5fvq0IXMVJFmUBeo7P2prQhdAU+YDWf+4rJi9MQjNNyenxN5GwAO2fS3UF
+        gjE7pfeP88qT5p5xQmCvB9NyqW8AKEEvd7z5Hntca1M5QR6yAKVgMzIWRkPCragIKLVfSKCPtm5KZ
+        kt+DfdISbKWm9sWIhYSOwbPx1xRCB4Tle9xmB9bFB5JG1+dJmfh18RzQMhvaWGuP6zHZksvW6CTkF
+        VmceJMfRODgGWW9KifGdOYmf;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1ipB29-0006Zh-0r; Wed, 08 Jan 2020 13:06:01 +0000
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20200107170034.16165-1-axboe@kernel.dk>
- <20200107170034.16165-4-axboe@kernel.dk>
+        id 1ipBMF-0006iD-47; Wed, 08 Jan 2020 13:26:47 +0000
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Jann Horn <jannh@google.com>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+References: <f77ac379ddb6a67c3ac6a9dc54430142ead07c6f.1576336565.git.asml.silence@gmail.com>
+ <CAG48ez0N_b+kjbddhHe+BUvSnOSvpm1vdfQ9cv+cgTLuCMXqug@mail.gmail.com>
+ <9b4f56c1-dce9-1acd-2775-e64a3955d8ee@gmail.com>
+ <1f995281-4a56-a7de-d20b-14b0f64536c0@kernel.dk>
 From:   Stefan Metzmacher <metze@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
@@ -344,84 +348,60 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  uWrtpKE+BrlhmZrZleospHp05F+oHuE7lrOg09g0SFdTigqSJNbN1R/pkPI5Q03GfbWipsd4
  iY0Rj0D34DQVeKAa4qUlOcBgX2D9VHRap9GKQRWs//egCueqDZNmIk3071aFV+BSiBSTZIIG
  t/YZOE37yKSj2rcCbqg=
-Subject: Re: [PATCH 3/6] io_uring: add support for IORING_OP_OPENAT
-Message-ID: <82a015c4-f5b9-7c85-7d80-78964cb0d82e@samba.org>
-Date:   Wed, 8 Jan 2020 14:05:55 +0100
+Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_IOCTL
+Message-ID: <d52435c0-54dc-0fbb-81b4-b2be0b834ffc@samba.org>
+Date:   Wed, 8 Jan 2020 14:26:46 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20200107170034.16165-4-axboe@kernel.dk>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="U1uZfITnd9Jg7jFbPReP1ZGX61Y9xFF5d"
+In-Reply-To: <1f995281-4a56-a7de-d20b-14b0f64536c0@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---U1uZfITnd9Jg7jFbPReP1ZGX61Y9xFF5d
-Content-Type: multipart/mixed; boundary="Ilr6Qnl4koQtrO9si5ISKifa26EeVyWc3";
- protected-headers="v1"
-From: Stefan Metzmacher <metze@samba.org>
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Message-ID: <82a015c4-f5b9-7c85-7d80-78964cb0d82e@samba.org>
-Subject: Re: [PATCH 3/6] io_uring: add support for IORING_OP_OPENAT
-References: <20200107170034.16165-1-axboe@kernel.dk>
- <20200107170034.16165-4-axboe@kernel.dk>
-In-Reply-To: <20200107170034.16165-4-axboe@kernel.dk>
-
---Ilr6Qnl4koQtrO9si5ISKifa26EeVyWc3
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
 Hi Jens,
 
-> This works just like openat(2), except it can be performed async. For
-> the normal case of a non-blocking path lookup this will complete
-> inline. If we have to do IO to perform the open, it'll be done from
-> async context.
+> While the ioctl approach is tempting, for the use cases where it makes
+> sense, I think we should just add a ioctl type opcode and have the
+> sub-opcode be somewhere else in the sqe. Because I do think there's
+> a large opportunity to expose a fast API that works with ioctl like
+> mechanisms. If we have
+> 
+> IORING_OP_IOCTL
+> 
+> and set aside an sqe field for the per-driver (or per-user) and
+> add a file_operations method for sending these to the fd, then we'll
+> have a much better (and faster + async) API than ioctls. We could
+> add fops->uring_issue() or something, and that passes the io_kiocb.
+> When it completes, the ->io_uring_issue() posts a completion by
+> calling io_uring_complete_req() or something.
+> 
+> Outside of the issues that Jann outlined, ioctls are also such a
+> decade old mess that we have to do the -EAGAIN punt for all of them
+> like you did in your patch. If it's opt-in like ->uring_issue(), then
+> care could be taken to do this right and just have it return -EAGAIN
+> if it does need async context.
+> 
+> ret = fops->uring_issue(req, force_nonblock);
+> if (ret == -EAGAIN) {
+> 	... usual punt ...
+> }
+> 
+> I think working on this would be great, and some of the more performance
+> sensitive ioctl cases should flock to it.
 
-Did you already thought about the credentials being used for the async
-open? The application could call setuid() and similar calls to change
-the credentials of the userspace process/threads. In order for
-applications like samba to use this async openat, it would be required
-to specify the credentials for each open, as we have to multiplex
-requests from multiple user sessions in one process.
+I could use also use a generic way for an async fd-based syscall.
+I thought about using sendmsg() with special CMSG_ elements, but
+currently it's not possible with IORING_OP_SENDMSG to do an async
+io_kiocb based completion, using msg_iocb.
 
-This applies to non-fd based syscall. Also for an async connect
-to a unix domain socket.
-
-Do you have comments on this?
+My use case would be samba triggering async sendfile-like io for
+the SMB-Direct protocol, doing multiple async file io operations
+followed by RDMA-WRITE operations as a single async syscall from userspace.
 
 Thanks!
 metze
-
-
---Ilr6Qnl4koQtrO9si5ISKifa26EeVyWc3--
-
---U1uZfITnd9Jg7jFbPReP1ZGX61Y9xFF5d
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl4V07MACgkQDbX1YShp
-vVaqlhAArM08saZ2s2NbJ8hb7VCPyv5qc79qwW5QPZuCz54iPJ8paOmQHb3xNnyg
-kQJ6+q4ZYYl8ZQuKvWzR+jFxGpf+7/CwxZTXDtqKoDghGzCKmWuXMf3U2Q3Df2FD
-PECxky60WknLCVyDeCMdbAtw/tIcwaFZjIS2F8HxC6SeFbnBI8oEqIZrT6Nmas2s
-Q/AecnqWrqcCCh8dX31Kwjjw4UYVRFRCXjJgEuAAvCVNBT3zuoHYZ3gXYTDTwL/P
-Pve9akx5TGmaL6VASNDh1YixQygRXbSDtStB0f/s/iOQFYMsnROT/pArkfdQKqRW
-Pu/vgZY6jZZpOpbCLinuvYH+WqYTPlM0IMPUebdfxcSf5qVg14LaoYCut7bVeHJP
-wosPFWTRNBtQn4LMhokIgKI6vNjnuQ0kcINH+n4+iRgvRb01Mn5B5hhRjzhce9Te
-TiPZLQq5KEJtxNmizSTsWFvPrn2UwChyiJsf5RDjehWmz7wZ2eXHvhzMaoGBee0B
-d8bchnq9+h4B5ku1cHCR3XT1Bc6GarzYrP0lfuwrCpX+BOhUbuz2gtICBvBbn42u
-4zqbIyxRjomgxE46ApWRMixep0fpDGe2dKAaC0Aj0ozddkt1/6TiSjcLRd7qgqtd
-uMoReGJfXc+LEe+5KdYqqPUxakTfriETK/bZ9DmrOZhbbm1WM6Q=
-=0Ayf
------END PGP SIGNATURE-----
-
---U1uZfITnd9Jg7jFbPReP1ZGX61Y9xFF5d--

@@ -2,137 +2,149 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3211B134828
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2020 17:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7197B134858
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2020 17:47:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbgAHQkJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jan 2020 11:40:09 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:40204 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbgAHQkJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jan 2020 11:40:09 -0500
-Received: by mail-pj1-f68.google.com with SMTP id bg7so1316798pjb.5
-        for <io-uring@vger.kernel.org>; Wed, 08 Jan 2020 08:40:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jZgMbISEx5/ZwoweCKstWunPDGLwVoLwLQ95l7OM00w=;
-        b=c1XmWKiHp2h+A3AfXzToAFiFWv45qJzXO/2M/Bsahue/9KGEAiRt4bPT6TJm0Rj6Uv
-         c+1AkxCjKpJYOzfneSOtEIcGP0hWqQerjLMrFqT8i+5KPYGwQMhQPWmnARAVEX0LaRhm
-         jUv0jSr/Igtxw5YIkxmUC90tY/XY6ozONNZxuD9rJd+O+G8YZOSC+IjLkpdNg/hkFnWI
-         pvOgtIMaeXfgz27wwEAL3mQSXRHWOuNXgtoyZTclACUBEoDcZY/O0LdctV2ZbfUKcwXo
-         ryqVuHt6tcBhsQ/j3YH0o6ihLQZix1r+mYJmAr7+/Xv9dKTi4L2G9gsII3PzYx/2EURp
-         RG2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jZgMbISEx5/ZwoweCKstWunPDGLwVoLwLQ95l7OM00w=;
-        b=GcBP8TQ0xgbGBmnf8+RtaOAn+CcgEG5rzEgklEtO9p+g1+uJxLXj47YClM2wgWJxws
-         Dd2QIGTs7DxTGbrGEdrTJCwYuMpI0CmiKOSMDLDP7u5NvWn7EV+FxvxuKbMIYA9vaen8
-         wIfww48wcVa8eBK3GL+STGV3LKpvCx6xpbmGsQqXvirjNfiDMqM60cK7pRtVG57uht+B
-         CGB+NpL3bbhO/ByUMdGurSQtJbDoN6LbZl6HrdWiBkYF1+4jBT6FqY9yju4KUzCxmM7H
-         wBttzRvk2ToXWqjGHje/WOuFdqWB6lmsZEL4gG6uYqFAZiytn+ya8zg1OOApXza17+zj
-         XX0A==
-X-Gm-Message-State: APjAAAWAFV6/ptT+Ir8lkFUIDIgJsDKABYTxuCddSnJhwsDUs/LFCJho
-        m52IsCqUSaAdT9HiQpQ7F23oiA==
-X-Google-Smtp-Source: APXvYqwJet9UKFMoX7hR+EMWyyPQvpc5T0YWzIkbowE8RkaStgCLhh43PIO66X8TH5tZ/KuEpJ1z1w==
-X-Received: by 2002:a17:90a:9b88:: with SMTP id g8mr5353248pjp.72.1578501608336;
-        Wed, 08 Jan 2020 08:40:08 -0800 (PST)
-Received: from ?IPv6:2620:10d:c081:1130::1133? ([2620:10d:c090:180::38c8])
-        by smtp.gmail.com with ESMTPSA id k23sm4179804pgg.7.2020.01.08.08.40.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jan 2020 08:40:07 -0800 (PST)
-Subject: Re: [PATCH 3/6] io_uring: add support for IORING_OP_OPENAT
-To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20200107170034.16165-1-axboe@kernel.dk>
- <20200107170034.16165-4-axboe@kernel.dk>
- <82a015c4-f5b9-7c85-7d80-78964cb0d82e@samba.org>
- <4ccb935c-7ff9-592f-8c27-0af3d38326d7@kernel.dk>
- <2afdd5a5-0eb5-8fba-58d1-03001abbab7e@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9672da37-bf6f-ce2d-403c-5e2692c67782@kernel.dk>
-Date:   Wed, 8 Jan 2020 09:40:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <2afdd5a5-0eb5-8fba-58d1-03001abbab7e@samba.org>
+        id S1729428AbgAHQrD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Jan 2020 11:47:03 -0500
+Received: from mr85p00im-zteg06021601.me.com ([17.58.23.187]:33692 "EHLO
+        mr85p00im-zteg06021601.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729379AbgAHQrD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jan 2020 11:47:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+        s=1a1hai; t=1578502021;
+        bh=z5vtUorkniBZ6fympcT1CYmOSOpwegQICWrvW31Fcc0=;
+        h=Content-Type:From:Subject:Date:Message-Id:To;
+        b=U36GkWDoU0ha82CrrSibpUBWLZi/2sxO0ccGf5SRU4gOt+i5YIQQA9pzwukSzoc6S
+         Dwt+VFEJnVVOHsSET7/bA/gD+dB6n1CTicHwAmn58pMxKueY6k/z93STK8IUUc+RtP
+         e/z1BZpnAV8R5xFtqcAxVTJyOlgIHDs8OvcLBFRTrTaB+YK9G60wTapHii6gqXQmKl
+         Qe3A+Z+A7B2zhNi9PDisQSgJb+gkCXoFst/4Hg3EEsC3LDhHxexOihrRhJ4KBlJ37b
+         X/hZdDWWdKgHaDkwuo3cslRlRCyc/bjrZ3F0pBH0J+wfXSwadmzIz7zMMszql9cK01
+         sLrumIJl/3Zjw==
+Received: from [10.187.227.108] (109-178-162-185.pat.ren.cosmote.net [109.178.162.185])
+        by mr85p00im-zteg06021601.me.com (Postfix) with ESMTPSA id 75BA84013FC;
+        Wed,  8 Jan 2020 16:47:01 +0000 (UTC)
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+From:   Mark Papadakis <markuspapadakis@icloud.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: io_uring and spurious wake-ups from eventfd
+Date:   Wed, 8 Jan 2020 18:46:51 +0200
+Message-Id: <02106C23-C466-4E63-B881-AF8E6BDF9235@icloud.com>
+References: <d949ea3a-bd24-e597-b230-89b7075544cc@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+In-Reply-To: <d949ea3a-bd24-e597-b230-89b7075544cc@kernel.dk>
+To:     Jens Axboe <axboe@kernel.dk>
+X-Mailer: iPhone Mail (17B111)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-01-08_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-2001080136
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/8/20 9:32 AM, Stefan Metzmacher wrote:
-> Am 08.01.20 um 17:20 schrieb Jens Axboe:
->> On 1/8/20 6:05 AM, Stefan Metzmacher wrote:
->>> Hi Jens,
->>>
->>>> This works just like openat(2), except it can be performed async. For
->>>> the normal case of a non-blocking path lookup this will complete
->>>> inline. If we have to do IO to perform the open, it'll be done from
->>>> async context.
->>>
->>> Did you already thought about the credentials being used for the async
->>> open? The application could call setuid() and similar calls to change
->>> the credentials of the userspace process/threads. In order for
->>> applications like samba to use this async openat, it would be required
->>> to specify the credentials for each open, as we have to multiplex
->>> requests from multiple user sessions in one process.
->>>
->>> This applies to non-fd based syscall. Also for an async connect
->>> to a unix domain socket.
->>>
->>> Do you have comments on this?
->>
->> The open works like any of the other commands, it inherits the
->> credentials that the ring was setup with. Same with the memory context,
->> file table, etc. There's currently no way to have multiple personalities
->> within a single ring.
-> 
-> Ah, it's user = get_uid(current_user()); and ctx->user = user in
-> io_uring_create(), right?
+Thus sounds perfect!
 
-That's just for the accounting, it's the:
+Thanks Jens
 
-ctx->creds = get_current_cred();
+@markpapadakis
 
->> Sounds like you'd like an option for having multiple personalities
->> within a single ring?
-> 
-> I'm not sure anymore, I wasn't aware of the above.
-> 
->> I think it would be better to have a ring per personality instead.
-> 
-> We could do that. I guess we could use per user rings for path based
-> operations and a single ring for fd based operations.
-> 
->> One thing we could do to make this more lightweight
->> is to have rings that are associated, so that we can share a lot of the
->> backend processing between them.
-> 
-> My current idea is to use the ring fd and pass it to our main epoll loop.
-> 
-> Can you be more specific about how an api for associated rings could
-> look like?
+> On 8 Jan 2020, at 6:24 PM, Jens Axboe <axboe@kernel.dk> wrote:
+>=20
+> =EF=BB=BFOn 1/8/20 12:36 AM, Mark Papadakis wrote:
+>>=20
+>>=20
+>>>> On 7 Jan 2020, at 10:34 PM, Jens Axboe <axboe@kernel.dk> wrote:
+>>>=20
+>>> On 1/7/20 1:26 PM, Jens Axboe wrote:
+>>>> On 1/7/20 8:55 AM, Mark Papadakis wrote:
+>>>>> This is perhaps an odd request, but if it=E2=80=99s trivial to impleme=
+nt
+>>>>> support for this described feature, it could help others like it =E2=80=
+=98d
+>>>>> help me (I =E2=80=98ve been experimenting with io_uring for some time n=
+ow).
+>>>>>=20
+>>>>> Being able to register an eventfd with an io_uring context is very
+>>>>> handy, if you e.g have some sort of reactor thread multiplexing I/O
+>>>>> using epoll etc, where you want to be notified when there are pending
+>>>>> CQEs to drain. The problem, such as it is, is that this can result in
+>>>>> un-necessary/spurious wake-ups.
+>>>>>=20
+>>>>> If, for example, you are monitoring some sockets for EPOLLIN, and when=
 
-The API would be the exact same, there would just be some way to
-associate rings when you create them. Probably a new field in struct
-io_uring_params (and an associated flag), which would tell io_uring that
-two separate rings are really the same "user". This would allow io_uring
-to use the same io-wq workqueues, for example, etc.
+>>>>> poll says you have pending bytes to read from their sockets, and said
+>>>>> sockets are non-blocking, and for each some reported event you reserve=
 
-This depends on the fact that you can setup the rings with the right
-personalities, that they would be known upfront. From your description,
-I'm not so sure that's the case? If not, then we would indeed need
-something that can pass in the credentials on a per-command basis. Not
-sure what that would look like.
+>>>>> an SQE for preadv() to read that data and then you io_uring_enter to
+>>>>> submit the SQEs, because the data is readily available, as soon as
+>>>>> io_uring_enter returns, you will have your completions available -
+>>>>> which you can process.  The =E2=80=9Cproblem=E2=80=9D is that poll wil=
+l wake up
+>>>>> immediately thereafter in the next reactor loop iteration because
+>>>>> eventfd was tripped (which is reasonable but un-necessary).
+>>>>>=20
+>>>>> What if there was a flag for io_uring_setup() so that the eventfd
+>>>>> would only be tripped for CQEs that were processed asynchronously, or,=
 
--- 
-Jens Axboe
+>>>>> if that=E2=80=99s non-trivial, only for CQEs that reference file FDs?
+>>>>>=20
+>>>>> That=E2=80=99d help with that spurious wake-up.
+>>>>=20
+>>>> One easy way to do that would be for the application to signal that it
+>>>> doesn't want eventfd notifications for certain requests. Like using an
+>>>> IOSQE_ flag for that. Then you could set that on the requests you submi=
+t
+>>>> in response to triggering an eventfd event.
+>>>=20
+>>=20
+>>=20
+>> Thanks Jens,
+>>=20
+>> This is great, but perhaps there is a somewhat slightly more optimal
+>> way to do this.  Ideally, io_uring should trip the eventfd if there
+>> are any new completions available, that haven=E2=80=99t been produced In t=
+he
+>> context of an io_uring_enter(). That is to say, if any SQEs can be
+>> immediately served (because data is readily available in
+>> Buffers/caches in the kernel), then their respective CQEs will be
+>> produced in the context of that io_uring_enter() that submitted said
+>> SQEs(and thus the CQEs can be processed immediately after
+>> io_uring_enter() returns).  So, if any CQEs are placed in the
+>> respective ring at any other time, but not during an io_uring_enter()
+>> call, then it means those completions were produced asynchronously,
+>> and thus the eventfd can be tripped, otherwise, there is no need to
+>> trip the eventfd at all.
+>>=20
+>> e.g (pseudocode):
+>> void produce_completion(cfq_ctx *ctx, const bool in_io_uring_enter_ctx) {=
+
+>>        cqe_ring_push(cqe_from_ctx(ctx));
+>>        if (false =3D=3D in_io_uring_enter_ctx && eventfd_registered()) {
+>>                trip_iouring_eventfd();
+>>        } else {
+>>                // don't bother
+>>        }
+>> }
+>=20
+> I see what you're saying, so essentially only trigger eventfd
+> notifications if the completions happen async. That does make a lot of
+> sense, and it would be cleaner than having to flag this per request as
+> well. I think we'd still need to make that opt-in as it changes the
+> behavior of it.
+>=20
+> The best way to do that would be to add IORING_REGISTER_EVENTFD_ASYNC or
+> something like that. Does the exact same thing as
+> IORING_REGISTER_EVENTFD, but only triggers it if completions happen
+> async.
+>=20
+> What do you think?
+>=20
+> --=20
+> Jens Axboe
+>=20
 

@@ -2,39 +2,35 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75918134FBB
-	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2020 00:03:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4618B134FBF
+	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2020 00:05:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbgAHXD5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jan 2020 18:03:57 -0500
-Received: from hr2.samba.org ([144.76.82.148]:18036 "EHLO hr2.samba.org"
+        id S1726913AbgAHXFw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Jan 2020 18:05:52 -0500
+Received: from hr2.samba.org ([144.76.82.148]:18454 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbgAHXD5 (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 8 Jan 2020 18:03:57 -0500
+        id S1726548AbgAHXFv (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 8 Jan 2020 18:05:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
          s=42; h=Date:Message-ID:From:Cc:To;
-        bh=3QcIFVa/J0u75X8KF/ahquacynRAuoJA821YUMiv3YQ=; b=f9nuLu2dW0WTkHKPPZtcjfidcO
-        ClO+AFNLCjAw3pk8Zt4RyO+Y9KzSSFmEzxPxwAzPO+JV5EAsjkRLdZ6TKh8Pemt9/9nnsJFA4AKzy
-        BjPTKyowLN5dKprI5DquBESTSFcR5TGUpo//FuMJBnu5vq+CoM24KvlFqlItuYDmxvd2lbKNEM6Ly
-        3oatpxdMDq+/1X8R/1gVyiBtjSNxPHHuV825BtLZV9wGBD7acqF1h8xKJJA5Ui01R/ZRpXEoCNNcZ
-        dmxJyTM6iy2pukegWSxWxHxhJqNLTmF4HstQ+EZa7I1ZlyRa+EE/itrCMhNQRZUQ6nu324zTeFXyS
-        LmSGmP5Nf+3a3VOJqxVw2BosRuzqEqFPgUSEDsxccoZ1PzbHvtBzEU08O2EqWXs70N7MfBpM7YZ6O
-        EAYJUMp+2Kbbq9vRwBllj4CJ8XJPvBFNyBVrctDwmdfq/Lj7qhS7XxIo9QuYsWNh6SHg16g81vo7c
-        riYRRpQrj8HTn+6n/FvRcu/K;
+        bh=tArFhkp2wyQaznCLrVKqY3vzfjRJ5mG3+Y574C7Xgrw=; b=jVXUBqg2B7DRUeSVB/JkbxoH2k
+        G8ziomAdigiphZ6JJbXP5+se13XVPRFeGfpbrxTsXEX2HZApZ5WFVoYQfG6hB7Ql3fOYpWRliUx5p
+        zi4RWlc8Krp51kH1Ebz7xagHFhJRMCTs4yp2Q9PzEetTZvAijL2XU79gqykqRYa5T8iTGUAMgAJzy
+        qan31amQtaJpDQhafjb0O8H+OIJvFCjRIyRW8wdGvoRqCO63FQqsTTRZcmZ5/tePT8ltCLCPSGC25
+        4KUXmoHebIkbK6cW8vt7rVAaFaq+YFXwg8n3tl72W0XL1IjAnnp6CN/6KteFF1KB88To7JthALyky
+        Op+57D8YjtfjGwKP3b8CCJza7MY7RpMP1phy7gOdl0Ur5XdVr00v6BSrwygLMq+ND0ZJmTSO4sxsb
+        r0AzSjTEXB7SSKfWMUpjtJKgYWcwZLEEcLvWJACmibTtk2ccEWyUUoNOlpd7LuEQsaE4BS/WgPv5Z
+        I49I3dtGw/0GRxw1TqEK2iA1;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1ipKMg-0002gb-AX; Wed, 08 Jan 2020 23:03:50 +0000
+        id 1ipKOZ-0002hL-Th; Wed, 08 Jan 2020 23:05:48 +0000
+Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
 References: <20200107170034.16165-1-axboe@kernel.dk>
- <20200107170034.16165-4-axboe@kernel.dk>
- <82a015c4-f5b9-7c85-7d80-78964cb0d82e@samba.org>
- <4ccb935c-7ff9-592f-8c27-0af3d38326d7@kernel.dk>
- <2afdd5a5-0eb5-8fba-58d1-03001abbab7e@samba.org>
- <9672da37-bf6f-ce2d-403c-5e2692c67782@kernel.dk>
- <d0f0e726-8e6f-aa43-07b6-fdb3b49ce1bc@samba.org>
- <d5a5dc20-7e11-8489-b9d5-c2cf8a4bdf4b@kernel.dk>
+ <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
+ <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
 From:   Stefan Metzmacher <metze@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
@@ -349,137 +345,86 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  uWrtpKE+BrlhmZrZleospHp05F+oHuE7lrOg09g0SFdTigqSJNbN1R/pkPI5Q03GfbWipsd4
  iY0Rj0D34DQVeKAa4qUlOcBgX2D9VHRap9GKQRWs//egCueqDZNmIk3071aFV+BSiBSTZIIG
  t/YZOE37yKSj2rcCbqg=
-Subject: Re: [PATCH 3/6] io_uring: add support for IORING_OP_OPENAT
-Message-ID: <a0f1b3a0-9827-b3e1-da0c-a2b71151fd4e@samba.org>
-Date:   Thu, 9 Jan 2020 00:03:45 +0100
+Message-ID: <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
+Date:   Thu, 9 Jan 2020 00:05:42 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <d5a5dc20-7e11-8489-b9d5-c2cf8a4bdf4b@kernel.dk>
+In-Reply-To: <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="gCfIfgvi4YypNR1UX2yTVsDMYYkm8P5NI"
+ boundary="CDspPx6hBAPjOEa9eZC2SVt7UOMc2O8Mn"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---gCfIfgvi4YypNR1UX2yTVsDMYYkm8P5NI
-Content-Type: multipart/mixed; boundary="Lrgp64BBH0IEUsLDPJAB3pOgK3YOkiuYo";
+--CDspPx6hBAPjOEa9eZC2SVt7UOMc2O8Mn
+Content-Type: multipart/mixed; boundary="ynJrnfNmvDrA5iuvcd7LpWdz6XB1ja8WY";
  protected-headers="v1"
 From: Stefan Metzmacher <metze@samba.org>
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Message-ID: <a0f1b3a0-9827-b3e1-da0c-a2b71151fd4e@samba.org>
-Subject: Re: [PATCH 3/6] io_uring: add support for IORING_OP_OPENAT
+Message-ID: <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
+Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
 References: <20200107170034.16165-1-axboe@kernel.dk>
- <20200107170034.16165-4-axboe@kernel.dk>
- <82a015c4-f5b9-7c85-7d80-78964cb0d82e@samba.org>
- <4ccb935c-7ff9-592f-8c27-0af3d38326d7@kernel.dk>
- <2afdd5a5-0eb5-8fba-58d1-03001abbab7e@samba.org>
- <9672da37-bf6f-ce2d-403c-5e2692c67782@kernel.dk>
- <d0f0e726-8e6f-aa43-07b6-fdb3b49ce1bc@samba.org>
- <d5a5dc20-7e11-8489-b9d5-c2cf8a4bdf4b@kernel.dk>
-In-Reply-To: <d5a5dc20-7e11-8489-b9d5-c2cf8a4bdf4b@kernel.dk>
+ <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
+ <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
+In-Reply-To: <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
 
---Lrgp64BBH0IEUsLDPJAB3pOgK3YOkiuYo
+--ynJrnfNmvDrA5iuvcd7LpWdz6XB1ja8WY
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Am 08.01.20 um 23:53 schrieb Jens Axboe:
-> On 1/8/20 10:04 AM, Stefan Metzmacher wrote:
->> Am 08.01.20 um 17:40 schrieb Jens Axboe:
->>> On 1/8/20 9:32 AM, Stefan Metzmacher wrote:
->>>> Am 08.01.20 um 17:20 schrieb Jens Axboe:
->>>>> On 1/8/20 6:05 AM, Stefan Metzmacher wrote:
->>>>>> Hi Jens,
->>>>>>
->>>>>>> This works just like openat(2), except it can be performed async.=
- For
->>>>>>> the normal case of a non-blocking path lookup this will complete
->>>>>>> inline. If we have to do IO to perform the open, it'll be done fr=
-om
->>>>>>> async context.
->>>>>>
->>>>>> Did you already thought about the credentials being used for the a=
-sync
->>>>>> open? The application could call setuid() and similar calls to cha=
-nge
->>>>>> the credentials of the userspace process/threads. In order for
->>>>>> applications like samba to use this async openat, it would be requ=
-ired
->>>>>> to specify the credentials for each open, as we have to multiplex
->>>>>> requests from multiple user sessions in one process.
->>>>>>
->>>>>> This applies to non-fd based syscall. Also for an async connect
->>>>>> to a unix domain socket.
->>>>>>
->>>>>> Do you have comments on this?
->>>>>
->>>>> The open works like any of the other commands, it inherits the
->>>>> credentials that the ring was setup with. Same with the memory cont=
-ext,
->>>>> file table, etc. There's currently no way to have multiple personal=
-ities
->>>>> within a single ring.
->>>>
->>>> Ah, it's user =3D get_uid(current_user()); and ctx->user =3D user in=
-
->>>> io_uring_create(), right?
->>>
->>> That's just for the accounting, it's the:
->>>
->>> ctx->creds =3D get_current_cred();
+Am 08.01.20 um 23:57 schrieb Jens Axboe:
+> On 1/8/20 2:17 PM, Stefan Metzmacher wrote:
+>> Am 07.01.20 um 18:00 schrieb Jens Axboe:
+>>> Sending this out separately, as I rebased it on top of the work.opena=
+t2
+>>> branch from Al to resolve some of the conflicts with the differences =
+in
+>>> how open flags are built.
 >>
->> Ok, I just looked at an old checkout.
->>
->> In kernel-dk-block/for-5.6/io_uring-vfs I see this only used in
->> the async processing. Does a non-blocking openat also use ctx->creds?
+>> Now that you rebased on top of openat2, wouldn't it be better to add
+>> openat2 that to io_uring instead of the old openat call?
 >=20
-> There's basically two sets here - one set is in the ring, and the other=
+> The IORING_OP_OPENAT already exists, so it would probably make more sen=
+se
+> to add IORING_OP_OPENAT2 alongside that. Or I could just change it. Don=
+'t
+> really feel that strongly about it, I'll probably just add openat2 and
+> leave openat alone, openat will just be a wrapper around openat2 anyway=
+=2E
 
-> is the identity that the async thread (briefly) assumes if we have to g=
-o
-> async. Right now they are the same thing, and hence we don't need to
-> play any tricks off the system call submitting SQEs to assume any other=
-
-> identity than the one we have.
-
-I see two cases using it io_sq_thread() and
-io_wq_create()->io_worker_handle_work() call override_creds().
-
-But aren't non-blocking syscall executed in the context of the thread
-calling io_uring_enter()->io_submit_sqes()?
-In only see some magic around ctx->sqo_mm for that case, but ctx->creds
-doesn't seem to be used in that case. And my design would require that.
-
+Great, thanks!
 metze
 
 
---Lrgp64BBH0IEUsLDPJAB3pOgK3YOkiuYo--
 
---gCfIfgvi4YypNR1UX2yTVsDMYYkm8P5NI
+--ynJrnfNmvDrA5iuvcd7LpWdz6XB1ja8WY--
+
+--CDspPx6hBAPjOEa9eZC2SVt7UOMc2O8Mn
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl4WX9EACgkQDbX1YShp
-vVaiqw/8COu0p8L9HnvyKRRvz5opeeukn9SH+X4ShkLOXaBQcClU5BajP2WQPuPN
-HDf32Bl4xfsPNwYw4VMyCu15kL414CLEswf4mG0WdFcj4k57nHqyXIf2ZHIi3YSd
-9aWrPejQl4P3GFjd9pyc2mBrz4KpO4PPKoHX8V5l+gqrT6bVi+0TN4+TmJsvlW+1
-STQri3DrDmxLsVjPE0+I5S8Zqk+wq+EJY4ymKedQT07Z6JdwsVFHUZe0ASvMj4n2
-mW9aFKhJcng6A4XU98n6bPtHj8V7jycAgkjLIojTr9Usr9G7wJ6CZx76jjl7CcCG
-LyLXqFsjNiOt4268Zxp7lW3Uvz+g6Ki8Tng1KqVzLsRS+1lKVgGN3CKSW1WihT8A
-u7j4CCwLwxRH+6500Ui5TEOyzctWchuQzdctYWB2oMBiK9z8jt9wTXrSkOazKFJo
-dOTKkpI9aXm7dTlYx0+S6zi1zSvtCjABkDBesiPOL67rE8v/SYr8WIzyWeQog9Lu
-GOnxr4te43eQTfzgzAGamWdF4btM9cwe0n+24rGTnXNcJm1ZNTbAnmIcPf/lwGMl
-1umdW2Qn479PXBecBIE3jp2sbSKr9kJK2xpug4qnaz7jW4hwT5pvp6cELvM8Udlu
-39nOJKQFBzJVn9FnAOAnC2SE9zCOy5UN+P7bFl94VnG8jMu4fiw=
-=ZaOc
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl4WYEYACgkQDbX1YShp
+vVaqCRAAiD7FS6RWetkN+HMM9/P18hygrPKR+ZB/OK7GRP5uCWrnY7oQkZOKrtCf
+cpngXRdWgX5LvnNssHikbO01aT6x7FQUD4n8LIGc/+F7w0jM71fuDe5o6S9vQIxU
++3vz8SQXAqtChs4KHLQ8Ip1dAufz1YvKjikUs9TYAwLglq4zcdm/rYbqgG1o5EX9
+Ptp3pf4LTin25DqVzVjOZSQuzQFEi2vq32xRkhXGCKRnnFf7aB45QxBNztumTdg/
+88ludfb+DYfG0c9ffIivl/6MlMnQkZtWk10O1qS9beFDUjooVFQdPr//4AGRdpPY
+9kDzl3Go9iA2ZstXP6gXdLch+b2NYH73cSU6htqrJgCEGRcJaXXiZKwqOsNIeJ0c
+yoISopgXAWF0rVZN072+2gjzdST3RCf8cPFD2lEIVGW84NyosS5gw4gao6B1fPhq
+/r77SHsG92+DGJ+CAaZuUUUuKAG8iRLvew6bVSl5Q2UJVf88u/w8R63DS2XD8m+8
+FYXNo+kIaIxhgoiwRzrjFfWdBfkvLiXp7/nFKp0CyTDts7DOK+cqxV8CYb57Iwqw
+DXgEHUHLWAQovgRpdOHnrdLstgHso4TEsOMvwg0x/zwA/lNT6EiW1v7LzSN85f/z
+iJUICIOqVDZ30KH4sz8uLioaH49EVTzyNjyF1ZUQu4mRorz4AeA=
+=VFVW
 -----END PGP SIGNATURE-----
 
---gCfIfgvi4YypNR1UX2yTVsDMYYkm8P5NI--
+--CDspPx6hBAPjOEa9eZC2SVt7UOMc2O8Mn--

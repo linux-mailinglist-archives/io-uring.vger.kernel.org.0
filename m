@@ -2,145 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FBA5135BB3
-	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2020 15:51:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4339D135C0B
+	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2020 16:00:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730146AbgAIOvb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Jan 2020 09:51:31 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:54569 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728654AbgAIOvb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Jan 2020 09:51:31 -0500
-Received: by mail-pj1-f68.google.com with SMTP id kx11so1241881pjb.4
-        for <io-uring@vger.kernel.org>; Thu, 09 Jan 2020 06:51:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=siyrmGK/GLa09IZDzqqPsAT0f528oev3Br0KKZWDoco=;
-        b=v7b0GorCsUeyIcg8GSr2vWx5nt1qsvMWMwIxMzy84JLU9tqs6Egx/qMBbz7Xoz1R7O
-         vnpR9Q9yURJVZ0FELNRixtcN1tc98W1tHjczLGfNt4pwoVD5gEQ6E04qzofAAEhn3Ftt
-         z5Vi9eygxZRv/Em7Qjdt+xuCoEJfT52h4NiCQo+fGO9AxzOzDxapjDpgpG6rAISm+jIV
-         Mo30nya9AiLawrGUc17GEiYCuhzsRTsbcD8vklAIWkK94uk1HLZZD+yNkyB9yq46d7SP
-         OEMOFBMPypAApERRexorw7FxR+QcGl8OiA8kJXAhH8UWlw3n0It7CsyscpK8ttAVpkZD
-         Ps6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=siyrmGK/GLa09IZDzqqPsAT0f528oev3Br0KKZWDoco=;
-        b=DcuPqux6mIuwLX3qiwsGlJkCBOQNxOnDKQPY+pTLD3V4+jjeOOO4V01/KBQIA21lN6
-         xCYilBjxckNKHlFgTsIZR3c8ZTZeOYsDS2ulos5QCuR1HXB7i8JI7jTjUgAVbUHJTfzp
-         1tZ5dAMqruGFlxiHZVlKTMYC63xDMrlWKn2neCHXeOdKkzllpBjhOJW0fJ2uWksCPycH
-         /CMYbhIHnqUezjijveJ6TaUv6+E1Qm76g1lxb4wuwT4ixuMbK0++qK5jmIerGzT4pzLd
-         InJBpZcqizo6emcuEVUCgbzWkP4FSBuL3Xr4WstzDV5HExc02nVmvrQzvdPNxmPZaErP
-         3Gzw==
-X-Gm-Message-State: APjAAAVzzhgSR137rqOmwn3aWnu6O6dZNnSXvsFGwpJBRvSRX1k+0Xg7
-        gOxhsvUuns0uctEUgbS8ba2fXdCHZ7g=
-X-Google-Smtp-Source: APXvYqyc0H4dH2NAc+YMGzVRYoiRglxdtqx0x9M17SrjJWvKhp1YJfk9luVXX87fheP7AYGmx9nXGQ==
-X-Received: by 2002:a17:90a:cb8c:: with SMTP id a12mr5795478pju.71.1578581490741;
-        Thu, 09 Jan 2020 06:51:30 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id m128sm8332978pfm.183.2020.01.09.06.51.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jan 2020 06:51:30 -0800 (PST)
-Subject: Re: [RFC] Check if file_data is initialized
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Dmitrii Dolgov <9erthalion6@gmail.com>,
-        io-uring@vger.kernel.org
-References: <20200109131750.30468-1-9erthalion6@gmail.com>
- <e6cd2afe-565f-8cde-652c-26c52b888962@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <07aeb2b5-b459-746b-30a2-b63550b288df@kernel.dk>
-Date:   Thu, 9 Jan 2020 07:51:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <e6cd2afe-565f-8cde-652c-26c52b888962@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1732061AbgAIO6Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Jan 2020 09:58:16 -0500
+Received: from mr85p00im-ztdg06021701.me.com ([17.58.23.196]:39447 "EHLO
+        mr85p00im-ztdg06021701.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732055AbgAIO6Q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Jan 2020 09:58:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+        s=1a1hai; t=1578581895;
+        bh=hHWKTZmVz6E9tqpH+pP3j2ANssvQuXEcmg9EhsFIAls=;
+        h=From:Content-Type:Subject:Message-Id:Date:To;
+        b=Dg2xMIXFDpDTwzeJrMmRxRYdvvoXG99Wz5ujqe6Ix6Me6Us3ZcvqGBP5V2umbT+/0
+         H3VfSTOVsav0Jo8dc1FVErv8hD10PWNm2wJTdbn/hEJBcgiqLLMNd6N6k/AgMAjwxY
+         wdN+MHYNSMDkxVDAMMFpgdR6UMtAReUZ7KBTsqjVKD8ngc1Xo0a+BgpUd+HlVF3VZt
+         9zW9FhisoZk+8/o3gMc7rcO7dAVQOMXFebR7qSCTiwwXqJA5klem0uckPpHn9s+XcK
+         44dIRSNnXuii+bncW4iFjeBJu1fpU4iicTZYnhbmgXa/ZBalsOyyLTNNZwrtkz2am0
+         2VBgQuxs8YNnw==
+Received: from dhcp.her (louloudi.phaistosnetworks.gr [139.91.200.222])
+        by mr85p00im-ztdg06021701.me.com (Postfix) with ESMTPSA id 2E785A0127B
+        for <io-uring@vger.kernel.org>; Thu,  9 Jan 2020 14:58:14 +0000 (UTC)
+From:   Mark Papadakis <markuspapadakis@icloud.com>
+Content-Type: text/plain;
+        charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Feature: zero-copy splice API/opcode
+Message-Id: <CBBC10BD-9497-4248-9E6A-AF2DE788E401@icloud.com>
+Date:   Thu, 9 Jan 2020 16:58:12 +0200
+To:     io-uring@vger.kernel.org
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-01-09_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=461 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-2001090131
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/9/20 7:26 AM, Pavel Begunkov wrote:
-> On 1/9/2020 4:17 PM, Dmitrii Dolgov wrote:
->> With combination of --fixedbufs and an old version of fio I've managed
->> to get a strange situation, when doing io_iopoll_complete NULL pointer
->> dereference on file_data was caused in io_free_req_many. Interesting
->> enough, the very same configuration doesn't fail on a newest version of
->> fio (the old one is fc220349e4514, the new one is 2198a6b5a9f4), but I
->> guess it still makes sense to have this check if it's possible to craft
->> such request to io_uring.
-> 
-> I didn't looked up why it could become NULL in the first place, but the
-> problem is probably deeper.
-> 
-> 1. I don't see why it puts @rb->to_free @file_data->refs, even though
-> there could be non-fixed reqs. It needs to count REQ_F_FIXED_FILE reqs
-> and put only as much.
+Greetings,
 
-Agree on the fixed file refs, there's a bug there where it assumes they
-are all still fixed. See below - Dmitrii, use this patch for testing
-instead of the other one!
+I =E2=80=98ve been trying to replicate the benefits provided by =
+sendfile() using e.g O_DIRECT access, together with IOSQE_IO_LINK in SQE =
+flags and MSG_ZEROCOPY, but it doesn=E2=80=99t appear to work. Other =
+ideas didn=E2=80=99t work either.
 
-> 2. Jens, there is another line bothering me, could you take a look?
-> 
-> io_free_req_many()
-> {
-> ...
-> 	if (req->flags & REQ_F_INFLIGHT) ...;
-> 	else
-> 		rb->reqs[i] = NULL;
-> ...
-> }
-> 
-> It zeroes rb->reqs[i], calls __io_req_aux_free(), but did not free
-> memory for the request itself. Is it as intended?
-
-We free them at the end of that function, in bulk. But we can't do that
-with the aux data.
+I would really appreciate a sendfile like SQE opcode, but maybe some =
+sort of generic DMA/zero-copy based opcode based on splice semantics =
+could be implemented, so that e.g a vmsplice() like alternative could =
+also work.
 
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 32aee149f652..b5dcf6c800ef 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1218,6 +1218,8 @@ struct req_batch {
- 
- static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
- {
-+	int fixed_refs = 0;
-+
- 	if (!rb->to_free)
- 		return;
- 	if (rb->need_iter) {
-@@ -1227,8 +1229,10 @@ static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
- 		for (i = 0; i < rb->to_free; i++) {
- 			struct io_kiocb *req = rb->reqs[i];
- 
--			if (req->flags & REQ_F_FIXED_FILE)
-+			if (req->flags & REQ_F_FIXED_FILE) {
- 				req->file = NULL;
-+				fixed_refs++;
-+			}
- 			if (req->flags & REQ_F_INFLIGHT)
- 				inflight++;
- 			else
-@@ -1255,8 +1259,9 @@ static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
- 	}
- do_free:
- 	kmem_cache_free_bulk(req_cachep, rb->to_free, rb->reqs);
-+	if (fixed_refs)
-+		percpu_ref_put_many(&ctx->file_data->refs, fixed_refs);
- 	percpu_ref_put_many(&ctx->refs, rb->to_free);
--	percpu_ref_put_many(&ctx->file_data->refs, rb->to_free);
- 	rb->to_free = rb->need_iter = 0;
- }
+(That would be the last remaining bit of functionality missing from =
+io_uring, now that Jens has implemented support for IOSQE_ASYNC, =
+IORING_REGISTER_EVENTFD_ASYNC and for managing epoll FDs, for enabling =
+support for io_uring on https://github.com/phaistos-networks/TANK ).
 
--- 
-Jens Axboe
+Thank you,
+@markpapadakis
 

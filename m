@@ -2,101 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 121FE135135
-	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2020 03:03:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E11FE135312
+	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2020 07:09:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbgAICD4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jan 2020 21:03:56 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42130 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbgAICD4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jan 2020 21:03:56 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p9so1875537plk.9
-        for <io-uring@vger.kernel.org>; Wed, 08 Jan 2020 18:03:55 -0800 (PST)
+        id S1727961AbgAIGJc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Jan 2020 01:09:32 -0500
+Received: from mail-qv1-f47.google.com ([209.85.219.47]:35778 "EHLO
+        mail-qv1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbgAIGJb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Jan 2020 01:09:31 -0500
+Received: by mail-qv1-f47.google.com with SMTP id u10so2513790qvi.2
+        for <io-uring@vger.kernel.org>; Wed, 08 Jan 2020 22:09:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bvQg+LxFMIJ5CUVmtu63eojL5hkuYWw8tQBem5norCI=;
-        b=GebOjeBTPu8s5SIYddRsBbZUSpUo6Lht+ASKHIGR0mvZs8tWBpypz9mJTWppcmoReg
-         +riQFYlZUyMak9BFuKcPRtyEhuHOWVVDW4HB096mTRyGvLJd42wl/IpWfXToK2PbepOw
-         7WLzMYS80CXiXjpcCWgRpQodilbgSFG7ZAzA4qNRj5O0ZSmib0CL3qoM3Tj7QkKdbS+G
-         aaoispdLcZDPzMkAhBeeAUjwXkDWZoTz479JIu2N1S01KsjT4pA3P1g7EKmZ4qJA725c
-         RpFTNUMxSj4+JoCROd/1Cc2KM6cILw5k2iLo5iSm5sZ3X4Sba9sXQmkdy5ENnwF/1CJF
-         B6+w==
+        d=daurnimator.com; s=daurnimator;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r7Xvq/S/UnBz8PGcA9iN7E/DoGN73xwMY9aIFNWHjwQ=;
+        b=ivshZxUhtJOe++SOOUGEIXcCDFSLBEAzVsi1nJhxzpwxCAShBw0LGGDrFLorJ3ruUJ
+         iugPukLwMdwn+zrkG8G9jFB9wz9mtVLcgL4IGyE6B1c6JNtRDwDKih75V5PCmqTSkBbd
+         AcU7pzbkcvmzVtZxRdWQjVwgVXNhozWSZcXVg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bvQg+LxFMIJ5CUVmtu63eojL5hkuYWw8tQBem5norCI=;
-        b=a3OmrRN9abqLUxzxZXE2nuEG2ezp7UVN9IdXOi8AitJe1UEbOrwKCuVPC+A7XrV8iU
-         lwTFvgZN4uDoqe5AjjUkZ269C2LW94++MwmqvlMrRfRgMJeAUkd1WQcqsPkrR4WImswl
-         6z5tFr+2l3bxRC1IMLyak+43dw0vQWnbD1x9C391kQWMuq87L2RSX2MhYE25ptCq9Drm
-         zWt+0SoPxUArU9m+lU6DDMoCvevzANbrCKDHmyNdbevDTjwm2nk73MQ/7NSm8d8mq6p8
-         BJDPRVw95OFo2UZ/fiRgZtZfLIxciVhYF+DOzHJqNc3ZEZuWomXZ/m28GXeY2rUmRT+H
-         LJsA==
-X-Gm-Message-State: APjAAAVApYG58FkDciPHUn6qyokh+egEGc3Je3IrNMk2kArHvdSnNrEm
-        0pm0vuF0WmHYBs6IF6Ydhr+tHg==
-X-Google-Smtp-Source: APXvYqysci+ybBBfFoBTS8pypSqrLYiTCkceL+OSgmospOeEaAA9rc6LaU0pICjLVT7ARdNXuk2VJQ==
-X-Received: by 2002:a17:902:7d94:: with SMTP id a20mr6050657plm.297.1578535435212;
-        Wed, 08 Jan 2020 18:03:55 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id a16sm5019329pgb.5.2020.01.08.18.03.53
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r7Xvq/S/UnBz8PGcA9iN7E/DoGN73xwMY9aIFNWHjwQ=;
+        b=chPKrydFg3E7S2JBF3BshMGiTZnTipCRCZd/884NkTR2VkbboAGV5SKtk5OYwNyoZa
+         qLAmF5kPYtrboojuWYO7SD533TC0SdyW82Si+01mjF04ZPSQEfzf95/rSCoT2Cvpz4Ld
+         PFSp5crC/kXmiSh+dAy948BQxuoL08LY7qSMTUTmZgJR1OXi4SRENhLiH964qUklw4Aa
+         HnwH13ZHdPdA/JB8UayFJVGbmoaKuRhYDiSQbBVNdcsa+57sbwjqWXXa4jTC4bg3DTYw
+         RkRFJb79FjrU5+o5an3WNrXzWxaDulG+XIE+s4Fphk2tCV/J4dxvF5nPSRwzH7zXK61A
+         oA/g==
+X-Gm-Message-State: APjAAAVBSxJlZ4rB4z8R8t54CS1iaCuLVUlyoNzvSWV+nf8IZKmnMkud
+        4RFi5dbeAS8L0pH4/OSc2Lz0X7um5EQ=
+X-Google-Smtp-Source: APXvYqwIlXbPvbsSZU/WgGu3JCLi6udW/olvdJ9+IzzmsnVgjLfzkYAkPFgcJcyaGhMQjck9KqxN3Q==
+X-Received: by 2002:a05:6214:1745:: with SMTP id dc5mr7244538qvb.230.1578550169471;
+        Wed, 08 Jan 2020 22:09:29 -0800 (PST)
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com. [209.85.222.178])
+        by smtp.gmail.com with ESMTPSA id 206sm2556471qkf.132.2020.01.08.22.09.28
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jan 2020 18:03:54 -0800 (PST)
-Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20200107170034.16165-1-axboe@kernel.dk>
- <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
- <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
- <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
- <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
-Message-ID: <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
-Date:   Wed, 8 Jan 2020 19:03:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Wed, 08 Jan 2020 22:09:28 -0800 (PST)
+Received: by mail-qk1-f178.google.com with SMTP id d71so5044311qkc.0
+        for <io-uring@vger.kernel.org>; Wed, 08 Jan 2020 22:09:28 -0800 (PST)
+X-Received: by 2002:a37:b783:: with SMTP id h125mr7771038qkf.75.1578550168021;
+ Wed, 08 Jan 2020 22:09:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <2005CB9A-0883-4C35-B975-1931C3640AA1@icloud.com>
+ <55243723-480f-0220-2b93-74cc033c6e1d@kernel.dk> <60360091-ffce-fc8b-50d5-1a20fecaf047@kernel.dk>
+ <4DED8D2F-8F0B-46FB-800D-FEC3F2A5B553@icloud.com> <d949ea3a-bd24-e597-b230-89b7075544cc@kernel.dk>
+In-Reply-To: <d949ea3a-bd24-e597-b230-89b7075544cc@kernel.dk>
+From:   Daurnimator <quae@daurnimator.com>
+Date:   Thu, 9 Jan 2020 17:09:14 +1100
+X-Gmail-Original-Message-ID: <CAEnbY+fSuT+bBztpOUNJY3cq2pZ6tbFvKkSUeY+mEVwjtdNDow@mail.gmail.com>
+Message-ID: <CAEnbY+fSuT+bBztpOUNJY3cq2pZ6tbFvKkSUeY+mEVwjtdNDow@mail.gmail.com>
+Subject: Re: io_uring and spurious wake-ups from eventfd
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Mark Papadakis <markuspapadakis@icloud.com>,
+        io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/8/20 6:02 PM, Jens Axboe wrote:
-> On 1/8/20 4:05 PM, Stefan Metzmacher wrote:
->> Am 08.01.20 um 23:57 schrieb Jens Axboe:
->>> On 1/8/20 2:17 PM, Stefan Metzmacher wrote:
->>>> Am 07.01.20 um 18:00 schrieb Jens Axboe:
->>>>> Sending this out separately, as I rebased it on top of the work.openat2
->>>>> branch from Al to resolve some of the conflicts with the differences in
->>>>> how open flags are built.
->>>>
->>>> Now that you rebased on top of openat2, wouldn't it be better to add
->>>> openat2 that to io_uring instead of the old openat call?
->>>
->>> The IORING_OP_OPENAT already exists, so it would probably make more sense
->>> to add IORING_OP_OPENAT2 alongside that. Or I could just change it. Don't
->>> really feel that strongly about it, I'll probably just add openat2 and
->>> leave openat alone, openat will just be a wrapper around openat2 anyway.
->>
->> Great, thanks!
-> 
-> Here:
-> 
-> https://git.kernel.dk/cgit/linux-block/log/?h=for-5.6/io_uring-vfs
-> 
-> Not tested yet, will wire this up in liburing and write a test case
-> as well.
+On Thu, 9 Jan 2020 at 03:25, Jens Axboe <axboe@kernel.dk> wrote:
+> I see what you're saying, so essentially only trigger eventfd
+> notifications if the completions happen async. That does make a lot of
+> sense, and it would be cleaner than having to flag this per request as
+> well. I think we'd still need to make that opt-in as it changes the
+> behavior of it.
+>
+> The best way to do that would be to add IORING_REGISTER_EVENTFD_ASYNC or
+> something like that. Does the exact same thing as
+> IORING_REGISTER_EVENTFD, but only triggers it if completions happen
+> async.
+>
+> What do you think?
 
-Wrote a basic test case, and used my openbench as well. Seems to work
-fine for me. Pushed prep etc support to liburing.
 
--- 
-Jens Axboe
-
+Why would a new opcode be cleaner than using a flag for the existing
+EVENTFD opcode?

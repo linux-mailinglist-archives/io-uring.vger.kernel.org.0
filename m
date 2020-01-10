@@ -2,84 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D7641375D1
-	for <lists+io-uring@lfdr.de>; Fri, 10 Jan 2020 19:07:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8DC21377E7
+	for <lists+io-uring@lfdr.de>; Fri, 10 Jan 2020 21:26:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbgAJSHU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Jan 2020 13:07:20 -0500
-Received: from mail-pf1-f173.google.com ([209.85.210.173]:41634 "EHLO
-        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbgAJSHU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Jan 2020 13:07:20 -0500
-Received: by mail-pf1-f173.google.com with SMTP id w62so1492690pfw.8
-        for <io-uring@vger.kernel.org>; Fri, 10 Jan 2020 10:07:20 -0800 (PST)
+        id S1726139AbgAJU06 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Jan 2020 15:26:58 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39419 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbgAJU06 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Jan 2020 15:26:58 -0500
+Received: by mail-lf1-f68.google.com with SMTP id y1so2435376lfb.6
+        for <io-uring@vger.kernel.org>; Fri, 10 Jan 2020 12:26:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=e39cdydXyLR8RuoOLhJ0fbywsMBFLKrnu0fhJtzX8yM=;
-        b=gVsmFyIUB28ErlHPfrjKDAdDzNO3c7AZ5XN0AQyPEM5E6eLna8SRlTRlCIAtKrfs4z
-         hgTOUr9f64QaxSgNvxr+ysysNvsAfjaBqWH6y6lFOnyNk0WQdx8A1DHKOtxcK7flfwxS
-         t6sK4RpfjbBNQdlZEF5+lw565zHPivHhLAIiXfmJELrwBqnTOQjBr4aNL5DOYisdVxhW
-         fb/pcZi+rIiBfa0ZI78omiAbuq8Rz3aNqztHJvPgPu1+xPMmiS6ZMInv5EuspGEqQAUT
-         YG1oa4A1UwQzaUOf843N2Fdvgs0tRuS+OI2SbpsvQ8Pfa+oAMAfYRLb+1SyY6LNKJOeE
-         R/zg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q6RmY6iVo4NGP6Hg5M76hkN086tbBjjirfF+fQEc8us=;
+        b=hdjqcu361W3mzbJATmBN+/g2zCwVbZCLH56Q046KWoiEhRaLynn8y608Hb176vrZoH
+         KTohYxRRdT6IA5ZxDYMJ8477XDQWTPlj4BRkmvkjxyHKdVebJghpjCdTq3cUJ7kPsmmY
+         XTns0LlP6OgATUI8m90sfn+ADFmQNS/2/4kXs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=e39cdydXyLR8RuoOLhJ0fbywsMBFLKrnu0fhJtzX8yM=;
-        b=SOdyAXJMZDZzdr8pOe1SlkHDjLTbnHGKPJ2LceePxIJM6hhoN4x6M48BH2wriraXxn
-         sndnnNpjPhN5k0lVahnR9X3F5GQuPHabrEYcfHqH3YXQz4UEOs7CIMxEKWGVGML1OanD
-         qYQ2/Yd4aXLN0IxK62Gt/WP0FWhqJEGQUa/1MPyiKdrGb5DPfWCTMcywJhkP0KvQQ240
-         os6EbyNTff76TlbSlEq+aKaWl9XohQ9lkzSaKi7q6VPUrV1846oQ6j/bFDb744Pa0ni9
-         OYMGxUcFT+8WQdLRNwB6e84ex0NP2NE59jJOMFV1DvTKQNPwzBHgZryU/CsmXrdb28bP
-         tukw==
-X-Gm-Message-State: APjAAAWMnDuMc2HtKhfALZ3yNOlN8nDfBT7dt0yLjAskvoiss8zT8W95
-        icbFbH18HG89fhU94b2SBkbbCIez6Ck=
-X-Google-Smtp-Source: APXvYqwvA5+q9htzXmACRkAFUn5ItQFtWvyhjISBt/jwVgH+iU2/VNwURUeo/qIzRexlyFjPzbylpw==
-X-Received: by 2002:a63:504c:: with SMTP id q12mr5821112pgl.117.1578679639364;
-        Fri, 10 Jan 2020 10:07:19 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id j17sm3727584pfa.28.2020.01.10.10.07.18
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q6RmY6iVo4NGP6Hg5M76hkN086tbBjjirfF+fQEc8us=;
+        b=FyAblHON8nbGOvfEhqTZB0N49osQ9XMo2TrbumVvvjSWWFpeIQDDVROhkXMU8aPIRM
+         EeqLVLSu9noVUbNGwVFWk6s5sig5BII88n2o83qoGjpkWDAgOFmvnXf1XHIx8MnnCeUu
+         D7laF6OO8vy4qG7v1jCQgMkcjKpYJQ92DQ/MY3ALnAbZSJf4qddyfOYAXYUjCeEN8sYa
+         m/W5bubcRmo2k/s1qs7fGJuTXcbQNioPj1LU5QuzWB3rHs7OkeMpaNTKMZf67a4/qivk
+         N6JHXdV//6596ov0tZQnU87r2jSCjw13RLyjyYDjv9V7PV+l2TzJ1eUz6THv7n8NFlSj
+         73EA==
+X-Gm-Message-State: APjAAAWipYb9kPUTE/CNpvggIb9YUcsCxDSv+307QB/+RP3iqLNXJxeq
+        ED/oluBufhC07xtJpO7L9JUzlrGoiDM=
+X-Google-Smtp-Source: APXvYqw7UBr1UEaPKOgLqNfyLTxtUq9kJQOLWymnWoFuiJxBwWXfGBeJIJTh8UZG42ewV95moSRCjg==
+X-Received: by 2002:a19:cb54:: with SMTP id b81mr3405516lfg.188.1578688016610;
+        Fri, 10 Jan 2020 12:26:56 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id m189sm1578103lfd.92.2020.01.10.12.26.55
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jan 2020 10:07:18 -0800 (PST)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fix for 5.5-rc
-Message-ID: <4f9e9ba4-4963-52d3-7598-b406b3a4ed35@kernel.dk>
-Date:   Fri, 10 Jan 2020 11:07:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Fri, 10 Jan 2020 12:26:55 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id y1so2435308lfb.6
+        for <io-uring@vger.kernel.org>; Fri, 10 Jan 2020 12:26:55 -0800 (PST)
+X-Received: by 2002:ac2:5ec3:: with SMTP id d3mr3370517lfq.176.1578688015452;
+ Fri, 10 Jan 2020 12:26:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <4f9e9ba4-4963-52d3-7598-b406b3a4ed35@kernel.dk>
+In-Reply-To: <4f9e9ba4-4963-52d3-7598-b406b3a4ed35@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 10 Jan 2020 12:26:39 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgLX0Axk+3Gd6YeRcXkW6GHOk0_CSpp3fJGgmmbN8_BMA@mail.gmail.com>
+Message-ID: <CAHk-=wgLX0Axk+3Gd6YeRcXkW6GHOk0_CSpp3fJGgmmbN8_BMA@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring fix for 5.5-rc
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On Fri, Jan 10, 2020 at 10:07 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Single fix for this series, fixing a regression with the short read
+> handling. This just removes it, as it cannot safely be done for all
+> cases.
 
-Single fix for this series, fixing a regression with the short read
-handling. This just removes it, as it cannot safely be done for all
-cases.
+Hmm. The io_uring list is apparently not on lore. So you don't get
+pr-tracker-bot responses.
 
-Please pull!
+Maybe add lkml to the cc for pull requests unconditionally?
 
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.5-2020-01-10
-
-
-----------------------------------------------------------------
-Jens Axboe (1):
-      io_uring: remove punt of short reads to async context
-
- fs/io_uring.c | 12 ------------
- 1 file changed, 12 deletions(-)
-
--- 
-Jens Axboe
-
+            Linus

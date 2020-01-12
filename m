@@ -2,51 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E514138852
-	for <lists+io-uring@lfdr.de>; Sun, 12 Jan 2020 22:21:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EC2413885C
+	for <lists+io-uring@lfdr.de>; Sun, 12 Jan 2020 22:40:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733179AbgALVVu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 12 Jan 2020 16:21:50 -0500
-Received: from mail-lj1-f179.google.com ([209.85.208.179]:34908 "EHLO
-        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732825AbgALVVu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jan 2020 16:21:50 -0500
-Received: by mail-lj1-f179.google.com with SMTP id j1so7821257lja.2
-        for <io-uring@vger.kernel.org>; Sun, 12 Jan 2020 13:21:49 -0800 (PST)
+        id S1727128AbgALVkc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 12 Jan 2020 16:40:32 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:32835 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727222AbgALVkc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jan 2020 16:40:32 -0500
+Received: by mail-lj1-f193.google.com with SMTP id y6so7887692lji.0;
+        Sun, 12 Jan 2020 13:40:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=GPKsU47+7R5NyejRDCLqSH2KFbmxbaUItrvOjFjF5gU=;
-        b=vb+exK57vTx7EqKVKFvMUSLIbm7cw7fVf92gumMp/iHOZfZnLpH6n7EryD1VKOScKA
-         AyrlkKva1IG0QIrkRA5/a3B8txgZdfFrJGycOsocUUFRLr9jgLrKw9FX3N35tvp2OofN
-         bUhs5MYPzAa0djkaDA5G9oRnN4/NLqTqoghFklJ235+QX6DlQ5P2dAsx7BhFnqZ54/RE
-         6xpeDPddS1CNwqSR5P7Aha1cF8edev+U2gQUpVkwiKM8D1nYzV9IBnQuDVO91+WWWoy9
-         1kxzujswTbJ1pl4ikR8cb1i2muySFqwGcb7dvpnABYguX2z4bCQpsqH+K0ZEEU6MZ2R/
-         ju7g==
+        bh=Jyl4d4zHXjE2fzyvfEeWIdPg0Qhn3KHMynJV0N+3WYU=;
+        b=ZSe3IixKEAgrG7hyvrnHaC91mNXbJeKLlqhK7ohILkkyIRlwlq+bVIZfS8XlN7LrZ+
+         hOWJTRgZ2GW//CgbsUna8RLTEobNJiD5OXx9ujkNG2FItxw/Ou4/Os1jVSAWXEXiNyn7
+         YJXALmZHFhPEey3on5XddyoVUxj7RK5/sJd2/MICnMpe9CPtaY2k4iCKWXalcu2iH2in
+         2IITkshRnthtMQgq4bAxo0B87LabnV1/q2727qWFka1OAbwwJ7PR0o327VHXJRH1NeG6
+         hiDZLTdHxSj6KJvO3mcD4AInD5C6nwf2wC/t2NyN006AU6jOF4BXrbwVDeYFPWpibc9p
+         iz8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=GPKsU47+7R5NyejRDCLqSH2KFbmxbaUItrvOjFjF5gU=;
-        b=foD2SixqJCPTqvcTcPd1auEiNtMQMwXl+qz19M7ZRvhZ90pZU+xQF8HZGMjfxDtGYX
-         DZ45GlZ7UZXkHK7H633OI1AbSkzUKAMPL4r6ToezZYnYrZ+A8OfkUgnHfqMr14KQIw0x
-         u5vLiLYPlGQd9IAMddWwb/1LMFbGENF7r9vuiDvwuH+JoCfpux8jKV7riC2VkhChf3hI
-         OD+uqchsnqr3If7G7THwIV6J83MuSjIsao5hddGsz9Wk5kT0Sqs+cy/DZErYMge/DvTI
-         pAw35Tt6US3h0DCziBvpVrHlg+ocJgmzC1qugxTYbgLgNEsdYI3lhHntPmKjXGJrF7mm
-         /oeA==
-X-Gm-Message-State: APjAAAW77zEA29BZOnvIGU/C0asJXNGpadSZJbIww/uxceNOmkfk8PVF
-        LkC/msK/KDWqSww6uoPffCPZTSXL
-X-Google-Smtp-Source: APXvYqzfAUuTVsvvrP56h1a9D/TRzrWvsBBn7mudoIiHuDWJLvWDJ2Jlrk4H/aVhVeK3XUk0snQu4w==
-X-Received: by 2002:a2e:9d0f:: with SMTP id t15mr8718404lji.171.1578864107939;
-        Sun, 12 Jan 2020 13:21:47 -0800 (PST)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to;
+        bh=Jyl4d4zHXjE2fzyvfEeWIdPg0Qhn3KHMynJV0N+3WYU=;
+        b=dXw1gpQ+vZe0XvW0eVmsNPBf7QjquiIAk1/p50Nz06dt4jVNxbLizV9kqyLOdQHAKo
+         fNnvkHHVP0qEESM4s5Ktq0E/uybRyCNccI0fi2ubv3N/dIWgAws2o2C9AU4NJOPBzoUQ
+         qLNXNosLTb1sEVz82HAsKc7QLm192aRuRodcKeaw4CSjJAtWOidmjSTU7yW++CkmYDb+
+         NaBbHObbRzjP75wchBXWpyoOaqjR7uRRaJvfUOXv3oiqMuSt1JWG3VHoSZj7OEe36vce
+         Ewp1okaeqM5rMKXLkBOwPRbbFHzzLedfyIZK1GtpYwu0NioSDAOd21JGwbk1aGrPX8LU
+         nvEg==
+X-Gm-Message-State: APjAAAWd2nun9j8rHmxfA/llc4Q1QDtdkAb254KBarbvAXHHNjbe3Pt5
+        mnfbyTqaMsyrEY7bnHglelWZ0dxB
+X-Google-Smtp-Source: APXvYqxxco/ezPHxDYaiyAgPOOOMkEsSBSVAT1MhpQInb2CmlvYfR2lVgbzIyCvs0xMAxg8PfGd9WQ==
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr8900103ljk.201.1578865229080;
+        Sun, 12 Jan 2020 13:40:29 -0800 (PST)
 Received: from [192.168.43.115] ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id q26sm4622031lfb.26.2020.01.12.13.21.43
+        by smtp.gmail.com with ESMTPSA id z13sm4687427lfi.69.2020.01.12.13.40.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Jan 2020 13:21:47 -0800 (PST)
-To:     Mark Papadakis <markuspapadakis@icloud.com>,
-        io-uring@vger.kernel.org
-References: <CBBC10BD-9497-4248-9E6A-AF2DE788E401@icloud.com>
+        Sun, 12 Jan 2020 13:40:28 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20200110154739.2119-1-axboe@kernel.dk>
+ <20200110154739.2119-4-axboe@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -91,94 +92,203 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: Feature: zero-copy splice API/opcode
-Message-ID: <457632cf-614c-ac55-b869-39b50a61e1fd@gmail.com>
-Date:   Mon, 13 Jan 2020 00:21:04 +0300
+Subject: Re: [PATCH 3/3] io_uring: add IORING_OP_MADVISE
+Message-ID: <a9a6be4f-2d81-7634-a2f5-38341f718a7e@gmail.com>
+Date:   Mon, 13 Jan 2020 00:39:46 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <CBBC10BD-9497-4248-9E6A-AF2DE788E401@icloud.com>
+In-Reply-To: <20200110154739.2119-4-axboe@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="Uozf36OHpdV8rWpAPZhSwjfPluBM7XOBp"
+ boundary="TnaMNkjdr2jxx9mkkbIg3uf04PlhI8t8E"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Uozf36OHpdV8rWpAPZhSwjfPluBM7XOBp
-Content-Type: multipart/mixed; boundary="eZlxHQrl51HcwXqKQsC06GFbHZwSz0OQV";
+--TnaMNkjdr2jxx9mkkbIg3uf04PlhI8t8E
+Content-Type: multipart/mixed; boundary="28z4doOrSDfZi7mZ8O7rPeprdWzFB7fqi";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
-To: Mark Papadakis <markuspapadakis@icloud.com>, io-uring@vger.kernel.org
-Message-ID: <457632cf-614c-ac55-b869-39b50a61e1fd@gmail.com>
-Subject: Re: Feature: zero-copy splice API/opcode
-References: <CBBC10BD-9497-4248-9E6A-AF2DE788E401@icloud.com>
-In-Reply-To: <CBBC10BD-9497-4248-9E6A-AF2DE788E401@icloud.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Message-ID: <a9a6be4f-2d81-7634-a2f5-38341f718a7e@gmail.com>
+Subject: Re: [PATCH 3/3] io_uring: add IORING_OP_MADVISE
+References: <20200110154739.2119-1-axboe@kernel.dk>
+ <20200110154739.2119-4-axboe@kernel.dk>
+In-Reply-To: <20200110154739.2119-4-axboe@kernel.dk>
 
---eZlxHQrl51HcwXqKQsC06GFbHZwSz0OQV
+--28z4doOrSDfZi7mZ8O7rPeprdWzFB7fqi
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 09/01/2020 17:58, Mark Papadakis wrote:
-> Greetings,
->=20
-> I =E2=80=98ve been trying to replicate the benefits provided by sendfil=
-e() using e.g O_DIRECT access, together with IOSQE_IO_LINK in SQE flags a=
-nd MSG_ZEROCOPY, but it doesn=E2=80=99t appear to work. Other ideas didn=E2=
-=80=99t work either.
->=20
-> I would really appreciate a sendfile like SQE opcode, but maybe some so=
-rt of generic DMA/zero-copy based opcode based on splice semantics could =
-be implemented, so that e.g a vmsplice() like alternative could also work=
-=2E
->=20
-Sounds interesting, I'll look into this. First, I want to dig a bit into
-kernel's zero-copy and get an idea how to cover all use cases with a sing=
-le
-opcode, and that's probably keeping in mind p2p.
+On 10/01/2020 18:47, Jens Axboe wrote:
+> This adds support for doing madvise(2) through io_uring. We assume that=
 
-The obvious nuisance from  perspective is that it needs 2 fds. Any other =
-concerns?
+> any operation can block, and hence punt everything async. This could be=
 
+> improved, but hard to make bullet proof. The async punt ensures it's
+> safe.
 >=20
-> (That would be the last remaining bit of functionality missing from io_=
-uring, now that Jens has implemented support for IOSQE_ASYNC, IORING_REGI=
-STER_EVENTFD_ASYNC and for managing epoll FDs, for enabling support for i=
-o_uring on https://github.com/phaistos-networks/TANK ).
+I don't like that it share structs/fields names with fadvise. E.g. madvis=
+e's
+context is called struct io_fadvise. Could it at least have fadvise_advic=
+e filed
+in struct io_uring_sqe? io_uring parts of the patchset look good.
+
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/io_uring.c                 | 56 ++++++++++++++++++++++++++++++++++-=
+
+>  include/uapi/linux/io_uring.h |  1 +
+>  2 files changed, 56 insertions(+), 1 deletion(-)
 >=20
-> Thank you,
-> @markpapadakis
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 0b200a7d4ae0..378f97cc2bf2 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -403,7 +403,10 @@ struct io_files_update {
+> =20
+>  struct io_fadvise {
+>  	struct file			*file;
+> -	u64				offset;
+> +	union {
+> +		u64			offset;
+> +		u64			addr;
+> +	};
+>  	u32				len;
+>  	u32				advice;
+>  };
+> @@ -682,6 +685,10 @@ static const struct io_op_def io_op_defs[] =3D {
+>  		/* IORING_OP_FADVISE */
+>  		.needs_file		=3D 1,
+>  	},
+> +	{
+> +		/* IORING_OP_MADVISE */
+> +		.needs_mm		=3D 1,
+> +	},
+>  };
+> =20
+>  static void io_wq_submit_work(struct io_wq_work **workptr);
+> @@ -2448,6 +2455,42 @@ static int io_openat(struct io_kiocb *req, struc=
+t io_kiocb **nxt,
+>  	return 0;
+>  }
+> =20
+> +static int io_madvise_prep(struct io_kiocb *req, const struct io_uring=
+_sqe *sqe)
+> +{
+> +#if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
+> +	if (sqe->ioprio || sqe->buf_index || sqe->off)
+> +		return -EINVAL;
+> +
+> +	req->fadvise.addr =3D READ_ONCE(sqe->addr);
+> +	req->fadvise.len =3D READ_ONCE(sqe->len);
+> +	req->fadvise.advice =3D READ_ONCE(sqe->fadvise_advice);
+> +	return 0;
+> +#else
+> +	return -EOPNOTSUPP;
+> +#endif
+> +}
+> +
+> +static int io_madvise(struct io_kiocb *req, struct io_kiocb **nxt,
+> +		      bool force_nonblock)
+> +{
+> +#if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
+> +	struct io_fadvise *fa =3D &req->fadvise;
+> +	int ret;
+> +
+> +	if (force_nonblock)
+> +		return -EAGAIN;
+> +
+> +	ret =3D do_madvise(fa->addr, fa->len, fa->advice);
+> +	if (ret < 0)
+> +		req_set_fail_links(req);
+> +	io_cqring_add_event(req, ret);
+> +	io_put_req_find_next(req, nxt);
+> +	return 0;
+> +#else
+> +	return -EOPNOTSUPP;
+> +#endif
+> +}
+> +
+>  static int io_fadvise_prep(struct io_kiocb *req, const struct io_uring=
+_sqe *sqe)
+>  {
+>  	if (sqe->ioprio || sqe->buf_index || sqe->addr)
+> @@ -3769,6 +3812,9 @@ static int io_req_defer_prep(struct io_kiocb *req=
+,
+>  	case IORING_OP_FADVISE:
+>  		ret =3D io_fadvise_prep(req, sqe);
+>  		break;
+> +	case IORING_OP_MADVISE:
+> +		ret =3D io_madvise_prep(req, sqe);
+> +		break;
+>  	default:
+>  		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+>  				req->opcode);
+> @@ -3973,6 +4019,14 @@ static int io_issue_sqe(struct io_kiocb *req, co=
+nst struct io_uring_sqe *sqe,
+>  		}
+>  		ret =3D io_fadvise(req, nxt, force_nonblock);
+>  		break;
+> +	case IORING_OP_MADVISE:
+> +		if (sqe) {
+> +			ret =3D io_madvise_prep(req, sqe);
+> +			if (ret)
+> +				break;
+> +		}
+> +		ret =3D io_madvise(req, nxt, force_nonblock);
+> +		break;
+>  	default:
+>  		ret =3D -EINVAL;
+>  		break;
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_urin=
+g.h
+> index f87d8fb42916..7cb6fe0fccd7 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -88,6 +88,7 @@ enum {
+>  	IORING_OP_READ,
+>  	IORING_OP_WRITE,
+>  	IORING_OP_FADVISE,
+> +	IORING_OP_MADVISE,
+> =20
+>  	/* this goes last, obviously */
+>  	IORING_OP_LAST,
 >=20
 
 --=20
 Pavel Begunkov
 
 
---eZlxHQrl51HcwXqKQsC06GFbHZwSz0OQV--
+--28z4doOrSDfZi7mZ8O7rPeprdWzFB7fqi--
 
---Uozf36OHpdV8rWpAPZhSwjfPluBM7XOBp
+--TnaMNkjdr2jxx9mkkbIg3uf04PlhI8t8E
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl4bjcUACgkQWt5b1Glr
-+6UEvhAArrFhTQrYIN2HN7qdpKQj1JyRZt+ncf7HVilrcsrkvPSMRLjVu/UdzYxX
-fzVF0GX1w6G68/l4EfYX/XHuZ7RBcsLpi3hV48SvfJ8ifzFWZJeKtjcWs12AXicb
-CV3pADiV4+SdRtFbACV8YAyzDt4s8OUnuK+nXGisCW+R1ichGvY4HFF38+r3JD8V
-k3+zPWwGFFl76LrBLjJ8x/z80PDDoN3btA0/WjBdKZTM7230sNLqnQV3KF6sy5hD
-ZaprqQkRNQCRHnLtUXBnZo1zfsuK/1tLcEvig4kl41LltQXcLXueRFLUb7TnN/sX
-ApJAJYYtIErCj9Vfq85J9WrrwTzpshusVukZG853fGOSiXiOd8ozkyz+YjHm3sU2
-aQO6QaSEvCidw+FC+oLoT0H9mDzg5ritSfdG7ed8Y+Lmx6Gse6k3Fx9C2FcesB1y
-QM1m17GsEyiWSsYVDG5wFvIvgvAFvBOOKOOyQcl41dH8BMgYCNA3+DxYl0n9Ptme
-ZOgvuRsVljecDuJZogc5R8poHHTZ8I6sHkb84FhqVqR/WktbHTzWOhTelvvdCw0L
-zRLCsbxgsAb88F2xT5JTRYCm1e+vj+/rz1X/tG83mhak4iIlJs5NZmihWHcYLrtX
-Yoe7yhBcPoepf7QgmeSHdBMtOrpFPvGEbxy+xPLeN8ZG8DA1uX4=
-=80sK
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl4bkigACgkQWt5b1Glr
++6WObw//YAQdVzXMcJJKxco0yWIVtpcOiE+UPoDSCJ2IDIjo7WDj17fOWXwhsnBC
+x3IYOqOOGpeTpHQ5Bzhq+6U3dZShEc1Tf/vEtIwVRpupoFpklmULLIwwMcyxnJIF
+n/yo8mi1MtdjzZKiTjeFyWXGx7baLSDVv0ZPZDk0CdOearbrfVIsywXMlMjNy89h
+s66o+kBP/WiO+jIumZkZrcD0g67hSnh/WzC2Y3NBCo6Yka14R4nmeOQDG4MSBkFK
+P+CusaSoaCdenfuPkYhk6JJ8tq7XoR09FtS0FMOWjNH8fYkpdHvQxy1R+a9ZkMu/
+TBhlWxH81fi3sDaS8LBHEnDD5X6v2lbWmysdCVv6Ocd72ZlavqduGrwnIDgiIbbs
+jwgqvc8y3GFa+/mEfK4q9atCCGpcPQuB7wpx/YftVAVRkS2sAlJ6bLRSu0ygsEiE
+2ArhtaUM+KITKh4UM2yX3s7yvRz7ovqGbHSaFmlj9d2QX0k05MWi6aodtTFXgEOn
+P4siXkzjbK9Z1GtCcWamxqHCDPksgBvauXs8VlDbORtnhsg/1UyKaw+PkoCjRO+j
+3BWmbFnKpt0qEucH26DB8VxgzFGj/tcAj1QXUOy3JD2iVhMYpbv/WVtiU5DxW9ng
+zXXNc6mwP8eblwhtT16k87ITaggpNwCWxh6xBTzL7UEqIaWs4zc=
+=fscM
 -----END PGP SIGNATURE-----
 
---Uozf36OHpdV8rWpAPZhSwjfPluBM7XOBp--
+--TnaMNkjdr2jxx9mkkbIg3uf04PlhI8t8E--

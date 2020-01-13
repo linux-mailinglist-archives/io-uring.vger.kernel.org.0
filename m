@@ -2,84 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF15C138CAE
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2020 09:14:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F561396DF
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2020 17:58:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbgAMIOl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Jan 2020 03:14:41 -0500
-Received: from mail02.vodafone.es ([217.130.24.81]:30067 "EHLO
-        mail02.vodafone.es" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728695AbgAMIOk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Jan 2020 03:14:40 -0500
-IronPort-SDR: yXj0HwwMYAm3snri15SMcL8wvYjbwhm9SeXXAo//p4CA1DFnAnZvsj1VDPF+DNowpUZY8UMqY5
- Y1GBhqGA1OdQ==
-IronPort-PHdr: =?us-ascii?q?9a23=3A3bpCaxwmN9IVas3XCy+O+j09IxM/srCxBDY+r6?=
- =?us-ascii?q?Qd2+IRIJqq85mqBkHD//Il1AaPAdyAraga2qGP6vGocFdDyK7JiGoFfp1IWk?=
- =?us-ascii?q?1NouQttCtkPvS4D1bmJuXhdS0wEZcKflZk+3amLRodQ56mNBXdrXKo8DEdBA?=
- =?us-ascii?q?j0OxZrKeTpAI7SiNm82/yv95HJbAhEmTSwbalsIBi3qQjdudQajZZmJ60s1h?=
- =?us-ascii?q?bHv3xEdvhMy2h1P1yThRH85smx/J5n7Stdvu8q+tBDX6vnYak2VKRUAzs6PW?=
- =?us-ascii?q?874s3rrgTDQhCU5nQASGUWkwFHDBbD4RrnQ5r+qCr6tu562CmHIc37SK0/VD?=
- =?us-ascii?q?q+46t3ThLjlSELOzkk/m7LkMNwiaJarAu/qhx42Y7UeIaVNOBkcaPBY9wWXH?=
- =?us-ascii?q?ROXsBIWyFdHoO8c5EAAPYBPelGqonyuV0OrQenCQayAuPj0zhGhnjw3aIk0+?=
- =?us-ascii?q?UtCB/J3Ao9FN4KvnnYsMn5OKIUXOuozqfH0C/DYutY1zn98ojGbBMvr+yDUr?=
- =?us-ascii?q?1sfsTc0lUvGgHZgVmMtYDpIy2Z2+IQuGab9epgUuevhnY9pQ5vvjig2N0sgZ?=
- =?us-ascii?q?TJiYISzFDE+jhyzYEtJdKmVE50f8SkEZVXtyGcOIt7WcMiQ3pztykm0LEJpZ?=
- =?us-ascii?q?m7fC0QxJQnxB7ScvqKeJWL7BL7TOudPyp0iXB/dL6iiRu+7VKsxvPzW8Wu3l?=
- =?us-ascii?q?tHrixImcTWuH8XzRzc8M2HR+N4/kemxDmAyRje6vpBIUAojarbLIMhwqIomp?=
- =?us-ascii?q?oTr0vDGij2lV3zjKCMd0Uk/vKo5PrjYrn6qZKQLZF0igbjPas0lMy/BuI4PR?=
- =?us-ascii?q?YUU2eF4uSwzLzj/UvnT7VWlvA6jLTVvZLAKcgGqKO1HxVZ3pgs5hqlATqr0M?=
- =?us-ascii?q?wUnXwdI1JEfBKHgZLpO1bLIP3gFfewnUisnylxx/HIOb3hBJrNI2PDkLf6Zr?=
- =?us-ascii?q?ly91RQxxY0zdBa/Z5UCrIBLOrpWkDtrNzYEgM5MwuszubmD9Vxz54eWXiOAq?=
- =?us-ascii?q?+fP6PfqkGI5u0xLOmWfoMVuyjyK+Ij5/HwiX81g1gdfbOm3chfVHftH/MjPl?=
- =?us-ascii?q?+YZ3XEnNgMCyEJsxA4Qeisj0eNAgRef3KjY6Vp3jwnBZjuMoDFScj5mLGd0T?=
- =?us-ascii?q?2kGZtZZmNGEVqHOXjtfoSAHfwLbXTBDNVml2k8WKSsUcce0heh/FvixqZqNP?=
- =?us-ascii?q?XT/CIwtYnp355+4OiVlRJkpm88NNiUz2zYFjI8pWgPXTJjh/gnrA=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HqbQAyJhxeeiMYgtkUBjMYGwEBAQE?=
- =?us-ascii?q?BAQEFAQEBEQEBAwMBAQGBewIBARcBAYEjAgmBTVIgEpNQgU0fg0OLY4EAgx4?=
- =?us-ascii?q?VhggTDIFbDQEBAQEBGxoCAQGEQE4BF4ESJDoEDQIDDQEBBQEBAQEBBQQBAQI?=
- =?us-ascii?q?QAQEJDQsEK4VKgh0MHgEEAQEBAQMDAwEBDAGDXQcZDzlKDEABDgFThU8BATO?=
- =?us-ascii?q?FI5cyAYQEiQANDQKFHYI1BAqBCYEaI4E0AgEBjBcagUE/gSMhgisIAYIBgn8?=
- =?us-ascii?q?BEgFsgkiCWQSNQhIhgQeIKZgXgkEEdolMjAKCNwEPiAGEMQMQgkUPgQmIA4R?=
- =?us-ascii?q?OgX2jN1eBDA16cTMagiYagSBPGA2WSECBFhACT4lXgjIBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2HqbQAyJhxeeiMYgtkUBjMYGwEBAQEBAQEFAQEBEQEBA?=
- =?us-ascii?q?wMBAQGBewIBARcBAYEjAgmBTVIgEpNQgU0fg0OLY4EAgx4VhggTDIFbDQEBA?=
- =?us-ascii?q?QEBGxoCAQGEQE4BF4ESJDoEDQIDDQEBBQEBAQEBBQQBAQIQAQEJDQsEK4VKg?=
- =?us-ascii?q?h0MHgEEAQEBAQMDAwEBDAGDXQcZDzlKDEABDgFThU8BATOFI5cyAYQEiQAND?=
- =?us-ascii?q?QKFHYI1BAqBCYEaI4E0AgEBjBcagUE/gSMhgisIAYIBgn8BEgFsgkiCWQSNQ?=
- =?us-ascii?q?hIhgQeIKZgXgkEEdolMjAKCNwEPiAGEMQMQgkUPgQmIA4ROgX2jN1eBDA16c?=
- =?us-ascii?q?TMagiYagSBPGA2WSECBFhACT4lXgjIBAQ?=
-X-IronPort-AV: E=Sophos;i="5.69,428,1571695200"; 
-   d="scan'208";a="323927844"
-Received: from mailrel04.vodafone.es ([217.130.24.35])
-  by mail02.vodafone.es with ESMTP; 13 Jan 2020 09:14:38 +0100
-Received: (qmail 12196 invoked from network); 12 Jan 2020 03:08:12 -0000
-Received: from unknown (HELO 192.168.1.3) (quesosbelda@[217.217.179.17])
-          (envelope-sender <peterwong@hsbc.com.hk>)
-          by mailrel04.vodafone.es (qmail-ldap-1.03) with SMTP
-          for <io-uring@vger.kernel.org>; 12 Jan 2020 03:08:12 -0000
-Date:   Sun, 12 Jan 2020 04:08:11 +0100 (CET)
-From:   Peter Wong <peterwong@hsbc.com.hk>
-Reply-To: Peter Wong <peterwonghkhsbc@gmail.com>
-To:     io-uring@vger.kernel.org
-Message-ID: <26471064.110373.1578798492063.JavaMail.cash@217.130.24.55>
-Subject: Investment opportunity
+        id S1728674AbgAMQ6M (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Jan 2020 11:58:12 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35084 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727331AbgAMQ6M (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Jan 2020 11:58:12 -0500
+Received: by mail-io1-f66.google.com with SMTP id h8so10583373iob.2
+        for <io-uring@vger.kernel.org>; Mon, 13 Jan 2020 08:58:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=n2qCWY9dDm8azp3DnmT/BcaCngFCq3W2JQHBtzBAlYY=;
+        b=eRQXTp5+Fdsol+TwBhKVu36c+xEsubHFLEjWy9QFVzU1tB6qIF8pVl20WHhmQVxRFC
+         yZMw4hZJpVz1PjtQbwHArQY38aNPdjVMS3CXL+JfvCw7iXwiZ41JMzuSjtpp7/RSUv25
+         9vlS42r4EFT/QDwNGKJ9WLEgRuxUvroVRjD/tG9aHzVZVjzbZqEwyTm8LfqfyT6550Zd
+         Al1MTC1QA2+JfmQQPqAHN/SHpOfgI1HXxP75fLNYbB+zSYPRRxqY7ACrh3Xj70tA6lQN
+         Ef7nr8UozdVnu1wEdVOFSmQhtZVQqz9o36szU/uaAKGdLLb9jDo4OgzDl2FRFVJk8rU1
+         4/Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n2qCWY9dDm8azp3DnmT/BcaCngFCq3W2JQHBtzBAlYY=;
+        b=WOrh2kJ3H8srvmH7isKjL3EHUYYc0Fd24ywmLcwX3+ILtC1FtY+r++o6xe4m60TNC2
+         X5DiLa5etdrVWaW5xDdxI+1LWNWtsVjd7KcrAtDO3+/p0DgAxHVt7wXfqmv9VfSfcRo5
+         M43hev2yHEWVCzS1SPTP7YFvd4dA3Sj2TrH1LQzkAjZnqqTylK9aciXxqDO5BOihpkAJ
+         2dDzAa+H3nXgQf0pw9mzgyAQNZCSSNYbmY5L2kh/5r+PLr/u6tY3DrqcXLhTz0OfNZOE
+         HaD7nV5VbyDajmmVAcSfdbck3bfmF7LZKlI7/Tm2RZRmCBbpJTzQ0NoTkYw8o2lDHGc1
+         3FGQ==
+X-Gm-Message-State: APjAAAUF/YfLaHGibQQCqUqN4zHj+3dO1OtqdZ1l61hD8wZplilppHxV
+        DL/Rby1FE4GoJqRPTTkof5Pr6x0A0WM=
+X-Google-Smtp-Source: APXvYqwyrhFsN2dBByOa3+7fTRrG+lp40kkZ9OndzVXmXHA7PqNVLg5aZ5lupvygNfFAdzHsiBTTaQ==
+X-Received: by 2002:a5e:920a:: with SMTP id y10mr13634213iop.292.1578934691437;
+        Mon, 13 Jan 2020 08:58:11 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id m24sm2875133ioc.37.2020.01.13.08.58.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jan 2020 08:58:10 -0800 (PST)
+Subject: Re: [PATCH 3/3] io_uring: add IORING_OP_MADVISE
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20200110154739.2119-1-axboe@kernel.dk>
+ <20200110154739.2119-4-axboe@kernel.dk>
+ <a9a6be4f-2d81-7634-a2f5-38341f718a7e@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7bf2e663-eb82-d8d5-304b-d06e183de235@kernel.dk>
+Date:   Mon, 13 Jan 2020 09:58:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <a9a6be4f-2d81-7634-a2f5-38341f718a7e@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Greetings,
-Please read the attached investment proposal and reply for more details.
-Are you interested in loan?
-Sincerely: Peter Wong
+On 1/12/20 2:39 PM, Pavel Begunkov wrote:
+> On 10/01/2020 18:47, Jens Axboe wrote:
+>> This adds support for doing madvise(2) through io_uring. We assume that
+>> any operation can block, and hence punt everything async. This could be
+>> improved, but hard to make bullet proof. The async punt ensures it's
+>> safe.
+>>
+> I don't like that it share structs/fields names with fadvise. E.g. madvise's
+> context is called struct io_fadvise. Could it at least have fadvise_advice filed
+> in struct io_uring_sqe? io_uring parts of the patchset look good.
+> 
+> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
+Thanks, I can add the separate union, not a big deal.
 
-
-
-----------------------------------------------------
-This email was sent by the shareware version of Postman Professional.
+-- 
+Jens Axboe
 

@@ -2,83 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 351E313DC5C
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2020 14:50:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C609E13DEC2
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2020 16:29:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbgAPNty (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jan 2020 08:49:54 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24066 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726084AbgAPNty (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jan 2020 08:49:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579182593;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=tW8QepJVzZQv/Ygdvwl07xvaRaFmGC5EBwa4NFuhNeM=;
-        b=Kat1ueh6URun3U1Gioba4aadsYehGLOvYzefcLU/PleyAhq0GxYRr0wxXuA0gW3XcuLotu
-        lcnOsJJFdykht33mkCXt3DG4OVLYPmjbzFPbZjajdVuWleJCKWVj5KKmc20fZ24TVCGOJP
-        ao8oC9G68RrktlFxypXayENsI2GhwK0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-92-jzdK0iVEON-09vfB4a5Ciw-1; Thu, 16 Jan 2020 08:49:50 -0500
-X-MC-Unique: jzdK0iVEON-09vfB4a5Ciw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1E9EC8DF704;
-        Thu, 16 Jan 2020 13:49:49 +0000 (UTC)
-Received: from steredhat.redhat.com (ovpn-117-242.ams2.redhat.com [10.36.117.242])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CF7AA860DA;
-        Thu, 16 Jan 2020 13:49:47 +0000 (UTC)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
+        id S1726343AbgAPP3J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jan 2020 10:29:09 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44454 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbgAPP3J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jan 2020 10:29:09 -0500
+Received: by mail-io1-f65.google.com with SMTP id b10so22174057iof.11
+        for <io-uring@vger.kernel.org>; Thu, 16 Jan 2020 07:29:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JJcFvW8HJdilHnnCk22v1SBtvRGSSS8XKcSjVtOnrIo=;
+        b=0s0D+UFaDYK6xrnqFY4RWZ85Cw7sAB42ZD2xHfNT4EsZ8JKtak1k8ZZJkGlzDu2xjs
+         vtiRoN3kZV35k2FNoji6lV3M3AXln6xx0pK6i1QWFcPPwk1zFP66wOQBx2kK/zDvHhqP
+         wJKpoeJBgZaKuLE3NQoKBI0Nk21N+Yda0ZXBE+ftxkdvzkhdDxnsYvHDhVcVMtfwf80A
+         SEMW5nm1fVcomadiPkmyRAoAMT58nuqIKsSvI7sj6dzPm7wkj89fWecNSQETVuwX1Psw
+         NH6k2NcvHyJJsBxf2A49ORcsV5O0eI1qiKcVaQUi+E8RIdKbSMzTsZWgLuZfgE4h8HjD
+         EV2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JJcFvW8HJdilHnnCk22v1SBtvRGSSS8XKcSjVtOnrIo=;
+        b=BIT3UDvjFLRshxERWhShdvc1IjSlroWv4IzgT4pHoVkwpmqD76lc8nZi6RtVjxTu17
+         YJIlWV7Rna0WO3I4AmzDOTcCn0YPXxPmAQtjF5OWFP3Na5u7yrZhJtYDkbkxjb+djeC7
+         2COOzGFAyjXI/0myMvfwFe4hmPIzIcXu3sWuEUhW8qZidgn3Lz9bcMTdftcAxcbZ75Ou
+         UDTO7by59afvjHS44+TOOecVfxS1SOHM/r3janiVGr43AjtQFkS+mZfayMAB5fbOPuQL
+         HRopG4vsljLe0NbT3HD8AnK2cHyNyvPXXlMmri5ykQBB77Ph3mXeg1icrto+5N1ceDyO
+         z7xA==
+X-Gm-Message-State: APjAAAWBIk4itt3nPDcty0qmrhEONrHhyvZiEiumI4+hac1GbYaB3I3Y
+        2U885YI07QY0fmVtwSbpz/WxsQ==
+X-Google-Smtp-Source: APXvYqyq+mjlgPuHivk2+TNQ161jCn6GCai4KGnDmwom0xMohe+U1BAqMlNQy9ae2riH2dgDMe5KUQ==
+X-Received: by 2002:a02:8587:: with SMTP id d7mr28917545jai.39.1579188548882;
+        Thu, 16 Jan 2020 07:29:08 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id b7sm2870279ioq.39.2020.01.16.07.29.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2020 07:29:08 -0800 (PST)
+Subject: Re: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
+To:     Stefano Garzarella <sgarzare@redhat.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
-Date:   Thu, 16 Jan 2020 14:49:46 +0100
-Message-Id: <20200116134946.184711-1-sgarzare@redhat.com>
+References: <20200116134946.184711-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2d2dda92-3c50-ee62-5ffe-0589d4c8fc0d@kernel.dk>
+Date:   Thu, 16 Jan 2020 08:29:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200116134946.184711-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_uring_poll() sets EPOLLOUT flag if there is space in the
-SQ ring, then we should wakeup threads waiting for EPOLLOUT
-events when we expose the new SQ head to the userspace.
+On 1/16/20 6:49 AM, Stefano Garzarella wrote:
+> io_uring_poll() sets EPOLLOUT flag if there is space in the
+> SQ ring, then we should wakeup threads waiting for EPOLLOUT
+> events when we expose the new SQ head to the userspace.
+> 
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> ---
+> 
+> Do you think is better to change the name of 'cq_wait' and 'cq_fasync'?
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
+I honestly think it'd be better to have separate waits for in/out poll,
+the below patch will introduce some unfortunate cacheline traffic
+between the submitter and completer side.
 
-Do you think is better to change the name of 'cq_wait' and 'cq_fasync'?
-
-Thanks,
-Stefano
----
- fs/io_uring.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 38b54051facd..5c6ff5f9e741 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3687,6 +3687,11 @@ static void io_commit_sqring(struct io_ring_ctx *c=
-tx)
- 		 * write new data to them.
- 		 */
- 		smp_store_release(&rings->sq.head, ctx->cached_sq_head);
-+
-+		if (wq_has_sleeper(&ctx->cq_wait)) {
-+			wake_up_interruptible(&ctx->cq_wait);
-+			kill_fasync(&ctx->cq_fasync, SIGIO, POLL_OUT);
-+		}
- 	}
- }
-=20
---=20
-2.24.1
+-- 
+Jens Axboe
 

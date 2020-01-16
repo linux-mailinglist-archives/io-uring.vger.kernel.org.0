@@ -2,45 +2,37 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9066F13FC48
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2020 23:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B392513FC69
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2020 23:50:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbgAPWmV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jan 2020 17:42:21 -0500
-Received: from hr2.samba.org ([144.76.82.148]:32806 "EHLO hr2.samba.org"
+        id S2387501AbgAPWuj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jan 2020 17:50:39 -0500
+Received: from hr2.samba.org ([144.76.82.148]:35218 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729994AbgAPWmV (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 16 Jan 2020 17:42:21 -0500
+        id S1729261AbgAPWui (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 16 Jan 2020 17:50:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
          s=42; h=Date:Message-ID:From:Cc:To;
-        bh=y7ZeN7qOiOwuC9mDEtlTkBp1hDuphrWtDa25YJMl65g=; b=HSKFotLqEWwa+FXBLKV1ILIbpv
-        UJ2VU7HnHsCfQynCz3UQ1yi5XQp/y76wCYLiNmNQW4P2g78UGtsJ5SExvsoapAYiEtXMk6HEN+pQi
-        5QxQp5h9tecf1Q1EFTbsGABUbITejRcTiFcXOPRMmfJ4OFBYIW0aEZNW/S+iZTJ8IFIAK4Btjlo7A
-        O7VfsAYcb7JXwD1vUpKUZRwB8AK5nkwRNmCsxbd0UKwPaycryWRYX8bhF1f1tadYr1D8iH4FujcyU
-        9qMXMlj7xwN8NUHWcUzT2sNBuchSWt9wDUPraX3V+69jJUP8p4U+FderQ2H+fnyFEreY2wR8TeKxZ
-        D8536p6MqVEzNFqANcuswzBVaZuO1PvcXJjyGGJ8psAPQpoMfbr46UPOr+ZzuXakSDPubK8bIY3Yj
-        BGFDBfRuLglny+uHM0UA32EjKOLwktYcPRmaxAfN63qbz2zxNC90WP6eraPCVHGW+wKbGOvu6kAEC
-        8YM7/JAy0upSSebLX7Q3rDIS;
+        bh=b7Ms9fQaxpz2HEUIgEkc6c8FY7vwppyCSnRi/edsMBI=; b=k2z0QsO6qssTgwySsruitIlglY
+        ftAhD9Odytyd6jR3YaRCUuJhvFmfdWbWxkNR7uBV6VV1t6s0PDICgULUpIbdT85dJT/5VPu/gSKw0
+        4H8VLWbe8seje1nIDU1WJz/Z3SdFVBnmoBa1XYcdkEd6wUz2Gl08Fpk0UfWScsdSOkYtrQZCE8hkb
+        kXsiAxIWbqJdronkAnzlQe/oNeP3I6H0nJAmKRAxfre9U8zuCfcu+1f60dHmG/Y9Mw95+9SjnzZs0
+        mgHquPLpJazxnCud0Wo6yStp+pxTzaN+uBiWI/epzCDHHpapiy8Tm8WiICx+YiPQbDhSQEvTz7lCR
+        EhkJiORvhkIwEXZlJIxcEi66K7WJ6xfPT+Fw3pL296b3DScLgy5FXvc/mmUxAzmUcSZiPL96QhVkX
+        jJupLUgviSk52BYbkBBiCqHhT/LjrKBr0QMByBKFlcJq04a+vwpnDEA0lc6JxcI91MKwkDYfKikQf
+        zlfHn2hRcHe/B3hzWiW+UIyT;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1isDqB-0004qE-H7; Thu, 16 Jan 2020 22:42:15 +0000
+        id 1isDyB-0004v1-PC; Thu, 16 Jan 2020 22:50:32 +0000
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
 References: <20200107170034.16165-1-axboe@kernel.dk>
- <20200107170034.16165-4-axboe@kernel.dk>
- <82a015c4-f5b9-7c85-7d80-78964cb0d82e@samba.org>
- <4ccb935c-7ff9-592f-8c27-0af3d38326d7@kernel.dk>
- <2afdd5a5-0eb5-8fba-58d1-03001abbab7e@samba.org>
- <9672da37-bf6f-ce2d-403c-5e2692c67782@kernel.dk>
- <d0f0e726-8e6f-aa43-07b6-fdb3b49ce1bc@samba.org>
- <d5a5dc20-7e11-8489-b9d5-c2cf8a4bdf4b@kernel.dk>
- <a0f1b3a0-9827-b3e1-da0c-a2b71151fd4e@samba.org>
- <0b8a0f70-c2de-1b1c-28d4-5c578a3534eb@kernel.dk>
- <d42d5abd-c87b-1d97-00f3-95460a81c527@samba.org>
- <7c97ddec-24b9-c88d-da7e-89aa161f1634@kernel.dk>
- <cbbebc78-3e3d-b12a-c2dc-9018d4e99c17@samba.org>
- <17dac99c-e3c5-0e50-c26d-c159c1e1724d@kernel.dk>
+ <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
+ <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
+ <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
+ <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
+ <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
 From:   Stefan Metzmacher <metze@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
@@ -355,257 +347,118 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  uWrtpKE+BrlhmZrZleospHp05F+oHuE7lrOg09g0SFdTigqSJNbN1R/pkPI5Q03GfbWipsd4
  iY0Rj0D34DQVeKAa4qUlOcBgX2D9VHRap9GKQRWs//egCueqDZNmIk3071aFV+BSiBSTZIIG
  t/YZOE37yKSj2rcCbqg=
-Subject: Re: [PATCH 3/6] io_uring: add support for IORING_OP_OPENAT
-Message-ID: <7a91c0ee-ee1c-bec4-98fd-a25664839423@samba.org>
-Date:   Thu, 16 Jan 2020 23:42:10 +0100
+Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
+Message-ID: <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
+Date:   Thu, 16 Jan 2020 23:50:27 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <17dac99c-e3c5-0e50-c26d-c159c1e1724d@kernel.dk>
+In-Reply-To: <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="TjF16TwNmqn6lFDGccTNnBjt05kZF2BPh"
+ boundary="6BKnqqpE6RQtq1EUA9aWUlzpDZiTmHMN1"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---TjF16TwNmqn6lFDGccTNnBjt05kZF2BPh
-Content-Type: multipart/mixed; boundary="W4BSpJHRLTZvpgPrUWKVV0gssbaIxJc3o";
+--6BKnqqpE6RQtq1EUA9aWUlzpDZiTmHMN1
+Content-Type: multipart/mixed; boundary="pLhhltEkJ9GJ44cjYaQVjijOSAcyWRRQR";
  protected-headers="v1"
 From: Stefan Metzmacher <metze@samba.org>
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Message-ID: <7a91c0ee-ee1c-bec4-98fd-a25664839423@samba.org>
-Subject: Re: [PATCH 3/6] io_uring: add support for IORING_OP_OPENAT
+Message-ID: <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
+Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
 References: <20200107170034.16165-1-axboe@kernel.dk>
- <20200107170034.16165-4-axboe@kernel.dk>
- <82a015c4-f5b9-7c85-7d80-78964cb0d82e@samba.org>
- <4ccb935c-7ff9-592f-8c27-0af3d38326d7@kernel.dk>
- <2afdd5a5-0eb5-8fba-58d1-03001abbab7e@samba.org>
- <9672da37-bf6f-ce2d-403c-5e2692c67782@kernel.dk>
- <d0f0e726-8e6f-aa43-07b6-fdb3b49ce1bc@samba.org>
- <d5a5dc20-7e11-8489-b9d5-c2cf8a4bdf4b@kernel.dk>
- <a0f1b3a0-9827-b3e1-da0c-a2b71151fd4e@samba.org>
- <0b8a0f70-c2de-1b1c-28d4-5c578a3534eb@kernel.dk>
- <d42d5abd-c87b-1d97-00f3-95460a81c527@samba.org>
- <7c97ddec-24b9-c88d-da7e-89aa161f1634@kernel.dk>
- <cbbebc78-3e3d-b12a-c2dc-9018d4e99c17@samba.org>
- <17dac99c-e3c5-0e50-c26d-c159c1e1724d@kernel.dk>
-In-Reply-To: <17dac99c-e3c5-0e50-c26d-c159c1e1724d@kernel.dk>
+ <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
+ <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
+ <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
+ <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
+ <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
+In-Reply-To: <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
 
---W4BSpJHRLTZvpgPrUWKVV0gssbaIxJc3o
+--pLhhltEkJ9GJ44cjYaQVjijOSAcyWRRQR
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Am 09.01.20 um 22:31 schrieb Jens Axboe:
-> On 1/9/20 3:40 AM, Stefan Metzmacher wrote:
->>>> I'm sorry, but I'm still unsure we're talking about the same thing
->>>> (or maybe I'm missing some basics here).
+Am 09.01.20 um 03:03 schrieb Jens Axboe:
+> On 1/8/20 6:02 PM, Jens Axboe wrote:
+>> On 1/8/20 4:05 PM, Stefan Metzmacher wrote:
+>>> Am 08.01.20 um 23:57 schrieb Jens Axboe:
+>>>> On 1/8/20 2:17 PM, Stefan Metzmacher wrote:
+>>>>> Am 07.01.20 um 18:00 schrieb Jens Axboe:
+>>>>>> Sending this out separately, as I rebased it on top of the work.op=
+enat2
+>>>>>> branch from Al to resolve some of the conflicts with the differenc=
+es in
+>>>>>> how open flags are built.
+>>>>>
+>>>>> Now that you rebased on top of openat2, wouldn't it be better to ad=
+d
+>>>>> openat2 that to io_uring instead of the old openat call?
 >>>>
->>>> My understanding of the io_uring_enter() is that it will execute as =
-much
->>>> non-blocking calls as it can without switching to any other kernel t=
-hread.
+>>>> The IORING_OP_OPENAT already exists, so it would probably make more =
+sense
+>>>> to add IORING_OP_OPENAT2 alongside that. Or I could just change it. =
+Don't
+>>>> really feel that strongly about it, I'll probably just add openat2 a=
+nd
+>>>> leave openat alone, openat will just be a wrapper around openat2 any=
+way.
 >>>
->>> Correct, any SQE that we can do without switching, we will.
->>>
->>>> And my fear is that openat will use get_current_cred() instead of
->>>> ctx->creds.
->>>
->>> OK, I think I follow your concern. So you'd like to setup the rings f=
-rom
->>> a _different_ user, and then later on use it for submission for SQEs =
-that
->>> a specific user. So sort of the same as our initial discussion, excep=
-t
->>> the mapping would be static. The difference being that you might setu=
-p
->>> the ring from a different user than the user that would be submitting=
- IO
->>> on it?
+>>> Great, thanks!
 >>
->> Our current (much simplified here) flow is this:
+>> Here:
 >>
->>   # we start as root
->>   seteuid(0);setegid(0);setgroups()...
->>   ...
->>   # we become the user555 and
->>   # create our desired credential token
->>   seteuid(555); seteguid(555); setgroups()...
->>   # Start an openat2 on behalf of user555
->>   openat2()
->>   # we unbecome the user again and run as root
->>   seteuid(0);setegid(0); setgroups()...
->>   ...
->>   # we become the user444 and
->>   # create our desired credential token
->>   seteuid(444); seteguid(444); setgroups()...
->>   # Start an openat2 on behalf of user444
->>   openat2()
->>   # we unbecome the user again and run as root
->>   seteuid(0);setegid(0); setgroups()...
->>   ...
->>   # we become the user555 and
->>   # create our desired credential token
->>   seteuid(555); seteguid(555); setgroups()...
->>   # Start an openat2 on behalf of user555
->>   openat2()
->>   # we unbecome the user again and run as root
->>   seteuid(0);setegid(0); setgroups()...
+>> https://git.kernel.dk/cgit/linux-block/log/?h=3Dfor-5.6/io_uring-vfs
 >>
->> It means we have to do about 7 syscalls in order
->> to open a file on behalf of a user.
->> (In reality we cache things and avoid set*id()
->> calls most of the time, but I want to demonstrate the
->> simplified design here)
->>
->> With io_uring I'd like to use a flow like this:
->>
->>   # we start as root
->>   seteuid(0);setegid(0);setgroups()...
->>   ...
->>   # we become the user444 and
->>   # create our desired credential token
->>   seteuid(444); seteguid(444); setgroups()...
->>   # we snapshot the credentials to the new ring for user444
->>   ring444 =3D io_uring_setup()
->>   # we unbecome the user again and run as root
->>   seteuid(0);setegid(0);setgroups()...
->>   ...
->>   # we become the user555 and
->>   # create our desired credential token
->>   seteuid(555); seteguid(555); setgroups()...
->>   # we snapshot the credentials to the new ring for user555
->>   ring555 =3D io_uring_setup()
->>   # we unbecome the user again and run as root
->>   seteuid(0);setegid(0);setgroups()...
->>   ...
->>   # Start an openat2 on behalf of user555
->>   io_uring_enter(ring555, OP_OPENAT2...)
->>   ...
->>   # Start an openat2 on behalf of user444
->>   io_uring_enter(ring444, OP_OPENAT2...)
->>   ...
->>   # Start an openat2 on behalf of user555
->>   io_uring_enter(ring555, OP_OPENAT2...)
->>
->> So instead of constantly doing 7 syscalls per open,
->> we would be down to just at most one. And I would assume
->> that io_uring_enter() would do the temporary credential switch
->> for me also in the non-blocking case.
+>> Not tested yet, will wire this up in liburing and write a test case
+>> as well.
 >=20
-> OK, thanks for spelling the use case out, makes it easier to understand=
-
-> what you need in terms of what we currently can't do.
->=20
->>> If so, then we do need something to support that, probably an
->>> IORING_REGISTER_CREDS or similar. This would allow you to replace the=
-
->>> creds you currently have in ctx->creds with whatever new one.
->>
->> I don't want to change ctx->creds, but I want it to be used consistent=
-ly.
->>
->> What I think is missing is something like this:
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 32aee149f652..55dbb154915a 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -6359,10 +6359,27 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int,
->> fd, u32, to_submit,
->>                 struct mm_struct *cur_mm;
->>
->>                 mutex_lock(&ctx->uring_lock);
->> +               if (current->mm !=3D ctx->sqo_mm) {
->> +                       // TODO: somthing like this...
->> +                       restore_mm =3D current->mm;
->> +                       use_mm(ctx->sqo_mm);
->> +               }
->>                 /* already have mm, so io_submit_sqes() won't try to
->> grab it */
->>                 cur_mm =3D ctx->sqo_mm;
->> +               if (current_cred() !=3D ctx->creds) {
->> +                       // TODO: somthing like this...
->> +                       restore_cred =3D override_creds(ctx->creds);
->> +               }
->>                 submitted =3D io_submit_sqes(ctx, to_submit, f.file, f=
-d,
->>                                            &cur_mm, false);
->> +               if (restore_cred !=3D NULL) {
->> +                       revert_creds(restore_cred);
->> +               }
->> +               if (restore_mm !=3D NULL) {
->> +                       // TODO: something like this...
->> +                       unuse_mm(ctx->sqo_mm);
->> +                       use_mm(restore_mm);
->> +               }
->>                 mutex_unlock(&ctx->uring_lock);
->>
->>                 if (submitted !=3D to_submit)
->>
->> I'm not sure if current->mm is needed, I just added it for completenes=
-s
->> and as hint that io_op_defs[req->opcode].needs_mm is there and a
->> needs_creds could also be added (if it helps with performance)
->>
->> Is it possible to trigger a change of current->mm from userspace?
->>
->> An IORING_REGISTER_CREDS would only be useful if it's possible to
->> register a set of credentials and then use per io_uring_sqe credential=
-s.
->> That would also be fine for me, but I'm not sure it's needed for now.
->=20
-> I think it'd be a cleaner way of doing the same thing as your patch
-> does. It seems a little odd to do this by default (having the ring
-> change personalities depending on who's using it), but from an opt-in
-> point of view, I think it makes more sense.
->=20
-> That would make the IORING_REGISTER_ call something like
-> IORING_REGISTER_ADOPT_OWNER or something like that, meaning that the
-> ring would just assume the identify of the task that's calling
-> io_uring_enter().
->=20
-> Note that this also has to be passed through to the io-wq handler, as
-> the mappings there are currently static as well.
-
-What's the next step here?
-
-I think the current state is a security problem!
-
-The inline execution either needs to change the creds temporary
-or io_uring_enter() needs a general check that the current creds match
-the creds of the ring and return -EPERM or something similar.
+> Wrote a basic test case, and used my openbench as well. Seems to work
+> fine for me. Pushed prep etc support to liburing.
 
 Thanks!
+
+Another great feature would the possibility to make use of the
+generated fd in the following request.
+
+This is a feature that's also available in the SMB3 protocol
+called compound related requests.
+
+The client can compound a chain with open, getinfo, read, close
+getinfo, read and close get an file handle of -1 and implicitly
+get the fd generated/used in the previous request.
+
 metze
 
 
---W4BSpJHRLTZvpgPrUWKVV0gssbaIxJc3o--
 
---TjF16TwNmqn6lFDGccTNnBjt05kZF2BPh
+--pLhhltEkJ9GJ44cjYaQVjijOSAcyWRRQR--
+
+--6BKnqqpE6RQtq1EUA9aWUlzpDZiTmHMN1
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl4g5sIACgkQDbX1YShp
-vVb0PxAAukvaXOXTt+tvGj+ppVg4IuRGid8RHM92M5aFg2aJE4xvi4kRLLxWKNK1
-OCsoL9ebcm+JSs5z33ymWOk7mtOaMpdP23w06T43xroh47EUj1wZmo2O/UB6z7cO
-eD3anqXEgoJnm1lM45ktnMCTNf2RvhYX4PfV2mulwaA2B+GuRzEwk3zDoaa+8sCe
-by4oeCQtG5S5vvJvgNtgVMofSty7yvGYK6ow3BRjz+1FhDpZFfGtVoDAU//vQJtx
-2IuofkuJ7jgLaS64JoOhCvGDuiGWgqPJkoKntTORTQTYTx8SEIfwR0xS2GVB2D82
-7dhGWTu3WpV1Z+FfDfmANWC7U5tbP54bDzOeH5XQ7hxgT+EGC6/clkSLYjQPuEOO
-JV9LYvKgq96DEXYwsPMJb9zd1GBvfiARYzTdg9LTLQ6deyIxB18n7qqtQzD4m5Lj
-ti98VXrhSdlTuYRhN5Hba2Ob+O/jYvZ5RpS7nTZ1ETcRgabwn2qfy/Jyqi/YKXc8
-bV+ZT8FdSrXZbQog3Q6dzzjXe2rAAZo3uG9PAynLl9YXm8+duy6iqdJWMNPcLuAP
-yE/yeA9Swj7FVems5qyWSymdVMkV29brI42Wpt0jAaPOxPq0wYytK9j78lw+Woyk
-dLCh/fa/fIKkhm26b4vtP4J/xrQr01yN4PoMMzo+UwlpOBR5gNI=
-=Tkv8
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl4g6LMACgkQDbX1YShp
+vVYl6Q//f8L6BltH1tiJUZ3pM2xVmDEKGgYfJ/fS3U9garx0wB+TCkM52SUa7xmD
+WXEjOiO6fM0tX6ci9F5MDjW6NigfUva5N8s0UxR27dCOpotAzD4rXf9RN6dtPprS
+ho/8oMBqEyq3Z5VFpJeJBm3Bu635wVd4z+MuQPU52fLF7aaU7o+BYCf4nYdcJiQ7
+FU2GqTnb7DkHy+ZBVGIMyPF0uNkYETzVuDVDRyJtURSkhry9YQFzCNIPy2FdVT68
+mBCdCwg2olekX5Hb38TARk+esYllbePaT8WZgMFAmdb9VhxSYRlvhzllyXB9WnIi
+7JGwo96XyfXema0xHexZPH69z/VQDwByNQM9skn/JayFIgOg1PofuIJSDTexAE2W
+mhYbVaScA8zyzUYIIBaS3JmsWKHSWE/iJnqBGUfVyIO4bxm3jqyWDtIKneigao9E
+TIlJlR2Q0w3Fb3yRMOdwZ2CZV3e86Psj8LnspVN8TOASQf3Z5Zwk9x9KWVK5oG/w
+OnNawu88oWYO5JHIdDpomI1/XpQG6uKQO6K4rqYmSXJyNcme8WEkulTmEns5QqQd
+8m9f4mN1wyag9jqjRuZ9RvMUvy5+sIuL3Ztr8LyHTi1ismlWl2SEo7eB3S3UVVRj
+zl8rwiFdpuFVt5FeZYcnxzMg16VhyK0O2vWPFUG9gibEQPfw2bA=
+=TNBA
 -----END PGP SIGNATURE-----
 
---TjF16TwNmqn6lFDGccTNnBjt05kZF2BPh--
+--6BKnqqpE6RQtq1EUA9aWUlzpDZiTmHMN1--

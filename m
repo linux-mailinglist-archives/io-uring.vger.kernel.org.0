@@ -2,37 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B392513FC69
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2020 23:50:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC76313FCCC
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2020 00:13:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387501AbgAPWuj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jan 2020 17:50:39 -0500
-Received: from hr2.samba.org ([144.76.82.148]:35218 "EHLO hr2.samba.org"
+        id S2388430AbgAPXNa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jan 2020 18:13:30 -0500
+Received: from hr2.samba.org ([144.76.82.148]:43318 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729261AbgAPWui (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 16 Jan 2020 17:50:38 -0500
+        id S1729336AbgAPXN3 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:13:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:Cc:To;
-        bh=b7Ms9fQaxpz2HEUIgEkc6c8FY7vwppyCSnRi/edsMBI=; b=k2z0QsO6qssTgwySsruitIlglY
-        ftAhD9Odytyd6jR3YaRCUuJhvFmfdWbWxkNR7uBV6VV1t6s0PDICgULUpIbdT85dJT/5VPu/gSKw0
-        4H8VLWbe8seje1nIDU1WJz/Z3SdFVBnmoBa1XYcdkEd6wUz2Gl08Fpk0UfWScsdSOkYtrQZCE8hkb
-        kXsiAxIWbqJdronkAnzlQe/oNeP3I6H0nJAmKRAxfre9U8zuCfcu+1f60dHmG/Y9Mw95+9SjnzZs0
-        mgHquPLpJazxnCud0Wo6yStp+pxTzaN+uBiWI/epzCDHHpapiy8Tm8WiICx+YiPQbDhSQEvTz7lCR
-        EhkJiORvhkIwEXZlJIxcEi66K7WJ6xfPT+Fw3pL296b3DScLgy5FXvc/mmUxAzmUcSZiPL96QhVkX
-        jJupLUgviSk52BYbkBBiCqHhT/LjrKBr0QMByBKFlcJq04a+vwpnDEA0lc6JxcI91MKwkDYfKikQf
-        zlfHn2hRcHe/B3hzWiW+UIyT;
+         s=42; h=Date:Message-ID:From:To:Cc;
+        bh=phiFoj8sWJfQ+bpuvIqDqjKcWERqMNWJKGdHLmmZhYk=; b=tKSl2styjlUhsHY6UGtccpx/yG
+        DqORbBlAF3+q4KJpLbEYbkEApNxU7LmOne2BL6a0BssAuH54+j9KIMknxqSBi6CNOynuShzTfP8pd
+        wpg9g/36SafuETqox4ZoRC7K7Y09JzTWUU71l3SL0n33rDr0uFIzNhYXMI8XSGIS1CarTy3g014mx
+        eLTVZRQ4PvXmYlEpG7Rm0Ld8UasWLryaoOhxeeUCB7x3R8/whJX4aKNhvkIBeT5WSSysnimZla7Ku
+        4xYSIqoo+zSt/wLxMnUIrhhFfZZARs41Nd3jwa8JRbbjkj3EYqlQwwtsARkh6ycxWLfbX7Dp2+svp
+        FbMsr6EJXJWvDGF3+7iR5mGrRc8QFvJUfw7Z9be6F/TqX2fppdNm54X91MtZxaSjd0UYLxchFQTKi
+        dLmlF4+RUCxpVgkXun+L4eEnfwyc2ZBw26cqbP+jibduqcoW/H78Wk/6ewoNNOFS2m0l2mNHNfg4V
+        ABocwcG+XyL6GywIrOjfo7ow;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1isDyB-0004v1-PC; Thu, 16 Jan 2020 22:50:32 +0000
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20200107170034.16165-1-axboe@kernel.dk>
- <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
- <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
- <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
- <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
- <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
+        id 1isEKK-0005Gg-7f; Thu, 16 Jan 2020 23:13:24 +0000
+X-Mozilla-News-Host: news://nntp.lore.kernel.org:119
+Cc:     io-uring <io-uring@vger.kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
 From:   Stefan Metzmacher <metze@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
@@ -347,118 +342,83 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  uWrtpKE+BrlhmZrZleospHp05F+oHuE7lrOg09g0SFdTigqSJNbN1R/pkPI5Q03GfbWipsd4
  iY0Rj0D34DQVeKAa4qUlOcBgX2D9VHRap9GKQRWs//egCueqDZNmIk3071aFV+BSiBSTZIIG
  t/YZOE37yKSj2rcCbqg=
-Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
-Message-ID: <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
-Date:   Thu, 16 Jan 2020 23:50:27 +0100
+Subject: Questions regarding IORING_OP_SENDMSG
+Message-ID: <74d50a99-9518-07c1-b8d7-83f49b907d12@samba.org>
+Date:   Fri, 17 Jan 2020 00:13:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="6BKnqqpE6RQtq1EUA9aWUlzpDZiTmHMN1"
+ boundary="lxS2wBg7XC0A3WxnI1OweVvCqervmyhsU"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---6BKnqqpE6RQtq1EUA9aWUlzpDZiTmHMN1
-Content-Type: multipart/mixed; boundary="pLhhltEkJ9GJ44cjYaQVjijOSAcyWRRQR";
+--lxS2wBg7XC0A3WxnI1OweVvCqervmyhsU
+Content-Type: multipart/mixed; boundary="Fn8NMXm0JRrvml7frpRWHWoqVkpA1HCDk";
  protected-headers="v1"
 From: Stefan Metzmacher <metze@samba.org>
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Message-ID: <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
-Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
-References: <20200107170034.16165-1-axboe@kernel.dk>
- <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
- <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
- <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
- <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
- <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
-In-Reply-To: <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring <io-uring@vger.kernel.org>
+Message-ID: <74d50a99-9518-07c1-b8d7-83f49b907d12@samba.org>
+Subject: Questions regarding IORING_OP_SENDMSG
 
---pLhhltEkJ9GJ44cjYaQVjijOSAcyWRRQR
+--Fn8NMXm0JRrvml7frpRWHWoqVkpA1HCDk
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Am 09.01.20 um 03:03 schrieb Jens Axboe:
-> On 1/8/20 6:02 PM, Jens Axboe wrote:
->> On 1/8/20 4:05 PM, Stefan Metzmacher wrote:
->>> Am 08.01.20 um 23:57 schrieb Jens Axboe:
->>>> On 1/8/20 2:17 PM, Stefan Metzmacher wrote:
->>>>> Am 07.01.20 um 18:00 schrieb Jens Axboe:
->>>>>> Sending this out separately, as I rebased it on top of the work.op=
-enat2
->>>>>> branch from Al to resolve some of the conflicts with the differenc=
-es in
->>>>>> how open flags are built.
->>>>>
->>>>> Now that you rebased on top of openat2, wouldn't it be better to ad=
-d
->>>>> openat2 that to io_uring instead of the old openat call?
->>>>
->>>> The IORING_OP_OPENAT already exists, so it would probably make more =
-sense
->>>> to add IORING_OP_OPENAT2 alongside that. Or I could just change it. =
-Don't
->>>> really feel that strongly about it, I'll probably just add openat2 a=
-nd
->>>> leave openat alone, openat will just be a wrapper around openat2 any=
-way.
->>>
->>> Great, thanks!
->>
->> Here:
->>
->> https://git.kernel.dk/cgit/linux-block/log/?h=3Dfor-5.6/io_uring-vfs
->>
->> Not tested yet, will wire this up in liburing and write a test case
->> as well.
->=20
-> Wrote a basic test case, and used my openbench as well. Seems to work
-> fine for me. Pushed prep etc support to liburing.
+Hi Jens,
+
+In the "io_uring: add support for IORING_OP_IOCTL" thread I wrote this:
+
+> I could use also use a generic way for an async fd-based syscall.
+> I thought about using sendmsg() with special CMSG_ elements, but
+> currently it's not possible with IORING_OP_SENDMSG to do an async
+> io_kiocb based completion, using msg_iocb.
+
+I just noticed that __sys_sendmsg_sock doesn't allow
+msg->msg_control || msg->msg_controllen.
+
+Why is that the case?
+I could use that in several places for my smbdirect driver.
+
+Optionally turning on msg_iocb usage would also be great,
+I'd use that in combination with MSG_OOB and CMSG_
+and this OOB message is not ordered like the typical
+sendmsg stream socket flow.
+
+Do you think we can add support for this usecase?
 
 Thanks!
-
-Another great feature would the possibility to make use of the
-generated fd in the following request.
-
-This is a feature that's also available in the SMB3 protocol
-called compound related requests.
-
-The client can compound a chain with open, getinfo, read, close
-getinfo, read and close get an file handle of -1 and implicitly
-get the fd generated/used in the previous request.
-
 metze
 
 
+--Fn8NMXm0JRrvml7frpRWHWoqVkpA1HCDk--
 
---pLhhltEkJ9GJ44cjYaQVjijOSAcyWRRQR--
-
---6BKnqqpE6RQtq1EUA9aWUlzpDZiTmHMN1
+--lxS2wBg7XC0A3WxnI1OweVvCqervmyhsU
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl4g6LMACgkQDbX1YShp
-vVYl6Q//f8L6BltH1tiJUZ3pM2xVmDEKGgYfJ/fS3U9garx0wB+TCkM52SUa7xmD
-WXEjOiO6fM0tX6ci9F5MDjW6NigfUva5N8s0UxR27dCOpotAzD4rXf9RN6dtPprS
-ho/8oMBqEyq3Z5VFpJeJBm3Bu635wVd4z+MuQPU52fLF7aaU7o+BYCf4nYdcJiQ7
-FU2GqTnb7DkHy+ZBVGIMyPF0uNkYETzVuDVDRyJtURSkhry9YQFzCNIPy2FdVT68
-mBCdCwg2olekX5Hb38TARk+esYllbePaT8WZgMFAmdb9VhxSYRlvhzllyXB9WnIi
-7JGwo96XyfXema0xHexZPH69z/VQDwByNQM9skn/JayFIgOg1PofuIJSDTexAE2W
-mhYbVaScA8zyzUYIIBaS3JmsWKHSWE/iJnqBGUfVyIO4bxm3jqyWDtIKneigao9E
-TIlJlR2Q0w3Fb3yRMOdwZ2CZV3e86Psj8LnspVN8TOASQf3Z5Zwk9x9KWVK5oG/w
-OnNawu88oWYO5JHIdDpomI1/XpQG6uKQO6K4rqYmSXJyNcme8WEkulTmEns5QqQd
-8m9f4mN1wyag9jqjRuZ9RvMUvy5+sIuL3Ztr8LyHTi1ismlWl2SEo7eB3S3UVVRj
-zl8rwiFdpuFVt5FeZYcnxzMg16VhyK0O2vWPFUG9gibEQPfw2bA=
-=TNBA
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl4g7gYACgkQDbX1YShp
+vVYP7hAAtfJuYJsOkuxHNXAIEP3UvcI5ZlVuLv49uX9mlhZQ5DXTz8G8nkqg99I7
+UTHNSVYygx9jfiVpf4+Zsta83gqESt/r5dCqydG/VJbGzJo2IqUj9EsE8YZhF5R8
+6J0zQ71IEG+lCZ2wV6sjp+vSpL0rIeV3ujU/YRGSMnsXSpiEqDOcQhUH02xi2B6f
+/q4tNOvhDEosVbllLBkx3cqpMgwXI8WhwlL9lF6lMRIBzMNtQ0jeSoFuB8CRIyPD
+5STLaT9K53qxW6n0NTsItIYu+aCw77FZiwjjAEUFsmDAoCqR1gqxYTkznGVAYn0P
+UkqYJiwMJ1zi7UKEAHE27kjIKP17PlDtOWfMqMqVhk8dVibvQQV1DUT25971Mjy+
+gwDk2bRK/PipH3o/0iCs6jtpmHBr2G/g/m5savuMhsralV8JR40sRrNPdgwIKSC8
+Je2rpkhz95AhD9Cmh26ivTq9VRHCge2m7mECrpqXfJDXXwGyn+WX1tnaHh5n8Hbh
+tuQHIssHWRL4FsYExtmAtt5jmRo2Edemc3XcyA/YCDIDNfqAl/Jg5W50cvmLhrh8
+QeHMsu3lMwuhFs1P7X8Aeje7qVlJiIpMCo0JQnXvKEtd+jzt6OMhjDGL9yHxQym5
+uSDYUDwjJoLe6VdwjjdKoaSuSF1PA/2IdorGst2p1+Ca7lua97w=
+=YKTI
 -----END PGP SIGNATURE-----
 
---6BKnqqpE6RQtq1EUA9aWUlzpDZiTmHMN1--
+--lxS2wBg7XC0A3WxnI1OweVvCqervmyhsU--

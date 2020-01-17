@@ -2,62 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB49140D93
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2020 16:15:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A8A140DB5
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2020 16:21:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbgAQPPT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Jan 2020 10:15:19 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35822 "EHLO
+        id S1728977AbgAQPVD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Jan 2020 10:21:03 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35680 "EHLO
         mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728739AbgAQPPT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jan 2020 10:15:19 -0500
-Received: by mail-io1-f65.google.com with SMTP id h8so26387837iob.2
-        for <io-uring@vger.kernel.org>; Fri, 17 Jan 2020 07:15:18 -0800 (PST)
+        with ESMTP id S1728739AbgAQPVD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jan 2020 10:21:03 -0500
+Received: by mail-io1-f65.google.com with SMTP id h8so26408942iob.2
+        for <io-uring@vger.kernel.org>; Fri, 17 Jan 2020 07:21:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xT36z7Bws+eNMrBqJwUz2n2zjVjB7kHFvqu4jvdQ6B0=;
-        b=FpewnYb1Ej1M/mImdDlN91H9JMzylIu87dY+nCfwkMtw1F+OJzKAbhee4B48wNFei0
-         8ggwNnAiupYtUrba0+Q82IZzGJdePvbmYKUfJntb36wkp9Q2n7wPoh47ttRzyrYAs9VR
-         RuoMZ8VFVk0N7L7Sj0iFCAjdwFYw5YFVxCFkb/hqQv8oVSk8qZShfq6OiPjCUC1tH4ZV
-         jRW8TuQZWpJC7kntANuNMIxThcapmfqABYEppN2J6BmVviHZTJ73Uf4GxTA8adFe3rDX
-         v9diqHWOKvk7kClq22R22tz0jqShYsHEJRzrREiLWM8tCVXszrKJHX9P+lW8qQAoyBeH
-         kx0Q==
+        bh=lV41RpA2QhEA5rHH6ZyOIv8ERiJPbYKFmYjuUSaG+xY=;
+        b=b0LSOflu7YITfOb8w5wi0kKgHuwAAYbt8QhYhVXfdHzo6JF5FBQMQ/andumpi0YUYg
+         N7pZyOhFoH9UOwBkIoLvHc4ft7vLlAf4n2RuRbFRMW+B71ipf5wcO7wCSFkVVLHkO5jI
+         3K+n8FE27awtwWIdLKVOXTTCYsCR1knctOe4COEYGMl2D1Qf4FsICFacb/2OHmiAN87A
+         yUKNszWjYYQQmfIsktyb3QGim0W77+mQShRvXvCNxplZqMe/TRPpiC6su1QfbuWXjZZJ
+         AlZ4N54EMBE1getHFCe7JiEjLmKRGbkGevpTj2GpVyKdzJEKUL5nl2BNtnWpmM6D9sqi
+         hpIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=xT36z7Bws+eNMrBqJwUz2n2zjVjB7kHFvqu4jvdQ6B0=;
-        b=gBAIHTJODu2KKkPioTpFrKF23KkRT+uht6tYKyr3U+ny7MPC8eazN+F++uopcBKMw+
-         l7e5YYfeVlyBMXKqGtA4tT4lVJ5zLpG69yhcdMAHMTlfMTDpYofPz7URASYGdAZl2U61
-         FNvdBA2ZQ++y1ZPdF8Vw5zSjtv1zrLPxcmoS3JY37AXlusDzYcpVFgGmhFYVdr73nG15
-         K1l3gU9jqehH64U54F2dlYvylVRZzZXGAm06RRJ0PILuBxIIbX9FcztxzE699Ei7HJoQ
-         Tl96BYldz7MNtfp8Tx0Dele2a6ifxKRVfILddrs1lMEErYHBSdwUI5yFlmeelfJ3i93+
-         EETA==
-X-Gm-Message-State: APjAAAXAB0M60zXNJh4wdO+3ZirliqcSevHr0a5dRYhGh2KlPNrcnSue
-        qCsCpF7KNhgEtJ9uSPuuqqMfVw==
-X-Google-Smtp-Source: APXvYqyg8ZcdCV3Zf0gHKPFV/yug1ekIoH+28vBeDiDFQ7yqqnG50OvFSrAFhL9BvB4d8AMqK9HTeg==
-X-Received: by 2002:a02:2a08:: with SMTP id w8mr33919839jaw.86.1579274118151;
-        Fri, 17 Jan 2020 07:15:18 -0800 (PST)
+        bh=lV41RpA2QhEA5rHH6ZyOIv8ERiJPbYKFmYjuUSaG+xY=;
+        b=NBbn0HxE/0K/DKkPYquRlrTGCddtg2h3cpwyVfzYzeJ+VTdUnyY4qyhcyZkb0+O0Wb
+         cLfz7ajYEHRqFFp/QjtET2zw1aKJM7gIa8wisasvujOHb1saQE8qwr4vGvNNm4xHdP2r
+         /JC//cmcq6NA3tbwbgBp2u05z/dUg7jQQdSJkZRwYVu2ybeAH7mknG9bJLQn8htWF5x+
+         0B20CJ5chy0J2EOSIwRodQwiqw6im3BCVEjq8r07T51rJ/TY7zvnp1vacS+ccMjvrrfH
+         uTm6IRO2f6p4TlDGKCYCVshJnc1gVd+RvGhCgBXY5Ng/an3j63eWryYei19EzIUtHDox
+         rckQ==
+X-Gm-Message-State: APjAAAWZaRz9WG+noS/iw/DHxXRq88pt+Ds72mQ/yemm5DenUSVc/eaE
+        8Ay/sCOShWb6XfYMdQPdopLiOw==
+X-Google-Smtp-Source: APXvYqxNdfKQ23cTwPqlKSciggsxkHP5nNwk+VgMM0sAWv9fvINW/lRRXEihWek+ZKUh4pmgWY7zeA==
+X-Received: by 2002:a6b:1443:: with SMTP id 64mr30082191iou.116.1579274462723;
+        Fri, 17 Jan 2020 07:21:02 -0800 (PST)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id b3sm7962630ilh.72.2020.01.17.07.15.17
+        by smtp.gmail.com with ESMTPSA id p69sm8016553ilb.48.2020.01.17.07.21.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jan 2020 07:15:17 -0800 (PST)
-Subject: Re: [PATCH v2] io_uring: add support for probing opcodes
-To:     Mark Papadakis <markuspapadakis@icloud.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        Stefan Metzmacher <metze@samba.org>
-References: <886e284c-4b1f-b90e-507e-05e5c74b9599@kernel.dk>
- <76278FD6-7707-483E-ADDA-DF98A19F0860@icloud.com>
+        Fri, 17 Jan 2020 07:21:01 -0800 (PST)
+Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Colin Walters <walters@verbum.org>,
+        Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+References: <20200107170034.16165-1-axboe@kernel.dk>
+ <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
+ <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
+ <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
+ <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
+ <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
+ <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
+ <1e8a9e98-67f8-4e2f-8185-040b9979bc1a@www.fastmail.com>
+ <964c01cc-94f5-16b2-cc61-9ee5789b1f43@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7094d85e-1f7e-83c2-cb35-9fb699118167@kernel.dk>
-Date:   Fri, 17 Jan 2020 08:15:16 -0700
+Message-ID: <cbdb0621-3bc8-fc41-a365-56b2639e39a0@kernel.dk>
+Date:   Fri, 17 Jan 2020 08:21:01 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <76278FD6-7707-483E-ADDA-DF98A19F0860@icloud.com>
+In-Reply-To: <964c01cc-94f5-16b2-cc61-9ee5789b1f43@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,55 +74,43 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/17/20 12:42 AM, Mark Papadakis wrote:
-> I 've been thinking about this earlier.  I think the most realistic
-> solution would be to have kind of website/page(libiouring.org?), which
-> lists all SQE OPs, the kernel release that first implemented support
-> for it, and (if necessary) notes about compatibility.
+On 1/17/20 2:32 AM, Pavel Begunkov wrote:
+> On 1/17/2020 3:44 AM, Colin Walters wrote:
+>> On Thu, Jan 16, 2020, at 5:50 PM, Stefan Metzmacher wrote:
+>>> The client can compound a chain with open, getinfo, read, close
+>>> getinfo, read and close get an file handle of -1 and implicitly
+>>> get the fd generated/used in the previous request.
+>>
+>> Sounds similar to  https://capnproto.org/rpc.html too.
+>>
+> Looks like just grouping a pack of operations for RPC.
+> With io_uring we could implement more interesting stuff. I've been
+> thinking about eBPF in io_uring for a while as well, and apparently it
+> could be _really_ powerful, and would allow almost zero-context-switches
+> for some usecases.
 > 
-> - There will be, hopefully, a lot more such OPS implemented in the
-> future - By having this list readily available, one can determine the
-> lowest Linux Kernel release required(target) for a specific set of OPs
-> they need for their program. If I want support for readv, writev,
-> accept, and connect - say - then I should be able to quickly figure
-> out that e.g 5.5 is the minimum LK release I must require - Subtle
-> issues may be discovered, or other such important specifics may be to
-> be called out -- e.g readv works for < 5.5 for disk I/O but (e.g)
-> "broken" for 5.4.3. This should be included in that table
+> 1. full flow control with eBPF
+> - dropping requests (links)
+> - emitting reqs/links (e.g. after completions of another req)
+> - chaining/redirecting
+> of course, all of that with fast intermediate computations in between
+> 
+> 2. do long eBPF programs by introducing a new opcode (punted to async).
+> (though, there would be problems with that)
+> 
+> Could even allow to dynamically register new opcodes within the kernel
+> and extend it to eBPF, if there will be demand for such things.
 
-The problem with this approach is that io_uring is (mostly) a one man
-show so far, and maintaining a web page is not part of my core skill
-set, nor is it something I want to take on. It'd be awesome if someone
-else would step up on that front. Might be easier to simply keep the
-liburing man pages up-to-date and maintain the information in there.
+We're also looking into exactly that at Facebook, nothing concrete yet
+though. But it's clear we need it to take full advantage of links at
+least, and it's also clear that it would unlock a lot of really cool
+functionality once we do.
 
-I think a lot of the issues you mention above are early teething issues,
-hopefully won't be much of a concern going forward as things solidy and
-stabilize on all fronts. So we're left with mostly "is this supported in
-the kernel I'm on" kind of questions, which would hopefully be request
-specific.
+Pavel, I'd strongly urge you to submit a talk to LSF/MM/BPF about this.
+It's the perfect venue to have some concrete planning around this topic
+and get things rolling.
 
-One thing that has been brought up is that we could add an opcode
-version. There's an u8 reserved field next to the opcode, that could be
-turned into
-
-	__u8 version;
-
-in the future, which would allow us to differentiate types of supported
-for an individual opcode. Your readv example would work with that, for
-instance.
-
-> Testing against specific SQE OPs support alone won't be enough, and it
-> will likely also get convoluted fast.  liburing could provide a simple
-> utility function that returns the (major, minor) LK release for
-> convenience.
-
-I'm not a huge fan of versioning, exactly because it requires some other
-source of information to then cross check a version number with
-features. Then the application needs to maintain it to. It also totally
-breaks down for backports, where you may only selectively backport
-features to an older kernel. You can't represent that with a major.minor
-that is sytem wide. The table can.
+https://lore.kernel.org/bpf/20191122172502.vffyfxlqejthjib6@macbook-pro-91.dhcp.thefacebook.com/
 
 -- 
 Jens Axboe

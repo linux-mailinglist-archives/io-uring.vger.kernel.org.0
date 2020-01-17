@@ -2,58 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A783E140C90
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2020 15:33:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CB49140D93
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2020 16:15:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbgAQOdT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Jan 2020 09:33:19 -0500
-Received: from mail-pl1-f170.google.com ([209.85.214.170]:35808 "EHLO
-        mail-pl1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbgAQOdS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jan 2020 09:33:18 -0500
-Received: by mail-pl1-f170.google.com with SMTP id g6so9959290plt.2
-        for <io-uring@vger.kernel.org>; Fri, 17 Jan 2020 06:33:18 -0800 (PST)
+        id S1728780AbgAQPPT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Jan 2020 10:15:19 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35822 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728739AbgAQPPT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jan 2020 10:15:19 -0500
+Received: by mail-io1-f65.google.com with SMTP id h8so26387837iob.2
+        for <io-uring@vger.kernel.org>; Fri, 17 Jan 2020 07:15:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=w4mp3hsKOArV78Fh9THmePV3c421RHxulbG70WLaTp4=;
-        b=eqXflPFuuamkC1dxHfVih0Dj2pBPqEkO4/H0rMCRtDNvHwZgbkHR13FKZyhkKvu7be
-         Qv/iPkXTtzSY4uhWfe9sCrh88KI7jbsKHwe5Re+NHjLOFtVcmsh7nPI8BxJ1qHt7S59W
-         uGZoQLZ4b9zCqSaZBxXoY8uP5Yy3wwbgMrvK+Y+PuHOw+eeTujlkeBb8XUF8lYQtKDU+
-         vt1RVkUWp7m7ldiTe3YbeUSRV4+Sp2julnGyUaD4ukaCbcPAtiIL1bYmTGHPeY/3eah7
-         oKo5TJ1cJIHzNHKvXcL9uvmOf2YndiXZKffTvkqOU81wMb6GYo/bvvRbwqG6acshfEsK
-         luXQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xT36z7Bws+eNMrBqJwUz2n2zjVjB7kHFvqu4jvdQ6B0=;
+        b=FpewnYb1Ej1M/mImdDlN91H9JMzylIu87dY+nCfwkMtw1F+OJzKAbhee4B48wNFei0
+         8ggwNnAiupYtUrba0+Q82IZzGJdePvbmYKUfJntb36wkp9Q2n7wPoh47ttRzyrYAs9VR
+         RuoMZ8VFVk0N7L7Sj0iFCAjdwFYw5YFVxCFkb/hqQv8oVSk8qZShfq6OiPjCUC1tH4ZV
+         jRW8TuQZWpJC7kntANuNMIxThcapmfqABYEppN2J6BmVviHZTJ73Uf4GxTA8adFe3rDX
+         v9diqHWOKvk7kClq22R22tz0jqShYsHEJRzrREiLWM8tCVXszrKJHX9P+lW8qQAoyBeH
+         kx0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=w4mp3hsKOArV78Fh9THmePV3c421RHxulbG70WLaTp4=;
-        b=V0Jvsi0JRKIOcl/AqZQXOc949OhbE3Iq6rjHT3eJgB9rPdVQqYt4KhDQx8ozewOZlc
-         Iyzsf2LcrD2h+frlmMuhIy1YKQu0HoqxF7CUldIkv1u+SfbhRwdeXyswojOMO8Lurtvo
-         KsFbvhLs3sDEfbjMNwUTY9ujBMmUFIYapsVg+s56/ZqNDJK7V8T6/Bb533xa41VyVM9q
-         4r9J0gsy0yXBUAY1Jvlbgg5B9PfaW3NBZNs2V2YEvp31UeCXp0iEQID3sWLT0rm63qtT
-         jrHXp/r7U1FzxEAQIM2Xw6xvP9a+3LZYJxuf+MoGAOJ41xw/61+dSk3N4ZQXCLrF20pN
-         xEjA==
-X-Gm-Message-State: APjAAAVKcSawei5eYY8YAdpo8AtksgNehmj05wfagqhiK8uEY85lyB1v
-        ZEzNSe89TZ6/5L2W1jg9n+vF5W5Vb78=
-X-Google-Smtp-Source: APXvYqy3SNNpATed1MOyfomAGHqYY170zILmu6a0D/TplCHXTJqzBxhRkSyWNeyLP4Z/AmC9I7R5VQ==
-X-Received: by 2002:a17:902:6b09:: with SMTP id o9mr35417493plk.209.1579271597816;
-        Fri, 17 Jan 2020 06:33:17 -0800 (PST)
-Received: from [192.168.1.182] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id b8sm30023821pff.114.2020.01.17.06.33.16
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xT36z7Bws+eNMrBqJwUz2n2zjVjB7kHFvqu4jvdQ6B0=;
+        b=gBAIHTJODu2KKkPioTpFrKF23KkRT+uht6tYKyr3U+ny7MPC8eazN+F++uopcBKMw+
+         l7e5YYfeVlyBMXKqGtA4tT4lVJ5zLpG69yhcdMAHMTlfMTDpYofPz7URASYGdAZl2U61
+         FNvdBA2ZQ++y1ZPdF8Vw5zSjtv1zrLPxcmoS3JY37AXlusDzYcpVFgGmhFYVdr73nG15
+         K1l3gU9jqehH64U54F2dlYvylVRZzZXGAm06RRJ0PILuBxIIbX9FcztxzE699Ei7HJoQ
+         Tl96BYldz7MNtfp8Tx0Dele2a6ifxKRVfILddrs1lMEErYHBSdwUI5yFlmeelfJ3i93+
+         EETA==
+X-Gm-Message-State: APjAAAXAB0M60zXNJh4wdO+3ZirliqcSevHr0a5dRYhGh2KlPNrcnSue
+        qCsCpF7KNhgEtJ9uSPuuqqMfVw==
+X-Google-Smtp-Source: APXvYqyg8ZcdCV3Zf0gHKPFV/yug1ekIoH+28vBeDiDFQ7yqqnG50OvFSrAFhL9BvB4d8AMqK9HTeg==
+X-Received: by 2002:a02:2a08:: with SMTP id w8mr33919839jaw.86.1579274118151;
+        Fri, 17 Jan 2020 07:15:18 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id b3sm7962630ilh.72.2020.01.17.07.15.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jan 2020 06:33:17 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.5-rc7
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Fri, 17 Jan 2020 07:15:17 -0800 (PST)
+Subject: Re: [PATCH v2] io_uring: add support for probing opcodes
+To:     Mark Papadakis <markuspapadakis@icloud.com>
 Cc:     io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <48229b93-5e4d-78a2-3171-021e2a87c99b@kernel.dk>
-Date:   Fri, 17 Jan 2020 07:33:15 -0700
+        Stefan Metzmacher <metze@samba.org>
+References: <886e284c-4b1f-b90e-507e-05e5c74b9599@kernel.dk>
+ <76278FD6-7707-483E-ADDA-DF98A19F0860@icloud.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7094d85e-1f7e-83c2-cb35-9fb699118167@kernel.dk>
+Date:   Fri, 17 Jan 2020 08:15:16 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <76278FD6-7707-483E-ADDA-DF98A19F0860@icloud.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -62,46 +66,55 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On 1/17/20 12:42 AM, Mark Papadakis wrote:
+> I 've been thinking about this earlier.  I think the most realistic
+> solution would be to have kind of website/page(libiouring.org?), which
+> lists all SQE OPs, the kernel release that first implemented support
+> for it, and (if necessary) notes about compatibility.
+> 
+> - There will be, hopefully, a lot more such OPS implemented in the
+> future - By having this list readily available, one can determine the
+> lowest Linux Kernel release required(target) for a specific set of OPs
+> they need for their program. If I want support for readv, writev,
+> accept, and connect - say - then I should be able to quickly figure
+> out that e.g 5.5 is the minimum LK release I must require - Subtle
+> issues may be discovered, or other such important specifics may be to
+> be called out -- e.g readv works for < 5.5 for disk I/O but (e.g)
+> "broken" for 5.4.3. This should be included in that table
 
-A set of fixes that should go into this release. This pull request
-contains:
+The problem with this approach is that io_uring is (mostly) a one man
+show so far, and maintaining a web page is not part of my core skill
+set, nor is it something I want to take on. It'd be awesome if someone
+else would step up on that front. Might be easier to simply keep the
+liburing man pages up-to-date and maintain the information in there.
 
-- Ensure ->result is always set when IO is retried (Bijan)
+I think a lot of the issues you mention above are early teething issues,
+hopefully won't be much of a concern going forward as things solidy and
+stabilize on all fronts. So we're left with mostly "is this supported in
+the kernel I'm on" kind of questions, which would hopefully be request
+specific.
 
-- In conjunction with the above, fix a regression in polled IO issue
-  when retried (me/Bijan)
+One thing that has been brought up is that we could add an opcode
+version. There's an u8 reserved field next to the opcode, that could be
+turned into
 
-- Don't setup async context for read/write fixed, otherwise we may
-  wrongly map the iovec on retry (me)
+	__u8 version;
 
-- Cancel io-wq work if we fail getting mm reference (me)
+in the future, which would allow us to differentiate types of supported
+for an individual opcode. Your readv example would work with that, for
+instance.
 
-- Ensure dependent work is always initialized correctly (me)
+> Testing against specific SQE OPs support alone won't be enough, and it
+> will likely also get convoluted fast.  liburing could provide a simple
+> utility function that returns the (major, minor) LK release for
+> convenience.
 
-- Only allow original task to submit IO, don't allow it from a passed
-  ring fd (me)
-
-Please pull!
-
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.5-2020-01-16
-
-
-----------------------------------------------------------------
-Bijan Mottahedeh (1):
-      io_uring: clear req->result always before issuing a read/write request
-
-Jens Axboe (5):
-      io_uring: don't setup async context for read/write fixed
-      io-wq: cancel work if we fail getting a mm reference
-      io_uring: be consistent in assigning next work from handler
-      io_uring: ensure workqueue offload grabs ring mutex for poll list
-      io_uring: only allow submit from owning task
-
- fs/io-wq.c    | 12 ++++++----
- fs/io_uring.c | 72 +++++++++++++++++++++++++++++++++++++++--------------------
- 2 files changed, 56 insertions(+), 28 deletions(-)
+I'm not a huge fan of versioning, exactly because it requires some other
+source of information to then cross check a version number with
+features. Then the application needs to maintain it to. It also totally
+breaks down for backports, where you may only selectively backport
+features to an older kernel. You can't represent that with a major.minor
+that is sytem wide. The table can.
 
 -- 
 Jens Axboe

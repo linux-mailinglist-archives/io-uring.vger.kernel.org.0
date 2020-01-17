@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09AA1140229
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2020 04:00:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D8E4140320
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2020 05:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389125AbgAQC76 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jan 2020 21:59:58 -0500
-Received: from mail-pf1-f176.google.com ([209.85.210.176]:41809 "EHLO
-        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389065AbgAQC76 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jan 2020 21:59:58 -0500
-Received: by mail-pf1-f176.google.com with SMTP id w62so11228416pfw.8
-        for <io-uring@vger.kernel.org>; Thu, 16 Jan 2020 18:59:57 -0800 (PST)
+        id S1726406AbgAQErc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jan 2020 23:47:32 -0500
+Received: from mail-pg1-f175.google.com ([209.85.215.175]:45466 "EHLO
+        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbgAQErc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jan 2020 23:47:32 -0500
+Received: by mail-pg1-f175.google.com with SMTP id b9so11017384pgk.12
+        for <io-uring@vger.kernel.org>; Thu, 16 Jan 2020 20:47:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=z+YdJeFqFDZRiS6UDwTkhXHC91WQ1PZ11Rxt5I2e+FU=;
-        b=OME1BEPmzQ43q7L6b6RwcTDzN4ky8vN6iW5h0/2emyXIECsky7iZXPnqyzRv093ppZ
-         lF0W5SFvL5CCJjGYa22yIVb+8y4vpQrqZiwGICPwjOcoZnkUVVipcELGMXwoXaEtdZIG
-         dj3GcBd9bPOvsyLDUbzX98O1FdmUNP7uO1rDk3g4htEdgpkeHtlcWflNGj5DeYdJQPT4
-         X3ERHWTE/Y8Ppz3iq6d8lVBDzsbSmqqJeVuvtkHKQmXBi6dAfWO/ltPBZp6b5R0q+e9s
-         gSj/VoDBc2HjcicB1V5XWrsIwhmg1pzxniaQDupXt3oVaFiygCDcyLLDUskLIYvOz2wJ
-         uA/g==
+        bh=A+4aYu/f+LLI3Jw91RLfV6RdAoA39tW2N/DHyvDL3Ik=;
+        b=sxc0BE3OoszJC5FcjG40xTs59ymbvxykkUk8mBvmvm13L2O1sRFFxW7xoQbhpSHgf5
+         zBpes8RCdcKhjcpAYj+e1ZpMYfNZb+V3G9DsJxiAOG7j3D06dMgyaXqV6aXcGkpliwi3
+         +O7pml11pdBF8JcPPKcJ5hhqz53FCSgApNqw1/SVeIJFPNbpz+SBuBC3cD8mtpZwOewv
+         FmCsN7Y72mFfR7chMz/5lm3hczCSBAA81+964CHZyVYUER3aw2clkom8/7Ul9tP2abxW
+         c6A37jME6MCwBQ4tjff8WLidrVhe/bqqnDNBYqfQMtgGA8zhJBp6z6SfrQxSpSBPAYpp
+         vzRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=z+YdJeFqFDZRiS6UDwTkhXHC91WQ1PZ11Rxt5I2e+FU=;
-        b=LnSeEIBdFkTGufYDYFoXh/hXkIzNcAhbN8j07L46z8b8bHTex8gEDbWieJ96pNAenX
-         sVMi8NumeXOPAvyGBfrwbam+qDhCdvoJKeJWBIv+KuzgSU2htnC1VLtwRh22FBb25epu
-         EC+yxTfoCK96c4MSweQS7kZDgbLw8ajS/bpCvaF7IJWPc1YKz5C8H7Svh8Anm5uB7PcN
-         CiB0g5s1jd0IQnSfuKcjnkK3YVn62EaiJal2Bp5Y5tgfVj35Pxn3do9oqQMySxskqPoA
-         94D/yMHQVsZPL7LGIn3Z8ANo8pTs06E8W0WjDTrLViZM0c/my3RfD+wQrr4InktsmJ7K
-         80ow==
-X-Gm-Message-State: APjAAAUnCHMIXXtYs0ei9EG8NZoLkLir60HpQK8GbL5d+Wqs0urL2l22
-        0Hl8EF/DGbKTJzJFyRcozE+vrzJf+dWr6Q==
-X-Google-Smtp-Source: APXvYqyS/RKeM9zumYWvWIONZnnYQoo2K9mMGL30OI0gAqgkRZQYGDp2/hgWcYtcJbLOY/q14c0jWg==
-X-Received: by 2002:a62:446:: with SMTP id 67mr713329pfe.109.1579229997428;
-        Thu, 16 Jan 2020 18:59:57 -0800 (PST)
-Received: from ?IPv6:2600:380:4b14:d397:f0a3:4fc6:c904:323a? ([2600:380:4b14:d397:f0a3:4fc6:c904:323a])
-        by smtp.gmail.com with ESMTPSA id a26sm27407001pfo.27.2020.01.16.18.59.56
+        bh=A+4aYu/f+LLI3Jw91RLfV6RdAoA39tW2N/DHyvDL3Ik=;
+        b=YCMpI2l4DbSBXIcGw/wKPuPSig1FTWpcaBlRbWzJmcCddYLhkAHuBOhugqWd+GTWOp
+         8Y5eCUSybxYsPIaAvh2vNyv3T3B+GTFbwSgohOtd7pI3NSxTpwD47Pm5D43DqlQJPSPk
+         lPPAUsQ/2L0UAPKLYGeHciYWSglhK+XU5bgCPWntQJQxqni17LQXBm3OG4XQecU1piIu
+         t4CW5xTCr247juSootxgj1yYI9r1Iqt+A0sRH2PVI3omyG4ql+8X2LXGMTDgdbaTvfKx
+         PimuYzfBFlNTkUow+2+9XhAlhq6PJePzMR0rOGWr91H2QeuOw0sPDsTOCXQEiSL37I1H
+         A7GQ==
+X-Gm-Message-State: APjAAAXGT8R7rCO1bM5ZZ32WyDRyGHsNIJkITtwACSondLq0u8EFOKYO
+        8WLnOiT2xOd0t/Hb+ZiOln3WdQ==
+X-Google-Smtp-Source: APXvYqzvatyId/eBVFoH3KLoXBu5HUCClzB9UM6crG/QSDY1KoMfVERKvTxmUsdwdnzcWDs810WGXw==
+X-Received: by 2002:a63:d906:: with SMTP id r6mr43590024pgg.440.1579236451548;
+        Thu, 16 Jan 2020 20:47:31 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id z26sm28299448pfa.90.2020.01.16.20.47.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2020 18:59:57 -0800 (PST)
-Subject: Re: [PATCH] io_uring: remove extra check in __io_commit_cqring
+        Thu, 16 Jan 2020 20:47:31 -0800 (PST)
+Subject: Re: [PATCH] io_uring: hide uring_fd in ctx
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <0d023acc096d63db454927590a5aca07deeac1cf.1579222330.git.asml.silence@gmail.com>
+References: <2aefced4902f33f2b70aaedc32bc8d60a20efd7a.1579225489.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e3109a4c-76c9-fc88-6140-5825fd5bf3e1@kernel.dk>
-Date:   Thu, 16 Jan 2020 19:59:55 -0700
+Message-ID: <e0d0eaea-3bda-ec22-0da5-8cfbeaf3f42d@kernel.dk>
+Date:   Thu, 16 Jan 2020 21:47:29 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <0d023acc096d63db454927590a5aca07deeac1cf.1579222330.git.asml.silence@gmail.com>
+In-Reply-To: <2aefced4902f33f2b70aaedc32bc8d60a20efd7a.1579225489.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,11 +64,12 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/16/20 5:52 PM, Pavel Begunkov wrote:
-> __io_commit_cqring() is almost always called when there is a change in
-> the rings, so the check is rather pessimising.
+On 1/16/20 6:45 PM, Pavel Begunkov wrote:
+> req->ring_fd and req->ring_file are used only during the prep stage
+> during submission, which is is protected by mutex. There is no need
+> to store them per-request, place them in ctx.
 
-Applied, thanks.
+Thanks, applied.
 
 -- 
 Jens Axboe

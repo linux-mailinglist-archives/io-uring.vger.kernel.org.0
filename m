@@ -2,63 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AD681419A9
-	for <lists+io-uring@lfdr.de>; Sat, 18 Jan 2020 21:45:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A663E1419AB
+	for <lists+io-uring@lfdr.de>; Sat, 18 Jan 2020 21:46:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbgARUpQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 18 Jan 2020 15:45:16 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34961 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726933AbgARUpP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Jan 2020 15:45:15 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g6so11384806plt.2
-        for <io-uring@vger.kernel.org>; Sat, 18 Jan 2020 12:45:15 -0800 (PST)
+        id S1726997AbgARUqS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 18 Jan 2020 15:46:18 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:40668 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbgARUqR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Jan 2020 15:46:17 -0500
+Received: by mail-pj1-f65.google.com with SMTP id bg7so5066492pjb.5
+        for <io-uring@vger.kernel.org>; Sat, 18 Jan 2020 12:46:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=cPDaiuuezvQHY5FbiMneb91VHbFptyeIrZbpDAf5ezI=;
-        b=fgqd9Gs3tFFWeije8getX63o/kmBD21eAjCYfAYviID4Tuyxa57QscYlsxwphjMrTL
-         0cs8dBMtPWoQc5hIVzdwMwzH/QnfCn9vaI2jcVokoUFLHSiwJ4FAK5uDTH41On4NEKGR
-         FfgWEcGWokyqh5HvVWh4WwIA1Cb+QLsByoRrczvqxfxC0rYToNlviLmDwuEdZraJHRm4
-         WStqUrzVZa2Sfc2FcapQBdm0khNTL9zOxM544iIMqGuKbcaU1jaqJR+NXxDgrArcgX0A
-         r79hUg3t2xNlRTPBmkDbkilG9ZwG+fblXlCjVtnO9DtmX9jUk7YjrFi0SeBDfgiCk7BR
-         KjSw==
+        bh=9nGxRoRYyJbnnwOrpQGmTmHPjg5LAsfCWJ/kF5ALD1c=;
+        b=B2jmbkHRX/6OAJ3J9TuDRJDwLJP9i+J0xOs/l8MaJ6yLbqPtg+H3sPVxzDvmJfsvk1
+         G3gjA2wSOd93b04nIHXqvTZj7lZklbDxngWulRlMu0TY2MrLURgiXzSPZDvbPL5B5kk5
+         nbm6SZVXnQJd5+RS9i4fDb77UKUSE0TsP/gH1IJQ8aNVfLHN6Xp3iWgAiDO/fqDhIg5p
+         4aoPdYv7lka7KDH9U6RclFBtLoR6DkkxGv/AqcyHgPmY4yx8xhlEop735ZtN70Gfejvb
+         RKfuaPutAy+00ct3U2y2okMI9F+dLr9qA99rWvb4TyR/h3eNp8tu5BXl7sv1l7wWx5AI
+         ptTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=cPDaiuuezvQHY5FbiMneb91VHbFptyeIrZbpDAf5ezI=;
-        b=mgx8cJfW0UMF8ch6kGAUKNrRkl+OE8irdMELuqUVddfq3uMQU8vNdlDiL8euwawMYP
-         rvvaLjnIJR/5wlgL9BDWkeaQyoscVq2hTfs0a1RADBpf2Jgzv2BgTrucUWkC1pxnxf5A
-         Roo0nHBAxW0BMU/EXQhmdcZwbnfshYvLjN/gvn0SQx30GpY8WM7JuWwqx8krD8F15/4u
-         HKFGiM1jaZm4peEGlXlOzqH70E0IopglxPBnPoIT6U4HW7+cKzFvxOoPzo7ZDbiKv4FP
-         qtCzHe0kvpsMhRKhpDZVxBJ91kzIiUAg9DEDH/9pEXgqBno7haK6wAU9yl4wZy59Ag9Q
-         UtsQ==
-X-Gm-Message-State: APjAAAWwf9MQp1wB60wwKshneCZ/YoIxXfdM7VkxgDJ3aeL7+krczkES
-        9fJqPiR0XaTT2b/4MR98TvzoUNyOo00=
-X-Google-Smtp-Source: APXvYqxdZFc8rUKvnYBdsfaCbtZU51j/0ksv614dOtS1iFCJC1LjBpRoRpa9DRX4lVO2NynxWQU7lA==
-X-Received: by 2002:a17:902:b701:: with SMTP id d1mr6647046pls.280.1579380315182;
-        Sat, 18 Jan 2020 12:45:15 -0800 (PST)
+        bh=9nGxRoRYyJbnnwOrpQGmTmHPjg5LAsfCWJ/kF5ALD1c=;
+        b=gEyX1iWWYlXQkhMp5enYgONH35y2b5Dd0sxEuDIiGSoS5U28dKO2GUr2YBNKwtiQaK
+         VPh99Gvy6mPXdjYUeosXI6Fy2gYoMmbWZmCYuwXm99y2yz50HAiNII73o8uwYJS88UHi
+         HY/fmhHSSkp30gaAlDsi/ENzL7kEDmcHTMwm4fP3iGhFlEP1akhFFagUztv5ugiCmhBQ
+         6D0jr/8XoFNLbFB3/xAjCf3N/ZmC4kJ47PpdtJJw4nmses464VyXWc4CAP79r5BN5aJs
+         dJ0hmJ2fs2PSOAs1LkZuv5j0k1nul0JneLpsugh3Gei0Ht67n2Si8mdWHfco9qKSe7ZA
+         WM1Q==
+X-Gm-Message-State: APjAAAXdObHxssjMLuRpChlkvOajgpWMmzO5yqqOPOfMAMxwGQX66RId
+        D/NCtpuh1bOogcJu8CKn2JPSrxXq2dA=
+X-Google-Smtp-Source: APXvYqyBGKSzq8EJexVFGiEYgwUBYmAdWpzBit4G++aNEoxZ3QyJwCMlQAsDrYDdeEXAAiq0s4UnAQ==
+X-Received: by 2002:a17:90a:31cf:: with SMTP id j15mr14244745pjf.120.1579380377239;
+        Sat, 18 Jan 2020 12:46:17 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id v15sm12050145pju.15.2020.01.18.12.45.14
+        by smtp.gmail.com with ESMTPSA id m19sm2528305pjv.10.2020.01.18.12.46.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Jan 2020 12:45:14 -0800 (PST)
-Subject: Re: [PATCH v2] io_uring: optimise sqe-to-req flags translation
+        Sat, 18 Jan 2020 12:46:16 -0800 (PST)
+Subject: Re: [PATCH v3 1/1] io_uring: optimise sqe-to-req flags translation
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <b507d39e-ec2b-5c9f-0fd0-6ab1b0491cad@kernel.dk>
- <06bcf64774c4730b33d1ef65e4fcb67f381cae08.1579340590.git.asml.silence@gmail.com>
- <b773df2f-8873-77f3-d25d-b59c66f3a04b@kernel.dk>
- <ad7c75c3-b660-9814-e3fe-ef5a3acd7e8f@gmail.com>
+References: <ad7c75c3-b660-9814-e3fe-ef5a3acd7e8f@gmail.com>
+ <648dbd08d8acb9c959acdd0fc76e8482d83635dd.1579368079.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b358b578-f0bd-8886-a75b-b9caefea2496@kernel.dk>
-Date:   Sat, 18 Jan 2020 13:45:12 -0700
+Message-ID: <7197ccc8-6fe2-3405-c88d-95bcb909d55a@kernel.dk>
+Date:   Sat, 18 Jan 2020 13:46:14 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <ad7c75c3-b660-9814-e3fe-ef5a3acd7e8f@gmail.com>
+In-Reply-To: <648dbd08d8acb9c959acdd0fc76e8482d83635dd.1579368079.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,20 +65,15 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/18/20 10:10 AM, Pavel Begunkov wrote:
-> On 18/01/2020 19:34, Jens Axboe wrote:
->>> +enum {
->>> +	/* correspond one-to-one to IOSQE_IO_* flags*/
->>> +	REQ_F_FIXED_FILE	= BIT(REQ_F_FIXED_FILE_BIT),	/* ctx owns file */
->>
->> I'd put the comment on top of the line instead, these lines are way too
->> long.
+On 1/18/20 10:22 AM, Pavel Begunkov wrote:
+> For each IOSQE_* flag there is a corresponding REQ_F_* flag. And there
+> is a repetitive pattern of their translation:
+> e.g. if (sqe->flags & SQE_FLAG*) req->flags |= REQ_F_FLAG*
 > 
-> I find it less readable, but let's see
+> Use same numeric values/bits for them and copy instead of manual
+> handling.
 
-Well, the monster lines are unreadable on an 80-char display... I'm generally
-not a stickler with 80 chars, if a few over needs we don't need to break,
-I'm all for it. But the long comments are unreadable for me.
+Thanks, applied.
 
 -- 
 Jens Axboe

@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C65C14593D
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2020 17:02:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36A8514593F
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2020 17:02:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbgAVQCh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Jan 2020 11:02:37 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:33546 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbgAVQCg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jan 2020 11:02:36 -0500
-Received: by mail-il1-f193.google.com with SMTP id v15so5562857iln.0
-        for <io-uring@vger.kernel.org>; Wed, 22 Jan 2020 08:02:36 -0800 (PST)
+        id S1725827AbgAVQCi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Jan 2020 11:02:38 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45542 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbgAVQCh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jan 2020 11:02:37 -0500
+Received: by mail-io1-f66.google.com with SMTP id i11so7091565ioi.12
+        for <io-uring@vger.kernel.org>; Wed, 22 Jan 2020 08:02:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AA0wwvnZ0n7WrhC9fHpAGgP3kCVdarewU7fTNKHf4vo=;
-        b=0H/shxhDH59wMOxesQPvrDjl4FFa3J+m4nL2lmrNnii35gnausf6qcIR1qKVyzVQla
-         PYNxtpP1C7/+l2tphwffssWW/Q0vGMFwDSPhXC3vsaazpFg2veEUYPiOhlx3NPln4jDZ
-         TVB/ZG+CNBGX3priGF4NMP2ShNa8rdk24z7mkGPlc5HX3USTp5/9aaPfXwijftQW7c01
-         NsF6pxF5ScY8hSZhjZ6Eq4NYpX7FJiRHQfA6gNeKAgGrVz/DOa9VjsN0klyJQTedOsN7
-         LYNRD+/CIhPRe/S52R1Yv2GbiGd97uxMwCoWgKPskjngNYVNaKt13jq1yfjaeuHd7u0x
-         ZeGg==
+        bh=KSosYJIVrzvlE5E1FMUdzMtoabtqfcuKGndm1BKLKA0=;
+        b=ScozufRVIjlbXUefOn+/TZ64qB1VAqwe5zD5MRgdNkGmITpEGnx4SgOsJEGzRwc/Lj
+         bboCL1oK+Sru83+Mra/dPjmwRIK2mzbb8BmKkCI5SXPnQ15ahYgCXt+7WLUu4nK3ocCk
+         wcfvKJApe8EJrHdluSj9/203sItgJ34DrqamFA31R41ISO7cbmG0CW1GNBvHMf58g0HD
+         Jcm71viljY4QW84Kaw9JPCYIfY+xrVI6PyzIM00OA/gqvKwMqbI3roXt6ZkB2cfCdI9H
+         cgHSCqIc2oi5ZcbIe3a9HguLPeGZJynGo2hoCIohyDz1jaIZgbF4T+gy5eMpXNCdQEeB
+         4ZfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AA0wwvnZ0n7WrhC9fHpAGgP3kCVdarewU7fTNKHf4vo=;
-        b=UO42hlC1sMXaSxseOMtJYf6xNwZc+jue5Jnqvb2WNWtG+vTxQPm8LEo/JVJd65NbD8
-         w4ccXlX30RFiVRef++Kf4o49f5h52eDV8kT6XU5SCsQ+WRplwUYqiSFbDkVv3B/vDqI4
-         p/EIUxwl3srXaeRBUxbXM4iI0aq5unomnQuCsUnfsSpDsKCd2Q4r/NK1LKvTKCS/6q6J
-         cdUVLU+k8GBFpQPvjAy5ILuUSqvspwIlXqT0jGZ+SMsB6PNx8wY4ifMRgTwqZHQgWSdt
-         WxGg93jy3QT8yr7gzXPpM8AEvkdzdHgjelNk92ViRd+s+KKY6FkPH3XvKTRfyDmm1e11
-         TeHw==
-X-Gm-Message-State: APjAAAVcIJId2sMx34hJ+/DWAb73n7IQEdm6ai2KQYgmPaEbv3VyzW8o
-        qvobfgIMBwloNWDtPHQ4cvOFO0I9ZDE=
-X-Google-Smtp-Source: APXvYqyxzuH48HGZqrrug9el5aUKeMAz9hgaD7zTffei2y597qUlMlA4wHMTMSSmUeNtc91J/df1Sg==
-X-Received: by 2002:a05:6e02:f0f:: with SMTP id x15mr8446354ilj.298.1579708955822;
-        Wed, 22 Jan 2020 08:02:35 -0800 (PST)
+        bh=KSosYJIVrzvlE5E1FMUdzMtoabtqfcuKGndm1BKLKA0=;
+        b=Mk/Xhzv+Mw7u1Tau3wdAFJbqlAvJwIsOpAMru+mc/ytuNPPM2c2YcNqvqtlQpa6wtY
+         7vV/ZIhS7k2MSF+U2edS9R8qwgRY3VvXGRZ8LsbP4UQANenFCok2tS85Bcdvewfxe27U
+         PGk4rngf7jSSeZ5HHSYw8zAHZmfOnj54E6WGca0Q8rkVRyoldrfXa4Yvp/9jRbrmK4+G
+         314pjHseie8k9Rq6xH36mz3t6jpUX9i2CwmqeF0VMfQPGB0F57x2p4wCgOvZ1Q3ENVC+
+         /hKNFHF33xAXfrsfRyIRov2EaDEfQ1XFl9o8Bovg4FNHmq6fFsmRdO5+jSQPoPMuxcZq
+         endA==
+X-Gm-Message-State: APjAAAWGgyBT1vsYCjsyykRh/n5t3OdXT+jwfcOUt12o7OyMls/Bo2GP
+        i5V+FDGG+4CzNLf4wdhdl7paVdyib2Q=
+X-Google-Smtp-Source: APXvYqwBWAalVw4FoWA7D+ackaiPP9lzbini3VNwpiBcVhocQfghO/eG5jRFPDsEYOCVHmvDRvve1Q==
+X-Received: by 2002:a6b:6311:: with SMTP id p17mr7160934iog.127.1579708956573;
+        Wed, 22 Jan 2020 08:02:36 -0800 (PST)
 Received: from x1.localdomain ([65.144.74.34])
         by smtp.gmail.com with ESMTPSA id v206sm796924iod.41.2020.01.22.08.02.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 08:02:35 -0800 (PST)
+        Wed, 22 Jan 2020 08:02:36 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/3] eventpoll: support non-blocking do_epoll_ctl() calls
-Date:   Wed, 22 Jan 2020 09:02:30 -0700
-Message-Id: <20200122160231.11876-3-axboe@kernel.dk>
+Subject: [PATCH 3/3] io_uring: add support for epoll_ctl(2)
+Date:   Wed, 22 Jan 2020 09:02:31 -0700
+Message-Id: <20200122160231.11876-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122160231.11876-1-axboe@kernel.dk>
 References: <20200122160231.11876-1-axboe@kernel.dk>
@@ -60,123 +60,152 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Also make it available outside of epoll, along with the helper that
-decides if we need to copy the passed in epoll_event.
+This adds IORING_OP_EPOLL_CTL, which can perform the same work as the
+epoll_ctl(2) system call.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/eventpoll.c            | 42 ++++++++++++++++++++++++++++-----------
- include/linux/eventpoll.h |  9 +++++++++
- 2 files changed, 39 insertions(+), 12 deletions(-)
+ fs/io_uring.c                 | 72 +++++++++++++++++++++++++++++++++++
+ include/uapi/linux/io_uring.h |  1 +
+ 2 files changed, 73 insertions(+)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index cd848e8d08e2..162af749ea50 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -354,12 +354,6 @@ static inline struct epitem *ep_item_from_epqueue(poll_table *p)
- 	return container_of(p, struct ep_pqueue, pt)->epi;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 09503d1e9e45..b3bff464d2e7 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -74,6 +74,7 @@
+ #include <linux/namei.h>
+ #include <linux/fsnotify.h>
+ #include <linux/fadvise.h>
++#include <linux/eventpoll.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/io_uring.h>
+@@ -421,6 +422,14 @@ struct io_madvise {
+ 	u32				advice;
+ };
+ 
++struct io_epoll {
++	struct file			*file;
++	int				epfd;
++	int				op;
++	int				fd;
++	struct epoll_event		event;
++};
++
+ struct io_async_connect {
+ 	struct sockaddr_storage		address;
+ };
+@@ -534,6 +543,7 @@ struct io_kiocb {
+ 		struct io_files_update	files_update;
+ 		struct io_fadvise	fadvise;
+ 		struct io_madvise	madvise;
++		struct io_epoll		epoll;
+ 	};
+ 
+ 	struct io_async_ctx		*io;
+@@ -719,6 +729,9 @@ static const struct io_op_def io_op_defs[] = {
+ 		.needs_file		= 1,
+ 		.fd_non_neg		= 1,
+ 	},
++	[IORING_OP_EPOLL_CTL] = {
++		.unbound_nonreg_file	= 1,
++	},
+ };
+ 
+ static void io_wq_submit_work(struct io_wq_work **workptr);
+@@ -2578,6 +2591,54 @@ static int io_openat(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	return io_openat2(req, nxt, force_nonblock);
  }
  
--/* Tells if the epoll_ctl(2) operation needs an event copy from userspace */
--static inline int ep_op_has_event(int op)
--{
--	return op != EPOLL_CTL_DEL;
--}
--
- /* Initialize the poll safe wake up structure */
- static void ep_nested_calls_init(struct nested_calls *ncalls)
- {
-@@ -2074,7 +2068,20 @@ SYSCALL_DEFINE1(epoll_create, int, size)
- 	return do_epoll_create(0);
- }
- 
--static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds)
-+static inline int epoll_mutex_lock(struct mutex *mutex, int depth,
-+				   bool nonblock)
++static int io_epoll_ctl_prep(struct io_kiocb *req,
++			     const struct io_uring_sqe *sqe)
 +{
-+	if (!nonblock) {
-+		mutex_lock_nested(mutex, depth);
-+		return 0;
++#if defined(CONFIG_EPOLL)
++	if (sqe->ioprio || sqe->buf_index || sqe->off)
++		return -EINVAL;
++
++	req->epoll.epfd = READ_ONCE(sqe->fd);
++	req->epoll.op = READ_ONCE(sqe->len);
++	req->epoll.fd = READ_ONCE(sqe->off);
++
++	if (ep_op_has_event(req->epoll.op)) {
++		struct epoll_event __user *ev;
++
++		ev = u64_to_user_ptr(READ_ONCE(sqe->addr));
++		if (copy_from_user(&req->epoll.event, ev, sizeof(*ev)))
++			return -EFAULT;
 +	}
-+	if (!mutex_trylock(mutex))
-+		return 0;
-+	return -EAGAIN;
++
++	return 0;
++#else
++	return -EOPNOTSUPP;
++#endif
 +}
 +
-+int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
-+		 bool nonblock)
- {
- 	int error;
- 	int full_check = 0;
-@@ -2145,13 +2152,17 @@ static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds)
- 	 * deep wakeup paths from forming in parallel through multiple
- 	 * EPOLL_CTL_ADD operations.
- 	 */
--	mutex_lock_nested(&ep->mtx, 0);
-+	error = epoll_mutex_lock(&ep->mtx, 0, nonblock);
-+	if (error)
-+		goto error_tgt_fput;
- 	if (op == EPOLL_CTL_ADD) {
- 		if (!list_empty(&f.file->f_ep_links) ||
- 						is_file_epoll(tf.file)) {
- 			full_check = 1;
- 			mutex_unlock(&ep->mtx);
--			mutex_lock(&epmutex);
-+			error = epoll_mutex_lock(&epmutex, 0, nonblock);
-+			if (error)
-+				goto error_tgt_fput;
- 			if (is_file_epoll(tf.file)) {
- 				error = -ELOOP;
- 				if (ep_loop_check(ep, tf.file) != 0) {
-@@ -2161,10 +2172,17 @@ static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds)
- 			} else
- 				list_add(&tf.file->f_tfile_llink,
- 							&tfile_check_list);
--			mutex_lock_nested(&ep->mtx, 0);
-+			error = epoll_mutex_lock(&ep->mtx, 0, nonblock);
-+			if (error) {
-+out_del:
-+				list_del(&tf.file->f_tfile_llink);
-+				goto error_tgt_fput;
-+			}
- 			if (is_file_epoll(tf.file)) {
- 				tep = tf.file->private_data;
--				mutex_lock_nested(&tep->mtx, 1);
-+				error = epoll_mutex_lock(&tep->mtx, 1, nonblock);
-+				if (error)
-+					goto out_del;
- 			}
- 		}
- 	}
-@@ -2233,7 +2251,7 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
- 	    copy_from_user(&epds, event, sizeof(struct epoll_event)))
- 		return -EFAULT;
- 
--	return do_epoll_ctl(epfd, op, fd, &epds);
-+	return do_epoll_ctl(epfd, op, fd, &epds, false);
- }
- 
- /*
-diff --git a/include/linux/eventpoll.h b/include/linux/eventpoll.h
-index bc6d79b00c4e..8f000fada5a4 100644
---- a/include/linux/eventpoll.h
-+++ b/include/linux/eventpoll.h
-@@ -61,6 +61,15 @@ static inline void eventpoll_release(struct file *file)
- 	eventpoll_release_file(file);
- }
- 
-+int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
-+		 bool nonblock);
-+
-+/* Tells if the epoll_ctl(2) operation needs an event copy from userspace */
-+static inline int ep_op_has_event(int op)
++static int io_epoll_ctl(struct io_kiocb *req, struct io_kiocb **nxt,
++			bool force_nonblock)
 +{
-+	return op != EPOLL_CTL_DEL;
++#if defined(CONFIG_EPOLL)
++	struct io_epoll *ie = &req->epoll;
++	int ret;
++
++	ret = do_epoll_ctl(ie->epfd, ie->op, ie->fd, &ie->event, force_nonblock);
++	if (force_nonblock && ret == -EAGAIN) {
++		req->work.flags |= IO_WQ_WORK_NEEDS_FILES;
++		return -EAGAIN;
++	}
++
++	if (ret < 0)
++		req_set_fail_links(req);
++	io_cqring_add_event(req, ret);
++	io_put_req_find_next(req, nxt);
++	return 0;
++#else
++	return -EOPNOTSUPP;
++#endif
 +}
 +
- #else
+ static int io_madvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ #if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
+@@ -4039,6 +4100,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
+ 	case IORING_OP_OPENAT2:
+ 		ret = io_openat2_prep(req, sqe);
+ 		break;
++	case IORING_OP_EPOLL_CTL:
++		ret = io_epoll_ctl_prep(req, sqe);
++		break;
+ 	default:
+ 		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+ 				req->opcode);
+@@ -4267,6 +4331,14 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 		}
+ 		ret = io_openat2(req, nxt, force_nonblock);
+ 		break;
++	case IORING_OP_EPOLL_CTL:
++		if (sqe) {
++			ret = io_epoll_ctl_prep(req, sqe);
++			if (ret)
++				break;
++		}
++		ret = io_epoll_ctl(req, nxt, force_nonblock);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 57d05cc5e271..cffa6fd33827 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -106,6 +106,7 @@ enum {
+ 	IORING_OP_SEND,
+ 	IORING_OP_RECV,
+ 	IORING_OP_OPENAT2,
++	IORING_OP_EPOLL_CTL,
  
- static inline void eventpoll_init_file(struct file *file) {}
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
 -- 
 2.25.0
 

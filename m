@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F40D8145A10
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2020 17:42:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B5B1145A12
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2020 17:42:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725836AbgAVQmt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Jan 2020 11:42:49 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40317 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbgAVQms (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jan 2020 11:42:48 -0500
-Received: by mail-io1-f68.google.com with SMTP id x1so7260868iop.7
-        for <io-uring@vger.kernel.org>; Wed, 22 Jan 2020 08:42:48 -0800 (PST)
+        id S1726204AbgAVQmu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Jan 2020 11:42:50 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35331 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbgAVQmu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jan 2020 11:42:50 -0500
+Received: by mail-io1-f66.google.com with SMTP id h8so7306022iob.2
+        for <io-uring@vger.kernel.org>; Wed, 22 Jan 2020 08:42:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RfiRzl729pSQkcVcyHTXNJXLD8uT/Zh0KX5h0rH8OOE=;
-        b=Vtu+Oq5gEAO9RZ0XdxLepwTDRsT+4l7hnqDjoUlOnBJhyJQeZDk9ysQkmuahDdl7V9
-         DTWL5O4OWPfwccVKZhdwTLs96FprFEYcUuaBoYVGr/K0M/zwRgn8b37r3VSK2vGHRpvm
-         x66UPSrgUxYd+vJAkvBrV0YKJ68s/W2TPBbkKV2i/ti2N2WKqTFt4B7YQkBrkMCRtl+C
-         U8Qp4SapIKKw2FqIQjDqLt0c5ufvTqAll+btDUpAyBhR0zhf6ctW5mUoAjhnMyhJP0n3
-         pIJw1uAFPf6Ff6hQ2bbhBCYWmwUml2Ofdtz8QugF4ToaqKGFSyHfsEHI4RfuFdgcUJl4
-         RtJA==
+        bh=BAFfS5OIp3jxEUeDeCIVOeYSwdTU3d0hKCDzqFsPnqo=;
+        b=Io0n3sYNpwQM8CdCxWnopIOeOP5krysVQuURUiwa4PYvS+MRY9UCoyemshpeqG8KMn
+         vs9QU5zcdwO/jeOblKk1AI0Fjw+m4RRBgp/A2x3AbG5QUDP9YrmoKycJyCO6Ar7q7K0A
+         /uyBjTqChU0AKeEXfrZJJgg4HweZspeytK+aYzSR2F+5oI9Za7Cunmg73/0xAvs25ofk
+         DV7O+eGbqrDlDjahQugG1jE23PST6ARM9Hs3r6qcvVIFklMX39AtdkecH3H0YzsY5gr2
+         J8GtNB6Xr4WLPUipdJiRWH/N3mS2ebfKN5L6ycGOWHsm+u7ghka4j+XKXh+xA+BaUusa
+         WSsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RfiRzl729pSQkcVcyHTXNJXLD8uT/Zh0KX5h0rH8OOE=;
-        b=juS9pJKC8R1p2UkDYdvXwrhRbw2L+/+6kGO2bZemWTakJ8d291htnaieyh409vCMKn
-         Q8U8HLyB1DqdaVvt/U+HhNNQJxd7gu/b9DNYDSPFnAQ67xgtM4Qw2DHLluWATYjRMYL8
-         1Gw/rBMQLs/GGrgHCs7GxWMOtZKFVQzhqhbHFYVvTDi/khoXOGTYd/9GxaSS1fOJu1Uw
-         +A1W6yu4rbE0KIGyfwWSEwNAJareueh3PIgYBxdvMv1cb3urCSGENqlnjyTVWIDoQ/+n
-         D3Vx1ItxVTnLES11ZvVHGlfXg/fGXDBk9ouApWz6wGmxfEv4J5LLDX049Kl9K+Y03mWz
-         UfXQ==
-X-Gm-Message-State: APjAAAXZC167eL+Ftsn4tYkB9lvDKQ7xVuOLqSA43fStGVB5BdgdM22Q
-        OrsJlHOwXG8b5NEQpLjqBsT8GmAF694=
-X-Google-Smtp-Source: APXvYqwyFd9pcByXHyotx2H96fZrn/peNcW0PRxTpuSU/TvG3mekjSSzF3Qnbe3qbIo7g6Xv2ADQ+A==
-X-Received: by 2002:a5d:9805:: with SMTP id a5mr3425782iol.80.1579711367872;
-        Wed, 22 Jan 2020 08:42:47 -0800 (PST)
+        bh=BAFfS5OIp3jxEUeDeCIVOeYSwdTU3d0hKCDzqFsPnqo=;
+        b=qUIcfNssR3h4zGToexVPY/ahiVUZHtsTeId7+uafbupr9GgX8brxM1CHpGP/8R6iCL
+         JFmBRtGJQ1Jf35GGK4EE48cXq38gzk6j9fl+jCWrlZHQuw6VpzzpxJZ65W/TQa9mWSKo
+         YGPabRYX5jq6mo5QxoTUEzEaH0DUbunjHx1n/Hip+CrFwIBRImG5q8wlKhKxTnwisVs/
+         nNvasDm02mm1Sg0Usccyh3UFs7k/zIR82CW6xN5kNZREWLwKHiR/rWB6T9gGiXiM2p4b
+         61MFlBfPkGYB3sdlByMEw6e09XilhZO6bvcjJchuutqNJ/dQjj5HRBTGQFBDKdnfHF50
+         dFuw==
+X-Gm-Message-State: APjAAAUp2JjF0V0vajhm9TpFLmE+W9jv+rMzXo5wC9Y37488UD/cmyAC
+        lZMF4NLSlxmrGki7cVEFU5BdOx/VIac=
+X-Google-Smtp-Source: APXvYqxu2DqtaxjVNoRDx51OWRR3Ym3l6DHf/aadfHj8lW0h1xOcIGJ1jzKSRUIa4u6hglBVJ/qxIQ==
+X-Received: by 2002:a6b:ca43:: with SMTP id a64mr7366905iog.217.1579711368999;
+        Wed, 22 Jan 2020 08:42:48 -0800 (PST)
 Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id o6sm14599681ilc.76.2020.01.22.08.42.47
+        by smtp.gmail.com with ESMTPSA id o6sm14599681ilc.76.2020.01.22.08.42.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 08:42:47 -0800 (PST)
+        Wed, 22 Jan 2020 08:42:48 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, jannh@google.com,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/3] eventpoll: abstract out epoll_ctl() handler
-Date:   Wed, 22 Jan 2020 09:42:42 -0700
-Message-Id: <20200122164244.27799-2-axboe@kernel.dk>
+Subject: [PATCH 2/3] eventpoll: support non-blocking do_epoll_ctl() calls
+Date:   Wed, 22 Jan 2020 09:42:43 -0700
+Message-Id: <20200122164244.27799-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122164244.27799-1-axboe@kernel.dk>
 References: <20200122164244.27799-1-axboe@kernel.dk>
@@ -61,115 +61,126 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-No functional changes in this patch.
+Also make it available outside of epoll, along with the helper that
+decides if we need to copy the passed in epoll_event.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/eventpoll.c | 45 +++++++++++++++++++++++++--------------------
- 1 file changed, 25 insertions(+), 20 deletions(-)
+ fs/eventpoll.c            | 46 ++++++++++++++++++++++++++++-----------
+ include/linux/eventpoll.h |  9 ++++++++
+ 2 files changed, 42 insertions(+), 13 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 67a395039268..cd848e8d08e2 100644
+index cd848e8d08e2..b041b66002db 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -2074,27 +2074,15 @@ SYSCALL_DEFINE1(epoll_create, int, size)
+@@ -354,12 +354,6 @@ static inline struct epitem *ep_item_from_epqueue(poll_table *p)
+ 	return container_of(p, struct ep_pqueue, pt)->epi;
+ }
+ 
+-/* Tells if the epoll_ctl(2) operation needs an event copy from userspace */
+-static inline int ep_op_has_event(int op)
+-{
+-	return op != EPOLL_CTL_DEL;
+-}
+-
+ /* Initialize the poll safe wake up structure */
+ static void ep_nested_calls_init(struct nested_calls *ncalls)
+ {
+@@ -2074,7 +2068,20 @@ SYSCALL_DEFINE1(epoll_create, int, size)
  	return do_epoll_create(0);
  }
  
--/*
-- * The following function implements the controller interface for
-- * the eventpoll file that enables the insertion/removal/change of
-- * file descriptors inside the interest set.
-- */
--SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
--		struct epoll_event __user *, event)
-+static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds)
+-static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds)
++static inline int epoll_mutex_lock(struct mutex *mutex, int depth,
++				   bool nonblock)
++{
++	if (!nonblock) {
++		mutex_lock_nested(mutex, depth);
++		return 0;
++	}
++	if (mutex_trylock(mutex))
++		return 0;
++	return -EAGAIN;
++}
++
++int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
++		 bool nonblock)
  {
  	int error;
  	int full_check = 0;
- 	struct fd f, tf;
- 	struct eventpoll *ep;
- 	struct epitem *epi;
--	struct epoll_event epds;
- 	struct eventpoll *tep = NULL;
- 
--	error = -EFAULT;
--	if (ep_op_has_event(op) &&
--	    copy_from_user(&epds, event, sizeof(struct epoll_event)))
--		goto error_return;
--
- 	error = -EBADF;
- 	f = fdget(epfd);
- 	if (!f.file)
-@@ -2112,7 +2100,7 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
- 
- 	/* Check if EPOLLWAKEUP is allowed */
- 	if (ep_op_has_event(op))
--		ep_take_care_of_epollwakeup(&epds);
-+		ep_take_care_of_epollwakeup(epds);
- 
- 	/*
- 	 * We have to check that the file structure underneath the file descriptor
-@@ -2128,11 +2116,11 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
- 	 * so EPOLLEXCLUSIVE is not allowed for a EPOLL_CTL_MOD operation.
- 	 * Also, we do not currently supported nested exclusive wakeups.
+@@ -2145,13 +2152,17 @@ static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds)
+ 	 * deep wakeup paths from forming in parallel through multiple
+ 	 * EPOLL_CTL_ADD operations.
  	 */
--	if (ep_op_has_event(op) && (epds.events & EPOLLEXCLUSIVE)) {
-+	if (ep_op_has_event(op) && (epds->events & EPOLLEXCLUSIVE)) {
- 		if (op == EPOLL_CTL_MOD)
- 			goto error_tgt_fput;
- 		if (op == EPOLL_CTL_ADD && (is_file_epoll(tf.file) ||
--				(epds.events & ~EPOLLEXCLUSIVE_OK_BITS)))
-+				(epds->events & ~EPOLLEXCLUSIVE_OK_BITS)))
- 			goto error_tgt_fput;
- 	}
- 
-@@ -2192,8 +2180,8 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
- 	switch (op) {
- 	case EPOLL_CTL_ADD:
- 		if (!epi) {
--			epds.events |= EPOLLERR | EPOLLHUP;
--			error = ep_insert(ep, &epds, tf.file, fd, full_check);
-+			epds->events |= EPOLLERR | EPOLLHUP;
-+			error = ep_insert(ep, epds, tf.file, fd, full_check);
- 		} else
- 			error = -EEXIST;
- 		if (full_check)
-@@ -2208,8 +2196,8 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
- 	case EPOLL_CTL_MOD:
- 		if (epi) {
- 			if (!(epi->event.events & EPOLLEXCLUSIVE)) {
--				epds.events |= EPOLLERR | EPOLLHUP;
--				error = ep_modify(ep, epi, &epds);
-+				epds->events |= EPOLLERR | EPOLLHUP;
-+				error = ep_modify(ep, epi, epds);
+-	mutex_lock_nested(&ep->mtx, 0);
++	error = epoll_mutex_lock(&ep->mtx, 0, nonblock);
++	if (error)
++		goto error_tgt_fput;
+ 	if (op == EPOLL_CTL_ADD) {
+ 		if (!list_empty(&f.file->f_ep_links) ||
+ 						is_file_epoll(tf.file)) {
+-			full_check = 1;
+ 			mutex_unlock(&ep->mtx);
+-			mutex_lock(&epmutex);
++			error = epoll_mutex_lock(&epmutex, 0, nonblock);
++			if (error)
++				goto error_tgt_fput;
++			full_check = 1;
+ 			if (is_file_epoll(tf.file)) {
+ 				error = -ELOOP;
+ 				if (ep_loop_check(ep, tf.file) != 0) {
+@@ -2161,10 +2172,19 @@ static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds)
+ 			} else
+ 				list_add(&tf.file->f_tfile_llink,
+ 							&tfile_check_list);
+-			mutex_lock_nested(&ep->mtx, 0);
++			error = epoll_mutex_lock(&ep->mtx, 0, nonblock);
++			if (error) {
++out_del:
++				list_del(&tf.file->f_tfile_llink);
++				goto error_tgt_fput;
++			}
+ 			if (is_file_epoll(tf.file)) {
+ 				tep = tf.file->private_data;
+-				mutex_lock_nested(&tep->mtx, 1);
++				error = epoll_mutex_lock(&tep->mtx, 1, nonblock);
++				if (error) {
++					mutex_unlock(&ep->mtx);
++					goto out_del;
++				}
  			}
- 		} else
- 			error = -ENOENT;
-@@ -2231,6 +2219,23 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
- 	return error;
+ 		}
+ 	}
+@@ -2233,7 +2253,7 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
+ 	    copy_from_user(&epds, event, sizeof(struct epoll_event)))
+ 		return -EFAULT;
+ 
+-	return do_epoll_ctl(epfd, op, fd, &epds);
++	return do_epoll_ctl(epfd, op, fd, &epds, false);
  }
  
-+/*
-+ * The following function implements the controller interface for
-+ * the eventpoll file that enables the insertion/removal/change of
-+ * file descriptors inside the interest set.
-+ */
-+SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
-+		struct epoll_event __user *, event)
+ /*
+diff --git a/include/linux/eventpoll.h b/include/linux/eventpoll.h
+index bc6d79b00c4e..8f000fada5a4 100644
+--- a/include/linux/eventpoll.h
++++ b/include/linux/eventpoll.h
+@@ -61,6 +61,15 @@ static inline void eventpoll_release(struct file *file)
+ 	eventpoll_release_file(file);
+ }
+ 
++int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
++		 bool nonblock);
++
++/* Tells if the epoll_ctl(2) operation needs an event copy from userspace */
++static inline int ep_op_has_event(int op)
 +{
-+	struct epoll_event epds;
-+
-+	if (ep_op_has_event(op) &&
-+	    copy_from_user(&epds, event, sizeof(struct epoll_event)))
-+		return -EFAULT;
-+
-+	return do_epoll_ctl(epfd, op, fd, &epds);
++	return op != EPOLL_CTL_DEL;
 +}
 +
- /*
-  * Implement the event wait interface for the eventpoll file. It is the kernel
-  * part of the user space epoll_wait(2).
+ #else
+ 
+ static inline void eventpoll_init_file(struct file *file) {}
 -- 
 2.25.0
 

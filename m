@@ -2,53 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A28B1144A38
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2020 04:12:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5C65144A4A
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2020 04:17:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbgAVDMM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Jan 2020 22:12:12 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53381 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728779AbgAVDMM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jan 2020 22:12:12 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m24so5285545wmc.3;
-        Tue, 21 Jan 2020 19:12:09 -0800 (PST)
+        id S1729093AbgAVDRY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Jan 2020 22:17:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39763 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729191AbgAVDRX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jan 2020 22:17:23 -0500
+Received: by mail-wr1-f68.google.com with SMTP id y11so5675824wrt.6;
+        Tue, 21 Jan 2020 19:17:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=1BVzpWHJzPeOvi4CZ1Q3Hz4I3KovNebvVdfsMJTDsfU=;
-        b=SIkXC4tKpbEJ3PzQ+OcB9TVuS3WRNt+JqXTKzFmxBiackrEKYZdgCn+S3do1qDVPKy
-         XRFbnEGYkJWGDniD8LtDhTu0lw+1hFJG3D25noF+1PfEVPIhB/V1hee2wjZaqYSRLAgV
-         2XCr3UcxV0wQLyg4hxYBaX02F7DAJYPm4lpdqiHhx/E9qy4yuKXsDkVn9yjzjb4iTmfo
-         futapoJSyD3lbQaO2w580/ck9vktD39qgogT/xmFlAywWEqFCnyxZ16yn5ky7Tkl51lL
-         BdFEftfxIlMaLzlg1V+Lr+OienYW4kJPuKKTUB0Ek98Lu3QnfHXtUlB387cOXKK3n0oO
-         9e5w==
+        bh=qZaKHdf6AtwVH3g0ZcDyF9A3vbnDav4W2l5999jDwEM=;
+        b=DxcD7hvc1lmtVGyk5g9TdnZ23WxP29CfifhZR7ekZ3DPIi3EntOvT715CyZ7l8AgEe
+         HIEeqa4pIpgcYzR2GZ3pn1dq8b4aSztt2uT3pfVAopTc6DHzP5JWCWIMwb99vfwrBSrq
+         zW34nDr0rcRwphrHNH9UKtqgGB3Y9yPfmFBauLF69x06rF/qiEDUXqxyDXG0YYlp1Frm
+         Q1yuotqGcZI/C2iCT3QzJt8dQ3cSZrUXgUO8PxYYmsPQBOmA5mbJLJ0jGio/MHr3/RPS
+         5Gn9tmPEY/Fog4RX7XV6ShPus5Dorkn/9f4/oHtLNBvlWn0dgz6gvuPM1jrfO32TZIl4
+         kFaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to;
-        bh=1BVzpWHJzPeOvi4CZ1Q3Hz4I3KovNebvVdfsMJTDsfU=;
-        b=uD837xjeHu5r2I7v8D3ROPrCAJJ9JnYmk5ReBBMkJtWH3mhiNber5laO3Y1WFjdm8v
-         zxe3jLZpVWOnqWHJWxi368ewzyJwEOjEUJf+Nn9nPL5a6jjy3yzMqdArkrKVQSi/blw8
-         JiGlrFM7j5DCGJU3d7RRhCaSxYAVpVswKwZ2NQksNA+0ZCuAASxFJiKOmIE3cEf3epfT
-         ARVa2lAF1GXTNq0F83OmTi1lQNG9Ci1gPAexaDyTxaBLeScd+OhZ37FTMXPEBfMHdF9O
-         40h52n/Ng+GJbcb0JPHgX3NDci2K2qH7cWAYcoizveHBpsFA9jmvNK8ScMkN1eq/zMP7
-         0S8A==
-X-Gm-Message-State: APjAAAXlMEDhH6nTCD9EBb628itTL76ejvLHLQwRWhlQ+Wq+lk/JrhLv
-        JkWDfZgQI7HneAheB7tCHm0=
-X-Google-Smtp-Source: APXvYqzvtuXRbVIzXqwp5PVuu7Gnq4U2PWJPmUC3aH5OtxRp1XV+niaX4ENSfTT2mSX8MuKFGd4Nlg==
-X-Received: by 2002:a1c:1d02:: with SMTP id d2mr264695wmd.185.1579662728737;
-        Tue, 21 Jan 2020 19:12:08 -0800 (PST)
+        bh=qZaKHdf6AtwVH3g0ZcDyF9A3vbnDav4W2l5999jDwEM=;
+        b=I67z0hscFhHcwDt51qniuLh1O/U1H0KSyN6UeN+QdwOtq1zwAGDgXkzYpTHe9wX3dI
+         tl0AdO8RPybwrP7jTfVaE21jz9ZJwqv8mAy53qumNL/2qYYiTpelK2a0/UgrDbVSoQoU
+         InTdaPWPJw48EJoy5cONa2q3taRFtRdxSHI/6EovvvubA49tCHxA8UtemNgBE7X+OUW0
+         b+ySVTbuXugpIfd5YHLDreUkWp0cem66EPj3rtxkZbS2kii4HAr91r/lVNXgW/LxkkF9
+         x2FFLHPGUmtEslUJ/eBoX/j/cYItXyQIHXrqQHqQp8iyzmgjrodlsmmayh2cd4K4okaL
+         cJnA==
+X-Gm-Message-State: APjAAAVpPbRgB+ESc+5IxEnXNgCzj/BjS2uJSsTeaYKzCkzzcdDMPvFV
+        BSVlwODQPg2DTjOgwZ1g2ns=
+X-Google-Smtp-Source: APXvYqw9oXm3D+DAbpXPqrPgnTIsDuqWsrYwf0hqJc07C6LpC0qbxf8Gx81oCwBjCPjA5ho9+HN7LQ==
+X-Received: by 2002:adf:d848:: with SMTP id k8mr8028336wrl.328.1579663040122;
+        Tue, 21 Jan 2020 19:17:20 -0800 (PST)
 Received: from [192.168.43.234] ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id q3sm56270381wrn.33.2020.01.21.19.12.06
+        by smtp.gmail.com with ESMTPSA id x7sm53795772wrq.41.2020.01.21.19.17.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2020 19:12:08 -0800 (PST)
+        Tue, 21 Jan 2020 19:17:19 -0800 (PST)
+Subject: Re: [PATCH 3/3] io_uring: add splice(2) support
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
 References: <cover.1579649589.git.asml.silence@gmail.com>
- <63119dd6-7668-a7bc-ea24-1db4909762bb@kernel.dk>
+ <8bfd9a57bf42cfc10ee7195969058d6da277deed.1579649589.git.asml.silence@gmail.com>
+ <6d43b9d7-209a-2bbf-e2c2-e125e84b46ab@kernel.dk>
+ <14499431-0409-5d57-9b08-aff95b9d2160@gmail.com>
+ <b20d33eb-fd88-418c-57b6-32feb84d2373@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -93,124 +97,181 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [POC RFC 0/3] splice(2) support for io_uring
-Message-ID: <45f0b63b-e3e7-ba71-d037-9af1db7bbd98@gmail.com>
-Date:   Wed, 22 Jan 2020 06:11:27 +0300
+Message-ID: <578003e9-1af2-4df6-d9e1-cdbbbb701bf7@gmail.com>
+Date:   Wed, 22 Jan 2020 06:16:40 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <63119dd6-7668-a7bc-ea24-1db4909762bb@kernel.dk>
+In-Reply-To: <b20d33eb-fd88-418c-57b6-32feb84d2373@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="Ir6uQ8kmMcOcEUhuO6HLX6yuWsMNYgzNE"
+ boundary="nxVirGMUqE7BJEKscjFSeSPU3sU9IUgLs"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Ir6uQ8kmMcOcEUhuO6HLX6yuWsMNYgzNE
-Content-Type: multipart/mixed; boundary="x0tm5hLtcuaId6zzrES9YU9sroBKl5WwS";
+--nxVirGMUqE7BJEKscjFSeSPU3sU9IUgLs
+Content-Type: multipart/mixed; boundary="I1dRQRmOsgC8CQx7IPXAJUKCb7etVIZmJ";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Message-ID: <45f0b63b-e3e7-ba71-d037-9af1db7bbd98@gmail.com>
-Subject: Re: [POC RFC 0/3] splice(2) support for io_uring
+Message-ID: <578003e9-1af2-4df6-d9e1-cdbbbb701bf7@gmail.com>
+Subject: Re: [PATCH 3/3] io_uring: add splice(2) support
 References: <cover.1579649589.git.asml.silence@gmail.com>
- <63119dd6-7668-a7bc-ea24-1db4909762bb@kernel.dk>
-In-Reply-To: <63119dd6-7668-a7bc-ea24-1db4909762bb@kernel.dk>
+ <8bfd9a57bf42cfc10ee7195969058d6da277deed.1579649589.git.asml.silence@gmail.com>
+ <6d43b9d7-209a-2bbf-e2c2-e125e84b46ab@kernel.dk>
+ <14499431-0409-5d57-9b08-aff95b9d2160@gmail.com>
+ <b20d33eb-fd88-418c-57b6-32feb84d2373@kernel.dk>
+In-Reply-To: <b20d33eb-fd88-418c-57b6-32feb84d2373@kernel.dk>
 
---x0tm5hLtcuaId6zzrES9YU9sroBKl5WwS
+--I1dRQRmOsgC8CQx7IPXAJUKCb7etVIZmJ
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 22/01/2020 04:55, Jens Axboe wrote:
-> On 1/21/20 5:05 PM, Pavel Begunkov wrote:
->> It works well for basic cases, but there is still work to be done. E.g=
-=2E
->> it misses @hash_reg_file checks for the second (output) file. Anyway,
->> there are some questions I want to discuss:
+On 22/01/2020 05:47, Jens Axboe wrote:
+> On 1/21/20 7:40 PM, Pavel Begunkov wrote:
+>>>> @@ -719,6 +730,11 @@ static const struct io_op_def io_op_defs[] =3D =
+{
+>>>>  		.needs_file		=3D 1,
+>>>>  		.fd_non_neg		=3D 1,
+>>>>  	},
+>>>> +	[IORING_OP_SPLICE] =3D {
+>>>> +		.needs_file		=3D 1,
+>>>> +		.hash_reg_file		=3D 1,
+>>>> +		.unbound_nonreg_file	=3D 1,
+>>>> +	}
+>>>>  };
+>>>> =20
+>>>>  static void io_wq_submit_work(struct io_wq_work **workptr);
+>>>
+>>> I probably want to queue up a reservation for the EPOLL_CTL that I
+>>> haven't included yet, but which has been tested. But that's easily
+>>> manageable, so no biggy on my end.
 >>
->> - why sqe->len is __u32? Splice uses size_t, and I think it's better
->> to have something wider (e.g. u64) for fututre use. That's the story
->> behind added sqe->splice_len.
+>> I didn't quite get it. Do you mean collision of opcode numbers?
 >=20
-> IO operations in Linux generally are INT_MAX, so the u32 is plenty big.=
+> Yeah that's all I meant, sorry wasn't too clear. But you can disregard,=
 
-> That's why I chose it. For this specifically, if you look at splice:
+> I'll just pop a reservation in front if/when this is ready to go in if
+> it's before EPOLL_CTL op.
 >=20
-> 	if (unlikely(len > MAX_RW_COUNT))
-> 		len =3D MAX_RW_COUNT;
+>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_u=
+ring.h
+>>>> index 57d05cc5e271..f234b13e7ed3 100644
+>>>> --- a/include/uapi/linux/io_uring.h
+>>>> +++ b/include/uapi/linux/io_uring.h
+>>>> @@ -23,8 +23,14 @@ struct io_uring_sqe {
+>>>>  		__u64	off;	/* offset into file */
+>>>>  		__u64	addr2;
+>>>>  	};
+>>>> -	__u64	addr;		/* pointer to buffer or iovecs */
+>>>> -	__u32	len;		/* buffer size or number of iovecs */
+>>>> +	union {
+>>>> +		__u64	addr;		/* pointer to buffer or iovecs */
+>>>> +		__u64	off_out;
+>>>> +	};
+>>>> +	union {
+>>>> +		__u32	len;	/* buffer size or number of iovecs */
+>>>> +		__s32	fd_out;
+>>>> +	};
+>>>>  	union {
+>>>>  		__kernel_rwf_t	rw_flags;
+>>>>  		__u32		fsync_flags;
+>>>> @@ -37,10 +43,12 @@ struct io_uring_sqe {
+>>>>  		__u32		open_flags;
+>>>>  		__u32		statx_flags;
+>>>>  		__u32		fadvise_advice;
+>>>> +		__u32		splice_flags;
+>>>>  	};
+>>>>  	__u64	user_data;	/* data to be passed back at completion time */
+>>>>  	union {
+>>>>  		__u16	buf_index;	/* index into fixed buffers, if used */
+>>>> +		__u64	splice_len;
+>>>>  		__u64	__pad2[3];
+>>>>  	};
+>>>>  };
+>>>
+>>> Not a huge fan of this, also mean splice can't ever used fixed buffer=
+s.
+>>> Hmm...
+>>
+>> But it's not like splice() ever uses user buffers. Isn't it? vmsplice
+>> does, but that's another opcode.
 >=20
-> so anything larger is truncated anyway.
+> I guess that's true, I had vmsplice on my mind for this as well. But
+> won't be a problem there, since it doesn't take 6 arguments like splice=
 
-Yeah, I saw this one, but that was rather an argument for the future. It'=
-s
-pretty easy to transfer more than 4GB with sg list, but that would be the=
- case
-for splice.
+> does.
+>=20
+> Another option is to do an indirect for splice, stuff the arguments in =
+a
+> struct that's passed in as a pointer in ->addr. A bit slower, but
+> probably not a huge deal.
+>=20
+>>>> @@ -67,6 +75,9 @@ enum {
+>>>>  /* always go async */
+>>>>  #define IOSQE_ASYNC		(1U << IOSQE_ASYNC_BIT)
+>>>> =20
+>>>> +/* op custom flags */
+>>>> +#define IOSQE_SPLICE_FIXED_OUT	(1U << 16)
+>>>> +
+>>>
+>>> I don't think it's unreasonable to say that if you specify
+>>> IOSQE_FIXED_FILE, then both are fixed. If not, then none of them are.=
 
->=20
->> - it requires 2 fds, and it's painful. Currently file managing is done=
+>>> What do you think?
+>>>
+>>
+>> It's plausible to register only one end for splicing, e.g. splice from=
 
->> by common path (e.g. io_req_set_file(), __io_req_aux_free()). I'm
->> thinking to make each opcode function handle file grabbing/putting
->> themself with some helpers, as it's done in the patch for splice's
->> out-file.
->>     1. Opcode handler knows, whether it have/needs a file, and thus
->>        doesn't need extra checks done in common path.
->>     2. It will be more consistent with splice.
->> Objections? Ideas?
+>> short-lived sockets to pre-registered buffers-pipes. And it's clearer
+>> do it now.
 >=20
-> Sounds reasonable to me, but always easier to judge in patch form :-)
->=20
->> - do we need offset pointers with fallback to file->f_pos? Or is it
->> enough to have offset value. Jens, I remember you added the first
->> option somewhere, could you tell the reasoning?
->=20
-> I recently added support for -1/cur position, which splice also uses. S=
-o
-> you should be fine with that.
->=20
+> You're probably right, though it's a bit nasty to add an unrelated flag=
 
-I always have been thinking about it as a legacy from old days, and one o=
-f the
-problems of posix. It's not hard to count it in the userspace especially =
-in C++
-or high-level languages, and is just another obstacle for having a perfor=
-mant
-API. So, I'd rather get rid of it here. But is there any reasons against?=
-
+> in the splice flag space... We should probably reserve it in splice
+> instead, and just not have it available from the regular system call.
+>=20
+Agree, it looks bad. I don't want to add it into sqe->splice_flags to not=
+ clash
+with splice(2) in the future, but could have a separate field in @sqe...
+or can leave in in sqe->flags, as it's done in the patch, but that's like=
+ a
+portion of bits would be opcode specific and we would need to set rules f=
+or
+their use.
 
 --=20
 Pavel Begunkov
 
 
---x0tm5hLtcuaId6zzrES9YU9sroBKl5WwS--
+--I1dRQRmOsgC8CQx7IPXAJUKCb7etVIZmJ--
 
---Ir6uQ8kmMcOcEUhuO6HLX6yuWsMNYgzNE
+--nxVirGMUqE7BJEKscjFSeSPU3sU9IUgLs
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl4nvV8ACgkQWt5b1Glr
-+6VkCA//aCNZp/ksciDSAOD11wim450Ov9jYZXPNn6fFmerie3+01DMZUUE2Zqs0
-rsS7FDTQbRECrH9TrVzVFikNjOrHR1p8nXaarZHHt27w8OWajke+pHXDpz3WZo3C
-rutnN62fK5+P/zYewibsZwSwwXOzZJPwaEXV8ykcUc2IoR2OU+vgVNvggChOChTV
-QJ8FmsACeZte8CPXjv4wfcJxUc98r4qwCN7rp8//BdUYwQu9QLvCQlbinTeNhO0/
-D1vZEFVpEf0bzCj5jQrYDgL/v69CHMiFKHtvxkhe+jVlTgMrogYALeSbFEWhH64w
-OQZY1iZv1hTACSi8DBAzbN25OgYCLvfvMZck4fQTJfdTbwvPuJ/bPpudyHcNyNvi
-bpm/Sa08NZWpas6qO5u3jv2hBNBfID7bRBWtXH/5a2v4qcmo/qrQbKVqNasoUTqi
-L+ZD5yQfq/y9zfm8DyVTbLZEHR8tBh9252A+4asg/Xt6swofMhHQL0nmhB9IEkAf
-yj3PefJJ5HA46qVoPwl3h0rKo/S/mzMqnwIihHluJjihhX6eMjJXx28zhS1puO12
-/v59PNCvSgaiPTqUBiE9wPX+DkYmGWYE98g2Ubx5gohaAQKdFAyRVZ+jbpd9qLUv
-2LEUfXzwGuFcFZdOi9Fe4V8WpA74tobjrpBHKcS0g/giKylA7A4=
-=VszQ
+iQIyBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl4nvpkACgkQWt5b1Glr
++6Uqyw/2Pk7cle/Z6cJIzs3D+3fH7nMsze4hxd3gMpFDr4dn1mddynQ9HW36W+6Z
+2YBrrHUr1lhir8CnPg7Ef8xIzYrKwW222gu+75FHXzcBEQF3o63KMeqigqeX6Ycb
+UR1QcCZrV8CkI9AAGqF+y+lxie84TFdv9nnWlsZ8PEW290ioNhuABIfPxtXMC8oV
+jcaa0OIh8ciHFila7Gm8kNoauuQZKwMmguz6kp8mv9kLHuU2iKQyNKff2rTslHFx
+3U4Z1CZEZwJKvOKcTKME4BmEgYHFSbbANOlP7s1iW0gQkwVG1JqBeVNTR3UzfnpJ
+YBxT2rSiUIsaN+ZHXh17L71EjJnS0j8rRqY8cmEgVBggtlmow32gF8Q64ugqRRcb
+LrTqnkxmoKWW2+6RfrlOEUugNn2EkubY435YqVGKyr1gn1f8XSO5cJdDLcva2Ccs
+UGz56zMrxdZYMSfBfaoIIoxMCdLjyd4Yx7FgaD0D05+kROr4EQcjmlsSVvmiageQ
+MxPbxpCRCFRuIUUBWSHMtSiiojnrG1Tafytd+eIc5M1Gu22ElFiX1geaP6AuQAcd
+8gDoC3kNlThpIFxrTD1k/gk69Pgbu9y5ESeEatDfA0MuJ2HZpd28n9/NQ05PV3mX
+8TDSrw0YNd8ft9dvQjqPH5di/DDGRoWka+2VmVYVrQmECuJKXw==
+=6T65
 -----END PGP SIGNATURE-----
 
---Ir6uQ8kmMcOcEUhuO6HLX6yuWsMNYgzNE--
+--nxVirGMUqE7BJEKscjFSeSPU3sU9IUgLs--

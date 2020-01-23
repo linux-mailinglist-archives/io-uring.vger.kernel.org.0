@@ -2,60 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B8EB145D65
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2020 21:58:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA26914718C
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2020 20:14:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbgAVU6Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Jan 2020 15:58:25 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46948 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbgAVU6Z (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jan 2020 15:58:25 -0500
-Received: by mail-io1-f65.google.com with SMTP id t26so653223ioi.13
-        for <io-uring@vger.kernel.org>; Wed, 22 Jan 2020 12:58:25 -0800 (PST)
+        id S1728792AbgAWTOA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Jan 2020 14:14:00 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45522 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727590AbgAWTOA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Jan 2020 14:14:00 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 2so1964438pfg.12
+        for <io-uring@vger.kernel.org>; Thu, 23 Jan 2020 11:13:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=4MircL4o+/KcGaydQPkSmj2rWDThvm1wQe092xveFAg=;
-        b=z7zNVoDLPM4MKPRvTM8UcJmi0wu+n3yp7v7+XP9SWb4hRXrNU7h3WCwDGc1P4vU/pr
-         1RDsoi29ohD4qtUcHvQ8YVj3VQwls6+TFceX3zfd6HPZyLZ5d2nUYL1gwbItGly6YDQ/
-         S2NtkRpr/cc2n/3SgaFMbvs0eS168OjavvQHzbbqmK4j9iFfDgQTEmS2mHsV2YW0RcMW
-         zcBAMt6NxOf8u0r10Zm4RBnrYnA+JWTjw0JMqfRjiaz0aHpWK24OVvrAWbwynBgiDRUy
-         W+ArAyPuMeakUhlPKLAWTElfVmnwEmTSFh/F8/UOvrdl3yM/7qU6GShXUf03Hoy7DLmn
-         ORLQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+j6n3bLqsywHmHf3IWP7jfMllioYd4CpeP8JoTqsBg4=;
+        b=VdZgkZgvc+axYrbN0WmRyJokY3HmJqCNSto/KBRyWcFp+Pq3NHvPFfpH+sYGzX6Mcf
+         g22nywECZ1Rmo1bhwF+SNdC7agfaEN1xGSqa3LadFG+de8ugL2qYR5ZXfeelocFesZrv
+         /W9uP2k/th0jCtd8sxXpwy8nWxNHNbtVmYtdnTYThMvsagzjZ/1OQ2ZIXj06+UC9ykHA
+         KJgvE5QisCvhHIrX1rGIfwsWHkZQUKPkQEsGQM2e53ibX7zxeacbfPOLc+Dfm9lmuFTR
+         7au1oO1oKsH0K+ZSQTR5effJiR1/XfGVckuiawtGmcBLc3OjnhUh1UqzMyrgLFaS5mLm
+         6svw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=4MircL4o+/KcGaydQPkSmj2rWDThvm1wQe092xveFAg=;
-        b=JQkVyJuSJtcOg7I9PeKLxNVqjthRC/iL6j0AAzMmj33bkYtL3J7YyM9oYfvlxd43RX
-         Vn8Zf2fsJD9G5DOZpkd8h/qZWEL25pBY6dJpA2FSvfUWCPLuFaTsIHnJNzyfqBZNR3Im
-         oaR7K33uhn/MsPBLn5pBP+EVL588oIL5LeeQvWzjekkLj/YSxFDhWlhF7V63FNg6ZptX
-         qy66pGS2KEPBrfq+YAmXlDn6l3OrXE7oHvF/3nfcXbzoHs0sKRcrZu9ECXQ4D0DXr1aI
-         DntY75iZl1hIi8tI039gN6KO1eVP3vy286Dla+4UbnHa6pBZ2M1QQg+veAbRmqwvAOea
-         GSQg==
-X-Gm-Message-State: APjAAAUbd8vMl2HUcTkhUhZPXX/Lv0AoShSFggY3pelY8KPsQYfDPSRH
-        8AdCjaKxmlDis8NYK8kNTgZ8/g==
-X-Google-Smtp-Source: APXvYqw1ulk/Wtf9YIzcaCdr/v609qPcVtLz2wSTPEoZNUkQaI5ybUqWCdtoDCzopR4fh1M5bypPMw==
-X-Received: by 2002:a5d:93d1:: with SMTP id j17mr8768497ioo.300.1579726704741;
-        Wed, 22 Jan 2020 12:58:24 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id g4sm15020839iln.81.2020.01.22.12.58.24
+        bh=+j6n3bLqsywHmHf3IWP7jfMllioYd4CpeP8JoTqsBg4=;
+        b=muZ2JBc89F9hrdrU/V9cWrr1mSK7Cj+ZteJnD8U64KZp3aLGBRgs7D5HSXQwvB9+4+
+         /3mMTibxnbr9v7EfGNTYnb8l5eQUxqVG6DxwNi788/oTf5n6cfj2fkkhOKOw5ICHWG3o
+         noPLoznGTF+R7FyoH8XTBT/D/7WqOHGRJkKXuEmGvXXKowGoHCookc8lOZZvRcnzbWwS
+         LBvWGEpx5ly4MkAFUCY1YihtmgbD2Sv086n/G++1mWFnzEGqvWHOY9iBKa6pxW8PklLZ
+         Z15Jpa21zkiGnkGh+vx8JT1J4BQUDWStd8tunbrxbwTJyko0XfqxWUpHftGspZzQ/Yac
+         yTAg==
+X-Gm-Message-State: APjAAAV1/uEeORC/Tql1lpambdTsMDGn+3CUi2YVYLB63PTHVmOu7Ud/
+        q0TP4bZyXe2jwTCz5RmAeWKqVg==
+X-Google-Smtp-Source: APXvYqyy93D4u/4fyfGaogLMtiMjbjktxYdJjqvu555rM06/JgrUxLKamGaHJUP2hOZTjSK3nw/55A==
+X-Received: by 2002:a63:500c:: with SMTP id e12mr312091pgb.214.1579806839580;
+        Thu, 23 Jan 2020 11:13:59 -0800 (PST)
+Received: from ?IPv6:2600:380:4562:fb25:b980:6664:b71f:35b5? ([2600:380:4562:fb25:b980:6664:b71f:35b5])
+        by smtp.gmail.com with ESMTPSA id k44sm3731287pjb.20.2020.01.23.11.13.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jan 2020 12:58:24 -0800 (PST)
-Subject: Re: [PATCH 0/2] IOSQE_ASYNC patches
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1579723710.git.asml.silence@gmail.com>
+        Thu, 23 Jan 2020 11:13:59 -0800 (PST)
+Subject: Re: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20200116134946.184711-1-sgarzare@redhat.com>
+ <2d2dda92-3c50-ee62-5ffe-0589d4c8fc0d@kernel.dk>
+ <20200116155557.mwjc7vu33xespiag@steredhat>
+ <5723453a-9326-e954-978e-910b8b495b38@kernel.dk>
+ <20200116162630.6r3xc55kdyyq5tvz@steredhat>
+ <a02a58dc-bf23-ed74-aec6-52c85360fe00@kernel.dk>
+ <20200116170342.4jvkhbbw4x6z3txn@steredhat>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5722c4c7-ac5d-9a28-62e8-c327c6affc3c@kernel.dk>
-Date:   Wed, 22 Jan 2020 13:58:23 -0700
+Message-ID: <2d3d4932-8894-6969-4006-25141ca1286e@kernel.dk>
+Date:   Thu, 23 Jan 2020 12:13:57 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <cover.1579723710.git.asml.silence@gmail.com>
+In-Reply-To: <20200116170342.4jvkhbbw4x6z3txn@steredhat>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,15 +71,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/22/20 1:09 PM, Pavel Begunkov wrote:
-> There are 2 problems addressed:
-> 1. it never calls *_prep() when going through IOSQE_ASYNC path.
-> 2. non-head linked reqs ignore IOSQE_ASYNC.
+On 1/16/20 10:03 AM, Stefano Garzarella wrote:
+> On Thu, Jan 16, 2020 at 09:30:12AM -0700, Jens Axboe wrote:
+>> On 1/16/20 9:26 AM, Stefano Garzarella wrote:
+>>>> Since the use case is mostly single submitter, unless you're doing
+>>>> something funky or unusual, you're not going to be needing POLLOUT ever.
+>>>
+>>> The case that I had in mind was with kernel side polling enabled and
+>>> a single submitter that can use epoll() to wait free slots in the SQ
+>>> ring. (I don't have a test, maybe I can write one...)
+>>
+>> Right, I think that's the only use case where it makes sense, because
+>> you have someone else draining the sq side for you. A test case would
+>> indeed be nice, liburing has a good arsenal of test cases and this would
+>> be a good addition!
 > 
-> Also, there could be yet another problem, when we bypass io_issue_req()
-> and going straight to async.
+> Sure, I'll send a test to liburing for this case!
 
-Thanks, applied.
+Gentle ping on the test case :-)
 
 -- 
 Jens Axboe

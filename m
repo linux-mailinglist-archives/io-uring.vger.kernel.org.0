@@ -2,95 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4958914903A
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2020 22:38:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F36D7149045
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2020 22:41:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbgAXViB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Jan 2020 16:38:01 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45852 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbgAXViB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jan 2020 16:38:01 -0500
-Received: by mail-io1-f67.google.com with SMTP id i11so3428491ioi.12
-        for <io-uring@vger.kernel.org>; Fri, 24 Jan 2020 13:38:01 -0800 (PST)
+        id S1726080AbgAXVle (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Jan 2020 16:41:34 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54162 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgAXVle (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jan 2020 16:41:34 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m24so862395wmc.3;
+        Fri, 24 Jan 2020 13:41:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=+BrHQKB5nfij+vX08vsx6E0QvFRNc+igfWKJlm1mgiA=;
-        b=DBv8uLjFSLKMV5O7UgoCxSNN2aS14tNPGkFNBOzdM1UM/0NGOOh4Y7YyUxBD5Wd4lW
-         hbi+5gP3PAsEhYk+TiH2ycs5OGUr7mf5WDIk7OeP9tZ4RWNVD4dFGcaEDTR0YsZGK26P
-         cakejgZRNkstaoGrfshia+PSWPknhmT4Xg+nVwfl+NX5aqhreji9qfiu0h5FLmqQ2vj5
-         K6zOYUppE/7+OinbLU2C2Lpir8offUWBcpbHZIhr3lsElOujx5x6p+FxoWiuNuwvo73u
-         O+GD9gPc4w78vfcM1bonh1feBNqadoDY2tv8AeCog/MsemR5go2XqyTBNuipQflrLQ4p
-         y4Hw==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/EsbjcVb4PmLGRLOo4fjDzsj8rqTy2jhH7Fz+a3ZxRc=;
+        b=oa+WtCJ31Uz1BR4ovJRn1Zi+muTQzhyp2T9r/dW7Nf0OUWHusjmLqp+7pbXQC8sfVJ
+         GrENv/9NvCSTheeJB0sBthWf7YHa3k+khLXevx3gC4dtrwKnNcUO2nVGxMVRWE633B8k
+         0xCBMLmR5JkFLuvzMMaU4uzXKJj8RodJUNeFYgKq8y4dgRvFCiSLfsVkIzwqrGeH+fxv
+         wJnemeuyBiFv248KtxH27DIHqzHFs3tYB+dyLHaoawq0RCMFSJUrtTK8nX14pDFkhva1
+         XBCKn1oTagq5mEOA0GT+qF0nXBudBxLI3Doj2Hcg80FlU/McvL+ZFW+c7Q4aev+ly8fq
+         jMaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+BrHQKB5nfij+vX08vsx6E0QvFRNc+igfWKJlm1mgiA=;
-        b=d/bntF0hDf0vdiECg6VNQ2egXP9EvjiTNhn/TPy6JsnjFBvmNAO2c5lpyKyfU6R4ru
-         SOSq4H8wS5WY3D+PqzYDL4WUbhgzx4c2+RqKH6icgpmIC8VSedhzGYA3/F2bpm8wWyGr
-         22bNYzOEZnn1egJa44presdcsmHy2GfS6SJCulNspfXyOAeXkqelB7prP7jBve31hPlN
-         Ayd7I8AGVg3iyNbOs/E+wnOsTpmMYiGWVdNebICqfSTMu9ikMoFk0Srjy3j3QvJPlV++
-         zfgpY/DtjDeeSBcfxsNhIMMCiHMLquDF19hYUQz5UbiXvXLolvCcWQiGCv8Ws9N/GFc5
-         S5WQ==
-X-Gm-Message-State: APjAAAX0DQib4/JOkFbh2IpgNXcuQZMmIcb8DbD1Fxz+1mO1ma2qwQML
-        rYs5RtaMqyyxPQA7p3c/2sTekEwCPok=
-X-Google-Smtp-Source: APXvYqx531H0bkeg3pNsuZHceZjZej7sSLqhmm52w07XPXkxKIaXHfBVrZDpV6dhgULFkozNyfC+Qw==
-X-Received: by 2002:a05:6638:34c:: with SMTP id x12mr3540066jap.144.1579901880674;
-        Fri, 24 Jan 2020 13:38:00 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 75sm1985732ila.61.2020.01.24.13.38.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jan 2020 13:38:00 -0800 (PST)
-Subject: Re: [PATCHSET 0/4] Add support for shared io-wq backends
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <20200123231614.10850-1-axboe@kernel.dk>
- <0bbc7cb3-6e04-d18c-4646-6886d02e5a87@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <afede29d-b244-afca-2676-4500a7111a54@kernel.dk>
-Date:   Fri, 24 Jan 2020 14:38:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        bh=/EsbjcVb4PmLGRLOo4fjDzsj8rqTy2jhH7Fz+a3ZxRc=;
+        b=kkLZ5e8gTK2h7vDA4DlrovAJpTQ8Lk7YQhisi3xnpprl+AFoQ7p4g0w6MbcVAc2OtC
+         5Skp+hEq396BWWpZrYoS/UVtGSsF1XQMLF8kvfUjLYoINTv0tGINOuqalYc1Pdh8YLOG
+         uEmMVOqpR5wDN31h3/udQ/TFRWbR6ovl9S/yaOSZpDo/iDuZ7Sn8IYo9WPbeVCzuuHBR
+         tRgJEPlT+mD/590+Lj476rqn9s4Rj18zG7cLd/I+tu6vbA8HIffBlX23DnF2dVjLEer0
+         2vW7ovjKYv7CJCt14Hl0hR7GtcAivDl3I7cUlyH7X5BCPgfSGjjFBeNDBJ+Cw5CiFcRJ
+         bzYw==
+X-Gm-Message-State: APjAAAViMlFxx7HGbokehYo21exMcAXb8bSKCjCGNauarD4yP8J73RB4
+        TkAuNXrLTZccEzGh39E7e6M=
+X-Google-Smtp-Source: APXvYqx4VvdpPSIfrO0uupxkHeIYQI3sjLG71kvVEmfWa4hlWQ0HPHrwtVelkpyXUKiofkIoMlKccQ==
+X-Received: by 2002:a1c:7d93:: with SMTP id y141mr1044410wmc.111.1579902091904;
+        Fri, 24 Jan 2020 13:41:31 -0800 (PST)
+Received: from localhost.localdomain ([109.126.145.157])
+        by smtp.gmail.com with ESMTPSA id f16sm9203055wrm.65.2020.01.24.13.41.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 13:41:31 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/8] add persistent submission state
+Date:   Sat, 25 Jan 2020 00:40:23 +0300
+Message-Id: <cover.1579901866.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <0bbc7cb3-6e04-d18c-4646-6886d02e5a87@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/24/20 1:34 PM, Pavel Begunkov wrote:
-> On 24/01/2020 02:16, Jens Axboe wrote:
->> Sometimes an applications wants to use multiple smaller rings, because
->> it's more efficient than sharing a ring. The downside of that is that
->> we'll create the io-wq backend separately for all of them, while they
->> would be perfectly happy just sharing that.
->>
->> This patchset adds support for that. io_uring_params grows an 'id' field,
->> which denotes an identifier for the async backend. If an application
->> wants to utilize sharing, it'll simply grab the id from the first ring
->> created, and pass it in to the next one and set IORING_SETUP_SHARED. This
->> allows efficient sharing of backend resources, while allowing multiple
->> rings in the application or library.
->>
->> Not a huge fan of the IORING_SETUP_SHARED name, we should probably make
->> that better (I'm taking suggestions).
->>
-> 
-> Took a look at the latest version (b942f31ee0 at io_uring-vfs-shared-wq).
-> There is an outdated commit message for the last patch mentioning renamed
-> IORING_SETUP_SHARED, but the code looks good to me.
-> 
-> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+Apart from unrelated first patch, this persues two goals:
 
-Thanks for the review, I'll add your reviewed-by and fix up that commit
-message too.
+1. start preparing io_uring to move resources handling into
+opcode specific functions, and thus for splice(2)
+
+2. make the first step towards some long-standing optimisation ideas
+
+Basically, it makes struct io_submit_state embedded into ctx, so
+easily accessible and persistent, and then plays a bit around that.
+
+Pavel Begunkov (8):
+  io_uring: add comment for drain_next
+  io_uring: always pass non-null io_submit_state
+  io_uring: place io_submit_state into ctx
+  io_uring: move ring_fd  into io_submit_state
+  io_uring: move cur_mm into io_submit_state
+  io_uring: move *link into io_submit_state
+  io_uring: persistent req bulk allocation cache
+  io_uring: optimise req bulk allocation cache
+
+ fs/io_uring.c | 219 +++++++++++++++++++++++++++-----------------------
+ 1 file changed, 120 insertions(+), 99 deletions(-)
 
 -- 
-Jens Axboe
+2.24.0
 

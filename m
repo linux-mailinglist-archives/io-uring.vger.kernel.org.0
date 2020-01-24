@@ -2,31 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57838147C5D
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2020 10:51:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91764147CE2
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2020 10:56:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388036AbgAXJv1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Jan 2020 04:51:27 -0500
-Received: from hr2.samba.org ([144.76.82.148]:18216 "EHLO hr2.samba.org"
+        id S2388436AbgAXJzJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Jan 2020 04:55:09 -0500
+Received: from hr2.samba.org ([144.76.82.148]:19398 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388018AbgAXJvZ (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 24 Jan 2020 04:51:25 -0500
+        id S1733081AbgAXJzI (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 24 Jan 2020 04:55:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
          s=42; h=Date:Message-ID:From:To:CC;
-        bh=8MFY0sdJZMeJcA245+KqGQGz0hAmCGGGJgKh6uHJbyg=; b=W4x8/gaRf5uCzx+lpObV2/3fyB
-        T/nWfgF9MvStMsP1D2G5vgQo6VYb/PTpoNk72STZhpJn5tLUrT8HaIQWszSI3VuS0vVcWgzxX3CMg
-        c44VlTm6YvQDxydLELNGnGVuPU3ZE9icoTaWhRhvG8U3nsXG2FEq3xhZDq+a4awHSvzpC/59udvte
-        1FzN7gbeZCAXCkHKr9TIM6Jtq7N7LbpeJ+ZL/EN/2Ndul+K6OYVD0rha7z3zIZkWu0wsuny6H6dFY
-        hws/DZ43Cf1NYwu8W/zbYGpakd7XpxmKrTT3bt+LXe3FEFUW/ygmY94xjCVmVMJdD4jEj47M6e7D2
-        lhBh3gLFu8cXZefCINwCS8JUYbTmbSOlIiVtYxDYZJY0uEVqOEndMMxRJsUwjEHVkiLQuwB9oMM0d
-        /IN/NT1A1QG9tipmcQpsVROrKmeNuIBB18T8smpUv6m4E3+16pjsrZBCLhosgwBz55pykkdIDy+TV
-        +Ltt15IXS2sSAWNkMFWnVqXb;
+        bh=Op2VucLNqQI54JH577tn+6JyOQ5wrwTduH0YhcFpdvI=; b=TT9sDsz+4KEwTElOoSq1b/BaII
+        7cCZbqF6ibhwtp5UoJakDU448JmjO5yQUKlnCWCwkxDiuLsEMk5HUDE2KO7qZKTuqKm5Lyuzd6tL2
+        vB1caa4dBnA+nS6e+zxoPqyX1bmefX6opdgtQye0OPN/qqLfXjtjjVhNjMIAu9hqc0PQeWX1qaU3/
+        nYsWssgWdRtbr5+N9hHSUJjEREVBFeN/jFY4dRBKTZZ24bT1YstgUYGzLTc0EFnqMDAzEDrSttGue
+        N5XOwCHLhnMgRaYxOS7pZeGyk2VGLwg1TbfXqBvQMLh4Bi++r+0xj8k8R3UhumHmfO6/cyZPfMY/M
+        uNwbq3AB2Uel08MCnCcdg/KYXrpzDP4tPPuLTIPxgnxr4EfoxgQ70h7WyQ7JBoBtqr8hhSzk0gphE
+        wpuRZo+36MS8WHYYDG7tQ3EQKLvxNQ8ofVhJJehs0SG68qaBCtKMAKZZQuVHWTREykkXggDGNINkZ
+        6y9qsAgP25LlfAsdOw5Je3u2;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1iuvcX-00029c-0L; Fri, 24 Jan 2020 09:51:21 +0000
+        id 1iuvg7-0002Bs-3Z; Fri, 24 Jan 2020 09:55:03 +0000
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <20200123231614.10850-1-axboe@kernel.dk>
+ <20200123231614.10850-4-axboe@kernel.dk>
 From:   Stefan Metzmacher <metze@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
@@ -341,90 +342,91 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  uWrtpKE+BrlhmZrZleospHp05F+oHuE7lrOg09g0SFdTigqSJNbN1R/pkPI5Q03GfbWipsd4
  iY0Rj0D34DQVeKAa4qUlOcBgX2D9VHRap9GKQRWs//egCueqDZNmIk3071aFV+BSiBSTZIIG
  t/YZOE37yKSj2rcCbqg=
-Subject: Re: [PATCHSET 0/4] Add support for shared io-wq backends
-Message-ID: <2ba85190-6888-585c-cd42-4cbdd112dee1@samba.org>
-Date:   Fri, 24 Jan 2020 10:51:17 +0100
+Subject: Re: [PATCH 3/4] io-wq: allow lookup of existing io_wq with given id
+Message-ID: <c3e67265-dff9-a832-090c-6110dd4ef6c3@samba.org>
+Date:   Fri, 24 Jan 2020 10:54:59 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200123231614.10850-1-axboe@kernel.dk>
+In-Reply-To: <20200123231614.10850-4-axboe@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="6rEa05aYmbJ0qzQPbSX4cVOdzp7ark0ei"
+ boundary="dIg0GqIrf4Fm5FdLYg508Zws8c7dv83TQ"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---6rEa05aYmbJ0qzQPbSX4cVOdzp7ark0ei
-Content-Type: multipart/mixed; boundary="ERXCeQixGDuMd33JlOLJHrOMHI2IitNBf";
+--dIg0GqIrf4Fm5FdLYg508Zws8c7dv83TQ
+Content-Type: multipart/mixed; boundary="lblkmsgMmF1nCkl6lR6hVIMnDpRy7e3nT";
  protected-headers="v1"
 From: Stefan Metzmacher <metze@samba.org>
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Message-ID: <2ba85190-6888-585c-cd42-4cbdd112dee1@samba.org>
-Subject: Re: [PATCHSET 0/4] Add support for shared io-wq backends
+Message-ID: <c3e67265-dff9-a832-090c-6110dd4ef6c3@samba.org>
+Subject: Re: [PATCH 3/4] io-wq: allow lookup of existing io_wq with given id
 References: <20200123231614.10850-1-axboe@kernel.dk>
-In-Reply-To: <20200123231614.10850-1-axboe@kernel.dk>
+ <20200123231614.10850-4-axboe@kernel.dk>
+In-Reply-To: <20200123231614.10850-4-axboe@kernel.dk>
 
---ERXCeQixGDuMd33JlOLJHrOMHI2IitNBf
+--lblkmsgMmF1nCkl6lR6hVIMnDpRy7e3nT
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+> +/*
+> + * Find and return io_wq with given id and grab a reference to it.
+> + */
+> +struct io_wq *io_wq_create_id(unsigned bounded, struct io_wq_data *dat=
+a,
+> +			      unsigned int id)
+> +{
+> +	struct io_wq *wq, *ret =3D NULL;
+> +
+> +	mutex_lock(&wq_lock);
+> +	list_for_each_entry(wq, &wq_list, wq_list) {
+> +		if (id !=3D wq->id)
+> +			continue;
+> +		if (data->creds !=3D wq->creds || data->user !=3D wq->user)
+> +			continue;
+> +		if (data->get_work !=3D wq->get_work ||
+> +		    data->put_work !=3D wq->put_work)
+> +			continue;
+> +		if (!refcount_inc_not_zero(&wq->use_refs))
+> +			continue;
+> +		ret =3D wq;
+> +		break;
+> +	}
+> +	mutex_unlock(&wq_lock);
 
-> Sometimes an applications wants to use multiple smaller rings, because
-> it's more efficient than sharing a ring. The downside of that is that
-> we'll create the io-wq backend separately for all of them, while they
-> would be perfectly happy just sharing that.
->=20
-> This patchset adds support for that. io_uring_params grows an 'id' fiel=
-d,
-> which denotes an identifier for the async backend. If an application
-> wants to utilize sharing, it'll simply grab the id from the first ring
-> created, and pass it in to the next one and set IORING_SETUP_SHARED. Th=
-is
-> allows efficient sharing of backend resources, while allowing multiple
-> rings in the application or library.
-
-But still all rings need to use the same creds, correct?
-
-> Not a huge fan of the IORING_SETUP_SHARED name, we should probably make=
-
-> that better (I'm taking suggestions).
-
-The flag is supposed to be used for the new ring that attached to
-the existing workqueue, correct?
-
-What about IORING_ATTACH_TO_WORKQUEUE?
+Isn't there a more efficient ida_find function in order to avoid
+the loop, which won't really scale in the long run.
 
 metze
 
 
+--lblkmsgMmF1nCkl6lR6hVIMnDpRy7e3nT--
 
---ERXCeQixGDuMd33JlOLJHrOMHI2IitNBf--
-
---6rEa05aYmbJ0qzQPbSX4cVOdzp7ark0ei
+--dIg0GqIrf4Fm5FdLYg508Zws8c7dv83TQ
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl4qvhUACgkQDbX1YShp
-vVZJxhAApYdcrsV2vav9rCFU+4G8Gp0rRRbfCVDL63/GU0PyXVbBXogtS09/qntm
-QQOYwO68tBJV5CS7wtVZsdXa1POhV6wmrg7KWohZJB4/0oqjPHIOl3roGE4b7C1l
-W8IKF49daErcwNAmDu6JtZx0LMRmHgi3Fk0N98zkHRPfyS70B1Z+zDwL/kF0FWYD
-/Dvq/iheMS46TkVlQ48IFgDdhhGNoXfEowU6Be2WoMKITlKmAJoj/lEpFI3daCy5
-4AAc6w8nNp+zGNGgtmZt1VnnKe+TzHgHHZnWV6axqx1Jr07u2Ihy+01svP/452vg
-VWHDHdGrl+VTfPzhG7jOH/jYHScOb4YM+Q9AloKQBBwTmfJ0xJOYccuti/BsHO+F
-lDNKD26Z7KMJ7WgUUuXyKu/kXFnCyOt5+B00fTGyW/4YJCn8rebZJmz4fBdI9LhI
-vSyjAVh9Y21C/Y6XmXrkPTQpKWIgDbl+IiJIobMRbL0KFjqdB6eM9SOPY740uhsx
-MtkUlONloKQS3FvNWRag2nlOhCJSPj9NJIHZ83Zo0NSW/8SueBSBUPvbg2JH7paX
-1SkQg3SIEcDBUc8iopah4oe+yx+HNClhnrJofh07VKxk7vS14sGRU49nibw+/UU1
-UetfScTvl5MCU23VzvF9frp32pluqz6AVD0pf6nQBqFbzb/xIOM=
-=zLP2
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl4qvvMACgkQDbX1YShp
+vVZdMRAAp9u6lHzxX+aJ7uDF/LobeFose8Ix36WAg+kHRQxj4t4hITH2aQ7S1WFy
+d7OS8MfbFYfCgIk1sjxe2rzqrl86JPs794pC6D6MYCTNbtXU/sQgxABOBLhsS2G6
++r7RB5KBOojzJJd2nguaY8yQ32Ps2bghYqoerGyDHEJ4LvR3/wmuiIJjPX5yL+vL
+wjEnZSTquZfb0ZgHH+C2B2TP0SrQC7wCCRT/4ZCasF6aiTGDfD/pGR/D8RU1jsn1
+jCjLf3PVDFHU0f+0cg4V3AoOsb984+YxEQFoZmmK1C1JAMRg0cnN6iBzIIbIQ6n1
+jGqQbEiGDdZuUUd/uMoKCCQ6M/g8lh+8DFbd6f11IDGhuLBl01DB2/3KJmBYjhys
+0l4eA5efyLtbiQvVtYVfLvOk9gsd276SkvYEfpchpOMfMd3Qk+r8w0vDb54Tz35V
+MoB2ul+1Y2jSFHgvafOnj8AhZrKT3NS7T8AKbolFvMjREvl+V2D+4Va9tNSiPdq3
+6nLrB0YVZ2DozGKoPUS/Vj1jPLkLITADYa7ui2KKWDPhlDUCE06FPXRZ9lbSPXpd
+N4yF1HkLdVNKgUCCPRRy+abqUjWge4D5Gtb9dsKkpOwNEaSzxDR8aCudadoUpp8w
+fOqmxTpHIvy7WX21KOrBB/FLBmT2rCDe0Omf937OPQsTC2QhQao=
+=JIy+
 -----END PGP SIGNATURE-----
 
---6rEa05aYmbJ0qzQPbSX4cVOdzp7ark0ei--
+--dIg0GqIrf4Fm5FdLYg508Zws8c7dv83TQ--

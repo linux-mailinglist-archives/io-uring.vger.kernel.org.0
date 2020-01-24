@@ -2,55 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37A75149029
+	by mail.lfdr.de (Postfix) with ESMTP id AD4A314902A
 	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2020 22:31:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbgAXVbn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Jan 2020 16:31:43 -0500
-Received: from mail-io1-f42.google.com ([209.85.166.42]:32841 "EHLO
-        mail-io1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbgAXVbn (ORCPT
+        id S1728708AbgAXVbo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Jan 2020 16:31:44 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36142 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbgAXVbn (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jan 2020 16:31:43 -0500
-Received: by mail-io1-f42.google.com with SMTP id z8so3461704ioh.0
-        for <io-uring@vger.kernel.org>; Fri, 24 Jan 2020 13:31:42 -0800 (PST)
+Received: by mail-io1-f68.google.com with SMTP id d15so3451440iog.3
+        for <io-uring@vger.kernel.org>; Fri, 24 Jan 2020 13:31:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d2YSBZR7OuqQr70Xp5p6k1DkAjNpo6cwUNurRiskDIM=;
-        b=pNsccN73hAnxf2WKp59W17hwvgxMxorgV93iehO0nAnHBFzganZLQ3kfnEwRqovKma
-         S01s/5hSSp9M7Z/AROz0wyj1HmbP9+KFtmNfpTiB/LsNHux2VLD43FaodCrUU3CuAqWT
-         f1MC5egSt07j9OMCLTDF/UDCmyz1e2qwVI54C+wgxO7s0P/w6Eu23mrHzTsYuF1a7sbE
-         8UEuKhcICyNDJokpot+CUQLCL/ONaZifIwuUaHRZdUZB+OjdSadydibNPvfW4wKsXE1k
-         iJg59s36Tc/J0OCX+hLjqdn/oFor/+5uBDJdXzeZh6rkmhRDjcC8T9hj/95Z1bsrMo5i
-         lX5Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0+MB13SxPrtkY53fvbOmF6I1m2+FPYNrDl1sdTj+ZD4=;
+        b=zkvV+2urpJhePZ5GJFM6PMjnwb/NJxNBXBXT7o5vAla0aCD4qdHNO5eWHsCzVkURvA
+         vauVaQOH+zlSm7LN7fXphJVX5uh/McHEGuUmTvPQ8NkHzKmW9aQjkuPBeYkUGMt9IAew
+         yu9euS/vLosslfjv2Yjf7ipX5Hl2pmvc+LEp/5iPHmuXWJ2dQBeUd5YlpYys26398/10
+         lOl6brhPYBxBnQxfkWxPGAUY3U0aBU3vbEsWMiBiUw+vHjwgEb6vbksokzZhhoJUnFY6
+         +J490e/a7RDf/MJM627CdjeLI34/rFgAo8cW9ds13j/lw5DFKV0ThLe2PtPB+ObjPaVT
+         d0zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d2YSBZR7OuqQr70Xp5p6k1DkAjNpo6cwUNurRiskDIM=;
-        b=sdkf1MyONZH0SmMxCz44Rveym1wklggoPeSyB4ANvvky0i5gzGUrNbmCrkAPg5h0E+
-         ABVZM7YZiuoXKJwZCnAkmR1vqWlCfUEAuQjtlMiPPHY63MAUs2gBtA/z/76hw6GSJQOj
-         jX6H+1ENJwWEfh3k2zH9HqtGnbsSL+fS8RrUaBFoT6S9j1KbtgiCvJDr8bus/yjr6XcB
-         V0gnzeE9C4ZykUzJMGj6sxsygQiMZ14Z7dPlBKq7q8h7c+/U0QxZYMs0XGoz1T9KI4OM
-         q7gk+pQSmwshWpmZimwbL+RVP2jsrTXxtExLYphLtUgWeI+XP/BpvQ/G4UycEANh4His
-         QboA==
-X-Gm-Message-State: APjAAAWd+09nwRWgF8Vy6+bt70SvIFU+a2NL+fV7GxLSs/SWz5laldWB
-        2PtqiHlvdXE/rg7SvmA1Q4qpJQMfbiY=
-X-Google-Smtp-Source: APXvYqw3QLiAjr15IVtvVaJDfPvjve8FcTgmMkEWVTmXfJXIOrjavMVWNQnjyJr/s89OJ+sNN0C3Bg==
-X-Received: by 2002:a6b:7846:: with SMTP id h6mr4044199iop.224.1579901502171;
-        Fri, 24 Jan 2020 13:31:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0+MB13SxPrtkY53fvbOmF6I1m2+FPYNrDl1sdTj+ZD4=;
+        b=jxxzk1RhvZ9vr9rgS3XEZMKYd8zi0OzP4Q5shTEXP8pTnoGyaQlyO45mb2tt08mUOP
+         4kP3Na3yJDLKHQ3VtorkxCEDiR0NhzChwPPS1YWhA54cWfw5nqadLfA/NggENc9Cq/tk
+         5BNDQ9f0dZ3ThLk6ZCCksQ8vfwSjxn43m6WgHZ8jiIzZTPqd5EMMMHaKxqq3pTruPsW8
+         qHAFhj02tlzk6lMa/ajglk3/mSOirWGMjnZmtTImMGOlyGIb3HctAxa0Mp1LFaKZl5ME
+         AszqeypEYzyYipvK+1TQYkXnxlIa0z9hCeYAtakBxRRfPsAegr3UmUqQGeaJorASoNFd
+         k28g==
+X-Gm-Message-State: APjAAAVSYUeEEStE3mSdWcHXkBHdWC7cnKsNABWqDtdx6KQzQsqfHQkx
+        kI30h1fuJgCQQU1QoZeHIl6p+DGyx7c=
+X-Google-Smtp-Source: APXvYqyqmJvNw/aEPwwqWRAuq3nqwguC+8dHg5zaXyYLtlQVLESQO77hRYjDEu7sdremVeVg11h82w==
+X-Received: by 2002:a02:742:: with SMTP id f63mr4117800jaf.138.1579901503141;
+        Fri, 24 Jan 2020 13:31:43 -0800 (PST)
 Received: from x1.thefacebook.com ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 190sm1322705iou.60.2020.01.24.13.31.41
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id 190sm1322705iou.60.2020.01.24.13.31.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 13:31:41 -0800 (PST)
+        Fri, 24 Jan 2020 13:31:42 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Subject: [PATCHSET v2 0/4] Add support for shared io-wq backends
-Date:   Fri, 24 Jan 2020 14:31:37 -0700
-Message-Id: <20200124213141.22108-1-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/4] io-wq: make the io_wq ref counted
+Date:   Fri, 24 Jan 2020 14:31:38 -0700
+Message-Id: <20200124213141.22108-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200124213141.22108-1-axboe@kernel.dk>
+References: <20200124213141.22108-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -58,19 +60,54 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Here's v2 of the shared wq backend patchset. A few minor changes in terms
-of id validation, and a switch to using idr and also utilizing it for
-lookups.
+In preparation for sharing an io-wq across different users, add a
+reference count that manages destruction of it.
 
-Changes since v1:
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/io-wq.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-- Use idr instead of ida, and use it for lookups too
-- Rename IORING_SETUP_SHARED to IORING_SETUP_ATTACH_WQ
-- Don't allow id specified without IORING_SETUP_ATTACH_WQ
-- Use id=0 if we run out of idr space instead of failing
-- id==0 is not allowed for attach
-
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 4d902c19ee5f..54e270ae12ab 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -113,6 +113,8 @@ struct io_wq {
+ 	struct mm_struct *mm;
+ 	refcount_t refs;
+ 	struct completion done;
++
++	refcount_t use_refs;
+ };
+ 
+ static bool io_worker_get(struct io_worker *worker)
+@@ -1073,6 +1075,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 			ret = -ENOMEM;
+ 			goto err;
+ 		}
++		refcount_set(&wq->use_refs, 1);
+ 		reinit_completion(&wq->done);
+ 		return wq;
+ 	}
+@@ -1093,7 +1096,7 @@ static bool io_wq_worker_wake(struct io_worker *worker, void *data)
+ 	return false;
+ }
+ 
+-void io_wq_destroy(struct io_wq *wq)
++static void __io_wq_destroy(struct io_wq *wq)
+ {
+ 	int node;
+ 
+@@ -1113,3 +1116,9 @@ void io_wq_destroy(struct io_wq *wq)
+ 	kfree(wq->wqes);
+ 	kfree(wq);
+ }
++
++void io_wq_destroy(struct io_wq *wq)
++{
++	if (refcount_dec_and_test(&wq->use_refs))
++		__io_wq_destroy(wq);
++}
 -- 
-Jens Axboe
-
+2.25.0
 

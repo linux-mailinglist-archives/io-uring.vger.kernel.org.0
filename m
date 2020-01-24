@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 883F614902B
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2020 22:31:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A05B14902C
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2020 22:31:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbgAXVbp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Jan 2020 16:31:45 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39066 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        id S1726769AbgAXVbq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Jan 2020 16:31:46 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45065 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S1725747AbgAXVbp (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jan 2020 16:31:45 -0500
-Received: by mail-io1-f65.google.com with SMTP id c16so3440133ioh.6
-        for <io-uring@vger.kernel.org>; Fri, 24 Jan 2020 13:31:44 -0800 (PST)
+Received: by mail-io1-f68.google.com with SMTP id i11so3411887ioi.12
+        for <io-uring@vger.kernel.org>; Fri, 24 Jan 2020 13:31:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6p7BJv/F5TPA6fYQeYzH4I2EeBKpTbJOSKWf/TBlffo=;
-        b=zLZHKaQigxXCeF5+9Ek5Hwl8WOIOZSauP69yOr3RagRZg9NrfP+6uV5OyXK3nKv2fT
-         UAC+PzqoTKEaFZmxA9W5JQBImIaRoX7TNdyz2ZLm3G34m+AKdKFF9YoKdPXzunB/VTyv
-         lZqchwppOW0urk2A8vv4kKCTeolQqPRKKHr1wkCKXkM78PxbVmDcSqd/1aQh3GigIhBi
-         Jv9vTpuIKBc5rAXZBy7hma2flieE0byks9idiC9Mtgy0DdkZDyXTGWx+xDgJT+oPjGHK
-         OavOHj5yVCRiYQNuNY71XMVr1BXEttMUtm1pf1l+N8luh0W/KgUzbUphsdxF5vudptxi
-         CQLg==
+        bh=S/7B1heQ9F5sCRETyaCW+4R53+86Po75J52yQE8zWb0=;
+        b=mfYNiD8bY/sS1A32OvhE2KXH7iCrkZUgY7gKyhqBYYNDUFcm7muh6IdYnjpK3MGrEu
+         oxSGyE1xFH0Q1gJKvbkLIjrqVm2Qz6pV8Jols2xWU2H3QkuS9wn9uYQsw9iuuOVGdycL
+         gVSzGzOj2DEAuTar3+ppKH5ChZBz+g6NTDV4buotTgd5txA9BKspMHjsVRK+rQSO0DSO
+         +60CiAg+gKPXYFU6fuRF+AihBh6ek1rwOhTZTj6SqmQSHlg/EEZye2qjhUXi+/Afvyzj
+         CgIM7035tz3Xt6jE7pp3vv0tx+jdrv3CGu9JcWcDl8Q3WDTYtIP6q8J4gOJMGse9xeRn
+         8hmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6p7BJv/F5TPA6fYQeYzH4I2EeBKpTbJOSKWf/TBlffo=;
-        b=DTbR4BOYfSlTuxmrfC/Juon2YhDqTHfzyCf1sRasy24XhbmS9/naW/L2YYImEbn48T
-         MvDtmPmJg+QirinrYijGEVa51/VvO03EfvvDGec7IOOCo9yGfIhAA/Ah2G4qPaXv2o8C
-         2xzZR1KiXyvA3I0tmtZgZCxM59XGHtjcte4J6CBMPbJH+xzDo+v/mDHZKmjcKcfC3TwA
-         6Xe22ZKdOCtVWEXvbXQXMlJ1TVmB4V9tLDwJsu4TBjNYG9zmHZzLoMcOwr5ZX0Ws58kk
-         +HQ5rcU51NafeFPPBpAw3VqlXWDB4Q7KwYuJx1yhl4JjZ4HkAxjYgVo4Y840Dgi4jOp7
-         69tg==
-X-Gm-Message-State: APjAAAV/VvSFSLWWhyLm9aJG+7Tht/RlJJ/u5aPaAFLC0fBj05UDAxyh
-        5d+lGNeKF7JnbgzFFgY2ybn4XDUTdx8=
-X-Google-Smtp-Source: APXvYqwlMZzehI02MEn+5jzwvbODyPijyZv5ugoN1UOV+5E39LSNMLihK6V61x0gz8dKmb6fcknVBg==
-X-Received: by 2002:a5d:8cce:: with SMTP id k14mr4012677iot.294.1579901503915;
-        Fri, 24 Jan 2020 13:31:43 -0800 (PST)
+        bh=S/7B1heQ9F5sCRETyaCW+4R53+86Po75J52yQE8zWb0=;
+        b=YkE6p4i0T8Z+R4vHq6XdHhUqCGvUCCUVGQPIcTOfzySMbsCsAhd+Yv+rdsyC7S52LG
+         W9Dc8108frCn8Q0kQS4frn/AUUhAR+RcecuBC9QXKB2dD/JHiIG7ATtAbuzLRo8OTP/n
+         V2KjOxwKItLSirmAkezGSv/qPoMEsWA19j38PjS+PEBO0050sGmzfD0KKZ5kJ34nSi00
+         1qm/vWk/aRQg1a9Vo74rifujENaLgZ25YQbEnVj4RI2o8xGPB//iXlkdhwR/mKmhb2PD
+         hMhKm0g53ISu3fg07yTEIq7tq5Te/c2wFKnYqOWvU7Z5eFOkzMotldl7qcG51XbrFm9N
+         FtqQ==
+X-Gm-Message-State: APjAAAX6rtO130BPZORHFqh5f9qABn0rjNyXN7ksgyFEvvZUv13S3aKZ
+        WeKfXCKPgQYgDCaDuYk1Wna3po3TrP0=
+X-Google-Smtp-Source: APXvYqw5leYPVZJ0LUtU/8LkGNxpcHV3S7vvMg0eD0rfV0AlWuqqS4Bw9yDwUFc73vYPiWLJZ4pC5A==
+X-Received: by 2002:a6b:e601:: with SMTP id g1mr3768543ioh.55.1579901504898;
+        Fri, 24 Jan 2020 13:31:44 -0800 (PST)
 Received: from x1.thefacebook.com ([65.144.74.34])
         by smtp.gmail.com with ESMTPSA id 190sm1322705iou.60.2020.01.24.13.31.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 13:31:43 -0800 (PST)
+        Fri, 24 Jan 2020 13:31:44 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/4] io-wq: add 'id' to io_wq
-Date:   Fri, 24 Jan 2020 14:31:39 -0700
-Message-Id: <20200124213141.22108-3-axboe@kernel.dk>
+Subject: [PATCH 3/4] io-wq: allow lookup of existing io_wq with given id
+Date:   Fri, 24 Jan 2020 14:31:40 -0700
+Message-Id: <20200124213141.22108-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124213141.22108-1-axboe@kernel.dk>
 References: <20200124213141.22108-1-axboe@kernel.dk>
@@ -60,74 +60,97 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add each io_wq to a global list, and assign an id for each of them. This
-is in preparation for attaching to an existing io_wq, rather than
-creating a new one.
+If the id and user/creds match, return an existing io_wq if we can safely
+grab a reference to it.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io-wq.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ fs/io-wq.c | 37 ++++++++++++++++++++++++++++++++++++-
+ fs/io-wq.h | 11 ++++++++++-
+ 2 files changed, 46 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 54e270ae12ab..51b3677d6fbd 100644
+index 51b3677d6fbd..08ef69b498f6 100644
 --- a/fs/io-wq.c
 +++ b/fs/io-wq.c
-@@ -16,9 +16,14 @@
- #include <linux/slab.h>
- #include <linux/kthread.h>
- #include <linux/rculist_nulls.h>
-+#include <linux/idr.h>
+@@ -1024,7 +1024,7 @@ void io_wq_flush(struct io_wq *wq)
+ 	}
+ }
  
- #include "io-wq.h"
+-struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
++static struct io_wq *__io_wq_create(unsigned bounded, struct io_wq_data *data)
+ {
+ 	int ret = -ENOMEM, node;
+ 	struct io_wq *wq;
+@@ -1106,6 +1106,36 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	return ERR_PTR(ret);
+ }
  
-+static LIST_HEAD(wq_list);
-+static DEFINE_MUTEX(wq_lock);
-+static DEFINE_IDR(wq_idr);
++static bool io_wq_match(struct io_wq *wq, struct io_wq_data *data)
++{
++	if (data->creds != wq->creds || data->user != wq->user)
++		return false;
++	if (data->get_work != wq->get_work || data->put_work != wq->put_work)
++		return false;
++	return refcount_inc_not_zero(&wq->use_refs);
++}
 +
- #define WORKER_IDLE_TIMEOUT	(5 * HZ)
- 
- enum {
-@@ -115,6 +120,8 @@ struct io_wq {
- 	struct completion done;
- 
- 	refcount_t use_refs;
-+	struct list_head wq_list;
-+	unsigned int id;
++/*
++ * Find and return io_wq with given id and grab a reference to it.
++ */
++struct io_wq *io_wq_create_id(unsigned bounded, struct io_wq_data *data,
++			      unsigned int id)
++{
++	if (id) {
++		struct io_wq *wq;
++
++		mutex_lock(&wq_lock);
++		wq = idr_find(&wq_idr, id);
++		if (wq && io_wq_match(wq, data)) {
++			mutex_unlock(&wq_lock);
++			return wq;
++		}
++		mutex_unlock(&wq_lock);
++	}
++
++	return __io_wq_create(bounded, data);
++}
++
+ static bool io_wq_worker_wake(struct io_worker *worker, void *data)
+ {
+ 	wake_up_process(worker->task);
+@@ -1145,3 +1175,8 @@ void io_wq_destroy(struct io_wq *wq)
+ 		__io_wq_destroy(wq);
+ 	}
+ }
++
++unsigned int io_wq_id(struct io_wq *wq)
++{
++	return wq->id;
++}
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index 1cd039af8813..dee7bb3b7cd4 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -97,8 +97,17 @@ struct io_wq_data {
+ 	put_work_fn *put_work;
  };
  
- static bool io_worker_get(struct io_worker *worker)
-@@ -1076,6 +1083,15 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- 			goto err;
- 		}
- 		refcount_set(&wq->use_refs, 1);
+-struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data);
++struct io_wq *io_wq_create_id(unsigned bounded, struct io_wq_data *data,
++				unsigned int id);
 +
-+		/* if we're out of IDs or fail to get one, use 0 */
-+		mutex_lock(&wq_lock);
-+		wq->id = idr_alloc(&wq_idr, wq, 1, INT_MAX, GFP_KERNEL);
-+		if (wq->id < 0)
-+			wq->id = 0;
++static inline struct io_wq *io_wq_create(unsigned bounded,
++					 struct io_wq_data *data)
++{
++	return io_wq_create_id(bounded, data, 0);
++}
 +
-+		list_add(&wq->wq_list, &wq_list);
-+		mutex_unlock(&wq_lock);
- 		reinit_completion(&wq->done);
- 		return wq;
- 	}
-@@ -1119,6 +1135,13 @@ static void __io_wq_destroy(struct io_wq *wq)
+ void io_wq_destroy(struct io_wq *wq);
++unsigned int io_wq_id(struct io_wq *wq);
  
- void io_wq_destroy(struct io_wq *wq)
- {
--	if (refcount_dec_and_test(&wq->use_refs))
-+	if (refcount_dec_and_test(&wq->use_refs)) {
-+		mutex_lock(&wq_lock);
-+		if (wq->id)
-+			idr_remove(&wq_idr, wq->id);
-+		list_del(&wq->wq_list);
-+		mutex_unlock(&wq_lock);
-+
- 		__io_wq_destroy(wq);
-+	}
- }
+ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work);
+ void io_wq_enqueue_hashed(struct io_wq *wq, struct io_wq_work *work, void *val);
 -- 
 2.25.0
 

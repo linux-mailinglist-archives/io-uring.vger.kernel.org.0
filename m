@@ -2,90 +2,136 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D5614940B
-	for <lists+io-uring@lfdr.de>; Sat, 25 Jan 2020 10:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B6081495DE
+	for <lists+io-uring@lfdr.de>; Sat, 25 Jan 2020 14:15:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbgAYJAp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 25 Jan 2020 04:00:45 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39719 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbgAYJAp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Jan 2020 04:00:45 -0500
-Received: by mail-wm1-f68.google.com with SMTP id c84so1842663wme.4;
-        Sat, 25 Jan 2020 01:00:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GchmmZAhlU8Co5U1q3zcxajpizhbMQGLMHtACB5nzyQ=;
-        b=Rvai70gMz3sVqPtPLTYrPnb42K/8SueeKq7npnqZMuKJnASRWGoDJoIj/A8Uaqa+Y1
-         1PDCNXIHKq/xACnbdflJjMo7wW1j4GV2Em+7qzXL7T0eeYB2vEjZXCkCWD1mqDVygRv9
-         MYRy37PbyKc9sL+szLOclJQiaDDuIxErBplqctLxJED+UAzz0Fm1F4vHf0dyNVeXjC9J
-         UiQjlaz76FPCjSngXHPSolZP2zHl+HHnMi9bURixE7NBMmSqRhhBp/FGL8ylmyeigraJ
-         CegQyplu9SK/MACWx4ZkEV/aroZr/UNOTKjNiMAgKxay1sHOOy+4OHQonX35nrdxJTut
-         4OsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GchmmZAhlU8Co5U1q3zcxajpizhbMQGLMHtACB5nzyQ=;
-        b=B550Zhxo5m1kVLbTxp+QXjxfV1dm+v9fEBGBVUMZHZOh92GmrlTx3lKIDMh2ir8eiz
-         FGRDbtNFMHqn3Dzy4qG0tPlKTruVmYqh7eKcuaU4EGTZHzn3E1I7uODvQ2SN+cPre+aN
-         vT/2r7Mr3tI6D1Iu+v6Xv8+CKXLH+cpc4J37b91ip0vzwQnF0qe4mV5FTHkVgprJnX+X
-         otMwFcYC9eeaJ5WZiPtOsGazCX3Gag1x70PhCIZDXu39X1G6PY1V/PhGYLT14huWmEoc
-         /W9DcXKt6UxfSvncFz2IQRIEiL4zogdvdAAIkdUqhMd67TYtFn/4Nk2BzQBeUUFNp3S+
-         BKjQ==
-X-Gm-Message-State: APjAAAU06+IE7ACxBviogabFqdVGBVkP9Vw22Kjt9FS4NZMMQLIqc11W
-        Kz0uW6aazgJaOA2R4s5mp0rOh6ax
-X-Google-Smtp-Source: APXvYqwfIf3KOlD0xYres/MByZ2hWFZYxKFDhuoyIRk1vPfHTsjSVOYEMgdI2/iY6YAEAMEcQcv/vA==
-X-Received: by 2002:a1c:7718:: with SMTP id t24mr3450608wmi.119.1579942843388;
-        Sat, 25 Jan 2020 01:00:43 -0800 (PST)
-Received: from localhost.localdomain ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id a5sm9866897wmb.37.2020.01.25.01.00.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Jan 2020 01:00:42 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: fix refcounting with OOM
-Date:   Sat, 25 Jan 2020 11:59:30 +0300
-Message-Id: <fa69cae513308ef3f681e13888a4f551c67ef3a2.1579942715.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1725821AbgAYNPE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 25 Jan 2020 08:15:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725812AbgAYNPE (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sat, 25 Jan 2020 08:15:04 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B49742071A;
+        Sat, 25 Jan 2020 13:15:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579958103;
+        bh=YrMaopeIElCm2701zXAtNoG1FrkPY4mNmwga5Vke9n4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=HM43GISKiUCkOtHkoJRrPKD5WczChvI38tbKfD4ANX9ncuxa/uPdT4u+2dBTyQ/IT
+         NeLbmh2O77B/K9MUJMiaLZDhQ/EmeEpn567LBNLCmTp2Zi4S1Tn8L5py9qPqMRdpvu
+         1BONPIqXGp+WRu87wcrIpBpQG0FqMsth4/ngMNP0=
+Message-ID: <c49d8fb5f7a056cddfa19f9b48af878ac14536d2.camel@kernel.org>
+Subject: Re: [PATCH 1/6] fs: add namei support for doing a non-blocking path
+ lookup
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Date:   Sat, 25 Jan 2020 08:15:01 -0500
+In-Reply-To: <20200107170034.16165-2-axboe@kernel.dk>
+References: <20200107170034.16165-1-axboe@kernel.dk>
+         <20200107170034.16165-2-axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In case of out of memory the second argument of percpu_ref_put_many() in
-io_submit_sqes() may evaluate into "nr - (-EAGAIN)", that is clearly
-wrong.
+On Tue, 2020-01-07 at 10:00 -0700, Jens Axboe wrote:
+> If the fast lookup fails, then return -EAGAIN to have the caller retry
+> the path lookup. Assume that a dentry having any of:
+> 
+> ->d_revalidate()
+> ->d_automount()
+> ->d_manage()
+> 
+> could block in those callbacks. Preemptively return -EAGAIN if any of
+> these are present.
+> 
+> This is in preparation for supporting non-blocking open.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/namei.c            | 21 ++++++++++++++++++++-
+>  include/linux/namei.h |  2 ++
+>  2 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index b367fdb91682..ed108a41634f 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1641,6 +1641,17 @@ static struct dentry *__lookup_hash(const struct qstr *name,
+>  	return dentry;
+>  }
+>  
+> +static inline bool lookup_could_block(struct dentry *dentry, unsigned int flags)
+> +{
+> +	const struct dentry_operations *ops = dentry->d_op;
+> +
+> +	if (!ops || !(flags & LOOKUP_NONBLOCK))
+> +		return 0;
+> +
+> +	/* assume these dentry ops may block */
+> +	return ops->d_revalidate || ops->d_automount || ops->d_manage;
+> +}
+> +
 
-Fixes: 2b85edfc0c90 ("io_uring: batch getting pcpu references")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+d_revalidate shouldn't block if LOOKUP_RCU is set.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a4b496815783..744e8a90b543 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4912,8 +4912,11 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 			break;
- 	}
- 
--	if (submitted != nr)
--		percpu_ref_put_many(&ctx->refs, nr - submitted);
-+	if (unlikely(submitted != nr)) {
-+		int ref_used = (submitted == -EAGAIN) ? 0 : submitted;
-+
-+		percpu_ref_put_many(&ctx->refs, nr - ref_used);
-+	}
- 
- 	io_submit_end(ctx);
- 	if (nr > IO_PLUG_THRESHOLD)
+
+>  static int lookup_fast(struct nameidata *nd,
+>  		       struct path *path, struct inode **inode,
+>  		       unsigned *seqp)
+> @@ -1665,6 +1676,9 @@ static int lookup_fast(struct nameidata *nd,
+>  			return 0;
+>  		}
+>  
+> +		if (unlikely(lookup_could_block(dentry, nd->flags)))
+> +			return -EAGAIN;
+> +
+>  		/*
+>  		 * This sequence count validates that the inode matches
+>  		 * the dentry name information from lookup.
+> @@ -1707,7 +1721,10 @@ static int lookup_fast(struct nameidata *nd,
+>  		dentry = __d_lookup(parent, &nd->last);
+>  		if (unlikely(!dentry))
+>  			return 0;
+> -		status = d_revalidate(dentry, nd->flags);
+> +		if (unlikely(lookup_could_block(dentry, nd->flags)))
+> +			status = -EAGAIN;
+> +		else
+> +			status = d_revalidate(dentry, nd->flags);
+>  	}
+>  	if (unlikely(status <= 0)) {
+>  		if (!status)
+> @@ -1912,6 +1929,8 @@ static int walk_component(struct nameidata *nd, int flags)
+>  	if (unlikely(err <= 0)) {
+>  		if (err < 0)
+>  			return err;
+> +		if (nd->flags & LOOKUP_NONBLOCK)
+> +			return -EAGAIN;
+>  		path.dentry = lookup_slow(&nd->last, nd->path.dentry,
+>  					  nd->flags);
+>  		if (IS_ERR(path.dentry))
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 4e77068f7a1a..392eb439f88b 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -49,6 +49,8 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
+>  /* LOOKUP_* flags which do scope-related checks based on the dirfd. */
+>  #define LOOKUP_IS_SCOPED (LOOKUP_BENEATH | LOOKUP_IN_ROOT)
+>  
+> +#define LOOKUP_NONBLOCK		0x200000 /* don't block for lookup */
+> +
+>  extern int path_pts(struct path *path);
+>  
+>  extern int user_path_at_empty(int, const char __user *, unsigned, struct path *, int *empty);
+
 -- 
-2.24.0
+Jeff Layton <jlayton@kernel.org>
 

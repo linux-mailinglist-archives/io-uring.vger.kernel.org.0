@@ -2,136 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B6081495DE
-	for <lists+io-uring@lfdr.de>; Sat, 25 Jan 2020 14:15:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 889A31496AE
+	for <lists+io-uring@lfdr.de>; Sat, 25 Jan 2020 17:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725821AbgAYNPE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 25 Jan 2020 08:15:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57922 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbgAYNPE (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Sat, 25 Jan 2020 08:15:04 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B49742071A;
-        Sat, 25 Jan 2020 13:15:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579958103;
-        bh=YrMaopeIElCm2701zXAtNoG1FrkPY4mNmwga5Vke9n4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=HM43GISKiUCkOtHkoJRrPKD5WczChvI38tbKfD4ANX9ncuxa/uPdT4u+2dBTyQ/IT
-         NeLbmh2O77B/K9MUJMiaLZDhQ/EmeEpn567LBNLCmTp2Zi4S1Tn8L5py9qPqMRdpvu
-         1BONPIqXGp+WRu87wcrIpBpQG0FqMsth4/ngMNP0=
-Message-ID: <c49d8fb5f7a056cddfa19f9b48af878ac14536d2.camel@kernel.org>
-Subject: Re: [PATCH 1/6] fs: add namei support for doing a non-blocking path
- lookup
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Date:   Sat, 25 Jan 2020 08:15:01 -0500
-In-Reply-To: <20200107170034.16165-2-axboe@kernel.dk>
-References: <20200107170034.16165-1-axboe@kernel.dk>
-         <20200107170034.16165-2-axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+        id S1726293AbgAYQoL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 25 Jan 2020 11:44:11 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35033 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbgAYQoK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Jan 2020 11:44:10 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i23so2730080pfo.2
+        for <io-uring@vger.kernel.org>; Sat, 25 Jan 2020 08:44:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=JdcMu6qOC/l/h8yg4uxH4L0ReEXT+2wIHNQriVaWjMQ=;
+        b=IgibN5/1C3vOuhyt9soXznfYTJA4ZJACrg0TWglaG8bZvcvArASh5Q3YpcWBVmabbc
+         I4Eu9Drq68jEs8mHRoOWBeALNARc24UuDXs+vikqSnq4IeelZV9dN7RfjvNXkGOAQ/Cg
+         pt2VeAh5z0Ni+H4PBtoToeNHQRI13e0AHCvujxrwgA+ON1clxQh9mqQHkYhuf5UyWjRP
+         rOAlKlz/eeImsuav12dco8PfYFDSmycktNLhGiuYWH9clFwwX//4MxT5l08jHhcQrxsX
+         qhr209bw4BafYwNz6xcp/9grsXMByCPS45/Fdub5Pu0JQn+XM5KICJNkCuaYZVsnRxuV
+         fLHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JdcMu6qOC/l/h8yg4uxH4L0ReEXT+2wIHNQriVaWjMQ=;
+        b=mHWBWLSkcESwADaGmPfmwX/KcWhp0tz/4cO0PVSdnMfEqj+JbW+Q2MEHj6Sz9mc+Gz
+         V6ydH5EXGnCh0uZNLtL+dszY96RQMKLAXeXdik8SQdBdOqNET4nkoJQgDJYoBEkXSX8T
+         /UDEX2dTlmJ9/mZUTuXWyzZaQB0lKHnB1UVVZ2Os1SiQm4CLFbU1TF7UbYlWlzvOKYci
+         TX+E51uMN6yMjGC+Dx48zgRPdFuJ0I4j2bUYPFtyssN481sMPXLm3SWZORQkZ0sP/QYV
+         Pa0hqgZnTcwc+fhWtKgkkRbNxYGRZUEA5UkWDky/i0A5z+x0/XLyqws+6d8MO7n5AnFY
+         /rSA==
+X-Gm-Message-State: APjAAAUMdxCXiJH4KmWD1CUGbIohMH1C3fSlkMsjw0qW8BB9tIn95lYr
+        HQO46PpTQ9MdhBQT6bFzJ9EYLF0DVjI=
+X-Google-Smtp-Source: APXvYqwvpGnKgGQvKn3Cap5WpEURrzoNeigwkoyihoDZ/yp1wu8Mr5dmFqt9wbegzg9WRbNKwvYxEQ==
+X-Received: by 2002:a63:5c0e:: with SMTP id q14mr1926453pgb.313.1579970649726;
+        Sat, 25 Jan 2020 08:44:09 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id u11sm10209622pjn.2.2020.01.25.08.44.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Jan 2020 08:44:09 -0800 (PST)
+Subject: Re: [PATCH 4/4] io_uring: add support for sharing kernel io-wq
+ workqueue
+To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
+References: <20200124213141.22108-1-axboe@kernel.dk>
+ <20200124213141.22108-5-axboe@kernel.dk>
+ <7ad7503b-cce2-ccbb-4d4d-9805ab342e8b@samba.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <27935f36-9946-8556-49de-57a41204b314@kernel.dk>
+Date:   Sat, 25 Jan 2020 09:44:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <7ad7503b-cce2-ccbb-4d4d-9805ab342e8b@samba.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 2020-01-07 at 10:00 -0700, Jens Axboe wrote:
-> If the fast lookup fails, then return -EAGAIN to have the caller retry
-> the path lookup. Assume that a dentry having any of:
+On 1/25/20 12:45 AM, Stefan Metzmacher wrote:
+> Am 24.01.20 um 22:31 schrieb Jens Axboe:
+>> An id field is added to io_uring_params, which always returns the ID of
+>> the io-wq backend that is associated with an io_uring context. If an 'id'
+>> is provided and IORING_SETUP_SHARED is set in the creation flags, then
+>> we attempt to attach to an existing io-wq instead of setting up a new one.
 > 
-> ->d_revalidate()
-> ->d_automount()
-> ->d_manage()
-> 
-> could block in those callbacks. Preemptively return -EAGAIN if any of
-> these are present.
-> 
-> This is in preparation for supporting non-blocking open.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/namei.c            | 21 ++++++++++++++++++++-
->  include/linux/namei.h |  2 ++
->  2 files changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index b367fdb91682..ed108a41634f 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1641,6 +1641,17 @@ static struct dentry *__lookup_hash(const struct qstr *name,
->  	return dentry;
->  }
->  
-> +static inline bool lookup_could_block(struct dentry *dentry, unsigned int flags)
-> +{
-> +	const struct dentry_operations *ops = dentry->d_op;
-> +
-> +	if (!ops || !(flags & LOOKUP_NONBLOCK))
-> +		return 0;
-> +
-> +	/* assume these dentry ops may block */
-> +	return ops->d_revalidate || ops->d_automount || ops->d_manage;
-> +}
-> +
+> Use the new name here too.
 
-d_revalidate shouldn't block if LOOKUP_RCU is set.
+Already fixed that up yesterday.
 
+>>  	ret = io_uring_create(entries, &p);
+>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>> index 57d05cc5e271..f66e53c74a3d 100644
+>> --- a/include/uapi/linux/io_uring.h
+>> +++ b/include/uapi/linux/io_uring.h
+>> @@ -75,6 +75,7 @@ enum {
+>>  #define IORING_SETUP_SQ_AFF	(1U << 2)	/* sq_thread_cpu is valid */
+>>  #define IORING_SETUP_CQSIZE	(1U << 3)	/* app defines CQ size */
+>>  #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
+>> +#define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
+>>  
+>>  enum {
+>>  	IORING_OP_NOP,
+>> @@ -183,7 +184,8 @@ struct io_uring_params {
+>>  	__u32 sq_thread_cpu;
+>>  	__u32 sq_thread_idle;
+>>  	__u32 features;
+>> -	__u32 resv[4];
+>> +	__u32 id;
+> 
+> I think this should be wq_id;
 
->  static int lookup_fast(struct nameidata *nd,
->  		       struct path *path, struct inode **inode,
->  		       unsigned *seqp)
-> @@ -1665,6 +1676,9 @@ static int lookup_fast(struct nameidata *nd,
->  			return 0;
->  		}
->  
-> +		if (unlikely(lookup_could_block(dentry, nd->flags)))
-> +			return -EAGAIN;
-> +
->  		/*
->  		 * This sequence count validates that the inode matches
->  		 * the dentry name information from lookup.
-> @@ -1707,7 +1721,10 @@ static int lookup_fast(struct nameidata *nd,
->  		dentry = __d_lookup(parent, &nd->last);
->  		if (unlikely(!dentry))
->  			return 0;
-> -		status = d_revalidate(dentry, nd->flags);
-> +		if (unlikely(lookup_could_block(dentry, nd->flags)))
-> +			status = -EAGAIN;
-> +		else
-> +			status = d_revalidate(dentry, nd->flags);
->  	}
->  	if (unlikely(status <= 0)) {
->  		if (!status)
-> @@ -1912,6 +1929,8 @@ static int walk_component(struct nameidata *nd, int flags)
->  	if (unlikely(err <= 0)) {
->  		if (err < 0)
->  			return err;
-> +		if (nd->flags & LOOKUP_NONBLOCK)
-> +			return -EAGAIN;
->  		path.dentry = lookup_slow(&nd->last, nd->path.dentry,
->  					  nd->flags);
->  		if (IS_ERR(path.dentry))
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 4e77068f7a1a..392eb439f88b 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -49,6 +49,8 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
->  /* LOOKUP_* flags which do scope-related checks based on the dirfd. */
->  #define LOOKUP_IS_SCOPED (LOOKUP_BENEATH | LOOKUP_IN_ROOT)
->  
-> +#define LOOKUP_NONBLOCK		0x200000 /* don't block for lookup */
-> +
->  extern int path_pts(struct path *path);
->  
->  extern int user_path_at_empty(int, const char __user *, unsigned, struct path *, int *empty);
+Yeah, probably clearer, I'll make that change, thanks.
 
 -- 
-Jeff Layton <jlayton@kernel.org>
+Jens Axboe
 

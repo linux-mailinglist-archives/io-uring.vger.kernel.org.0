@@ -2,66 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55B08149BF4
-	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2020 17:57:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B14CC149BF7
+	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2020 18:00:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725838AbgAZQ5f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 26 Jan 2020 11:57:35 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:50498 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbgAZQ5f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 26 Jan 2020 11:57:35 -0500
-Received: by mail-pj1-f65.google.com with SMTP id r67so2029525pjb.0
-        for <io-uring@vger.kernel.org>; Sun, 26 Jan 2020 08:57:32 -0800 (PST)
+        id S1726155AbgAZRAs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 26 Jan 2020 12:00:48 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:54007 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbgAZRAr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 26 Jan 2020 12:00:47 -0500
+Received: by mail-pj1-f66.google.com with SMTP id n96so2017996pjc.3
+        for <io-uring@vger.kernel.org>; Sun, 26 Jan 2020 09:00:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7zqZazIrLW3UMe+DEg8Ims5Vma+2yCeGVjU7l0hDaFI=;
-        b=FmXnlEHSap/erSDUtHgbLZKvNXoyQp7mGEL9OB4HWUDrPGQ+y+gu6hEwu1M1AikPli
-         Y7nyUsM/YtgdC3/6V00wRNkgkG0l08K1eX+UKID6MEYiQiul4kDlCJLfax24Fms64Cdq
-         kghBW/392UqzwkI6gE/disn1tK6WgdJIlUc3/KOX3f6beRwWYR0+zRDZNI6pjv6GRU3y
-         szxPlgY8vf9C3Kaqw43G3ozp6Ix8/1XkYcraGg5AkO1jYS0Sq9ogD0JOzmjPmfl9enWB
-         fu7dCaO08I3YCzI/THbHAP5rRUIrND/QyOfKXPXHT7N82uF06hgM+iuQSPEI8MWD6FvS
-         iOeg==
+        bh=TrFshwMX3sLK7BOBqA2VJ29qR9X1r/JNaTWM7Oz0VQA=;
+        b=jnWi3Yn2NMNOIwX2PJ4tOUcqZTqX5OR5JwlRXPoNGyNHX01sOirIgtEWYZRZWvJeTm
+         GijpteuCf51TdsNDRzDyuqhadCJcW0tpB3IKSY+0aTmLzPPWeFWAEJY1LA9vbDKCAPfi
+         olnSOVDYqGErWCEDpM1rVPXbcR2Flm+LYjdQ256mzNxkVa8m/nFXGiqaEkPlLcCZre0b
+         T6SGWs/QVoWcUoKbnKq7zmrWge70eMtGMNI6wB5C+/y9akv+VAVXIBy2ivRdDFOYtP7a
+         hJ2sCVli/r0zBc+zlE0nfBx3yGU74ugrLMJac5KV5VDiZIIS8S1bE7TsnoGFUkeXgAdl
+         RTQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=7zqZazIrLW3UMe+DEg8Ims5Vma+2yCeGVjU7l0hDaFI=;
-        b=mytiSUsPOOLObFb9XvfAYY3ZOve0VJ3dJGR7saLSS1y1q6pLHUQv5r/iuUldao88+l
-         t2WQ6AYMkSLHrO7xuDCLBgmU2zWTo1zXHJy4rJKf/FdykteXzDXi+35RBh/QIQO5RWTF
-         U+8beBkKjJUkb+ouqAQ/va9dDrjtFnWhyawhJXEPtJZAPeXF+pJMHq1T71uuKACHsOsK
-         doDge6VGdBN+8nYHSW3dF6EXz1qATnjAP7Lzu4Zq9D1TFAEiHdnC4g2liUe1xqV447MK
-         lDqZ4djsnKowoUhip27Veznvn28dHhMsWj45EFOOl3QpvJP9B4miALLdI9nw4hWMWUQM
-         HX+Q==
-X-Gm-Message-State: APjAAAWTSAr+SmKVoDWZOpfJxjcDMaUFgDfALSVDJKpJy1zF7MWZvPUM
-        r8eqzKvUcUasCr3jq8eLbPLCdSDH6dI=
-X-Google-Smtp-Source: APXvYqx4rWV7nx2DHaapCpgosWizbCCBCsXwyBHP8fEaGjZ94AtWJvkTA6aleGx1vap8iMDtXG8New==
-X-Received: by 2002:a17:90b:8ce:: with SMTP id ds14mr10296557pjb.57.1580057852072;
-        Sun, 26 Jan 2020 08:57:32 -0800 (PST)
+        bh=TrFshwMX3sLK7BOBqA2VJ29qR9X1r/JNaTWM7Oz0VQA=;
+        b=jIXiwB3vkk1ukjM8a+UAIwXtmyftgmp79K5PZJNuB1OL1gTNNWM1IcCiryDXjwvZub
+         yqh3Q5jXbTQOlBIidDsCXvH6TNA7roVvtfZE5b7PHuHSbvsQnO8fod15rC59Fc/KtNr+
+         toGzVvnINeynFqyE/gOAX42WQXwiLzXXrRBs2IGdEHzQrKYnNiWbuOjTB6x8GtbRXqoV
+         eT2tVHG050ZIDxHcHn89oObW/PuAV3nubFcxRBKVjG+mzLmg8JGvAr4KwzNg+i56p6vx
+         oI0CDEsHTZQ8YyG7YIC1UCZxFSCOIG9m8k2AIdmLWOi4DyQVvQzRCrkx9XimCnAyFtwF
+         kg7Q==
+X-Gm-Message-State: APjAAAXyrbkZbgqlAdWJaWKmCwKvIiNWeRLxHLWfYThjB8Pd7kfj9xUJ
+        jvAhoQxdKfkyFhJKhLUtKTZKCUnUIeg=
+X-Google-Smtp-Source: APXvYqy8OkXpvY/EO7JJ8JrTwGu1cGTUbP5I6eRn6QR69XynaZ75aoXP1ZrYpUnlS6f6H1wvcRthDg==
+X-Received: by 2002:a17:902:be06:: with SMTP id r6mr12572734pls.99.1580058047058;
+        Sun, 26 Jan 2020 09:00:47 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id u26sm12381726pfn.46.2020.01.26.08.57.30
+        by smtp.gmail.com with ESMTPSA id p3sm1629735pfg.184.2020.01.26.09.00.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Jan 2020 08:57:31 -0800 (PST)
-Subject: Re: [PATCH 5.4 033/222] io_uring: only allow submit from owning task
-To:     Andres Freund <andres@anarazel.de>,
-        Stefan Metzmacher <metze@samba.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        io-uring <io-uring@vger.kernel.org>
-References: <20200122092833.339495161@linuxfoundation.org>
- <20200122092835.852416399@linuxfoundation.org>
- <1b4a79c1-6cda-12a8-219b-0c1c146faeff@samba.org>
- <20200126055457.5w4f5jyhkic7cixu@alap3.anarazel.de>
+        Sun, 26 Jan 2020 09:00:46 -0800 (PST)
+Subject: Re: [PATCHSET 0/4] Add support for shared io-wq backends
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Daurnimator <quae@daurnimator.com>
+Cc:     io-uring@vger.kernel.org
+References: <20200123231614.10850-1-axboe@kernel.dk>
+ <CAEnbY+c34Uiguq=11eZ1F0z_VZopeBbw1g1gfn-S0Fb5wCaL5A@mail.gmail.com>
+ <4917a761-6665-0aa2-0990-9122dfac007a@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c52a3b63-731b-95f2-ae97-0ad153e7698b@kernel.dk>
-Date:   Sun, 26 Jan 2020 09:57:29 -0700
+Message-ID: <694c2b6f-6b51-fd7b-751e-db87de90e490@kernel.dk>
+Date:   Sun, 26 Jan 2020 10:00:44 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200126055457.5w4f5jyhkic7cixu@alap3.anarazel.de>
+In-Reply-To: <4917a761-6665-0aa2-0990-9122dfac007a@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,144 +67,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/25/20 10:54 PM, Andres Freund wrote:
-> Hi,
-> 
-> On 2020-01-24 11:38:02 +0100, Stefan Metzmacher wrote:
->> Am 22.01.20 um 10:26 schrieb Greg Kroah-Hartman:
->>> From: Jens Axboe <axboe@kernel.dk>
->>>
->>> commit 44d282796f81eb1debc1d7cb53245b4cb3214cb5 upstream.
->>>
->>> If the credentials or the mm doesn't match, don't allow the task to
->>> submit anything on behalf of this ring. The task that owns the ring can
->>> pass the file descriptor to another task, but we don't want to allow
->>> that task to submit an SQE that then assumes the ring mm and creds if
->>> it needs to go async.
->>>
->>> Cc: stable@vger.kernel.org
->>> Suggested-by: Stefan Metzmacher <metze@samba.org>
->>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>
->>>
->>> ---
->>>  fs/io_uring.c |    6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -3716,6 +3716,12 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned
->>>  			wake_up(&ctx->sqo_wait);
->>>  		submitted = to_submit;
->>>  	} else if (to_submit) {
->>> +		if (current->mm != ctx->sqo_mm ||
->>> +		    current_cred() != ctx->creds) {
->>> +			ret = -EPERM;
->>> +			goto out;
->>> +		}
->>> +
+On 1/26/20 8:11 AM, Pavel Begunkov wrote:
+> On 1/26/2020 4:51 AM, Daurnimator wrote:
+>> On Fri, 24 Jan 2020 at 10:16, Jens Axboe <axboe@kernel.dk> wrote:
 >>
->> I thought about this a bit more.
+>> I don't love the idea of some new type of magic user<>kernel
+>> identifier. It would be nice if the id itself was e.g. a file
+>> descriptor
 >>
->> I'm not sure if this is actually to restrictive,
->> because it means applications like Samba won't
->> be able to use io-uring at all.
+>> What if when creating an io_uring you could pass in an existing
+>> io_uring file descriptor, and the new one would share the io-wq
+>> backend?
+>>
+> Good idea! It can solve potential problems with jails, isolation, etc in
+> the future.
 > 
-> Yea, I think it is too restrictive. In fact, it broke my WIP branch to
-> make postgres use io_uring.
+> May we need having other shared resources and want fine-grained control
+> over them at some moment? It can prove helpful for the BPF plans.
+> E.g.
 > 
+> io_uring_setup(share_io-wq=ring_fd1,
+>                share_fds=ring_fd2,
+>                share_ebpf=ring_fd3, ...);
 > 
-> Postgres uses a forked process model, with all sub-processes forked off
-> one parent process ("postmaster"), sharing MAP_ANONYMOUS|MAP_SHARED
-> memory (buffer pool, locks, and lots of other IPC). My WIP branch so far
-> has postmaster create a number of io_urings that then the different
-> processes can use (with locking if necessary).
+> If so, it's better to have more flexible API. E.g. as follows or a
+> pointer to a struct with @size field.
 > 
-> In plenty of the cases it's fairly important for performance to not
-> require an additional context switch initiate IO, therefore we cannot
-> delegate submitting to an io_uring to separate process. But it's not
-> feasible to have one (or even two) urings for each process either: For
-> one, that's just about guaranteed to bring us over the default
-> RLIMIT_MEMLOCK limit, and requiring root only config changes is not an
-> option for many (nor user friendly).
+> struct io_shared_resource {
+>     int type;
+>     int fd;
+> };
 > 
+> struct io_uring_params {
+>     ...
+>     struct io_shared_resource shared[];
+> };
 > 
-> Not sharing queues makes it basically impossible to rely on io_uring
-> ordering properties when operation interlock is needed. E.g. to
-> guarantee that the journal is flushed before some data buffer can be
-> written back, being able to make use of links and drains is great - but
-> there's one journal for all processes. To be able to guarantee anything,
-> all the interlocked writes need to go through one io_uring. I've not yet
-> implemented this, so I don't have numbers, but I expect pretty
-> significant savings.
-> 
-> 
-> Not being able to share urings also makes it harder to resolve
-> deadlocks:
-> 
-> As we call into both library and user defined code, we cannot guarantee
-> that a specific backend process will promptly (or at all, when waiting
-> for some locks) process cqes. There's also sections where we don't want
-> to constantly check for ready events, for performance reasons.  But
-> operations initiated by a process might be blocking other connections:
-> 
-> E.g. process #1 might have initiated transferring a number of blocks
-> into postgres' buffer pool via io_uring , and now is busy processing the
-> first block that completed. But now process #2 might need one of the
-> buffers that had IO queued, but didn't complete in time for #1 to see
-> the results.  The way I have it set up right now, #2 simply can process
-> pending cqes in the relevant queue. Which, in this example, would mark
-> the pg buffer pool entry as valid, allowing #2 to continue.
-> 
-> Now, completions can still be read by all processes, so I could continue
-> to do the above: But that'd require all potentially needed io_urings to
-> be set up in postmaster, before the first fork, and all processes to
-> keep all those FDs open (commonly several hundred). Not an attractive
-> option either, imo.
-> 
-> Obviously we could solve this by having a sqe result processing thread
-> running within each process - but that'd be a very significant new
-> overhead. And it'd require making some non-threadsafe code threadsafe,
-> which I do not relish tackling as a side-effect of io_uring adoption.
-> 
-> 
-> It also turns out to be nice from a performance / context-switch rate
-> angle to be able to process cqes for submissions by other
-> processes. Saves an expensive context switch, and often enough it really
-> doesn't matter which process processes the completion (especially for
-> readahead). And in other cases it's cheap to just schedule the
-> subsequent work from the cqe processor, e.g. initiating readahead of a
-> few more blocks into the pg buffer pool.  Similarly, there are a few
-> cases where it's useful for several processes to submit IO into a uring
-> primarily drained by one specific process, to offload the subsequent
-> action, if that's expensive
-> 
-> 
-> Now, I think there's a valid argument to be made that postgres should
-> just use threads, and not be hampered by any of this. But a) that's not
-> going to happen all that soon, it's a large change, b) it's far from
-> free from problems either, especially scalability on larger machines,
-> and robustness.
-> 
-> 
->> As even if current_cred() and ctx->creds describe the same
->> set of uid,gids the != won't ever match again and
->> makes the whole ring unuseable.
-> 
-> Indeed.  It also seems weird that a sqpoll now basically has different
-> semantics, allowing the io_uring to be used by multiple processes - a
-> task with a different mm can still wake the sqpoll thread up, even.
-> 
-> Since the different processes attached still can still write to the
-> io_uring mmaped memory, they can still queue sqes, they just can't
-> initiate the processing. But the next time the creator of the uring
-> submits, they will still be - and thus it seems that the kernel needs to
-> handle this safely. So I really don't get what this actually achieves?
-> Am I missing something here?
+> params = {
+>     ...
+>     .shared = {{ATTACH_IO_WQ, fd1}, ..., SANTINEL_ENTRY};
+> };
 
-Thanks for your detailed reported, I'm going to revert this change for
-5.5.
+I'm fine with changing/extending the sharing API, please send a
+patch!
 
 -- 
 Jens Axboe

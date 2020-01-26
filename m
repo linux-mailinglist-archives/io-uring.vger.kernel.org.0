@@ -2,63 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B14CC149BF7
-	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2020 18:00:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2730B149BFE
+	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2020 18:10:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbgAZRAs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 26 Jan 2020 12:00:48 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:54007 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbgAZRAr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 26 Jan 2020 12:00:47 -0500
-Received: by mail-pj1-f66.google.com with SMTP id n96so2017996pjc.3
-        for <io-uring@vger.kernel.org>; Sun, 26 Jan 2020 09:00:47 -0800 (PST)
+        id S1726599AbgAZRKY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 26 Jan 2020 12:10:24 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35682 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbgAZRKY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 26 Jan 2020 12:10:24 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i23so3785500pfo.2
+        for <io-uring@vger.kernel.org>; Sun, 26 Jan 2020 09:10:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TrFshwMX3sLK7BOBqA2VJ29qR9X1r/JNaTWM7Oz0VQA=;
-        b=jnWi3Yn2NMNOIwX2PJ4tOUcqZTqX5OR5JwlRXPoNGyNHX01sOirIgtEWYZRZWvJeTm
-         GijpteuCf51TdsNDRzDyuqhadCJcW0tpB3IKSY+0aTmLzPPWeFWAEJY1LA9vbDKCAPfi
-         olnSOVDYqGErWCEDpM1rVPXbcR2Flm+LYjdQ256mzNxkVa8m/nFXGiqaEkPlLcCZre0b
-         T6SGWs/QVoWcUoKbnKq7zmrWge70eMtGMNI6wB5C+/y9akv+VAVXIBy2ivRdDFOYtP7a
-         hJ2sCVli/r0zBc+zlE0nfBx3yGU74ugrLMJac5KV5VDiZIIS8S1bE7TsnoGFUkeXgAdl
-         RTQQ==
+        bh=ISotJI3izVmXl3fjfB5uTrAYmwdgYfTOknESvfHgtZk=;
+        b=N8yflsFSMo7z3TohnJaUL9dTQK5ay/N2VmQ0cVC2L7uONXQVzN+hmbOTVywede6zNY
+         ZMD6X5Ibh0fD4PTewZdSnz7d14c0IgLWlieRNDowPssmahpv2H/Cb4q+YAwJxjQv9Qdp
+         w5UN134ifB0I5pKbdveIYAuMJmwQh+eEqNSE2IPwtieN+lKQm14zneSQwH7fOUHTNHvr
+         gAOpToN/GVumKmK0euYBifaZPS3y718ISGXiGDIDIQn0dQSxmJz4c7pzbioJ8zp/+T0L
+         nDlDrwsTqKRQO/g1U5+LL7MbQ3TPgyTpUE+XSfwRMbfDL+d5CAA26B8+zL6Z6SvkyobK
+         u/AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=TrFshwMX3sLK7BOBqA2VJ29qR9X1r/JNaTWM7Oz0VQA=;
-        b=jIXiwB3vkk1ukjM8a+UAIwXtmyftgmp79K5PZJNuB1OL1gTNNWM1IcCiryDXjwvZub
-         yqh3Q5jXbTQOlBIidDsCXvH6TNA7roVvtfZE5b7PHuHSbvsQnO8fod15rC59Fc/KtNr+
-         toGzVvnINeynFqyE/gOAX42WQXwiLzXXrRBs2IGdEHzQrKYnNiWbuOjTB6x8GtbRXqoV
-         eT2tVHG050ZIDxHcHn89oObW/PuAV3nubFcxRBKVjG+mzLmg8JGvAr4KwzNg+i56p6vx
-         oI0CDEsHTZQ8YyG7YIC1UCZxFSCOIG9m8k2AIdmLWOi4DyQVvQzRCrkx9XimCnAyFtwF
-         kg7Q==
-X-Gm-Message-State: APjAAAXyrbkZbgqlAdWJaWKmCwKvIiNWeRLxHLWfYThjB8Pd7kfj9xUJ
-        jvAhoQxdKfkyFhJKhLUtKTZKCUnUIeg=
-X-Google-Smtp-Source: APXvYqy8OkXpvY/EO7JJ8JrTwGu1cGTUbP5I6eRn6QR69XynaZ75aoXP1ZrYpUnlS6f6H1wvcRthDg==
-X-Received: by 2002:a17:902:be06:: with SMTP id r6mr12572734pls.99.1580058047058;
-        Sun, 26 Jan 2020 09:00:47 -0800 (PST)
+        bh=ISotJI3izVmXl3fjfB5uTrAYmwdgYfTOknESvfHgtZk=;
+        b=JZ0TLTrlfXgQHSA3ttEi5dprntmnpKHzLt9n0AY9thf/Z/2zDpYSImIKaus7l7RoIg
+         yiyHnSeSHyKiJuEon4i4xuajBA4m9eKsXBll6j68jyWzC6tt5w6VKMizWmfHgQPXPaIA
+         gB4112v1BplWtouNRDuDD4Rwu3wsThvrCu1m8SATPFoBNLkYfUH2wMXKO0XwqXzjzD08
+         NihYvLBh6vvkjHqG/2cvI7kiDvbSgOQ17FehAvlyHAeycqtJayCMELwthAFOHKlO9QqM
+         oVwj7HDJ9vWLTpCD7UUa1TljmsJ66aG4qZY8QRKuQWhZhHUXHXTVI1Nc4jDEpCVipPjv
+         zHxQ==
+X-Gm-Message-State: APjAAAX1Vpb8o1C38Eyuhng08dLiRr9/c7ZTZoa4t4T9Z4qop9/GI0Hr
+        K7rUvXxJB+WxId1mczqLG51rUw==
+X-Google-Smtp-Source: APXvYqym3vadWUhjWT7Te3HkaNqzI77r+VUVo4DIV3gy9ebln2NudM/oNPXUBmetPULNnbzrzAJowA==
+X-Received: by 2002:a63:211f:: with SMTP id h31mr14427070pgh.299.1580058623198;
+        Sun, 26 Jan 2020 09:10:23 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id p3sm1629735pfg.184.2020.01.26.09.00.46
+        by smtp.gmail.com with ESMTPSA id 11sm13232933pfz.25.2020.01.26.09.10.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Jan 2020 09:00:46 -0800 (PST)
-Subject: Re: [PATCHSET 0/4] Add support for shared io-wq backends
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Daurnimator <quae@daurnimator.com>
-Cc:     io-uring@vger.kernel.org
-References: <20200123231614.10850-1-axboe@kernel.dk>
- <CAEnbY+c34Uiguq=11eZ1F0z_VZopeBbw1g1gfn-S0Fb5wCaL5A@mail.gmail.com>
- <4917a761-6665-0aa2-0990-9122dfac007a@gmail.com>
+        Sun, 26 Jan 2020 09:10:22 -0800 (PST)
+Subject: Re: [PATCH 2/4] io_uring: io_uring: add support for async work
+ inheriting files
+To:     Andres Freund <andres@anarazel.de>
+Cc:     linux-block@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
+        davem@davemloft.net, netdev@vger.kernel.org, jannh@google.com
+References: <20191025173037.13486-1-axboe@kernel.dk>
+ <20191025173037.13486-3-axboe@kernel.dk>
+ <20200126101207.oqovstqfr4iddc3p@alap3.anarazel.de>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <694c2b6f-6b51-fd7b-751e-db87de90e490@kernel.dk>
-Date:   Sun, 26 Jan 2020 10:00:44 -0700
+Message-ID: <1f9a5869-845a-f7ca-7530-49e407602023@kernel.dk>
+Date:   Sun, 26 Jan 2020 10:10:20 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <4917a761-6665-0aa2-0990-9122dfac007a@gmail.com>
+In-Reply-To: <20200126101207.oqovstqfr4iddc3p@alap3.anarazel.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,50 +68,72 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/26/20 8:11 AM, Pavel Begunkov wrote:
-> On 1/26/2020 4:51 AM, Daurnimator wrote:
->> On Fri, 24 Jan 2020 at 10:16, Jens Axboe <axboe@kernel.dk> wrote:
+On 1/26/20 3:12 AM, Andres Freund wrote:
+> Hi,
+> 
+> On 2019-10-25 11:30:35 -0600, Jens Axboe wrote:
+>> This is in preparation for adding opcodes that need to add new files
+>> in a process file table, system calls like open(2) or accept4(2).
 >>
->> I don't love the idea of some new type of magic user<>kernel
->> identifier. It would be nice if the id itself was e.g. a file
->> descriptor
+>> If an opcode needs this, it must set IO_WQ_WORK_NEEDS_FILES in the work
+>> item. If work that needs to get punted to async context have this
+>> set, the async worker will assume the original task file table before
+>> executing the work.
 >>
->> What if when creating an io_uring you could pass in an existing
->> io_uring file descriptor, and the new one would share the io-wq
->> backend?
->>
-> Good idea! It can solve potential problems with jails, isolation, etc in
-> the future.
+>> Note that opcodes that need access to the current files of an
+>> application cannot be done through IORING_SETUP_SQPOLL.
 > 
-> May we need having other shared resources and want fine-grained control
-> over them at some moment? It can prove helpful for the BPF plans.
-> E.g.
 > 
-> io_uring_setup(share_io-wq=ring_fd1,
->                share_fds=ring_fd2,
->                share_ebpf=ring_fd3, ...);
+> Unfortunately this partially breaks sharing a uring across with forked
+> off processes, even though it initially appears to work:
 > 
-> If so, it's better to have more flexible API. E.g. as follows or a
-> pointer to a struct with @size field.
 > 
-> struct io_shared_resource {
->     int type;
->     int fd;
-> };
+>> +static int io_uring_flush(struct file *file, void *data)
+>> +{
+>> +	struct io_ring_ctx *ctx = file->private_data;
+>> +
+>> +	io_uring_cancel_files(ctx, data);
+>> +	if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
+>> +		io_wq_cancel_all(ctx->io_wq);
+>> +	return 0;
+>> +}
 > 
-> struct io_uring_params {
->     ...
->     struct io_shared_resource shared[];
-> };
+> Once one process having the uring fd open (even if it were just a fork
+> never touching the uring, I believe) exits, this prevents the uring from
+> being usable for any async tasks. The process exiting closes the fd,
+> which triggers flush. io_wq_cancel_all() sets IO_WQ_BIT_CANCEL, which
+> never gets unset, which causes all future async sqes to be be
+> immediately returned as -ECANCELLED by the worker, via io_req_cancelled.
 > 
-> params = {
->     ...
->     .shared = {{ATTACH_IO_WQ, fd1}, ..., SANTINEL_ENTRY};
-> };
+> It's not clear to me why a close() should cancel the the wq (nor clear
+> the entire backlog, after 1d7bb1d50fb4)? Couldn't that even just be a
+> dup()ed fd? Or a fork that immediately exec()s?
+> 
+> After rudely ifdefing out the above if, and reverting 44d282796f81, my
+> WIP io_uring using version of postgres appears to pass its tests - which
+> are very sparse at this point - again with 5.5-rc7.
 
-I'm fine with changing/extending the sharing API, please send a
-patch!
+We need to cancel work items using the files from this process if it
+exits, but I think we should be fine not canceling all work. Especially
+since thet setting of IO_WQ_BIT_CANCEL is a one way street...  I'm assuming
+the below works for you?
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index e5b502091804..e3ac2a6ff195 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5044,10 +5044,8 @@ static int io_uring_flush(struct file *file, void *data)
+ 	struct io_ring_ctx *ctx = file->private_data;
+ 
+ 	io_uring_cancel_files(ctx, data);
+-	if (fatal_signal_pending(current) || (current->flags & PF_EXITING)) {
++	if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
+ 		io_cqring_overflow_flush(ctx, true);
+-		io_wq_cancel_all(ctx->io_wq);
+-	}
+ 	return 0;
+ }
+ 
 -- 
 Jens Axboe
 

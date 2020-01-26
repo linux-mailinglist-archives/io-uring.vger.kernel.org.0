@@ -2,65 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDF17149C0C
-	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2020 18:17:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAE00149CAC
+	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2020 21:02:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbgAZRRD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 26 Jan 2020 12:17:03 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34332 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbgAZRRD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 26 Jan 2020 12:17:03 -0500
-Received: by mail-pl1-f194.google.com with SMTP id q13so2896770pls.1
-        for <io-uring@vger.kernel.org>; Sun, 26 Jan 2020 09:17:03 -0800 (PST)
+        id S1726548AbgAZUCU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 26 Jan 2020 15:02:20 -0500
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:43559 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbgAZUCU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 26 Jan 2020 15:02:20 -0500
+Received: by mail-pf1-f177.google.com with SMTP id s1so3289744pfh.10
+        for <io-uring@vger.kernel.org>; Sun, 26 Jan 2020 12:02:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sNV793+0cycsAhcHF8cv23AfCjhutUJI8XZukCzTbCU=;
-        b=FVvWfp/tztsdAQcRG5Rci1crrbXT9URtlcwg6BhUmCDHI+CavYwe6NHJ9YM+MznIfl
-         /XIh0QRjO+cbnuSns6vKfAVEDox0PQfiv39oXoObL2MfiPpTM6CPOuRCOsFRC9UEVRvq
-         trJi7lec3gmRIEB+p61X6QvoI0T+C5A/nkBh0lIOBt6eZl7NCshifRrgA2eNKwPJP14e
-         ulyZcaUJWVhhdlnGN/znFtqvF8FPsTOxbb8I14rOP94PexGv6Lvf6GSoiAHGCCLcFipc
-         Ak2UeHO2QQUYuJL3yQqiymuQFb+4oobskgEvI8Il7b8or2XmJrFAwnWN0bLwAKaiqWfg
-         31Xw==
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=hAj2qkKHbDn4W5gqS8ibjJvnqiiOc0xEaLINRRkxATg=;
+        b=Nu1YG3iqUH0dAt8AsWKqFlWxEyW/kqj3FhH3vwJMBAUQyygJG/Txs4TmdYCVZZBGy4
+         qkBfLPim/Rxa5XcUn9+3fmirDTRaG6nknZzNiTY138AISAx4iL4G3hapcLSIQY2P7AJ7
+         ijHsB/8BaOwmnY8Qm5DQw0UEA7Rx5lTl35kfiKgQrlhj+aXzVnvR+hQR2twiWNDLdqEl
+         Ih1ZQUdeE6vAMzl9lY4c6TNrc7ZKZTnf9fXrfslGuwrDlP1zkyM+Xp1PuB9imtGoIWIN
+         LZIcz5Dn2HIar9j0YeXvledJ+n5pOVHq2vTPhZ5hEem8PufW2qlNchWVTpOT8Z/sP1+f
+         i9gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sNV793+0cycsAhcHF8cv23AfCjhutUJI8XZukCzTbCU=;
-        b=X8+pcLfT9cgLyzsE9cdyxFnyKrIebhCxBFRrJA0c/t3yqijhGVBDIIBcBoV0gwXyH8
-         DvHwfGXfsyYuzbbAsrVOtCQMJdSeFdwac9eAeVtOmIjG+SnLcbTvGqbWrSXtDkuf4Zkl
-         y14SHUI7/n7B/XirLQT2YZ+1OqYdBu3BYmrlzS1r2F3PzXK9+nld/j+7c1HCOxSVeEXv
-         zrWwOLHEk83Wjvk5jZtcrjEHigqyTJsvg/gIhfk1giA4f68lq3/hMV6WdZm/jC6JitbZ
-         qW3V0gVe1hqaDFCUluFQkWEhCE0NnEbb9lI+0UbGee1zPgOxiEGKjyi+xeXtiXifRlBQ
-         jL4Q==
-X-Gm-Message-State: APjAAAVaGJA2ZfC7bp5SvX23gYMb0wjlRkt8vAvHfVazFW3AYSQe8cpU
-        o1ZiolzI5HHeOttt2GIv3MzlAg==
-X-Google-Smtp-Source: APXvYqy9zSy9tuxtT+VumjEcIX7MmU599ZVrh6QD7SfB4UlILYyVD2HalIFSX4f3cwZ8f+FBpkvF9A==
-X-Received: by 2002:a17:90a:a10c:: with SMTP id s12mr10139586pjp.47.1580059022601;
-        Sun, 26 Jan 2020 09:17:02 -0800 (PST)
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=hAj2qkKHbDn4W5gqS8ibjJvnqiiOc0xEaLINRRkxATg=;
+        b=THZBokNAEx/aJAVPBtuehG3Ajv04xu/03y4J1b581QKc641OG5aH6hzy5YCNzrQxl1
+         7VGdlOVyrjrsNHOhY/zmKCwSDhFNLddnQloBNY0k75OcwBvhOrhMcIhiaVF6FXr5p6iO
+         +bHYdfSuFNJFtsOs1i3WbJgW1Np2tm2sIe0kLMtlVsUJmeL5R1Ew1wPqodfbx16EjIE8
+         MuGpaERGlkPKqAxpvGU3CFJL9e5NQvg7Y5bKQm61jiqiycp6V3F/EY3A3vYXb7zJ7gcV
+         4ZfNRCxSs+rZth1DM/gkLWXc4n3NlNRovcZrRzRPpXDOEAB052xp5QYD7PuqyQv/Vv9K
+         mSdQ==
+X-Gm-Message-State: APjAAAX+kPILmEJDIGusCv9Iw7XB56TDUnnGNNcr0G+I2zAzKFJ0mpXy
+        z8WCWN8pyR9FS1lVmzwt2JrK8xWYEaQ=
+X-Google-Smtp-Source: APXvYqx80UScOhO1FzTCUp1Pb5pqJs7Ahum36LsqCG3g8dSsw7q4jwqzn23HXVSueO6SagG1FxSLhg==
+X-Received: by 2002:a62:83c5:: with SMTP id h188mr13177144pfe.0.1580068939147;
+        Sun, 26 Jan 2020 12:02:19 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id m22sm13634498pgn.8.2020.01.26.09.17.01
+        by smtp.gmail.com with ESMTPSA id p5sm13861976pga.69.2020.01.26.12.02.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Jan 2020 09:17:02 -0800 (PST)
-Subject: Re: [PATCH 2/4] io_uring: io_uring: add support for async work
- inheriting files
+        Sun, 26 Jan 2020 12:02:18 -0800 (PST)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Andres Freund <andres@anarazel.de>
-Cc:     linux-block@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
-        davem@davemloft.net, netdev@vger.kernel.org, jannh@google.com
-References: <20191025173037.13486-1-axboe@kernel.dk>
- <20191025173037.13486-3-axboe@kernel.dk>
- <20200126101207.oqovstqfr4iddc3p@alap3.anarazel.de>
- <1f9a5869-845a-f7ca-7530-49e407602023@kernel.dk>
-Message-ID: <e9e79b75-9e0f-1a36-5618-e8d27e995cc1@kernel.dk>
-Date:   Sun, 26 Jan 2020 10:17:00 -0700
+Subject: [GIT PULL] io_uring fixes for 5.5-final
+Message-ID: <97fc142a-5f87-57f5-67fd-a146996a7ff1@kernel.dk>
+Date:   Sun, 26 Jan 2020 13:02:16 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <1f9a5869-845a-f7ca-7530-49e407602023@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,75 +62,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/26/20 10:10 AM, Jens Axboe wrote:
-> On 1/26/20 3:12 AM, Andres Freund wrote:
->> Hi,
->>
->> On 2019-10-25 11:30:35 -0600, Jens Axboe wrote:
->>> This is in preparation for adding opcodes that need to add new files
->>> in a process file table, system calls like open(2) or accept4(2).
->>>
->>> If an opcode needs this, it must set IO_WQ_WORK_NEEDS_FILES in the work
->>> item. If work that needs to get punted to async context have this
->>> set, the async worker will assume the original task file table before
->>> executing the work.
->>>
->>> Note that opcodes that need access to the current files of an
->>> application cannot be done through IORING_SETUP_SQPOLL.
->>
->>
->> Unfortunately this partially breaks sharing a uring across with forked
->> off processes, even though it initially appears to work:
->>
->>
->>> +static int io_uring_flush(struct file *file, void *data)
->>> +{
->>> +	struct io_ring_ctx *ctx = file->private_data;
->>> +
->>> +	io_uring_cancel_files(ctx, data);
->>> +	if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
->>> +		io_wq_cancel_all(ctx->io_wq);
->>> +	return 0;
->>> +}
->>
->> Once one process having the uring fd open (even if it were just a fork
->> never touching the uring, I believe) exits, this prevents the uring from
->> being usable for any async tasks. The process exiting closes the fd,
->> which triggers flush. io_wq_cancel_all() sets IO_WQ_BIT_CANCEL, which
->> never gets unset, which causes all future async sqes to be be
->> immediately returned as -ECANCELLED by the worker, via io_req_cancelled.
->>
->> It's not clear to me why a close() should cancel the the wq (nor clear
->> the entire backlog, after 1d7bb1d50fb4)? Couldn't that even just be a
->> dup()ed fd? Or a fork that immediately exec()s?
->>
->> After rudely ifdefing out the above if, and reverting 44d282796f81, my
->> WIP io_uring using version of postgres appears to pass its tests - which
->> are very sparse at this point - again with 5.5-rc7.
-> 
-> We need to cancel work items using the files from this process if it
-> exits, but I think we should be fine not canceling all work. Especially
-> since thet setting of IO_WQ_BIT_CANCEL is a one way street...  I'm assuming
-> the below works for you?
+Hi Linus,
 
-Could be even simpler, for shared ring setup, it also doesn't make any sense
-to flush the cq ring on exit.
+Fix for two regressions in this cycle, both reported by the postgresql
+use case. One removes the added restriction on who can submit IO, making
+it possible for rings shared across forks to do so. The other fixes an
+issue for the same kind of use case, where one exiting process would
+cancel all IO.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e5b502091804..e54556b0fcc6 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5044,10 +5044,6 @@ static int io_uring_flush(struct file *file, void *data)
- 	struct io_ring_ctx *ctx = file->private_data;
- 
- 	io_uring_cancel_files(ctx, data);
--	if (fatal_signal_pending(current) || (current->flags & PF_EXITING)) {
--		io_cqring_overflow_flush(ctx, true);
--		io_wq_cancel_all(ctx->io_wq);
--	}
- 	return 0;
- }
- 
+Please pull!
+
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.5-2020-01-26
+
+
+----------------------------------------------------------------
+Jens Axboe (2):
+      Revert "io_uring: only allow submit from owning task"
+      io_uring: don't cancel all work on process exit
+
+ fs/io_uring.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
 -- 
 Jens Axboe

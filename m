@@ -2,106 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84AF514A7F8
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2020 17:22:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6B0514A805
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2020 17:26:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729851AbgA0QWn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Jan 2020 11:22:43 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:21485 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729470AbgA0QWm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 11:22:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580142161;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ss4U9Wn3tTKAPoAuitiVMbAeV2gmkSw/nR7X4tYbbRo=;
-        b=aeC9JHNjn/DORqnQFDSRjiqJZkGFaAb38mS4g8/CGrODwZssBSmZhhD0j9iPoG3PuW5myE
-        DKDhFFQQvTds7tm4tmQDJsKEVb8FIAbPxalQO4OlpO1SSgY0dNY4/szU88r86szJAGnJZY
-        cURYQsy52r0iMzAR7nBmSGawIeUczrE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-99--McmlvubMJuUbI4LSOqcZA-1; Mon, 27 Jan 2020 11:22:37 -0500
-X-MC-Unique: -McmlvubMJuUbI4LSOqcZA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7EE70801FA5;
-        Mon, 27 Jan 2020 16:22:36 +0000 (UTC)
-Received: from steredhat.redhat.com (unknown [10.43.2.93])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AA0332AF99;
-        Mon, 27 Jan 2020 16:22:35 +0000 (UTC)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH liburing] .gitignore: add missing tests to ignore
-Date:   Mon, 27 Jan 2020 17:22:34 +0100
-Message-Id: <20200127162234.156353-1-sgarzare@redhat.com>
+        id S1726327AbgA0Q0o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Jan 2020 11:26:44 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34877 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726101AbgA0Q0o (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 11:26:44 -0500
+Received: by mail-io1-f66.google.com with SMTP id h8so10661604iob.2
+        for <io-uring@vger.kernel.org>; Mon, 27 Jan 2020 08:26:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jnAf2ZCvKeR5KrFg81NL0b/pJXtuUM4gmcIbXki436s=;
+        b=J7SvJjKqvJbkbZjUVLEw8HGOfNBzK/t8L3zsFgV2DcjLemtkHVO0yC51wOouTl6oEf
+         Ofh4rkV0R9eoXe4W6+fuj+qy/cFtatuRyOVpo94bK68OTcaeWusODpB8MaeJdmWotUv2
+         QIJPytxZu+WLTDaG84hSrYfTS6MdYtMc8CoaJY0v6VYwRzGuyeqLtOQl7Gq0232yxgZW
+         dQajSdX0danP0r5U0BBJJRmwfIcM0FWO8zGozFIZo1MzEz8fWf47wNlqttuyN6ucCXmD
+         krFkQ2K+WX8m0cuiPEctMv+w83MIhGYSEC8qUzT0PE0oC0w4ThEz5cnv961zcFAjHypG
+         ngIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jnAf2ZCvKeR5KrFg81NL0b/pJXtuUM4gmcIbXki436s=;
+        b=lGq2GrazVQ4QJeVEJPrcdrRQdguZU52wRvntRogFTR3DGkSPrJaT+uX3bFAGZ1Y7V3
+         Ej25zshAFy6+MzS575v9UertixThmPf7aoviPB9NE2fIFnYLrznLodsZDHrrfADLOFZK
+         tHV4WcNQrtI78aVtrowei2VE6pYtr7c5xD9LNzOAVtMbINKSaESVIkwrN+D24/rNTI24
+         jrVDflAJSJJFGdmwFncYzh1f4KJNsgdJQVLTULZVVDsyZymFLu+vQ/LDcKkfEM8tKWL1
+         PRrc9DUxsw97rKeoIZyNcQv18/htZAMdH0qtlid4ipAPiNIDlvJy19GXy9eCiAknJRUv
+         QePw==
+X-Gm-Message-State: APjAAAUkA3s4h25K5lnS0rPJC6qSpDWGCoth6uKy4jxYmJo1AOKzPXNb
+        Q1uqsynSmq6azvFuFM/GK+WE5ZWMdFU=
+X-Google-Smtp-Source: APXvYqyLeS0OYSK/chuIUny+PebIrVJGaZIYd4dwfdJS/YVsHj5RM6n3ZOjVo+TEeU1SM9jWNE58pA==
+X-Received: by 2002:a5d:9805:: with SMTP id a5mr12889195iol.80.1580142403376;
+        Mon, 27 Jan 2020 08:26:43 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id b6sm1081212ioh.15.2020.01.27.08.26.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2020 08:26:42 -0800 (PST)
+Subject: Re: [PATCH liburing 0/1] test: add epoll test case
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200127161701.153625-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d409ad33-2122-9500-51f4-37e9748f1d73@kernel.dk>
+Date:   Mon, 27 Jan 2020 09:26:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200127161701.153625-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
- .gitignore | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On 1/27/20 9:17 AM, Stefano Garzarella wrote:
+> Hi Jens,
+> I wrote the test case for epoll.
+> 
+> Since it fails also without sqpoll (Linux 5.4.13-201.fc31.x86_64),
+> can you take a look to understand if the test is wrong?
+> 
+> Tomorrow I'll travel, but on Wednesday I'll try this test with the patch
+> that I sent and also with the upstream kernel.
 
-diff --git a/.gitignore b/.gitignore
-index fdb4b32..acbd30b 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -24,6 +24,7 @@
- /test/a4c0b3decb33-test
- /test/accept
- /test/accept-link
-+/test/accept-reuse
- /test/accept-test
- /test/b19062a56726-test
- /test/b5837bd5311d-test
-@@ -36,8 +37,11 @@
- /test/d77a67ed5f27-test
- /test/defer
- /test/eeed8b54e0df-test
-+/test/fadvise
-+/test/fallocate
- /test/fc2a85cb02ef-test
- /test/file-register
-+/test/file-update
- /test/fixed-link
- /test/fsync
- /test/io_uring_enter
-@@ -47,18 +51,26 @@
- /test/link
- /test/link-timeout
- /test/link_drain
-+/test/madvise
- /test/nop
-+/test/open-close
-+/test/openat2
- /test/poll
- /test/poll-cancel
- /test/poll-cancel-ton
- /test/poll-link
- /test/poll-many
-+/test/poll-v-poll
-+/test/probe
- /test/read-write
- /test/ring-leak
- /test/send_recvmsg
-+/test/shared-wq
-+/test/short-read
- /test/socket-rw
- /test/sq-full
- /test/sq-space_left
-+/test/statx
- /test/stdout
- /test/submit-reuse
- /test/teardowns
---=20
-2.24.1
+I'll take a look, but your patches are coming through garbled and don't
+apply.
+
+-- 
+Jens Axboe
 

@@ -2,116 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DD2F14A9CB
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2020 19:28:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0848114AA04
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2020 19:46:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgA0S2l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Jan 2020 13:28:41 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:52442 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726004AbgA0S2k (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 13:28:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580149719;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3mbZcV8yWaTIA/hbNkPjAEycEkSir2saWg6RR3kS4nA=;
-        b=Xxiqjro9wXLEIsBCeglqf6WgnPaGDAABf3m21d6du44iB80ksV6Vz8XT+CkWWMNngQfXet
-        ev5vjT/G8Z9plBLZcyCmQ0C/2fFvdTkHYyO8HWTXf8M9IsT3sAkMCPfy8qUHIQrOJW0Icf
-        mOel91LKWcX8Zt1j3Ya3yxatPTtMnqw=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-317-vta6sbxDOv-FVEwCsZeYPw-1; Mon, 27 Jan 2020 13:28:37 -0500
-X-MC-Unique: vta6sbxDOv-FVEwCsZeYPw-1
-Received: by mail-wr1-f69.google.com with SMTP id f15so6632608wrr.2
-        for <io-uring@vger.kernel.org>; Mon, 27 Jan 2020 10:28:36 -0800 (PST)
+        id S1725990AbgA0Sqg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Jan 2020 13:46:36 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44672 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbgA0Sqg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 13:46:36 -0500
+Received: by mail-pg1-f193.google.com with SMTP id x7so5580527pgl.11
+        for <io-uring@vger.kernel.org>; Mon, 27 Jan 2020 10:46:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tOlByGG/z9eX7KBfPtN4oVs+iXd8DtbbVKWbuZoUZ0U=;
+        b=tLa6xUkjTP/8me30/6p48asiVEiDxQuOuwvCONFNDxS7bVdFoYW2mA1HX8L6owJouD
+         QguHw3C8P/5dfv8EHTh5k8yzEFJlBS2afuIk/bLw83xFZc334qvWmNcfiDztDuu2rw2a
+         AsXoXhUVpl4KmVOVXHDtHsoNF15G1M+NvmGZZFQYYo2VQUFZcVj3mb/pRwDuWWpWQNBk
+         2WuXuyEGnnb5nBcQyMBLinSkt8wFRXP7FOW4gDBWkPR7X2LgXcvK/FZpFzlpQbmTXsMm
+         9CY723KCiDecQxN/yw2k3BqIn0XugWIQzfSOV1jKecz5cuWgrvvLrgbuZe2+O2Phn2qH
+         ou9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3mbZcV8yWaTIA/hbNkPjAEycEkSir2saWg6RR3kS4nA=;
-        b=fl65XDeYToHK31kpoh5GbZIJk1HkLr9aKFCAMJcBv0in3WoHxvRdt2NV1Bdf71Nnhx
-         wEQw+ZCTlO9snwIy0uzYy+ifLQaqS+KWhlPwg4luXuvm0jMWyTM+R2Bc4FcdK5oVLt/1
-         tJcnt2X6Zi+h6FM9dwfE3XEcRQJNPknKBKX3IM7yjbCtPTy6q5lDFuoTP+eanJBA7E92
-         RLcgNWw3WMMg6KoDv+FNicjesBmOTrWWm7AnFGAfh2lZaMKCRSPPIcbRACqlTavzB7vp
-         /3u94DonYQDG84jW/t4LdvM4Jy1XMQ6Xmj0xB+pbP2sq7oz+NlbI6BTgJ/vwaqyUsrWx
-         7P+w==
-X-Gm-Message-State: APjAAAWb6JAx594GssWb/yif3P9ND+x9oYCNGTyda2jQC3D/ysIrJ8Rz
-        kBr+irnn3yi9dQAvfAzESsyfyHwJL+IEp/SKz7JLKlQMvIMzkb93FVVNJplE85OwIdI1UK3WKxF
-        mMGtpqtbIuWeMJEOTPsA=
-X-Received: by 2002:adf:f802:: with SMTP id s2mr24664205wrp.201.1580149715505;
-        Mon, 27 Jan 2020 10:28:35 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxljkmgJFrEsrK67bdzBVCvvZYAffQfauHWWhtfrHKAHuMm7FaRUGU2gtvbM7bw0rJ21gT52A==
-X-Received: by 2002:adf:f802:: with SMTP id s2mr24664178wrp.201.1580149715279;
-        Mon, 27 Jan 2020 10:28:35 -0800 (PST)
-Received: from steredhat ([80.188.125.198])
-        by smtp.gmail.com with ESMTPSA id t10sm10472778wmi.40.2020.01.27.10.28.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 10:28:34 -0800 (PST)
-Date:   Mon, 27 Jan 2020 19:28:32 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tOlByGG/z9eX7KBfPtN4oVs+iXd8DtbbVKWbuZoUZ0U=;
+        b=KFc1tFqKJWAuYY5Xprf+404DHD8Dt0a2vZmtnRTtFA7VfjUutV3c4iYxpqqFDLN8p0
+         Q3tO0nZaQ7X6gCOmuLY/eXM6xK6ej9sbZ0e1gAcGLvuY7b3fcys3NUhOQ1FnlhiVrQ3I
+         W//lx/5p6PBuRyRnT5Ldsb6Ra5JwLnu/+T4D+40riFHjDcppnN6QKeNqRumjxjFiOhSA
+         KTROnb9JuwpT6E+cylSZJMt7F/zEa8bJbBBt9atuISbW3pA0mi53Ncddl5yuz9tc01s0
+         rp2F5mNNIHrOoCvIuqdgOiFbJ0KmshAACHFFufiN+3desmE1Y9LZtHDNY8+jD7m6ZjKJ
+         9dXg==
+X-Gm-Message-State: APjAAAVfWbgNgv2jHoZUG9WJu3NpL+iQzyDy2dEH1mBmTn6yzIjj59JC
+        ZNJxKtB4OYQ+1Txb9ItIdiCX0A==
+X-Google-Smtp-Source: APXvYqwu0sbtWVgACK3oeP1zHft8Cu21lVg/Z5EAiACB+KnyO0D89XYQNS2eyhCO0OGMTzhqGcBvUw==
+X-Received: by 2002:a63:2a8b:: with SMTP id q133mr20323238pgq.72.1580150795811;
+        Mon, 27 Jan 2020 10:46:35 -0800 (PST)
+Received: from ?IPv6:2620:10d:c081:1133::11c2? ([2620:10d:c090:180::dec1])
+        by smtp.gmail.com with ESMTPSA id 136sm16741250pgg.74.2020.01.27.10.46.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2020 10:46:35 -0800 (PST)
+Subject: Re: [PATCH liburing 1/1] test: add epoll test case
+To:     Stefano Garzarella <sgarzare@redhat.com>
 Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH liburing 0/1] test: add epoll test case
-Message-ID: <20200127182832.hashyy6wi75ca4cg@steredhat>
 References: <20200127161701.153625-1-sgarzare@redhat.com>
- <d409ad33-2122-9500-51f4-37e9748f1d73@kernel.dk>
- <20200127180028.f7s5xhhizii3dsnr@steredhat>
- <52df8d77-1cb4-b8d5-d03d-5a8cabaeddb6@kernel.dk>
+ <20200127161701.153625-2-sgarzare@redhat.com>
+ <b1b26e79-507a-b339-2850-d2686661e669@kernel.dk>
+ <20200127182534.5ljsj53vzpj6kkru@steredhat>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <646cbb04-9bef-0d99-64ec-322d1584abe7@kernel.dk>
+Date:   Mon, 27 Jan 2020 11:46:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52df8d77-1cb4-b8d5-d03d-5a8cabaeddb6@kernel.dk>
+In-Reply-To: <20200127182534.5ljsj53vzpj6kkru@steredhat>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 11:07:41AM -0700, Jens Axboe wrote:
-> On 1/27/20 11:00 AM, Stefano Garzarella wrote:
-> > On Mon, Jan 27, 2020 at 09:26:41AM -0700, Jens Axboe wrote:
-> >> On 1/27/20 9:17 AM, Stefano Garzarella wrote:
-> >>> Hi Jens,
-> >>> I wrote the test case for epoll.
-> >>>
-> >>> Since it fails also without sqpoll (Linux 5.4.13-201.fc31.x86_64),
-> >>> can you take a look to understand if the test is wrong?
-> >>>
-> >>> Tomorrow I'll travel, but on Wednesday I'll try this test with the patch
-> >>> that I sent and also with the upstream kernel.
-> >>
-> >> I'll take a look, but your patches are coming through garbled and don't
-> >> apply.
-> > 
-> > Weird, I'm using git-publish as usual. I tried to download the patch
-> > received from the ML, and I tried to reapply and it seams to work here.
-> > 
-> > Which kind of issue do you have? (just to fix my setup)
+On 1/27/20 11:25 AM, Stefano Garzarella wrote:
+> On Mon, Jan 27, 2020 at 09:32:43AM -0700, Jens Axboe wrote:
+>> On 1/27/20 9:17 AM, Stefano Garzarella wrote:
+>>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>>
+>> You're not reaping CQ events, and hence you overflow the ring. Once
+>> overflown, an attempt to submit new IO will returns in a -16/-EBUSY
+>> return value. This is io_uring telling you that it won't submit more
+>> IO until you've emptied the completion ring so io_uring can flush
+>> the overflown entries to the ring.
 > 
-> First I grabbed it from email, and I get the usual =3D (instead of =)
-> and =20 instead of a space. Longer lines also broken up, with an = at
-> the end.
+> How can I reaping CQ events? (I was hoping the epoll would help me with that)
 > 
-> Then I grabbed it from the lore io-uring archive, but it was the exact
-> same thing.
-
-I saw! I'll try to fix my setup.
-The strange thing is that my git (v2.24.1) is able to apply that
-malformed patch!
-
+> What I'm seeing is that the producer (EPOLLOUT) can fill the SQ without issues,
+> the consumer (read()) is receiving all the buffers produced, but the thread
+> that frees the buffers (EPOLLIN) is not woken up.
 > 
-> > Anyway I pushed my tree here:
-> >     https://github.com/stefano-garzarella/liburing.git epoll
+> I tried to set a timeout to the epoll_wait(), but the io_uring_peek_cqe()
+> returns -EAGAIN.
 > 
-> As per other email, I think you're having some coordination issues
-> with the reaping and submitting side being separated. If the reaper
-> isn't keeping up, you'll get the -EBUSY problem I saw. I'm assuming
-> that's the failure case you are also seeing, you didn't actually
-> mention how it fails for you?
+> If I'm using a ring with 16 entries, it seems to work better, but
+> sometimes I lose events and the thread that frees the buffer doesn't wake up.
+> 
+> Maybe I'm missing something...
 
-My fault, I sent more information on the issue that I'm seeing.
+OK, so that helps in terms of understanding the issue you are seeing with
+it. I'll take a look at this, but it'll probably be a few days. You can
+try and enable tracing, I see events completed just fine. Maybe a race
+with your epoll wait and event reaping?
 
-Thanks,
-Stefano
+-- 
+Jens Axboe
 

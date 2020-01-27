@@ -2,109 +2,193 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8222B14AA12
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2020 19:50:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D5114AAA3
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2020 20:40:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725893AbgA0Sub (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Jan 2020 13:50:31 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47100 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725955AbgA0Sub (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 13:50:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580151030;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T1Gai6vxTjkumKj6PkexgQY+X4x4Qxy3rVtAsMEidoI=;
-        b=LdVqnkDPj6XqGkil2a7iClGFdn7e8anfytG2kZUGpu0Gr9o3SZA/gmq35GQdidcpPZ6AZy
-        rwmxaTfrDdXS0VyExm/0y0KFeg3J1goNISgP2XTzmve2zVjGQD/kJuus7RDWrwhWYfxkaO
-        Nbq8giCuRBKpDVGgEdGUNatFgvEHvco=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-hfVhIihPPPKiaA1p5v3iSA-1; Mon, 27 Jan 2020 13:50:28 -0500
-X-MC-Unique: hfVhIihPPPKiaA1p5v3iSA-1
-Received: by mail-wm1-f69.google.com with SMTP id b133so1918873wmb.2
-        for <io-uring@vger.kernel.org>; Mon, 27 Jan 2020 10:50:28 -0800 (PST)
+        id S1725893AbgA0Tkc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Jan 2020 14:40:32 -0500
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:42183 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbgA0Tkb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 14:40:31 -0500
+Received: by mail-wr1-f47.google.com with SMTP id q6so12890583wro.9
+        for <io-uring@vger.kernel.org>; Mon, 27 Jan 2020 11:40:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=Zil4VZseJ0A+XSTSFsADqTH8nzBv/xEaJOiFPP1vCxI=;
+        b=LYs19XJrMc9ZgFAjDDu52d5IJlbE8NL8BfiaT0WDGLZU9h6a7/UDtBBZz2rNsO1W+f
+         zvXiY5Hd0TCRp0KX9Sc52OBUL5hTeI+OvkKWzKMMn+V25GFtjAXjWxQmxuNH7xX7Nil7
+         8I3BDJg04W7bNFqE3tS9v9RGPKmefUppy+M2XjXjAcJTaKVCvmu+NdP//uL/ZtqteNoQ
+         L6LJ8Hrd7LW5fLvAGPq4jyuxF8aS4HrUWqFF55WlXdij+tYxxxL6AYxEkev8NznWln5o
+         ndjAOrxcrIzBrYScOxVODlU4pB/3sfWxsBB8pu9WGn4DBzhDmvBneD6X/2Xloeu+acrg
+         dAHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=T1Gai6vxTjkumKj6PkexgQY+X4x4Qxy3rVtAsMEidoI=;
-        b=CsyevQnS2LjOM4sFkGpNCD/888PSCmX5vdW0rvyWOTJWDk1lHFSrhRObdzMLA/WwKl
-         +wRyNQJe/TOjLgh237gLq6wIK34KuGH/Ys5oAWqlHt0IdiW9ucoYbC+YvHBqmh0N4RqX
-         NUNQDmuPPcMd3A4Rk21U4vhcMMKRxJQlUGFbS7qKBwj6n9vta7WkE6HC5dPUKt1fxnKQ
-         4JLypMnPO04CEHhuHnn5ZBk1qfTCfeg8JQXpqsBm87HZ7K1dBW7N7s29L7UXm/PWX+9J
-         cDNwW7tu5xEQYlLX3oazDejOOSHf993SzQP0MTJN73kk+BQGZcJwUJkyCelvMesG0i8N
-         lxuw==
-X-Gm-Message-State: APjAAAURjeWeXOe0jtuXz2IJMQg755Q1pWIb966vCrqvV9AyEvrodzi3
-        CWR+83gmC3t2p8jBAYGDeQy686geb/vFCvmfKZc7gAYLJrit3i3REyqGcnKrSqPyZZtjyRvkza2
-        smOABb/mpk3McRLgOHZc=
-X-Received: by 2002:a1c:4144:: with SMTP id o65mr28713wma.81.1580151026731;
-        Mon, 27 Jan 2020 10:50:26 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzAwOQAd2U/RwoyuZU05L0e9solmdu8yt3ejwrX511RNsTq4+1QZAZv6aqaSgF3SixnfB11VA==
-X-Received: by 2002:a1c:4144:: with SMTP id o65mr28695wma.81.1580151026505;
-        Mon, 27 Jan 2020 10:50:26 -0800 (PST)
-Received: from steredhat ([80.188.125.198])
-        by smtp.gmail.com with ESMTPSA id b10sm23618928wrt.90.2020.01.27.10.50.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 10:50:25 -0800 (PST)
-Date:   Mon, 27 Jan 2020 19:50:24 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH liburing 1/1] test: add epoll test case
-Message-ID: <20200127185024.zp4n3d6jktgnoznq@steredhat>
-References: <20200127161701.153625-1-sgarzare@redhat.com>
- <20200127161701.153625-2-sgarzare@redhat.com>
- <b1b26e79-507a-b339-2850-d2686661e669@kernel.dk>
- <20200127182534.5ljsj53vzpj6kkru@steredhat>
- <646cbb04-9bef-0d99-64ec-322d1584abe7@kernel.dk>
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to;
+        bh=Zil4VZseJ0A+XSTSFsADqTH8nzBv/xEaJOiFPP1vCxI=;
+        b=H/oRWYlII2otfIEpaWbNDh66A06kDdK9tGw2Qx03Ml53zu7gbSLaE36VsmtaCXv3Mq
+         d3mrJzJMiudiT8Luy8c+/kNSdIYRRrHX1TwbkkuXG0N0/WZMZhrT2FRl2GCk8EmVGSfY
+         QTbt+4TCXMrAESqOGYi+NA2srKXNt74kC/vjm/LSwa9SIfQSc3OMfkRrYFI322jxC8Ap
+         +Ddoxv+r8C7ezDSX3f8Vy1sWa4asR0BRuvEXhF9MkzuLRgOyuF9vMzhXn56jY3EA58ct
+         DBypauFr9j4WuSZi9YMALlDHNsI4KT2BTU5dsQE2M6ptINJaeZuhVbZUeaM9wT9LRq7a
+         lvWA==
+X-Gm-Message-State: APjAAAXmzJqbslpoBlHecAoTw3Y9SDAgSGNLiikao0lO4yWUqtXjdNcP
+        zWI1iwXkI+jfDQ/nbd6X22NSva62
+X-Google-Smtp-Source: APXvYqzzlWU8Q/J9+LomdgwIWQWmVnNovlSnyQN2xi44k1CcsWoFDMa811FelfQ1dRsKal0f5I1A2A==
+X-Received: by 2002:adf:bc4f:: with SMTP id a15mr23155803wrh.160.1580154029358;
+        Mon, 27 Jan 2020 11:40:29 -0800 (PST)
+Received: from [192.168.43.118] ([109.126.145.157])
+        by smtp.gmail.com with ESMTPSA id n3sm21226983wmc.27.2020.01.27.11.40.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2020 11:40:28 -0800 (PST)
+Subject: Re: [PATCHSET 0/4] Add support for shared io-wq backends
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, Daurnimator <quae@daurnimator.com>
+Cc:     io-uring@vger.kernel.org
+References: <20200123231614.10850-1-axboe@kernel.dk>
+ <CAEnbY+c34Uiguq=11eZ1F0z_VZopeBbw1g1gfn-S0Fb5wCaL5A@mail.gmail.com>
+ <4917a761-6665-0aa2-0990-9122dfac007a@gmail.com>
+ <694c2b6f-6b51-fd7b-751e-db87de90e490@kernel.dk>
+ <a9fcf996-88ed-6bc4-f5ef-6ce4ed2253c5@gmail.com>
+ <92e92002-f803-819a-5f5e-44cf09e63c9b@kernel.dk>
+ <3b3b5e03-2c7e-aa00-c1fd-3af8b2620d5e@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <7316bdb3-4426-2016-df48-107a68d3e2ab@gmail.com>
+Date:   Mon, 27 Jan 2020 22:39:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <646cbb04-9bef-0d99-64ec-322d1584abe7@kernel.dk>
+In-Reply-To: <3b3b5e03-2c7e-aa00-c1fd-3af8b2620d5e@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="d65VFq5wGXFWwNuIJayICE9gPxjeuC5u3"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 11:46:34AM -0700, Jens Axboe wrote:
-> On 1/27/20 11:25 AM, Stefano Garzarella wrote:
-> > On Mon, Jan 27, 2020 at 09:32:43AM -0700, Jens Axboe wrote:
-> >> On 1/27/20 9:17 AM, Stefano Garzarella wrote:
-> >>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> >>
-> >> You're not reaping CQ events, and hence you overflow the ring. Once
-> >> overflown, an attempt to submit new IO will returns in a -16/-EBUSY
-> >> return value. This is io_uring telling you that it won't submit more
-> >> IO until you've emptied the completion ring so io_uring can flush
-> >> the overflown entries to the ring.
-> > 
-> > How can I reaping CQ events? (I was hoping the epoll would help me with that)
-> > 
-> > What I'm seeing is that the producer (EPOLLOUT) can fill the SQ without issues,
-> > the consumer (read()) is receiving all the buffers produced, but the thread
-> > that frees the buffers (EPOLLIN) is not woken up.
-> > 
-> > I tried to set a timeout to the epoll_wait(), but the io_uring_peek_cqe()
-> > returns -EAGAIN.
-> > 
-> > If I'm using a ring with 16 entries, it seems to work better, but
-> > sometimes I lose events and the thread that frees the buffer doesn't wake up.
-> > 
-> > Maybe I'm missing something...
-> 
-> OK, so that helps in terms of understanding the issue you are seeing with
-> it. I'll take a look at this, but it'll probably be a few days. You can
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--d65VFq5wGXFWwNuIJayICE9gPxjeuC5u3
+Content-Type: multipart/mixed; boundary="mqXszbISBLnU15N0YOCRNLHLiCdUJL5Tt";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, Daurnimator <quae@daurnimator.com>
+Cc: io-uring@vger.kernel.org
+Message-ID: <7316bdb3-4426-2016-df48-107a68d3e2ab@gmail.com>
+Subject: Re: [PATCHSET 0/4] Add support for shared io-wq backends
+References: <20200123231614.10850-1-axboe@kernel.dk>
+ <CAEnbY+c34Uiguq=11eZ1F0z_VZopeBbw1g1gfn-S0Fb5wCaL5A@mail.gmail.com>
+ <4917a761-6665-0aa2-0990-9122dfac007a@gmail.com>
+ <694c2b6f-6b51-fd7b-751e-db87de90e490@kernel.dk>
+ <a9fcf996-88ed-6bc4-f5ef-6ce4ed2253c5@gmail.com>
+ <92e92002-f803-819a-5f5e-44cf09e63c9b@kernel.dk>
+ <3b3b5e03-2c7e-aa00-c1fd-3af8b2620d5e@gmail.com>
+In-Reply-To: <3b3b5e03-2c7e-aa00-c1fd-3af8b2620d5e@gmail.com>
 
-Sure, take your time!
+--mqXszbISBLnU15N0YOCRNLHLiCdUJL5Tt
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-> try and enable tracing, I see events completed just fine. Maybe a race
-> with your epoll wait and event reaping?
+On 27/01/2020 17:07, Pavel Begunkov wrote:
+> On 1/27/2020 4:39 PM, Jens Axboe wrote:
+>> On 1/27/20 6:29 AM, Pavel Begunkov wrote:
+>>> On 1/26/2020 8:00 PM, Jens Axboe wrote:
+>>>> On 1/26/20 8:11 AM, Pavel Begunkov wrote:
+>>>>> On 1/26/2020 4:51 AM, Daurnimator wrote:
+>>>>>> On Fri, 24 Jan 2020 at 10:16, Jens Axboe <axboe@kernel.dk> wrote:
+>>> Ok. I can't promise it'll play handy for sharing. Though, you'll be o=
+ut
+>>> of space in struct io_uring_params soon anyway.
+>>
+>> I'm going to keep what we have for now, as I'm really not imagining a
+>> lot more sharing - what else would we share? So let's not over-design
+>> anything.
+>>
+> Fair enough. I prefer a ptr to an extendable struct, that will take the=
 
-Could be. I'll try to investigate better enabling the tracing!
+> last u64, when needed.
+>=20
+> However, it's still better to share through file descriptors. It's just=
 
-Thanks,
-Stefano
+> not secure enough the way it's now.
+>=20
 
+I'll send a patch with fd-approach shortly, just if you want to squeeze t=
+hem
+into 5.6-rc
+
+--=20
+Pavel Begunkov
+
+
+--mqXszbISBLnU15N0YOCRNLHLiCdUJL5Tt--
+
+--d65VFq5wGXFWwNuIJayICE9gPxjeuC5u3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl4vPIgACgkQWt5b1Glr
++6VpNA//YbuJCb59ZL+CwjV7pHw85u1DWM1jZKeILrRXbBiZdoXTRkTZCvUmjah1
+egqSzhirDNdMDcgjTVBTDf+KUwniIDeqWMxfj5xoJO02622GeTGGF4R9n6BxK3DG
+H6A/y3/bAhByr9b0IeyqnZQNXYHP7VC0vSw+ceAocirGZmtomLSdfk0pPryECY3u
+aTkWQtr1EElJMiWgn7l+UozLku34XvoGkEEOtcsuJxiSW8jfVaxe0IaE/z6o0SI5
+v2eLQpweAdl7SQp6/6oJDzfAikRDiKoxUFKIG00DJgN/jdnAOLUyGu3g6zP38SQQ
+fuCMMYXWtTaA1TQLwxgUoQ+TRWewvot7gRox7uPX1lNMQvhEL1Vp1OI2Akj+vZ67
+Yndz70ZwkNrMqLOA15ODCHDXwSelWn0o7sX+qEGJ2qJyE5M5T0Oa004utTU+FtlR
+mL5ei1AqnjUHHtu1NeMAPN5HdapYsDsrzHPDaf/wQ/Vdenuzr+RXIPwrCaeO0XbX
+oDw33NEG+N033zwaNCRqV+oBuBWXTJf996S2GbuScAeOGCM/2j7q/BDhZjZYw78k
+iUHao0roUTzGDmsqDZTrfTp36gOmAON3PsSvI3V5OuvYwrv9KoYHdG7xFQ5bk7f5
+F+nUHaIe4OfHMMRMk+sWuz2btRUcX6WeGEhB5L2UmjwK9LmWzCw=
+=7gJ2
+-----END PGP SIGNATURE-----
+
+--d65VFq5wGXFWwNuIJayICE9gPxjeuC5u3--

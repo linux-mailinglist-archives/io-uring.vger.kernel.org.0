@@ -2,91 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B4D14A5AE
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2020 15:07:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD07714A7E9
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2020 17:17:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbgA0OHU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Jan 2020 09:07:20 -0500
-Received: from mail-lj1-f172.google.com ([209.85.208.172]:37203 "EHLO
-        mail-lj1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbgA0OHU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 09:07:20 -0500
-Received: by mail-lj1-f172.google.com with SMTP id v17so10812749ljg.4
-        for <io-uring@vger.kernel.org>; Mon, 27 Jan 2020 06:07:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4WamNq5r3oRcgSyaStjgL8h3KYO17ip65FA05Ro/4Lo=;
-        b=Ppr4X8HgMuWoox/5bW+0en2KEPHvdyb9PqI9iQNFlFqHUMZDNJmAyQlBLjvPDiaIm5
-         9d+bpf7/y7ghwABG5UBM+wDZQ0ReNDExqVk93aNK9V4S/O7Vq4tfglUm4S2B8/rLywym
-         7Q2B3lmJ3eX0U6LCHoyOoz8+OqpzhAVlbN3DoPPCXM8sWYSRRRmjA5zD6X1zwc9tskoN
-         pUFPw9JUBnjNgWpwiMdhdqUYNK4kmMwZNIICfyGcC5OOFRlzBdMs5m/JQ4PYhKVWJcMo
-         dQJol8HAUksHDICECuFT18TM9lQhk9G+Yc/9eyrNyepg4BDdMo6MBvBnLiWGKjsHTiXd
-         GctQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4WamNq5r3oRcgSyaStjgL8h3KYO17ip65FA05Ro/4Lo=;
-        b=RAAE9k2JHoGSAAKroWAxArFRQ0/QmJUBB/kZvwgC6VWE3Cqc0t9b5cNbbLfXesBquy
-         x6Py1RdqyAB4Bwi0NgXzgwOv/znGFNGZPsmlkk6VMhutoKOrVbj7a8Xgr3H8NsVYRzpo
-         ntomP0vXD+NQVBJvgzPN0ROpeI6JrSQ0yj90LeB8PZngeJrWoQv35c+xrPklvwNrvEuJ
-         CKLD4YULxVItbxHcJiacEkgvcDvT/V6ygyZNJ2rYMzLjeDQeh/p9H6XyCm/K9JmvH7/2
-         VF9EKFcHujnKUkJwlF6tCfcOmY816pwOHSiqmG7uDOskdsJk0K+mHtYosc/SyOEjF4Dj
-         oKiA==
-X-Gm-Message-State: APjAAAUN6lRAF1cmF23LYYCim1lZn6cq0EyS9cpPeAnLyn40ovXyoCL9
-        2xOSy+RB4oSs1BAAbCxAx3DZGLmiVfE=
-X-Google-Smtp-Source: APXvYqzvaGOdW6/I35VuX/8TvSmb4nqBli61TD39+NP0zLpNaapjQQ8BL9XLWCxAyPeJSb1d6SeoaA==
-X-Received: by 2002:a2e:8119:: with SMTP id d25mr10358709ljg.76.1580134037792;
-        Mon, 27 Jan 2020 06:07:17 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id i13sm8232454ljg.89.2020.01.27.06.07.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jan 2020 06:07:17 -0800 (PST)
-Subject: Re: [PATCHSET 0/4] Add support for shared io-wq backends
-To:     Jens Axboe <axboe@kernel.dk>, Daurnimator <quae@daurnimator.com>
-Cc:     io-uring@vger.kernel.org
-References: <20200123231614.10850-1-axboe@kernel.dk>
- <CAEnbY+c34Uiguq=11eZ1F0z_VZopeBbw1g1gfn-S0Fb5wCaL5A@mail.gmail.com>
- <4917a761-6665-0aa2-0990-9122dfac007a@gmail.com>
- <694c2b6f-6b51-fd7b-751e-db87de90e490@kernel.dk>
- <a9fcf996-88ed-6bc4-f5ef-6ce4ed2253c5@gmail.com>
- <92e92002-f803-819a-5f5e-44cf09e63c9b@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <3b3b5e03-2c7e-aa00-c1fd-3af8b2620d5e@gmail.com>
-Date:   Mon, 27 Jan 2020 17:07:15 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1729735AbgA0QRK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Jan 2020 11:17:10 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:54491 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729505AbgA0QRJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 11:17:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580141828;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=NPHIDBHIHn19+j0f45CcKBBFeX5G7EU5YQsaBeUB+i0=;
+        b=gTtanwRKWQ6Crq1Pv7qo/v0+Q05D2TtA5rTm8wmnVjp+dMGOPLTHUCtRUnLihENvXmyYNg
+        LkQV1tKfiGm7YVfQy2K6bCIQ3TAfhvq7vChTMX7qwg+fe0XahVdf6oD3clXyffKj9w7vtz
+        aAp8v1X0nixqXkGyTkIZc9LOGWMgdG4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-286-q64UPdiXOzamvKKWjkGniw-1; Mon, 27 Jan 2020 11:17:03 -0500
+X-MC-Unique: q64UPdiXOzamvKKWjkGniw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D2E85108597A;
+        Mon, 27 Jan 2020 16:17:02 +0000 (UTC)
+Received: from steredhat.redhat.com (unknown [10.43.2.93])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C84288832;
+        Mon, 27 Jan 2020 16:17:01 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH liburing 0/1] test: add epoll test case
+Date:   Mon, 27 Jan 2020 17:17:00 +0100
+Message-Id: <20200127161701.153625-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <92e92002-f803-819a-5f5e-44cf09e63c9b@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/27/2020 4:39 PM, Jens Axboe wrote:
-> On 1/27/20 6:29 AM, Pavel Begunkov wrote:
->> On 1/26/2020 8:00 PM, Jens Axboe wrote:
->>> On 1/26/20 8:11 AM, Pavel Begunkov wrote:
->>>> On 1/26/2020 4:51 AM, Daurnimator wrote:
->>>>> On Fri, 24 Jan 2020 at 10:16, Jens Axboe <axboe@kernel.dk> wrote:
->> Ok. I can't promise it'll play handy for sharing. Though, you'll be out
->> of space in struct io_uring_params soon anyway.
-> 
-> I'm going to keep what we have for now, as I'm really not imagining a
-> lot more sharing - what else would we share? So let's not over-design
-> anything.
-> 
-Fair enough. I prefer a ptr to an extendable struct, that will take the
-last u64, when needed.
+Hi Jens,
+I wrote the test case for epoll.
 
-However, it's still better to share through file descriptors. It's just
-not secure enough the way it's now.
+Since it fails also without sqpoll (Linux 5.4.13-201.fc31.x86_64),
+can you take a look to understand if the test is wrong?
 
--- 
-Pavel Begunkov
+Tomorrow I'll travel, but on Wednesday I'll try this test with the patch
+that I sent and also with the upstream kernel.
+
+Thanks,
+Stefano
+
+Stefano Garzarella (1):
+  test: add epoll test case
+
+ .gitignore    |   1 +
+ test/Makefile |   5 +-
+ test/epoll.c  | 307 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 311 insertions(+), 2 deletions(-)
+ create mode 100644 test/epoll.c
+
+--=20
+2.24.1
+

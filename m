@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD1614AD00
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2020 01:16:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DD3214AD03
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2020 01:16:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbgA1AQe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Jan 2020 19:16:34 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55275 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbgA1AQe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 19:16:34 -0500
-Received: by mail-wm1-f68.google.com with SMTP id g1so586615wmh.4;
-        Mon, 27 Jan 2020 16:16:32 -0800 (PST)
+        id S1726481AbgA1AQf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Jan 2020 19:16:35 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45842 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbgA1AQf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 19:16:35 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j42so13893515wrj.12;
+        Mon, 27 Jan 2020 16:16:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=eM3aXMdviE6hTyCVscRclhpEvOjmEe6+yzv4IO5CG50=;
-        b=A4FCXU3vjyEJWOe+O4sHm46rFOoDr2hpoOrzOFivFzbn8PW6trEzakSvWlN1gtJCQB
-         oF4jvdJ+S74YR1sdfUn2GQQoT/rGzoxRlxdBGHG3064oafaZ3ievuyfKliexo2R2bMwC
-         ZaMf1T5Qv+AFAUft7zIEjO5VCifasU+aEQ7of5xF8KHmgglGG6SFu6LUrtSZ7FRHck9F
-         rvCpoa3TeNYfPSXSGiJWsht0vNBQH+Akm+ZG+vSAWqeohU5I5I2tWrXe/NX6NUGUd73u
-         AH0w47TbrA33V9sS6XCnecK1Qsy+7g9iVkQkFG3UBAEBhbVr0qu0g8tO/6WtDqaNpS3k
-         LY3w==
+        bh=X6SmAvLCHiTWpQkkHRbnIbIeXQO2/7otcQ8yU/pmEwU=;
+        b=bnOjNFqpFKIuFy1sbZ2FKaajnuP+hoc05jLczsPmaDtcl1nva2IsuKi3hFDmsdljYK
+         FeaOw8MKv2HXVvW7HieQPGXPhNHOiH+42x6xdE6kFOgp6gAm15r/N2kJ2DBhSb66NO8R
+         44vhN+NJi0hhePYLa6kVticnzy6rgXBuCycjh7dpmDoUQtEDoNq4kLPpAN74vSweJgNf
+         yuB94TF0FCA7tRg7aQA2DliSQz5VuuXYNnm/KS1bWOluSDaxffgeS82oWpGuWh4KHg/t
+         zj+QNIAcdcTJb0Jj/RlXIJBVGfM7bpfN9iMTTVb9kLUfCWlpws9B3/y40YWTYd0uw0Gp
+         NU/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eM3aXMdviE6hTyCVscRclhpEvOjmEe6+yzv4IO5CG50=;
-        b=XonipEVtRGfYVGXdjbXLF4V8IEacKi8PiuPb0Qs4gYgEFrfddSK87xaPkq+vy/bOaS
-         lcUutCCdlCqo4xl8oD1QSgtNqpFNnIDIeiukfb/My4PQ0wyIHCUllb126Zi4NLzyII+K
-         4mziGZAFWAGtFfGatSDVFgvgwoFInTMlMeqJRJzHNqM53SXz48rQVqAUTalP2a9g0JnN
-         uSP9VZfUs69DA0UZB4ByBbApwYvNWROGow++EmR51U0EBLRQnJwJ5kaz4hNzQvLKjE3i
-         8txFZkowJh/Fh9RL1sJkK6gGNeDzc4KmHl9reWTUgbgax0Mrtdwk5pjoCHqDB5vramNC
-         vABg==
-X-Gm-Message-State: APjAAAV9TtqR3y99RA/mhSrJrhAZZ9F11V9TVe579lEfT+secCgjCp4G
-        vFuDYV3XVvCSiiuDyhp7t9BedhBN
-X-Google-Smtp-Source: APXvYqyn5QoZ09WC7hXyqSMC70hZBDNbZL5BUq81/tbwkinFyuoLBrADGdD7qvNrYelOLvUPkPAkQw==
-X-Received: by 2002:a7b:cb0d:: with SMTP id u13mr1257765wmj.68.1580170591498;
-        Mon, 27 Jan 2020 16:16:31 -0800 (PST)
+        bh=X6SmAvLCHiTWpQkkHRbnIbIeXQO2/7otcQ8yU/pmEwU=;
+        b=e1aCBLswJZ40k+tZTnYkjhpWr+IvvA+HM7ZXCFkL/f22fz1iBN1YVm3w5xDVdHcoPq
+         s+rgyeFagFIk5i2e3vwpxMOBuo5ZzKKfJ2t0F8mIIJDJ84mTjOcw8wybfoDGKi1gNaIa
+         oj5I57i9fR3a6FJAoLnQzZqVRvMgt5tO73qBE8jkSlFKRV3T75peIrdc1d5T6cHSQG2v
+         hs5MHNjhXgLgr6K39jTrWKawUL0Tniqwn3ZSaqcXy6QUB0BkKFiCD5+lvyOu5Xn4jGUJ
+         pyHs/oAVUi4KgP8tVHY+tU49MBZjUhP3SHppK3KuIeEPkSXCRNSR+iVSnAKgeeihe+k5
+         xrWQ==
+X-Gm-Message-State: APjAAAUOmzcULa1cGUyRnFwH4DLhlm0PISYQd8/LHlLBp04eCBQU74TX
+        0vRZWDCxzRBOIoj8zCHqzQc=
+X-Google-Smtp-Source: APXvYqwJn9SPD243lszL9inEZQ51trQ7U5RYtGhiOxIt5/YzVNsgX9IxpoBl3GfF199HpEoDPKt77w==
+X-Received: by 2002:a5d:6652:: with SMTP id f18mr25453877wrw.246.1580170592786;
+        Mon, 27 Jan 2020 16:16:32 -0800 (PST)
 Received: from localhost.localdomain ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id z21sm638426wml.5.2020.01.27.16.16.30
+        by smtp.gmail.com with ESMTPSA id z21sm638426wml.5.2020.01.27.16.16.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 16:16:31 -0800 (PST)
+        Mon, 27 Jan 2020 16:16:32 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] io-wq sharing
-Date:   Tue, 28 Jan 2020 03:15:46 +0300
-Message-Id: <cover.1580170474.git.asml.silence@gmail.com>
+Subject: [PATCH v2 1/2] io-wq: allow grabbing existing io-wq
+Date:   Tue, 28 Jan 2020 03:15:47 +0300
+Message-Id: <af01e0ca2dcab907bc865a5ecdc0317c00bb059a.1580170474.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1580169415.git.asml.silence@gmail.com>
-References: <cover.1580169415.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1580170474.git.asml.silence@gmail.com>
+References: <cover.1580170474.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -60,27 +60,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-rip-off of Jens io-wq sharing patches allowing multiple io_uring
-instances to be bound to a single io-wq. The differences are:
-- io-wq, which we would like to be shared, is passed as io_uring fd
-- fail, if can't share. IMHO, it's always better to fail fast and loud
+If the id and user/creds match, return an existing io_wq if we can safely
+grab a reference to it.
 
-I didn't tested it after rebasing, but hopefully won't be a problem.
+Reported-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io-wq.c | 8 ++++++++
+ fs/io-wq.h | 1 +
+ 2 files changed, 9 insertions(+)
 
-p.s. on top of ("io_uring/io-wq: don't use static creds/mm assignments")
-
-v2: rebased version
-
-Pavel Begunkov (2):
-  io-wq: allow grabbing existing io-wq
-  io_uring: add io-wq workqueue sharing
-
- fs/io-wq.c                    |  8 +++++
- fs/io-wq.h                    |  1 +
- fs/io_uring.c                 | 68 +++++++++++++++++++++++++++--------
- include/uapi/linux/io_uring.h |  4 ++-
- 4 files changed, 66 insertions(+), 15 deletions(-)
-
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index b45d585cdcc8..ee49e8852d39 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -1110,6 +1110,14 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	return ERR_PTR(ret);
+ }
+ 
++bool io_wq_get(struct io_wq *wq, struct io_wq_data *data)
++{
++	if (data->get_work != wq->get_work || data->put_work != wq->put_work)
++		return false;
++
++	return refcount_inc_not_zero(&wq->use_refs);
++}
++
+ static bool io_wq_worker_wake(struct io_worker *worker, void *data)
+ {
+ 	wake_up_process(worker->task);
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index 167316ad447e..c42602c58c56 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -99,6 +99,7 @@ struct io_wq_data {
+ };
+ 
+ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data);
++bool io_wq_get(struct io_wq *wq, struct io_wq_data *data);
+ void io_wq_destroy(struct io_wq *wq);
+ 
+ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work);
 -- 
 2.24.0
 

@@ -2,62 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64EFD14AD1C
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2020 01:22:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D97014AD36
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2020 01:29:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbgA1AWF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Jan 2020 19:22:05 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46886 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbgA1AWF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 19:22:05 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y8so4368303pll.13
-        for <io-uring@vger.kernel.org>; Mon, 27 Jan 2020 16:22:04 -0800 (PST)
+        id S1726083AbgA1A3X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Jan 2020 19:29:23 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33035 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbgA1A3X (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jan 2020 19:29:23 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 6so6037379pgk.0
+        for <io-uring@vger.kernel.org>; Mon, 27 Jan 2020 16:29:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Rng1ZZuvnh8skbUMKVNeE9hX7pU77/13sjNLkfyNJKs=;
-        b=bQZ14tH+SvMsGr4XVN84bRypOLPGFqyhXA5d8ytE4IUggWVBPNg3EQ2kZPF8IsGU0v
-         1BIrieFe3LovX4i4CObrM167FaotJXLpvAnwRgUWmqy9EExGcYHyz20aXtgoT9ui0zmB
-         HILLhuuYadGPV3GX32cuEv7V3eZWdq3ScpBsfq2aUXFT5s0WAKipkVgClzfXKPFW7ZQ1
-         E7IkR4C1vuKD63+JsyTsuFLQ6Wg9VHNBy8cMa9jVZ3Z+JjBegd+R4OEOC8SbjMV8c4g2
-         hp9i7x77GdVgj+2oRy6prhMmozEQMWgMkAegVCTpT+WbCBwbkQ0A4h0MYt+naLzMsfmt
-         zt+g==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=U91Hz0/lYI/n3Dw7PNbm4tKqVwXKnzCFxiEDM+SytAc=;
+        b=UCFUHmfc6v/JRX0Qb9ELA/2JIJTO8BSKgTwXqqkF76uAHJaJPYVpYvmZXJN8euqWb3
+         qFN77HQzxsZFMZVN1TZEaisb0t0eyYBTfZanth6pqlGx+y7toODk89yzbPATS0EKBxIb
+         Q/CEm4YtPy2IE2c66zfikoEqSqg1wUuTTDgPwdr0vLzMiw1xr616DqbuQGcDXiU71Nau
+         Jd52p0QPfl1mqcrst0QdhDzhZOJuezgKOV+fmwciHxyt4ISLmIFVzdGiy/HLNtLUd7Q3
+         2yk8hslrjU5XPr7ELisLNPHMuDP6ltxJ2ytIMn2+ECvGF2gHQ8PhCaTj+TJOBC5DGh0G
+         Z1NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Rng1ZZuvnh8skbUMKVNeE9hX7pU77/13sjNLkfyNJKs=;
-        b=WDD1qZp/E5A3XcRCDqOOuNh3yktjOKl4Ze8c2rGBAYR8coPbxkX49LVfa0zHqKZr1Y
-         uRVcCIiBuqkB+lzZ57Q+qD6bpLTXTHj5oDAE6aeE+c7w/rt6cUpZvK31I1Hx9v3L/wBo
-         abA5dy7/7qHrkViUYNDK/QpjOggUHw8tkQQrZb9QPLjDFSyvOmJkTxbIB7dlO80t7rZ+
-         d+1ckXBzKpc4XNi6TrgaJ388P8h6PMbV8MCvCtvgqlgsrG5Dj2MqU6dbNUTWmM56AKIC
-         4wcgogDplNHlPvvXbU+MBCiSGARNflsP0rpO1hTcA5OoqsVRvTkyCEVu5yvQc4oLNALl
-         hH0A==
-X-Gm-Message-State: APjAAAX4necletFbYq8uH4Eg5wiogMVSGVQdwB8vF6cqNcMi7+wMHPMg
-        Ma++ihGEvpJZ1VyZbIYbnd2zrw==
-X-Google-Smtp-Source: APXvYqygNN/9n/tShBs+tuNBRXauIWs/uvVsnHr+QNjy4aBJsI33lz5qlXFQc+bK57chGHkYtTbq9g==
-X-Received: by 2002:a17:902:b587:: with SMTP id a7mr20391881pls.155.1580170924370;
-        Mon, 27 Jan 2020 16:22:04 -0800 (PST)
+        bh=U91Hz0/lYI/n3Dw7PNbm4tKqVwXKnzCFxiEDM+SytAc=;
+        b=sz18kI0iFwr5ls6hqLz3pNAgXa6IIK2kBQ+Yzs2yJawI4/pOSxPr/KgB6za/qOxenC
+         4n1SKCgMAi3idFPnVmxwaAvGEs0pre3YkDcO41un5hB/8QOpw8fa9hx6ZxRtcs4QsJf1
+         ZGFMvQ1tskfkLiJA1osdr7vk1S+7EtiWFELIvJv7OnIS0MPHNOlj6lVOKpUlBc2iIfFR
+         YBZdxQNA3srqwOo/N/BcdzfzQYUPeHuq+cqJrMnB1PL9X2FaPMJGcMwlYcdOS8j0GEPO
+         NmbBJmVpB0crfFq6Cv86/PrUlrKdgpJ9yRI/7yJmSjc00sjTw94Cj+oxHdUgfkFpW1eG
+         PWFQ==
+X-Gm-Message-State: APjAAAWZvzR0g6X4mzNNxengbE8EbWO1y4s7s2Vu1FzqIaKePHva/gzn
+        iy5wgyMGFngWm9+K8D3i96YkQg==
+X-Google-Smtp-Source: APXvYqzemLISLBefJvaaqOU7JuquxtVC5RTyaiNPVjDMt+GGCIT5cZ287zomhRuum9B1VELnut4ctg==
+X-Received: by 2002:a63:450:: with SMTP id 77mr22257009pge.290.1580171362744;
+        Mon, 27 Jan 2020 16:29:22 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id e2sm16899550pfh.84.2020.01.27.16.22.03
+        by smtp.gmail.com with ESMTPSA id 200sm17503369pfz.121.2020.01.27.16.29.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jan 2020 16:22:03 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] io_uring: add io-wq workqueue sharing
+        Mon, 27 Jan 2020 16:29:22 -0800 (PST)
+Subject: Re: [PATCH v2 0/2] io-wq sharing
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Daurnimator <quae@daurnimator.com>
-References: <cover.1580170474.git.asml.silence@gmail.com>
- <c40338a9989a45ec38f36e5937365eca6a089795.1580170474.git.asml.silence@gmail.com>
+References: <cover.1580169415.git.asml.silence@gmail.com>
+ <cover.1580170474.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <86c5b26b-ae03-01ba-8735-ee37647b3d48@kernel.dk>
-Date:   Mon, 27 Jan 2020 17:22:02 -0700
+Message-ID: <2b1e23c3-71a3-2d5c-05c5-4aa393aee19b@kernel.dk>
+Date:   Mon, 27 Jan 2020 17:29:21 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <c40338a9989a45ec38f36e5937365eca6a089795.1580170474.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1580170474.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,20 +66,21 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 1/27/20 5:15 PM, Pavel Begunkov wrote:
-> @@ -6577,7 +6613,11 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
->  
->  	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
->  			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
-> -			IORING_SETUP_CLAMP))
-> +			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ))
-> +		return -EINVAL;
-> +
-> +	/* wq_fd isn't valid without ATTACH_WQ being set */
-> +	if (!(p.flags & IORING_SETUP_ATTACH_WQ) && p.wq_fd)
->  		return -EINVAL;
+> rip-off of Jens io-wq sharing patches allowing multiple io_uring
+> instances to be bound to a single io-wq. The differences are:
+> - io-wq, which we would like to be shared, is passed as io_uring fd
+> - fail, if can't share. IMHO, it's always better to fail fast and loud
+> 
+> I didn't tested it after rebasing, but hopefully won't be a problem.
+> 
+> p.s. on top of ("io_uring/io-wq: don't use static creds/mm assignments")
 
-Since we're now using file descriptors, this no longer works. Any values
-(outside of -1) is fair game.
+Applied with the following changes:
+
+- Return -EINVAL for invalid ringfd when attach is specified
+- Remove the wq_fd check for attach not specified
+
+Tested here, works for me. Pushing out the updated test case.
 
 -- 
 Jens Axboe

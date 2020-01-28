@@ -2,65 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A992414C312
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2020 23:39:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F38E514C39A
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2020 00:37:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbgA1Wjd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jan 2020 17:39:33 -0500
-Received: from mail-wm1-f50.google.com ([209.85.128.50]:32837 "EHLO
-        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726257AbgA1Wjc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jan 2020 17:39:32 -0500
-Received: by mail-wm1-f50.google.com with SMTP id m10so2775467wmc.0;
-        Tue, 28 Jan 2020 14:39:30 -0800 (PST)
+        id S1726338AbgA1Xhn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jan 2020 18:37:43 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39018 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbgA1Xhn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jan 2020 18:37:43 -0500
+Received: by mail-wr1-f66.google.com with SMTP id y11so18087320wrt.6;
+        Tue, 28 Jan 2020 15:37:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=EESes6cMHRph/qkhLWT90QyBlZRSI6qQVGv7ZTuj83E=;
-        b=ZnwGqgp0r9HFKnbaz9lyQqbzomcVwaZRHsTd9sGmvE1k0DgwByF7BuyD/Nv/CBW4zI
-         HWgNkWVAfp0Ne5BJseelv21iQEvafA/PFr3mCPhRl/8ZQq7/WA4j2avXPzvd8xg+PrNk
-         IFOwBPJDaBBxftajGG5rqWShaE2B9JD4h7T6IW6IrHucbScq9McnilyOWYFy28rEy/yg
-         +lE11K5r0iVQbSikWduHkxOHsUeO7Mtjzxfdu1xtFrn13K3U+gMrp13vs96U6SfXW/8w
-         ttRnlfOMaMk63SYvr/hcRkGrMW0eZuzTAlrIRZx2b7D+X9+Ijr1xAxSSMTb/sikVPTAv
-         sKgg==
+        bh=CQxqRf7XpNY/tfLABbzF/HD2OOhhAKKhygwABrhzaTU=;
+        b=lg7ulnMsDkolpVToXKNv5vqQRXt2Nt/j17KASyLnkAcYQS0dyDLPeEgvPLd5u7308s
+         K3wDPd69C5POKfOHsXEaI/rK7VPjWM1yyjzQuOtLa2f/Mo5GG9uYVAvtoEUEPPu+XjE8
+         OLnIzC7g90O2b6e051trqOAECjpIeV7+Ldthv6vZ3ViWKfZPHxSWrsIG10iLAGHZqeCT
+         MjxzS8L1F78ikyY6fQiV/CVfh72xen9kQCuTt0jF+dWEKzPEhh0HvWOlnavvMTc4ngbV
+         Oxq/nVBuPdYvrJm63bYkiPY7QIzICOBagYPtL+HEe1RJtPrufSbijV1FriW9fd0wgEVT
+         bK+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to;
-        bh=EESes6cMHRph/qkhLWT90QyBlZRSI6qQVGv7ZTuj83E=;
-        b=UCFHEiHipVDNcwpg8j66lA13F1I+XUhVebKe6RQA+3xa42Z5qoTTRCTR2lJjscOmO8
-         D+QMlnh/x7HXibo+k0UoUVzT4ovusbw3HqKlepamtqF7sVFTVCU9Zl5VgN3ox1bUpzKl
-         VDO/X/9+2HaOVUbLm4fGFJJEWopmy2R342igxILYevX4rtKswvhW6wb5JbeNRgb9z/Eb
-         4sMvCjzgFYvw4QWfwiJRSA+Ne2LcZqCbTwPX9nKHeq1y5lwewsTpqUjmg99R9u89y/nW
-         8wtxd7DYmpJq7vzayhKcLKu6OS80otdGnjQGbHug4hu42rpp/DdvM39iHZbTmkKF4QKH
-         20Fg==
-X-Gm-Message-State: APjAAAVOsITm1XbBQl4opJehe5qOg7wiDQJBME99UG/PbICWmghkC5uV
-        +FEbPE0KnuMo34Ou9Hyoxx6uDHgZ
-X-Google-Smtp-Source: APXvYqzAujTGZxewBQEg2M3Zm6qB/28qql53Qwn5XNEuqk+6qhQuImr2Btx8QyhiKEMgXhSdwBLFWQ==
-X-Received: by 2002:a1c:e388:: with SMTP id a130mr7168800wmh.176.1580251169288;
-        Tue, 28 Jan 2020 14:39:29 -0800 (PST)
+        bh=CQxqRf7XpNY/tfLABbzF/HD2OOhhAKKhygwABrhzaTU=;
+        b=MGDWtwM5ihcI7OmWwrFmX9nVU5c8HTHhDPVD0/v0/xOkX+1nK6VSMV0BTMyGeVqMJr
+         y5X7toX+J9598HouxWRLmykf4HlwiVbHN1Ct4HoO3NrlJR0dWt12MJx6wWwDc0vG9aOf
+         cc6WbuzcHXT5VZJ2u9cdyFM6UHJpHkfg9kgna5HYIYi6Ht+k74BL9LJdtfVgx1p27WOl
+         u9HVTepQa4/QLnccAbXkgpc/Kt7tJRqSDqZBl01umfwZEWpHKa/gIfgOcyaQxeItTaSv
+         hKlESezvqEcaNfX+EmGrIwFAj8xA0glw9SeRpJd3hLMseD9nFZvXSXgBgrySVXFjLF4V
+         tAdg==
+X-Gm-Message-State: APjAAAUfANxVxzTwuic35MHa4A9tHqGmSwyi2Q4CHuzLPnDMVwnhLkOO
+        i5XIWsIkPXye1O2RfyGRPUqx9LNQ
+X-Google-Smtp-Source: APXvYqytdxTndReu8na6Zz/sNtlvbRYMKOETjcqoaqXYLupT64f/EGX+Ku9RqrBwPvrDSvZ7glBhtQ==
+X-Received: by 2002:adf:97d6:: with SMTP id t22mr30829557wrb.407.1580254657064;
+        Tue, 28 Jan 2020 15:37:37 -0800 (PST)
 Received: from [192.168.43.59] ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id h17sm233107wrs.18.2020.01.28.14.39.27
+        by smtp.gmail.com with ESMTPSA id w7sm68024wmi.9.2020.01.28.15.37.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jan 2020 14:39:28 -0800 (PST)
-Subject: Re: IORING_REGISTER_CREDS[_UPDATE]() and credfd_create()?
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Stefan Metzmacher <metze@samba.org>,
-        io-uring <io-uring@vger.kernel.org>,
+        Tue, 28 Jan 2020 15:37:36 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, Stefan Metzmacher <metze@samba.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
         Linux API Mailing List <linux-api@vger.kernel.org>
-References: <d6bc8139-abbe-8a8d-7da1-4eeafd9eebe7@kernel.dk>
+References: <ea9f2f27-e9fe-7016-5d5f-56fe1fdfc7a9@samba.org>
+ <d6bc8139-abbe-8a8d-7da1-4eeafd9eebe7@kernel.dk>
  <688e187a-75dd-89d9-921c-67de228605ce@samba.org>
  <b29e972e-5ca0-8b5f-46b3-36f93d865723@kernel.dk>
  <1ac31828-e915-6180-cdb4-36685442ea75@kernel.dk>
  <0d4f43d8-a0c4-920b-5b8f-127c1c5a3fad@kernel.dk>
  <b88f0590-71c9-d2bd-9d17-027b05d30d7a@kernel.dk>
- <15ca72fd-5750-db7c-2404-2dd4d53dd196@gmail.com>
- <82b20ec2-ceaa-93f1-4cce-889a933f2c7a@kernel.dk>
- <60253bd9-93a7-4d76-93b6-586e4f55138c@gmail.com>
- <43a57f2a-16da-e657-3dca-5aa3afe31318@kernel.dk>
- <20200128212533.snjm34gct3kmfxfi@wittgenstein>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -105,89 +98,101 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <23cf858a-389e-676d-b239-155284eec6e3@gmail.com>
-Date:   Wed, 29 Jan 2020 01:38:50 +0300
+Subject: Re: IORING_REGISTER_CREDS[_UPDATE]() and credfd_create()?
+Message-ID: <2d7e7fa2-e725-8beb-90b9-6476d48bdb33@gmail.com>
+Date:   Wed, 29 Jan 2020 02:36:23 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200128212533.snjm34gct3kmfxfi@wittgenstein>
+In-Reply-To: <b88f0590-71c9-d2bd-9d17-027b05d30d7a@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="3eYLF71RS5ivj7kVym3U6jqyooSj8n90X"
+ boundary="rEF2fbPYDZSZbOYsEnSrCcCyk8fNHPtJa"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---3eYLF71RS5ivj7kVym3U6jqyooSj8n90X
-Content-Type: multipart/mixed; boundary="oVTFtXAUhKVmeJ9ryUAJuOEX8IAytDe0f";
+--rEF2fbPYDZSZbOYsEnSrCcCyk8fNHPtJa
+Content-Type: multipart/mixed; boundary="xCYP6jDf49GkRAEMQysNnTclfI4fZ0DCL";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
-To: Christian Brauner <christian.brauner@ubuntu.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: Stefan Metzmacher <metze@samba.org>, io-uring <io-uring@vger.kernel.org>,
+To: Jens Axboe <axboe@kernel.dk>, Stefan Metzmacher <metze@samba.org>
+Cc: io-uring <io-uring@vger.kernel.org>,
  Linux API Mailing List <linux-api@vger.kernel.org>
-Message-ID: <23cf858a-389e-676d-b239-155284eec6e3@gmail.com>
+Message-ID: <2d7e7fa2-e725-8beb-90b9-6476d48bdb33@gmail.com>
 Subject: Re: IORING_REGISTER_CREDS[_UPDATE]() and credfd_create()?
-References: <d6bc8139-abbe-8a8d-7da1-4eeafd9eebe7@kernel.dk>
+References: <ea9f2f27-e9fe-7016-5d5f-56fe1fdfc7a9@samba.org>
+ <d6bc8139-abbe-8a8d-7da1-4eeafd9eebe7@kernel.dk>
  <688e187a-75dd-89d9-921c-67de228605ce@samba.org>
  <b29e972e-5ca0-8b5f-46b3-36f93d865723@kernel.dk>
  <1ac31828-e915-6180-cdb4-36685442ea75@kernel.dk>
  <0d4f43d8-a0c4-920b-5b8f-127c1c5a3fad@kernel.dk>
  <b88f0590-71c9-d2bd-9d17-027b05d30d7a@kernel.dk>
- <15ca72fd-5750-db7c-2404-2dd4d53dd196@gmail.com>
- <82b20ec2-ceaa-93f1-4cce-889a933f2c7a@kernel.dk>
- <60253bd9-93a7-4d76-93b6-586e4f55138c@gmail.com>
- <43a57f2a-16da-e657-3dca-5aa3afe31318@kernel.dk>
- <20200128212533.snjm34gct3kmfxfi@wittgenstein>
-In-Reply-To: <20200128212533.snjm34gct3kmfxfi@wittgenstein>
+In-Reply-To: <b88f0590-71c9-d2bd-9d17-027b05d30d7a@kernel.dk>
 
---oVTFtXAUhKVmeJ9ryUAJuOEX8IAytDe0f
+--xCYP6jDf49GkRAEMQysNnTclfI4fZ0DCL
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 29/01/2020 00:25, Christian Brauner wrote:
-> I've been reading along quietly. In addition to what Jens said, to ease=
+On 28/01/2020 22:42, Jens Axboe wrote:
+> I didn't like it becoming a bit too complicated, both in terms of
+> implementation and use. And the fact that we'd have to jump through
+> hoops to make this work for a full chain.
+>=20
+> So I punted and just added sqe->personality and IOSQE_PERSONALITY.
+> This makes it way easier to use. Same branch:
+>=20
+> https://git.kernel.dk/cgit/linux-block/log/?h=3Dfor-5.6/io_uring-vfs-cr=
+eds
+>=20
+> I'd feel much better with this variant for 5.6.
+>=20
 
-> everyone's mind: pidfd_getfd() doesn't allow to unconditionally grab
-> file descriptors for any task. That would be crazy. The calling task
-> needs ptrace_may_access() permissions on the target task, i.e. the task=
+Checked out ("don't use static creds/mm assignments")
 
-> from which you want to grab the io_uring file descriptor. And any
-> calling task that has ptrace_may_access() permissions on the target can=
+1. do we miscount cred refs? We grab one in get_current_cred() for each a=
+sync
+request, but if (worker->creds !=3D work->creds) it will never be put.
 
-> do much worse than just grabbing an fd.
+2. shouldn't worker->creds be named {old,saved,etc}_creds? It's set as
 
-Good to know, thanks!
+    worker->creds =3D override_creds(work->creds);
+
+Where override_creds() returns previous creds. And if so, then the follow=
+ing
+fast check looks strange:
+
+    worker->creds !=3D work->creds
 
 --=20
 Pavel Begunkov
 
 
---oVTFtXAUhKVmeJ9ryUAJuOEX8IAytDe0f--
+--xCYP6jDf49GkRAEMQysNnTclfI4fZ0DCL--
 
---3eYLF71RS5ivj7kVym3U6jqyooSj8n90X
+--rEF2fbPYDZSZbOYsEnSrCcCyk8fNHPtJa
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl4wt/0ACgkQWt5b1Glr
-+6Vd3A/9GISP7sSN8O0lTDXoPvR6y29W8LT9KsLDopisUherenZqMAAze+PtVaF+
-ezW+W2zcSUA0EpyfeQkxEy8PM5iNuXp3RQ68LveCpX+Kaj6AJTogu0rFJ2U4ipLR
-Xjw+C8X0RbOcA1jsQqikJT6myddh1IrbWQpg0xFRRwJNQHJreZa/VyJ5rUJkbTWH
-oQNnIW/2jFvY3Z5dwEtqusBRhKkbvna5JaKa5px/nO5f96G1r+f6sqpB4dap57xA
-tUVurLNkdODC708Cg4DAGSrNOJXGY+89FOHmKkQ5jECiNvcjrLE7EVX5o+MU75Qi
-H89Hy3bOQbyQzzhy6R41xQ9uNv55nhN+5Qbk0C1qTtVw3JM/N99ST9p3ONqLKSGM
-o3siMZ1XCzsO46nZF8zsScIQvMdpkPFsW6C5320T7AI1i3BolLyRW3dVn2jMJgLt
-5rL0bKJyu78AhjHGBS+0hnOTte6hionDF4FOriIiPNW69OjH9XcmNF1U/Wdj+bYu
-YoFD4bJXCCCNB+CXljOC03jn3XwGId4A7LjlyOn6QpL2omKnavhbC8K15CxWWX2i
-xVhPAgG3BkY4IkUy6DZlpZqZ4Ku84c9lbRqmNIyoTHU9+jj3sV5SB8Gd+UR+VA0T
-zg6n4yuRxrsmQ/wCZ+jWrHm7rE5PZ3+3+xfQSYUkCQXVjP+e75g=
-=xfEc
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl4wxXcACgkQWt5b1Glr
++6XIPQ/+JTYE1M2JkCRsNcK/1JXv09mAkVGj/ZSNPna7hmGfykBQEPYdyj2xfOV8
+kRsbSF3BnqEEoAakGubgcHcFl+//hfUhu4e3ct3NzmRDY796bkhUdxVvl7D30vln
+Qo4Cvh+R6ierzFZ0092TEANyud54fSMUBZqL+2Z7n5XLQkKVbKmbaTDTuzgPztcM
+t+wsjWzFRqmoxu4GXLyGWP+SP0GntctdcQbqdxcZ/P4JucbxMTsS2mQrDsmzl3j5
+v8AgEudAKabyrzfG3tII7ZVUfZ59GkB1MUXvkLNaKHznHeJx6tsrHES9MhfRiwlz
+OTJEW5W7Nxv317X44D4XVe/83oYyG5JL1vVAuT9FjbGZtRPXmvgBa53HcxXl9oBt
+88tbmSaOoW9scqgTK/3iOxdqXoWq36v6Ej7uJqAB21ZoZvR58iTWKrvA4iTn0sGg
+K4nyY5Xu6SFqmEcIf5SNnzr9adSfZdaCKquOdoEer2TlxAtBiNBzL3qDW6Z7SGc1
+2iJlCE0SDzy7agmCX3zvH8qsBStuSdOTcWxhrSHKPgQzJgmlRDANQi+AB/7MYZ/I
+LYKAw9Li9+9Ro45DFaePYRrSjKT4NQgQXPYmg427wCNmUkEzCekpmL/YlMCNo0RS
+hzrkJDB7Ilme4I2zFAwcWK5vL64BYh7waj5DqPDAj3UKjxfFewk=
+=FxiK
 -----END PGP SIGNATURE-----
 
---3eYLF71RS5ivj7kVym3U6jqyooSj8n90X--
+--rEF2fbPYDZSZbOYsEnSrCcCyk8fNHPtJa--

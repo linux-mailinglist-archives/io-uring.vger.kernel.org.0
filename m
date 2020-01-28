@@ -2,48 +2,33 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67C2A14B22A
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2020 11:01:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A2D414B277
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2020 11:19:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbgA1KBe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jan 2020 05:01:34 -0500
-Received: from hr2.samba.org ([144.76.82.148]:43144 "EHLO hr2.samba.org"
+        id S1725941AbgA1KTO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jan 2020 05:19:14 -0500
+Received: from hr2.samba.org ([144.76.82.148]:50436 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbgA1KBd (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 28 Jan 2020 05:01:33 -0500
+        id S1725948AbgA1KTN (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Tue, 28 Jan 2020 05:19:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:Cc:To;
-        bh=2hJFbSn/liuSOoJIkDZ7GJdEXCZDMJie+K6G34vQTb0=; b=jyNh4jycAEcjvsZDq0IGXHzK9u
-        Zgv3S3QYNSXOZc9DPUktATcsxZ3Rnvlf8ZW6C0Q2q2y/fwpD+4oCzpyuG9RJRmC7qWArzOobz4K28
-        b8ZrvmatUSpW/pQsrs92QCK/CkVneU4EB1AXTcY6GRg8uHMhAH9iXE2B3wkIZIHTde6zlW5DCM4Om
-        Xb9I8GJJvHlUkWoPTKe4XXTPHoKJOZEWp88//2nreIKWuaRpiHgR5eW2JCPGq4rrkNwdfDAfSdSr0
-        P14FxndJG4CO7oQJslahknKEWYBsMVPJjXtkXLgFbSKTs3lFGhhzeFIAau3qF3dB6nV2sg5VMwn/R
-        7nh+BqhxZ7xJa356CSmaFj4VexW57fFJIMc61mMmD9N7Eca5WSk6+NW65aBl4N4jE+/q9Zh3EWsEB
-        9RTqrMy/iHlSyCmHDOdPlOLibBwXVraKgfhC5lBqsCaKm4h1ygTqLarqHYykQ1alcQhICe+ZUREpo
-        BACtLZ38Mf3TfmOLI2wWeEye;
+         s=42; h=Date:Message-ID:From:To:Cc;
+        bh=hjmX3GKhJHyD7FOiZsSNPgYvA1eyzonFCqM+t3Qb5mM=; b=hA4NX5ZFj/L4sJxE1TsoPdNTv7
+        uHyeO9+xw7cgUXq/aIixipCcF7SiPuD26wkBqT2ePV1l3paq5VhKOZ+BtIkHf8+rfYYCHsUrIdIS4
+        VJbK5EW0Q2QST5Mu8aQS4FYP/ptYHP9vgP2cINJwcC94azywZdx6heF92vB46r+xAolTPqR9L4pnF
+        zcRYZ/t+tZ38VNifidCi+Zkux5XIL79pjsH0Yj4STZU5lLcqo7A3ZR1POe8Vkwy4tkavfQfU5NiDA
+        emMf8GpdKP+dh4/S/Pmda2n/geWARSSzTP11Ew5UwMxU/g3Ri8jidEWsebnFrYFiGLSE13LkFtT8N
+        5cKp7MX6mrJDorJjQtC/FMVmrE+bglVeXkEPMWna2Hmw6wvnZrqunojEqrZaW4KMwB859sxKIKm9T
+        Z7LpEq8x2qegVgN8z5S0tPJZcyudRXKlMT94F1Slejx3hw8oDdJwQnIS347N8EOKxQasoezxeE5uw
+        EWe7Hu9H9l/0c6sDJvaGALzW;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1iwNgU-0002RY-Th; Tue, 28 Jan 2020 10:01:27 +0000
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Daurnimator <quae@daurnimator.com>
-Cc:     io-uring@vger.kernel.org
-References: <20200123231614.10850-1-axboe@kernel.dk>
- <CAEnbY+c34Uiguq=11eZ1F0z_VZopeBbw1g1gfn-S0Fb5wCaL5A@mail.gmail.com>
- <4917a761-6665-0aa2-0990-9122dfac007a@gmail.com>
- <694c2b6f-6b51-fd7b-751e-db87de90e490@kernel.dk>
- <a9fcf996-88ed-6bc4-f5ef-6ce4ed2253c5@gmail.com>
- <92e92002-f803-819a-5f5e-44cf09e63c9b@kernel.dk>
- <3b3b5e03-2c7e-aa00-c1fd-3af8b2620d5e@gmail.com>
- <1b24da2d-dd92-608e-27b6-b827a728e7ab@kernel.dk>
- <e15d7700-7d7b-521e-0e78-e8bff9013277@gmail.com>
- <c432d4e1-9cf0-d342-3d87-84bd731e07f3@kernel.dk>
- <18d3f936-c8d0-9bbb-6e9d-4c9ec579cfa4@kernel.dk>
- <d2db974d-cb40-36eb-c13d-e0c3713e7573@gmail.com>
- <fad41959-e8e6-ff2b-47c3-528edc6009df@kernel.dk>
- <adcb5842-34c8-a433-6ee3-b160fcb24473@gmail.com>
- <965e6e04-aa4c-c179-06f2-37f0527fb5e1@kernel.dk>
+        id 1iwNxd-0002Za-5k; Tue, 28 Jan 2020 10:19:09 +0000
+X-Mozilla-News-Host: news://nntp.lore.kernel.org:119
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        Linux API Mailing List <linux-api@vger.kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
 From:   Stefan Metzmacher <metze@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
@@ -358,128 +343,90 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  uWrtpKE+BrlhmZrZleospHp05F+oHuE7lrOg09g0SFdTigqSJNbN1R/pkPI5Q03GfbWipsd4
  iY0Rj0D34DQVeKAa4qUlOcBgX2D9VHRap9GKQRWs//egCueqDZNmIk3071aFV+BSiBSTZIIG
  t/YZOE37yKSj2rcCbqg=
-Subject: Re: [PATCHSET 0/4] Add support for shared io-wq backends
-Message-ID: <e8219de1-5179-4a3b-68cc-d7dbf5c1fa20@samba.org>
-Date:   Tue, 28 Jan 2020 11:01:26 +0100
+Subject: IORING_REGISTER_CREDS[_UPDATE]() and credfd_create()?
+Message-ID: <ea9f2f27-e9fe-7016-5d5f-56fe1fdfc7a9@samba.org>
+Date:   Tue, 28 Jan 2020 11:18:58 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <965e6e04-aa4c-c179-06f2-37f0527fb5e1@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="xNzVPy8fiuzDJ2gb2kehFMEhKE9xoboE2"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Am 28.01.20 um 00:38 schrieb Jens Axboe:
-> On 1/27/20 4:25 PM, Pavel Begunkov wrote:
->> On 28/01/2020 02:23, Jens Axboe wrote:
->>> On 1/27/20 4:17 PM, Pavel Begunkov wrote:
->>>> On 28/01/2020 02:00, Jens Axboe wrote:
->>>>> On 1/27/20 3:40 PM, Jens Axboe wrote:
->>>>>> On 1/27/20 2:45 PM, Pavel Begunkov wrote:
->>>>>>> On 27/01/2020 23:33, Jens Axboe wrote:
->>>>>>>> On 1/27/20 7:07 AM, Pavel Begunkov wrote:
->>>>>>>>> On 1/27/2020 4:39 PM, Jens Axboe wrote:
->>>>>>>>>> On 1/27/20 6:29 AM, Pavel Begunkov wrote:
->>>>>>>>>>> On 1/26/2020 8:00 PM, Jens Axboe wrote:
->>>>>>>>>>>> On 1/26/20 8:11 AM, Pavel Begunkov wrote:
->>>>>>>>>>>>> On 1/26/2020 4:51 AM, Daurnimator wrote:
->>>>>>>>>>>>>> On Fri, 24 Jan 2020 at 10:16, Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>>>>>> Ok. I can't promise it'll play handy for sharing. Though, you'll be out
->>>>>>>>>>> of space in struct io_uring_params soon anyway.
->>>>>>>>>>
->>>>>>>>>> I'm going to keep what we have for now, as I'm really not imagining a
->>>>>>>>>> lot more sharing - what else would we share? So let's not over-design
->>>>>>>>>> anything.
->>>>>>>>>>
->>>>>>>>> Fair enough. I prefer a ptr to an extendable struct, that will take the
->>>>>>>>> last u64, when needed.
->>>>>>>>>
->>>>>>>>> However, it's still better to share through file descriptors. It's just
->>>>>>>>> not secure enough the way it's now.
->>>>>>>>
->>>>>>>> Is the file descriptor value really a good choice? We just had some
->>>>>>>> confusion on ring sharing across forks. Not sure using an fd value
->>>>>>>> is a sane "key" to use across processes.
->>>>>>>>
->>>>>>> As I see it, the problem with @mm is that uring is dead-bound to it.
->>>>>>> For example, a process can create and send uring (e.g. via socket),
->>>>>>> and then be killed. And that basically means
->>>>>>> 1. @mm of the process is locked just because of the sent uring
->>>>>>> instance.
->>>>>>> 2. a process may have an io_uring, which bound to @mm of another
->>>>>>> process, even though the layouts may be completely different.
->>>>>>>
->>>>>>> File descriptors are different here, because io_uring doesn't know
->>>>>>> about them, They are controlled by the userspace (send, dup, fork,
->>>>>>> etc), and don't sabotage all isolation work done in the kernel. A dire
->>>>>>> example here is stealing io-wq from within a container, which is
->>>>>>> trivial with global self-made id. I would love to hear, if I am
->>>>>>> mistaken somewhere.
->>>>>>>
->>>>>>> Is there some better option?
->>>>>>
->>>>>> OK, so how about this:
->>>>>>
->>>>>> - We use the 'fd' as the lookup key. This makes it easy since we can
->>>>>>   just check if it's a io_uring instance or not, we don't need to do any
->>>>>>   tracking on the side. It also means that the application asking for
->>>>>>   sharing must already have some relationship to the process that
->>>>>>   created the ring.
->>>>
->>>> Yeah, that's exactly the point.
->>>>
->>>>>>
->>>>>> - mm/creds must be transferred through the work item. Any SQE done on
->>>>>>   behalf of io_uring_enter() directly already has that, if punted we
->>>>>>   must pass the creds and mm. This means we break the static setup of
->>>>>>   io_wq->mm/creds. It also means that we probably have to add that to
->>>>>>   io_wq_work, which kind of sucks, but...
->>>>
->>>> ehh, juggling mm's... But don't have anything nicer myself.
->>>
->>> We already do juggle mm's, this is no different. A worker potentially
->>> retain the mm across works if they are the same.
->>>
->>>>> It'd fix Stefan's worry too.
->>>>>
->>>>>> I think with that we have a decent setup, that's also safe. I've dropped
->>>>>> the sharing patches for now, from the 5.6 tree.
->>>>>
->>>>> So one concern might be SQPOLL, it'll have to use the ctx creds and mm
->>>>> as usual. I guess that is ok.
->>>>>
->>>>
->>>> OK. I'll send the patches for the first part now, and take a look at
->>>> the second one a bit latter if isn't done until then.
->>>
->>> Hang on a second, I'm doing the mm and creds bits right now. I'll push
->>> that to a branch, if you want to do the actual fd stuff on top of that,
->>> that would be great.
->>>
->> Sure, should be trivially mergeable.
-> 
-> https://git.kernel.dk/cgit/linux-block/log/?h=for-5.6/io_uring-vfs-wq
-> 
-> Top patch there is the mm/creds passing. I kind of like it even if it
-> means we're growing io_wq_worker (and subsequently io_kiocb) by 16
-> bytes, as it means we can be more flexible. This solves it for this use
-> case, but also the case that Stefan was worried about.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--xNzVPy8fiuzDJ2gb2kehFMEhKE9xoboE2
+Content-Type: multipart/mixed; boundary="0TIZ41FG6UqAgh5j0FNuYtlsRwIPAejbR";
+ protected-headers="v1"
+From: Stefan Metzmacher <metze@samba.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring <io-uring@vger.kernel.org>,
+ Linux API Mailing List <linux-api@vger.kernel.org>
+Message-ID: <ea9f2f27-e9fe-7016-5d5f-56fe1fdfc7a9@samba.org>
+Subject: IORING_REGISTER_CREDS[_UPDATE]() and credfd_create()?
 
-Ok, that means that ctx->creds is only used in the IORING_SETUP_SQPOLL
-case and there it's used for all requests as get_current_cred() is the
-same as ctx->creds from within io_sq_thread(), correct?
+--0TIZ41FG6UqAgh5j0FNuYtlsRwIPAejbR
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-And in all other cases get_current_cred() is used at io_uring_enter() time.
+Hi Jens,
 
-That's good in order to make the behavior consistent again and prevents
-potential random security problems.
+now that we have IORING_FEAT_CUR_PERSONALITY...
 
-BTW: you need to revert/drop 44d282796f81eb1debc1d7cb53245b4cb3214cb5
-in that branch. Or just rebase on v5.5 final?
+How can we optimize the fileserver case now, in order to avoid the
+overhead of always calling 5 syscalls before io_uring_enter()?:
 
-Thanks!
+ /* gain root again */
+ setresuid(-1,0,-1); setresgid(-1,0,-1)
+ /* impersonate the user with groups */
+ setgroups(num, grps); setresgid(-1,gid,-1); setresuid(-1,uid,-1);
+ /* trigger the operation */
+ io_uring_enter();
+
+I guess some kind of IORING_REGISTER_CREDS[_UPDATE] would be
+good, together with a IOSQE_FIXED_CREDS in order to specify
+credentials per operation.
+
+Or we make it much more generic and introduce a credsfd_create()
+syscall in order to get an fd for a credential handle, maybe
+together with another syscall to activate the credentials of
+the current thread (or let a write to the fd trigger the activation
+in order to avoid an additional syscall number).
+
+Having just an fd would allow IORING_REGISTER_CREDS[_UPDATE]
+to be just an array of int values instead of a more complex
+structure to define the credentials.
+
+What do you think?
 metze
+
+
+--0TIZ41FG6UqAgh5j0FNuYtlsRwIPAejbR--
+
+--xNzVPy8fiuzDJ2gb2kehFMEhKE9xoboE2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl4wCpYACgkQDbX1YShp
+vVZt3BAAjKYeQZedFfZ8ij6ejIxHBo0u3zRitnsiSkVJdsEbF/0Jq8vuBuubvzxi
+6XVS+2ltgT+f68teBrkz1kpYoxqU8w7xcT9i3A5bg37mc6wjm05xPYpy9tgfbI4a
+Y1hNo+Ia+/OFS/l0obvnL7AFOanWXvE6U9YFIuMJIdNuT54iZZUOSNgHnlQI8im8
+80T6D3liylKA7w4qcrT/sy3jaXbeqvazes1R3jOdaGzVt0E1I95xuhnqM2oApW1U
++jnUc1mfUw2teG2T3+PJ2rY+59x38fo/l/WpQ2EGXM/j48IQL59uZGz/umHLyzDR
+xtphlKWhXCUzNnqlPPKmgRwh77cwsKtt14FGYlGZmfKFLIIGTITjhz2HQFAAxSpq
+TN20FpQsYg4SSWmTWy44fK1J0PQ6beT9b1FD1n051oTcLLgRPxCwOuCS7vAST9Bh
+BU3v/k6Yxp1z7FDKvlxN9oXdxWdl2W4T9q6Xoa5sZGTUmb1Uu3EWhVFlJQ4hpZ2O
+TaHD60j0tMJcC57/KgNaTxyan0x61juJUtUQfYg2O1+CBN5bnhsZEprdwUY210wO
+iJVi+O426r9vQS2kNY3mdp6NX1xSJDl+pzU7UA0bS4aFYbrFq14+0V/TiyVcIGqW
+wgVisDPg4eScq8idAJ7yRnh9ArfAV9amdx3snhTKAxpDesizWeM=
+=Og5/
+-----END PGP SIGNATURE-----
+
+--xNzVPy8fiuzDJ2gb2kehFMEhKE9xoboE2--

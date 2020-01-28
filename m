@@ -2,118 +2,134 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BAA614B4AB
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2020 14:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D093B14B4C2
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2020 14:20:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725283AbgA1NGx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jan 2020 08:06:53 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:54036 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725852AbgA1NGx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jan 2020 08:06:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580216812;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PVCZBoWITEVn0ar0L5LRVeQOwBalysgHCJ5R42wZfYg=;
-        b=aKKGxSDsN79xFOg8vcf9IlKtLbHaBK9ZrZSFYeOS0vv5m8Jaj5LCkJX2D/Ch7mV+6F0h12
-        3QoxANEWeopJcP2aO/L1XCAG+4TCBpUMMgTC/8BiVHdp+xRk0kEbygVP8h0koDe8B1LnUZ
-        y+raXxSb67A2zp4PiXerKmgndzn0nJ8=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-87-Ur_4pAhSNF26wmfXaLAGpA-1; Tue, 28 Jan 2020 08:06:50 -0500
-X-MC-Unique: Ur_4pAhSNF26wmfXaLAGpA-1
-Received: by mail-wm1-f70.google.com with SMTP id e12so788928wma.7
-        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2020 05:06:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=PVCZBoWITEVn0ar0L5LRVeQOwBalysgHCJ5R42wZfYg=;
-        b=MvcttZAppIn6IRc/995Ry6tSmkCZm1AZofoWCrB/p3CRWmiAiKAC56O15aLI+FizZP
-         JImUpzAxPURyg5gpdTXL6FNoeKTq6BEvv7duxi+75DfMrTqS4HnIRKmBKpRlv7bSvVlH
-         XOkQxyKi7yv9pfT7/pB09yMQZ46bHDaGoYAm032LNpI+W3P3rNmPreUlb4CjZiILfG5+
-         DfuR52159cOHJy+NrPmxYdS2Lskj8fnyhsP2I+eiOkiixOQHrSQ3ZCBiZeuLv3749sNa
-         cgARLP9LZtDdbY5CQBL2I9576z3EvPedV1ls1pYK88bUVEk2p9V2COZNOSkg1N50juXr
-         Y2/Q==
-X-Gm-Message-State: APjAAAUN7i61ggvI2inFWO90b9c+tnR3Y+RKQctEu83N/6M1Jg3hllkf
-        B/wGk9CxmNuM/HXWHHkB7svPlZSiqTkBQfDjZ6lifWUTGH5aTIOQiKh5R4MrPEpG9CkMseapvVJ
-        45kc7/uS7s/hyCPpQpQI=
-X-Received: by 2002:a5d:4d4a:: with SMTP id a10mr30027646wru.220.1580216808906;
-        Tue, 28 Jan 2020 05:06:48 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzFnkEhBvvJuJtmNLUvHluChe4Bv8Ikr8QxAm5+P07CiOQneEKsGEiAF0zCN6YWxKDXkUk42Q==
-X-Received: by 2002:a5d:4d4a:: with SMTP id a10mr30027618wru.220.1580216808670;
-        Tue, 28 Jan 2020 05:06:48 -0800 (PST)
-Received: from steredhat (85-207-217-101.static.bluetone.cz. [85.207.217.101])
-        by smtp.gmail.com with ESMTPSA id v17sm25046478wrt.91.2020.01.28.05.06.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2020 05:06:48 -0800 (PST)
-Date:   Tue, 28 Jan 2020 14:06:46 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH liburing 1/1] test: add epoll test case
-Message-ID: <20200128130646.n3x5co7n3m7gbyzy@steredhat>
-References: <20200127161701.153625-1-sgarzare@redhat.com>
- <20200127161701.153625-2-sgarzare@redhat.com>
- <b1b26e79-507a-b339-2850-d2686661e669@kernel.dk>
- <20200127182534.5ljsj53vzpj6kkru@steredhat>
- <646cbb04-9bef-0d99-64ec-322d1584abe7@kernel.dk>
+        id S1725881AbgA1NUZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jan 2020 08:20:25 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:46375 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbgA1NUZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jan 2020 08:20:25 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200128132023euoutp0260f283eff60255d465af52d0bfd72d8d~uD45ZUWR11868418684euoutp02F
+        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2020 13:20:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200128132023euoutp0260f283eff60255d465af52d0bfd72d8d~uD45ZUWR11868418684euoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1580217623;
+        bh=YQjaE3MTnDd+KhbIU/ti6hTv18/y+fMJHSN1sRL1FMI=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=ihf2YZVGDhZxlCxYyMrJhWv/vt8U8mWQMz3kzO94TDZO6mAykGl2iyzouQF9QiH3J
+         Wcq5ALXvmqC0RJCZeEDhR/UdIIC/t0bSk+0Lf/l6nsttoNj1lttAKp2Pw2oaulHW6i
+         YlG/QQ584J3cxo+totVqij4yEpPEed6xGQQMZpN0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200128132023eucas1p2923a45fe543d1c6f23b3b35d25224c0f~uD45RFMb01816518165eucas1p29;
+        Tue, 28 Jan 2020 13:20:23 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 90.78.60698.715303E5; Tue, 28
+        Jan 2020 13:20:23 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200128132022eucas1p1e94fc561550c26d2c880282fd9ad9c62~uD44_d3T_0518205182eucas1p1z;
+        Tue, 28 Jan 2020 13:20:22 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200128132022eusmtrp21803f600f032e290daa9ca9d4ea3b14b~uD4494vK22647726477eusmtrp2_;
+        Tue, 28 Jan 2020 13:20:22 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-ec-5e30351758e4
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 0D.60.08375.615303E5; Tue, 28
+        Jan 2020 13:20:22 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200128132022eusmtip2f72c604dfb676f3c9a08b0997d5c39ec~uD440-HND2135321353eusmtip2U;
+        Tue, 28 Jan 2020 13:20:22 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
+        Server (TLS) id 15.0.1320.4; Tue, 28 Jan 2020 13:20:22 +0000
+Received: from debbie.aal.scsc.local (106.110.32.48) by
+        CAMSVWEXC02.scsc.local (106.1.227.72) with Microsoft SMTP Server id
+        15.0.1320.4 via Frontend Transport; Tue, 28 Jan 2020 13:20:22 +0000
+From:   "Simon A. F. Lund" <simon.lund@samsung.com>
+To:     <axboe@kernel.dk>
+CC:     <io-uring@vger.kernel.org>
+Subject: [PATCH liburing] test/read-write: fixed output, and added 'nonvec',
+ when VERBOSE
+Date:   Tue, 28 Jan 2020 14:20:05 +0100
+Message-ID: <20200128132005.2234-1-simon.lund@samsung.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <646cbb04-9bef-0d99-64ec-322d1584abe7@kernel.dk>
+Content-Type: text/plain
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCIsWRmVeSWpSXmKPExsWy7djP87ripgZxBnO2cVisvtvPZvGu9RyL
+        A5PH5bOlHp83yQUwRXHZpKTmZJalFunbJXBlfNn+jK3gAHvFwcPb2RsYf7J2MXJySAiYSLxZ
+        toi9i5GLQ0hgBaPE+22vGSGcL4wSl86dZoJwPjNK/Go/BdeycvpfNhBbSGA5o8TzyUZwRS03
+        lrJAOGcYJRoWL2WDcA4zSnw7f5gdpIVNwFBi49S7QAkODhEBUYk5iypBwswCchJLGr6xgISF
+        BaIlzq1UBAmzCKhK/N3yAWwZr4CVxInJ3SwQR8hLnO9dxw4RF5Q4OfMJC8QYeYnmrbOZIWwJ
+        iYMvXjBD1D9mk3jxtQ7CdpE41/QVKi4s8er4FnYIW0bi/875TBB2tcS6811gv0gIdDBKrPiw
+        jBXkNgkBa4m+MzkQNY4Smw/9ZoII80nceCsIsZZPYtK26cwQYV6JjjYhiGo1iR1NWxkhwjIS
+        T9coTGBUmoXk/llI7p+F5P4FjMyrGMVTS4tz01OLjfNSy/WKE3OLS/PS9ZLzczcxAtPC6X/H
+        v+5g3Pcn6RCjAAejEg+vg5JBnBBrYllxZe4hRgkOZiUR3k4moBBvSmJlVWpRfnxRaU5q8SFG
+        aQ4WJXFe40UvY4UE0hNLUrNTUwtSi2CyTBycUg2Mdn3fm2at35FwLvb2TGHfokNH7YL8Xr8+
+        bWjo/1rBsEw25JFmwoH3MueEL1eePGytWrEocPr+qv8/lUt+X9IQt2qw4Hnq2Xjvn278s6eZ
+        T5/+VVEoutIowZVb3dq/S/j5BYEp050uyZv9iUruXnm16cCNpw+fsHZ181/esGRjO4N4Qmvi
+        Su67SizFGYmGWsxFxYkAdRAK+wcDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDLMWRmVeSWpSXmKPExsVy+t/xe7pipgZxBs879C1W3+1ns3jXeo7F
+        gcnj8tlSj8+b5AKYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJz
+        MstSi/TtEvQyvmx/xlZwgL3i4OHt7A2MP1m7GDk5JARMJFZO/8sGYgsJLGWUONEUBxGXkfh0
+        5SM7hC0s8edaF1ANF1DNR0aJ75f2sEA4Zxglns/ezQzhHGaU+HbnGiNIC5uAocTGqXeBWjg4
+        RAREJeYsqgQJMwvISSxp+MYCYgsLREr8an0NtoFFQFXi75YPYFfwClhJnJjczQKxWV7ifO86
+        doi4oMTJmU9YIObISzRvnc0MYUtIHHzxgnkCo+AsJGWzkJTNQlK2gJF5FaNIamlxbnpusaFe
+        cWJucWleul5yfu4mRmDIbzv2c/MOxksbgw8xCnAwKvHwzlAxiBNiTSwrrsw9xCjBwawkwtvJ
+        BBTiTUmsrEotyo8vKs1JLT7EaAr0xERmKdHkfGA85pXEG5oamltYGpobmxubWSiJ83YIHIwR
+        EkhPLEnNTk0tSC2C6WPi4JRqYMw0q1srtH9BkXWxX/+hN/pbH3CK/ny09IzQ452fqy9ddYpi
+        Nbtk87Z396/90tvzd+VOvK17ZM3BKWs6XGf0eTZuWDJpUqGC2bVzUaxhc2+ervsY/eKi3Iyp
+        8d1yC5S2s5m1M/9YeD5jTdr2BdkOu+/dX7n+VthbzeWKlZ2MD8PuqP9lnOX26xmLEktxRqKh
+        FnNRcSIAMdOVLo8CAAA=
+X-CMS-MailID: 20200128132022eucas1p1e94fc561550c26d2c880282fd9ad9c62
+X-Msg-Generator: CA
+X-RootMTR: 20200128132022eucas1p1e94fc561550c26d2c880282fd9ad9c62
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200128132022eucas1p1e94fc561550c26d2c880282fd9ad9c62
+References: <CGME20200128132022eucas1p1e94fc561550c26d2c880282fd9ad9c62@eucas1p1.samsung.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 11:46:34AM -0700, Jens Axboe wrote:
-> On 1/27/20 11:25 AM, Stefano Garzarella wrote:
-> > On Mon, Jan 27, 2020 at 09:32:43AM -0700, Jens Axboe wrote:
-> >> On 1/27/20 9:17 AM, Stefano Garzarella wrote:
-> >>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> >>
-> >> You're not reaping CQ events, and hence you overflow the ring. Once
-> >> overflown, an attempt to submit new IO will returns in a -16/-EBUSY
-> >> return value. This is io_uring telling you that it won't submit more
-> >> IO until you've emptied the completion ring so io_uring can flush
-> >> the overflown entries to the ring.
-> > 
-> > How can I reaping CQ events? (I was hoping the epoll would help me with that)
-> > 
-> > What I'm seeing is that the producer (EPOLLOUT) can fill the SQ without issues,
-> > the consumer (read()) is receiving all the buffers produced, but the thread
-> > that frees the buffers (EPOLLIN) is not woken up.
-> > 
-> > I tried to set a timeout to the epoll_wait(), but the io_uring_peek_cqe()
-> > returns -EAGAIN.
-> > 
-> > If I'm using a ring with 16 entries, it seems to work better, but
-> > sometimes I lose events and the thread that frees the buffer doesn't wake up.
-> > 
-> > Maybe I'm missing something...
-> 
-> OK, so that helps in terms of understanding the issue you are seeing with
-> it. I'll take a look at this, but it'll probably be a few days. You can
-> try and enable tracing, I see events completed just fine. Maybe a race
-> with your epoll wait and event reaping?
+Signed-off-by: Simon A. F. Lund <simon.lund@samsung.com>
+---
+ test/read-write.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-(discard previous email wrongly sent by my phone, sorry for the noise)
-
-Okay, the issue was that my kernel doesn’t support IORING_FEAT_NODROP,
-so for this reason I missed the CQ events.
-
-Avoiding the CQ overflow keeping this condition true
-(submitted - completed < n_entries), solves the issue.
-
-I’ll try with a mainline kernel, handling also the -EBUSY returned by
-io_uring_submit().
-
-Thanks,
-Stefano
+diff --git a/test/read-write.c b/test/read-write.c
+index face66b..64f8fd5 100644
+--- a/test/read-write.c
++++ b/test/read-write.c
+@@ -62,9 +62,10 @@ static int test_io(const char *file, int write, int buffered, int sqthread,
+ 	static int warned;
+ 
+ #ifdef VERBOSE
+-	fprintf(stdout, "%s: start %d/%d/%d/%d/%d: ", __FUNCTION__, write,
++	fprintf(stdout, "%s: start %d/%d/%d/%d/%d/%d: ", __FUNCTION__, write,
+ 							buffered, sqthread,
+-							fixed, mixed_fixed);
++							fixed, mixed_fixed,
++							nonvec);
+ #endif
+ 	if (sqthread && geteuid()) {
+ #ifdef VERBOSE
+@@ -212,7 +213,7 @@ static int test_io(const char *file, int write, int buffered, int sqthread,
+ 	return 0;
+ err:
+ #ifdef VERBOSE
+-	print("FAILED\n");
++	printf("FAILED\n");
+ #endif
+ 	if (fd != -1)
+ 		close(fd);
+-- 
+2.20.1
 

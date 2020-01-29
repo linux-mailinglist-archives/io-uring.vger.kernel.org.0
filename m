@@ -2,150 +2,175 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1860114CFD0
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2020 18:46:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AD0E14D125
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2020 20:20:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbgA2RqV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Jan 2020 12:46:21 -0500
-Received: from mail-lj1-f169.google.com ([209.85.208.169]:43543 "EHLO
-        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbgA2RqV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Jan 2020 12:46:21 -0500
-Received: by mail-lj1-f169.google.com with SMTP id a13so244189ljm.10;
-        Wed, 29 Jan 2020 09:46:19 -0800 (PST)
+        id S1726203AbgA2TU0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Jan 2020 14:20:26 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42418 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbgA2TU0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Jan 2020 14:20:26 -0500
+Received: by mail-io1-f66.google.com with SMTP id n11so998957iom.9
+        for <io-uring@vger.kernel.org>; Wed, 29 Jan 2020 11:20:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QS9r6Pw3kjijpdm49BCeHOyhsA9XNtzwCyIFlvRSyMA=;
-        b=D37nBQNH5impZ1FUQu16DzoaBYe3rJPpMMnFn99HZRX9UW0t4Mrd1bcrtwe0/KcQAn
-         +cwe+VQ1cu66lN4Fvw9sZOITgrNIWmH6zHRjvQJZkpZlLhrzmLlZohn5cSmRYCg6fvjc
-         /6I0ZX3OfvEJCUSVb6WveDRs7BkVSuaNbTLcFyqtyUFCj026BvIi/DuZlD0n1gIss3KI
-         JDhY3TaxASaScAVqOsEfAXmuSZ4qEeB9GIT6Ui2njBRRL3fMwVQv7b1oDo87JtccNMeA
-         dGC85wS+dRCXQe45uZBhy61Chwj+WsoJdOOB2FL7yHSDD65kg+L24jY+9B7Z91fGWv4E
-         NLZQ==
+        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tARdTrkr17b1Gsla+LK2e3Xp7U7ZfWeXdms5wggV1a0=;
+        b=hdbZf8h03ULhfhJC8C3m3qSLKqfyseOZO0s1CSCqdPubCPi/g/aPN3i1eVzVoOsvfD
+         BdMO0fnPTdScPPw/EDo4f3WJwhEaxCB9UJADTFm9YibxnQww4O4v5ck04FqZP1Kk9Wyl
+         aPJnJd9sqmCVZhzvXxOhUxKyku2U1p5YHbhDYQEgiIRKlT4tguzZAE4X7/XRLcRNbzN8
+         /h2X0r8QzmdxrPEuLnmvj4FUREXjA77r+EPqJ5Q53C4uVQG8in/rqezyOaBp9d/Vm9BF
+         7nI7u9DUR16YNygCgmuWYnfteQkfIQGjcIyMlU/ngjf8n9Vtue3cok6TyCF8bVTvBSsS
+         lzxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=QS9r6Pw3kjijpdm49BCeHOyhsA9XNtzwCyIFlvRSyMA=;
-        b=TeUID1nHpgxZcSsc67Qp0XIRak+WGJUSIFr+qjll2UBM3feXz5qNj8nNbu6zU993Uo
-         I9MnrusdZ/J/8au5EhD8EJGlaQvg+udb5sUqPgJ2jfFplZDuJWCE37urfyGASLwp6atz
-         KLre0ZCWaJEspc1YjenwSdOMosp2t5fx0PW35sGUbV752RojCu7V0di8NUPa7XgQ8kQi
-         NbGdV4l9JoygFpOG4DWVXfsGci/LDzoaRQ8MfYrhVHscmP0wlHLBWotHCVOjfyNFd08f
-         +fvUzmih8kHlqGwrX7bKzS64GA0wawyyY2azTyMrRioEolsLyMX/VaGfpJkTCLYhKcHY
-         VY5w==
-X-Gm-Message-State: APjAAAXWdTr7lppT0sfL4zJ73iiwj3wXnrCHPJU5h8vyqnDb2QVFtSww
-        KlWk7HaW4LaD7uqL/WUB99m3FgEl5Fs=
-X-Google-Smtp-Source: APXvYqxCiKlvgF9UCVjzi1PsVxKNsiV6KSf8cb1GHAGKwOUPpNLNULgLRDS2kJ+Pc/xrYP0X5atHwQ==
-X-Received: by 2002:a2e:3504:: with SMTP id z4mr145824ljz.273.1580319978398;
-        Wed, 29 Jan 2020 09:46:18 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id z205sm1366096lfa.52.2020.01.29.09.46.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jan 2020 09:46:17 -0800 (PST)
-Subject: Re: IORING_REGISTER_CREDS[_UPDATE]() and credfd_create()?
-To:     Jens Axboe <axboe@kernel.dk>, Stefan Metzmacher <metze@samba.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>
-References: <ea9f2f27-e9fe-7016-5d5f-56fe1fdfc7a9@samba.org>
- <688e187a-75dd-89d9-921c-67de228605ce@samba.org>
- <b29e972e-5ca0-8b5f-46b3-36f93d865723@kernel.dk>
- <1ac31828-e915-6180-cdb4-36685442ea75@kernel.dk>
- <0d4f43d8-a0c4-920b-5b8f-127c1c5a3fad@kernel.dk>
- <b88f0590-71c9-d2bd-9d17-027b05d30d7a@kernel.dk>
- <2d7e7fa2-e725-8beb-90b9-6476d48bdb33@gmail.com>
- <6c401e23-de7c-1fc1-4122-33d53fcf9700@kernel.dk>
- <35eebae7-76dd-52ee-58b2-4f9e85caee40@kernel.dk>
- <d3f9c1a4-8b28-3cfe-de88-503837a143bc@gmail.com>
- <c9e58b5c-f66e-8406-16d5-fd6df1a27e77@kernel.dk>
- <6e5ab6bf-6ff1-14df-1988-a80a7c6c9294@gmail.com>
- <2019e952-df2a-6b57-3571-73c525c5ba1a@kernel.dk>
- <0df4904f-780b-5d5f-8700-41df47a1b470@kernel.dk>
- <5406612e-299d-9d6e-96fc-c962eb93887f@gmail.com>
- <821243e7-b470-ad7a-c1a5-535bee58e76d@samba.org>
- <9a419bc5-4445-318d-87aa-1474b49266dd@gmail.com>
- <40d52623-5f9c-d804-cdeb-b7da6b13cb4f@samba.org>
- <3e1289de-8d8e-49cf-cc9f-fb7bc67f35d5@gmail.com>
- <9aef3b3b-7e71-f7f1-b366-2517b4d52719@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <d27dce12-66b9-9389-871e-714299270809@gmail.com>
-Date:   Wed, 29 Jan 2020 20:46:16 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        bh=tARdTrkr17b1Gsla+LK2e3Xp7U7ZfWeXdms5wggV1a0=;
+        b=Jfa6qkhMr+VVJtN6mUvQKbqW7aQ/HGaLlQ2ET0oe3Um1EkSoMQ4NfWwmDk5dMSYU+t
+         PSVhBMeJDpQUy5HX0Rgpra7bFcETAlZWWj6EXvXjNQS8X767XBnW5edcdwGo1pzed+Ac
+         ++UNsdb0E5pv3gFUPT7ykKCMNMMFYiGVWa/SBME+sqdb2BD7klBNLO301mq11ItFKg+H
+         gaJVfliY2uXyLPe6ZxeAOOVCmut5RsJ86OTeX5nsr52tGprOiQNtj7e9ZhwzcNtttRRi
+         hxuORfYZV9IH3h7i3p1L1uid3jvtiqPJ27fiHcF47lYqw+HT1TbiQlEqBRlCfoZeHX8b
+         /0Ag==
+X-Gm-Message-State: APjAAAWSJfwGOqgL40J0G4HfZw/oU5WRBhMVJwTlvBfnL+tORLTQi1H8
+        fOgDssvs8wyQa18tp4TDp2VIDnHvQthmmA==
+X-Google-Smtp-Source: APXvYqxl1y3XhXVONmuH2FfMJxdM1XqR/nJOtx28CSjzCXJWLbvSFezCglwyv6Ptr7tla1kdhbX3yg==
+X-Received: by 2002:a5d:8043:: with SMTP id b3mr923448ior.192.1580325623920;
+        Wed, 29 Jan 2020 11:20:23 -0800 (PST)
+Received: from trueserverstrongandfree.hitronhub.home ([2607:fea8:8400:f64::7])
+        by smtp.googlemail.com with ESMTPSA id t2sm990114ild.34.2020.01.29.11.20.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2020 11:20:23 -0800 (PST)
+From:   Glauber Costa <glauber@scylladb.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, Glauber Costa <glauber@scylladb.com>,
+        Avi Kivity <avi@scylladb.com>
+Subject: [PATCH] add a helper function to verify io_uring functionality
+Date:   Wed, 29 Jan 2020 14:20:16 -0500
+Message-Id: <20200129192016.6407-1-glauber@scylladb.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <9aef3b3b-7e71-f7f1-b366-2517b4d52719@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/29/2020 8:34 PM, Jens Axboe wrote:
-> On 1/29/20 7:23 AM, Pavel Begunkov wrote:
->>>>> The override_creds(personality_creds) has changed current->cred
->>>>> and get_current_cred() will just pick it up as in the default case.
->>>>>
->>>>> This would make the patch much simpler and allows put_cred() to be
->>>>> in io_put_work() instead of __io_req_aux_free() as explained above.
->>>>>
->>>>
->>>> It's one extra get_current_cred(). I'd prefer to find another way to
->>>> clean this up.
->>>
->>> As far as I can see it avoids a get_cred() in the IOSQE_PERSONALITY case
->>> and the if (!req->work.creds) for both cases.
->>
->> Great, that you turned attention to that! override_creds() is already
->> grabbing a ref, so it shouldn't call get_cred() there.
->> So, that's a bug.
-> 
-> It's not though - one is dropped in that function, the other when the
-> request is freed. So we do need two references to it. With the proposed
-> change to keep the override_creds() variable local for that spot we
-> don't, and the get_cred() can then go.
+It is common for an application using an ever-evolving interface to want
+to inquire about the presence of certain functionality it plans to use.
 
-You're right here. It seems, it was too much looking at the same code :)
+The boilerplate to do that is about always the same: find places that
+have feature bits, match that with what we need, rinse, repeat.
+Therefore it makes sense to move this to a library function.
 
-> 
->> It could be I'm wrong with the statement above, need to recheck all this
->> code to be sure.
-> 
-> I think you are :-)
+We have two places in which we can check for such features: the feature
+flag returned by io_uring_init_params(), and the resulting array
+returning from io_uring_probe.
 
-Considering above, there shouldn't be much difference indeed.
-One extra rcu_dereference() in get_current_creds() instead of
-get_cred(), but that's nothing.
+I tried my best to communicate as well as possible in the function
+signature the fact that this is not supposed to test the availability
+of io_uring (which is straightforward enough), but rather a minimum set
+of requirements for usage.
 
-Later we can hide one get by using submission state from the long
-patchset, I sent a while ago.
+Signed-off-by: Glauber Costa <glauber@scylladb.com>
+CC: Avi Kivity <avi@scylladb.com>
+---
+ src/include/liburing.h | 13 +++++++++++++
+ src/liburing.map       |  1 +
+ src/setup.c            | 39 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 53 insertions(+)
 
-> 
->> BTW, io_req_defer_prep() may be called twice for a req, so you will
->> reassign it without putting a ref. It's safer to leave NULL checks. At
->> least, until I've done reworking and fixing preparation paths.
-> 
-> Agree, the NULL checks are safer and we should keep them.
-> 
-> Going through the rest of this thread, I'm making the following changes:
-> 
-> - ID must be > 0. I like that change, as we don't need an sqe flag to
->   select personality then, and it also makes it obvious that id == 0 is
->   just using current creds.
-> 
-> - Fixed the missing put_cred() in the teardown
-> 
-> - Use a local variable in io_submit_sqe() instead of assigning the
->   creds to req->work.creds there
-> 
-> - Use cyclic idr allocation
-> 
-> I'm going to fold in as appropriate. If there are fixes needed on top of
-> that, let's do them separately.
-> 
-
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 83d11dd..d740083 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -72,6 +72,19 @@ struct io_uring {
+ /*
+  * Library interface
+  */
++
++/* Checks that io_uring is modern enough for a particular case.
++ * Check it by verifying that:
++ *
++ *  - io_uring is available
++ *  - the io_uring_probe call is available, so opcodes can be checked
++ *  - all opcodes the application wants to use are supported
++ *  - the features requested are present.
++ *
++ *  return 0 if io_uring is not usable, 1 otherwise.
++ */
++extern int io_uring_check_minimum_support(const int* operations, int noperations, int features);
++
+ extern int io_uring_queue_init_params(unsigned entries, struct io_uring *ring,
+ 	struct io_uring_params *p);
+ extern int io_uring_queue_init(unsigned entries, struct io_uring *ring,
+diff --git a/src/liburing.map b/src/liburing.map
+index b45f373..579d4de 100644
+--- a/src/liburing.map
++++ b/src/liburing.map
+@@ -72,4 +72,5 @@ LIBURING_0.4 {
+ 		io_uring_register_probe;
+ 		io_uring_register_personality;
+ 		io_uring_unregister_personality;
++		io_uring_check_minimum_support;
+ } LIBURING_0.3;
+diff --git a/src/setup.c b/src/setup.c
+index c53f234..7e46219 100644
+--- a/src/setup.c
++++ b/src/setup.c
+@@ -4,6 +4,7 @@
+ #include <unistd.h>
+ #include <errno.h>
+ #include <string.h>
++#include <stdlib.h>
+ 
+ #include "liburing/compat.h"
+ #include "liburing/io_uring.h"
+@@ -167,3 +168,41 @@ void io_uring_queue_exit(struct io_uring *ring)
+ 	io_uring_unmap_rings(sq, cq);
+ 	close(ring->ring_fd);
+ }
++
++int io_uring_check_minimum_support(const int* operations, int noperations, int features)
++{
++	struct io_uring_params p;
++	struct io_uring_probe* probe;
++	struct io_uring ring;
++	int r;
++	int i;
++	int ret = 0;
++
++	memset(&p, 0, sizeof(p));
++	r = io_uring_queue_init_params(2, &ring, &p);
++	if (r < 0)
++		return ret;
++
++	if ((p.features & features) != features)
++		goto exit;
++
++	size_t len = sizeof(*probe) + 256 * sizeof(struct io_uring_probe_op);
++	probe = malloc(len);
++	memset(probe, 0, len);
++	r = io_uring_register_probe(&ring, probe, 256);
++	if (r < 0)
++		goto exit;
++
++	for (i = 0; i < noperations; i++) {
++		int op = operations[i];
++		if (probe->last_op < op)
++			goto exit;
++
++		if (!(probe->ops[op].flags & IO_URING_OP_SUPPORTED))
++			goto exit;
++	}
++	ret = 1;
++exit:
++	io_uring_queue_exit(&ring);
++	return ret;
++}
 -- 
-Pavel Begunkov
+2.20.1
+

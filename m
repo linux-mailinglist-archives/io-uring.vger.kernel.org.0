@@ -2,51 +2,50 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 158FB14C3E0
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2020 01:18:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87C5014C3E6
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2020 01:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbgA2ASu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jan 2020 19:18:50 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43694 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbgA2ASu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jan 2020 19:18:50 -0500
-Received: by mail-pf1-f196.google.com with SMTP id s1so6909197pfh.10
-        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2020 16:18:49 -0800 (PST)
+        id S1726402AbgA2AUD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jan 2020 19:20:03 -0500
+Received: from mail-pg1-f180.google.com ([209.85.215.180]:33553 "EHLO
+        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbgA2AUD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jan 2020 19:20:03 -0500
+Received: by mail-pg1-f180.google.com with SMTP id 6so7908908pgk.0
+        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2020 16:20:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Xu0t7fQFOPxeBK58JhveLHReraKm9bUYSb0AKFkvn/Y=;
-        b=ecLBFq3oczw0ffuQm/J+InSnKBAUPAv8869Xc/2a5qLYe2jSwpwbmYj8nsV0a71Twt
-         IZ11Fmx0g0xz+57FSlOy6uL+anS82lUJGOY/XY+ipXTVS5CQCJslLiT+KAGBV49v1ljA
-         WAEMKPJGTP1AAsode9vw1OreOTu0I9U+GtABSYXOcINnewILjNmOZ9HE4ilhOzjOGpo3
-         4oigRdjVVnD1mjX+LsHGoU7PFMEoB/5JpS4ioJAaTVXPokn7uB2qCq5mYxnle7wNczMj
-         vJzNL4Wh/+1fHsniRl+PCPVieU4/76817w3o+DbymJsbI9j7Qfv5TwWSLiMtJ4xH8hgD
-         0YzA==
+        bh=8kyp/VrhKERhG+K9hmS2Utzgr/wVLR2b6aoPqZM79B8=;
+        b=r0kpkmQnfZmk9IbPJO4MAEgMnD2y/qsDQvmgioR/iMb4vvB/K8JRT1+0ktFzm2jpPK
+         VKX9vXncytbjxDo0X/4a7CKFfOZrFk78e1xncDUYVSeokq3c2zX3wwvZ20AoIdH6RtbR
+         o+eq7J6JmE7m1cU/CfOzTONCCdu+/XaJcg1Q33sp5B3RgjQiwLIby2YQp0ijAe1CZW0w
+         n26pZBYIQ8GP7Qa8tirpkEKdaZOipH0R0rQlRoV4J31HunXjSpBIQBNaWIJgZ4gvGU3+
+         KGGj2h8kMovtRqeN46OoQOCB3pK7HwJ8SkSsGFM0x4sL8xbEUiVstCG27ukIcdTUPhAi
+         o8FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Xu0t7fQFOPxeBK58JhveLHReraKm9bUYSb0AKFkvn/Y=;
-        b=a05ut7A4r+JRxHEVYCtkvnCMthgiSzzvOf5u3jPbq8Zed6gp0cN0Ev3UO6cSxpfA/r
-         4YoxLejqUI48HwZG5zYakI0DK4h2wCqqqob9oMPr2uK1/dr9UaCw1+wJlFtPAKx1EDhL
-         iHRLYVAxWhM58VmTqMRSFcwXDR6CfrK+P//vmPGB77EYRt2AnrCF2Tw81YJqyIAd6z5L
-         6Ms7rDzA6mI4i25bqFqqoO5Zpdc+IatGeJ+FwtauOQ2hwLr2dSwnc0xv4x34ciK/qV/8
-         TPBJWtC+VW0+Ok80adfMunfRfxu8L/Ks9XMp2tVOvgFPmMT+kno8rZL8iVeiga1Zl65d
-         g7LQ==
-X-Gm-Message-State: APjAAAVUAABknhqLLQ1pW/UgVB2o4O05YpWi9F2JgC/JuumSE3i+jInF
-        bcynyAT0qiCaHOtbmcKfT0DStw==
-X-Google-Smtp-Source: APXvYqxHgZkaGIBKVJrxFT0ryGUAAWh3XtK5Z4Ea5Gq9qWbw+MPmRwZ92FhWTJR8CtwbF0WMNB+66w==
-X-Received: by 2002:a63:5f84:: with SMTP id t126mr26845132pgb.71.1580257129418;
-        Tue, 28 Jan 2020 16:18:49 -0800 (PST)
+        bh=8kyp/VrhKERhG+K9hmS2Utzgr/wVLR2b6aoPqZM79B8=;
+        b=CEwFlBmX0kYTi5rgE3xiXCWRVcCdcL04ZZ/UjruMRpl43W++xkfuuCdJuUh0oGAuCv
+         oUo6p06Bv+XToveOtXUFk7EvcITlbJN+WzbuAfzCVtMV+SoDO+6wczAuuzj2U56k+G7Q
+         I5K4+erw0C7dFqk0sbt3IyXSZ979v+y+psgHpACo+o7WJiopV8Wf5mLX8hNLIWSx3XFV
+         UdCg0HDmD+tNefTHnA89cv02iQUOZQXM5VQ6M+WJyFGYVBbRPhgRgKDxzp+722xMIg1U
+         g6ro4cWGiWIvc2bscKIR00UgHxcd+/ZKRZ8OZUWn6S9J3boQdXWJxpPU3wraisDxRiSy
+         ijHg==
+X-Gm-Message-State: APjAAAXUYkQb7bXzJLDsYd9YAvc6Ff3PDzCx1oa1PfwLUnfZ3/bO8ray
+        8P7aZP7qtkJl8GzXsRDpFDXqwA==
+X-Google-Smtp-Source: APXvYqxj/VTK9uE+Yaw3RPpOWhOxp4InAorRUcwedVhsztPskMNJGVyfs9h+72dJLxMSsxQvo1THTw==
+X-Received: by 2002:a63:5d4d:: with SMTP id o13mr26855190pgm.182.1580257202717;
+        Tue, 28 Jan 2020 16:20:02 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id y2sm184158pff.139.2020.01.28.16.18.48
+        by smtp.gmail.com with ESMTPSA id x65sm186209pfb.171.2020.01.28.16.20.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jan 2020 16:18:49 -0800 (PST)
+        Tue, 28 Jan 2020 16:20:02 -0800 (PST)
 Subject: Re: IORING_REGISTER_CREDS[_UPDATE]() and credfd_create()?
-From:   Jens Axboe <axboe@kernel.dk>
 To:     Pavel Begunkov <asml.silence@gmail.com>,
         Stefan Metzmacher <metze@samba.org>
 Cc:     io-uring <io-uring@vger.kernel.org>,
@@ -62,13 +61,13 @@ References: <ea9f2f27-e9fe-7016-5d5f-56fe1fdfc7a9@samba.org>
  <6c401e23-de7c-1fc1-4122-33d53fcf9700@kernel.dk>
  <35eebae7-76dd-52ee-58b2-4f9e85caee40@kernel.dk>
  <d3f9c1a4-8b28-3cfe-de88-503837a143bc@gmail.com>
- <6415ae98-e205-5374-296d-0442e1ed2034@kernel.dk>
-Message-ID: <a54d66b8-6c50-7a34-1e9e-5954c4ccd3e8@kernel.dk>
-Date:   Tue, 28 Jan 2020 17:18:47 -0700
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c9e58b5c-f66e-8406-16d5-fd6df1a27e77@kernel.dk>
+Date:   Tue, 28 Jan 2020 17:20:00 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <6415ae98-e205-5374-296d-0442e1ed2034@kernel.dk>
+In-Reply-To: <d3f9c1a4-8b28-3cfe-de88-503837a143bc@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,119 +76,21 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/28/20 5:15 PM, Jens Axboe wrote:
-> On 1/28/20 5:10 PM, Pavel Begunkov wrote:
->> On 29/01/2020 02:51, Jens Axboe wrote:
->>> On 1/28/20 4:40 PM, Jens Axboe wrote:
->>>> On 1/28/20 4:36 PM, Pavel Begunkov wrote:
->>>>> On 28/01/2020 22:42, Jens Axboe wrote:
->>>>>> I didn't like it becoming a bit too complicated, both in terms of
->>>>>> implementation and use. And the fact that we'd have to jump through
->>>>>> hoops to make this work for a full chain.
->>>>>>
->>>>>> So I punted and just added sqe->personality and IOSQE_PERSONALITY.
->>>>>> This makes it way easier to use. Same branch:
->>>>>>
->>>>>> https://git.kernel.dk/cgit/linux-block/log/?h=for-5.6/io_uring-vfs-creds
->>>>>>
->>>>>> I'd feel much better with this variant for 5.6.
->>>>>>
->>>>>
->>>>> Checked out ("don't use static creds/mm assignments")
->>>>>
->>>>> 1. do we miscount cred refs? We grab one in get_current_cred() for each async
->>>>> request, but if (worker->creds != work->creds) it will never be put.
+On 1/28/20 5:10 PM, Pavel Begunkov wrote:
+>>>> Checked out ("don't use static creds/mm assignments")
 >>>>
->>>> Yeah I think you're right, that needs a bit of fixing up.
+>>>> 1. do we miscount cred refs? We grab one in get_current_cred() for each async
+>>>> request, but if (worker->creds != work->creds) it will never be put.
 >>>
+>>> Yeah I think you're right, that needs a bit of fixing up.
 >>
->> Hmm, it seems it leaks it unconditionally, as it grabs in a ref in
->> override_creds().
->>
->>> I think this may have gotten fixed with the later addition posted today?
->>> I'll double check. But for the newer stuff, we put it for both cases
->>> when the request is freed.
->>
->> Yeah, maybe. I got tangled trying to verify both at once and decided to start
->> with the old one.
->>
->>
->>>>> 2. shouldn't worker->creds be named {old,saved,etc}_creds? It's set as
->>>>>
->>>>>     worker->creds = override_creds(work->creds);
->>>>>
->>>>> Where override_creds() returns previous creds. And if so, then the following
->>>>> fast check looks strange:
->>>>>
->>>>>     worker->creds != work->creds
->>>>
->>>> Don't care too much about the naming, but the logic does appear off.
->>>> I'll take a look at both of these tonight, unless you beat me to it.
->>
->> Apparently, you're faster :)
->>
->>>
->>> Testing this now, what a braino.
->>>
->>> diff --git a/fs/io-wq.c b/fs/io-wq.c
->>> index ee49e8852d39..8fbbadf04cc3 100644
->>> --- a/fs/io-wq.c
->>> +++ b/fs/io-wq.c
->>> @@ -56,7 +56,8 @@ struct io_worker {
->>>  
->>>  	struct rcu_head rcu;
->>>  	struct mm_struct *mm;
->>> -	const struct cred *creds;
->>> +	const struct cred *cur_creds;
->>> +	const struct cred *saved_creds;
->>>  	struct files_struct *restore_files;
->>>  };
->>>  
->>> @@ -135,9 +136,9 @@ static bool __io_worker_unuse(struct io_wqe *wqe, struct io_worker *worker)
->>>  {
->>>  	bool dropped_lock = false;
->>>  
->>> -	if (worker->creds) {
->>> -		revert_creds(worker->creds);
->>> -		worker->creds = NULL;
->>> +	if (worker->saved_creds) {
->>> +		revert_creds(worker->saved_creds);
->>> +		worker->cur_creds = worker->saved_creds = NULL;
->>>  	}
->>>  
->>>  	if (current->files != worker->restore_files) {
->>> @@ -424,10 +425,11 @@ static void io_wq_switch_mm(struct io_worker *worker, struct io_wq_work *work)
->>>  static void io_wq_switch_creds(struct io_worker *worker,
->>>  			       struct io_wq_work *work)
->>>  {
->>> -	if (worker->creds)
->>> -		revert_creds(worker->creds);
->>> +	if (worker->saved_creds)
->>> +		revert_creds(worker->saved_creds);
->>>  
->>> -	worker->creds = override_creds(work->creds);
->>> +	worker->saved_creds = override_creds(work->creds);
->>> +	worker->cur_creds = work->creds;
->>>  }
->>
->> How about as follows? rever_creds() is a bit heavier than put_creds().
->>
->> static void io_wq_switch_creds(struct io_worker *worker,
->> 			       struct io_wq_work *work)
->> {
->> 	const struct cred *old_creds = override_creds(work->creds);
->>
->> 	if (worker->saved_creds)
->> 		put_cred(old_creds);
->> 	else
->> 		worker->saved_creds = old;
->> 	worker->cur_creds = work->creds;
->> }
 > 
-> Looks good to me, I'll fold.
+> Hmm, it seems it leaks it unconditionally, as it grabs in a ref in
+> override_creds().
+> 
 
-Actually, it doesn't clear current->cred then, which seems a bit..
-unfortunate. Could be a source of issues.
+We grab one there, and an extra one. Then we drop one of them inline,
+and the other in __io_req_aux_free().
 
 -- 
 Jens Axboe

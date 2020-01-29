@@ -2,53 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 429B914CFC9
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2020 18:42:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1860114CFD0
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2020 18:46:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbgA2RmQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Jan 2020 12:42:16 -0500
-Received: from mail-io1-f48.google.com ([209.85.166.48]:35403 "EHLO
-        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbgA2RmQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Jan 2020 12:42:16 -0500
-Received: by mail-io1-f48.google.com with SMTP id h8so693563iob.2
-        for <io-uring@vger.kernel.org>; Wed, 29 Jan 2020 09:42:15 -0800 (PST)
+        id S1727290AbgA2RqV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Jan 2020 12:46:21 -0500
+Received: from mail-lj1-f169.google.com ([209.85.208.169]:43543 "EHLO
+        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726679AbgA2RqV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Jan 2020 12:46:21 -0500
+Received: by mail-lj1-f169.google.com with SMTP id a13so244189ljm.10;
+        Wed, 29 Jan 2020 09:46:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=c/PaCl2xkoxkKr7PKewuQH6ZMYi7SOFMEsRi72zCft0=;
-        b=FBMHWlFOzfgHHMufrlWlQ5OKMv5jU/Ixh8niFQ+h4dsJZsQkjoUNVrL13drl8bWfaO
-         E/lCeJACOih8MKPZyulPOrNnGkyUO53whet5U9rXMQFwlkGHfN5THnQScEuengxxsmoj
-         M3BtOBe8FthslEczBe8zRC3UQ8qNcLFS6aXc+2mto9CKyeCssPjG+Uxt1WlVqg6z85Nq
-         0BMdMSsssH8/795J5N60hUTaq7jLilslH0VvKX/LMUHdDW188X9d5Ve/zFwfdrVEeQal
-         yq8bv7eyysumkUGoyO/6cRq0LQx3ftHqh4ozXrLNPVPQ1u/kKGD+MIt68/8byu4uY3ch
-         BKIQ==
+        bh=QS9r6Pw3kjijpdm49BCeHOyhsA9XNtzwCyIFlvRSyMA=;
+        b=D37nBQNH5impZ1FUQu16DzoaBYe3rJPpMMnFn99HZRX9UW0t4Mrd1bcrtwe0/KcQAn
+         +cwe+VQ1cu66lN4Fvw9sZOITgrNIWmH6zHRjvQJZkpZlLhrzmLlZohn5cSmRYCg6fvjc
+         /6I0ZX3OfvEJCUSVb6WveDRs7BkVSuaNbTLcFyqtyUFCj026BvIi/DuZlD0n1gIss3KI
+         JDhY3TaxASaScAVqOsEfAXmuSZ4qEeB9GIT6Ui2njBRRL3fMwVQv7b1oDo87JtccNMeA
+         dGC85wS+dRCXQe45uZBhy61Chwj+WsoJdOOB2FL7yHSDD65kg+L24jY+9B7Z91fGWv4E
+         NLZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=c/PaCl2xkoxkKr7PKewuQH6ZMYi7SOFMEsRi72zCft0=;
-        b=lIbPO1/L3yYXKo9m1ifgL0qybvAqWbEBgW4F9aCsIaizKwbz5rJ3exx35F14RJGAUy
-         wo0PxD3MTtZyeAHC8vmci4SyqXzIIbGRn9zqD5qQ0lrO2aLdhFfqWp6D1Cr5ogW5exAf
-         VjFta+4pwsrrgrdyYkfQ9iaazs3CCWUu0K2vFhFUOwwU3KI9RCGNfuLOGmnWe22+wDox
-         vXU7mp1/aZVur4uI88sZyAA7Xdd0d3MHO7Q3MBCZSBGTID+07Wco9ObgP/6tI6S3s6Jw
-         kSW48uL9g+vKqk5et5xAjNxyDS3pTkhYfzdlzgLF45idvFIO7/z6m/kwZl1gxmLdtLL2
-         NPIQ==
-X-Gm-Message-State: APjAAAUidBBZB46QkWw9pDdCrg6qDMFogUU0h3p0SjKJtkQHPa0MeJzD
-        iCia6HWqbWIDdRGnTPFoFBvx+w==
-X-Google-Smtp-Source: APXvYqxQpQ96F2/ImIUt7I12UspEtfcQLo75Mnz2j/CGh8+0TRgNNmrkOceOg9/sDd7X4LY5z9IpNQ==
-X-Received: by 2002:a02:a694:: with SMTP id j20mr205499jam.69.1580319735479;
-        Wed, 29 Jan 2020 09:42:15 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id s21sm687570ioa.33.2020.01.29.09.42.14
+        bh=QS9r6Pw3kjijpdm49BCeHOyhsA9XNtzwCyIFlvRSyMA=;
+        b=TeUID1nHpgxZcSsc67Qp0XIRak+WGJUSIFr+qjll2UBM3feXz5qNj8nNbu6zU993Uo
+         I9MnrusdZ/J/8au5EhD8EJGlaQvg+udb5sUqPgJ2jfFplZDuJWCE37urfyGASLwp6atz
+         KLre0ZCWaJEspc1YjenwSdOMosp2t5fx0PW35sGUbV752RojCu7V0di8NUPa7XgQ8kQi
+         NbGdV4l9JoygFpOG4DWVXfsGci/LDzoaRQ8MfYrhVHscmP0wlHLBWotHCVOjfyNFd08f
+         +fvUzmih8kHlqGwrX7bKzS64GA0wawyyY2azTyMrRioEolsLyMX/VaGfpJkTCLYhKcHY
+         VY5w==
+X-Gm-Message-State: APjAAAXWdTr7lppT0sfL4zJ73iiwj3wXnrCHPJU5h8vyqnDb2QVFtSww
+        KlWk7HaW4LaD7uqL/WUB99m3FgEl5Fs=
+X-Google-Smtp-Source: APXvYqxCiKlvgF9UCVjzi1PsVxKNsiV6KSf8cb1GHAGKwOUPpNLNULgLRDS2kJ+Pc/xrYP0X5atHwQ==
+X-Received: by 2002:a2e:3504:: with SMTP id z4mr145824ljz.273.1580319978398;
+        Wed, 29 Jan 2020 09:46:18 -0800 (PST)
+Received: from [172.31.190.83] ([86.57.146.226])
+        by smtp.gmail.com with ESMTPSA id z205sm1366096lfa.52.2020.01.29.09.46.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jan 2020 09:42:14 -0800 (PST)
+        Wed, 29 Jan 2020 09:46:17 -0800 (PST)
 Subject: Re: IORING_REGISTER_CREDS[_UPDATE]() and credfd_create()?
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Metzmacher <metze@samba.org>
+To:     Jens Axboe <axboe@kernel.dk>, Stefan Metzmacher <metze@samba.org>
 Cc:     io-uring <io-uring@vger.kernel.org>,
         Linux API Mailing List <linux-api@vger.kernel.org>
 References: <ea9f2f27-e9fe-7016-5d5f-56fe1fdfc7a9@samba.org>
@@ -71,10 +69,11 @@ References: <ea9f2f27-e9fe-7016-5d5f-56fe1fdfc7a9@samba.org>
  <40d52623-5f9c-d804-cdeb-b7da6b13cb4f@samba.org>
  <3e1289de-8d8e-49cf-cc9f-fb7bc67f35d5@gmail.com>
  <9aef3b3b-7e71-f7f1-b366-2517b4d52719@kernel.dk>
-Message-ID: <b3382961-8288-ec09-9019-5248f87dd86c@kernel.dk>
-Date:   Wed, 29 Jan 2020 10:42:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <d27dce12-66b9-9389-871e-714299270809@gmail.com>
+Date:   Wed, 29 Jan 2020 20:46:16 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
 In-Reply-To: <9aef3b3b-7e71-f7f1-b366-2517b4d52719@kernel.dk>
 Content-Type: text/plain; charset=utf-8
@@ -85,7 +84,7 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/29/20 10:34 AM, Jens Axboe wrote:
+On 1/29/2020 8:34 PM, Jens Axboe wrote:
 > On 1/29/20 7:23 AM, Pavel Begunkov wrote:
 >>>>> The override_creds(personality_creds) has changed current->cred
 >>>>> and get_current_cred() will just pick it up as in the default case.
@@ -108,11 +107,22 @@ On 1/29/20 10:34 AM, Jens Axboe wrote:
 > request is freed. So we do need two references to it. With the proposed
 > change to keep the override_creds() variable local for that spot we
 > don't, and the get_cred() can then go.
+
+You're right here. It seems, it was too much looking at the same code :)
+
 > 
 >> It could be I'm wrong with the statement above, need to recheck all this
 >> code to be sure.
 > 
 > I think you are :-)
+
+Considering above, there shouldn't be much difference indeed.
+One extra rcu_dereference() in get_current_creds() instead of
+get_cred(), but that's nothing.
+
+Later we can hide one get by using submission state from the long
+patchset, I sent a while ago.
+
 > 
 >> BTW, io_req_defer_prep() may be called twice for a req, so you will
 >> reassign it without putting a ref. It's safer to leave NULL checks. At
@@ -135,11 +145,7 @@ On 1/29/20 10:34 AM, Jens Axboe wrote:
 > 
 > I'm going to fold in as appropriate. If there are fixes needed on top of
 > that, let's do them separately.
-
-In particular, would love a patch that only assigns req->work.creds if
-we do go async, so we can leave the put_cred() in io_put_work()
-instead of needing it in __io_req_aux_free().
+> 
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

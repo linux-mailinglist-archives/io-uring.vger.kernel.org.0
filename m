@@ -2,146 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7456F14E83B
-	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 06:25:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB88E14E8E7
+	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 07:42:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726023AbgAaFZB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Jan 2020 00:25:01 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37212 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbgAaFZB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 00:25:01 -0500
-Received: by mail-pg1-f193.google.com with SMTP id q127so2851319pga.4
-        for <io-uring@vger.kernel.org>; Thu, 30 Jan 2020 21:24:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=cTZJjbub+t4whVe2OqpYAc4XOoLzdddWMo7ijJTomFM=;
-        b=KduraYKzYhqELCevVnUJhvvWJEm7+o/w27ZI61EFQAhiIiheeoIqgnXLzC6hC+8Y1V
-         sGsrNNBUDt0pL/TEZPs97hNbYua3UI9oSdJBAEGYCONXVrsUwFVLgbswDWtjnZQ7nDwe
-         9txtJx7n3dg2/o4VwfI5CJsNFB+0umss8Kdfwp6xv7/O5DiVQDACQZda3X/DpvJS8+cs
-         5W0EjQnBvqEWhRGxxwn0YUbknAYmLBBgxkcJxh6QuW3zbtKzl/LCbthMQGeoOp1l0oif
-         9iIDibskLYFeWL8gCBYjNFfq3aEY/NWt3MIm3Hmq72tZ3tHUcvuSY/hdoHbdwfqzKKs1
-         duIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=cTZJjbub+t4whVe2OqpYAc4XOoLzdddWMo7ijJTomFM=;
-        b=FJ51Sw4XcIGkw62v0GcKA7bHz9bupZw/WtliYZqHWnTWnKVs0lpaNMuOSmiDPLqFqT
-         5EE8N9n2SMZp6HWGTf27B+YLEgFumdd3KUp9v7FIhVaM28DpvzhyuFWFS1E5aMapiPxz
-         wisYa9PPyZBi+XQe4ED7uQ81Vn6w7tjiC6GylT598Yll6QpjgB4nVP5tN/1EKrhzT+Lz
-         1zCFVI/ZU85E/4IU0F89kR4BRgd8+mzug/PRUhsIjlxWvJJyp/62Nv2FQfSjSRjTBxXi
-         IQAMTh4UwGvmGCFtVoKmtHSC+/y9rb6v/yPCWd9MqVt3nYTQwCs9oygXE4ky5rxEOFSy
-         Qerg==
-X-Gm-Message-State: APjAAAWYRPOKpPi+YXiF+1aDtWGyYKIPh4ARDryVjvb2A7Ihg92Ryc/f
-        bGb2IRq1z98TCk0OVgMlamdyQdcYJzg=
-X-Google-Smtp-Source: APXvYqxt2iYVgBm/1p7mu//DOKCkZvwyZhwHwrVOunRNrKeYCnKqyv4EWPEmHJEpHz5v7AakbcVFvg==
-X-Received: by 2002:a63:4d4c:: with SMTP id n12mr8730380pgl.212.1580448299040;
-        Thu, 30 Jan 2020 21:24:59 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id a185sm8406581pge.15.2020.01.30.21.24.58
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2020 21:24:58 -0800 (PST)
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: prevent eventfd recursion on poll
-Message-ID: <73f985c9-66df-3a80-3aee-05c89a35faad@kernel.dk>
-Date:   Thu, 30 Jan 2020 22:24:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726127AbgAaGmc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 31 Jan 2020 01:42:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53334 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbgAaGmb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 01:42:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4RziqBNwPU1PXyuUYR4uTQ9MUQMUjgsmxUEvgGf8uVg=; b=mbwTRV+JFE7kOQ/Zc1q7EWWLo
+        b/r6VaG5PA2zFHi4pvVcHg00QQM2cM663Xq1D41XOwf0UQdQdBNI2xvUvvuRWZc0z3F9LIYg5uvSB
+        Od2BHuooTiRfcTGuydXKRdUSEgl6XNVJsSYSUM37WQMbf/wb7XNSVQDdHWL3GqkwTsluhlPKhw6S/
+        EP3EB4/pADxjzTK6JdQpS2tIBSbJEw8Ly4vzgw/v+FJrXluZhHIuqgyn0eOfaxQ3TI9XX6banLZW8
+        zNWG9hIz5ggAbgKPzcd24gpk7VbDWT32ozJTEJsOQql+384AXzT7RsS4uJWfpkFJ7BZl+lVgNVI5k
+        PbQlk0vAw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ixQ0c-0000EL-Oy; Fri, 31 Jan 2020 06:42:30 +0000
+Date:   Thu, 30 Jan 2020 22:42:30 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org
+Subject: Re: [PATCH 1/1] block: Manage bio references so the bio persists
+ until necessary
+Message-ID: <20200131064230.GA28151@infradead.org>
+References: <1580441022-59129-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1580441022-59129-2-git-send-email-bijan.mottahedeh@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1580441022-59129-2-git-send-email-bijan.mottahedeh@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If we register an eventfd with io_uring for completion notification,
-and then subsequently does a poll for that very descriptor, then we
-can trigger a deadlock scenario. Once a request completes and signals
-the eventfd context, that will in turn trigger the poll command to
-complete. When that poll request completes, it'll try trigger another
-event on the eventfd, but this time off the path led us to complete
-the poll in the first place. The result is a deadlock in eventfd,
-as it tries to ctx->wqh.lock in a nested fashion.
+On Thu, Jan 30, 2020 at 07:23:42PM -0800, Bijan Mottahedeh wrote:
+> Get a reference to a bio, so it won't be freed if end_io() gets to
+> it before submit_io() returns.  Defer the release of the first bio
+> in a mult-bio request until the last end_io() since the first bio is
+> embedded in the dio structure and must therefore persist through an
+> entire multi-bio request.
 
-Check if the file in question for the poll request is our eventfd
-context, and if it is, don't trigger a nested event for the poll
-completion.
+Can you explain the issue a little more?
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-We're holding the file here, so checking ->private_data is fine.
-It's a bit iffy in that it implies knowledge that this is where
-eventfd stores the ctx. We could potentially make that helper in
-eventfd, if needed.
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ac5340fdcdfe..5788c2139c72 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1025,16 +1025,21 @@ static inline bool io_should_trigger_evfd(struct io_ring_ctx *ctx)
- 	return io_wq_current_is_worker() || in_interrupt();
- }
- 
--static void io_cqring_ev_posted(struct io_ring_ctx *ctx)
-+static void __io_cqring_ev_posted(struct io_ring_ctx *ctx, bool no_evfd)
- {
- 	if (waitqueue_active(&ctx->wait))
- 		wake_up(&ctx->wait);
- 	if (waitqueue_active(&ctx->sqo_wait))
- 		wake_up(&ctx->sqo_wait);
--	if (ctx->cq_ev_fd && io_should_trigger_evfd(ctx))
-+	if (!no_evfd && ctx->cq_ev_fd && io_should_trigger_evfd(ctx))
- 		eventfd_signal(ctx->cq_ev_fd, 1);
- }
- 
-+static void io_cqring_ev_posted(struct io_ring_ctx *ctx)
-+{
-+	__io_cqring_ev_posted(ctx, false);
-+}
-+
- /* Returns true if there are no backlogged entries after the flush */
- static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
- {
-@@ -3586,13 +3591,27 @@ static int io_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- 
- 		if (llist_empty(&ctx->poll_llist) &&
- 		    spin_trylock_irqsave(&ctx->completion_lock, flags)) {
-+			bool no_evfd = false;
-+
- 			hash_del(&req->hash_node);
- 			io_poll_complete(req, mask, 0);
- 			req->flags |= REQ_F_COMP_LOCKED;
-+
-+			/*
-+			 * If the file triggering the poll is our eventfd
-+			 * context, then don't trigger another event for this
-+			 * request. If we do, we can recurse, as this poll
-+			 * request may be triggered by a completion that
-+			 * signaled our eventfd.
-+			 */
-+			if (ctx->cq_ev_fd &&
-+			    req->file->private_data == ctx->cq_ev_fd)
-+				no_evfd = true;
-+
- 			io_put_req(req);
- 			spin_unlock_irqrestore(&ctx->completion_lock, flags);
- 
--			io_cqring_ev_posted(ctx);
-+			__io_cqring_ev_posted(ctx, no_evfd);
- 			req = NULL;
- 		} else {
- 			req->result = mask;
-
--- 
-Jens Axboe
-
+The initial bio is embedded into the dio, and will have a reference
+until the bio_put call at the end of the function, so we can't have
+a race for that one and won't ever need the refcount for the single
+bio case.  Avoiding the atomic is pretty important for aio/uring
+performance.

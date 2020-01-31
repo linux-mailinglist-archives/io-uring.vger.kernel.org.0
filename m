@@ -2,102 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16E7114EDFC
-	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 14:52:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B76A14EE74
+	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 15:30:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728726AbgAaNwR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Jan 2020 08:52:17 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32848 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728711AbgAaNwR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 08:52:17 -0500
-Received: by mail-lj1-f194.google.com with SMTP id y6so7198084lji.0
-        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2020 05:52:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LXtoyDbRhJ1GDdgHuSvQPa215Cd1GpLKYxadt+kW0Pw=;
-        b=G3irzPF3OOtKYKeJtZcs95l544OTGs4eFBFlfVdrSSPIMvJ9Fln7Fb4Hm3yvUN870C
-         HMkTPoe2nthLRCExbdPih0AErGT5VPG1gKgR30+wvmhE6tgDMPWn4CpiwPcEq7yXU38J
-         lR3PyL3FY/0f8T3E80Ub1HPcxFspfnY7g/2oa2WpWAA78yvtozR1NPLzbv/8rr8xQ311
-         t/l+LHELDF1jDzjhXf2wrBUisLL1Nq3GDqWney0Q19/Kb5r6Ve/oBS8n/1rVnjJJEZg5
-         6GbOPZnwxf5a8pWjJ+v9hYLGbA6O+pOK3GlDnnDSg9rLrCBfZE6iuS1VBmqIHMss0apc
-         ktFg==
+        id S1729050AbgAaO3w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 31 Jan 2020 09:29:52 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:36930 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728827AbgAaO3w (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 09:29:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580480990;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=PejrRp0WLHfGD9bvxIDUPY9VeT1zBnFCJg8McZ4Axj8=;
+        b=KTPgREVzU1HhZEqzN8p6BlPFaDnDfaUPPvy9fXXEsY+JQ+FXD+MaJijYGXY3xGzk3WvQ3z
+        uW2mUErG+zOD5sRiJ7KhyIKhLHVZHPyj2ZYw/hbsG89i13MEccurHDuBDRkdc0ityFyqva
+        NlXnnEFu95NTSi1aTMaf1Xx2kvZwSLs=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-337-_dEwtEeSOGi2Cnu9b6EtTA-1; Fri, 31 Jan 2020 09:29:46 -0500
+X-MC-Unique: _dEwtEeSOGi2Cnu9b6EtTA-1
+Received: by mail-wr1-f72.google.com with SMTP id h30so3433766wrh.5
+        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2020 06:29:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LXtoyDbRhJ1GDdgHuSvQPa215Cd1GpLKYxadt+kW0Pw=;
-        b=pahy0kouxiQ0+aD1J9xakokRFkO8QZVE1C072lXi5+REx/h8qsvHWo3cM1zKGKkYYL
-         pTWMS2anMZakIDSzQ6buu3FWmyBJm6WAD1LA5FQceTLM+S3/6XCakxZioWa/5pGz2sOb
-         m+OOZGElEorPud9v4ipGAFW+z8ngVBR3hbYjnspPnisvqe1qtqc4+27rRFF6CzCfwEv2
-         RMiOLtHc9PsvSZP4Eystfjunvqdl93P+oqkG19OF4LBpM1zG45Jva4EsF87XrNa+rYeB
-         g0huvc4dvK+gj9DlmZPksfgpQdOFShjB7IB8jmEzbEBWo6dpGpzyijJ/a95Fqu9+IQb1
-         7+pA==
-X-Gm-Message-State: APjAAAX1CWANbWOgWFcMLITN2fb7IH9VjKNDFTdGdKHdchLyKyKXt/s7
-        30zcFC1ZRTY4DMytKlw7gi8SXN2QBaj9N4YR/oK7/Q==
-X-Google-Smtp-Source: APXvYqyaaJYxzY+pDnZj2mFGXMxemfcvDbkG49xKpYr1N+RozmG1FbAvNrsaUUl8dIF2v6kl/bYQepnTzUiVsdcWxI8=
-X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr6128021ljm.233.1580478734924;
- Fri, 31 Jan 2020 05:52:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20200130160013.21315-1-glauber@scylladb.com> <94074992-eb67-def1-5f74-5e412dda18fd@kernel.dk>
- <CAD-J=zZURZV46Tzx4fC4EteD4ejL=axKaw-CjtyFmYhCYzKEdg@mail.gmail.com> <3338257d-009d-1db0-c77a-2bf06e5518f2@kernel.dk>
-In-Reply-To: <3338257d-009d-1db0-c77a-2bf06e5518f2@kernel.dk>
-From:   Glauber Costa <glauber@scylladb.com>
-Date:   Fri, 31 Jan 2020 08:52:03 -0500
-Message-ID: <CAD-J=zaHpYPj-UOK46AhdKgSHQF2Hd5b_tjZ_+d9qAdu5VHXhA@mail.gmail.com>
-Subject: Re: [PATCH v2 liburing] add helper functions to verify io_uring functionality
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PejrRp0WLHfGD9bvxIDUPY9VeT1zBnFCJg8McZ4Axj8=;
+        b=hIju7KXquFgE/NmrnpDVnqIV3HXtYxihjfSrX2rhmcZt0cULN2Ur6VvshIdBtJ7vjc
+         2siQQfr0haqASgooCf7cU3I23OySmApiLHVxVQAZu2k/qM1TvuNeGROAONtbj2IZvDkf
+         mqUGPynmCeYos+B1uNYPsE98+TkKOxxBw1YNfThFFuVlrZ6d7xXmDp6aufjM7iqT9yuM
+         CULCeeY0AAF4XoT2xeVPGmg07YsAN8KA2gFLILCOtMNG4GJ8kRZFDu2RpVqZVLqEuLuL
+         czWDbHo2x+bFls3qK3kfLWxtShTkma+jRi4FRXxncAfSdvLQqsuJofN7OEWuOpyCEELG
+         BaIw==
+X-Gm-Message-State: APjAAAWgeJPso5KdiDOti63ypIOZVzaDOQf+70Tc+aVm3KD4s74bNlt2
+        qp7Z/s3HHX+ON/+rhguBewKXgWJ/v0qqCr6zW+0rF7jZpFnC194ec7mcPH8oKWMONFnJx/5QnuJ
+        NE1bts+w/NLuBxGz0Og8=
+X-Received: by 2002:a5d:44cd:: with SMTP id z13mr12704423wrr.104.1580480985569;
+        Fri, 31 Jan 2020 06:29:45 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwRMCxZHckpDcEhNoxHFfQhtFNCylRmCEGUWCEZZXq7Gu5uARj7G8YWRmdg39dMpUlGXg1t/g==
+X-Received: by 2002:a5d:44cd:: with SMTP id z13mr12704407wrr.104.1580480985325;
+        Fri, 31 Jan 2020 06:29:45 -0800 (PST)
+Received: from steredhat.redhat.com (host209-4-dynamic.27-79-r.retail.telecomitalia.it. [79.27.4.209])
+        by smtp.gmail.com with ESMTPSA id z19sm10394558wmi.43.2020.01.31.06.29.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Jan 2020 06:29:44 -0800 (PST)
+From:   Stefano Garzarella <sgarzare@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Avi Kivity <avi@scylladb.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: [PATCH liburing v2 0/1] test: add epoll test case
+Date:   Fri, 31 Jan 2020 15:29:42 +0100
+Message-Id: <20200131142943.120459-1-sgarzare@redhat.com>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 11:31 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 1/30/20 9:29 AM, Glauber Costa wrote:
-> > On Thu, Jan 30, 2020 at 11:13 AM Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> On 1/30/20 9:00 AM, Glauber Costa wrote:
-> >>> It is common for an application using an ever-evolving interface to want
-> >>> to inquire about the presence of certain functionality it plans to use.
-> >>>
-> >>> Information about opcodes is stored in a io_uring_probe structure. There
-> >>> is usually some boilerplate involved in initializing one, and then using
-> >>> it to check if it is enabled.
-> >>>
-> >>> This patch adds two new helper functions: one that returns a pointer to
-> >>> a io_uring_probe (or null if it probe is not available), and another one
-> >>> that given a probe checks if the opcode is supported.
-> >>
-> >> This looks good, I committed it with minor changes.
-> >>
-> >> On top of this, we should have a helper that doesn't need a ring. So
-> >> basically one that just sets up a ring, calls io_uring_get_probe(),
-> >> then tears down the ring.
-> >>
-> > I'd be happy to follow up with that.
-> >
-> > Just to be sure, the information returned by probe should be able to outlive the
-> > tear down of the ring, right ?
->
-> Yeah, same lifetime as the helper you have now, caller must free it once
-> done.
+Hi Jens,
+this is a v2 of the epoll test.
 
-Well, in hindsight, I should have called that
-io_uring_get_probe_ring() so io_uring_get_probe()
-doesn't take a ring.
+v1 -> v2:
+    - if IORING_FEAT_NODROP is not available, avoid to overflow the CQ
+    - add 2 new tests to test epoll with IORING_FEAT_NODROP
+    - cleanups
 
-Alternatively, to keep things in a single function, I can change
-io_uring_get_probe() so that if it
-ring is NULL, we do our own allocation.
+There are 4 sub-tests:
+    1. test_epoll
+    2. test_epoll_sqpoll
+    3. test_epoll_nodrop
+    4. test_epoll_sqpoll_nodrop
 
-I actually kind of like that. Would that work for you ?
+In the first 2 tests, I try to avoid to queue more requests than we have room
+for in the CQ ring. These work fine, I have no faults.
 
->
-> --
-> Jens Axboe
->
+In the tests 3 and 4, if IORING_FEAT_NODROP is supported, I try to submit as
+much as I can until I get a -EBUSY, but they often fail in this way:
+the submitter manages to submit everything, the receiver receives all the
+submitted bytes, but the cleaner loses completion events (I also tried to put a
+timeout to epoll_wait() in the cleaner to be sure that it is not related to the
+patch that I send some weeks ago, but the situation doesn't change, it's like
+there is still overflow in the CQ).
+
+Next week I'll try to investigate better which is the problem.
+
+I hope my test make sense, otherwise let me know what is wrong.
+
+Anyway, when I was exploring the library, I had a doubt:
+- in the __io_uring_get_cqe() should we call sys_io_uring_enter() also if
+  submit and wait_nr are zero, but IORING_SQ_NEED_WAKEUP is set in the
+  sq.kflags?
+
+Thanks,
+Stefano
+
+Stefano Garzarella (1):
+  test: add epoll test case
+
+ .gitignore    |   1 +
+ test/Makefile |   5 +-
+ test/epoll.c  | 386 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 390 insertions(+), 2 deletions(-)
+ create mode 100644 test/epoll.c
+
+-- 
+2.24.1
+

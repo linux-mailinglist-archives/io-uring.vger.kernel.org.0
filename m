@@ -2,115 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A612414EF8B
-	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 16:27:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AB8D14EF8E
+	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 16:28:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728839AbgAaP1n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Jan 2020 10:27:43 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46119 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728752AbgAaP1m (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 10:27:42 -0500
-Received: by mail-lj1-f196.google.com with SMTP id x14so7446928ljd.13
-        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2020 07:27:40 -0800 (PST)
+        id S1728958AbgAaP2O (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 31 Jan 2020 10:28:14 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33255 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728893AbgAaP2O (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 10:28:14 -0500
+Received: by mail-lj1-f194.google.com with SMTP id y6so7539128lji.0
+        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2020 07:28:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=scylladb-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qc4iV7u+7LZJudYZfUI6zVNlh7gRpRZuAwpNVS04Lhc=;
-        b=0DgVl6rKp4JHwn/OhoPWRJI4QY2Bfwwx6nsdEYDAPteJ5G3+ttcNlb/5E5r9pGX9po
-         LsnFphOVEZvH5LpvM6uSUFSaczmfsyeBcz3kDQMxTpy+NhRxQvF3sx/shSd1f9HZcy6t
-         6+4K/YUkxCXBW98Fz24gstr+MVWssZGd3/+kuTjIhkWj6SvnSLSCxpXONzZ79RPFsO0y
-         cQX2h4xZDclrj19XUtInJlXlpHDvpomFBLEkKec/scPHEm8D8NHu3xJohcRpi8Av/tJL
-         HO4MWnMks+jkRMqVhwbicvsc+CdAINQxj9rryYBOCApnxPCPM7R5/dbS4CZ89Dm5O8sL
-         9bUw==
+        bh=r92wjDOXiwcz3Y2pJxc7TJujukW/5/2e2ye2R9cnhYQ=;
+        b=azXsQwo1hwPA1bD8MJocXVqlocZ3wZt65jDjZBhwbVRbMZvZXZaOV1+uPor0zZS7Lj
+         SWlEGW6Bfi7fmc+SHcUh8y7YyM2q8zOpNr8KcmdFD1Pk2FOpTZAT2630gMihWVDV28ND
+         GUBSTlAnCDdkqs9QZLnEV4ifYQTMOTBdEbLko/R9c8laLfBm4BbdVIki1O0LsMvDrnWO
+         IFeFGaLjatWuYhB/gzkQ7otIpf4dlFJS3XsPhKc+IExNpJ7w158BwFjqGPUbTu3DlRRS
+         W3JT2wNDm0MvXaw4rC0aQ3Nj9YTc3t1ERsS6TfAOuEnXRtR0L66yWW6IE0hy+eDj3ppQ
+         XMlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qc4iV7u+7LZJudYZfUI6zVNlh7gRpRZuAwpNVS04Lhc=;
-        b=OYlz79zKwIe1XSYPkfl8V3E8hHPVbJRRgQ4GvcG+sfFrFHQw6YnRKkUFDRFGcG+LAp
-         lh7tLIe1NRpLCZ7g3vC7Skk0AeXy9vCDBhtWMAnBA2byT/3vTeu1+F9KVIU5V7RMv+u2
-         VSGRh43b6Li9alvPEBm8JZHhJNxUoWbYNH3Sw0aOKt1DOreSX5tezJ4K6f9kgjW0yPBr
-         arjIEddHpTkKgDceAIlw/3ODgWRBuZqkZiaTSzR5HzLAod7okvNWNRhxbUW3NWRj62F4
-         LVEf618SSbzKvPU8tSxYS7ifTSih3Awh5btwzYhC4vxzJhpr0xa/OmGtdpRhz6r9FlDv
-         Vjwg==
-X-Gm-Message-State: APjAAAU+L75DFaU0IlwB5aCMNuY1yrC4yxeBATiQ2jz9f+0/UCOY+rjq
-        Ya17TLoyQ+ACgsieURRFuUvR9o6yEJZuQDdJoW5htw==
-X-Google-Smtp-Source: APXvYqytdVDAJwx/PWqC0I679F1nNuSYOCBUO5jM8tcQx5SK20D1rHR9jSfaNbQ3x4FohbU9PldQXr+QfxSKR3IlIvM=
-X-Received: by 2002:a2e:9052:: with SMTP id n18mr6163722ljg.251.1580484459192;
- Fri, 31 Jan 2020 07:27:39 -0800 (PST)
+        bh=r92wjDOXiwcz3Y2pJxc7TJujukW/5/2e2ye2R9cnhYQ=;
+        b=rHbUEVPJLKFAg0te4WVwF5MtiCRYB36PcPS3TH/3F1Il8PA3W+86bb8bfIvxn/pgR9
+         Zas7B1UgbPawl9NpP0jHwePrzZjrbdL4cDCF2HwC7Zp3FWyiB78F5A6D6e9xWhXs8YnR
+         wPAA9v7nX52TgYa8HBvH9Dk/8HyHK/vXfffU3un2LR8vM1x78ykjWoUXhn83tdUlwvQN
+         Qw4oXSFOj/9DaEcLGBFATQOc31OIBGmNWy/Lz/26hzfQYs8zJLyjNzv4GtbgrgRsl8g8
+         CQpnLnUBZ44KnmbTfF/WoGNTTI4u7l9T3QJq0KYojLWDd1TjdNduQ9t4s5bq2aGpTr1T
+         ynDg==
+X-Gm-Message-State: APjAAAXnH6F5tMnbkIB2Z3Qr51K2AaNkd2rdsgq073llEr5tkJ7F5W2t
+        7MsM0Y33VU64vrc4JLWTh+TYzgHlXVx7E1N2Q+Q39A==
+X-Google-Smtp-Source: APXvYqyboQI74ChabIth+Eba7nttLS046MFm6QonAuZLeQJ48skuIaiOzQJbUY6hmcLiNOJFGQb6bzkM6VxSKTXHcYY=
+X-Received: by 2002:a2e:b4e7:: with SMTP id s7mr6564955ljm.58.1580484492607;
+ Fri, 31 Jan 2020 07:28:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20200130160013.21315-1-glauber@scylladb.com> <94074992-eb67-def1-5f74-5e412dda18fd@kernel.dk>
- <CAD-J=zZURZV46Tzx4fC4EteD4ejL=axKaw-CjtyFmYhCYzKEdg@mail.gmail.com>
- <3338257d-009d-1db0-c77a-2bf06e5518f2@kernel.dk> <CAD-J=zaHpYPj-UOK46AhdKgSHQF2Hd5b_tjZ_+d9qAdu5VHXhA@mail.gmail.com>
- <d08b04c0-535e-4837-bd83-531f231259b9@kernel.dk>
-In-Reply-To: <d08b04c0-535e-4837-bd83-531f231259b9@kernel.dk>
+References: <20200131150002.4191-1-glauber@scylladb.com> <d4cff1bf-bb75-e202-26c8-a6d82fae5737@kernel.dk>
+In-Reply-To: <d4cff1bf-bb75-e202-26c8-a6d82fae5737@kernel.dk>
 From:   Glauber Costa <glauber@scylladb.com>
-Date:   Fri, 31 Jan 2020 10:27:27 -0500
-Message-ID: <CAD-J=zYGgKA74OAuQzNt14-zpxFs1ryKw9TBkQ_vzVUfMos4qQ@mail.gmail.com>
-Subject: Re: [PATCH v2 liburing] add helper functions to verify io_uring functionality
+Date:   Fri, 31 Jan 2020 10:28:01 -0500
+Message-ID: <CAD-J=zYGOCSa34u6MCLOs+j9_Kc+C4AhMwdDh+WeK+qmE53ntQ@mail.gmail.com>
+Subject: Re: [PATCH liburing] add another helper for probing existing opcodes
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Avi Kivity <avi@scylladb.com>
+Cc:     io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 10:14 AM Jens Axboe <axboe@kernel.dk> wrote:
+On Fri, Jan 31, 2020 at 10:24 AM Jens Axboe <axboe@kernel.dk> wrote:
 >
-> On 1/31/20 6:52 AM, Glauber Costa wrote:
-> > On Thu, Jan 30, 2020 at 11:31 AM Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> On 1/30/20 9:29 AM, Glauber Costa wrote:
-> >>> On Thu, Jan 30, 2020 at 11:13 AM Jens Axboe <axboe@kernel.dk> wrote:
-> >>>>
-> >>>> On 1/30/20 9:00 AM, Glauber Costa wrote:
-> >>>>> It is common for an application using an ever-evolving interface to want
-> >>>>> to inquire about the presence of certain functionality it plans to use.
-> >>>>>
-> >>>>> Information about opcodes is stored in a io_uring_probe structure. There
-> >>>>> is usually some boilerplate involved in initializing one, and then using
-> >>>>> it to check if it is enabled.
-> >>>>>
-> >>>>> This patch adds two new helper functions: one that returns a pointer to
-> >>>>> a io_uring_probe (or null if it probe is not available), and another one
-> >>>>> that given a probe checks if the opcode is supported.
-> >>>>
-> >>>> This looks good, I committed it with minor changes.
-> >>>>
-> >>>> On top of this, we should have a helper that doesn't need a ring. So
-> >>>> basically one that just sets up a ring, calls io_uring_get_probe(),
-> >>>> then tears down the ring.
-> >>>>
-> >>> I'd be happy to follow up with that.
-> >>>
-> >>> Just to be sure, the information returned by probe should be able to outlive the
-> >>> tear down of the ring, right ?
-> >>
-> >> Yeah, same lifetime as the helper you have now, caller must free it once
-> >> done.
+> On 1/31/20 8:00 AM, Glauber Costa wrote:
+> > There are situations where one does not have a ring initialized yet, and
+> > yet they may want to know which opcodes are supported before doing so.
 > >
-> > Well, in hindsight, I should have called that
-> > io_uring_get_probe_ring() so io_uring_get_probe()
-> > doesn't take a ring.
->
-> Just change it - we just added it yesterday, and it's not released yet.
-> I don't break anything that's been in a release, and I maintain
-> compatibility between releases, but we can change it now.
-
-Yeah, I figured as much and ended up changing it.
-
->
-> > Alternatively, to keep things in a single function, I can change
-> > io_uring_get_probe() so that if it
-> > ring is NULL, we do our own allocation.
+> > We have recently introduced io_uring_get_probe(io_uring*) to do a
+> > similar task when the ring already exists. Because this was committed
+> > recently and this hasn't seen a release, I thought I would just go ahead
+> > and change that to io_uring_get_probe_ring(io_uring*), because I suck at
+> > finding another meaningful name for this case (io_uring_get_probe_noring
+> > sounded way too ugly to me)
 > >
-> > I actually kind of like that. Would that work for you ?
+> > A minimal ring is initialized and torn down inside the function.
+> >
+> > Signed-off-by: Glauber Costa <glauber@scylladb.com>
+> > ---
+> >  src/include/liburing.h |  4 +++-
+> >  src/liburing.map       |  1 +
+> >  src/setup.c            | 15 ++++++++++++++-
+> >  test/probe.c           |  2 +-
+> >  4 files changed, 19 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/src/include/liburing.h b/src/include/liburing.h
+> > index 39db902..aa11282 100644
+> > --- a/src/include/liburing.h
+> > +++ b/src/include/liburing.h
+> > @@ -77,7 +77,9 @@ struct io_uring {
+> >   * return an allocated io_uring_probe structure, or NULL if probe fails (for
+> >   * example, if it is not available). The caller is responsible for freeing it
+> >   */
+> > -extern struct io_uring_probe *io_uring_get_probe(struct io_uring *ring);
+> > +extern struct io_uring_probe *io_uring_get_probe_ring(struct io_uring *ring);
+> > +/* same as io_uring_get_probe_ring, but takes care of ring init and teardown */
+> > +extern struct io_uring_probe *io_uring_get_probe();
 >
-> Not a huge deal to me, we can go that route.
+> Include 'void' for no parameter.
 >
-> --
-> Jens Axboe
+> > @@ -186,3 +186,16 @@ fail:
+> >       free(probe);
+> >       return NULL;
+> >  }
+> > +
+> > +struct io_uring_probe *io_uring_get_probe() {
 >
+> void here as well, and new line before the opening bracket.
+>
+> Minor stuff, rest looks fine to me.
+
+What's next? tabs instead of spaces?
+You monsters.

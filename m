@@ -2,60 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF9D14EFD2
-	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 16:40:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 188AC14EFE5
+	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 16:41:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729004AbgAaPkg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Jan 2020 10:40:36 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41726 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728992AbgAaPkg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 10:40:36 -0500
-Received: by mail-io1-f66.google.com with SMTP id m25so8592844ioo.8
-        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2020 07:40:34 -0800 (PST)
+        id S1729004AbgAaPlv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 31 Jan 2020 10:41:51 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:32946 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728752AbgAaPlv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 10:41:51 -0500
+Received: by mail-il1-f196.google.com with SMTP id s18so6530197iln.0
+        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2020 07:41:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=eAKq2QyfLcdTlNJtYIhV7Qdf7evmCf6D/ZKWaBrIri8=;
-        b=1S1ocajOfoVQDsQAePYk/Opj//sSoDraop8mA/wqvw7HxI5ufoDV2lGSTJU2k/AoSY
-         R7nradd2LoceUf8E/g5IL5uZek8Vj8BFgKhX0P9FQvuImoBn98U+q3EIv/sOUuuknz/e
-         v9SmFuBwc47r+i7bJg0r5Zsnpw3N/TQ/DYFUiVXmozHun7HasvnhyQozVACmQCAPvYR6
-         dJZnjtjYA/mavgakmVjEC+h31ojA6JLX6QeY18NXPGuvj/p/kvlWk7R0pJ6fV2a7FzhT
-         kB1Dvsuk5KPTECmDE6qylPyZSpTD45G3OdmTTtrKnQtNyC2Lb2WlqtQTNT2US5f3cQyz
-         RwhQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Bt/QheAZ930twwioViVJw8WXYDgWI7UHXp6ZgLfEFvU=;
+        b=A6Y2AxBNtVwdIYHMVc3HVU8q/VzulMbzj/3/CIXAT1NEl9g+rtYxLOZL0iajhtIH2h
+         MiLriuEA35OxvITi1H1wcLnMy7zEM42kjWp+nV44p6Hs6yBhBUfYF+CthIJYAayJ+nuX
+         KCQQixMqG90XFFpLWL+nGFGJg9T506YOP0lJW6PDhMwqcDTVKct76WRd6XFLaMwx9Bkn
+         uEPZ5feqGTRx9pGjZYNwqYBDDal5sa/0x7x1nfjPOy+8A/wZoVtP/FpcAUGoMrx6NeH8
+         OxL2xDbd8/HQGw316yFtDyGmr6CYXUjoHNSbCIXsqxQx0jR0aDHoNuccm35OKtmQ3Fpg
+         eIYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=eAKq2QyfLcdTlNJtYIhV7Qdf7evmCf6D/ZKWaBrIri8=;
-        b=pJTFnQL+iocdLZQp9AgKFpRlAmE28x8KKxiEdNtgcf+6sF7LH2U8fQenP6s2JS/l3S
-         99UDwe58noT3GcQt3XHhlhvfXju3TO5swthdrekIrYk1JbwYHCO+duKmXPUMMw7VwXd9
-         QouMMkOZO+vVaocWxKI5dMuXjQJKEx0DRunxJjqBz/FNe22gRWGAyJExwcggXB5HfI/p
-         kcR0HODNHf29MF6eXm6I0kfSayZvYaCbw5vnarCIvQ5+stz6SyDOpIigLmHGTDcILdrz
-         OWc7ugKn+6fZMfZcyenyBl2g8GSkk9lZHahE7TSNNMYerimzzAdCcucpXvnNGsDb3B4F
-         o5bA==
-X-Gm-Message-State: APjAAAV6jzAimX5uB8RlzDSnQWbJFjj1C3ZgmjvWSYW/kPrBhzpF17YJ
-        BTjr44CwjM93Px7uZ6o5AWwDOkV6jiE=
-X-Google-Smtp-Source: APXvYqzYz7i6rV7JzTEJHHWTfdvoJY7wYO7JGAQ4HU+XB2MLO//zG/4xNM03ukNtdnnIuUyw5UC64Q==
-X-Received: by 2002:a02:ce5c:: with SMTP id y28mr8949739jar.96.1580485234322;
-        Fri, 31 Jan 2020 07:40:34 -0800 (PST)
+        bh=Bt/QheAZ930twwioViVJw8WXYDgWI7UHXp6ZgLfEFvU=;
+        b=RxbHk/CFgvicNQIBqxy1dpqNFF/m8kwJfA2xLoKO62r338zMYW0TEvP5SoIw/Df2Ob
+         wC2ls60REbLGD4xRlJDamAtCAcXez4ouU7iMwu05Ef7f8EcJMtBLVMPXSRYc5O69hV7x
+         2yqO/J1yw641PDZZgSkZZlbe4eMiGRimXcRgNjtQ/F2GA0L2GIjLoNajrDJzhXqmvCF2
+         obqDQkhn4wvOc17MwhPo9Oj8XHK24s5ctt+x34O15wOZFrHJ/w8gtq1Awe1EsLcjE4vi
+         X00aZC4WocTt7GTt3juMyBWQuUHwP6Glwc2/uTIYvOuFfXLR43VOxr19wJEwmemqy8zu
+         2zuw==
+X-Gm-Message-State: APjAAAVnIYe9fnhdbLDqv10FTXMjn9U8pYSq25EJHdZJMVEhbQrQTLI8
+        Z5BwWI6/jR3oLAJqztZs8hrJPpmJphg=
+X-Google-Smtp-Source: APXvYqzmFO+FwGR8L2EL82Fy4qUmOkX9hKN8xdZIQNl3E/nj/xI2hVeg29FnzUN/wjKuFPY47A0oeQ==
+X-Received: by 2002:a05:6e02:4cc:: with SMTP id f12mr3138757ils.90.1580485310666;
+        Fri, 31 Jan 2020 07:41:50 -0800 (PST)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id h19sm3270800ild.76.2020.01.31.07.40.33
+        by smtp.gmail.com with ESMTPSA id s88sm3276032ilk.79.2020.01.31.07.41.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Jan 2020 07:40:34 -0800 (PST)
-Subject: Re: [PATCH liburing v2] add another helper for probing existing
- opcodes
-To:     Glauber Costa <glauber@scylladb.com>, io-uring@vger.kernel.org
-References: <20200131153744.4750-1-glauber@scylladb.com>
+        Fri, 31 Jan 2020 07:41:50 -0800 (PST)
+Subject: Re: [PATCH liburing v2 1/1] test: add epoll test case
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20200131142943.120459-1-sgarzare@redhat.com>
+ <20200131142943.120459-2-sgarzare@redhat.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ddc796dc-0020-5ae5-6f01-15c4c609c8a3@kernel.dk>
-Date:   Fri, 31 Jan 2020 08:40:33 -0700
+Message-ID: <00610b2b-2110-36c2-d6ce-85599e46013f@kernel.dk>
+Date:   Fri, 31 Jan 2020 08:41:49 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200131153744.4750-1-glauber@scylladb.com>
+In-Reply-To: <20200131142943.120459-2-sgarzare@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,20 +65,15 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/31/20 8:37 AM, Glauber Costa wrote:
-> There are situations where one does not have a ring initialized yet, and
-> yet they may want to know which opcodes are supported before doing so.
-> 
-> We have recently introduced io_uring_get_probe(io_uring*) to do a
-> similar task when the ring already exists. Because this was committed
-> recently and this hasn't seen a release, I thought I would just go ahead
-> and change that to io_uring_get_probe_ring(io_uring*), because I suck at
-> finding another meaningful name for this case (io_uring_get_probe_noring
-> sounded way too ugly to me)
-> 
-> A minimal ring is initialized and torn down inside the function.
+On 1/31/20 7:29 AM, Stefano Garzarella wrote:
+> This patch add the epoll test case that has four sub-tests:
+> - test_epoll
+> - test_epoll_sqpoll
+> - test_epoll_nodrop
+> - test_epoll_sqpoll_nodrop
 
-Thing of beauty, applied, thanks.
+Since we have EPOLL_CTL now, any chance you could also include
+a test case that uses that instead of epoll_ctl()?
 
 -- 
 Jens Axboe

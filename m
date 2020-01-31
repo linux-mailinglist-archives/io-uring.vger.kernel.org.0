@@ -2,84 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03C5114F4AA
-	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 23:22:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA56014F4A7
+	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 23:22:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbgAaWW6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Jan 2020 17:22:58 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36434 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbgAaWW6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 17:22:58 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z3so10480277wru.3;
-        Fri, 31 Jan 2020 14:22:56 -0800 (PST)
+        id S1726881AbgAaWWc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 31 Jan 2020 17:22:32 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38989 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbgAaWWc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 17:22:32 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 84so4075995pfy.6
+        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2020 14:22:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6YW2lBCoKgOsrfSohMX0v2q7APytYZCatXkac5w4d9U=;
-        b=Qc8wxFe09FqegQ+WDFuYg5q/pY1HugyRaVjC0ElRry3Gx3rw2h0A0oAtRxcYDnD24R
-         xOnJQvLOvX9nueqI8gxIHoFd6DGqEJ2oLdYEuO39TX7RzQN+hd9i8tG0U5xU7XFCh47h
-         UVpB91/4eTtXN2COLb89H+Muqs/6xIzFOmyf8gNxAJPoMEFvNl6uQSuBTlzA+H3OIg4t
-         rp9gq24rBxxGWPu2hLYpOGDYVPEg02IhFJ4K9GuDz/qFtN498g45w5ksyrPiQ792grCS
-         ZNIclPPABa6pazAmyYD3NYW3wpvm4ihuXWQknO29RG451QRe7zeQRU2B2wbpOtRNWpiv
-         4WvA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=ym4CATryr3QJbBXCpmH+mWSLbQwwdB6r4IiJNjhJKxM=;
+        b=AbeaxiAXSmyiyWHNUbJzYqLQg8oCe/1I9MYoknkNjSSPvw9PWYJllaHHOTXONw12vW
+         N7IVuUFhIeoFuznn5PPdckAaTra7JYdCZdxcDpe12Ek/R4Pn7uyMW6bdd2pZ+A7N0lk6
+         xfJWkSkh8RSWWOO9Cbdn8cRbOBsWA5bUs8wzjfKvrhOWvDsZnskFKOGLGA731rNjTiiT
+         nK5Eyc9z4+Sw0N2W2l1JaNdyXM1uhKMKp0jwX7qgsi7FONnqpsddAwyEyNEJh7/BPI6a
+         S88kJycsXPYxc/2R5u+zip6zxGOncmgqexxtkknyJA4KsXGpDfbkrp4f+TVwovCXrjhr
+         OF7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=6YW2lBCoKgOsrfSohMX0v2q7APytYZCatXkac5w4d9U=;
-        b=k3TK1wmpqRBrVYPY/Jkz3SydQ8qkkwd1xs5E5PgWXuyG6lscHbz5bFkekvxY3VrnG2
-         /vjzqLIU0wBHGyGA2lmyKSNRqwmq9CJ//5bZQ+9TqiHtOAzb1KIHpbmk4doYo2tlFIoN
-         iQrucIqKrGFgz8wp3m6lI7Tp4HjgMog2fUC+8sCXhMCbVUNCI/u5QwNFVanA5uBUaanM
-         dFqccyhlQSSCw2oUT1Ca5PSKnmZr7bOcAgSNPqz2PjJ/UjKc9m9+2nVzP7ldUHlsL2b0
-         bD0g8eNxJMxWlpnBEoVaoHUEWKEXnGpbloV3V8LBOYokGdLlWCb1W6Rrhu9VL2SiwqIa
-         Sd5Q==
-X-Gm-Message-State: APjAAAXUve7wbqO6D5miYgYl9CmIPsKxhJD61QgoTb6MpI7d5GfY+xxv
-        sOIHDorfOBvBLoXveG6tFvl2uvP/
-X-Google-Smtp-Source: APXvYqwUYXtLFGlM5rdV7JEMokq/c3cNqakr1Yd52pUgexie7tp4V7m2tae+VnXuUEYkl2KW+iUKJg==
-X-Received: by 2002:adf:f10b:: with SMTP id r11mr496125wro.307.1580509375799;
-        Fri, 31 Jan 2020 14:22:55 -0800 (PST)
-Received: from localhost.localdomain ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id k8sm6071084wrq.67.2020.01.31.14.22.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 14:22:55 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        bh=ym4CATryr3QJbBXCpmH+mWSLbQwwdB6r4IiJNjhJKxM=;
+        b=WyB3nDYy3qqcOQCDYi3UgoUtCH8StS6aEaIgcCnz4Wv9XsInuq/OpfLt26kz3UeNOJ
+         Ugwj/Od3Gs7HYYRdz9zjVNwgAZvFZfzy4+n8ljDSBlAroGw5Zmp5rzQ7gNEdpOj9KRKs
+         MYr6AENjnwMO2Ows2kU0F6PIGcO7nGjkxlnEHyLKazTKvEAN5GEc2f/dlhEos2NWV6d/
+         G+C0eTXpdHvPqVYYNfEhJcl8lKv8S6iR4Zy0Rrvx5TaCTlGh6pC0LU5JaBn63uzMHn39
+         2msbMlrSB3DqjeO7Ctx1IY0wFcSs6rwg9Xrs+pduOdbJdtRwJzSnVq53zcJpzMAx5mws
+         u85A==
+X-Gm-Message-State: APjAAAXB1fnjLbN6zB/DAkzvsgkfmfI79iwGeplnDS8OfsGpUKF5PYMj
+        UnBr1ajL4TUebaCn3UtJ9rcIVQ==
+X-Google-Smtp-Source: APXvYqxTillDlW/mS8lPlT9SG5wZBL0oehI9eN5JpPJ1IpJJMPh4VPircIzIYcxv85ZTCYsJ2zICWQ==
+X-Received: by 2002:aa7:9205:: with SMTP id 5mr12785889pfo.213.1580509350445;
+        Fri, 31 Jan 2020 14:22:30 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id l10sm11260963pjy.5.2020.01.31.14.22.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 14:22:29 -0800 (PST)
+Subject: Re: [PATCH v3 0/6] add persistent submission state
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: remove extra ->file check
-Date:   Sat,  1 Feb 2020 01:22:08 +0300
-Message-Id: <e21d4c192e0fb12af00cbb4c1ed7d517385ec160.1580509300.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+References: <cover.1580508735.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6492ccd2-e829-df13-ab6e-e62590375fd1@kernel.dk>
+Date:   Fri, 31 Jan 2020 15:22:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1580508735.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It won't ever get into io_prep_rw() when req->file haven't been set in
-io_req_set_file(), hence remove the check.
+On 1/31/20 3:15 PM, Pavel Begunkov wrote:
+> Apart from unrelated first patch, this persues two goals:
+> 
+> 1. start preparing io_uring to move resources handling into
+> opcode specific functions
+> 
+> 2. make the first step towards long-standing optimisation ideas
+> 
+> Basically, it makes struct io_submit_state embedded into ctx, so
+> easily accessible and persistent, and then plays a bit around that.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 3 ---
- 1 file changed, 3 deletions(-)
+Do you have any perf/latency numbers for this? Just curious if we
+see any improvements on that front, cross submit persistence of
+alloc caches should be a nice sync win, for example, or even
+for peak iops by not having to replenish the pool for each batch.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 799e80e85027..426b0dd81cca 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1868,9 +1868,6 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	unsigned ioprio;
- 	int ret;
- 
--	if (!req->file)
--		return -EBADF;
--
- 	if (S_ISREG(file_inode(req->file)->i_mode))
- 		req->flags |= REQ_F_ISREG;
- 
+I can try and run some here too.
+
 -- 
-2.24.0
+Jens Axboe
 

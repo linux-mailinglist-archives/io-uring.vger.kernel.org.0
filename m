@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB1EB14F477
-	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 23:17:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 511E314F468
+	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2020 23:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgAaWQx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Jan 2020 17:16:53 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38500 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbgAaWQw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 17:16:52 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a9so10517552wmj.3;
-        Fri, 31 Jan 2020 14:16:50 -0800 (PST)
+        id S1726749AbgAaWQy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 31 Jan 2020 17:16:54 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50232 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbgAaWQx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 17:16:53 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a5so9717326wmb.0;
+        Fri, 31 Jan 2020 14:16:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=7wdBkgzfqrw3xwjaGUYTIWJD4C1FRsvzjImuzApBwhE=;
-        b=fhK5lsmHoZTARU0AtIXR40+duvR3HttOsmxuahiUIYZ06LMpDJw9/c5cH7P7tRNl4z
-         HDCdlHdm1yhD5DFOcGIv3rA6SAHDFySuylnga+Bt+7lKtMuzOouj9ptdVLDH8aUU1cCj
-         Yoap7PK8pkHyqI5g3Bec6Xpo2t2R82PLur5jBcU98ARqNeH1MRBssFaOgV9/2OB/DXr/
-         mame+ITreddPQilTVqnuchQGyC/AAmEOnZPpAKQsJry8AS1CKR8xO4lGKdzv7p6PUVsB
-         B1g/zA5vCA3/bYP+qrLF9aJPOoEIeR23ATdifoosnlkKg8UTXT/cFwNkGOiSafNwotJP
-         dZSQ==
+        bh=lu2Xiqkgl7J684IcpCrQ+v+PneCC7C7asFHx4scTo3E=;
+        b=dytORbb7Xshs033UjFtE7RlqC1iKKTi2e/fwlvR6I2EH0YSd3SkL4+5ZnDbJf7oWWT
+         6ZJ5MiAlVvcufc3wPJQkll0J6qmcL+GaExssFd7RoZqo1XfhnpmMcmndbAm3PX9VzdAU
+         8xzbOLRCGaAzrqG3I2v3so/Ikn0sA69mjajFCmpHQPg0WdP2nixcfQypC2pxDSLUw/jb
+         hlOvhfDQtj3UHxwxdUY15OERQ8P1u2a5FovDapFeJdS0v6LiXZdeFM00dLlcNGTvLN2O
+         HJn2zNAbglFmjaccrqjmnbEpWTYS/PwYZIFH42RrY/O5Xl3vELyiKnwPgbm99RZG/hoI
+         WLPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7wdBkgzfqrw3xwjaGUYTIWJD4C1FRsvzjImuzApBwhE=;
-        b=aUuDL7lfT+QpH0fM42AbIyd4rx3PBVc60igVSieVJZbU3pe5K+RUXdXo0yv0GQtOzm
-         MLt5SSs6u9gN8u3+HkvbYrPj+ch98GVriKt6zxryWCoBJ2ht6cDCUagi/S8ZHqQZHZ2x
-         WiC6lBgbySpU7iqyfocHi4FRHVnw+9zfkqNtMyJr0BtmWsooRr8Ky1Df1+eszApSGHu6
-         h2oTsdh3g0Rsjv6Uh6O/IxQ+ZVj8KK7Ql+wOhuUEX2DDXACqjADHtswTYkqfE2UXvx6b
-         p4IvFrJf7ZQu0FZFqD0WCB85/ugDIwf09cpsQnWZVqtJVxPi0S3K9vP1OFvO7rvUNaZQ
-         vgMg==
-X-Gm-Message-State: APjAAAUvluEQ/bYOQJU5MF0Lx3YDma6vJR6ZiWLBCgCp2ZOKQCxQz2zQ
-        UqvKrObJjVksHPdOWgbcpvs=
-X-Google-Smtp-Source: APXvYqzeFMLsAKoA6oc96JgRrhzajf+CVrico6XvPOMI0sbd/JUF4GwzrQRHzuc/7zRVfld8J9ciCw==
-X-Received: by 2002:a05:600c:2c13:: with SMTP id q19mr14507267wmg.144.1580509009552;
-        Fri, 31 Jan 2020 14:16:49 -0800 (PST)
+        bh=lu2Xiqkgl7J684IcpCrQ+v+PneCC7C7asFHx4scTo3E=;
+        b=LDwQGRvyIpGFCMJ+FyM75Xg4Q+Amo/tNLIsdxtfwQa0d2dIiFb6X8NJj0aJm6n1tNm
+         mF0jFPKPFI8K3XlM6CVLJW7py3OjyjHHFx8k+M2sq/2HzQus5G8psVV2FtO/ekwpecPZ
+         MnTngGpIac6dkSbMHirJqvll/yl3tfzTVEDIZScR/LgHlTMyUGySYqcXx82RQ5FC6Q0V
+         98oYBxnGjWoFFiWx+TjRl3ARboJ/sxKugMe374GwecmcDFMExWFG8RB1IVOasA6UyGpV
+         iqR5H0KcMOIgsO9+nKfgeLmS0Jl0g8RgVDkrUVgpv+7tJ3l9PZp/EocIfxg2856bpcQ5
+         y3EQ==
+X-Gm-Message-State: APjAAAXw1UgK+/gesa7KN2sf1teUPbfHzSl/jpt9Zvdoac1tMsea+Gin
+        S+4BgqfT4aBSqWMIrTS0ld0=
+X-Google-Smtp-Source: APXvYqz9nFroN0Ret7EFrVnUJyYuLdYHM0Yofn4m4GGu0rHemZamj4MFBDlLpWFwi94sTscfB0yPbQ==
+X-Received: by 2002:a05:600c:291d:: with SMTP id i29mr14816183wmd.39.1580509011041;
+        Fri, 31 Jan 2020 14:16:51 -0800 (PST)
 Received: from localhost.localdomain ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id e6sm12328001wme.3.2020.01.31.14.16.48
+        by smtp.gmail.com with ESMTPSA id e6sm12328001wme.3.2020.01.31.14.16.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 14:16:49 -0800 (PST)
+        Fri, 31 Jan 2020 14:16:50 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/6] io_uring: move *link into io_submit_state
-Date:   Sat,  1 Feb 2020 01:15:53 +0300
-Message-Id: <f86d95660c3e69d8161bae9c9bde45a90a1ae10d.1580508735.git.asml.silence@gmail.com>
+Subject: [PATCH v3 5/6] io_uring: persistent req bulk allocation cache
+Date:   Sat,  1 Feb 2020 01:15:54 +0300
+Message-Id: <47dbf2f0f521cc286d0657e337e5fd9fa0a1e4ec.1580508735.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1580508735.git.asml.silence@gmail.com>
 References: <cover.1580508735.git.asml.silence@gmail.com>
@@ -60,113 +60,91 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It's more convenient to have it in the submission state, than passing as
-a pointer, so move it.
+Save bulk allocated requests across io_uring_enter(), so lower QD also
+could benefit from that. This is not much of an optimisation, and for
+current cache sizes would probably affect only offloaded ~QD=1.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ fs/io_uring.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 725e852e22c5..cbe639caa096 100644
+index cbe639caa096..66742d5772fa 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -219,6 +219,8 @@ struct io_submit_state {
+@@ -845,6 +845,23 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	return NULL;
+ }
  
- 	struct file		*ring_file;
- 	int			ring_fd;
-+
-+	struct io_kiocb		*link;
- };
- 
- struct io_ring_ctx {
-@@ -4721,11 +4723,11 @@ static inline void io_queue_link_head(struct io_kiocb *req)
- #define SQE_VALID_FLAGS	(IOSQE_FIXED_FILE|IOSQE_IO_DRAIN|IOSQE_IO_LINK|	\
- 				IOSQE_IO_HARDLINK | IOSQE_ASYNC)
- 
--static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
--			  struct io_kiocb **link)
-+static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	const struct cred *old_creds = NULL;
- 	struct io_ring_ctx *ctx = req->ctx;
++static void io_init_submit_state(struct io_ring_ctx *ctx)
++{
 +	struct io_submit_state *state = &ctx->submit_state;
- 	unsigned int sqe_flags;
- 	int ret, id;
++
++	state->free_reqs = 0;
++	state->cur_req = 0;
++}
++
++static void io_clear_submit_state(struct io_ring_ctx *ctx)
++{
++	struct io_submit_state *state = &ctx->submit_state;
++
++	if (state->free_reqs)
++		kmem_cache_free_bulk(req_cachep, state->free_reqs,
++					&state->reqs[state->cur_req]);
++}
++
+ static inline bool __req_need_defer(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+@@ -1171,10 +1188,9 @@ static struct io_kiocb *io_get_req(struct io_ring_ctx *ctx)
+ 	struct io_submit_state *state = &ctx->submit_state;
  
-@@ -4770,8 +4772,8 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	 * submitted sync once the chain is complete. If none of those
- 	 * conditions are true (normal request), then just queue it.
- 	 */
--	if (*link) {
--		struct io_kiocb *head = *link;
-+	if (state->link) {
-+		struct io_kiocb *head = state->link;
+ 	if (!state->free_reqs) {
+-		size_t sz;
++		size_t sz = ARRAY_SIZE(state->reqs);
+ 		int ret;
+ 
+-		sz = min_t(size_t, state->ios_left, ARRAY_SIZE(state->reqs));
+ 		ret = kmem_cache_alloc_bulk(req_cachep, gfp, sz, state->reqs);
  
  		/*
- 		 * Taking sequential execution of a link, draining both sides
-@@ -4801,7 +4803,7 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		/* last request of a link, enqueue the link */
- 		if (!(sqe_flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK))) {
- 			io_queue_link_head(head);
--			*link = NULL;
-+			state->link = NULL;
- 		}
- 	} else {
- 		if (unlikely(ctx->drain_next)) {
-@@ -4814,7 +4816,7 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 			ret = io_req_defer_prep(req, sqe);
- 			if (ret)
- 				req->flags |= REQ_F_FAIL_LINK;
--			*link = req;
-+			state->link = req;
- 		} else {
- 			io_queue_sqe(req, sqe);
- 		}
-@@ -4836,6 +4838,8 @@ static void io_submit_end(struct io_ring_ctx *ctx)
- 	if (state->free_reqs)
- 		kmem_cache_free_bulk(req_cachep, state->free_reqs,
- 					&state->reqs[state->cur_req]);
-+	if (state->link)
-+		io_queue_link_head(state->link);
+@@ -4835,9 +4851,6 @@ static void io_submit_end(struct io_ring_ctx *ctx)
+ 	struct io_submit_state *state = &ctx->submit_state;
+ 
+ 	io_file_put(state);
+-	if (state->free_reqs)
+-		kmem_cache_free_bulk(req_cachep, state->free_reqs,
+-					&state->reqs[state->cur_req]);
+ 	if (state->link)
+ 		io_queue_link_head(state->link);
  }
- 
- /*
-@@ -4852,6 +4856,7 @@ static void io_submit_start(struct io_ring_ctx *ctx, unsigned int max_ios,
- 
- 	state->ring_file = ring_file;
- 	state->ring_fd = ring_fd;
-+	state->link = NULL;
- }
- 
- static void io_commit_sqring(struct io_ring_ctx *ctx)
-@@ -4915,7 +4920,6 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 			  struct mm_struct **mm, bool async)
+@@ -4850,7 +4863,6 @@ static void io_submit_start(struct io_ring_ctx *ctx, unsigned int max_ios,
  {
- 	struct blk_plug plug;
--	struct io_kiocb *link = NULL;
- 	int i, submitted = 0;
- 	bool mm_fault = false;
+ 	struct io_submit_state *state = &ctx->submit_state;
  
-@@ -4973,7 +4977,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 		req->needs_fixed_file = async;
- 		trace_io_uring_submit_sqe(ctx, req->opcode, req->user_data,
- 						true, async);
--		if (!io_submit_sqe(req, sqe, &link))
-+		if (!io_submit_sqe(req, sqe))
- 			break;
- 	}
+-	state->free_reqs = 0;
+ 	state->file = NULL;
+ 	state->ios_left = max_ios;
  
-@@ -4982,8 +4986,6 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+@@ -6247,6 +6259,8 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	if (ctx->sqo_mm)
+ 		mmdrop(ctx->sqo_mm);
  
- 		percpu_ref_put_many(&ctx->refs, nr - ref_used);
- 	}
--	if (link)
--		io_queue_link_head(link);
++	io_clear_submit_state(ctx);
++
+ 	io_iopoll_reap_events(ctx);
+ 	io_sqe_buffer_unregister(ctx);
+ 	io_sqe_files_unregister(ctx);
+@@ -6767,6 +6781,8 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
+ 	if (ret)
+ 		goto err;
  
- 	io_submit_end(ctx);
- 	if (nr > IO_PLUG_THRESHOLD)
++	io_init_submit_state(ctx);
++
+ 	ret = io_sq_offload_start(ctx, p);
+ 	if (ret)
+ 		goto err;
 -- 
 2.24.0
 

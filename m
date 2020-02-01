@@ -2,67 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8EFD14F7B6
-	for <lists+io-uring@lfdr.de>; Sat,  1 Feb 2020 13:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4AAE14F7D3
+	for <lists+io-uring@lfdr.de>; Sat,  1 Feb 2020 13:53:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbgBAMCe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 1 Feb 2020 07:02:34 -0500
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:51229 "EHLO
+        id S1726518AbgBAMxx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 1 Feb 2020 07:53:53 -0500
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:39239 "EHLO
         wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726385AbgBAMCd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Feb 2020 07:02:33 -0500
+        by vger.kernel.org with ESMTP id S1726297AbgBAMxx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Feb 2020 07:53:53 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id A706E395;
-        Sat,  1 Feb 2020 07:02:32 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sat, 01 Feb 2020 07:02:32 -0500
+        by mailout.west.internal (Postfix) with ESMTP id 8AB92483
+        for <io-uring@vger.kernel.org>; Sat,  1 Feb 2020 07:53:52 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sat, 01 Feb 2020 07:53:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=LxTx/iobLleXOvLzif2kKL9QP8/
-        JKwT0wGnktjXfOQ8=; b=PcFDXefjONfD5be/SDOLRzsewIJ+tiKu2k81s7uwrqe
-        vz1F7NyTX6kVNs0v9xxCs5sBcUPPc6TS5YD60aj5ELfyzy0dKDz6jFWszOpuo83C
-        YOMuDxfIewVAo4gF9IznYd0u/CV1uIzXm9anrwdb6+COrTmzV/TWQXbI7EDK18zr
-        4qBRhdZ3abYPTZpIsX3CLGurHO7iesel4+rDOnD0aLgCKjD7pFOH/ADHJJqa/T0K
-        J0Sf/2ZqLWBFKiPrb+aVmGq0zVN4BQxfPEtCzDQxfzZFBxd//qPCnv44uXyeI+9B
-        lqVliwhnyDhAVpOUCncARQMXX6PVUm35/CToe7pzTJw==
+        date:from:to:subject:message-id:mime-version:content-type; s=
+        fm3; bh=djPvWJmYuTTIGdVAunT9mOFvyj3L45qe+zvD9eenmPw=; b=X/XdC0+p
+        kUcFAMK4oyggLCtNW5qPbXFTMBFIyD6OJzMRsLLPCAcK08T5RLa6i5ydemfH/6W5
+        VFn1TkgYJHpelTIH6wRyO3wS0gSoknNnsy4EBc1s3c6kKqo9NwnMQowY+vI6FVs5
+        E8vxKB6KLJ0eGklIk2yz0gyHwSqo6vagnI5A5/4VkRApFhG6E9EdRfR7rIsAT21Z
+        aQ1dvHvvw87mBLKzbOJxE7cclC2x4b6uQMoTAnXu5jitIdLiyAV/fIStyzGQZ9Pd
+        mn3Rc6HVsDJ+Ze3IHQTGMQqeEyZWXArilVCjKGE/eV3BBxt55jj+x07rH8NZhrac
+        8OBeB+uKSZEzqQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=LxTx/i
-        obLleXOvLzif2kKL9QP8/JKwT0wGnktjXfOQ8=; b=elmAbbdmfSp6nIQKrwp81f
-        eeehaTs5V4asVQiPN8vEH/11Mz2K/LsJrg4+cMtOTXW77X3GWy6oc+/bYJ2+chOm
-        vGCY4Nyd9wOhf8OmrzYvVli34unsPGV5NmG7kArev5oiByFHEP8nR9mDPeBkn7kv
-        YV9YftDe0A3SO8nvTAObh+jsGRpM1G1WoC05K3r9Jdwy4VGW1bAehlLr5CNbXQqQ
-        i89iuJai7zjySUrTu6jup5ykMv8yQRgaRLQrmsX8t3QNNDqPYzepsfh16g1hie1U
-        Q2Uf0XRzExWSgr1FqINy5neLsv/5i3dULMTAb/ZRJKGEaCnzAowi3XZjhf4MD1ZA
-        ==
-X-ME-Sender: <xms:12g1XlaUbMPj09kxrJqRFDAnNJyMwRTAilQN6vpXKEoLQ7roaZNNcQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgedvgdefgecutefuodetggdotefrodftvf
+        messagingengine.com; h=content-type:date:from:message-id
+        :mime-version:subject:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm1; bh=djPvWJmYuTTIGdVAunT9mOFvyj3L4
+        5qe+zvD9eenmPw=; b=jl1cdr4FGIOjt7DgDrJahBvZrRTGypruBu1aKuuGIiioQ
+        o72eiAFn6a9xkCGiLxBBtFCpm30+9/gawalYj9pfppU/859pLzkElOrwe6YS0jZs
+        /wHv7754ytILJ3zCih+4HdpLiS4NsxQSb+OJ8vgmU9tq9hkM0oBktT5dZqDeO55W
+        BtWMH4hAruqvecWutj8ZEjiZ232/VLfcYRbvCbd+8qz4qs3s4wlpwOLVcQ9HJ9tv
+        6pqCW6/nR10byhTBr6uLQ2ADzsWVL8DDkkxRP6ayy6q8rNwO6JWbGchOBgHQOVSV
+        Lv1vhQoSzc/OWe6NKiyhf0+EQNbrPaXeNnW6PSlMg==
+X-ME-Sender: <xms:4HQ1XtlqkGsIzRocArY-GRyVMigvGZCGGzzIHiNMQrwEsR5W9-jDpA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgedvgdeggecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
-    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecukfhppeduhe
-    durddvudeirddufeeirdeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpegrnhgurhgvshesrghnrghrrgiivghlrdguvg
-X-ME-Proxy: <xmx:12g1XmyB_ZxAkYjk5Q8DbIGAx02KHBOLQm1BKDITNucohpLuW1w6GA>
-    <xmx:12g1XuHCjT5zCiaYBpEYLBd9pUGzAJAxhvIS3kWmt-pxtxD4chW7yg>
-    <xmx:12g1XuxDReDrESypyoDpnEzErIVyGIga8kOpNAQgLXRTuI1zbca6xA>
-    <xmx:2Gg1XrisoZSp5X77fjykHsq8DrCKkIsiLYPEUCiypirsIl0aBRli6g>
+    uegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfggtggusehttdertddttd
+    dvnecuhfhrohhmpeetnhgurhgvshcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgr
+    iigvlhdruggvqeenucfkphepudehuddrvdduiedrudefiedriedvnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgr
+    iigvlhdruggv
+X-ME-Proxy: <xmx:4HQ1XsF8Bm8Lbh7do8zGrCPrWc_WMP0VBN8lnq9ijePeTQ5NH0qWlQ>
+    <xmx:4HQ1XtEHj2IanG1fmwiMBh7AYaHgSvz4v06HzadlxUDxnEBauSzA4A>
+    <xmx:4HQ1XpOV-VQeUP15xnmiDuTIsVWTC0TjL2eK5QJfteWXhVMN4lraoQ>
+    <xmx:4HQ1XsT57LIdQh3B8Yxpzh7XceA1nHeTyFmZzw0BquNkOxuGNgC-sg>
 Received: from intern.anarazel.de (unknown [151.216.136.62])
-        by mail.messagingengine.com (Postfix) with ESMTPA id ADD363280062;
-        Sat,  1 Feb 2020 07:02:31 -0500 (EST)
-Date:   Sat, 1 Feb 2020 04:02:29 -0800
+        by mail.messagingengine.com (Postfix) with ESMTPA id F07FA30607B0
+        for <io-uring@vger.kernel.org>; Sat,  1 Feb 2020 07:53:51 -0500 (EST)
+Date:   Sat, 1 Feb 2020 04:53:50 -0800
 From:   Andres Freund <andres@anarazel.de>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: Re: What does IOSQE_IO_[HARD]LINK actually mean?
-Message-ID: <20200201120229.l7krkt6zstiruckf@alap3.anarazel.de>
-References: <20200201091839.eji7fwudvozr3deb@alap3.anarazel.de>
- <a7d492a6-b8cf-4128-fdde-879371b7913f@gmail.com>
+To:     io-uring@vger.kernel.org
+Subject: liburing: expose syscalls?
+Message-ID: <20200201125350.vkkhezidm6ka6ux5@alap3.anarazel.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a7d492a6-b8cf-4128-fdde-879371b7913f@gmail.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
@@ -70,78 +65,38 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Hi,
 
-On 2020-02-01 14:30:06 +0300, Pavel Begunkov wrote:
-> On 01/02/2020 12:18, Andres Freund wrote:
-> > Hi,
-> > 
-> > Reading the manpage from liburing I read:
-> >        IOSQE_IO_LINK
-> >               When  this  flag is specified, it forms a link with the next SQE in the submission ring. That next SQE
-> >               will not be started before this one completes.  This, in effect, forms a chain of SQEs, which  can  be
-> >               arbitrarily  long. The tail of the chain is denoted by the first SQE that does not have this flag set.
-> >               This flag has no effect on previous SQE submissions, nor does it impact SQEs that are outside  of  the
-> >               chain  tail.  This  means  that multiple chains can be executing in parallel, or chains and individual
-> >               SQEs. Only members inside the chain are serialized. Available since 5.3.
-> > 
-> >        IOSQE_IO_HARDLINK
-> >               Like IOSQE_IO_LINK, but it doesn't sever regardless of the completion result.  Note that the link will
-> >               still sever if we fail submitting the parent request, hard links are only resilient in the presence of
-> >               completion results for requests that did submit correctly.  IOSQE_IO_HARDLINK  implies  IOSQE_IO_LINK.
-> >               Available since 5.5.
-> > 
-> > I can make some sense out of that description of IOSQE_IO_LINK without
-> > looking at kernel code. But I don't think it's possible to understand
-> > what happens when an earlier chain member fails, and what denotes an
-> > error.  IOSQE_IO_HARDLINK's description kind of implies that
-> > IOSQE_IO_LINK will not start the next request if there was a failure,
-> > but doesn't define failure either.
-> > 
-> 
-> Right, after a "failure" occurred for a IOSQE_IO_LINK request, all subsequent
-> requests in the link won't be executed, but completed with -ECANCELED. However,
-> if IOSQE_IO_HARDLINK set for the request, it won't sever/break the link and will
-> continue to the next one.
+As long as the syscalls aren't exposed by glibc it'd be useful - at
+least for me - to have liburing expose the syscalls without really going
+through liburing facilities...
 
-I think something along those lines should be added to the manpage... I
-think severing the link isn't really a good description, because it's
-not like it's separating off the tail to be independent, or such. If
-anything it's the opposite.
+Right now I'm e.g. using a "raw" io_uring_enter(IORING_ENTER_GETEVENTS)
+to be able to have multiple processes safely wait for events on the same
+uring, without needing to hold the lock [1] protecting the ring [2].  It's
+probably a good idea to add a liburing function to be able to do so, but
+I'd guess there are going to continue to be cases like that. In a bit
+of time it seems likely that at least open source users of uring that
+are included in databases, have to work against multiple versions of
+liburing (as usually embedding libs is not allowed), and sometimes that
+is easier if one can backfill a function or two if necessary.
+
+That syscall should probably be under a name that won't conflict with
+eventual glibc implementation of the syscall.
+
+Obviously I can just do the syscall() etc myself, but it seems
+unnecessary to have a separate copy of the ifdefs for syscall numbers
+etc.
+
+What do you think?
 
 
-> > Looks like it's defined in a somewhat adhoc manner. For file read/write
-> > subsequent requests are failed if they are a short read/write. But
-> > e.g. for sendmsg that looks not to be the case.
-> > 
-> 
-> As you said, it's defined rather sporadically. We should unify for it to make
-> sense. I'd prefer to follow the read/write pattern.
+[1] It's more efficient to have the kernel wake up the waiting processes
+directly, rather than waking up one process, which then wakes up the
+other processes by releasing a lock.
 
-I think one problem with that is that it's not necessarily useful to
-insist on the length being the maximum allowed length. E.g. for a
-recvmsg you'd likely want to not fail the request if you read less than
-what you provided for, because that's just a normal occurance. It could
-e.g. be useful to just start the next recv (with a different buffer)
-immediately.
+[2] The reason one can't just use io_uring_submit_and_wait or such, is
+because it's not safe to call __io_uring_flush_sq(ring) while somebody
+else might access the ring.
 
-I'm not even sure it's generally sensible for read either, as that
-doesn't work well for EOF, non-file FDs, ... Perhaps there's just no
-good solution though.
-
-
-> > Perhaps it'd make sense to reject use of IOSQE_IO_LINK outside ops where
-> > it's meaningful?
-> 
-> If we disregard it for either length-based operations or the rest ones (or
-> whatever combination), the feature won't be flexible enough to be useful,
-> but in combination it allows to remove much of context switches.
-
-I really don't want to make it less useful ;) - In fact I'm pretty
-excited about having it. I haven't yet implemented / benchmarked that,
-but I think for databases it is likely to be very good to achieve low
-but consistent IO queue depths for background tasks like checkpointing,
-readahead, writeback etc, while still having a low context switch
-rates. Without something like IOSQE_IO_LINK it's considerably harder to
-have continuous IO that doesn't impact higher priority IO like journal
-flushes.
+Greetings,
 
 Andres Freund

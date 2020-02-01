@@ -2,51 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A63E914F7A1
-	for <lists+io-uring@lfdr.de>; Sat,  1 Feb 2020 12:30:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C80AA14F7A4
+	for <lists+io-uring@lfdr.de>; Sat,  1 Feb 2020 12:43:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbgBALax (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 1 Feb 2020 06:30:53 -0500
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:38926 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726297AbgBALax (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Feb 2020 06:30:53 -0500
-Received: by mail-wr1-f51.google.com with SMTP id y11so11727590wrt.6
-        for <io-uring@vger.kernel.org>; Sat, 01 Feb 2020 03:30:51 -0800 (PST)
+        id S1726336AbgBALng (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 1 Feb 2020 06:43:36 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35055 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbgBALnf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Feb 2020 06:43:35 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w12so838230wrt.2
+        for <io-uring@vger.kernel.org>; Sat, 01 Feb 2020 03:43:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=f1GRx3vB4gpQksg3N9idUR0thDhHfm3loNuGo7UP0mc=;
-        b=GewutjqZkuPvvxMrcdl5tCJFenxmGrnLjjSrV+lUT1X1nueHtxwFVp44tcqM83GnC/
-         RNdzNPcQpCYtiOeCDxYTrrRFhvf4w70KBR3JyFLqH4IFSP86Ab3DeQAXKKM54vwgaSS9
-         1ja9cRIV+3mLcMg6eHnvuUbxeWiqU2Ydqbj7YF3dHKsDM1lCF+GmPc47g+/6AIcMNATk
-         crTXf8pRsRA59N/IUmoX9gz9AY8zZme8P7XjLWfP63R4N79ieRkaLCSsouEAxVJBqZTi
-         HC7QcV3pOSkumsR40gWaKoGmihuOpkwvYJicFVrUZLQACRsgS/OJDF889c/q7VaX0GgZ
-         hvuw==
+        bh=+ZC7rLgdkHDsL2R/AAsEOTLJdEGrrizRPClMAMV6TDM=;
+        b=f1LMyIMhbcFCFlCz0b+uU8cfRRgrOzi812k0alW2LpbpbK4+zYpoGGdKeGC2DiZHsn
+         ZPDh7Ounpi7ukg3Mf5rnXtfRxW+LhlXcfihm2E45Asg5lGThYG7+0TxiubX6InszL7zM
+         xbzRuACTohWrRrWDEGmf+iWX+f4B8Te3hK/fU77qulpEGHNV0zmX2wKSVTdA69lLixuf
+         byJd/QN6yleqnSad310+mWapUsQmcjH/YckUbKiQt1+0MU8vkkm9O+XwO7XMvKSusZqj
+         SdJ42NoeJjYj0rDU/dVZs1dSb+achr11FSBeEB5tx0sz1AZSxzsKbuLkpW3ocJGIDOF4
+         xg8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to;
-        bh=f1GRx3vB4gpQksg3N9idUR0thDhHfm3loNuGo7UP0mc=;
-        b=Vf8V0P6VPoBONqaHiXY9tKFeRrhShdYapSMy0cpu4ulUYZ9k2+xxcZKAXCjwLU+oTT
-         +wxKtfttkC0kbOTwL572C8FgRfdeARu96+OOV2Nd3fRZ1vji+M6yeHagLg4AGVLM4fsA
-         Sx705CsP2i90vhUAJhTQOFbCfUuRR+iHBywc/jtTeiRSIgFuT0KkMEJ5E1yOj1NKoH5r
-         DWZOhLfIbvgRsMA8+cxTQP0wTHB9yHXR9cSnu67CM4VarCqBYLnqX9WNTUbiPTVP8bKv
-         f9ZHbKf0MvVl9xpvqas6Re44luhyXRkInGWgLo4IruE5T+KFPE9qKRDEpgr321pAbkik
-         DKzw==
-X-Gm-Message-State: APjAAAWbhZ/j11ByFULj7Mkd2cV4nX3N5N7VjWccvMcd3zwjlc5qTtEJ
-        vVyw4qDkRgA7vDwkQi2jVX9S2vGY
-X-Google-Smtp-Source: APXvYqxh00SUX0Tlc7jJ7eW4di3ttsMsYMThDUMpWWEE7PiJ+kjx/diqXh7IotPW7FeMhnKKN9bIlw==
-X-Received: by 2002:a5d:620b:: with SMTP id y11mr4228625wru.230.1580556650395;
-        Sat, 01 Feb 2020 03:30:50 -0800 (PST)
+        bh=+ZC7rLgdkHDsL2R/AAsEOTLJdEGrrizRPClMAMV6TDM=;
+        b=YFwgQ/zpMZs+gog+6DnkzjfgeUa1WPzFbcLAVwQQGAJKl29F7IojotrpfL+02OLGVQ
+         cG+uA1v+XQNfwim4vh4LewyVR2WD0iHYmCvpCrrr2sg+taanq/wH/riRsbVUh9tXzOfa
+         p93apAj91glCPtuugUsh9dZ61goCqEzJkWZjeljKNmqcoKxSsX5iOqKlVYFRb/+Y35WT
+         ovcy+6guYlCmVUa69eHQZac1SE6j9S+yZPNwe31K1PXJUIR2tnwxQ3puynw7nUywJ5LN
+         yQg2AIkg6Pils8uLQt4adGmeL4sCBAhiFImWQKgRbG4xh0VR67uimvuyV13E0p82Yo/W
+         Kt6A==
+X-Gm-Message-State: APjAAAUlB3H0ujyFjTuT2Egbjfkh095tw7FByaF/nuoENHpnwEExJCGZ
+        yUp5mmc/62njDjgeTJk+QEvzvfVD
+X-Google-Smtp-Source: APXvYqxlkmTbEzqH3uMqWM56zhsRhnzePKXrAtXB6U5PkhxnkdTGTrNDT0psT3SVemvcixu8+XENvw==
+X-Received: by 2002:adf:db84:: with SMTP id u4mr4331549wri.317.1580557411269;
+        Sat, 01 Feb 2020 03:43:31 -0800 (PST)
 Received: from [192.168.43.154] ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id p26sm13998022wmc.24.2020.02.01.03.30.49
+        by smtp.gmail.com with ESMTPSA id d23sm16388385wra.30.2020.02.01.03.43.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Feb 2020 03:30:49 -0800 (PST)
-To:     Andres Freund <andres@anarazel.de>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org
-References: <20200201091839.eji7fwudvozr3deb@alap3.anarazel.de>
+        Sat, 01 Feb 2020 03:43:30 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1580508735.git.asml.silence@gmail.com>
+ <6492ccd2-e829-df13-ab6e-e62590375fd1@kernel.dk>
+ <199731e7-ca3f-ea6c-0813-6aa5dec6fa66@gmail.com>
+ <18b43ead-0056-f975-a6ed-35fb645461e9@gmail.com>
+ <1124e9e0-cf3b-767e-40a5-57297e5ec17b@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -91,127 +94,119 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: What does IOSQE_IO_[HARD]LINK actually mean?
-Message-ID: <a7d492a6-b8cf-4128-fdde-879371b7913f@gmail.com>
-Date:   Sat, 1 Feb 2020 14:30:06 +0300
+Subject: Re: [PATCH v3 0/6] add persistent submission state
+Message-ID: <19522299-39e3-2839-c809-204acbd59b01@gmail.com>
+Date:   Sat, 1 Feb 2020 14:42:44 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200201091839.eji7fwudvozr3deb@alap3.anarazel.de>
+In-Reply-To: <1124e9e0-cf3b-767e-40a5-57297e5ec17b@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="7ZZUWIqY1aJnc8JsPIZFepNrSc6huQ6zZ"
+ boundary="IB8GdpGwgHxRqHAQsH3wn4fW77qqL7qzN"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---7ZZUWIqY1aJnc8JsPIZFepNrSc6huQ6zZ
-Content-Type: multipart/mixed; boundary="Hq3yl7KcrtKjLycLjfPJsO4wcRMZgjYDP";
+--IB8GdpGwgHxRqHAQsH3wn4fW77qqL7qzN
+Content-Type: multipart/mixed; boundary="k5ROsZqGC6Fajfq8iwQaLBO3Fs14yoKz6";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
-To: Andres Freund <andres@anarazel.de>, Jens Axboe <axboe@kernel.dk>,
- io-uring@vger.kernel.org
-Message-ID: <a7d492a6-b8cf-4128-fdde-879371b7913f@gmail.com>
-Subject: Re: What does IOSQE_IO_[HARD]LINK actually mean?
-References: <20200201091839.eji7fwudvozr3deb@alap3.anarazel.de>
-In-Reply-To: <20200201091839.eji7fwudvozr3deb@alap3.anarazel.de>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Message-ID: <19522299-39e3-2839-c809-204acbd59b01@gmail.com>
+Subject: Re: [PATCH v3 0/6] add persistent submission state
+References: <cover.1580508735.git.asml.silence@gmail.com>
+ <6492ccd2-e829-df13-ab6e-e62590375fd1@kernel.dk>
+ <199731e7-ca3f-ea6c-0813-6aa5dec6fa66@gmail.com>
+ <18b43ead-0056-f975-a6ed-35fb645461e9@gmail.com>
+ <1124e9e0-cf3b-767e-40a5-57297e5ec17b@kernel.dk>
+In-Reply-To: <1124e9e0-cf3b-767e-40a5-57297e5ec17b@kernel.dk>
 
---Hq3yl7KcrtKjLycLjfPJsO4wcRMZgjYDP
+--k5ROsZqGC6Fajfq8iwQaLBO3Fs14yoKz6
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 01/02/2020 12:18, Andres Freund wrote:
-> Hi,
+On 01/02/2020 05:10, Jens Axboe wrote:
+> On 1/31/20 5:31 PM, Pavel Begunkov wrote:
+>> On 01/02/2020 01:32, Pavel Begunkov wrote:
+>>> On 01/02/2020 01:22, Jens Axboe wrote:
+>>>> On 1/31/20 3:15 PM, Pavel Begunkov wrote:
+>>>>> Apart from unrelated first patch, this persues two goals:
+>>>>>
+>>>>> 1. start preparing io_uring to move resources handling into
+>>>>> opcode specific functions
+>>>>>
+>>>>> 2. make the first step towards long-standing optimisation ideas
+>>>>>
+>>>>> Basically, it makes struct io_submit_state embedded into ctx, so
+>>>>> easily accessible and persistent, and then plays a bit around that.=
+
+>>>>
+>>>> Do you have any perf/latency numbers for this? Just curious if we
+>>>> see any improvements on that front, cross submit persistence of
+>>>> alloc caches should be a nice sync win, for example, or even
+>>>> for peak iops by not having to replenish the pool for each batch.
+>>>>
+>>>> I can try and run some here too.
+>>>>
+>>>
+>>> I tested the first version, but my drive is too slow, so it was only =
+nops and
+>>> hence no offloading. Honestly, there waren't statistically significan=
+t results.
+>>> I'll rerun anyway.
+>>>
+>>> I have a plan to reuse it for a tricky optimisation, but thinking twi=
+ce, I can
+>>> just stash it until everything is done. That's not the first thing in=
+ TODO and
+>>> will take a while.
+>>>
+>>
+>> I've got numbers, but there is nothing really interesting. Throughput =
+is
+>> insignificantly better with the patches, but I'd need much more experi=
+ments
+>> across reboots to confirm that.
+>>
+>> Let's postpone the patchset for later
 >=20
-> Reading the manpage from liburing I read:
->        IOSQE_IO_LINK
->               When  this  flag is specified, it forms a link with the n=
-ext SQE in the submission ring. That next SQE
->               will not be started before this one completes.  This, in =
-effect, forms a chain of SQEs, which  can  be
->               arbitrarily  long. The tail of the chain is denoted by th=
-e first SQE that does not have this flag set.
->               This flag has no effect on previous SQE submissions, nor =
-does it impact SQEs that are outside  of  the
->               chain  tail.  This  means  that multiple chains can be ex=
-ecuting in parallel, or chains and individual
->               SQEs. Only members inside the chain are serialized. Avail=
-able since 5.3.
+> Sounds fine to me, no need to do it unless it's a nice cleanup, and/or
+> provides some nice improvements.
 >=20
->        IOSQE_IO_HARDLINK
->               Like IOSQE_IO_LINK, but it doesn't sever regardless of th=
-e completion result.  Note that the link will
->               still sever if we fail submitting the parent request, har=
-d links are only resilient in the presence of
->               completion results for requests that did submit correctly=
-=2E  IOSQE_IO_HARDLINK  implies  IOSQE_IO_LINK.
->               Available since 5.5.
+> It would be great to see the splice stuff revamped, though :-)
 >=20
-> I can make some sense out of that description of IOSQE_IO_LINK without
-> looking at kernel code. But I don't think it's possible to understand
-> what happens when an earlier chain member fails, and what denotes an
-> error.  IOSQE_IO_HARDLINK's description kind of implies that
-> IOSQE_IO_LINK will not start the next request if there was a failure,
-> but doesn't define failure either.
->=20
-
-Right, after a "failure" occurred for a IOSQE_IO_LINK request, all subseq=
-uent
-requests in the link won't be executed, but completed with -ECANCELED. Ho=
-wever,
-if IOSQE_IO_HARDLINK set for the request, it won't sever/break the link a=
-nd will
-continue to the next one.
-
-> Looks like it's defined in a somewhat adhoc manner. For file read/write=
-
-> subsequent requests are failed if they are a short read/write. But
-> e.g. for sendmsg that looks not to be the case.
->=20
-
-As you said, it's defined rather sporadically. We should unify for it to =
-make
-sense. I'd prefer to follow the read/write pattern.
-
-> Perhaps it'd make sense to reject use of IOSQE_IO_LINK outside ops wher=
-e
-> it's meaningful?
-
-If we disregard it for either length-based operations or the rest ones (o=
-r
-whatever combination), the feature won't be flexible enough to be useful,=
-
-but in combination it allows to remove much of context switches.
+Yep, I didn't abandon it.
 
 --=20
 Pavel Begunkov
 
 
---Hq3yl7KcrtKjLycLjfPJsO4wcRMZgjYDP--
+--k5ROsZqGC6Fajfq8iwQaLBO3Fs14yoKz6--
 
---7ZZUWIqY1aJnc8JsPIZFepNrSc6huQ6zZ
+--IB8GdpGwgHxRqHAQsH3wn4fW77qqL7qzN
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl41YUMACgkQWt5b1Glr
-+6WYQxAAuUVBNx5BcJs7tqLmYwrfmJmEqqBXN4xCjVUvzWTAt1psHqOdiBCidFp7
-Zo1FDoXsZxLbwXXAHmBWShTwJZ3l7v5vhs+FZJthsUq1h+A1a7hFs58HBKzPVHR8
-o+MiBNnfqIALLp0itHyk5ulO0sQ9f+XsZm2Xv3ziL5gIzTfxWcL5fTs34/1jHonP
-ONMUsC7D8Q0yy5tO5XuJIY97wN2EZkKukYhKrgAszdWe7vhm9LUsY7LBcxQYw/zv
-ab6qC4pTfcpeLt56kIXL6B7a9+uxMNFKxgLQH/hOxixkcF2susUfsk88NfeTytmv
-yhoXhFMW4D67auuQZHV2iVddziU2QJvLFx45QDxiQkM90tztCr1nFdvACPIJbAdJ
-ojCRQ8OfYQmeuOvupOenZB5NJq/b7uWS0men5viGrPghoGVTsy04JRi8uSe5kZnX
-6VAR1cMQzsCZU0cjrSiZxJmi8MsKgqWnDNB/MsMMWds9lUE3qplumCNu5QwXJZvM
-w72U15suKoIP7WU1qYTZlO/hxiEPH+dCWatd6QQK0qWcxuT/O/eBF8kICFh2lqYn
-GiuKvXFHwGmlSNqIgM1UaNk9Rv9tZRveI/0WUPAV/dVyGqAlSc/VBSxyb+TdgTgk
-bYL1VG9opPD1rb0pw7Wt0QEZjweDunKooDyYXUaE+WU4rfrFAKE=
-=wNkz
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl41ZDQACgkQWt5b1Glr
++6Uklg//XLhwtf+v/UdheuUQYoDSp3L0vrHR7EOrnkpa/QPazMgaWRtswYD63iYL
+XapR5KfLCNQNeF/sKzOOUI693CFwImeoU+oS42uoHofVeN1wMsUfoXtjABXKwtEo
+76TLNSNOjrcXeMwyoaMTi1YeN0fmbsxNSDh1aCNEXCxoFMT/8+CLNpeARAwCMHNy
+gHu9bYhYwH9wRlXOwpP1LdRVtlc3dVvSf/Qp6RmE5FZDE/EJgPwqc5L/1sMTqBK0
+2G9NN5iN/KQctZfOqPvr9lEWwQOOsTWp0PhRA3pdqvhYNbCvKEiTISzuNJDAyJRe
+gVxLqYmFFKhuQzx5GKQOWb7dA5xl9d7PsSM1lbOiJe7fkfs/ydb0ZpZgaElifAWR
+iKN6Rn++gLR+8uTZm2rSJlqeETdb5KLmrmehEp6LMgntDMYvW0eugy7+bszsT5rM
+oe3V5yrToZmv1wV10jRcBM7RcMPB0SXqznc7bYak+v0DgFzOVVbhDnaIzyOMTl86
+CnfFoacSuGkdfBWCKYMgSxNZ/xKChkze8hwhQZE2YEfgiFqWW8ooiQhurevJuNTW
+mM/39+x4vi2YJpiuxIS01I/KbjHU3eAPgLLbWCdZPalMbhAYhpYoXWAP67wJna0n
+7VN+MBOSNNDhDngSysA89VNjYtVdgok/99BY6WOSEw0KXtlmChE=
+=jGpH
 -----END PGP SIGNATURE-----
 
---7ZZUWIqY1aJnc8JsPIZFepNrSc6huQ6zZ--
+--IB8GdpGwgHxRqHAQsH3wn4fW77qqL7qzN--

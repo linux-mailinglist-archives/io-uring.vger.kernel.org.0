@@ -2,99 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EEDC14F58A
-	for <lists+io-uring@lfdr.de>; Sat,  1 Feb 2020 01:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCEFC14F5E4
+	for <lists+io-uring@lfdr.de>; Sat,  1 Feb 2020 03:10:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbgBAA7f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Jan 2020 19:59:35 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51732 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726264AbgBAA7f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 19:59:35 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t23so9988319wmi.1;
-        Fri, 31 Jan 2020 16:59:33 -0800 (PST)
+        id S1726548AbgBACKD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 31 Jan 2020 21:10:03 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41701 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726475AbgBACKC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 21:10:02 -0500
+Received: by mail-pg1-f194.google.com with SMTP id l3so449379pgi.8
+        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2020 18:10:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=o/Z1Q9j16pnd5qHxzj1VfasD9Q7tF0Et5G7N/eWy7Ks=;
-        b=XJ2DHsui8Xaz0JCtJ2EYXlxrz+FjhsQ6TzlTwhQv32cVGz2+OWC45CVtN7wcyB3YG2
-         p7EMsclbgumy+RQk0jWg20LI4/ojv/lHvr7xcdXeXyC0tmdCS8RVeedtR5F5ajN2WEJZ
-         gysPQgF25Wt+HIOLBUdaoAXQJTNPAXhqu6V3gMedbHMSpbCHjwiEUAn3nWSikduoZUZT
-         qfYTG/gpSE/r7mUuwCNvUxvg0OAofA8f2GExxmjY9C4aZnaNcduI8x6WU8kVunUNHnYD
-         CJG0dJPPLyaFFfh9ekvT6M1WBuFwmFNAgf1j7pmAb3jcDNEynk6Nv8Y/fOscTHXdRfAi
-         vIGw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=H5w6I3OS4WZjjlTpvsBmyPnESGojpboh+taS7AUCgO4=;
+        b=xvfUtClqOCuoLdJ/ZRdfM5dQbo5QM8ntjeUBENH8l/BRCSbUD96QR6RXH1ubGsM99Q
+         V6RLOdEGCNa+019hQCLuzoIx7grR48V6/w0D9Ku7KxiI/OmjwkH4ar/ZKALkEmTvpqBx
+         nhXIW6w4nM0FkLPd8EHvcv+EeMO+1r1EJuPIVlL8lS4Kjlbqmr0uIqqsoHrAKpMs3GF9
+         jpwEjiXpoBKgUUdbaiZguYgg33zPISAkKgIN2KK9ranthjJlptdbuk8G/nFEkQcmdxyB
+         FXpWfGUmuTc3PWr8eIg7WYvQixP3wP4cMuCrbVzZyAlJa88pRYEk22R6F/doh8KkIZU7
+         +vwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=o/Z1Q9j16pnd5qHxzj1VfasD9Q7tF0Et5G7N/eWy7Ks=;
-        b=MOwVzEM0RYOVy4nV2mUtVuNG9+dvoAGes2kfMOQsXSmXJABONrqYQj1ztgdBjj+5Ld
-         Z4dNra8JlHyJUqhVq1EEq2J+XqkkvIbur90ynAcLiqcjThJptdWALs5C7URoXjLfqjyT
-         s0Rn90qDao47S55jUOlwCV0hR2gGRxRqSzJA3z7/I0Wiua5Cgm9Qhm0/9Tc3/pASRWuZ
-         z0Myt9e8Csh7y/3Lzo8XbpQD9f0cvGmg9U/iNPR5TWWKJaQjI2XScTfZtm9I4NZ5nvvn
-         vCzikqAoj0DgnjirdcmXxX7lEusRG5wQbSBEWmsfCXWJpa3CDKUhF0gPFJdb4yqqgn2c
-         v2qA==
-X-Gm-Message-State: APjAAAUjjMTV6zULzPzYTYOwmVON27rffIyKWNFxmAIjllwTmGRFk2er
-        Tl3UwUQjM2KtI+L1oO+eBjNae9Sf
-X-Google-Smtp-Source: APXvYqxVaMLA0kmq27KIpw7WmGCxp3GYPy6zFg4Oj47SappJUhZE7DFyOz4vg9iVVmn9TXUXSMPHKg==
-X-Received: by 2002:a1c:4008:: with SMTP id n8mr14770673wma.121.1580518772615;
-        Fri, 31 Jan 2020 16:59:32 -0800 (PST)
-Received: from localhost.localdomain ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id c9sm12979291wmc.47.2020.01.31.16.59.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 16:59:32 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: place close flag changing code
-Date:   Sat,  1 Feb 2020 03:58:42 +0300
-Message-Id: <aebc542fb8d3625178fa02c6a8c6a5b2b89466c4.1580518533.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=H5w6I3OS4WZjjlTpvsBmyPnESGojpboh+taS7AUCgO4=;
+        b=Tt7ONbZvI91/4aclv4KeZDtYsz00D8USoCQS++hvJaFLpo04LiP7dZSjGmT560HQR3
+         Px5yyrlNA8Sr76dJlqNMXm19iSMzjIaEXKA3J/Vp/ftWhogrFv7exu+Z1OzFrwK+V+Tf
+         dmkG63KJa870J7NrEh+2/Kgd/KkbFo2Vfxc+paM2eYQaNbWRHjAuVTS80Uv4BspDTvzL
+         4+M93Yy0JKJkHu94s+E2cTLrhOhzjZBgFBLOPvGWz0lHzbe79KcxUtxTnynM4uavJPw3
+         IAkO8A+15EX/9Ib8DCHw5NREAj6Kw3vh8CUTjKO/Bc0LcEKCQmsSap0DvCNfiLyjNrA7
+         vHlw==
+X-Gm-Message-State: APjAAAXEOGiLctUJkxsfaZ1hu2XmZhldkyAI+5bVqU6kW/LKehb9QK/a
+        Q1uDSOmZFkI9pddjQDXo0J2/ZHRS++s=
+X-Google-Smtp-Source: APXvYqyxUdFrg7gok840YZS/l6mgq1lD7uIP+gO4ce+WlI79wghcXrpok74+fc3sDsFCSe3mIM6kPQ==
+X-Received: by 2002:a63:ba05:: with SMTP id k5mr13097453pgf.158.1580523000535;
+        Fri, 31 Jan 2020 18:10:00 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id u3sm11568922pjv.32.2020.01.31.18.09.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 18:10:00 -0800 (PST)
+Subject: Re: [PATCH] io_uring: fix sporadic double CQE entry for close
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>
+References: <b0b0bb08-d3ab-a9f7-d468-6f113fbda19f@kernel.dk>
+ <c1b8f3c9-af7c-7327-cd15-5bc92ffc8e6b@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8ac0d841-0307-d475-be84-ffaaf1c985b3@kernel.dk>
+Date:   Fri, 31 Jan 2020 19:09:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <c1b8f3c9-af7c-7327-cd15-5bc92ffc8e6b@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Both iocb_flags() and kiocb_set_rw_flags() are inline and modify
-kiocb->ki_flags. Place them close, so they can be potentially better
-optimised.
+On 1/31/20 5:40 PM, Pavel Begunkov wrote:
+> On 01/02/2020 03:21, Jens Axboe wrote:
+>> We punt close to async for the final fput(), but we log the completion
+>> even before that even in that case. We rely on the request not having
+>> a files table assigned to detect what the final async close should do.
+>> However, if we punt the async queue to __io_queue_sqe(), we'll get
+>> ->files assigned and this makes io_close_finish() think it should both
+>> close the filp again (which does no harm) AND log a new CQE event for
+>> this request. This causes duplicate CQEs.
+>>
+>> Queue the request up for async manually so we don't grab files
+>> needlessly and trigger this condition.
+>>
+> 
+> Evidently from your 2 last patches, it's becoming hard to track everything in
+> the current state. As mentioned, I'm going to rework and fix submission and prep
+> paths with a bit of formalisation.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Honestly don't think it's that bad, not unusual to have a bit of
+fallout from the large amount of changes that just went in. That said,
+I'm obviously always interested in anything that is clear and hardens
+the flow.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 73a6c6a4ec50..c3687bda92d0 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1865,8 +1865,11 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		req->flags |= REQ_F_CUR_POS;
- 		kiocb->ki_pos = req->file->f_pos;
- 	}
--	kiocb->ki_flags = iocb_flags(kiocb->ki_filp);
- 	kiocb->ki_hint = ki_hint_validate(file_write_hint(kiocb->ki_filp));
-+	kiocb->ki_flags = iocb_flags(kiocb->ki_filp);
-+	ret = kiocb_set_rw_flags(kiocb, READ_ONCE(sqe->rw_flags));
-+	if (unlikely(ret))
-+		return ret;
- 
- 	ioprio = READ_ONCE(sqe->ioprio);
- 	if (ioprio) {
-@@ -1878,10 +1881,6 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	} else
- 		kiocb->ki_ioprio = get_current_ioprio();
- 
--	ret = kiocb_set_rw_flags(kiocb, READ_ONCE(sqe->rw_flags));
--	if (unlikely(ret))
--		return ret;
--
- 	/* don't allow async punt if RWF_NOWAIT was requested */
- 	if ((kiocb->ki_flags & IOCB_NOWAIT) ||
- 	    (req->file->f_flags & O_NONBLOCK))
 -- 
-2.24.0
+Jens Axboe
 

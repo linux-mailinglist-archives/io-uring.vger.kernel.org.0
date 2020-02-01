@@ -2,113 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D096014F5E5
-	for <lists+io-uring@lfdr.de>; Sat,  1 Feb 2020 03:10:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C13514F756
+	for <lists+io-uring@lfdr.de>; Sat,  1 Feb 2020 10:18:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbgBACKq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Jan 2020 21:10:46 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38542 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbgBACKq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 21:10:46 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t6so3528456plj.5
-        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2020 18:10:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=k93QIXrlhVKvP7ezICOk3caRM5BxpPtO926JL6CGXc4=;
-        b=WzJTUP5Yd/yOi2pp6mKUiEg5Y0sTCDhOnWOow3LVm9HbMEo9yewdTOGRujYdJMrLHC
-         di0stniZHIsZSf1ca98dPzIpwRLgU03JMXkzIp8zlJwynW6ovU+Na1fb8lQH3loT/Uis
-         6mfdncX2AadVERJvdPfCHeILLUGXLDmq89+uQMQ7niNSP0mkLjOjfd4OrJUYM7kdwso/
-         sBpoyFEA7ZXyvd2q5awC8NsO9PQIPEA7rAAcSfvkLeso2K51Hh7m8okJ1WN7z6RnBJJK
-         Dc9wD6CjrBAnQ6fS/3e7+Gn4bkL5n9HU9Ba+lZJ+aW2mXqe8CkBiAKewUtey/GD66djp
-         /EtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k93QIXrlhVKvP7ezICOk3caRM5BxpPtO926JL6CGXc4=;
-        b=FmNrbGciqV5FiZT2RM+Iz3FVz/y7w5S8jjlImHLwM4Cu7bjB1RFudFftkfg3YJLV3M
-         pTFyd16+EQ/jRp2P5WQCFP09mffeFgqTen7PkvdRsd5HWLr7XgCsd/Md6Rx8V3aG+rI4
-         7x1iZ+jL6OOgwYuWlU6Ca1Ak1EqI25x+A55h8F7S/cYpkHdFFPsZ8PSB53/gB4Qih2Sx
-         7ve6HMIrNXY/7+CqkGWdhEXCBF58L4Bualu5s9yF5frZU/lno2dJhkbshWYZFxcA3YXn
-         dXEiGqHBkW9vUQig/pN4EjuLLnDs8FtAIZTwAJ9TS6XMsyN/3ldjUWt1w+5x7VtCjmO9
-         3JWw==
-X-Gm-Message-State: APjAAAVj3ciloA5Kc82KR3Oty3Gq+GrP6NPOog55mDah1wWgu/R/xPcj
-        8MFlmWGrxBAZw11aKCnfSTiwOg==
-X-Google-Smtp-Source: APXvYqzzyMS5+MJH6hdO4YgucV12idd1nE0F8fU6Mb37cO9QTx2XLAH5YCfsk+SO5RsMUbbNJvrDqw==
-X-Received: by 2002:a17:90a:a385:: with SMTP id x5mr5223992pjp.102.1580523044195;
-        Fri, 31 Jan 2020 18:10:44 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id p17sm11327441pfn.31.2020.01.31.18.10.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Jan 2020 18:10:43 -0800 (PST)
-Subject: Re: [PATCH v3 0/6] add persistent submission state
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1580508735.git.asml.silence@gmail.com>
- <6492ccd2-e829-df13-ab6e-e62590375fd1@kernel.dk>
- <199731e7-ca3f-ea6c-0813-6aa5dec6fa66@gmail.com>
- <18b43ead-0056-f975-a6ed-35fb645461e9@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1124e9e0-cf3b-767e-40a5-57297e5ec17b@kernel.dk>
-Date:   Fri, 31 Jan 2020 19:10:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726216AbgBAJSn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 1 Feb 2020 04:18:43 -0500
+Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:51241 "EHLO
+        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726156AbgBAJSn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Feb 2020 04:18:43 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id DBEE64E6;
+        Sat,  1 Feb 2020 04:18:41 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sat, 01 Feb 2020 04:18:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:subject:message-id:mime-version:content-type; s=
+        fm3; bh=nSRz+8plUrgOix9q1n0MF6i0ji9x/tEzSqxR6M+7kBE=; b=U7XqrMWM
+        76bw0bzXcor4T4wgxahL3ysyv6/kf4TRfUxaAiDzbsSHJB1Ij5PT8aejTo8pZC0C
+        BminrnZJPHb5RhZS0b8SklVb/8SbunJaEWAVINjWRu7S2NAwBXc6iNqrxf/93ngX
+        hC1wbp52KqsA8dR4oeMRuZwPbjd1XM22NXETtGpeXsHY2Rsykt92WqHOt0GySjKd
+        +Mz4UYWxRRkeMJeq5Fy37gQip6LKjd4jEXcjOd768lHFZ/tGZ7aVFBMXSZZI+YyO
+        QX/cIH06ITHGBLb8AH1RmNzjEwDPEJ4T+8qttzh6X9LzvgxYfoJW8tZyKeP17TJX
+        FA6PtL38FgxvvQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=content-type:date:from:message-id
+        :mime-version:subject:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm1; bh=nSRz+8plUrgOix9q1n0MF6i0ji9x/
+        tEzSqxR6M+7kBE=; b=FOtus0t01lCRyT0KAtxZ/rIqYoGMhIlFyhBoxmy1u8V89
+        wM2R2iToj9J3/ZzjX+cTf2VLVqDxMhkzjhRYtS3JBkaoivI/DKrXnmp8TljJw7I6
+        Z+2i+00awtk47tDaU25iPHUSqwSl96VTbiH9/3Nivnk5OApG5gDwf2HZiFEbfPgN
+        Rw4swPV6GQjahYTdQbv7fzw2xl461LTULzmEpBp9zTZwx1/wLMobWs2yqZpiMWpc
+        4aOepjev8n8U4N5g0EHi6kkESOq84S5Wrl0IQko04GznS5bkyC2MaU67E6zQDUik
+        32VqunQedBcb68xgq/QHfpKSQ/PsZJmnRqNok7dFQ==
+X-ME-Sender: <xms:cUI1XpPwwqUTzqWhO_90pmqsr4ZtUoTgzyS2BbDX_Z0PwW4w1TCmLA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgedvgddtudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkgggtugesthdtredttddtvdenucfhrhhomheptehnughrvghsucfh
+    rhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecukfhppedvuddvrd
+    ejiedrvdehfedrudejudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpegrnhgurhgvshesrghnrghrrgiivghlrdguvg
+X-ME-Proxy: <xmx:cUI1XjvDetQgCA49zpklLhKel8qHPPsbhrLssCB81_pt40yJkEcAPw>
+    <xmx:cUI1XtSRIz-_fVVpwUCB1hJ2-rpPRDUHxrP5svUsdb8j22CWmi5u5g>
+    <xmx:cUI1XttJbiB9UQ-jVcm6fBMOtraj8_rEDBrc_kMF-17isgK52-6oJw>
+    <xmx:cUI1Xt4-MGjmcAAJvIG1F0ZiMU4ZseyzAdj4MYoZJsOBkWTAzpNjPQ>
+Received: from intern.anarazel.de (unknown [212.76.253.171])
+        by mail.messagingengine.com (Postfix) with ESMTPA id F01453060B66;
+        Sat,  1 Feb 2020 04:18:40 -0500 (EST)
+Date:   Sat, 1 Feb 2020 01:18:39 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: What does IOSQE_IO_[HARD]LINK actually mean?
+Message-ID: <20200201091839.eji7fwudvozr3deb@alap3.anarazel.de>
 MIME-Version: 1.0
-In-Reply-To: <18b43ead-0056-f975-a6ed-35fb645461e9@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/31/20 5:31 PM, Pavel Begunkov wrote:
-> On 01/02/2020 01:32, Pavel Begunkov wrote:
->> On 01/02/2020 01:22, Jens Axboe wrote:
->>> On 1/31/20 3:15 PM, Pavel Begunkov wrote:
->>>> Apart from unrelated first patch, this persues two goals:
->>>>
->>>> 1. start preparing io_uring to move resources handling into
->>>> opcode specific functions
->>>>
->>>> 2. make the first step towards long-standing optimisation ideas
->>>>
->>>> Basically, it makes struct io_submit_state embedded into ctx, so
->>>> easily accessible and persistent, and then plays a bit around that.
->>>
->>> Do you have any perf/latency numbers for this? Just curious if we
->>> see any improvements on that front, cross submit persistence of
->>> alloc caches should be a nice sync win, for example, or even
->>> for peak iops by not having to replenish the pool for each batch.
->>>
->>> I can try and run some here too.
->>>
->>
->> I tested the first version, but my drive is too slow, so it was only nops and
->> hence no offloading. Honestly, there waren't statistically significant results.
->> I'll rerun anyway.
->>
->> I have a plan to reuse it for a tricky optimisation, but thinking twice, I can
->> just stash it until everything is done. That's not the first thing in TODO and
->> will take a while.
->>
-> 
-> I've got numbers, but there is nothing really interesting. Throughput is
-> insignificantly better with the patches, but I'd need much more experiments
-> across reboots to confirm that.
-> 
-> Let's postpone the patchset for later
+Hi,
 
-Sounds fine to me, no need to do it unless it's a nice cleanup, and/or
-provides some nice improvements.
+Reading the manpage from liburing I read:
+       IOSQE_IO_LINK
+              When  this  flag is specified, it forms a link with the next SQE in the submission ring. That next SQE
+              will not be started before this one completes.  This, in effect, forms a chain of SQEs, which  can  be
+              arbitrarily  long. The tail of the chain is denoted by the first SQE that does not have this flag set.
+              This flag has no effect on previous SQE submissions, nor does it impact SQEs that are outside  of  the
+              chain  tail.  This  means  that multiple chains can be executing in parallel, or chains and individual
+              SQEs. Only members inside the chain are serialized. Available since 5.3.
 
-It would be great to see the splice stuff revamped, though :-)
+       IOSQE_IO_HARDLINK
+              Like IOSQE_IO_LINK, but it doesn't sever regardless of the completion result.  Note that the link will
+              still sever if we fail submitting the parent request, hard links are only resilient in the presence of
+              completion results for requests that did submit correctly.  IOSQE_IO_HARDLINK  implies  IOSQE_IO_LINK.
+              Available since 5.5.
 
--- 
-Jens Axboe
+I can make some sense out of that description of IOSQE_IO_LINK without
+looking at kernel code. But I don't think it's possible to understand
+what happens when an earlier chain member fails, and what denotes an
+error.  IOSQE_IO_HARDLINK's description kind of implies that
+IOSQE_IO_LINK will not start the next request if there was a failure,
+but doesn't define failure either.
 
+Looks like it's defined in a somewhat adhoc manner. For file read/write
+subsequent requests are failed if they are a short read/write. But
+e.g. for sendmsg that looks not to be the case.
+
+Perhaps it'd make sense to reject use of IOSQE_IO_LINK outside ops where
+it's meaningful?
+
+Or maybe I'm just missing something.
+
+Greetings,
+
+Andres Freund

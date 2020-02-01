@@ -2,54 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59BAF14F56B
-	for <lists+io-uring@lfdr.de>; Sat,  1 Feb 2020 01:32:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5D6F14F579
+	for <lists+io-uring@lfdr.de>; Sat,  1 Feb 2020 01:41:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbgBAAcS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Jan 2020 19:32:18 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36004 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726264AbgBAAcS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 19:32:18 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z3so10708116wru.3;
-        Fri, 31 Jan 2020 16:32:16 -0800 (PST)
+        id S1726319AbgBAAlb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 31 Jan 2020 19:41:31 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54066 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726264AbgBAAlb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jan 2020 19:41:31 -0500
+Received: by mail-wm1-f67.google.com with SMTP id s10so9941053wmh.3
+        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2020 16:41:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:references:autocrypt:subject:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=nClKbpvo7N4EeBPrBoCoNOC/kbhnzVjccKuhK+B/IrI=;
-        b=RKwdvxvjRXQ5CjhJCYK5xLUj/bwrgNQfxEZqEqDJyH3giH3cgGIUN0E37UGWr/0i0m
-         HgTefiQflJG1Uc/AKWYnq8H8sZtkDgpU3JychNxfhBjy6ijnQacn9ifsNY1w+24iYPy1
-         4uqEJ8XpqDOo5zimqvkAPIwucuDoD1x69bEKLs2qeoDpA4BfnG6wEDDawrJKbdTs1cyB
-         RCMoQObkOsCteAvueulUFvqbC8D8Ae1Z7WpEvMIwZnENM8vhsbFeuNkG+XilMaVDS9FJ
-         PiXzli6TD9p3FtPj8QWfWkoH+ltTP1Rqm98LgTumsSKZigc9DmHc/f3+rXwHA7aeSkXT
-         75hw==
+        bh=GCdRLqMZvxMaAAtiIkTig+tVICF6mExVVa+6LkRus5U=;
+        b=ZHqB5Yi22ylkTUU7ps6m5F0LDc3SenuCFQYeZ0A63WJjHTKwisleQwyw6KTZUUDUOx
+         yySG4MK3YOkltDehXs5G6+HBAyr7fl54BiM6EHHIpNlLfiqKp8Se8osw7b29mrA3/1BU
+         opu7FkdzAmpt+MNF5IAgnMbTXw7L7q7GCFRfWd+SkRBeo9JzKoo4ySo8Tro45iUkMO46
+         aJWqQ5OCoLpaFgEnOOhg+oz+aEMYq4TvZv0MJxN0PFHxSI54y0G1+mA4Ats2DYEgWXsQ
+         1FLrgY4lhmRNMIYbN5EMyRbC3E0QoGO7YoCUnu7hxgFIwWMl0z9SltrBxYrl8lIJ1HY0
+         p0fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:references:autocrypt:subject:message-id
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to;
-        bh=nClKbpvo7N4EeBPrBoCoNOC/kbhnzVjccKuhK+B/IrI=;
-        b=hho/+mi1aQHfAoGfdwr84vWHSmOinrjJ/1Uij+XoXrBt9nmdgs26qoZiYiNAzZSLp7
-         oulXtaPH3bMZCfArpBWAivH3xxi30vguDoFCafmv+J0wrGVfbki5tFZdqwEsPq63uK2m
-         Rnh1O7W/Qi62VhQWdXCIuRSMpSReqRAVpThyfYb0BimuNbx1wckGWcb2Jwo2h2FYLAkj
-         Lvz6pSl8ZcCtJYDlHrW2qbpP8D5QoPALXk5CAUVuYosTR4WUNVFMPHEG53tEF+2ISrRA
-         6Kv4Af0rf2BnJcIgraprbBI5Hbs6YQVWwJuYrPHXpRNWDjlTmQBImH+rYOyNQ/UAhrCJ
-         RSNQ==
-X-Gm-Message-State: APjAAAWaG1PS3DI4xm+tcga39C6OfJyMs7ci76132P59KlSO+5tnZqv9
-        9xRIWMI3r+vp8v8G8/TFRY3VKRUw
-X-Google-Smtp-Source: APXvYqwj0P/RAPdmFBWR/8nNQTpNKyHpze1P7juUF25j6ko/WhdkruYq2O1lnDmG/ceVko+D2Npvcg==
-X-Received: by 2002:adf:b310:: with SMTP id j16mr961931wrd.361.1580517135378;
-        Fri, 31 Jan 2020 16:32:15 -0800 (PST)
+        bh=GCdRLqMZvxMaAAtiIkTig+tVICF6mExVVa+6LkRus5U=;
+        b=edZOkBx80stNoPHVKLU2E4aTz1GeZ366+EHkkAlas6UiDzltzmiVbdHPsTuZGs7GVO
+         5NLh0UtX2vyb6aeRk8mVV6pcOr2/jtQL0xF/ErFP2X0TzyT2ACBXRIIgHC59zB4Xtk4K
+         Hh4e4urQC0b84SiKLKpQNsqxjHipShnuoM7UsYll/qqu7Bls8r6MIy40O1CHkpmbX07Y
+         RN3ReIDn06mMLERj8t3gQeo2OSkRlY+Dti54GQS0T3D4rvPLo/+UyzwnLSUta9sUGHMP
+         7ABLqANeZsJo67K1ehYY9rGcP5PPjMTZblII2p0AQiOgTencx8d/lShpOOsVQbT2V4ms
+         m+qQ==
+X-Gm-Message-State: APjAAAWaAA8guptfr6gpZmJs3dSRioqbYD4krbkfkGLK/4saLe3ks56u
+        e72Gok2LoraAHNfm7Dn0AaSRAE27
+X-Google-Smtp-Source: APXvYqye4pMBF4sz+ifj0ndBkKD/hfwTaBSRcxQj7qDRIwhiWMcnBi9FiYRslbHfuuOt/PBpuI4iCQ==
+X-Received: by 2002:a7b:c183:: with SMTP id y3mr13988789wmi.45.1580517688265;
+        Fri, 31 Jan 2020 16:41:28 -0800 (PST)
 Received: from [192.168.43.154] ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id v5sm14057864wrv.86.2020.01.31.16.32.14
+        by smtp.gmail.com with ESMTPSA id o1sm13873294wrn.84.2020.01.31.16.41.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Jan 2020 16:32:14 -0800 (PST)
+        Fri, 31 Jan 2020 16:41:27 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <b0b0bb08-d3ab-a9f7-d468-6f113fbda19f@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1580508735.git.asml.silence@gmail.com>
- <6492ccd2-e829-df13-ab6e-e62590375fd1@kernel.dk>
- <199731e7-ca3f-ea6c-0813-6aa5dec6fa66@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -93,107 +90,128 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v3 0/6] add persistent submission state
-Message-ID: <18b43ead-0056-f975-a6ed-35fb645461e9@gmail.com>
-Date:   Sat, 1 Feb 2020 03:31:21 +0300
+Subject: Re: [PATCH] io_uring: fix sporadic double CQE entry for close
+Message-ID: <c1b8f3c9-af7c-7327-cd15-5bc92ffc8e6b@gmail.com>
+Date:   Sat, 1 Feb 2020 03:40:48 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <199731e7-ca3f-ea6c-0813-6aa5dec6fa66@gmail.com>
+In-Reply-To: <b0b0bb08-d3ab-a9f7-d468-6f113fbda19f@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="9qbBbTO9vuKvGdNLtka83mwq4aSsQPGUJ"
+ boundary="RqkCsk6WtVLjEPdCVgs8OJ53FvVlyo1D1"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---9qbBbTO9vuKvGdNLtka83mwq4aSsQPGUJ
-Content-Type: multipart/mixed; boundary="cnCZt9dfTR0Vc4nYrEbEItomcGaJCGDOY";
+--RqkCsk6WtVLjEPdCVgs8OJ53FvVlyo1D1
+Content-Type: multipart/mixed; boundary="2CQYOmd0DwcQt8UcdkFVc9cZqZFgjBqzk";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <18b43ead-0056-f975-a6ed-35fb645461e9@gmail.com>
-Subject: Re: [PATCH v3 0/6] add persistent submission state
-References: <cover.1580508735.git.asml.silence@gmail.com>
- <6492ccd2-e829-df13-ab6e-e62590375fd1@kernel.dk>
- <199731e7-ca3f-ea6c-0813-6aa5dec6fa66@gmail.com>
-In-Reply-To: <199731e7-ca3f-ea6c-0813-6aa5dec6fa66@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+Message-ID: <c1b8f3c9-af7c-7327-cd15-5bc92ffc8e6b@gmail.com>
+Subject: Re: [PATCH] io_uring: fix sporadic double CQE entry for close
+References: <b0b0bb08-d3ab-a9f7-d468-6f113fbda19f@kernel.dk>
+In-Reply-To: <b0b0bb08-d3ab-a9f7-d468-6f113fbda19f@kernel.dk>
 
---cnCZt9dfTR0Vc4nYrEbEItomcGaJCGDOY
+--2CQYOmd0DwcQt8UcdkFVc9cZqZFgjBqzk
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 01/02/2020 01:32, Pavel Begunkov wrote:
-> On 01/02/2020 01:22, Jens Axboe wrote:
->> On 1/31/20 3:15 PM, Pavel Begunkov wrote:
->>> Apart from unrelated first patch, this persues two goals:
->>>
->>> 1. start preparing io_uring to move resources handling into
->>> opcode specific functions
->>>
->>> 2. make the first step towards long-standing optimisation ideas
->>>
->>> Basically, it makes struct io_submit_state embedded into ctx, so
->>> easily accessible and persistent, and then plays a bit around that.
->>
->> Do you have any perf/latency numbers for this? Just curious if we
->> see any improvements on that front, cross submit persistence of
->> alloc caches should be a nice sync win, for example, or even
->> for peak iops by not having to replenish the pool for each batch.
->>
->> I can try and run some here too.
->>
+On 01/02/2020 03:21, Jens Axboe wrote:
+> We punt close to async for the final fput(), but we log the completion
+> even before that even in that case. We rely on the request not having
+> a files table assigned to detect what the final async close should do.
+> However, if we punt the async queue to __io_queue_sqe(), we'll get
+> ->files assigned and this makes io_close_finish() think it should both
+> close the filp again (which does no harm) AND log a new CQE event for
+> this request. This causes duplicate CQEs.
 >=20
-> I tested the first version, but my drive is too slow, so it was only no=
-ps and
-> hence no offloading. Honestly, there waren't statistically significant =
-results.
-> I'll rerun anyway.
->=20
-> I have a plan to reuse it for a tricky optimisation, but thinking twice=
-, I can
-> just stash it until everything is done. That's not the first thing in T=
-ODO and
-> will take a while.
+> Queue the request up for async manually so we don't grab files
+> needlessly and trigger this condition.
 >=20
 
-I've got numbers, but there is nothing really interesting. Throughput is
-insignificantly better with the patches, but I'd need much more experimen=
-ts
-across reboots to confirm that.
+Evidently from your 2 last patches, it's becoming hard to track everythin=
+g in
+the current state. As mentioned, I'm going to rework and fix submission a=
+nd prep
+paths with a bit of formalisation.
 
-Let's postpone the patchset for later
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>=20
+> ---
+>=20
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index cb3c0a803b46..fb5c5b3e23f4 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2841,16 +2841,13 @@ static void io_close_finish(struct io_wq_work *=
+*workptr)
+>  		int ret;
+> =20
+>  		ret =3D filp_close(req->close.put_file, req->work.files);
+> -		if (ret < 0) {
+> +		if (ret < 0)
+>  			req_set_fail_links(req);
+> -		}
+>  		io_cqring_add_event(req, ret);
+>  	}
+> =20
+>  	fput(req->close.put_file);
+> =20
+> -	/* we bypassed the re-issue, drop the submission reference */
+> -	io_put_req(req);
+>  	io_put_req_find_next(req, &nxt);
+>  	if (nxt)
+>  		io_wq_assign_next(workptr, nxt);
+> @@ -2892,7 +2889,13 @@ static int io_close(struct io_kiocb *req, struct=
+ io_kiocb **nxt,
+> =20
+>  eagain:
+>  	req->work.func =3D io_close_finish;
+> -	return -EAGAIN;
+> +	/*
+> +	 * Do manual async queue here to avoid grabbing files - we don't
+> +	 * need the files, and it'll cause io_close_finish() to close
+> +	 * the file again and cause a double CQE entry for this request
+> +	 */
+> +	io_queue_async_work(req);
+> +	return 0;
+>  }
+> =20
+>  static int io_prep_sfr(struct io_kiocb *req, const struct io_uring_sqe=
+ *sqe)
+>=20
 
 --=20
 Pavel Begunkov
 
 
---cnCZt9dfTR0Vc4nYrEbEItomcGaJCGDOY--
+--2CQYOmd0DwcQt8UcdkFVc9cZqZFgjBqzk--
 
---9qbBbTO9vuKvGdNLtka83mwq4aSsQPGUJ
+--RqkCsk6WtVLjEPdCVgs8OJ53FvVlyo1D1
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl40xuoACgkQWt5b1Glr
-+6WJzRAAp6ZiD6oT1kfCj3dtT1jZOT1dYVmuEnzpXGqDYbI2VsgTmCTMUbIALQWq
-f03If6bPaCTIrMN+KMKN1XYwwI2RtCc3ddFLFyNxf1M7A3PEcnJ3lDXgJPdmficL
-UiIugHz5AYTwArin0fCKMtRVB5i9D59G1O1q6t4FRjW/M+eS/Ss+yxkkgVWdFgFV
-yAzBHuALw87pVdTdx70vr7nFuKTivY4aWLLrZcQaIfw5uE+NCKbIUFdgjtHhqxHw
-Jqa67u7Clqu1zeJYSOOefB7v+AlPFS801GOUyxoI9f6qCIG6qlcfEvWYrtuG76Sf
-HZEMh/Hw6Lo2UlPWAMMbHG7ukCMLE/YEasWufNi5MjbPAAh/xytkKU+4+6bIg3IC
-23ZjR3yov2vlxQ9h1mCc7MOiDCtUQz5YTL3TMu8+WTBhH9tPS+fjyXCTy0UFnFJS
-9WHv99AuR9zQwN/5RNrNxi2HWRdmzY3dJEehdo6H6JaiOHycjcDTn9Fwhha51MZf
-yX3Pf9ejQccwa1810jAPkbPmPerjiSprVpmpGWD4W1CO24j6Lf17dHjq/y5F25mM
-QBJ5lbQXd8ferBomfK0LI0U3szqvhwr/qZZjMnzheaySNCKjq3LkyUVEShcXBGDP
-fBqWZuK6Bjx1aLNiUIXEWXednYDSJc6EtEhwwUGt8R3k78cM7Mo=
-=iian
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl40yRAACgkQWt5b1Glr
++6Xvnw/8CUG9cfIKrszNFwSFyXrx0jNgoot2QqNFzp+0anXvZdPOALrSnbswdUOb
+UFy1rg9trgnYL2Q24M/jT+ZMoKeLt9Ee9pO0QDo4tLDAjcDczGzcXvZU64+dHvI3
+KAkiYOF3i2MV+KTkw5RDtk/0w+a1gq1vYiXETSnFJ3kT0nDT0ahN0rR8uBDNkgdo
+OXc5z8J3108sSipNmuZPdaBZkwDaKPDzraoZU43Y9f6yoGEZbAIBNAM9ooEOzaJ9
+5c1xIx4rKo0xwUVH3YqxjNctTmr9QiIgYBkGQLB/rLVKatLP2GEtNF4u6yrDp4gr
+4x4ljwpTpZR2HXCoyAa5YgeG8nnUIeIej8QfUzvQCeHhqcxbKW0zbx5OslA5gosc
+Pbk1h3chusyOELQ79KugOcUWkSUdpPXEA16IfzoOvq/M3oP72EHboSN6dZTxycPl
+q4vW9fACTQFxLg+dzSfnXMf5e3OooUD1bGeIFALZEiZ5l/e6JvOdFL4XvpDC5M4U
+UTpVIHD4PxkUE6xprTSeFiCyTQwIVMdm0adsEGva3XoD1SMj1uputgcJZcfnwKaV
+16Ez0M9UiBBPhu/NrVwKZoEDQ4g+ihc8GKOVgaPGDMJL0HVM1BigJV8hKS1m5jHu
+WBR1H8omSE680W1pA2FBYrQG1w93SMCarMNslgGkJ06oVANmdkg=
+=8SYK
 -----END PGP SIGNATURE-----
 
---9qbBbTO9vuKvGdNLtka83mwq4aSsQPGUJ--
+--RqkCsk6WtVLjEPdCVgs8OJ53FvVlyo1D1--

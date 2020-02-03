@@ -2,139 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B75B31504E1
-	for <lists+io-uring@lfdr.de>; Mon,  3 Feb 2020 12:06:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15A1D150A0F
+	for <lists+io-uring@lfdr.de>; Mon,  3 Feb 2020 16:43:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbgBCLGv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 3 Feb 2020 06:06:51 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:37367 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727268AbgBCLGu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 3 Feb 2020 06:06:50 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7C46621F57;
-        Mon,  3 Feb 2020 06:06:49 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 03 Feb 2020 06:06:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=NeywmRTXFlPPGpmrIlLmDGmyULW
-        /aHnlSGPykwDSgV4=; b=mIdeyCoPq+cYflUc2/An6NdgElK7pUEqlDNRzwUfYJ8
-        GA8p6srodHzgacu1/5IAdhWaHCB4QBrvj7Gr3PhHeoJfuDxKLXWL0nztRSHJZVev
-        0zhy1gBr3mz/2EwFYpluX0+zQKhLRNGoh7Vkdj7phZs14WUOCKxmf3kZk5bvkyM6
-        VhfcHgXt0QSTwcAb1ImIDrNj5gjUZAr0UpE1kxp3VyYxSlggA/19aOBN7z2rqqbF
-        PfP44S9d4rIbhYSI7TFBBhaTEux415E/ffLj3LjDdUc/KOH2XSpr9UDv0JQmsHcb
-        TTYA0++rQgFgnK7LkDbF2GgdPAkhMclCTrV+A+Ywv5A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=NeywmR
-        TXFlPPGpmrIlLmDGmyULW/aHnlSGPykwDSgV4=; b=QS2hbBA36i5GE7TbVxNATW
-        1nFk1kJ/F3mhHG2TAUoSY7lP03TQ9pz/vMWzrDGUmghx2YsZX7l88gPDz8sGfXSa
-        nbjF2PKM6qeBW2fCovpSkL5HSoPXozPrd07pVjjHQHoHaFkSXfeKYiJ3eA6n4YzP
-        Ah5+ilnO+nUf3nW89/oC4zuedIfbXCzz+GZSFWqljpPyTZDDF7uInxtz4Nubi06V
-        xBIPfsOcNzvNjwjnz2hta+DKrpjZY2ftsqTBcOzZc8sYprSp3/nR/q3dxdYVz01E
-        lieNu1hHbfDxKf2mYnn7GHVsK0GlmCdXyqPFHRfv+bmR1lLOeL/vOJQvyl9rXogw
-        ==
-X-ME-Sender: <xms:yP43XgmNoGQ3oPwpsI7mZd5TGm7phJbkFTG7NsgKVqNb_9XYAj1iRg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgeejgddvvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
-    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecukfhppeduje
-    dvrdehkedrvdejrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:yP43Xkqcj9ahGzgmMs8oHquwHSP1HGIyJ1hfdBXym-ciKCSRlY4p_g>
-    <xmx:yP43XgmzbfQYAVL2HsN3wA0ClrFtQXC0-mPsn-85NND-4gUhkZnlbw>
-    <xmx:yP43XkzyuQqIho2ZEV5TSLLPrOqU31qg0tac-0thFlLmAxlZVHskkg>
-    <xmx:yf43XlZIFjlGzoXBBD0dBfeU9xL2gni4ROvk54k_x0Qy-a3ei97uAg>
-Received: from intern.anarazel.de (unknown [172.58.27.127])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0073730602DB;
-        Mon,  3 Feb 2020 06:06:48 -0500 (EST)
-Date:   Sun, 2 Feb 2020 23:42:57 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: io_uring force_nonblock vs POSIX_FADV_WILLNEED
-Message-ID: <20200203074257.nx23pigjtmgbyyyz@alap3.anarazel.de>
-References: <20200201094309.6si5dllxo4i25f4u@alap3.anarazel.de>
- <20200203064047.GC8731@bombadil.infradead.org>
+        id S1727308AbgBCPnb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 3 Feb 2020 10:43:31 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:38140 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727230AbgBCPnb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 3 Feb 2020 10:43:31 -0500
+Received: by mail-il1-f195.google.com with SMTP id f5so13004172ilq.5
+        for <io-uring@vger.kernel.org>; Mon, 03 Feb 2020 07:43:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tqYcgHc5VOj+fbH6k9sfeEL1lPZODVdx63DLzZEZWGM=;
+        b=OC9GYtA5uaUGUTNxpxQP/8l4Y2Kmkh6U/EDEHCHesaZEfX9yBWA2ezdOt6+moxwlHA
+         fvWoLToypZUAE/X/KcjKoMOUwGFX1jv2lDCMzgP13MzrkTXz9IqkvAsBru1XMrBRMX8y
+         xwfcccVkfpWsSPduRMbDU/ECQFb1hqkDshtDOEmOYITnJDsj1tyUheUp2g8/yT2kLcAU
+         /z8WF2AHtU/dPDmdye//GZGZ4BuyeFI+8KokNEPRHRRQ2v9LycDhYeQQmGo/4iSwu7pF
+         NhLsacjk8qNBsYCduXgCE+Ap+uOTU+s7qcWhCmSK04kTXkUHuySuSo6uk+XW1NLRNoHA
+         1lyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tqYcgHc5VOj+fbH6k9sfeEL1lPZODVdx63DLzZEZWGM=;
+        b=IvV2uSy6CescjjihwTA0OQtLYMaWtDGI5zdOtETYeFfI14D41cTlroVGkyCzLo99Ys
+         jRHXVVE2umh7BX/+cBs+gE44uPy7jS6RpoeDd3dAE/wTfkZOEhlYekNm1hmBP31Qb5U/
+         B5lKrwWX7uCEWyqGsdiHNIJUlAOW6380NUy+lorJZiRoyccfqy/tMCxhJUZO4nycr6to
+         VHM1T5r9bCrCsLQGXelN4AG+JvY4VDg/yHkuKt/3OE5cYPhOE9GCbCJECj82QjDI5uN3
+         qi2rAMuh+zZYl4TDENNuoN9pHUqrUIBupygb6CMJZyztrCTq40ldOXCC8kp52nmJHryh
+         eimA==
+X-Gm-Message-State: APjAAAWGtT3zt5rJAtqpfBxgsAPJYW8SRkVBnv1HHPGWfuCbXaklkACP
+        zvcNcCthcoAsnx8xjuIYpwmw7+T3P84=
+X-Google-Smtp-Source: APXvYqzcTRKaGJoUO23/z186pV0Ri5qk49RtXpG070hlIWnLWwd1jK0I3EojhgnXaUiM+3Vq9ztGGA==
+X-Received: by 2002:a92:4818:: with SMTP id v24mr14416711ila.96.1580744609930;
+        Mon, 03 Feb 2020 07:43:29 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id x62sm7393197ill.86.2020.02.03.07.43.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Feb 2020 07:43:29 -0800 (PST)
+Subject: Re: [PATCH liburing v2 1/1] test: add epoll test case
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20200131142943.120459-1-sgarzare@redhat.com>
+ <20200131142943.120459-2-sgarzare@redhat.com>
+ <00610b2b-2110-36c2-d6ce-85599e46013f@kernel.dk>
+ <20200203090406.mlgmw2u7lv7a76vd@steredhat>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d3763cdb-dee0-9312-2a4c-08ed939eae70@kernel.dk>
+Date:   Mon, 3 Feb 2020 08:43:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203064047.GC8731@bombadil.infradead.org>
+In-Reply-To: <20200203090406.mlgmw2u7lv7a76vd@steredhat>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Matthew,
-
-On 2020-02-02 22:40:47 -0800, Matthew Wilcox wrote:
-> On Sat, Feb 01, 2020 at 01:43:09AM -0800, Andres Freund wrote:
-> > As far as I can tell POSIX_FADV_WILLNEED synchronously starts readahead,
-> > including page allocation etc, which of course might trigger quite
-> > blocking. The fs also quite possibly needs to read metadata.
-> > 
-> > 
-> > Seems like either WILLNEED would have to always be deferred, or
-> > force_page_cache_readahead, __do_page_cache_readahead would etc need to
-> > be wired up to know not to block. Including returning EAGAIN, despite
-> > force_page_cache_readahead and generic_readahead() intentially ignoring
-> > return values / errors.
+On 2/3/20 2:04 AM, Stefano Garzarella wrote:
+> On Fri, Jan 31, 2020 at 08:41:49AM -0700, Jens Axboe wrote:
+>> On 1/31/20 7:29 AM, Stefano Garzarella wrote:
+>>> This patch add the epoll test case that has four sub-tests:
+>>> - test_epoll
+>>> - test_epoll_sqpoll
+>>> - test_epoll_nodrop
+>>> - test_epoll_sqpoll_nodrop
+>>
+>> Since we have EPOLL_CTL now, any chance you could also include
+>> a test case that uses that instead of epoll_ctl()?
 > 
-> The first step is going to be letting the readahead code know that it
-> should have this behaviour, which is tricky because the code flow looks
-> like this:
-> 
-> io_fadvise
->   vfs_fadvise
->     file->f_op->fadvise()
+> Sure, I'll add a test case for EPOLL_CTL!
 
-Yea.
+Awesome, thanks!
 
+-- 
+Jens Axboe
 
-> ... and we'd be breaking brand new ground trying to add a gfp_t to a
-> file_operations method.  Which is not to say it couldn't be done, but
-> would mean changing filesystems, just so we could pass the gfp
-> flags through from the top level to the low level.  It wouldn't be
-> too bad; only two filesystems implement an ->fadvise op today.
-
-I was wondering if the right approach could be to pass through a kiocb
-instead of gfp_t. There's obviously precedent for that in
-file_operations, and then IOCB_NOWAIT could be used to represent the the
-intent to not block. It'd be a bit weird in the sense that currently
-there'd probably be no callback - but that seems fairly minor. And who
-knows, 
-
-
-> Next possibility, we could add a POSIX_FADV_WILLNEED_ASYNC advice
-> flag.
-
-POSIX_FADV_DONTNEED has similar problems to POSIX_FADV_WILLNEED, so it'd
-be nice to come up with an API change to vfs_fadvise that'd support
-both. Obviously there also could be a POSIX_FADV_DONTNEED_ASYNC, but ...
-
-
-> Something I already want to see in an entirely different context is
-> a flag in the task_struct which says, essentially, "don't block in
-> memory allocations" -- ie behave as if __GFP_NOWAIT | __GFP_NOWARN
-> is set.  See my proposal here:
-
-I'm a bit out of my depth here: Would __GFP_NOWAIT actually be suitable
-to indicate that no blocking IO is to be executed by the FS? E.g. for
-metadata? As far as I can tell that's also a problem, not just reclaim
-to make space for the to-be-read data.
-
-
-> I've got my head stuck in the middle of the readahead code right now,
-> so this seems like a good time to add this functionality.  Once I'm done
-> with finding out who broke my test VM, I'll take a shot at adding
-> this.
-
-Cool!
-
-Greetings,
-
-Andres Freund

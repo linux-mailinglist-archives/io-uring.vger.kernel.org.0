@@ -2,71 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F364715169E
-	for <lists+io-uring@lfdr.de>; Tue,  4 Feb 2020 08:51:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35D96151806
+	for <lists+io-uring@lfdr.de>; Tue,  4 Feb 2020 10:38:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbgBDHv0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 4 Feb 2020 02:51:26 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51972 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbgBDHv0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Feb 2020 02:51:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=yUiImlhwcIpiW7cZCXnZDPMFY1pVbnQvFpHqcngYJpA=; b=gstJsAL8wCfEyAUHmus+6yyWTS
-        FTJf8/HqAHwAoYF3+90KrznEc26VGSwMoQjghTds08H67I2DqucLSFAGKoRURFqhgAbPoJlMyPFpy
-        TAQ2aL1XrcAx00X1sLx+A0G7bBQkRNfDr+NcL9HP7IbFWHUbsIKl82akG0UGwyLdlKbUmTPXpISm4
-        jkEePYDhBrk2NXbJaXa2+5lOYwB+FfFUziY5EQWBTs7wzZXAerzVhQ8mzqjzeF7+Y1JTuKdmXBvdy
-        WcgvXnEKK/ZNE5PP7qzo8kgpvk1i4cMNGhd1G9DuTqkKGCKAsd0vvPpDuLWCDgT7nlVeqxSwIN2At
-        dpNbF2iw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iyszU-0000Wx-HQ; Tue, 04 Feb 2020 07:51:24 +0000
-Date:   Mon, 3 Feb 2020 23:51:24 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH 1/1] block: Manage bio references so the bio persists
- until necessary
-Message-ID: <20200204075124.GA29349@infradead.org>
-References: <1580441022-59129-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1580441022-59129-2-git-send-email-bijan.mottahedeh@oracle.com>
- <20200131064230.GA28151@infradead.org>
- <9f29fbc7-baf3-00d1-a20c-d2a115439db2@oracle.com>
- <20200203083422.GA2671@infradead.org>
- <aaecd43b-dd44-f6c5-4e2d-1772cf135d2a@oracle.com>
+        id S1726230AbgBDJir (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 Feb 2020 04:38:47 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:39135 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbgBDJir (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Feb 2020 04:38:47 -0500
+Received: by mail-qk1-f196.google.com with SMTP id w15so17245779qkf.6
+        for <io-uring@vger.kernel.org>; Tue, 04 Feb 2020 01:38:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daurnimator.com; s=daurnimator;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YNCQSvCIeWC94pgLACmS1HbX3HCukQpBVOdtXH1VKHw=;
+        b=iqvCudZwiW9s7/uz/6ETltiDtjVZC24knRHyAK/Jno7LWqCZ4Pg4pOwnsnWUJylBPc
+         mA8W3J/2ilWe2ZRArqDCgSt46+nf8rl+uVhjLKJztNpEUQ0y5PvYCN5eapJ9KdFUs7i2
+         JbQVEeNP9Ab8GyktV1zUELNgnCbFVVCa3t7Q8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YNCQSvCIeWC94pgLACmS1HbX3HCukQpBVOdtXH1VKHw=;
+        b=Hg+rtd2JxVZW3PLiXFT1J+LN3YjeZHYXCdxQPOiAfu6VSzS5I6zbtU1lKXgiUQumRy
+         ymwIdG47OCLYgSABpHYZej/2DxjeR9SMLKDHnQnLtOJ0EnOYZmwjDz5U4VpJgi3v2ZDP
+         I9CZJD8bxOfmeOeKwMZ7qDksZ1p+YwplM+K+NDqPqWnbVwyjAbnwbSSUrJjUjuEoa/sp
+         kMTvcSNhTBWck/KOBVcxe3ZOrD0tVnOIW1lAWCNsl0Hri5K5L/sE8FuMP7w67oigXU8f
+         aisM69E+4mG4GRVwpZJ5uCxUWA8+5/20OQf1667WHj6AKDkd+CLapg0nuD48mqm/sNAl
+         vRTQ==
+X-Gm-Message-State: APjAAAWmswCHHsTcTEl8wmXAFMKbt1MVDXCDwRpl7M1o9EUk3P+o58Ff
+        yQZKBLhO6ZxJ3fcilFZRlIWB+crxMOvYlg==
+X-Google-Smtp-Source: APXvYqxGm41nPlXglwYWuCtPR4g9T3SkUPZkgSUWSEgaMoshVSDUGYEbqDdfAQQ4BDx0lUchHBLh5w==
+X-Received: by 2002:a37:6446:: with SMTP id y67mr27628150qkb.59.1580809125899;
+        Tue, 04 Feb 2020 01:38:45 -0800 (PST)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com. [209.85.219.54])
+        by smtp.gmail.com with ESMTPSA id o7sm10763653qkd.119.2020.02.04.01.38.44
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Feb 2020 01:38:45 -0800 (PST)
+Received: by mail-qv1-f54.google.com with SMTP id m5so8245389qvv.4
+        for <io-uring@vger.kernel.org>; Tue, 04 Feb 2020 01:38:44 -0800 (PST)
+X-Received: by 2002:ad4:57c7:: with SMTP id y7mr23151390qvx.174.1580809124559;
+ Tue, 04 Feb 2020 01:38:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aaecd43b-dd44-f6c5-4e2d-1772cf135d2a@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <73f985c9-66df-3a80-3aee-05c89a35faad@kernel.dk>
+In-Reply-To: <73f985c9-66df-3a80-3aee-05c89a35faad@kernel.dk>
+From:   Daurnimator <quae@daurnimator.com>
+Date:   Tue, 4 Feb 2020 20:38:33 +1100
+X-Gmail-Original-Message-ID: <CAEnbY+cUeNGLOHj2O9VughT8c6A_T4w5qG_nSen=P=fOivfMMA@mail.gmail.com>
+Message-ID: <CAEnbY+cUeNGLOHj2O9VughT8c6A_T4w5qG_nSen=P=fOivfMMA@mail.gmail.com>
+Subject: Re: [PATCH] io_uring: prevent eventfd recursion on poll
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 01:07:48PM -0800, Bijan Mottahedeh wrote:
-> My concern is with the code below for the single bio async case:
-> 
->                            qc = submit_bio(bio);
-> 
->                            if (polled)
->                                    WRITE_ONCE(iocb->ki_cookie, qc);
-> 
-> The bio/dio can be freed before the the cookie is written which is what I'm
-> seeing, and I thought this may lead to a scenario where that iocb request
-> could be completed, freed, reallocated, and resubmitted in io_uring layer;
-> i.e., I thought the cookie could be written into the wrong iocb.
+On Fri, 31 Jan 2020 at 16:25, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> If we register an eventfd with io_uring for completion notification,
+> and then subsequently does a poll for that very descriptor, then we
+> can trigger a deadlock scenario. Once a request completes and signals
+> the eventfd context, that will in turn trigger the poll command to
+> complete. When that poll request completes, it'll try trigger another
+> event on the eventfd, but this time off the path led us to complete
+> the poll in the first place. The result is a deadlock in eventfd,
+> as it tries to ctx->wqh.lock in a nested fashion.
+>
+> Check if the file in question for the poll request is our eventfd
+> context, and if it is, don't trigger a nested event for the poll
+> completion.
 
-I think we do have a potential use after free of the iocb here.
-But taking a bio reference isn't going to help with that, as the iocb
-and bio/dio life times are unrelated.
-
-I vaguely remember having that discussion with Jens a while ago, and
-tried to pass a pointer to the qc to submit_bio so that we can set
-it at submission time, but he came up with a reason why that might not
-be required.  I'd have to dig out all notes unless Jens remembers
-better.
+Could this deadlock/loop also happen via an epoll fd?

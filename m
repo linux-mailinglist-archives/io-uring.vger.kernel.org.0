@@ -2,55 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60E69153A6A
-	for <lists+io-uring@lfdr.de>; Wed,  5 Feb 2020 22:44:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 268C5153AFF
+	for <lists+io-uring@lfdr.de>; Wed,  5 Feb 2020 23:30:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbgBEVoi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 Feb 2020 16:44:38 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35588 "EHLO
+        id S1727529AbgBEWaI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 Feb 2020 17:30:08 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37736 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727116AbgBEVoh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Feb 2020 16:44:37 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w12so4672696wrt.2;
-        Wed, 05 Feb 2020 13:44:35 -0800 (PST)
+        with ESMTP id S1727307AbgBEWaI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Feb 2020 17:30:08 -0500
+Received: by mail-wr1-f66.google.com with SMTP id w15so4774820wru.4;
+        Wed, 05 Feb 2020 14:30:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=ar6agWtuM+9Xulf6qRMIf69QeD+YmYMouRwwo5GNuII=;
-        b=OJ7R2FdJf/C720qWU27LC9UPJc3V1+Nj+eDFyRCbMwNMa6g95VUQB0eojRQEa0p2BX
-         yzG5+IfJlt5ikoNTm0D9/aBtNF6X2YOgAaQmWwUDB0Z4Qax0BeFHgl0ZUDdIUFRbYZjV
-         rn/o9ZVTe4kpR1CsPBeo+bLU05IeMcCYF1aY/WXKt+HF3SVsBccvF85b8QyqrjJHcWe7
-         eEHDgH+CagnzF+TrpN42CyF2c5pWcn8oUo7yYhnWtgaj4ylQTWAPavaaWT1Qn0eJ39H5
-         6LN5SrYdiMrSKf+eBPj6lgqrJZ4fN/DKsvaqKrR8D5hveaRW50wRI7xabXpyX4uvGd/Y
-         CrGw==
+        bh=Fa1DCh+jk5n7X+msJlbZMYPmYUwfUXma4K/VOwbfSjY=;
+        b=j36kBM637O5acfRGxU8yNmlrGO60UA3cxNw9sPvaMogGWprUfTSaglGVQNlMUZbAtK
+         1Nj0rvrM1dDDmLGlZrW4JH86DF3yl3QkQvkOMj7h7MQf6yXrvXc7SkLjK/kSZkGUvkZd
+         +Z+LF6uQ3yN9qnoDSWmkzuD/DENhDNVY/6kx7M3HqX5s77n59f0B3nAiByc/8NsdvaTp
+         klfTIyxxR4vxdVs4fM1hl3p3RE3fO9cOn+wPeCetzzdfL8IVwIu6Wn24JioIH8Wa9OVU
+         gV41AtpXLP9yehbGsv0pVoaxN6Bhn57oBiDlQCzwkggOXL32C9NbzfHwgoX9fn2OmWkx
+         6hRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to;
-        bh=ar6agWtuM+9Xulf6qRMIf69QeD+YmYMouRwwo5GNuII=;
-        b=PTuGvwevdbhE+O+v1JHpcOTVky0akMgqviuV283RG78tDQd/gtIMUn3+dMNbKCWnK9
-         NogWQfuZcl4nLNrhrcyp4gEWzxNDbIHH47/nmd7HVN8LXNQrEk2PFg+kv7cYLITUx+Q7
-         CmvXrgpee6YZB+u2epxeSMTzQoTJrdHoR8/qAVgceksN4Z/39WfpACUvqYc9KAns4cUW
-         IBcjxLIWpNHqiWR45Dfa8Vwf8reBjJZUBo4/kg+MKfBeJuOq1dnjatcysGLe24UNYmCH
-         jEnPM3FbTKAwslC0+O8LSV+T7xLhHNnkZfbN+DaSIa2WcOh+74TeX9k26eAwjB0BQrZ0
-         3qcQ==
-X-Gm-Message-State: APjAAAWr9QgpwD0gF5rfwLKy6cwlowyyFCEr/4/AtpWtKiv8nR5JbQ1W
-        Tg4Fh8Ns9psq0jRBqCVNetx/X5Wf
-X-Google-Smtp-Source: APXvYqzT92bLiR7MO2yUyPMHJItNHZBtdiHr8wXIJoyrnLXMPN+PCREQ2UlSy9h6K/fj+STqDuo4BQ==
-X-Received: by 2002:a5d:6886:: with SMTP id h6mr605043wru.154.1580939074428;
-        Wed, 05 Feb 2020 13:44:34 -0800 (PST)
+        bh=Fa1DCh+jk5n7X+msJlbZMYPmYUwfUXma4K/VOwbfSjY=;
+        b=fpw3khSxLLLQYeIC6rZQe3ibBjadepBtedXENgYTULVTI7IbLsvdvZOyhqUhWcy4pA
+         Y4fmXJzxfUJFh8S1ZVzJnPxFEUCEjndeUlDnpNtbmOWbgaKpV08O5mITwDGK90LUvKpX
+         2m2FgQhElIyj4RNij8crn09K6GGuxD6yQAmmQ9A4PrG5P8jitvSGF6rYxqAgDDVatfmy
+         dGoo7poExzk66TnYdZw52F4g9y66mlJdAsTyx6DkkNmk7KAbCQcW+XJ8br5MmhCk+wp9
+         lysy3DkRMxGgIRuP6e/AC0kaeGQsAqKT6H5XMorp7+SptGvXJXZGziNMvzxzdmLDdhpy
+         mMlg==
+X-Gm-Message-State: APjAAAXleDVSRJkKsNZaU+cf4zsDgbtzZD1TdbLmF59G0MSCXI2HiANP
+        RfYIto/NQmCPCuVfHhF1uoaNxvSJ
+X-Google-Smtp-Source: APXvYqy3mEwpGpXlr8q14Yok36B8YeqhIXQWxI+cdRox/j9peecFBwFMqit18PhhjEeAQXI7rdyTwg==
+X-Received: by 2002:adf:df83:: with SMTP id z3mr76777wrl.389.1580941804785;
+        Wed, 05 Feb 2020 14:30:04 -0800 (PST)
 Received: from [192.168.43.125] ([109.126.145.62])
-        by smtp.gmail.com with ESMTPSA id 133sm1204270wmd.5.2020.02.05.13.44.33
+        by smtp.gmail.com with ESMTPSA id m21sm1257086wmi.27.2020.02.05.14.30.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Feb 2020 13:44:33 -0800 (PST)
-Subject: Re: [PATCH 1/3] io_uring: pass sqe for link head
+        Wed, 05 Feb 2020 14:30:04 -0800 (PST)
+Subject: Re: [PATCH 0/3] io_uring: clean wq path
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <cover.1580928112.git.asml.silence@gmail.com>
- <c9654d6a79898d5f8aa8b9dabcb76d9f23faa149.1580928112.git.asml.silence@gmail.com>
- <19f6aa0e-158f-5125-9df9-39ae95c72962@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -94,178 +92,94 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <332a2afd-cdfc-3b7f-c228-abc5bdc7646a@gmail.com>
-Date:   Thu, 6 Feb 2020 00:43:56 +0300
+Message-ID: <1fdfd8bf-c0cd-04c0-e22e-bc0945ef1734@gmail.com>
+Date:   Thu, 6 Feb 2020 01:29:16 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <19f6aa0e-158f-5125-9df9-39ae95c72962@gmail.com>
+In-Reply-To: <cover.1580928112.git.asml.silence@gmail.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="IYK2h3LBy4gGtE5VaeSAU4KhikwwceVaz"
+ boundary="qgSlbA92WBtIHxNiLpFDc7GwLZJ9lYpLb"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---IYK2h3LBy4gGtE5VaeSAU4KhikwwceVaz
-Content-Type: multipart/mixed; boundary="QNEeBAtqmlBWcq56WAFcyeH8PtY64JIDW";
+--qgSlbA92WBtIHxNiLpFDc7GwLZJ9lYpLb
+Content-Type: multipart/mixed; boundary="jAhrhSC4CY4p50BIJGaO4qzOU75UZbGut";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Message-ID: <332a2afd-cdfc-3b7f-c228-abc5bdc7646a@gmail.com>
-Subject: Re: [PATCH 1/3] io_uring: pass sqe for link head
+Message-ID: <1fdfd8bf-c0cd-04c0-e22e-bc0945ef1734@gmail.com>
+Subject: Re: [PATCH 0/3] io_uring: clean wq path
 References: <cover.1580928112.git.asml.silence@gmail.com>
- <c9654d6a79898d5f8aa8b9dabcb76d9f23faa149.1580928112.git.asml.silence@gmail.com>
- <19f6aa0e-158f-5125-9df9-39ae95c72962@gmail.com>
-In-Reply-To: <19f6aa0e-158f-5125-9df9-39ae95c72962@gmail.com>
+In-Reply-To: <cover.1580928112.git.asml.silence@gmail.com>
 
---QNEeBAtqmlBWcq56WAFcyeH8PtY64JIDW
+--jAhrhSC4CY4p50BIJGaO4qzOU75UZbGut
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 06/02/2020 00:39, Pavel Begunkov wrote:
-> On 05/02/2020 22:07, Pavel Begunkov wrote:
->> Save an sqe for a head of a link, so it doesn't go through switch in
->> io_req_defer_prep() nor allocating an async context in advance.
->>
->> Also, it's fixes potenial memleak for double-preparing head requests.
->> E.g. prep in io_submit_sqe() and then prep in io_req_defer(),
->> which leaks iovec for vectored read/writes.
->=20
-> Looking through -rc1, remembered that Jens already fixed this. So, this=
- may be
-> striked out.
+On 05/02/2020 22:07, Pavel Begunkov wrote:
+> This is the first series of shaving some overhead for wq-offloading.
+> The 1st removes extra allocations, and the 3rd req->refs abusing.
 
-Just to clarify, I was talking about removing the last argument in the pa=
-tch
-message.
+Rechecked a couple of assumptions, this patchset is messed up.
+Drop it for now.
 
+> There are plenty of opportunities to leak memory similarly to
+> the way mentioned in [PATCH 1/3], and I'm working a generic fix,
+> as I need it to close holes in waiting splice(2) patches.
+>=20
+> The untold idea behind [PATCH 3/3] is to get rid referencing even
+> further. As submission ref always pin request, there is no need
+> in the second (i.e. completion) ref. Even more, With a bit of
+> retossing, we can get rid of req->refs at all by using non-atomic
+> ref under @compl_lock, which usually will be bundled fill_event().
+> I'll play with it soon. Any ideas or concerns regarding it?
+>=20
+> Regarding [PATCH 3/3], is there better way to do it for io_poll_add()?
 >=20
 >=20
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>  fs/io_uring.c | 19 ++++++++++---------
->>  1 file changed, 10 insertions(+), 9 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index f00c2c9c67c0..e18056af5672 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -4721,20 +4721,22 @@ static void io_queue_sqe(struct io_kiocb *req,=
- const struct io_uring_sqe *sqe)
->>  	}
->>  }
->> =20
->> -static inline void io_queue_link_head(struct io_kiocb *req)
->> +static inline void io_queue_link_head(struct io_kiocb *req,
->> +				      const struct io_uring_sqe *sqe)
->>  {
->>  	if (unlikely(req->flags & REQ_F_FAIL_LINK)) {
->>  		io_cqring_add_event(req, -ECANCELED);
->>  		io_double_put_req(req);
->>  	} else
->> -		io_queue_sqe(req, NULL);
->> +		io_queue_sqe(req, sqe);
->>  }
->> =20
->>  #define SQE_VALID_FLAGS	(IOSQE_FIXED_FILE|IOSQE_IO_DRAIN|IOSQE_IO_LIN=
-K|	\
->>  				IOSQE_IO_HARDLINK | IOSQE_ASYNC)
->> =20
->>  static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring=
-_sqe *sqe,
->> -			  struct io_submit_state *state, struct io_kiocb **link)
->> +			  struct io_submit_state *state, struct io_kiocb **link,
->> +			  const struct io_uring_sqe **link_sqe)
->>  {
->>  	const struct cred *old_creds =3D NULL;
->>  	struct io_ring_ctx *ctx =3D req->ctx;
->> @@ -4812,7 +4814,7 @@ static bool io_submit_sqe(struct io_kiocb *req, =
-const struct io_uring_sqe *sqe,
->> =20
->>  		/* last request of a link, enqueue the link */
->>  		if (!(sqe_flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK))) {
->> -			io_queue_link_head(head);
->> +			io_queue_link_head(head, *link_sqe);
->>  			*link =3D NULL;
->>  		}
->>  	} else {
->> @@ -4823,10 +4825,8 @@ static bool io_submit_sqe(struct io_kiocb *req,=
- const struct io_uring_sqe *sqe,
->>  		if (sqe_flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK)) {
->>  			req->flags |=3D REQ_F_LINK;
->>  			INIT_LIST_HEAD(&req->link_list);
->> -			ret =3D io_req_defer_prep(req, sqe);
->> -			if (ret)
->> -				req->flags |=3D REQ_F_FAIL_LINK;
->>  			*link =3D req;
->> +			*link_sqe =3D sqe;
->>  		} else {
->>  			io_queue_sqe(req, sqe);
->>  		}
->> @@ -4924,6 +4924,7 @@ static int io_submit_sqes(struct io_ring_ctx *ct=
-x, unsigned int nr,
->>  	struct io_kiocb *link =3D NULL;
->>  	int i, submitted =3D 0;
->>  	bool mm_fault =3D false;
->> +	const struct io_uring_sqe *link_sqe =3D NULL;
->> =20
->>  	/* if we have a backlog and couldn't flush it all, return BUSY */
->>  	if (test_bit(0, &ctx->sq_check_overflow)) {
->> @@ -4983,7 +4984,7 @@ static int io_submit_sqes(struct io_ring_ctx *ct=
-x, unsigned int nr,
->>  		req->needs_fixed_file =3D async;
->>  		trace_io_uring_submit_sqe(ctx, req->opcode, req->user_data,
->>  						true, async);
->> -		if (!io_submit_sqe(req, sqe, statep, &link))
->> +		if (!io_submit_sqe(req, sqe, statep, &link, &link_sqe))
->>  			break;
->>  	}
->> =20
->> @@ -4993,7 +4994,7 @@ static int io_submit_sqes(struct io_ring_ctx *ct=
-x, unsigned int nr,
->>  		percpu_ref_put_many(&ctx->refs, nr - ref_used);
->>  	}
->>  	if (link)
->> -		io_queue_link_head(link);
->> +		io_queue_link_head(link, link_sqe);
->>  	if (statep)
->>  		io_submit_state_end(&state);
->> =20
->>
+> Pavel Begunkov (3):
+>   io_uring: pass sqe for link head
+>   io_uring: deduce force_nonblock in io_issue_sqe()
+>   io_uring: pass submission ref to async
+>=20
+>  fs/io_uring.c | 60 +++++++++++++++++++++++++++++----------------------=
+
+>  1 file changed, 34 insertions(+), 26 deletions(-)
 >=20
 
 --=20
 Pavel Begunkov
 
 
---QNEeBAtqmlBWcq56WAFcyeH8PtY64JIDW--
+--jAhrhSC4CY4p50BIJGaO4qzOU75UZbGut--
 
---IYK2h3LBy4gGtE5VaeSAU4KhikwwceVaz
+--qgSlbA92WBtIHxNiLpFDc7GwLZJ9lYpLb
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl47NxwACgkQWt5b1Glr
-+6Vu/Q/7BOI23/9uOMO7/wGqAXBW9wdK6MAa3v9qAY60XypkE1qluGIyRYe4vcfB
-WISUt1k4+65n7PpRc7frP6yVNNs7Rm/RLldJYBusz0b8hSf3TYcNrVIp/HREIl5b
-kju9oWhHv805gJQcP5nOgC5C/eL49TCKq7mg/NObvh0WVzMASHz3wyQcLrRuVMIi
-zChCzp8a29hI3xDnVwa4dVxbKxtPi0JhekxuDeqdzJCqxglCCToJ8ikV1pkpShB0
-dbE0OhpyTMCkh7E8tFHpCOnJweyEYyTgX8PPKOvgl+EfPps6WvkRyeVGDSGZcBQ7
-oFE0Tujsk6TlTmKGElVwdK4b2J01fUYoGI5XGS/lCs/cLrGYhStoBsPKjl1dowST
-/DW1gy+1TgSVyL+Ebnfu/tIdkwpmfa/LNCxeyYASTMjqn9JAYKpKSj7DuJFHAY7t
-Qfn/6s68n7WQqGETD2VTv4o3XyPed2AutGZ76Ow9+Q+wiyXJyDIQDBhfEqu0OJhT
-JoELacwAswPKJpbI+UWya6oYGK8do4Q5yN5ZNI31T303ln9XO7ITWT5yVcXQt3Yq
-11vnB6BpdnnZ2cIa+ki1ufkpUvhPIPEWz/NFU3B1iQv80d46DUtRJAdCcivufJUM
-AzhTWAV9PGz+ePEK0nU47YMdpDya8ZXTho13HD6xyx+DODcVxKc=
-=mg1P
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl47QbwACgkQWt5b1Glr
++6VToQ/9G4BdubOtDPuDw2Hx+AVJmjiGAHx3h1jUxKLihhmkE8JfjSlkQYHQAsJp
+M2Zl4BDgsYKPHXENHPEyT+g4HVZRQjjxx91i/8sMvMRoizGVykPWA/bQ2y5gSpT5
+hSVVSYkOa0rH2/xOQLXKG6NWagqxl6R/4nqjaZfAO8DGsH/ZCEbAoZjVIdmwNIqw
+7zOBitzZu+3Ve9p/IRXHuoUGCdmkiBtoObQ0Il3me8h+Pj3NU9o7Pq97cYdkQmhr
+ojod7x5uAZgHhyAhH3foyCOkbwbj6u+GNN7bI4XdlEcncIO1tygFvfYtEh1lZGS2
+pQubHIN0aQ2B5OTGZ6fqRB8lWMSDXFjANrxMG5phQXlLErbT1iMJEWQW++zuJmFT
+Hfb/b7SwQ8xThY9Kv2pFsyCw3Ah8j3YzK1RdyQNOox9qXhooq64QJU5rVuh15GT3
+48QsB3j5P5vXq29OMYG1cN8qL3uxZ/r8yiH+wsm9x4tDystH3J6ekYl7T+JQuoPJ
+v5dSo/Z+n8D0ad/IGrR1m3jq2U/fWhw058in9EQ7JujCsuh8C5P6wQxRomOED/p7
+jQxqameulQJOmon5HjLwN9TU2mTTMRW7Bg4tuBw1CtJ2Zi8mjLqUQddYTbMFTfaT
+1wq9++DlGmCeieoaUq1OqhQSyDG1u6CMDFZpNWeg3VmQIH60/OY=
+=3ONH
 -----END PGP SIGNATURE-----
 
---IYK2h3LBy4gGtE5VaeSAU4KhikwwceVaz--
+--qgSlbA92WBtIHxNiLpFDc7GwLZJ9lYpLb--

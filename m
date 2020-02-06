@@ -2,155 +2,199 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A114F154974
-	for <lists+io-uring@lfdr.de>; Thu,  6 Feb 2020 17:42:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 185601549B4
+	for <lists+io-uring@lfdr.de>; Thu,  6 Feb 2020 17:52:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbgBFQmp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 6 Feb 2020 11:42:45 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:42265 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727390AbgBFQmo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Feb 2020 11:42:44 -0500
-Received: by mail-il1-f193.google.com with SMTP id x2so5617894ila.9
-        for <io-uring@vger.kernel.org>; Thu, 06 Feb 2020 08:42:37 -0800 (PST)
+        id S1727479AbgBFQwE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 6 Feb 2020 11:52:04 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45598 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727358AbgBFQwE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Feb 2020 11:52:04 -0500
+Received: by mail-ed1-f67.google.com with SMTP id v28so6652853edw.12;
+        Thu, 06 Feb 2020 08:52:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=hKgA97R2olaY6C2+8+rOCy+pH/axO3i15QhPSsxtG/A=;
-        b=i3G6kqJJiXxE4GZ/TNj7LSjNzbN64dy9AATlcUICgGUZYqtSxE9AlEkN1ZKu0E+gA8
-         qOunN0UKICDVpT+Exfbyiw1qHC5EyNQ0e4P5sHNkU5zPU0K/xn5FpywyT1RAXILSbrCI
-         trvaYpaEfM3GWs+OCycm2tuO4XM+OQjstO1uDBmyq3Uc2XnRvnbOevj5kBYcmo5gY/kk
-         8eZ9yBek4MqKs/TeSP+pAvpnEupNCLLAF1MOd0Ov0FTJ2HVAhSF0BHsIjsJDefUPqIik
-         DqysLQjDfFlciqA5ENb5ADPljPc6H2bWJbkFKArujBlwYT9DB02eUjpSsJrqAy0ENgtn
-         Y9bg==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SJxFgsecqtei72spXgyrudIkZIJGgELlpouGAqZ4/us=;
+        b=tFT94kInRIvGnjurirgdAOKPn+CQH1ryOj12OD0drFnemVonOKNuX9RNNbDT9RrO5I
+         180vflqSELjgRysD/U+RFVKDuCexZXcHF5x2ge0bm8cJqKjIAFQBregPcgPVtG29tZkN
+         drFMkXqR9JYfBuz1nqLdxqgStVNL88M0bt8iwSjH9EiNCD6TNw8Plr3HPuxU9dfRDuKp
+         kLtdmiP/9bDm7iP8utNCx7QVGxDIM/L5P/JXDf//wl9JMZg0hNyI4zHLR8epruHzUkuD
+         Dh0soyOnpFT0SOmaptgECWpVuPvz3y0jAyw0G78oDBCvzVaSEX2uhBtt44sUwXnjU41P
+         DiHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=hKgA97R2olaY6C2+8+rOCy+pH/axO3i15QhPSsxtG/A=;
-        b=FMyxacdO6Fev1yDgtNV5Pt5dbdH7vEx+UEtzTguMMSgcdqS8M+Q84t2S2tzWcATj0b
-         Q5M9Ii+CUF5LxSrgJCs0GarYonKooi+DnDbmGMfYZm4HOe5Hk0djpZxsoNuVLmCjHcWA
-         kf2LhFtg46H8B3sNSSZJ/rz/coUYKO4jk4irm/KHN8JmGUQWduYSImvc03dnyhXU0t8n
-         NI4keXNylIpbXafX9Jft0R3FBX5giD7Mi6rIw7mA33LO1hRwRyvygO9V5zR9SlOvKg8u
-         zPFVx0RPuYeZBCdkT9YLSkTkLLR9rr7vMG1ET2XNSA1r8aCg5ewmlF2LB/psjj07m03x
-         7jcw==
-X-Gm-Message-State: APjAAAWegPlbn9Vluc/tW3S3Xt5XXg3KSC/vLBNNw9mEhQjYGOU0ZuY1
-        dspJz04v6JrZZX4eVJ9eX1ZHTEierTk=
-X-Google-Smtp-Source: APXvYqxEnJfsUWh9Kg/r6zSU6cV7lRzOVVIquuFlpWnwUYAxQvfOF147PnAuYCclKZ5s5wSl0OiAlQ==
-X-Received: by 2002:a92:d183:: with SMTP id z3mr4714174ilz.214.1581007356660;
-        Thu, 06 Feb 2020 08:42:36 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id u20sm3054iom.27.2020.02.06.08.42.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Feb 2020 08:42:36 -0800 (PST)
-Subject: Re: [PATCH v1] io_uring_cqe_get_data() only requires a const struct
- io_uring_cqe *cqe
-To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-References: <20200206160209.14432-1-metze@samba.org>
- <94d5b40d-a5d8-706f-ab5c-3a8bd512d831@kernel.dk>
- <a26428e4-39d7-972c-cc68-45f7230d51b9@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <95e6c04d-e66f-06f8-3a04-ac59b35c2ac7@kernel.dk>
-Date:   Thu, 6 Feb 2020 09:42:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        bh=SJxFgsecqtei72spXgyrudIkZIJGgELlpouGAqZ4/us=;
+        b=g49qy9REz5XeMpVehLQWzoW2C+3Jh4D7pVehlMaXSl+a+yc+2PObbsc26XEzU2/Ksa
+         iVIwXp+QYQWPHtmCvDvnvWgP6tlV22wyfLycVipYoI7pqSVSHxu49J2qmx/YVuWpxnUj
+         UoePPchEgOLFnVUB7pVyQx+7IiFLqZ9QnjJy8Dohf+guRjz+1peYj9kp+IHTAerI0/Cv
+         gHKUb3p9Cj+ni0tGsdDox5YMPYQbSEzHCTQxi4dm7lBU1szDqyfUf/elMoqTiOorRA3Y
+         zi4WQ3QHsLpBC8xwmlcuC9vREGGyQj4i44NFZMinZl1+4ccQnd6SyWiLNZGa1UPU+91s
+         lH2A==
+X-Gm-Message-State: APjAAAXxpahrIzHIwm7uDfd7aQanjHbb4AiHSIgY3aDsy8KOZyF8YOEF
+        JixT2k5X+Boax466Y9Nro4I=
+X-Google-Smtp-Source: APXvYqy+auJcYYJdToXmFqwPTZvEXE1DfEJIG7HuQmqsu4zH/qi96tHhVCFSqjY66+CHfw3ZUF3NRg==
+X-Received: by 2002:a05:6402:1e1:: with SMTP id i1mr3854649edy.338.1581007922255;
+        Thu, 06 Feb 2020 08:52:02 -0800 (PST)
+Received: from localhost.localdomain ([109.126.145.62])
+        by smtp.gmail.com with ESMTPSA id y4sm7015ejp.50.2020.02.06.08.52.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 08:52:01 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring: fix deferred req iovec leak
+Date:   Thu,  6 Feb 2020 19:51:16 +0300
+Message-Id: <e143e45a34dce9d271fc4a3b32f7620c5a7377c1.1581007844.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <a26428e4-39d7-972c-cc68-45f7230d51b9@samba.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/6/20 9:37 AM, Stefan Metzmacher wrote:
-> Am 06.02.20 um 17:04 schrieb Jens Axboe:
->> On 2/6/20 9:02 AM, Stefan Metzmacher wrote:
->>> Signed-off-by: Stefan Metzmacher <metze@samba.org>
->>> ---
->>>  src/include/liburing.h | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/src/include/liburing.h b/src/include/liburing.h
->>> index faed2e7..44f18fd 100644
->>> --- a/src/include/liburing.h
->>> +++ b/src/include/liburing.h
->>> @@ -179,7 +179,7 @@ static inline void io_uring_sqe_set_data(struct io_uring_sqe *sqe, void *data)
->>>  	sqe->user_data = (unsigned long) data;
->>>  }
->>>  
->>> -static inline void *io_uring_cqe_get_data(struct io_uring_cqe *cqe)
->>> +static inline void *io_uring_cqe_get_data(const struct io_uring_cqe *cqe)
->>>  {
->>>  	return (void *) (uintptr_t) cqe->user_data;
->>>  }
->>
->> Applied, thanks.
-> 
-> Thanks!
-> 
->> Unrelated to this patch, but I'd like to release a 0.4 sooner rather
->> than later.
-> 
-> Funny, I thought about that today:-)
-> I prepared debian packaging for liburing-0.4 I'll send the patches soon.
+After defer, a request will be prepared, that includes allocating iovec
+if needed, and then submitted through io_wq_submit_work() but not custom
+handler (e.g. io_rw_async()/io_sendrecv_async()). However, it'll leak
+iovec, as it's in io-wq and the code goes as follows:
 
-Great!
+io_read() {
+	if (!io_wq_current_is_worker())
+		kfree(iovec);
+}
 
-> While doing that I found the following incompatible change against
-> liburing-0.3:
-> 
->  static inline void io_uring_prep_files_update(struct io_uring_sqe *sqe,
-> -                                             int *fds, unsigned nr_fds)
-> +                                             int *fds, unsigned nr_fds,
-> +                                             int offset)
-> 
-> I'm not sure if we should do something about that.
+Put all deallocation logic in io_{read,write,send,recv}(), which will
+leave the memory, if going async with -EAGAIN.
 
-Hmm, that wasn't on purpose. But for this specific case, I think we can
-just pretend that never happened.
+It also fixes a leak after failed io_alloc_async_ctx() in
+io_{recv,send}_msg().
 
-> It's also strange that in src/liburing.map LIBURING_0.3 doesn't
-> inherit LIBURING_0.2. There's not a single symbol with @LIBURING_0.3.
-> Also io_uring_{setup,enter,register} are still
-> listed under LIBURING_0.1, but they're not in the library anymore.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 47 ++++++++++++-----------------------------------
+ 1 file changed, 12 insertions(+), 35 deletions(-)
 
-That seems like a bug, I'd happily take a patch for that...
-
->> Let me know if you see any immediate work that needs doing
->> before that happens.
-> 
-> I had the idea to have a simple version of fd compounding.
-> We already have IORING_OP_FILES_UPDATE in order to update
-> specific indexes in the files array.
-> I'm wondering if we could have specify an index where
-> IORING_OP_ACCEPT, IORING_OP_OPENAT and IORING_OP_OPENAT2
-> could store the generated fd into the fixed array.
-> The index 0 is not valid, correct? So we can have it
-> without a flag similar to the personality, and for
-> all of these buf_index is not used.
-
-Just to make sure I'm undestanding your proposal, you want the result
-from those fd instantiating calls to be added to the array of registered
-files, instead of having the application do that? If so, I think this is
-another case where the BPF driven links would be useful, as we could
-easily do it through that with an IORING_OP_FILES_UPDATE linked to
-either one of those commands.
-
-index 0 is valid, so we can't use that trick.
-
-> While researching that I noticed that IOSQE_FIXED_FILE
-> seems to be ignored for some new commands, I think that
-> all commands with on input fd, should be able to use that flag.
-> Can this be fixed before 5.6 final?
-
-Do you have specifics? Generally the file grabbing happens as part of
-request prep, and the individual opcodes should not need to bother with
-it.
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index bff7a03e873f..ce3dbd2b1b5c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2143,17 +2143,6 @@ static int io_alloc_async_ctx(struct io_kiocb *req)
+ 	return req->io == NULL;
+ }
+ 
+-static void io_rw_async(struct io_wq_work **workptr)
+-{
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-	struct iovec *iov = NULL;
+-
+-	if (req->io->rw.iov != req->io->rw.fast_iov)
+-		iov = req->io->rw.iov;
+-	io_wq_submit_work(workptr);
+-	kfree(iov);
+-}
+-
+ static int io_setup_async_rw(struct io_kiocb *req, ssize_t io_size,
+ 			     struct iovec *iovec, struct iovec *fast_iov,
+ 			     struct iov_iter *iter)
+@@ -2166,7 +2155,6 @@ static int io_setup_async_rw(struct io_kiocb *req, ssize_t io_size,
+ 
+ 		io_req_map_rw(req, io_size, iovec, fast_iov, iter);
+ 	}
+-	req->work.func = io_rw_async;
+ 	return 0;
+ }
+ 
+@@ -2253,8 +2241,7 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		}
+ 	}
+ out_free:
+-	if (!io_wq_current_is_worker())
+-		kfree(iovec);
++	kfree(iovec);
+ 	return ret;
+ }
+ 
+@@ -2359,8 +2346,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		}
+ 	}
+ out_free:
+-	if (!io_wq_current_is_worker())
+-		kfree(iovec);
++	kfree(iovec);
+ 	return ret;
+ }
+ 
+@@ -2955,19 +2941,6 @@ static int io_sync_file_range(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	return 0;
+ }
+ 
+-#if defined(CONFIG_NET)
+-static void io_sendrecv_async(struct io_wq_work **workptr)
+-{
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-	struct iovec *iov = NULL;
+-
+-	if (req->io->rw.iov != req->io->rw.fast_iov)
+-		iov = req->io->msg.iov;
+-	io_wq_submit_work(workptr);
+-	kfree(iov);
+-}
+-#endif
+-
+ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ #if defined(CONFIG_NET)
+@@ -3036,17 +3009,19 @@ static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		if (force_nonblock && ret == -EAGAIN) {
+ 			if (req->io)
+ 				return -EAGAIN;
+-			if (io_alloc_async_ctx(req))
++			if (io_alloc_async_ctx(req)) {
++				if (kmsg && kmsg->iov != kmsg->fast_iov)
++					kfree(kmsg->iov);
+ 				return -ENOMEM;
++			}
+ 			memcpy(&req->io->msg, &io.msg, sizeof(io.msg));
+-			req->work.func = io_sendrecv_async;
+ 			return -EAGAIN;
+ 		}
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
+ 	}
+ 
+-	if (!io_wq_current_is_worker() && kmsg && kmsg->iov != kmsg->fast_iov)
++	if (kmsg && kmsg->iov != kmsg->fast_iov)
+ 		kfree(kmsg->iov);
+ 	io_cqring_add_event(req, ret);
+ 	if (ret < 0)
+@@ -3180,17 +3155,19 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		if (force_nonblock && ret == -EAGAIN) {
+ 			if (req->io)
+ 				return -EAGAIN;
+-			if (io_alloc_async_ctx(req))
++			if (io_alloc_async_ctx(req)) {
++				if (kmsg && kmsg->iov != kmsg->fast_iov)
++					kfree(kmsg->iov);
+ 				return -ENOMEM;
++			}
+ 			memcpy(&req->io->msg, &io.msg, sizeof(io.msg));
+-			req->work.func = io_sendrecv_async;
+ 			return -EAGAIN;
+ 		}
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
+ 	}
+ 
+-	if (!io_wq_current_is_worker() && kmsg && kmsg->iov != kmsg->fast_iov)
++	if (kmsg && kmsg->iov != kmsg->fast_iov)
+ 		kfree(kmsg->iov);
+ 	io_cqring_add_event(req, ret);
+ 	if (ret < 0)
 -- 
-Jens Axboe
+2.24.0
 

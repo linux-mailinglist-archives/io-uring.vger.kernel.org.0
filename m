@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F28154C74
-	for <lists+io-uring@lfdr.de>; Thu,  6 Feb 2020 20:52:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A50AC154C79
+	for <lists+io-uring@lfdr.de>; Thu,  6 Feb 2020 20:55:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbgBFTwV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 6 Feb 2020 14:52:21 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:39975 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727900AbgBFTwV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Feb 2020 14:52:21 -0500
-Received: by mail-il1-f194.google.com with SMTP id i7so6243105ilr.7
-        for <io-uring@vger.kernel.org>; Thu, 06 Feb 2020 11:52:19 -0800 (PST)
+        id S1727773AbgBFTzl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 6 Feb 2020 14:55:41 -0500
+Received: from mail-io1-f45.google.com ([209.85.166.45]:45429 "EHLO
+        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbgBFTzl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Feb 2020 14:55:41 -0500
+Received: by mail-io1-f45.google.com with SMTP id i11so7580943ioi.12
+        for <io-uring@vger.kernel.org>; Thu, 06 Feb 2020 11:55:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=/GI0x8aCVNKIMLzA3XY2pv1luDDrx3P+zazrMcLhILc=;
-        b=OEQQuP4ZmetlqILLWOGkdeW5LVUmoD2ikmnLCT1X+EvodvWW8eeb1akQEhgIKZJVJV
-         sp16BDvSLgPWbMFMhSiAxLzN1xe5Zo9EpTZ2mD4VNz2Xq+2KAhZAHhk3JY2O2ug8313J
-         /tvj7MMynUKOSwdvMIWpjIiCK3NeoLNuWVB07VPlalJMJdiJlFEcVk+lxzzFk23MbEqg
-         xXkJAW0m0Jrg0yhDjLwOpURuKPw/1PKMzJkh+bc2JEwYLsRkM9Z5TUhJe/to21lcSXuR
-         enAoATaO4KHp4ek6aiqzSRAMpMANDVyTbZAuSFqJ3lMTkkp2IvdhvF8hOQrRCPgoEbR1
-         QxLg==
+        bh=7EJDgXJItKSHtBqDlGpPXjVpKLFySBu/jYXtj6UBSqk=;
+        b=o2TJ5na94rRJqPrzLey6UhOyaQeCV+fXbL9oXrunqYSqw1pwJlDwE0G22NET61LtcX
+         71Y43oiTYDi6ldv8WMbqqKkoHJuW46Sb6CMXM1sgTSxOnwduZanEhmT7m7J/SefDAARM
+         WME4XkeUq+Tjzu58vXSPJcs1J/nt7mk8T/Aw8hZHo5geX6yvkdIN0k4KQ3kFAvgFfJXu
+         Tb0rOVdECcmuDt8vO8Dt+F+UW7zAygiLBmZsp75DS4xfoM8xyfxlrWpA1UfRV2j7EFCG
+         PV/p2CV73wg1i6YzpM2OfI0FqGMDtCvk2tfrTvK17Su/oj8ajn6MIeK5YacgEwzw9kD0
+         2btg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=/GI0x8aCVNKIMLzA3XY2pv1luDDrx3P+zazrMcLhILc=;
-        b=LkUgofWiCX0U3k+mcji+dzgokQBHp6TOlp61lLfcaL/D2FNEL1MywXfxTDIemstwlp
-         7Bmt8cL0VL2yvB3gMK+GSj9mK0YOwsXYkr3uHCdKq25arFJckrUsAaJNpM6frCU3DtB5
-         fV8+C0LlkgzR8JiPQjJhRLmsY2ukf+xumiNtfC659bC6Pt1pikq3EOGlTre004gHCOxi
-         M3T3PObojf2+CyAMYHGkpbIKjm8OKxYMPeMCKnym3jO/FJW1UF743R03issY9m+UXyry
-         2P6yiLmMoTgo9UHxcTbMgUjLWTQEi2cS+WCaUYWiRIiYYqWPt+f0PouGu6z8QNhIxLcj
-         hXsA==
-X-Gm-Message-State: APjAAAXvCrnYO3PT27/JThSi+mlaOA9ZLy/Lc4IaNw8hXwyGuwAqjgd4
-        E/Z8ESl3AujZ8Det1N2kBqePUQ==
-X-Google-Smtp-Source: APXvYqzDdGbbKaFV7gIifpEe7KdoksmmwNedOy6I9rfJNrF9Dy/F0iM/VqsFZM5eEL5iOyV8EjSzQw==
-X-Received: by 2002:a92:5acd:: with SMTP id b74mr5654184ilg.240.1581018738798;
-        Thu, 06 Feb 2020 11:52:18 -0800 (PST)
+        bh=7EJDgXJItKSHtBqDlGpPXjVpKLFySBu/jYXtj6UBSqk=;
+        b=OnXhlO5fQ7p2hvZ2t2AtH6OHIJABjqFWBcMvOG8+/JaXRjnY9eknHwl5t+vZWFD3mz
+         vPjVNr52Ns4jwjyCFOlI2sdxONhbnJMCi5hFss4n+gPQk+UbLqC8TB3edgJxq+6s3VIg
+         J5DfEdBUHbErKdpV/eMCvNkECgfdH0/TFPf0zQ+IfuEoS1eehcD1iFihMTJbxkilpoO/
+         oVWKDqw7ZWojctRwjnCFdeYDZrkXQmGn5bd0NyFq2A3d/1ddDRak/7CuSbOkHOJ6HbiN
+         3mXWagJZLzdXRbCtzhFmt2H5FnwVaEakNvg+cdKlzReKR5v79zulkAPW32ox0P/ol6rg
+         Dr7g==
+X-Gm-Message-State: APjAAAXGDd7xyqrLmGOVGFY5YwfTqunl2safE7CN+HoIOFOnUYGP8Tdx
+        WXeUjNWsQ04SM6AxkagVeLhCxraTvKQ=
+X-Google-Smtp-Source: APXvYqwQ64mS6HQ41I/nwk6tzAjLMk/IwBf+dBUv+mgTa6HnkXBxFKkS7atl+hATRkpB/LmRUwAIyA==
+X-Received: by 2002:a5e:8b03:: with SMTP id g3mr34012728iok.279.1581018939563;
+        Thu, 06 Feb 2020 11:55:39 -0800 (PST)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id w24sm274230ilk.4.2020.02.06.11.52.18
+        by smtp.gmail.com with ESMTPSA id u10sm282505ilq.1.2020.02.06.11.55.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Feb 2020 11:52:18 -0800 (PST)
-Subject: Re: [PATCH 1/1] io_uring: fix delayed mm check
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <5c7db203bb5aa23c22f16925ac00d50bdbe406e0.1581012158.git.asml.silence@gmail.com>
+        Thu, 06 Feb 2020 11:55:39 -0800 (PST)
+Subject: Re: io_uring: io_grab_files() misses taking files->count?
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org
+References: <f0d2b7d3-2f6b-7eb2-aee0-4ff6a7daa35c@virtuozzo.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8dbd13cd-6e93-b765-ade2-27ba91d8c30d@kernel.dk>
-Date:   Thu, 6 Feb 2020 12:52:17 -0700
+Message-ID: <b004838f-602d-0992-cb1d-2d083227186c@kernel.dk>
+Date:   Thu, 6 Feb 2020 12:55:38 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <5c7db203bb5aa23c22f16925ac00d50bdbe406e0.1581012158.git.asml.silence@gmail.com>
+In-Reply-To: <f0d2b7d3-2f6b-7eb2-aee0-4ff6a7daa35c@virtuozzo.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,13 +64,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/6/20 11:16 AM, Pavel Begunkov wrote:
-> Fail fast if can't grab mm, so past that requests always have an mm
-> when required. This fixes not checking mm fault for
-> IORING_OP_{READ,WRITE}, as well allows to remove req->has_user
-> altogether.
+On 2/6/20 9:32 AM, Kirill Tkhai wrote:
+> Hi, Jens,
+> 
+> in io_grab_files() we take pointer to current->files without taking
+> files->count.  Later, this files become attached to worker in
+> io_worker_handle_work() also without any manipulation with counter.
+> 
+> But files->count is used for different optimizations. Say, in
+> expand_fdtable() we avoid synchonize_rcu() in case of there is only
+> files user. In case of there are more users, missing of
+> synchronize_rcu() is not safe.
+> 
+> Is this correct? Or maybe there is some hidden logic in io_uring,
+> which prevents this problem? Say, IORING_OP_OPENAT/CLOSE/ETC can't be
+> propagated to worker etc...
 
-Looks fine, except that first hunk that I can just delete.
+We track requests that grab files on the side, since we can't safely
+grab a reference to the file table. We could have our own ring fd in the
+file table, and thus create a circular reference if we incremented
+files->count here.
+
+Looks like we might need a 2nd way to know if we need to use
+synchronize_rcu() or not, though I need to look into this particular
+case.
 
 -- 
 Jens Axboe

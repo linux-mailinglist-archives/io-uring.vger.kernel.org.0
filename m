@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE760155B07
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2020 16:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7408155B09
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2020 16:50:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbgBGPuq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Feb 2020 10:50:46 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44801 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbgBGPuq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Feb 2020 10:50:46 -0500
-Received: by mail-il1-f194.google.com with SMTP id s85so2060674ill.11
-        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2020 07:50:45 -0800 (PST)
+        id S1726956AbgBGPur (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Feb 2020 10:50:47 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:39567 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbgBGPur (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Feb 2020 10:50:47 -0500
+Received: by mail-il1-f193.google.com with SMTP id f70so2083938ill.6
+        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2020 07:50:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Nx0zLuuSVjRcGRsww4pu5U9gDsXqI3Akdw0A9ohFK7Y=;
-        b=U5jczplXQveO0KalMqRoJuda1kPErLvkWKMPCukcoNgLl8TDasvPSMqpEhW3K2A7QG
-         xBMva5AlMnq6+pMcpi/zoDWIEZtR0IzxX6bj+DyY1GBiXj3KPvzjZEJ9AvfWseQzLaEz
-         sSge08jGegx6tR9ttSjlzjWPbKfTZ6tKnbWgw/zxJ6WtA8iJ4bFfufaM4NJWwho13IGP
-         G2oLDV/FW0AYTlJaiiblHhxk4xGCVZqEqZe7mZEDxei4uOmviqkfnbbYix0qwENgisEI
-         DuFyIfC1xFaOYK5xxtRkSvDoGuN4iR+Kd+jp4hVUURNupG85xC+nuYZaIVVOXDCe3iHc
-         tzOw==
+        bh=D26ycyyixKYpx3yX+Ak713T8bnVBatPnLzgb6E5ndAE=;
+        b=QAUMDDkuylGriTHXTapemNq+y6QvSmif+jIoDlgntgbsXedC22fF/0XDZ0G5mWFLdJ
+         peh53ktgWyhDFGfb2j8QuQzjh/PHRZUuol1rI4cXELrKAFZFb/rFr1GLSi9wMDy11iOK
+         v2caTMtmL8AeWW3/DhlzeYAvy/QjCTRM9xetSmQYpGSpk+/j2AVZenPgY7LpKF1DGAHo
+         mUe4WwJzmmuECtOT+7m1HLogvAaK/5baPAhPO454v193h4ZuzEWZgbSyqo/iPg6kLd0p
+         /F3KXRYcpv7bO0heZd/upIGras4j9s7y1nj6t3FpLe1TCDiOge5tSeT8qfx/LPZySVxh
+         KyvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Nx0zLuuSVjRcGRsww4pu5U9gDsXqI3Akdw0A9ohFK7Y=;
-        b=mf8rtJzxkIjjSaUD3Z/cgulgCEGltBW6qVrIuZgrsvoRkKtBNzl25WEatmP3o9s8CD
-         ixy1xB3OYwyjW5nvqNlZ+b90LVkw+e0NIWRg9E4WidSJuwFRYt3Fw/8OlPrhbW5oi9Oq
-         mN9XlVJwfhLjU9xiDxBoRkSjGDu5a3PdZuHFIoo5ZGtowdVG9h8i1cpTEivrgNuPolgX
-         2LexIqgRMDkJvwcqWcyNPomI5XK/fDJlYCFmng8Lfxg4lugwMfkFfUaGpb/3PcztXg+Y
-         W//8Znrytb4gpIwGHdXemx6vGbqBdvUvFfrLCFAChNlB21VISaDM50QXAzUgbM2B3wb1
-         BPGQ==
-X-Gm-Message-State: APjAAAXvR0m9rKVVM1TQvUlPiDWcXYyLuFpLBVO86KkpXWRtyV+M84QW
-        /Pyv1JQoBG3WprtT3a7xNFW0ttLQteA=
-X-Google-Smtp-Source: APXvYqyoZ2iJ5KXnzvRrreffn5xVZZk3OWx68UF4f0y8JCz/viBDaBujmWn6vV5lvVN49Uk4S5y+hw==
-X-Received: by 2002:a92:b648:: with SMTP id s69mr31214ili.184.1581090645143;
-        Fri, 07 Feb 2020 07:50:45 -0800 (PST)
+        bh=D26ycyyixKYpx3yX+Ak713T8bnVBatPnLzgb6E5ndAE=;
+        b=bMg5OZlsCTpmQJXZgRQRiz+rgCxqaRDA2j3Z8jnZ43eEby+krDcW+Hb40JQQOOcZcY
+         QOd/2cWYbpHxFjlLXgIu4dsntU+Z+AR4siRPP4Si46iOaI6ZdP6RG92LzxpmObJ8+Wfp
+         qOCJ0q97bp8zBM9s+OU3jXKJXhfrZQ1UK+I2UY/hHQEwcFznl8uIMnLsYTV09zEh+cXF
+         2HqwmHQX34+pAmmJlJ7CmVuSFugeGldmkxD5xRJ7o9cSR55rqttoxrQMRrLzvO5aqQAx
+         sgj6ulurAsz2MHbbetkTKLA3tngkpfNigRA0XcZWYDnYHy8vb2mt4HwIe1HKR4Gj4hA+
+         W/Lg==
+X-Gm-Message-State: APjAAAX1I+PGSvLFOSavquX8JaXoYGIKMtcrqUIXYh0CFVnRC+6/TuT+
+        x8S8HKrdR1aXN+v+xehvH7mZQAQsy2Q=
+X-Google-Smtp-Source: APXvYqygJRN9TJUb8jARNxJzbZbxPy6HOVjpM9gUYZ9vH5CrFHc/6ohCob4nHR1LoAAnEXs6TDf2Lg==
+X-Received: by 2002:a92:c50f:: with SMTP id r15mr22134ilg.258.1581090646104;
+        Fri, 07 Feb 2020 07:50:46 -0800 (PST)
 Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r18sm978493iom.71.2020.02.07.07.50.44
+        by smtp.gmail.com with ESMTPSA id r18sm978493iom.71.2020.02.07.07.50.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 07:50:44 -0800 (PST)
+        Fri, 07 Feb 2020 07:50:45 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/4] io-wq: add support for inheriting ->fs
-Date:   Fri,  7 Feb 2020 08:50:37 -0700
-Message-Id: <20200207155039.12819-3-axboe@kernel.dk>
+Subject: [PATCH 3/4] io_uring: add ->needs_fs to the opcode requirements table
+Date:   Fri,  7 Feb 2020 08:50:38 -0700
+Message-Id: <20200207155039.12819-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200207155039.12819-1-axboe@kernel.dk>
 References: <20200207155039.12819-1-axboe@kernel.dk>
@@ -60,104 +60,60 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Some work items need this for relative path lookup, make it available
-like the other inherited credentials/mm/etc.
+Set it for openat/openat2/statx, as they all potentially need relative
+path lookups if AT_FDCWD is used.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io-wq.c | 19 +++++++++++++++----
- fs/io-wq.h |  4 +++-
- 2 files changed, 18 insertions(+), 5 deletions(-)
+ fs/io_uring.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index cb60a42b9fdf..58b1891bcfe5 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -16,6 +16,7 @@
- #include <linux/slab.h>
- #include <linux/kthread.h>
- #include <linux/rculist_nulls.h>
-+#include <linux/fs_struct.h>
- 
- #include "io-wq.h"
- 
-@@ -59,6 +60,7 @@ struct io_worker {
- 	const struct cred *cur_creds;
- 	const struct cred *saved_creds;
- 	struct files_struct *restore_files;
-+	struct fs_struct *restore_fs;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index da6a5998fa30..957de0f99bcd 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -616,6 +616,8 @@ struct io_op_def {
+ 	unsigned		not_supported : 1;
+ 	/* needs file table */
+ 	unsigned		file_table : 1;
++	/* needs ->fs assigned */
++	unsigned		needs_fs : 1;
  };
  
- #if BITS_PER_LONG == 64
-@@ -141,13 +143,17 @@ static bool __io_worker_unuse(struct io_wqe *wqe, struct io_worker *worker)
- 		worker->cur_creds = worker->saved_creds = NULL;
+ static const struct io_op_def io_op_defs[] = {
+@@ -694,6 +696,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.needs_file		= 1,
+ 		.fd_non_neg		= 1,
+ 		.file_table		= 1,
++		.needs_fs		= 1,
+ 	},
+ 	[IORING_OP_CLOSE] = {
+ 		.needs_file		= 1,
+@@ -707,6 +710,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.needs_mm		= 1,
+ 		.needs_file		= 1,
+ 		.fd_non_neg		= 1,
++		.needs_fs		= 1,
+ 	},
+ 	[IORING_OP_READ] = {
+ 		.needs_mm		= 1,
+@@ -738,6 +742,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.needs_file		= 1,
+ 		.fd_non_neg		= 1,
+ 		.file_table		= 1,
++		.needs_fs		= 1,
+ 	},
+ 	[IORING_OP_EPOLL_CTL] = {
+ 		.unbound_nonreg_file	= 1,
+@@ -911,6 +916,8 @@ static inline void io_req_work_grab_env(struct io_kiocb *req,
  	}
- 
--	if (current->files != worker->restore_files) {
-+	if ((current->files != worker->restore_files) ||
-+	    (current->fs != worker->restore_fs)) {
- 		__acquire(&wqe->lock);
- 		spin_unlock_irq(&wqe->lock);
- 		dropped_lock = true;
- 
- 		task_lock(current);
--		current->files = worker->restore_files;
-+		if (current->files != worker->restore_files)
-+			current->files = worker->restore_files;
-+		if (current->fs != worker->restore_fs)
-+			current->fs = worker->restore_fs;
- 		task_unlock(current);
- 	}
- 
-@@ -311,6 +317,7 @@ static void io_worker_start(struct io_wqe *wqe, struct io_worker *worker)
- 
- 	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
- 	worker->restore_files = current->files;
-+	worker->restore_fs = current->fs;
- 	io_wqe_inc_running(wqe, worker);
+ 	if (!req->work.creds)
+ 		req->work.creds = get_current_cred();
++	if (!req->work.fs && def->needs_fs)
++		req->work.fs = req->ctx->fs;
  }
  
-@@ -476,9 +483,13 @@ static void io_worker_handle_work(struct io_worker *worker)
- 		if (work->flags & IO_WQ_WORK_CB)
- 			work->func(&work);
- 
--		if (work->files && current->files != work->files) {
-+		if ((work->files && current->files != work->files) ||
-+		    (work->fs && current->fs != work->fs)) {
- 			task_lock(current);
--			current->files = work->files;
-+			if (work->files && current->files != work->files)
-+				current->files = work->files;
-+			if (work->fs && current->fs != work->fs)
-+				current->fs = work->fs;
- 			task_unlock(current);
- 		}
- 		if (work->mm != worker->mm)
-diff --git a/fs/io-wq.h b/fs/io-wq.h
-index 50b3378febf2..f152ba677d8f 100644
---- a/fs/io-wq.h
-+++ b/fs/io-wq.h
-@@ -74,6 +74,7 @@ struct io_wq_work {
- 	struct files_struct *files;
- 	struct mm_struct *mm;
- 	const struct cred *creds;
-+	struct fs_struct *fs;
- 	unsigned flags;
- };
- 
-@@ -81,10 +82,11 @@ struct io_wq_work {
- 	do {						\
- 		(work)->list.next = NULL;		\
- 		(work)->func = _func;			\
--		(work)->flags = 0;			\
- 		(work)->files = NULL;			\
- 		(work)->mm = NULL;			\
- 		(work)->creds = NULL;			\
-+		(work)->fs = NULL;			\
-+		(work)->flags = 0;			\
- 	} while (0)					\
- 
- typedef void (get_work_fn)(struct io_wq_work *);
+ static inline void io_req_work_drop_env(struct io_kiocb *req)
 -- 
 2.25.0
 

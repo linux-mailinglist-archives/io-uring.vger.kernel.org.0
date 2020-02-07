@@ -2,34 +2,35 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74911156162
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2020 23:56:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C9C5156176
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2020 00:07:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbgBGW4R (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Feb 2020 17:56:17 -0500
-Received: from hr2.samba.org ([144.76.82.148]:42924 "EHLO hr2.samba.org"
+        id S1727075AbgBGXHk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Feb 2020 18:07:40 -0500
+Received: from hr2.samba.org ([144.76.82.148]:45624 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727032AbgBGW4R (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 7 Feb 2020 17:56:17 -0500
+        id S1727048AbgBGXHj (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 7 Feb 2020 18:07:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:To:CC;
-        bh=WQv0LfviPy0P98lYniIosCN7X+xmrKp58I7c6vW1Vro=; b=jjRo6780OxYwiyQD0TxGkHk2Sq
-        JkkmI9FZwBso0xuDtGvsD6STJTRNhnPHPh9byz8scek1gxPMc1ZWe03gl+zJJxOi86esUUkN5MJrr
-        iMNbNRawnPrPK8XkTIeOEERBXR/JC4cshYxAs8eWyq+GxFWvpEBw9F2cnURiQLZH4+ivYdq80P+FI
-        t/+v+lhueZ4AAVex8T67I0ox1PL1lD6BS98BDA6RJ3rY+I2SpaL+wFSp+jstsjKhu/BUxLdJxXrak
-        8b5vbEo+LkKBz9X3BQRmaNlrBVzztQBCFdX0WkuRbDpS0ehx3bUXwHRCHRasMscSdRo9go2VWwfxH
-        Va+6lazDQCZ3e5yShePWqMJvEaFdkdvJLWE8Y9YOgj7V9Pi4ntSoleHmbhndh+FQTDDxzCNSf8eGu
-        XDiOkOanupolPMrsuqHKcRe4KFUwal555CFLKxP1V1uUVdcwNo4Bc9Z2L3euLKSwyKrDJOKz9FQP7
-        KIUdAvY9NcwkiXPyasOP55K4;
+         s=42; h=Date:Message-ID:To:From:CC;
+        bh=cBfRg0ZNwy715fVhOjM3IYRgueioFGqqyyNJ1tWq1Tw=; b=Qswc/yMn95/9/ZX1L1yYmXA8GJ
+        jKJ0wZSiIEy1NlZeleLtYbBfLu4ccOK+CaaMqn3sLfnyJuCI8wmNNsVX+bmXQNL0lfkP5DNnHpBGW
+        QoNqowpkTsLM9+Jf39hHcb7EvBnwW2ushlvgk+V6iQnEJKUnVaNbx9udQDk4RTfP7rUtJXdBS77jG
+        KavXktdcNFrZOsT7OYM/hOWHR6/Hb0SgCYR7aoNYZ2ftaW9oAgBuHZl8+tyt2g8kWlnu/3S25fAJm
+        Ix8nBMsNWYT6aQ38JU/PdGe05K2mWJ0R+pm7m8P3vjtwKFuM1zRakRK5baMJEO1g1zmxhbebemdDj
+        1kGTeR7r9OtQzusorXjJ4OWulsuIqP3HgtNL8WuoSY51cezNmXU7ah0aXg1acKjSJZKr+57SAurNe
+        2x8bgMXk+QU1EpOw8A6ADQjGlmxRLm02QcZCLL9GmEXOcon2oLvE502fbCqKXMFMrUa2fsVEzlwi7
+        7QGHYL61DQxGakaMQxezXLLQ;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1j0CXl-0005Xw-Lr; Fri, 07 Feb 2020 22:56:13 +0000
+        id 1j0Cil-0005b2-6f; Fri, 07 Feb 2020 23:07:35 +0000
+From:   Stefan Metzmacher <metze@samba.org>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <20200207155039.12819-1-axboe@kernel.dk>
  <36ca4e5a-9ac9-2bc6-a2e6-f3e2667463c9@samba.org>
  <74c1e465-d18c-85f1-dd7d-1f6a7177f5a2@kernel.dk>
-From:   Stefan Metzmacher <metze@samba.org>
+ <1f8f18a5-f37a-c11b-3e72-716de4c580f7@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
  rMYfMxBFfWS/0WF8840mDvhqPI+lJGfvJ1Y2r8a9JPuqsk6vwLedv62TQe5J3qMCR2y4TTK1
@@ -344,102 +345,103 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  iY0Rj0D34DQVeKAa4qUlOcBgX2D9VHRap9GKQRWs//egCueqDZNmIk3071aFV+BSiBSTZIIG
  t/YZOE37yKSj2rcCbqg=
 Subject: Re: [PATCHSET 0/4] Allow relative lookups
-Message-ID: <1f8f18a5-f37a-c11b-3e72-716de4c580f7@samba.org>
-Date:   Fri, 7 Feb 2020 23:56:09 +0100
+Message-ID: <045757dd-e903-5232-4c2b-44d154a88321@samba.org>
+Date:   Sat, 8 Feb 2020 00:07:31 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <74c1e465-d18c-85f1-dd7d-1f6a7177f5a2@kernel.dk>
+In-Reply-To: <1f8f18a5-f37a-c11b-3e72-716de4c580f7@samba.org>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="6IisbWdSKdkXQbaYMNIY9r6silujuXpq0"
+ boundary="oLXPQglMoWNAzyd5Lfq6m5eue82zjY0gx"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---6IisbWdSKdkXQbaYMNIY9r6silujuXpq0
-Content-Type: multipart/mixed; boundary="w6dVgWPSQmUB7I3sBlZ1hD4vDaNPxfvrD";
+--oLXPQglMoWNAzyd5Lfq6m5eue82zjY0gx
+Content-Type: multipart/mixed; boundary="xXSKVfDfO6HSaxHQirXwDgSHvz6Jj8Ilx";
  protected-headers="v1"
 From: Stefan Metzmacher <metze@samba.org>
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Message-ID: <1f8f18a5-f37a-c11b-3e72-716de4c580f7@samba.org>
+Message-ID: <045757dd-e903-5232-4c2b-44d154a88321@samba.org>
 Subject: Re: [PATCHSET 0/4] Allow relative lookups
 References: <20200207155039.12819-1-axboe@kernel.dk>
  <36ca4e5a-9ac9-2bc6-a2e6-f3e2667463c9@samba.org>
  <74c1e465-d18c-85f1-dd7d-1f6a7177f5a2@kernel.dk>
-In-Reply-To: <74c1e465-d18c-85f1-dd7d-1f6a7177f5a2@kernel.dk>
+ <1f8f18a5-f37a-c11b-3e72-716de4c580f7@samba.org>
+In-Reply-To: <1f8f18a5-f37a-c11b-3e72-716de4c580f7@samba.org>
 
---w6dVgWPSQmUB7I3sBlZ1hD4vDaNPxfvrD
+--xXSKVfDfO6HSaxHQirXwDgSHvz6Jj8Ilx
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
-
->> Am 07.02.20 um 16:50 schrieb Jens Axboe:
->>> Due to an oversight on my part, AT_FDCWD lookups only work when the
->>> lookup can be done inline, not async. This patchset rectifies that,
->>> aiming for 5.6 for this one as it would be a shame to have openat etc=
-
->>> without that.
+Am 07.02.20 um 23:56 schrieb Stefan Metzmacher:
+> Hi Jens,
+>=20
+>>> Am 07.02.20 um 16:50 schrieb Jens Axboe:
+>>>> Due to an oversight on my part, AT_FDCWD lookups only work when the
+>>>> lookup can be done inline, not async. This patchset rectifies that,
+>>>> aiming for 5.6 for this one as it would be a shame to have openat et=
+c
+>>>> without that.
+>>>>
+>>>> Just 3 small simple patches - grab the task ->fs, add io-wq suppor f=
+or
+>>>> passing it in and setting it, and finally add a ->needs_fs to the op=
+code
+>>>> table list of requirements for openat/openat2/statx.
+>>>>
+>>>> Last patch just ensures we allow AT_FDCWD.
 >>>
->>> Just 3 small simple patches - grab the task ->fs, add io-wq suppor fo=
-r
->>> passing it in and setting it, and finally add a ->needs_fs to the opc=
-ode
->>> table list of requirements for openat/openat2/statx.
->>>
->>> Last patch just ensures we allow AT_FDCWD.
+>>> Thanks! But IOSQE_FIXED_FILE is still not supported and not rejected =
+at
+>>> the same time, correct?
 >>
->> Thanks! But IOSQE_FIXED_FILE is still not supported and not rejected a=
-t
->> the same time, correct?
+>> That's in a separate patch:
+>>
+>> https://git.kernel.dk/cgit/linux-block/commit/?h=3Dio_uring-5.6&id=3D5=
+e159663813f0b7837342426cfb68185b6609359
 >=20
-> That's in a separate patch:
->=20
-> https://git.kernel.dk/cgit/linux-block/commit/?h=3Dio_uring-5.6&id=3D5e=
-159663813f0b7837342426cfb68185b6609359
+> Do we handle the error path correct?
+> As far as I can see io_req_set_file() is called before
+> io_{statx,openat,openat2}_prep() and req->file is already filled.
+> Maybe a generic way would be better using io_op_defs[op].allow_fixed_fi=
+le.
 
-Do we handle the error path correct?
-As far as I can see io_req_set_file() is called before
-io_{statx,openat,openat2}_prep() and req->file is already filled.
-Maybe a generic way would be better using io_op_defs[op].allow_fixed_file=
-=2E
+BTW: I'm really wondering what req->needs_fixed_file is for...
 
-In the long run we may want to add support for openat2 with
-IOSQE_FIXED_FILE, then Samba could register the share root directory as
-fixed file and it could be used for all openat2 calls.
-But for now it's fine to just reject it...
+Does it mean that IORING_SETUP_SQPOLL only works with IOSQE_FIXED_FILE?
+Which would mean IORING_SETUP_SQPOLL can't support openat2 and others.
 
-Thanks!
 metze
 
 
 
---w6dVgWPSQmUB7I3sBlZ1hD4vDaNPxfvrD--
+--xXSKVfDfO6HSaxHQirXwDgSHvz6Jj8Ilx--
 
---6IisbWdSKdkXQbaYMNIY9r6silujuXpq0
+--oLXPQglMoWNAzyd5Lfq6m5eue82zjY0gx
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl496wkACgkQDbX1YShp
-vVaDyQ/+JJPcVd78fIdrQythKPOUUq5DicfdgnN7uRZMM+8RMwoL6KDEyBJ+KhgR
-LRfECLhImssAQTsabdbs9haADbHOOUMBZIVQvyVEuI0LtDDAeAQSsevf8i+oxyLf
-dXXZAOu9gwvfOPaMe/3l2cdVAR24Akq/yW8da013s7Fvt4BE4sH5oXf8S+jxX2wC
-a28vfuWRGXqiWmUMQfKVCmx4fywEg2lR9enXYjF9iHlYuy320Q7h8ZlwvQ1Bh+TQ
-hRu2EBeac5V38oxCIcUoX3Q4AiBWBJIdk9UabBJ+QNmHWXAGAE3bWyci5znilm34
-Q30Na9fAZOCHDvuORbjAvSJVS2fugQxOLmM1/06nq3GGRmxfHu+gQC1zaYApJsVb
-XxfvS9GTmaXcCth3YiL5ff0QNG8l3H+oRzmUyqEIzlHWdUKIHi4wSf2q3Ql0PYjH
-QQ2cX+wOohZZoS+qg4kyEpnu83F8dRe/iNfmafqYSwP5U7S4WeooLHT23yUmYr1w
-XHAqkXfU3/evzyQw18lxfDgb2S4xoEEVuw+aFHq6lmtgRkPg3xYEWCegvCgKZ3se
-d2q5wwf190/9KxKvihY3lGUUasgtOJNDiWb6jn7Xfsin/2KGHnkeiRAbEKVhs2ot
-05GCYhd25cIiUvK4ZBV7v/DktfuqVuBZhglz1kn0TCyHqWvLDWw=
-=Tgub
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl497bMACgkQDbX1YShp
+vVYhxRAAul4NuordSMXzM3njXVYgCQmMXqt/4HmDJcFrUcSjHwOq0k5rUnZTBn5W
+t/H3WhH2D0LFh0Y3ihqX53vjMFNP+G3HXGNzSvhTagkAjlm/xvA3J7dnwAqJ0s39
+lJ53N8IqoH6s9pQ1RZeeQvO96PgggLUjRE6N7H6KOmzZ2MD+QwlgD9+nk/v2ghW/
+HibYo2ZQj9HNfLpPuDQv/qcIl5gnSnqVTYiAa2qR5XY2hJX7ZxLXM+8khU8kZkeo
+jegDC1p9k36XrR3fIg9hWGv+TiqdBIhCfEzU7ePagyfMIuA2/W+YeqZTV0no8O71
+i83Am31UZLOJ+svbgqGHFqmVDDKWAAFUFJHNx4Af/DMI3+Wtvu9O/Tcc8cqoWW62
+Mp9R63h2uYrE7S5d7IA2FZYqvtAVTpmRlPR1U6G7hKESsuLa78AjFSpUZYxs9Bgs
+lxGhhHtUNBA/9eLszY3oCd6X6v18ZSvEKdUmgvMnp4DfY20JGh4NUWl/fPUwxMtE
+nwBrLRuweBcTR8WV1F46WlQbRBvwE3YDBTyj0KvQHn4PMu30jvxD5OEIK9UH6RXg
+GC89ZK571AWDhVnbUd1l+GlrM4Ru+UYMP/4oYk4MQBkpviXGsuz56mJTEQ06poCy
+C/m/uUsdlzT3fNA4fS3LDDT7pBFnxZ/pYrE3BusRe5zZJFHl+xc=
+=7S+Y
 -----END PGP SIGNATURE-----
 
---6IisbWdSKdkXQbaYMNIY9r6silujuXpq0--
+--oLXPQglMoWNAzyd5Lfq6m5eue82zjY0gx--

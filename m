@@ -2,91 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 912E1155BA6
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2020 17:22:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A8E0155BAC
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2020 17:24:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgBGQWQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Feb 2020 11:22:16 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39307 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbgBGQWQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Feb 2020 11:22:16 -0500
-Received: by mail-ed1-f67.google.com with SMTP id m13so123246edb.6;
-        Fri, 07 Feb 2020 08:22:15 -0800 (PST)
+        id S1727018AbgBGQYr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Feb 2020 11:24:47 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44489 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbgBGQYr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Feb 2020 11:24:47 -0500
+Received: by mail-io1-f65.google.com with SMTP id z16so98149iod.11
+        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2020 08:24:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qfPiejj3XjGvU4zBUXMU4/Zw2o3mtsbKmeUjXUlQCt4=;
-        b=tL3/C7IJyhHnzAvP1jQPm8SPP8Bccj1/Ij6am24KgIwmagn2v63pdIi0n18LvIa0QQ
-         VNm85boNKrtZiHoNSESHUfltpmIc1+BVuA78Dh/ap81rTLzm/Wqpf5gSifv7Ed61E2Se
-         n9S8SB+lTRSfMO1nDSYmTTegoOCiisc7B5zFeR9aER+Ynh8/wOMNYjcXynCfobEYTZ8h
-         hWXszghTC7bGLxejWXdDJGjSMVr13G4gRX9lylI7MoXyWAhqNKmF97FdUZqRzTarjdnz
-         0Bv0lWK3rG2SMGK7fH4B3RA7GbXz3cvKOgaJWvvsGWIIW5AibvhVMGugrvzKD8WgZRW3
-         stbg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=oaZ9JMBYMQp3FTZFmmJehg30E/joUSZmPBIdJwaWZcE=;
+        b=K+AaRPUcBaRxMnqoqSxl8XqiVSSGhp9Hba0qQcp93YqG5WlrzpIKfL66dSU26cBeFL
+         1Z+UH0A+EVF1hzJk29oYELetTF86BkjK3MNB10rW+dmSXkNDvZFgqjwJINvvwPr7dlbJ
+         mGb4hmnOSE0HpU0TtRzEDYLbxbF+v+0Tik5/OyNngbXAT7LKDblbN2G3qyApDfDm/XlN
+         NjfXDVOF6ykIY7nTxm50hoeOpUqUvWJO34UtBfjENaXom4U1af+tizDyiOLrg0dsm/Zp
+         iTnHqxFwANLYsovvXPV5pm1EooY8b0gqE3morJd+55GvJtjm+COZi06mGH4oNLiDt1H8
+         MKbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=qfPiejj3XjGvU4zBUXMU4/Zw2o3mtsbKmeUjXUlQCt4=;
-        b=RA5qmDOcTPFyRB0IWBsnfTduGF5+5eKez9y+gBD8Uwt4nESI0uWR6aY/tg+9M3QOtj
-         q6UVBTs8y4DRI7kHuPy4XVnEr/57VCc93RU4XenulpzQkS9gmKccOQjIxByWuRV4lMWW
-         CkPO7Nv6Ms8XQI7yusSZF0EkYPw1CA1IMRlYUt3mj1/DEa5Qej+VWmYmNyC+SH7ja/qu
-         MCe59Yd1au/i4iZbWCj+LxY8lmgEob5PA3a1qPWDRoZiQbTSMJHN4gjxJ1dY/YYpyEuE
-         gpg7w2/kCr2YRMqrBZzhlTLk+UbntQHy5PfqjjEu+MK9eEwUr/XNR29TjCf4xsUygKH9
-         FjYQ==
-X-Gm-Message-State: APjAAAXFPZrkjYaUkfKXcDAmP3aXMzBgWDlM5RGyseh9/oYoSKiXbqst
-        /QdgXdJY7lX+jxXSSYJjRSXsNGGl
-X-Google-Smtp-Source: APXvYqw9VI/kfHd1ym3TppQrGns491gBqQgRSf8cLFqecunVf2pvve8Sei0BE1UZ3goBzo6eCxdqQw==
-X-Received: by 2002:a17:906:af84:: with SMTP id mj4mr2338ejb.341.1581092534265;
-        Fri, 07 Feb 2020 08:22:14 -0800 (PST)
-Received: from localhost.localdomain ([109.126.145.62])
-        by smtp.gmail.com with ESMTPSA id x12sm426368eje.52.2020.02.07.08.22.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 08:22:13 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring: remove unused struct io_async_open
-Date:   Fri,  7 Feb 2020 19:21:25 +0300
-Message-Id: <a14a8fc0c22be0dbbd9767f424e876704d9e9c8d.1581092449.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=oaZ9JMBYMQp3FTZFmmJehg30E/joUSZmPBIdJwaWZcE=;
+        b=lS6RC2YSjflVuaxNwPkGivIfUSltTGKGRsktjyXWMeCDvzYeBIa/xKlOQmCODGLVmP
+         OW3Ry2z9PRBQcXWY34V4DAmH7Mb9WiE0BInrtAKgLdJoKCQjUC9/TEj3E8mJb3YKA4Bu
+         QPHyW3TNpQ/0Jre3Jn7WjIegovNAeGUyHNkM9cDnAi6wXpQ6ZzbbQLHOR9Eerd8hUWS3
+         xh5BQp+UHsvArqdB41ojan2lkn2IhnPhiMsBwE754/DYGSMbjW+CtR3SaE5C6kNwUeqZ
+         ztmJm1AZ5QNkqQcbfFJFjunR58T4hJ0KAZmDy5WlhNjHSMckRq6aaX8uv2gtuiCbWi5z
+         vsOA==
+X-Gm-Message-State: APjAAAVsuTvOp2DoCZrO9EG/AJagNb2HLofFkBvVyTgfTauZpSM3yrxN
+        YEyq94JB1QCQjDuJaIqBH1rp40N2o1k=
+X-Google-Smtp-Source: APXvYqz7vYKMRfLs+Z82pe2GF4PpKOK1ZJNlN1mESgr+Bq1Hj6XEa2c4LC8ihmHneeEYj8yhWHF1wg==
+X-Received: by 2002:a6b:9188:: with SMTP id t130mr108805iod.215.1581092685219;
+        Fri, 07 Feb 2020 08:24:45 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id d69sm1417976ill.15.2020.02.07.08.24.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Feb 2020 08:24:44 -0800 (PST)
+Subject: Re: [PATCH v2] Fix liburing.so symlink source if libdir != libdevdir
+To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
+References: <35cb2c1e-5985-13a8-1719-1bfa9aeb65a4@samba.org>
+ <20200207144212.4212-1-metze@samba.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e12311f9-9ea1-b405-4663-8789c687eed4@kernel.dk>
+Date:   Fri, 7 Feb 2020 09:24:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200207144212.4212-1-metze@samba.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-struct io_async_open is unused, remove it.
+On 2/7/20 7:42 AM, Stefan Metzmacher wrote:
+> Signed-off-by: Stefan Metzmacher <metze@samba.org>
+> ---
+>  Makefile         | 6 +++++-
+>  configure        | 8 +++++++-
+>  debian/changelog | 6 ++++++
+>  src/Makefile     | 2 +-
+>  4 files changed, 19 insertions(+), 3 deletions(-)
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 5 -----
- 1 file changed, 5 deletions(-)
+Thanks, applied on top.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index deff11e84094..bff7a03e873f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -450,17 +450,12 @@ struct io_async_rw {
- 	ssize_t				size;
- };
- 
--struct io_async_open {
--	struct filename			*filename;
--};
--
- struct io_async_ctx {
- 	union {
- 		struct io_async_rw	rw;
- 		struct io_async_msghdr	msg;
- 		struct io_async_connect	connect;
- 		struct io_timeout_data	timeout;
--		struct io_async_open	open;
- 	};
- };
- 
 -- 
-2.24.0
+Jens Axboe
 

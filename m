@@ -2,49 +2,48 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72E9A1560AC
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2020 22:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A21DF1560BE
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2020 22:36:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbgBGVT5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Feb 2020 16:19:57 -0500
-Received: from mail-ed1-f41.google.com ([209.85.208.41]:33129 "EHLO
-        mail-ed1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbgBGVT5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Feb 2020 16:19:57 -0500
-Received: by mail-ed1-f41.google.com with SMTP id r21so1085115edq.0
-        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2020 13:19:56 -0800 (PST)
+        id S1727005AbgBGVgN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Feb 2020 16:36:13 -0500
+Received: from mail-ed1-f44.google.com ([209.85.208.44]:38900 "EHLO
+        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbgBGVgN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Feb 2020 16:36:13 -0500
+Received: by mail-ed1-f44.google.com with SMTP id p23so1096784edr.5
+        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2020 13:36:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=jzRFdz4dJWnu/VKq17XW3AHfF8e4zL+XZy+jGluYgXg=;
-        b=fqA7NyZL1Lw2fM/kkGeLUIXzpEvNTwp3+SkRfAiUlWkYyeuwYMtFuVZxBGBYD+RLvR
-         +RGCO2i+Y/PWZr2QcHll82g7peEbuovHgkEpNGK/rsJz8TQHqjzzB2gLk5NZuYKzeADC
-         5W2wQPhFt5FPRpYu/wtWgmrtNbs433uan8isYBcRI6hDe/ShKhmqBPq8C8omtOZQ4tZb
-         oKaPzgSzdKfoxfwNOZLN2SLkCoDTgyR71od/DoXKOMcJPkSeHuvZ/xWAXJhDxm8fJhGO
-         Pgm4TgiLDCTkXCSOU5kU6il03DTRaKbHQAGgeJ6EacagS5x9HZAqFf6gSm3v3qe2ckoE
-         sM4g==
+        bh=PQOg2jXQ4TYuJ2ST0Xo9/F3P7DPLPhXPZ93WoyYhYps=;
+        b=IQKmfER/lpDqVgIvEv9IYzoKK7dmQZtyQZhMeimGxIv4h4eLwHvjuSEE+L/aorQY3t
+         YgTz5oTF1Uzpuk1LMWfTT6q3Yz/Lh6AL1CBQ0mgfUSw0iI3PMpZtvRTDbp/62PqBHMZy
+         APbUB42FjnSKQKAjuMtDooyDVKj/gR2lWMIq1rgWsFgSj7yLds4l2awZrnVn49pH3FhO
+         jr99Uf5uMeSlg3vDWh1eAltnvbt4J4rbacDm4t0on1FLFd47pcvcBinMaswkWOv1Fs6+
+         P2ih2xt6hYmy3Jy+JKcUh5eiKTbKSQAXnkQt7xolaUzC8bX7vBD9KJgICGW+opK3acjI
+         bQ7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to;
-        bh=jzRFdz4dJWnu/VKq17XW3AHfF8e4zL+XZy+jGluYgXg=;
-        b=aPfjSW9R2c8iQwOgFmamNU63c83A/FTBIE/YZNgINEC3bejdg9FtI1JINLrcioWAxM
-         6TOPbJ+x9e6pybmT/fo0palVE4SJ1me/j8OnPNPVu3ZGAvuhNQfZUEvW51gGZ5xFgcTN
-         BThVnQKMaTiYEP0o9yGppRhsWE7eNCRaAzLjJOddqwQDgKeg0+dwo5B3TplersQNVTnl
-         0witDn5fbTFe9J78wQZtC6pOpdr31MYSg6iAyo3AKG6dtC6dw4zADz2xLDSbpxMiAZ1B
-         YQ/3E8gE3/yEr0F6hLQJG/iXnluzmSR+OJtKM2E+qzp8vilh/4aNZrQWfCsSByN+Bxaa
-         Hwgw==
-X-Gm-Message-State: APjAAAWy9+FdCpXAOsAP9+Q85np7VT89DXH2jLLyobanvKU2e/QoQsTi
-        jOyEP+BihMfXpCiLI9ydaqLWYUim
-X-Google-Smtp-Source: APXvYqzj5T+JHupy9YCTFXsyWKcrAcR7xo7T8q0IeO8O8kew5QjSzZb9ljT6rNfndvTRd9gAX1KGBQ==
-X-Received: by 2002:aa7:cd49:: with SMTP id v9mr784540edw.269.1581110395629;
-        Fri, 07 Feb 2020 13:19:55 -0800 (PST)
+        bh=PQOg2jXQ4TYuJ2ST0Xo9/F3P7DPLPhXPZ93WoyYhYps=;
+        b=ZMTpwfoAgE1CueiP/zAm9sSmfUjqr1hcoNxC1C6GDrvaiEu0P8Om06tynxBlioOd4v
+         QxELZQJc74st9iHRo2eMmss/Zulm4FGg4as69uX13DFu/NsT2WnBwIVboFnZfpCzK8v3
+         z2PoaqReAA71LOPIfY2UyB0n6cyTyt2ciR+Y5RPYmd0Y4DdTYkp9BewzkLSKrY0Ww/Aq
+         AhjVWx3GlrclMiV5CgBYvV0t/juLmAEgjdMoLFOA0HIQZeuPlhy37bIdwFVqAcpB/Ax/
+         ItdZcKkD0k44a7DlnshGh6lUi46Oxn6IgAFmh1avagjoMHaK3RojMqRrDFhF9wGejdNW
+         6Xgg==
+X-Gm-Message-State: APjAAAXufSLM9RmFJRewCpd3u9GuVkA3HUsp07wdV95qrBABKqPLxrQg
+        5wEjDz8b0Db82474Q36WnIuA3Wlc
+X-Google-Smtp-Source: APXvYqz5QnIIc2NNhO4bGh2IMsZ48PMHir0AEx250RkadVmsSUpJdu6y5nFOU3j/ATi8ReOF68pMSw==
+X-Received: by 2002:a50:bf4b:: with SMTP id g11mr789691edk.373.1581111371265;
+        Fri, 07 Feb 2020 13:36:11 -0800 (PST)
 Received: from [192.168.43.117] ([109.126.145.62])
-        by smtp.gmail.com with ESMTPSA id ks2sm478617ejb.82.2020.02.07.13.19.54
+        by smtp.gmail.com with ESMTPSA id y4sm218086edl.11.2020.02.07.13.36.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Feb 2020 13:19:55 -0800 (PST)
-Subject: Re: io_close()
+        Fri, 07 Feb 2020 13:36:10 -0800 (PST)
 To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
 References: <45f22c50-1ffe-4b73-f213-08dd49233597@gmail.com>
  <6052650b-4deb-4a4c-8efb-a85e4781cce2@kernel.dk>
@@ -92,33 +91,34 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <40291566-72da-cafc-d8cd-0554abac8715@gmail.com>
-Date:   Sat, 8 Feb 2020 00:19:17 +0300
+Subject: Re: io_close()
+Message-ID: <bf5b575f-1d45-a3db-46ea-925a0eb4fa08@gmail.com>
+Date:   Sat, 8 Feb 2020 00:35:26 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
 In-Reply-To: <6052650b-4deb-4a4c-8efb-a85e4781cce2@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="1QmSPLFk7HNNS7vM3hyrcXTKzyhuzqD6h"
+ boundary="fjmInl4w7v0SwHWZA7MedZ59RQS62jSnW"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---1QmSPLFk7HNNS7vM3hyrcXTKzyhuzqD6h
-Content-Type: multipart/mixed; boundary="UksOERydRXByiHaU1UCp6yzSJIqjeN97Q";
+--fjmInl4w7v0SwHWZA7MedZ59RQS62jSnW
+Content-Type: multipart/mixed; boundary="WSrE42krQvVAcZWqcs01U6HxgOIPsafKN";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-Message-ID: <40291566-72da-cafc-d8cd-0554abac8715@gmail.com>
+Message-ID: <bf5b575f-1d45-a3db-46ea-925a0eb4fa08@gmail.com>
 Subject: Re: io_close()
 References: <45f22c50-1ffe-4b73-f213-08dd49233597@gmail.com>
  <6052650b-4deb-4a4c-8efb-a85e4781cce2@kernel.dk>
 In-Reply-To: <6052650b-4deb-4a4c-8efb-a85e4781cce2@kernel.dk>
 
---UksOERydRXByiHaU1UCp6yzSJIqjeN97Q
+--WSrE42krQvVAcZWqcs01U6HxgOIPsafKN
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
@@ -136,36 +136,42 @@ ork(), so
 >> it's already delayed.
 >=20
 > It's not the fput(), it's the f_op->flush().
->=20
 
-Got it, thanks
+What confuses me, is that in case of ->flush, it doesn't return -EAGAIN, =
+but
+io_queue_async_work() itself, so nobody will set ->work.files. But that m=
+eans
+io_close_finish() won't do filp_close() as well.
+
+Did I missed somewhere called io_grab_files()?
+
 
 --=20
 Pavel Begunkov
 
 
---UksOERydRXByiHaU1UCp6yzSJIqjeN97Q--
+--WSrE42krQvVAcZWqcs01U6HxgOIPsafKN--
 
---1QmSPLFk7HNNS7vM3hyrcXTKzyhuzqD6h
+--fjmInl4w7v0SwHWZA7MedZ59RQS62jSnW
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl491FUACgkQWt5b1Glr
-+6XpkxAAmm4T6kB6aUAxLMV8PY2zqV35q5uJwYaIS5cUrbxO8z6n8MIbuCUOo092
-yLtpTS50QPMRGsX4ESnrUPrU3My7qQQLv6u/9VUY8xEv7OgjEcevUS3jmSJgnwSR
-wW484tf61BC5nZlDxtWjJPmDisYtRz+VbbXMR1fNLVtD65+sRxHXtmz0BPFL4sGU
-hVpHn2ToVxIt15ewaNK/nryLSeXeeYzyB3pMDOLsD9yxdsUbdhmcDat7vHt/uMJN
-IPw3OB4to7dDHUT4YqdrGtH3CJJURLcr7bClDyIdw2mvNw0KGWA/IN53ia7DWQYC
-o6pBku7NNZUUXrq7cCm+5WCwgOvaYOal1zgGGNa/xdXRDjCNtc/+8/CUqjP3MRhK
-FvZXqzju20dEvtxJeZSaxxAp5X5UtO5h/n8eR20UnL/M4igvs9GqT6YwDLUPPiOx
-vCzURtGB2JLs6gU9qcJUVG7KD5L/x+/MnVPGkTNy0V0tPtutpYtNEPahYYogMlZ7
-/Q1Eepz2wlLdNllktiqRbtmG2CHSAIASf5rO4X6TznJU38QQBT0FYrUu7hGPMW4c
-9i4hTFQQ8jGgBL3GuQxtgLiZOfu+WE3rQb7UT2OlKx4rvQWNhKOXF5oWMvdDOGt0
-MPak6PpyyMDY1L0gF08nF2N0kn9wRGcugI6TAzeRVRGPQQb5MAg=
-=4wbD
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl492CIACgkQWt5b1Glr
++6VcqQ//RaBJkDlDHs0KeEuzgZCGyzEtKcTiaNBaIw4n7t+hDSbuEtGbXWh3++O1
+b+d0k/dEsqNXq58+Bhye6J/CMpqOCBwGjT/+Rtz0YWJJUX8MdiOIclqYvE1p6KI5
+E4COUgBoP6eDhAu+DRu7d3096dmHIWGkEvH/KO1joJnZ2Blse8+lCs3BUbo2JRlB
+ZmQHrfbYoJQ1s1w81RJ43hikeP3I/FBkpst0+9MpjqIT0STbNMmth5rEJxlGF9xL
+znpzh7PxzPru5UQQl7XmcuUW+FMO41junKXTBTJAFUnJPfqyNzZVcdRIGoFrqaqk
+ttChstmglrEavv7HZz+dRgd1Asr87MXmcjDnqkyiqvkA6tSlMgQJ96mOhalEUOSv
+5JrBHwLgXMDf0giDLFNgLtuiq8V4vQaKtiMfMPAi2/3y4OBbhHGUKzR6xRFp7Yl9
+EpWZrcefHnBOhYhW1SOcy2zQybO1EPWeu18CjX/3S2hYYHE4iZ+bOnSi9CWqCSrt
+31VLSmgwoAAlcGahz8Xj1/18UT2xWwZkJ9g1AS/d4Kt7PH5EIN+uN6cxKrarG+dU
+tqAHab90msV/r04OzgStlsXs20ZFdXkwEpkYgljQfZgzrQUlqD6PSor/IWT/p3Ym
+4OZGhq9Mn8OmJ34gDWXxStbqatXLKCOKl5viS/Q4zQHRVDzU4g0=
+=j+o/
 -----END PGP SIGNATURE-----
 
---1QmSPLFk7HNNS7vM3hyrcXTKzyhuzqD6h--
+--fjmInl4w7v0SwHWZA7MedZ59RQS62jSnW--

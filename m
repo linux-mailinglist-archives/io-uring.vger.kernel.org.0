@@ -2,35 +2,35 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C9C5156176
-	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2020 00:07:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91E1C15619B
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2020 00:45:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbgBGXHk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Feb 2020 18:07:40 -0500
-Received: from hr2.samba.org ([144.76.82.148]:45624 "EHLO hr2.samba.org"
+        id S1727071AbgBGXp2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Feb 2020 18:45:28 -0500
+Received: from hr2.samba.org ([144.76.82.148]:54302 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727048AbgBGXHj (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 7 Feb 2020 18:07:39 -0500
+        id S1727065AbgBGXp2 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 7 Feb 2020 18:45:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:To:From:CC;
-        bh=cBfRg0ZNwy715fVhOjM3IYRgueioFGqqyyNJ1tWq1Tw=; b=Qswc/yMn95/9/ZX1L1yYmXA8GJ
-        jKJ0wZSiIEy1NlZeleLtYbBfLu4ccOK+CaaMqn3sLfnyJuCI8wmNNsVX+bmXQNL0lfkP5DNnHpBGW
-        QoNqowpkTsLM9+Jf39hHcb7EvBnwW2ushlvgk+V6iQnEJKUnVaNbx9udQDk4RTfP7rUtJXdBS77jG
-        KavXktdcNFrZOsT7OYM/hOWHR6/Hb0SgCYR7aoNYZ2ftaW9oAgBuHZl8+tyt2g8kWlnu/3S25fAJm
-        Ix8nBMsNWYT6aQ38JU/PdGe05K2mWJ0R+pm7m8P3vjtwKFuM1zRakRK5baMJEO1g1zmxhbebemdDj
-        1kGTeR7r9OtQzusorXjJ4OWulsuIqP3HgtNL8WuoSY51cezNmXU7ah0aXg1acKjSJZKr+57SAurNe
-        2x8bgMXk+QU1EpOw8A6ADQjGlmxRLm02QcZCLL9GmEXOcon2oLvE502fbCqKXMFMrUa2fsVEzlwi7
-        7QGHYL61DQxGakaMQxezXLLQ;
+         s=42; h=Date:Message-ID:From:To:CC;
+        bh=WF29rmLWM2BWhy65ZXKpnVPg+lxfLapt4ptt9Xgpnrk=; b=Qs7dZFX3HEhFPsKLK+iHf0twld
+        hLK3h3djxiFC52LQy/bDKmTe8QNogCdafSYa/j66k9LgW35r1i2+fU9CqY3ucY3p3yekWRr+8HrBg
+        QulqtKU2E1puZSJIa2bDdZhKQoULiYiFXDi7c+YWKXOXsGTpI0w45S9zMUcwcc5FD+2oaiAkMS8vs
+        LtzjLc3Gu3Ydt/pZJYj24wtwWTXVCSRyQin8OUiZducTcouHh5SY0scp2eWXgyQxK+N1rbEJM1CAX
+        B1cFSuauVLz/gUj6jCZuSreXXwEVmFS+ceFkuKRU1Eh05JZL5f0UfV78FrKlR2KaNTVZz59RgZy3S
+        MQFe9IzUON4rNBMEaApJaxhONEADpMUWMiQ0gjcpBpH0Lt7uKVWFhMTNkGTb9cB88DkgeaiFc3efF
+        EhMmumF2qkSdA1EQKGhtO7i18sB98MoGDGDu/SRaPityyNNZanoigwRDGQ2S+M8cWBXVky/2Och4t
+        Ft6Gyq6E7Kz6tSo+thU8kn4r;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1j0Cil-0005b2-6f; Fri, 07 Feb 2020 23:07:35 +0000
-From:   Stefan Metzmacher <metze@samba.org>
+        id 1j0DJI-0005nE-Qj; Fri, 07 Feb 2020 23:45:22 +0000
+Subject: Re: [PATCH v1] io_uring_cqe_get_data() only requires a const struct
+ io_uring_cqe *cqe
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20200207155039.12819-1-axboe@kernel.dk>
- <36ca4e5a-9ac9-2bc6-a2e6-f3e2667463c9@samba.org>
- <74c1e465-d18c-85f1-dd7d-1f6a7177f5a2@kernel.dk>
- <1f8f18a5-f37a-c11b-3e72-716de4c580f7@samba.org>
+References: <20200206160209.14432-1-metze@samba.org>
+ <94d5b40d-a5d8-706f-ab5c-3a8bd512d831@kernel.dk>
+From:   Stefan Metzmacher <metze@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
  rMYfMxBFfWS/0WF8840mDvhqPI+lJGfvJ1Y2r8a9JPuqsk6vwLedv62TQe5J3qMCR2y4TTK1
@@ -344,104 +344,75 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  uWrtpKE+BrlhmZrZleospHp05F+oHuE7lrOg09g0SFdTigqSJNbN1R/pkPI5Q03GfbWipsd4
  iY0Rj0D34DQVeKAa4qUlOcBgX2D9VHRap9GKQRWs//egCueqDZNmIk3071aFV+BSiBSTZIIG
  t/YZOE37yKSj2rcCbqg=
-Subject: Re: [PATCHSET 0/4] Allow relative lookups
-Message-ID: <045757dd-e903-5232-4c2b-44d154a88321@samba.org>
-Date:   Sat, 8 Feb 2020 00:07:31 +0100
+Message-ID: <9ecdcb22-c51c-8b84-678a-d41e8b97fc09@samba.org>
+Date:   Sat, 8 Feb 2020 00:45:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <1f8f18a5-f37a-c11b-3e72-716de4c580f7@samba.org>
+In-Reply-To: <94d5b40d-a5d8-706f-ab5c-3a8bd512d831@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="oLXPQglMoWNAzyd5Lfq6m5eue82zjY0gx"
+ boundary="oVCHxFxTGDzcg6ROvLzSZ57imBjPoX4Od"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---oLXPQglMoWNAzyd5Lfq6m5eue82zjY0gx
-Content-Type: multipart/mixed; boundary="xXSKVfDfO6HSaxHQirXwDgSHvz6Jj8Ilx";
+--oVCHxFxTGDzcg6ROvLzSZ57imBjPoX4Od
+Content-Type: multipart/mixed; boundary="RIP0HqeD1vPVo1Djp9wQBKiep1DUHlG2A";
  protected-headers="v1"
 From: Stefan Metzmacher <metze@samba.org>
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Message-ID: <045757dd-e903-5232-4c2b-44d154a88321@samba.org>
-Subject: Re: [PATCHSET 0/4] Allow relative lookups
-References: <20200207155039.12819-1-axboe@kernel.dk>
- <36ca4e5a-9ac9-2bc6-a2e6-f3e2667463c9@samba.org>
- <74c1e465-d18c-85f1-dd7d-1f6a7177f5a2@kernel.dk>
- <1f8f18a5-f37a-c11b-3e72-716de4c580f7@samba.org>
-In-Reply-To: <1f8f18a5-f37a-c11b-3e72-716de4c580f7@samba.org>
+Message-ID: <9ecdcb22-c51c-8b84-678a-d41e8b97fc09@samba.org>
+Subject: Re: [PATCH v1] io_uring_cqe_get_data() only requires a const struct
+ io_uring_cqe *cqe
+References: <20200206160209.14432-1-metze@samba.org>
+ <94d5b40d-a5d8-706f-ab5c-3a8bd512d831@kernel.dk>
+In-Reply-To: <94d5b40d-a5d8-706f-ab5c-3a8bd512d831@kernel.dk>
 
---xXSKVfDfO6HSaxHQirXwDgSHvz6Jj8Ilx
+--RIP0HqeD1vPVo1Djp9wQBKiep1DUHlG2A
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Am 07.02.20 um 23:56 schrieb Stefan Metzmacher:
-> Hi Jens,
->=20
->>> Am 07.02.20 um 16:50 schrieb Jens Axboe:
->>>> Due to an oversight on my part, AT_FDCWD lookups only work when the
->>>> lookup can be done inline, not async. This patchset rectifies that,
->>>> aiming for 5.6 for this one as it would be a shame to have openat et=
-c
->>>> without that.
->>>>
->>>> Just 3 small simple patches - grab the task ->fs, add io-wq suppor f=
-or
->>>> passing it in and setting it, and finally add a ->needs_fs to the op=
-code
->>>> table list of requirements for openat/openat2/statx.
->>>>
->>>> Last patch just ensures we allow AT_FDCWD.
->>>
->>> Thanks! But IOSQE_FIXED_FILE is still not supported and not rejected =
-at
->>> the same time, correct?
->>
->> That's in a separate patch:
->>
->> https://git.kernel.dk/cgit/linux-block/commit/?h=3Dio_uring-5.6&id=3D5=
-e159663813f0b7837342426cfb68185b6609359
->=20
-> Do we handle the error path correct?
-> As far as I can see io_req_set_file() is called before
-> io_{statx,openat,openat2}_prep() and req->file is already filled.
-> Maybe a generic way would be better using io_op_defs[op].allow_fixed_fi=
-le.
+Hi Jens,
 
-BTW: I'm really wondering what req->needs_fixed_file is for...
+> Unrelated to this patch, but I'd like to release a 0.4 sooner rather
+> than later. Let me know if you see any immediate work that needs doing
+> before that happens.
 
-Does it mean that IORING_SETUP_SQPOLL only works with IOSQE_FIXED_FILE?
-Which would mean IORING_SETUP_SQPOLL can't support openat2 and others.
+I just noticed that IORING_FEAT_CUR_PERSONALITY is not yet documented,
+I'm not sure if that's important enough to have in 0.4.
+
+When do you plan to tag the release?
 
 metze
 
 
 
---xXSKVfDfO6HSaxHQirXwDgSHvz6Jj8Ilx--
+--RIP0HqeD1vPVo1Djp9wQBKiep1DUHlG2A--
 
---oLXPQglMoWNAzyd5Lfq6m5eue82zjY0gx
+--oVCHxFxTGDzcg6ROvLzSZ57imBjPoX4Od
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl497bMACgkQDbX1YShp
-vVYhxRAAul4NuordSMXzM3njXVYgCQmMXqt/4HmDJcFrUcSjHwOq0k5rUnZTBn5W
-t/H3WhH2D0LFh0Y3ihqX53vjMFNP+G3HXGNzSvhTagkAjlm/xvA3J7dnwAqJ0s39
-lJ53N8IqoH6s9pQ1RZeeQvO96PgggLUjRE6N7H6KOmzZ2MD+QwlgD9+nk/v2ghW/
-HibYo2ZQj9HNfLpPuDQv/qcIl5gnSnqVTYiAa2qR5XY2hJX7ZxLXM+8khU8kZkeo
-jegDC1p9k36XrR3fIg9hWGv+TiqdBIhCfEzU7ePagyfMIuA2/W+YeqZTV0no8O71
-i83Am31UZLOJ+svbgqGHFqmVDDKWAAFUFJHNx4Af/DMI3+Wtvu9O/Tcc8cqoWW62
-Mp9R63h2uYrE7S5d7IA2FZYqvtAVTpmRlPR1U6G7hKESsuLa78AjFSpUZYxs9Bgs
-lxGhhHtUNBA/9eLszY3oCd6X6v18ZSvEKdUmgvMnp4DfY20JGh4NUWl/fPUwxMtE
-nwBrLRuweBcTR8WV1F46WlQbRBvwE3YDBTyj0KvQHn4PMu30jvxD5OEIK9UH6RXg
-GC89ZK571AWDhVnbUd1l+GlrM4Ru+UYMP/4oYk4MQBkpviXGsuz56mJTEQ06poCy
-C/m/uUsdlzT3fNA4fS3LDDT7pBFnxZ/pYrE3BusRe5zZJFHl+xc=
-=7S+Y
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl499okACgkQDbX1YShp
+vVaB0w/9HExIwENzljGt/jjgBK/3MfDfqOOwl0X2hQmyPLGNcYqucqFFz9ly8jZP
+7V4YOZsGHqVEVhct4GmVg/E7eK87T6PCAVG+xFWfVoyz6c7DMDe9HCPuPecdLK1c
+0/up045m+XhEG4h4zEqeU1HwHo2snQBckqDbe1y0Io2o+BEl9VlXn5NNs5PQZMM3
+IGzc7PGCSMdLfSJT9g3DK47NKf2z6X3ndWFOzE4BbCFx2d/28aVaeUABTueccX/b
+nKPfNct62xlyT1/x8Dba6DOj6vbG5W8w72N62ZGfqgnXbRcxQSdhQCEjXUR9mkaW
+/MKHXOzFESAGwnM99gjEYG0JQAF4nsRgsHLJl0qNjy5039nUSFBibCbxnK4FxD8p
+D/+KO30Pw/2TMKZug0Br7nDck49u8jigDj3atDKetQmFUc+gNp/P/gOPwi//1oSs
+aNRy/vr4jbBxBIjQxB0rGRFeElpdBvhyei9A5eRHuZ4rsnxnyHMxt0y+1qFwxCAk
+AfC15j7q/uY+JZLqerXZ3kpdBiA9hVpCaHrZxpjiB1abuqD5osiL9TC5Py383vJt
+7i7sk04XKxJqFiwrDVENPSX0lXKQ+bkrHQZ8Yi+FOFq5DMmObYBDcewBBzDc8O9o
+9lcZRzqGbRnQeWP465lGB2cRCilHt06bMJGVGRBOpWF9abXWSzM=
+=Cu4W
 -----END PGP SIGNATURE-----
 
---oLXPQglMoWNAzyd5Lfq6m5eue82zjY0gx--
+--oVCHxFxTGDzcg6ROvLzSZ57imBjPoX4Od--

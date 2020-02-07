@@ -2,53 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 938431560AA
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2020 22:19:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72E9A1560AC
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2020 22:19:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbgBGVTf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Feb 2020 16:19:35 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38215 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbgBGVTf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Feb 2020 16:19:35 -0500
-Received: by mail-ed1-f66.google.com with SMTP id p23so1055005edr.5;
-        Fri, 07 Feb 2020 13:19:33 -0800 (PST)
+        id S1727118AbgBGVT5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Feb 2020 16:19:57 -0500
+Received: from mail-ed1-f41.google.com ([209.85.208.41]:33129 "EHLO
+        mail-ed1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726947AbgBGVT5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Feb 2020 16:19:57 -0500
+Received: by mail-ed1-f41.google.com with SMTP id r21so1085115edq.0
+        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2020 13:19:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=OWCBZ6tih1HyNFzDGB/mSHGPgMhLO6Fnq6qaK7NUkrc=;
-        b=UICGqB223vOOu2383pFCn98guTfsMca3NzGr2bG+AJzB/wTCRdAZFrhNXuIcb8PrNX
-         1hgj0qowVg+9Q0qktE4S76GfRxS1hEiDIAt5ZlituWPMx+UW7djSador0D2T8aP5JsGM
-         xycPdQxTgaEb+yGM6SWcPBIBpIXthbynQuINR+5ZJ06Z6w+l5d5J2F6dBmXcU3IbVUfk
-         Jo4xMCph5Tc4ifhdX9qnty9WwOGk1wNrBvuubzMFQHuxFtIwJKfzO7dCKoeZy7R81303
-         989Zy61R9dCiERWoXIDK1F/ZPZrMgQo6UV68Z33zDnTUc8AJMF7j3FE9KLf0BSw1S2eR
-         WEpg==
+        bh=jzRFdz4dJWnu/VKq17XW3AHfF8e4zL+XZy+jGluYgXg=;
+        b=fqA7NyZL1Lw2fM/kkGeLUIXzpEvNTwp3+SkRfAiUlWkYyeuwYMtFuVZxBGBYD+RLvR
+         +RGCO2i+Y/PWZr2QcHll82g7peEbuovHgkEpNGK/rsJz8TQHqjzzB2gLk5NZuYKzeADC
+         5W2wQPhFt5FPRpYu/wtWgmrtNbs433uan8isYBcRI6hDe/ShKhmqBPq8C8omtOZQ4tZb
+         oKaPzgSzdKfoxfwNOZLN2SLkCoDTgyR71od/DoXKOMcJPkSeHuvZ/xWAXJhDxm8fJhGO
+         Pgm4TgiLDCTkXCSOU5kU6il03DTRaKbHQAGgeJ6EacagS5x9HZAqFf6gSm3v3qe2ckoE
+         sM4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to;
-        bh=OWCBZ6tih1HyNFzDGB/mSHGPgMhLO6Fnq6qaK7NUkrc=;
-        b=Ii55JjTLWpNOS73TNFJx21V8QHeR+9+JlPfrOtT2JMZr02gKpEor4YImfK3xHv/FFl
-         udag+CDjUbl6EkAGMGzfa6l8OzRqxhJEkrWIH6yKOxOBbqlNDx4exOABSQ5dXaA7kkil
-         JAcyG8CkG51ZKI/MWwsp8VSvx8Z54iIQJtDAGpf88Z7N7sUPrCmqJoIRkwTK1HaztkQJ
-         Rkdu7x+OM0GtYpCbiC4oJ2sCW8n8gK5YMqXLensAnB8Q74peiOLvl3RMpKveUQ39+8Kg
-         H2bQ10hxJE1iKsxUd/t5mwK+v1hoe4j/kWR/VxzJ84rNfNI4ITsF6/84piN5xTDgNxpd
-         wGbQ==
-X-Gm-Message-State: APjAAAUZrkJxqc3F+sQ8f/K7i4W3h0pg+drVOTUuiZr+fn3ixBSufuk6
-        Sgi6Bwc/C06A6lEecYKHpNTEXDsD
-X-Google-Smtp-Source: APXvYqz/z1XrGqOHiPHsCg12e+jf8nNd2aAlDTzSZua9PfHTyGKug0J8xIXh8veDjbsM3f7RyR4Ksg==
-X-Received: by 2002:a50:cfc1:: with SMTP id i1mr812421edk.366.1581110371916;
-        Fri, 07 Feb 2020 13:19:31 -0800 (PST)
+        bh=jzRFdz4dJWnu/VKq17XW3AHfF8e4zL+XZy+jGluYgXg=;
+        b=aPfjSW9R2c8iQwOgFmamNU63c83A/FTBIE/YZNgINEC3bejdg9FtI1JINLrcioWAxM
+         6TOPbJ+x9e6pybmT/fo0palVE4SJ1me/j8OnPNPVu3ZGAvuhNQfZUEvW51gGZ5xFgcTN
+         BThVnQKMaTiYEP0o9yGppRhsWE7eNCRaAzLjJOddqwQDgKeg0+dwo5B3TplersQNVTnl
+         0witDn5fbTFe9J78wQZtC6pOpdr31MYSg6iAyo3AKG6dtC6dw4zADz2xLDSbpxMiAZ1B
+         YQ/3E8gE3/yEr0F6hLQJG/iXnluzmSR+OJtKM2E+qzp8vilh/4aNZrQWfCsSByN+Bxaa
+         Hwgw==
+X-Gm-Message-State: APjAAAWy9+FdCpXAOsAP9+Q85np7VT89DXH2jLLyobanvKU2e/QoQsTi
+        jOyEP+BihMfXpCiLI9ydaqLWYUim
+X-Google-Smtp-Source: APXvYqzj5T+JHupy9YCTFXsyWKcrAcR7xo7T8q0IeO8O8kew5QjSzZb9ljT6rNfndvTRd9gAX1KGBQ==
+X-Received: by 2002:aa7:cd49:: with SMTP id v9mr784540edw.269.1581110395629;
+        Fri, 07 Feb 2020 13:19:55 -0800 (PST)
 Received: from [192.168.43.117] ([109.126.145.62])
-        by smtp.gmail.com with ESMTPSA id k11sm479668ejq.24.2020.02.07.13.19.30
+        by smtp.gmail.com with ESMTPSA id ks2sm478617ejb.82.2020.02.07.13.19.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Feb 2020 13:19:31 -0800 (PST)
-Subject: Re: [PATCH v2] io_uring: add cleanup for openat()/statx()
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <b55d447204244baca5a99c53fb443c20b36b8c0e.1581109120.git.asml.silence@gmail.com>
- <10b7caed-06dd-f6a0-24f1-648968011e40@kernel.dk>
+        Fri, 07 Feb 2020 13:19:55 -0800 (PST)
+Subject: Re: io_close()
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <45f22c50-1ffe-4b73-f213-08dd49233597@gmail.com>
+ <6052650b-4deb-4a4c-8efb-a85e4781cce2@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -93,88 +92,80 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <66ab5ebd-8a9c-47bc-1bf2-8a328e70c290@gmail.com>
-Date:   Sat, 8 Feb 2020 00:18:48 +0300
+Message-ID: <40291566-72da-cafc-d8cd-0554abac8715@gmail.com>
+Date:   Sat, 8 Feb 2020 00:19:17 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <10b7caed-06dd-f6a0-24f1-648968011e40@kernel.dk>
+In-Reply-To: <6052650b-4deb-4a4c-8efb-a85e4781cce2@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="7uuPjldF0rMczuXUAWDrpXw3B02Hl8en9"
+ boundary="1QmSPLFk7HNNS7vM3hyrcXTKzyhuzqD6h"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---7uuPjldF0rMczuXUAWDrpXw3B02Hl8en9
-Content-Type: multipart/mixed; boundary="LoWLipQcGjVDclvdaAczuwtdlfwjfZVpv";
+--1QmSPLFk7HNNS7vM3hyrcXTKzyhuzqD6h
+Content-Type: multipart/mixed; boundary="UksOERydRXByiHaU1UCp6yzSJIqjeN97Q";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <66ab5ebd-8a9c-47bc-1bf2-8a328e70c290@gmail.com>
-Subject: Re: [PATCH v2] io_uring: add cleanup for openat()/statx()
-References: <b55d447204244baca5a99c53fb443c20b36b8c0e.1581109120.git.asml.silence@gmail.com>
- <10b7caed-06dd-f6a0-24f1-648968011e40@kernel.dk>
-In-Reply-To: <10b7caed-06dd-f6a0-24f1-648968011e40@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+Message-ID: <40291566-72da-cafc-d8cd-0554abac8715@gmail.com>
+Subject: Re: io_close()
+References: <45f22c50-1ffe-4b73-f213-08dd49233597@gmail.com>
+ <6052650b-4deb-4a4c-8efb-a85e4781cce2@kernel.dk>
+In-Reply-To: <6052650b-4deb-4a4c-8efb-a85e4781cce2@kernel.dk>
 
---LoWLipQcGjVDclvdaAczuwtdlfwjfZVpv
+--UksOERydRXByiHaU1UCp6yzSJIqjeN97Q
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 08/02/2020 00:13, Jens Axboe wrote:
-> On 2/7/20 1:59 PM, Pavel Begunkov wrote:
->> openat() and statx() may have allocated ->open.filename, which should =
-be
->> be put. Add cleanup handlers for them.
+On 08/02/2020 00:14, Jens Axboe wrote:
+> On 2/7/20 1:52 PM, Pavel Begunkov wrote:
+>> Hi,
+>>
+>> I noticed, that io_close() is broken for some use cases, and was think=
+ing about
+>> the best way to fix it. Is fput(req->close.put_file) really need to be=
+ done in
+>> wq? It seems, fput_many() implementation just calls schedule_delayed_w=
+ork(), so
+>> it's already delayed.
 >=20
-> Thanks, applied - but I dropped this hunk:
+> It's not the fput(), it's the f_op->flush().
+>=20
 
-That's the second time it slipped, I need to read patches more attentivel=
-y.
-Thanks
-
->=20
->> @@ -2857,7 +2862,6 @@ static void io_close_finish(struct io_wq_work **=
-workptr)
->>  	}
->> =20
->>  	fput(req->close.put_file);
->> -
->>  	io_put_req_find_next(req, &nxt);
->>  	if (nxt)
->>  		io_wq_assign_next(workptr, nxt);
->=20
+Got it, thanks
 
 --=20
 Pavel Begunkov
 
 
---LoWLipQcGjVDclvdaAczuwtdlfwjfZVpv--
+--UksOERydRXByiHaU1UCp6yzSJIqjeN97Q--
 
---7uuPjldF0rMczuXUAWDrpXw3B02Hl8en9
+--1QmSPLFk7HNNS7vM3hyrcXTKzyhuzqD6h
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl491DgACgkQWt5b1Glr
-+6VPRg/5AaMTrZu9rk7XcHCN5mjMLegmEPR0z+qdHzR7++6LKUslGj4TELRyfw0G
-pQWuFjc3JPozFJgrj1S/0mN76Rqy5sncSA/OfRPVRrlXi3RqGNU+5RUpK5OaS6Qy
-Yq0miHIViKCmZSP7qyhbe6KRqfQnkWnVRgSJyGeiJgkwTMIAaDbkYOdjOHvMWhcP
-14Sj5ZXqbMZWICOdFzCjvagaSzJ/0XRg9ol0oyOdXljvMPFcZ19Uq/6b2ub7Kv5S
-kmR4a2/U0vB6ouRq/s0khgEpDeVL1S0A2SSviCpIvGTxEvcztA7foUPsqi2LrdBC
-15LyqGs+Ew20qnCT9YJg8PIY0WJkM6zKmoujboJplJiA9922n+w9TLzc591yFcGx
-EctgXNAOq8WCmBy6+ZH0rdL23OZOWs2hCvVDz1nisFXiNVdzqRj2AQVSKaf9AP+c
-7vnesUjkBLLu42e+Gm9Pgc6kzoCHKqe1nKAkvn3niGjwsGX+vm82Bj2+752zLjJ2
-7UEZrs2qCSjmPix0fTF5OxzBdyAmvIVhaVpYC9jIyb07qsvuSpFMzcJQVFOC9VgU
-3pqPybvyE+fz8WaO3Q42iE4CeFAh3b5HMeuiffFJ1DNRI+3WcPuS9QHVSaG7DwjZ
-N7wZNQDAbz1ojVWZrMILTV4cAYOwKOmhbLIubFCwR7q+t4Jf3ZE=
-=35C3
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl491FUACgkQWt5b1Glr
++6XpkxAAmm4T6kB6aUAxLMV8PY2zqV35q5uJwYaIS5cUrbxO8z6n8MIbuCUOo092
+yLtpTS50QPMRGsX4ESnrUPrU3My7qQQLv6u/9VUY8xEv7OgjEcevUS3jmSJgnwSR
+wW484tf61BC5nZlDxtWjJPmDisYtRz+VbbXMR1fNLVtD65+sRxHXtmz0BPFL4sGU
+hVpHn2ToVxIt15ewaNK/nryLSeXeeYzyB3pMDOLsD9yxdsUbdhmcDat7vHt/uMJN
+IPw3OB4to7dDHUT4YqdrGtH3CJJURLcr7bClDyIdw2mvNw0KGWA/IN53ia7DWQYC
+o6pBku7NNZUUXrq7cCm+5WCwgOvaYOal1zgGGNa/xdXRDjCNtc/+8/CUqjP3MRhK
+FvZXqzju20dEvtxJeZSaxxAp5X5UtO5h/n8eR20UnL/M4igvs9GqT6YwDLUPPiOx
+vCzURtGB2JLs6gU9qcJUVG7KD5L/x+/MnVPGkTNy0V0tPtutpYtNEPahYYogMlZ7
+/Q1Eepz2wlLdNllktiqRbtmG2CHSAIASf5rO4X6TznJU38QQBT0FYrUu7hGPMW4c
+9i4hTFQQ8jGgBL3GuQxtgLiZOfu+WE3rQb7UT2OlKx4rvQWNhKOXF5oWMvdDOGt0
+MPak6PpyyMDY1L0gF08nF2N0kn9wRGcugI6TAzeRVRGPQQb5MAg=
+=4wbD
 -----END PGP SIGNATURE-----
 
---7uuPjldF0rMczuXUAWDrpXw3B02Hl8en9--
+--1QmSPLFk7HNNS7vM3hyrcXTKzyhuzqD6h--

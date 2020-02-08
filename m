@@ -2,137 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8A5815672B
-	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2020 19:42:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4D6156733
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2020 19:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbgBHSmP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 8 Feb 2020 13:42:15 -0500
-Received: from mail-lf1-f45.google.com ([209.85.167.45]:42874 "EHLO
-        mail-lf1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727471AbgBHSmP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 8 Feb 2020 13:42:15 -0500
-Received: by mail-lf1-f45.google.com with SMTP id y19so1462749lfl.9
-        for <io-uring@vger.kernel.org>; Sat, 08 Feb 2020 10:42:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dTN5asbuLmjOCGk1ftMo2pAG8oxcb0hwfMkVR4m1Xr4=;
-        b=gktp3m/pa08siEipEnaCxBdlDPMgQ4CYQg2HidNf2K3JGElwngryH6eXPiXODLAV74
-         KcvVQ6UMh6Yh0weFGkiRi35Kmy8iVIq0S9E8i6njLVlP21pqn1X0urhRl7zn7ziB3y/u
-         uX7Qi6AMm4eeZC5MoVQxyj46kL0gryJmnnjA/mssnsapqxlGXGpEpsCX1pKUJzDhO55B
-         Rcnl3O/ELDXmI+cdlBkhlg0PVzjs8tJ0eomCFeOG6AyI66T9hFwtR2ukzzyhK5yP9PY5
-         N82Y+VQzhUnpfl83EBRpoV1F2fn6YPEu1KoSw5n3LLuTQhfpzn9rqYew9hn3D/RCfGHM
-         1mSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dTN5asbuLmjOCGk1ftMo2pAG8oxcb0hwfMkVR4m1Xr4=;
-        b=U2E/+DAV3tkxMwoJjSjpA0xk+vwOzhw55mWzGfm9WaXIr8MnL40DZ3N2JQLv4WimJT
-         ZAtdJ2eDqj2Vs+AsqjSbxkJLNfEBAGCoiO1VdXhR92BEsYKEu0NGtc/Apklgy8yDj++I
-         9/iukTYXa8qFTwP4HIFoB/lxN/d4vIWtCKtJKhNGhoNpE1STXMTKBDIFsC7O5OgOptf1
-         A0a4eR5SBgeIqoaSZPhyrJ88MRa505O1DbQRIpZTqOigZFZxo+2J4lwmTl4M7E/fu66q
-         SeZ8kfnAcI+Dne7ldCdvRZJz/v+8UvefsxH1mHthLW+uzLufX7VL4s5CA+4IGF/NCbZX
-         nkAA==
-X-Gm-Message-State: APjAAAWwA6bLjPalVIOTnW6d7FV74aUaaN+zRhlHbcNHfh8ylTRou1uL
-        q9DojnLdAf0/tKIIfiwno0hyP3/uP5nl7xVFjqrrqQ==
-X-Google-Smtp-Source: APXvYqyufMv/qPhpR/xahYrf5XrnXRSXbxu0u5xMjsJD+iMcGU+z3WLJTcLKOPbsiZKylSrBQOsHal0TW8Y0UhbmocA=
-X-Received: by 2002:a19:c210:: with SMTP id l16mr2421034lfc.35.1581187333396;
- Sat, 08 Feb 2020 10:42:13 -0800 (PST)
-MIME-Version: 1.0
-References: <CAD-J=zaQ2hCBKYCgsK8ehhzF4WgB0=1uMgG=p1BQ1V1YsN37_A@mail.gmail.com>
- <cfc6191b-9db3-9ba7-9776-09b66fa56e76@gmail.com>
-In-Reply-To: <cfc6191b-9db3-9ba7-9776-09b66fa56e76@gmail.com>
-From:   Glauber Costa <glauber@scylladb.com>
-Date:   Sat, 8 Feb 2020 13:42:02 -0500
-Message-ID: <CAD-J=zbMcPx1Q5PTOK2VTBNVA+PQX1DrYhXvVRa2tPRXd_2RYQ@mail.gmail.com>
-Subject: Re: shutdown not affecting connection?
-To:     Pavel Begunkov <asml.silence@gmail.com>
+        id S1727473AbgBHSsL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 8 Feb 2020 13:48:11 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:34737 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727471AbgBHSsL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 8 Feb 2020 13:48:11 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id AF09422027;
+        Sat,  8 Feb 2020 13:48:10 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sat, 08 Feb 2020 13:48:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=ZfFSW57hq8utcXEveHJZrGZfdRR
+        3t2kGNib7bvNxAsc=; b=kQAVMhcX4Q03bSgPm1kk3WOh8w0isIHzNvwLufjrA48
+        mS53I4ydJuPrTwkDhvW4oEf6zZUtUe/1UdzQiXwOX1xRTWEK9CSTqM5pyAQyleyx
+        dEwmweI0qIwzCl6UJ4luQ9F9YSVXLrWulUnVv+msvJnb1u40WQcSpn/1TzHz7q0t
+        MSr42RWgeje6bGLCy/rSVK709fq2vop/HWMsOn4MOERGZvy89rBzFEWV7/TJzkIJ
+        VylSztkwNf3JDLU6MaCUuIi20COOFZMbJQ7j3IzQXMruaAPJwH/3iz+2E6Nj1wel
+        wo5uXEp2X/UP4gpeYiEQicBtKpOWc4n9wZNL08iZyKQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ZfFSW5
+        7hq8utcXEveHJZrGZfdRR3t2kGNib7bvNxAsc=; b=OGjJ4DbO89nPWae+Gop/sh
+        hQYrnhYwvZ7/EUbQVk1DJFReoD3YNSGtxyRpcpavoLCVWLM8nARQ9J+yTlYqCIBG
+        Zr8gBmXtfQNDwiDfMd0wxOWE4W41qx6Pk99Z34CTxtZwOmIymTaHiBGpVD+pzgvt
+        xvY1d3fFrdqrPQ4yhv7KkfvZ1V+X6IoeqbYlbFQlrkyU0QKho9bDsIFtQqtANsya
+        XNPjTdUHC27G+STn23yxHptvtalfbzeqru1O6Q0WbACfd3Fx1SeOOPGzAJk81Xhp
+        9A62s+PpLlrKJlR5nFVIdvd69GPfj2fdZ2UCpsKxBgOktpZRpohkySEphZIWlSYQ
+        ==
+X-ME-Sender: <xms:agI_XvFY3Rk6i4NE_3tmWKfCYTkzb-7hYj094aPev8q9xPL89oOU9w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrheejgdduudelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
+    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepie
+    ejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
+    pehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggv
+X-ME-Proxy: <xmx:agI_Xkc2UgjLbIMH2b_CWcUBPjGhJZI14Purxj-5aKS9sntyR0qOBQ>
+    <xmx:agI_Xgr00cxNOXq6yOm5trQ3e7qtlqIJyig_7MIBsSKw90vCUpK63g>
+    <xmx:agI_XtBiSM6DqH7WST_T_d3EFwp9-6J37FYK8RkNlhJyK5aCdtONtQ>
+    <xmx:agI_XpqZ21_Bsj4ORoYUWSN5a6iU4PEUnXsOytnWBU4s4GfXVummog>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CE7DA30606E9;
+        Sat,  8 Feb 2020 13:48:09 -0500 (EST)
+Date:   Sat, 8 Feb 2020 10:48:08 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Glauber Costa <glauber@scylladb.com>
 Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Avi Kivity <avi@scylladb.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: shutdown not affecting connection?
+Message-ID: <20200208184808.jxrnsl3xyoj7io6c@alap3.anarazel.de>
+References: <CAD-J=zaQ2hCBKYCgsK8ehhzF4WgB0=1uMgG=p1BQ1V1YsN37_A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD-J=zaQ2hCBKYCgsK8ehhzF4WgB0=1uMgG=p1BQ1V1YsN37_A@mail.gmail.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi
+Hi,
 
-BTW, my apologies but I should have specified the kernel I am running:
-90206ac99c1f25b7f7a4c2c40a0b9d4561ffa9bf
+On 2020-02-08 08:55:25 -0500, Glauber Costa wrote:
+> - A connect() call is issued (and in the backend I can choose if I use
+> uring or not)
+> - The connection is supposed to take a while to establish.
+> - I call shutdown on the file descriptor
+> 
+> If io_uring is not used:
+> - connect() starts by  returning EINPROGRESS as expected, and after
+> the shutdown the file descriptor is finally made ready for epoll. I
+> call getsockopt(SOL_SOCKET, SO_ERROR), and see the error (104)
+> 
+> if io_uring is used:
+> - if the SQE has the IOSQE_ASYNC flag on, connect() never returns.
 
-On Sat, Feb 8, 2020 at 9:26 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->
-> Hi
->
-> On 2/8/2020 4:55 PM, Glauber Costa wrote:
-> > Hi
-> >
-> > I've been trying to make sense of some weird behavior with the seastar
-> > implementation of io_uring, and started to suspect a bug in io_uring's
-> > connect.
-> >
-> > The situation is as follows:
-> >
-> > - A connect() call is issued (and in the backend I can choose if I use
-> > uring or not)
-> > - The connection is supposed to take a while to establish.
-> > - I call shutdown on the file descriptor
-> >
-> > If io_uring is not used:
-> > - connect() starts by  returning EINPROGRESS as expected, and after
-> > the shutdown the file descriptor is finally made ready for epoll. I
-> > call getsockopt(SOL_SOCKET, SO_ERROR), and see the error (104)
-> >
-> > if io_uring is used:
-> > - if the SQE has the IOSQE_ASYNC flag on, connect() never returns.
-> > - if the SQE *does not* have the IOSQE_ASYNC flag on, then most of the
-> > time the test works as intended and connect() returns 104, but
-> > occasionally it hangs too. Note that, seastar may choose not to call
-> > io_uring_enter immediately and batch sqes.
-> >
-> > Sounds like some kind of race?
-> >
-> > I know C++ probably stinks like the devil for you guys, but if you are
-> > curious to see the code, this fails one of our unit tests:
-> >
-> > https://github.com/scylladb/seastar/blob/master/tests/unit/connect_test.cc
-> > See test_connection_attempt_is_shutdown
-> > (above is the master seastar tree, not including the io_uring implementation)
-> >
-> Is this chaining with connect().then_wrapped() asynchronous? Like kind
-> of future/promise stuff?
+That should be easy enough to reproduce without seastar as it sounds
+deterministic - how about modifying liburing's test/connect.c test to
+behave this way?
 
-Correct.
-then_wrapped executes eventually when connect returns either success or failure
+Hm, any chance you set O_NONBLOCK on the fd, before calling the async
+connect?
 
-> I wonder, if connect() and shutdown() there may
-> be executed in the reverse order.
+Wonder if io_connect()
+	file_flags = force_nonblock ? O_NONBLOCK : 0;
 
-The methods connect and shutdown will execute in this order.
-But connect will just queue something that will later be sent down to
-the kernel.
+	ret = __sys_connect_file(req->file, &io->connect.address,
+					req->connect.addr_len, file_flags);
+	if ((ret == -EAGAIN || ret == -EINPROGRESS) && force_nonblock) {
+fully takes into account that __sys_connect_file
+	err = sock->ops->connect(sock, (struct sockaddr *)address, addrlen,
+				 sock->file->f_flags | file_flags);
+appears to leave O_NONBLOCK set on the file in place, which'd then
+not block in the wq?
 
-I initially suspected an ordering issue on my side. What made me start
-suspecting a bug
-are two reasons:
-- I can force the code to grab an sqe and call io_uring_enter at the
-moment the connect()
-call happens : I see no change.
-- that IOSQE_ASYNC changes this behavior, as you acknowledged yourself.
+Greetings,
 
-It seems to me that if shutdown happens when the sqe is sitting on a
-kernel queue somewhere
-the connection will hang forever instead of failing right away as I would expect
-- if shutdown happens after the call to io_uring_enter
->
-> The hung with IOSQE_ASYNC sounds strange anyway.
->
->
-> > Please let me know if this rings a bell and if there is anything I
-> > should be verifying here
-> >
->
-> --
-> Pavel Begunkov
+Andres Freund

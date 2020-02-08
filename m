@@ -2,76 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E5CE15648B
-	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2020 14:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CD4815649C
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2020 14:55:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbgBHN3E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 8 Feb 2020 08:29:04 -0500
-Received: from mail-lj1-f171.google.com ([209.85.208.171]:34444 "EHLO
-        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727144AbgBHN3E (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 8 Feb 2020 08:29:04 -0500
-Received: by mail-lj1-f171.google.com with SMTP id x7so2257537ljc.1
-        for <io-uring@vger.kernel.org>; Sat, 08 Feb 2020 05:29:02 -0800 (PST)
+        id S1727173AbgBHNzk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 8 Feb 2020 08:55:40 -0500
+Received: from mail-lf1-f50.google.com ([209.85.167.50]:45470 "EHLO
+        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbgBHNzk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 8 Feb 2020 08:55:40 -0500
+Received: by mail-lf1-f50.google.com with SMTP id 203so1177815lfa.12
+        for <io-uring@vger.kernel.org>; Sat, 08 Feb 2020 05:55:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=V4tzyl1wzNqnfv9HjJ8KJkw9TCUrxGu7vImy/N3FLCM=;
-        b=UBLglfOXl80D1bZwOjKm9VB8OeweHfg/PA70lO1FhGtzBSEydx3CXjuUpVebYv9Hdj
-         1cCfZrbHJHlMDabmAmH+bPQeI9gnpLULycxvOg7Q/IUKKzB2c7nNsOyU5fA3GoY7KC4h
-         hKrK7JGvwwIxMwVdWhJc8sXdPLXTd/tI5ODqWzg2awD311PT97Y0U36HqEe1AYw9hM1H
-         RyHU+mmn7cMgZENFKjpOshpU8xoXOsSkSZoyVKK2NtSfO8ngtfQuD0FEw5Dxm46UAazc
-         Sbj3YOH9Hjgkyh3Kth1suAC/zGohn1XQDVlgCD/6UEjwlBwCYxEl0p06UXcW1Qjs3dsK
-         tVew==
+        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=VKSE2BbtXqegzNlLJjEiZJ1ytxdynWBVVJeET1WVwJQ=;
+        b=Tf5KdK514fCm+RmiVF+jdUWuJGA42WQmHx2zl/KKDm038Is+s60QsC/98vDvzOVRW8
+         LiOyshsGTwfMF2MA7ydQ51X/H8U5N/wzy8SsT5gcSkXD7XgrDW/i1oeGMsvZhMsKqQG2
+         sAX8dwdUntf4ruT4SG7B2Rpm04QQkaGoVZ5fqb1whiyMKhxpUUYkq+O2jUsdL91nmaIj
+         oC46iflYzlLepkJMNKt/MFfltxDuGC+9xjAhreL6Q0qb7Fe+TnQSFyZ6yS8xOkT8L1JK
+         CoXQkd6eQoxwyxzKzD6COf45bVXs7kTEAa6QWfpAJcBggvkID8zayn12z8z7ZdM1+Hov
+         7eXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=V4tzyl1wzNqnfv9HjJ8KJkw9TCUrxGu7vImy/N3FLCM=;
-        b=DD0JrPX5FEopxzuep2LFK4vIHuYboqLXAakfuTbc+QQH24gvsQ/FLL2SRoVk2LVWCI
-         VnHXz8EifgZbCYlVbg86cMRHhSHN/ppS5bvyWTpLUcUmrTb3RmY0/T3TUAypeN7HTSZY
-         xaG7Ix+5So3YKMuNdHIUyCre5nlbSh9aXenqHMgGysSC3l95FmTWig0ZPhlrF+FRp8tk
-         gsDbV6+jygRS+l70LRQPLus6g5yzA34wvh9JNYA7oGNKnEhYubln/ODQgwkxQpQkblGQ
-         yVQNgP4riCer0YlyVZGdGPUGEMlxHEU1CpGUTIG/Fb7z1/ZBxz5t7IRAlowGytsWXc/7
-         fbFA==
-X-Gm-Message-State: APjAAAW7xb38HDmOOujkXXui7DAEbh7mXAFslaSO94wIxQxFrZArDU+z
-        hCnE4iv2dreU3Csf5ZLK5GGyfk+tlb8=
-X-Google-Smtp-Source: APXvYqyeULdJ5fLY8ULToC+eLGtCn8dwfQU/GDs310ftX8gSgKVZfHEEuEUq6j4FqJCTi1MRPQQOuw==
-X-Received: by 2002:a05:651c:10f:: with SMTP id a15mr2767387ljb.237.1581168541481;
-        Sat, 08 Feb 2020 05:29:01 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id a8sm3092190ljn.74.2020.02.08.05.29.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Feb 2020 05:29:01 -0800 (PST)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: [RFC] fixed files
-Message-ID: <ace72a3f-0c25-5d53-9756-32bbdc77c844@gmail.com>
-Date:   Sat, 8 Feb 2020 16:28:59 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=VKSE2BbtXqegzNlLJjEiZJ1ytxdynWBVVJeET1WVwJQ=;
+        b=f8Z0Vx9lkB1TeZvBrrDz99wYrohO+lAM/Il+5OTJclg3xgZ5eUCH+RC32mE+C4xKYp
+         GqrB0wGgDQe1URAg7VRHRC5JDZYUn2V5pKpHK0U10CPrW9QQ3Xyzy4wpLudrSswRI7+n
+         +Acm3Jk/fXRMUEvxfY2jJUecYbS7MTNixK41RIFs7ulF9M6jkh5sgwx7IGXVNEXg2Hxk
+         7ixfD+CfW8gEQBR+RTvp+1FrKGpI1HrB3bEiAX/LHs65P9uIHuj2dUzO1jrj0FwMweoZ
+         LRxl+eV0kuZNQMVhHUU+jmYxnBFiNYFp9lnYNyr+PlzhK+kSXFHVicQwa4+FlFAgU27Y
+         rnNw==
+X-Gm-Message-State: APjAAAUonkg9p4BRWG/FCIY5Nrr1DKJf5hmeQGEspe7wFQFlPMkVqAOx
+        d2xM02kAKBdgQQlQpycNVJJP/K9T1SPFT/xjyN1fWA1ARnnF/A==
+X-Google-Smtp-Source: APXvYqzj6hMbDtCfvvPLoPZt85Ox1SyufXiVtyKD7BCG8OVrA9QMBo/5mcY9C77b6VdpIAy2LsfDQhCvHS+bouSxdpU=
+X-Received: by 2002:a19:c210:: with SMTP id l16mr2024860lfc.35.1581170136904;
+ Sat, 08 Feb 2020 05:55:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Glauber Costa <glauber@scylladb.com>
+Date:   Sat, 8 Feb 2020 08:55:25 -0500
+Message-ID: <CAD-J=zaQ2hCBKYCgsK8ehhzF4WgB0=1uMgG=p1BQ1V1YsN37_A@mail.gmail.com>
+Subject: shutdown not affecting connection?
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Avi Kivity <avi@scylladb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+Hi
 
-As you remember, splice(2) needs two fds, and it's a bit of a pain
-finding a place for the second REQ_F_FIXED_FILE flag. So, I was
-thinking, can we use the last (i.e. sign) bit to mark an fd as fixed? A
-lot of userspace programs consider any negative result of open() as an
-error, so it's more or less safe to reuse it.
+I've been trying to make sense of some weird behavior with the seastar
+implementation of io_uring, and started to suspect a bug in io_uring's
+connect.
 
-e.g.
-fill_sqe(fd) // is not fixed
-fill_sqe(buf_idx | LAST_BIT) // fixed file
+The situation is as follows:
 
+- A connect() call is issued (and in the backend I can choose if I use
+uring or not)
+- The connection is supposed to take a while to establish.
+- I call shutdown on the file descriptor
 
--- 
-Pavel Begunkov
+If io_uring is not used:
+- connect() starts by  returning EINPROGRESS as expected, and after
+the shutdown the file descriptor is finally made ready for epoll. I
+call getsockopt(SOL_SOCKET, SO_ERROR), and see the error (104)
+
+if io_uring is used:
+- if the SQE has the IOSQE_ASYNC flag on, connect() never returns.
+- if the SQE *does not* have the IOSQE_ASYNC flag on, then most of the
+time the test works as intended and connect() returns 104, but
+occasionally it hangs too. Note that, seastar may choose not to call
+io_uring_enter immediately and batch sqes.
+
+Sounds like some kind of race?
+
+I know C++ probably stinks like the devil for you guys, but if you are
+curious to see the code, this fails one of our unit tests:
+
+https://github.com/scylladb/seastar/blob/master/tests/unit/connect_test.cc
+See test_connection_attempt_is_shutdown
+(above is the master seastar tree, not including the io_uring implementation)
+
+Please let me know if this rings a bell and if there is anything I
+should be verifying here

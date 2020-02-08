@@ -2,60 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E7AE15673B
-	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2020 20:03:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EE51567A1
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2020 20:53:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbgBHTDY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 8 Feb 2020 14:03:24 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36330 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727442AbgBHTDY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 8 Feb 2020 14:03:24 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 185so1525411pfv.3
-        for <io-uring@vger.kernel.org>; Sat, 08 Feb 2020 11:03:22 -0800 (PST)
+        id S1727473AbgBHTx6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 8 Feb 2020 14:53:58 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:35398 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727471AbgBHTx6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 8 Feb 2020 14:53:58 -0500
+Received: by mail-pj1-f67.google.com with SMTP id q39so2419832pjc.0
+        for <io-uring@vger.kernel.org>; Sat, 08 Feb 2020 11:53:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=WKGslASOCJw9fH3wCvacNiNi/Eg9Xxun443ZFbQsq/Y=;
-        b=H7AwUKxwj3AgcnUzdX+bAYwhdlA3o8FhdLERI7kkjGcEm/i51aOzWW2TJf1ZEl6+EK
-         nW357lhAJGILHf5g9H+rnlHEFaqOcx4ar9LSspfnGI9umKyeBwgFAWnDc7g4GyWJiFe8
-         YVfNe2YoRKqSJ9ohFJ46lXtWVyciDBiN8exlNui93mbFp9DKQkD9nsY4fNthfws/8rn+
-         9u5cO9VMQ9DbmlX4X3HqWS47OLsAY5SF5fHQnPRedfjv628K4gQUIXbj264A5KXvXhFx
-         I/iNXs2Ah4GWZvep+clzpUdG8P1ZJEAx1EnAwBtZm9Li01PdMO1/QC4HpNRw2Pe0Fvdp
-         /PGA==
+        bh=UMDJMiQTFcKCxPkVkF9StmgbZfLqi1e4W4NfLM9RGGQ=;
+        b=mKY4hd2as7iT5swEh2F8QhDSA2OKX3SB05pC/Y2HtdG8CVj7yoqEXXAbyqp7/lqDug
+         9+5oXA2JDjqYNYOrr+69PUN8UAY3P1NedCp4E8KPj+l8VsPofsIJ+8Pk1Uf4fOvyIsRh
+         eSFz4kGtDMh72HDZK03AF1hSlc85eKA7fd0IxjU45t97ZzV0ikGop0U5CjSSKySjwHyG
+         2yy+Kf6wh+z9WPEgavWquy6fJXzzZCwJRDpXB7fsu4iIv3x4J2JVahIVMuYVYJjckGMg
+         AwqG18kH/KS2Bk6TqZfAVl1UO0cWTGOoOHDlnfOOzGD3K06j4zdaCweuL6e3WzJy4P9o
+         diQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=WKGslASOCJw9fH3wCvacNiNi/Eg9Xxun443ZFbQsq/Y=;
-        b=Cc5IOrxQP/nx0V/XQkZvOa1lQIVhk8cwArV0b7OD5D3fMXubGBgc9AVjvzzCt5er8c
-         SL/W4YWoXbjknLdGo96S1nT5KKsr71fk9DI4TYiQHaKa/Wdu4CWZ8OnYfeddKIFBVv8v
-         8lp0kHXl9CNbctMJC0ZL4tHLq1OpHkt/Kz/BrvBi3i0zCk0Ep5AmIGe/FfoPa+ZB0ZMZ
-         Vk6j3rtecGnnC9X5TNiJsCLPv1RAhIUKrW/oxMUnNOpfTvlZPabjqm60hjotzsY9VNDu
-         P1vpJzmMJEhRNsW1EADT7aHDSbprkOryXj9l2u9m1PGVrk0KB34IESTawKb3+WnevjAa
-         sD/w==
-X-Gm-Message-State: APjAAAUbaqQ6SHlreALmU15IOdNl3j9a3eM2Arf9wWjizWjRmVtqsTDC
-        nWqvA1InFdiBbKBl92QfdfdJMw==
-X-Google-Smtp-Source: APXvYqwlpP9bUrL3nARRTpT0gLzoPOwlGe7Xc1j8a4wSNDkXpcHcT2e8aaZdQYY4krc1NFi2co5xVQ==
-X-Received: by 2002:aa7:9a52:: with SMTP id x18mr5432421pfj.73.1581188601975;
-        Sat, 08 Feb 2020 11:03:21 -0800 (PST)
+        bh=UMDJMiQTFcKCxPkVkF9StmgbZfLqi1e4W4NfLM9RGGQ=;
+        b=cWVBfes+nTsKG2yqhyNYbvk+vy1M6mMEGokscGbJ9Zlo21vWajQW8zj7iz+AD1LWgw
+         N5jMhw3feBO7cqgvmJYJxQ5WIwZ8rmwOqi6DxSoxV/NLmXfm67h65jB2LU+tcTU6eEaD
+         p46qaeR6SkIKXyHtb+R7dxm1wF/b1znOTD8b29y9oYlCuvmKoEowHJOOqEplflNqX4B2
+         X2AiVHWEKEQGdjujOgYPNnMxTgTRU55sVWRoWM4bbRY40pRbXalyTHjukyBzZ4/hOxor
+         /73c35vRpq6cBoFRhHa6Mk4CTE59ojN1kGEkP2D0XpeXslUY0xWMq1uSebihURIkK85M
+         nkWQ==
+X-Gm-Message-State: APjAAAUKKWXKdrWNU0f+az2w5qiO04DaC+2OmwKO9/MSm8Kku+vlnN1r
+        netT8NT7sO2w87BB7McQN4X+7xdUIUA=
+X-Google-Smtp-Source: APXvYqzo4p/1a3wvw6HTi9jsGg/qb5UWEPPOXa35iQJObbQiB5+drNX5be1G6ww7RJuO5K0ACc9Bfg==
+X-Received: by 2002:a17:902:547:: with SMTP id 65mr5017787plf.50.1581191635719;
+        Sat, 08 Feb 2020 11:53:55 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id q84sm7308326pgq.94.2020.02.08.11.03.21
+        by smtp.gmail.com with ESMTPSA id v10sm7219532pgk.24.2020.02.08.11.53.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Feb 2020 11:03:21 -0800 (PST)
-Subject: Re: [PATCH 1/1] io_uring: fix async close()
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <6ab2ba6d202439323571ab6536025df0dd8b167e.1581159868.git.asml.silence@gmail.com>
+        Sat, 08 Feb 2020 11:53:55 -0800 (PST)
+Subject: Re: [PATCH v1] io_uring_cqe_get_data() only requires a const struct
+ io_uring_cqe *cqe
+To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
+References: <20200206160209.14432-1-metze@samba.org>
+ <94d5b40d-a5d8-706f-ab5c-3a8bd512d831@kernel.dk>
+ <9ecdcb22-c51c-8b84-678a-d41e8b97fc09@samba.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <36dfed78-3399-38f6-7c9c-807803dec72a@kernel.dk>
-Date:   Sat, 8 Feb 2020 12:03:19 -0700
+Message-ID: <f2049c0c-9fca-c6e6-6d2a-18585b86307f@kernel.dk>
+Date:   Sat, 8 Feb 2020 12:53:53 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <6ab2ba6d202439323571ab6536025df0dd8b167e.1581159868.git.asml.silence@gmail.com>
+In-Reply-To: <9ecdcb22-c51c-8b84-678a-d41e8b97fc09@samba.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,22 +66,22 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/8/20 4:04 AM, Pavel Begunkov wrote:
-> First, io_close() misses filp_close() and io_cqring_add_event(), when
-> f_op->flush is defined. That's because in this case it will
-> io_queue_async_work() itself not grabbing files, so the corresponding
-> chunk in io_close_finish() won't be executed.
+On 2/7/20 4:45 PM, Stefan Metzmacher wrote:
+> Hi Jens,
 > 
-> Second, when submitted through io_wq_submit_work(), it will do
-> filp_close() and *_add_event() twice: first inline in io_close(),
-> and the second one in call to io_close_finish() from io_close().
-> The second one will also fire, because it was submitted async through
-> generic path, and so have grabbed files.
+>> Unrelated to this patch, but I'd like to release a 0.4 sooner rather
+>> than later. Let me know if you see any immediate work that needs doing
+>> before that happens.
 > 
-> And the last nice thing is to remove this weird pilgrimage with checking
-> work/old_work and casting it to nxt. Just use a helper instead.
+> I just noticed that IORING_FEAT_CUR_PERSONALITY is not yet documented,
+> I'm not sure if that's important enough to have in 0.4.
 
-Thanks, applied. Nice cleanup, too!
+Ah good catch, I'll add that.
+
+> When do you plan to tag the release?
+
+Sometime next week, need to do the above doc addition and the debian
+guys had something as well.
 
 -- 
 Jens Axboe

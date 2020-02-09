@@ -2,116 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 949481567B9
-	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2020 21:43:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E7951569CA
+	for <lists+io-uring@lfdr.de>; Sun,  9 Feb 2020 10:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbgBHUnw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 8 Feb 2020 15:43:52 -0500
-Received: from mail-lf1-f54.google.com ([209.85.167.54]:43563 "EHLO
-        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726192AbgBHUnw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 8 Feb 2020 15:43:52 -0500
-Received: by mail-lf1-f54.google.com with SMTP id 9so1554972lfq.10
-        for <io-uring@vger.kernel.org>; Sat, 08 Feb 2020 12:43:49 -0800 (PST)
+        id S1726312AbgBIJZH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 9 Feb 2020 04:25:07 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35507 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbgBIJZH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 9 Feb 2020 04:25:07 -0500
+Received: by mail-lj1-f196.google.com with SMTP id q8so3792788ljb.2
+        for <io-uring@vger.kernel.org>; Sun, 09 Feb 2020 01:25:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aPEhtSCbtY8BZtoIZW5xjEM12+SwZtmNjXeBcPgnX/0=;
-        b=d2+WG0L3Ua+ZfkRRRmwWgYDO7uAAiTyxoz0a+ellD2qwRqLxPp66qLB2Zm3ROcA64F
-         ESWa8GGxIEGcehCQfk5xW5Cd11fGq3vz2xho1Pn0na/HWq39G+zUPuzn+m/1E2fmMzL+
-         fgi9hN1M0mEajFczagZWlLlhGLUwK7UbNH/6o1KXnGvuGoQ5vwaskRaPqP9ggSY2LZET
-         l1XzJmH9SsJ2HYCCQ7hhfFVh+SBvNuQVSML3V48qEj8hxH/qlxCcunD/3bd6Sf0AAdKH
-         weyOwSk7Khue+SEU5T/hwdhrvvZ73EFqb/dbe+z2UEdhnMowQHAOKYALkZQ036XMZXe3
-         GH6w==
+        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=pU5TDhLWBeUO+uU4r1uIheviJ3XNxen/j06LtX2Qy7w=;
+        b=J5pReuB8BDnuCdm/NyNgltzMzzTIWUkY3jsVZ0Ybg8PEyaKhHE9v11HE7pc8NeW10r
+         ygINW2mOpLgDr5/wjwGrBfPdCelDz1h6eUtTunj5A0Shiwr39lPEhOh4QNKEYH650WhK
+         z2YWhdKCwlvLllmMMPCoIaxDMKoYFKFQqHTujFfYvSIlkUfkClSnQegFLp9Mp9Rmimon
+         g2pP7EodNrh7v578eH/UaPVVtGfTknGl9Xk7Bo/vba4wJhEQgMDNgdE4ttTrA/PvSM2L
+         pjlq6B0Z3ybp007kI+86/aMEJ5MV6jb/I2zEbfba7CoqbFqCCpne7oUmRA2Xzq3whzj0
+         CEgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aPEhtSCbtY8BZtoIZW5xjEM12+SwZtmNjXeBcPgnX/0=;
-        b=NteCTtDd60N9fH6ZLhaYemoCkzV5iH6xZ4R/U/JzPzfKPUanT4r4PqqE63fbsPqe/s
-         UH9AEYd14h/PZkeahhVeeT9WgvoWvat48ENHk0F64rWD43X7J8YIUleVc7pg5+JskkXJ
-         D4bkncGYh8ie5TBjkrP5wgUnfFCGlzvGwOoZr3ynVx6TCa92qbGAnKxby7l87U1iKXUQ
-         DJRAx6UjMAJHgW1XA+B2nF8+04VJuLVG2Hi8ZbT14m1NcoBcaVkdg28cG6qQCjOqAzbl
-         94fbq74xhv3YY49JnQ9xMyfTe96CF9O8KNXVtR7aDn98hRC6tw3kPuZhh9HANvcTd6/t
-         Yqhg==
-X-Gm-Message-State: APjAAAUQZdljpeHLw4DtCb2w45kdB4cIPq55pfTTUGY5A7kmsvWYHnZ1
-        9vCCJA/0Fkb1KWkUXryCfJ2QTpWzLLQ2TLHA7LlsFg==
-X-Google-Smtp-Source: APXvYqymJTXzHHgkiFj2Rob/16SUtbMNyhcxK9X5v8F+ZfDUII4odBxjObTLB0xO4vEyd8wcjALQL0gCDrAgrZEiziQ=
-X-Received: by 2002:a19:9d5:: with SMTP id 204mr2594298lfj.120.1581194628336;
- Sat, 08 Feb 2020 12:43:48 -0800 (PST)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=pU5TDhLWBeUO+uU4r1uIheviJ3XNxen/j06LtX2Qy7w=;
+        b=P8H4iwzvZ7ddfaVtVbIiwnIg5cA1YZvm5qXOAH9+ov8h4diHfSEOe/+71BxItacZ58
+         dczI6jEJLtDIIS0iCiEj+CiwVttV02KHUNgbiM01vnFbappdyCbPkIQ+KgFlYbGdbti+
+         QUK8juPDiXfZfAGu/wATglLLb3Ch2dxHn/sstbH+BacT44T610nBzpkPwwOGUsXWoJtW
+         Jk2LKvAvpXELMFpoUM/P7pky37v4dk6UFiqmmJlBAWOd9pFRGPKgH85onRWQyk8Iq01e
+         DUQHCatd2qTQfG3ztRsXDXgQjLMJ3KgVddNW1PL6FRh7EWDmDs8w+/9WFhtP1AW37Ulp
+         H4Wg==
+X-Gm-Message-State: APjAAAVcOUl2NWP20JGtqhYrJdwJMzLA6+C9Vgc+rEvgOHRaJS3WRtwa
+        Pkb/WrigY7RjDw2mFStiko0F0ejTn6Q=
+X-Google-Smtp-Source: APXvYqwNaiawiXskNMi9KYzhJ0uZmvpGiyEAnm/MZnb1BW0DVFPcDtCePuYM1hCg/CPDa4qPTlCwXQ==
+X-Received: by 2002:a2e:8758:: with SMTP id q24mr4813717ljj.157.1581240305159;
+        Sun, 09 Feb 2020 01:25:05 -0800 (PST)
+Received: from [192.168.1.169] (h-137-65.A159.priv.bahnhof.se. [81.170.137.65])
+        by smtp.gmail.com with ESMTPSA id u24sm4282091ljo.77.2020.02.09.01.25.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Feb 2020 01:25:04 -0800 (PST)
+To:     axboe@kernel.dk, io-uring@vger.kernel.org
+From:   Jonas Bonn <jonas@norrbonn.se>
+Subject: sendmsg fails when it 'blocks'
+Message-ID: <6b909e30-c31c-b7f0-fa3a-d30d287ce427@norrbonn.se>
+Date:   Sun, 9 Feb 2020 10:25:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <CAD-J=zaQ2hCBKYCgsK8ehhzF4WgB0=1uMgG=p1BQ1V1YsN37_A@mail.gmail.com>
- <cfc6191b-9db3-9ba7-9776-09b66fa56e76@gmail.com> <CAD-J=zbMcPx1Q5PTOK2VTBNVA+PQX1DrYhXvVRa2tPRXd_2RYQ@mail.gmail.com>
- <9ec6cbf7-0f0b-f777-8507-199e8837df94@scylladb.com> <CAD-J=zZm2B8-EXiX8j2AT5Q0zTCi5rB1gQzzOaYi3JoO1jcqOw@mail.gmail.com>
- <CAD-J=zZwH7ceTaAS=ck5_5thGN_ne1kVXOJzZfBK-gorzwNLxg@mail.gmail.com> <d651f706-68eb-0f15-6e5d-3919eb90f3da@scylladb.com>
-In-Reply-To: <d651f706-68eb-0f15-6e5d-3919eb90f3da@scylladb.com>
-From:   Glauber Costa <glauber@scylladb.com>
-Date:   Sat, 8 Feb 2020 15:43:37 -0500
-Message-ID: <CAD-J=zbxqDD_=Q-Y6T5DPycdKY=aDmvrjP08QSiuWao851UGUA@mail.gmail.com>
-Subject: Re: shutdown not affecting connection?
-To:     Avi Kivity <avi@scylladb.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Feb 8, 2020 at 3:29 PM Avi Kivity <avi@scylladb.com> wrote:
->
-> On 2/8/20 10:20 PM, Glauber Costa wrote:
-> >>
-> >>> Perhaps you can reduce the
-> >>> problem to a small C reproducer?
-> >>>
-> >> That was my intended next step, yes
-> > s***, I didn't resist and I had to explain to my wife that no, I don't
-> > like io_uring more than I like her.
-> >
-> > But here it is.
-> >
-> > This is a modification of test/connect.c.
-> > I added a pthread comparison example that should achieve the same
-> > sequence of events:
-> > - try to sync connect
-> > - wait a bit
-> > - shutdown
-> >
-> > I added a fixed wait for pthread to make sure that shutdown is not
-> > called before connect.
-> >
-> > For io_uring, the shutdown is configurable with the program argument.
-> > This works just fine if I sleep before shutdown (as I would expect from a race).
-> > This hangs every time if I don't.
-> >
-> > Unless I am missing something I don't think this is the expected behavior
->
->
-> I think it is understandable. Since the socket is blocking uring moves
-> the work to a workqueue, and the shutdown() happens before the workqueue
-> has had a chance to process the connection attempt. So we'll have to
-> cancel the sqe.
+Hi Jens,
 
-It does seem to me that this implies that every shutdown must imply a cancel
-to a connection.
+I've been trying to use io_uring to flood a network link with UDP 
+packets.  Essentially, the program just pushes a series of sendmsg() 
+calls through the SQE ring and keeps topping it up with new calls as 
+soon as the completions come in.
 
-From the user's perspective, this still feels like a bug to me:
-the fact that we had to move this to a work queue is an implementation detail:
-1) we asked the kernel to do something
-2) the kernel returned
-3) we called shutdown() to expecting that cancel to go away and never returned.
+When the sendmsg() calls complete immediately then everything works 
+fine; however, when the calls 'block' and get queued up in the kernel 
+then the calls return either errno 97 or 22 when they're retried through 
+the workqueue (effectively, bad address or invalid iovec length).
 
-If cancel-after-connect to avoid these races is the intended behavior,
-it would be nice to
-get this documented somehow in the io_uring fantastic documentation.
+My gut-feeling is that there's some issue copying the msghdr struct so 
+that the call that's retried isn't exactly the same one that was 
+requested.  I looked into the kernel code a bit, but couldn't really 
+make heads or tails of it so I though I'd ask for some input while I 
+keep investigating.
 
-In hindsight, cancel-on-shutdown is quite obvious and natural.
-But I just spent two days to make this obvious and natural.
+I noticed that liburing has a simple test for sendmsg that sends a 
+single message; the 'punted' case doesn't seem to be tested.  Is this 
+something you've tried?
 
->
->
-> Jens, does the blocking connect doesn't consume a kernel thread while
-> it's waiting for a connection? Or does it just set things up and move on?
->
+Tested on kernels 5.3 to 5.6-pre and the behaviour's pretty much the 
+same with regards to the above.
+
+Any help greatly appreciated.
+
+Best regards,
+Jonas

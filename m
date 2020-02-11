@@ -2,107 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 972F1158F61
-	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2020 14:01:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC70115942C
+	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2020 17:03:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbgBKNBW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Feb 2020 08:01:22 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41050 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728475AbgBKNBW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Feb 2020 08:01:22 -0500
-Received: by mail-lj1-f194.google.com with SMTP id h23so11459814ljc.8
-        for <io-uring@vger.kernel.org>; Tue, 11 Feb 2020 05:01:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cnZQZQRTdXOcI2Kx8IxwLX1Mue3RjA6QCtmyyVGO7Bg=;
-        b=ijbMUm+rnGfu1C865ihBd2dpr1uauppQNYQWoDreW30vFyOYnC/JdXhgNUjA0v5K52
-         osbAmd1TdmaRGAtHqBdem6A1v0YTTB38hYU9krE5MFORzbsu7diKUaBuI28WObK0wOvK
-         wzCgLAV0SYe+fh4bZHqy+ogKxw8w2GaVOqhD67TDmBYFhPzHTDffZ9V+YAaNWK9HTHLc
-         ud5B8zpX8FnZDZAmB10f6jgUVXZ54bHjCWyQpQHt7270Im4Jrr2b2n5rWCexd1AkhG/9
-         KQYrC5TklerGKKVmXy6SVbKXC9Zqlj95V6xmMHlebwZGg8we+5I/wteHJ6YJRjmdNM1p
-         II8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cnZQZQRTdXOcI2Kx8IxwLX1Mue3RjA6QCtmyyVGO7Bg=;
-        b=uOtv2SEpsTJ2urekQEkApR6WOCD83knJ9xtyRofhSdZULRGKNJ7nn4FSCEhFAzG+fn
-         Cx8Hrfb5kGi+W4i0Ah9A6qIMF3dIXUwrb6WECXdApNPyDZDGfKgks+hsItxt7LMQlcL0
-         dV7wLF7aNgZULGwE+xoH1tWrjZl++jjZeEr2dxZc2gbQkH/jqEVNOQ+KKcdFB6Use5Zc
-         qyTIMZU/sHrxcGUKui6pCxGGiHme7cspLDM896Ill522b1hYt+aTOXUaOS2KbLTweJIL
-         nmZqo0ljMhG57aBLPxAdbmPCzuTkQHa9qeHVTRp3gMY80EHPaOFyLcP8aRL5+MpVdAH2
-         HVaQ==
-X-Gm-Message-State: APjAAAXxJFqM6BSLOTT2a4MOozoMOi57QsEF03BtMO2e5Wx7mgRQhVQJ
-        r8K22YxpUUd8QeVgB0+RqqBlfU54zheDqCxyoPGf9Q==
-X-Google-Smtp-Source: APXvYqwF6oASt/jlnUnGbEo6hswer7vrht6PpuqTLzvk/hMXNEitkoLVyefqcuEHJ/6isYGayoKC2I8sLGoFjkb3Sxc=
-X-Received: by 2002:a2e:3514:: with SMTP id z20mr4129821ljz.261.1581426079389;
- Tue, 11 Feb 2020 05:01:19 -0800 (PST)
+        id S1729405AbgBKQDC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Feb 2020 11:03:02 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51222 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728389AbgBKQDC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Feb 2020 11:03:02 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1j1Y03-0005vu-A1; Tue, 11 Feb 2020 16:02:59 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] io_uring: fix return of an uninitialized variable ret
+Date:   Tue, 11 Feb 2020 16:02:59 +0000
+Message-Id: <20200211160259.90660-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-References: <CAD-J=zZ7OFgqp88HrpKt4sW10AzjasaPkKSM7Gv68TiJt_3RxQ@mail.gmail.com>
- <6c32ccd9-6d00-5c57-48cc-25fd4f48d5e7@kernel.dk> <CAD-J=zYNXej09AarnJDqgvX5U5aNLh4ez6hddWzWvg-625c1mA@mail.gmail.com>
- <c192d9b8-fab9-1c29-7266-acd48b380338@kernel.dk>
-In-Reply-To: <c192d9b8-fab9-1c29-7266-acd48b380338@kernel.dk>
-From:   Glauber Costa <glauber@scylladb.com>
-Date:   Tue, 11 Feb 2020 08:01:08 -0500
-Message-ID: <CAD-J=zYUCFG=RTf=d98sBD=M4yg+i=qag2X9JxFa-KW0Un19Qw@mail.gmail.com>
-Subject: Re: Kernel BUG when registering the ring
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Avi Kivity <avi@scylladb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This works.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks
+Currently variable ret is not initialized and this value is being
+returned at the end of the function io_poll_double_wake.  Since
+ret is not being used anywhere else remove it and just return 0.
 
-On Mon, Feb 10, 2020 at 10:50 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 2/10/20 8:45 PM, Glauber Costa wrote:
-> > It crashes all the same
-> >
-> > New backtrace attached - looks very similar to the old one, although
-> > not identical.
->
-> I missed the other spot we do the same thing... Try this.
->
->
-> diff --git a/fs/io-wq.c b/fs/io-wq.c
-> index 182aa17dc2ca..b8ef5a5483de 100644
-> --- a/fs/io-wq.c
-> +++ b/fs/io-wq.c
-> @@ -1115,12 +1116,15 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
->
->         for_each_node(node) {
->                 struct io_wqe *wqe;
-> +               int alloc_node = node;
->
-> -               wqe = kzalloc_node(sizeof(struct io_wqe), GFP_KERNEL, node);
-> +               if (!node_online(alloc_node))
-> +                       alloc_node = NUMA_NO_NODE;
-> +               wqe = kzalloc_node(sizeof(struct io_wqe), GFP_KERNEL, alloc_node);
->                 if (!wqe)
->                         goto err;
->                 wq->wqes[node] = wqe;
-> -               wqe->node = node;
-> +               wqe->node = alloc_node;
->                 wqe->acct[IO_WQ_ACCT_BOUND].max_workers = bounded;
->                 atomic_set(&wqe->acct[IO_WQ_ACCT_BOUND].nr_running, 0);
->                 if (wq->user) {
-> @@ -1128,7 +1132,6 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
->                                         task_rlimit(current, RLIMIT_NPROC);
->                 }
->                 atomic_set(&wqe->acct[IO_WQ_ACCT_UNBOUND].nr_running, 0);
-> -               wqe->node = node;
->                 wqe->wq = wq;
->                 spin_lock_init(&wqe->lock);
->                 INIT_WQ_LIST(&wqe->work_list);
->
-> --
-> Jens Axboe
->
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: f6e84af0767f ("io_uring: allow POLL_ADD with double poll_wait() users")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/io_uring.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 72bc378edebc..5c6a899b51d8 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3707,7 +3707,6 @@ static int io_poll_double_wake(struct wait_queue_entry *wait, unsigned mode,
+ 	struct io_poll_iocb *poll = (void *) req->io;
+ 	__poll_t mask = key_to_poll(key);
+ 	bool done = true;
+-	int ret;
+ 
+ 	/* for instances that support it check for an event match first: */
+ 	if (mask && !(mask & poll->events))
+@@ -3725,7 +3724,7 @@ static int io_poll_double_wake(struct wait_queue_entry *wait, unsigned mode,
+ 	if (!done)
+ 		__io_poll_wake(req, poll, mask);
+ 	refcount_dec(&req->refs);
+-	return ret;
++	return 0;
+ }
+ 
+ struct io_poll_table {
+-- 
+2.25.0
+

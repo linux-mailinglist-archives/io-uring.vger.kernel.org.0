@@ -2,135 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0A4A159A2A
-	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2020 21:03:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A382159A35
+	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2020 21:06:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731734AbgBKUC4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Feb 2020 15:02:56 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37913 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731722AbgBKUC4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Feb 2020 15:02:56 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y17so14056196wrh.5;
-        Tue, 11 Feb 2020 12:02:54 -0800 (PST)
+        id S1728211AbgBKUGD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Feb 2020 15:06:03 -0500
+Received: from mail-io1-f54.google.com ([209.85.166.54]:44197 "EHLO
+        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727762AbgBKUGD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Feb 2020 15:06:03 -0500
+Received: by mail-io1-f54.google.com with SMTP id z16so13205665iod.11
+        for <io-uring@vger.kernel.org>; Tue, 11 Feb 2020 12:06:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=qMiSHIRbdzW3UGsV0CTSItDQk6U8dFeQqM5nwbwYTLk=;
-        b=JhItJE9v3lQu9D40opOS6v9TouSFMBTYwvO1dSj/Jw1E2q2tySJVLIEDAgYL0/Ldr7
-         dOAT7q+AG6ZjLCFhR/PcLwje5nrkbyXi45EqG4lSrXvauA/pe354mh9MLOH8LvxAcFG3
-         aTL+58dd46iwnUx1/CyL4LHrq4QqNzmxQeVotzwtnlr3tRVh6H5XnGa/ME8pZmqK2duW
-         rQG/UM0xfQDkQJHElzpFdNzPAODmpGKzo2b0PwffYhwo8iEEjg3BCVYFOEBx3Q8dV/Hb
-         EyKeZwwMyBwHZUMvXYSL1e/qZA8dt5y6eJKqWRQIw3NlxSBsFRlhC2JdmbnzQYhS80Bo
-         8Wbw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=FpfPq3R5BrbBpww0mfOuGDw22fVDFzP/524w9CLu6mQ=;
+        b=KRHyrqNSDxIMsZdwtDfUcrGNHZX8fO5+AMBBp77tQ3BImF8myvb9Tlg5pGaGwQXaMe
+         7Z6QAGZrkxn1EAvFgKDrRNiPPsQAvD2kS8VGHyeJJSsSRgg47fnXny2Sys72PdKn8DyM
+         F8nMer356fLFhGFu9PEStq5NEQYBGvOBpNF3ntireRy+DKjyBRvvznmnRAJmoVsZzlwD
+         e8JjeznJrSf0G7TgKKZ/16espGwF4ngs4rvBicb2gIGlJp7RWp6Lggse4BUkBVFq1pel
+         x70gbS/2wUZ8Pmq8HMkwf8Wu6BjpKnHwoGgDhF4fSjebREYgvuGUC7UF0bdyxeYxgjDS
+         lvwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qMiSHIRbdzW3UGsV0CTSItDQk6U8dFeQqM5nwbwYTLk=;
-        b=LCgS7IVDIjlzo2ULsOjh+GK78ARnmRMIZwEtW0vYmLJEtrWLxLlNLcLYsZ54X9WbAQ
-         3Zhw3pUmiFZ2u36Nfb4NCx0RVwB5+kpOQC3Rh4/veeD4nbYLadcgjRpJA3lPqVghzKxu
-         scziNUnTLUkbQ19+7yze24b2h8ROLXDOR/2dn4ByajUFSlhWqWvNrU7928/lB5wYAt8v
-         nfKiE2P/1gDo3vsdZ6bzxPMNnZY5vtWI2CxLPy4gW4Q7nQmra7E5YRJQrTmudNYzsjn8
-         w+qBluFOfI2PRyRWyWW5twtd5RWb5QETwYjaX+mnOOkqI/8XquHwZrUjTJsBEIKp9mVQ
-         3Fzg==
-X-Gm-Message-State: APjAAAU39s7bKNGd6Eyz19wOHrZIecD6wyzExQOD8F2uRUMheo0iFzv2
-        YrSduarA947PvCPuu/p0nBXpPo8P
-X-Google-Smtp-Source: APXvYqzyVSJFs9k3jXMni0lOF58D9WNghqgSRDIWYrxWCBrA+Hye+zfx8cJo7CRXQel+EB1d9azW4A==
-X-Received: by 2002:a5d:6ac4:: with SMTP id u4mr10145014wrw.318.1581451374009;
-        Tue, 11 Feb 2020 12:02:54 -0800 (PST)
-Received: from localhost.localdomain ([109.126.145.62])
-        by smtp.gmail.com with ESMTPSA id 4sm4955101wmg.22.2020.02.11.12.02.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 12:02:53 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] io_uring: purge req->in_async
-Date:   Tue, 11 Feb 2020 23:01:58 +0300
-Message-Id: <4ec21bcc4b477808d918efa6ec691469207b1db1.1581450491.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1581450491.git.asml.silence@gmail.com>
-References: <cover.1581450491.git.asml.silence@gmail.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FpfPq3R5BrbBpww0mfOuGDw22fVDFzP/524w9CLu6mQ=;
+        b=Z2xYvCg22eO8XeldLK+3jrZFf7vUxiHTNOcOuRLvAyyv1RCC0xNFczBdrEGVUy2Eqh
+         xZvF/JXC7Tu7m9oSMiZ/XER4fwkiTvnzebzgdD+92fKXmzMzq4dxxTZFNnaJhUj7Xs4T
+         WnitC2/2Pkhd19EypUqEOHIA2jPREUfHd344jhcuk42753zcmaxV+N7ND2dXyBe/qbJK
+         JEjS8DRiC4wIxDEjkQ/2sh+KoBz/x2DA91SZ/E91rUR8PJ5XLMWqpPy7aKp3Z5vo0XkA
+         nj3e5aZ0O0L89U/5jZqXSSz6mJf97C7bdzZbzNJUlO2Lm8oMEQ6wqpy93SZAIIrb0W5B
+         +gIg==
+X-Gm-Message-State: APjAAAWLy7z0V+F/RfmsLTGq6K0pVbjfc09R1+p9K/i6rBDGqGGoBb8z
+        rgZMbGrMT/T8Yy6l+xD8fcYjqlwFelU=
+X-Google-Smtp-Source: APXvYqxVxu/yxM3wBRIjOc54AlbRq5Iqa4VCNcxvPsMIP8KrZ84ouSrPOHT529K1Ogdp83RpAOPeQw==
+X-Received: by 2002:a6b:e601:: with SMTP id g1mr14593759ioh.55.1581451562546;
+        Tue, 11 Feb 2020 12:06:02 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id a21sm1289717ioh.29.2020.02.11.12.06.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Feb 2020 12:06:02 -0800 (PST)
+Subject: Re: [PATCHSET 0/3] io_uring: make POLL_ADD support multiple waitqs
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <20200210205650.14361-1-axboe@kernel.dk>
+ <c3fd3aa0-4358-6148-7486-ea52b410a5a6@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <692a561c-9176-63fa-3c48-7f37a8214057@kernel.dk>
+Date:   Tue, 11 Feb 2020 13:06:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <c3fd3aa0-4358-6148-7486-ea52b410a5a6@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-req->in_async is not really needed, it only prevents propagation of
-@nxt for fast not-blocked submissions. Remove it.
+On 2/11/20 1:01 PM, Pavel Begunkov wrote:
+> On 10/02/2020 23:56, Jens Axboe wrote:
+>> As mentioned in the previous email, here are the three patches that add
+>> support for multiple waitqueues for polling with io_uring.
+>>
+>> Patches 1-2 are just basic prep patches, and should not have any
+>> functional changes in them. Patch 3 adds support for allocating a new
+>> io_poll_iocb unit if we get multiple additions through our queue proc
+>> for the wait queues. This new 'poll' addition is queued up as well, and
+>> it grabs a reference to the original poll request.
+>>
+>> Please do review, would love to get this (long standing) issue fixed as
+>> it's a real problem for various folks.
+>>
+> 
+> I need to dig a bit deeper into poll to understand some moments, but there is a
+> question: don't we won't to support arbitrary number of waitqueues then?
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+In theory, probably. But in practice, don't think anything exists with > 2
+waitqueues. As mentioned, even the 2 waitqueue case is limited to less than
+a handful of users.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b33f2521040e..a50e7ac41668 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -550,7 +550,6 @@ struct io_kiocb {
- 	 * llist_node is only used for poll deferred completions
- 	 */
- 	struct llist_node		llist_node;
--	bool				in_async;
- 	bool				needs_fixed_file;
- 	u8				opcode;
- 
-@@ -1974,14 +1973,13 @@ static inline void io_rw_done(struct kiocb *kiocb, ssize_t ret)
- 	}
- }
- 
--static void kiocb_done(struct kiocb *kiocb, ssize_t ret, struct io_kiocb **nxt,
--		       bool in_async)
-+static void kiocb_done(struct kiocb *kiocb, ssize_t ret, struct io_kiocb **nxt)
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
- 
- 	if (req->flags & REQ_F_CUR_POS)
- 		req->file->f_pos = kiocb->ki_pos;
--	if (in_async && ret >= 0 && kiocb->ki_complete == io_complete_rw)
-+	if (ret >= 0 && kiocb->ki_complete == io_complete_rw)
- 		*nxt = __io_complete_rw(kiocb, ret);
- 	else
- 		io_rw_done(kiocb, ret);
-@@ -2274,7 +2272,7 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
- 
- 		/* Catch -EAGAIN return for forced non-blocking submission */
- 		if (!force_nonblock || ret2 != -EAGAIN) {
--			kiocb_done(kiocb, ret2, nxt, req->in_async);
-+			kiocb_done(kiocb, ret2, nxt);
- 		} else {
- copy_iov:
- 			ret = io_setup_async_rw(req, io_size, iovec,
-@@ -2387,7 +2385,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
- 		if (ret2 == -EOPNOTSUPP && (kiocb->ki_flags & IOCB_NOWAIT))
- 			ret2 = -EAGAIN;
- 		if (!force_nonblock || ret2 != -EAGAIN) {
--			kiocb_done(kiocb, ret2, nxt, req->in_async);
-+			kiocb_done(kiocb, ret2, nxt);
- 		} else {
- copy_iov:
- 			ret = io_setup_async_rw(req, io_size, iovec,
-@@ -4523,7 +4521,6 @@ static void io_wq_submit_work(struct io_wq_work **workptr)
- 	}
- 
- 	if (!ret) {
--		req->in_async = true;
- 		do {
- 			ret = io_issue_sqe(req, NULL, &nxt, false);
- 			/*
-@@ -5059,7 +5056,6 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 			*mm = ctx->sqo_mm;
- 		}
- 
--		req->in_async = async;
- 		req->needs_fixed_file = async;
- 		trace_io_uring_submit_sqe(ctx, req->opcode, req->user_data,
- 						true, async);
+But the patch should for sure check this, and -EINVAL if we get a third
+entry attempted.
+
 -- 
-2.24.0
+Jens Axboe
 

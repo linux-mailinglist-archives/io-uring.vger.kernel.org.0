@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 534A2159A27
-	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2020 21:03:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 100C4159A25
+	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2020 21:02:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731089AbgBKUCv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Feb 2020 15:02:51 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36314 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730912AbgBKUCv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Feb 2020 15:02:51 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z3so14081782wru.3;
-        Tue, 11 Feb 2020 12:02:50 -0800 (PST)
+        id S1731727AbgBKUCz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Feb 2020 15:02:55 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42318 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbgBKUCx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Feb 2020 15:02:53 -0500
+Received: by mail-wr1-f68.google.com with SMTP id k11so14034495wrd.9;
+        Tue, 11 Feb 2020 12:02:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=nPuj7TemWcqy/RKQwtEp7IOqjSWo0LWqgPLFOZx3hMs=;
-        b=fLXqyI37iW8UweuYeHmhdkbPhTCbRt1tVeVCh6ReNhiMZGCVWvIC5MMt2pzFWtS0Vf
-         NEoSK8KScR83rl0031O/yqALycI31fLMIc/VJdZ+s6/tY2HKFezfKdm4jygrnKzFT/pR
-         h5NL/fPR1eIP2Hx9vfUlUy4QErN1N34PtWGfYUPLoRGWp6unJ2mg3Vu+w0IEiAH3Evqz
-         V/nCOcZC/6xdjX/IdGDYcRbKWhHilpmgiIKqe5J9B2yRpmm1JNwObWUopjVKGMRs9HfX
-         U0QqlqiIeN4vQyHoPrZBbRtUEFW0Svo1rxeRNS7uUXE/PFvp7QF4BiKPFcqUUbZPtwCD
-         ZdYg==
+        bh=JoJVONI9ynzOQnCp/Q3VBaIx3fqD2PLhYmRbsdZ0IMM=;
+        b=rdaUQf+wDobwiG7cRBhwJRYvsUOxx0oNOJwo0P03pFApmIjdSKxEu0f9fNxn0IdTxL
+         sMtLew8pF6MKkWpS/tpeMNpC2BsP5csjcLqZntO1sEkktQ6aeM8OLr8lw9plB1n96lmD
+         C2cQtPpq8wlFOxa5SCwd6uFS2Cw6oWS9aHV3Fh74UMGj7AW6PpKvG2omcZweE8fjRD4x
+         LgtMSyqYENBhqdtaL5bCJBJM3HBYnJlYQRphndrCrX7Ce1OT3nOXQVRygDw8WrnnQPf9
+         WLZirWiyyqWP3sRFuWXxNfXfreA6SgK2XaKxqUaFhLD0MknInA7IAkvhnLEcyPtP/Jzu
+         XgAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nPuj7TemWcqy/RKQwtEp7IOqjSWo0LWqgPLFOZx3hMs=;
-        b=rlv9kcS7e7b/1b2GM8YwhGz6qVhe6ecBmeXYWJqik4M3+xL1bx5OfQLiUX/etInJfk
-         YGhXkiKVVo2WZk1zhvTd+i8MN1Qg4r/gI3R8+4vhsMaw59jvr7imE5tGtO5HiIGo4bkM
-         z5YN1B28tWsWJTJtpzNT4dfMA/NF+pEE9mzn7AW1irs1hxoO5KoQcWCBSTo3ajqMxYez
-         Ui7hMMr6KfFLJKgaxQstv2gt+D3FDcrIE9n4Yhb6Xqvy5MlL/TzUyGlaL1Co4Tgq+fYc
-         Mgdp3wgYmbMoO3bRP/jpvJrybYM+Nh6IcqPSegYhmYtB4O4iLBWFC60F74OseIPdVml9
-         j3wg==
-X-Gm-Message-State: APjAAAXl1n6+fpWdQACz9/rXOC5cY1yP9Dy4jn1yjtIso2iqDq4qgDGf
-        Hcf2yGYK1pr41+3oqF31KTQ=
-X-Google-Smtp-Source: APXvYqwBjGeRTQ4tUW+zTz3j8XIpBk/aiiYL0ZyV1H+HnvyY783N0OBIfNWetk18N7N5Vf3P7mRB9A==
-X-Received: by 2002:a5d:6292:: with SMTP id k18mr10205180wru.256.1581451369507;
-        Tue, 11 Feb 2020 12:02:49 -0800 (PST)
+        bh=JoJVONI9ynzOQnCp/Q3VBaIx3fqD2PLhYmRbsdZ0IMM=;
+        b=r/HEcomw4BQv8x+G1QwJahb+SxwNztvnjKo6llegbJkGdIzTDV97KYyKWB66GK4POK
+         QIbx7LdewJp6bDWcj1xaBBwbk0pEcDA2a/T/LaNKdY2uiSXSZEe8dXaaPFlffpFxg9wy
+         BKoTUNI7JMfTL5tmbuxG4DMBoUpHZdFdVGJT6vix5hjT+2tAq0WSp6Os8Ek04QJgpfVc
+         OT175eWXfFiGYQA0xJNINInPBENa6Jk/z+U2ZjPgzf2hmACaVJMMaLxNEgvjtE0I2Ix7
+         tgu47Sf/waKoxXj17xX0DHBL0KQk1S11y8OUA17LjYLvsOK5ttFlKdQTQqSv4X1xizNU
+         xJXw==
+X-Gm-Message-State: APjAAAUeR2e04hyTErL7L8uU/b/oYWkvjTQRrdaSLvBuGUmDG7y2q+zI
+        HtscZqk3Adg6BiIv3fm+EB1g+uDc
+X-Google-Smtp-Source: APXvYqyEm/aUq2S5+C5q3JwTuvzsUeaUELJnuGSq8hsA4hWF0bgU4oljaG6AsyckNEdkZNYT2CeLxw==
+X-Received: by 2002:a5d:61cf:: with SMTP id q15mr10050833wrv.74.1581451370644;
+        Tue, 11 Feb 2020 12:02:50 -0800 (PST)
 Received: from localhost.localdomain ([109.126.145.62])
-        by smtp.gmail.com with ESMTPSA id 4sm4955101wmg.22.2020.02.11.12.02.48
+        by smtp.gmail.com with ESMTPSA id 4sm4955101wmg.22.2020.02.11.12.02.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 12:02:49 -0800 (PST)
+        Tue, 11 Feb 2020 12:02:50 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] io_uring: remove REQ_F_MUST_PUNT
-Date:   Tue, 11 Feb 2020 23:01:54 +0300
-Message-Id: <ea87b4425681664d82ea3454003038abc33376cb.1581450491.git.asml.silence@gmail.com>
+Subject: [PATCH 2/5] io_uring: don't call work.func from sync ctx
+Date:   Tue, 11 Feb 2020 23:01:55 +0300
+Message-Id: <ef53fa1d05e92d333f20d75a682570565945348f.1581450491.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1581450491.git.asml.silence@gmail.com>
 References: <cover.1581450491.git.asml.silence@gmail.com>
@@ -60,76 +60,186 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-REQ_F_MUST_PUNT is needed to ignore REQ_F_NOWAIT and thus always punt
-async if have got -EAGAIN. It's enough to clear REQ_F_NOWAIT instead of
-having yet another flag.
+Many operations define custom work.func before getting into an io-wq.
+There are several points against:
+- it calls io_wq_assign_next() from outside io-wq, that may be confusing
+- sync context would go unnecessary through io_req_cancelled()
+- prototypes are quite different, so work!=old_work looks strange
+- makes async/sync responsibilities fuzzy
+- adds extra overhead
+
+Don't call generic path and io-wq handlers from each other, but use
+helpers instead
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ fs/io_uring.c | 76 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 38 insertions(+), 38 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 63beda9bafc5..98da478ae56c 100644
+index 98da478ae56c..04680d2c205c 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -477,7 +477,6 @@ enum {
- 	REQ_F_LINK_TIMEOUT_BIT,
- 	REQ_F_TIMEOUT_BIT,
- 	REQ_F_ISREG_BIT,
--	REQ_F_MUST_PUNT_BIT,
- 	REQ_F_TIMEOUT_NOSEQ_BIT,
- 	REQ_F_COMP_LOCKED_BIT,
- 	REQ_F_NEED_CLEANUP_BIT,
-@@ -513,8 +512,6 @@ enum {
- 	REQ_F_TIMEOUT		= BIT(REQ_F_TIMEOUT_BIT),
- 	/* regular file */
- 	REQ_F_ISREG		= BIT(REQ_F_ISREG_BIT),
--	/* must be punted even for NONBLOCK */
--	REQ_F_MUST_PUNT		= BIT(REQ_F_MUST_PUNT_BIT),
- 	/* no timeout sequence */
- 	REQ_F_TIMEOUT_NOSEQ	= BIT(REQ_F_TIMEOUT_NOSEQ_BIT),
- 	/* completion under lock */
-@@ -2246,11 +2243,11 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
- 		req->result = io_size;
+@@ -2462,23 +2462,28 @@ static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
+ 	}
+ }
  
- 	/*
--	 * If the file doesn't support async, mark it as REQ_F_MUST_PUNT so
--	 * we know to async punt it even if it was opened O_NONBLOCK
-+	 * If the file doesn't support async, async punt it even if it
-+	 * was opened O_NONBLOCK
- 	 */
- 	if (force_nonblock && !io_file_supports_async(req->file)) {
--		req->flags |= REQ_F_MUST_PUNT;
-+		req->flags &= ~REQ_F_NOWAIT;
- 		goto copy_iov;
+-static void io_fsync_finish(struct io_wq_work **workptr)
++static void __io_fsync(struct io_kiocb *req, struct io_kiocb **nxt)
+ {
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+ 	loff_t end = req->sync.off + req->sync.len;
+-	struct io_kiocb *nxt = NULL;
+ 	int ret;
+ 
+-	if (io_req_cancelled(req))
+-		return;
+-
+ 	ret = vfs_fsync_range(req->file, req->sync.off,
+ 				end > 0 ? end : LLONG_MAX,
+ 				req->sync.flags & IORING_FSYNC_DATASYNC);
+ 	if (ret < 0)
+ 		req_set_fail_links(req);
+ 	io_cqring_add_event(req, ret);
+-	io_put_req_find_next(req, &nxt);
++	io_put_req_find_next(req, nxt);
++}
++
++static void io_fsync_finish(struct io_wq_work **workptr)
++{
++	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
++	struct io_kiocb *nxt = NULL;
++
++	if (io_req_cancelled(req))
++		return;
++	__io_fsync(req, &nxt);
+ 	if (nxt)
+ 		io_wq_assign_next(workptr, nxt);
+ }
+@@ -2486,26 +2491,18 @@ static void io_fsync_finish(struct io_wq_work **workptr)
+ static int io_fsync(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		    bool force_nonblock)
+ {
+-	struct io_wq_work *work, *old_work;
+-
+ 	/* fsync always requires a blocking context */
+ 	if (force_nonblock) {
+ 		io_put_req(req);
+ 		req->work.func = io_fsync_finish;
+ 		return -EAGAIN;
+ 	}
+-
+-	work = old_work = &req->work;
+-	io_fsync_finish(&work);
+-	if (work && work != old_work)
+-		*nxt = container_of(work, struct io_kiocb, work);
++	__io_fsync(req, nxt);
+ 	return 0;
+ }
+ 
+-static void io_fallocate_finish(struct io_wq_work **workptr)
++static void __io_fallocate(struct io_kiocb *req, struct io_kiocb **nxt)
+ {
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-	struct io_kiocb *nxt = NULL;
+ 	int ret;
+ 
+ 	ret = vfs_fallocate(req->file, req->sync.mode, req->sync.off,
+@@ -2513,7 +2510,15 @@ static void io_fallocate_finish(struct io_wq_work **workptr)
+ 	if (ret < 0)
+ 		req_set_fail_links(req);
+ 	io_cqring_add_event(req, ret);
+-	io_put_req_find_next(req, &nxt);
++	io_put_req_find_next(req, nxt);
++}
++
++static void io_fallocate_finish(struct io_wq_work **workptr)
++{
++	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
++	struct io_kiocb *nxt = NULL;
++
++	__io_fallocate(req, &nxt);
+ 	if (nxt)
+ 		io_wq_assign_next(workptr, nxt);
+ }
+@@ -2533,8 +2538,6 @@ static int io_fallocate_prep(struct io_kiocb *req,
+ static int io_fallocate(struct io_kiocb *req, struct io_kiocb **nxt,
+ 			bool force_nonblock)
+ {
+-	struct io_wq_work *work, *old_work;
+-
+ 	/* fallocate always requiring blocking context */
+ 	if (force_nonblock) {
+ 		io_put_req(req);
+@@ -2542,11 +2545,7 @@ static int io_fallocate(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		return -EAGAIN;
  	}
  
-@@ -2335,11 +2332,11 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
- 		req->result = io_size;
+-	work = old_work = &req->work;
+-	io_fallocate_finish(&work);
+-	if (work && work != old_work)
+-		*nxt = container_of(work, struct io_kiocb, work);
+-
++	__io_fallocate(req, nxt);
+ 	return 0;
+ }
  
- 	/*
--	 * If the file doesn't support async, mark it as REQ_F_MUST_PUNT so
--	 * we know to async punt it even if it was opened O_NONBLOCK
-+	 * If the file doesn't support async, async punt it even if it
-+	 * was opened O_NONBLOCK
- 	 */
- 	if (force_nonblock && !io_file_supports_async(req->file)) {
--		req->flags |= REQ_F_MUST_PUNT;
-+		req->flags &= ~REQ_F_NOWAIT;
- 		goto copy_iov;
+@@ -2949,21 +2948,27 @@ static int io_prep_sfr(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return 0;
+ }
+ 
+-static void io_sync_file_range_finish(struct io_wq_work **workptr)
++static void __io_sync_file_range(struct io_kiocb *req, struct io_kiocb **nxt)
+ {
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-	struct io_kiocb *nxt = NULL;
+ 	int ret;
+ 
+-	if (io_req_cancelled(req))
+-		return;
+-
+ 	ret = sync_file_range(req->file, req->sync.off, req->sync.len,
+ 				req->sync.flags);
+ 	if (ret < 0)
+ 		req_set_fail_links(req);
+ 	io_cqring_add_event(req, ret);
+-	io_put_req_find_next(req, &nxt);
++	io_put_req_find_next(req, nxt);
++}
++
++
++static void io_sync_file_range_finish(struct io_wq_work **workptr)
++{
++	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
++	struct io_kiocb *nxt = NULL;
++
++	if (io_req_cancelled(req))
++		return;
++	__io_sync_file_range(req, &nxt);
+ 	if (nxt)
+ 		io_wq_assign_next(workptr, nxt);
+ }
+@@ -2971,8 +2976,6 @@ static void io_sync_file_range_finish(struct io_wq_work **workptr)
+ static int io_sync_file_range(struct io_kiocb *req, struct io_kiocb **nxt,
+ 			      bool force_nonblock)
+ {
+-	struct io_wq_work *work, *old_work;
+-
+ 	/* sync_file_range always requires a blocking context */
+ 	if (force_nonblock) {
+ 		io_put_req(req);
+@@ -2980,10 +2983,7 @@ static int io_sync_file_range(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		return -EAGAIN;
  	}
  
-@@ -4715,8 +4712,7 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	 * We async punt it if the file wasn't marked NOWAIT, or if the file
- 	 * doesn't support non-blocking read/write attempts
- 	 */
--	if (ret == -EAGAIN && (!(req->flags & REQ_F_NOWAIT) ||
--	    (req->flags & REQ_F_MUST_PUNT))) {
-+	if (ret == -EAGAIN && !(req->flags & REQ_F_NOWAIT)) {
- punt:
- 		if (io_op_defs[req->opcode].file_table) {
- 			ret = io_grab_files(req);
+-	work = old_work = &req->work;
+-	io_sync_file_range_finish(&work);
+-	if (work && work != old_work)
+-		*nxt = container_of(work, struct io_kiocb, work);
++	__io_sync_file_range(req, nxt);
+ 	return 0;
+ }
+ 
 -- 
 2.24.0
 

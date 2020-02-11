@@ -2,52 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F8F8159A93
-	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2020 21:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF7E159AD6
+	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2020 21:58:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728596AbgBKUha (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Feb 2020 15:37:30 -0500
-Received: from mail-wm1-f52.google.com ([209.85.128.52]:55317 "EHLO
-        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728063AbgBKUha (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Feb 2020 15:37:30 -0500
-Received: by mail-wm1-f52.google.com with SMTP id q9so5408645wmj.5
-        for <io-uring@vger.kernel.org>; Tue, 11 Feb 2020 12:37:28 -0800 (PST)
+        id S1729080AbgBKU6H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Feb 2020 15:58:07 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51850 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728078AbgBKU6H (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Feb 2020 15:58:07 -0500
+Received: by mail-wm1-f68.google.com with SMTP id t23so5510284wmi.1;
+        Tue, 11 Feb 2020 12:58:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=C3QZTQIYRWGAtNZp7z8mDoQRBNDxIrCwVKe/a6Yio2A=;
-        b=Bm1fHiQfB6GFi6g0C9Eq0RFU2vpqb/0ftZ+27fcgfEKgxBlfB+pB/DqBNWbTEnTxdD
-         UPyy+VHqQEkzZGIR1/CFoSR9U9jIshHNoxd/S5TSxFfyiaxOo6aLyXorxkxnnFe3hV4P
-         q3a6VNziyXitePTrNNYJX055G7MTCrfYy2PdZfeUS32BB0qrq2ZhvE7TsrbrI2kBO0Wy
-         L5Cp+GONEiyGiQn406nH96i8EJ3giaCJfb2Dfh53DSd24g/v6g4kqdIIs+YChw10FYTz
-         bqAc/oQK76jR2dNY+j2ksuqlAHf6nCPg0ILfxYZ4v5gK+tnk5ztS6gzwGrPX3+otufC3
-         I3+w==
+        bh=m3fJ32xhEuPsN5HBHAQHIEew/YDs6sUWcnFvSG1TcmM=;
+        b=qc/y1//yNiQEBCCkEasqpe2nrp96JVcxNS3S04vB2UBloLK2k7DzLsT8kc+EQLx9K+
+         eMSfNUxA1SP+cOlk4fDJQ6+B/86W/C/WiEX8kxWrVnwcVeqdBg78VGPVsLnwZRxxm2Yg
+         4eJMToKpQApxAetPyqoMjvN7b/+//s4j976SHZI03ERLplSSmbY5TW4jIQ0oSt5FIJl4
+         gDGUfL5iOw2PtrjH6fYQeMU3f5HQ0l1YebX7uc4PSyJy/m+K3ILXhVqUAXM8cXgjQdOT
+         JpnVJBcIBtFlRm8wwuhnwwjYc4d76CbStZzDZc4ZrA5R/siQo0lUUwxOoxMXEEXG3Zzm
+         5Qfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to;
-        bh=C3QZTQIYRWGAtNZp7z8mDoQRBNDxIrCwVKe/a6Yio2A=;
-        b=oDsQNg5lLqhu8himVuzHfYwqoBXFZ0MU+gg6UBskPLJTc9z1uPvS5wozOX7+QeDxcN
-         n+Hc93i9avqUY3vdtkEOtfb9oJ5pkQRtD6YbMgp1kGbn6FCTBtRZ096Kf0rCvmnyICNk
-         4c4UhLyidqgd0Zfi1kK9gkDvzUvLaXNDLJ1cqnnjXOtRGXXazf9ZQ/BR/rXzKHtNE0Du
-         at4E95RjlDueQSzymLZI0seHeFSSQJvQ9yd2BdBNmYAtpI2XsL1kxnSG1bdCeYospl5+
-         8ZORSSG6fjgUies1SwTz7fh13hiDbQvs53ZOnuESOrms55/+p9GenqJ3QQn+2PKpIgBB
-         n1gg==
-X-Gm-Message-State: APjAAAWjhLi5pp4ireulm8FNEeuDTHseHgRWPXtdLphtvs037BpoPWh/
-        o6F7CWXAK808s9+nhPdtiHHkjBA8
-X-Google-Smtp-Source: APXvYqwScAbXX8MSqa6hJRzwioX2e/Ix5A+AOBJrgfK87Z0EPJDy3bK/gGdYvnB5QQfAbsYy0M5MfQ==
-X-Received: by 2002:a05:600c:2c50:: with SMTP id r16mr7533904wmg.74.1581453447211;
-        Tue, 11 Feb 2020 12:37:27 -0800 (PST)
+        bh=m3fJ32xhEuPsN5HBHAQHIEew/YDs6sUWcnFvSG1TcmM=;
+        b=p1+TW8aVUUXrUq4Jby8AlaulmjgUBORLTo/dFjHvwmjXHA3LfqFsZ/zsI/ShU39cZJ
+         yFDSoM93SlLOelNwoeGIFN0wIuCyoZc5bsKxCC9+5uQfB2luizcymgxSX7F/V9B083Ka
+         jI0jl478FHHCGMoADG+8yHoKUMCYeFxy/1A/PbIfEUP6xY1x0rm5Ayp2G3+6WPAzcMq8
+         RRX7J1eo6F/RxfQsRgsxY59fTDVzZ/hd3Jr8JpaacWY5ZuluD/4RSwuPRdpPjTSDR8jU
+         9Dt7Ca/j9d55GxcY0Kv2fxh8m9L6Bq/3yvTcR094dcuT3pOvVa4oowKegWhSlpOhCG9A
+         kQ9g==
+X-Gm-Message-State: APjAAAW82mi6kRYxwzk42O0Ti4QN5v6kTumEYPvyIpXg2I/9EaSU4bwc
+        0P0ztzy0HwkYOTp6TqapojXcgZEp
+X-Google-Smtp-Source: APXvYqzdWWRzdBq9F6vH4WcTtcWWoC6MQnN8wezuZ1BwE0bS+YaXWZ+qOj1I8SEe400tOMT2IS4aTQ==
+X-Received: by 2002:a05:600c:294a:: with SMTP id n10mr7913041wmd.11.1581454684451;
+        Tue, 11 Feb 2020 12:58:04 -0800 (PST)
 Received: from [192.168.43.18] ([109.126.145.62])
-        by smtp.gmail.com with ESMTPSA id s8sm5152424wmh.26.2020.02.11.12.37.26
+        by smtp.gmail.com with ESMTPSA id f127sm5313446wma.4.2020.02.11.12.58.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2020 12:37:26 -0800 (PST)
-Subject: Re: [RFC] do_hashed and wq enqueue
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-References: <f0662f54-3964-9cef-151d-3102c9280757@gmail.com>
- <00a3935a-043a-ee60-2206-2e62ec8c2936@kernel.dk>
+        Tue, 11 Feb 2020 12:58:03 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1581450491.git.asml.silence@gmail.com>
+ <728f583e7835cf0c74b8dc8fbeddb58970f477a5.1581450491.git.asml.silence@gmail.com>
+ <4a08cc5a-2100-3a31-becb-c16592905c86@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -92,103 +93,89 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <31a63d75-5022-a427-d123-90b2e2ca6350@gmail.com>
-Date:   Tue, 11 Feb 2020 23:36:45 +0300
+Subject: Re: [PATCH 3/5] io_uring: fix reassigning work.task_pid from io-wq
+Message-ID: <e60026f7-8e8f-7133-57e3-762a1d84269b@gmail.com>
+Date:   Tue, 11 Feb 2020 23:57:13 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <00a3935a-043a-ee60-2206-2e62ec8c2936@kernel.dk>
+In-Reply-To: <4a08cc5a-2100-3a31-becb-c16592905c86@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="zcADxSWOdNcyYTEBPaqvdoVyWrK9NLyKg"
+ boundary="r3ufS8hWOO0jlZFGhNNoJ76CAUirJEWUa"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---zcADxSWOdNcyYTEBPaqvdoVyWrK9NLyKg
-Content-Type: multipart/mixed; boundary="Prpz8ZaYCrVfJm3IqM7NFSUFh58gjWo71";
+--r3ufS8hWOO0jlZFGhNNoJ76CAUirJEWUa
+Content-Type: multipart/mixed; boundary="nrWwE987J8OkG3OdY3y7K4XXiCHWftVzZ";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-Message-ID: <31a63d75-5022-a427-d123-90b2e2ca6350@gmail.com>
-Subject: Re: [RFC] do_hashed and wq enqueue
-References: <f0662f54-3964-9cef-151d-3102c9280757@gmail.com>
- <00a3935a-043a-ee60-2206-2e62ec8c2936@kernel.dk>
-In-Reply-To: <00a3935a-043a-ee60-2206-2e62ec8c2936@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <e60026f7-8e8f-7133-57e3-762a1d84269b@gmail.com>
+Subject: Re: [PATCH 3/5] io_uring: fix reassigning work.task_pid from io-wq
+References: <cover.1581450491.git.asml.silence@gmail.com>
+ <728f583e7835cf0c74b8dc8fbeddb58970f477a5.1581450491.git.asml.silence@gmail.com>
+ <4a08cc5a-2100-3a31-becb-c16592905c86@kernel.dk>
+In-Reply-To: <4a08cc5a-2100-3a31-becb-c16592905c86@kernel.dk>
 
---Prpz8ZaYCrVfJm3IqM7NFSUFh58gjWo71
+--nrWwE987J8OkG3OdY3y7K4XXiCHWftVzZ
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 11/02/2020 23:30, Jens Axboe wrote:
-> On 2/11/20 1:20 PM, Pavel Begunkov wrote:
->> Hi,
+On 11/02/2020 23:21, Jens Axboe wrote:
+> On 2/11/20 1:01 PM, Pavel Begunkov wrote:
+>> If a request got into io-wq context, io_prep_async_work() has already
+>> been called. Most of the stuff there is idempotent with an exception
+>> that it'll set work.task_pid to task_pid_vnr() of an io_wq worker thre=
+ad
 >>
->> I've been looking for hashed io-wq enqueuing, but not fully understand=
- the
->> issue. As I remember, it was something about getting around blocking f=
-or
->> buffered I/O. Is that so? Is there any write-up of a thread for this i=
-ssue?
+>> Do only what's needed, that's io_prep_linked_timeout() and setting
+>> IO_WQ_WORK_UNBOUND.
 >=20
-> Not sure if there's a writeup, but the issue is that buffered writes al=
-l
-> need to grab the per-inode mutex. Hence if you don't serialize these wr=
-ites,
-> you end up having potentially quite a few threads banging on the same m=
-utex.
-> This causes a high level of lock contention (and scheduling). By serial=
-izing
-> by inode hash we avoid that, and yield the same performance.
->=20
-> Dave Chinner is working on lifting this restriction, at which point we'=
-ll
-> have to gate the hashing based on whether or not the fs is smart or dum=
-b
-> when it comes to buffered writes and locking.
+> Rest of the series aside, I'm going to fix-up the pid addition to
+> only set if it's zero like the others.
 
-Got it, thanks!
+IMO, io_req_work_grab_env() should never be called from io-wq. It'd do no=
+thing
+good but open space for subtle bugs. And if that's enforced (as done in t=
+his
+patch), it's safe to set @pid multiple times.
 
->> My case is 2-fd request, and I'm not sure how it should look. For spli=
-ce() it's
->> probably Ok to hash the non-pipe end (if any), but I wonder how it sho=
-uld work,
->> if, for example, the restriction will be removed.
->=20
-> Probably just do the same, but for the output fd only (and following th=
-e
-> same restrictions in terms of file type).
->=20
+Probably, it worth to add the check just to not go through task_pid_vnr()=
+
+several times.
 
 --=20
 Pavel Begunkov
 
 
---Prpz8ZaYCrVfJm3IqM7NFSUFh58gjWo71--
+--nrWwE987J8OkG3OdY3y7K4XXiCHWftVzZ--
 
---zcADxSWOdNcyYTEBPaqvdoVyWrK9NLyKg
+--r3ufS8hWOO0jlZFGhNNoJ76CAUirJEWUa
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl5DEF0ACgkQWt5b1Glr
-+6WnyxAAuP14nGCHGIt3/E2mkaWFjo57ezoh3pto3BKThMFrKXwCu3wgnKoE2oZc
-kA0rXv+TSk4eDlcmSFID5rn/hwVqh9Qp3r2wYa/IS39887En4Wgs5TjQ3QMImRZx
-stoHvQ8Iqhe4BdosQGLqyN0Wpay3y3TRs3faye6FIfEnw8iEWTUBarEiEBkpzr7v
-m2CEMqO9LSkf/kCUgIW6tqaRr3Rxh6mDCFkQ92ZwKzgqVxYnlti0jZPkCS7DvJSG
-DjTdfgAX3t184slGfAW9+VUe2maKiaaU8Hdp7cCiU1Z8cyDfmPwcU9cS4/CfNzOB
-SiOcuIln0kFQynOCpWNb0TlNgbXfEE7dSQdAdGLBCc6RuBjm7FnmOApKYdvcOIpg
-/TX1MMCRzqvXXABcEln3MWAC0s9nHlXltR4vZo8hWfF7u1E8fp+Y5VuosjZvdCbI
-wUsPswnQcB77QCD74S7tZQU66ZPRk7dj41YyBrs3iMKRyatKbyyCRJaWz3ImQwT4
-5rtC376U5DAzyVo7/9VYeJDPykfnPh7ovwsJ4dTYnKzOC0sinBvym1VhWT11pUdS
-ozeWmgIj3Z46+RDZlf0wHFPi9DwuONe2LutBi+8LGggbIKir2ckfP7VnCvRphEkT
-lgX2rUaBlDil9C7h07D5470PVFUA9lhPKY0oRkBxBCHdyCwSEgo=
-=SIAx
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl5DFTQACgkQWt5b1Glr
++6U4HBAAiVXVbwa8UiXiDXRRjHe/Uwk9VmBUYqKOjRAm0LCbMxrrVvA5WNj/heOA
+Lw3aEiKKzGVYyhRpxyV8HPfMfb41psM7XWs0DEPMFgNR89H50nCLkkfeqfjx2UKL
+9F0AkfxXvFwoGLsgRq4SGN8xAjq0RifAeQjZqlXjIYXY3ChA+nYda2TxUAUrUfoM
+ubNOAjr+xtOLV7DjyoDzc6jU7lYro9ndKn2VnBLAXWHAdNbLbRU0uzgruZHJ7JOS
+SkKR/easNwKco+KXU+rLFA1P7TdYobJokH8tS4t3sGJCvqNTSfrWNmIhgi/Jl4SF
+l7ktcd6EIowyf2NPd5ZRKcHlRvK3gj5mKr/Pa8eHoAZzL2p8OgM/SmDIMPaU1VTj
+JX38BymP2FhfMcBzW9gutitqSa3o5ZsFyBoQhmxLScZtZ4PKpejne4a47siY5KyO
+0xjAAK4OlRznOarq1pjCYFHiaJn26SyMi2ooAQsgGvztgUPbrludXTSg6iFpecZ1
+X+tL8q20zEPt6XNyDEdKIgPJtOQFZM+a7X2rf70U43rXdyST4IMcqfdAq1USjb14
+hd//fpnrnA6iS/0ASGdT/d0w8ZRJ7Q+MIl2xklBL4fmZciQI+oF1E7kzt3fn/4pi
+EhIAbJwaT+D9M58R2+ZSwuZj1TIqttHn7Uy36bh423Kgyx7cw3s=
+=jU+T
 -----END PGP SIGNATURE-----
 
---zcADxSWOdNcyYTEBPaqvdoVyWrK9NLyKg--
+--r3ufS8hWOO0jlZFGhNNoJ76CAUirJEWUa--

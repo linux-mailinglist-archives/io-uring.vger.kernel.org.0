@@ -2,55 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2446015B1C7
+	by mail.lfdr.de (Postfix) with ESMTP id EF69215B1C8
 	for <lists+io-uring@lfdr.de>; Wed, 12 Feb 2020 21:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbgBLUZT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Feb 2020 15:25:19 -0500
-Received: from mail-io1-f53.google.com ([209.85.166.53]:36249 "EHLO
-        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbgBLUZT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Feb 2020 15:25:19 -0500
-Received: by mail-io1-f53.google.com with SMTP id d15so3801757iog.3
+        id S1727548AbgBLUZU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Feb 2020 15:25:20 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40779 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgBLUZU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Feb 2020 15:25:20 -0500
+Received: by mail-io1-f68.google.com with SMTP id x1so3774897iop.7
         for <io-uring@vger.kernel.org>; Wed, 12 Feb 2020 12:25:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wkZ54TmjuoQncn5LIcfLUWX+2v8MMbgcS9dyrLhx7oM=;
-        b=CHZXUJdpQNBnu2EskS2qGVSCKo0hX/w3ps0QRi/3e0BI63UVgnn4gyhcv0yoyvpdDW
-         lgu1LBYX8msukzOB9DDwkke0JyF2dUVmAYvCZse07Axqx5kxUk7REUf/op8FOXibFdwO
-         ICBmKSOIHfr3XiP5UHZgo4ZVoJzkDNySl9P/ki+2yDMLiZoUHWR8Cq6Te1DXJiLKMr+G
-         c2e+I5uUBjoWRjB/LwUURC9jnM9u5FcCk1w2tGjGamzULh2M5kLa0cM22z62llJJurz7
-         iplS7Rp3mOrERcKICHz1/y5jIyKQrZnsUfXepFFCJIMjlv7XyiAIOT04nITzcQLk6RP5
-         O4gg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=sb0/VPxdG1KxirMSLE8xiqZicgQ/tOUSIgVpAOZHrKs=;
+        b=ojpdY/sxnyF86kPZskwLqr8XxvJbuA2ylJpK1UUfDKvwjcqDuem0s5U532B9+62q2Y
+         hQYOnbS3KPyBmmEPdRJ7l4aJWs70mTTSMZDs/d5grZGxe6K5h5B49iHufkZ4XjGWPBtQ
+         obOeLaU0WFC9df2Vbb/XJVhoRoL8t1TOheig5Lcx0q9Lb5OmAiK4Dw23yNPonfmSAAZR
+         5X/wC8WyKJK80LlPVdEWJGjMSiQcryrjeHCLMRHg1Phc58fNxQeDPdamsGiLnVazuWmy
+         fXCSWM5WQdaQqHAFM6iEg1JuypXwZgr3vQzPz6dXs7WBtSl3RvEeh9itoAx1Y+ITT7E7
+         EP6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wkZ54TmjuoQncn5LIcfLUWX+2v8MMbgcS9dyrLhx7oM=;
-        b=jyOHrmcdreVCvFC321B8hqp4nUIum+DJrkBYYdb2FE0XCFxYIJ5Io479p5SZDLQsW0
-         VJ0Rb2ZsGK8bIF5bws4LX0TOVTt6mkdlGBOsPA7dGnZqm61SnW7gYdVja0Bpo4//tbBP
-         1Ngw8HLHfQeqTuiPAsWOo/5kdOLaTfUliw/UAgPqYrtfH8TIJHcKaEH3OFt8h1jBI7uD
-         z6ol6oY49cLLO3iMozVZVfKNUrsmBYnJVkE6w257h4P67JifHEuEQNZNPgggMLN7BxJz
-         1pqF+BjzhnmKA2aDI+rX5nF57EL+Di/veXJ2tFuhBFnq0tg+mWv19WaMdpiHc9OZY6lc
-         FcFg==
-X-Gm-Message-State: APjAAAVGUqpXV/auKCZXk9KZ1oR7aFbzfptf0NCdeQr+9mLUx+2BRajR
-        CB76SeKuFzZaZiR7XV2aIr/xVA/P4/Q=
-X-Google-Smtp-Source: APXvYqzBqunfpCQH79URjAAu0d2Yo8Gu2w5F8e9aRF2vsMKZegiJbzsymG9/XXwnWM1fIvdifsxISA==
-X-Received: by 2002:a6b:f913:: with SMTP id j19mr17942916iog.124.1581539117566;
-        Wed, 12 Feb 2020 12:25:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=sb0/VPxdG1KxirMSLE8xiqZicgQ/tOUSIgVpAOZHrKs=;
+        b=PhAmH40wfg5tq2JYRU4sfQBOamVmEStrdsMY23UiqNiedFA+WAkE1cNfpEFyksBRK1
+         xtonkKxEeBCAp7pWJHXbCXDSW60tPd7+DYKj9X8DtUIHZD1cIVX5pr3yeKagx/sWhPGW
+         7MCvMV+VG7b+QSylH2mbPM/NI37762tVcHoC006zkw/KeWq9f5AZRaN5r/14zZBSdZ4p
+         QX0+W+VqpeFyPA6Z/Erk69UaAfEk/c/MaZ7lGQwu2PgrC6Sa/EMz6oYGPqZ63vKDOCKb
+         e5EWGEsBxCGiRDkMQAGSOpze5qgML8zgR8HsEmQQvicwVnqsG9VgXtyfoNhYNbcB5atz
+         B4tg==
+X-Gm-Message-State: APjAAAWkmM2o73CHD1s3I7/bY/1DH669Rc94I5tUjnzzsH9FtCRzW4si
+        gtBp3JkYRxGBp8FRTeg5c9RVpkLmMpg=
+X-Google-Smtp-Source: APXvYqyEGXTkqecYJf1JqMYhEUFtmPCE4Vch9D5qBa+ceZ3ZVzItITHLFFvM1OlzaMViAr2K7UPaYw==
+X-Received: by 2002:a5d:878c:: with SMTP id f12mr19392365ion.164.1581539118339;
+        Wed, 12 Feb 2020 12:25:18 -0800 (PST)
 Received: from x1.localdomain ([65.144.74.34])
         by smtp.gmail.com with ESMTPSA id 203sm37938ilb.42.2020.02.12.12.25.17
-        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 12:25:17 -0800 (PST)
+        Wed, 12 Feb 2020 12:25:18 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Subject: [PATCHSET v2 0/3] io_uring: make POLL_ADD support multiple waitqs
-Date:   Wed, 12 Feb 2020 13:25:12 -0700
-Message-Id: <20200212202515.15299-1-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/3] io_uring: store io_kiocb in wait->private
+Date:   Wed, 12 Feb 2020 13:25:13 -0700
+Message-Id: <20200212202515.15299-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200212202515.15299-1-axboe@kernel.dk>
+References: <20200212202515.15299-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -58,19 +60,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Here's v2 of the "let's make POLL_ADD work on everything" patchset. As
-before, patches 1-2 are just basic prep patches, and should not have any
-functional changes in them. Patch 3 adds support for allocating a new
-io_poll_iocb unit if we get multiple additions through our queue proc
-for the wait queues. This new 'poll' addition is queued up as well, and
-it grabs a reference to the original poll request.
+Store the io_kiocb in the private field instead of the poll entry, this
+is in preparation for allowing multiple waitqueues.
 
-Changes since v1:
+No functional changes in this patch.
 
-- Fix unused 'ret' variable in io_poll_double_wake()
-- Fail if we get an attempt at a third waitqueue addition (Pavel)
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/io_uring.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 6d4e20d59729..08ffeb7df4f5 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3625,8 +3625,8 @@ static void io_poll_trigger_evfd(struct io_wq_work **workptr)
+ static int io_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+ 			void *key)
+ {
+-	struct io_poll_iocb *poll = wait->private;
+-	struct io_kiocb *req = container_of(poll, struct io_kiocb, poll);
++	struct io_kiocb *req = wait->private;
++	struct io_poll_iocb *poll = &req->poll;
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	__poll_t mask = key_to_poll(key);
+ 
+@@ -3749,7 +3749,7 @@ static int io_poll_add(struct io_kiocb *req, struct io_kiocb **nxt)
+ 	/* initialized the list so that we can do list_empty checks */
+ 	INIT_LIST_HEAD(&poll->wait.entry);
+ 	init_waitqueue_func_entry(&poll->wait, io_poll_wake);
+-	poll->wait.private = poll;
++	poll->wait.private = req;
+ 
+ 	INIT_LIST_HEAD(&req->list);
+ 
 -- 
-Jens Axboe
-
+2.25.0
 

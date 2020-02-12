@@ -2,150 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A252D15AEB2
-	for <lists+io-uring@lfdr.de>; Wed, 12 Feb 2020 18:29:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2446015B1C7
+	for <lists+io-uring@lfdr.de>; Wed, 12 Feb 2020 21:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbgBLR3n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Feb 2020 12:29:43 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45446 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728721AbgBLR3n (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Feb 2020 12:29:43 -0500
-Received: by mail-pg1-f194.google.com with SMTP id b9so1423956pgk.12
-        for <io-uring@vger.kernel.org>; Wed, 12 Feb 2020 09:29:43 -0800 (PST)
+        id S1727111AbgBLUZT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Feb 2020 15:25:19 -0500
+Received: from mail-io1-f53.google.com ([209.85.166.53]:36249 "EHLO
+        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgBLUZT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Feb 2020 15:25:19 -0500
+Received: by mail-io1-f53.google.com with SMTP id d15so3801757iog.3
+        for <io-uring@vger.kernel.org>; Wed, 12 Feb 2020 12:25:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=xrY7AMkHrKww8zJCzj1GdOG5UXmd0BAsVpqqjvF0JJE=;
-        b=H0hDSzA0gLP0bkiP6fI5C4Uk1NwHFllDo8mfnJnA1qSh7GqMulCvq7NnOclKS+u3np
-         1jqDSf8EaJaDioerkcXRFueqReYLFCKETWtOCseiKq4GtygCydwMtxBpyZHmLD7bwrOh
-         f1+p0h/rilRjp9MKcE/kUHdO+b8PMzzSZLSchOtRjmCtaalc/BVIe+JU57SzT4akP9I3
-         qbMrxpUwxmnldupwcLWh0n1DtDmhzEUBg72LyXbNv2fy7ehg2/ikNeiYk+/Nq6vB/anZ
-         upReVPW3ZH4ZoDvwbHZ6xvTLARM2Vzcx9NNrONGGtJkMyxrN9MRoXVQdV7foSTn9wQzY
-         qO7g==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wkZ54TmjuoQncn5LIcfLUWX+2v8MMbgcS9dyrLhx7oM=;
+        b=CHZXUJdpQNBnu2EskS2qGVSCKo0hX/w3ps0QRi/3e0BI63UVgnn4gyhcv0yoyvpdDW
+         lgu1LBYX8msukzOB9DDwkke0JyF2dUVmAYvCZse07Axqx5kxUk7REUf/op8FOXibFdwO
+         ICBmKSOIHfr3XiP5UHZgo4ZVoJzkDNySl9P/ki+2yDMLiZoUHWR8Cq6Te1DXJiLKMr+G
+         c2e+I5uUBjoWRjB/LwUURC9jnM9u5FcCk1w2tGjGamzULh2M5kLa0cM22z62llJJurz7
+         iplS7Rp3mOrERcKICHz1/y5jIyKQrZnsUfXepFFCJIMjlv7XyiAIOT04nITzcQLk6RP5
+         O4gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xrY7AMkHrKww8zJCzj1GdOG5UXmd0BAsVpqqjvF0JJE=;
-        b=D4YZYDdVCJuFB5r00Q+dNTy7UfM+KoRW/411Bz6xphVIsnoE47Jq7nVXyqu1gADRMV
-         Med2iZDnWug8LBTalpKn7Mow7WhXYthzUY6fMBg2Vf2H4/iLkOIm9z7KreKv8i/Kfbdr
-         LmaZcYz2+yyBX2VXW2gLSptD3cfehuMDTJ+8MGw9MfZVxcuSJOWjf6X6sIvSFonlJQd9
-         otGO6oFnvRoJ50j76In+BWJ4J0UQjIrAJwBB9j6Wk1RTr22+gvoKs/Iww6DeiB6fKo6W
-         2ycMSlEWkocRwSpDJL+oKcFEzNcXStmfe3MPMBNLQF60X4dyayRyrZFr/sg07/HgteSF
-         OGVA==
-X-Gm-Message-State: APjAAAXMPYNfEXefDs5sga7Iop/RHYuUPYuPnCBHQbWhHwR8mA4Dfj5H
-        S2zsxtS2qYdWChAdQAfZRCy+9gCP/F4=
-X-Google-Smtp-Source: APXvYqx0WIgXOOAmFG89+/eF2zkiVYJZRHANf0YXKtuliRrJ7ZHIPwToMPQkMsegTFOrvDDJCzDYyA==
-X-Received: by 2002:a63:7802:: with SMTP id t2mr13057740pgc.352.1581528582675;
-        Wed, 12 Feb 2020 09:29:42 -0800 (PST)
-Received: from ?IPv6:2620:10d:c081:1131::1018? ([2620:10d:c090:180::78ef])
-        by smtp.gmail.com with ESMTPSA id t23sm1679471pfq.6.2020.02.12.09.29.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2020 09:29:42 -0800 (PST)
-Subject: Re: [ISSUE] The time cost of IOSQE_IO_LINK
+        bh=wkZ54TmjuoQncn5LIcfLUWX+2v8MMbgcS9dyrLhx7oM=;
+        b=jyOHrmcdreVCvFC321B8hqp4nUIum+DJrkBYYdb2FE0XCFxYIJ5Io479p5SZDLQsW0
+         VJ0Rb2ZsGK8bIF5bws4LX0TOVTt6mkdlGBOsPA7dGnZqm61SnW7gYdVja0Bpo4//tbBP
+         1Ngw8HLHfQeqTuiPAsWOo/5kdOLaTfUliw/UAgPqYrtfH8TIJHcKaEH3OFt8h1jBI7uD
+         z6ol6oY49cLLO3iMozVZVfKNUrsmBYnJVkE6w257h4P67JifHEuEQNZNPgggMLN7BxJz
+         1pqF+BjzhnmKA2aDI+rX5nF57EL+Di/veXJ2tFuhBFnq0tg+mWv19WaMdpiHc9OZY6lc
+         FcFg==
+X-Gm-Message-State: APjAAAVGUqpXV/auKCZXk9KZ1oR7aFbzfptf0NCdeQr+9mLUx+2BRajR
+        CB76SeKuFzZaZiR7XV2aIr/xVA/P4/Q=
+X-Google-Smtp-Source: APXvYqzBqunfpCQH79URjAAu0d2Yo8Gu2w5F8e9aRF2vsMKZegiJbzsymG9/XXwnWM1fIvdifsxISA==
+X-Received: by 2002:a6b:f913:: with SMTP id j19mr17942916iog.124.1581539117566;
+        Wed, 12 Feb 2020 12:25:17 -0800 (PST)
+Received: from x1.localdomain ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id 203sm37938ilb.42.2020.02.12.12.25.17
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 12:25:17 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     =?UTF-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <9FEF0D34-A012-4505-AA4E-FF97CC302A33@eoitek.com>
- <8a3ee653-77ed-105d-c1c3-87087451914e@kernel.dk>
- <c0bf9bf4-9932-0c74-aa74-72b9cfa488b0@kernel.dk>
-Message-ID: <4f1cdfd5-4947-39d0-c21b-01e694b47e87@kernel.dk>
-Date:   Wed, 12 Feb 2020 10:29:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET v2 0/3] io_uring: make POLL_ADD support multiple waitqs
+Date:   Wed, 12 Feb 2020 13:25:12 -0700
+Message-Id: <20200212202515.15299-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <c0bf9bf4-9932-0c74-aa74-72b9cfa488b0@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/12/20 10:22 AM, Jens Axboe wrote:
-> On 2/12/20 10:11 AM, Jens Axboe wrote:
->> On 2/12/20 9:31 AM, Carter Li 李通洲 wrote:
->>> Hi everyone,
->>>
->>> IOSQE_IO_LINK seems to have very high cost, even greater then io_uring_enter syscall.
->>>
->>> Test code attached below. The program completes after getting 100000000 cqes.
->>>
->>> $ gcc test.c -luring -o test0 -g -O3 -DUSE_LINK=0
->>> $ time ./test0
->>> USE_LINK: 0, count: 100000000, submit_count: 1562500
->>> 0.99user 9.99system 0:11.02elapsed 99%CPU (0avgtext+0avgdata 1608maxresident)k
->>> 0inputs+0outputs (0major+72minor)pagefaults 0swaps
->>>
->>> $ gcc test.c -luring -o test1 -g -O3 -DUSE_LINK=1
->>> $ time ./test1
->>> USE_LINK: 1, count: 100000110, submit_count: 799584
->>> 0.83user 19.21system 0:20.90elapsed 95%CPU (0avgtext+0avgdata 1632maxresident)k
->>> 0inputs+0outputs (0major+72minor)pagefaults 0swaps
->>>
->>> As you can see, the `-DUSE_LINK=1` version emits only about half io_uring_submit calls
->>> of the other version, but takes twice as long. That makes IOSQE_IO_LINK almost useless,
->>> please have a check.
->>
->> The nop isn't really a good test case, as it doesn't contain any smarts
->> in terms of executing a link fast. So it doesn't say a whole lot outside
->> of "we could make nop links faster", which is also kind of pointless.
->>
->> "Normal" commands will work better. Where the link is really a win is if
->> the first request needs to go async to complete. For that case, the
->> next link can execute directly from that context. This saves an async
->> punt for the common case.
-> 
-> Case in point, if I just add the below patch, we're a lot closer:
-> 
-> [root@archlinux liburing]# time test/nop-link 0
-> Using link: 0
-> count: 100000000, submit_count: 1562500
-> 
-> 
-> real	0m7.934s
-> user	0m0.740s
-> sys	0m7.157s
-> [root@archlinux liburing]# time test/nop-link 1
-> Using link: 1
-> count: 100000000, submit_count: 781250
-> 
-> 
-> real	0m9.009s
-> user	0m0.710s
-> sys	0m8.264s
-> 
-> The links are still a bit slower, which is to be expected as the
-> nop basically just completes, it doesn't do anything at all and
-> it never needs to go async.
+Here's v2 of the "let's make POLL_ADD work on everything" patchset. As
+before, patches 1-2 are just basic prep patches, and should not have any
+functional changes in them. Patch 3 adds support for allocating a new
+io_poll_iocb unit if we get multiple additions through our queue proc
+for the wait queues. This new 'poll' addition is queued up as well, and
+it grabs a reference to the original poll request.
 
-Pinning the test for more reliable results and we're basically even.
+Changes since v1:
 
-[root@archlinux liburing]# time taskset -c 0 test/nop-link 1
-Using link: 1
-count: 100000000, submit_count: 781250
-
-
-real	0m8.251s
-user	0m0.680s
-sys	0m7.536s
-
-[root@archlinux liburing]# time taskset -c 0 test/nop-link 0
-Using link: 0
-count: 100000000, submit_count: 1562500
-
-
-real	0m7.986s
-user	0m0.610s
-sys	0m7.340s
-
-For the intended case (outlined above), it'll definitely be a
-win.
+- Fix unused 'ret' variable in io_poll_double_wake()
+- Fail if we get an attempt at a third waitqueue addition (Pavel)
 
 -- 
 Jens Axboe
+
 

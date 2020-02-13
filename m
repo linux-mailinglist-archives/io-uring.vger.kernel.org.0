@@ -2,63 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B43FB15C109
-	for <lists+io-uring@lfdr.de>; Thu, 13 Feb 2020 16:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5477015C12A
+	for <lists+io-uring@lfdr.de>; Thu, 13 Feb 2020 16:14:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbgBMPIN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 Feb 2020 10:08:13 -0500
-Received: from mail-lj1-f175.google.com ([209.85.208.175]:33575 "EHLO
-        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbgBMPIN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Feb 2020 10:08:13 -0500
-Received: by mail-lj1-f175.google.com with SMTP id y6so7003382lji.0
-        for <io-uring@vger.kernel.org>; Thu, 13 Feb 2020 07:08:09 -0800 (PST)
+        id S1727671AbgBMPOu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 Feb 2020 10:14:50 -0500
+Received: from mail-il1-f171.google.com ([209.85.166.171]:37957 "EHLO
+        mail-il1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727742AbgBMPOu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Feb 2020 10:14:50 -0500
+Received: by mail-il1-f171.google.com with SMTP id f5so5260795ilq.5
+        for <io-uring@vger.kernel.org>; Thu, 13 Feb 2020 07:14:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sERHr2/Up3vmok5oE9m78EPT9j+qjhaMneIVOseolQk=;
-        b=TZL5c2yTj/kzbJz9/6wc6vGHI1m2PpBp/PYzXPoNHSI1tutS/9BdMayAGMD9lQQ/QL
-         ojeCurgF2H8Po7hGr3ZKRqbhakTYCjkKDGoAxchc1FexgBLGUykmgxKIdSltDhzmjeE4
-         AxK3E64I10CbDNw4vivLZTS6DyGAQYHrclEr4OjX6iT4Jvfc0+lTMNiR811wfb+qd7Mg
-         yUA88KqKcWzJOuNq5/uFNgttsX63KBS+m2JNr25ctL5uX7VAP9eOgWFIgLgVVealeV/Q
-         VYRANSn41pwFoNpLiNSE8ycVJ+6o3Bj6wwnONGoPCvZqBxQ1vqTBjFvBBfFU8jqhgreQ
-         Fn/A==
+        bh=IdPuhyh0Vn4sM4f9nVAZGziVd1L1hk6h2JT3aOkHIU8=;
+        b=xBg2srfjgYR1seqCLNO9O/m8iOK6ikG+SKo7ezOIF3Xlc9fsj7iIQpuX1yU1T9l2ez
+         5iIf20igqnqX1CWv6yH1P33lI3rN0OMTeghn4FtnWWfcCA5SBL9+r59IyoqostqKy20L
+         LMJ4IBO5dkvCFb8dhwhZjRRG0DO4juv5Z4YoyoDLw7YfBuoVQnzHalcGhvUqQloOt7bj
+         SK1n6a0w/XOb8a+hGJvchE8l5FR565L7pTuk8BWSlGnIMi94oCLk9PWmagiJAytwo1Ja
+         i96PizoYcFbCVH5psAUVqwuu8lPgPPHWrL4M/m0xZZrNCVo394m7QBwKwK8jZ9D7+pEP
+         rfww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=sERHr2/Up3vmok5oE9m78EPT9j+qjhaMneIVOseolQk=;
-        b=Khghd1qlhFFEaC7TnUV2E/FQBUO6p3lSwNLPKwm5HPo5ovFIdcH35+JEYxRNliHqXM
-         6bu0zEnw/DIKVg+l1vii6DtmGznw7Gx838DzDPKsTqgxsN+6JyeS8Zh8C5uelV40/tlL
-         T2JWyFJ4Du+B1wtVTVZfyqA1vDGc67w7VbsZG1OJKBUQIHKVfv/avosaa8pnfa8PTKdW
-         lQR54Kxcj+zgicbPwtPe6MvWujnVgQ/FEZ/2jBJDacwEJqKDj8+CvUez+ss90+vpORay
-         /3IMC7zfmbrDp6/OCXsI/0idf5pvyBXbcv8jj4vBU6v8tgEFiLYhd+KhaBt0q8lBhgRN
-         BYjw==
-X-Gm-Message-State: APjAAAXt6vZlEHNFiw/9MlYV1nuADWwfDaJprIne5HhaI2SNwXDTlkwa
-        SptnPFghbZyiV0frGyY0wQdUIsnU
-X-Google-Smtp-Source: APXvYqwAWEwQGwMaBGxTDG+ajG8N732M5RlOFAOKFjAG/WNBsm8ZjoSJBNpHaBWl+KYqHWGCnLh/mQ==
-X-Received: by 2002:a05:651c:120d:: with SMTP id i13mr11353332lja.173.1581606487846;
-        Thu, 13 Feb 2020 07:08:07 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id m3sm1403678lfl.97.2020.02.13.07.08.06
+        bh=IdPuhyh0Vn4sM4f9nVAZGziVd1L1hk6h2JT3aOkHIU8=;
+        b=dBJbgL0siHcWn3I6GdeOEoPACEizuDYw2yxZWtXjFZkg4pQ2Pj1SAdizBPMsMyr0Fx
+         +Jz52UVdwUQXIzQUGCUT+UFC3JJ0benrmSvEeIUPz2d8G14+ph7ctc+J3Y5Ryvwww8PF
+         N6n+OuzBsgxUrpYj7mN13VuaPvrLs6CgNAb9MKIRhcjaD6vxgagby3npWBb6rovO3tun
+         taKT3geccvZEUIHNO6JMN567JzL5U6NtNprT2I8wITN7/zfvaZLup9rm8HG/Hch54V6Y
+         Xs9mIiXfylQeK+mBgD7j3Cd9/7xzPxmKiQd15vK7j0bhii4OwEWygduXuZ7I0WF2XUtl
+         v0pg==
+X-Gm-Message-State: APjAAAXPJK4Jb3mgE24tD04wNet0DxSSdyNZ30vhw8Xy1NuOtDz3l1hb
+        Y3CdvE2Gc+fO5/gf0QyLpuK8cMDOwj8=
+X-Google-Smtp-Source: APXvYqwxK1xdC0ojhrQktMz77QArh64y4jUBNzLO8hFzf5MKcHlw9xipwNFQkrc40HYVPDxk7KT6PA==
+X-Received: by 2002:a92:4013:: with SMTP id n19mr16316300ila.279.1581606889383;
+        Thu, 13 Feb 2020 07:14:49 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id m6sm725204ioc.52.2020.02.13.07.14.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2020 07:08:07 -0800 (PST)
+        Thu, 13 Feb 2020 07:14:48 -0800 (PST)
 Subject: Re: [ISSUE] The time cost of IOSQE_IO_LINK
-To:     =?UTF-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>,
-        Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        =?UTF-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>
 Cc:     io-uring <io-uring@vger.kernel.org>
 References: <9FEF0D34-A012-4505-AA4E-FF97CC302A33@eoitek.com>
  <8a3ee653-77ed-105d-c1c3-87087451914e@kernel.dk>
  <ADF462D7-A381-4314-8931-DDB0A2C18761@eoitek.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <9a8e4c8a-f8b2-900d-92b6-cc69b6adf324@gmail.com>
-Date:   Thu, 13 Feb 2020 18:08:05 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+ <9a8e4c8a-f8b2-900d-92b6-cc69b6adf324@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5f09d89a-0c6d-47c2-465c-993af0c7ae71@kernel.dk>
+Date:   Thu, 13 Feb 2020 08:14:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <ADF462D7-A381-4314-8931-DDB0A2C18761@eoitek.com>
+In-Reply-To: <9a8e4c8a-f8b2-900d-92b6-cc69b6adf324@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -67,296 +68,45 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/13/2020 3:33 AM, Carter Li 李通洲 wrote:
-> Thanks for your reply.
+On 2/13/20 8:08 AM, Pavel Begunkov wrote:
+> On 2/13/2020 3:33 AM, Carter Li 李通洲 wrote:
+>> Thanks for your reply.
+>>
+>> You are right the nop isn't really a good test case. But I actually
+>> found this issue when benchmarking my echo server, which didn't use
+>> NOP of course.
 > 
-> You are right the nop isn't really a good test case. But I actually
-> found this issue when benchmarking my echo server, which didn't use
-> NOP of course.
+> If there are no hidden subtle issues in io_uring, your benchmark or the
+> used pattern itself, it's probably because of overhead on async punting
+> (copying iovecs, several extra switches, refcounts, grabbing mm/fs/etc,
+> io-wq itself).
+> 
+> I was going to tune async/punting stuff anyway, so I'll look into this.
+> And of course, there is always a good chance Jens have some bright insights
 
-If there are no hidden subtle issues in io_uring, your benchmark or the
-used pattern itself, it's probably because of overhead on async punting
-(copying iovecs, several extra switches, refcounts, grabbing mm/fs/etc,
-io-wq itself).
+The main issue here is that if you do the poll->recv, then it'll be
+an automatic punt of the recv to async context when the poll completes.
+That's regardless of whether or not we can complete the poll inline,
+we never attempt to recv inline from that completion. This is in contrast
+to doing a separate poll, getting the notification, then doing another
+sqe and io_uring_enter to perform the recv. For this case, we end up
+doing everything inline, just with the cost of an additional system call
+to submit the new recv.
 
-I was going to tune async/punting stuff anyway, so I'll look into this.
-And of course, there is always a good chance Jens have some bright insights
+It'd be really cool if we could improve on this situation, as recv (or
+read) preceded by a poll is indeed a common use case. Or ditto for the
+write side.
 
-BTW, what's benefit of doing poll(fd)->read(fd), but not directly read()?
+> BTW, what's benefit of doing poll(fd)->read(fd), but not directly read()?
 
-> Test case attached below. Use rust_echo_bench for benchmarking.
-> https://github.com/haraldh/rust_echo_bench
-> 
-> 
-> $ gcc link_recv.c -o link_recv -luring -O3 -DUSE_LINK=0
-> $ ./link_recv 12345
-> $ cargo run --release # On another console
-> Benchmarking: 127.0.0.1:12345
-> 50 clients, running 512 bytes, 60 sec.
-> 
-> Speed: 168264 request/sec, 168264 response/sec
-> Requests: 10095846
-> Responses: 10095844
-> 
-> $ gcc link_recv.c -o link_recv -luring -O3 -DUSE_LINK=1
-> $ ./link_recv 12345
-> $ cargo run --release # On another console
-> Benchmarking: 127.0.0.1:12345
-> 50 clients, running 512 bytes, 60 sec.
-> 
-> Speed: 112666 request/sec, 112666 response/sec
-> Requests: 6760009
-> Responses: 6759975
-> 
-> 
-> I think `POLL_ADD(POLLIN)-RECV` and `POLL_ADD(POLLOUT)-SEND` are common use cases for networking ( for some reason a short read for SEND is not considered an error, `RECV-SEND` cannot be used in a link chain ). RECV/SEND won't block after polled. I expect better performance for fewer io_uring_enter syscalls. Could you please have a check with it?
-> 
-> Another more complex test case `POLL_ADD-READ_FIXED-WRITE_FIXED` I have posted on Github, which currently results in freeze.
-> 
-> https://github.com/axboe/liburing/issues/71
-> 
-> Carter
-> 
-> ---
-> 
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <string.h>
-> #include <unistd.h>
-> 
-> #include <sys/socket.h>
-> #include <sys/poll.h>
-> #include <netinet/in.h>
-> 
-> #include <liburing.h>
-> 
-> #define BACKLOG 128
-> #define MAX_MESSAGE_LEN 1024
-> #define MAX_CONNECTIONS 1024
-> #ifndef USE_LINK
-> #   define USE_LINK 0
-> #endif
-> 
-> enum { ACCEPT, POLL, READ, WRITE };
-> 
-> struct conn_info {
->     __u32 fd;
->     __u32 type;
-> };
-> 
-> typedef char buf_type[MAX_CONNECTIONS][MAX_MESSAGE_LEN];
-> 
-> static struct io_uring ring;
-> static unsigned cqe_count = 0;
-> 
-> int init_socket(int portno) {
->     int sock_listen_fd = socket(AF_INET, SOCK_STREAM, 0);
->     if (sock_listen_fd < 0) {
->         perror("socket");
->         return -1;
->     }
-> 
->     struct sockaddr_in server_addr = {
->         .sin_family = AF_INET,
->         .sin_port = htons(portno),
->         .sin_addr = {
->             .s_addr = INADDR_ANY,
->         },
->     };
-> 
->     if (bind(sock_listen_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
->         perror("bind");
->         return -1;
->     }
-> 
->     if (listen(sock_listen_fd, BACKLOG) < 0) {
->         perror("listen");
->         return -1;
->     }
-> 
->     return sock_listen_fd;
-> }
-> 
-> static struct io_uring_sqe* get_sqe_safe() {
->     struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
->     if (__builtin_expect(!!sqe, 1)) {
->         return sqe;
->     } else {
->         io_uring_cq_advance(&ring, cqe_count);
->         cqe_count = 0;
->         io_uring_submit(&ring);
->         return io_uring_get_sqe(&ring);
->     }
-> }
-> 
-> static void add_accept(int fd, struct sockaddr *client_addr, socklen_t *client_len) {
->     struct io_uring_sqe *sqe = get_sqe_safe();
->     struct conn_info conn_i = {
->         .fd = fd,
->         .type = ACCEPT,
->     };
-> 
->     io_uring_prep_accept(sqe, fd, client_addr, client_len, 0);
->     memcpy(&sqe->user_data, &conn_i, sizeof(conn_i));
-> }
-> 
-> static void add_poll(int fd, int poll_mask, unsigned flags) {
->     struct io_uring_sqe *sqe = get_sqe_safe();
->     struct conn_info conn_i = {
->         .fd = fd,
->         .type = POLL,
->     };
-> 
->     io_uring_prep_poll_add(sqe, fd, poll_mask);
->     io_uring_sqe_set_flags(sqe, flags);
->     memcpy(&sqe->user_data, &conn_i, sizeof(conn_i));
-> }
-> 
-> static void add_socket_read(int fd, size_t size, buf_type *bufs) {
->     struct io_uring_sqe *sqe = get_sqe_safe();
->     struct conn_info conn_i = {
->         .fd = fd,
->         .type = READ,
->     };
-> 
->     io_uring_prep_recv(sqe, fd, (*bufs)[fd], size, MSG_NOSIGNAL);
->     memcpy(&sqe->user_data, &conn_i, sizeof(conn_i));
-> }
-> 
-> static void add_socket_write(int fd, size_t size, buf_type *bufs, unsigned flags) {
->     struct io_uring_sqe *sqe = get_sqe_safe();
->     struct conn_info conn_i = {
->         .fd = fd,
->         .type = WRITE,
->     };
-> 
->     io_uring_prep_send(sqe, fd, (*bufs)[fd], size, MSG_NOSIGNAL);
->     io_uring_sqe_set_flags(sqe, flags);
->     memcpy(&sqe->user_data, &conn_i, sizeof(conn_i));
-> }
-> 
-> int main(int argc, char *argv[]) {
->     if (argc < 2) {
->         fprintf(stderr, "Please give a port number: %s [port]\n", argv[0]);
->         return 1;
->     }
-> 
->     int portno = strtol(argv[1], NULL, 10);
->     int sock_listen_fd = init_socket(portno);
->     if (sock_listen_fd < 0) return -1;
->     printf("io_uring echo server listening for connections on port: %d\n", portno);
-> 
-> 
->     int ret = io_uring_queue_init(BACKLOG, &ring, 0);
->     if (ret < 0) {
->         fprintf(stderr, "queue_init: %s\n", strerror(-ret));
->         return -1;
->     }
-> 
->     buf_type *bufs = (buf_type *)malloc(sizeof(*bufs));
-> 
->     struct sockaddr_in client_addr;
->     socklen_t client_len = sizeof(client_addr);
->     add_accept(sock_listen_fd, (struct sockaddr *)&client_addr, &client_len);
-> 
->     while (1) {
->         io_uring_submit_and_wait(&ring, 1);
-> 
->         struct io_uring_cqe *cqe;
->         unsigned head;
-> 
->         io_uring_for_each_cqe(&ring, head, cqe) {
->             ++cqe_count;
-> 
->             struct conn_info conn_i;
->             memcpy(&conn_i, &cqe->user_data, sizeof(conn_i));
->             int result = cqe->res;
-> 
->             switch (conn_i.type) {
->             case ACCEPT:
-> #if USE_LINK
->                 add_poll(result, POLLIN, IOSQE_IO_LINK);
->                 add_socket_read(result, MAX_MESSAGE_LEN, bufs);
-> #else
->                 add_poll(result, POLLIN, 0);
-> #endif
->                 add_accept(sock_listen_fd, (struct sockaddr *)&client_addr, &client_len);
->                 break;
-> 
-> #if !USE_LINK
->             case POLL:
->                 add_socket_read(conn_i.fd, MAX_MESSAGE_LEN, bufs);
->                 break;
-> #endif
-> 
->             case READ:
->                 if (__builtin_expect(result <= 0, 0)) {
->                     shutdown(conn_i.fd, SHUT_RDWR);
->                 } else {
->                     add_socket_write(conn_i.fd, result, bufs, 0);
->                 }
->                 break;
-> 
->             case WRITE:
-> #if USE_LINK
->                 add_poll(conn_i.fd, POLLIN, IOSQE_IO_LINK);
->                 add_socket_read(conn_i.fd, MAX_MESSAGE_LEN, bufs);
-> #else
->                 add_poll(conn_i.fd, POLLIN, 0);
-> #endif
->                 break;
->             }
->         }
-> 
->         io_uring_cq_advance(&ring, cqe_count);
->         cqe_count = 0;
->     }
-> 
-> 
->     close(sock_listen_fd);
->     free(bufs);
-> }
-> 
-> 
-> 
->> 2020年2月13日 上午1:11，Jens Axboe <axboe@kernel.dk> 写道：
->>
->> On 2/12/20 9:31 AM, Carter Li 李通洲 wrote:
->>> Hi everyone,
->>>
->>> IOSQE_IO_LINK seems to have very high cost, even greater then io_uring_enter syscall.
->>>
->>> Test code attached below. The program completes after getting 100000000 cqes.
->>>
->>> $ gcc test.c -luring -o test0 -g -O3 -DUSE_LINK=0
->>> $ time ./test0
->>> USE_LINK: 0, count: 100000000, submit_count: 1562500
->>> 0.99user 9.99system 0:11.02elapsed 99%CPU (0avgtext+0avgdata 1608maxresident)k
->>> 0inputs+0outputs (0major+72minor)pagefaults 0swaps
->>>
->>> $ gcc test.c -luring -o test1 -g -O3 -DUSE_LINK=1
->>> $ time ./test1
->>> USE_LINK: 1, count: 100000110, submit_count: 799584
->>> 0.83user 19.21system 0:20.90elapsed 95%CPU (0avgtext+0avgdata 1632maxresident)k
->>> 0inputs+0outputs (0major+72minor)pagefaults 0swaps
->>>
->>> As you can see, the `-DUSE_LINK=1` version emits only about half io_uring_submit calls
->>> of the other version, but takes twice as long. That makes IOSQE_IO_LINK almost useless,
->>> please have a check.
->>
->> The nop isn't really a good test case, as it doesn't contain any smarts
->> in terms of executing a link fast. So it doesn't say a whole lot outside
->> of "we could make nop links faster", which is also kind of pointless.
->>
->> "Normal" commands will work better. Where the link is really a win is if
->> the first request needs to go async to complete. For that case, the
->> next link can execute directly from that context. This saves an async
->> punt for the common case.
->>
->> -- 
->> Jens Axboe
->>
-> 
+If there's no data to begin with, then the read will go async. Hence
+it'll be a switch to a worker thread. The above should avoid it, but
+it doesn't.
+
+For carter's sake, it's worth nothing that the poll command is special
+and normal requests would be more efficient with links. We just need
+to work on making the poll linked with read/write perform much better.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

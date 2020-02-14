@@ -2,199 +2,146 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E313115D809
-	for <lists+io-uring@lfdr.de>; Fri, 14 Feb 2020 14:11:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18DE015D865
+	for <lists+io-uring@lfdr.de>; Fri, 14 Feb 2020 14:27:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729252AbgBNNLp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 Feb 2020 08:11:45 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:28531 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728336AbgBNNLp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Feb 2020 08:11:45 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Tpz-n5I_1581685891;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Tpz-n5I_1581685891)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 14 Feb 2020 21:11:43 +0800
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: [PATCH] io_uring: fix poll_list race for SETUP_IOPOLL|SETUP_SQPOLL
-Date:   Fri, 14 Feb 2020 21:11:25 +0800
-Message-Id: <20200214131125.3391-1-xiaoguang.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.2
+        id S1728437AbgBNN1c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 Feb 2020 08:27:32 -0500
+Received: from mail-shaon0132.outbound.protection.partner.outlook.cn ([42.159.164.132]:62456
+        "EHLO CN01-SHA-obe.outbound.protection.partner.outlook.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728405AbgBNN1c (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 14 Feb 2020 08:27:32 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nz2/sh2asEHkVTTXMCwFR+NW7/HEHrRl0cHYIXkyioOcq2nIqslgQL0RwUD0+Izm4NNoUI9QcTa2zCqJF+9VQGFviFQwQ0uljB9zpRN7vXFuVIX/ohHaOZYo/9XLQfS6kg5s2sCDeL9AoH7kuW2Ltuk+Pz525gNbzqnG1JouKd7hH0jcWPQD2MM6Bm2G1YEoMgGKHM2HoXGeESECT5vTzyB++ihjBC+PJLFoUymGdx1C60ChL/tJILpfKiPya2lv8JdQ0FOYd/Dicwxl1OKcF8uTnxIu+thQwRE+RU30EK86jttwqipSUcKkLTsLyAPrZUCtmyy/77mKITA+si72qw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z4wG68g9HHC8x+HbUAWcHNwHwx2d33sCpoHifDiiBFI=;
+ b=kgM84lBe5ruRSU8T/PscdxUL3wjNzK3qpTbZtRpUuRvyGq3R/n/upMaBdBQ5et3rQasoXdqRZKVEG4+UCDQjBWfEUc38xZgQlz0YfgOvbE0cDDYXUbG4abBw0nvZR5jz5uQrCd2Nr3Yv9CUUQq0fJD7p7wGQtMopYLsdgmqkWrpCIsAZNWu9LVi5M8YAsrvRtvSMpPzxSj7y12PA26/BnedDz/XyDUCGaEwvmQxNsUjw0q95LtwDjisNUzfDzTZe6S+zauHtrYo9dip0FDbM4SX9MN0FaFYbeX+adL49Yu59dE6AzLPyMDNfVg4r6NsSbfJC8UX8weh62mc0BFPU5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=eoitek.com; dmarc=pass action=none header.from=eoitek.com;
+ dkim=pass header.d=eoitek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=eoitek.partner.onmschina.cn; s=selector1-eoitek-partner-onmschina-cn;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z4wG68g9HHC8x+HbUAWcHNwHwx2d33sCpoHifDiiBFI=;
+ b=Lh4UaxHXaujgXlT85o0HsinvXO6vYtlIycV9N4GRTeR/D9dXXHBt5AkVTJpbf/AQw7QVAr/uRF0X7IrD1tE7JAMMfJNUp+rXWKCz/0yWXaooR0j3XrffSqRHsURj8oNFkpIMorEeRPYn9471lxzcIgA78FJ87u/vYBhTWKAcV/g=
+Received: from SH0PR01MB0491.CHNPR01.prod.partner.outlook.cn (10.43.108.138)
+ by SH0PR01MB0539.CHNPR01.prod.partner.outlook.cn (10.43.108.82) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.23; Fri, 14 Feb
+ 2020 13:27:27 +0000
+Received: from SH0PR01MB0491.CHNPR01.prod.partner.outlook.cn ([10.43.108.138])
+ by SH0PR01MB0491.CHNPR01.prod.partner.outlook.cn ([10.43.108.138]) with mapi
+ id 15.20.2729.021; Fri, 14 Feb 2020 13:27:27 +0000
+From:   =?utf-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+CC:     io-uring <io-uring@vger.kernel.org>
+Subject: Re: [FEATURE REQUEST] Specify a sqe won't generate a cqe
+Thread-Topic: [FEATURE REQUEST] Specify a sqe won't generate a cqe
+Thread-Index: AQHV4xDdjkRpeTIk4EOwWEL6ELxawKgafmoAgAAPDwCAABd/AIAACeWA
+Date:   Fri, 14 Feb 2020 13:27:27 +0000
+Message-ID: <57BDF3A6-7279-4250-B200-76FDCDB04765@eoitek.com>
+References: <9A41C624-3D2C-40BC-A910-59CBDC5BB76E@eoitek.com>
+ <30d88cf3-527e-4396-4934-fff13c449a80@gmail.com>
+ <7C48911C-9C0F-42E1-90DA-7C277E37D986@eoitek.com>
+ <19236051-0949-ed5c-d1d5-458c07681f36@gmail.com>
+In-Reply-To: <19236051-0949-ed5c-d1d5-458c07681f36@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=carter.li@eoitek.com; 
+x-originating-ip: [183.200.9.149]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c06f8094-b17c-44ef-da63-08d7b151a290
+x-ms-traffictypediagnostic: SH0PR01MB0539:
+x-microsoft-antispam-prvs: <SH0PR01MB0539B176C8ED0F4A78D8153C94150@SH0PR01MB0539.CHNPR01.prod.partner.outlook.cn>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 03137AC81E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(189003)(199004)(328002)(329002)(76116006)(2616005)(63696004)(71200400001)(86362001)(95416001)(2906002)(8676002)(66476007)(66556008)(81166006)(81156014)(53546011)(186003)(66946007)(5660300002)(59450400001)(64756008)(966005)(26005)(66446008)(508600001)(36756003)(8936002)(4326008)(6916009)(85182001)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:SH0PR01MB0539;H:SH0PR01MB0491.CHNPR01.prod.partner.outlook.cn;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: eoitek.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: JZpu3C0vUdaAukRGhv6iLed8292+kFg3VslDYEzDKm0aCWyxOnq+CKXlk2qCLIToP3/ygnxrJFlTsuM/aR3QNtPViuWu4pSr48pk20wkAZKKnm/HkYHowmCqNo/T3sdwe805d/zoNS0KqYTLTeJ/6VXVKQfR1v6UIpkeGhk3N0yrKUvW6gfbSeI4FyoD4btwx5r6NgQUtVk/2xGbjLAhzddSU/EmKtkDHhQvlzHyfoE5QZoC/Cu9Jpeyf8wmhSDcrJLabkYby+2Y3eGFBPNMC+cVkuJMBhI6gOW85vYg0kkkdYULFshoki8enhFzh3V8/IaioTsetVtx56+EOgvzuozT0mCLH5yTtBJDNvJZEblj2ZcvH/yMXeKsUf37cDdp+wxlmyVHhaESVVaWt0o/MnsmB1fedjBYFwnGq72s6JD57VmYhd22K5XN4phllJ0QwvREUbrwhhXzob0iZnWX0fJmpiS6i2HZl3HlsE2+QU7T0BfwSnxcptYLvuk3uMIahxVvZvscWy3InxZGJb+/OA==
+x-ms-exchange-antispam-messagedata: R01J9wz0jPkQ7Wg6o97rj5qrD1kkZ06rlvZCUZ8sOJI05ejf1eZMmGmiESq5/jC761MXTSri2QwG7IXr5KIq6P8cXMbYqDKkx2cZ6ybNlt1MTRVR6LT1YsKpbTdqLQ/IAWyvnEWz6EwaBDssffmCbA==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1BA383A027690D43BF93F848B979A9D6@CHNPR01.prod.partner.outlook.cn>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: eoitek.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c06f8094-b17c-44ef-da63-08d7b151a290
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2020 13:27:27.1605
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e3e4d1ca-338b-4a22-bdef-50f88bbc88d8
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: D0HaZctROisS8fmH9hbE+OmwgWLanGvFbkq3IMYuE44AP4iYwqN9KP9IxsyuQ2u8XHavLWGy0O9zeweS0XV4Gg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SH0PR01MB0539
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-After making ext4 support iopoll method:
-  let ext4_file_operations's iopoll method be iomap_dio_iopoll(),
-we found fio can easily hang in fio_ioring_getevents() with below fio
-job:
-    rm -f testfile; sync;
-    sudo fio -name=fiotest -filename=testfile -iodepth=128 -thread
--rw=write -ioengine=io_uring  -hipri=1 -sqthread_poll=1 -direct=1
--bs=4k -size=10G -numjobs=8 -runtime=2000 -group_reporting
-with IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL enabled.
-
-There are two issues that results in this hang, one reason is that
-when IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL are enabled, fio
-does not use io_uring_enter to get completed events, it relies on
-kernel io_sq_thread to poll for completed events.
-
-Another reason is that there is a race: when io_submit_sqes() in
-io_sq_thread() submits a batch of sqes, variable 'inflight' will
-record the number of submitted reqs, then io_sq_thread will poll for
-reqs which have been added to poll_list. But note, if some previous
-reqs have been punted to io worker, these reqs will won't be in
-poll_list timely. io_sq_thread() will only poll for a part of previous
-submitted reqs, and then find poll_list is empty, reset variable
-'inflight' to be zero. If app just waits these deferred reqs and does
-not wake up io_sq_thread again, then hang happens.
-
-For app that entirely relies on io_sq_thread to poll completed requests,
-let io_iopoll_req_issued() wake up io_sq_thread properly when adding new
-element to poll_list.
-
-Fixes: 2b2ed9750fc9 ("io_uring: fix bad inflight accounting for SETUP_IOPOLL|SETUP_SQTHREAD")
-Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
----
- fs/io_uring.c | 63 +++++++++++++++++++++++++--------------------------
- 1 file changed, 31 insertions(+), 32 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 77f22c3da30f..fe1fa2d00606 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1793,6 +1793,9 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
- 		list_add(&req->list, &ctx->poll_list);
- 	else
- 		list_add_tail(&req->list, &ctx->poll_list);
-+
-+	if (ctx->flags & IORING_SETUP_SQPOLL && wq_has_sleeper(&ctx->sqo_wait))
-+		wake_up(&ctx->sqo_wait);
- }
- 
- static void io_file_put(struct io_submit_state *state)
-@@ -5011,9 +5014,9 @@ static int io_sq_thread(void *data)
- 	const struct cred *old_cred;
- 	mm_segment_t old_fs;
- 	DEFINE_WAIT(wait);
--	unsigned inflight;
- 	unsigned long timeout;
--	int ret;
-+	int ret = 0;
-+	bool iopoll = false;
- 
- 	complete(&ctx->completions[1]);
- 
-@@ -5021,39 +5024,21 @@ static int io_sq_thread(void *data)
- 	set_fs(USER_DS);
- 	old_cred = override_creds(ctx->creds);
- 
--	ret = timeout = inflight = 0;
-+	if (ctx->flags & IORING_SETUP_IOPOLL)
-+		iopoll = true;
-+	timeout = jiffies + ctx->sq_thread_idle;
- 	while (!kthread_should_park()) {
- 		unsigned int to_submit;
- 
--		if (inflight) {
-+		if (!list_empty(&ctx->poll_list)) {
- 			unsigned nr_events = 0;
- 
--			if (ctx->flags & IORING_SETUP_IOPOLL) {
--				/*
--				 * inflight is the count of the maximum possible
--				 * entries we submitted, but it can be smaller
--				 * if we dropped some of them. If we don't have
--				 * poll entries available, then we know that we
--				 * have nothing left to poll for. Reset the
--				 * inflight count to zero in that case.
--				 */
--				mutex_lock(&ctx->uring_lock);
--				if (!list_empty(&ctx->poll_list))
--					__io_iopoll_check(ctx, &nr_events, 0);
--				else
--					inflight = 0;
--				mutex_unlock(&ctx->uring_lock);
--			} else {
--				/*
--				 * Normal IO, just pretend everything completed.
--				 * We don't have to poll completions for that.
--				 */
--				nr_events = inflight;
--			}
--
--			inflight -= nr_events;
--			if (!inflight)
-+			mutex_lock(&ctx->uring_lock);
-+			if (!list_empty(&ctx->poll_list))
-+				__io_iopoll_check(ctx, &nr_events, 0);
-+			if (list_empty(&ctx->poll_list))
- 				timeout = jiffies + ctx->sq_thread_idle;
-+			mutex_unlock(&ctx->uring_lock);
- 		}
- 
- 		to_submit = io_sqring_entries(ctx);
-@@ -5070,7 +5055,7 @@ static int io_sq_thread(void *data)
- 			 * more IO, we should wait for the application to
- 			 * reap events and wake us up.
- 			 */
--			if (inflight ||
-+			if (!list_empty(&ctx->poll_list) ||
- 			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
- 			    !percpu_ref_is_dying(&ctx->refs))) {
- 				cond_resched();
-@@ -5089,6 +5074,15 @@ static int io_sq_thread(void *data)
- 				cur_mm = NULL;
- 			}
- 
-+			if (iopoll) {
-+				mutex_lock(&ctx->uring_lock);
-+				if (!list_empty(&ctx->poll_list)) {
-+					mutex_unlock(&ctx->uring_lock);
-+					cond_resched();
-+					continue;
-+				}
-+			}
-+
- 			prepare_to_wait(&ctx->sqo_wait, &wait,
- 						TASK_INTERRUPTIBLE);
- 
-@@ -5101,16 +5095,22 @@ static int io_sq_thread(void *data)
- 			if (!to_submit || ret == -EBUSY) {
- 				if (kthread_should_park()) {
- 					finish_wait(&ctx->sqo_wait, &wait);
-+					if (iopoll)
-+						mutex_unlock(&ctx->uring_lock);
- 					break;
- 				}
- 				if (signal_pending(current))
- 					flush_signals(current);
-+				if (iopoll)
-+					mutex_unlock(&ctx->uring_lock);
- 				schedule();
- 				finish_wait(&ctx->sqo_wait, &wait);
- 
- 				ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
- 				continue;
- 			}
-+			if (iopoll)
-+				mutex_unlock(&ctx->uring_lock);
- 			finish_wait(&ctx->sqo_wait, &wait);
- 
- 			ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
-@@ -5119,8 +5119,7 @@ static int io_sq_thread(void *data)
- 		mutex_lock(&ctx->uring_lock);
- 		ret = io_submit_sqes(ctx, to_submit, NULL, -1, &cur_mm, true);
- 		mutex_unlock(&ctx->uring_lock);
--		if (ret > 0)
--			inflight += ret;
-+		timeout = jiffies + ctx->sq_thread_idle;
- 	}
- 
- 	set_fs(old_fs);
--- 
-2.17.2
-
+DQoNCj4gMjAyMOW5tDLmnIgxNOaXpSDkuIvljYg4OjUy77yMUGF2ZWwgQmVndW5rb3YgPGFzbWwu
+c2lsZW5jZUBnbWFpbC5jb20+IOWGmemBk++8mg0KPiANCj4gT24gMi8xNC8yMDIwIDI6MjcgUE0s
+IENhcnRlciBMaSDmnY7pgJrmtLIgd3JvdGU6DQo+PiANCj4+PiAyMDIw5bm0MuaciDE05pelIOS4
+i+WNiDY6MzTvvIxQYXZlbCBCZWd1bmtvdiA8YXNtbC5zaWxlbmNlQGdtYWlsLmNvbT4g5YaZ6YGT
+77yaDQo+Pj4gDQo+Pj4gT24gMi8xNC8yMDIwIDExOjI5IEFNLCBDYXJ0ZXIgTGkg5p2O6YCa5rSy
+IHdyb3RlOg0KPj4+PiBUbyBpbXBsZW1lbnQgaW9fdXJpbmdfd2FpdF9jcWVfdGltZW91dCwgd2Ug
+aW50cm9kdWNlIGEgbWFnaWMgbnVtYmVyDQo+Pj4+IGNhbGxlZCBgTElCVVJJTkdfVURBVEFfVElN
+RU9VVGAuIFRoZSBwcm9ibGVtIGlzIHRoYXQgbm90IG9ubHkgd2UNCj4+Pj4gbXVzdCBtYWtlIHN1
+cmUgdGhhdCB1c2VycyBzaG91bGQgbmV2ZXIgc2V0IHNxZS0+dXNlcl9kYXRhIHRvDQo+Pj4+IExJ
+QlVSSU5HX1VEQVRBX1RJTUVPVVQsIGJ1dCBhbHNvIGludHJvZHVjZSBleHRyYSBjb21wbGV4aXR5
+IHRvDQo+Pj4+IGZpbHRlciBvdXQgVElNRU9VVCBjcWVzLg0KPj4+PiANCj4+Pj4gRm9ybWVyIGRp
+c2N1c3Npb246IGh0dHBzOi8vZ2l0aHViLmNvbS9heGJvZS9saWJ1cmluZy9pc3N1ZXMvNTMNCj4+
+Pj4gDQo+Pj4+IEnigJltIHN1Z2dlc3RpbmcgaW50cm9kdWNpbmcgYSBuZXcgU1FFIGZsYWcgY2Fs
+bGVkIElPU1FFX0lHTk9SRV9DUUUNCj4+Pj4gdG8gc29sdmUgdGhpcyBwcm9ibGVtLg0KPj4+PiAN
+Cj4+Pj4gRm9yIGEgc3FlIHRhZ2dlZCB3aXRoIElPU1FFX0lHTk9SRV9DUUUgZmxhZywgaXQgd29u
+4oCZdCBnZW5lcmF0ZSBhIGNxZQ0KPj4+PiBvbiBjb21wbGV0aW9uLiBTbyB0aGF0IElPUklOR19P
+UF9USU1FT1VUIGNhbiBiZSBmaWx0ZXJlZCBvbiBrZXJuZWwNCj4+Pj4gc2lkZS4NCj4+Pj4gDQo+
+Pj4+IEluIGFkZGl0aW9uLCBgSU9TUUVfSUdOT1JFX0NRRWAgY2FuIGJlIHVzZWQgdG8gc2F2ZSBj
+cSBzaXplLg0KPj4+PiANCj4+Pj4gRm9yIGV4YW1wbGUgYFBPTExfQUREKFBPTExJTiktPlJFQUQv
+UkVDVmAgbGluayBjaGFpbiwgcGVvcGxlIHVzdWFsbHkNCj4+Pj4gZG9u4oCZdCBjYXJlIHRoZSBy
+ZXN1bHQgb2YgYFBPTExfQUREYCBpcyAoIHNpbmNlIGl0IHdpbGwgYWx3YXlzIGJlDQo+Pj4+IFBP
+TExJTiApLCBgSU9TUUVfSUdOT1JFX0NRRWAgY2FuIGJlIHNldCBvbiBgUE9MTF9BRERgIHRvIHNh
+dmUgbG90cw0KPj4+PiBvZiBjcSBzaXplLg0KPj4+PiANCj4+Pj4gQmVzaWRlcyBQT0xMX0FERCwg
+cGVvcGxlIHVzdWFsbHkgZG9u4oCZdCBjYXJlIHRoZSByZXN1bHQgb2YgUE9MTF9SRU1PVkUNCj4+
+Pj4gL1RJTUVPVVRfUkVNT1ZFL0FTWU5DX0NBTkNFTC9DTE9TRS4gVGhlc2Ugb3BlcmF0aW9ucyBj
+YW4gYWxzbyBiZSB0YWdnZWQNCj4+Pj4gd2l0aCBJT1NRRV9JR05PUkVfQ1FFLg0KPj4+PiANCj4+
+Pj4gVGhvdWdodHM/DQo+Pj4+IA0KPj4+IA0KPj4+IEkgbGlrZSB0aGUgaWRlYSEgQW5kIHRoYXQn
+cyBvbmUgb2YgbXkgVE9ET3MgZm9yIHRoZSBlQlBGIHBsYW5zLg0KPj4+IExldCBtZSBsaXN0IG15
+IHVzZSBjYXNlcywgc28gd2UgY2FuIHRoaW5rIGhvdyB0byBleHRlbmQgaXQgYSBiaXQuDQo+Pj4g
+DQo+Pj4gMS4gSW4gY2FzZSBvZiBsaW5rIGZhaWwsIHdlIG5lZWQgdG8gcmVhcCBhbGwgLUVDQU5D
+RUxMRUQsIGFuYWxpc2UgaXQgYW5kDQo+Pj4gcmVzdWJtaXQgdGhlIHJlc3QuIEl0J3MgcXVpdGUg
+aW5jb252ZW5pZW50LiBXZSBtYXkgd2FudCB0byBoYXZlIENRRSBvbmx5DQo+Pj4gZm9yIG5vdCBj
+YW5jZWxsZWQgcmVxdWVzdHMuDQo+Pj4gDQo+Pj4gMi4gV2hlbiBjaGFpbiBzdWNjZWVkZWQsIHlv
+dSBpbiB0aGUgbW9zdCBjYXNlcyBhbHJlYWR5IGtub3cgdGhlIHJlc3VsdA0KPj4+IG9mIGFsbCBp
+bnRlcm1lZGlhdGUgQ1FFcywgYnV0IHlvdSBzdGlsbCBuZWVkIHRvIHJlYXAgYW5kIG1hdGNoIHRo
+ZW0uDQo+Pj4gSSdkIHByZWZlciB0byBoYXZlIG9ubHkgMSBDUUUgcGVyIGxpbmssIHRoYXQgaXMg
+ZWl0aGVyIGZvciB0aGUgZmlyc3QNCj4+PiBmYWlsZWQgb3IgZm9yIHRoZSBsYXN0IHJlcXVlc3Qg
+aW4gdGhlIGNoYWluLg0KPj4+IA0KPj4+IFRoZXNlIDIgbWF5IHNoZWQgbXVjaCBwcm9jZXNzaW5n
+IG92ZXJoZWFkIGZyb20gdGhlIHVzZXJzcGFjZS4NCj4+IA0KPj4gSSBjb3VsZG4ndCBhZ3JlZSBt
+b3JlIQ0KPj4gDQo+PiBBbm90aGVyIHByb2JsZW0gaXMgdGhhdCBpb191cmluZ19lbnRlciB3aWxs
+IGJlIGF3YWtlZCBmb3IgY29tcGxldGlvbiBvZg0KPj4gZXZlcnkgb3BlcmF0aW9uIGluIGEgbGlu
+aywgd2hpY2ggcmVzdWx0cyBpbiB1bm5lY2Vzc2FyeSBjb250ZXh0IHN3aXRjaC4NCj4+IFdoZW4g
+YXdha2VkLCB1c2VycyBoYXZlIG5vdGhpbmcgdG8gZG8gYnV0IGlzc3VlIGFub3RoZXIgaW9fdXJp
+bmdfZW50ZXINCj4+IHN5c2NhbGwgdG8gd2FpdCBmb3IgY29tcGxldGlvbiBvZiB0aGUgZW50aXJl
+IGxpbmsgY2hhaW4uDQo+IA0KPiBHb29kIHBvaW50LiBTb3VuZHMgbGlrZSBJIGhhdmUgb25lIG1v
+cmUgdGhpbmcgdG8gZG8gOikNCj4gV291bGQgdGhlIGJlaGF2aW91ciBhcyBpbiB0aGUgKDIpIGNv
+dmVyIGFsbCB5b3VyIG5lZWRzPw0KDQooMikgc2hvdWxkIGNvdmVyIG1vc3QgY2FzZXMgZm9yIG1l
+LiBGb3IgY2FzZXMgaXQgY291bGRu4oCZdCBjb3ZlciAoIGlmIGFueSApLA0KSSBjYW4gc3RpbGwg
+dXNlIG5vcm1hbCBzcWVzLg0KDQo+IA0KPiBUaGVyZSBpcyBhIG51aXNhbmNlIHdpdGggbGlua2Vk
+IHRpbWVvdXRzLCBidXQgSSB0aGluayBpdCdzIHJlYXNvbmFibGUNCj4gZm9yIFJFUS0+TElOS0VE
+X1RJTUVPVVQsIHdoZXJlIGl0IGRpZG4ndCBmaXJlZCwgbm90aWZ5IG9ubHkgZm9yIFJFUQ0KPiAN
+Cj4+PiANCj4+PiAzLiBJZiB3ZSBnZW5lcmF0ZSByZXF1ZXN0cyBieSBlQlBGIGV2ZW4gdGhlIG5v
+dGlvbiBvZiBwZXItcmVxdWVzdCBldmVudA0KPj4+IG1heSBicm9rZS4NCj4+PiAtIGVCUEYgY3Jl
+YXRpbmcgbmV3IHJlcXVlc3RzIHdvdWxkIGFsc28gbmVlZCB0byBzcGVjaWZ5IHVzZXItZGF0YSwg
+YW5kDQo+Pj4gdGhpcyBtYXkgYmUgcHJvYmxlbWF0aWMgZnJvbSB0aGUgdXNlciBwZXJzcGVjdGl2
+ZS4NCj4+PiAtIG1heSB3YW50IHRvIG5vdCBnZW5lcmF0ZSBDUUVzIGF1dG9tYXRpY2FsbHksIGJ1
+dCBsZXQgZUJQRiBkbyBpdC4NCj4+PiANCj4+PiAtLSANCj4+PiBQYXZlbCBCZWd1bmtvdg0KPj4g
+DQo+IA0KPiAtLSANCj4gUGF2ZWwgQmVndW5rb3YNCg0K

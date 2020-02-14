@@ -2,142 +2,199 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D674C15D7AE
-	for <lists+io-uring@lfdr.de>; Fri, 14 Feb 2020 13:52:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E313115D809
+	for <lists+io-uring@lfdr.de>; Fri, 14 Feb 2020 14:11:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728083AbgBNMwH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 Feb 2020 07:52:07 -0500
-Received: from mail-lf1-f46.google.com ([209.85.167.46]:41504 "EHLO
-        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728062AbgBNMwH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Feb 2020 07:52:07 -0500
-Received: by mail-lf1-f46.google.com with SMTP id m30so6665543lfp.8
-        for <io-uring@vger.kernel.org>; Fri, 14 Feb 2020 04:52:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AHuFgxg6ao65G+XFnKoRYjRjQZtw3Zl0IwZYrENLSD0=;
-        b=nCeKoA6UJHhs0PYPZV8yNjeH9KC7YyUMwxGuZxc3ibnHnIUFhtj0zyVPR3cnYikeTx
-         tFOpGoYKaQgrNCikiTVHphcFiBLrx+UIpq4BmdwgoPxYmS8z1Dvtm8Y1qGfSFYYOkj6h
-         wR3TstuH6/VBun1DcYRuLIjaeEJKzYvbXU92XT8p9Og3vJju7XIF3CPiJI4RKP6+YEuy
-         Z8XK3v+LuSgKLcYFJfFr/zHYLmA2IFuw7LXvSfR+yZxCxLapHfXXNuUwbfrP1uy+Wl15
-         YA+Dv2pU67Mo3drGeArGy6zc87u/FCtgZGhJF28aakY7/7gXZ3Oz1perLD0JwL+RKDnq
-         qJrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AHuFgxg6ao65G+XFnKoRYjRjQZtw3Zl0IwZYrENLSD0=;
-        b=QrFi696u5vSrBi6FtHDbi8oKnz5nrqcd06j3qjMWPKHlZgFcG/rQu193T/fLMktTKM
-         VGXeypwTbY1g5oV63YFutDd5tL22zaVEWCgIuVpMaE2Tofv6XZygCwhI+6M1STS+urdu
-         WwM+cAWLl8cd2J/BwT2E4nSX0yckgp7wXd3BZ6DL2Oyg8mq1/BbA7GURtEY+Ln2SdXTD
-         cFTneR8wWLrkR2i/ZONuX/o1LdH15YfAIAsavqnxn9clL7/s9sRiVwjRD1olW/7kt12M
-         23z4RBF2tS2nhqsIyo7GoyVG04yAu8bZnh+OuAGhcJX0+gmt61LCUm9jhBNBBgwDclNi
-         lFWQ==
-X-Gm-Message-State: APjAAAV8zCrafMIMOuUYXUS1xyee+ofqA/hfJl0n/X92MXkEW/QQ7mrA
-        FZhk11bxhcA7II6Jv3dt6ut2ZyHzIRM=
-X-Google-Smtp-Source: APXvYqy0kxXzPsHMq1WBP+ZLW47kwc+M496U59iudag8ACB0x72YO5eQuAVJxjzjjeeLoXws9docpw==
-X-Received: by 2002:a19:ca0e:: with SMTP id a14mr1645766lfg.186.1581684724448;
-        Fri, 14 Feb 2020 04:52:04 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id h10sm3523983ljc.39.2020.02.14.04.52.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2020 04:52:03 -0800 (PST)
-Subject: Re: [FEATURE REQUEST] Specify a sqe won't generate a cqe
-To:     =?UTF-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <9A41C624-3D2C-40BC-A910-59CBDC5BB76E@eoitek.com>
- <30d88cf3-527e-4396-4934-fff13c449a80@gmail.com>
- <7C48911C-9C0F-42E1-90DA-7C277E37D986@eoitek.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <19236051-0949-ed5c-d1d5-458c07681f36@gmail.com>
-Date:   Fri, 14 Feb 2020 15:52:02 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <7C48911C-9C0F-42E1-90DA-7C277E37D986@eoitek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1729252AbgBNNLp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 Feb 2020 08:11:45 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:28531 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728336AbgBNNLp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Feb 2020 08:11:45 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Tpz-n5I_1581685891;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Tpz-n5I_1581685891)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 14 Feb 2020 21:11:43 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH] io_uring: fix poll_list race for SETUP_IOPOLL|SETUP_SQPOLL
+Date:   Fri, 14 Feb 2020 21:11:25 +0800
+Message-Id: <20200214131125.3391-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/14/2020 2:27 PM, Carter Li 李通洲 wrote:
-> 
->> 2020年2月14日 下午6:34，Pavel Begunkov <asml.silence@gmail.com> 写道：
->>
->> On 2/14/2020 11:29 AM, Carter Li 李通洲 wrote:
->>> To implement io_uring_wait_cqe_timeout, we introduce a magic number
->>> called `LIBURING_UDATA_TIMEOUT`. The problem is that not only we
->>> must make sure that users should never set sqe->user_data to
->>> LIBURING_UDATA_TIMEOUT, but also introduce extra complexity to
->>> filter out TIMEOUT cqes.
->>>
->>> Former discussion: https://github.com/axboe/liburing/issues/53
->>>
->>> I’m suggesting introducing a new SQE flag called IOSQE_IGNORE_CQE
->>> to solve this problem.
->>>
->>> For a sqe tagged with IOSQE_IGNORE_CQE flag, it won’t generate a cqe
->>> on completion. So that IORING_OP_TIMEOUT can be filtered on kernel
->>> side.
->>>
->>> In addition, `IOSQE_IGNORE_CQE` can be used to save cq size.
->>>
->>> For example `POLL_ADD(POLLIN)->READ/RECV` link chain, people usually
->>> don’t care the result of `POLL_ADD` is ( since it will always be
->>> POLLIN ), `IOSQE_IGNORE_CQE` can be set on `POLL_ADD` to save lots
->>> of cq size.
->>>
->>> Besides POLL_ADD, people usually don’t care the result of POLL_REMOVE
->>> /TIMEOUT_REMOVE/ASYNC_CANCEL/CLOSE. These operations can also be tagged
->>> with IOSQE_IGNORE_CQE.
->>>
->>> Thoughts?
->>>
->>
->> I like the idea! And that's one of my TODOs for the eBPF plans.
->> Let me list my use cases, so we can think how to extend it a bit.
->>
->> 1. In case of link fail, we need to reap all -ECANCELLED, analise it and
->> resubmit the rest. It's quite inconvenient. We may want to have CQE only
->> for not cancelled requests.
->>
->> 2. When chain succeeded, you in the most cases already know the result
->> of all intermediate CQEs, but you still need to reap and match them.
->> I'd prefer to have only 1 CQE per link, that is either for the first
->> failed or for the last request in the chain.
->>
->> These 2 may shed much processing overhead from the userspace.
-> 
-> I couldn't agree more!
-> 
-> Another problem is that io_uring_enter will be awaked for completion of
-> every operation in a link, which results in unnecessary context switch.
-> When awaked, users have nothing to do but issue another io_uring_enter
-> syscall to wait for completion of the entire link chain.
+After making ext4 support iopoll method:
+  let ext4_file_operations's iopoll method be iomap_dio_iopoll(),
+we found fio can easily hang in fio_ioring_getevents() with below fio
+job:
+    rm -f testfile; sync;
+    sudo fio -name=fiotest -filename=testfile -iodepth=128 -thread
+-rw=write -ioengine=io_uring  -hipri=1 -sqthread_poll=1 -direct=1
+-bs=4k -size=10G -numjobs=8 -runtime=2000 -group_reporting
+with IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL enabled.
 
-Good point. Sounds like I have one more thing to do :)
-Would the behaviour as in the (2) cover all your needs?
+There are two issues that results in this hang, one reason is that
+when IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL are enabled, fio
+does not use io_uring_enter to get completed events, it relies on
+kernel io_sq_thread to poll for completed events.
 
-There is a nuisance with linked timeouts, but I think it's reasonable
-for REQ->LINKED_TIMEOUT, where it didn't fired, notify only for REQ
+Another reason is that there is a race: when io_submit_sqes() in
+io_sq_thread() submits a batch of sqes, variable 'inflight' will
+record the number of submitted reqs, then io_sq_thread will poll for
+reqs which have been added to poll_list. But note, if some previous
+reqs have been punted to io worker, these reqs will won't be in
+poll_list timely. io_sq_thread() will only poll for a part of previous
+submitted reqs, and then find poll_list is empty, reset variable
+'inflight' to be zero. If app just waits these deferred reqs and does
+not wake up io_sq_thread again, then hang happens.
 
+For app that entirely relies on io_sq_thread to poll completed requests,
+let io_iopoll_req_issued() wake up io_sq_thread properly when adding new
+element to poll_list.
 
->>
->> 3. If we generate requests by eBPF even the notion of per-request event
->> may broke.
->> - eBPF creating new requests would also need to specify user-data, and
->>  this may be problematic from the user perspective.
->> - may want to not generate CQEs automatically, but let eBPF do it.
->>
->> -- 
->> Pavel Begunkov
-> 
+Fixes: 2b2ed9750fc9 ("io_uring: fix bad inflight accounting for SETUP_IOPOLL|SETUP_SQTHREAD")
+Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+---
+ fs/io_uring.c | 63 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 31 insertions(+), 32 deletions(-)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 77f22c3da30f..fe1fa2d00606 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1793,6 +1793,9 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
+ 		list_add(&req->list, &ctx->poll_list);
+ 	else
+ 		list_add_tail(&req->list, &ctx->poll_list);
++
++	if (ctx->flags & IORING_SETUP_SQPOLL && wq_has_sleeper(&ctx->sqo_wait))
++		wake_up(&ctx->sqo_wait);
+ }
+ 
+ static void io_file_put(struct io_submit_state *state)
+@@ -5011,9 +5014,9 @@ static int io_sq_thread(void *data)
+ 	const struct cred *old_cred;
+ 	mm_segment_t old_fs;
+ 	DEFINE_WAIT(wait);
+-	unsigned inflight;
+ 	unsigned long timeout;
+-	int ret;
++	int ret = 0;
++	bool iopoll = false;
+ 
+ 	complete(&ctx->completions[1]);
+ 
+@@ -5021,39 +5024,21 @@ static int io_sq_thread(void *data)
+ 	set_fs(USER_DS);
+ 	old_cred = override_creds(ctx->creds);
+ 
+-	ret = timeout = inflight = 0;
++	if (ctx->flags & IORING_SETUP_IOPOLL)
++		iopoll = true;
++	timeout = jiffies + ctx->sq_thread_idle;
+ 	while (!kthread_should_park()) {
+ 		unsigned int to_submit;
+ 
+-		if (inflight) {
++		if (!list_empty(&ctx->poll_list)) {
+ 			unsigned nr_events = 0;
+ 
+-			if (ctx->flags & IORING_SETUP_IOPOLL) {
+-				/*
+-				 * inflight is the count of the maximum possible
+-				 * entries we submitted, but it can be smaller
+-				 * if we dropped some of them. If we don't have
+-				 * poll entries available, then we know that we
+-				 * have nothing left to poll for. Reset the
+-				 * inflight count to zero in that case.
+-				 */
+-				mutex_lock(&ctx->uring_lock);
+-				if (!list_empty(&ctx->poll_list))
+-					__io_iopoll_check(ctx, &nr_events, 0);
+-				else
+-					inflight = 0;
+-				mutex_unlock(&ctx->uring_lock);
+-			} else {
+-				/*
+-				 * Normal IO, just pretend everything completed.
+-				 * We don't have to poll completions for that.
+-				 */
+-				nr_events = inflight;
+-			}
+-
+-			inflight -= nr_events;
+-			if (!inflight)
++			mutex_lock(&ctx->uring_lock);
++			if (!list_empty(&ctx->poll_list))
++				__io_iopoll_check(ctx, &nr_events, 0);
++			if (list_empty(&ctx->poll_list))
+ 				timeout = jiffies + ctx->sq_thread_idle;
++			mutex_unlock(&ctx->uring_lock);
+ 		}
+ 
+ 		to_submit = io_sqring_entries(ctx);
+@@ -5070,7 +5055,7 @@ static int io_sq_thread(void *data)
+ 			 * more IO, we should wait for the application to
+ 			 * reap events and wake us up.
+ 			 */
+-			if (inflight ||
++			if (!list_empty(&ctx->poll_list) ||
+ 			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
+ 			    !percpu_ref_is_dying(&ctx->refs))) {
+ 				cond_resched();
+@@ -5089,6 +5074,15 @@ static int io_sq_thread(void *data)
+ 				cur_mm = NULL;
+ 			}
+ 
++			if (iopoll) {
++				mutex_lock(&ctx->uring_lock);
++				if (!list_empty(&ctx->poll_list)) {
++					mutex_unlock(&ctx->uring_lock);
++					cond_resched();
++					continue;
++				}
++			}
++
+ 			prepare_to_wait(&ctx->sqo_wait, &wait,
+ 						TASK_INTERRUPTIBLE);
+ 
+@@ -5101,16 +5095,22 @@ static int io_sq_thread(void *data)
+ 			if (!to_submit || ret == -EBUSY) {
+ 				if (kthread_should_park()) {
+ 					finish_wait(&ctx->sqo_wait, &wait);
++					if (iopoll)
++						mutex_unlock(&ctx->uring_lock);
+ 					break;
+ 				}
+ 				if (signal_pending(current))
+ 					flush_signals(current);
++				if (iopoll)
++					mutex_unlock(&ctx->uring_lock);
+ 				schedule();
+ 				finish_wait(&ctx->sqo_wait, &wait);
+ 
+ 				ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
+ 				continue;
+ 			}
++			if (iopoll)
++				mutex_unlock(&ctx->uring_lock);
+ 			finish_wait(&ctx->sqo_wait, &wait);
+ 
+ 			ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
+@@ -5119,8 +5119,7 @@ static int io_sq_thread(void *data)
+ 		mutex_lock(&ctx->uring_lock);
+ 		ret = io_submit_sqes(ctx, to_submit, NULL, -1, &cur_mm, true);
+ 		mutex_unlock(&ctx->uring_lock);
+-		if (ret > 0)
+-			inflight += ret;
++		timeout = jiffies + ctx->sq_thread_idle;
+ 	}
+ 
+ 	set_fs(old_fs);
 -- 
-Pavel Begunkov
+2.17.2
+

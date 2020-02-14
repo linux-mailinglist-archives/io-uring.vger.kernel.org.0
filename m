@@ -2,148 +2,168 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C7E115D936
-	for <lists+io-uring@lfdr.de>; Fri, 14 Feb 2020 15:17:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 133FC15DB02
+	for <lists+io-uring@lfdr.de>; Fri, 14 Feb 2020 16:32:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729320AbgBNORE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 Feb 2020 09:17:04 -0500
-Received: from mail-lj1-f180.google.com ([209.85.208.180]:45568 "EHLO
-        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729268AbgBNORE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Feb 2020 09:17:04 -0500
-Received: by mail-lj1-f180.google.com with SMTP id e18so10864226ljn.12
-        for <io-uring@vger.kernel.org>; Fri, 14 Feb 2020 06:17:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QIQQDJpBzINR/Rd5ILrXesYGD1sjTERZcja7ii0ZiCw=;
-        b=GTiLOhl9kHS8JgI460SwSmFooPw9sSeiOp24oDaPNMLAynwSPcwUIInf9uJQIeh+tW
-         bIUgGNULYssCv3w80j/BjwZNXdaMET0zpTgtH/cmw4zhSdBeSDTecQDfnKyuf5W61arG
-         y9bYi6emA9qjExy1G/q6f9OMj5lh6qbEK4G5qnbhtKB+DIKjaN9aoSsp1yr6pejH3VOg
-         NQqSuZG/8FiatW2lqkulPyGPX3hSh600J4hl+HG4fmcF7W+1iiYpH1GF1HFyItXXJiPR
-         ehq5poUbd+tf4Y9ZKEBpwiTuo2YJ92xV0rEXmjMjWIOWOL/rxc9CiWguXxmPb1xgCmN4
-         DlfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QIQQDJpBzINR/Rd5ILrXesYGD1sjTERZcja7ii0ZiCw=;
-        b=Ph0JiwylV2F4h1hqwM2gcNj8Wq/ofqFpC+zCEDXSm293ZiufYJD/U5vRScKjcTqrnJ
-         IpWD/yGZCgc4Qtd+HCRVDfIYvXWIiYekcwuSdMXs1NXgz8pGzdtkOMnOuHb6CKpytNxo
-         7Xg7hhuKqAolBAI3vGhQvJlXcFFJQDFyDkRJY/EY7mhmQZ45H9agU/C4vQzQmuhF4Zln
-         rds/7pJ7SP7ezwytk3KtoO5xuEDu5F8ETAU2IPYcppC0V1q3SzSppaNnTy+vYfxEpktb
-         09p4fhzNuwTXdgQ7ZH0TGKBN+YpnANLc8KCWg5XNqCXsefqMhSCgKwmC0qmMWrFCtoX6
-         4NwQ==
-X-Gm-Message-State: APjAAAUptlBWoGavH8fbgKtobwnRime8e4PVKbK9joSZKBs5Ugkw50wu
-        5Ue8398ZDAxKtotlO6BafsI8onY+Xnw=
-X-Google-Smtp-Source: APXvYqyPwmPrTE3WDeKfYOFHJAPsRmhXnH/UWaM1xGABUn9JQ/lfjiOclcyGePXm8arLWoUgbV5K7A==
-X-Received: by 2002:a2e:9596:: with SMTP id w22mr2185561ljh.21.1581689821483;
-        Fri, 14 Feb 2020 06:17:01 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id e8sm4368107ljb.45.2020.02.14.06.17.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2020 06:17:00 -0800 (PST)
-Subject: Re: [FEATURE REQUEST] Specify a sqe won't generate a cqe
-To:     =?UTF-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <9A41C624-3D2C-40BC-A910-59CBDC5BB76E@eoitek.com>
- <30d88cf3-527e-4396-4934-fff13c449a80@gmail.com>
- <7C48911C-9C0F-42E1-90DA-7C277E37D986@eoitek.com>
- <19236051-0949-ed5c-d1d5-458c07681f36@gmail.com>
- <57BDF3A6-7279-4250-B200-76FDCDB04765@eoitek.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <67b28e66-f2f8-99a1-dfd1-14f753d11f7a@gmail.com>
-Date:   Fri, 14 Feb 2020 17:16:59 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S2387438AbgBNPcY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 Feb 2020 10:32:24 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51542 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387435AbgBNPcX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Feb 2020 10:32:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=MNsKvUSIS+yRYAE3qRhpn/J5RBbYFVWQg/XQqI9qVr4=; b=KtVekxNnJunr+Eo0QFu94N6Vkg
+        cn82TLQCkan+3/ONFJda6fc8mCM3mDNhrOhv75nmBFu7vGuYZy89n8L587j/JofLNzqshGHe3ypAm
+        B/b67pykBEdwBwm9IvRqTlh4yxktTQQvOpLlBSAZ+fw1/aZpuTYGQ9yBoXMiRwyLSzU0H+6wyYW6Z
+        6CajiBVcNsSnmDHYRrDsnmap2Gh/V8eeOLhZDjOG4BitOavbsEcl+xwmYSmN3u1k3obkHGAxY1MhT
+        4gEa1J9b1qVIBX/ZVpthi+VER30WIvyqs47xjuFBhnstWDJTCZuS4buNYkEhx22t45O3ba40ng4CI
+        /wvLeMIQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j2cx2-0007xT-RG; Fri, 14 Feb 2020 15:32:21 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 292AD300606;
+        Fri, 14 Feb 2020 16:30:28 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D84132B7863CA; Fri, 14 Feb 2020 16:32:18 +0100 (CET)
+Date:   Fri, 14 Feb 2020 16:32:18 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Carter Li =?utf-8?B?5p2O6YCa5rSy?= <carter.li@eoitek.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>
+Subject: Re: [ISSUE] The time cost of IOSQE_IO_LINK
+Message-ID: <20200214153218.GM14914@hirez.programming.kicks-ass.net>
+References: <9FEF0D34-A012-4505-AA4E-FF97CC302A33@eoitek.com>
+ <8a3ee653-77ed-105d-c1c3-87087451914e@kernel.dk>
+ <ADF462D7-A381-4314-8931-DDB0A2C18761@eoitek.com>
+ <9a8e4c8a-f8b2-900d-92b6-cc69b6adf324@gmail.com>
+ <5f09d89a-0c6d-47c2-465c-993af0c7ae71@kernel.dk>
+ <7E66D70C-BE4E-4236-A49B-9843F66EA322@eoitek.com>
+ <671A3FE3-FA12-43D8-ADF0-D1DB463B053F@eoitek.com>
+ <217eda7b-3742-a50b-7d6a-c1294a85c8e0@kernel.dk>
+ <1b9a7390-7539-a8bc-d437-493253b13d77@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <57BDF3A6-7279-4250-B200-76FDCDB04765@eoitek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1b9a7390-7539-a8bc-d437-493253b13d77@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/14/2020 4:27 PM, Carter Li 李通洲 wrote:
->> 2020年2月14日 下午8:52，Pavel Begunkov <asml.silence@gmail.com> 写道：
->> On 2/14/2020 2:27 PM, Carter Li 李通洲 wrote:
->>>> 2020年2月14日 下午6:34，Pavel Begunkov <asml.silence@gmail.com> 写道：
->>>> On 2/14/2020 11:29 AM, Carter Li 李通洲 wrote:
->>>>> To implement io_uring_wait_cqe_timeout, we introduce a magic number
->>>>> called `LIBURING_UDATA_TIMEOUT`. The problem is that not only we
->>>>> must make sure that users should never set sqe->user_data to
->>>>> LIBURING_UDATA_TIMEOUT, but also introduce extra complexity to
->>>>> filter out TIMEOUT cqes.
->>>>>
->>>>> Former discussion: https://github.com/axboe/liburing/issues/53
->>>>>
->>>>> I’m suggesting introducing a new SQE flag called IOSQE_IGNORE_CQE
->>>>> to solve this problem.
->>>>>
->>>>> For a sqe tagged with IOSQE_IGNORE_CQE flag, it won’t generate a cqe
->>>>> on completion. So that IORING_OP_TIMEOUT can be filtered on kernel
->>>>> side.
->>>>>
->>>>> In addition, `IOSQE_IGNORE_CQE` can be used to save cq size.
->>>>>
->>>>> For example `POLL_ADD(POLLIN)->READ/RECV` link chain, people usually
->>>>> don’t care the result of `POLL_ADD` is ( since it will always be
->>>>> POLLIN ), `IOSQE_IGNORE_CQE` can be set on `POLL_ADD` to save lots
->>>>> of cq size.
->>>>>
->>>>> Besides POLL_ADD, people usually don’t care the result of POLL_REMOVE
->>>>> /TIMEOUT_REMOVE/ASYNC_CANCEL/CLOSE. These operations can also be tagged
->>>>> with IOSQE_IGNORE_CQE.
->>>>>
->>>>> Thoughts?
->>>>>
->>>>
->>>> I like the idea! And that's one of my TODOs for the eBPF plans.
->>>> Let me list my use cases, so we can think how to extend it a bit.
->>>>
->>>> 1. In case of link fail, we need to reap all -ECANCELLED, analise it and
->>>> resubmit the rest. It's quite inconvenient. We may want to have CQE only
->>>> for not cancelled requests.
->>>>
->>>> 2. When chain succeeded, you in the most cases already know the result
->>>> of all intermediate CQEs, but you still need to reap and match them.
->>>> I'd prefer to have only 1 CQE per link, that is either for the first
->>>> failed or for the last request in the chain.
->>>>
->>>> These 2 may shed much processing overhead from the userspace.
->>>
->>> I couldn't agree more!
->>>
->>> Another problem is that io_uring_enter will be awaked for completion of
->>> every operation in a link, which results in unnecessary context switch.
->>> When awaked, users have nothing to do but issue another io_uring_enter
->>> syscall to wait for completion of the entire link chain.
->>
->> Good point. Sounds like I have one more thing to do :)
->> Would the behaviour as in the (2) cover all your needs?
+On Thu, Feb 13, 2020 at 10:03:54PM -0700, Jens Axboe wrote:
+
+> CC'ing peterz for some cluebat knowledge. Peter, is there a nice way to
+> currently do something like this? Only thing I'm currently aware of is
+> the preempt in/out notifiers, but they don't quite provide what I need,
+> since I need to pass some data (a request) as well.
+
+Whee, nothing quite like this around I think.
+
+> The full detail on what I'm trying here is:
 > 
-> (2) should cover most cases for me. For cases it couldn’t cover ( if any ),
-> I can still use normal sqes.
-> 
+> io_uring can have linked requests. One obvious use case for that is to
+> queue a POLLIN on a socket, and then link a read/recv to that. When the
+> poll completes, we want to run the read/recv. io_uring hooks into the
+> waitqueue wakeup handler to finish the poll request, and since we're
+> deep in waitqueue wakeup code, it queues the linked read/recv for
+> execution via an async thread. This is not optimal, obviously, as it
+> relies on a switch to a new thread to perform this read. This hack
+> queues a backlog to the task itself, and runs it when it's scheduled in.
+> Probably want to do the same for sched out as well, currently I just
+> hack that in the io_uring wait part...
 
-Great! I need to give a thought, what I may need for eBPF-steering
-stuff, but sounds like a plan.
+I'll definitely need to think more about this, but a few comments on the
+below.
 
->>
->> There is a nuisance with linked timeouts, but I think it's reasonable
->> for REQ->LINKED_TIMEOUT, where it didn't fired, notify only for REQ
->>
->>>>
->>>> 3. If we generate requests by eBPF even the notion of per-request event
->>>> may broke.
->>>> - eBPF creating new requests would also need to specify user-data, and
->>>> this may be problematic from the user perspective.
->>>> - may want to not generate CQEs automatically, but let eBPF do it.
->>>>
+> +static void __io_uring_task_handler(struct list_head *list)
+> +{
+> +	struct io_kiocb *req;
+> +
+> +	while (!list_empty(list)) {
+> +		req = list_first_entry(list, struct io_kiocb, list);
+> +		list_del(&req->list);
+> +
+> +		__io_queue_sqe(req, NULL);
+> +	}
+> +}
+> +
+> +void io_uring_task_handler(struct task_struct *tsk)
+> +{
+> +	LIST_HEAD(list);
+> +
+> +	raw_spin_lock_irq(&tsk->uring_lock);
+> +	if (!list_empty(&tsk->uring_work))
+> +		list_splice_init(&tsk->uring_work, &list);
+> +	raw_spin_unlock_irq(&tsk->uring_lock);
+> +
+> +	__io_uring_task_handler(&list);
+> +}
 
--- 
-Pavel Begunkov
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index fc1dfc007604..b60f081cac17 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2717,6 +2717,11 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
+>  	INIT_HLIST_HEAD(&p->preempt_notifiers);
+>  #endif
+>  
+> +#ifdef CONFIG_IO_URING
+> +	INIT_LIST_HEAD(&p->uring_work);
+> +	raw_spin_lock_init(&p->uring_lock);
+> +#endif
+> +
+>  #ifdef CONFIG_COMPACTION
+>  	p->capture_control = NULL;
+>  #endif
+> @@ -3069,6 +3074,20 @@ fire_sched_out_preempt_notifiers(struct task_struct *curr,
+>  
+>  #endif /* CONFIG_PREEMPT_NOTIFIERS */
+>  
+> +#ifdef CONFIG_IO_URING
+> +extern void io_uring_task_handler(struct task_struct *tsk);
+> +
+> +static inline void io_uring_handler(struct task_struct *tsk)
+> +{
+> +	if (!list_empty(&tsk->uring_work))
+> +		io_uring_task_handler(tsk);
+> +}
+> +#else /* !CONFIG_IO_URING */
+> +static inline void io_uring_handler(struct task_struct *tsk)
+> +{
+> +}
+> +#endif
+> +
+>  static inline void prepare_task(struct task_struct *next)
+>  {
+>  #ifdef CONFIG_SMP
+> @@ -3322,6 +3341,8 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
+>  	balance_callback(rq);
+>  	preempt_enable();
+>  
+> +	io_uring_handler(current);
+> +
+>  	if (current->set_child_tid)
+>  		put_user(task_pid_vnr(current), current->set_child_tid);
+>  
+
+I suspect you meant to put that in finish_task_switch() which is the
+tail end of every schedule(), schedule_tail() is the tail end of
+clone().
+
+Or maybe you meant to put it in (and rename) sched_update_worker() which
+is after every schedule() but in a preemptible context -- much saner
+since you don't want to go add an unbounded amount of work in a
+non-preemptible context.
+
+At which point you already have your callback: io_wq_worker_running(),
+or is this for any random task?
+
+

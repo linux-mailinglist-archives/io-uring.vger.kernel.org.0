@@ -2,114 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D48DB15FEA8
-	for <lists+io-uring@lfdr.de>; Sat, 15 Feb 2020 14:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 686DA15FEEB
+	for <lists+io-uring@lfdr.de>; Sat, 15 Feb 2020 16:11:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbgBONuY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 15 Feb 2020 08:50:24 -0500
-Received: from master.debian.org ([82.195.75.110]:51224 "EHLO
-        master.debian.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbgBONuX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Feb 2020 08:50:23 -0500
-Received: from guillem by master.debian.org with local (Exim 4.92)
-        (envelope-from <guillem@master.debian.org>)
-        id 1j2xpu-0002bs-2L; Sat, 15 Feb 2020 13:50:22 +0000
-Date:   Sat, 15 Feb 2020 14:48:36 +0100
-From:   Guillem Jover <guillem@debian.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org
-Subject: Re: liburing packaging issues
-Message-ID: <20200215134836.GA15122@gaara.hadrons.org>
-Mail-Followup-To: Guillem Jover <guillem@debian.org>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20200208173608.GA1390571@thunder.hadrons.org>
- <67b1f314-31df-acef-b3f9-256bdf951b76@kernel.dk>
+        id S1726137AbgBOPLH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 15 Feb 2020 10:11:07 -0500
+Received: from mail-pj1-f53.google.com ([209.85.216.53]:53515 "EHLO
+        mail-pj1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbgBOPLH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Feb 2020 10:11:07 -0500
+Received: by mail-pj1-f53.google.com with SMTP id n96so5291473pjc.3
+        for <io-uring@vger.kernel.org>; Sat, 15 Feb 2020 07:11:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4Jxb1UpfzlD6F3odi0TQX/DW9qRQlAcKGJRT1a7Lhv0=;
+        b=fEsC37jSQcaPVN8NkDNptFGey8TyJdecvFNCTT6F1UyWb6MGvY2dvbXa6q191UJmgj
+         2MdrfYDdQxsQVsC7yorzzmKMx7Y3cXOpVcszVQRyD01LuFRgOGf6R8a4Y48ee3xJeBzL
+         B6C6DfdZd/LUQS31MYUWA4RzUWLQavMwByjmy7AQ97jwgicp2texa7kzvpMwPu+BGFM2
+         D+fg5PEcOzBjiC5tvFwCyVwuiABCk4nOA3HH+Ri8H9Nr0o3kYaLS5uAakq6Izk0yeCzB
+         W5/F+TZpcsH43EmXDLmMhtHBBS8FSUBMTMjC231mh1QaWbV1r3xC5zRtOp3i0XSiq8Yb
+         bBZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4Jxb1UpfzlD6F3odi0TQX/DW9qRQlAcKGJRT1a7Lhv0=;
+        b=oKQIhA4l58lyC01UXqFjrpjl6ZgFmDK4ZWSVdGwGyl6g2UyO2LPvbeIZZzL9c3eRKr
+         HKFwIU/WB8XzFEPJjq/llhAEyu5AdummuZHQ/F9Pb0ziuf0FXX7yO7cdb7q1g/RFiZzG
+         rNy3KcHwDFgfseoSIznfv1h7wHyJToH0t4azQY+s2VaYlm2Kn4YW59pqSL4zRRRrxSjz
+         3fBC0vb90srY+PuP8mI/e3FlbB6eboBV70GYYY5f3+53MbQ/081mED/lxWks5VEpJXyx
+         /Gk6Pd7f+dQlO+IwrFicH/Mei/VnswDkGu7kr5NPB1Pe/7+Iw1YN42mMW7XdpgTRYGGJ
+         /VJQ==
+X-Gm-Message-State: APjAAAWemuyOVVmLchT67/CJN3GU5X8awNZiqeTOeBX8acbuwBDgxR6R
+        AadzwzOmVuOTY/YzL+2KQiNOnnVlynA=
+X-Google-Smtp-Source: APXvYqyo8MPjMyqxTlP3GOQFPc06rSY4fNxJvrWDbOFsLY9Yi+o43ZKune0dab79QnNalymCEEKL/w==
+X-Received: by 2002:a17:902:204:: with SMTP id 4mr8600697plc.266.1581779466341;
+        Sat, 15 Feb 2020 07:11:06 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id w14sm11062100pgi.22.2020.02.15.07.11.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Feb 2020 07:11:05 -0800 (PST)
+Subject: Re: [ISSUE] The time cost of IOSQE_IO_LINK
+To:     =?UTF-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>
+References: <9FEF0D34-A012-4505-AA4E-FF97CC302A33@eoitek.com>
+ <ADF462D7-A381-4314-8931-DDB0A2C18761@eoitek.com>
+ <9a8e4c8a-f8b2-900d-92b6-cc69b6adf324@gmail.com>
+ <5f09d89a-0c6d-47c2-465c-993af0c7ae71@kernel.dk>
+ <7E66D70C-BE4E-4236-A49B-9843F66EA322@eoitek.com>
+ <671A3FE3-FA12-43D8-ADF0-D1DB463B053F@eoitek.com>
+ <217eda7b-3742-a50b-7d6a-c1294a85c8e0@kernel.dk>
+ <1b9a7390-7539-a8bc-d437-493253b13d77@kernel.dk>
+ <20200214153218.GM14914@hirez.programming.kicks-ass.net>
+ <5995f84e-8a6c-e774-6bb5-5b9b87a9cd3c@kernel.dk>
+ <7c4c3996-4886-eb58-cdee-fe0951907ab5@kernel.dk>
+ <addcd44e-ed9b-5f82-517d-c1ed3ee2d85c@kernel.dk>
+ <b8069e62-7ea4-c7f3-55a3-838241951068@kernel.dk>
+ <FA1CECBA-FBFE-4228-BA5C-1B8A4A2B3534@eoitek.com>
+ <f1610a65-0bf9-8134-3e8d-72cccd2f5468@kernel.dk>
+ <72423161-38EF-49D1-8229-18C328AB5DA1@eoitek.com>
+ <3124507b-3458-48da-27e0-abeefcd9eb08@kernel.dk>
+ <5cba3020-7d99-56b0-8927-f679118c90e9@kernel.dk>
+ <2DA8FE8A-220F-4741-829E-24D0F9EF906B@eoitek.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a079a1c4-c1b4-437d-cfdc-c8c17a12ab72@kernel.dk>
+Date:   Sat, 15 Feb 2020 08:11:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67b1f314-31df-acef-b3f9-256bdf951b76@kernel.dk>
+In-Reply-To: <2DA8FE8A-220F-4741-829E-24D0F9EF906B@eoitek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, 2020-02-08 at 13:02:15 -0700, Jens Axboe wrote:
-> On 2/8/20 10:36 AM, Guillem Jover wrote:
-> > Stefan Metzmacher asked whether I could package and upload liburing
-> > for Debian (and as a side effect Ubuntu). And here are some of the
-> > things I've noticed that would be nice to get fixed or improved
-> > before I upload it there.
-> > 
-> >   * The README states that the license is LGPL (I assume 2.1+ in
-> >     contrast to 2.1?) and MIT, but there's at least one header that's
-> >     GPL-2.0 + Linux-syscall-note, which I assume is due to it coming
-> >     from the kernel headers. Would be nice to have every file with an
-> >     explicit license grant, say at least with an SPDX tag, and update
-> >     the README.
-> 
-> OK, I can clarify that and add SPDX headers.
+On 2/14/20 11:32 PM, Carter Li 李通洲 wrote:
+> Really appreciate it! Looking forward to getting it merged into mainline!
 
-Thanks for those.
+I'm very excited about it too, I'll keep hammering on it to flesh it
+out. I'll only be sporadically available next week though, but we'll
+see how it turns out.
 
-I see now almost all code files are marked as MIT, the man pages as
-LGPL-2.1 (not clear whether >= or not), and one header with GPL-2.0
-with Linux-syscall-note or MIT. But there's no COPYING for the GPL,
-only for the LGPL, and the README does not reflect the above. Could
-you either add the missing COPYING if necessary, clarify the license
-for the files, or the README and RPM spec so that they are consistent
-(I guess you might want to do that on the debian/ directory too, but
-it's not a problem for the Debian packaging as we'll be overriding it
-completely anyway).
+> By the way, what time is it now in your city? ;-)
 
-I'm sorry to be a pain on this, but this is going to be the thing most
-scrutinized by the Debian ftp-masters on the first upload for manual
-acceptance, which tends to take a while, so I'd like to get any
-inconsistencies sorted out before that. :)
+It was 11PM when that went out, could be worse :-)
 
-> >   * From the RPM spec file and the debian packaging in the repo, I
-> >     assume there is no actual release tarball (didn't see on in
-> >     kernel.dk nor kernel.org)? It would be nice to have one with a
-> >     detached OpenPGP signature, so that we can include it in the
-> >     Debian source package, to chain and verify the provenance from
-> >     upstream.
-> 
-> I do generate release tar balls with a detached signature, see:
-> 
-> https://brick.kernel.dk/snaps/
+-- 
+Jens Axboe
 
-Ah great, thanks. It was not obvious before. (Perhaps add a mention to
-the README too? And another for places where patches can be sent to,
-say the list and github? :)
-
-> >   * The test suite fails for me on the following unit tests:
-> > 
-> >       read-write accept-link poll-many poll-v-poll short-read send_recv
-> > 
-> >     while running on Linux 5.5.0-rc0. I read from the README it is not
-> >     supposed to work on old kernels, and might even crash them. But it
-> >     would still be nice if these tests would get SKIPPED, so that I can
-> >     enable them unconditionally to catch possible regressions and so they
-> >     do not make the package fail to build from source on the Debian build
-> >     daemons due to too old kernels, which in most cases will be one from
-> >     a Debian stable release (Linux 4.19.x or so).
-> 
-> The tests should build fine on any system, they just won't pass on any
-> system. So I don't think this is a packaging issue, don't run them as
-> part of building the package.
-
-I'd really like to run these both at build-time, and at "install-time"
-as part of our CI infra (https://ci.debian.net/), so that we can catch
-possible regressions or similar. Even if they still fail for now, I'd
-probably still run them at build-time but as non-fatal (like I'm doing
-with libaio), so that we can have visibility over all our ports.
-
-After the merge requests I sent I'm now only seeing two problems on the
-above mentioned Linux version (from Debian experimental):
-
-  - short-read always fails with "Read failed: 0".
-  - there seems to be some kind of resource leak or similar, because
-    after running the tests multiple times, almost if not all of them
-    start to fail with -ENOMEM from io_uring_setup().
-
-Thanks,
-Guillem

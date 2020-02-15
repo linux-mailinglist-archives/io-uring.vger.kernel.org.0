@@ -2,106 +2,122 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 824FE15FBDD
-	for <lists+io-uring@lfdr.de>; Sat, 15 Feb 2020 02:10:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF3CA15FBF9
+	for <lists+io-uring@lfdr.de>; Sat, 15 Feb 2020 02:21:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbgBOBKR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 Feb 2020 20:10:17 -0500
-Received: from mail-pj1-f49.google.com ([209.85.216.49]:40319 "EHLO
-        mail-pj1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbgBOBKR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Feb 2020 20:10:17 -0500
-Received: by mail-pj1-f49.google.com with SMTP id 12so4604271pjb.5
-        for <io-uring@vger.kernel.org>; Fri, 14 Feb 2020 17:10:15 -0800 (PST)
+        id S1727761AbgBOBU5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 Feb 2020 20:20:57 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44719 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727639AbgBOBU5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Feb 2020 20:20:57 -0500
+Received: by mail-pg1-f196.google.com with SMTP id g3so5661515pgs.11
+        for <io-uring@vger.kernel.org>; Fri, 14 Feb 2020 17:20:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/mTI6E6fLpY2NIyZT8JE3xLfWsCeI/tqTHXMGsGAJX4=;
-        b=QL4RruImS/bxHJMLi+dXRnS6xU0M+GwseGNS+L0myRcC22jb5lJn6HT0NV51loHxNw
-         dtFsz8JuRGch/8nVX2xg4PKVhfeiJoMP639V4+BudA4CvL7yZv5Ml2xnF2OQDA+j/aC/
-         T8O8EUV1TXfosHkUfwws1NTID3//yCE53WqDYOiCXFl+MMVxxUhfR4RvIaCIeEf4TAUb
-         hR3ywxNL+kTo9KQ6e5D26B8I2CsE/3o80lINCxqCxO8tmxM7y2rvXCP/2TqPZSgxmMDT
-         qrmeMVnaQORquIY0ckSSr8CEbwqReP2p3gTLcow0SnStaGDT2R5MDfmnr/Rz2MciYTGx
-         MYYA==
+        bh=Kq5+zg+BjWYmBTuTOQDyEJGh1pC/f5gJH8KP9SmE9fg=;
+        b=XpYT65RR0Fi4QsHUQLu3MF7Hoh1ULvt2aa9HhPIww9v/ulAN+5OD5QeZsoRNTQKRVu
+         pptPtLqwblpNiw0bFy8+N3Ka+gpX1rEnvjFaSjFJfYh3BH+iECY9n3LFtt0FHLvmQu0R
+         rdqP2WfinfVvWWsSVaZMDWwd+FVhOAeMQkwwTJvGtAd26aII1GBSWjcR28K3oN1mVi1w
+         XYNccYp6c9hCBG+4nIcKpczRRlFWgGGcv3zWIL3t4abUSNedJTn24AALa/IPQNYmOgGv
+         1pAqwpKqU4zZ0pyQBFoDY1NG44ExZTKzs51eseFiC7/S228ehhCOB7GmJerLdycMWqp7
+         XThw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=/mTI6E6fLpY2NIyZT8JE3xLfWsCeI/tqTHXMGsGAJX4=;
-        b=s82cyLbICieENyc0Wd06XPP49poAs7opUiUoFk/04Mrchs/YeeRmnw8CmR4bg+SxEq
-         nY9fs1zmg0ZtW+Ke2oYbBKWsoafn5tDp2fHcZSkBafSMkUH0/4XdeYXB+tICiiDguneV
-         wKosBI8M/+gkdCTtihu/8XC5arZx9HLnlWrkeV5vFDiMIHcQ+TtAITWlyCvYsXweq83M
-         ynh4OGXcj++i65TU9hp24mDy10qwHrTdhqq5u0MIAeS6yKUvUlhVnhGhrSwFPJ2Rs7MX
-         SU84CPqXtAT5SlojoKygUCzVNU0tmeg+AMK8hOXbe7wSNlDgTQf5ZYEBGA8maUTUW+R/
-         OI/A==
-X-Gm-Message-State: APjAAAUjlJY20I4OQAbbFC2FrxriZ7sorL/Isc8Sh5yCDek5T02WH87k
-        JS4EeRKh1RY9MxVQQT6hGf15LjTDBk8=
-X-Google-Smtp-Source: APXvYqzQ8dnYwdtUvWt1HOQXACOK7PNdP4SMNvi7PSHBqriAcGXiCRgmZTWNSH9SUMBr9TQydozpng==
-X-Received: by 2002:a17:90a:6:: with SMTP id 6mr7020835pja.71.1581729015102;
-        Fri, 14 Feb 2020 17:10:15 -0800 (PST)
+        bh=Kq5+zg+BjWYmBTuTOQDyEJGh1pC/f5gJH8KP9SmE9fg=;
+        b=TgBe6laLFCVKO+qYi+jBOQPTWfMO0DVXG0qh2H5j+MjVviDg6pQyk5pE1xZB41AWQj
+         jBqaWK7z1r/twTn4yqbywU1ZruKt1kftoWw7pTIwfvI69vlfvPg94AmIxYaKq5FEJMTE
+         829559HINYC+S1XV63MUnPF7jor8eYrnYPmbpAjzdPkU4sxGBXVy249hUT1CldUoAs79
+         hV/LBhXyMDO/MxJoAayxH1sjU2A7wydoipePzt528asIggiWcSxDanAyfi7jPH0Eqn3K
+         XPY4Khdw5XlkPOqo5G3L/OiR7vJqYZmTEf/+exLYGDDwA86Obu1SSA0CcNpshcOjqZzD
+         0xhg==
+X-Gm-Message-State: APjAAAWEtXTeM+EEXnrZ8NTk7fQ+xNCHJr765mT14+O/DiihM6h1cfKh
+        R+ngrifgh/C8UJB2D+fj3qHlyA==
+X-Google-Smtp-Source: APXvYqzL/dVBWz2L9E/f9zq7JCtYavJdmzKMwmTGXxYnq9BfNcmSMoYZ/kGg/y4DyOxFXOqZ60EMRg==
+X-Received: by 2002:a63:d04c:: with SMTP id s12mr6373035pgi.105.1581729655556;
+        Fri, 14 Feb 2020 17:20:55 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id e10sm8264002pgt.78.2020.02.14.17.10.14
+        by smtp.gmail.com with ESMTPSA id p3sm8492017pfg.184.2020.02.14.17.20.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2020 17:10:14 -0800 (PST)
-Subject: Re: [ISSUE] The time cost of IOSQE_IO_LINK
-To:     =?UTF-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <9FEF0D34-A012-4505-AA4E-FF97CC302A33@eoitek.com>
- <8a3ee653-77ed-105d-c1c3-87087451914e@kernel.dk>
- <ADF462D7-A381-4314-8931-DDB0A2C18761@eoitek.com>
- <9a8e4c8a-f8b2-900d-92b6-cc69b6adf324@gmail.com>
- <5f09d89a-0c6d-47c2-465c-993af0c7ae71@kernel.dk>
- <7E66D70C-BE4E-4236-A49B-9843F66EA322@eoitek.com>
- <671A3FE3-FA12-43D8-ADF0-D1DB463B053F@eoitek.com>
- <217eda7b-3742-a50b-7d6a-c1294a85c8e0@kernel.dk>
- <1b9a7390-7539-a8bc-d437-493253b13d77@kernel.dk>
- <20200214153218.GM14914@hirez.programming.kicks-ass.net>
- <5995f84e-8a6c-e774-6bb5-5b9b87a9cd3c@kernel.dk>
- <7c4c3996-4886-eb58-cdee-fe0951907ab5@kernel.dk>
- <addcd44e-ed9b-5f82-517d-c1ed3ee2d85c@kernel.dk>
- <b8069e62-7ea4-c7f3-55a3-838241951068@kernel.dk>
- <FA1CECBA-FBFE-4228-BA5C-1B8A4A2B3534@eoitek.com>
+        Fri, 14 Feb 2020 17:20:55 -0800 (PST)
+Subject: Re: [GIT PULL] io_uring fixes for 5.6-rc2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <d72d51a9-488d-c75b-4daf-bb74960c7531@kernel.dk>
+ <CAHk-=wixEw+wKJzwfEFnBYLNt5zU6zA2kpNVu_36e33_zsawKA@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f1610a65-0bf9-8134-3e8d-72cccd2f5468@kernel.dk>
-Date:   Fri, 14 Feb 2020 18:10:13 -0700
+Message-ID: <ba8f3ef7-a696-0e47-eadb-7772e6aba725@kernel.dk>
+Date:   Fri, 14 Feb 2020 18:20:53 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <FA1CECBA-FBFE-4228-BA5C-1B8A4A2B3534@eoitek.com>
+In-Reply-To: <CAHk-=wixEw+wKJzwfEFnBYLNt5zU6zA2kpNVu_36e33_zsawKA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/14/20 5:16 PM, Carter Li 李通洲 wrote:
-> Hello Jens,
+On 2/14/20 3:07 PM, Linus Torvalds wrote:
+> On Fri, Feb 14, 2020 at 8:45 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> Here's a set of fixes for io_uring that should go into this release.
 > 
+> Whaa?
 > 
->> It's now up to 3.5x the original performance for the single client case.
->> Here's the updated patch, folded with the original that only went half
->> the way there.
+>           for_each_node(node) {
+> +                if (!node_online(node))
+> +                        continue;
 > 
+> that's just silly.
 > 
-> I’m looking forward to it.
+> We have 'for_each_online_node()' for this.
 > 
-> And question again: since POLL->READ/RECV is much faster then READ/RECV async,
-> could we implement READ/RECV that would block as POLL->READ/RECV? Not only for
-> networking, but also for all pollable fds.
+> There's something like four patterns of that pointless thing.
 
-That's exactly the next step. With this, we have a very efficient way of
-doing async IO for anything that can be driven by poll. Then we can do it
-by default, instead of doing an async punt. Much faster and much more
-efficient.
+Sorry, that definitely should have been for_each_online_node() for
+those, guess I didn't think of that when making the change.
 
-I'll try and work on that next week, I think this could be a real game
-changer.
+> And in io_wq_create(), do you really want to allocate that wqe for
+> nodes that aren't online? Right now you _allocate_ the node data for
+> them (using a non-node-specific allocation), but then you won't
+> actually create the thread for them io_wq_manager().
+
+I was thinking about this a bit, and as far as I know there's no good
+way to get notified of nodes coming and going. And I'd really like
+to avoid having to add that to the fast path.
+
+So this seemed like the lesser of evils, we setup the wqe just in
+case the node does come online, and then rely on the manager
+creating the thread when we need it. Not sure what setup was run
+to create it, I haven't come across any boxes where we have nodes
+that are present but not online.
+
+> Plus if the node online status changes, it looks like you'll mess up
+> _anyway_, in that  io_wq_manager() will first create the workers on
+> one set of nodes, but then perhaps set the state flags for a
+> completely different set of nodes if some onlining/offlining has
+> happened.
+
+We'll look into making this more clear and bullet proof.
+
+> I've pulled this, but Jens, you need to be more careful. This all
+> looks like completely random state that nobody spent any time thinking
+> about.
+> 
+> Seriously, this "io_uring FIXES ONLY" needs to be stricter than what
+> you seem to be doing here. This "fix" is opening up a lot of new
+> possibilities for inconsistencies in the data structures.
+
+We'll get it sorted for 5.6. Thanks for pulling.
 
 -- 
 Jens Axboe

@@ -2,236 +2,138 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C0C1603CA
-	for <lists+io-uring@lfdr.de>; Sun, 16 Feb 2020 12:15:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8605C1604F1
+	for <lists+io-uring@lfdr.de>; Sun, 16 Feb 2020 18:14:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728026AbgBPLPk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 16 Feb 2020 06:15:40 -0500
-Received: from mail-wr1-f42.google.com ([209.85.221.42]:43659 "EHLO
-        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728009AbgBPLPj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Feb 2020 06:15:39 -0500
-Received: by mail-wr1-f42.google.com with SMTP id r11so16151814wrq.10
-        for <io-uring@vger.kernel.org>; Sun, 16 Feb 2020 03:15:38 -0800 (PST)
+        id S1728469AbgBPROC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 16 Feb 2020 12:14:02 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36347 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728370AbgBPROC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Feb 2020 12:14:02 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d9so7793407pgu.3
+        for <io-uring@vger.kernel.org>; Sun, 16 Feb 2020 09:14:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=1gTtXv0Ou7Ozif9CG3wW02P8umAhUNyzslpCaL1DANM=;
-        b=Le1Vf3A6lrX2METdF3KyhhxpxY6+PUwGSUsd5KjHiOzFHNK0msbe3u3VstcdPzTYhk
-         vtA2/cGfWffhlNBQOeDT8EIxViSgbwxXlBejhkL76etFrox4sFinS/scKqpiS2vvdhto
-         om/bHf22XUCO3sjvDQqaF6YfS5OBKegK4LrGtqnB2WmjI3jf1gZN2uCrHqBxuWSjB0lZ
-         WbcT6QBfMhk2ugtSwULV07KDnUkNgG8q5qDn8l34+NQ/KInjQsbXJT78CL38U6sYycH1
-         yaTfgRJuzRnCbpQqJj6wKtquTKSPvcKMI1cg3dpDDBOokCrSRDoNCJt8/HsMf96JXF3b
-         5fjQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=SaNvcIlvlJ60eWkUWtXTLHOg1msWrtwuor9UhgQ0e+U=;
+        b=oZYKHVdsnUOKDh9lGlz+iTcbnUw+181E7AzTIbhA643LnR/8z/6R6a4GyuqVbNZwVK
+         pJ0p3NKkGiPdpcvewjpWJYnKeX3UX48ZVamRGU6pjY0PO6y9r4//gP96Dwown4bVCdzh
+         Qcg8G9+JcjobTNgmd8wHgQMKqB8X189vugAVhK9lc/bqD9WKOVGArXPJ167Cym+jzbFN
+         26m6pgOVuZ8a9Rd4QFEWX1/f7Wb437uww9tIPlHxlDqn2nwV7KqQWAdTfrJpoUbEqLg6
+         nwQEq2YLMekOkFPtElFg62SobIhKtUtkAuEPkdKwFjTZPXj/Sp3uqaCl10rDSc/p9YEA
+         hLsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1gTtXv0Ou7Ozif9CG3wW02P8umAhUNyzslpCaL1DANM=;
-        b=mHsH4GytfjW+U80UJnrUjrY5manEQMVMtJvygyyhPM2Qgyy96A1I0dLEzcY9NQb/Sd
-         O76b9twATYaJy4VTp+bZeYvi5IxrylkP8KhH7gm0qB/my2M9BKf1OuRBQVT+VoHIAhnq
-         AsRWO649xZF06M0lAgUfSDbP/olBPg5osUkivnHPhfPWziQTb93e0sKAFZjEBRwzgjne
-         p+8dY8WdxLQ4Gv+33kSrsY5QcBcBsUR4aR1B0bFauRHxUr6nDj5EAR+U4wNjq6ydxZBE
-         fsUuhlDohJgb04z33OJ/y4Ebu17j9YR3GBtufLaTCf69+ltrxAj2UiDq8nVgfD25OCjQ
-         YJ2Q==
-X-Gm-Message-State: APjAAAWQ6lFbmor2S/qUK4Jn7Uvd15xJAUAAdiZlhL282aYZB+tRNphx
-        2yel6deaQlwCQpHed7Ejsqt86CSw
-X-Google-Smtp-Source: APXvYqx41jRtoPLn3zy43aOnwmwTDJ+3eKhnIk5q7smojjAYz8wQVsymAtrqxYiWW4wzuQ3ku2Xw6A==
-X-Received: by 2002:adf:cd11:: with SMTP id w17mr16271692wrm.66.1581851737562;
-        Sun, 16 Feb 2020 03:15:37 -0800 (PST)
-Received: from localhost.localdomain ([109.126.140.114])
-        by smtp.gmail.com with ESMTPSA id 25sm16232033wmi.32.2020.02.16.03.15.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2020 03:15:37 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2 2/2] test/splice: add basic splice tests
-Date:   Sun, 16 Feb 2020 14:14:41 +0300
-Message-Id: <78e2a197848074778814b70d56c8ac611e80c1d9.1581851604.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1581851604.git.asml.silence@gmail.com>
-References: <cover.1581851604.git.asml.silence@gmail.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SaNvcIlvlJ60eWkUWtXTLHOg1msWrtwuor9UhgQ0e+U=;
+        b=q3h+XQ/gDRj5mwpxsWVzu8oMgFViIyLglstzxTCP5ECgdivJJeNC+eqxMqn+wBuUFT
+         XqDw/JQQ4MTdS5aVvCYJf/Z8uySZzLWO5BqMfXuQ2+KcQT97gRQTGsS5mTJaHNv77zTw
+         RHYNNL+TwAjvXajSF9SqQmWyKIvRcMMUQ4ZWH+3LBYAOar5NLlEVz/5+8EKbZVA28P3P
+         F8coep063OVq0dt84YXLMR2XEwR8jSMyZUErJl3YXt5lsyH5KKdl4O6B2CsUHY7GALD5
+         kphqVZ9j2V2WlQFq0bDjFC1JMz69MC+nJVkUl7NRR1GvgVtGrBhqjV6jfvAn8omlW6Fx
+         MY3Q==
+X-Gm-Message-State: APjAAAXOWj4/ELSyJxZrmzUpMJH8pEefkC94iZcPJlZYDR0eXGNI7P2G
+        mwzSO6TWE+AgcteL//6FmgPS6ugERCM=
+X-Google-Smtp-Source: APXvYqz1kLCaHGyUK2e3O/IyNTKkNE483FnTLGd+PYStnE/2iKrGUi/tA32RmagvNZMEAQnbCY+V9Q==
+X-Received: by 2002:a63:583:: with SMTP id 125mr13497998pgf.100.1581873241523;
+        Sun, 16 Feb 2020 09:14:01 -0800 (PST)
+Received: from ?IPv6:2605:e000:100e:8c61:b1fd:20cc:c368:304b? ([2605:e000:100e:8c61:b1fd:20cc:c368:304b])
+        by smtp.gmail.com with ESMTPSA id c68sm14049356pfc.156.2020.02.16.09.14.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Feb 2020 09:14:01 -0800 (PST)
+Subject: Re: [PATCH] io_uring: fix poll_list race for
+ SETUP_IOPOLL|SETUP_SQPOLL
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+References: <20200214131125.3391-1-xiaoguang.wang@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <880c7bef-ac1d-30bf-6ab7-9866d0614afa@kernel.dk>
+Date:   Sun, 16 Feb 2020 09:13:59 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200214131125.3391-1-xiaoguang.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/Makefile |   4 +-
- test/splice.c | 138 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 140 insertions(+), 2 deletions(-)
- create mode 100644 test/splice.c
+On 2/14/20 6:11 AM, Xiaoguang Wang wrote:
+> After making ext4 support iopoll method:
+>   let ext4_file_operations's iopoll method be iomap_dio_iopoll(),
+> we found fio can easily hang in fio_ioring_getevents() with below fio
+> job:
+>     rm -f testfile; sync;
+>     sudo fio -name=fiotest -filename=testfile -iodepth=128 -thread
+> -rw=write -ioengine=io_uring  -hipri=1 -sqthread_poll=1 -direct=1
+> -bs=4k -size=10G -numjobs=8 -runtime=2000 -group_reporting
+> with IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL enabled.
+> 
+> There are two issues that results in this hang, one reason is that
+> when IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL are enabled, fio
+> does not use io_uring_enter to get completed events, it relies on
+> kernel io_sq_thread to poll for completed events.
+> 
+> Another reason is that there is a race: when io_submit_sqes() in
+> io_sq_thread() submits a batch of sqes, variable 'inflight' will
+> record the number of submitted reqs, then io_sq_thread will poll for
+> reqs which have been added to poll_list. But note, if some previous
+> reqs have been punted to io worker, these reqs will won't be in
+> poll_list timely. io_sq_thread() will only poll for a part of previous
+> submitted reqs, and then find poll_list is empty, reset variable
+> 'inflight' to be zero. If app just waits these deferred reqs and does
+> not wake up io_sq_thread again, then hang happens.
+> 
+> For app that entirely relies on io_sq_thread to poll completed requests,
+> let io_iopoll_req_issued() wake up io_sq_thread properly when adding new
+> element to poll_list.
 
-diff --git a/test/Makefile b/test/Makefile
-index cf91011..94bbd18 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -20,7 +20,7 @@ all_targets += poll poll-cancel ring-leak fsync io_uring_setup io_uring_register
- 		connect 7ad0e4b2f83c-test submit-reuse fallocate open-close \
- 		file-update statx accept-reuse poll-v-poll fadvise madvise \
- 		short-read openat2 probe shared-wq personality eventfd \
--		send_recv eventfd-ring across-fork
-+		send_recv eventfd-ring across-fork splice
+I think your analysis is correct, but the various conditional locking
+and unlocking in io_sq_thread() is not easy to follow. When I see
+things like:
+
+@@ -5101,16 +5095,22 @@ static int io_sq_thread(void *data)
+ 			if (!to_submit || ret == -EBUSY) {
+ 				if (kthread_should_park()) {
+ 					finish_wait(&ctx->sqo_wait, &wait);
++					if (iopoll)
++						mutex_unlock(&ctx->uring_lock);
+ 					break;
+ 				}
+ 				if (signal_pending(current))
+ 					flush_signals(current);
++				if (iopoll)
++					mutex_unlock(&ctx->uring_lock);
+ 				schedule();
+ 				finish_wait(&ctx->sqo_wait, &wait);
  
- include ../Makefile.quiet
+ 				ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
+ 				continue;
+ 			}
++			if (iopoll)
++				mutex_unlock(&ctx->uring_lock);
+ 			finish_wait(&ctx->sqo_wait, &wait);
  
-@@ -47,7 +47,7 @@ test_srcs := poll.c poll-cancel.c ring-leak.c fsync.c io_uring_setup.c \
- 	7ad0e4b2f83c-test.c submit-reuse.c fallocate.c open-close.c \
- 	file-update.c statx.c accept-reuse.c poll-v-poll.c fadvise.c \
- 	madvise.c short-read.c openat2.c probe.c shared-wq.c \
--	personality.c eventfd.c eventfd-ring.c across-fork.c
-+	personality.c eventfd.c eventfd-ring.c across-fork.c splice.c
- 
- test_objs := $(patsubst %.c,%.ol,$(test_srcs))
- 
-diff --git a/test/splice.c b/test/splice.c
-new file mode 100644
-index 0000000..92b3195
---- /dev/null
-+++ b/test/splice.c
-@@ -0,0 +1,138 @@
-+#include <errno.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <fcntl.h>
-+#include <sys/mman.h>
-+
-+#include "liburing.h"
-+
-+static int copy_single(struct io_uring *ring,
-+			int fd_in, loff_t off_in,
-+			int fd_out, loff_t off_out,
-+			unsigned int len,
-+			unsigned flags1, unsigned flags2)
-+{
-+	struct io_uring_cqe *cqe;
-+	struct io_uring_sqe *sqe;
-+	int ret, i, err = -1;
-+	int pipe_fds[2] = {-1, -1};
-+
-+	if (pipe(pipe_fds) < 0)
-+		goto exit;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		printf("get sqe failed\n");
-+		goto exit;
-+	}
-+	io_uring_prep_splice(sqe, fd_in, off_in, pipe_fds[1], -1,
-+			     len, flags1);
-+	sqe->user_data = 1;
-+	sqe->flags = IOSQE_IO_LINK;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		printf("get sqe failed\n");
-+		goto exit;
-+	}
-+	io_uring_prep_splice(sqe, pipe_fds[0], -1, fd_out, off_out,
-+			     len, flags2);
-+	sqe->user_data = 2;
-+
-+	ret = io_uring_submit(ring);
-+	if (ret <= 0) {
-+		printf("sqe submit failed: %d\n", ret);
-+		goto exit;
-+	}
-+
-+	for (i = 0; i < 2; i++) {
-+		ret = io_uring_wait_cqe(ring, &cqe);
-+		if (ret < 0 || cqe->res != len) {
-+			printf("wait completion %d\n", cqe->res);
-+			goto exit;
-+		}
-+		io_uring_cqe_seen(ring, cqe);
-+	}
-+	err = 0;
-+exit:
-+	if (pipe_fds[0] >= 0) {
-+		close(pipe_fds[0]);
-+		close(pipe_fds[1]);
-+	}
-+	return err;
-+}
-+
-+static int test_splice(struct io_uring *ring)
-+{
-+	int ret, err = 1;
-+	int len = 4 * 4096;
-+	int fd_out = -1, fd_in = -1;
-+	int fd_in_idx;
-+
-+	fd_in = open("/dev/urandom", O_RDONLY);
-+	if (fd_in < 0)
-+		goto exit;
-+	fd_out = memfd_create("splice_test_out_file", 0);
-+	if (fd_out < 0)
-+		goto exit;
-+	if (ftruncate(fd_out, len) == -1)
-+		goto exit;
-+
-+	ret = copy_single(ring, fd_in, -1, fd_out, -1, len,
-+			  SPLICE_F_MOVE | SPLICE_F_MORE, 0);
-+	if (ret) {
-+		printf("basic splice-copy failed\n");
-+		goto exit;
-+	}
-+
-+	ret = copy_single(ring, fd_in, 0, fd_out, 0, len,
-+			  0, SPLICE_F_MOVE | SPLICE_F_MORE);
-+	if (ret) {
-+		printf("basic splice with offset failed\n");
-+		goto exit;
-+	}
-+
-+	fd_in_idx = 0;
-+	ret = io_uring_register_files(ring, &fd_in, 1);
-+	if (ret) {
-+		fprintf(stderr, "%s: register ret=%d\n", __FUNCTION__, ret);
-+		goto exit;
-+	}
-+
-+	ret = copy_single(ring, fd_in_idx, 0, fd_out, 0, len,
-+			  SPLICE_F_FD_IN_FIXED, 0);
-+	if (ret) {
-+		printf("basic splice with reg files failed\n");
-+		goto exit;
-+	}
-+
-+	err = 0;
-+exit:
-+	if (fd_out >= 0)
-+		close(fd_out);
-+	if (fd_in >= 0)
-+		close(fd_in);
-+	return err;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct io_uring ring;
-+	int ret;
-+
-+	ret = io_uring_queue_init(8, &ring, 0);
-+	if (ret) {
-+		printf("ring setup failed\n");
-+		return 1;
-+	}
-+
-+	ret = test_splice(&ring);
-+	if (ret) {
-+		printf("test_splice failed %i %i\n", ret, errno);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
+ 			ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
+
+it triggers the taste senses a bit. Any chance you could take another
+look at that part and see if we can clean it up a bit?
+
+Even if that isn't possible, then I think it'd help to rename 'iopoll'
+to something related to the lock, and have a comment when you first do:
+
+	/* If we're doing polled IO, we need to bla bla */
+	if (ctx->flags & IORING_SETUP_IOPOLL)
+		needs_uring_lock = true;
+
+
 -- 
-2.24.0
+Jens Axboe
 

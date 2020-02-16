@@ -2,49 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 164AB1606E8
-	for <lists+io-uring@lfdr.de>; Sun, 16 Feb 2020 23:23:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C613160714
+	for <lists+io-uring@lfdr.de>; Mon, 17 Feb 2020 00:06:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbgBPWXP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 16 Feb 2020 17:23:15 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:37361 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbgBPWXP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Feb 2020 17:23:15 -0500
-Received: by mail-pj1-f68.google.com with SMTP id m13so6331242pjb.2
-        for <io-uring@vger.kernel.org>; Sun, 16 Feb 2020 14:23:14 -0800 (PST)
+        id S1726036AbgBPXGd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 16 Feb 2020 18:06:33 -0500
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:40487 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726020AbgBPXGd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Feb 2020 18:06:33 -0500
+Received: by mail-pf1-f177.google.com with SMTP id q8so7843462pfh.7
+        for <io-uring@vger.kernel.org>; Sun, 16 Feb 2020 15:06:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dsMZbC5u0cNEe+uf+u+YMRXbQjiqsYmPgVmh+HSiZ7A=;
-        b=fKflyMklpPzg9ICsipQ55P6eblFXz2NIUZe1cSip4IT+UIPaVuYUfN5craQkH78/Cm
-         07gl8SsYoCYexCZSAmZhS91GCe4R4UsThzrQvy1UNPT/mB8lg9goQ33cb5IVBlyGO++X
-         xJqL0a3d6NUePJDB9MtdTuax9hQE3mQw60G50x4vnOhZ2jdiH7NSoDzDjNmKuqc66lNa
-         nWLmJCRKzdRVCnnEcHKhRdrcZ3ftf373a+fPLMNZNOxyJiCQ1PLa1enMCBTLuypzZkVi
-         Z9qVcI27YUdmXXnL6ahhgPZMz5La2w4r54XOrPyzm0S3fAPxI8Z/+Nz+QbOl3l1rQU2D
-         VCEg==
+        bh=dW0nef4Q2iuqbR3d5NTG55VCHiSHhCPPe05HvA5iXEA=;
+        b=xJXeIp37vxceqtPtxaiRA69QeNrfSU0RuCTPmvXb04uC3e9kbak358J6GxHC28ClVn
+         V5ghBemdVxq+Z95oRAOpAQUmv3jK3jY9Il9GXxyxce/dZR034uCxhjXD68qk9Jj8DBeA
+         2mEzs55G0Owvocp5Yrkg5H8n21vNKDA1Fs2iPJ6pKddfGtZ2gksDrRyDFkNmekQnO2wW
+         pQTmAv0/HUseidpGtXx7X9TZ+8TfzTbcKHgQ3984D9UMdg/uyy3GezRZN5lkPZqPYNTP
+         76QRw88Qu4b5jgrPAo/hIhfv417wdLxEhavb7yUxdTSEVamctR2V0EZpNgmOWZA+rYuA
+         hoEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=dsMZbC5u0cNEe+uf+u+YMRXbQjiqsYmPgVmh+HSiZ7A=;
-        b=psyC5ILQgjW3JmWiMYv1BE0EsX9MOqSGJPA7ZDRhJWSPpVmRkZ0KQ/5PUUwMB1vi6s
-         FeSIn17xKAeN/Yjy569xohXhgSVC8T9Y2bMowK8eDgDu6WT8W28N+arlP+ArGn5Zc3jU
-         tUcK4pIqVu44Pdfqb/Eq9aRRtCYVeYPNgFAYsYFThmUNW7BQ2n7e+KvAnI2b/pluSCpZ
-         ospPIsRDXa9CnM7c9OT9FljANFg6zxfI2M+KAssFu3tyjrY1Do1Tmgdwf0vMqcJUzw+5
-         72QyJDmoAKI2XOTDEPm85MB1DnnigWq+1u9Fw9V/r2UJn4q+lu5B2wQ9cDEsy48I/irV
-         GaiA==
-X-Gm-Message-State: APjAAAWfjycfeqJWMuQkgXJnpnqHathaCKRcKAW9EcuF7HHSOaaKVhgu
-        4HQ+XW0GS3JeCIysQs5weVDfun5dXao=
-X-Google-Smtp-Source: APXvYqxTD1tEKwuOQ22d7Uiv0YkEUjNDjWseE4SznQwGUOXIox+cjFIjVDDWbLImaLPTlHzvnuosQQ==
-X-Received: by 2002:a17:902:fe8d:: with SMTP id x13mr13763629plm.232.1581891794188;
-        Sun, 16 Feb 2020 14:23:14 -0800 (PST)
-Received: from ?IPv6:2605:e000:100e:8c61:f9ca:4e53:3b3b:ca45? ([2605:e000:100e:8c61:f9ca:4e53:3b3b:ca45])
-        by smtp.gmail.com with ESMTPSA id d2sm14123889pjv.18.2020.02.16.14.23.13
+        bh=dW0nef4Q2iuqbR3d5NTG55VCHiSHhCPPe05HvA5iXEA=;
+        b=WKeU/NGP4aF/b8DwIiqer8HuLJzsrjFk0mzVGxTgI5/nILc8vohwxfj69UBmvLs5/g
+         uu9M9nwrW0bQh35gQ9utm9oyYcsjtXkJWm9ZVR51EpW83/U6MgCA+Wt3yisDJav6gD/r
+         OOZr9+eN0Rw6bTZ6ww8jv5CXfaIvkidFP1I6cDFpRKIXq1RMMgHyaQP/spFlnVPsnren
+         vgSlH461ga5GZ3HkoIKmOisqIAvHre7GS0ObW5RB4GtQifD1B+vBzkBB/McNyYSDZVpS
+         iox0qde2496UVjfzmd0YqSOnj/dv9umhs57BzmAEMquqJ2T0hjLhpzXn0GfoKpFKmcPQ
+         EHzA==
+X-Gm-Message-State: APjAAAX/pwbYQ2ARQfCYwbVA6zbwFmEoFccP7nxOtZV3jsumS+wMkJq+
+        Pg/z2ZriiIVp5FbGKp+fdhdfF4D8sfo=
+X-Google-Smtp-Source: APXvYqw6Se7joGnnxpEpNV7o8ADbLjK2d7yE+ooCEaOaZiRunTtKN1EDRcUYw3uEMhto4m5+/m23Dw==
+X-Received: by 2002:a63:3154:: with SMTP id x81mr15170944pgx.32.1581894391260;
+        Sun, 16 Feb 2020 15:06:31 -0800 (PST)
+Received: from ?IPv6:2605:e000:100e:8c61:6cdc:d83a:55b1:9a10? ([2605:e000:100e:8c61:6cdc:d83a:55b1:9a10])
+        by smtp.gmail.com with ESMTPSA id t28sm14262383pfq.122.2020.02.16.15.06.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Feb 2020 14:23:13 -0800 (PST)
+        Sun, 16 Feb 2020 15:06:30 -0800 (PST)
 Subject: Re: [ISSUE] The time cost of IOSQE_IO_LINK
 To:     Pavel Begunkov <asml.silence@gmail.com>,
         =?UTF-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>
@@ -70,8 +70,8 @@ References: <9FEF0D34-A012-4505-AA4E-FF97CC302A33@eoitek.com>
  <5cba3020-7d99-56b0-8927-f679118c90e9@kernel.dk>
  <68a068dd-cb14-10a5-a441-12bc6a2b1dea@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <08cc6880-be41-9ca7-3026-7988ac7d9640@kernel.dk>
-Date:   Sun, 16 Feb 2020 14:23:12 -0800
+Message-ID: <286b00c4-bff7-6c1a-b81f-612114637019@kernel.dk>
+Date:   Sun, 16 Feb 2020 15:06:27 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
@@ -85,28 +85,11 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 2/16/20 12:06 PM, Pavel Begunkov wrote:
-> On 15/02/2020 09:01, Jens Axboe wrote:
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index fb94b8bac638..530dcd91fa53 100644
->> @@ -4630,6 +4753,14 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>  	 */
->>  	if (ret == -EAGAIN && (!(req->flags & REQ_F_NOWAIT) ||
->>  	    (req->flags & REQ_F_MUST_PUNT))) {
->> +
->> +		if (io_arm_poll_handler(req, &retry_count)) {
->> +			if (retry_count == 1)
->> +				goto issue;
-> 
-> Better to sqe=NULL before retrying, so it won't re-read sqe and try to
-> init the req twice.
-
-Good point, that should get cleared after issue.
-
 > Also, the second sync-issue may -EAGAIN again, and as I remember,
 > read/write/etc will try to copy iovec into req->io. But iovec is
 > already in req->io, so it will self memcpy(). Not a good thing.
 
-I'll look into those details, that has indeed reared its head before.
+That got fixed, it's no longer doing that anymore.
 
 >> +			else if (!retry_count)
 >> +				goto done_req;
@@ -118,12 +101,8 @@ I'll look into those details, that has indeed reared its head before.
 > - some may rely on specified work.func to be called. e.g. close(), even though
 > it doesn't participate in the scheme
 
-It's totally a hack as-is for the "can't do it, go async". I did clean
-this up a bit (if you check the git version, it's changed quite a bit),
-but it's still a mess in terms of that and ->work vs union ownership.
-The commit message also has a note about that.
-
-So more work needed in that area for sure.
+For now I just retain a copy of ->work, seems to be the easiest solution
+vs trying to track this state.
 
 -- 
 Jens Axboe

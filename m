@@ -2,33 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A119816169A
-	for <lists+io-uring@lfdr.de>; Mon, 17 Feb 2020 16:48:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08DEE1616B8
+	for <lists+io-uring@lfdr.de>; Mon, 17 Feb 2020 16:54:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbgBQPsm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 17 Feb 2020 10:48:42 -0500
-Received: from hr2.samba.org ([144.76.82.148]:21952 "EHLO hr2.samba.org"
+        id S1727976AbgBQPyY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 17 Feb 2020 10:54:24 -0500
+Received: from hr2.samba.org ([144.76.82.148]:23908 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727553AbgBQPsm (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 17 Feb 2020 10:48:42 -0500
+        id S1729403AbgBQPyX (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 17 Feb 2020 10:54:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
          s=42; h=Date:Message-ID:From:To:CC;
-        bh=8dlgBhd+lSjbGUND7MGo+YNCYyckbZZ0GB3Zm7V7w6w=; b=TbLpMDx251n5qlCl/qAXWAA0s5
-        /qewjO1wQSJIas9NYMkBJmX9/oR9i+XR5CXRAFeGtGO4hIqjHxsgFT7ggFB3KWd30Pvbl2QFfGV4n
-        wJlJLy/6Nky07lq4AUG8B6WJOm+XUgMsJtDJMzrfkXmGfG7SPZwjNuQldbih84fi+x35xwkjOXjmx
-        bG8wTGkFMLj6ZSJ7gh01Kwcx5AcIpMS482yue3oaqTG7oSmMCo/pmvuO2pQwvUd4xd/7nw8HQ0xYa
-        tK/42fJOBc8RiRiMYblDplMyc+CxMXq2YD0+x26ET6akKQfd2g6nrBj+NJ5jWZahpRiHKkXsEi6JA
-        s3mQMwW1bpiMUxs02NUfnRjCbIMS/68UIb4sZIKX3U9T7QQFIBqVc5Uv1n3yKCS85R1scuozhHXcx
-        ku0ZKVtH96oLaVKndR9PciJBW1nbTXCg7Oi4G2orOGtyegxRuZeabKGND9YQda9/vQbtPuep5Vkfb
-        3NCjbAo+A6eHR07aGJRwfjcn;
+        bh=fUJ9SaZHT3F3fZnWTmFRx0siIE19YJt4o8K2blk5cKg=; b=p+z0ZY50NLTahcY/dGLeG6O6y5
+        eGyvOyc5eyWJ14Z05hihraKx8w6i0G4pUU/x6TJCGpMXXyJc+NQKGIc4rnlLiPTyULuuBg+qVzm56
+        hKXtD3Ygtz9al2VDv64jAzqMNkdAMHHkJMAoP1zWuhTxrQEK6qWw9QeV1hUv91F01TwatsK3F+Kv9
+        sQYr4FrJlE36Wt1VR2xXv7nJlxxwG6OJBP9JWLbBf6063txLA1m2jMrjfbwRUKWaK5HDCD7WgSsRT
+        3DE7XoU5VV6RYQE3G+VvZmLX1o3javDH9lFL7tZbrDww0PgorBoKxYVY2ft1vXhVMsN0XqT7ADde5
+        aGrFqyzt75eZuSrCp64C3YaiOOIfNuYRzB3Gp+oXFKpHHfcWdmgh8ZgPlmKaSzKwJ4pymzCHHrbLv
+        8n9xN3gUu6BwV48z1aZhepfRJA9QgB6jDlvu7ydpNxVxu9T853D5yQxRsyAUHo1K/NxFOrACO1GTe
+        L6KUy0idwZpxMb/bSlpSL3YP;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1j3idR-0006jp-Oq; Mon, 17 Feb 2020 15:48:37 +0000
+        id 1j3iiw-0006nN-9C; Mon, 17 Feb 2020 15:54:18 +0000
 To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1581851604.git.asml.silence@gmail.com>
- <a49db514f8b0b7d509c50ed0185688ece5830363.1581851604.git.asml.silence@gmail.com>
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1581802973.git.asml.silence@gmail.com>
+ <b33d7315f266225237dfd10f483162c51c2ed5bc.1581802973.git.asml.silence@gmail.com>
+ <6d803558-ab09-1850-2c38-38848b8ddf27@samba.org>
+ <b44a4692-f43c-e625-3eb7-cc4e12041f48@gmail.com>
 From:   Stefan Metzmacher <metze@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
@@ -343,123 +348,107 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  uWrtpKE+BrlhmZrZleospHp05F+oHuE7lrOg09g0SFdTigqSJNbN1R/pkPI5Q03GfbWipsd4
  iY0Rj0D34DQVeKAa4qUlOcBgX2D9VHRap9GKQRWs//egCueqDZNmIk3071aFV+BSiBSTZIIG
  t/YZOE37yKSj2rcCbqg=
-Subject: Re: [PATCH v2 1/2] splice: add splice(2) helpers
-Message-ID: <c1d203e2-a31a-2e61-fc2f-4b144209e0cc@samba.org>
-Date:   Mon, 17 Feb 2020 16:48:34 +0100
+Subject: Re: [PATCH v2 3/3] io_uring: add splice(2) support
+Message-ID: <033a6560-df47-39a2-871b-13f2d84bb1ec@samba.org>
+Date:   Mon, 17 Feb 2020 16:54:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <a49db514f8b0b7d509c50ed0185688ece5830363.1581851604.git.asml.silence@gmail.com>
+In-Reply-To: <b44a4692-f43c-e625-3eb7-cc4e12041f48@gmail.com>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="FThlJgfe0YQu2svMnbZs4MoNnn1Sjgcpm"
+ boundary="MK6GbzPE0beUfJX8udO1KXHWgYNQy9N9F"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---FThlJgfe0YQu2svMnbZs4MoNnn1Sjgcpm
-Content-Type: multipart/mixed; boundary="0ohS7vATEdVqo555A2kg8UW8wABYYYZf6";
+--MK6GbzPE0beUfJX8udO1KXHWgYNQy9N9F
+Content-Type: multipart/mixed; boundary="iBAWUdVNq4VEqTgxeZErxNarJWuPE64MF";
  protected-headers="v1"
 From: Stefan Metzmacher <metze@samba.org>
 To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- io-uring@vger.kernel.org
-Message-ID: <c1d203e2-a31a-2e61-fc2f-4b144209e0cc@samba.org>
-Subject: Re: [PATCH v2 1/2] splice: add splice(2) helpers
-References: <cover.1581851604.git.asml.silence@gmail.com>
- <a49db514f8b0b7d509c50ed0185688ece5830363.1581851604.git.asml.silence@gmail.com>
-In-Reply-To: <a49db514f8b0b7d509c50ed0185688ece5830363.1581851604.git.asml.silence@gmail.com>
+ Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <033a6560-df47-39a2-871b-13f2d84bb1ec@samba.org>
+Subject: Re: [PATCH v2 3/3] io_uring: add splice(2) support
+References: <cover.1581802973.git.asml.silence@gmail.com>
+ <b33d7315f266225237dfd10f483162c51c2ed5bc.1581802973.git.asml.silence@gmail.com>
+ <6d803558-ab09-1850-2c38-38848b8ddf27@samba.org>
+ <b44a4692-f43c-e625-3eb7-cc4e12041f48@gmail.com>
+In-Reply-To: <b44a4692-f43c-e625-3eb7-cc4e12041f48@gmail.com>
 
---0ohS7vATEdVqo555A2kg8UW8wABYYYZf6
+--iBAWUdVNq4VEqTgxeZErxNarJWuPE64MF
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Hi Pavel,
+Am 17.02.20 um 16:40 schrieb Pavel Begunkov:
+> On 2/17/2020 6:18 PM, Stefan Metzmacher wrote:
+>> Hi Pavel,
+>>
+>>> +static int io_splice_prep(struct io_kiocb *req, const struct io_urin=
+g_sqe *sqe)
+>>> +{
+>>> +	struct io_splice* sp =3D &req->splice;
+>>> +	unsigned int valid_flags =3D SPLICE_F_FD_IN_FIXED | SPLICE_F_ALL;
+>>> +	int ret;
+>>> +
+>>> +	if (req->flags & REQ_F_NEED_CLEANUP)
+>>> +		return 0;
+>>> +
+>>> +	sp->file_in =3D NULL;
+>>> +	sp->off_in =3D READ_ONCE(sqe->off_in);
+>>> +	sp->off_out =3D READ_ONCE(sqe->off);
+>>> +	sp->len =3D READ_ONCE(sqe->len);
+>>> +	sp->flags =3D READ_ONCE(sqe->splice_flags);
+>>> +
+>>> +	if (unlikely(READ_ONCE(sqe->ioprio) || (sp->flags & ~valid_flags)))=
 
-> diff --git a/src/include/liburing.h b/src/include/liburing.h
-> index 8ca6cd9..9ff2a54 100644
-> --- a/src/include/liburing.h
-> +++ b/src/include/liburing.h
-> @@ -191,6 +191,17 @@ static inline void io_uring_prep_rw(int op, struct=
- io_uring_sqe *sqe, int fd,
->  	sqe->__pad2[0] =3D sqe->__pad2[1] =3D sqe->__pad2[2] =3D 0;
->  }
-> =20
-> +static inline void io_uring_prep_splice(struct io_uring_sqe *sqe,
-> +					int fd_in, loff_t off_in,
-> +					int fd_out, loff_t off_out,
-> +					unsigned int nbytes, int splice_flags)
-> +{
+>>> +		return -EINVAL;
+>>
+>> Why is ioprio not supported?
+>=20
+> Because there is no way to set it without changing much of splice code.=
 
-The splice() syscall takes 'size_t len' and 'unsigned int flags',
-I think we should at least change this to 'unsigned int splice_flags'.
+> It may be added later
+>=20
+> BTW, it seems, only opcodes cares about ioprio are read*/write*.
+> recv*() and send*() don't reject it, but never use.
 
-> diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_=
-uring.h
-> index 424fb4b..dc78697 100644
-> --- a/src/include/liburing/io_uring.h
-> +++ b/src/include/liburing/io_uring.h
-> @@ -23,7 +23,10 @@ struct io_uring_sqe {
->  		__u64	off;	/* offset into file */
->  		__u64	addr2;
->  	};
-> -	__u64	addr;		/* pointer to buffer or iovecs */
-> +	union {
-> +		__u64	addr;	/* pointer to buffer or iovecs */
-> +		__u64	off_in;
-> +	};
->  	__u32	len;		/* buffer size or number of iovecs */
->  	union {
->  		__kernel_rwf_t	rw_flags;
-> @@ -37,6 +40,7 @@ struct io_uring_sqe {
->  		__u32		open_flags;
->  		__u32		statx_flags;
->  		__u32		fadvise_advice;
-> +		__u32		splice_flags;
->  	};
->  	__u64	user_data;	/* data to be passed back at completion time */
->  	union {
-> @@ -45,6 +49,7 @@ struct io_uring_sqe {
->  			__u16	buf_index;
->  			/* personality to use, if used */
->  			__u16	personality;
-> +			__u32	splice_fd_in;
+I guess it's more like a hint, so should we just ignore it until
+it's passed down? Otherwise applications need to do some logic to
+find out if they can pass a value or not.
 
-Shouldn't this be __s32 in order to match "__s32 fd"?
+I'm not sure what's better, but I think it needs to be discussed...
 
->  		};
-
-Can you please add BUILD_BUG_SQE_ELEM() checks for the new elements
-in io_uring_init()?
-
-Thanks!
 metze
 
 
---0ohS7vATEdVqo555A2kg8UW8wABYYYZf6--
 
---FThlJgfe0YQu2svMnbZs4MoNnn1Sjgcpm
+--iBAWUdVNq4VEqTgxeZErxNarJWuPE64MF--
+
+--MK6GbzPE0beUfJX8udO1KXHWgYNQy9N9F
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl5KtdIACgkQDbX1YShp
-vVZ+Iw//Slgl7VgRQ0bghhaQRZc25+ksA9p4/jfBt/YTcByrwpk7APZK13rEx3AW
-c5kA6s1DUEtv3ejlaLvHnCrBtKs3adpU64naXZ1pJPbDmOBDimydSNC9LrMPoKJA
-8wFIIkuIpmIvlDYuAKAYMOEDeDBp4plG9qIJyv4t5/z9BB00p6BWjhyFm8nX+smt
-gwaf461xosS09hODa+vkkAR/7S7haUWXCcpZelECbP2EUhu0McmBw6tOHbsPrvEH
-qQw/pZ6B3LX6cF7unh1GrV6jv4HLx3zjY0WgvmDfum0UFxxqb2mbXXjYh6xGo+oo
-wgIxznbENvsqWzJXI8Z57gcbgRbXOP4uCnKdpuxzNZ1af027/vtfshQcaZwEFrat
-CL/rP4Q5AdA5WCJNTlkKaONt4eWiRfhv95RYk/UOdtcdbYd/ApPvhFkIthmDCpwp
-LyQrBZAmmUDd9FOzACR6h8UPkjuczWgmXJtolL1QGVVgjp7nGqK1ZgT6v/yGymV5
-w+aNrrX62w7iaKrmU51Wo9gb222eC8BSgFNVawltXEFOe2alYJag84YgLTEHlD2P
-GYBxpxz7fQyffYU0n0qjco4kIpOz2f6lqvLVpSIpNflCiA0RSk1fX4vIdQ4iaqo/
-npLzNh+OsPWwb0ZpgSPGUlKu/dnpdncIcONDIdYJ00GM9Kjek2A=
-=Rax9
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl5KtyYACgkQDbX1YShp
+vVbiyw//Rha/vkogtVJdrNHjZliVhZteNtH3R9hZeyDmlz8D+uQpVbYiq689hw3Q
+RHC1RtSW0G1xTUIycJY+ePOEAwB4JYuADVd//2dbQzzCF8rTV4yPeSrBJNNod8U6
+feQDSi/6BfIG681r8a8fhyGWtE23ywbhtflSaioZlIC/nKsIYHR4AViC0Lm/285/
+N67S9DKvVjSnnJtayOX0DnLjg6j/EBwyI7KV6EkEFpyInzs5U/11YQv2OxTJO7PQ
+Ldntze+0rcXOIH1TGKBqJNevnJxXCibcYPWAhvnsirBs9Sfm4KgpFLfxl4TWi/8+
+RJ6ovV4E9Gn7b2KIbLcuLO0FiKUHYxayjkWpWT+2a62LlVG604A1LA2rkJF1y5AI
+E3EVMeHXgIHVDCrPiPtEPvoFGP1hGHeIRHwgw0gPMdzypJn0bNPA55Zurk7cWz55
+WmkukdyOcpkRhZJrmRw+LxP8oHJAZVuesEdedVj1O1RgFg3xAyZTM+kvd76WkcZr
+tuV7nWnZKA304EnPvG/Z5lTRzXr6175+b3ecifJiLeEyOIyA19q8Moey9hqWYdKL
+d5Vdg3r6n8eoxREHB2BOpIuA02v0rJMvCf5TkgqCAlq5zU3Bw4lOubO+NMBiJFGE
+nGkjMcmQTBeT/5GLWoEvvA/MyzmnzEjhP0eGOeXhSP0yJmP+zDk=
+=K3D4
 -----END PGP SIGNATURE-----
 
---FThlJgfe0YQu2svMnbZs4MoNnn1Sjgcpm--
+--MK6GbzPE0beUfJX8udO1KXHWgYNQy9N9F--

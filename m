@@ -2,116 +2,213 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5139B1629D1
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2020 16:50:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D27162A75
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2020 17:28:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbgBRPu0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Feb 2020 10:50:26 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:42089 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726399AbgBRPu0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Feb 2020 10:50:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582041025;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bZ3IC5jCHDU4qtDgLH9wB8emAAfZApU1NcKXs0Pg7PQ=;
-        b=KYola16cyUlDrZ/geDNvILBrMyEhUEXtNzm6G1c9f6YFE1olQ556lyDK24DYyHkxKB4Hww
-        OtoFK6J5nD+LK2/4zD0NGeJH2TskwefKLzj7uOL/8D6CuzvLLFb31/5UBrt9paEs1yoHmc
-        vyoMSItbRhBvWAHr1PvxIT5Lp6Gjo5Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-134-GbSHHSbqNzaBlysYcKVI6g-1; Tue, 18 Feb 2020 10:50:21 -0500
-X-MC-Unique: GbSHHSbqNzaBlysYcKVI6g-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7893F1005F86;
-        Tue, 18 Feb 2020 15:50:20 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.70])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 13F6890F65;
-        Tue, 18 Feb 2020 15:50:18 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 18 Feb 2020 16:50:20 +0100 (CET)
-Date:   Tue, 18 Feb 2020 16:50:18 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Carter Li =?utf-8?B?5p2O6YCa5rSy?= <carter.li@eoitek.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-Subject: [PATCH] task_work_run: don't take ->pi_lock unconditionally
-Message-ID: <20200218155017.GD3466@redhat.com>
-References: <addcd44e-ed9b-5f82-517d-c1ed3ee2d85c@kernel.dk>
- <b8069e62-7ea4-c7f3-55a3-838241951068@kernel.dk>
- <20200217120920.GQ14914@hirez.programming.kicks-ass.net>
- <53de3581-b902-89ba-3f53-fd46b052df40@kernel.dk>
- <43c066d1-a892-6a02-82e7-7be850d9454d@kernel.dk>
- <20200217174610.GU14897@hirez.programming.kicks-ass.net>
- <592cf069-41ee-0bc1-1f83-e058e5dd53ff@kernel.dk>
- <20200218131310.GZ14914@hirez.programming.kicks-ass.net>
- <20200218145645.GB3466@redhat.com>
- <20200218150756.GC14914@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218150756.GC14914@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+        id S1726422AbgBRQ2c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Feb 2020 11:28:32 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:22542 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726411AbgBRQ2c (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Feb 2020 11:28:32 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TqJ-0R7_1582043292;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0TqJ-0R7_1582043292)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 19 Feb 2020 00:28:19 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH v2] io_uring: fix poll_list race for SETUP_IOPOLL|SETUP_SQPOLL
+Date:   Wed, 19 Feb 2020 00:28:00 +0800
+Message-Id: <20200218162800.3089-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-As Peter pointed out, task_work() can avoid ->pi_lock and cmpxchg()
-if task->task_works == NULL && !PF_EXITING.
+After making ext4 support iopoll method:
+  let ext4_file_operations's iopoll method be iomap_dio_iopoll(),
+we found fio can easily hang in fio_ioring_getevents() with below fio
+job:
+    rm -f testfile; sync;
+    sudo fio -name=fiotest -filename=testfile -iodepth=128 -thread
+-rw=write -ioengine=io_uring  -hipri=1 -sqthread_poll=1 -direct=1
+-bs=4k -size=10G -numjobs=8 -runtime=2000 -group_reporting
+with IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL enabled.
 
-And in fact the only reason why task_work_run() needs ->pi_lock is
-the possible race with task_work_cancel(), we can optimize this code
-and make the locking more clear.
+There are two issues that results in this hang, one reason is that
+when IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL are enabled, fio
+does not use io_uring_enter to get completed events, it relies on
+kernel io_sq_thread to poll for completed events.
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Another reason is that there is a race: when io_submit_sqes() in
+io_sq_thread() submits a batch of sqes, variable 'inflight' will
+record the number of submitted reqs, then io_sq_thread will poll for
+reqs which have been added to poll_list. But note, if some previous
+reqs have been punted to io worker, these reqs will won't be in
+poll_list timely. io_sq_thread() will only poll for a part of previous
+submitted reqs, and then find poll_list is empty, reset variable
+'inflight' to be zero. If app just waits these deferred reqs and does
+not wake up io_sq_thread again, then hang happens.
+
+For app that entirely relies on io_sq_thread to poll completed requests,
+let io_iopoll_req_issued() wake up io_sq_thread properly when adding new
+element to poll_list.
+
+Fixes: 2b2ed9750fc9 ("io_uring: fix bad inflight accounting for SETUP_IOPOLL|SETUP_SQTHREAD")
+Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+
 ---
- kernel/task_work.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+V2:
+    simple code cleanups and add necessary comments.
+---
+ fs/io_uring.c | 72 ++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 40 insertions(+), 32 deletions(-)
 
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index 0fef395..825f282 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -97,16 +97,26 @@ void task_work_run(void)
- 		 * work->func() can do task_work_add(), do not set
- 		 * work_exited unless the list is empty.
- 		 */
--		raw_spin_lock_irq(&task->pi_lock);
- 		do {
-+			head = NULL;
- 			work = READ_ONCE(task->task_works);
--			head = !work && (task->flags & PF_EXITING) ?
--				&work_exited : NULL;
-+			if (!work) {
-+				if (task->flags & PF_EXITING)
-+					head = &work_exited;
-+				else
-+					break;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 77f22c3da30f..b6d7c45d0d0d 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1793,6 +1793,9 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
+ 		list_add(&req->list, &ctx->poll_list);
+ 	else
+ 		list_add_tail(&req->list, &ctx->poll_list);
++
++	if (ctx->flags & IORING_SETUP_SQPOLL && wq_has_sleeper(&ctx->sqo_wait))
++		wake_up(&ctx->sqo_wait);
+ }
+ 
+ static void io_file_put(struct io_submit_state *state)
+@@ -5011,9 +5014,9 @@ static int io_sq_thread(void *data)
+ 	const struct cred *old_cred;
+ 	mm_segment_t old_fs;
+ 	DEFINE_WAIT(wait);
+-	unsigned inflight;
+ 	unsigned long timeout;
+-	int ret;
++	int ret = 0;
++	bool needs_uring_lock = false;
+ 
+ 	complete(&ctx->completions[1]);
+ 
+@@ -5021,39 +5024,21 @@ static int io_sq_thread(void *data)
+ 	set_fs(USER_DS);
+ 	old_cred = override_creds(ctx->creds);
+ 
+-	ret = timeout = inflight = 0;
++	if (ctx->flags & IORING_SETUP_IOPOLL)
++		needs_uring_lock = true;
++	timeout = jiffies + ctx->sq_thread_idle;
+ 	while (!kthread_should_park()) {
+ 		unsigned int to_submit;
+ 
+-		if (inflight) {
++		if (!list_empty(&ctx->poll_list)) {
+ 			unsigned nr_events = 0;
+ 
+-			if (ctx->flags & IORING_SETUP_IOPOLL) {
+-				/*
+-				 * inflight is the count of the maximum possible
+-				 * entries we submitted, but it can be smaller
+-				 * if we dropped some of them. If we don't have
+-				 * poll entries available, then we know that we
+-				 * have nothing left to poll for. Reset the
+-				 * inflight count to zero in that case.
+-				 */
+-				mutex_lock(&ctx->uring_lock);
+-				if (!list_empty(&ctx->poll_list))
+-					__io_iopoll_check(ctx, &nr_events, 0);
+-				else
+-					inflight = 0;
+-				mutex_unlock(&ctx->uring_lock);
+-			} else {
+-				/*
+-				 * Normal IO, just pretend everything completed.
+-				 * We don't have to poll completions for that.
+-				 */
+-				nr_events = inflight;
+-			}
+-
+-			inflight -= nr_events;
+-			if (!inflight)
++			mutex_lock(&ctx->uring_lock);
++			if (!list_empty(&ctx->poll_list))
++				__io_iopoll_check(ctx, &nr_events, 0);
++			if (list_empty(&ctx->poll_list))
+ 				timeout = jiffies + ctx->sq_thread_idle;
++			mutex_unlock(&ctx->uring_lock);
+ 		}
+ 
+ 		to_submit = io_sqring_entries(ctx);
+@@ -5070,7 +5055,7 @@ static int io_sq_thread(void *data)
+ 			 * more IO, we should wait for the application to
+ 			 * reap events and wake us up.
+ 			 */
+-			if (inflight ||
++			if (!list_empty(&ctx->poll_list) ||
+ 			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
+ 			    !percpu_ref_is_dying(&ctx->refs))) {
+ 				cond_resched();
+@@ -5089,6 +5074,24 @@ static int io_sq_thread(void *data)
+ 				cur_mm = NULL;
+ 			}
+ 
++			/*
++			 * While doing polled IO, before going to sleep, we need
++			 * to check if there are new reqs added to poll_list, it
++			 * is because reqs may have been punted to io worker and
++			 * will be added to poll_list later, hence check the
++			 * poll_list again, meanwhile we need to hold uring_lock
++			 * to do this check, otherwise we may lose wakeup event
++			 * in io_iopoll_req_issued().
++			 */
++			if (needs_uring_lock) {
++				mutex_lock(&ctx->uring_lock);
++				if (!list_empty(&ctx->poll_list)) {
++					mutex_unlock(&ctx->uring_lock);
++					cond_resched();
++					continue;
++				}
 +			}
- 		} while (cmpxchg(&task->task_works, work, head) != work);
--		raw_spin_unlock_irq(&task->pi_lock);
++
+ 			prepare_to_wait(&ctx->sqo_wait, &wait,
+ 						TASK_INTERRUPTIBLE);
  
- 		if (!work)
- 			break;
-+		/*
-+		 * Synchronize with task_work_cancel(). It can not remove
-+		 * the first entry == work, cmpxchg(task_works) must fail.
-+		 * But it can remove another entry from the ->next list.
-+		 */
-+		raw_spin_lock_irq(&task->pi_lock);
-+		raw_spin_unlock_irq(&task->pi_lock);
+@@ -5101,16 +5104,22 @@ static int io_sq_thread(void *data)
+ 			if (!to_submit || ret == -EBUSY) {
+ 				if (kthread_should_park()) {
+ 					finish_wait(&ctx->sqo_wait, &wait);
++					if (needs_uring_lock)
++						mutex_unlock(&ctx->uring_lock);
+ 					break;
+ 				}
+ 				if (signal_pending(current))
+ 					flush_signals(current);
++				if (needs_uring_lock)
++					mutex_unlock(&ctx->uring_lock);
+ 				schedule();
+ 				finish_wait(&ctx->sqo_wait, &wait);
  
- 		do {
- 			next = work->next;
+ 				ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
+ 				continue;
+ 			}
++			if (needs_uring_lock)
++				mutex_unlock(&ctx->uring_lock);
+ 			finish_wait(&ctx->sqo_wait, &wait);
+ 
+ 			ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
+@@ -5119,8 +5128,7 @@ static int io_sq_thread(void *data)
+ 		mutex_lock(&ctx->uring_lock);
+ 		ret = io_submit_sqes(ctx, to_submit, NULL, -1, &cur_mm, true);
+ 		mutex_unlock(&ctx->uring_lock);
+-		if (ret > 0)
+-			inflight += ret;
++		timeout = jiffies + ctx->sq_thread_idle;
+ 	}
+ 
+ 	set_fs(old_fs);
 -- 
-2.5.0
-
+2.17.2
 

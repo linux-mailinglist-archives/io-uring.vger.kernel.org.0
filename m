@@ -2,225 +2,170 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8634F163993
-	for <lists+io-uring@lfdr.de>; Wed, 19 Feb 2020 02:49:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31AEE16412C
+	for <lists+io-uring@lfdr.de>; Wed, 19 Feb 2020 11:04:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbgBSBtp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Feb 2020 20:49:45 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:55312 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727686AbgBSBtp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Feb 2020 20:49:45 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R531e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TqKW12C_1582076981;
-Received: from 30.0.178.92(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0TqKW12C_1582076981)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 19 Feb 2020 09:49:41 +0800
-Subject: Re: [PATCH v2] io_uring: fix poll_list race for
- SETUP_IOPOLL|SETUP_SQPOLL
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>
-References: <20200218162800.3089-1-xiaoguang.wang@linux.alibaba.com>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <f1809c94-fe71-2bb3-62cc-51389440f1cb@linux.alibaba.com>
-Date:   Wed, 19 Feb 2020 09:49:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726450AbgBSKEP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Feb 2020 05:04:15 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37877 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbgBSKEO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Feb 2020 05:04:14 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a6so6064179wme.2
+        for <io-uring@vger.kernel.org>; Wed, 19 Feb 2020 02:04:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=FmC3BDDn8o+VlJUY76gMrpS01PQ0GpUPg5FEph/UgVw=;
+        b=BcV/6ISfChdPAQlzZK7vo7hbkWjJa0BkzkeLhejKIdlE74s8aVJt5gCnNgBTDP3TNB
+         fIuKLLt/1y8J52z1XUup4RZ9fFOdJd6rBvGss3BcKL3bUQak96SSLBT9k8kmTUWEFMJT
+         B4WZM5y6dan4o+BUBqQIJ1xwXBeymWOa/ytDaXgaYshbgaa7BJhS8ItNfU8UGU2usALi
+         7uZNG0vj83VstIG/5+uMjdDRYU4eyM1HlkWnLsI2envtts4Fu/+fsenRn/LvbQPSe9Pa
+         bVcFRbuJAhJdJrd8unRRU6D73iBea3YPbFormpUYS3pYOhugFH88UxQO0Ama0znHLZbm
+         S/zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=FmC3BDDn8o+VlJUY76gMrpS01PQ0GpUPg5FEph/UgVw=;
+        b=YgSLQ03LCdVz6U4kp9agileQ1U02tRZqoQc+yOW66b4ooRrjqthQr9cM36qgfkxVyW
+         yl6doyU7r5KeIznJjn3lMz4Fym8wanHR3BLEeCCA3Cja2EmYk0AmQKdNcmfMdY4k6Irp
+         tPyHLxZQv/NCZ5/9TpBPyqzJayST40iEcsCZ+a8i0R9tOyaxKGkvvqd3T/ws706t0IbN
+         dTIdD/yevUE8obo8dV7MLQgVfFSh5C5sEA4+sHc84kkdGB8NNDnuraNORoGMxsgzkYuz
+         KyVbiQkfc+3rNiWg53etm4wWNjM2a8JDvECYkp9XWAaGBwp1NccM98XGLYT9JwZSFiiZ
+         IxDw==
+X-Gm-Message-State: APjAAAVPsAxCOxVyVajnfN/QLU58jkJmewW05Eenx64DiY7XbHCGJuBW
+        nIPUutF5WGkYNwOMe+vmXaXXll9j
+X-Google-Smtp-Source: APXvYqx++QcGCaDtMkb2r/2UI5pdrc/a26orI+uh+88gq9N8hgeVCcdmO9cEm7yFr7dTg2HWQ20Rmg==
+X-Received: by 2002:a1c:9c52:: with SMTP id f79mr9059327wme.30.1582106652045;
+        Wed, 19 Feb 2020 02:04:12 -0800 (PST)
+Received: from [192.168.43.74] ([109.126.142.57])
+        by smtp.gmail.com with ESMTPSA id r3sm2371012wrn.34.2020.02.19.02.04.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2020 02:04:11 -0800 (PST)
+Subject: Re: [PATCH for-5.6] io_uring: fix use-after-free by io_cleanup_req()
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <a0ee1817fd82ae102607714825ed35833a7d6a3d.1582060617.git.asml.silence@gmail.com>
+ <1e4fbbf0-5b2e-4372-758d-55e9352d11f3@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
+ bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
+ 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
+ +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
+ W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
+ CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
+ Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
+ EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
+ jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
+ NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
+ bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
+ PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
+ Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
+ Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
+ xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
+ aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
+ HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
+ 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
+ 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
+ 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
+ M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
+ reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
+ IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
+ dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
+ Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
+ jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
+ Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
+ dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
+ xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
+ DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
+ F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
+ 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
+ aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
+ 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
+ LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
+ uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
+ rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
+ 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
+ JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
+ UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
+ m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
+ OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
+Message-ID: <851501b0-5043-3cfc-c25a-7d6e0fee9e66@gmail.com>
+Date:   Wed, 19 Feb 2020 13:03:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200218162800.3089-1-xiaoguang.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1e4fbbf0-5b2e-4372-758d-55e9352d11f3@kernel.dk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="5P8LPDHOiaXiumGegnT10bg3ImWisD80g"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--5P8LPDHOiaXiumGegnT10bg3ImWisD80g
+Content-Type: multipart/mixed; boundary="lpZNvahXswapMFB4snIJyKz4VYZwB1abO";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Message-ID: <851501b0-5043-3cfc-c25a-7d6e0fee9e66@gmail.com>
+Subject: Re: [PATCH for-5.6] io_uring: fix use-after-free by io_cleanup_req()
+References: <a0ee1817fd82ae102607714825ed35833a7d6a3d.1582060617.git.asml.silence@gmail.com>
+ <1e4fbbf0-5b2e-4372-758d-55e9352d11f3@kernel.dk>
+In-Reply-To: <1e4fbbf0-5b2e-4372-758d-55e9352d11f3@kernel.dk>
 
-Cc ext4 mail list as well, in case someone runs into the same issue.
+--lpZNvahXswapMFB4snIJyKz4VYZwB1abO
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Xiaoguang Wang
+On 19/02/2020 03:13, Jens Axboe wrote:
+> On 2/18/20 2:19 PM, Pavel Begunkov wrote:
+>> io_cleanup_req() should be called before req->io is freed, and so
+>> shouldn't be after __io_free_req() -> __io_req_aux_free(). Also,
+>> it will be ignored for in io_free_req_many(), which use
+>> __io_req_aux_free().
+>>
+>> Place cleanup_req() into __io_req_aux_free().
+>=20
+> I've applied this, but would be great if you could generate 5.x
+> patches against io_uring-5.x. This one didn't apply, as it's
+> done behind some of the 5.7 series you have.
+>=20
 
-> After making ext4 support iopoll method:
->    let ext4_file_operations's iopoll method be iomap_dio_iopoll(),
-> we found fio can easily hang in fio_ioring_getevents() with below fio
-> job:
->      rm -f testfile; sync;
->      sudo fio -name=fiotest -filename=testfile -iodepth=128 -thread
-> -rw=write -ioengine=io_uring  -hipri=1 -sqthread_poll=1 -direct=1
-> -bs=4k -size=10G -numjobs=8 -runtime=2000 -group_reporting
-> with IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL enabled.
-> 
-> There are two issues that results in this hang, one reason is that
-> when IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL are enabled, fio
-> does not use io_uring_enter to get completed events, it relies on
-> kernel io_sq_thread to poll for completed events.
-> 
-> Another reason is that there is a race: when io_submit_sqes() in
-> io_sq_thread() submits a batch of sqes, variable 'inflight' will
-> record the number of submitted reqs, then io_sq_thread will poll for
-> reqs which have been added to poll_list. But note, if some previous
-> reqs have been punted to io worker, these reqs will won't be in
-> poll_list timely. io_sq_thread() will only poll for a part of previous
-> submitted reqs, and then find poll_list is empty, reset variable
-> 'inflight' to be zero. If app just waits these deferred reqs and does
-> not wake up io_sq_thread again, then hang happens.
-> 
-> For app that entirely relies on io_sq_thread to poll completed requests,
-> let io_iopoll_req_issued() wake up io_sq_thread properly when adding new
-> element to poll_list.
-> 
-> Fixes: 2b2ed9750fc9 ("io_uring: fix bad inflight accounting for SETUP_IOPOLL|SETUP_SQTHREAD")
-> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-> 
-> ---
-> V2:
->      simple code cleanups and add necessary comments.
-> ---
->   fs/io_uring.c | 72 ++++++++++++++++++++++++++++-----------------------
->   1 file changed, 40 insertions(+), 32 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 77f22c3da30f..b6d7c45d0d0d 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1793,6 +1793,9 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
->   		list_add(&req->list, &ctx->poll_list);
->   	else
->   		list_add_tail(&req->list, &ctx->poll_list);
-> +
-> +	if (ctx->flags & IORING_SETUP_SQPOLL && wq_has_sleeper(&ctx->sqo_wait))
-> +		wake_up(&ctx->sqo_wait);
->   }
->   
->   static void io_file_put(struct io_submit_state *state)
-> @@ -5011,9 +5014,9 @@ static int io_sq_thread(void *data)
->   	const struct cred *old_cred;
->   	mm_segment_t old_fs;
->   	DEFINE_WAIT(wait);
-> -	unsigned inflight;
->   	unsigned long timeout;
-> -	int ret;
-> +	int ret = 0;
-> +	bool needs_uring_lock = false;
->   
->   	complete(&ctx->completions[1]);
->   
-> @@ -5021,39 +5024,21 @@ static int io_sq_thread(void *data)
->   	set_fs(USER_DS);
->   	old_cred = override_creds(ctx->creds);
->   
-> -	ret = timeout = inflight = 0;
-> +	if (ctx->flags & IORING_SETUP_IOPOLL)
-> +		needs_uring_lock = true;
-> +	timeout = jiffies + ctx->sq_thread_idle;
->   	while (!kthread_should_park()) {
->   		unsigned int to_submit;
->   
-> -		if (inflight) {
-> +		if (!list_empty(&ctx->poll_list)) {
->   			unsigned nr_events = 0;
->   
-> -			if (ctx->flags & IORING_SETUP_IOPOLL) {
-> -				/*
-> -				 * inflight is the count of the maximum possible
-> -				 * entries we submitted, but it can be smaller
-> -				 * if we dropped some of them. If we don't have
-> -				 * poll entries available, then we know that we
-> -				 * have nothing left to poll for. Reset the
-> -				 * inflight count to zero in that case.
-> -				 */
-> -				mutex_lock(&ctx->uring_lock);
-> -				if (!list_empty(&ctx->poll_list))
-> -					__io_iopoll_check(ctx, &nr_events, 0);
-> -				else
-> -					inflight = 0;
-> -				mutex_unlock(&ctx->uring_lock);
-> -			} else {
-> -				/*
-> -				 * Normal IO, just pretend everything completed.
-> -				 * We don't have to poll completions for that.
-> -				 */
-> -				nr_events = inflight;
-> -			}
-> -
-> -			inflight -= nr_events;
-> -			if (!inflight)
-> +			mutex_lock(&ctx->uring_lock);
-> +			if (!list_empty(&ctx->poll_list))
-> +				__io_iopoll_check(ctx, &nr_events, 0);
-> +			if (list_empty(&ctx->poll_list))
->   				timeout = jiffies + ctx->sq_thread_idle;
-> +			mutex_unlock(&ctx->uring_lock);
->   		}
->   
->   		to_submit = io_sqring_entries(ctx);
-> @@ -5070,7 +5055,7 @@ static int io_sq_thread(void *data)
->   			 * more IO, we should wait for the application to
->   			 * reap events and wake us up.
->   			 */
-> -			if (inflight ||
-> +			if (!list_empty(&ctx->poll_list) ||
->   			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
->   			    !percpu_ref_is_dying(&ctx->refs))) {
->   				cond_resched();
-> @@ -5089,6 +5074,24 @@ static int io_sq_thread(void *data)
->   				cur_mm = NULL;
->   			}
->   
-> +			/*
-> +			 * While doing polled IO, before going to sleep, we need
-> +			 * to check if there are new reqs added to poll_list, it
-> +			 * is because reqs may have been punted to io worker and
-> +			 * will be added to poll_list later, hence check the
-> +			 * poll_list again, meanwhile we need to hold uring_lock
-> +			 * to do this check, otherwise we may lose wakeup event
-> +			 * in io_iopoll_req_issued().
-> +			 */
-> +			if (needs_uring_lock) {
-> +				mutex_lock(&ctx->uring_lock);
-> +				if (!list_empty(&ctx->poll_list)) {
-> +					mutex_unlock(&ctx->uring_lock);
-> +					cond_resched();
-> +					continue;
-> +				}
-> +			}
-> +
->   			prepare_to_wait(&ctx->sqo_wait, &wait,
->   						TASK_INTERRUPTIBLE);
->   
-> @@ -5101,16 +5104,22 @@ static int io_sq_thread(void *data)
->   			if (!to_submit || ret == -EBUSY) {
->   				if (kthread_should_park()) {
->   					finish_wait(&ctx->sqo_wait, &wait);
-> +					if (needs_uring_lock)
-> +						mutex_unlock(&ctx->uring_lock);
->   					break;
->   				}
->   				if (signal_pending(current))
->   					flush_signals(current);
-> +				if (needs_uring_lock)
-> +					mutex_unlock(&ctx->uring_lock);
->   				schedule();
->   				finish_wait(&ctx->sqo_wait, &wait);
->   
->   				ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
->   				continue;
->   			}
-> +			if (needs_uring_lock)
-> +				mutex_unlock(&ctx->uring_lock);
->   			finish_wait(&ctx->sqo_wait, &wait);
->   
->   			ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
-> @@ -5119,8 +5128,7 @@ static int io_sq_thread(void *data)
->   		mutex_lock(&ctx->uring_lock);
->   		ret = io_submit_sqes(ctx, to_submit, NULL, -1, &cur_mm, true);
->   		mutex_unlock(&ctx->uring_lock);
-> -		if (ret > 0)
-> -			inflight += ret;
-> +		timeout = jiffies + ctx->sq_thread_idle;
->   	}
->   
->   	set_fs(old_fs);
-> 
+Thanks, I cherry-picked it by didn't regenerate the patch.
+I'll double check the next time
+
+--=20
+Pavel Begunkov
+
+
+--lpZNvahXswapMFB4snIJyKz4VYZwB1abO--
+
+--5P8LPDHOiaXiumGegnT10bg3ImWisD80g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl5NB+4ACgkQWt5b1Glr
++6V3Vw//aiyfimiI2fvCiC6aCt6b1lMirCVptK7kc0CUvMaaGwULu4VsP3UknAED
+doeIsKDMjUjWNctJT8t9TXf6JUSt5NO0OXt7pcCChIivQDP9w8V5qCpwA7sTlxDf
+ExXgSnH3TV88XR18KjzGP1h7kgzs9eg6HPQ8yNyBtrW0oVAJxUnAinqX3TOGmlhG
+B3vexyq5pAugMNZYjun3moDUog7ozGmXZeKk4eKZgb2FxJizuVZdWTqY1PKEv0gN
+WFknM0pa69N3hwTtcrZ2Fb3lDAIIyHksVD3FGGvUU6OFKSJCCAQKxsmLZ0QoI0Pu
+C1zznuk7uYm3F/VBX9eQ8Ik+bOgjA+bGeOL5/yY8bDfLTcftmxKIOLBfsVj1wqe0
+5SxBQiiXvPnrwDxGf4BvpETClPXLuuYP/RGCClYaSeTMn3H1awIJfP1NLs2PVe/z
+16VqV2knhctSdv3IXDOG9KbbyuJa2LssmCsYc2bGGha3O/w8gf9FfZpGyyeEmjZ3
+Ro4q4cSxg2WbDtKpPg7IxnC1DR1CS95ecx3Di55/SLMjxLMTN9gwgyIyWpspC03r
+1prMZjNgIJJrHb/cU/ZjBbYzMzPrEAy/ZezR6v5qJGjAfyDdGjs1nOMw94SYUo+I
+B9RPQxp0AvRKOlU0k5VayTuKSRDNEMUyY22xFZA9l4Y2jACNkNE=
+=Kk63
+-----END PGP SIGNATURE-----
+
+--5P8LPDHOiaXiumGegnT10bg3ImWisD80g--

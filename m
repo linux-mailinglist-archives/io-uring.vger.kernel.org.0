@@ -2,90 +2,163 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 808CC165F75
-	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2020 15:08:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D938165F9E
+	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2020 15:19:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbgBTOIk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Feb 2020 09:08:40 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54445 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728042AbgBTOIk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Feb 2020 09:08:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582207719;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=yXw1aooGm3SizxRsc5d1sX2J/L6gkHAaW3S5VvpIZy0=;
-        b=B3FQHyFpyo/FqshK32+eV/XR8KC4BZN4V0i6kq+RE8UvvFxxDniFWVRsNugCDqUG98NyfL
-        2j/0efe9sR5LRDthKkhU1dg1Y5uMqfGngS6RX4kQ0EOYDGkVmK7bXBZEqyMnjma90E/SOY
-        y87y8xH5UpyvtwpSW4nYGyii8F8v11k=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-332-nIS2u5SQOjOUiYUMSUXXFw-1; Thu, 20 Feb 2020 09:08:37 -0500
-X-MC-Unique: nIS2u5SQOjOUiYUMSUXXFw-1
-Received: by mail-wm1-f72.google.com with SMTP id n17so880230wmk.1
-        for <io-uring@vger.kernel.org>; Thu, 20 Feb 2020 06:08:36 -0800 (PST)
+        id S1727868AbgBTOT1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Feb 2020 09:19:27 -0500
+Received: from mail-lf1-f53.google.com ([209.85.167.53]:35774 "EHLO
+        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726959AbgBTOT1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Feb 2020 09:19:27 -0500
+Received: by mail-lf1-f53.google.com with SMTP id l16so3240377lfg.2
+        for <io-uring@vger.kernel.org>; Thu, 20 Feb 2020 06:19:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=0eWvJ5hCCWDZ5pMiGIuaUkGn9wkHxTuhNGx5ofF0KlI=;
+        b=e+ybVVTW12IYH/5m1Hq5CUSZdscu9tz6E3TyEsRF2xDUb0VBmPy4C78rUnBrHhdy/h
+         VSy9cMOIu/sNpook+X7InfLrSY5+nIFysYhE1+RifWg7SsUOMtHeno6D9Ai4yMcuu0+i
+         rDmHYOkOeJNnZNz2bp45fwCdTH46pCj6JpatLbQWnwC1XWL3K6/rPqTTI2s8mbU4ZA1C
+         9p4h7Z1u8xKaWqjv/GzDYWt+HL4iN/k/xQI1yRrgUTNQwQqzdc/L6vW8ZlRhz7kB7IKz
+         883n1ni9epQd37MUc29qlHdOXhzMXeCby7UdLxDRB8x53wotJD29awBqCMR4Zc+yDqCx
+         TPWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yXw1aooGm3SizxRsc5d1sX2J/L6gkHAaW3S5VvpIZy0=;
-        b=D2yjrlz4qnfPu/NMv0E+CdQT1bSeN+G7XYS2thrab4EgpvPO3GLF9RLYn20rSFt4Zy
-         U0pUdKqR2I+xOk7ggvWyt8rb1FnjjUSvoczsV86ogVTdzlaYk4Cl7vt+UfPn2w2sbP9H
-         BK7Mi7DLkohmd+hpyy6YX86hHiGSF0ydbESntE2KSy4ppyiLq8tn2O5d1HLsh+mUmSA4
-         taZ6RY0UUh7J0R+XAOqQSt3zUycRqzGPXwRoTCa0r3x2VWr1pF/M5IfQWb+fXfpVcu0w
-         XUECFYT95VjtPbxE3eHXTldfXBf78WLfY9wUGc4gZNny+DFd6dE97BKrxQzsobGGMYQ9
-         LsoA==
-X-Gm-Message-State: APjAAAXDiKMOfxqG+rRiPs2TNe1onBh6zmEZp6/IjjzJ4XrRB/X3yEu0
-        G0nU4PhlJm52AnYAVOAkB+TOWoHc4gEhymF8AajEafowK9o9q8+FM+igBKS6ECE3ybGCRSeZdLL
-        HsH4AJDLgSXYMB6UswYc=
-X-Received: by 2002:a5d:5007:: with SMTP id e7mr42931440wrt.228.1582207715416;
-        Thu, 20 Feb 2020 06:08:35 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyw0NL4CfkVCvHhL8BV6jD0BLn6ZRb0x1FWrOTy5dsR72Hmp0fM/ZUPGXOTxrdPDBTx4bQySg==
-X-Received: by 2002:a5d:5007:: with SMTP id e7mr42931423wrt.228.1582207715204;
-        Thu, 20 Feb 2020 06:08:35 -0800 (PST)
-Received: from steredhat.redhat.com (host209-4-dynamic.27-79-r.retail.telecomitalia.it. [79.27.4.209])
-        by smtp.gmail.com with ESMTPSA id 133sm5010574wmd.5.2020.02.20.06.08.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 06:08:34 -0800 (PST)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH liburing] man/io_uring_setup.2: fix 'sq_thread_idle' description
-Date:   Thu, 20 Feb 2020 15:08:33 +0100
-Message-Id: <20200220140833.108791-1-sgarzare@redhat.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=0eWvJ5hCCWDZ5pMiGIuaUkGn9wkHxTuhNGx5ofF0KlI=;
+        b=m2+X0ksEWWKN1RpTZP/11HzE6YI9TQoZ4h+ITYjTEVdHL61eSH727VtGeZepUwuPgZ
+         9qgDxVNCksfmWbGGb2KoQycNop9Y+OA1SJ/4/e5HoTDU+x2SUBX9Mv6Xc+zLt3mVXzK4
+         6mjX1x4zE5Yw7ZgQpBP51AMiB0mbzsUPzdowmT11S/5+DoKWlB+KxDxvLMHhsLdyuTzW
+         l1Uz6tvjl6qqi6g43LqQPzcQCwkUvnKXHuR3plAwsBzYD8R1oWbQ4BI3C7IZiRv0FNBk
+         9Lx0NT03hA5P/HAuaF6lf8JTObrEkSw5btPfEUxJTWRHM/fxO7Y9eM38qxNN2G6MklZs
+         WCMQ==
+X-Gm-Message-State: APjAAAUi/dbbkbyB8pHWs52DPTAe5eRVIM9ZP9p5utmrSugKG8+3zJen
+        gDia7Cc2O7+jVtYjAFb3LoJIph8siksaTy+gap4+GYY65p0axw==
+X-Google-Smtp-Source: APXvYqwMUtkEHSAoT5a3mwbFiSVNhgXx+L/jwhZNx0WrQ4yoMIZRBaVmlrie5QA1rF8Q0laFqN4NwjhdfTpdFVvIIb0=
+X-Received: by 2002:a05:6512:3136:: with SMTP id p22mr5378364lfd.120.1582208364778;
+ Thu, 20 Feb 2020 06:19:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Glauber Costa <glauber@scylladb.com>
+Date:   Thu, 20 Feb 2020 09:19:13 -0500
+Message-ID: <CAD-J=zbBU2j=a0t2zD7k_aGqguwwkzLpPnnrOUAm2DJ3ZUJFvg@mail.gmail.com>
+Subject: crash on connect
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Avi Kivity <avi@scylladb.com>
+Content-Type: multipart/mixed; boundary="0000000000008b43cb059f029781"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In the kernel we are using msecs_to_jiffies() to convert the
-'sq_thread_idle' parameter, provided by the user, in jiffies.
-So, the value is interpreted in milliseconds and not microseconds.
+--0000000000008b43cb059f029781
+Content-Type: text/plain; charset="UTF-8"
 
-Fixes: 59bb09c553eb ("man: add io_uring_setup.2 man page")
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
- man/io_uring_setup.2 | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi there, me again
 
-diff --git a/man/io_uring_setup.2 b/man/io_uring_setup.2
-index 4057e4b..20c67dc 100644
---- a/man/io_uring_setup.2
-+++ b/man/io_uring_setup.2
-@@ -82,7 +82,7 @@ doing a single system call.
- 
- If the kernel thread is idle for more than
- .I sq_thread_idle
--microseconds, it will set the
-+milliseconds, it will set the
- .B IORING_SQ_NEED_WAKEUP
- bit in the
- .I flags
--- 
-2.24.1
+Kernel is at 043f0b67f2ab8d1af418056bc0cc6f0623d31347
 
+This test is easier to explain: it essentially issues a connect and a
+shutdown right away.
+
+It currently fails due to no fault of io_uring. But every now and then
+it crashes (you may have to run more than once to get it to crash)
+
+Instructions are similar to my last test.
+Except the test to build is now "tests/unit/connect_test"
+Code is at git@github.com:glommer/seastar.git  branch io-uring-connect-crash
+
+Run it with ./build/release/tests/unit/connect_test -- -c1
+--reactor-backend=uring
+
+Backtrace attached
+
+--0000000000008b43cb059f029781
+Content-Type: text/plain; charset="US-ASCII"; name="uring-connect.txt"
+Content-Disposition: attachment; filename="uring-connect.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k6utv2wz0>
+X-Attachment-Id: f_k6utv2wz0
+
+WyAgNzMyLjAzMDUxNF0gQlVHOiB1bmFibGUgdG8gaGFuZGxlIHBhZ2UgZmF1bHQgZm9yIGFkZHJl
+c3M6IDAwMDAwMDAwMDAwMDIwMDgKWyAgNzMyLjAzMDY2Nl0gI1BGOiBzdXBlcnZpc29yIHdyaXRl
+IGFjY2VzcyBpbiBrZXJuZWwgbW9kZQpbICA3MzIuMDMwODA3XSAjUEY6IGVycm9yX2NvZGUoMHgw
+MDAyKSAtIG5vdC1wcmVzZW50IHBhZ2UKWyAgNzMyLjAzMDk0Nl0gUEdEIDgwMDAwMDBmZTMwNGQw
+NjcgUDREIDgwMDAwMDBmZTMwNGQwNjcgUFVEIGZlNDc0NTA2NyBQTUQgMCAKWyAgNzMyLjAzMTEz
+MV0gT29wczogMDAwMiBbIzFdIFNNUCBQVEkKWyAgNzMyLjAzMTM1NV0gQ1BVOiAwIFBJRDogMTY1
+NiBDb21tOiBjb25uZWN0X3Rlc3QgTm90IHRhaW50ZWQgNS42LjAtcmMxKyAjMzkKWyAgNzMyLjAz
+MTU4M10gSGFyZHdhcmUgbmFtZTogQVNVUyBBbGwgU2VyaWVzL1g5OS1BLCBCSU9TIDM0MDIgMDgv
+MTgvMjAxNgpbICA3MzIuMDMxODE3XSBSSVA6IDAwMTA6X19pb19xdWV1ZV9zcWUrMHg0YWMvMHg0
+ZjAKWyAgNzMyLjAzMjA0NF0gQ29kZTogMTMgNGQgODUgZDIgNzUgZDggNGMgOGIgNjQgMjQgMTgg
+NGMgOGIgN2MgMjQgMDggZTkgYzMgZmUgZmYgZmYgNDggOGIgNDMgNjAgNDggODUgYzAgNzQgMjAg
+NDggOGIgNTMgNTggNDggODkgMTAgNDggODUgZDIgNzQgMDQgPDQ4PiA4OSA0MiAwOCA0OCBjNyA0
+MyA1OCAwMCAwMCAwMCAwMCA0OCBjNyA0MyA2MCAwMCAwMCAwMCAwMCA0OCA4YgpbICA3MzIuMDMy
+MzAwXSBSU1A6IDAwMTg6ZmZmZmI5ZWVjMTFjN2QyMCBFRkxBR1M6IDAwMDEwMDA2ClsgIDczMi4w
+MzI1NjRdIFJBWDogZmZmZmU2MmU3ZTViOTcwMCBSQlg6IGZmZmY5OTk2NmVlMjU3MDAgUkNYOiBk
+ZWFkMDAwMDAwMDAwMTIyClsgIDczMi4wMzI4MTddIFJEWDogMDAwMDAwMDAwMDAwMjAwMCBSU0k6
+IGZmZmY5OTk2NzZiMTA1ODAgUkRJOiBmZmZmOTk5Njc2YjEwNWIwClsgIDczMi4wMzMwNjddIFJC
+UDogZmZmZmI5ZWVjMTFjN2RiMCBSMDg6IGZmZmY5OTk2NmMzY2U4NDggUjA5OiBmZmZmOTk5NjZl
+ZTI1NzAwClsgIDczMi4wMzMzMTldIFIxMDogZmZmZmZmZmZhMGU2MzlhMCBSMTE6IGZmZmY5OTk2
+NmVlMjU3YTggUjEyOiAwMDAwMDAwMDAwMDAwMDAwClsgIDczMi4wMzM1NzJdIFIxMzogZmZmZjk5
+OTY3NmIxMDVjMCBSMTQ6IGZmZmZmZmZmZmZmZmZmZjUgUjE1OiBmZmZmOTk5NjYzMDU4MDQwClsg
+IDczMi4wMzM4MjddIEZTOiAgMDAwMDdmZmZmMjg5NzcwMCgwMDAwKSBHUzpmZmZmOTk5NjdmYTAw
+MDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDAKWyAgNzMyLjAzNDA4MF0gQ1M6ICAwMDEw
+IERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMwpbICA3MzIuMDM0MzM0XSBD
+UjI6IDAwMDAwMDAwMDAwMDIwMDggQ1IzOiAwMDAwMDAwZmUyMGY2MDA1IENSNDogMDAwMDAwMDAw
+MDE2MDZmMApbICA3MzIuMDM0NTk2XSBDYWxsIFRyYWNlOgpbICA3MzIuMDM0ODUzXSAgPyBpb19w
+b2xsX3F1ZXVlX3Byb2MrMHgzMC8weDMwClsgIDczMi4wMzUxMTJdICA/IGttZW1fY2FjaGVfYWxs
+b2MrMHgxYTQvMHgyMzAKWyAgNzMyLjAzNTM1NV0gIGlvX3N1Ym1pdF9zcWVzKzB4NzcyLzB4YWQw
+ClsgIDczMi4wMzU2MTRdICA/IF9fd2FrZV91cF9jb21tb25fbG9jaysweDg3LzB4YzAKWyAgNzMy
+LjAzNTg1N10gID8gc29ja19oYXNfcGVybSsweDgwLzB4YTAKWyAgNzMyLjAzNjEwN10gIF9feDY0
+X3N5c19pb191cmluZ19lbnRlcisweDI1My8weDM1MApbICA3MzIuMDM2MzY0XSAgZG9fc3lzY2Fs
+bF82NCsweDViLzB4MTkwClsgIDczMi4wMzY2MTVdICBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3
+ZnJhbWUrMHg0NC8weGE5ClsgIDczMi4wMzY4NzBdIFJJUDogMDAzMzoweDdmZmZmNWI2ZGM0ZApb
+ICA3MzIuMDM3MTI1XSBDb2RlOiAwMCBjMyA2NiAyZSAwZiAxZiA4NCAwMCAwMCAwMCAwMCAwMCA5
+MCBmMyAwZiAxZSBmYSA0OCA4OSBmOCA0OCA4OSBmNyA0OCA4OSBkNiA0OCA4OSBjYSA0ZCA4OSBj
+MiA0ZCA4OSBjOCA0YyA4YiA0YyAyNCAwOCAwZiAwNSA8NDg+IDNkIDAxIGYwIGZmIGZmIDczIDAx
+IGMzIDQ4IDhiIDBkIDBiIDcyIDBjIDAwIGY3IGQ4IDY0IDg5IDAxIDQ4ClsgIDczMi4wMzc1MjVd
+IFJTUDogMDAyYjowMDAwN2ZmZmYyODkzMGI4IEVGTEFHUzogMDAwMDAyNDYgT1JJR19SQVg6IDAw
+MDAwMDAwMDAwMDAxYWEKWyAgNzMyLjAzNzgwNV0gUkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDog
+MDAwMDAwMDAwMDAwMDAxMSBSQ1g6IDAwMDA3ZmZmZjViNmRjNGQKWyAgNzMyLjAzODA4M10gUkRY
+OiAwMDAwMDAwMDAwMDAwMDAwIFJTSTogMDAwMDAwMDAwMDAwMDAwMiBSREk6IDAwMDAwMDAwMDAw
+MDAwMDcKWyAgNzMyLjAzODM2NF0gUkJQOiAwMDAwN2ZmZmYyODkzMTIwIFIwODogMDAwMDAwMDAw
+MDAwMDAwMCBSMDk6IDAwMDAwMDAwMDAwMDAwMDgKWyAgNzMyLjAzODY0N10gUjEwOiAwMDAwMDAw
+MDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDA2MTYwMDAwMTE3ZTAKWyAg
+NzMyLjAzODkyOF0gUjEzOiAwMDAwN2ZmZmYyODkzMjYwIFIxNDogMDAwMDAwMDAwMTNjZDQwOCBS
+MTU6IDAwMDA2MDIwMDAwMmFhMTAKWyAgNzMyLjAzOTIxM10gTW9kdWxlcyBsaW5rZWQgaW46IGlw
+dGFibGVfbWFuZ2xlIHh0X0NIRUNLU1VNIGlwdGFibGVfbmF0IHh0X01BU1FVRVJBREUgbmZfbmF0
+IHh0X2Nvbm50cmFjayBuZl9jb25udHJhY2sgbmZfZGVmcmFnX2lwdjYgbmZfZGVmcmFnX2lwdjQg
+aXB0X1JFSkVDVCBuZl9yZWplY3RfaXB2NCB0dW4gYnJpZGdlIHN0cCBsbGMgZWJ0YWJsZV9maWx0
+ZXIgZWJ0YWJsZXMgaXA2dGFibGVfZmlsdGVyIGlwNl90YWJsZXMgaXB0YWJsZV9maWx0ZXIgaXBf
+dGFibGVzIHhmcyBsaWJjcmMzMmMgc25kX2hkYV9jb2RlY19yZWFsdGVrIHNuZF9oZGFfY29kZWNf
+Z2VuZXJpYyBsZWR0cmlnX2F1ZGlvIHNuZF9oZGFfY29kZWNfaGRtaSBzbmRfaGRhX2ludGVsIHNu
+ZF9pbnRlbF9kc3BjZmcgaW50ZWxfcmFwbF9tc3IgaW50ZWxfcmFwbF9jb21tb24geDg2X3BrZ190
+ZW1wX3RoZXJtYWwgaW50ZWxfcG93ZXJjbGFtcCBjb3JldGVtcCBrdm1faW50ZWwga3ZtIHNuZF9o
+ZGFfY29kZWMgaXJxYnlwYXNzIHNuZF9od2RlcCBzbmRfaGRhX2NvcmUgY3JjdDEwZGlmX3BjbG11
+bCBjcmMzMl9wY2xtdWwgc25kX3NlcSBnaGFzaF9jbG11bG5pX2ludGVsIGludGVsX2NzdGF0ZSBz
+bmRfc2VxX2RldmljZSBlZWVwY193bWkgaW50ZWxfdW5jb3JlIHNuZF9wY20gYXN1c193bWkgd21p
+X2Jtb2YgaVRDT193ZHQgcGNzcGtyIGludGVsX3JhcGxfcGVyZiBzcGFyc2Vfa2V5bWFwIHJma2ls
+bCBzbmRfdGltZXIgaTJjX2k4MDEgaVRDT192ZW5kb3Jfc3VwcG9ydCBtZWlfbWUgc25kIG1laSBp
+bnRlbF93bWlfdGh1bmRlcmJvbHQgbHBjX2ljaCBzb3VuZGNvcmUgbm91dmVhdSB2aWRlbyBpMmNf
+YWxnb19iaXQgZHJtX2ttc19oZWxwZXIgY2VjIHR0bSBkcm0gZTEwMDBlIG14bV93bWkgbnZtZSBj
+cmMzMmNfaW50ZWwgbnZtZV9jb3JlIHdtaSBmdXNlClsgIDczMi4wNDA1MjBdIENSMjogMDAwMDAw
+MDAwMDAwMjAwOApbICA3MzIuMDQwODczXSAtLS1bIGVuZCB0cmFjZSBhZDBhY2Y5NGMwZGYzMmJm
+IF0tLS0KWyAgNzMyLjA0MTIyNl0gUklQOiAwMDEwOl9faW9fcXVldWVfc3FlKzB4NGFjLzB4NGYw
+ClsgIDczMi4wNDE1NzldIENvZGU6IDEzIDRkIDg1IGQyIDc1IGQ4IDRjIDhiIDY0IDI0IDE4IDRj
+IDhiIDdjIDI0IDA4IGU5IGMzIGZlIGZmIGZmIDQ4IDhiIDQzIDYwIDQ4IDg1IGMwIDc0IDIwIDQ4
+IDhiIDUzIDU4IDQ4IDg5IDEwIDQ4IDg1IGQyIDc0IDA0IDw0OD4gODkgNDIgMDggNDggYzcgNDMg
+NTggMDAgMDAgMDAgMDAgNDggYzcgNDMgNjAgMDAgMDAgMDAgMDAgNDggOGIKWyAgNzMyLjA0MTk2
+NV0gUlNQOiAwMDE4OmZmZmZiOWVlYzExYzdkMjAgRUZMQUdTOiAwMDAxMDAwNgpbICA3MzIuMDQy
+MzQzXSBSQVg6IGZmZmZlNjJlN2U1Yjk3MDAgUkJYOiBmZmZmOTk5NjZlZTI1NzAwIFJDWDogZGVh
+ZDAwMDAwMDAwMDEyMgpbICA3MzIuMDQyNzIwXSBSRFg6IDAwMDAwMDAwMDAwMDIwMDAgUlNJOiBm
+ZmZmOTk5Njc2YjEwNTgwIFJESTogZmZmZjk5OTY3NmIxMDViMApbICA3MzIuMDQzMTAyXSBSQlA6
+IGZmZmZiOWVlYzExYzdkYjAgUjA4OiBmZmZmOTk5NjZjM2NlODQ4IFIwOTogZmZmZjk5OTY2ZWUy
+NTcwMApbICA3MzIuMDQzNDgzXSBSMTA6IGZmZmZmZmZmYTBlNjM5YTAgUjExOiBmZmZmOTk5NjZl
+ZTI1N2E4IFIxMjogMDAwMDAwMDAwMDAwMDAwMApbICA3MzIuMDQzODY1XSBSMTM6IGZmZmY5OTk2
+NzZiMTA1YzAgUjE0OiBmZmZmZmZmZmZmZmZmZmY1IFIxNTogZmZmZjk5OTY2MzA1ODA0MApbICA3
+MzIuMDQ0MjQ2XSBGUzogIDAwMDA3ZmZmZjI4OTc3MDAoMDAwMCkgR1M6ZmZmZjk5OTY3ZmEwMDAw
+MCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwClsgIDczMi4wNDQ2MjddIENTOiAgMDAxMCBE
+UzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMKWyAgNzMyLjA0NTAxMF0gQ1Iy
+OiAwMDAwMDAwMDAwMDAyMDA4IENSMzogMDAwMDAwMGZlMjBmNjAwNSBDUjQ6IDAwMDAwMDAwMDAx
+NjA2ZjAKCg==
+--0000000000008b43cb059f029781--

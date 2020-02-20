@@ -2,118 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EEDD166346
-	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2020 17:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0C3116634A
+	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2020 17:39:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbgBTQjC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Feb 2020 11:39:02 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:52543 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728090AbgBTQjC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Feb 2020 11:39:02 -0500
-Received: by mail-pj1-f67.google.com with SMTP id ep11so1097075pjb.2
-        for <io-uring@vger.kernel.org>; Thu, 20 Feb 2020 08:39:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=q5Dz/WYlaLI6r28yufBUOa2r4p7AgwX56r3A+yapg0Q=;
-        b=GH8xtHVAk+zjakiRUGv4qjvxucNzSDb1qNI5qnqJCv1AAkom1aixxS+gI0uirLtkEV
-         QjncLyFlIvp3iiowjlS57ynCuGGpoVV9iHHJEOya3ujuCyrLwy1wM06an7qygs9vzi9R
-         UJJ1MchrN555uEvfqVPwUjJKKwlCmlwyrwrXC7V+GrGcB2O1megOAoVcQ/cz4s2/uZm4
-         sX+jlnC/8J0S2src3rjJFHSjfxF88CXOpPHXRlpGzKBvwy080gQLEPsZss5buhi1ZC3t
-         2dBWvHpebAcTOruz3NgurM3Qze9/HOu7cSWghTluXQ9/I46JgPXKo1xfQun3LV5fKlOe
-         mLiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=q5Dz/WYlaLI6r28yufBUOa2r4p7AgwX56r3A+yapg0Q=;
-        b=sQY1uaXPxuoHq2opHbda6VwK1P5gujfX1Tn8YTSlvOqYfsLBz5S5sUXoAZtjxoRFqE
-         vd8SILeNcm5T9QUP7Cv7dfXZE/NRPBDbUS+jic0xWsdY788IYA0D8sIeVFuSUvswZpO7
-         2ESx/SY6WFjqbDPPa7hnOpfxnMgg9EAFH/ib5dZJwG0erSa++wCmugBWjUkhJ8ScukyZ
-         4a92NNEIan0ea/l2qBDt/ahyBr4+vhpzAkM8gjcBmFvQDb76KBvYY8NEuWgLZzMCaoml
-         ypIPbbnfD7uKnF70ELvztYSSkaSBcnL55i8OJC0FRdi4fpkhjizXw6D8lV0ZctMEY429
-         TyDg==
-X-Gm-Message-State: APjAAAXRv3vjQThnMty6WVtDqxe6i8wGMDYEdvIioICY3Zl6LgrgcakL
-        aP0sxUE8SxZ06OvJucNTnovv2g==
-X-Google-Smtp-Source: APXvYqw3PYeX9Rl7v2uf00mXi7ejdJdlqQSsZ/IPMHGtvTPy+8rnBFVFBiB5OhQTCGZ9C2tWbPClUQ==
-X-Received: by 2002:a17:902:b110:: with SMTP id q16mr31396045plr.289.1582216741109;
-        Thu, 20 Feb 2020 08:39:01 -0800 (PST)
-Received: from ?IPv6:2605:e000:100e:8c61:8495:a173:67ea:559c? ([2605:e000:100e:8c61:8495:a173:67ea:559c])
-        by smtp.gmail.com with ESMTPSA id k5sm3977905pju.29.2020.02.20.08.39.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2020 08:39:00 -0800 (PST)
-Subject: Re: crash on connect
-To:     Glauber Costa <glauber@scylladb.com>
-Cc:     io-uring@vger.kernel.org, Avi Kivity <avi@scylladb.com>
-References: <CAD-J=zbBU2j=a0t2zD7k_aGqguwwkzLpPnnrOUAm2DJ3ZUJFvg@mail.gmail.com>
- <5e4904d5-e7fc-c079-e112-5b978c8fa129@kernel.dk>
- <7fa66eac-73d0-c461-98dd-2818434e8bc8@kernel.dk>
- <CAD-J=zbRDiK2PfXW4B=gHjKtqX1SdXHHne9TsD-NVvp-uznkHg@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ec76784f-d9fa-d5e3-fcf1-87c2754e419b@kernel.dk>
-Date:   Thu, 20 Feb 2020 08:38:59 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728133AbgBTQjw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Feb 2020 11:39:52 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:47346 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728090AbgBTQjw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Feb 2020 11:39:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Czln9zO1MbNs+5/lq7jslZJ9cOfAoIa1zN/EhrpDmYk=; b=Q22463E0pu4m0S3aqVEg59g5qL
+        fjzSbHQjBc0yf0umZxpa5ninACLCbCT6ftB7wuTUM2zwh810nAwY/cIoYujEDFWOzIZc15BIJifi0
+        TLzW6HbaFgtAa8EuhgdglcbrGAfj1nIKr+9BPnIyOIvm+c80ESX5ynPsOxLSaIOXAH6GWWbKm1vrF
+        d8QrIAJwamnMRsY/mRgLt7r4T9MbBu6AjpVObWJIbwFv+T+hbQXoZUmww4lCaKBt+Jd8fPdqbszTI
+        w8KP8yolwhNdCooyrDCVDN3rcL46IuNDZZbRSsT58afx5I5XNA5OQ5/1KqFS2hI0WkEkYn+DNr7Dn
+        UFp7c2Jw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4orX-0000Hj-A1; Thu, 20 Feb 2020 16:39:43 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3E6F1300606;
+        Thu, 20 Feb 2020 17:37:45 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 429C829D73548; Thu, 20 Feb 2020 17:39:38 +0100 (CET)
+Date:   Thu, 20 Feb 2020 17:39:38 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Carter Li =?utf-8?B?5p2O6YCa5rSy?= <carter.li@eoitek.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH] task_work_run: don't take ->pi_lock unconditionally
+Message-ID: <20200220163938.GA18400@hirez.programming.kicks-ass.net>
+References: <b8069e62-7ea4-c7f3-55a3-838241951068@kernel.dk>
+ <20200217120920.GQ14914@hirez.programming.kicks-ass.net>
+ <53de3581-b902-89ba-3f53-fd46b052df40@kernel.dk>
+ <43c066d1-a892-6a02-82e7-7be850d9454d@kernel.dk>
+ <20200217174610.GU14897@hirez.programming.kicks-ass.net>
+ <592cf069-41ee-0bc1-1f83-e058e5dd53ff@kernel.dk>
+ <20200218131310.GZ14914@hirez.programming.kicks-ass.net>
+ <20200218145645.GB3466@redhat.com>
+ <20200218150756.GC14914@hirez.programming.kicks-ass.net>
+ <20200218155017.GD3466@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAD-J=zbRDiK2PfXW4B=gHjKtqX1SdXHHne9TsD-NVvp-uznkHg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218155017.GD3466@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/20/20 9:34 AM, Glauber Costa wrote:
-> On Thu, Feb 20, 2020 at 11:29 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 2/20/20 9:17 AM, Jens Axboe wrote:
->>> On 2/20/20 7:19 AM, Glauber Costa wrote:
->>>> Hi there, me again
->>>>
->>>> Kernel is at 043f0b67f2ab8d1af418056bc0cc6f0623d31347
->>>>
->>>> This test is easier to explain: it essentially issues a connect and a
->>>> shutdown right away.
->>>>
->>>> It currently fails due to no fault of io_uring. But every now and then
->>>> it crashes (you may have to run more than once to get it to crash)
->>>>
->>>> Instructions are similar to my last test.
->>>> Except the test to build is now "tests/unit/connect_test"
->>>> Code is at git@github.com:glommer/seastar.git  branch io-uring-connect-crash
->>>>
->>>> Run it with ./build/release/tests/unit/connect_test -- -c1
->>>> --reactor-backend=uring
->>>>
->>>> Backtrace attached
->>>
->>> Perfect thanks, I'll take a look!
->>
->> Haven't managed to crash it yet, but every run complains:
->>
->> got to shutdown of 10 with refcnt: 2
->> Refs being all dropped, calling forget for 10
->> terminate called after throwing an instance of 'fmt::v6::format_error'
->>   what():  argument index out of range
->> unknown location(0): fatal error: in "unixdomain_server": signal: SIGABRT (application abort requested)
->>
->> Not sure if that's causing it not to fail here.
+On Tue, Feb 18, 2020 at 04:50:18PM +0100, Oleg Nesterov wrote:
+> As Peter pointed out, task_work() can avoid ->pi_lock and cmpxchg()
+> if task->task_works == NULL && !PF_EXITING.
 > 
-> Ok, that means it "passed". (I was in the process of figuring out
-> where I got this wrong when I started seeing the crashes)
+> And in fact the only reason why task_work_run() needs ->pi_lock is
+> the possible race with task_work_cancel(), we can optimize this code
+> and make the locking more clear.
+> 
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
 
-Can you do, in your kernel dir:
+Still playing with my try_cmpxchg() patches, how does the below look on
+top?
 
-$ gdb vmlinux
-[...]
-(gdb) l *__io_queue_sqe+0x4a
-
-and see what it says?
-
--- 
-Jens Axboe
-
+---
+--- a/kernel/task_work.c
++++ b/kernel/task_work.c
+@@ -27,14 +27,13 @@ static struct callback_head work_exited;
+ int
+ task_work_add(struct task_struct *task, struct callback_head *work, bool notify)
+ {
+-	struct callback_head *head;
++	struct callback_head *head = READ_ONCE(tsk->task_works);
+ 
+ 	do {
+-		head = READ_ONCE(task->task_works);
+ 		if (unlikely(head == &work_exited))
+ 			return -ESRCH;
+ 		work->next = head;
+-	} while (cmpxchg(&task->task_works, head, work) != head);
++	} while (!try_cmpxchg(&task->task_works, &head, work))
+ 
+ 	if (notify)
+ 		set_notify_resume(task);
+@@ -90,26 +89,24 @@ task_work_cancel(struct task_struct *tas
+ void task_work_run(void)
+ {
+ 	struct task_struct *task = current;
+-	struct callback_head *work, *head, *next;
++	struct callback_head *work, *next;
+ 
+ 	for (;;) {
+-		/*
+-		 * work->func() can do task_work_add(), do not set
+-		 * work_exited unless the list is empty.
+-		 */
+-		do {
+-			head = NULL;
+-			work = READ_ONCE(task->task_works);
+-			if (!work) {
+-				if (task->flags & PF_EXITING)
+-					head = &work_exited;
+-				else
+-					break;
+-			}
+-		} while (cmpxchg(&task->task_works, work, head) != work);
++		work = READ_ONCE(task->task_works);
++		if (!work) {
++			if (!(task->flags & PF_EXITING))
++				return;
++
++			/*
++			 * work->func() can do task_work_add(), do not set
++			 * work_exited unless the list is empty.
++			 */
++			if (try_cmpxchg(&task->task_works, &work, &work_exited))
++				return;
++		}
++
++		work = xchg(&task->task_works, NULL);
+ 
+-		if (!work)
+-			break;
+ 		/*
+ 		 * Synchronize with task_work_cancel(). It can not remove
+ 		 * the first entry == work, cmpxchg(task_works) must fail.

@@ -2,51 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8DCB166A9D
-	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2020 23:56:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 101A6166A9F
+	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2020 23:58:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbgBTW4x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Feb 2020 17:56:53 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33466 "EHLO
+        id S1729230AbgBTW6n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Feb 2020 17:58:43 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39315 "EHLO
         mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729130AbgBTW4x (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Feb 2020 17:56:53 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w6so343619otk.0
-        for <io-uring@vger.kernel.org>; Thu, 20 Feb 2020 14:56:52 -0800 (PST)
+        with ESMTP id S1729130AbgBTW6n (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Feb 2020 17:58:43 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 77so313562oty.6
+        for <io-uring@vger.kernel.org>; Thu, 20 Feb 2020 14:58:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=udSQjP2zpwW8wxEC0irpv/d6oryvIHJArzGHSkq96iI=;
-        b=uVlNQ1fz7UWoZ1ATyjCqSY/9lM/7DW1CW4+8C1vKzY15n4pUzm70/Dyb/8RnDJx2fW
-         Yee8Vd0BjzVl6vpQfWl/bONKYxAl78dQib2L/ONd64FddXzyrk66epiFZrwuI8VthFn9
-         WaNoDzWnTrkpwGvD54jvzDmjGgeCvf38bQ0USawNRntw3iv2bUZh8hyKlUzhEqlICFi9
-         damReOcDkk33ncsQPeh+Sbl/faGLN/vI6+u4OqMTjiEWjvoUXexkGavouuj610ploEf8
-         w1b7/GmMbJKJw0xXlhpLBTa8P93v1N+DSyOFDXyjeFG88n+25EzfQMtb3AXh3TotT83L
-         r9qA==
+        bh=XmpqTmH6msXy3QbaOupW8fPNhbYbkp3EODKW7zqB3YM=;
+        b=YYuu9uOwAPcl9mT0YBGrVbbYwUK7cxBnrulVU7qwe1UjoQpT/v2X0Q6N5wIuLsf0tV
+         QWSxxgqUvD810sukcz714DlT6ZmCv4gQP6GEBqaajuDOsZXYwPYku5ekpEJjFbDuPixZ
+         WmLTzVwqhQ7OjN+zAthdCjlBKed8rG9vqHwBISXqnQpleTa2K4BrN7kIe+H+nwO9JEn9
+         WPMOK+nCvI51c6gEhlyyTFIkhEcqd9zbaIxFCIkX/uaA7VHi+8XiNNNPjPF0g318AILj
+         V+noR6NID+LsmPXasrfzfqrA0hn/ul+4/v04DOl/8LcMsXJETMDR0d9Q99KC3jWfYvYG
+         hTDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=udSQjP2zpwW8wxEC0irpv/d6oryvIHJArzGHSkq96iI=;
-        b=ofBN3QEyl4cDU/6g613lJE63+iXN66e1EbdgP7qQaWCUltgn26u5fNOIro+MAE7nhY
-         ccDL2iaQmwk2zYzMW89PbbSJ/UkYPlM9PaejWOjGDrBA4P1Ajjvjhs0GwVBVjA95NKZ5
-         GKvx+1V1/gtwxUfaRYnwAkPPJpIzuAvpS/fK3uKQHl0aEfg0VXHOTNdbPqvxNwxK7bmo
-         ely4TQBBSu759EFbbT0HJ7Akq0lRJ//SgfYhJZLpZFRTyxCzxlEUS2Ssnu1HGeGcvBNY
-         eyBVt9Zad4Lo7jMdBR8coUH68CQxykuYvZOvlltYMixvMylVFmmVj5g4dBOrKsPDb7d2
-         dhAA==
-X-Gm-Message-State: APjAAAU8hHuSD6tD/yXQN6yRGq4bM7z90dgvuu7Kwz1WQGa1nyKVuIqG
-        XcqusNOSGxzHmFCmBKpfASLrwYQgHjSb52/quw1uLg==
-X-Google-Smtp-Source: APXvYqyHKsOIkUFNrGwpc/MokogAnUCbBL4xNCyhPZZzIrsYvArJWa+mAdbgkVVi40PcViNKAAPFlo36SwSDTKqHxLg=
-X-Received: by 2002:a05:6830:1219:: with SMTP id r25mr1210786otp.180.1582239412050;
- Thu, 20 Feb 2020 14:56:52 -0800 (PST)
+        bh=XmpqTmH6msXy3QbaOupW8fPNhbYbkp3EODKW7zqB3YM=;
+        b=GIe4/WcLpfMGj0ZaeawZGeGLIt0c0ZTU9bMnz4kdsd03HwBO1jA49BjZJR3K2/TYQc
+         JphnoHkIdNbOGR3/7vdqhu2eH1/BzpejY23tX4edNxLARx1hWRjBNjZcLcBwbI+tgNIX
+         5sLHJe6jW4cKleBhROP7zAJIgHeFujaIhqhoFigeyrbaBL20RRMycMGl5zTTYbKpCXyA
+         JBumGQAJV2ZAhZn4XBZ3QptQMspMrkYWnjL9sr3ZYZgihSin64/s3UAdsbvkLI7ravzl
+         nz6lSwmhwUQ17t8vGNFBBedpv7FvuxUuvzumAZ0DVcL/+pw0nfzw1HaXKvD1q19uobqV
+         vYSw==
+X-Gm-Message-State: APjAAAXcJbYtdyxVp9Uk19z0p2PNFyVH6pCf2gBARNiVxjzktdXa2I+Q
+        HgBBV+JEvRhd7KYYxQTNxlWr8hmP4DmDUlBx7d1hbw==
+X-Google-Smtp-Source: APXvYqyoZLGwq2YZrdlhA2Lsl74wJO9hJ+vgEs84zkh9+mwavBdN5lToKnFvwiNs+9uej/uKAcSiwlPdhsYZpqLE1t8=
+X-Received: by 2002:a9d:5e8b:: with SMTP id f11mr12022061otl.110.1582239522032;
+ Thu, 20 Feb 2020 14:58:42 -0800 (PST)
 MIME-Version: 1.0
 References: <20200220203151.18709-1-axboe@kernel.dk> <20200220203151.18709-8-axboe@kernel.dk>
  <CAG48ez1sQi7ntGnLxyo9X_642-wr55+Kn662XyyEYGLyi0iLwQ@mail.gmail.com>
-In-Reply-To: <CAG48ez1sQi7ntGnLxyo9X_642-wr55+Kn662XyyEYGLyi0iLwQ@mail.gmail.com>
+ <b78cd45a-9e6f-04ec-d096-d6e1f6cec8bd@kernel.dk> <67a62039-0cb0-b5b2-d7f8-fade901c59f4@kernel.dk>
+ <CAG48ez3R3DWLry_aRAt47BQ05Y4Mr9yVXq49yuiRGNoyRMr3Lg@mail.gmail.com> <1658b860-6419-fac9-8ec3-b2d91d74b293@kernel.dk>
+In-Reply-To: <1658b860-6419-fac9-8ec3-b2d91d74b293@kernel.dk>
 From:   Jann Horn <jannh@google.com>
-Date:   Thu, 20 Feb 2020 23:56:25 +0100
-Message-ID: <CAG48ez3d-HD2_tC+kUwS4ch4ifd=ota27J_2wZ7ovGFT5R7Hnw@mail.gmail.com>
+Date:   Thu, 20 Feb 2020 23:58:15 +0100
+Message-ID: <CAG48ez3jS0VbeaW2VYBoGBKHDzkYaR-f_wA69TPFrWdz9iwmdA@mail.gmail.com>
 Subject: Re: [PATCH 7/9] io_uring: add per-task callback handler
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring <io-uring@vger.kernel.org>,
@@ -59,56 +61,42 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 11:02 PM Jann Horn <jannh@google.com> wrote:
-> On Thu, Feb 20, 2020 at 9:32 PM Jens Axboe <axboe@kernel.dk> wrote:
+On Thu, Feb 20, 2020 at 11:56 PM Jens Axboe <axboe@kernel.dk> wrote:
+> On 2/20/20 3:38 PM, Jann Horn wrote:
+> > On Thu, Feb 20, 2020 at 11:23 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >> On 2/20/20 3:14 PM, Jens Axboe wrote:
+> >>>>> @@ -3646,46 +3596,11 @@ static int io_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+> >>>>>
+> >>>>>         list_del_init(&poll->wait.entry);
+> >>>>>
+> >>>> [...]
+> >>>>> +       tsk = req->task;
+> >>>>> +       req->result = mask;
+> >>>>> +       init_task_work(&req->sched_work, io_poll_task_func);
+> >>>>> +       sched_work_add(tsk, &req->sched_work);
+> >>>>
+> >>>> Doesn't this have to check the return value?
+> >>>
+> >>> Trying to think if we can get here with TASK_EXITING, but probably safer
+> >>> to just handle it in any case. I'll add that.
+> >>
+> >> Double checked this one, and I think it's good as-is, but needs a
+> >> comment. If the sched_work_add() fails, then the work item is still in
+> >> the poll hash on the ctx. That work is canceled on exit.
 > >
-> > For poll requests, it's not uncommon to link a read (or write) after
-> > the poll to execute immediately after the file is marked as ready.
-> > Since the poll completion is called inside the waitqueue wake up handler,
-> > we have to punt that linked request to async context. This slows down
-> > the processing, and actually means it's faster to not use a link for this
-> > use case.
-> >
-> > We also run into problems if the completion_lock is contended, as we're
-> > doing a different lock ordering than the issue side is. Hence we have
-> > to do trylock for completion, and if that fails, go async. Poll removal
-> > needs to go async as well, for the same reason.
-> >
-> > eventfd notification needs special case as well, to avoid stack blowing
-> > recursion or deadlocks.
-> >
-> > These are all deficiencies that were inherited from the aio poll
-> > implementation, but I think we can do better. When a poll completes,
-> > simply queue it up in the task poll list. When the task completes the
-> > list, we can run dependent links inline as well. This means we never
-> > have to go async, and we can remove a bunch of code associated with
-> > that, and optimizations to try and make that run faster. The diffstat
-> > speaks for itself.
-> [...]
-> > -static void io_poll_trigger_evfd(struct io_wq_work **workptr)
-> > +static void io_poll_task_func(struct callback_head *cb)
-> >  {
-> > -       struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-> > +       struct io_kiocb *req = container_of(cb, struct io_kiocb, sched_work);
-> > +       struct io_kiocb *nxt = NULL;
-> >
-> [...]
-> > +       io_poll_task_handler(req, &nxt);
-> > +       if (nxt)
-> > +               __io_queue_sqe(nxt, NULL);
+> > You mean via io_poll_remove_all()? That doesn't happen when a thread
+> > dies, right?
 >
-> This can now get here from anywhere that calls schedule(), right?
-> Which means that this might almost double the required kernel stack
-> size, if one codepath exists that calls schedule() while near the
-> bottom of the stack and another codepath exists that goes from here
-> through the VFS and again uses a big amount of stack space?
+> Off of io_uring_flush, we do:
+>
+> if (fatal_signal_pending(current) || (current->flags & PF_EXITING)) {
+>         io_uring_cancel_task_poll(current);
+>         io_uring_cancel_task_async(current);
+>         io_wq_cancel_pid(ctx->io_wq, task_pid_vnr(current));
+> }
+>
+> to cancel _anything_ that the task has pending.
 
-Oh, I think this also implies that any mutex reachable via any of the
-nonblocking uring ops nests inside any mutex under which we happen to
-schedule(), right? I wonder whether that's going to cause deadlocks...
-
-For example, FUSE's ->read_iter() can call fuse_direct_io(), which can
-call inode_lock() and then call fuse_sync_writes() under the inode
-lock, which can wait_event(), which can schedule(); and if uring then
-from schedule() calls ->read_iter() again, you could reach
-inode_lock() on the same inode again, causing a deadlock, I think?
+->flush() is only for when the uring instance is dropped from a file
+descriptor table; threads typically share their file descriptor
+tables, and therefore won't ->flush() until the last one dies.

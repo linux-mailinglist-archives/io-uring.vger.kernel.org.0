@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F873166859
+	by mail.lfdr.de (Postfix) with ESMTP id B7B6016685A
 	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2020 21:32:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728976AbgBTUb6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Feb 2020 15:31:58 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:51800 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        id S1728979AbgBTUb7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Feb 2020 15:31:59 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43676 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S1728400AbgBTUb6 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 20 Feb 2020 15:31:58 -0500
-Received: by mail-pj1-f65.google.com with SMTP id fa20so1347722pjb.1
-        for <io-uring@vger.kernel.org>; Thu, 20 Feb 2020 12:31:56 -0800 (PST)
+Received: by mail-pf1-f196.google.com with SMTP id s1so2467586pfh.10
+        for <io-uring@vger.kernel.org>; Thu, 20 Feb 2020 12:31:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BPdue20yPrEAO95/cy8rDvve5g73RfBeOXqMHkni0CA=;
-        b=Gv4eHnFPAZFeTtDI9jJxpyTTQA8YOx4QUUMSmO/QBHz2JMXRHzIj/l4gfjSXWSEwuk
-         gJ65RhL08czRAwAHdGRV6VUOgBCybxUxVMOLcK+hT17R5nC3qc9Fs/jPzG4S+aym4MF/
-         XpaxGYDJSS5GxJtjvHkevcS7cIAwpVjt4LBzBsFX9k3+0nZ5Z6JrTLgwuiamb+8FR2nS
-         KqHzlG6XwCLXRsKhIKs0G7XJigOM55uH0geO/x8Y4fVcP3r9Rf6ySjvtLnyGs6+OUy5h
-         4AL/J2PYBCeB1JcOc4uYN9xhaASIOZmCw+bQwnvSAIk8hC1GyGIJAdDsjBcqtPvF+pCJ
-         ZKBg==
+        bh=qYb1pTSxvCmtivq53vZqNobwoobHQyWd7lP0oir6RbA=;
+        b=AhBVccYWIWqDArBfwPaJuXwKQLFLjD+8qrkxopsGMrVTW6gVsntAcY9Tjt40A35W19
+         hPSm0b2PMzKFvm23twk5zeFjpf5s/jtH+KqQWR25+epN54pBHMH6dzAt4X3kGL9qa4G0
+         UL1ZbzaUrHTnsny+b80YkGpyvTwGsmQBkFeX4RdEORayaNIpE4WgUsk0/KoaW7+iBoRA
+         nlunARLKt24BoUER1aO+vHvMU8zBNZ1CGZcpQ+auzi5mmt03zokWt51o1G7GsuSOk7oa
+         mQHZg+mTgZHAiBX0vB6tWbc6n1Kc+NCAAoJOgyPXNceQYWhj09XpVQU+Ncy2al5pL7ZE
+         nxHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BPdue20yPrEAO95/cy8rDvve5g73RfBeOXqMHkni0CA=;
-        b=aNAhOpSGiCJwAeR4JE2KHVIAuto/dh889YkIyIdqRCEU8Yr0esnt5yYJALS5iXA2RK
-         DN4m1tuk0NIyfGx3c5tNUX7jaGes2EpSm0A6yjI+knjd/zbaLcq5LvArybkHtbny51Wa
-         YElQNLGmMtqvffwpl8u3fUFwWug5wu76DVcA/zJVG9M54KW9QteldLr4Cjs+N7qnlItY
-         XbXak7kFGYsrUz4dh7nROhIFFXR+2lDjF2K/WdlJGD0N28XTrqXck1pd/DMd09fuyekR
-         dgAX+ygAvU4W0/7OTeNBz5xcxzP2/fr0j95c/uG4Q9+NE/RB7RglwSJXlfYSl9X6Cz+q
-         ychQ==
-X-Gm-Message-State: APjAAAWSHx3GBmB4s36NCFHUKMKF1ceEaNBGohg8hG0O0K+QeAKobdB2
-        CEDtA6Zm/eKUkcFnvI9+ZNYA4TgThyE=
-X-Google-Smtp-Source: APXvYqx4aT3i4BgJMTVJagFm+YpMY0oplfzV/NfmteE633UfY5hn95zvE2r/HmJULvYk9mNdS5jwTw==
-X-Received: by 2002:a17:90b:11d0:: with SMTP id gv16mr5682979pjb.109.1582230716172;
-        Thu, 20 Feb 2020 12:31:56 -0800 (PST)
+        bh=qYb1pTSxvCmtivq53vZqNobwoobHQyWd7lP0oir6RbA=;
+        b=jxQld7icGrXT3srchaeeCXP1b6BnEjR/YFaSoq4KB0m5/8B2TgEYY6xurKkO0k9tSd
+         qH+cYIqUjgUXDLc3HjqXuKPRTD9EAK5mTcPbhApaisfMY704G9DN69WCkMB7w+asvBoU
+         sumWt7KmyZKU43E8lYNlBNtYhcJfsGyAKevpFUpCn9GOoH2vrxaraUYEyV5cGiCj6tH4
+         ZqGYPUl/+jXkXiQp7g3Jl9VwWaXuCvUWaRd5tHMJMgUFwkMprgECZ8uQTyfBdaxbMKob
+         ZlOYqQX65d1PyYZcnF5EEVRBhpeLfpSPbWOG5wefDvF0R9018pyf2VEJ+AaIZKpE1GCZ
+         lsDg==
+X-Gm-Message-State: APjAAAWHC0uHO1umVR4IL7U78LLtZv1oSGVU1GQCY/vRBQmkb4BBI+sN
+        R9FUper7OlBM14UXpuHCRBwWi11UQSs=
+X-Google-Smtp-Source: APXvYqz5ZkyY6ea+QXaztOOLcPTFVfUuQYg8W5ZQVnsU7sZ7wDDHhnapntQYi7SS+qB45uERSWdRIQ==
+X-Received: by 2002:aa7:8101:: with SMTP id b1mr34238180pfi.105.1582230717337;
+        Thu, 20 Feb 2020 12:31:57 -0800 (PST)
 Received: from x1.localdomain ([2605:e000:100e:8c61:8495:a173:67ea:559c])
-        by smtp.gmail.com with ESMTPSA id z10sm169672pgj.73.2020.02.20.12.31.55
+        by smtp.gmail.com with ESMTPSA id z10sm169672pgj.73.2020.02.20.12.31.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 12:31:55 -0800 (PST)
+        Thu, 20 Feb 2020 12:31:56 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     glauber@scylladb.com, peterz@infradead.org, asml.silence@gmail.com,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/9] io_uring: consider any io_read/write -EAGAIN as final
-Date:   Thu, 20 Feb 2020 13:31:43 -0700
-Message-Id: <20200220203151.18709-2-axboe@kernel.dk>
+Subject: [PATCH 2/9] io_uring: io_accept() should hold on to submit reference on retry
+Date:   Thu, 20 Feb 2020 13:31:44 -0700
+Message-Id: <20200220203151.18709-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200220203151.18709-1-axboe@kernel.dk>
 References: <20200220203151.18709-1-axboe@kernel.dk>
@@ -61,62 +61,35 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If the -EAGAIN happens because of a static condition, then a poll
-or later retry won't fix it. We must call it again from blocking
-condition. Play it safe and ensure that any -EAGAIN condition from read
-or write must retry from async context.
+Don't drop an early reference, hang on to it and let the caller drop
+it. This makes it behave more like "regular" requests.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/io_uring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6e249aa97ba3..bd3a39b0f4ee 100644
+index bd3a39b0f4ee..c3fe2022e343 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2255,10 +2255,8 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
- 	 * If the file doesn't support async, mark it as REQ_F_MUST_PUNT so
- 	 * we know to async punt it even if it was opened O_NONBLOCK
- 	 */
--	if (force_nonblock && !io_file_supports_async(req->file)) {
--		req->flags |= REQ_F_MUST_PUNT;
-+	if (force_nonblock && !io_file_supports_async(req->file))
- 		goto copy_iov;
--	}
+@@ -3353,6 +3353,8 @@ static void io_accept_finish(struct io_wq_work **workptr)
+ 	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+ 	struct io_kiocb *nxt = NULL;
  
- 	iov_count = iov_iter_count(&iter);
- 	ret = rw_verify_area(READ, req->file, &kiocb->ki_pos, iov_count);
-@@ -2279,6 +2277,8 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
- 						inline_vecs, &iter);
- 			if (ret)
- 				goto out_free;
-+			/* any defer here is final, must blocking retry */
-+			req->flags |= REQ_F_MUST_PUNT;
- 			return -EAGAIN;
- 		}
++	io_put_req(req);
++
+ 	if (io_req_cancelled(req))
+ 		return;
+ 	__io_accept(req, &nxt, false);
+@@ -3370,7 +3372,6 @@ static int io_accept(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	ret = __io_accept(req, nxt, force_nonblock);
+ 	if (ret == -EAGAIN && force_nonblock) {
+ 		req->work.func = io_accept_finish;
+-		io_put_req(req);
+ 		return -EAGAIN;
  	}
-@@ -2344,10 +2344,8 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
- 	 * If the file doesn't support async, mark it as REQ_F_MUST_PUNT so
- 	 * we know to async punt it even if it was opened O_NONBLOCK
- 	 */
--	if (force_nonblock && !io_file_supports_async(req->file)) {
--		req->flags |= REQ_F_MUST_PUNT;
-+	if (force_nonblock && !io_file_supports_async(req->file))
- 		goto copy_iov;
--	}
- 
- 	/* file path doesn't support NOWAIT for non-direct_IO */
- 	if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT) &&
-@@ -2392,6 +2390,8 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
- 						inline_vecs, &iter);
- 			if (ret)
- 				goto out_free;
-+			/* any defer here is final, must blocking retry */
-+			req->flags |= REQ_F_MUST_PUNT;
- 			return -EAGAIN;
- 		}
- 	}
+ 	return 0;
 -- 
 2.25.1
 

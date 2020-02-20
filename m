@@ -2,99 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEBCF1655DE
-	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2020 04:53:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46F2A165B8A
+	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2020 11:31:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbgBTDxJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Feb 2020 22:53:09 -0500
-Received: from mail-pl1-f177.google.com ([209.85.214.177]:35821 "EHLO
-        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727370AbgBTDxJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Feb 2020 22:53:09 -0500
-Received: by mail-pl1-f177.google.com with SMTP id g6so1001455plt.2
-        for <io-uring@vger.kernel.org>; Wed, 19 Feb 2020 19:53:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=l+m1QqZLp0jnVcmSXEkIZ6vSbIUvZ5AOqDjjrXzqTM0=;
-        b=19p4UK5kcWU8ZZmbXym+Zwtmf6n7nziVg9dXRY6IQrJycoSx5vWmCp034L+eGqOEMI
-         YSXVIeIZceYm8IC3/js1Ad/WVqj2KOMP7ap88wxdgR49iWi+KxWOvwM+1EBcwsHJRwB0
-         V+ngrOhkl6KFziObxwKOR2Vo27IS/Km08Fe1D4+mPhloiLwJxrjkPwjf6kIvH/9JEi6o
-         Ayp1ZFuxAmQcAYtGq+yRLw5PBO3m6P1LP1T21uuGsdifCxvhgReFbdqjuteMO9yuDdJq
-         0XjqaJaaUvCzS8TL53Hr52crzWSccfNFghVmjJNYIZegpAXX0LsZ3K/eD8pIntQZLYIu
-         kuUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=l+m1QqZLp0jnVcmSXEkIZ6vSbIUvZ5AOqDjjrXzqTM0=;
-        b=UpwRmF0Zeyrk2wFDsHOvid1P6zIAMglCQAZ5F4W19G58q8gxkOOpqFKzQpJ227WAvq
-         Opv3N46aITp2J7pot8cFoRITmTK/m8hnEpGGFuFAGB+jcwXW1hAWGXf31dnffFg4mZOJ
-         jHVZbepg5ryoWgZITOJeXr4Ecno/QsPujwGWRLc/JoHCTuEGFT5Hx6tfe8EwfgTXTFIR
-         Oj/+Jsq1w9RWCUNuS4FX/TgM0f6BgOafMHrJO4P5i8Lfpjf5nWao8BDfQVzcBAKh62Lf
-         OSh2SwtbJWfDO8CWmVCzqwV+Xe1u99mWy2BcgvPJY3Lh0E2Ir9S42T/61BMg8Rt70+x2
-         Xe5A==
-X-Gm-Message-State: APjAAAVrKqE4ODt8OzohUrY30kkFXmUCv9I7FLlMz65GkLn1dTjxAdRW
-        xo/hpt2PsHf0CSYsXWid8PbTI9LBAVY=
-X-Google-Smtp-Source: APXvYqwOKugkLNrX/s/GctAr0LATf/VxPqORceZekzbw6JOaJ/rAhrgpfz716OkrzynyQ6UmTEXlnA==
-X-Received: by 2002:a17:90a:5d85:: with SMTP id t5mr1213825pji.126.1582170787791;
-        Wed, 19 Feb 2020 19:53:07 -0800 (PST)
-Received: from ?IPv6:2605:e000:100e:8c61:54cb:52c5:6d91:1922? ([2605:e000:100e:8c61:54cb:52c5:6d91:1922])
-        by smtp.gmail.com with ESMTPSA id g19sm1104636pfh.134.2020.02.19.19.53.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2020 19:53:07 -0800 (PST)
-Subject: Re: crash on accept
-To:     Glauber Costa <glauber@scylladb.com>
-Cc:     Avi Kivity <avi@scylladb.com>, io-uring@vger.kernel.org
-References: <CAD-J=zZnmnjgC9Epd5muON2dx6reCzYMzJBD=jFekxB9mgp6GA@mail.gmail.com>
- <ec98e47f-a08f-59ba-d878-60b8cd787a1f@kernel.dk>
- <CAD-J=zbm3a4nYvUo83UL706nhOicRC8LUh=iphWwL6inAa37RA@mail.gmail.com>
- <f74646a0-72a2-a14c-f6fd-8be4c8d87894@kernel.dk>
- <CAD-J=zb2Y_U3W6=8RUfX_zSP7YbdYLxFY0UDcmCqKRH8Jin4bQ@mail.gmail.com>
- <fba5b599-3e07-5e35-3d44-3018be19309f@scylladb.com>
- <20ab3016-9964-9811-c5b9-be848f072764@kernel.dk>
- <3e5c6df3-c4ab-1cd5-5bb1-e1a5d44180ad@kernel.dk>
- <CAD-J=zYcT6VSGhu81e=UJ3SrjfuPJLF9qB5T176OhZjfEpS26g@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <923b26bd-4f1d-3fa7-8578-b35a63ba2a59@kernel.dk>
-Date:   Wed, 19 Feb 2020 19:53:05 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727448AbgBTKav (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Feb 2020 05:30:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39528 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726885AbgBTKau (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 20 Feb 2020 05:30:50 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E03EB24672;
+        Thu, 20 Feb 2020 10:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582194650;
+        bh=uWiTS8YgHPdo3MANnuhWHXoq+v/QRNnUmDA8sfhf8Bk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RbCX7TQv3skc2aoG9+L6JIaQJnX2npmUZ93js6YaP63bVUSIDSySPmRrCugANIO42
+         qVsWcpQ8PWkjcLRzJAQp3NoUEnVEYDYLmzdY2G+7m/ipJJqJb26g4N04KVDR0h2rgS
+         RtaaVKotVzuJB0D2J344nJa3ZP3ZiZw1HGdYZ3gg=
+Date:   Thu, 20 Feb 2020 10:30:45 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Carter Li =?utf-8?B?5p2O6YCa5rSy?= <carter.li@eoitek.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] asm-generic/atomic: Add try_cmpxchg() fallbacks
+Message-ID: <20200220103044.GA13608@willie-the-truck>
+References: <7c4c3996-4886-eb58-cdee-fe0951907ab5@kernel.dk>
+ <addcd44e-ed9b-5f82-517d-c1ed3ee2d85c@kernel.dk>
+ <b8069e62-7ea4-c7f3-55a3-838241951068@kernel.dk>
+ <20200217120920.GQ14914@hirez.programming.kicks-ass.net>
+ <53de3581-b902-89ba-3f53-fd46b052df40@kernel.dk>
+ <43c066d1-a892-6a02-82e7-7be850d9454d@kernel.dk>
+ <20200217174610.GU14897@hirez.programming.kicks-ass.net>
+ <592cf069-41ee-0bc1-1f83-e058e5dd53ff@kernel.dk>
+ <20200218131310.GZ14914@hirez.programming.kicks-ass.net>
+ <20200218142700.GB14946@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <CAD-J=zYcT6VSGhu81e=UJ3SrjfuPJLF9qB5T176OhZjfEpS26g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218142700.GB14946@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/19/20 7:52 PM, Glauber Costa wrote:
-> I don't see a crash now, thanks.
-
-Updated again, should be more solid now. Just in case you run into
-issues.
-
-> I can now go back to trying to figure out why the test is just hanging
-> forever, as I was doing earlier =)
-> (99.9% I broke something with the last rework).
+On Tue, Feb 18, 2020 at 03:27:00PM +0100, Peter Zijlstra wrote:
+> On Tue, Feb 18, 2020 at 02:13:10PM +0100, Peter Zijlstra wrote:
+> > (with the caveat that try_cmpxchg() doesn't seem available on !x86 -- I
+> > should go fix that)
 > 
-> Out of curiosity, as it may help me with the above: I notice you
-> didn't add a patch on top, but rather rebased the tree.
+> Completely untested (lemme go do that shortly), but something like so I
+> suppose.
+> 
+> ---
+> Subject: asm-generic/atomic: Add try_cmpxchg() fallbacks
+> 
+> Only x86 provides try_cmpxchg() outside of the atomic_t interfaces,
+> provide generic fallbacks to create this interface from the widely
+> available cmpxchg() function.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+> diff --git a/include/linux/atomic-fallback.h b/include/linux/atomic-fallback.h
+> index 656b5489b673..243f61d6c35f 100644
+> --- a/include/linux/atomic-fallback.h
+> +++ b/include/linux/atomic-fallback.h
+> @@ -77,6 +77,50 @@
+>  
+>  #endif /* cmpxchg64_relaxed */
+>  
+> +#ifndef try_cmpxchg
+> +#define try_cmpxchg(_ptr, _oldp, _new) \
+> +({ \
+> +	typeof(*ptr) ___r, ___o = *(_oldp); \
 
-Yeah, the poll based async bits are very much a work in progress,
-and I'll just fold fixes for now.
+Probably worth pointing out that this will have the nasty behaviour
+for volatile pointers that we're tackling for READ_ONCE. Obviously no
+need to hold this up, but just mentioning it here in the hope that one
+of us remembers to fix it later on.
 
-> What was the problem leading to the crash ?
+> diff --git a/scripts/atomic/gen-atomic-fallback.sh b/scripts/atomic/gen-atomic-fallback.sh
+> index b6c6f5d306a7..3c9be8d550e0 100755
+> --- a/scripts/atomic/gen-atomic-fallback.sh
+> +++ b/scripts/atomic/gen-atomic-fallback.sh
+> @@ -140,6 +140,32 @@ cat <<EOF
+>  EOF
+>  }
+>  
+> +gen_try_cmpxchg_fallback()
+> +{
+> +	local order="$1"; shift;
+> +
+> +cat <<EOF
+> +#ifndef try_cmpxchg${order}
+> +#define try_cmpxchg${order}(_ptr, _oldp, _new) \\
+> +({ \\
+> +	typeof(*ptr) ___r, ___o = *(_oldp); \\
+> +	___r = cmpxchg${order}((_ptr), ___o, (_new)); \\
+> +	if (unlikely(___r != ___o)) \\
+> +		*(_old) = ___r; \\
 
-It had to do with repeated retry. Eg we want to read from something,
-we try and get -EAGAIN. Arm the poll handler, poll results says we're
-good to go. Retry, get -EAGAIN again. Now we give up, but the state
-wasn't restored properly.
+This doesn't compile because _old isn't declared. Probably best to avoid
+evaluating _oldp twice though.
 
--- 
-Jens Axboe
-
+Will

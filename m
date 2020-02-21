@@ -2,83 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 847EC1682DC
-	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2020 17:12:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2B66168313
+	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2020 17:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbgBUQMG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Feb 2020 11:12:06 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36910 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727039AbgBUQMG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Feb 2020 11:12:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jO1rG1z8nFFcRcatXTx8R6dstzQDlOlE/07mv+ckS7E=; b=t/AspgcLoJczSqj/FCHd3S2H18
-        SKwgLIlQbtvxxqwhwwCL2aiqnevVe7od3lHN3Wymv+KccPDjol06mcYgZxprteMQcqYrul89jDSQH
-        yP/l1pjS+pETb9X6pRel31t7rHGVBRmPZ+n/qq/8E+MdmxJWZMd2dOGykJjkx+elyR1nJAkIr4TWf
-        urbKOk36pxMr7IFbXwoXeeavzfDyjgoGesXJ7hP8xrGpuMhhm7KyAOmrc7iohjs3JTZ5aDOGy4Obr
-        UzLg6pQn3Do4dVPyZL33XWfM9G3cRgFvLsd0FVEBqiLYbPmt/9dTVLnDFYFypvmzRaOzCoJnUEvP9
-        WlHoMcuQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5AuJ-0005OW-U8; Fri, 21 Feb 2020 16:12:04 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0768A304D2C;
-        Fri, 21 Feb 2020 17:10:09 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4CFDF2B26B892; Fri, 21 Feb 2020 17:12:02 +0100 (CET)
-Date:   Fri, 21 Feb 2020 17:12:02 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
-        Glauber Costa <glauber@scylladb.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH 7/9] io_uring: add per-task callback handler
-Message-ID: <20200221161202.GY14897@hirez.programming.kicks-ass.net>
-References: <20200220203151.18709-1-axboe@kernel.dk>
- <20200220203151.18709-8-axboe@kernel.dk>
- <CAG48ez1sQi7ntGnLxyo9X_642-wr55+Kn662XyyEYGLyi0iLwQ@mail.gmail.com>
- <20200221104740.GE18400@hirez.programming.kicks-ass.net>
- <7e8d4355-fd2c-b155-b28c-57fd20db949d@kernel.dk>
- <CAG48ez3Bc6gCVX7Gd2mFDR=ktGE0M_H+s6pHao2NjUrbxub20w@mail.gmail.com>
+        id S1727781AbgBUQQi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Feb 2020 11:16:38 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:36144 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727095AbgBUQQi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Feb 2020 11:16:38 -0500
+Received: by mail-pj1-f68.google.com with SMTP id gv17so956600pjb.1
+        for <io-uring@vger.kernel.org>; Fri, 21 Feb 2020 08:16:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/D/bCVh04fEfVjE3l+u65ysQqtalkQRAJeGslkh2Jlk=;
+        b=v5lA5xSH7LDA9vQ/4iVjZB56ndgIrMqEWa+q30hZWOaB/8Yk/iSra60oBQabsvw47c
+         ysRjVU22aBNfvLA3yMfqeAAHfjgG9NR7ExBkYgXCJ9AbqsALQs2aiVR0mWyqOujxdrPB
+         B4G/HL+CN0NmAEbRK0fxR8XnK1fPc40icdwd0PThc13FaZYozszyViIB3x3Hv1sJNllp
+         hZlOSVd/Kgm8e9y5V8hPpkz7XVdHbcfYsNDONcj2W0q/c20z72Yyl4WC9CiYJ+5xSqjn
+         iW1h6CaFaBDi3UWsNS1fPMgevOdnKbT2199lDkFRcATJelHZPTJN6Pb7vQa2Iott0OC0
+         0z4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/D/bCVh04fEfVjE3l+u65ysQqtalkQRAJeGslkh2Jlk=;
+        b=oXY8A7jNxE67euEZEAHnn59YvdbdrvIW5oZGQIOHnz2yG7m+s8jxqBs+E1xWdBk0As
+         MYHxkAYoo4V2ye5e6ioZvTvH3neEclvX8S/VDM6xc0AxWFl22zfgLPXrc3wH/R+wT5T2
+         eCnCvQL/I5BkRZANZem3NsFL9FSOzxfmY2XAjaCFOgwjA8eoCYXiTAf/Wi5M1OspA7m+
+         f6Nbk6dbpQj4Yp5VdbvvxHpTLi2CFTrvv6BIGqdm49UHxQ2+8KO9zo03g9p/CodinQyy
+         aOC1fzFkuG5WYdiqp9ppbXEJSWgW1GcsMekntYoQPNPhusZYW8TfYebKl2wEGVwaJi5Y
+         zp4Q==
+X-Gm-Message-State: APjAAAV1VBLzgODGXsS3EAuBhQC9mdGbAVmFj8RiIt9GU6AVo0VgsIbD
+        zAomJf7OrMH5BQEDyXib7Y2ChV6xJ4Q=
+X-Google-Smtp-Source: APXvYqycgYJ4Gzgbgcdcjq4J1ha4aIIHC2rr4MArvDn2fxyjV0Vy9hm/THa0WI1QyjDVYz+V64EmYA==
+X-Received: by 2002:a17:90a:858a:: with SMTP id m10mr3942252pjn.117.1582301797198;
+        Fri, 21 Feb 2020 08:16:37 -0800 (PST)
+Received: from ?IPv6:2605:e000:100e:8c61:91ff:e31e:f68d:32a9? ([2605:e000:100e:8c61:91ff:e31e:f68d:32a9])
+        by smtp.gmail.com with ESMTPSA id b18sm3380479pfb.116.2020.02.21.08.16.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2020 08:16:36 -0800 (PST)
+Subject: Re: [PATCH] io_uring: prevent sq_thread from spinning when it should
+ stop
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Hannes Reinecke <hare@suse.com>, io-uring@vger.kernel.org
+References: <20200221154216.206367-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <916f5b1f-1e01-dfe6-7049-113e7175b66a@kernel.dk>
+Date:   Fri, 21 Feb 2020 08:16:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez3Bc6gCVX7Gd2mFDR=ktGE0M_H+s6pHao2NjUrbxub20w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200221154216.206367-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 04:02:36PM +0100, Jann Horn wrote:
-> On Fri, Feb 21, 2020 at 3:49 PM Jens Axboe <axboe@kernel.dk> wrote:
-> > On 2/21/20 3:47 AM, Peter Zijlstra wrote:
-
-> > > But I thought to understand that these sched_work things were only
-> > > queued on tasks that were stuck waiting on POLL (or it's io_uring
-> > > equivalent). Earlier patches were explicitly running things from
-> > > io_cqring_wait(), which might have given me this impression.
-> >
-> > No, that is correct.
+On 2/21/20 8:42 AM, Stefano Garzarella wrote:
+> This patch drops 'cur_mm' before calling cond_resched(), to prevent
+> the sq_thread from spinning even when the user process is finished.
 > 
-> Really? I was pretty sure that io_uring does not force the calling
-> thread to block on the io_uring operations to continue; and isn't that
-> the whole point?
+> Before this patch, if the user process ended without closing the
+> io_uring fd, the sq_thread continues to spin until the
+> 'sq_thread_idle' timeout ends.
 > 
-> I think that when Peter says "stuck waiting on POLL", he really means
-> "blocked in the context of sys_io_uring_enter() and can't go
-> anywhere";
+> In the worst case where the 'sq_thread_idle' parameter is bigger than
+> INT_MAX, the sq_thread will spin forever.
 
-Exactly.
+Thanks, applied.
 
-> while I think you interpret it as "has pending POLL work
-> queued up in the background and may decide to wait for it in
-> sys_io_uring_enter(), but might also be doing anything else".
+-- 
+Jens Axboe
 
-In which case it can hit schedule() at some random point before it gets
-to io_uring_cqring_wait().

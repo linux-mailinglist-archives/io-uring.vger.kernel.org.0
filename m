@@ -2,75 +2,120 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D691D168318
-	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2020 17:18:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5741168332
+	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2020 17:23:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbgBUQRZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Feb 2020 11:17:25 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44383 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727213AbgBUQRY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Feb 2020 11:17:24 -0500
-Received: by mail-pg1-f196.google.com with SMTP id a14so817710pgb.11
-        for <io-uring@vger.kernel.org>; Fri, 21 Feb 2020 08:17:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aQGcVDwZYQWBOtAXil8SzgdiYPVSaSGZOeGTzRnc5aE=;
-        b=igvfD2fJPKAX9ygqtJrrPalny2QTmYWCBA5aUcmDkKSmfijQRdypWy+AHX5MU5kLH5
-         DKHxoGL1quqgjN8moD1oc+a7VeyYhurpgFd+P9B4kC2GHDHA/8shUcIpsC38TgwVals0
-         xpDPT+Tvx/csZKZCHbBcq1s5ffaqFNU135vHx9669aK32fSDxBzBM96qb+YQKYlIgtk1
-         KLC6F+x0A7d0NqLDbkrgxTdJTYnGSQtt3uH3UySe3cF7Q6CHbyzVlz3NuNJTTIY0P76A
-         Z0q5MxJVZUKyXXIf1aXuISrJnJw9ux9nvLlrM/9G3qHIDTIbUGYQtRpLjM/+wn55mAQA
-         B63w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aQGcVDwZYQWBOtAXil8SzgdiYPVSaSGZOeGTzRnc5aE=;
-        b=pC8JbCR+AvlWkaTobFvI8SO01+3ysux0zcdsv6L5NxLVBKwB8wNbE3BYUaVnTpJzja
-         7o9hPLSage6Qa4K1O95iEF6R7fJO1P2eS2WgSsiOOLuWPjRMt9naRo0uR7+uTPywxQb8
-         gGyIAgD+rbExPjVsHQkN+VdC8TAn0PvUsDOuXVpSZik6fu1CWVnph5wq0zJWztbRVujr
-         u/5zhPyyJsOMsrVWuZIs9NjZbf2QdalS44RWqshlVLt5RXD8mq7xh6RSYu5uiwpRPH23
-         BfhcrdFduWftJIK8MR4IwpmdRGJuXArmYeqtvkhSxgeA2U2PRajEGgsvDBvwpyJsl7r/
-         Jubw==
-X-Gm-Message-State: APjAAAUpvuEMpP20c2UYWWFCz/SCl3Yhx2YjM8UzHn4PIzAUqK0dDpoL
-        hW2W48ONDwtiREz/aRGnRLDu21cDLZg=
-X-Google-Smtp-Source: APXvYqwUA11U5oDvifmSn/+wBEXU6Z5cSGYf+l+J+XGmsYkQFGr5FQgzrVuTtm9KseVvsIoREIbjdQ==
-X-Received: by 2002:a65:424d:: with SMTP id d13mr40361290pgq.128.1582301842730;
-        Fri, 21 Feb 2020 08:17:22 -0800 (PST)
-Received: from ?IPv6:2605:e000:100e:8c61:91ff:e31e:f68d:32a9? ([2605:e000:100e:8c61:91ff:e31e:f68d:32a9])
-        by smtp.gmail.com with ESMTPSA id p16sm2944701pgi.50.2020.02.21.08.17.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 08:17:22 -0800 (PST)
-Subject: Re: [PATCH liburing] test: add sq-poll-kthread test case
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200221154400.207213-1-sgarzare@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0f04c1d4-0688-41be-8889-9b18838053a1@kernel.dk>
-Date:   Fri, 21 Feb 2020 08:17:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1725957AbgBUQX6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Feb 2020 11:23:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41204 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbgBUQX6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Feb 2020 11:23:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=a3GgPPeZl1d/+iiwtU6QQoaX6YNFUNomfhT8W2NPY50=; b=sRuirQckjzre4ZWw4M6E9VB+aX
+        I+P9osxXahj8ftH9iqKbF5fIjoxk8HvSIyWVVDfvWeY3o/Q4CYWcV/yCazEWUT44yKL0riO6MZNr4
+        dnleQFiO2Xtyg2atdu/ktT/TqrfcoiEUu7OOYsrNFRBkLlFrtNbqOXqghbFDxLNQgYGFGCjkqHTXd
+        S5E++ltwjZk3mC4UC41gzICYN+Uj/uYvdXvrJ2ESuRod7UYt1d7hE4NKVzmGte2HhR26gwWZd8I4j
+        3igQ67M0Q1coZ8VQmVSfiquzbQaZGtuTVoinN7pTlqes5dRTLnuAOzwWxQ3Q02p4d79HT8UkyNTZ3
+        kqbDsZ8w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5B5o-0001dG-7v; Fri, 21 Feb 2020 16:23:56 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 48DDD304D2C;
+        Fri, 21 Feb 2020 17:22:01 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8F7FC2B26B89E; Fri, 21 Feb 2020 17:23:54 +0100 (CET)
+Date:   Fri, 21 Feb 2020 17:23:54 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Jann Horn <jannh@google.com>, io-uring <io-uring@vger.kernel.org>,
+        Glauber Costa <glauber@scylladb.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH 7/9] io_uring: add per-task callback handler
+Message-ID: <20200221162354.GZ14897@hirez.programming.kicks-ass.net>
+References: <20200220203151.18709-1-axboe@kernel.dk>
+ <20200220203151.18709-8-axboe@kernel.dk>
+ <CAG48ez1sQi7ntGnLxyo9X_642-wr55+Kn662XyyEYGLyi0iLwQ@mail.gmail.com>
+ <20200221104740.GE18400@hirez.programming.kicks-ass.net>
+ <7e8d4355-fd2c-b155-b28c-57fd20db949d@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20200221154400.207213-1-sgarzare@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e8d4355-fd2c-b155-b28c-57fd20db949d@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/21/20 8:44 AM, Stefano Garzarella wrote:
-> sq-poll-kthread tests if the 'io_uring-sq' kthread is stopped
-> when the userspace process ended with or without closing the
-> io_uring fd.
+On Fri, Feb 21, 2020 at 06:49:16AM -0800, Jens Axboe wrote:
 
-Applied, thanks.
+> > Jens, what exactly is the benefit of running this on every random
+> > schedule() vs in io_cqring_wait() ? Or even, since io_cqring_wait() is
+> > the very last thing the syscall does, task_work.
+> 
+> I took a step back and I think we can just use the task work, which
+> makes this a lot less complicated in terms of locking and schedule
+> state. Ran some quick testing with the below and it works for me.
+> 
+> I'm going to re-spin based on this and just dump the sched_work
+> addition.
 
--- 
-Jens Axboe
+Aswesome, simpler is better.
 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 81aa3959f326..413ac86d7882 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -3529,7 +3529,7 @@ static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
+>  	 * the exit check will ultimately cancel these work items. Hence we
+>  	 * don't need to check here and handle it specifically.
+>  	 */
+> -	sched_work_add(tsk, &req->sched_work);
+> +	task_work_add(tsk, &req->sched_work, true);
+>  	wake_up_process(tsk);
+>  	return 1;
+>  }
+> @@ -5367,9 +5367,9 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  	do {
+>  		if (io_cqring_events(ctx, false) >= min_events)
+>  			return 0;
+> -		if (!current->sched_work)
+> +		if (!current->task_works)
+>  			break;
+> -		sched_work_run();
+> +		task_work_run();
+>  	} while (1);
+>  
+>  	if (sig) {
+> @@ -5392,6 +5392,12 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  						TASK_INTERRUPTIBLE);
+>  		if (io_should_wake(&iowq, false))
+>  			break;
+> +		if (current->task_works) {
+> +			task_work_run();
+> +			if (io_should_wake(&iowq, false))
+> +				break;
+> +			continue;
+> +		}
+
+		if (current->task_works)
+			task_work_run();
+		if (io_should_wake(&iowq, false);
+			break;
+
+doesn't work?
+
+>  		schedule();
+>  		if (signal_pending(current)) {
+>  			ret = -EINTR;
+
+
+Anyway, we need to be careful about the context where we call
+task_work_run(), but afaict doing it here should be fine.

@@ -2,284 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6199168216
-	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2020 16:44:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 847EC1682DC
+	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2020 17:12:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729167AbgBUPoH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Feb 2020 10:44:07 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20831 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729120AbgBUPoH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Feb 2020 10:44:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582299845;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=au5w5k7HxBHqjH5cZQKFsvOJIbXWXe9r1KGkl1Ke4uY=;
-        b=W901IntcAt51t/z4q6CrVKFAuDaBT1M/TxItx7c6HugoHX2626H9SgwHY7+HfylYIVRV3/
-        Kw+3r8MOJhDcX3i+Pa34GbJlhGOERXtQPOj3zEIGzriqNazD9y1vG/Gr+ki5DCSXKoe9W0
-        dBEQ5RUMzED8wap9x06ICdAKDjXcakI=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-391-3fnPA-khNp6AP8bYnHvG8g-1; Fri, 21 Feb 2020 10:44:04 -0500
-X-MC-Unique: 3fnPA-khNp6AP8bYnHvG8g-1
-Received: by mail-wm1-f70.google.com with SMTP id k21so734940wmi.2
-        for <io-uring@vger.kernel.org>; Fri, 21 Feb 2020 07:44:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=au5w5k7HxBHqjH5cZQKFsvOJIbXWXe9r1KGkl1Ke4uY=;
-        b=iAOOupWW1JOLnf+FNKqJKBjYv4IEkbJBoL5trm8o1bBcqffpWikXLTrfSwwsNlmk8X
-         iBQSd2DsuVZtcYdr/vq+niLUG173XVw4qT4m+wXeCFd3NlIXiYwMq11W2Wd8mSpHrwyG
-         XvCsm2WEUquhnT9pwUweU08hGg+7iqpXKLfMIcIP2sN6koBhpwMppQR+5RvsEVCHg1tH
-         y/50d3cs/QWiGUKofNe3gYtZutskqR+U1I9dwvbmtpRSsSTv5KaCTXhoRGVLEwkD6Wye
-         bMCG/daqy1TVY6Z6ga5zL2PtvDWdO+iuDEyUtbLmrwg3gvDRjSupxOgRo+mDC6HwMUM5
-         /dqQ==
-X-Gm-Message-State: APjAAAWhIpXNvBEKmQwDQIvCnApgKQ02xgGNXqNQuKANUg/AtYjGEFMw
-        Pz6puiivzYivtzYT7U/QA1oSoP8+ylbbgikHJWeNVx9lmBxQgVa6Bh4jcymyViFB2YEc/KSmIxN
-        8l5poMCiFxukR3ZQlIj0=
-X-Received: by 2002:adf:cd92:: with SMTP id q18mr48502654wrj.261.1582299842704;
-        Fri, 21 Feb 2020 07:44:02 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzFbR8YpdMkB2LZ7XzQfd990NVbaWIbX6cjjg8jokRX93gXdIpYyctYMtN2MnduFH2I7b1DNw==
-X-Received: by 2002:adf:cd92:: with SMTP id q18mr48502636wrj.261.1582299842449;
-        Fri, 21 Feb 2020 07:44:02 -0800 (PST)
-Received: from steredhat.redhat.com (host209-4-dynamic.27-79-r.retail.telecomitalia.it. [79.27.4.209])
-        by smtp.gmail.com with ESMTPSA id s1sm4297072wro.66.2020.02.21.07.44.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 07:44:01 -0800 (PST)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH liburing] test: add sq-poll-kthread test case
-Date:   Fri, 21 Feb 2020 16:44:00 +0100
-Message-Id: <20200221154400.207213-1-sgarzare@redhat.com>
-X-Mailer: git-send-email 2.24.1
+        id S1727137AbgBUQMG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Feb 2020 11:12:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36910 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbgBUQMG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Feb 2020 11:12:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=jO1rG1z8nFFcRcatXTx8R6dstzQDlOlE/07mv+ckS7E=; b=t/AspgcLoJczSqj/FCHd3S2H18
+        SKwgLIlQbtvxxqwhwwCL2aiqnevVe7od3lHN3Wymv+KccPDjol06mcYgZxprteMQcqYrul89jDSQH
+        yP/l1pjS+pETb9X6pRel31t7rHGVBRmPZ+n/qq/8E+MdmxJWZMd2dOGykJjkx+elyR1nJAkIr4TWf
+        urbKOk36pxMr7IFbXwoXeeavzfDyjgoGesXJ7hP8xrGpuMhhm7KyAOmrc7iohjs3JTZ5aDOGy4Obr
+        UzLg6pQn3Do4dVPyZL33XWfM9G3cRgFvLsd0FVEBqiLYbPmt/9dTVLnDFYFypvmzRaOzCoJnUEvP9
+        WlHoMcuQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5AuJ-0005OW-U8; Fri, 21 Feb 2020 16:12:04 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0768A304D2C;
+        Fri, 21 Feb 2020 17:10:09 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4CFDF2B26B892; Fri, 21 Feb 2020 17:12:02 +0100 (CET)
+Date:   Fri, 21 Feb 2020 17:12:02 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
+        Glauber Costa <glauber@scylladb.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH 7/9] io_uring: add per-task callback handler
+Message-ID: <20200221161202.GY14897@hirez.programming.kicks-ass.net>
+References: <20200220203151.18709-1-axboe@kernel.dk>
+ <20200220203151.18709-8-axboe@kernel.dk>
+ <CAG48ez1sQi7ntGnLxyo9X_642-wr55+Kn662XyyEYGLyi0iLwQ@mail.gmail.com>
+ <20200221104740.GE18400@hirez.programming.kicks-ass.net>
+ <7e8d4355-fd2c-b155-b28c-57fd20db949d@kernel.dk>
+ <CAG48ez3Bc6gCVX7Gd2mFDR=ktGE0M_H+s6pHao2NjUrbxub20w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez3Bc6gCVX7Gd2mFDR=ktGE0M_H+s6pHao2NjUrbxub20w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-sq-poll-kthread tests if the 'io_uring-sq' kthread is stopped
-when the userspace process ended with or without closing the
-io_uring fd.
+On Fri, Feb 21, 2020 at 04:02:36PM +0100, Jann Horn wrote:
+> On Fri, Feb 21, 2020 at 3:49 PM Jens Axboe <axboe@kernel.dk> wrote:
+> > On 2/21/20 3:47 AM, Peter Zijlstra wrote:
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
- .gitignore             |   1 +
- test/Makefile          |   4 +-
- test/sq-poll-kthread.c | 165 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 168 insertions(+), 2 deletions(-)
- create mode 100644 test/sq-poll-kthread.c
+> > > But I thought to understand that these sched_work things were only
+> > > queued on tasks that were stuck waiting on POLL (or it's io_uring
+> > > equivalent). Earlier patches were explicitly running things from
+> > > io_cqring_wait(), which might have given me this impression.
+> >
+> > No, that is correct.
+> 
+> Really? I was pretty sure that io_uring does not force the calling
+> thread to block on the io_uring operations to continue; and isn't that
+> the whole point?
+> 
+> I think that when Peter says "stuck waiting on POLL", he really means
+> "blocked in the context of sys_io_uring_enter() and can't go
+> anywhere";
 
-diff --git a/.gitignore b/.gitignore
-index 1ab4075..9f85a5f 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -75,6 +75,7 @@
- /test/short-read
- /test/socket-rw
- /test/sq-full
-+/test/sq-poll-kthread
- /test/sq-space_left
- /test/statx
- /test/stdout
-diff --git a/test/Makefile b/test/Makefile
-index cf91011..09c7aa2 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -20,7 +20,7 @@ all_targets += poll poll-cancel ring-leak fsync io_uring_setup io_uring_register
- 		connect 7ad0e4b2f83c-test submit-reuse fallocate open-close \
- 		file-update statx accept-reuse poll-v-poll fadvise madvise \
- 		short-read openat2 probe shared-wq personality eventfd \
--		send_recv eventfd-ring across-fork
-+		send_recv eventfd-ring across-fork sq-poll-kthread
- 
- include ../Makefile.quiet
- 
-@@ -47,7 +47,7 @@ test_srcs := poll.c poll-cancel.c ring-leak.c fsync.c io_uring_setup.c \
- 	7ad0e4b2f83c-test.c submit-reuse.c fallocate.c open-close.c \
- 	file-update.c statx.c accept-reuse.c poll-v-poll.c fadvise.c \
- 	madvise.c short-read.c openat2.c probe.c shared-wq.c \
--	personality.c eventfd.c eventfd-ring.c across-fork.c
-+	personality.c eventfd.c eventfd-ring.c across-fork.c sq-poll-kthread.c
- 
- test_objs := $(patsubst %.c,%.ol,$(test_srcs))
- 
-diff --git a/test/sq-poll-kthread.c b/test/sq-poll-kthread.c
-new file mode 100644
-index 0000000..d53605c
---- /dev/null
-+++ b/test/sq-poll-kthread.c
-@@ -0,0 +1,165 @@
-+/*
-+ * Description: test if io_uring SQ poll kthread is stopped when the userspace
-+ *              process ended with or without closing the io_uring fd
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <pthread.h>
-+#include <stdbool.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <signal.h>
-+#include <sys/poll.h>
-+#include <sys/wait.h>
-+#include <sys/epoll.h>
-+
-+#include "liburing.h"
-+
-+#define SQ_THREAD_IDLE  2000
-+#define BUF_SIZE        128
-+#define KTHREAD_NAME    "io_uring-sq"
-+
-+enum {
-+	TEST_OK = 0,
-+	TEST_SKIPPED = 1,
-+	TEST_FAILED = 2,
-+};
-+
-+static int do_test_sq_poll_kthread_stopped(bool do_exit)
-+{
-+	int ret = 0, pipe1[2];
-+	struct io_uring_params param;
-+	struct io_uring ring;
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	uint8_t buf[BUF_SIZE];
-+	struct iovec iov;
-+
-+	if (geteuid()) {
-+		fprintf(stderr, "sqpoll requires root!\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	if (pipe(pipe1) != 0) {
-+		perror("pipe");
-+		return TEST_FAILED;
-+	}
-+
-+	memset(&param, 0, sizeof(param));
-+
-+	param.flags |= IORING_SETUP_SQPOLL;
-+	param.sq_thread_idle = SQ_THREAD_IDLE;
-+
-+	ret = io_uring_queue_init_params(16, &ring, &param);
-+	if (ret) {
-+		fprintf(stderr, "ring setup failed\n");
-+		ret = TEST_FAILED;
-+		goto err_pipe;
-+	}
-+
-+	ret = io_uring_register_files(&ring, &pipe1[1], 1);
-+	if (ret) {
-+		fprintf(stderr, "file reg failed: %d\n", ret);
-+		ret = TEST_FAILED;
-+		goto err_uring;
-+	}
-+
-+	iov.iov_base = buf;
-+	iov.iov_len = BUF_SIZE;
-+
-+	sqe = io_uring_get_sqe(&ring);
-+	if (!sqe) {
-+		fprintf(stderr, "io_uring_get_sqe failed\n");
-+		ret = TEST_FAILED;
-+		goto err_uring;
-+	}
-+
-+	io_uring_prep_writev(sqe, 0, &iov, 1, 0);
-+	sqe->flags |= IOSQE_FIXED_FILE;
-+
-+	ret = io_uring_submit(&ring);
-+	if (ret < 0) {
-+		fprintf(stderr, "io_uring_submit failed - ret: %d\n",
-+			ret);
-+		ret = TEST_FAILED;
-+		goto err_uring;
-+	}
-+
-+	ret = io_uring_wait_cqe(&ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "io_uring_wait_cqe - ret: %d\n",
-+			ret);
-+		ret = TEST_FAILED;
-+		goto err_uring;
-+	}
-+
-+	if (cqe->res != BUF_SIZE) {
-+		fprintf(stderr, "unexpected cqe->res %d [expected %d]\n",
-+			cqe->res, BUF_SIZE);
-+		ret = TEST_FAILED;
-+		goto err_uring;
-+
-+	}
-+
-+	io_uring_cqe_seen(&ring, cqe);
-+
-+	ret = TEST_OK;
-+
-+err_uring:
-+	if (do_exit)
-+		io_uring_queue_exit(&ring);
-+err_pipe:
-+	close(pipe1[0]);
-+	close(pipe1[1]);
-+
-+	return ret;
-+}
-+
-+int test_sq_poll_kthread_stopped(bool do_exit) {
-+	pid_t pid;
-+	int status = 0;
-+
-+	pid = fork();
-+
-+	if (pid == 0) {
-+		int ret = do_test_sq_poll_kthread_stopped(do_exit);
-+		exit(ret);
-+	}
-+
-+	pid = wait(&status);
-+	if (status != 0)
-+		return WEXITSTATUS(status);
-+
-+	if (system("ps --ppid 2 | grep " KTHREAD_NAME) == 0) {
-+		fprintf(stderr, "%s kthread still running!\n", KTHREAD_NAME);
-+		return TEST_FAILED;
-+	}
-+
-+	return 0;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int ret;
-+
-+	ret = test_sq_poll_kthread_stopped(true);
-+	if (ret == TEST_SKIPPED) {
-+		printf("test_sq_poll_kthread_stopped_exit: skipped\n");
-+	} else if (ret == TEST_FAILED) {
-+		fprintf(stderr, "test_sq_poll_kthread_stopped_exit failed\n");
-+		return ret;
-+	}
-+
-+	ret = test_sq_poll_kthread_stopped(false);
-+	if (ret == TEST_SKIPPED) {
-+		printf("test_sq_poll_kthread_stopped_noexit: skipped\n");
-+	} else if (ret == TEST_FAILED) {
-+		fprintf(stderr, "test_sq_poll_kthread_stopped_noexit failed\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
--- 
-2.24.1
+Exactly.
 
+> while I think you interpret it as "has pending POLL work
+> queued up in the background and may decide to wait for it in
+> sys_io_uring_enter(), but might also be doing anything else".
+
+In which case it can hit schedule() at some random point before it gets
+to io_uring_cqring_wait().

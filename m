@@ -2,123 +2,186 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E094167B41
-	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2020 11:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01006167E40
+	for <lists+io-uring@lfdr.de>; Fri, 21 Feb 2020 14:17:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbgBUKrs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Feb 2020 05:47:48 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40830 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728311AbgBUKrq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Feb 2020 05:47:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=gs7gkyTuqpIeeD6N7XSe4PrOvDA3q3ruDWaBnShCDoE=; b=uvxFAesn99iJDpcNGZiodPNlKG
-        FUondremJpmal9stkxlxhVpFinmzhokzndpfrKo8E0JTCTPvMm4uUSp1+b2ueZ4esQ1i6nEYEfKGp
-        F0t+KAcmnty+ClEE1m8TXJrnoX48JWm99tdXx69sBGWTQY2KCKADd7pTYIujhK/hulggqt2GR7Fec
-        MxUpE0B8KLep9+qEofcPtI0M87O8OymzhGgCFFIhwQKSj75ZEdC+Fn3OZLke1rxtMlo/Q+UFT8PSk
-        W6Z5DA2qIHkBVRXiEmG75NpjF6D0Nowg1kZ3jjWJQu1lcOn7xxI3saS15PEprRDiFFTitqYUSNWHf
-        iIPNKrUg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j55qQ-0002oe-Rv; Fri, 21 Feb 2020 10:47:43 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3CFC3300565;
-        Fri, 21 Feb 2020 11:45:47 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6CCB1203C3ED0; Fri, 21 Feb 2020 11:47:40 +0100 (CET)
-Date:   Fri, 21 Feb 2020 11:47:40 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
-        Glauber Costa <glauber@scylladb.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH 7/9] io_uring: add per-task callback handler
-Message-ID: <20200221104740.GE18400@hirez.programming.kicks-ass.net>
-References: <20200220203151.18709-1-axboe@kernel.dk>
- <20200220203151.18709-8-axboe@kernel.dk>
- <CAG48ez1sQi7ntGnLxyo9X_642-wr55+Kn662XyyEYGLyi0iLwQ@mail.gmail.com>
+        id S1727053AbgBUNRS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Feb 2020 08:17:18 -0500
+Received: from mail-qv1-f52.google.com ([209.85.219.52]:42258 "EHLO
+        mail-qv1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728300AbgBUNRR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Feb 2020 08:17:17 -0500
+Received: by mail-qv1-f52.google.com with SMTP id dc14so946308qvb.9
+        for <io-uring@vger.kernel.org>; Fri, 21 Feb 2020 05:17:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=cQ9Z8lb6ALwbwNJQ49eWfbgNtxEpXerq+TtFuIm+Exs=;
+        b=rz7zzZxs7OPKNXS+kC+s1gNhW5R0DYBIppRY44T2EBqWxBmtqAlPn1SllGx/OO6Oq6
+         ClespWUCzopjJRbSKqPoQgvixXjQqCuh9DSCV3Qk0IQ/IPEsMcq4y7CFY2BTupHTZV8m
+         8jpKEnj9XPxK9P34X2ii5UinjPEvzg1LN3IbhHa2oJGTJpGY2sdPcok6C+bZYP9mYLoo
+         /hGDY7Ddnesh4fl3gjjc9XwZEuWJq0aJNBDUqJiuSdONrsFVlwSk5ORhtVDTYLAQqX1K
+         PARlpWSdWXC72jUokBYi+OWu+84mDZ5vOTfHgrU/DirUHFhkU1UarqEeUshuPshYseBk
+         8HPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=cQ9Z8lb6ALwbwNJQ49eWfbgNtxEpXerq+TtFuIm+Exs=;
+        b=aSxf6lVjEffgCV+nAPabfCujMu9Wp8so/cGf6u4DPezdcJ63Pv8yKBxqy5sFktRDdh
+         WAjrq6nt+FNqhIEIjQJlF7wV6aFihg/VUuf3NzWGibRcuQ7lBGqmefApOmXcNfalf3LC
+         hRAkLGO6bcq5+B8+VUunGyYl/fr+c7a1X/LgpAkKXfqyHt4XqprGjb5YI83oZtCNrV/p
+         PT0bM7ol2WIhl6dZcGpd96q/67gJRyebAXotZqaQdxN+QdoxOVHxjnhL00R6axXLWVNO
+         k0FdGfyLM+y+0T/h6ZAfDByZ0cn/LOikZQKiO8EAcctTx/k+eDyS81FPUUYx98xuUoLE
+         4zMg==
+X-Gm-Message-State: APjAAAVtGxr/HNsdOC8HzYg8YtxvA1ykaQRoEWmn1k1qh4WxL1G2zF6T
+        BtbqoDfC4gtTwXu7FoVl8WUovTvaJ7muHEjCGt5yCTdvcUljpA==
+X-Google-Smtp-Source: APXvYqw5mygQr+kN/R52L/Q9MJb9w78NuPTG0GbJHCTGXCGH0NuKmWy+G+jsQFx4JQqLGP/jAtNqs0AhPzYQJdTActg=
+X-Received: by 2002:a05:6214:1253:: with SMTP id q19mr29980642qvv.75.1582291035561;
+ Fri, 21 Feb 2020 05:17:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez1sQi7ntGnLxyo9X_642-wr55+Kn662XyyEYGLyi0iLwQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Glauber Costa <glauber@scylladb.com>
+Date:   Fri, 21 Feb 2020 08:17:04 -0500
+Message-ID: <CAD-J=zbKXuF1HCd5yG0oNaizNWZTD3248Oii7xoofQ--EqO3dw@mail.gmail.com>
+Subject: Crash on using the poll ring
+To:     io-uring@vger.kernel.org, Avi Kivity <avi@scylladb.com>,
+        Jens Axboe <axboe@kernel.dk>
+Content-Type: multipart/mixed; boundary="0000000000001b6cab059f15d7d3"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 11:02:16PM +0100, Jann Horn wrote:
-> On Thu, Feb 20, 2020 at 9:32 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >
-> > For poll requests, it's not uncommon to link a read (or write) after
-> > the poll to execute immediately after the file is marked as ready.
-> > Since the poll completion is called inside the waitqueue wake up handler,
-> > we have to punt that linked request to async context. This slows down
-> > the processing, and actually means it's faster to not use a link for this
-> > use case.
-> >
-> > We also run into problems if the completion_lock is contended, as we're
-> > doing a different lock ordering than the issue side is. Hence we have
-> > to do trylock for completion, and if that fails, go async. Poll removal
-> > needs to go async as well, for the same reason.
-> >
-> > eventfd notification needs special case as well, to avoid stack blowing
-> > recursion or deadlocks.
-> >
-> > These are all deficiencies that were inherited from the aio poll
-> > implementation, but I think we can do better. When a poll completes,
-> > simply queue it up in the task poll list. When the task completes the
-> > list, we can run dependent links inline as well. This means we never
-> > have to go async, and we can remove a bunch of code associated with
-> > that, and optimizations to try and make that run faster. The diffstat
-> > speaks for itself.
-> [...]
-> > -static void io_poll_trigger_evfd(struct io_wq_work **workptr)
-> > +static void io_poll_task_func(struct callback_head *cb)
-> >  {
-> > -       struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-> > +       struct io_kiocb *req = container_of(cb, struct io_kiocb, sched_work);
-> > +       struct io_kiocb *nxt = NULL;
-> >
-> [...]
-> > +       io_poll_task_handler(req, &nxt);
-> > +       if (nxt)
-> > +               __io_queue_sqe(nxt, NULL);
-> 
-> This can now get here from anywhere that calls schedule(), right?
-> Which means that this might almost double the required kernel stack
-> size, if one codepath exists that calls schedule() while near the
-> bottom of the stack and another codepath exists that goes from here
-> through the VFS and again uses a big amount of stack space? This is a
-> somewhat ugly suggestion, but I wonder whether it'd make sense to
-> check whether we've consumed over 25% of stack space, or something
-> like that, and if so, directly punt the request.
+--0000000000001b6cab059f15d7d3
+Content-Type: text/plain; charset="UTF-8"
 
-I'm still completely confused as to how io_uring works, and concequently
-the ramifications of all this.
+Hi
 
-But I thought to understand that these sched_work things were only
-queued on tasks that were stuck waiting on POLL (or it's io_uring
-equivalent). Earlier patches were explicitly running things from
-io_cqring_wait(), which might have given me this impression.
+Today I found a crash when adding code for the poll ring to my implementation.
+Kernel is 2b58a38ef46e91edd68eec58bdb817c42474cad6
 
-The above seems to suggest this is not the case. Which then does indeed
-lead to all the worries expressed by Jann. All sorts of nasty nesting is
-possible with this.
+Here's how to reproduce:
 
-Can someone please spell this out for me?
+code at
+https://github.com/glommer/seastar.git branch poll-ring
 
-Afaict the req->tsk=current thing is set for whomever happens to run
-io_poll_add_prep(), which is either a sys_io_uring_enter() or an io-wq
-thread afaict.
+1. same as previous steps to configure seastar, but compile with:
+ninja -C build/release apps/io_tester/io_tester
 
-But I'm then unsure what happens to that thread afterwards.
+2. Download the yaml file attached
 
-Jens, what exactly is the benefit of running this on every random
-schedule() vs in io_cqring_wait() ? Or even, since io_cqring_wait() is
-the very last thing the syscall does, task_work.
+3. Run with:
+
+./build/release/apps/io_tester/io_tester --conf ~/test.yaml --duration
+15 --directory /var/disk1  --reactor-backend=uring --smp 1
+
+(directory must be on xfs because we do c++ but we're not savages)
+
+--0000000000001b6cab059f15d7d3
+Content-Type: text/plain; charset="US-ASCII"; name="poll-ring.txt"
+Content-Disposition: attachment; filename="poll-ring.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k6w73ho11>
+X-Attachment-Id: f_k6w73ho11
+
+WzM1NzM5Ljc0OTU4OF0gQlVHOiBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlLCBhZGRy
+ZXNzOiAwMDAwMDAwMDAwMDAwMDAwClszNTczOS43NDk2NTldICNQRjogc3VwZXJ2aXNvciBpbnN0
+cnVjdGlvbiBmZXRjaCBpbiBrZXJuZWwgbW9kZQpbMzU3MzkuNzQ5NzA3XSAjUEY6IGVycm9yX2Nv
+ZGUoMHgwMDEwKSAtIG5vdC1wcmVzZW50IHBhZ2UKWzM1NzM5Ljc0OTc1NF0gUEdEIDAgUDREIDAg
+ClszNTczOS43NDk3ODZdIE9vcHM6IDAwMTAgWyMxXSBTTVAgTk9QVEkKWzM1NzM5Ljc0OTgyM10g
+Q1BVOiAwIFBJRDogMTQ4NDUgQ29tbTogaW9fdGVzdGVyIE5vdCB0YWludGVkIDUuNi4wLXJjMSsg
+IzE0ClszNTczOS43NDk4ODFdIEhhcmR3YXJlIG5hbWU6IEludGVsIENvcnBvcmF0aW9uIFMyNjAw
+V0ZUL1MyNjAwV0ZULCBCSU9TIFNFNUM2MjAuODZCLjAyLjAxLjAwMDguMDMxOTIwMTkxNTU5IDAz
+LzE5LzIwMTkKWzM1NzM5Ljc0OTk3MV0gUklQOiAwMDEwOjB4MApbMzU3MzkuNzUwMDA0XSBDb2Rl
+OiBCYWQgUklQIHZhbHVlLgpbMzU3MzkuNzUwMDM2XSBSU1A6IDAwMTg6ZmZmZmI0ZTljZjM1N2Jh
+OCBFRkxBR1M6IDAwMDEwMjQ2ClszNTczOS43NTAwODNdIFJBWDogMDAwMDAwMDAwMDAwMDAwMCBS
+Qlg6IDAwMDAwMDAwMDAwMDAwMDAgUkNYOiAwMDAwMDAwMDAwMDAwMDAwClszNTczOS43NTAxNDhd
+IFJEWDogMDAwMDAwMDAwMDAwMDAwMSBSU0k6IGZmZmY4YWYxMjA4MzA2ODAgUkRJOiBmZmZmZmZm
+ZmI0MjQ4ZGUwClszNTczOS43NTAyMTFdIFJCUDogZmZmZjhiYzU5YTIzNDA3MCBSMDg6IGZmZmY4
+YWYxMjA4MmI4ZDAgUjA5OiBmZmZmOGFmMTIwODJiOGQwClszNTczOS43NTAyNzJdIFIxMDogMDAw
+MDAwMDAwMDAwMDMyMSBSMTE6IGZmZmY4YWYxMjA4MjljYTQgUjEyOiBmZmZmOGJjNTlhMjM0Yjc0
+ClszNTczOS43NTAzMzNdIFIxMzogZmZmZjhiYzU5YTIzNDAwMCBSMTQ6IGZmZmY4YmM1OWEyMzQw
+MDEgUjE1OiBmZmZmOGJjNTlkZmQzN2I4ClszNTczOS43NTAzOTddIEZTOiAgMDAwMDdmMTUwYjZm
+OTkwMCgwMDAwKSBHUzpmZmZmOGFmMTIwODAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAw
+MDAKWzM1NzM5Ljc1MDQ2NV0gQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAw
+MDA4MDA1MDAzMwpbMzU3MzkuNzUwNTE4XSBDUjI6IGZmZmZmZmZmZmZmZmZmZDYgQ1IzOiAwMDAw
+MDBlN2RkNjBhMDA1IENSNDogMDAwMDAwMDAwMDc2MDZmMApbMzU3MzkuNzUwNTgxXSBEUjA6IDAw
+MDAwMDAwMDAwMDAwMDAgRFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAwMDAwMDAwMDAwMDAw
+MApbMzU3MzkuNzUwNjQyXSBEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUw
+ZmYwIERSNzogMDAwMDAwMDAwMDAwMDQwMApbMzU3MzkuNzUwNzA1XSBQS1JVOiA1NTU1NTU1NApb
+MzU3MzkuNzUwNzMyXSBDYWxsIFRyYWNlOgpbMzU3MzkuNzUwNzY4XSAgX190YXNrX3dvcmtfcnVu
+KzB4NjcvMHhhMApbMzU3MzkuNzUwODExXSAgc2NoZWR1bGUrMHhiMS8weGYwClszNTczOS43NTA4
+NDVdICBzY2hlZHVsZV90aW1lb3V0KzB4MjBmLzB4MzAwClszNTczOS43NTA4ODZdICA/IF9fa2Zp
+Zm9fdG9fdXNlcl9yKzB4OTAvMHg5MApbMzU3MzkuNzUwOTI3XSAgPyBfX3BlcmNwdV9yZWZfc3dp
+dGNoX21vZGUrMHhkNy8weDE5MApbMzU3MzkuNzUwOTc2XSAgPyBfX3dha2VfdXBfY29tbW9uX2xv
+Y2srMHg4YS8weGMwClszNTczOS43NTEwMjFdICB3YWl0X2Zvcl9jb21wbGV0aW9uKzB4MTE5LzB4
+MTYwClszNTczOS43NTEwNjVdICA/IHdha2VfdXBfcSsweGEwLzB4YTAKWzM1NzM5Ljc1MTEwM10g
+IGV4aXRfYWlvKzB4ZGMvMHhmMApbMzU3MzkuNzUxMTMyXSAgbW1wdXQrMHgzNS8weDE0MApbMzU3
+MzkuNzUxMTYwXSAgZG9fZXhpdCsweDMwZC8weGI5MApbMzU3MzkuNzUxMTkyXSAgPyBfX21lbWNn
+X2ttZW1fdW5jaGFyZ2UrMHgzNC8weGEwClszNTczOS43NTEyMzFdICBkb19ncm91cF9leGl0KzB4
+M2EvMHhhMApbMzU3MzkuNzUxMjY3XSAgZ2V0X3NpZ25hbCsweDE1Yi8weDg5MApbMzU3MzkuNzUx
+MzA0XSAgZG9fc2lnbmFsKzB4MzYvMHg2NTAKWzM1NzM5Ljc1MTMzOF0gID8gaW9fY3FyaW5nX3dh
+aXQrMHgxZmMvMHgyMjAKWzM1NzM5Ljc1MTM3NF0gID8gaW9fdXJpbmdfcG9sbCsweDgwLzB4ODAK
+WzM1NzM5Ljc1MTQxMl0gIGV4aXRfdG9fdXNlcm1vZGVfbG9vcCsweDlkLzB4MTMwClszNTczOS43
+NTE0NTJdICBkb19zeXNjYWxsXzY0KzB4MWE0LzB4MWMwClszNTczOS43NTE0ODldICBlbnRyeV9T
+WVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg0NC8weGE5ClszNTczOS43NTI4NjhdIFJJUDogMDAz
+MzoweDdmMTUwYjdmYTFlZApbMzU3MzkuNzU0MTk1XSBDb2RlOiBCYWQgUklQIHZhbHVlLgpbMzU3
+MzkuNzU1NTEzXSBSU1A6IDAwMmI6MDAwMDdmZmY5MzNhYWIzOCBFRkxBR1M6IDAwMDAwMjE2IE9S
+SUdfUkFYOiAwMDAwMDAwMDAwMDAwMWFhClszNTczOS43NTY4ODVdIFJBWDogZmZmZmZmZmZmZmZm
+ZmZmYyBSQlg6IDAwMDAwMDAwMDAwMDAwMDAgUkNYOiAwMDAwN2YxNTBiN2ZhMWVkClszNTczOS43
+NTgyNjddIFJEWDogMDAwMDAwMDAwMDAwMDAwMSBSU0k6IDAwMDAwMDAwMDAwMDAwMDAgUkRJOiAw
+MDAwMDAwMDAwMDAwMDA3ClszNTczOS43NTk2NTRdIFJCUDogMDAwMDYwMDAwMDA3NjAyMCBSMDg6
+IDAwMDA2MDAwMDAwNzYwMjAgUjA5OiAwMDAwMDAwMDAwMDAwMDA4ClszNTczOS43NjEwMDVdIFIx
+MDogMDAwMDAwMDAwMDAwMDAwMSBSMTE6IDAwMDAwMDAwMDAwMDAyMTYgUjEyOiAwMDAwMDAwMDAw
+MDAwMDAwClszNTczOS43NjE5MDddIFIxMzogMDAwMDYwMDAwMDBjMTA2MCBSMTQ6IDAwMDAwMDAw
+MDAwMDAwMDAgUjE1OiAwMDAwMDAwMDAwMDAwMDAxClszNTczOS43NjI3MjldIE1vZHVsZXMgbGlu
+a2VkIGluOiBpcDZ0X1JFSkVDVCBuZl9yZWplY3RfaXB2NiBpcDZ0X3JwZmlsdGVyIGlwdF9SRUpF
+Q1QgbmZfcmVqZWN0X2lwdjQgeHRfY29ubnRyYWNrIGVidGFibGVfbmF0IGVidGFibGVfYnJvdXRl
+IGlwNnRhYmxlX25hdCBpcDZ0YWJsZV9tYW5nbGUgaXA2dGFibGVfcmF3IGlwNnRhYmxlX3NlY3Vy
+aXR5IGlwdGFibGVfbmF0IG5mX25hdCBpcHRhYmxlX21hbmdsZSBpcHRhYmxlX3JhdyBpcHRhYmxl
+X3NlY3VyaXR5IG5mX2Nvbm50cmFjayBuZl9kZWZyYWdfaXB2NiBuZl9kZWZyYWdfaXB2NCBpcF9z
+ZXQgbmZuZXRsaW5rIGVidGFibGVfZmlsdGVyIGVidGFibGVzIGlwNnRhYmxlX2ZpbHRlciBpcDZf
+dGFibGVzIGlwdGFibGVfZmlsdGVyIGliX2lzZXJ0IGlzY3NpX3RhcmdldF9tb2QgaWJfc3JwdCB0
+YXJnZXRfY29yZV9tb2QgaWJfc3JwIHNjc2lfdHJhbnNwb3J0X3NycCBpYl9pcG9pYiB2ZmF0IGZh
+dCBpYl91bWFkIHJwY3JkbWEgc3VucnBjIGludGVsX3JhcGxfbXNyIHJkbWFfdWNtIGludGVsX3Jh
+cGxfY29tbW9uIGliX2lzZXIgcmRtYV9jbSBpc3N0X2lmX2NvbW1vbiBpd19jbSBpYl9jbSBsaWJp
+c2NzaSBza3hfZWRhYyBzY3NpX3RyYW5zcG9ydF9pc2NzaSB4ODZfcGtnX3RlbXBfdGhlcm1hbCBp
+bnRlbF9wb3dlcmNsYW1wIGNvcmV0ZW1wIGt2bV9pbnRlbCBrdm0gaXJxYnlwYXNzIGlUQ09fd2R0
+IGNyY3QxMGRpZl9wY2xtdWwgaVRDT192ZW5kb3Jfc3VwcG9ydCBpNDBpdyBjcmMzMl9wY2xtdWwg
+aXBtaV9zc2lmIGliX3V2ZXJicyBnaGFzaF9jbG11bG5pX2ludGVsIGludGVsX2NzdGF0ZSBpYl9j
+b3JlIGludGVsX3VuY29yZSBpcG1pX3NpIGludGVsX3JhcGxfcGVyZiBqb3lkZXYgaW9hdGRtYSBt
+ZWlfbWUgcGNzcGtyIHN3aXRjaHRlYyBpMmNfaTgwMSBpcG1pX2RldmludGYgbHBjX2ljaCBtZWkg
+ZGNhIGRheF9wbWVtIGlwbWlfbXNnaGFuZGxlciBkYXhfcG1lbV9jb3JlIGFjcGlfcG93ZXJfbWV0
+ZXIgYWNwaV9wYWQKWzM1NzM5Ljc2Mjc3NF0gIGlwX3RhYmxlcyB4ZnMgbGliY3JjMzJjIHJma2ls
+bCBuZF9wbWVtIG5kX2J0dCBhc3QgaTJjX2FsZ29fYml0IGRybV92cmFtX2hlbHBlciBkcm1fdHRt
+X2hlbHBlciB0dG0gZHJtX2ttc19oZWxwZXIgY2VjIGRybSBpNDBlIG52bWUgY3JjMzJjX2ludGVs
+IG1lZ2FyYWlkX3NhcyBudm1lX2NvcmUgbmZpdCBsaWJudmRpbW0gd21pIHBrY3M4X2tleV9wYXJz
+ZXIKWzM1NzM5Ljc3MTk2NV0gQ1IyOiAwMDAwMDAwMDAwMDAwMDAwClszNTczOS43NzI2NzVdIC0t
+LVsgZW5kIHRyYWNlIGQ4ZDE2MDEzZjZmZTMyZmUgXS0tLQpbMzU3MzkuODU1NjY4XSBSSVA6IDAw
+MTA6MHgwClszNTczOS44NTYyMzVdIENvZGU6IEJhZCBSSVAgdmFsdWUuClszNTczOS44NTY3NTJd
+IFJTUDogMDAxODpmZmZmYjRlOWNmMzU3YmE4IEVGTEFHUzogMDAwMTAyNDYKWzM1NzM5Ljg1NzI2
+NV0gUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogMDAwMDAwMDAwMDAwMDAwMCBSQ1g6IDAwMDAw
+MDAwMDAwMDAwMDAKWzM1NzM5Ljg1Nzc3Ml0gUkRYOiAwMDAwMDAwMDAwMDAwMDAxIFJTSTogZmZm
+ZjhhZjEyMDgzMDY4MCBSREk6IGZmZmZmZmZmYjQyNDhkZTAKWzM1NzM5Ljg1ODI4Ml0gUkJQOiBm
+ZmZmOGJjNTlhMjM0MDcwIFIwODogZmZmZjhhZjEyMDgyYjhkMCBSMDk6IGZmZmY4YWYxMjA4MmI4
+ZDAKWzM1NzM5Ljg1ODc4OV0gUjEwOiAwMDAwMDAwMDAwMDAwMzIxIFIxMTogZmZmZjhhZjEyMDgy
+OWNhNCBSMTI6IGZmZmY4YmM1OWEyMzRiNzQKWzM1NzM5Ljg1OTI5OV0gUjEzOiBmZmZmOGJjNTlh
+MjM0MDAwIFIxNDogZmZmZjhiYzU5YTIzNDAwMSBSMTU6IGZmZmY4YmM1OWRmZDM3YjgKWzM1NzM5
+Ljg1OTgxNV0gRlM6ICAwMDAwN2YxNTBiNmY5OTAwKDAwMDApIEdTOmZmZmY4YWYxMjA4MDAwMDAo
+MDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMApbMzU3MzkuODYwMzQxXSBDUzogIDAwMTAgRFM6
+IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzClszNTczOS44NjA4NjldIENSMjog
+ZmZmZmZmZmZmZmZmZmZkNiBDUjM6IDAwMDAwMGU3ZGQ2MGEwMDUgQ1I0OiAwMDAwMDAwMDAwNzYw
+NmYwClszNTczOS44NjE0MDddIERSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAw
+MDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwClszNTczOS44NjE5NDddIERSMzogMDAwMDAwMDAw
+MDAwMDAwMCBEUjY6IDAwMDAwMDAwZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwClszNTcz
+OS44NjI0ODFdIFBLUlU6IDU1NTU1NTU0Cgo=
+--0000000000001b6cab059f15d7d3
+Content-Type: application/x-yaml; name="test.yaml"
+Content-Disposition: attachment; filename="test.yaml"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k6w73hnd0>
+X-Attachment-Id: f_k6w73hnd0
+
+LSBuYW1lOiBsYXRlbmN5X3JlYWRzCiAgc2hhcmRzOiBhbGwKICB0eXBlOiByYW5kcmVhZAogIHNo
+YXJkX2luZm86CiAgICBwYXJhbGxlbGlzbTogMTAKICAgIHJlcXNpemU6IDUxMgogICAgc2hhcmVz
+OiAxMDAKICAgIHRoaW5rX3RpbWU6IDAKCg==
+--0000000000001b6cab059f15d7d3--

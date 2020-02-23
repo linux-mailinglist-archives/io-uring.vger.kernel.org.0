@@ -2,49 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6633416982E
-	for <lists+io-uring@lfdr.de>; Sun, 23 Feb 2020 15:59:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7954716983B
+	for <lists+io-uring@lfdr.de>; Sun, 23 Feb 2020 16:07:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbgBWO7D (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 23 Feb 2020 09:59:03 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38571 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbgBWO7D (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Feb 2020 09:59:03 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x185so3933086pfc.5
-        for <io-uring@vger.kernel.org>; Sun, 23 Feb 2020 06:59:01 -0800 (PST)
+        id S1726678AbgBWPHQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 23 Feb 2020 10:07:16 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:40581 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbgBWPHQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Feb 2020 10:07:16 -0500
+Received: by mail-pj1-f67.google.com with SMTP id 12so2943692pjb.5
+        for <io-uring@vger.kernel.org>; Sun, 23 Feb 2020 07:07:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2oyQ3Id6346ciahZpKd06XabSRnjR5pc1pPJ6MHDeA4=;
-        b=V5aqM40ittiRlsVs9P5HCWJHUY71aLUY36aDVzRHIkoLBCygWrqacRsxKRbrHQyNYf
-         sKuPFtc3wBdxrZjgAbe4uf7B+WeWrEMU5LAoGusLgww0cT5PwFwo5o416/zj5xnHdo+5
-         EwSAT9X7FRIO0iqr1nCXtc04GOIt6O4ZDRPKEdpfEy0Djzvdxdi5TWnzQLd99u1GnC2h
-         RVNEQ1iTEo3kol9nPxxYUqdfjxsuD5z97H/XW+0mb3VizDBleNv/ErtuyGg4IPwRkcQX
-         F0hY7ISFb8QhL3NA+E0m7knn/ZvyWZq38O8Hp9A95NgnH6kKFzaopPVxFoNJfjWU+ZT3
-         WINg==
+        bh=+JOBQ1EeGHW83rdemZ7F7+Nma3eI9NLk5O47f96P7yI=;
+        b=GMyDjvBSIYHRjsrGqA0d3zOsla0GGa0bUGHZpBMG09yNM6/pFxtEr9f4glQyyvpMUM
+         yZxRzxGaFldxya/P6hZGHgrTc4djEg0RE6OJh7ML+5yYNwXmBNI+cLYRwNeDXcmT9F3k
+         5PkImY3q8lTEDLZKbvAU7GW+6wk86LpWzlh/aaDlipMRsRLLPANCNhAUiR9ANRo/Onh2
+         ogGrRaiwTMJnzDqDy0eRYPe6fVAdePN1UM4yjQ1fl181OlmgXtoVReISwF6itrvhCsPN
+         ez15ym1HBb29EzQadGXPNVIS1st/0WUwFCoi28pQrxjBTjojctvLZfuJhkdBIwvSiaTs
+         JcVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=2oyQ3Id6346ciahZpKd06XabSRnjR5pc1pPJ6MHDeA4=;
-        b=fl/XXx2UgEqJ09UmETqBnJrnAGE1j780wMVPpO19lUfzla2fmrpJbTXch2Rj0rGWvw
-         wl2SgPFfMR9D/Vqd/Fv0yjrXieL5jLcS+2eVvoIGIoCI+H4ShMbzV9O9O7o2L11quIMZ
-         HN7pLPWiOcarkfaOv7b3FXU2/J2yKca4auG7JufPfDV+ce3w0CXlPwHYqgmAiO76LqVr
-         /0JFD5UeY4qPWvyyjE10UKJmwYCeK2M6KFTTnBp1BxH2K43+atwqwY3ZgzLFBShfvtVm
-         2qL8FwBvKl7J5h7+5vC3VXst1ZyTKXZZHEwB0gW9fahwnQMboRM22WgL1+gXgeg3CIgQ
-         4OPQ==
-X-Gm-Message-State: APjAAAWpA/AYIiJKXRnE4tSzyFClREbS0yyp5Fc2gI706vRl4JQHMl6U
-        yokaXN/mOj2gVAYQAPxGM2PFTw==
-X-Google-Smtp-Source: APXvYqwGvqcX9izIG1rfRuu8QBofPIv3E2AsQ8T5d56qoq1+GPIbzZ/lCSxmHad1MV+f7NuoYREUAw==
-X-Received: by 2002:a65:68ce:: with SMTP id k14mr46683132pgt.336.1582469941507;
-        Sun, 23 Feb 2020 06:59:01 -0800 (PST)
+        bh=+JOBQ1EeGHW83rdemZ7F7+Nma3eI9NLk5O47f96P7yI=;
+        b=DU1pWdSDIwpWMvwqocC9UXg37XZhrvR1dKqMx2flIbjGdECsjyojqQsRi95374ist6
+         WO5BqSHRtd3ZPU+2syYvEj9gYEP2wRD+qrzITT/OMunk4ODQC11dhQW3PrebQ+U8a79m
+         P0jqCVZR7P94bXycd9+iWABqNy07BJiQbbpd/uDoFMlhXLBC3/suXcvzjTQf8Pu1PBzm
+         NPz9fKlROehMhOmutSuGZ95cpidUVAwTVbkxyMiL24KnVYM7/rUq9vrJNo/yPO+szA10
+         ErJZ9Gpt1+P9U//8KnxHOmeTNChrZaqoBBQ3895B3jdoM1qMgpKQavS+9iz5s7Hoi6pr
+         NVYw==
+X-Gm-Message-State: APjAAAVmowK/mWao/GZwdrn0KhqVIZMUsJ4KdOsBbdLzFIVGg86YyWgr
+        gqGZkw7kpagcrq9kPFV3wKPSmg==
+X-Google-Smtp-Source: APXvYqxtexf9yafUvn9HU93o70N0FlSFiJIc425/xwpQjze+I1GFoaUfooIRu5d5lxGZoREpRAyz7Q==
+X-Received: by 2002:a17:902:7046:: with SMTP id h6mr42972992plt.231.1582470434435;
+        Sun, 23 Feb 2020 07:07:14 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id i3sm9327362pfg.94.2020.02.23.06.58.59
+        by smtp.gmail.com with ESMTPSA id k29sm9575562pfh.77.2020.02.23.07.07.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Feb 2020 06:59:00 -0800 (PST)
+        Sun, 23 Feb 2020 07:07:13 -0800 (PST)
 Subject: Re: [PATCH 7/9] io_uring: add per-task callback handler
 From:   Jens Axboe <axboe@kernel.dk>
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
@@ -60,12 +60,13 @@ References: <20200220203151.18709-1-axboe@kernel.dk>
  <231dc76e-697f-d8dd-46cb-53776bdc920d@kernel.dk>
  <fcfcf572-f808-6b3a-f9eb-379657babba5@gmail.com>
  <18d38bb6-70e2-24ce-a668-d279b8e3ce4c@kernel.dk>
-Message-ID: <3d4aa255-f333-573c-e806-a3e79a28f3c6@kernel.dk>
-Date:   Sun, 23 Feb 2020 07:58:58 -0700
+ <3d4aa255-f333-573c-e806-a3e79a28f3c6@kernel.dk>
+Message-ID: <48e81bbf-89c7-f84d-cefc-86d26baeae07@kernel.dk>
+Date:   Sun, 23 Feb 2020 08:07:10 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <18d38bb6-70e2-24ce-a668-d279b8e3ce4c@kernel.dk>
+In-Reply-To: <3d4aa255-f333-573c-e806-a3e79a28f3c6@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,26 +75,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/23/20 7:49 AM, Jens Axboe wrote:
->> Anyway, creds handling is too scattered across the code, and this do a
->> lot of useless refcounting and bouncing. It's better to find it a
->> better place in the near future.
+On 2/23/20 7:58 AM, Jens Axboe wrote:
+> On 2/23/20 7:49 AM, Jens Axboe wrote:
+>>> Anyway, creds handling is too scattered across the code, and this do a
+>>> lot of useless refcounting and bouncing. It's better to find it a
+>>> better place in the near future.
+>>
+>> I think a good cleanup on top of this would be to move the personality
+>> lookup to io_req_defer_prep(), and kill it from io_submit_sqe(). Now
+>> __io_issue_sqe() does the right thing, and it'll just fall out nicely
+>> with that as far as I can tell.
+>>
+>> Care to send a patch for that?
 > 
-> I think a good cleanup on top of this would be to move the personality
-> lookup to io_req_defer_prep(), and kill it from io_submit_sqe(). Now
-> __io_issue_sqe() does the right thing, and it'll just fall out nicely
-> with that as far as I can tell.
-> 
-> Care to send a patch for that?
+> Since we also need it for non-deferral, how about just leaving the
+> lookup in there and removing the assignment? That means we only do that
+> juggling in one spot, which makes more sense. I think this should just
+> be folded into the previous patch.
 
-Since we also need it for non-deferral, how about just leaving the
-lookup in there and removing the assignment? That means we only do that
-juggling in one spot, which makes more sense. I think this should just
-be folded into the previous patch.
+Tested, we need a ref grab on the creds when assigning since we're
+dropped at the other end.
 
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index cead1a0602b4..b5422613c7b1 100644
+index cead1a0602b4..d83f113f22fd 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
 @@ -4923,7 +4923,6 @@ static inline void io_queue_link_head(struct io_kiocb *req)
@@ -104,7 +109,7 @@ index cead1a0602b4..b5422613c7b1 100644
  	struct io_ring_ctx *ctx = req->ctx;
  	unsigned int sqe_flags;
  	int ret, id;
-@@ -4938,14 +4937,11 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+@@ -4938,14 +4937,12 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  
  	id = READ_ONCE(sqe->personality);
  	if (id) {
@@ -118,10 +123,11 @@ index cead1a0602b4..b5422613c7b1 100644
  			goto err_req;
  		}
 -		old_creds = override_creds(personality_creds);
++		get_cred(req->work.creds);
  	}
  
  	/* same numerical values with corresponding REQ_F_*, safe to copy */
-@@ -4957,8 +4953,6 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+@@ -4957,8 +4954,6 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  err_req:
  		io_cqring_add_event(req, ret);
  		io_double_put_req(req);
@@ -130,7 +136,7 @@ index cead1a0602b4..b5422613c7b1 100644
  		return false;
  	}
  
-@@ -5019,8 +5013,6 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+@@ -5019,8 +5014,6 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  		}
  	}
  

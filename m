@@ -2,53 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C91B16AAB0
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 17:04:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4979C16AAB1
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 17:04:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbgBXQEq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 11:04:46 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51352 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726806AbgBXQEq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 11:04:46 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t23so9522074wmi.1
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 08:04:45 -0800 (PST)
+        id S1726806AbgBXQEt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 11:04:49 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36799 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727681AbgBXQEs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 11:04:48 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z3so11032769wru.3
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 08:04:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=thsP8H6nSxdgVgrWUzoP7eGdzkH4NG8aUwdxWGwM9XI=;
-        b=pdDmGUTeOtdgHKg6cK9vK4Qid50qbJ2mzBIYK6i0H4zwEUIj0UScSaBLKB7CZnc5EF
-         d+BBcNDj+Y/UTvZYqrq7WaBHPQjw6P8V0Cp1O1b92OY4Z+ke4YZOeRvFEnUvC55qzY7v
-         WAG9+xYfJp36wl/icy0Tpy/DuL2jEtQHsJMD+KpyrFcth43tSE6UVHuevClkXQ6JVukj
-         kCV4M5TpLMRpJBYuuHSgxJPZa3tsZKf6eWP6hyKAvKzqofdUjJVpBmGTDeRmNjudxWT8
-         gFTOVq3aboWeOWtCq75j6KOK3ebeD9m/K9CPekUFurLAuuPK3Q8L8xI/I6RXs0GWyOa8
-         fQ7g==
+        bh=WHKia8bIY8P1sd2G1pzFXPxmNtZOjnz7fDtCCl1I0Ic=;
+        b=DOFPoGhdfbxh8SA6zFI+3vFNimAjgJzyjFSkCv5DOLTb8x1MhRGqwWScmVOBmPjfGR
+         j3AOL/4H2vvgBcS2CTzhNuFBhAG2xbPPuV02Q3wb43VUeLZ0icSrGQn9SSj84FErptyy
+         lWtO8j5I7uruxTCg+Ebsojzah32lLCZkyJQe6Ta7gCXpuPfGHAYLn7jfLA1Rl/okrDY5
+         RoQzXqeHEzcT/v0ntVt1rCTiliKWn33pCvmkJ1vn59TCf/H9A0KtUgsBWXxQgsVatgVi
+         LYQ/46e0lVh4RarF4hJB3U9Ex+byywHu3FTUdFkkDOBzBIaPBRLxqU45gWd9WFOiF6Ie
+         3jig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=thsP8H6nSxdgVgrWUzoP7eGdzkH4NG8aUwdxWGwM9XI=;
-        b=rFSB4/9tXdQYyV3TS17gqcWraKcRCPVXHj5GKkWsDKLzT/1VA27hr6hGurj++fHvXI
-         5iFPsKMej77toJeGrzGCmrf+CLrHqAOgTnkcCodqLJKpEy8PeqrvGN0hU3e4K/v+Bqqv
-         EQ2s8xlHhMxISoQXJBirwCvgzYwYYckaYw3zUloD6Pq3UAtgH2ZgknS4Um0paXxO1SSz
-         jIYLQwrKrEiQldVBovSAdxk3VYpCrhr6HR4TWXe8mOLFIl0gwD9tHJUbSv6mZBwrBxLr
-         7BZ6vA47xrika8HT/MHNywWS5kDozalhx16ERPt16hl49/+umjFSITzMRi/WZEzOv/sr
-         N2Mg==
-X-Gm-Message-State: APjAAAVykzBZ9fqktKxqvVv47susIiqjr/Kkt34YWEPURSnCt7H48gQh
-        /1lSEefwP+kVsC/Dm2up2cE=
-X-Google-Smtp-Source: APXvYqzMEypn2jGDMMLVO6KYRWmr8QaIo/sScEQSld5rLwsmp6eD3qEiLgQhKvO8YnQ98pznBjmhjQ==
-X-Received: by 2002:a7b:c088:: with SMTP id r8mr23024560wmh.18.1582560284528;
-        Mon, 24 Feb 2020 08:04:44 -0800 (PST)
+        bh=WHKia8bIY8P1sd2G1pzFXPxmNtZOjnz7fDtCCl1I0Ic=;
+        b=HUVotP8cMaaRptA6mL2t9YKyeFvNH3QMWlS2W2ZpErbMEQ1Zyq5NGVWufgLhKNT/0f
+         IIhvx6acztz0478LVxNklAUVh1e0XK18qlSw4Yh/q40vi7Tf6nlJ2zniGui9XvY+VdUn
+         0xIRTRqqLaR7ZK8Vg/GcIbu40lDlW9OCBgEXWwFLWkk09YKfhwodOMANL3dh2xFFCS4H
+         doBQY+uoHjyZt31C7NKwtQxb1YZODwG3arFe1MNnz+0JGZXbpR1EhHbyZVNDSN1W6fYG
+         mw1N20dMgk51wkGU0JkNGwwkn4x6tY/rrdWj+vhWXAAYKNqAl62i1sH0iCDS3TPvtS/t
+         OFFQ==
+X-Gm-Message-State: APjAAAWZWlH5x5h/CN1SRivMFnSn7HfFcrTtO5JpdDv0vX3uCauu5AoY
+        utsZ5beJbnRQrQIO4J0Lwilj2EEm
+X-Google-Smtp-Source: APXvYqwuJxbZ4aS1CnjzOwLzX+2inRnJCIQBk7b9G8/DOCfCc2OyBnc7Z97TU586jpKDhoGeirWHmg==
+X-Received: by 2002:a5d:474b:: with SMTP id o11mr70327321wrs.255.1582560285904;
+        Mon, 24 Feb 2020 08:04:45 -0800 (PST)
 Received: from localhost.localdomain ([109.126.137.65])
-        by smtp.gmail.com with ESMTPSA id e11sm8600608wrm.80.2020.02.24.08.04.43
+        by smtp.gmail.com with ESMTPSA id e11sm8600608wrm.80.2020.02.24.08.04.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 08:04:43 -0800 (PST)
+        Mon, 24 Feb 2020 08:04:45 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v4 1/2] splice: add splice(2) helpers
-Date:   Mon, 24 Feb 2020 19:03:49 +0300
-Message-Id: <b93aaeab88361e1c08adb97347506f55561c457d.1582560081.git.asml.silence@gmail.com>
+Subject: [PATCH v4 2/2] test/splice: add basic splice tests
+Date:   Mon, 24 Feb 2020 19:03:50 +0300
+Message-Id: <b4a11a08d6c6fe7c3292eac3d1eb9fb9f8f9d7dd.1582560081.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1582560081.git.asml.silence@gmail.com>
 References: <cover.1582560081.git.asml.silence@gmail.com>
@@ -59,90 +59,180 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add splice helpers and update io_uring.h
-
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- src/include/liburing.h          | 12 ++++++++++++
- src/include/liburing/io_uring.h | 14 +++++++++++++-
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ test/Makefile |   5 +-
+ test/splice.c | 138 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 141 insertions(+), 2 deletions(-)
+ create mode 100644 test/splice.c
 
-diff --git a/src/include/liburing.h b/src/include/liburing.h
-index b8bcdf5..7edd4f1 100644
---- a/src/include/liburing.h
-+++ b/src/include/liburing.h
-@@ -191,6 +191,18 @@ static inline void io_uring_prep_rw(int op, struct io_uring_sqe *sqe, int fd,
- 	sqe->__pad2[0] = sqe->__pad2[1] = sqe->__pad2[2] = 0;
- }
+diff --git a/test/Makefile b/test/Makefile
+index 09c7aa2..8437f31 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -20,7 +20,7 @@ all_targets += poll poll-cancel ring-leak fsync io_uring_setup io_uring_register
+ 		connect 7ad0e4b2f83c-test submit-reuse fallocate open-close \
+ 		file-update statx accept-reuse poll-v-poll fadvise madvise \
+ 		short-read openat2 probe shared-wq personality eventfd \
+-		send_recv eventfd-ring across-fork sq-poll-kthread
++		send_recv eventfd-ring across-fork sq-poll-kthread splice
  
-+static inline void io_uring_prep_splice(struct io_uring_sqe *sqe,
-+					int fd_in, loff_t off_in,
-+					int fd_out, loff_t off_out,
-+					unsigned int nbytes,
-+					unsigned int splice_flags)
+ include ../Makefile.quiet
+ 
+@@ -47,7 +47,8 @@ test_srcs := poll.c poll-cancel.c ring-leak.c fsync.c io_uring_setup.c \
+ 	7ad0e4b2f83c-test.c submit-reuse.c fallocate.c open-close.c \
+ 	file-update.c statx.c accept-reuse.c poll-v-poll.c fadvise.c \
+ 	madvise.c short-read.c openat2.c probe.c shared-wq.c \
+-	personality.c eventfd.c eventfd-ring.c across-fork.c sq-poll-kthread.c
++	personality.c eventfd.c eventfd-ring.c across-fork.c sq-poll-kthread.c \
++	splice.c
+ 
+ test_objs := $(patsubst %.c,%.ol,$(test_srcs))
+ 
+diff --git a/test/splice.c b/test/splice.c
+new file mode 100644
+index 0000000..92b3195
+--- /dev/null
++++ b/test/splice.c
+@@ -0,0 +1,138 @@
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <string.h>
++#include <fcntl.h>
++#include <sys/mman.h>
++
++#include "liburing.h"
++
++static int copy_single(struct io_uring *ring,
++			int fd_in, loff_t off_in,
++			int fd_out, loff_t off_out,
++			unsigned int len,
++			unsigned flags1, unsigned flags2)
 +{
-+	io_uring_prep_rw(IORING_OP_SPLICE, sqe, fd_out, (void *)off_in,
-+			 nbytes, off_out);
-+	sqe->splice_fd_in = fd_in;
-+	sqe->splice_flags = splice_flags;
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	int ret, i, err = -1;
++	int pipe_fds[2] = {-1, -1};
++
++	if (pipe(pipe_fds) < 0)
++		goto exit;
++
++	sqe = io_uring_get_sqe(ring);
++	if (!sqe) {
++		printf("get sqe failed\n");
++		goto exit;
++	}
++	io_uring_prep_splice(sqe, fd_in, off_in, pipe_fds[1], -1,
++			     len, flags1);
++	sqe->user_data = 1;
++	sqe->flags = IOSQE_IO_LINK;
++
++	sqe = io_uring_get_sqe(ring);
++	if (!sqe) {
++		printf("get sqe failed\n");
++		goto exit;
++	}
++	io_uring_prep_splice(sqe, pipe_fds[0], -1, fd_out, off_out,
++			     len, flags2);
++	sqe->user_data = 2;
++
++	ret = io_uring_submit(ring);
++	if (ret <= 0) {
++		printf("sqe submit failed: %d\n", ret);
++		goto exit;
++	}
++
++	for (i = 0; i < 2; i++) {
++		ret = io_uring_wait_cqe(ring, &cqe);
++		if (ret < 0 || cqe->res != len) {
++			printf("wait completion %d\n", cqe->res);
++			goto exit;
++		}
++		io_uring_cqe_seen(ring, cqe);
++	}
++	err = 0;
++exit:
++	if (pipe_fds[0] >= 0) {
++		close(pipe_fds[0]);
++		close(pipe_fds[1]);
++	}
++	return err;
 +}
 +
- static inline void io_uring_prep_readv(struct io_uring_sqe *sqe, int fd,
- 				       const struct iovec *iovecs,
- 				       unsigned nr_vecs, off_t offset)
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 7e7c2d9..a3d5e25 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -23,7 +23,10 @@ struct io_uring_sqe {
- 		__u64	off;	/* offset into file */
- 		__u64	addr2;
- 	};
--	__u64	addr;		/* pointer to buffer or iovecs */
-+	union {
-+		__u64	addr;	/* pointer to buffer or iovecs */
-+		__u64	splice_off_in;
-+	};
- 	__u32	len;		/* buffer size or number of iovecs */
- 	union {
- 		__kernel_rwf_t	rw_flags;
-@@ -37,6 +40,7 @@ struct io_uring_sqe {
- 		__u32		open_flags;
- 		__u32		statx_flags;
- 		__u32		fadvise_advice;
-+		__u32		splice_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	union {
-@@ -45,6 +49,7 @@ struct io_uring_sqe {
- 			__u16	buf_index;
- 			/* personality to use, if used */
- 			__u16	personality;
-+			__s32	splice_fd_in;
- 		};
- 		__u64	__pad2[3];
- 	};
-@@ -113,6 +118,7 @@ enum {
- 	IORING_OP_RECV,
- 	IORING_OP_OPENAT2,
- 	IORING_OP_EPOLL_CTL,
-+	IORING_OP_SPLICE,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-@@ -128,6 +134,12 @@ enum {
-  */
- #define IORING_TIMEOUT_ABS	(1U << 0)
- 
-+/*
-+ * sqe->splice_flags
-+ * extends splice(2) flags
-+ */
-+#define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
++static int test_splice(struct io_uring *ring)
++{
++	int ret, err = 1;
++	int len = 4 * 4096;
++	int fd_out = -1, fd_in = -1;
++	int fd_in_idx;
 +
- /*
-  * IO completion data structure (Completion Queue Entry)
-  */
++	fd_in = open("/dev/urandom", O_RDONLY);
++	if (fd_in < 0)
++		goto exit;
++	fd_out = memfd_create("splice_test_out_file", 0);
++	if (fd_out < 0)
++		goto exit;
++	if (ftruncate(fd_out, len) == -1)
++		goto exit;
++
++	ret = copy_single(ring, fd_in, -1, fd_out, -1, len,
++			  SPLICE_F_MOVE | SPLICE_F_MORE, 0);
++	if (ret) {
++		printf("basic splice-copy failed\n");
++		goto exit;
++	}
++
++	ret = copy_single(ring, fd_in, 0, fd_out, 0, len,
++			  0, SPLICE_F_MOVE | SPLICE_F_MORE);
++	if (ret) {
++		printf("basic splice with offset failed\n");
++		goto exit;
++	}
++
++	fd_in_idx = 0;
++	ret = io_uring_register_files(ring, &fd_in, 1);
++	if (ret) {
++		fprintf(stderr, "%s: register ret=%d\n", __FUNCTION__, ret);
++		goto exit;
++	}
++
++	ret = copy_single(ring, fd_in_idx, 0, fd_out, 0, len,
++			  SPLICE_F_FD_IN_FIXED, 0);
++	if (ret) {
++		printf("basic splice with reg files failed\n");
++		goto exit;
++	}
++
++	err = 0;
++exit:
++	if (fd_out >= 0)
++		close(fd_out);
++	if (fd_in >= 0)
++		close(fd_in);
++	return err;
++}
++
++int main(int argc, char *argv[])
++{
++	struct io_uring ring;
++	int ret;
++
++	ret = io_uring_queue_init(8, &ring, 0);
++	if (ret) {
++		printf("ring setup failed\n");
++		return 1;
++	}
++
++	ret = test_splice(&ring);
++	if (ret) {
++		printf("test_splice failed %i %i\n", ret, errno);
++		return ret;
++	}
++
++	return 0;
++}
 -- 
 2.24.0
 

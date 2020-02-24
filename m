@@ -2,118 +2,216 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EF56169CBF
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 04:52:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D513F169EE9
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 08:05:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbgBXDwa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 23 Feb 2020 22:52:30 -0500
-Received: from mail-pg1-f181.google.com ([209.85.215.181]:33911 "EHLO
-        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbgBXDwa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Feb 2020 22:52:30 -0500
-Received: by mail-pg1-f181.google.com with SMTP id j4so4424497pgi.1
-        for <io-uring@vger.kernel.org>; Sun, 23 Feb 2020 19:52:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Y59ovc0W2O5AuApJ8f3Qxzk/LdrpQY4yIXl4xCWnCv4=;
-        b=dhFNE0+49/XP7TcSKQnvivaAKieaHM5EyP3m9yD0NWWdOSoAmmtQk/aRxKeLIPr0Dv
-         9CLJnGklv/nuwkrwo0iChUU6UJhnCVQumdpQb9Vw9TLUvwBuEKVYbx/JH/Agi9nDCKEn
-         lZY5fmVNdxqGM7Nx1zdOK0CXKA1rXVPrGTmAbh36vyS2znpD0GYa/fg/w9VRDk2YfT3S
-         AneHXVJJrnFeiiLkvwE/kLPQPk9VJsf2hMP79EmvPTPTBJQcBKYS0JJZKjPURSz6yf0G
-         NJp/bKfHiy+StnvdAWgtSC3kxUmogm2oqQyi6hhr8mXkltjM0lYz0xR7B1mouWohkwPk
-         bYkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y59ovc0W2O5AuApJ8f3Qxzk/LdrpQY4yIXl4xCWnCv4=;
-        b=BIinxFZjhIDOUJ8ZrZnHPrfrvacFHV2WfdophXEcMdk/iLK987jCYSDXwb0K9Hpwhk
-         +mcI2l/sWSiTzPBq3RdJDbU8ZSIvrXTi0Z+JyuUlr76pn2Ih/IbZ8vrEaNDcCXOgRrC1
-         gxFf0kZg9PesvmiEkWcyMoLAploUj/BIWXWZVy3zi3ki8dzvltYqfNk/gtHjqBT5zTww
-         dvh2qq/rt88iNZFkzvO+QpzFvgtidUYsICU0daVbj5bs1kGXcx6+M9T7zI5TZ1SgcZx2
-         tUipjp0HTFj8CkZI+LiFJzpEEQfz0j0K51oGZg+ZERkZLZZw6EYT6+VHaV7WYD02qVhM
-         8OBw==
-X-Gm-Message-State: APjAAAX0oBvWWoI28d5zJEIonD9L0wJJ3NlBbyXaI5dKTD0w45O35Bxy
-        CMSyb5jBXH8OKB1VP+E4DVwnXJqo0QU=
-X-Google-Smtp-Source: APXvYqxtJYQJq3v475I/KO1M/jYoXp00RW/WaQn6iHbRiSdd2EAz+t5Fm8MvjXQrR4RnAgC0Lnoo9A==
-X-Received: by 2002:a63:60a:: with SMTP id 10mr45050302pgg.302.1582516349406;
-        Sun, 23 Feb 2020 19:52:29 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id c1sm10533739pfa.51.2020.02.23.19.52.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Feb 2020 19:52:28 -0800 (PST)
-Subject: Re: Deduplicate io_*_prep calls?
-To:     Andres Freund <andres@anarazel.de>
-Cc:     io-uring@vger.kernel.org
-References: <20200224010754.h7sr7xxspcbddcsj@alap3.anarazel.de>
- <b3c1489a-c95d-af41-3369-6fd79d6b259c@kernel.dk>
- <20200224033352.j6bsyrncd7z7eefq@alap3.anarazel.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <90097a02-ade0-bc9a-bc00-54867f3c24bc@kernel.dk>
-Date:   Sun, 23 Feb 2020 20:52:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200224033352.j6bsyrncd7z7eefq@alap3.anarazel.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726628AbgBXHFD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 02:05:03 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:50287 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726509AbgBXHFC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 02:05:02 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Tqlb7Pz_1582527869;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Tqlb7Pz_1582527869)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 24 Feb 2020 15:04:37 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, axboe@kernel.dk,
+        joseph.qi@linux.alibaba.com,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH v3] io_uring: fix poll_list race for SETUP_IOPOLL|SETUP_SQPOLL
+Date:   Mon, 24 Feb 2020 15:03:54 +0800
+Message-Id: <20200224070354.3774-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/23/20 8:33 PM, Andres Freund wrote:
-> Hi,
-> 
-> On 2020-02-23 20:17:45 -0700, Jens Axboe wrote:
->>> that seems a bit unnecessary. How about breaking that out into a
->>> separate function?  I can write up a patch, just didn't want to do so if
->>> there's a reason for the current split.
->>>
->>>
->>> Alternatively it'd could all be just be dispatches via io_op_defs, but
->>> that'd be a bigger change with potential performance implications. And
->>> it'd benefit from prior deduplication anyway.
->>
->> The reason for the split is that if we defer a request, it has to be
->> prepared up front. If the request has been deferred, then the
->> io_issue_sqe() invocation has sqe == NULL. Hence we only run the prep
->> handler once, and read the sqe just once.
-> 
->> This could of course be compacted with some indirect function calls, but
->> I didn't want to pay the overhead of doing so... The downside is that
->> the code is a bit bigger.
-> 
-> Shouldn't need indirect function calls? At most the switch() would be
-> duplicated, if the compiler can't optimize it away (ok, that's an
-> indirect jump...).  I was just thinking of moving the io_*_prep() switch
-> into something like io_prep_sqe().
-> 
-> io_req_defer_prep() would basically move its switch into io_prep_sqe
-> (but not touch the rest of its code). io_issue_sqe() would have
-> 
-> if (sqe) {
->     ret = io_prep_sqe(req, sqe, force_nonblock);
->     if (ret != 0)
->         return ret;
-> }
-> 
-> at the start.
-> 
-> Even if the added switch can't be optimized away from io_issue_sqe(),
-> the code for all the branches inside the opcode cases isn't free
-> either...
+After making ext4 support iopoll method:
+  let ext4_file_operations's iopoll method be iomap_dio_iopoll(),
+we found fio can easily hang in fio_ioring_getevents() with below fio
+job:
+    rm -f testfile; sync;
+    sudo fio -name=fiotest -filename=testfile -iodepth=128 -thread
+-rw=write -ioengine=io_uring  -hipri=1 -sqthread_poll=1 -direct=1
+-bs=4k -size=10G -numjobs=8 -runtime=2000 -group_reporting
+with IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL enabled.
 
-The fast case is not being deferred, that's by far the common (and hot)
-case, which means io_issue() is called with sqe != NULL. My worry is
-that by moving it into a prep helper, the compiler isn't smart enough to
-not make that basically two switches. Feel free to prove me wrong, I'd
-love to reduce it ;-)
+There are two issues that results in this hang, one reason is that
+when IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL are enabled, fio
+does not use io_uring_enter to get completed events, it relies on
+kernel io_sq_thread to poll for completed events.
 
+Another reason is that there is a race: when io_submit_sqes() in
+io_sq_thread() submits a batch of sqes, variable 'inflight' will
+record the number of submitted reqs, then io_sq_thread will poll for
+reqs which have been added to poll_list. But note, if some previous
+reqs have been punted to io worker, these reqs will won't be in
+poll_list timely. io_sq_thread() will only poll for a part of previous
+submitted reqs, and then find poll_list is empty, reset variable
+'inflight' to be zero. If app just waits these deferred reqs and does
+not wake up io_sq_thread again, then hang happens.
+
+For app that entirely relies on io_sq_thread to poll completed requests,
+let io_iopoll_req_issued() wake up io_sq_thread properly when adding new
+element to poll_list.
+
+Fixes: 2b2ed9750fc9 ("io_uring: fix bad inflight accounting for SETUP_IOPOLL|SETUP_SQTHREAD")
+Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+
+---
+V2:
+    simple code cleanups and add necessary comments.
+
+V3:
+    rebase to v5.6-rc3.
+---
+ fs/io_uring.c | 72 ++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 40 insertions(+), 32 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index de650df9ac53..91f5d6c6cd95 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1821,6 +1821,9 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
+ 		list_add(&req->list, &ctx->poll_list);
+ 	else
+ 		list_add_tail(&req->list, &ctx->poll_list);
++
++	if (ctx->flags & IORING_SETUP_SQPOLL && wq_has_sleeper(&ctx->sqo_wait))
++		wake_up(&ctx->sqo_wait);
+ }
+ 
+ static void io_file_put(struct io_submit_state *state)
+@@ -5081,9 +5084,9 @@ static int io_sq_thread(void *data)
+ 	const struct cred *old_cred;
+ 	mm_segment_t old_fs;
+ 	DEFINE_WAIT(wait);
+-	unsigned inflight;
+ 	unsigned long timeout;
+-	int ret;
++	int ret = 0;
++	bool needs_uring_lock = false;
+ 
+ 	complete(&ctx->completions[1]);
+ 
+@@ -5091,39 +5094,21 @@ static int io_sq_thread(void *data)
+ 	set_fs(USER_DS);
+ 	old_cred = override_creds(ctx->creds);
+ 
+-	ret = timeout = inflight = 0;
++	if (ctx->flags & IORING_SETUP_IOPOLL)
++		needs_uring_lock = true;
++	timeout = jiffies + ctx->sq_thread_idle;
+ 	while (!kthread_should_park()) {
+ 		unsigned int to_submit;
+ 
+-		if (inflight) {
++		if (!list_empty(&ctx->poll_list)) {
+ 			unsigned nr_events = 0;
+ 
+-			if (ctx->flags & IORING_SETUP_IOPOLL) {
+-				/*
+-				 * inflight is the count of the maximum possible
+-				 * entries we submitted, but it can be smaller
+-				 * if we dropped some of them. If we don't have
+-				 * poll entries available, then we know that we
+-				 * have nothing left to poll for. Reset the
+-				 * inflight count to zero in that case.
+-				 */
+-				mutex_lock(&ctx->uring_lock);
+-				if (!list_empty(&ctx->poll_list))
+-					io_iopoll_getevents(ctx, &nr_events, 0);
+-				else
+-					inflight = 0;
+-				mutex_unlock(&ctx->uring_lock);
+-			} else {
+-				/*
+-				 * Normal IO, just pretend everything completed.
+-				 * We don't have to poll completions for that.
+-				 */
+-				nr_events = inflight;
+-			}
+-
+-			inflight -= nr_events;
+-			if (!inflight)
++			mutex_lock(&ctx->uring_lock);
++			if (!list_empty(&ctx->poll_list))
++				io_iopoll_getevents(ctx, &nr_events, 0);
++			if (list_empty(&ctx->poll_list))
+ 				timeout = jiffies + ctx->sq_thread_idle;
++			mutex_unlock(&ctx->uring_lock);
+ 		}
+ 
+ 		to_submit = io_sqring_entries(ctx);
+@@ -5152,13 +5137,31 @@ static int io_sq_thread(void *data)
+ 			 * more IO, we should wait for the application to
+ 			 * reap events and wake us up.
+ 			 */
+-			if (inflight ||
++			if (!list_empty(&ctx->poll_list) ||
+ 			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
+ 			    !percpu_ref_is_dying(&ctx->refs))) {
+ 				cond_resched();
+ 				continue;
+ 			}
+ 
++			/*
++			 * While doing polled IO, before going to sleep, we need
++			 * to check if there are new reqs added to poll_list, it
++			 * is because reqs may have been punted to io worker and
++			 * will be added to poll_list later, hence check the
++			 * poll_list again, meanwhile we need to hold uring_lock
++			 * to do this check, otherwise we may lose wakeup event
++			 * in io_iopoll_req_issued().
++			 */
++			if (needs_uring_lock) {
++				mutex_lock(&ctx->uring_lock);
++				if (!list_empty(&ctx->poll_list)) {
++					mutex_unlock(&ctx->uring_lock);
++					cond_resched();
++					continue;
++				}
++			}
++
+ 			prepare_to_wait(&ctx->sqo_wait, &wait,
+ 						TASK_INTERRUPTIBLE);
+ 
+@@ -5171,16 +5174,22 @@ static int io_sq_thread(void *data)
+ 			if (!to_submit || ret == -EBUSY) {
+ 				if (kthread_should_park()) {
+ 					finish_wait(&ctx->sqo_wait, &wait);
++					if (needs_uring_lock)
++						mutex_unlock(&ctx->uring_lock);
+ 					break;
+ 				}
+ 				if (signal_pending(current))
+ 					flush_signals(current);
++				if (needs_uring_lock)
++					mutex_unlock(&ctx->uring_lock);
+ 				schedule();
+ 				finish_wait(&ctx->sqo_wait, &wait);
+ 
+ 				ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
+ 				continue;
+ 			}
++			if (needs_uring_lock)
++				mutex_unlock(&ctx->uring_lock);
+ 			finish_wait(&ctx->sqo_wait, &wait);
+ 
+ 			ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
+@@ -5189,8 +5198,7 @@ static int io_sq_thread(void *data)
+ 		mutex_lock(&ctx->uring_lock);
+ 		ret = io_submit_sqes(ctx, to_submit, NULL, -1, &cur_mm, true);
+ 		mutex_unlock(&ctx->uring_lock);
+-		if (ret > 0)
+-			inflight += ret;
++		timeout = jiffies + ctx->sq_thread_idle;
+ 	}
+ 
+ 	set_fs(old_fs);
 -- 
-Jens Axboe
+2.17.2
 

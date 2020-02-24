@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB9FD169C72
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 03:56:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A6C169C73
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 03:56:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbgBXC4P (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 23 Feb 2020 21:56:15 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39626 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727158AbgBXC4P (ORCPT
+        id S1727158AbgBXC4Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 23 Feb 2020 21:56:16 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35807 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbgBXC4P (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sun, 23 Feb 2020 21:56:15 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g6so3436638plp.6
-        for <io-uring@vger.kernel.org>; Sun, 23 Feb 2020 18:56:13 -0800 (PST)
+Received: by mail-pg1-f193.google.com with SMTP id 7so2273468pgr.2
+        for <io-uring@vger.kernel.org>; Sun, 23 Feb 2020 18:56:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bZWs3g4ivEodh6WFzH0c3kjRxR1SL/AnXUni3U5yJrc=;
-        b=bdFFKaI6f+wvppivcMV6PvmU1zDFDe4lZOHPzgAnquRq/MFUNw/jk2+CTGKnTzxzPR
-         ltVo8qY49FpCygD5KRAWJrTAFJSFJ7MvGXY+3mifa5ZM79pZNo8krv6CeFPmKhiep9rb
-         VFyEhvivz3RIf/b8HIVTAFX/BNbc/Id+8jBO984BW8ktTJStOWEJLE5o8yfsv5vwGZiW
-         ujE84gROhK7EZHlwitbZJSnDu46kb6m2R8copupeRNgzs0aTjbegM28izdrEvog3QhpV
-         L1pi/aaDEAxo5MQcSvFXEIwmdaTiEb8jakVnHVe0lQHyMIWoP9NXfI+Rb+j+Srm09kIh
-         7ahQ==
+        bh=CoZUfENDMcx4lrwfHMAHsXlT7UOVRxRRkOZHLeurh3E=;
+        b=qSAG2A36K7VLa71Qorv0hbFJQdJkl2GWIiNXH48JiawOCtHkGK3gKEYcNmauRa6Rga
+         R9+aSuZoBncQnHqNl/Mg3c7AH9Yde+jjKWrROeSArNG1cNMAO9NpkE4Ybvw2+cyn9yIb
+         MOS+C0UXDH6c1InS+CVeR/YZJpTMGTwJ+mMTT5Kuwn+iX4oBtoUjPurTxD+BL936fSZT
+         3iUA+UJjQPUcq9RNaRsKmiWloFVx1wLYbS8nb3fzFsoLBYUCY0t/FnISxurFeV4DCRar
+         OqBh+5U+LfuLFAxZE+Ai/5t18dTInrXO23DhCr2ky3aUVsaNoByhfes3PEW/0vVBoW3x
+         f/rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bZWs3g4ivEodh6WFzH0c3kjRxR1SL/AnXUni3U5yJrc=;
-        b=SJ1qcVgnD1IgcG2sRwACUJfgNz3kl/ap8ohF3tSQbfkEwVX9qPKEm0iISQ9DE29QuN
-         FHEfArfJDND+NWHVOHv9qjbiebkBFCSZylV2XRhUUArevZaRLh5R5+HPHrhxkM6WdSwM
-         b8MKD7Q2ahxboPHq32MglyE0RHuZfTa6H3dho6Qv/OGYk/Dwq3s/kSgG3hiWYIrWWmB7
-         UuqMY+Rk60seXddv/1G6Ws2p2yqkD1xycteH5V8VjYq2113XzO7hJQVJg5Og4FLKaKC8
-         KDnGsPqqyUg3JAjRmjuvsexFjGih4CJBXwL7lRjwGGeVpko8+f6xPoHLi+Qz6UtNxnF1
-         uOiA==
-X-Gm-Message-State: APjAAAWfhG+TcIpXcWU4ILChcGWK7q03buuJV64slK/rYJTy5gO7UNao
-        tE4SBzTAAQ32GmJd2A868TwwBCLSugI=
-X-Google-Smtp-Source: APXvYqw6FnXMX3SdP228YT3RpNa8XfH8uTQJC5BRZkexIPxgMlruLJe/hHz67AWOqJDgSPeuKCsc1w==
-X-Received: by 2002:a17:902:864a:: with SMTP id y10mr48399222plt.2.1582512973056;
-        Sun, 23 Feb 2020 18:56:13 -0800 (PST)
+        bh=CoZUfENDMcx4lrwfHMAHsXlT7UOVRxRRkOZHLeurh3E=;
+        b=jEOiQ5l/0NF0V8SjsXZgZE2JTq00YUF6nqLjeB/iuuWnfWxft5AQB8+mvmxwQ//AVC
+         atImtJPWcFFIgRjq/5XXjA1IPmaB+uP7hS6J/PQ7sJ/BE3Tvp5T0NA5TN6ALHNWTQVCT
+         eE1HvdiASNqxCdR2of9B2GNwdba76PspXKPQTcwIOUB3d6ZLqot+QyIW9sgYR7U0jMvW
+         UxN9T1D4qu42fX6VyGXAUxyqhES6jeSMWOYHnmqY1Pc/ug0xE9bFuYgBPdhhGGWqstWR
+         1IIMobNSkm4TuZ9a6++SJ5OSMZU5n6idc6fhPn1xYJJNX7KyyJ/cV+6EialKAlXKFbY9
+         0rYA==
+X-Gm-Message-State: APjAAAUQptJvWADJAfG/WY8ZveMrEC2utAeP/eJAvbTNr5Cl5/grR3K1
+        Nz6mN2eHIXQvpDn+tXZk0J7sjLXs7XI=
+X-Google-Smtp-Source: APXvYqz09/ZPTl9ytxRK4XpK6WtFVJmSnCD/0xW7QVl5OuuK37Ua/CKET6WrKCPfZ6WPXUOMdxvbLQ==
+X-Received: by 2002:a63:e80d:: with SMTP id s13mr50959712pgh.236.1582512974517;
+        Sun, 23 Feb 2020 18:56:14 -0800 (PST)
 Received: from x1.localdomain ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id z5sm10859169pfq.3.2020.02.23.18.56.12
+        by smtp.gmail.com with ESMTPSA id z5sm10859169pfq.3.2020.02.23.18.56.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2020 18:56:12 -0800 (PST)
+        Sun, 23 Feb 2020 18:56:13 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     andres@anarazel.de, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/3] io_uring: buffer registration infrastructure
-Date:   Sun, 23 Feb 2020 19:56:05 -0700
-Message-Id: <20200224025607.22244-2-axboe@kernel.dk>
+Subject: [PATCH 2/3] io_uring: add IORING_OP_PROVIDE_BUFFER
+Date:   Sun, 23 Feb 2020 19:56:06 -0700
+Message-Id: <20200224025607.22244-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200224025607.22244-1-axboe@kernel.dk>
 References: <20200224025607.22244-1-axboe@kernel.dk>
@@ -60,89 +60,166 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This just prepares the ring for having lists of buffers associated with
-it, that the application can provide for SQEs to consume instead of
-providing their own.
+IORING_OP_PROVIDE_BUFFER uses the buffer registration infrastructure to
+support passing in an addr/len that is associated with a buffer ID and
+buffer group ID. The group ID is used to index and lookup the buffers,
+while the buffer ID can be used to notify the application which buffer
+in the group was used.
 
-The buffers are organized by group ID.
+At least for now, no validation is done of the buffer ID. If the
+application provides buffers within the same group with identical buffer
+IDs, then it'll have a hard time telling which buffer ID was used. The
+only restriction is that the buffer ID can be a max of 16-bits in size,
+so USHRT_MAX is the maximum ID that can be used.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ fs/io_uring.c                 | 84 +++++++++++++++++++++++++++++++++++
+ include/uapi/linux/io_uring.h |  1 +
+ 2 files changed, 85 insertions(+)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 945547a5e792..98b0e9552ef2 100644
+index 98b0e9552ef2..8b7c5ab69658 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -199,6 +199,13 @@ struct fixed_file_data {
- 	struct completion		done;
+@@ -442,6 +442,14 @@ struct io_epoll {
+ 	struct epoll_event		event;
  };
  
-+struct io_buffer {
-+	struct list_head list;
-+	__u64 addr;
-+	__s32 len;
-+	__u16 bid;
++struct io_provide_buffer {
++	struct file			*file;
++	__u64				addr;
++	__s32				len;
++	__u32				gid;
++	__u16				bid;
 +};
 +
- struct io_ring_ctx {
- 	struct {
- 		struct percpu_ref	refs;
-@@ -276,6 +283,8 @@ struct io_ring_ctx {
- 	struct socket		*ring_sock;
- #endif
+ struct io_async_connect {
+ 	struct sockaddr_storage		address;
+ };
+@@ -566,6 +574,7 @@ struct io_kiocb {
+ 		struct io_fadvise	fadvise;
+ 		struct io_madvise	madvise;
+ 		struct io_epoll		epoll;
++		struct io_provide_buffer	pbuf;
+ 	};
  
-+	struct idr		io_buffer_idr;
-+
- 	struct idr		personality_idr;
+ 	struct io_async_ctx		*io;
+@@ -790,6 +799,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.unbound_nonreg_file	= 1,
+ 		.file_table		= 1,
+ 	},
++	[IORING_OP_PROVIDE_BUFFER] = {},
+ };
  
- 	struct {
-@@ -863,6 +872,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_LIST_HEAD(&ctx->cq_overflow_list);
- 	init_completion(&ctx->completions[0]);
- 	init_completion(&ctx->completions[1]);
-+	idr_init(&ctx->io_buffer_idr);
- 	idr_init(&ctx->personality_idr);
- 	mutex_init(&ctx->uring_lock);
- 	init_waitqueue_head(&ctx->wait);
-@@ -6447,6 +6457,28 @@ static int io_eventfd_unregister(struct io_ring_ctx *ctx)
- 	return -ENXIO;
+ static void io_wq_submit_work(struct io_wq_work **workptr);
+@@ -2703,6 +2713,69 @@ static int io_openat(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	return io_openat2(req, nxt, force_nonblock);
  }
  
-+static int __io_destroy_buffers(int id, void *p, void *data)
++static int io_provide_buffer_prep(struct io_kiocb *req,
++				  const struct io_uring_sqe *sqe)
 +{
-+	struct io_ring_ctx *ctx = data;
-+	struct list_head *buf_list = p;
-+	struct io_buffer *buf;
++	struct io_provide_buffer *p = &req->pbuf;
++	u64 off;
 +
-+	while (!list_empty(buf_list)) {
-+		buf = list_first_entry(buf_list, struct io_buffer, list);
-+		list_del(&buf->list);
-+		kfree(buf);
-+	}
-+	idr_remove(&ctx->io_buffer_idr, id);
-+	kfree(buf_list);
++	p->addr = READ_ONCE(sqe->addr);
++	p->len = READ_ONCE(sqe->len);
++	p->gid = READ_ONCE(sqe->fd);
++	off = READ_ONCE(sqe->off);
++	if (off > USHRT_MAX)
++		return -EINVAL;
++	p->bid = off;
 +	return 0;
 +}
 +
-+static void io_destroy_buffers(struct io_ring_ctx *ctx)
++static int io_provide_buffer(struct io_kiocb *req, struct io_kiocb **nxt)
 +{
-+	idr_for_each(&ctx->io_buffer_idr, __io_destroy_buffers, ctx);
-+	idr_destroy(&ctx->io_buffer_idr);
++	struct io_provide_buffer *p = &req->pbuf;
++	struct io_ring_ctx *ctx = req->ctx;
++	struct list_head *list;
++	struct io_buffer *buf;
++	int ret = 0;
++
++	list = idr_find(&ctx->io_buffer_idr, p->gid);
++	if (!list) {
++		list = kmalloc(sizeof(*list), GFP_KERNEL);
++		if (!list) {
++			ret = -ENOMEM;
++			goto out;
++		}
++		INIT_LIST_HEAD(list);
++		ret = idr_alloc(&ctx->io_buffer_idr, list, p->gid, p->gid + 1,
++					GFP_KERNEL);
++		if (ret < 0) {
++			kfree(list);
++			goto out;
++		}
++	}
++
++	buf = kmalloc(sizeof(*buf), GFP_KERNEL);
++	if (!buf) {
++		if (list_empty(list)) {
++			idr_remove(&ctx->io_buffer_idr, p->gid);
++			kfree(list);
++		}
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	buf->addr = p->addr;
++	buf->len = p->len;
++	buf->bid = p->bid;
++	list_add(&buf->list, list);
++	ret = buf->bid;
++out:
++	if (ret < 0)
++		req_set_fail_links(req);
++	io_cqring_add_event(req, ret);
++	io_put_req_find_next(req, nxt);
++	return 0;
 +}
 +
- static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ static int io_epoll_ctl_prep(struct io_kiocb *req,
+ 			     const struct io_uring_sqe *sqe)
  {
- 	io_finish_async(ctx);
-@@ -6457,6 +6489,7 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 	io_sqe_buffer_unregister(ctx);
- 	io_sqe_files_unregister(ctx);
- 	io_eventfd_unregister(ctx);
-+	io_destroy_buffers(ctx);
- 	idr_destroy(&ctx->personality_idr);
+@@ -4314,6 +4387,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
+ 	case IORING_OP_EPOLL_CTL:
+ 		ret = io_epoll_ctl_prep(req, sqe);
+ 		break;
++	case IORING_OP_PROVIDE_BUFFER:
++		ret = io_provide_buffer_prep(req, sqe);
++		break;
+ 	default:
+ 		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+ 				req->opcode);
+@@ -4579,6 +4655,14 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 		}
+ 		ret = io_epoll_ctl(req, nxt, force_nonblock);
+ 		break;
++	case IORING_OP_PROVIDE_BUFFER:
++		if (sqe) {
++			ret = io_provide_buffer_prep(req, sqe);
++			if (ret)
++				break;
++		}
++		ret = io_provide_buffer(req, nxt);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 653865554691..21915ada9507 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -113,6 +113,7 @@ enum {
+ 	IORING_OP_RECV,
+ 	IORING_OP_OPENAT2,
+ 	IORING_OP_EPOLL_CTL,
++	IORING_OP_PROVIDE_BUFFER,
  
- #if defined(CONFIG_UNIX)
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
 -- 
 2.25.1
 

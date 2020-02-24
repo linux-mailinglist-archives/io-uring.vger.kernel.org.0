@@ -2,53 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC2316A007
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 09:31:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E9E716A008
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 09:31:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbgBXIbU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 03:31:20 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46907 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbgBXIbU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 03:31:20 -0500
-Received: by mail-wr1-f68.google.com with SMTP id g4so2907185wro.13
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 00:31:18 -0800 (PST)
+        id S1727115AbgBXIbY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 03:31:24 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53567 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbgBXIbX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 03:31:23 -0500
+Received: by mail-wm1-f66.google.com with SMTP id s10so8035593wmh.3
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 00:31:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=kzx/3yJB9NBkgwCn3RpqT+8ATl78a2V/jEcEyQz4lMo=;
-        b=aHvsBQ6W6/cjtiGA9WsjjgfPrpx3aS7SI7qLp9EtD5YprxZrR+yJCHXtPYZPVjmu0T
-         vf6xqkQbSsiefYLDY14fZEoXXSYjTRhAZNeFZmMA9/0jkd2uQvHQ5bBAsPuc4BFBmYJT
-         6+DET2Q2V1bqGsbjH+nT3KPa4paOjPdIzXer5NFmARJbGMfuMjDJQSCA6wZyrNoA/nwu
-         O7joJrfyZakNwllmeqhpGq56pebeoVtgCllACUYP9TaaMF8CAjqGp4NW9sXMc27mdvkN
-         bsz5V0fi8qioVeeF546xzD+EnGnKemM/fAaCj13lXotx1fGDJVV0hQoD2hU9/7XIWr4L
-         O6ZQ==
+        bh=wV4WyY7dHz29Sb2l29fN2iI7Y0Jmz9uVJPy2YZJPBAY=;
+        b=IGFfSQ0sF5y3Brn+IRG0ULCpZBtP6G1/uG3/z04hSv8meOzTKN/Gv+Dl7A9SHPOWRw
+         pFMCwd1wO+1KH9ajXaRIwu4PZ5r+ZixePWPwHtsCdEMBEplfctRDzx9ewk6qobpIiRxv
+         aIuSabcssuC4vTcqX5zj1J5F1hxB0yOoB6b2M0ygmW87FfoH0F3WaQjs/z/nJfvrC/7g
+         lJ54wpIEO40ZeWr6A4axETLD8EEFn2Xca1JkILbkXwdviXVdxy37LmBMtHxbSCK4FhRe
+         3L0/x6vNz+53bwcu+Pl19BkrQiESg4JNOK+MrCt7wk+F3b3o2XBd1SOolB0cGGKfEeZz
+         Sm8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kzx/3yJB9NBkgwCn3RpqT+8ATl78a2V/jEcEyQz4lMo=;
-        b=N08zC+yhjcJGpCDknCi9yzSv6kY97B1NflU2/XNOsKFFvkSVu7BLKpcOWs1gmhT3Cp
-         N4AieOBILZDKU3oYbXmtbZBaZujfuU/OghbcVDTubatV3oBoQ9cSllJThytvt8F0/N7P
-         YsZ5C78zHB4rKh+CRrFV+KbC4OjXOns/S5UfrmHbLkcIneI2mrO9eR6ayFZAZAsobXGU
-         EoQZV4Cazb32xrUujxx0qKQ7tuupr7zLMGntPFsIr5JQ0p5FNsTBPvrK49ev6G7VXRQA
-         kmvQYnLinDImfslPH3Zmya5kMc2QlezWCKDo87jWhIawjVmCy4CtvSqnEiQf6SN4vNaf
-         ZuWQ==
-X-Gm-Message-State: APjAAAUVvdwkx34BPiIpmBaTWTJrw/50+SF2yPe67ExKsUs7wPxg4EE4
-        sZ3ND8SUQxgS9pMKLlofWsc=
-X-Google-Smtp-Source: APXvYqygth8ci/GVMsUxL1rj8jt3/ywa4bT3r+el9PCBrIFC3s5TiLU6PLTOiKvUNV77NObghuRUPw==
-X-Received: by 2002:adf:b198:: with SMTP id q24mr67309883wra.188.1582533077455;
-        Mon, 24 Feb 2020 00:31:17 -0800 (PST)
+        bh=wV4WyY7dHz29Sb2l29fN2iI7Y0Jmz9uVJPy2YZJPBAY=;
+        b=Xxl7vzkr0JmTg0VI3IDNDNbHxlPGcPtbSCX+JhwGtFNeaZZBtT7nZMrrX0F3r7aCyU
+         75Uh5G6S1f31YdvGVzrHQ9gj+90fX03xMPnHn0dfwwOHwJbYvsG7QMttrduacf6mYUSD
+         gfUC2o8G+kgFXzYPIMoTuBQQHAGlsyMynQ9fc8YGiDUluoNIUY2mDSSQIU+C1yGYz3bv
+         TAvhFEGqBMwUKvfGUAT39EJe9FVGMAR2cp7OsIs2i4NoCYow5KS3Te/jzldQ5uM0GJgs
+         KR4HINPTvr/jvs1OwOomLf/+Pz8QqwQM8CsmILX8aBehzC++D6BGvHY4CYE1eicuTnKr
+         CAFA==
+X-Gm-Message-State: APjAAAVyXKi8k840ECUhbSNeMcl6a1zRcARnPhL0ZB24EU9rIKyFOR1Q
+        FvxW+BN5YI/NG0W+OLzSYpA=
+X-Google-Smtp-Source: APXvYqyPd33Brch3pGGtHVIukIDmtzyArv8sNANSaofgkzkcfkoEz8IDeYX+nCgGzoT8UGrakYE8oA==
+X-Received: by 2002:a1c:e3c2:: with SMTP id a185mr20770823wmh.27.1582533079423;
+        Mon, 24 Feb 2020 00:31:19 -0800 (PST)
 Received: from localhost.localdomain ([109.126.137.65])
-        by smtp.gmail.com with ESMTPSA id a16sm17946265wrx.87.2020.02.24.00.31.16
+        by smtp.gmail.com with ESMTPSA id a16sm17946265wrx.87.2020.02.24.00.31.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 00:31:17 -0800 (PST)
+        Mon, 24 Feb 2020 00:31:18 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v3 1/3] io_uring: don't call work.func from sync ctx
-Date:   Mon, 24 Feb 2020 11:30:16 +0300
-Message-Id: <e3ad1962f3d9d12e6ce30407c5858a2b9a809c1b.1582530396.git.asml.silence@gmail.com>
+Subject: [PATCH v3 2/3] io_uring: don't do full *prep_worker() from io-wq
+Date:   Mon, 24 Feb 2020 11:30:17 +0300
+Message-Id: <ca345ead1a45ce9d2c4f916b07a4a2e8eae328e8.1582530396.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1582530396.git.asml.silence@gmail.com>
 References: <cover.1582530396.git.asml.silence@gmail.com>
@@ -59,186 +59,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Many operations define custom work.func before getting into an io-wq.
-There are several points against:
-- it calls io_wq_assign_next() from outside io-wq, that may be confusing
-- sync context would go unnecessary through io_req_cancelled()
-- prototypes are quite different, so work!=old_work looks strange
-- makes async/sync responsibilities fuzzy
-- adds extra overhead
-
-Don't call generic path and io-wq handlers from each other, but use
-helpers instead
+io_prep_async_worker() called io_wq_assign_next() do many useless checks:
+io_req_work_grab_env() was already called during prep, and @do_hashed
+is not ever used. Add io_prep_next_work() -- simplified version, that
+can be called io-wq.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 76 +++++++++++++++++++++++++--------------------------
- 1 file changed, 38 insertions(+), 38 deletions(-)
+ fs/io_uring.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7d0be264527d..819661f49023 100644
+index 819661f49023..3003e767ced3 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2462,23 +2462,28 @@ static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
+@@ -955,6 +955,17 @@ static inline void io_req_work_drop_env(struct io_kiocb *req)
  	}
  }
  
--static void io_fsync_finish(struct io_wq_work **workptr)
-+static void __io_fsync(struct io_kiocb *req, struct io_kiocb **nxt)
- {
--	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
- 	loff_t end = req->sync.off + req->sync.len;
--	struct io_kiocb *nxt = NULL;
- 	int ret;
- 
--	if (io_req_cancelled(req))
--		return;
--
- 	ret = vfs_fsync_range(req->file, req->sync.off,
- 				end > 0 ? end : LLONG_MAX,
- 				req->sync.flags & IORING_FSYNC_DATASYNC);
- 	if (ret < 0)
- 		req_set_fail_links(req);
- 	io_cqring_add_event(req, ret);
--	io_put_req_find_next(req, &nxt);
-+	io_put_req_find_next(req, nxt);
++static inline void io_prep_next_work(struct io_kiocb *req,
++				     struct io_kiocb **link)
++{
++	const struct io_op_def *def = &io_op_defs[req->opcode];
++
++	if (!(req->flags & REQ_F_ISREG) && def->unbound_nonreg_file)
++			req->work.flags |= IO_WQ_WORK_UNBOUND;
++
++	*link = io_prep_linked_timeout(req);
 +}
 +
-+static void io_fsync_finish(struct io_wq_work **workptr)
-+{
-+	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-+	struct io_kiocb *nxt = NULL;
-+
-+	if (io_req_cancelled(req))
-+		return;
-+	__io_fsync(req, &nxt);
- 	if (nxt)
- 		io_wq_assign_next(workptr, nxt);
- }
-@@ -2486,26 +2491,18 @@ static void io_fsync_finish(struct io_wq_work **workptr)
- static int io_fsync(struct io_kiocb *req, struct io_kiocb **nxt,
- 		    bool force_nonblock)
+ static inline bool io_prep_async_work(struct io_kiocb *req,
+ 				      struct io_kiocb **link)
  {
--	struct io_wq_work *work, *old_work;
--
- 	/* fsync always requires a blocking context */
- 	if (force_nonblock) {
- 		io_put_req(req);
- 		req->work.func = io_fsync_finish;
- 		return -EAGAIN;
- 	}
--
--	work = old_work = &req->work;
--	io_fsync_finish(&work);
--	if (work && work != old_work)
--		*nxt = container_of(work, struct io_kiocb, work);
-+	__io_fsync(req, nxt);
- 	return 0;
- }
- 
--static void io_fallocate_finish(struct io_wq_work **workptr)
-+static void __io_fallocate(struct io_kiocb *req, struct io_kiocb **nxt)
+@@ -2453,7 +2464,7 @@ static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
  {
--	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
--	struct io_kiocb *nxt = NULL;
- 	int ret;
+ 	struct io_kiocb *link;
  
- 	if (io_req_cancelled(req))
-@@ -2516,7 +2513,15 @@ static void io_fallocate_finish(struct io_wq_work **workptr)
- 	if (ret < 0)
- 		req_set_fail_links(req);
- 	io_cqring_add_event(req, ret);
--	io_put_req_find_next(req, &nxt);
-+	io_put_req_find_next(req, nxt);
-+}
-+
-+static void io_fallocate_finish(struct io_wq_work **workptr)
-+{
-+	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-+	struct io_kiocb *nxt = NULL;
-+
-+	__io_fallocate(req, &nxt);
- 	if (nxt)
- 		io_wq_assign_next(workptr, nxt);
- }
-@@ -2536,8 +2541,6 @@ static int io_fallocate_prep(struct io_kiocb *req,
- static int io_fallocate(struct io_kiocb *req, struct io_kiocb **nxt,
- 			bool force_nonblock)
- {
--	struct io_wq_work *work, *old_work;
--
- 	/* fallocate always requiring blocking context */
- 	if (force_nonblock) {
- 		io_put_req(req);
-@@ -2545,11 +2548,7 @@ static int io_fallocate(struct io_kiocb *req, struct io_kiocb **nxt,
- 		return -EAGAIN;
- 	}
- 
--	work = old_work = &req->work;
--	io_fallocate_finish(&work);
--	if (work && work != old_work)
--		*nxt = container_of(work, struct io_kiocb, work);
--
-+	__io_fallocate(req, nxt);
- 	return 0;
- }
- 
-@@ -2953,21 +2952,27 @@ static int io_prep_sfr(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return 0;
- }
- 
--static void io_sync_file_range_finish(struct io_wq_work **workptr)
-+static void __io_sync_file_range(struct io_kiocb *req, struct io_kiocb **nxt)
- {
--	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
--	struct io_kiocb *nxt = NULL;
- 	int ret;
- 
--	if (io_req_cancelled(req))
--		return;
--
- 	ret = sync_file_range(req->file, req->sync.off, req->sync.len,
- 				req->sync.flags);
- 	if (ret < 0)
- 		req_set_fail_links(req);
- 	io_cqring_add_event(req, ret);
--	io_put_req_find_next(req, &nxt);
-+	io_put_req_find_next(req, nxt);
-+}
-+
-+
-+static void io_sync_file_range_finish(struct io_wq_work **workptr)
-+{
-+	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-+	struct io_kiocb *nxt = NULL;
-+
-+	if (io_req_cancelled(req))
-+		return;
-+	__io_sync_file_range(req, &nxt);
- 	if (nxt)
- 		io_wq_assign_next(workptr, nxt);
- }
-@@ -2975,8 +2980,6 @@ static void io_sync_file_range_finish(struct io_wq_work **workptr)
- static int io_sync_file_range(struct io_kiocb *req, struct io_kiocb **nxt,
- 			      bool force_nonblock)
- {
--	struct io_wq_work *work, *old_work;
--
- 	/* sync_file_range always requires a blocking context */
- 	if (force_nonblock) {
- 		io_put_req(req);
-@@ -2984,10 +2987,7 @@ static int io_sync_file_range(struct io_kiocb *req, struct io_kiocb **nxt,
- 		return -EAGAIN;
- 	}
- 
--	work = old_work = &req->work;
--	io_sync_file_range_finish(&work);
--	if (work && work != old_work)
--		*nxt = container_of(work, struct io_kiocb, work);
-+	__io_sync_file_range(req, nxt);
- 	return 0;
- }
- 
+-	io_prep_async_work(nxt, &link);
++	io_prep_next_work(nxt, &link);
+ 	*workptr = &nxt->work;
+ 	if (link) {
+ 		nxt->work.flags |= IO_WQ_WORK_CB;
 -- 
 2.24.0
 

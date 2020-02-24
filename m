@@ -2,326 +2,154 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D2D216A015
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 09:34:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E26816A130
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 10:10:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbgBXId7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 03:33:59 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38817 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbgBXId7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 03:33:59 -0500
-Received: by mail-wr1-f65.google.com with SMTP id e8so9276090wrm.5;
-        Mon, 24 Feb 2020 00:33:58 -0800 (PST)
+        id S1728380AbgBXJK4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 04:10:56 -0500
+Received: from mail-wr1-f44.google.com ([209.85.221.44]:38143 "EHLO
+        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727709AbgBXJKz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 04:10:55 -0500
+Received: by mail-wr1-f44.google.com with SMTP id e8so9412089wrm.5
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 01:10:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=12vPGZpFg0vglmSbRNNbzPOp/4sEkidPp3sfD3982tI=;
-        b=O0Acsw26HSPxu5KgZtWMzFTfDMtqFgyRP4MZWZ0uA2JCOPQygmtb5FvcBslZxI0y0/
-         K6crY0Qh+LqvJEc7/MjkCEkDE0hZji/eap26TsVnyniRBtL5qLEwYJH9P1uHR7a6gJHk
-         HxkCdvsLEziKCuzXkEDun3r2b5KuYqx0a+vfQfeKDpLThOTO1zIrS9mgJPdu5Fk5OwP4
-         h2Ig8HXVjGFceivRHpv6+vjZYaNpij4TCIeEGiJuv205g/OJBMOeajDlMURqzLxXG47a
-         Pvtdlymz8ICvf9ams+30wSZFCQOTc0CaviHN17cqYpOay+vfbgm0guUET0AhsvZKKYhB
-         OAfg==
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aM1tNe5CKXYcvsrIJpNur35kFGAyK/urNu2p5XT7KIo=;
+        b=tPuTpYtvKIbn6DIQGdBTS7YsmbQ9dbp+l7SjH/h8Z/jOck1q/J2TKHBKHGE75hZOix
+         SL+djE8cfLxzvo8SArLo4m0ahfDlDys6yDv6b1nXR/fTXuKGn6orr7VJryflV4KlquM2
+         wPOVY57QvndVmH+cpjwRm+Usl8eWFwItIG6zI+A0YFi4C9Pg0eUs+LCnDa8sCP59UJ3A
+         0Lkrs/BfM8a3smAxL8SM2ilnI09if6EEviensevIn5D1Th7h8yHcRDjRlaeBtgeII1cm
+         pGtmv0AYRP41EgYT/K8VVwFZ0wiV5dzhG3RBhkC49xKhy0EoVpIPHYvIwYGjigWZI/KS
+         6FwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=12vPGZpFg0vglmSbRNNbzPOp/4sEkidPp3sfD3982tI=;
-        b=TdSGGR4+9ftaQhWEgQKKP8HKl8hqCvK+diriRUWgRmsmUx+9jD7PZQ78SmG3tsuAcO
-         0qEAd8EdN2z8NIhzUAjmZYDTHNxbp2iAfdz1BXfydVyV+pJo0UHdBpCJCPB80+ttbrEo
-         gfOlNDYsyNM48oDVtktU+JAfByWRZpdxhUc1wSfaO5VuupDAO7oWP7HKY7puRbIOIuZ3
-         g95KCPiNLS+zt5/DfRNXW5J35ZlWY6Ai0ALKIXigIOv++W7RQVUUCHmgY899cNdrdudK
-         Ozkx5lvtWsi7+tvKtKwmqHYYjfkUW1XFLVxvG2T6FKCrn4yBOltq5P/rcHoetf+fNh06
-         dWxg==
-X-Gm-Message-State: APjAAAXGCypFU/SeaZ6WphQWeLGMDgp+0ER4jcWAoAlUxq5Vtq90kLBU
-        FVlp16x0wCRXTW99gXn73FE=
-X-Google-Smtp-Source: APXvYqw2c3+epxtVujmqLcG/dulkNNB3WNC/+FwHLv6JZhDGq1lB3sJG4PstOy9QeTg4rAWuad0+Xw==
-X-Received: by 2002:a5d:4085:: with SMTP id o5mr64690659wrp.321.1582533237552;
-        Mon, 24 Feb 2020 00:33:57 -0800 (PST)
-Received: from localhost.localdomain ([109.126.137.65])
-        by smtp.gmail.com with ESMTPSA id p15sm16695353wma.40.2020.02.24.00.33.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 00:33:57 -0800 (PST)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=aM1tNe5CKXYcvsrIJpNur35kFGAyK/urNu2p5XT7KIo=;
+        b=RGl6IbWyOmeyROpKQR6wCwoWrUdsruP66k5mUJytQTpTOx6n4xyEtBtongJX3JLhRJ
+         kfiMImaCXeb5yys09wKCY1Z12JiqRLWZW3yRIgVJ8V+BW2O/urNo1oGdHX5YZg+YuuN6
+         rN2j5fRtrwmeWX3PBMqqnp8gjPLdrTYD8EnqZgQX0HNwrapd6v9dald0QpqSbN0WoxL5
+         pW8c0TdUly3Pv3ZUo+Gp4Nj5GZfRbCs6QOUicfRV80dMgKzopTQM1a63zu3Kwshv6xK0
+         V5l16ZMBWkAEbZSDMtfSbzyRY7T6cPmeS7mvrLiAbEZDP+TNvLeCMYDFJtnULtWR+UWD
+         Eqow==
+X-Gm-Message-State: APjAAAWtMx9ejP6veLXkTfKtErL4p/bg2aGAPg3hojchSoP+QnY2pL2I
+        OUwJIeqe3AKija4Ck41KI+aLEKbh
+X-Google-Smtp-Source: APXvYqyelsHei+/t4pOWNmM7+KR4o9l+55SgB59goe0Ogg03bWnsJLkfQBUMbFu90MRYSNKsJIwTVw==
+X-Received: by 2002:a5d:4bd2:: with SMTP id l18mr1870996wrt.99.1582535453923;
+        Mon, 24 Feb 2020 01:10:53 -0800 (PST)
+Received: from [192.168.43.177] ([109.126.137.65])
+        by smtp.gmail.com with ESMTPSA id z16sm390320wrp.33.2020.02.24.01.10.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2020 01:10:53 -0800 (PST)
+To:     Andres Freund <andres@anarazel.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+References: <20200224010754.h7sr7xxspcbddcsj@alap3.anarazel.de>
+ <b3c1489a-c95d-af41-3369-6fd79d6b259c@kernel.dk>
+ <20200224033352.j6bsyrncd7z7eefq@alap3.anarazel.de>
+ <90097a02-ade0-bc9a-bc00-54867f3c24bc@kernel.dk>
+ <20200224071211.bar3aqgo76sznqd5@alap3.anarazel.de>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] io_uring: add splice(2) support
-Date:   Mon, 24 Feb 2020 11:32:45 +0300
-Message-Id: <bf7f2f76de5f43cdc121b6ea2f1e204a97abe80e.1582530525.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1582530525.git.asml.silence@gmail.com>
-References: <cover.1582530525.git.asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: Deduplicate io_*_prep calls?
+Message-ID: <5f355efb-1091-89b5-546f-8dbbc984f65b@gmail.com>
+Date:   Mon, 24 Feb 2020 12:10:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <20200224071211.bar3aqgo76sznqd5@alap3.anarazel.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add support for splice(2).
+On 24/02/2020 10:12, Andres Freund wrote:
+> Hi,
+> 
+> On 2020-02-23 20:52:26 -0700, Jens Axboe wrote:
+>> The fast case is not being deferred, that's by far the common (and hot)
+>> case, which means io_issue() is called with sqe != NULL. My worry is
+>> that by moving it into a prep helper, the compiler isn't smart enough to
+>> not make that basically two switches.
+> 
+> I'm not sure that benefit of a single switch isn't offset by the lower
+> code density due to the additional per-opcode branches.  Not inlining
+> the prepare function results in:
+> 
 
-- output file is specified as sqe->fd, so it's handled by generic code
-- hash_reg_file handled by generic code as well
-- len is 32bit, but should be fine
-- the fd_in is registered file, when SPLICE_F_FD_IN_FIXED is set, which
-is a splice flag (i.e. sqe->splice_flags).
+The first looks good, I like the change. Do you have performance numbers?
+e.g. tools/io_uring/io_uring-bench (do_nop=1, with high DEPTH e.g. 100)
+would be good enough to estimate relative overhead.
+I don't expect any difference, TBH.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c                 | 109 ++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  14 ++++-
- 2 files changed, 122 insertions(+), 1 deletion(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 443870e0dc46..b9dd94143c30 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -76,6 +76,7 @@
- #include <linux/fadvise.h>
- #include <linux/eventpoll.h>
- #include <linux/fs_struct.h>
-+#include <linux/splice.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -433,6 +434,15 @@ struct io_epoll {
- 	struct epoll_event		event;
- };
- 
-+struct io_splice {
-+	struct file			*file_out;
-+	struct file			*file_in;
-+	loff_t				off_out;
-+	loff_t				off_in;
-+	u64				len;
-+	unsigned int			flags;
-+};
-+
- struct io_async_connect {
- 	struct sockaddr_storage		address;
- };
-@@ -549,6 +559,7 @@ struct io_kiocb {
- 		struct io_fadvise	fadvise;
- 		struct io_madvise	madvise;
- 		struct io_epoll		epoll;
-+		struct io_splice	splice;
- 	};
- 
- 	struct io_async_ctx		*io;
-@@ -749,6 +760,11 @@ static const struct io_op_def io_op_defs[] = {
- 		.unbound_nonreg_file	= 1,
- 		.file_table		= 1,
- 	},
-+	[IORING_OP_SPLICE] = {
-+		.needs_file		= 1,
-+		.hash_reg_file		= 1,
-+		.unbound_nonreg_file	= 1,
-+	}
- };
- 
- static void io_wq_submit_work(struct io_wq_work **workptr);
-@@ -763,6 +779,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- static int io_grab_files(struct io_kiocb *req);
- static void io_ring_file_ref_flush(struct fixed_file_data *data);
- static void io_cleanup_req(struct io_kiocb *req);
-+static int io_file_get(struct io_submit_state *state,
-+		       struct io_kiocb *req,
-+		       int fd, struct file **out_file,
-+		       bool fixed);
- 
- static struct kmem_cache *req_cachep;
- 
-@@ -2404,6 +2424,77 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
- 	return ret;
- }
- 
-+static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_splice* sp = &req->splice;
-+	unsigned int valid_flags = SPLICE_F_FD_IN_FIXED | SPLICE_F_ALL;
-+	int ret;
-+
-+	if (req->flags & REQ_F_NEED_CLEANUP)
-+		return 0;
-+
-+	sp->file_in = NULL;
-+	sp->off_in = READ_ONCE(sqe->splice_off_in);
-+	sp->off_out = READ_ONCE(sqe->off);
-+	sp->len = READ_ONCE(sqe->len);
-+	sp->flags = READ_ONCE(sqe->splice_flags);
-+
-+	if (unlikely(sp->flags & ~valid_flags))
-+		return -EINVAL;
-+
-+	ret = io_file_get(NULL, req, READ_ONCE(sqe->splice_fd_in), &sp->file_in,
-+			  (sp->flags & SPLICE_F_FD_IN_FIXED));
-+	if (ret)
-+		return ret;
-+	req->flags |= REQ_F_NEED_CLEANUP;
-+
-+	if (!S_ISREG(file_inode(sp->file_in)->i_mode))
-+		req->work.flags |= IO_WQ_WORK_UNBOUND;
-+
-+	return 0;
-+}
-+
-+static bool io_splice_punt(struct file *file)
-+{
-+	if (get_pipe_info(file))
-+		return false;
-+	if (!io_file_supports_async(file))
-+		return true;
-+	return !(file->f_mode & O_NONBLOCK);
-+}
-+
-+static int io_splice(struct io_kiocb *req, struct io_kiocb **nxt,
-+		     bool force_nonblock)
-+{
-+	struct io_splice *sp = &req->splice;
-+	struct file *in = sp->file_in;
-+	struct file *out = sp->file_out;
-+	unsigned int flags = sp->flags & ~SPLICE_F_FD_IN_FIXED;
-+	loff_t *poff_in, *poff_out;
-+	long ret;
-+
-+	if (force_nonblock) {
-+		if (io_splice_punt(in) || io_splice_punt(out))
-+			return -EAGAIN;
-+		flags |= SPLICE_F_NONBLOCK;
-+	}
-+
-+	poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
-+	poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
-+	ret = do_splice(in, poff_in, out, poff_out, sp->len, flags);
-+	if (force_nonblock && ret == -EAGAIN)
-+		return -EAGAIN;
-+
-+	io_put_file(req, in, (sp->flags & SPLICE_F_FD_IN_FIXED));
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+
-+	io_cqring_add_event(req, ret);
-+	if (ret != sp->len)
-+		req_set_fail_links(req);
-+	io_put_req_find_next(req, nxt);
-+	return 0;
-+}
-+
- /*
-  * IORING_OP_NOP just posts a completion event, nothing else.
-  */
-@@ -4219,6 +4310,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	case IORING_OP_EPOLL_CTL:
- 		ret = io_epoll_ctl_prep(req, sqe);
- 		break;
-+	case IORING_OP_SPLICE:
-+		ret = io_splice_prep(req, sqe);
-+		break;
- 	default:
- 		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
- 				req->opcode);
-@@ -4281,6 +4375,10 @@ static void io_cleanup_req(struct io_kiocb *req)
- 	case IORING_OP_STATX:
- 		putname(req->open.filename);
- 		break;
-+	case IORING_OP_SPLICE:
-+		io_put_file(req, req->splice.file_in,
-+			    (req->splice.flags & SPLICE_F_FD_IN_FIXED));
-+		break;
- 	}
- 
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
-@@ -4484,6 +4582,14 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		}
- 		ret = io_epoll_ctl(req, nxt, force_nonblock);
- 		break;
-+	case IORING_OP_SPLICE:
-+		if (sqe) {
-+			ret = io_splice_prep(req, sqe);
-+			if (ret < 0)
-+				break;
-+		}
-+		ret = io_splice(req, nxt, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-@@ -7225,6 +7331,7 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_SQE_ELEM(8,  __u64,  off);
- 	BUILD_BUG_SQE_ELEM(8,  __u64,  addr2);
- 	BUILD_BUG_SQE_ELEM(16, __u64,  addr);
-+	BUILD_BUG_SQE_ELEM(16, __u64,  splice_off_in);
- 	BUILD_BUG_SQE_ELEM(24, __u32,  len);
- 	BUILD_BUG_SQE_ELEM(28,     __kernel_rwf_t, rw_flags);
- 	BUILD_BUG_SQE_ELEM(28, /* compat */   int, rw_flags);
-@@ -7239,9 +7346,11 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_SQE_ELEM(28, __u32,  open_flags);
- 	BUILD_BUG_SQE_ELEM(28, __u32,  statx_flags);
- 	BUILD_BUG_SQE_ELEM(28, __u32,  fadvise_advice);
-+	BUILD_BUG_SQE_ELEM(28, __u32,  splice_flags);
- 	BUILD_BUG_SQE_ELEM(32, __u64,  user_data);
- 	BUILD_BUG_SQE_ELEM(40, __u16,  buf_index);
- 	BUILD_BUG_SQE_ELEM(42, __u16,  personality);
-+	BUILD_BUG_SQE_ELEM(44, __s32,  splice_fd_in);
- 
- 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
- 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 3f7961c1c243..08891cc1c1e7 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -23,7 +23,10 @@ struct io_uring_sqe {
- 		__u64	off;	/* offset into file */
- 		__u64	addr2;
- 	};
--	__u64	addr;		/* pointer to buffer or iovecs */
-+	union {
-+		__u64	addr;	/* pointer to buffer or iovecs */
-+		__u64	splice_off_in;
-+	};
- 	__u32	len;		/* buffer size or number of iovecs */
- 	union {
- 		__kernel_rwf_t	rw_flags;
-@@ -37,6 +40,7 @@ struct io_uring_sqe {
- 		__u32		open_flags;
- 		__u32		statx_flags;
- 		__u32		fadvise_advice;
-+		__u32		splice_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	union {
-@@ -45,6 +49,7 @@ struct io_uring_sqe {
- 			__u16	buf_index;
- 			/* personality to use, if used */
- 			__u16	personality;
-+			__s32	splice_fd_in;
- 		};
- 		__u64	__pad2[3];
- 	};
-@@ -113,6 +118,7 @@ enum {
- 	IORING_OP_RECV,
- 	IORING_OP_OPENAT2,
- 	IORING_OP_EPOLL_CTL,
-+	IORING_OP_SPLICE,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-@@ -128,6 +134,12 @@ enum {
-  */
- #define IORING_TIMEOUT_ABS	(1U << 0)
- 
-+/*
-+ * sqe->splice_flags
-+ * extends splice(2) flags
-+ */
-+#define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
-+
- /*
-  * IO completion data structure (Completion Queue Entry)
-  */
+> There's still some unnecessary branching on force_nonblocking. The
+> second patch just separates the cases needing force_nonblocking
+> out. Probably not quite the right structure.
+> 
+
+It's trickier there. It can get into io_prep_issue_sqe_nonblock() ->
+io_req_prep() with sqe=NULL. With a glance look, it should crash.
+The culprit is __io_queue_sqe() with linked requests.
+
+Also, io_issue_sqe_nonblock() would look better than io_prep_issue_sqe_nonblock().
+
+BTW, did you tried to run regression tests? It's under liburing repository.
+
+> 
+> Not quite sure what the policy is with attaching POC patches? Also send
+> as separate emails?
+
+I'd prefer it inlined (i.e. as text, not attachment), so it can be
+inline-commented.
+
 -- 
-2.24.0
-
+Pavel Begunkov

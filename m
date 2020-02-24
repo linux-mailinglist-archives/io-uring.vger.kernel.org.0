@@ -2,53 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A7BC16AF01
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 19:26:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52AEE16AF3C
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 19:33:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbgBXS0y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 13:26:54 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37700 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727711AbgBXS0y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 13:26:54 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a6so359388wme.2
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 10:26:51 -0800 (PST)
+        id S1727796AbgBXSd7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 13:33:59 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33299 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbgBXSd6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 13:33:58 -0500
+Received: by mail-wr1-f66.google.com with SMTP id u6so11636957wrt.0
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 10:33:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=z5f9aZJUWrYWjBwlTTrNoDRWDOIdxd7l1qvuVBHpDxQ=;
-        b=WoiMjucl7XszISmwPidTME3YU6+c/RUBXzjv7J2Sskj4Qb1K5E1SZEBzmin3uPwKS0
-         NQZqJ5mT+FDTanImZHG8cfHtu2EjlIV8oY5qs8oGJfa9cnbVe4sZduLRPfi6cSSYacGP
-         WcYkz0oHoHWKhEIlbuwi6ZTjnMugV4ERf9RWu1jbX2WWMdzMHW7o120SAXfNFzWZotrQ
-         BpdQPqWzERqNsWZNwYQcOp61xqPeVUmEo4zRESMrXieRU54At/dX7CYHW8uqSza6k4/K
-         ZqWhGiMPsl/hIkUZWxlYZFqpPSUeA1TiYVhNleMjiGNR6rBdVwGqmdyPojT8Abdjp8Jr
-         9JYg==
+        bh=8fgwK/RxIA62ZhQnmNwFQg4KLufDZNiQl4ABIfYQapI=;
+        b=jqlB4Cw7myx1XrDdhvXWWyw8XGpmnB579Ge1xPNvhEQFr9iBxDZ5VDJnQIANkoo293
+         7mqv9RTswXXKRbabiTRcEZ4YWlzNFyg9SQ1DbkyELS+Tjox7T6sYYGxgU+ckZoWxbLKp
+         5lql0XtnvRvKzRaGhPxO9o5Fdo2iPRj+5GjnGzwv+dPlz0zET94NlfSu7apibH7QmC/Q
+         ijxNIcFk8jzPVqMU2jzQyKGIcWRyjRc9aZv/7ajOijoEKUyHVkF8SVrulqZHoQXwBiKw
+         JhHw+Z8iZUimkpU1VtRnHoQMLO9oMN0BfiGSn5V0rzfkKmLtD+xHRrTS44Uo90kV8Xaz
+         kv3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to;
-        bh=z5f9aZJUWrYWjBwlTTrNoDRWDOIdxd7l1qvuVBHpDxQ=;
-        b=Ro2AAmDoVa1MZxSljx6f7UV8FH9Q+3K/0WkNnuB116gLm9kI+QTcLOQTEYrDUDKUJn
-         cEv8PSpspnsKUKadavIHCNLkQn6dAlAq/+heWFoVYFpNUXGdHp7s3UmLAJrywY0AwZc/
-         qHenehuBLAOGFcPr866DKrOIOHk9obEfdjSyMetmAT5S4DOhevlV8mtJ4wpQIqzc6OqC
-         tjU7qnHPwvKx4XCWV7pcDSjmpz/J/jc5tFFmEIPycAJFQEvv+6F9QFQ+pym+SALnMnkB
-         o0ZSjw+hzbvoC8JPal7kpGLcoN1hc3wYJxyDfj1js/KrR+RmzxlwEHw2/FKhKct8whAQ
-         c+MQ==
-X-Gm-Message-State: APjAAAV1Vp5xbuz5Cr1uKIhGwdBVYIDtOb2T5l+COY9C+2sq+xgf99CA
-        quPJDp+jiSOuCFhhNzBbO90eVQaJ
-X-Google-Smtp-Source: APXvYqy3eM9OGJ7Qsli1CyyfXcsVba+CwpWRcSqu5zNBLXoRWQpO54KG9TYPn0WDVDpf2nXoIpvmrw==
-X-Received: by 2002:a1c:ba83:: with SMTP id k125mr341975wmf.106.1582568810387;
-        Mon, 24 Feb 2020 10:26:50 -0800 (PST)
+        bh=8fgwK/RxIA62ZhQnmNwFQg4KLufDZNiQl4ABIfYQapI=;
+        b=Pk8C/qdeBEXfeCdrv9kOeMO8tuvs9+qjvs3irs9HGTGZZSeKE2chKwXfSiq7+XT7yj
+         48DJU5CwwpP1MX0W9LA9UVKinJkqDmHAp5KwmhSkveRQvD26PU6n1IMgRTw07/Qb9Zba
+         TfQX8rgOGTTj/nn7tqxt12wt8vDoCdFQNe9sgBi8OzFcZqU+g+VrC0Gh/edoCqYxeO1v
+         jfBRAluMM5gxvVt9SGvCz4euZaLDiGwYhRnMwuXtRbsIwkwFhwqWA40nCYT93ECXUeNv
+         pP91T3dQCGxvsLPaEE7Ek5r/AgfyEH6rAifPbe7ugiuYLWHLPI8Ao3E0WP4q+r16RIqU
+         YR7g==
+X-Gm-Message-State: APjAAAVY4ogLY4tVdlbIcsl6iOUMY4MqB7m7hVn1QlVYkv7WI1h0dtwb
+        +H2uUzgxyRBdrYyrFoNmVgGSzXbl
+X-Google-Smtp-Source: APXvYqzMPPK5TdSJX200/mfbIwUJo4805LUgBbvXtZMR7mtld2SzvPAL8BtZIskrv6xVe5bux8rfHQ==
+X-Received: by 2002:adf:f6c8:: with SMTP id y8mr67015916wrp.167.1582569235973;
+        Mon, 24 Feb 2020 10:33:55 -0800 (PST)
 Received: from [192.168.43.177] ([109.126.137.65])
-        by smtp.gmail.com with ESMTPSA id b7sm11665888wrs.97.2020.02.24.10.26.47
+        by smtp.gmail.com with ESMTPSA id q9sm20575512wrx.18.2020.02.24.10.33.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 10:26:48 -0800 (PST)
-Subject: Re: [PATCH liburing v5 2/2] test/splice: add basic splice tests
+        Mon, 24 Feb 2020 10:33:55 -0800 (PST)
+Subject: Re: [PATCH RFC] io_uring: remove retries from io_wq_submit_work()
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1582566728.git.asml.silence@gmail.com>
- <aa79d4a192bd1a8e68beddfb177618c1cdacf381.1582566728.git.asml.silence@gmail.com>
- <56c83973-db0f-cc25-4b78-6c9a74431d2a@kernel.dk>
+References: <843cc96a407b2cbfe869d9665c8120bdde34683e.1582535688.git.asml.silence@gmail.com>
+ <295a86f4-6e70-366a-e056-33894430c7aa@kernel.dk>
+ <f880f914-8fd4-2f11-a859-a78148915699@gmail.com>
+ <abe952ad-54d8-1d18-7fe6-6a7f1666b7e0@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -93,108 +94,101 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <060087a8-a6c1-b44c-1b7c-3fc0de3a4a5d@gmail.com>
-Date:   Mon, 24 Feb 2020 21:26:01 +0300
+Message-ID: <e11dbcc8-3986-73cd-3cc8-289adf87f520@gmail.com>
+Date:   Mon, 24 Feb 2020 21:33:08 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <56c83973-db0f-cc25-4b78-6c9a74431d2a@kernel.dk>
+In-Reply-To: <abe952ad-54d8-1d18-7fe6-6a7f1666b7e0@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="PgiuQhw0exthb7WTWncotxEke0BjsfEnG"
+ boundary="kzPYkzonS5jh8hUz1bzpdy6HFilQdvotF"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---PgiuQhw0exthb7WTWncotxEke0BjsfEnG
-Content-Type: multipart/mixed; boundary="ceZPB6kdPvOEc8OWHWoVfEkx9GkLSgbr2";
+--kzPYkzonS5jh8hUz1bzpdy6HFilQdvotF
+Content-Type: multipart/mixed; boundary="yAEbbSWxb05pCtCythePJPem0J8gxK1eY";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Message-ID: <060087a8-a6c1-b44c-1b7c-3fc0de3a4a5d@gmail.com>
-Subject: Re: [PATCH liburing v5 2/2] test/splice: add basic splice tests
-References: <cover.1582566728.git.asml.silence@gmail.com>
- <aa79d4a192bd1a8e68beddfb177618c1cdacf381.1582566728.git.asml.silence@gmail.com>
- <56c83973-db0f-cc25-4b78-6c9a74431d2a@kernel.dk>
-In-Reply-To: <56c83973-db0f-cc25-4b78-6c9a74431d2a@kernel.dk>
+Message-ID: <e11dbcc8-3986-73cd-3cc8-289adf87f520@gmail.com>
+Subject: Re: [PATCH RFC] io_uring: remove retries from io_wq_submit_work()
+References: <843cc96a407b2cbfe869d9665c8120bdde34683e.1582535688.git.asml.silence@gmail.com>
+ <295a86f4-6e70-366a-e056-33894430c7aa@kernel.dk>
+ <f880f914-8fd4-2f11-a859-a78148915699@gmail.com>
+ <abe952ad-54d8-1d18-7fe6-6a7f1666b7e0@kernel.dk>
+In-Reply-To: <abe952ad-54d8-1d18-7fe6-6a7f1666b7e0@kernel.dk>
 
---ceZPB6kdPvOEc8OWHWoVfEkx9GkLSgbr2
+--yAEbbSWxb05pCtCythePJPem0J8gxK1eY
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 24/02/2020 21:23, Jens Axboe wrote:
-> On 2/24/20 10:55 AM, Pavel Begunkov wrote:
->> +static int copy_single(struct io_uring *ring,
->> +			int fd_in, loff_t off_in,
->> +			int fd_out, loff_t off_out,
->> +			int pipe_fds[2],
->> +			unsigned int len,
->> +			unsigned flags1, unsigned flags2)
->> +{
->> +	struct io_uring_cqe *cqe;
->> +	struct io_uring_sqe *sqe;
->> +	int i, ret =3D -1;
->> +
->> +	sqe =3D io_uring_get_sqe(ring);
->> +	if (!sqe) {
->> +		fprintf(stderr, "get sqe failed\n");
->> +		return -1;
->> +	}
->> +	io_uring_prep_splice(sqe, fd_in, off_in, pipe_fds[1], -1,
->> +			     len, flags1);
->> +	sqe->flags =3D IOSQE_IO_LINK;
->> +
->> +	sqe =3D io_uring_get_sqe(ring);
->> +	if (!sqe) {
->> +		fprintf(stderr, "get sqe failed\n");
->> +		return -1;
->> +	}
->> +	io_uring_prep_splice(sqe, pipe_fds[0], -1, fd_out, off_out,
->> +			     len, flags2);
->> +
->> +	ret =3D io_uring_submit(ring);
->> +	if (ret <=3D 1) {
->> +		fprintf(stderr, "sqe submit failed: %d\n", ret);
->> +		return -1;
->> +	}
+On 24/02/2020 21:16, Jens Axboe wrote:
+> On 2/24/20 8:40 AM, Pavel Begunkov wrote:
+>> On 24/02/2020 18:27, Jens Axboe wrote:
+>>> On 2/24/20 2:15 AM, Pavel Begunkov wrote:
+>>>> It seems no opcode may return -EAGAIN for non-blocking case and expe=
+ct
+>>>> to be reissued. Remove retry code from io_wq_submit_work().
+>>>
+>>> There's actually a comment right there on how that's possible :-)
+>>
+>> Yeah, I saw it and understand the motive, and how it may happen, but c=
+an't
+>> find a line, which can actually return -EAGAIN. Could you please point=
+ to an
+>> example?
 >=20
-> This seems wrong, you prep one and submit, the right return value would=
-
-> be 1. This check should be < 1, not <=3D 1. I'll make the change, rest
-> looks good to me. Thanks!
+> Just give it a whirl, should be easy to reproduce if you just do:
 >=20
+> # echo 2 > /sys/block/nvme0n1/queue/nr_requests
+> # fio/t/io_uring /dev/nvme0n1
+>=20
+> or something like that. It's propagated from the kiocb endio handler,
+> through, req->result at the bottom of io_issue_sqe()
 
-There are 2 sqes, "fd_in -> pipe" and "pipe -> fd_out".
+I see now, thanks! What a jungle
+
+>=20
+> 	if (ctx->flags & IORING_SETUP_IOPOLL) {
+> 		const bool in_async =3D io_wq_current_is_worker();
+>=20
+> 		if (req->result =3D=3D -EAGAIN)                                    =20
+> 			return -EAGAIN;
+> 	[...]
+>=20
+>=20
 
 --=20
 Pavel Begunkov
 
 
---ceZPB6kdPvOEc8OWHWoVfEkx9GkLSgbr2--
+--yAEbbSWxb05pCtCythePJPem0J8gxK1eY--
 
---PgiuQhw0exthb7WTWncotxEke0BjsfEnG
+--kzPYkzonS5jh8hUz1bzpdy6HFilQdvotF
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl5UFT0ACgkQWt5b1Glr
-+6XXig/+I52yH0caE8JJTJs+LbiblMmX+2mV8oULw0KEcBOrCXp6/nSX4ZJ8ewAR
-L66HXcbPpKyg/rSyxeEF7Zy3GGtlFrNacOQMnbggSwOBRTAzVA7m6IkOeW9fgjcQ
-yt6NtMT+3DtDwDC886UiCiF3Ixfn068uU4ejV9xWpsiiKsGKXA9UxJFrYIt1JMM8
-5gzgp+r9TupdeizXhRczAuj8/N4XXWU5soMLtrKiJQ4uJgD4vuo7TirBgcclDp2X
-13EN+l6s4a51eGxFMCiNi6cYbeXBm0nl1DAO+LCYOxorYd0xD61/y6JetA1LV/no
-OeYHaxffqeENPoVTEAxVnDQSDZwiwv6cKjH5LiIr6E1H8BK3AaJVeQf3cUNbsUNX
-d7T2ETTLT9TvGd4YxP1Hke+fRU9XXf6jCd2QZgcRJ2YinW/f3NxcOkb3yt5JU5+r
-xpN577CGDUhVPCaBCeBXQw5nU/eiW22+AEh43AgobqXCppM+eAf3o47d2iHismZG
-fr6MtmXUftIYhWSdB2s4o2OuJZIEhlwYlQ3vgTki0DgVigAupbxQy1Ssll+aG3PS
-Oe97y4IzefWmXNcLKXRU8uCAihR57XkddfsETiBjw47Fd0vmg0uru2bUsNsyRq2j
-LaLEZqxGqCAWTqsw7/vzO5nCDT4AGOz4sC+LaEXqP1a0fMb8S4E=
-=vgQo
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl5UFuQACgkQWt5b1Glr
++6XmWQ//Z9zSJzt3nd4cjAV1Q77gzzscwJ5RVloO7Rgbg9INHuC49sQJhJUieLza
+7tfPV9fGR6OAEjggHfRQYZXCOMsrjNAIvqf2oudIUFpeT+5WzBQH6t4k7iUEcgml
+wlrIPNxwxW1+DGKy0ba44+wu6lrMYRXhHoHwGDcQtOz0Hr2D0q/Rr5ITRLiIjng3
+fWNTMTI97PbTM3ZiDLtThog+CERrAMQncPqBWHM5qvSQjg7cb1euzQoCt3CVm2AO
+TVFVG9m0DIfGzXwKLFViXALZlY4ufAPjt8pcCS2zsLNnCcuei9eaokpWD07560Ji
+nyAUBvmxI4v06Ei6NQ4jhSEI5Vr95pBrGoKLHEy3ClmOAwDQhZRaChJ8qdlmQtRP
+/oX1Qhsh8HOthA0z3Ip0QP8Nqfmu9tq89aBb8ssv2LjmuspAtkViw3VJrdQWFZEu
+VQwqTXzF3Jt/F7ScDv2z2j+3x6xgIQwB6EZ2zwDDKsoVR04WuEobL0miU1mFIznD
+kS15bpeOtk+NxJQGGa2GIoQiWKhuvKdsUCX1693Zfb1nDhs574yXDcP7YG82XWxP
++YeAwQt0DueSeK1iUYfyt4knq6LHRNlGWkzn+vwKGXr5gbUQElPI4THSczHwkQhu
+CGpeml4WQB5zj1Av8rnO2uPGUVniD+I9L2pCtkn3eXCuExViAzE=
+=aXN9
 -----END PGP SIGNATURE-----
 
---PgiuQhw0exthb7WTWncotxEke0BjsfEnG--
+--kzPYkzonS5jh8hUz1bzpdy6HFilQdvotF--

@@ -2,249 +2,194 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5139316B4A5
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 23:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9110E16B5A5
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 00:33:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbgBXWym (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 17:54:42 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55959 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBXWyl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 17:54:41 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q9so1018000wmj.5;
-        Mon, 24 Feb 2020 14:54:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:references:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to;
-        bh=F6Z1iN97w4+cVJAjKNW+II86CGcNkQZPJNHzISvdQGs=;
-        b=saRj2wQ2FiKUjG6c6Kec7pEPRByBlpQAPkIIVjLQDUHZ+lbNa4I6aWyym5ilsh85ZE
-         hDDsIiXVZ4s+mZNyR7fDLm2NyKiZrNqCZjR+ZrCgTXhmM+lD88+r7eHwcnqjqT+PvlNr
-         aU1e2JK8To2psDn14cBqsEaXjnc87FRBcrcizP9NFkpJ3z38d4OJHz8EzNpqTCvVi3wv
-         e3AkozQgEtAoog0gsQqLZekBqr08BbkcjmkQuMPweWj03MSUXDGNUrJ5zS60Bkb6fxal
-         vLGrhan/u8AJT8F6vjMKhW/3Rt4CsMZE8S2DbGMNvhbXk3s6Oj1zSRtigc0OFQ/OzaGq
-         gW0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=F6Z1iN97w4+cVJAjKNW+II86CGcNkQZPJNHzISvdQGs=;
-        b=HuW7+KKewWR2LPmGyKl2Y7Mgi2R24OL6QW+kwKdQYe9vFDghEAWUdgbw93+6uNuIPJ
-         bZwb+RmyY/c2JTYflBte/OVq4IdN4pcne5UYuptSfNufvebslYPAZBHDMI3XnY9G7BUw
-         cTvWtV/Fs7lRZkFX6LmqY5a91WM6fvGGn7xlF4HDPNHiYfQAEFBbfhSSgC6FaeHBZFZd
-         j/ZK9cX0S0jGgo1AH8WdEXJZ3IZ3cTeBb992s2gQ8xLc3V4cWE788PCfs08iWA8aF6b4
-         lsFmeN7j3N28Zz1AE+Ve0BP34tckZcOIP8AkmGK/ApgxHLqqs+UWsljFTxVHDV285EpJ
-         an+w==
-X-Gm-Message-State: APjAAAU3hjfb49H2ijKLmoEiKe1QHCGPUAWPrIK4uGfn2Ym2lhFdr32d
-        6K3FH7thtC5EWchFjib0X4ggwkgi
-X-Google-Smtp-Source: APXvYqwmcD2c+TtkpFaxKoieGZ01+ffdFiQplU6fR7FJW60zxHf52yxbnVeXhe7O2K0XdFYnp2q31w==
-X-Received: by 2002:a1c:a1c3:: with SMTP id k186mr1175063wme.179.1582584879480;
-        Mon, 24 Feb 2020 14:54:39 -0800 (PST)
-Received: from [192.168.43.206] ([109.126.137.65])
-        by smtp.gmail.com with ESMTPSA id i2sm1173626wmb.28.2020.02.24.14.54.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 14:54:38 -0800 (PST)
-Subject: Re: [PATCH v4 0/3] io_uring: add splice(2) support
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1582530525.git.asml.silence@gmail.com>
- <923cc84a-e11f-2a16-2f12-ca3ba2f3ade4@kernel.dk>
- <596e6b61-e9de-7498-05c4-571613673c15@kernel.dk>
- <e2fe9083-d5bf-001d-0821-04e265cb85cb@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <189e8cb4-df3a-f12d-9b21-7134caa918bb@gmail.com>
-Date:   Tue, 25 Feb 2020 01:53:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727896AbgBXXc7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 18:32:59 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:58362 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbgBXXc6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 18:32:58 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01ONVPTr195994;
+        Mon, 24 Feb 2020 23:32:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=a8ubdp8TUaTsUfIREXDEbgh9tTowTVfz3WviG2xF3SA=;
+ b=EDtpydoGkAM2RvvhzezAX6jdwWZ5J3VE+v1s+/yGeddua1nkTcs54pKKV5Jc3yMjoh+l
+ kUL5xwsY1YS25fIKQ8j0s5fxmGil+u5WwW7kfsDe3InlmmXNwM2TrUyN8Gqctw4bIgi8
+ Mtf0x3jIaagoabaYimTEb8orNF6e3cRDrFlnqXJ7FBy5n89Gk0mAoHuZixjOeL5aG6h6
+ Hs7L4YbGyAydYcIBrEYSN7IMwbLdDr82xseQiHJAyFttqt9mpRDfk6bmYAxMnkC3femS
+ 5sjRB+Dis3i4OJLTY8RWHUlKQDUnlT5Sk2UWhaeWqkZYBsr0pSOaxm8IwyX4XnhWYPu+ zg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2ycppr8c65-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Feb 2020 23:32:50 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01ONS750130848;
+        Mon, 24 Feb 2020 23:32:50 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2ybe12c6tn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Feb 2020 23:32:50 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01ONWniO010039;
+        Mon, 24 Feb 2020 23:32:49 GMT
+Received: from [10.154.136.165] (/10.154.136.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Feb 2020 15:32:49 -0800
+Subject: Re: [PATCH 1/1] block: Manage bio references so the bio persists
+ until necessary
+To:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>
+Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        MATTHEW_WILCOX <matthew.wilcox@oracle.com>
+References: <1580441022-59129-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1580441022-59129-2-git-send-email-bijan.mottahedeh@oracle.com>
+ <20200131064230.GA28151@infradead.org>
+ <9f29fbc7-baf3-00d1-a20c-d2a115439db2@oracle.com>
+ <20200203083422.GA2671@infradead.org>
+ <aaecd43b-dd44-f6c5-4e2d-1772cf135d2a@oracle.com>
+ <20200204075124.GA29349@infradead.org>
+ <46bf2ea0-7677-44af-8e23-45a10710ca3d@kernel.dk>
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Message-ID: <8111469e-713d-88d3-7f12-55e90edaf52b@oracle.com>
+Date:   Mon, 24 Feb 2020 15:32:45 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <e2fe9083-d5bf-001d-0821-04e265cb85cb@gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="Ozoo4hy5KCIvsO7awHbFxR1uVzpAnLi9p"
+In-Reply-To: <46bf2ea0-7677-44af-8e23-45a10710ca3d@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Antivirus: Avast (VPS 200223-0, 02/23/2020), Outbound message
+X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9541 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ suspectscore=2 malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002240175
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9541 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 malwarescore=0 suspectscore=2 impostorscore=0
+ spamscore=0 phishscore=0 mlxscore=0 clxscore=1015 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002240175
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Ozoo4hy5KCIvsO7awHbFxR1uVzpAnLi9p
-Content-Type: multipart/mixed; boundary="Aude6cfmBxHJCEFukhlDs0IzGgKB6pbmc";
- protected-headers="v1"
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <189e8cb4-df3a-f12d-9b21-7134caa918bb@gmail.com>
-Subject: Re: [PATCH v4 0/3] io_uring: add splice(2) support
-References: <cover.1582530525.git.asml.silence@gmail.com>
- <923cc84a-e11f-2a16-2f12-ca3ba2f3ade4@kernel.dk>
- <596e6b61-e9de-7498-05c4-571613673c15@kernel.dk>
- <e2fe9083-d5bf-001d-0821-04e265cb85cb@gmail.com>
-In-Reply-To: <e2fe9083-d5bf-001d-0821-04e265cb85cb@gmail.com>
-
---Aude6cfmBxHJCEFukhlDs0IzGgKB6pbmc
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-On 25/02/2020 01:51, Pavel Begunkov wrote:
-> On 25/02/2020 01:34, Jens Axboe wrote:
->> On 2/24/20 8:35 AM, Jens Axboe wrote:
->>> On 2/24/20 1:32 AM, Pavel Begunkov wrote:
->>>> *on top of for-5.6 + async patches*
->>>>
->>>> Not the fastets implementation, but I'd need to stir up/duplicate
->>>> splice.c bits to do it more efficiently.
->>>>
->>>> note: rebase on top of the recent inflight patchset.
+On 2/4/2020 12:59 PM, Jens Axboe wrote:
+> On 2/4/20 12:51 AM, Christoph Hellwig wrote:
+>> On Mon, Feb 03, 2020 at 01:07:48PM -0800, Bijan Mottahedeh wrote:
+>>> My concern is with the code below for the single bio async case:
 >>>
->>> Let's get this queued up, looks good to go to me. Do you have a few
->>> liburing test cases we can add for this?
+>>>                             qc = submit_bio(bio);
+>>>
+>>>                             if (polled)
+>>>                                     WRITE_ONCE(iocb->ki_cookie, qc);
+>>>
+>>> The bio/dio can be freed before the the cookie is written which is what I'm
+>>> seeing, and I thought this may lead to a scenario where that iocb request
+>>> could be completed, freed, reallocated, and resubmitted in io_uring layer;
+>>> i.e., I thought the cookie could be written into the wrong iocb.
+>> I think we do have a potential use after free of the iocb here.
+>> But taking a bio reference isn't going to help with that, as the iocb
+>> and bio/dio life times are unrelated.
 >>
->> Seems to me like we have an address space issue for the off_in and
->=20
-> Is that a problem? From the old fixing thread loop_rw_iter() it appeare=
-d
-> to me, that it's ok to pass a kernel address as a user one.
-> f_op->write of some implemented through the same copy_to_user().
+>> I vaguely remember having that discussion with Jens a while ago, and
+>> tried to pass a pointer to the qc to submit_bio so that we can set
+>> it at submission time, but he came up with a reason why that might not
+>> be required.  I'd have to dig out all notes unless Jens remembers
+>> better.
+> Don't remember that either, so I'd have to dig out emails! But looking
+> at it now, for the async case with io_uring, the iocb is embedded in the
+> io_kiocb from io_uring. We hold two references to the io_kiocb, one for
+> submit and one for completion. Hence even if the bio completes
+> immediately and someone else finds the completion before the application
+> doing this submit, we still hold the submission reference to the
+> io_kiocb. Hence I don't really see how we can end up with a
+> use-after-free situation here.
+>
+> IIRC, Bijan had traces showing this can happen, KASAN complaining about
+> it. Which makes me think that I'm missing a case here, though I don't
+> immediately see what it is.
+>
+> Bijan, could post your trace again, I can't seem to find it?
+>
 
-Either I finally need to check myself how the protection is implemented..=
-=2E
+I think the problem may be in the nvme driver's handling of multiple 
+pollers sharing the same CQ, due to the fact that nvme_poll() drops 
+cq_poll_lock before completing the CQEs found with nvme_process_cq():
 
->=20
->> off_out parameters. Why aren't we passing in pointers to these
->> and making them work like regular splice?
->=20
-> That's one extra copy_to_user() + copy_from_user(), which I hope to rem=
-ove
-> in the future. And I'm not really a fan of such API, and would prefer t=
-o give
-> away such tracking to the userspace.
->=20
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 792ef01a521c..b0cfd68be8c9 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -448,8 +448,8 @@ struct io_epoll {
->>  struct io_splice {
->>  	struct file			*file_out;
->>  	struct file			*file_in;
->> -	loff_t				off_out;
->> -	loff_t				off_in;
->> +	loff_t __user			*off_out;
->> +	loff_t __user			*off_in;
->>  	u64				len;
->>  	unsigned int			flags;
->>  };
->> @@ -2578,8 +2578,8 @@ static int io_splice_prep(struct io_kiocb *req, =
-const struct io_uring_sqe *sqe)
->>  		return 0;
->> =20
->>  	sp->file_in =3D NULL;
->> -	sp->off_in =3D READ_ONCE(sqe->splice_off_in);
->> -	sp->off_out =3D READ_ONCE(sqe->off);
->> +	sp->off_in =3D u64_to_user_ptr(READ_ONCE(sqe->splice_off_in));
->> +	sp->off_out =3D u64_to_user_ptr(READ_ONCE(sqe->off));
->>  	sp->len =3D READ_ONCE(sqe->len);
->>  	sp->flags =3D READ_ONCE(sqe->splice_flags);
->> =20
->> @@ -2614,7 +2614,6 @@ static int io_splice(struct io_kiocb *req, struc=
-t io_kiocb **nxt,
->>  	struct file *in =3D sp->file_in;
->>  	struct file *out =3D sp->file_out;
->>  	unsigned int flags =3D sp->flags & ~SPLICE_F_FD_IN_FIXED;
->> -	loff_t *poff_in, *poff_out;
->>  	long ret;
->> =20
->>  	if (force_nonblock) {
->> @@ -2623,9 +2622,7 @@ static int io_splice(struct io_kiocb *req, struc=
-t io_kiocb **nxt,
->>  		flags |=3D SPLICE_F_NONBLOCK;
->>  	}
->> =20
->> -	poff_in =3D (sp->off_in =3D=3D -1) ? NULL : &sp->off_in;
->> -	poff_out =3D (sp->off_out =3D=3D -1) ? NULL : &sp->off_out;
->> -	ret =3D do_splice(in, poff_in, out, poff_out, sp->len, flags);
->> +	ret =3D do_splice(in, sp->off_in, out, sp->off_out, sp->len, flags);=
+nvme_poll()
+{
+     ...
+     spin_lock(&nvmeq->cq_poll_lock);
+     found = nvme_process_cq(nvmeq, &start, &end, -1);
+     spin_unlock(&nvmeq->cq_poll_lock);
 
->>  	if (force_nonblock && ret =3D=3D -EAGAIN)
->>  		return -EAGAIN;
->> =20
->>
->=20
+     nvme_complete_cqes(nvmeq, start, end);
+     ...
+}
 
---=20
-Pavel Begunkov
+Furthermore, nvme_process_cq() rings the CQ doorbell after collecting 
+the CQEs but before processing them:
 
+static inline int nvme_process_cq(struct nvme_queue *nvmeq, u16 *start, 
+u16 *end, unsigned int tag)
+{
+     ...
+     while (nvme_cqe_pending(nvmeq)) {
+         ...
+         nvme_update_cq_head(nvmeq);
+     }
+     ...
+         nvme_ring_cq_doorbell(nvmeq);
+     return found;
+}
 
---Aude6cfmBxHJCEFukhlDs0IzGgKB6pbmc--
+Each poller effectively tells the controller that the CQ is empty when it rings the CQ doorbell. This is ok if there is only one poller but with many of them, I think enough tags can be freed and reissued that CQ could be overrun.
 
---Ozoo4hy5KCIvsO7awHbFxR1uVzpAnLi9p
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+In one specific example:
 
------BEGIN PGP SIGNATURE-----
+- Poller 1 find a CQ full of entries in nvme_process_cq()
+- Poller 1 processes CQEs, and more pollers find CQE ranges to process
+   Pollers 2-4 start processing additional non-overlapping CQE ranges
+- Poller 5 finds a CQE range that is overlapping with Poller 1
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl5UVAMACgkQWt5b1Glr
-+6U6cQ/+OtaKdH4Wn7/s7+vEyidYyGSmLFzAVj/WPBXzP7nYlZpgXPoQ45knUbus
-roj7NcE0rj9ZPk8FUgfnkI51KeJH0jc2pAroYUEYkBprCvUSTTRLzH9fFeB9UZmg
-+mdhrETW/FMqLKY6PQ85ydTwXpnF38c2CPoT/QaxOz7YOMwDlIc4zmVMy86jkgw1
-e8N7C7Xd4POlAOfpTGwIXTCvBapVVjVfZ5vvKLapYHiQVo4Cmt6/8QH0fDIC1LNq
-azwTfPmAnTzYywLQb/HiAU/MzcIBYKrxlSdsMu20iH69UvxJmdzJx3XrG1cYbpok
-PA/OVSq+kncEezoQdNXV7/r/ETBHfG7Tqt8MprzGpHJH28bygwiSu1mrsGRAaH6t
-4ULG1Z2J+JjGjLUcm2TLsKH7rDTFRh4zACJQl2zl9Iwhdwa+wVV8ZnKcAw+mNTR/
-nN74hYsn1UncSwGO9/ydeR+Tg4tB8gjXApeVzGPx9Tuf2ukGpgVNFlAYYjdT70ZN
-d9upyg/9yIuQMVL+5XGd4t9zVRbTdsTsZcfTjTzl1zyzm98Em6lumgsQAkyF9rGf
-zMF5C2Qj6IbBN/bJUcgSqMUWMYkn+IoP4eZQoZcctbV8PdQEYMc9Yi+b1Zf80MR/
-FK6mR8GMCFsz2WHTif+0h0jj4WPyqpmUcBXxe0zfKivfNCgUuQE=
-=VNrk
------END PGP SIGNATURE-----
+CQ size 1024
 
---Ozoo4hy5KCIvsO7awHbFxR1uVzpAnLi9p--
+Poller          1   2    3    4    5
+CQ start index  10  9    214  401  708
+CQ end index    9   214  401  708  77
+CQ start phase  1   0    0    0    0
+CQ end phase    0   0    0    0    1
+
+Poller 1 finds the CQ phase has flipped when processing CQE 821 and  indeed the phase has flipped because of poller 5.  If I interpret this data correctly, it suggests that Pollers 1 and 5 overlap.
+
+After that I start seeing errors.
+
+A simpler theoretical example with two threads suggested by Matthew Wilcox:
+
+Thread 1 submits enough I/O to fill the CQ
+Thread 1 then processes two CQEs, two block layer tags become available.
+Thread 1 is preempted by thread 2.
+Thread 2 submits two I/Os.
+Thread 2 processes the two CQEs which it owns.
+Thread 2 submits two more I/Os.
+Those CQEs overwrite the next two CQEs that will be processed by thread 1.
+
+Two of thread 1's IOs will not receive a completion.  Two of
+thread 2's IOs will receive two completions.
+
+Just as a workaround, I held cq_poll_lock while completing the CQEs and see no errors.
+
+Does that make sense?
+
+Thanks.
+
+--bijan
+

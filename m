@@ -2,135 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED7A716A269
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 10:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56C6616A3B2
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 11:16:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbgBXJfs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 04:35:48 -0500
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:49995 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726216AbgBXJfs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 04:35:48 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 67A702099D;
-        Mon, 24 Feb 2020 04:35:47 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 24 Feb 2020 04:35:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=MxMsqNAb7GAwS1J5Cd2NRuaub8+
-        U6Y5YQ4LvFPeCJow=; b=lkyzl70N0cc7uFEPoIQjjRwxXmNzMvsMyDxRugo85Lu
-        8QcfeCRRdykcZVPfYcQhaBPH0RsoMhjcmj2EjoFP6pd9RqZdgwXXRSYNY+B15VTx
-        siXJEU78ILsP03qf+W9rk6VbMEViHU6h3BjqMyUWs0VjZLff4gB+p5oK/3Ej05N6
-        oqmvadVApMa31p/+h11xoMMQGl4i+0BqDPVA2XXjNtW/Sbu/iuoIak8bEuKsemJ8
-        xeIMm6d8svVelthUd1iCuGhzkCnzAyEU9ujCggZWlZkGOd4BjnRcKAquxsqp0WHj
-        IfjBf4zKgk23UemCeI2M7uK2Gju8CnFgoLMN4tYiaJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=MxMsqN
-        Ab7GAwS1J5Cd2NRuaub8+U6Y5YQ4LvFPeCJow=; b=qXBENHW3qHCSaNSarfJrFu
-        CNGmoBBvxjAh5H/dG4R9JAo3Xzf4C/mXUGMq9+Z2jwMuMFC3sPm2tp5omk2EdSsO
-        I0QiLI6KkauChBtU8dT5pCtsRf3mZU/eRs2zhTyJe8wTZURnyC5JDjgZ9az1n7Sq
-        L6LymxjW4TidtHY/Lf27QCH7VAtCumsZlUALJlvYnbvztAkItEKQMB+hDjItozd4
-        FLXrPhT84SzbOqcHKD5eFrYWWS9Nu38aTpT+17ZE3gtkgQzt89N5chBZQs196iGk
-        JHgkNkkwvuhuwzrMOl/ckAFYtOmPczW7hSdJifjv2Dp1NJObb26f+KqToWB4AK8A
-        ==
-X-ME-Sender: <xms:8phTXtkZWkJNMS2qJ_C2eciL6EiD1H8lbvNkUdROtsaMw-8TzOib6w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledtgddtiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
-    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecukfhppeeije
-    drudeitddrvddujedrvdehtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpegrnhgurhgvshesrghnrghrrgiivghlrdguvg
-X-ME-Proxy: <xmx:8phTXktGpRECYOzj9bgqXA8eapbQM4RDtb6dGD6UNZ-tV--QYlRzqg>
-    <xmx:8phTXvI2vuA9CGfvkCBbbBUcCR9Tpm43LIPbUX9oUEd7M7amSAub1w>
-    <xmx:8phTXhi75WxPU8wSuK5k2awoRZ0STfkx4KJkF9khieeadiVyqyW62g>
-    <xmx:85hTXgoM4fNbfepbX8vBhdmA7F9aX6-V3-QayxPgtCx7b5890C7JPQ>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A2F21328005E;
-        Mon, 24 Feb 2020 04:35:46 -0500 (EST)
-Date:   Mon, 24 Feb 2020 01:35:44 -0800
-From:   Andres Freund <andres@anarazel.de>
+        id S1727202AbgBXKQX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 05:16:23 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:40070 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727352AbgBXKQW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 05:16:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582539381;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hPf/yXWC/PiGfjXcPUU3BSfiGE9Nl86MyJqNGBc9zOA=;
+        b=iU/kaxq3MevMi2QoUmCxVjqe2su4gF4JkykBe202byy4TCffYhMYH4mbFsNK476l6OCTKC
+        OEbLHTu0HBd543GK6upO7I65g1TpsPejVnao9wEwH6EiRkFXShdNJz9jERfSDp+cKKUOZp
+        DXkZkli/IBPpkaHfftX2nww36vg2Avg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-12-6tqKtUBfMbSChFa5EnVjbg-1; Mon, 24 Feb 2020 05:16:18 -0500
+X-MC-Unique: 6tqKtUBfMbSChFa5EnVjbg-1
+Received: by mail-wm1-f72.google.com with SMTP id p2so2235023wma.3
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 02:16:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hPf/yXWC/PiGfjXcPUU3BSfiGE9Nl86MyJqNGBc9zOA=;
+        b=bShtnD3QVo4mXBCzKIxLfUhnjyfFTjB28sSg8BpkqvtDsbMQ2sL/3Gpmwdn1eGhNuh
+         LZZ3NCoMd2MtkXuSWfK9hiVZoQFO/ZW4SVupyknzkdpcsYh/+L1s1Eqb6j57qD6JCHTc
+         wxzt5+8oIvfKHXwHYwIyDnDItuCHf8kkDB3qUPzrWFsDJ6VIWbkaCQbKlb8fmbqiJR78
+         z0GT86xyPHQln64xejnD1oNh90Fb6cw50T74yT+CMbhA1Atf21q4SMlgIJU87qsO2Mys
+         ANbyX+86sP1QPXcBjYBdrBZQyIS0MCSwALI8meMvoDCfkS3eg0EX7wLTAtMdKyTLInui
+         8uaA==
+X-Gm-Message-State: APjAAAV/4A2p2pxl0Pbo7bxQOdlnBhtfblJetCRBb2JKdWv/l9NRAd4r
+        szTAh/ppqfFPHs/1Xm+e5NIvyV2ta200s+tVy42N/Bs9CwY4bUo3vFbL8hLU8FE2ZFUQhwJK4eD
+        LQZ4CSDfMWsy+hwHji0w=
+X-Received: by 2002:adf:fd0e:: with SMTP id e14mr65075643wrr.127.1582539377518;
+        Mon, 24 Feb 2020 02:16:17 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzq75ZBbiYJBqXZFf3WHPu0AbaOStO3vsqhakZe5N3S1JHJ0dImuKw60zRTqP8RJRfhpwBzNQ==
+X-Received: by 2002:adf:fd0e:: with SMTP id e14mr65075621wrr.127.1582539377250;
+        Mon, 24 Feb 2020 02:16:17 -0800 (PST)
+Received: from steredhat (host209-4-dynamic.27-79-r.retail.telecomitalia.it. [79.27.4.209])
+        by smtp.gmail.com with ESMTPSA id a5sm17644194wmb.37.2020.02.24.02.16.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 02:16:16 -0800 (PST)
+Date:   Mon, 24 Feb 2020 11:16:14 +0100
+From:   Stefano Garzarella <sgarzare@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org
-Subject: Re: Buffered IO async context overhead
-Message-ID: <20200224093544.kg4kmuerevg7zooq@alap3.anarazel.de>
-References: <20200214195030.cbnr6msktdl3tqhn@alap3.anarazel.de>
- <c91551b2-9694-78cb-2aa6-bc8cccc474c3@kernel.dk>
- <20200214203140.ksvbm5no654gy7yi@alap3.anarazel.de>
- <4896063a-20d7-d2dd-c75e-a082edd5d72f@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH] io_uring: fix personality idr leak
+Message-ID: <20200224101614.rycnfdvcrhthlkct@steredhat>
+References: <a77e7987-0b1b-a01a-bd31-264c1179816c@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4896063a-20d7-d2dd-c75e-a082edd5d72f@kernel.dk>
+In-Reply-To: <a77e7987-0b1b-a01a-bd31-264c1179816c@kernel.dk>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+On Sun, Feb 23, 2020 at 02:17:36PM -0700, Jens Axboe wrote:
+> We somehow never free the idr, even though we init it for every ctx.
+> Free it when the rest of the ring data is freed.
+> 
+> Fixes: 071698e13ac6 ("io_uring: allow registering credentials")
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> ---
 
-On 2020-02-14 13:49:31 -0700, Jens Axboe wrote:
-> [description of buffered write workloads being slower via io_uring
-> than plain writes]
-> Because I'm working on other items, I didn't read carefully enough. Yes
-> this won't change the situation for writes. I'll take a look at this when
-> I get time, maybe there's something we can do to improve the situation.
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-I looked a bit into this.
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 7d0be264527d..d961945cb332 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -6339,6 +6339,7 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+>  	io_sqe_buffer_unregister(ctx);
+>  	io_sqe_files_unregister(ctx);
+>  	io_eventfd_unregister(ctx);
+> +	idr_destroy(&ctx->personality_idr);
+>  
+>  #if defined(CONFIG_UNIX)
+>  	if (ctx->ring_sock) {
+> 
+> -- 
+> Jens Axboe
+> 
 
-I think one issue is the spinning the workers do:
-
-static int io_wqe_worker(void *data)
-{
-
-	while (!test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
-		set_current_state(TASK_INTERRUPTIBLE);
-loop:
-		if (did_work)
-			io_worker_spin_for_work(wqe);
-		spin_lock_irq(&wqe->lock);
-		if (io_wqe_run_queue(wqe)) {
-
-static inline void io_worker_spin_for_work(struct io_wqe *wqe)
-{
-	int i = 0;
-
-	while (++i < 1000) {
-		if (io_wqe_run_queue(wqe))
-			break;
-		if (need_resched())
-			break;
-		cpu_relax();
-	}
-}
-
-even with the cpu_relax(), that causes quite a lot of cross socket
-traffic, slowing down the submission side. Which after all frequently
-needs to take the wqe->lock, just to be able to submit a queue
-entry.
-
-lock, work_list, flags all reside in one cacheline, so it's pretty
-likely that a single io_wqe_enqueue would get the cacheline "stolen"
-several times during one enqueue - without allowing any progress in the
-worker, of course.
-
-
-I also wonder if we can't avoid dequeuing entries one-by-one within the
-worker, at least for the IO_WQ_WORK_HASHED case. Especially when writes
-are just hitting the page cache, they're pretty fast, making it
-plausible to cause pretty bad contention on the spinlock (even without
-the spining above). Whereas the submission side is at least somewhat
-likely to be able to submit several queue entries while the worker is
-processing one job, that's pretty unlikely for workers.
-
-In the hashed case there shouldn't be another worker processing entries
-for the same hash. So it seems quite possible for the wqe to drain a few
-of the entries for that hash within one spinlock acquisition, and then
-process them one-by-one?
-
-Greetings,
-
-Andres Freund

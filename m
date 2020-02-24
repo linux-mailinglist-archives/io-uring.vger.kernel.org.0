@@ -2,51 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6050416AA54
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 16:41:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E52A16AA5B
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 16:44:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbgBXPlJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 10:41:09 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35386 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727742AbgBXPlJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 10:41:09 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w12so10928053wrt.2
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 07:41:07 -0800 (PST)
+        id S1727837AbgBXPo6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 10:44:58 -0500
+Received: from mail-wm1-f54.google.com ([209.85.128.54]:37086 "EHLO
+        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727734AbgBXPo5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 10:44:57 -0500
+Received: by mail-wm1-f54.google.com with SMTP id a6so9931895wme.2
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 07:44:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=WsorB5vWWvp3FN18bZLzd2tF/W1D1iRWl5fkxAjyCqY=;
-        b=nGG+ayN/4FAAJ+OzsDA6xPmt4YqKozwY7t6FRYMdkqwkc0B8bjnyxVF0m/kaQ/mIW5
-         eiwDl7o29YWgbq8Qi17f4TkjVd7Py50Il5oNZwHJ6/v86RB9N+bUUwEkB4wK6yzFr24L
-         MlN55D9NX3Hg96JBw3VPDW3+6j83NjpGeoCJcBYHdDnhKARm1y040MXQZLHhgIgw5yJ1
-         +x57VZATO2oQdby01Kh5e/TGxGZs+IJGcZqxXl1UgsNuhQPYlegVK8A4Nkggdz7x/UvJ
-         9/jxf4V8WFlhCOBDkOXDvl8bWJRYEUWcsqGII7M3VE/8HeopIGDgR7Uvumq85DVl7djH
-         VVcA==
+        bh=Ny33y7u5/3B+EhkMccz+r1D/XcEttWNt2/FaZIEJbV0=;
+        b=Wr7Y74cS29gMLLpvIv9H14V2zszc2gHjh27lq5BxGqll65LrWhLXtedKrQK1fBOlQr
+         HxgKJjuW2RkRDssg2cjifcTEcDZTaBiwiOG9LMeGgoW2HYAyegJiwhXQa/Raj8a3fGuq
+         BhOUs2Tm3OeL4WOJv0704ktrtMqnjnCK6u7Mo7ngWrY2Id0m5xGBSbGXTMIWs7ni412T
+         Dp7f4n7jD+o7PUPnIIXCtg8buRq3k9Hi4d3j54zzXFvtAaXpbAwZnlZsIEI/w9xOCCC3
+         U5MSYMW52xafVyBEnoGcG0mHcBpwzTdQGwnDdm83XpaN/cBuh7lq/4xPeDIcB9DikJNu
+         YVRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=WsorB5vWWvp3FN18bZLzd2tF/W1D1iRWl5fkxAjyCqY=;
-        b=kJMix3yWdDkSIG7/ak0Sbzu1b7c5uh5xPiEw+N1p3uoSEJkKu4Dr8UnIs6NIly+Bkd
-         hVT4hOwyShZne1RtVz1pJSSIoZED/Nw/nnrpcpYRnfoYpIk+JajDM8Piw1rtUEa14dRS
-         Al64cn4dpZPw7n7412jwDOZ5DAoJqHR0T+7iQKcpw6l5/bBz439Fb56HqoDBba8M1lrR
-         dEsIK4b0l5WRrn21jyg1tnXiNmKrWll6vbsqs9cx+eJMDREdtTwxcIL4M2mV/f5L4LZg
-         H2AE3krBOQGYSY6LpmebL7kmqJwgb883SyEM7PNXTJUFPzqOhQTYg87oVnhs+0PkQxZ4
-         s7XQ==
-X-Gm-Message-State: APjAAAXByAcijZMSwBmH6bI9cys2wkdMhUSklgeNEYui+8XjO2VnqwDE
-        QNLmvC2EoqtdpJ3MVWiNksPDE5mO
-X-Google-Smtp-Source: APXvYqxDTtaSseNHPJGIRUMUxN1tKi6ppYo/Vf398vTz0J8niuQySxtiidxzwpcv4unGdetq5sDH2w==
-X-Received: by 2002:adf:cd03:: with SMTP id w3mr68597916wrm.191.1582558866778;
-        Mon, 24 Feb 2020 07:41:06 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to;
+        bh=Ny33y7u5/3B+EhkMccz+r1D/XcEttWNt2/FaZIEJbV0=;
+        b=tS2T4JMq3Ag6PAXe9RO763JukI+kCWa4osfi1VZPuS/STUhvXSB1HVQEdNb8wweCOy
+         5CBiIrTaN/oLlyO7Htd3KryPE6JmxJ6qO94Jxg5gEa743h9jEEfgrJq0e42V3DJIUX+Z
+         yo/9U0qUvjxBMECS9oXq7JIfiXh5O05Wze0dCd1wsGLmiDEuMpjJwwR3IAmoVt4GHvbH
+         cBWHlDd1xeWHtxnrckMwLud26jQNljaKYfGWRzUqRap6XnuiSM4KOv3o9gt76toLhds+
+         x0oE7YucV7ngI+KRQcr/EhvOMgUyOZbC4ZgjZPHbQO4KyAIuBkUc4dCoMLXWvQwSWy5r
+         78YQ==
+X-Gm-Message-State: APjAAAWSBtMi9+R7VmXWsA7isqi/fc1PlkIT0AOM9sdb4c13XVJHAU3C
+        IRYbVxGogssiaKufhdo2y9xjqQB5
+X-Google-Smtp-Source: APXvYqxs7A5AH+9C09222yolq0kLv/ZMSBylBkxJSLZxfGSdXkoTY58aYIUiUwqj/BXeQICgy1ye9g==
+X-Received: by 2002:a1c:a1c3:: with SMTP id k186mr22711037wme.179.1582559094457;
+        Mon, 24 Feb 2020 07:44:54 -0800 (PST)
 Received: from [192.168.43.177] ([109.126.137.65])
-        by smtp.gmail.com with ESMTPSA id n13sm19146602wmd.21.2020.02.24.07.41.05
+        by smtp.gmail.com with ESMTPSA id c9sm18899576wmc.47.2020.02.24.07.44.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 07:41:05 -0800 (PST)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <843cc96a407b2cbfe869d9665c8120bdde34683e.1582535688.git.asml.silence@gmail.com>
- <295a86f4-6e70-366a-e056-33894430c7aa@kernel.dk>
+        Mon, 24 Feb 2020 07:44:53 -0800 (PST)
+Subject: Re: Deduplicate io_*_prep calls?
+To:     Jens Axboe <axboe@kernel.dk>, Andres Freund <andres@anarazel.de>
+Cc:     io-uring@vger.kernel.org
+References: <20200224010754.h7sr7xxspcbddcsj@alap3.anarazel.de>
+ <b3c1489a-c95d-af41-3369-6fd79d6b259c@kernel.dk>
+ <20200224033352.j6bsyrncd7z7eefq@alap3.anarazel.de>
+ <90097a02-ade0-bc9a-bc00-54867f3c24bc@kernel.dk>
+ <20200224071211.bar3aqgo76sznqd5@alap3.anarazel.de>
+ <933f2211-d395-fa84-59ae-0b2e725df613@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -91,90 +97,200 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH RFC] io_uring: remove retries from io_wq_submit_work()
-Message-ID: <f880f914-8fd4-2f11-a859-a78148915699@gmail.com>
-Date:   Mon, 24 Feb 2020 18:40:18 +0300
+Message-ID: <23a49bca-26a6-ddbd-480b-d7f3caa16c29@gmail.com>
+Date:   Mon, 24 Feb 2020 18:44:08 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <295a86f4-6e70-366a-e056-33894430c7aa@kernel.dk>
+In-Reply-To: <933f2211-d395-fa84-59ae-0b2e725df613@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="2Y3IsaPFIoarmMDg6dRt1ldJ9bE5svX9u"
+ boundary="vmzQiEjEfpBo6Y0RnUeaecQ9aT5wOt99q"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---2Y3IsaPFIoarmMDg6dRt1ldJ9bE5svX9u
-Content-Type: multipart/mixed; boundary="FmouyxkJODbrNHOd3uHMMDmYGrvdHcHXu";
+--vmzQiEjEfpBo6Y0RnUeaecQ9aT5wOt99q
+Content-Type: multipart/mixed; boundary="8Wa6b9pTvu2EZfX3LVgbywOW7V57G0NY9";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Message-ID: <f880f914-8fd4-2f11-a859-a78148915699@gmail.com>
-Subject: Re: [PATCH RFC] io_uring: remove retries from io_wq_submit_work()
-References: <843cc96a407b2cbfe869d9665c8120bdde34683e.1582535688.git.asml.silence@gmail.com>
- <295a86f4-6e70-366a-e056-33894430c7aa@kernel.dk>
-In-Reply-To: <295a86f4-6e70-366a-e056-33894430c7aa@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>, Andres Freund <andres@anarazel.de>
+Cc: io-uring@vger.kernel.org
+Message-ID: <23a49bca-26a6-ddbd-480b-d7f3caa16c29@gmail.com>
+Subject: Re: Deduplicate io_*_prep calls?
+References: <20200224010754.h7sr7xxspcbddcsj@alap3.anarazel.de>
+ <b3c1489a-c95d-af41-3369-6fd79d6b259c@kernel.dk>
+ <20200224033352.j6bsyrncd7z7eefq@alap3.anarazel.de>
+ <90097a02-ade0-bc9a-bc00-54867f3c24bc@kernel.dk>
+ <20200224071211.bar3aqgo76sznqd5@alap3.anarazel.de>
+ <933f2211-d395-fa84-59ae-0b2e725df613@kernel.dk>
+In-Reply-To: <933f2211-d395-fa84-59ae-0b2e725df613@kernel.dk>
 
---FmouyxkJODbrNHOd3uHMMDmYGrvdHcHXu
-Content-Type: text/plain; charset=utf-8
+--8Wa6b9pTvu2EZfX3LVgbywOW7V57G0NY9
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 24/02/2020 18:27, Jens Axboe wrote:
-> On 2/24/20 2:15 AM, Pavel Begunkov wrote:
->> It seems no opcode may return -EAGAIN for non-blocking case and expect=
+On 24/02/2020 18:40, Jens Axboe wrote:
+> On 2/24/20 12:12 AM, Andres Freund wrote:
+>> Hi,
+>>
+>> On 2020-02-23 20:52:26 -0700, Jens Axboe wrote:
+>>> The fast case is not being deferred, that's by far the common (and ho=
+t)
+>>> case, which means io_issue() is called with sqe !=3D NULL. My worry i=
+s
+>>> that by moving it into a prep helper, the compiler isn't smart enough=
+ to
+>>> not make that basically two switches.
+>>
+>> I'm not sure that benefit of a single switch isn't offset by the lower=
 
->> to be reissued. Remove retry code from io_wq_submit_work().
->=20
-> There's actually a comment right there on how that's possible :-)
-
-Yeah, I saw it and understand the motive, and how it may happen, but can'=
+>> code density due to the additional per-opcode branches.  Not inlining
+>> the prepare function results in:
+>>
+>> $ size fs/io_uring.o fs/io_uring.before.o
+>>    text	   data	    bss	    dec	    hex	filename
+>>   75383	   8237	      8	  83628	  146ac	fs/io_uring.o
+>>   76959	   8237	      8	  85204	  14cd4	fs/io_uring.before.o
+>>
+>> symbol size
+>> -io_close_prep 0000000000000066
+>> -io_connect_prep 0000000000000051
+>> -io_epoll_ctl_prep 0000000000000051
+>> -io_issue_sqe 0000000000001101
+>> +io_issue_sqe 0000000000000de9
+>> -io_openat2_prep 00000000000000ed
+>> -io_openat_prep 0000000000000089
+>> -io_poll_add_prep 0000000000000056
+>> -io_prep_fsync 0000000000000053
+>> -io_prep_sfr 000000000000004e
+>> -io_read_prep 00000000000000ca
+>> -io_recvmsg_prep 0000000000000079
+>> -io_req_defer_prep 000000000000058e
+>> +io_req_defer_prep 0000000000000160
+>> +io_req_prep 0000000000000d26
+>> -io_sendmsg_prep 000000000000006b
+>> -io_statx_prep 00000000000000ed
+>> -io_write_prep 00000000000000cd
+>>
+>>
+>>
+>>> Feel free to prove me wrong, I'd love to reduce it ;-)
+>>
+>> With a bit of handholding the compiler can deduplicate the switches. I=
 t
-find a line, which can actually return -EAGAIN. Could you please point to=
- an
-example?
+>> can't recognize on its own that req->opcode can't change between the
+>> switch for prep and issue. Can be solved by moving the opcode into a
+>> temporary variable. Also needs an inline for io_req_prep (not surpring=
+,
+>> it's a bit large).
+>>
+>> That results in a bit bigger code. That's partially because of more
+>> inlining:
+>>    text	   data	    bss	    dec	    hex	filename
+>>   78291	   8237	      8	  86536	  15208	fs/io_uring.o
+>>   76959	   8237	      8	  85204	  14cd4	fs/io_uring.before.o
+>>
+>> symbol size
+>> +get_order 0000000000000015
+>> -io_close_prep 0000000000000066
+>> -io_connect_prep 0000000000000051
+>> -io_epoll_ctl_prep 0000000000000051
+>> -io_issue_sqe 0000000000001101
+>> +io_issue_sqe 00000000000018fa
+>> -io_openat2_prep 00000000000000ed
+>> -io_openat_prep 0000000000000089
+>> -io_poll_add_prep 0000000000000056
+>> -io_prep_fsync 0000000000000053
+>> -io_prep_sfr 000000000000004e
+>> -io_read_prep 00000000000000ca
+>> -io_recvmsg_prep 0000000000000079
+>> -io_req_defer_prep 000000000000058e
+>> +io_req_defer_prep 0000000000000f12
+>> -io_sendmsg_prep 000000000000006b
+>> -io_statx_prep 00000000000000ed
+>> -io_write_prep 00000000000000cd
+>>
+>>
+>> There's still some unnecessary branching on force_nonblocking. The
+>> second patch just separates the cases needing force_nonblocking
+>> out. Probably not quite the right structure.
+>>
+>>
+>> Oddly enough gcc decides that io_queue_async_work() wouldn't be inline=
+d
+>> anymore after that. I'm quite doubtful it's a good candidate anyway?
+>> Seems mighty complex, and not likely to win much. That's a noticable
+>> win:
+>>    text	   data	    bss	    dec	    hex	filename
+>>   72857	   8141	      8	  81006	  13c6e	fs/io_uring.o
+>>   76959	   8237	      8	  85204	  14cd4	fs/io_uring.before.o
+>> --- /tmp/before.txt	2020-02-23 21:00:16.316753022 -0800
+>> +++ /tmp/after.txt	2020-02-23 23:10:44.979496728 -0800
+>> -io_commit_cqring 00000000000003ef
+>> +io_commit_cqring 000000000000012c
+>> +io_free_req 000000000000005e
+>> -io_free_req 00000000000002ed
+>> -io_issue_sqe 0000000000001101
+>> +io_issue_sqe 0000000000000e86
+>> -io_poll_remove_one 0000000000000308
+>> +io_poll_remove_one 0000000000000074
+>> -io_poll_wake 0000000000000498
+>> +io_poll_wake 000000000000021c
+>> +io_queue_async_work 00000000000002a0
+>> -io_queue_sqe 00000000000008cc
+>> +io_queue_sqe 0000000000000391
+>=20
+> That's OK, it's slow path, I'd prefer it not to be inlined.
+>=20
+>> Not quite sure what the policy is with attaching POC patches? Also sen=
+d
+>> as separate emails?
+>=20
+> Fine like this, though easier if you inline the patches so it's easier
+> to comment on them.
+>=20
+> Agree that the first patch looks fine, though I don't quite see why
+> you want to pass in opcode as a separate argument as it's always
+> req->opcode. Seeing it separate makes me a bit nervous, thinking that
+> someone is reading it again from the sqe, or maybe not passing in
+> the right opcode for the given request. So that seems fragile and it
+> should go away.
 
-E.g. I suppose for io_read() it may happen in call_read_iter(), but its r=
-esult
-(i.e. res2) will be written to cqe, but not returned.
-> Normally, for block IO, we can wait for request slots if we run out.
-> For polled IO, that isn't possible since the task itself is the one
-> that will find completions and hence free request slots as well. If
-> the submitting task is allowed to sleep waiting for requests that it
-> itself are supposed to find and complete, then we'd hang. Hence we
-> return -EAGAIN for that case, and have no other choice for polled
-> IO than to retry.
-
+I suppose it's to hint a compiler, that opcode haven't been changed insid=
+e the
+first switch. And any compiler I used breaks analysis there pretty easy.
+Optimising C is such a pain...
 
 --=20
 Pavel Begunkov
 
 
---FmouyxkJODbrNHOd3uHMMDmYGrvdHcHXu--
+--8Wa6b9pTvu2EZfX3LVgbywOW7V57G0NY9--
 
---2Y3IsaPFIoarmMDg6dRt1ldJ9bE5svX9u
+--vmzQiEjEfpBo6Y0RnUeaecQ9aT5wOt99q
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl5T7mYACgkQWt5b1Glr
-+6UylQ/+NgYSCltfm9PIAYiAmAEx4tEznpjOgTlAA+lU5oto/IjRtKVJgD+IvpxN
-QTv7BUGl+kNg+kOB0RTdCwOjIDxeAmb1fmebkQsMesJpHJAsef+xTTYQS/XjSVmP
-WhhzQ1POPs2mkmAIXebhJicv+Kqsha4YipCgzvRhapeWkqm/gXMjmOPQcZ3pVEwc
-jXLIw9w1qliXjmKG8wBoewN6Ru5Nr2uedQ4CrLM98Jp6s5D9uumF8fC/xVhJ6la8
-AZglPULaACcf3tyEaMTHroYYJr9v6EZrjrv7j0J7Yx4rHmIHaCQ5YTQtV8I71FXk
-Zh8CGTJa5oEoj5jEyHQSJrCuwVqtPK1ewbCmGIRKJYPgoSGjbsg9+2s5LIUw4SLK
-TzdsK5a4/Ol4NoB6Y893Q49H999LrpBGc0tE0dCF6CLK5cYZR/VAPJbN8nzoFktq
-oVTA7ksAnF2ZCrSC2Z5daofV6y/bCRnHLSDUopK6TMcE6Gm51Zsl1/1otm0EnfuH
-y9X26z+qMxA1u6Rh9daEPPWDr/DxDNEKPF6IaFMWLigi0DwPn06gdBf+dmWxgDpw
-5T4c8/WGep+y9APcbDEfemwRR7qR73O93hGS1JbdKhtmfW0NctJRX5Ss2r4Rju0m
-eAxK/ZzDLo15E8LUndHYLqYp9XCKtmeLrHEg9yu6ZP9h/h93c98=
-=QM5M
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl5T70gACgkQWt5b1Glr
++6WczA/+O/1Phkx7/GQ5XThJhxDMSGRZ4XbbR4P/sfOYBxt7PO6PuUAPCwx57GAC
+6NyH7qbWO9iesMLDohfTBdeF0MVM5wcy5k7mhbAuK6Cj+awU/Mu1I0O0wR8vH7A0
+PcWc7gjE9Pgz8tqjXEsN6sNP38KWh0tPwtIu/I+CIxxHouYHLJPHCPoXwcO8nNFb
+Q1pltWQI4H1ZsmHath037UdzJ+C8SL+6TsRv6ojeLIPE5Ni/KwHG5DT0SJ4PyJMB
+Y8XmjBkbihL1puy/Mo74wcIZfb0HvdfyuUQe2F2v3sKjilqA4Wn/1hlKDFncG1gd
+mzyZ7ZUkWADD4JSwTpEPjsZ9z32+xMdj7BAn+3/brR8eD4qcQazjmoDXimGnWdZU
+tfKRmlQOKqF2k76oDYxbOvkjRGjiyC3/f9Y5CR53mCBCQBt3f1WnxyKNKq6JFzrH
+Eh7S6OGSkhr/oFq/a+/HSszCE5t/bjwjvdqt4IALf8qA9nlVCSx23pn6eA0dXmSv
+in3s5vfYsoZ4s8zHQ02xmiRuy25kPqvWi+9aEvnWlZcY1l7CKDBZnwkOJNVn5OJf
+0t86/slImFxYxDG17s/KqLN8q31egWt8yBPWSVVKoubXkwFjJFrT+tF3TK/kvr9W
+adRWHSCrGjwvDmuHzGMBndRpgyWHtkD46agKUHkKnNIUZ/HBqC4=
+=nTbs
 -----END PGP SIGNATURE-----
 
---2Y3IsaPFIoarmMDg6dRt1ldJ9bE5svX9u--
+--vmzQiEjEfpBo6Y0RnUeaecQ9aT5wOt99q--

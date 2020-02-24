@@ -2,220 +2,188 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B75B16AF9E
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 19:47:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F9D616AFA5
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 19:48:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbgBXSr3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 13:47:29 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45590 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727797AbgBXSr3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 13:47:29 -0500
-Received: by mail-io1-f67.google.com with SMTP id w9so40288iob.12
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 10:47:28 -0800 (PST)
+        id S1726663AbgBXSsk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 13:48:40 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40419 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbgBXSsk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 13:48:40 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t3so11636646wru.7
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 10:48:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eI0fvDGpOl2R0oIHdxWo9epHT28g114lPTBAwlN/kP0=;
-        b=pbdwNBi0w8FbjBkyN9qb1373jxGz9i8NBLMu8nQZ9WvQZfSDEekFqBoZMl0kCJcYIe
-         WNAk7RUeFdAxgNcj12shSnF2m41XSXCSxPkMIhRoq7+S+/552uCRmynFVWlx8B/Q8PHp
-         j+Od5Rbwyuh4tQJ/1+iGDc19YEgH9fL6AOSKKr9m42dyiZCFAaeCLUN7fAYSTqLd5K5A
-         HojzqsgXnFF/tIcvzHdqv5txA877qZTtRhmyT13A5VkwRG8lGQuhH/x/vPCTYSIhLYOv
-         FfZrZETM+7r7adZnPnixltFlnQ4n9MFwPsxWPswwm4pEXKyIDVI2msW1jPUcl3eiHc/V
-         GlIA==
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=ckXOdGdsgFxwSQ2CjZwkikTp3dNG9uvKSnUObif+Li0=;
+        b=bZ0tjsa1GYaN6w4udw7upGlebCNhTOICGpXYFo1Zyuk+WyGOl9o0BLt6pZ6OyD6WX+
+         k/ulZ6unJvOk7NwDUo3YzTtQIL6HkJJdg/ol/kN4pGdDBRVHA+qFhIdFbmp3EdqK+tCl
+         9WyOm3rJ3NTY2cd/jIXtyIFextoYlnFm2Zg7eP8Y6KIeS6v0KsEdILO2TwMdv1WetI94
+         i+6ol+uMmVnRJ1SYYWA/GDH9pJDRLSZdDx21lok0wP5fLsN7ILYuBHQUQ2Xa9UaORqau
+         5Qd6x/fDnErET5BjzLq0yZRXAlemi3RbeM+LWQLlNiJvX1OIkgOb5CwPOapra0kbx385
+         5Vcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eI0fvDGpOl2R0oIHdxWo9epHT28g114lPTBAwlN/kP0=;
-        b=K7iEOnMlelz5KNxtL5LVMJ1ssfW345CJDw1AwREdfWG28c454564MuhAnck2HVzYbI
-         hOaKq0/avC1BQxOegW5eAaw/Gdiqgt/8eGk8/tkwjIL0hdDqFOeEBfzco9ok9fg3wKP8
-         LsvLIoCJ06p2Itt0rNoYSV1k54A3bHqGn1BkeZeHAMgixar5u9sYUr3DCeWDLH7OWfK1
-         jVN69cRFORd4jzYNO/vI695J8vgl38ZU6xtIrVe60SlAIff7YaYCORTmsajjZv8Bao5i
-         icZ4CX+yDJ8d+nb53aCdwl65qWCvodb5OFD93Dt5yzddGnqaBeQnTjRw3ramWbWdOJYt
-         F0qA==
-X-Gm-Message-State: APjAAAWQgsXpfrNcL3MDTiXPR4ucBSpdBSkvec2v93cjtpTwRJkBK8xa
-        CunP27bNzIKMSFfICeR05YlxkhkdhGQ=
-X-Google-Smtp-Source: APXvYqwZnUDcMe+xE3nolUQoO/BirkDsvELA4pxNWA9QgNkjMhwKOVS6sTsTbzcnudUUzZR4+EQHqg==
-X-Received: by 2002:a5d:8856:: with SMTP id t22mr52423524ios.217.1582570047323;
-        Mon, 24 Feb 2020 10:47:27 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l13sm3127334ion.3.2020.02.24.10.47.24
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=ckXOdGdsgFxwSQ2CjZwkikTp3dNG9uvKSnUObif+Li0=;
+        b=SfsKlT/TvCT35A66rVm89dBTVDwdDQ+a0k3izkEdQLuUds1xQq2MXDOe1y1/VooiN8
+         zXcvyarwXvxDtVSXDjJWa52TAGTYEyRot4ZoM/IZYSgZHEvZyUd4QAM/1YQD4bcGM5+5
+         qujqUzeZpZrBSy77zAmUYHwx5Gm6p0DEKcjZexEeo4bjon5T/P38T+g3eNgEeC2DSb8r
+         l5KRTueZodU3/0yvvi0xw5wPRVEowiOJYy0ZU4GVSlXpUmktkOKuVdLzvClQ0D8tq/EI
+         14bDHGdlf3ipOQ/w8wHGMDTCiLvj+NvC/BnAsrfPbkcaiogglYq05LSZiMfwNDjUyvKr
+         N/eA==
+X-Gm-Message-State: APjAAAUG2/bpQJFPPQv33+nI0Ax+c15gnXJy573oDKMpS1WgdbF9Xi2w
+        2nkQHiAUnNAORQKSn1RGfShA4Edb
+X-Google-Smtp-Source: APXvYqxnrXZtqNqLTtPLiszWedwWejT3DPt0/WTTfcIxJKPy6zr7nIqKzu5UVyb8uU8FffLbClMm4w==
+X-Received: by 2002:a5d:4289:: with SMTP id k9mr70086323wrq.280.1582570117166;
+        Mon, 24 Feb 2020 10:48:37 -0800 (PST)
+Received: from [192.168.43.177] ([109.126.137.65])
+        by smtp.gmail.com with ESMTPSA id l131sm405214wmf.31.2020.02.24.10.48.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 10:47:26 -0800 (PST)
-Subject: Re: [PATCH] task_work_run: don't take ->pi_lock unconditionally
-To:     Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     =?UTF-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <43c066d1-a892-6a02-82e7-7be850d9454d@kernel.dk>
- <20200217174610.GU14897@hirez.programming.kicks-ass.net>
- <592cf069-41ee-0bc1-1f83-e058e5dd53ff@kernel.dk>
- <20200218131310.GZ14914@hirez.programming.kicks-ass.net>
- <20200218145645.GB3466@redhat.com>
- <20200218150756.GC14914@hirez.programming.kicks-ass.net>
- <20200218155017.GD3466@redhat.com>
- <20200220163938.GA18400@hirez.programming.kicks-ass.net>
- <20200220172201.GC27143@redhat.com>
- <20200220174932.GB18400@hirez.programming.kicks-ass.net>
- <20200221145256.GA16646@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <77349a8d-ecbf-088d-3a48-321f68f1774f@kernel.dk>
-Date:   Mon, 24 Feb 2020 11:47:23 -0700
+        Mon, 24 Feb 2020 10:48:36 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1582566728.git.asml.silence@gmail.com>
+ <aa79d4a192bd1a8e68beddfb177618c1cdacf381.1582566728.git.asml.silence@gmail.com>
+ <56c83973-db0f-cc25-4b78-6c9a74431d2a@kernel.dk>
+ <060087a8-a6c1-b44c-1b7c-3fc0de3a4a5d@gmail.com>
+ <12eb524a-cc65-48e1-d82e-5e3d07ff444a@kernel.dk>
+ <20e51d15-82d8-3e91-a1ca-36dccd9d30e7@gmail.com>
+ <89272517-d4c4-1a0f-f955-af2b1c1a337f@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH liburing v5 2/2] test/splice: add basic splice tests
+Message-ID: <c863a99f-aa29-4629-a959-53c584f4d2ed@gmail.com>
+Date:   Mon, 24 Feb 2020 21:47:49 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200221145256.GA16646@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <89272517-d4c4-1a0f-f955-af2b1c1a337f@kernel.dk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="x5qUnh5uel9d6KjA5RgVglXRKnTTqzlJL"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/21/20 7:52 AM, Oleg Nesterov wrote:
-> On 02/20, Peter Zijlstra wrote:
->>
->> On Thu, Feb 20, 2020 at 06:22:02PM +0100, Oleg Nesterov wrote:
->>> @@ -68,10 +65,10 @@ task_work_cancel(struct task_struct *task, task_work_func_t func)
->>>  	 * we raced with task_work_run(), *pprev == NULL/exited.
->>>  	 */
->>>  	raw_spin_lock_irqsave(&task->pi_lock, flags);
->>> +	for (work = READ_ONCE(*pprev); work; ) {
->>>  		if (work->func != func)
->>>  			pprev = &work->next;
->>
->> But didn't you loose the READ_ONCE() of *pprev in this branch?
-> 
-> Argh, yes ;)
-> 
->>> @@ -97,16 +94,16 @@ void task_work_run(void)
->>>  		 * work->func() can do task_work_add(), do not set
->>>  		 * work_exited unless the list is empty.
->>>  		 */
->>> +		work = READ_ONCE(task->task_works);
->>>  		do {
->>>  			head = NULL;
->>>  			if (!work) {
->>>  				if (task->flags & PF_EXITING)
->>>  					head = &work_exited;
->>>  				else
->>>  					break;
->>>  			}
->>> +		} while (!try_cmpxchg(&task->task_works, &work, head));
->>>
->>>  		if (!work)
->>>  			break;
->>
->> But given that, as you say, cancel() could have gone and stole our head,
->> should we not try and install &work_exiting when PF_EXITING in that
->> case?
-> 
-> cancel() can't do this, as long as we use cmpxchg/try_cmpxchg, not xchg().
-> This is what the comment before lock/unlock below tries to explain.
-> 
->> That is; should we not do continue in that case, instead of break.
-> 
-> This is what we should do if we use xchg() like your previous version did.
-> Or I am totally confused. Hmm, and when I re-read my words it looks as if
-> I am trying to confuse you.
-> 
-> So lets "simplify" this code assuming that PF_EXITING is set:
-> 
-> 		work = READ_ONCE(task->task_works);
-> 		do {
-> 			head = NULL;
-> 			if (!work)
-> 				head = &work_exited;
-> 		} while (!try_cmpxchg(&task->task_works, &work, head));
-> 
-> 		if (!work)
-> 			break;
-> 
-> If work == NULL after try_cmpxchg() _succeeds_, then the new "head" must
-> be work_exited and we have nothing to do.
-> 
-> If it was nullified by try_cmpxchg(&work) because we raced with cancel_(),
-> then this try_cmpxchg() should have been failed.
-> 
-> Right?
-> 
->> @@ -69,9 +68,12 @@ task_work_cancel(struct task_struct *tas
->>  	 */
->>  	raw_spin_lock_irqsave(&task->pi_lock, flags);
->>  	while ((work = READ_ONCE(*pprev))) {
->> -		if (work->func != func)
->> +		if (work->func != func) {
->>  			pprev = &work->next;
->> -		else if (cmpxchg(pprev, work, work->next) == work)
->> +			continue;
->> +		}
->> +
->> +		if (try_cmpxchg(pprev, &work, work->next))
->>  			break;
-> 
-> perhaps I misread this code, but it looks a bit strange to me... it doesn't
-> differ from
-> 
-> 	while ((work = READ_ONCE(*pprev))) {
-> 		if (work->func != func)
-> 			pprev = &work->next;
-> 		else if (try_cmpxchg(pprev, &work, work->next))
-> 			break;
-> 	}
-> 
-> either way it is correct, the only problem is that we do not need (want)
-> another READ_ONCE() if try_cmpxchg() fails.
-> 
->>  void task_work_run(void)
->>  {
->>  	struct task_struct *task = current;
->> -	struct callback_head *work, *head, *next;
->> +	struct callback_head *work, *next;
->>  
->>  	for (;;) {
->> -		/*
->> -		 * work->func() can do task_work_add(), do not set
->> -		 * work_exited unless the list is empty.
->> -		 */
->> -		do {
->> -			head = NULL;
->> -			work = READ_ONCE(task->task_works);
->> -			if (!work) {
->> -				if (task->flags & PF_EXITING)
->> -					head = &work_exited;
->> -				else
->> -					break;
->> -			}
->> -		} while (cmpxchg(&task->task_works, work, head) != work);
->> +		work = READ_ONCE(task->task_works);
->> +		if (!work) {
->> +			if (!(task->flags & PF_EXITING))
->> +				return;
->> +
->> +			/*
->> +			 * work->func() can do task_work_add(), do not set
->> +			 * work_exited unless the list is empty.
->> +			 */
->> +			if (try_cmpxchg(&task->task_works, &work, &work_exited))
->> +				return;
->> +		}
->> +
->> +		work = xchg(&task->task_works, NULL);
->> +		if (!work)
->> +			continue;
-> 
-> looks correct...
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--x5qUnh5uel9d6KjA5RgVglXRKnTTqzlJL
+Content-Type: multipart/mixed; boundary="yDe19ZAXCpZxJfWjIrOkHOHtTAdkYj5XA";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Message-ID: <c863a99f-aa29-4629-a959-53c584f4d2ed@gmail.com>
+Subject: Re: [PATCH liburing v5 2/2] test/splice: add basic splice tests
+References: <cover.1582566728.git.asml.silence@gmail.com>
+ <aa79d4a192bd1a8e68beddfb177618c1cdacf381.1582566728.git.asml.silence@gmail.com>
+ <56c83973-db0f-cc25-4b78-6c9a74431d2a@kernel.dk>
+ <060087a8-a6c1-b44c-1b7c-3fc0de3a4a5d@gmail.com>
+ <12eb524a-cc65-48e1-d82e-5e3d07ff444a@kernel.dk>
+ <20e51d15-82d8-3e91-a1ca-36dccd9d30e7@gmail.com>
+ <89272517-d4c4-1a0f-f955-af2b1c1a337f@kernel.dk>
+In-Reply-To: <89272517-d4c4-1a0f-f955-af2b1c1a337f@kernel.dk>
 
-Peter/Oleg, as you've probably noticed, I'm still hauling Oleg's
-original patch around. Is the above going to turn into a separate patch
-on top?  If so, feel free to shove it my way as well for some extra
-testing.
+--yDe19ZAXCpZxJfWjIrOkHOHtTAdkYj5XA
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Jens Axboe
+On 24/02/2020 21:41, Jens Axboe wrote:
+>> I've wanted for long to kill this weird behaviour, it should consume t=
+he whole
+>> link. Can't imagine any userspace app handling all edge-case errors ri=
+ght...
+>=20
+> Yeah, for links it makes sense to error the chain, which would consume
+> the whole chain too.
+>=20
+>>> submit fails. I'll clean up that bit.
+>>
+>> ...I should have tested better. Thanks!
+>=20
+> No worries, just trying to do better than we have in the best so we can=
 
+> have some vague hope of having the test suite pass on older stable
+> kernels.
+
+Have you gave a thought to using C++ for testing? It would be really nice=
+ to
+have some flexible test generator removing boilerplate and allowing
+automatically try different flags combinations. It sounds like a lot of p=
+ain
+doing this in old plain C.
+
+--=20
+Pavel Begunkov
+
+
+--yDe19ZAXCpZxJfWjIrOkHOHtTAdkYj5XA--
+
+--x5qUnh5uel9d6KjA5RgVglXRKnTTqzlJL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl5UGlUACgkQWt5b1Glr
++6VmTQ/9HFONmIo0ddZjz7OXLH8OzGpV0crebHL+QACy2T6CsNYv2x29CCn13x9Z
+IQ4hQS32H1xe5p5ofXwyxAIGXLQhy43h74DRoVuDk72jRw1d0CZutXy3KJ1JdzZy
+4qsx9P4FdCSC9mceaSq+cTXQY0DfH+vr1/BMOfOV6DoJm79+ev4c68m2inpM5/NY
+KYHYyUpFjqMz7DNrb9rG/IvIQP5/xrSGpSbUEUsgBLUXfiM9Q03/HZP1Hm1eBcpF
+Q5CbTMWWwF9I+/a7mEfaJXZmb8x8Bdsdo4t4aSRk3To+IDUvOwNuSLslwMZjum0A
+gFufYxMVlXLFs9VosWwWiOavuRr+SwdTIJmxHkkzZRa69fGXvC6hGKaUKoinM7ne
+0SawrASHzjuHWdGN3S+8h9Eb/bvOityZitXKkR4FTE2x9YtH8iQn13u850us+S4X
+hssdZCmBpQDep6EfkbAGSRaVTim0rSwwpOM6AuKjvQ2OD+l/qXpzz30y4AfB+smR
+1eDNRTKwlhMFsXTknt/cUqzZVdRRfQk91zBxYzAwYuypCNJaPT8JCQOx4o1YWBZX
+T3L+cfi9vhsiYCdR4bYrGd5cWYhTk8CHMjtUqy19/f6YoyWheK0Jrtvg6Cr8DQsn
+dewA+o93r2Rw2EddsgJhdZZK27q8YcdtbrPeQ/KPYh2R2K6YZrs=
+=R3vW
+-----END PGP SIGNATURE-----
+
+--x5qUnh5uel9d6KjA5RgVglXRKnTTqzlJL--

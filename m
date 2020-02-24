@@ -2,216 +2,611 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D513F169EE9
-	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 08:05:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F25F2169EF4
+	for <lists+io-uring@lfdr.de>; Mon, 24 Feb 2020 08:12:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbgBXHFD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 02:05:03 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:50287 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726509AbgBXHFC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 02:05:02 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Tqlb7Pz_1582527869;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Tqlb7Pz_1582527869)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 24 Feb 2020 15:04:37 +0800
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     io-uring@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, axboe@kernel.dk,
-        joseph.qi@linux.alibaba.com,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: [PATCH v3] io_uring: fix poll_list race for SETUP_IOPOLL|SETUP_SQPOLL
-Date:   Mon, 24 Feb 2020 15:03:54 +0800
-Message-Id: <20200224070354.3774-1-xiaoguang.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.2
+        id S1726997AbgBXHMP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 02:12:15 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:44679 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725895AbgBXHMP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 02:12:15 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 59CFB20A0D;
+        Mon, 24 Feb 2020 02:12:13 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 24 Feb 2020 02:12:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=svCIjTru6MK1nvbEfCRUeH6N6e1
+        mwAl/7sGsfQ6ZvaI=; b=QPybhWJcZFEvOF2oc35EYAXxeWuMe+MhqZjvWt31+FG
+        5Jj6+qgBM+3npHMD65eqyS0ETMimWUK0bLZt4uDbZbX54My6uIRAlXgFmE86nRUj
+        tHzZLrXLKKrg02TQ0hGRUeJchYUjZToUuK3Ev2kdP1NfxpesjWI9RH2B4MgFV4Ei
+        C9/niNC9WQOY7qPIaGo4aDwiWnCfLxpDwCzRqqZSsvdIoTRPa6V1Bi53bxRpDYvp
+        rLbS0zA1851smh2tGv3DIKNWVoNfIKs89gEqth2ya+xlVZu2rxPa3KNYIjq3vd96
+        82+SHAhefRImpB7hjyh35hkynXw/aI1/GqkPWynHX+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=svCIjT
+        ru6MK1nvbEfCRUeH6N6e1mwAl/7sGsfQ6ZvaI=; b=R115ogp7E16xPKt2kPhJft
+        4YnSKMmqYAgjAMqStrjetfO4CRAY6TmeJMGTIik0pDX8bmVnuDlyYfUQgmkXOgPp
+        cVQnDZcFNTTBse2voqSI0B1TKKB0LWj7IznpgCOlr3ZxTfxvTAVflQXgemmmTLLP
+        oALTrXeHKyAXQCwMvBipX2UIdFG9ZX+pGFzAhGyTumSblaOD46RvlNWDoXAZlSO9
+        YC2dtPcwbq0On78BPKLWO05nBH4goNKrvS4akE3TOsMGn03bZPu9zRuo1sWG4qNv
+        td/QzsVyQwJpm9wUpOXBDELBZXeDXgD/MtTAEA7DZeVd5w1HJIE/7VQbhItyOzSQ
+        ==
+X-ME-Sender: <xms:TXdTXt6mr2AwHnUGftmXepwPQ4VSuXBnrxbMeUY45TA9O4Fx9Bn0Kg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkeelgddutdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehmtderredttddvnecuhfhrohhmpeetnhgurhgv
+    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepie
+    ejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
+    pehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggv
+X-ME-Proxy: <xmx:TXdTXqlC2Nxni3zfpkEmjeQGG2tsDaZcD6NavPLQp56p-RCz68Oe-A>
+    <xmx:TXdTXgG-PLj4fW9dP6q0yRenebU7UFBdtG3DoQpTYii1V0L-XaPd3g>
+    <xmx:TXdTXh8QzAKGkh31BVkKSd1SzsemU5WxdK41EJDefFgeC5-PYB5o0Q>
+    <xmx:TXdTXsSX2jig2ghvrcJlzlNN9yOhKMKB1TZgD9NldYbyRHNCR96IUg>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C73533280062;
+        Mon, 24 Feb 2020 02:12:12 -0500 (EST)
+Date:   Sun, 23 Feb 2020 23:12:11 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+Subject: Re: Deduplicate io_*_prep calls?
+Message-ID: <20200224071211.bar3aqgo76sznqd5@alap3.anarazel.de>
+References: <20200224010754.h7sr7xxspcbddcsj@alap3.anarazel.de>
+ <b3c1489a-c95d-af41-3369-6fd79d6b259c@kernel.dk>
+ <20200224033352.j6bsyrncd7z7eefq@alap3.anarazel.de>
+ <90097a02-ade0-bc9a-bc00-54867f3c24bc@kernel.dk>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="5xcvbplkbi3nv3hh"
+Content-Disposition: inline
+In-Reply-To: <90097a02-ade0-bc9a-bc00-54867f3c24bc@kernel.dk>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-After making ext4 support iopoll method:
-  let ext4_file_operations's iopoll method be iomap_dio_iopoll(),
-we found fio can easily hang in fio_ioring_getevents() with below fio
-job:
-    rm -f testfile; sync;
-    sudo fio -name=fiotest -filename=testfile -iodepth=128 -thread
--rw=write -ioengine=io_uring  -hipri=1 -sqthread_poll=1 -direct=1
--bs=4k -size=10G -numjobs=8 -runtime=2000 -group_reporting
-with IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL enabled.
 
-There are two issues that results in this hang, one reason is that
-when IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL are enabled, fio
-does not use io_uring_enter to get completed events, it relies on
-kernel io_sq_thread to poll for completed events.
+--5xcvbplkbi3nv3hh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Another reason is that there is a race: when io_submit_sqes() in
-io_sq_thread() submits a batch of sqes, variable 'inflight' will
-record the number of submitted reqs, then io_sq_thread will poll for
-reqs which have been added to poll_list. But note, if some previous
-reqs have been punted to io worker, these reqs will won't be in
-poll_list timely. io_sq_thread() will only poll for a part of previous
-submitted reqs, and then find poll_list is empty, reset variable
-'inflight' to be zero. If app just waits these deferred reqs and does
-not wake up io_sq_thread again, then hang happens.
+Hi,
 
-For app that entirely relies on io_sq_thread to poll completed requests,
-let io_iopoll_req_issued() wake up io_sq_thread properly when adding new
-element to poll_list.
+On 2020-02-23 20:52:26 -0700, Jens Axboe wrote:
+> The fast case is not being deferred, that's by far the common (and hot)
+> case, which means io_issue() is called with sqe != NULL. My worry is
+> that by moving it into a prep helper, the compiler isn't smart enough to
+> not make that basically two switches.
 
-Fixes: 2b2ed9750fc9 ("io_uring: fix bad inflight accounting for SETUP_IOPOLL|SETUP_SQTHREAD")
-Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+I'm not sure that benefit of a single switch isn't offset by the lower
+code density due to the additional per-opcode branches.  Not inlining
+the prepare function results in:
 
+$ size fs/io_uring.o fs/io_uring.before.o
+   text	   data	    bss	    dec	    hex	filename
+  75383	   8237	      8	  83628	  146ac	fs/io_uring.o
+  76959	   8237	      8	  85204	  14cd4	fs/io_uring.before.o
+
+symbol size
+-io_close_prep 0000000000000066
+-io_connect_prep 0000000000000051
+-io_epoll_ctl_prep 0000000000000051
+-io_issue_sqe 0000000000001101
++io_issue_sqe 0000000000000de9
+-io_openat2_prep 00000000000000ed
+-io_openat_prep 0000000000000089
+-io_poll_add_prep 0000000000000056
+-io_prep_fsync 0000000000000053
+-io_prep_sfr 000000000000004e
+-io_read_prep 00000000000000ca
+-io_recvmsg_prep 0000000000000079
+-io_req_defer_prep 000000000000058e
++io_req_defer_prep 0000000000000160
++io_req_prep 0000000000000d26
+-io_sendmsg_prep 000000000000006b
+-io_statx_prep 00000000000000ed
+-io_write_prep 00000000000000cd
+
+
+
+> Feel free to prove me wrong, I'd love to reduce it ;-)
+
+With a bit of handholding the compiler can deduplicate the switches. It
+can't recognize on its own that req->opcode can't change between the
+switch for prep and issue. Can be solved by moving the opcode into a
+temporary variable. Also needs an inline for io_req_prep (not surpring,
+it's a bit large).
+
+That results in a bit bigger code. That's partially because of more
+inlining:
+   text	   data	    bss	    dec	    hex	filename
+  78291	   8237	      8	  86536	  15208	fs/io_uring.o
+  76959	   8237	      8	  85204	  14cd4	fs/io_uring.before.o
+
+symbol size
++get_order 0000000000000015
+-io_close_prep 0000000000000066
+-io_connect_prep 0000000000000051
+-io_epoll_ctl_prep 0000000000000051
+-io_issue_sqe 0000000000001101
++io_issue_sqe 00000000000018fa
+-io_openat2_prep 00000000000000ed
+-io_openat_prep 0000000000000089
+-io_poll_add_prep 0000000000000056
+-io_prep_fsync 0000000000000053
+-io_prep_sfr 000000000000004e
+-io_read_prep 00000000000000ca
+-io_recvmsg_prep 0000000000000079
+-io_req_defer_prep 000000000000058e
++io_req_defer_prep 0000000000000f12
+-io_sendmsg_prep 000000000000006b
+-io_statx_prep 00000000000000ed
+-io_write_prep 00000000000000cd
+
+
+There's still some unnecessary branching on force_nonblocking. The
+second patch just separates the cases needing force_nonblocking
+out. Probably not quite the right structure.
+
+
+Oddly enough gcc decides that io_queue_async_work() wouldn't be inlined
+anymore after that. I'm quite doubtful it's a good candidate anyway?
+Seems mighty complex, and not likely to win much. That's a noticable
+win:
+   text	   data	    bss	    dec	    hex	filename
+  72857	   8141	      8	  81006	  13c6e	fs/io_uring.o
+  76959	   8237	      8	  85204	  14cd4	fs/io_uring.before.o
+--- /tmp/before.txt	2020-02-23 21:00:16.316753022 -0800
++++ /tmp/after.txt	2020-02-23 23:10:44.979496728 -0800
+-io_commit_cqring 00000000000003ef
++io_commit_cqring 000000000000012c
++io_free_req 000000000000005e
+-io_free_req 00000000000002ed
+-io_issue_sqe 0000000000001101
++io_issue_sqe 0000000000000e86
+-io_poll_remove_one 0000000000000308
++io_poll_remove_one 0000000000000074
+-io_poll_wake 0000000000000498
++io_poll_wake 000000000000021c
++io_queue_async_work 00000000000002a0
+-io_queue_sqe 00000000000008cc
++io_queue_sqe 0000000000000391
+
+
+Not quite sure what the policy is with attaching POC patches? Also send
+as separate emails?
+
+Greetings,
+
+Andres Freund
+
+--5xcvbplkbi3nv3hh
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="v1-0001-WIP-io_uring-Deduplicate-request-prep.patch"
+
+From edb629fc246ef146ad4e25bc51fd3f5db797b2be Mon Sep 17 00:00:00 2001
+From: Andres Freund <andres@anarazel.de>
+Date: Sun, 23 Feb 2020 22:22:33 -0800
+Subject: [PATCH v1 1/2] WIP: io_uring: Deduplicate request prep.
+
+Signed-off-by: Andres Freund <andres@anarazel.de>
 ---
-V2:
-    simple code cleanups and add necessary comments.
-
-V3:
-    rebase to v5.6-rc3.
----
- fs/io_uring.c | 72 ++++++++++++++++++++++++++++-----------------------
- 1 file changed, 40 insertions(+), 32 deletions(-)
+ fs/io_uring.c | 192 +++++++++++++-------------------------------------
+ 1 file changed, 49 insertions(+), 143 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index de650df9ac53..91f5d6c6cd95 100644
+index de650df9ac53..9a8fda8b28c9 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1821,6 +1821,9 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
- 		list_add(&req->list, &ctx->poll_list);
- 	else
- 		list_add_tail(&req->list, &ctx->poll_list);
-+
-+	if (ctx->flags & IORING_SETUP_SQPOLL && wq_has_sleeper(&ctx->sqo_wait))
-+		wake_up(&ctx->sqo_wait);
+@@ -4116,31 +4116,24 @@ static int io_files_update(struct io_kiocb *req, bool force_nonblock)
+ 	return 0;
  }
  
- static void io_file_put(struct io_submit_state *state)
-@@ -5081,9 +5084,9 @@ static int io_sq_thread(void *data)
- 	const struct cred *old_cred;
- 	mm_segment_t old_fs;
- 	DEFINE_WAIT(wait);
--	unsigned inflight;
- 	unsigned long timeout;
--	int ret;
-+	int ret = 0;
-+	bool needs_uring_lock = false;
+-static int io_req_defer_prep(struct io_kiocb *req,
+-			     const struct io_uring_sqe *sqe)
++static inline int io_req_prep(u8 opcode, struct io_kiocb *req,
++			      const struct io_uring_sqe *sqe,
++			      bool force_nonblock)
+ {
+ 	ssize_t ret = 0;
  
- 	complete(&ctx->completions[1]);
- 
-@@ -5091,39 +5094,21 @@ static int io_sq_thread(void *data)
- 	set_fs(USER_DS);
- 	old_cred = override_creds(ctx->creds);
- 
--	ret = timeout = inflight = 0;
-+	if (ctx->flags & IORING_SETUP_IOPOLL)
-+		needs_uring_lock = true;
-+	timeout = jiffies + ctx->sq_thread_idle;
- 	while (!kthread_should_park()) {
- 		unsigned int to_submit;
- 
--		if (inflight) {
-+		if (!list_empty(&ctx->poll_list)) {
- 			unsigned nr_events = 0;
- 
--			if (ctx->flags & IORING_SETUP_IOPOLL) {
--				/*
--				 * inflight is the count of the maximum possible
--				 * entries we submitted, but it can be smaller
--				 * if we dropped some of them. If we don't have
--				 * poll entries available, then we know that we
--				 * have nothing left to poll for. Reset the
--				 * inflight count to zero in that case.
--				 */
--				mutex_lock(&ctx->uring_lock);
--				if (!list_empty(&ctx->poll_list))
--					io_iopoll_getevents(ctx, &nr_events, 0);
--				else
--					inflight = 0;
--				mutex_unlock(&ctx->uring_lock);
--			} else {
--				/*
--				 * Normal IO, just pretend everything completed.
--				 * We don't have to poll completions for that.
--				 */
--				nr_events = inflight;
--			}
+-	if (io_op_defs[req->opcode].file_table) {
+-		ret = io_grab_files(req);
+-		if (unlikely(ret))
+-			return ret;
+-	}
 -
--			inflight -= nr_events;
--			if (!inflight)
-+			mutex_lock(&ctx->uring_lock);
-+			if (!list_empty(&ctx->poll_list))
-+				io_iopoll_getevents(ctx, &nr_events, 0);
-+			if (list_empty(&ctx->poll_list))
- 				timeout = jiffies + ctx->sq_thread_idle;
-+			mutex_unlock(&ctx->uring_lock);
- 		}
+-	io_req_work_grab_env(req, &io_op_defs[req->opcode]);
+-
+-	switch (req->opcode) {
++	switch (opcode) {
+ 	case IORING_OP_NOP:
+ 		break;
+ 	case IORING_OP_READV:
+ 	case IORING_OP_READ_FIXED:
+ 	case IORING_OP_READ:
+-		ret = io_read_prep(req, sqe, true);
++		ret = io_read_prep(req, sqe, force_nonblock);
+ 		break;
+ 	case IORING_OP_WRITEV:
+ 	case IORING_OP_WRITE_FIXED:
+ 	case IORING_OP_WRITE:
+-		ret = io_write_prep(req, sqe, true);
++		ret = io_write_prep(req, sqe, force_nonblock);
+ 		break;
+ 	case IORING_OP_POLL_ADD:
+ 		ret = io_poll_add_prep(req, sqe);
+@@ -4162,23 +4155,23 @@ static int io_req_defer_prep(struct io_kiocb *req,
+ 	case IORING_OP_RECV:
+ 		ret = io_recvmsg_prep(req, sqe);
+ 		break;
+-	case IORING_OP_CONNECT:
+-		ret = io_connect_prep(req, sqe);
+-		break;
+ 	case IORING_OP_TIMEOUT:
+ 		ret = io_timeout_prep(req, sqe, false);
+ 		break;
+ 	case IORING_OP_TIMEOUT_REMOVE:
+ 		ret = io_timeout_remove_prep(req, sqe);
+ 		break;
++	case IORING_OP_ACCEPT:
++		ret = io_accept_prep(req, sqe);
++		break;
+ 	case IORING_OP_ASYNC_CANCEL:
+ 		ret = io_async_cancel_prep(req, sqe);
+ 		break;
+ 	case IORING_OP_LINK_TIMEOUT:
+ 		ret = io_timeout_prep(req, sqe, true);
+ 		break;
+-	case IORING_OP_ACCEPT:
+-		ret = io_accept_prep(req, sqe);
++	case IORING_OP_CONNECT:
++		ret = io_connect_prep(req, sqe);
+ 		break;
+ 	case IORING_OP_FALLOCATE:
+ 		ret = io_fallocate_prep(req, sqe);
+@@ -4217,6 +4210,23 @@ static int io_req_defer_prep(struct io_kiocb *req,
+ 	return ret;
+ }
  
- 		to_submit = io_sqring_entries(ctx);
-@@ -5152,13 +5137,31 @@ static int io_sq_thread(void *data)
- 			 * more IO, we should wait for the application to
- 			 * reap events and wake us up.
- 			 */
--			if (inflight ||
-+			if (!list_empty(&ctx->poll_list) ||
- 			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
- 			    !percpu_ref_is_dying(&ctx->refs))) {
- 				cond_resched();
- 				continue;
- 			}
- 
-+			/*
-+			 * While doing polled IO, before going to sleep, we need
-+			 * to check if there are new reqs added to poll_list, it
-+			 * is because reqs may have been punted to io worker and
-+			 * will be added to poll_list later, hence check the
-+			 * poll_list again, meanwhile we need to hold uring_lock
-+			 * to do this check, otherwise we may lose wakeup event
-+			 * in io_iopoll_req_issued().
-+			 */
-+			if (needs_uring_lock) {
-+				mutex_lock(&ctx->uring_lock);
-+				if (!list_empty(&ctx->poll_list)) {
-+					mutex_unlock(&ctx->uring_lock);
-+					cond_resched();
-+					continue;
-+				}
-+			}
++static int io_req_defer_prep(struct io_kiocb *req,
++			     const struct io_uring_sqe *sqe)
++{
++	ssize_t ret = 0;
++	u8 opcode = req->opcode;
 +
- 			prepare_to_wait(&ctx->sqo_wait, &wait,
- 						TASK_INTERRUPTIBLE);
++	if (io_op_defs[opcode].file_table) {
++		ret = io_grab_files(req);
++		if (unlikely(ret))
++			return ret;
++	}
++
++	io_req_work_grab_env(req, &io_op_defs[opcode]);
++
++	return io_req_prep(opcode, req, sqe, true);
++}
++
+ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+@@ -4278,198 +4288,94 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 			struct io_kiocb **nxt, bool force_nonblock)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
++	/* allow compiler to infer opcode doesn't change */
++	u8 opcode = req->opcode;
+ 	int ret;
  
-@@ -5171,16 +5174,22 @@ static int io_sq_thread(void *data)
- 			if (!to_submit || ret == -EBUSY) {
- 				if (kthread_should_park()) {
- 					finish_wait(&ctx->sqo_wait, &wait);
-+					if (needs_uring_lock)
-+						mutex_unlock(&ctx->uring_lock);
- 					break;
- 				}
- 				if (signal_pending(current))
- 					flush_signals(current);
-+				if (needs_uring_lock)
-+					mutex_unlock(&ctx->uring_lock);
- 				schedule();
- 				finish_wait(&ctx->sqo_wait, &wait);
- 
- 				ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
- 				continue;
- 			}
-+			if (needs_uring_lock)
-+				mutex_unlock(&ctx->uring_lock);
- 			finish_wait(&ctx->sqo_wait, &wait);
- 
- 			ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
-@@ -5189,8 +5198,7 @@ static int io_sq_thread(void *data)
- 		mutex_lock(&ctx->uring_lock);
- 		ret = io_submit_sqes(ctx, to_submit, NULL, -1, &cur_mm, true);
- 		mutex_unlock(&ctx->uring_lock);
--		if (ret > 0)
--			inflight += ret;
-+		timeout = jiffies + ctx->sq_thread_idle;
- 	}
- 
- 	set_fs(old_fs);
+-	switch (req->opcode) {
++	if (sqe) {
++		ret = io_req_prep(opcode, req, sqe, force_nonblock);
++		if (ret)
++			return ret;
++	}
++
++	switch (opcode) {
+ 	case IORING_OP_NOP:
+ 		ret = io_nop(req);
+ 		break;
+ 	case IORING_OP_READV:
+ 	case IORING_OP_READ_FIXED:
+ 	case IORING_OP_READ:
+-		if (sqe) {
+-			ret = io_read_prep(req, sqe, force_nonblock);
+-			if (ret < 0)
+-				break;
+-		}
+ 		ret = io_read(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_WRITEV:
+ 	case IORING_OP_WRITE_FIXED:
+ 	case IORING_OP_WRITE:
+-		if (sqe) {
+-			ret = io_write_prep(req, sqe, force_nonblock);
+-			if (ret < 0)
+-				break;
+-		}
+ 		ret = io_write(req, nxt, force_nonblock);
+ 		break;
+-	case IORING_OP_FSYNC:
+-		if (sqe) {
+-			ret = io_prep_fsync(req, sqe);
+-			if (ret < 0)
+-				break;
+-		}
+-		ret = io_fsync(req, nxt, force_nonblock);
+-		break;
+ 	case IORING_OP_POLL_ADD:
+-		if (sqe) {
+-			ret = io_poll_add_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_poll_add(req, nxt);
+ 		break;
+ 	case IORING_OP_POLL_REMOVE:
+-		if (sqe) {
+-			ret = io_poll_remove_prep(req, sqe);
+-			if (ret < 0)
+-				break;
+-		}
+ 		ret = io_poll_remove(req);
+ 		break;
++	case IORING_OP_FSYNC:
++		ret = io_fsync(req, nxt, force_nonblock);
++		break;
+ 	case IORING_OP_SYNC_FILE_RANGE:
+-		if (sqe) {
+-			ret = io_prep_sfr(req, sqe);
+-			if (ret < 0)
+-				break;
+-		}
+ 		ret = io_sync_file_range(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_SENDMSG:
++		ret = io_sendmsg(req, nxt, force_nonblock);
++		break;
+ 	case IORING_OP_SEND:
+-		if (sqe) {
+-			ret = io_sendmsg_prep(req, sqe);
+-			if (ret < 0)
+-				break;
+-		}
+-		if (req->opcode == IORING_OP_SENDMSG)
+-			ret = io_sendmsg(req, nxt, force_nonblock);
+-		else
+-			ret = io_send(req, nxt, force_nonblock);
++		ret = io_send(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_RECVMSG:
++		ret = io_recvmsg(req, nxt, force_nonblock);
++		break;
+ 	case IORING_OP_RECV:
+-		if (sqe) {
+-			ret = io_recvmsg_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+-		if (req->opcode == IORING_OP_RECVMSG)
+-			ret = io_recvmsg(req, nxt, force_nonblock);
+-		else
+-			ret = io_recv(req, nxt, force_nonblock);
++		ret = io_recv(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_TIMEOUT:
+-		if (sqe) {
+-			ret = io_timeout_prep(req, sqe, false);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_timeout(req);
+ 		break;
+ 	case IORING_OP_TIMEOUT_REMOVE:
+-		if (sqe) {
+-			ret = io_timeout_remove_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_timeout_remove(req);
+ 		break;
+ 	case IORING_OP_ACCEPT:
+-		if (sqe) {
+-			ret = io_accept_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_accept(req, nxt, force_nonblock);
+ 		break;
+-	case IORING_OP_CONNECT:
+-		if (sqe) {
+-			ret = io_connect_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+-		ret = io_connect(req, nxt, force_nonblock);
+-		break;
+ 	case IORING_OP_ASYNC_CANCEL:
+-		if (sqe) {
+-			ret = io_async_cancel_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_async_cancel(req, nxt);
+ 		break;
++	case IORING_OP_CONNECT:
++		ret = io_connect(req, nxt, force_nonblock);
++		break;
+ 	case IORING_OP_FALLOCATE:
+-		if (sqe) {
+-			ret = io_fallocate_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_fallocate(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_OPENAT:
+-		if (sqe) {
+-			ret = io_openat_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_openat(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_CLOSE:
+-		if (sqe) {
+-			ret = io_close_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_close(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_FILES_UPDATE:
+-		if (sqe) {
+-			ret = io_files_update_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_files_update(req, force_nonblock);
+ 		break;
+ 	case IORING_OP_STATX:
+-		if (sqe) {
+-			ret = io_statx_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_statx(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_FADVISE:
+-		if (sqe) {
+-			ret = io_fadvise_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_fadvise(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_MADVISE:
+-		if (sqe) {
+-			ret = io_madvise_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_madvise(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_OPENAT2:
+-		if (sqe) {
+-			ret = io_openat2_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_openat2(req, nxt, force_nonblock);
+ 		break;
+ 	case IORING_OP_EPOLL_CTL:
+-		if (sqe) {
+-			ret = io_epoll_ctl_prep(req, sqe);
+-			if (ret)
+-				break;
+-		}
+ 		ret = io_epoll_ctl(req, nxt, force_nonblock);
+ 		break;
+ 	default:
 -- 
-2.17.2
+2.25.0.114.g5b0ca878e0
 
+
+--5xcvbplkbi3nv3hh
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="v1-0002-WIP-io_uring-Separate-blocking-nonblocking-io_iss.patch"
+
+From 4efd092e07207d18b2f0fdbc6e68e93d5e7c93b0 Mon Sep 17 00:00:00 2001
+From: Andres Freund <andres@anarazel.de>
+Date: Sun, 23 Feb 2020 23:06:58 -0800
+Subject: [PATCH v1 2/2] WIP: io_uring: Separate blocking/nonblocking
+ io_issue_sqe cases.
+
+Signed-off-by: Andres Freund <andres@anarazel.de>
+---
+ fs/io_uring.c | 33 ++++++++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 9a8fda8b28c9..b149ab57c5b4 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4284,20 +4284,12 @@ static void io_cleanup_req(struct io_kiocb *req)
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+ }
+ 
+-static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
++static inline int __io_issue_sqe(u8 opcode, struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 			struct io_kiocb **nxt, bool force_nonblock)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	/* allow compiler to infer opcode doesn't change */
+-	u8 opcode = req->opcode;
+ 	int ret;
+ 
+-	if (sqe) {
+-		ret = io_req_prep(opcode, req, sqe, force_nonblock);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	switch (opcode) {
+ 	case IORING_OP_NOP:
+ 		ret = io_nop(req);
+@@ -4405,6 +4397,25 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	return 0;
+ }
+ 
++static int io_prep_issue_sqe_nonblock(struct io_kiocb *req, const struct io_uring_sqe *sqe,
++				   struct io_kiocb **nxt)
++{
++	/* allow compiler to infer opcode doesn't change */
++	u8 opcode = req->opcode;
++	int ret;
++
++	ret = io_req_prep(opcode, req, sqe, true);
++	if (ret)
++		return ret;
++
++	return __io_issue_sqe(opcode, req, NULL, nxt, true);
++}
++
++static int io_issue_sqe_block(struct io_kiocb *req, struct io_kiocb **nxt)
++{
++	return __io_issue_sqe(req->opcode, req, NULL, nxt, false);
++}
++
+ static void io_wq_submit_work(struct io_wq_work **workptr)
+ {
+ 	struct io_wq_work *work = *workptr;
+@@ -4421,7 +4432,7 @@ static void io_wq_submit_work(struct io_wq_work **workptr)
+ 	if (!ret) {
+ 		req->in_async = true;
+ 		do {
+-			ret = io_issue_sqe(req, NULL, &nxt, false);
++			ret = io_issue_sqe_block(req, &nxt);
+ 			/*
+ 			 * We can get EAGAIN for polled IO even though we're
+ 			 * forcing a sync submission from here, since we can't
+@@ -4616,7 +4627,7 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ again:
+ 	linked_timeout = io_prep_linked_timeout(req);
+ 
+-	ret = io_issue_sqe(req, sqe, &nxt, true);
++	ret = io_prep_issue_sqe_nonblock(req, sqe, &nxt);
+ 
+ 	/*
+ 	 * We async punt it if the file wasn't marked NOWAIT, or if the file
+-- 
+2.25.0.114.g5b0ca878e0
+
+
+--5xcvbplkbi3nv3hh--

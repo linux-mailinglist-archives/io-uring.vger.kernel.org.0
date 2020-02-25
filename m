@@ -2,125 +2,118 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1285016EA6C
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 16:47:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49C2A16EAC9
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 17:04:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729553AbgBYPrf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 Feb 2020 10:47:35 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:38411 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729386AbgBYPrf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Feb 2020 10:47:35 -0500
-Received: by mail-il1-f193.google.com with SMTP id f5so11201059ilq.5
-        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2020 07:47:33 -0800 (PST)
+        id S1728065AbgBYQEy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 Feb 2020 11:04:54 -0500
+Received: from mail-io1-f45.google.com ([209.85.166.45]:33121 "EHLO
+        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbgBYQEy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Feb 2020 11:04:54 -0500
+Received: by mail-io1-f45.google.com with SMTP id z8so2817709ioh.0
+        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2020 08:04:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=NJ9ZB3x5EusKPedEP8k69cKpBStrdbihTdCVOKPB8tQ=;
-        b=r7hj85bE3YM7BKji/vM4T5vVw1aHaeUuMl4O/7QV67eyJ3bC8xbfEBOWxtghEXt3Ja
-         8VsMZPkqa0LY7J01KPXB/bOYrlreht0aetRqyadyN18HlikPEDHyc8pBd6bgtN7rGgCN
-         WO6J2nYWewNz1urVz5A4dqJDiKKsQDdzoBcqw9a393UVGAPMiWTYF3z01j2CzaMgMu2n
-         AnU/Sgowu5tPU4MDuj/24/wSNlCrSWrVnNY6QAeMApDP+y1xfVkwaQ01xDew4DTtWo9J
-         ZCmCLKqevWefv8pzN3Bmn9VIafMcRwCowM6mLmNOym5ciN1uHwcc6gZ/ty3epOiHI5CN
-         PQag==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Caji5YTxOgnbPSqZrj8z1cApQfcaGFZJrBeZgVjpkkc=;
+        b=0AVP48gzAoyhAoENVv9a25DW5nYx23n8iFwB3/n5zJNCz4Z/juWJcUpgGWhP6ZSn6J
+         vmlxmz9S/xuL1vgtKi2Cr1bB96aqh4t5tG+C3YIoLd8w9kRSO2XN5omocPuCAZGlHZuo
+         u7XmQwc/nQEWsB+PSOEkMpjIhTbWYaUu74qvQwIER86Zke2hYpO3I4MPG5bIUqCZ0XgI
+         6+GbVeFW8CqOjQeYf51uHMWDf2HIummAxrvOF2yknbAsQcrUxU+4wbRArJQ9KoU6FGPt
+         xtHFdz+kFX90nh5BAfZBPNvAcReOo1nmmAsE9kVbnwdmNi61ci/qNZn91kMQgU2CIyMU
+         px+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=NJ9ZB3x5EusKPedEP8k69cKpBStrdbihTdCVOKPB8tQ=;
-        b=bHi+Thc20TJnhn05fBVJ/5u0nLebwQwfyKIS4uVR/+QoGtaIKHp5uYtd8qR4pRP6Y4
-         /bH5BOglwEqzxtYyIcsTIc98ohkENdWJXO5kI08R+48RxA1Q+8I39TW8iZS5I7Ts+xKP
-         n3BU33iCGx+1McCAuRdecz0rb9J2t5pPQdQRbuk5W/s3BZhBexvIo4oe4pQ6SIwEd+DJ
-         0pKDGO4wFe+icjZah6cdAkIDPbQqSimaXUI1fVqqZxhmij3chtQv0wJGVbl6SbCVQSrA
-         Z3229cEfDQ0/pwZIgJDb0omnEPqjmdJInDJlKiGjsQ39UDZW6uOr1zdpqafH+LpdbWYq
-         4l5A==
-X-Gm-Message-State: APjAAAWGTOXi+uMiWkQZpG1E0q7JcC4P8KEjm4BTFEwKgUNSqGYJQVeJ
-        q2w7gWF/Y0n7KKR9LcvJ4nAIWYiQfzU=
-X-Google-Smtp-Source: APXvYqzYdc5eRYlBmkTPoZZIMSeOu8JV8AjIIWZJbEEPZItVliwLZDvGMhk3R+N3NjtTIkGaOt/low==
-X-Received: by 2002:a92:dac3:: with SMTP id o3mr70781678ilq.237.1582645653202;
-        Tue, 25 Feb 2020 07:47:33 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id v3sm5661884ili.0.2020.02.25.07.47.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2020 07:47:32 -0800 (PST)
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Andres Freund <andres@anarazel.de>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Caji5YTxOgnbPSqZrj8z1cApQfcaGFZJrBeZgVjpkkc=;
+        b=PSx1PuCmxEAPPZ3buGPCtdEF9QIorvkSQwubF1GHv/wiqbyRtAsr2DeQR85YZ0im5Y
+         DQ47z71cvZkTWdxLsalkk8rEYZ7gIxD+6jx7uUvwLthNN7HvJ6XqWsf1L9Kv8IgTesDh
+         G8x0XNSg1nacrlnd06XRAovP6vnv/PtUMfOTBH574OQnaPL15I8Era/mPGhJ0TgJFLq2
+         /AyReC6c33m61GQuUf/dHQdwsFbISOu7naWBK4+Rd/KGDUXafnQ+YcWjiSuz3VQQJKhU
+         8yHJ4PIaH2prLqKh2XUFDNaF66dDpzwT4L83dDbW87veIlS3irsEze1gr65ZMBdTGNX7
+         cfyw==
+X-Gm-Message-State: APjAAAVFfAWr0gOshBcCMIytrow5WJ07A83LoE1q+uovRhOLT2x8EWKc
+        VpvEW/IXWzQoLV07MFT+WCMppxsnX7k=
+X-Google-Smtp-Source: APXvYqxHV7ajesHsnhcYlbAYs26Uk1Hdbx6ksOSDotzYUPLpwFTFpvmnZuisgNB7YuYuy8uWuBIpuw==
+X-Received: by 2002:a05:6638:72c:: with SMTP id j12mr61572580jad.136.1582646693553;
+        Tue, 25 Feb 2020 08:04:53 -0800 (PST)
+Received: from x1.localdomain ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id k23sm5628100ilg.83.2020.02.25.08.04.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 08:04:53 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io-wq: remove spin-for-work optimization
-Message-ID: <13210add-5356-9c02-3430-4fe92fe0b32c@kernel.dk>
-Date:   Tue, 25 Feb 2020 08:47:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+To:     io-uring@vger.kernel.org
+Cc:     andres@anarazel.de
+Subject: [PATCHSET v2 0/3] io_uring support for automatic buffers
+Date:   Tue, 25 Feb 2020 09:04:48 -0700
+Message-Id: <20200225160451.7198-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Andres reports that buffered IO seems to suck up more cycles than we
-would like, and he narrowed it down to the fact that the io-wq workers
-will briefly spin for more work on completion of a work item. This was
-a win on the networking side, but apparently some other cases take a
-hit because of it. Remove the optimization to avoid burning more CPU
-than we have to for disk IO.
+With the poll retry based async IO patchset I posted last week, the one
+big missing thing for me was the ability to have automatic buffer
+selection. Generally applications that handle tons of sockets like to
+poll for activity on them, then issue IO when they become ready. This is
+of course at least two system calls, but it also means that it provides
+an application a chance to manage how many IO buffers it needs. With the
+io_uring based polled IO, the application need only issue an
+IORING_OP_RECV (for example, to receive socket data), it doesn't need to
+poll at all. However, this means that the application no longer has an
+opportune moment to select how many IO buffers to keep in flight, it has
+to be equal to what it currently has pending.
 
-Reported-by: Andres Freund <andres@anarazel.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+I had originally intended to use BPF to provide some means of buffer
+selection, but I had a hard time imagining how life times of the buffer
+could be managed through that. I had a false start today, but Andres
+suggested a nifty approach that also solves the life time issue.
 
----
+Basically the application registers buffers with the kernel. Each buffer
+is registered with a given group ID, and buffer ID. The buffers are
+organized by group ID, and the application selects a buffer pool based
+on this group ID. One use case might be to group by size. There's an
+opcode for this, IORING_OP_PROVIDE_BUFFERS.
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 0a5ab1a8f69a..bf8ed1b0b90a 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -535,42 +535,23 @@ static void io_worker_handle_work(struct io_worker *worker)
- 	} while (1);
- }
- 
--static inline void io_worker_spin_for_work(struct io_wqe *wqe)
--{
--	int i = 0;
--
--	while (++i < 1000) {
--		if (io_wqe_run_queue(wqe))
--			break;
--		if (need_resched())
--			break;
--		cpu_relax();
--	}
--}
--
- static int io_wqe_worker(void *data)
- {
- 	struct io_worker *worker = data;
- 	struct io_wqe *wqe = worker->wqe;
- 	struct io_wq *wq = wqe->wq;
--	bool did_work;
- 
- 	io_worker_start(wqe, worker);
- 
--	did_work = false;
- 	while (!test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
- 		set_current_state(TASK_INTERRUPTIBLE);
- loop:
--		if (did_work)
--			io_worker_spin_for_work(wqe);
- 		spin_lock_irq(&wqe->lock);
- 		if (io_wqe_run_queue(wqe)) {
- 			__set_current_state(TASK_RUNNING);
- 			io_worker_handle_work(worker);
--			did_work = true;
- 			goto loop;
- 		}
--		did_work = false;
- 		/* drops the lock on success, retry */
- 		if (__io_worker_idle(wqe, worker)) {
- 			__release(&wqe->lock);
+IORING_OP_PROVIDE_BUFFERS takes a start address, length of a buffer, and
+number of buffers. It also provides a group ID with which these buffers
+should be associated, and a starting buffer ID. The buffers are then
+added, and the buffer ID is incremented by 1 for each buffer.
+
+With that, when doing the same IORING_OP_RECV, no buffer is passed in
+with the request. Instead, it's flagged with IOSQE_BUFFER_SELECT, and
+sqe->buf_group is filled in with a valid group ID. When the kernel can
+satisfy the receive, a buffer is selected from the specified group ID
+pool. If none are available, the IO is terminated with -ENOBUFS. On
+success, the buffer ID is passed back through the (CQE) completion
+event. This tells the application what specific buffer was used.
+
+A buffer can be used only once. On completion, the application may
+choose to free it, or register it again with IORING_OP_PROVIDE_BUFFER.
+
+Patches can also be found in the below repo:
+
+https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-buf-select
+
+and they are obviously layered on top of the poll retry rework.
+
+Changes since v1:
+- Cleanup address space
+- Fix locking for async offload issue
+- Add lockdep annotation for uring_lock
+- Verify sqe fields on PROVIDE_BUFFERS prep
+- Fix send/recv kbuf leak on import failure
+- Fix send/recv error handling on -ENOBUFS
+- Change IORING_OP_PROVIDE_BUFFER to PROVIDE_BUFFERS, and allow multiple
+  contig buffers in one call
 
 -- 
 Jens Axboe
+
 

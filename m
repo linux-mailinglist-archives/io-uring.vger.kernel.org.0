@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC2AA16EB2C
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 17:19:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7F6316EB2D
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 17:19:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729411AbgBYQTq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 Feb 2020 11:19:46 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45165 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728051AbgBYQTq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Feb 2020 11:19:46 -0500
-Received: by mail-io1-f67.google.com with SMTP id w9so2064550iob.12
-        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2020 08:19:45 -0800 (PST)
+        id S1729992AbgBYQTs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 Feb 2020 11:19:48 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:45542 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbgBYQTs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Feb 2020 11:19:48 -0500
+Received: by mail-il1-f196.google.com with SMTP id p8so3000267iln.12
+        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2020 08:19:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=59rELmG0O9zfu1tuc/s8zN+CnTkFSFqiiR4DrHCKfTg=;
-        b=W+0LR0uiLuGgFqAM1id4Nxd/9KSz3locqmWnzz7SzJzspClvadju1NZmRiQsasCQJz
-         3XLe+EVJiBwvIOnvNOIqw+hDXndZxCWC06TWW9dB4J86GZp7f+ABXlKTwY4aDw4lDN+D
-         C7C69Up15dMJnftdt0FSspXhqQ8awhwW8Ml9i51AdZC9vdVcHbzycjecozd6cfZJ/uX2
-         KOF9Ku8cjjIIoIr0J5/CZ1XMZldwn50HMbSSCzjU5A+ieDPJgIdMJ1vhL7xTynSvoD0z
-         4xmg2tmALHxzuinkvfnMbwtyJLRMq14n7bvo4PWCSyukKTpLX5Q8rMFv7JmEtFKiU5np
-         ot3Q==
+        bh=q81uZYP1dr2I7ML9cbyRzoj5265hFdFzLvA+Xdaap2I=;
+        b=oClJB6947ltFwsk7vc73pnLurW7BBgd2Hhm3ZVZscAUs1bodXdQJ4rCYzpzwkt13ZG
+         dO1XnLwwT6TvVBESkgJxa6M6jN7XoNBLMBr9un47XBKAJhcmd6mph2wtd/DdIyq3txC7
+         84Jq1hA7MI/iRMKGsBCJB0TMx2fQxRpreC7wFZwS9M3HpUYQ98d8Vr3YCA9g8ZDHUYdx
+         T63gsceCQffTQe6B+TW4c3NQ526+fy2g+RnKjLRVLmLtqSLwnlLD9uIj8uYy5SLUdRoF
+         5U7ngM3ieJehHpHvAzH32pgrLLAYngJ6tl1eR5LvJeQ7/evmjsh/0k0P+EO00OXRvTHr
+         DoXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=59rELmG0O9zfu1tuc/s8zN+CnTkFSFqiiR4DrHCKfTg=;
-        b=TDYWNeM2hRrXInmZ9PYul1u3yJtfHhhiQoB0quzc1qRG7u1RvRJkglKBoYCH4e5Qe5
-         lj92IFCztsuEEIb8qd8Cj7ROe4Rd+xrKGA10MumoQUPVikpdvKlLpBUh/vKBRIvjQZ2p
-         TtfSZ74ewFhaLTXAAZg+qBQO3Y8MuMLVxE0p0CTfzLdo2NjdzVEdUVU8wU8PGhGZHzcc
-         52e74VoPp2PsIefLpJjB9Dv/dsWgCkm9RFw2gMIac07kOm9bf2nPDRJIFFE6MTe44z1o
-         nKZ1kCLehf4nCHpLWfJvGOUFK/pLARiW8luKtz0pA8VY5KZhr3FutoC27JDcax5zEXDY
-         sS8w==
-X-Gm-Message-State: APjAAAXt9q36FJ56fGQIEs9poz7IOryxR7SWvbd2Yh3jrGPZ+tUT+soA
-        QB9NM7mfrt0xAXSsrhnmvGug800PNCg=
-X-Google-Smtp-Source: APXvYqw5xqyEgbCDRjs5Cg71seLAghxjRUc2jBhys7KOg6tttti57ATBZoH+wSyWJ2S4HLs76Ift/A==
-X-Received: by 2002:a5d:9593:: with SMTP id a19mr56261092ioo.244.1582647584616;
-        Tue, 25 Feb 2020 08:19:44 -0800 (PST)
+        bh=q81uZYP1dr2I7ML9cbyRzoj5265hFdFzLvA+Xdaap2I=;
+        b=lMcpn3B68HTojQfjOl5YDgYMMIierSiRPQSMR9AemfMiIlKIQ42pu+rSnAaWUOAWx8
+         EUYe0OCU9rwS8rBd9s64VsvKO2BjzrjltCAPJuXhDmi4OOJEdaCiJVtqeJuQXmZ3dZ5L
+         Q7QjAF1Jv6gO8MgCrW55SBbA+sFizc0LLpg0MsO8ooKlORbRY6kOVtluU80DOrEXUKLT
+         dfEfiGBWoJsM5OrNs7zF0/QHbgO7RyVSdGE2Z+P74iPZQ0pa96GZV1uStzwp0akaryS+
+         pRiZIWgSxJMnhjMmcykNbXjNcuODesLgg65KIOvMR9O+zlI1PnwBdIjlLcVPNgfzQ0q0
+         d1gA==
+X-Gm-Message-State: APjAAAVvuMq1eYUdj41roDjyMo2LAHNxQERCcoujfGBe9i/2dia37fEs
+        9ACqyHg0pWHoHTSLMuf8jLhQ2RmHR5M=
+X-Google-Smtp-Source: APXvYqwXuR3duKf0SFJvgQ6BQ1umtD5MNTqAXzYb5uaVsbk241PQzg0OAS9wqCFG079cddwGlrOQRQ==
+X-Received: by 2002:a92:1b51:: with SMTP id b78mr64074281ilb.14.1582647585536;
+        Tue, 25 Feb 2020 08:19:45 -0800 (PST)
 Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id y11sm5652204ilp.46.2020.02.25.08.19.43
+        by smtp.gmail.com with ESMTPSA id y11sm5652204ilp.46.2020.02.25.08.19.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 08:19:43 -0800 (PST)
+        Tue, 25 Feb 2020 08:19:45 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     andres@anarazel.de, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/2] io_uring: support buffer selection
-Date:   Tue, 25 Feb 2020 09:19:37 -0700
-Message-Id: <20200225161938.11649-5-axboe@kernel.dk>
+Subject: [PATCH 3/3] io_uring: support buffer selection
+Date:   Tue, 25 Feb 2020 09:19:38 -0700
+Message-Id: <20200225161938.11649-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200225161938.11649-1-axboe@kernel.dk>
 References: <20200225161938.11649-1-axboe@kernel.dk>
@@ -90,12 +90,12 @@ if attempted on unsupported requests.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c                 | 288 ++++++++++++++++++++++++++++------
- include/uapi/linux/io_uring.h |  24 ++-
- 2 files changed, 260 insertions(+), 52 deletions(-)
+ fs/io_uring.c                 | 203 +++++++++++++++++++++++++++++-----
+ include/uapi/linux/io_uring.h |  14 +++
+ 2 files changed, 192 insertions(+), 25 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d28602f32936..ae6be007d426 100644
+index c4dcb7565a20..ae6be007d426 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
 @@ -400,7 +400,9 @@ struct io_sr_msg {
@@ -108,7 +108,7 @@ index d28602f32936..ae6be007d426 100644
  };
  
  struct io_open {
-@@ -494,6 +497,7 @@ enum {
+@@ -495,6 +497,7 @@ enum {
  	REQ_F_LINK_BIT		= IOSQE_IO_LINK_BIT,
  	REQ_F_HARDLINK_BIT	= IOSQE_IO_HARDLINK_BIT,
  	REQ_F_FORCE_ASYNC_BIT	= IOSQE_ASYNC_BIT,
@@ -116,7 +116,7 @@ index d28602f32936..ae6be007d426 100644
  
  	REQ_F_LINK_NEXT_BIT,
  	REQ_F_FAIL_LINK_BIT,
-@@ -510,6 +514,7 @@ enum {
+@@ -511,6 +514,7 @@ enum {
  	REQ_F_NEED_CLEANUP_BIT,
  	REQ_F_OVERFLOW_BIT,
  	REQ_F_POLLED_BIT,
@@ -124,7 +124,7 @@ index d28602f32936..ae6be007d426 100644
  };
  
  enum {
-@@ -523,6 +528,8 @@ enum {
+@@ -524,6 +528,8 @@ enum {
  	REQ_F_HARDLINK		= BIT(REQ_F_HARDLINK_BIT),
  	/* IOSQE_ASYNC */
  	REQ_F_FORCE_ASYNC	= BIT(REQ_F_FORCE_ASYNC_BIT),
@@ -133,7 +133,7 @@ index d28602f32936..ae6be007d426 100644
  
  	/* already grabbed next link */
  	REQ_F_LINK_NEXT		= BIT(REQ_F_LINK_NEXT_BIT),
-@@ -554,6 +561,8 @@ enum {
+@@ -555,6 +561,8 @@ enum {
  	REQ_F_OVERFLOW		= BIT(REQ_F_OVERFLOW_BIT),
  	/* already went through poll handler */
  	REQ_F_POLLED		= BIT(REQ_F_POLLED_BIT),
@@ -142,7 +142,7 @@ index d28602f32936..ae6be007d426 100644
  };
  
  struct async_poll {
-@@ -616,6 +625,7 @@ struct io_kiocb {
+@@ -617,6 +625,7 @@ struct io_kiocb {
  			struct callback_head	task_work;
  			struct hlist_node	hash_node;
  			struct async_poll	*apoll;
@@ -150,7 +150,7 @@ index d28602f32936..ae6be007d426 100644
  		};
  		struct io_wq_work	work;
  	};
-@@ -665,6 +675,8 @@ struct io_op_def {
+@@ -666,6 +675,8 @@ struct io_op_def {
  	/* set if opcode supports polled "wait" */
  	unsigned		pollin : 1;
  	unsigned		pollout : 1;
@@ -159,7 +159,7 @@ index d28602f32936..ae6be007d426 100644
  };
  
  static const struct io_op_def io_op_defs[] = {
-@@ -774,12 +786,14 @@ static const struct io_op_def io_op_defs[] = {
+@@ -775,12 +786,14 @@ static const struct io_op_def io_op_defs[] = {
  		.needs_file		= 1,
  		.unbound_nonreg_file	= 1,
  		.pollin			= 1,
@@ -174,7 +174,7 @@ index d28602f32936..ae6be007d426 100644
  	},
  	[IORING_OP_FADVISE] = {
  		.needs_file		= 1,
-@@ -792,12 +806,14 @@ static const struct io_op_def io_op_defs[] = {
+@@ -793,12 +806,14 @@ static const struct io_op_def io_op_defs[] = {
  		.needs_file		= 1,
  		.unbound_nonreg_file	= 1,
  		.pollout		= 1,
@@ -189,7 +189,7 @@ index d28602f32936..ae6be007d426 100644
  	},
  	[IORING_OP_OPENAT2] = {
  		.needs_file		= 1,
-@@ -1185,7 +1201,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+@@ -1186,7 +1201,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
  		if (cqe) {
  			WRITE_ONCE(cqe->user_data, req->user_data);
  			WRITE_ONCE(cqe->res, req->result);
@@ -198,7 +198,7 @@ index d28602f32936..ae6be007d426 100644
  		} else {
  			WRITE_ONCE(ctx->rings->cq_overflow,
  				atomic_inc_return(&ctx->cached_cq_overflow));
-@@ -1209,7 +1225,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+@@ -1210,7 +1225,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
  	return cqe != NULL;
  }
  
@@ -207,7 +207,7 @@ index d28602f32936..ae6be007d426 100644
  {
  	struct io_ring_ctx *ctx = req->ctx;
  	struct io_uring_cqe *cqe;
-@@ -1225,7 +1241,7 @@ static void io_cqring_fill_event(struct io_kiocb *req, long res)
+@@ -1226,7 +1241,7 @@ static void io_cqring_fill_event(struct io_kiocb *req, long res)
  	if (likely(cqe)) {
  		WRITE_ONCE(cqe->user_data, req->user_data);
  		WRITE_ONCE(cqe->res, res);
@@ -216,7 +216,7 @@ index d28602f32936..ae6be007d426 100644
  	} else if (ctx->cq_overflow_flushed) {
  		WRITE_ONCE(ctx->rings->cq_overflow,
  				atomic_inc_return(&ctx->cached_cq_overflow));
-@@ -1237,23 +1253,34 @@ static void io_cqring_fill_event(struct io_kiocb *req, long res)
+@@ -1238,23 +1253,34 @@ static void io_cqring_fill_event(struct io_kiocb *req, long res)
  		req->flags |= REQ_F_OVERFLOW;
  		refcount_inc(&req->refs);
  		req->result = res;
@@ -253,7 +253,7 @@ index d28602f32936..ae6be007d426 100644
  static inline bool io_is_fallback_req(struct io_kiocb *req)
  {
  	return req == (struct io_kiocb *)
-@@ -1634,6 +1661,17 @@ static inline bool io_req_multi_free(struct req_batch *rb, struct io_kiocb *req)
+@@ -1635,6 +1661,17 @@ static inline bool io_req_multi_free(struct req_batch *rb, struct io_kiocb *req)
  	return true;
  }
  
@@ -271,7 +271,7 @@ index d28602f32936..ae6be007d426 100644
  /*
   * Find and free completed poll iocbs
   */
-@@ -1645,10 +1683,15 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+@@ -1646,10 +1683,15 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
  
  	rb.to_free = rb.need_iter = 0;
  	while (!list_empty(done)) {
@@ -288,7 +288,7 @@ index d28602f32936..ae6be007d426 100644
  		(*nr_events)++;
  
  		if (refcount_dec_and_test(&req->refs) &&
-@@ -1823,13 +1866,16 @@ static inline void req_set_fail_links(struct io_kiocb *req)
+@@ -1824,13 +1866,16 @@ static inline void req_set_fail_links(struct io_kiocb *req)
  static void io_complete_rw_common(struct kiocb *kiocb, long res)
  {
  	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
@@ -306,7 +306,7 @@ index d28602f32936..ae6be007d426 100644
  }
  
  static void io_complete_rw(struct kiocb *kiocb, long res, long res2)
-@@ -2018,7 +2064,7 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+@@ -2019,7 +2064,7 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  
  	req->rw.addr = READ_ONCE(sqe->addr);
  	req->rw.len = READ_ONCE(sqe->len);
@@ -315,7 +315,7 @@ index d28602f32936..ae6be007d426 100644
  	req->rw.kiocb.private = (void *) (unsigned long)
  					READ_ONCE(sqe->buf_index);
  	return 0;
-@@ -2131,8 +2177,43 @@ static ssize_t io_import_fixed(struct io_kiocb *req, int rw,
+@@ -2132,8 +2177,43 @@ static ssize_t io_import_fixed(struct io_kiocb *req, int rw,
  	return len;
  }
  
@@ -360,7 +360,7 @@ index d28602f32936..ae6be007d426 100644
  {
  	void __user *buf = u64_to_user_ptr(req->rw.addr);
  	size_t sqe_len = req->rw.len;
-@@ -2144,12 +2225,30 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+@@ -2145,12 +2225,30 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
  		return io_import_fixed(req, rw, iter);
  	}
  
@@ -393,7 +393,7 @@ index d28602f32936..ae6be007d426 100644
  		ret = import_single_range(rw, buf, sqe_len, *iovec, iter);
  		*iovec = NULL;
  		return ret;
-@@ -2292,7 +2391,7 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+@@ -2293,7 +2391,7 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  	io = req->io;
  	io->rw.iov = io->rw.fast_iov;
  	req->io = NULL;
@@ -402,7 +402,7 @@ index d28602f32936..ae6be007d426 100644
  	req->io = io;
  	if (ret < 0)
  		return ret;
-@@ -2310,7 +2409,7 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+@@ -2311,7 +2409,7 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
  	size_t iov_count;
  	ssize_t io_size, ret;
  
@@ -411,7 +411,7 @@ index d28602f32936..ae6be007d426 100644
  	if (ret < 0)
  		return ret;
  
-@@ -2382,7 +2481,7 @@ static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+@@ -2383,7 +2481,7 @@ static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  	io = req->io;
  	io->rw.iov = io->rw.fast_iov;
  	req->io = NULL;
@@ -420,7 +420,7 @@ index d28602f32936..ae6be007d426 100644
  	req->io = io;
  	if (ret < 0)
  		return ret;
-@@ -2400,7 +2499,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+@@ -2401,7 +2499,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
  	size_t iov_count;
  	ssize_t ret, io_size;
  
@@ -429,7 +429,7 @@ index d28602f32936..ae6be007d426 100644
  	if (ret < 0)
  		return ret;
  
-@@ -3217,6 +3352,7 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+@@ -3254,6 +3352,7 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  	sr->msg_flags = READ_ONCE(sqe->msg_flags);
  	sr->msg = u64_to_user_ptr(READ_ONCE(sqe->addr));
  	sr->len = READ_ONCE(sqe->len);
@@ -437,7 +437,7 @@ index d28602f32936..ae6be007d426 100644
  
  	if (!io || req->opcode == IORING_OP_SEND)
  		return 0;
-@@ -3307,12 +3443,38 @@ static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+@@ -3344,12 +3443,38 @@ static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
  #endif
  }
  
@@ -477,7 +477,7 @@ index d28602f32936..ae6be007d426 100644
  
  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
  		return -EINVAL;
-@@ -3322,12 +3484,20 @@ static int io_send(struct io_kiocb *req, struct io_kiocb **nxt,
+@@ -3359,12 +3484,20 @@ static int io_send(struct io_kiocb *req, struct io_kiocb **nxt,
  		struct io_sr_msg *sr = &req->sr_msg;
  		struct msghdr msg;
  		struct iovec iov;
@@ -500,7 +500,7 @@ index d28602f32936..ae6be007d426 100644
  
  		msg.msg_name = NULL;
  		msg.msg_control = NULL;
-@@ -3348,7 +3518,8 @@ static int io_send(struct io_kiocb *req, struct io_kiocb **nxt,
+@@ -3385,7 +3518,8 @@ static int io_send(struct io_kiocb *req, struct io_kiocb **nxt,
  			ret = -EINTR;
  	}
  
@@ -510,7 +510,7 @@ index d28602f32936..ae6be007d426 100644
  	if (ret < 0)
  		req_set_fail_links(req);
  	io_put_req_find_next(req, nxt);
-@@ -3369,6 +3540,7 @@ static int io_recvmsg_prep(struct io_kiocb *req,
+@@ -3406,6 +3540,7 @@ static int io_recvmsg_prep(struct io_kiocb *req,
  	sr->msg_flags = READ_ONCE(sqe->msg_flags);
  	sr->msg = u64_to_user_ptr(READ_ONCE(sqe->addr));
  	sr->len = READ_ONCE(sqe->len);
@@ -518,7 +518,7 @@ index d28602f32936..ae6be007d426 100644
  
  	if (!io || req->opcode == IORING_OP_RECV)
  		return 0;
-@@ -3465,8 +3637,9 @@ static int io_recv(struct io_kiocb *req, struct io_kiocb **nxt,
+@@ -3502,8 +3637,9 @@ static int io_recv(struct io_kiocb *req, struct io_kiocb **nxt,
  		   bool force_nonblock)
  {
  #if defined(CONFIG_NET)
@@ -529,7 +529,7 @@ index d28602f32936..ae6be007d426 100644
  
  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
  		return -EINVAL;
-@@ -3476,12 +3649,20 @@ static int io_recv(struct io_kiocb *req, struct io_kiocb **nxt,
+@@ -3513,12 +3649,20 @@ static int io_recv(struct io_kiocb *req, struct io_kiocb **nxt,
  		struct io_sr_msg *sr = &req->sr_msg;
  		struct msghdr msg;
  		struct iovec iov;
@@ -552,7 +552,7 @@ index d28602f32936..ae6be007d426 100644
  
  		msg.msg_name = NULL;
  		msg.msg_control = NULL;
-@@ -3503,7 +3684,8 @@ static int io_recv(struct io_kiocb *req, struct io_kiocb **nxt,
+@@ -3540,7 +3684,8 @@ static int io_recv(struct io_kiocb *req, struct io_kiocb **nxt,
  			ret = -EINTR;
  	}
  
@@ -562,7 +562,7 @@ index d28602f32936..ae6be007d426 100644
  	if (ret < 0)
  		req_set_fail_links(req);
  	io_put_req_find_next(req, nxt);
-@@ -5139,7 +5321,8 @@ static inline void io_queue_link_head(struct io_kiocb *req)
+@@ -5176,7 +5321,8 @@ static inline void io_queue_link_head(struct io_kiocb *req)
  }
  
  #define SQE_VALID_FLAGS	(IOSQE_FIXED_FILE|IOSQE_IO_DRAIN|IOSQE_IO_LINK|	\
@@ -572,7 +572,7 @@ index d28602f32936..ae6be007d426 100644
  
  static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  			  struct io_submit_state *state, struct io_kiocb **link)
-@@ -5156,6 +5339,12 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+@@ -5193,6 +5339,12 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  		goto err_req;
  	}
  
@@ -585,7 +585,7 @@ index d28602f32936..ae6be007d426 100644
  	id = READ_ONCE(sqe->personality);
  	if (id) {
  		req->work.creds = idr_find(&ctx->personality_idr, id);
-@@ -5168,7 +5357,8 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+@@ -5205,7 +5357,8 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
  
  	/* same numerical values with corresponding REQ_F_*, safe to copy */
  	req->flags |= sqe_flags & (IOSQE_IO_DRAIN | IOSQE_IO_HARDLINK |
@@ -596,10 +596,10 @@ index d28602f32936..ae6be007d426 100644
  	ret = io_req_set_file(state, req, sqe);
  	if (unlikely(ret)) {
 diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 7e2af5753bcc..36ecd1f8d5d3 100644
+index 1de1f683cc3c..36ecd1f8d5d3 100644
 --- a/include/uapi/linux/io_uring.h
 +++ b/include/uapi/linux/io_uring.h
-@@ -61,6 +65,7 @@ enum {
+@@ -65,6 +65,7 @@ enum {
  	IOSQE_IO_LINK_BIT,
  	IOSQE_IO_HARDLINK_BIT,
  	IOSQE_ASYNC_BIT,
@@ -607,7 +607,7 @@ index 7e2af5753bcc..36ecd1f8d5d3 100644
  };
  
  /*
-@@ -76,6 +81,8 @@ enum {
+@@ -80,6 +81,8 @@ enum {
  #define IOSQE_IO_HARDLINK	(1U << IOSQE_IO_HARDLINK_BIT)
  /* always go async */
  #define IOSQE_ASYNC		(1U << IOSQE_ASYNC_BIT)
@@ -616,7 +616,7 @@ index 7e2af5753bcc..36ecd1f8d5d3 100644
  
  /*
   * io_uring_setup() flags
-@@ -150,6 +157,17 @@ struct io_uring_cqe {
+@@ -154,6 +157,17 @@ struct io_uring_cqe {
  	__u32	flags;
  };
  

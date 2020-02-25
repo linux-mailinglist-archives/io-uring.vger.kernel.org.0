@@ -2,203 +2,223 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBBFF16B6D1
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 01:40:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D4B916B772
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 03:00:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbgBYAkA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 19:40:00 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45826 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728011AbgBYAj7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 19:39:59 -0500
-Received: by mail-wr1-f66.google.com with SMTP id g3so12584349wrs.12
-        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 16:39:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:from:autocrypt:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=M6b+yUjkrxpk2X0AVYMdHP/LxGDwuHV9SwPNp0wPrL8=;
-        b=JD72/O4Uc7zX8/XF6iad8fSjs91PrAy3Bu0AynBEIKNAqd7VMmBVYbTIbpg7qM8WXG
-         BMO7ODG9tqz0UhLlcS+HbN0pr2r/XqdsDrMQm/7f50bAm17PCm+3go/9Y78+GP5q3J+G
-         YWDW3iFhThru6zOoQY3yoJNM/+zmSZV533r5h2dDcPgzPB+IH/9yklSbUmnWa4dJ6+BT
-         IIWQ0wtQjdsLaDbaEU7XyD6+V6ypR25efzRjf3N/AFlVK5DzgJ9dOJ88idoc4hZmTZhZ
-         H2YABaz/Fjf8a1nX9f+8LVqIo+bd3ALpG5VszfnikMT8bqoZTIRgAWUM0UJ7PzdrhFST
-         pg/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:autocrypt:subject:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=M6b+yUjkrxpk2X0AVYMdHP/LxGDwuHV9SwPNp0wPrL8=;
-        b=Rq5z421FhIM1d2WxruXgNNiDh3D2Tn6Hv0fwH1z0pDzll2Bf7ROLxzvltFMkMZZUkA
-         iE+lY/bcPNe08lz3ER4HrW2/KYhrk76F2jM16k5u7KToyftY6aQZfSChXu69YhMOMoSQ
-         4IqdKmQGmlZfmvxwhTG0fiXZVuFZH9YMt6s6JfTBgl25PBmJFw935dxiuWb8hOVm4pbL
-         Gvh+MRB3MXWVsSY9E6G9T7c2ocSfcPIkguD8d8PnvCYoR3b+B4HLQW7rcqcqJKe1Vf12
-         VOKyerQRIVOmZWiKMFqX0D5YE1X7tJmGUOnCEdnGqgiYIRCHP6HC+t9ifLSrl5aRIhxs
-         73jA==
-X-Gm-Message-State: APjAAAUskYDrhR3hBXMWkGWuv9euUzHV9NeaKWWghnvGBrc0+O5Of7r7
-        BmPzw6SKGAMiekPu/JJudge8YL4V
-X-Google-Smtp-Source: APXvYqyuVXyJhaP4fMV6veIi0xM5zTdgYyz/fN0RLp3lTbNPVxLLSNduNtX7tZQPvObGzHK8DAlnVg==
-X-Received: by 2002:a5d:5188:: with SMTP id k8mr69402462wrv.151.1582591197089;
-        Mon, 24 Feb 2020 16:39:57 -0800 (PST)
-Received: from [192.168.43.206] ([109.126.137.65])
-        by smtp.gmail.com with ESMTPSA id c26sm1264447wmb.8.2020.02.24.16.39.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 16:39:56 -0800 (PST)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
-        =?UTF-8?B?5p2O6YCa5rSy?= <carter.li@eoitek.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: [RFC] single cqe per link
-Message-ID: <1a9a6022-7175-8ed3-4668-e4de3a2b9ff7@gmail.com>
-Date:   Tue, 25 Feb 2020 03:39:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1728489AbgBYCAT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 21:00:19 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:52646 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726962AbgBYCAT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 21:00:19 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Tqr7L2F_1582596012;
+Received: from 30.15.229.215(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Tqr7L2F_1582596012)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 25 Feb 2020 10:00:13 +0800
+Subject: Re: [PATCH v3] io_uring: fix poll_list race for
+ SETUP_IOPOLL|SETUP_SQPOLL
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, joseph.qi@linux.alibaba.com
+References: <20200224070354.3774-1-xiaoguang.wang@linux.alibaba.com>
+ <6ee28cc6-3c4c-a5cb-75d4-83bccf93fb2a@kernel.dk>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <ca4803dc-af0c-5d6e-834a-343e3100f6f3@linux.alibaba.com>
+Date:   Tue, 25 Feb 2020 10:00:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <6ee28cc6-3c4c-a5cb-75d4-83bccf93fb2a@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-I've got curious about performance of the idea of having only 1 CQE per link
-(for the failed or last one). Tested it with a quick dirty patch doing
-submit-and-reap of a nops-link (patched for inline execution).
+hi,
 
-1) link size: 100
-old: 206 ns per nop
-new: 144 ns per nop
+> On 2/24/20 12:03 AM, Xiaoguang Wang wrote:
+>> After making ext4 support iopoll method:
+>>    let ext4_file_operations's iopoll method be iomap_dio_iopoll(),
+>> we found fio can easily hang in fio_ioring_getevents() with below fio
+>> job:
+>>      rm -f testfile; sync;
+>>      sudo fio -name=fiotest -filename=testfile -iodepth=128 -thread
+>> -rw=write -ioengine=io_uring  -hipri=1 -sqthread_poll=1 -direct=1
+>> -bs=4k -size=10G -numjobs=8 -runtime=2000 -group_reporting
+>> with IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL enabled.
+>>
+>> There are two issues that results in this hang, one reason is that
+>> when IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL are enabled, fio
+>> does not use io_uring_enter to get completed events, it relies on
+>> kernel io_sq_thread to poll for completed events.
+>>
+>> Another reason is that there is a race: when io_submit_sqes() in
+>> io_sq_thread() submits a batch of sqes, variable 'inflight' will
+>> record the number of submitted reqs, then io_sq_thread will poll for
+>> reqs which have been added to poll_list. But note, if some previous
+>> reqs have been punted to io worker, these reqs will won't be in
+>> poll_list timely. io_sq_thread() will only poll for a part of previous
+>> submitted reqs, and then find poll_list is empty, reset variable
+>> 'inflight' to be zero. If app just waits these deferred reqs and does
+>> not wake up io_sq_thread again, then hang happens.
+>>
+>> For app that entirely relies on io_sq_thread to poll completed requests,
+>> let io_iopoll_req_issued() wake up io_sq_thread properly when adding new
+>> element to poll_list.
+> 
+> I'm still not a huge fan of this solution. A few comments below:
+> 
+>> +			if (!list_empty(&ctx->poll_list))
+>> +				io_iopoll_getevents(ctx, &nr_events, 0);
+>> +			if (list_empty(&ctx->poll_list))
+>>   				timeout = jiffies + ctx->sq_thread_idle;
+> 
+> Just use an else?
+> 
+>> +			/*
+>> +			 * While doing polled IO, before going to sleep, we need
+>> +			 * to check if there are new reqs added to poll_list, it
+>> +			 * is because reqs may have been punted to io worker and
+>> +			 * will be added to poll_list later, hence check the
+>> +			 * poll_list again, meanwhile we need to hold uring_lock
+>> +			 * to do this check, otherwise we may lose wakeup event
+>> +			 * in io_iopoll_req_issued().
+>> +			 */
+>> +			if (needs_uring_lock) {
+>> +				mutex_lock(&ctx->uring_lock);
+>> +				if (!list_empty(&ctx->poll_list)) {
+>> +					mutex_unlock(&ctx->uring_lock);
+>> +					cond_resched();
+>> +					continue;
+>> +				}
+>> +			}
+> 
+> Can't we just put this below the prepare_to_wait? I'm not convinced
+> this is closing the gaps, there should be no need to hold the uring
+> lock over this long stretch.
+> 
+> Modified version of yours below
+> 
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index d961945cb332..ffd9bfa84d86 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1821,6 +1821,10 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
+>   		list_add(&req->list, &ctx->poll_list);
+>   	else
+>   		list_add_tail(&req->list, &ctx->poll_list);
+> +
+> +	if ((ctx->flags & IORING_SETUP_SQPOLL) &&
+> +	    wq_has_sleeper(&ctx->sqo_wait))
+> +		wake_up(&ctx->sqo_wait);
+>   }
+>   
+>   static void io_file_put(struct io_submit_state *state)
+> @@ -5086,9 +5090,8 @@ static int io_sq_thread(void *data)
+>   	const struct cred *old_cred;
+>   	mm_segment_t old_fs;
+>   	DEFINE_WAIT(wait);
+> -	unsigned inflight;
+>   	unsigned long timeout;
+> -	int ret;
+> +	int ret = 0;
+>   
+>   	complete(&ctx->completions[1]);
+>   
+> @@ -5096,39 +5099,19 @@ static int io_sq_thread(void *data)
+>   	set_fs(USER_DS);
+>   	old_cred = override_creds(ctx->creds);
+>   
+> -	ret = timeout = inflight = 0;
+> +	timeout = jiffies + ctx->sq_thread_idle;
+>   	while (!kthread_should_park()) {
+>   		unsigned int to_submit;
+>   
+> -		if (inflight) {
+> +		if (!list_empty(&ctx->poll_list)) {
+>   			unsigned nr_events = 0;
+>   
+> -			if (ctx->flags & IORING_SETUP_IOPOLL) {
+> -				/*
+> -				 * inflight is the count of the maximum possible
+> -				 * entries we submitted, but it can be smaller
+> -				 * if we dropped some of them. If we don't have
+> -				 * poll entries available, then we know that we
+> -				 * have nothing left to poll for. Reset the
+> -				 * inflight count to zero in that case.
+> -				 */
+> -				mutex_lock(&ctx->uring_lock);
+> -				if (!list_empty(&ctx->poll_list))
+> -					io_iopoll_getevents(ctx, &nr_events, 0);
+> -				else
+> -					inflight = 0;
+> -				mutex_unlock(&ctx->uring_lock);
+> -			} else {
+> -				/*
+> -				 * Normal IO, just pretend everything completed.
+> -				 * We don't have to poll completions for that.
+> -				 */
+> -				nr_events = inflight;
+> -			}
+> -
+> -			inflight -= nr_events;
+> -			if (!inflight)
+> +			mutex_lock(&ctx->uring_lock);
+> +			if (!list_empty(&ctx->poll_list))
+> +				io_iopoll_getevents(ctx, &nr_events, 0);
+> +			else
+>   				timeout = jiffies + ctx->sq_thread_idle;
+> +			mutex_unlock(&ctx->uring_lock);
+>   		}
+>   
+>   		to_submit = io_sqring_entries(ctx);
+> @@ -5157,7 +5140,7 @@ static int io_sq_thread(void *data)
+>   			 * more IO, we should wait for the application to
+>   			 * reap events and wake us up.
+>   			 */
+> -			if (inflight ||
+> +			if (!list_empty(&ctx->poll_list) ||
+>   			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
+>   			    !percpu_ref_is_dying(&ctx->refs))) {
+>   				cond_resched();
+> @@ -5167,6 +5150,19 @@ static int io_sq_thread(void *data)
+>   			prepare_to_wait(&ctx->sqo_wait, &wait,
+>   						TASK_INTERRUPTIBLE);
+>   
+> +			/*
+> +			 * While doing polled IO, before going to sleep, we need
+> +			 * to check if there are new reqs added to poll_list, it
+> +			 * is because reqs may have been punted to io worker and
+> +			 * will be added to poll_list later, hence check the
+> +			 * poll_list again.
+> +			 */
+> +			if ((ctx->flags & IORING_SETUP_IOPOLL) &&
+> +			    !list_empty_careful(&ctx->poll_list)) {
+> +				finish_wait(&ctx->sqo_wait, &wait);
+> +				continue;
+> +			}
+> +
+>   			/* Tell userspace we may need a wakeup call */
+>   			ctx->rings->sq_flags |= IORING_SQ_NEED_WAKEUP;
+>   			/* make sure to read SQ tail after writing flags */
+> @@ -5194,8 +5190,7 @@ static int io_sq_thread(void *data)
+>   		mutex_lock(&ctx->uring_lock);
+>   		ret = io_submit_sqes(ctx, to_submit, NULL, -1, &cur_mm, true);
+>   		mutex_unlock(&ctx->uring_lock);
+> -		if (ret > 0)
+> -			inflight += ret;
+> +		timeout = jiffies + ctx->sq_thread_idle;
+>   	}
+>   
+>   	set_fs(old_fs);
+> 
+Thanks for your modified version, it works well and looks much better, after applying
+this version, I also don't see this hang issue again.
+ From your codes, now I understand why we don't need to hold uring_lock, thanks.
+Should I send this v4 version with your codes?
 
-2) link size: 10
-old: 234 ns per nop
-new: 181 ns per nop
+Regards,
+Xiaoguang Wang
 
-3) link size: 10, FORCE_ASYNC
-old: 667 ns per nop
-new: 569 ns per nop
-
-
-The patch below breaks sequences, linked_timeout and who knows what else.
-The first one requires synchronisation/atomic, so it's a bit in the way. I've
-been wondering, whether IOSQE_IO_DRAIN is popular and how much it's used. We can
-try to find tradeoff or even disable it with this feature.
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 65a61b8b37c4..9ec29f01cfda 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1164,7 +1164,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx
-*ctx, bool force)
- 	return cqe != NULL;
- }
-
--static void io_cqring_fill_event(struct io_kiocb *req, long res)
-+static void __io_cqring_fill_event(struct io_kiocb *req, long res)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_uring_cqe *cqe;
-@@ -1196,13 +1196,31 @@ static void io_cqring_fill_event(struct io_kiocb *req,
-long res)
- 	}
- }
-
-+static inline bool io_ignore_cqe(struct io_kiocb *req)
-+{
-+	if (!(req->ctx->flags & IORING_SETUP_BOXED_CQE))
-+		return false;
-+
-+	return (req->flags & (REQ_F_LINK|REQ_F_FAIL_LINK)) == REQ_F_LINK;
-+}
-+
-+static void io_cqring_fill_event(struct io_kiocb *req, long res)
-+{
-+	if (io_ignore_cqe(req))
-+		return;
-+	__io_cqring_fill_event(req, res);
-+}
-+
- static void io_cqring_add_event(struct io_kiocb *req, long res)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	unsigned long flags;
-
-+	if (io_ignore_cqe(req))
-+		return;
-+
- 	spin_lock_irqsave(&ctx->completion_lock, flags);
--	io_cqring_fill_event(req, res);
-+	__io_cqring_fill_event(req, res);
- 	io_commit_cqring(ctx);
- 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
-
-@@ -7084,7 +7102,8 @@ static long io_uring_setup(u32 entries, struct
-io_uring_params __user *params)
-
- 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
- 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
--			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ))
-+			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
-+			IORING_SETUP_BOXED_CQE))
- 		return -EINVAL;
-
- 	ret = io_uring_create(entries, &p);
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 08891cc1c1e7..3d69369e252c 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -86,6 +86,7 @@ enum {
- #define IORING_SETUP_CQSIZE	(1U << 3)	/* app defines CQ size */
- #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
- #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
-+#define IORING_SETUP_BOXED_CQE	(1U << 6)	/* single sqe per link */
-
- enum {
- 	IORING_OP_NOP,
-
-
--- 
-Pavel Begunkov

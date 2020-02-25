@@ -2,194 +2,203 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9110E16B5A5
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 00:33:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBBFF16B6D1
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 01:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727896AbgBXXc7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Feb 2020 18:32:59 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:58362 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBXXc6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 18:32:58 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01ONVPTr195994;
-        Mon, 24 Feb 2020 23:32:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=a8ubdp8TUaTsUfIREXDEbgh9tTowTVfz3WviG2xF3SA=;
- b=EDtpydoGkAM2RvvhzezAX6jdwWZ5J3VE+v1s+/yGeddua1nkTcs54pKKV5Jc3yMjoh+l
- kUL5xwsY1YS25fIKQ8j0s5fxmGil+u5WwW7kfsDe3InlmmXNwM2TrUyN8Gqctw4bIgi8
- Mtf0x3jIaagoabaYimTEb8orNF6e3cRDrFlnqXJ7FBy5n89Gk0mAoHuZixjOeL5aG6h6
- Hs7L4YbGyAydYcIBrEYSN7IMwbLdDr82xseQiHJAyFttqt9mpRDfk6bmYAxMnkC3femS
- 5sjRB+Dis3i4OJLTY8RWHUlKQDUnlT5Sk2UWhaeWqkZYBsr0pSOaxm8IwyX4XnhWYPu+ zg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2ycppr8c65-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 23:32:50 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01ONS750130848;
-        Mon, 24 Feb 2020 23:32:50 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2ybe12c6tn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 23:32:50 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01ONWniO010039;
-        Mon, 24 Feb 2020 23:32:49 GMT
-Received: from [10.154.136.165] (/10.154.136.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Feb 2020 15:32:49 -0800
-Subject: Re: [PATCH 1/1] block: Manage bio references so the bio persists
- until necessary
-To:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>
-Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        MATTHEW_WILCOX <matthew.wilcox@oracle.com>
-References: <1580441022-59129-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1580441022-59129-2-git-send-email-bijan.mottahedeh@oracle.com>
- <20200131064230.GA28151@infradead.org>
- <9f29fbc7-baf3-00d1-a20c-d2a115439db2@oracle.com>
- <20200203083422.GA2671@infradead.org>
- <aaecd43b-dd44-f6c5-4e2d-1772cf135d2a@oracle.com>
- <20200204075124.GA29349@infradead.org>
- <46bf2ea0-7677-44af-8e23-45a10710ca3d@kernel.dk>
-From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Message-ID: <8111469e-713d-88d3-7f12-55e90edaf52b@oracle.com>
-Date:   Mon, 24 Feb 2020 15:32:45 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1728316AbgBYAkA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Feb 2020 19:40:00 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45826 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728011AbgBYAj7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Feb 2020 19:39:59 -0500
+Received: by mail-wr1-f66.google.com with SMTP id g3so12584349wrs.12
+        for <io-uring@vger.kernel.org>; Mon, 24 Feb 2020 16:39:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:from:autocrypt:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=M6b+yUjkrxpk2X0AVYMdHP/LxGDwuHV9SwPNp0wPrL8=;
+        b=JD72/O4Uc7zX8/XF6iad8fSjs91PrAy3Bu0AynBEIKNAqd7VMmBVYbTIbpg7qM8WXG
+         BMO7ODG9tqz0UhLlcS+HbN0pr2r/XqdsDrMQm/7f50bAm17PCm+3go/9Y78+GP5q3J+G
+         YWDW3iFhThru6zOoQY3yoJNM/+zmSZV533r5h2dDcPgzPB+IH/9yklSbUmnWa4dJ6+BT
+         IIWQ0wtQjdsLaDbaEU7XyD6+V6ypR25efzRjf3N/AFlVK5DzgJ9dOJ88idoc4hZmTZhZ
+         H2YABaz/Fjf8a1nX9f+8LVqIo+bd3ALpG5VszfnikMT8bqoZTIRgAWUM0UJ7PzdrhFST
+         pg/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:autocrypt:subject:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=M6b+yUjkrxpk2X0AVYMdHP/LxGDwuHV9SwPNp0wPrL8=;
+        b=Rq5z421FhIM1d2WxruXgNNiDh3D2Tn6Hv0fwH1z0pDzll2Bf7ROLxzvltFMkMZZUkA
+         iE+lY/bcPNe08lz3ER4HrW2/KYhrk76F2jM16k5u7KToyftY6aQZfSChXu69YhMOMoSQ
+         4IqdKmQGmlZfmvxwhTG0fiXZVuFZH9YMt6s6JfTBgl25PBmJFw935dxiuWb8hOVm4pbL
+         Gvh+MRB3MXWVsSY9E6G9T7c2ocSfcPIkguD8d8PnvCYoR3b+B4HLQW7rcqcqJKe1Vf12
+         VOKyerQRIVOmZWiKMFqX0D5YE1X7tJmGUOnCEdnGqgiYIRCHP6HC+t9ifLSrl5aRIhxs
+         73jA==
+X-Gm-Message-State: APjAAAUskYDrhR3hBXMWkGWuv9euUzHV9NeaKWWghnvGBrc0+O5Of7r7
+        BmPzw6SKGAMiekPu/JJudge8YL4V
+X-Google-Smtp-Source: APXvYqyuVXyJhaP4fMV6veIi0xM5zTdgYyz/fN0RLp3lTbNPVxLLSNduNtX7tZQPvObGzHK8DAlnVg==
+X-Received: by 2002:a5d:5188:: with SMTP id k8mr69402462wrv.151.1582591197089;
+        Mon, 24 Feb 2020 16:39:57 -0800 (PST)
+Received: from [192.168.43.206] ([109.126.137.65])
+        by smtp.gmail.com with ESMTPSA id c26sm1264447wmb.8.2020.02.24.16.39.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2020 16:39:56 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
+        =?UTF-8?B?5p2O6YCa5rSy?= <carter.li@eoitek.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: [RFC] single cqe per link
+Message-ID: <1a9a6022-7175-8ed3-4668-e4de3a2b9ff7@gmail.com>
+Date:   Tue, 25 Feb 2020 03:39:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <46bf2ea0-7677-44af-8e23-45a10710ca3d@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Antivirus: Avast (VPS 200223-0, 02/23/2020), Outbound message
-X-Antivirus-Status: Clean
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9541 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- suspectscore=2 malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002240175
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9541 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 malwarescore=0 suspectscore=2 impostorscore=0
- spamscore=0 phishscore=0 mlxscore=0 clxscore=1015 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002240175
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/4/2020 12:59 PM, Jens Axboe wrote:
-> On 2/4/20 12:51 AM, Christoph Hellwig wrote:
->> On Mon, Feb 03, 2020 at 01:07:48PM -0800, Bijan Mottahedeh wrote:
->>> My concern is with the code below for the single bio async case:
->>>
->>>                             qc = submit_bio(bio);
->>>
->>>                             if (polled)
->>>                                     WRITE_ONCE(iocb->ki_cookie, qc);
->>>
->>> The bio/dio can be freed before the the cookie is written which is what I'm
->>> seeing, and I thought this may lead to a scenario where that iocb request
->>> could be completed, freed, reallocated, and resubmitted in io_uring layer;
->>> i.e., I thought the cookie could be written into the wrong iocb.
->> I think we do have a potential use after free of the iocb here.
->> But taking a bio reference isn't going to help with that, as the iocb
->> and bio/dio life times are unrelated.
->>
->> I vaguely remember having that discussion with Jens a while ago, and
->> tried to pass a pointer to the qc to submit_bio so that we can set
->> it at submission time, but he came up with a reason why that might not
->> be required.  I'd have to dig out all notes unless Jens remembers
->> better.
-> Don't remember that either, so I'd have to dig out emails! But looking
-> at it now, for the async case with io_uring, the iocb is embedded in the
-> io_kiocb from io_uring. We hold two references to the io_kiocb, one for
-> submit and one for completion. Hence even if the bio completes
-> immediately and someone else finds the completion before the application
-> doing this submit, we still hold the submission reference to the
-> io_kiocb. Hence I don't really see how we can end up with a
-> use-after-free situation here.
->
-> IIRC, Bijan had traces showing this can happen, KASAN complaining about
-> it. Which makes me think that I'm missing a case here, though I don't
-> immediately see what it is.
->
-> Bijan, could post your trace again, I can't seem to find it?
->
+I've got curious about performance of the idea of having only 1 CQE per link
+(for the failed or last one). Tested it with a quick dirty patch doing
+submit-and-reap of a nops-link (patched for inline execution).
 
-I think the problem may be in the nvme driver's handling of multiple 
-pollers sharing the same CQ, due to the fact that nvme_poll() drops 
-cq_poll_lock before completing the CQEs found with nvme_process_cq():
+1) link size: 100
+old: 206 ns per nop
+new: 144 ns per nop
 
-nvme_poll()
-{
-     ...
-     spin_lock(&nvmeq->cq_poll_lock);
-     found = nvme_process_cq(nvmeq, &start, &end, -1);
-     spin_unlock(&nvmeq->cq_poll_lock);
+2) link size: 10
+old: 234 ns per nop
+new: 181 ns per nop
 
-     nvme_complete_cqes(nvmeq, start, end);
-     ...
-}
+3) link size: 10, FORCE_ASYNC
+old: 667 ns per nop
+new: 569 ns per nop
 
-Furthermore, nvme_process_cq() rings the CQ doorbell after collecting 
-the CQEs but before processing them:
 
-static inline int nvme_process_cq(struct nvme_queue *nvmeq, u16 *start, 
-u16 *end, unsigned int tag)
-{
-     ...
-     while (nvme_cqe_pending(nvmeq)) {
-         ...
-         nvme_update_cq_head(nvmeq);
-     }
-     ...
-         nvme_ring_cq_doorbell(nvmeq);
-     return found;
-}
+The patch below breaks sequences, linked_timeout and who knows what else.
+The first one requires synchronisation/atomic, so it's a bit in the way. I've
+been wondering, whether IOSQE_IO_DRAIN is popular and how much it's used. We can
+try to find tradeoff or even disable it with this feature.
 
-Each poller effectively tells the controller that the CQ is empty when it rings the CQ doorbell. This is ok if there is only one poller but with many of them, I think enough tags can be freed and reissued that CQ could be overrun.
 
-In one specific example:
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 65a61b8b37c4..9ec29f01cfda 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1164,7 +1164,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx
+*ctx, bool force)
+ 	return cqe != NULL;
+ }
 
-- Poller 1 find a CQ full of entries in nvme_process_cq()
-- Poller 1 processes CQEs, and more pollers find CQE ranges to process
-   Pollers 2-4 start processing additional non-overlapping CQE ranges
-- Poller 5 finds a CQE range that is overlapping with Poller 1
+-static void io_cqring_fill_event(struct io_kiocb *req, long res)
++static void __io_cqring_fill_event(struct io_kiocb *req, long res)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_uring_cqe *cqe;
+@@ -1196,13 +1196,31 @@ static void io_cqring_fill_event(struct io_kiocb *req,
+long res)
+ 	}
+ }
 
-CQ size 1024
++static inline bool io_ignore_cqe(struct io_kiocb *req)
++{
++	if (!(req->ctx->flags & IORING_SETUP_BOXED_CQE))
++		return false;
++
++	return (req->flags & (REQ_F_LINK|REQ_F_FAIL_LINK)) == REQ_F_LINK;
++}
++
++static void io_cqring_fill_event(struct io_kiocb *req, long res)
++{
++	if (io_ignore_cqe(req))
++		return;
++	__io_cqring_fill_event(req, res);
++}
++
+ static void io_cqring_add_event(struct io_kiocb *req, long res)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	unsigned long flags;
 
-Poller          1   2    3    4    5
-CQ start index  10  9    214  401  708
-CQ end index    9   214  401  708  77
-CQ start phase  1   0    0    0    0
-CQ end phase    0   0    0    0    1
++	if (io_ignore_cqe(req))
++		return;
++
+ 	spin_lock_irqsave(&ctx->completion_lock, flags);
+-	io_cqring_fill_event(req, res);
++	__io_cqring_fill_event(req, res);
+ 	io_commit_cqring(ctx);
+ 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
 
-Poller 1 finds the CQ phase has flipped when processing CQE 821 and  indeed the phase has flipped because of poller 5.  If I interpret this data correctly, it suggests that Pollers 1 and 5 overlap.
+@@ -7084,7 +7102,8 @@ static long io_uring_setup(u32 entries, struct
+io_uring_params __user *params)
 
-After that I start seeing errors.
+ 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
+ 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
+-			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ))
++			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
++			IORING_SETUP_BOXED_CQE))
+ 		return -EINVAL;
 
-A simpler theoretical example with two threads suggested by Matthew Wilcox:
+ 	ret = io_uring_create(entries, &p);
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 08891cc1c1e7..3d69369e252c 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -86,6 +86,7 @@ enum {
+ #define IORING_SETUP_CQSIZE	(1U << 3)	/* app defines CQ size */
+ #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
+ #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
++#define IORING_SETUP_BOXED_CQE	(1U << 6)	/* single sqe per link */
 
-Thread 1 submits enough I/O to fill the CQ
-Thread 1 then processes two CQEs, two block layer tags become available.
-Thread 1 is preempted by thread 2.
-Thread 2 submits two I/Os.
-Thread 2 processes the two CQEs which it owns.
-Thread 2 submits two more I/Os.
-Those CQEs overwrite the next two CQEs that will be processed by thread 1.
+ enum {
+ 	IORING_OP_NOP,
 
-Two of thread 1's IOs will not receive a completion.  Two of
-thread 2's IOs will receive two completions.
 
-Just as a workaround, I held cq_poll_lock while completing the CQEs and see no errors.
-
-Does that make sense?
-
-Thanks.
-
---bijan
-
+-- 
+Pavel Begunkov

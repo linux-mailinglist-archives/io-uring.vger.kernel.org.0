@@ -2,58 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF66516F0F4
-	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 22:13:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 758C016F116
+	for <lists+io-uring@lfdr.de>; Tue, 25 Feb 2020 22:23:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbgBYVNt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 Feb 2020 16:13:49 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:38177 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbgBYVNt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Feb 2020 16:13:49 -0500
-Received: by mail-wr1-f48.google.com with SMTP id e8so386849wrm.5
-        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2020 13:13:47 -0800 (PST)
+        id S1728977AbgBYVXF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 Feb 2020 16:23:05 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42264 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728955AbgBYVXE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Feb 2020 16:23:04 -0500
+Received: by mail-wr1-f66.google.com with SMTP id p18so391487wre.9
+        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2020 13:23:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Lxy5Uuc1O6GaqDB6pcG+SCdzoWN71OMpnn1DUNjEAuM=;
-        b=JBI4rawlMh5iZVeAC5zAbQfnhAFI4mE8s6W/CJZ1vTaXseU+cUQw6lqlOU4zqFtnLt
-         Sy4+uJQBVZiWSHdQOg6NkT7n56xsc/G1UYUni5b1kVdKRpXSGkn8NmIqGx/50aOCc9ji
-         bEOMRnkfDjIpwlDx97SiszF7gnDiEwdZwvpSi/0Glrcxm5I8BwY/IkezZOkDq23LkAzj
-         mRIUk3kuC/H+U7G706oBQoC2n0Jq08nxOfwMsLzWDL3+RDxXpJsucuLdP6QhpG5Toiwm
-         kuyrMhvBHmjNtHZP/n4VCMkZ/Te7nRHNl/nq35wZwZwOQpj34fAH5g+thaUd9isQCnTt
-         xxFg==
+        bh=56mz9ustrTDZePuxGS4fxd/f00qQHqZxYu9f6gHZSY8=;
+        b=VPnx91C8h0PdOjJpPg0gblt8vOMOJPINg1ptW57J6gs/mLQolG2x887NHtRwHyn8QX
+         n0fNJTDB2HF/CsbW15NhU5iSIfz8NYTB1/ni+rW3QABqTsYEPqvGnBygYVesUE4tyooI
+         0DLxyQ7M4gRuOVsxC54atVo/pdN1AzVyH2DRAm3jY0sxU/oXWN1yCCj8IU7lOhsIU6R6
+         /hGIJpm3Ev/dDBGfUiijCFwt+wZowt8iOB+qPwKy4WblqOw8vAxH8cIPJ6ejaf2sUHM7
+         uyh+b+1cU/eKv7JinMnEqB153OcYvQLFsUhkUI1u9QwpSK1hem1UbX7itS7s6Ui9Nocc
+         UFgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Lxy5Uuc1O6GaqDB6pcG+SCdzoWN71OMpnn1DUNjEAuM=;
-        b=Rzpvu3BKEwCSSEdMNd2dn+JrUNd+NkcxO9FJp580a1dLzkez15lBghyeEsDSCLPJjL
-         CHLY2PVOyI/wvzdLrJu4dSkc13FTuzgWg2IztMiXw56JlbxOkbqRLgip0BDzSCrskPmT
-         gAYK6BzuTe6hHNAZ5abgIMitN8TNOMiV6G38fahSkN4X67d+KuB9fhdRaannzHAVbRTd
-         JeODU0draKngNcywU+oo0lpXSrYUZfn2S0Lw2F0j5na0TrBHDCD5rTjqZHYnukR2vaOb
-         wfwllYWzt1dn8/8WG4NjA5UOfmA26gKYgY6UX1YNY6sTTmLtzL98jOxBqMrXu1yyzuex
-         EG8g==
-X-Gm-Message-State: APjAAAWCx7r0Oy7HBrWsiQzw04Ta8qGL/HedRrdRKjwSFBB8HoXa40bu
-        sIrCwpRpAmwWN9dfT3x4rFGICTrp
-X-Google-Smtp-Source: APXvYqxzt/Hdch51I6N9eQBrlfyIRZ+4pWM+BqXQNz8TdmEfdi5KcWNChTVHvAhZp8yyIO4pof19yw==
-X-Received: by 2002:adf:aacc:: with SMTP id i12mr1104387wrc.90.1582665225987;
-        Tue, 25 Feb 2020 13:13:45 -0800 (PST)
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=56mz9ustrTDZePuxGS4fxd/f00qQHqZxYu9f6gHZSY8=;
+        b=JsksHzrxzLjYHxAtH10Za3AIQ6x9w5rN6XqB5Qfn4zz+HY3MXM/6svunQKHPg7byVT
+         1Mor1MqOVOKfTdge7+IK2VoA+TwKUFoKVY33fp51gCwB5TjZ97rsySDOdzvh4bFnTrqk
+         3Q9MH1XMT+MkBoMtpDlIH7deeAxkz+43EhrsL/3LPxWd3j9BXuhXH6Dul0nelQb7iquU
+         FviMI6jrvqQ0SGx1/5R9cIo3df4n0yzgSsTZHEXxcI/3FMPQtlk8VD2Zvg2dIBx1ctu2
+         tIWkwTs6MXbURkFMO2joMzSfgfLwX99HpZKURO/DyA94cG/rc/eH0/eWkuskA3kB6FfF
+         D/5Q==
+X-Gm-Message-State: APjAAAWB7aW6Nc8ftV7pZuKJ4aLRX4HCBkh7Lp76mMWvyT0+vhTk/al7
+        U4399SjzU9mN4jY83D0JAYxX8/3P
+X-Google-Smtp-Source: APXvYqw7ES/2aRso3xUk0qJvy9FxUWYktS2L4V3jZUnnldsWcMlggC8jiN515Ka8vjabjJHevHvCXg==
+X-Received: by 2002:adf:e40f:: with SMTP id g15mr1024322wrm.223.1582665781417;
+        Tue, 25 Feb 2020 13:23:01 -0800 (PST)
 Received: from [192.168.43.62] ([109.126.137.65])
-        by smtp.gmail.com with ESMTPSA id w1sm120624wro.72.2020.02.25.13.13.44
+        by smtp.gmail.com with ESMTPSA id a16sm146585wrx.87.2020.02.25.13.22.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2020 13:13:45 -0800 (PST)
-To:     Jens Axboe <axboe@kernel.dk>,
-        =?UTF-8?B?Q2FydGVyIExpIOadjumAmua0sg==?= <carter.li@eoitek.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <1a9a6022-7175-8ed3-4668-e4de3a2b9ff7@gmail.com>
- <9E393343-7DB8-49D1-A7A2-611F88124C11@eoitek.com>
- <9830e660-0ffa-ed48-37da-493485a5ea17@kernel.dk>
- <56a18348-2949-e9da-b036-600b5bb4dad2@kernel.dk>
- <1e733dd7-acd4-dde6-b3c5-c0ee0fbeda2a@gmail.com>
- <be37a342-9768-5d1e-8d80-6d3d28f236e8@kernel.dk>
+        Tue, 25 Feb 2020 13:23:00 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <1c5f074e-22dd-095a-6be7-730c81eeb1b1@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,13 +91,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [RFC] single cqe per link
-Message-ID: <9271f312-4863-fd3b-5ced-d200d68cfe22@gmail.com>
-Date:   Wed, 26 Feb 2020 00:13:01 +0300
+Subject: Re: [PATCH] io_uring: pick up link work on submit reference drop
+Message-ID: <82423419-1c14-418e-8085-2d8b902b0a2d@gmail.com>
+Date:   Wed, 26 Feb 2020 00:22:13 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <be37a342-9768-5d1e-8d80-6d3d28f236e8@kernel.dk>
+In-Reply-To: <1c5f074e-22dd-095a-6be7-730c81eeb1b1@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -113,52 +106,50 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 25/02/2020 23:20, Jens Axboe wrote:
-> On 2/25/20 3:12 AM, Pavel Begunkov wrote:
->> Flexible, but not performant. The existence of drain is already makes
->> io_uring to do a lot of extra stuff, and even worse when it's actually used.
+On 25/02/2020 23:27, Jens Axboe wrote:
+> If work completes inline, then we should pick up a dependent link item
+> in __io_queue_sqe() as well. If we don't do so, we're forced to go async
+> with that item, which is suboptimal.
 > 
-> Yeah I agree, that's assuming we can make the drain more efficient. Just
-> hand waving on possible use cases :-)
-
-I don't even know what to do with sequences and drains when we get to in-kernel
-sqe generation. And the current linear numbering won't be the case at all.
-
-E.g. req1 -> DRAIN, and req1 infinitely generates req2, req3, etc. Should they
-go before DRAIN? or at any time? What would be performance burden for it?..
-
-I'd rather forbid them for using with some new features. And that's the reason
-behind the question about wideness of its use.
-
->>
->> That's a different thing. Knowing how requests behave (e.g. if
->> nbytes!=res, then fail link), one would want to get cqe for the last
->> executed sqe, whether it's an error or a success for the last one.
->>
->> It makes a link to be handled as a single entity. I don't see a way to
->> emulate similar behaviour with the unconditional masking. Probably, we
->> will need them both.
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > 
-> But you can easily do that with IOSQE_NO_CQE, in fact that's what I did
-> to test this. The chain will have IOSQE_NO_CQE | IOSQE_IO_LINK set on
-> all but the last request.
-
-It's fine if you don't expect it to fail. Otherwise, there will be only
--ECANCELELED for the last one, so you don't know error code nor failed
-req/user_data. Forcing IOSQE_NO_CQE to emit in case of an error is not really
-better.
-
-I know, it's hard to judge base on performance-testing-only patch, but the whole
-idea is to greatly simplify userspace cqe handling, including errors. And I'd
-like to find something better/faster and doing the same favor.
-
-
+> ---
 > 
-> My box with the optane2 is out of commission, apparently, cannot get it
-> going today. So I had to make do with my laptop, which does about ~600K
-> random read IOPS. I don't see any difference there, using polled IO,
-> using 4 link deep chains (so 1/4th the CQEs). Both run at around
-> 611-613K IOPS.
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index ffd9bfa84d86..160cf1b0f478 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -4531,8 +4531,15 @@ static void io_wq_submit_work(struct io_wq_work **workptr)
+>  		} while (1);
+>  	}
+>  
+> -	/* drop submission reference */
+> -	io_put_req(req);
+> +	/*
+> +	 * Drop submission reference. In case the handler already dropped the
+> +	 * completion reference, then it didn't pick up any potential link
+> +	 * work. If 'nxt' isn't set, try and do that here.
+> +	 */
+> +	if (nxt)
+
+It can't even get here, because of the submission ref, isn't it? would the
+following do?
+
+-	io_put_req(req);
++	io_put_req_find_next(req, &nxt);
+
+BTW, as I mentioned before, it appears to me, we don't even need completion ref
+as it always pinned by the submission ref. I'll resurrect the patches doing
+that, but after your poll work will land.
+
+
+> +		io_put_req(req);
+> +	else
+> +		io_put_req_find_next(req, &nxt);
+>  
+>  	if (ret) {
+>  		req_set_fail_links(req);
+> 
 
 -- 
 Pavel Begunkov

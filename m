@@ -2,62 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 919A7170116
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2020 15:24:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6B4170119
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2020 15:25:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbgBZOYK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Feb 2020 09:24:10 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38320 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbgBZOYJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Feb 2020 09:24:09 -0500
-Received: by mail-io1-f67.google.com with SMTP id s24so3521172iog.5
-        for <io-uring@vger.kernel.org>; Wed, 26 Feb 2020 06:24:08 -0800 (PST)
+        id S1726920AbgBZOZP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Feb 2020 09:25:15 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:42185 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbgBZOZO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Feb 2020 09:25:14 -0500
+Received: by mail-il1-f196.google.com with SMTP id x2so2497398ila.9
+        for <io-uring@vger.kernel.org>; Wed, 26 Feb 2020 06:25:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VjOUi1Fi7+2MpzROLuPBLYpl9LM0MiHFG+cIU7G/DUs=;
-        b=CZ6SogvG+jLe4CyeZOEKf5Sl6s5/iivnqWDugz3ywfIG1HZ1peGLEafs38pRnulyth
-         Cw9+Ifm3bjjTIlrM3KCoe+AuJbm1KrF1BMBD0Xypg89hOClvbsMu2FrpCfet2C9q0k/5
-         bQ3WBlNC3gQbaBdW+VaNwnK4NqE9QYVyPzHOIyxCDs2WbG9eXBpu5p2K6z9mxmYBMV2t
-         Fi46+auwvSjCghV1SoMlh0ZzipBn1rIFclBFNvwrNshChqHEDjd7+giv7yzTumUa52CD
-         diVlQEiCxeBC2p+0OPlDgUuXLrgJs5arqz8O7DXBbb6YUyjq+PzXhkrsmRYTYQySD5cL
-         ySlg==
+        bh=99t4/LSu709UOxxHgYYUFaE6oXsju8vQQ+Dan2LeyS0=;
+        b=AKk/C6blVn64C2GdGSB/11TdQP23YBX8LXOs3f/XbzIXqr7hAnkujGrXxJ0GQT48Lv
+         2v5ZX98cPy5pTkdPtua8t2/B0nKg9uc8DXXJrgFFNrM1ag3T47CbyZQQ/aCH3Ktr8Pxk
+         uoFERM1qWTnUf9//HAleqtIGtpdyRsFlXwkO/saMKUFejE4NjFAzPQz7EIcm8ldY6mxL
+         wzHwYSGXsezQVveXPAngRMU9mkVfuA2WXc77iJlvVCARQ5NAX4g4/H26RuVa6sPk/qX9
+         V7FXAFJxM1RtJXLYWiCgnE1VNOnXBPFjmc+JnL1kw5r1pWsPl7338FTsvxLmLOylZZC/
+         CCDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=VjOUi1Fi7+2MpzROLuPBLYpl9LM0MiHFG+cIU7G/DUs=;
-        b=TURmsKE9ERU3gepWP4/gadiiJEvhIdWrEpYuPtB9W91twZkg/MwvHsU6spO3MwgPpp
-         YhF27mSEYmg3BsC/cFPyWBOuZ1AIcKt21CL6iznK1KGjH5ny6JUAjY34jJl+oI8M4+oa
-         6x1B4GvewaqK5uFGW72As1YUREoPpERuk0c6dXyqUzH48o9Y+YYt2GI3lt0yf7P3Oekb
-         ITnq3Om7n1cipWdu9kpR+CW4Hofzaq5YIRIFW+Mpm89fwEfVSnaSJkBgv6eB0yCoXHL9
-         j85jCIOvWsFlf+1QWurT5buC9EyX/Ur9QNfDLONkbMavaf/mA0+QMA9tUzRY4cMZEqVG
-         whdA==
-X-Gm-Message-State: APjAAAVdRA2WzSULgiI0Y/c6P5K5UYCrp9LoRxmfSmff7krPR+ZQsOCW
-        LeXT0nsfCorjOLSZcq6jvfxsV+uTctfR7A==
-X-Google-Smtp-Source: APXvYqwFNHqgHKYrcTeD09SifzEJkv7rgKvB2Q0zfnjOZ97sfYrsnpIOGWRvfm0QC3HjTi2ixxkfvQ==
-X-Received: by 2002:a02:950d:: with SMTP id y13mr4507649jah.139.1582727047686;
-        Wed, 26 Feb 2020 06:24:07 -0800 (PST)
+        bh=99t4/LSu709UOxxHgYYUFaE6oXsju8vQQ+Dan2LeyS0=;
+        b=bKjWJpl3Akt1svRZ3GiS7bstjpk19lhjL7TWS7kM00xtYiTONTfua5ZWHy9k6EhCeM
+         vqC4rq9/xEHZVQyN0aeNIZTqaSkZ2bE0rlNlksDwzMxoeV5o9gTTrN9Rgy5q88wG1cNR
+         WLGHoRrgMIBVf4A3njwgh0ZBSRgENbbSRrC5nIq/9AkuZFq5d/+Go7MLdNBx+LVVD2cU
+         chelZLJs/nqEOBK7AS8fEpMU5n4kw71XOhT6Ybr4p7ju3ISzQBinyj8TIVGd9OrgQhV9
+         XV+T4ipwQCtCI6Q7aVeCwec1vLkl7ucE91rMIFxU6X1LoDxnK506UUlhNdYkQOWQMv19
+         GseA==
+X-Gm-Message-State: APjAAAV4KIZMjc4ilC5ygr8OHbzpbO5RDu4zez37hyZRVgc3a5McCxi+
+        JeB+jaBAyu2mkMqAuBir7bUAL6zOJyhtjQ==
+X-Google-Smtp-Source: APXvYqzJN5sYhszLLxiqSgaobFmDkIvmEoRA1VDdlBLUayiIJ2XsJh54cxRdrAFsQuKLE4ruGUvNOg==
+X-Received: by 2002:a92:5e9b:: with SMTP id f27mr5359159ilg.263.1582727112384;
+        Wed, 26 Feb 2020 06:25:12 -0800 (PST)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id b17sm622145ioj.81.2020.02.26.06.24.06
+        by smtp.gmail.com with ESMTPSA id v64sm756538ila.36.2020.02.26.06.25.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2020 06:24:06 -0800 (PST)
-Subject: Re: [PATCH 1/4] io_uring: add IORING_OP_READ{WRITE}V_PI cmd
+        Wed, 26 Feb 2020 06:25:12 -0800 (PST)
+Subject: Re: [RFC PATCH 0/4] userspace PI passthrough via io_uring
 To:     Bob Liu <bob.liu@oracle.com>, linux-block@vger.kernel.org
 Cc:     martin.petersen@oracle.com, linux-fsdevel@vger.kernel.org,
         darrick.wong@oracle.com, io-uring@vger.kernel.org
 References: <20200226083719.4389-1-bob.liu@oracle.com>
- <20200226083719.4389-2-bob.liu@oracle.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6e466774-4dc5-861c-58b5-f0cc728bacff@kernel.dk>
-Date:   Wed, 26 Feb 2020 07:24:06 -0700
+Message-ID: <4defe33b-689e-04c1-a1d5-c2e7a572027e@kernel.dk>
+Date:   Wed, 26 Feb 2020 07:25:11 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200226083719.4389-2-bob.liu@oracle.com>
+In-Reply-To: <20200226083719.4389-1-bob.liu@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,27 +66,26 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 2/26/20 1:37 AM, Bob Liu wrote:
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index a3300e1..98fa3f1 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -62,6 +62,8 @@ enum {
->  	IORING_OP_NOP,
->  	IORING_OP_READV,
->  	IORING_OP_WRITEV,
-> +	IORING_OP_READV_PI,
-> +	IORING_OP_WRITEV_PI,
->  	IORING_OP_FSYNC,
->  	IORING_OP_READ_FIXED,
->  	IORING_OP_WRITE_FIXED,
+> This RFC provides a rough implementation of a mechanism to allow
+> userspace to attach protection information (e.g. T10 DIF) data to a
+> disk write and to receive the information alongside a disk read.
+> The interface is an extension to the io_uring interface:
+> two new commands (IORING_OP_READV{WRITEV}_PI) are provided.
+> The last struct iovec in the arg list is interpreted to point to a buffer
+> containing the the PI data.
+> 
+> Patch #1 add two new commands to io_uring.
+> Patch #2 introduces two helper funcs in bio-integrity.
+> Patch #3 implement the PI passthrough in direct-io of block-dev.
+> (Similar extensions may add to fs/direct-io.c and fs/maps/directio.c)
+> Patch #4 add io_uring use space test case to liburing.
 
-So this one renumbers everything past IORING_OP_WRITEV, breaking the
-ABI in a very bad way. I'm guessing that was entirely unintentional?
-Any new command must go at the end of the list.
+No strong feelings on the support in general, the io_uring bits are
+trivial enough (once fixed up, per comments in that patch) that I
+have no objections on that front.
 
-You're also not updating io_op_defs[] with the two new commands,
-which means it won't compile at all. I'm guessing you tested this on
-an older version of the kernel which didn't have io_op_defs[]?
+I'd really like Martin to render an opinion on the API (PI info in
+last vec), since he's the integrity guy.
 
 -- 
 Jens Axboe

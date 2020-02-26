@@ -2,56 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E63616F800
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2020 07:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5179116F99F
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2020 09:34:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbgBZGdK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Feb 2020 01:33:10 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42442 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgBZGdK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Feb 2020 01:33:10 -0500
-Received: by mail-wr1-f68.google.com with SMTP id p18so1472662wre.9
-        for <io-uring@vger.kernel.org>; Tue, 25 Feb 2020 22:33:07 -0800 (PST)
+        id S1726764AbgBZIeW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Feb 2020 03:34:22 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55170 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbgBZIeW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Feb 2020 03:34:22 -0500
+Received: by mail-wm1-f68.google.com with SMTP id z12so1939433wmi.4
+        for <io-uring@vger.kernel.org>; Wed, 26 Feb 2020 00:34:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=j+wz539euZj4MjmsDq2I8O8ooG1goAwgFXFhLimhkwY=;
-        b=eNcTifV4m22YNHhYnh7gQ1OWmT904RSBbLKZE9gsSO9TLHIfaaxI58IGfDcEHX4p4e
-         KsqC6RQ8xoefpCbvUy8tpuW1uZa2ELN8kDB6fnu9xxn2Txv5xpdbuyTcn+6HSRW/o55D
-         ajXOvLc/J4Mz8BvBdpGqm5N1c3MQSycDj+my3X+uJo5DCVIFMFZqXx+JTO5Pocrjc+UC
-         ABq0fuqSxaUkHQHEuzl4EArLH9zZSw2ixKvq/q6bAWV5gnNrrSvBCbDBOYQlAAKEV6fQ
-         2Dpqy0qm13cLbNdADZzViVB9nxWGtXNgI1ncUkUjHHo2oiDMm65zv2LJ8lk7gLoh6cRr
-         PtDg==
+         :mime-version:in-reply-to;
+        bh=qjFqGSsOpyY+MZBelZf10b+1xoXTPGQTgnTuGgHj5+4=;
+        b=rPj13z9yGF6tkvaX+agcEQ5CzDlC/xVfq/zy++IXKgKA71+XEVMpff/lzfe30eWls2
+         wdwTKFjGPkBns/+1B5GTFVBbJcKICSitpDSW3k6xW+b0OYMhQXMFCKmHnkiPN3uQzsbK
+         vFXpv2apDMsj5XOa2S/jMygFKAaS6HAkHeBeWsc9BoUa2bUh4NwlV3Dx2ldU0JJ/EPkS
+         HcKL6pM3HL+Tj//MjZ6jpfWQfCWDws12tEXsFIBvtvF6pQ/j3Bg6ILwdqsGlfe7XPfIl
+         ifc7oIWnMrJnVQc5gYXIdcmnZEWG23V9FFQ3oM38xuVgPTi/y0kdY1TSv2JpePxx+kNF
+         LN8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=j+wz539euZj4MjmsDq2I8O8ooG1goAwgFXFhLimhkwY=;
-        b=p4DlWdwuch2d0AIt6W8/j1VSi8mOXcXe5BW12rqPa+sSRs2Warq3eoVTxwSfYo9+Bo
-         JzEj7mqL/1kIm0bNFwmEibvrE+cY7zA3bakdFViEriFfc1HlCwDOEOEJMQyAuh1/n6/t
-         OnehEL+Hbcn+SSJ8Y/rbZXZPE3SdTbvIHiNOsee/lhQ5TlNCVIW+dOkKxbrJ5CRzLY8f
-         n2WjO+nK+679ToEkYv0gbEQdBtYKI6hGGvAKpEmSt3vLy/S2fZyp0rDpaxgOsv8ZBJPH
-         tZkvDep68dkFmyZebZ2oc+kaIDNfuLSE33n8oZN2hbiU1Oo9OUMAakefaIzdV/6tDEal
-         8hNQ==
-X-Gm-Message-State: APjAAAXC95TFF9C5Aigsa6wKDhP3H8Po+FiFbJfnXHqeyOEtMOYVzf1h
-        jhQW269kLe+AW9xS4qv7l3CVBEEU
-X-Google-Smtp-Source: APXvYqwW7mAaq3FuFly9+TA80oAYSGbfIP6d5hH/Hq3BJqqkfm6xe5R7Eoi/Dz75/sGTMC7r6wTuWQ==
-X-Received: by 2002:a5d:5303:: with SMTP id e3mr3445497wrv.274.1582698786735;
-        Tue, 25 Feb 2020 22:33:06 -0800 (PST)
-Received: from [192.168.43.62] ([109.126.130.242])
-        by smtp.gmail.com with ESMTPSA id m19sm1538233wmc.34.2020.02.25.22.33.04
+         :date:user-agent:mime-version:in-reply-to;
+        bh=qjFqGSsOpyY+MZBelZf10b+1xoXTPGQTgnTuGgHj5+4=;
+        b=Q9uyZkPd5YTDcTf/EQw73tgpb+5oBmOoe9E9sAdkR6UKjWfW5iNrQtaHOhE6TipbOE
+         Q5vwOLf7gzI8ds+XD69JTiDUMib8B1dGaRMDn/KrafOkeoglR6Yb0BK8eSlViCrWGrI/
+         IODs6gzJp4yjr990AT3B9ZlFBcTxdi+qFKq4fyB/O+QzBif0XNLPJOJ4DDIDptpAqyjH
+         SOXEKwkTu3Sh0tN1A8+dX3ORd4hyBQxuHVG1ANSHXs6VeQxCtMTMyTteb8gBLqbzjwi9
+         2TCy9tVjcH6AAEUn0+n/pnykrwk+emgv6g/dTAWCMatfq7Uk3ARdMp48Xp4RzO3bsL5Q
+         FGMA==
+X-Gm-Message-State: APjAAAV+RbwcDXoN7PxFEcloABsjn91MnlyBel8BallmOg9QfBfXWEt8
+        q/JcGXIThX3zMMWj8RoNktI0UkWQ
+X-Google-Smtp-Source: APXvYqzRJGjeMKnAse+o0BD0Afg/DPPYciyCSY85uSA37C7CItWFsDOBBk5XS2MqP5nJ/hhKgbV0rg==
+X-Received: by 2002:a1c:a443:: with SMTP id n64mr3879048wme.141.1582706059073;
+        Wed, 26 Feb 2020 00:34:19 -0800 (PST)
+Received: from [192.168.43.183] ([109.126.130.242])
+        by smtp.gmail.com with ESMTPSA id 133sm2028360wme.32.2020.02.26.00.34.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2020 22:33:06 -0800 (PST)
+        Wed, 26 Feb 2020 00:34:18 -0800 (PST)
 To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
 References: <1c5f074e-22dd-095a-6be7-730c81eeb1b1@kernel.dk>
  <82423419-1c14-418e-8085-2d8b902b0a2d@gmail.com>
  <71add82f-9d25-b879-5fe5-8e2a4eb26877@kernel.dk>
- <f5cb2e96-b30f-eec9-7a0b-68bdfcb0b8e2@gmail.com>
- <6c476531-7ba8-1c2a-66c3-029ad399f0b1@gmail.com>
- <0f2fd3ba-81e2-1a54-03a7-dded262a0c9f@kernel.dk>
+ <32c9037d-d515-9065-3315-e023edaa4578@kernel.dk>
+ <dfc1fc59-46c5-d985-80f7-3d637cd40b13@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -97,31 +95,134 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: [PATCH] io_uring: pick up link work on submit reference drop
-Message-ID: <25e2d7ed-c82d-f541-be82-2cc97ea66a4e@gmail.com>
-Date:   Wed, 26 Feb 2020 09:32:18 +0300
+Message-ID: <14cc6bff-565a-c41b-bb96-7b2edad163ce@gmail.com>
+Date:   Wed, 26 Feb 2020 11:33:29 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <0f2fd3ba-81e2-1a54-03a7-dded262a0c9f@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <dfc1fc59-46c5-d985-80f7-3d637cd40b13@kernel.dk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="VvaYeFCIufJDVPuJsXaZxQyaOuioRvQrG"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 26/02/2020 01:24, Jens Axboe wrote:
-> It very much can complete the req after io_read() returns, that's what
-> happens for any async disk request! By the time io_read() returns, the
-> request could be completed, or it could just be in-flight. This is
-> different from lots of the other opcodes, where the actual call returns
-> completion sync (either success, or EAGAIN).
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--VvaYeFCIufJDVPuJsXaZxQyaOuioRvQrG
+Content-Type: multipart/mixed; boundary="b6uZQqTdcTnP86vZtKvfyxruf9LG9OId0";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+Message-ID: <14cc6bff-565a-c41b-bb96-7b2edad163ce@gmail.com>
+Subject: Re: [PATCH] io_uring: pick up link work on submit reference drop
+References: <1c5f074e-22dd-095a-6be7-730c81eeb1b1@kernel.dk>
+ <82423419-1c14-418e-8085-2d8b902b0a2d@gmail.com>
+ <71add82f-9d25-b879-5fe5-8e2a4eb26877@kernel.dk>
+ <32c9037d-d515-9065-3315-e023edaa4578@kernel.dk>
+ <dfc1fc59-46c5-d985-80f7-3d637cd40b13@kernel.dk>
+In-Reply-To: <dfc1fc59-46c5-d985-80f7-3d637cd40b13@kernel.dk>
 
-For some reason, I've got the idea that it do the same things as
-__vfs_read/write. At least I don't see the difference between
-io_read_prep()+io_read() and new_sync_read().
-Thanks for the explanation, I should drop these futile attempts.
+--b6uZQqTdcTnP86vZtKvfyxruf9LG9OId0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
--- 
+On 26/02/2020 01:18, Jens Axboe wrote:
+> So this found something funky, we really should only be picking up
+> the next request if we're dropping the final reference to the
+> request. And io_put_req_find_next() also says that in the comment,
+> but it always looks it up. That doesn't seem safe at all, I think
+> this is what it should be:
+
+It was weird indeed, it looks good. And now it's safe to do the same in
+io_wq_submit_work().
+
+Interestingly, this means that passing @nxt into the handlers is useless,=
+ as
+they won't ever return !=3DNULL, isn't it? I'll prepare the cleanup.
+
+>=20
+> commit eff5fe974f332c1b86c9bb274627e88b4ecbbc85
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Tue Feb 25 13:25:41 2020 -0700
+>=20
+>     io_uring: pick up link work on submit reference drop
+>    =20
+>     If work completes inline, then we should pick up a dependent link i=
+tem
+>     in __io_queue_sqe() as well. If we don't do so, we're forced to go =
+async
+>     with that item, which is suboptimal.
+>    =20
+>     This also fixes an issue with io_put_req_find_next(), which always =
+looks
+>     up the next work item. That should only be done if we're dropping t=
+he
+>     last reference to the request, to prevent multiple lookups of the s=
+ame
+>     work item.
+>    =20
+>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>=20
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index ffd9bfa84d86..f79ca494bb56 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1483,10 +1483,10 @@ static void io_free_req(struct io_kiocb *req)
+>  __attribute__((nonnull))
+>  static void io_put_req_find_next(struct io_kiocb *req, struct io_kiocb=
+ **nxtptr)
+>  {
+> -	io_req_find_next(req, nxtptr);
+> -
+> -	if (refcount_dec_and_test(&req->refs))
+> +	if (refcount_dec_and_test(&req->refs)) {
+> +		io_req_find_next(req, nxtptr);
+>  		__io_free_req(req);
+> +	}
+>  }
+> =20
+>  static void io_put_req(struct io_kiocb *req)
+> @@ -4749,7 +4749,7 @@ static void __io_queue_sqe(struct io_kiocb *req, =
+const struct io_uring_sqe *sqe)
+> =20
+>  err:
+>  	/* drop submission reference */
+> -	io_put_req(req);
+> +	io_put_req_find_next(req, &nxt);
+> =20
+>  	if (linked_timeout) {
+>  		if (!ret)
+>=20
+
+--=20
 Pavel Begunkov
+
+
+--b6uZQqTdcTnP86vZtKvfyxruf9LG9OId0--
+
+--VvaYeFCIufJDVPuJsXaZxQyaOuioRvQrG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl5WLVkACgkQWt5b1Glr
++6W84A/8CoaGmBoWnopCdSdoXbSWoL0Q2fh1fKXeefiBAxGQHCMv3DrnQ/3OiFUd
+gLJLzJ2AIgKCpIzBMEty9cXXDTYjAvbhu3rCxK+xkU42CR0pTYhHl6dtm890PIwf
+sjnssb4D1Dcmy7YSbvc1mDWtHOzzWy2i+ET9ihbOAO79N49sONHHeVJLIlKf5Bly
+lmYWOhqEsFf8U4nB+fgrCdwKPVNIgoUhyLeGX/QLOZeWZk9xthgntR4NJY0CzSzL
+jCUrNwL/swb0RIKmkva3zarz1yvQggnOnjp8DN+JiDe5Jo+tftOpyXOfeuNA5RX0
+IkRCNjdY5S3BwaWm9BLVhl/n9r/TotAOb7uOOwDZyG4cqtJ6xjWYSk6fRza8g17Y
+oORsuzr51ZtXVVlwfocqTfCkCTBjJh5P46fq134TYl+l4pVeEuf0xTi/ETMal0OK
+m+GSQc/UtruF+G62LYur3Mg7AwhMVP7FS2CMBcjhu7EuXn1cY1zix+Pdbs1p8bRS
+VPZcopYLYyHUSfzyKzbJ8pSA0hq2MG2Tl21Clzaq4yXsXFRBnrT9kss8UMDL7RYe
+bq7sRT/uUiK1BbvHRh1QIn3TCboB3kHQwX6NzSFyzYV7RoWW7McYhl6/sjciCW3A
+p9ZoHFHmWhN7LV5HjZB7Jyk2HZRT/jMxqqv+LYG+BMDqtqS07MA=
+=BKB7
+-----END PGP SIGNATURE-----
+
+--VvaYeFCIufJDVPuJsXaZxQyaOuioRvQrG--

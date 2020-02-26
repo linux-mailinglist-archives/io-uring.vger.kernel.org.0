@@ -2,63 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C06816F9CB
-	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2020 09:41:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0285116F9A9
+	for <lists+io-uring@lfdr.de>; Wed, 26 Feb 2020 09:38:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbgBZIkt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Feb 2020 03:40:49 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:33514 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727823AbgBZIkt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Feb 2020 03:40:49 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01Q8dUX1013730;
-        Wed, 26 Feb 2020 08:40:46 GMT
+        id S1727317AbgBZIiz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Feb 2020 03:38:55 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:57326 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbgBZIiz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Feb 2020 03:38:55 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01Q8crKT159185;
+        Wed, 26 Feb 2020 08:38:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=CT6n6U935vcrUBg8uf+s666OpRuH6tq158bXwYwRJ/I=;
- b=JiIsQRjnXpNWR8RDOkYMWO7f8nH4LsVTW/PoyHxWI9bVbrFvFmxEWzIRosSEvjQB+ewL
- 25+kfTx/2rHQm7OKp7SyYb2Fdmdtm67VQ5zV1iqlr3Q3pKh7ZQfwkEVbRfLxDV5RRLv1
- R4fRjaz5X+P8xlVIItg1Z7kt/fM1zroNFhUdc2wGtbH8+JYfqDSS97ig4hVTo+Rz6MBq
- nq+dP4w8JefZ06LrVX3AL/kGGwB1XDXaRnlMqRCqFSImurjemUD5mtpvVP+RZy/2DFIE
- QgzXwDhhGCF7shfvapptPCBuF3PKvKsohh4bTqG3eHWJmqV0HaDpTmpTNrATd32Yoax3 Mg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2ydcsn9xp1-1
+ bh=2s1kfrTp5VgYkGSu4A6cB/Hn4JvN4if7I+45uwNilxA=;
+ b=dX2rZ+w8qth3Y/IbzxMIy1AulnG63/NrNBvtArohESRIzbnGeBPE9N0zL/EtcFOGGWEr
+ BoBLz4X4+yABy/DWa7CE//EbDBQG6xFcc0K077xNt9qAOqUlnweOeIO+McHQh26ygiH3
+ jnWOIVrKy2tg/FbOwLa8Wt9E0zRVRJb4E+jup0AjggYgSyRSRJLqRVqXdz0xzFgSofA1
+ t5ZQwlYdRtddZ9DXwAhjyYKHbSftYKDuo84sAIF+QDwct9hRNCVWL+7Up/fQU+y2yfq/
+ l7fseoRXqY1HEfDOhQq0s2CkccFpzp2Fs546SnNtw0P+5GhvWO/+DQ5sCicZuxL53Iry ug== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2ydct31wt1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 08:40:46 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01Q8cBdD091499;
-        Wed, 26 Feb 2020 08:38:46 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2ydcs1hs1u-1
+        Wed, 26 Feb 2020 08:38:53 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01Q8c3uw005079;
+        Wed, 26 Feb 2020 08:38:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2ydj4gxdka-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 08:38:45 +0000
+        Wed, 26 Feb 2020 08:38:53 +0000
 Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01Q8cikv010058;
-        Wed, 26 Feb 2020 08:38:44 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01Q8cqrh012380;
+        Wed, 26 Feb 2020 08:38:52 GMT
 Received: from localhost.localdomain (/114.88.246.185)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Feb 2020 00:38:43 -0800
+        with ESMTP ; Wed, 26 Feb 2020 00:38:51 -0800
 From:   Bob Liu <bob.liu@oracle.com>
 To:     linux-block@vger.kernel.org
 Cc:     axboe@kernel.dk, martin.petersen@oracle.com,
         linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
         io-uring@vger.kernel.org, Bob Liu <bob.liu@oracle.com>
-Subject: [PATCH 1/4] io_uring: add IORING_OP_READ{WRITE}V_PI cmd
-Date:   Wed, 26 Feb 2020 16:37:16 +0800
-Message-Id: <20200226083719.4389-2-bob.liu@oracle.com>
+Subject: [PATCH 2/4] bio-integrity: introduce two funcs handle protect information
+Date:   Wed, 26 Feb 2020 16:37:17 +0800
+Message-Id: <20200226083719.4389-3-bob.liu@oracle.com>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200226083719.4389-1-bob.liu@oracle.com>
 References: <20200226083719.4389-1-bob.liu@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9542 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 phishscore=0 suspectscore=1 spamscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 suspectscore=1
+ spamscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
  definitions=main-2002260065
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9542 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 spamscore=0 adultscore=0
- suspectscore=1 impostorscore=0 clxscore=1015 priorityscore=1501
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=1 clxscore=1015
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
  definitions=main-2002260065
 Sender: io-uring-owner@vger.kernel.org
@@ -66,101 +66,155 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add read and write with protect information command.
+Introduce two funcs handle protect information passthrough from
+user space.
+
+iter_slice_protect_info() will slice the last segment as protect
+information.
+
+bio_integrity_prep_from_iovec() attach the protect information to
+a bio.
 
 Signed-off-by: Bob Liu <bob.liu@oracle.com>
 ---
- fs/io_uring.c                 | 12 ++++++++++++
- include/linux/fs.h            |  1 +
- include/uapi/linux/io_uring.h |  2 ++
- 3 files changed, 15 insertions(+)
+ block/bio-integrity.c | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/bio.h   | 14 ++++++++++
+ 2 files changed, 91 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 562e3a1..c43d96a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -630,12 +630,14 @@ static inline bool io_prep_async_work(struct io_kiocb *req,
+diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+index 575df98..0b22c5d 100644
+--- a/block/bio-integrity.c
++++ b/block/bio-integrity.c
+@@ -12,6 +12,7 @@
+ #include <linux/bio.h>
+ #include <linux/workqueue.h>
+ #include <linux/slab.h>
++#include <linux/uio.h>
+ #include "blk.h"
  
- 	switch (req->opcode) {
- 	case IORING_OP_WRITEV:
-+	case IORING_OP_WRITEV_PI:
- 	case IORING_OP_WRITE_FIXED:
- 		/* only regular files should be hashed for writes */
- 		if (req->flags & REQ_F_ISREG)
- 			do_hashed = true;
- 		/* fall-through */
- 	case IORING_OP_READV:
-+	case IORING_OP_READV_PI:
- 	case IORING_OP_READ_FIXED:
- 	case IORING_OP_SENDMSG:
- 	case IORING_OP_RECVMSG:
-@@ -1505,6 +1507,12 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	kiocb->ki_pos = READ_ONCE(sqe->off);
- 	kiocb->ki_flags = iocb_flags(kiocb->ki_filp);
- 	kiocb->ki_hint = ki_hint_validate(file_write_hint(kiocb->ki_filp));
-+	if (req->opcode == IORING_OP_READV_PI ||
-+			req->opcode == IORING_OP_WRITEV_PI) {
-+		if (!(req->file->f_flags & O_DIRECT))
-+			return -EINVAL;
-+		kiocb->ki_flags |= IOCB_USE_PI;
+ #define BIP_INLINE_VECS	4
+@@ -305,6 +306,53 @@ bool bio_integrity_prep(struct bio *bio)
+ }
+ EXPORT_SYMBOL(bio_integrity_prep);
+ 
++int bio_integrity_prep_from_iovec(struct bio *bio, struct iovec *pi_iov)
++{
++	struct blk_integrity *bi = blk_get_integrity(bio->bi_disk);
++	struct bio_integrity_payload *bip;
++	struct page *user_pi_page;
++	int nr_vec_page = 0;
++	int ret = 0, interval = 0;
++
++	if (!pi_iov || !pi_iov->iov_base)
++		return 1;
++
++	nr_vec_page = (pi_iov->iov_len + PAGE_SIZE - 1) >> PAGE_SHIFT;
++	if (nr_vec_page > 1) {
++		printk("Now only support 1 page containing integrity "
++			"metadata, while requires %d pages.\n", nr_vec_page);
++		return 1;
 +	}
++
++	interval = bio_integrity_intervals(bi, bio_sectors(bio));
++	if ((interval * bi->tuple_size) != pi_iov->iov_len)
++		return 1;
++
++	bip = bio_integrity_alloc(bio, GFP_NOIO, nr_vec_page);
++	if (IS_ERR(bip))
++		return PTR_ERR(bip);
++
++	bip->bip_iter.bi_size = pi_iov->iov_len;
++	bip->bio_iter = bio->bi_iter;
++	bip_set_seed(bip, bio->bi_iter.bi_sector);
++
++	if (bi->flags & BLK_INTEGRITY_IP_CHECKSUM)
++		bip->bip_flags |= BIP_IP_CHECKSUM;
++
++	ret = get_user_pages_fast((unsigned long)(pi_iov->iov_base), nr_vec_page,
++			op_is_write(bio_op(bio)) ?  FOLL_WRITE : 0,
++			&user_pi_page);
++	if (unlikely(ret < 0))
++		return 1;
++
++	ret = bio_integrity_add_page(bio, user_pi_page, pi_iov->iov_len, 0);
++	if (unlikely(ret != pi_iov->iov_len))
++		return -ENOMEM;
++
++	return 0;
++}
++EXPORT_SYMBOL(bio_integrity_prep_from_iovec);
++
+ /**
+  * bio_integrity_verify_fn - Integrity I/O completion worker
+  * @work:	Work struct stored in bio to be verified
+@@ -378,6 +426,35 @@ void bio_integrity_advance(struct bio *bio, unsigned int bytes_done)
+ }
  
- 	ioprio = READ_ONCE(sqe->ioprio);
- 	if (ioprio) {
-@@ -3065,10 +3073,12 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	case IORING_OP_NOP:
- 		break;
- 	case IORING_OP_READV:
-+	case IORING_OP_READV_PI:
- 	case IORING_OP_READ_FIXED:
- 		ret = io_read_prep(req, sqe, true);
- 		break;
- 	case IORING_OP_WRITEV:
-+	case IORING_OP_WRITEV_PI:
- 	case IORING_OP_WRITE_FIXED:
- 		ret = io_write_prep(req, sqe, true);
- 		break;
-@@ -3156,6 +3166,7 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	case IORING_OP_NOP:
- 		ret = io_nop(req);
- 		break;
-+	case IORING_OP_READV_PI:
- 	case IORING_OP_READV:
- 	case IORING_OP_READ_FIXED:
- 		if (sqe) {
-@@ -3166,6 +3177,7 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		ret = io_read(req, nxt, force_nonblock);
- 		break;
- 	case IORING_OP_WRITEV:
-+	case IORING_OP_WRITEV_PI:
- 	case IORING_OP_WRITE_FIXED:
- 		if (sqe) {
- 			ret = io_write_prep(req, sqe, force_nonblock);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 98e0349..65fda07 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -314,6 +314,7 @@ enum rw_hint {
- #define IOCB_SYNC		(1 << 5)
- #define IOCB_WRITE		(1 << 6)
- #define IOCB_NOWAIT		(1 << 7)
-+#define IOCB_USE_PI		(1 << 8)
+ /**
++ * iter_slice_protect_info
++ *
++ * Description: slice protection information from iter.
++ * The last iovec contains protection information pass from user space.
++ */
++int iter_slice_protect_info(struct iov_iter *iter, int nr_pages,
++		struct iovec **pi_iov)
++{
++	size_t len = 0;
++
++	/* TBD: now only support one bio. */
++	if (!iter_is_iovec(iter) || nr_pages >= BIO_MAX_PAGES - 1)
++		return 1;
++
++	/* Last iovec contains protection information. */
++	iter->nr_segs--;
++	*pi_iov = (struct iovec *)(iter->iov + iter->nr_segs);
++
++	len = (*pi_iov)->iov_len;
++	if (len > 0 && len < iter->count) {
++		iter->count -= len;
++		return 0;
++	}
++
++	return 1;
++}
++EXPORT_SYMBOL(iter_slice_protect_info);
++
++/**
+  * bio_integrity_trim - Trim integrity vector
+  * @bio:	bio whose integrity vector to update
+  *
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 3cdb84c..6172b13 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -749,6 +749,8 @@ static inline bool bioset_initialized(struct bio_set *bs)
+ extern struct bio_integrity_payload *bio_integrity_alloc(struct bio *, gfp_t, unsigned int);
+ extern int bio_integrity_add_page(struct bio *, struct page *, unsigned int, unsigned int);
+ extern bool bio_integrity_prep(struct bio *);
++extern int bio_integrity_prep_from_iovec(struct bio *bio, struct iovec *pi_iov);
++extern int iter_slice_protect_info(struct iov_iter *iter, int nr_pages, struct iovec **pi_iov);
+ extern void bio_integrity_advance(struct bio *, unsigned int);
+ extern void bio_integrity_trim(struct bio *);
+ extern int bio_integrity_clone(struct bio *, struct bio *, gfp_t);
+@@ -778,6 +780,18 @@ static inline bool bio_integrity_prep(struct bio *bio)
+ 	return true;
+ }
  
- struct kiocb {
- 	struct file		*ki_filp;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index a3300e1..98fa3f1 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -62,6 +62,8 @@ enum {
- 	IORING_OP_NOP,
- 	IORING_OP_READV,
- 	IORING_OP_WRITEV,
-+	IORING_OP_READV_PI,
-+	IORING_OP_WRITEV_PI,
- 	IORING_OP_FSYNC,
- 	IORING_OP_READ_FIXED,
- 	IORING_OP_WRITE_FIXED,
++static inline int bio_integrity_prep_from_iovec(struct bio *bio,
++		struct iovec *pi_iov)
++{
++	return 0;
++}
++
++static inline int iter_slice_protect_info(struct iov_iter *iter, int nr_pages,
++		struct iovec **pi_iov)
++{
++	return 0;
++}
++
+ static inline int bio_integrity_clone(struct bio *bio, struct bio *bio_src,
+ 				      gfp_t gfp_mask)
+ {
 -- 
 2.9.5
 

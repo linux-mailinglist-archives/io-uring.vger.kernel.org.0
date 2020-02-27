@@ -2,74 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37BD4171FB8
-	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2020 15:38:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E581729EB
+	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2020 22:07:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732207AbgB0OiH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Feb 2020 09:38:07 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40005 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732202AbgB0N4s (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Feb 2020 08:56:48 -0500
-Received: by mail-io1-f65.google.com with SMTP id x1so3247871iop.7
-        for <io-uring@vger.kernel.org>; Thu, 27 Feb 2020 05:56:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R+SoRazeZGWCcamx/h04PzBGW1A7arrsbxdwnu8tWtk=;
-        b=MMUwvKtcpPAvkKN+kPsK1Sje4a1KILb+I1pnGx83EPQlWylcvbM+WBbiE/9jD7BFJ2
-         IaJBGGUBSLvQMAkshSAE+6gHpQPbIYP0EFZMdnDwbzuskKR44dFUKcbaheYtVUpL0oRD
-         cjlNWNtoSxVH+9tokSQinWATuGxWZR4UBLBoCDfurc1b5hhhr17ARrWtNxsuTuXLvTKf
-         4K+jmx/u0TXbGw1HxVMfvmrCX4lnC6E8ykns2vqrF+m69hlUc3sBC+T8wzG9nL779AP/
-         oYxt+f7xcYUtzCtZUqtXWo3pM7s8u0WvPULzc8x+AC4akuurpVi2z+i3HrhfEvXq6ooc
-         yiJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=R+SoRazeZGWCcamx/h04PzBGW1A7arrsbxdwnu8tWtk=;
-        b=ew6kxUTMsWgiRu9VaueHXlFYsNL+xSTmbsZHrE4D+4HU7TqN4tfxFITNHjPoxisBkw
-         /5hiAeEVjb/FyJRgnM10/VGCqOLn+CyUd1kK6C2OZxfFPsPTAl/Fy8qOUJqtHYrp+VcX
-         vjOiQ5E5NVwOvZ79qaM7Y8Qi1ZgxB/YSGK5EbCqJpejzR3rFhb25liV0i9M7DWmKUfa3
-         jCAtkre2b0yMZZ13OVZCMqBoO6cdV+XjYyIBeq8x0iXi3bJFEb/sdkhbzmNPnZFwHNKv
-         1OpAPwa3+C3wneKAfKTP3uMoChhVX1lUhfiteX0zxKlM8Xgt9HoetAfQCUdGRsk8Y4X7
-         kHcw==
-X-Gm-Message-State: APjAAAXPyEbQy31jJVpsXaYYwESAqMb2dJ3w2XyVwChBp3D+fZx8+F8F
-        2Hi1XQS/zcL9zDMp6C7kCL9OlFKAzFCeVQ==
-X-Google-Smtp-Source: APXvYqzQad+7ikffGpwz7dpY+EX0A0h9+anSEnIFkAU5zm0Qx5dPFs1jZSbhl+kJ7oj6AOo9rDMqZg==
-X-Received: by 2002:a05:6638:501:: with SMTP id i1mr5754177jar.25.1582811807097;
-        Thu, 27 Feb 2020 05:56:47 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id v4sm1386071ioh.87.2020.02.27.05.56.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2020 05:56:46 -0800 (PST)
-Subject: Re: [PATCH] io_uring: use correct CONFIG_PROC_FS define
-To:     Tobias Klauser <tklauser@distanz.ch>
-Cc:     io-uring@vger.kernel.org
-References: <20200227130856.15148-1-tklauser@distanz.ch>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <27593a49-d50a-6296-a4b7-f35ba09014fb@kernel.dk>
-Date:   Thu, 27 Feb 2020 06:56:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1729685AbgB0VG7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Feb 2020 16:06:59 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39483 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726758AbgB0VG6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Feb 2020 16:06:58 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 181C322007;
+        Thu, 27 Feb 2020 16:06:58 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 27 Feb 2020 16:06:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=A5NPuU34XQSov1fBK0TRE0xsC3A
+        j/eAKJgGOyd2Z3ps=; b=LQScykUUfXDZau4xvZEXkb4EiW1Y+YnW1rMEUbs1+hA
+        Zg8qil2w7/yF4CA3L+aSArUC/PBwhgjxsgCfGbmRyOkp85gH+YutfW3yM/kKPcPJ
+        aZfpXPxEGEYAcLrevFEwJsjfDbKoxw/ZtvOknxi52s0Nxo7V5Plb7p+EoGutWTmc
+        aTQEZAo/WWRP6fdl7uF5vzoouECJZwFd9KDKv5uLm4qlezkZWnVMqAMwKg0e2d0s
+        zCSOhTTQ7BKR0B3Bn446as2Pkf/I07PgweH91tDoDSxh5eVdwt7BAucysrPD4wyK
+        aQyeCO8vOypunO6gOqgJUXCPMCPvEpxo1VBHRka5Mhw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=A5NPuU
+        34XQSov1fBK0TRE0xsC3Aj/eAKJgGOyd2Z3ps=; b=kSBa+vgLIO1pgh1jZsPn4S
+        t5hDalGcSK1/mDu6PgjIL23FOgF6pirw8Ty5XhZFOnztp7gLdN3M4KVZW55JeiPN
+        R6giCp4P8H8cWp+PyY6TWMII3zucj/1Fa6TS16MJ8KqkEa7y7KczuRdEuSZ3Uy+J
+        BzAjRr7h63MwDJSPzei/PfylU33dqoyzAB2ku/T16poumGHa2B1JeRwA1XqYpnvU
+        AcwEfakuVjqOFdIeG/R/oMh5ebZ66tdNCaol+RmNyu4on5pgnOBhYoXS6vMQq1XX
+        pc4sb1Bs06AeFq0JV5vJ4Gfy1IwCTIhElH8DAqjGuaxkwE1tIdCxDADkBKObYvcw
+        ==
+X-ME-Sender: <xms:cS9YXjurrtaBiL-2Tdk6cdDBH_12B_2INIICzgr4fx1NunXMRBQYFA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleeigddugeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
+    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepie
+    ejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
+    pehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggv
+X-ME-Proxy: <xmx:cS9YXk6gO2ylDkEHZctLI2FjfXmsUG2Ad9waEEt3V-gwECCS0vpsOw>
+    <xmx:cS9YXndRWNxt2YE-FZa1sBUErim_rSa0NC_4qQ3S39XS0aMmth_eig>
+    <xmx:cS9YXpyAS-5m5uJz-iZmkxq1k1dSSBs5cZRZwGEA_DNaFgVk6ckKkw>
+    <xmx:ci9YXutFYY4zgrIkgrpx2WjVA2nyyKmqYnt0GTSoAeYhCnS9r9TfYQ>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 36D63328006A;
+        Thu, 27 Feb 2020 16:06:57 -0500 (EST)
+Date:   Thu, 27 Feb 2020 13:06:55 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: Re: Deduplicate io_*_prep calls?
+Message-ID: <20200227210655.fr3cqphj2ab4z36n@alap3.anarazel.de>
+References: <20200224010754.h7sr7xxspcbddcsj@alap3.anarazel.de>
+ <b3c1489a-c95d-af41-3369-6fd79d6b259c@kernel.dk>
+ <20200224033352.j6bsyrncd7z7eefq@alap3.anarazel.de>
+ <90097a02-ade0-bc9a-bc00-54867f3c24bc@kernel.dk>
+ <20200224071211.bar3aqgo76sznqd5@alap3.anarazel.de>
+ <933f2211-d395-fa84-59ae-0b2e725df613@kernel.dk>
+ <23a49bca-26a6-ddbd-480b-d7f3caa16c29@gmail.com>
+ <065ee992-7eaf-051a-e8c5-9e0e8731b3f1@kernel.dk>
+ <746b93f0-d0b5-558a-28c7-a614b2367d91@gmail.com>
+ <acb90f56-bb54-90e2-9c87-be4f754b322b@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200227130856.15148-1-tklauser@distanz.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <acb90f56-bb54-90e2-9c87-be4f754b322b@gmail.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/27/20 6:08 AM, Tobias Klauser wrote:
-> Commit 6f283fe2b1ed ("io_uring: define and set show_fdinfo only if
-> procfs is enabled") used CONFIG_PROCFS by mistake. Correct it.
+Hi,
 
-Oops - I folded this into the original.
+On 2020-02-25 12:26:34 +0300, Pavel Begunkov wrote:
+> On 2/24/2020 6:50 PM, Pavel Begunkov wrote:
+> It seems I have one. It can be done by using a const-attributed getter
+> function. And I see nothing against it in gcc manuals.
+> 
+> __attribute__((const))
+> static inline u8 io_get_opcode(struct io_kiocb *req)
+> {
+>     return req->opcode;
+> }
 
--- 
-Jens Axboe
+That's practically safe, I'd assume, but I'm not sure it's theoretically
+sound. The gcc manual says:
 
+> Note that a function that has pointer arguments and examines the data
+> pointed to must not be declared const if the pointed-to data might
+> change between successive invocations of the function. In general, since
+> a function cannot distinguish data that might change from data that
+> cannot, const functions should never take pointer or, in C++, reference
+> arguments. Likewise, a function that calls a non-const function usually
+> must not be const itself.
+
+and since req might be reused, this seems to violate the point about
+reading pointers that could change. Which certainly isn't the case
+here. Theoretically the compiler could e.g. understand that fallback_req
+or such should never change it's opcode.
+
+Greetings,
+
+Andres Freund

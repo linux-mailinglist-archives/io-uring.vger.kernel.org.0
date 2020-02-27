@@ -2,64 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7F2917178B
-	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2020 13:37:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C878E17183B
+	for <lists+io-uring@lfdr.de>; Thu, 27 Feb 2020 14:08:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729030AbgB0Mh5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Feb 2020 07:37:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36302 "EHLO mail.kernel.org"
+        id S1728986AbgB0NI7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Feb 2020 08:08:59 -0500
+Received: from sym2.noone.org ([178.63.92.236]:45588 "EHLO sym2.noone.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728982AbgB0Mh4 (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 27 Feb 2020 07:37:56 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EE3124692;
-        Thu, 27 Feb 2020 12:37:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582807075;
-        bh=LYndjluasFvOwT9cS111JQlMY4yrNHQvHvqjIBLUJgQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UDe5pD7Wm98QR+Duu+FR746o0EA24PTZ9S8Nsjv46813sLABQri45IwXqVox/7iDZ
-         uQGs/RrB77tuiAMtSx9TNf0oqrcTaw+AGXh7lViF5zaXHFjNyMoEkJ1ZcVOosaV+GJ
-         BsR/ZHsbnLG/c4Hog5WKQsjcNFXy4Jx+EAYenlVs=
-Date:   Thu, 27 Feb 2020 13:37:53 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     stable@vger.kernel.org, io-uring@vger.kernel.org, axboe@kernel.dk
-Subject: Re: [PATCH 5.4] io_uring: prevent sq_thread from spinning when it
- should stop
-Message-ID: <20200227123753.GC962932@kroah.com>
-References: <20200227104311.76533-1-sgarzare@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227104311.76533-1-sgarzare@redhat.com>
+        id S1729075AbgB0NI6 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:08:58 -0500
+Received: by sym2.noone.org (Postfix, from userid 1002)
+        id 48StKN3Wnkzvjc1; Thu, 27 Feb 2020 14:08:56 +0100 (CET)
+From:   Tobias Klauser <tklauser@distanz.ch>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+Subject: [PATCH] io_uring: use correct CONFIG_PROC_FS define
+Date:   Thu, 27 Feb 2020 14:08:56 +0100
+Message-Id: <20200227130856.15148-1-tklauser@distanz.ch>
+X-Mailer: git-send-email 2.11.0
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 11:43:11AM +0100, Stefano Garzarella wrote:
-> [ Upstream commit 7143b5ac5750f404ff3a594b34fdf3fc2f99f828 ]
-> 
-> This patch drops 'cur_mm' before calling cond_resched(), to prevent
-> the sq_thread from spinning even when the user process is finished.
-> 
-> Before this patch, if the user process ended without closing the
-> io_uring fd, the sq_thread continues to spin until the
-> 'sq_thread_idle' timeout ends.
-> 
-> In the worst case where the 'sq_thread_idle' parameter is bigger than
-> INT_MAX, the sq_thread will spin forever.
-> 
-> Fixes: 6c271ce2f1d5 ("io_uring: add submission polling")
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/io_uring.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
+Commit 6f283fe2b1ed ("io_uring: define and set show_fdinfo only if
+procfs is enabled") used CONFIG_PROCFS by mistake. Correct it.
 
-thanks for this, now queued up.
+Fixes: 6f283fe2b1ed ("io_uring: define and set show_fdinfo only if procfs is enabled")
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index bab973106566..05eea06f5421 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6641,7 +6641,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 	return submitted ? submitted : ret;
+ }
+ 
+-#ifdef CONFIG_PROCFS
++#ifdef CONFIG_PROC_FS
+ static int io_uring_show_cred(int id, void *p, void *data)
+ {
+ 	const struct cred *cred = p;
+@@ -6727,7 +6727,7 @@ static const struct file_operations io_uring_fops = {
+ #endif
+ 	.poll		= io_uring_poll,
+ 	.fasync		= io_uring_fasync,
+-#ifdef CONFIG_PROCFS
++#ifdef CONFIG_PROC_FS
+ 	.show_fdinfo	= io_uring_show_fdinfo,
+ #endif
+ };
+-- 
+2.25.0
+

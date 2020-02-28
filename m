@@ -2,261 +2,133 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 699AA1740F7
-	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2020 21:31:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69CE1174289
+	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2020 23:53:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbgB1UbF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Feb 2020 15:31:05 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46359 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbgB1UbF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Feb 2020 15:31:05 -0500
-Received: by mail-il1-f195.google.com with SMTP id t17so3852811ilm.13
-        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2020 12:31:03 -0800 (PST)
+        id S1726277AbgB1WxT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 28 Feb 2020 17:53:19 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34858 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbgB1WxT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Feb 2020 17:53:19 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m3so5089333wmi.0
+        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2020 14:53:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=BP56q9onFy0f8OClpNzleqTUtQEUXNMGbU2lrqE+ArI=;
-        b=gsHfgaj2QPOBs4PXnUGaqp6sN5y06qDgiQY7lmliljJqGGYGCsuvS7yd6PnUKKZHrs
-         HvjnrxHUDpJ4G7+XceGI/2ydDSLoYjFp9uRj8tIOxHKnh4dZGJBCQ+3/9o8aPReXI2zK
-         JVtAivxbvsue7Sj7lvwbFi4EEF4Wq+HxbiPut74azF6wlDzXq1HsxQsV3GDLMtXIEFfT
-         SgfNANC2xOh6VTvEXNyd7d7dBZqIbBlgLOzzY1IRdB2cWIqdfY/eVL2yKvYCLjFRADwH
-         C013pu7XBIW3n0zFQB5JqAB/6lglfxJOmNkkxAWwYQBZv8AHt94YhW0uoa/rlALST2S9
-         j5nA==
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=d0Bc9mq+Yn5jjtulmZbfXZOJxGrxDQKg4YGKk3YvZHM=;
+        b=ohxuIUMA/W8NI0TKHJU7kagQ4y1q1spWP/zKQowxwilbwz7b5vCc18ZhgR2Vifkz4F
+         N4qN5terflh8JuRUKopOLxKRn0gUIfj0K+TbeVXcS0Ahaxxe+HVUfyV1kyryqdpW7NaF
+         /xBKV9zNcmw+W68V4irYuIdhDvgS9CXX1MfhgQ2g5Od7DHUMD3Ftti81s5qqJB+TnvqQ
+         Dnrh9YW6N5nXUP/VRYwrOqKLAfkExDD08UPkH3xspUQO+rF/BHdB8RxPgFqgiCvmwOHR
+         peIjDNEskYhpw1ipmoqd4Q9CS49I3t9gLcyQ2ahGyKjVCOymFC7qJWrA67f2pjBjkBR5
+         smPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BP56q9onFy0f8OClpNzleqTUtQEUXNMGbU2lrqE+ArI=;
-        b=E5W6tRRPAOuRKCE5Z5UBiha5Kp7bPfUMJUHg/+c7rweNMn5U1Z5C9RXLGI4rALONrF
-         VDOsMOa3r6U7SKSAAHd8eybALwaqlnpCMdop00FJr1TMvwKM6nOHWfI7QwlC35erLQsT
-         58LhfTJb1/re8Zs+xpYteRI2J5lFZl+XdRYiYtGLoapZoNDcitaLx8ct1owNXwbAHpIR
-         Dt86Em/S5lnkxcKK3O9lSAtKpS3Ao7xLPDxhLNrt4D+qN067Z64AJF8MlVuPetkea/PC
-         gu+J9wtnJQbfZIfnUxK4n5XZ2+7VtEuXmD+fOLsAIinRkzvYbzKSqZb71fZ8HQZLfr7L
-         zfSw==
-X-Gm-Message-State: APjAAAVjWDhkNlDOmOsOdOCL8McnDJ9fcwIoOu+f43BMO2CIfS8jo44b
-        342iXzirkT2aNnvCAuwHG4NfnXquh0Y=
-X-Google-Smtp-Source: APXvYqyme8wVC4dzWmSgsc6H1b0UZIrl6+aO96h8ULykDsTVf0eJCZ/S3jZx4g/O0MbyErXe7KisQA==
-X-Received: by 2002:a92:b749:: with SMTP id c9mr5864813ilm.143.1582921862448;
-        Fri, 28 Feb 2020 12:31:02 -0800 (PST)
-Received: from x1.thefacebook.com ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t15sm3397611ili.50.2020.02.28.12.31.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 12:31:01 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     andres@anarazel.de, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 6/6] io_uring: add IOSQE_BUFFER_SELECT support for IORING_OP_RECVMSG
-Date:   Fri, 28 Feb 2020 13:30:53 -0700
-Message-Id: <20200228203053.25023-7-axboe@kernel.dk>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200228203053.25023-1-axboe@kernel.dk>
-References: <20200228203053.25023-1-axboe@kernel.dk>
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=d0Bc9mq+Yn5jjtulmZbfXZOJxGrxDQKg4YGKk3YvZHM=;
+        b=EuVFIVGtG24tQ3DoVQ7I65BYhq6dcXT1Z/gveU6utkIyC7w1FQd+QdFhlIZFxu85vY
+         l5EajIjsSGVc3nMluXBHPsUK5ofO9S+1TOjUuZxzKFmCEtPsZiyKSNW6R2C3U2WIvjwk
+         kMU23Re5I4apIRlRZ0m2+DO1U+Sjh0vaSOsgJ57cRDelEzwd9w/5CTfIt6gjlZRkxi93
+         e0Je1EkqwGrGj9J6ojRVJS6Hkp+R3w1jSdbTsv1lb4IWHLeWp2fEQJ63gWD/Ia2e3Fmd
+         Zwha8wBOa1XvXfe01FH4ZfiTkh2FACzYCnnjyc+TwpQAKUyAhV6xyXZXakvdFp0p4Bn6
+         80/Q==
+X-Gm-Message-State: APjAAAVO7WRstf+InlOFmAj3c5ha8wlUMP/GBl5rN/8qhPM/EQcveW0s
+        g4+KGsM82m/1rgzzXHf1Cv7hML9j
+X-Google-Smtp-Source: APXvYqxBY1QyYuWheCerZpPov/0k+UBpTyiKlm1KfsbIIrsakoKtXq87smYipmZRLHlFoLpmmi4HZQ==
+X-Received: by 2002:a1c:4341:: with SMTP id q62mr6721462wma.107.1582930396563;
+        Fri, 28 Feb 2020 14:53:16 -0800 (PST)
+Received: from [192.168.43.88] ([109.126.130.242])
+        by smtp.gmail.com with ESMTPSA id v131sm4208565wme.23.2020.02.28.14.53.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2020 14:53:16 -0800 (PST)
+Subject: Re: Issue with splice 32-bit compatability?
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <ea81e4f4-59d2-fa8e-2b5c-0c215c378850@kernel.dk>
+ <1f39b13b-d3c0-d731-35f7-0aaadec1c14e@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <d37666a6-05c7-ba4b-e0e9-7995da300b2c@gmail.com>
+Date:   Sat, 29 Feb 2020 01:52:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1f39b13b-d3c0-d731-35f7-0aaadec1c14e@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Like IORING_OP_READV, this is limited to supporting just a single
-segment in the iovec passed in.
+On 28/02/2020 18:25, Jens Axboe wrote:
+> On 2/28/20 8:16 AM, Jens Axboe wrote:
+>> Hey Pavel,
+>>
+>> Since I yesterday found that weirdness with networking and using
+>> a separate flag for compat mode, I went to check everything else.
+>> Outside of all the syzbot reproducers not running in 32-bit mode,
+>> the only other error was splice:
+>>
+>> splice: returned -29, expected 16384
+>> basic splice-copy failed
+>> test_splice failed -29 0
+>> Test splice failed with ret 227
+>>
+>> Can you take a look? I just edit test/Makefile and src/Makefile and
+>> add -m32 to the CFLAGS for testing.
+> 
+> It's in the liburing prep, fixed it:
+> 
+> https://git.kernel.dk/cgit/liburing/commit/?id=566180209fc4d9e3ee8852315a4411ee0c3d5510
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 115 ++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 103 insertions(+), 12 deletions(-)
+A subtle one, great you found it!
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 561120460422..fadffe21d4da 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -44,6 +44,7 @@
- #include <linux/errno.h>
- #include <linux/syscalls.h>
- #include <linux/compat.h>
-+#include <net/compat.h>
- #include <linux/refcount.h>
- #include <linux/uio.h>
- #include <linux/bits.h>
-@@ -729,6 +730,7 @@ static const struct io_op_def io_op_defs[] = {
- 		.unbound_nonreg_file	= 1,
- 		.needs_fs		= 1,
- 		.pollin			= 1,
-+		.buffer_select		= 1,
- 	},
- 	[IORING_OP_TIMEOUT] = {
- 		.async_ctx		= 1,
-@@ -3582,6 +3584,90 @@ static int io_send(struct io_kiocb *req, struct io_kiocb **nxt,
- #endif
- }
- 
-+static int __io_recvmsg_copy_hdr(struct io_kiocb *req, struct io_async_ctx *io)
-+{
-+	struct io_sr_msg *sr = &req->sr_msg;
-+	struct iovec __user *uiov;
-+	size_t iov_len;
-+	int ret;
-+
-+	ret = __copy_msghdr_from_user(&io->msg.msg, sr->msg, &io->msg.uaddr,
-+					&uiov, &iov_len);
-+	if (ret)
-+		return ret;
-+
-+	if (req->flags & REQ_F_BUFFER_SELECT) {
-+		if (iov_len > 1)
-+			return -EINVAL;
-+		if (copy_from_user(io->msg.iov, uiov, sizeof(*uiov)))
-+			return -EFAULT;
-+		sr->len = io->msg.iov[0].iov_len;
-+		iov_iter_init(&io->msg.msg.msg_iter, READ, io->msg.iov, 1,
-+				sr->len);
-+		io->msg.iov = NULL;
-+	} else {
-+		ret = import_iovec(READ, uiov, iov_len, UIO_FASTIOV,
-+					&io->msg.iov, &io->msg.msg.msg_iter);
-+		if (ret > 0)
-+			ret = 0;
-+	}
-+
-+	return ret;
-+}
-+
-+#ifdef CONFIG_COMPAT
-+static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
-+					struct io_async_ctx *io)
-+{
-+	struct compat_msghdr __user *msg_compat;
-+	struct io_sr_msg *sr = &req->sr_msg;
-+	struct compat_iovec __user *uiov;
-+	compat_uptr_t ptr;
-+	compat_size_t len;
-+	int ret;
-+
-+	msg_compat = (struct compat_msghdr __user *) sr->msg;
-+	ret = __get_compat_msghdr(&io->msg.msg, msg_compat, &io->msg.uaddr,
-+					&ptr, &len);
-+
-+	uiov = compat_ptr(ptr);
-+	if (req->flags & REQ_F_BUFFER_SELECT) {
-+		compat_ssize_t clen;
-+
-+		if (len > 1)
-+			return -EINVAL;
-+		if (!access_ok(uiov, sizeof(*uiov)))
-+			return -EFAULT;
-+		if (__get_user(clen, &uiov->iov_len))
-+			return -EFAULT;
-+		if (clen < 0)
-+			return -EINVAL;
-+		sr->len = io->msg.iov[0].iov_len;
-+		io->msg.iov = NULL;
-+	} else {
-+		ret = compat_import_iovec(READ, uiov, len, UIO_FASTIOV,
-+						&io->msg.iov,
-+						&io->msg.msg.msg_iter);
-+		if (ret > 0)
-+			ret = 0;
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static int io_recvmsg_copy_hdr(struct io_kiocb *req, struct io_async_ctx *io)
-+{
-+	io->msg.iov = io->msg.fast_iov;
-+
-+#ifdef CONFIG_COMPAT
-+	if (req->ctx->compat)
-+		return __io_compat_recvmsg_copy_hdr(req, io);
-+#endif
-+
-+	return __io_recvmsg_copy_hdr(req, io);
-+}
-+
- static struct io_buffer *io_recv_buffer_select(struct io_kiocb *req,
- 					       int *cflags, bool needs_lock)
- {
-@@ -3629,9 +3715,7 @@ static int io_recvmsg_prep(struct io_kiocb *req,
- 	if (req->flags & REQ_F_NEED_CLEANUP)
- 		return 0;
- 
--	io->msg.iov = io->msg.fast_iov;
--	ret = recvmsg_copy_msghdr(&io->msg.msg, sr->msg, sr->msg_flags,
--					&io->msg.uaddr, &io->msg.iov);
-+	ret = io_recvmsg_copy_hdr(req, io);
- 	if (!ret)
- 		req->flags |= REQ_F_NEED_CLEANUP;
- 	return ret;
-@@ -3646,13 +3730,14 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
- #if defined(CONFIG_NET)
- 	struct io_async_msghdr *kmsg = NULL;
- 	struct socket *sock;
--	int ret;
-+	int ret, cflags = 0;
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
- 
- 	sock = sock_from_file(req->file, &ret);
- 	if (sock) {
-+		struct io_buffer *kbuf;
- 		struct io_async_ctx io;
- 		unsigned flags;
- 
-@@ -3664,19 +3749,23 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
- 				kmsg->iov = kmsg->fast_iov;
- 			kmsg->msg.msg_iter.iov = kmsg->iov;
- 		} else {
--			struct io_sr_msg *sr = &req->sr_msg;
--
- 			kmsg = &io.msg;
- 			kmsg->msg.msg_name = &io.msg.addr;
- 
--			io.msg.iov = io.msg.fast_iov;
--			ret = recvmsg_copy_msghdr(&io.msg.msg, sr->msg,
--					sr->msg_flags, &io.msg.uaddr,
--					&io.msg.iov);
-+			ret = io_recvmsg_copy_hdr(req, &io);
- 			if (ret)
- 				return ret;
- 		}
- 
-+		kbuf = io_recv_buffer_select(req, &cflags, !force_nonblock);
-+		if (IS_ERR(kbuf)) {
-+			return PTR_ERR(kbuf);
-+		} else if (kbuf) {
-+			kmsg->fast_iov[0].iov_base = u64_to_user_ptr(kbuf->addr);
-+			iov_iter_init(&kmsg->msg.msg_iter, READ, kmsg->iov,
-+					1, req->sr_msg.len);
-+		}
-+
- 		flags = req->sr_msg.msg_flags;
- 		if (flags & MSG_DONTWAIT)
- 			req->flags |= REQ_F_NOWAIT;
-@@ -3694,7 +3783,7 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
- 	if (kmsg && kmsg->iov != kmsg->fast_iov)
- 		kfree(kmsg->iov);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
--	io_cqring_add_event(req, ret);
-+	__io_cqring_add_event(req, ret, cflags);
- 	if (ret < 0)
- 		req_set_fail_links(req);
- 	io_put_req_find_next(req, nxt);
-@@ -4806,8 +4895,10 @@ static void io_cleanup_req(struct io_kiocb *req)
- 		if (io->rw.iov != io->rw.fast_iov)
- 			kfree(io->rw.iov);
- 		break;
--	case IORING_OP_SENDMSG:
- 	case IORING_OP_RECVMSG:
-+		if (req->flags & REQ_F_BUFFER_SELECTED)
-+			kfree(req->sr_msg.kbuf);
-+	case IORING_OP_SENDMSG:
- 		if (io->msg.iov != io->msg.fast_iov)
- 			kfree(io->msg.iov);
- 		break;
 -- 
-2.25.1
-
+Pavel Begunkov

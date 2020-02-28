@@ -2,95 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 399961731E2
-	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2020 08:37:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EEF2173976
+	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2020 15:08:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbgB1Hho (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Feb 2020 02:37:44 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36414 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbgB1Hhn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Feb 2020 02:37:43 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f19so2124610wmh.1
-        for <io-uring@vger.kernel.org>; Thu, 27 Feb 2020 23:37:42 -0800 (PST)
+        id S1726740AbgB1OHp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 28 Feb 2020 09:07:45 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44374 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgB1OHo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Feb 2020 09:07:44 -0500
+Received: by mail-io1-f66.google.com with SMTP id z16so3476265iod.11
+        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2020 06:07:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=h3HK8blp4v1LjOiPEFB5dLOVJG89/ojTZyUi5ZYX994=;
-        b=obmmLsW5qnmAnlQcvDL/j6GuKzTMaqWa1DaCb3UmVlMHvDtOVuLiAUbDZ3wZ4YS4RQ
-         820MceBQk4Dkke2tpR6lYZVUOGN9TZyzoGyDUgZxAFZkNyfWPbZvE/OwfArjYY4GwV+B
-         URiWVey7eb1yJ72UgAzCMMUFQfGXXu0spHMrMTnksUOAsf7A+rFMTGfQlYV5tc++4gIW
-         IWQSLBZBecwEN1Qzw5jkEznB54vhfKQ/hqBlftvpypCD8AIJxuO/eUQ0z5VFwWmlQL50
-         v25JvnTuf6DJXh2W1kORK8ZbvzDBpKw4VEzxOR68WnAkPoUZTHDpYzTqYjO+OnAnXniD
-         27zA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=I7VerJ00XbCTcblHyPJ69M92GIZbyH5sXHBHO8MfbXs=;
+        b=rWrSmWBw+wdWnmSjjN/+a/VrD+Me3zwNHa1YstG0cUa4pLQY9dOEym2Pt+r5GWD0RR
+         TgdPmcxP9tDcONyWTxncu7Y8Yo5w9IrC7U1IvEG875njLn4ctGvwHFtJ0hQQEuMeF6UA
+         e8P2XbBMR2Tjoku4hsPGLbbt7LbmIvJvPEuq0vkaHg//UgVtlgoGMIjqOfrNFfTHirdg
+         w0/mKJvi6YL1/95xkxCUkEw1GWT66CZJ11EUks15OJyQCbJl8gZHEI8mFwrYjFPMUD8I
+         Si4+e36oePjA332KVhrffzobAmijt3VvHknbOQYAP+4uhIAbCHP0SDXi41BSyhglxbJc
+         bMCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=h3HK8blp4v1LjOiPEFB5dLOVJG89/ojTZyUi5ZYX994=;
-        b=qlB8woZghg8H6iggHisurk2Ye7wPHsvJ41xYNm8hKtcJJ5WO46C79pWBnPuNW3UCwa
-         JwOPSzMBOE/0e+nPIU4cDf12AXMt3lnE+n/IgGZMYyuVppnMucjWXwq1EZyI8T9rNBi4
-         SMyuDHfLvQaIyn/JjLNomT+uZUnqYDakPG19eq+ejFS0tsxZmQoOgtUle78qLQVN8TDr
-         tlqfG55CFr+RYK+K7/1R+O8e7b7fYHI/s6dR2PbeKVlbD95aErKjFjGHMi7dmSqlzCVu
-         QILdki41VRCI/KWv83e5JPhdMPQyFMataLLcWMvIbkgOFjBmCPfJmjLLxwYyqvvswJvx
-         mHUQ==
-X-Gm-Message-State: APjAAAWnjoogcCfV5Ev0p0NzGhuRlcNw2OSKuW28KGwAcAnEwzUyNav+
-        l2JAzXbzaBhR4vWZPhZqNwQ=
-X-Google-Smtp-Source: APXvYqw/a58aguyyloXW2Sf/DOaJaIEwEhtubC6Ch7Vr2klctbVb2geD1uCeJ1OhZ+VhjEQozE017Q==
-X-Received: by 2002:a05:600c:2c13:: with SMTP id q19mr3491484wmg.144.1582875461676;
-        Thu, 27 Feb 2020 23:37:41 -0800 (PST)
-Received: from localhost.localdomain ([109.126.130.242])
-        by smtp.gmail.com with ESMTPSA id h2sm11369425wrt.45.2020.02.27.23.37.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 23:37:41 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 5/5] io-wq: use BIT for ulong hash
-Date:   Fri, 28 Feb 2020 10:36:39 +0300
-Message-Id: <332610e11bc94acb2390f737ecb0b08db120cb8c.1582874853.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1582874853.git.asml.silence@gmail.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=I7VerJ00XbCTcblHyPJ69M92GIZbyH5sXHBHO8MfbXs=;
+        b=hjwCEe/GiYHM9c4t2WL3Mt/crdVISAjicTYrZDH1//Ik2X0ZQdZG6DIXgfFJouhZex
+         graBg08ZuA5jjhE4cVEjSTpx8Ts0nz8LrShg3/8AsBrqczECmcKqJE5kpryxjnImogC2
+         AO5KRZBklsWmdjWOazoqlNGxxX521dsoP5Flv/kUHDSanicOiaMdbKJBs01B3cnjU0gW
+         LyNlRl/3zwegMauaSxlUOSic4tvpW1aCxY+PD5/Wm8RljAoSEETC+bRvvyEhoWBoZD7Y
+         R9Hvevo3UzNCYX9jUjf0TF90AbJGL2x0cs4Q0MWqM9etBugYocz34KYEvQep6spp4jEp
+         uDzA==
+X-Gm-Message-State: APjAAAUoqgIxV1yD7XeXTY58lLk5wvx7vpvcVBS9+JtTljHIqV8rQ45U
+        fQOjSZ7KH2emkJHWnh6Cxz3IOizA2es=
+X-Google-Smtp-Source: APXvYqxpCXjDDiNPmKXR7riZh8TXh7PX9WKpJG5aV+07+wY9DKu0swvs2nfdHuc9LR/AnncyYvogog==
+X-Received: by 2002:a02:a48e:: with SMTP id d14mr3495360jam.30.1582898862847;
+        Fri, 28 Feb 2020 06:07:42 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id v4sm3092221ill.31.2020.02.28.06.07.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2020 06:07:42 -0800 (PST)
+Subject: Re: [PATCH 0/5] random io-wq and io_uring bits
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <cover.1582874853.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <15c68c0e-fe14-e38f-ec51-ede94fe79ff2@kernel.dk>
+Date:   Fri, 28 Feb 2020 07:07:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1582874853.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-@hash_map is unsigned long, but BIT_ULL() is used for manipulations.
-BIT() is a better match as it returns exactly unsigned long value.
+On 2/28/20 12:36 AM, Pavel Begunkov wrote:
+> A bunch of unconnected patches, easy and straightworward.
+> Probably could even be picked separately.
+> 
+> The only thing could be of concern is [PATCH 4/5]. I assumed that
+> work setup is short (switch creds, mm, fs, files with task_[un]lock),
+> and arm a timeout after it's done.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io-wq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+That's totally fine in terms of timing, the reason it was done in a
+callback was so we didn't have a small gap where a cancellation
+would trigger via the timeout, but the request wasn't locatable yet.
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 1ceb12c58ae6..a05c32df2046 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -393,8 +393,8 @@ static struct io_wq_work *io_get_next_work(struct io_wqe *wqe, unsigned *hash)
- 
- 		/* hashed, can run if not already running */
- 		*hash = work->flags >> IO_WQ_HASH_SHIFT;
--		if (!(wqe->hash_map & BIT_ULL(*hash))) {
--			wqe->hash_map |= BIT_ULL(*hash);
-+		if (!(wqe->hash_map & BIT(*hash))) {
-+			wqe->hash_map |= BIT(*hash);
- 			wq_node_del(&wqe->work_list, node, prev);
- 			return work;
- 		}
-@@ -512,7 +512,7 @@ static void io_worker_handle_work(struct io_worker *worker)
- 		spin_lock_irq(&wqe->lock);
- 
- 		if (hash != -1U) {
--			wqe->hash_map &= ~BIT_ULL(hash);
-+			wqe->hash_map &= ~BIT(hash);
- 			wqe->flags &= ~IO_WQE_FLAG_STALLED;
- 		}
- 		if (work && work != old_work) {
+But you retain that, so I think it should be fine.
+
 -- 
-2.24.0
+Jens Axboe
 

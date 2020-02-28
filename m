@@ -2,59 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5831739D0
-	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2020 15:26:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97CFA173B27
+	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2020 16:16:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgB1O0f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Feb 2020 09:26:35 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:39384 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbgB1O0f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Feb 2020 09:26:35 -0500
-Received: by mail-io1-f68.google.com with SMTP id h3so3575743ioj.6
-        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2020 06:26:33 -0800 (PST)
+        id S1727064AbgB1PQI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 28 Feb 2020 10:16:08 -0500
+Received: from mail-io1-f46.google.com ([209.85.166.46]:34535 "EHLO
+        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbgB1PQI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Feb 2020 10:16:08 -0500
+Received: by mail-io1-f46.google.com with SMTP id z190so3791776iof.1
+        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2020 07:16:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Hmi5le44CQGwHZkkTL72nRXhpJhZ7lPRnGWjBH7JO1M=;
-        b=sfTx6UEDp6jly1gWp413OHU4NBU0yLUmZSFdVEtigbJuYIxiT0ZcQet1qkwiKWAsN6
-         ZwX73MDmY3TVBslM2YEoQ7CeebPykjbnQR/2K4BhlPuaXL1PR207IEVop5MoONHgs3F7
-         xfWzUd+sKOtHbYGzATpBJEBrYslZuHHB34zAXL1swPoh/3aeO1aD2wut8A0WYPfwmz3l
-         a3kDbNcYhshGGslRLREFhTI/qyyCeOlGOmP5/62DHnvnQ+BDU/uksO6XK0R1/a58Yj3l
-         DXK58/e3qqVAL8AtUlAeiKcWuFWVblazb1lo8twdJ5KYgN9rr5EfZEQXpy9zeeV77Gqr
-         8t8Q==
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=kr/scANoPclBqA40Z4yKvOc53JA8SGG9g/n2i12EtE8=;
+        b=oEHedgIvEoJH+8CmW7blnb0Mr6LQ5jaerXs76OSFtlrwG4OM0ZEdRW/ML815S1ntxB
+         u5Gs4D7155T9K2xbzuajYUsdav4L21H7mVCiQN3IW946VR2ZqvcBkSh+31Xmf3dQCz7b
+         IUtzFnDSXfkV2F5cK2eKvCoG+nbEX4c6xnaLNRzY/966+9Jpr1MneftCZ1TYPBM5vXZX
+         U7PPWOFdtLxj73p41tga+TsqdLLGghCJ3rzO3LibvYaZQ1IsIaoIk79L7A9L6Gjpq+iT
+         3kpkcagZWxSsK/9LGE4lSCef8q5CBLjuqwCgysQIwGbigaS1GPQDU/6V9baOPJ22/8B8
+         wT4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Hmi5le44CQGwHZkkTL72nRXhpJhZ7lPRnGWjBH7JO1M=;
-        b=ijuEStYBxLmtao9rIva2c7TRsRpH8vdpuufdmSHSgIlTAtWnxTOivds724u1pHVKhq
-         ptcWp2BVj2E1bzMRX7WnFE+AncorUXhgsVDTXgQMfmtSUJKvLxGOtxxU7bLe96c9P2Vp
-         py6+E1xYeT+OcM8nN8YZjuW4J/0byCPUz2lIpIRu6TGfZTmXxmo4WiMjEzo9B1dnB1yd
-         B1RsJCgHUhtXZyCkkaGL/FFQy99QN15C1+ObZpybEFxXJPlOaPB2Mt5hhoKelheMcnlT
-         lriTJqzA7PKyUSVevz6KbxJcTMIOfC3ajujm3cVWQYg6qCZTjkP4g9mikjxgalOZZlJ+
-         WB/Q==
-X-Gm-Message-State: APjAAAUjaHtNDG/kSuYN6ZivpiebmUzsB5VEXSzSgjfI2S154/AnXrQg
-        PtEQxitKEBMbbVrFJJcNEbVOm0TwIS0=
-X-Google-Smtp-Source: APXvYqwKE8S55tXWujXu74z/WrxCIhadSvN6bbCm06hlROjJQJMP7kzYGjmY4S46oUFEHpb8rfRG6A==
-X-Received: by 2002:a5d:984e:: with SMTP id p14mr3823286ios.115.1582899993200;
-        Fri, 28 Feb 2020 06:26:33 -0800 (PST)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=kr/scANoPclBqA40Z4yKvOc53JA8SGG9g/n2i12EtE8=;
+        b=I0pPeqviPcVu5R9uAreVSTrO9lWf384Rr7H6HlW7VLqJkAROofs2EVpuk9oSe+c99n
+         C1fY7MRcjzyFcpvH24i2AoyuAun6y0iMyhjYYcQKhYqbMgaL7ORF8/bGKv63cmrrl2+b
+         fpHN/7zrFNJYmjTngsBZdrjJ/lB+LvqpnLSnTF6l1H2Iqbk9euFuhtClUzUYH5hwppRD
+         Rj9nGZc87KASIRHamYXL4HIjz/BuPDcAqcuAfdJAB0oztIUjdxk6wbju9ibxECVwU6C2
+         JUI7+NI6Lgiw1yb/1v4Ts2fhYY6HOExpWBmRW9E+edleP24KgqK4gXJw9tzRw9xyvTq+
+         A9zA==
+X-Gm-Message-State: APjAAAWYNTbvUVwNbGsJ8GuoHM/4Jj/rqVvHFzma65AYo+GqHZwaf1lS
+        PJNfWnALt5Nu1vjZZNEGqHVDBw==
+X-Google-Smtp-Source: APXvYqxae8UYPDehlyfptcwAaWolCpSemGR12Dhk72CDdD+KemrEQFrIHutD+K+8qRypf7+2H1RfJw==
+X-Received: by 2002:a5d:9e0d:: with SMTP id h13mr579031ioh.98.1582902966285;
+        Fri, 28 Feb 2020 07:16:06 -0800 (PST)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id n80sm3138915ilh.30.2020.02.28.06.26.32
+        by smtp.gmail.com with ESMTPSA id m18sm3147239ila.54.2020.02.28.07.16.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2020 06:26:32 -0800 (PST)
-Subject: Re: [PATCH 0/5] random io-wq and io_uring bits
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1582874853.git.asml.silence@gmail.com>
+        Fri, 28 Feb 2020 07:16:05 -0800 (PST)
+To:     io-uring <io-uring@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <43a706cf-0abb-94bf-1417-8bb73048fd09@kernel.dk>
-Date:   Fri, 28 Feb 2020 07:26:32 -0700
+Subject: Issue with splice 32-bit compatability?
+Message-ID: <ea81e4f4-59d2-fa8e-2b5c-0c215c378850@kernel.dk>
+Date:   Fri, 28 Feb 2020 08:16:04 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <cover.1582874853.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -63,27 +61,20 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/28/20 12:36 AM, Pavel Begunkov wrote:
-> A bunch of unconnected patches, easy and straightworward.
-> Probably could even be picked separately.
-> 
-> The only thing could be of concern is [PATCH 4/5]. I assumed that
-> work setup is short (switch creds, mm, fs, files with task_[un]lock),
-> and arm a timeout after it's done.
-> 
-> Pavel Begunkov (5):
->   io_uring: clean io_poll_complete
->   io_uring: extract kmsg copy helper
->   io-wq: remove unused IO_WQ_WORK_HAS_MM
->   io_uring: remove IO_WQ_WORK_CB
->   io-wq: use BIT for ulong hash
-> 
->  fs/io-wq.c    | 11 +++--------
->  fs/io-wq.h    |  2 --
->  fs/io_uring.c | 51 +++++++++++++++++++++------------------------------
->  3 files changed, 24 insertions(+), 40 deletions(-)
+Hey Pavel,
 
-LGTM, and always love a negative diffstat. Applied for 5.7.
+Since I yesterday found that weirdness with networking and using
+a separate flag for compat mode, I went to check everything else.
+Outside of all the syzbot reproducers not running in 32-bit mode,
+the only other error was splice:
+
+splice: returned -29, expected 16384
+basic splice-copy failed
+test_splice failed -29 0
+Test splice failed with ret 227
+
+Can you take a look? I just edit test/Makefile and src/Makefile and
+add -m32 to the CFLAGS for testing.
 
 -- 
 Jens Axboe

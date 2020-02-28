@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5451A1740F5
-	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2020 21:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 699AA1740F7
+	for <lists+io-uring@lfdr.de>; Fri, 28 Feb 2020 21:31:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725730AbgB1UbC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Feb 2020 15:31:02 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:39579 "EHLO
+        id S1726400AbgB1UbF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 28 Feb 2020 15:31:05 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:46359 "EHLO
         mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbgB1UbC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Feb 2020 15:31:02 -0500
-Received: by mail-il1-f195.google.com with SMTP id w69so3905153ilk.6
-        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2020 12:31:01 -0800 (PST)
+        with ESMTP id S1726287AbgB1UbF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Feb 2020 15:31:05 -0500
+Received: by mail-il1-f195.google.com with SMTP id t17so3852811ilm.13
+        for <io-uring@vger.kernel.org>; Fri, 28 Feb 2020 12:31:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=opzF/Xl5cy64UVZeXK0Pqdm7F7EKZVDIMZ22vwBunKE=;
-        b=P/1Ijdq2PTdCj+mbJQxRPLRGwssmBuIxQDU3YPW31UNkBdLBsU8K+W8p3AdAyLwWfI
-         buJsbrqJNgcMCH72ftp1a6l4/L318Sc1HnHTDYvJiMwPQG8wCzj+hVgLp/Ps9IATAeMm
-         9LXZ7LCvTnhcMp24YnuuErFdXqeu1Chp/Uq+357G/OcXdfGc+xLzLa7hq9WniDxulWjx
-         LHzlWz8ecZyX8xCFHXXBXhRvOQ3iYNjVHQkMV9Y1ZP96TFqvh7mqSWcU7iE6E0nCP3dY
-         4+4NAVpkEO+FIaqDtUxnffFUq4VjQghy9rPZ3b3FQJh9czIuqyX6ZYO8mCP7sZLENsZN
-         yllg==
+        bh=BP56q9onFy0f8OClpNzleqTUtQEUXNMGbU2lrqE+ArI=;
+        b=gsHfgaj2QPOBs4PXnUGaqp6sN5y06qDgiQY7lmliljJqGGYGCsuvS7yd6PnUKKZHrs
+         HvjnrxHUDpJ4G7+XceGI/2ydDSLoYjFp9uRj8tIOxHKnh4dZGJBCQ+3/9o8aPReXI2zK
+         JVtAivxbvsue7Sj7lvwbFi4EEF4Wq+HxbiPut74azF6wlDzXq1HsxQsV3GDLMtXIEFfT
+         SgfNANC2xOh6VTvEXNyd7d7dBZqIbBlgLOzzY1IRdB2cWIqdfY/eVL2yKvYCLjFRADwH
+         C013pu7XBIW3n0zFQB5JqAB/6lglfxJOmNkkxAWwYQBZv8AHt94YhW0uoa/rlALST2S9
+         j5nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=opzF/Xl5cy64UVZeXK0Pqdm7F7EKZVDIMZ22vwBunKE=;
-        b=JumNF8aQYBdfFYKw6LmlV4qalUqt4T2PJe3c5+Jf90h3uBh0VevxdZ8WGSWSOpqzrL
-         yljIkPQLC641G2Uny87VP9gVeUn+Ur0GBpth7wCSJcBA5+VI8nDpnrJ5QLL/YQ0efC1n
-         0uVfg7DGis8dMP13A2D+NK6lidjaowP2TvZA38w95HAosGmV+a4YnKdBwG5sQq2xnXce
-         DxUWSWo8Qw5H2mlvuIYQPltdZ4k/DzF61N2zvXadGIeAqRsg9UwXlZ7+p9ksqiuc4iq9
-         qNCLaeDJXtEan72Jpz2Kt7F5ApUgsx9DXd3q7ccSsWeUBAXrMVbhRBFcW6zjOCIFWrmM
-         kmog==
-X-Gm-Message-State: APjAAAXP8HR0nedJCV+gGbfU46raD7/CRHCkcrMJ2TyxjU1JF6ueklWs
-        UiA7wLAAXT3t25KScMZqk7lNkNJGv6U=
-X-Google-Smtp-Source: APXvYqwoXQ+gpbjza5/lScF0KJ/94foRPhXaU87u2mzGb82j9FXD1LM38L5eRH53cVyNQVuIQxhssg==
-X-Received: by 2002:a92:b68a:: with SMTP id m10mr6276862ill.255.1582921861037;
-        Fri, 28 Feb 2020 12:31:01 -0800 (PST)
+        bh=BP56q9onFy0f8OClpNzleqTUtQEUXNMGbU2lrqE+ArI=;
+        b=E5W6tRRPAOuRKCE5Z5UBiha5Kp7bPfUMJUHg/+c7rweNMn5U1Z5C9RXLGI4rALONrF
+         VDOsMOa3r6U7SKSAAHd8eybALwaqlnpCMdop00FJr1TMvwKM6nOHWfI7QwlC35erLQsT
+         58LhfTJb1/re8Zs+xpYteRI2J5lFZl+XdRYiYtGLoapZoNDcitaLx8ct1owNXwbAHpIR
+         Dt86Em/S5lnkxcKK3O9lSAtKpS3Ao7xLPDxhLNrt4D+qN067Z64AJF8MlVuPetkea/PC
+         gu+J9wtnJQbfZIfnUxK4n5XZ2+7VtEuXmD+fOLsAIinRkzvYbzKSqZb71fZ8HQZLfr7L
+         zfSw==
+X-Gm-Message-State: APjAAAVjWDhkNlDOmOsOdOCL8McnDJ9fcwIoOu+f43BMO2CIfS8jo44b
+        342iXzirkT2aNnvCAuwHG4NfnXquh0Y=
+X-Google-Smtp-Source: APXvYqyme8wVC4dzWmSgsc6H1b0UZIrl6+aO96h8ULykDsTVf0eJCZ/S3jZx4g/O0MbyErXe7KisQA==
+X-Received: by 2002:a92:b749:: with SMTP id c9mr5864813ilm.143.1582921862448;
+        Fri, 28 Feb 2020 12:31:02 -0800 (PST)
 Received: from x1.thefacebook.com ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t15sm3397611ili.50.2020.02.28.12.31.00
+        by smtp.gmail.com with ESMTPSA id t15sm3397611ili.50.2020.02.28.12.31.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 12:31:00 -0800 (PST)
+        Fri, 28 Feb 2020 12:31:01 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     andres@anarazel.de, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5/6] net: abstract out normal and compat msghdr import
-Date:   Fri, 28 Feb 2020 13:30:52 -0700
-Message-Id: <20200228203053.25023-6-axboe@kernel.dk>
+Subject: [PATCH 6/6] io_uring: add IOSQE_BUFFER_SELECT support for IORING_OP_RECVMSG
+Date:   Fri, 28 Feb 2020 13:30:53 -0700
+Message-Id: <20200228203053.25023-7-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200228203053.25023-1-axboe@kernel.dk>
 References: <20200228203053.25023-1-axboe@kernel.dk>
@@ -60,141 +60,203 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This splits it into two parts, one that imports the message, and one
-that imports the iovec. This allows a caller to only do the first part,
-and import the iovec manually afterwards.
-
-No functional changes in this patch.
+Like IORING_OP_READV, this is limited to supporting just a single
+segment in the iovec passed in.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/socket.h |  4 ++++
- include/net/compat.h   |  3 +++
- net/compat.c           | 30 +++++++++++++++++++++++-------
- net/socket.c           | 25 +++++++++++++++++++++----
- 4 files changed, 51 insertions(+), 11 deletions(-)
+ fs/io_uring.c | 115 ++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 103 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index 2d2313403101..fc59ac825561 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -391,6 +391,10 @@ extern int recvmsg_copy_msghdr(struct msghdr *msg,
- 			       struct user_msghdr __user *umsg, unsigned flags,
- 			       struct sockaddr __user **uaddr,
- 			       struct iovec **iov);
-+extern int __copy_msghdr_from_user(struct msghdr *kmsg,
-+				   struct user_msghdr __user *umsg,
-+				   struct sockaddr __user **save_addr,
-+				   struct iovec __user **uiov, size_t *nsegs);
- 
- /* helpers which do the actual work for syscalls */
- extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
-diff --git a/include/net/compat.h b/include/net/compat.h
-index f277653c7e17..e341260642fe 100644
---- a/include/net/compat.h
-+++ b/include/net/compat.h
-@@ -38,6 +38,9 @@ struct compat_cmsghdr {
- #define compat_mmsghdr	mmsghdr
- #endif /* defined(CONFIG_COMPAT) */
- 
-+int __get_compat_msghdr(struct msghdr *kmsg, struct compat_msghdr __user *umsg,
-+			struct sockaddr __user **save_addr, compat_uptr_t *ptr,
-+			compat_size_t *len);
- int get_compat_msghdr(struct msghdr *, struct compat_msghdr __user *,
- 		      struct sockaddr __user **, struct iovec **);
- struct sock_fprog __user *get_compat_bpf_fprog(char __user *optval);
-diff --git a/net/compat.c b/net/compat.c
-index 47d99c784947..4bed96e84d9a 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -33,10 +33,10 @@
- #include <linux/uaccess.h>
- #include <net/compat.h>
- 
--int get_compat_msghdr(struct msghdr *kmsg,
--		      struct compat_msghdr __user *umsg,
--		      struct sockaddr __user **save_addr,
--		      struct iovec **iov)
-+int __get_compat_msghdr(struct msghdr *kmsg,
-+			struct compat_msghdr __user *umsg,
-+			struct sockaddr __user **save_addr,
-+			compat_uptr_t *ptr, compat_size_t *len)
- {
- 	struct compat_msghdr msg;
- 	ssize_t err;
-@@ -79,10 +79,26 @@ int get_compat_msghdr(struct msghdr *kmsg,
- 		return -EMSGSIZE;
- 
- 	kmsg->msg_iocb = NULL;
-+	*ptr = msg.msg_iov;
-+	*len = msg.msg_iovlen;
-+	return 0;
-+}
-+
-+int get_compat_msghdr(struct msghdr *kmsg,
-+		      struct compat_msghdr __user *umsg,
-+		      struct sockaddr __user **save_addr,
-+		      struct iovec **iov)
-+{
-+	compat_uptr_t ptr;
-+	compat_size_t len;
-+	ssize_t err;
-+
-+	err = __get_compat_msghdr(kmsg, umsg, save_addr, &ptr, &len);
-+	if (err)
-+		return err;
- 
--	err = compat_import_iovec(save_addr ? READ : WRITE,
--				   compat_ptr(msg.msg_iov), msg.msg_iovlen,
--				   UIO_FASTIOV, iov, &kmsg->msg_iter);
-+	err = compat_import_iovec(save_addr ? READ : WRITE, compat_ptr(ptr),
-+				   len, UIO_FASTIOV, iov, &kmsg->msg_iter);
- 	return err < 0 ? err : 0;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 561120460422..fadffe21d4da 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -44,6 +44,7 @@
+ #include <linux/errno.h>
+ #include <linux/syscalls.h>
+ #include <linux/compat.h>
++#include <net/compat.h>
+ #include <linux/refcount.h>
+ #include <linux/uio.h>
+ #include <linux/bits.h>
+@@ -729,6 +730,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.unbound_nonreg_file	= 1,
+ 		.needs_fs		= 1,
+ 		.pollin			= 1,
++		.buffer_select		= 1,
+ 	},
+ 	[IORING_OP_TIMEOUT] = {
+ 		.async_ctx		= 1,
+@@ -3582,6 +3584,90 @@ static int io_send(struct io_kiocb *req, struct io_kiocb **nxt,
+ #endif
  }
  
-diff --git a/net/socket.c b/net/socket.c
-index b79a05de7c6e..70ede74ab24b 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2226,10 +2226,10 @@ struct used_address {
- 	unsigned int name_len;
- };
- 
--static int copy_msghdr_from_user(struct msghdr *kmsg,
--				 struct user_msghdr __user *umsg,
--				 struct sockaddr __user **save_addr,
--				 struct iovec **iov)
-+int __copy_msghdr_from_user(struct msghdr *kmsg,
-+			    struct user_msghdr __user *umsg,
-+			    struct sockaddr __user **save_addr,
-+			    struct iovec __user **uiov, size_t *nsegs)
- {
- 	struct user_msghdr msg;
- 	ssize_t err;
-@@ -2271,6 +2271,23 @@ static int copy_msghdr_from_user(struct msghdr *kmsg,
- 		return -EMSGSIZE;
- 
- 	kmsg->msg_iocb = NULL;
-+	*uiov = msg.msg_iov;
-+	*nsegs = msg.msg_iovlen;
-+	return 0;
++static int __io_recvmsg_copy_hdr(struct io_kiocb *req, struct io_async_ctx *io)
++{
++	struct io_sr_msg *sr = &req->sr_msg;
++	struct iovec __user *uiov;
++	size_t iov_len;
++	int ret;
++
++	ret = __copy_msghdr_from_user(&io->msg.msg, sr->msg, &io->msg.uaddr,
++					&uiov, &iov_len);
++	if (ret)
++		return ret;
++
++	if (req->flags & REQ_F_BUFFER_SELECT) {
++		if (iov_len > 1)
++			return -EINVAL;
++		if (copy_from_user(io->msg.iov, uiov, sizeof(*uiov)))
++			return -EFAULT;
++		sr->len = io->msg.iov[0].iov_len;
++		iov_iter_init(&io->msg.msg.msg_iter, READ, io->msg.iov, 1,
++				sr->len);
++		io->msg.iov = NULL;
++	} else {
++		ret = import_iovec(READ, uiov, iov_len, UIO_FASTIOV,
++					&io->msg.iov, &io->msg.msg.msg_iter);
++		if (ret > 0)
++			ret = 0;
++	}
++
++	return ret;
 +}
 +
-+static int copy_msghdr_from_user(struct msghdr *kmsg,
-+				 struct user_msghdr __user *umsg,
-+				 struct sockaddr __user **save_addr,
-+				 struct iovec **iov)
++#ifdef CONFIG_COMPAT
++static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
++					struct io_async_ctx *io)
 +{
-+	struct user_msghdr msg;
-+	ssize_t err;
++	struct compat_msghdr __user *msg_compat;
++	struct io_sr_msg *sr = &req->sr_msg;
++	struct compat_iovec __user *uiov;
++	compat_uptr_t ptr;
++	compat_size_t len;
++	int ret;
 +
-+	err = __copy_msghdr_from_user(kmsg, umsg, save_addr, &msg.msg_iov,
-+					&msg.msg_iovlen);
-+	if (err)
-+		return err;
++	msg_compat = (struct compat_msghdr __user *) sr->msg;
++	ret = __get_compat_msghdr(&io->msg.msg, msg_compat, &io->msg.uaddr,
++					&ptr, &len);
++
++	uiov = compat_ptr(ptr);
++	if (req->flags & REQ_F_BUFFER_SELECT) {
++		compat_ssize_t clen;
++
++		if (len > 1)
++			return -EINVAL;
++		if (!access_ok(uiov, sizeof(*uiov)))
++			return -EFAULT;
++		if (__get_user(clen, &uiov->iov_len))
++			return -EFAULT;
++		if (clen < 0)
++			return -EINVAL;
++		sr->len = io->msg.iov[0].iov_len;
++		io->msg.iov = NULL;
++	} else {
++		ret = compat_import_iovec(READ, uiov, len, UIO_FASTIOV,
++						&io->msg.iov,
++						&io->msg.msg.msg_iter);
++		if (ret > 0)
++			ret = 0;
++	}
++
++	return 0;
++}
++#endif
++
++static int io_recvmsg_copy_hdr(struct io_kiocb *req, struct io_async_ctx *io)
++{
++	io->msg.iov = io->msg.fast_iov;
++
++#ifdef CONFIG_COMPAT
++	if (req->ctx->compat)
++		return __io_compat_recvmsg_copy_hdr(req, io);
++#endif
++
++	return __io_recvmsg_copy_hdr(req, io);
++}
++
+ static struct io_buffer *io_recv_buffer_select(struct io_kiocb *req,
+ 					       int *cflags, bool needs_lock)
+ {
+@@ -3629,9 +3715,7 @@ static int io_recvmsg_prep(struct io_kiocb *req,
+ 	if (req->flags & REQ_F_NEED_CLEANUP)
+ 		return 0;
  
- 	err = import_iovec(save_addr ? READ : WRITE,
- 			    msg.msg_iov, msg.msg_iovlen,
+-	io->msg.iov = io->msg.fast_iov;
+-	ret = recvmsg_copy_msghdr(&io->msg.msg, sr->msg, sr->msg_flags,
+-					&io->msg.uaddr, &io->msg.iov);
++	ret = io_recvmsg_copy_hdr(req, io);
+ 	if (!ret)
+ 		req->flags |= REQ_F_NEED_CLEANUP;
+ 	return ret;
+@@ -3646,13 +3730,14 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ #if defined(CONFIG_NET)
+ 	struct io_async_msghdr *kmsg = NULL;
+ 	struct socket *sock;
+-	int ret;
++	int ret, cflags = 0;
+ 
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+ 		return -EINVAL;
+ 
+ 	sock = sock_from_file(req->file, &ret);
+ 	if (sock) {
++		struct io_buffer *kbuf;
+ 		struct io_async_ctx io;
+ 		unsigned flags;
+ 
+@@ -3664,19 +3749,23 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ 				kmsg->iov = kmsg->fast_iov;
+ 			kmsg->msg.msg_iter.iov = kmsg->iov;
+ 		} else {
+-			struct io_sr_msg *sr = &req->sr_msg;
+-
+ 			kmsg = &io.msg;
+ 			kmsg->msg.msg_name = &io.msg.addr;
+ 
+-			io.msg.iov = io.msg.fast_iov;
+-			ret = recvmsg_copy_msghdr(&io.msg.msg, sr->msg,
+-					sr->msg_flags, &io.msg.uaddr,
+-					&io.msg.iov);
++			ret = io_recvmsg_copy_hdr(req, &io);
+ 			if (ret)
+ 				return ret;
+ 		}
+ 
++		kbuf = io_recv_buffer_select(req, &cflags, !force_nonblock);
++		if (IS_ERR(kbuf)) {
++			return PTR_ERR(kbuf);
++		} else if (kbuf) {
++			kmsg->fast_iov[0].iov_base = u64_to_user_ptr(kbuf->addr);
++			iov_iter_init(&kmsg->msg.msg_iter, READ, kmsg->iov,
++					1, req->sr_msg.len);
++		}
++
+ 		flags = req->sr_msg.msg_flags;
+ 		if (flags & MSG_DONTWAIT)
+ 			req->flags |= REQ_F_NOWAIT;
+@@ -3694,7 +3783,7 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	if (kmsg && kmsg->iov != kmsg->fast_iov)
+ 		kfree(kmsg->iov);
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+-	io_cqring_add_event(req, ret);
++	__io_cqring_add_event(req, ret, cflags);
+ 	if (ret < 0)
+ 		req_set_fail_links(req);
+ 	io_put_req_find_next(req, nxt);
+@@ -4806,8 +4895,10 @@ static void io_cleanup_req(struct io_kiocb *req)
+ 		if (io->rw.iov != io->rw.fast_iov)
+ 			kfree(io->rw.iov);
+ 		break;
+-	case IORING_OP_SENDMSG:
+ 	case IORING_OP_RECVMSG:
++		if (req->flags & REQ_F_BUFFER_SELECTED)
++			kfree(req->sr_msg.kbuf);
++	case IORING_OP_SENDMSG:
+ 		if (io->msg.iov != io->msg.fast_iov)
+ 			kfree(io->msg.iov);
+ 		break;
 -- 
 2.25.1
 

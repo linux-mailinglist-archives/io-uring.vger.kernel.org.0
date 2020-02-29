@@ -2,108 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8209C17490B
-	for <lists+io-uring@lfdr.de>; Sat, 29 Feb 2020 20:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6427A174973
+	for <lists+io-uring@lfdr.de>; Sat, 29 Feb 2020 21:55:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbgB2T5F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 29 Feb 2020 14:57:05 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33493 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbgB2T5F (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Feb 2020 14:57:05 -0500
-Received: by mail-wr1-f65.google.com with SMTP id x7so7573449wrr.0;
-        Sat, 29 Feb 2020 11:57:03 -0800 (PST)
+        id S1727307AbgB2Uzs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 29 Feb 2020 15:55:48 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:51968 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbgB2Uzs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Feb 2020 15:55:48 -0500
+Received: by mail-pj1-f65.google.com with SMTP id fa20so2744787pjb.1
+        for <io-uring@vger.kernel.org>; Sat, 29 Feb 2020 12:55:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=vvkDjAk4ndVLVwI1Z85PO4wShGWFE753uje7rnBIzBg=;
-        b=t2DDU3+hkN8w194qqvWUopVfWP6u0sKq3Z19CzBXahiRvO7xABcJJau8w10RTTkA0M
-         lxL8kCgpuWA8U0gL+svruQ9DgmOMuCA/RQzwozxbOhxdOVEaCfMNyYIj22bKk2LMkzcN
-         TP8l0emC/VhIOxO1h/xUPAoM5IG35668eoiIRtdF4OvwG1MwcTZK097OeE5VZc00rCWE
-         +i6Djpi3yXFAAR9/tpala0OkFAToxPbS0cLrtWDbmkekPFbGxs3hTf2xrD4JhPHXN2jq
-         xjrk7BZI4QVR4CKsfhFch2A+fHFvuzA1dGUJpyX+2qXXjOzTf2CI3rB0fioKtmbklj9N
-         uhLA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=LfAey+bVZC63MZcRaKrf1wf+n/7HqfzMlziFP/uZ5DA=;
+        b=ClhsKX9DW5hTIMiI6HHZ0GUWCxU6QbmOxwbUME6SC+2H4MgVlbEAMmNzWoVHCxtZz4
+         jODg4Y20/kt8t5Hi9NP9dV8oxmZ2Grr06rBhEjhVTLCofOWwzlM35aosLDpdH9p0TRrz
+         6y2ZA41P832B+JG3r42ZaWntowDOl24cID7FT913bB+SVyj+BbKUgJ+BGzUC0cPibOb0
+         Fe60zjQFVT9K3JoX6WnKmFcQXwGtRsM8IgIXy8FOHwuaWTp06Ai01R9BScmI2EfR3InQ
+         EK3K2M6kE9dTDpLZj3jvEScnQimKWv1kHMOimtSd/wFbmHFBsKjBTghpKnbJDLCx2QMg
+         sZ2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vvkDjAk4ndVLVwI1Z85PO4wShGWFE753uje7rnBIzBg=;
-        b=nNur+r/57QjJAWbJsz9VYemqRDwlQ6AJ8cQtnmfF4myJamh1X5NKjEZm8vJQxiDesG
-         y9Llw7b26PPcB/DsBevUBQGKdB0wDSREuQMTRQAL3/tDPNmJnQwUUNbLSggWft5O69iN
-         L+Z9PfN55VbPHUkb0zMYsClLdOEAE3xGFvvXSFNpBmmMr6Btme24hhtqt4MtO7l6nke0
-         tPNLCaLgYtXpBUF4frPXdOaSqGOMLNXbeSGlN37vKqjyVOoD/Zlk2e3EKGzLA0rV+s9j
-         UHlQJKwhOrIeOaQ9wXlxC7/k48G6YkFKcvWjn1srf7xrGWHTO/9ZRNUwtYoseTrYN6e1
-         58aQ==
-X-Gm-Message-State: APjAAAW9OtVytIz5qvOiwIy2L/necWN9Y8gJlfL2I97ApPbZwG5Le4p/
-        SWTQ9csID8CozznwEPc+01QN/EC8
-X-Google-Smtp-Source: APXvYqxryE7Rk5zddXt9LGFByBc1I2MYRMoiGnlh9NTKNJeG9V7EA89QCMdLrnpj6epKJ2gU2TH4dA==
-X-Received: by 2002:adf:f052:: with SMTP id t18mr11411182wro.192.1583006222335;
-        Sat, 29 Feb 2020 11:57:02 -0800 (PST)
-Received: from localhost.localdomain ([109.126.130.242])
-        by smtp.gmail.com with ESMTPSA id k16sm19171386wrd.17.2020.02.29.11.57.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Feb 2020 11:57:01 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LfAey+bVZC63MZcRaKrf1wf+n/7HqfzMlziFP/uZ5DA=;
+        b=AMPL9LDNnp2N3GkqNg1Ri0ePrD11YQjTnBJpY+squ8GKQyNMu9TXloQDouiy8jq15X
+         N/7c1jMIyFDKYk99biSDe3qolCQLEzGpcAVWxHhZ7345TLNlQr3P40mIBUBNSl8eZAdW
+         KoJ9ZnrVkUw6Q8ZSd614CPcShuuraav0l6s4eHyzFZNS01e1kum+SbuZtvK+HevSwIFz
+         8ydfMRQe4FnA0nIA8LZxqKtIQjwBRh5KGeOMSKbQ3xdCMdyj8AD3UIk8+OXkSM+8dUTZ
+         6cUDu0ab4PB+XbYkrCsSN2/oVQBzlCTs+heBZEnM/dDaaTc8WMRMP6GD3RgcHvuIHQ3W
+         lw7w==
+X-Gm-Message-State: APjAAAVaFfWFi4fzDDE4BHqgCwL1H5QcFuNtsy3Tm68G7qrXTbGHx/Dn
+        I+Y6ol9LNE97nkbLS5OeTyvIBg==
+X-Google-Smtp-Source: APXvYqwOVZngKIRetVCWvncT1J21YRIi0aP5gheYzkQNimZI2jAECzbYCrcgakD8LcCfMLaRbWsjuw==
+X-Received: by 2002:a17:90a:9ee:: with SMTP id 101mr11994638pjo.74.1583009745793;
+        Sat, 29 Feb 2020 12:55:45 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id x4sm10554330pgi.76.2020.02.29.12.55.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Feb 2020 12:55:45 -0800 (PST)
+Subject: Re: [PATCH 1/1] io_uring: remove extra nxt check after punt
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] io_uring: remove io_prep_next_work()
-Date:   Sat, 29 Feb 2020 22:56:10 +0300
-Message-Id: <b97698208e565be70ae0afae1851e0964260c3f8.1583006078.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <d5893319c019695321a357cb1f09e76ed40715d1.1583005556.git.asml.silence@gmail.com>
-References: <d5893319c019695321a357cb1f09e76ed40715d1.1583005556.git.asml.silence@gmail.com>
+References: <29e9f945f8aa6646186065469ba00c0a4ef5b210.1583005578.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <08e7732a-4a31-424f-ec3f-eba4d753456a@kernel.dk>
+Date:   Sat, 29 Feb 2020 13:55:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <29e9f945f8aa6646186065469ba00c0a4ef5b210.1583005578.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io-wq cares about IO_WQ_WORK_UNBOUND flag only while enqueueing, so
-it's useless setting it for a next req of a link. Thus, removed it
-from io_prep_linked_timeout(), and inline the function.
+On 2/29/20 12:48 PM, Pavel Begunkov wrote:
+> After __io_queue_sqe() ended up in io_queue_async_work(), it's already
+> known that there is no @nxt req, so skip the check and return from the
+> function.
+> 
+> Also, @nxt initialisation now can be done just before
+> io_put_req_find_next(), as there is no jumping until it's checked.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+Applied, thanks.
 
-v2: fix unfortunate cherry-pick
-
- fs/io_uring.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 74498c9cd023..768cf18cf912 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -999,17 +999,6 @@ static inline void io_req_work_drop_env(struct io_kiocb *req)
- 	}
- }
- 
--static inline void io_prep_next_work(struct io_kiocb *req,
--				     struct io_kiocb **link)
--{
--	const struct io_op_def *def = &io_op_defs[req->opcode];
--
--	if (!(req->flags & REQ_F_ISREG) && def->unbound_nonreg_file)
--		req->work.flags |= IO_WQ_WORK_UNBOUND;
--
--	*link = io_prep_linked_timeout(req);
--}
--
- static inline bool io_prep_async_work(struct io_kiocb *req,
- 				      struct io_kiocb **link)
- {
-@@ -2581,8 +2570,8 @@ static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
- {
- 	struct io_kiocb *link;
- 
--	io_prep_next_work(nxt, &link);
- 	*workptr = &nxt->work;
-+	link = io_prep_linked_timeout(nxt);
- 	if (link) {
- 		nxt->work.func = io_link_work_cb;
- 		nxt->work.data = link;
 -- 
-2.24.0
+Jens Axboe
 

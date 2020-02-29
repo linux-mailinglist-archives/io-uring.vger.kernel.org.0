@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2CAD174904
-	for <lists+io-uring@lfdr.de>; Sat, 29 Feb 2020 20:49:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BFCE174906
+	for <lists+io-uring@lfdr.de>; Sat, 29 Feb 2020 20:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbgB2TtT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 29 Feb 2020 14:49:19 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39696 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbgB2TtT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Feb 2020 14:49:19 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y17so7535102wrn.6;
-        Sat, 29 Feb 2020 11:49:18 -0800 (PST)
+        id S1727252AbgB2Ttk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 29 Feb 2020 14:49:40 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:32889 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbgB2Ttk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Feb 2020 14:49:40 -0500
+Received: by mail-wr1-f65.google.com with SMTP id x7so7560177wrr.0;
+        Sat, 29 Feb 2020 11:49:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=hYAMEXGO5cVVYedHxQ0SqxqcBi3GOauYjlJCDMcLs4U=;
-        b=LwI0UQ8nur42CPV2gJ/rv6TexA/7yx2qlhzF6hdCoV4wCMhgGeXdSkCSTmz5CjbN3+
-         gsw2w0FdAfu+Jodcb6FMl8mYVJ7nycYYDd88fUCDwjyQ/nWskKlbrZ6nXGYZknWJtIgu
-         i1596rMXypskETUi//u6EoMCQOphC1mhQf1hh4O69lGKjm9FSZZKfMv3gBb5j8NMSlkI
-         ECxAzvbph5dRC1EQqCdqGILdv3IKZ/W76Jp65O4/fbdolF25WX6RoR26MCTW/DIPF8gy
-         PewkENq/UjSRGuX0b0wyvt73YwKOXPplHFqktzjGt9pQs0usdBMEoeT93VuQlqEtUmrq
-         78CQ==
+        bh=HF9TR+cuxNWTzEGKhi1O+qaHNvsycP3lUbuHZcTsNJs=;
+        b=E5EAIC2OlGesClpHg0uzvcu39fkQQPPMYzYLaiDiU/o8FTpWWmfO8mvjThlU4J8CX4
+         BZxSEiHe9BLvtO4T3zdDfgFkR1d8pZinhWhaKrZ169PFikd81CxUv1b5MseoTNCqXqJq
+         6vn/e7GE6LkpE80M3zxAkeIjuaGPCQO2ddXfX83722wZFmLPu6oqm59pNThwXN8KPyia
+         b7KgynleGYWAVjnB+jQk9QAQ3U7tTS0f63apc/OsKVc7HlPw6on7gJBDuZdo/OXiW8so
+         EXC4IZ/glNgAInihqYKqtqfEyS50RL+bl5/Ps6wBPMKupGYPpxYKDwvYVT+6ebyRYy6z
+         iHSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=hYAMEXGO5cVVYedHxQ0SqxqcBi3GOauYjlJCDMcLs4U=;
-        b=Y29YTdOyZFbstbqV0VnGLUQ+QDAdmWRocyAz6HBUSQKQMWmsJQiWDBKVYWgw55i+sL
-         //mi+dk9kdZNxK6NoABo7mWKu09ZJiWznUH0jhwZBmb71hbIDbtEkWBwkHW0iLstWvzE
-         F/FGOmPc+nI5Bwm3WTcwA+D3Q36R908DC4Vkudwk0D0+hjJ7thak+dUo8sqRrUjLl2pO
-         JRnQg7DpftJHd2Pb+Xm/mAJjF9vzeibqPLgIfblB/eHss4sgI4oCst1ogLKP30GCzIb1
-         /EJhz9veMn3DfnzoCTIXU4u2daVU0ZHt1KlkaxIIkthJukH/V84D+Q/HTPjhMIQjGzXv
-         qXoQ==
-X-Gm-Message-State: APjAAAUWe47c3rfAJv+O3bJp7W1uYi1juGI6ztFLtow0SKbONErKHiKP
-        v9qzl+MRrnAAXWRgyOgmsp3fnCWs
-X-Google-Smtp-Source: APXvYqyA7aioZ9rx7j0tootssFvt9Uv8fQXvFET2nxu9RNdjPr78OFNhc4ec5vri+OgyGZjTSDh2SA==
-X-Received: by 2002:adf:a4c4:: with SMTP id h4mr11756313wrb.112.1583005757386;
-        Sat, 29 Feb 2020 11:49:17 -0800 (PST)
+        bh=HF9TR+cuxNWTzEGKhi1O+qaHNvsycP3lUbuHZcTsNJs=;
+        b=DbKQinlgrVeL1qb143YaP8x4gW/IvwRBk+vlv5RM0vMpfAsN2EZAd11ixhtySsdGD4
+         vR9wPSpU6QxhU0pnwB1/MpBW3fwRpDReMOyInw6QlssQasGVBsE9Ha+HXC0ykTpf1xrd
+         Quqk10MBNCyNfh08RMC/wzwliNiZFQzD92KAvgQRjucqJe/Hx1lFPxbaLPVeUX9Mr8sS
+         88WIIuYaWWOC+WmvRlQXV0OJ0yX3Sz+EBgpPQEuoUp7WTXveXcHloe3Rmfk5+jHhzIbr
+         r7BAcx+i21uhRLHSxE56BUEuTb72T+X2g//U/4c+dBsXokMDkqtfXHq5JF6b3TGdFxOf
+         WP0A==
+X-Gm-Message-State: APjAAAWQ/w3tMi3KGCzf4DqwYjMGXpZKTvX8s8tKDma1yN5YzhRMIxCO
+        ETgmza1B40eUljvKOp1CpyneurXn
+X-Google-Smtp-Source: APXvYqzUyFKcrZPdkhDJl4JU8Qwv9mX4J0hwEclYoNJ72Ck/ez8IZB9hu8P73Lxh50PESpCiwF9QXg==
+X-Received: by 2002:adf:fc10:: with SMTP id i16mr8544595wrr.331.1583005778611;
+        Sat, 29 Feb 2020 11:49:38 -0800 (PST)
 Received: from localhost.localdomain ([109.126.130.242])
-        by smtp.gmail.com with ESMTPSA id j15sm19246297wrp.9.2020.02.29.11.49.15
+        by smtp.gmail.com with ESMTPSA id x21sm7081549wmi.30.2020.02.29.11.49.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Feb 2020 11:49:16 -0800 (PST)
+        Sat, 29 Feb 2020 11:49:38 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: remove extra nxt check after punt
-Date:   Sat, 29 Feb 2020 22:48:24 +0300
-Message-Id: <29e9f945f8aa6646186065469ba00c0a4ef5b210.1583005578.git.asml.silence@gmail.com>
+Subject: [PATCH 1/1] io_uring: remove io_prep_next_work()
+Date:   Sat, 29 Feb 2020 22:48:45 +0300
+Message-Id: <d5893319c019695321a357cb1f09e76ed40715d1.1583005556.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,70 +58,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-After __io_queue_sqe() ended up in io_queue_async_work(), it's already
-known that there is no @nxt req, so skip the check and return from the
-function.
-
-Also, @nxt initialisation now can be done just before
-io_put_req_find_next(), as there is no jumping until it's checked.
+io-wq cares about IO_WQ_WORK_UNBOUND flag only while enqueueing, so
+it's useless setting it for a next req of a link. Thus, removed it
+from io_prep_linked_timeout(), and inline the function.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/io_uring.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 8d8d93adb9c2..74498c9cd023 100644
+index 74498c9cd023..9bbef21bad5b 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -4931,7 +4931,7 @@ static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req)
- static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_kiocb *linked_timeout;
--	struct io_kiocb *nxt = NULL;
-+	struct io_kiocb *nxt;
- 	const struct cred *old_creds = NULL;
- 	int ret;
- 
-@@ -4958,7 +4958,7 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		if (io_arm_poll_handler(req)) {
- 			if (linked_timeout)
- 				io_queue_linked_timeout(linked_timeout);
--			goto done_req;
-+			goto exit;
- 		}
- punt:
- 		if (io_op_defs[req->opcode].file_table) {
-@@ -4972,10 +4972,11 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		 * submit reference when the iocb is actually submitted.
- 		 */
- 		io_queue_async_work(req);
--		goto done_req;
-+		goto exit;
+@@ -999,17 +999,6 @@ static inline void io_req_work_drop_env(struct io_kiocb *req)
  	}
- 
- err:
-+	nxt = NULL;
- 	/* drop submission reference */
- 	io_put_req_find_next(req, &nxt);
- 
-@@ -4992,15 +4993,14 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		req_set_fail_links(req);
- 		io_put_req(req);
- 	}
--done_req:
- 	if (nxt) {
- 		req = nxt;
--		nxt = NULL;
- 
- 		if (req->flags & REQ_F_FORCE_ASYNC)
- 			goto punt;
- 		goto again;
- 	}
-+exit:
- 	if (old_creds)
- 		revert_creds(old_creds);
  }
+ 
+-static inline void io_prep_next_work(struct io_kiocb *req,
+-				     struct io_kiocb **link)
+-{
+-	const struct io_op_def *def = &io_op_defs[req->opcode];
+-
+-	if (!(req->flags & REQ_F_ISREG) && def->unbound_nonreg_file)
+-		req->work.flags |= IO_WQ_WORK_UNBOUND;
+-
+-	*link = io_prep_linked_timeout(req);
+-}
+-
+ static inline bool io_prep_async_work(struct io_kiocb *req,
+ 				      struct io_kiocb **link)
+ {
+@@ -2581,8 +2570,8 @@ static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
+ {
+ 	struct io_kiocb *link;
+ 
+-	io_prep_next_work(nxt, &link);
+ 	*workptr = &nxt->work;
++	link = io_prep_linked_timeout(req);
+ 	if (link) {
+ 		nxt->work.func = io_link_work_cb;
+ 		nxt->work.data = link;
 -- 
 2.24.0
 

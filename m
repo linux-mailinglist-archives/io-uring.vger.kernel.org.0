@@ -2,61 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CB9F1746A6
-	for <lists+io-uring@lfdr.de>; Sat, 29 Feb 2020 13:08:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D0F91746C5
+	for <lists+io-uring@lfdr.de>; Sat, 29 Feb 2020 13:21:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbgB2MIN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 29 Feb 2020 07:08:13 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33608 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726940AbgB2MIN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Feb 2020 07:08:13 -0500
-Received: by mail-lj1-f194.google.com with SMTP id y6so6394036lji.0
-        for <io-uring@vger.kernel.org>; Sat, 29 Feb 2020 04:08:12 -0800 (PST)
+        id S1726980AbgB2MVu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 29 Feb 2020 07:21:50 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37372 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726975AbgB2MVt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Feb 2020 07:21:49 -0500
+Received: by mail-lf1-f66.google.com with SMTP id j11so722177lfg.4
+        for <io-uring@vger.kernel.org>; Sat, 29 Feb 2020 04:21:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RY8owUi24KN0dwo2xos66LeNhcrZWAT5ki5P2yPKkko=;
-        b=I/oP/sco8zWGMtGKp/HuL2v7xLNLe4EzNhUaQ5J+j8+2oiIicguyhFyf0p5j1GpQQL
-         VJPZV7FNWyxG8K4Wm4rc0vVZntd86d72ryXYq6eFXUCCvP7lYs+3dm0sOo7ydh9KewJ7
-         28QOBSeaebaIkhgsOY/3qrc7Yz/K1KvzoHh0DU3iwoiUXZEbjRIa48E3I4YzK23Yz+Cg
-         Q4Cs8N+JrO/HEwbs5hYASABh7wC7s6BnU+jzwr70mxnTAQIGKBfTT+wdbbm8tuBKIUDQ
-         /E2kdZmXRkztxq1llJgsr0zqq8VsT7aWxOS47d7/Mx0HvfyKm733WwopJm5ZtMxTcSy8
-         Sg7w==
+        bh=nicjlVDTn1RLjF5YNP4lJKlt1OSyZqzHGmBmYoJbz9M=;
+        b=UteAvbI5W3HLWgpOhsWM8dumC7iExPWvudaUWjZZ1tBv0DntJ46A+ehplyLjeq/EQ9
+         CXrYv4cJvdyPFaAAzUhMI/K71hkLTwnag7k8JLHWhRRqvWErnObY95FOe+cdCUdoFFfa
+         fnkbJEc2oNaQN6Un5gRgJPI/5ezT/ZpAibdI6lEHP2y0Ygnzbp41WshM1zVHjXOpzEDR
+         DXmt94CMY6m7XwSUjA4F1clwA3C9t1xswXrXUrMGq5amjEYVmJOGHXfSpHVtT1MnDT8k
+         GzsPqj9No/NwM2jRt++KJDwNAFYhWiUbjr61Ta4YaJw5gHcysAoydbnA3hqD6+kvN1/B
+         /6Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=RY8owUi24KN0dwo2xos66LeNhcrZWAT5ki5P2yPKkko=;
-        b=QruTI+OoLJ68jdfQKS+75aE4PPJHsbYCIvKzUyj8HLnpg1Smb1xR4VVNVHSHFFb2fc
-         MbYXT7g0yt5YRq61WYg9jKzbAUgpSre0tWQSBijrGUFzE+yrugR4NaMlLTvaniWd03IY
-         fXkbSRKa9CweQvmr55DjYuYUowa2q8yz8xiPayKQB8ZwfaDQukJAZT+U6pHlEbbvTShn
-         433Uc1RR/5LWcRxb09fsZAHn9Uwyj+X1gk7Hde8q/kzpVHRXVnzab77sGBA76mXv/HZi
-         ddTL8bbJ6+YOWS4ppcvZw3OHRfzSdNy0WYrx0OUtzFhULlxlWrJdFZajsLrcwgnL6nLg
-         D63w==
-X-Gm-Message-State: ANhLgQ1dBbX64520H0MJT08k1lvyC188TNuWNZt0PgHu0wXvIhGPKakJ
-        Vp10JHLSGdR4mDb28uokE7g=
-X-Google-Smtp-Source: ADFU+vsHDuAEwDZOpxCeF2j5cv577Nv04Bo2WQOzi/ilLfqSE7cCxHmtCpfclNeQoz99olNUPqFhyw==
-X-Received: by 2002:a2e:8490:: with SMTP id b16mr5975025ljh.282.1582978091331;
-        Sat, 29 Feb 2020 04:08:11 -0800 (PST)
+        bh=nicjlVDTn1RLjF5YNP4lJKlt1OSyZqzHGmBmYoJbz9M=;
+        b=h6TaJpVHucBPpkb3fpqC4k1vV+SM6IcpTjdvoo1VZRD1dwkl2TSBmIjCvIAbtsB6Sv
+         KqiJHeuleOuvdGS585T8CPhzjjB195t+85koin3xRxe7PoshyQGj8pEMjn6q9kvRic1e
+         qMWW1Cpjr9/n4255m069vCIGscmEvgaezqTdVX15xWpxanJ+++4HuBJd4ExbDp3pwL7b
+         vwZC4+kSkASx7MmbpIaYFZA+tHjv9YttyTJGFAhg175/+KC0WAmBUPdtcVU7E+hLVycP
+         AOMAErkZu0yK0OJB9zKEh2rPfGpuisTLdAbgdcNCXLeQn9XPnfGw871J5jzsmmkLh4QW
+         ZQtA==
+X-Gm-Message-State: ANhLgQ2iZXPUhA5PGIo31CRLcwBrLz/EhovyCKTvsMFxb350CuCJFwGO
+        /bKzU9ODZyRUiZ9YBlajEujowfP9zSc=
+X-Google-Smtp-Source: ADFU+vsvU48IOm54NC2O1gM3oRj4v7wvDonYABfMPPllxbmE67uLg/sWVG/9N4lmTxOVIPTr3PoY2g==
+X-Received: by 2002:ac2:5190:: with SMTP id u16mr5151945lfi.43.1582978906178;
+        Sat, 29 Feb 2020 04:21:46 -0800 (PST)
 Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id g20sm6951124lfb.33.2020.02.29.04.08.10
+        by smtp.gmail.com with ESMTPSA id q10sm7834771ljj.60.2020.02.29.04.21.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Feb 2020 04:08:10 -0800 (PST)
-Subject: Re: [PATCH 2/6] io_uring: add IORING_OP_PROVIDE_BUFFERS
+        Sat, 29 Feb 2020 04:21:45 -0800 (PST)
+Subject: Re: [PATCH 3/6] io_uring: support buffer selection
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc:     andres@anarazel.de
 References: <20200228203053.25023-1-axboe@kernel.dk>
- <20200228203053.25023-3-axboe@kernel.dk>
+ <20200228203053.25023-4-axboe@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <1717ee0c-9700-654e-d75b-6398b1c4c1a9@gmail.com>
-Date:   Sat, 29 Feb 2020 15:08:09 +0300
+Message-ID: <e6fdc525-760d-466f-b754-229d76406e45@gmail.com>
+Date:   Sat, 29 Feb 2020 15:21:44 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200228203053.25023-3-axboe@kernel.dk>
+In-Reply-To: <20200228203053.25023-4-axboe@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,39 +66,34 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 2/28/2020 11:30 PM, Jens Axboe wrote:
-> IORING_OP_PROVIDE_BUFFERS uses the buffer registration infrastructure to
-> support passing in an addr/len that is associated with a buffer ID and
-> buffer group ID. The group ID is used to index and lookup the buffers,
-> while the buffer ID can be used to notify the application which buffer
-> in the group was used. The addr passed in is the starting buffer address,
-> and length is each buffer length. A number of buffers to add with can be
-> specified, in which case addr is incremented by length for each addition,
-> and each buffer increments the buffer ID specified.
-> 
-> No validation is done of the buffer ID. If the application provides
-> buffers within the same group with identical buffer IDs, then it'll have
-> a hard time telling which buffer ID was used. The only restriction is
-> that the buffer ID can be a max of 16-bits in size, so USHRT_MAX is the
-> maximum ID that can be used.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
 
->  
-> +static int io_provide_buffers_prep(struct io_kiocb *req,
-> +				   const struct io_uring_sqe *sqe)
+> +static int io_rw_common_cflags(struct io_kiocb *req)
+
+Sounds more like sort of const/idempotent function, but not one changing
+internal state (i.e. deallocation kbuf). Could it be named closer to
+deallocate, remove, disarm, etc?
+
 > +{
+> +	struct io_buffer *kbuf = (struct io_buffer *) req->rw.addr;
+> +	int cflags;
+> +
+> +	cflags = kbuf->bid << IORING_CQE_BUFFER_SHIFT;
+> +	cflags |= IORING_CQE_F_BUFFER;
+> +	req->rw.addr = 0;
+> +	kfree(kbuf);
+> +	return cflags;
+> +}
 
-*provide* may be confusing, at least it's for me. It's not immediately
-obvious, who gives and who consumes. Not sure what name would be better yet.
 
-> +static int io_provide_buffers(struct io_kiocb *req, struct io_kiocb **nxt,
-> +			      bool force_nonblock)
+
+> +static struct io_buffer *io_buffer_select(struct io_kiocb *req, int gid,
+> +					  struct io_buffer *kbuf,
+> +					  bool needs_lock)
 > +{
-> +	struct io_provide_buf *p = &req->pbuf;
-> +	struct io_ring_ctx *ctx = req->ctx;
 > +	struct list_head *list;
-> +	int ret = 0;
+> +
+> +	if (req->flags & REQ_F_BUFFER_SELECTED)
+> +		return kbuf;
 > +
 > +	/*
 > +	 * "Normal" inline submissions always hold the uring_lock, since we
@@ -106,49 +101,32 @@ obvious, who gives and who consumes. Not sure what name would be better yet.
 > +	 * The only exception is when we've detached the request and issue it
 > +	 * from an async worker thread, grab the lock for that case.
 > +	 */
-> +	if (!force_nonblock)
-> +		mutex_lock(&ctx->uring_lock);
-> +
-> +	lockdep_assert_held(&ctx->uring_lock);
-> +
-> +	list = idr_find(&ctx->io_buffer_idr, p->gid);
-> +	if (!list) {
-> +		list = kmalloc(sizeof(*list), GFP_KERNEL);
+> +	if (needs_lock)
+> +		mutex_lock(&req->ctx->uring_lock);
 
-Could be easier to hook struct io_buffer into idr directly, i.e. without
-a separate allocated list-head entry.
+The same concern as for the [2/6]
 
-> +		if (!list) {
-> +			ret = -ENOMEM;
-> +			goto out;
-> +		}
-> +		INIT_LIST_HEAD(list);
-> +		ret = idr_alloc(&ctx->io_buffer_idr, list, p->gid, p->gid + 1,
-> +					GFP_KERNEL);
-> +		if (ret < 0) {
-> +			kfree(list);
-> +			goto out;
-> +		}
+> +
+> +	lockdep_assert_held(&req->ctx->uring_lock);
+> +
+> +	list = idr_find(&req->ctx->io_buffer_idr, gid);
+> +	if (list && !list_empty(list)) {
+> +		kbuf = list_first_entry(list, struct io_buffer, list);
+> +		list_del(&kbuf->list);
+
+free(list), if it became empty? As mentioned, may go away naturally if
+idr would store io_buffer directly.
+
+> +	} else {
+> +		kbuf = ERR_PTR(-ENOBUFS);
 > +	}
 > +
-> +	ret = io_add_buffers(p, list);
-> +	if (!ret) {
-> +		/* no buffers added and list empty, remove entry */
-> +		if (list_empty(list)) {
-> +			idr_remove(&ctx->io_buffer_idr, p->gid);
-> +			kfree(list);
-> +		}
-> +		ret = -ENOMEM;
-> +	}
-> +out:
-> +	if (!force_nonblock)
-> +		mutex_unlock(&ctx->uring_lock);
-> +	if (ret < 0)
-> +		req_set_fail_links(req);
-> +	io_cqring_add_event(req, ret);
-> +	io_put_req_find_next(req, nxt);
-> +	return 0;
+> +	if (needs_lock)
+> +		mutex_unlock(&req->ctx->uring_lock);
+> +
+> +	return kbuf;
 > +}
+> +
 
 -- 
 Pavel Begunkov

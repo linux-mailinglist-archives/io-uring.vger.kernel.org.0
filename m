@@ -2,54 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43F55174E66
-	for <lists+io-uring@lfdr.de>; Sun,  1 Mar 2020 17:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41774174E8C
+	for <lists+io-uring@lfdr.de>; Sun,  1 Mar 2020 17:42:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbgCAQYC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 1 Mar 2020 11:24:02 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44601 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgCAQYC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 1 Mar 2020 11:24:02 -0500
-Received: by mail-wr1-f65.google.com with SMTP id n7so1504606wrt.11;
-        Sun, 01 Mar 2020 08:24:01 -0800 (PST)
+        id S1726658AbgCAQmS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 1 Mar 2020 11:42:18 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42909 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbgCAQmS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 1 Mar 2020 11:42:18 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z11so696608wro.9;
+        Sun, 01 Mar 2020 08:42:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aQNmJtnJXUdOZ5WP+6T2LhMyumwJevaLkPnO98h9yHA=;
-        b=YWk86eVqQaKhmsRxJRXQRhInrV5Ux6ehMNjIZTv9go70h47TctNgBesFMI2qEfm/Pq
-         gpbyJxdFj7Tgls/Mm0k3YZQaRv9jQD399/c6ld5oPxgDRH/aG3eoF59EWoZ4A5+NxGQk
-         LtNgbo6N+KbgUYu1KZpUxKQVRUJPA4ghwYmBP6tCRRO8+NXek8ol8y3YSWz7aaDh1DEp
-         Zu8vIafKIF6amGu6udehdAQ4T0cHzWvShQ+xnzgIxwR1zx2qKoK2inY1CKucGYKFpj8Z
-         BqIzIhV5dlu2L+vmCSzfM645Y4XwG51Qx9PVSTuzSt+stTZaVgXdgZU2e6aXnZtwPg6w
-         43nQ==
+        bh=bbKHxflMjsgqF1ooVb0LYJao+ZmBpD8MpwmE6/bKXGo=;
+        b=s+j3ZwetR4lyJq3YAPwl+zPqbZbEwBilpinVE3tnK55BdMpGGyQfTNW5KzjzgFhKl0
+         WWsum7w57YEjzKde6T6Y2J7ZyhVNKW5kDrnJ/Bl41rV7nt4K1XsrD3rpksFcoGQFYzaM
+         6Vz5j0bOtWI4quGilr5SJnb1WW09I/fJDCxQXNw6bbsoH/MU+kUKaJIDafiFpIn+edsi
+         E+ePXuPVTjrGHvjg7CANtVqjn4ckXnZIpn95z/+rKkSNPi80UeuWIhkEiIg5hcwftcR1
+         PmrJEHADTsPjtq8Mi5pdNW5GrHUGg840jOPS1FwdqHmjaIvOt4/pHBaZKKEDPc2Tz5oG
+         I9tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=aQNmJtnJXUdOZ5WP+6T2LhMyumwJevaLkPnO98h9yHA=;
-        b=pi0dBEhEqlN3Qwju+ScTy367W2KgErjpqWSQuKABq78jZByJHmfZCeCaEeaaGfxtzq
-         mdVIqFCLV7jwORZLffyGYnJ+zxaO29xX8QP2fp+3iR/FLX0lAbYs+LyFLz6A4dy439F+
-         u7WxiQ7zQmZR5TXqhqJOjTKWg0qyvPc1aNLLVuIWyGcAijVhaXzBufKUbmggfCA7IFlY
-         giaEXbK4YnBelz3iGMT6saM/SvupprzxEIkLZGS8sol2uFPNZP0AK5OpUc/dDyxiHq+w
-         QQa4LpsVmcjJPiOfx8RGlvo7xVj4H/MTnZHs6qqIVqoZrvFtpolNFSBWjKstsAzM41D/
-         8xIw==
-X-Gm-Message-State: APjAAAXhWTn09wDcqfdPv+FSSF0mInpR5jTo9rCImoKHS/FrcPL2Yi2p
-        uIilCJUc0XsipvU9Vgl1nBZD4k9e
-X-Google-Smtp-Source: APXvYqwl85K9W7vCtZ0ns8VWbV8zz2soEcc0P5qtb9jvqnlN1zPEqJRSLA0WfB1/HLgsKi7vye+7Uw==
-X-Received: by 2002:adf:ea91:: with SMTP id s17mr16664707wrm.129.1583079840391;
-        Sun, 01 Mar 2020 08:24:00 -0800 (PST)
+        bh=bbKHxflMjsgqF1ooVb0LYJao+ZmBpD8MpwmE6/bKXGo=;
+        b=N4CYxYRXKZbhrTT0M29O5bspQCB/aPRyM59/J/e+M6dozfMekplcmTF/VFLy+3KSzj
+         nl8FybiAK+18t14hSpnogj1OLxZgDPa9f6rl4OWb/BOhM3/9IiwaR3Tdt7Z6ECrIOgVj
+         T7Zkzcw3qiacRljpNhRoyQHfLXvtETC3m66d0tTrg70Ou616m0oMO4NUHqrSlZh4zGAk
+         ySvVTRVU+ZTTH+RsyTvwqnXQ60iq7HMVqD4iNcL52jfPSdjic5TicQIdfZbKBBn456Lh
+         FVB9b5qBJGUAcQcl+Mp7kVsENiWshsCbiBL1thZTtGxDBZUOH3ZepLjofDjTHnKb1ajG
+         ajUA==
+X-Gm-Message-State: APjAAAWSn3KGtgi/7TpevGM4bx1D7xUpuHk35T/cxLGsJkO4PUHpeP/2
+        v1QmDb9KE4rXfVTe+xWMclo4b560
+X-Google-Smtp-Source: APXvYqzEd+vSlq0bBHGPFQ6mwF/Xs7DMOzjVexkZwciQljNG4UQZ/lRpH7OsD5he5hRr7nUoxxPNow==
+X-Received: by 2002:a5d:42c8:: with SMTP id t8mr16823096wrr.261.1583080933776;
+        Sun, 01 Mar 2020 08:42:13 -0800 (PST)
 Received: from [192.168.43.139] ([109.126.130.242])
-        by smtp.gmail.com with ESMTPSA id a7sm10616716wmj.12.2020.03.01.08.23.58
+        by smtp.gmail.com with ESMTPSA id l4sm6061454wmf.38.2020.03.01.08.42.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Mar 2020 08:24:00 -0800 (PST)
+        Sun, 01 Mar 2020 08:42:13 -0800 (PST)
 Subject: Re: [PATCH RFC 0/9] nxt propagation + locking optimisation
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <cover.1583078091.git.asml.silence@gmail.com>
+ <fe4cb05b-2fd0-25dd-e120-9a9d57659008@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -93,66 +94,71 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <fe4cb05b-2fd0-25dd-e120-9a9d57659008@gmail.com>
-Date:   Sun, 1 Mar 2020 19:23:14 +0300
+Message-ID: <101bed21-670c-4ade-e513-b15848ef1361@gmail.com>
+Date:   Sun, 1 Mar 2020 19:41:27 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1583078091.git.asml.silence@gmail.com>
+In-Reply-To: <fe4cb05b-2fd0-25dd-e120-9a9d57659008@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 01/03/2020 19:18, Pavel Begunkov wrote:
-> There are several independent parts in the patchset, but bundled
-> to make a point.
-> 1-2: random stuff, that implicitly used later.
-> 3-5: restore @nxt propagation
-> 6-8: optimise locking in io_worker_handle_work()
-> 9: optimise io_uring refcounting
+On 01/03/2020 19:23, Pavel Begunkov wrote:
+> On 01/03/2020 19:18, Pavel Begunkov wrote:
+>> There are several independent parts in the patchset, but bundled
+>> to make a point.
+>> 1-2: random stuff, that implicitly used later.
+>> 3-5: restore @nxt propagation
+>> 6-8: optimise locking in io_worker_handle_work()
+>> 9: optimise io_uring refcounting
+>>
+>> The next propagation bits are done similarly as it was before, but
+>> - nxt stealing is now at top-level, but not hidden in handlers
+>> - ensure there is no with REQ_F_DONT_STEAL_NEXT
+>>
+>> [6-8] is the reason to dismiss the previous @nxt propagation appoach,
+>> I didn't found a good way to do the same. Even though it looked
+>> clearer and without new flag.
+>>
+>> Performance tested it with link-of-nops + IOSQE_ASYNC:
+>>
+>> link size: 100
+>> orig:  501 (ns per nop)
+>> 0-8:   446
+>> 0-9:   416
+>>
+>> link size: 10
+>> orig:  826
+>> 0-8:   776
+>> 0-9:   756
 > 
-> The next propagation bits are done similarly as it was before, but
-> - nxt stealing is now at top-level, but not hidden in handlers
-> - ensure there is no with REQ_F_DONT_STEAL_NEXT
-> 
-> [6-8] is the reason to dismiss the previous @nxt propagation appoach,
-> I didn't found a good way to do the same. Even though it looked
-> clearer and without new flag.
-> 
-> Performance tested it with link-of-nops + IOSQE_ASYNC:
-> 
-> link size: 100
-> orig:  501 (ns per nop)
-> 0-8:   446
-> 0-9:   416
-> 
-> link size: 10
-> orig:  826
-> 0-8:   776
-> 0-9:   756
+> BTW, that's basically QD1, and with contention for wqe->lock the gap should be
+> even wider.
 
-BTW, that's basically QD1, and with contention for wqe->lock the gap should be
-even wider.
+And another notice: "orig" actually includes [1-5], so @nxt propagation was
+working there.
 
-> 
-> Pavel Begunkov (9):
->   io_uring: clean up io_close
->   io-wq: fix IO_WQ_WORK_NO_CANCEL cancellation
->   io_uring: make submission ref putting consistent
->   io_uring: remove @nxt from handlers
->   io_uring: get next req on subm ref drop
->   io-wq: shuffle io_worker_handle_work() code
->   io-wq: io_worker_handle_work() optimise locking
->   io-wq: optimise double lock for io_get_next_work()
->   io_uring: pass submission ref to async
-> 
->  fs/io-wq.c    | 162 ++++++++++++----------
->  fs/io_uring.c | 366 ++++++++++++++++++++++----------------------------
->  2 files changed, 258 insertions(+), 270 deletions(-)
+>>
+>> Pavel Begunkov (9):
+>>   io_uring: clean up io_close
+>>   io-wq: fix IO_WQ_WORK_NO_CANCEL cancellation
+>>   io_uring: make submission ref putting consistent
+>>   io_uring: remove @nxt from handlers
+>>   io_uring: get next req on subm ref drop
+>>   io-wq: shuffle io_worker_handle_work() code
+>>   io-wq: io_worker_handle_work() optimise locking
+>>   io-wq: optimise double lock for io_get_next_work()
+>>   io_uring: pass submission ref to async
+>>
+>>  fs/io-wq.c    | 162 ++++++++++++----------
+>>  fs/io_uring.c | 366 ++++++++++++++++++++++----------------------------
+>>  2 files changed, 258 insertions(+), 270 deletions(-)
+>>
 > 
 
 -- 

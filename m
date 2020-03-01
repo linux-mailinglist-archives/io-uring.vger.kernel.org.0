@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58EDC174FE9
-	for <lists+io-uring@lfdr.de>; Sun,  1 Mar 2020 22:32:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91C3F174FFC
+	for <lists+io-uring@lfdr.de>; Sun,  1 Mar 2020 22:40:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbgCAVcL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 1 Mar 2020 16:32:11 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42356 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbgCAVcL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 1 Mar 2020 16:32:11 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z11so1286539wro.9;
-        Sun, 01 Mar 2020 13:32:08 -0800 (PST)
+        id S1726204AbgCAVkd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 1 Mar 2020 16:40:33 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33443 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbgCAVkd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 1 Mar 2020 16:40:33 -0500
+Received: by mail-wr1-f65.google.com with SMTP id x7so10093265wrr.0;
+        Sun, 01 Mar 2020 13:40:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Kp4R6mhpQhx7AvlCGwxnG2FPxNzv0GqxY9q7H0wp4f4=;
-        b=vNJF20kaf80tRa73/dmdUBvwXgZ7q9T4+WNceacQk7JVVOhZ9nevA2zdu3wQyQE3YJ
-         HIQJuxMTA3rGvBK8qBdwNqArFBivhuj3C0hxYQ86kmO0EBiLfapOcOK+Uc3o/CAyFdo2
-         lUEfFzq/s3+NdNPGPa401G55iRRAOs28N+9zd33rpntK+GXEjuxkPiLSNxDQcPaPL5ug
-         SHNtF8/5GMlphIEi/jkHvHMTufpPCvjIziE1ax7+AThwCsbRTaTuDU9R8BtagKqxz/J9
-         IAD+Ry0DLD2ocAW18n9KJdvRgybuy2grXlBWwkHvD+pEWUZ5c5C5MYM8zGmw4o2Ju+xD
-         /h0w==
+        bh=5365KLru4qSZDpNM5l+n3e7Q++lsVis5gf+2sNysuhk=;
+        b=XT5NXRlc/J9QW28t42UWFXEHulZbh4xHBCbT4NOOOguvJa4/nfaYCOWJLUkxlznB2w
+         rUOHddryfqyJN/UR8PI0jl/UxHE9bd027p+/hJxtf6YE3Ap/8ym0Pdaq8i2L4uw32avR
+         z6poPCLX6rjY6VjfDYrm5BX5/hSbdbpq9SFddtNlJBAKa1TsgrkPmZpSb2NsvBlSLW0G
+         GLR1VqrxUK8Fs3iRnJZin/WEzKipvjoMApoy6g0QllFokxRcrJqaMRes/2MmsSaOhSx9
+         SvS1ovRLhTz/r+fdYlFNy2xhTkoVOQz6euHx3n0u69LusUU11HwNuse/jxOduGw1x+8J
+         hCaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Kp4R6mhpQhx7AvlCGwxnG2FPxNzv0GqxY9q7H0wp4f4=;
-        b=qbj6Unvn/Yv6iAT11s2gWoznRuVyQlPtxDGTXw+yQIqb1nx0PITnapQj3lytdJHmrT
-         NEgScQLggjI2xOX9++foTuYJYuFJ7LFpFUQ3SyQpkfRcSgyz6ord4gHZOMXe7KwxypmA
-         ZgBZguw49Q4/wCP0ZE37y4MHCvXmrXVOBqZ/+nP3LLDxf+3E9ACs/DZXC3czTdMXH+if
-         j0aYey5rXKWTd7QsBluxGNjnwhBc1bHFwgW31mXhA5WvVWUf0OQdwS7s2NHkfnngh0kN
-         m4qi0Miihxo0kwplhvV/E8II92sjRbrKJBIsO22BnTYpqAj+y+uR8xwgMk5d4E0VgdWV
-         Ry7w==
-X-Gm-Message-State: APjAAAUdhxdoyWEtu8VN+zz8vku6ceaecicbmbyIIsv6/Fpa+3rAllWn
-        xdIeCbVt3C5VMjVGRBemo+2iFKc6
-X-Google-Smtp-Source: APXvYqzd6K0JxsGe7Nh8jGK+WVCC0k43VSO3rxwZeCozwvHddnf0LT08JoXvidnu3BlUutQqFxXi7Q==
-X-Received: by 2002:a5d:528e:: with SMTP id c14mr18278512wrv.308.1583098327700;
-        Sun, 01 Mar 2020 13:32:07 -0800 (PST)
+        bh=5365KLru4qSZDpNM5l+n3e7Q++lsVis5gf+2sNysuhk=;
+        b=mBo6I3ZJrPqagoX2Tf7dLLzlQHq6bDyn4uBfqf6V4/BPe+b7icS7PrkGfUZfj5iYBv
+         dfjv0qarFAjyM+gKXeahF69Ui0DD1yeYBiis+1mCq1sFIFY0jC7brbt3+SmLRV7Kzrif
+         G79XapnLCoMb7jF3vGZEV8Yd2XCC71tCbZN5Q/FPcMjRcWy5XcOXD7b1Ufwv3B+3LysV
+         vcwmsV1l/VMYYu+7w8bcI8m/5Cvl+tVfqs+XKzs+6wse5Ze55W5nShfl2qjs18fPcAs+
+         K4Yoijh6GUMhW7C3sjST6sk1CkG+4fMh2LmKc9iT+J2/tcKEO1EWh3wU0JWWeg3zVgrB
+         9vDw==
+X-Gm-Message-State: APjAAAWqEsGtbWyAddtBVoHcKqgEIJ5qcfP4YCUmCHwpQrcsIhypXo83
+        p5EBG8qL1ZmoMX8kuBk3b3Rze0h/
+X-Google-Smtp-Source: APXvYqzUY7ht/djsoUDX1YlOcfG4nx0hD4dvwWuSt5QGPO6IKihFjSRrtYeDGX1PDlHfpwEuPQETRw==
+X-Received: by 2002:adf:fa0f:: with SMTP id m15mr18805089wrr.392.1583098829282;
+        Sun, 01 Mar 2020 13:40:29 -0800 (PST)
 Received: from [192.168.43.139] ([109.126.130.242])
-        by smtp.gmail.com with ESMTPSA id r5sm23328975wrt.43.2020.03.01.13.32.04
+        by smtp.gmail.com with ESMTPSA id i18sm21042498wrv.30.2020.03.01.13.40.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Mar 2020 13:32:07 -0800 (PST)
-Subject: Re: [PATCH 5/9] io_uring: get next req on subm ref drop
+        Sun, 01 Mar 2020 13:40:28 -0800 (PST)
+Subject: Re: [PATCH 9/9] io_uring: pass submission ref to async
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <cover.1583078091.git.asml.silence@gmail.com>
- <d5e0c69a5b0fdf7e72a8137949818dc59465d40f.1583078091.git.asml.silence@gmail.com>
+ <29efa25e63ea86b9b038fff202a5f7423b5482c8.1583078091.git.asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -94,12 +94,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <8285a4ee-c2cc-a194-7cfd-9108729f3e3b@gmail.com>
-Date:   Mon, 2 Mar 2020 00:31:15 +0300
+Message-ID: <fb27a289-717c-b911-7981-db72cbc51c26@gmail.com>
+Date:   Mon, 2 Mar 2020 00:39:41 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <d5e0c69a5b0fdf7e72a8137949818dc59465d40f.1583078091.git.asml.silence@gmail.com>
+In-Reply-To: <29efa25e63ea86b9b038fff202a5f7423b5482c8.1583078091.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -109,310 +109,189 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 01/03/2020 19:18, Pavel Begunkov wrote:
-> Get next request when dropping the submission reference. However, if
-> there is an asynchronous counterpart (i.e. read/write, timeout, etc),
-> that would be dangerous to do, so ignore them using new
-> REQ_F_DONT_STEAL_NEXT flag.
+> Currenlty, every async work handler accepts a submission reference,
+> which it should put. Also there is a reference grabbed in io_get_work()
+> and dropped in io_put_work(). This patch merge them together.
 > 
+> - So, ownership of the submission reference passed to io-wq, and it'll
+> be put in io_put_work().
+> - io_get_put() doesn't take a ref now and so deleted.
+> - async handlers don't put the submission ref anymore.
+> - make cancellation bits of io-wq to call {get,put}_work() handlers
+
+Hmm, it makes them more like {init,fini}_work() and unbalanced/unpaired. May be
+no a desirable thing.
+
 > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 > ---
->  fs/io_uring.c | 121 ++++++++++++++++++++++++++------------------------
->  1 file changed, 62 insertions(+), 59 deletions(-)
+>  fs/io-wq.c    | 17 +++++++++++++----
+>  fs/io_uring.c | 32 +++++++++++++-------------------
+>  2 files changed, 26 insertions(+), 23 deletions(-)
 > 
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index f9b18c16ebd8..686ad043c6ac 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -751,14 +751,23 @@ static bool io_wq_can_queue(struct io_wqe *wqe, struct io_wqe_acct *acct,
+>  	return true;
+>  }
+>  
+> -static void io_run_cancel(struct io_wq_work *work)
+> +static void io_run_cancel(struct io_wq_work *work, struct io_wqe *wqe)
+>  {
+> +	struct io_wq *wq = wqe->wq;
+> +
+>  	do {
+>  		struct io_wq_work *old_work = work;
+> +		bool is_internal = work->flags & IO_WQ_WORK_INTERNAL;
+> +
+> +		if (wq->get_work && !is_internal)
+> +			wq->get_work(work);
+>  
+>  		work->flags |= IO_WQ_WORK_CANCEL;
+>  		work->func(&work);
+>  		work = (work == old_work) ? NULL : work;
+> +
+> +		if (wq->put_work && !is_internal)
+> +			wq->put_work(old_work);
+>  	} while (work);
+>  }
+>  
+> @@ -775,7 +784,7 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
+>  	 * It's close enough to not be an issue, fork() has the same delay.
+>  	 */
+>  	if (unlikely(!io_wq_can_queue(wqe, acct, work))) {
+> -		io_run_cancel(work);
+> +		io_run_cancel(work, wqe);
+>  		return;
+>  	}
+>  
+> @@ -914,7 +923,7 @@ static enum io_wq_cancel io_wqe_cancel_cb_work(struct io_wqe *wqe,
+>  	spin_unlock_irqrestore(&wqe->lock, flags);
+>  
+>  	if (found) {
+> -		io_run_cancel(work);
+> +		io_run_cancel(work, wqe);
+>  		return IO_WQ_CANCEL_OK;
+>  	}
+>  
+> @@ -989,7 +998,7 @@ static enum io_wq_cancel io_wqe_cancel_work(struct io_wqe *wqe,
+>  	spin_unlock_irqrestore(&wqe->lock, flags);
+>  
+>  	if (found) {
+> -		io_run_cancel(work);
+> +		io_run_cancel(work, wqe);
+>  		return IO_WQ_CANCEL_OK;
+>  	}
+>  
 > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index daf7c2095523..d456b0ff6835 100644
+> index d456b0ff6835..c6845a1e5aaa 100644
 > --- a/fs/io_uring.c
 > +++ b/fs/io_uring.c
-> @@ -488,6 +488,7 @@ enum {
->  	REQ_F_NEED_CLEANUP_BIT,
->  	REQ_F_OVERFLOW_BIT,
->  	REQ_F_POLLED_BIT,
-> +	REQ_F_DONT_STEAL_NEXT_BIT,
->  };
->  
->  enum {
-> @@ -532,6 +533,8 @@ enum {
->  	REQ_F_OVERFLOW		= BIT(REQ_F_OVERFLOW_BIT),
->  	/* already went through poll handler */
->  	REQ_F_POLLED		= BIT(REQ_F_POLLED_BIT),
-> +	/* don't try to get next req, it's async and racy */
-> +	REQ_F_DONT_STEAL_NEXT	= BIT(REQ_F_DONT_STEAL_NEXT_BIT),
->  };
->  
->  struct async_poll {
-> @@ -1218,6 +1221,27 @@ static void io_cqring_add_event(struct io_kiocb *req, long res)
->  	io_cqring_ev_posted(ctx);
+> @@ -1556,12 +1556,13 @@ static struct io_kiocb *io_put_req_submission(struct io_kiocb *req)
+>  	return nxt;
 >  }
 >  
-> +static void io_link_work_cb(struct io_wq_work **workptr)
-> +{
-> +	struct io_wq_work *work = *workptr;
-> +	struct io_kiocb *link = work->data;
-> +
-> +	io_queue_linked_timeout(link);
-> +	io_wq_submit_work(workptr);
-> +}
-> +
-> +static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
-> +{
-> +	struct io_kiocb *link;
-> +
-> +	*workptr = &nxt->work;
-> +	link = io_prep_linked_timeout(nxt);
-> +	if (link) {
-> +		nxt->work.func = io_link_work_cb;
-> +		nxt->work.data = link;
-> +	}
-> +}
-> +
->  static inline bool io_is_fallback_req(struct io_kiocb *req)
+> -static void io_put_req_async_submission(struct io_kiocb *req,
+> -					struct io_wq_work **workptr)
+> +static void io_steal_work(struct io_kiocb *req,
+> +			  struct io_wq_work **workptr)
 >  {
->  	return req == (struct io_kiocb *)
-> @@ -1518,17 +1542,28 @@ static void io_free_req(struct io_kiocb *req)
->  		io_queue_async_work(nxt);
->  }
->  
-> -/*
-> - * Drop reference to request, return next in chain (if there is one) if this
-> - * was the last reference to this request.
-> - */
-> -__attribute__((nonnull))
-> -static void io_put_req_find_next(struct io_kiocb *req, struct io_kiocb **nxtptr)
-> +__attribute__((warn_unused_result))
-> +static struct io_kiocb *io_put_req_submission(struct io_kiocb *req)
->  {
-> -	if (refcount_dec_and_test(&req->refs)) {
-> -		io_req_find_next(req, nxtptr);
-> +	bool last_ref = refcount_dec_and_test(&req->refs);
+> -	static struct io_kiocb *nxt;
 > +	struct io_kiocb *nxt = NULL;
-> +
-> +	if (!(req->flags & REQ_F_DONT_STEAL_NEXT) || last_ref)
-
-This is a bit racy, need to take @nxt first and then do atomic.
-The fix is trivial, so makes sense to review the rest.
-
+>  
+> -	nxt = io_put_req_submission(req);
+> +	if (!(req->flags & REQ_F_DONT_STEAL_NEXT))
 > +		io_req_find_next(req, &nxt);
-> +	if (last_ref)
->  		__io_free_req(req);
-> -	}
-> +
-> +	return nxt;
-> +}
-> +
-> +static void io_put_req_async_submission(struct io_kiocb *req,
-> +					struct io_wq_work **workptr)
-> +{
-> +	static struct io_kiocb *nxt;
-> +
-> +	nxt = io_put_req_submission(req);
-> +	if (nxt)
-> +		io_wq_assign_next(workptr, nxt);
+>  	if (nxt)
+>  		io_wq_assign_next(workptr, nxt);
 >  }
+> @@ -2575,7 +2576,7 @@ static bool io_req_cancelled(struct io_kiocb *req)
+>  	if (req->work.flags & IO_WQ_WORK_CANCEL) {
+>  		req_set_fail_links(req);
+>  		io_cqring_add_event(req, -ECANCELED);
+> -		io_double_put_req(req);
+> +		io_put_req(req);
+>  		return true;
+>  	}
 >  
->  static void io_put_req(struct io_kiocb *req)
-> @@ -1979,8 +2014,11 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
->  
->  static inline void io_rw_done(struct kiocb *kiocb, ssize_t ret)
->  {
-> +	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
-> +
->  	switch (ret) {
->  	case -EIOCBQUEUED:
-> +		req->flags |= REQ_F_DONT_STEAL_NEXT;
->  		break;
->  	case -ERESTARTSYS:
->  	case -ERESTARTNOINTR:
-> @@ -2526,6 +2564,7 @@ static int io_prep_fsync(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  	if (unlikely(req->sync.flags & ~IORING_FSYNC_DATASYNC))
->  		return -EINVAL;
->  
-> +	req->flags |= REQ_F_DONT_STEAL_NEXT;
->  	req->sync.off = READ_ONCE(sqe->off);
->  	req->sync.len = READ_ONCE(sqe->len);
->  	return 0;
-> @@ -2543,27 +2582,6 @@ static bool io_req_cancelled(struct io_kiocb *req)
->  	return false;
->  }
->  
-> -static void io_link_work_cb(struct io_wq_work **workptr)
-> -{
-> -	struct io_wq_work *work = *workptr;
-> -	struct io_kiocb *link = work->data;
-> -
-> -	io_queue_linked_timeout(link);
-> -	io_wq_submit_work(workptr);
-> -}
-> -
-> -static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
-> -{
-> -	struct io_kiocb *link;
-> -
-> -	*workptr = &nxt->work;
-> -	link = io_prep_linked_timeout(nxt);
-> -	if (link) {
-> -		nxt->work.func = io_link_work_cb;
-> -		nxt->work.data = link;
-> -	}
-> -}
-> -
->  static void __io_fsync(struct io_kiocb *req)
->  {
->  	loff_t end = req->sync.off + req->sync.len;
-> @@ -2581,14 +2599,11 @@ static void __io_fsync(struct io_kiocb *req)
->  static void io_fsync_finish(struct io_wq_work **workptr)
->  {
->  	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-> -	struct io_kiocb *nxt = NULL;
->  
+> @@ -2603,7 +2604,7 @@ static void io_fsync_finish(struct io_wq_work **workptr)
 >  	if (io_req_cancelled(req))
 >  		return;
 >  	__io_fsync(req);
-> -	io_put_req(req); /* drop submission reference */
-> -	if (nxt)
-> -		io_wq_assign_next(workptr, nxt);
-> +	io_put_req_async_submission(req, workptr);
+> -	io_put_req_async_submission(req, workptr);
+> +	io_steal_work(req, workptr);
 >  }
 >  
 >  static int io_fsync(struct io_kiocb *req, bool force_nonblock)
-> @@ -2617,14 +2632,11 @@ static void __io_fallocate(struct io_kiocb *req)
->  static void io_fallocate_finish(struct io_wq_work **workptr)
->  {
->  	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-> -	struct io_kiocb *nxt = NULL;
->  
+> @@ -2636,7 +2637,7 @@ static void io_fallocate_finish(struct io_wq_work **workptr)
 >  	if (io_req_cancelled(req))
 >  		return;
 >  	__io_fallocate(req);
-> -	io_put_req(req); /* drop submission reference */
-> -	if (nxt)
-> -		io_wq_assign_next(workptr, nxt);
-> +	io_put_req_async_submission(req, workptr);
+> -	io_put_req_async_submission(req, workptr);
+> +	io_steal_work(req, workptr);
 >  }
 >  
 >  static int io_fallocate_prep(struct io_kiocb *req,
-> @@ -2988,13 +3000,10 @@ static void __io_close_finish(struct io_kiocb *req)
->  static void io_close_finish(struct io_wq_work **workptr)
->  {
->  	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-> -	struct io_kiocb *nxt = NULL;
+> @@ -3003,7 +3004,7 @@ static void io_close_finish(struct io_wq_work **workptr)
 >  
 >  	/* not cancellable, don't do io_req_cancelled() */
 >  	__io_close_finish(req);
-> -	io_put_req(req); /* drop submission reference */
-> -	if (nxt)
-> -		io_wq_assign_next(workptr, nxt);
-> +	io_put_req_async_submission(req, workptr);
+> -	io_put_req_async_submission(req, workptr);
+> +	io_steal_work(req, workptr);
 >  }
 >  
 >  static int io_close(struct io_kiocb *req, bool force_nonblock)
-> @@ -3016,6 +3025,7 @@ static int io_close(struct io_kiocb *req, bool force_nonblock)
->  		 */
->  		io_queue_async_work(req);
->  		/* submission ref will be dropped, take it for async */
-> +		req->flags |= REQ_F_DONT_STEAL_NEXT;
->  		refcount_inc_not_zero(&req->refs);
->  		return 0;
->  	}
-> @@ -3062,14 +3072,11 @@ static void __io_sync_file_range(struct io_kiocb *req)
->  static void io_sync_file_range_finish(struct io_wq_work **workptr)
->  {
->  	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-> -	struct io_kiocb *nxt = NULL;
->  
+> @@ -3076,7 +3077,7 @@ static void io_sync_file_range_finish(struct io_wq_work **workptr)
 >  	if (io_req_cancelled(req))
 >  		return;
 >  	__io_sync_file_range(req);
-> -	io_put_req(req); /* put submission ref */
-> -	if (nxt)
-> -		io_wq_assign_next(workptr, nxt);
-> +	io_put_req_async_submission(req, workptr);
+> -	io_put_req_async_submission(req, workptr);
+> +	io_steal_work(req, workptr);
 >  }
 >  
 >  static int io_sync_file_range(struct io_kiocb *req, bool force_nonblock)
-> @@ -3435,14 +3442,11 @@ static int __io_accept(struct io_kiocb *req, bool force_nonblock)
->  static void io_accept_finish(struct io_wq_work **workptr)
->  {
->  	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-> -	struct io_kiocb *nxt = NULL;
->  
+> @@ -3446,7 +3447,7 @@ static void io_accept_finish(struct io_wq_work **workptr)
 >  	if (io_req_cancelled(req))
 >  		return;
 >  	__io_accept(req, false);
-> -	io_put_req(req); /* drop submission reference */
-> -	if (nxt)
-> -		io_wq_assign_next(workptr, nxt);
-> +	io_put_req_async_submission(req, workptr);
+> -	io_put_req_async_submission(req, workptr);
+> +	io_steal_work(req, workptr);
 >  }
 >  #endif
 >  
-> @@ -3859,9 +3863,10 @@ static void io_poll_task_handler(struct io_kiocb *req, struct io_kiocb **nxt)
->  	hash_del(&req->hash_node);
->  	io_poll_complete(req, req->result, 0);
->  	req->flags |= REQ_F_COMP_LOCKED;
-> -	io_put_req_find_next(req, nxt);
->  	spin_unlock_irq(&ctx->completion_lock);
->  
-> +	req->flags &= ~REQ_F_DONT_STEAL_NEXT;
-> +	*nxt = io_put_req_submission(req);
->  	io_cqring_ev_posted(ctx);
->  }
->  
-> @@ -3944,6 +3949,8 @@ static int io_poll_add(struct io_kiocb *req)
->  		io_cqring_ev_posted(ctx);
->  		io_put_req(req);
->  	}
-> +
-> +	req->flags |= REQ_F_DONT_STEAL_NEXT;
->  	return ipt.error;
->  }
->  
-> @@ -4066,6 +4073,7 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
->  	if (flags & ~IORING_TIMEOUT_ABS)
->  		return -EINVAL;
->  
-> +	req->flags |= REQ_F_DONT_STEAL_NEXT;
->  	req->timeout.count = READ_ONCE(sqe->off);
->  
->  	if (!req->io && io_alloc_async_ctx(req))
-> @@ -4680,7 +4688,6 @@ static void io_wq_submit_work(struct io_wq_work **workptr)
->  {
->  	struct io_wq_work *work = *workptr;
->  	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
-> -	struct io_kiocb *nxt = NULL;
->  	int ret = 0;
->  
->  	/* if NO_CANCEL is set, we must still run the work */
-> @@ -4709,9 +4716,7 @@ static void io_wq_submit_work(struct io_wq_work **workptr)
+> @@ -4716,7 +4717,7 @@ static void io_wq_submit_work(struct io_wq_work **workptr)
 >  		io_put_req(req);
 >  	}
 >  
-> -	io_put_req(req); /* drop submission reference */
-> -	if (nxt)
-> -		io_wq_assign_next(workptr, nxt);
-> +	io_put_req_async_submission(req, workptr);
+> -	io_put_req_async_submission(req, workptr);
+> +	io_steal_work(req, workptr);
 >  }
 >  
 >  static int io_req_needs_file(struct io_kiocb *req, int fd)
-> @@ -4935,10 +4940,6 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  	}
+> @@ -6107,13 +6108,6 @@ static void io_put_work(struct io_wq_work *work)
+>  	io_put_req(req);
+>  }
 >  
->  err:
-> -	nxt = NULL;
-> -	/* drop submission reference */
-> -	io_put_req_find_next(req, &nxt);
+> -static void io_get_work(struct io_wq_work *work)
+> -{
+> -	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
 > -
->  	if (linked_timeout) {
->  		if (!ret)
->  			io_queue_linked_timeout(linked_timeout);
-> @@ -4952,6 +4953,8 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  		req_set_fail_links(req);
->  		io_put_req(req);
->  	}
-> +
-> +	nxt = io_put_req_submission(req);
->  	if (nxt) {
->  		req = nxt;
+> -	refcount_inc(&req->refs);
+> -}
+> -
+>  static int io_init_wq_offload(struct io_ring_ctx *ctx,
+>  			      struct io_uring_params *p)
+>  {
+> @@ -6124,7 +6118,7 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx,
+>  	int ret = 0;
 >  
+>  	data.user = ctx->user;
+> -	data.get_work = io_get_work;
+> +	data.get_work = NULL;
+>  	data.put_work = io_put_work;
+>  
+>  	if (!(p->flags & IORING_SETUP_ATTACH_WQ)) {
 > 
 
 -- 

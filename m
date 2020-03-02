@@ -2,150 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2455417653A
-	for <lists+io-uring@lfdr.de>; Mon,  2 Mar 2020 21:47:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE6EC17656F
+	for <lists+io-uring@lfdr.de>; Mon,  2 Mar 2020 21:57:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbgCBUrK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 2 Mar 2020 15:47:10 -0500
-Received: from mail-wr1-f42.google.com ([209.85.221.42]:33685 "EHLO
-        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgCBUrK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Mar 2020 15:47:10 -0500
-Received: by mail-wr1-f42.google.com with SMTP id x7so1617957wrr.0
-        for <io-uring@vger.kernel.org>; Mon, 02 Mar 2020 12:47:09 -0800 (PST)
+        id S1725911AbgCBU5g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 2 Mar 2020 15:57:36 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41196 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgCBU5f (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Mar 2020 15:57:35 -0500
+Received: by mail-io1-f66.google.com with SMTP id m25so984539ioo.8
+        for <io-uring@vger.kernel.org>; Mon, 02 Mar 2020 12:57:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GOkchIsH+fJbRcVsItZnjeGr7jBvjP/k+9ebvFok7/g=;
-        b=auSVC3PvC6dxKvxGolMibYXE1LBVldPHdsMvTxgE1Zc8Y6WL4lo9ERBknHtkdnBxcl
-         /AagibGnJE5ZA0SkSPCajo0YJ1sWGZx9IOBvadtoNSWsvh31by3FZxDMPVeFdVPYHv6c
-         pP0VNelwCxOYW8iWoXk/JNBIg0AqXormRo75YI8KwIWwjIksLz7Pa3pHnJBbwuiDCPgI
-         NjHoKVEoykNdOZJ6FdXKnk0LTRphwoPpCd+vWvKizbZ5mezgA9oriEMSTdew2HTE/f15
-         d0l2AtKsD2ENRh5VR1eCxBEnKpCiR8IccklCXjn7EyopaHcNUwS1/utn+5RM8+OvWXHD
-         CJ6Q==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=Gl/5rVif2JDN0HnIkWpOEquRYzsAc1gld6y9cprgoeM=;
+        b=I4vSuHP/BRg55zuTUMW/zexw/O0mF/VuQbTne2n5EJtnkSqlFx9C6EAHV04aO06fP5
+         t/lSP1HmveBtzwhaU0JvFyCz/l0wZx+Ka5V8IhbG/AjSFrodHHWtau9tFoO51623vfNY
+         ioqkJIDJzOqaJYbbMbA5U5NrIroH+RSQ6aM6QkMkWjwofDyvunuOuWNfqiOKR4YtwUDb
+         tQo/j8xOaceF2A0akGKWwQ4LHLHv/6XZyxjoCPlMk0FswGePTfZseZKjYoywGUDau43B
+         ya7XdOjCCqecwKvLddKwCBVGQw9YHcjGb5n6XMYPHBlPOMKJRXISS4M6IwWvQIT6jzC9
+         /mnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=GOkchIsH+fJbRcVsItZnjeGr7jBvjP/k+9ebvFok7/g=;
-        b=Tj7cwzZO8jNy/AczkJpCs8XdHmmpKxgHAKAKUW92DjQ+TNDioGc/1sCId7/Xvlwp4C
-         AWWa1QASaPsDqPqZQvDmWm8IbHZtC5Zo59/OdQ3vbhg1SzA4t057Oth+kXFX2+MaFh1f
-         Kjd5SDpLMR+vwXGGyhVNgkwOUfvo1fTUvIDpfw+ZneDCdKFYWVvcp6ZV/IYyEmPmq50p
-         ZU6viunu623Q2BsekKth8vr5efeHyl9yqbViX0GtXBNMBWwcBAgkOAhVNQ/fbag2DcN7
-         5A3HltAV3RFsF+NCyV0QgHqEyP4qkCgi9mfcIdZZebFgg+tSgAmBHCiZ2dVi90hmA2cw
-         7WMg==
-X-Gm-Message-State: ANhLgQ0n4RnBml8RMhIhPHidFO4hy4p5megT+bF9akN/P+dT10uZZpIu
-        wxSBu5DRXkEzkiUVPKyK/4E=
-X-Google-Smtp-Source: ADFU+vuSLXbmZTeYm7Zlps3YezBEre5Onekj+eEwo/eyop/ybx58s5ibVFpswfARoLynHIHtmTwYkA==
-X-Received: by 2002:a5d:4b50:: with SMTP id w16mr1322397wrs.230.1583182028616;
-        Mon, 02 Mar 2020 12:47:08 -0800 (PST)
-Received: from localhost.localdomain ([109.126.130.242])
-        by smtp.gmail.com with ESMTPSA id c16sm258981wrm.24.2020.03.02.12.47.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 12:47:08 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/1] io-wq: remove io_wq_flush and IO_WQ_WORK_INTERNAL
-Date:   Mon,  2 Mar 2020 23:46:10 +0300
-Message-Id: <d29bb1d27f45cb408bd7f530958235b0a4f251f2.1583181133.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=Gl/5rVif2JDN0HnIkWpOEquRYzsAc1gld6y9cprgoeM=;
+        b=j5OVRsxULJ9RDHEQppnqXhwApeI1B+A7vrOkgxrPie8ldFu5wwnfYygi4OumZnHTgD
+         mRdMoqmJKftxKKAIqY/JBmY50aJFNl8oxD1FDOYitvcm6whmMwFk5d5kU17BuoS74p7v
+         lHTBTZef54y+usMGiB964CK2tG363M8myh8ppBdaNmqE3SCoBnR9kix81VdNgcBHfd1m
+         Xd1jVDW/hJO2fHB2rG7fh7JiWLVKLqkafjAE0Zvu1VB+WZ1mjUoyzDycIXK6gMDWLOsq
+         cUisce579CRh5Eb7GQst8NVW3xneb3Gs8hSiibrYIFIpqxlbxJ5MZNNjxxV0bYx3o3/o
+         Nj3A==
+X-Gm-Message-State: ANhLgQ2GvLjdAOVLY5WoBzWPehpBHzpq56nXUOYTHcq3VUNyGxEj7xTP
+        KNBfUpwl6zUB194g4nTBU1bT3nvlGTE=
+X-Google-Smtp-Source: ADFU+vssQX8j2SVajfCyyaQyXsHzVhsM6qY+td8eGAaNniD5F543V2zjBUrXXjN3eX5sLxvGoEM+qg==
+X-Received: by 2002:a05:6638:18c:: with SMTP id a12mr959281jaq.84.1583182653448;
+        Mon, 02 Mar 2020 12:57:33 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id d13sm2045534iln.4.2020.03.02.12.57.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Mar 2020 12:57:33 -0800 (PST)
+Subject: Re: [PATCH 1/1] io-wq: remove io_wq_flush and IO_WQ_WORK_INTERNAL
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <d29bb1d27f45cb408bd7f530958235b0a4f251f2.1583181133.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <1a2473af-627b-7ad8-5ed8-1fae0d15caf4@kernel.dk>
+Date:   Mon, 2 Mar 2020 13:57:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <d29bb1d27f45cb408bd7f530958235b0a4f251f2.1583181133.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_wq_flush() is buggy, during cancellation an flush associated work may
-be passed to user's (i.e. io_uring) @match callback, which doesn't a
-work of a different layout. Neither sounds right cancellation of
-internal work by io-wq users.
+On 3/2/20 1:46 PM, Pavel Begunkov wrote:
+> io_wq_flush() is buggy, during cancellation an flush associated work may
+> be passed to user's (i.e. io_uring) @match callback, which doesn't a
+> work of a different layout. Neither sounds right cancellation of
+> internal work by io-wq users.
+> 
+> As it's not used anyway, delete it.
 
-As it's not used anyway, delete it.
+Thanks - and yes, it's unused now, so easy enough to just kill it
+off. Applied for 5.6.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io-wq.c | 38 +-------------------------------------
- fs/io-wq.h |  2 --
- 2 files changed, 1 insertion(+), 39 deletions(-)
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index f74a105ab968..042c7e2057ef 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -497,7 +497,7 @@ static void io_worker_handle_work(struct io_worker *worker)
- 		if (test_bit(IO_WQ_BIT_CANCEL, &wq->state))
- 			work->flags |= IO_WQ_WORK_CANCEL;
- 
--		if (wq->get_work && !(work->flags & IO_WQ_WORK_INTERNAL)) {
-+		if (wq->get_work) {
- 			put_work = work;
- 			wq->get_work(work);
- 		}
-@@ -1052,42 +1052,6 @@ enum io_wq_cancel io_wq_cancel_pid(struct io_wq *wq, pid_t pid)
- 	return ret;
- }
- 
--struct io_wq_flush_data {
--	struct io_wq_work work;
--	struct completion done;
--};
--
--static void io_wq_flush_func(struct io_wq_work **workptr)
--{
--	struct io_wq_work *work = *workptr;
--	struct io_wq_flush_data *data;
--
--	data = container_of(work, struct io_wq_flush_data, work);
--	complete(&data->done);
--}
--
--/*
-- * Doesn't wait for previously queued work to finish. When this completes,
-- * it just means that previously queued work was started.
-- */
--void io_wq_flush(struct io_wq *wq)
--{
--	struct io_wq_flush_data data;
--	int node;
--
--	for_each_node(node) {
--		struct io_wqe *wqe = wq->wqes[node];
--
--		if (!node_online(node))
--			continue;
--		init_completion(&data.done);
--		INIT_IO_WORK(&data.work, io_wq_flush_func);
--		data.work.flags |= IO_WQ_WORK_INTERNAL;
--		io_wqe_enqueue(wqe, &data.work);
--		wait_for_completion(&data.done);
--	}
--}
--
- struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- {
- 	int ret = -ENOMEM, node;
-diff --git a/fs/io-wq.h b/fs/io-wq.h
-index 001194aef6ae..a0978d6958f0 100644
---- a/fs/io-wq.h
-+++ b/fs/io-wq.h
-@@ -7,7 +7,6 @@ enum {
- 	IO_WQ_WORK_CANCEL	= 1,
- 	IO_WQ_WORK_HASHED	= 4,
- 	IO_WQ_WORK_UNBOUND	= 32,
--	IO_WQ_WORK_INTERNAL	= 64,
- 	IO_WQ_WORK_NO_CANCEL	= 256,
- 	IO_WQ_WORK_CONCURRENT	= 512,
- 
-@@ -98,7 +97,6 @@ void io_wq_destroy(struct io_wq *wq);
- 
- void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work);
- void io_wq_enqueue_hashed(struct io_wq *wq, struct io_wq_work *work, void *val);
--void io_wq_flush(struct io_wq *wq);
- 
- void io_wq_cancel_all(struct io_wq *wq);
- enum io_wq_cancel io_wq_cancel_work(struct io_wq *wq, struct io_wq_work *cwork);
 -- 
-2.24.0
+Jens Axboe
 

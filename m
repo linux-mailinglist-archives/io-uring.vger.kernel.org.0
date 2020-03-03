@@ -2,66 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 206E0177925
-	for <lists+io-uring@lfdr.de>; Tue,  3 Mar 2020 15:37:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE93177B75
+	for <lists+io-uring@lfdr.de>; Tue,  3 Mar 2020 17:03:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729464AbgCCOfq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 3 Mar 2020 09:35:46 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:47061 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729277AbgCCOfp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 3 Mar 2020 09:35:45 -0500
-Received: by mail-pf1-f196.google.com with SMTP id o24so1528776pfp.13
-        for <io-uring@vger.kernel.org>; Tue, 03 Mar 2020 06:35:43 -0800 (PST)
+        id S1729680AbgCCQDQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 3 Mar 2020 11:03:16 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:35899 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgCCQDQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 3 Mar 2020 11:03:16 -0500
+Received: by mail-il1-f193.google.com with SMTP id c3so612885ili.3
+        for <io-uring@vger.kernel.org>; Tue, 03 Mar 2020 08:03:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ouf1+DJDwhm/5ZElUXpk3SJdH41b2dI1crMCfR1CPw0=;
-        b=SMHoGFSdPPFuBWu5C5gXcST+zGDfTmBduWyGTOxeApkgka0f7HBvKJsllmWUlO/qxc
-         r15KfdjJh/gXku8O5/hEqvXjKTf4Lz1MlrWoa4wlNOtU/QjQyLlKiJ2LslIcFmQ/IXdk
-         Foo1aZyFUzl/IwdFfBRkPuIusHsIoZkAYzdv5PjRhYxI1i1HFEwP7ox7hhoIfg+nJQkZ
-         2Wlyj4nCJnr0zrL3O/0MRZKuyZS6NvkIgq/JvozSOJ3wxomzvTSwWPoGowLsWDFsbsSx
-         48YrwSL3Zoc+DveupIlbzcpvLPVRHIZ1qSCbYC9bTUCvnlWE74AFuIsjewYyFL9aF/P3
-         NV+A==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=WJ8CT33vCQgmzyyKSord2fPnPar8kkaEbMHV5McznGQ=;
+        b=hiGouDg2FaInS+pLRzCFc0dFLEY3+qYi/nKghmXhNLPnCwCQi4EVttrrZlWfJbbU2F
+         wairFJDAsRO1GLD2GOqKjysbBffUBkPJBpF6WXD/dMcUrylikBIAyLhShy2IIz+8LpXk
+         T89ec3wN5qJWVfhT4+rX03RevMJ2die3Um06r6oa+epzjEXE+a3PdR28tuSC7/VnMP2Z
+         72AZ2KCefh3jQNHT/TiU4mEzBlRu+YMSzescXfOQY0u8EvXNf91S6kKmnClvNs0WPpI8
+         /l2jT9pOMKTqgcKWup6ZRFMwLhx6q7GxC+qRcOWNGcB/HugafPymk3Ry6MIOjcSNVsJE
+         3/1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Ouf1+DJDwhm/5ZElUXpk3SJdH41b2dI1crMCfR1CPw0=;
-        b=Tc/kkW0zjntN5wpvyWAKhW7ulJSy7fyoMhqyRmmW0pdez6qyluO/Iu88hm7bId//zI
-         /RurBpaYn6waCrURAfflaTJZkG0EK/hmHVwEyQEWfiGfDSDSg51flNxJn0QpzpfuglF1
-         /r6soY0hsQWREClPEMfdtPwDkh5CnFzvzJv62Se9iRvmgYwlSoiBQG3xciYvMnBk3eZk
-         rzcNUYeglTGjMxLYaTGMvW8rF6ZwbeYvYwQbGSH8ULb+v6hc1Pax7Ix8Hmp/SNFSwHXb
-         e38klkM37CDrWgo/v5OHHDYLxY1u/UDbEfG7JKngMvxhOXdnRslFwiIuqnWi/oZUOYDi
-         CdCg==
-X-Gm-Message-State: ANhLgQ387pZb/wcOA3CXG71VKfAt0kFF4jh31yTnsHB3rqv1nIqTW/t4
-        DesFMjNf1Qhzr+SMC83o3oWMlmiD4jE=
-X-Google-Smtp-Source: ADFU+vuLhOC1RMoSeVI5IKfC6PyRPfetRlCN8E/6vRAYtCBSnTINgs1Hiin3fOMq2P0YeOnwfyjN1Q==
-X-Received: by 2002:a63:5713:: with SMTP id l19mr4485444pgb.216.1583246143131;
-        Tue, 03 Mar 2020 06:35:43 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id c2sm2779393pjo.28.2020.03.03.06.35.42
+        bh=WJ8CT33vCQgmzyyKSord2fPnPar8kkaEbMHV5McznGQ=;
+        b=Tf2QWsVyu9BMoLWtqJN29sxPLQBgzltoOeTaUU4KtacyAAcVLL87ZlmPCeZEaZqdnh
+         8HCAbD8BE56ZCFiIkA0tWxr1QNoQB0Do0q9q32dheKlfHPVT/dWE2RqBYPZuEDp6DKPC
+         buftNhjDH7YoftFactCvFdHVY9YpncTKJ+bhLU/INmrYkflYZTLH5Ms7d7s1Lz8+DaDR
+         Y57dFTWENphWjkiYzZKaSRa42NMKLHcVYAwnttOnr774B/m7witLHt7kln6R1wiPQ8v3
+         PaSbRzDZKm1lbkrWm071MLw7lbKXPEPz2GhZne6Z8XARcHfoZv267aFHnKyNsiP9Japj
+         vKtA==
+X-Gm-Message-State: ANhLgQ3O4xxy8MloBAdR8GSV59QwFYiGqqbrK8iMf3E6KtXcnEfUba06
+        DesZt1HNJSI9xFxWcApPBUunww==
+X-Google-Smtp-Source: ADFU+vsI/dTdh2QHXsAzucz/h3HCFffui/bep2tqN1oMvr4GMjM8imoAagVCMjvooJK/S8JJtpaUkg==
+X-Received: by 2002:a92:c041:: with SMTP id o1mr5740753ilf.139.1583251395477;
+        Tue, 03 Mar 2020 08:03:15 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id s2sm5434633iod.12.2020.03.03.08.03.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 06:35:42 -0800 (PST)
-Subject: Re: [PATCH] __io_uring_get_cqe: eliminate unnecessary
- io_uring_enter() syscalls
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200302041811.13330-1-xiaoguang.wang@linux.alibaba.com>
- <91e11a5a-1880-8ce3-18c5-6843abd2cf2b@kernel.dk>
- <5370d9cf-2ca6-53bc-0e32-544a43ca88a3@kernel.dk>
- <1c4ff425-a5a9-1e5a-a07c-24c8f3aa0f2e@kernel.dk>
- <90f3eee6-ddec-74a9-e9d0-568aa3e0fdc9@linux.alibaba.com>
+        Tue, 03 Mar 2020 08:03:14 -0800 (PST)
+Subject: Re: [PATCH v2 4/4] io_uring: get next req on subm ref drop
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1583181841.git.asml.silence@gmail.com>
+ <444aef98f849d947d7f10e88f30244fa0bc82360.1583181841.git.asml.silence@gmail.com>
+ <3ab75953-ee39-2c4e-99e2-f8c18ceb6a8d@kernel.dk>
+ <52b282f5-50f3-2ee6-a055-6ef0c2c39e93@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ed18a9e4-60d9-721a-ec3f-fe42452eb413@kernel.dk>
-Date:   Tue, 3 Mar 2020 07:35:41 -0700
+Message-ID: <904bfed4-19cc-7c05-8410-05016f9ab578@kernel.dk>
+Date:   Tue, 3 Mar 2020 09:03:13 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <90f3eee6-ddec-74a9-e9d0-568aa3e0fdc9@linux.alibaba.com>
+In-Reply-To: <52b282f5-50f3-2ee6-a055-6ef0c2c39e93@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,125 +67,78 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/3/20 6:11 AM, Xiaoguang Wang wrote:
-> hi,
+On 3/2/20 11:54 PM, Pavel Begunkov wrote:
+> On 03/03/2020 07:26, Jens Axboe wrote:
+>> On 3/2/20 1:45 PM, Pavel Begunkov wrote:
+>>> Get next request when dropping the submission reference. However, if
+>>> there is an asynchronous counterpart (i.e. read/write, timeout, etc),
+>>> that would be dangerous to do, so ignore them using new
+>>> REQ_F_DONT_STEAL_NEXT flag.
+>>
+>> Hmm, not so sure I like this one. It's not quite clear to me where we
+>> need REQ_F_DONT_STEAL_NEXT. If we have an async component, then we set
+>> REQ_F_DONT_STEAL_NEXT. So this is generally the case where our
+>> io_put_req() for submit is not the last drop. And for the other case,
+>> the put is generally in the caller anyway. So I don't really see what
+>> this extra flag buys us?
 > 
->> On 3/2/20 8:24 AM, Jens Axboe wrote:
->>> On 3/2/20 7:05 AM, Jens Axboe wrote:
->>>> On 3/1/20 9:18 PM, Xiaoguang Wang wrote:
->>>>> When user applis programming mode, like sumbit one sqe and wait its
->>>>> completion event, __io_uring_get_cqe() will result in many unnecessary
->>>>> syscalls, see below test program:
->>>>>
->>>>>      int main(int argc, char *argv[])
->>>>>      {
->>>>>              struct io_uring ring;
->>>>>              int fd, ret;
->>>>>              struct io_uring_sqe *sqe;
->>>>>              struct io_uring_cqe *cqe;
->>>>>              struct iovec iov;
->>>>>              off_t offset, filesize = 0;
->>>>>              void *buf;
->>>>>
->>>>>              if (argc < 2) {
->>>>>                      printf("%s: file\n", argv[0]);
->>>>>                      return 1;
->>>>>              }
->>>>>
->>>>>              ret = io_uring_queue_init(4, &ring, 0);
->>>>>              if (ret < 0) {
->>>>>                      fprintf(stderr, "queue_init: %s\n", strerror(-ret));
->>>>>                      return 1;
->>>>>              }
->>>>>
->>>>>              fd = open(argv[1], O_RDONLY | O_DIRECT);
->>>>>              if (fd < 0) {
->>>>>                      perror("open");
->>>>>                      return 1;
->>>>>              }
->>>>>
->>>>>              if (posix_memalign(&buf, 4096, 4096))
->>>>>                      return 1;
->>>>>              iov.iov_base = buf;
->>>>>              iov.iov_len = 4096;
->>>>>
->>>>>              offset = 0;
->>>>>              do {
->>>>>                      sqe = io_uring_get_sqe(&ring);
->>>>>                      if (!sqe) {
->>>>>                              printf("here\n");
->>>>>                              break;
->>>>>                      }
->>>>>                      io_uring_prep_readv(sqe, fd, &iov, 1, offset);
->>>>>
->>>>>                      ret = io_uring_submit(&ring);
->>>>>                      if (ret < 0) {
->>>>>                              fprintf(stderr, "io_uring_submit: %s\n", strerror(-ret));
->>>>>                              return 1;
->>>>>                      }
->>>>>
->>>>>                      ret = io_uring_wait_cqe(&ring, &cqe);
->>>>>                      if (ret < 0) {
->>>>>                              fprintf(stderr, "io_uring_wait_cqe: %s\n", strerror(-ret));
->>>>>                              return 1;
->>>>>                      }
->>>>>
->>>>>                      if (cqe->res <= 0) {
->>>>>                              if (cqe->res < 0) {
->>>>>                                      fprintf(stderr, "got eror: %d\n", cqe->res);
->>>>>                                      ret = 1;
->>>>>                              }
->>>>>                              io_uring_cqe_seen(&ring, cqe);
->>>>>                              break;
->>>>>                      }
->>>>>                      offset += cqe->res;
->>>>>                      filesize += cqe->res;
->>>>>                      io_uring_cqe_seen(&ring, cqe);
->>>>>              } while (1);
->>>>>
->>>>>              printf("filesize: %ld\n", filesize);
->>>>>              close(fd);
->>>>>              io_uring_queue_exit(&ring);
->>>>>              return 0;
->>>>>      }
->>>>>
->>>>> dd if=/dev/zero of=testfile bs=4096 count=16
->>>>> ./test  testfile
->>>>> and use bpftrace to trace io_uring_enter syscalls, in original codes,
->>>>> [lege@localhost ~]$ sudo bpftrace -e "tracepoint:syscalls:sys_enter_io_uring_enter {@c[tid] = count();}"
->>>>> Attaching 1 probe...
->>>>> @c[11184]: 49
->>>>> Above test issues 49 syscalls, it's counterintuitive. After looking
->>>>> into the codes, it's because __io_uring_get_cqe issue one more syscall,
->>>>> indded when __io_uring_get_cqe issues the first syscall, one cqe should
->>>>> already be ready, we don't need to wait again.
->>>>>
->>>>> To fix this issue, after the first syscall, set wait_nr to be zero, with
->>>>> tihs patch, bpftrace shows the number of io_uring_enter syscall is 33.
->>>>
->>>> Thanks, that's a nice fix, we definitely don't want to be doing
->>>> 50% more system calls than we have to...
->>>
->>> Actually, don't think the fix is quite safe. For one, if we get an error
->>> on the __io_uring_enter(), then we may not have waited for entries. Or if
->>> we submitted less than we thought we would, we would not have waited
->>> either. So we need to check for full success before deeming it safe to
->>> clear wait_nr.
->>
->> Unrelated fix:
->>
->> https://git.kernel.dk/cgit/liburing/commit/?id=0edcef5700fd558d2548532e0e5db26cb74d19ca
->>
->> and then a fix for your patch on top:
->>
->> https://git.kernel.dk/cgit/liburing/commit/?id=dc14e30a086082b6aebc3130948e2453e3bd3b2a
->>
->> Can you double check that your original test case still produces the
->> same amount of system calls with the fix in place?
-> Yes, it still produces the same amount of system calls.
-> Thanks for explanation and right fix.
+> Because io_put_work() holds a reference, no async handler can achive req->refs
+> == 0, so it won't return next upon dropping the submission ref (i.e. by
+> put_find_nxt()). And I want to have next before io_put_work(), to, instead of as
+> currently:
+> 
+> run_work(work);
+> assign_cur_work(NULL); // spinlock + unlock worker->lock
+> new_work = put_work(work);
+> assign_cur_work(new_work); // the second time
+> 
+> do:
+> 
+> new_work = run_work(work);
+> assign_cur_work(new_work); // need new_work here
+> put_work(work);
+> 
+> 
+> The other way:
+> 
+> io_wq_submit_work() // for all async handlers
+> {
+> 	...
+> 	// Drop submission reference.
+> 	// One extra ref will be put in io_put_work() right
+> 	// after return, and it'll be done in the same thread
+> 	if (atomic_dec_and_get(req) == 1)
+> 		steal_next(req);
+> }
+> 
+> Maybe cleaner, but looks fragile as well. Would you prefer it?
 
-Great, thanks for confirming!
+I think I prefer that, since it doesn't need random setting of a
+no-steal flag throughout. And it should be pretty solid, since we know
+that we hold one and that can only be our reference. Just needs a nice
+comment explaining that fact as well.
+
+>>> @@ -3943,7 +3947,10 @@ static int io_poll_add(struct io_kiocb *req)
+>>>  	if (mask) {
+>>>  		io_cqring_ev_posted(ctx);
+>>>  		io_put_req(req);
+>>> +	} else {
+>>> +		req->flags |= REQ_F_DONT_STEAL_NEXT;
+>>>  	}
+>>> +
+>>>  	return ipt.error;
+>>>  }
+>>
+>> Is this racy? I guess it doesn't matter since we're still holding the
+>> completion reference.
+> 
+> It's done by the same thread, that uses it. There could be a race if
+> the async counterpart is going to change req->flags, but we tolerate
+> false negative (i.e.  put_req() will handle it).
+
+It's relying on the fact that it's the task itself that'll run the task
+work, which can't be done by this time. Just caught my eye as something
+to look out for.
 
 -- 
 Jens Axboe

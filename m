@@ -2,89 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19C9C178503
-	for <lists+io-uring@lfdr.de>; Tue,  3 Mar 2020 22:41:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE0581786AD
+	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 00:51:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728474AbgCCVlC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 3 Mar 2020 16:41:02 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:45724 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbgCCVlC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 3 Mar 2020 16:41:02 -0500
-Received: by mail-il1-f193.google.com with SMTP id p8so36724iln.12
-        for <io-uring@vger.kernel.org>; Tue, 03 Mar 2020 13:41:02 -0800 (PST)
+        id S1727978AbgCCXvB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 3 Mar 2020 18:51:01 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40942 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbgCCXvB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 3 Mar 2020 18:51:01 -0500
+Received: by mail-pf1-f194.google.com with SMTP id l184so2324216pfl.7
+        for <io-uring@vger.kernel.org>; Tue, 03 Mar 2020 15:51:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=y4BPnxRjRQmS41LUIF2L8mvdJaQq8+rrTlVY/f5XiEc=;
-        b=v3UGVgXO+XIpk/RYGqz2XOIeyrfSrbnFNb9TIn/u460b9GU5xjCXpNNKqoq3KM/Dlo
-         V6Tk9KoPqlFFwKRW+N7qc7QkhtBC52tQ7sI1w9GH2l4pgyvGPimZVfmt9oK3/flxQpUr
-         X7blkTF5huerdFeEP3wFVUMFF1Qsi6hW6IMudzuNsfEvVdCdXUvul9pqk31pJwlLEnt0
-         FEol1F4L4tXVSx6R+wXk/8PlGGNRVwNB016u1zfsIYoOoxKjKJWuX7TI4JnuaTqk3QxN
-         EmwEx6AJ0kOzS/uzkZ/P91c5q18VLw4h8bt+yxROnLW2pbJylrim4vYTMvye5x+MDJNF
-         pZaQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Tr8OJ5yWq8T3QOKN75HSsi3oOVT2GndhHyPHMHEj8qg=;
+        b=bnXVFbMGlWIV1BX/uJBZjXZSRDbokUk5NT6p9WUsWXWic5+WbZhK9taY4taMrRvKoQ
+         YGVlRyOYOyLlGjNca8snJsfZelaIoEJo1JqRtRVPgCfQxtFSSQi4n6zw+wIruLPr7JSc
+         pqXeH9dB7txxc0bPkS7gT+g4Zj/68VP0vJ57A+q9pArCKD201zX7u8pHX2A9te7ewZq1
+         IK93QORBe1t8mBT3SaEEo8ZjbD5BIlBLnYMEY00u9oevJ9pbCODlk1iTKFsLRNWzeSbB
+         ocxbWzu4eyFYFT2Dsb46XUsTnHGb0szT9l5gtz5oGSLWy7uqEtqjsbPE/tc1zjKkt4c1
+         GumQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=y4BPnxRjRQmS41LUIF2L8mvdJaQq8+rrTlVY/f5XiEc=;
-        b=IcngVwWV2XRouX2/9ThOcevK95GKJKqAqt+Q4xwoxrK22FSVq7V6GaIWf9aVxNGJsy
-         N/0x3es7sbSS8zAJ0oiplTrVUl/U83rpd+yH1BEXaxT3V290JqA3ir0oaS4PucjQ+wmN
-         RbyqzF3guukMwuxKDVsJIhQtqzrfsxaj+/MQUzuQr7YdCioZnKKV2ncat/Ipa6x7jZt2
-         BhfPZoDhSF/823h4SnfolLo7765OvKYxmrKClAATGLpskY7WiXzUxvLog2c/ONH9GBlq
-         9idviwSIx/zFEZ0tW2YHaTM9uVCR1nil+LfHDwD511IeWbsg/zsp/jEsHJZ4jqIKrTWF
-         Dn4w==
-X-Gm-Message-State: ANhLgQ0LsZnSl5KREQQrk8fKM4jq41jK+isj6JVEkEaHMcpYVexb8+co
-        dosJB+1B8Ndgp3xWpDam3jI+vvTS6y8=
-X-Google-Smtp-Source: ADFU+vverQRhyfdXUIFxYIWwnNQizQ3NTtNKyaot0sVVumwOpesyCX7k8yUBXtJHswh9tOyOXDSX9w==
-X-Received: by 2002:a92:3b4e:: with SMTP id i75mr6552306ila.20.1583271661845;
-        Tue, 03 Mar 2020 13:41:01 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id g13sm1207469ioq.87.2020.03.03.13.41.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 13:41:01 -0800 (PST)
-Subject: Re: [PATCH v3 0/3] next work propagation
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1583258348.git.asml.silence@gmail.com>
+        bh=Tr8OJ5yWq8T3QOKN75HSsi3oOVT2GndhHyPHMHEj8qg=;
+        b=oweVSbltMHW/jL41WQSR6B6hWorEyJAGyxtHNd7R3BtZgxpQ60U5fu6LKXTTViS964
+         0IuSBnCrnfJQ572XUmtD1I/7UaRuIXhIb1xh6Kl+c4NkNzHId1Pti62PW+M6KRb64+2L
+         2m5oBqDAJgrjmdqOjy858/ZI3PGmjJthE5kCx1gbxkn2xAtK0M1PalruibLrWY1DULF8
+         PtxjtfEyxD7QQ67qskp7mscUeyujIDqFZ2NnUa1dnLjKI03OLQTqatToWPEkqpdvQbEg
+         AVBN9LFzz505Bnf6TjBt4DLvsNYLcpybOUAOeXKFzfHTaAwISigAlOmBhyQQJWM1f2G/
+         fOpA==
+X-Gm-Message-State: ANhLgQ0QkHw/dophWldpRCkS2ZgGtSsRbnl4J6XLKGefMiCf28KBpOp0
+        cdkn/9vk/JPQz4k5ing8a4LaHPIPTi8=
+X-Google-Smtp-Source: ADFU+vujNECnfSCPMqdyHv8TV6UeCbenMx0XsAQsNJu4IcXbGVFJOaxivMXuNtXV3H0nhOHN4ci/eQ==
+X-Received: by 2002:a05:6a00:4c:: with SMTP id i12mr204202pfk.81.1583279459303;
+        Tue, 03 Mar 2020 15:50:59 -0800 (PST)
+Received: from x1.localdomain ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id d24sm27041503pfq.75.2020.03.03.15.50.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 15:50:58 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <37a34bf9-e599-8bf9-2a7b-3c2bda9d3e8e@kernel.dk>
-Date:   Tue, 3 Mar 2020 14:40:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+To:     io-uring@vger.kernel.org
+Cc:     jlayton@kernel.org
+Subject: [PATCHSET RFC 0/4] Support passing fds between chain links
+Date:   Tue,  3 Mar 2020 16:50:49 -0700
+Message-Id: <20200303235053.16309-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <cover.1583258348.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/3/20 11:33 AM, Pavel Begunkov wrote:
-> The next propagation bits are done similarly as it was before, but
-> - nxt stealing is now at top-level, but not hidden in handlers
-> - ensure there is no with REQ_F_DONT_STEAL_NEXT
-> 
-> v2:
-> - fix race cond in io_put_req_submission()
-> - don't REQ_F_DONT_STEAL_NEXT for sync poll_add
-> 
-> v3: [patch 3/3] only
-> - drop DONT_STEAL approach, and just check for refcount==1
-> 
-> Pavel Begunkov (3):
->   io_uring: make submission ref putting consistent
->   io_uring: remove @nxt from handlers
->   io_uring: get next work with submission ref drop
-> 
->  fs/io_uring.c | 307 +++++++++++++++++++++++---------------------------
->  1 file changed, 140 insertions(+), 167 deletions(-)
+One of the fabled features with chains has long been the desire to
+support things like:
 
-Applied, thanks.
+<open fileX><read from fileX><close fileX>
+
+in a single chain. This currently doesn't work, since the read/close
+depends on what file descriptor we get on open.
+
+This is very much a RFC patchset, but it allows the read/close above
+to set their fd to a magic value, IOSQE_FD_LAST_OPEN. If set to this
+value, the file descriptor will be inherited from the last open in
+that chain. If there are no opens in the chain, the IO is simply
+errored. Only a single magic fd value is supported, so if the chain
+needs to operate on two of them, care needs to be taken to ensure
+things are correct. Consider for example the desire to open fileX
+and read from it, and write that to another file. You could do that
+ala:
+
+<open fileX><read from fileX><close fileX><open fileY><write to fileY>
+	<close fileY>
+
+and have that work, but you cannot open both files first, then read/write
+and then close. I don't think that necessarily poses a problem, and
+I'd rather not get into fd nesting and things like that. Open to input
+here, of course.
+
+Another concern here is that we currently error linked IO if it doesn't
+match what was asked for, a prime example being short reads. For a
+basic chain of open/read/close, the close doesn't really care if the read
+is short or not. It's only if we have further links in the chain that
+depend on the read length that this is a problem.
+
+Anyway, with this, prep handlers can't look at ->file as it may not be
+valid yet. Only close and read/write do that, from a quick glance, and
+there are two prep patches to split that a bit (2 and 3). Patch 1 is just
+a basic prep patch as well, patch 4 is the functional part.
+
+I added a small 'orc' (open-read-close) test program in the fd-pass
+branch of liburing:
+
+https://git.kernel.dk/cgit/liburing/plain/test/orc.c?h=fd-pass
+
+as an example use case.
 
 -- 
 Jens Axboe
+
 

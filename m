@@ -2,122 +2,297 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 189E3178723
-	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 01:43:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88CF1178BFD
+	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 08:54:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387396AbgCDAns (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 3 Mar 2020 19:43:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387411AbgCDAnr (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 3 Mar 2020 19:43:47 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63596206D5;
-        Wed,  4 Mar 2020 00:43:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583282626;
-        bh=XK+G6khwr7qN7maCq0un95O3asSsmGLGZKgaeyZ8QJo=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=r2vyvhyOjhZfzp1FAIqdC08o88JrIhx/u/bbn1kQvQNxBDTOV+qcLjAPm+Ida5K3I
-         5zIFr1eORpbxN8SBYUNDjMf4avi2m7pFmOHqpOIzJkYt1kGj/EPu+Phz/MzB+he1q+
-         cfpzTf/Shj5a6E29mANy5ty1modEpIcpwyQo6mxg=
-Message-ID: <68870b663dadea8d287ca7cb39d224bb4affd01c.camel@kernel.org>
-Subject: Re: [PATCHSET RFC 0/4] Support passing fds between chain links
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Date:   Tue, 03 Mar 2020 19:43:45 -0500
-In-Reply-To: <20200303235053.16309-1-axboe@kernel.dk>
-References: <20200303235053.16309-1-axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S1728659AbgCDHyK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Mar 2020 02:54:10 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11143 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728319AbgCDHyK (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 4 Mar 2020 02:54:10 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2A2BEB725D2ADD41E334;
+        Wed,  4 Mar 2020 15:54:03 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Mar 2020
+ 15:53:56 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <axboe@kernel.dk>, <viro@zeniv.linux.org.uk>
+CC:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] io_uring: Fix unused function warnings
+Date:   Wed, 4 Mar 2020 15:53:52 +0800
+Message-ID: <20200304075352.31132-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 2020-03-03 at 16:50 -0700, Jens Axboe wrote:
-> One of the fabled features with chains has long been the desire to
-> support things like:
-> 
-> <open fileX><read from fileX><close fileX>
-> 
-> in a single chain. This currently doesn't work, since the read/close
-> depends on what file descriptor we get on open.
-> 
-> This is very much a RFC patchset, but it allows the read/close above
-> to set their fd to a magic value, IOSQE_FD_LAST_OPEN. If set to this
-> value, the file descriptor will be inherited from the last open in
-> that chain. If there are no opens in the chain, the IO is simply
-> errored. Only a single magic fd value is supported, so if the chain
-> needs to operate on two of them, care needs to be taken to ensure
-> things are correct. Consider for example the desire to open fileX
-> and read from it, and write that to another file. You could do that
-> ala:
-> 
-> <open fileX><read from fileX><close fileX><open fileY><write to fileY>
-> 	<close fileY>
-> 
-> and have that work, but you cannot open both files first, then read/write
-> and then close. I don't think that necessarily poses a problem, and
-> I'd rather not get into fd nesting and things like that. Open to input
-> here, of course.
-> 
+If CONFIG_NET is not set, gcc warns:
 
-Nice work!
+fs/io_uring.c:3110:12: warning: io_setup_async_msg defined but not used [-Wunused-function]
+ static int io_setup_async_msg(struct io_kiocb *req,
+            ^~~~~~~~~~~~~~~~~~
 
-I think this is a fine interface for about 90% of the use cases that I
-can think of for this.
+There are many funcions wraped by CONFIG_NET, move them
+together to simplify code, also fix this warning.
 
-It would have to be expanded if we ever did want to be able to multiplex
-several fds though. Might we ever need to do a splice or copy_file_range
-between two files like this? It's at least worth considering how we
-might do that in the future.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/io_uring.c | 98 ++++++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 57 insertions(+), 41 deletions(-)
 
-One idea might be to give each chain a fixed-size table (8 or so?) and
-then add a way to basically dup a private reference of the LAST_OPEN
-fd+file into a particular slot.
-
-Then you could just define constants like IOSQE_FD_SLOT_1..8 and then
-you have a way to deal with more than one "ephemeral" open at a time.
-Those dup'ed entries would be implicitly closed when the chain returns.
-
-Then, you could do:
-
-    <open><dup><close>
-
-...and just work with the private slot descriptor from then on in the
-chain.
-
-> 
-> Another concern here is that we currently error linked IO if it doesn't
-> match what was asked for, a prime example being short reads. For a
-> basic chain of open/read/close, the close doesn't really care if the read
-> is short or not. It's only if we have further links in the chain that
-> depend on the read length that this is a problem.
-> 
-
-Ok, so a short read is considered an error and you stop processing the
-chain? That seems like a reasonable thing to do here. The idea is to do
-this for speed, so erroring out when things don't go as planned seems
-fine to me.
-
-
-> Anyway, with this, prep handlers can't look at ->file as it may not be
-> valid yet. Only close and read/write do that, from a quick glance, and
-> there are two prep patches to split that a bit (2 and 3). Patch 1 is just
-> a basic prep patch as well, patch 4 is the functional part.
-> 
-> I added a small 'orc' (open-read-close) test program in the fd-pass
-> branch of liburing:
-> 
-> https://git.kernel.dk/cgit/liburing/plain/test/orc.c?h=fd-pass
-> 
-> as an example use case.
-> 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index b7c178f9..89cdc6e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3420,6 +3420,7 @@ static int io_sync_file_range(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	return 0;
+ }
+ 
++#if defined(CONFIG_NET)
+ static int io_setup_async_msg(struct io_kiocb *req,
+ 			      struct io_async_msghdr *kmsg)
+ {
+@@ -3437,7 +3438,6 @@ static int io_setup_async_msg(struct io_kiocb *req,
+ 
+ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_sr_msg *sr = &req->sr_msg;
+ 	struct io_async_ctx *io = req->io;
+ 	int ret;
+@@ -3463,15 +3463,11 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if (!ret)
+ 		req->flags |= REQ_F_NEED_CLEANUP;
+ 	return ret;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		      bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_async_msghdr *kmsg = NULL;
+ 	struct socket *sock;
+ 	int ret;
+@@ -3525,15 +3521,11 @@ static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		req_set_fail_links(req);
+ 	io_put_req_find_next(req, nxt);
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_send(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		   bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	struct socket *sock;
+ 	int ret;
+ 
+@@ -3576,9 +3568,6 @@ static int io_send(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		req_set_fail_links(req);
+ 	io_put_req_find_next(req, nxt);
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int __io_recvmsg_copy_hdr(struct io_kiocb *req, struct io_async_ctx *io)
+@@ -3691,7 +3680,6 @@ static struct io_buffer *io_recv_buffer_select(struct io_kiocb *req,
+ static int io_recvmsg_prep(struct io_kiocb *req,
+ 			   const struct io_uring_sqe *sqe)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_sr_msg *sr = &req->sr_msg;
+ 	struct io_async_ctx *io = req->io;
+ 	int ret;
+@@ -3716,15 +3704,11 @@ static int io_recvmsg_prep(struct io_kiocb *req,
+ 	if (!ret)
+ 		req->flags |= REQ_F_NEED_CLEANUP;
+ 	return ret;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		      bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_async_msghdr *kmsg = NULL;
+ 	struct socket *sock;
+ 	int ret, cflags = 0;
+@@ -3785,15 +3769,11 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		req_set_fail_links(req);
+ 	io_put_req_find_next(req, nxt);
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_recv(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		   bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_buffer *kbuf = NULL;
+ 	struct socket *sock;
+ 	int ret, cflags = 0;
+@@ -3850,15 +3830,10 @@ static int io_recv(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		req_set_fail_links(req);
+ 	io_put_req_find_next(req, nxt);
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+-
+ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_accept *accept = &req->accept;
+ 
+ 	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
+@@ -3870,12 +3845,8 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	accept->addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+ 	accept->flags = READ_ONCE(sqe->accept_flags);
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+-#if defined(CONFIG_NET)
+ static int __io_accept(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		       bool force_nonblock)
+ {
+@@ -3910,12 +3881,10 @@ static void io_accept_finish(struct io_wq_work **workptr)
+ 	if (nxt)
+ 		io_wq_assign_next(workptr, nxt);
+ }
+-#endif
+ 
+ static int io_accept(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		     bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	int ret;
+ 
+ 	ret = __io_accept(req, nxt, force_nonblock);
+@@ -3924,14 +3893,10 @@ static int io_accept(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		return -EAGAIN;
+ 	}
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_connect *conn = &req->connect;
+ 	struct io_async_ctx *io = req->io;
+ 
+@@ -3948,15 +3913,11 @@ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ 	return move_addr_to_kernel(conn->addr, conn->addr_len,
+ 					&io->connect.address);
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_connect(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		      bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_async_ctx __io, *io;
+ 	unsigned file_flags;
+ 	int ret;
+@@ -3994,11 +3955,66 @@ static int io_connect(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	io_cqring_add_event(req, ret);
+ 	io_put_req_find_next(req, nxt);
+ 	return 0;
++}
+ #else
++static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
++		      bool force_nonblock)
++{
+ 	return -EOPNOTSUPP;
+-#endif
+ }
+ 
++static int io_send(struct io_kiocb *req, struct io_kiocb **nxt,
++		   bool force_nonblock)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_recvmsg_prep(struct io_kiocb *req,
++			   const struct io_uring_sqe *sqe)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
++		      bool force_nonblock)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_recv(struct io_kiocb *req, struct io_kiocb **nxt,
++		   bool force_nonblock)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_accept(struct io_kiocb *req, struct io_kiocb **nxt,
++		     bool force_nonblock)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_connect(struct io_kiocb *req, struct io_kiocb **nxt,
++		      bool force_nonblock)
++{
++	return -EOPNOTSUPP;
++}
++#endif
++
+ struct io_poll_table {
+ 	struct poll_table_struct pt;
+ 	struct io_kiocb *req;
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.7.4
+
 

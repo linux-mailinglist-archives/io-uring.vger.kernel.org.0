@@ -2,107 +2,215 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DE4817927C
-	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 15:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E6501792C4
+	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 15:53:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725765AbgCDOkH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Mar 2020 09:40:07 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:32995 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbgCDOkH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 09:40:07 -0500
-Received: by mail-io1-f67.google.com with SMTP id r15so2668199iog.0
-        for <io-uring@vger.kernel.org>; Wed, 04 Mar 2020 06:40:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dMGVVFarDw73CfV5fUTk6Su35UJvJOifOzDgrmDUXRc=;
-        b=Zn9CxSVlchouOG4GZgk7Nm4O/NAB0SnMeBa/JRkGZQ9G1OUrvvluEsXpyBEz8p0mbm
-         7wYFzOiTNUdcvsrB6Rvv5CcuSi1CFmYKyGmQmVo8he30G67WaU8kY5ZmaCpX13/5okzl
-         KA6BcOXHqW21m8kffBdz9LGa8fLlHe/L+vgJkgYOgJU1kYf0fqdurzWAaaMthk9C24R4
-         PZ/4+OTiTWx44fuJjJuJajQQLJPFuchVQ9vRd62Ti3X+1x87hzclf65iIwzpQLwcyk9S
-         juAGN51NgAopyDzlSLFxItv/TCemR9SYKMqZSNW27phIVAWaxpAEjIXz34t1ePEh6V+R
-         cxLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dMGVVFarDw73CfV5fUTk6Su35UJvJOifOzDgrmDUXRc=;
-        b=h3dt5A0+QMI3u/WJu9znc3nwB4bHF28FK0u5TB6LDh9Xk7tAd1XGz7ZQl6ok1k9idr
-         pbev2OYk1SPVRbpFSV6d4uUvdEfo1ykGXPuzSfs/glUfu/bUe9oj/9KEh/aNb+Ts17gz
-         XXajMmlOXFdzzIOFXqbpWgA4sEWR9hrtDFbHf4/3RofEDw4FMU5rFdQ18TrnahoLU6XT
-         Ho3pixLhSOn5abhbgAo1hAzAZpUj8k87V7C6jc87CghofTpSlNCs8kk094SXrJU1t9Qa
-         hSFsmUltVPcD14Sxkal0iZTZcgvC416PHNUfiRU1K6fxYxhi/JJkJh0pJYCP6SGxX18s
-         pWlA==
-X-Gm-Message-State: ANhLgQ1eoL0b9t+OTmDoJWd6uucmVlTdOhHlP4s/DgbH0zlkvC++c9TV
-        tH3RU9WxQL0YSN65/rh8PUJc0Q==
-X-Google-Smtp-Source: ADFU+vubGPSo6Z/AKTb62TsrXVcF66QjDDSgPTJ2s+8TaTBeohcH0WybO8+xeSzKqgfJmF8AzmAnRQ==
-X-Received: by 2002:a6b:3756:: with SMTP id e83mr2523436ioa.133.1583332805008;
-        Wed, 04 Mar 2020 06:40:05 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id c24sm6544597iom.0.2020.03.04.06.40.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2020 06:40:04 -0800 (PST)
-Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <00000000000067c6df059df7f9f5@google.com>
- <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
-Date:   Wed, 4 Mar 2020 07:40:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726579AbgCDOxY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Mar 2020 09:53:24 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:48655 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725795AbgCDOxY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 09:53:24 -0500
+X-Originating-IP: 50.39.173.182
+Received: from localhost (50-39-173-182.bvtn.or.frontiernet.net [50.39.173.182])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id ED0B940018;
+        Wed,  4 Mar 2020 14:53:20 +0000 (UTC)
+Date:   Wed, 4 Mar 2020 06:53:18 -0800
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH WIP 1/3] fs: Support setting a minimum fd for "lowest
+ available fd" allocation
+Message-ID: <a7eb20315b9cf4262b5fc4f6ae9ba67392c9b2f2.1583333579.git.josh@joshtriplett.org>
+References: <20200304143548.GA407676@localhost>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200304143548.GA407676@localhost>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/4/20 12:59 AM, Dmitry Vyukov wrote:
-> On Fri, Feb 7, 2020 at 9:14 AM syzbot
-> <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
->>
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
->> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
->> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->>
->> Unfortunately, I don't have any reproducer for this crash yet.
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
-> 
-> +io_uring maintainers
-> 
-> Here is a repro:
-> https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
+Some applications want to prevent the usual "lowest available fd"
+allocation from allocating certain file descriptors. For instance, they
+may want to prevent allocation of a closed fd 0, 1, or 2 other than via
+dup2/dup3, or reserve some low file descriptors for other purposes.
 
-I've queued up a fix for this:
+System calls that allocate a specific file descriptor, such as
+dup2/dup3, ignore this minimum.
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=9875fe3dc4b8cff1f1b440fb925054a5124403c3
+exec resets the minimum fd, to prevent one program from interfering with
+another program's expectations about fd allocation.
 
+Test program:
+
+    #include <err.h>
+    #include <fcntl.h>
+    #include <stdio.h>
+    #include <sys/prctl.h>
+
+    int main(int argc, char *argv[])
+    {
+        if (prctl(PR_SET_MIN_FD, 100, 0, 0, 0) < 0)
+            err(1, "prctl");
+        int fd = open("/dev/null", O_RDONLY);
+        if (fd < 0)
+            err(1, "open");
+        printf("%d\n", fd); // prints 100
+        return 0;
+    }
+
+Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+---
+ fs/file.c                  | 29 +++++++++++++++++++++++------
+ include/linux/fdtable.h    |  1 +
+ include/linux/file.h       |  2 ++
+ include/uapi/linux/prctl.h |  4 ++++
+ kernel/sys.c               | 10 ++++++++++
+ 5 files changed, 40 insertions(+), 6 deletions(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index a364e1a9b7e8..1b79d4ddedb2 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -286,7 +286,6 @@ struct files_struct *dup_fd(struct files_struct *oldf, int *errorp)
+ 	spin_lock_init(&newf->file_lock);
+ 	newf->resize_in_progress = false;
+ 	init_waitqueue_head(&newf->resize_wait);
+-	newf->next_fd = 0;
+ 	new_fdt = &newf->fdtab;
+ 	new_fdt->max_fds = NR_OPEN_DEFAULT;
+ 	new_fdt->close_on_exec = newf->close_on_exec_init;
+@@ -295,6 +294,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, int *errorp)
+ 	new_fdt->fd = &newf->fd_array[0];
+ 
+ 	spin_lock(&oldf->file_lock);
++	newf->next_fd = newf->min_fd = oldf->min_fd;
+ 	old_fdt = files_fdtable(oldf);
+ 	open_files = count_open_files(old_fdt);
+ 
+@@ -487,9 +487,7 @@ int __alloc_fd(struct files_struct *files,
+ 	spin_lock(&files->file_lock);
+ repeat:
+ 	fdt = files_fdtable(files);
+-	fd = start;
+-	if (fd < files->next_fd)
+-		fd = files->next_fd;
++	fd = max3(start, files->min_fd, files->next_fd);
+ 
+ 	if (fd < fdt->max_fds)
+ 		fd = find_next_fd(fdt, fd);
+@@ -514,7 +512,7 @@ int __alloc_fd(struct files_struct *files,
+ 		goto repeat;
+ 
+ 	if (start <= files->next_fd)
+-		files->next_fd = fd + 1;
++		files->next_fd = max(fd + 1, files->min_fd);
+ 
+ 	__set_open_fd(fd, fdt);
+ 	if (flags & O_CLOEXEC)
+@@ -550,7 +548,7 @@ static void __put_unused_fd(struct files_struct *files, unsigned int fd)
+ {
+ 	struct fdtable *fdt = files_fdtable(files);
+ 	__clear_open_fd(fd, fdt);
+-	if (fd < files->next_fd)
++	if (fd < files->next_fd && fd >= files->min_fd)
+ 		files->next_fd = fd;
+ }
+ 
+@@ -679,6 +677,7 @@ void do_close_on_exec(struct files_struct *files)
+ 
+ 	/* exec unshares first */
+ 	spin_lock(&files->file_lock);
++	files->min_fd = 0;
+ 	for (i = 0; ; i++) {
+ 		unsigned long set;
+ 		unsigned fd = i * BITS_PER_LONG;
+@@ -860,6 +859,24 @@ bool get_close_on_exec(unsigned int fd)
+ 	return res;
+ }
+ 
++void set_min_fd(unsigned int min_fd)
++{
++	struct files_struct *files = current->files;
++	spin_lock(&files->file_lock);
++	files->min_fd = min_fd;
++	spin_unlock(&files->file_lock);
++}
++
++unsigned int get_min_fd(void)
++{
++	struct files_struct *files = current->files;
++	unsigned int min_fd;
++	spin_lock(&files->file_lock);
++	min_fd = files->min_fd;
++	spin_unlock(&files->file_lock);
++	return min_fd;
++}
++
+ static int do_dup2(struct files_struct *files,
+ 	struct file *file, unsigned fd, unsigned flags)
+ __releases(&files->file_lock)
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index f07c55ea0c22..d1980443d8b3 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -60,6 +60,7 @@ struct files_struct {
+    */
+ 	spinlock_t file_lock ____cacheline_aligned_in_smp;
+ 	unsigned int next_fd;
++	unsigned int min_fd; /* min for "lowest available fd" allocation */
+ 	unsigned long close_on_exec_init[1];
+ 	unsigned long open_fds_init[1];
+ 	unsigned long full_fds_bits_init[1];
+diff --git a/include/linux/file.h b/include/linux/file.h
+index c6c7b24ea9f7..358202f5951e 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -85,6 +85,8 @@ extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
+ extern int replace_fd(unsigned fd, struct file *file, unsigned flags);
+ extern void set_close_on_exec(unsigned int fd, int flag);
+ extern bool get_close_on_exec(unsigned int fd);
++extern void set_min_fd(unsigned int min_fd);
++extern unsigned int get_min_fd(void);
+ extern int get_unused_fd_flags(unsigned flags);
+ extern void put_unused_fd(unsigned int fd);
+ 
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 07b4f8131e36..d0a9ebf46872 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -238,4 +238,8 @@ struct prctl_mm_map {
+ #define PR_SET_IO_FLUSHER		57
+ #define PR_GET_IO_FLUSHER		58
+ 
++/* Minimum file descriptor for automatic "lowest available fd" allocation */
++#define PR_SET_MIN_FD			59
++#define PR_GET_MIN_FD			60
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index f9bc5c303e3f..5ab301e97218 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2513,6 +2513,16 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 
+ 		error = (current->flags & PR_IO_FLUSHER) == PR_IO_FLUSHER;
+ 		break;
++	case PR_SET_MIN_FD:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		set_min_fd((int)arg2);
++		break;
++	case PR_GET_MIN_FD:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		error = put_user(get_min_fd(), (int __user *)arg2);
++		break;
+ 	default:
+ 		error = -EINVAL;
+ 		break;
 -- 
-Jens Axboe
+2.25.1
 

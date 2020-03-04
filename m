@@ -2,99 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E0AD17959F
-	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 17:48:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11A251796F4
+	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 18:47:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729752AbgCDQsO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Mar 2020 11:48:14 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:59302 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbgCDQsO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 11:48:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583340492;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Iwh6ArBhNlC/QzZYMfW6WQM30EkgNyAS0AeU4Ro9sDY=;
-        b=Myi8qoPFGhK2VOTViuTt9BReD3uHSNbrVNTG9JRvXP5jD0klGJDHtKHML6GwRerVeVvw08
-        VQE5MD3tyqGOlEJsup8ROWVguC04KyjsuZVvlEVzQaudhgSlzLhogO5OlvIPMKLrcSEFng
-        EgXlhafjrGZyCvow2uGwpouztxnT1zg=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-14-vVAtNJiyPyeaVrlC9ctX1w-1; Wed, 04 Mar 2020 11:48:11 -0500
-X-MC-Unique: vVAtNJiyPyeaVrlC9ctX1w-1
-Received: by mail-wm1-f72.google.com with SMTP id f207so1075271wme.6
-        for <io-uring@vger.kernel.org>; Wed, 04 Mar 2020 08:48:10 -0800 (PST)
+        id S1729662AbgCDRrO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Mar 2020 12:47:14 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:38787 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729471AbgCDRrO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 12:47:14 -0500
+Received: by mail-il1-f194.google.com with SMTP id f5so2562793ilq.5
+        for <io-uring@vger.kernel.org>; Wed, 04 Mar 2020 09:47:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SfkBb5qeeptsN+ikqmVQfFVFhEpaHETbdvKL1xWNv0A=;
+        b=LJqK/RxnNvzyKuPmMZUuM11EBRSjd9K9bP2O2+fS9Ok97bobYZG+W4h2twHVKGPaES
+         d4rLoWmOFPnHVfle3IQcqrtzcePSaTImKuXVEfw4yay6xJ7l0FLWei3BAm/kE2JsaD6q
+         TZaOfGqEs6s2N8f9w74ob4vzPhOFYx2JN4/ZPt1sBO74NCkfOQGmdX50MlVx/eciVf+c
+         4z+NMe+g4eNKWAaJxhTr1qF2Cq5PP5IZW78pZ4/jG4YVEbqWcdQ+aGbbMlSpMUjxIplv
+         hWDUp+tl3aT9tgO0daMrk4z37gVqBklijTtBGSbA+235PYpgLg0F0buGJtIOJ4kYrD1q
+         OCfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Iwh6ArBhNlC/QzZYMfW6WQM30EkgNyAS0AeU4Ro9sDY=;
-        b=d6aaQiXh5UcfVBodQxBPBfAlz26jU/90UgjOnDIVBs401PB22B8YcvdsnSo3EPaJeD
-         ePHr2t+8wzxJg/Mi2+5U529Ccjg7apGgUxU4oROrn9tX3JfJKUw0kV3smS24vNwXf71f
-         vQxkDyfqmakOZEorxpOzgCN/czMdv3N7nMcmriYNW14vD9WlTd2drr8zrYs/vtTBYw18
-         pXIkZ3vmuqXvc5OpSD+Jndt3NvKzGkOiw9FKlnpQ3J5jURejqUvrA4V4+csDMxpawgA7
-         e54gxhs7Bg65sNC+aJY7SdeRJ6OSIsvOt3NjAwyMS9a+QbzU0O3Pc82rcHlqMpwFSder
-         UlEQ==
-X-Gm-Message-State: ANhLgQ3P09TUOtumXXBt9cRTu/gtgHTU8aUZGMUI7xCVfEbkvBs+z6iq
-        0Xd5DuH62kqYu0ToX0vKZ95CO+by2YkfeZ9IUP7q02Y1xGc/ch0HxcpQ+W8oevB2B2cHt1+K+UF
-        qWQc97J9u1MeNgMjdzEM=
-X-Received: by 2002:a05:600c:20e:: with SMTP id 14mr4326637wmi.108.1583340489629;
-        Wed, 04 Mar 2020 08:48:09 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vsNyLWu0uFAuo01q9LkN1pw0Tdrpz/UjV74a4G/Kr0JlmOeAm6griIqJdEVFCpIlrxATT+Wuw==
-X-Received: by 2002:a05:600c:20e:: with SMTP id 14mr4326621wmi.108.1583340489391;
-        Wed, 04 Mar 2020 08:48:09 -0800 (PST)
-Received: from steredhat (host209-4-dynamic.27-79-r.retail.telecomitalia.it. [79.27.4.209])
-        by smtp.gmail.com with ESMTPSA id n11sm6627994wrw.11.2020.03.04.08.48.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 08:48:08 -0800 (PST)
-Date:   Wed, 4 Mar 2020 17:48:06 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] io_uring: Fix unused function warnings
-Message-ID: <20200304164806.3bsr2v7cvpq7sw5e@steredhat>
-References: <20200304075352.31132-1-yuehaibing@huawei.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SfkBb5qeeptsN+ikqmVQfFVFhEpaHETbdvKL1xWNv0A=;
+        b=WMJJx86Dswy/iApImvPG/vKRc/VO5kM58gg1aVL7HYT+Kw4NGeJ7ZS5ixCDiOoRSp8
+         XXhzFnTe5T3TQL9R7AP2/vLtdgTRZOGa+DtWokR6m9uO28wXCMD6NO6ETfwY/ZmaGQha
+         PiEEynULB230kh4xsNmFEoJrD80UY0icpAOoKUMSThQ6hYk6P/SN2W7oiI6zTnaiO8u+
+         OLy3OLsWBjpv67PgVguYCGlwXzJBTSNbzmU+s9pGVPEljr949CWNHYbjw7azmeKuNTEN
+         e1Psu7gLW2jXYQHme2lSxRag+ZS2XBgGtiOwr9xmbftzfshFMhHAabSD9Ckb1jZOF3D8
+         cKrg==
+X-Gm-Message-State: ANhLgQ3uEfohMPuNp9XfaZ3eWqbaEW6JwCF7SL3Up6dE8N/4AMTJPybR
+        bxSVmKnIfplcvzt/JHYznno4LA==
+X-Google-Smtp-Source: ADFU+vth8Sg1hIIn3bKfJzTOmIScoxuCbJgCThWc4b+YP3szikYmIDLF3ncM7ysH/n5XjhcsibUugw==
+X-Received: by 2002:a92:c7a4:: with SMTP id f4mr3710694ilk.122.1583344033665;
+        Wed, 04 Mar 2020 09:47:13 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id z25sm6662051iod.50.2020.03.04.09.47.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Mar 2020 09:47:13 -0800 (PST)
+Subject: Re: [PATCH 2/4] io_uring: move CLOSE req->file checking into handler
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     jlayton@kernel.org
+References: <20200303235053.16309-1-axboe@kernel.dk>
+ <20200303235053.16309-3-axboe@kernel.dk>
+ <a90767a7-f930-8e0c-b816-b4eb90452c58@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0cfff308-4e68-d0fd-f427-2c246a936da1@kernel.dk>
+Date:   Wed, 4 Mar 2020 10:47:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304075352.31132-1-yuehaibing@huawei.com>
+In-Reply-To: <a90767a7-f930-8e0c-b816-b4eb90452c58@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 03:53:52PM +0800, YueHaibing wrote:
-> If CONFIG_NET is not set, gcc warns:
+On 3/4/20 6:07 AM, Pavel Begunkov wrote:
+> On 04/03/2020 02:50, Jens Axboe wrote:
+>> In preparation for not needing req->file in on the prep side at all.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>  fs/io_uring.c | 8 ++++----
+>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 0464efbeba25..9d5e49a39dba 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -3367,10 +3367,6 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>  		return -EBADF;
+>>  
+>>  	req->close.fd = READ_ONCE(sqe->fd);
+>> -	if (req->file->f_op == &io_uring_fops ||
+>> -	    req->close.fd == req->ctx->ring_fd)
+>> -		return -EBADF;
+>> -
+>>  	return 0;
+>>  }
+>>  
+>> @@ -3400,6 +3396,10 @@ static int io_close(struct io_kiocb *req, bool force_nonblock)
+>>  {
+>>  	int ret;
+>>  
+>> +	if (req->file->f_op == &io_uring_fops ||
+>> +	    req->close.fd == req->ctx->ring_fd)
+>> +		return -EBADF;
+>> +
 > 
-> fs/io_uring.c:3110:12: warning: io_setup_async_msg defined but not used [-Wunused-function]
->  static int io_setup_async_msg(struct io_kiocb *req,
->             ^~~~~~~~~~~~~~~~~~
-> 
-> There are many funcions wraped by CONFIG_NET, move them
-> together to simplify code, also fix this warning.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  fs/io_uring.c | 98 ++++++++++++++++++++++++++++++++++-------------------------
->  1 file changed, 57 insertions(+), 41 deletions(-)
-> 
+> @ring_fd's and @ring_file's lifetimes are bound by call to io_submit_sqes(), and
+> they're undefined outside. For the same reason both of them should be used with
+> ctx->uring_lock hold.
 
-Since the code under the ifdef/else/endif blocks now are huge, would it make
-sense to add some comments for better readability?
-
-I mean something like this:
-
-#if defined(CONFIG_NET)
-...
-#else /* !CONFIG_NET */
-...
-#endif /* CONFIG_NET */
+I've fixed this by splitting the check.
 
 
-Thanks,
-Stefano
+-- 
+Jens Axboe
 

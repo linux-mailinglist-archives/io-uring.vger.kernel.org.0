@@ -2,26 +2,25 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E6501792C4
-	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 15:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C48671792C6
+	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 15:53:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbgCDOxY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Mar 2020 09:53:24 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:48655 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725795AbgCDOxY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 09:53:24 -0500
-X-Originating-IP: 50.39.173.182
+        id S1725897AbgCDOxp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Mar 2020 09:53:45 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:47603 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725795AbgCDOxp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 09:53:45 -0500
 Received: from localhost (50-39-173-182.bvtn.or.frontiernet.net [50.39.173.182])
         (Authenticated sender: josh@joshtriplett.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id ED0B940018;
-        Wed,  4 Mar 2020 14:53:20 +0000 (UTC)
-Date:   Wed, 4 Mar 2020 06:53:18 -0800
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id C27B410000D;
+        Wed,  4 Mar 2020 14:53:41 +0000 (UTC)
+Date:   Wed, 4 Mar 2020 06:53:39 -0800
 From:   Josh Triplett <josh@joshtriplett.org>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH WIP 1/3] fs: Support setting a minimum fd for "lowest
- available fd" allocation
-Message-ID: <a7eb20315b9cf4262b5fc4f6ae9ba67392c9b2f2.1583333579.git.josh@joshtriplett.org>
+Subject: [PATCH WIP 2/3] fs: openat2: Extend open_how to allow
+ userspace-selected fds
+Message-ID: <97dea7c8933ced47208899335fef5b41c13d2ae1.1583333579.git.josh@joshtriplett.org>
 References: <20200304143548.GA407676@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -32,185 +31,226 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Some applications want to prevent the usual "lowest available fd"
-allocation from allocating certain file descriptors. For instance, they
-may want to prevent allocation of a closed fd 0, 1, or 2 other than via
-dup2/dup3, or reserve some low file descriptors for other purposes.
+Inspired by the X protocol's handling of XIDs, allow userspace to select
+the file descriptor opened by openat2, so that it can use the resulting
+file descriptor in subsequent system calls without waiting for the
+response to openat2.
 
-System calls that allocate a specific file descriptor, such as
-dup2/dup3, ignore this minimum.
+In io_uring, this allows sequences like openat2/read/close without
+waiting for the openat2 to complete. Multiple such sequences can
+overlap, as long as each uses a distinct file descriptor.
 
-exec resets the minimum fd, to prevent one program from interfering with
-another program's expectations about fd allocation.
+Add a new O_SPECIFIC_FD open flag to enable this behavior, only accepted
+by openat2 for now (ignored by open/openat like all unknown flags). Add
+an fd field to struct open_how (along with appropriate padding, and
+verify that the padding is 0 to allow replacing the padding with a field
+in the future).
+
+The file table has a corresponding new function
+get_specific_unused_fd_flags, which gets the specified file descriptor
+if O_SPECIFIC_FD is set (and the fd isn't -1); otherwise it falls back
+to get_unused_fd_flags, to simplify callers.
+
+The specified file descriptor must not already be open; if it is,
+get_specific_unused_fd_flags will fail with -EBUSY. This helps catch
+userspace errors.
+
+When O_SPECIFIC_FD is set, and fd is not -1, openat2 will use the
+specified file descriptor rather than finding the lowest available one.
 
 Test program:
 
     #include <err.h>
     #include <fcntl.h>
     #include <stdio.h>
-    #include <sys/prctl.h>
+    #include <unistd.h>
 
-    int main(int argc, char *argv[])
+    int main(void)
     {
-        if (prctl(PR_SET_MIN_FD, 100, 0, 0, 0) < 0)
-            err(1, "prctl");
-        int fd = open("/dev/null", O_RDONLY);
+        struct open_how how = { .flags = O_RDONLY | O_SPECIFIC_FD, .fd = 42 };
+        int fd = openat2(AT_FDCWD, "/dev/null", &how, sizeof(how));
         if (fd < 0)
-            err(1, "open");
-        printf("%d\n", fd); // prints 100
+            err(1, "openat2");
+        printf("fd=%d\n", fd); // prints fd=42
         return 0;
     }
 
 Signed-off-by: Josh Triplett <josh@joshtriplett.org>
 ---
- fs/file.c                  | 29 +++++++++++++++++++++++------
- include/linux/fdtable.h    |  1 +
- include/linux/file.h       |  2 ++
- include/uapi/linux/prctl.h |  4 ++++
- kernel/sys.c               | 10 ++++++++++
- 5 files changed, 40 insertions(+), 6 deletions(-)
+ fs/fcntl.c                       |  2 +-
+ fs/file.c                        | 33 ++++++++++++++++++++++++++++++++
+ fs/io_uring.c                    |  2 +-
+ fs/open.c                        |  6 ++++--
+ include/linux/fcntl.h            |  5 +++--
+ include/linux/file.h             |  1 +
+ include/uapi/asm-generic/fcntl.h |  4 ++++
+ include/uapi/linux/openat2.h     |  2 ++
+ 8 files changed, 49 insertions(+), 6 deletions(-)
 
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 9bc167562ee8..1396bf8d9357 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -1031,7 +1031,7 @@ static int __init fcntl_init(void)
+ 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+ 	 * is defined as O_NONBLOCK on some platforms and not on others.
+ 	 */
+-	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
++	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
+ 		HWEIGHT32(
+ 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
+ 			__FMODE_EXEC | __FMODE_NONOTIFY));
 diff --git a/fs/file.c b/fs/file.c
-index a364e1a9b7e8..1b79d4ddedb2 100644
+index 1b79d4ddedb2..185c54732b4a 100644
 --- a/fs/file.c
 +++ b/fs/file.c
-@@ -286,7 +286,6 @@ struct files_struct *dup_fd(struct files_struct *oldf, int *errorp)
- 	spin_lock_init(&newf->file_lock);
- 	newf->resize_in_progress = false;
- 	init_waitqueue_head(&newf->resize_wait);
--	newf->next_fd = 0;
- 	new_fdt = &newf->fdtab;
- 	new_fdt->max_fds = NR_OPEN_DEFAULT;
- 	new_fdt->close_on_exec = newf->close_on_exec_init;
-@@ -295,6 +294,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, int *errorp)
- 	new_fdt->fd = &newf->fd_array[0];
+@@ -562,6 +562,39 @@ void put_unused_fd(unsigned int fd)
  
- 	spin_lock(&oldf->file_lock);
-+	newf->next_fd = newf->min_fd = oldf->min_fd;
- 	old_fdt = files_fdtable(oldf);
- 	open_files = count_open_files(old_fdt);
+ EXPORT_SYMBOL(put_unused_fd);
  
-@@ -487,9 +487,7 @@ int __alloc_fd(struct files_struct *files,
- 	spin_lock(&files->file_lock);
- repeat:
- 	fdt = files_fdtable(files);
--	fd = start;
--	if (fd < files->next_fd)
--		fd = files->next_fd;
-+	fd = max3(start, files->min_fd, files->next_fd);
++int get_specific_unused_fd_flags(unsigned int fd, unsigned flags)
++{
++	int ret;
++	struct fdtable *fdt;
++	struct files_struct *files = current->files;
++
++	if (!(flags & O_SPECIFIC_FD) || fd == -1)
++		return get_unused_fd_flags(flags);
++
++	if (fd >= rlimit(RLIMIT_NOFILE))
++		return -EBADF;
++
++	spin_lock(&files->file_lock);
++	ret = expand_files(files, fd);
++	if (unlikely(ret < 0))
++		goto out_unlock;
++	fdt = files_fdtable(files);
++	if (fdt->fd[fd]) {
++		ret = -EBUSY;
++		goto out_unlock;
++	}
++	__set_open_fd(fd, fdt);
++	if (flags & O_CLOEXEC)
++		__set_close_on_exec(fd, fdt);
++	else
++		__clear_close_on_exec(fd, fdt);
++	ret = fd;
++
++out_unlock:
++	spin_unlock(&files->file_lock);
++	return ret;
++}
++
+ /*
+  * Install a file pointer in the fd array.
+  *
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 6a595c13e108..c25d56554d00 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2635,7 +2635,7 @@ static int io_openat2(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	if (ret)
+ 		goto err;
  
- 	if (fd < fdt->max_fds)
- 		fd = find_next_fd(fdt, fd);
-@@ -514,7 +512,7 @@ int __alloc_fd(struct files_struct *files,
- 		goto repeat;
+-	ret = get_unused_fd_flags(req->open.how.flags);
++	ret = get_specific_unused_fd_flags(req->open.how.fd, req->open.how.flags);
+ 	if (ret < 0)
+ 		goto err;
  
- 	if (start <= files->next_fd)
--		files->next_fd = fd + 1;
-+		files->next_fd = max(fd + 1, files->min_fd);
- 
- 	__set_open_fd(fd, fdt);
- 	if (flags & O_CLOEXEC)
-@@ -550,7 +548,7 @@ static void __put_unused_fd(struct files_struct *files, unsigned int fd)
+diff --git a/fs/open.c b/fs/open.c
+index 0788b3715731..570166eb11eb 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -961,7 +961,7 @@ EXPORT_SYMBOL(open_with_fake_path);
+ inline struct open_how build_open_how(int flags, umode_t mode)
  {
- 	struct fdtable *fdt = files_fdtable(files);
- 	__clear_open_fd(fd, fdt);
--	if (fd < files->next_fd)
-+	if (fd < files->next_fd && fd >= files->min_fd)
- 		files->next_fd = fd;
- }
+ 	struct open_how how = {
+-		.flags = flags & VALID_OPEN_FLAGS,
++		.flags = flags & VALID_OPEN_FLAGS & ~O_SPECIFIC_FD,
+ 		.mode = mode & S_IALLUGO,
+ 	};
  
-@@ -679,6 +677,7 @@ void do_close_on_exec(struct files_struct *files)
+@@ -1144,7 +1144,7 @@ static long do_sys_openat2(int dfd, const char __user *filename,
+ 	if (IS_ERR(tmp))
+ 		return PTR_ERR(tmp);
  
- 	/* exec unshares first */
- 	spin_lock(&files->file_lock);
-+	files->min_fd = 0;
- 	for (i = 0; ; i++) {
- 		unsigned long set;
- 		unsigned fd = i * BITS_PER_LONG;
-@@ -860,6 +859,24 @@ bool get_close_on_exec(unsigned int fd)
- 	return res;
- }
+-	fd = get_unused_fd_flags(how->flags);
++	fd = get_specific_unused_fd_flags(how->fd, how->flags);
+ 	if (fd >= 0) {
+ 		struct file *f = do_filp_open(dfd, tmp, &op);
+ 		if (IS_ERR(f)) {
+@@ -1194,6 +1194,8 @@ SYSCALL_DEFINE4(openat2, int, dfd, const char __user *, filename,
+ 	err = copy_struct_from_user(&tmp, sizeof(tmp), how, usize);
+ 	if (err)
+ 		return err;
++	if (tmp.pad != 0)
++		return -EINVAL;
  
-+void set_min_fd(unsigned int min_fd)
-+{
-+	struct files_struct *files = current->files;
-+	spin_lock(&files->file_lock);
-+	files->min_fd = min_fd;
-+	spin_unlock(&files->file_lock);
-+}
-+
-+unsigned int get_min_fd(void)
-+{
-+	struct files_struct *files = current->files;
-+	unsigned int min_fd;
-+	spin_lock(&files->file_lock);
-+	min_fd = files->min_fd;
-+	spin_unlock(&files->file_lock);
-+	return min_fd;
-+}
-+
- static int do_dup2(struct files_struct *files,
- 	struct file *file, unsigned fd, unsigned flags)
- __releases(&files->file_lock)
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index f07c55ea0c22..d1980443d8b3 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -60,6 +60,7 @@ struct files_struct {
-    */
- 	spinlock_t file_lock ____cacheline_aligned_in_smp;
- 	unsigned int next_fd;
-+	unsigned int min_fd; /* min for "lowest available fd" allocation */
- 	unsigned long close_on_exec_init[1];
- 	unsigned long open_fds_init[1];
- 	unsigned long full_fds_bits_init[1];
+ 	/* O_LARGEFILE is only allowed for non-O_PATH. */
+ 	if (!(tmp.flags & O_PATH) && force_o_largefile())
+diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+index 7bcdcf4f6ab2..728849bcd8fa 100644
+--- a/include/linux/fcntl.h
++++ b/include/linux/fcntl.h
+@@ -10,7 +10,7 @@
+ 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
+ 	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
+ 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
+-	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
++	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_SPECIFIC_FD)
+ 
+ /* List of all valid flags for the how->upgrade_mask argument: */
+ #define VALID_UPGRADE_FLAGS \
+@@ -23,7 +23,8 @@
+ 
+ /* List of all open_how "versions". */
+ #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
+-#define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER0
++#define OPEN_HOW_SIZE_VER1	32 /* added fd and pad */
++#define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER1
+ 
+ #ifndef force_o_largefile
+ #define force_o_largefile() (!IS_ENABLED(CONFIG_ARCH_32BIT_OFF_T))
 diff --git a/include/linux/file.h b/include/linux/file.h
-index c6c7b24ea9f7..358202f5951e 100644
+index 358202f5951e..1fe67d8009ee 100644
 --- a/include/linux/file.h
 +++ b/include/linux/file.h
-@@ -85,6 +85,8 @@ extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
- extern int replace_fd(unsigned fd, struct file *file, unsigned flags);
- extern void set_close_on_exec(unsigned int fd, int flag);
- extern bool get_close_on_exec(unsigned int fd);
-+extern void set_min_fd(unsigned int min_fd);
-+extern unsigned int get_min_fd(void);
+@@ -89,6 +89,7 @@ extern void set_min_fd(unsigned int min_fd);
+ extern unsigned int get_min_fd(void);
  extern int get_unused_fd_flags(unsigned flags);
  extern void put_unused_fd(unsigned int fd);
++extern int get_specific_unused_fd_flags(unsigned int fd, unsigned flags);
  
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 07b4f8131e36..d0a9ebf46872 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -238,4 +238,8 @@ struct prctl_mm_map {
- #define PR_SET_IO_FLUSHER		57
- #define PR_GET_IO_FLUSHER		58
+ extern void fd_install(unsigned int fd, struct file *file);
  
-+/* Minimum file descriptor for automatic "lowest available fd" allocation */
-+#define PR_SET_MIN_FD			59
-+#define PR_GET_MIN_FD			60
+diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+index 9dc0bf0c5a6e..d3de5b8b3955 100644
+--- a/include/uapi/asm-generic/fcntl.h
++++ b/include/uapi/asm-generic/fcntl.h
+@@ -89,6 +89,10 @@
+ #define __O_TMPFILE	020000000
+ #endif
+ 
++#ifndef O_SPECIFIC_FD
++#define O_SPECIFIC_FD	01000000000	/* open as specified fd */
++#endif
 +
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/sys.c b/kernel/sys.c
-index f9bc5c303e3f..5ab301e97218 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2513,6 +2513,16 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ /* a horrid kludge trying to make sure that this will fail on old kernels */
+ #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
+ #define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
+diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+index 58b1eb711360..50d1206b64c2 100644
+--- a/include/uapi/linux/openat2.h
++++ b/include/uapi/linux/openat2.h
+@@ -20,6 +20,8 @@ struct open_how {
+ 	__u64 flags;
+ 	__u64 mode;
+ 	__u64 resolve;
++	__s32 fd;
++	__u32 pad; /* Must be 0 in the current version */
+ };
  
- 		error = (current->flags & PR_IO_FLUSHER) == PR_IO_FLUSHER;
- 		break;
-+	case PR_SET_MIN_FD:
-+		if (arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		set_min_fd((int)arg2);
-+		break;
-+	case PR_GET_MIN_FD:
-+		if (arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		error = put_user(get_min_fd(), (int __user *)arg2);
-+		break;
- 	default:
- 		error = -EINVAL;
- 		break;
+ /* how->resolve flags for openat2(2). */
 -- 
 2.25.1
 

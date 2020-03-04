@@ -2,209 +2,153 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE6FE178C0D
-	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 08:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D5211790E4
+	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 14:07:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725283AbgCDH7n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Mar 2020 02:59:43 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42779 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbgCDH7n (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 02:59:43 -0500
-Received: by mail-qt1-f194.google.com with SMTP id r6so684261qtt.9
-        for <io-uring@vger.kernel.org>; Tue, 03 Mar 2020 23:59:41 -0800 (PST)
+        id S2387992AbgCDNH6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Mar 2020 08:07:58 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55797 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387776AbgCDNH6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 08:07:58 -0500
+Received: by mail-wm1-f67.google.com with SMTP id 6so2008695wmi.5
+        for <io-uring@vger.kernel.org>; Wed, 04 Mar 2020 05:07:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZvfFfoiDvwomK27nl9TtMPE/YuB+BqiJw1pTlVud7/c=;
-        b=YZB8Lub8KYqPzHJRFlphw/+Mj19Z9y5xuVLO2ElE3XuVlf8XOkgKNjJ5MjYMkGZ46C
-         4Ken3VTO87z/yUAGQ4TkHJoh64RM135Al1/JDHh68rhVPTajEk/ztz3o1nJJaRdwE5SC
-         QUkXp5XyhdQb3+TPYfp1MI6QT38qas+33Nd9Iqx+q1rOi0lqxExvdmi68QlGPX8msWP7
-         hkKSK1YGr0/vtgMgh8TN+L48Lj5j5Vjy7CoRGIMqXpiy40c9UloXFu2IZJpVDPEs8ciJ
-         LGIYZr7ni/xf2H4l+qDhmmrtj5KbReGx328yS0cAo1n7m7dhUnQptPapD/XuuUVJqIn9
-         sClg==
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Dw7yFnXVIwTUIwGPdh/QGpKt0AsNfveoCp5EcTASH+8=;
+        b=oHbd8PFXg5Ln9LFJYIrcqNS0uq9+pQdrYPlFsCA1vpMKZUucg5iYNUVQPZEpsDizhk
+         w3fR8MtnPCiwzhgJ6tKx0AOuP3wTHovuFBVP6NfMe76i7j0bV7J5+PnxNNx0HCt/Cy7I
+         GsGchZtt9TLCqwmpXjCLkACKt41ln1fpN/MWcJ3Q2DEhpDMrWMf1v/pPyx/Fw3nGYt9s
+         aijbnYynJK8vKp6SFZNf8Yof2O6D85ZKZJ6w5Q6xmaJRIs4xuLnyNRSICwrv04Al3qXn
+         5QK3ZaWuIic846NEt881lhEcgc7jhe3dcnvEYDlUNPdUHUJVYyDAox7F5g+j1wf41Gve
+         oqng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZvfFfoiDvwomK27nl9TtMPE/YuB+BqiJw1pTlVud7/c=;
-        b=THEkyYAVkp4KHw9k3/brZvGP02xTbs+x6vqdCD+ZS1guL1kWvbZ3sSrPxjcVF8ujjS
-         RuRCU2N88ZSrmoDNDyGZzZjeUC0H58Hx4qObT7DgxWm/NsucB3JD0cEoXEH+X8hKzU4D
-         o/JSE2pQ6JJWKUB+sd3SZ086F8pz1tDGq7JhYKZhgVn5BCcnYIs7Comuw3WiYkdaNcKY
-         mGrw3EXwfyvNb43IQsDwE+GY3G8t4ASAR9Zr3lVvm+1nq5FX4NLlxFYX5P/nq1oUmm6h
-         b0WJhOx+oKPLG3+a0lKcs8NGrv8YZeDXmCO/ZOv7B3Tcw3VRZcX3UypkByfwCaT8WhbZ
-         SU5Q==
-X-Gm-Message-State: ANhLgQ0GP3Svi4mSiXJKTozyJaGIyMmLuUE5GCr3IWRsS9keK8XQOS44
-        fl9XaNL72NnF0bfmPi+HE5cFijMuvDA9YyUxFle1zA==
-X-Google-Smtp-Source: ADFU+vuBXAS2lNdsEI9fkEjYC/iIIwvlVsaIwmxbP7wV7qqfPL1XIHUe4oobQJ4iczwiKUbjul/qLGKw3hYVqhfymfE=
-X-Received: by 2002:ac8:3533:: with SMTP id y48mr1325776qtb.380.1583308780858;
- Tue, 03 Mar 2020 23:59:40 -0800 (PST)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Dw7yFnXVIwTUIwGPdh/QGpKt0AsNfveoCp5EcTASH+8=;
+        b=PxC9kwc08dbyHXwmzGooH7OY1wk45uFZdTk4Fz+EO8tNnJGQmi6DQeBiyurz1qcxbI
+         Iq3CWFwgrM+Eh6gKymPgZ/9yFbbOrZsFW3rpWWhXXxEN1K3CGZtVYlbZWnkZT4yDUY5R
+         OhAAo5EaPAlyUzG20pJMjcNey2X/whCGnUfYJlBhuzaMtPrhJWhuWt3fFhaJLHvC4XrB
+         809KfJZNRNggS93RT7ei3pfEg5SP8wFS2VvsDH42sCqwnRbkioCs1wjhG9FrvNdzHkOa
+         INSWXatZ4Vcir+WwuRFqsjibYbDlrFJgyg/vSGPZ/b52/3uLJ72wxqWCcl0xOj1R4v0G
+         LAHw==
+X-Gm-Message-State: ANhLgQ0WAwRQKEjvC3QuKnjd2s5x71FpA/p2dlWa/Q1ClgvtfwS9G6JF
+        5XbQL+GL2Oe7uQ8ESpFiV6c=
+X-Google-Smtp-Source: ADFU+vtQRQn34R7dltpDqAVOJbmosG5SHZPVUxN9ypcqpX4elJZgmc8dXThO4fLDqd5LsoLILcTcVg==
+X-Received: by 2002:a05:600c:2f10:: with SMTP id r16mr1204903wmn.46.1583327275652;
+        Wed, 04 Mar 2020 05:07:55 -0800 (PST)
+Received: from [192.168.43.187] ([109.126.130.242])
+        by smtp.gmail.com with ESMTPSA id a7sm40754952wrm.29.2020.03.04.05.07.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Mar 2020 05:07:55 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     jlayton@kernel.org
+References: <20200303235053.16309-1-axboe@kernel.dk>
+ <20200303235053.16309-3-axboe@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH 2/4] io_uring: move CLOSE req->file checking into handler
+Message-ID: <a90767a7-f930-8e0c-b816-b4eb90452c58@gmail.com>
+Date:   Wed, 4 Mar 2020 16:07:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <00000000000067c6df059df7f9f5@google.com>
-In-Reply-To: <00000000000067c6df059df7f9f5@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 4 Mar 2020 08:59:29 +0100
-Message-ID: <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
-To:     syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200303235053.16309-3-axboe@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Feb 7, 2020 at 9:14 AM syzbot
-<syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
-> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
-
-+io_uring maintainers
-
-Here is a repro:
-https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
-
-> ==================================================================
-> BUG: KASAN: use-after-free in percpu_ref_call_confirm_rcu lib/percpu-refcount.c:126 [inline]
-> BUG: KASAN: use-after-free in percpu_ref_switch_to_atomic_rcu+0x3f7/0x400 lib/percpu-refcount.c:165
-> Read of size 1 at addr ffff8880a8d91830 by task swapper/0/0
->
-> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.5.0-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1fb/0x318 lib/dump_stack.c:118
->  print_address_description+0x74/0x5c0 mm/kasan/report.c:374
->  __kasan_report+0x149/0x1c0 mm/kasan/report.c:506
->  kasan_report+0x26/0x50 mm/kasan/common.c:641
->  __asan_report_load1_noabort+0x14/0x20 mm/kasan/generic_report.c:132
->  percpu_ref_call_confirm_rcu lib/percpu-refcount.c:126 [inline]
->  percpu_ref_switch_to_atomic_rcu+0x3f7/0x400 lib/percpu-refcount.c:165
->  rcu_do_batch kernel/rcu/tree.c:2186 [inline]
->  rcu_core+0x81b/0x10c0 kernel/rcu/tree.c:2410
->  rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2419
->  __do_softirq+0x283/0x7bd kernel/softirq.c:292
->  invoke_softirq kernel/softirq.c:373 [inline]
->  irq_exit+0x227/0x230 kernel/softirq.c:413
->  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
->  smp_apic_timer_interrupt+0x113/0x280 arch/x86/kernel/apic/apic.c:1137
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
->  </IRQ>
-> RIP: 0010:native_safe_halt+0x12/0x20 arch/x86/include/asm/irqflags.h:61
-> Code: 89 d9 80 e1 07 80 c1 03 38 c1 7c ba 48 89 df e8 e4 5f 9d f9 eb b0 cc cc 55 48 89 e5 e9 07 00 00 00 0f 00 2d 62 17 4c 00 fb f4 <5d> c3 66 90 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 e9 07 00 00
-> RSP: 0018:ffffffff89207db8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-> RAX: 1ffffffff1255a25 RBX: ffffffff89275b00 RCX: dffffc0000000000
-> RDX: 0000000000000000 RSI: ffffffff812c06aa RDI: ffffffff89276344
-> RBP: ffffffff89207db8 R08: ffffffff89276358 R09: fffffbfff124eb61
-> R10: fffffbfff124eb61 R11: 0000000000000000 R12: 1ffffffff124eb60
-> R13: dffffc0000000000 R14: dffffc0000000000 R15: 1ffffffff1255a23
->  arch_safe_halt arch/x86/include/asm/paravirt.h:144 [inline]
->  default_idle+0x50/0x70 arch/x86/kernel/process.c:695
->  arch_cpu_idle+0xa/0x10 arch/x86/kernel/process.c:686
->  default_idle_call+0x59/0xa0 kernel/sched/idle.c:94
->  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
->  do_idle+0x1ec/0x630 kernel/sched/idle.c:269
->  cpu_startup_entry+0x25/0x30 kernel/sched/idle.c:361
->  rest_init+0x29d/0x2b0 init/main.c:450
->  arch_call_rest_init+0xe/0x10
->  start_kernel+0x676/0x777 init/main.c:784
->  x86_64_start_reservations+0x18/0x2e arch/x86/kernel/head64.c:490
->  x86_64_start_kernel+0x7a/0x7d arch/x86/kernel/head64.c:471
->  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
->
-> Allocated by task 25166:
->  save_stack mm/kasan/common.c:72 [inline]
->  set_track mm/kasan/common.c:80 [inline]
->  __kasan_kmalloc+0x118/0x1c0 mm/kasan/common.c:515
->  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:529
->  kmem_cache_alloc_trace+0x221/0x2f0 mm/slab.c:3551
->  kmalloc include/linux/slab.h:555 [inline]
->  kzalloc include/linux/slab.h:669 [inline]
->  io_sqe_files_register fs/io_uring.c:5528 [inline]
->  __io_uring_register fs/io_uring.c:6875 [inline]
->  __do_sys_io_uring_register fs/io_uring.c:6955 [inline]
->  __se_sys_io_uring_register+0x1df4/0x3260 fs/io_uring.c:6937
->  __x64_sys_io_uring_register+0x9b/0xb0 fs/io_uring.c:6937
->  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> Freed by task 25160:
->  save_stack mm/kasan/common.c:72 [inline]
->  set_track mm/kasan/common.c:80 [inline]
->  kasan_set_free_info mm/kasan/common.c:337 [inline]
->  __kasan_slab_free+0x12e/0x1e0 mm/kasan/common.c:476
->  kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
->  __cache_free mm/slab.c:3426 [inline]
->  kfree+0x10d/0x220 mm/slab.c:3757
->  io_sqe_files_unregister+0x238/0x2b0 fs/io_uring.c:5250
->  io_ring_ctx_free fs/io_uring.c:6229 [inline]
->  io_ring_ctx_wait_and_kill+0x343d/0x3b00 fs/io_uring.c:6310
->  io_uring_release+0x5d/0x70 fs/io_uring.c:6318
->  __fput+0x2e4/0x740 fs/file_table.c:280
->  ____fput+0x15/0x20 fs/file_table.c:313
->  task_work_run+0x176/0x1b0 kernel/task_work.c:113
->  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->  exit_to_usermode_loop arch/x86/entry/common.c:164 [inline]
->  prepare_exit_to_usermode+0x480/0x5b0 arch/x86/entry/common.c:195
->  syscall_return_slowpath+0x113/0x4a0 arch/x86/entry/common.c:278
->  do_syscall_64+0x11f/0x1c0 arch/x86/entry/common.c:304
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> The buggy address belongs to the object at ffff8880a8d91800
->  which belongs to the cache kmalloc-256 of size 256
-> The buggy address is located 48 bytes inside of
->  256-byte region [ffff8880a8d91800, ffff8880a8d91900)
-> The buggy address belongs to the page:
-> page:ffffea0002a36440 refcount:1 mapcount:0 mapping:ffff8880aa4008c0 index:0x0
-> flags: 0xfffe0000000200(slab)
-> raw: 00fffe0000000200 ffffea000265d2c8 ffffea00022f7948 ffff8880aa4008c0
-> raw: 0000000000000000 ffff8880a8d91000 0000000100000008 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8880a8d91700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8880a8d91780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> >ffff8880a8d91800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                      ^
->  ffff8880a8d91880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8880a8d91900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
->
->
+On 04/03/2020 02:50, Jens Axboe wrote:
+> In preparation for not needing req->file in on the prep side at all.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000067c6df059df7f9f5%40google.com.
+>  fs/io_uring.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 0464efbeba25..9d5e49a39dba 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -3367,10 +3367,6 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  		return -EBADF;
+>  
+>  	req->close.fd = READ_ONCE(sqe->fd);
+> -	if (req->file->f_op == &io_uring_fops ||
+> -	    req->close.fd == req->ctx->ring_fd)
+> -		return -EBADF;
+> -
+>  	return 0;
+>  }
+>  
+> @@ -3400,6 +3396,10 @@ static int io_close(struct io_kiocb *req, bool force_nonblock)
+>  {
+>  	int ret;
+>  
+> +	if (req->file->f_op == &io_uring_fops ||
+> +	    req->close.fd == req->ctx->ring_fd)
+> +		return -EBADF;
+> +
+
+@ring_fd's and @ring_file's lifetimes are bound by call to io_submit_sqes(), and
+they're undefined outside. For the same reason both of them should be used with
+ctx->uring_lock hold.
+
+
+>  	req->close.put_file = NULL;
+>  	ret = __close_fd_get_file(req->close.fd, &req->close.put_file);
+>  	if (ret < 0)
+> 
+
+-- 
+Pavel Begunkov

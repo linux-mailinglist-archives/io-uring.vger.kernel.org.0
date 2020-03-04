@@ -2,53 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D5211790E4
-	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 14:07:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CAC6179107
+	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 14:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387992AbgCDNH6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Mar 2020 08:07:58 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55797 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387776AbgCDNH6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 08:07:58 -0500
-Received: by mail-wm1-f67.google.com with SMTP id 6so2008695wmi.5
-        for <io-uring@vger.kernel.org>; Wed, 04 Mar 2020 05:07:56 -0800 (PST)
+        id S1729118AbgCDNOH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Mar 2020 08:14:07 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44540 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728969AbgCDNOH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 08:14:07 -0500
+Received: by mail-wr1-f68.google.com with SMTP id n7so2314522wrt.11
+        for <io-uring@vger.kernel.org>; Wed, 04 Mar 2020 05:14:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Dw7yFnXVIwTUIwGPdh/QGpKt0AsNfveoCp5EcTASH+8=;
-        b=oHbd8PFXg5Ln9LFJYIrcqNS0uq9+pQdrYPlFsCA1vpMKZUucg5iYNUVQPZEpsDizhk
-         w3fR8MtnPCiwzhgJ6tKx0AOuP3wTHovuFBVP6NfMe76i7j0bV7J5+PnxNNx0HCt/Cy7I
-         GsGchZtt9TLCqwmpXjCLkACKt41ln1fpN/MWcJ3Q2DEhpDMrWMf1v/pPyx/Fw3nGYt9s
-         aijbnYynJK8vKp6SFZNf8Yof2O6D85ZKZJ6w5Q6xmaJRIs4xuLnyNRSICwrv04Al3qXn
-         5QK3ZaWuIic846NEt881lhEcgc7jhe3dcnvEYDlUNPdUHUJVYyDAox7F5g+j1wf41Gve
-         oqng==
+        bh=v1tToJIZHbp6oHGAoeYQQFZ+RpQrRi22ML8rDx8DbFs=;
+        b=VCGd1mijBcxqlxy8ZuNLTu5CSeG6OPcmV0L4Gx86OEgy0VQXWVlSPlHHnC5toiJRh4
+         Opg2RYoqeHv8id2wN/wRqf4ZAeKGGFge0iZY+GFQv5WFaa6wnEqN/wOUF7DpAonDN0xn
+         Ema6J/jeqO8Em7U1nf9ytTK2uYvzPsBm8R7V/IMOJQYW7ukE60gfERQN1+4qFsEeMQ+F
+         k9lvehqMMmv2SiFNp2is7tBr3G0Gq4uAAGxfdFjEw755IaR8kyGTVP7FhDAHJSqMMazB
+         f9+0FWWoU8R6+LhgC32zqjjG62EjAzR5cCf5TCRjBWSByuFAO8rspkDxNRuSREOIrKHj
+         lLjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=Dw7yFnXVIwTUIwGPdh/QGpKt0AsNfveoCp5EcTASH+8=;
-        b=PxC9kwc08dbyHXwmzGooH7OY1wk45uFZdTk4Fz+EO8tNnJGQmi6DQeBiyurz1qcxbI
-         Iq3CWFwgrM+Eh6gKymPgZ/9yFbbOrZsFW3rpWWhXXxEN1K3CGZtVYlbZWnkZT4yDUY5R
-         OhAAo5EaPAlyUzG20pJMjcNey2X/whCGnUfYJlBhuzaMtPrhJWhuWt3fFhaJLHvC4XrB
-         809KfJZNRNggS93RT7ei3pfEg5SP8wFS2VvsDH42sCqwnRbkioCs1wjhG9FrvNdzHkOa
-         INSWXatZ4Vcir+WwuRFqsjibYbDlrFJgyg/vSGPZ/b52/3uLJ72wxqWCcl0xOj1R4v0G
-         LAHw==
-X-Gm-Message-State: ANhLgQ0WAwRQKEjvC3QuKnjd2s5x71FpA/p2dlWa/Q1ClgvtfwS9G6JF
-        5XbQL+GL2Oe7uQ8ESpFiV6c=
-X-Google-Smtp-Source: ADFU+vtQRQn34R7dltpDqAVOJbmosG5SHZPVUxN9ypcqpX4elJZgmc8dXThO4fLDqd5LsoLILcTcVg==
-X-Received: by 2002:a05:600c:2f10:: with SMTP id r16mr1204903wmn.46.1583327275652;
-        Wed, 04 Mar 2020 05:07:55 -0800 (PST)
+        bh=v1tToJIZHbp6oHGAoeYQQFZ+RpQrRi22ML8rDx8DbFs=;
+        b=Y1nyBhG1rxt2pnIrumUd51eHyBLgg/HwH69Vjv1LMl3/NCU6HveF0h9ow/X5yxepgN
+         +Cmci6B5NM4HYryYr+GXxdSZJ3IF4i63ruSI7SUqraGt3ARMP82EyoMA5smG6qtEovq8
+         op0RFspPICVvZor8gpTxNeNUfXwRRhbsBr0/s/vMRWhjtOy/qGcye4WHIDjCEZUbUBoB
+         CHTOP/uyss+t8phLtBrXDxVffsWI3tpmPGt1jnAO+MPN4tuDQTOhB70QNZ7soxYnka4Y
+         +lVs3vk6yKkrYcNLvzG0hgX6Tv5DIHPxlBt6xnhDEpzBJ87guvNPGUoSH7n3ZPS3q4U4
+         fHEQ==
+X-Gm-Message-State: ANhLgQ3qczzkIpldq3KsFYZxkPa/eL5HsEf2GaxFVNv9n6b+W/5ledW7
+        PhayrjRLnco7JYP+AC1JDkE=
+X-Google-Smtp-Source: ADFU+vvQreEf9U3wyYrj7GGm1Z1bNm22MMvezwLQoU5w8rplSVS2j+stp0+u38PyD4AxCzhOmicDmw==
+X-Received: by 2002:a5d:4b01:: with SMTP id v1mr3977420wrq.422.1583327644419;
+        Wed, 04 Mar 2020 05:14:04 -0800 (PST)
 Received: from [192.168.43.187] ([109.126.130.242])
-        by smtp.gmail.com with ESMTPSA id a7sm40754952wrm.29.2020.03.04.05.07.54
+        by smtp.gmail.com with ESMTPSA id t9sm3839546wmi.45.2020.03.04.05.14.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2020 05:07:55 -0800 (PST)
+        Wed, 04 Mar 2020 05:14:03 -0800 (PST)
+Subject: Re: [PATCH 4/4] io_uring: test patch for fd passing
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc:     jlayton@kernel.org
 References: <20200303235053.16309-1-axboe@kernel.dk>
- <20200303235053.16309-3-axboe@kernel.dk>
+ <20200303235053.16309-5-axboe@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -93,13 +94,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 2/4] io_uring: move CLOSE req->file checking into handler
-Message-ID: <a90767a7-f930-8e0c-b816-b4eb90452c58@gmail.com>
-Date:   Wed, 4 Mar 2020 16:07:07 +0300
+Message-ID: <b2568465-1f35-fbb7-96df-f1aa4801c969@gmail.com>
+Date:   Wed, 4 Mar 2020 16:13:16 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200303235053.16309-3-axboe@kernel.dk>
+In-Reply-To: <20200303235053.16309-5-axboe@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -109,46 +109,18 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 04/03/2020 02:50, Jens Axboe wrote:
-> In preparation for not needing req->file in on the prep side at all.
+> This allows a chain link to set ->fd to IOSQE_FD_LAST_OPEN, which will
+> then be turned into the results from the last open (or accept) request
+> in the chain. If no open has been done, this isn't valid and the request
+> will be errored with -EBADF.
 > 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/io_uring.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> With this, we can define chains of open+read+close, where the read and
+> close part can work on the fd instantiated by the open request.
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 0464efbeba25..9d5e49a39dba 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -3367,10 +3367,6 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  		return -EBADF;
->  
->  	req->close.fd = READ_ONCE(sqe->fd);
-> -	if (req->file->f_op == &io_uring_fops ||
-> -	    req->close.fd == req->ctx->ring_fd)
-> -		return -EBADF;
-> -
->  	return 0;
->  }
->  
-> @@ -3400,6 +3396,10 @@ static int io_close(struct io_kiocb *req, bool force_nonblock)
->  {
->  	int ret;
->  
-> +	if (req->file->f_op == &io_uring_fops ||
-> +	    req->close.fd == req->ctx->ring_fd)
-> +		return -EBADF;
-> +
+> Totally a work in progress, POC so far.
 
-@ring_fd's and @ring_file's lifetimes are bound by call to io_submit_sqes(), and
-they're undefined outside. For the same reason both of them should be used with
-ctx->uring_lock hold.
-
-
->  	req->close.put_file = NULL;
->  	ret = __close_fd_get_file(req->close.fd, &req->close.put_file);
->  	if (ret < 0)
-> 
+I'm concerned of having and supporting all these IOSQE flavours. Isn't it the
+thing that can be potentially done with eBPF?
 
 -- 
 Pavel Begunkov

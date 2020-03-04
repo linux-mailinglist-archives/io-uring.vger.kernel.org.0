@@ -2,131 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B7517994E
-	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 20:51:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D59179951
+	for <lists+io-uring@lfdr.de>; Wed,  4 Mar 2020 20:52:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbgCDTu7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Mar 2020 14:50:59 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:45879 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbgCDTu7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 14:50:59 -0500
-Received: by mail-il1-f195.google.com with SMTP id s201so2151046ilc.12
-        for <io-uring@vger.kernel.org>; Wed, 04 Mar 2020 11:50:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6+dZ8mka3m/YUuzPaWXwaycBYWlcCeI00o5WArPjgOc=;
-        b=icAIPeGSFlyH0DzKHSQZZaXpTJj3HbUgeo9My55RtrRBJtG+Z6+/KwVWkVvkHCWnhA
-         Vas0N1zEWsQa1PdCA/eHATVwx0efbm4tlQKVxTdUUkJljbsxc9KSEtBAzD7lK35oBKZO
-         xePyev/HJuU1N4z9r9d7u5l3cfzQn0B/+sFrMOIe3gnr2jE9ulm3thDQQx4Tdd8kKYRo
-         7HxjxrmZkuQK/OFKLCfRmsUjq2E6QczO/URPMiDhjbZsdkVyVOG2e5PRK2TNti/8Iyw7
-         0yRfOa8QoU1r4tRf/ZmXFuwB1iZXFGxtmyDvsPBdEu+TKNEiPzBuMlPRAqAJMB2dUNdK
-         jqoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6+dZ8mka3m/YUuzPaWXwaycBYWlcCeI00o5WArPjgOc=;
-        b=HGw8Yqzx5OdN8ja7fvZEch12yNWeZdaV5/HJrNd3GLrypk/p8LAzGRDk+o0rAaO6UT
-         r4lJmVK6NWcMwn+wmxibOZqNQ08COBA+AEMN+8ogEI+d4a/xUOkjUIIR53K+RZVGw6bP
-         FHkfkEz1uHrJk/JKZwHs/Xb237KzAqaU3o5RACqFK4W2joaN9Y6hSe/L5VJnNlFtC98U
-         R1NK2npdyQK++FOzIPMhAWwviSxT0P+9glC6VKVb8kS0Oei7hWZLmagh7ecS0V3KgEPu
-         Lt8JcJk1e8QmAIVjYiL2TljMx/qaIn0s3c2a+5+lFPCNN+AIb4OanqFHjngnlmfysmrt
-         boaQ==
-X-Gm-Message-State: ANhLgQ0LoxDR0HRKdtK+ZPrIMYDmto8PLmGnXX/umcykeoK8DtTKS+wP
-        hTNdF3e67lbe7f6tWFb7SUoJV6K4Rho=
-X-Google-Smtp-Source: ADFU+vsylS5NjPuU7aNoxo6ywGsj58eXKh64aBxiUeRFMo7zXKmK0bhjfS/AX6z1s54RsvOlX8v5Wg==
-X-Received: by 2002:a05:6e02:686:: with SMTP id o6mr4207168ils.181.1583351456912;
-        Wed, 04 Mar 2020 11:50:56 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id d18sm6738920iom.39.2020.03.04.11.50.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2020 11:50:56 -0800 (PST)
-Subject: Re: [PATCHSET v2 0/6] Support selectable file descriptors
-To:     Jeff Layton <jlayton@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>
-Cc:     io-uring@vger.kernel.org
+        id S2387847AbgCDTv7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Mar 2020 14:51:59 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:39591 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387905AbgCDTv7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Mar 2020 14:51:59 -0500
+X-Originating-IP: 92.243.9.8
+Received: from localhost (joshtriplett.org [92.243.9.8])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 6DA831C0002;
+        Wed,  4 Mar 2020 19:51:58 +0000 (UTC)
+Date:   Wed, 4 Mar 2020 11:51:58 -0800
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, jlayton@kernel.org
+Subject: Re: [PATCH 6/6] io_uring: allow specific fd for IORING_OP_ACCEPT
+Message-ID: <20200304195158.GA16527@localhost>
 References: <20200304180016.28212-1-axboe@kernel.dk>
- <20200304190341.GB16251@localhost>
- <121d15a7-4b21-368c-e805-a0660b1c851a@kernel.dk>
- <50d459bb4c894b99532d9f56fadceb0c317ab7f0.camel@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <23facb58-294c-546e-576c-9edbe40af750@kernel.dk>
-Date:   Wed, 4 Mar 2020 12:50:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ <20200304180016.28212-7-axboe@kernel.dk>
+ <20200304190223.GA16251@localhost>
+ <54cbb2d9-e1d7-07b1-2806-6f430a420dd8@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <50d459bb4c894b99532d9f56fadceb0c317ab7f0.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54cbb2d9-e1d7-07b1-2806-6f430a420dd8@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/4/20 12:28 PM, Jeff Layton wrote:
-> On Wed, 2020-03-04 at 12:10 -0700, Jens Axboe wrote:
->> On 3/4/20 12:03 PM, Josh Triplett wrote:
->>> On Wed, Mar 04, 2020 at 11:00:10AM -0700, Jens Axboe wrote:
->>>> One of the fabled features with chains has long been the desire to
->>>> support things like:
->>>>
->>>> <open fileX><read from fileX><close fileX>
->>>>
->>>> in a single chain. This currently doesn't work, since the read/close
->>>> depends on what file descriptor we get on open.
->>>>
->>>> The original attempt at solving this provided a means to pass
->>>> descriptors between chains in a link, this version takes a different
->>>> route. Based on Josh's support for O_SPECIFIC_FD, we can instead control
->>>> what fd value we're going to get out of open (or accept). With that in
->>>> place, we don't need to do any magic to make this work. The above chain
->>>> then becomes:
->>>>
->>>> <open fileX with fd Y><read from fd Y><close fd Y>
->>>>
->>>> which is a lot more useful, and allows any sort of weird chains without
->>>> needing to nest "last open" file descriptors.
->>>>
->>>> Updated the test program to use this approach:
->>>>
->>>> https://git.kernel.dk/cgit/liburing/plain/test/orc.c?h=fd-select
->>>>
->>>> which forces the use of fd==89 for the open, and then uses that for the
->>>> read and close.
->>>>
->>>> Outside of this adaptation, fixed a few bugs and cleaned things up.
->>>
->>> I posted one comment about an issue in patch 6.
->>>
->>> Patches 2-5 look great; for those:
->>> Reviewed-by: Josh Triplett <josh@joshtriplett.org>
->>>
->>> Thanks for picking this up and running with it!
->>
->> Thanks for doing the prep work! I think it turned out that much better
->> for it.
->>
->> Are you going to post your series for general review? I just stole
->> your 1 patch that was needed for me.
->>
+On Wed, Mar 04, 2020 at 12:09:14PM -0700, Jens Axboe wrote:
+> On 3/4/20 12:02 PM, Josh Triplett wrote:
+> > On Wed, Mar 04, 2020 at 11:00:16AM -0700, Jens Axboe wrote:
+> >> sqe->len can be set to a specific fd we want to use for accept4(), so
+> >> it uses that one instead of just assigning a free unused one.
+> > [...]
+> >> +	accept->open_fd = READ_ONCE(sqe->len);
+> >> +	if (!accept->open_fd)
+> >> +		accept->open_fd = -1;
+> > 
+> > 0 is a valid file descriptor. I realize that it seems unlikely, but I
+> > went to a fair bit of trouble in my patch series to ensure that
+> > userspace could use any valid file descriptor openat2, without a corner
+> > case like "you can't open as file descriptor 0", even though it would
+> > have been more convenient to just say "if you pass a non-zero fd in
+> > open_how". Please consider accepting a flag to determine the validity of
+> > open_fd.
 > 
-> This does seem like a better approach overall.
+> Heh, I actually just changed this, just added that as a temporary hack to
+> verify that things were working. Now SOCK_SPECIFIC_FD is required, and we
+> just gate on that. OP_ACCEPT disallowed fd != 0 before, so we continue
+> to do that if SOCK_SPECIFIC_FD isn't set:
 > 
-> How should userland programs pick fds to use for this though? Should you
-> just start with some reasonably high number that you don't expect to
-> have been used by the current process or is there some more reliable way
-> to do it?
+> https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fd-select
+> 
+> top two patches.
 
-If you look at Josh's separate posting, he has a patch that sets the
-min_fd for the normal dynamic allocations. With that, you could set that
-to eg 1000, and then know that anything below that would be fair game to
-use for the selectable fd values.
+That looks much better, thank you!
 
--- 
-Jens Axboe
+For the entire 6-patch series through commit
+2e4ccbb5e66eaa5963dbaf502e8adf1c063c086b:
 
+Reviewed-by: Josh Triplett <josh@joshtriplett.org>

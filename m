@@ -2,98 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B69617ACAF
-	for <lists+io-uring@lfdr.de>; Thu,  5 Mar 2020 18:22:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FE3D17AF5F
+	for <lists+io-uring@lfdr.de>; Thu,  5 Mar 2020 21:06:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbgCEROI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Mar 2020 12:14:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727557AbgCEROH (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:14:07 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A6F32146E;
-        Thu,  5 Mar 2020 17:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583428446;
-        bh=Fd5mXYSIkdYOZviVLVfQIG/AbZvQecDxCTGdLIxVWH4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DJSup7gQwVkhjRiSWeH1J9Z1W7EpfjdmlddKsQFaev1Bfj7LauEFJ3bH1tERiQoK6
-         KCuAiWvPfyU/LzH6IdAIfpKggGNfJdhJPvxNGsyxHx+T5+pNE0jICHyxqYDgXqpDBV
-         YjKjaUpjDixEkuWdBApTkJy4/tfokBHERbE6UWmQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 42/67] io_uring: pick up link work on submit reference drop
-Date:   Thu,  5 Mar 2020 12:12:43 -0500
-Message-Id: <20200305171309.29118-42-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200305171309.29118-1-sashal@kernel.org>
-References: <20200305171309.29118-1-sashal@kernel.org>
+        id S1726083AbgCEUF7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Mar 2020 15:05:59 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:55160 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbgCEUF7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Mar 2020 15:05:59 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 025K3Dvk022598;
+        Thu, 5 Mar 2020 20:05:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=t8CAWsgw/ELAbr5QnCrpPBQ505nk1Vu1ytI4BAQPrjk=;
+ b=qw5KAu+5x/mirpb96LhLseOQBeoE1g3KqE56X2xHk0uyspvS/7d79kx9XbhpTUcU7uj3
+ dvVo/KBxCSR/2onyknlNQJSLw325k5akEGJ/QT2uC9/SkdupNuXCdQwRCpVEkizLrZF9
+ 6ewlsMmbqeNpMWBFXrIpQA3d1cjozQq6CFYv0+NVRD5HPArWkNpPxmURjVvgxOXZxEWN
+ e/H4O4ZZp9I/kabwHM/XtyLc2NPfxv63pFsl13+SjpeA5JUGyhoI/bGsWHfw9sWnMsQq
+ Ky358/r857GJoJ90QY0CwjiuGBf3vNOzjIiROeHrsuO/CxErp6Ce4w8po/6ZjBGator+ Yw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2yghn3k7ck-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Mar 2020 20:05:55 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 025K3BNE121033;
+        Thu, 5 Mar 2020 20:05:55 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2yg1h48kdp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Mar 2020 20:05:54 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 025K5sBK007254;
+        Thu, 5 Mar 2020 20:05:54 GMT
+Received: from kili.mountain (/41.210.146.162)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Mar 2020 12:05:53 -0800
+Date:   Thu, 5 Mar 2020 23:05:44 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] io_uring: Fix error handling in
+ __io_compat_recvmsg_copy_hdr()
+Message-ID: <20200305200544.5wmrfo7hbfybp3w5@kili.mountain>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003050116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003050116
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+We need to check if __get_compat_msghdr() fails and return immediately
+on error.  Also if compat_import_iovec() fails then we should return a
+negative error code, but the current behavior is to just return
+success.
 
-[ Upstream commit 2a44f46781617c5040372b59da33553a02b1f46d ]
-
-If work completes inline, then we should pick up a dependent link item
-in __io_queue_sqe() as well. If we don't do so, we're forced to go async
-with that item, which is suboptimal.
-
-This also fixes an issue with io_put_req_find_next(), which always looks
-up the next work item. That should only be done if we're dropping the
-last reference to the request, to prevent multiple lookups of the same
-work item.
-
-Outside of being a fix, this also enables a good cleanup series for 5.7,
-where we never have to pass 'nxt' around or into the work handlers.
-
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: ede6c476b57d ("io_uring: add IOSQE_BUFFER_SELECT support for IORING_OP_RECVMSG")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/io_uring.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/io_uring.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 95df7026ac5aa..39b18ab928210 100644
+index d7c42bd04c78..c1a59cde2d88 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1099,10 +1099,10 @@ static void io_free_req(struct io_kiocb *req)
- __attribute__((nonnull))
- static void io_put_req_find_next(struct io_kiocb *req, struct io_kiocb **nxtptr)
- {
--	io_req_find_next(req, nxtptr);
--
--	if (refcount_dec_and_test(&req->refs))
-+	if (refcount_dec_and_test(&req->refs)) {
-+		io_req_find_next(req, nxtptr);
- 		__io_free_req(req);
-+	}
- }
+@@ -3684,6 +3684,8 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+ 	msg_compat = (struct compat_msghdr __user *) sr->msg;
+ 	ret = __get_compat_msghdr(&io->msg.msg, msg_compat, &io->msg.uaddr,
+ 					&ptr, &len);
++	if (ret)
++		return ret;
  
- static void io_put_req(struct io_kiocb *req)
-@@ -3559,7 +3559,7 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	uiov = compat_ptr(ptr);
+ 	if (req->flags & REQ_F_BUFFER_SELECT) {
+@@ -3703,8 +3705,8 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+ 		ret = compat_import_iovec(READ, uiov, len, UIO_FASTIOV,
+ 						&io->msg.iov,
+ 						&io->msg.msg.msg_iter);
+-		if (ret > 0)
+-			ret = 0;
++		if (ret < 0)
++			return ret;
+ 	}
  
- err:
- 	/* drop submission reference */
--	io_put_req(req);
-+	io_put_req_find_next(req, &nxt);
- 
- 	if (linked_timeout) {
- 		if (!ret)
+ 	return 0;
 -- 
-2.20.1
+2.11.0
 

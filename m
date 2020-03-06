@@ -2,78 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CBBA17B414
-	for <lists+io-uring@lfdr.de>; Fri,  6 Mar 2020 02:56:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5887917C059
+	for <lists+io-uring@lfdr.de>; Fri,  6 Mar 2020 15:36:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbgCFB4B (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Mar 2020 20:56:01 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36687 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbgCFB4B (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Mar 2020 20:56:01 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d9so324327pgu.3
-        for <io-uring@vger.kernel.org>; Thu, 05 Mar 2020 17:55:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kaXeesIPPJMvPx4kXVh7gCp+Z3uzVmJEDAEEcWfSDtk=;
-        b=m0uGG95jnfdlAWS1zW5wrVlOCbHvBqS4pnLjhYDwoHSUSeZ0mdxsG7TrEgIOVlMyjJ
-         XkqhXyi+g1rDj4yGoOYDzALFjGqSGhoAURaZPXV1WpQCz5ZEz8K7+C/j8ypaEekRQ5vX
-         nG83Vbtwn11cHwxzs5q997ZKprD0v4/UHFRFyf84aZqL35AcJR4+nYOiO3zDUbZSHMEb
-         ctLVvigiannkuT0QAk7SzuW6eUfJ5dkrx+E007kPyW4wT/qn6WevAXqYPHJ9Tu67CPjF
-         HZhrubOk0/1pK7pirS8FoMwv/UibUoJ8ZYbez9HmrKF9Uj6vcglRbIPFmyM28N3iKiBN
-         ekmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kaXeesIPPJMvPx4kXVh7gCp+Z3uzVmJEDAEEcWfSDtk=;
-        b=pS30V8cf7V1ehpw4CogLCW8xArzpzDwzztdiFtMO40JaIiq5ejdt81Tq9IeDk8FLQZ
-         pKQSI8HXUCVRN8spyc8MXxktTQuavo35Ww0W+n0Sa5Ac4InI3Mn+C7/RtKSlSX9xegdj
-         SOF05vrVtVA1Rqhxrw/X3hfsbmPmLI64PL53d3peMzg6RruoqRKViVUcd10pngTdJ7z1
-         F97S9uBa9hKN2d8ju8MOFf4x9HDdN8X717kJxf834QcWYWCva4RnIfRhxjiVDZSsJM+6
-         UtbpBm4sIxmKD2BD8a83H04RashLflFJUTJClWKXdlGUERWIO6LqdnF8/XAIxynDSpa/
-         3gmw==
-X-Gm-Message-State: ANhLgQ2lZ/WqP3bVmYVi4TlQq0dwkUd2qgRvZ4NtaH1rkQBDYakRC3Ul
-        kzXf1w2K3k5siCZ3A4ejT2IAbg==
-X-Google-Smtp-Source: ADFU+vtqOTPBL+DI0/5IBgeGnVtrkQZjNncicf0Rr++POXk8uMRWYzPeLE+yHx0D7xZIm9ix3RJqHg==
-X-Received: by 2002:a63:d10c:: with SMTP id k12mr962268pgg.392.1583459758864;
-        Thu, 05 Mar 2020 17:55:58 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id x16sm6615906pfq.40.2020.03.05.17.55.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Mar 2020 17:55:58 -0800 (PST)
-Subject: Re: [PATCH] io_uring: Fix error handling in
- __io_compat_recvmsg_copy_hdr()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20200305200544.5wmrfo7hbfybp3w5@kili.mountain>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8ae4f1e1-9158-4ec8-e6fc-87c836093b89@kernel.dk>
-Date:   Thu, 5 Mar 2020 18:55:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726704AbgCFOgh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 Mar 2020 09:36:37 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:52778 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbgCFOgh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Mar 2020 09:36:37 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 026EZt8N119834;
+        Fri, 6 Mar 2020 14:36:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=xa65RcA52aSBC9k32u2gnoNOdze/X6lwyq6dnX69pNM=;
+ b=P88AOonRfnU1JRYDh7zY2PZrjrAjh5Uu0+nLglIKN+BXnnEZi9EmfdHUvgQ9YFFWwoo2
+ MLiLc2/apoBnta6LzJICVwlbvuMxM7ypm/mdTZv6Zlew3UH3kz46sVnOUe9DVKy5TPF+
+ qdWkWD3RJIJ22PrjDWZ/74Zgedg7nASUzF1Ixz9kH8ktMJKDLrPZidks9upo5FTI8p7J
+ byPH9GDFtxLD51TDdVAGUCGAsJ2BFkVLxkCzhZVtGpohaa8DhwKAejFz8Zli4s1YofEu
+ lN28zbQqxe1nhguOwtTEixSpS9p27qqybb0HAhsJZybyow4A1R2XPvDVDTaaRHqC6JOf EQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2ykgys27dy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Mar 2020 14:36:01 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 026EWxgG188705;
+        Fri, 6 Mar 2020 14:36:00 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2yg1s0t5r6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Mar 2020 14:36:00 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 026EZwWS006594;
+        Fri, 6 Mar 2020 14:35:58 GMT
+Received: from kadam (/41.210.146.162)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 06 Mar 2020 06:35:57 -0800
+Date:   Fri, 6 Mar 2020 17:35:52 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
+Message-ID: <20200306143552.GC19839@kadam>
+References: <00000000000067c6df059df7f9f5@google.com>
+ <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
+ <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20200305200544.5wmrfo7hbfybp3w5@kili.mountain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=750
+ suspectscore=2 malwarescore=0 adultscore=0 spamscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003060103
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 lowpriorityscore=0
+ mlxscore=0 mlxlogscore=796 bulkscore=0 impostorscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 spamscore=0 clxscore=1011 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003060103
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/5/20 1:05 PM, Dan Carpenter wrote:
-> We need to check if __get_compat_msghdr() fails and return immediately
-> on error.  Also if compat_import_iovec() fails then we should return a
-> negative error code, but the current behavior is to just return
-> success.
 
-Thanks, that certainly looks better... Applied.
+There a bunch of similar bugs.  It's seems a common anti-pattern.
 
--- 
-Jens Axboe
+block/blk-cgroup.c:85 blkg_free() warn: freeing 'blkg' which has percpu_ref_exit()
+block/blk-core.c:558 blk_alloc_queue_node() warn: freeing 'q' which has percpu_ref_exit()
+drivers/md/md.c:5528 md_free() warn: freeing 'mddev' which has percpu_ref_exit()
+drivers/target/target_core_transport.c:583 transport_free_session() warn: freeing 'se_sess' which has percpu_ref_exit()
+fs/aio.c:592 free_ioctx() warn: freeing 'ctx' which has percpu_ref_exit()
+fs/aio.c:806 ioctx_alloc() warn: freeing 'ctx' which has percpu_ref_exit()
+fs/io_uring.c:6115 io_sqe_files_unregister() warn: freeing 'data' which has percpu_ref_exit()
+fs/io_uring.c:6431 io_sqe_files_register() warn: freeing 'ctx->file_data' which has percpu_ref_exit()
+fs/io_uring.c:7134 io_ring_ctx_free() warn: freeing 'ctx' which has percpu_ref_exit()
+kernel/cgroup/cgroup.c:4948 css_free_rwork_fn() warn: freeing 'css' which has percpu_ref_exit()
+mm/backing-dev.c:615 cgwb_create() warn: freeing 'wb' which has percpu_ref_exit()
+
+regards,
+dan carpenter
 

@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3555717C834
-	for <lists+io-uring@lfdr.de>; Fri,  6 Mar 2020 23:16:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2731D17C836
+	for <lists+io-uring@lfdr.de>; Fri,  6 Mar 2020 23:16:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbgCFWQT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 Mar 2020 17:16:19 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35523 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbgCFWQT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Mar 2020 17:16:19 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m3so3978679wmi.0;
-        Fri, 06 Mar 2020 14:16:18 -0800 (PST)
+        id S1726307AbgCFWQi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 Mar 2020 17:16:38 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34164 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbgCFWQi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Mar 2020 17:16:38 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z15so4133020wrl.1;
+        Fri, 06 Mar 2020 14:16:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=/j1T882kpdTB+xU9Pa7Mjqyda6ZI9wU/9+N6UU71UIA=;
-        b=uSDUuU/P6iCMlQKs+oWn+03baStJwUexZeV0BAmAZo0lMI0eozSOhf6o/ZO9rjrJSZ
-         2jqejJz8gFQoJOVZjcZE2Gem13AwnewQ3t4Qkhw15zz0eWta3ESGvXnk7HU3hwjgP4M0
-         P1Kg2XVJCIJpPwR8ZR0F3q534uKCa2z3vhTsFMe2PEQX2QXeyQ3G9kZljKooLcllSFIL
-         O9T7w2SPbiTgJFZkvDhQnmTn+/c8xIGyDGleLV5jk8+pQTkESd/UxK6xWUK4CmVRUpMJ
-         WyiyAgluj7kUKlisVu5AyZZFwVAxQMLY7ZTJvHjvVH++wOKEpGuraRhesp3bXpzjJeZl
-         h0Tw==
+        bh=uOvy7qFzP2o/QfsQqd9FQH6elo20IssQkb6btx1/LZI=;
+        b=PgmOLgpHd//uqECmKFYAD9ljB1lvLgSnihAI1gmHND6MHOXT7BhkZl3b2bqnUcGHEt
+         hxJKcB/i/EcKTUw7w6HORLnI828m0NNqvxKu77lUCLn1f+nRqtISqrLBP9leDXJbOzW/
+         pxGA9xYX6GOF5WS3kpSOnT8NNVT7FBZg4Yt0IhxDc9aSyNiy17S9TiZ0SXD/vcDyLJe0
+         xJmvd1cAp2mFWEklxC/RtWmTTa6XaIXPEsXVFs8FqClUn77xI874i7XiQhdfh0JX9PdZ
+         hh60OB3PfCXp1WwVtNqS6oT0OdMrylNNMdrbDHtho7v6+lemH0z0hk3DiFbuerepKX0x
+         C7yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=/j1T882kpdTB+xU9Pa7Mjqyda6ZI9wU/9+N6UU71UIA=;
-        b=lARdoLeWJQ/PcPyYz/ibYz8h8r0aPY03jSPz7jn/rrBBPaO4VvvWrlIOh7+y7Lx9pY
-         j6clW0a9bMhCUH3T2nu9E9chVlhNonDT+3uasOgfuHXCtHMHw9RcJ/duVqr0j4Hns21h
-         j0U13nSfzn9FqAAkJJ0ky1fR39lCwNzWUBgQHW7fA7WG2fI3fc/f1SNp9HIq7le4mu1D
-         ZOo+RL/rysBiddxSz13Eh4Kkv399f3x+j/EPFF8+SEDB+W9rt5DySRFYitc/f5c7JAUY
-         u5viCnTzujsoE/+X4DMio5iJ1KAyzTwe1eHY3gyHHdLwplDLNE2wJci8eG/oyyma+fFU
-         oMnw==
-X-Gm-Message-State: ANhLgQ0m9NPg8Grc3KefEyPb4KGj1hbnAOlmhCc2NepcReZLiyxhhtPe
-        sFP0dsYA6NDZ95isKRSW4UyDqcmU
-X-Google-Smtp-Source: ADFU+vsZMBvdEhNjOHFkyfx/FCSXMfBltUFRIQIAlO4kfizh/XRAKylY221r6UbcNbXc8P3tI4Xb+w==
-X-Received: by 2002:a7b:c76a:: with SMTP id x10mr6028129wmk.49.1583532977341;
-        Fri, 06 Mar 2020 14:16:17 -0800 (PST)
+        bh=uOvy7qFzP2o/QfsQqd9FQH6elo20IssQkb6btx1/LZI=;
+        b=t6EYHTZMYpr3bnxKAb02Gkhllc00E65Ja+emvAHn2kydY3OQZERSZLF09nmyScnx/W
+         3yUpfaftg6wkqf5tY+rtirYBDba69cipQ+KxOrwhLMrJolCa9dE0JZ1T242uf6+iOuy6
+         6rriKxjHFPNLDubYpiviwjz/acHcAgBjwm2A1cQVZW7DX4l5LVUCH/AKQIz6sWJvVNG8
+         YTNNIfZSn9uiHAXgbXWWEU/ylNrOIubGIWMXSUNFtJcndL1C1RbvuZZdnSGG5D90Iv+F
+         iwrZ6BXPDrIg8EJ1O/AXH/I2GaKqj6yTT1tGJX5ZLZtEyZ/tCPCZcqmpthgTyMMObYlS
+         XYMA==
+X-Gm-Message-State: ANhLgQ14KNSg/KSB/TPEYL2SDIAuiRHz67+UuOoXJoi3kqRMDwuIloM+
+        qkCKrWmqoTfYoEGI5hB0Afyv3/PX
+X-Google-Smtp-Source: ADFU+vvZ6lCgwvbC8a0wJ/X1+n+BpidLMBSrXPAuIEv5HBF+/Ap/wTMk8+Lz39t/49KT8fDNOckslQ==
+X-Received: by 2002:adf:ec52:: with SMTP id w18mr5860600wrn.26.1583532995771;
+        Fri, 06 Mar 2020 14:16:35 -0800 (PST)
 Received: from localhost.localdomain ([109.126.130.242])
-        by smtp.gmail.com with ESMTPSA id g7sm50350384wrq.21.2020.03.06.14.16.16
+        by smtp.gmail.com with ESMTPSA id r19sm14592901wmh.26.2020.03.06.14.16.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2020 14:16:16 -0800 (PST)
+        Fri, 06 Mar 2020 14:16:35 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: fix lockup with timeouts
-Date:   Sat,  7 Mar 2020 01:15:22 +0300
-Message-Id: <54e141c75da11f55f607d53c54943b9fee5bbd70.1583532280.git.asml.silence@gmail.com>
+Subject: [PATCH 1/1] io-wq: remove duplicated cancel code
+Date:   Sat,  7 Mar 2020 01:15:39 +0300
+Message-Id: <883f200570ee22c8081469bd571bec5fb27da4c5.1583531319.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,33 +58,208 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There is a recipe to deadlock the kernel: submit a timeout sqe with a
-linked_timeout (e.g.  test_single_link_timeout_ception() from liburing),
-and SIGKILL the process.
-
-Then, io_kill_timeouts() takes @ctx->completion_lock, but the timeout
-isn't flagged with REQ_F_COMP_LOCKED, and will try to double grab it
-during io_put_free() to cancel the linked timeout. Probably, the same
-can happen with another io_kill_timeout() call site, that is
-io_commit_cqring().
+Deduplicate cancellation parts, as many of them looks the same, as do
+e.g.
+- io_wqe_cancel_cb_work() and io_wqe_cancel_work()
+- io_wq_worker_cancel() and io_work_cancel()
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/io-wq.c | 136 ++++++++++-------------------------------------------
+ 1 file changed, 24 insertions(+), 112 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 104f76aace29..94eca92d1354 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1089,6 +1089,7 @@ static void io_kill_timeout(struct io_kiocb *req)
- 	if (ret != -1) {
- 		atomic_inc(&req->ctx->cq_timeouts);
- 		list_del_init(&req->list);
-+		req->flags |= REQ_F_COMP_LOCKED;
- 		io_cqring_fill_event(req, 0);
- 		io_put_req(req);
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index eda36f997dea..0e7c6277afcb 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -855,14 +855,13 @@ void io_wq_cancel_all(struct io_wq *wq)
+ }
+ 
+ struct io_cb_cancel_data {
+-	struct io_wqe *wqe;
+-	work_cancel_fn *cancel;
+-	void *caller_data;
++	work_cancel_fn *fn;
++	void *data;
+ };
+ 
+-static bool io_work_cancel(struct io_worker *worker, void *cancel_data)
++static bool io_wq_worker_cancel(struct io_worker *worker, void *data)
+ {
+-	struct io_cb_cancel_data *data = cancel_data;
++	struct io_cb_cancel_data *match = data;
+ 	unsigned long flags;
+ 	bool ret = false;
+ 
+@@ -873,83 +872,7 @@ static bool io_work_cancel(struct io_worker *worker, void *cancel_data)
+ 	spin_lock_irqsave(&worker->lock, flags);
+ 	if (worker->cur_work &&
+ 	    !(worker->cur_work->flags & IO_WQ_WORK_NO_CANCEL) &&
+-	    data->cancel(worker->cur_work, data->caller_data)) {
+-		send_sig(SIGINT, worker->task, 1);
+-		ret = true;
+-	}
+-	spin_unlock_irqrestore(&worker->lock, flags);
+-
+-	return ret;
+-}
+-
+-static enum io_wq_cancel io_wqe_cancel_cb_work(struct io_wqe *wqe,
+-					       work_cancel_fn *cancel,
+-					       void *cancel_data)
+-{
+-	struct io_cb_cancel_data data = {
+-		.wqe = wqe,
+-		.cancel = cancel,
+-		.caller_data = cancel_data,
+-	};
+-	struct io_wq_work_node *node, *prev;
+-	struct io_wq_work *work;
+-	unsigned long flags;
+-	bool found = false;
+-
+-	spin_lock_irqsave(&wqe->lock, flags);
+-	wq_list_for_each(node, prev, &wqe->work_list) {
+-		work = container_of(node, struct io_wq_work, list);
+-
+-		if (cancel(work, cancel_data)) {
+-			wq_node_del(&wqe->work_list, node, prev);
+-			found = true;
+-			break;
+-		}
+-	}
+-	spin_unlock_irqrestore(&wqe->lock, flags);
+-
+-	if (found) {
+-		io_run_cancel(work, wqe);
+-		return IO_WQ_CANCEL_OK;
+-	}
+-
+-	rcu_read_lock();
+-	found = io_wq_for_each_worker(wqe, io_work_cancel, &data);
+-	rcu_read_unlock();
+-	return found ? IO_WQ_CANCEL_RUNNING : IO_WQ_CANCEL_NOTFOUND;
+-}
+-
+-enum io_wq_cancel io_wq_cancel_cb(struct io_wq *wq, work_cancel_fn *cancel,
+-				  void *data)
+-{
+-	enum io_wq_cancel ret = IO_WQ_CANCEL_NOTFOUND;
+-	int node;
+-
+-	for_each_node(node) {
+-		struct io_wqe *wqe = wq->wqes[node];
+-
+-		ret = io_wqe_cancel_cb_work(wqe, cancel, data);
+-		if (ret != IO_WQ_CANCEL_NOTFOUND)
+-			break;
+-	}
+-
+-	return ret;
+-}
+-
+-struct work_match {
+-	bool (*fn)(struct io_wq_work *, void *data);
+-	void *data;
+-};
+-
+-static bool io_wq_worker_cancel(struct io_worker *worker, void *data)
+-{
+-	struct work_match *match = data;
+-	unsigned long flags;
+-	bool ret = false;
+-
+-	spin_lock_irqsave(&worker->lock, flags);
+-	if (match->fn(worker->cur_work, match->data) &&
+-	    !(worker->cur_work->flags & IO_WQ_WORK_NO_CANCEL)) {
++	    match->fn(worker->cur_work, match->data)) {
+ 		send_sig(SIGINT, worker->task, 1);
+ 		ret = true;
  	}
+@@ -959,7 +882,7 @@ static bool io_wq_worker_cancel(struct io_worker *worker, void *data)
+ }
+ 
+ static enum io_wq_cancel io_wqe_cancel_work(struct io_wqe *wqe,
+-					    struct work_match *match)
++					    struct io_cb_cancel_data *match)
+ {
+ 	struct io_wq_work_node *node, *prev;
+ 	struct io_wq_work *work;
+@@ -1000,22 +923,16 @@ static enum io_wq_cancel io_wqe_cancel_work(struct io_wqe *wqe,
+ 	return found ? IO_WQ_CANCEL_RUNNING : IO_WQ_CANCEL_NOTFOUND;
+ }
+ 
+-static bool io_wq_work_match(struct io_wq_work *work, void *data)
+-{
+-	return work == data;
+-}
+-
+-enum io_wq_cancel io_wq_cancel_work(struct io_wq *wq, struct io_wq_work *cwork)
++enum io_wq_cancel io_wq_cancel_cb(struct io_wq *wq, work_cancel_fn *cancel,
++				  void *data)
+ {
+-	struct work_match match = {
+-		.fn	= io_wq_work_match,
+-		.data	= cwork
++	struct io_cb_cancel_data match = {
++		.fn	= cancel,
++		.data	= data,
+ 	};
+ 	enum io_wq_cancel ret = IO_WQ_CANCEL_NOTFOUND;
+ 	int node;
+ 
+-	cwork->flags |= IO_WQ_WORK_CANCEL;
+-
+ 	for_each_node(node) {
+ 		struct io_wqe *wqe = wq->wqes[node];
+ 
+@@ -1027,33 +944,28 @@ enum io_wq_cancel io_wq_cancel_work(struct io_wq *wq, struct io_wq_work *cwork)
+ 	return ret;
+ }
+ 
++static bool io_wq_io_cb_cancel_data(struct io_wq_work *work, void *data)
++{
++	return work == data;
++}
++
++enum io_wq_cancel io_wq_cancel_work(struct io_wq *wq, struct io_wq_work *cwork)
++{
++	return io_wq_cancel_cb(wq, io_wq_io_cb_cancel_data, (void *)cwork);
++}
++
+ static bool io_wq_pid_match(struct io_wq_work *work, void *data)
+ {
+ 	pid_t pid = (pid_t) (unsigned long) data;
+ 
+-	if (work)
+-		return work->task_pid == pid;
+-	return false;
++	return work->task_pid == pid;
+ }
+ 
+ enum io_wq_cancel io_wq_cancel_pid(struct io_wq *wq, pid_t pid)
+ {
+-	struct work_match match = {
+-		.fn	= io_wq_pid_match,
+-		.data	= (void *) (unsigned long) pid
+-	};
+-	enum io_wq_cancel ret = IO_WQ_CANCEL_NOTFOUND;
+-	int node;
+-
+-	for_each_node(node) {
+-		struct io_wqe *wqe = wq->wqes[node];
++	void *data = (void *) (unsigned long) pid;
+ 
+-		ret = io_wqe_cancel_work(wqe, &match);
+-		if (ret != IO_WQ_CANCEL_NOTFOUND)
+-			break;
+-	}
+-
+-	return ret;
++	return io_wq_cancel_cb(wq, io_wq_pid_match, data);
+ }
+ 
+ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
 -- 
 2.24.0
 

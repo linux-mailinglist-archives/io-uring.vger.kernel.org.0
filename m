@@ -2,107 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FE3D17AF5F
-	for <lists+io-uring@lfdr.de>; Thu,  5 Mar 2020 21:06:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CBBA17B414
+	for <lists+io-uring@lfdr.de>; Fri,  6 Mar 2020 02:56:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgCEUF7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Mar 2020 15:05:59 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:55160 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbgCEUF7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Mar 2020 15:05:59 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 025K3Dvk022598;
-        Thu, 5 Mar 2020 20:05:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=t8CAWsgw/ELAbr5QnCrpPBQ505nk1Vu1ytI4BAQPrjk=;
- b=qw5KAu+5x/mirpb96LhLseOQBeoE1g3KqE56X2xHk0uyspvS/7d79kx9XbhpTUcU7uj3
- dvVo/KBxCSR/2onyknlNQJSLw325k5akEGJ/QT2uC9/SkdupNuXCdQwRCpVEkizLrZF9
- 6ewlsMmbqeNpMWBFXrIpQA3d1cjozQq6CFYv0+NVRD5HPArWkNpPxmURjVvgxOXZxEWN
- e/H4O4ZZp9I/kabwHM/XtyLc2NPfxv63pFsl13+SjpeA5JUGyhoI/bGsWHfw9sWnMsQq
- Ky358/r857GJoJ90QY0CwjiuGBf3vNOzjIiROeHrsuO/CxErp6Ce4w8po/6ZjBGator+ Yw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2yghn3k7ck-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Mar 2020 20:05:55 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 025K3BNE121033;
-        Thu, 5 Mar 2020 20:05:55 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2yg1h48kdp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Mar 2020 20:05:54 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 025K5sBK007254;
-        Thu, 5 Mar 2020 20:05:54 GMT
-Received: from kili.mountain (/41.210.146.162)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 05 Mar 2020 12:05:53 -0800
-Date:   Thu, 5 Mar 2020 23:05:44 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jens Axboe <axboe@kernel.dk>
+        id S1726378AbgCFB4B (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Mar 2020 20:56:01 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36687 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbgCFB4B (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Mar 2020 20:56:01 -0500
+Received: by mail-pg1-f195.google.com with SMTP id d9so324327pgu.3
+        for <io-uring@vger.kernel.org>; Thu, 05 Mar 2020 17:55:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kaXeesIPPJMvPx4kXVh7gCp+Z3uzVmJEDAEEcWfSDtk=;
+        b=m0uGG95jnfdlAWS1zW5wrVlOCbHvBqS4pnLjhYDwoHSUSeZ0mdxsG7TrEgIOVlMyjJ
+         XkqhXyi+g1rDj4yGoOYDzALFjGqSGhoAURaZPXV1WpQCz5ZEz8K7+C/j8ypaEekRQ5vX
+         nG83Vbtwn11cHwxzs5q997ZKprD0v4/UHFRFyf84aZqL35AcJR4+nYOiO3zDUbZSHMEb
+         ctLVvigiannkuT0QAk7SzuW6eUfJ5dkrx+E007kPyW4wT/qn6WevAXqYPHJ9Tu67CPjF
+         HZhrubOk0/1pK7pirS8FoMwv/UibUoJ8ZYbez9HmrKF9Uj6vcglRbIPFmyM28N3iKiBN
+         ekmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kaXeesIPPJMvPx4kXVh7gCp+Z3uzVmJEDAEEcWfSDtk=;
+        b=pS30V8cf7V1ehpw4CogLCW8xArzpzDwzztdiFtMO40JaIiq5ejdt81Tq9IeDk8FLQZ
+         pKQSI8HXUCVRN8spyc8MXxktTQuavo35Ww0W+n0Sa5Ac4InI3Mn+C7/RtKSlSX9xegdj
+         SOF05vrVtVA1Rqhxrw/X3hfsbmPmLI64PL53d3peMzg6RruoqRKViVUcd10pngTdJ7z1
+         F97S9uBa9hKN2d8ju8MOFf4x9HDdN8X717kJxf834QcWYWCva4RnIfRhxjiVDZSsJM+6
+         UtbpBm4sIxmKD2BD8a83H04RashLflFJUTJClWKXdlGUERWIO6LqdnF8/XAIxynDSpa/
+         3gmw==
+X-Gm-Message-State: ANhLgQ2lZ/WqP3bVmYVi4TlQq0dwkUd2qgRvZ4NtaH1rkQBDYakRC3Ul
+        kzXf1w2K3k5siCZ3A4ejT2IAbg==
+X-Google-Smtp-Source: ADFU+vtqOTPBL+DI0/5IBgeGnVtrkQZjNncicf0Rr++POXk8uMRWYzPeLE+yHx0D7xZIm9ix3RJqHg==
+X-Received: by 2002:a63:d10c:: with SMTP id k12mr962268pgg.392.1583459758864;
+        Thu, 05 Mar 2020 17:55:58 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id x16sm6615906pfq.40.2020.03.05.17.55.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2020 17:55:58 -0800 (PST)
+Subject: Re: [PATCH] io_uring: Fix error handling in
+ __io_compat_recvmsg_copy_hdr()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] io_uring: Fix error handling in
- __io_compat_recvmsg_copy_hdr()
-Message-ID: <20200305200544.5wmrfo7hbfybp3w5@kili.mountain>
+References: <20200305200544.5wmrfo7hbfybp3w5@kili.mountain>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8ae4f1e1-9158-4ec8-e6fc-87c836093b89@kernel.dk>
+Date:   Thu, 5 Mar 2020 18:55:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
- suspectscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003050116
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 spamscore=0
- impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
- priorityscore=1501 bulkscore=0 clxscore=1015 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003050116
+In-Reply-To: <20200305200544.5wmrfo7hbfybp3w5@kili.mountain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We need to check if __get_compat_msghdr() fails and return immediately
-on error.  Also if compat_import_iovec() fails then we should return a
-negative error code, but the current behavior is to just return
-success.
+On 3/5/20 1:05 PM, Dan Carpenter wrote:
+> We need to check if __get_compat_msghdr() fails and return immediately
+> on error.  Also if compat_import_iovec() fails then we should return a
+> negative error code, but the current behavior is to just return
+> success.
 
-Fixes: ede6c476b57d ("io_uring: add IOSQE_BUFFER_SELECT support for IORING_OP_RECVMSG")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- fs/io_uring.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Thanks, that certainly looks better... Applied.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d7c42bd04c78..c1a59cde2d88 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3684,6 +3684,8 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
- 	msg_compat = (struct compat_msghdr __user *) sr->msg;
- 	ret = __get_compat_msghdr(&io->msg.msg, msg_compat, &io->msg.uaddr,
- 					&ptr, &len);
-+	if (ret)
-+		return ret;
- 
- 	uiov = compat_ptr(ptr);
- 	if (req->flags & REQ_F_BUFFER_SELECT) {
-@@ -3703,8 +3705,8 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
- 		ret = compat_import_iovec(READ, uiov, len, UIO_FASTIOV,
- 						&io->msg.iov,
- 						&io->msg.msg.msg_iter);
--		if (ret > 0)
--			ret = 0;
-+		if (ret < 0)
-+			return ret;
- 	}
- 
- 	return 0;
 -- 
-2.11.0
+Jens Axboe
 

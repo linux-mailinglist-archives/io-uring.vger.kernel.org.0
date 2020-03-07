@@ -2,54 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E6E517CFFA
-	for <lists+io-uring@lfdr.de>; Sat,  7 Mar 2020 21:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B558C17D074
+	for <lists+io-uring@lfdr.de>; Sat,  7 Mar 2020 23:28:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbgCGUZF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 Mar 2020 15:25:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40778 "EHLO mail.kernel.org"
+        id S1726139AbgCGW2I (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 Mar 2020 17:28:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbgCGUZF (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Sat, 7 Mar 2020 15:25:05 -0500
-Subject: Re: [GIT PULL] io_uring fixes for 5.6-rc
+        id S1726138AbgCGW2H (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sat, 7 Mar 2020 17:28:07 -0500
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F78020684;
+        Sat,  7 Mar 2020 22:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583612704;
-        bh=LqZikUIGjrG49YBGy3wYSV0PklxJB5J09FO9REe4fZM=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=pTYVIOKrcklVcbJrqYpx0BCvWD5U/4d5UKmYPIThhZO7e8yZHKDNtZaehADDDEFkc
-         xVuDb3qVYEhaF1tuovvBWqjjX4Y2e7KbzsUQpe4FGvhh+pGPJKfI1t+TXMkmk+whc4
-         ug02imbUgdfJGxcPWXeVrvPF9sApcfNsHf2Q3eF0=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <b8c32cfe-9bf8-ee8c-a91b-565583a44a8c@kernel.dk>
-References: <b8c32cfe-9bf8-ee8c-a91b-565583a44a8c@kernel.dk>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <b8c32cfe-9bf8-ee8c-a91b-565583a44a8c@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git
- tags/io_uring-5.6-2020-03-07
-X-PR-Tracked-Commit-Id: f0e20b8943509d81200cef5e30af2adfddba0f5c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c20037652700024cffeb6b0f74306ce9b391248f
-Message-Id: <158361270490.17903.10576399726265115993.pr-tracker-bot@kernel.org>
-Date:   Sat, 07 Mar 2020 20:25:04 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        s=default; t=1583620087;
+        bh=C0FP671Pfrvd6YtWzAu9hRhLXZsYGljGU10wwCo4F/8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kgMCk0pAdB4vxirppNuwwEo2K5keMKce68PZyVf39rXJbcE7C4u97DJ9QbZ2jiJnn
+         bpmIEgJUYvzwUSAdCR6PLAam28BSwBLwldw9TxIBYNZb9dugiP4N3dmtlVZCjsfY9t
+         rjMEFRUbg6ago4guDbFIzKWafHDu84KloJGu/pdM=
+Date:   Sat, 7 Mar 2020 14:28:05 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+9c064b9ab4dbb724c806@syzkaller.appspotmail.com>
+Cc:     syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
+Subject: Re: memory leak in path_openat
+Message-ID: <20200307222805.GS15444@sol.localdomain>
+References: <000000000000736cbb059b276cd4@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000736cbb059b276cd4@google.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Sat, 7 Mar 2020 12:16:34 -0700:
+On Thu, Jan 02, 2020 at 04:35:09AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    bf8d1cd4 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16386971e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=328af7338803d39a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9c064b9ab4dbb724c806
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f4ce15e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153c8971e00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+9c064b9ab4dbb724c806@syzkaller.appspotmail.com
+> 
+> BUG: memory leak
+> unreferenced object 0xffff88811f95b400 (size 256):
+>   comm "syz-executor609", pid 6975, jiffies 4294945087 (age 7.980s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     a0 2b ab 1b 82 88 ff ff c0 3c 80 2b 81 88 ff ff  .+.......<.+....
+>   backtrace:
+>     [<00000000aa112990>] kmemleak_alloc_recursive
+> include/linux/kmemleak.h:43 [inline]
+>     [<00000000aa112990>] slab_post_alloc_hook mm/slab.h:586 [inline]
+>     [<00000000aa112990>] slab_alloc mm/slab.c:3320 [inline]
+>     [<00000000aa112990>] kmem_cache_alloc+0x13f/0x2c0 mm/slab.c:3484
+>     [<00000000a62a216f>] kmem_cache_zalloc include/linux/slab.h:660 [inline]
+>     [<00000000a62a216f>] __alloc_file+0x28/0x130 fs/file_table.c:101
+>     [<00000000db4f5560>] alloc_empty_file+0x50/0xd0 fs/file_table.c:151
+>     [<00000000178121b2>] path_openat+0x52/0x1dd0 fs/namei.c:3526
+>     [<00000000b9f51901>] do_filp_open+0xaa/0x130 fs/namei.c:3567
+>     [<000000008b6c278b>] do_sys_open+0x253/0x330 fs/open.c:1097
+>     [<00000000de529158>] __do_sys_openat fs/open.c:1124 [inline]
+>     [<00000000de529158>] __se_sys_openat fs/open.c:1118 [inline]
+>     [<00000000de529158>] __x64_sys_openat+0x24/0x30 fs/open.c:1118
+>     [<000000002f0aeb7b>] do_syscall_64+0x73/0x220
+> arch/x86/entry/common.c:294
+>     [<00000000720f3b5c>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.6-2020-03-07
+Looks like this was an io_uring bug, but it's not reproducible anymore and the
+relevant code was heavily changed recently.  So, invalidating this bug report:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c20037652700024cffeb6b0f74306ce9b391248f
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+#syz invalid

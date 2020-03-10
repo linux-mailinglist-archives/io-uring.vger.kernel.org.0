@@ -2,55 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98EE318010E
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2020 16:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0A17180112
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2020 16:04:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbgCJPEe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 10 Mar 2020 11:04:34 -0400
-Received: from mail-il1-f176.google.com ([209.85.166.176]:37764 "EHLO
-        mail-il1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727795AbgCJPEe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 10 Mar 2020 11:04:34 -0400
-Received: by mail-il1-f176.google.com with SMTP id a6so12294981ilc.4
-        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2020 08:04:34 -0700 (PDT)
+        id S1727856AbgCJPEj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 10 Mar 2020 11:04:39 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:32875 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727849AbgCJPEi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 10 Mar 2020 11:04:38 -0400
+Received: by mail-il1-f194.google.com with SMTP id k29so7090533ilg.0
+        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2020 08:04:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zROZmDA7IXql3hwCfBOpijdNclCXfrOWKVxduTRpcVo=;
-        b=gSiJJlteYxPvKZ0/CefvLlqkJ9beXPj75gSZKV9yqryMuB2ue8qFVEV2dXcgEPDxI8
-         06SrejOUc4dkUAxDUrZryjCGvtcTvVmuaGICxnUoIXBncnmhHOpoyvhnW60kqyhCe+vD
-         1vth9zGFFhm7ifKLTtBNs9v49sTr3cWMlUsl5rGxJ+cST5JWcEexHssJctBaAEJM3x6h
-         4t1n2P8mfsX3plu2JKm6iZ3mFSp1X5lrHjoe+NdRwIwhqERO71pYwCphw5Q+9/cpZuyN
-         XUF3m8cUZu1ahUJHocWCB+jkOS/M77LRmZdbY6hoQHRBC+YdP3UK4OHhdp4mXJUOqM+6
-         c/Lw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=l514IrcApzP58j83EjjHprocgNUYX0xcvH3LdD3Ambw=;
+        b=I+nmKcUpnAIMRvdkAa9YyD0rzCcIQsdWT4/PESStcZJMica21yoWulR1eNq7VyU0Q2
+         cE8ny9dkGzIVJFjNTdSwOB2srMoVqsqO4aSOCkajcxfuslS3kdpVwYeIkmmRKidiDzSt
+         U5HRFVyyG4cvd2iVuGNamXg07V2OJhDyMT5WQKS74KvcAooBq16LaeOWl3QtfzlvT0Yv
+         uxmB00LbfeA/75Ot6Yqw9io+JXbwsPOUW0nKByXrevUkBWIem9IOf/WqlYID1Bmn3zGV
+         ZFSnAzbjY4uSvqXPxIbf5keu1s5QayL8RU3wFg0/Tv+PDLRL2/iShdqe+bRC/LUSXisF
+         a/Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zROZmDA7IXql3hwCfBOpijdNclCXfrOWKVxduTRpcVo=;
-        b=lK4B8oFaZY5rWrZjTtXfZcYrayPm2e+IVW2QeiPmP0yV2t0oeIMBMCo7U8rriwy+9E
-         rAliI+Eg4hWRDDvfhjfmjtKQVK5mopmWpCHNG1t4viSQv7YE521t51qrA51gBbdsrZT0
-         atlD1nXLrNt9aqK0i6AsgugzRPgcKYlmavi97qVWU7DjLDQUQsxQ2revcsNqklclHuZL
-         gR3ER6onhJhxjVVC4SyRHruM9CHU8nOVvRHykRK+rvP0qSVlqi5fmziqfNIyAHsXkYlp
-         8fA1Flggumck5yUH87krjHu/IOHpSwb91G02/wsxvq81h9Q21SIc+Q9q0FL/51kObsxW
-         MkcA==
-X-Gm-Message-State: ANhLgQ3bNvn2TF0ApIz4yT7nychId9UiYqBy+NqodIgRba9FUC4cQu0K
-        VqfbEv62A3EdHiDtREffvWmysinKUoHnMw==
-X-Google-Smtp-Source: ADFU+vsgkgartF6lOi6uXC735a6cWAHtSobKewE3BUqMvXGUhqz6VpzHW9jBm0/xWHGlpgWFGTYijg==
-X-Received: by 2002:a92:d2c5:: with SMTP id w5mr20933363ilg.196.1583852672123;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=l514IrcApzP58j83EjjHprocgNUYX0xcvH3LdD3Ambw=;
+        b=Ft9Mrfk4BWjBstoeZ/z+jv5QPjeWzqGJ8svjIMvYvKduRWS0AYJ2wntTVEnfqBwxtp
+         RtHh1q9l4zgiotGr+qcl8sGIyxYoLdlLWxqkK1uHXd87sjBrrZQUuQOAAwMvAOZJyv3y
+         JC8sQo2odIcbGqot8bevEBhUWsqyEZ0GMDf0ifOrJW2yMPvN7OrVqhXA3s7mdH1RKdBi
+         lejGaLbK9182+r2kvBgMgGxlfABGe1FVZyx/zCe8zY/yJ58IblSULKrOW+SKqqs9TB+6
+         tza0RH+R0Roknhaxu4JDxBeNGoQH90kmEagMl1TTxVcClQM2G0UbDddq6lLfg50NJ0tD
+         O32g==
+X-Gm-Message-State: ANhLgQ2AtYO2HL9tlGa37sQbN9+677p27MnbF9Ud4scxmAOxIgBswib0
+        8VVJ5IP8HgY18XycSTSGHiZwKRHmcbg25A==
+X-Google-Smtp-Source: ADFU+vuZHNqk7H22Zq6S6BzK0JyYsvs7FqQ29vbL1lWzK10uG8MuhD/n47c0DZ/cxiTzoWtjC/ebdw==
+X-Received: by 2002:a92:7911:: with SMTP id u17mr14632433ilc.44.1583852672949;
         Tue, 10 Mar 2020 08:04:32 -0700 (PDT)
 Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id e16sm4684750ioh.7.2020.03.10.08.04.31
+        by smtp.gmail.com with ESMTPSA id e16sm4684750ioh.7.2020.03.10.08.04.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 08:04:31 -0700 (PDT)
+        Tue, 10 Mar 2020 08:04:32 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     andres@anarazel.de
-Subject: [PATCHSET v4] Support for automatic buffer selection
-Date:   Tue, 10 Mar 2020 09:04:17 -0600
-Message-Id: <20200310150427.28489-1-axboe@kernel.dk>
+Cc:     andres@anarazel.de, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/9] io_uring: buffer registration infrastructure
+Date:   Tue, 10 Mar 2020 09:04:18 -0600
+Message-Id: <20200310150427.28489-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200310150427.28489-1-axboe@kernel.dk>
+References: <20200310150427.28489-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -58,71 +60,91 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-With the poll retry based async IO patchset I posted last week, the one
-big missing thing for me was the ability to have automatic buffer
-selection. Generally applications that handle tons of sockets like to
-poll for activity on them, then issue IO when they become ready. This is
-of course at least two system calls, but it also means that it provides
-an application a chance to manage how many IO buffers it needs. With the
-io_uring based polled IO, the application need only issue an
-IORING_OP_RECV (for example, to receive socket data), it doesn't need to
-poll at all. However, this means that the application no longer has an
-opportune moment to select how many IO buffers to keep in flight, it has
-to be equal to what it currently has pending.
+This just prepares the ring for having lists of buffers associated with
+it, that the application can provide for SQEs to consume instead of
+providing their own.
 
-I had originally intended to use BPF to provide some means of buffer
-selection, but I had a hard time imagining how life times of the buffer
-could be managed through that. I had a false start today, but Andres
-suggested a nifty approach that also solves the life time issue.
+The buffers are organized by group ID.
 
-Basically the application registers buffers with the kernel. Each buffer
-is registered with a given group ID, and buffer ID. The buffers are
-organized by group ID, and the application selects a buffer pool based
-on this group ID. One use case might be to group by size. There's an
-opcode for this, IORING_OP_PROVIDE_BUFFERS.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/io_uring.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-IORING_OP_PROVIDE_BUFFERS takes a start address, length of a buffer, and
-number of buffers. It also provides a group ID with which these buffers
-should be associated, and a starting buffer ID. The buffers are then
-added, and the buffer ID is incremented by 1 for each buffer.
-
-With that, when doing the same IORING_OP_RECV, no buffer is passed in
-with the request. Instead, it's flagged with IOSQE_BUFFER_SELECT, and
-sqe->buf_group is filled in with a valid group ID. When the kernel can
-satisfy the receive, a buffer is selected from the specified group ID
-pool. If none are available, the IO is terminated with -ENOBUFS. On
-success, the buffer ID is passed back through the (CQE) completion
-event. This tells the application what specific buffer was used.
-
-A buffer can be used only once. On completion, the application may
-choose to free it, or register it again with IORING_OP_PROVIDE_BUFFERS.
-
-Patches can also be found in the below repo:
-
-https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-buf-select
-
-which is sitting on top of for-5.7/io_uring.
-
-v4:
-- Address various review comments
-- Fixes
-- Fold in 32-bit warning fixes
-
-v3:
-- Add support for IORING_OP_READV and IORING_OP_RECVMSG
-- Drop write side
-- More cleanups on address space, retained state
-- Add a few helpers
-- Rebase on new for-5.7/io_uring
-
-v2:
-- Cleanup address space
-- Fix locking for async offload issue
-- Add lockdep annotation for uring_lock
-- Verify sqe fields on PROVIDE_BUFFERS prep
-- Fix send/recv kbuf leak on import failure
-- Fix send/recv error handling on -ENOBUFS
-- Change IORING_OP_PROVIDE_BUFFER to PROVIDE_BUFFERS, and allow multiple
-  contig buffers in one call
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0d6f4b3b8f13..1f3ae208f6a6 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -195,6 +195,13 @@ struct fixed_file_data {
+ 	struct completion		done;
+ };
+ 
++struct io_buffer {
++	struct list_head list;
++	__u64 addr;
++	__s32 len;
++	__u16 bid;
++};
++
+ struct io_ring_ctx {
+ 	struct {
+ 		struct percpu_ref	refs;
+@@ -272,6 +279,8 @@ struct io_ring_ctx {
+ 	struct socket		*ring_sock;
+ #endif
+ 
++	struct idr		io_buffer_idr;
++
+ 	struct idr		personality_idr;
+ 
+ 	struct {
+@@ -875,6 +884,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	INIT_LIST_HEAD(&ctx->cq_overflow_list);
+ 	init_completion(&ctx->completions[0]);
+ 	init_completion(&ctx->completions[1]);
++	idr_init(&ctx->io_buffer_idr);
+ 	idr_init(&ctx->personality_idr);
+ 	mutex_init(&ctx->uring_lock);
+ 	init_waitqueue_head(&ctx->wait);
+@@ -6524,6 +6534,30 @@ static int io_eventfd_unregister(struct io_ring_ctx *ctx)
+ 	return -ENXIO;
+ }
+ 
++static int __io_destroy_buffers(int id, void *p, void *data)
++{
++	struct io_ring_ctx *ctx = data;
++	struct io_buffer *buf = p;
++
++	/* the head kbuf is the list itself */
++	while (!list_empty(&buf->list)) {
++		struct io_buffer *nxt;
++
++		nxt = list_first_entry(&buf->list, struct io_buffer, list);
++		list_del(&nxt->list);
++		kfree(nxt);
++	}
++	kfree(buf);
++	idr_remove(&ctx->io_buffer_idr, id);
++	return 0;
++}
++
++static void io_destroy_buffers(struct io_ring_ctx *ctx)
++{
++	idr_for_each(&ctx->io_buffer_idr, __io_destroy_buffers, ctx);
++	idr_destroy(&ctx->io_buffer_idr);
++}
++
+ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ {
+ 	io_finish_async(ctx);
+@@ -6534,6 +6568,7 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	io_sqe_buffer_unregister(ctx);
+ 	io_sqe_files_unregister(ctx);
+ 	io_eventfd_unregister(ctx);
++	io_destroy_buffers(ctx);
+ 	idr_destroy(&ctx->personality_idr);
+ 
+ #if defined(CONFIG_UNIX)
+-- 
+2.25.1
 

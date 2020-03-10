@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C0F6180117
+	by mail.lfdr.de (Postfix) with ESMTP id 93CD6180118
 	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2020 16:04:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbgCJPEm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 10 Mar 2020 11:04:42 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:41910 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727845AbgCJPEl (ORCPT
+        id S1727845AbgCJPEn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 10 Mar 2020 11:04:43 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:46673 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727870AbgCJPEl (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 10 Mar 2020 11:04:41 -0400
-Received: by mail-il1-f196.google.com with SMTP id l14so6423033ilj.8
-        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2020 08:04:40 -0700 (PDT)
+Received: by mail-il1-f194.google.com with SMTP id e8so12258149ilc.13
+        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2020 08:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=W4l733DAdrPNx9GnCTFROgD5OKn8lsLjlZl2HPp7xug=;
-        b=kHfz3trLEgGlYAud6Zln8bp75H/YOdDKRuyRHVrULSONhqSc47OWGB31alrx1mWMKE
-         FvGrDclbiHSK+KZ+Fd0oxTcfNSQeWXW4owsOU8Tj6QaSqpW4KToArXCye+fySyjux9eu
-         c8H9RIpcJXkoOpKCz2UNSp0HM1DUAvy4l4koUE9K/Y4duYmY4ji0TS+dchq8JaqcuTcS
-         tDwLG8YG5WHTgepx2TdULqZklvpmIJawoBT1GV0KL03wBVNfk2J/Df/NOq8SLHizTN7N
-         OdcvtIR7G8WG4NFqRsDP+qR1/noaj7P9ZKnZl4S2I7HULH3f+T0pEDP+LvvF+2Fc8Ip7
-         ozkg==
+        bh=AHdDo0OvmfMXRs5la8a/G7V89jVhoTaAvfqIWj6qxic=;
+        b=IGin7W8NAEM0PCBpONk4iDoMBZI2TV43WoXrZX75B1TBlLW8rQkoBe6sqgtwlVUWgW
+         HpqZHZeZ/qeqvExK6++js02bqhkWsmaRyz38vDU+ZJ+lhkmNuua7DRp4M2hTCQlmrUFy
+         LLqCUH3m2bCEb0hn4dm7F3AYPwMDZIvvtPWK3zptJEY37yBQsPSrkCh1h0jnwygo57bu
+         3rj7I0uDt7b8eVOz5a2Koth+yH5/G5EIAmnTreCLRjhzl3w6gPyobxXHffoHiEIVMl4J
+         +Fqkzi6UxWzHo9PdBTGLz6DsCZyfuL+3daCvbw1K7IoBt5VOtwtKG/VnEKPLFgE/Nc3e
+         FwHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=W4l733DAdrPNx9GnCTFROgD5OKn8lsLjlZl2HPp7xug=;
-        b=YXdgvkhK7sr97xOxgG1iIskYu1nwnq/LQDBz8ZjCYu3YALjfp7pPzLJ6mhb9sIxPFp
-         jvy8etCmHKdCiyreQ94zNy5ZQ3JnuB8AWwFacbu1t7hW0b0QAEhaBpCq5r40T7Jkf9o1
-         krsXWBKRwSx/NeZGwmR/U9IYl+rEiRfEfGMANHY8SJI9Rf6FoZRlyhr5GZQFZbTmQJzz
-         QbOSGQzcEbX2ot8usXrqQL0E4rjStJ8+/HR21MK5CQFvQu5VxM+8hLrr94vu46QgF+Y/
-         ORLsLFsWq2JtOQgzjN7XEsXtEexSh1Wrkgz4UQfmv2AiEV8gBTs22qaJDnWu1y2POPD2
-         RIvQ==
-X-Gm-Message-State: ANhLgQ2b8SnAFgm0tcsDc85l16jOHOWt01/AF9L1uclcG8pZ0YCv+3xd
-        LQi6Tq5j9lOBqAgB2+sb21RWkO+wqoY2zw==
-X-Google-Smtp-Source: ADFU+vvfRW3EQIch03iJzyY95nyZic8xl2ZJCHUcjSWoD6eJ+kAqYLX/VHAkZedlxGsCfdNOvcyOLQ==
-X-Received: by 2002:a92:c603:: with SMTP id p3mr18740270ilm.96.1583852679534;
-        Tue, 10 Mar 2020 08:04:39 -0700 (PDT)
+        bh=AHdDo0OvmfMXRs5la8a/G7V89jVhoTaAvfqIWj6qxic=;
+        b=uaScBlGRAhqXIKwX4oK1mkx9VX8EB0l6D3+SBNN00cKeLBYNr2cfMeTgO7hd8fiWeU
+         kjypl6CIunMZsEL5dEky/zwUk/WHmmCoOKyawysIsIcUPwT+vspXDvfhbpqnUpRBlzUA
+         ZVUubiVhUfqO2mrl8QxVjlhsa1739g/OBCgMFDnAuEAp3peB+QGVYm62633SZoSToEHO
+         yqXpnyy+D5PgenE+itZvTE1y0I748jZH6CinhQfW2doobs2i4QB/9zePTnAoiXOHiAHK
+         h04j8Pj7jis5FY1TtFa/Itp5t2J3noLTZHcEhBW3tIqHbL08QFviFEUmOz0y4dLir4DR
+         tl5w==
+X-Gm-Message-State: ANhLgQ0zEvghM6xsC90oD9TAIdjjOKsKWJzk1M4mbwzPBWtD4N6p1xVm
+        GAHYyoF9vHvv4oALtxlSqKi89yAbzI6fCg==
+X-Google-Smtp-Source: ADFU+vtX7R36bFTJPdffaxsmyP1jmFXLV2UI8gt5dLD9uQLeOo3M3ARDfn8Dr/ZkOLz348VW1HHNZQ==
+X-Received: by 2002:a92:760e:: with SMTP id r14mr19711019ilc.59.1583852680675;
+        Tue, 10 Mar 2020 08:04:40 -0700 (PDT)
 Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id e16sm4684750ioh.7.2020.03.10.08.04.38
+        by smtp.gmail.com with ESMTPSA id e16sm4684750ioh.7.2020.03.10.08.04.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 08:04:38 -0700 (PDT)
+        Tue, 10 Mar 2020 08:04:39 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     andres@anarazel.de, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 7/9] io_uring: provide means of removing buffers
-Date:   Tue, 10 Mar 2020 09:04:24 -0600
-Message-Id: <20200310150427.28489-8-axboe@kernel.dk>
+Subject: [PATCH 8/9] io_uring: add end-of-bits marker and build time verify it
+Date:   Tue, 10 Mar 2020 09:04:25 -0600
+Message-Id: <20200310150427.28489-9-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310150427.28489-1-axboe@kernel.dk>
 References: <20200310150427.28489-1-axboe@kernel.dk>
@@ -60,179 +60,37 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We have IORING_OP_PROVIDE_BUFFERS, but the only way to remove buffers
-is to trigger IO on them. The usual case of shrinking a buffer pool
-would be to just not replenish the buffers when IO completes, and
-instead just free it. But it may be nice to have a way to manually
-remove a number of buffers from a given group, and
-IORING_OP_REMOVE_BUFFERS provides that functionality.
+Not easy to tell if we're going over the size of bits we can shove
+in req->flags, so add an end-of-bits marker and a BUILD_BUG_ON()
+check for it.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c                 | 102 +++++++++++++++++++++++++++-------
- include/uapi/linux/io_uring.h |   1 +
- 2 files changed, 84 insertions(+), 19 deletions(-)
+ fs/io_uring.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ed898fb24612..0760a0099760 100644
+index 0760a0099760..f8a3f6843698 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -827,6 +827,7 @@ static const struct io_op_def io_op_defs[] = {
- 		.unbound_nonreg_file	= 1,
- 	},
- 	[IORING_OP_PROVIDE_BUFFERS] = {},
-+	[IORING_OP_REMOVE_BUFFERS] = {},
+@@ -511,6 +511,9 @@ enum {
+ 	REQ_F_OVERFLOW_BIT,
+ 	REQ_F_POLLED_BIT,
+ 	REQ_F_BUFFER_SELECTED_BIT,
++
++	/* not a real bit, just to check we're not overflowing the space */
++	__REQ_F_LAST_BIT,
  };
  
- static void io_wq_submit_work(struct io_wq_work **workptr);
-@@ -2995,6 +2996,75 @@ static int io_openat(struct io_kiocb *req, bool force_nonblock)
- 	return io_openat2(req, force_nonblock);
- }
+ enum {
+@@ -8006,6 +8009,7 @@ static int __init io_uring_init(void)
+ 	BUILD_BUG_SQE_ELEM(44, __s32,  splice_fd_in);
  
-+static int io_remove_buffers_prep(struct io_kiocb *req,
-+				  const struct io_uring_sqe *sqe)
-+{
-+	struct io_provide_buf *p = &req->pbuf;
-+	u64 tmp;
-+
-+	if (sqe->ioprio || sqe->rw_flags || sqe->addr || sqe->len || sqe->off)
-+		return -EINVAL;
-+
-+	tmp = READ_ONCE(sqe->fd);
-+	if (!tmp || tmp > USHRT_MAX)
-+		return -EINVAL;
-+
-+	memset(p, 0, sizeof(*p));
-+	p->nbufs = tmp;
-+	p->bgid = READ_ONCE(sqe->buf_group);
-+	return 0;
-+}
-+
-+static int __io_remove_buffers(struct io_ring_ctx *ctx, struct io_buffer *buf,
-+			       int bgid, unsigned nbufs)
-+{
-+	unsigned i = 0;
-+
-+	/* shouldn't happen */
-+	if (!nbufs)
-+		return 0;
-+
-+	/* the head kbuf is the list itself */
-+	while (!list_empty(&buf->list)) {
-+		struct io_buffer *nxt;
-+
-+		nxt = list_first_entry(&buf->list, struct io_buffer, list);
-+		list_del(&nxt->list);
-+		kfree(nxt);
-+		if (++i == nbufs)
-+			return i;
-+	}
-+	i++;
-+	kfree(buf);
-+	idr_remove(&ctx->io_buffer_idr, bgid);
-+
-+	return i;
-+}
-+
-+static int io_remove_buffers(struct io_kiocb *req, bool force_nonblock)
-+{
-+	struct io_provide_buf *p = &req->pbuf;
-+	struct io_ring_ctx *ctx = req->ctx;
-+	struct io_buffer *head;
-+	int ret = 0;
-+
-+	io_ring_submit_lock(ctx, !force_nonblock);
-+
-+	lockdep_assert_held(&ctx->uring_lock);
-+
-+	ret = -ENOENT;
-+	head = idr_find(&ctx->io_buffer_idr, p->bgid);
-+	if (head)
-+		ret = __io_remove_buffers(ctx, head, p->bgid, p->nbufs);
-+
-+	io_ring_submit_lock(ctx, !force_nonblock);
-+	if (ret < 0)
-+		req_set_fail_links(req);
-+	io_cqring_add_event(req, ret);
-+	io_put_req(req);
-+	return 0;
-+}
-+
- static int io_provide_buffers_prep(struct io_kiocb *req,
- 				   const struct io_uring_sqe *sqe)
- {
-@@ -3077,15 +3147,7 @@ static int io_provide_buffers(struct io_kiocb *req, bool force_nonblock)
- 		ret = idr_alloc(&ctx->io_buffer_idr, head, p->bgid, p->bgid + 1,
- 					GFP_KERNEL);
- 		if (ret < 0) {
--			while (!list_empty(&head->list)) {
--				struct io_buffer *buf;
--
--				buf = list_first_entry(&head->list,
--							struct io_buffer, list);
--				list_del(&buf->list);
--				kfree(buf);
--			}
--			kfree(head);
-+			__io_remove_buffers(ctx, head, p->bgid, -1U);
- 			goto out;
- 		}
- 	}
-@@ -4833,6 +4895,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	case IORING_OP_PROVIDE_BUFFERS:
- 		ret = io_provide_buffers_prep(req, sqe);
- 		break;
-+	case IORING_OP_REMOVE_BUFFERS:
-+		ret = io_remove_buffers_prep(req, sqe);
-+		break;
- 	default:
- 		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
- 				req->opcode);
-@@ -5128,6 +5193,14 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		}
- 		ret = io_provide_buffers(req, force_nonblock);
- 		break;
-+	case IORING_OP_REMOVE_BUFFERS:
-+		if (sqe) {
-+			ret = io_remove_buffers_prep(req, sqe);
-+			if (ret)
-+				break;
-+		}
-+		ret = io_remove_buffers(req, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-@@ -7006,16 +7079,7 @@ static int __io_destroy_buffers(int id, void *p, void *data)
- 	struct io_ring_ctx *ctx = data;
- 	struct io_buffer *buf = p;
- 
--	/* the head kbuf is the list itself */
--	while (!list_empty(&buf->list)) {
--		struct io_buffer *nxt;
--
--		nxt = list_first_entry(&buf->list, struct io_buffer, list);
--		list_del(&nxt->list);
--		kfree(nxt);
--	}
--	kfree(buf);
--	idr_remove(&ctx->io_buffer_idr, id);
-+	__io_remove_buffers(ctx, buf, id, -1U);
+ 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
++	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
+ 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
  	return 0;
- }
- 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 9b263d9b24e6..cef4c0c0f26b 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -128,6 +128,7 @@ enum {
- 	IORING_OP_EPOLL_CTL,
- 	IORING_OP_SPLICE,
- 	IORING_OP_PROVIDE_BUFFERS,
-+	IORING_OP_REMOVE_BUFFERS,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
+ };
 -- 
 2.25.1
 

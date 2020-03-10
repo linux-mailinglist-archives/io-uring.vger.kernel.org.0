@@ -2,54 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93CD6180118
-	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2020 16:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE7A180119
+	for <lists+io-uring@lfdr.de>; Tue, 10 Mar 2020 16:04:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbgCJPEn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 10 Mar 2020 11:04:43 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:46673 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727870AbgCJPEl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 10 Mar 2020 11:04:41 -0400
-Received: by mail-il1-f194.google.com with SMTP id e8so12258149ilc.13
-        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2020 08:04:41 -0700 (PDT)
+        id S1727876AbgCJPEp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 10 Mar 2020 11:04:45 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46717 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727875AbgCJPEo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 10 Mar 2020 11:04:44 -0400
+Received: by mail-io1-f67.google.com with SMTP id v3so7022309iom.13
+        for <io-uring@vger.kernel.org>; Tue, 10 Mar 2020 08:04:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AHdDo0OvmfMXRs5la8a/G7V89jVhoTaAvfqIWj6qxic=;
-        b=IGin7W8NAEM0PCBpONk4iDoMBZI2TV43WoXrZX75B1TBlLW8rQkoBe6sqgtwlVUWgW
-         HpqZHZeZ/qeqvExK6++js02bqhkWsmaRyz38vDU+ZJ+lhkmNuua7DRp4M2hTCQlmrUFy
-         LLqCUH3m2bCEb0hn4dm7F3AYPwMDZIvvtPWK3zptJEY37yBQsPSrkCh1h0jnwygo57bu
-         3rj7I0uDt7b8eVOz5a2Koth+yH5/G5EIAmnTreCLRjhzl3w6gPyobxXHffoHiEIVMl4J
-         +Fqkzi6UxWzHo9PdBTGLz6DsCZyfuL+3daCvbw1K7IoBt5VOtwtKG/VnEKPLFgE/Nc3e
-         FwHg==
+        bh=XZRx5Vds4MtJnauJvVIQ/N9oU8O7MnPnnghFsz+Xzcg=;
+        b=0NNCdORAbrA9pOr1Njz7E7QvIEsS30r4+6enQT6w+WQHqZT4mZMFbIYZqS3lXv6ExF
+         IkHSJAak8kT9+vGncx/s9hauLGjAovLbEGxLYomrArZBG4CSACq2n4CKa7dMdFydn8d3
+         zXL8N3HX8bQeaz7xVmYKndJHtNVnfDqFqDtkcpxvdXyFXUzQKIb3JqL3Bo65HIJoh2Yh
+         JMSUhnXLmb49NO/yFqpKNTlYKVeAR5JTGv/nifnWMmlOmY8ukuoaXSRpkdQi0Js8OHVa
+         B69ud2nhBmU0l68PVlCmlOGvnPvkJ2Xsh6B5G4ePDNXXnKibw8aILRWkP0EH6N3Q3U7I
+         DXWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AHdDo0OvmfMXRs5la8a/G7V89jVhoTaAvfqIWj6qxic=;
-        b=uaScBlGRAhqXIKwX4oK1mkx9VX8EB0l6D3+SBNN00cKeLBYNr2cfMeTgO7hd8fiWeU
-         kjypl6CIunMZsEL5dEky/zwUk/WHmmCoOKyawysIsIcUPwT+vspXDvfhbpqnUpRBlzUA
-         ZVUubiVhUfqO2mrl8QxVjlhsa1739g/OBCgMFDnAuEAp3peB+QGVYm62633SZoSToEHO
-         yqXpnyy+D5PgenE+itZvTE1y0I748jZH6CinhQfW2doobs2i4QB/9zePTnAoiXOHiAHK
-         h04j8Pj7jis5FY1TtFa/Itp5t2J3noLTZHcEhBW3tIqHbL08QFviFEUmOz0y4dLir4DR
-         tl5w==
-X-Gm-Message-State: ANhLgQ0zEvghM6xsC90oD9TAIdjjOKsKWJzk1M4mbwzPBWtD4N6p1xVm
-        GAHYyoF9vHvv4oALtxlSqKi89yAbzI6fCg==
-X-Google-Smtp-Source: ADFU+vtX7R36bFTJPdffaxsmyP1jmFXLV2UI8gt5dLD9uQLeOo3M3ARDfn8Dr/ZkOLz348VW1HHNZQ==
-X-Received: by 2002:a92:760e:: with SMTP id r14mr19711019ilc.59.1583852680675;
-        Tue, 10 Mar 2020 08:04:40 -0700 (PDT)
+        bh=XZRx5Vds4MtJnauJvVIQ/N9oU8O7MnPnnghFsz+Xzcg=;
+        b=GoBLHC5GBflhfix5kMgL2pDuoegIsMv+1FffR1CN2HKI+DcsZPvugbVPSUDrnWmAhD
+         PDGwzgrkbctiQMuc3R1iA7vTq2hCtnvN/Q33Nz2roCOeRupswuXU4gTM6OJRogHxhXye
+         i/ZDu51OL9CuYSSO2dcn9tTi1jp+j6CvQz92+ZVJL798SN/0WuQ+eHCKY081S4R55D+4
+         ksnE9++eskcy+FcVyKvClFEB3x/zH9MIa5DDuMparHuA0XRgYWIti6v6L0kxPHA7c3xr
+         lWwe2aBHHir2BriY44FYVnjEhPahpdZCl+j84HoNiptTFpY3FRrh7fTR6L97g399NxmL
+         MUxA==
+X-Gm-Message-State: ANhLgQ15m1sVQtxILu0AlvyMDZd5WcC9BCX3+HGnO2sXVS8vwndThh7M
+        UPAztjdqC0lwXWO5g4D+H/Aj6RQbAgbVIA==
+X-Google-Smtp-Source: ADFU+vvpA/6Zaez+4UnKt1NC699CWS+Nbddm2nYhQwzOkm2EXCu/IR4RSJZAkbubfGYIyc4nrEsIWw==
+X-Received: by 2002:a02:7b13:: with SMTP id q19mr20601775jac.73.1583852681544;
+        Tue, 10 Mar 2020 08:04:41 -0700 (PDT)
 Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id e16sm4684750ioh.7.2020.03.10.08.04.39
+        by smtp.gmail.com with ESMTPSA id e16sm4684750ioh.7.2020.03.10.08.04.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 08:04:39 -0700 (PDT)
+        Tue, 10 Mar 2020 08:04:41 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     andres@anarazel.de, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 8/9] io_uring: add end-of-bits marker and build time verify it
-Date:   Tue, 10 Mar 2020 09:04:25 -0600
-Message-Id: <20200310150427.28489-9-axboe@kernel.dk>
+Cc:     andres@anarazel.de, YueHaibing <yuehaibing@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 9/9] io_uring: Fix unused function warnings
+Date:   Tue, 10 Mar 2020 09:04:26 -0600
+Message-Id: <20200310150427.28489-10-axboe@kernel.dk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310150427.28489-1-axboe@kernel.dk>
 References: <20200310150427.28489-1-axboe@kernel.dk>
@@ -60,37 +61,258 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Not easy to tell if we're going over the size of bits we can shove
-in req->flags, so add an end-of-bits marker and a BUILD_BUG_ON()
-check for it.
+From: YueHaibing <yuehaibing@huawei.com>
+
+If CONFIG_NET is not set, gcc warns:
+
+fs/io_uring.c:3110:12: warning: io_setup_async_msg defined but not used [-Wunused-function]
+ static int io_setup_async_msg(struct io_kiocb *req,
+            ^~~~~~~~~~~~~~~~~~
+
+There are many funcions wraped by CONFIG_NET, move them
+together to simplify code, also fix this warning.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Minor tweaks.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/io_uring.c | 94 ++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 52 insertions(+), 42 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0760a0099760..f8a3f6843698 100644
+index f8a3f6843698..83439cf9f5e7 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -511,6 +511,9 @@ enum {
- 	REQ_F_OVERFLOW_BIT,
- 	REQ_F_POLLED_BIT,
- 	REQ_F_BUFFER_SELECTED_BIT,
-+
-+	/* not a real bit, just to check we're not overflowing the space */
-+	__REQ_F_LAST_BIT,
- };
- 
- enum {
-@@ -8006,6 +8009,7 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_SQE_ELEM(44, __s32,  splice_fd_in);
- 
- 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
-+	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
- 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
+@@ -3485,6 +3485,7 @@ static int io_sync_file_range(struct io_kiocb *req, bool force_nonblock)
  	return 0;
- };
+ }
+ 
++#if defined(CONFIG_NET)
+ static int io_setup_async_msg(struct io_kiocb *req,
+ 			      struct io_async_msghdr *kmsg)
+ {
+@@ -3502,7 +3503,6 @@ static int io_setup_async_msg(struct io_kiocb *req,
+ 
+ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_sr_msg *sr = &req->sr_msg;
+ 	struct io_async_ctx *io = req->io;
+ 	int ret;
+@@ -3528,14 +3528,10 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if (!ret)
+ 		req->flags |= REQ_F_NEED_CLEANUP;
+ 	return ret;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_async_msghdr *kmsg = NULL;
+ 	struct socket *sock;
+ 	int ret;
+@@ -3589,14 +3585,10 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock)
+ 		req_set_fail_links(req);
+ 	io_put_req(req);
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_send(struct io_kiocb *req, bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	struct socket *sock;
+ 	int ret;
+ 
+@@ -3639,9 +3631,6 @@ static int io_send(struct io_kiocb *req, bool force_nonblock)
+ 		req_set_fail_links(req);
+ 	io_put_req(req);
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int __io_recvmsg_copy_hdr(struct io_kiocb *req, struct io_async_ctx *io)
+@@ -3754,7 +3743,6 @@ static struct io_buffer *io_recv_buffer_select(struct io_kiocb *req,
+ static int io_recvmsg_prep(struct io_kiocb *req,
+ 			   const struct io_uring_sqe *sqe)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_sr_msg *sr = &req->sr_msg;
+ 	struct io_async_ctx *io = req->io;
+ 	int ret;
+@@ -3779,14 +3767,10 @@ static int io_recvmsg_prep(struct io_kiocb *req,
+ 	if (!ret)
+ 		req->flags |= REQ_F_NEED_CLEANUP;
+ 	return ret;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_async_msghdr *kmsg = NULL;
+ 	struct socket *sock;
+ 	int ret, cflags = 0;
+@@ -3847,14 +3831,10 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock)
+ 		req_set_fail_links(req);
+ 	io_put_req(req);
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_recv(struct io_kiocb *req, bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_buffer *kbuf = NULL;
+ 	struct socket *sock;
+ 	int ret, cflags = 0;
+@@ -3911,15 +3891,10 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock)
+ 		req_set_fail_links(req);
+ 	io_put_req(req);
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+-
+ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_accept *accept = &req->accept;
+ 
+ 	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
+@@ -3931,12 +3906,8 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	accept->addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+ 	accept->flags = READ_ONCE(sqe->accept_flags);
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+-#if defined(CONFIG_NET)
+ static int __io_accept(struct io_kiocb *req, bool force_nonblock)
+ {
+ 	struct io_accept *accept = &req->accept;
+@@ -3966,11 +3937,9 @@ static void io_accept_finish(struct io_wq_work **workptr)
+ 	__io_accept(req, false);
+ 	io_steal_work(req, workptr);
+ }
+-#endif
+ 
+ static int io_accept(struct io_kiocb *req, bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	int ret;
+ 
+ 	ret = __io_accept(req, force_nonblock);
+@@ -3979,14 +3948,10 @@ static int io_accept(struct io_kiocb *req, bool force_nonblock)
+ 		return -EAGAIN;
+ 	}
+ 	return 0;
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_connect *conn = &req->connect;
+ 	struct io_async_ctx *io = req->io;
+ 
+@@ -4003,14 +3968,10 @@ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ 	return move_addr_to_kernel(conn->addr, conn->addr_len,
+ 					&io->connect.address);
+-#else
+-	return -EOPNOTSUPP;
+-#endif
+ }
+ 
+ static int io_connect(struct io_kiocb *req, bool force_nonblock)
+ {
+-#if defined(CONFIG_NET)
+ 	struct io_async_ctx __io, *io;
+ 	unsigned file_flags;
+ 	int ret;
+@@ -4048,10 +4009,59 @@ static int io_connect(struct io_kiocb *req, bool force_nonblock)
+ 	io_cqring_add_event(req, ret);
+ 	io_put_req(req);
+ 	return 0;
+-#else
++}
++#else /* !CONFIG_NET */
++static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_sendmsg(struct io_kiocb *req, bool force_nonblock)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_send(struct io_kiocb *req, bool force_nonblock)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_recvmsg_prep(struct io_kiocb *req,
++			   const struct io_uring_sqe *sqe)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_recvmsg(struct io_kiocb *req, bool force_nonblock)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_recv(struct io_kiocb *req, bool force_nonblock)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_accept(struct io_kiocb *req, bool force_nonblock)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	return -EOPNOTSUPP;
++}
++
++static int io_connect(struct io_kiocb *req, bool force_nonblock)
++{
+ 	return -EOPNOTSUPP;
+-#endif
+ }
++#endif /* CONFIG_NET */
+ 
+ struct io_poll_table {
+ 	struct poll_table_struct pt;
 -- 
 2.25.1
 

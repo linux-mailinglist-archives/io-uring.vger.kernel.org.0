@@ -2,62 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A97DE181921
-	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2020 14:06:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8789A1820D0
+	for <lists+io-uring@lfdr.de>; Wed, 11 Mar 2020 19:30:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbgCKNGJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Mar 2020 09:06:09 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:32976 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729345AbgCKNGJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Mar 2020 09:06:09 -0400
-Received: by mail-il1-f193.google.com with SMTP id k29so1929641ilg.0
-        for <io-uring@vger.kernel.org>; Wed, 11 Mar 2020 06:06:07 -0700 (PDT)
+        id S1730784AbgCKSaU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Mar 2020 14:30:20 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37564 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730768AbgCKSaU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Mar 2020 14:30:20 -0400
+Received: by mail-pg1-f193.google.com with SMTP id a32so797405pga.4
+        for <io-uring@vger.kernel.org>; Wed, 11 Mar 2020 11:30:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cZ/TaX4UK7w0MY0cuNWl5vlnSN43tf6Yl1C7KdfUKZI=;
-        b=e3FILmQXqulGfBwCmwhpTTSvPtadACfiW7Rlg9aH2HPsuzJQW7Neliv/nqie/yZGzI
-         qQKui9KBVvhE5WKH3BGabWh7IeiIElchP1K71oWF5irmbicrob4Cjz3EZH1lI/fFxTpG
-         Kw6jSTb2Xt7orG74IvOOQsPoSkw8fv8vyCC8NpRTRDZxQk2VvjmA6MZX2p3QIvoWi7pV
-         bHi7/jOn12Rw+W6CBdXylOn1kVDHOqgHQWgMdPmjsrv2Ddvt5moXOsF6ItFuYRs+SEgH
-         /Z6gBjGAnmSHm1ZXHghQ1Nj12M48Q9thzi3IbxaQAh6UPxJtXjuQf4dDCRHcV3j0Ibvc
-         zKCQ==
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=BxZbaKbsS1IaGahDQhL0vut6MVcrp8tQKTp+ER/O00Y=;
+        b=Cc9O753W9LvcReYVC9EDdHVhe62irX6doAmVS+ZSm7bSV1+YfR+jqX28ExSlsq8Txq
+         srKEZ1PGRYtH4IdvYmR1D0bjMDnZonKwMei0SgwYKxEohbk+RpyAXNIMAvgnI8ZJ+3ua
+         FXdU3KOsaxtFfOk2O4JzSfn29ix3V4h7rjrDzu/688JiT7keYeC8G7GVE4vyU61G41nS
+         mh+PRJkInH3QL6kCsLuX8hTKEkodjmhsInrMHKafwoel7ueLb/L2awypsF6bCMLVUwAS
+         0hk63HLePrcutMCMcQURYKestEH68hA6FfVIyNqicibHCOztENDQN+k3MValDnOvJra/
+         vpGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cZ/TaX4UK7w0MY0cuNWl5vlnSN43tf6Yl1C7KdfUKZI=;
-        b=FS0qKXOcF7TKth9mDdQzYV5Onys7M9g/PyMDrsWGe1vGgoIyuIZngzMRtmAM7tdSkz
-         wIrF6yLKYZdzDkUxVuos8MGjuO2HxThQngjEWYBpZUOB772Qm519ntahW/eTtdn/Obs0
-         TbhofRW8S+MqMjZ9F7COm9MyafTUf0dYLJCxRVMextPtVgCcMBqrCPQQFoLFLQdFJBUB
-         Z+EkAQUmxIyfQ+T/FFoMc3xnhyUzKqbUoX62WupA2aQfXqDx8G5xjgEvP8/ksmMkbSBP
-         6tgE+HwoyOzZy0/U4q0uNETnRJpowmHCOAj4M4UzsQd6EjyjitEN2g/7Iw57UsiTEGCo
-         p9nw==
-X-Gm-Message-State: ANhLgQ2Wt28X3spPUPaQ2ViuhCNctwUFOqnRJWpPkjKq89R5MBbomEqi
-        MRryHViVUE3GAYmHonB03vGmHN0YKimOyQ==
-X-Google-Smtp-Source: ADFU+vsuB4Wcb/MlMAllIRNP5+xapwvLahXm3+xV4MbBVF0l7MHOWVLp5MIDAr0NV2YZE3PB50XnKQ==
-X-Received: by 2002:a92:5a88:: with SMTP id b8mr3057342ilg.206.1583931966961;
-        Wed, 11 Mar 2020 06:06:06 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k13sm4218454ioj.31.2020.03.11.06.06.05
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=BxZbaKbsS1IaGahDQhL0vut6MVcrp8tQKTp+ER/O00Y=;
+        b=tC73ky75QqzjsOdPeUtx2TVCzetTpaN6u1bHctREOYGC5kqdvTLVfbBFombMPNPUpx
+         5lr8ByijX0Tc9Y5XQ7adkOjNJG9+ufzBqtsuMKneHAcQ0gbhnYaV5eH1MhcY+huqUG/U
+         6s6pgsWbHPGVp8LcPGripCk0k6JMnCzm46hJKddxMJfM2hIRLMDMOv97VAA3z9FQa2wp
+         7IGsT3vX6ubBJRN+ZBI7U77QisrfN+8Lkd1D10cURSv5aHjKMqfQ3ei+5N0O681+cgZm
+         bCVYH/cgPN/oeHdQ5D/qOb44hel50Mo4AapZX2DQD77qEf+j92Pd2SrgFk6Q6HbMIjCb
+         dhHg==
+X-Gm-Message-State: ANhLgQ3X4YX9m1WmI/++7VxudFoFYvjxDzWlKySfq7BE4Vo80/fWOUfD
+        gg3X45CP94NYQjrGiRqrGrkMCVDXCf7JBA==
+X-Google-Smtp-Source: ADFU+vsyfFOMkJU7LWW7SU58gQ1bJ1ShmKUg9aYshiVhJYDUVpp20FL3MQQHOtUZ9jEkXqaiWnHEBg==
+X-Received: by 2002:a63:5465:: with SMTP id e37mr3933352pgm.411.1583951419046;
+        Wed, 11 Mar 2020 11:30:19 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c085:21c1::1835? ([2620:10d:c090:400::5:d375])
+        by smtp.gmail.com with ESMTPSA id a143sm29062855pfd.108.2020.03.11.11.30.17
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 06:06:05 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: io_uring_enter(2) don't poll while
- SETUP_IOPOLL|SETUP_SQPOLL enabled
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200311012609.35482-1-xiaoguang.wang@linux.alibaba.com>
+        Wed, 11 Mar 2020 11:30:18 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c51ba29e-14ce-c811-d4c1-344d9ea1258d@kernel.dk>
-Date:   Wed, 11 Mar 2020 07:06:05 -0600
+Subject: [PATCH] io_uring: fix truncated async read/readv and write/writev
+ retry
+Message-ID: <62d7aa88-8765-d0a1-0db7-6b20cbf9a3a9@kernel.dk>
+Date:   Wed, 11 Mar 2020 12:30:17 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200311012609.35482-1-xiaoguang.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,51 +62,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/10/20 7:26 PM, Xiaoguang Wang wrote:
-> When SETUP_IOPOLL and SETUP_SQPOLL are both enabled, applications don't need
-> to do io completion events polling again, they can rely on io_sq_thread to do
-> polling work, which can reduce cpu usage and uring_lock contention.
-> 
-> I modify fio io_uring engine codes a bit to evaluate the performance:
-> static int fio_ioring_getevents(struct thread_data *td, unsigned int min,
->                         continue;
->                 }
-> 
-> -               if (!o->sqpoll_thread) {
-> +               if (o->sqpoll_thread && o->hipri) {
->                         r = io_uring_enter(ld, 0, actual_min,
->                                                 IORING_ENTER_GETEVENTS);
->                         if (r < 0) {
-> 
-> and use "fio  -name=fiotest -filename=/dev/nvme0n1 -iodepth=$depth -thread
-> -rw=read -ioengine=io_uring  -hipri=1 -sqthread_poll=1  -direct=1 -bs=4k
-> -size=10G -numjobs=1  -time_based -runtime=120"
-> 
-> original codes
-> --------------------------------------------------------------------
-> iodepth       |        4 |        8 |       16 |       32 |       64
-> bw            | 1133MB/s | 1519MB/s | 2090MB/s | 2710MB/s | 3012MB/s
-> fio cpu usage |     100% |     100% |     100% |     100% |     100%
-> --------------------------------------------------------------------
-> 
-> with patch
-> --------------------------------------------------------------------
-> iodepth       |        4 |        8 |       16 |       32 |       64
-> bw            | 1196MB/s | 1721MB/s | 2351MB/s | 2977MB/s | 3357MB/s
-> fio cpu usage |    63.8% |   74.4%% |    81.1% |    83.7% |    82.4%
-> --------------------------------------------------------------------
-> bw improve    |     5.5% |    13.2% |    12.3% |     9.8% |    11.5%
-> --------------------------------------------------------------------
-> 
-> From above test results, we can see that bw has above 5.5%~13%
-> improvement, and fio process's cpu usage also drops much. Note this
-> won't improve io_sq_thread's cpu usage when SETUP_IOPOLL|SETUP_SQPOLL
-> are both enabled, in this case, io_sq_thread always has 100% cpu usage.
-> I think this patch will be friendly to applications which will often use
-> io_uring_wait_cqe() or similar from liburing.
+Ensure we keep the truncated value, if we did truncate it. If not, we
+might read/write more than the registered buffer size.
 
-I think this looks reasonable, and true to the spirit of how polling
-should work when SQPOLL is used. I'll apply this for 5.7, thanks.
+Also for retry, ensure that we return the truncated mapped value for
+the vectorized versions of the read/write commands.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 9f1a462eb780..55afae6f0cf4 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2360,6 +2360,7 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+ 				*iovec = NULL;
+ 				return PTR_ERR(buf);
+ 			}
++			req->rw.len = sqe_len;
+ 		}
+ 
+ 		ret = import_single_range(rw, buf, sqe_len, *iovec, iter);
+@@ -2379,8 +2380,10 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+ 
+ 	if (req->flags & REQ_F_BUFFER_SELECT) {
+ 		ret = io_iov_buffer_select(req, *iovec, needs_lock);
+-		if (!ret)
+-			iov_iter_init(iter, rw, *iovec, 1, (*iovec)->iov_len);
++		if (!ret) {
++			ret = (*iovec)->iov_len;
++			iov_iter_init(iter, rw, *iovec, 1, ret);
++		}
+ 		*iovec = NULL;
+ 		return ret;
+ 	}
 
 -- 
 Jens Axboe

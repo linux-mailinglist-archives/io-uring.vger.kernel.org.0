@@ -2,73 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1279618583B
-	for <lists+io-uring@lfdr.de>; Sun, 15 Mar 2020 02:58:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5188818632C
+	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2020 03:43:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbgCOB6Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 14 Mar 2020 21:58:25 -0400
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:45392 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbgCOB6Z (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Mar 2020 21:58:25 -0400
-Received: by mail-qv1-f65.google.com with SMTP id h20so2982335qvr.12
-        for <io-uring@vger.kernel.org>; Sat, 14 Mar 2020 18:58:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=SdOYsMZFDHe9vqNvSdxRkcSwQBXCi2657j9Xa2tK9oA=;
-        b=xgAlfPF/jH19mCf3oilauqnvertvFGN4reqpz1II3RvLTUdEG1XjtuLT8GB+7rw/DG
-         ZzU1/5ECQCzgWimMdZiq5PqAGKOk28z0eOks95Ksf0BVFzH+8qujmfqN9KJ3Cl4iKO3h
-         5Ca0xO2QG14yS0E6801I5dT6odvBnpqmEDYRU6fZC0ZwEvPRNrxJ5vG+99jI/DBYxSUN
-         KdG2cWMcoWd6plprhdjoQZD4Y0jM9jZFSvU73u33d7mEyvCpLxv3pOSAL9tRBVI8E1DK
-         hZ3Lwvu41Jm6NJsEL8pA/aqJsnZwC3AenvE05fCvwm+llph+hEg+oC7T4/CjW8PzaiY1
-         +6vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SdOYsMZFDHe9vqNvSdxRkcSwQBXCi2657j9Xa2tK9oA=;
-        b=HqOk1IrlmaU2iNSL+MVHEoycW53lXY1geUNtJKdxC4SHNrIRZ5XVyf0JFfPQJRxzzv
-         /i11u6LlyAvV98lPkIQwfil5lHoyJN1mhuw4VnW5Whh/pMCwQ1Q/dpOo9O8cxrG11n1f
-         EIlkKMvg00lrUmiwJcaRHjObUu1p7A+Xiu7TyrB9txK1EU53wQCjUTeBMvsOERgJbecs
-         G1z5bmQCF3BMi3jfIoHZLvA9UA2tT0itw3v9h8I4eCfokejuCyR/MXqfEa1d6OciyHSD
-         zHrlGd4aA7nLM4NppD7DTf0IDT25OW3gn84qwtZ2c4B4alIGrXzb7y2TxSqJ6CQmuF1m
-         y2XA==
-X-Gm-Message-State: ANhLgQ0tvgcixrd2A6oOMBXWExMX0NqHvTVdsndCtbSTiR1W0Gr/2P5e
-        bp7psoCWWk3XsBb3db7+4Dsb2zR2L1jR0g==
-X-Google-Smtp-Source: ADFU+vv8d06cooYnEyYmyLwJ5MAPGncbMbhQYSytgYgCc67JuVz17NdDF+7aY/joqlDV2aEOjDBwZw==
-X-Received: by 2002:a17:902:2e:: with SMTP id 43mr20495125pla.326.1584227898541;
-        Sat, 14 Mar 2020 16:18:18 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id u3sm15469459pjv.32.2020.03.14.16.18.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Mar 2020 16:18:18 -0700 (PDT)
-Subject: Re: [PATCH 0/3] support hashing for linked requests
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1584130466.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a6af1ae2-dfdc-00b3-4b33-f6d5a2f63f0c@kernel.dk>
-Date:   Sat, 14 Mar 2020 17:18:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1730478AbgCPClG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 15 Mar 2020 22:41:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36736 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729632AbgCPCds (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sun, 15 Mar 2020 22:33:48 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE76C20746;
+        Mon, 16 Mar 2020 02:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584326027;
+        bh=6h5MTVyaKyz4i4lsW9DXrzFXoUBWZQhfBhzWyfVeCLQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=URk591NVGcVyVwEB0aUr5wl0htT9LUfliNxr4ZJX46qkJGXvRS3CAVzFdFiS5hPL3
+         pGbzmHH1BsnLNG79Spp/wWL/i2D5IcKBu23kBiSKwnj6TTbn3L4m+y77h5KUkR7yBF
+         1j9uKATdRlNZfj0sGeO1BnX0AgL4AP9JWI+cRwJI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 23/41] io-wq: fix IO_WQ_WORK_NO_CANCEL cancellation
+Date:   Sun, 15 Mar 2020 22:33:01 -0400
+Message-Id: <20200316023319.749-23-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200316023319.749-1-sashal@kernel.org>
+References: <20200316023319.749-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <cover.1584130466.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/13/20 3:31 PM, Pavel Begunkov wrote:
-> That's it, honour hashing for dependant works in io-wq.
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-Looks good to me, applied for 5.7, thanks.
+[ Upstream commit fc04c39bae01a607454f7619665309870c60937a ]
 
+To cancel a work, io-wq sets IO_WQ_WORK_CANCEL and executes the
+callback. However, IO_WQ_WORK_NO_CANCEL works will just execute and may
+return next work, which will be ignored and lost.
+
+Cancel the whole link.
+
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io-wq.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 25ffb6685baea..1f46fe663b287 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -733,6 +733,17 @@ static bool io_wq_can_queue(struct io_wqe *wqe, struct io_wqe_acct *acct,
+ 	return true;
+ }
+ 
++static void io_run_cancel(struct io_wq_work *work)
++{
++	do {
++		struct io_wq_work *old_work = work;
++
++		work->flags |= IO_WQ_WORK_CANCEL;
++		work->func(&work);
++		work = (work == old_work) ? NULL : work;
++	} while (work);
++}
++
+ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
+ {
+ 	struct io_wqe_acct *acct = io_work_get_acct(wqe, work);
+@@ -745,8 +756,7 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
+ 	 * It's close enough to not be an issue, fork() has the same delay.
+ 	 */
+ 	if (unlikely(!io_wq_can_queue(wqe, acct, work))) {
+-		work->flags |= IO_WQ_WORK_CANCEL;
+-		work->func(&work);
++		io_run_cancel(work);
+ 		return;
+ 	}
+ 
+@@ -882,8 +892,7 @@ static enum io_wq_cancel io_wqe_cancel_cb_work(struct io_wqe *wqe,
+ 	spin_unlock_irqrestore(&wqe->lock, flags);
+ 
+ 	if (found) {
+-		work->flags |= IO_WQ_WORK_CANCEL;
+-		work->func(&work);
++		io_run_cancel(work);
+ 		return IO_WQ_CANCEL_OK;
+ 	}
+ 
+@@ -957,8 +966,7 @@ static enum io_wq_cancel io_wqe_cancel_work(struct io_wqe *wqe,
+ 	spin_unlock_irqrestore(&wqe->lock, flags);
+ 
+ 	if (found) {
+-		work->flags |= IO_WQ_WORK_CANCEL;
+-		work->func(&work);
++		io_run_cancel(work);
+ 		return IO_WQ_CANCEL_OK;
+ 	}
+ 
 -- 
-Jens Axboe
+2.20.1
 

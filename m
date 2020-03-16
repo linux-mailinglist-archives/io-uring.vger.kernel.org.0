@@ -2,35 +2,35 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5188818632C
-	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2020 03:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B3B91862F1
+	for <lists+io-uring@lfdr.de>; Mon, 16 Mar 2020 03:42:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730478AbgCPClG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 15 Mar 2020 22:41:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36736 "EHLO mail.kernel.org"
+        id S1729783AbgCPCeK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 15 Mar 2020 22:34:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729632AbgCPCds (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Sun, 15 Mar 2020 22:33:48 -0400
+        id S1729777AbgCPCeJ (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sun, 15 Mar 2020 22:34:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE76C20746;
-        Mon, 16 Mar 2020 02:33:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7030120726;
+        Mon, 16 Mar 2020 02:34:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584326027;
-        bh=6h5MTVyaKyz4i4lsW9DXrzFXoUBWZQhfBhzWyfVeCLQ=;
+        s=default; t=1584326049;
+        bh=cCg0M0loROU58Zt2BRB0MoP92hqsihIZYRkM3zwyyRk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=URk591NVGcVyVwEB0aUr5wl0htT9LUfliNxr4ZJX46qkJGXvRS3CAVzFdFiS5hPL3
-         pGbzmHH1BsnLNG79Spp/wWL/i2D5IcKBu23kBiSKwnj6TTbn3L4m+y77h5KUkR7yBF
-         1j9uKATdRlNZfj0sGeO1BnX0AgL4AP9JWI+cRwJI=
+        b=KWL3pWbjXJfFfFs+oJnvQLlToapXO9JKU6+KSTFIMbNLLfYcJCQ5lxyTkl3J7J+ae
+         RFbT65nzR1DX93pmt6vjUiEs7yZRBmHkABjh9Ax3Ct8iUIPsm8VssQJPRYulEqZqqy
+         wvIctqijqI48aXudkADLDrEND9hnUSymkxF4ADHs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 23/41] io-wq: fix IO_WQ_WORK_NO_CANCEL cancellation
-Date:   Sun, 15 Mar 2020 22:33:01 -0400
-Message-Id: <20200316023319.749-23-sashal@kernel.org>
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 41/41] io_uring: fix lockup with timeouts
+Date:   Sun, 15 Mar 2020 22:33:19 -0400
+Message-Id: <20200316023319.749-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200316023319.749-1-sashal@kernel.org>
 References: <20200316023319.749-1-sashal@kernel.org>
@@ -45,73 +45,37 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Pavel Begunkov <asml.silence@gmail.com>
 
-[ Upstream commit fc04c39bae01a607454f7619665309870c60937a ]
+[ Upstream commit f0e20b8943509d81200cef5e30af2adfddba0f5c ]
 
-To cancel a work, io-wq sets IO_WQ_WORK_CANCEL and executes the
-callback. However, IO_WQ_WORK_NO_CANCEL works will just execute and may
-return next work, which will be ignored and lost.
+There is a recipe to deadlock the kernel: submit a timeout sqe with a
+linked_timeout (e.g.  test_single_link_timeout_ception() from liburing),
+and SIGKILL the process.
 
-Cancel the whole link.
+Then, io_kill_timeouts() takes @ctx->completion_lock, but the timeout
+isn't flagged with REQ_F_COMP_LOCKED, and will try to double grab it
+during io_put_free() to cancel the linked timeout. Probably, the same
+can happen with another io_kill_timeout() call site, that is
+io_commit_cqring().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/io-wq.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ fs/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 25ffb6685baea..1f46fe663b287 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -733,6 +733,17 @@ static bool io_wq_can_queue(struct io_wqe *wqe, struct io_wqe_acct *acct,
- 	return true;
- }
- 
-+static void io_run_cancel(struct io_wq_work *work)
-+{
-+	do {
-+		struct io_wq_work *old_work = work;
-+
-+		work->flags |= IO_WQ_WORK_CANCEL;
-+		work->func(&work);
-+		work = (work == old_work) ? NULL : work;
-+	} while (work);
-+}
-+
- static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
- {
- 	struct io_wqe_acct *acct = io_work_get_acct(wqe, work);
-@@ -745,8 +756,7 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
- 	 * It's close enough to not be an issue, fork() has the same delay.
- 	 */
- 	if (unlikely(!io_wq_can_queue(wqe, acct, work))) {
--		work->flags |= IO_WQ_WORK_CANCEL;
--		work->func(&work);
-+		io_run_cancel(work);
- 		return;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 60a4832089982..fd28f85677225 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -688,6 +688,7 @@ static void io_kill_timeout(struct io_kiocb *req)
+ 	if (ret != -1) {
+ 		atomic_inc(&req->ctx->cq_timeouts);
+ 		list_del_init(&req->list);
++		req->flags |= REQ_F_COMP_LOCKED;
+ 		io_cqring_fill_event(req, 0);
+ 		io_put_req(req);
  	}
- 
-@@ -882,8 +892,7 @@ static enum io_wq_cancel io_wqe_cancel_cb_work(struct io_wqe *wqe,
- 	spin_unlock_irqrestore(&wqe->lock, flags);
- 
- 	if (found) {
--		work->flags |= IO_WQ_WORK_CANCEL;
--		work->func(&work);
-+		io_run_cancel(work);
- 		return IO_WQ_CANCEL_OK;
- 	}
- 
-@@ -957,8 +966,7 @@ static enum io_wq_cancel io_wqe_cancel_work(struct io_wqe *wqe,
- 	spin_unlock_irqrestore(&wqe->lock, flags);
- 
- 	if (found) {
--		work->flags |= IO_WQ_WORK_CANCEL;
--		work->func(&work);
-+		io_run_cancel(work);
- 		return IO_WQ_CANCEL_OK;
- 	}
- 
 -- 
 2.20.1
 

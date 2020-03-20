@@ -2,57 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA76518BFBD
-	for <lists+io-uring@lfdr.de>; Thu, 19 Mar 2020 19:56:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C4818C499
+	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2020 02:23:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbgCSS4q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 19 Mar 2020 14:56:46 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42122 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbgCSS4q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Mar 2020 14:56:46 -0400
-Received: by mail-io1-f67.google.com with SMTP id q128so3410605iof.9
-        for <io-uring@vger.kernel.org>; Thu, 19 Mar 2020 11:56:45 -0700 (PDT)
+        id S1727235AbgCTBXH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 Mar 2020 21:23:07 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35192 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727049AbgCTBXH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Mar 2020 21:23:07 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 7so2248894pgr.2
+        for <io-uring@vger.kernel.org>; Thu, 19 Mar 2020 18:23:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=gU+O1WteBcrbPMf10+D5JPQiWvQWUBrSXCg5rSPskIs=;
-        b=o/I8UfFhZC9kVwao/dtLBxWYXO2jA8R+0lRUj4/HZz3x7ZfCjgoVOwl/z/x2RZD7JN
-         f77ESLLyaTo+nQCzYLubsflly/tTTThYFo4Jc3Ab5mzZ3MRDMi1QNzS+LSwfqBnJh9za
-         hcNuyqXLmOhHPgofcr56xuT4iAdVMdxQTjmZYC5Z+PvwYoXGJiUkYX2dUjqVZ2h799X4
-         QwZz6Rge5pY1P9juYLAtI4zog+vSJqBLlDV4BVjZ7vgn4LzUYVJ9dDD1Gqz5x/E1rxj7
-         bwdKCX6gqcFQTZBpWNjBKYjgiOdNRkJRQYMPzLjklnFmbUwt79glB0ZgzlhFjNOhgLr8
-         CEsA==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=sY0jlucWtr2KpqhKL8t483Rz+Yzzasp8fEJbBIxJRXY=;
+        b=mQZZM8Msvr6A+mleatB5Rt/2f5+whZXOlyH/i/FNDsPTGNHl0gbAw8WAf/+jpjGJHt
+         1JTyIa4kbIrdWQhH/kSdzrxMnq/4rMwH4kV9KxWyZwB+XNYvwXZK96t8XZ8y5B5Oh2Be
+         ML3ZtbLTyxjznXORKBRtFjqeFmhphrC7q7Nh7xWXik8LX6G6xbvIzSbLG1UpEWKI9jhB
+         oQnR18s2ljJIiGpGlgYLQw3r0n+7dGI/EP0FxDeNDEkvmjR5+4sghjKpLQ9tIR0IYLiS
+         uE9q8YlZ4iUOZuXJS30WUGerm55Oyc33mowV1EgPjVsfc4chyf7w0be7fnMCORNjQjRV
+         XqLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=gU+O1WteBcrbPMf10+D5JPQiWvQWUBrSXCg5rSPskIs=;
-        b=eQ5/H5QLIo5HKIfmUZ70sgD4vn4nlrl8W0F4HMM/i7swyjPd7QtgR9HTIXeYiMvfl5
-         mBP7P/lU3wa0HdEuJVHdVCFFDoj4heyKT2Lbk/iTmAtIFy4MxoVXftDXaizqWf1n5D6+
-         +4noCTGlBIZl4iae2OIkmxXSO7xgrmNVu6jKF76eKexXioGt+g2tXe4SasW/ZbiIGhfA
-         GrokISaDUr12WbRkwrgwli/I9avrm1mQ/kLR8P6V79REfDwyo0GJ2NjaIXX5vogDtgRO
-         jbzdBYB2qMWLHnbBW+6sye9yDZZGe6SJ1PTV62tME8C9rPfcGYD7I1cMs/aUeyIOCe7L
-         zRXw==
-X-Gm-Message-State: ANhLgQ3IuP9rX72u16dF+iNMxHcXZTWnem+9TqLnJE4M6QsK4sl21boF
-        XB86Vv5Rk1DZ4BwWPvMu+BkiJx2elt5Dsg==
-X-Google-Smtp-Source: ADFU+vvlVwcJcOynWKRtaPzXKockoI7Fodl5T3ap0ktK1e7AsqWJ2allhN7vJ/LABoUc8WFANxzhiA==
-X-Received: by 2002:a02:9003:: with SMTP id w3mr3950592jaf.18.1584644203200;
-        Thu, 19 Mar 2020 11:56:43 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id f15sm1029523iof.16.2020.03.19.11.56.41
-        for <io-uring@vger.kernel.org>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sY0jlucWtr2KpqhKL8t483Rz+Yzzasp8fEJbBIxJRXY=;
+        b=YcwB4uQvELEHr+md+GdInzMYt7BJqSDI8Hqk2vgS0UNRfPLamJOlWoHUPG3zWJ5xRj
+         wOMcHXk4kNPqLlHZe6Im2Fa2siTkPgWviZT+x9l1FiwynCVTqfNB4YM0a6T9qe6yHuxE
+         qc+dL1DFDSgBKV8Ae3P969qAthBGymQOsNyBDZPysxGU5JEDIUEOIMLYwPuYoki9RobZ
+         m30CTQDDGJmq45l7LxEZQG/4ENVcQCWfrrlcPepqqcz3ldmDJThnOMTFyErtUlC+aNyk
+         dX5iKdo/JeM0tqIuyr1CCHt4fQ7HFAJP9MMkgjfigxuN1ljPYzYkRpyuf8tRmC3y27rb
+         JFEw==
+X-Gm-Message-State: ANhLgQ3spL8pbuliqApePJ4XRiS5YSOyYOH7t39VZmmGyKMtNbLE2lKI
+        fWYEn+teWXeGtCMPFt/u6QMsq/6E1KSA1g==
+X-Google-Smtp-Source: ADFU+vvgtOVPnlNIjtBE1bDMmQSYttT94c/WAHqsSPgXljlICXDQp9nGpyGUJZQwbAdMgacQlxaSLA==
+X-Received: by 2002:a62:5296:: with SMTP id g144mr6951758pfb.29.1584667385608;
+        Thu, 19 Mar 2020 18:23:05 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id i2sm2930063pjs.21.2020.03.19.18.23.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Mar 2020 11:56:42 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
+        Thu, 19 Mar 2020 18:23:04 -0700 (PDT)
+Subject: Re: openat ignores changes to RLIMIT_NOFILE?
+To:     Dmitry Kadashev <dkadashev@gmail.com>, io-uring@vger.kernel.org
+References: <CAOKbgA7cgN=+zNVH9Jv1UHXC1qoWAgnPqZPPJuNaLUzzXOwwSg@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2] io-wq: handle hashed writes in chains
-Message-ID: <ab2e967f-754f-6dcf-95a0-4f24c47a9d5e@kernel.dk>
-Date:   Thu, 19 Mar 2020 12:56:41 -0600
+Message-ID: <67f104f9-b239-4d68-2f90-01a2d5e30388@kernel.dk>
+Date:   Thu, 19 Mar 2020 19:23:02 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <CAOKbgA7cgN=+zNVH9Jv1UHXC1qoWAgnPqZPPJuNaLUzzXOwwSg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -61,207 +63,97 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We always punt async buffered writes to an io-wq helper, as the core
-kernel does not have IOCB_NOWAIT support for that. Most buffered async
-writes complete very quickly, as it's just a copy operation. This means
-that doing multiple locking roundtrips on the shared wqe lock for each
-buffered write is wasteful. Additionally, buffered writes are hashed
-work items, which means that any buffered write to a given file is
-serialized.
+On 3/19/20 6:12 AM, Dmitry Kadashev wrote:
+> Hi,
+> 
+> It seems that openat calls issued via io_uring ignore changes to
+> RLIMIT_NOFILE. Maybe a wrong limit is checked. A short reproducer is
+> attached, it sets RLIMIT_NOFILE to a very low value and the sync
+> openat() call fails with "Too many open files", but io_uring one
+> succeeds. The resulting FD is completely usable, I've tried writing to
+> it successfully.
+> 
+> To be clear, originally I've encountered another side of this problem:
+> we increase the limit in our code, and io_uring's openat started to
+> fail after a while under load, while the sync calls executed on a
+> thread pool were working as expected. It's just easier to demo with
+> small limit.
+> 
+> Kernel 5.6-rc2, 5.6-rc6.
+> 
+> Hope it's the right place to report an issue like this.
 
-When looking for a new work item, build a chain of identicaly hashed
-work items, and then hand back that batch. Until the batch is done, the
-caller doesn't have to synchronize with the wqe or worker locks again.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-Changes:
-- Don't overwrite passed back work
+Can you try the below patch?
 
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 9541df2729de..8402c6e417e1 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -380,32 +380,65 @@ static inline unsigned int io_get_work_hash(struct io_wq_work *work)
- 	return work->flags >> IO_WQ_HASH_SHIFT;
+diff --git a/fs/file.c b/fs/file.c
+index a364e1a9b7e8..c8a4e4c86e55 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -540,9 +540,14 @@ static int alloc_fd(unsigned start, unsigned flags)
+ 	return __alloc_fd(current->files, start, rlimit(RLIMIT_NOFILE), flags);
  }
  
--static struct io_wq_work *io_get_next_work(struct io_wqe *wqe)
-+/*
-+ * Returns the next work item to process, if any. For hashed work that hash
-+ * to the same key, we can't process N+1 before N is done. To make the
-+ * processing more efficient, return N+1 and later identically hashed work
-+ * in the passed in list. This avoids repeated hammering on the wqe lock for,
-+ * as the caller can just process items in the on-stack list.
-+ */
-+static struct io_wq_work *io_get_next_work(struct io_wqe *wqe,
-+					   struct io_wq_work_list *list)
- 	__must_hold(wqe->lock)
- {
--	struct io_wq_work_node *node, *prev;
--	struct io_wq_work *work;
--	unsigned int hash;
-+	struct io_wq_work *ret = NULL;
- 
--	wq_list_for_each(node, prev, &wqe->work_list) {
--		work = container_of(node, struct io_wq_work, list);
-+	do {
-+		unsigned int new_hash, hash;
-+		struct io_wq_work *work;
-+
-+		work = wq_first_entry(&wqe->work_list, struct io_wq_work, list);
-+		if (!work)
-+			break;
- 
- 		/* not hashed, can run anytime */
- 		if (!io_wq_is_hashed(work)) {
--			wq_node_del(&wqe->work_list, node, prev);
--			return work;
-+			/* already have hashed work, let new worker get this */
-+			if (ret) {
-+				struct io_wqe_acct *acct;
-+
-+				/* get new worker for unhashed, if none now */
-+				acct = io_work_get_acct(wqe, work);
-+				if (!atomic_read(&acct->nr_running))
-+					io_wqe_wake_worker(wqe, acct);
-+				break;
-+			}
-+			wq_node_del(&wqe->work_list, &work->list);
-+			ret = work;
-+			break;
- 		}
- 
- 		/* hashed, can run if not already running */
--		hash = io_get_work_hash(work);
--		if (!(wqe->hash_map & BIT(hash))) {
-+		new_hash = io_get_work_hash(work);
-+		if (wqe->hash_map & BIT(new_hash))
-+			break;
-+
-+		if (!ret) {
-+			hash = new_hash;
- 			wqe->hash_map |= BIT(hash);
--			wq_node_del(&wqe->work_list, node, prev);
--			return work;
-+		} else if (hash != new_hash) {
-+			break;
- 		}
--	}
- 
--	return NULL;
-+		wq_node_del(&wqe->work_list, &work->list);
-+		/* return first node, add subsequent same hash to the list */
-+		if (!ret)
-+			ret = work;
-+		else
-+			wq_list_add_tail(&work->list, list);
-+	} while (1);
-+
-+	return ret;
- }
- 
- static void io_wq_switch_mm(struct io_worker *worker, struct io_wq_work *work)
-@@ -481,6 +514,7 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work);
- static void io_worker_handle_work(struct io_worker *worker)
- 	__releases(wqe->lock)
- {
-+	struct io_wq_work_list list = { .first = NULL, .last = NULL };
- 	struct io_wqe *wqe = worker->wqe;
- 	struct io_wq *wq = wqe->wq;
- 
-@@ -495,7 +529,7 @@ static void io_worker_handle_work(struct io_worker *worker)
- 		 * can't make progress, any work completion or insertion will
- 		 * clear the stalled flag.
- 		 */
--		work = io_get_next_work(wqe);
-+		work = io_get_next_work(wqe, &list);
- 		if (work)
- 			__io_worker_busy(wqe, worker, work);
- 		else if (!wq_list_empty(&wqe->work_list))
-@@ -504,6 +538,7 @@ static void io_worker_handle_work(struct io_worker *worker)
- 		spin_unlock_irq(&wqe->lock);
- 		if (!work)
- 			break;
-+got_work:
- 		io_assign_current_work(worker, work);
- 
- 		/* handle a whole dependent link */
-@@ -530,6 +565,24 @@ static void io_worker_handle_work(struct io_worker *worker)
- 				work = NULL;
- 			}
- 			if (hash != -1U) {
-+				/*
-+				 * If the local list is non-empty, then we
-+				 * have work that hashed to the same key.
-+				 * No need for a lock round-trip, or fiddling
-+				 * the the free/busy state of the worker, or
-+				 * clearing the hashed state. Just process the
-+				 * next one.
-+				 */
-+				if (!work) {
-+					work = wq_first_entry(&list,
-+							      struct io_wq_work,
-+							      list);
-+					if (work) {
-+						wq_node_del(&list, &work->list);
-+						goto got_work;
-+					}
-+				}
-+
- 				spin_lock_irq(&wqe->lock);
- 				wqe->hash_map &= ~BIT_ULL(hash);
- 				wqe->flags &= ~IO_WQE_FLAG_STALLED;
-@@ -910,7 +963,7 @@ static enum io_wq_cancel io_wqe_cancel_work(struct io_wqe *wqe,
- 		work = container_of(node, struct io_wq_work, list);
- 
- 		if (match->fn(work, match->data)) {
--			wq_node_del(&wqe->work_list, node, prev);
-+			__wq_node_del(&wqe->work_list, node, prev);
- 			found = true;
- 			break;
- 		}
-diff --git a/fs/io-wq.h b/fs/io-wq.h
-index 298b21f4a4d2..9a194339bd9d 100644
---- a/fs/io-wq.h
-+++ b/fs/io-wq.h
-@@ -40,9 +40,9 @@ static inline void wq_list_add_tail(struct io_wq_work_node *node,
- 	}
- }
- 
--static inline void wq_node_del(struct io_wq_work_list *list,
--			       struct io_wq_work_node *node,
--			       struct io_wq_work_node *prev)
-+static inline void __wq_node_del(struct io_wq_work_list *list,
-+				struct io_wq_work_node *node,
-+				struct io_wq_work_node *prev)
- {
- 	if (node == list->first)
- 		WRITE_ONCE(list->first, node->next);
-@@ -53,6 +53,21 @@ static inline void wq_node_del(struct io_wq_work_list *list,
- 	node->next = NULL;
- }
- 
-+
-+static inline void wq_node_del(struct io_wq_work_list *list,
-+			       struct io_wq_work_node *node)
++int __get_unused_fd_flags(unsigned flags, unsigned long nofile)
 +{
-+	__wq_node_del(list, node, NULL);
++	return __alloc_fd(current->files, 0, nofile, flags);
 +}
 +
-+#define wq_first_entry(list, type, member)				\
-+({									\
-+	struct io_wq_work *__work = NULL;				\
-+	if (!wq_list_empty((list)))					\
-+		__work = container_of((list)->first, type, member);	\
-+	__work;								\
-+})
-+
- #define wq_list_for_each(pos, prv, head)			\
- 	for (pos = (head)->first, prv = NULL; pos; prv = pos, pos = (pos)->next)
+ int get_unused_fd_flags(unsigned flags)
+ {
+-	return __alloc_fd(current->files, 0, rlimit(RLIMIT_NOFILE), flags);
++	return __get_unused_fd_flags(flags, rlimit(RLIMIT_NOFILE));
+ }
+ EXPORT_SYMBOL(get_unused_fd_flags);
+ 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index c06082bb039a..be5705ff33b4 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -398,6 +398,7 @@ struct io_open {
+ 	struct filename			*filename;
+ 	struct statx __user		*buffer;
+ 	struct open_how			how;
++	unsigned long			nofile;
+ };
+ 
+ struct io_files_update {
+@@ -2578,6 +2579,7 @@ static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return ret;
+ 	}
+ 
++	req->open.nofile = rlimit(RLIMIT_NOFILE);
+ 	req->flags |= REQ_F_NEED_CLEANUP;
+ 	return 0;
+ }
+@@ -2619,6 +2621,7 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return ret;
+ 	}
+ 
++	req->open.nofile = rlimit(RLIMIT_NOFILE);
+ 	req->flags |= REQ_F_NEED_CLEANUP;
+ 	return 0;
+ }
+@@ -2637,7 +2640,7 @@ static int io_openat2(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	if (ret)
+ 		goto err;
+ 
+-	ret = get_unused_fd_flags(req->open.how.flags);
++	ret = __get_unused_fd_flags(req->open.how.flags, req->open.nofile);
+ 	if (ret < 0)
+ 		goto err;
+ 
+diff --git a/include/linux/file.h b/include/linux/file.h
+index c6c7b24ea9f7..142d102f285e 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -85,6 +85,7 @@ extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
+ extern int replace_fd(unsigned fd, struct file *file, unsigned flags);
+ extern void set_close_on_exec(unsigned int fd, int flag);
+ extern bool get_close_on_exec(unsigned int fd);
++extern int __get_unused_fd_flags(unsigned flags, unsigned long nofile);
+ extern int get_unused_fd_flags(unsigned flags);
+ extern void put_unused_fd(unsigned int fd);
  
 -- 
 Jens Axboe

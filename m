@@ -2,162 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 460E018CFA8
-	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2020 15:03:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCB8018D165
+	for <lists+io-uring@lfdr.de>; Fri, 20 Mar 2020 15:47:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbgCTODi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 20 Mar 2020 10:03:38 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:46841 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbgCTODi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Mar 2020 10:03:38 -0400
-Received: by mail-il1-f193.google.com with SMTP id e8so5605851ilc.13
-        for <io-uring@vger.kernel.org>; Fri, 20 Mar 2020 07:03:38 -0700 (PDT)
+        id S1726979AbgCTOrJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 20 Mar 2020 10:47:09 -0400
+Received: from mail-pl1-f175.google.com ([209.85.214.175]:44986 "EHLO
+        mail-pl1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbgCTOrI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Mar 2020 10:47:08 -0400
+Received: by mail-pl1-f175.google.com with SMTP id h11so2559133plr.11
+        for <io-uring@vger.kernel.org>; Fri, 20 Mar 2020 07:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OpuMI95NOMBoPSuxbnmP8QASDWsV+lCqDzQunT49Io4=;
-        b=fhpJjuXcK0CicEXTEClVGaY/gkUqqVoRvWxNlE5b185eBIHHaJqUlwKQA9rkd1Zf49
-         1Vs/fznX6w17ZcwVnRcCN3OYP/TQNJMEwBRxb0qnVUrCa7oPEz0X3Hf7DaObYP9Oa1wZ
-         PHU6EFa/a/RznO8o20BqgLVcdgsLrbQqWg4HOWkH0FVv/T3tBup8fszP2sTu0z089exl
-         5DHVNu8DkVArpJ7lPAqQQhbCHrbcRuWNI/D/a+7jklCLH0A7Q8tAbP1hUogyl7P+j+82
-         LyNman3/58mwe/DQI/iQXnU/pVBGeBVj7814EiG3PYDcpOZcEjPS6/XkUuLudRoVsRJs
-         WUzw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eODrjtlhxOTiOIE29YNGxawgf2NuIiCFtx3U9eUdR1o=;
+        b=w2sFeTI6xJny2rlGP3QvwgvKrol5h4Oz1YzCAoOMRXvp4o000AIUWmX8FEn2K5OiPn
+         6BVDiunczPvIL8iRhyChvNqjU0S8IOs9hvHW0NEbfjshSt9lgdCVhDogdhTTrMmQq8gh
+         uyNTi5zaBhlqzhVWTH+M3I+lAqTozXSpwb6MBhmL+dpTVkr8pfbyo0TW/iwvL2G31kQk
+         Lcb14BEcCo3e2C2FRlMQpki840wWVsOBuOTedpKfFbu5AfW6z9/cwV0PgF0jRH09KtvA
+         jUxy+Z3Cy8GSkVEAdg7JQdIy3ub2j2o8sAdmP+csDZ5haHwn/AXp9EtyuG1Qtgj6pJ5N
+         F2Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OpuMI95NOMBoPSuxbnmP8QASDWsV+lCqDzQunT49Io4=;
-        b=YhBIFGvhBDXdv9hpFJGtoSZFyhL6530UME4MFJ0xz85XYJk6ru2vjbnvoMLH2DnTTv
-         SCotWKje0EdieOMkaFKRGX9MdMRb54oJvVtptoYgeYMlG0ePiIPZnruzFnxaUt+2kAaM
-         H7QIDm7uhbUMv8t3b7QibsEYj1B30cmH8Gu8xSlahwCXcXlqIvcNU6uxf3nxIpv14NjJ
-         O6EwcIPJ44PRxeza7d+gxq1MQYYKEfz3AGjpLasDvrG4U2IkoX1ZcL6hw5i2s9tn8qWM
-         1gXaBVMv06yF1TlltfuYGd9e9mNS8+f70NstrEZHS/1d5uF7K4txzkMWf4VB6jb6r7pn
-         VoIw==
-X-Gm-Message-State: ANhLgQ0GHrJpncvZiOLnlg1qhfBY7Hpy/eH8Adb/Q3Ee6WYy7SwaqxaG
-        i2piugJJXTQYL7gxaXn546ckRYh7z+XC/ZvaC2dhQw==
-X-Google-Smtp-Source: ADFU+vvflercahkiMoppPtxyZ8+PTudLvN+igtrjEpX5cZ+VOGE43gQy0XTRifqpdh2kWs2i/LJvlyvq3Wz4WZbZPtw=
-X-Received: by 2002:a92:da03:: with SMTP id z3mr7862609ilm.191.1584713017788;
- Fri, 20 Mar 2020 07:03:37 -0700 (PDT)
-MIME-Version: 1.0
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eODrjtlhxOTiOIE29YNGxawgf2NuIiCFtx3U9eUdR1o=;
+        b=ZDhqe0bEda1n55ex0euWDfoKJSOJAooT5oczuigjoEjQ/kN/sQaMJB08/RGZeSDxUv
+         ycv5S0rpoPrCfzb/kYWmSFSSFgDWu88uKh3wqL4VdB5qSPfTxkROUHMsHwghFaZNN3uc
+         0UVwottH7b75NIXxhI5DEX+pTyvXQeTpPHx7Mk9BAbixKaVubCc5tlxuUm+VBSEXSFoO
+         FqZVJJYtbp9XjiKKzUL2T3Hzhcn2Y3urIBMH10qkcJXZJEJrr2HEv1kP6Wg3Ig5E3k6V
+         Rwn9seR41TWbm2OGBRdeDXhIiyiDGImUOp6oo7356u1h3WbC1SlWVA5ySnjVpzDQO0Ss
+         5moA==
+X-Gm-Message-State: ANhLgQ0tyyAIHGe55conY2e+ix5Pw8PsvISWhG+WY0a17T5bfeVb67xn
+        9WQ12IY0VtCFJeXc8/1vmDLlB5gKpLmHNA==
+X-Google-Smtp-Source: ADFU+vsqSEowjDLSywdfclAM2jdlEQxjMlIhM+WhoToPLcwc4KbuToihckNI/5uQvMbKvV4AV+QOhw==
+X-Received: by 2002:a17:90a:7105:: with SMTP id h5mr9929862pjk.54.1584715627077;
+        Fri, 20 Mar 2020 07:47:07 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id c207sm5763202pfb.47.2020.03.20.07.47.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Mar 2020 07:47:05 -0700 (PDT)
+Subject: Re: openat ignores changes to RLIMIT_NOFILE?
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     io-uring@vger.kernel.org
 References: <CAOKbgA7cgN=+zNVH9Jv1UHXC1qoWAgnPqZPPJuNaLUzzXOwwSg@mail.gmail.com>
  <67f104f9-b239-4d68-2f90-01a2d5e30388@kernel.dk>
-In-Reply-To: <67f104f9-b239-4d68-2f90-01a2d5e30388@kernel.dk>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Fri, 20 Mar 2020 21:03:25 +0700
-Message-ID: <CAOKbgA5RvZrf=RD-5rp7gug0-SgcKaFY4aacup982NvxYTPjSQ@mail.gmail.com>
-Subject: Re: openat ignores changes to RLIMIT_NOFILE?
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <CAOKbgA5RvZrf=RD-5rp7gug0-SgcKaFY4aacup982NvxYTPjSQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9de6d5a1-5937-c564-648b-23e6db4c73ef@kernel.dk>
+Date:   Fri, 20 Mar 2020 08:47:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <CAOKbgA5RvZrf=RD-5rp7gug0-SgcKaFY4aacup982NvxYTPjSQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+On 3/20/20 8:03 AM, Dmitry Kadashev wrote:
+> Hi Jens,
+> 
+> Yes, with the patch it works perfectly, thank you.
 
-Yes, with the patch it works perfectly, thank you.
+Great thanks, I'm going to add your Tested-by to the commit.
 
 -- 
-Dmitry
+Jens Axboe
 
-
-On Fri, Mar 20, 2020 at 8:23 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 3/19/20 6:12 AM, Dmitry Kadashev wrote:
-> > Hi,
-> >
-> > It seems that openat calls issued via io_uring ignore changes to
-> > RLIMIT_NOFILE. Maybe a wrong limit is checked. A short reproducer is
-> > attached, it sets RLIMIT_NOFILE to a very low value and the sync
-> > openat() call fails with "Too many open files", but io_uring one
-> > succeeds. The resulting FD is completely usable, I've tried writing to
-> > it successfully.
-> >
-> > To be clear, originally I've encountered another side of this problem:
-> > we increase the limit in our code, and io_uring's openat started to
-> > fail after a while under load, while the sync calls executed on a
-> > thread pool were working as expected. It's just easier to demo with
-> > small limit.
-> >
-> > Kernel 5.6-rc2, 5.6-rc6.
-> >
-> > Hope it's the right place to report an issue like this.
->
-> Can you try the below patch?
->
->
-> diff --git a/fs/file.c b/fs/file.c
-> index a364e1a9b7e8..c8a4e4c86e55 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -540,9 +540,14 @@ static int alloc_fd(unsigned start, unsigned flags)
->         return __alloc_fd(current->files, start, rlimit(RLIMIT_NOFILE), flags);
->  }
->
-> +int __get_unused_fd_flags(unsigned flags, unsigned long nofile)
-> +{
-> +       return __alloc_fd(current->files, 0, nofile, flags);
-> +}
-> +
->  int get_unused_fd_flags(unsigned flags)
->  {
-> -       return __alloc_fd(current->files, 0, rlimit(RLIMIT_NOFILE), flags);
-> +       return __get_unused_fd_flags(flags, rlimit(RLIMIT_NOFILE));
->  }
->  EXPORT_SYMBOL(get_unused_fd_flags);
->
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index c06082bb039a..be5705ff33b4 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -398,6 +398,7 @@ struct io_open {
->         struct filename                 *filename;
->         struct statx __user             *buffer;
->         struct open_how                 how;
-> +       unsigned long                   nofile;
->  };
->
->  struct io_files_update {
-> @@ -2578,6 +2579,7 @@ static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->                 return ret;
->         }
->
-> +       req->open.nofile = rlimit(RLIMIT_NOFILE);
->         req->flags |= REQ_F_NEED_CLEANUP;
->         return 0;
->  }
-> @@ -2619,6 +2621,7 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->                 return ret;
->         }
->
-> +       req->open.nofile = rlimit(RLIMIT_NOFILE);
->         req->flags |= REQ_F_NEED_CLEANUP;
->         return 0;
->  }
-> @@ -2637,7 +2640,7 @@ static int io_openat2(struct io_kiocb *req, struct io_kiocb **nxt,
->         if (ret)
->                 goto err;
->
-> -       ret = get_unused_fd_flags(req->open.how.flags);
-> +       ret = __get_unused_fd_flags(req->open.how.flags, req->open.nofile);
->         if (ret < 0)
->                 goto err;
->
-> diff --git a/include/linux/file.h b/include/linux/file.h
-> index c6c7b24ea9f7..142d102f285e 100644
-> --- a/include/linux/file.h
-> +++ b/include/linux/file.h
-> @@ -85,6 +85,7 @@ extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
->  extern int replace_fd(unsigned fd, struct file *file, unsigned flags);
->  extern void set_close_on_exec(unsigned int fd, int flag);
->  extern bool get_close_on_exec(unsigned int fd);
-> +extern int __get_unused_fd_flags(unsigned flags, unsigned long nofile);
->  extern int get_unused_fd_flags(unsigned flags);
->  extern void put_unused_fd(unsigned int fd);
->
-> --
-> Jens Axboe
->

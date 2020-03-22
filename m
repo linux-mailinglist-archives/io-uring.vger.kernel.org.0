@@ -2,106 +2,142 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30B0F18EAE3
-	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2020 18:34:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 604E118EAF2
+	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2020 18:38:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbgCVReW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 22 Mar 2020 13:34:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42487 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbgCVReW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Mar 2020 13:34:22 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h15so1637871wrx.9;
-        Sun, 22 Mar 2020 10:34:20 -0700 (PDT)
+        id S1726913AbgCVRir (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 22 Mar 2020 13:38:47 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51354 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbgCVRir (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Mar 2020 13:38:47 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c187so11930301wme.1
+        for <io-uring@vger.kernel.org>; Sun, 22 Mar 2020 10:38:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=cQ7HYMFbbKAuDCMOfbn6HqKEoBXsMZuFfeRp8Yh61Ok=;
-        b=UustbaFUhoIub2rOK6HQ+QJ3QiUqiOPp4lEhc11koY0aJfLjlS9hNdXf4IoGv/ID9m
-         wtC7boPwQvl5NlI+CB1IelqUUiL/3AX4bCSKsQgZ+W5J9a/LXxJI8h3rtOyGGBE554H9
-         1rZ7abibNGBYKHhCbx6dt4jMdbnchwmTUpFTdHVxVvlsNbIQ6JVJK9sy8V7F2laxU7tx
-         J++nNIZwuxTwrbQ9TaR/AVEgRe2celCLlfoMnvNJ4l+ILzw8i3YtgLonvJrC2APyZ8SC
-         0WzoH6MECDTiiJxOx7J4fVz7+aWgqZS4kI/2Jku74H2jYRVcRHsGbgvBNEKubDxMw+IJ
-         xELg==
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bnS8jGrKttGro/fzm1oV6SHaxYM7Wmhg6g9Fccx2zTU=;
+        b=YPMB1O2hpGIkUxdveYgbXk5hvZw+Xv/p1lovbVk/YHEuIPkiALJRwoXpAj7npKe596
+         nOalA3jie2LPXeaner43Hay67hthr3Guu+fkP6NihI2z2VN1bHWw290tqyMIcc0vMN9b
+         sADT4aDX6Sfph/3/apAH5od/hbY+v2YYteqzPGkp1rfugSI860fjvWv8jMN/pr7xgxp3
+         V5OZ+g+DeupVaRm9qOb7X48586fWMyNWjM5iITdtBYlcYGf/gslECX8j0tZlV3jalfnX
+         4V2QPt/2pVrKSxbwrHAtpQ76rCbPGJ4RUFoWH0vpmH1T5ZqBl9kywozPR3WncMG4wu4h
+         UZnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cQ7HYMFbbKAuDCMOfbn6HqKEoBXsMZuFfeRp8Yh61Ok=;
-        b=WI7cadNz7wyu8BK/HdG11UPfDPsOiklKNyz1nQ1EYsZTUwjgcw1VMjj5DrDACFFmHQ
-         klTnsmEYwHj5XNfDusjxa6J3BBTFtXfP1QkQSUleKuLFp8n5oMSp9+EkRCWC54I2dGtk
-         ENEFIKf4Z4lWakr7rrmd043iopD7OD+D9/Orgwd3Do+S1p4cgmj+NHJSC1mMhbOvccj2
-         rWjA3/ByG2JpvyVlq7yny5DyTnO2eXN/kTG39h2p6Cgpmus+HQQ0BoGXXP1KxrfUKplr
-         LCtXkd36v9D4bDci0v5bBl/r4JF5LmrSTDIFEJNAF46xjEA61AWVn9BQscbTSIt0EnL1
-         CapA==
-X-Gm-Message-State: ANhLgQ11UDWSVggbqyJIdyZ+CLBsJrTbbU+gJx2HH++kXw8lXkXFxjg+
-        GnFd4eEmVF+5bVHZCvKDb3Q=
-X-Google-Smtp-Source: ADFU+vs6xFWgxOsPlZz4IW1uYgigFjNLcWueKdt7J01toef8xawT7hnF+aF+CIipF1uCl3oKBPTHRw==
-X-Received: by 2002:a05:6000:1184:: with SMTP id g4mr24816792wrx.396.1584898459650;
-        Sun, 22 Mar 2020 10:34:19 -0700 (PDT)
-Received: from localhost.localdomain ([109.126.140.227])
-        by smtp.gmail.com with ESMTPSA id t21sm5245948wmt.43.2020.03.22.10.34.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Mar 2020 10:34:17 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bnS8jGrKttGro/fzm1oV6SHaxYM7Wmhg6g9Fccx2zTU=;
+        b=s8ajC8lK7KID7CxHoOl7fr5J+0bCnWo0aIA8kLao30E3AlYTS4Jp3WK9HCyWcVF8LW
+         6iSUc25B6x9vcijRm9wZeTBe5D2Qzw/wtQGoydZ9sOUVUKQd4tO6zc5KeD6LgjJGcDAL
+         5zNjjK1IwQepE9lVAfup7GH9aMPLK7ywrAEfBsV/nr7Mr1wp3RrmyRSeSNSydwgoYYlf
+         OgrW+bMojwumwBzdbb+BshfGsndh9NQEp1etfMe3AUC6TilhVTuBY2mtjWGxRLSKmMYD
+         54YIC9o5EukuAk54dZuUM2Aj1DUuMX6gFAx8vD+c1n+9LiBfDv9gvsFxwh1JOvNLUe8+
+         Mu2Q==
+X-Gm-Message-State: ANhLgQ1aNfUiVLFSLo6RSbkhoHBr/89KL36mI5A8VmE5tAQ7+d/4aJ/N
+        DDZjyHCtrRk1eZA53G8vyxBnvMw+
+X-Google-Smtp-Source: ADFU+vtfB38WbH+DzcZAuPTKuNX6aj/m02+C/GKNtvGnxOhqw7pa9BpEuK0U0R/gqHOmq0Otr33cYg==
+X-Received: by 2002:a1c:e442:: with SMTP id b63mr23160509wmh.174.1584898724845;
+        Sun, 22 Mar 2020 10:38:44 -0700 (PDT)
+Received: from [192.168.43.200] ([109.126.140.227])
+        by smtp.gmail.com with ESMTPSA id c5sm20516609wma.3.2020.03.22.10.38.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Mar 2020 10:38:44 -0700 (PDT)
+Subject: Re: [PATCH v2] io-wq: handle hashed writes in chains
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <ab2e967f-754f-6dcf-95a0-4f24c47a9d5e@kernel.dk>
+ <3454f8c1-3d5a-1f94-569a-41e553fc836a@gmail.com>
+ <1c0d0978-0824-b896-d100-e0b7664ba81a@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] io-wq: close cancel gap for hashed linked work
-Date:   Sun, 22 Mar 2020 20:33:16 +0300
-Message-Id: <c38a2421e15e3aaa5c55e3e0d7ddca4c77d178e1.1584898199.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <c7f352b4-0255-d87a-1fb4-0b55984df137@kernel.dk>
-References: <c7f352b4-0255-d87a-1fb4-0b55984df137@kernel.dk>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <097a0386-bd60-3d37-16ad-4053edb3c12b@gmail.com>
+Date:   Sun, 22 Mar 2020 20:37:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1c0d0978-0824-b896-d100-e0b7664ba81a@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-After io_assign_current_work() of a linked work, it can be decided to
-offloaded to another thread so doing io_wqe_enqueue(). However, until
-next io_assign_current_work() it can be cancelled, that isn't handled.
+On 22/03/2020 20:08, Jens Axboe wrote:
+>>> +				 */
+>>> +				if (!work) {
+>>> +					work = wq_first_entry(&list,
+>>> +							      struct io_wq_work,
+>>> +							      list);
+>>
+>> Wouldn't it just drop a linked request? Probably works because of the
+>> comment above.
+> 
+> Only drops if if we always override 'work', if it's already set we use
+> 'work' and don't grab from the list. So that should work for links.
+> 
 
-Don't assign it, if it's not going to be executed.
+Oh, right, the NULL check is just above.
 
-Fixes: 60cf46ae605446feb0c43c472c0 ("io-wq: hash dependent work")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io-wq.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+>>> +					if (work) {
+>>> +						wq_node_del(&list, &work->list);
+>>
+>> There is a bug, apparently from one of my commits, where it do
+>> io_assign_current_work() but then re-enqueue and reassign new work,
+>> though there is a gap for cancel to happen, which would screw
+>> everything up.
+>>
+>> I'll send a patch, so it'd be more clear. However, this is a good
+>> point to look after for this as well.
+> 
+> Saw it, I'll apply when you have the Fixes line. I'll respin this one
+> after.
+> 
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 9541df2729de..b3fb61ec0870 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -485,7 +485,7 @@ static void io_worker_handle_work(struct io_worker *worker)
- 	struct io_wq *wq = wqe->wq;
- 
- 	do {
--		struct io_wq_work *work;
-+		struct io_wq_work *work, *assign_work;
- 		unsigned int hash;
- get_next:
- 		/*
-@@ -522,10 +522,14 @@ static void io_worker_handle_work(struct io_worker *worker)
- 			hash = io_get_work_hash(work);
- 			work->func(&work);
- 			work = (old_work == work) ? NULL : work;
--			io_assign_current_work(worker, work);
-+
-+			assign_work = work;
-+			if (work && io_wq_is_hashed(work))
-+				assign_work = NULL;
-+			io_assign_current_work(worker, assign_work);
- 			wq->free_work(old_work);
- 
--			if (work && io_wq_is_hashed(work)) {
-+			if (work && !assign_work) {
- 				io_wqe_enqueue(wqe, work);
- 				work = NULL;
- 			}
 -- 
-2.24.0
-
+Pavel Begunkov

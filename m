@@ -2,65 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE1E18EC15
-	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2020 21:16:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB10F18EC17
+	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2020 21:17:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbgCVUQE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 22 Mar 2020 16:16:04 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33139 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbgCVUQE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Mar 2020 16:16:04 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d17so5486713pgo.0
-        for <io-uring@vger.kernel.org>; Sun, 22 Mar 2020 13:16:02 -0700 (PDT)
+        id S1726710AbgCVURk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 22 Mar 2020 16:17:40 -0400
+Received: from mail-pj1-f52.google.com ([209.85.216.52]:40545 "EHLO
+        mail-pj1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726623AbgCVURj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Mar 2020 16:17:39 -0400
+Received: by mail-pj1-f52.google.com with SMTP id bo3so5043328pjb.5
+        for <io-uring@vger.kernel.org>; Sun, 22 Mar 2020 13:17:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=s/wZQcNYe3sVJrJyk/B5WQN2MX+ZGiqPClv9613s3wo=;
-        b=SwwNZdFEWTZ//dfICgi+u75oPVUJrzw5feC1te6YYVADXCcTuaHO/CztevFy861LL3
-         98w6rqrKDt/yQbXRSwxyGuVKvkeZ2WXJ4ja1P1IHP9RIPS33UYI3C85zLDQHzFnLCCV9
-         bSPxScXQUz3hNHrstxdoP3aFp5Y/c2aTrpXaPKeCRLSlo42bDilZlcX+CRl3GSLQf5Bg
-         /Y5eFws/ByyHMfucNaBvUj+wmIvUs2OnGjyS7/zh76P3PVR9clgQEHcglngnmejpv2m6
-         5b/XI420gF0PkTzshQVssQ5h4LHwR0fALKbKJF2aqla9rBMoRQjurNQ3qopXHkrATTgr
-         YH1w==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=siZlRY8txSUJlhMo281aqD2ignUiFBwzsrA1ioFeCWc=;
+        b=yQsE9jPoqIE9Ks0/g5mEGQfzQRvi2zC1UrkHqEfQrKl7cYDPxrg0ybOQtJlrEavwmC
+         RsZZNBMfy6UuHKQjbibMDBT6BJ2crbcFTEIwo901wd5yLuuMjMJ0ofccfXoE4ni1ghvp
+         3goncK7uf946Eu2zbw6d+OEMh/Py+tLu+PE0QPUhr15T5IEK01y5puXj0gIEueoulD+K
+         isqP7MzEm5dSlrhiKDPyWintlWnKPgUROL2vz5ypj6hndnDAnCGK1dGMCtdScaBDRaUa
+         h23JHJuit7ThaSEbGLPHCHiD2jVbb2veVPOXbXR2dmyjtSQK9faa1pdRV5JU9jBGJLqr
+         W2ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=s/wZQcNYe3sVJrJyk/B5WQN2MX+ZGiqPClv9613s3wo=;
-        b=SDte5w+cvHG6eaA+HccEFNE5W2ZYFKF2a0nLWCH3jZWBBJxTxiL2LKgSb2Ob4+Tdex
-         DTZmiCUsQIDBZc9qLYyW9c048tj6p1G9DQkeH9qR+Vi3Fav8SV1lomYBzKgW20SfYu3W
-         A6K4BQKccAIwI7UV8/4qWK6Ha8QdQTYxMeK0NFXr3rZQnQ5qJaiapMjFOH1tIi3HgI/7
-         D3Q9HKeL6LssMKaJ3kIEkt0/ZW6beMPc+Q3TtjUBUYgMfATa+vkRCIflGm1FaLalLk5/
-         eWaJL7vB+l2/YR1kqdEESPIXmhTmqFQyKXkxAVikJCnim+QmRd5CL5Xw6MdoI5sUMcpG
-         Jlnw==
-X-Gm-Message-State: ANhLgQ2JeFjOXLT5LrMkFAu2JintAwOlEvWBN5vH/sz9DP+bYc76zFoY
-        4PBi+9GuqY1awDidBrdp4ixoRO+lbnjTJQ==
-X-Google-Smtp-Source: ADFU+vtsPw2PP3jvnjrWGaLCY6C2x2sgy6xaGCFeh8137t43Z/jyAra03v7aw+FOYvNs/a6GRe16+g==
-X-Received: by 2002:a63:2:: with SMTP id 2mr18084722pga.102.1584908161354;
-        Sun, 22 Mar 2020 13:16:01 -0700 (PDT)
+        bh=siZlRY8txSUJlhMo281aqD2ignUiFBwzsrA1ioFeCWc=;
+        b=aKTsU8/JA5Hd6M3NMUJesZbijeA6E/KmY1DGu+J20dP6FqUFrq4+d/NCQ2Q/RBVA59
+         5fnwyRa6YpV5JOc9npVbGu869/S0NLca8U9NyyTP7CcERTyYTdwunLaFjsBLh4uubMbv
+         U1BwGWMQMXWUKtDsm+lUaHJd9aVWuuoJNc7ysdP/2wv4BGjd1PebmURaRCDn8bAjkvL5
+         KTLezpxVtE0ZGkQuXn30yTARZZvo4AZ4CApCeUe1MNOfBosN7IaME/p1mXJvcfPWgOuT
+         jJ+2FSyjzzey4+B4KrALhdjjikztNKAuxp05RdHWi8jNYmq17eWIPlE2PO5jW32iPatg
+         GeUw==
+X-Gm-Message-State: ANhLgQ0KopTOpKGlP2QoRXwBVdexzYTGUvleTdV65fieGu/FJixG7WBU
+        8Vik4HUuQHec6BGHZ+j0jyW9pw==
+X-Google-Smtp-Source: ADFU+vs0g2AtePxKPH5/W1n2yu4vnWRlEivkRnKOvETnf9xMebrSFe6mc4pQWf0hdeBcXIZXZDgCOw==
+X-Received: by 2002:a17:90b:3656:: with SMTP id nh22mr3943791pjb.71.1584908258528;
+        Sun, 22 Mar 2020 13:17:38 -0700 (PDT)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id g18sm5239702pgh.42.2020.03.22.13.16.00
+        by smtp.gmail.com with ESMTPSA id m29sm963701pgl.35.2020.03.22.13.17.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Mar 2020 13:16:00 -0700 (PDT)
-Subject: Re: [PATCH v2] io-wq: handle hashed writes in chains
+        Sun, 22 Mar 2020 13:17:37 -0700 (PDT)
+Subject: Re: INFO: task hung in io_queue_file_removal
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+538d1957ce178382a394@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <20200321123827.15256-1-hdanton@sina.com>
+ <20200322020601.5136-1-hdanton@sina.com>
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <ab2e967f-754f-6dcf-95a0-4f24c47a9d5e@kernel.dk>
- <3454f8c1-3d5a-1f94-569a-41e553fc836a@gmail.com>
- <cd8541df-8f97-af3c-ea49-422e546ab648@gmail.com>
- <aa7049a8-179b-7c99-fce3-ac32b3500d31@gmail.com>
- <a6dedf7c-1c62-94f1-0b98-d926af2ea4b9@kernel.dk>
- <cd75e37f-b7c8-91ad-d804-3c4fdf45d3ed@kernel.dk>
-Message-ID: <0f487c49-3394-0434-f91c-72c8e6b8d6f3@kernel.dk>
-Date:   Sun, 22 Mar 2020 14:15:59 -0600
+Message-ID: <5f48249b-19f9-6c18-b849-d77db0b2f247@kernel.dk>
+Date:   Sun, 22 Mar 2020 14:17:36 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <cd75e37f-b7c8-91ad-d804-3c4fdf45d3ed@kernel.dk>
+In-Reply-To: <20200322020601.5136-1-hdanton@sina.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,19 +68,46 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/22/20 2:05 PM, Jens Axboe wrote:
-> On 3/22/20 1:51 PM, Jens Axboe wrote:
->>> Please, tell if you see a hole in the concept. And as said, there is
->>> still a bug somewhere.
+On 3/21/20 8:06 PM, Hillf Danton wrote:
 > 
-> One quick guess would be that you're wanting to use both work->list and
-> work->data, the latter is used by links which is where you are crashing.
-> Didn't check your list management yet so don't know if that's the case,
-> but if you're still on the list (or manipulating it after), then that
-> would be a bug.
+> On Sat, 21 Mar 2020 14:03:24 -0600 Jens Axboe wrote:
+>>
+>> On 3/21/20 6:38 AM, Hillf Danton wrote:
+>>>
+>>> Flush work before waiting for completion.
+>>>
+>>> --- a/fs/io_uring.c
+>>> +++ b/fs/io_uring.c
+>>> @@ -5823,8 +5823,8 @@ static bool io_queue_file_removal(struct
+>>>  
+>>>  	if (pfile == &pfile_stack) {
+>>>  		percpu_ref_switch_to_atomic(&data->refs, io_atomic_switch);
+>>> -		wait_for_completion(&done);
+>>>  		flush_work(&data->ref_work);
+>>> +		wait_for_completion(&done);
+>>>  		return false;
+>>>  	}
+>>>  
+>>> --
+>>>
+>>> And perhaps a tiny cleanup: no deed to wait for completion as
+>>> flushing work itself will wait until the work is done.
+>>
+>> Care to send this version as a real patch? Seems kind of pointless to
+>> just do the above change with that in mind. And then at the same time
+>> turn ->done into ->do_file_put or something, and make it a bool.
+> 
+> Have trouble making a patch with the ideas in your mind all folded in so
+> it may be better that you do it this time leaving me a chance to learn
+> a lesson.
 
-IOW, by the time you do work->func(&work), the item must be off the
-list. Does indeed look like that's exactly the bug you have.
+Maybe my explanation wasn't quite clear! What I meant was that since
+we're no longer using pfile->done, turn that ->done into a ->needs_kfree
+or something, and make that a bool. So basically the same patch as the
+one you posted, just making that naming (and type) change as well.
+
+Does that help? Would prefer if you sent a patch, you already did
+99% of the hard work.
 
 -- 
 Jens Axboe

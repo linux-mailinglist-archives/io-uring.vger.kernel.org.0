@@ -2,54 +2,50 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2A3F18EC24
-	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2020 21:26:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CA5718EC59
+	for <lists+io-uring@lfdr.de>; Sun, 22 Mar 2020 21:57:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbgCVU03 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 22 Mar 2020 16:26:29 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55181 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbgCVU03 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Mar 2020 16:26:29 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c81so1943685wmd.4
-        for <io-uring@vger.kernel.org>; Sun, 22 Mar 2020 13:26:26 -0700 (PDT)
+        id S1726756AbgCVU5P (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 22 Mar 2020 16:57:15 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55105 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbgCVU5O (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Mar 2020 16:57:14 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c81so2010782wmd.4
+        for <io-uring@vger.kernel.org>; Sun, 22 Mar 2020 13:57:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to;
-        bh=DzkpJY9+lEh8KA7/IvlDEDoXlDl5tLZbdFJkiDZLtfk=;
-        b=dY5NFbdTccUwhyR9rewUHiV6s0K1YNkI/wGaOL7Igj8DtlZTDrmUC/xUKlUPFaackX
-         lt+Qe2R6ltUipOZShWBLUUgM5p95StNMDN0J7NK/iRDPVu42el2BJ0+oqocmJTu19bns
-         24s6i7h13nYvBzOmg4s1Qqy9smnZMwi5iSkAWN2QNSRh0gtc3n+18mWh10JbM9rjleWZ
-         8MyiYcO+rce/xYP+EpQOoyXCNPEwN+Ent1KjbhZM8DwmURJhombpaG2b6kZX/bX5Ot3w
-         Q0upbjLa07PpLxyOOPnuNao1mq3GtJnhLBOsE8eV8J5cyk72PsrY5oxAXWAKHVPvFT8t
-         WqnQ==
+        bh=ko+9eCkxI+c9dXjeL4SAcO1F0b6O+rcd3hmOLE24dcM=;
+        b=FQjiLg5C3PBbx3GpKTZxvypdUn/Y/sBStlqhltqwN+VObSySdvgLtfcIJXl4Iq1NMx
+         1d0w5iukUOQBUDFjtJztdcxhlFKWK2FITITyqWMrcdW90Ff8sHtZeqLVrwMFPWpGdh0u
+         Ss6BelBvkU3J6gpdrjCiTQojkTD42fCNazJ61alk0rbMDg74Cd2z1fTPEO4iI+wCMGjt
+         b6rRlIQevCWYxd8YUgCu2XQzt/YQa25PRSMEZeOYCjNaNNxeB5NTO0W0+RXXAukar+fz
+         OCVskF6TDVFj7yWzyccLpOFTX8YJUSpT9nJsGXSyIe1r4zO+hAC3FHPh5uw22XeBpiNG
+         sNYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to;
-        bh=DzkpJY9+lEh8KA7/IvlDEDoXlDl5tLZbdFJkiDZLtfk=;
-        b=QoLx4lLRhr1wRgAygpRLnBf4qZFd78Z5c9+D1MwhMaus6qxLu5+H4k/3iiow0S3cag
-         x2SRDYz4kMyKEnGyD/Wikjre/sqP25oacJCvKo6dWaD0Z9DJv3u/VQcLLHXsGA8QOn8Q
-         wi56Ar7+4uAT3JkyxuQXwwzHyUPHWgUKb3RYcJX0XZgXiAcbiG8HWhU5dMfvPYQ13xxE
-         AYwRw+3Yq0LFwUtsHaTTuggFSwTsSyjthren3Tj9iBgNXawh0Q+pdkwH1YSZuBXtZFoH
-         n+DN24Spn/5Q+iRnKobdYI9pFlq8SQC3XDt3B/6rG18Bb81b9LyiDZXqQU41iZ03hPVP
-         d8lQ==
-X-Gm-Message-State: ANhLgQ0ju/2R81jCQF6AFwFxdKA2XuOmNznLXyGOMmagKkhgWnAk1an5
-        h8EGCCt4ryHYL5smYLas0q28U3rp
-X-Google-Smtp-Source: ADFU+vupCwDHs8zsL00az56YfcbMOK/5Pf6ypBNkPHnE0oHx5ap3pj+4Ex/D5Dr/Eivi/dB3bif7PQ==
-X-Received: by 2002:a7b:c450:: with SMTP id l16mr18781014wmi.9.1584908785659;
-        Sun, 22 Mar 2020 13:26:25 -0700 (PDT)
+        bh=ko+9eCkxI+c9dXjeL4SAcO1F0b6O+rcd3hmOLE24dcM=;
+        b=cqN22Jc0LODYIIfw3KYNe8E6MLRsi86VIIOsNgr9t6ZbZcHeGMO6+4KacC7hwNJIUp
+         QE6Q2uq7SzycMgllcSQp+o8DZG/P6sxtku3qgr+gnkJpfmSpoiQwsw6MGuSYqauN22Ep
+         OoO8VZdHbbwFEtYuc1e2N89fDE8apL4YXDlcnvH3qdSgSu1DH6xVZJMIlggWU+ygPtnn
+         jzyr3FNqqr5bUFwVq1jLNldc1T5eo3TBNsIidXbe901pHtNxDZ4dW7qz0AC6mBO6SQmv
+         pimTptiPWOFP+a3dI/oAlLFXhtMeMSl2r/Y7nuW/ji/zlYP2r0XDTTd11IW3OCcS+4a8
+         xMoA==
+X-Gm-Message-State: ANhLgQ1AREOj9EX9JwKSqVZ+r+TKhdNjg4jE7VmcOdXQLLCEisHUaIoX
+        BYBqQolphA1mgRHuBBPtDt0OH8OP
+X-Google-Smtp-Source: ADFU+vsgW/dKmTJZKxNkrjdnj4QhB3MFF47qewqfUBEBqQ3ZN6JvTBdPKzC0ZsRh0NA+K09yOyRwFA==
+X-Received: by 2002:a1c:4486:: with SMTP id r128mr21523044wma.32.1584910631804;
+        Sun, 22 Mar 2020 13:57:11 -0700 (PDT)
 Received: from [192.168.43.118] ([109.126.140.227])
-        by smtp.gmail.com with ESMTPSA id d124sm14608665wmd.37.2020.03.22.13.26.24
+        by smtp.gmail.com with ESMTPSA id m12sm12256347wmi.3.2020.03.22.13.57.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Mar 2020 13:26:25 -0700 (PDT)
+        Sun, 22 Mar 2020 13:57:11 -0700 (PDT)
 To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
 References: <ab2e967f-754f-6dcf-95a0-4f24c47a9d5e@kernel.dk>
- <3454f8c1-3d5a-1f94-569a-41e553fc836a@gmail.com>
- <cd8541df-8f97-af3c-ea49-422e546ab648@gmail.com>
- <aa7049a8-179b-7c99-fce3-ac32b3500d31@gmail.com>
- <a6dedf7c-1c62-94f1-0b98-d926af2ea4b9@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -95,112 +91,126 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: [PATCH v2] io-wq: handle hashed writes in chains
-Message-ID: <b8bc3645-a918-f058-7358-b2a541927202@gmail.com>
-Date:   Sun, 22 Mar 2020 23:25:30 +0300
+Message-ID: <cc1ad5fc-dce1-cece-a34d-0894a3e556d6@gmail.com>
+Date:   Sun, 22 Mar 2020 23:56:13 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <a6dedf7c-1c62-94f1-0b98-d926af2ea4b9@kernel.dk>
+In-Reply-To: <ab2e967f-754f-6dcf-95a0-4f24c47a9d5e@kernel.dk>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="CRiAO4ie2qRtd5OyvDeIHZmpu4oehZbx2"
+ boundary="RHi3NPpOHqBPTbFxXU32dmPx8dUS4QMM1"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---CRiAO4ie2qRtd5OyvDeIHZmpu4oehZbx2
-Content-Type: multipart/mixed; boundary="HHLsypKBgtAnbuATg0FO9RifVXFvzZAjH";
+--RHi3NPpOHqBPTbFxXU32dmPx8dUS4QMM1
+Content-Type: multipart/mixed; boundary="FSRq5ImmSgRqNb9UIwzQ2IZfg4xc8QwDJ";
  protected-headers="v1"
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-Message-ID: <b8bc3645-a918-f058-7358-b2a541927202@gmail.com>
+Message-ID: <cc1ad5fc-dce1-cece-a34d-0894a3e556d6@gmail.com>
 Subject: Re: [PATCH v2] io-wq: handle hashed writes in chains
 References: <ab2e967f-754f-6dcf-95a0-4f24c47a9d5e@kernel.dk>
- <3454f8c1-3d5a-1f94-569a-41e553fc836a@gmail.com>
- <cd8541df-8f97-af3c-ea49-422e546ab648@gmail.com>
- <aa7049a8-179b-7c99-fce3-ac32b3500d31@gmail.com>
- <a6dedf7c-1c62-94f1-0b98-d926af2ea4b9@kernel.dk>
-In-Reply-To: <a6dedf7c-1c62-94f1-0b98-d926af2ea4b9@kernel.dk>
+In-Reply-To: <ab2e967f-754f-6dcf-95a0-4f24c47a9d5e@kernel.dk>
 
---HHLsypKBgtAnbuATg0FO9RifVXFvzZAjH
+--FSRq5ImmSgRqNb9UIwzQ2IZfg4xc8QwDJ
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 22/03/2020 22:51, Jens Axboe wrote:
-> commit f1d96a8fcbbbb22d4fbc1d69eaaa678bbb0ff6e2
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Fri Mar 13 22:29:14 2020 +0300
->=20
->     io_uring: NULL-deref for IOSQE_{ASYNC,DRAIN}
->=20
-> which is what I ran into as well last week...
+On 19/03/2020 21:56, Jens Axboe wrote:
 
-I picked it before testing
-
-> The extra memory isn't a bit deal, it's very minor. My main concern
-> would be fairness, since we'd then be grabbing non-contig hashed chunks=
-,
-> before we did not. May not be a concern as long as we ensure the
-> non-hasned (and differently hashed) work can proceed in parallel. For m=
-y
-> end, I deliberately added:
-
-Don't think it's really a problem, all ordering/scheduling is up to users=
- (i.e.
-io_uring), and it can't infinitely postpone a work, because it's processi=
-ng
-spliced requests without taking more, even if new ones hash to the same b=
-it.
-
-> +	/* already have hashed work, let new worker get this */
-> +	if (ret) {
-> +		struct io_wqe_acct *acct;
+>  			if (hash !=3D -1U) {
+> +				/*
+> +				 * If the local list is non-empty, then we
+> +				 * have work that hashed to the same key.
+> +				 * No need for a lock round-trip, or fiddling
+> +				 * the the free/busy state of the worker, or
+> +				 * clearing the hashed state. Just process the
+> +				 * next one.
+> +				 */
+> +				if (!work) {
+> +					work =3D wq_first_entry(&list,
+> +							      struct io_wq_work,
+> +							      list);
+> +					if (work) {
+> +						wq_node_del(&list, &work->list);
+> +						goto got_work;
+> +					}
+> +				}
 > +
-> +		/* get new worker for unhashed, if none now */
-> +		acct =3D io_work_get_acct(wqe, work);
-> +		if (!atomic_read(&acct->nr_running))
-> +			io_wqe_wake_worker(wqe, acct);
-> +		break;
-> +	}
->=20
-> to try and improve that.
+>  				spin_lock_irq(&wqe->lock);
+>  				wqe->hash_map &=3D ~BIT_ULL(hash);
+>  				wqe->flags &=3D ~IO_WQE_FLAG_STALLED;
 
-Is there performance problems with your patch without this chunk? I may s=
-ee
-another problem with yours, I need to think it through.
+Let's have an example, where "->" is a link
+req0(hash=3D0) -> req1(not_hashed)
+req2(hash=3D0)
 
->=20
-> I'll run a quick test with yours.
+1. it grabs @req0 (@work=3D@req0) and @req1 (in the local @list)
+2. it do @req0->func(), sets @work=3D@req1 and goes to the hash updating =
+code (see
+above).
+
+3. ```if (!work)``` check  fails, and it clears @hash_map, even though th=
+ere is
+one of the same hash in the list. It messes up @hash_map accounting, but
+probably even can continue working fine.
+
+4. Next, it goes for the second iteration (work =3D=3D req1), do ->func()=
+=2E
+Then checks @hash, which is -1 for non-hashed req1, and exits leaving req=
+2 in
+the @list.
+
+Can miss something by looking at diff only, but there are 2 potential poi=
+nts to
+fix.
+
+BTW, yours patch executes all linked requests first and then goes to the =
+next
+hashed. Mine do hashed first, and re-enqueue linked requests. The downsid=
+e in my
+version is the extra re-enqueue. And your approach can't do some cases in=
+
+parallel, e.g. the following is purely sequential:
+
+req0(hash0) -> ... long link ->
+req1(hash0) -> ... long link ->
+req2(hash0) -> ... long link ->
+req3(hash0) -> ... long link ->
+
+It's not hard to convert, though
 
 --=20
 Pavel Begunkov
 
 
---HHLsypKBgtAnbuATg0FO9RifVXFvzZAjH--
+--FSRq5ImmSgRqNb9UIwzQ2IZfg4xc8QwDJ--
 
---CRiAO4ie2qRtd5OyvDeIHZmpu4oehZbx2
+--RHi3NPpOHqBPTbFxXU32dmPx8dUS4QMM1
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl53yboACgkQWt5b1Glr
-+6UXrBAAoTyAPp+HIFpM944rAt5+hdu03j6ephvSmCmljea7/+YZ6wr0dVMcvoKq
-4N6s/t1/2Z81MRZwa2YaxYPSaANQLk3KZsvE9ppONIeNtVyhy3jPPSF2B0GLAoPo
-K9lROY3EfjFijfAtgcYeldN8PHkoO2GdvMz4l8AUsdfDB5WfecZ7ZtnZAyArnVYq
-zxVq1H/lmcDu/Oo+s7mk4r3SqhDNqzH1n9JTLGqIG2p0NCF47HAsibr8qhyyjuEi
-5zo23odE0xHcbk42zLwfayyyNS/wZeE/2xQInw36B9wiZuqKm1pXpwvq4zJc7A1U
-5pB/1LfszqOW3xtEHsZUgd7JJLYALZaj2xcEQY8wX1cmOvT4s9LpMjg4/aCqhLw7
-N9q6B+yuacELh1XbdRZes8Xkh0xA4j1Yau9PlzJMuVruSgEkMMnQJvUjw+vaZFbM
-FenekR1rCw9ZIWBQZ7RG/LEmjyljdNtrzMrbBSb/z+rBW1556M//HfaE1DiKDZNq
-shrKHiLP1UdOIWStBF7jC8XyA1pkwLW9mQRCLxW8u9+4w5SCYiB2z2tafCoqquFz
-w9W7OqEDsk496cdatdruOj0Ll0bUNwQt31ZkXcA853jVLWsitBqKarfgHrfUa4GX
-snIA2faxQhM4W/bqGAPYfaXrPVu13Kb4EXVq98e2WiEVgBlw1tM=
-=LdgA
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl530O0ACgkQWt5b1Glr
++6W6Kw//UtXtolpyNA1Q4GBMFzGG+qV3wA5m6d/CHsuhOlDb/bG9cUj0NlGx9ZWf
+aAK+2mCbiNJ5iindav6YSmVQgOD6SLTUGv1mvmLYa6KwHW13UhPyTEYq6fV2QEYH
+AIjxmko8zcMei/q70YLAuPShn/KLPV2xvamse+hJRa4Tpc3fWNfdR4fLakDoRdTW
+kMCZj6YTEQTH5zvTGy+BnfFu/2/19N3KGyRED3lPlHXRLxi+4n/VY9gq/YEqwIhz
+R3MI848NIuxK7z7QU5UNURmfo96y1WUFbsFQVRMQ10F359ULlzxzFYCjCzPvOWtw
+U18hhgXWTjUZxMhCh9Mdn4DE+FF2iyIhISv7MuD8kS5CFl5te7pA50dBA1Pscr+d
+2rw0rNE4HBap1gtfaOWwbEcDZib4ZacXe55f7w7xIa5D+iBZ/24H19Ru4ZAtBft9
+qRbd0VCflw5DicIvQxn+JPfn3o5gdxpyoI/Vmv6IJ9Ddb8/NZSvi0dVFvmzdDTX7
+5O2+UEwTlcPFPxwEz9HmlWoXmZ/J2AgiO6ipkZ+/clV2M6JqPgu6KocWfRMhkMSK
+RjPlQF0jTemFlJ0mdXXjrDtb0dS0S7F4wUaX9c8qX9OQ7GWkmxosu8/6G16jO4uv
+Zznpax843JrTdLPRUO5VVz47qpKtsqTUQCuNit+DpxhKCHfP1xQ=
+=a8B8
 -----END PGP SIGNATURE-----
 
---CRiAO4ie2qRtd5OyvDeIHZmpu4oehZbx2--
+--RHi3NPpOHqBPTbFxXU32dmPx8dUS4QMM1--

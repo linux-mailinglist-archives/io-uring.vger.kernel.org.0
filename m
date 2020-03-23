@@ -2,234 +2,531 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F16018F0FE
-	for <lists+io-uring@lfdr.de>; Mon, 23 Mar 2020 09:39:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 563A918F3F0
+	for <lists+io-uring@lfdr.de>; Mon, 23 Mar 2020 12:54:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727571AbgCWIjJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Mar 2020 04:39:09 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37007 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727477AbgCWIjJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Mar 2020 04:39:09 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w10so15821788wrm.4
-        for <io-uring@vger.kernel.org>; Mon, 23 Mar 2020 01:39:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to;
-        bh=aVcnY+I+l9V2cLPu0WvCqapwmxY3gkc2f3PhkoSOJ8Q=;
-        b=OdkCKiRp4V/X2df3Iswd8bbnzoCUHBqkd2KRpR22RcP8IT1eK0BV4xH6YXjdbrz4pn
-         dNb84kPglmnvC/PFp3OPQNx7WiZN3HkgyFZ0ssF69ctDutsBNsYbRMNQ8nQPJGJC08u3
-         +XwHPyXj0+D3CS6ipPeDraCkCX8DPizmDmLmf05h8cSJ8qJa3AKMX7odBvFep6cHHA+w
-         lT8Y5ekHmTLNVlzPNHHFwzaM5zz5BZrMEg7ncqH+xQk5p/UfJxGM2D6M1ceOWRTDXFpr
-         pRxkZfUnmvejj9P/oFzzuFWG30EzxbNGSPB34C333+jFDE2dufLRcS7K9nDLVoUOrsN2
-         eITQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=aVcnY+I+l9V2cLPu0WvCqapwmxY3gkc2f3PhkoSOJ8Q=;
-        b=mCMen3U6kXGQ85vlAQLdaAp4aINP+NCqS1IYZbLcG2gVxSuxoDM+1jlpvMgPYIZaOp
-         fzhUtKOKhRnhr0Eiy41MY0HTioX3DQn+z9XVYfLXqld/I7Sxy7WYxV6A4JMr2HJJyBYA
-         P8bJEIPZIu960pBfiEpps1GHOaouGjLL3OKAB2YlQgnGx+vxnPcyyVFKFQs0KmpRtMPi
-         Jc+c4ZgGk4IaOwNBIKtV7OICyGTHzD6I99v15LFMncSvDUszd8W4Dx8KwiRTH8JjoeGi
-         UYP46GTtiC4N/yoGF6DR37Sg7cowkv44a31h/unCOpG4WZrbkCwFvLg22KcEeF987tF7
-         w9jQ==
-X-Gm-Message-State: ANhLgQ0UgHF93uFVCxt3dHqgObiqRNBq6dIDk4R++FQzCfvrCL6YorYP
-        Hdtu9I1jFNvNlAqKIceiUTvG6dSs
-X-Google-Smtp-Source: ADFU+vvRBa4PQsV232SDS4F6ClcApxVTPSvI19mCXHzJb6gDR+/nSOH/eYZKFYWDRflbSYja/5BHqQ==
-X-Received: by 2002:adf:f503:: with SMTP id q3mr28424698wro.135.1584952744662;
-        Mon, 23 Mar 2020 01:39:04 -0700 (PDT)
-Received: from [192.168.43.123] ([109.126.140.227])
-        by smtp.gmail.com with ESMTPSA id h81sm22594097wme.42.2020.03.23.01.39.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Mar 2020 01:39:04 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-References: <ab2e967f-754f-6dcf-95a0-4f24c47a9d5e@kernel.dk>
- <3454f8c1-3d5a-1f94-569a-41e553fc836a@gmail.com>
- <cd8541df-8f97-af3c-ea49-422e546ab648@gmail.com>
- <aa7049a8-179b-7c99-fce3-ac32b3500d31@gmail.com>
- <a6dedf7c-1c62-94f1-0b98-d926af2ea4b9@kernel.dk>
- <b8bc3645-a918-f058-7358-b2a541927202@gmail.com>
- <d2093dbe-7c75-340b-4c99-c88bdae450e6@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH v2] io-wq: handle hashed writes in chains
-Message-ID: <d316093f-46cd-7ae0-714a-7b90f3df5f1e@gmail.com>
-Date:   Mon, 23 Mar 2020 11:38:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <d2093dbe-7c75-340b-4c99-c88bdae450e6@kernel.dk>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="FxI1HWLB8ulzcMhZg69xpg6CLnPQzK1eF"
+        id S1728174AbgCWLyd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Mar 2020 07:54:33 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:49090 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728145AbgCWLyd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Mar 2020 07:54:33 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TtPCqbv_1584964242;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0TtPCqbv_1584964242)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 23 Mar 2020 19:50:49 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH] io_uring: refacor file register/unregister/update based on sequence
+Date:   Mon, 23 Mar 2020 19:50:36 +0800
+Message-Id: <20200323115036.6539-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---FxI1HWLB8ulzcMhZg69xpg6CLnPQzK1eF
-Content-Type: multipart/mixed; boundary="FfD6x6MiB5WKzp90CkbymDzPbJ4wtjM14";
- protected-headers="v1"
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-Message-ID: <d316093f-46cd-7ae0-714a-7b90f3df5f1e@gmail.com>
-Subject: Re: [PATCH v2] io-wq: handle hashed writes in chains
-References: <ab2e967f-754f-6dcf-95a0-4f24c47a9d5e@kernel.dk>
- <3454f8c1-3d5a-1f94-569a-41e553fc836a@gmail.com>
- <cd8541df-8f97-af3c-ea49-422e546ab648@gmail.com>
- <aa7049a8-179b-7c99-fce3-ac32b3500d31@gmail.com>
- <a6dedf7c-1c62-94f1-0b98-d926af2ea4b9@kernel.dk>
- <b8bc3645-a918-f058-7358-b2a541927202@gmail.com>
- <d2093dbe-7c75-340b-4c99-c88bdae450e6@kernel.dk>
-In-Reply-To: <d2093dbe-7c75-340b-4c99-c88bdae450e6@kernel.dk>
+While diving into iouring fileset resigster/unregister/update codes,
+we found one bug in fileset update codes. Iouring fileset update codes
+use a percpu_ref variable to check whether can put previous registered
+file, only when the refcnt of the perfcpu_ref variable reachs zero, can
+we safely put these files, but this do not work well. If applications
+always issue requests continually, this perfcpu_ref will never have an
+chance to reach zero, and it'll always be in atomic mode, also will
+defeat the gains introduced by fileset register/unresiger/update feature,
+which are used to reduce the atomic operation overhead of fput/fget.
 
---FfD6x6MiB5WKzp90CkbymDzPbJ4wtjM14
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+To fix this issue, we remove the percpu_ref related codes, and add two new
+counter: sq_seq and cq_seq to struct io_ring_ctx:
+    sq_seq: the most recent issued requset sequence number, which is
+            protected uring_lock.
+    cq_seq: the most recent completed request sequence number, which is
+            protected completion_lock.
 
-On 23/03/2020 04:37, Jens Axboe wrote:
-> On 3/22/20 2:25 PM, Pavel Begunkov wrote:
->> On 22/03/2020 22:51, Jens Axboe wrote:
->>> commit f1d96a8fcbbbb22d4fbc1d69eaaa678bbb0ff6e2
->>> Author: Pavel Begunkov <asml.silence@gmail.com>
->>> Date:   Fri Mar 13 22:29:14 2020 +0300
->>>
->>>     io_uring: NULL-deref for IOSQE_{ASYNC,DRAIN}
->>>
->>> which is what I ran into as well last week...
->>
->> I picked it before testing
->>
->>> The extra memory isn't a bit deal, it's very minor. My main concern
->>> would be fairness, since we'd then be grabbing non-contig hashed chun=
-ks,
->>> before we did not. May not be a concern as long as we ensure the
->>> non-hasned (and differently hashed) work can proceed in parallel. For=
- my
->>> end, I deliberately added:
->>
->> Don't think it's really a problem, all ordering/scheduling is up to
->> users (i.e.  io_uring), and it can't infinitely postpone a work,
->> because it's processing spliced requests without taking more, even if
->> new ones hash to the same bit.
->=20
-> I don't disagree with you, just wanted to bring it up!
+When we update fileset(under uring_lock), we record the current sq_seq,
+and when cq_seq is greater or equal to recorded sq_seq, we know we can
+put previous registered file safely.
 
-Sure, there is a lot to think about. E.g. I don't like this reenqueueing,=
+Link: https://lore.kernel.org/io-uring/5a8dac33-4ca2-4847-b091-f7dcd3ad0ff3@linux.alibaba.com/T/#t
+Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+---
+ fs/io_uring.c | 278 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 155 insertions(+), 123 deletions(-)
 
-and if all other thread have enough work to do, then it can avoided, but =
-don't
-want to over-complicate.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 3affd96a98ba..d33cf957a074 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -186,13 +186,27 @@ struct fixed_file_table {
+ struct fixed_file_data {
+ 	struct fixed_file_table		*table;
+ 	struct io_ring_ctx		*ctx;
+-
+ 	struct percpu_ref		refs;
+-	struct llist_head		put_llist;
++	struct list_head		drop_list;
+ 	struct work_struct		ref_work;
++	unsigned long			wait_seq;
++	wait_queue_head_t		wait;
+ 	struct completion		done;
+ };
+ 
++struct io_file {
++	struct list_head list;
++	struct file *file;
++};
++
++struct io_file_set {
++	unsigned long			seq;
++	struct list_head		file_list;
++	struct list_head		node;
++	struct fixed_file_data		*file_data;
++	struct work_struct		work;
++};
++
+ struct io_ring_ctx {
+ 	struct {
+ 		struct percpu_ref	refs;
+@@ -306,6 +320,11 @@ struct io_ring_ctx {
+ 		spinlock_t		inflight_lock;
+ 		struct list_head	inflight_list;
+ 	} ____cacheline_aligned_in_smp;
++
++	struct {
++		unsigned long		sq_seq;
++		unsigned long		cq_seq;
++	} ____cacheline_aligned_in_smp;
+ };
+ 
+ /*
+@@ -759,7 +778,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 				 struct io_uring_files_update *ip,
+ 				 unsigned nr_args);
+ static int io_grab_files(struct io_kiocb *req);
+-static void io_ring_file_ref_flush(struct fixed_file_data *data);
++static void io_ring_file_put(struct io_ring_ctx *ctx, struct file *file);
+ static void io_cleanup_req(struct io_kiocb *req);
+ 
+ static struct kmem_cache *req_cachep;
+@@ -1017,6 +1036,56 @@ static void io_kill_timeouts(struct io_ring_ctx *ctx)
+ 	spin_unlock_irq(&ctx->completion_lock);
+ }
+ 
++static void put_files(struct io_file_set *drop_files)
++{
++	struct io_file *pfile, *tmp;
++	struct fixed_file_data *file_data = drop_files->file_data;
++	struct io_ring_ctx *ctx = file_data->ctx;
++
++	list_for_each_entry_safe(pfile, tmp, &drop_files->file_list, list) {
++		list_del_init(&pfile->list);
++		io_ring_file_put(ctx, pfile->file);
++		kfree(pfile);
++	}
++
++}
++
++static void io_file_put_work(struct work_struct *work)
++{
++	struct io_file_set *drop_files;
++	struct fixed_file_data *data;
++
++	drop_files = container_of(work, struct io_file_set, work);
++	data = drop_files->file_data;
++	put_files(drop_files);
++	kfree(drop_files);
++	percpu_ref_put(&data->refs);
++}
++
++static void io_file_set_put(struct io_ring_ctx *ctx)
++{
++	struct fixed_file_data *data = ctx->file_data;
++	struct io_file_set *drop_files, *tmp;
++
++	if (!data)
++		return;
++
++	if (unlikely(data->wait_seq <= ctx->cq_seq &&
++	    wq_has_sleeper(&data->wait)))
++		wake_up(&data->wait);
++
++	if (list_empty(&data->drop_list))
++		return;
++
++	list_for_each_entry_safe(drop_files, tmp, &data->drop_list, node) {
++		if (drop_files->seq <= ctx->cq_seq) {
++			list_del_init(&drop_files->node);
++			queue_work(system_wq, &drop_files->work);
++		} else
++			break;
++	}
++}
++
+ static void io_commit_cqring(struct io_ring_ctx *ctx)
+ {
+ 	struct io_kiocb *req;
+@@ -1026,6 +1095,8 @@ static void io_commit_cqring(struct io_ring_ctx *ctx)
+ 
+ 	__io_commit_cqring(ctx);
+ 
++	io_file_set_put(ctx);
++
+ 	while ((req = io_get_deferred_req(ctx)) != NULL)
+ 		io_queue_async_work(req);
+ }
+@@ -1162,6 +1233,7 @@ static void io_cqring_fill_event(struct io_kiocb *req, long res)
+ 		req->result = res;
+ 		list_add_tail(&req->list, &ctx->cq_overflow_list);
+ 	}
++	ctx->cq_seq++;
+ }
+ 
+ static void io_cqring_add_event(struct io_kiocb *req, long res)
+@@ -1256,18 +1328,12 @@ static void __io_req_do_free(struct io_kiocb *req)
+ 
+ static void __io_req_aux_free(struct io_kiocb *req)
+ {
+-	struct io_ring_ctx *ctx = req->ctx;
+-
+ 	if (req->flags & REQ_F_NEED_CLEANUP)
+ 		io_cleanup_req(req);
+ 
+ 	kfree(req->io);
+-	if (req->file) {
+-		if (req->flags & REQ_F_FIXED_FILE)
+-			percpu_ref_put(&ctx->file_data->refs);
+-		else
+-			fput(req->file);
+-	}
++	if (req->file && !(req->flags & REQ_F_FIXED_FILE))
++		fput(req->file);
+ 
+ 	io_req_work_drop_env(req);
+ }
+@@ -1339,8 +1405,6 @@ static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
+ 	}
+ do_free:
+ 	kmem_cache_free_bulk(req_cachep, rb->to_free, rb->reqs);
+-	if (fixed_refs)
+-		percpu_ref_put_many(&ctx->file_data->refs, fixed_refs);
+ 	percpu_ref_put_many(&ctx->refs, rb->to_free);
+ 	rb->to_free = rb->need_iter = 0;
+ }
+@@ -4122,7 +4186,9 @@ static int io_files_update(struct io_kiocb *req, bool force_nonblock)
+ 	up.fds = req->files_update.arg;
+ 
+ 	mutex_lock(&ctx->uring_lock);
++	ctx->sq_seq--;
+ 	ret = __io_sqe_files_update(ctx, &up, req->files_update.nr_args);
++	ctx->sq_seq++;
+ 	mutex_unlock(&ctx->uring_lock);
+ 
+ 	if (ret < 0)
+@@ -4600,7 +4666,6 @@ static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
+ 		if (!req->file)
+ 			return -EBADF;
+ 		req->flags |= REQ_F_FIXED_FILE;
+-		percpu_ref_get(&ctx->file_data->refs);
+ 	} else {
+ 		if (req->needs_fixed_file)
+ 			return -EBADF;
+@@ -5002,6 +5067,7 @@ static bool io_get_sqring(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 		req->opcode = READ_ONCE((*sqe_ptr)->opcode);
+ 		req->user_data = READ_ONCE((*sqe_ptr)->user_data);
+ 		ctx->cached_sq_head++;
++		ctx->sq_seq++;
+ 		return true;
+ 	}
+ 
+@@ -5336,51 +5402,37 @@ static void __io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ #endif
+ }
+ 
+-static void io_file_ref_kill(struct percpu_ref *ref)
+-{
+-	struct fixed_file_data *data;
+-
+-	data = container_of(ref, struct fixed_file_data, refs);
+-	complete(&data->done);
+-}
+-
+-static void io_file_ref_exit_and_free(struct work_struct *work)
+-{
+-	struct fixed_file_data *data;
+-
+-	data = container_of(work, struct fixed_file_data, ref_work);
+-
+-	/*
+-	 * Ensure any percpu-ref atomic switch callback has run, it could have
+-	 * been in progress when the files were being unregistered. Once
+-	 * that's done, we can safely exit and free the ref and containing
+-	 * data structure.
+-	 */
+-	rcu_barrier();
+-	percpu_ref_exit(&data->refs);
+-	kfree(data);
+-}
+-
+ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ {
+ 	struct fixed_file_data *data = ctx->file_data;
+ 	unsigned nr_tables, i;
++	DEFINE_WAIT(wait);
++	unsigned long flags;
+ 
+ 	if (!data)
+ 		return -ENXIO;
+ 
+-	percpu_ref_kill_and_confirm(&data->refs, io_file_ref_kill);
+-	flush_work(&data->ref_work);
++	percpu_ref_kill(&data->refs);
+ 	wait_for_completion(&data->done);
+-	io_ring_file_ref_flush(data);
++
++	spin_lock_irqsave(&ctx->completion_lock, flags);
++	prepare_to_wait(&data->wait, &wait, TASK_INTERRUPTIBLE);
++	if (ctx->cq_seq >= ctx->sq_seq) {
++		finish_wait(&data->wait, &wait);
++		spin_unlock_irqrestore(&ctx->completion_lock, flags);
++	} else {
++		data->wait_seq = ctx->sq_seq;
++		spin_unlock_irqrestore(&ctx->completion_lock, flags);
++		schedule();
++		finish_wait(&data->wait, &wait);
++		data->wait_seq = 0;
++	}
+ 
+ 	__io_sqe_files_unregister(ctx);
+ 	nr_tables = DIV_ROUND_UP(ctx->nr_user_files, IORING_MAX_FILES_TABLE);
+ 	for (i = 0; i < nr_tables; i++)
+ 		kfree(data->table[i].files);
+ 	kfree(data->table);
+-	INIT_WORK(&data->ref_work, io_file_ref_exit_and_free);
+-	queue_work(system_wq, &data->ref_work);
+ 	ctx->file_data = NULL;
+ 	ctx->nr_user_files = 0;
+ 	return 0;
+@@ -5604,51 +5656,12 @@ static void io_ring_file_put(struct io_ring_ctx *ctx, struct file *file)
+ #endif
+ }
+ 
+-struct io_file_put {
+-	struct llist_node llist;
+-	struct file *file;
+-	struct completion *done;
+-};
+-
+-static void io_ring_file_ref_flush(struct fixed_file_data *data)
+-{
+-	struct io_file_put *pfile, *tmp;
+-	struct llist_node *node;
+-
+-	while ((node = llist_del_all(&data->put_llist)) != NULL) {
+-		llist_for_each_entry_safe(pfile, tmp, node, llist) {
+-			io_ring_file_put(data->ctx, pfile->file);
+-			if (pfile->done)
+-				complete(pfile->done);
+-			else
+-				kfree(pfile);
+-		}
+-	}
+-}
+-
+-static void io_ring_file_ref_switch(struct work_struct *work)
+-{
+-	struct fixed_file_data *data;
+-
+-	data = container_of(work, struct fixed_file_data, ref_work);
+-	io_ring_file_ref_flush(data);
+-	percpu_ref_switch_to_percpu(&data->refs);
+-}
+-
+ static void io_file_data_ref_zero(struct percpu_ref *ref)
+ {
+ 	struct fixed_file_data *data;
+ 
+ 	data = container_of(ref, struct fixed_file_data, refs);
+-
+-	/*
+-	 * We can't safely switch from inside this context, punt to wq. If
+-	 * the table ref is going away, the table is being unregistered.
+-	 * Don't queue up the async work for that case, the caller will
+-	 * handle it.
+-	 */
+-	if (!percpu_ref_is_dying(&data->refs))
+-		queue_work(system_wq, &data->ref_work);
++	complete(&data->done);
+ }
+ 
+ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+@@ -5672,6 +5685,8 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		return -ENOMEM;
+ 	ctx->file_data->ctx = ctx;
+ 	init_completion(&ctx->file_data->done);
++	init_waitqueue_head(&ctx->file_data->wait);
++	INIT_LIST_HEAD(&ctx->file_data->drop_list);
+ 
+ 	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_FILES_TABLE);
+ 	ctx->file_data->table = kcalloc(nr_tables,
+@@ -5684,17 +5699,15 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	}
+ 
+ 	if (percpu_ref_init(&ctx->file_data->refs, io_file_data_ref_zero,
+-				PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
++			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
++		percpu_ref_exit(&ctx->file_data->refs);
+ 		kfree(ctx->file_data->table);
+ 		kfree(ctx->file_data);
+ 		ctx->file_data = NULL;
+ 		return -ENOMEM;
+ 	}
+-	ctx->file_data->put_llist.first = NULL;
+-	INIT_WORK(&ctx->file_data->ref_work, io_ring_file_ref_switch);
+ 
+ 	if (io_sqe_alloc_file_tables(ctx, nr_tables, nr_args)) {
+-		percpu_ref_exit(&ctx->file_data->refs);
+ 		kfree(ctx->file_data->table);
+ 		kfree(ctx->file_data);
+ 		ctx->file_data = NULL;
+@@ -5803,46 +5816,40 @@ static int io_sqe_file_register(struct io_ring_ctx *ctx, struct file *file,
+ #endif
+ }
+ 
+-static void io_atomic_switch(struct percpu_ref *ref)
++static void io_queue_file_removal(struct fixed_file_data *data,
++			struct io_file_set *drop_files, struct file *file)
+ {
+-	struct fixed_file_data *data;
+-
+-	/*
+-	 * Juggle reference to ensure we hit zero, if needed, so we can
+-	 * switch back to percpu mode
+-	 */
+-	data = container_of(ref, struct fixed_file_data, refs);
+-	percpu_ref_put(&data->refs);
+-	percpu_ref_get(&data->refs);
+-}
+-
+-static bool io_queue_file_removal(struct fixed_file_data *data,
+-				  struct file *file)
+-{
+-	struct io_file_put *pfile, pfile_stack;
+-	DECLARE_COMPLETION_ONSTACK(done);
++	struct io_file *pfile;
++	struct io_ring_ctx *ctx = data->ctx;
++	unsigned long flags;
++	DEFINE_WAIT(wait);
+ 
+ 	/*
+ 	 * If we fail allocating the struct we need for doing async reomval
+ 	 * of this file, just punt to sync and wait for it.
+ 	 */
+ 	pfile = kzalloc(sizeof(*pfile), GFP_KERNEL);
+-	if (!pfile) {
+-		pfile = &pfile_stack;
+-		pfile->done = &done;
++	if (pfile) {
++		pfile->file = file;
++		INIT_LIST_HEAD(&pfile->list);
++		list_add(&pfile->list, &drop_files->file_list);
++		return;
+ 	}
+ 
+-	pfile->file = file;
+-	llist_add(&pfile->llist, &data->put_llist);
+-
+-	if (pfile == &pfile_stack) {
+-		percpu_ref_switch_to_atomic(&data->refs, io_atomic_switch);
+-		wait_for_completion(&done);
+-		flush_work(&data->ref_work);
+-		return false;
++	spin_lock_irqsave(&ctx->completion_lock, flags);
++	prepare_to_wait(&data->wait, &wait, TASK_INTERRUPTIBLE);
++	if (ctx->cq_seq >= ctx->sq_seq) {
++		finish_wait(&data->wait, &wait);
++		spin_unlock_irqrestore(&ctx->completion_lock, flags);
++		io_ring_file_put(ctx, file);
++		return;
+ 	}
+-
+-	return true;
++	data->wait_seq = ctx->sq_seq;
++	spin_unlock_irqrestore(&ctx->completion_lock, flags);
++	schedule();
++	finish_wait(&data->wait, &wait);
++	data->wait_seq = 0;
++	return;
+ }
+ 
+ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+@@ -5850,17 +5857,26 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 				 unsigned nr_args)
+ {
+ 	struct fixed_file_data *data = ctx->file_data;
+-	bool ref_switch = false;
+ 	struct file *file;
+ 	__s32 __user *fds;
+ 	int fd, i, err;
+ 	__u32 done;
++	struct io_file_set *drop_files;
+ 
+ 	if (check_add_overflow(up->offset, nr_args, &done))
+ 		return -EOVERFLOW;
+ 	if (done > ctx->nr_user_files)
+ 		return -EINVAL;
+ 
++	drop_files = kzalloc(sizeof(*drop_files), GFP_KERNEL);
++	if (!drop_files)
++		return -ENOMEM;
++
++	drop_files->file_data = data;
++	drop_files->seq = ctx->sq_seq;
++	INIT_LIST_HEAD(&drop_files->file_list);
++	INIT_LIST_HEAD(&drop_files->node);
++	INIT_WORK(&drop_files->work, io_file_put_work);
+ 	done = 0;
+ 	fds = u64_to_user_ptr(up->fds);
+ 	while (nr_args) {
+@@ -5878,8 +5894,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 		if (table->files[index]) {
+ 			file = io_file_from_index(ctx, index);
+ 			table->files[index] = NULL;
+-			if (io_queue_file_removal(data, file))
+-				ref_switch = true;
++			io_queue_file_removal(data, drop_files, file);
+ 		}
+ 		if (fd != -1) {
+ 			file = fget(fd);
+@@ -5910,8 +5925,25 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 		up->offset++;
+ 	}
+ 
+-	if (ref_switch)
+-		percpu_ref_switch_to_atomic(&data->refs, io_atomic_switch);
++	if (!list_empty(&drop_files->file_list)) {
++		unsigned long flags;
++		bool drop = false;
++
++		spin_lock_irqsave(&ctx->completion_lock, flags);
++		if (ctx->cq_seq >= ctx->sq_seq)
++			drop = true;
++		else {
++			drop_files->seq = ctx->sq_seq;
++			list_add_tail(&drop_files->node, &data->drop_list);
++		}
++		spin_unlock_irqrestore(&ctx->completion_lock, flags);
++
++		if (drop) {
++			put_files(drop_files);
++			kfree(drop_files);
++		} else
++			percpu_ref_get(&ctx->file_data->refs);
++	}
+ 
+ 	return done ? done : err;
+ }
+-- 
+2.17.2
 
-
->=20
->>> +	/* already have hashed work, let new worker get this */
->>> +	if (ret) {
->>> +		struct io_wqe_acct *acct;
->>> +
->>> +		/* get new worker for unhashed, if none now */
->>> +		acct =3D io_work_get_acct(wqe, work);
->>> +		if (!atomic_read(&acct->nr_running))
->>> +			io_wqe_wake_worker(wqe, acct);
->>> +		break;
->>> +	}
->>>
->>> to try and improve that.
->>
->> Is there performance problems with your patch without this chunk? I
->> may see another problem with yours, I need to think it through.
->=20
-> No, and in fact it probably should be a separate thing, but I kind of
-> like your approach so not moving forward with mine. I do think it's
-> worth looking into separately, as there's no reason why we can't wake a=
-
-> non-hashed worker if we're just doing hashed work from the existing
-> thread. If that thread is just doing copies and not blocking, the
-> unhashed (or next hashed) work is just sitting idle while it could be
-> running instead.
-
-Then, I'll clean the diff, hopefully soon. Could I steal parts of your pa=
-tch
-description?
-
->=20
-> Hence I added that hunk, to kick a new worker to proceed in parallel.
-
-It seems, I need to take a closer look at this accounting in general.
-
-
---=20
-Pavel Begunkov
-
-
---FfD6x6MiB5WKzp90CkbymDzPbJ4wtjM14--
-
---FxI1HWLB8ulzcMhZg69xpg6CLnPQzK1eF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl54dXMACgkQWt5b1Glr
-+6XOMBAAhsLkIqBK1we2IWHCbK99MwN93jd+RXuBMIKZtDIRKHW5+0el6CaULzNm
-OX5lwDZDWsDlbeoIxj6lHIukuUUU2gGoeQHlDwHO5CatRPq5L98LCgBd+qxei0Bv
-fwgRk/Dfzr+/anct3sRhp5lzYIVXSrEhb34DRzlFT7omm7qgeq4RexE1eqxb+gWL
-D+wVhvJsQOHUC/HlXWYNFBmhHQGzaJKGOLXEzWeXbN7pLH1GBJnD+EVwbCPq5gp7
-XI/N0QEXyjDzAjmlOfbcqrQ5lz9Ouu3QCRBCXGeHzmHxBA9jGzD9YA6j8DjlokgI
-oCl9O/LtJ9sbxSK9VvS9ornqb+ieD4ux4t6GcfzvyDJRw9Vd6QSWdGp3TINGFxKM
-pWMd1fXPLAgKK6m+NeZtm7kK0Z3R7ER7HshW8fbmtUwKH+KwqsBjg3A1TzPliLvo
-KlduziSYgaHuZ+viIdnMjMQskS41WJSAMM4li+76sNhFCDzCHE5g7/oGKel0avBH
-+iqBi4sX3g+37YZPVfmVSfjaBza0Q+IhKJR5ROm+o1GE68HxDoV1T8A7ECjGA21A
-bIKgyhAVNP88Rt/GsdY62Tx7l8GW2pZOyrK+z8W5qq6wPGt/vk1jREG+/Lg0eM07
-rgijyaCvuFA1d6mdaXWKJP7GtnvUujBDxN+UQZLkoQiy+J5kHqE=
-=MIPX
------END PGP SIGNATURE-----
-
---FxI1HWLB8ulzcMhZg69xpg6CLnPQzK1eF--

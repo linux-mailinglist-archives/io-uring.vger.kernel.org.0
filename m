@@ -2,67 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA58718F6CC
-	for <lists+io-uring@lfdr.de>; Mon, 23 Mar 2020 15:26:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBDF818F90B
+	for <lists+io-uring@lfdr.de>; Mon, 23 Mar 2020 16:57:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725866AbgCWO0E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Mar 2020 10:26:04 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42548 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgCWO0D (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Mar 2020 10:26:03 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 22so3958969pfa.9
-        for <io-uring@vger.kernel.org>; Mon, 23 Mar 2020 07:26:03 -0700 (PDT)
+        id S1727364AbgCWP53 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Mar 2020 11:57:29 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35688 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727298AbgCWP53 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Mar 2020 11:57:29 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g6so6092642plt.2
+        for <io-uring@vger.kernel.org>; Mon, 23 Mar 2020 08:57:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=gyVFtIAdfxxiuKfx8+zJgTL9jcPcCuD4xyjjj0KliPs=;
-        b=CnHY57/ca86uVMekD6N3Ny53hrNuxe4odiTn0RFDYZ0Y0mm2nIxe+kxrn3f9Boi2hj
-         gdOqFdv2P2UZFyLkTu/uGF0YCjWKZQe1v+qQ1DuaXUFBBljnMTMMrIOqTElIVR+z0qAy
-         jgNLUEeI8s47KOhznH3X858mVXYEzxKKxRlEsp7prVW3nIU4EoZk5e8WL5Z2xD0sp5Z+
-         qybiCLg6hyiHdcx/pgsQrJ97Od3auJ32eO8vPfmuhSU4FXXnJW021aSDQhYW4zcto4GV
-         4nsmIlPuInr89AZsUZNBj+d1ZWDKk6PfhIbaxVla1pMxcnzoVwFohnb3MJEg3UkkzgnZ
-         QBaw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/xdFeUkMil+HXZ4ax6FoPNFtoFq6FUJmJ0Q6Zva1VrE=;
+        b=ldgxYSTapIFo5c9XASqPk/M1zo3L8kU4x3tLHAuxMZ3Ni6aYrfoaqEhE+GIihzMifA
+         hKtcxmeGZgwq3VV21jgiUJ/leOO59zn8qHUpukZvTMgPXL0f50oYzRetsOj5RfOr5wo6
+         hNb2+NEVCcjd2OVVKPiwQIVBfHMX/axtpRPHrL0Iv2sk/crj1nPyEJwsltNo8Ft5pDwy
+         j8dYEZs68r93tzXRFm63Z6c5zJYZSdMkjkPqi11eaw/AP3CgE2ixd1CcjUbk8aUlSkpP
+         zPNYtlRNtuG03yRkgo7ud3aFj9FsPNJD68IweJ+zZQXlexokaVicwjJKyLBKLNp4g1CL
+         +DSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=gyVFtIAdfxxiuKfx8+zJgTL9jcPcCuD4xyjjj0KliPs=;
-        b=Xgs8alFIyvOENrjZEws+UkUv0HbSlEyFvtWULPCQauvB58XT94zQCFRigETtrjR3HW
-         CpJjqPE98wfnJfHKl8+HDJTioJ5nt1o8c0DxAr4mwHsjDJKCvVAe/EKNhwValKVgIDpd
-         W3Gwv50n8V9fgl67WPyda0JJlDWGFvB24LuPjrpKcglZ0jHYg2QYV6Ayx3NYvKDkqBHb
-         W0JO0wD/n5MU0YNWoz7rxKkKOPZ+OFyFEIvwNfbAImI/yNo2fR5dA9tHlRi6EgzTtER7
-         Tc2eUsb1NRUH1lxDTvvEaAisUn3A0adqcccUfVt5Is+3CV60MDtucQFhkOY5tgoKlfYb
-         YoSA==
-X-Gm-Message-State: ANhLgQ0+i224e1Uop9l3JRtzFQdY36lmzANf5DfnYzK0xw2MK0zHyDTU
-        3QObbmNb4p1TWzXUfaj2F2vPdBKGL4magA==
-X-Google-Smtp-Source: ADFU+vuVG3gBwPFElTeDuxB+2JMCHW0iXFiE6p4I9CwD1mqp2tRM+40+5hNTHI5OEsJUH5pYQPZisQ==
-X-Received: by 2002:a65:494f:: with SMTP id q15mr22381358pgs.383.1584973562272;
-        Mon, 23 Mar 2020 07:26:02 -0700 (PDT)
+        bh=/xdFeUkMil+HXZ4ax6FoPNFtoFq6FUJmJ0Q6Zva1VrE=;
+        b=WH5UgAqL/ww9VlaSlox/Qki/w0X1a1w2DhFgIX1Xrou+aHoMZtPYJiLyXu6APMz6jm
+         l9kBBVWbDDdQ0ChPCMe+u+Egk6nucwnTEXEEVFxJvq2Dj4EJ73mtjW/pUf/OX2h3zZPO
+         8LDd/ZsMY2Eh6mPQ/8nedJsZyIs5TMbEm+uJYow3J0gUgDfXj5M3BmsOJTHzgnrLg0oz
+         jCdiUKOeQOtGjHuhBP8vxU82vO2iTF1uqDdvUcxj71g3t7NRXUwb7JbXZAGlksAkdu+d
+         2gNyVj9KppqCSSZ6zwtjxv2eiYKjUuF4XmKbOasRtDWqEzjAdNAWPDHAV5tRSskEPxCG
+         S3xQ==
+X-Gm-Message-State: ANhLgQ2cmJ6QiUOM3djqm03nPqHnqOcsJCCix5uKYRu6/JlNZWNMi9Uo
+        OAWtsmXMBMl1uc89SAL8c5sdYQ==
+X-Google-Smtp-Source: ADFU+vv2vW47TMHyado3xCQbCSqIX92ldURxbW69S9I1oeWxT4bL7zUy0acMpY+x/kqHktNpZ7+cSw==
+X-Received: by 2002:a17:90a:2a89:: with SMTP id j9mr7994pjd.64.1584979048199;
+        Mon, 23 Mar 2020 08:57:28 -0700 (PDT)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id bx1sm12738920pjb.5.2020.03.23.07.26.01
+        by smtp.gmail.com with ESMTPSA id c62sm13653239pfc.136.2020.03.23.08.57.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Mar 2020 07:26:01 -0700 (PDT)
-Subject: Re: [PATCH v2] io-wq: handle hashed writes in chains
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <ab2e967f-754f-6dcf-95a0-4f24c47a9d5e@kernel.dk>
- <3454f8c1-3d5a-1f94-569a-41e553fc836a@gmail.com>
- <cd8541df-8f97-af3c-ea49-422e546ab648@gmail.com>
- <aa7049a8-179b-7c99-fce3-ac32b3500d31@gmail.com>
- <a6dedf7c-1c62-94f1-0b98-d926af2ea4b9@kernel.dk>
- <b8bc3645-a918-f058-7358-b2a541927202@gmail.com>
- <d2093dbe-7c75-340b-4c99-c88bdae450e6@kernel.dk>
- <d316093f-46cd-7ae0-714a-7b90f3df5f1e@gmail.com>
+        Mon, 23 Mar 2020 08:57:27 -0700 (PDT)
+Subject: Re: [PATCH 0/2] io-uring: cleanup: drop completion upon removal of
+ file
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+538d1957ce178382a394@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <20200323092419.8764-1-hdanton@sina.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3b977334-e4d4-b19a-01c9-631e2a52614f@kernel.dk>
-Date:   Mon, 23 Mar 2020 08:26:00 -0600
+Message-ID: <5f98097a-b3f7-fc8f-4a84-f848253a0e56@kernel.dk>
+Date:   Mon, 23 Mar 2020 09:57:25 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <d316093f-46cd-7ae0-714a-7b90f3df5f1e@gmail.com>
+In-Reply-To: <20200323092419.8764-1-hdanton@sina.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,25 +68,18 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/23/20 2:38 AM, Pavel Begunkov wrote:
->> No, and in fact it probably should be a separate thing, but I kind of
->> like your approach so not moving forward with mine. I do think it's
->> worth looking into separately, as there's no reason why we can't wake a
->> non-hashed worker if we're just doing hashed work from the existing
->> thread. If that thread is just doing copies and not blocking, the
->> unhashed (or next hashed) work is just sitting idle while it could be
->> running instead.
+On 3/23/20 3:24 AM, Hillf Danton wrote:
 > 
-> Then, I'll clean the diff, hopefully soon. Could I steal parts of your patch
-> description?
-
-Of course, go ahead.
-
->> Hence I added that hunk, to kick a new worker to proceed in parallel.
+> Kudos to the task hung reported by syzbot, and inspired by it, cleanup
+> is made for dropping completion when files are removed from the fixed
+> fileset. Another cleanup is also proposed for dropping the done field
+> in struct io_file_put.
 > 
-> It seems, I need to take a closer look at this accounting in general.
+> [PATCH 1/2] io_uring: drop completion when removing file
+> [PATCH 2/2 RFC] io-uring: drop done in struct io_file_put
 
-Agree, I think we have some room for improvement there.
+I like it - I applied, only changing 'done' to 'free_pfile' to make it
+more apparent what it controls. Thanks!
 
 -- 
 Jens Axboe

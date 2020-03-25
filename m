@@ -2,82 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7720192A88
-	for <lists+io-uring@lfdr.de>; Wed, 25 Mar 2020 14:56:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33FEF192B59
+	for <lists+io-uring@lfdr.de>; Wed, 25 Mar 2020 15:41:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbgCYN4H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 25 Mar 2020 09:56:07 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:34024 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727277AbgCYN4H (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Mar 2020 09:56:07 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R511e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Ttby5Zv_1585144554;
-Received: from 30.5.113.160(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Ttby5Zv_1585144554)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 25 Mar 2020 21:55:54 +0800
-To:     io-uring@vger.kernel.org
-Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        joseph qi <joseph.qi@linux.alibaba.com>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: Question about fileset unregister and update codes
-Message-ID: <64638b5f-401e-5cf4-23d9-0a31119d1b9c@linux.alibaba.com>
-Date:   Wed, 25 Mar 2020 21:55:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1727840AbgCYOlz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 25 Mar 2020 10:41:55 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45543 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727123AbgCYOlz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Mar 2020 10:41:55 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j10so1111370pfi.12
+        for <io-uring@vger.kernel.org>; Wed, 25 Mar 2020 07:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XCINa/bqSDUlqZD8AeDZCCs9KQApmzJ+EcZpMaMnQiE=;
+        b=1y4th5zBJLAPdinDNsQAcPCnP07KOhdoUwWMiLuJy3AnWXSs87PyhBJVRJOWhdDEwM
+         VI8UIkGRgodl0kURsdq28TpG4tvJiZYoUpX3sbQ13F2cWFaiMA9zpRByORW/kD3lQmd5
+         HCND+yoyVa6cGABwLtFEZ7Xge6/BR6sPuLuV+9r3uHLOJ21imyaxvuqROpeDze2k1GYW
+         7XpnLfSi35tZsLpWrqOIbwMeg4VdaeQBkEB2V7HMGkGYiYFfb2S4IAsm4eb6Aw8kj4go
+         2n8voRavhgEMowTT4yKTn1nx0TfBmnPNWliyhA9S4UtZBN24HqzMkUalaevIzeIlqLCY
+         kp9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XCINa/bqSDUlqZD8AeDZCCs9KQApmzJ+EcZpMaMnQiE=;
+        b=jUATSVkpqhXuafvEO5fz3n+2Ye9yr07Hck5RXg4nuIL/eNsBfGGbIi45RQyxGGujN3
+         EsAHwjZWQm/GQ82VM2XZC1w3Cq87aBNWOICFbcpd2e3LizyA13D3qamrM2QY1YCjZB3D
+         re7O+LWzbxjk7DnS9PPwcPdinmn+owBIRO3DwZZnYojNYAaYXgIWFCa4SAKuC1/lCHNH
+         Rv50Nqn6pr5iVyf6lWVvrJoX23zsfTCr2Hkbb4JTqCL4zaLpwWZSAy2I1UKG1G45UK/U
+         WtigOqe3+btkH6HiT/twgQPS7XU4VbhZL827A7jrY5JvKm7pz6ZmgMeVn+RY7WJVPGwA
+         YG4A==
+X-Gm-Message-State: ANhLgQ0f+t0Wx4S6isOmwtTITQEBIzD0zKlAWm3dmbWNNXZENqLgO3g8
+        H4xrs3gms0fXw6lGbeX8ytrpLjmMNxYd/w==
+X-Google-Smtp-Source: ADFU+vsylQYqAZKy5Es0twsf9ymu9IpbEgQlJ6+DrsNkH7/GdDMgZpHpjf4lMyTBpW2WLfcpVjSULQ==
+X-Received: by 2002:a63:2948:: with SMTP id p69mr3644131pgp.238.1585147312228;
+        Wed, 25 Mar 2020 07:41:52 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id d3sm18690858pfq.126.2020.03.25.07.41.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Mar 2020 07:41:51 -0700 (PDT)
+Subject: Re: [PATCH liburing] Add test/splice to .gitignore
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20200325083321.16826-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d2c5888d-0acc-248f-833d-b60f9960a37c@kernel.dk>
+Date:   Wed, 25 Mar 2020 08:41:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=gbk; format=flowed
+In-Reply-To: <20200325083321.16826-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
+On 3/25/20 2:33 AM, Stefano Garzarella wrote:
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> ---
+>  .gitignore | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/.gitignore b/.gitignore
+> index 9f85a5f..db163b4 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -74,6 +74,7 @@
+>  /test/shared-wq
+>  /test/short-read
+>  /test/socket-rw
+> +/test/splice
+>  /test/sq-full
+>  /test/sq-poll-kthread
+>  /test/sq-space_left
 
-Look at below function:
-static bool io_register_op_must_quiesce(int op)
-{
-	switch (op) {
-	case IORING_UNREGISTER_FILES:
-	case IORING_REGISTER_FILES_UPDATE:
-	case IORING_REGISTER_PROBE:
-	case IORING_REGISTER_PERSONALITY:
-	case IORING_UNREGISTER_PERSONALITY:
-		return false;
-	default:
-		return true;
-	}
-}
+Applied, thanks.
 
-IORING_REGISTER_FILES will quiesces the ctx, but IORING_UNREGISTER_FILES
-and IORING_REGISTER_FILES_UPDATE won't, so I wonder how userspace applications
-can sure when they can unregister or update the registered fileset.
-Imagine below application behaviour:
-      ThreadA                     |      ThreadB
-                                  |
-     1, register a file           |     while (1) {
-     2, prepare a batch of sqes   |         wait a cqe and handle this cqe.
-     3, submit prepared sqes      |     }
-     4, unregister or update file |
-                                  |
+-- 
+Jens Axboe
 
-If IORING_SETUP_SQPOLL is not enabled, I think step4 is safe, because step3
-will ensure that all sqes will be prepared by io_req_set_file(), then corresponding
-struct file will be resolved and ctx->file_data->refs will be increased, we know
-unless requst is completed, struct file will not be put, finally we know step4
-is safe.
-
-But if IORING_SETUP_SQPOLL is enabled, step3 will complete quickly, if kernel
-thread io_sq_thread submit sqes before step4, everything is ok, but if step4
-starts to run, holding uring_lock, later io_sq_thread starts to handle sqes and
-all previously submitted sqes will be returned with EBADF.
-
-I'm not sure whether should make application ensure that all sqes against registered
-file to complete, then app can unregister or update fileset, if so, I think it'll
-introduce extra programming overhead to programmer.
-
-Or if IORING_SETUP_SQPOLL is enabled, we call io_submit_sqes in unregister/update codes,
-then applications will not need to worry about above race.
-
-Regards,
-Xiaoguang Wang

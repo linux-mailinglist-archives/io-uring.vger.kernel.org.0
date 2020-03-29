@@ -2,138 +2,188 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B73CF195B2F
-	for <lists+io-uring@lfdr.de>; Fri, 27 Mar 2020 17:35:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E113197104
+	for <lists+io-uring@lfdr.de>; Mon, 30 Mar 2020 01:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbgC0QfT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Mar 2020 12:35:19 -0400
-Received: from mail-pl1-f176.google.com ([209.85.214.176]:38416 "EHLO
-        mail-pl1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727495AbgC0QfT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Mar 2020 12:35:19 -0400
-Received: by mail-pl1-f176.google.com with SMTP id w3so3637906plz.5
-        for <io-uring@vger.kernel.org>; Fri, 27 Mar 2020 09:35:18 -0700 (PDT)
+        id S1726032AbgC2XEo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 29 Mar 2020 19:04:44 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39255 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbgC2XEo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 29 Mar 2020 19:04:44 -0400
+Received: by mail-pl1-f196.google.com with SMTP id k18so1178977pll.6
+        for <io-uring@vger.kernel.org>; Sun, 29 Mar 2020 16:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=M46dTk9Mg6uNvDz6YoDBibNyJVywCM7jUyk+VGGER8o=;
-        b=BT0wbHzN1WNFdsC1LC7Q+2uPsn/1mT27qfNf9tIzhPazaRwAX0nvuU9nElzr2A3YiU
-         s5hljfZfd2Plu+OPr+aCLzV4NQIjD49St+kqUe13H4VtaGSLxkINDqaIp5+F/RxcaapA
-         K2+W3yTJP6pG7mlBzOJ+13FwAm9/kwfX+OU+t4MVsMaJPHuu4/pCkHo63A9ExHNf++iI
-         KW/Glfz3PIN0kZSd2wTqxvzReODJH3sXInJGIE/KSyjbU9d2QikDHdXItkdDLTUew5ND
-         xjjQwB8ow1t2xezaHYHV0ymPEAY/SMOZVCurPo4uMPdZSx5SFGynaFmfMYfwEqkS2F9N
-         2vBA==
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=rCn28/5YMVoix93/RoHK+5/W1grR76h8dUAa1bzWPcE=;
+        b=SKMr3/oHWImaHQ9Yfs8nzgJ9q3sBRaKeow9afbC4mDpLPm01p8TCId19wicllBL7BB
+         zIa3Mw5TI06v1VQuvKnNn2egj449CJOCSBqJVqWRJYpP6A5KkWy3SeZMXi4M8RJCxyOc
+         EGzoids6sU5Q8y0TSv8qMdEr0zdKWjWI42gjaG4HVaMcLDwpErXTw7RUwj2sX/MQzU/n
+         K9w35Dh9i5mIsob0nVrdW19GWM8ZnV/mQuvta4gQebZqgYSPUGre8AYLPsDmP42zCaaj
+         1gjtK7VFXMPGThw9AdNEVftjxQOf81gpSLhF4PMZeNAlJM/fAK599nvZLp77JGcii10X
+         jjOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=M46dTk9Mg6uNvDz6YoDBibNyJVywCM7jUyk+VGGER8o=;
-        b=pld7HcUqQMIJ6JBP62BFWA/YL607t8lR4BVhtPQMLKf19B7EzV2+5vUvNsqdbEEp7z
-         H22MhsUWe9Acr3Jp5IN+ZJEqJgtriJ3JVuYl+4QQruhA6YIl/qrNH1k97cLW6ODlT+rB
-         DEzgT1g/i4yOQO/cq177dzumT3lek7nUfWpOFEDvjPDnLjM4s/YMZMESxQV047eVS/Zb
-         F7HSI2fRIeTetFAQzhy0VhJ+KdArdFmZAeJytxz5lmQBBuv5iQnDEXtdFDarXn/3v3iu
-         1AhB05FkQzx45RZqkqw3dYC39JhOCAo5tOSPYBN9nYYvnuxv+8xseEbT/WMe5rPED5VS
-         jgqg==
-X-Gm-Message-State: ANhLgQ18nnyjChdXzNbamVUju3PpWHJTpw3TbDXnEkwRzwDXCf6teX7b
-        4Gt28BcJd+cK5fmR/jIFTLfIdg==
-X-Google-Smtp-Source: ADFU+vuuwSgDGRSN3uiiP4R9sduHGxu9uBRYL33K0XACdp//N0Eji+mN0Ko/WyhyHG3UrUowKn9Yrw==
-X-Received: by 2002:a17:90a:cb87:: with SMTP id a7mr301218pju.80.1585326917792;
-        Fri, 27 Mar 2020 09:35:17 -0700 (PDT)
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=rCn28/5YMVoix93/RoHK+5/W1grR76h8dUAa1bzWPcE=;
+        b=KanFQGl3VfIvMsIdJ1jQLymmQaE2WhnKmGwfppLVVrkVjGqvbxiSnQjeNHZGk/sPEO
+         TCtlEm1v05245XEt2jdxJkgaHZs+tSqwmf2RrIlmFCr1btNDSGjnukeE2ttHj0UjkBF0
+         TjVL9fL4RalsSlZur1BpMM/Nrg8wqRIRfsL/IxBxA2gK7qDgdF5mNVJgwKEP9VPYCevy
+         +SvXOsswxHQJ8F5jsz0bObznmF1qSd65FZEXPhFncV66H532VG/YlwG6ONkliQ5THeUq
+         W/G2yT+IU1ARXMIVoT9sKtlEdPd64D/Fzr4MX27jSzcy/aQwWJ7CLBsgWbYmDB9wjSpO
+         p1XA==
+X-Gm-Message-State: ANhLgQ37+vMubR47vFQ+CAvg3qv9u7/SgHWfE8n4jo9H7YiNKSgbnNNr
+        3VHjgGqXq2dU5V1D9TjcWONogw==
+X-Google-Smtp-Source: ADFU+vuT73Fy7RaAOyfrc4It1U8Z92zhTrQi5Wp7TtSnhXSzbHgd6NRd9eTpSpSeyYMLY8hNjLGKfQ==
+X-Received: by 2002:a17:902:a50a:: with SMTP id s10mr9929294plq.290.1585523080984;
+        Sun, 29 Mar 2020 16:04:40 -0700 (PDT)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id n7sm4215857pgm.28.2020.03.27.09.35.16
+        by smtp.gmail.com with ESMTPSA id x71sm8709037pfd.129.2020.03.29.16.04.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Mar 2020 09:35:16 -0700 (PDT)
-Subject: Re: Polled I/O cannot find completions
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Cc:     io-uring@vger.kernel.org,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-References: <471572cf-700c-ec60-5740-0282930c849e@oracle.com>
- <4098ab93-980e-7a17-31f7-9eaeb24a2a65@kernel.dk>
- <34a7c633-c390-1220-3c78-1215bd64819f@oracle.com>
+        Sun, 29 Mar 2020 16:04:40 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d2f92d20-2eb0-e683-5011-e1c922dfcf71@kernel.dk>
-Date:   Fri, 27 Mar 2020 10:35:15 -0600
+Subject: [GIT PULL] io_uring updates for 5.7-rc
+Message-ID: <90978552-6746-1902-888b-4b6150e02b7a@kernel.dk>
+Date:   Sun, 29 Mar 2020 17:04:39 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <34a7c633-c390-1220-3c78-1215bd64819f@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/27/20 10:31 AM, Bijan Mottahedeh wrote:
-> Does io_uring though have to deal with BLK_QC_T_NONE at all?  Or are you 
-> saying that it should never receive that result?
-> That's one of the things I'm not clear about.
+Hi Linus,
 
-BLK_QC_T_* are block cookies, they are only valid in the block layer.
-Only the poll handler called should have to deal with them, inside
-their f_op->iopoll() handler. It's simply passed from the queue to
-the poll side.
+Here are the io_uring changes for this merge window. Light on new
+features this time around (just splice + buffer selection), lots of
+cleanups, fixes, and improvements to existing support. In particular,
+this pull request contains:
 
-So no, io_uring shouldn't have to deal with them at all.
+- Cleanup fixed file update handling for stack fallback (Hillf)
 
-The problem, as I see it, is if the block layer returns BLK_QC_T_NONE
-and the IO was actually queued and requires polling to be found. We'd
-end up with IO timeouts for handling those requests, and that's not a
-good thing...
+- Re-work of how pollable async IO is handled, we no longer require
+  thread offload to handle that. Instead we rely using poll to drive
+  this, with task_work execution.
 
->> On 3/26/20 8:57 PM, Bijan Mottahedeh wrote:
->>> I'm seeing poll threads hang as I increase the number of threads in
->>> polled fio tests.  I think this is because of polling on BLK_QC_T_NONE
->>> cookie, which will never succeed.
->>>
->>> A related problem however, is that the meaning of BLK_QC_T_NONE seems to
->>> be ambiguous.
->>>
->>> Specifically, the following cases return BLK_QC_T_NONE which I think
->>> would be problematic for polled io:
->>>
->>>
->>> generic_make_request()
->>> ...
->>>           if (current->bio_list) {
->>>                   bio_list_add(&current->bio_list[0], bio);
->>>                   goto out;
->>>           }
->>>
->>> In this case the request is delayed but should get a cookie eventually.
->>> How does the caller know what the right action is in this case for a
->>> polled request?  Polling would never succeed.
->>>
->>>
->>> __blk_mq_issue_directly()
->>> ...
->>>           case BLK_STS_RESOURCE:
->>>           case BLK_STS_DEV_RESOURCE:
->>>                   blk_mq_update_dispatch_busy(hctx, true);
->>>                   __blk_mq_requeue_request(rq);
->>>                   break;
->>>
->>> In this case, cookie is not updated and would keep its default
->>> BLK_QC_T_NONE value from blk_mq_make_request().  However, this request
->>> will eventually be reissued, so again, how would the caller poll for the
->>> completion of this request?
->>>
->>> blk_mq_try_issue_directly()
->>> ...
->>>           ret = __blk_mq_try_issue_directly(hctx, rq, cookie, false, true);
->>>           if (ret == BLK_STS_RESOURCE || ret == BLK_STS_DEV_RESOURCE)
->>>                   blk_mq_request_bypass_insert(rq, false, true);
->>>
->>> Am I missing something here?
->>>
->>> Incidentally, I don't see BLK_QC_T_EAGAIN used anywhere, should it be?
+- In conjunction with the above, allow expendable buffer selection, so
+  that poll+recv (for example) no longer has to be a split operation.
 
-Pretty sure that's a leftover from when the attempts was made to pass
-back -EAGAIN inline instead of through the bio end_io handler.
+- Make sure we honor RLIMIT_FSIZE for buffered writes
 
+- Add support for splice (Pavel)
+
+- Linked work inheritance fixes and optimizations (Pavel)
+
+- Async work fixes and cleanups (Pavel)
+
+- Improve io-wq locking (Pavel)
+
+- Hashed link write improvements (Pavel)
+
+- SETUP_IOPOLL|SETUP_SQPOLL improvements (Xiaoguang)
+
+Please pull!
+
+
+  git://git.kernel.dk/linux-block.git tags/for-5.7/io_uring-2020-03-29
+
+
+----------------------------------------------------------------
+Chucheng Luo (1):
+      io_uring: fix missing 'return' in comment
+
+Hillf Danton (2):
+      io-uring: drop completion when removing file
+      io-uring: drop 'free_pfile' in struct io_file_put
+
+Jens Axboe (17):
+      io_uring: consider any io_read/write -EAGAIN as final
+      io_uring: io_accept() should hold on to submit reference on retry
+      io_uring: store io_kiocb in wait->private
+      io_uring: add per-task callback handler
+      io_uring: mark requests that we can do poll async in io_op_defs
+      io_uring: use poll driven retry for files that support it
+      io_uring: buffer registration infrastructure
+      io_uring: add IORING_OP_PROVIDE_BUFFERS
+      io_uring: support buffer selection for OP_READ and OP_RECV
+      io_uring: add IOSQE_BUFFER_SELECT support for IORING_OP_READV
+      net: abstract out normal and compat msghdr import
+      io_uring: add IOSQE_BUFFER_SELECT support for IORING_OP_RECVMSG
+      io_uring: provide means of removing buffers
+      io_uring: add end-of-bits marker and build time verify it
+      io_uring: dual license io_uring.h uapi header
+      io_uring: fix truncated async read/readv and write/writev retry
+      io_uring: honor original task RLIMIT_FSIZE
+
+Lukas Bulwahn (1):
+      io_uring: make spdxcheck.py happy
+
+Nathan Chancellor (1):
+      io_uring: Ensure mask is initialized in io_arm_poll_handler
+
+Oleg Nesterov (1):
+      task_work_run: don't take ->pi_lock unconditionally
+
+Pavel Begunkov (28):
+      io_uring: don't call work.func from sync ctx
+      io_uring: don't do full *prep_worker() from io-wq
+      io_uring: remove req->in_async
+      splice: make do_splice public
+      io_uring: add interface for getting files
+      io_uring: add splice(2) support
+      io_uring: clean io_poll_complete
+      io_uring: extract kmsg copy helper
+      io-wq: remove unused IO_WQ_WORK_HAS_MM
+      io_uring: remove IO_WQ_WORK_CB
+      io-wq: use BIT for ulong hash
+      io_uring: remove extra nxt check after punt
+      io_uring: remove io_prep_next_work()
+      io_uring: clean up io_close
+      io_uring: make submission ref putting consistent
+      io_uring: remove @nxt from handlers
+      io_uring: get next work with submission ref drop
+      io-wq: shuffle io_worker_handle_work() code
+      io-wq: optimise locking in io_worker_handle_work()
+      io-wq: optimise out *next_work() double lock
+      io_uring/io-wq: forward submission ref to async
+      io-wq: remove duplicated cancel code
+      io-wq: don't resched if there is no work
+      io-wq: split hashing and enqueueing
+      io-wq: hash dependent work
+      io-wq: close cancel gap for hashed linked work
+      io_uring: Fix ->data corruption on re-enqueue
+      io-wq: handle hashed writes in chains
+
+Xiaoguang Wang (2):
+      io_uring: io_uring_enter(2) don't poll while SETUP_IOPOLL|SETUP_SQPOLL enabled
+      io_uring: cleanup io_alloc_async_ctx()
+
+YueHaibing (1):
+      io_uring: Fix unused function warnings
+
+ fs/io-wq.c                      |  368 ++++---
+ fs/io-wq.h                      |   65 +-
+ fs/io_uring.c                   | 2015 +++++++++++++++++++++++++++------------
+ fs/splice.c                     |    6 +-
+ include/linux/socket.h          |    4 +
+ include/linux/splice.h          |    3 +
+ include/net/compat.h            |    3 +
+ include/trace/events/io_uring.h |  103 ++
+ include/uapi/linux/io_uring.h   |   42 +-
+ kernel/task_work.c              |   18 +-
+ net/compat.c                    |   30 +-
+ net/socket.c                    |   25 +-
+ 12 files changed, 1826 insertions(+), 856 deletions(-)
 
 -- 
 Jens Axboe

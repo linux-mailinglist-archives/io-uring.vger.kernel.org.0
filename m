@@ -2,35 +2,36 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A2D519993C
-	for <lists+io-uring@lfdr.de>; Tue, 31 Mar 2020 17:10:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F48319993D
+	for <lists+io-uring@lfdr.de>; Tue, 31 Mar 2020 17:10:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbgCaPKD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Tue, 31 Mar 2020 11:10:03 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:25503 "EHLO
+        id S1730391AbgCaPKT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Tue, 31 Mar 2020 11:10:19 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:20361 "EHLO
         eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726526AbgCaPKD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Mar 2020 11:10:03 -0400
+        by vger.kernel.org with ESMTP id S1726526AbgCaPKT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Mar 2020 11:10:19 -0400
 Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
  TLS) by relay.mimecast.com with ESMTP id
- uk-mta-241-7LJDl3bsPG2iDAnR1ZjiSg-1; Tue, 31 Mar 2020 16:09:57 +0100
-X-MC-Unique: 7LJDl3bsPG2iDAnR1ZjiSg-1
+ uk-mta-100-Sh6i9EmcPFSOkPYOf_5IaA-1; Tue, 31 Mar 2020 16:10:15 +0100
+X-MC-Unique: Sh6i9EmcPFSOkPYOf_5IaA-1
 Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
  AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 16:09:56 +0100
+ Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 16:10:15 +0100
 Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
  AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 31 Mar 2020 16:09:56 +0100
+ Tue, 31 Mar 2020 16:10:15 +0100
 From:   David Laight <David.Laight@ACULAB.COM>
 To:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Subject: FW: [RFC PATCH 00/12] Changes to code that reads iovec from userspace
-Thread-Topic: [RFC PATCH 00/12] Changes to code that reads iovec from
- userspace
-Thread-Index: AdYHYETxpoUzI3CTQc6sOiLf8VKhPgADiMtA
-Date:   Tue, 31 Mar 2020 15:09:56 +0000
-Message-ID: <b80d0e07e155401fad27fae2aa83b013@AcuMS.aculab.com>
-References: <a2c781bbd5c44fd19483076fd0296943@AcuMS.aculab.com>
-In-Reply-To: <a2c781bbd5c44fd19483076fd0296943@AcuMS.aculab.com>
+Subject: FW: [RFC PATCH 02/12] fs/io_uring Don't use the return value from
+ import_iovec().
+Thread-Topic: [RFC PATCH 02/12] fs/io_uring Don't use the return value from
+ import_iovec().
+Thread-Index: AdYHYUSKSGJaZEFfSFajLxQsesYkOQADTLgQ
+Date:   Tue, 31 Mar 2020 15:10:15 +0000
+Message-ID: <1e7279e89d2a40079c2da188a10e32e5@AcuMS.aculab.com>
+References: <87c31730ece341b0bdf29745b9411ab8@AcuMS.aculab.com>
+In-Reply-To: <87c31730ece341b0bdf29745b9411ab8@AcuMS.aculab.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -53,72 +54,140 @@ X-Mailing-List: io-uring@vger.kernel.org
 > From: David Laight
 > Sent: 31 March 2020 14:52
 > To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-> Cc: netdev@vger.kernel.org
-> Subject: [RFC PATCH 00/12] Changes to code that reads iovec from userspace
+> Subject: [RFC PATCH 02/12] fs/io_uring Don't use the return value from import_iovec().
 > 
-> This is RFC because we seem to be in a merge window.
+> This is the only code that relies on import_iovec() returning
+> iter.count on success.
+> Not using the value actually saves passing it through to functions
+> that are also passed the 'iter'.
+> This allows a better interface to import_iovec().
 > 
-> The canonical code to read iov[] is currently:
-> 	struct iovec iovstack[UIO_FASTIOV];
-> 	struct iovec *iov;
-> 	...
-> 	iov = iovstack;
-> 	rc = import_iovec(..., UIO_FASTIOV, &iov, &iter);
-> 	if (rc < 0)
-> 		return rc;
-> 	...
-> 	kfree(iov);
+> Signed-off-by: David Laight <david.laight@aculab.com>
+> ---
+>  fs/io_uring.c | 34 ++++++++++++++--------------------
+>  1 file changed, 14 insertions(+), 20 deletions(-)
 > 
-> Note that the 'iov' parameter is used for two different things.
-> On input it is an iov[] can can be used.
-> On output it is an iov[] array that must be freed.
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 3affd96..d8dc2e2 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2153,12 +2153,11 @@ static ssize_t loop_rw_iter(int rw, struct file *file, struct kiocb *kiocb,
+>  	return ret;
+>  }
 > 
-> If 'iovstack' is passed, the count is actually always UIO_FASTIOV (8)
-> although in some places the array definition is in a different file
-> (never mind function) from the constant used.
+> -static void io_req_map_rw(struct io_kiocb *req, ssize_t io_size,
+> -			  struct iovec *iovec, struct iovec *fast_iov,
+> -			  struct iov_iter *iter)
+> +static void io_req_map_rw(struct io_kiocb *req, struct iovec *iovec,
+> +			  struct iovec *fast_iov, struct iov_iter *iter)
+>  {
+>  	req->io->rw.nr_segs = iter->nr_segs;
+> -	req->io->rw.size = io_size;
+> +	req->io->rw.size = iter->count;
+>  	req->io->rw.iov = iovec;
+>  	if (!req->io->rw.iov) {
+>  		req->io->rw.iov = req->io->rw.fast_iov;
+> @@ -2177,9 +2176,8 @@ static int io_alloc_async_ctx(struct io_kiocb *req)
+>  	return req->io == NULL;
+>  }
 > 
-> import_iovec() itself is just a wrapper to rw_copy_check_uvector().
-> So everything is passed through to a second function.
-> Several items are 'passed by reference' - adding to the code paths.
+> -static int io_setup_async_rw(struct io_kiocb *req, ssize_t io_size,
+> -			     struct iovec *iovec, struct iovec *fast_iov,
+> -			     struct iov_iter *iter)
+> +static int io_setup_async_rw(struct io_kiocb *req, struct iovec *iovec,
+> +			     struct iovec *fast_iov, struct iov_iter *iter)
+>  {
+>  	if (!io_op_defs[req->opcode].async_ctx)
+>  		return 0;
+> @@ -2187,7 +2185,7 @@ static int io_setup_async_rw(struct io_kiocb *req, ssize_t io_size,
+>  		if (io_alloc_async_ctx(req))
+>  			return -ENOMEM;
 > 
-> On success import_iovec() returned the transfer count.
-> Only one caller looks at it, the count is also in iter.count.
+> -		io_req_map_rw(req, io_size, iovec, fast_iov, iter);
+> +		io_req_map_rw(req, iovec, fast_iov, iter);
+>  	}
+>  	return 0;
+>  }
+> @@ -2218,7 +2216,7 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  	if (ret < 0)
+>  		return ret;
 > 
-> The new canonical code is:
-> 	struct iov_cache cache;
-> 	struct iovec *iov;
-> 	...
-> 	iov = iovec_import(..., &cache, &iter);
-> 	if (IS_ERR(iov))
-> 		return PTR_ERR(iov);
-> 	...
-> 	kfree(iov);
+> -	io_req_map_rw(req, ret, io->rw.iov, io->rw.fast_iov, &iter);
+> +	io_req_map_rw(req, io->rw.iov, io->rw.fast_iov, &iter);
+>  	return 0;
+>  }
 > 
-> Since 'struct iov_cache' is a fixed size there is no need to pass in
-> a length (correct or not!). It can still be NULL (used by the scsi code).
+> @@ -2229,7 +2227,7 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+>  	struct kiocb *kiocb = &req->rw.kiocb;
+>  	struct iov_iter iter;
+>  	size_t iov_count;
+> -	ssize_t io_size, ret;
+> +	ssize_t ret;
 > 
-> iovec_import() contains the code that used to be in rw_copy_check_uvector()
-> and then sets up the iov_iter.
+>  	ret = io_import_iovec(READ, req, &iovec, &iter);
+>  	if (ret < 0)
+> @@ -2240,9 +2238,8 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+>  		req->rw.kiocb.ki_flags &= ~IOCB_NOWAIT;
 > 
-> rw_copy_check_uvector() is no more.
-> The only other caller was in mm/process_vm_access.c when reading the
-> iov[] for the target process addresses when copying from a differ process.
-> This can extract the iov[] from an extra 'struct iov_iter'.
+>  	req->result = 0;
+> -	io_size = ret;
+>  	if (req->flags & REQ_F_LINK)
+> -		req->result = io_size;
+> +		req->result = iter.count;
 > 
-> In passing I noticed an access_ok() call on each fragment.
-> I hope this is just there to bail out early!
-> It is also skipped in process_vm_rw(). I did a quick look but couldn't
-> see an obvious equivalent check.
+>  	/*
+>  	 * If the file doesn't support async, mark it as REQ_F_MUST_PUNT so
+> @@ -2268,8 +2265,7 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+>  			kiocb_done(kiocb, ret2, nxt, req->in_async);
+>  		} else {
+>  copy_iov:
+> -			ret = io_setup_async_rw(req, io_size, iovec,
+> -						inline_vecs, &iter);
+> +			ret = io_setup_async_rw(req, iovec, inline_vecs, &iter);
+>  			if (ret)
+>  				goto out_free;
+>  			return -EAGAIN;
+> @@ -2307,7 +2303,7 @@ static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  	if (ret < 0)
+>  		return ret;
 > 
-> Patches 1 and 2 tidy up existing code.
-> Patches 3 and 4 add the new interface.
-> Patches 5 through 10 change all the callers.
-> Patch 11 removes a 'hack' that allowed fs/io_uring be updated before the socket code.
-> Patch 12 removes the old interface.
+> -	io_req_map_rw(req, ret, io->rw.iov, io->rw.fast_iov, &iter);
+> +	io_req_map_rw(req, io->rw.iov, io->rw.fast_iov, &iter);
+>  	return 0;
+>  }
 > 
-> I suspect the changes need to trickle through a merge window.
+> @@ -2318,7 +2314,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+>  	struct kiocb *kiocb = &req->rw.kiocb;
+>  	struct iov_iter iter;
+>  	size_t iov_count;
+> -	ssize_t ret, io_size;
+> +	ssize_t ret;
 > 
-> 	David
+>  	ret = io_import_iovec(WRITE, req, &iovec, &iter);
+>  	if (ret < 0)
+> @@ -2329,9 +2325,8 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+>  		req->rw.kiocb.ki_flags &= ~IOCB_NOWAIT;
+> 
+>  	req->result = 0;
+> -	io_size = ret;
+>  	if (req->flags & REQ_F_LINK)
+> -		req->result = io_size;
+> +		req->result = iter.count;
+> 
+>  	/*
+>  	 * If the file doesn't support async, mark it as REQ_F_MUST_PUNT so
+> @@ -2381,8 +2376,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+>  			kiocb_done(kiocb, ret2, nxt, req->in_async);
+>  		} else {
+>  copy_iov:
+> -			ret = io_setup_async_rw(req, io_size, iovec,
+> -						inline_vecs, &iter);
+> +			ret = io_setup_async_rw(req, iovec, inline_vecs, &iter);
+>  			if (ret)
+>  				goto out_free;
+>  			return -EAGAIN;
+> --
+> 1.8.1.2
 
 -
 Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK

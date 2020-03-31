@@ -2,154 +2,477 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29AF4199795
-	for <lists+io-uring@lfdr.de>; Tue, 31 Mar 2020 15:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA1A199800
+	for <lists+io-uring@lfdr.de>; Tue, 31 Mar 2020 15:59:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731079AbgCaNek (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 31 Mar 2020 09:34:40 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40727 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730856AbgCaNek (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Mar 2020 09:34:40 -0400
-Received: by mail-qt1-f193.google.com with SMTP id c9so18262451qtw.7
-        for <io-uring@vger.kernel.org>; Tue, 31 Mar 2020 06:34:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FC6FIie4dB6bMk3AEouOio/5I8/SxWgVUF3EHcYeGKk=;
-        b=JSLXv2GsMl24k0EipG86fel3qIxrznqKCbWUISfyREeUxRtG8dcuHyRcIQfgiVh/XR
-         vw4t5DfPeQ1L3LW0EcUykGzi2Wp4bu68RjhmLvhMsR41TFlDi9t8kesfnUu5CTKNNwJP
-         vFBhTS5afyuY6Cv6HP9u4KaXcUkzT/Rghk88lc6+MQylxn8drFFzL1mX4eStYOBq1XX5
-         qO2WvCiTKHxZXgjS9eunHwCnNdqJ+5vHrBiV3ZlP5XwAuX21T/7LSKVw4ntABTWhh/SI
-         Z4bYjRTOHuQIsXD4GSWmQiDFoqQzTHeGFU8stiDQe9YK27oclNz/1sx/5VPgUHEhes+T
-         ctEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FC6FIie4dB6bMk3AEouOio/5I8/SxWgVUF3EHcYeGKk=;
-        b=cbeRVNOi2HHq6ShW4yuhhOMPzDYNJz/i/FD2Ex5jbE6BXb6PR+fBmkUr2dRMeetJsY
-         Ewr0RSuxudrhQD+xHyBMnCgZrS3zJJtdx+ug3rUI+t1aZp0aDSfJG0fUEVBCl99jlMLB
-         1+Qy5Hz47g/3dL+HCfahQbXsgshlxM+dYMRxSztysVBwNfttnTRNhCRYsggv1QvtIMJL
-         bcimkwMX38Ds883xBpJsyXmHyyI1NUK/MnpSyrs/yljj/MWliAmECjNkgWhzLd3MQYL1
-         Qyao/vTU9f1J1OPSYeYZ4P3lkZlovPXnLIGrEzTBT4USfWCJeuJUrnRvzy6JZeJ2RGrI
-         Zg4A==
-X-Gm-Message-State: ANhLgQ1bNHWpbzKEtyt/c+Hd135BikmGdYGHJngprYCqFxtDdt8kscja
-        uvKbkZWMpgciyFGO4JCc++2lJBKQJu+2sWLVvkwNPQ==
-X-Google-Smtp-Source: ADFU+vtUeEOZn0rGavrGQ77YK5I181F1/PrUa9BYa0b8C78Gwj1gAK2n5Cl9kEZmCorTDalXgX+CB9VDENu7bBoYtus=
-X-Received: by 2002:ac8:719a:: with SMTP id w26mr4993271qto.257.1585661678287;
- Tue, 31 Mar 2020 06:34:38 -0700 (PDT)
+        id S1730851AbgCaN7x convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Tue, 31 Mar 2020 09:59:53 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:48259 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730442AbgCaN7w (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 31 Mar 2020 09:59:52 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-214-KBxWLHdjNfW7-10389SxYw-1; Tue, 31 Mar 2020 14:59:47 +0100
+X-MC-Unique: KBxWLHdjNfW7-10389SxYw-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 14:59:47 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 31 Mar 2020 14:59:47 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Subject: FW: [RFC PATCH 08/12] fs/io_uring: Use iovec_import() not
+ import_iovec().
+Thread-Topic: [RFC PATCH 08/12] fs/io_uring: Use iovec_import() not
+ import_iovec().
+Thread-Index: AdYHYizbfIRJ197UQ5GBjlxsSM9cggAAmlwg
+Date:   Tue, 31 Mar 2020 13:59:47 +0000
+Message-ID: <081d0ffde944432194ed0caf9f1df77c@AcuMS.aculab.com>
+References: <518953cd20d84fc5b6fc4ab459bf3459@AcuMS.aculab.com>
+In-Reply-To: <518953cd20d84fc5b6fc4ab459bf3459@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <00000000000016bac605a2268a08@google.com>
-In-Reply-To: <00000000000016bac605a2268a08@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 31 Mar 2020 15:34:26 +0200
-Message-ID: <CACT4Y+Zk60ETzYdpSepkR+YqNvzkbEhjdDUy+bY7r=XWxoVYaA@mail.gmail.com>
-Subject: Re: WARNING in percpu_ref_switch_to_atomic_rcu
-To:     syzbot <syzbot+0076781e1606f479425e@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 3:28 PM syzbot
-<syzbot+0076781e1606f479425e@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    770fbb32 Add linux-next specific files for 20200228
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1414f7ade00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=576314276bce4ad5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0076781e1606f479425e
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+0076781e1606f479425e@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> percpu ref (io_file_data_ref_zero) <= 0 (0) after switching to atomic
+Fixed cc address
 
-Looking at this io_file_data_ref_zero, this seems to be io_uring
-related. +io_uring maintainers
-
-> WARNING: CPU: 0 PID: 0 at lib/percpu-refcount.c:160 percpu_ref_switch_to_atomic_rcu+0x436/0x540 lib/percpu-refcount.c:160
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.6.0-rc3-next-20200228-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x188/0x20d lib/dump_stack.c:118
->  panic+0x2e3/0x75c kernel/panic.c:221
->  __warn.cold+0x2f/0x35 kernel/panic.c:582
->  report_bug+0x27b/0x2f0 lib/bug.c:195
->  fixup_bug arch/x86/kernel/traps.c:175 [inline]
->  fixup_bug arch/x86/kernel/traps.c:170 [inline]
->  do_error_trap+0x12b/0x220 arch/x86/kernel/traps.c:267
->  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
->  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-> RIP: 0010:percpu_ref_switch_to_atomic_rcu+0x436/0x540 lib/percpu-refcount.c:160
-> Code: 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 f7 00 00 00 49 8b 75 e8 4c 89 e2 48 c7 c7 e0 d1 71 88 e8 02 36 b5 fd <0f> 0b e9 2b fd ff ff e8 7e 6a e3 fd be 08 00 00 00 48 89 ef e8 51
-> RSP: 0018:ffffc90000007df0 EFLAGS: 00010282
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: 0000000000000100 RSI: ffffffff815c4e91 RDI: fffff52000000fb0
-> RBP: ffff88808c4b2810 R08: ffffffff8987a480 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> R13: ffff88808c4b2838 R14: 0000000000000002 R15: 0000000000000007
->  rcu_do_batch kernel/rcu/tree.c:2218 [inline]
->  rcu_core+0x59f/0x1370 kernel/rcu/tree.c:2445
->  __do_softirq+0x26c/0x99d kernel/softirq.c:292
->  invoke_softirq kernel/softirq.c:373 [inline]
->  irq_exit+0x192/0x1d0 kernel/softirq.c:413
->  exiting_irq arch/x86/include/asm/apic.h:546 [inline]
->  smp_apic_timer_interrupt+0x19e/0x600 arch/x86/kernel/apic/apic.c:1146
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
->  </IRQ>
-> RIP: 0010:native_safe_halt+0xe/0x10 arch/x86/include/asm/irqflags.h:61
-> Code: cc cc cc cc cc cc cc cc cc cc cc cc e9 07 00 00 00 0f 00 2d e4 35 65 00 f4 c3 66 90 e9 07 00 00 00 0f 00 2d d4 35 65 00 fb f4 <c3> cc 41 56 41 55 41 54 55 53 e8 f3 25 9d f9 e8 8e f7 cf fb 0f 1f
-> RSP: 0018:ffffffff89807d98 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-> RAX: 1ffffffff132790a RBX: ffffffff8987a480 RCX: 0000000000000000
-> RDX: dffffc0000000000 RSI: 0000000000000006 RDI: ffffffff8987ad1c
-> RBP: dffffc0000000000 R08: ffffffff8987a480 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: fffffbfff130f490
-> R13: 0000000000000000 R14: ffffffff8a862140 R15: 0000000000000000
->  arch_safe_halt arch/x86/include/asm/paravirt.h:144 [inline]
->  default_idle+0x49/0x350 arch/x86/kernel/process.c:698
->  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
->  do_idle+0x393/0x690 kernel/sched/idle.c:269
->  cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:361
->  start_kernel+0x867/0x8a1 init/main.c:1001
->  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
+> -----Original Message-----
+> From: David Laight
+> Sent: 31 March 2020 14:52
+> To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+> Cc: 'io_uring@vger.kernel.org' <io_uring@vger.kernel.org>; 'axboe@kernel.de' <axboe@kernel.de>
+> Subject: [RFC PATCH 08/12] fs/io_uring: Use iovec_import() not import_iovec().
+> 
+> 
+> This is a mechanical change to this horrid code.
+> I think it is correct.
+> 
+> Signed-off-by: David Laight <david.laight@aculab.com>
 > ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
+>  fs/io_uring.c | 165 +++++++++++++++++++++++++++++++---------------------------
+>  1 file changed, 87 insertions(+), 78 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index d8dc2e2..27d66cf 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -77,6 +77,10 @@
+>  #include <linux/eventpoll.h>
+>  #include <linux/fs_struct.h>
+> 
+> +/* Temporary for commit bisection */
+> +#define sendmsg_copy_msghdr(a, b, c, d) sendmsg_copy_msghdr(a, b, c, (void *)d)
+> +#define recvmsg_copy_msghdr(a, b, c, d, e) recvmsg_copy_msghdr(a, b, c, d, (void *)e)
+> +
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/io_uring.h>
+> 
+> @@ -435,7 +439,7 @@ struct io_async_connect {
+>  };
+> 
+>  struct io_async_msghdr {
+> -	struct iovec			fast_iov[UIO_FASTIOV];
+> +	struct iovec_cache		fast_iov;
+>  	struct iovec			*iov;
+>  	struct sockaddr __user		*uaddr;
+>  	struct msghdr			msg;
+> @@ -443,7 +447,7 @@ struct io_async_msghdr {
+>  };
+> 
+>  struct io_async_rw {
+> -	struct iovec			fast_iov[UIO_FASTIOV];
+> +	struct iovec_cache		fast_iov;
+>  	struct iovec			*iov;
+>  	ssize_t				nr_segs;
+>  	ssize_t				size;
+> @@ -2052,47 +2056,39 @@ static ssize_t io_import_fixed(struct io_kiocb *req, int rw,
+>  	return len;
+>  }
+> 
+> -static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+> -			       struct iovec **iovec, struct iov_iter *iter)
+> +static struct iovec *io_import_iovec(int rw, struct io_kiocb *req,
+> +			       struct iovec_cache *cache, struct iov_iter *iter)
+>  {
+>  	void __user *buf = u64_to_user_ptr(req->rw.addr);
+>  	size_t sqe_len = req->rw.len;
+>  	u8 opcode;
+> 
+>  	opcode = req->opcode;
+> -	if (opcode == IORING_OP_READ_FIXED || opcode == IORING_OP_WRITE_FIXED) {
+> -		*iovec = NULL;
+> -		return io_import_fixed(req, rw, iter);
+> -	}
+> +	if (opcode == IORING_OP_READ_FIXED || opcode == IORING_OP_WRITE_FIXED)
+> +		return ERR_PTR(io_import_fixed(req, rw, iter));
+> 
+>  	/* buffer index only valid with fixed read/write */
+>  	if (req->rw.kiocb.private)
+> -		return -EINVAL;
+> +		return ERR_PTR(-EINVAL);
+> 
+> -	if (opcode == IORING_OP_READ || opcode == IORING_OP_WRITE) {
+> -		ssize_t ret;
+> -		ret = import_single_range(rw, buf, sqe_len, *iovec, iter);
+> -		*iovec = NULL;
+> -		return ret < 0 ? ret : sqe_len;
+> -	}
+> +	if (opcode == IORING_OP_READ || opcode == IORING_OP_WRITE)
+> +		return ERR_PTR(import_single_range(rw, buf, sqe_len, cache->iov, iter));
+> 
+>  	if (req->io) {
+>  		struct io_async_rw *iorw = &req->io->rw;
+> 
+> -		*iovec = iorw->iov;
+> -		iov_iter_init(iter, rw, *iovec, iorw->nr_segs, iorw->size);
+> -		if (iorw->iov == iorw->fast_iov)
+> -			*iovec = NULL;
+> -		return iorw->size;
+> +		iov_iter_init(iter, rw, iorw->iov, iorw->nr_segs, iorw->size);
+> +		if (iorw->iov != iorw->fast_iov.iov)
+> +			return iorw->iov;
+> +		return NULL;
+>  	}
+> 
+>  #ifdef CONFIG_COMPAT
+>  	if (req->ctx->compat)
+> -		return compat_import_iovec(rw, buf, sqe_len, UIO_FASTIOV,
+> -						iovec, iter);
+> +		return compat_iovec_import(rw, buf, sqe_len, cache, iter);
+>  #endif
+> 
+> -	return import_iovec(rw, buf, sqe_len, UIO_FASTIOV, iovec, iter);
+> +	return iovec_import(rw, buf, sqe_len, cache, iter);
+>  }
+> 
+>  /*
+> @@ -2154,13 +2150,13 @@ static ssize_t loop_rw_iter(int rw, struct file *file, struct kiocb *kiocb,
+>  }
+> 
+>  static void io_req_map_rw(struct io_kiocb *req, struct iovec *iovec,
+> -			  struct iovec *fast_iov, struct iov_iter *iter)
+> +			  struct iovec_cache *fast_iov, struct iov_iter *iter)
+>  {
+>  	req->io->rw.nr_segs = iter->nr_segs;
+>  	req->io->rw.size = iter->count;
+>  	req->io->rw.iov = iovec;
+>  	if (!req->io->rw.iov) {
+> -		req->io->rw.iov = req->io->rw.fast_iov;
+> +		req->io->rw.iov = req->io->rw.fast_iov.iov;
+>  		memcpy(req->io->rw.iov, fast_iov,
+>  			sizeof(struct iovec) * iter->nr_segs);
+>  	} else {
+> @@ -2177,7 +2173,7 @@ static int io_alloc_async_ctx(struct io_kiocb *req)
+>  }
+> 
+>  static int io_setup_async_rw(struct io_kiocb *req, struct iovec *iovec,
+> -			     struct iovec *fast_iov, struct iov_iter *iter)
+> +			     struct iovec_cache *fast_iov, struct iov_iter *iter)
+>  {
+>  	if (!io_op_defs[req->opcode].async_ctx)
+>  		return 0;
+> @@ -2195,6 +2191,7 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  {
+>  	struct io_async_ctx *io;
+>  	struct iov_iter iter;
+> +	struct iovec *iov;
+>  	ssize_t ret;
+> 
+>  	ret = io_prep_rw(req, sqe, force_nonblock);
+> @@ -2209,29 +2206,30 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  		return 0;
+> 
+>  	io = req->io;
+> -	io->rw.iov = io->rw.fast_iov;
+>  	req->io = NULL;
+> -	ret = io_import_iovec(READ, req, &io->rw.iov, &iter);
+> +	iov = io_import_iovec(READ, req, &io->rw.fast_iov, &iter);
+>  	req->io = io;
+> -	if (ret < 0)
+> -		return ret;
+> +	if (IS_ERR(iov))
+> +		return PTR_ERR(iov);
+> +	io->rw.iov = iov;
+> 
+> -	io_req_map_rw(req, io->rw.iov, io->rw.fast_iov, &iter);
+> +	io_req_map_rw(req, io->rw.iov, &io->rw.fast_iov, &iter);
+>  	return 0;
+>  }
+> 
+>  static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+>  		   bool force_nonblock)
+>  {
+> -	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
+> +	struct iovec_cache cache;
+> +	struct iovec *iovec;
+>  	struct kiocb *kiocb = &req->rw.kiocb;
+>  	struct iov_iter iter;
+>  	size_t iov_count;
+>  	ssize_t ret;
+> 
+> -	ret = io_import_iovec(READ, req, &iovec, &iter);
+> -	if (ret < 0)
+> -		return ret;
+> +	iovec = io_import_iovec(READ, req, &cache, &iter);
+> +	if (IS_ERR(iovec))
+> +		return PTR_ERR(iovec);
+> 
+>  	/* Ensure we clear previously set non-block flag */
+>  	if (!force_nonblock)
+> @@ -2265,7 +2263,7 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+>  			kiocb_done(kiocb, ret2, nxt, req->in_async);
+>  		} else {
+>  copy_iov:
+> -			ret = io_setup_async_rw(req, iovec, inline_vecs, &iter);
+> +			ret = io_setup_async_rw(req, iovec, &cache, &iter);
+>  			if (ret)
+>  				goto out_free;
+>  			return -EAGAIN;
+> @@ -2282,6 +2280,7 @@ static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  {
+>  	struct io_async_ctx *io;
+>  	struct iov_iter iter;
+> +	struct iovec *iov;
+>  	ssize_t ret;
+> 
+>  	ret = io_prep_rw(req, sqe, force_nonblock);
+> @@ -2296,29 +2295,30 @@ static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  		return 0;
+> 
+>  	io = req->io;
+> -	io->rw.iov = io->rw.fast_iov;
+>  	req->io = NULL;
+> -	ret = io_import_iovec(WRITE, req, &io->rw.iov, &iter);
+> +	iov = io_import_iovec(WRITE, req, &io->rw.fast_iov, &iter);
+>  	req->io = io;
+> -	if (ret < 0)
+> -		return ret;
+> +	if (IS_ERR(iov))
+> +		return PTR_ERR(iov);
+> +	io->rw.iov = iov;
+> 
+> -	io_req_map_rw(req, io->rw.iov, io->rw.fast_iov, &iter);
+> +	io_req_map_rw(req, io->rw.iov, &io->rw.fast_iov, &iter);
+>  	return 0;
+>  }
+> 
+>  static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+>  		    bool force_nonblock)
+>  {
+> -	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
+> +	struct iovec_cache cache;
+> +	struct iovec *iovec;
+>  	struct kiocb *kiocb = &req->rw.kiocb;
+>  	struct iov_iter iter;
+>  	size_t iov_count;
+>  	ssize_t ret;
+> 
+> -	ret = io_import_iovec(WRITE, req, &iovec, &iter);
+> -	if (ret < 0)
+> -		return ret;
+> +	iovec = io_import_iovec(WRITE, req, &cache, &iter);
+> +	if (IS_ERR(iovec))
+> +		return PTR_ERR(iovec);
+> 
+>  	/* Ensure we clear previously set non-block flag */
+>  	if (!force_nonblock)
+> @@ -2376,7 +2376,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+>  			kiocb_done(kiocb, ret2, nxt, req->in_async);
+>  		} else {
+>  copy_iov:
+> -			ret = io_setup_async_rw(req, iovec, inline_vecs, &iter);
+> +			ret = io_setup_async_rw(req, iovec, &cache, &iter);
+>  			if (ret)
+>  				goto out_free;
+>  			return -EAGAIN;
+> @@ -2994,7 +2994,7 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  #if defined(CONFIG_NET)
+>  	struct io_sr_msg *sr = &req->sr_msg;
+>  	struct io_async_ctx *io = req->io;
+> -	int ret;
+> +	struct iovec *iov;
+> 
+>  	sr->msg_flags = READ_ONCE(sqe->msg_flags);
+>  	sr->msg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+> @@ -3011,12 +3011,14 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe
+> *sqe)
+>  	if (req->flags & REQ_F_NEED_CLEANUP)
+>  		return 0;
+> 
+> -	io->msg.iov = io->msg.fast_iov;
+> -	ret = sendmsg_copy_msghdr(&io->msg.msg, sr->msg, sr->msg_flags,
+> -					&io->msg.iov);
+> -	if (!ret)
+> -		req->flags |= REQ_F_NEED_CLEANUP;
+> -	return ret;
+> +	iov = sendmsg_copy_msghdr(&io->msg.msg, sr->msg, sr->msg_flags,
+> +					&io->msg.fast_iov);
+> +	if (IS_ERR(iov))
+> +		return PTR_ERR(iov);
+> +
+> +	io->msg.iov = iov;
+> +	req->flags |= REQ_F_NEED_CLEANUP;
+> +	return 0;
+>  #else
+>  	return -EOPNOTSUPP;
+>  #endif
+> @@ -3043,19 +3045,21 @@ static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+>  			kmsg->msg.msg_name = &req->io->msg.addr;
+>  			/* if iov is set, it's allocated already */
+>  			if (!kmsg->iov)
+> -				kmsg->iov = kmsg->fast_iov;
+> +				kmsg->iov = kmsg->fast_iov.iov;
+>  			kmsg->msg.msg_iter.iov = kmsg->iov;
+>  		} else {
+>  			struct io_sr_msg *sr = &req->sr_msg;
+> +			struct iovec *iov;
+> 
+>  			kmsg = &io.msg;
+>  			kmsg->msg.msg_name = &io.msg.addr;
+> 
+> -			io.msg.iov = io.msg.fast_iov;
+> -			ret = sendmsg_copy_msghdr(&io.msg.msg, sr->msg,
+> -					sr->msg_flags, &io.msg.iov);
+> -			if (ret)
+> -				return ret;
+> +			iov = sendmsg_copy_msghdr(&io.msg.msg, sr->msg,
+> +					sr->msg_flags, &io.msg.fast_iov);
+> +			if (IS_ERR(iov))
+> +				return PTR_ERR(iov);
+> +
+> +			io.msg.iov = iov;
+>  		}
+> 
+>  		flags = req->sr_msg.msg_flags;
+> @@ -3069,7 +3073,7 @@ static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+>  			if (req->io)
+>  				return -EAGAIN;
+>  			if (io_alloc_async_ctx(req)) {
+> -				if (kmsg->iov != kmsg->fast_iov)
+> +				if (kmsg->iov != kmsg->fast_iov.iov)
+>  					kfree(kmsg->iov);
+>  				return -ENOMEM;
+>  			}
+> @@ -3081,7 +3085,7 @@ static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+>  			ret = -EINTR;
+>  	}
+> 
+> -	if (kmsg && kmsg->iov != kmsg->fast_iov)
+> +	if (kmsg && kmsg->iov != kmsg->fast_iov.iov)
+>  		kfree(kmsg->iov);
+>  	req->flags &= ~REQ_F_NEED_CLEANUP;
+>  	io_cqring_add_event(req, ret);
+> @@ -3151,7 +3155,7 @@ static int io_recvmsg_prep(struct io_kiocb *req,
+>  #if defined(CONFIG_NET)
+>  	struct io_sr_msg *sr = &req->sr_msg;
+>  	struct io_async_ctx *io = req->io;
+> -	int ret;
+> +	struct iovec *iov;
+> 
+>  	sr->msg_flags = READ_ONCE(sqe->msg_flags);
+>  	sr->msg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+> @@ -3168,12 +3172,14 @@ static int io_recvmsg_prep(struct io_kiocb *req,
+>  	if (req->flags & REQ_F_NEED_CLEANUP)
+>  		return 0;
+> 
+> -	io->msg.iov = io->msg.fast_iov;
+> -	ret = recvmsg_copy_msghdr(&io->msg.msg, sr->msg, sr->msg_flags,
+> -					&io->msg.uaddr, &io->msg.iov);
+> -	if (!ret)
+> -		req->flags |= REQ_F_NEED_CLEANUP;
+> -	return ret;
+> +	iov = recvmsg_copy_msghdr(&io->msg.msg, sr->msg, sr->msg_flags,
+> +					&io->msg.uaddr, &io->msg.fast_iov);
+> +	if (IS_ERR(iov))
+> +		return PTR_ERR(iov);
+> +
+> +	io->msg.iov = iov;
+> +	req->flags |= REQ_F_NEED_CLEANUP;
+> +	return 0;
+>  #else
+>  	return -EOPNOTSUPP;
+>  #endif
+> @@ -3200,20 +3206,23 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+>  			kmsg->msg.msg_name = &req->io->msg.addr;
+>  			/* if iov is set, it's allocated already */
+>  			if (!kmsg->iov)
+> -				kmsg->iov = kmsg->fast_iov;
+> +				kmsg->iov = kmsg->fast_iov.iov;
+>  			kmsg->msg.msg_iter.iov = kmsg->iov;
+>  		} else {
+>  			struct io_sr_msg *sr = &req->sr_msg;
+> +			struct iovec *iov;
+> 
+>  			kmsg = &io.msg;
+>  			kmsg->msg.msg_name = &io.msg.addr;
+> 
+> -			io.msg.iov = io.msg.fast_iov;
+> -			ret = recvmsg_copy_msghdr(&io.msg.msg, sr->msg,
+> +			io.msg.iov = io.msg.fast_iov.iov;
+> +			iov = recvmsg_copy_msghdr(&io.msg.msg, sr->msg,
+>  					sr->msg_flags, &io.msg.uaddr,
+> -					&io.msg.iov);
+> -			if (ret)
+> -				return ret;
+> +					&io.msg.fast_iov);
+> +			if (IS_ERR(iov))
+> +				return PTR_ERR(iov);
+> +
+> +			io.msg.iov = iov;
+>  		}
+> 
+>  		flags = req->sr_msg.msg_flags;
+> @@ -3228,7 +3237,7 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+>  			if (req->io)
+>  				return -EAGAIN;
+>  			if (io_alloc_async_ctx(req)) {
+> -				if (kmsg->iov != kmsg->fast_iov)
+> +				if (kmsg->iov != kmsg->fast_iov.iov)
+>  					kfree(kmsg->iov);
+>  				return -ENOMEM;
+>  			}
+> @@ -3240,7 +3249,7 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+>  			ret = -EINTR;
+>  	}
+> 
+> -	if (kmsg && kmsg->iov != kmsg->fast_iov)
+> +	if (kmsg && kmsg->iov != kmsg->fast_iov.iov)
+>  		kfree(kmsg->iov);
+>  	req->flags &= ~REQ_F_NEED_CLEANUP;
+>  	io_cqring_add_event(req, ret);
+> @@ -4269,12 +4278,12 @@ static void io_cleanup_req(struct io_kiocb *req)
+>  	case IORING_OP_WRITEV:
+>  	case IORING_OP_WRITE_FIXED:
+>  	case IORING_OP_WRITE:
+> -		if (io->rw.iov != io->rw.fast_iov)
+> +		if (io->rw.iov != io->rw.fast_iov.iov)
+>  			kfree(io->rw.iov);
+>  		break;
+>  	case IORING_OP_SENDMSG:
+>  	case IORING_OP_RECVMSG:
+> -		if (io->msg.iov != io->msg.fast_iov)
+> +		if (io->msg.iov != io->msg.fast_iov.iov)
+>  			kfree(io->msg.iov);
+>  		break;
+>  	case IORING_OP_OPENAT:
 > --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000016bac605a2268a08%40google.com.
+> 1.8.1.2
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+

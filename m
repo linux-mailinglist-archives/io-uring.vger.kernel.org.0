@@ -2,173 +2,238 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE25319FEAA
-	for <lists+io-uring@lfdr.de>; Mon,  6 Apr 2020 22:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D97331A0077
+	for <lists+io-uring@lfdr.de>; Mon,  6 Apr 2020 23:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbgDFUCv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 6 Apr 2020 16:02:51 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44966 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbgDFUCv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Apr 2020 16:02:51 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c15so978180wro.11;
-        Mon, 06 Apr 2020 13:02:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to;
-        bh=zgQ7IMlDvdLY8o7/vd2Yy6fwTd5gBIx7KrgVafEc9Oo=;
-        b=OBh8Kkf4LPGLPG5SmdCVdAKorJI8dxKJlcGW7uIBmeIUM+eYZL9CKh9YxVkE1Q9ttB
-         Jdj5UaKJQbAmMUKH8GwTbKzX4BJ9p2mRyvvOKU49mJ2njVHCsgT2tbzN67azYiJX3oKp
-         se3OD7AxXp9WhDIx7lILXcOMirZ3dQ6AdGyone1faGVdiZATb5LtifxGd6Bi6PGHGX4w
-         EzLbifqspLJ8KVin1UvJ0zYo+QzaHfUyTtGlytuf4KPpT5EIsXRUZp51I3z2mW/7b9Tn
-         K0EAmjJf7eYaC+lCRobCsR9gyR//8P1u7NwIrSVWlLGvLcBOCoy32ntXAb/PUyQ5AqN2
-         52iA==
+        id S1726225AbgDFVts (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 6 Apr 2020 17:49:48 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:51388 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725933AbgDFVtp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Apr 2020 17:49:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1586209784;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kIXDxUjS2HMskB+mPSwuv3yFtOM4CbvksE2h37nZI78=;
+        b=HdCZpjFcSwWKp1JAt996D+YRgtvKuIuxxjuze4aPMbhwSq3ugFloPh2Yxt7P5Jx1s6Fm/o
+        0b72TogcskQEHnofUy3FqaYUyvMhcpep1D7XFamBaZdzEzGfJt6txSLqryYpKkN836wYlX
+        Dy9HujfJgJ9I6J7/CtpLBowNrlBsbk4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-235-ZZz_V7JlNbW38E92nOLS_w-1; Mon, 06 Apr 2020 17:49:40 -0400
+X-MC-Unique: ZZz_V7JlNbW38E92nOLS_w-1
+Received: by mail-wm1-f69.google.com with SMTP id o5so32659wmo.6
+        for <io-uring@vger.kernel.org>; Mon, 06 Apr 2020 14:49:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to;
-        bh=zgQ7IMlDvdLY8o7/vd2Yy6fwTd5gBIx7KrgVafEc9Oo=;
-        b=lsGKBwwx0NnaBrNhtgkIADDmJjqWKQ2MS6qtfifwzVM+2iA7qnAS/Pce0CBxhr4K6Q
-         7pqJr7/yJtsV8OGJIVKZ3JdhbzTl5JJrMSnvK+jj+B4Ct6kNpQTOxY0xrQz4nE0Gue3d
-         EBGSI+MACuqdHJ7CbWBD67qfRZMvolc4ZLR8cbparZMLWTaOf/iV6yG7dlr39Fe194ng
-         bsQv8Ex7r+m8gr6EKEhN0V9Md2QeD4zEG7koonkPXxVkQpgRO8pfgHJHTicFVQSbS4wd
-         40ULJ4k9/GR+oyn3gSJrVuolvhDScnnkDGDFuBxF9ePGZtjxGua2hA0BNM8itgoOcgqh
-         4/nQ==
-X-Gm-Message-State: AGi0Puagqi7F9VBzJNZXulG97G6RTaz9p6+FJEb+L8/i2NLQZagt/3Cv
-        4yFoagtw6GwfHuerl1Hb1oc=
-X-Google-Smtp-Source: APiQypK0S9LYB8vFy7yVLl49eYP7gZFUI6QgnPbAuNfXv++iU/nyJwzwwz6bF0Fcz/PzXVqvkl5r5g==
-X-Received: by 2002:a5d:484b:: with SMTP id n11mr972832wrs.110.1586203369487;
-        Mon, 06 Apr 2020 13:02:49 -0700 (PDT)
-Received: from [192.168.43.134] ([109.126.129.227])
-        by smtp.gmail.com with ESMTPSA id t2sm9596367wrs.7.2020.04.06.13.02.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Apr 2020 13:02:48 -0700 (PDT)
-To:     Askar Safin <safinaskar@mail.ru>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-References: <1586200181.435329676@f412.i.mail.ru>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
- bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
- 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
- +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
- W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
- CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
- Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
- EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
- jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
- NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
- bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
- PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
- Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
- Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
- xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
- aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
- HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
- 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
- 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
- 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
- M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
- reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
- IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
- dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
- Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
- jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
- Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
- dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
- xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
- DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
- F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
- 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
- aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
- 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
- LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
- uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
- rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
- 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
- JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
- UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
- m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
- OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [POC RFC 0/3] splice(2) support for io_uring
-Message-ID: <59c447cb-46b5-ac9d-3fdd-94d029e7f5dc@gmail.com>
-Date:   Mon, 6 Apr 2020 23:01:44 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kIXDxUjS2HMskB+mPSwuv3yFtOM4CbvksE2h37nZI78=;
+        b=q3R6O+CoRBtIo1mXmRkPxuWtaGpJBMzlRPDNoYlwsRX1CQ8kBVWWqv5zk9/53rAzH8
+         l8OUoGgl/h7Y+lRvCRP5/IiFVcD1m3FplkJsoLs7aD267W7jtYT3dlX5i54Rwh5BjoCd
+         BHP07P0SWrMx+4WDLSg5TlK+Szzq1z0qbHMzij6fayOMwN8WX4EliGtaD3CNI5nRPg1B
+         GMAfsfzOqM5tilChyvM8Xm8xfkNI7IInoZUkL8qjBlQ9OTrMeNCAWhcaAGEW9l9FXDFh
+         g32tvO8V6fyj2ImEkVonWxw+MsoYs9I1X0oJuXAyw0uiz+ifFJ8o2WNSHGSfrJMuxg8G
+         pPjg==
+X-Gm-Message-State: AGi0PuZrVI7PW0+Vr8ZKYaq5nSUDXJ1rzYFhroLXRNyjjv9Q9xX/YqPg
+        QpwFIFjPZNciaTodcLRY0FGDJTgbWqcYlPbeZ4tSPhqY3nm9+A4f0ETTSYqdvJaFkJjaqJQ1W/J
+        C/udIuGoyyqCzA7wUi6E=
+X-Received: by 2002:a5d:5230:: with SMTP id i16mr1340788wra.15.1586209779343;
+        Mon, 06 Apr 2020 14:49:39 -0700 (PDT)
+X-Google-Smtp-Source: APiQypJNgJ7eiNVOi5WqhYdhc42FjdejCWO6/Y8fkLNs2CGrGBsCWnbC9H2zd2UGSvXrNhDXRVbxFQ==
+X-Received: by 2002:a5d:5230:: with SMTP id i16mr1340765wra.15.1586209779132;
+        Mon, 06 Apr 2020 14:49:39 -0700 (PDT)
+Received: from redhat.com (bzq-79-176-51-222.red.bezeqint.net. [79.176.51.222])
+        by smtp.gmail.com with ESMTPSA id n6sm1057944wmc.28.2020.04.06.14.49.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Apr 2020 14:49:38 -0700 (PDT)
+Date:   Mon, 6 Apr 2020 17:49:34 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 6/6] kernel: set USER_DS in kthread_use_mm
+Message-ID: <20200406174917-mutt-send-email-mst@kernel.org>
+References: <20200404094101.672954-1-hch@lst.de>
+ <20200404094101.672954-7-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <1586200181.435329676@f412.i.mail.ru>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="XeXf2vlNfgg9vaeMUWcOxYZdYkCoLmWN3"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200404094101.672954-7-hch@lst.de>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---XeXf2vlNfgg9vaeMUWcOxYZdYkCoLmWN3
-Content-Type: multipart/mixed; boundary="J7LH82WWimjZtr0j91XWX2urDE1jPHLqz";
- protected-headers="v1"
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Askar Safin <safinaskar@mail.ru>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Message-ID: <59c447cb-46b5-ac9d-3fdd-94d029e7f5dc@gmail.com>
-Subject: Re: [POC RFC 0/3] splice(2) support for io_uring
-References: <1586200181.435329676@f412.i.mail.ru>
-In-Reply-To: <1586200181.435329676@f412.i.mail.ru>
+On Sat, Apr 04, 2020 at 11:41:01AM +0200, Christoph Hellwig wrote:
+> Some architectures like arm64 and s390 require USER_DS to be set for
+> kernel threads to access user address space, which is the whole purpose
+> of kthread_use_mm, but other like x86 don't.  That has lead to a huge
+> mess where some callers are fixed up once they are tested on said
+> architectures, while others linger around and yet other like io_uring
+> try to do "clever" optimizations for what usually is just a trivial
+> asignment to a member in the thread_struct for most architectures.
+> 
+> Make kthread_use_mm set USER_DS, and kthread_unuse_mm restore to the
+> previous value instead.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
---J7LH82WWimjZtr0j91XWX2urDE1jPHLqz
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+I'm ok with vhost bits:
 
-On 06/04/2020 22:09, Askar Safin wrote:
-> Hi. Thanks for your splice io_uring patch. Maybe it will be good idea t=
-o add uring operation, which will unify splice, sendfile and copy_file_ra=
-nge instead of just IORING_OP_SPLICE?
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-It doesn't have to follow splice(2) semantics, so can be extended, in the=
-ory.
+> ---
+>  drivers/usb/gadget/function/f_fs.c | 4 ----
+>  drivers/vhost/vhost.c              | 3 ---
+>  fs/io-wq.c                         | 8 ++------
+>  fs/io_uring.c                      | 4 ----
+>  kernel/kthread.c                   | 6 ++++++
+>  5 files changed, 8 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+> index d9e48bd7c692..a1198f4c527c 100644
+> --- a/drivers/usb/gadget/function/f_fs.c
+> +++ b/drivers/usb/gadget/function/f_fs.c
+> @@ -824,13 +824,9 @@ static void ffs_user_copy_worker(struct work_struct *work)
+>  	bool kiocb_has_eventfd = io_data->kiocb->ki_flags & IOCB_EVENTFD;
+>  
+>  	if (io_data->read && ret > 0) {
+> -		mm_segment_t oldfs = get_fs();
+> -
+> -		set_fs(USER_DS);
+>  		kthread_use_mm(io_data->mm);
+>  		ret = ffs_copy_to_iter(io_data->buf, ret, &io_data->data);
+>  		kthread_unuse_mm(io_data->mm);
+> -		set_fs(oldfs);
+>  	}
+>  
+>  	io_data->kiocb->ki_complete(io_data->kiocb, ret, ret);
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index 1787d426a956..b5229ae01d3b 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -333,9 +333,7 @@ static int vhost_worker(void *data)
+>  	struct vhost_dev *dev = data;
+>  	struct vhost_work *work, *work_next;
+>  	struct llist_node *node;
+> -	mm_segment_t oldfs = get_fs();
+>  
+> -	set_fs(USER_DS);
+>  	kthread_use_mm(dev->mm);
+>  
+>  	for (;;) {
+> @@ -365,7 +363,6 @@ static int vhost_worker(void *data)
+>  		}
+>  	}
+>  	kthread_unuse_mm(dev->mm);
+> -	set_fs(oldfs);
+>  	return 0;
+>  }
+>  
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index 83c2868eff2a..75cc2f31816d 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -168,7 +168,6 @@ static bool __io_worker_unuse(struct io_wqe *wqe, struct io_worker *worker)
+>  			dropped_lock = true;
+>  		}
+>  		__set_current_state(TASK_RUNNING);
+> -		set_fs(KERNEL_DS);
+>  		kthread_unuse_mm(worker->mm);
+>  		mmput(worker->mm);
+>  		worker->mm = NULL;
+> @@ -420,14 +419,11 @@ static void io_wq_switch_mm(struct io_worker *worker, struct io_wq_work *work)
+>  		mmput(worker->mm);
+>  		worker->mm = NULL;
+>  	}
+> -	if (!work->mm) {
+> -		set_fs(KERNEL_DS);
+> +	if (!work->mm)
+>  		return;
+> -	}
+> +
+>  	if (mmget_not_zero(work->mm)) {
+>  		kthread_use_mm(work->mm);
+> -		if (!worker->mm)
+> -			set_fs(USER_DS);
+>  		worker->mm = work->mm;
+>  		/* hang on to this mm */
+>  		work->mm = NULL;
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 367406381044..c332a34e8b34 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -5871,15 +5871,12 @@ static int io_sq_thread(void *data)
+>  	struct io_ring_ctx *ctx = data;
+>  	struct mm_struct *cur_mm = NULL;
+>  	const struct cred *old_cred;
+> -	mm_segment_t old_fs;
+>  	DEFINE_WAIT(wait);
+>  	unsigned long timeout;
+>  	int ret = 0;
+>  
+>  	complete(&ctx->completions[1]);
+>  
+> -	old_fs = get_fs();
+> -	set_fs(USER_DS);
+>  	old_cred = override_creds(ctx->creds);
+>  
+>  	timeout = jiffies + ctx->sq_thread_idle;
+> @@ -5985,7 +5982,6 @@ static int io_sq_thread(void *data)
+>  	if (current->task_works)
+>  		task_work_run();
+>  
+> -	set_fs(old_fs);
+>  	if (cur_mm) {
+>  		kthread_unuse_mm(cur_mm);
+>  		mmput(cur_mm);
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index 316db17f6b4f..9e27d01b6d78 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -52,6 +52,7 @@ struct kthread {
+>  	unsigned long flags;
+>  	unsigned int cpu;
+>  	void *data;
+> +	mm_segment_t oldfs;
+>  	struct completion parked;
+>  	struct completion exited;
+>  #ifdef CONFIG_BLK_CGROUP
+> @@ -1235,6 +1236,9 @@ void kthread_use_mm(struct mm_struct *mm)
+>  
+>  	if (active_mm != mm)
+>  		mmdrop(active_mm);
+> +
+> +	to_kthread(tsk)->oldfs = get_fs();
+> +	set_fs(USER_DS);
+>  }
+>  EXPORT_SYMBOL_GPL(kthread_use_mm);
+>  
+> @@ -1249,6 +1253,8 @@ void kthread_unuse_mm(struct mm_struct *mm)
+>  	WARN_ON_ONCE(!(tsk->flags & PF_KTHREAD));
+>  	WARN_ON_ONCE(!tsk->mm);
+>  
+> +	set_fs(to_kthread(tsk)->oldfs);
+> +
+>  	task_lock(tsk);
+>  	sync_mm_rss(mm);
+>  	tsk->mm = NULL;
+> -- 
+> 2.25.1
 
-Though I don't see much profit in doing that for now. sendfile(2) is done=
- by
-splicing through an internal pipe, and this pipe will complicate things f=
-or
-io-wq (i.e. io_uring's thread pool). On the other hand, it'd be of the sa=
-me
-performance and even more flexible to send 2 linked splice requests with =
-a
-pre-allocated pipe from the userspace.
-
---=20
-Pavel Begunkov
-
-
---J7LH82WWimjZtr0j91XWX2urDE1jPHLqz--
-
---XeXf2vlNfgg9vaeMUWcOxYZdYkCoLmWN3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl6Liq0ACgkQWt5b1Glr
-+6V/Cg/8DGMAtp8WL98iaVAYYfHeJZ7g4Rr/XylbWMSHl1gDBvYgdz5tItBu1XJn
-V890nJDW+pvpMKVPc6wg5f0zEEnpFa6+sLOiyZzNYxvqRcO/Dq2mTNHXWa2A4v1F
-xlcagtY9QmKE6mp8IOQMQGLhvdacqEMY36h9qzb7l0m9ZYkWDy0UgHvKtWxc5m2Z
-jPjH8983jqhYZJnjkHtpeOzDWcn8+g3YB4rwwo/npqxtfkEL0YsH53Og3/ryVFbE
-saSVNmtVGKV3bYh4DnWySU4KDI26DxqJnZgDBC9VlpCssQFkBSphwJzoaf2HbQFe
-/2cS3kIb4t1UKwj3bYLML2gNSy7iMqdx/DPzhGvpEVK+DQxmvMPEXDNe39xNdSDU
-u0SWAOLi3hbSdWYPGtrHkLHGPPmXvtg4p1nTNO3bD+tqkZyDZiKw0Ma5XnqodS43
-TFGHpfqQMyI/S/siGt1Zf0Lrm85inT4uNf0i54hhH4hLJz3YP9vZ56T9VPJ3u1E3
-WI6rFeFNRJLpPVRelVWyv/xD8SCPd3ok+pLBK3UYMVa2mIX7d/KqhfDKf9iIARtA
-W15K4olNf8NwSsqNsODjYkVX5imlZkmELNS4I/Fpo4iEk37EfJ5gOCOtE+xr//G1
-H5Q9hmqtyXu119/phXApZSWO6t7XgSMUAgzVpIz/eondEvTg31k=
-=R4jo
------END PGP SIGNATURE-----
-
---XeXf2vlNfgg9vaeMUWcOxYZdYkCoLmWN3--

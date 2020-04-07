@@ -2,80 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57C9F1A01BA
-	for <lists+io-uring@lfdr.de>; Tue,  7 Apr 2020 01:33:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41EB01A0533
+	for <lists+io-uring@lfdr.de>; Tue,  7 Apr 2020 05:18:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726331AbgDFXd5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 6 Apr 2020 19:33:57 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40858 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbgDFXd4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Apr 2020 19:33:56 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c20so8382786pfi.7
-        for <io-uring@vger.kernel.org>; Mon, 06 Apr 2020 16:33:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=APdJ2bbJpdKbX+Sk+LIMoTdwNG0LJpHDXmC1o7gJlEs=;
-        b=msdjWJ+QJBaucO7GD9Jl+hBSA0PUl2BSJiwTwyO6NYTKgo++vqVg0TAlaenuKxaTZH
-         GYQsp2YXDWbKyhaXMpwDDw/f8KKk2nByDrmkaR9QtCgoObBvBvsJovisx7niVMxr9702
-         HRN6s+4JhXbxnccjpu+npnHfsUlpmPlkRjJSupNg44UW8zSTOsACZtlAYb/VLrwdf8Et
-         xI+Hq3cQG1FvhxS54t33C0gsvLaBf9S7l6fbWaRVz+bq34EB+IoQoBhXm3AQ+gdogGfb
-         O/2EDSjYBb+Bh5JHEyapryREF1j2xeLhg4WgvCTPCJsDuS/cIFjxCJ9foE2VJEeRXbNp
-         fBwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=APdJ2bbJpdKbX+Sk+LIMoTdwNG0LJpHDXmC1o7gJlEs=;
-        b=mhnmJADckOnNsYTCTolI9l17F9b6AdBK3okUtCrUP7Y/5U07KSYOhzXySuPoQMNvEf
-         78a0P/0XRZX9mAXkmciD2N7pauQWHtZ2JeL2tLempvJjS4iZSUbiZIuR13R9Da2rWcfo
-         o3c34uhJAKxEKQoYq80MsrHdQkt7rH3ulMB/pFAAizOMATckCJFLYErICrMLN6Vithn+
-         C592B8wSt50rTJJ2ajvRdBpoh+crXn0Su6NY424L3TocO+GS/sTRPSjIWngncewZAJpi
-         7oTSEMNOobeFJzvsq1IiQ1VNydFPFKpuSaK+K/p3z+PfcJ2grc8VdKNb4H46/IqZBE5u
-         6Cig==
-X-Gm-Message-State: AGi0PubI+vLUAiOiVz+djDH2aS+n36TeIFGHhwrTICQ/1LMLpa/QlHJO
-        C5nTx52vbqXdPT7K3IoswWWVXw==
-X-Google-Smtp-Source: APiQypIo2Aco3bI5Gz4obU/4cINPuKZSt8IQago27JXTS7utPnzZj8oW9fEgGAHRnl7DNBznTHSsUg==
-X-Received: by 2002:a63:9a1a:: with SMTP id o26mr13288335pge.447.1586216035546;
-        Mon, 06 Apr 2020 16:33:55 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:7d7c:3a38:f0f8:3951? ([2605:e000:100e:8c61:7d7c:3a38:f0f8:3951])
-        by smtp.gmail.com with ESMTPSA id r189sm11918932pgr.31.2020.04.06.16.33.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Apr 2020 16:33:54 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: remove redundant variable pointer nxt and
- io_wq_assign_next call
-To:     Colin King <colin.king@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200406225439.654486-1-colin.king@canonical.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <434016cd-bf33-ce65-a86b-69a565d62a61@kernel.dk>
-Date:   Mon, 6 Apr 2020 16:33:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726647AbgDGDS1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 6 Apr 2020 23:18:27 -0400
+Received: from mga07.intel.com ([134.134.136.100]:19262 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726535AbgDGDS0 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 6 Apr 2020 23:18:26 -0400
+IronPort-SDR: 9vRluI4iJ7LncyDqqP9OOkqmrDCqYY8nZY0vJXvjyyNaUn016xWtinCmu0YWMEidX6uih+VMKy
+ PcbSIPYQYVVQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2020 20:18:26 -0700
+IronPort-SDR: 2xR9uCM5BCNi15KKmsOhl436RFPRAMt47uVHr0POCE9sbZmZYVeBcv4l84JGJCChQ2Yo+l3GPc
+ XmGUNL+cWKeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,353,1580803200"; 
+   d="scan'208";a="451069613"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Apr 2020 20:18:21 -0700
+Date:   Mon, 6 Apr 2020 23:08:46 -0400
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Felipe Balbi <balbi@kernel.org>,
+        amd-gfx@lists.freedesktop.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        linux-usb@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        intel-gfx@lists.freedesktop.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        intel-gvt-dev@lists.freedesktop.org,
+        Jason Wang <jasowang@redhat.com>,
+        Zhi Wang <zhi.a.wang@intel.com>
+Subject: Re: [PATCH 2/6] i915/gvt/kvm: a NULL ->mm does not mean a thread is
+ a kthread
+Message-ID: <20200407030845.GA10586@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20200404094101.672954-1-hch@lst.de>
+ <20200404094101.672954-3-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20200406225439.654486-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200404094101.672954-3-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/6/20 3:54 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sat, Apr 04, 2020 at 11:40:57AM +0200, Christoph Hellwig wrote:
+> Use the proper API instead.
 > 
-> An earlier commit "io_uring: remove @nxt from handlers" removed the
-> setting of pointer nxt and now it is always null, hence the non-null
-> check and call to io_wq_assign_next is redundant and can be removed.
+> Fixes: f440c8a572d7 ("drm/i915/gvt/kvmgt: read/write GPA via KVM API")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/gpu/drm/i915/gvt/kvmgt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
+> index 074c4efb58eb..5848400620b4 100644
+> --- a/drivers/gpu/drm/i915/gvt/kvmgt.c
+> +++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+> @@ -2037,7 +2037,7 @@ static int kvmgt_rw_gpa(unsigned long handle, unsigned long gpa,
+>  	struct kvmgt_guest_info *info;
+>  	struct kvm *kvm;
+>  	int idx, ret;
+> -	bool kthread = current->mm == NULL;
+> +	bool kthread = (current->flags & PF_KTHREAD);
+>  
+>  	if (!handle_valid(handle))
+>  		return -ESRCH;
+> -- 
+> 2.25.1
+>
+hi
+we were removing this code. see
+https://lore.kernel.org/kvm/20200313031109.7989-1-yan.y.zhao@intel.com/
 
-Thanks, applied.
+The implementation of vfio_dma_rw() has been in vfio next tree.
+https://github.com/awilliam/linux-vfio/commit/8d46c0cca5f4dc0538173d62cd36b1119b5105bc
 
--- 
-Jens Axboe
+in vfio_dma_rw(),  we still use
+bool kthread = current->mm == NULL.
+because if current->mm != NULL and current->flags & PF_KTHREAD, instead
+of calling use_mm(), we first check if (current->mm == mm) and allow copy_to_user() if it's true.
 
+Do you think it's all right?
+
+Thanks
+Yan
+
+
+
+> _______________________________________________
+> intel-gvt-dev mailing list
+> intel-gvt-dev@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gvt-dev

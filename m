@@ -2,60 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C21D21A177B
-	for <lists+io-uring@lfdr.de>; Tue,  7 Apr 2020 23:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 001781A17A9
+	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2020 00:04:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbgDGVlo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Apr 2020 17:41:44 -0400
-Received: from mail-pj1-f50.google.com ([209.85.216.50]:37445 "EHLO
-        mail-pj1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbgDGVln (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Apr 2020 17:41:43 -0400
-Received: by mail-pj1-f50.google.com with SMTP id k3so306768pjj.2
-        for <io-uring@vger.kernel.org>; Tue, 07 Apr 2020 14:41:41 -0700 (PDT)
+        id S1726407AbgDGWEd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Apr 2020 18:04:33 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33838 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbgDGWEd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Apr 2020 18:04:33 -0400
+Received: by mail-pf1-f194.google.com with SMTP id v23so2084324pfm.1
+        for <io-uring@vger.kernel.org>; Tue, 07 Apr 2020 15:04:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=tS+TlVOd7aIy1vUa5jDzKH6KdKlFSnYfAmgGmCwg0MQ=;
-        b=sd4MktDhQuFjZKn/dt63EgD+Gt0T6W9fSKxGFDq1gG9Czbqn2gO1+uXxK0+ErMxrHJ
-         m/C8XhLRZdkZk0DAtQirwT090+NhqDWHlhGqgekUVbUFdSAldD6u6UNfDwdLgMh9v65C
-         BvKw3mvy7iKcTz/YL6YIlBbqRUal0hN6S6l4QlPwRP4Rl6yDHDNuonvvCt0OfTy3YqYB
-         4aVcFAsDW/eR4jLG87vwWj9EmGwZ1m1MfXkHmLd7pjy5FbKTHXMw8m9F2m9q9M89P+gf
-         FyB6BQnOuMs18SpW3F+4CmNokJuByiwmJNMCauplJFuuX7+XrvmCTXACisnFNgCVE+TW
-         R3pA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zGNyGCQzwewKS9B0wqSZYVQ5j9Z5+W9C/ZvjsyYyPY8=;
+        b=w2Y5L5j3rfIRkUZfj+5+qtpEHdecipu7yG+NeSWyIXGn9dGt4EmHnRKvbcQzlNO+d/
+         yquZWELyxsJif0RqMqg+I76vRuSFIBoKP9yafxdT2ubY073HsrA62EUv1/QkHkuvCB25
+         DiADXtGQmokp6kgbA+Ot0DpMQ8fzVNs+hTcJR3Fml4w7jCAI11DAIJTGaq+NzyvIhO2W
+         GCviRNSeSEMohQw9b0lIK+t4nzNvpA0ebS7+4gcPo2TvxjSrcMh/L/FuRJISy64N0nrU
+         SLz6k8sa5NSkyAaJb0CZa08D3jAcvjuHw3fO8EPZmFtdBLiIrlIxM++9z5J0bDexNC24
+         4RoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=tS+TlVOd7aIy1vUa5jDzKH6KdKlFSnYfAmgGmCwg0MQ=;
-        b=Qpy2USKTygAnTAjgGW03Jy7OgViet3MQRF8v/YKNVuDHxAWWrQM0wTF8Z6ccPFJ4wn
-         6x6ZrTrxyjTgzZPqKEyIr460uM4CIUQUc7P6Msa+XY1ShdR13LhWdmBsP+Htc1wDu9S3
-         U1nusaiFfrwi0Q31BpLaN/k2tkHWIdkUEAgE0Jb5rT7tKFxuI8YvywVmkqTJV2HhU9ta
-         D0JaH70S8wcM6MiJMNyHcfy2xqNGWmNtNfF+G2Un2bnZB4bmc91OGv69i80SoOFL+FuY
-         j1kyyxJjhRgOYxCpsBhzO4Y7bShFfAdJ6BoOeVFNSLOks7fu/hLZ2WB/AxxUxFIYctBZ
-         7Fyg==
-X-Gm-Message-State: AGi0Pube778+fDtI0Meg4UXFF4Iw0cyoSXR0a7VkM9n6BAumGuO+mSkj
-        0USgO8U1T/lhovcgs9HJmhans0imUuvRUg==
-X-Google-Smtp-Source: APiQypIK+Z87HSv2+rtYgLoRPKRC7k5ClaVBM4KlGxiDYDKusejKG4bT6iDnKGats4CEChHGck44Ug==
-X-Received: by 2002:a17:90a:350d:: with SMTP id q13mr1381142pjb.171.1586295700952;
-        Tue, 07 Apr 2020 14:41:40 -0700 (PDT)
+        bh=zGNyGCQzwewKS9B0wqSZYVQ5j9Z5+W9C/ZvjsyYyPY8=;
+        b=OWFR7OsEAOPNVVr+Xj5qsaaPOGzV+toO1NRImDlXjs5d4LkBfZ3xQqgRMsjWS0YJmr
+         6ILF50BLoZ1iAmloHlOPfchZn3UGfrX7sBTDoUuSsJodvNq+whxDL6HgrqliI89oY9e3
+         MJzHsJXI7e31pdyX8sH61eOUGe9Cn9alE/2V2f5H4A5SGXkwb52umd3o2TuMjvExS2O2
+         A1/nDW+Uj3pk9hrBSUN2zloJMFetODxI1gT+oGBh24x6DjBsCJE1PdZsAmtJfg9a9/OP
+         Xv/p9HQucaq+hIpvTNCY/t5K7yKhkdn7UmX+IIfr5JLj+tFt3QD1b6AUrPmfkKIBNQo9
+         sMHQ==
+X-Gm-Message-State: AGi0Pubg//4U9rsXm/sGoiMQ3XV/0tsMys9SzOD0Ev4Zq8xrbnc2/+pP
+        aQO4T63x8kkFpgbqzHGUElcd0k4waarM6Q==
+X-Google-Smtp-Source: APiQypIxFPaKBTpUoBsmn5LGzBcT9VM5IStfJQ0hrpaik8cQlJ3XQATIYbXSbU2Dr0qyhMyEUIylng==
+X-Received: by 2002:a63:f13:: with SMTP id e19mr3894574pgl.135.1586297072469;
+        Tue, 07 Apr 2020 15:04:32 -0700 (PDT)
 Received: from ?IPv6:2605:e000:100e:8c61:ec7d:96d3:6e2d:dcab? ([2605:e000:100e:8c61:ec7d:96d3:6e2d:dcab])
-        by smtp.gmail.com with ESMTPSA id u3sm223416pjy.9.2020.04.07.14.41.40
+        by smtp.gmail.com with ESMTPSA id c14sm2030028pgi.54.2020.04.07.15.04.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Apr 2020 14:41:40 -0700 (PDT)
-Subject: Re: Spurious/undocumented EINTR from io_uring_enter
-To:     Joseph Christopher Sible <jcsible@cert.org>,
-        "'io-uring@vger.kernel.org'" <io-uring@vger.kernel.org>
-References: <43b339d3dc0c4b6ab15652faf12afa30@cert.org>
+        Tue, 07 Apr 2020 15:04:31 -0700 (PDT)
+Subject: Re: [PATCH] io_uring:IORING_SETUP_SQPOLL don't need to enter
+ io_cqring_wait
+To:     wu860403@gmail.com, io-uring@vger.kernel.org
+Cc:     Liming Wu <19092205@suning.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+References: <1586249075-14649-1-git-send-email-wu860403@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b9ee42f0-cd94-9410-0de1-1bbfd50a6040@kernel.dk>
-Date:   Tue, 7 Apr 2020 14:41:39 -0700
+Message-ID: <b50140b3-d5a7-ed5e-434c-6bf004a4869d@kernel.dk>
+Date:   Tue, 7 Apr 2020 15:04:30 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <43b339d3dc0c4b6ab15652faf12afa30@cert.org>
+In-Reply-To: <1586249075-14649-1-git-send-email-wu860403@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,29 +66,59 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/7/20 1:36 PM, Joseph Christopher Sible wrote:
-> When a process is blocking in io_uring_enter, and a signal stops it for
-> any reason, it returns -EINTR to userspace. Two comments about this:
+On 4/7/20 1:44 AM, wu860403@gmail.com wrote:
+> From: Liming Wu <19092205@suning.com>
 > 
-> 1. https://github.com/axboe/liburing/blob/master/man/io_uring_enter.2
->    doesn't mention EINTR as a possible error that it can return.
+> When SETUP_IOPOLL and SETUP_SQPOLL are both enabled, app don't
+> need to enter io_cqring_wait too. If I misunderstand, please give
+> me some advise.
 
-I'll add it to the man page.
+The logic should be as follows:
 
-> 2. When there's no signal handler, and a signal stopped the syscall for
->    some other reason (e.g., SIGSTOP, SIGTSTP, or any signal when the
->    process is being traced), other syscalls (e.g., read) will be
->    restarted transparently, but this one will return to userspace
->    with -EINTR just as if there were a signal handler.
+flags			method
+---------------------------------------------
+0			io_cqring_wait()
+IOPOLL			io_iopoll_check()
+IOPOLL | SQPOLL		io_cqring_wait()
+SQPOLL			io_cqring_wait()
+
+The reasoning being that we do want to enter cqring_wait() for SQPOLL,
+as the application may want to wait for completions. Even with IOPOLL
+set. As far as I can tell, the current code is correct, as long as we
+know SQPOLL will always poll for events for us.
+
+So I'm curious why you think your patch is needed? Leaving it below and
+CC'ing Xiaoguang, who made the most recent change, so he can comment.
+
+> Signed-off-by Liming Wu <19092205@suning.com>
+> ---
+>  io_uring.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 > 
-> Point 1 seems like a no-brainer. I'm not sure if point 2 is possible
-> to fix, though, especially since some other syscalls (e.g., epoll_wait)
-> have the same problem as this one.
+> diff --git a/io_uring.c b/io_uring.c
+> index b12d33b..36e884f 100644
+> --- a/io_uring.c
+> +++ b/io_uring.c
+> @@ -7418,11 +7418,12 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+>  		 * polling again, they can rely on io_sq_thread to do polling
+>  		 * work, which can reduce cpu usage and uring_lock contention.
+>  		 */
+> -		if (ctx->flags & IORING_SETUP_IOPOLL &&
+> -		    !(ctx->flags & IORING_SETUP_SQPOLL)) {
+> -			ret = io_iopoll_check(ctx, &nr_events, min_complete);
+> -		} else {
+> -			ret = io_cqring_wait(ctx, min_complete, sig, sigsz);
+> +		if (!(ctx->flags & IORING_SETUP_SQPOLL)) {
+> +		    if (ctx->flags & IORING_SETUP_IOPOLL) {
+> +		    	ret = io_iopoll_check(ctx, &nr_events, min_complete);
+> +		    } else {
+> +		    	ret = io_cqring_wait(ctx, min_complete, sig, sigsz);
+> +		    }
+>  		}
+>  	}
+>  
+> 
 
-Lots of system calls return -EINTR if interrupted by a signal, don't
-think there's anything worth fixing there. For the wait part, the
-application may want to handle the signal before we can wait again.
-We can't go to sleep with a pending signal.
 
 -- 
 Jens Axboe

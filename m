@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E31AE1A10E3
+	by mail.lfdr.de (Postfix) with ESMTP id 6E88E1A10E2
 	for <lists+io-uring@lfdr.de>; Tue,  7 Apr 2020 18:03:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbgDGQDI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Apr 2020 12:03:08 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37752 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbgDGQDI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Apr 2020 12:03:08 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r4so1938733pgg.4
-        for <io-uring@vger.kernel.org>; Tue, 07 Apr 2020 09:03:05 -0700 (PDT)
+        id S1727992AbgDGQDH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Apr 2020 12:03:07 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:52927 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726889AbgDGQDH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Apr 2020 12:03:07 -0400
+Received: by mail-pj1-f68.google.com with SMTP id ng8so942839pjb.2
+        for <io-uring@vger.kernel.org>; Tue, 07 Apr 2020 09:03:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=151owXNTO53jByuuGSr5GWu4XC2mXE43fBblB5HhEno=;
-        b=OY+o5Kl2wRP4YUXEIdYYuK8hE7brEtaS7WwrCHTtQ28ywV3po50N+au6Dd372AdWCw
-         FhHPFQ5ZPbLru6o2a0A9NgtuV2v3r61QldAV96NYLhRfTokTvE5fj0OdavVknzXCn55k
-         8dv7v660higYF+SkPLu+CqJ0Bl4PJ5TKWQ2Wo/1NYXmzatH8hdSQ8umF8otg0HNohGlM
-         jTst8h/8Cb8FcuqMlS17t9/RYDR2QrkdRKjSToglY1egafxza9eJqkf92wMjWJUnBLgY
-         0GoKbl6hU2L1FOA+hDu7JHWrUB8/inpyoozAMgsI/BN2pp+ZaVT13AVbl3YAkAukMdVy
-         zIrQ==
+        bh=PO/WcQSK3jIV6+mEeW/X0pv1XXoeNuIRAZlC7WSdLM4=;
+        b=qfqV+qbGsZQhEfXJPus85N2QSLoHhVH6ifQ3fOnNREcjkNOq69TrAjrusnT578+t5z
+         vTGcS6pGh9uNDDAStk0QIDYmFqX34ABEKk0AILlzIlmBDFxzNram5ZKO+EEK9p/Gsb8O
+         Us3P4KHlkV2M6JCRqjkBAftaaBueAXPwPe5HmbexGuIlLKPrZAlwdCJKKJAqI9k4Mrw3
+         sOI9Xlt1m2zWlWgKq0mAKQjTPZyw8nWkx2+7kdENsWZqKgJonNegWIFFoUn3SIkS7t9Q
+         kT18/5gbXSqYF71YR1A5R45hQV/+MxdLp8viZ8VgtVPPfR904D1Xju0B7AY8f1YHp0j9
+         bvsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=151owXNTO53jByuuGSr5GWu4XC2mXE43fBblB5HhEno=;
-        b=fcYZyfaNresr4TeaLPEryQ2y0iQjYC/9DE41v242Cq75+VVT2+7m2FDRJiPiRsoOfe
-         m/adVh3Szt5Zo5oV08O9UpOddKtZIOCUIIZ86nsm6kCzFP0YO9xKsWDWuH6nAIOwofUN
-         H6EUZd4gaaBhgTIV28xy/Nx7ozk/0zSZEqTSGViccCRQWbpk8/FuW45vuuE8ogTmOHRp
-         EWgR8fpZnULMEhc0UE7zaNhvwpg/SrP0z9GVQ8wZzJ+GqufDIbn8lvNWnTvdsAyxIPC0
-         IJe1ErymDcMM+8RyzCEH46J+kLj9lfLhKfKl2KA4r2W1YBggbT2jQ7Ndue+PnHjCUVfZ
-         y3jA==
-X-Gm-Message-State: AGi0PuY7BcwSr7oDP2LBh8TDjHq3P0cwgVLsN+CVIoCdDQ7e1S7p1ORL
-        lbAYYW/Jbj3u3/lAS5sTXSNsYzBRvQny4Q==
-X-Google-Smtp-Source: APiQypLBbRatft4nupqcNiU2zQxxPySHqLHcaR+nzDfGMmvAZDtnC6yie1XsCEAEzHLpG16utACQHg==
-X-Received: by 2002:a63:7e58:: with SMTP id o24mr23849pgn.3.1586275383560;
-        Tue, 07 Apr 2020 09:03:03 -0700 (PDT)
+        bh=PO/WcQSK3jIV6+mEeW/X0pv1XXoeNuIRAZlC7WSdLM4=;
+        b=RREhbV8xTuaCwphhVi1JAqC+94sCeUCwbBc1qRGNDudDwGOOumSY8q9s2VU2INM8m4
+         mY1/n1okCyjI+lRu6SXHX8sKrIrBryxvjp8FN20f1CKDquIqYv4+TVs5CIK6AcwWz5Vf
+         V81Obf/WfMJEnYJjo49ANwnU/jDhEzDzYQ8G0QeoOaritQ/DR65BzJ7oTmX4uUF3avVF
+         YUgk4r/Yq3rvId7SoTZL0an5WfjgTe9yNxY+K8qObnaDB7SUPEk3+cZnwQqnQWNZjMev
+         14DdcsthgUhteVJI4Wfvoh2duUHWZE8IXNKmH6tPo3LDLt8X3aIQgVP6ziBKtMKKrqxN
+         PlFA==
+X-Gm-Message-State: AGi0PuaUITKU0ZrQIHs6OQ2ppnb0zDw0P3rmfh5YalY5idbKdILvMBxH
+        2L06uFyIptltT+keysG3IXL3UuRMGJ6DZg==
+X-Google-Smtp-Source: APiQypK9PoydroftiRL4O7vRBnsw2GHrshMQ2+7FXzqYsyntrYiGYbg3+X+7+0xM3F7qLFmGgGvsHw==
+X-Received: by 2002:a17:902:aa94:: with SMTP id d20mr3075321plr.313.1586275384679;
+        Tue, 07 Apr 2020 09:03:04 -0700 (PDT)
 Received: from x1.lan ([2605:e000:100e:8c61:ec7d:96d3:6e2d:dcab])
-        by smtp.gmail.com with ESMTPSA id y22sm14366955pfr.68.2020.04.07.09.03.02
+        by smtp.gmail.com with ESMTPSA id y22sm14366955pfr.68.2020.04.07.09.03.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Apr 2020 09:03:03 -0700 (PDT)
+        Tue, 07 Apr 2020 09:03:04 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     viro@zeniv.linux.org.uk, Jens Axboe <axboe@kernel.dk>,
         Oleg Nesterov <oleg@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 2/4] task_work: kill current->task_works checking in callers
-Date:   Tue,  7 Apr 2020 10:02:56 -0600
-Message-Id: <20200407160258.933-3-axboe@kernel.dk>
+Subject: [PATCH 3/4] task_work: make exit_work externally visible
+Date:   Tue,  7 Apr 2020 10:02:57 -0600
+Message-Id: <20200407160258.933-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200407160258.933-1-axboe@kernel.dk>
 References: <20200407160258.933-1-axboe@kernel.dk>
@@ -62,151 +62,72 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If the callsite cares, use task_work_pending(). If not, just call
-task_work_run() unconditionally, that makes the check inline and
-doesn't add any extra overhead.
+If task_work has already been run on task exit, we don't always know
+if it's safe to run again. Most call paths don't really care as they
+can never hit this condition, but io_uring would like to call task
+work from the fops->release() handler, which can get invoked off
+do_exit() where we could have already run exit_task_work().
 
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io-wq.c                |  7 ++-----
- fs/io_uring.c             | 20 ++++++++------------
- include/linux/tracehook.h |  3 +--
- kernel/signal.c           |  7 +++----
- 4 files changed, 14 insertions(+), 23 deletions(-)
+ include/linux/task_work.h | 2 ++
+ kernel/task_work.c        | 8 ++++----
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 4023c9846860..5bee3f5f67e1 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -717,8 +717,7 @@ static int io_wq_manager(void *data)
- 	complete(&wq->done);
+diff --git a/include/linux/task_work.h b/include/linux/task_work.h
+index 088538590e65..893c916d8677 100644
+--- a/include/linux/task_work.h
++++ b/include/linux/task_work.h
+@@ -7,6 +7,8 @@
  
- 	while (!kthread_should_stop()) {
--		if (current->task_works)
--			task_work_run();
-+		task_work_run();
+ typedef void (*task_work_func_t)(struct callback_head *);
  
- 		for_each_node(node) {
- 			struct io_wqe *wqe = wq->wqes[node];
-@@ -742,9 +741,7 @@ static int io_wq_manager(void *data)
- 		schedule_timeout(HZ);
- 	}
- 
--	if (current->task_works)
--		task_work_run();
--
-+	task_work_run();
- 	return 0;
- err:
- 	set_bit(IO_WQ_BIT_ERROR, &wq->state);
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 773f55c49cd8..7fb51c383e51 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5964,8 +5964,7 @@ static int io_sq_thread(void *data)
- 			if (!list_empty(&ctx->poll_list) ||
- 			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
- 			    !percpu_ref_is_dying(&ctx->refs))) {
--				if (current->task_works)
--					task_work_run();
-+				task_work_run();
- 				cond_resched();
- 				continue;
- 			}
-@@ -5997,8 +5996,8 @@ static int io_sq_thread(void *data)
- 					finish_wait(&ctx->sqo_wait, &wait);
- 					break;
- 				}
--				if (current->task_works) {
--					task_work_run();
-+				if (task_work_pending()) {
-+					__task_work_run();
- 					finish_wait(&ctx->sqo_wait, &wait);
- 					continue;
- 				}
-@@ -6021,8 +6020,7 @@ static int io_sq_thread(void *data)
- 		timeout = jiffies + ctx->sq_thread_idle;
- 	}
- 
--	if (current->task_works)
--		task_work_run();
-+	task_work_run();
- 
- 	set_fs(old_fs);
- 	if (cur_mm) {
-@@ -6091,9 +6089,9 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	do {
- 		if (io_cqring_events(ctx, false) >= min_events)
- 			return 0;
--		if (!current->task_works)
-+		if (!task_work_pending())
- 			break;
--		task_work_run();
-+		__task_work_run();
- 	} while (1);
- 
- 	if (sig) {
-@@ -6114,8 +6112,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	do {
- 		prepare_to_wait_exclusive(&ctx->wait, &iowq.wq,
- 						TASK_INTERRUPTIBLE);
--		if (current->task_works)
--			task_work_run();
-+		task_work_run();
- 		if (io_should_wake(&iowq, false))
- 			break;
- 		schedule();
-@@ -7465,8 +7462,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	int submitted = 0;
- 	struct fd f;
- 
--	if (current->task_works)
--		task_work_run();
-+	task_work_run();
- 
- 	if (flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP))
- 		return -EINVAL;
-diff --git a/include/linux/tracehook.h b/include/linux/tracehook.h
-index 36fb3bbed6b2..608a2d12bc14 100644
---- a/include/linux/tracehook.h
-+++ b/include/linux/tracehook.h
-@@ -184,8 +184,7 @@ static inline void tracehook_notify_resume(struct pt_regs *regs)
- 	 * hlist_add_head(task->task_works);
- 	 */
- 	smp_mb__after_atomic();
--	if (unlikely(current->task_works))
--		task_work_run();
-+	task_work_run();
- 
- #ifdef CONFIG_KEYS_REQUEST_CACHE
- 	if (unlikely(current->cached_requested_key)) {
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 5b2396350dd1..e927cfae3151 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2271,8 +2271,8 @@ static void ptrace_do_notify(int signr, int exit_code, int why)
- void ptrace_notify(int exit_code)
- {
- 	BUG_ON((exit_code & (0x7f | ~0xffff)) != SIGTRAP);
--	if (unlikely(current->task_works))
--		task_work_run();
++extern struct callback_head task_work_exited;
 +
-+	task_work_run();
+ static inline void
+ init_task_work(struct callback_head *twork, task_work_func_t func)
+ {
+diff --git a/kernel/task_work.c b/kernel/task_work.c
+index 9620333423a3..d6a8b4ab4858 100644
+--- a/kernel/task_work.c
++++ b/kernel/task_work.c
+@@ -3,7 +3,7 @@
+ #include <linux/task_work.h>
+ #include <linux/tracehook.h>
  
- 	spin_lock_irq(&current->sighand->siglock);
- 	ptrace_do_notify(SIGTRAP, exit_code, CLD_TRAPPED);
-@@ -2529,8 +2529,7 @@ bool get_signal(struct ksignal *ksig)
- 	struct signal_struct *signal = current->signal;
- 	int signr;
+-static struct callback_head work_exited; /* all we need is ->next == NULL */
++struct callback_head task_work_exited = { };
  
--	if (unlikely(current->task_works))
--		task_work_run();
-+	task_work_run();
+ /**
+  * task_work_add - ask the @task to execute @work->func()
+@@ -31,7 +31,7 @@ task_work_add(struct task_struct *task, struct callback_head *work, bool notify)
  
- 	if (unlikely(uprobe_deny_signal()))
- 		return false;
+ 	do {
+ 		head = READ_ONCE(task->task_works);
+-		if (unlikely(head == &work_exited))
++		if (unlikely(head == &task_work_exited))
+ 			return -ESRCH;
+ 		work->next = head;
+ 	} while (cmpxchg(&task->task_works, head, work) != head);
+@@ -95,14 +95,14 @@ void __task_work_run(void)
+ 	for (;;) {
+ 		/*
+ 		 * work->func() can do task_work_add(), do not set
+-		 * work_exited unless the list is empty.
++		 * task_work_exited unless the list is empty.
+ 		 */
+ 		do {
+ 			head = NULL;
+ 			work = READ_ONCE(task->task_works);
+ 			if (!work) {
+ 				if (task->flags & PF_EXITING)
+-					head = &work_exited;
++					head = &task_work_exited;
+ 				else
+ 					break;
+ 			}
 -- 
 2.26.0
 

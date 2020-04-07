@@ -2,146 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF5621A070E
-	for <lists+io-uring@lfdr.de>; Tue,  7 Apr 2020 08:13:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8599B1A092D
+	for <lists+io-uring@lfdr.de>; Tue,  7 Apr 2020 10:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbgDGGNL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Apr 2020 02:13:11 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43854 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbgDGGNL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Apr 2020 02:13:11 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w15so2397258wrv.10;
-        Mon, 06 Apr 2020 23:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8etR1CFejVLVV7lIaOkWLfh+67hUJYeYv/uOXoSbqAk=;
-        b=Xrq+pk9ZBZFhr78R37fPiEJRJ/QBMtPjUh/iw6q4R1EShJjUnWUCBRniyMbRxWdleD
-         V1M4KylOmk9OIOMowRT8X03CpfDKv6MKdEJ5mpg8kyVa1Bbm8BMr8nLhHQGDcT1MDImz
-         /HsY2j01dpiijHNYAmFnLIxNM4gpn+EFylErKXiM4gzhU+uwExiMwR6DWeFvAcNpYi8d
-         3F36Mh9Puxl8Qtnk56ziuqOUwyG9uK0Th2jqShzCMCm/vkf52qu9I5alswXsWhRCc+WC
-         s6E3oEaGgf3eWFuJWO/bmhkcsESBnoSdKw+k7K6XoPSCV8zczXwHQrF5ZMvRSP4iJ+rD
-         teLw==
+        id S1727962AbgDGIQO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Apr 2020 04:16:14 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:47049 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727883AbgDGIQO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Apr 2020 04:16:14 -0400
+Received: by mail-il1-f200.google.com with SMTP id n18so2400765ilp.13
+        for <io-uring@vger.kernel.org>; Tue, 07 Apr 2020 01:16:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=8etR1CFejVLVV7lIaOkWLfh+67hUJYeYv/uOXoSbqAk=;
-        b=b7QHTra3L7jVia07A7Q+mIcyNSK8hm16sMjslWGLByn/Aph6Dm09Zmp1eJOJ122YZc
-         NlGEP5ybb3Hrhe702/xD/tmx/2egGeKgtYIOeCT3e1X3Or/e8PQAOteCeDChoMZIerTp
-         VLuCiOrVUGpHBTAKkwyXs7i+6w7MMzvGekuL4OT4krff9+jKNDlAcIp0sTCvNQoyRIud
-         scZ9+mNMcGE6vRK6f1ez9YwMkhCgUfyYm33pSGFjuLVN0DJ71/BfA1X9iPvhqnF41rVX
-         jfnSb6oR24kZoWOFlzc3c0qxWM4t3bi+GIslyrlMHszUFoYmt1L7gpxARqTjG/G1Ehhx
-         YIwg==
-X-Gm-Message-State: AGi0PuZGVGPx3lJJe9WZ2xTBPlQrJHxY6rZAqfs9udrzPQs6THbwFhxR
-        QuhuFbSMNhW/FfeNHFNbZ3jmQ9Jt
-X-Google-Smtp-Source: APiQypJz3aouSR3QwOXMTTllaAt9cRgpZjrg9bL4L/TqTfUjxt4UxUDUbr0VggwT/bh2iIMHbBYAAQ==
-X-Received: by 2002:a5d:498b:: with SMTP id r11mr849739wrq.368.1586239987014;
-        Mon, 06 Apr 2020 23:13:07 -0700 (PDT)
-Received: from [192.168.43.134] ([109.126.129.227])
-        by smtp.gmail.com with ESMTPSA id h10sm30867497wrq.33.2020.04.06.23.13.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Apr 2020 23:13:06 -0700 (PDT)
-To:     Colin King <colin.king@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200406225439.654486-1-colin.king@canonical.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH] io_uring: remove redundant variable pointer nxt and
- io_wq_assign_next call
-Message-ID: <e9fba5b9-7dd9-c9ef-c978-94615169351b@gmail.com>
-Date:   Tue, 7 Apr 2020 09:12:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=IJaW8e1pAg406HAS3eifVVxAuqJ0aaca8MQ2T7iKKWU=;
+        b=MT6Zqn1bRrqc931poaIcJs9uvVX5PMrv6wXWDcA4USopUYMlcRwyRIMfzFcjg0hapC
+         sAI1mUp2j9qElVrk8kBWvGOIveHJ1+Wd3+VxsHzuTrtvUKgEvt48ijBR0NakhPKpeZF2
+         FAWFvLwbf7YlPxCIilFODf9Kdnz6B+2YMN38TFIIQUzAxU3sJ9L/wYtiPnjW0C+XRK+S
+         dGsXBCTDLI+jkJBgE/YfVxgcjP+uwfvFEaGzCMWlEueqIlhR2THjjeA8faKrgg1Xp4DL
+         lzlRP2S5SFFmtDC3d4gcknDUbcxYxXuxSACvjt3if/OHOAkFIjBSoiqHCE2j2+wAhIfm
+         2EJw==
+X-Gm-Message-State: AGi0PuZDUQ91MHTwZvjZX3sLjREQ630qw0XBfINoBQXifjcdmETLcwhn
+        aRbVylymc2DzC0Zo6qAydYkfIik+rZkzPqLnxqhP8fIpz49g
+X-Google-Smtp-Source: APiQypLvj1XMIJth9nQaOebGarxZ54oBjoIcjVBp91jSdnNJcksZbB7B5U15GQarxcic6eQdMqO5vTJIVTFUdPBYznxJzJII/xOB
 MIME-Version: 1.0
-In-Reply-To: <20200406225439.654486-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:d150:: with SMTP id t16mr1233211ilg.164.1586247373398;
+ Tue, 07 Apr 2020 01:16:13 -0700 (PDT)
+Date:   Tue, 07 Apr 2020 01:16:13 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000037a76305a2aeff88@google.com>
+Subject: INFO: trying to register non-static key in __io_uring_register
+From:   syzbot <syzbot+e6eeca4a035da76b3065@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        xiaoguang.wang@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/04/2020 01:54, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> An earlier commit "io_uring: remove @nxt from handlers" removed the
-> setting of pointer nxt and now it is always null, hence the non-null
-> check and call to io_wq_assign_next is redundant and can be removed.
-> 
-> Addresses-Coverity: ("'Constant' variable guard")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/io_uring.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 14efcf0a3070..b594fa0bd210 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -3509,14 +3509,11 @@ static void __io_sync_file_range(struct io_kiocb *req)
->  static void io_sync_file_range_finish(struct io_wq_work **workptr)
->  {
->  	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-> -	struct io_kiocb *nxt = NULL;
->  
->  	if (io_req_cancelled(req))
->  		return;
->  	__io_sync_file_range(req);
->  	io_put_req(req); /* put submission ref */
-> -	if (nxt)
-> -		io_wq_assign_next(workptr, nxt);
+Hello,
 
-Works, but it should be io_steal_work() instead
+syzbot found the following crash on:
 
--- 
-Pavel Begunkov
+HEAD commit:    b2e2a818 Add linux-next specific files for 20200406
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1418a1c7e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=595413e7170f444b
+dashboard link: https://syzkaller.appspot.com/bug?extid=e6eeca4a035da76b3065
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17cd89cde00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=102d89cde00000
+
+The bug was bisected to:
+
+commit 0558955373023b08f638c9ede36741b0e4200f58
+Author: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Date:   Tue Mar 31 06:05:18 2020 +0000
+
+    io_uring: refactor file register/unregister/update handling
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=166f91c7e00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=156f91c7e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=116f91c7e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e6eeca4a035da76b3065@syzkaller.appspotmail.com
+Fixes: 055895537302 ("io_uring: refactor file register/unregister/update handling")
+
+INFO: trying to register non-static key.
+the code is fine but needs lockdep annotation.
+turning off the locking correctness validator.
+CPU: 1 PID: 7099 Comm: syz-executor897 Not tainted 5.6.0-next-20200406-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x188/0x20d lib/dump_stack.c:118
+ assign_lock_key kernel/locking/lockdep.c:913 [inline]
+ register_lock_class+0x1664/0x1760 kernel/locking/lockdep.c:1225
+ __lock_acquire+0x104/0x4e00 kernel/locking/lockdep.c:4223
+ lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x8c/0xbf kernel/locking/spinlock.c:159
+ io_sqe_files_register fs/io_uring.c:6599 [inline]
+ __io_uring_register+0x1fe8/0x2f00 fs/io_uring.c:8001
+ __do_sys_io_uring_register fs/io_uring.c:8081 [inline]
+ __se_sys_io_uring_register fs/io_uring.c:8063 [inline]
+ __x64_sys_io_uring_register+0x192/0x560 fs/io_uring.c:8063
+ do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+ entry_SYSCALL_64_after_hwframe+0x49/0xb3
+RIP: 0033:0x440289
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffff1bbf558 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440289
+RDX: 0000000020000280 RSI: 0000000000000002 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000401b10
+R13: 0000000000401ba0 R14: 0000000000000000 R15: 0000000000000000
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches

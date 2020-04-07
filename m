@@ -2,86 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D7581A0D47
-	for <lists+io-uring@lfdr.de>; Tue,  7 Apr 2020 14:04:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C588A1A0DF1
+	for <lists+io-uring@lfdr.de>; Tue,  7 Apr 2020 14:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgDGMEa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Apr 2020 08:04:30 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:55863 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728637AbgDGMEa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Apr 2020 08:04:30 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Tuu--x3_1586260971;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Tuu--x3_1586260971)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 07 Apr 2020 20:02:57 +0800
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: [PATCH for-next] io_uring: initialize fixed_file_data lock
-Date:   Tue,  7 Apr 2020 20:02:31 +0800
-Message-Id: <20200407120231.2644-1-xiaoguang.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.2
+        id S1728447AbgDGMr1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Apr 2020 08:47:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35268 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728304AbgDGMr0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Apr 2020 08:47:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=rJFwx60lMvR2sVcAkKRtg6CYbWWdZSDgF7t1rDY0bM0=; b=FV4Um1NJhvdLfBCjaRH+ALQmYd
+        o9RTLlYTVUTT+sOT01To24uoU/PgGH4EtO0dBBUJ3YVPuivLJm/+V6v2We7qE6c1tNrKjbLFcQJtK
+        SDyIdkvGOPfsStSKXtt5ymvCENZe0s1fCenZjAAYJ7mUHXAcgCh5Fzx1tQDpH7lLjxIgBf/2XqhMY
+        QBIg8F2QwmZb/0T/gYa1m+AF2BfpU8A6XBoK0tudW5dAmXEkupEnCA6sIg9ngTyxeSHPmTI/5IZAe
+        pVk5g7eskRnY8pHpQu/l5hIeaUbsTYoe25YAQUwbvtCeJw+F6f43dgS9dJv9NeUaYOGpZHaP6OzlQ
+        wSxKcyag==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jLndT-0004hI-GP; Tue, 07 Apr 2020 12:47:23 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F2BDB3011DD;
+        Tue,  7 Apr 2020 14:47:21 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D4A4E2B907A8D; Tue,  7 Apr 2020 14:47:21 +0200 (CEST)
+Date:   Tue, 7 Apr 2020 14:47:21 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 2/4] task_work: don't run task_work if task_work_exited
+ is queued
+Message-ID: <20200407124721.GX20730@hirez.programming.kicks-ass.net>
+References: <20200406194853.9896-1-axboe@kernel.dk>
+ <20200406194853.9896-3-axboe@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200406194853.9896-3-axboe@kernel.dk>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-syzbot reports below warning:
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 1 PID: 7099 Comm: syz-executor897 Not tainted 5.6.0-next-20200406-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x188/0x20d lib/dump_stack.c:118
- assign_lock_key kernel/locking/lockdep.c:913 [inline]
- register_lock_class+0x1664/0x1760 kernel/locking/lockdep.c:1225
- __lock_acquire+0x104/0x4e00 kernel/locking/lockdep.c:4223
- lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x8c/0xbf kernel/locking/spinlock.c:159
- io_sqe_files_register fs/io_uring.c:6599 [inline]
- __io_uring_register+0x1fe8/0x2f00 fs/io_uring.c:8001
- __do_sys_io_uring_register fs/io_uring.c:8081 [inline]
- __se_sys_io_uring_register fs/io_uring.c:8063 [inline]
- __x64_sys_io_uring_register+0x192/0x560 fs/io_uring.c:8063
- do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xb3
-RIP: 0033:0x440289
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffff1bbf558 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440289
-RDX: 0000000020000280 RSI: 0000000000000002 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000401b10
-R13: 0000000000401ba0 R14: 0000000000000000 R15: 0000000000000000
 
-Initialize struct fixed_file_data's lock to fix this issue.
+You seem to have lost Oleg and Al from the Cc list..
 
-Reported-by: syzbot+e6eeca4a035da76b3065@syzkaller.appspotmail.com
-Fixes: 055895537302 ("io_uring: refactor file register/unregister/update handling")
-Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
----
- fs/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
+On Mon, Apr 06, 2020 at 01:48:51PM -0600, Jens Axboe wrote:
+> If task_work has already been run on task exit, we don't always know
+> if it's safe to run again. Check for task_work_exited in the
+> task_work_pending() helper. This makes it less fragile in calling
+> from the exit files path, for example.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  include/linux/task_work.h | 4 +++-
+>  kernel/task_work.c        | 8 ++++----
+>  2 files changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/task_work.h b/include/linux/task_work.h
+> index 54c911bbf754..24f977a8fc35 100644
+> --- a/include/linux/task_work.h
+> +++ b/include/linux/task_work.h
+> @@ -7,6 +7,8 @@
+>  
+>  typedef void (*task_work_func_t)(struct callback_head *);
+>  
+> +extern struct callback_head task_work_exited;
+> +
+>  static inline void
+>  init_task_work(struct callback_head *twork, task_work_func_t func)
+>  {
+> @@ -19,7 +21,7 @@ void __task_work_run(void);
+>  
+>  static inline bool task_work_pending(void)
+>  {
+> -	return current->task_works;
+> +	return current->task_works && current->task_works != &task_work_exited;
+>  }
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 79bd22289d73..6ac830b2b4fb 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6504,6 +6504,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 	ctx->file_data->ctx = ctx;
- 	init_completion(&ctx->file_data->done);
- 	INIT_LIST_HEAD(&ctx->file_data->ref_list);
-+	spin_lock_init(&ctx->file_data->lock);
- 
- 	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_FILES_TABLE);
- 	ctx->file_data->table = kcalloc(nr_tables,
--- 
-2.17.2
-
+Hurmph..  not sure I like this. It inlines that second condition to
+every caller of task_work_run() even though for pretty much all of them
+this is impossible.

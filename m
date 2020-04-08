@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59C8B1A1BB5
-	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2020 08:00:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8C891A1BB8
+	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2020 08:00:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbgDHGAA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Apr 2020 02:00:00 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43561 "EHLO
+        id S1726632AbgDHGAC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Apr 2020 02:00:02 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40982 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbgDHF77 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Apr 2020 01:59:59 -0400
-Received: by mail-wr1-f68.google.com with SMTP id i10so60393wrv.10;
-        Tue, 07 Apr 2020 22:59:58 -0700 (PDT)
+        with ESMTP id S1726627AbgDHGAB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Apr 2020 02:00:01 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h9so6354094wrc.8;
+        Tue, 07 Apr 2020 22:59:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=MyjaqxTspVHB0RoR9euNSLMsUfgZpaBT76QDvi+tcPY=;
-        b=jISq4ag9INN0cNDo2K+g6jCxeXOqsphf8TjUX0yQlnkuLr3OeinztmyQ2QO+mYy7gE
-         nAUMUGGouwiwrVMu1MOhy/nx/IYEjO0bO8zFxWcyDuw5pgoDwRo+53RRWEll905lroCF
-         jXleU5ibmsQwD00Z72Tlk7bhaXw47oBjspBMqH9JgY4/B9OztNjOGUJ2NXwAv+zryfy5
-         846LCVItAj10cC1JbJBPnyrcG+z8ZzF6NgTxoD1VFaxoEsYFZM3crZN7mTBq7LKQf54A
-         kbOb21z/YVLial51op+byM2fc+gWo8Og+rNDnAdHeFk2uvDtu1JHFVYRhSVi+zGVhNb+
-         d7nQ==
+        bh=sUUvCvoLtB9BgaxbdgLhXAQ6BgnLG9M3Jlf9kyZEpjI=;
+        b=basSX8349jAmNVvct8Z0NUGQkNURfxXaR1mPKb3TobK7R/Dk9VWnP3/NdLOYFD8WuE
+         OeKSmx18g5Rj/XIgicLEbQu+qLNh3Z+IdhOKEbYnOMY8T3mbLeeM0ymjgrN7zXtTZD87
+         ZG8JgVKK4Nhsp6ijeJZEnNSjiAV3fYYILXU5TTxq+hJ9iJmc9URkpvgdNtNOmwt9WSOz
+         e5ULGgGy5jGOQbNHs2M+sYmW62QMKPnU61sKNp2oN4VYmc3JCyW3CjnVplE1m+/X6mGu
+         u+XUD3YJk4dJU9uxMBKVS9w0TqXvMq3jlDNhyZqGt3ep5GWA3baMSHoxv2Ut65289KTJ
+         nPVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MyjaqxTspVHB0RoR9euNSLMsUfgZpaBT76QDvi+tcPY=;
-        b=GYc00IsW6qEOZVAv65o9oOe6/KGv9F8mta2kWVPxUShZcvsq5wE+PIphn2I6Ilv6Ce
-         wiWpKVoJk2J9Ew+2tfTolx0IJDWYPfUXsZVBXnGRy+UqUpUhu52P9o/sUMeaYFin2Up3
-         E7Te8AheWrK/MishiJw4X4b5Yh2/HsiSvrIros0O/r/jWnUucNgqNTMKiKZrWOaAGFcE
-         DltxprXDxhIRqLLzPV9gb/lr0Fr0QQt+naywqbSEmM+hlL07qdD5TN3MrEa+DqA8vH5k
-         DajhDrhs2rsuYig2hVHteLsmKDLtvjOqw7RY296U8FsZqRGAjRkzaYsRnDS9JGqAXkFm
-         Oz3Q==
-X-Gm-Message-State: AGi0Pua6t1h5pxlYSTE5bUvRx9piuX36GyCpqCpHT82syaXXjCbzXbqa
-        seW4R1pYD3ujTdm7G2bsQXZqB3mO
-X-Google-Smtp-Source: APiQypLegS5WMPl3g+9MEOlDr71NIpgtUy8WBSrYzKd6kkrHURT/M9N1a6W5wqL9Df79bmMRFMiKGQ==
-X-Received: by 2002:adf:a3cb:: with SMTP id m11mr6564982wrb.225.1586325597645;
-        Tue, 07 Apr 2020 22:59:57 -0700 (PDT)
+        bh=sUUvCvoLtB9BgaxbdgLhXAQ6BgnLG9M3Jlf9kyZEpjI=;
+        b=jYrrqNrzrEJgwbs7BGc1bALyFfOIts67S+J31uHPS+6spN2YYfGrlH6JYoJ4LO+/R9
+         UKc1g6BFtZvRCumhTCJllLSTtTjxUALhI1GY2JTkaSsHZdGxfh+H9D9hT88CLR+08ojj
+         I7Ko1EVkxxOCIWtvZDXGKplNMznp32c5A5Nn9/sDs2sYD+NXBnaBEFanKegXbNnuabKa
+         FyDo8MdhQcFurCcyxL3FUoGlxx4ai+SFd1nJc49ZvdxMqsido4hlDGnt8o8GDeR3lqGI
+         6qhlsiW7KWnZ9OADHPfQVqIEZ9fPfwKyTbzhRWaCm66fItdkF8nLhQJwjzEWMgzNwCLp
+         GILg==
+X-Gm-Message-State: AGi0PuY4tcwdXsQKfATHWb38UySv+b0Sraj1l8S0JaDFVOuD+gfdDnMz
+        AIz/d1YvcULO3lS359DRm3c=
+X-Google-Smtp-Source: APiQypIlWnbhqK+g7qAB49Q/aDrrqNeRdBW8mI9fjJ325GlY8a0lTy5jkVVLQ22TOXS3PhLnxdmGRA==
+X-Received: by 2002:a05:6000:2:: with SMTP id h2mr6332546wrx.112.1586325599141;
+        Tue, 07 Apr 2020 22:59:59 -0700 (PDT)
 Received: from localhost.localdomain ([109.126.129.227])
-        by smtp.gmail.com with ESMTPSA id b15sm33454986wru.70.2020.04.07.22.59.56
+        by smtp.gmail.com with ESMTPSA id b15sm33454986wru.70.2020.04.07.22.59.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Apr 2020 22:59:57 -0700 (PDT)
+        Tue, 07 Apr 2020 22:59:58 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] io_uring: simplify io_get_sqring
-Date:   Wed,  8 Apr 2020 08:58:43 +0300
-Message-Id: <419217cd0b30c49511f26f50dbfc66ab4c0f54f6.1586325467.git.asml.silence@gmail.com>
+Subject: [PATCH 2/4] io_uring: alloc req only after getting sqe
+Date:   Wed,  8 Apr 2020 08:58:44 +0300
+Message-Id: <378c7980b103152954e4dfd71a46732b51b84254.1586325467.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1586325467.git.asml.silence@gmail.com>
 References: <cover.1586325467.git.asml.silence@gmail.com>
@@ -60,88 +60,70 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Make io_get_sqring() to care only about sqes but not initialising
-io_kiocb. Also, split it into get + consume, that will be helpful in the
-future.
+As io_get_sqe() split into 2 stage get/consume, get an sqe before
+allocating io_kiocb, so no free_req*() for a failure case is needed,
+and inline back __io_req_do_free(), which has only 1 user.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 40 ++++++++++++++++++++++------------------
- 1 file changed, 22 insertions(+), 18 deletions(-)
+ fs/io_uring.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 773f55c49cd8..fa6b7bb62616 100644
+index fa6b7bb62616..9c3e920e789f 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5778,8 +5778,7 @@ static void io_commit_sqring(struct io_ring_ctx *ctx)
-  * used, it's important that those reads are done through READ_ONCE() to
-  * prevent a re-load down the line.
-  */
--static bool io_get_sqring(struct io_ring_ctx *ctx, struct io_kiocb *req,
--			  const struct io_uring_sqe **sqe_ptr)
-+static const struct io_uring_sqe *io_get_sqe(struct io_ring_ctx *ctx)
- {
- 	u32 *sq_array = ctx->sq_array;
- 	unsigned head;
-@@ -5793,25 +5792,18 @@ static bool io_get_sqring(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	 *    though the application is the one updating it.
- 	 */
- 	head = READ_ONCE(sq_array[ctx->cached_sq_head & ctx->sq_mask]);
--	if (likely(head < ctx->sq_entries)) {
--		/*
--		 * All io need record the previous position, if LINK vs DARIN,
--		 * it can be used to mark the position of the first IO in the
--		 * link list.
--		 */
--		req->sequence = ctx->cached_sq_head;
--		*sqe_ptr = &ctx->sq_sqes[head];
--		req->opcode = READ_ONCE((*sqe_ptr)->opcode);
--		req->user_data = READ_ONCE((*sqe_ptr)->user_data);
--		ctx->cached_sq_head++;
--		return true;
--	}
-+	if (likely(head < ctx->sq_entries))
-+		return &ctx->sq_sqes[head];
- 
- 	/* drop invalid entries */
--	ctx->cached_sq_head++;
- 	ctx->cached_sq_dropped++;
- 	WRITE_ONCE(ctx->rings->sq_dropped, ctx->cached_sq_dropped);
--	return false;
-+	return NULL;
-+}
-+
-+static inline void io_consume_sqe(struct io_ring_ctx *ctx)
-+{
-+	ctx->cached_sq_head++;
+@@ -1354,14 +1354,6 @@ static inline void io_put_file(struct io_kiocb *req, struct file *file,
+ 		fput(file);
  }
  
- static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
-@@ -5855,11 +5847,23 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+-static void __io_req_do_free(struct io_kiocb *req)
+-{
+-	if (likely(!io_is_fallback_req(req)))
+-		kmem_cache_free(req_cachep, req);
+-	else
+-		clear_bit_unlock(0, (unsigned long *) req->ctx->fallback_req);
+-}
+-
+ static void __io_req_aux_free(struct io_kiocb *req)
+ {
+ 	if (req->flags & REQ_F_NEED_CLEANUP)
+@@ -1392,7 +1384,10 @@ static void __io_free_req(struct io_kiocb *req)
+ 	}
+ 
+ 	percpu_ref_put(&req->ctx->refs);
+-	__io_req_do_free(req);
++	if (likely(!io_is_fallback_req(req)))
++		kmem_cache_free(req_cachep, req);
++	else
++		clear_bit_unlock(0, (unsigned long *) req->ctx->fallback_req);
+ }
+ 
+ struct req_batch {
+@@ -5841,18 +5836,17 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+ 		struct io_kiocb *req;
+ 		int err;
+ 
++		sqe = io_get_sqe(ctx);
++		if (unlikely(!sqe)) {
++			io_consume_sqe(ctx);
++			break;
++		}
+ 		req = io_get_req(ctx, statep);
+ 		if (unlikely(!req)) {
+ 			if (!submitted)
  				submitted = -EAGAIN;
  			break;
  		}
--		if (!io_get_sqring(ctx, req, &sqe)) {
-+		sqe = io_get_sqe(ctx);
-+		if (!sqe) {
- 			__io_req_do_free(req);
-+			io_consume_sqe(ctx);
- 			break;
- 		}
+-		sqe = io_get_sqe(ctx);
+-		if (!sqe) {
+-			__io_req_do_free(req);
+-			io_consume_sqe(ctx);
+-			break;
+-		}
  
-+		/*
-+		 * All io need record the previous position, if LINK vs DARIN,
-+		 * it can be used to mark the position of the first IO in the
-+		 * link list.
-+		 */
-+		req->sequence = ctx->cached_sq_head;
-+		req->opcode = READ_ONCE(sqe->opcode);
-+		req->user_data = READ_ONCE(sqe->user_data);
-+		io_consume_sqe(ctx);
-+
- 		/* will complete beyond this point, count as submitted */
- 		submitted++;
- 
+ 		/*
+ 		 * All io need record the previous position, if LINK vs DARIN,
 -- 
 2.24.0
 

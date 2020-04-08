@@ -2,133 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B5F41A28D0
-	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2020 20:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B53491A28F0
+	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2020 20:58:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729364AbgDHSsK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Apr 2020 14:48:10 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44907 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729414AbgDHSsK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Apr 2020 14:48:10 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n13so2290266pgp.11
-        for <io-uring@vger.kernel.org>; Wed, 08 Apr 2020 11:48:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=60ZM4mPQS5JO2tdxiZ7aNVm30iaxUJzcOvgTRMztmaw=;
-        b=rxlkTeuzCoxZ7Zfdv5oWOofJ7/Dc6eTycTrWHZqIGbth6iJqisb2QUcUHfqpSUSmFb
-         dQnnUd1YdVyvgqCk8hfGGYNNH7ckC52dwNLlK6ZZcN06K3s2lE7mDdPDarXFN/6knzTr
-         j+aTIw5RyN4XkuI3GK7mUmHhNH/VAJ7HwOMPUh0HXFglyYqQlHbNSSA+Zn/8I+uI5yIe
-         bfIE3EZ6+dVppnqr0RTT4xvgxfjLMpWEh0qPFTx7hl+vy2zRP6A9cTkc/DDmtTs6Kvc3
-         ObGBMZQXo0Uh8a9myRVt4m9qclOSiksFbV290LGgIlC223QyagOg/y8eW/e6+THkrWer
-         LRIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=60ZM4mPQS5JO2tdxiZ7aNVm30iaxUJzcOvgTRMztmaw=;
-        b=WRrTpbGiW3MoOuK5M4655gvV45yqFof3g6W8njLu34rrX3wRPSbWb4wtxBkc05Gzx6
-         n4U38M3dzETLCo7HxV9M+4/Js+Rhj+R3huEBByfFdycB5EEJ/1HkvmRYnquZDAKXtXlC
-         GzmjVLRUQWlVBc2aa+4XzoTDzHXD7RVsyl3dQDPECsWjOzZGcmz7BTEEUW3N+5R6a2nj
-         bVcCgRwEOc0RmAM8FH3ydnknbiD6CIaQTymft0eZxl+CQjXiyC7TUJSlb0cQExVt/5Wt
-         Edo0vWAqrnQiYdpWL3IRz9zCX7jyJjse8k3Sbi2ZT9TjgpI2vB3iBEBL7Th3nJC/JJlX
-         Pu9A==
-X-Gm-Message-State: AGi0PubnWwzjZ/LGY2AYmgRNN8BrMRYt4oVtZpjP4D2DOW4eLYL647PT
-        Z3GUPcgcYV5ojwe/mrkc7+8Zug==
-X-Google-Smtp-Source: APiQypJ+VGw10ufslCfLwOexfvsQNsbDwYc9A7XjPptZJD+3wC2EYEgXSPTYjayWbAXY/NKe0pxr3g==
-X-Received: by 2002:a62:4ec4:: with SMTP id c187mr9385838pfb.223.1586371684934;
-        Wed, 08 Apr 2020 11:48:04 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c085:21c8::12dd? ([2620:10d:c090:400::5:607f])
-        by smtp.gmail.com with ESMTPSA id p4sm17138100pfg.163.2020.04.08.11.48.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Apr 2020 11:48:04 -0700 (PDT)
-Subject: Re: [PATCH 4/4] io_uring: flush task work before waiting for ring
- exit
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     io-uring@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20200407160258.933-1-axboe@kernel.dk>
- <20200407160258.933-5-axboe@kernel.dk> <20200407162405.GA9655@redhat.com>
- <20200407163816.GB9655@redhat.com>
- <4b70317a-d12a-6c29-1d7f-1394527f9676@kernel.dk>
- <20200408184049.GA25918@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a31dfee4-8125-a3c1-4be6-bd4a3f71b301@kernel.dk>
-Date:   Wed, 8 Apr 2020 11:48:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200408184049.GA25918@redhat.com>
-Content-Type: text/plain; charset=utf-8
+        id S1728560AbgDHS6F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Apr 2020 14:58:05 -0400
+Received: from taper.sei.cmu.edu ([147.72.252.16]:34498 "EHLO
+        taper.sei.cmu.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726730AbgDHS6E (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Apr 2020 14:58:04 -0400
+Received: from delp.sei.cmu.edu (delp.sei.cmu.edu [10.64.21.31])
+        by taper.sei.cmu.edu (8.14.7/8.14.7) with ESMTP id 038Iw2lN015578;
+        Wed, 8 Apr 2020 14:58:02 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 taper.sei.cmu.edu 038Iw2lN015578
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cert.org;
+        s=yc2bmwvrj62m; t=1586372282;
+        bh=nDGwARLz6IzT4e2hihxcIa84jDbOOqw1v9YebUxCeRM=;
+        h=From:To:Subject:Date:References:In-Reply-To:From;
+        b=GdiAiX5CrfyK2G8N9XAoHJPVNUDEWCoftyMzxMqWydCzr1W2LOLWyMRT9bFgaMKVM
+         CO6laUIOQ5Wm7R8wMZQaw4x2DK8ZmkgR8MywLxAYSwuSnU0nSCj7jCZlMRwzatZOa2
+         foy3OHzbOyB2eyrBaO09TRX+sx22wC2jylccaJak=
+Received: from CASCADE.ad.sei.cmu.edu (cascade.ad.sei.cmu.edu [10.64.28.248])
+        by delp.sei.cmu.edu (8.14.7/8.14.7) with ESMTP id 038IvvTr028408;
+        Wed, 8 Apr 2020 14:57:57 -0400
+Received: from MORRIS.ad.sei.cmu.edu (147.72.252.46) by CASCADE.ad.sei.cmu.edu
+ (10.64.28.248) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 8 Apr
+ 2020 14:57:57 -0400
+Received: from MORRIS.ad.sei.cmu.edu (147.72.252.46) by MORRIS.ad.sei.cmu.edu
+ (147.72.252.46) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1847.3; Wed, 8 Apr 2020
+ 14:57:56 -0400
+Received: from MORRIS.ad.sei.cmu.edu ([fe80::555b:9498:552e:d1bb]) by
+ MORRIS.ad.sei.cmu.edu ([fe80::555b:9498:552e:d1bb%22]) with mapi id
+ 15.01.1847.007; Wed, 8 Apr 2020 14:57:56 -0400
+From:   Joseph Christopher Sible <jcsible@cert.org>
+To:     "'Jens Axboe'" <axboe@kernel.dk>,
+        "'io-uring@vger.kernel.org'" <io-uring@vger.kernel.org>
+Subject: RE: Spurious/undocumented EINTR from io_uring_enter
+Thread-Topic: Spurious/undocumented EINTR from io_uring_enter
+Thread-Index: AdYNHCB8t2qqN/asQKmA7dRl2D+7cwAKrhOAAB25dbAADHSFgAAGsldQ
+Date:   Wed, 8 Apr 2020 18:57:56 +0000
+Message-ID: <00c3981899fd44ff9727cf36494992e0@cert.org>
+References: <43b339d3dc0c4b6ab15652faf12afa30@cert.org>
+ <b9ee42f0-cd94-9410-0de1-1bbfd50a6040@kernel.dk>
+ <d8a2a9fe86974f999cb41f0b17f9e9a7@cert.org>
+ <12cca225-d95c-da61-fdba-f69427a2726f@kernel.dk>
+In-Reply-To: <12cca225-d95c-da61-fdba-f69427a2726f@kernel.dk>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.64.64.23]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/8/20 11:40 AM, Oleg Nesterov wrote:
-> Jens, I am sorry. I tried to understand your explanations but I can't :/
-> Just in case, I know nothing about io_uring.
-> 
-> However, I strongly believe that
-> 
-> 	- the "task_work_exited" check in 4/4 can't help, the kernel
-> 	  will crash anyway if a task-work callback runs with
-> 	  current->task_works == &task_work_exited.
-> 
-> 	- this check is not needed with the patch I sent.
-> 	  UNLESS io_ring_ctx_wait_and_kill() can be called by the exiting
-> 	  task AFTER it passes exit_task_work(), but I don't see how this
-> 	  is possible.
-> 
-> Lets forget this problem, lets assume that task_work_run() is always safe.
-> 
-> I still can not understand why io_ring_ctx_wait_and_kill() needs to call
-> task_work_run().
-> 
-> On 04/07, Jens Axboe wrote:
->>
->> io_uring exit removes the pending poll requests, but what if (for non
->> exit invocation), we get poll requests completing before they are torn
->> down. Now we have task_work queued up that won't get run,
->         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> this must not be possible. If task_work is queued it will run, or we
-> have another bug.
-> 
->> because we
->> are are in the task_work handler for the __fput().
-> 
-> this doesn't matter...
-> 
->> For this case, we
->> need to run the task work.
-> 
-> This is what I fail to understand :/
-
-Actually debugging this just now to attempt to get to the bottom of it.
-I'm running with Peter's "put fput work at the end at task_work_run
-time" patch (with a head == NULL check that was missing). I get a hang
-on the wait_for_completion() on io_uring exit, and if I dump the
-task_work, this is what I get:
-
-dump_work: dump cb
-cb=ffff88bff25589b8, func=ffffffff812f7310	<- io_poll_task_func()
-cb=ffff88bfdd164600, func=ffffffff812925e0	<- some __fput()
-cb=ffff88bfece13cb8, func=ffffffff812f7310	<- io_poll_task_func()
-cb=ffff88bff78393b8, func=ffffffff812b2c40
-
-and we hang because io_poll_task_func() got queued twice on this task
-_after_ we yanked the current list of work.
-
-I'm adding some more debug items to figure out why this is, just wanted
-to let you know that I'm currently looking into this and will provide
-more data when I have it.
-
--- 
-Jens Axboe
-
+T24gNC84LzIwIDE6NDkgUE0sIEplbnMgQXhib2Ugd3JvdGU6DQo+IE9uIDQvOC8yMCA5OjQxIEFN
+LCBKb3NlcGggQ2hyaXN0b3BoZXIgU2libGUgd3JvdGU6DQo+ID4gT24gNC83LzIwIDU6NDIgUE0s
+IEplbnMgQXhib2Ugd3JvdGU6DQo+ID4+IExvdHMgb2Ygc3lzdGVtIGNhbGxzIHJldHVybiAtRUlO
+VFIgaWYgaW50ZXJydXB0ZWQgYnkgYSBzaWduYWwsIGRvbid0DQo+ID4+IHRoaW5rIHRoZXJlJ3Mg
+YW55dGhpbmcgd29ydGggZml4aW5nIHRoZXJlLiBGb3IgdGhlIHdhaXQgcGFydCwgdGhlDQo+ID4+
+IGFwcGxpY2F0aW9uIG1heSB3YW50IHRvIGhhbmRsZSB0aGUgc2lnbmFsIGJlZm9yZSB3ZSBjYW4g
+d2FpdCBhZ2Fpbi4NCj4gPj4gV2UgY2FuJ3QgZ28gdG8gc2xlZXAgd2l0aCBhIHBlbmRpbmcgc2ln
+bmFsLg0KPiA+DQo+ID4gVGhpcyBzZWVtcyB0byBiZSBhbiB1bmFtYmlndW91cyBidWcsIGF0IGxl
+YXN0IGFjY29yZGluZyB0byB0aGUgQlVHUw0KPiA+IHNlY3Rpb24gb2YgdGhlIHB0cmFjZSBtYW4g
+cGFnZS4gVGhlIGJlaGF2aW9yIG9mIGVwb2xsX3dhaXQgaXMNCj4gPiBleHBsaWNpdGx5IGNhbGxl
+ZCBvdXQgYXMgYmVpbmcgYnVnZ3kvd3JvbmcsIGFuZCB3ZSdyZSBlbXVsYXRpbmcgaXRzDQo+ID4g
+YmVoYXZpb3IuIEFzIGZvciB0aGUgYXBwbGljYXRpb24gd2FudGluZyB0byBoYW5kbGUgdGhlIHNp
+Z25hbCwgaW4NCj4gPiB0aG9zZSBjYXNlcywgaXQgd291bGQgY2hvb3NlIHRvIGluc3RhbGwgYSBz
+aWduYWwgaGFuZGxlciwgaW4gd2hpY2gNCj4gPiBjYXNlIEkgYWJzb2x1dGVseSBhZ3JlZSB0aGF0
+IHJldHVybmluZyAtRUlOVFIgaXMgdGhlIHJpZ2h0IHRoaW5nIHRvDQo+ID4gZG8uIEknbSBvbmx5
+IHRhbGtpbmcgYWJvdXQgdGhlIGNhc2Ugd2hlcmUgdGhlIGFwcGxpY2F0aW9uIGRpZG4ndA0KPiA+
+IGNob29zZSB0byBpbnN0YWxsIGEgc2lnbmFsIGhhbmRsZXIgKGFuZCB0aGUgc2lnbmFsIHdvdWxk
+IGhhdmUgYmVlbg0KPiA+IGNvbXBsZXRlbHkgaW52aXNpYmxlIHRvIHRoZSBwcm9jZXNzIGhhZCBp
+dCBub3QgYmVlbiBiZWluZyB0cmFjZWQpLg0KPiANCj4gU28gd2hhdCBkbyB5b3Ugc3VnZ2VzdD8g
+VGhlIG9ubHkgcmVjdXJzZSB0aGUga2VybmVsIGhhcyBpcyB0byBmbHVzaCBzaWduYWxzLA0KPiB3
+aGljaCB3b3VsZCBqdXN0IGRlbGV0ZSB0aGUgc2lnbmFsIGNvbXBsZXRlbHkuIEl0J3MgYSB3YWl0
+IG9wZXJhdGlvbiwgYW5kIHlvdQ0KPiBjYW5ub3Qgd2FpdCB3aXRoIHNpZ25hbHMgcGVuZGluZy4g
+VGhlIG9ubHkgd2FpdCB0byByZXRyeSBpcyB0byByZXR1cm4gdGhlDQo+IG51bWJlciBvZiBldmVu
+dHMgd2UgYWxyZWFkeSBnb3QsIG9yIC1FSU5UUiBpZiB3ZSBnb3Qgbm9uZSwgYW5kIHJldHVybiB0
+bw0KPiB1c2Vyc3BhY2UuIFRoYXQnbGwgZW5zdXJlIHRoZSBzaWduYWwgZ2V0cyBoYW5kbGVkLCBh
+bmQgdGhlIGFwcCBtdXN0IHRoZW4gY2FsbA0KPiB3YWl0IGFnYWluIGlmIGl0IHdhbnRzIHRvIHdh
+aXQgZm9yIG1vcmUuDQo+IA0KPiBUaGVyZSdzIG5vICJlbXVsYXRpbmcgYmVoYXZpb3IiIGhlcmUs
+IHlvdSBtYWtlIGl0IHNvdW5kIGxpa2Ugd2UncmUgdHJ5aW5nIHRvDQo+IGJlIGJ1ZyBjb21wYXRp
+YmxlIHdpdGggc29tZSByYW5kb20gb3RoZXIgc3lzdGVtIGNhbGwuDQo+IFRoYXQncyBub3QgdGhl
+IGNhc2UgYXQgYWxsLg0KDQpTb3JyeSwgSSB1c2VkICJlbXVsYXRpbmciIGluIHRoZSBpbmZvcm1h
+bCBzZW5zZS4gSSBqdXN0IG1lYW50IHRoYXQgd2UNCmhhcHBlbiB0byBoYXZlIHRoZSBzYW1lIGJ1
+ZyB0aGF0IGVwb2xsX3dhaXQgZG9lcywgdGhhdCBtb3N0IG90aGVyDQpzeXNjYWxscyBkb24ndC4g
+QW55d2F5LCBJJ2QgbGlrZSBpdCB0byB3b3JrIGxpa2UgdGhlIHNlbGVjdCBzeXNjYWxsDQp3b3Jr
+cy4gQ29uc2lkZXIgdGhpcyBwcm9ncmFtOg0KDQojaW5jbHVkZSA8c2lnbmFsLmg+DQojaW5jbHVk
+ZSA8c3RkaW8uaD4NCiNpbmNsdWRlIDxzeXMvc2VsZWN0Lmg+DQojaW5jbHVkZSA8dW5pc3RkLmg+
+DQoNCnZvaWQgaGFuZGxlKGludCBzKSB7DQogIHdyaXRlKDEsICJJbiBzaWduYWwgaGFuZGxlclxu
+IiwgMTgpOw0KfQ0KDQppbnQgbWFpbih2b2lkKSB7DQogIHN0cnVjdCBzaWdhY3Rpb24gYWN0ID0g
+eyAuc2FfaGFuZGxlciA9IGhhbmRsZSB9Ow0KICBzdHJ1Y3QgdGltZXZhbCB0ID0geyAudHZfc2Vj
+ID0gMTAgfTsNCiAgZmRfc2V0IHNldDsNCiAgRkRfWkVSTygmc2V0KTsNCiAgc2lnYWN0aW9uKFNJ
+R1VTUjEsICZhY3QsIE5VTEwpOw0KICBzZWxlY3QoMCwgTlVMTCwgTlVMTCwgTlVMTCwgJnQpOw0K
+ICBwZXJyb3IoInNlbGVjdCIpOw0KICByZXR1cm4gMDsNCn0NCg0KWW91IGNhbiBkbyBhbnkgb2Yg
+dGhlIGZvbGxvd2luZyB0byB0aGF0IHByb2dyYW0gYW5kIGl0IHdpbGwgc3RpbGwgZmluaXNoDQpp
+dHMgZnVsbCAxMCBzZWNvbmRzIGFuZCBvdXRwdXQgIlN1Y2Nlc3MiOg0KDQoqIFN0b3AgaXQgd2l0
+aCBDdHJsK1ogdGhlbiByZXN1bWUgaXQgd2l0aCBmZw0KKiBBdHRhY2ggdG8gaXQgd2l0aCBzdHJh
+Y2Ugb3IgZ2RiIHdoaWxlIGl0J3MgYWxyZWFkeSBydW5uaW5nDQoqIFN0YXJ0IGl0IHVuZGVyIHN0
+cmFjZSBvciBnZGIsIHRoZW4gcmVzaXplIHRoZSB0ZXJtaW5hbCB3aW5kb3cgd2hpbGUNCiAgaXQn
+cyBydW5uaW5nDQoNClRoZSBvbmx5IHRoaW5nIHRoYXQgaXQgd2lsbCBtYWtlIGl0IG91dHB1dCAi
+SW50ZXJydXB0ZWQgc3lzdGVtIGNhbGwiIGlzDQppZiB5b3UgImtpbGwgLVVTUjEiIGl0LCByZXN1
+bHRpbmcgaW4gaXRzIHNpZ25hbCBoYW5kbGVyIGJlaW5nIGNhbGxlZC4gSXQNCmxvb2tzIGxpa2Ug
+d2hhdCdzIGhhcHBlbmluZyBpcyB0aGF0IHRoZSBzeXNjYWxsIHJlYWxseSBpcyBnZXR0aW5nDQpz
+dG9wcGVkIGJ5IHRoZSBvdGhlciBzaWduYWxzLCBidXQgb25jZSB0aGUga2VybmVsIGRldGVybWlu
+ZXMgdGhhdCB0aGUNCnByb2Nlc3MgaXNuJ3QgZ29pbmcgdG8gc2VlIHRoYXQgcGFydGljdWxhciBz
+aWduYWwsIGl0IHJlc3RhcnRzIHRoZQ0Kc3lzY2FsbCBmcm9tIHdoZXJlIGl0IGxlZnQgb2ZmIGF1
+dG9tYXRpY2FsbHkuIEkgdGhpbmsgdGhpcyBpcyBob3cgYWxtb3N0DQphbGwgb2YgdGhlIHN5c2Nh
+bGxzIGluIHRoZSBrZXJuZWwgd29yay4NCg0KSG93ZXZlciwgaWYgeW91IHJ1biBhIHNpbWlsYXIg
+cHJvZ3JhbSB0byB0aGF0IG9uZSwgYnV0IHRoYXQgdXNlcw0KaW9fdXJpbmdfZW50ZXIgaW5zdGVh
+ZCBvZiBzZWxlY3QsIHRoZW4gZG9pbmcgYW55IG9mIHRoZSAzIHRoaW5ncyBvbiB0aGF0DQpsaXN0
+IHdpbGwgbWFrZSBpdCBvdXRwdXQgIkludGVycnVwdGVkIHN5c3RlbSBjYWxsIiwgZXZlbiB0aG91
+Z2ggbm8NCnNpZ25hbCBoYW5kbGVyIHJhbi4gVGhpcyBpcyB0aGUgYmVoYXZpb3IgdGhhdCBJJ20g
+c2F5aW5nIGlzIGJ1Z2d5IGFuZA0Kc2ltaWxhciB0byBlcG9sbF93YWl0LCBhbmQgdGhhdCBJJ2Qg
+bGlrZSB0byBzZWUgY2hhbmdlZC4NCg0KSm9zZXBoIEMuIFNpYmxlDQo=

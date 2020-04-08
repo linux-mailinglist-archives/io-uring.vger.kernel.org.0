@@ -2,59 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDD851A2513
-	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2020 17:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ECF61A250E
+	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2020 17:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbgDHPZQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Apr 2020 11:25:16 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39221 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbgDHPZQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Apr 2020 11:25:16 -0400
-Received: by mail-pg1-f195.google.com with SMTP id g32so3459403pgb.6
-        for <io-uring@vger.kernel.org>; Wed, 08 Apr 2020 08:25:14 -0700 (PDT)
+        id S1728750AbgDHPYQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Apr 2020 11:24:16 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36263 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728681AbgDHPYP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Apr 2020 11:24:15 -0400
+Received: by mail-pf1-f195.google.com with SMTP id n10so2550493pff.3
+        for <io-uring@vger.kernel.org>; Wed, 08 Apr 2020 08:24:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=BI0LpeSIMVx070wajzrdqztQzFkxuBgOVuQTyvit/aU=;
-        b=ROEbf1uF9mKFhcznEhAziWgwQDMcCA1MDZLmR5CyEvTptLvFStDG3Dz79YW3V++QI0
-         7Wu9qJWIdV5GvujcMsvFii47uyuSIAnTyq6t5niZzzpyaT9E7arlCwasnsQ3JznIXAx/
-         xxKPHkwNOjZvZfEyEubAgUVapid1YSkz2sxJmhFp4lTqqCeWRanKhRfHa/7tt2gShc3e
-         j+gyhMGZPvSOjibyyW8LBvPN+MG8bQe1nI4zQhgGhYnfKItHcxupD8zn9IZiZL8ccHvI
-         jzVvi+nlKmJLMNR6bEuYUk46Rn+EBB9mqG2UjPAklTbwUvCfOUoV1W67EPFa0GoX7xIS
-         tOLg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/dpZO7xGBn/R7cMPlsx5BPFls5g6dIIF5JWr/+x1QeE=;
+        b=WEIjPDfMOZfjnkoh83zQiLIsMoJPMUHWCnPPRRF3ek0AfRpL0+Y9DJqB4tZYgPxSO3
+         4U6FSgeYUjq+SxnRFuiWYprQ8ENMkkG+nxOKefg5KR3kH2LBTqLfws1VaSocZ3G7Cz97
+         O8Rpm+aiDPLSpXEMOdd1dK/lUFzeyPfl+VLIlMOeYu2RUqSvi1QC8uGZKmpLFuWoFt5t
+         3ThhyKn3zelE89OwBBg6potJiLx27URQc7mewIigHbxvxECXj8a97nR0nqPVtGzWs1i9
+         v8PhgDZl7N1jgb9kuab9bBwyuuoFRRZ2RzHNaZeuQK5nEZXgT1diKfn5yw9wsyzDyzph
+         JKkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=BI0LpeSIMVx070wajzrdqztQzFkxuBgOVuQTyvit/aU=;
-        b=skOLDFkAqY4ciyRXoxK9N15ri2+/TAuBFRZIAbdsz+2GBu0kxnDfF64rkdey7c+lR6
-         vsB7/BswZ3rHyMG9k7zGiIezM1qTq1rYb2Iwh0WOgc9Pu2yHDN9G5lnKY9f9zyvWWkS6
-         kK26oI/59cP9HAOsripeNCO8wtw4m0/yAN54LW2cJo3g5q64/n386B790cKI5SF43Kdd
-         Mv2iMh4GvdgyFrdWG8e5IcSOM7fYQBni38nII/7FaiIbGGCkhSjmZQ/iTL4kgMEXa+SY
-         bwNlOujrf9c/zvNf3EHMiP+xJcCynLl8HKVgPZvh2Uhwqt+5xacEobZljxoF2Xaqr7BF
-         6fVA==
-X-Gm-Message-State: AGi0PuaJgihd7OP0K4mBf7io3tX80DOvLA6TLPnLtcpLriDdilYAogv+
-        7hyPE8Z8Fc/zmh+V+z+w+NMg0G7loRP7OQ==
-X-Google-Smtp-Source: APiQypKn2hMVoUID6fvFKbRhWhzUoVySjdqm+QpKh23I9Cu+hrQnSHDu9pPOa2MBcVQCQlu1RnfDRA==
-X-Received: by 2002:a63:6d87:: with SMTP id i129mr7478865pgc.54.1586359193422;
-        Wed, 08 Apr 2020 08:19:53 -0700 (PDT)
+        bh=/dpZO7xGBn/R7cMPlsx5BPFls5g6dIIF5JWr/+x1QeE=;
+        b=ZA2D4hIW5RC82irluL2R59Mr/KII+BDKiUJ8i5KpQQlmbuWtYTNR9PGfVWd93FKX2O
+         7B2s46hNUSptIQAXsKgJHc2/Bp1+DZ2fzlfPQ3sOyoDEzWaX4ceUrabxn5lb+fxPL4FI
+         wFqJIh9jFgQofKlGYtTn1NIcQEu+SXQqOVSsDzHeQ9VcKGwypkYiaQxUEDHa2sV7vjGC
+         YrhklQ3aNrKhAIc/fC0YX1CWFt0+0YcoHopvKLnUvw4JjimBPQHGIgtlbmfVX935+Ubs
+         XbbLvosP+ZO4MtfvEdgbwmLySvP/7m0HeXxwgQTKfUylWEPo1cGcx5zceo1U6u1Qz8D8
+         NhCg==
+X-Gm-Message-State: AGi0PuZ4+hmOzsko83ladbr5Ycp11EirHpkm3eIF8DnHn5vCLfPSW7Ae
+        y2SNk/76jx3vpWDOVPYWqtr7Qw==
+X-Google-Smtp-Source: APiQypLfXibFv6lRNTHotlVsXeN8s1ZiNYdCOdKO0UofCtt/3DVIls9UcGXfhwf7nQhqu0r0Z2p/jg==
+X-Received: by 2002:a62:ce46:: with SMTP id y67mr6687911pfg.57.1586359454275;
+        Wed, 08 Apr 2020 08:24:14 -0700 (PDT)
 Received: from ?IPv6:2605:e000:100e:8c61:4466:6b33:f85b:7770? ([2605:e000:100e:8c61:4466:6b33:f85b:7770])
-        by smtp.gmail.com with ESMTPSA id z8sm4522939pju.33.2020.04.08.08.19.52
+        by smtp.gmail.com with ESMTPSA id a75sm4510652pje.31.2020.04.08.08.24.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Apr 2020 08:19:52 -0700 (PDT)
-Subject: Re: io_uring's openat doesn't work with large (2G+) files
-To:     Dmitry Kadashev <dkadashev@gmail.com>, io-uring@vger.kernel.org
-References: <CAOKbgA4K4FzxTEoHHYcoOAe6oNwFvGbzcfch2sDmicJvf3Ydwg@mail.gmail.com>
+        Wed, 08 Apr 2020 08:24:13 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: do not always copy iovec in io_req_map_rw()
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     joseph.qi@linux.alibaba.com
+References: <20200408142958.17240-1-xiaoguang.wang@linux.alibaba.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3a70c47f-d017-9f11-a41b-fa351e3906dc@kernel.dk>
-Date:   Wed, 8 Apr 2020 08:19:51 -0700
+Message-ID: <fa4300a1-861a-5fbe-28b5-8dc5a54f4fb0@kernel.dk>
+Date:   Wed, 8 Apr 2020 08:24:12 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <CAOKbgA4K4FzxTEoHHYcoOAe6oNwFvGbzcfch2sDmicJvf3Ydwg@mail.gmail.com>
+In-Reply-To: <20200408142958.17240-1-xiaoguang.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -63,70 +65,14 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/8/20 7:51 AM, Dmitry Kadashev wrote:
-> Hi,
-> 
-> io_uring's openat seems to produce FDs that are incompatible with
-> large files (>2GB). If a file (smaller than 2GB) is opened using
-> io_uring's openat then writes -- both using io_uring and just sync
-> pwrite() -- past that threshold fail with EFBIG. If such a file is
-> opened with sync openat, then both io_uring's writes and sync writes
-> succeed. And if the file is larger than 2GB then io_uring's openat
-> fails right away, while the sync one works.
-> 
-> Kernel versions: 5.6.0-rc2, 5.6.0.
-> 
-> A couple of reproducers attached, one demos successful open with
-> failed writes afterwards, and another failing open (in comparison with
-> sync  calls).
-> 
-> The output of the former one for example:
-> 
-> *** sync openat
-> openat succeeded
-> sync write at offset 0
-> write succeeded
-> sync write at offset 4294967296
-> write succeeded
-> 
-> *** sync openat
-> openat succeeded
-> io_uring write at offset 0
-> write succeeded
-> io_uring write at offset 4294967296
-> write succeeded
-> 
-> *** io_uring openat
-> openat succeeded
-> sync write at offset 0
-> write succeeded
-> sync write at offset 4294967296
-> write failed: File too large
-> 
-> *** io_uring openat
-> openat succeeded
-> io_uring write at offset 0
-> write succeeded
-> io_uring write at offset 4294967296
-> write failed: File too large
+On 4/8/20 7:29 AM, Xiaoguang Wang wrote:
+> In io_read_prep() or io_write_prep(), io_req_map_rw() takes
+> struct io_async_rw's fast_iov as argument to call io_import_iovec(),
+> and if io_import_iovec() uses struct io_async_rw's fast_iov as
+> valid iovec array, later indeed io_req_map_rw() does not need
+> to do the memcpy operation, because they are same pointers.
 
-Can you try with this one? Seems like only openat2 gets it set,
-not openat...
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 79bd22289d73..63eb7efe10f2 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2957,6 +2957,8 @@ static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	req->open.how.mode = READ_ONCE(sqe->len);
- 	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	req->open.how.flags = READ_ONCE(sqe->open_flags);
-+	if (force_o_largefile())
-+		req->open.how.flags |= O_LARGEFILE;
- 
- 	req->open.filename = getname(fname);
- 	if (IS_ERR(req->open.filename)) {
+Applied, thanks.
 
 -- 
 Jens Axboe

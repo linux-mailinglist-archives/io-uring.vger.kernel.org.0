@@ -2,99 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B731A2819
-	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2020 19:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D9521A28C5
+	for <lists+io-uring@lfdr.de>; Wed,  8 Apr 2020 20:40:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728604AbgDHRt1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Apr 2020 13:49:27 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37976 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728424AbgDHRt0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Apr 2020 13:49:26 -0400
-Received: by mail-pf1-f193.google.com with SMTP id c21so2744606pfo.5
-        for <io-uring@vger.kernel.org>; Wed, 08 Apr 2020 10:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=MtxRB3yOfoBkNNevQ+ALjUXqLMurAPiM4R/+p5+53l0=;
-        b=m1a1TGGQY4N4aciI0rAcrD9Hq04kjNNoHlHNdbUT8HOakjaXUsDA4Y0/t8H7tu9o9x
-         g7EveC8qtNEVhxb0cAWkVMBsBNuhVnd//EweUjC+0vjZvHPsBvHvy5zj7HFEf1t1WohL
-         ffyOCjLsE04sB/ThSI3yLq5E1zLgnJj9ctJ/L2RqphWWeLrLitzVodBSFhdIdFRNmlsc
-         fSkStsBJTzlst4hgwa8spH8K7HNzu8MFOQUOEYYfH3Uhd9ld+gTac/GD41n9qi7b8n9B
-         uTjJn8Syf83qMATt0m4jH33pwYlo2VyXcDHKEbRQ16RsaBHFSKO/D4FruPACfqXVon7h
-         xI9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MtxRB3yOfoBkNNevQ+ALjUXqLMurAPiM4R/+p5+53l0=;
-        b=QgAlruxKdBSdLexqq+VtXXu22LXqQomRmCL0dlWjFZQaa+94+/XJPeg+lHupkIN1KI
-         4oMVCx7yXQ2np9hkgVJBgLdN+DQ436s2RN6VeRa+FjnuveDr9D8QNM+sle2dri20myp/
-         gYR4BCkrFYIpTseK8UDSMX7rlHi+9rFalh/SdQmWIRWzNvmD1bpeQ/8XrVtb3Dcmy1u8
-         YcHZjMdl1izQG+431+U0/Sw2L+WLndlYEtPm6pdm7wQznKRqmkwe34VxwQ6yGNMnPWTi
-         +61p4zudEfqbkUgWGVoCrxFnrb3IIrzl0n//1xRSTMpX1eAYJLkzfRa8hRJh3zC+AbxB
-         x9ZA==
-X-Gm-Message-State: AGi0Pub2wc2LFtFR4FMoGg0Y3ArcJZic4VunNVIp0eHE+rmFqOr+H1Qh
-        j/rqr1UIVz/bZrxCm9SbSvRTkGIZn1gaHw==
-X-Google-Smtp-Source: APiQypLsFwrcm387LIypvfVVHBMfBo648TeLkTDjxsBnCUV0VxT/PWdodIhvKnAWvJIYv5S5m2dCgw==
-X-Received: by 2002:a63:e809:: with SMTP id s9mr7881270pgh.214.1586368165400;
-        Wed, 08 Apr 2020 10:49:25 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c085:21c8::12dd? ([2620:10d:c090:400::5:607f])
-        by smtp.gmail.com with ESMTPSA id c125sm2236140pfa.142.2020.04.08.10.49.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Apr 2020 10:49:24 -0700 (PDT)
-Subject: Re: Spurious/undocumented EINTR from io_uring_enter
-To:     Joseph Christopher Sible <jcsible@cert.org>,
-        "'io-uring@vger.kernel.org'" <io-uring@vger.kernel.org>
-References: <43b339d3dc0c4b6ab15652faf12afa30@cert.org>
- <b9ee42f0-cd94-9410-0de1-1bbfd50a6040@kernel.dk>
- <d8a2a9fe86974f999cb41f0b17f9e9a7@cert.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <12cca225-d95c-da61-fdba-f69427a2726f@kernel.dk>
-Date:   Wed, 8 Apr 2020 10:49:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728433AbgDHSk4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Apr 2020 14:40:56 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53425 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728280AbgDHSk4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Apr 2020 14:40:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1586371254;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3XXGEPaN2jmaUz/XVCnamEsRloXus9CKAfl94A3Wa6U=;
+        b=ObplXyrHfjtZ+fRofgmgLMz+4T2Lr3kwXYT2N2CC7SutZzpaGgMfuCncOrGB/y3iSNANkC
+        LWjlnT0vQaj1SlEh/jQiBABetuxgLj+K8qirNWlurNP7BJskbbXJ2til03kICYHfxDrYit
+        u+z/acXPrYoKB3rJFm/55aP4MFKjJp8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-360-u6n-ULtnOLqNx2R473IAsw-1; Wed, 08 Apr 2020 14:40:53 -0400
+X-MC-Unique: u6n-ULtnOLqNx2R473IAsw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C9B3CDB21;
+        Wed,  8 Apr 2020 18:40:51 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.143])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8B5425D9CA;
+        Wed,  8 Apr 2020 18:40:50 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed,  8 Apr 2020 20:40:51 +0200 (CEST)
+Date:   Wed, 8 Apr 2020 20:40:49 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, viro@zeniv.linux.org.uk,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 4/4] io_uring: flush task work before waiting for ring
+ exit
+Message-ID: <20200408184049.GA25918@redhat.com>
+References: <20200407160258.933-1-axboe@kernel.dk>
+ <20200407160258.933-5-axboe@kernel.dk>
+ <20200407162405.GA9655@redhat.com>
+ <20200407163816.GB9655@redhat.com>
+ <4b70317a-d12a-6c29-1d7f-1394527f9676@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <d8a2a9fe86974f999cb41f0b17f9e9a7@cert.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4b70317a-d12a-6c29-1d7f-1394527f9676@kernel.dk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/8/20 9:41 AM, Joseph Christopher Sible wrote:
-> On 4/7/20 5:42 PM, Jens Axboe wrote:
->> Lots of system calls return -EINTR if interrupted by a signal, don't
->> think there's anything worth fixing there. For the wait part, the
->> application may want to handle the signal before we can wait again.
->> We can't go to sleep with a pending signal.
-> 
-> This seems to be an unambiguous bug, at least according to the BUGS
-> section of the ptrace man page. The behavior of epoll_wait is explicitly
-> called out as being buggy/wrong, and we're emulating its behavior. As
-> for the application wanting to handle the signal, in those cases, it
-> would choose to install a signal handler, in which case I absolutely
-> agree that returning -EINTR is the right thing to do. I'm only talking
-> about the case where the application didn't choose to install a signal
-> handler (and the signal would have been completely invisible to the
-> process had it not been being traced).
+Jens, I am sorry. I tried to understand your explanations but I can't :/
+Just in case, I know nothing about io_uring.
 
-So what do you suggest? The only recurse the kernel has is to flush
-signals, which would just delete the signal completely. It's a wait
-operation, and you cannot wait with signals pending. The only
-wait to retry is to return the number of events we already got, or
--EINTR if we got none, and return to userspace. That'll ensure the
-signal gets handled, and the app must then call wait again if it
-wants to wait for more.
+However, I strongly believe that
 
-There's no "emulating behavior" here, you make it sound like we're
-trying to be bug compatible with some random other system call.
-That's not the case at all.
+	- the "task_work_exited" check in 4/4 can't help, the kernel
+	  will crash anyway if a task-work callback runs with
+	  current->task_works == &task_work_exited.
 
--- 
-Jens Axboe
+	- this check is not needed with the patch I sent.
+	  UNLESS io_ring_ctx_wait_and_kill() can be called by the exiting
+	  task AFTER it passes exit_task_work(), but I don't see how this
+	  is possible.
+
+Lets forget this problem, lets assume that task_work_run() is always safe.
+
+I still can not understand why io_ring_ctx_wait_and_kill() needs to call
+task_work_run().
+
+On 04/07, Jens Axboe wrote:
+>
+> io_uring exit removes the pending poll requests, but what if (for non
+> exit invocation), we get poll requests completing before they are torn
+> down. Now we have task_work queued up that won't get run,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+this must not be possible. If task_work is queued it will run, or we
+have another bug.
+
+> because we
+> are are in the task_work handler for the __fput().
+
+this doesn't matter...
+
+> For this case, we
+> need to run the task work.
+
+This is what I fail to understand :/
+
+Oleg.
 

@@ -2,105 +2,127 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D4C61A39FF
-	for <lists+io-uring@lfdr.de>; Thu,  9 Apr 2020 20:50:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8794F1A3C33
+	for <lists+io-uring@lfdr.de>; Fri, 10 Apr 2020 00:03:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgDISus (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Apr 2020 14:50:48 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:37235 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725987AbgDISus (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Apr 2020 14:50:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1586458247;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0FI6+zx4SVRbHJj7p6NeuCLtnSETKk6g+UvcxgUhHPw=;
-        b=EQ2IsB99zUlPbhtRMdwqIuRU1iVqqO/8KHFNjlN/uYTq9dlXejvgc1Wz20KHPIAg8fMJux
-        gGFEhv4ka9ec6uChIqXoGATHJyuwO/TyeSje3agjAqnRG3KsMG02qpc4rGaYQntG8ZV0Wh
-        RsW9AmoLKH91vKdir9RYzNAZHCJxtLg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-166-15qLXLnqPrC9cfEhwj1iDQ-1; Thu, 09 Apr 2020 14:50:45 -0400
-X-MC-Unique: 15qLXLnqPrC9cfEhwj1iDQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 65189800D5B;
-        Thu,  9 Apr 2020 18:50:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.42])
-        by smtp.corp.redhat.com (Postfix) with SMTP id E6CBF272AA;
-        Thu,  9 Apr 2020 18:50:42 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu,  9 Apr 2020 20:50:44 +0200 (CEST)
-Date:   Thu, 9 Apr 2020 20:50:41 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 4/4] io_uring: flush task work before waiting for ring
- exit
-Message-ID: <20200409185041.GA14251@redhat.com>
-References: <20200407160258.933-1-axboe@kernel.dk>
- <20200407160258.933-5-axboe@kernel.dk>
- <20200407162405.GA9655@redhat.com>
- <20200407163816.GB9655@redhat.com>
- <4b70317a-d12a-6c29-1d7f-1394527f9676@kernel.dk>
- <20200408184049.GA25918@redhat.com>
- <a31dfee4-8125-a3c1-4be6-bd4a3f71b301@kernel.dk>
- <6d320b43-254d-2d42-cbad-d323f1532e65@kernel.dk>
- <20200408201734.GA21347@redhat.com>
- <884c70e0-2ec5-7ae6-7484-2bbbf4aa3e5d@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <884c70e0-2ec5-7ae6-7484-2bbbf4aa3e5d@kernel.dk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        id S1726814AbgDIWDr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Apr 2020 18:03:47 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47680 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbgDIWDr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Apr 2020 18:03:47 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 039M3QBW081748;
+        Thu, 9 Apr 2020 22:03:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=zpjssNcfucWmOFTF7EZQpB0ckFX3r6Gf7PK1935vju4=;
+ b=nKJeknZgx6x1sqXl8tDLfJRnJQpgQDCyzOgvTqFuE9IBEt4DCYUm2OM6dcIiNSHyF1n4
+ wTSnhPYpVGz1JByjW0jU9/GE76eVuaSO9v4Adg2MKDDGsOaE4b6sKIsSyioYXs31OZO9
+ uq6etGmhGSee4jJrJaKVxDC7NFxYPAQshpb6cprmn91zlWNdL6W+jeYqTmSsuvPl0EBy
+ PO6x/NfgBjrD095GuTL0hnYSICP/VASg1DJBPLSDuM1XhqQrnkFabn2rBRSqlKzeh/gY
+ dTCPJE8R7jApa3tgpBTtGGDoj6uaz0bzYaaUBVLXVO5BzCHKh1ePY5qIp1RpOnYMs9Z6 FA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 309gw4fwyg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 Apr 2020 22:03:46 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 039M1ehx035096;
+        Thu, 9 Apr 2020 22:03:45 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 3091m9rabp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 Apr 2020 22:03:45 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 039M3iLh025873;
+        Thu, 9 Apr 2020 22:03:44 GMT
+Received: from ca-ldom147.us.oracle.com (/10.129.68.131)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 09 Apr 2020 15:03:44 -0700
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+To:     axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org
+Subject: [RFC 0/1] io_uring: preserve work->mm since actual work processing may need it
+Date:   Thu,  9 Apr 2020 15:03:36 -0700
+Message-Id: <1586469817-59280-1-git-send-email-bijan.mottahedeh@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9586 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
+ malwarescore=0 spamscore=0 adultscore=0 suspectscore=3 mlxlogscore=860
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004090155
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9586 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 bulkscore=0
+ phishscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
+ suspectscore=3 malwarescore=0 spamscore=0 mlxlogscore=921 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004090155
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 04/08, Jens Axboe wrote:
->
-> So the question remains, we basically have this:
->
-> A			B
-> task_work_run(tsk)
-> 			task_work_add(tsk, io_poll_task_func())
-> process cbs
-> wait_for_completion()
->
-> with the last wait needing to flush the work added on the B side, since
-> that isn't part of the initial list.
+The liburing madvise test crashes the system with a NULL pointer
+dereference because io_madvise() is passing a NULL mm value, previously
+cleared in io_wq_switch_mm(), to do_advise().
 
-I don't understand you, even remotely :/
+I'm not clear why work->mm is being cleared, especially since it seems
+to run contrary to what the comment above it states, but in any case
+preserving the work->mm value gets rid of the crash.
 
-maybe you can write some pseudo-code ?
+--------------------------------------------------------------------------
 
-who does wait_for_completion(), a callback? or this "tsk" after it does
-task_work_run() ? Who does complete() ? How can this wait_for_completion()
-help to flush the work added on the B side? And why do you need to do
-something special to flush that work?
+Running test madvise
+[  165.733724] BUG: kernel NULL pointer dereference, address: 0000000000000138
+[  165.735088] #PF: supervisor read access in kernel mode
+[  165.736027] #PF: error_code(0x0000) - not-present page
+[  165.736971] PGD 8000000fa3c32067 P4D 8000000fa3c32067 PUD fc4e17067 PMD 0
+[  165.738254] Oops: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+[  165.739140] CPU: 18 PID: 30105 Comm: io_wqe_worker-0 Not tainted 5.6.0-next-1
+[  165.740640] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-4
+[  165.742721] RIP: 0010:__lock_acquire.isra.29+0x37/0x6c0
+[  165.743656] Code: 25 40 8e 01 00 53 48 83 ec 18 44 8b 35 e6 2f 61 01 45 85 fc
+[  165.747020] RSP: 0018:ffffc9000b08bba0 EFLAGS: 00010097
+[  165.747989] RAX: 0000000000000000 RBX: 0000000000000130 RCX: 0000000000000001
+[  165.749276] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000130
+[  165.750552] RBP: ffff888fa35224c0 R08: 0000000000000000 R09: 0000000000000000
+[  165.751862] R10: 0000000000000130 R11: 0000000000000000 R12: 0000000000000000
+[  165.753195] R13: 0000000000000001 R14: 0000000000000000 R15: 00007f5c4ecea000
+[  165.754490] FS:  0000000000000000(0000) GS:ffff888ff4600000(0000) knlGS:00000
+[  165.756007] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  165.757054] CR2: 0000000000000138 CR3: 0000000fc709c002 CR4: 0000000000160ee0
+[  165.758339] Call Trace:
+[  165.758805]  ? load_balance+0x1b4/0xd00
+[  165.759525]  lock_acquire+0xf9/0x160
+[  165.760202]  ? do_madvise+0xa59/0xb20
+[  165.760894]  down_read+0x3c/0xe0
+[  165.761479]  ? do_madvise+0xa59/0xb20
+[  165.762188]  do_madvise+0xa59/0xb20
+[  165.762830]  ? kvm_sched_clock_read+0xd/0x20
+[  165.763643]  ? free_debug_processing+0x291/0x2c8
+[  165.764535]  ? do_raw_spin_unlock+0x83/0x90
+[  165.765303]  ? free_debug_processing+0x291/0x2c8
+[  165.766184]  io_issue_sqe+0xafa/0x11e0
+[  165.766867]  ? kvm_sched_clock_read+0xd/0x20
+[  165.767641]  ? __free_pages_ok+0x3db/0x550
+[  165.768390]  ? _raw_spin_unlock+0x1f/0x30
+[  165.769129]  io_wq_submit_work+0x2f/0x80
+[  165.769800]  io_worker_handle_work+0x38a/0x540
+[  165.770650]  io_wqe_worker+0x32a/0x370
+[  165.771342]  kthread+0x118/0x120
+[  165.771948]  ? io_worker_handle_work+0x540/0x540
+[  165.772784]  ? kthread_insert_work_sanity_check+0x60/0x60
+[  165.773766]  ret_from_fork+0x1f/0x30
+[  165.774419] Modules linked in: xfs dm_mod sr_mod sd_mod cdrom crc32c_intel nt
+[  165.777124] CR2: 0000000000000138
+[  165.777733] ---[ end trace 2a1a5b9c912bd387 ]---
 
-Could you also explain the comment above task_work_add() in
-__io_async_wake() ?
+Bijan Mottahedeh (1):
+  io_uring: preserve work->mm since actual work processing may need it
 
+ fs/io-wq.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-	If this fails, then the task is exiting.
-
-OK,
-
-	If that is the case, then the exit check
-
-which exit check?
-
-	will ultimately cancel these work items.
-
-what does this mean? there is nothing to cancel if task_work_add() fails,
-I guess this means something else...
-
-Oleg.
+-- 
+1.8.3.1
 

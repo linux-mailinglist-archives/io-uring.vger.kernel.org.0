@@ -2,149 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7355C1A4105
-	for <lists+io-uring@lfdr.de>; Fri, 10 Apr 2020 06:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4244A1A43ED
+	for <lists+io-uring@lfdr.de>; Fri, 10 Apr 2020 10:47:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbgDJDr1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Apr 2020 23:47:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727464AbgDJDrZ (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 9 Apr 2020 23:47:25 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 628E2212CC;
-        Fri, 10 Apr 2020 03:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586490445;
-        bh=JAM8Anmk5de6aKDdGnzSs1IdSmz8uxl2HUNp4pHbp6s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AbPEMvQMTLVKhohnc6w6d5KpJ8Yb51of2ijRIPniFVJTWXH7jkM5UGm1iamKYX031
-         qJNfn81O1FFKVTX4hgGAoJSKybVvUmcaPNSV3tqnXWTioBa+518w2O6nTg/YMBfvH0
-         +p5bpRdYtCetOmbSajFfrUyr++DsZzlUXji0mx4A=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+538d1957ce178382a394@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 41/68] io-uring: drop completion when removing file
-Date:   Thu,  9 Apr 2020 23:46:06 -0400
-Message-Id: <20200410034634.7731-41-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200410034634.7731-1-sashal@kernel.org>
-References: <20200410034634.7731-1-sashal@kernel.org>
+        id S1725897AbgDJIrR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Apr 2020 04:47:17 -0400
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:46337 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbgDJIrR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Apr 2020 04:47:17 -0400
+Received: by mail-lf1-f54.google.com with SMTP id m19so842854lfq.13
+        for <io-uring@vger.kernel.org>; Fri, 10 Apr 2020 01:47:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SyVc0AUXFgwZFeXx8oqA8wQEu3GELDRcErh8X4dpjUM=;
+        b=dvSvRAdTz8MWF9BViG0MeBAvFMb8iR5ob0OuEZzXnyt9/bCahr0tzDdfle5dZgbH6b
+         Nsck8ZQiTGMpSKKX+wf38/50Gc1mlH+FjDa6u7tiMI0bMIS1TzZTazaHHz5/cw5OIgDo
+         AWZ88WV7vUS9Pag0RIV/kXpgL3bPXn23Wle/cab+NUVk6mqWzQEqSgTPFM+UL7yykqki
+         PLwaDKwGr0vuf0alLFURCS7EhW1h/gL3CqoZbKA9gCwM2FDhq0c5UH4bDhMjo1xs8LDD
+         nf3mq1w3lKBCYVke4KXw+V+/HGHzIRtN0hmSyToQ0Rxz/6eYgKApwU+MsMArU8LM78lx
+         tELg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SyVc0AUXFgwZFeXx8oqA8wQEu3GELDRcErh8X4dpjUM=;
+        b=aKSOGr4zE2+P/Z4Og5XrUjOvLoofFq8mzJRkximCCn6L/SrIXjQ7OHndaWKM1r2pY0
+         fNqjWKFxY5QJJtjqiF4tMnvYh0pAVN3A13iKJiESB3zsHjKQJjsSXZNycF+FaLIRjig5
+         eBYC8YurrcGfkgv3Dh4in+qMkcJIhPAoHIFVK8FQYrFAbND52HDcbfywcs1gds9TKd7A
+         Pg1IdNzKm8tJF3Xi7J5QtqlU0cNqwe/wostjSeKE/CHa2mXd9Np5Tyza1Wp7cs1PMPqf
+         Nyxc4kL0UUlor3hLiUcjEWYbA3Q3F9crE+l6qTQ5Cbue1aGQ7TxKrnCiw4CzLimanuk2
+         2TUg==
+X-Gm-Message-State: AGi0Pua0pQka67XGDjTUECiQ0YhJGNIbMt+u88pJOTd6f1CZUHCrIX+L
+        7y1y5KEjmdYKB+Oiv6hbcrRJsRg2
+X-Google-Smtp-Source: APiQypJtIK03kZ0hLYr7pSmhTw9Rkl2y9jGG/8S9dGiLIWmhXialEDD+QEMFMHsML7XudVpIf/tDaA==
+X-Received: by 2002:a05:6512:1c5:: with SMTP id f5mr2039824lfp.138.1586508433466;
+        Fri, 10 Apr 2020 01:47:13 -0700 (PDT)
+Received: from [172.31.190.83] ([86.57.146.226])
+        by smtp.gmail.com with ESMTPSA id a28sm886231lfr.4.2020.04.10.01.47.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Apr 2020 01:47:13 -0700 (PDT)
+Subject: Re: [RFC 1/1] io_uring: preserve work->mm since actual work
+ processing may need it
+To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org
+References: <1586469817-59280-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1586469817-59280-2-git-send-email-bijan.mottahedeh@oracle.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <f38056cf-b240-7494-d23b-c663867451cf@gmail.com>
+Date:   Fri, 10 Apr 2020 11:47:11 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1586469817-59280-2-git-send-email-bijan.mottahedeh@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Hillf Danton <hdanton@sina.com>
+On 4/10/2020 1:03 AM, Bijan Mottahedeh wrote:
+> Do not clear work->mm since io_madvise() passes it to do_madvise()
+> when the request is actually processed.
 
-[ Upstream commit 4afdb733b1606c6cb86e7833f9335f4870cf7ddd ]
+As I see, this down_read() from the trace is
+down_read(&current->mm->mmap_sem), where current->mm is set by use_mm()
+just several lines above your change. So, what do you mean by passing? I
+don't see do_madvise() __explicitly__ accepting mm as an argument.
 
-A case of task hung was reported by syzbot,
+What tree do you use? Extra patches on top?
 
-INFO: task syz-executor975:9880 blocked for more than 143 seconds.
-      Not tainted 5.6.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor975 D27576  9880   9878 0x80004000
-Call Trace:
- schedule+0xd0/0x2a0 kernel/sched/core.c:4154
- schedule_timeout+0x6db/0xba0 kernel/time/timer.c:1871
- do_wait_for_common kernel/sched/completion.c:83 [inline]
- __wait_for_common kernel/sched/completion.c:104 [inline]
- wait_for_common kernel/sched/completion.c:115 [inline]
- wait_for_completion+0x26a/0x3c0 kernel/sched/completion.c:136
- io_queue_file_removal+0x1af/0x1e0 fs/io_uring.c:5826
- __io_sqe_files_update.isra.0+0x3a1/0xb00 fs/io_uring.c:5867
- io_sqe_files_update fs/io_uring.c:5918 [inline]
- __io_uring_register+0x377/0x2c00 fs/io_uring.c:7131
- __do_sys_io_uring_register fs/io_uring.c:7202 [inline]
- __se_sys_io_uring_register fs/io_uring.c:7184 [inline]
- __x64_sys_io_uring_register+0x192/0x560 fs/io_uring.c:7184
- do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+> ---
+>  fs/io-wq.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index 4023c98..4d20754 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -431,8 +431,6 @@ static void io_wq_switch_mm(struct io_worker *worker, struct io_wq_work *work)
+>  		if (!worker->mm)
+>  			set_fs(USER_DS);
+>  		worker->mm = work->mm;
+> -		/* hang on to this mm */
+> -		work->mm = NULL;
+>  		return;
+>  	}
+>  
+> 
 
-and bisect pointed to 05f3fb3c5397 ("io_uring: avoid ring quiesce for
-fixed file set unregister and update").
-
-It is down to the order that we wait for work done before flushing it
-while nobody is likely going to wake us up.
-
-We can drop that completion on stack as flushing work itself is a sync
-operation we need and no more is left behind it.
-
-To that end, io_file_put::done is re-used for indicating if it can be
-freed in the workqueue worker context.
-
-Reported-and-Inspired-by: syzbot <syzbot+538d1957ce178382a394@syzkaller.appspotmail.com>
-Signed-off-by: Hillf Danton <hdanton@sina.com>
-
-Rename ->done to ->free_pfile
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3affd96a98ba7..bdcffd78fbb93 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5607,7 +5607,7 @@ static void io_ring_file_put(struct io_ring_ctx *ctx, struct file *file)
- struct io_file_put {
- 	struct llist_node llist;
- 	struct file *file;
--	struct completion *done;
-+	bool free_pfile;
- };
- 
- static void io_ring_file_ref_flush(struct fixed_file_data *data)
-@@ -5618,9 +5618,7 @@ static void io_ring_file_ref_flush(struct fixed_file_data *data)
- 	while ((node = llist_del_all(&data->put_llist)) != NULL) {
- 		llist_for_each_entry_safe(pfile, tmp, node, llist) {
- 			io_ring_file_put(data->ctx, pfile->file);
--			if (pfile->done)
--				complete(pfile->done);
--			else
-+			if (pfile->free_pfile)
- 				kfree(pfile);
- 		}
- 	}
-@@ -5820,7 +5818,6 @@ static bool io_queue_file_removal(struct fixed_file_data *data,
- 				  struct file *file)
- {
- 	struct io_file_put *pfile, pfile_stack;
--	DECLARE_COMPLETION_ONSTACK(done);
- 
- 	/*
- 	 * If we fail allocating the struct we need for doing async reomval
-@@ -5829,15 +5826,15 @@ static bool io_queue_file_removal(struct fixed_file_data *data,
- 	pfile = kzalloc(sizeof(*pfile), GFP_KERNEL);
- 	if (!pfile) {
- 		pfile = &pfile_stack;
--		pfile->done = &done;
--	}
-+		pfile->free_pfile = false;
-+	} else
-+		pfile->free_pfile = true;
- 
- 	pfile->file = file;
- 	llist_add(&pfile->llist, &data->put_llist);
- 
- 	if (pfile == &pfile_stack) {
- 		percpu_ref_switch_to_atomic(&data->refs, io_atomic_switch);
--		wait_for_completion(&done);
- 		flush_work(&data->ref_work);
- 		return false;
- 	}
 -- 
-2.20.1
-
+Pavel Begunkov

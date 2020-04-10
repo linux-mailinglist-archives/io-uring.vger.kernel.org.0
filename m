@@ -2,54 +2,143 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E67C11A48ED
-	for <lists+io-uring@lfdr.de>; Fri, 10 Apr 2020 19:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26CC21A498F
+	for <lists+io-uring@lfdr.de>; Fri, 10 Apr 2020 19:52:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgDJRa1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Apr 2020 13:30:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726582AbgDJRa0 (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 10 Apr 2020 13:30:26 -0400
-Subject: Re: [GIT PULL] io_uring fixes for 5.7-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586539827;
-        bh=sYlrR5tKskk3z6owago8EJjKBm6gIfyuH4y7PAxq+Ao=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=nos2edcItdVeB+QYawdZ4mMsVL7l9HBa3p5AvhaMugYTfTlgC/zriYLJLcDmqCiCb
-         rROldR7MvhBsLPd958GMQLZftWXnj5omcqDWv0+QZ9z3zMjJtkhyb0LCfD9cR9wbQ2
-         J0P4eBYeQxTVG8878c0CNzC9WSYpMxyEUgNXrzEE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <9739a06d-728e-1d6b-d511-ad4eefdd19b5@kernel.dk>
-References: <9739a06d-728e-1d6b-d511-ad4eefdd19b5@kernel.dk>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <9739a06d-728e-1d6b-d511-ad4eefdd19b5@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git
- io_uring-5.7-2020-04-09
-X-PR-Tracked-Commit-Id: 85faa7b8346ebef0606d2d0df6d3f8c76acb3654
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 172edde9604941f61d75bb3b4f88068204f8c086
-Message-Id: <158653982704.6431.2505342524339908158.pr-tracker-bot@kernel.org>
-Date:   Fri, 10 Apr 2020 17:30:27 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        id S1726736AbgDJRwl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Apr 2020 13:52:41 -0400
+Received: from mail-wr1-f52.google.com ([209.85.221.52]:43758 "EHLO
+        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbgDJRwl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Apr 2020 13:52:41 -0400
+Received: by mail-wr1-f52.google.com with SMTP id i10so3055171wrv.10
+        for <io-uring@vger.kernel.org>; Fri, 10 Apr 2020 10:52:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6jFeCJnJEofDfmaYKz7gwxivXFPa8zGcRtjuIipf8v0=;
+        b=lu48G3PlFn4uFWgRPdxvvtenEWAjrUqHyfSsWLESOaEi8ToCc1V3lO1bQ1uHL38toE
+         cJ7L3SmFzxPu7BxfPImDKni3la7LNBOTYLNU+PEBPKotML3h1lM6tt+4QLe6gYNkBwb2
+         uRnv4W+aIFFNPcZROwgKS4WHtcsAk4Wcxl3jzeXREGSve+1T5hKOy5mr2mY5H3tgrvzV
+         ckxJZ6K6ogzZTL98BZZCbGMzH5ObV1dAVxl7aux4WtitUgELXrPTLChgs6mGFuyzyd8q
+         3jKbJfqX0V2WmSW/LZjwYAqiPls9Wu/1ruDHxXRod0c1czx1nyUEnjHUkEOPb9Ztt8iU
+         Da8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=6jFeCJnJEofDfmaYKz7gwxivXFPa8zGcRtjuIipf8v0=;
+        b=fYLLxfp8GBGqgsSRoXerKvMUPEy8qALfLEsz8RjrhMp8IXqVWGss7LJRYQBfxrM1hO
+         zeUp7CxIT9ib3d8wMIYuiOpVIL3aItJ0qdvbN53v71yyo6fjdxzlb3j44sxWLJukE2Zc
+         5V3tpIn21Ot8cGFIB3sMsmpVUGIJB040k5rfO6VtyBoZy3uURSbkF2R7j9LGdYnTXGxA
+         NhsD4FCk1tJoSJLqbVO5juQL4LmbtSrl9jcE603/JrGLzLGfiw5XFjh4DEsjoW5cTEyg
+         45DkfiPKJCnjM9FWWWR8gXAusD7STdLqaTmmgyJ138DAOmVMoY5tINfI8cUNlHYtFZ5d
+         RtmQ==
+X-Gm-Message-State: AGi0PubxnFLCZSEfxaxWLDU5/C16KoyeHENQ128iuPgd928J+aLfAu2t
+        TZk6EX0ee8EZ1hwvg/hFnK4CO9oZ
+X-Google-Smtp-Source: APiQypKq0g/iGNP7OID+5quK+Fke1o1LMfZzwoGDk0HrXmqNGo+oWiWJYlua6nM+6Pbr5McP8YFk+Q==
+X-Received: by 2002:adf:f187:: with SMTP id h7mr5711942wro.331.1586541157972;
+        Fri, 10 Apr 2020 10:52:37 -0700 (PDT)
+Received: from [192.168.43.32] ([109.126.129.227])
+        by smtp.gmail.com with ESMTPSA id y7sm4066283wmb.43.2020.04.10.10.52.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Apr 2020 10:52:37 -0700 (PDT)
+To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org
+References: <1586469817-59280-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1586469817-59280-2-git-send-email-bijan.mottahedeh@oracle.com>
+ <f38056cf-b240-7494-d23b-c663867451cf@gmail.com>
+ <465d7f4f-e0a4-9518-7b0c-fe908e317720@oracle.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [RFC 1/1] io_uring: preserve work->mm since actual work
+ processing may need it
+Message-ID: <dbcf7351-aba2-a64e-ecd9-26666b30469f@gmail.com>
+Date:   Fri, 10 Apr 2020 20:51:37 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <465d7f4f-e0a4-9518-7b0c-fe908e317720@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Thu, 9 Apr 2020 18:07:06 -0700:
+On 10/04/2020 19:54, Bijan Mottahedeh wrote:
+> 
+>> As I see, this down_read() from the trace is
+>> down_read(&current->mm->mmap_sem), where current->mm is set by use_mm()
+>> just several lines above your change. So, what do you mean by passing? I
+>> don't see do_madvise() __explicitly__ accepting mm as an argument.
+> 
+> I think the sequence is:
+> 
+> io_madvise()
+> -> do_madvise(NULL, req->work.mm, ma->addr, ma->len, ma->advice)
+>                     ^^^^^^^^^^^^
+>    -> down_read(&mm->mmap_sem)
+> 
+> I added an assert in do_madvise() for a NULL mm value and hit it running the test.
+> 
+>> What tree do you use? Extra patches on top?
+> 
+> I'm using next-20200409 with no patches.
 
-> git://git.kernel.dk/linux-block.git io_uring-5.7-2020-04-09
+I see, it came from 676a179 ("mm: pass task and mm to do_madvise"), which isn't
+in Jen's tree.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/172edde9604941f61d75bb3b4f88068204f8c086
+I don't think your patch will do, because it changes mm refcounting with extra
+mmdrop() in io_req_work_drop_env(). That's assuming it worked well before.
 
-Thank you!
+Better fix then is to make it ```do_madvise(NULL, current->mm, ...)```
+as it actually was at some point in the mentioned patch (v5).
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Pavel Begunkov

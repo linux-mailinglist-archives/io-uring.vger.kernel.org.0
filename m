@@ -2,56 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26CC21A498F
-	for <lists+io-uring@lfdr.de>; Fri, 10 Apr 2020 19:52:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE8B11A499A
+	for <lists+io-uring@lfdr.de>; Fri, 10 Apr 2020 19:58:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbgDJRwl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Apr 2020 13:52:41 -0400
-Received: from mail-wr1-f52.google.com ([209.85.221.52]:43758 "EHLO
-        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgDJRwl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Apr 2020 13:52:41 -0400
-Received: by mail-wr1-f52.google.com with SMTP id i10so3055171wrv.10
-        for <io-uring@vger.kernel.org>; Fri, 10 Apr 2020 10:52:39 -0700 (PDT)
+        id S1726595AbgDJR6b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Apr 2020 13:58:31 -0400
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:35965 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbgDJR6b (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Apr 2020 13:58:31 -0400
+Received: by mail-wm1-f51.google.com with SMTP id a201so3095787wme.1
+        for <io-uring@vger.kernel.org>; Fri, 10 Apr 2020 10:58:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6jFeCJnJEofDfmaYKz7gwxivXFPa8zGcRtjuIipf8v0=;
-        b=lu48G3PlFn4uFWgRPdxvvtenEWAjrUqHyfSsWLESOaEi8ToCc1V3lO1bQ1uHL38toE
-         cJ7L3SmFzxPu7BxfPImDKni3la7LNBOTYLNU+PEBPKotML3h1lM6tt+4QLe6gYNkBwb2
-         uRnv4W+aIFFNPcZROwgKS4WHtcsAk4Wcxl3jzeXREGSve+1T5hKOy5mr2mY5H3tgrvzV
-         ckxJZ6K6ogzZTL98BZZCbGMzH5ObV1dAVxl7aux4WtitUgELXrPTLChgs6mGFuyzyd8q
-         3jKbJfqX0V2WmSW/LZjwYAqiPls9Wu/1ruDHxXRod0c1czx1nyUEnjHUkEOPb9Ztt8iU
-         Da8w==
+        bh=ksGCvb56PVYa/+fsqCJrUwkz7/URen0/Be9VscR4gds=;
+        b=izxW0emx5bD+px1DNYnA0RJA+WFNZ2TqtmNyt34ZyVAJpc8JI61L9MMiXU+AAAe/Xl
+         7l5PY/3VmoCpJS7C0U+XYf0RoNlERcZsqkoMZff2shBrr0lv9cDgiPP3uh0LHqDFHMrC
+         tisFjNpE7M2xK6WDYgP1ixvv7XBUAs563ZXSvQmP5tCOGfthXxiEgRrWGiC0IJdngeCf
+         NYGqlHAaFCDGQG0YhcB8g4Xwa2E+ybODya5AV8CzWxpQi5IV+/68en/OqwsI+Y+r71NV
+         /pj5kCMj4zGOJaJO1hkOjT84mBl149h8+PB1lOROp00IPnjYE/DvdbUL1LnuRNx3XrMF
+         uo2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=6jFeCJnJEofDfmaYKz7gwxivXFPa8zGcRtjuIipf8v0=;
-        b=fYLLxfp8GBGqgsSRoXerKvMUPEy8qALfLEsz8RjrhMp8IXqVWGss7LJRYQBfxrM1hO
-         zeUp7CxIT9ib3d8wMIYuiOpVIL3aItJ0qdvbN53v71yyo6fjdxzlb3j44sxWLJukE2Zc
-         5V3tpIn21Ot8cGFIB3sMsmpVUGIJB040k5rfO6VtyBoZy3uURSbkF2R7j9LGdYnTXGxA
-         NhsD4FCk1tJoSJLqbVO5juQL4LmbtSrl9jcE603/JrGLzLGfiw5XFjh4DEsjoW5cTEyg
-         45DkfiPKJCnjM9FWWWR8gXAusD7STdLqaTmmgyJ138DAOmVMoY5tINfI8cUNlHYtFZ5d
-         RtmQ==
-X-Gm-Message-State: AGi0PubxnFLCZSEfxaxWLDU5/C16KoyeHENQ128iuPgd928J+aLfAu2t
-        TZk6EX0ee8EZ1hwvg/hFnK4CO9oZ
-X-Google-Smtp-Source: APiQypKq0g/iGNP7OID+5quK+Fke1o1LMfZzwoGDk0HrXmqNGo+oWiWJYlua6nM+6Pbr5McP8YFk+Q==
-X-Received: by 2002:adf:f187:: with SMTP id h7mr5711942wro.331.1586541157972;
-        Fri, 10 Apr 2020 10:52:37 -0700 (PDT)
+        bh=ksGCvb56PVYa/+fsqCJrUwkz7/URen0/Be9VscR4gds=;
+        b=mFTjUARhXn/Rf/iMG773Cgrsv182T7Cg8snJKkTy8cxXQWvNCk7vwTWPBzD4D2PTTs
+         R0f/nUrJt4+Fvf5pCqx4YIYziRFk5i59OqAbLlG5QEkAUicd+j1Nsokqsjhu6SbZIULA
+         Jt/uXgBmyabI0LiCk4vw813WNNM88YPYJ5OkDtNjoEEtQs5oBG10qemxEKy7ykUJStZq
+         fihIxRgc/95TBnpQ+NKtxijQLYCJh2fg33UBLf/bcoH8OI5a8nlqZwm/uWFR6ItHI5Kq
+         PuvzkcHjGWhi7rnas9hxWlfEJTSEmPe4pwu1/6b8QCQjbmLTukGQ4p/SdMpM2uzWDveA
+         y2/g==
+X-Gm-Message-State: AGi0PuYCCA6VPBpXIAzaUeE4Auo82TzxyQPna6Jei65wbumXTv+1oSqv
+        Xo6yDHCT9302y0bopIZ++Id1qPAU
+X-Google-Smtp-Source: APiQypL7DFdJ8qHUWq81I+rJ9EZDfceVXtP22TVxg9k2Pwknk8lFi6qA1V4Q9rlTOggK54JOIu22Vw==
+X-Received: by 2002:a1c:4e06:: with SMTP id g6mr6066275wmh.186.1586541509620;
+        Fri, 10 Apr 2020 10:58:29 -0700 (PDT)
 Received: from [192.168.43.32] ([109.126.129.227])
-        by smtp.gmail.com with ESMTPSA id y7sm4066283wmb.43.2020.04.10.10.52.36
+        by smtp.gmail.com with ESMTPSA id a2sm3982273wra.71.2020.04.10.10.58.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Apr 2020 10:52:37 -0700 (PDT)
+        Fri, 10 Apr 2020 10:58:29 -0700 (PDT)
+Subject: Re: [RFC 1/1] io_uring: preserve work->mm since actual work
+ processing may need it
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk
 Cc:     io-uring@vger.kernel.org
 References: <1586469817-59280-1-git-send-email-bijan.mottahedeh@oracle.com>
  <1586469817-59280-2-git-send-email-bijan.mottahedeh@oracle.com>
  <f38056cf-b240-7494-d23b-c663867451cf@gmail.com>
  <465d7f4f-e0a4-9518-7b0c-fe908e317720@oracle.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <dbcf7351-aba2-a64e-ecd9-26666b30469f@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -95,14 +98,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [RFC 1/1] io_uring: preserve work->mm since actual work
- processing may need it
-Message-ID: <dbcf7351-aba2-a64e-ecd9-26666b30469f@gmail.com>
-Date:   Fri, 10 Apr 2020 20:51:37 +0300
+Message-ID: <a36ec903-c740-2bb3-ab97-890757c290ee@gmail.com>
+Date:   Fri, 10 Apr 2020 20:57:29 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <465d7f4f-e0a4-9518-7b0c-fe908e317720@oracle.com>
+In-Reply-To: <dbcf7351-aba2-a64e-ecd9-26666b30469f@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -111,34 +112,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/04/2020 19:54, Bijan Mottahedeh wrote:
+On 10/04/2020 20:51, Pavel Begunkov wrote:
+>> I added an assert in do_madvise() for a NULL mm value and hit it running the test.
+>>
+>>> What tree do you use? Extra patches on top?
+>>
+>> I'm using next-20200409 with no patches.
 > 
->> As I see, this down_read() from the trace is
->> down_read(&current->mm->mmap_sem), where current->mm is set by use_mm()
->> just several lines above your change. So, what do you mean by passing? I
->> don't see do_madvise() __explicitly__ accepting mm as an argument.
-> 
-> I think the sequence is:
-> 
-> io_madvise()
-> -> do_madvise(NULL, req->work.mm, ma->addr, ma->len, ma->advice)
->                     ^^^^^^^^^^^^
->    -> down_read(&mm->mmap_sem)
-> 
-> I added an assert in do_madvise() for a NULL mm value and hit it running the test.
-> 
->> What tree do you use? Extra patches on top?
-> 
-> I'm using next-20200409 with no patches.
+> I see, it came from 676a179 ("mm: pass task and mm to do_madvise"), which isn't
+> in Jen's tree
 
-I see, it came from 676a179 ("mm: pass task and mm to do_madvise"), which isn't
-in Jen's tree.
+oops, sorry for mistyping your name.
 
-I don't think your patch will do, because it changes mm refcounting with extra
-mmdrop() in io_req_work_drop_env(). That's assuming it worked well before.
+> 
+> I don't think your patch will do, because it changes mm refcounting with extra
+> mmdrop() in io_req_work_drop_env(). That's assuming it worked well before.
+> 
+> Better fix then is to make it ```do_madvise(NULL, current->mm, ...)```
+> as it actually was at some point in the mentioned patch (v5). 
 
-Better fix then is to make it ```do_madvise(NULL, current->mm, ...)```
-as it actually was at some point in the mentioned patch (v5).
+Jens, how this should be handled? Through what tree it has to go?
 
 -- 
 Pavel Begunkov

@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C221A5A71
-	for <lists+io-uring@lfdr.de>; Sun, 12 Apr 2020 01:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 947261A5A6B
+	for <lists+io-uring@lfdr.de>; Sun, 12 Apr 2020 01:43:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbgDKXGT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 11 Apr 2020 19:06:19 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43257 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727102AbgDKXGS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Apr 2020 19:06:18 -0400
-Received: by mail-wr1-f65.google.com with SMTP id i10so6262450wrv.10;
-        Sat, 11 Apr 2020 16:06:18 -0700 (PDT)
+        id S1726877AbgDKXnQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 11 Apr 2020 19:43:16 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33019 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728337AbgDKXGV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Apr 2020 19:06:21 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a25so6323148wrd.0;
+        Sat, 11 Apr 2020 16:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=wHzMiPjLqcq82v2DVVRU/GZaBxD/oG/7XqnentZacgc=;
-        b=qU9FVNEAILkEoZaSFYFtbuPJeknRgfMAUBtNkLVMSeCKYUKEl6jrI2z7oFxCo6058H
-         gxeokafXKjJUwmTiN/oHm2ShCIQr730Y6o4dTvvKrlxwBhcoViktbXeUGvPGdnIroZ7Z
-         SHVsfQaZxvu4g08HYLUfDPfK7x3lbJm5PNAB/fyhftxOkE7+EFjWTFrIbZV/KxBLboG/
-         VIBKjNFqjpLzFiO1CCqPoeh/4nsPFIDIag6Z6ohtT5rZHjoOJ/v1iNrpjJuiQ4M1wV8o
-         PF6psMztsaY/P0lqQoIjRjBaxJvIVH7SORPjAfGWMeZcarCeONIshb9GTu7VaDImj0pa
-         Fb3A==
+        bh=UAPPdZgmNKOCKDm/C5wWEA99bGYuEuYYzhgzenpdA08=;
+        b=A35hXGIH6duuun1CFP5LbsmnNUMFYmzusYtQ9MwfWVkHV1gvKiMzjPG2tmnL68VnHO
+         rpj+TiTa777dj9VDrpVE0m7zGKd76kGaP5EBMJK5r2m6LEiVfGTDZmbs6vhujvmMyWbk
+         rfwDN8U5e5wncueBpGX+IgZMfIH5GL33UL0acjdvrNxmH+H6bITfZc9gzDs5GTkwMHXE
+         fqmWDOxR3YOk5wohk3SVFglGy6FkIrTUifDk82oFeGNM0bziNV8obb9EzXBufTWOMP5g
+         ARtR3gQItQYRI+kFLklNaqVcxBwEYQ71sTQvSxaROsOyA+fiFpGR2NL7hj5HOq3XTY82
+         SC8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wHzMiPjLqcq82v2DVVRU/GZaBxD/oG/7XqnentZacgc=;
-        b=tzN3YI4fJrNopgWtrRwrkqqkKGo4KAGN6dY1hyLjmK6/ZkJzviBBCzBAN53uC4d+YL
-         wLHHZrxs/m3igStfV3eC2CHvEYnIArv8bqkoph5bI13ZVo1tDFGNBWuSYDxUAuawXiP2
-         pL3Cto+kT7a4Y3PaCHon3xfid4HNR+nK/JHqwPPh+CucGphEDz9SBfJ3NU2kDbUU75fl
-         qel+NHBllaSTOVcNLibrW+TEeSaKrpu1t9HxueJzotBKW9oFjGAcB8NylCcyJb9dFIvH
-         Tj/afEEMvDlImfVNFbr1I67lxWHxqIV/Vm6sqMnBoLG2vCcjusIY6SP/2OPTu9eEbWtx
-         SYoA==
-X-Gm-Message-State: AGi0PubXHEajeJtVlrkXgyqKx2tqubBOUHpIKMEloY/UAe2Ql33Xlw4x
-        NITU/hccdX76quKmLTvZPDwIe4NV
-X-Google-Smtp-Source: APiQypLtKn3FvivuLshm/Ie+kFAjCfZn5+hI+J6l9fYhoLs3Z8WUD79SwXCOlmnpasAVQmwttaBKVA==
-X-Received: by 2002:adf:d4ce:: with SMTP id w14mr11880885wrk.135.1586646377950;
-        Sat, 11 Apr 2020 16:06:17 -0700 (PDT)
+        bh=UAPPdZgmNKOCKDm/C5wWEA99bGYuEuYYzhgzenpdA08=;
+        b=ho3jAcJJ/BVMtVkecT0ozxlNvj2U1HI+f6lif0DT0ORZlR0DxrDlv5NSeqiCw8rJH2
+         0ctB6Dkrw0HuDDRMk/WdQC3uZAha4obpYrzBFcFEhqUzSitZSI2nlQaIOF4BXSsJZx/w
+         mu0HNH0M4a2wbZg3t8ws2JB2tD5tyw8eFXzg8wShooMAPtXiPbetzUkve98MrvNK50iC
+         lU9YFsUvYq44OmYaoOYm3jOuYUhdLXKwQY1KPt5TI1y7cQIAlaJfkSXAmqG1XdP5yek3
+         U91VeKWc3xPqNvDJsUbfl0+abH0jTqZ1dfJy0bmdWMLwhPc3Ot5wrBz+Jtl/a+qMCLoR
+         pUSA==
+X-Gm-Message-State: AGi0PuZgIAvcPusenJlewel02GjVgipzhtfmDxarXzDQWF09h9dJT9+c
+        mqiLGZQbCAQ8eL1L8OOr4D0=
+X-Google-Smtp-Source: APiQypIpl6R1I8xZA5yVhJgKZ8/GQTRobKXLBwELJmnjh3MRl2CZa4juQNgDAILFYYF7/V1v8futzg==
+X-Received: by 2002:adf:fdc1:: with SMTP id i1mr1666174wrs.158.1586646379981;
+        Sat, 11 Apr 2020 16:06:19 -0700 (PDT)
 Received: from localhost.localdomain ([109.126.129.227])
-        by smtp.gmail.com with ESMTPSA id k133sm8992741wma.0.2020.04.11.16.06.16
+        by smtp.gmail.com with ESMTPSA id k133sm8992741wma.0.2020.04.11.16.06.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Apr 2020 16:06:17 -0700 (PDT)
+        Sat, 11 Apr 2020 16:06:19 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] io_uring: track mm through current->mm
-Date:   Sun, 12 Apr 2020 02:05:02 +0300
-Message-Id: <78ce4523e0e4b3cd46e081c124fa9b6307303183.1586645520.git.asml.silence@gmail.com>
+Subject: [PATCH 3/5] io_uring: DRY early submission req fail code
+Date:   Sun, 12 Apr 2020 02:05:03 +0300
+Message-Id: <4eadf5c0ce4adc93426d84d94e88d12f0f89d60a.1586645520.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1586645520.git.asml.silence@gmail.com>
 References: <cover.1586645520.git.asml.silence@gmail.com>
@@ -60,114 +60,129 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-As a preparation for extracting request init bits, remove self-coded mm
-tracking from io_submit_sqes(), but rely on current->mm. It's more
-convenient, than passing this piece of state in other functions.
+Having only one place for cleaning up a request after a link assembly/
+submission failure will play handy in the future. At least it allows
+to remove duplicated cleanup sequence.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 37 ++++++++++++++++---------------------
- 1 file changed, 16 insertions(+), 21 deletions(-)
+ fs/io_uring.c | 50 +++++++++++++++++++-------------------------------
+ 1 file changed, 19 insertions(+), 31 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 343899915465..27868ec328b8 100644
+index 27868ec328b8..90b806e4022a 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5810,8 +5810,7 @@ static void io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- }
+@@ -5606,7 +5606,7 @@ static inline void io_queue_link_head(struct io_kiocb *req)
+ 				IOSQE_IO_HARDLINK | IOSQE_ASYNC | \
+ 				IOSQE_BUFFER_SELECT)
  
- static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
--			  struct file *ring_file, int ring_fd,
--			  struct mm_struct **mm, bool async)
-+			  struct file *ring_file, int ring_fd, bool async)
+-static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
++static int io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 			  struct io_submit_state *state, struct io_kiocb **link)
  {
- 	struct io_submit_state state, *statep = NULL;
- 	struct io_kiocb *link = NULL;
-@@ -5868,13 +5867,12 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 			break;
- 		}
+ 	struct io_ring_ctx *ctx = req->ctx;
+@@ -5616,24 +5616,18 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	sqe_flags = READ_ONCE(sqe->flags);
  
--		if (io_op_defs[req->opcode].needs_mm && !*mm) {
-+		if (io_op_defs[req->opcode].needs_mm && !current->mm) {
- 			if (unlikely(!mmget_not_zero(ctx->sqo_mm))) {
- 				err = -EFAULT;
- 				goto fail_req;
- 			}
- 			use_mm(ctx->sqo_mm);
--			*mm = ctx->sqo_mm;
- 		}
- 
- 		req->needs_fixed_file = async;
-@@ -5900,10 +5898,19 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 	return submitted;
- }
- 
-+static inline void io_sq_thread_drop_mm(struct io_ring_ctx *ctx)
-+{
-+	struct mm_struct *mm = current->mm;
-+
-+	if (mm) {
-+		unuse_mm(mm);
-+		mmput(mm);
-+	}
-+}
-+
- static int io_sq_thread(void *data)
- {
- 	struct io_ring_ctx *ctx = data;
--	struct mm_struct *cur_mm = NULL;
- 	const struct cred *old_cred;
- 	mm_segment_t old_fs;
- 	DEFINE_WAIT(wait);
-@@ -5944,11 +5951,7 @@ static int io_sq_thread(void *data)
- 			 * adding ourselves to the waitqueue, as the unuse/drop
- 			 * may sleep.
- 			 */
--			if (cur_mm) {
--				unuse_mm(cur_mm);
--				mmput(cur_mm);
--				cur_mm = NULL;
--			}
-+			io_sq_thread_drop_mm(ctx);
- 
- 			/*
- 			 * We're polling. If we're within the defined idle
-@@ -6012,7 +6015,7 @@ static int io_sq_thread(void *data)
- 		}
- 
- 		mutex_lock(&ctx->uring_lock);
--		ret = io_submit_sqes(ctx, to_submit, NULL, -1, &cur_mm, true);
-+		ret = io_submit_sqes(ctx, to_submit, NULL, -1, true);
- 		mutex_unlock(&ctx->uring_lock);
- 		timeout = jiffies + ctx->sq_thread_idle;
- 	}
-@@ -6021,10 +6024,7 @@ static int io_sq_thread(void *data)
- 		task_work_run();
- 
- 	set_fs(old_fs);
--	if (cur_mm) {
--		unuse_mm(cur_mm);
--		mmput(cur_mm);
+ 	/* enforce forwards compatibility on users */
+-	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS)) {
+-		ret = -EINVAL;
+-		goto err_req;
 -	}
-+	io_sq_thread_drop_mm(ctx);
- 	revert_creds(old_cred);
++	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS))
++		return -EINVAL;
  
- 	kthread_parkme();
-@@ -7493,13 +7493,8 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 			wake_up(&ctx->sqo_wait);
- 		submitted = to_submit;
- 	} else if (to_submit) {
--		struct mm_struct *cur_mm;
--
- 		mutex_lock(&ctx->uring_lock);
--		/* already have mm, so io_submit_sqes() won't try to grab it */
--		cur_mm = ctx->sqo_mm;
--		submitted = io_submit_sqes(ctx, to_submit, f.file, fd,
--					   &cur_mm, false);
-+		submitted = io_submit_sqes(ctx, to_submit, f.file, fd, false);
- 		mutex_unlock(&ctx->uring_lock);
+ 	if ((sqe_flags & IOSQE_BUFFER_SELECT) &&
+-	    !io_op_defs[req->opcode].buffer_select) {
+-		ret = -EOPNOTSUPP;
+-		goto err_req;
+-	}
++	    !io_op_defs[req->opcode].buffer_select)
++		return -EOPNOTSUPP;
  
- 		if (submitted != to_submit)
+ 	id = READ_ONCE(sqe->personality);
+ 	if (id) {
+ 		req->work.creds = idr_find(&ctx->personality_idr, id);
+-		if (unlikely(!req->work.creds)) {
+-			ret = -EINVAL;
+-			goto err_req;
+-		}
++		if (unlikely(!req->work.creds))
++			return -EINVAL;
+ 		get_cred(req->work.creds);
+ 	}
+ 
+@@ -5644,12 +5638,8 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 
+ 	fd = READ_ONCE(sqe->fd);
+ 	ret = io_req_set_file(state, req, fd, sqe_flags);
+-	if (unlikely(ret)) {
+-err_req:
+-		io_cqring_add_event(req, ret);
+-		io_double_put_req(req);
+-		return false;
+-	}
++	if (unlikely(ret))
++		return ret;
+ 
+ 	/*
+ 	 * If we already have a head request, queue this one for async
+@@ -5672,16 +5662,14 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 			head->flags |= REQ_F_IO_DRAIN;
+ 			ctx->drain_next = 1;
+ 		}
+-		if (io_alloc_async_ctx(req)) {
+-			ret = -EAGAIN;
+-			goto err_req;
+-		}
++		if (io_alloc_async_ctx(req))
++			return -EAGAIN;
+ 
+ 		ret = io_req_defer_prep(req, sqe);
+ 		if (ret) {
+ 			/* fail even hard links since we don't submit */
+ 			head->flags |= REQ_F_FAIL_LINK;
+-			goto err_req;
++			return ret;
+ 		}
+ 		trace_io_uring_link(ctx, req, head);
+ 		list_add_tail(&req->link_list, &head->link_list);
+@@ -5700,10 +5688,9 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 			req->flags |= REQ_F_LINK;
+ 			INIT_LIST_HEAD(&req->link_list);
+ 
+-			if (io_alloc_async_ctx(req)) {
+-				ret = -EAGAIN;
+-				goto err_req;
+-			}
++			if (io_alloc_async_ctx(req))
++				return -EAGAIN;
++
+ 			ret = io_req_defer_prep(req, sqe);
+ 			if (ret)
+ 				req->flags |= REQ_F_FAIL_LINK;
+@@ -5713,7 +5700,7 @@ static bool io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 		}
+ 	}
+ 
+-	return true;
++	return 0;
+ }
+ 
+ /*
+@@ -5878,8 +5865,9 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+ 		req->needs_fixed_file = async;
+ 		trace_io_uring_submit_sqe(ctx, req->opcode, req->user_data,
+ 						true, async);
+-		if (!io_submit_sqe(req, sqe, statep, &link))
+-			break;
++		err = io_submit_sqe(req, sqe, statep, &link);
++		if (err)
++			goto fail_req;
+ 	}
+ 
+ 	if (unlikely(submitted != nr)) {
 -- 
 2.24.0
 

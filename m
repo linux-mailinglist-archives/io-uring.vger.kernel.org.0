@@ -2,110 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 206771A6B57
-	for <lists+io-uring@lfdr.de>; Mon, 13 Apr 2020 19:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 771E31A6B58
+	for <lists+io-uring@lfdr.de>; Mon, 13 Apr 2020 19:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbgDMR0R (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Apr 2020 13:26:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59970 "EHLO
+        id S1732780AbgDMR0n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Apr 2020 13:26:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732778AbgDMR0Q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Apr 2020 13:26:16 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26082C0A3BDC
-        for <io-uring@vger.kernel.org>; Mon, 13 Apr 2020 10:26:16 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id r20so3123046pfh.9
-        for <io-uring@vger.kernel.org>; Mon, 13 Apr 2020 10:26:16 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1732778AbgDMR0m (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Apr 2020 13:26:42 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95E7FC0A3BDC
+        for <io-uring@vger.kernel.org>; Mon, 13 Apr 2020 10:26:42 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id y12so3321680pll.2
+        for <io-uring@vger.kernel.org>; Mon, 13 Apr 2020 10:26:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yJZkJXm0tWRLblPjTPd3oXwFey6mSjKyBT0xHMGidc4=;
-        b=aP55ugDgmQB8OrwTkwVZWgXO/OodFl4c7CWcxAxMwnZF89c9CrTp75Vo8RESK0+twe
-         NiHpcrjYmMKkKIeUDf/C+568mZiObVlVh6K8Kc3UhxT8uENoQXCVZQosKkUtoQ816qAr
-         m93bykEjiiun8s1tN5sAZ00y4NBt0Bq1o95ZFrE4/qnSEfw9YiLTLdqaZL7iJOlLrU41
-         twkY8TO6LtYet9pwYN9Ouh/dSniFwJh5A8vFH9FNB08IkF6vFgf9cSS2oUa7tKSiDdJJ
-         PJc1nmlrh3yi5zAr/eOIDG8KPxa7TgfANOyLwBPcXtLcvMvgC9oQoQZ6NYfnU6yg5+5o
-         +Frg==
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=onQLPHqKfBqwY5c0/DwuP7FcKzuXmwJhJ1O6LA9f3bM=;
+        b=mGnkkKOS4b5DQECbU6hmNYWkb3DRmDB/3dZr/6HWLOn04YPZNeykGUpW9GU+X3iM68
+         OcMcqR507gVUKCiFY9a/I4ptQIYkb06VIna3dWJY0atBXaeKVE+LSOCB8MfeLQz7Rg5h
+         ZNcXQv8hyJ8fqXLU4HIyxICFnq30vQlJ5JsIa6+Npb205HuMArtLj8Xzh4eWMfKZbWO9
+         mTlsH4IpSMOcLKQB1KAKKJhQ8auM3ypDKU9HHcsJTRATwHIRmmyVL6/GBgxE5/qIC0MG
+         GnJC17fzIUaK7IPkfCeoO906Bfms2qCSA0GHF+sOIFQoqCv9MvpjwAKpoeZvMLPSDJgl
+         3V1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yJZkJXm0tWRLblPjTPd3oXwFey6mSjKyBT0xHMGidc4=;
-        b=fHoxucbMmCfvAOpVvDgzcf2+z726mrjQ7rPldOHkHBa4BSoGjSyLH7xYVl0pCD/U5V
-         1QD5H4A0qcmqbo0Br43cIk2ZCpeIOJ9qbJLqS3v6zqpUx9fpgsAu3hxtZFma4h/4uQwU
-         MZm2EfgTXJ8QSP7gx+C2STC8ZeyzMgO3Txnuvd6RiD7amjlr4kL4QffpCv/4OGjsdvvU
-         kKrlrVfAJtJ09HjvYhzCUvGirX/MLh1iyxvtURfBTJQXboytjMqm9467xYHB0juujUmX
-         UUaIhStV8ag7ESXwha3zzUggblDDM2DLTU1+Ghn+Lm16xyf8r9k3cwwaONiWNKYwskDE
-         zEeg==
-X-Gm-Message-State: AGi0PuZ5Yw065yO2A+j43uEcU5aDxKhGAICEtKFukY5NxWfF68jh3iud
-        0QjSVo6bs//rYWuByQlYVm/n6EK0mIBDaQ==
-X-Google-Smtp-Source: APiQypL4hO9m+6Ba6b/efLRCN36lMBr6gYgv6nbuBcUXSPtdeIIGcmUtbjNfH2sl0nXaGC3oSGoVfg==
-X-Received: by 2002:aa7:9146:: with SMTP id 6mr19469826pfi.201.1586798775326;
-        Mon, 13 Apr 2020 10:26:15 -0700 (PDT)
-Received: from x1.localdomain ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id q2sm2228834pfl.174.2020.04.13.10.26.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2020 10:26:14 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=onQLPHqKfBqwY5c0/DwuP7FcKzuXmwJhJ1O6LA9f3bM=;
+        b=ff9Hn1Rwb23d06hsPMnU1VUgcuTUJNbv5TYa9A0DujbV6Wmnn6alYXfeg8+0GZuky1
+         OojHzpoP0A+HmZtRIh1VQgy37L6FHr/jU0mThWtAnadQLxRApmg1g4yEOiXsCLV9m+Ng
+         fblPH/EQb5fuayx9nGfJA+4axVgYlMedrKf9uSBs9L0prtvd74LSdsY2ABFvx2qmO8RA
+         aQf6a7Fin2KDWRpt8jz/zZnqpBeoOqEb6lKNMEiLhdkukmL7tmPCNRrhN1d137mdPPwr
+         yKorfl7nlzx77HbN1U29rkH9+cuE8wEDeatISYqQ27WtNxsBIQTZTi7coi0ahVO0/nkb
+         b8ig==
+X-Gm-Message-State: AGi0PuYOTjcdUgooij57/jzbuC1zCzxx05VJmeubApIgUnVZkGW45hTF
+        JGmFnyEzZHldLc+AcP99m5rNq8wTm8GqHQ==
+X-Google-Smtp-Source: APiQypKLXrYy8islFSHmaqXEg/2jxJKyZHzmXrb3LGBIRmgfNhz1uBblDmkMUT8JkiVyNF+T+DgRmQ==
+X-Received: by 2002:a17:90b:384c:: with SMTP id nl12mr22275602pjb.87.1586798800878;
+        Mon, 13 Apr 2020 10:26:40 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id e7sm9266413pfj.97.2020.04.13.10.26.39
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Apr 2020 10:26:40 -0700 (PDT)
+Subject: Re: [PATCHSET 0/2] io_uring async poll fixes
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/2] io_uring: io_async_task_func() should check and honor cancelation
-Date:   Mon, 13 Apr 2020 11:26:06 -0600
-Message-Id: <20200413172606.8836-3-axboe@kernel.dk>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200413172606.8836-1-axboe@kernel.dk>
-References: <20200413172606.8836-1-axboe@kernel.dk>
+References: <20200413172158.8126-1-axboe@kernel.dk>
+Message-ID: <cbd57dda-a32d-b5e3-c123-92233cbef2ca@kernel.dk>
+Date:   Mon, 13 Apr 2020 11:26:38 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200413172158.8126-1-axboe@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If the request has been marked as canceled, don't try and issue it.
-Instead just fill a canceled event and finish the request.
+On 4/13/20 11:21 AM, Jens Axboe wrote:
+> Just two minor fixes here that should go into 5.7:
+> 
+> - Honor async request cancelation instead of trying to re-issue when
+>   it triggers
+> 
+> - Apply same re-wait approach for async poll that we do for regular poll,
+>   in case we get spurious wakeups.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Please see v2 instead:
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7b41f6231955..aac54772e12e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4181,6 +4181,7 @@ static void io_async_task_func(struct callback_head *cb)
- 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
- 	struct async_poll *apoll = req->apoll;
- 	struct io_ring_ctx *ctx = req->ctx;
-+	bool canceled;
- 
- 	trace_io_uring_task_run(req->ctx, req->opcode, req->user_data);
- 
-@@ -4192,8 +4193,22 @@ static void io_async_task_func(struct callback_head *cb)
- 	if (hash_hashed(&req->hash_node))
- 		hash_del(&req->hash_node);
- 
-+	canceled = READ_ONCE(apoll->poll.canceled);
-+	if (canceled) {
-+		io_cqring_fill_event(req, -ECANCELED);
-+		io_commit_cqring(ctx);
-+	}
-+
- 	spin_unlock_irq(&ctx->completion_lock);
- 
-+	if (canceled) {
-+		kfree(apoll);
-+		io_cqring_ev_posted(ctx);
-+		req_set_fail_links(req);
-+		io_put_req(req);
-+		return;
-+	}
-+
- 	/* restore ->work in case we need to retry again */
- 	memcpy(&req->work, &apoll->work, sizeof(req->work));
- 
+https://lore.kernel.org/io-uring/20200413172606.8836-1-axboe@kernel.dk/T/#u
+
 -- 
-2.26.0
+Jens Axboe
 

@@ -2,82 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3742D1A7467
-	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2020 09:13:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50CD91A7BD3
+	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2020 15:09:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbgDNHN2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Apr 2020 03:13:28 -0400
-Received: from mga03.intel.com ([134.134.136.65]:60361 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728832AbgDNHN2 (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 14 Apr 2020 03:13:28 -0400
-IronPort-SDR: Bmi7r8AIOfEmVbCDegF0//TBTZ2W5wFR8I/kst/X8cYiCc4vCg/nCKmFwfbxylI0YhpRuTdTBt
- MXvcce6zRXIQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 00:13:27 -0700
-IronPort-SDR: 3mzTZiupNXsl0k5QcLc9AHNCJBc5G9UIIEYO8qCIUclLUzsoEbBJJHUqxdgJkxiNvCr7gq5Idq
- YjsPeTwaKt8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,381,1580803200"; 
-   d="scan'208";a="426968243"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
-  by orsmga005.jf.intel.com with ESMTP; 14 Apr 2020 00:13:22 -0700
-Date:   Tue, 14 Apr 2020 03:03:44 -0400
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Felipe Balbi <balbi@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        intel-gvt-dev@lists.freedesktop.org,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, io-uring@vger.kernel.org,
-        linux-mm@kvack.org, Zhenyu Wang <zhenyuw@linux.intel.com>,
-        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Zhi Wang <zhi.a.wang@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 2/6] i915/gvt/kvm: a NULL ->mm does not mean a thread is
- a kthread
-Message-ID: <20200414070344.GF10586@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20200404094101.672954-1-hch@lst.de>
- <20200404094101.672954-3-hch@lst.de>
- <20200407030845.GA10586@joy-OptiPlex-7040>
- <20200413132730.GB14455@lst.de>
- <20200414000410.GE10586@joy-OptiPlex-7040>
- <20200414070013.GA23680@lst.de>
+        id S2502589AbgDNNJA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Apr 2020 09:09:00 -0400
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:56112 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730314AbgDNNI6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Apr 2020 09:08:58 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04427;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0TvX7Ca-_1586869733;
+Received: from 30.5.112.143(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0TvX7Ca-_1586869733)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 14 Apr 2020 21:08:53 +0800
+To:     io-uring@vger.kernel.org, "axboe@kernel.dk" <axboe@kernel.dk>,
+        joseph qi <joseph.qi@linux.alibaba.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: Should io_sq_thread belongs to specific cpu, not io_uring instance
+Message-ID: <16ed5a58-e011-97f3-0ed7-e57fa37cede1@linux.alibaba.com>
+Date:   Tue, 14 Apr 2020 21:08:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200414070013.GA23680@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 09:00:13AM +0200, Christoph Hellwig wrote:
-> On Mon, Apr 13, 2020 at 08:04:10PM -0400, Yan Zhao wrote:
-> > > I can't think of another way for a kernel thread to have a mm indeed.
-> > for example, before calling to vfio_dma_rw(), a kernel thread has already
-> > called use_mm(), then its current->mm is not null, and it has flag
-> > PF_KTHREAD.
-> > in this case, we just want to allow the copy_to_user() directly if
-> > current->mm == mm, rather than call another use_mm() again.
-> > 
-> > do you think it makes sense?
-> 
-> I mean no other way than using use_mm.  That being said nesting
-> potentional use_mm callers sounds like a rather bad idea, and we
-> should avoid that.
-yes, agree.
-I was explaining why we just use "current->mm == NULL"
-(not "current->flag & PF_KTHREAD") as a criteria to call use_mm()
-in vfio_dma_rw(), which you might ask us when you take that part into your
-series. :)
+hi£¬
+
+Currently we can create multiple io_uring instances which all have SQPOLL
+enabled and make them run in the same cpu core by setting sq_thread_cpu
+argument, but I think this behaviour maybe not efficient. Say we create two
+io_uring instances, which both have sq_thread_cpu set to 1 and sq_thread_idle
+set to 1000 milliseconds, there maybe such scene below:
+   For example, in 0-1s time interval, io_uring instance0 has neither sqes
+nor cqes, so it just busy waits for new sqes in 0-1s time interval, but
+io_uring instance1 have work to do, submitting sqes or polling issued requests,
+then io_uring instance0 will impact io_uring instance1. Of cource io_uring
+instance1 may impact iouring instance0 as well, which is not efficient. I think
+the complete disorder of multiple io_uring instances running in same cpu core is
+not good.
+
+How about we create one io_sq_thread for user specified cpu for multiple io_uring
+instances which try to share this cpu core, that means this io_sq_thread does not
+belong to specific io_uring instance, it belongs to specific cpu and will
+handle requests from mulpile io_uring instance, see simple running flow:
+   1, for cpu 1, now there are no io_uring instances bind to it, so do not create io_sq_thread
+   2, io_uring instance1 is created and bind to cpu 1, then create cpu1's io_sq_thread
+   3, io_sq_thread will handle io_uring instance1's requests
+   4, io_uring instance2 is created and bind to cpu 1, since there are already an
+      io_sq_thread for cpu 1, will not create an io_sq_thread for cpu1.
+   5. now io_sq_thread in cpu1 will handle both io_uring instances' requests.
+
+What do you think about it? Thanks.
+
+Regards,
+Xiaoguang Wang

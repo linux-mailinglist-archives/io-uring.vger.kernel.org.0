@@ -2,149 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E6A61A703A
-	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2020 02:44:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7C31A70DC
+	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2020 04:14:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390556AbgDNAoy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Apr 2020 20:44:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50148 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390520AbgDNAoy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Apr 2020 20:44:54 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9653C0A3BDC
-        for <io-uring@vger.kernel.org>; Mon, 13 Apr 2020 17:44:52 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id n24so1298993plp.13
-        for <io-uring@vger.kernel.org>; Mon, 13 Apr 2020 17:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3oXC9kXqXsZPBSpX65mdWC7irYbI7v4NdwyrsnVkhsE=;
-        b=WbTOxIojCKQQaxNixKOfY13BzNTKrPE0AGfkGZvIFuZfuAi87AtnOTBlkio8soc1Nm
-         q38/ggPF/VhZ579ViSugRnBWGb5f8qRi0JOhE82vkeNdhvCjZPysMYJhjlVOMILIVslt
-         hSLCTDvhIDhEv5+1uczmRRtHWUED3UPRN1jom73MwQIbhd190Ac7aYTg2luvT9urqLoE
-         8J/D4UqYxihR/McZIqQJDMhW/FNBKlUCbV9XJROcx8AEmDwbJUiaoVrZiIzKVjOajkt6
-         G0hSEkpsyUNSAZ1LJXXWvu0hFasNpsrPiw34ds/+ZmP/uyV7yvy2aJl09z3AgBqViQ7z
-         TN8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3oXC9kXqXsZPBSpX65mdWC7irYbI7v4NdwyrsnVkhsE=;
-        b=ZubQDuxbk0iwZToskIZo2PT0er+p1BejNziNOMO96gavpLdDsMqkiK7ISVzpykOxyK
-         p9/9RkjlAo1GYC/U4ugMljAp5iP3zbg13zsnDCxl5Mtug1Q0rhcWI22CyFQed/oVThC1
-         0mEIDAqt2/UGe84zulBHh89WPl4SF+R22S5R+Qe7N09+olQ5MjNctfTrJbdER7Ddji9z
-         RMKR5MkK0HPkLet/FLVF8E8Bq0LRmI2MirzXkbq5sfkKlEsUIhRj6z5Nll74L0hvz+R9
-         ZO9IO+U6tInV7QOs/lk3pc08tyagFujjHLaZl/73x4p3AB+5iwpItQaOE8Mm8hNmHtXO
-         CMbg==
-X-Gm-Message-State: AGi0PuYaAqxsaOxtiixew7NuWgR/Yb4Ra8ZLo8/R/B0W665DuRDmiNpQ
-        V6RolU2Q8DyApcLrxERWWDwaJQ==
-X-Google-Smtp-Source: APiQypJtURuGW/leJ1HivG8bV7vBcgI5tQpiinqszmAZxHjfOgvHVEErFZaf5Upt3i5oLMHu6cCGmA==
-X-Received: by 2002:a17:902:a713:: with SMTP id w19mr8761219plq.197.1586825091939;
-        Mon, 13 Apr 2020 17:44:51 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id i16sm9652482pfq.165.2020.04.13.17.44.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Apr 2020 17:44:50 -0700 (PDT)
-Subject: Re: Odd timeout behavior
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Hrvoje Zeba <zeba.hrvoje@gmail.com>
-Cc:     io-uring@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>
-References: <CAEsUgYgTSVydbQdjVn1QuqFSHZp_JfDZxRk7KwWVSZikxY+hYg@mail.gmail.com>
- <e146dd8a-f6b6-a101-a40e-ece22b7fe320@kernel.dk>
- <fe383a44-bcfb-d6fa-2afe-983b456e7112@gmail.com>
- <CAEsUgYiwyjpbaUbHwbx9pHD6x5DBpDop_Z4w9_QXKDd=FdjDjw@mail.gmail.com>
- <b551c2e1-b39a-efbf-24f1-4115275b7db2@gmail.com>
- <0df2f436-0968-c708-84e2-da0c3daa265c@kernel.dk>
- <6835cec5-c8a5-dc49-c4e3-0df276c8537a@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c3055911-599f-0776-d0f8-6f8872df75e2@kernel.dk>
-Date:   Mon, 13 Apr 2020 18:44:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S2404008AbgDNCO4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Apr 2020 22:14:56 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:55575 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403967AbgDNCO4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Apr 2020 22:14:56 -0400
+X-Originating-IP: 50.39.163.217
+Received: from localhost (50-39-163-217.bvtn.or.frontiernet.net [50.39.163.217])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 495A020008;
+        Tue, 14 Apr 2020 02:14:48 +0000 (UTC)
+Date:   Mon, 13 Apr 2020 19:14:46 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: [PATCH v4 0/3] Support userspace-selected fds
+Message-ID: <cover.1586830316.git.josh@joshtriplett.org>
 MIME-Version: 1.0
-In-Reply-To: <6835cec5-c8a5-dc49-c4e3-0df276c8537a@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/13/20 1:09 PM, Pavel Begunkov wrote:
-> On 13/04/2020 17:16, Jens Axboe wrote:
->> On 4/13/20 2:21 AM, Pavel Begunkov wrote:
->>> On 4/12/2020 6:14 PM, Hrvoje Zeba wrote:
->>>> On Sun, Apr 12, 2020 at 5:15 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>>>
->>>>> On 4/12/2020 5:07 AM, Jens Axboe wrote:
->>>>>> On 4/11/20 5:00 PM, Hrvoje Zeba wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> I've been looking at timeouts and found a case I can't wrap my head around.
->>>>>>>
->>>>>>> Basically, If you submit OPs in a certain order, timeout fires before
->>>>>>> time elapses where I wouldn't expect it to. The order is as follows:
->>>>>>>
->>>>>>> poll(listen_socket, POLLIN) <- this never fires
->>>>>>> nop(async)
->>>>>>> timeout(1s, count=X)
->>>>>>>
->>>>>>> If you set X to anything but 0xffffffff/(unsigned)-1, the timeout does
->>>>>>> not fire (at least not immediately). This is expected apart from maybe
->>>>>>> setting X=1 which would potentially allow the timeout to fire if nop
->>>>>>> executes after the timeout is setup.
->>>>>>>
->>>>>>> If you set it to 0xffffffff, it will always fire (at least on my
->>>>>>> machine). Test program I'm using is attached.
->>>>>>>
->>>>>>> The funny thing is that, if you remove the poll, timeout will not fire.
->>>>>>>
->>>>>>> I'm using Linus' tree (v5.6-12604-gab6f762f0f53).
->>>>>>>
->>>>>>> Could anybody shine a bit of light here?
->>>>>>
->>>>>> Thinking about this, I think the mistake here is using the SQ side for
->>>>>> the timeouts. Let's say you queue up N requests that are waiting, like
->>>>>> the poll. Then you arm a timeout, it'll now be at N + count before it
->>>>>> fires. We really should be using the CQ side for the timeouts.
->>>>>
->>>>> As I get it, the problem is that timeout(off=0xffffffff, 1s) fires
->>>>> __immediately__ (i.e. not waiting 1s).
->>>>
->>>> Correct.
->>>>
->>>>> And still, the described behaviour is out of the definition. It's sounds
->>>>> like int overflow. Ok, I'll debug it, rest assured. I already see a
->>>>> couple of flaws anyway.
->>>>
->>>> For this particular case,
->>>>
->>>> req->sequence = ctx->cached_sq_head + count - 1;
->>>>
->>>> ends up being 1 which triggers in __req_need_defer() for nop sq.
->>>
->>> Right, that's it. The timeout's seq counter wraps around and triggers on
->>> previously submitted but still inflight requests.
->>>
->>> Jens, could you remind, do we limit number of inflight requests? We
->>> discussed it before, but can't find the thread. If we don't, vile stuff
->>> can happen with sequences.
->>
->> We don't.
-> 
-> I was too quick to judge, there won't be anything too bad, and only if we throw
-> 2^32 requests (~1TB).
-> 
-> For the issue at hand, how about limiting timeouts' sqe->off by 2^31? This will
-> solve the issue for now, and I can't imagine anyone waiting for over one billion
-> requests to pass.
+5.8 material, not intended for 5.7.
 
-I'm fine with that, but how do we handle someone asking for > INT_MAX?
+Inspired by the X protocol's handling of XIDs, allow userspace to select
+the file descriptor opened by a call like openat2, so that it can use
+the resulting file descriptor in subsequent system calls without waiting
+for the response to the initial openat2 syscall.
+
+The first patch is independent of the other two; it allows reserving
+file descriptors below a certain minimum for userspace-selected fd
+allocation only.
+
+The second patch implements userspace-selected fd allocation for
+openat2, introducing a new O_SPECIFIC_FD flag and an fd field in struct
+open_how. In io_uring, this allows sequences like openat2/read/close
+without waiting for the openat2 to complete. Multiple such sequences can
+overlap, as long as each uses a distinct file descriptor.
+
+The third patch adds userspace-selected fd allocation to pipe2 as well.
+I did this partly as a demonstration of how simple it is to wire up
+O_SPECIFIC_FD support for any fd-allocating system call, and partly in
+the hopes that this may make it more useful to wire up io_uring support
+for pipe2 in the future.
+
+If this gets accepted, I'm happy to also write corresponding manpage
+patches.
+
+v4:
+
+Changed fd field to __u32.
+Expanded and consolidated checks that return -EINVAL for invalid arguments.
+Simplified and commented build_open_how.
+Add documentation comment for fd field.
+Add kselftests.
+
+Thanks to Aleksa Sarai for feedback.
+
+v3:
+
+This new version has an API to atomically increase the minimum fd and
+return the previous minimum, rather than just getting and setting the
+minimum; this makes it easier to allocate a range. (A library that might
+initialize after the program has already opened other file descriptors
+may need to check for existing open fds in the range after reserving it,
+and reserve more fds if needed; this can be done entirely in userspace,
+and we can't really do anything simpler in the kernel due to limitations
+on file-descriptor semantics, so this patch series avoids introducing
+any extra complexity in the kernel.)
+
+This new version also supports a __get_specific_unused_fd_flags call
+which accepts the limit for RLIMIT_NOFILE as an argument, analogous to
+__get_unused_fd_flags, since io_uring needs that to correctly handle
+RLIMIT_NOFILE.
+
+Thanks to Jens Axboe for review and feedback.
+
+v2:
+
+Version 2 was a version incorporated into a larger patch series from Jens Axboe
+on io_uring.
+
+Josh Triplett (3):
+  fs: Support setting a minimum fd for "lowest available fd" allocation
+  fs: openat2: Extend open_how to allow userspace-selected fds
+  fs: pipe2: Support O_SPECIFIC_FD
+
+ fs/fcntl.c                                    |  2 +-
+ fs/file.c                                     | 62 +++++++++++++++++--
+ fs/io_uring.c                                 |  3 +-
+ fs/open.c                                     |  8 ++-
+ fs/pipe.c                                     | 16 +++--
+ include/linux/fcntl.h                         |  5 +-
+ include/linux/fdtable.h                       |  1 +
+ include/linux/file.h                          |  4 ++
+ include/uapi/asm-generic/fcntl.h              |  4 ++
+ include/uapi/linux/openat2.h                  |  3 +
+ include/uapi/linux/prctl.h                    |  3 +
+ kernel/sys.c                                  |  5 ++
+ tools/testing/selftests/openat2/helpers.c     |  2 +-
+ tools/testing/selftests/openat2/helpers.h     | 21 +++++--
+ .../testing/selftests/openat2/openat2_test.c  | 29 ++++++++-
+ 15 files changed, 144 insertions(+), 24 deletions(-)
 
 -- 
-Jens Axboe
+2.26.0
 

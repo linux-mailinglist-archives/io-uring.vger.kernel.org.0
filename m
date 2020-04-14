@@ -2,99 +2,149 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 792531A6FF9
-	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2020 02:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E6A61A703A
+	for <lists+io-uring@lfdr.de>; Tue, 14 Apr 2020 02:44:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390381AbgDNANy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Apr 2020 20:13:54 -0400
-Received: from mga04.intel.com ([192.55.52.120]:64690 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390372AbgDNANx (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 13 Apr 2020 20:13:53 -0400
-IronPort-SDR: Tcx1HYoDFFG/1ecGXpMr1zxOB2GVLzRwBS/5G4vwoQVPIV4Z2qNJ9d4jejWxd2UPkM0dMhnXlI
- 6Q6Hejcy44YQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 17:13:53 -0700
-IronPort-SDR: WwSP/bjwzVqCvzpfDJVQx7mHVD9DqAVfA90u9u6YJ0BE3eg8B7Aus6XqC75wdrzGtPX0vlI9oI
- I6IjfgU71shQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,380,1580803200"; 
-   d="scan'208";a="277078198"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Apr 2020 17:13:48 -0700
-Date:   Mon, 13 Apr 2020 20:04:10 -0400
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Felipe Balbi <balbi@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        intel-gvt-dev@lists.freedesktop.org,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, io-uring@vger.kernel.org,
-        linux-mm@kvack.org, Zhenyu Wang <zhenyuw@linux.intel.com>,
-        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Zhi Wang <zhi.a.wang@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 2/6] i915/gvt/kvm: a NULL ->mm does not mean a thread is
- a kthread
-Message-ID: <20200414000410.GE10586@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20200404094101.672954-1-hch@lst.de>
- <20200404094101.672954-3-hch@lst.de>
- <20200407030845.GA10586@joy-OptiPlex-7040>
- <20200413132730.GB14455@lst.de>
+        id S2390556AbgDNAoy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Apr 2020 20:44:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390520AbgDNAoy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Apr 2020 20:44:54 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9653C0A3BDC
+        for <io-uring@vger.kernel.org>; Mon, 13 Apr 2020 17:44:52 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id n24so1298993plp.13
+        for <io-uring@vger.kernel.org>; Mon, 13 Apr 2020 17:44:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3oXC9kXqXsZPBSpX65mdWC7irYbI7v4NdwyrsnVkhsE=;
+        b=WbTOxIojCKQQaxNixKOfY13BzNTKrPE0AGfkGZvIFuZfuAi87AtnOTBlkio8soc1Nm
+         q38/ggPF/VhZ579ViSugRnBWGb5f8qRi0JOhE82vkeNdhvCjZPysMYJhjlVOMILIVslt
+         hSLCTDvhIDhEv5+1uczmRRtHWUED3UPRN1jom73MwQIbhd190Ac7aYTg2luvT9urqLoE
+         8J/D4UqYxihR/McZIqQJDMhW/FNBKlUCbV9XJROcx8AEmDwbJUiaoVrZiIzKVjOajkt6
+         G0hSEkpsyUNSAZ1LJXXWvu0hFasNpsrPiw34ds/+ZmP/uyV7yvy2aJl09z3AgBqViQ7z
+         TN8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3oXC9kXqXsZPBSpX65mdWC7irYbI7v4NdwyrsnVkhsE=;
+        b=ZubQDuxbk0iwZToskIZo2PT0er+p1BejNziNOMO96gavpLdDsMqkiK7ISVzpykOxyK
+         p9/9RkjlAo1GYC/U4ugMljAp5iP3zbg13zsnDCxl5Mtug1Q0rhcWI22CyFQed/oVThC1
+         0mEIDAqt2/UGe84zulBHh89WPl4SF+R22S5R+Qe7N09+olQ5MjNctfTrJbdER7Ddji9z
+         RMKR5MkK0HPkLet/FLVF8E8Bq0LRmI2MirzXkbq5sfkKlEsUIhRj6z5Nll74L0hvz+R9
+         ZO9IO+U6tInV7QOs/lk3pc08tyagFujjHLaZl/73x4p3AB+5iwpItQaOE8Mm8hNmHtXO
+         CMbg==
+X-Gm-Message-State: AGi0PuYaAqxsaOxtiixew7NuWgR/Yb4Ra8ZLo8/R/B0W665DuRDmiNpQ
+        V6RolU2Q8DyApcLrxERWWDwaJQ==
+X-Google-Smtp-Source: APiQypJtURuGW/leJ1HivG8bV7vBcgI5tQpiinqszmAZxHjfOgvHVEErFZaf5Upt3i5oLMHu6cCGmA==
+X-Received: by 2002:a17:902:a713:: with SMTP id w19mr8761219plq.197.1586825091939;
+        Mon, 13 Apr 2020 17:44:51 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id i16sm9652482pfq.165.2020.04.13.17.44.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Apr 2020 17:44:50 -0700 (PDT)
+Subject: Re: Odd timeout behavior
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Hrvoje Zeba <zeba.hrvoje@gmail.com>
+Cc:     io-uring@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>
+References: <CAEsUgYgTSVydbQdjVn1QuqFSHZp_JfDZxRk7KwWVSZikxY+hYg@mail.gmail.com>
+ <e146dd8a-f6b6-a101-a40e-ece22b7fe320@kernel.dk>
+ <fe383a44-bcfb-d6fa-2afe-983b456e7112@gmail.com>
+ <CAEsUgYiwyjpbaUbHwbx9pHD6x5DBpDop_Z4w9_QXKDd=FdjDjw@mail.gmail.com>
+ <b551c2e1-b39a-efbf-24f1-4115275b7db2@gmail.com>
+ <0df2f436-0968-c708-84e2-da0c3daa265c@kernel.dk>
+ <6835cec5-c8a5-dc49-c4e3-0df276c8537a@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c3055911-599f-0776-d0f8-6f8872df75e2@kernel.dk>
+Date:   Mon, 13 Apr 2020 18:44:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200413132730.GB14455@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <6835cec5-c8a5-dc49-c4e3-0df276c8537a@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Apr 13, 2020 at 03:27:30PM +0200, Christoph Hellwig wrote:
-> On Mon, Apr 06, 2020 at 11:08:46PM -0400, Yan Zhao wrote:
-> > hi
-> > we were removing this code. see
-> > https://lore.kernel.org/kvm/20200313031109.7989-1-yan.y.zhao@intel.com/
+On 4/13/20 1:09 PM, Pavel Begunkov wrote:
+> On 13/04/2020 17:16, Jens Axboe wrote:
+>> On 4/13/20 2:21 AM, Pavel Begunkov wrote:
+>>> On 4/12/2020 6:14 PM, Hrvoje Zeba wrote:
+>>>> On Sun, Apr 12, 2020 at 5:15 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>>
+>>>>> On 4/12/2020 5:07 AM, Jens Axboe wrote:
+>>>>>> On 4/11/20 5:00 PM, Hrvoje Zeba wrote:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> I've been looking at timeouts and found a case I can't wrap my head around.
+>>>>>>>
+>>>>>>> Basically, If you submit OPs in a certain order, timeout fires before
+>>>>>>> time elapses where I wouldn't expect it to. The order is as follows:
+>>>>>>>
+>>>>>>> poll(listen_socket, POLLIN) <- this never fires
+>>>>>>> nop(async)
+>>>>>>> timeout(1s, count=X)
+>>>>>>>
+>>>>>>> If you set X to anything but 0xffffffff/(unsigned)-1, the timeout does
+>>>>>>> not fire (at least not immediately). This is expected apart from maybe
+>>>>>>> setting X=1 which would potentially allow the timeout to fire if nop
+>>>>>>> executes after the timeout is setup.
+>>>>>>>
+>>>>>>> If you set it to 0xffffffff, it will always fire (at least on my
+>>>>>>> machine). Test program I'm using is attached.
+>>>>>>>
+>>>>>>> The funny thing is that, if you remove the poll, timeout will not fire.
+>>>>>>>
+>>>>>>> I'm using Linus' tree (v5.6-12604-gab6f762f0f53).
+>>>>>>>
+>>>>>>> Could anybody shine a bit of light here?
+>>>>>>
+>>>>>> Thinking about this, I think the mistake here is using the SQ side for
+>>>>>> the timeouts. Let's say you queue up N requests that are waiting, like
+>>>>>> the poll. Then you arm a timeout, it'll now be at N + count before it
+>>>>>> fires. We really should be using the CQ side for the timeouts.
+>>>>>
+>>>>> As I get it, the problem is that timeout(off=0xffffffff, 1s) fires
+>>>>> __immediately__ (i.e. not waiting 1s).
+>>>>
+>>>> Correct.
+>>>>
+>>>>> And still, the described behaviour is out of the definition. It's sounds
+>>>>> like int overflow. Ok, I'll debug it, rest assured. I already see a
+>>>>> couple of flaws anyway.
+>>>>
+>>>> For this particular case,
+>>>>
+>>>> req->sequence = ctx->cached_sq_head + count - 1;
+>>>>
+>>>> ends up being 1 which triggers in __req_need_defer() for nop sq.
+>>>
+>>> Right, that's it. The timeout's seq counter wraps around and triggers on
+>>> previously submitted but still inflight requests.
+>>>
+>>> Jens, could you remind, do we limit number of inflight requests? We
+>>> discussed it before, but can't find the thread. If we don't, vile stuff
+>>> can happen with sequences.
+>>
+>> We don't.
 > 
-> This didn't make 5.7-rc1.
+> I was too quick to judge, there won't be anything too bad, and only if we throw
+> 2^32 requests (~1TB).
 > 
-> > The implementation of vfio_dma_rw() has been in vfio next tree.
-> > https://github.com/awilliam/linux-vfio/commit/8d46c0cca5f4dc0538173d62cd36b1119b5105bc
-> 
-> 
-> This made 5.7-rc1, so I'll update the series to take it into account.
-> 
-> T
-> > in vfio_dma_rw(),  we still use
-> > bool kthread = current->mm == NULL.
-> > because if current->mm != NULL and current->flags & PF_KTHREAD, instead
-> > of calling use_mm(), we first check if (current->mm == mm) and allow copy_to_user() if it's true.
-> > 
-> > Do you think it's all right?
-> 
-> I can't think of another way for a kernel thread to have a mm indeed.
-for example, before calling to vfio_dma_rw(), a kernel thread has already
-called use_mm(), then its current->mm is not null, and it has flag
-PF_KTHREAD.
-in this case, we just want to allow the copy_to_user() directly if
-current->mm == mm, rather than call another use_mm() again.
+> For the issue at hand, how about limiting timeouts' sqe->off by 2^31? This will
+> solve the issue for now, and I can't imagine anyone waiting for over one billion
+> requests to pass.
 
-do you think it makes sense?
+I'm fine with that, but how do we handle someone asking for > INT_MAX?
 
-Thanks
-Yan
+-- 
+Jens Axboe
 
-> _______________________________________________
-> intel-gvt-dev mailing list
-> intel-gvt-dev@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gvt-dev

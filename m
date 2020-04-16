@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B11631AB762
-	for <lists+io-uring@lfdr.de>; Thu, 16 Apr 2020 07:36:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2BB51AB75E
+	for <lists+io-uring@lfdr.de>; Thu, 16 Apr 2020 07:36:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406659AbgDPFcR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Apr 2020 01:32:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37876 "EHLO
+        id S2406602AbgDPFcQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Apr 2020 01:32:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2406392AbgDPFcM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Apr 2020 01:32:12 -0400
+        by vger.kernel.org with ESMTP id S2406396AbgDPFcN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Apr 2020 01:32:13 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 147FBC061A10;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBB57C061A41;
         Wed, 15 Apr 2020 22:32:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=hjp14iUZlRKTsu3uiFZgsg/rZSgDThHclQfpO/jd+7A=; b=NW+cnTIKfLE8yZDKQxf0Vg0THe
-        5H5KzRETI5QOYIlFyPmeCgPjtkaUhqXHeZZZGR/B+w8PXjfEd3lNa9Mj4/QGOn9tRUvEyT/HP9ZIp
-        cKEl09X0/SbpZcRbE1Mh7Vb8zgGIkzoVR64uw8oNvPmVn2QsTvA69pwSJU2Q9bz6jt8JwGUEha4a3
-        nEyjxcyILK4jFRfqVPEF9h3TFLMWpf06HDpQ10he4+pJSYC72xrIKSlVdJSFZ2mOVmnJ/zSW+Wkkg
-        up4NceVeglq0unxoki79IiA560yjgT195Q5ZMkbfrmRVZHPrxLQzMKmwpSM4G7LUPJzX6NE+e8U3J
-        03vtijDA==;
+        bh=067wQeP/XsQZz7g9kDshfnJ5VToeesdhipVsn0gNrtY=; b=YibKIVswQ5pUBnsRMM6VfjsvQ8
+        g4PkIfoEwbBcSGD1mLF+cQGk90fOYWm0fTmHuUNjn6GTpQXyIWjV4KoR08kg9crGiaO89xCJvC/0j
+        tyOiapEMb0oHb8sAiYMe6l55EZ2juDaT/0ZiN7o50JEV4RaKsxdjS1w5hhsuNy4H3Ua1KZ+QsQ76i
+        h9udkToejdlmgZPNEn3mYobJY6O79O2dzot1xmq7C1Asm8KAZ9OyZGJMK2joYCbz7VGjYLzEzOGc1
+        jqkNWWfMFa/3SegvAOVFQRy65e82bVNzbrubo/KsI2n28M9QW1nzS6EMiyZ0NApYCYFDbesPY5sci
+        iWGGTEsg==;
 Received: from [2001:4bb8:184:4aa1:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jOx89-0003dI-PY; Thu, 16 Apr 2020 05:32:06 +0000
+        id 1jOx8C-0003dn-CA; Thu, 16 Apr 2020 05:32:08 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>
@@ -44,9 +44,9 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 2/3] kernel: better document the use_mm/unuse_mm API contract
-Date:   Thu, 16 Apr 2020 07:31:57 +0200
-Message-Id: <20200416053158.586887-3-hch@lst.de>
+Subject: [PATCH 3/3] kernel: set USER_DS in kthread_use_mm
+Date:   Thu, 16 Apr 2020 07:31:58 +0200
+Message-Id: <20200416053158.586887-4-hch@lst.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200416053158.586887-1-hch@lst.de>
 References: <20200416053158.586887-1-hch@lst.de>
@@ -58,328 +58,155 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Switch the function documentation to kerneldoc comments, and add
-WARN_ON_ONCE asserts that the calling thread is a kernel thread and
-does not have ->mm set (or has ->mm set in the case of unuse_mm).
+Some architectures like arm64 and s390 require USER_DS to be set for
+kernel threads to access user address space, which is the whole purpose
+of kthread_use_mm, but other like x86 don't.  That has lead to a huge
+mess where some callers are fixed up once they are tested on said
+architectures, while others linger around and yet other like io_uring
+try to do "clever" optimizations for what usually is just a trivial
+asignment to a member in the thread_struct for most architectures.
 
-Also give the functions a kthread_ prefix to better document the
-use case.
+Make kthread_use_mm set USER_DS, and kthread_unuse_mm restore to the
+previous value instead.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com> [vhost]
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h |  4 +--
- drivers/gpu/drm/i915/gvt/kvmgt.c           |  4 +--
- drivers/usb/gadget/function/f_fs.c         |  4 +--
- drivers/usb/gadget/legacy/inode.c          |  4 +--
- drivers/vfio/vfio_iommu_type1.c            |  4 +--
- drivers/vhost/vhost.c                      |  4 +--
- fs/io-wq.c                                 |  6 ++--
- fs/io_uring.c                              |  6 ++--
- include/linux/kthread.h                    |  4 +--
- kernel/kthread.c                           | 33 +++++++++++-----------
- mm/oom_kill.c                              |  6 ++--
- mm/vmacache.c                              |  4 +--
- 12 files changed, 41 insertions(+), 42 deletions(-)
+ drivers/usb/gadget/function/f_fs.c | 4 ----
+ drivers/vhost/vhost.c              | 3 ---
+ fs/io-wq.c                         | 8 ++------
+ fs/io_uring.c                      | 4 ----
+ kernel/kthread.c                   | 6 ++++++
+ 5 files changed, 8 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
-index b820c8fc689f..b063bd7f41d8 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
-@@ -192,9 +192,9 @@ uint8_t amdgpu_amdkfd_get_xgmi_hops_count(struct kgd_dev *dst, struct kgd_dev *s
- 			if ((mmptr) == current->mm) {			\
- 				valid = !get_user((dst), (wptr));	\
- 			} else if (current->mm == NULL) {		\
--				use_mm(mmptr);				\
-+				kthread_use_mm(mmptr);			\
- 				valid = !get_user((dst), (wptr));	\
--				unuse_mm(mmptr);			\
-+				kthread_unuse_mm(mmptr);		\
- 			}						\
- 			pagefault_enable();				\
- 		}							\
-diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
-index ca1dd6e6f395..f2927575b793 100644
---- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-+++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-@@ -2048,7 +2048,7 @@ static int kvmgt_rw_gpa(unsigned long handle, unsigned long gpa,
- 	if (kthread) {
- 		if (!mmget_not_zero(kvm->mm))
- 			return -EFAULT;
--		use_mm(kvm->mm);
-+		kthread_use_mm(kvm->mm);
- 	}
- 
- 	idx = srcu_read_lock(&kvm->srcu);
-@@ -2057,7 +2057,7 @@ static int kvmgt_rw_gpa(unsigned long handle, unsigned long gpa,
- 	srcu_read_unlock(&kvm->srcu, idx);
- 
- 	if (kthread) {
--		unuse_mm(kvm->mm);
-+		kthread_unuse_mm(kvm->mm);
- 		mmput(kvm->mm);
- 	}
- 
 diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index c57b1b2507c6..d9e48bd7c692 100644
+index d9e48bd7c692..a1198f4c527c 100644
 --- a/drivers/usb/gadget/function/f_fs.c
 +++ b/drivers/usb/gadget/function/f_fs.c
-@@ -827,9 +827,9 @@ static void ffs_user_copy_worker(struct work_struct *work)
- 		mm_segment_t oldfs = get_fs();
+@@ -824,13 +824,9 @@ static void ffs_user_copy_worker(struct work_struct *work)
+ 	bool kiocb_has_eventfd = io_data->kiocb->ki_flags & IOCB_EVENTFD;
  
- 		set_fs(USER_DS);
--		use_mm(io_data->mm);
-+		kthread_use_mm(io_data->mm);
+ 	if (io_data->read && ret > 0) {
+-		mm_segment_t oldfs = get_fs();
+-
+-		set_fs(USER_DS);
+ 		kthread_use_mm(io_data->mm);
  		ret = ffs_copy_to_iter(io_data->buf, ret, &io_data->data);
--		unuse_mm(io_data->mm);
-+		kthread_unuse_mm(io_data->mm);
- 		set_fs(oldfs);
+ 		kthread_unuse_mm(io_data->mm);
+-		set_fs(oldfs);
  	}
  
-diff --git a/drivers/usb/gadget/legacy/inode.c b/drivers/usb/gadget/legacy/inode.c
-index 8b5233888bf8..a05552bc2ff8 100644
---- a/drivers/usb/gadget/legacy/inode.c
-+++ b/drivers/usb/gadget/legacy/inode.c
-@@ -462,9 +462,9 @@ static void ep_user_copy_worker(struct work_struct *work)
- 	struct kiocb *iocb = priv->iocb;
- 	size_t ret;
- 
--	use_mm(mm);
-+	kthread_use_mm(mm);
- 	ret = copy_to_iter(priv->buf, priv->actual, &priv->to);
--	unuse_mm(mm);
-+	kthread_unuse_mm(mm);
- 	if (!ret)
- 		ret = -EFAULT;
- 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 5f50866a8b01..2eb105aa9723 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -2333,7 +2333,7 @@ static int vfio_iommu_type1_dma_rw_chunk(struct vfio_iommu *iommu,
- 		return -EPERM;
- 
- 	if (kthread)
--		use_mm(mm);
-+		kthread_use_mm(mm);
- 	else if (current->mm != mm)
- 		goto out;
- 
-@@ -2351,7 +2351,7 @@ static int vfio_iommu_type1_dma_rw_chunk(struct vfio_iommu *iommu,
- 		*copied = __copy_from_user(data, (void __user *)vaddr,
- 					   count) ? 0 : count;
- 	if (kthread)
--		unuse_mm(mm);
-+		kthread_unuse_mm(mm);
- out:
- 	mmput(mm);
- 	return *copied ? 0 : -EFAULT;
+ 	io_data->kiocb->ki_complete(io_data->kiocb, ret, ret);
 diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index ead1deed80d3..17d598e74780 100644
+index 17d598e74780..b2abfbdf3cb2 100644
 --- a/drivers/vhost/vhost.c
 +++ b/drivers/vhost/vhost.c
-@@ -332,7 +332,7 @@ static int vhost_worker(void *data)
- 	mm_segment_t oldfs = get_fs();
+@@ -329,9 +329,7 @@ static int vhost_worker(void *data)
+ 	struct vhost_dev *dev = data;
+ 	struct vhost_work *work, *work_next;
+ 	struct llist_node *node;
+-	mm_segment_t oldfs = get_fs();
  
- 	set_fs(USER_DS);
--	use_mm(dev->mm);
-+	kthread_use_mm(dev->mm);
+-	set_fs(USER_DS);
+ 	kthread_use_mm(dev->mm);
  
  	for (;;) {
- 		/* mb paired w/ kthread_stop */
-@@ -360,7 +360,7 @@ static int vhost_worker(void *data)
- 				schedule();
+@@ -361,7 +359,6 @@ static int vhost_worker(void *data)
  		}
  	}
--	unuse_mm(dev->mm);
-+	kthread_unuse_mm(dev->mm);
- 	set_fs(oldfs);
+ 	kthread_unuse_mm(dev->mm);
+-	set_fs(oldfs);
  	return 0;
  }
+ 
 diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 5f590bf27bff..748621f7391e 100644
+index 748621f7391e..a5e90ac39e4d 100644
 --- a/fs/io-wq.c
 +++ b/fs/io-wq.c
-@@ -170,7 +170,7 @@ static bool __io_worker_unuse(struct io_wqe *wqe, struct io_worker *worker)
+@@ -169,7 +169,6 @@ static bool __io_worker_unuse(struct io_wqe *wqe, struct io_worker *worker)
+ 			dropped_lock = true;
  		}
  		__set_current_state(TASK_RUNNING);
- 		set_fs(KERNEL_DS);
--		unuse_mm(worker->mm);
-+		kthread_unuse_mm(worker->mm);
+-		set_fs(KERNEL_DS);
+ 		kthread_unuse_mm(worker->mm);
+ 		mmput(worker->mm);
+ 		worker->mm = NULL;
+@@ -421,14 +420,11 @@ static void io_wq_switch_mm(struct io_worker *worker, struct io_wq_work *work)
  		mmput(worker->mm);
  		worker->mm = NULL;
  	}
-@@ -417,7 +417,7 @@ static struct io_wq_work *io_get_next_work(struct io_wqe *wqe)
- static void io_wq_switch_mm(struct io_worker *worker, struct io_wq_work *work)
- {
- 	if (worker->mm) {
--		unuse_mm(worker->mm);
-+		kthread_unuse_mm(worker->mm);
- 		mmput(worker->mm);
- 		worker->mm = NULL;
- 	}
-@@ -426,7 +426,7 @@ static void io_wq_switch_mm(struct io_worker *worker, struct io_wq_work *work)
+-	if (!work->mm) {
+-		set_fs(KERNEL_DS);
++	if (!work->mm)
  		return;
- 	}
+-	}
++
  	if (mmget_not_zero(work->mm)) {
--		use_mm(work->mm);
-+		kthread_use_mm(work->mm);
- 		if (!worker->mm)
- 			set_fs(USER_DS);
+ 		kthread_use_mm(work->mm);
+-		if (!worker->mm)
+-			set_fs(USER_DS);
  		worker->mm = work->mm;
+ 		/* hang on to this mm */
+ 		work->mm = NULL;
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f5a80f6f28f5..8a8148512da7 100644
+index 8a8148512da7..40f90b98a18a 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5876,7 +5876,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 				err = -EFAULT;
- 				goto fail_req;
- 			}
--			use_mm(ctx->sqo_mm);
-+			kthread_use_mm(ctx->sqo_mm);
- 			*mm = ctx->sqo_mm;
- 		}
+@@ -5908,15 +5908,12 @@ static int io_sq_thread(void *data)
+ 	struct io_ring_ctx *ctx = data;
+ 	struct mm_struct *cur_mm = NULL;
+ 	const struct cred *old_cred;
+-	mm_segment_t old_fs;
+ 	DEFINE_WAIT(wait);
+ 	unsigned long timeout;
+ 	int ret = 0;
  
-@@ -5948,7 +5948,7 @@ static int io_sq_thread(void *data)
- 			 * may sleep.
- 			 */
- 			if (cur_mm) {
--				unuse_mm(cur_mm);
-+				kthread_unuse_mm(cur_mm);
- 				mmput(cur_mm);
- 				cur_mm = NULL;
- 			}
-@@ -6025,7 +6025,7 @@ static int io_sq_thread(void *data)
+ 	complete(&ctx->completions[1]);
  
- 	set_fs(old_fs);
+-	old_fs = get_fs();
+-	set_fs(USER_DS);
+ 	old_cred = override_creds(ctx->creds);
+ 
+ 	timeout = jiffies + ctx->sq_thread_idle;
+@@ -6023,7 +6020,6 @@ static int io_sq_thread(void *data)
+ 	if (current->task_works)
+ 		task_work_run();
+ 
+-	set_fs(old_fs);
  	if (cur_mm) {
--		unuse_mm(cur_mm);
-+		kthread_unuse_mm(cur_mm);
+ 		kthread_unuse_mm(cur_mm);
  		mmput(cur_mm);
- 	}
- 	revert_creds(old_cred);
-diff --git a/include/linux/kthread.h b/include/linux/kthread.h
-index c2d40c9672d6..12258ea077cf 100644
---- a/include/linux/kthread.h
-+++ b/include/linux/kthread.h
-@@ -200,8 +200,8 @@ bool kthread_cancel_delayed_work_sync(struct kthread_delayed_work *work);
- 
- void kthread_destroy_worker(struct kthread_worker *worker);
- 
--void use_mm(struct mm_struct *mm);
--void unuse_mm(struct mm_struct *mm);
-+void kthread_use_mm(struct mm_struct *mm);
-+void kthread_unuse_mm(struct mm_struct *mm);
- 
- struct cgroup_subsys_state;
- 
 diff --git a/kernel/kthread.c b/kernel/kthread.c
-index ce4610316377..8ed4b4fbec7c 100644
+index 8ed4b4fbec7c..86357cd38eb2 100644
 --- a/kernel/kthread.c
 +++ b/kernel/kthread.c
-@@ -1208,18 +1208,18 @@ void kthread_destroy_worker(struct kthread_worker *worker)
- }
- EXPORT_SYMBOL(kthread_destroy_worker);
+@@ -52,6 +52,7 @@ struct kthread {
+ 	unsigned long flags;
+ 	unsigned int cpu;
+ 	void *data;
++	mm_segment_t oldfs;
+ 	struct completion parked;
+ 	struct completion exited;
+ #ifdef CONFIG_BLK_CGROUP
+@@ -1235,6 +1236,9 @@ void kthread_use_mm(struct mm_struct *mm)
  
--/*
-- * use_mm
-- *	Makes the calling kernel thread take on the specified
-- *	mm context.
-- *	(Note: this routine is intended to be called only
-- *	from a kernel thread context)
-+/**
-+ * kthread_use_mm - make the calling kthread operate on an address space
-+ * @mm: address space to operate on
-  */
--void use_mm(struct mm_struct *mm)
-+void kthread_use_mm(struct mm_struct *mm)
- {
- 	struct mm_struct *active_mm;
- 	struct task_struct *tsk = current;
- 
-+	WARN_ON_ONCE(!(tsk->flags & PF_KTHREAD));
-+	WARN_ON_ONCE(tsk->mm);
-+
- 	task_lock(tsk);
- 	active_mm = tsk->active_mm;
- 	if (active_mm != mm) {
-@@ -1236,20 +1236,19 @@ void use_mm(struct mm_struct *mm)
  	if (active_mm != mm)
  		mmdrop(active_mm);
++
++	to_kthread(tsk)->oldfs = get_fs();
++	set_fs(USER_DS);
  }
--EXPORT_SYMBOL_GPL(use_mm);
-+EXPORT_SYMBOL_GPL(kthread_use_mm);
+ EXPORT_SYMBOL_GPL(kthread_use_mm);
  
--/*
-- * unuse_mm
-- *	Reverses the effect of use_mm, i.e. releases the
-- *	specified mm context which was earlier taken on
-- *	by the calling kernel thread
-- *	(Note: this routine is intended to be called only
-- *	from a kernel thread context)
-+/**
-+ * kthread_unuse_mm - reverse the effect of kthread_use_mm()
-+ * @mm: address space to operate on
-  */
--void unuse_mm(struct mm_struct *mm)
-+void kthread_unuse_mm(struct mm_struct *mm)
- {
- 	struct task_struct *tsk = current;
+@@ -1249,6 +1253,8 @@ void kthread_unuse_mm(struct mm_struct *mm)
+ 	WARN_ON_ONCE(!(tsk->flags & PF_KTHREAD));
+ 	WARN_ON_ONCE(!tsk->mm);
  
-+	WARN_ON_ONCE(!(tsk->flags & PF_KTHREAD));
-+	WARN_ON_ONCE(!tsk->mm);
++	set_fs(to_kthread(tsk)->oldfs);
 +
  	task_lock(tsk);
  	sync_mm_rss(mm);
  	tsk->mm = NULL;
-@@ -1257,7 +1256,7 @@ void unuse_mm(struct mm_struct *mm)
- 	enter_lazy_tlb(mm, tsk);
- 	task_unlock(tsk);
- }
--EXPORT_SYMBOL_GPL(unuse_mm);
-+EXPORT_SYMBOL_GPL(kthread_unuse_mm);
- 
- #ifdef CONFIG_BLK_CGROUP
- /**
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index dfc357614e56..958d2972313f 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -126,7 +126,7 @@ static bool oom_cpuset_eligible(struct task_struct *tsk, struct oom_control *oc)
- 
- /*
-  * The process p may have detached its own ->mm while exiting or through
-- * use_mm(), but one or more of its subthreads may still have a valid
-+ * kthread_use_mm(), but one or more of its subthreads may still have a valid
-  * pointer.  Return p, or any of its subthreads with a valid ->mm, with
-  * task_lock() held.
-  */
-@@ -919,8 +919,8 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
- 			continue;
- 		}
- 		/*
--		 * No use_mm() user needs to read from the userspace so we are
--		 * ok to reap it.
-+		 * No kthead_use_mm() user needs to read from the userspace so
-+		 * we are ok to reap it.
- 		 */
- 		if (unlikely(p->flags & PF_KTHREAD))
- 			continue;
-diff --git a/mm/vmacache.c b/mm/vmacache.c
-index cdc32a3b02fa..ceedbab82106 100644
---- a/mm/vmacache.c
-+++ b/mm/vmacache.c
-@@ -25,8 +25,8 @@
-  * task's vmacache pertains to a different mm (ie, its own).  There is
-  * nothing we can do here.
-  *
-- * Also handle the case where a kernel thread has adopted this mm via use_mm().
-- * That kernel thread's vmacache is not applicable to this mm.
-+ * Also handle the case where a kernel thread has adopted this mm via
-+ * kthread_use_mm(). That kernel thread's vmacache is not applicable to this mm.
-  */
- static inline bool vmacache_valid_mm(struct mm_struct *mm)
- {
 -- 
 2.25.1
 

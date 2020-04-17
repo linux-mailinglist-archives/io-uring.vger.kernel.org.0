@@ -2,76 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 126B71AE3CA
-	for <lists+io-uring@lfdr.de>; Fri, 17 Apr 2020 19:28:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 117801AE3EB
+	for <lists+io-uring@lfdr.de>; Fri, 17 Apr 2020 19:43:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728955AbgDQR1x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Apr 2020 13:27:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34860 "EHLO
+        id S1730159AbgDQRmf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Apr 2020 13:42:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728509AbgDQR1x (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Apr 2020 13:27:53 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2637C061A0C
-        for <io-uring@vger.kernel.org>; Fri, 17 Apr 2020 10:27:52 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id u15so2876092ljd.3
-        for <io-uring@vger.kernel.org>; Fri, 17 Apr 2020 10:27:52 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1730098AbgDQRmf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Apr 2020 13:42:35 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0074C061A10
+        for <io-uring@vger.kernel.org>; Fri, 17 Apr 2020 10:42:33 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id t4so1212078plq.12
+        for <io-uring@vger.kernel.org>; Fri, 17 Apr 2020 10:42:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C5NQST1nyAnu8ptbe8LACwEwOXn5hUjgwJZB1HluWEM=;
-        b=BSDsQEQvITDO8FLYNfEM0Jy04yGRqu4vT5WnT4ovVsI9MQ2hNBwuBUKS2lm53hq5Bv
-         WHnmjmziBdosh0dRodafXf1uMEqQeME9vosQjgwmwclZP9dIODWxm8GmEinVVsDSTl7o
-         MNme38G/piidMQHqHQGf3MIdQ0/f7fGAcyfdU=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KjrOit2pYvG6gEqrAeDYI3gE0UdgfpjpULdnfz35SG4=;
+        b=hfCzRr7n9mEYTAzBtGsqWPrXejcBdO5Qow4g1jcQych3gq3xMjtal1xwI1r0Xaltxg
+         yOtWdQuQor/DxpjYesdIWV0ZJ0OS84Rbas3R5Jo6sGHlqZV8IucD609aVErkzYTaozDW
+         iZRPrR2VgmL6QzTT68OtXYFHagWH+Xrq2cJ5T7LGCn65ywk8bJGveZF5ugT8ycyWpad1
+         gzB9YmagGJgST/YiEpY5nw9TpSElJVBxpla1je6WnVaA7RC1tTXPHwHEln0rgGic2siW
+         kGIgF6hQ1pWO7t16HoW4SP7IVKGatWHYZkn70aDNcWTBQp3kJ1rLWPQRorrfjanJEROC
+         ZAaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C5NQST1nyAnu8ptbe8LACwEwOXn5hUjgwJZB1HluWEM=;
-        b=hug9OUeVx5rYb97Ju48sl0mhcPUds+sGIs/hhUeMdHLwdhxqUrm7S4W2Ynt2rDXsQP
-         3xg39iSU5NAgA/xSRa4kMQDcoVBXsvYj1D+ScbGqP0/HB8W/RO0g4oy34HQEiTEtTl/4
-         xKsAuGzf1v1Ms2gbz/S4+a4JMU5MGU9j6DtmH86DWmQFhyXKzoA3jedj+ro/3CW7Lz/c
-         Kbq5wkKYfpbS4JwO7rGYqHtAijabMKswuNLOkjkYVlr5fdqOND0cqTS0XT+cCeaG1JyY
-         VnIjN7gzcF6dLv4WN6J+ILWFMxpPABieIwsbRPx5oCuFaMlclY9dV01KAUqOjcPM3dUh
-         4FZg==
-X-Gm-Message-State: AGi0PuZj61u3O50+yIZEuZv9s5km0ZPik/1OiQsgtuu+N6BsMGhRthey
-        xn3NgGx9aZDzn7ysaTk7x1yyl0UTOMY=
-X-Google-Smtp-Source: APiQypKiRv4Pg5Ihsz9KhhwzXsmzngJgazbDGiPcQ48tZEGUEwBYGwrFVsRmDqvi1FeD27PGNma80A==
-X-Received: by 2002:a2e:8688:: with SMTP id l8mr2810776lji.233.1587144471167;
-        Fri, 17 Apr 2020 10:27:51 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id i3sm4435807ljg.82.2020.04.17.10.27.50
-        for <io-uring@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KjrOit2pYvG6gEqrAeDYI3gE0UdgfpjpULdnfz35SG4=;
+        b=SAqu9la1Nhbz9wpkj57elPXL6WpyWR+6CHQ6P/ZbM0YEiwof7no0Y5SvWz2CItND9v
+         RTjgxN4v1ESdHOTqXNjjmxNEB29JyxOQCayFLKHvtqsSdkbYwPT/oBf37L1Jq9Y2erBw
+         ePpoDwvcqNYMa/7gRl/AcbBm+GSUosPQ9Rz5zYy4lkmurXyt1Qs6hACOeGssEfTjOi1x
+         MUlguVRbjz3CeoIJS64oHDz3x5xJU+6+ciyarwIDMjiZ0QMGlgs5ucyXhfOXm0yOS9sP
+         yOjbWVmlAcmblIHP2fafB7M5lFsjSMhxhx35XOwgZDSzaIrQ9/XUUH58RnCzHvLgqH1k
+         gO2A==
+X-Gm-Message-State: AGi0PuZkTbWxErEEbciiuP+jwcS+aquQE99K3GvH+c9LUnSxkndQLMzA
+        qsLfbyhSTVSZh6jRWegFHsmpyyWGiqBE9g==
+X-Google-Smtp-Source: APiQypKVAurQv52m9wQY/0bAGCeuAPfRMLq4iN/ZNr5XO8b0GoTa0DND2q3neyht7vIzBR1tbdREHA==
+X-Received: by 2002:a17:90a:364c:: with SMTP id s70mr5685521pjb.143.1587145352627;
+        Fri, 17 Apr 2020 10:42:32 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id h15sm13021131pgj.35.2020.04.17.10.42.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Apr 2020 10:27:50 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id q19so2831563ljp.9
-        for <io-uring@vger.kernel.org>; Fri, 17 Apr 2020 10:27:50 -0700 (PDT)
-X-Received: by 2002:a2e:870f:: with SMTP id m15mr2800184lji.16.1587144470102;
- Fri, 17 Apr 2020 10:27:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <2750fd4f-8edc-18c2-1991-c1dc794a431f@kernel.dk> <CAHk-=wiWP0M=ZAim7VVuoR+5ri+Ug+KZDE-TZskma4HV91ACxA@mail.gmail.com>
-In-Reply-To: <CAHk-=wiWP0M=ZAim7VVuoR+5ri+Ug+KZDE-TZskma4HV91ACxA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 17 Apr 2020 10:27:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whhvP+UQ=A3SHFgT7DUFJ-M7pFPrUusJSFo8p0x8wQUhw@mail.gmail.com>
-Message-ID: <CAHk-=whhvP+UQ=A3SHFgT7DUFJ-M7pFPrUusJSFo8p0x8wQUhw@mail.gmail.com>
+        Fri, 17 Apr 2020 10:42:31 -0700 (PDT)
 Subject: Re: [GIT PULL] io_uring fixes for 5.7-rc
-To:     Jens Axboe <axboe@kernel.dk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <2750fd4f-8edc-18c2-1991-c1dc794a431f@kernel.dk>
+ <CAHk-=wiWP0M=ZAim7VVuoR+5ri+Ug+KZDE-TZskma4HV91ACxA@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <53ee39ac-2d97-9bcc-80c9-5ed9b0868e8f@kernel.dk>
+Date:   Fri, 17 Apr 2020 11:42:29 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wiWP0M=ZAim7VVuoR+5ri+Ug+KZDE-TZskma4HV91ACxA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Apr 17, 2020 at 10:26 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
+On 4/17/20 11:26 AM, Linus Torvalds wrote:
+> On Fri, Apr 17, 2020 at 8:16 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> - Work restore poll cancelation fix
+> 
+> That whole apoll thing is disgusting.
+> 
 > I cannot convince myself it is right. How do you convince yourself?
 
-.. and equally importantly: even if it were to be now correct - how do
-you make sure it keeps working when it's so odd and subtle and crazy?
+req->poll is used for pure poll requests, req->apoll is used for poll
+that is armed on behalf of a non-poll request. So the paths are actually
+pretty well defined, for both the submission side entry, and the
+completion side which is through the wakeup handlers.
 
-               Linus
+The handlers that deal with the "poll on behalf of another request" is
+pretty short and limited. Anything that uses "poll on behalf of others"
+is not going to be queued async, which is the overlap with io_wq_work
+in the io_kiocb structure. The only part we have to be a bit careful
+with there is for the assume contexts, like mm etc. One of the fixes
+in this pull request deals with that.
+
+-- 
+Jens Axboe
+

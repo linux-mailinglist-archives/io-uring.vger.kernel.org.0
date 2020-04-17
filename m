@@ -2,81 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D5941AE285
-	for <lists+io-uring@lfdr.de>; Fri, 17 Apr 2020 18:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 306FB1AE3C3
+	for <lists+io-uring@lfdr.de>; Fri, 17 Apr 2020 19:26:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbgDQQwt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Apr 2020 12:52:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57640 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbgDQQwt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Apr 2020 12:52:49 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37DBFC061A0C
-        for <io-uring@vger.kernel.org>; Fri, 17 Apr 2020 09:52:49 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id o1so1317767pjs.4
-        for <io-uring@vger.kernel.org>; Fri, 17 Apr 2020 09:52:49 -0700 (PDT)
+        id S1728667AbgDQR0g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Apr 2020 13:26:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34656 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728666AbgDQR0g (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Apr 2020 13:26:36 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB051C061A0F
+        for <io-uring@vger.kernel.org>; Fri, 17 Apr 2020 10:26:35 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id r24so2858107ljd.4
+        for <io-uring@vger.kernel.org>; Fri, 17 Apr 2020 10:26:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=vWuhBwjYLA6af0ATp4czW21HWr+A1Pnv85JDCmtLUmc=;
-        b=HC6FEBnXobSQQnc3okSkG8k4pfyHcmlWiCC3zKjykzUk0YE47gr/8D1GGX++brL716
-         RRwmu9+FfLYRWrMowlD5pekiwOtlLiUcAKlewu73RpCYMw78BzsinUBx0H6zJgWZuPqm
-         P9KcQKp6otsJEhQI6wk1ftDGDDKZzpUc6FzKI2JmPliBHsOhD5Li4AnzdVw7XH0XFgiO
-         JH/yR9JAJNycnWCSObLl6BuQLuSWOF78uN+ebJpUcug3WuaWR/R+MLMnVkJMbfoYa+nR
-         rukRngBvOPcgNxxWVTPxMY/Obg3UYqWq3h1uwvJlUAG/LI96C99o71CItoPJCOMDXoeO
-         LTLw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=axfO7OLGNTCrLAVeBKh/eWQ+8sqIplMY2YUjR1earEU=;
+        b=UmKw1Q0ckwm1woOAXjKENpstVpDxJfriTgN5Z+SQkyqmSUkHruZiFIB4ZS0X6zMdZj
+         5RT1fDNr9COsnCUQ8OfkkHNZ+CwNeeGSRynF5bFMnX2K99CNUV92aBL7CEt3Efn8voqC
+         KEaB6UXfOuBfRtmXGQ5A5GAYff55GpMuQtfIU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vWuhBwjYLA6af0ATp4czW21HWr+A1Pnv85JDCmtLUmc=;
-        b=h5MIMqH2uh6mbPKOpXrDxKPE2Dns4Xch4NElcPcZBfCbKrnYYKzs3wJfFOX/PMtEAJ
-         mkDnSAoVGgE4M8ti2Mu+qclHSPydfeN31tYv7hC18Dm0dh8E5iTL5/FPmzkxPZwJ3Y+h
-         HhBnZlvMl39TpK6zwQH98jbKhSnh9yb5E4kLdWowqNc+ITZrTfhSjyqZqhN4p7wT8Yvl
-         pBc+f58TP3BUbSUTRnw0j9uSE3TXz+CHNk/83Mu1MqsPsnWdm5t08Tql2LxSHheAb4gS
-         2uRGdiUp6xE7cAHtm/T/RRcJQTqvC29Bto3x9zNGF4h9czHmXFswcXkbjDN8l7AhiI3d
-         xQYQ==
-X-Gm-Message-State: AGi0PuYiLM7G9bihZauuc+GmM9CA3QMx1A5XXzwBilvZkgxnEPBnjXoW
-        09jA8dkv09N3XXeQ9WRG0GffiFGIoI9AHA==
-X-Google-Smtp-Source: APiQypI4NI2G8luSYCnbKBeng/67cM9aVWfgssTa8GsQkkBy9iNhkhamcRkMfklLhMkCZEnNkkjBWQ==
-X-Received: by 2002:a17:902:fe09:: with SMTP id g9mr3805498plj.171.1587142368238;
-        Fri, 17 Apr 2020 09:52:48 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id 1sm6128371pjc.32.2020.04.17.09.52.47
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=axfO7OLGNTCrLAVeBKh/eWQ+8sqIplMY2YUjR1earEU=;
+        b=h0xuVTnToDLpK+4m8x6hsR/ACzA3MjXxNqe/EywsR6BhkO8qjsxOiL5uNE0QIwFmpd
+         SlfDNVBo9ItEfCjBXuK86sVHAVg85kGt7H18ZtjuTBYpgSPVeMqpj/lY27PBRL/i9mLU
+         sf3RATWI1kk/kxMfrKoeO26sq40Dnuc5hOIsw1ak9e3OAQvqgYrFHtcu88B13KIamrkE
+         3Q9Wg8iVHJ6AZILFBpwavWlZTx7TRRLZ82RnFAHjChvzQ19F+SeahalcKFBHSDTxM+lJ
+         LBl6kuE+GxCEyEMfIAu3M8dZiwta6fyn76eJ2Qxc/uFw7U9eo05sa1Aerlv2qyto/J5m
+         u+Tw==
+X-Gm-Message-State: AGi0PuahTCLUw4CLNhGCWE8SGnA2FX1JMf36NVSs5pb8osYZijDpMix+
+        9FiwgLU0RPtLEPRkV0bXrTxWF30avXQ=
+X-Google-Smtp-Source: APiQypIdS3qHKqB6A13Y8ta7AGmJD2IfhJp/eGzu3AnZRfHEHYIwBiXhap0FGm8ZIcHJWfRETnyx7A==
+X-Received: by 2002:a2e:5855:: with SMTP id x21mr2739646ljd.75.1587144393517;
+        Fri, 17 Apr 2020 10:26:33 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id j15sm7161018lja.71.2020.04.17.10.26.32
         for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Apr 2020 09:52:47 -0700 (PDT)
-Subject: Re: Upcoming liburing-0.6 release
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring <io-uring@vger.kernel.org>
-References: <2ec49990-639a-f6ac-15ca-7ac26d2d9769@kernel.dk>
-Message-ID: <ed9165c6-98ba-bbd9-e046-6d96c7cbafca@kernel.dk>
-Date:   Fri, 17 Apr 2020 10:52:46 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 17 Apr 2020 10:26:32 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id v9so2816945ljk.12
+        for <io-uring@vger.kernel.org>; Fri, 17 Apr 2020 10:26:32 -0700 (PDT)
+X-Received: by 2002:a05:651c:50e:: with SMTP id o14mr2706220ljp.241.1587144392363;
+ Fri, 17 Apr 2020 10:26:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <2ec49990-639a-f6ac-15ca-7ac26d2d9769@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <2750fd4f-8edc-18c2-1991-c1dc794a431f@kernel.dk>
+In-Reply-To: <2750fd4f-8edc-18c2-1991-c1dc794a431f@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 17 Apr 2020 10:26:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiWP0M=ZAim7VVuoR+5ri+Ug+KZDE-TZskma4HV91ACxA@mail.gmail.com>
+Message-ID: <CAHk-=wiWP0M=ZAim7VVuoR+5ri+Ug+KZDE-TZskma4HV91ACxA@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring fixes for 5.7-rc
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/12/20 9:28 AM, Jens Axboe wrote:
-> Hi,
-> 
-> I want to release 0.6 this week. Just a heads up if you've been holding
-> back on a patch or two, so the release doesn't catch anyone by surprise.
+On Fri, Apr 17, 2020 at 8:16 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> - Work restore poll cancelation fix
 
-It has now been released, shortlog here:
+That whole apoll thing is disgusting.
 
-https://brick.kernel.dk/snaps/liburing-0.6.shortlog.txt
+I cannot convince myself it is right. How do you convince yourself?
 
--- 
-Jens Axboe
-
+                Linus

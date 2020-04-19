@@ -2,62 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 515121AF96D
-	for <lists+io-uring@lfdr.de>; Sun, 19 Apr 2020 12:45:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AD7B1AFDDE
+	for <lists+io-uring@lfdr.de>; Sun, 19 Apr 2020 21:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726012AbgDSKpM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 19 Apr 2020 06:45:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47648 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725923AbgDSKpM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 19 Apr 2020 06:45:12 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0AFFC061A0C
-        for <io-uring@vger.kernel.org>; Sun, 19 Apr 2020 03:45:11 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id l11so5488066lfc.5
-        for <io-uring@vger.kernel.org>; Sun, 19 Apr 2020 03:45:11 -0700 (PDT)
+        id S1726011AbgDST4J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 19 Apr 2020 15:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47380 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbgDST4J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 19 Apr 2020 15:56:09 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D4CFC061A0C
+        for <io-uring@vger.kernel.org>; Sun, 19 Apr 2020 12:56:08 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id hi11so2907252pjb.3
+        for <io-uring@vger.kernel.org>; Sun, 19 Apr 2020 12:56:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ODcWnn+e18f09ekyOWon3eyD4CVsXK98+ybM+CBJ7mk=;
-        b=Piq4WFyenq0WRmQAlSKPPXHobpLK1rv3VTY8Hf/ns9wh3PLXxvG4JKWwn8goR9F1z0
-         w89g5169ILYIqyUT0WD+89rREGZ5D7OObnYTVpkpzOoLsEs/gKxpGHYJIsspNXyFwkKX
-         3xHN69AquC2MIEUDQSa4SS+JUPRl8h9kro7+Oiu6zfsHqwLKFtKRj6OWzmhEOpMYYMax
-         tH1lIJjBtAtufFHVIBJ9R4spxzE8j/HnLpRsp+Vgcv4iXMw4ZVuf230ExppQjQkYJ8/9
-         C0SiAUyYX+UAxZo3Yr0gvAMvOrK5tzOpo4tHCit1MO9Dt6tKR13+qWrui+BTqDBcEZmi
-         fUnQ==
+        bh=CJbAuRv3Tw2aKt7eaH1DUG/e3OAi6rLm/vdo+eunjOY=;
+        b=HG6DNDlFc0nHu2l+yVyurEhaJxTH++CRIHLr6M003g2Yg3OzW5wsMCe4qEgcNkFOhb
+         07yoCX8/7qoole3P9Lq7YyCVKyjRivdZQVcTSHE8dJmiElGuMS4O1MydsolavrmdimF6
+         yZ6pBf2+223WUHV55Uqw6q5+T2j8E5gZ6wTQVa7wb/y5YIv1lkSU+t+CaQF2uudrAfAL
+         1koHFcVyCJTIXoYl9zvuVCK7WQEnK/VFP6OTSsf+ys/OHLGedeca20BYASQW7k/lGiRu
+         Gld0arPuU9uDEVGaXu0RduMrPWuw9tLKns+/MS9kqhGIZI5PeWK4nryq5+ynEgzJId6+
+         6XMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ODcWnn+e18f09ekyOWon3eyD4CVsXK98+ybM+CBJ7mk=;
-        b=Kb+VZikWUTHfpLlJOLa7R7AmuNCnO1ZwTva1DewvbIJd6C0jT1d0VcL2GISjeNr6rS
-         g2nfpyZmx8o6wMeYO69fMe0TOH3hvq3sYgw95kIFm5zi8/Fzn/X2IhOvI3yPuYGx5T1B
-         SkHrSuePuBTfKrzReRCatY66hYc6mjl+/3Fn7+ldAE1c1X0KdjLVJk6mnSjp+lldAlvC
-         eLZBf5ByFqkLbyQ5d4t/2FgjqQM+hdlcxMDIxijVuseYIsVbYzzj+YCEw9P7E02f0PrD
-         Shv0D2U9m7RRazAp8/tk60QtYLbZCN8vl3HXxhfMlX8+chjvrFZkJfs5Zh8JKMsvfjoU
-         KG2Q==
-X-Gm-Message-State: AGi0PuY5OoUS3hLnf9FGb463vGduSqISQDbCCk1NYKczEGXRl/sU6WN9
-        cII52Gp4z3QgFnaezzrlZ98MGsF1bBM=
-X-Google-Smtp-Source: APiQypL6dBgMjruf5CvX/GLvz9AQCBGhmnKXdbmek7Xwdx5vOH7t/q4XP3ZFKIo//XKL/si0LQWGjw==
-X-Received: by 2002:a19:cb41:: with SMTP id b62mr7342303lfg.21.1587293110235;
-        Sun, 19 Apr 2020 03:45:10 -0700 (PDT)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id z9sm27856574lfd.9.2020.04.19.03.45.09
+        bh=CJbAuRv3Tw2aKt7eaH1DUG/e3OAi6rLm/vdo+eunjOY=;
+        b=YwbiFRU6ZC3rJJ+WFJpYmrMRapZiOQstehZ8Q9+Dvef5jgXtWUOfUzo1XQPtD4K3hH
+         utCDRk6gK0MWV9pjCvDzQ+zs+x5OqmLK4Ipxyc3KD7UyqkzHSfswrli/PeOl2XzXkduV
+         FmSr10iAWuoPP0kE4h115Lk9U9mnDEYHShpiQlp4hUModxwFBYPDC5dYr6e+lvbHRV/p
+         Go1j3CHujQ3xklir3Vw3Pw39GD1CK6rSAFpVmmg+agI+qrF7nlgfQiKl6TjxvEGQFmuP
+         Lgw0cXCo3RAwaAQydAxjZyAGgXeTis8pVpxFryR+Bxef+DK5pSlCXaw/0BbEllnFoBpP
+         u5QQ==
+X-Gm-Message-State: AGi0PuZl61zOx8AsF01zNr7ON7ma2tku9Subt/sreoaA0DiTz6JgCla4
+        V+WeSDe2cFUxMF+uBEXfXfI9p0BNQpU7kw==
+X-Google-Smtp-Source: APiQypL+8wn0p1RZa6mIs/FjoTPyFSNTfe0sXXM6BLtXcL9o+ZX41sgj21a+1eB43+QkkXPp74ycTQ==
+X-Received: by 2002:a17:90a:5287:: with SMTP id w7mr18286851pjh.66.1587326167523;
+        Sun, 19 Apr 2020 12:56:07 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id w3sm10154115pfn.115.2020.04.19.12.56.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Apr 2020 03:45:09 -0700 (PDT)
+        Sun, 19 Apr 2020 12:56:06 -0700 (PDT)
 Subject: Re: [PATCH] io_uring: only restore req->work for req that needs do
  completion
 To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
+Cc:     joseph.qi@linux.alibaba.com
 References: <20200419020655.2261-1-xiaoguang.wang@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <40b7d7c7-5ca3-6ca0-aa1b-fbd6957aba5c@gmail.com>
-Date:   Sun, 19 Apr 2020 13:45:08 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9401f5d1-e447-338e-e610-0497e837277c@kernel.dk>
+Date:   Sun, 19 Apr 2020 13:56:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
 In-Reply-To: <20200419020655.2261-1-xiaoguang.wang@linux.alibaba.com>
@@ -69,7 +69,7 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/19/2020 5:06 AM, Xiaoguang Wang wrote:
+On 4/18/20 8:06 PM, Xiaoguang Wang wrote:
 > When testing io_uring IORING_FEAT_FAST_POLL feature, I got below panic:
 > BUG: kernel NULL pointer dereference, address: 0000000000000030
 > PGD 0 P4D 0
@@ -132,52 +132,9 @@ On 4/19/2020 5:06 AM, Xiaoguang Wang wrote:
 > drop submit ref when req has been canceled.
 > 
 > Fix both issues.
-> 
-> Fixes: b1f573bd15fd ("io_uring: restore req->work when canceling poll request")
-> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 381d50becd04..b4f89023df1e 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -4200,17 +4200,18 @@ static void io_async_task_func(struct callback_head *cb)
->  
->  	spin_unlock_irq(&ctx->completion_lock);
->  
-> +	/* restore ->work in case we need to retry again */
-> +	memcpy(&req->work, &apoll->work, sizeof(req->work));
-> +
->  	if (canceled) {
->  		kfree(apoll);
->  		io_cqring_ev_posted(ctx);
->  		req_set_fail_links(req);
->  		io_put_req(req);
-> +		io_put_req(req);
 
-Using io_double_put_req() would be even better
-
->  		return;
->  	}
->  
-> -	/* restore ->work in case we need to retry again */
-> -	memcpy(&req->work, &apoll->work, sizeof(req->work));
-> -
->  	__set_current_state(TASK_RUNNING);
->  	mutex_lock(&ctx->uring_lock);
->  	__io_queue_sqe(req, NULL);
-> @@ -4369,7 +4370,7 @@ static bool io_poll_remove_one(struct io_kiocb *req)
->  
->  	hash_del(&req->hash_node);
->  
-> -	if (apoll) {
-> +	if (do_complete && apoll) {
->  		/*
->  		 * restore ->work because we need to call io_req_work_drop_env.
->  		 */
-> 
+Applied, with io_double_put_req() used.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

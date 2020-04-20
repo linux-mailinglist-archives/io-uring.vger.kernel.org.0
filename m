@@ -2,58 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B0E21B16BA
-	for <lists+io-uring@lfdr.de>; Mon, 20 Apr 2020 22:13:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B36A1B16C0
+	for <lists+io-uring@lfdr.de>; Mon, 20 Apr 2020 22:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725918AbgDTUN2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Apr 2020 16:13:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48038 "EHLO
+        id S1726100AbgDTUQd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Apr 2020 16:16:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbgDTUN1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Apr 2020 16:13:27 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B63C061A0C;
-        Mon, 20 Apr 2020 13:13:27 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id x4so1001161wmj.1;
-        Mon, 20 Apr 2020 13:13:26 -0700 (PDT)
+        with ESMTP id S1725897AbgDTUQd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Apr 2020 16:16:33 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493C0C061A0C;
+        Mon, 20 Apr 2020 13:16:32 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id 188so998108wmc.2;
+        Mon, 20 Apr 2020 13:16:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=50GodmMSF+/S56DVA0SDd9Nt430QjVwnoRMP+NIP1ok=;
-        b=Gfh+BBZSc0XjC1l4hVanmuubw5EgH0Mk1C0RbXkDG2NaSZ6y8XCv1q2yTGpiV+JtML
-         oZqr1B2uFAhRFtGeR7ZETZ0HsDm6yAXan4hlUApsOytfLBARmc4ifAUjthhiBYfyUgra
-         6YszwF42vOBjJTju2zUXIFK/sbuM8VgVmUel7uyuKPcV0sHspztE9cMFk22d0UfR+XOE
-         0GreJJQDAOlxdJDRjHbIu8IT+1S/6d9cEzqHwa2tEJj6t7Nsy/soeQruoSlrT42MNa+F
-         lNAAEvDI1/oQ5VR0u/S9XLG1FpPtrlp2F3mYoKhrqcrp9luCLkRAHnpSPAPLSfV7aopc
-         zU/g==
+        bh=PbYGmwk9aMs7i+WwwNHmn4efpeSeAZPf38VRz09zQQ0=;
+        b=XXEuLCLCsjExglYaAm+dOqTSF09ybcDH4kP4NAl3yReg8aW8lRQ15bIoWeKmtLuD77
+         yvVglLpT3/R7zP5o7eg3UlosITXtjTIsyHMlMvfAbGZo4Xqf27U1CuUthuQpLb3w6B91
+         f7IlkH7kVtm+8w0OcN3C4EFFaPdBEX/TLwlwDWakig2Rrm4aXihEJwZj9GYlAXmHachG
+         FC75lQd5dIa56N1Jxy656JK6X0CzuAsxDujYyBK+f9AYbs46tQtAJz++5TfVok5+EP1C
+         kPIyo/rXtI1VszVxuBO4pIWpQgoXgrifqcJIfdq9E0bbBe87AwrifioKQZYRAjHzf8zJ
+         81HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=50GodmMSF+/S56DVA0SDd9Nt430QjVwnoRMP+NIP1ok=;
-        b=oYik0LxvEWgDUrJNllJ3VSmEXe+edXU7c/tVcmsty1M59g5QAY3MV2MejMISXoWw2I
-         7CJRFWcP19+AbceRAbbOuNrv6okzimRsPDLljVmFNqCz/lnSkBNY/BUVRn8CRA0rSqZl
-         tGYHV+Iu0gLJvU4qyGeDj5tgU3ElZ4cIleTIVfuln/Roe0LnOha6SMyERtU9orLknGWv
-         4jrGdhX2QoMM9uFbCg1gnfUfznSNb3x0cePP4tqVKX4ZBVGhpDc6PSdqS8sjC75/JBRS
-         QLLcxxOefpUPheAX1k0bQ3q5CaswSZfEAaCfE0QV+aitE0hRW8r16BY83c/5y1/1UZI9
-         UTIA==
-X-Gm-Message-State: AGi0PubeDfQgFZ+CpLoDee6aSid1SeiMy18kKUqDkTB0P4lZhL3GG3wT
-        dhEbKz52x062K7YtiC8Otghr4fDp
-X-Google-Smtp-Source: APiQypIvbOh+sEKuPFiRTKb5adEJSAqAU8lg77/fX/rLiN9BgTqJ1xQ3ib1Q38ECKYXnep3DWJtXhQ==
-X-Received: by 2002:a1c:154:: with SMTP id 81mr1121695wmb.48.1587413605418;
-        Mon, 20 Apr 2020 13:13:25 -0700 (PDT)
+        bh=PbYGmwk9aMs7i+WwwNHmn4efpeSeAZPf38VRz09zQQ0=;
+        b=E46vYKFwtjErf+as5jYCe0d4zYU8RQv0HNXe29bq9kPNvlMGkDIpmzNH4HjYy6PK7x
+         InfJLoQ4nzgdWZn77+QlNwj4QXBD3n7WXojrc+iJyQ8EFDIKJfZH1+DGJmlsK8Gh0z3J
+         i1Xw5cZ1dgUMJ5lfIwDHSrpzt+EuQrI6cG09Nmnhenr5S2qd9RQFvtGT0B+Qm5bJLHLp
+         cN7qhWnWD9DWks5/b0Otjplh9s7t7fudAmZkbF5xwjtwiC9be5h+Ps+zxSnOfUNOQsHz
+         bKkJho9OIypY1YgywVDse9xx68vpW0fop7XQ4xXcHCm7p9B4voLMQZjPCt6eVk4HUsHK
+         fqDQ==
+X-Gm-Message-State: AGi0PuZpRdbTT11xmgT6eSEPM9yaU3YVCWAsPJV9fPkspey0LKo38F+z
+        PljPLug+N/RDjK3VTel7HhRfuoNq
+X-Google-Smtp-Source: APiQypKA/WbkFBiROj8Sx8BAZ1MNEINYp1IXBM4RGEprEMHflyIphEM7jSknsZh4fRA+f29CVjBu9A==
+X-Received: by 2002:a1c:8106:: with SMTP id c6mr1130558wmd.88.1587413790528;
+        Mon, 20 Apr 2020 13:16:30 -0700 (PDT)
 Received: from [192.168.43.25] ([109.126.129.227])
-        by smtp.gmail.com with ESMTPSA id 91sm803086wra.37.2020.04.20.13.13.24
+        by smtp.gmail.com with ESMTPSA id n6sm740640wrs.81.2020.04.20.13.16.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Apr 2020 13:13:24 -0700 (PDT)
+        Mon, 20 Apr 2020 13:16:29 -0700 (PDT)
+Subject: Re: [PATCH 1/2] io_uring: trigger timeout after any sqe->off CQEs
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <cover.1587229607.git.asml.silence@gmail.com>
  <28005ea0de63e15dbffd87a49fe9b671f1afa87e.1587229607.git.asml.silence@gmail.com>
  <88cbde3c-52a1-7fb3-c4a7-b548beaa5502@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <f9c1492c-a0f6-c6ec-ec2e-82a5894060f6@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -97,13 +99,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 1/2] io_uring: trigger timeout after any sqe->off CQEs
-Message-ID: <f9c1492c-a0f6-c6ec-ec2e-82a5894060f6@gmail.com>
-Date:   Mon, 20 Apr 2020 23:12:24 +0300
+Message-ID: <3fe32d07-10e6-4a5a-1390-f03ec4a09c6f@gmail.com>
+Date:   Mon, 20 Apr 2020 23:15:30 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <88cbde3c-52a1-7fb3-c4a7-b548beaa5502@kernel.dk>
+In-Reply-To: <f9c1492c-a0f6-c6ec-ec2e-82a5894060f6@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -112,55 +113,59 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 20/04/2020 22:40, Jens Axboe wrote:
-> On 4/18/20 11:20 AM, Pavel Begunkov wrote:
->> +static void __io_flush_timeouts(struct io_ring_ctx *ctx)
->> +{
->> +	u32 end, start;
->> +
->> +	start = end = ctx->cached_cq_tail;
->> +	do {
->> +		struct io_kiocb *req = list_first_entry(&ctx->timeout_list,
->> +							struct io_kiocb, list);
->> +
->> +		if (req->flags & REQ_F_TIMEOUT_NOSEQ)
->> +			break;
->> +		/*
->> +		 * multiple timeouts may have the same target,
->> +		 * check that @req is in [first_tail, cur_tail]
->> +		 */
->> +		if (!io_check_in_range(req->timeout.target_cq, start, end))
->> +			break;
->> +
->> +		list_del_init(&req->list);
->> +		io_kill_timeout(req);
->> +		end = ctx->cached_cq_tail;
->> +	} while (!list_empty(&ctx->timeout_list));
->> +}
->> +
->>  static void io_commit_cqring(struct io_ring_ctx *ctx)
->>  {
->>  	struct io_kiocb *req;
->>  
->> -	while ((req = io_get_timeout_req(ctx)) != NULL)
->> -		io_kill_timeout(req);
->> +	if (!list_empty(&ctx->timeout_list))
->> +		__io_flush_timeouts(ctx);
->>  
->>  	__io_commit_cqring(ctx);
->>  
+On 20/04/2020 23:12, Pavel Begunkov wrote:
+> On 20/04/2020 22:40, Jens Axboe wrote:
+>> On 4/18/20 11:20 AM, Pavel Begunkov wrote:
+>>> +static void __io_flush_timeouts(struct io_ring_ctx *ctx)
+>>> +{
+>>> +	u32 end, start;
+>>> +
+>>> +	start = end = ctx->cached_cq_tail;
+>>> +	do {
+>>> +		struct io_kiocb *req = list_first_entry(&ctx->timeout_list,
+>>> +							struct io_kiocb, list);
+>>> +
+>>> +		if (req->flags & REQ_F_TIMEOUT_NOSEQ)
+>>> +			break;
+>>> +		/*
+>>> +		 * multiple timeouts may have the same target,
+>>> +		 * check that @req is in [first_tail, cur_tail]
+>>> +		 */
+>>> +		if (!io_check_in_range(req->timeout.target_cq, start, end))
+>>> +			break;
+>>> +
+>>> +		list_del_init(&req->list);
+>>> +		io_kill_timeout(req);
+>>> +		end = ctx->cached_cq_tail;
+>>> +	} while (!list_empty(&ctx->timeout_list));
+>>> +}
+>>> +
+>>>  static void io_commit_cqring(struct io_ring_ctx *ctx)
+>>>  {
+>>>  	struct io_kiocb *req;
+>>>  
+>>> -	while ((req = io_get_timeout_req(ctx)) != NULL)
+>>> -		io_kill_timeout(req);
+>>> +	if (!list_empty(&ctx->timeout_list))
+>>> +		__io_flush_timeouts(ctx);
+>>>  
+>>>  	__io_commit_cqring(ctx);
+>>>  
+>>
+>> Any chance we can do this without having to iterate timeouts on the
+>> completion path?
+>>
 > 
-> Any chance we can do this without having to iterate timeouts on the
-> completion path?
-> 
+> If you mean the one in __io_flush_timeouts(), then no, unless we forbid timeouts
+> with identical target sequences + some extra constraints. The loop there is not
+> new, it iterates only over timeouts, that need to be completed, and removes
+> them. That's amortised O(1).
 
-If you mean the one in __io_flush_timeouts(), then no, unless we forbid timeouts
-with identical target sequences + some extra constraints. The loop there is not
-new, it iterates only over timeouts, that need to be completed, and removes
-them. That's amortised O(1).
+We can think about adding unlock/lock, if that's what you are thinking about.
 
-On the other hand, there was a loop in io_timeout_fn() doing in total O(n^2),
-and it was killed by this patch.
+
+> On the other hand, there was a loop in io_timeout_fn() doing in total O(n^2),
+> and it was killed by this patch.
 
 -- 
 Pavel Begunkov

@@ -2,97 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBF501B118D
-	for <lists+io-uring@lfdr.de>; Mon, 20 Apr 2020 18:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9111B1607
+	for <lists+io-uring@lfdr.de>; Mon, 20 Apr 2020 21:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbgDTQ14 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Apr 2020 12:27:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39860 "EHLO
+        id S1726439AbgDTTkp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Apr 2020 15:40:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728998AbgDTQ1x (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Apr 2020 12:27:53 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B445C061A0C
-        for <io-uring@vger.kernel.org>; Mon, 20 Apr 2020 09:27:53 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id b11so12952148wrs.6
-        for <io-uring@vger.kernel.org>; Mon, 20 Apr 2020 09:27:52 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1725897AbgDTTkp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Apr 2020 15:40:45 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BA07C061A0C
+        for <io-uring@vger.kernel.org>; Mon, 20 Apr 2020 12:40:45 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id a32so315796pje.5
+        for <io-uring@vger.kernel.org>; Mon, 20 Apr 2020 12:40:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition;
-        bh=O+WplOik87VxRZXMQTnlXVOMgELplUpLySghY0PPwj8=;
-        b=uO1l8267mVWK/rU0q3IgGyhEAkf/DNrU5RyxuhxOmSwpnzU3tWFFnsI0IDDoY76xZD
-         J2PrxBFgfwuZoq4TJSQz+kHp+29rBkVZYK3ZmJXq/Etn1oALzyrN0E9ciObXUVJKLyD3
-         qoJ+YPvADhb0S7bzmkqnOzIFnVLOyeraprnmQ1xfyvjkTJPhTpIeN/asWixfI3z53GHo
-         DWoMOjc2yB+rD6fKYwSAAwEUTssMZr7IZgiITpI2HFFp0n0qgNtqH2J+M+xUJdEwAmdX
-         MdRF+jJmbt4BpkJhQdAYateoTtlIIrzocgS6GgkqwTnS5ID3xhHt9wMtl5BvULpZOF8c
-         HYSg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=crfRAQ43ge1CHQV5uG3ZCQRSUiv0vgP1i6rewJuDm8w=;
+        b=PNkN3a33VBD76bwnRlQGAdcoo4qu3vBYufcWqh9DvJiLUNX3qUhCDJur/R4f81+NyC
+         Li1t2ZcZz8PU8ATF5r1EjhFu/niv8mpCTMQJaykbL7kc9WyhYmGzMY2GD/sxLFWhnYhk
+         KnqnPQ08Fu8fGYlOC8tow8pDIiCzbNh5uqm8x+/p0lks84VDLDX2aPWhxgLr1z6dcbeD
+         vt9y01ezFHCFMzCPh2PPL+9R0icCE4zhNL3jLDam+/pXGvh3LTJGyPeGV81+uVCHIDp5
+         ZTWIX7790gMBPi4f5h4cJwVkbJpaT/tzoObaMf5nOk9eFOuHcip1labMqSKXOp/NE42a
+         p6Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition;
-        bh=O+WplOik87VxRZXMQTnlXVOMgELplUpLySghY0PPwj8=;
-        b=WOTnUMp71FRYueV0PiHM8cgNVKSOmxPo7xkGtW15oabP++1cubVS2yD0yAm7CDoGN3
-         i5g5t9LoLNPdPpoGxlLrwlb9nJ5T0L3O8YKfoz5fQZTTjBNED4F6TKHpFflJQYOpGCyv
-         05+W7t2PVHTxK5jnRv1ayrJGrNAEcKhXHYGNJ+R/LdL/njosFxSTePMAq0DpOra3aJjs
-         5uISmCKVjQW6vr+y77IxUzsnA03LpFMuyiofKTw90fwUFwWP11gAqSxx4ajjOKU8oi/r
-         oH9kSbW6aIrRXKJWsZJfCjHiFtXRX8jSWdvHPk8hC0g2AYdgGHbGPNx6EB1/F1WuRrwV
-         nslA==
-X-Gm-Message-State: AGi0Pubo5iDR7PgprpT7JEHOexhBtKYPcnbrqjgstXdNVLuxmfLvh8V1
-        zIKKjP2KvsUxy7DcEklmgVJCHL4Wbs4=
-X-Google-Smtp-Source: APiQypJ4ax65Tn1JK0VrpJ9Hbxl0xEyKxZHGEFdhlE+FRrbDRa3kXzMGhwmX/35fGQCc7QyWbgeDBw==
-X-Received: by 2002:adf:8441:: with SMTP id 59mr20476989wrf.237.1587400070918;
-        Mon, 20 Apr 2020 09:27:50 -0700 (PDT)
-Received: from dontpanic ([2a01:e35:243a:cf10:6bd:73a4:bc42:c458])
-        by smtp.gmail.com with ESMTPSA id s9sm19054wrg.27.2020.04.20.09.27.49
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2020 09:27:49 -0700 (PDT)
-Date:   Mon, 20 Apr 2020 18:27:48 +0200
-From:   William Dauchy <wdauchy@gmail.com>
-To:     io-uring@vger.kernel.org
-Subject: io_uring_peek_cqe and EAGAIN
-Message-ID: <20200420162748.GA43918@dontpanic>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=crfRAQ43ge1CHQV5uG3ZCQRSUiv0vgP1i6rewJuDm8w=;
+        b=VAYp+ETdumbt189eguGPjD8+0abGE+YSM5bfU7LiOO1A+PeudC9YT8rMnO4vnQK8t7
+         /zOjh/H9teg3cc/s6ft+/8ClPI+AIPfnnobpLH1qnE4ybON+LMkr8hBAs6IZTXb/NM2+
+         5nVYR6MKRf8ni37eWAEmNt7tMYUYh+3G42VQyHWBWBB56GaTDqb4RoIwY/p0cPZopjf/
+         kxuQAIphQZobuWzMioUvlQUdSMJKSrOnDz7CuRcbbSMhcyY8hxAj7FqSkj3RqFoZw9G8
+         Avm0WWzbgGKOsMlyZ3TNqFK1Ng+Lyd2w2bTlEaip/xptcDEdBPrle6z8LNzRNJ1GLbji
+         VXEA==
+X-Gm-Message-State: AGi0Pub9SYQDqwxsF4AFt+zSZyEtnimB6y5nbMl0OM3kw8mKJ5mvxIjf
+        V5+U3YpL9sc+tH86OJgQjDxQmA==
+X-Google-Smtp-Source: APiQypLeJdTJ2fJM1do4hReG8gEvplWurwkuXAVWnImM5hulRFvatqG5fZlyRHR9/wqsYonnONJJEw==
+X-Received: by 2002:a17:90a:ad02:: with SMTP id r2mr1158906pjq.63.1587411644566;
+        Mon, 20 Apr 2020 12:40:44 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id l30sm162213pje.34.2020.04.20.12.40.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Apr 2020 12:40:44 -0700 (PDT)
+Subject: Re: [PATCH 1/2] io_uring: trigger timeout after any sqe->off CQEs
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1587229607.git.asml.silence@gmail.com>
+ <28005ea0de63e15dbffd87a49fe9b671f1afa87e.1587229607.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <88cbde3c-52a1-7fb3-c4a7-b548beaa5502@kernel.dk>
+Date:   Mon, 20 Apr 2020 13:40:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <28005ea0de63e15dbffd87a49fe9b671f1afa87e.1587229607.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 4/18/20 11:20 AM, Pavel Begunkov wrote:
+> +static void __io_flush_timeouts(struct io_ring_ctx *ctx)
+> +{
+> +	u32 end, start;
+> +
+> +	start = end = ctx->cached_cq_tail;
+> +	do {
+> +		struct io_kiocb *req = list_first_entry(&ctx->timeout_list,
+> +							struct io_kiocb, list);
+> +
+> +		if (req->flags & REQ_F_TIMEOUT_NOSEQ)
+> +			break;
+> +		/*
+> +		 * multiple timeouts may have the same target,
+> +		 * check that @req is in [first_tail, cur_tail]
+> +		 */
+> +		if (!io_check_in_range(req->timeout.target_cq, start, end))
+> +			break;
+> +
+> +		list_del_init(&req->list);
+> +		io_kill_timeout(req);
+> +		end = ctx->cached_cq_tail;
+> +	} while (!list_empty(&ctx->timeout_list));
+> +}
+> +
+>  static void io_commit_cqring(struct io_ring_ctx *ctx)
+>  {
+>  	struct io_kiocb *req;
+>  
+> -	while ((req = io_get_timeout_req(ctx)) != NULL)
+> -		io_kill_timeout(req);
+> +	if (!list_empty(&ctx->timeout_list))
+> +		__io_flush_timeouts(ctx);
+>  
+>  	__io_commit_cqring(ctx);
+>  
 
-While doing some tests which are open/read/close files I saw that I
-was getting -EAGAIN return value sometimesi on io_uring_peek_cqe,
-and more often after dropping caches.
-In parrallel, when reading examples provided by liburing, we can see
-that getting this error is making the example fail (such as in
-io_uring-cp). So I was wondering whether it was stupid to change the
-example to something like:
+Any chance we can do this without having to iterate timeouts on the
+completion path?
 
-diff --git a/examples/io_uring-cp.c b/examples/io_uring-cp.c
-index cc7a227..2d6d190 100644
---- a/examples/io_uring-cp.c
-+++ b/examples/io_uring-cp.c
-@@ -170,11 +170,11 @@ static int copy_file(struct io_uring *ring, off_t insize)
-     ret = io_uring_wait_cqe(ring, &cqe);
-     got_comp = 1;
-    } else {
--    ret = io_uring_peek_cqe(ring, &cqe);
--    if (ret == -EAGAIN) {
--     cqe = NULL;
--     ret = 0;
--    }
-+    do {
-+     ret = io_uring_peek_cqe(ring, &cqe)
-+     if (ret != -EAGAIN)
-+      break;
-+    } while (1);
-    }
-    if (ret < 0) {
-     fprintf(stderr, "io_uring_peek_cqe: %s\n",
-
-
-Best,
 -- 
-William
+Jens Axboe
+

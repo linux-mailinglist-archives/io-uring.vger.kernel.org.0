@@ -2,170 +2,165 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B36A1B16C0
-	for <lists+io-uring@lfdr.de>; Mon, 20 Apr 2020 22:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C2191B1823
+	for <lists+io-uring@lfdr.de>; Mon, 20 Apr 2020 23:14:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726100AbgDTUQd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Apr 2020 16:16:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48514 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbgDTUQd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Apr 2020 16:16:33 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493C0C061A0C;
-        Mon, 20 Apr 2020 13:16:32 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id 188so998108wmc.2;
-        Mon, 20 Apr 2020 13:16:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:references:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PbYGmwk9aMs7i+WwwNHmn4efpeSeAZPf38VRz09zQQ0=;
-        b=XXEuLCLCsjExglYaAm+dOqTSF09ybcDH4kP4NAl3yReg8aW8lRQ15bIoWeKmtLuD77
-         yvVglLpT3/R7zP5o7eg3UlosITXtjTIsyHMlMvfAbGZo4Xqf27U1CuUthuQpLb3w6B91
-         f7IlkH7kVtm+8w0OcN3C4EFFaPdBEX/TLwlwDWakig2Rrm4aXihEJwZj9GYlAXmHachG
-         FC75lQd5dIa56N1Jxy656JK6X0CzuAsxDujYyBK+f9AYbs46tQtAJz++5TfVok5+EP1C
-         kPIyo/rXtI1VszVxuBO4pIWpQgoXgrifqcJIfdq9E0bbBe87AwrifioKQZYRAjHzf8zJ
-         81HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PbYGmwk9aMs7i+WwwNHmn4efpeSeAZPf38VRz09zQQ0=;
-        b=E46vYKFwtjErf+as5jYCe0d4zYU8RQv0HNXe29bq9kPNvlMGkDIpmzNH4HjYy6PK7x
-         InfJLoQ4nzgdWZn77+QlNwj4QXBD3n7WXojrc+iJyQ8EFDIKJfZH1+DGJmlsK8Gh0z3J
-         i1Xw5cZ1dgUMJ5lfIwDHSrpzt+EuQrI6cG09Nmnhenr5S2qd9RQFvtGT0B+Qm5bJLHLp
-         cN7qhWnWD9DWks5/b0Otjplh9s7t7fudAmZkbF5xwjtwiC9be5h+Ps+zxSnOfUNOQsHz
-         bKkJho9OIypY1YgywVDse9xx68vpW0fop7XQ4xXcHCm7p9B4voLMQZjPCt6eVk4HUsHK
-         fqDQ==
-X-Gm-Message-State: AGi0PuZpRdbTT11xmgT6eSEPM9yaU3YVCWAsPJV9fPkspey0LKo38F+z
-        PljPLug+N/RDjK3VTel7HhRfuoNq
-X-Google-Smtp-Source: APiQypKA/WbkFBiROj8Sx8BAZ1MNEINYp1IXBM4RGEprEMHflyIphEM7jSknsZh4fRA+f29CVjBu9A==
-X-Received: by 2002:a1c:8106:: with SMTP id c6mr1130558wmd.88.1587413790528;
-        Mon, 20 Apr 2020 13:16:30 -0700 (PDT)
-Received: from [192.168.43.25] ([109.126.129.227])
-        by smtp.gmail.com with ESMTPSA id n6sm740640wrs.81.2020.04.20.13.16.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Apr 2020 13:16:29 -0700 (PDT)
-Subject: Re: [PATCH 1/2] io_uring: trigger timeout after any sqe->off CQEs
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1587229607.git.asml.silence@gmail.com>
- <28005ea0de63e15dbffd87a49fe9b671f1afa87e.1587229607.git.asml.silence@gmail.com>
- <88cbde3c-52a1-7fb3-c4a7-b548beaa5502@kernel.dk>
- <f9c1492c-a0f6-c6ec-ec2e-82a5894060f6@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
- bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
- 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
- +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
- W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
- CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
- Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
- EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
- jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
- NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
- bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
- PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
- Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
- Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
- xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
- aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
- HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
- 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
- 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
- 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
- M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
- reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
- IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
- dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
- Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
- jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
- Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
- dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
- xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
- DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
- F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
- 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
- aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
- 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
- LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
- uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
- rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
- 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
- JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
- UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
- m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
- OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <3fe32d07-10e6-4a5a-1390-f03ec4a09c6f@gmail.com>
-Date:   Mon, 20 Apr 2020 23:15:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1726758AbgDTVOn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Apr 2020 17:14:43 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:49317 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbgDTVOn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Apr 2020 17:14:43 -0400
+Received: from localhost (50-39-163-217.bvtn.or.frontiernet.net [50.39.163.217])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 7894D200002;
+        Mon, 20 Apr 2020 21:14:36 +0000 (UTC)
+Date:   Mon, 20 Apr 2020 14:14:34 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v4 2/3] fs: openat2: Extend open_how to allow
+ userspace-selected fds
+Message-ID: <20200420211434.GC3515@localhost>
+References: <cover.1586830316.git.josh@joshtriplett.org>
+ <f969e7d45a8e83efc1ca13d675efd8775f13f376.1586830316.git.josh@joshtriplett.org>
+ <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-In-Reply-To: <f9c1492c-a0f6-c6ec-ec2e-82a5894060f6@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200419104404.j4e5gxdn2duvmu6s@yavin.dot.cyphar.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 20/04/2020 23:12, Pavel Begunkov wrote:
-> On 20/04/2020 22:40, Jens Axboe wrote:
->> On 4/18/20 11:20 AM, Pavel Begunkov wrote:
->>> +static void __io_flush_timeouts(struct io_ring_ctx *ctx)
->>> +{
->>> +	u32 end, start;
->>> +
->>> +	start = end = ctx->cached_cq_tail;
->>> +	do {
->>> +		struct io_kiocb *req = list_first_entry(&ctx->timeout_list,
->>> +							struct io_kiocb, list);
->>> +
->>> +		if (req->flags & REQ_F_TIMEOUT_NOSEQ)
->>> +			break;
->>> +		/*
->>> +		 * multiple timeouts may have the same target,
->>> +		 * check that @req is in [first_tail, cur_tail]
->>> +		 */
->>> +		if (!io_check_in_range(req->timeout.target_cq, start, end))
->>> +			break;
->>> +
->>> +		list_del_init(&req->list);
->>> +		io_kill_timeout(req);
->>> +		end = ctx->cached_cq_tail;
->>> +	} while (!list_empty(&ctx->timeout_list));
->>> +}
->>> +
->>>  static void io_commit_cqring(struct io_ring_ctx *ctx)
->>>  {
->>>  	struct io_kiocb *req;
->>>  
->>> -	while ((req = io_get_timeout_req(ctx)) != NULL)
->>> -		io_kill_timeout(req);
->>> +	if (!list_empty(&ctx->timeout_list))
->>> +		__io_flush_timeouts(ctx);
->>>  
->>>  	__io_commit_cqring(ctx);
->>>  
->>
->> Any chance we can do this without having to iterate timeouts on the
->> completion path?
->>
+On Sun, Apr 19, 2020 at 08:44:04PM +1000, Aleksa Sarai wrote:
+> On 2020-04-13, Josh Triplett <josh@joshtriplett.org> wrote:
+> > Inspired by the X protocol's handling of XIDs, allow userspace to select
+> > the file descriptor opened by openat2, so that it can use the resulting
+> > file descriptor in subsequent system calls without waiting for the
+> > response to openat2.
+> > 
+> > In io_uring, this allows sequences like openat2/read/close without
+> > waiting for the openat2 to complete. Multiple such sequences can
+> > overlap, as long as each uses a distinct file descriptor.
 > 
-> If you mean the one in __io_flush_timeouts(), then no, unless we forbid timeouts
-> with identical target sequences + some extra constraints. The loop there is not
-> new, it iterates only over timeouts, that need to be completed, and removes
-> them. That's amortised O(1).
+> I'm not sure I understand this explanation -- how can you trigger a
+> syscall with an fd that hasn't yet been registered (unless you're just
+> hoping the race goes in your favour)?
 
-We can think about adding unlock/lock, if that's what you are thinking about.
+See the response from Jens for an explanation of how this works in
+io_uring.
 
+> > Add a new O_SPECIFIC_FD open flag to enable this behavior, only accepted
+> > by openat2 for now (ignored by open/openat like all unknown flags). Add
+> > an fd field to struct open_how (along with appropriate padding, and
+> > verify that the padding is 0 to allow replacing the padding with a field
+> > in the future).
+> > 
+> > The file table has a corresponding new function
+> > get_specific_unused_fd_flags, which gets the specified file descriptor
+> > if O_SPECIFIC_FD is set (and the fd isn't -1); otherwise it falls back
+> > to get_unused_fd_flags, to simplify callers.
+> > 
+> > The specified file descriptor must not already be open; if it is,
+> > get_specific_unused_fd_flags will fail with -EBUSY. This helps catch
+> > userspace errors.
+> > 
+> > When O_SPECIFIC_FD is set, and fd is not -1, openat2 will use the
+> > specified file descriptor rather than finding the lowest available one.
+> 
+> I still don't like that you can enable this feature with O_SPECIFIC_FD
+> but then disable it by specifying fd as -1. I understand why this is
+> needed for pipe2() and socketpair() and that's totally fine, but I don't
+> think it makes sense for openat2() or other interfaces where there's
+> only one fd being returned -- what does it mean to say "give me a
+> specific fd, but actually I don't care what it is"?
+> 
+> I know this is a trade-off between consistency of O_SPECIFIC_FD
+> interfaces and having wart-less interfaces for each syscall, but I don't
+> think it breaks consistency to say "syscalls that only give you one fd
+> don't have a second way of disabling the feature -- just don't pass
+> O_SPECIFIC_FD".
 
-> On the other hand, there was a loop in io_timeout_fn() doing in total O(n^2),
-> and it was killed by this patch.
+I think there's value in the orthogonality, and -1 can never be a valid
+file descriptor. If this becomes a sticking point, it could certainly be
+changed (just modify pipe2 to remove the O_SPECIFIC_FD flag if passed
+-1), but at the same time, I'd rather have this logic implemented once
+with a uniform semantic no matter what syscall uses it.
 
--- 
-Pavel Begunkov
+> >  struct open_how {
+> >  	__u64 flags;
+> >  	__u64 mode;
+> >  	__u64 resolve;
+> > +	__u32 fd;
+> > +	__u32 pad; /* Must be 0 in the current version */
+> 
+> Small nit: This field should be called __padding to make it more
+> explicit it's something internal and shouldn't be looked at by
+> userspace. And the comment should just be "must be zeroed".
+
+Good point. Done in v5.
+
+> > --- a/tools/testing/selftests/openat2/openat2_test.c
+> > +++ b/tools/testing/selftests/openat2/openat2_test.c
+> > @@ -40,7 +40,7 @@ struct struct_test {
+> >  	int err;
+> >  };
+> >  
+> > -#define NUM_OPENAT2_STRUCT_TESTS 7
+> > +#define NUM_OPENAT2_STRUCT_TESTS 8
+> >  #define NUM_OPENAT2_STRUCT_VARIATIONS 13
+> >  
+> >  void test_openat2_struct(void)
+> > @@ -52,6 +52,9 @@ void test_openat2_struct(void)
+> >  		{ .name = "normal struct",
+> >  		  .arg.inner.flags = O_RDONLY,
+> >  		  .size = sizeof(struct open_how) },
+> > +		{ .name = "v0 struct",
+> > +		  .arg.inner.flags = O_RDONLY,
+> > +		  .size = OPEN_HOW_SIZE_VER0 },
+> >  		/* Bigger struct, with zeroed out end. */
+> >  		{ .name = "bigger struct (zeroed out)",
+> >  		  .arg.inner.flags = O_RDONLY,
+> > @@ -155,7 +158,7 @@ struct flag_test {
+> >  	int err;
+> >  };
+> >  
+> > -#define NUM_OPENAT2_FLAG_TESTS 23
+> > +#define NUM_OPENAT2_FLAG_TESTS 29
+> >  
+> >  void test_openat2_flags(void)
+> >  {
+> > @@ -223,6 +226,24 @@ void test_openat2_flags(void)
+> >  		{ .name = "invalid how.resolve and O_PATH",
+> >  		  .how.flags = O_PATH,
+> >  		  .how.resolve = 0x1337, .err = -EINVAL },
+> > +
+> > +		/* O_SPECIFIC_FD tests */
+> > +		{ .name = "O_SPECIFIC_FD",
+> > +		  .how.flags = O_RDONLY | O_SPECIFIC_FD, .how.fd = 42 },
+> > +		{ .name = "O_SPECIFIC_FD if fd exists",
+> > +		  .how.flags = O_RDONLY | O_SPECIFIC_FD, .how.fd = 2,
+> > +		  .err = -EBUSY },
+> > +		{ .name = "O_SPECIFIC_FD with fd -1",
+> > +		  .how.flags = O_RDONLY | O_SPECIFIC_FD, .how.fd = -1 },
+> > +		{ .name = "fd without O_SPECIFIC_FD",
+> > +		  .how.flags = O_RDONLY, .how.fd = 42,
+> > +		  .err = -EINVAL },
+> > +		{ .name = "fd -1 without O_SPECIFIC_FD",
+> > +		  .how.flags = O_RDONLY, .how.fd = -1,
+> > +		  .err = -EINVAL },
+> > +		{ .name = "existing fd without O_SPECIFIC_FD",
+> > +		  .how.flags = O_RDONLY, .how.fd = 2,
+> > +		  .err = -EINVAL },
+> 
+> It would be good to add a test to make sure that a non-zero value of
+> how->__padding also gives -EINVAL.
+
+Done in v5.
+
+- Josh Triplett

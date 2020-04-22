@@ -2,73 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EFD81B3A02
-	for <lists+io-uring@lfdr.de>; Wed, 22 Apr 2020 10:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AEC11B4908
+	for <lists+io-uring@lfdr.de>; Wed, 22 Apr 2020 17:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725899AbgDVI1h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Apr 2020 04:27:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45740 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725811AbgDVI1h (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Apr 2020 04:27:37 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFCE2C03C1A6
-        for <io-uring@vger.kernel.org>; Wed, 22 Apr 2020 01:27:36 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id t63so1260204wmt.3
-        for <io-uring@vger.kernel.org>; Wed, 22 Apr 2020 01:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daurnimator.com; s=daurnimator;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Gtj2gwV4AVCr2al2GPmJtFyaeakVl+PxNigrn8lVSYk=;
-        b=TRIv6S9J+/2purFW94ZbHbaVN+t17OZqe2NY9pTciTmS3qfpXKP5RbtIKTadoCJkhH
-         JrLfZucciQk+B5CURlt1b3fyiti9JSh28G5HFaaPj8pUyUBMinNui1RF0k+/pCwLRxAV
-         yN5dYcdXcXaQV+1GbKMg4p+B84CXut0HvTckQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Gtj2gwV4AVCr2al2GPmJtFyaeakVl+PxNigrn8lVSYk=;
-        b=r6nv76pUqq/b7bMlw4b3flxw5PkVX6IMYijWtqc2CtEz2tE4OMPpkwy1jtrJwXCvTw
-         v0Rwx3/bWo8MYi1//12ImBCNMaOeq/2QOR8Kq6bRFhCYWAKyxjWAXEigcvzgDTxR8lgL
-         hr3rgwDgwY9QaHi5iQ+CiQfh9rTHqngKsClmwu1W+1Ttya3vIB+GQxMraALlsbWQSqha
-         T4Iwu633TqhbwAe0rJE/LaXXfrA1bfxW7TIGdtPIYDzp9tKIJhr1oHc1iRb1Vb1YUTaz
-         qJ3sleld8BvC9IH0CFuXUWe74k8KDXQHh0xq91oEdSJvH93RQZBMG8kMlPBkHgHiPeMG
-         Yv4A==
-X-Gm-Message-State: AGi0PubvNnaabWEvEQpSZuFRkzKb5v9TKbD2A/KjYMv46ezJYHfMA1gW
-        k7soOflAT36Jlzb+kLEjhKXGgd81ZgXy0wgHHpwCwg==
-X-Google-Smtp-Source: APiQypLys21v2XA3w7wPgbknTcuipVrxWwgEobgm9uqusSUVMzDY93NqngoXEYHzXojhCFjQrkM3Xqd6jQWQl/29iNU=
-X-Received: by 2002:a1c:7215:: with SMTP id n21mr9594288wmc.145.1587544055597;
- Wed, 22 Apr 2020 01:27:35 -0700 (PDT)
+        id S1726717AbgDVPoo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Apr 2020 11:44:44 -0400
+Received: from albireo.enyo.de ([37.24.231.21]:43428 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726124AbgDVPoo (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 22 Apr 2020 11:44:44 -0400
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1jRHYE-00031Q-Ug; Wed, 22 Apr 2020 15:44:38 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1jRHYE-0006oS-Ox; Wed, 22 Apr 2020 17:44:38 +0200
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Mark Wielaard <mark@klomp.org>
+Cc:     Josh Triplett <josh@joshtriplett.org>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mtk.manpages@gmail.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-man@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] fs: pipe2: Support O_SPECIFIC_FD
+References: <cover.1587531463.git.josh@joshtriplett.org>
+        <2bb2e92c688b97247f644fe8220054d6c6b66b65.1587531463.git.josh@joshtriplett.org>
+Date:   Wed, 22 Apr 2020 17:44:38 +0200
+In-Reply-To: <2bb2e92c688b97247f644fe8220054d6c6b66b65.1587531463.git.josh@joshtriplett.org>
+        (Josh Triplett's message of "Tue, 21 Apr 2020 22:20:20 -0700")
+Message-ID: <877dy7ikyh.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-References: <233BE31C-B811-4715-97B6-7E3F965A5137@icloud.com>
-In-Reply-To: <233BE31C-B811-4715-97B6-7E3F965A5137@icloud.com>
-From:   Daurnimator <quae@daurnimator.com>
-Date:   Wed, 22 Apr 2020 18:27:23 +1000
-Message-ID: <CAEnbY+dyDgb=0dq=1Vfo5qKVEps8U88azO_ufPFcf55GSTxquA@mail.gmail.com>
-Subject: Re: Feature Request: SQE's flag for when you are not interested in
- the op.result
-To:     Mark Papadakis <markuspapadakis@icloud.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 22 Apr 2020 at 18:13, Mark Papadakis <markuspapadakis@icloud.com> w=
-rote:
->
-> When e.g manipulating epoll state via its FD, most of the time you don=E2=
-=80=99t care wether e.g EPOLL_CTL_DEL succeeds or fails, or you know that i=
-t will =E2=80=9Cnever=E2=80=9D fail. In such cases maybe it =E2=80=98d be b=
-eneficial to support another IOSQE flag which, when set, would instruct the=
- io_uring to not include a matching CQE for that SQE when processed.
-> It=E2=80=99s not a big deal, per se, but it would probably help somewhat =
-with performance.
+* Josh Triplett:
 
-I don't know if this makes sense: it could always fail e.g. due to a
-security module.
-And because you always need to check for failure, you need to know
-when success happens so you can stop tracking for possible failures.
+> This allows the caller of pipe2 to specify one or both file descriptors
+> rather than having them automatically use the lowest available file
+> descriptor. The caller can specify either file descriptor as -1 to
+> allow that file descriptor to use the lowest available.
+>
+> Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+> ---
+>  fs/pipe.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 16fb72e9abf7..4681a0d1d587 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -936,19 +936,19 @@ static int __do_pipe_flags(int *fd, struct file **files, int flags)
+>  	int error;
+>  	int fdw, fdr;
+>  
+> -	if (flags & ~(O_CLOEXEC | O_NONBLOCK | O_DIRECT))
+> +	if (flags & ~(O_CLOEXEC | O_NONBLOCK | O_DIRECT | O_SPECIFIC_FD))
+>  		return -EINVAL;
+>  
+>  	error = create_pipe_files(files, flags);
+>  	if (error)
+>  		return error;
+>  
+> -	error = get_unused_fd_flags(flags);
+> +	error = get_specific_unused_fd_flags(fd[0], flags);
+>  	if (error < 0)
+>  		goto err_read_pipe;
+>  	fdr = error;
+>  
+> -	error = get_unused_fd_flags(flags);
+> +	error = get_specific_unused_fd_flags(fd[1], flags);
+>  	if (error < 0)
+>  		goto err_fdr;
+>  	fdw = error;
+> @@ -969,7 +969,11 @@ static int __do_pipe_flags(int *fd, struct file **files, int flags)
+>  int do_pipe_flags(int *fd, int flags)
+>  {
+>  	struct file *files[2];
+> -	int error = __do_pipe_flags(fd, files, flags);
+> +	int error;
+> +
+> +	if (flags & O_SPECIFIC_FD)
+> +		return -EINVAL;
+> +	error = __do_pipe_flags(fd, files, flags);
+>  	if (!error) {
+>  		fd_install(fd[0], files[0]);
+>  		fd_install(fd[1], files[1]);
+> @@ -987,6 +991,10 @@ static int do_pipe2(int __user *fildes, int flags)
+>  	int fd[2];
+>  	int error;
+>  
+> +	if (flags & O_SPECIFIC_FD)
+> +		if (copy_from_user(fd, fildes, sizeof(fd)))
+> +			return -EFAULT;
+> +
+>  	error = __do_pipe_flags(fd, files, flags);
+>  	if (!error) {
+>  		if (unlikely(copy_to_user(fildes, fd, sizeof(fd)))) {
+
+Mark, I think this will need (or at least benefit from) some valgrind
+changes.

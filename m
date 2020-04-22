@@ -2,55 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A0E21B371D
-	for <lists+io-uring@lfdr.de>; Wed, 22 Apr 2020 08:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F7F91B3724
+	for <lists+io-uring@lfdr.de>; Wed, 22 Apr 2020 08:06:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726033AbgDVGF5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Apr 2020 02:05:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52156 "EHLO
+        id S1726444AbgDVGGN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Apr 2020 02:06:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbgDVGF4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Apr 2020 02:05:56 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32DBCC03C1A6;
-        Tue, 21 Apr 2020 23:05:56 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id d16so624235edv.8;
-        Tue, 21 Apr 2020 23:05:56 -0700 (PDT)
+        with ESMTP id S1725912AbgDVGGM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Apr 2020 02:06:12 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86031C03C1A6;
+        Tue, 21 Apr 2020 23:06:12 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id t12so642136edw.3;
+        Tue, 21 Apr 2020 23:06:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:reply-to:from:date:message-id
          :subject:to:cc;
-        bh=0J7wpqIPjekpSgyN4c8bsABWOF449xYPFoLT/PLxb3g=;
-        b=KEcbAmkM1enSx18mTQFJO+BTAUOuXkxB3/JCDOXSHjdsdipjTSoW0TFJ/b4uS7hF+6
-         w7G+V+SNgJOEHFrfCF++XAO7Tqvmk5EIgWmJpPyjiF8Ek7DIqxeQMjBhT6nSxwrsTIWa
-         4cIfNCYEQOQ53L/IuIdGVm1XNzoJPur7l5jGbbd4BHx3y4VHjzLn278Z3CMNY1RoC6pJ
-         wwWoza8cfCH4RJzHlmXRweOfhgZ5gdqHzy5lIuIfLId9iM4suxPN7+5mmxXuA8Ri7ecF
-         W1kQMqEzIvesvl8Eg9iqqOfuAh1Omi0Pvd104kNfi5vQl4FfqGsgWGJlWM48ahLKN/N6
-         gFUg==
+        bh=Hf6xP/vargsYyqhriKqrcqcKu8IaknYAwCr2SAXzhXI=;
+        b=aN+izJ3/KqQp3SAdWwIWSP+jcBw5otAN/1GD5K+BlWRji7Zd3bMHJzSqn7qsh7vAdK
+         QXJV1CGsw102VJx6a1lvvX1cW0L3ps5LZh30zWvS1SkFwSb+XBig/NUk/pWP8GJtmBH7
+         5IfjGFW1eUjF4/GQWX+9fMIJalMR0VrFF9vzKYNZurzjs9IqaeC4x5bf/Hdd+XCCHYsi
+         albDIhy/E2gI2yvuF3cSVGxeV9A+wNbYK/GJNtYW1Mqrl8bcaOu4+ExKEmnFkp9bL5tP
+         CxG3QuWgX0HPdmCvbUkia9CFzgUieDzExNpJSmvh8Uh1nRWWUafYiDal2wXaj6MB+0tF
+         G7Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
          :from:date:message-id:subject:to:cc;
-        bh=0J7wpqIPjekpSgyN4c8bsABWOF449xYPFoLT/PLxb3g=;
-        b=XnOIIqyL/PSy98NkGnz9lZ/c60mkQRu3b7V8emrOWwCQ9fVFYRmLsWhroiMDaJMQ3u
-         YG7T+8xFa9HNKfDFMFqOntwPN3JfXz1XWwbOYMm0HqLDH6NgQcRQ6f2hUAcfMJFKZkt+
-         5phxGTYGB006D3wCc9AvyHU4bI1+7JPHZCdKPln5p3k9QnTvXrGyywdSC4V5WU3NJKLk
-         8tWWh6N+bnm9ApIKbUcs1oBG0XnP9d4kktS4ttkKJpyu3WSh5HedjaQc8OqkDcSOJxGU
-         SINB38xNpHhM3hjhV9uN0Y8Zj7u4cTb/okTuti1RZzi2J8XD2bknFXm1htaGS/A54K/1
-         fzHQ==
-X-Gm-Message-State: AGi0PubnxFPoTIFeFfBZqqiNCNlkgkeL2Axg3yOmURKTncsQFqw5lvF1
-        +24YHAKN93Jukz0oLQlDPCdT+dZjr264DjOLyPE=
-X-Google-Smtp-Source: APiQypJ+7lYBwuZOO0LKN5zF0UxsyS0mJHjcIoytsS3GDCjhJgfkdcUx0mzFBypChkJuW2x8po6k9cFV5nG0u0eOPeE=
-X-Received: by 2002:a50:ec0c:: with SMTP id g12mr15990711edr.140.1587535554646;
- Tue, 21 Apr 2020 23:05:54 -0700 (PDT)
+        bh=Hf6xP/vargsYyqhriKqrcqcKu8IaknYAwCr2SAXzhXI=;
+        b=d/dRm1a8KOF4ETZ40hOlUe23dVmp2/4tPWS0QqMmQmAhSc6FAWZX4xgZLorh2v+hC5
+         cP5rPmO8hcIoX7juiNz+kU8o69v9n6REf6Fffjh93YlochOsXp0up3unPAPewPS8TJX3
+         3nzJRMmON7vbBON+mTInsfh6dm2i9as1R/8RIKiCZG3d6n+6sCQCNpNYj8C9+UGtKKc4
+         cptS6IeybL6e3ltiu0lxsIct9L7ENH+qJPPvrKRIAhYADlxzZDJbbsiudtAgHDf6q4aa
+         BjOT3SG+zf8xWXPNxCDgJbKl/Hq6YH1/cthJbANc46hKb712RmXsiK3iVeeDXhfgIHuu
+         +ajw==
+X-Gm-Message-State: AGi0PubrmzEL9MSxdVPmp5LTNK1LCgtcmjS8sZqk9nWYi965NyXYm3Jh
+        dU6Pn/R4dsYFb4RrEO4JQHbC+2ucVdt+5moDblgFAFPl
+X-Google-Smtp-Source: APiQypKp3kYkG8TVoAcF4xcC377lvWoZyGD7nQURS2s/XU3TjDbIFNmVwIkeXXgllN7sKYVf37cWeyi+0nFEOU18pTk=
+X-Received: by 2002:aa7:d513:: with SMTP id y19mr22472621edq.367.1587535571151;
+ Tue, 21 Apr 2020 23:06:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1587531463.git.josh@joshtriplett.org>
-In-Reply-To: <cover.1587531463.git.josh@joshtriplett.org>
+References: <cover.1587531463.git.josh@joshtriplett.org> <05c9a6725490c5a5c4ee71be73326c2fedf35ba5.1587531463.git.josh@joshtriplett.org>
+In-Reply-To: <05c9a6725490c5a5c4ee71be73326c2fedf35ba5.1587531463.git.josh@joshtriplett.org>
 Reply-To: mtk.manpages@gmail.com
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Wed, 22 Apr 2020 08:05:43 +0200
-Message-ID: <CAKgNAkjMH6YvHa3LavDo4udDS4CxtJL80uenQN-SVd+Ef0-3Kg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] Support userspace-selected fds
+Date:   Wed, 22 Apr 2020 08:06:00 +0200
+Message-ID: <CAKgNAkhC1suyGaZzRee5x4Ret9Q_JVpqwhf_xELqm0SJAL61OA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] fs: Support setting a minimum fd for "lowest
+ available fd" allocation
 To:     Josh Triplett <josh@joshtriplett.org>
 Cc:     io-uring@vger.kernel.org,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
@@ -70,92 +71,174 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 On Wed, 22 Apr 2020 at 07:19, Josh Triplett <josh@joshtriplett.org> wrote:
 >
-> 5.8 material, not intended for 5.7. Now includes a patch for man-pages,
-> attached to this cover letter.
+> Some applications want to prevent the usual "lowest available fd"
+> allocation from allocating certain file descriptors. For instance, they
+> may want to prevent allocation of a closed fd 0, 1, or 2 other than via
+> dup2/dup3, or reserve some low file descriptors for other purposes.
 >
-> Inspired by the X protocol's handling of XIDs, allow userspace to select
-> the file descriptor opened by a call like openat2, so that it can use
-> the resulting file descriptor in subsequent system calls without waiting
-> for the response to the initial openat2 syscall.
+> Add a prctl to increase the minimum fd and return the previous minimum.
 >
-> The first patch is independent of the other two; it allows reserving
-> file descriptors below a certain minimum for userspace-selected fd
-> allocation only.
+> System calls that allocate a specific file descriptor, such as
+> dup2/dup3, ignore this minimum.
 >
-> The second patch implements userspace-selected fd allocation for
-> openat2, introducing a new O_SPECIFIC_FD flag and an fd field in struct
-> open_how. In io_uring, this allows sequences like openat2/read/close
-> without waiting for the openat2 to complete. Multiple such sequences can
-> overlap, as long as each uses a distinct file descriptor.
+> exec resets the minimum fd, to prevent one program from interfering with
+> another program's expectations about fd allocation.
 >
-> The third patch adds userspace-selected fd allocation to pipe2 as well.
-> I did this partly as a demonstration of how simple it is to wire up
-> O_SPECIFIC_FD support for any fd-allocating system call, and partly in
-> the hopes that this may make it more useful to wire up io_uring support
-> for pipe2 in the future.
+> Test program:
 >
-> v5:
+>     #include <err.h>
+>     #include <fcntl.h>
+>     #include <stdio.h>
+>     #include <sys/prctl.h>
 >
-> Rename padding field to __padding.
-> Add tests for non-zero __padding.
-> Include patch for man-pages.
+>     int main(int argc, char *argv[])
+>     {
+>         if (prctl(PR_INCREASE_MIN_FD, 100, 0, 0, 0) < 0)
+>             err(1, "prctl");
+>         int fd = open("/dev/null", O_RDONLY);
+>         if (fd < 0)
+>             err(1, "open");
+>         printf("%d\n", fd); // prints 100
+>         return 0;
+>     }
 >
-> v4:
+> Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+> ---
+>  fs/file.c                  | 23 +++++++++++++++++------
+>  include/linux/fdtable.h    |  1 +
+>  include/linux/file.h       |  1 +
+>  include/uapi/linux/prctl.h |  3 +++
+>  kernel/sys.c               |  5 +++++
+>  5 files changed, 27 insertions(+), 6 deletions(-)
 >
-> Changed fd field to __u32.
-> Expanded and consolidated checks that return -EINVAL for invalid arguments.
-> Simplified and commented build_open_how.
-> Add documentation comment for fd field.
-> Add kselftests.
+> diff --git a/fs/file.c b/fs/file.c
+> index c8a4e4c86e55..ba06140d89af 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -286,7 +286,6 @@ struct files_struct *dup_fd(struct files_struct *oldf, int *errorp)
+>         spin_lock_init(&newf->file_lock);
+>         newf->resize_in_progress = false;
+>         init_waitqueue_head(&newf->resize_wait);
+> -       newf->next_fd = 0;
+>         new_fdt = &newf->fdtab;
+>         new_fdt->max_fds = NR_OPEN_DEFAULT;
+>         new_fdt->close_on_exec = newf->close_on_exec_init;
+> @@ -295,6 +294,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, int *errorp)
+>         new_fdt->fd = &newf->fd_array[0];
 >
-> Thanks to Aleksa Sarai for feedback.
+>         spin_lock(&oldf->file_lock);
+> +       newf->next_fd = newf->min_fd = oldf->min_fd;
+>         old_fdt = files_fdtable(oldf);
+>         open_files = count_open_files(old_fdt);
 >
-> v3:
+> @@ -487,9 +487,7 @@ int __alloc_fd(struct files_struct *files,
+>         spin_lock(&files->file_lock);
+>  repeat:
+>         fdt = files_fdtable(files);
+> -       fd = start;
+> -       if (fd < files->next_fd)
+> -               fd = files->next_fd;
+> +       fd = max3(start, files->min_fd, files->next_fd);
 >
-> This new version has an API to atomically increase the minimum fd and
-> return the previous minimum, rather than just getting and setting the
-> minimum; this makes it easier to allocate a range. (A library that might
-> initialize after the program has already opened other file descriptors
-> may need to check for existing open fds in the range after reserving it,
-> and reserve more fds if needed; this can be done entirely in userspace,
-> and we can't really do anything simpler in the kernel due to limitations
-> on file-descriptor semantics, so this patch series avoids introducing
-> any extra complexity in the kernel.)
+>         if (fd < fdt->max_fds)
+>                 fd = find_next_fd(fdt, fd);
+> @@ -514,7 +512,7 @@ int __alloc_fd(struct files_struct *files,
+>                 goto repeat;
 >
-> This new version also supports a __get_specific_unused_fd_flags call
-> which accepts the limit for RLIMIT_NOFILE as an argument, analogous to
-> __get_unused_fd_flags, since io_uring needs that to correctly handle
-> RLIMIT_NOFILE.
+>         if (start <= files->next_fd)
+> -               files->next_fd = fd + 1;
+> +               files->next_fd = max(fd + 1, files->min_fd);
 >
-> Thanks to Jens Axboe for review and feedback.
+>         __set_open_fd(fd, fdt);
+>         if (flags & O_CLOEXEC)
+> @@ -555,7 +553,7 @@ static void __put_unused_fd(struct files_struct *files, unsigned int fd)
+>  {
+>         struct fdtable *fdt = files_fdtable(files);
+>         __clear_open_fd(fd, fdt);
+> -       if (fd < files->next_fd)
+> +       if (fd < files->next_fd && fd >= files->min_fd)
+>                 files->next_fd = fd;
+>  }
 >
-> v2:
+> @@ -684,6 +682,7 @@ void do_close_on_exec(struct files_struct *files)
 >
-> Version 2 was a version incorporated into a larger patch series from Jens Axboe
-> on io_uring.
+>         /* exec unshares first */
+>         spin_lock(&files->file_lock);
+> +       files->min_fd = 0;
+>         for (i = 0; ; i++) {
+>                 unsigned long set;
+>                 unsigned fd = i * BITS_PER_LONG;
+> @@ -865,6 +864,18 @@ bool get_close_on_exec(unsigned int fd)
+>         return res;
+>  }
 >
-> Josh Triplett (3):
->   fs: Support setting a minimum fd for "lowest available fd" allocation
->   fs: openat2: Extend open_how to allow userspace-selected fds
->   fs: pipe2: Support O_SPECIFIC_FD
+> +unsigned int increase_min_fd(unsigned int num)
+> +{
+> +       struct files_struct *files = current->files;
+> +       unsigned int old_min_fd;
+> +
+> +       spin_lock(&files->file_lock);
+> +       old_min_fd = files->min_fd;
+> +       files->min_fd += num;
+> +       spin_unlock(&files->file_lock);
+> +       return old_min_fd;
+> +}
+> +
+>  static int do_dup2(struct files_struct *files,
+>         struct file *file, unsigned fd, unsigned flags)
+>  __releases(&files->file_lock)
+> diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+> index f07c55ea0c22..d1980443d8b3 100644
+> --- a/include/linux/fdtable.h
+> +++ b/include/linux/fdtable.h
+> @@ -60,6 +60,7 @@ struct files_struct {
+>     */
+>         spinlock_t file_lock ____cacheline_aligned_in_smp;
+>         unsigned int next_fd;
+> +       unsigned int min_fd; /* min for "lowest available fd" allocation */
+>         unsigned long close_on_exec_init[1];
+>         unsigned long open_fds_init[1];
+>         unsigned long full_fds_bits_init[1];
+> diff --git a/include/linux/file.h b/include/linux/file.h
+> index 142d102f285e..b67986f818d2 100644
+> --- a/include/linux/file.h
+> +++ b/include/linux/file.h
+> @@ -88,6 +88,7 @@ extern bool get_close_on_exec(unsigned int fd);
+>  extern int __get_unused_fd_flags(unsigned flags, unsigned long nofile);
+>  extern int get_unused_fd_flags(unsigned flags);
+>  extern void put_unused_fd(unsigned int fd);
+> +extern unsigned int increase_min_fd(unsigned int num);
 >
->  fs/fcntl.c                                    |  2 +-
->  fs/file.c                                     | 62 +++++++++++++++++--
->  fs/io_uring.c                                 |  3 +-
->  fs/open.c                                     |  8 ++-
->  fs/pipe.c                                     | 16 +++--
->  include/linux/fcntl.h                         |  5 +-
->  include/linux/fdtable.h                       |  1 +
->  include/linux/file.h                          |  4 ++
->  include/uapi/asm-generic/fcntl.h              |  4 ++
->  include/uapi/linux/openat2.h                  |  3 +
->  include/uapi/linux/prctl.h                    |  3 +
->  kernel/sys.c                                  |  5 ++
->  tools/testing/selftests/openat2/helpers.c     |  2 +-
->  tools/testing/selftests/openat2/helpers.h     | 21 +++++--
->  .../testing/selftests/openat2/openat2_test.c  | 35 ++++++++++-
->  15 files changed, 150 insertions(+), 24 deletions(-)
+>  extern void fd_install(unsigned int fd, struct file *file);
 >
+> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> index 07b4f8131e36..916327272d21 100644
+> --- a/include/uapi/linux/prctl.h
+> +++ b/include/uapi/linux/prctl.h
+> @@ -238,4 +238,7 @@ struct prctl_mm_map {
+>  #define PR_SET_IO_FLUSHER              57
+>  #define PR_GET_IO_FLUSHER              58
+>
+> +/* Increase minimum file descriptor for "lowest available fd" allocation */
+> +#define PR_INCREASE_MIN_FD             59
+> +
+>  #endif /* _LINUX_PRCTL_H */
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index d325f3ab624a..daa0ce43cecc 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2514,6 +2514,11 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>
+>                 error = (current->flags & PR_IO_FLUSHER) == PR_IO_FLUSHER;
+>                 break;
+> +       case PR_INCREASE_MIN_FD:
+> +               if (arg3 || arg4 || arg5)
+> +                       return -EINVAL;
+> +               error = increase_min_fd((unsigned int)arg2);
+> +               break;
+>         default:
+>                 error = -EINVAL;
+>                 break;
 > --
 > 2.26.2
 >

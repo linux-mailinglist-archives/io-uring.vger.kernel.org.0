@@ -2,65 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80C491B5E98
-	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2020 17:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EEF11B5EC4
+	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2020 17:12:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbgDWPFx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 23 Apr 2020 11:05:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49442 "EHLO
+        id S1729028AbgDWPL4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Apr 2020 11:11:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728551AbgDWPFx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Apr 2020 11:05:53 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 592EBC08E934
-        for <io-uring@vger.kernel.org>; Thu, 23 Apr 2020 08:05:53 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id p10so6689953ioh.7
-        for <io-uring@vger.kernel.org>; Thu, 23 Apr 2020 08:05:53 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1728928AbgDWPL4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Apr 2020 11:11:56 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD4BC08E934
+        for <io-uring@vger.kernel.org>; Thu, 23 Apr 2020 08:11:55 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id p10so6713313ioh.7
+        for <io-uring@vger.kernel.org>; Thu, 23 Apr 2020 08:11:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NA1MYMybq9+OrRo21SC40ZZ5q8t3VlT1DD1/SgEUExA=;
-        b=b67th59n/Ohf77+YLJI6fnRl6S1KowNLhyL0SmYHw/hAMfhd1ZA0Fq9by+FjMp6pmg
-         3r1ucV/awCt2NIHBCO1s5NfGUI0WraBhHM8e6RkETM/DqB5tvuzXYV5UdBaAiqvWRU2G
-         N6/f5SdWqsvRPdW8EaeVeoISOs62oy8E0LTksSN6V3ECQPdtsjaRm5t/SekReDP/zSp5
-         lJzQ7Mxm2lYAMR9wZ7Ieuq1sONpBESj8PUT1Rd6tbFQCaffuTYSPZU7ngQ4edX0nhzyz
-         IpVmED66kF4zwJMg/r4IQCVma3JQQMyF885YCHAtnH4DGNwnPvrbh5WpUjGjpehI56iT
-         5tnA==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=YnYshfoH/ql1B19ispyeNmSbWJt2LFcxfoe/1Q9e39U=;
+        b=EAzhakmpm0SYe53qstC50PrizXLpCEjwN51UxoLhFHM26GploNyELmttjCmDsfDImc
+         oi4FMxvEQCrRyZTa0ApmzVNy/qhwHtrgzlnpHkD+G4x0Waz/hdTG5GyK9ja0Yy9D7I06
+         EeZm8mCMoYU2bmDkoclssHZqO6vCc93QuKIptOypbpo+PIwNfIK3vq8oI78iS5qz/Ere
+         v7I8U1CoHftiT4CdFF5Xeq3XL69KNmeCtomQI7XewQFwP5ObRI2YjgoTXYED3qhfjpH+
+         wFFkc1zsg+MYEKBWiGD6EHCQmdEsyn5U9GVs6iMKGSX8lGxJd41djXxqnlB3RdFbQHNF
+         NWqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=NA1MYMybq9+OrRo21SC40ZZ5q8t3VlT1DD1/SgEUExA=;
-        b=OGM1nlEle09Sg+zd/wfYXps3uGHD46g7KaqRw7DRPuuoSMTuG0W2TPsYIrxelbq3FI
-         MhV9Jey8RJ/3IWkqeM10aYhHARS5Y8ri8P22pJzUg1KWFxyV1PjO+3+gpFTTwtj7T2nP
-         VPkrQNB+zIecIsWPyFnSPkGUjcR00qXm32BLPtEOiib7t9O59daZ9MuBFfM7xISzEGeO
-         NbKyIyTyIOO/QoDH95IGtvyoWNAzbhq6/wAyFy60wZf/TB71ODUQez+7cYFxQLE+l4Bg
-         g46dZs3XUs7PzczG9fDy/tvX0NMx4M+dMnxrSN3CD3JJOeRSgm7JsBUM93kAlP+PSeeO
-         Mptg==
-X-Gm-Message-State: AGi0PuZV1CmN5pdHkqG+be8T5J/LMp3IoVZ8RocDFRZm9W15zhqI3KNr
-        jx29lmaJ4JTPO9JJxVzEPz8UvIZVz7uqjA==
-X-Google-Smtp-Source: APiQypLTJheTMQ/OW+cL6K+mcxLUGWax6yaMarZiHP5mF7KQxzoi7N4arcjIkAygEKgERoigERQASw==
-X-Received: by 2002:a05:6638:508:: with SMTP id i8mr3678116jar.137.1587654352137;
-        Thu, 23 Apr 2020 08:05:52 -0700 (PDT)
+        bh=YnYshfoH/ql1B19ispyeNmSbWJt2LFcxfoe/1Q9e39U=;
+        b=Vq4tok/aB37TTqN4ayJWGM2px8EEhs9hIyysxTav9SWVM3gGZdxRVQi123nByk+SWn
+         gPVTLipHru4ZtxRPz38gHZSQP5gyplHKoLKEPKYjTdPEtGkdmOz2O3m5Qo9ZIMRIVzci
+         WdCummYBOiTAAfnogV99zNMu8Z1KE24lUZ9p+DMLy796l5ulZDaZFOSaFjXATydATnnd
+         EOigWynOH3KAb/gJHDUTl+uHL5T+uo/zjPqp2RzMZqNxp63wv7CRjz2WoTm0oh7VrKqO
+         xiOC9jS4xpIGPaAoojwAP5QlYMg9bIO/QtT+AgheJFo8Kuak0++fCQpUMgHy1O0+6lRY
+         tUoQ==
+X-Gm-Message-State: AGi0PuYlzT7QsOu6G4/ED5u2tYlBQQ4q5Sj6Ji1y7tUVR/qb/eovBy4G
+        Hx9W77aIWQW5uW5HocuSkNLIZS53PIYQAw==
+X-Google-Smtp-Source: APiQypKeE4wG3nGqK3b+UFei2SBURsQQFhx5ey+Bmu15vkw7NW4rDzsNAAcVMs2IBkspuUcxeliH+g==
+X-Received: by 2002:a02:ccad:: with SMTP id t13mr3778353jap.64.1587654714786;
+        Thu, 23 Apr 2020 08:11:54 -0700 (PDT)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id s12sm967708ill.82.2020.04.23.08.05.50
+        by smtp.gmail.com with ESMTPSA id o19sm978618ild.42.2020.04.23.08.11.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Apr 2020 08:05:51 -0700 (PDT)
-Subject: Re: io_uring_peek_cqe and EAGAIN
-To:     William Dauchy <wdauchy@gmail.com>
-Cc:     io-uring@vger.kernel.org
-References: <20200420162748.GA43918@dontpanic>
- <2e16eecf-9866-9730-ee06-c7d38ac85aa4@kernel.dk>
- <CAJ75kXY1VLoqab4quz8RykbFrbXNJVBSAf7jv4t+u0_OquE1cQ@mail.gmail.com>
+        Thu, 23 Apr 2020 08:11:54 -0700 (PDT)
+Subject: Re: Multiple mmap/mprotect/munmap operations in a batch?
+To:     Josh Triplett <josh@joshtriplett.org>, io-uring@vger.kernel.org
+References: <20200423081918.GA172719@localhost>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fc04aedf-a417-de72-9ee4-6aa1dbf18226@kernel.dk>
-Date:   Thu, 23 Apr 2020 09:05:50 -0600
+Message-ID: <99e94e7d-fbb6-1a73-e03b-e8b4a15d886e@kernel.dk>
+Date:   Thu, 23 Apr 2020 09:11:53 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAJ75kXY1VLoqab4quz8RykbFrbXNJVBSAf7jv4t+u0_OquE1cQ@mail.gmail.com>
+In-Reply-To: <20200423081918.GA172719@localhost>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,46 +66,19 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/23/20 8:42 AM, William Dauchy wrote:
-> Hello Jens,
-> 
-> Thank you for your answer on this newbie question :)
-> 
-> On Wed, Apr 22, 2020 at 10:57 PM Jens Axboe <axboe@kernel.dk> wrote:
->> I don't think the change is correct. That's not saying that the original
->> code is necessarily correct, though! Basically there are two cases there:
->>
->> 1) We haven't gotten a completion yet, we'll wait for it.
->> 2) We already found at least one completion. We don't want
->>    to _wait_ for more, but we can peek and see if there are more.
->>
->> Hence we don't want to turn case 2 into a loop, we should just
->> continue.
-> 
-> ok so in fact I think I understand that my usage is incorrect:
-> 1- if I'm in the case of being able to do other things while waiting
-> for data available using `io_uring_peek_cqe`, I should use it and come
-> back later when getting a -EAGAIN.
-> 2- it is useless to do a loop on `io_uring_peek_cqe` because in that
-> case, I should simply do a `io_uring_wait_cqe`
-> 
-> is that correct?
+On 4/23/20 2:19 AM, Josh Triplett wrote:
+> What would it take for io_uring to support mmap, mprotect, and munmap
+> operations?
 
-Right, you rarely want to busy loop on io_uring_peek_cqe(), the normal
-use case would be to use io_uring_wait_cqe() if you need to wait for a
-completion to become available.
+Not very much, wiring up something like madvise as an example:
 
->> How is it currently failing for you?
-> 
-> While trying to open/read/close multiple files, I first thought that,
-> because I had one successful `io_uring_wait_cqe`, I could then loop on
-> `io_uring_peek_cqe` and get all my data. I now realise my assumption
-> was completely wrong and this example was just written that way to
-> show two different possibilities of getting results.
+https://git.kernel.dk/cgit/linux-block/commit/?id=c1ca757bd6f4632c510714631ddcc2d13030fe1e
 
-Ah ok, yes that sounds like a misunderstanding. Events are posted as
-they become available, availability of one does not mean that everything
-has completed.
+> What would it take to process a batch of such operations efficiently
+> without repeatedly poking mmap_sem and such?
+
+Probably just a bit of refactoring, to enable calling the needed helpers
+with the mmap_sem already held.
 
 -- 
 Jens Axboe

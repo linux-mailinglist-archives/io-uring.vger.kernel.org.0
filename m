@@ -2,76 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA8C1B51AC
-	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2020 03:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E2B1B5367
+	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2020 06:24:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726192AbgDWBM4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Apr 2020 21:12:56 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:59578 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbgDWBM4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Apr 2020 21:12:56 -0400
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 8FE1972CCEF;
-        Thu, 23 Apr 2020 04:12:53 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 803DA7CF575; Thu, 23 Apr 2020 04:12:53 +0300 (MSK)
-Date:   Thu, 23 Apr 2020 04:12:53 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
+        id S1725854AbgDWEYa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Apr 2020 00:24:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34198 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725562AbgDWEYa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Apr 2020 00:24:30 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB3E0C03C1AB
+        for <io-uring@vger.kernel.org>; Wed, 22 Apr 2020 21:24:29 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id d16so3296722edq.7
+        for <io-uring@vger.kernel.org>; Wed, 22 Apr 2020 21:24:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W1DMwknr8Mv5esWhXjaUd0WNvn+/fUVQmBus68SdeKI=;
+        b=Ttz2w7rbGa7bL4xh9pO5D01ts9bopo8zmXqwhb6SJpuJqdNz8GT63pO+DS3o5rFExI
+         91FDNSYgk46tTG7Z7myPIWIqQOs9vaczQphPBJwn1EJSP3KphnVypF5PWJUyTfiS1+ju
+         I3mogJgoyAiEEbYmdzuht+uXeeqbjhAf9VKrM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W1DMwknr8Mv5esWhXjaUd0WNvn+/fUVQmBus68SdeKI=;
+        b=tPYT+ck5KJ33w+9/QU6x1JpO8JY/5Cdm4+GCuPBVHuf3ODiuczewrUZHfkaHn3kfZv
+         XKSL8sS96K3MDuEWYIBr0Z7tTDufTWqF/5/OqWWX25byBwGfkZvEejZdtVbbnRCyJwIP
+         9VRul3dpgxmU8aaL5odrQPWWx1n2oy01DKkbjg2k/39lA5Sqiyx8zCfEFbYG78JqPLbG
+         1YxXGQJm9d+qELXXZ1cBkXGsW4NqnKbTlrT3GVYI9YpODLELCNuQpQF1YFfyJ7OZ63jd
+         lgWe7M/6cdk8xsW+gVMboLkHryqZHX3znEAH+JibfOiPN1B8aGedm4SImv+Cu4RFwmri
+         bmDA==
+X-Gm-Message-State: AGi0Puaa0NSzkly7EQrlcFkG8bBQ3j5Ndj3P/YVv5Hk/WGbONrrOiCEY
+        m4z0ktgjWPhJDh5d3rxvYY50h+2tkFnZx6WFGv8qQA==
+X-Google-Smtp-Source: APiQypIEFE4myQJwMnY76Nzh2FYKbEqny6z5ZXE6PB4mX15k5Pi4QVY5srwSRvGlAuVTRyIy9W6Eg4K1/Y9vK968Cqw=
+X-Received: by 2002:a05:6402:22ed:: with SMTP id dn13mr1254167edb.212.1587615865963;
+ Wed, 22 Apr 2020 21:24:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1587531463.git.josh@joshtriplett.org> <9873b8bd7d14ff8cd2a5782b434b39f076679eeb.1587531463.git.josh@joshtriplett.org>
+ <CAKgNAkjo3AeA78XqK-RRGqJHNy1H8SbcjQQQs7+jDwuFgq4YSg@mail.gmail.com>
+ <CAJfpegt=xe-8AayW2i3AYrk3q-=Pp_A+Hctsk+=sXoMed5hFQA@mail.gmail.com> <20200423004807.GC161058@localhost>
+In-Reply-To: <20200423004807.GC161058@localhost>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 23 Apr 2020 06:24:14 +0200
+Message-ID: <CAJfpegtSYKsApx2Dc6VGmc5Fm4SsxtAWAP-Zs052umwK1CjJmQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] fs: openat2: Extend open_how to allow
+ userspace-selected fds
 To:     Josh Triplett <josh@joshtriplett.org>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mtk.manpages@gmail.com,
+Cc:     Michael Kerrisk <mtk.manpages@gmail.com>, io-uring@vger.kernel.org,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-man@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-man <linux-man@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v5 1/3] fs: Support setting a minimum fd for "lowest
- available fd" allocation
-Message-ID: <20200423011253.GA18957@altlinux.org>
-References: <cover.1587531463.git.josh@joshtriplett.org>
- <05c9a6725490c5a5c4ee71be73326c2fedf35ba5.1587531463.git.josh@joshtriplett.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <05c9a6725490c5a5c4ee71be73326c2fedf35ba5.1587531463.git.josh@joshtriplett.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Apr 21, 2020 at 10:19:49PM -0700, Josh Triplett wrote:
-> Some applications want to prevent the usual "lowest available fd"
-> allocation from allocating certain file descriptors. For instance, they
-> may want to prevent allocation of a closed fd 0, 1, or 2 other than via
-> dup2/dup3, or reserve some low file descriptors for other purposes.
-> 
-> Add a prctl to increase the minimum fd and return the previous minimum.
-> 
-> System calls that allocate a specific file descriptor, such as
-> dup2/dup3, ignore this minimum.
-> 
-> exec resets the minimum fd, to prevent one program from interfering with
-> another program's expectations about fd allocation.
+On Thu, Apr 23, 2020 at 2:48 AM Josh Triplett <josh@joshtriplett.org> wrote:
+>
+> On Wed, Apr 22, 2020 at 09:55:56AM +0200, Miklos Szeredi wrote:
+> > On Wed, Apr 22, 2020 at 8:06 AM Michael Kerrisk (man-pages)
+> > <mtk.manpages@gmail.com> wrote:
+> > >
+> > > [CC += linux-api]
+> > >
+> > > On Wed, 22 Apr 2020 at 07:20, Josh Triplett <josh@joshtriplett.org> wrote:
+> > > >
+> > > > Inspired by the X protocol's handling of XIDs, allow userspace to select
+> > > > the file descriptor opened by openat2, so that it can use the resulting
+> > > > file descriptor in subsequent system calls without waiting for the
+> > > > response to openat2.
+> > > >
+> > > > In io_uring, this allows sequences like openat2/read/close without
+> > > > waiting for the openat2 to complete. Multiple such sequences can
+> > > > overlap, as long as each uses a distinct file descriptor.
+> >
+> > If this is primarily an io_uring feature, then why burden the normal
+> > openat2 API with this?
+>
+> This feature was inspired by io_uring; it isn't exclusively of value
+> with io_uring. (And io_uring doesn't normally change the semantics of
+> syscalls.)
 
-Please make this aspect properly documented in "Effect on process
-attributes" section of execve(2) manual page.
+What's the use case of O_SPECIFIC_FD beyond io_uring?
 
-[...]
-> +unsigned int increase_min_fd(unsigned int num)
-> +{
-> +	struct files_struct *files = current->files;
-> +	unsigned int old_min_fd;
-> +
-> +	spin_lock(&files->file_lock);
-> +	old_min_fd = files->min_fd;
-> +	files->min_fd += num;
-> +	spin_unlock(&files->file_lock);
-> +	return old_min_fd;
-> +}
+>
+> > This would also allow Implementing a private fd table for io_uring.
+> > I.e. add a flag interpreted by file ops (IORING_PRIVATE_FD), including
+> > openat2 and freely use the private fd space without having to worry
+> > about interactions with other parts of the system.
+>
+> I definitely don't want to add a special kind of file descriptor that
+> doesn't work in normal syscalls taking file descriptors. A file
+> descriptor allocated via O_SPECIFIC_FD is an entirely normal file
+> descriptor, and works anywhere a file descriptor normally works.
 
-If it's "increase", there should be an overflow check.
-Otherwise it's "assign" rather than "increase".
+What's the use case of allocating a file descriptor within io_uring
+and using it outside of io_uring?
 
-
--- 
-ldv
+Thanks,
+Miklos

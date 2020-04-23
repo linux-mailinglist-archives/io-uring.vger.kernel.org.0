@@ -2,77 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 38A501B517E
-	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2020 02:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFA8C1B51AC
+	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2020 03:13:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbgDWAsR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Apr 2020 20:48:17 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:2817 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbgDWAsR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Apr 2020 20:48:17 -0400
-X-Originating-IP: 50.39.163.217
-Received: from localhost (50-39-163-217.bvtn.or.frontiernet.net [50.39.163.217])
-        (Authenticated sender: josh@joshtriplett.org)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 9A5F1240008;
-        Thu, 23 Apr 2020 00:48:10 +0000 (UTC)
-Date:   Wed, 22 Apr 2020 17:48:07 -0700
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Michael Kerrisk <mtk.manpages@gmail.com>, io-uring@vger.kernel.org,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
+        id S1726192AbgDWBM4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Apr 2020 21:12:56 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:59578 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725846AbgDWBM4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Apr 2020 21:12:56 -0400
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 8FE1972CCEF;
+        Thu, 23 Apr 2020 04:12:53 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 803DA7CF575; Thu, 23 Apr 2020 04:12:53 +0300 (MSK)
+Date:   Thu, 23 Apr 2020 04:12:53 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mtk.manpages@gmail.com,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-man <linux-man@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-man@vger.kernel.org,
         Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v5 2/3] fs: openat2: Extend open_how to allow
- userspace-selected fds
-Message-ID: <20200423004807.GC161058@localhost>
+Subject: Re: [PATCH v5 1/3] fs: Support setting a minimum fd for "lowest
+ available fd" allocation
+Message-ID: <20200423011253.GA18957@altlinux.org>
 References: <cover.1587531463.git.josh@joshtriplett.org>
- <9873b8bd7d14ff8cd2a5782b434b39f076679eeb.1587531463.git.josh@joshtriplett.org>
- <CAKgNAkjo3AeA78XqK-RRGqJHNy1H8SbcjQQQs7+jDwuFgq4YSg@mail.gmail.com>
- <CAJfpegt=xe-8AayW2i3AYrk3q-=Pp_A+Hctsk+=sXoMed5hFQA@mail.gmail.com>
+ <05c9a6725490c5a5c4ee71be73326c2fedf35ba5.1587531463.git.josh@joshtriplett.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegt=xe-8AayW2i3AYrk3q-=Pp_A+Hctsk+=sXoMed5hFQA@mail.gmail.com>
+In-Reply-To: <05c9a6725490c5a5c4ee71be73326c2fedf35ba5.1587531463.git.josh@joshtriplett.org>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 09:55:56AM +0200, Miklos Szeredi wrote:
-> On Wed, Apr 22, 2020 at 8:06 AM Michael Kerrisk (man-pages)
-> <mtk.manpages@gmail.com> wrote:
-> >
-> > [CC += linux-api]
-> >
-> > On Wed, 22 Apr 2020 at 07:20, Josh Triplett <josh@joshtriplett.org> wrote:
-> > >
-> > > Inspired by the X protocol's handling of XIDs, allow userspace to select
-> > > the file descriptor opened by openat2, so that it can use the resulting
-> > > file descriptor in subsequent system calls without waiting for the
-> > > response to openat2.
-> > >
-> > > In io_uring, this allows sequences like openat2/read/close without
-> > > waiting for the openat2 to complete. Multiple such sequences can
-> > > overlap, as long as each uses a distinct file descriptor.
+On Tue, Apr 21, 2020 at 10:19:49PM -0700, Josh Triplett wrote:
+> Some applications want to prevent the usual "lowest available fd"
+> allocation from allocating certain file descriptors. For instance, they
+> may want to prevent allocation of a closed fd 0, 1, or 2 other than via
+> dup2/dup3, or reserve some low file descriptors for other purposes.
 > 
-> If this is primarily an io_uring feature, then why burden the normal
-> openat2 API with this?
+> Add a prctl to increase the minimum fd and return the previous minimum.
+> 
+> System calls that allocate a specific file descriptor, such as
+> dup2/dup3, ignore this minimum.
+> 
+> exec resets the minimum fd, to prevent one program from interfering with
+> another program's expectations about fd allocation.
 
-This feature was inspired by io_uring; it isn't exclusively of value
-with io_uring. (And io_uring doesn't normally change the semantics of
-syscalls.)
+Please make this aspect properly documented in "Effect on process
+attributes" section of execve(2) manual page.
 
-> This would also allow Implementing a private fd table for io_uring.
-> I.e. add a flag interpreted by file ops (IORING_PRIVATE_FD), including
-> openat2 and freely use the private fd space without having to worry
-> about interactions with other parts of the system.
+[...]
+> +unsigned int increase_min_fd(unsigned int num)
+> +{
+> +	struct files_struct *files = current->files;
+> +	unsigned int old_min_fd;
+> +
+> +	spin_lock(&files->file_lock);
+> +	old_min_fd = files->min_fd;
+> +	files->min_fd += num;
+> +	spin_unlock(&files->file_lock);
+> +	return old_min_fd;
+> +}
 
-I definitely don't want to add a special kind of file descriptor that
-doesn't work in normal syscalls taking file descriptors. A file
-descriptor allocated via O_SPECIFIC_FD is an entirely normal file
-descriptor, and works anywhere a file descriptor normally works.
+If it's "increase", there should be an overflow check.
+Otherwise it's "assign" rather than "increase".
+
+
+-- 
+ldv

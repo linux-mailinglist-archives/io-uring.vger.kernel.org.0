@@ -2,91 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C20E21B5816
-	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2020 11:25:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BDF1B5884
+	for <lists+io-uring@lfdr.de>; Thu, 23 Apr 2020 11:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725884AbgDWJZK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 23 Apr 2020 05:25:10 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:40865 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbgDWJZJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Apr 2020 05:25:09 -0400
-Received: from mail-qk1-f170.google.com ([209.85.222.170]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1M4roN-1jSv120psd-0020KI; Thu, 23 Apr 2020 11:25:07 +0200
-Received: by mail-qk1-f170.google.com with SMTP id t3so5686261qkg.1;
-        Thu, 23 Apr 2020 02:25:06 -0700 (PDT)
-X-Gm-Message-State: AGi0PubPju4TS9vqFIy5fUpPQXhorHWEfCTMOmWy9O+uzLsr19DU4U0c
-        kbcUSai7neEsPCcvYaur2DGy6nKnjCrmZIZgJh0=
-X-Google-Smtp-Source: APiQypL+w45VTBoxMvprVb6NEGdgZyNyPMU0dKAvD2rTXgVRLwfn3/Y7HWt6ZXTYoBoj1KPld4qOl8X+Utd6NzHUvt8=
-X-Received: by 2002:a37:63d0:: with SMTP id x199mr2439571qkb.3.1587633905619;
- Thu, 23 Apr 2020 02:25:05 -0700 (PDT)
+        id S1726847AbgDWJrQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Apr 2020 05:47:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726953AbgDWJrN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Apr 2020 05:47:13 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F0EC08E934
+        for <io-uring@vger.kernel.org>; Thu, 23 Apr 2020 02:47:12 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id n4so4206772ejs.11
+        for <io-uring@vger.kernel.org>; Thu, 23 Apr 2020 02:47:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eBjF9qj4VjUI/zoZpRsdcofUh4Hml8aXIqDYnm8I2pc=;
+        b=Kqsnyt0qkv6L86PfeD2KkzVB6KcD+1wQcWQMNqF6WL3KZ5iZir2mKjmxbzENryVDmR
+         h2KN673yOUpiqe96og6uDdVruUvcsVVl1dfoc8u25NFe2q3KdTuW2ZaTL0u/LLsSYeNl
+         S6piTbwiNJ2aGNlQCA8j4IDc0gBm31CEqEtAQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eBjF9qj4VjUI/zoZpRsdcofUh4Hml8aXIqDYnm8I2pc=;
+        b=YQgG5O40o1bMWxIxo/kQ0Vz+OwVKu1B5f4zxEY+JCR2HDXKoDy0Uvg9vR/2MZDysNq
+         ESTiHYSCxEa9kPr5LkSCI1jCIDc0XXS6vR/qQ5ACvL0o9PoYqAJbKN+1HDSuG80DJgAD
+         M54UpqQYehSvnm1d1XG+tTSGJxcTFO2+e6qwTkOlZxXYCHqe0eMOGvizXdAfpHbDLIfT
+         EUDqOhUW2UKX4Jy7GUc0GT+qlfaS1aJ2Ty7yfiBy/vNTAMoC5tKPhfOVAvrLalTjzWFD
+         CDi53EsGZ/JP1UFRD+SPq8rggMN/knEdK3uUcWbgBk78BCfkfxVQrr4uTk99Jtx7+0IE
+         WNMg==
+X-Gm-Message-State: AGi0PuYYkvlpPvlimhnLIBD9zsaus7vh8j3vOYk29LHBViwfXpgjHgV5
+        4Vv5Pf7H8TG6BhJfjh7HSdV/AOIsvE2NKRWcaSX03w==
+X-Google-Smtp-Source: APiQypKzYA+RwPbSzxAVe1uCnwABFW9ULWw73H2FS4WUYBmnv7bX1P0aUaDwT6A5ceIZBB1IQHhJpijAE9OUj++HWT8=
+X-Received: by 2002:a17:906:c06:: with SMTP id s6mr1856032ejf.198.1587635230925;
+ Thu, 23 Apr 2020 02:47:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1587531463.git.josh@joshtriplett.org> <05c9a6725490c5a5c4ee71be73326c2fedf35ba5.1587531463.git.josh@joshtriplett.org>
-In-Reply-To: <05c9a6725490c5a5c4ee71be73326c2fedf35ba5.1587531463.git.josh@joshtriplett.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 23 Apr 2020 11:24:49 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a09h4jhJWckxVUMYLoUp8=vAJ5NXuMTzSmghRxuk2_PTQ@mail.gmail.com>
-Message-ID: <CAK8P3a09h4jhJWckxVUMYLoUp8=vAJ5NXuMTzSmghRxuk2_PTQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] fs: Support setting a minimum fd for "lowest
- available fd" allocation
+References: <cover.1587531463.git.josh@joshtriplett.org> <9873b8bd7d14ff8cd2a5782b434b39f076679eeb.1587531463.git.josh@joshtriplett.org>
+ <CAKgNAkjo3AeA78XqK-RRGqJHNy1H8SbcjQQQs7+jDwuFgq4YSg@mail.gmail.com>
+ <CAJfpegt=xe-8AayW2i3AYrk3q-=Pp_A+Hctsk+=sXoMed5hFQA@mail.gmail.com>
+ <20200423004807.GC161058@localhost> <CAJfpegtSYKsApx2Dc6VGmc5Fm4SsxtAWAP-Zs052umwK1CjJmQ@mail.gmail.com>
+ <20200423044226.GH161058@localhost> <CAJfpeguaVYo-Lf-5Bi=EYJYWdmCfo3BqZA=kj9E5UmDb0mBc1w@mail.gmail.com>
+ <20200423073310.GA169998@localhost> <CAJfpegtXj4bSbhpx+=z=R0_ZT8uPEJAAev0O+DVg3AX242e=-g@mail.gmail.com>
+ <CAJfpegtgrUACZpYR8wWoTE=Hh4Xi+4rRfrZTxRtaFVpT9GMPjw@mail.gmail.com> <CAJfpegvcW9Sic8ZXgWfFQ3d8JTr53XABfP8rZzsVhCDBKCgMBw@mail.gmail.com>
+In-Reply-To: <CAJfpegvcW9Sic8ZXgWfFQ3d8JTr53XABfP8rZzsVhCDBKCgMBw@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 23 Apr 2020 11:46:59 +0200
+Message-ID: <CAJfpegv-zRp3a3JcmCO4JpXB=f32=TK=+jP1o-peqqxffT5ERw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] fs: openat2: Extend open_how to allow
+ userspace-selected fds
 To:     Josh Triplett <josh@joshtriplett.org>
-Cc:     io-uring@vger.kernel.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
+Cc:     Michael Kerrisk <mtk.manpages@gmail.com>, io-uring@vger.kernel.org,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Aleksa Sarai <cyphar@cyphar.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
         linux-man <linux-man@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:e6+fXZCzbNUcGueHZi0BR8/JFqXLu3ow8UkwsShEw/fDTsxMjHo
- Qt1mAwe83HkCU+qPttGnY+0+8e3ZAHvsTa02Fukov2D2leInYAI/HO06d2FyAdvYk3pgoIh
- 89W3fIgoQ6/p4NNtT/BtKzw5jAz2+rRJy2GeWnBok4QDe/DCzXnyOn+APqk5xJG0Kx4aAp2
- vy+iKbATk+5JtgOy4odVQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:V3w25P3eXTE=:ThBWKENYGuaDDbCgV64qnP
- bkbRgl8/B2JfJMnqoS0JcufoLCvJqQNpdxz+pX4XaXGGEokkLU9t8l4Ha1MlAHOFKG/8K6FXI
- MYgyZ0j2vV5S0xR09xlGrx+I3Lfoa56k4t6h6pX0LTYtAUgK2cIJMjm4eOc6jQdXBEAiaDdE4
- KylyazTM42OhTMoN6Qw1U1rlngh6GgVM9AT90hM/XVLp5mEfR6nldUdSReMlKQmPSYSOq+0Pz
- aD7MXXCwbVwbu1VX3wHVgAp+JhwDrK/Bbr6svVTCIR4MqTy7I503erAZvZtqm+7y6HsS9/SwK
- C6131GSKb579dphRwUOY76Eh+oBlIZgjwNopQS/eDDIBqpswCUTpCF4McxzZ1auDrOMA68/X8
- tP2KlKWOvFCG80DicrkpzLNXqQVippZPOgPqkVs5AqvEqwQG6+tdQu82gRBMUtEMrJgADgtH5
- 7ezukIAhwBbMBSGDPAb6F84UR9oixi2YEnHSK93vq69kT65uLfVEZdbaazznxZzq3EUmTLniB
- q3r8wazivQU22HEn79g0Jal+QVdPnEQM41vBpJ/6hZBe/T9+PAwFpec/re6J5FIemCkKHzUpO
- 2ras1d3DBNePUpsWkCX8uW69oIsM7wWleraqMomlc9EUebhOa3Hu3RnEWjywuu0uo449qjD9t
- yHWhG+k50RrPr9MhcRvBxlifJIcFlP69epb+U4BuIgglulInbGMZvYyxlj/XjySxeQZItuhLp
- 3Ymw+EJwVAIu3LOp1e92ImKesomN3PC4JP3/s0b8LQ9vGHci3Z1z7rjfVhyEZtHub3Pa4wpLM
- M4OEPdbG01a3cYWIZvLOQG5wmdOIKX8dOZZX7tg6VELwG4fFbI=
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 7:19 AM Josh Triplett <josh@joshtriplett.org> wrote:
+On Thu, Apr 23, 2020 at 11:20 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
-> Some applications want to prevent the usual "lowest available fd"
-> allocation from allocating certain file descriptors. For instance, they
-> may want to prevent allocation of a closed fd 0, 1, or 2 other than via
-> dup2/dup3, or reserve some low file descriptors for other purposes.
+> On Thu, Apr 23, 2020 at 9:57 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Thu, Apr 23, 2020 at 9:45 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > > > I would prefer to not introduce that limitation in the first place, and
+> > > > instead open normal file descriptors.
+> > > >
+> > > > > The point of O_SPECIFIC_FD is to be able to perform short
+> > > > > sequences of open/dosomething/close without having to block and having
+> > > > > to issue separate syscalls.
+> > > >
+> > > > "close" is not a required component. It's entirely possible to use
+> > > > io_uring to open a file descriptor, do various things with it, and then
+> > > > leave it open for subsequent usage via either other io_uring chains or
+> > > > standalone syscalls.
+> > >
+> > > If this use case arraises, we could add an op to dup/move a private
+> > > descriptor to a public one.  io_uring can return values, right?
+> > >
+> > > Still not convinced...
+> >
+> > Oh, and we haven't even touched on the biggest advantage of a private
+> > fd table: not having to dirty a cacheline on fdget/fdput due to the
+> > possibility of concurrent close() in a MT application.
+> >
+> > I believe this is a sticking point in some big enterprise apps and it
+> > may even be a driving force for io_uring.
 >
-> Add a prctl to increase the minimum fd and return the previous minimum.
+> https://lwn.net/Articles/787473/
 >
-> System calls that allocate a specific file descriptor, such as
-> dup2/dup3, ignore this minimum.
+> And an interesting (very old) article referenced from above, that
+> gives yet a new angle on fd allocation issues:
 >
-> exec resets the minimum fd, to prevent one program from interfering with
-> another program's expectations about fd allocation.
+> https://lwn.net/Articles/236843/
+>
+> A private fd space would be perfect for libraries such as glibc.
 
-Have you considered making this a separate system call rather than
-a part of prctl()?
+Ah, io_uring already implements a fixed private fd table via
+io_uring_register(IORING_REGISTER_FILES,...), we just need a way to
+wire up open, socket, accept, etc. to fill a slot in that table
+instead of, or in addition to allocating a slot in the fd_table.
 
-At the moment, there are certain classes of things controlled by prctl,
-e.g. capabilities, floating point handling and timer behavior, but nothing
-that relates to file descriptors as such, so it's not an obvious decision.
-
-Another option would be prlimit(), as it already controls the maximum
-file descriptor number with RLIMIT_NOFILE, and adding a minimum
-there would let you set min/max atomically.
-
-     Arnd
+Thanks,
+Miklos

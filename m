@@ -2,84 +2,91 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C181B7DC2
-	for <lists+io-uring@lfdr.de>; Fri, 24 Apr 2020 20:21:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA9EE1B7FAC
+	for <lists+io-uring@lfdr.de>; Fri, 24 Apr 2020 22:03:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbgDXSVe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Apr 2020 14:21:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51992 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726793AbgDXSVd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Apr 2020 14:21:33 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1FAC09B048
-        for <io-uring@vger.kernel.org>; Fri, 24 Apr 2020 11:21:32 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id c16so10181922ilr.3
-        for <io-uring@vger.kernel.org>; Fri, 24 Apr 2020 11:21:32 -0700 (PDT)
+        id S1727059AbgDXUDn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Apr 2020 16:03:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39588 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726908AbgDXUDn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Apr 2020 16:03:43 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15A71C09B049
+        for <io-uring@vger.kernel.org>; Fri, 24 Apr 2020 13:03:43 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id g4so11284408ljl.2
+        for <io-uring@vger.kernel.org>; Fri, 24 Apr 2020 13:03:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tCiVit0VG3KBQjqLDag8RVtGOpUDh+mCOuLbU+1aRD0=;
-        b=DI4S8Eswyw2eyP5Y78DgsiFN4s84xlODSy7s+DG5nUXBAKPHY8gYmupI3R3Ab62DuD
-         itY1p47ioOwd5OQDw3LzCTMV9xnMY7QjaN0uAmxSFUlD5LQ+/URGop+n4grQX7LXRxZA
-         SI/Ecbx3RtJLu0gQBlxFZq2dc6QKX4MHnBrdUkXPBD4R7IlMKRel0xQ4Pv5sWKFgml6g
-         zLmgevcC1/kIX04TdL7sZF2RpwV+2evQkBT1QmR2sf9jNJ5vFM8K/GETXoSf5PQi99Sy
-         2EogIRw7lGsuA2pazw4XwZ0OPnq8vmcuvM4Y5tYCfX21fZxYustPfGoI3t5W9HQHd42V
-         iKaw==
+        bh=zKiBGaITMWdq+RcJCKiD/KTBLwCH1eJL3pgyLRaRR50=;
+        b=RTCTUpbhuswy3xPMW3RGLlJF3lmnhyCRiVwB/lbeWvf4CUaD1xhJGKhESpvFHrwbnL
+         tCHhM4ASu3oXvIwAawcrwqPxV2i+vbr7hayLfIX+RIQg/QzXYPBweoWWoTGgDiiOG1xp
+         JD9DhVMgeTcS82lfo5xUOCeCz2bxZN0lUPjzg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tCiVit0VG3KBQjqLDag8RVtGOpUDh+mCOuLbU+1aRD0=;
-        b=AQNw64GEmC6Mw86NSCNbTDPDLVnjEvcBWRB5kHhFt4sysrDf2bU3lCpHinlcUNKIgo
-         obtfjsoD3tp64BDg2SO69KNSGd9tLM1htLgBEO6O4IpGvo2d1iXNbYTvQwHajh6XQfIE
-         iZw3/9DSk6z96A81zgkxyuHOQduUa1d5Z+5gAfx0dsxyrPcc/KC6DNk2EJTiLbrQp8dO
-         ED1e8mvtVL0/N1wquqZURvKU4/ajKJsswKWBemyL8FR1heLj3T3WNQ6LOoQDjJy4w2MB
-         oxGwyUI8tuxFVhw/O5o9/sS6xcOJpsqthogVmQxFSs6SY7SDPQeKKEE8YVjzXGghEajV
-         2n2g==
-X-Gm-Message-State: AGi0PuaEgRVNOzKr0DSSbIf1SokeBjmi1GuK03c1kUiYAXgmpTV1Rcid
-        TfESGzBcE2m8+S9B3WmVH9b8PaPH8fal/34ou6g=
-X-Google-Smtp-Source: APiQypJSt3yckcG1PG+0qHVO1B5ADwdiXuqf9yFYsMQhtvPSxbTCCBIvtEbhDtXHUxMe6fVoqo+A8ot62nqXZQGoVjI=
-X-Received: by 2002:a92:4b11:: with SMTP id m17mr10205010ilg.42.1587752491619;
- Fri, 24 Apr 2020 11:21:31 -0700 (PDT)
+        bh=zKiBGaITMWdq+RcJCKiD/KTBLwCH1eJL3pgyLRaRR50=;
+        b=WUmsrOQsGQ4I1HS0JNbIIVBveDh9V4jcsTiNqzHsy9uMAPAFrvlrvv01DtzNijtb43
+         1VfVRAG7Ii8spSz1ZumAcwWD+wR3E6BHK4Z3rYEkc72Im6RyNFFsKefXw4N7PuX3F5z5
+         vfeyb31I8xNH8RUzECRQJ2CvubuB2XOtse5ElAhO/RQNmQyAGtnF2/GPM1zoAXe709qa
+         +y98y/V57wIDNoITrRZR+FCa66RzDDUXDji9tsZWOTXe3le26Tnku/bgLUheAcd9QMPt
+         KGVCm2Q8hjIE6GAVW7lUAR8liayqlSVzCHFFpbUpm83GQPulKZL/ZgHIRTFU1pyRsNIp
+         cUAg==
+X-Gm-Message-State: AGi0PuYdJDHEaRuOoNhskYvb3HAoy8SHR7IhrKAuiLyGajNNIAp4q+iE
+        uh74QSMtLy30AEX2ElLZfFeXJgdGae4=
+X-Google-Smtp-Source: APiQypKfe5kds1LCwMB6t6wI8Kk7dpqd++fgQor696J8FI332yXlNj6/yR70yBD8Umu0gO40PFrV4w==
+X-Received: by 2002:a2e:b17a:: with SMTP id a26mr6563774ljm.215.1587758620911;
+        Fri, 24 Apr 2020 13:03:40 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id t16sm4780253ljg.41.2020.04.24.13.03.40
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Apr 2020 13:03:40 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id u6so11243173ljl.6
+        for <io-uring@vger.kernel.org>; Fri, 24 Apr 2020 13:03:40 -0700 (PDT)
+X-Received: by 2002:a2e:9a54:: with SMTP id k20mr5154247ljj.265.1587758619521;
+ Fri, 24 Apr 2020 13:03:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200423081918.GA172719@localhost> <99e94e7d-fbb6-1a73-e03b-e8b4a15d886e@kernel.dk>
-In-Reply-To: <99e94e7d-fbb6-1a73-e03b-e8b4a15d886e@kernel.dk>
-From:   Ed Baunton <edbaunton@gmail.com>
-Date:   Fri, 24 Apr 2020 14:21:20 -0400
-Message-ID: <CAF6hZUDW9zfLNuEP=CGiG7X0UAbQQJHjA3yO35A_xx9hNuxNuA@mail.gmail.com>
-Subject: Re: Multiple mmap/mprotect/munmap operations in a batch?
+References: <156f8353-5841-39ad-3bc2-af9cadac3c71@kernel.dk>
+In-Reply-To: <156f8353-5841-39ad-3bc2-af9cadac3c71@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 24 Apr 2020 13:03:23 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wibcCGvPy=PjevdSzEtzrYPWJnLo+t=S3zy3AQ5+NNeEg@mail.gmail.com>
+Message-ID: <CAHk-=wibcCGvPy=PjevdSzEtzrYPWJnLo+t=S3zy3AQ5+NNeEg@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring fix for 5.7-rc3
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Josh Triplett <josh@joshtriplett.org>, io-uring@vger.kernel.org
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Is there any restriction as to what calls shouldn't be covered with
-io_uring? I see the scope is growing over time. For example would
-directory operations be appropriate?
+On Fri, Apr 24, 2020 at 11:03 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Single fixup for a change that went into -rc2, please pull.
 
-Ed
+I'd like to point out that this was exactly the code that I pointed to
+as being badly written and hard to understand:
 
-On Thu, 23 Apr 2020 at 11:13, Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 4/23/20 2:19 AM, Josh Triplett wrote:
-> > What would it take for io_uring to support mmap, mprotect, and munmap
-> > operations?
->
-> Not very much, wiring up something like madvise as an example:
->
-> https://git.kernel.dk/cgit/linux-block/commit/?id=c1ca757bd6f4632c510714631ddcc2d13030fe1e
->
-> > What would it take to process a batch of such operations efficiently
-> > without repeatedly poking mmap_sem and such?
->
-> Probably just a bit of refactoring, to enable calling the needed helpers
-> with the mmap_sem already held.
->
-> --
-> Jens Axboe
->
+ "That whole apoll thing is disgusting.
+
+  I cannot convince myself it is right. How do you convince yourself?"
+
+And you at that time claimed it was all fairly simple and clear.
+
+I repeat: that whole apoll thing is disgusting. It wasn't simple and
+clear and only a few obvious cases that had issues.
+
+In fact, now it's even less clear, with an even more complicated check
+for when to restore things,
+
+I think that whole approach needs re-thinking. Is the union really worth it?
+
+Can you guarantee and explain why _this_ time it is right?
+
+                Linus

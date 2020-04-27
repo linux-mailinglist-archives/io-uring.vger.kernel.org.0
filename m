@@ -2,70 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 495471BA929
-	for <lists+io-uring@lfdr.de>; Mon, 27 Apr 2020 17:50:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA631BA95A
+	for <lists+io-uring@lfdr.de>; Mon, 27 Apr 2020 17:56:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbgD0PuY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Apr 2020 11:50:24 -0400
-Received: from azure.elm.relay.mailchannels.net ([23.83.212.7]:60926 "EHLO
-        azure.elm.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727073AbgD0PuX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Apr 2020 11:50:23 -0400
-X-Greylist: delayed 419 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Apr 2020 11:50:22 EDT
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 8621B641586
-        for <io-uring@vger.kernel.org>; Mon, 27 Apr 2020 15:43:17 +0000 (UTC)
-Received: from pdx1-sub0-mail-a84.g.dreamhost.com (100-96-9-22.trex.outbound.svc.cluster.local [100.96.9.22])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 12AE5641927
-        for <io-uring@vger.kernel.org>; Mon, 27 Apr 2020 15:43:17 +0000 (UTC)
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from pdx1-sub0-mail-a84.g.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
-        by 0.0.0.0:2500 (trex/5.18.6);
-        Mon, 27 Apr 2020 15:43:17 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
-X-MailChannels-Auth-Id: dreamhost
-X-Society-Bottle: 42e1836222d56a9f_1588002197307_704073597
-X-MC-Loop-Signature: 1588002197307:159093242
-X-MC-Ingress-Time: 1588002197307
-Received: from pdx1-sub0-mail-a84.g.dreamhost.com (localhost [127.0.0.1])
-        by pdx1-sub0-mail-a84.g.dreamhost.com (Postfix) with ESMTP id C202D7F0A2
-        for <io-uring@vger.kernel.org>; Mon, 27 Apr 2020 08:43:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=claycon.org; h=date:from
-        :to:subject:message-id:mime-version:content-type; s=claycon.org;
-         bh=gnYu2MhUJRFO3kFu3oRq3w51Zxg=; b=iJu+7gTmHa7I0PuporBXvfivD3hJ
-        cfMgACPOEuuAqfSmqtBNde/4VOHkY5eoHXXgQYSupEuY56vcLrzH8lUDLQHnVFms
-        Q0xiTtb2vtyn+J2RKPVtpqmsDoKNxrRxdZphN23YGKRXVV0X2ZO6/NsbaTkN9nVk
-        9HLGdga0nag7N4Q=
-Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a84.g.dreamhost.com (Postfix) with ESMTPSA id 686437E62E
-        for <io-uring@vger.kernel.org>; Mon, 27 Apr 2020 08:43:16 -0700 (PDT)
-Date:   Mon, 27 Apr 2020 10:43:16 -0500
-X-DH-BACKEND: pdx1-sub0-mail-a84
-From:   Clay Harris <bugs@claycon.org>
-To:     io-uring@vger.kernel.org
-Subject: io_uring IORING_OP_POLL_ADD fails when fd is a tty
-Message-ID: <20200427154316.vfh4z22cffx5oxvk@ps29521.dreamhostps.com>
+        id S1727104AbgD0P4A (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Apr 2020 11:56:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47740 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726539AbgD0P4A (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Apr 2020 11:56:00 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00DEDC0610D5
+        for <io-uring@vger.kernel.org>; Mon, 27 Apr 2020 08:55:59 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id i19so19367655ioh.12
+        for <io-uring@vger.kernel.org>; Mon, 27 Apr 2020 08:55:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/yE9SwQfeIeHyVe4ISb3/2+ArE3gkGzZXnHf9N3n4X0=;
+        b=Bn7LZ+aaBBQEdl+yaeJJ75RSt7gB9vlpAkf/XyQTxg9hYT3pjJG1bce1kakhTBKz+1
+         izk9DtfKdfgNUlNqxN+VLcItwb5/ojDY2Wp/c/9gOYKu7NBHJoJEewRQcWlRpxvPwc+l
+         hnwDyAcv5QLHuoWkexRMJV/uHXqwyeNDle4FCGQv+YuwnyjixxRYhRuTAjF8n+sEETNp
+         FzKOFfLNh0OGOXnBKSY1I3hsK7jUSvt5IwZDHcnoN1vMRWauQj/IeYdhbCJ0SEiXCj92
+         5aFJHujCafAISd4Wi72oYS9baXFBqm10Cp1VQfU/UqvdqnmVNk6hQ7MXq/IUNrvvtlrK
+         NbjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/yE9SwQfeIeHyVe4ISb3/2+ArE3gkGzZXnHf9N3n4X0=;
+        b=mhOQP+aj7/Ii+ijax515bjwskRRf4yPAhRSmIFD+Idy0+CrK4KBcTWIm6i55mXUFqh
+         0czt3RcDMzPo1xa2XiN9BMFIxI0xBM7HgZtIRDmjjffQmERVeNPEUeTiGvZmhlJVdKwI
+         lYOm+hsb/OQsLzLbxR/A6VT5lrbpHjFlslOjmmr2OEqqEL+PX1I5KTtOizm83/NEexWB
+         k/BGAJ1hY2pOhUZdxW7OBXyqRFGsSsDkzghWKuNPQ7G1TxC8iEgi/jim5nHPg+gMO1Um
+         uhrMzdSdPnBVU5MMF/RdeHWZ8/aoJogU5Sxnu0URowqXEJP7QjJpyV+d50t18lpmdtC7
+         ylAg==
+X-Gm-Message-State: AGi0PuZQSR9KudlWXMC9rupkPq2r80czufYreDlHj4WeD4mujGtgYyrK
+        FiXLiHpyyw5lceILYnarG5Cocw==
+X-Google-Smtp-Source: APiQypLf0YGyy+zqDW1IpWyWbeiGXgkX3q53fNTwb8xo93edN+GFPxMGEI+/8bebTNsce8tKEFfXuA==
+X-Received: by 2002:a5e:a810:: with SMTP id c16mr5439278ioa.99.1588002958369;
+        Mon, 27 Apr 2020 08:55:58 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id j3sm5055265ioj.27.2020.04.27.08.55.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Apr 2020 08:55:57 -0700 (PDT)
+Subject: Re: Feature request: Please implement IORING_OP_TEE
+To:     Clay Harris <bugs@claycon.org>
+References: <20200427154031.n354uscqosf76p5z@ps29521.dreamhostps.com>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c76b09f0-3437-842e-7106-efb2cac38284@kernel.dk>
+Date:   Mon, 27 Apr 2020 09:55:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-VR-OUT-STATUS: OK
-X-VR-OUT-SCORE: 0
-X-VR-OUT-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduhedrheelgdeltdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucggtfgfnhhsuhgsshgtrhhisggvpdfftffgtefojffquffvnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfggtggufgesthdtredttdervdenucfhrhhomhepvehlrgihucfjrghrrhhishcuoegsuhhgshestghlrgihtghonhdrohhrgheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepieelrdduieefrddukeeirdejgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehpshdvleehvddurdgurhgvrghmhhhoshhtphhsrdgtohhmpdhinhgvthepieelrdduieefrddukeeirdejgedprhgvthhurhhnqdhprghthhepvehlrgihucfjrghrrhhishcuoegsuhhgshestghlrgihtghonhdrohhrgheqpdhmrghilhhfrhhomhepsghughhssegtlhgrhigtohhnrdhorhhgpdhnrhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+In-Reply-To: <20200427154031.n354uscqosf76p5z@ps29521.dreamhostps.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=207461
+On 4/27/20 9:40 AM, Clay Harris wrote:
+> I was excited to see IORING_OP_SPLICE go in, but disappointed that tee
+> didn't go in at the same time.  It would be very useful to copy pipe
+> buffers in an async program.
 
-Related link:
-https://lore.kernel.org/io-uring/20200212202515.15299-1-axboe@kernel.dk/
+Pavel, care to wire up tee? From a quick look, looks like just exposing
+do_tee() and calling that, so should be trivial.
+
+-- 
+Jens Axboe
+

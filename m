@@ -2,54 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5F121BA65A
-	for <lists+io-uring@lfdr.de>; Mon, 27 Apr 2020 16:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1289F1BA81B
+	for <lists+io-uring@lfdr.de>; Mon, 27 Apr 2020 17:38:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbgD0O1z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Apr 2020 10:27:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39968 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727999AbgD0O1z (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 27 Apr 2020 10:27:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8F424AE0A;
-        Mon, 27 Apr 2020 14:27:52 +0000 (UTC)
-Date:   Mon, 27 Apr 2020 16:27:33 +0200
-From:   Cyril Hrubis <chrubis@suse.cz>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Josh Triplett <josh@joshtriplett.org>, linux-arch@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org, lkp@lists.01.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        ltp@lists.linux.it
-Subject: Re: [LTP] [fs] ce436509a8: ltp.openat203.fail
-Message-ID: <20200427142733.GD7661@rei>
-References: <f969e7d45a8e83efc1ca13d675efd8775f13f376.1586830316.git.josh@joshtriplett.org>
- <20200427135210.GB5770@shao2-debian>
+        id S1727822AbgD0PiD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Apr 2020 11:38:03 -0400
+Received: from crocodile.birch.relay.mailchannels.net ([23.83.209.45]:39044
+        "EHLO crocodile.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728032AbgD0PiD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Apr 2020 11:38:03 -0400
+X-Greylist: delayed 498 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Apr 2020 11:38:02 EDT
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 269514011C8
+        for <io-uring@vger.kernel.org>; Mon, 27 Apr 2020 15:29:44 +0000 (UTC)
+Received: from pdx1-sub0-mail-a84.g.dreamhost.com (100-96-14-18.trex.outbound.svc.cluster.local [100.96.14.18])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id A5E8E4004B9
+        for <io-uring@vger.kernel.org>; Mon, 27 Apr 2020 15:29:43 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from pdx1-sub0-mail-a84.g.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
+        by 0.0.0.0:2500 (trex/5.18.6);
+        Mon, 27 Apr 2020 15:29:44 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
+X-MailChannels-Auth-Id: dreamhost
+X-Chief-Skirt: 2926d22763aab07e_1588001383902_2093208734
+X-MC-Loop-Signature: 1588001383902:2796293541
+X-MC-Ingress-Time: 1588001383901
+Received: from pdx1-sub0-mail-a84.g.dreamhost.com (localhost [127.0.0.1])
+        by pdx1-sub0-mail-a84.g.dreamhost.com (Postfix) with ESMTP id 4347E7F0D5
+        for <io-uring@vger.kernel.org>; Mon, 27 Apr 2020 08:29:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=claycon.org; h=date:from
+        :to:subject:message-id:mime-version:content-type; s=claycon.org;
+         bh=AfvyN1WV54scVpnMyhOp6g/a65w=; b=BpsNofR8Pc9A/g/Ir6m61glkvYXL
+        ownKR1wFZ0/aK2Su8eVjrTVRC73DA99AVA1cegx845u2Z0a/q7ILGVFxVBUPV/nq
+        fUvqSdN+SZgFx5nBQ8a2g5CjnWH4ucvnD/k8UM8GnCsdm4+okM0+EQBBG7QvC2I1
+        2CnIg6Jsn/SXC94=
+Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cosmos@claycon.org)
+        by pdx1-sub0-mail-a84.g.dreamhost.com (Postfix) with ESMTPSA id F23467F0BF
+        for <io-uring@vger.kernel.org>; Mon, 27 Apr 2020 08:29:42 -0700 (PDT)
+Date:   Mon, 27 Apr 2020 10:29:43 -0500
+X-DH-BACKEND: pdx1-sub0-mail-a84
+From:   Clay Harris <bugs@claycon.org>
+To:     io-uring@vger.kernel.org
+Subject: io_uring statx fails with AT_EMPTY_PATH 
+Message-ID: <20200427152942.zhe6ncun7ijpbffq@ps29521.dreamhostps.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200427135210.GB5770@shao2-debian>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-VR-OUT-STATUS: OK
+X-VR-OUT-SCORE: 0
+X-VR-OUT-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduhedrheelgdekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucggtfgfnhhsuhgsshgtrhhisggvpdfftffgtefojffquffvnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfggtggufgesthdtredttdervdenucfhrhhomhepvehlrgihucfjrghrrhhishcuoegsuhhgshestghlrgihtghonhdrohhrgheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepieelrdduieefrddukeeirdejgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehpshdvleehvddurdgurhgvrghmhhhoshhtphhsrdgtohhmpdhinhgvthepieelrdduieefrddukeeirdejgedprhgvthhurhhnqdhprghthhepvehlrgihucfjrghrrhhishcuoegsuhhgshestghlrgihtghonhdrohhrgheqpdhmrghilhhfrhhomhepsghughhssegtlhgrhigtohhnrdhorhhgpdhnrhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi!
-> commit: ce436509a8e109330c56bb4d8ec87d258788f5f4 ("[PATCH v4 2/3] fs: openat2: Extend open_how to allow userspace-selected fds")
-> url: https://github.com/0day-ci/linux/commits/Josh-Triplett/Support-userspace-selected-fds/20200414-102939
-> base: https://git.kernel.org/cgit/linux/kernel/git/shuah/linux-kselftest.git next
+Jens Axboe recommended that I post io_uring stuff to this list.
+So, here goes.
 
-This commit adds fd parameter to the how structure where LTP test was
-previously passing garbage, which obviously causes the difference in
-errno.
-
-This could be safely ignored for now, if the patch gets merged the test
-needs to be updated.
-
--- 
-chrubis@suse.cz
+https://bugzilla.kernel.org/show_bug.cgi?id=207453

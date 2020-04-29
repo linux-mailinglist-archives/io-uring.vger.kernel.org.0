@@ -2,88 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3A0E1BE77A
-	for <lists+io-uring@lfdr.de>; Wed, 29 Apr 2020 21:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 847BB1BE77E
+	for <lists+io-uring@lfdr.de>; Wed, 29 Apr 2020 21:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbgD2Tg3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Apr 2020 15:36:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53276 "EHLO
+        id S1726456AbgD2Ti0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Apr 2020 15:38:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726423AbgD2Tg3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Apr 2020 15:36:29 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C519C03C1AE
-        for <io-uring@vger.kernel.org>; Wed, 29 Apr 2020 12:36:29 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id e25so3927846ljg.5
-        for <io-uring@vger.kernel.org>; Wed, 29 Apr 2020 12:36:28 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1726423AbgD2Ti0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Apr 2020 15:38:26 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69C78C03C1AE
+        for <io-uring@vger.kernel.org>; Wed, 29 Apr 2020 12:38:26 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id n24so1201354plp.13
+        for <io-uring@vger.kernel.org>; Wed, 29 Apr 2020 12:38:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1+bBufEVKtG0wIvFK4ZP4B4EwU11cS2geVWVY+TG39E=;
-        b=JGyW28kKSp2xzCZTcWZWK4kWmeR3vQkEQ6QDmuA8E9wIA9RNbrriB8FyUaougm/qKm
-         RR7FZerrH5Mx5BRSvj1O3M9naxbrHejw+W8a0g5BGx++O8hO0jju1bHE88JX3rAQJUfh
-         hfGHQ00xD9JxkMGJsJ6jcHCffIB6FCf2FjfpZaDLqsrEKbB4JBYSF3QG9wiCjckRaRCl
-         LvQaqvI9EOlW6aQJUITYx3zvK6YDuocbsLbmSspO/S3OIz26MHt+7sqLQUW938bmK1xP
-         j2B+5dZdIldS6jhi0v28DX0LHKK13TIHTf9WTGAg+1igpk53eUfzbYkxVsNz6/hKHnyU
-         S7Xg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Oi7zPrZd6t7Bs9iokHjxGsxJ/wumd0x0VUNT31dNcIk=;
+        b=qdJEqGuu+ubpGUGX1E5RMY05mqss5/7zBHCE8vFQApI+5RaH23n29TQEQhUL37KdML
+         WZCAXxPNIjnUvdu5AA1W49WK1BVm3hBKoj7NaV3m5jbWYmYvE3hEt3h4SQRmSRvbWtRl
+         0ZDFAvHQW393EuIEeAoIsRHB0ACCoEa37eASDnQ61P+OYcRZCtLVZbecO5mS36QfKPns
+         M55ERHnAuI7Mrr8LYbts7cuCLzuB0WsmGLpa5TE7r6jerjPWRyjIGWipF1aWf+kGBZbC
+         j1e06MblPGqpEHC5P3baw0VXZ+qBi/neGlUOUhLdrgMk0iidSN7pT9itCT9WrdVdjobX
+         QVbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1+bBufEVKtG0wIvFK4ZP4B4EwU11cS2geVWVY+TG39E=;
-        b=W4FwLZem7yimq/sXjZvQ20tbmTPYAzxG7WNdkFPM2ip4qmF0St7h5xlw/AK14v0XlS
-         flru7GCO4Adp+bJ1GqRmgQJqNFvT0+wgdbLR0YsRVH3shjVmVtxWxpoNWuqrN+aGAZkk
-         i9xy8iApfFWe6FWYFOySQa6XBKzJpaOIds1aND0/V7uB1rrqZzGIQIQE1Nfv4AYTJuUL
-         H56T5768MBnXzC/sVzvJ5NzVmyqhbk+XqGzm6XSFC9DGCma1RYNDVxA4bM9Uc4Yj9sVc
-         CmtuK/CU0tBh8izgaR6ICt0Q3GFfJG0SwQTS5NK+LQRO0of2PcszAV8s/D7SLEUBTWgY
-         Jf9A==
-X-Gm-Message-State: AGi0PuZEDy8XiF+ANiTUZ0R3P5A7y0htaZ1DjEkcXUOrS3axWXnt9Ggw
-        XCXxqTfyMWbuBAgzqukxXhY7jkJWPOB9ByMwXdi/T7ro
-X-Google-Smtp-Source: APiQypJdXQoi6q30r4RCMc7z3Y7nOKkXNKLRQaAdGDzZbHTQNG8DusLNtm+dNNLSe3eePAYbVUHRRiXhEjoK6Q0IlVA=
-X-Received: by 2002:a2e:87d3:: with SMTP id v19mr20705003ljj.176.1588188987317;
- Wed, 29 Apr 2020 12:36:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200428192956.GA32615@arya.arvanta.net> <04edfda7-0443-62e1-81af-30aa820cf256@kernel.dk>
- <20200429152646.GA17156@infradead.org> <e640dbcc-b25d-d305-ac97-a4724bd958e2@kernel.dk>
- <6528f839-274d-9d46-dea6-b20a90ac8cf8@kernel.dk>
-In-Reply-To: <6528f839-274d-9d46-dea6-b20a90ac8cf8@kernel.dk>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 29 Apr 2020 21:36:00 +0200
-Message-ID: <CAG48ez2k_CvXxVHW9WB+GV_+41PoKmVk0m_b_1sZaOAbnJUC1A@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Oi7zPrZd6t7Bs9iokHjxGsxJ/wumd0x0VUNT31dNcIk=;
+        b=o7R6uh6XM0v6BY4rXQlxPoE0LvbIOYJYADyKtpY6r0NEJpkcUyN0okdro1PXV8QMpW
+         DI1BKdob6igT0+FOwcnAqO3i2/hlDuuItET/hKTcEBX/0IINlDt+j5LC10JiZ+cExawt
+         zAKYTQKxVj6Oqq8aNO0mNjnovYgFHR4bvtQ+MF5ZYCyN13YrQxnAQwE4Eue1TiUOrHM3
+         K6lHAmWXF2jSoap8ZzGfhCeUNzJAULgPGBdFtNSh3mzrhZxZzVFvB+8YsyLME+IMz7Mi
+         oXSxpzGKJzzWaTFiTLhFi2XcpbbLw3jYKhn0H/k5+OGVijGT1TwnnxxU+vyrvrFmFX86
+         Afjw==
+X-Gm-Message-State: AGi0PuaWWvTd40l+QflTPULtW27nvaX4251RYrZw3R7rXSFE0jt4rJ5y
+        lQ7YytP+y3TrHHrAfDDlB0mk3w==
+X-Google-Smtp-Source: APiQypLU+segjfMRPZk3jPvfz4eanoPJTkGhaCdQzmZW+4uEDhvsYrKdypi68/JYfdhokQTiyP6M3Q==
+X-Received: by 2002:a17:90a:a484:: with SMTP id z4mr63967pjp.40.1588189105856;
+        Wed, 29 Apr 2020 12:38:25 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id j6sm1630264pfe.134.2020.04.29.12.38.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Apr 2020 12:38:25 -0700 (PDT)
 Subject: Re: Build 0.6 version fail on musl libc
-To:     Jens Axboe <axboe@kernel.dk>
+To:     Jann Horn <jannh@google.com>
 Cc:     Christoph Hellwig <hch@infradead.org>,
-        =?UTF-8?Q?Milan_P=2E_Stani=C4=87?= <mps@arvanta.net>,
+        =?UTF-8?Q?Milan_P=2e_Stani=c4=87?= <mps@arvanta.net>,
         io-uring <io-uring@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20200428192956.GA32615@arya.arvanta.net>
+ <04edfda7-0443-62e1-81af-30aa820cf256@kernel.dk>
+ <20200429152646.GA17156@infradead.org>
+ <e640dbcc-b25d-d305-ac97-a4724bd958e2@kernel.dk>
+ <6528f839-274d-9d46-dea6-b20a90ac8cf8@kernel.dk>
+ <CAG48ez2k_CvXxVHW9WB+GV_+41PoKmVk0m_b_1sZaOAbnJUC1A@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <eca672cb-2df3-2274-c97f-c401328a40ce@kernel.dk>
+Date:   Wed, 29 Apr 2020 13:38:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAG48ez2k_CvXxVHW9WB+GV_+41PoKmVk0m_b_1sZaOAbnJUC1A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-+linux-api
+On 4/29/20 1:36 PM, Jann Horn wrote:
+> +linux-api
+> 
+> On Wed, Apr 29, 2020 at 6:14 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 4/29/20 9:29 AM, Jens Axboe wrote:
+>>> On 4/29/20 9:26 AM, Christoph Hellwig wrote:
+>>>> On Wed, Apr 29, 2020 at 09:24:40AM -0600, Jens Axboe wrote:
+>>>>>
+>>>>> Not sure what the best fix is there, for 32-bit, your change will truncate
+>>>>> the offset to 32-bit as off_t is only 4 bytes there. At least that's the
+>>>>> case for me, maybe musl is different if it just has a nasty define for
+>>>>> them.
+>>>>>
+>>>>> Maybe best to just make them uint64_t or something like that.
+>>>>
+>>>> The proper LFS type would be off64_t.
+>>>
+>>> Is it available anywhere? Because I don't have it.
+>>
+>> There seems to be better luck with __off64_t, but I don't even know
+>> how widespread that is... Going to give it a go, we'll see.
+> 
+> If you have questions about how to properly write UAPI headers,
+> linux-api@ is probably a good place to ask.
 
-On Wed, Apr 29, 2020 at 6:14 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 4/29/20 9:29 AM, Jens Axboe wrote:
-> > On 4/29/20 9:26 AM, Christoph Hellwig wrote:
-> >> On Wed, Apr 29, 2020 at 09:24:40AM -0600, Jens Axboe wrote:
-> >>>
-> >>> Not sure what the best fix is there, for 32-bit, your change will truncate
-> >>> the offset to 32-bit as off_t is only 4 bytes there. At least that's the
-> >>> case for me, maybe musl is different if it just has a nasty define for
-> >>> them.
-> >>>
-> >>> Maybe best to just make them uint64_t or something like that.
-> >>
-> >> The proper LFS type would be off64_t.
-> >
-> > Is it available anywhere? Because I don't have it.
->
-> There seems to be better luck with __off64_t, but I don't even know
-> how widespread that is... Going to give it a go, we'll see.
+This is in liburing, it's not the kernel side. The kernel side is fine.
 
-If you have questions about how to properly write UAPI headers,
-linux-api@ is probably a good place to ask.
+-- 
+Jens Axboe
+

@@ -2,55 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB631BE2F2
-	for <lists+io-uring@lfdr.de>; Wed, 29 Apr 2020 17:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15FB01BE33A
+	for <lists+io-uring@lfdr.de>; Wed, 29 Apr 2020 17:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgD2Pkj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Apr 2020 11:40:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbgD2Pki (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Apr 2020 11:40:38 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25281C03C1AD
-        for <io-uring@vger.kernel.org>; Wed, 29 Apr 2020 08:40:38 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id r26so2540444wmh.0
-        for <io-uring@vger.kernel.org>; Wed, 29 Apr 2020 08:40:38 -0700 (PDT)
+        id S1726635AbgD2P6T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Apr 2020 11:58:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47104 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726423AbgD2P6T (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Apr 2020 11:58:19 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C416DC03C1AD
+        for <io-uring@vger.kernel.org>; Wed, 29 Apr 2020 08:58:18 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id k1so3186765wrx.4
+        for <io-uring@vger.kernel.org>; Wed, 29 Apr 2020 08:58:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jXtxi1JTe34SqdxxMX4Be6w/Yz4QlJoZXz/jou0jltQ=;
-        b=gur49IoqlwAJkrTiLsDp6EZDDz21yCnTCMNU9H2J0FSUp7F6gEO/n8asS9hVvhutMD
-         TncHa5F/REta74BO+OfqjAgDCnNXxFyMstCgWM0JnTwFv6Y82uTdIDpTWMuzQuAPsaUI
-         aK5egDoMRFqnJ/E0jfiIgyRDbzzbWrTwJizzHXhqkoOewBL20r7kKcdRdrlHRgH7nI85
-         82mBLrPCU5vq3Bg9ytZxNOydprXD4Ap3O+Vh5MStyr1qLkqxVxQCW1FUxIp3PV6w85nh
-         Iz4yuQmRH60FN9f5GWzs+UIIJYRmUN3qi/8iCA2lG/XGlueRTS+tjvKm6UX9Z4mL9WzK
-         AIFA==
+        bh=P1nAnH1qoyjSBG7uz8UWKBU86HNkwr37357tFZ3UqcQ=;
+        b=pMWYk9q7YczX7G+sWgYAUyPO6iPlfcro1vFAByLsRsbwtUhf6v2jykvxfzZsR4cbWT
+         O5qhjhBmXE5I3OFCNkFHxxRNL4KkNHuHsYBdd/1hFFKITMs0CwVY14QwaO/mZ70LlrLr
+         p4QEtIAzxkwigSzFEywWlxKIp9X9HVzyP0+lDnIzSwI24EbKb60SRFLeSX1SbyYdqP8a
+         50xvVVMQM0VwVH4YUIuKsKZmb7MEapr89B8HBn2spSogQV3iOhwkLsSKu8rWMHPkihUu
+         0kkzKKdUCU3fl3Zh6tqrpwYhKp4eSKz0zoF1E9oHVUojvPYtmW5iicvPtTI7ZspC31b9
+         so5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jXtxi1JTe34SqdxxMX4Be6w/Yz4QlJoZXz/jou0jltQ=;
-        b=ZN3VvOHNW5kv6+Sg4hQDsEsdEOyiIYUEVG5DUUfJnEZKRfoCAK4tSTKTepht4nSN9u
-         zYuVE6RPQl9HI7Tk9QkvkSGlu2OKIC/T5fFwD/QAjaH62uCLZTUDOosu2DB/JWmAk2Ly
-         mof20kl/DFLAVT3cgcaFyXj1FYlcwiRDEFlmvoq5RWqLpqvzi85pw4a3NSi3kWtMALot
-         9kdcLHArIqHk3R8qhBTnr2/++Lkd8ghZzitW/UTedVdq0g9hWgqeyf5y5yTtm2QW3BoJ
-         9XL5YAC/wHH+sOOevhXm5nv4ubF0IQ3UAi9u+hGcmUxmBdM9BIJsUVnUMkwoKTij9G+F
-         ZfHg==
-X-Gm-Message-State: AGi0PuabP+P+UTEVNDpBv3nozahMcCqCb+FPIBA00yY4QTjYEoyUO8aB
-        Z0cW10hsUvpwZDgk6OoIaZ9aV3h5
-X-Google-Smtp-Source: APiQypIT6l4y/7IsgDsO6PqNFW0LmwhoGF1BzVX/C3fqRKSlRbN7ozNCymrMDKYEQ+3OzbmXINMc4A==
-X-Received: by 2002:a1c:f20c:: with SMTP id s12mr4195774wmc.83.1588174836521;
-        Wed, 29 Apr 2020 08:40:36 -0700 (PDT)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=P1nAnH1qoyjSBG7uz8UWKBU86HNkwr37357tFZ3UqcQ=;
+        b=uU0fw8b930shhBXTS9lepM9GdX8kb3xI0tCuodeVJ1eys0gZ+MQ2Qo2h4V64QyFH3v
+         Ga1Ns92n9Nf36ePhcw4ST8xdedNITd/rbVN57tIXvuy00yokuZ2UBCpHOaOGlKJYm2AR
+         fwvRSzC0ylwAJUEAekzcAeXgvDd+95eTvzDQJ55ozatYxVJJ/h25EKNAtULYLINT3YJU
+         i4GYM+EW2wYMGJRFBTOhnv8DNdYRsMBe+3jkQ7V8EKPxEVAVqCHndS3qPB0k3nsSJLeY
+         1RpPqG2u+p5DP3liTB3PelItHBetXGZcVo5PCq21kp95xXeTZ6hs9fOc+FMbN03OQWjd
+         B4Qw==
+X-Gm-Message-State: AGi0PuYxglHtyZok377jEdJbQhvXCm+x+ytDx7BgkZeznFd76WnXs5OM
+        nV1ENf23yK6IP6/xb+3btzfWgctc
+X-Google-Smtp-Source: APiQypIUuT7XHkd40LFcY/XINoVPyjZUxBzxJi6rHPQPtPTK6AXXQ2djMUiyPdzle8tSgB/b9kEtBg==
+X-Received: by 2002:a5d:4301:: with SMTP id h1mr41223885wrq.144.1588175897011;
+        Wed, 29 Apr 2020 08:58:17 -0700 (PDT)
 Received: from [192.168.43.25] ([109.126.129.227])
-        by smtp.gmail.com with ESMTPSA id q17sm7991346wmj.45.2020.04.29.08.40.35
+        by smtp.gmail.com with ESMTPSA id p6sm30684475wrt.3.2020.04.29.08.58.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Apr 2020 08:40:36 -0700 (PDT)
-To:     Mark Papadakis <markuspapadakis@icloud.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <8B8CEFE3-DDC8-46C6-AE63-4990D677A770@icloud.com>
+        Wed, 29 Apr 2020 08:58:16 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>
+Cc:     Clay Harris <bugs@claycon.org>, io-uring <io-uring@vger.kernel.org>
+References: <20200427154031.n354uscqosf76p5z@ps29521.dreamhostps.com>
+ <c76b09f0-3437-842e-7106-efb2cac38284@kernel.dk>
+ <CAG48ez1fc1_U7AtWAM+Jh6QjV-oAtAW2sQ2XSz9s+53SN_wSFg@mail.gmail.com>
+ <6a444e4c-bd51-b32c-b9e0-5e157b20e79d@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -95,13 +98,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: SQE OP - sendfile
-Message-ID: <94dbbb15-4751-d03c-01fd-d25a0fe98e25@gmail.com>
-Date:   Wed, 29 Apr 2020 18:39:32 +0300
+Subject: Re: Feature request: Please implement IORING_OP_TEE
+Message-ID: <639bc18d-7419-29b9-bbbe-0b011795f38b@gmail.com>
+Date:   Wed, 29 Apr 2020 18:57:12 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <8B8CEFE3-DDC8-46C6-AE63-4990D677A770@icloud.com>
+In-Reply-To: <6a444e4c-bd51-b32c-b9e0-5e157b20e79d@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -110,20 +113,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 29/04/2020 18:21, Mark Papadakis wrote:
-> Greetings,
+On 27/04/2020 23:02, Jens Axboe wrote:
+> On 4/27/20 12:22 PM, Jann Horn wrote:
+>> On Mon, Apr 27, 2020 at 5:56 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>> On 4/27/20 9:40 AM, Clay Harris wrote:
+>>>> I was excited to see IORING_OP_SPLICE go in, but disappointed that tee
+>>>> didn't go in at the same time.  It would be very useful to copy pipe
+>>>> buffers in an async program.
+>>>
+>>> Pavel, care to wire up tee? From a quick look, looks like just exposing
+>>> do_tee() and calling that, so should be trivial.
+>>
+>> Just out of curiosity:
+>>
+>> What's the purpose of doing that via io_uring? Non-blocking sys_tee()
+>> just shoves around some metadata, it doesn't do any I/O, right? Is
+>> this purely for syscall-batching reasons? (And does that mean that you
+>> would also add syscalls like epoll_wait() and futex() to io_uring?) Or
+>> is this because you're worried about blocking on the pipe mutex?
 > 
-> Are there any plans for an SENDFILE SQE OP?
-> Using a pipe and 2 two SPLICE ops(using the LINK flag) for moving data from one file FD to a socket FD(for example) works - but it’s somewhat inconvenient and maybe more expensive than it would otherwise be if there was a dedicated op for a sendfile() like facility.
+> Right, it doesn't do any IO. It does potentially block on the inode
+> mutex, but that's about it. I think the reasons are mainly:
+
+Good catch, the waiting probably can happen with splice as well.
+I need to read it through, but looks strange that it just ignores O_NONBLOCK,
+is there some upper bound for holding it or something?
+
 > 
-
-I didn't dig deeply, but it's done by internally creating a pipe and leaving it
-with a task up until it exits. I hope such pipes use only 1 page or so, but I
-don't like the idea of having one per each io-wq thread (even lazily as it's
-done now).
-
-If we really want to do that, would probably need something more elaborate.
-Jens may shed some light.
+> - Keep the interfaces the same, instead of using both sync and async
+>   calls.
+> - Bundling/batch reasons, either in same submission, or chained.
+> 
+> Some folks have talked about futex, and epoll_wait would also be a
+> natural extension as well, since we already have the ctl part.
 
 -- 
 Pavel Begunkov

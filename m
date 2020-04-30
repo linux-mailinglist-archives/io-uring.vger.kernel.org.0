@@ -2,58 +2,25 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 416C61BFEFE
-	for <lists+io-uring@lfdr.de>; Thu, 30 Apr 2020 16:47:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 152C81C00EE
+	for <lists+io-uring@lfdr.de>; Thu, 30 Apr 2020 17:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbgD3OrL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Apr 2020 10:47:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35348 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726867AbgD3OrJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Apr 2020 10:47:09 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65092C035495
-        for <io-uring@vger.kernel.org>; Thu, 30 Apr 2020 07:47:08 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id b18so1590457ilf.2
-        for <io-uring@vger.kernel.org>; Thu, 30 Apr 2020 07:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8An+d+NnGqCUxytF65N4uVkrd3vFybIXvZLzAwPHTIc=;
-        b=bWUZBDtdA3PZ6KPU+2aIaGUqNGbf2LQyIYAH2Ptk5o83tJ0ARJLK1mSeDomdafjqmu
-         lo9XiqVtpBpeaFgoqjETzto07A0QUJTU6F3OiDHSMhaqhL2w76rLUuPf+7dO4lxVHvp1
-         5wAFYc3CAmbBwQGsVollJoVGGZnW9lr8oSaG1xs2P4pV5nA2QkzV/J7aEoDU88PB/PCx
-         yvd4hZK5Bkqg8VFBvUhyw+rDzt7a0cqrECPiVqucV7Etc67/LNjzQZE3jxQWwvpg1mi+
-         6ZaRzo4g2MOlx+9+7Wm96xhIvsh1Cv01st8S8M8b67HTbzjM8zJsRj41nOXYDqK/HyHQ
-         Y13A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8An+d+NnGqCUxytF65N4uVkrd3vFybIXvZLzAwPHTIc=;
-        b=C8+eEInjPxyXPJkOf4M5wN53YfW2zq+gSngpTHEfgobey7+hlqCCf9iawvMP3GDXjT
-         +8rmcBgysrT6lyT1fbUyJ5rGKUrRJbI6c+hCGPcFJ1YWqDBz7C/kCKM7NVSO/8kPh69c
-         wQhwljyBuFKI1zWJrTajcNd1E8vNiuJ4euxKZwiYeSBuqpkuYVNJ/IIE1TbVAv6NYdsP
-         iVzLsHC7Onu7ZFHuXMB8aFA2a2Gu5xy67/FC0Kq4UeU9zLP1slGoS0sbfvJMe7m5lZ4L
-         +qwuRgChfEtsD653KArE4bS4uYDR9IZyXmyDtSX9RTWgkeBavJ3/+pTde64PAB7yP14B
-         igKg==
-X-Gm-Message-State: AGi0PuZgszC1JKwDAPIQxMX0C9W5evgXGzJPqn/Kx13bhT9NQ4Ca4AsJ
-        cdDixw/HO1p6KxgtvGZDfpHVKxJnj+/WDw==
-X-Google-Smtp-Source: APiQypI+Z9Y3y+F8kLsslRgLmN9ZNshCDRBQ1Z+Prg1hvHsLkitbbktY0G73C6dHbJXl69Hj990Ibw==
-X-Received: by 2002:a92:dac8:: with SMTP id o8mr2179529ilq.189.1588258026845;
-        Thu, 30 Apr 2020 07:47:06 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id m14sm18011ilq.68.2020.04.30.07.47.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Apr 2020 07:47:06 -0700 (PDT)
-Subject: Re: Build 0.6 version fail on musl libc
-To:     =?UTF-8?Q?Milan_P=2e_Stani=c4=87?= <mps@arvanta.net>
+        id S1726441AbgD3P4p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Apr 2020 11:56:45 -0400
+Received: from static-213-198-238-194.adsl.eunet.rs ([213.198.238.194]:44178
+        "EHLO fx.arvanta.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbgD3P4p (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Apr 2020 11:56:45 -0400
+Received: from arya.arvanta.net (arya.arvanta.net [10.5.1.6])
+        by fx.arvanta.net (Postfix) with ESMTP id C3E323829;
+        Thu, 30 Apr 2020 17:56:43 +0200 (CEST)
+Date:   Thu, 30 Apr 2020 17:56:43 +0200
+From:   Milan =?utf-8?Q?P=2E_Stani=C4=87?= <mps@arvanta.net>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@infradead.org>, io-uring@vger.kernel.org
-References: <04edfda7-0443-62e1-81af-30aa820cf256@kernel.dk>
- <20200429152646.GA17156@infradead.org>
- <e640dbcc-b25d-d305-ac97-a4724bd958e2@kernel.dk>
+Subject: Re: Build 0.6 version fail on musl libc
+Message-ID: <20200430155643.GA11928@arya.arvanta.net>
+References: <e640dbcc-b25d-d305-ac97-a4724bd958e2@kernel.dk>
  <6528f839-274d-9d46-dea6-b20a90ac8cf8@kernel.dk>
  <20200429193315.GA31807@arya.arvanta.net>
  <4f9df512-75a6-e4ca-4f06-21857ac44afb@kernel.dk>
@@ -62,127 +29,29 @@ References: <04edfda7-0443-62e1-81af-30aa820cf256@kernel.dk>
  <20200429203844.GA25859@arya.arvanta.net>
  <bcfe40db-ebcd-df5c-ca18-4a867c9d1e1e@kernel.dk>
  <20200430143836.GA4948@arya.arvanta.net>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2e8edb98-0594-8e77-012f-4e96139878fb@kernel.dk>
-Date:   Thu, 30 Apr 2020 08:47:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ <2e8edb98-0594-8e77-012f-4e96139878fb@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20200430143836.GA4948@arya.arvanta.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2e8edb98-0594-8e77-012f-4e96139878fb@kernel.dk>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/30/20 8:38 AM, Milan P. Stanić wrote:
-> On Wed, 2020-04-29 at 14:43, Jens Axboe wrote:
->> On 4/29/20 2:38 PM, Milan P. Stanić wrote:
->>> On Wed, 2020-04-29 at 14:08, Jens Axboe wrote:
->>>> On 4/29/20 2:01 PM, Milan P. Stanić wrote:
->>>>> On Wed, 2020-04-29 at 13:38, Jens Axboe wrote:
->>>>>> On 4/29/20 1:33 PM, Milan P. Stanić wrote:
->>>>>>> On Wed, 2020-04-29 at 10:14, Jens Axboe wrote:
->>>>>>>> On 4/29/20 9:29 AM, Jens Axboe wrote:
->>>>>>>>> On 4/29/20 9:26 AM, Christoph Hellwig wrote:
->>>>>>>>>> On Wed, Apr 29, 2020 at 09:24:40AM -0600, Jens Axboe wrote:
->>>>>>>>>>>
->>>>>>>>>>> Not sure what the best fix is there, for 32-bit, your change will truncate
->>>>>>>>>>> the offset to 32-bit as off_t is only 4 bytes there. At least that's the
->>>>>>>>>>> case for me, maybe musl is different if it just has a nasty define for
->>>>>>>>>>> them.
->>>>>>>>>>>
->>>>>>>>>>> Maybe best to just make them uint64_t or something like that.
->>>>>>>>>>
->>>>>>>>>> The proper LFS type would be off64_t.
->>>>>>>>>
->>>>>>>>> Is it available anywhere? Because I don't have it.
->>>>>>>>
->>>>>>>> There seems to be better luck with __off64_t, but I don't even know
->>>>>>>> how widespread that is... Going to give it a go, we'll see.
->>>>>>>
->>>>>>> AFAIK, __off64_t is glibc specific, defined in /usr/include/fcntl.h:
->>>>>>> ------
->>>>>>> # ifndef __USE_FILE_OFFSET64
->>>>>>> typedef __off_t off_t;
->>>>>>> # else
->>>>>>> typedef __off64_t off_t;
->>>>>>> # endif
->>>>>>> ------
->>>>>>>
->>>>>>> So, this will not work on musl based Linux system, git commit id
->>>>>>> b5096098c62adb19dbf4a39b480909766c9026e7 should be reverted. But you
->>>>>>> know better what to do.
->>>>>>>
->>>>>>> I come with another quick and dirty patch attached to this mail but
->>>>>>> again  I think it is not proper solution, just playing to find (maybe)
->>>>>>> 'good enough' workaround.
->>>>>>
->>>>>> Let's just use uint64_t.
->>>>>
->>>>> This works. Thanks.
->>>>>
->>>>> Next issue is this:
->>>>> ----
->>>>> make[1]: Entering directory '/work/devel/liburing/src'
->>>>>      CC setup.ol
->>>>>      CC queue.ol
->>>>>      CC syscall.ol
->>>>> In file included from syscall.c:9:
->>>>> include/liburing/compat.h:6:2: error: unknown type name 'int64_t'
->>>>>     6 |  int64_t  tv_sec;
->>>>>       |  ^~~~~~~
->>>>> make[1]: *** [Makefile:43: syscall.ol] Error 1
->>>>> make[1]: Leaving directory '/work/devel/liburing/src'
->>>>> make: *** [Makefile:12: all] Error 2
->>>>> ----
->>>>>
->>>>> I fixed it with this patch:
->>>>> --
->>>>> diff --git a/configure b/configure
->>>>> index 30b0a5a..4b44177 100755
->>>>> --- a/configure
->>>>> +++ b/configure
->>>>> @@ -301,6 +301,7 @@ EOF
->>>>>  fi
->>>>>  if test "$__kernel_timespec" != "yes"; then
->>>>>  cat >> $compat_h << EOF
->>>>> +#include <stdint.h>
->>>>>  struct __kernel_timespec {
->>>>>   int64_t   tv_sec;
->>>>>   long long tv_nsec;
->>>>> --
->>>>>
->>>>> but not sure will that work on glibc.
->>>>
->>>> That should work fine on glibc. Care to send as an actual
->>>> patch, with commit message and signed-off-by? Then I'll add
->>>> it to liburing.
->>> patch is attached.
->> Great thanks, I added a bit to your commit message. Here it is:
->> https://git.kernel.dk/cgit/liburing/commit/?id=8171778c835b6be517c314cf23dd1f5ae061a117
-> 
-> Yet another issue, build also fails when make enter test subdir saying
-> ../src/include/liburing.h:339:35: error: unknown type name 'mode_t'
-> 
-> I'm attaching build log as liburing-test.log file and patch file
-> liburing-fix-mode_t.diff  where I added
-> #include <sys/stat.h> in src/include/liburing.h
-> 
-> After adding this patch 'make' pass build and test, but fails in
-> examples subdir, but this is not big problem.
+On Thu, 2020-04-30 at 08:47, Jens Axboe wrote:
+> On 4/30/20 8:38 AM, Milan P. Stanić wrote:
+[...]
 
-Thanks, applied!
+> > Maybe you would consider changes in make to have separate invocation for
+> > make (just build lib), make test and make examples. Will be easier for
+> > distribution maintainers.
+> 
+> Sure, I'd be fine with that, as long as 'all' or default still builds
+> the whole thing.
 
-> Maybe you would consider changes in make to have separate invocation for
-> make (just build lib), make test and make examples. Will be easier for
-> distribution maintainers.
-
-Sure, I'd be fine with that, as long as 'all' or default still builds
-the whole thing.
+Nice, and thanks for accepting suggestion.
 
 -- 
-Jens Axboe
-
+regards

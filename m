@@ -2,57 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0BE1C106F
-	for <lists+io-uring@lfdr.de>; Fri,  1 May 2020 11:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 484FB1C1706
+	for <lists+io-uring@lfdr.de>; Fri,  1 May 2020 16:09:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbgEAJjx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 1 May 2020 05:39:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42930 "EHLO
+        id S1731407AbgEAN4X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 1 May 2020 09:56:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728236AbgEAJjx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 1 May 2020 05:39:53 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA55EC08E859;
-        Fri,  1 May 2020 02:39:52 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id e26so5398478wmk.5;
-        Fri, 01 May 2020 02:39:52 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1731068AbgEAN4W (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 1 May 2020 09:56:22 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A098BC061A0C;
+        Fri,  1 May 2020 06:56:21 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id x18so11635013wrq.2;
+        Fri, 01 May 2020 06:56:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:references:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AY7jQHhwKy0m8fYEfOzQ4txFVzKK3a64+y00TkYY2Vs=;
-        b=d9LQZ20ToCDRYxBvGDtlFrz8wUWUDFkzjorQALXBSKkAnvZ7K0Fb3EPSTMUa3JvX1h
-         bY0GyRT9kxrjrdRstJLq0Ooyj//h7dDJhxewmYGee8auFnUt5R3VmOWGMeC6ImyDu4Rs
-         B0/+wsMOPtRLqQdF2rGxgUg8Ym5rRkxcDcKrzBksoM5BSjoNxHfEwYinIw5INPkzHTtQ
-         v52RI574hQ3ZwoOmB53U8OyqVOWwlvMi5rd1LfjuLjCUQEHeiIZ/rX3EsOqFzF4g/ER/
-         6Z3dxLcpBDwtBtg2ynb3MF6llR4wXFuQURkPeyfVaKrSoBFe8KmUfYpm4dtfiVvpLcXP
-         7Uxw==
+        bh=nVy6xVot467fPGKE+CAQW0mY5W07tHJIflXllKQNc3U=;
+        b=dYmdtZAbMUJvRYiDUSQjMFgQ1LE22fvTB6mFi+HS5/w6KzFiQZFOcKNB6xq2IEJ5z/
+         uLvDF5mHwlRwVnG4Z8FnFsoepLsqdhkFbM0YNJXkbX88HXxtJAhceLm0b3aRNXv+neXg
+         gg7CQBh4Ovt1KvAWlhnyIvyJbhtb06jNLi89HmQ33GARVYAAg+JmeHQ7VHmAhdt3UYhE
+         taqrbRXbzT4s+oqCgI0SdRLZlxQvtTeapGhFNDatOmNZPZHRgc3JKq/3U4x9Ym6nVDCp
+         froucC8dFgY3ZTAQDtFF/KRCCHRgDYtvPhan6+tIzaSQBuz/4kRmYLtvEgSaSCN0CUAP
+         FKTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:references:autocrypt:subject:message-id
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AY7jQHhwKy0m8fYEfOzQ4txFVzKK3a64+y00TkYY2Vs=;
-        b=Q3Gw4MzICOzM20/vdsu9bXGbqu9S2lT9lo7wLyQxol9hDt5PfdZL3e4uPOzJO/wtMr
-         hPP8AWJvF9mgoILpkbrNpAy9UXSNgcD3bt6P6SgK/9M31I7xOa6bNOpb5tjnKFgazkND
-         YwMM/J8cyZ0FYro2IYXN1wJPhIyNH4bLIaNmZ77OGfeOO48Pdn6pCOPh3t+tlRtEO5P0
-         zW1rfyWhJIOdOz/Bq39hSWVF3HRoYil75YBzLcFKFtWp5G95WnPAbkwV7HeUhiCwWlvm
-         tu2N+HZh9eR99NSF/glhB1y71qxO6GuqnnezscfTJDJq+xEM0vmYUdIzzITDCvW/vBph
-         HBdw==
-X-Gm-Message-State: AGi0PuZyS6uvJdtD6JGYRVSKXAY09LqReaKvnIPOHAD3uCM6tZlmLAXl
-        EsG41VbjwIipnEZIS+mBssz6ES06
-X-Google-Smtp-Source: APiQypIAO27s2GnSljTDihnWml0cPP+DAMFkAPloU+bfIfMxIxhpjiGtWhnLokmX7yvM8i3rHlyaWw==
-X-Received: by 2002:a1c:4985:: with SMTP id w127mr3148348wma.100.1588325991213;
-        Fri, 01 May 2020 02:39:51 -0700 (PDT)
-Received: from [192.168.43.180] ([109.126.131.64])
-        by smtp.gmail.com with ESMTPSA id j11sm3501587wrr.62.2020.05.01.02.39.50
+        bh=nVy6xVot467fPGKE+CAQW0mY5W07tHJIflXllKQNc3U=;
+        b=iGiwoSCfeJh4crq4c9g0QK/6RtzdDvQgPYwAZkYdo8C3wGiHRFX7aKrPJ96QFd7f0S
+         70BfOOvVweGDMpgqLjdBT6vjz/sGN7MIg0dBj21vLh6jagD8r5I4npctjTzSWKubcxOH
+         HxFeQOHVe/+P/cod3wV95NGyWEUte8Vx08hAqUAZ+zfbbbT0WGxROq/3nGxI29rhabfo
+         dvH5tufur/NqSFvAEt9TPjeG5460XgUWiCZE0eFPTUtXEzHlXzzVFHZ2NPb3ncUqkCf3
+         xXUvhwPw0LdwF1cQzsyrPVT2Bmh1jra2d1SmVLjGcG9+N9sZiWe3AxXmC9q1gHcnOBwh
+         IiwQ==
+X-Gm-Message-State: AGi0PuayfQRagFF20BORFfuQklGH6zRTF2Zj0sAT8XnLAAjwIJxrwhfv
+        LcyQcEcf/PfjWgnRhZyjXtEViV5G
+X-Google-Smtp-Source: APiQypLsurQNBd883OVsybu+wf1TevPtBNuM8uJYTQzu0JmXa0cJUtEVX+zEfzp9N8S9sxfkHtt7dw==
+X-Received: by 2002:adf:8b45:: with SMTP id v5mr4675831wra.175.1588341380110;
+        Fri, 01 May 2020 06:56:20 -0700 (PDT)
+Received: from [192.168.43.135] ([109.126.133.135])
+        by smtp.gmail.com with ESMTPSA id s11sm4508609wrp.79.2020.05.01.06.56.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 May 2020 02:39:50 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
+        Fri, 01 May 2020 06:56:19 -0700 (PDT)
+Subject: Re: [PATCH 0/5] timeout fixes
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <cover.1588253029.git.asml.silence@gmail.com>
  <8665e87d-98f8-5973-d11a-03cca3fdf66f@gmail.com>
+ <8d9b5e06-4100-c49a-c9ca-0efc389edaf3@gmail.com>
+ <c7aefe37-d740-5324-905f-1b095cfb4ea7@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -96,46 +99,45 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 0/5] timeout fixes
-Message-ID: <8d9b5e06-4100-c49a-c9ca-0efc389edaf3@gmail.com>
-Date:   Fri, 1 May 2020 12:38:47 +0300
+Message-ID: <64a20810-851d-21b4-cf33-d624aee06ce8@gmail.com>
+Date:   Fri, 1 May 2020 16:55:16 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <8665e87d-98f8-5973-d11a-03cca3fdf66f@gmail.com>
+In-Reply-To: <c7aefe37-d740-5324-905f-1b095cfb4ea7@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 01/05/2020 11:21, Pavel Begunkov wrote:
-> On 30/04/2020 22:31, Pavel Begunkov wrote:
->> [1,2] are small random patches.
->> [3,4] are the last 2 timeout patches, but with 1 var renamed.
->> [5] fixes a timeout problem related to batched CQ commits. From
->> what I see, this should be the last fixing timeouts.
+On 01/05/2020 07:26, Jens Axboe wrote:
+> On 5/1/20 3:38 AM, Pavel Begunkov wrote:
+>> On 01/05/2020 11:21, Pavel Begunkov wrote:
+>>> On 30/04/2020 22:31, Pavel Begunkov wrote:
+>>>> [1,2] are small random patches.
+>>>> [3,4] are the last 2 timeout patches, but with 1 var renamed.
+>>>> [5] fixes a timeout problem related to batched CQ commits. From
+>>>> what I see, this should be the last fixing timeouts.
+>>>
+>>> Something gone wrong with testing or rebasing. Never mind this.
+>>
+>> io_uring-5.7 hangs the first test in link_timeout.c. I'll debug it today,
+>> but by any chance, does anyone happen to know something?
 > 
-> Something gone wrong with testing or rebasing. Never mind this.
 
-io_uring-5.7 hangs the first test in link_timeout.c. I'll debug it today,
-but by any chance, does anyone happen to know something?
+Yeah, just found the culprit myself
 
+> That's not your stuff, see:
 > 
->>
->> Pavel Begunkov (5):
->>   io_uring: check non-sync defer_list carefully
->>   io_uring: pass nxt from sync_file_range()
->>   io_uring: trigger timeout after any sqe->off CQEs
->>   io_uring: don't trigger timeout with another t-out
->>   io_uring: fix timeout offset with batch CQ commit
->>
->>  fs/io_uring.c | 130 +++++++++++++++++++++-----------------------------
->>  1 file changed, 54 insertions(+), 76 deletions(-)
->>
+> https://lore.kernel.org/linux-fsdevel/269ef3a5-e30f-ceeb-5f5e-58563e7c5367@kernel.dk/T/#ma61d47f59eaaa7f04ae686c117fab69c957e0d7d
 > 
+> which then just turned into a modification to a patch in io_uring-5.7
+> instead. Just force rebase that branch and it should work fine.
+
+Got it, thanks
 
 -- 
 Pavel Begunkov

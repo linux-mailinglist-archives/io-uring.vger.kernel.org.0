@@ -2,60 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9961C176F
-	for <lists+io-uring@lfdr.de>; Fri,  1 May 2020 16:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A7F61C17ED
+	for <lists+io-uring@lfdr.de>; Fri,  1 May 2020 16:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729279AbgEAOK4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 1 May 2020 10:10:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57266 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728840AbgEAOK4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 1 May 2020 10:10:56 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9381BC061A0C;
-        Fri,  1 May 2020 07:10:55 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id e26so6070905wmk.5;
-        Fri, 01 May 2020 07:10:55 -0700 (PDT)
+        id S1729333AbgEAOjX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 1 May 2020 10:39:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33488 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729319AbgEAOjW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 1 May 2020 10:39:22 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 327DDC061A0C;
+        Fri,  1 May 2020 07:39:22 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id x18so11766696wrq.2;
+        Fri, 01 May 2020 07:39:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+        h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=IAf6Gre4CI3bCwa5vEmyXDJKlM4nN1VUj17/dj4XXpw=;
-        b=KTWaNlwUNym5z0Gt3KcWT7BTxBawtoLjOTOI6QkKArofrtUh+JBpHOjY2U5PRXxZ/m
-         yJ13N2Xk7QBM0cKVN8jm2NWan7OuZbAJ7dR9h7BZxmZT/BjnNhcrIDHb1UilQgL7IdY0
-         ynG8OE4kp7tgYcEXxIqzjP69edNjO0KCwAeZSyli13c14iSbhEs6jqF109WB3PGWkCsu
-         hN7quWswi555x9inwGEfjvwWM1p4/ObXsZY6PK8Mly537EPdvnNTD6sQrRX0D7LRM0AX
-         QBc3ie21q1RaIsSYnAS1GXEl/hnRImhZbb4skWJvUBJdGJi4O9GNNDa/RHJp9dApDRJP
-         KI7w==
+        bh=W39olwyD1ZhzcIxfsnVceKE9Xw0rG7gkUI5YYAf7G2U=;
+        b=TuRWt3ltfoi+VgnoGf26Fj0cEAwnYiLpqvU2VDrM3zaI0Nwx5a/o7dqdcF9jBxKvnX
+         N2DqG7tMBh1cqp5PYA0lsDmZG9aCRdXmq9GUtb7Ezrv7FeKUzUUKgohTF1atEO2pqCvR
+         4oj05zpw+4cQncyMdrgbeD0OrqtbxD9oE7CjcbX/iDJaoxy3wEflO0Fpgi8IY1rznpjz
+         roX0y12SSNR+KzYolIZrFcYcBqFbxmzrl8njZy8MCtyknaGOMvIFuaaY63Akw2w1DaPd
+         NuaymtYAIxFyFVp21sNpPKKrwbjM41fr8Gu0PUaWwadkOcbLicg59xxgFRhaVwMPlgXi
+         +BNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IAf6Gre4CI3bCwa5vEmyXDJKlM4nN1VUj17/dj4XXpw=;
-        b=fnwbERojtHbGY7NAIwc9kRMIonCT5Qx4KsucDr4by+JuyvtQzmg9KCencDtZMnjIyk
-         yIzmVsIuNcUgl77wRm/KUpHXLSDz1AEHN0eo682GLCjMPPBNKK0yoI7k5TSpaFTChvxc
-         wwsFZbXpi0WxuYdYfs4qICQK3IfbIfYpGvTCviDbDpGcQ6CIYguwr2Rtcd5FiwOtkVNm
-         5pzsh7m/trRbpXV2QgydzOOC02l4eAtW1x2dvIVz1kQdSaHVGCysK7qOc9jrJwemFDs3
-         UbFFtIE8bBJ+ns4DdDLuS0mxi7m+PzSD9+6ucYdanAqb4sZK2NJbyOCgNQVYe3m1DvJ1
-         UwGw==
-X-Gm-Message-State: AGi0Pua/tznYuoHpWjZUPu3HrhEo+KOaykoSUub6g0l34qo6myJQ0Lr3
-        BA7bDmJrU7JI3jOu2MCsCGfyP7Fx
-X-Google-Smtp-Source: APiQypJGNdSnTtWpOpKeeONoIF+z0quTiMIo5dhXcAfSbjl/Pj02o8HiAay7CPqw0waVJ+xI6vWmLA==
-X-Received: by 2002:a1c:6455:: with SMTP id y82mr4154900wmb.128.1588342254204;
-        Fri, 01 May 2020 07:10:54 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W39olwyD1ZhzcIxfsnVceKE9Xw0rG7gkUI5YYAf7G2U=;
+        b=b405vDWt+b/LEVoq1OtbvXwqCLfC8421YtHbjVFvAphrtNRf71EjhFvlxxSCaOiSbh
+         kYgEEPnXnwOvmAjLyzH3SeJFP2yCLDJrf4At50qkurJ3JsxxTExBm4luTocZSNyQnvTR
+         23W5cfDQ0t5GExtQDrOj2evs9uicMoNNDIEZllYSDOHIo1K+aot1+dlaTqpop6S6dRTt
+         PBjSu1UESCYOQD82g09gn9qUt6f50IBqIcDd7AzYF97qpiYwLUpqw6bx+2udrNIbE8TB
+         FvDwEyzH6xQ+6+F46NGSYQOwkaGvHp2JqMs8HAvmmBhrIwEwPLnleIV8miHjBtI2EtcI
+         twOw==
+X-Gm-Message-State: AGi0PubmQoKb/rQruNvxd5wfsdr9EtzvM4JsNG1Tz35TyR3lKe+hIYNv
+        /TRQuxB5u7JCe6qdP2gWXSU=
+X-Google-Smtp-Source: APiQypK9mdZCXdIzpDfEjHs4j3UvzcmIDXn55ON1zdREUbbhw1jhML6XTzyH72SjApGOVBUCdNH5mQ==
+X-Received: by 2002:a5d:420a:: with SMTP id n10mr4284992wrq.235.1588343960936;
+        Fri, 01 May 2020 07:39:20 -0700 (PDT)
 Received: from localhost.localdomain ([109.126.133.135])
-        by smtp.gmail.com with ESMTPSA id j17sm4837390wrb.46.2020.05.01.07.10.53
+        by smtp.gmail.com with ESMTPSA id k184sm4087673wmf.9.2020.05.01.07.39.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 May 2020 07:10:53 -0700 (PDT)
+        Fri, 01 May 2020 07:39:20 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] io_uring: punt splice async because of inode mtx
-Date:   Fri,  1 May 2020 17:09:38 +0300
-Message-Id: <ca4741da198740647d3d90716d63facf8bc0a53d.1588341674.git.asml.silence@gmail.com>
+Subject: [PATCH liburing] test/sfr: basic test for sync_file_range
+Date:   Fri,  1 May 2020 17:38:11 +0300
+Message-Id: <9a85a351b8a06108260fee1dfcbd901b8055b9a8.1588343872.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1588341674.git.asml.silence@gmail.com>
-References: <cover.1588341674.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -63,49 +61,109 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Nonblocking do_splice() still may wait for some time on an inode mutex.
-Let's play safe and always punt it async.
+Just call it and check that it doesn't hang and returns success.
 
-Reported-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ test/fsync.c | 79 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e5d560f2ce12..65458eda2127 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2765,15 +2765,6 @@ static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return 0;
+diff --git a/test/fsync.c b/test/fsync.c
+index 839716a..ee60e0f 100644
+--- a/test/fsync.c
++++ b/test/fsync.c
+@@ -135,6 +135,79 @@ err:
+ 	return 1;
  }
  
--static bool io_splice_punt(struct file *file, int rw)
--{
--	if (get_pipe_info(file))
--		return false;
--	if (!io_file_supports_async(file, rw))
--		return true;
--	return !(file->f_flags & O_NONBLOCK);
--}
--
- static int io_splice(struct io_kiocb *req, bool force_nonblock)
++#define FILE_SIZE 1024
++
++static int create_file(const char *file)
++{
++	ssize_t ret;
++	char *buf;
++	int fd;
++
++	buf = malloc(FILE_SIZE);
++	memset(buf, 0xaa, FILE_SIZE);
++
++	fd = open(file, O_WRONLY | O_CREAT, 0644);
++	if (fd < 0) {
++		perror("open file");
++		return 1;
++	}
++	ret = write(fd, buf, FILE_SIZE);
++	close(fd);
++	return ret != FILE_SIZE;
++}
++
++static int test_sync_file_range(struct io_uring *ring)
++{
++	int ret, fd, save_errno;
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++
++	if (create_file(".sync_file_range")) {
++		fprintf(stderr, "file creation failed\n");
++		return 1;
++	}
++
++	fd = open(".sync_file_range", O_RDWR);
++	save_errno = errno;
++	unlink(".sync_file_range");
++	errno = save_errno;
++	if (fd < 0) {
++		perror("file open");
++		return 1;
++	}
++
++	sqe = io_uring_get_sqe(ring);
++	if (!sqe) {
++		fprintf(stderr, "sqe get failed\n");
++		return 1;
++	}
++	memset(sqe, 0, sizeof(*sqe));
++	sqe->opcode = IORING_OP_SYNC_FILE_RANGE;
++	sqe->off = 0;
++	sqe->len = 0;
++	sqe->sync_range_flags = 0;
++	sqe->user_data = 1;
++	sqe->fd = fd;
++
++	ret = io_uring_submit(ring);
++	if (ret != 1) {
++		fprintf(stderr, "submit failed: %d\n", ret);
++		return 1;
++	}
++	ret = io_uring_wait_cqe(ring, &cqe);
++	if (ret) {
++		fprintf(stderr, "wait_cqe failed: %d\n", ret);
++		return 1;
++	}
++	if (cqe->res) {
++		fprintf(stderr, "sfr failed: %d\n", cqe->res);
++		return 1;
++	}
++
++	io_uring_cqe_seen(ring, cqe);
++	return 0;
++}
++
+ int main(int argc, char *argv[])
  {
- 	struct io_splice *sp = &req->splice;
-@@ -2783,11 +2774,8 @@ static int io_splice(struct io_kiocb *req, bool force_nonblock)
- 	loff_t *poff_in, *poff_out;
- 	long ret;
+ 	struct io_uring ring;
+@@ -159,5 +232,11 @@ int main(int argc, char *argv[])
+ 		return ret;
+ 	}
  
--	if (force_nonblock) {
--		if (io_splice_punt(in, READ) || io_splice_punt(out, WRITE))
--			return -EAGAIN;
--		flags |= SPLICE_F_NONBLOCK;
--	}
-+	if (force_nonblock)
-+		return -EAGAIN;
- 
- 	poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
- 	poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
++	ret = test_sync_file_range(&ring);
++	if (ret) {
++		fprintf(stderr, "test_sync_file_range failed\n");
++		return ret;
++	}
++
+ 	return 0;
+ }
 -- 
 2.24.0
 

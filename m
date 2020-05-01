@@ -2,63 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4A7E1C18BD
-	for <lists+io-uring@lfdr.de>; Fri,  1 May 2020 16:58:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 261F61C18E7
+	for <lists+io-uring@lfdr.de>; Fri,  1 May 2020 17:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbgEAOtZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 1 May 2020 10:49:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35046 "EHLO
+        id S1728851AbgEAPFl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 1 May 2020 11:05:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729114AbgEAOtV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 1 May 2020 10:49:21 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 476CEC061A0C
-        for <io-uring@vger.kernel.org>; Fri,  1 May 2020 07:49:21 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id i16so4624372ils.12
-        for <io-uring@vger.kernel.org>; Fri, 01 May 2020 07:49:21 -0700 (PDT)
+        with ESMTP id S1728839AbgEAPFk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 1 May 2020 11:05:40 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B77FC061A0C
+        for <io-uring@vger.kernel.org>; Fri,  1 May 2020 08:05:39 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id d7so232430ioq.5
+        for <io-uring@vger.kernel.org>; Fri, 01 May 2020 08:05:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=x8PLshh029JFfraDINPFYaqpVRTVLoh0xA2vag76VgU=;
-        b=vxEfLCTH7Nfxiz/d41M22feQyHk4l3tlyaCNLOv6T1fKQdSeNDrbCLS6eNnGqHVhbh
-         6ApTEFX3Wz8cNujDJ4T3JDlFpqKvn55GEy0NwGKXU2oXvAVoLr6rYtX83gJTQNEOXysP
-         GcUsze7xAEmat3U1O2mU14fW4buR0xIeUS2pH3KNwqCI5aLmZ4c+vHNpK5fOCQHOQ4ni
-         4vB/IsXHNGfcSJUCqwwXmdkbT3Yhis8V3NVRu4I2T8YkVdIP+Co/YOEwU2XdlfuO0dgv
-         5lCprRhSsRv3vuPsX45tP2XmfOHQxFtLj28e2dqatilMymm5DlkAmHZtrhFB8Map2qZD
-         w4sw==
+        bh=OywnYsOX9HSwp3HTdJRlErOVC37z2JBjZDdUK+Itl5s=;
+        b=XoXKYZklpDZih+9yxf0ODOQ/y0+Vmxko1JosGAeZXU45gZMn6YNFWNUWCp9GuaNntH
+         O7H5d5gaqvWtU8h0jphO0HZcqqolrQAbHqvWbezjVKK5+M8BF0kxwHFYYSbU86ZbYUKT
+         meDetoUN6obcwwZp7R5gR4ZU0dBT+ZBlI6YhoTDNSwjlvWrUSTC1Xuelb2HLtGpyDoMC
+         RnmB8M/kQ+XNb0UyKvOQl6BbTj667ABkx5+Uvs2tPgzCP9146Jun+CltJGNQUouL+woA
+         xZV6R0wPt4RRMUaJC9bYDt8zAr6jnF//yUv8hXhz2L45SdSeIY1P9SYEVkNgbQgrMMd+
+         q/0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=x8PLshh029JFfraDINPFYaqpVRTVLoh0xA2vag76VgU=;
-        b=sXzoLvcUoZM9xFqzI0MVvq3ptgklSBtZ4Wi8dfHSIA67AsjeAlizh1kFOpexNCkAb9
-         kSu2998jJ3wNEo28q17rouU5T7+vkThY+cO9W8SjjHpGTU7IIdfLn9XV7CM3Iocp+jlT
-         T4dbv1d1Pu+nVE1khwrlRkxLBNzaj3pAZk2Y/3Dga4eP0PuLs77HMvu5KOkCYaB2yBRU
-         mqSsKO4ZlyrR6r2DKWN5gsY4fulass6S7u2YLDqcTE7ThRNpfoP4goXpy1cN4Tl+KOD5
-         1uzyTX53u/LDvmTokPfsEzwgXZccQN6YSzOsdwUAzmZaRFBZohzUPBkHfFGqHzJs2wuw
-         eSlQ==
-X-Gm-Message-State: AGi0PubThzkSUaDYMCzAbyYtWAykQMVa4ZhikJSaOZGB5ZxXyMqJyPOZ
-        oYV8lcXOFZHnnifcHg9niGYFBqmlUQuShg==
-X-Google-Smtp-Source: APiQypKn+TEanh98F99uq96FudsPyLXSW6MEPEmMn6erLQrIwYFY6+FIDdMf1z5efsEtucHKAzzGKQ==
-X-Received: by 2002:a92:c6ca:: with SMTP id v10mr3870302ilm.181.1588344560532;
-        Fri, 01 May 2020 07:49:20 -0700 (PDT)
+        bh=OywnYsOX9HSwp3HTdJRlErOVC37z2JBjZDdUK+Itl5s=;
+        b=kG6Mv1sAuKf0pajypdk4KZhGu7qSyMk70gYmwjMzEv5Pny6dY0ZRJei+cL5BCml4n7
+         V4GSsNZuZ1BA16LFCmOKsq3V+IEkI8zWXs0uSR2G4W6q6KiF61y3NKKzW4iTbfDyFyJV
+         RLzAVKQtYKIm4+7isVkzGMOKl0yHgn2GDyc/BRRa7IvL5PRLxIPVuhKdCwMfjBZQ8Omu
+         PVzW2IL7WOTcshH3qsXI4ll3QsXjou3GGTj4NueHxC5nrA9SaL7DcIDBYTCwvtkrYWtc
+         X70jTpyJUsKq0QBbmoDNM0GZsXDqxlDA+INV+GkuGPOXWfUU2t4CJwpOM2BAaMaqEOd+
+         Rv2g==
+X-Gm-Message-State: AGi0Pua31Ml1bsi8py3mQ3G8VJZgar+oFADNnm/nNeyc3KrMo1i0xBFK
+        /73zhyvPKU8UKHCVIyMUsSqRYA==
+X-Google-Smtp-Source: APiQypKJmeTbRVpekRlRZX2ChMEx0WDcl6JX+ShhzejzFCOyGuQBkN1mqfwiMRrg1Cnf8jtwyxEEXg==
+X-Received: by 2002:a5e:9518:: with SMTP id r24mr4292114ioj.209.1588345538701;
+        Fri, 01 May 2020 08:05:38 -0700 (PDT)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id u21sm1018966iot.5.2020.05.01.07.49.19
+        by smtp.gmail.com with ESMTPSA id i20sm1047218ioj.14.2020.05.01.08.05.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 May 2020 07:49:19 -0700 (PDT)
-Subject: Re: [PATCH liburing] test/sfr: basic test for sync_file_range
+        Fri, 01 May 2020 08:05:38 -0700 (PDT)
+Subject: Re: [PATCH 0/3] small fixes for-5.7
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <9a85a351b8a06108260fee1dfcbd901b8055b9a8.1588343872.git.asml.silence@gmail.com>
+References: <cover.1588341674.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6fdbccd8-80ed-1e5a-cbe8-2785967fd210@kernel.dk>
-Date:   Fri, 1 May 2020 08:49:18 -0600
+Message-ID: <f621d20a-b81e-62ec-1f5c-a81bafa4c9be@kernel.dk>
+Date:   Fri, 1 May 2020 09:05:37 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <9a85a351b8a06108260fee1dfcbd901b8055b9a8.1588343872.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1588341674.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,10 +67,20 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/1/20 8:38 AM, Pavel Begunkov wrote:
-> Just call it and check that it doesn't hang and returns success.
+On 5/1/20 8:09 AM, Pavel Begunkov wrote:
+> I split the sent patchset, please consider this part for current.
+> 
+> I'll send a test for [1] in a day or so.
+> 
+> Regarding [3], Jens, I haven't looked properly yet, how long
+> splice can wait on a inode mutex, but it can be problematic,
+> especially for latencies. How about go safe for-5.7, and
+> maybe think something out for next?
 
-Applied, thanks.
+Agree, let's play it safe for 5.7, and look further into expanding
+this for 5.8 so we don't always have to go async.
+
+Series looks good to me, applied. Thanks Pavel!
 
 -- 
 Jens Axboe

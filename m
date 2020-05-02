@@ -2,62 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AD451C2514
-	for <lists+io-uring@lfdr.de>; Sat,  2 May 2020 14:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7813C1C2518
+	for <lists+io-uring@lfdr.de>; Sat,  2 May 2020 14:12:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbgEBMKm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 2 May 2020 08:10:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36862 "EHLO
+        id S1727114AbgEBMMq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 2 May 2020 08:12:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727951AbgEBMKm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 2 May 2020 08:10:42 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9189C061A0C;
-        Sat,  2 May 2020 05:10:41 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id e26so2912613wmk.5;
-        Sat, 02 May 2020 05:10:41 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1726654AbgEBMMq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 2 May 2020 08:12:46 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE7AC061A0C
+        for <io-uring@vger.kernel.org>; Sat,  2 May 2020 05:12:44 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id s8so4717507wrt.9
+        for <io-uring@vger.kernel.org>; Sat, 02 May 2020 05:12:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+        h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=KpfvJecLL3a77wRaEiE1iD1YWA6MRqbUFAwQ0V5rD8U=;
-        b=r+QdoZKQ3oV2+/dqyF9Q3ZPu7/x2VEIRUn2uWg0aEpfVMc975LtdWxKusSEWm+zFnh
-         3MJdfLLu/K/AhjZBr9w4ynM5LF3mQFxi/+qWORR/+IZQ5CdYgzzYXWzuKRFYTnkolhY/
-         DAfrnxESyd3hdYujeJEifJvIjQZE+BUemuu1HJXKKDhJRmQDT8cjA4+n4aXDBJCm0lxz
-         Vm0k8dI9R0hNt91uBMnuyf7ked/Q1SEz/n2Uf72fJa6YYdw5zSpPKy6yXzU7euytKnLN
-         FEjCPXW+RQx8X2vTrcxIsmc5dEct+Ks+09BkPWWaSCfrKZ3SQCHUTyFx0ksgVdids4XY
-         uvOA==
+        bh=U4pDZtqz4vx4F6YwZweRWKy3LfYaTcC2bzi1XwjDZ48=;
+        b=CBfAFd8jaD/J6YfxLwINbVTF0XhPgTQTySWJm+wwuEA/mmqsLvkeEbo2phX/mRGd2e
+         gBCEhG01Dip0TwWzEmOym7fRKGn0xhsq/4Vm2nw4b6+E8AX3hCfvimZSDPab5y+7AM5L
+         KqEFc6j1b2sp61jiTEHjDRq6TgPVW3q/He+XndpjWcx1gvhgryC1nxrE8qpdVFxFnIwL
+         T8SIdTCi2dC6Kt/slgA1uVq/Bb6YuieC4/aoumHbvDZPMg9h7bb8KKUKKJJAs1f3Gdre
+         1zY8qoVJWPiAZ1vmaKmMrJURXQ54+/YuUvtTAVd3TD0Hed0pYvMgoDHMutoPG5skTEJU
+         BI0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KpfvJecLL3a77wRaEiE1iD1YWA6MRqbUFAwQ0V5rD8U=;
-        b=FDhzR692EHcOqnUDUXmhwR+vFdz4U7mvHa3fpD8tCcOnU4DVnqSDYZDyFFxJ/XMHyJ
-         EmFKkBTTBNBb/3meSIB+tDyw8Sp02bxLD9zUuEFGNNip6WsoAHvsEtHVgSJoHqP3gbDW
-         bXniBZj/AhQUP1F0qRRP3Ynowfa5ST0mQsA+eiJN5ZC9PXzsm3pTklcteOfo0EvbM3V7
-         yyZvAYYirf7f7fU/DkP+5l67+e+fTfpmrXX+HhjssmZGbOtTWIi3IGiAUcyfQ3lMk7o6
-         qq7Jf5N8PrgQAUN1JZi20fImCUUBhPUXQNNumc3lhSrc1RftWgHdTtV9zi8sWAdoXn2L
-         +iiQ==
-X-Gm-Message-State: AGi0PuYUnXWWBDlGPd4ZuGV1gJtvyOqW3tPOhXYtW2YjX3Ninxlj5vio
-        PIVaVak24Qd/YPd3Or5Vffk=
-X-Google-Smtp-Source: APiQypLiYFkxgSfD8yXv1FY3q2MHs/3gjyCgFdoNZjDplObNqqNEJw95OsTWpXJWZc4pgGxlvVtfTQ==
-X-Received: by 2002:a1c:1c8:: with SMTP id 191mr4178633wmb.37.1588421440464;
-        Sat, 02 May 2020 05:10:40 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U4pDZtqz4vx4F6YwZweRWKy3LfYaTcC2bzi1XwjDZ48=;
+        b=D4+gIyMATRIsU5AyN2A7sa6MktiIaVer9TUXTF/wyrVN45zk3UfTOfw7vt1GUZpfqb
+         o2Xr6qH0auVWqOkGHorCPs8c+SrnFc5dVdi+cKa0L3f+5F4lylP4XcUgFj1GHlSB9V1m
+         mqLdPOulj6yEkjmgwfW4wdkA8GVGe53KBh0/NvkK1y09E/NblUQ3J0Px7oFh1kMNYmaY
+         5Geg26c5oxwWwdez+5MsBmzAzRLerclFXqTerN8m2Tm5y7dgG489ZqtiqjfOQo30qUe+
+         z8Bq5Z9Sg561yCA4tkInWh3s7nJhltq0Hm4/eQUQ8W4ESMjeDOYFyVBCVbhqmtxUWtcB
+         rrhA==
+X-Gm-Message-State: AGi0PubH59BmHtTHVEtqUCnPuibuaSSyZWVPEdpvp0AMvYszKDXeZhwR
+        1+OkDtSxqU0c/eAP++ZjRr4=
+X-Google-Smtp-Source: APiQypJiELNmLA0d2l55uh892i2FVDUNmozeE4O+bXGr5tuDtOS1mnpCjHMTTY/olp2NNPQ6gOFdAw==
+X-Received: by 2002:a5d:634d:: with SMTP id b13mr8891059wrw.353.1588421562698;
+        Sat, 02 May 2020 05:12:42 -0700 (PDT)
 Received: from localhost.localdomain ([109.126.133.135])
-        by smtp.gmail.com with ESMTPSA id m15sm3858297wmc.35.2020.05.02.05.10.38
+        by smtp.gmail.com with ESMTPSA id m188sm3993913wme.47.2020.05.02.05.12.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 May 2020 05:10:40 -0700 (PDT)
+        Sat, 02 May 2020 05:12:42 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Clay Harris <bugs@claycon.org>
-Subject: [PATCH 2/2] io_uring: add tee(2) support
-Date:   Sat,  2 May 2020 15:09:26 +0300
-Message-Id: <ea033201ae4e8359420ab1b50bce95ed47c8cd90.1588421219.git.asml.silence@gmail.com>
+        Clay Harris <bugs@claycon.org>
+Subject: [PATCH liburing 0/3] test tee
+Date:   Sat,  2 May 2020 15:11:26 +0300
+Message-Id: <cover.1588421430.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1588421219.git.asml.silence@gmail.com>
-References: <cover.1588421219.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -65,144 +61,17 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add IORING_OP_TEE implementing tee(2) support. Almost identical to
-splice bits, but without offsets.
+Add tee + tests
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c                 | 64 +++++++++++++++++++++++++++++++++--
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 62 insertions(+), 3 deletions(-)
+Pavel Begunkov (3):
+  splice/test: improve splice tests
+  update io_uring.h with tee()
+  tee/test: add test for tee(2)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4ed82d39540b..dc314f66fbc9 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -855,6 +855,11 @@ static const struct io_op_def io_op_defs[] = {
- 	},
- 	[IORING_OP_PROVIDE_BUFFERS] = {},
- 	[IORING_OP_REMOVE_BUFFERS] = {},
-+	[IORING_OP_TEE] = {
-+		.needs_file		= 1,
-+		.hash_reg_file		= 1,
-+		.unbound_nonreg_file	= 1,
-+	},
- };
- 
- static void io_wq_submit_work(struct io_wq_work **workptr);
-@@ -2754,7 +2759,8 @@ static int io_write(struct io_kiocb *req, bool force_nonblock)
- 	return ret;
- }
- 
--static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+static int __io_splice_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
- {
- 	struct io_splice* sp = &req->splice;
- 	unsigned int valid_flags = SPLICE_F_FD_IN_FIXED | SPLICE_F_ALL;
-@@ -2764,8 +2770,6 @@ static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return 0;
- 
- 	sp->file_in = NULL;
--	sp->off_in = READ_ONCE(sqe->splice_off_in);
--	sp->off_out = READ_ONCE(sqe->off);
- 	sp->len = READ_ONCE(sqe->len);
- 	sp->flags = READ_ONCE(sqe->splice_flags);
- 
-@@ -2784,6 +2788,48 @@ static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return 0;
- }
- 
-+static int io_tee_prep(struct io_kiocb *req,
-+		       const struct io_uring_sqe *sqe)
-+{
-+	if (READ_ONCE(sqe->splice_off_in) || READ_ONCE(sqe->off))
-+		return -EINVAL;
-+	return __io_splice_prep(req, sqe);
-+}
-+
-+static int io_tee(struct io_kiocb *req, bool force_nonblock)
-+{
-+	struct io_splice *sp = &req->splice;
-+	struct file *in = sp->file_in;
-+	struct file *out = sp->file_out;
-+	unsigned int flags = sp->flags & ~SPLICE_F_FD_IN_FIXED;
-+	long ret;
-+
-+	if (force_nonblock)
-+		return -EAGAIN;
-+
-+	ret = do_tee(in, out, sp->len, flags);
-+	if (force_nonblock && ret == -EAGAIN)
-+		return -EAGAIN;
-+
-+	io_put_file(req, in, (sp->flags & SPLICE_F_FD_IN_FIXED));
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+
-+	io_cqring_add_event(req, ret);
-+	if (ret != sp->len)
-+		req_set_fail_links(req);
-+	io_put_req(req);
-+	return 0;
-+}
-+
-+static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_splice* sp = &req->splice;
-+
-+	sp->off_in = READ_ONCE(sqe->splice_off_in);
-+	sp->off_out = READ_ONCE(sqe->off);
-+	return __io_splice_prep(req, sqe);
-+}
-+
- static int io_splice(struct io_kiocb *req, bool force_nonblock)
- {
- 	struct io_splice *sp = &req->splice;
-@@ -4978,6 +5024,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	case IORING_OP_REMOVE_BUFFERS:
- 		ret = io_remove_buffers_prep(req, sqe);
- 		break;
-+	case IORING_OP_TEE:
-+		ret = io_tee_prep(req, sqe);
-+		break;
- 	default:
- 		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
- 				req->opcode);
-@@ -5051,6 +5100,7 @@ static void io_cleanup_req(struct io_kiocb *req)
- 		putname(req->open.filename);
- 		break;
- 	case IORING_OP_SPLICE:
-+	case IORING_OP_TEE:
- 		io_put_file(req, req->splice.file_in,
- 			    (req->splice.flags & SPLICE_F_FD_IN_FIXED));
- 		break;
-@@ -5281,6 +5331,14 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		}
- 		ret = io_remove_buffers(req, force_nonblock);
- 		break;
-+	case IORING_OP_TEE:
-+		if (sqe) {
-+			ret = io_tee_prep(req, sqe);
-+			if (ret < 0)
-+				break;
-+		}
-+		ret = io_tee(req, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index e48d746b8e2a..a279151437fc 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -129,6 +129,7 @@ enum {
- 	IORING_OP_SPLICE,
- 	IORING_OP_PROVIDE_BUFFERS,
- 	IORING_OP_REMOVE_BUFFERS,
-+	IORING_OP_TEE,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
+ src/include/liburing/io_uring.h |   1 +
+ test/splice.c                   | 530 ++++++++++++++++++++++++++------
+ 2 files changed, 438 insertions(+), 93 deletions(-)
+
 -- 
 2.24.0
 

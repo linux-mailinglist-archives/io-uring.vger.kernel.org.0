@@ -2,106 +2,176 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 585141C46EA
-	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 21:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16BB31C472A
+	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 21:41:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbgEDTQc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 May 2020 15:16:32 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42934 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbgEDTQb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 15:16:31 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 044JDPXe099087;
-        Mon, 4 May 2020 19:16:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=QqCvzslKy1qxN+LVzduRa3rFtYwHBIGI6A3wkwGuF10=;
- b=DOHL6nTz5/CykW18hOpUWWXuTLuSBLNP5it6Vk34PQOqBq2L4zEi6h68QZcQOneowNiu
- hfJy0vKAKD99EsavsRzWU3aquW2JIFU4Lod1WC7PUHK6ww48k/62uLO1fbenOYYmAPmi
- QCBnFX2x4VwjJ3CsCF4dAaw45/38Or2w3ndl0TRpcTjxa7wgdq/H8ASe6p0hnD6AIWoP
- c9zAtO1IUPoxOPR1sd5FXtV7e62qurxIADLsaI4jPNrKwH3+cFu0GlJOyOXrzfNpIVSL
- o2LdjPo0dy4oNGK10tBn/bMVCTMn5p3Sy9WY0e/k3F0uCap8uyEZx4h7wmEgmMVSogqw XQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 30s0tm8umh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 May 2020 19:16:29 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 044JDds3117937;
-        Mon, 4 May 2020 19:16:28 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 30t1r30tf8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 May 2020 19:16:28 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 044JGR0r029699;
-        Mon, 4 May 2020 19:16:27 GMT
-Received: from [10.154.137.248] (/10.154.137.248)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 04 May 2020 12:16:27 -0700
-Subject: Re: [PATCH 1/1] io_uring: use proper references for fallback_req
- locking
+        id S1727855AbgEDTkz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 May 2020 15:40:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44560 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725956AbgEDTky (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 15:40:54 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E538C061A0E;
+        Mon,  4 May 2020 12:40:53 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id x25so811959wmc.0;
+        Mon, 04 May 2020 12:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x6Diq7oRDqkTM6TkRVDLHHEx/9bVRKYWWWp7nV67j3Y=;
+        b=LJ3MgiAf01pnCAbWw5QEkH3TmTqN+dvb+8pn/5kpoqL4SmiTkWPns9pps/IzP3o0m1
+         m1Cws2aYFu1A9BzK5wFGGEi930x/9va2D0GVN5VzWLN4TziNkaUMQbCsPNFnc4mA8D1J
+         MTR6htRme5PAiF1k7srA1cgeBYYIhCEuNU2d0U1pWw0kg2FpkVaPYOe5QktGU481wt0q
+         FdNQ80n7kvFiCn5yreAXWVtb/E36ENPVj+j8/vrOfNZv1z63MhVdHxlJxUFWVrWi+0I4
+         5LBaof8eHYCEMBjZmmQ0/VPsJtpgeQd2I7Rf58Ofk9sb5G7dbVoniyxCVjPqaSV/48iL
+         IfuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x6Diq7oRDqkTM6TkRVDLHHEx/9bVRKYWWWp7nV67j3Y=;
+        b=gr8/sNlNyzCuw6eMhz9I4u8G1ePWWzFs80lF63iVPnbR25UdaHjWGBGov/hrzLx5sF
+         tjNQaW/JFwMwVJThAL0wVtE27Y9UGeXFKSrPS8SLqc0WbU5XIVj9+GVFyWHiGh8ZvP5f
+         Yln7HAufgz1hDNvfT4jbeDHnzjQLQIwU9Au8lYwh1xVPeLVd3gEDC4skmLCcigfj9COB
+         sV0fjpOMVFrlat+QplHAj4fgtocPieaKTHA6Fsp0EzPMn7lvtJ7+O0RoQj/Eq47IU/ST
+         3Ttibt3LBGFB4AiUULBMK7ZEa+2BV1YbCO3VFMvKHplHuwR9CmqksCkI1C629uiNnwUX
+         5nTw==
+X-Gm-Message-State: AGi0PuYzPDkDiUT/2OCQx4DKLdTUFy59nIRsm3VATJZaMitrH9yws9fd
+        qkMIKFQ28jS+VHWi2b9I3K/IpgNF
+X-Google-Smtp-Source: APiQypLkHMh9K10m3x2j4o9IHRGVNPo0tI7hiQOIARjkOtfiYiT0jvUOuZIq7vzZETWGoipI+DPcXA==
+X-Received: by 2002:a7b:c390:: with SMTP id s16mr15630119wmj.14.1588621252336;
+        Mon, 04 May 2020 12:40:52 -0700 (PDT)
+Received: from localhost.localdomain ([109.126.133.135])
+        by smtp.gmail.com with ESMTPSA id s6sm696602wmh.17.2020.05.04.12.40.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 May 2020 12:40:51 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <1588207670-65832-1-git-send-email-bijan.mottahedeh@oracle.com>
- <05997981-047c-a87b-c875-6ea7b229f586@kernel.dk>
- <07fda8ac-93e4-e488-0575-026b339d2c36@gmail.com>
- <84554b60-2ec5-9876-79ce-5962ae5580e4@kernel.dk>
-From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Message-ID: <c25af31e-4d41-7b95-1cfa-8c87210a5e36@oracle.com>
-Date:   Mon, 4 May 2020 12:16:24 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH for-5.7] splice: move f_mode checks to do_{splice,tee}()
+Date:   Mon,  4 May 2020 22:39:35 +0300
+Message-Id: <51b4370ef70eebf941f6cef503943d7f7de3ea4d.1588621153.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <84554b60-2ec5-9876-79ce-5962ae5580e4@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Antivirus: Avast (VPS 200503-0, 05/03/2020), Outbound message
-X-Antivirus-Status: Clean
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9610 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 suspectscore=0
- spamscore=0 mlxlogscore=999 malwarescore=0 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2005040150
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9610 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 spamscore=0 suspectscore=0
- phishscore=0 clxscore=1015 bulkscore=0 mlxlogscore=999 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005040150
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/4/2020 9:12 AM, Jens Axboe wrote:
-> On 5/3/20 6:52 AM, Pavel Begunkov wrote:
->> On 30/04/2020 17:52, Jens Axboe wrote:
->>> On 4/29/20 6:47 PM, Bijan Mottahedeh wrote:
->>>> Use ctx->fallback_req address for test_and_set_bit_lock() and
->>>> clear_bit_unlock().
->>> Thanks, applied.
->>>
->> How about getting rid of it? As once was fairly noticed, we're screwed in many
->> other ways in case of OOM. Otherwise we at least need to make async context
->> allocation more resilient.
-> Not sure how best to handle it, it really sucks to have things fall apart
-> under high memory pressure, a condition that isn't that rare in production
-> systems. But as you say, it's only a half measure currently. We could have
-> the fallback request have req->io already allocated, though. That would
-> provide what we need for guaranteed forward progress, even in the presence
-> of OOM conditions.
->
-A somewhat related question, would it make sense to have (configurable) 
-pre-allocated requests, to be used first if low latency is a priority 
-for a ring, or would the allocation overhead be negligible compared to 
-the actual I/O?  This would be the flip side of fallback in a sense.
+do_splice() is used by io_uring, as will be do_tee(). Move f_mode
+checks from sys_{splice,tee}() to do_{splice,tee}(), so they're
+enforced for io_uring as well.
 
-Thanks.
+Fixes: 7d67af2c0134 ("io_uring: add splice(2) support")
+Reported-by: Jann Horn <jannh@google.com>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/splice.c | 45 ++++++++++++++++++---------------------------
+ 1 file changed, 18 insertions(+), 27 deletions(-)
 
---bijan
+diff --git a/fs/splice.c b/fs/splice.c
+index 4735defc46ee..fd0a1e7e5959 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1118,6 +1118,10 @@ long do_splice(struct file *in, loff_t __user *off_in,
+ 	loff_t offset;
+ 	long ret;
+ 
++	if (unlikely(!(in->f_mode & FMODE_READ) ||
++		     !(out->f_mode & FMODE_WRITE)))
++		return -EBADF;
++
+ 	ipipe = get_pipe_info(in);
+ 	opipe = get_pipe_info(out);
+ 
+@@ -1125,12 +1129,6 @@ long do_splice(struct file *in, loff_t __user *off_in,
+ 		if (off_in || off_out)
+ 			return -ESPIPE;
+ 
+-		if (!(in->f_mode & FMODE_READ))
+-			return -EBADF;
+-
+-		if (!(out->f_mode & FMODE_WRITE))
+-			return -EBADF;
+-
+ 		/* Splicing to self would be fun, but... */
+ 		if (ipipe == opipe)
+ 			return -EINVAL;
+@@ -1153,9 +1151,6 @@ long do_splice(struct file *in, loff_t __user *off_in,
+ 			offset = out->f_pos;
+ 		}
+ 
+-		if (unlikely(!(out->f_mode & FMODE_WRITE)))
+-			return -EBADF;
+-
+ 		if (unlikely(out->f_flags & O_APPEND))
+ 			return -EINVAL;
+ 
+@@ -1440,15 +1435,11 @@ SYSCALL_DEFINE6(splice, int, fd_in, loff_t __user *, off_in,
+ 	error = -EBADF;
+ 	in = fdget(fd_in);
+ 	if (in.file) {
+-		if (in.file->f_mode & FMODE_READ) {
+-			out = fdget(fd_out);
+-			if (out.file) {
+-				if (out.file->f_mode & FMODE_WRITE)
+-					error = do_splice(in.file, off_in,
+-							  out.file, off_out,
+-							  len, flags);
+-				fdput(out);
+-			}
++		out = fdget(fd_out);
++		if (out.file) {
++			error = do_splice(in.file, off_in, out.file, off_out,
++					  len, flags);
++			fdput(out);
+ 		}
+ 		fdput(in);
+ 	}
+@@ -1770,6 +1761,10 @@ static long do_tee(struct file *in, struct file *out, size_t len,
+ 	struct pipe_inode_info *opipe = get_pipe_info(out);
+ 	int ret = -EINVAL;
+ 
++	if (unlikely(!(in->f_mode & FMODE_READ) ||
++		     !(out->f_mode & FMODE_WRITE)))
++		return -EBADF;
++
+ 	/*
+ 	 * Duplicate the contents of ipipe to opipe without actually
+ 	 * copying the data.
+@@ -1795,7 +1790,7 @@ static long do_tee(struct file *in, struct file *out, size_t len,
+ 
+ SYSCALL_DEFINE4(tee, int, fdin, int, fdout, size_t, len, unsigned int, flags)
+ {
+-	struct fd in;
++	struct fd in, out;
+ 	int error;
+ 
+ 	if (unlikely(flags & ~SPLICE_F_ALL))
+@@ -1807,14 +1802,10 @@ SYSCALL_DEFINE4(tee, int, fdin, int, fdout, size_t, len, unsigned int, flags)
+ 	error = -EBADF;
+ 	in = fdget(fdin);
+ 	if (in.file) {
+-		if (in.file->f_mode & FMODE_READ) {
+-			struct fd out = fdget(fdout);
+-			if (out.file) {
+-				if (out.file->f_mode & FMODE_WRITE)
+-					error = do_tee(in.file, out.file,
+-							len, flags);
+-				fdput(out);
+-			}
++		out = fdget(fdout);
++		if (out.file) {
++			error = do_tee(in.file, out.file, len, flags);
++			fdput(out);
+ 		}
+  		fdput(in);
+  	}
+-- 
+2.24.0
 
---bijan

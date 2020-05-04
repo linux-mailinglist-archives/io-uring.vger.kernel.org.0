@@ -2,56 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 275BB1C3EC5
-	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 17:41:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A37051C3F09
+	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 17:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbgEDPlu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 May 2020 11:41:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35134 "EHLO
+        id S1729499AbgEDPxZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 May 2020 11:53:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727929AbgEDPlu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 11:41:50 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A329AC061A0E
-        for <io-uring@vger.kernel.org>; Mon,  4 May 2020 08:41:49 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id g13so21498021wrb.8
-        for <io-uring@vger.kernel.org>; Mon, 04 May 2020 08:41:49 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1729479AbgEDPxY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 11:53:24 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BA69C061A0E;
+        Mon,  4 May 2020 08:53:24 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id s8so11268752wrt.9;
+        Mon, 04 May 2020 08:53:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VQFXtdSwJ7RhGd1ztUmTk4uyHhdYKWU1eeOviR/n0cc=;
-        b=bHBq6pOtF3ujHiT8JZVqD2PJkBJuznCYaIs7ag0xHOjBu4nGaIzpUegyOcPxz4exVC
-         8LnmCWc7IcckhEvb+UXSnuA5t5STZriZFtHt3jo5KEp5qZzlyzFuPoG7wnJoEQrZi348
-         kc/6jJNJ1PSII86oL/qizNvrdQuaysPCyQ3KVD3ds9BFImko6vvSoVZ95z8m9hCb0N3q
-         7Rd9LLVEmMMwmoortYTLXatM+LpjN1M1HByJTDpEFBMHtyQDku29dv4g70DTUVjp2Pz8
-         kejuhz7qavO/hbU+ry30Nl0Bs2eWrcYwncg8CVm2hpWZJvORdNVj582cJxixoGIEW7oF
-         gqNQ==
+        bh=a51OfRZ33jZudrw71sJOVnYwq5K9qTUEcP4pBHMr04A=;
+        b=JrfRQ8/P7x/T5NAffxXkepwKmvwZK3c+IHiTDqRUz4I+CNaR9rIsAzheuLUPeKecdq
+         18Eu9YPwKO2809csIUMr18/QT/Mn8nZAJD0u5pjdAZkHJozr0R1EjeFLBnhf837aCOU6
+         L59+dtAztMayqeD6CD/REdfp9qG7Vlb4Tbx0SOGtM+oyfXGQ/Rv9Yd6useR0gIbDKhJ9
+         xIZwAfxSDfoX8qYL9/jzm1zHQ0FWYT7N1mLUQT+BsVJPrWviGg6xTuQ7ilmKvPOF/Njj
+         fxhZsgH1JINnmYdmLeSPiGer6dXPYo7PvFpjYRShDwEd6eJuskfc8bQ7lZOPTbUB3jIo
+         OwcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=VQFXtdSwJ7RhGd1ztUmTk4uyHhdYKWU1eeOviR/n0cc=;
-        b=NPrKtLe9ZZt5jmINLKby3gkZyHmzVd0kfttfm9Xz3ATFj7se2m9LXa5Hb8zRqWsOyH
-         2T2VeLE4FK9OYxTrU7lanrf8bV/hnjZrJd8fH2v+OG7Idk+tuFi7MwmEocSEuEAQcH9z
-         PEyMnvG6xHAtcMCT4Ts64fTu5m4ASCLQf6mX5mj7T84PHFmZb0zvdKi9AXDIV8wHxihD
-         uQgL9SRGL2qVcnMn00Izoiroqnmuv7XZhvlrR8X0aHbMS56AOW96gwHzDIpFZu8w6cDm
-         s6m2w22Y8Sp50+qS4lvzDFHzt4ITMKeUsvwqXcMw5y80QGjRyJ7vLofN85mQzLOFjxd/
-         Ofpw==
-X-Gm-Message-State: AGi0PuZuJWgWAC9tVjFeTfEr3GxQCV7F6c/QQJUzg3bhAjQIsNjIOrhA
-        iC9Q2rkZrqK4v0ITpsZJiX07EOja
-X-Google-Smtp-Source: APiQypLD+lx6sBQCu1T/IBS/nEm9PtMkpkY10/Nrvnor1KJvBhrlQvpcmgem4+/5X+yyxd57hbc1sA==
-X-Received: by 2002:adf:f8c1:: with SMTP id f1mr8262166wrq.171.1588606908178;
-        Mon, 04 May 2020 08:41:48 -0700 (PDT)
+        bh=a51OfRZ33jZudrw71sJOVnYwq5K9qTUEcP4pBHMr04A=;
+        b=KJ7E4uyXaXbRK20JcoldnPi9KkLzQ2NaMIgrK40HmBVV7wiiwFTcSyA3VT7RjCoypP
+         fW4DPdIdyfJ+J0KdVMcU6XcuJ6DA4tiPwOYeh0oMB7rhSTqhbzGKsw5guS1O3sPbHNpm
+         leDyx+wehElP2GtoZC4o4t5VEHjrkbY2cMlI8W/cBI7qOjF2a5ZjM4ggnLLTrWsa+B/B
+         /MQsK0WinWKimJQRAkH3JcVxs6YWoN0MgSvvuXnBsosYB0J2YQMg+25t+bEts6xGWop+
+         l6Qvq5RXnTwXWrZrII0VtjacKqWwxqPEokEl4RV21j+JIvinvTemalyGOCjKKG46no2g
+         OA7g==
+X-Gm-Message-State: AGi0PuYFZ+MUOMd00KlPmlv/xt49XraUT+vfTUDPJqoLJVK94ibJL/As
+        ETOaUv5PFTdmjF9p6d3Mg6jxNFEC
+X-Google-Smtp-Source: APiQypLktSGrl9Czf2iXPJCpsgaisVYVHpeQnFjMU3AhYBvXXlyz7dbfXsF3KL0dP0oidqNycuHqrw==
+X-Received: by 2002:a5d:6742:: with SMTP id l2mr12713590wrw.138.1588607602913;
+        Mon, 04 May 2020 08:53:22 -0700 (PDT)
 Received: from [192.168.43.158] ([109.126.133.135])
-        by smtp.gmail.com with ESMTPSA id d18sm16126996wrv.14.2020.05.04.08.41.46
+        by smtp.gmail.com with ESMTPSA id k14sm19424026wrp.53.2020.05.04.08.53.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 May 2020 08:41:47 -0700 (PDT)
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-References: <20200504135328.29396-1-xiaoguang.wang@linux.alibaba.com>
+        Mon, 04 May 2020 08:53:22 -0700 (PDT)
+Subject: Re: [PATCH][next] io_uring: Remove logically dead code in io_splice
+To:     Jens Axboe <axboe@kernel.dk>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200504151912.GA22779@embeddedor>
+ <b26c33c8-e636-edf6-3d43-7b3394850d7a@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -96,155 +100,59 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH] io_uring: handle -EFAULT properly in io_uring_setup()
-Message-ID: <8f6b82d4-7e52-e25a-4f05-f16e51854df1@gmail.com>
-Date:   Mon, 4 May 2020 18:40:42 +0300
+Message-ID: <55bf573d-52f9-9131-ff08-49231a88abce@gmail.com>
+Date:   Mon, 4 May 2020 18:52:17 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200504135328.29396-1-xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <b26c33c8-e636-edf6-3d43-7b3394850d7a@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 04/05/2020 16:53, Xiaoguang Wang wrote:
-> If copy_to_user() in io_uring_setup() failed, we'll leak many kernel
-> resources, which could be reproduced by using mprotect to set params
-
-At least it recycles everything upon killing the process, so that's rather not
-notifying a user about a successfully installed fd. Good catch
-
-
-> to PROT_READ. To fix this issue, refactor io_uring_create() a bit to
-> let it return 'struct io_ring_ctx *', then when copy_to_user() failed,
-> we can free kernel resource properly.
+On 04/05/2020 18:25, Jens Axboe wrote:
+> On 5/4/20 9:19 AM, Gustavo A. R. Silva wrote:
+>> In case force_nonblock happens to be true, the function returns
+>> at:
+>>
+>>  2779         if (force_nonblock)
+>>  2780                 return -EAGAIN;
+>>
+>> before reaching this line of code. So, the null check on force_nonblock
+>> at 2785, is never actually being executed.
+>>
+>> Addresses-Coverity-ID: 1492838 ("Logically dead code")
+>> Fixes: 2fb3e82284fc ("io_uring: punt splice async because of inode mutex")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  fs/io_uring.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index e5dfbbd2aa34..4b1efb062f7f 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -2782,7 +2782,7 @@ static int io_splice(struct io_kiocb *req, bool force_nonblock)
+>>  	poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
+>>  	poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
+>>  	ret = do_splice(in, poff_in, out, poff_out, sp->len, flags);
+>> -	if (force_nonblock && ret == -EAGAIN)
+>> +	if (ret == -EAGAIN)
+>>  		return -EAGAIN;
 > 
-> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 45 ++++++++++++++++++++++++---------------------
->  1 file changed, 24 insertions(+), 21 deletions(-)
+> This isn't right, it should just remove the two lines completely. But
+> also see:
+
+Oh, right, it will ignore O_NONBLOCK and be resubmitted, as going through
+io_wq_submit_work(). I need to be more attentive.
+
+
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 0b91b0631173..a19885dee621 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -7761,7 +7761,8 @@ static int io_uring_get_fd(struct io_ring_ctx *ctx)
->  	return ret;
->  }
->  
-> -static int io_uring_create(unsigned entries, struct io_uring_params *p)
-> +static struct io_ring_ctx *io_uring_create(unsigned entries,
-> +				struct io_uring_params *p)
->  {
->  	struct user_struct *user = NULL;
->  	struct io_ring_ctx *ctx;
-> @@ -7769,10 +7770,10 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
->  	int ret;
->  
->  	if (!entries)
-> -		return -EINVAL;
-> +		return ERR_PTR(-EINVAL);
->  	if (entries > IORING_MAX_ENTRIES) {
->  		if (!(p->flags & IORING_SETUP_CLAMP))
-> -			return -EINVAL;
-> +			return ERR_PTR(-EINVAL);
->  		entries = IORING_MAX_ENTRIES;
->  	}
->  
-> @@ -7792,10 +7793,10 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
->  		 * any cq vs sq ring sizing.
->  		 */
->  		if (p->cq_entries < p->sq_entries)
-> -			return -EINVAL;
-> +			return ERR_PTR(-EINVAL);
->  		if (p->cq_entries > IORING_MAX_CQ_ENTRIES) {
->  			if (!(p->flags & IORING_SETUP_CLAMP))
-> -				return -EINVAL;
-> +				return ERR_PTR(-EINVAL);
->  			p->cq_entries = IORING_MAX_CQ_ENTRIES;
->  		}
->  		p->cq_entries = roundup_pow_of_two(p->cq_entries);
-> @@ -7811,7 +7812,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
->  				ring_pages(p->sq_entries, p->cq_entries));
->  		if (ret) {
->  			free_uid(user);
-> -			return ret;
-> +			return ERR_PTR(ret);
->  		}
->  	}
->  
-> @@ -7821,7 +7822,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
->  			io_unaccount_mem(user, ring_pages(p->sq_entries,
->  								p->cq_entries));
->  		free_uid(user);
-> -		return -ENOMEM;
-> +		return ERR_PTR(-ENOMEM);
->  	}
->  	ctx->compat = in_compat_syscall();
->  	ctx->account_mem = account_mem;
-> @@ -7853,22 +7854,14 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
->  	p->cq_off.overflow = offsetof(struct io_rings, cq_overflow);
->  	p->cq_off.cqes = offsetof(struct io_rings, cqes);
->  
-> -	/*
-> -	 * Install ring fd as the very last thing, so we don't risk someone
-> -	 * having closed it before we finish setup
-> -	 */
-> -	ret = io_uring_get_fd(ctx);
-> -	if (ret < 0)
-> -		goto err;
-> -
->  	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
->  			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
->  			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL;
->  	trace_io_uring_create(ret, ctx, p->sq_entries, p->cq_entries, p->flags);
-> -	return ret;
-> +	return ctx;
->  err:
->  	io_ring_ctx_wait_and_kill(ctx);
-> -	return ret;
-> +	return ERR_PTR(ret);
->  }
->  
->  /*
-> @@ -7878,6 +7871,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
->   */
->  static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
->  {
-> +	struct io_ring_ctx *ctx;
->  	struct io_uring_params p;
->  	long ret;
->  	int i;
-> @@ -7894,12 +7888,21 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
->  			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ))
->  		return -EINVAL;
->  
-> -	ret = io_uring_create(entries, &p);
-> -	if (ret < 0)
-> -		return ret;
-> +	ctx = io_uring_create(entries, &p);
-> +	if (IS_ERR(ctx))
-> +		return PTR_ERR(ctx);
->  
-> -	if (copy_to_user(params, &p, sizeof(p)))
-> +	if (copy_to_user(params, &p, sizeof(p))) {
-> +		io_ring_ctx_wait_and_kill(ctx);
->  		return -EFAULT;
-> +	}
-> +	/*
-> +	 * Install ring fd as the very last thing, so we don't risk someone
-> +	 * having closed it before we finish setup
-> +	 */
-> +	ret = io_uring_get_fd(ctx);
-> +	if (ret < 0)
-> +		io_ring_ctx_wait_and_kill(ctx);
->  
->  	return ret;
->  }
+> https://lore.kernel.org/io-uring/529ea928-88a6-2cbe-ba8c-72b4c68cc7e8@kernel.dk/T/#u
 > 
 
 -- 

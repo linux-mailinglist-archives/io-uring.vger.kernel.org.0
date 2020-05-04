@@ -2,60 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E81F1C3FD4
-	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 18:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B5601C400E
+	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 18:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729547AbgEDQ3P (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 May 2020 12:29:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42526 "EHLO
+        id S1729676AbgEDQhd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 May 2020 12:37:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729425AbgEDQ3O (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 12:29:14 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46185C061A0E
-        for <io-uring@vger.kernel.org>; Mon,  4 May 2020 09:29:13 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id k12so170965wmj.3
-        for <io-uring@vger.kernel.org>; Mon, 04 May 2020 09:29:13 -0700 (PDT)
+        with ESMTP id S1729525AbgEDQhc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 12:37:32 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79E64C061A0E;
+        Mon,  4 May 2020 09:37:32 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id u127so236256wmg.1;
+        Mon, 04 May 2020 09:37:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rJsjfY32fdlazgOtr9f8PulSzUm9PmE64Ox6eErNEn8=;
-        b=Hh/71gI4okTJ1pc4WrJ6eZNptlsrzP6dgrVaUdV9i534BUHUy2DGotQ0s3AkneEHAJ
-         ovSht+CQ56YWMrB6ghlMz6hQhwZ+FJoWTJ+Ej/UX6fQEOnhjtf50C7q0hPsO7u5+Hily
-         kyJw32iGrS/rdu3GWTfuPUVR1Zu5LoVNkwJt2nVfLzxbCKumjlIiPzDyQTZFuF3aiC3m
-         7CnCpV2jkwmlwbJLx4EwrVe8RAlqM7szSwMdgEgyA37ITjQrE/KhC5iU3go4bd55ObmF
-         GY/Lw/flauXAaAc+zQymW5iyEb6+9maA5DnVPjMnr2CVIAkj0K7UHwjBtX9wGxam4INL
-         F2HA==
+        bh=XpnOB9rc7n9qfSHlnZribjJN6qDF52tRyJ8Jd4talvc=;
+        b=CNDvjkSqOBUrqhmgcOZVvJkaiqU494jlCmPFep3pYtu1QwFDuht7oTa5xcVuP3UQy6
+         LimDWUYF1hmO+UNTfHZsMTSuD4NoWBgY4mt8GxtH77sXPeZXTZckiB082kaEfftsnYFG
+         IRgcegf3YJ7o0y/JmHSMIf0LN4pg6YvQ60OztqZH3xhjeBrG5zK9YH3vqMSqqaDVHvla
+         7rq9ozH6ZO6g0a0DXsC6GD/qy+WfjYai6eYmynUMqHqpuJ8mnu+VwvcFl0AgCMJplM5w
+         9DLhGrJQtu+QhcY5WaAy+rHTUEMGHTuRME4B8U4eJTobXLKQrcBZipPORyUAskZRbzQj
+         Q4wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=rJsjfY32fdlazgOtr9f8PulSzUm9PmE64Ox6eErNEn8=;
-        b=tzF54Ma7bPTFYlCXhlyenqbuUN8mKObCjFga4Fsl2ooDvcTG8IpfttW7TDXNRMXua+
-         WqiCcgG16LczQ4W8B3w1gLoIxMlkua/gj0ODeg35dNqJIeF5tnTqS3XmpTAvbpcHkyNK
-         14FkZgqGh9HZ7wR3KbU9VRlJnqs/DqsLutwENAO0GN1GWV1vtxy+efzIlWluZvnI65fe
-         3oCbdl/kBcmd9QfG0OJUgwbJg2g5K5KNxfbWeU8Gfz8Xy4zgA9qhULc7gM2hxfSJxvuA
-         SIkwBOGQwJaI3zXHpfBI3zusZ/Qhv8OaZ2p4lDpFiMDIo1C7wlLOlaIvrW/59EaUOQNt
-         GQKQ==
-X-Gm-Message-State: AGi0Puarz+hHf4NJ6d1CzJEwlG/bwjbwigEV+bGP0mmZBRG4LubCy55N
-        emQ6lwxg5AFmjugsWyW465vOoPr6
-X-Google-Smtp-Source: APiQypJWi7qUHgqvwUX6qjsOx5s1koAtxzLcpTJYkpMPseGyxCCjyekGUGXPSlbT8VZVjHhmXKK2EQ==
-X-Received: by 2002:a1c:7d90:: with SMTP id y138mr16694497wmc.121.1588609751720;
-        Mon, 04 May 2020 09:29:11 -0700 (PDT)
+        bh=XpnOB9rc7n9qfSHlnZribjJN6qDF52tRyJ8Jd4talvc=;
+        b=TrUtjicW4RogxTbyI++6hGXiv9TCRhcbVw6UXyP9nkhtL+1FhY6Cz2jbDvgzNKGyZ4
+         pBk+D5EkJrn9jNhQ2jmCePt72u3nN41TWc6C+LkzaPiu8ev2xzLPzjXW+//SfdRtEE8N
+         nv33EqULtmNj7WD61zuJbUXGRSLSgBpElGMw3RlWpM+sUNugxuNF/vG8HaNMV8HmISQk
+         v74kI/wBN6zBuLjeEUrSXlJjUuiN3lKEzVfI9Sjv7m0CF1US90NbYzCk7g51D8uNdbBA
+         nNhw7T3JOv0TtX3bljNvDG5UqAvhH3QD8WUy9pNlTzrB2SFG/BTHuU3txStIhGDsmPi1
+         Bvqw==
+X-Gm-Message-State: AGi0Puap/z8Dy1XzCtAFWZYuB46wFlan5lX6j81u1XMgVjRqvOweJmPq
+        kKJ5HEM8SQ8ksa2GyIQB6fczlPw/lbE=
+X-Google-Smtp-Source: APiQypJ4/yGGQzpEBAQzSIluwdJKnWVlYhxEM/j/uy7JHHHARVFC5goyXXXoCz02KFsBR5TivGlqog==
+X-Received: by 2002:a7b:c44d:: with SMTP id l13mr15024815wmi.72.1588610251118;
+        Mon, 04 May 2020 09:37:31 -0700 (PDT)
 Received: from [192.168.43.158] ([109.126.133.135])
-        by smtp.gmail.com with ESMTPSA id v10sm20279748wrq.45.2020.05.04.09.29.10
+        by smtp.gmail.com with ESMTPSA id j11sm19410332wrr.62.2020.05.04.09.37.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 May 2020 09:29:11 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>,
-        Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <1588207670-65832-1-git-send-email-bijan.mottahedeh@oracle.com>
- <05997981-047c-a87b-c875-6ea7b229f586@kernel.dk>
- <07fda8ac-93e4-e488-0575-026b339d2c36@gmail.com>
- <84554b60-2ec5-9876-79ce-5962ae5580e4@kernel.dk>
+        Mon, 04 May 2020 09:37:30 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Clay Harris <bugs@claycon.org>
+References: <cover.1588421219.git.asml.silence@gmail.com>
+ <56e9c3c84e5dbf0be8272b520a7f26b039724175.1588421219.git.asml.silence@gmail.com>
+ <CAG48ez0h6950sPrwfirF2rJ7S0GZhHcBM=+Pm+T2ky=-iFyOKg@mail.gmail.com>
+ <387c1e30-cdb0-532b-032e-6b334b9a69fa@gmail.com>
+ <b62d84b0-c5a8-402f-d62e-e0b8d41221bb@kernel.dk>
+ <1007c4ff-2af0-1473-a268-a0ae245d8188@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -99,14 +104,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 1/1] io_uring: use proper references for fallback_req
- locking
-Message-ID: <f1c46f3c-2fc3-ecd4-d7c6-70fc19437f0e@gmail.com>
-Date:   Mon, 4 May 2020 19:28:06 +0300
+Subject: Re: [PATCH 1/2] splice: export do_tee()
+Message-ID: <9d43b5b5-577b-bc44-1667-fdd2055e63d7@gmail.com>
+Date:   Mon, 4 May 2020 19:36:25 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <84554b60-2ec5-9876-79ce-5962ae5580e4@kernel.dk>
+In-Reply-To: <1007c4ff-2af0-1473-a268-a0ae245d8188@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -115,29 +119,42 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 04/05/2020 19:12, Jens Axboe wrote:
-> On 5/3/20 6:52 AM, Pavel Begunkov wrote:
->> On 30/04/2020 17:52, Jens Axboe wrote:
->>> On 4/29/20 6:47 PM, Bijan Mottahedeh wrote:
->>>> Use ctx->fallback_req address for test_and_set_bit_lock() and
->>>> clear_bit_unlock().
+On 04/05/2020 17:03, Pavel Begunkov wrote:
+> On 04/05/2020 16:43, Jens Axboe wrote:
+>> On 5/4/20 6:31 AM, Pavel Begunkov wrote:
+>>> On 04/05/2020 14:09, Jann Horn wrote:
+>>>> On Sat, May 2, 2020 at 2:10 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>> export do_tee() for use in io_uring
+>>>> [...]
+>>>>> diff --git a/fs/splice.c b/fs/splice.c
+>>>> [...]
+>>>>>   * The 'flags' used are the SPLICE_F_* variants, currently the only
+>>>>>   * applicable one is SPLICE_F_NONBLOCK.
+>>>>>   */
+>>>>> -static long do_tee(struct file *in, struct file *out, size_t len,
+>>>>> -                  unsigned int flags)
+>>>>> +long do_tee(struct file *in, struct file *out, size_t len, unsigned int flags)
+>>>>>  {
+>>>>>         struct pipe_inode_info *ipipe = get_pipe_info(in);
+>>>>>         struct pipe_inode_info *opipe = get_pipe_info(out);
+>>>>
+>>>> AFAICS do_tee() in its current form is not something you should be
+>>>> making available to anything else, because the file mode checks are
+>>>> performed in sys_tee() instead of in do_tee(). (And I don't see any
+>>>> check for file modes in your uring patch, but maybe I missed it?) If
+>>>> you want to make do_tee() available elsewhere, please refactor the
+>>>> file mode checks over into do_tee().
 >>>
->>> Thanks, applied.
->>>
+>>> Overlooked it indeed. Glad you found it
 >>
->> How about getting rid of it? As once was fairly noticed, we're screwed in many
->> other ways in case of OOM. Otherwise we at least need to make async context
->> allocation more resilient.
+>> Yeah indeed, that's a glaring oversight on my part too. Will you send
+>> a patch for 5.7-rc as well for splice?
 > 
-> Not sure how best to handle it, it really sucks to have things fall apart
-> under high memory pressure, a condition that isn't that rare in production
-> systems. But as you say, it's only a half measure currently. We could have
-> the fallback request have req->io already allocated, though. That would
-> provide what we need for guaranteed forward progress, even in the presence
-> of OOM conditions.
+> Absolutely
 
-Good idea. +extend it to work with links as a next step. E.g. for short links
-(2-3 reqs).
+The right way would be to do as Jann proposed, but would you prefer an
+io_uring.c local fix for-5.7 and then a proper one? I assume it could be easier
+to manage.
 
 -- 
 Pavel Begunkov

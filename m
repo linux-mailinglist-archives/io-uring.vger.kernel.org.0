@@ -2,151 +2,145 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18F621C3F0E
-	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 17:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B95E1C3FA3
+	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 18:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbgEDPxo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 May 2020 11:53:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36966 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725941AbgEDPxn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 11:53:43 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84A7FC061A0E
-        for <io-uring@vger.kernel.org>; Mon,  4 May 2020 08:53:42 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id c2so12814803iow.7
-        for <io-uring@vger.kernel.org>; Mon, 04 May 2020 08:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lx7Wc0Zdb4PinBRTDIFbjVTEN5O86pFRibO907vY4jY=;
-        b=MBYwksPP2XS1ZKlsfSCFPVvjsIx06mxeVUSVNP9f0DjG6OE8hK/8gHe9+lnbdsoEN0
-         VMrOVm237hbaAQaw/HDBKNPA0YsyXxtSiXRYJ27cfBE5AXe6rPM/s7J0BTSKFBARWkSJ
-         S3uffDjaUW2+MfHUsHg8s8YGg6zjKZRw2OofYT/YdbeYdaFSZRAljUJ2xPAqEdA72X/d
-         EEVofckYGNmFkBWNQ3kqSIJzlh6hgjALTPV8CefW94UlFxbeC4/hKM7haXPvZAJX4+3W
-         x4qfHWHH/b68poYwLMNlHPtnvrbETRSq/N+bmG5Cses0nHDkCzU+ivTLVRRUMwsKV/a7
-         7Uzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lx7Wc0Zdb4PinBRTDIFbjVTEN5O86pFRibO907vY4jY=;
-        b=jUknXjShuISOPx9/Wrm3KcTifQA9aCm+2ZtOYzv977wJQ5KAxikxnGxkrrgkuOm0If
-         GlLS10rmN8TzdkDTohL+DWEo3UQ9k610qypcTXTl2jnQV2Eeqr5kTvK6XSSI1H2thG4h
-         fI0MrhiGyifQxV1KRtAH+4OoSSw1XUGAn8mNHfAcpaB6JSgAVd8qcJmeczKNoOzkbn4g
-         jKoypJWa97z6R/+MDAr9+CIJ4I7Jj32APWL7+2TUT1lWkjwsZHBtTeD0V1TQcvrf6Fc9
-         sC9YoSQCaX933OSNsg56jHCkndMb9wHtAeRfY/PJsy2fq3jJc/Q4391ZwI92fEDl6rko
-         WByw==
-X-Gm-Message-State: AGi0PuZJ/fhI+euqSGwNZ1ia3AcVHVJrjUtJyLomKXXcSIxGVS3banCW
-        esl7tsz8v6OvXlTFaykEGP+27A==
-X-Google-Smtp-Source: APiQypJPBxZF0MaHh3YC0vXo4cmg+YXN31B0Ad71dLNdMP1A7xM8cwZ+TCZmXZEwfDUFKC/QTX65zA==
-X-Received: by 2002:a02:a60b:: with SMTP id c11mr15044467jam.45.1588607621828;
-        Mon, 04 May 2020 08:53:41 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id z3sm4282814ior.45.2020.05.04.08.53.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 May 2020 08:53:41 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: handle -EFAULT properly in io_uring_setup()
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200504135328.29396-1-xiaoguang.wang@linux.alibaba.com>
- <8f6b82d4-7e52-e25a-4f05-f16e51854df1@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8f75fc56-03c7-7763-cbf8-787aae0901b5@kernel.dk>
-Date:   Mon, 4 May 2020 09:53:40 -0600
+        id S1729459AbgEDQSa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 May 2020 12:18:30 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.141]:11770 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729352AbgEDQSa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 12:18:30 -0400
+X-Greylist: delayed 1437 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 May 2020 12:18:29 EDT
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 25C3723EA33
+        for <io-uring@vger.kernel.org>; Mon,  4 May 2020 10:54:32 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id VdQOj4Tqf1s2xVdQOjeJOD; Mon, 04 May 2020 10:54:32 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=8HueZDk4OODexmqJco5SQBisHrl1MFGtFhpEOcgqigo=; b=S1fqfmpve9BGokvwwKTUUmYeZX
+        QeCs17bUDUKFs76NosxNUQbRCiDt4/tORfINtLjWwaUgYYM0TfvR/rn4TDSgqHrF/OQy5Dvf04mpH
+        NIbZxbQxwdhuTAEozH59iM/DoTk0ZD0nRofnx2pkii9XYywyK0CrdtGGhy+fIXfx/gefZzRccx55Q
+        Jps58DOwcj1Z4XmRRtiXvNY8WGauWydJDNja2KIRiRjNx42mMAQkqQsBpz85EZYkeXLEie6ctfx+2
+        Ag1qez1DbJPAYWw055V48nbRpNEeRnSZnl4KN+pSvublI7LyF/pClJ3CFaZX0s79VRie26ZBz+DeD
+        c/F1Lw9w==;
+Received: from [189.207.59.248] (port=43770 helo=[192.168.15.4])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jVdQN-004IL3-Oz; Mon, 04 May 2020 10:54:31 -0500
+Subject: Re: [PATCH][next] io_uring: Remove logically dead code in io_splice
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200504151912.GA22779@embeddedor>
+ <b26c33c8-e636-edf6-3d43-7b3394850d7a@kernel.dk>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <ff734fe4-8b7f-739f-3876-45ebd1691880@embeddedor.com>
+Date:   Mon, 4 May 2020 10:58:50 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <8f6b82d4-7e52-e25a-4f05-f16e51854df1@gmail.com>
+In-Reply-To: <b26c33c8-e636-edf6-3d43-7b3394850d7a@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.207.59.248
+X-Source-L: No
+X-Exim-ID: 1jVdQN-004IL3-Oz
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.4]) [189.207.59.248]:43770
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 20
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/4/20 9:40 AM, Pavel Begunkov wrote:
-> On 04/05/2020 16:53, Xiaoguang Wang wrote:
->> If copy_to_user() in io_uring_setup() failed, we'll leak many kernel
->> resources, which could be reproduced by using mprotect to set params
+
+
+On 5/4/20 10:25, Jens Axboe wrote:
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index e5dfbbd2aa34..4b1efb062f7f 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -2782,7 +2782,7 @@ static int io_splice(struct io_kiocb *req, bool force_nonblock)
+>>  	poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
+>>  	poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
+>>  	ret = do_splice(in, poff_in, out, poff_out, sp->len, flags);
+>> -	if (force_nonblock && ret == -EAGAIN)
+>> +	if (ret == -EAGAIN)
+>>  		return -EAGAIN;
 > 
-> At least it recycles everything upon killing the process, so that's rather not
-> notifying a user about a successfully installed fd. Good catch
+> This isn't right, it should just remove the two lines completely. But
+> also see:
+> 
+> https://lore.kernel.org/io-uring/529ea928-88a6-2cbe-ba8c-72b4c68cc7e8@kernel.dk/T/#u
+> 
 
-Let me revise the simpler version, so we error before doing the fd install
-at least. Still untested...
+Oh, I see now. Thanks for the feedback.
 
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6d52ff98279d..8eea54197489 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7760,7 +7760,8 @@ static int io_uring_get_fd(struct io_ring_ctx *ctx)
- 	return ret;
- }
- 
--static int io_uring_create(unsigned entries, struct io_uring_params *p)
-+static int io_uring_create(unsigned entries, struct io_uring_params *p,
-+			   struct io_uring_params __user *params)
- {
- 	struct user_struct *user = NULL;
- 	struct io_ring_ctx *ctx;
-@@ -7852,6 +7853,15 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
- 	p->cq_off.overflow = offsetof(struct io_rings, cq_overflow);
- 	p->cq_off.cqes = offsetof(struct io_rings, cqes);
- 
-+	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
-+			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
-+			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL;
-+
-+	if (copy_to_user(params, p, sizeof(*p))) {
-+		ret = -EFAULT;
-+		goto err;
-+	}
-+
- 	/*
- 	 * Install ring fd as the very last thing, so we don't risk someone
- 	 * having closed it before we finish setup
-@@ -7860,9 +7870,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
- 	if (ret < 0)
- 		goto err;
- 
--	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
--			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
--			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL;
- 	trace_io_uring_create(ret, ctx, p->sq_entries, p->cq_entries, p->flags);
- 	return ret;
- err:
-@@ -7878,7 +7885,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
- static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- {
- 	struct io_uring_params p;
--	long ret;
- 	int i;
- 
- 	if (copy_from_user(&p, params, sizeof(p)))
-@@ -7893,14 +7899,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ))
- 		return -EINVAL;
- 
--	ret = io_uring_create(entries, &p);
--	if (ret < 0)
--		return ret;
--
--	if (copy_to_user(params, &p, sizeof(p)))
--		return -EFAULT;
--
--	return ret;
-+	return io_uring_create(entries, &p, params);
- }
- 
- SYSCALL_DEFINE2(io_uring_setup, u32, entries,
-
--- 
-Jens Axboe
-
+--
+Gustavo

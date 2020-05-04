@@ -2,71 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D2021C3B79
-	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 15:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 365811C3BAB
+	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 15:48:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbgEDNnM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 May 2020 09:43:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44772 "EHLO
+        id S1728360AbgEDNr7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 May 2020 09:47:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728011AbgEDNnM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 09:43:12 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1266FC061A0F
-        for <io-uring@vger.kernel.org>; Mon,  4 May 2020 06:43:12 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id w3so6786150plz.5
-        for <io-uring@vger.kernel.org>; Mon, 04 May 2020 06:43:12 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1728165AbgEDNr7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 09:47:59 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F47C061A0F
+        for <io-uring@vger.kernel.org>; Mon,  4 May 2020 06:47:59 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id u22so6782767plq.12
+        for <io-uring@vger.kernel.org>; Mon, 04 May 2020 06:47:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QAn+2RM7soSoqdOBHN+11VsA1mCP/YaXzCZebzqANzo=;
-        b=TE0iYyWaTh8bQ7IhHQUx/YbRFRnMkI4YDJatk7J/aBL01J5cQhnQxteoR6dI47x2WM
-         9w6GKjsw2MxaEcoWrmr/sfBb3M1hW9o+V38nO1wdEs99XhLm+b2sfzz39ExcH7Z7lrZ8
-         3hh+1EqtCInJBgFUsAjijAZjvXJGKLf9i3PXhKlPubiiU6+tfcNv7UkM+PY/8BPiU/+d
-         0CoCZeT/EiobAGwHu4cy1D0QsKI5zVK1WHzdEKSvmisLf2zRy7QYw/rrIHiUOHZ8dhxs
-         uJZKIS6sSR+EKs2QnO8trbgF6u3PH7lG36bjbej6xNQnma4QOJvC2lWBsb9KM2jn0a0+
-         JAFg==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=Rg9UJJZ2W+/6S6MT1yhRF1ts3Ydv5puORxZkSnYHZRI=;
+        b=H+GI6QH7GVmDJt9eR5e3WijVO2f2YgUQwIhVzCHRTk48F9Zye6P94vp8XXB6uvbUFZ
+         qb7kz6M0lu8AjoQ0nx42BHznddNfwoCWOvaurhJJ6WbIZTX6RUZaBpeuKaFv6+Qvwqpd
+         6BPL4gJqV6q3lrNiUJY1c6ccc46SW8R8FERPrNPiyfQyedEj9QSpDi7VxAxjB9FSTkDF
+         H0sx8Qbo8EkV/QZM9xhttl8qeCYARH2Tr5pibQ3Y6MGB9Ew590BRnWO/zzIcAOb2ZS4n
+         T/SNCgDp4ZxIszIldbtusRlvPZNOlCqBmsQWwTlLuFYiN04oLaOv+tWLQpHwAuMx4IVF
+         k0qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=QAn+2RM7soSoqdOBHN+11VsA1mCP/YaXzCZebzqANzo=;
-        b=UehLcpvEYbh36PFHAZ8pAhCFWGuUrC+asM4BrKRPmP1SSxonDqmvZCfwT8NYp6Je7E
-         H8xgCZciqZKwhVzrlRfHoxwiM6Kwh8w6OV6TlMiJktbY6kqAejKUVVL2ksEu3nkO4i3D
-         LN4nACSEnDCy3J82Ge2zltX5OKpKPLlWJuAVXiebF2EGzAY7p5nWWDKJdxvVyQez+zz6
-         RxmjzHpbGo5AhrS3rEejw/h7IQIQQsSM80OKUA3hbQC9UZaQIrmCBnHTmLbjP8CyHH+h
-         qpNocwbltBMH6faU/Fbq9/E6lE/H+jZTlL8MRscJUNU6Y+fPZkMsTk/jKflVHxywqGqu
-         HvhQ==
-X-Gm-Message-State: AGi0PuZK+5L5hyPDqVCYszsszT2FxgJQeqCTcQsl2da9ZmxceCOnCfaM
-        N0iOVuTrjvuX4g5AHSSs/4/CPw==
-X-Google-Smtp-Source: APiQypKVxfCwaRhwua444a4sKxbwU/GHLXZIu8GXcoaQjL6NbjBrUVGGq7g2rF/uM+Rfwd9g0kYMdA==
-X-Received: by 2002:a17:902:9693:: with SMTP id n19mr18232346plp.277.1588599791407;
-        Mon, 04 May 2020 06:43:11 -0700 (PDT)
+        bh=Rg9UJJZ2W+/6S6MT1yhRF1ts3Ydv5puORxZkSnYHZRI=;
+        b=bXBqKQMGWxAaI6W+qbNFezqhjRahsNbS8AaY1AoNt9io5Mp9aXYmICSCNTRAQ5fKc6
+         BznI1H5JppTRU27rsLbYnD8RyyikkjV2xyftG64cJHRvGCRRQKQC0w21Nb01X8aPyOkt
+         bDPDB1Z5wE6KjIIf/MTnqUKnf1xnsjjJKVUq8beLxi+rlnL7iktSWJvBRTJkP9P+4i8T
+         k9/vjo16loDx542LIBbEv2OOlKqcO5xhxsARf89vAwAQBRiSNLfX0oQUVFXaZOb0oniI
+         IuFZVHQKrFNszkIvW1tsFSJRjVjTyF8AbvjgaChv7LZehdN+aioki5vl/x2iMmcUlCo6
+         1k5g==
+X-Gm-Message-State: AGi0PuYH9oqZmtq6QmEPfT3W9r58V1vcp2SyNQkkOJs8y9ViE07VVWA+
+        NDQXNIoseSjftgevOvNBgSnX6w==
+X-Google-Smtp-Source: APiQypLp6xInEdHrkCM7w6jc80BQxPrij8GCaCtwruE5LFklNlcGU79ZnBD6dQ7m0iXCPMxhm3LB8A==
+X-Received: by 2002:a17:90a:8d01:: with SMTP id c1mr17221288pjo.170.1588600078528;
+        Mon, 04 May 2020 06:47:58 -0700 (PDT)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id a23sm8908180pfo.145.2020.05.04.06.43.10
+        by smtp.gmail.com with ESMTPSA id r78sm8909979pfr.10.2020.05.04.06.47.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 May 2020 06:43:10 -0700 (PDT)
-Subject: Re: [PATCH 1/2] splice: export do_tee()
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jann Horn <jannh@google.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Clay Harris <bugs@claycon.org>
-References: <cover.1588421219.git.asml.silence@gmail.com>
- <56e9c3c84e5dbf0be8272b520a7f26b039724175.1588421219.git.asml.silence@gmail.com>
- <CAG48ez0h6950sPrwfirF2rJ7S0GZhHcBM=+Pm+T2ky=-iFyOKg@mail.gmail.com>
- <387c1e30-cdb0-532b-032e-6b334b9a69fa@gmail.com>
+        Mon, 04 May 2020 06:47:58 -0700 (PDT)
+Subject: Re: linux-5.7-rc4/fs/io_uring.c:2786: bad if test ?
+To:     David Binderman <dcb314@hotmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <DB7PR08MB3801F4B9DD818545A8DA6CC99CA60@DB7PR08MB3801.eurprd08.prod.outlook.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b62d84b0-c5a8-402f-d62e-e0b8d41221bb@kernel.dk>
-Date:   Mon, 4 May 2020 07:43:09 -0600
+Message-ID: <529ea928-88a6-2cbe-ba8c-72b4c68cc7e8@kernel.dk>
+Date:   Mon, 4 May 2020 07:47:54 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <387c1e30-cdb0-532b-032e-6b334b9a69fa@gmail.com>
+In-Reply-To: <DB7PR08MB3801F4B9DD818545A8DA6CC99CA60@DB7PR08MB3801.eurprd08.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -75,34 +70,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/4/20 6:31 AM, Pavel Begunkov wrote:
-> On 04/05/2020 14:09, Jann Horn wrote:
->> On Sat, May 2, 2020 at 2:10 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>> export do_tee() for use in io_uring
->> [...]
->>> diff --git a/fs/splice.c b/fs/splice.c
->> [...]
->>>   * The 'flags' used are the SPLICE_F_* variants, currently the only
->>>   * applicable one is SPLICE_F_NONBLOCK.
->>>   */
->>> -static long do_tee(struct file *in, struct file *out, size_t len,
->>> -                  unsigned int flags)
->>> +long do_tee(struct file *in, struct file *out, size_t len, unsigned int flags)
->>>  {
->>>         struct pipe_inode_info *ipipe = get_pipe_info(in);
->>>         struct pipe_inode_info *opipe = get_pipe_info(out);
->>
->> AFAICS do_tee() in its current form is not something you should be
->> making available to anything else, because the file mode checks are
->> performed in sys_tee() instead of in do_tee(). (And I don't see any
->> check for file modes in your uring patch, but maybe I missed it?) If
->> you want to make do_tee() available elsewhere, please refactor the
->> file mode checks over into do_tee().
+On 5/4/20 2:12 AM, David Binderman wrote:
+> Hello there,
 > 
-> Overlooked it indeed. Glad you found it
+> linux-5.7-rc4/fs/io_uring.c:2786:6: warning: Identical condition 'force_nonblock', second condition is always false [identicalConditionAfterEarlyExit]
+> 
+> Source code is
+> 
+>     if (force_nonblock)
+>         return -EAGAIN;
+> 
+>     poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
+>     poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
+>     ret = do_splice(in, poff_in, out, poff_out, sp->len, flags);
+>     if (force_nonblock && ret == -EAGAIN)
+>         return -EAGAIN;
+> 
+> So the second return can never execute. Suggest code rework.
 
-Yeah indeed, that's a glaring oversight on my part too. Will you send
-a patch for 5.7-rc as well for splice?
+Looks like that's a leftover of the "only punt sometimes" code. That
+second one is indeed dead now, Pavel is re-working the async punt
+for 5.8 anyway so I don't think it's worth touching at this point.
 
 -- 
 Jens Axboe

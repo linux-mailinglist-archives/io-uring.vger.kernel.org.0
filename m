@@ -2,96 +2,160 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 365811C3BAB
-	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 15:48:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EB931C3BC4
+	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 15:53:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728360AbgEDNr7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 May 2020 09:47:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45566 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728165AbgEDNr7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 09:47:59 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F47C061A0F
-        for <io-uring@vger.kernel.org>; Mon,  4 May 2020 06:47:59 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id u22so6782767plq.12
-        for <io-uring@vger.kernel.org>; Mon, 04 May 2020 06:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Rg9UJJZ2W+/6S6MT1yhRF1ts3Ydv5puORxZkSnYHZRI=;
-        b=H+GI6QH7GVmDJt9eR5e3WijVO2f2YgUQwIhVzCHRTk48F9Zye6P94vp8XXB6uvbUFZ
-         qb7kz6M0lu8AjoQ0nx42BHznddNfwoCWOvaurhJJ6WbIZTX6RUZaBpeuKaFv6+Qvwqpd
-         6BPL4gJqV6q3lrNiUJY1c6ccc46SW8R8FERPrNPiyfQyedEj9QSpDi7VxAxjB9FSTkDF
-         H0sx8Qbo8EkV/QZM9xhttl8qeCYARH2Tr5pibQ3Y6MGB9Ew590BRnWO/zzIcAOb2ZS4n
-         T/SNCgDp4ZxIszIldbtusRlvPZNOlCqBmsQWwTlLuFYiN04oLaOv+tWLQpHwAuMx4IVF
-         k0qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Rg9UJJZ2W+/6S6MT1yhRF1ts3Ydv5puORxZkSnYHZRI=;
-        b=bXBqKQMGWxAaI6W+qbNFezqhjRahsNbS8AaY1AoNt9io5Mp9aXYmICSCNTRAQ5fKc6
-         BznI1H5JppTRU27rsLbYnD8RyyikkjV2xyftG64cJHRvGCRRQKQC0w21Nb01X8aPyOkt
-         bDPDB1Z5wE6KjIIf/MTnqUKnf1xnsjjJKVUq8beLxi+rlnL7iktSWJvBRTJkP9P+4i8T
-         k9/vjo16loDx542LIBbEv2OOlKqcO5xhxsARf89vAwAQBRiSNLfX0oQUVFXaZOb0oniI
-         IuFZVHQKrFNszkIvW1tsFSJRjVjTyF8AbvjgaChv7LZehdN+aioki5vl/x2iMmcUlCo6
-         1k5g==
-X-Gm-Message-State: AGi0PuYH9oqZmtq6QmEPfT3W9r58V1vcp2SyNQkkOJs8y9ViE07VVWA+
-        NDQXNIoseSjftgevOvNBgSnX6w==
-X-Google-Smtp-Source: APiQypLp6xInEdHrkCM7w6jc80BQxPrij8GCaCtwruE5LFklNlcGU79ZnBD6dQ7m0iXCPMxhm3LB8A==
-X-Received: by 2002:a17:90a:8d01:: with SMTP id c1mr17221288pjo.170.1588600078528;
-        Mon, 04 May 2020 06:47:58 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id r78sm8909979pfr.10.2020.05.04.06.47.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 May 2020 06:47:58 -0700 (PDT)
-Subject: Re: linux-5.7-rc4/fs/io_uring.c:2786: bad if test ?
-To:     David Binderman <dcb314@hotmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <DB7PR08MB3801F4B9DD818545A8DA6CC99CA60@DB7PR08MB3801.eurprd08.prod.outlook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <529ea928-88a6-2cbe-ba8c-72b4c68cc7e8@kernel.dk>
-Date:   Mon, 4 May 2020 07:47:54 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <DB7PR08MB3801F4B9DD818545A8DA6CC99CA60@DB7PR08MB3801.eurprd08.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727831AbgEDNxo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 May 2020 09:53:44 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:38484 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726404AbgEDNxo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 09:53:44 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TxUSl9j_1588600413;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0TxUSl9j_1588600413)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 04 May 2020 21:53:39 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH] io_uring: handle -EFAULT properly in io_uring_setup()
+Date:   Mon,  4 May 2020 21:53:28 +0800
+Message-Id: <20200504135328.29396-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/4/20 2:12 AM, David Binderman wrote:
-> Hello there,
-> 
-> linux-5.7-rc4/fs/io_uring.c:2786:6: warning: Identical condition 'force_nonblock', second condition is always false [identicalConditionAfterEarlyExit]
-> 
-> Source code is
-> 
->     if (force_nonblock)
->         return -EAGAIN;
-> 
->     poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
->     poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
->     ret = do_splice(in, poff_in, out, poff_out, sp->len, flags);
->     if (force_nonblock && ret == -EAGAIN)
->         return -EAGAIN;
-> 
-> So the second return can never execute. Suggest code rework.
+If copy_to_user() in io_uring_setup() failed, we'll leak many kernel
+resources, which could be reproduced by using mprotect to set params
+to PROT_READ. To fix this issue, refactor io_uring_create() a bit to
+let it return 'struct io_ring_ctx *', then when copy_to_user() failed,
+we can free kernel resource properly.
 
-Looks like that's a leftover of the "only punt sometimes" code. That
-second one is indeed dead now, Pavel is re-working the async punt
-for 5.8 anyway so I don't think it's worth touching at this point.
+Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+---
+ fs/io_uring.c | 45 ++++++++++++++++++++++++---------------------
+ 1 file changed, 24 insertions(+), 21 deletions(-)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0b91b0631173..a19885dee621 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7761,7 +7761,8 @@ static int io_uring_get_fd(struct io_ring_ctx *ctx)
+ 	return ret;
+ }
+ 
+-static int io_uring_create(unsigned entries, struct io_uring_params *p)
++static struct io_ring_ctx *io_uring_create(unsigned entries,
++				struct io_uring_params *p)
+ {
+ 	struct user_struct *user = NULL;
+ 	struct io_ring_ctx *ctx;
+@@ -7769,10 +7770,10 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
+ 	int ret;
+ 
+ 	if (!entries)
+-		return -EINVAL;
++		return ERR_PTR(-EINVAL);
+ 	if (entries > IORING_MAX_ENTRIES) {
+ 		if (!(p->flags & IORING_SETUP_CLAMP))
+-			return -EINVAL;
++			return ERR_PTR(-EINVAL);
+ 		entries = IORING_MAX_ENTRIES;
+ 	}
+ 
+@@ -7792,10 +7793,10 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
+ 		 * any cq vs sq ring sizing.
+ 		 */
+ 		if (p->cq_entries < p->sq_entries)
+-			return -EINVAL;
++			return ERR_PTR(-EINVAL);
+ 		if (p->cq_entries > IORING_MAX_CQ_ENTRIES) {
+ 			if (!(p->flags & IORING_SETUP_CLAMP))
+-				return -EINVAL;
++				return ERR_PTR(-EINVAL);
+ 			p->cq_entries = IORING_MAX_CQ_ENTRIES;
+ 		}
+ 		p->cq_entries = roundup_pow_of_two(p->cq_entries);
+@@ -7811,7 +7812,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
+ 				ring_pages(p->sq_entries, p->cq_entries));
+ 		if (ret) {
+ 			free_uid(user);
+-			return ret;
++			return ERR_PTR(ret);
+ 		}
+ 	}
+ 
+@@ -7821,7 +7822,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
+ 			io_unaccount_mem(user, ring_pages(p->sq_entries,
+ 								p->cq_entries));
+ 		free_uid(user);
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 	ctx->compat = in_compat_syscall();
+ 	ctx->account_mem = account_mem;
+@@ -7853,22 +7854,14 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
+ 	p->cq_off.overflow = offsetof(struct io_rings, cq_overflow);
+ 	p->cq_off.cqes = offsetof(struct io_rings, cqes);
+ 
+-	/*
+-	 * Install ring fd as the very last thing, so we don't risk someone
+-	 * having closed it before we finish setup
+-	 */
+-	ret = io_uring_get_fd(ctx);
+-	if (ret < 0)
+-		goto err;
+-
+ 	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
+ 			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
+ 			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL;
+ 	trace_io_uring_create(ret, ctx, p->sq_entries, p->cq_entries, p->flags);
+-	return ret;
++	return ctx;
+ err:
+ 	io_ring_ctx_wait_and_kill(ctx);
+-	return ret;
++	return ERR_PTR(ret);
+ }
+ 
+ /*
+@@ -7878,6 +7871,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
+  */
+ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ {
++	struct io_ring_ctx *ctx;
+ 	struct io_uring_params p;
+ 	long ret;
+ 	int i;
+@@ -7894,12 +7888,21 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ))
+ 		return -EINVAL;
+ 
+-	ret = io_uring_create(entries, &p);
+-	if (ret < 0)
+-		return ret;
++	ctx = io_uring_create(entries, &p);
++	if (IS_ERR(ctx))
++		return PTR_ERR(ctx);
+ 
+-	if (copy_to_user(params, &p, sizeof(p)))
++	if (copy_to_user(params, &p, sizeof(p))) {
++		io_ring_ctx_wait_and_kill(ctx);
+ 		return -EFAULT;
++	}
++	/*
++	 * Install ring fd as the very last thing, so we don't risk someone
++	 * having closed it before we finish setup
++	 */
++	ret = io_uring_get_fd(ctx);
++	if (ret < 0)
++		io_ring_ctx_wait_and_kill(ctx);
+ 
+ 	return ret;
+ }
 -- 
-Jens Axboe
+2.17.2
 

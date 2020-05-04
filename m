@@ -2,145 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B95E1C3FA3
-	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 18:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BA6A1C3F79
+	for <lists+io-uring@lfdr.de>; Mon,  4 May 2020 18:12:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbgEDQSa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 May 2020 12:18:30 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.141]:11770 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729352AbgEDQSa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 12:18:30 -0400
-X-Greylist: delayed 1437 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 May 2020 12:18:29 EDT
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 25C3723EA33
-        for <io-uring@vger.kernel.org>; Mon,  4 May 2020 10:54:32 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id VdQOj4Tqf1s2xVdQOjeJOD; Mon, 04 May 2020 10:54:32 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8HueZDk4OODexmqJco5SQBisHrl1MFGtFhpEOcgqigo=; b=S1fqfmpve9BGokvwwKTUUmYeZX
-        QeCs17bUDUKFs76NosxNUQbRCiDt4/tORfINtLjWwaUgYYM0TfvR/rn4TDSgqHrF/OQy5Dvf04mpH
-        NIbZxbQxwdhuTAEozH59iM/DoTk0ZD0nRofnx2pkii9XYywyK0CrdtGGhy+fIXfx/gefZzRccx55Q
-        Jps58DOwcj1Z4XmRRtiXvNY8WGauWydJDNja2KIRiRjNx42mMAQkqQsBpz85EZYkeXLEie6ctfx+2
-        Ag1qez1DbJPAYWw055V48nbRpNEeRnSZnl4KN+pSvublI7LyF/pClJ3CFaZX0s79VRie26ZBz+DeD
-        c/F1Lw9w==;
-Received: from [189.207.59.248] (port=43770 helo=[192.168.15.4])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jVdQN-004IL3-Oz; Mon, 04 May 2020 10:54:31 -0500
-Subject: Re: [PATCH][next] io_uring: Remove logically dead code in io_splice
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200504151912.GA22779@embeddedor>
- <b26c33c8-e636-edf6-3d43-7b3394850d7a@kernel.dk>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <ff734fe4-8b7f-739f-3876-45ebd1691880@embeddedor.com>
-Date:   Mon, 4 May 2020 10:58:50 -0500
+        id S1728764AbgEDQMM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 May 2020 12:12:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728655AbgEDQMM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 May 2020 12:12:12 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 881E9C061A0E
+        for <io-uring@vger.kernel.org>; Mon,  4 May 2020 09:12:10 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id i19so12872544ioh.12
+        for <io-uring@vger.kernel.org>; Mon, 04 May 2020 09:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=03zROLnx2fSxbZ/3k0dXZwjojIAg6i8ytOSzzMhfDBY=;
+        b=Ou6U7n84j8PoYdi8hmYMprEa6GXpDHf1drLqeqUfCgIbWCZq0oCnWEQeRs4IGgpqxN
+         0GZ6etqprwmnb/7RVOjVX1nfVjb+ZF1KjnHQikTb3f35qU30fjSa6zgsvecUNB3LEv5Y
+         zJf2ZKxwM0Bsxnb5CNnf0AqcJK9/hVs0B9yVlqq5446BKpuRuZtkbObeQO8Xvp9d0J/I
+         v7unq/Aqq4w/4G/cl3Cs4nHyvqH55IHWK/xxalztY3hkbr+Em579DPIo7pu4IyUBxh4e
+         P93V5tZD7bBTEr0l79MECXRq1gwIxJtUzLjGEqMGNP+3UBGsIB+iu/VEIo9cqM+CfgyI
+         Phow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=03zROLnx2fSxbZ/3k0dXZwjojIAg6i8ytOSzzMhfDBY=;
+        b=RF4488L34s3AnuOcpBPC/JSi1bNKcmYUJ5tPgvuhikvw/CesiYKiHzfbA+7bXzrXDe
+         W8giIZVSrNgnfkbYZsOepXOejCu1+nNITu0/ZoVATpM1R9flPGnTFhKxkA+Yecn34ojd
+         fnlqbsE/qGXbCIif7U8INoKj2uv8PrCDSM6moeBwfIDBjhdB7J/Fn8dSXMRrhDH5tIj8
+         YrAuXMuN0n7v6vjHh+US3Rq95lnrhTcc43XDb3WSrKHmrQMVlWYUIDXCkSVMqrSnuSaQ
+         OQ4MISR0NjYmVsg7sh/IwkkZqcxCvhzibqjG1FyTgvsY9TuDfBH5avzfJVC9ebWZtiu/
+         4auw==
+X-Gm-Message-State: AGi0PuZG5ok8+j9sLAvRrilYip892PUKZf/FKnHwF1ccCNOh5S3yYn1s
+        G+Y1Tziankykp+6WvGifxyFB0eOfAkE2rQ==
+X-Google-Smtp-Source: APiQypJ1mjDPnLS48YNSQ9Py1yTU8TmEUdDm53R94aBVtwczLUifpGDNvorOAHJzyzV9NLJUhhxbDw==
+X-Received: by 2002:a5d:8b02:: with SMTP id k2mr16052502ion.39.1588608729001;
+        Mon, 04 May 2020 09:12:09 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id c12sm5296238ilo.31.2020.05.04.09.12.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 May 2020 09:12:08 -0700 (PDT)
+Subject: Re: [PATCH 1/1] io_uring: use proper references for fallback_req
+ locking
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Cc:     io-uring <io-uring@vger.kernel.org>
+References: <1588207670-65832-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <05997981-047c-a87b-c875-6ea7b229f586@kernel.dk>
+ <07fda8ac-93e4-e488-0575-026b339d2c36@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <84554b60-2ec5-9876-79ce-5962ae5580e4@kernel.dk>
+Date:   Mon, 4 May 2020 10:12:07 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <b26c33c8-e636-edf6-3d43-7b3394850d7a@kernel.dk>
+In-Reply-To: <07fda8ac-93e4-e488-0575-026b339d2c36@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.207.59.248
-X-Source-L: No
-X-Exim-ID: 1jVdQN-004IL3-Oz
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.4]) [189.207.59.248]:43770
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 20
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-
-On 5/4/20 10:25, Jens Axboe wrote:
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index e5dfbbd2aa34..4b1efb062f7f 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -2782,7 +2782,7 @@ static int io_splice(struct io_kiocb *req, bool force_nonblock)
->>  	poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
->>  	poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
->>  	ret = do_splice(in, poff_in, out, poff_out, sp->len, flags);
->> -	if (force_nonblock && ret == -EAGAIN)
->> +	if (ret == -EAGAIN)
->>  		return -EAGAIN;
+On 5/3/20 6:52 AM, Pavel Begunkov wrote:
+> On 30/04/2020 17:52, Jens Axboe wrote:
+>> On 4/29/20 6:47 PM, Bijan Mottahedeh wrote:
+>>> Use ctx->fallback_req address for test_and_set_bit_lock() and
+>>> clear_bit_unlock().
+>>
+>> Thanks, applied.
+>>
 > 
-> This isn't right, it should just remove the two lines completely. But
-> also see:
-> 
-> https://lore.kernel.org/io-uring/529ea928-88a6-2cbe-ba8c-72b4c68cc7e8@kernel.dk/T/#u
-> 
+> How about getting rid of it? As once was fairly noticed, we're screwed in many
+> other ways in case of OOM. Otherwise we at least need to make async context
+> allocation more resilient.
 
-Oh, I see now. Thanks for the feedback.
+Not sure how best to handle it, it really sucks to have things fall apart
+under high memory pressure, a condition that isn't that rare in production
+systems. But as you say, it's only a half measure currently. We could have
+the fallback request have req->io already allocated, though. That would
+provide what we need for guaranteed forward progress, even in the presence
+of OOM conditions.
 
---
-Gustavo
+-- 
+Jens Axboe
+

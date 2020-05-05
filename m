@@ -2,109 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DE321C504B
-	for <lists+io-uring@lfdr.de>; Tue,  5 May 2020 10:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 046071C51F9
+	for <lists+io-uring@lfdr.de>; Tue,  5 May 2020 11:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbgEEI3G (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 5 May 2020 04:29:06 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:39077 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728556AbgEEI3G (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 5 May 2020 04:29:06 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TxYdNBh_1588667335;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0TxYdNBh_1588667335)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 05 May 2020 16:29:04 +0800
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: [PATCH v2] io_uring: handle -EFAULT properly in io_uring_setup()
-Date:   Tue,  5 May 2020 16:28:53 +0800
-Message-Id: <20200505082853.28411-1-xiaoguang.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.2
+        id S1728487AbgEEJdq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 5 May 2020 05:33:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44627 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728180AbgEEJdq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 5 May 2020 05:33:46 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1jVtxP-0003YD-NN; Tue, 05 May 2020 09:33:43 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH]i[next] io_uring: remove redundant check on force_nonblock
+Date:   Tue,  5 May 2020 10:33:43 +0100
+Message-Id: <20200505093343.41869-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If copy_to_user() in io_uring_setup() failed, we'll leak many kernel
-resources, which will be recycled until process terminates. This bug
-can be reproduced by using mprotect to set params to PROT_READ. To fix
-this issue, refactor io_uring_create() a bit to add a new 'struct
-io_uring_params __user *params' parameter and move the copy_to_user()
-in io_uring_setup() to io_uring_setup(), if copy_to_user() failed,
-we can free kernel resource properly.
+From: Colin Ian King <colin.king@canonical.com>
 
-Suggested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+The check on force_nonblock is redundant as this is performed
+several statements earlier and also returns with -EAGAIN. Remove
+the redundant check.
+
+Addresses-Coverity: ("Logicall dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/io_uring.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0b91b0631173..ec0aa6957882 100644
+index e5dfbbd2aa34..4b1efb062f7f 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7761,7 +7761,8 @@ static int io_uring_get_fd(struct io_ring_ctx *ctx)
- 	return ret;
- }
+@@ -2782,7 +2782,7 @@ static int io_splice(struct io_kiocb *req, bool force_nonblock)
+ 	poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
+ 	poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
+ 	ret = do_splice(in, poff_in, out, poff_out, sp->len, flags);
+-	if (force_nonblock && ret == -EAGAIN)
++	if (ret == -EAGAIN)
+ 		return -EAGAIN;
  
--static int io_uring_create(unsigned entries, struct io_uring_params *p)
-+static int io_uring_create(unsigned entries, struct io_uring_params *p,
-+			   struct io_uring_params __user *params)
- {
- 	struct user_struct *user = NULL;
- 	struct io_ring_ctx *ctx;
-@@ -7853,6 +7854,14 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
- 	p->cq_off.overflow = offsetof(struct io_rings, cq_overflow);
- 	p->cq_off.cqes = offsetof(struct io_rings, cqes);
- 
-+	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
-+			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
-+			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL;
-+
-+	if (copy_to_user(params, p, sizeof(*p))) {
-+		ret = -EFAULT;
-+		goto err;
-+	}
- 	/*
- 	 * Install ring fd as the very last thing, so we don't risk someone
- 	 * having closed it before we finish setup
-@@ -7861,9 +7870,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
- 	if (ret < 0)
- 		goto err;
- 
--	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
--			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
--			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL;
- 	trace_io_uring_create(ret, ctx, p->sq_entries, p->cq_entries, p->flags);
- 	return ret;
- err:
-@@ -7879,7 +7885,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
- static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- {
- 	struct io_uring_params p;
--	long ret;
- 	int i;
- 
- 	if (copy_from_user(&p, params, sizeof(p)))
-@@ -7894,14 +7899,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ))
- 		return -EINVAL;
- 
--	ret = io_uring_create(entries, &p);
--	if (ret < 0)
--		return ret;
--
--	if (copy_to_user(params, &p, sizeof(p)))
--		return -EFAULT;
--
--	return ret;
-+	return  io_uring_create(entries, &p, params);
- }
- 
- SYSCALL_DEFINE2(io_uring_setup, u32, entries,
+ 	io_put_file(req, in, (sp->flags & SPLICE_F_FD_IN_FIXED));
 -- 
-2.17.2
+2.25.1
 

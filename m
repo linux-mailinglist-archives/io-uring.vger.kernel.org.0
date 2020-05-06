@@ -2,35 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7BB51C6E6D
-	for <lists+io-uring@lfdr.de>; Wed,  6 May 2020 12:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D91A1C6E9D
+	for <lists+io-uring@lfdr.de>; Wed,  6 May 2020 12:41:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbgEFKeL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 May 2020 06:34:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41516 "EHLO
+        id S1728768AbgEFKlq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 May 2020 06:41:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728716AbgEFKeJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 May 2020 06:34:09 -0400
+        by vger.kernel.org with ESMTP id S1725824AbgEFKlp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 May 2020 06:41:45 -0400
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C50C061A0F
-        for <io-uring@vger.kernel.org>; Wed,  6 May 2020 03:34:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 341F7C061A0F
+        for <io-uring@vger.kernel.org>; Wed,  6 May 2020 03:41:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
          s=42; h=Date:Message-ID:From:Cc:To;
-        bh=ghYAX0d9yCxVjcF5lcTya2IBPrHRwUVwkdLxbg7w00I=; b=u4UdWd/ARq9h4vogCaLKeA2r38
-        Rd5X+yxUAWOAcx0xDH4H91RiLlrxK9rD/vTFZyZXGvqTsBMFpqbluc0eC2Lz9WQrqTgwn0Jf7MaL0
-        1zbPZiBXICbmCjLLhef0pP8GglRD/YbTsqhxTZzQRyts4n+lUfn33CgO8JMQ7dnaJZfXpDd7W8NJm
-        jLuG92XSzTa5V94gr3gSJn3xkUH1by3gJIaYGI8eYhnSA/9LOloJcmC/qa4p9oD7mPk6q5wdRLduG
-        8uli5jyjIW6ZLQyNdOXYdcKQ6+1PAK8/h0ONitUyY27/f73HWMxbFFGl2UVj5bzMwwqEGqWiDjf7S
-        bh7xcgNuDs+q4Yc/JCYo6QqaB9KHNPbpFGwhbkzXcXvGs9u1GwJVFhb2ShcsX/bHOvm3emG+F9jXv
-        CagJJIzJaQGQpzCjITNpgY4UxQGCIXQVx0GIbCJrZO6xDHBW/Vn+boPnPI0t6OcWBgE7J6lIJIq3P
-        yCFhs4D6IAIWTC/2U/N1VNPS;
+        bh=OMXb5DekiL8X7dKcftjRlT1c5V2801zWN2NT2efig+c=; b=awOOJYL6zbO+rvc0DLXlirW0zt
+        qViQVvFW8SdFwWxv8OsvlMAG3wv6/v9jRwvYnt/cyAC/aPgype7v1521yOKWH/5oOTVMiXlF1uzFR
+        Q1jBd0KkPHfcz+0VapOX5faqfzzyXGFbrRiyCRvRroFB8t7t8p7z2tGzYyqQWoVm7MD5Q9xbx/vf2
+        Rhu+gh7rK0b9HgVcEor48s+1jaBYiqWzlxK+NnEF86Kmf5xNoOWcIM8Rw7av0YtYa14TJrYLjuRmj
+        87FoXEF9E3/CRRBL66k93CIH9cJp4CP71o+vi+Nsat3El7xuernHx1qZzHALOkt8HAmLmw104MIRh
+        3vhwiY/3VAuduFkxRvHohdUg6LB2oC8KMfK8C9KY0Ue2LhQqLpN8Wkk06/C2tdYWt8+PzL1YXaetC
+        inC9jdFVj45JPUvP/ObG9nRep3EF6fY6sNOPIFp1bqU5bYv8K6eIEhWUGb6KfTHATo2p9XyiAQwJ8
+        KNGPlF0vJf7UeK8nsdGYSeUJ;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1jWHNN-0004d9-OC; Wed, 06 May 2020 10:34:05 +0000
+        id 1jWHUl-0004h9-81; Wed, 06 May 2020 10:41:43 +0000
+Subject: Re: Data Corruption bug with Samba's vfs_iouring and Linux
+ 5.6.7/5.7rc3
 To:     Anoop C S <anoopcs@cryptolab.net>, Jeremy Allison <jra@samba.org>
-Cc:     Samba Technical <samba-technical@lists.samba.org>,
-        io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Samba Technical <samba-technical@lists.samba.org>,
+        io-uring <io-uring@vger.kernel.org>
 References: <0009f6b7-9139-35c7-c0b1-b29df2a67f70@samba.org>
  <102c824b-b2f5-bbb1-02da-d2a78c3ff460@kernel.dk>
  <7ed7267d-a0ae-72ac-2106-2476773f544f@kernel.dk>
@@ -38,6 +41,7 @@ References: <0009f6b7-9139-35c7-c0b1-b29df2a67f70@samba.org>
  <f782fc6d-0f89-dca7-3bb0-58ef8f662392@kernel.dk>
  <20200505174832.GC7920@jeremy-acer>
  <3a3e311c7a4bc4d4df371b95ca0c66a792fab986.camel@cryptolab.net>
+ <48c9ddf2-31a3-55f7-aa18-5b332c6be6a6@samba.org>
 From:   Stefan Metzmacher <metze@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
@@ -352,31 +356,30 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  uWrtpKE+BrlhmZrZleospHp05F+oHuE7lrOg09g0SFdTigqSJNbN1R/pkPI5Q03GfbWipsd4
  iY0Rj0D34DQVeKAa4qUlOcBgX2D9VHRap9GKQRWs//egCueqDZNmIk3071aFV+BSiBSTZIIG
  t/YZOE37yKSj2rcCbqg=
-Subject: Re: Data Corruption bug with Samba's vfs_iouring and Linux
- 5.6.7/5.7rc3
-Message-ID: <48c9ddf2-31a3-55f7-aa18-5b332c6be6a6@samba.org>
-Date:   Wed, 6 May 2020 12:33:59 +0200
+Message-ID: <5811bf73-7cd4-125e-ac1d-8dbb9a0d7c12@samba.org>
+Date:   Wed, 6 May 2020 12:41:39 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <3a3e311c7a4bc4d4df371b95ca0c66a792fab986.camel@cryptolab.net>
+In-Reply-To: <48c9ddf2-31a3-55f7-aa18-5b332c6be6a6@samba.org>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="5Bi5nMIt7JpNqwwd1UNbUsQj7bbkVxNto"
+ boundary="yAjxnJhkQiFDgwsZrcnZdDFxcA54RcpVa"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---5Bi5nMIt7JpNqwwd1UNbUsQj7bbkVxNto
-Content-Type: multipart/mixed; boundary="EVV2tXuzIhCj0wS29cz0ZK508UL2FrMg7";
+--yAjxnJhkQiFDgwsZrcnZdDFxcA54RcpVa
+Content-Type: multipart/mixed; boundary="sOPnD47novnbsq2n4CvpX5mjZYl80R47A";
  protected-headers="v1"
 From: Stefan Metzmacher <metze@samba.org>
 To: Anoop C S <anoopcs@cryptolab.net>, Jeremy Allison <jra@samba.org>
-Cc: Samba Technical <samba-technical@lists.samba.org>,
- io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
-Message-ID: <48c9ddf2-31a3-55f7-aa18-5b332c6be6a6@samba.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+ Samba Technical <samba-technical@lists.samba.org>,
+ io-uring <io-uring@vger.kernel.org>
+Message-ID: <5811bf73-7cd4-125e-ac1d-8dbb9a0d7c12@samba.org>
 Subject: Re: Data Corruption bug with Samba's vfs_iouring and Linux
  5.6.7/5.7rc3
 References: <0009f6b7-9139-35c7-c0b1-b29df2a67f70@samba.org>
@@ -386,56 +389,59 @@ References: <0009f6b7-9139-35c7-c0b1-b29df2a67f70@samba.org>
  <f782fc6d-0f89-dca7-3bb0-58ef8f662392@kernel.dk>
  <20200505174832.GC7920@jeremy-acer>
  <3a3e311c7a4bc4d4df371b95ca0c66a792fab986.camel@cryptolab.net>
-In-Reply-To: <3a3e311c7a4bc4d4df371b95ca0c66a792fab986.camel@cryptolab.net>
+ <48c9ddf2-31a3-55f7-aa18-5b332c6be6a6@samba.org>
+In-Reply-To: <48c9ddf2-31a3-55f7-aa18-5b332c6be6a6@samba.org>
 
---EVV2tXuzIhCj0wS29cz0ZK508UL2FrMg7
+--sOPnD47novnbsq2n4CvpX5mjZYl80R47A
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Hi Anoop,
+Am 06.05.20 um 12:33 schrieb Stefan Metzmacher via samba-technical:
+> Hi Anoop,
+>=20
+>> I could reproduce the difference in SHA256 checksum after copying a
+>> directory with 100 copies of test file(provided by reporter) from
+>> io_uring VFS module enabled share using Windows explorer(right-click-
+>>> copy/paste). Only 5 out of 100 files had correct checksum after copy
+>> operation :-/
+>=20
+> Great! Can you please try to collect level 1 log files with
+> the patch https://bugzilla.samba.org/attachment.cgi?id=3D15955
+> applied?
+>=20
+> If you use files with only 0xff please also use the
+> "io_uring:check_ff=3Dyes" option.
 
-> I could reproduce the difference in SHA256 checksum after copying a
-> directory with 100 copies of test file(provided by reporter) from
-> io_uring VFS module enabled share using Windows explorer(right-click-
->> copy/paste). Only 5 out of 100 files had correct checksum after copy
-> operation :-/
-
-Great! Can you please try to collect level 1 log files with
-the patch https://bugzilla.samba.org/attachment.cgi?id=3D15955
-applied?
-
-If you use files with only 0xff please also use the
-"io_uring:check_ff=3Dyes" option.
-
-Maybe the problem is really triggered by short reads...
+And "log level =3D 1" and "max log size =3D 0"
 
 Thanks!
 metze
 
 
---EVV2tXuzIhCj0wS29cz0ZK508UL2FrMg7--
 
---5Bi5nMIt7JpNqwwd1UNbUsQj7bbkVxNto
+--sOPnD47novnbsq2n4CvpX5mjZYl80R47A--
+
+--yAjxnJhkQiFDgwsZrcnZdDFxcA54RcpVa
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl6ykpcACgkQDbX1YShp
-vVZsMg/+Jnnm4vqVAK8ghWxaEB+YCij64ct0oSmXfQWcA72pyJYL8gJqUYWqd06P
-g4C4KMRnZwpIboCXsux33xd9pod74IK4oBu2MVOidNfOiTkho/pgrREZKZEreDXS
-jYI5FD1XoA2UCg3NpVcOSOfRhKV1OVQ6VTj+a1qlun6E9Jl/k6s03hZ7eK5e3vDa
-X712fHAPdzHcbMVzduf6nwPhrt99P7gYFEwL/Hogr6bqXVV7XOArNQoiq8AKBrNH
-XbUpA/6Z/FarC9wCoWlHrA/+tjmEc695xnKQgQHI1CkF09ojU6xxj8Cus9lWjEsK
-Low3EBW1myVOzQfNV9RZy/73JJNf6QUzEh7K2Z0keyvPlF+eIBsBaXi8BtOBvT55
-+jdKnj0JFrfHVEJxSx8Uprdhv7WaHceNnjrfxtcEZJuE51mRH4q0viW+ynxfQMT2
-9LMoIBKE1mKwbk94bKsm3qabQCtMjSTtcaXg8aqmxTatKeQhGYvnlU9zaaRWuZVz
-mq8XpJbW6sVBNeq50xOmGhDUSWB+Qkd+gBeZre+mWjjdm7o2Gcd8HRaJUdLWts2c
-skFPQfx23JzY46EYrfUVH3CYpuw/47mtNAlMHZr9u/0S/VoJeyKEYKWL3AdGoYqL
-vzADcbDjw5PcKqsQjUVd4o+2djt1uRfRUe4Uc5yK5iqHtH9/dCE=
-=2PRY
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl6ylGMACgkQDbX1YShp
+vVYEAQ/8DicmSwUBPLsRdN52QTPQFHjCCGE7jfjJu6w8LQePMsgGA9I9152Lb+Lf
+nu1NfEp5gnyAqyjK9kgJlheMi6XmPaCZDmlp08eK0THT212xRRXyWr3Z6grlG2Jv
+0uTyYBUPE8KVXMb+T3zAZzxg3d5cv6lwrB4N0rbsyjV8RjPQ3Halnto3pbXZ5UdV
+EenNeSqRKs04/pQoT4ITDCMzLeW+c/OSsbMh2PterUSGB5EbDGz8RXmB0PuzQcpA
+wBgwcqPtL8pv8DNmMbAadpeeiPfXIdpaq2Y9aysHuZDKjlQn/PLnFeuFbQwMG6f5
+NYWfMOFgxNupSyjZuxeX1Mmc/0skV5sjCHoriPyFzx9GqhFH/o8Lpx9daLId1bSB
+iNk/fXZSgJkJPNZyVWZS1DCpWcbW8Eo1bw6oj7v3yO1Clm7bHQRsWyrBxre24JRE
+dm8qDU2RKWb6MaAVUtRPlA3GwyM0BvmCs+OD4WVw/oNWTHT0qrOR3DVcvvwqfybE
+fgkptS/lV0NRutPCAMyNqivneXBm03pm8KZTcFbUgddgaTz3FWZId6UAjeiHKAlA
+4vkEgMY6N0wLzmhU2RFczN5ZVGlZSjc+8PnHdN+LM33MHELqGYkKjXlJByW9U7jN
+VnVNexxXPJPI5TWeu5Aj+bK3kiUm9KejI4jtNYTHMvI0ONAJVhE=
+=nUg1
 -----END PGP SIGNATURE-----
 
---5Bi5nMIt7JpNqwwd1UNbUsQj7bbkVxNto--
+--yAjxnJhkQiFDgwsZrcnZdDFxcA54RcpVa--

@@ -2,29 +2,33 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 456781C7327
-	for <lists+io-uring@lfdr.de>; Wed,  6 May 2020 16:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 133391C7339
+	for <lists+io-uring@lfdr.de>; Wed,  6 May 2020 16:46:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbgEFOn0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 May 2020 10:43:26 -0400
-Received: from hr2.samba.org ([144.76.82.148]:42442 "EHLO hr2.samba.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728769AbgEFOn0 (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 6 May 2020 10:43:26 -0400
+        id S1729103AbgEFOqN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 May 2020 10:46:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52670 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728769AbgEFOqN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 May 2020 10:46:13 -0400
+X-Greylist: delayed 169 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 06 May 2020 07:46:12 PDT
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F9FC061A0F
+        for <io-uring@vger.kernel.org>; Wed,  6 May 2020 07:46:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
          s=42; h=Message-ID:Date:Cc:To:From;
-        bh=lFzGIfZyUzw09ujCQ7GaJvL7Kl/XhUaQt1wrBE8f8ww=; b=JlfagcZJ0EwGy9ukNH689R3wRj
-        esdqaJk4VrNCT+pbsQDkDAoE8grGAQnFiGGrkkUsNcuNaTzT4gwWUHY6XNo4EYdfORIS9UC+8IxmQ
-        3uvwIN5NKTUfaDL7T2T518KEu37CS1cNxqb4WZMWdz4cD0u+IRv/EeRGk5u8kjhBpe5LcXSpRtVef
-        bRK6wyvqzXX1Kjl9S/esl75nUM7Y8LLQgBKAjgjN21xZ17MdQhE24y/b7mgXm32Ay0C4DemsHRjv2
-        OG8qYCNBP2HQolILnH4F9Ea12r6xJ0ceZpm5kTh474tqzjZ95AgbjPKRel0++H7FJW9hJOJpdSHQQ
-        L6WL6pUT3WB9Rm6ekwqa05wWDftY5DHtmBWST92MT/bxsObk0R2pLrO3v9447rJqJTh7RlRlG77XC
-        xpAHbpdCZoMWknHscgqBxd7eNEH1ztrARY7aMRuflmX5D2/AZxCTmsOmM7JzaU7nUUaiDYv9kZknq
-        eIDzrF7qqGoFU6R5Dop9B7zJ;
+        bh=zlenTLWGk+kuHrOXaXe7UKtKqL57QpdlqqCH3B1Lw38=; b=gxLI4N20vI+hJB/uXEpqXUuVEe
+        9pa+9RQCu2G+m0fLOVVOaytDc4kIupIqlG0p4220hV47uGDuzCu6tFq3dnpUdDFTX53Fgn6/ZN75j
+        CpIb8zZlhUlUIfj6VLfX1UktDSOTRY2mXRwJn8PemoGacUCJ8DTd3ppRPz6GEPoPmT6YXIlVoYHrp
+        shadFY2tsAbXfRtsnY2/fEALtoT90szvmb6vWaGta/g6xPFf1Mx4FQLdiZN8TvpCQvcImIpA0RxX2
+        2yCc5JODsixCOEwuHOgAZDrtBKIcM635NqdMlxiVO3d3zKhU4WlKkhpJ7ovV6hSjlcldrqEryz1U0
+        3iicCkYt8JJCF3Y1jjbkwT1E07BIqKzs38EXkvCCIOfw37pSfDYR0taEp3Ugq94tyW7W/KfiGUXxq
+        yf/RGzHNU6cFFRTU7bFt+rELLj8f9zj3msHpUKKiNuXbmmrMvUemnSPxtz+j0i03fqnc8Azxxwarq
+        s+5lkHytNt5/ZytB1YxaNRR5;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1jWLGb-0006hZ-3f; Wed, 06 May 2020 14:43:21 +0000
+        id 1jWLJK-0006kU-KM; Wed, 06 May 2020 14:46:10 +0000
 From:   Andreas Schneider <asn@samba.org>
 To:     Anoop C S <anoopcs@cryptolab.net>, Jeremy Allison <jra@samba.org>,
         samba-technical@lists.samba.org
@@ -33,8 +37,8 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         io-uring <io-uring@vger.kernel.org>,
         Stefan Metzmacher <metze@samba.org>
 Subject: Re: Data Corruption bug with Samba's vfs_iouring and Linux 5.6.7/5.7rc3
-Date:   Wed, 06 May 2020 16:43:19 +0200
-Message-ID: <3382111.jB3aVEHC4s@magrathea>
+Date:   Wed, 06 May 2020 16:46:10 +0200
+Message-ID: <27882183.aulKxNbigu@magrathea>
 In-Reply-To: <36fd1c62-abfb-931c-ac31-f6afbbb313fb@samba.org>
 References: <0009f6b7-9139-35c7-c0b1-b29df2a67f70@samba.org> <62e94d8a6cecf60cfba7e5ca083e90bc8f216d61.camel@cryptolab.net> <36fd1c62-abfb-931c-ac31-f6afbbb313fb@samba.org>
 MIME-Version: 1.0
@@ -128,18 +132,22 @@ wrote:
 > be able to demonstrate the problem. It can also be found in
 > https://github.com/metze-samba/liburing/tree/implicit-rwf-nowaithttps://gith
 > ub.com/metze-samba/liburing/commit/eb06dcfde747e46bd08bedf9def2e6cb536c39e3
-
-  ^^^ This link gives me 404 ...
-
+> 
+> 
 > I added the sqe->rw_flags = RWF_NOWAIT; line in order to demonstrate it
 > against the Ubuntu 5.3 and 5.4 kernels. They both seem to have the bug.
 > 
 > Can someone run the unmodified test/implicit-rwf_nowait against
 > a newer kernel?
-> 
-> Thanks!
-> metze
 
+$ uname -a
+Linux magrathea 5.6.8-1-default #1 SMP Thu Apr 30 10:47:01 UTC 2020 (63116ab) 
+x86_64 x86_64 x86_64 GNU/Linux
+$ ./a.out 
+cqe res=4096 != 8192
+
+
+	Andreas
 
 -- 
 Andreas Schneider                      asn@samba.org

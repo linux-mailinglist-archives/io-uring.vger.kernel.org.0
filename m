@@ -2,41 +2,42 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 812801C7787
-	for <lists+io-uring@lfdr.de>; Wed,  6 May 2020 19:13:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 958F91C78D7
+	for <lists+io-uring@lfdr.de>; Wed,  6 May 2020 20:01:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbgEFRNN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 May 2020 13:13:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47688 "EHLO
+        id S1728082AbgEFSBq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 May 2020 14:01:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728180AbgEFRNN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 May 2020 13:13:13 -0400
+        with ESMTP id S1727872AbgEFSBq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 May 2020 14:01:46 -0400
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60E60C061A0F
-        for <io-uring@vger.kernel.org>; Wed,  6 May 2020 10:13:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A3FC061A0F
+        for <io-uring@vger.kernel.org>; Wed,  6 May 2020 11:01:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Message-ID:To:From:Date:CC;
-        bh=2uC3V/gMGc0geLbCCw2n5WItILjRdpfiemIHGcFO0qs=; b=SIBgQ1S3SQ5EselIzBcu6arXTH
-        w9++ZhBDZN5o6afpbhz+H/sIFIgnV/18ZEcB/ZKK/AnUDBkoKNLCvWit5gMo9ZzB+p6zKpG4UAqUM
-        f21jdIBKBHkIBl/NM2VsZDhGVLgepWlpoM+Gy8WitwhBa2De0sUg2/TU7FRnqHY68/Ybr9Ud/lqQo
-        hfMZaFBLOGJpyVaGX9KxtQGTMPnusuDA8z3UxKlvtY4WBRLquv8y7L3ICqh7G1NeL6FuorUxuW8NW
-        r1Xr2WzZ+1i1cQ1D2TmPadxlv/SY0aX/qc7U5fo9xhyn8jyhcenrmeh0jXm30NgoSxv7E2epnE2vD
-        apmrJngYREEFVgmyRge+d56pkloWRIbiNfuCHlxbpq6eZM6Qj1UW2aIHjLUXuxT38tqqQMKn3VFAI
-        PukHFTynGHiQ7z9PjePGIbZJATvRwB0Mj2hx4vGbTMsShKLXYRuxf7ac5fxajJA/woGDvLdhCFk5g
-        qbiOjcDF85Br4fpqmdmMSU/P;
+         s=42; h=Message-ID:Cc:To:From:Date;
+        bh=cubNOstQJemEvNzH8ZnubJwoJNUkZds2C9bCoeRv/Wk=; b=FWef2P4dxQEADlRGmJoUAjT8G6
+        3b3515Tru6+DeJBAE9hXYWI493/a2r3kZMcsXyEP4m31dtMLCPfNUgZukfKnBBIz2/7RzeUPzFtcD
+        PHI0sa665a1kFujxQ7R5L3SCbl0Azu5pvu/DLe2ZJGBySZ2cSX3emBmWEIOU9E6GrkvcCKAzQKIzo
+        /Ehi7dNkLJZO+ek/tF+8orlVbuGGuCsdMP3e10ryhVVACqHWRWmlBylaMJxpC4/6ZQqE467b4cuUy
+        Fdm0ijBVWmnWzNL+YxTcuPbfkxz5xqg6SutlFOyQ9eqSJtqBg0odcSRD7MW79DZM/GX0LhHPiOKTF
+        fretgOnqyyv72mTZupLBy2ZfnBHYcnxkCnRyIZf83GZ2LQ4JHNmuW6g/+BgnM8fIHf7Nwiv7UL0yq
+        WKHJjPV3sV22PkKZZSzHnOZjqx9KNsjuyzsEJBRqIJZc+/Jnk7hf0f0PhiZoMKwgYQd5tSMcr4ARo
+        98DWYyDrDa9Y3jI18nLoM7I5;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1jWNbb-00087y-3F; Wed, 06 May 2020 17:13:11 +0000
-Date:   Wed, 6 May 2020 10:13:04 -0700
+        id 1jWOMZ-00006G-6J; Wed, 06 May 2020 18:01:43 +0000
+Date:   Wed, 6 May 2020 11:01:36 -0700
 From:   Jeremy Allison <jra@samba.org>
 To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
         Anoop C S <anoopcs@cryptolab.net>,
         Samba Technical <samba-technical@lists.samba.org>,
         io-uring <io-uring@vger.kernel.org>
+Cc:     jra@samba.org
 Subject: Re: Data Corruption bug with Samba's vfs_iouring and Linux
  5.6.7/5.7rc3
-Message-ID: <20200506171304.GC3447@jeremy-acer>
+Message-ID: <20200506180136.GF3447@jeremy-acer>
 Reply-To: Jeremy Allison <jra@samba.org>
 References: <102c824b-b2f5-bbb1-02da-d2a78c3ff460@kernel.dk>
  <7ed7267d-a0ae-72ac-2106-2476773f544f@kernel.dk>
@@ -49,7 +50,7 @@ References: <102c824b-b2f5-bbb1-02da-d2a78c3ff460@kernel.dk>
  <36fd1c62-abfb-931c-ac31-f6afbbb313fb@samba.org>
  <20200506170344.GA32399@jeremy-acer>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="yEPQxsgoJgBvi8ip"
 Content-Disposition: inline
 In-Reply-To: <20200506170344.GA32399@jeremy-acer>
 User-Agent: Mutt/1.10.1 (2018-07-13)
@@ -58,7 +59,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+
+--yEPQxsgoJgBvi8ip
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
 On Wed, May 06, 2020 at 10:03:44AM -0700, Jeremy Allison via samba-technical wrote:
+> On Wed, May 06, 2020 at 04:08:03PM +0200, Stefan Metzmacher wrote:
+> > 
+> > smbclient is just smart enough to recover itself from the short read.
+> > But the windows client isn't.
 > 
 > Well we pay attention to the amount of data returned
 > and only increment the next read request by the amount
@@ -66,52 +76,51 @@ On Wed, May 06, 2020 at 10:03:44AM -0700, Jeremy Allison via samba-technical wro
 > 
 > I'm amazed that the Windows client doesn't seem to
 > check this !
-> 
-> > The attached test against liburing (git://git.kernel.dk/liburing) should
-> > be able to demonstrate the problem. It can also be found in
-> > https://github.com/metze-samba/liburing/tree/implicit-rwf-nowaithttps://github.com/metze-samba/liburing/commit/eb06dcfde747e46bd08bedf9def2e6cb536c39e3
-> > 
-> > 
-> > I added the sqe->rw_flags = RWF_NOWAIT; line in order to demonstrate it
-> > against the Ubuntu 5.3 and 5.4 kernels. They both seem to have the bug.
-> > 
-> > Can someone run the unmodified test/implicit-rwf_nowait against
-> > a newer kernel?
-> 
-> Aha. I wondered about the short read issue when this
-> was first reported but I could never catch it in the
-> act.
-> 
-> If the Windows client doesn't check and the kernel
-> returns short reads I guess we'll have to add logic
-> similar to tstream_readv_send()/tstream_writev_send()
-> that ensure all bytes requested/send actually go through
-> the interface and from/into the kernel unless a read
-> returns 0 (EOF) or a write returns an error.
-> 
-> What a pain though :-(. SMB2+ server implementors
-> really need to take note that Windows clients will corrupt
-> files if they get a short read/write return.
-> 
-> The fact that early kernels don't return short
-> reads on io_uring but later kernels do makes it
-> even worse :-(.
-> 
-> There's even an SMB2 protocol field in SMB2_READ:
-> 
-> "MinimumCount (4 bytes): The minimum number of bytes to be read for this operation to be
-> successful. If fewer than the minimum number of bytes are read by the server, the server
-> MUST return an error rather than the bytes read."
-> 
-> We correctly return EOF if the amount read from
-> the kernel is less than SMB2_READ.MinimumCount
-> so I'm guessing they're not using it or looking
-> at it (or setting it to zero).
-> 
-> MinimumCount is supposed to allow the client to cope with
-> this. Anoop, do you have wireshark traces so we can
-> see what the Windows clients are setting here ?
 
-Just did a quick check myself and Windows10 clients
-are setting Minimumcount==0 on read, so any amount
-should be good here.
+Confirmed. I just ran a copy test from a Windows10
+client copying from Samba with the attached patch
+applied (when reading from offset zero, reduce
+the amount of data returned by 2 bytes to force
+a short read return), and it reliably corrupts files.
+
+Windows isn't looking at the DataLength field
+of the SMB2_READ response :-(.
+
+--yEPQxsgoJgBvi8ip
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=look
+
+diff --git a/source3/modules/vfs_io_uring.c b/source3/modules/vfs_io_uring.c
+index 378e48d112f..d21a3485536 100644
+--- a/source3/modules/vfs_io_uring.c
++++ b/source3/modules/vfs_io_uring.c
+@@ -294,6 +294,7 @@ static void vfs_io_uring_fd_handler(struct tevent_context *ev,
+ struct vfs_io_uring_pread_state {
+ 	struct vfs_io_uring_request ur;
+ 	struct iovec iov;
++	off_t offset;
+ };
+ 
+ static struct tevent_req *vfs_io_uring_pread_send(struct vfs_handle_struct *handle,
+@@ -319,6 +320,7 @@ static struct tevent_req *vfs_io_uring_pread_send(struct vfs_handle_struct *hand
+ 	state->ur.config = config;
+ 	state->ur.req = req;
+ 	state->ur.state = state;
++	state->offset = offset;
+ 
+ 	SMBPROFILE_BYTES_ASYNC_START(syscall_asys_pread, profile_p,
+ 				     state->ur.profile_bytes, n);
+@@ -367,6 +369,11 @@ static ssize_t vfs_io_uring_pread_recv(struct tevent_req *req,
+ 		ret = state->ur.cqe.res;
+ 	}
+ 
++	//JRATEST
++	if (ret > 2 && state->offset == 0) {
++		ret = ret - 2;
++	}
++
+ 	tevent_req_received(req);
+ 	return ret;
+ }
+
+--yEPQxsgoJgBvi8ip--

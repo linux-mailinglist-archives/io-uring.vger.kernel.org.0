@@ -2,250 +2,440 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 493B21C6596
-	for <lists+io-uring@lfdr.de>; Wed,  6 May 2020 03:38:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7BB51C6E6D
+	for <lists+io-uring@lfdr.de>; Wed,  6 May 2020 12:34:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbgEFBif (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 5 May 2020 21:38:35 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3850 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728512AbgEFBif (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 5 May 2020 21:38:35 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5F6621D5AD0E07EADC97;
-        Wed,  6 May 2020 09:38:32 +0800 (CST)
-Received: from [10.74.191.121] (10.74.191.121) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.487.0; Wed, 6 May 2020 09:38:21 +0800
-Subject: Re: INFO: task hung in linkwatch_event (2)
-To:     syzbot <syzbot+96ff6cfc4551fcc29342@syzkaller.appspotmail.com>,
-        <allison@lohutok.net>, <aviad.krawczyk@huawei.com>,
-        <axboe@kernel.dk>, <davem@davemloft.net>,
-        <gregkh@linuxfoundation.org>, <io-uring@vger.kernel.org>,
-        <kuba@kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <luobin9@huawei.com>,
-        <netdev@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
-        <tglx@linutronix.de>, <viro@zeniv.linux.org.uk>
-References: <0000000000001779fd05a46b001f@google.com>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <24adc687-cdb1-3570-f7bc-9e3e51d4df4b@huawei.com>
-Date:   Wed, 6 May 2020 09:38:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1728768AbgEFKeL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 May 2020 06:34:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41516 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728716AbgEFKeJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 May 2020 06:34:09 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C50C061A0F
+        for <io-uring@vger.kernel.org>; Wed,  6 May 2020 03:34:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:From:Cc:To;
+        bh=ghYAX0d9yCxVjcF5lcTya2IBPrHRwUVwkdLxbg7w00I=; b=u4UdWd/ARq9h4vogCaLKeA2r38
+        Rd5X+yxUAWOAcx0xDH4H91RiLlrxK9rD/vTFZyZXGvqTsBMFpqbluc0eC2Lz9WQrqTgwn0Jf7MaL0
+        1zbPZiBXICbmCjLLhef0pP8GglRD/YbTsqhxTZzQRyts4n+lUfn33CgO8JMQ7dnaJZfXpDd7W8NJm
+        jLuG92XSzTa5V94gr3gSJn3xkUH1by3gJIaYGI8eYhnSA/9LOloJcmC/qa4p9oD7mPk6q5wdRLduG
+        8uli5jyjIW6ZLQyNdOXYdcKQ6+1PAK8/h0ONitUyY27/f73HWMxbFFGl2UVj5bzMwwqEGqWiDjf7S
+        bh7xcgNuDs+q4Yc/JCYo6QqaB9KHNPbpFGwhbkzXcXvGs9u1GwJVFhb2ShcsX/bHOvm3emG+F9jXv
+        CagJJIzJaQGQpzCjITNpgY4UxQGCIXQVx0GIbCJrZO6xDHBW/Vn+boPnPI0t6OcWBgE7J6lIJIq3P
+        yCFhs4D6IAIWTC/2U/N1VNPS;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1jWHNN-0004d9-OC; Wed, 06 May 2020 10:34:05 +0000
+To:     Anoop C S <anoopcs@cryptolab.net>, Jeremy Allison <jra@samba.org>
+Cc:     Samba Technical <samba-technical@lists.samba.org>,
+        io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
+References: <0009f6b7-9139-35c7-c0b1-b29df2a67f70@samba.org>
+ <102c824b-b2f5-bbb1-02da-d2a78c3ff460@kernel.dk>
+ <7ed7267d-a0ae-72ac-2106-2476773f544f@kernel.dk>
+ <cd53de09-5f4c-f2f0-41ef-9e0bfca9a37d@kernel.dk>
+ <f782fc6d-0f89-dca7-3bb0-58ef8f662392@kernel.dk>
+ <20200505174832.GC7920@jeremy-acer>
+ <3a3e311c7a4bc4d4df371b95ca0c66a792fab986.camel@cryptolab.net>
+From:   Stefan Metzmacher <metze@samba.org>
+Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
+ 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
+ t/YZOE37yKSj2rcCbqg=
+Subject: Re: Data Corruption bug with Samba's vfs_iouring and Linux
+ 5.6.7/5.7rc3
+Message-ID: <48c9ddf2-31a3-55f7-aa18-5b332c6be6a6@samba.org>
+Date:   Wed, 6 May 2020 12:33:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <0000000000001779fd05a46b001f@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
+In-Reply-To: <3a3e311c7a4bc4d4df371b95ca0c66a792fab986.camel@cryptolab.net>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="5Bi5nMIt7JpNqwwd1UNbUsQj7bbkVxNto"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2020/4/29 17:59, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    b4f63322 Merge branch 'for-linus' of git://git.kernel.org/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1558936fe00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b7a70e992f2f9b68
-> dashboard link: https://syzkaller.appspot.com/bug?extid=96ff6cfc4551fcc29342
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a57828100000
-> 
-> The bug was bisected to:
-> 
-> commit 386d4716fd91869e07c731657f2cde5a33086516
-> Author: Luo bin <luobin9@huawei.com>
-> Date:   Thu Feb 27 06:34:44 2020 +0000
-> 
->     hinic: fix a bug of rss configuration
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--5Bi5nMIt7JpNqwwd1UNbUsQj7bbkVxNto
+Content-Type: multipart/mixed; boundary="EVV2tXuzIhCj0wS29cz0ZK508UL2FrMg7";
+ protected-headers="v1"
+From: Stefan Metzmacher <metze@samba.org>
+To: Anoop C S <anoopcs@cryptolab.net>, Jeremy Allison <jra@samba.org>
+Cc: Samba Technical <samba-technical@lists.samba.org>,
+ io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
+Message-ID: <48c9ddf2-31a3-55f7-aa18-5b332c6be6a6@samba.org>
+Subject: Re: Data Corruption bug with Samba's vfs_iouring and Linux
+ 5.6.7/5.7rc3
+References: <0009f6b7-9139-35c7-c0b1-b29df2a67f70@samba.org>
+ <102c824b-b2f5-bbb1-02da-d2a78c3ff460@kernel.dk>
+ <7ed7267d-a0ae-72ac-2106-2476773f544f@kernel.dk>
+ <cd53de09-5f4c-f2f0-41ef-9e0bfca9a37d@kernel.dk>
+ <f782fc6d-0f89-dca7-3bb0-58ef8f662392@kernel.dk>
+ <20200505174832.GC7920@jeremy-acer>
+ <3a3e311c7a4bc4d4df371b95ca0c66a792fab986.camel@cryptolab.net>
+In-Reply-To: <3a3e311c7a4bc4d4df371b95ca0c66a792fab986.camel@cryptolab.net>
 
-The above patch does not seem to be the cause of the crash.
+--EVV2tXuzIhCj0wS29cz0ZK508UL2FrMg7
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-From the below call trace, it seems the blocking is caused by
-the tun_detach() which need to flush the all the pending work
-for each online cpu, it is the linkwatch_work that need to be
-flushed in this crash case. But the linkwatch_work() need to take
-RTNL lock, which is already taken by the tun_detach(), and that is
-where the blocking is happening.
+Hi Anoop,
 
-Possible way to fix or avoid this:
-1. Call flush_all_backlogs() without holding the RTNL lock, I am not
-   sure it is safe to do this.
-2. Disabling adding link event to the unregisterring netdev, and flush
-   all the pending link event without taking RTNL lock before calling
-   unregister_netdevice() in tun_detach().
+> I could reproduce the difference in SHA256 checksum after copying a
+> directory with 100 copies of test file(provided by reporter) from
+> io_uring VFS module enabled share using Windows explorer(right-click-
+>> copy/paste). Only 5 out of 100 files had correct checksum after copy
+> operation :-/
 
-Any better suggestion? Thanks.
+Great! Can you please try to collect level 1 log files with
+the patch https://bugzilla.samba.org/attachment.cgi?id=3D15955
+applied?
 
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16626fcfe00000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=15626fcfe00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11626fcfe00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+96ff6cfc4551fcc29342@syzkaller.appspotmail.com
-> Fixes: 386d4716fd91 ("hinic: fix a bug of rss configuration")
-> 
-> INFO: task kworker/1:5:2724 blocked for more than 143 seconds.
->       Not tainted 5.7.0-rc2-syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> kworker/1:5     D27416  2724      2 0x80004000
-> Workqueue: events linkwatch_event
-> Call Trace:
->  schedule+0xd0/0x2a0 kernel/sched/core.c:4163
->  schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4222
->  __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
->  __mutex_lock+0x7ab/0x13c0 kernel/locking/mutex.c:1103
->  linkwatch_event+0xb/0x60 net/core/link_watch.c:242
->  process_one_work+0x965/0x16a0 kernel/workqueue.c:2268
->  worker_thread+0x96/0xe20 kernel/workqueue.c:2414
->  kthread+0x388/0x470 kernel/kthread.c:268
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> INFO: task syz-executor.0:7053 blocked for more than 143 seconds.
->       Not tainted 5.7.0-rc2-syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> syz-executor.0  D23512  7053      1 0x80004006
-> Call Trace:
->  schedule+0xd0/0x2a0 kernel/sched/core.c:4163
->  schedule_timeout+0x55b/0x850 kernel/time/timer.c:1874
->  do_wait_for_common kernel/sched/completion.c:85 [inline]
->  __wait_for_common kernel/sched/completion.c:106 [inline]
->  wait_for_common kernel/sched/completion.c:117 [inline]
->  wait_for_completion+0x16a/0x270 kernel/sched/completion.c:138
->  __flush_work+0x4fd/0xa80 kernel/workqueue.c:3045
->  flush_all_backlogs net/core/dev.c:5527 [inline]
->  rollback_registered_many+0x562/0xe70 net/core/dev.c:8813
->  rollback_registered+0xf2/0x1c0 net/core/dev.c:8873
->  unregister_netdevice_queue net/core/dev.c:9969 [inline]
->  unregister_netdevice_queue+0x1d7/0x2b0 net/core/dev.c:9962
->  unregister_netdevice include/linux/netdevice.h:2725 [inline]
->  __tun_detach+0xe42/0x1110 drivers/net/tun.c:690
->  tun_detach drivers/net/tun.c:707 [inline]
->  tun_chr_close+0xd9/0x180 drivers/net/tun.c:3413
->  __fput+0x33e/0x880 fs/file_table.c:280
->  task_work_run+0xf4/0x1b0 kernel/task_work.c:123
->  exit_task_work include/linux/task_work.h:22 [inline]
->  do_exit+0xb34/0x2dd0 kernel/exit.c:795
->  do_group_exit+0x125/0x340 kernel/exit.c:893
->  get_signal+0x47b/0x24e0 kernel/signal.c:2739
->  do_signal+0x81/0x2240 arch/x86/kernel/signal.c:784
->  exit_to_usermode_loop+0x26c/0x360 arch/x86/entry/common.c:161
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
->  do_syscall_64+0x6b1/0x7d0 arch/x86/entry/common.c:305
->  entry_SYSCALL_64_after_hwframe+0x49/0xb3
-> RIP: 0033:0x4166ca
-> Code: Bad RIP value.
-> RSP: 002b:00007ffd4022d478 EFLAGS: 00000246 ORIG_RAX: 000000000000003d
-> RAX: fffffffffffffe00 RBX: 0000000001d60940 RCX: 00000000004166ca
-> RDX: 0000000040000000 RSI: 00007ffd4022d4b0 RDI: ffffffffffffffff
-> RBP: 0000000000002996 R08: 0000000000000001 R09: 0000000000000001
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-> R13: 00007ffd4022d4b0 R14: 0000000001d6099b R15: 00007ffd4022d4c0
-> 
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/1125:
->  #0: ffffffff899beb00 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5754
-> 3 locks held by kworker/1:5/2724:
->  #0: ffff8880aa026d38 ((wq_completion)events){+.+.}-{0:0}, at: __write_once_size include/linux/compiler.h:226 [inline]
->  #0: ffff8880aa026d38 ((wq_completion)events){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
->  #0: ffff8880aa026d38 ((wq_completion)events){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:855 [inline]
->  #0: ffff8880aa026d38 ((wq_completion)events){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:40 [inline]
->  #0: ffff8880aa026d38 ((wq_completion)events){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:615 [inline]
->  #0: ffff8880aa026d38 ((wq_completion)events){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:642 [inline]
->  #0: ffff8880aa026d38 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x844/0x16a0 kernel/workqueue.c:2239
->  #1: ffffc90008367dc0 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work+0x878/0x16a0 kernel/workqueue.c:2243
->  #2: ffffffff8a582268 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xb/0x60 net/core/link_watch.c:242
-> 1 lock held by in:imklog/6717:
->  #0: ffff888098d271b0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:826
-> 2 locks held by syz-executor.0/7053:
->  #0: ffffffff8a582268 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:704 [inline]
->  #0: ffffffff8a582268 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3a/0x180 drivers/net/tun.c:3413
->  #1: ffffffff89979ad0 (cpu_hotplug_lock){++++}-{0:0}, at: get_online_cpus include/linux/cpu.h:143 [inline]
->  #1: ffffffff89979ad0 (cpu_hotplug_lock){++++}-{0:0}, at: flush_all_backlogs net/core/dev.c:5520 [inline]
->  #1: ffffffff89979ad0 (cpu_hotplug_lock){++++}-{0:0}, at: rollback_registered_many+0x45b/0xe70 net/core/dev.c:8813
-> 3 locks held by kworker/1:6/14336:
->  #0: ffff88809ace8d38 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: __write_once_size include/linux/compiler.h:226 [inline]
->  #0: ffff88809ace8d38 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
->  #0: ffff88809ace8d38 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:855 [inline]
->  #0: ffff88809ace8d38 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:40 [inline]
->  #0: ffff88809ace8d38 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:615 [inline]
->  #0: ffff88809ace8d38 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:642 [inline]
->  #0: ffff88809ace8d38 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x844/0x16a0 kernel/workqueue.c:2239
->  #1: ffffc90004637dc0 ((addr_chk_work).work){+.+.}-{0:0}, at: process_one_work+0x878/0x16a0 kernel/workqueue.c:2243
->  #2: ffffffff8a582268 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_verify_work+0xa/0x20 net/ipv6/addrconf.c:4584
-> 
-> =============================================
-> 
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 1125 Comm: khungtaskd Not tainted 5.7.0-rc2-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x188/0x20d lib/dump_stack.c:118
->  nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
->  nmi_trigger_cpumask_backtrace+0x231/0x27e lib/nmi_backtrace.c:62
->  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
->  watchdog+0xa8c/0x1010 kernel/hung_task.c:289
->  kthread+0x388/0x470 kernel/kthread.c:268
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> Sending NMI from CPU 1 to CPUs 0:
-> NMI backtrace for cpu 0
-> CPU: 0 PID: 28894 Comm: syz-executor.0 Not tainted 5.7.0-rc2-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:io_ring_ctx_wait_and_kill+0x98/0x5e0 fs/io_uring.c:7329
-> Code: 01 00 00 4d 89 f4 48 b8 00 00 00 00 00 fc ff df 4c 89 ed 49 c1 ec 03 48 c1 ed 03 49 01 c4 48 01 c5 eb 1c e8 6a f2 9d ff f3 90 <41> 80 3c 24 00 0f 85 b0 04 00 00 48 83 bb 10 01 00 00 00 74 21 e8
-> RSP: 0018:ffffc90004e17a48 EFLAGS: 00000293
-> RAX: ffff888091758480 RBX: ffff888094860000 RCX: 1ffff920009c2f36
-> RDX: 0000000000000000 RSI: ffffffff81d53c26 RDI: ffff888094860300
-> RBP: ffffed101290c02c R08: 0000000000000001 R09: ffffed101290c061
-> R10: ffff888094860307 R11: ffffed101290c060 R12: ffffed101290c022
-> R13: ffff888094860160 R14: ffff888094860110 R15: ffffffff81d54170
-> FS:  00007fac6c1a8700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000560ad6a654a7 CR3: 0000000009879000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  io_uring_release+0x3e/0x50 fs/io_uring.c:7352
->  __fput+0x33e/0x880 fs/file_table.c:280
->  task_work_run+0xf4/0x1b0 kernel/task_work.c:123
->  exit_task_work include/linux/task_work.h:22 [inline]
->  do_exit+0xb34/0x2dd0 kernel/exit.c:795
->  do_group_exit+0x125/0x340 kernel/exit.c:893
->  get_signal+0x47b/0x24e0 kernel/signal.c:2739
->  do_signal+0x81/0x2240 arch/x86/kernel/signal.c:784
->  exit_to_usermode_loop+0x26c/0x360 arch/x86/entry/common.c:161
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
->  do_syscall_64+0x6b1/0x7d0 arch/x86/entry/common.c:305
->  entry_SYSCALL_64_after_hwframe+0x49/0xb3
-> RIP: 0033:0x45c829
-> Code: Bad RIP value.
-> RSP: 002b:00007fac6c1a7c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> RAX: 0000000000000003 RBX: 00000000004e0bc0 RCX: 000000000045c829
-> RDX: 0000000000000000 RSI: 0000000020000580 RDI: 00000000000000f1
-> RBP: 000000000078bf00 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 0000000000000204 R14: 00000000004c425f R15: 00007fac6c1a86d4
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
-> .
-> 
+If you use files with only 0xff please also use the
+"io_uring:check_ff=3Dyes" option.
+
+Maybe the problem is really triggered by short reads...
+
+Thanks!
+metze
+
+
+--EVV2tXuzIhCj0wS29cz0ZK508UL2FrMg7--
+
+--5Bi5nMIt7JpNqwwd1UNbUsQj7bbkVxNto
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl6ykpcACgkQDbX1YShp
+vVZsMg/+Jnnm4vqVAK8ghWxaEB+YCij64ct0oSmXfQWcA72pyJYL8gJqUYWqd06P
+g4C4KMRnZwpIboCXsux33xd9pod74IK4oBu2MVOidNfOiTkho/pgrREZKZEreDXS
+jYI5FD1XoA2UCg3NpVcOSOfRhKV1OVQ6VTj+a1qlun6E9Jl/k6s03hZ7eK5e3vDa
+X712fHAPdzHcbMVzduf6nwPhrt99P7gYFEwL/Hogr6bqXVV7XOArNQoiq8AKBrNH
+XbUpA/6Z/FarC9wCoWlHrA/+tjmEc695xnKQgQHI1CkF09ojU6xxj8Cus9lWjEsK
+Low3EBW1myVOzQfNV9RZy/73JJNf6QUzEh7K2Z0keyvPlF+eIBsBaXi8BtOBvT55
++jdKnj0JFrfHVEJxSx8Uprdhv7WaHceNnjrfxtcEZJuE51mRH4q0viW+ynxfQMT2
+9LMoIBKE1mKwbk94bKsm3qabQCtMjSTtcaXg8aqmxTatKeQhGYvnlU9zaaRWuZVz
+mq8XpJbW6sVBNeq50xOmGhDUSWB+Qkd+gBeZre+mWjjdm7o2Gcd8HRaJUdLWts2c
+skFPQfx23JzY46EYrfUVH3CYpuw/47mtNAlMHZr9u/0S/VoJeyKEYKWL3AdGoYqL
+vzADcbDjw5PcKqsQjUVd4o+2djt1uRfRUe4Uc5yK5iqHtH9/dCE=
+=2PRY
+-----END PGP SIGNATURE-----
+
+--5Bi5nMIt7JpNqwwd1UNbUsQj7bbkVxNto--

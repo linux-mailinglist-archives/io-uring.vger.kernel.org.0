@@ -2,61 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBBE21C7121
-	for <lists+io-uring@lfdr.de>; Wed,  6 May 2020 14:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC06A1C71FA
+	for <lists+io-uring@lfdr.de>; Wed,  6 May 2020 15:45:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbgEFM4X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 May 2020 08:56:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35554 "EHLO
+        id S1728058AbgEFNpg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 May 2020 09:45:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728173AbgEFM4W (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 May 2020 08:56:22 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5D6C061A0F
-        for <io-uring@vger.kernel.org>; Wed,  6 May 2020 05:56:22 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id w7so1242180wre.13
-        for <io-uring@vger.kernel.org>; Wed, 06 May 2020 05:56:22 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1725966AbgEFNpg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 May 2020 09:45:36 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B53EC061A0F
+        for <io-uring@vger.kernel.org>; Wed,  6 May 2020 06:45:36 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id s8so2269679wrt.9
+        for <io-uring@vger.kernel.org>; Wed, 06 May 2020 06:45:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3s+v+xRv6rNz1DJIK08eM4riAGUqlWYpBJhi7rOUDRE=;
-        b=mGfT0tru8cEKvYxCNeJ8EGvSULyVReqOYJDxkl6pvwmaOCF3/xhZPuCFagRMz2zda7
-         SNWALUJG8GUYkM6kgYjMtSRc/G7W0CVhHDxjWfUmG2v/D3PfqkktVMpHjrujLOv2G/sk
-         auw39Xcx3s/fPcqUyPYsAoCguscp8txVzzgA9ySb/UgFOT/Mcii00J0GoREAwrfwZrEA
-         XVt8k+x0VUmRzey7oGM4Vz0SwYB1dp9vEyHK/k8gOUXiHzuENvW6Yc5YCrH2EduUzlZR
-         ESyZJSXnlwVkK77ZOCIZP4XOnX5wM9NTxtkYJJWEJsi3vQzr4MCVKMwzTDzla66luGvo
-         C0Ig==
+        bh=3bSQ+b58zHUGRAxAgt3Z4F/KNvSB5vqhLF5vmymo4Vc=;
+        b=GJlTtcwL1KSpui3D6b18egPSXm8nZoxVoHz5icWo9R7RRx3anOEcwmnASt6RNa3lDU
+         2rOOEAWgPwVK1KMz6dE7VBfXfQaiF9+Z3fOuHM6roiicvpZEg1lv/ClhKekwc4pzkb8g
+         Wo+xs8/2nRFjPbYJqKl5RDOkp9K6ZHGUEMV3EUs5jY1Ic/0tgeHEsbBFxzr5sGW2rnNj
+         ZpQyZhF3leZ0hH7g/6ErDxgEJEHu6poTST7qd1Fo1AKGuAf9iKRfLZGwLWdpSIYlv2M+
+         W4rUP7l/qWJJC7Bdi5ZmphbVWnIJa9UzbWpbmHBuUWFVRqxveZL5+uEwLyryYik7zsCH
+         TpOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=3s+v+xRv6rNz1DJIK08eM4riAGUqlWYpBJhi7rOUDRE=;
-        b=Q2IphbSsUe7rPVgvxkZndFomVDzu5od2UP3QY6PaLSnPTVwB3qOZ3bchJj/Yx16l5q
-         FPA5KZrYWaS8+9bvc66wbZKk66mc+KF8gi5zAj6cXS4Dztf7GRps99firZtIMC86SSjp
-         TIMNfoKuBTPLjxlTU4GpLoKTnl/atRZmmyp/1b9muJ7WMgbjXzMm7XSgJlRiUKfVDc+M
-         9T2DMo+Bjvgjo9oR3OAY/vuZdlqTxTNexcxQLNi502qAO/FZb/wQDxl8o66rKYXZ0R5v
-         sZ42WETNhdpBHSE83QyuaTlMQad15TUnuxToFWfH8ohsyQWPPCFejqxCw+S604pv/54u
-         MpUA==
-X-Gm-Message-State: AGi0PuauOW8swO9JjawrfLY08ZRaNr4YEs0Ipck/q9LMbv9YBsn1QPot
-        8Rd40uZ5B8saJKmV0YF9R4zHFIdZj+A=
-X-Google-Smtp-Source: APiQypIG9n3BCGkRnyd7jvrhLFfZB+WkUAh8PJGr77DvYake2rBO4oouJEmymLlHGoIjf4gqC3BO4g==
-X-Received: by 2002:adf:810a:: with SMTP id 10mr9880145wrm.101.1588769780898;
-        Wed, 06 May 2020 05:56:20 -0700 (PDT)
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3bSQ+b58zHUGRAxAgt3Z4F/KNvSB5vqhLF5vmymo4Vc=;
+        b=OxGZSgBFUKMEKrzx0y1o/h1U4zHLjNHDx21bbgp3gknfHLGqH/sPJ27wg7mBLrscgm
+         qJe/Xysl3QVwgue864ltef+upxnKpUK0t+sgZg+ZGk2DMkWAgyV9R0yTkLd9NATT0CVY
+         EVzQiRjPV8rUk7EtKbc+ZYmhmCULvRN93ebv3U9zcXo5BUEHIHLF/6WAh4c2ShcXwhwC
+         nng2WZDQYHyBWlQuBNyyUbSlu1BzgkVb/uP0ZrgNV5ELgawvswBA1YkeUhjtlCA2CwvF
+         fiyHBAVOmpzHOhwPRGTjLT69RkgJK+7aTSg7nzCl4KTe0cGd3wBOMQWj9WJ74yIGIAew
+         OV5g==
+X-Gm-Message-State: AGi0PuaseXU9c5nawLrEK+q3eTh8n2LgH33/aKPQk5yrsyEWFeNFrSjR
+        toTwl9u14EONv52XYe7Dzfr6TvzJ
+X-Google-Smtp-Source: APiQypJ9/XPhsajyiLw9KHCxjfp1PvpbCUNerhxme0nphfpCj7iwS0eevO7F3aXjj3PAJo20d8lC4g==
+X-Received: by 2002:adf:9286:: with SMTP id 6mr147067wrn.179.1588772734570;
+        Wed, 06 May 2020 06:45:34 -0700 (PDT)
 Received: from [192.168.43.168] ([109.126.133.135])
-        by smtp.gmail.com with ESMTPSA id g6sm2720043wrw.34.2020.05.06.05.56.19
+        by smtp.gmail.com with ESMTPSA id 17sm3000221wmo.2.2020.05.06.06.45.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 May 2020 05:56:20 -0700 (PDT)
-To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        Samba Technical <samba-technical@lists.samba.org>,
-        Jeremy Allison <jra@samba.org>
-References: <0009f6b7-9139-35c7-c0b1-b29df2a67f70@samba.org>
- <102c824b-b2f5-bbb1-02da-d2a78c3ff460@kernel.dk>
- <7ed7267d-a0ae-72ac-2106-2476773f544f@kernel.dk>
- <cd53de09-5f4c-f2f0-41ef-9e0bfca9a37d@kernel.dk>
- <a8152d38-8ad4-ee4c-0e69-400b503358f3@samba.org>
+        Wed, 06 May 2020 06:45:34 -0700 (PDT)
+To:     Lorenzo Gabriele <lorenzolespaul@gmail.com>,
+        io-uring@vger.kernel.org
+References: <CAC40aqaSBwdBxQOn1T_ihtB=TnNLH91_xy05gFhvOG+3i3=ang@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -101,14 +95,14 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: Data Corruption bug with Samba's vfs_iouring and Linux
- 5.6.7/5.7rc3
-Message-ID: <6fb9286a-db89-9d97-9ae3-d3cc08ef9039@gmail.com>
-Date:   Wed, 6 May 2020 15:55:13 +0300
+Subject: Re: are volatile and memory barriers necessary for single threaded
+ code?
+Message-ID: <32cf6f07-c2df-76ed-5200-c39821cf6f61@gmail.com>
+Date:   Wed, 6 May 2020 16:44:25 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <a8152d38-8ad4-ee4c-0e69-400b503358f3@samba.org>
+In-Reply-To: <CAC40aqaSBwdBxQOn1T_ihtB=TnNLH91_xy05gFhvOG+3i3=ang@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -117,54 +111,37 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 05/05/2020 23:19, Stefan Metzmacher wrote:
-> Hi Jens,
-> 
->> Got it working, but apparently the arch samba doesn't come with io_uring...
->> One question, though, from looking at the source:
-> 
-> Thanks for taking a look!
-> 
->> static ssize_t vfs_io_uring_pread_recv(struct tevent_req *req,
->> 				  struct vfs_aio_state *vfs_aio_state)
->> {
->> [...]
->> 	if (state->ur.cqe.res < 0) {
->> 		vfs_aio_state->error = -state->ur.cqe.res;
->> 		ret = -1;
->> 	} else {
->> 		vfs_aio_state->error = 0;
->> 		ret = state->ur.cqe.res;
->> 	}
->>
->> 	tevent_req_received(req);
->> [...]
->>
->> I'm assuming this is dealing with short reads?
->>
->> I'll try and see if I can get an arch binary build that has the
->> vfs_io_uring module and reproduce.
-> 
-> I guess I don't expect short reads for files unless the client asked
-> for a read beyond EOF. Does IORING_OP_READV may return short reads
-> similar to preadv2 with RWF_NOWAIT? And if so, did this got changed
-> since 5.3?
+On 04/05/2020 19:54, Lorenzo Gabriele wrote:
+> Hi everyone,
+> I'm a complete noob so sorry if I'm saying something stupid.
+> I want to have a liburing-like library for the Scala Native language.
+> I can't easily use liburing itself because of some limitations of the
+> language.. So I was rewriting the C code in liburing in Scala Native.
+> The language is single threaded and, sadly, doesn't support atomic,
+> nor volatile. I was thinking what are the implications of completely
+> removing the memory barriers.
+> Are they needed for something related with multithreading or they are
+> needed regardless to utilize io_uring?
 
-AFAIK, it can. io_uring first tries to submit a request with IOCB_NOWAIT,
-in short for performance reasons. And it have been doing so from the beginning
-or so. The same is true for writes.
+Long story short, even if your app is single-threaded, io_uring is _not_.
+I wouldn't recommend removing it. See the comment below picked from io_uring.h
 
-> 
-> By default Samba uses pread()/pwrite() from within a helper thread
-> and I modeled the io_uring module with the same expecations that
-> we wouldn't get a short read if only part of the requested buffer (can
-> be up to 8MB) is returned because only some of it is already in the
-> buffer cache.
-> 
-> I'll try the ubuntu 5.4 kernel tomorrow.
-> 
-> metze
-> 
+/*
+ * After the application reads the CQ ring tail, it must use an
+ * appropriate smp_rmb() to pair with the smp_wmb() the kernel uses
+ * before writing the tail (using smp_load_acquire to read the tail will
+ * do). It also needs a smp_mb() before updating CQ head (ordering the
+ * entry load(s) with the head store), pairing with an implicit barrier
+ * through a control-dependency in io_get_cqring (smp_store_release to
+ * store head will do). Failure to do so could lead to reading invalid
+ * CQ entries.
+ */
+
+
+More difficult to say, what will actually happen. E.g. if you don't use polling
+io_uring modes, and if you don't do speculative CQ reaping, there is a pairing
+smp_rmb() just before returning from a wait. But, again, the io_uring ABI
+doesn't guarantee correctness without them.
 
 -- 
 Pavel Begunkov

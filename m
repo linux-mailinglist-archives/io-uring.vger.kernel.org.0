@@ -2,118 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD0AC1C7F92
-	for <lists+io-uring@lfdr.de>; Thu,  7 May 2020 03:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E2201C84B4
+	for <lists+io-uring@lfdr.de>; Thu,  7 May 2020 10:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbgEGBEv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 May 2020 21:04:51 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:41231 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727819AbgEGBEv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 May 2020 21:04:51 -0400
+        id S1725849AbgEGIWS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 7 May 2020 04:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48138 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725802AbgEGIWR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 7 May 2020 04:22:17 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FA19C061A10
+        for <io-uring@vger.kernel.org>; Thu,  7 May 2020 01:22:17 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id x4so5409968wmj.1
+        for <io-uring@vger.kernel.org>; Thu, 07 May 2020 01:22:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1588813490; x=1620349490;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version:subject;
-  bh=mgLJPqabMWDWSnT/E9DXYGzfgXs0DHdceKUrdhCdHCY=;
-  b=T0bCoSiClaAuE+Hi7AoetVl6wTuGRsXTnc0R94NGJC/6CG9YC/gRlpP5
-   7JkW2xklMa2iczvjtj2nnSEx0/vJ550xUW1kIcgOOokBOXuPhihfSiyqz
-   UPSkqQEDvmv3G7SV6MWQVKhmNu/AduVRe1dq/Vc3Wu6C6oE+BsjEL+ExN
-   U=;
-IronPort-SDR: U1w7QfcdayWrSz7L3taJ1ecNcNITqvPXR/fK1RKq+uXBdVtB8ji+07QvHHXxV7USaCa8ZGnYmY
- vg7q33QaCzRQ==
-X-IronPort-AV: E=Sophos;i="5.73,361,1583193600"; 
-   d="scan'208";a="29005515"
-Subject: Re: Non sequential linked chains and IO_LINK support
-Thread-Topic: Non sequential linked chains and IO_LINK support
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 07 May 2020 01:04:38 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com (Postfix) with ESMTPS id D2AF0A22F3;
-        Thu,  7 May 2020 01:04:36 +0000 (UTC)
-Received: from EX13D10UEA002.ant.amazon.com (10.43.61.18) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Thu, 7 May 2020 01:04:36 +0000
-Received: from EX13D14UWB001.ant.amazon.com (10.43.161.158) by
- EX13D10UEA002.ant.amazon.com (10.43.61.18) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Thu, 7 May 2020 01:04:35 +0000
-Received: from EX13D14UWB001.ant.amazon.com ([10.43.161.158]) by
- EX13D14UWB001.ant.amazon.com ([10.43.161.158]) with mapi id 15.00.1497.006;
- Thu, 7 May 2020 01:04:34 +0000
-From:   "Bhatia, Sumeet" <sumee@amazon.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RYsdJgMVI4EmksecG85zFIGfWLnetjCs9IAGhikztdM=;
+        b=GUGw/ULCHBhuw6jrbzPTpvvbmkAe7jtg6gTwCQ3ijmRXmQBn9b3wE9SFmGwLe/Wqh8
+         Vz3HRsF/2VFD2s+WrRFTsb/ev2PtYifUMhrVnSSah75apvAgx5Rw9RPYof88KD/TgZe1
+         4C0MSAUoiZRRkp5V+ui7uyiTYyZ9ckkXURJkXrqYfMhNDtXOrDAFC8FRxrizD6X2oFam
+         746DXNuv5DKniVCW5hRAgVsVsSluNGj5UCNrxyidpy4T4nYNSl4QvT+LGuBxOdZUNOqH
+         erNqduyOIRKnVdmnvkCltXzXmAicWl/1myO/jLHISsFRkPNGrCL0z9E7+1LyT4seqoya
+         QS+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=RYsdJgMVI4EmksecG85zFIGfWLnetjCs9IAGhikztdM=;
+        b=Utdgw9Q2angY+6uYbGfl5hyOA/whpaQZRuSBlWBfMJL5ACPrMBA4dhOGcod325pm+T
+         1s8AozrvcO7MXRtjTeZKJLDX2N/Dg+UIhaNPBMaXVOuNQU5PRaT9+APY9nlTIJAzUy48
+         8UATblBJYYyHO2yjx3UDNS+CQQ+/SGlLwhBnvo2feudznId4iJkM3PwnDujeNP/xgtD9
+         8nrgTZmI4Cz8X7EEU37rFDMIVUVdBDLgpcFxZYvzSoosD1J7sgWpLVs7un76BBCDQuB5
+         Wtc5YAha/LYHGxGzMxQrDOxDjVva3ixSu4biC//X0x5EdLFJmINjiH3Cpsd881W/9DiG
+         3upg==
+X-Gm-Message-State: AGi0PuasGn+uJYsCmQa3oL02sCEm5V4X23TjJzEbOhJXqm8idh5w0Eon
+        vFsIkP6GA/XW9nYcktwO51k=
+X-Google-Smtp-Source: APiQypLWNnBwJereasiqBKXeSbX1REVXIUeuo5S3SKCVJwRigTWFMmqLw1ioQmbRFByhxfaHGQyg6g==
+X-Received: by 2002:a1c:3c87:: with SMTP id j129mr8650245wma.157.1588839735547;
+        Thu, 07 May 2020 01:22:15 -0700 (PDT)
+Received: from [192.168.43.168] ([46.191.65.149])
+        by smtp.gmail.com with ESMTPSA id f7sm6488655wrt.10.2020.05.07.01.22.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 May 2020 01:22:15 -0700 (PDT)
+To:     "Bhatia, Sumeet" <sumee@amazon.com>,
         "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-CC:     "Hegde, Pramod" <phegde@amazon.com>, Jens Axboe <axboe@kernel.dk>
-Thread-Index: AQHWI+9s4Fi5GrZNSkiih0IwBQ/oNKibnsoAgAAvCVQ=
-Date:   Thu, 7 May 2020 01:04:34 +0000
-Message-ID: <1588813473189.20383@amazon.com>
-References: <1588801562969.24370@amazon.com>,<62a52be6-d538-b3ee-a071-4ff45da85a87@gmail.com>
-In-Reply-To: <62a52be6-d538-b3ee-a071-4ff45da85a87@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.160.180]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc:     "Hegde, Pramod" <phegde@amazon.com>
+References: <1588806165324.88604@amazon.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: Is it safe to submit and reap IOs in different threads?
+Message-ID: <4a364d95-d80e-979e-dc18-c17e6b2e4e3c@gmail.com>
+Date:   Thu, 7 May 2020 11:21:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <1588806165324.88604@amazon.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-VGhhbmsgeW91IGZvciB0aGUgcmVzcG9uc2UhCgpVbmZvcnR1bmF0ZWx5IHdoZW4gdGhlIGFwcGxp
-Y2F0aW9uIHN1Ym1pdHMgb3BlcmF0aW9uXzAgaXQgaGFzIG5vIHdheSBvZiBkZXRlcm1pbmluZyBp
-Zi93aGVuIG9wZXJhdGlvbl8yIHdvdWxkIGJlIGdlbmVyYXRlZC4gCgpGb3Igbm93IEkgcGxhbiB0
-byBtYWludGFpbiBhIGxpc3Qgb2Ygb3V0c3RhbmRpbmcgb3BlcmF0aW9ucy4gSWYgb3BlcmF0aW9u
-XzIgZ2V0cyBnZW5lcmF0ZWQgd2hpbGUgb3BlcmF0aW9uXzAgaXMgaW4gZmxpZ2h0IHRoZSBhcHBs
-aWNhdGlvbiB3aWxsIGhvbGQgaXRzIHN1Ym1pc3Npb24gdW50aWwgb3BlcmF0aW9uXzAgaXMgY29t
-cGxldGVkLiAKCkkgd2FudGVkIHRvIGNoZWNrIHdoZXRoZXIgdGhpcyB3b3VsZCBiZSBhIGdlbmVy
-aWMgdXNlIGNhc2UgYW5kIHdvdWxkIHdhcnJhbnQgbmF0aXZlIHN1cHBvcnQgaW4gaW91cmluZz8K
-ClRoYW5rcywKU3VtZWV0Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-RnJvbTogUGF2ZWwgQmVndW5rb3YgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+ClNlbnQ6IFdlZG5l
-c2RheSwgTWF5IDYsIDIwMjAgNjoxMSBQTQpUbzogQmhhdGlhLCBTdW1lZXQ7IGlvLXVyaW5nQHZn
-ZXIua2VybmVsLm9yZwpDYzogSGVnZGUsIFByYW1vZDsgSmVucyBBeGJvZQpTdWJqZWN0OiBSRTog
-W0VYVEVSTkFMXSBOb24gc2VxdWVudGlhbCBsaW5rZWQgY2hhaW5zIGFuZCBJT19MSU5LIHN1cHBv
-cnQKCkNBVVRJT046IFRoaXMgZW1haWwgb3JpZ2luYXRlZCBmcm9tIG91dHNpZGUgb2YgdGhlIG9y
-Z2FuaXphdGlvbi4gRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNz
-IHlvdSBjYW4gY29uZmlybSB0aGUgc2VuZGVyIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUu
-CgoKCk9uIDA3LzA1LzIwMjAgMDA6NDYsIEJoYXRpYSwgU3VtZWV0IHdyb3RlOgo+IEhlbGxvIGV2
-ZXJ5b25lLAo+Cj4gSSd2ZSBiZWVuIGV4cGxvcmluZyBpb3VyaW5nIHRvIHN1Ym1pdCBkaXNrIG9w
-ZXJhdGlvbnMuIE15IGFwcGxpY2F0aW9uIGdlbmVyYXRlcyBkaXNrIG9wZXJhdGlvbnMgYmFzZWQg
-b24gc29tZSBldmVudHMgYW5kIG9wZXJhdGlvbnMgYXJlIHVua25vd24gdW50aWwgdGhvc2UgZXZl
-bnRzIG9jY3VyLiAgU29tZSBvZiB0aGVzZSBkaXNrIG9wZXJhdGlvbnMgYXJlIGludGVyZGVwZW5k
-ZW50IG90aGVycyBhcmUgbm90Lgo+Cj4gRXhhbXBsZTogRm9sbG93aW5nIG9wZXJhdGlvbnMgYXJl
-IGdlbmVyYXRlZCBhbmQgc3VibWl0dGVkIGJlZm9yZSBhbnkgb2YgdGhlbSBhcmUgY29tcGxldGUK
-PiBvcGVyYXRpb25fMCAoaW5kZXBlbmRlbnQgb3BlcmF0aW9uKQo+IG9wZXJhdGlvbl8xIChpbmRl
-cGVuZGVudCBvcGVyYXRpb24pLOKAiwo+IG9wZXJhdGlvbl8yICh0byBiZSBpc3N1ZWQgb25seSBp
-ZiBvcGVyYXRpb25fMCB3YXMgc3VjY2Vzc2Z1bCksCj4gb3BlcmF0aW9uXzMgKGluZGVwZW5kZW50
-IG9wZXJhdGlvbiksCj4gb3BlcmF0aW9uXzQgKHRvIGJlIGlzc3VlZCBvbmx5IGlmIG9wZXJhdGlv
-bl8xIHdhcyBzdWNjZXNzZnVsKQo+Cj4gSW4gbXkgZXhhbXBsZSBJIGhhdmUgdHdvIGluZGVwZW5k
-ZW50IGxpbmsgY2hhaW5zLCAob3BlcmF0aW9uXzAsIG9wZXJhdGlvbl8yKSBhbmQgKG9wZXJhdGlv
-bl8xLCBvcGVyYXRpb25fNCkuICBpb3VyaW5nIGRvY3VtZW50YXRpb24gc3VnZ2VzdHMgSU9TUUVf
-SU9fTElOSyBleHBlY3RzIGxpbmsgY2hhaW5zIHRvIGJlIHNlcXVlbnRpYWwgYW5kIHdpbGwgbm90
-IHN1cHBvcnQgbXkgdXNlIGNhc2UuCgpGaXJzdCBvZiBhbGwsIHRoZXJlIHNob3VsZG4ndCBiZSBh
-IHN1Ym1pc3Npb24gKGkuZS4gaW9fdXJpbmdfZW50ZXIodG9fc3VibWl0PjApKQpiZXR3ZWVuIGFk
-ZGluZyBsaW5rZWQgcmVxdWVzdHMgdG8gYSBzdWJtaXNzaW9uIHF1ZXVlIChTUSkuIEl0J2QgYmUg
-cmFjeSBvdGhlcndpc2UuCgpFLmcuIHlvdSBjYW4ndCBkbzoKCmFkZF9zcWUob3AwKQpzdWJtaXQo
-b3AwKQphZGRfc3FlKG9wMiwgbGlua2VkKQoKVGhvdWdoIHRoZSBmb2xsb3dpbmcgaXMgdmFsaWQs
-IGFzIHdlIGRvbid0IHN1Ym1pdCBvcDA6CgphZGRfc3FlKG9wWCkKYWRkX3NxZShvcDApCnN1Ym1p
-dCh1cCB1bnRpbCBvcFgpCmFkZF9zcWUob3AyLCBsaW5rZWQpCgoKQW5kIHRoYXQgbWVhbnMgeW91
-IGNhbiByZW9yZGVyIHRoZW0ganVzdCBiZWZvcmUgc3VibWl0dGluZywgb3IgZmlsaW5nIHRoZW0g
-aW50bwp0aGUgU1EgaW4gYSBiZXR0ZXIgb3JkZXIuCgpJcyBpdCBoZWxwZnVsPyBMZXQncyBmaWd1
-cmUgb3V0IGhvdyB0byBjb3ZlciB5b3VyIGNhc2UuCgoKPiBJIGV4cGxvcmVkIGNyZWF0aW5nIG5l
-dyBpb3VyaW5nIGNvbnRleHQgZm9yIGVhY2ggb2YgdGhlc2UgbGlua2VkIGNoYWlucy4gQnV0IGl0
-IHR1cm5zIG91dCBkZXBlbmRpbmcgb24gZGlzayBzaXplIHRoZXJlIGNhbiBiZSBzb21ld2hlcmUg
-YmV0d2VlbiA1MDAtMTAwMCBzdWNoIGNoYWlucy4gSSdtIG5vdCBzdXJlIHdoZXRoZXIgaXQgaXMg
-cHJ1ZGVudCB0byBjcmVhdGUgdGhhdCBtYW55IGlvdXJpbmcgY29udGV4dHMuCgpUaGVuIHlvdSB3
-b3VsZCBuZWVkIHRvIHdhaXQgb24gdGhlbSAoZS5nLiBlcG9sbCBvciAxMDAwIHRocmVhZHMpLCBh
-bmQgdGhhdCB3b3VsZApkZWZlYXQgdGhlIHdob2xlIGlkZWEuIEluIGFueSBjYXNlIGV2ZW4gd2l0
-aCBzaGFyaW5nIGlvLXdxIGFuZCBoYXZpbmcgc21hbGwgQ1EKYW5kIFNRLCBpdCdkIGJlIHdhc3Rl
-ZnVsIGtlZXBpbmcgbWFueSByZXNvdXJjZXMgZHVwbGljYXRlZC4KCj4KPiBJIGFtIHJlYWNoaW5n
-IG91dCB0byBjaGVjayB3aGV0aGVyIHRoZXJlIHdvdWxkIGJlIGEgZ2VuZXJpYyBuZWVkIHRvIHN1
-cHBvcnQgbm9uc2VxdWVudGlhbCBsaW5rZWQgY2hhaW5zIG9uIGEgc2luZ2xlIGlvdXJpbmcgY29u
-dGV4dC4gV291bGQgbG92ZSB0byBoZWFyIGFsbCB5b3VyIHRob3VnaHRzLgo+Cj4gVGhhbmtzLAo+
-IFN1bWVldAo+CgotLQpQYXZlbCBCZWd1bmtvdgo=
+On 07/05/2020 02:02, Bhatia, Sumeet wrote:
+> Hello,
+> 
+> My application has a thread per disk (aka producer_thread) that generates disk operations. I have io-uring context per disk to ensure iouring submissions are from a single thread.
+> 
+> producer_thread executes only if new disk operations are to be submitted else it yields. It'll be significant code change to modify this behavior. For this reason I spin up a new thread (aka consumer thread) per io-uring context to reap IO completions.
+> 
+> My reading of fs/io_uring.c suggests it is safe to submit IOs from producer_thread and reap IOs from consumer_thread. My prototype based on liburing (Ref: https://pastebin.com/6u2FZB0D) works fine too. 
+> 
+> I would like to get your thoughts on whether this approach is indeed safe or am I overlooking any race condition?
+
+Shortly, if you don't mix up submissions and completions, it's safe. There is
+only pitfall I found in liburing -- you shouldn't pass a timeout in wait
+functions (e.g. io_uring_wait_cqes()), which would do submission.
+
+Also take a look:
+https://github.com/axboe/liburing/issues/108#issuecomment-619616721
+
+-- 
+Pavel Begunkov

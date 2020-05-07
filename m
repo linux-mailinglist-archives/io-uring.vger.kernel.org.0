@@ -2,86 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A08541C8FE7
-	for <lists+io-uring@lfdr.de>; Thu,  7 May 2020 16:37:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 367FA1C9553
+	for <lists+io-uring@lfdr.de>; Thu,  7 May 2020 17:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728679AbgEGOfu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 7 May 2020 10:35:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728102AbgEGO2Z (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 7 May 2020 10:28:25 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F3B6218AC;
-        Thu,  7 May 2020 14:28:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588861704;
-        bh=o6PaR1/R/MRl/FjFPECd7AUCCz6IqqoI0ngS/aGTPEw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xRz9wuoOEq8P0Yd4U/uQMToNKjwATxaobLbZP46O4yqR0IYplVS50NxQI1BdvCU0u
-         dFxH6t0C2pKD6beYl13OWLhJ4WdquyTw1on/bjYSEr0Y1SELochzanzUUHyBZ8y3EF
-         CtkIyhU0Ce5RobohesEBQFtS/ICAZnLyKBBf7vQk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 45/50] io_uring: use cond_resched() in io_ring_ctx_wait_and_kill()
-Date:   Thu,  7 May 2020 10:27:21 -0400
-Message-Id: <20200507142726.25751-45-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200507142726.25751-1-sashal@kernel.org>
-References: <20200507142726.25751-1-sashal@kernel.org>
+        id S1726393AbgEGPpb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 7 May 2020 11:45:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33016 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726538AbgEGPpb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 7 May 2020 11:45:31 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2070C05BD09
+        for <io-uring@vger.kernel.org>; Thu,  7 May 2020 08:45:30 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id d22so2985842pgk.3
+        for <io-uring@vger.kernel.org>; Thu, 07 May 2020 08:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=NYaUg5HujR7sQmyawubmYl3hcJlxfTXuEKXFBZh5EIc=;
+        b=Ss3kDmHogDZdKj41KkjFqKo8fnHPDSj2KSuSggY8NZeJYcML53gyEaOC3De8TBWgFD
+         yuf3Ue9z5v7Vaa7FsC9cHzDfA+CwRr7M41isRpX4c5KEfIoPICoNXdM9e/0IL2Y8S9Je
+         Is9tdNgj2qmYAdh+fWyO/3nJOzTa+aGUcdWIVGo0xdN+vdX766K1s6/woXwyb+/nyYbN
+         rign7egMM/NP/46hy7V6yL7M3yylWxV3+kzkKbrWJOCG0pvOTCGSmSi8Vl+2KkZIcN84
+         D3OUKtQRgVtGUfVa15GznJy0ZCl7sZEUqYzHObPBkL8k70mKDbJ0kU9fsu9O/YvcqCOC
+         jz/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NYaUg5HujR7sQmyawubmYl3hcJlxfTXuEKXFBZh5EIc=;
+        b=LgTOO5DUp87kKHLwKag1LU11Rnr/Ag6YELWMjFMgPuRcE2WaTgRkFVlxpzR3tAmjh3
+         8gV5SrQlHHUGuhpYO7+B9azrw9s47ATnKBvLajsQ20NqB7IITKws2ZbBg4GBI0iFgAFm
+         OQYDs7fBl0EfZoPkeWgK/DREG5F2cW4/n4K/nUM9pw96DFRNbuYGvHvUS0E3pKxi4okV
+         OqO0Iun231hjYeWBfa09SutdruG0KVOkmYvEjWiUjIdwLhrOQZlMailFzAjIfq0Kre4G
+         P7/y9sfJn3Uh6fZllSLjTtEMrAIOTaaVebEqyTvXqYta8rVW0pmx7tc1ozE1xmRgaVG0
+         UBGw==
+X-Gm-Message-State: AGi0PubA/YFGgQgQZMA0Iggvku2TA3nYurWlgwL0Sw7cdkxFN2gorPdS
+        OAXCe/SxlNLwOjNoPqchuP/XWA==
+X-Google-Smtp-Source: APiQypKBENGmsna8fKffRP5V2fMNHw/Sxc/xNdBGETyIGoaWr6WO+p7BbERfqYmoehmrWiUYKA2iHg==
+X-Received: by 2002:a62:764b:: with SMTP id r72mr14420954pfc.207.1588866329524;
+        Thu, 07 May 2020 08:45:29 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c085:21e8::1239? ([2620:10d:c090:400::5:ddfe])
+        by smtp.gmail.com with ESMTPSA id n9sm210681pjt.29.2020.05.07.08.45.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 May 2020 08:45:28 -0700 (PDT)
+Subject: Re: [PATCH for-5.7] splice: move f_mode checks to do_{splice,tee}()
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <51b4370ef70eebf941f6cef503943d7f7de3ea4d.1588621153.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e960f9f6-76ed-5c37-286f-9f8630336520@kernel.dk>
+Date:   Thu, 7 May 2020 09:45:27 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <51b4370ef70eebf941f6cef503943d7f7de3ea4d.1588621153.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+On 5/4/20 1:39 PM, Pavel Begunkov wrote:
+> do_splice() is used by io_uring, as will be do_tee(). Move f_mode
+> checks from sys_{splice,tee}() to do_{splice,tee}(), so they're
+> enforced for io_uring as well.
 
-[ Upstream commit 3fd44c86711f71156b586c22b0495c58f69358bb ]
+Applied for 5.7, thanks.
 
-While working on to make io_uring sqpoll mode support syscalls that need
-struct files_struct, I got cpu soft lockup in io_ring_ctx_wait_and_kill(),
-
-    while (ctx->sqo_thread && !wq_has_sleeper(&ctx->sqo_wait))
-        cpu_relax();
-
-above loop never has an chance to exit, it's because preempt isn't enabled
-in the kernel, and the context calling io_ring_ctx_wait_and_kill() and
-io_sq_thread() run in the same cpu, if io_sq_thread calls a cond_resched()
-yield cpu and another context enters above loop, then io_sq_thread() will
-always in runqueue and never exit.
-
-Use cond_resched() can fix this issue.
-
- Reported-by: syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com
-Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a46de2cfc28e8..b5ade01379029 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6449,7 +6449,7 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 	 * it could cause shutdown to hang.
- 	 */
- 	while (ctx->sqo_thread && !wq_has_sleeper(&ctx->sqo_wait))
--		cpu_relax();
-+		cond_resched();
- 
- 	io_kill_timeouts(ctx);
- 	io_poll_remove_all(ctx);
 -- 
-2.20.1
+Jens Axboe
 

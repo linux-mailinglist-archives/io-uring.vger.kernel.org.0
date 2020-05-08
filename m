@@ -2,111 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2260E1CB32C
-	for <lists+io-uring@lfdr.de>; Fri,  8 May 2020 17:37:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6695E1CB41D
+	for <lists+io-uring@lfdr.de>; Fri,  8 May 2020 17:55:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728426AbgEHPhL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 May 2020 11:37:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58486 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728418AbgEHPhL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 May 2020 11:37:11 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F247EC061A0C;
-        Fri,  8 May 2020 08:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=uQupytwSEXnv3/F3EONV14yFM9iDWY0BYhUPftguMlU=; b=ECjye1lFh/oDKkHSp8s8r3/PBL
-        bY/42wC5a85E1iHD+psjQ/gkXg7hcCE7r0N2ufr4ZnmtVS2rYT80SgF8xdIozTYFqxl0tf1Z49wkr
-        brImDOTrRr2yXeQqkxa8oM7wZ8d1A07kuZ+YelyRE3/Ejv0WR63qqwEi7NkSPvm6JCdwbnIFIuFhh
-        ca06xctQt3/rLg9MSgExt6X6hISxql6kbhSk4akzhzTPYah7nLCyDQJuj3qQCGYA/oqYFM9Kr5h5f
-        gIMF4UxTD82Q2/oQLlx6fL74cfXHXgNPMz/nvaxsMY6cMkjGOAWo/Ha8ThQx5El+S/JcOa/eOm9Qh
-        ch4YtVZw==;
-Received: from [2001:4bb8:180:9d3f:90d7:9df8:7cd:3504] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jX53m-0004ST-Ff; Fri, 08 May 2020 15:37:10 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S1728135AbgEHPzR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 May 2020 11:55:17 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45025 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727940AbgEHPzQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 May 2020 11:55:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588953315;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=o2NuVDMsNek1XqDZ23KXOT0aYU3U9mtuti+eij0cQ3Y=;
+        b=RH/5e3x/Aznsbd5AM1J6BO+2cqjJRQKQ+ghv58yZ4onqXKu52Yll3jfDrYllFqRXnZ0nKO
+        3f2rtaNllTzDrvWbaSRolJ2itxGSdcZE0opMh4qcFX2KXuNbcI3CtqooBvkUkAiwE+/gsb
+        us/8o0UifSojcAi6TAgXtPfpSD3kH2Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-172-tB1ktjf7Nd6ZDjXX8AJRsw-1; Fri, 08 May 2020 11:55:11 -0400
+X-MC-Unique: tB1ktjf7Nd6ZDjXX8AJRsw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 59A41107ACCA;
+        Fri,  8 May 2020 15:55:09 +0000 (UTC)
+Received: from w520.home (ovpn-113-111.phx2.redhat.com [10.3.113.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 615F6341E3;
+        Fri,  8 May 2020 15:55:08 +0000 (UTC)
+Date:   Fri, 8 May 2020 09:55:07 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-rdma@vger.kernel.org, kvm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH 12/12] vtpm_proxy: use __anon_inode_getfd
-Date:   Fri,  8 May 2020 17:36:34 +0200
-Message-Id: <20200508153634.249933-13-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200508153634.249933-1-hch@lst.de>
+Subject: Re: [PATCH 08/12] vfio: use __anon_inode_getfd
+Message-ID: <20200508095507.54051943@w520.home>
+In-Reply-To: <20200508153634.249933-9-hch@lst.de>
 References: <20200508153634.249933-1-hch@lst.de>
+        <20200508153634.249933-9-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Use __anon_inode_getfd instead of opencoding the logic using
-get_unused_fd_flags + anon_inode_getfile.
+On Fri,  8 May 2020 17:36:30 +0200
+Christoph Hellwig <hch@lst.de> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/char/tpm/tpm_vtpm_proxy.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
+> Use __anon_inode_getfd instead of opencoding the logic using
+> get_unused_fd_flags + anon_inode_getfile.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/vfio/vfio.c | 37 ++++++++-----------------------------
+>  1 file changed, 8 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-index 91c772e38bb54..4c0a31209ae5a 100644
---- a/drivers/char/tpm/tpm_vtpm_proxy.c
-+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-@@ -534,7 +534,7 @@ static struct file *vtpm_proxy_create_device(
- 				 struct vtpm_proxy_new_dev *vtpm_new_dev)
- {
- 	struct proxy_dev *proxy_dev;
--	int rc, fd;
-+	int fd;
- 	struct file *file;
- 
- 	if (vtpm_new_dev->flags & ~VTPM_PROXY_FLAGS_ALL)
-@@ -546,19 +546,10 @@ static struct file *vtpm_proxy_create_device(
- 
- 	proxy_dev->flags = vtpm_new_dev->flags;
- 
--	/* setup an anonymous file for the server-side */
--	fd = get_unused_fd_flags(O_RDWR);
--	if (fd < 0) {
--		rc = fd;
-+	fd = __anon_inode_getfd("[vtpms]", &vtpm_proxy_fops, proxy_dev, O_RDWR,
-+			&file);
-+	if (fd < 0)
- 		goto err_delete_proxy_dev;
--	}
--
--	file = anon_inode_getfile("[vtpms]", &vtpm_proxy_fops, proxy_dev,
--				  O_RDWR);
--	if (IS_ERR(file)) {
--		rc = PTR_ERR(file);
--		goto err_put_unused_fd;
--	}
- 
- 	/* from now on we can unwind with put_unused_fd() + fput() */
- 	/* simulate an open() on the server side */
-@@ -576,13 +567,9 @@ static struct file *vtpm_proxy_create_device(
- 
- 	return file;
- 
--err_put_unused_fd:
--	put_unused_fd(fd);
--
- err_delete_proxy_dev:
- 	vtpm_proxy_delete_proxy_dev(proxy_dev);
--
--	return ERR_PTR(rc);
-+	return ERR_PTR(fd);
- }
- 
- /*
--- 
-2.26.2
+
+Thanks!
+
+Acked-by: Alex Williamson <alex.williamson@redhat.com>
+
+> diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+> index 765e0e5d83ed9..33a88103f857f 100644
+> --- a/drivers/vfio/vfio.c
+> +++ b/drivers/vfio/vfio.c
+> @@ -1451,42 +1451,21 @@ static int vfio_group_get_device_fd(struct vfio_group *group, char *buf)
+>  		return ret;
+>  	}
+>  
+> -	/*
+> -	 * We can't use anon_inode_getfd() because we need to modify
+> -	 * the f_mode flags directly to allow more than just ioctls
+> -	 */
+> -	ret = get_unused_fd_flags(O_CLOEXEC);
+> -	if (ret < 0) {
+> -		device->ops->release(device->device_data);
+> -		vfio_device_put(device);
+> -		return ret;
+> -	}
+> -
+> -	filep = anon_inode_getfile("[vfio-device]", &vfio_device_fops,
+> -				   device, O_RDWR);
+> -	if (IS_ERR(filep)) {
+> -		put_unused_fd(ret);
+> -		ret = PTR_ERR(filep);
+> -		device->ops->release(device->device_data);
+> -		vfio_device_put(device);
+> -		return ret;
+> -	}
+> -
+> -	/*
+> -	 * TODO: add an anon_inode interface to do this.
+> -	 * Appears to be missing by lack of need rather than
+> -	 * explicitly prevented.  Now there's need.
+> -	 */
+> +	ret = __anon_inode_getfd("[vfio-device]", &vfio_device_fops,
+> +				   device, O_CLOEXEC | O_RDWR, &filep);
+> +	if (ret < 0)
+> +		goto release;
+>  	filep->f_mode |= (FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE);
+> -
+>  	atomic_inc(&group->container_users);
+> -
+>  	fd_install(ret, filep);
+>  
+>  	if (group->noiommu)
+>  		dev_warn(device->dev, "vfio-noiommu device opened by user "
+>  			 "(%s:%d)\n", current->comm, task_pid_nr(current));
+> -
+> +	return ret;
+> +release:
+> +	device->ops->release(device->device_data);
+> +	vfio_device_put(device);
+>  	return ret;
+>  }
+>  
 

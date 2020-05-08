@@ -2,121 +2,127 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A82A51CB60D
-	for <lists+io-uring@lfdr.de>; Fri,  8 May 2020 19:32:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAEAF1CB8A0
+	for <lists+io-uring@lfdr.de>; Fri,  8 May 2020 21:53:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbgEHRcy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 May 2020 13:32:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48340 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726746AbgEHRcx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 May 2020 13:32:53 -0400
-Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62700C061A0C;
-        Fri,  8 May 2020 10:32:53 -0700 (PDT)
-Received: by mail-qt1-x842.google.com with SMTP id h26so1926535qtu.8;
-        Fri, 08 May 2020 10:32:53 -0700 (PDT)
+        id S1726767AbgEHTw7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 May 2020 15:52:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42110 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727825AbgEHTw6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 May 2020 15:52:58 -0400
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 745C4C05BD0B
+        for <io-uring@vger.kernel.org>; Fri,  8 May 2020 12:52:58 -0700 (PDT)
+Received: by mail-qk1-x741.google.com with SMTP id q7so2987843qkf.3
+        for <io-uring@vger.kernel.org>; Fri, 08 May 2020 12:52:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8u1vbu5bJ69YihL8GWipXODDQVOvMStlxTqzIrRkPUQ=;
-        b=CevGhA3drB9rx9GAhf7Jd40EnNtr3XglCd18jTPTpJsgn56s0Q9ZugmY0aQqMnSGTH
-         7aagHQfF3X78TVXApqMaxjd66mhtOXvmL/4HYUWJW/adXA8e8n5GfPBPmQNAL19OfDE5
-         LKmSVl8km7PxkynymVQEPV4lk577a7G6pryLd8OTLGPtsbCEaAV29/jnVDoGOchK+oXF
-         ADZkHhl+hkYYLZCeFVTd3IXBBgi7Vcs9qr0dwPmfQ9/ULwOPvDSa/PgxDmkfuyvSzJ6H
-         sC+yukRWl+pPdTIl3k+mflFAJ1SndgezVfhRdzQGFW2qCsOZjs94dn27Zb6+yY1dofoM
-         xFPQ==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+PiQ6ckxUTnSDo+AGLRh/Fg+o3k0O3ko3wY06x3JoKE=;
+        b=Ts3CIrENqZECosUV9ufuB6NplQ4bZIANry4cTq9ctiFl2W3eKhj5UpDDQOEaY6A2Yd
+         mNvqS8MpDNbFmXG47isv0LHHuWhU9DrWeNeUqpMHP3rRP+c5b6gcvtAg+8ZLRMd/gdoD
+         1i8v4D54gKF1JaotzplFLT3nMfQ5VKcTVTMjFomlH2d9ykBhs9YeoAV4r0fEyjl3TlPr
+         v2KDioACvLG1JOHWROC3jtqtFiE8v+6chVfwhJVwQ6LpHrO+DnmO5kWS3VjbGmk9WNEY
+         aeK1VQ7Ix6UqBc9nyw9EdxtaWdyBCOYz2f1ZZWBmiN42UGRN2WCkIjnAj9hWJy7yjUPW
+         HsMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8u1vbu5bJ69YihL8GWipXODDQVOvMStlxTqzIrRkPUQ=;
-        b=RN422PLdjE8go6AuR72FJuTgiBzmtnpYBWzaGZYP3BNaZGF4ofuRufgeE4QXVRyFXS
-         wT6Uqp4sZb8OzRfgzSlVEHpCPSzJHK4+SX0n2pLrZTG7qjNKk0W3Rvri0CJYSilJXc/H
-         4kL8nlGnSVgj6O0wEhLFBWL3sMvvQtsNBfHfbyLPqFUpfCXSsojm9Bi/u2vKBWbxJyUZ
-         5Rbzwv+mK39nx495fsByG58gzAwTOXGSK9UwSEBZJuJ1VYo5iWkDVYK3k/kBBMfEoXM6
-         eR17In0P35gkRK9xxc8aYddKHScusjFhJYNdGmUDIIBnISNwRrS1TqFdXqG+HzTdAwDP
-         E0kA==
-X-Gm-Message-State: AGi0PuZ/W84N46cblyjD6WQwXcQ/wTq7XnqgYu3XaKJNd1Qcr0JiEJ15
-        xLZnwcQyn9sZVQX4X0JqcqDx0CoSRnww8Z3Mk1kJPgN0
-X-Google-Smtp-Source: APiQypI1ltj7u5Bq7am8qePoEo4cQ/trbraNCdyogcK0LAAg4BY0jq2I7/GsLnM1GzSePjDroYbXz+4CAgFA1/GrFDU=
-X-Received: by 2002:ac8:51d3:: with SMTP id d19mr4033765qtn.141.1588959172426;
- Fri, 08 May 2020 10:32:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200508153634.249933-1-hch@lst.de> <20200508153634.249933-5-hch@lst.de>
-In-Reply-To: <20200508153634.249933-5-hch@lst.de>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Fri, 8 May 2020 10:32:41 -0700
-Message-ID: <CAEf4BzZ-gE87RVLPHGBfoNhHB+H7AnPbb7UUE7EGq8T5p_en_w@mail.gmail.com>
-Subject: Re: [PATCH 04/12] bpf: use __anon_inode_getfd
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+PiQ6ckxUTnSDo+AGLRh/Fg+o3k0O3ko3wY06x3JoKE=;
+        b=ney89GSzTB1cVjYCmVjQugWkTEfes1IBV5ri82FZ9nP3SgIewIhtn7iBek+7G74tH7
+         o1dbtEhXlDK65yLc4tMsufC83EmPeTprEDlIYxuqijnoOXsqSAIrgXz4GzxQyM5sDdFq
+         VeNkwmP9lGfjdojeQcGXCn5txsV7Qg/d6inw6ieHYIGxRZSPsq+832IJ+KHB8siv3iw0
+         AJ9rVQfzf/5IEVFbRP98/3Gs611vq5aEdPVQ0cgVFWGxU7qDILZp56FPMVTqmZZjxceF
+         rHpq6ySh0kVpVC8E6b6/ewsXoOz3XsRyrzxgB+2nkbtRqtzYZGBTp9zpiL+a+v2mmnB6
+         soZQ==
+X-Gm-Message-State: AGi0PuZ3uQC3u/Q9aq6aIlwkKz7FYtPoKbRE0KtrhBL0n4xVJkkXnJXn
+        tIUfhgZvTvPtZ8lBZL9c5Iq3lQ==
+X-Google-Smtp-Source: APiQypJ92/0qZ5iunL9hikarn4eDK0RllMv8mjTvIrEJ1zjbLNqAjWeKqDY9cc4vVlZEbqAojJlNqA==
+X-Received: by 2002:a37:a4d8:: with SMTP id n207mr4488919qke.354.1588967577470;
+        Fri, 08 May 2020 12:52:57 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id c4sm1945896qkf.120.2020.05.08.12.52.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 May 2020 12:52:56 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1jX93I-0002SQ-9Q; Fri, 08 May 2020 16:52:56 -0300
+Date:   Fri, 8 May 2020 16:52:56 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-rdma@vger.kernel.org, kvm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH 09/12] rdma: use __anon_inode_getfd
+Message-ID: <20200508195256.GA8912@ziepe.ca>
+References: <20200508153634.249933-1-hch@lst.de>
+ <20200508153634.249933-10-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200508153634.249933-10-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, May 8, 2020 at 8:39 AM Christoph Hellwig <hch@lst.de> wrote:
->
+On Fri, May 08, 2020 at 05:36:31PM +0200, Christoph Hellwig wrote:
 > Use __anon_inode_getfd instead of opencoding the logic using
-> get_unused_fd_flags + anon_inode_getfile.  Also switch the
-> bpf_link_new_file calling conventions to match __anon_inode_getfd.
->
+> get_unused_fd_flags + anon_inode_getfile.
+> 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  include/linux/bpf.h  |  2 +-
->  kernel/bpf/cgroup.c  |  6 +++---
->  kernel/bpf/syscall.c | 31 +++++++++----------------------
->  3 files changed, 13 insertions(+), 26 deletions(-)
->
+>  drivers/infiniband/core/rdma_core.c | 17 ++++-------------
+>  1 file changed, 4 insertions(+), 13 deletions(-)
 
-[...]
-
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 64783da342020..cb2364e17423c 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -2307,23 +2307,10 @@ int bpf_link_new_fd(struct bpf_link *link)
->   * complicated and expensive operations and should be delayed until all the fd
->   * reservation and anon_inode creation succeeds.
->   */
-
-The comment above explains the reason why we do want to split getting
-fd, getting file, and installing fd later. I'd like to keep it this
-way. Also, this code was refactored in bpf-next by [0] (it still uses
-get_unused_fd_flag + anon_inode_getfile + fd_install, by design).
-
-  [0] https://patchwork.ozlabs.org/project/netdev/patch/20200429001614.1544-3-andriin@fb.com/
-
-> -struct file *bpf_link_new_file(struct bpf_link *link, int *reserved_fd)
-> +int bpf_link_new_file(struct bpf_link *link, struct file **file)
->  {
-> -       struct file *file;
-> -       int fd;
+ 
+> diff --git a/drivers/infiniband/core/rdma_core.c b/drivers/infiniband/core/rdma_core.c
+> index 5128cb16bb485..541e5e06347f6 100644
+> --- a/drivers/infiniband/core/rdma_core.c
+> +++ b/drivers/infiniband/core/rdma_core.c
+> @@ -462,30 +462,21 @@ alloc_begin_fd_uobject(const struct uverbs_api_object *obj,
+>  	if (WARN_ON(fd_type->fops->release != &uverbs_uobject_fd_release))
+>  		return ERR_PTR(-EINVAL);
+>  
+> -	new_fd = get_unused_fd_flags(O_CLOEXEC);
+> -	if (new_fd < 0)
+> -		return ERR_PTR(new_fd);
 > -
-> -       fd = get_unused_fd_flags(O_CLOEXEC);
-> -       if (fd < 0)
-> -               return ERR_PTR(fd);
-> -
-> -       file = anon_inode_getfile("bpf_link", &bpf_link_fops, link, O_CLOEXEC);
-> -       if (IS_ERR(file)) {
-> -               put_unused_fd(fd);
-> -               return file;
-> -       }
-> -
-> -       *reserved_fd = fd;
-> -       return file;
-> +       return __anon_inode_getfd("bpf_link", &bpf_link_fops, link, O_CLOEXEC,
-> +                       file);
->  }
->
+>  	uobj = alloc_uobj(attrs, obj);
+>  	if (IS_ERR(uobj))
+> -		goto err_fd;
+> +		return uobj;
+>  
+>  	/* Note that uverbs_uobject_fd_release() is called during abort */
+> -	filp = anon_inode_getfile(fd_type->name, fd_type->fops, NULL,
+> -				  fd_type->flags);
+> -	if (IS_ERR(filp)) {
+> -		uobj = ERR_CAST(filp);
+> +	new_fd = __anon_inode_getfd(fd_type->name, fd_type->fops, NULL,
+> +			fd_type->flags | O_CLOEXEC, &filp);
+> +	if (new_fd < 0)
+>  		goto err_uobj;
 
-[...]
+This will conflict with a fix (83a267021221 'RDMA/core: Fix
+overwriting of uobj in case of error') that is going to go to -rc
+soon.
+
+Also the above misses returning an ERR_PTR if __anon_inode_getfd fails, it
+returns a uobj that had been freed.. I suppose it should be something
+like
+
+if (new_fd < 0) {
+   uverbs_uobject_put(uobj);
+   return ERR_PTR(new_fd)
+}
+
+?
+
+Jason

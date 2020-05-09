@@ -2,77 +2,138 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EDF11CBCF7
-	for <lists+io-uring@lfdr.de>; Sat,  9 May 2020 05:30:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A19CB1CBF58
+	for <lists+io-uring@lfdr.de>; Sat,  9 May 2020 10:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728355AbgEIDa3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 May 2020 23:30:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728353AbgEIDa3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 May 2020 23:30:29 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20CB4C061A0C
-        for <io-uring@vger.kernel.org>; Fri,  8 May 2020 20:30:29 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id b6so1586326plz.13
-        for <io-uring@vger.kernel.org>; Fri, 08 May 2020 20:30:29 -0700 (PDT)
+        id S1726067AbgEIIrf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 9 May 2020 04:47:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49502 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725989AbgEIIrf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 9 May 2020 04:47:35 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 195F5C061A0C;
+        Sat,  9 May 2020 01:47:35 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id g14so2782945wme.1;
+        Sat, 09 May 2020 01:47:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mhP8WlApXsmxKUxMxHyGB9cXYz3ZMDdZWnzpx3gHLjQ=;
-        b=kvz+ptryMagrAvaKJQInk9vHFnbCyHx2ofYRCF/e3BQrhMFB95jhw66zO0947nunIP
-         rsvrjoNasC9xf+gTk/bkhlTeimOZFeeoTXyfDWI1e53+/nLsm2nJecn80TWQnl27w9mb
-         WEjvoNH6SiIP5ijY2+vOtBIaWjhhBNCG1fwsO9zr26Mpata3VpHObiJtaHnnaP6n7cuO
-         9etmvIVN9VYZJoWd6mlCKO/NLLnzdJq3UttOGOF13jfRPfQGaIj2oKWtIth+IY8McR+b
-         KX4K30GltVxwDyRecl9VWo9grzqAm1CwJ+w9c/ADRgmb1o/T3/MDdGmFnX/DJVMGX1P9
-         Gv4A==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vpA2mMnqtCdcczzkn/BswPLFEz3AqGdCg7CXXHUsINQ=;
+        b=fsf5L63RngfsFHogIddKCefBwaJMD0i/7d0SGXzwlzuQj5veMbf37TVxzV3XhU9pPz
+         W3ajImjcN6U19WkMWXjlRHamJXtXoycA2qWpk2mE6P3NhptdU5Yrfri5GHcyqow04Aeu
+         RXDko3XlzZDmtJqLLe67ojhStsta03uAlGDfjh0p1FcSe4yWUMYxG4tT0HHRFh+lLRhI
+         NdVWae3mQ3/hEHGcMkmdPgwsWrnAq33BteCX+tAKcHnVTl6zeFJKgexr10cKOvW3KRJy
+         8XNpqln4a2EZBODt9MIcl+XAwEnOYXh4XzfZQJrf+VQQw0tuPFW9SubM+p0FJeyHqGOs
+         pDkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=mhP8WlApXsmxKUxMxHyGB9cXYz3ZMDdZWnzpx3gHLjQ=;
-        b=dFZMDAP1KpgoTnDrD320/W5c6D6XpOGjgEhF963N0n3Psbv0MjOEiossL0WILXLmO6
-         IXcoMX0cuvyen3tz/3rbfJ8coBRXzVRgK663MlGrHHMThDbXqiUTlv9Hvj/S6iaGYXmu
-         QRqBeXAnN1TqYxmjMwfVFrQRUyW8h+wKBePYYbCKEybT9jmZtXFFZ7UzOc+Za+nOexwL
-         mG+mXZ+4TxxzI1eZuAOUk+dQlQ09X/wYptVyBFCeEiy4Dmseknu4eNGLx6yAdTxXuWxW
-         28EjAC8rHcfgQvF7wBp1yrM4l4PGYF2KU2kN5ETjrrJY724765BXMeCf3mKJ8O8E7Itt
-         IZrw==
-X-Gm-Message-State: AGi0PuYY03cnvfy9kxPohPDAYWXLZ6nEgJr3ob5WRgdL3DV3Mk9HAclS
-        fdzc2mtZcxIYxPEGIHxfyDsc+LDrGGI=
-X-Google-Smtp-Source: APiQypKKGpsCg9nBOdp1edp5RKml6NjjNazdiiYf3qUl21Ki7omdxMw+sYNOFUd5H+elkpyHkNcp1Q==
-X-Received: by 2002:a17:90a:24e6:: with SMTP id i93mr9387269pje.13.1588995028386;
-        Fri, 08 May 2020 20:30:28 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id d184sm3101562pfc.130.2020.05.08.20.30.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 May 2020 20:30:27 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: remove obsolete 'state' parameter
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200508131930.38743-1-xiaoguang.wang@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <334bbc31-6084-eac3-6731-fa0d5a0f3ba9@kernel.dk>
-Date:   Fri, 8 May 2020 21:30:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        bh=vpA2mMnqtCdcczzkn/BswPLFEz3AqGdCg7CXXHUsINQ=;
+        b=fqN58LfDSs52XzzazE5KnzNYwKCqMkxVhluubeFKrkBD2glSI8FwajeEqa9Ql4V2mE
+         yVCOZGvB2hIi2Vb6m0jSuntmuhsfGfb6/IrNWECgtQ3xH3eWDO+lhfBSb8JvUHJBx5aQ
+         FdLcC8w5A3j9nPNOFrAC/+PV7KctspnY0N3FQP52jtsnmVrUy0orgRghhCF0B+H+a9AH
+         b081hbZMjqjgW+KHS1UsxpTQH8XhXlf7yx5fKE5o6vAIsvD/b9dCiRa5I3TGB1cgWIZP
+         lnOALqlNLJ67Jxyg6rAfj7RXv7GxFrVxfOzeZ37h++sxEZlFFN0BDJSlXTSyO0b3WPxa
+         n9WQ==
+X-Gm-Message-State: AGi0PuZvGJLS8rL9ZSV4hASmZoRjyjuzRCqeA0y6GTddoBrP3tWDFGQX
+        3as1fevObWnXl5bJhwLQ48aI5TI7
+X-Google-Smtp-Source: APiQypKZkVDG+otFrlSCvBOkm7q7k+tzlXizLMWX5sXQxqKVfB8TYKqQb5B6dyx1LlKk2FYszyfWBQ==
+X-Received: by 2002:a7b:cf23:: with SMTP id m3mr19772826wmg.36.1589014053596;
+        Sat, 09 May 2020 01:47:33 -0700 (PDT)
+Received: from localhost.localdomain ([46.191.65.149])
+        by smtp.gmail.com with ESMTPSA id b20sm16145044wme.9.2020.05.09.01.47.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 May 2020 01:47:33 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC] splice/tee: len=0 fast path after validity check
+Date:   Sat,  9 May 2020 11:46:18 +0300
+Message-Id: <14d4955e8c232ea7d2cbb2c2409be789499e0452.1589013737.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20200508131930.38743-1-xiaoguang.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/8/20 7:19 AM, Xiaoguang Wang wrote:
-> The "struct io_submit_state *state" parameter is not used, remove it.
+When len=0, splice() and tee() return 0 even if specified fds are
+invalid, hiding errors from users. Move len=0 optimisation later after
+basic validity checks.
 
-Applied for 5.8, thanks.
+before:
+splice(len=0, fd_in=-1, ...) == 0;
 
+after:
+splice(len=0, fd_in=-1, ...) == -EBADF;
+
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+
+Totally leaving it at yours judgment, but it'd be nice to have
+for io_uring as well.
+
+ fs/splice.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/fs/splice.c b/fs/splice.c
+index a1dd54de24d8..8d6fc690f8e9 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1122,6 +1122,9 @@ long do_splice(struct file *in, loff_t __user *off_in,
+ 		     !(out->f_mode & FMODE_WRITE)))
+ 		return -EBADF;
+ 
++	if (unlikely(!len))
++		return 0;
++
+ 	ipipe = get_pipe_info(in);
+ 	opipe = get_pipe_info(out);
+ 
+@@ -1426,9 +1429,6 @@ SYSCALL_DEFINE6(splice, int, fd_in, loff_t __user *, off_in,
+ 	struct fd in, out;
+ 	long error;
+ 
+-	if (unlikely(!len))
+-		return 0;
+-
+ 	if (unlikely(flags & ~SPLICE_F_ALL))
+ 		return -EINVAL;
+ 
+@@ -1535,7 +1535,6 @@ static int splice_pipe_to_pipe(struct pipe_inode_info *ipipe,
+ 	int ret = 0;
+ 	bool input_wakeup = false;
+ 
+-
+ retry:
+ 	ret = ipipe_prep(ipipe, flags);
+ 	if (ret)
+@@ -1769,6 +1768,9 @@ long do_tee(struct file *in, struct file *out, size_t len, unsigned int flags)
+ 	 * copying the data.
+ 	 */
+ 	if (ipipe && opipe && ipipe != opipe) {
++		if (unlikely(!len))
++			return 0;
++
+ 		if ((in->f_flags | out->f_flags) & O_NONBLOCK)
+ 			flags |= SPLICE_F_NONBLOCK;
+ 
+@@ -1795,9 +1797,6 @@ SYSCALL_DEFINE4(tee, int, fdin, int, fdout, size_t, len, unsigned int, flags)
+ 	if (unlikely(flags & ~SPLICE_F_ALL))
+ 		return -EINVAL;
+ 
+-	if (unlikely(!len))
+-		return 0;
+-
+ 	error = -EBADF;
+ 	in = fdget(fdin);
+ 	if (in.file) {
 -- 
-Jens Axboe
+2.24.0
 

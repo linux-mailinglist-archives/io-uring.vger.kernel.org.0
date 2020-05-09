@@ -2,127 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAEAF1CB8A0
-	for <lists+io-uring@lfdr.de>; Fri,  8 May 2020 21:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29AFE1CBCDD
+	for <lists+io-uring@lfdr.de>; Sat,  9 May 2020 05:13:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbgEHTw7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 May 2020 15:52:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42110 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727825AbgEHTw6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 May 2020 15:52:58 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 745C4C05BD0B
-        for <io-uring@vger.kernel.org>; Fri,  8 May 2020 12:52:58 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id q7so2987843qkf.3
-        for <io-uring@vger.kernel.org>; Fri, 08 May 2020 12:52:58 -0700 (PDT)
+        id S1728353AbgEIDMy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 May 2020 23:12:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54332 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728625AbgEIDMx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 May 2020 23:12:53 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F648C061A0C
+        for <io-uring@vger.kernel.org>; Fri,  8 May 2020 20:12:52 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id r14so1999078pfg.2
+        for <io-uring@vger.kernel.org>; Fri, 08 May 2020 20:12:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+PiQ6ckxUTnSDo+AGLRh/Fg+o3k0O3ko3wY06x3JoKE=;
-        b=Ts3CIrENqZECosUV9ufuB6NplQ4bZIANry4cTq9ctiFl2W3eKhj5UpDDQOEaY6A2Yd
-         mNvqS8MpDNbFmXG47isv0LHHuWhU9DrWeNeUqpMHP3rRP+c5b6gcvtAg+8ZLRMd/gdoD
-         1i8v4D54gKF1JaotzplFLT3nMfQ5VKcTVTMjFomlH2d9ykBhs9YeoAV4r0fEyjl3TlPr
-         v2KDioACvLG1JOHWROC3jtqtFiE8v+6chVfwhJVwQ6LpHrO+DnmO5kWS3VjbGmk9WNEY
-         aeK1VQ7Ix6UqBc9nyw9EdxtaWdyBCOYz2f1ZZWBmiN42UGRN2WCkIjnAj9hWJy7yjUPW
-         HsMQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=0fAk7ZpAqjDTTUlJrY2gO1N8l4nPyAVEQOajMC1v0Ws=;
+        b=yhCzWpzAOK6rF6jP4117QQ//DqCZA+d21wEIOej+xBnNcoy3pulqS74cfXMeWQXCC5
+         +J9j/sPQOu3T0fN3dEpJ7vv2WSWPNPVpcakAbs6ME+L09R6p59765Q4wkxU0oVM1JC5A
+         gad8G2c9y/OhOLLZdollok503Uzlj6AW7TbA3pkjz5ian+ZaVidUit3DX/rmv9MEFR9I
+         x8Qkd/1pITRDe2OYiwlHBUAOpk1LEy3cAJ+aZGEg74dWDS5KWQtXVhPxkndtBuGWVDQM
+         D3CEYRVHWwWfm62MO9ryebEqm1uWkSiDe/kkdN9vKcnhdKnY7pdmK+VTtQ3DCvT8Cm5B
+         GIwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+PiQ6ckxUTnSDo+AGLRh/Fg+o3k0O3ko3wY06x3JoKE=;
-        b=ney89GSzTB1cVjYCmVjQugWkTEfes1IBV5ri82FZ9nP3SgIewIhtn7iBek+7G74tH7
-         o1dbtEhXlDK65yLc4tMsufC83EmPeTprEDlIYxuqijnoOXsqSAIrgXz4GzxQyM5sDdFq
-         VeNkwmP9lGfjdojeQcGXCn5txsV7Qg/d6inw6ieHYIGxRZSPsq+832IJ+KHB8siv3iw0
-         AJ9rVQfzf/5IEVFbRP98/3Gs611vq5aEdPVQ0cgVFWGxU7qDILZp56FPMVTqmZZjxceF
-         rHpq6ySh0kVpVC8E6b6/ewsXoOz3XsRyrzxgB+2nkbtRqtzYZGBTp9zpiL+a+v2mmnB6
-         soZQ==
-X-Gm-Message-State: AGi0PuZ3uQC3u/Q9aq6aIlwkKz7FYtPoKbRE0KtrhBL0n4xVJkkXnJXn
-        tIUfhgZvTvPtZ8lBZL9c5Iq3lQ==
-X-Google-Smtp-Source: APiQypJ92/0qZ5iunL9hikarn4eDK0RllMv8mjTvIrEJ1zjbLNqAjWeKqDY9cc4vVlZEbqAojJlNqA==
-X-Received: by 2002:a37:a4d8:: with SMTP id n207mr4488919qke.354.1588967577470;
-        Fri, 08 May 2020 12:52:57 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id c4sm1945896qkf.120.2020.05.08.12.52.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 May 2020 12:52:56 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1jX93I-0002SQ-9Q; Fri, 08 May 2020 16:52:56 -0300
-Date:   Fri, 8 May 2020 16:52:56 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-rdma@vger.kernel.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH 09/12] rdma: use __anon_inode_getfd
-Message-ID: <20200508195256.GA8912@ziepe.ca>
-References: <20200508153634.249933-1-hch@lst.de>
- <20200508153634.249933-10-hch@lst.de>
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=0fAk7ZpAqjDTTUlJrY2gO1N8l4nPyAVEQOajMC1v0Ws=;
+        b=RTKRmo3vwAOe76R2XEHbL2xCJOKMxelp+itSpnP1EC1uuG5p76DkP7R4tWgUjjTHIS
+         h6/8jjm8ZdjIJVoNL75OE3nrbb4ostxX+DDE7rsjx7EyRRD5h7xFiqLOoXLHtNwM2nqN
+         NmxPju7VGYnJGvfLg/7KCjWcM85Tix5wmYU+6HJmZVgP7Z+UdwPggmndYhqUHYUgJ86x
+         4hJdCzoElJLIEOiOSUIo2gD51+IpYpf6z2WRpBRN4XDU/G+lWrGMzMiTL34/23HD6MHh
+         ZuUrTo4K/ri938OeNg+8i1b4wTeikwEjOo99Kn8GQLDDgvkA20n8a9kXAYdwDhaz1OmQ
+         wIaw==
+X-Gm-Message-State: AGi0PuYRD3IXd0keGsdDQAwJWK4mn9EUOHDjPcK5+PxdJzgxBe8bWcUd
+        ZhRgqYPVdvRxReAsce1KJq7aBQ==
+X-Google-Smtp-Source: APiQypIUJYqTDsXo4WyM4KVfIveyEQ+rOw67qbSgJeXo9F/vwm66qKT3TA00Xg81HLWhTosUDTOLJA==
+X-Received: by 2002:a63:4c1d:: with SMTP id z29mr4625642pga.243.1588993971602;
+        Fri, 08 May 2020 20:12:51 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id b8sm3490300pjz.51.2020.05.08.20.12.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 May 2020 20:12:50 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.7-rc5
+Message-ID: <cf931801-dc26-e86b-57aa-d7730baccdc1@kernel.dk>
+Date:   Fri, 8 May 2020 21:12:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200508153634.249933-10-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, May 08, 2020 at 05:36:31PM +0200, Christoph Hellwig wrote:
-> Use __anon_inode_getfd instead of opencoding the logic using
-> get_unused_fd_flags + anon_inode_getfile.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/infiniband/core/rdma_core.c | 17 ++++-------------
->  1 file changed, 4 insertions(+), 13 deletions(-)
+Hi Linus,
 
- 
-> diff --git a/drivers/infiniband/core/rdma_core.c b/drivers/infiniband/core/rdma_core.c
-> index 5128cb16bb485..541e5e06347f6 100644
-> --- a/drivers/infiniband/core/rdma_core.c
-> +++ b/drivers/infiniband/core/rdma_core.c
-> @@ -462,30 +462,21 @@ alloc_begin_fd_uobject(const struct uverbs_api_object *obj,
->  	if (WARN_ON(fd_type->fops->release != &uverbs_uobject_fd_release))
->  		return ERR_PTR(-EINVAL);
->  
-> -	new_fd = get_unused_fd_flags(O_CLOEXEC);
-> -	if (new_fd < 0)
-> -		return ERR_PTR(new_fd);
-> -
->  	uobj = alloc_uobj(attrs, obj);
->  	if (IS_ERR(uobj))
-> -		goto err_fd;
-> +		return uobj;
->  
->  	/* Note that uverbs_uobject_fd_release() is called during abort */
-> -	filp = anon_inode_getfile(fd_type->name, fd_type->fops, NULL,
-> -				  fd_type->flags);
-> -	if (IS_ERR(filp)) {
-> -		uobj = ERR_CAST(filp);
-> +	new_fd = __anon_inode_getfd(fd_type->name, fd_type->fops, NULL,
-> +			fd_type->flags | O_CLOEXEC, &filp);
-> +	if (new_fd < 0)
->  		goto err_uobj;
+A few fixes that should go into this series:
 
-This will conflict with a fix (83a267021221 'RDMA/core: Fix
-overwriting of uobj in case of error') that is going to go to -rc
-soon.
+- Fix finish_wait() balancing in file cancelation (Xiaoguang)
 
-Also the above misses returning an ERR_PTR if __anon_inode_getfd fails, it
-returns a uobj that had been freed.. I suppose it should be something
-like
+- Ensure early cleanup of resources in ring map failure (Xiaoguang)
 
-if (new_fd < 0) {
-   uverbs_uobject_put(uobj);
-   return ERR_PTR(new_fd)
-}
+- Ensure IORING_OP_SLICE does the right file mode checks (Pavel)
 
-?
+- Remove file opening from openat/openat2/statx, it's not needed and
+  messes with O_PATH
 
-Jason
+Please pull!
+
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.7-2020-05-08
+
+
+----------------------------------------------------------------
+Jens Axboe (1):
+      io_uring: don't use 'fd' for openat/openat2/statx
+
+Pavel Begunkov (1):
+      splice: move f_mode checks to do_{splice,tee}()
+
+Xiaoguang Wang (2):
+      io_uring: fix mismatched finish_wait() calls in io_uring_cancel_files()
+      io_uring: handle -EFAULT properly in io_uring_setup()
+
+ fs/io_uring.c | 65 ++++++++++++++++++++---------------------------------------
+ fs/splice.c   | 45 +++++++++++++++++------------------------
+ 2 files changed, 40 insertions(+), 70 deletions(-)
+
+-- 
+Jens Axboe
+

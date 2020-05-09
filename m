@@ -2,84 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D39BD1CC292
-	for <lists+io-uring@lfdr.de>; Sat,  9 May 2020 18:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 123701CC48E
+	for <lists+io-uring@lfdr.de>; Sat,  9 May 2020 22:25:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbgEIQPa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 9 May 2020 12:15:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34066 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727787AbgEIQPa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 9 May 2020 12:15:30 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E8DC061A0C
-        for <io-uring@vger.kernel.org>; Sat,  9 May 2020 09:15:28 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id 18so2562140pfv.8
-        for <io-uring@vger.kernel.org>; Sat, 09 May 2020 09:15:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=9RfWoa+OyVYhRyq8fc6okRxutf75i2JHWqqPNgwLqfs=;
-        b=a81IJUwFIPM1Hc2xgPStppkTlfmxBdDHqDcxpgY/XOTG1fwZPckIMxmaW3YINucx/H
-         kcuekRUoSNd66nE02LkNOTIxd4XqUPooYRo8WYcx8vzzDT6xbWNX0ejrbqSPv+zHTo86
-         QdMELaRNrcpmyyZ4bIQjSefkyz3xp5ry4wUAHVNHdfQIt9QzBGR6kk3H8NOb7fAJ4qqc
-         NjliGsz3Harvl+UG5hvG9aAjHy2D37LAgyNDJLfhn5CVvIuEwyVauo13CtRBeAWFGwE7
-         1L3JVI6z1qLd5tJslvF/Fvt2Hq7qAXu5VikKYMR0Cup/xHIox+U/z89ifcqbLm6YmU9F
-         k4Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9RfWoa+OyVYhRyq8fc6okRxutf75i2JHWqqPNgwLqfs=;
-        b=YRHdqc3ibMnNk51rrRuZw0K5VgaSznGSsCxhffLTqv/0JFYKVpoKMitvkO+9FYu7q7
-         KD3MH2hoixZUR+I4SAjW3qRJvwHhjXfnsKuZ3ONThBPI9M97YhNIYCbFGDzTUutcnilt
-         28COLxXkF5DVCYxvV1Gq88vMqHNgusW6wb8aiRj7OZj5E3IdwPHz+3Qp6WhVofwIBkWx
-         Xj4wsZ52i+uX3FoI7B/M9MR6qhgYJqrjgx5LpL5es1HDwRpLF5TDQtYOnVz3F7Q/bxm6
-         cjy8NFGBLKe1ef/kgJPDFejH6LnEEgMWSvxj1OtnHwfSO6M8WGyNik6TPd8wzEU5LuP/
-         6BBA==
-X-Gm-Message-State: AGi0Puasx1l1Xu0kdF7ND9IWYJD+lGd58QaCcUJaQOG5WBAg5Ky+HYJ+
-        xutSoMT/oXyYih7fcS3tkk+Y0A==
-X-Google-Smtp-Source: APiQypJTJwqxmrzhdmttmXW+QEBXc3SNvFkZ5mkyj4gdo2+P/cFptDi1ZuE81TthfzHU4hk2p9dWyg==
-X-Received: by 2002:a62:3784:: with SMTP id e126mr8525998pfa.303.1589040927999;
-        Sat, 09 May 2020 09:15:27 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id z1sm5162042pjn.43.2020.05.09.09.15.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 May 2020 09:15:27 -0700 (PDT)
-Subject: Re: [PATCH for-5.7] io_uring: fix zero len do_splice()
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <c7dc4d15f9065f41df5ad83e051d05e7c46f004f.1588622410.git.asml.silence@gmail.com>
- <102cad76-9b98-444f-7ccf-6475245f4031@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5c24bcbd-cb68-1929-d3f4-389fe599e8f1@kernel.dk>
-Date:   Sat, 9 May 2020 10:15:25 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <102cad76-9b98-444f-7ccf-6475245f4031@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728410AbgEIUZF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 9 May 2020 16:25:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36040 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725960AbgEIUZF (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sat, 9 May 2020 16:25:05 -0400
+Subject: Re: [GIT PULL] io_uring fixes for 5.7-rc5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589055904;
+        bh=d40vE5YHjV8cq2Tbu7iN4MRiNJoI6JVnXkhtzcw0dX8=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=RV3fKHchS3VVDRIKu48eMKiHDwgsNlh/8nDedmIektBH1HSwL/uOUoRkwzpXOv3rf
+         YxMXnfwja1Dx1Jg65Zgt6MV3AjuiJwi6pqzs3v4uKFXC4rYbD0sNZscwy1Idx6pGXg
+         AK9hLtaEcarxY7CYpAeVWiBKsmdSNO6f72JzIRXk=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <cf931801-dc26-e86b-57aa-d7730baccdc1@kernel.dk>
+References: <cf931801-dc26-e86b-57aa-d7730baccdc1@kernel.dk>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <cf931801-dc26-e86b-57aa-d7730baccdc1@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git
+ tags/io_uring-5.7-2020-05-08
+X-PR-Tracked-Commit-Id: 63ff822358b276137059520cf16e587e8073e80f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1d3962ae3b3d3a945f7fd5c651cf170a27521a35
+Message-Id: <158905590492.29076.1791242764984106931.pr-tracker-bot@kernel.org>
+Date:   Sat, 09 May 2020 20:25:04 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/9/20 10:07 AM, Pavel Begunkov wrote:
-> On 04/05/2020 23:00, Pavel Begunkov wrote:
->> do_splice() doesn't expect len to be 0. Just always return 0 in this
->> case as splice(2) do.
->>
-> 
-> If it was missed, may you take a look? I reattached the patch btw killing
-> reported warnings.
+The pull request you sent on Fri, 8 May 2020 21:12:49 -0600:
 
-Thanks for re-sending, I'll queue it up for 5.7.
+> git://git.kernel.dk/linux-block.git tags/io_uring-5.7-2020-05-08
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1d3962ae3b3d3a945f7fd5c651cf170a27521a35
+
+Thank you!
 
 -- 
-Jens Axboe
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker

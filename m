@@ -2,360 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 268FD1CE245
-	for <lists+io-uring@lfdr.de>; Mon, 11 May 2020 20:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EDCE1CEAAD
+	for <lists+io-uring@lfdr.de>; Tue, 12 May 2020 04:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbgEKSIx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 11 May 2020 14:08:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45498 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729564AbgEKSIx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 11 May 2020 14:08:53 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14279C061A0C
-        for <io-uring@vger.kernel.org>; Mon, 11 May 2020 11:08:52 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id s11so1424343pgv.13
-        for <io-uring@vger.kernel.org>; Mon, 11 May 2020 11:08:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ddj9lf6ma2Qlx1QjgbEt1FhBF5ekcCdIXThqdzq78GU=;
-        b=hU5Vj9PrbZGs22kNj9EjeYDSafxCaqBno70uHEp+NSXfmIpsB+VVrVi7C7JAi+il64
-         BdGuEa78O43gZqK0H2ja0v2g0tD2Hu4g9YWVjOdCM6Bip0AX+M9FC1t9R9Z6PENUM4Mw
-         ysJoigEl2nBAQ2znJQunE3dAW91p5PghQZgD/m0kMYJIL36ykrAvcjmkbI5VUeXUftGB
-         s34sM0xz2pTHt59EdB8CANP2eQVh6QF3sdBn682fY4K/fHlkeec70KZs2Q5vliwS6K9y
-         cnShc46YBZVw9+cNLC1DLZSdT6MZWk8va3yGY2M0TJ3QqunjritBuclCrI3z5fcvz1ME
-         eCww==
+        id S1728592AbgELCRP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 11 May 2020 22:17:15 -0400
+Received: from mail-il1-f199.google.com ([209.85.166.199]:50450 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727942AbgELCRP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 11 May 2020 22:17:15 -0400
+Received: by mail-il1-f199.google.com with SMTP id e8so11271472ile.17
+        for <io-uring@vger.kernel.org>; Mon, 11 May 2020 19:17:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ddj9lf6ma2Qlx1QjgbEt1FhBF5ekcCdIXThqdzq78GU=;
-        b=Sim2TAnmFSwtZBbribnNSj7Xczsectz8i+X1bHjsYPdN1gfxkGFEWQYp7nbN3B2dj7
-         DXfinv4gdbq+H7zWN8uVkdp3sXDYgoixlYtJ19aHjTdrMSNN/hI+Tx/bW5AJfwof25t9
-         VIYk0hVoh0foJSzS85XfxfWAaqZiJ74U/wgxaXLt+hmDmXUepVVWseKRgfAYMAvsfswr
-         Csb1LN9wQNBkZPfIlAjcPSq0a//l1Ux5I4GWDYhC5Mga5f87DA/qBVs7hRRSC5RznqV3
-         msX7hsWZqB2g4vKY/wSFjtk4rECxkG7QFVVvITpInwYoewqPHPAH1Bxq6MQvCPra+jHI
-         yFMg==
-X-Gm-Message-State: AGi0PuahcAOImQqDUAAo4D043vcAajRRyIDjvg4zGtHIPZz8i7PfJ9Cw
-        Hn8Xwq+9gfzlZ74/NLCx1SmUTA==
-X-Google-Smtp-Source: APiQypLrXYDDLw4jkoRM/oIwEIPa2qbMMtoy/SnoIx3HJpKH0VMbbDqfvplwASJuL82j4l5u7yDvaA==
-X-Received: by 2002:a05:6a00:d:: with SMTP id h13mr17705134pfk.254.1589220531273;
-        Mon, 11 May 2020 11:08:51 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:911f:9a95:56a4:6995? ([2605:e000:100e:8c61:911f:9a95:56a4:6995])
-        by smtp.gmail.com with ESMTPSA id b7sm9675120pft.147.2020.05.11.11.08.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 May 2020 11:08:50 -0700 (PDT)
-Subject: Re: Is io_uring framework becoming bloated gradually? and introduces
- performace regression
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        joseph qi <joseph.qi@linux.alibaba.com>,
-        Jiufei Xue <jiufei.xue@linux.alibaba.com>
-References: <6132351e-75e6-9d4d-781b-d6a183d87846@linux.alibaba.com>
- <5828e2de-5976-20ae-e920-bf185c0bc52d@kernel.dk>
- <113c34c8-9f17-7890-d12a-e35c7922432e@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0a042320-c162-8d57-0506-471bf85c7d0f@kernel.dk>
-Date:   Mon, 11 May 2020 12:08:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=A+bGB37fUphrdg4rHZUQ/mDG5UQ3vJlqsxE4yR9cEE8=;
+        b=CBoMcAytUMIZ9t+ySdB/TDrxOWWpBHELavPOjNot2SINTo3RBI8hcAOF5O2LI6yve6
+         bTCRL2NVik14QK33n1kDdxetjZM6epsANhj3Wdg30BtORCaXqqiNK0dFnUwwrHh8DsXO
+         oB1h8nEQAii88qQHpzuiyOLjzk+wd5IxfnBYBR+H/OXwGomFGy6KKK+jbnfzyKPB1PgI
+         hbEbPXjIIkP0FCo2piUZLXvfKhzBpeSxog9BesLqKMZ/RX2VHxEBSKPiJC74l7Uu4Gtz
+         AQtPh8YooX/s4Q3Qn1uVi4lfWGFMhNLpmVq7u0l+NQouGsuY4MdXWTU8SKOVp6WNMmBT
+         yqmQ==
+X-Gm-Message-State: AGi0Pub6mTy20pryNo7GKqZCXVdgxkweqHlLbBPMSxBpK2muMwvB09Ry
+        sXu4/ARvRpbLAQsfinEqKyZJL6k+o+SZPzYOj7kXwRCbgGtY
+X-Google-Smtp-Source: APiQypIctjI4BY678X/t1WAymF2cyXuX2SyTS1+z5w3mFX/fZa4vxhw2dKZ7JTseH4Vka4XJRt2E0ZvpPKA+IcgSpo1VYHbp8iLf
 MIME-Version: 1.0
-In-Reply-To: <113c34c8-9f17-7890-d12a-e35c7922432e@linux.alibaba.com>
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:d6c5:: with SMTP id z5mr13337735ilp.194.1589249834499;
+ Mon, 11 May 2020 19:17:14 -0700 (PDT)
+Date:   Mon, 11 May 2020 19:17:14 -0700
+In-Reply-To: <00000000000009dcd905a3954340@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d845e305a56a0f24@google.com>
+Subject: Re: INFO: rcu detected stall in io_uring_release
+From:   syzbot <syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, dan.carpenter@oracle.com,
+        hdanton@sina.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/10/20 9:30 PM, Xiaoguang Wang wrote:
-> hi£¬
-> 
->> On 5/8/20 9:18 AM, Xiaoguang Wang wrote:
->>> hi,
->>>
->>> This issue was found when I tested IORING_FEAT_FAST_POLL feature, with
->>> the newest upstream codes, indeed I find that io_uring's performace
->>> improvement is not obvious compared to epoll in my test environment,
->>> most of the time they are similar.  Test cases basically comes from:
->>> https://github.com/frevib/io_uring-echo-server/blob/io-uring-feat-fast-poll/benchmarks/benchmarks.md.
->>> In above url, the author's test results shows that io_uring will get a
->>> big performace improvement compared to epoll. I'm still looking into
->>> why I don't get the big improvement, currently don't know why, but I
->>> find some obvious regression issue.
->>>
->>> I wrote a simple tool based io_uring nop operation to evaluate
->>> io_uring framework in v5.1 and 5.7.0-rc4+(jens's io_uring-5.7 branch),
->>> I see a obvious performace regression:
->>>
->>> v5.1 kernel:
->>>       $sudo taskset -c 60 ./io_uring_nop_stress -r 300 # run 300 seconds
->>>       total ios: 1832524960
->>>       IOPS:      6108416
->>> 5.7.0-rc4+
->>>       $sudo taskset -c 60 ./io_uring_nop_stress -r 300
->>>       total ios: 1597672304
->>>       IOPS:      5325574
->>> it's about 12% performance regression.
->>
->> For sure there's a bit more bloat in 5.7+ compared to the initial slim
->> version, and focus has been on features to a certain extent recently.
->> The poll rework for 5.7 will really improve performance for the
->> networked side though, so it's not like it's just piling on features
->> that add bloat.
->>
->> That said, I do think it's time for a revisit on overhead. It's been a
->> while since I've done my disk IO testing. The nop testing isn't _that_
->> interesting by itself, as a micro benchmark it does yield some results
->> though. Are you running on bare metal or in a VM?
-> I run it on bare metal.
-> 
->>
->>> Using perf can see many performance bottlenecks, for example,
->>> io_submit_sqes is one.  For now, I did't make many analysis yet, just
->>> have a look at io_submit_sqes(), there are many assignment operations
->>> in io_init_req(), but I'm not sure whether they are all needed when
->>> req is not needed to be punt to io-wq, for example,
->>> INIT_IO_WORK(&req->work, io_wq_submit_work); # a whole struct
->>> assignment from perf annotate tool, it's an expensive operation, I
->>> think reqs that use fast poll feature use task-work function, so the
->>> INIT_IO_WORK maybe not necessary.
->>
->> I'm sure there's some low hanging fruit there, and I'd love to take
->> patches for it.
-> Ok, I'll try to improve it a bit, thanks.
-> 
->>
->>> Above is just one issue, what I worry is that whether io_uring is
->>> becoming more bloated gradually, and will not that better to aio. In
->>> https://kernel.dk/io_uring.pdf, it says that io_uring will eliminate
->>> 104 bytes copy compared to aio, but see currenct io_init_req(),
->>> io_uring maybe copy more, introducing more overhead? Or does we need
->>> to carefully re-design struct io_kiocb, to reduce overhead as soon as
->>> possible.
->>
->> The copy refers to the data structures coming in and out, both io_uring
->> and io_uring inititalize their main io_kiocb/aio_kiocb structure as
->> well. The io_uring is slightly bigger, but not much, and it's the same
->> number of cachelines. So should not be a huge difference there. The
->> copying on the aio side is basically first the pointer copy, then the
->> user side kiocb structure. io_uring doesn't need to do that. The
->> completion side is also slimmer. We also don't need as many system calls
->> to do the same thing, for example.
->>
->> So no, we should always been substantially slimmer than aio, just by the
->> very nature of the API.
-> Really thanks for detailed explanations, now I see, feel good:)
-> 
->>
->> One major thing I've been thinking about for io_uring is io_kiocb
->> recycling. We're hitting the memory allocator for alloc+free for each
->> request, even though that can be somewhat amortized by doing batched
->> submissions, and polling for instance can also do batched frees. But I'm
->> pretty sure we can find some gains here by having some io_kiocb caching
->> that is persistent across operations.
-> Yes, agree. From my above nop operation tests, using perf, it shows
-> kmem_cache_free() and kmem_cache_alloc_bulk() introduce an considerable
-> overhead.
+syzbot has found a reproducer for the following crash on:
 
-Just did a quick'n dirty where we have a global per-cpu cache of
-io_kiocbs, so we can recycle them.
+HEAD commit:    ac935d22 Add linux-next specific files for 20200415
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a38f0a100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bc498783097e9019
+dashboard link: https://syzkaller.appspot.com/bug?extid=66243bb7126c410cefe6
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=179b3b32100000
 
-I'm using my laptop for this testing, running in kvm. This isn't ideal,
-as the spinlock/irq overhead is much larger there, but it's the same
-across all runs.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+66243bb7126c410cefe6@syzkaller.appspotmail.com
 
-Baseline performance, this is running your test app as-is, no changes:
-
-# taskset -c 0 ./io_uring_nop_stress 
-total ios: 294158288
-IOPS:      9805276
-
-Then I disabled the bulk alloc optimization, so we don't get any
-benefits of allocating 16 requests at the time:
-
-# taskset -c 0 ./io_uring_nop_stress 
-total ios: 285341456
-IOPS:      9511381
-
-As expected, we're down a bit at that point, as we're allocating each
-io_kiocb individually.
-
-Then I tried with the quick'n dirty patch:
-
-# taskset -c 0 ./io_uring_nop_stress 
-total ios: 325797040
-IOPS:      10859901
-
-and it's quite a bit faster. This is cheating a little bit, since these
-are just nops and we don't have to disable local irqs while grabbing a
-recycled entry. But just adding that and it should be safe to use, and
-probably won't make much of a difference on actual hardware.
-
-The main concern for me is how to manage this cache. We could just limit
-it to X entries per cpu or something like that, but it'd be nice to be
-able to respond to memory pressure.
-
-Quick'n dirty below.
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4c2fe06ae20b..b6a6d0f0f4e5 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -673,6 +673,13 @@ struct io_submit_state {
- 	unsigned int		ios_left;
- };
- 
-+struct io_kiocb_cache {
-+	struct list_head	list;
-+	unsigned		nr_free;
-+};
-+
-+static struct io_kiocb_cache *alloc_cache;
-+
- struct io_op_def {
- 	/* needs req->io allocated for deferral/async */
- 	unsigned		async_ctx : 1;
-@@ -1293,6 +1300,29 @@ static struct io_kiocb *io_get_fallback_req(struct io_ring_ctx *ctx)
- 	return NULL;
- }
- 
-+static struct io_kiocb *io_cache_alloc(void)
-+{
-+	struct io_kiocb_cache *cache;
-+	struct io_kiocb *req = NULL;
-+
-+	cache = this_cpu_ptr(alloc_cache);
-+	if (!list_empty(&cache->list)) {
-+		req = list_first_entry(&cache->list, struct io_kiocb, list);
-+		list_del(&req->list);
-+		return req;
-+	}
-+
-+	return NULL;
-+}
-+
-+static void io_cache_free(struct io_kiocb *req)
-+{
-+	struct io_kiocb_cache *cache;
-+
-+	cache = this_cpu_ptr(alloc_cache);
-+	list_add(&req->list, &cache->list);
-+}
-+
- static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx,
- 				     struct io_submit_state *state)
- {
-@@ -1300,6 +1330,9 @@ static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx,
- 	struct io_kiocb *req;
- 
- 	if (!state) {
-+		req = io_cache_alloc();
-+		if (req)
-+			return req;
- 		req = kmem_cache_alloc(req_cachep, gfp);
- 		if (unlikely(!req))
- 			goto fallback;
-@@ -1372,7 +1405,7 @@ static void __io_free_req(struct io_kiocb *req)
- 
- 	percpu_ref_put(&req->ctx->refs);
- 	if (likely(!io_is_fallback_req(req)))
--		kmem_cache_free(req_cachep, req);
-+		io_cache_free(req);
- 	else
- 		clear_bit_unlock(0, (unsigned long *) &req->ctx->fallback_req);
- }
-@@ -5842,7 +5875,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 			  struct file *ring_file, int ring_fd, bool async)
- {
--	struct io_submit_state state, *statep = NULL;
-+	//struct io_submit_state state, *statep = NULL;
- 	struct io_kiocb *link = NULL;
- 	int i, submitted = 0;
- 
-@@ -5859,10 +5892,12 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 	if (!percpu_ref_tryget_many(&ctx->refs, nr))
- 		return -EAGAIN;
- 
-+#if 0
- 	if (nr > IO_PLUG_THRESHOLD) {
- 		io_submit_state_start(&state, nr);
- 		statep = &state;
- 	}
-+#endif
- 
- 	ctx->ring_fd = ring_fd;
- 	ctx->ring_file = ring_file;
-@@ -5877,14 +5912,14 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 			io_consume_sqe(ctx);
- 			break;
- 		}
--		req = io_alloc_req(ctx, statep);
-+		req = io_alloc_req(ctx, NULL);
- 		if (unlikely(!req)) {
- 			if (!submitted)
- 				submitted = -EAGAIN;
- 			break;
- 		}
- 
--		err = io_init_req(ctx, req, sqe, statep, async);
-+		err = io_init_req(ctx, req, sqe, NULL, async);
- 		io_consume_sqe(ctx);
- 		/* will complete beyond this point, count as submitted */
- 		submitted++;
-@@ -5898,7 +5933,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 
- 		trace_io_uring_submit_sqe(ctx, req->opcode, req->user_data,
- 						true, async);
--		err = io_submit_sqe(req, sqe, statep, &link);
-+		err = io_submit_sqe(req, sqe, NULL, &link);
- 		if (err)
- 			goto fail_req;
- 	}
-@@ -5910,8 +5945,10 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 	}
- 	if (link)
- 		io_queue_link_head(link);
-+#if 0
- 	if (statep)
- 		io_submit_state_end(&state);
-+#endif
- 
- 	 /* Commit SQ ring head once we've consumed and submitted all SQEs */
- 	io_commit_sqring(ctx);
-@@ -8108,6 +8145,8 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
- 
- static int __init io_uring_init(void)
- {
-+	int cpu;
-+
- #define __BUILD_BUG_VERIFY_ELEMENT(stype, eoffset, etype, ename) do { \
- 	BUILD_BUG_ON(offsetof(stype, ename) != eoffset); \
- 	BUILD_BUG_ON(sizeof(etype) != sizeof_field(stype, ename)); \
-@@ -8147,6 +8186,15 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
- 	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
- 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
-+
-+	alloc_cache = alloc_percpu(struct io_kiocb_cache);
-+	for_each_possible_cpu(cpu) {
-+		struct io_kiocb_cache *cache;
-+
-+		cache = per_cpu_ptr(alloc_cache, cpu);
-+		INIT_LIST_HEAD(&cache->list);
-+		cache->nr_free = 0;
-+	}
- 	return 0;
- };
- __initcall(io_uring_init);
-
--- 
-Jens Axboe
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	0-....: (10533 ticks this GP) idle=aea/1/0x4000000000000002 softirq=10553/10555 fqs=5249 
+	(t=10501 jiffies g=12777 q=556)
+NMI backtrace for cpu 0
+CPU: 0 PID: 8729 Comm: syz-executor.3 Not tainted 5.7.0-rc1-next-20200415-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x188/0x20d lib/dump_stack.c:118
+ nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
+ nmi_trigger_cpumask_backtrace+0x231/0x27e lib/nmi_backtrace.c:62
+ trigger_single_cpu_backtrace include/linux/nmi.h:165 [inline]
+ rcu_dump_cpu_stacks+0x19b/0x1e5 kernel/rcu/tree_stall.h:254
+ print_cpu_stall kernel/rcu/tree_stall.h:475 [inline]
+ check_cpu_stall kernel/rcu/tree_stall.h:549 [inline]
+ rcu_pending kernel/rcu/tree.c:3225 [inline]
+ rcu_sched_clock_irq.cold+0x55d/0xd00 kernel/rcu/tree.c:2296
+ update_process_times+0x25/0x60 kernel/time/timer.c:1727
+ tick_sched_handle+0x9b/0x180 kernel/time/tick-sched.c:176
+ tick_sched_timer+0x4e/0x140 kernel/time/tick-sched.c:1320
+ __run_hrtimer kernel/time/hrtimer.c:1520 [inline]
+ __hrtimer_run_queues+0x5ca/0xed0 kernel/time/hrtimer.c:1584
+ hrtimer_interrupt+0x312/0x770 kernel/time/hrtimer.c:1646
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1113 [inline]
+ smp_apic_timer_interrupt+0x15b/0x600 arch/x86/kernel/apic/apic.c:1138
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+ </IRQ>
+RIP: 0010:io_ring_ctx_wait_and_kill+0x98/0x5a0 fs/io_uring.c:7301
+Code: 01 00 00 4d 89 f4 48 b8 00 00 00 00 00 fc ff df 4c 89 ed 49 c1 ec 03 48 c1 ed 03 49 01 c4 48 01 c5 eb 1c e8 ba 65 9d ff f3 90 <41> 80 3c 24 00 0f 85 53 04 00 00 48 83 bb 10 01 00 00 00 74 21 e8
+RSP: 0018:ffffc900054d7a50 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+RAX: ffff888097c14400 RBX: ffff8880963a0000 RCX: 1ffff92000a9af37
+RDX: 0000000000000000 RSI: ffffffff81d5ced6 RDI: ffff8880963a0300
+RBP: ffffed1012c7402c R08: 0000000000000001 R09: ffffed1012c74061
+R10: ffff8880963a0307 R11: ffffed1012c74060 R12: ffffed1012c74022
+R13: ffff8880963a0160 R14: ffff8880963a0110 R15: ffffffff81d5d3e0
+ io_uring_release+0x3e/0x50 fs/io_uring.c:7324
+ __fput+0x33e/0x880 fs/file_table.c:280
+ task_work_run+0xf4/0x1b0 kernel/task_work.c:123
+ exit_task_work include/linux/task_work.h:22 [inline]
+ do_exit+0xb53/0x2e10 kernel/exit.c:795
+ do_group_exit+0x125/0x340 kernel/exit.c:893
+ get_signal+0x47b/0x24e0 kernel/signal.c:2735
+ do_signal+0x81/0x2240 arch/x86/kernel/signal.c:784
+ exit_to_usermode_loop+0x26c/0x360 arch/x86/entry/common.c:161
+ prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
+ do_syscall_64+0x6b1/0x7d0 arch/x86/entry/common.c:305
+ entry_SYSCALL_64_after_hwframe+0x49/0xb3
+RIP: 0033:0x45c829
+Code: Bad RIP value.
+RSP: 002b:00007fdd2a37fc78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: 0000000000000003 RBX: 00000000004e0ce0 RCX: 000000000045c829
+RDX: 0000000000000000 RSI: 0000000020000580 RDI: 00000000000000f1
+RBP: 000000000078bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000204 R14: 00000000004c425f R15: 00007fdd2a3806d4
 

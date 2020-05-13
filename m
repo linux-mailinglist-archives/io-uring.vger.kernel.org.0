@@ -2,55 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3402C1D1C7E
-	for <lists+io-uring@lfdr.de>; Wed, 13 May 2020 19:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 570641D1D8E
+	for <lists+io-uring@lfdr.de>; Wed, 13 May 2020 20:34:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732694AbgEMRmf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 May 2020 13:42:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38346 "EHLO
+        id S1732218AbgEMSeR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 May 2020 14:34:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732435AbgEMRmf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 May 2020 13:42:35 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3174FC061A0C
-        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 10:42:35 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id w10so565830ljo.0
-        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 10:42:35 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1730472AbgEMSeR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 May 2020 14:34:17 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 127F0C061A0C
+        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 11:34:16 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id x10so171297plr.4
+        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 11:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pQS9PZSZkC7J4FQkV4xe75LJQYCCMj17Z0oYFTEHPAg=;
-        b=CuNHH4dtXsRN1EAJPY6PDuqYboQGoRqGyFQeIKled0eFTwTjnqRO8hPh+XtFI8pLKe
-         PvVnJ1iMi2tr/lQ0jytjS5UFXtomk896SeiJJyJ84jTl+75H9tAOAeaBylYcdzNdhEvt
-         FjJKbe8B4hccHFVGQ3h5oEYjUI1bJeIuzrgC0NkX7qyEXxl/MgoB9t0uq2618qIgXxZx
-         dRk04iTv7iKcfzfo7TqtNb17hsuwh/KQYPnE1FCebmt/nIy8iIPXzZCukM+2zNFEsnbe
-         R42fMBIfkcOlF4iSwKE7leE2cr70zuMXFzgk1v8BmZwVxzGo2Zw6WDiDGMtrxFnIiiLY
-         +L9w==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SH+sjMwZuOMM8o6r6yEzeEIldRD9YZTLwHLIdvFCJLI=;
+        b=1awYWNJjGLthqdDg8sO8PfSRDks8MSzZ9Qopf8YhOB7PmVSKOiNOnqwarpt9C1LqRA
+         3FDYE5WjX0+Z7z+R7haOLF8qKtXVdIxRwd19AJQ3IBMOa0eU4ZBJ656K3O65t00sRQ3y
+         DVOjGp/VoPnYRM/YgOZpK+NS1vCN+8sMQZYAW6WGGHLpHmQYxghtIIZc4BfDidi8Zl7p
+         n/YQtytQItl59JA7LZJEV54OEbTcFCc3/1/CF32JcrvcDepdcpwKOReP1zdu44URGuCU
+         +WRrSoAQOwpCPIup1HowigObyROu3yUPQRfW3rvJM/g3Q51WGrSxz43cw+Ze+yIVrMvD
+         9iTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pQS9PZSZkC7J4FQkV4xe75LJQYCCMj17Z0oYFTEHPAg=;
-        b=sXGC55cAKm+G0MgvWT78hyKZFe9tcnXsyI6ztLZWU80QimMbFgGyR7DAgu2Xqlf0/z
-         4Sc1jiSnGRfGll/TkNzckz/DuEZrU5744qTgG2moprJF04u4RL79UFhzuR82u0BjJFo8
-         e5nZVFcwW2ESZ8CJjRB2zFUaOJHTJS+KZC8/WUulHgxQEGK3Y5EdlbdsmxP/DbZKBEgn
-         y4FJdYRkwg6d8rEl5a0G6wwT3DpDqWT2BP1XYhnTAjLfP5EI3LPm8VrrKIUNidVJGRCN
-         2YgCv2CViZmz800HercomodlGapZK2XUp9Zp1LDLseDVyHmCztsucO0gUIlp7LP5IEId
-         oPXA==
-X-Gm-Message-State: AOAM531Z6ElpMOoQGWzJFltRuW0zqeyCZhbxVDqNBfeGhDhm1/Qd1gzv
-        XHiX0FstwoOZT9zuINDEbuouxUfu/Ot0OeSNFkVVNw==
-X-Google-Smtp-Source: ABdhPJxpFDG22Y809iXjpQMHfUixwp4Zg6FEPmzfikjpGdIc/OC7MzvC4yQr1nPLFLkafaeIxQrxrSP8aIMPO7qNl2g=
-X-Received: by 2002:a2e:87d3:: with SMTP id v19mr145416ljj.176.1589391753304;
- Wed, 13 May 2020 10:42:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <492bb956-a670-8730-a35f-1d878c27175f@kernel.dk>
-In-Reply-To: <492bb956-a670-8730-a35f-1d878c27175f@kernel.dk>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 13 May 2020 19:42:07 +0200
-Message-ID: <CAG48ez0eGT60a50GAkL3FVvRzpXwhufdr+68k_X_qTgxyZ-oQQ@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SH+sjMwZuOMM8o6r6yEzeEIldRD9YZTLwHLIdvFCJLI=;
+        b=mWDp/0Uphra9w6lQMwcJznvDnoVCDeD5h752R3kGuSh9cJgfoxFJSCDr6RuFhCuK9B
+         ZnQIPFnc2dS8LK26kyz4CH04rHGkydHojq/kjvUtrCwGTi05LjGzhUxRjNovwOdoJ+Mb
+         HGV0uXhie8HUIVp5iGZB1dACEPQj8jxXUk51A9shQBOjbiQ0UYa8mBER19DcsnnQGBOO
+         e5qeHKlg5kZctpg8jLIBigGYQ99qx2HWCDuDKtk3RDWYZVMN+2dTlxyzDs/8COusF2Na
+         ckZCBnoxAVk4KTWDavFlL3vWWeTaBSMBB/zmGK+DO3EzrUuHCmt+vT5WtKvpFVtosrhK
+         NukQ==
+X-Gm-Message-State: AOAM531fScFv2l3xzhMjgJ4In2mJu05vhwacaBsicyDraXn9jF5wu9OA
+        fr3kwRxUxnJtHIjQQviXSvNmgYChwA0=
+X-Google-Smtp-Source: ABdhPJwaWdgZJDB6FkHbh50cGMWPvrkyRzNSC4EjlEgDHl9rlJGIryZ1sfGk7fwP/kmM/1U9t+F1NQ==
+X-Received: by 2002:a17:902:b58e:: with SMTP id a14mr425108pls.247.1589394855415;
+        Wed, 13 May 2020 11:34:15 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:e16c:b526:b72a:3095? ([2605:e000:100e:8c61:e16c:b526:b72a:3095])
+        by smtp.gmail.com with ESMTPSA id 28sm16329433pjh.43.2020.05.13.11.34.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 May 2020 11:34:14 -0700 (PDT)
 Subject: Re: [PATCH RFC} io_uring: io_kiocb alloc cache
-To:     Jens Axboe <axboe@kernel.dk>
+To:     Jann Horn <jannh@google.com>
 Cc:     io-uring <io-uring@vger.kernel.org>,
         Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         joseph qi <joseph.qi@linux.alibaba.com>,
@@ -62,67 +61,107 @@ Cc:     io-uring <io-uring@vger.kernel.org>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <492bb956-a670-8730-a35f-1d878c27175f@kernel.dk>
+ <CAG48ez0eGT60a50GAkL3FVvRzpXwhufdr+68k_X_qTgxyZ-oQQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f1b2cbf8-a253-edb2-5e0a-5a1e5d45afa2@kernel.dk>
+Date:   Wed, 13 May 2020 12:34:12 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAG48ez0eGT60a50GAkL3FVvRzpXwhufdr+68k_X_qTgxyZ-oQQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-+slab allocator people
+On 5/13/20 11:42 AM, Jann Horn wrote:
+> +slab allocator people
+> 
+> On Wed, May 13, 2020 at 6:30 PM Jens Axboe <axboe@kernel.dk> wrote:
+>> I turned the quick'n dirty from the other day into something a bit
+>> more done. Would be great if someone else could run some performance
+>> testing with this, I get about a 10% boost on the pure NOP benchmark
+>> with this. But that's just on my laptop in qemu, so some real iron
+>> testing would be awesome.
+> 
+> 10% boost compared to which allocator? Are you using CONFIG_SLUB?
 
-On Wed, May 13, 2020 at 6:30 PM Jens Axboe <axboe@kernel.dk> wrote:
-> I turned the quick'n dirty from the other day into something a bit
-> more done. Would be great if someone else could run some performance
-> testing with this, I get about a 10% boost on the pure NOP benchmark
-> with this. But that's just on my laptop in qemu, so some real iron
-> testing would be awesome.
+SLUB, yes.
 
-10% boost compared to which allocator? Are you using CONFIG_SLUB?
+>> The idea here is to have a percpu alloc cache. There's two sets of
+>> state:
+>>
+>> 1) Requests that have IRQ completion. preempt disable is not enough
+>>    there, we need to disable local irqs. This is a lot slower in
+>>    certain setups, so we keep this separate.
+>>
+>> 2) No IRQ completion, we can get by with just disabling preempt.
+> 
+> The SLUB allocator has percpu caching, too, and as long as you don't
+> enable any SLUB debugging or ASAN or such, and you're not hitting any
+> slowpath processing, it doesn't even have to disable interrupts, it
+> gets away with cmpxchg_double.
+> 
+> Have you profiled what the actual problem is when using SLUB? Have you
+> tested with CONFIG_SLAB_FREELIST_HARDENED turned off,
+> CONFIG_SLUB_DEBUG turned off, CONFIG_TRACING turned off,
+> CONFIG_FAILSLAB turned off, and so on? As far as I know, if you
+> disable all hardening and debugging infrastructure, SLUB's
+> kmem_cache_alloc()/kmem_cache_free() on the fastpaths should be really
+> straightforward. And if you don't turn those off, the comparison is
+> kinda unfair, because your custom freelist won't respect those flags.
 
-> The idea here is to have a percpu alloc cache. There's two sets of
-> state:
->
-> 1) Requests that have IRQ completion. preempt disable is not enough
->    there, we need to disable local irqs. This is a lot slower in
->    certain setups, so we keep this separate.
->
-> 2) No IRQ completion, we can get by with just disabling preempt.
+But that's sort of the point. I don't have any nasty SLUB options
+enabled, just the default. And that includes CONFIG_SLUB_DEBUG. Which
+all the distros have enabled, I believe.
 
-The SLUB allocator has percpu caching, too, and as long as you don't
-enable any SLUB debugging or ASAN or such, and you're not hitting any
-slowpath processing, it doesn't even have to disable interrupts, it
-gets away with cmpxchg_double.
+So yes, I could compare to a bare bones SLUB, and I'll definitely do
+that because I'm curious. And it also could be an artifact of qemu,
+sometimes that behaves differently than a real host (locks/irq is more
+expensive, for example). Not sure how much with SLUB in particular,
+haven't done targeted benchmarking of that.
 
-Have you profiled what the actual problem is when using SLUB? Have you
-tested with CONFIG_SLAB_FREELIST_HARDENED turned off,
-CONFIG_SLUB_DEBUG turned off, CONFIG_TRACING turned off,
-CONFIG_FAILSLAB turned off, and so on? As far as I know, if you
-disable all hardening and debugging infrastructure, SLUB's
-kmem_cache_alloc()/kmem_cache_free() on the fastpaths should be really
-straightforward. And if you don't turn those off, the comparison is
-kinda unfair, because your custom freelist won't respect those flags.
+The patch is just tossed out there for experimentation reasons, in case
+it wasn't clear. It's not like I'm proposing this for inclusion. But if
+the wins are big enough over a _normal_ configuration, then it's
+definitely tempting.
 
-When you build custom allocators like this, it interferes with
-infrastructure meant to catch memory safety issues and such (both pure
-debugging code and safety checks meant for production use) - for
-example, ASAN and memory tagging will no longer be able to detect
-use-after-free issues in objects managed by your custom allocator
-cache.
+> When you build custom allocators like this, it interferes with
+> infrastructure meant to catch memory safety issues and such (both pure
+> debugging code and safety checks meant for production use) - for
+> example, ASAN and memory tagging will no longer be able to detect
+> use-after-free issues in objects managed by your custom allocator
+> cache.
+> 
+> So please, don't implement custom one-off allocators in random
+> subsystems. And if you do see a way to actually improve the
+> performance of memory allocation, add that to the generic SLUB
+> infrastructure.
 
-So please, don't implement custom one-off allocators in random
-subsystems. And if you do see a way to actually improve the
-performance of memory allocation, add that to the generic SLUB
-infrastructure.
+I hear you. This isn't unique, fwiw. Networking has a page pool
+allocator for example, which I did consider tapping into.
 
-> Outside of that, any freed requests goes to the ce->alloc_list.
-> Attempting to alloc a request will check there first. When freeing
-> a request, if we're over some threshold, move requests to the
-> ce->free_list. This list can be browsed by the shrinker to free
-> up memory. If a CPU goes offline, all requests are reaped.
->
-> That's about it. If we go further with this, it'll be split into
-> a few separate patches. For now, just throwing this out there
-> for testing. The patch is against my for-5.8/io_uring branch.
+Anyway, I/we will be a lot wiser once this experiment progresses!
 
-That branch doesn't seem to exist on
-<https://git.kernel.dk/cgit/linux-block/>...
+>> Outside of that, any freed requests goes to the ce->alloc_list.
+>> Attempting to alloc a request will check there first. When freeing
+>> a request, if we're over some threshold, move requests to the
+>> ce->free_list. This list can be browsed by the shrinker to free
+>> up memory. If a CPU goes offline, all requests are reaped.
+>>
+>> That's about it. If we go further with this, it'll be split into
+>> a few separate patches. For now, just throwing this out there
+>> for testing. The patch is against my for-5.8/io_uring branch.
+> 
+> That branch doesn't seem to exist on
+> <https://git.kernel.dk/cgit/linux-block/>...
+
+Oh oops, guess I never pushed that out. Will do so.
+
+-- 
+Jens Axboe
+

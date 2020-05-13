@@ -2,74 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 570641D1D8E
-	for <lists+io-uring@lfdr.de>; Wed, 13 May 2020 20:34:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBC7B1D1DC0
+	for <lists+io-uring@lfdr.de>; Wed, 13 May 2020 20:45:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732218AbgEMSeR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 May 2020 14:34:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46428 "EHLO
+        id S2387469AbgEMSpT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 May 2020 14:45:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730472AbgEMSeR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 May 2020 14:34:17 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 127F0C061A0C
-        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 11:34:16 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id x10so171297plr.4
-        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 11:34:16 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1732817AbgEMSpS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 May 2020 14:45:18 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84153C061A0C
+        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 11:45:17 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id t9so11507925pjw.0
+        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 11:45:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SH+sjMwZuOMM8o6r6yEzeEIldRD9YZTLwHLIdvFCJLI=;
-        b=1awYWNJjGLthqdDg8sO8PfSRDks8MSzZ9Qopf8YhOB7PmVSKOiNOnqwarpt9C1LqRA
-         3FDYE5WjX0+Z7z+R7haOLF8qKtXVdIxRwd19AJQ3IBMOa0eU4ZBJ656K3O65t00sRQ3y
-         DVOjGp/VoPnYRM/YgOZpK+NS1vCN+8sMQZYAW6WGGHLpHmQYxghtIIZc4BfDidi8Zl7p
-         n/YQtytQItl59JA7LZJEV54OEbTcFCc3/1/CF32JcrvcDepdcpwKOReP1zdu44URGuCU
-         +WRrSoAQOwpCPIup1HowigObyROu3yUPQRfW3rvJM/g3Q51WGrSxz43cw+Ze+yIVrMvD
-         9iTg==
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=kedT0HY+ViVEEtnUYs06kmw4y2XfyiFzsbircCs+tYk=;
+        b=cYAlDsaVpBMPafQAzVvU4B/DNbXyGA+3quWjCQIXVxgkOq7l6uqWdi8ZUfid4kvAKc
+         tnirNQGSwOhgmgDr+svRBYiKmGFSovOGwMDDcZEih9LfSYKEPTZ96/JF6OcfrmWq0NDC
+         TIIkJdlfbdJkZw0IqO+nTzjjO9gE+xCoHaUAgTpEWnWttP/hzr/dONvEP846+Jv0NvLo
+         VkBa44GBqoPSmsHZ7nLZ1dYXpIyV15iY+LqvuGUwTdIfTxTbuAFWxpxKQdnTGQh1OPPp
+         /iyF0lOMYaNVwEd8txIwHwvz3jXmGux7v5mhwp7gpD/wMuWLljN9yrMpbv6bTtMm7+Xu
+         p7bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SH+sjMwZuOMM8o6r6yEzeEIldRD9YZTLwHLIdvFCJLI=;
-        b=mWDp/0Uphra9w6lQMwcJznvDnoVCDeD5h752R3kGuSh9cJgfoxFJSCDr6RuFhCuK9B
-         ZnQIPFnc2dS8LK26kyz4CH04rHGkydHojq/kjvUtrCwGTi05LjGzhUxRjNovwOdoJ+Mb
-         HGV0uXhie8HUIVp5iGZB1dACEPQj8jxXUk51A9shQBOjbiQ0UYa8mBER19DcsnnQGBOO
-         e5qeHKlg5kZctpg8jLIBigGYQ99qx2HWCDuDKtk3RDWYZVMN+2dTlxyzDs/8COusF2Na
-         ckZCBnoxAVk4KTWDavFlL3vWWeTaBSMBB/zmGK+DO3EzrUuHCmt+vT5WtKvpFVtosrhK
-         NukQ==
-X-Gm-Message-State: AOAM531fScFv2l3xzhMjgJ4In2mJu05vhwacaBsicyDraXn9jF5wu9OA
-        fr3kwRxUxnJtHIjQQviXSvNmgYChwA0=
-X-Google-Smtp-Source: ABdhPJwaWdgZJDB6FkHbh50cGMWPvrkyRzNSC4EjlEgDHl9rlJGIryZ1sfGk7fwP/kmM/1U9t+F1NQ==
-X-Received: by 2002:a17:902:b58e:: with SMTP id a14mr425108pls.247.1589394855415;
-        Wed, 13 May 2020 11:34:15 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=kedT0HY+ViVEEtnUYs06kmw4y2XfyiFzsbircCs+tYk=;
+        b=XX69DlI3B1sJ2ZdSKPaJKgDWxfzYchJShClj8OYQ6oZALwZcV5QSY7BA3JWqsklmm9
+         aE+nmnEXFsVYrK0ZO1rtSR8FPYzpnJffnC/KR8wCygKsJZV9z49YOSuMIU3Xhj5UTvtJ
+         ismCm3s4PTiHhZspYfqO6iKhM63K8bMnF4W6pSmNv7ViIFK1Zd7SARbyW3bJodajUgz1
+         wbRcOo/nG86U/uPnvmiOJUuPZAhGNNJoCe4iqj8z6xweEqVEUmykJ7Q1dKMiUPXDOoWV
+         n22PST18mhmGVUrhk4Kq1NxkU9TwF8meXgYRuy1NDXw9BwuDEII5tSsIlnDC/ITsURq1
+         K20Q==
+X-Gm-Message-State: AOAM531scQLD9XDBIDiYqkHMXNrNfv7b6d7/pDh0J6Xus3YYrqHXP6jN
+        aTlqOQwWzjvjuSgNkw8zA1AmfvrFoTo=
+X-Google-Smtp-Source: ABdhPJycWFRNDEh+swilCCDkdzzb5JFKOiLEmrG4KNxZxiWVaWmVYTNGuHB8IsWgD9f0mP8tF3SwFw==
+X-Received: by 2002:a17:902:d913:: with SMTP id c19mr451786plz.229.1589395516172;
+        Wed, 13 May 2020 11:45:16 -0700 (PDT)
 Received: from ?IPv6:2605:e000:100e:8c61:e16c:b526:b72a:3095? ([2605:e000:100e:8c61:e16c:b526:b72a:3095])
-        by smtp.gmail.com with ESMTPSA id 28sm16329433pjh.43.2020.05.13.11.34.13
+        by smtp.gmail.com with ESMTPSA id i9sm220876pfk.199.2020.05.13.11.45.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 May 2020 11:34:14 -0700 (PDT)
-Subject: Re: [PATCH RFC} io_uring: io_kiocb alloc cache
-To:     Jann Horn <jannh@google.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        joseph qi <joseph.qi@linux.alibaba.com>,
-        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>
-References: <492bb956-a670-8730-a35f-1d878c27175f@kernel.dk>
- <CAG48ez0eGT60a50GAkL3FVvRzpXwhufdr+68k_X_qTgxyZ-oQQ@mail.gmail.com>
+        Wed, 13 May 2020 11:45:15 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f1b2cbf8-a253-edb2-5e0a-5a1e5d45afa2@kernel.dk>
-Date:   Wed, 13 May 2020 12:34:12 -0600
+Subject: regression: fixed file hang
+Message-ID: <67435827-eb94-380c-cdca-aee69d773d4d@kernel.dk>
+Date:   Wed, 13 May 2020 12:45:14 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez0eGT60a50GAkL3FVvRzpXwhufdr+68k_X_qTgxyZ-oQQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -78,89 +64,42 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/13/20 11:42 AM, Jann Horn wrote:
-> +slab allocator people
-> 
-> On Wed, May 13, 2020 at 6:30 PM Jens Axboe <axboe@kernel.dk> wrote:
->> I turned the quick'n dirty from the other day into something a bit
->> more done. Would be great if someone else could run some performance
->> testing with this, I get about a 10% boost on the pure NOP benchmark
->> with this. But that's just on my laptop in qemu, so some real iron
->> testing would be awesome.
-> 
-> 10% boost compared to which allocator? Are you using CONFIG_SLUB?
+Hi Xiaoguang,
 
-SLUB, yes.
+Was doing some other testing today, and noticed a hang with fixed files.
+I did a bit of poor mans bisecting, and came up with this one:
 
->> The idea here is to have a percpu alloc cache. There's two sets of
->> state:
->>
->> 1) Requests that have IRQ completion. preempt disable is not enough
->>    there, we need to disable local irqs. This is a lot slower in
->>    certain setups, so we keep this separate.
->>
->> 2) No IRQ completion, we can get by with just disabling preempt.
-> 
-> The SLUB allocator has percpu caching, too, and as long as you don't
-> enable any SLUB debugging or ASAN or such, and you're not hitting any
-> slowpath processing, it doesn't even have to disable interrupts, it
-> gets away with cmpxchg_double.
-> 
-> Have you profiled what the actual problem is when using SLUB? Have you
-> tested with CONFIG_SLAB_FREELIST_HARDENED turned off,
-> CONFIG_SLUB_DEBUG turned off, CONFIG_TRACING turned off,
-> CONFIG_FAILSLAB turned off, and so on? As far as I know, if you
-> disable all hardening and debugging infrastructure, SLUB's
-> kmem_cache_alloc()/kmem_cache_free() on the fastpaths should be really
-> straightforward. And if you don't turn those off, the comparison is
-> kinda unfair, because your custom freelist won't respect those flags.
+commit 0558955373023b08f638c9ede36741b0e4200f58
+Author: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Date:   Tue Mar 31 14:05:18 2020 +0800
 
-But that's sort of the point. I don't have any nasty SLUB options
-enabled, just the default. And that includes CONFIG_SLUB_DEBUG. Which
-all the distros have enabled, I believe.
+    io_uring: refactor file register/unregister/update handling
 
-So yes, I could compare to a bare bones SLUB, and I'll definitely do
-that because I'm curious. And it also could be an artifact of qemu,
-sometimes that behaves differently than a real host (locks/irq is more
-expensive, for example). Not sure how much with SLUB in particular,
-haven't done targeted benchmarking of that.
+If I revert this one, the test completes fine.
 
-The patch is just tossed out there for experimentation reasons, in case
-it wasn't clear. It's not like I'm proposing this for inclusion. But if
-the wins are big enough over a _normal_ configuration, then it's
-definitely tempting.
+The case case is pretty simple, just run t/io_uring from the fio
+repo, default settings:
 
-> When you build custom allocators like this, it interferes with
-> infrastructure meant to catch memory safety issues and such (both pure
-> debugging code and safety checks meant for production use) - for
-> example, ASAN and memory tagging will no longer be able to detect
-> use-after-free issues in objects managed by your custom allocator
-> cache.
-> 
-> So please, don't implement custom one-off allocators in random
-> subsystems. And if you do see a way to actually improve the
-> performance of memory allocation, add that to the generic SLUB
-> infrastructure.
+[ fio] # t/io_uring /dev/nvme0n1p2
+Added file /dev/nvme0n1p2
+sq_ring ptr = 0x0x7fe1cb81f000
+sqes ptr    = 0x0x7fe1cb81d000
+cq_ring ptr = 0x0x7fe1cb81b000
+polled=1, fixedbufs=1, buffered=0 QD=128, sq_ring=128, cq_ring=256
+submitter=345
+IOPS=240096, IOS/call=32/31, inflight=91 (91)
+IOPS=249696, IOS/call=32/31, inflight=99 (99)
+^CExiting on signal 2
 
-I hear you. This isn't unique, fwiw. Networking has a page pool
-allocator for example, which I did consider tapping into.
+and ctrl-c it after a second or so. You'll then notice a kworker that
+is stuck in io_sqe_files_unregister(), here:
 
-Anyway, I/we will be a lot wiser once this experiment progresses!
+	/* wait for all refs nodes to complete */
+	wait_for_completion(&data->done);
 
->> Outside of that, any freed requests goes to the ce->alloc_list.
->> Attempting to alloc a request will check there first. When freeing
->> a request, if we're over some threshold, move requests to the
->> ce->free_list. This list can be browsed by the shrinker to free
->> up memory. If a CPU goes offline, all requests are reaped.
->>
->> That's about it. If we go further with this, it'll be split into
->> a few separate patches. For now, just throwing this out there
->> for testing. The patch is against my for-5.8/io_uring branch.
-> 
-> That branch doesn't seem to exist on
-> <https://git.kernel.dk/cgit/linux-block/>...
-
-Oh oops, guess I never pushed that out. Will do so.
+I'll try and debug this a bit, and for some reason it doens't trigger
+with the liburing fixed file setup. Just wanted to throw this out there,
+so if you have cycles, please do take a look at it.
 
 -- 
 Jens Axboe

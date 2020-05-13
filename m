@@ -2,54 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BC601D1FD7
-	for <lists+io-uring@lfdr.de>; Wed, 13 May 2020 22:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4F0B1D2037
+	for <lists+io-uring@lfdr.de>; Wed, 13 May 2020 22:32:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387996AbgEMUJT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 May 2020 16:09:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33280 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387445AbgEMUJT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 May 2020 16:09:19 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02D37C061A0C
-        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 13:09:18 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id f4so221594pgi.10
-        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 13:09:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=odPRiSe8khfy7ohFJpbmDMC5PLQjZ5y6DzMomFbp5xg=;
-        b=oongAyt3NKd1MX3jceVXwpIIs/tDMSoN/vZ+BCakcME7NWPegVCaXLOVudhhtViiKn
-         V+mK3IJ3NkY3pN8P1P1uAt6B+IWRtjNFTeW6NPp5pTurY7o7s3t+4ra7FqumyiIOJMSD
-         1d3bdPwrP3aBXRUW1fWmMCz5Rx9616s/vdG68ZDH7EzF1GN4WOS1WRqgYLbEZodeqG7I
-         BTKcE4l//fpkJz9Ny8FbEABbJN/L6nDtXhOD5A3SFtal4lzDJjhpMukrjx3sOB84sWdh
-         cenhbeBxIL4QQiMMZcvDOHaiUdqp/KhV+jgwtUqogNNBKIHO2ODmwbmI93nmgrARkW/a
-         MiAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=odPRiSe8khfy7ohFJpbmDMC5PLQjZ5y6DzMomFbp5xg=;
-        b=GsYNS1NBmEOxxKv0q6HiWGnVDRKP9LKF+tPInijEuiavaqEMmvrez0J8B0TFFK1aE8
-         KbjQzbfM06OSyZJbyGQ5+4DgF/dRsQqD5sVcGHbYtjKBdUF4d6e6k3/HWNtjv1T1cXLI
-         SOzirizdMqQ3PUcBXtAkBnF0w4RyFMod980msh9grggbDuta6Nb3A2fYgeLSIk6xMQOD
-         lpkafp0iSk9C9vkqyVhF2jP2iPtf8nczBPJKH/OL5/p3iqcyissSP9MXh7KXHOHBOuSU
-         4U+TvYe44r42SmX3K2Kdzp5dw8Zum8NVTdYUvhQF/ENhtzSq2RdrE/1vMJWh3nG3/5M/
-         lY+A==
-X-Gm-Message-State: AOAM530KSUsnOudsmN10czvgbya8YFLygfzi2G0QB1hAb2ip+dfFAlK4
-        H10UyV1lTA2dqdFskKO+SCzh1A==
-X-Google-Smtp-Source: ABdhPJwWIOjg3aOHPqEIvBsOXRgpDMjdwvsb2/ZpQfOL2+I1C9kGu2JAv9l5CnHrHdF7vxnyZx1XBg==
-X-Received: by 2002:a63:1348:: with SMTP id 8mr929534pgt.350.1589400557214;
-        Wed, 13 May 2020 13:09:17 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:4833:bff6:8281:ef26? ([2605:e000:100e:8c61:4833:bff6:8281:ef26])
-        by smtp.gmail.com with ESMTPSA id j5sm342442pfa.37.2020.05.13.13.09.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 May 2020 13:09:16 -0700 (PDT)
+        id S1725977AbgEMUcE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 May 2020 16:32:04 -0400
+Received: from forward5-smtp.messagingengine.com ([66.111.4.239]:60655 "EHLO
+        forward5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725952AbgEMUcE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 May 2020 16:32:04 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailforward.nyi.internal (Postfix) with ESMTP id 2DC4F194048A;
+        Wed, 13 May 2020 16:32:03 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Wed, 13 May 2020 16:32:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=8/uT6Fyu1iz5eMYwmwTdiVaY95eH7ssrm/l9QXJ0X
+        kc=; b=yHPT6i5JEuO123spClgY1e/ykbHQXZ2iW+mV7slkqCziGEpSxtbc8z2kC
+        3C3H7CRY6elioS4GJEc0FxGIXXzU3jFDtPz0L2UVDyNwQUmPqqFNajOe2/nueUux
+        dkjjjELuK1zs5a6QVooAhmiPXd1iEy3N53xNWyH30hmxZB4+V/AT5oIJ3K3Da2V4
+        WVEeU+meGYOG5rY0P5b0Zu7KrPAc5SKac1CwZy8kr5dhKQsdxp/Ppwxe5PsVtnP8
+        cDzq82jrmF7nlIZVXTwHBtYVLpefzf5PkRm6+VVtkHozqFnklSBA7AAiZ0OeOt+a
+        gvFTYcwIw6SWmkDK28MRjEd3oQarg==
+X-ME-Sender: <xms:QVm8XjH0PIh1KIE0N3gC4SFfkOEvN2gMaxDyRRKOY94NfzQdnM-t9Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrleeggddugeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomheprfgvkhhk
+    rgcugfhnsggvrhhguceophgvnhgsvghrghesihhkihdrfhhiqeenucggtffrrghtthgvrh
+    hnpefhveegtdehhfdtfeeuleegfffhtdegkeefleehfeehieelgefgfffhgfehudefteen
+    ucfkphepkeelrddvjedrfeefrddujeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepphgvnhgsvghrghesihhkihdrfhhi
+X-ME-Proxy: <xmx:QVm8XgUbeqiTdzIOYi5uZFpm2N4t0KC4GA3jJi7zuZ0MZnQWyxM0Gw>
+    <xmx:QVm8XlJXQKYi34vxsRm0Ak85boJMNI-l3ZPm8Py12HwWPPSkqYZ4gQ>
+    <xmx:QVm8XhFGVHik4F9GrMmTC3RSAvqaqe-lmJUTDbKMBtLuXwAX2s8SHw>
+    <xmx:Q1m8XhQNu3LyF08sn1hudj1T8Okv1ue4v3qJl_5A9U1BhvwW9jw8HrKPMms>
+Received: from [192.168.1.105] (89-27-33-173.bb.dnainternet.fi [89.27.33.173])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 63489306631F;
+        Wed, 13 May 2020 16:31:59 -0400 (EDT)
 Subject: Re: [PATCH RFC} io_uring: io_kiocb alloc cache
-To:     Pekka Enberg <penberg@iki.fi>, Jann Horn <jannh@google.com>
+To:     Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>
 Cc:     io-uring <io-uring@vger.kernel.org>,
         Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         joseph qi <joseph.qi@linux.alibaba.com>,
@@ -64,14 +59,15 @@ Cc:     io-uring <io-uring@vger.kernel.org>,
 References: <492bb956-a670-8730-a35f-1d878c27175f@kernel.dk>
  <CAG48ez0eGT60a50GAkL3FVvRzpXwhufdr+68k_X_qTgxyZ-oQQ@mail.gmail.com>
  <20200513191919.GA10975@nero>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fb43ddb4-693b-5c07-775f-3142502495de@kernel.dk>
-Date:   Wed, 13 May 2020 14:09:14 -0600
+ <fb43ddb4-693b-5c07-775f-3142502495de@kernel.dk>
+From:   Pekka Enberg <penberg@iki.fi>
+Message-ID: <d3ff604d-2955-f8f6-dcbd-25ae90569dc3@iki.fi>
+Date:   Wed, 13 May 2020 23:31:58 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200513191919.GA10975@nero>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <fb43ddb4-693b-5c07-775f-3142502495de@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
@@ -79,58 +75,35 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hi Jens,
+
 On 5/13/20 1:20 PM, Pekka Enberg wrote:
-> 
-> Hi,
-> 
-> On Wed, May 13, 2020 at 6:30 PM Jens Axboe <axboe@kernel.dk> wrote:
->>> I turned the quick'n dirty from the other day into something a bit 
->>> more done. Would be great if someone else could run some
->>> performance testing with this, I get about a 10% boost on the pure
->>> NOP benchmark with this. But that's just on my laptop in qemu, so
->>> some real iron testing would be awesome.
-> 
-> On 5/13/20 8:42 PM, Jann Horn wrote:> +slab allocator people
->> 10% boost compared to which allocator? Are you using CONFIG_SLUB?
->  
-> On Wed, May 13, 2020 at 6:30 PM Jens Axboe <axboe@kernel.dk> wrote:
->>> The idea here is to have a percpu alloc cache. There's two sets of 
->>> state:
->>>
->>> 1) Requests that have IRQ completion. preempt disable is not
->>> enough there, we need to disable local irqs. This is a lot slower
->>> in certain setups, so we keep this separate.
->>>
->>> 2) No IRQ completion, we can get by with just disabling preempt.
-> 
-> On 5/13/20 8:42 PM, Jann Horn wrote:> +slab allocator people
->> The SLUB allocator has percpu caching, too, and as long as you don't 
->> enable any SLUB debugging or ASAN or such, and you're not hitting
->> any slowpath processing, it doesn't even have to disable interrupts,
->> it gets away with cmpxchg_double.
-> 
-> The struct io_kiocb is 240 bytes. I don't see a dedicated slab for it in
-> /proc/slabinfo on my machine, so it likely got merged to the kmalloc-256
-> cache. This means that there's 32 objects in the per-CPU cache. Jens, on
-> the other hand, made the cache much bigger:
+>> So I assume if someone does "perf record", they will see significant
+>> reduction in page allocator activity with Jens' patch. One possible way
+>> around that is forcing the page allocation order to be much higher. IOW,
+>> something like the following completely untested patch:
 
-Right, it gets merged with kmalloc-256 (and 5 others) in my testing.
+On 5/13/20 11:09 PM, Jens Axboe wrote:
+> Now tested, I gave it a shot. This seems to bring performance to
+> basically what the io_uring patch does, so that's great! Again, just in
+> the microbenchmark test case, so freshly booted and just running the
+> case.
 
-> +#define IO_KIOCB_CACHE_MAX 256
-> 
-> So I assume if someone does "perf record", they will see significant
-> reduction in page allocator activity with Jens' patch. One possible way
-> around that is forcing the page allocation order to be much higher. IOW,
-> something like the following completely untested patch:
+Great, thanks for testing!
 
-Now tested, I gave it a shot. This seems to bring performance to
-basically what the io_uring patch does, so that's great! Again, just in
-the microbenchmark test case, so freshly booted and just running the
-case.
+On 5/13/20 11:09 PM, Jens Axboe wrote:
+> Will this patch introduce latencies or non-deterministic behavior for a
+> fragmented system?
 
-Will this patch introduce latencies or non-deterministic behavior for a
-fragmented system?
+You have to talk to someone who is more up-to-date with how the page 
+allocator operates today. But yeah, I assume people still want to avoid 
+higher-order allocations as much as possible, because they make 
+allocation harder when memory is fragmented.
 
--- 
-Jens Axboe
+That said, perhaps it's not going to the page allocator as much as I 
+thought, but the problem is that the per-CPU cache size is just to small 
+for these allocations, forcing do_slab_free() to take the slow path 
+often. Would be interesting to know if CONFIG_SLAB does better here 
+because the per-CPU cache size is much larger IIRC.
 
+- Pekka

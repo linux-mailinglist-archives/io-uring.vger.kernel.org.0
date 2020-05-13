@@ -2,103 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DDEA31D06F2
-	for <lists+io-uring@lfdr.de>; Wed, 13 May 2020 08:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA4FD1D106C
+	for <lists+io-uring@lfdr.de>; Wed, 13 May 2020 13:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728786AbgEMGIh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 May 2020 02:08:37 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:58353 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728784AbgEMGIg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 May 2020 02:08:36 -0400
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 9E92D5C0176;
-        Wed, 13 May 2020 02:08:35 -0400 (EDT)
-Received: from imap21 ([10.202.2.71])
-  by compute7.internal (MEProxy); Wed, 13 May 2020 02:08:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
-        mime-version:message-id:in-reply-to:references:date:from:to
-        :subject:content-type:content-transfer-encoding; s=fm2; bh=e+/AH
-        NWAEkpDEPZFqgJxIoqoURy7hxCUFbqvgryriwQ=; b=G+9mQsqyB1MDzqyfVvgtx
-        N9QhexQUTUmM62yojcXJVrI+7g3jUx8rFS9Q43yOvkSkmjhHy8sY2Q0ZrGSvvML1
-        ZhrMwEE55ycv1ADH8XOYTHl19kbDuZ7OWv/62Kis4YtFgC/EeOTnsYnjjAIadLq4
-        5oUSnjuyv9lwKKLXVh4JunTFOc7xjP80BOM34D6VxXuZEfmkwzK+xGbae2XCxiuP
-        UinmMP7AQZTJ4pAbIGRr7JWyXIqmTO/1fRL3eRKWbXH5V8UUAqbD3qZmFIqSVB0M
-        buGgjBS4VteX4aI8RKzpER+Ujth05p3rH/MRs3JDAFky73rwh5srks62DUSxeZHt
-        Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=e+/AHNWAEkpDEPZFqgJxIoqoURy7hxCUFbqvgryri
-        wQ=; b=1PVbk1OK1+21NRab9kCXG05hF+uaUJ9lICLEiA9cypSmkOmCiRrkkFx6W
-        9XiftMfwcV4BP0dgirHe/t24DmuHjWZOgoou+4OSiNb1tmbKmk7jVYI+it7Cieha
-        dY1qbdlOBCuPkeF/qdS9AcSQna9eIAq9jZX4Kue4hdFTARfS+4okEaZoh9BDnFG+
-        HAAyAdS5BMNvBHEH6j42UqjoW8DbvyyyHVXUnf9b+X1c+LcEogspFhcj8Xdo+hLb
-        wSs7uL13BNQJzfXWPJz8IkQ2o7QfghTW009zbKAjZLCUFv1kb6LWozbY6DZ+Lmbx
-        G7VS5atOpDPELoWhVGFRWpWZWAGFw==
-X-ME-Sender: <xms:4467Xm4TohfXYFAcWPmMm5tn3sn85Y9-AopMLJRSTecPtdE69CTvMQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrleefgddutddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgfgsehtqhertderreejnecuhfhrohhmpedfjfdr
-    ucguvgcugghrihgvshdfuceohhguvghvrhhivghssehfrghsthhmrghilhdrtghomheqne
-    cuggftrfgrthhtvghrnhepheeitdehfeehteegueekfedutdefueffiefgteekiefgveef
-    gfehjedtjeegteffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhephhguvghvrhhivghssehfrghsthhmrghilhdrtghomh
-X-ME-Proxy: <xmx:4467Xv411ULUHUOGQxOVaBnYJjRdnjHY3DfPfUg3Yu-tmwN37l5Dbg>
-    <xmx:4467XleJ0gS6e4oXoLN9PtR6xOAnmzxN92yPXM-oTyuC0QCTVh6lvQ>
-    <xmx:4467XjIQIIhr9MZsXSf02uJMqX6zFS96dhtBX32_lp8b8b2WVLNmfw>
-    <xmx:4467XvU9LGMJShf8L4NzaFw8xH9XNqMQ5TuqspSbc4yeCB_HTTzdMw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 4B9E566007E; Wed, 13 May 2020 02:08:35 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.3.0-dev0-413-g750b809-fmstable-20200507v1
-Mime-Version: 1.0
-Message-Id: <d22e7619-3ff0-4cea-ba10-a05c2381f3b7@www.fastmail.com>
-In-Reply-To: <CADPKF+ene9LqKTFPUTwkdgbEe_pccZsJGjcm7cNmiq=8P_ojbA@mail.gmail.com>
+        id S1729836AbgEMLCH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 May 2020 07:02:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60510 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728784AbgEMLCH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 May 2020 07:02:07 -0400
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B20C1C061A0C
+        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 04:02:05 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id i5so610094qkl.12
+        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 04:02:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DYbuSTSEXUMSooc/O6v+uLXRdzjLHkh9w8KM+rnHyB8=;
+        b=uFPzRODqgYmWbwxYLP+M63msAXn2yIblPX4tl5Y+e6XLV0CrIjR68SD0fenlxpkf6u
+         TD9shU8KcHdRBjOQm1pp0M5eSYWmbRQ/Dma4+JLDOyYyVEjX5M63mP6AsodsBh8V1FZK
+         AmPCdoQ4WsDdoRLJ7h65PKxfK6Lg1KazNQ9Em+ZmX+b4FW32p5afxZnSCAENo07NHPP+
+         p6GgzZgzm+z5QsvmjUQL9Fh4P86paoMlR+wQ3AKuZfuu66bU2kBfnR9pVtnMT2Ysx2Ov
+         0fIwYKp88FiAaSScH132cRk46kPRrY7TSPEXi1GPuQRmwrcj+Ty8ysdvwZ5S7aLacgl4
+         +f5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DYbuSTSEXUMSooc/O6v+uLXRdzjLHkh9w8KM+rnHyB8=;
+        b=K3U9+QYn9MHS3upMqG3eiO7LhmGMhkNzNKXD+NpigXpZ4/IB3zX5XgLU+jnTgpBqOJ
+         njBMBfUtLTSn/ho2tOkaD+tspRKiBb3J685PFphXk0yk0KRZP0HiyjP0usMJC76KAOnD
+         zT9+/5woD93Q42eZnc1fAdsmiT78pnBOl/nUQi5Uhjbi378/FhOxl7EVZwrxZMFzRu6M
+         t023XZiSh+n/Q9Q8jvuTpp9PrwaA8KQTe5WhQmZAvmLUgOA7iu8vv+pKVctzjkpihe+x
+         YchGplDMqirH/QskQSsSJ+mHGvynsZzLkd7yprHD9H8EWL1jdRTlzx49mLKcrpD1kWuR
+         RwSw==
+X-Gm-Message-State: AGi0PubraVopWRvl+2FlT8F+zRS4oBgyq6vQZHORc8WnkT93zwdkfbKW
+        1PDzX0C7QDysLuqoAC3Y4cd37s1yXkTfeW7dcEQ/tjUZvTS37Jc=
+X-Google-Smtp-Source: APiQypK33cRoEFwlfd7QOqGPMc35osvD4pXD2iX/OmqeeyICrjudkr9/iFXYGptn2Q32dUvcRU15nIOMmkjBRW0VDPs=
+X-Received: by 2002:a37:a485:: with SMTP id n127mr13566595qke.476.1589367723508;
+ Wed, 13 May 2020 04:02:03 -0700 (PDT)
+MIME-Version: 1.0
 References: <CADPKF+ene9LqKTFPUTwkdgbEe_pccZsJGjcm7cNmiq=8P_ojbA@mail.gmail.com>
-Date:   Wed, 13 May 2020 08:07:07 +0200
-From:   "H. de Vries" <hdevries@fastmail.com>
-To:     "Dmitry Sychov" <dmitry.sychov@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
+ <d22e7619-3ff0-4cea-ba10-a05c2381f3b7@www.fastmail.com>
+In-Reply-To: <d22e7619-3ff0-4cea-ba10-a05c2381f3b7@www.fastmail.com>
+From:   Dmitry Sychov <dmitry.sychov@gmail.com>
+Date:   Wed, 13 May 2020 14:01:28 +0300
+Message-ID: <CADPKF+d1SJU9T+NFtqgRWwY3GJn1Wg06uNdSrVg_q837z_PV=A@mail.gmail.com>
 Subject: Re: Any performance gains from using per thread(thread local) urings?
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+To:     "H. de Vries" <hdevries@fastmail.com>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Dmitry,
+Hi Hielke,
 
-If you want max performance, what you generally will see in non-blocking=
- servers is one event loop per core/thread. This means one ring per core=
-/thread. Of course there is no simple answer to this. See how thread-bas=
-ed servers work vs non-blocking servers. E.g. Apache vs Nginx or Tomcat =
-vs Netty.
+> If you want max performance, what you generally will see in non-blocking servers is one event loop per core/thread.
+> This means one ring per core/thread. Of course there is no simple answer to this.
+> See how thread-based servers work vs non-blocking servers. E.g. Apache vs Nginx or Tomcat vs Netty.
 
-=E2=80=94
-Hielke de Vries
+I think a lot depends on the internal uring implementation. To what
+degree the kernel is able to handle multiple urings independently,
+without much congestion points(like updates of the same memory
+locations from multiple threads), thus taking advantage of one ring
+per CPU core.
 
-On Tue, May 12, 2020, at 22:20, Dmitry Sychov wrote:
-> Hello,
->=20
-> I'am writing a small web + embedded database application taking
-> advantage of the multicore performance of the latest AMD Epyc (up to
-> 128 threads/CPU).
->=20
-> Is there any performance advantage of using per thread uring setups?
-> Such as every thread will own its unique sq+cq.
->=20
-> My feeling is there are no gains since internally, in Linux kernel,
-> the uring system is represented as a single queue pickup thread
-> anyway(?) and sharing a one pair of sq+cq (through exclusive locks)
-> via all threads would be enough to achieve maximum throughput.
->=20
-> I want to squeeze the max performance out of uring in multi threading
-> clients <-> server environment, where the max number of threads is
-> always bounded by the max number of CPUs cores.
->=20
-> Regards, Dmitry
->
+For example, if the tasks from multiple rings are later combined into
+single input kernel queue (effectively forming a congestion point) I
+see
+no reason to use exclusive ring per core in user space.
+
+[BTW in Windows IOCP is always one input+output queue for all(active) threads].
+
+Also we could pop out multiple completion events from a single CQ at
+once to spread the handling to cores-bound threads .
+
+I thought about one uring per core at first, but now I'am not sure -
+maybe the kernel devs have something to add to the discussion?
+
+P.S. uring is the main reason I'am switching from windows to linux dev
+for client-sever app so I want to extract the max performance possible
+out of this new exciting uring stuff. :)
+
+Thanks, Dmitry

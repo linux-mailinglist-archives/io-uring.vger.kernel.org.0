@@ -2,184 +2,276 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D63011D1F1C
-	for <lists+io-uring@lfdr.de>; Wed, 13 May 2020 21:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 493361D1F00
+	for <lists+io-uring@lfdr.de>; Wed, 13 May 2020 21:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390661AbgEMT0h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 May 2020 15:26:37 -0400
-Received: from forward5-smtp.messagingengine.com ([66.111.4.239]:52721 "EHLO
-        forward5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390658AbgEMT0g (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 May 2020 15:26:36 -0400
-X-Greylist: delayed 334 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 May 2020 15:26:35 EDT
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailforward.nyi.internal (Postfix) with ESMTP id EF1B2194094E;
-        Wed, 13 May 2020 15:21:00 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 13 May 2020 15:21:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=8bsMyx
-        zfDx9Zr6FfUcGRIkLCnzWw0XKmR2trMWHzkT4=; b=TCiG3nuh0Q53KOHbhBhap9
-        nWsQX29dr8w2sl+TSas6D8KQJPKvwNsPdiCJrCmf5cS2R4oIRA95TVcnQz3SiP8m
-        xFv3XFxtj0oQ5lVEDApR9RUodkmJs4vE5Tz1Z6ZfWdrOZ9bwIOrwA3TCm3oAP+7f
-        VHaK4s6IAtxCc1zj5tT63FjuU+bCFfPb6wNtbTCabVO3fPoYXOBMhen36bJ4o5fz
-        EKKVFo8R3BGEyVHSNhj4r5geovsn31i1WadyxmQHZKNJYXs4mF6MfwUmJB7KcROb
-        eedYsPN/u3PG8Arwc2Vlw3mTzrECm58gqFH6Ap1ZjdxIKUB1J6GYqaUn7NODx8iQ
-        ==
-X-ME-Sender: <xms:mki8XnnJfPr71IsGnPYfCUgxycY9Xcmu4mu5dCf23MqkPHHhdIiqgA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrleeggddufeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefrvghkkhgr
-    ucfgnhgsvghrghcuoehpvghnsggvrhhgsehikhhirdhfiheqnecuggftrfgrthhtvghrnh
-    epgfffgeekteetvdejledufeelleeuudeigfevvdeileeludehiedugefhleehvdeunecu
-    kfhppeekledrvdejrdeffedrudejfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehpvghnsggvrhhgsehikhhirdhfih
-X-ME-Proxy: <xmx:mki8Xq2aprX_n819v_Dne_g1BYaC5iSg90Zhj7YyZ-qAaNAQlTxkUQ>
-    <xmx:mki8Xtqhw5v-Vi1t0WSlxxUddQjtU7raolxSKzKcl52XmN41phzJBQ>
-    <xmx:mki8XvkxkZv8P8i5CGCxbu1rIL7vah7wm3VpEerylPbDX0b7V1pr9w>
-    <xmx:nEi8XvzCKsSm7fIuBHtUINQ7-G0IftIJjUGhGPGs8M0HkGyF0D2MrDGph_M>
-Received: from localhost (89-27-33-173.bb.dnainternet.fi [89.27.33.173])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9A9BA3280059;
-        Wed, 13 May 2020 15:20:58 -0400 (EDT)
-Date:   Wed, 13 May 2020 22:20:57 +0300
-From:   Pekka Enberg <penberg@iki.fi>
-To:     Jann Horn <jannh@google.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        joseph qi <joseph.qi@linux.alibaba.com>,
-        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH RFC} io_uring: io_kiocb alloc cache
-Message-ID: <20200513191919.GA10975@nero>
-References: <492bb956-a670-8730-a35f-1d878c27175f@kernel.dk>
- <CAG48ez0eGT60a50GAkL3FVvRzpXwhufdr+68k_X_qTgxyZ-oQQ@mail.gmail.com>
+        id S2390263AbgEMTYT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 May 2020 15:24:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54414 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732218AbgEMTYT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 May 2020 15:24:19 -0400
+Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFFBBC061A0C
+        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 12:24:18 -0700 (PDT)
+Received: by mail-qt1-x834.google.com with SMTP id j2so779622qtr.12
+        for <io-uring@vger.kernel.org>; Wed, 13 May 2020 12:24:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZOfTY8R/u4rTnoEIrszPd7HIwzUpo5eTVkwRymhLJn4=;
+        b=th0zMIQK8wvorrRRqzi+cFq6oAaSh9jZG1pJlJf2HsPZNq2ODIS25EuDElkMHl/Orq
+         DFvh9xI+r4soWNaWFcI/p/p8P2aF/GhU039mv/Sb1qbS9njzES7aHZ89E2djxKyb3WZj
+         gs6Nd4cbROZcdUXZU/fwb1YxHW6fHiZgRaL7l6/Jo5ONuurg4FdQLZab5Q2mfD6KJQYW
+         72ZqLE/cQ7zaHW8tdsUr9XIXRQpOxqe9b1D19S+kts9vbKu+gdpx1G+ze9DBEOiQfqop
+         +H/oNY59w9mH5giFY3qFehnx+/Qse32bV/j4U/aBXl5fIzqRmEkT9DGaik2HCOoeCv6s
+         FvaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZOfTY8R/u4rTnoEIrszPd7HIwzUpo5eTVkwRymhLJn4=;
+        b=MaipDO+dDozjql9VZ5XqeM754Q4iaNWN7ToTaZbS8PnbmlnGpT5y4AxY/LkmBXRfKd
+         kq9bUdPSbqa81tAMWewdC35paCAn8WssHG/QMQsv5mH623yMRq3RQG6/LUyfM09XzCB8
+         23Hx67TPpREjyQPGLco59YbsEUxNX6YrWcIgHVj1LffTiPUC/Yi8bMJndHEHbLKlDyVR
+         GjH1r6tEISxiTmouY7k28DH9tOjr7gLQkS9Tv5ps7xiKngW3FwTpU/KaZ7XhJqERH7cm
+         EDAlsUEKR4QvFtVqozBNAGNRO/rMRMVAP0rcHIC103ypIeG6TYnxmSfTIfZ2lesP8+3B
+         oLjw==
+X-Gm-Message-State: AOAM530Ig3CPNK4/PzlyIHU+cJM1mZ1idiY/Bkr57nQn+J+dspdEVqiM
+        duWUyeyWDl7UBwPt2cXdRNfn4x+m3CneYePavxh7KxE=
+X-Google-Smtp-Source: ABdhPJyYBIK9kR4S2btytPsMaEq+lN03dVr0e1hm5VHT4FqPxr2PuAp5Xvvgv5VuCZr69sJdAbKbJfsOsi9pHr6y45I=
+X-Received: by 2002:ac8:7b81:: with SMTP id p1mr701688qtu.305.1589397857984;
+ Wed, 13 May 2020 12:24:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez0eGT60a50GAkL3FVvRzpXwhufdr+68k_X_qTgxyZ-oQQ@mail.gmail.com>
+References: <CADPKF+ene9LqKTFPUTwkdgbEe_pccZsJGjcm7cNmiq=8P_ojbA@mail.gmail.com>
+ <d22e7619-3ff0-4cea-ba10-a05c2381f3b7@www.fastmail.com> <CADPKF+d1SJU9T+NFtqgRWwY3GJn1Wg06uNdSrVg_q837z_PV=A@mail.gmail.com>
+ <7692E70C-A0EA-423B-883F-6BF91B0DB359@icloud.com> <CADPKF+eZCE4A2yXnQaZvq1uk3b-zR+-rwQhzA2z=v7+VsTndkQ@mail.gmail.com>
+ <2F012CBD-7DB6-4E88-BFFE-63427B0DD18D@icloud.com> <CAO5MNut+nD-OqsKgae=eibWYuPim1f8-NuwqVpD87eZQnrwscA@mail.gmail.com>
+ <CADPKF+dR=uQx9Dnu83ADghgei4KxwqnfBwONvp-ou--aePq0xg@mail.gmail.com> <c66f786b-999b-de45-ce18-f6a2df0e7d8c@gmail.com>
+In-Reply-To: <c66f786b-999b-de45-ce18-f6a2df0e7d8c@gmail.com>
+From:   Dmitry Sychov <dmitry.sychov@gmail.com>
+Date:   Wed, 13 May 2020 22:23:43 +0300
+Message-ID: <CADPKF+fGMYHDMdtWzuujyUqwBGJounsn3RsxgVVGaPDeLj_3TQ@mail.gmail.com>
+Subject: Re: Any performance gains from using per thread(thread local) urings?
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Sergiy Yevtushenko <sergiy.yevtushenko@gmail.com>,
+        Mark Papadakis <markuspapadakis@icloud.com>,
+        "H. de Vries" <hdevries@fastmail.com>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+> E.g. 100+ cores hammering on a spinlock/mutex protecting an SQ wouldn't d=
+o any good.
 
-Hi,
+Its possible to mitigate the hammering by using proxy buffer - instead
+of spinning, the particular thread
+could add the next entry into the buffer through XADD instead, and
+another thread currently holding an exclusive
+lock could in turn check this buffer and batch-submit all pending
+entries to SQ before leasing SQ mutex.
 
-On Wed, May 13, 2020 at 6:30 PM Jens Axboe <axboe@kernel.dk> wrote:
-> > I turned the quick'n dirty from the other day into something a bit 
-> > more done. Would be great if someone else could run some
-> > performance testing with this, I get about a 10% boost on the pure
-> > NOP benchmark with this. But that's just on my laptop in qemu, so
-> > some real iron testing would be awesome.
+> will be offloaded to an internal thread pool (aka io-wq), which is per io=
+_uring by default, but can be shared if specified.
 
-On 5/13/20 8:42 PM, Jann Horn wrote:> +slab allocator people
-> 10% boost compared to which allocator? Are you using CONFIG_SLUB?
- 
-On Wed, May 13, 2020 at 6:30 PM Jens Axboe <axboe@kernel.dk> wrote:
-> > The idea here is to have a percpu alloc cache. There's two sets of 
-> > state:
-> > 
-> > 1) Requests that have IRQ completion. preempt disable is not
-> > enough there, we need to disable local irqs. This is a lot slower
-> > in certain setups, so we keep this separate.
-> > 
-> > 2) No IRQ completion, we can get by with just disabling preempt.
+Well, thats sounds like mumbo jumbo to me, does this mean that the
+kernel holds and internal pool of threads to
+perform uring tasks independent to the number of user urings?
 
-On 5/13/20 8:42 PM, Jann Horn wrote:> +slab allocator people
-> The SLUB allocator has percpu caching, too, and as long as you don't 
-> enable any SLUB debugging or ASAN or such, and you're not hitting
-> any slowpath processing, it doesn't even have to disable interrupts,
-> it gets away with cmpxchg_double.
+If there are multiple kernel work flows bound to corresponding uring
+setups the issue with threads starvation could exist if they do not
+actively steal from each other SQs.
 
-The struct io_kiocb is 240 bytes. I don't see a dedicated slab for it in
-/proc/slabinfo on my machine, so it likely got merged to the kmalloc-256
-cache. This means that there's 32 objects in the per-CPU cache. Jens, on
-the other hand, made the cache much bigger:
+And starvation costs could be greater than allowing for multiple
+threads to dig into one uring queue, even under the exclusive lock.
 
-+#define IO_KIOCB_CACHE_MAX 256
+> And there a lot of details, probably worth of a separate write-up.
 
-So I assume if someone does "perf record", they will see significant
-reduction in page allocator activity with Jens' patch. One possible way
-around that is forcing the page allocation order to be much higher. IOW,
-something like the following completely untested patch:
+I've reread io_uring.pdf and there are not much tech details on the
+inner implementation of uring to try to apply best practices and to
+avoid noob questions like mine.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 979d9f977409..c3bf7b72026d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8143,7 +8143,7 @@ static int __init io_uring_init(void)
- 
- 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
- 	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
--	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
-+	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_LARGE_ORDER);
- 	return 0;
- };
- __initcall(io_uring_init);
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 6d454886bcaf..316fd821ec1f 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -39,6 +39,8 @@
- #define SLAB_STORE_USER		((slab_flags_t __force)0x00010000U)
- /* Panic if kmem_cache_create() fails */
- #define SLAB_PANIC		((slab_flags_t __force)0x00040000U)
-+/* Force slab page allocation order to be as large as possible */
-+#define SLAB_LARGE_ORDER	((slab_flags_t __force)0x00080000U)
- /*
-  * SLAB_TYPESAFE_BY_RCU - **WARNING** READ THIS!
-  *
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 23c7500eea7d..a18bbe9472e4 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -51,7 +51,7 @@ static DECLARE_WORK(slab_caches_to_rcu_destroy_work,
-  */
- #define SLAB_NEVER_MERGE (SLAB_RED_ZONE | SLAB_POISON | SLAB_STORE_USER | \
- 		SLAB_TRACE | SLAB_TYPESAFE_BY_RCU | SLAB_NOLEAKTRACE | \
--		SLAB_FAILSLAB | SLAB_KASAN)
-+		SLAB_FAILSLAB | SLAB_KASAN | SLAB_LARGE_ORDER)
- 
- #define SLAB_MERGE_SAME (SLAB_RECLAIM_ACCOUNT | SLAB_CACHE_DMA | \
- 			 SLAB_CACHE_DMA32 | SLAB_ACCOUNT)
-diff --git a/mm/slub.c b/mm/slub.c
-index b762450fc9f0..d1d86b1279aa 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3318,12 +3318,15 @@ static inline unsigned int slab_order(unsigned int size,
- 	return order;
- }
- 
--static inline int calculate_order(unsigned int size)
-+static inline int calculate_order(unsigned int size, gfp_t flags)
- {
- 	unsigned int order;
- 	unsigned int min_objects;
- 	unsigned int max_objects;
- 
-+	if (flags & SLAB_LARGE_ORDER)
-+		return slub_max_order;
-+
- 	/*
- 	 * Attempt to find best configuration for a slab. This
- 	 * works by first attempting to generate a layout with
-@@ -3651,7 +3654,7 @@ static int calculate_sizes(struct kmem_cache *s, int forced_order)
- 	if (forced_order >= 0)
- 		order = forced_order;
- 	else
--		order = calculate_order(size);
-+		order = calculate_order(size, flags);
- 
- 	if ((int)order < 0)
- 		return 0;
 
-- Pekka
+
+On Wed, May 13, 2020 at 7:03 PM Pavel Begunkov <asml.silence@gmail.com> wro=
+te:
+>
+> On 13/05/2020 17:22, Dmitry Sychov wrote:
+> > Anyone could shed some light on the inner implementation of uring pleas=
+e? :)
+>
+> It really depends on the workload, hardware, etc.
+>
+> io_uring instances are intended to be independent, and each have one CQ a=
+nd SQ.
+> The main user's concern should be synchronisation (in userspace) on CQ+SQ=
+. E.g.
+> 100+ cores hammering on a spinlock/mutex protecting an SQ wouldn't do any=
+ good.
+>
+> Everything that can't be inline completed\submitted during io_urng_enter(=
+), will
+> be offloaded to an internal thread pool (aka io-wq), which is per io_urin=
+g by
+> default, but can be shared if specified. There are pros and cons, but I'd
+> recommend first to share a single io-wq, and then experiment and tune.
+>
+> Also, in-kernel submission is not instantaneous and done by only thread a=
+t any
+> moment. Single io_uring may bottleneck you there or add high latency in s=
+ome cases.
+>
+> And there a lot of details, probably worth of a separate write-up.
+>
+> >
+> > Specifically how well kernel scales with the increased number of user
+> > created urings?
+>
+> Should scale well, especially for rw. Just don't overthrow the kernel wit=
+h
+> threads from dozens of io-wqs.
+>
+> >
+> >> If kernel implementation will change from single to multiple queues,
+> >> user space is already prepared for this change.
+> >
+> > Thats +1 for per-thread urings. An expectation for the kernel to
+> > become better and better in multiple urings scaling in the future.
+> >
+> > On Wed, May 13, 2020 at 4:52 PM Sergiy Yevtushenko
+> > <sergiy.yevtushenko@gmail.com> wrote:
+> >>
+> >> Completely agree. Sharing state should be avoided as much as possible.
+> >> Returning to original question: I believe that uring-per-thread scheme=
+ is better regardless from how queue is managed inside the kernel.
+> >> - If there is only one queue inside the kernel, then it's more efficie=
+nt to perform multiplexing/demultiplexing requests in kernel space
+> >> - If there are several queues inside the kernel, then user space code =
+better matches kernel-space code.
+> >> - If kernel implementation will change from single to multiple queues,=
+ user space is already prepared for this change.
+> >>
+> >>
+> >> On Wed, May 13, 2020 at 3:30 PM Mark Papadakis <markuspapadakis@icloud=
+.com> wrote:
+> >>>
+> >>>
+> >>>
+> >>>> On 13 May 2020, at 4:15 PM, Dmitry Sychov <dmitry.sychov@gmail.com> =
+wrote:
+> >>>>
+> >>>> Hey Mark,
+> >>>>
+> >>>> Or we could share one SQ and one CQ between multiple threads(bound b=
+y
+> >>>> the max number of CPU cores) for direct read/write access using very
+> >>>> light mutex to sync.
+> >>>>
+> >>>> This also solves threads starvation issue  - thread A submits the jo=
+b
+> >>>> into shared SQ while thread B both collects and _processes_ the resu=
+lt
+> >>>> from the shared CQ instead of waiting on his own unique CQ for next
+> >>>> completion event.
+> >>>>
+> >>>
+> >>>
+> >>> Well, if the SQ submitted by A and its matching CQ is consumed by B, =
+and A will need access to that CQ because it is tightly coupled to state it=
+ owns exclusively(for example), or other reasons, then you=E2=80=99d still =
+need to move that CQ from B back to A, or share it somehow, which seems exp=
+ensive-is.
+> >>>
+> >>> It depends on what kind of roles your threads have though; I am perso=
+nally very much against sharing state between threads unless there a really=
+ good reason for it.
+> >>>
+> >>>
+> >>>
+> >>>
+> >>>
+> >>>
+> >>>> On Wed, May 13, 2020 at 2:56 PM Mark Papadakis
+> >>>> <markuspapadakis@icloud.com> wrote:
+> >>>>>
+> >>>>> For what it=E2=80=99s worth, I am (also) using using multiple =E2=
+=80=9Creactor=E2=80=9D (i.e event driven) cores, each associated with one O=
+S thread, and each reactor core manages its own io_uring context/queues.
+> >>>>>
+> >>>>> Even if scheduling all SQEs through a single io_uring SQ =E2=80=94 =
+by e.g collecting all such SQEs in every OS thread and then somehow =E2=80=
+=9Cmoving=E2=80=9D them to the one OS thread that manages the SQ so that it=
+ can enqueue them all -- is very cheap, you =E2=80=98d still need to drain =
+the CQ from that thread and presumably process those CQEs in a single OS th=
+read, which will definitely be more work than having each reactor/OS thread=
+ dequeue CQEs for SQEs that itself submitted.
+> >>>>> You could have a single OS thread just for I/O and all other thread=
+s could do something else but you=E2=80=99d presumably need to serialize ac=
+cess/share state between them and the one OS thread for I/O which maybe a s=
+calability bottleneck.
+> >>>>>
+> >>>>> ( if you are curious, you can read about it here https://medium.com=
+/@markpapadakis/building-high-performance-services-in-2020-e2dea272f6f6 )
+> >>>>>
+> >>>>> If you experiment with the various possible designs though, I=E2=80=
+=99d love it if you were to share your findings.
+> >>>>>
+> >>>>> =E2=80=94
+> >>>>> @markpapapdakis
+> >>>>>
+> >>>>>
+> >>>>>> On 13 May 2020, at 2:01 PM, Dmitry Sychov <dmitry.sychov@gmail.com=
+> wrote:
+> >>>>>>
+> >>>>>> Hi Hielke,
+> >>>>>>
+> >>>>>>> If you want max performance, what you generally will see in non-b=
+locking servers is one event loop per core/thread.
+> >>>>>>> This means one ring per core/thread. Of course there is no simple=
+ answer to this.
+> >>>>>>> See how thread-based servers work vs non-blocking servers. E.g. A=
+pache vs Nginx or Tomcat vs Netty.
+> >>>>>>
+> >>>>>> I think a lot depends on the internal uring implementation. To wha=
+t
+> >>>>>> degree the kernel is able to handle multiple urings independently,
+> >>>>>> without much congestion points(like updates of the same memory
+> >>>>>> locations from multiple threads), thus taking advantage of one rin=
+g
+> >>>>>> per CPU core.
+> >>>>>>
+> >>>>>> For example, if the tasks from multiple rings are later combined i=
+nto
+> >>>>>> single input kernel queue (effectively forming a congestion point)=
+ I
+> >>>>>> see
+> >>>>>> no reason to use exclusive ring per core in user space.
+> >>>>>>
+> >>>>>> [BTW in Windows IOCP is always one input+output queue for all(acti=
+ve) threads].
+> >>>>>>
+> >>>>>> Also we could pop out multiple completion events from a single CQ =
+at
+> >>>>>> once to spread the handling to cores-bound threads .
+> >>>>>>
+> >>>>>> I thought about one uring per core at first, but now I'am not sure=
+ -
+> >>>>>> maybe the kernel devs have something to add to the discussion?
+> >>>>>>
+> >>>>>> P.S. uring is the main reason I'am switching from windows to linux=
+ dev
+> >>>>>> for client-sever app so I want to extract the max performance poss=
+ible
+> >>>>>> out of this new exciting uring stuff. :)
+> >>>>>>
+> >>>>>> Thanks, Dmitry
+> >>>>>
+> >>>
+>
+> --
+> Pavel Begunkov

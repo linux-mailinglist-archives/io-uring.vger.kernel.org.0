@@ -2,53 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E35861D364D
-	for <lists+io-uring@lfdr.de>; Thu, 14 May 2020 18:19:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDAAB1D365D
+	for <lists+io-uring@lfdr.de>; Thu, 14 May 2020 18:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbgENQTh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 May 2020 12:19:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52768 "EHLO
+        id S1726088AbgENQVr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 May 2020 12:21:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbgENQTg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 May 2020 12:19:36 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C562C061A0C
-        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 09:19:36 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id l17so5034628wrr.4
-        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 09:19:36 -0700 (PDT)
+        with ESMTP id S1726067AbgENQVq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 May 2020 12:21:46 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3EBDC061A0C
+        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 09:21:45 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id q9so979398pjm.2
+        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 09:21:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rv+8Ta0kcq0rTDBJs/zl82TITmKueMnGN0RNmTBwGhM=;
-        b=AsR5bMd+VhGKC7+5/NDUzosHRTGDRb85+xqHQDlINeX+Cs0ycnLw/LeeK4qXrDK7gu
-         XzHM1qLH5ot9zunye5yDeF03V+29JHmZ/0AlEJaPUl5PV2aZzWWJOLf/cw2IrLQSH5ev
-         3SfZoV3phSUGS9a2hPeFXX2kLfRjR0tgt949DYIyR66IeKdhypTzn6K++mH1OAPG2fsU
-         6IofTLE/FlweT/eMoo72VgFHCWvpI3wU2Kev1FWpJcDTbeIGpPyoGHEGAy4i9CW1bOuz
-         xc7MMkc0Vb+mUMwualUQghFaHBQtnOzt2yji8npxCyQQqsSN7PG0F7vcE2jHKrtyp52p
-         dNaA==
+        bh=A+cd7TmUeMbuYfUNYXAH2YnFWikyl7ZGXznHXC7CsZI=;
+        b=VsOZOk5U6NOlqf+OEIOVGd02OdcEg5OkaC0nWcMAEqOhsl0XjQZ/eED0g09M3Lzw2f
+         jmSpR/4xxtriDehd90cuLHYG9KKYFIDZojhQj+r1UU0VSY/8cPyecwXvQgvuCylPa9wO
+         hn/pUbeOCp5F4JJhq922985STRNtJF3L8o8v8XJ61zeYGrNSrjSnWQQ3dNBL6PkBZepK
+         A1LIQIqElRFewwFQ7/KudR9+by0ya07iQLERmAXKrLkVGypaQamuxISdBuZj50biUZ5U
+         b5CIFkMeCA7RZENShz6TzQvgiPpZNM4fC409jxSQrpB1MqS5HrG6zukB8O+s/31DBeq1
+         BVsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=rv+8Ta0kcq0rTDBJs/zl82TITmKueMnGN0RNmTBwGhM=;
-        b=YqjSHj4EmPPX+CcXoAMJDjR9m1gsMmX2drQFpxWH97mcx7eMh+YI1eL97EcGZkq82o
-         VmieS9adP+O1OcH//df2DCyolVtyiJPSunaBJ28XoNMzukJkZCQ4ADMj+pCKHUt9Iuw+
-         LenUcG1Xy6+uS4KSn8heJ5OuTMlXdurt4KjaIO1rosWJLCGuJrSswpi2FaC8cx06xnmh
-         AV+M0VDiB3A3awRAGlS6e+tSHkm+GY7BNQY9sDJMvt3DsmLuZgXUEOlhzqgvdxA4q5AM
-         dqIxA1yF8AZ9PwB+NR34q/m2Z7Ydkhu5BDtQ76st/7ifX6P+WVD6a+l1Wm+Aoya5gbxU
-         SPUA==
-X-Gm-Message-State: AOAM531KRl3qDpWRLSpJiW1WL1vVZb+ls6buLX+5ff9gTbsYJOwRedG+
-        ujzAfQwOckPHKrBYu7yFSxc=
-X-Google-Smtp-Source: ABdhPJzFDTE/HkYg8c12Mw+X9YS9XTcn9M/IjvUvAC0i1+w0Hg5ujGBQyOq+lwqM4PSwVKUbKjtIag==
-X-Received: by 2002:a5d:526f:: with SMTP id l15mr6103292wrc.367.1589473175082;
-        Thu, 14 May 2020 09:19:35 -0700 (PDT)
-Received: from [192.168.43.127] ([46.191.65.149])
-        by smtp.gmail.com with ESMTPSA id q9sm16541971wmb.34.2020.05.14.09.19.33
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A+cd7TmUeMbuYfUNYXAH2YnFWikyl7ZGXznHXC7CsZI=;
+        b=dbNmJRiR8u1PmKKMLxlEIS5NYMhQ5cZjpXglDBUoZA1MtMYY1QX5bzK0wFZW0k9dqM
+         rtqsCNSfLIp6HFntNHUA8zRKlR2Y2gnC5+7pPKG8B3aQ5qJnBwXOQTxdRUfy2RF62D9M
+         3aS4zx2mjqPJLaUT1N0WaDbqgG1CIpGICxxh3lsR4esR4NJvkzlcGqrxlCMQv4yeVhLa
+         gI1WqVtJeMPAWaoTyKENJESAiLpwqrLDOE6tqWDXwECFYFggsZctXxnKsjqKzJycN/rh
+         l9JOkwnN/gqgoiudHaL3dxUinJ9Rn4WiKVxAwgbLnBrABS7kUAr5iDTdBePp/x4VjQwK
+         Diig==
+X-Gm-Message-State: AOAM5326k1p1at4vL7DCL/5WmcdYsghyi0nO2xDxck3N/Vwh8c/aHPEO
+        1fJOBkUB9SuAJiqX6KwHwNa0kg==
+X-Google-Smtp-Source: ABdhPJxNMftelLuPwcHCKLTaBDKeLcJH72TeyERVIC6kI0KkNb+EdzQVK4oMVerERT+lLVVr2SxA9w==
+X-Received: by 2002:a17:90a:26a7:: with SMTP id m36mr3979476pje.28.1589473305151;
+        Thu, 14 May 2020 09:21:45 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:85e7:ddeb:bb07:3741? ([2605:e000:100e:8c61:85e7:ddeb:bb07:3741])
+        by smtp.gmail.com with ESMTPSA id x10sm2312493pgr.65.2020.05.14.09.21.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 May 2020 09:19:34 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>,
+        Thu, 14 May 2020 09:21:43 -0700 (PDT)
+Subject: Re: [PATCH RFC} io_uring: io_kiocb alloc cache
+To:     Pavel Begunkov <asml.silence@gmail.com>,
         Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring <io-uring@vger.kernel.org>
 Cc:     joseph qi <joseph.qi@linux.alibaba.com>,
@@ -61,83 +62,49 @@ References: <492bb956-a670-8730-a35f-1d878c27175f@kernel.dk>
  <a2b5e500-316d-dc06-1a25-72aaf67ac227@kernel.dk>
  <d6206c24-8b4d-37d3-56bd-eac752151de9@gmail.com>
  <b7e7eb5e-cbea-0c59-38b1-1043b5352e4d@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH RFC} io_uring: io_kiocb alloc cache
-Message-ID: <8ddf1d04-aa4a-ee91-72fa-59cb0081695c@gmail.com>
-Date:   Thu, 14 May 2020 19:18:24 +0300
+ <8ddf1d04-aa4a-ee91-72fa-59cb0081695c@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a87adbe8-9c71-0c7b-1a34-faf3d259fdba@kernel.dk>
+Date:   Thu, 14 May 2020 10:21:40 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <b7e7eb5e-cbea-0c59-38b1-1043b5352e4d@kernel.dk>
+In-Reply-To: <8ddf1d04-aa4a-ee91-72fa-59cb0081695c@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 14/05/2020 18:53, Jens Axboe wrote:
-> On 5/14/20 9:37 AM, Pavel Begunkov wrote:
-> Hmm yes good point, it should work pretty easily, barring the use cases
-> that do IRQ complete. But that was also a special case with the other
-> cache.
+On 5/14/20 10:18 AM, Pavel Begunkov wrote:
+> On 14/05/2020 18:53, Jens Axboe wrote:
+>> On 5/14/20 9:37 AM, Pavel Begunkov wrote:
+>> Hmm yes good point, it should work pretty easily, barring the use cases
+>> that do IRQ complete. But that was also a special case with the other
+>> cache.
+>>
+>>> BTW, there will be a lot of problems to make either work properly with
+>>> IORING_FEAT_SUBMIT_STABLE.
+>>
+>> How so? Once the request is setup, any state should be retained there.
 > 
->> BTW, there will be a lot of problems to make either work properly with
->> IORING_FEAT_SUBMIT_STABLE.
+> If a late alloc fails (e.g. in __io_queue_sqe()), you'd need to file a
+> CQE with an error. If there is no place in CQ, to postpone the
+> completion it'd require an allocated req. Of course it can be dropped,
+> but I'd prefer to have strict guarantees.
 > 
-> How so? Once the request is setup, any state should be retained there.
+> That's the same reason, I have a patch stashed, that grabs links from
+> SQ atomically (i.e. take all SQEs of a link or none).
 
-If a late alloc fails (e.g. in __io_queue_sqe()), you'd need to file a CQE with
-an error. If there is no place in CQ, to postpone the completion it'd require an
-allocated req. Of course it can be dropped, but I'd prefer to have strict
-guarantees.
-
-That's the same reason, I have a patch stashed, that grabs links from SQ
-atomically (i.e. take all SQEs of a link or none).
+OK, I see what you mean. Yeah there's definitely some quirkiness
+associated with deferring the allocation. I'm currently just working off
+the idea that we just need to fix the refcounts, using a relaxed
+version for the cases where we don't have shared semantics. We basically
+only need that for requests with out-of-line completions, like irq
+completions or async completions.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

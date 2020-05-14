@@ -2,65 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2AFE1D356C
-	for <lists+io-uring@lfdr.de>; Thu, 14 May 2020 17:43:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D28B11D35A2
+	for <lists+io-uring@lfdr.de>; Thu, 14 May 2020 17:53:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbgENPnY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 May 2020 11:43:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47086 "EHLO
+        id S1726146AbgENPxY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 May 2020 11:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726056AbgENPnY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 May 2020 11:43:24 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35143C061A0C
-        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 08:43:23 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id k19so1298727pll.9
-        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 08:43:23 -0700 (PDT)
+        with ESMTP id S1726117AbgENPxX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 May 2020 11:53:23 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4960C061A0C
+        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 08:53:23 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id t9so12736271pjw.0
+        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 08:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=OCQpS10JQrcVCte4c3jVqrW09BGJccTnUvGw01SchCI=;
-        b=FiWnLCv2UAIYII0jpP+2AVus38Nx7dtYuXf3mVLecHUBjMZuqcTW1I8oBE6pQpm03t
-         NcDnHL3CgBA8Gp3FIg/1/IoX2mrQXMXGZ+fPdFn028/BtceKiNv2geFGfU3YrZ9xx7/a
-         uomuvI0T1yaXeG8sXPF9c6jhkhP8YDBHcZl0mjsJK97luLn1xV17UYC6GxITkVQx6Vw2
-         rJ9aNRJE98B7FKBMvFaO1qJTsIV5ItWU70XY+dZW/TY+ImLOC7r8olpoehm5EQ/oU3Bu
-         1lIctOw1muhZer3Vjs8RHuTXzwQQjNw8PWQR35qM03C9sXl+0AhI7LENs9OWVPinFSro
-         1i/w==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TUnOuWpDZrQI3eDMwaRbY1bk7jojEaJugTM4T/ybTj4=;
+        b=Tit7wRwiXxxjsRQgnFp4MOgdGdSGEMwuP8p7grSZuopaO8UN80w4QvZPtRwntbQrbV
+         yI2p5t9ArHbMdon7jj6TIq/CBZSM2/iCCihNNJH7Mz0uvYTMJQ3cV/f62jo91MG3e+kq
+         goKhrbgrnSH8sdBcENtK3ZHmHgXmgL8Jooog/O9TIvlqO79RIfUZ7HM6hLgFbcnS4jo3
+         WX0nH0K2718dPU9OQb2aAlFLnHTIRCQmIHyfA8XSJy0oCd0ueK78L3MZ4Xik1vy+Xdd3
+         YZVN1mZyXbNwLaplbI4nQ4AEuxgDALAwFF/KL40gfChE2kdaNmOd42QiNNZjVMTSPyUA
+         80FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=OCQpS10JQrcVCte4c3jVqrW09BGJccTnUvGw01SchCI=;
-        b=AErAs68EYIkqn92v+fO31Tq79VMnmoEsLemy8wHhB0kG7sVOQSSQGrva13W9gWwxTu
-         9so+llO21cdRJ9jLmpzRvP/LUijcuseBFkyqLKaLB8iOi+nt0K64d6tAG+EQuxokA6PL
-         YsQe9N5BE5LHMTMtDT/jHeWOf8qToyuVUbZak1Z91aSim6m5Tfq34OSWQ4++xlylYKIX
-         SkG0nCr8HhsZGVdCiEWGEfUVJjU7rLKaVVsGhlrhl9vCA9qqIc3lsga6Wldww2LBGL9M
-         XiikQAauWFqjShLTSRPmlm15QM8/KAqohp/z2/T3dwQFwQarZP/Mew2dcjEA6Ee2p4ur
-         SFhg==
-X-Gm-Message-State: AGi0Puax8poc77qTTPKse0nHctf7w1KSAgH8tbKB/p8+KS7f4sTyaUHQ
-        leiZ2p9nPbJGsM3qgprSPZqyGxxxwE0=
-X-Google-Smtp-Source: APiQypKPziX9bgRzBDaVh4jeQoDXvNsaZ/gT68met0/Y91J0lK7bw1UHG3lla3GAFCT9U2YwSR9OfA==
-X-Received: by 2002:a17:90a:d0c3:: with SMTP id y3mr39999981pjw.25.1589471002346;
-        Thu, 14 May 2020 08:43:22 -0700 (PDT)
+        bh=TUnOuWpDZrQI3eDMwaRbY1bk7jojEaJugTM4T/ybTj4=;
+        b=M3dyd3rXKVwpwJoYUdZWf31x2iZPp1DAE1cp9W4VCo3R9NE0F57k0MSwkxMO6Ncvwc
+         CqUN4ln4rAIgYaF3R7SbOcsz1jEC28rfsz1cMK7xUI7ncXIiLsbxqRYKHpJ45pVQ+mr3
+         ru0Yx/NCpcffuiLQCkjzxVQ1jsCEXjffZnT2crOYRD3F6OqpXrW5Is3Tu3+vBYjFEX5s
+         D3osikDvcHRmpaVkSw5kY9DUvSriN8bV1hGMasw7HYMKMQcffpqnFuyI+0c6kRYV5dJt
+         0XjtWVWZvN+H0YAbolGen/578Q/hW9JK3Qc/L7b795iYUGXexs3tkCR0usTmKQ8uVGn+
+         KWqw==
+X-Gm-Message-State: AGi0PuaCCaKCjR4Q1mcX+XxIl+3vg8z1TuXh7NDNpzRgFbplPPV8oQMe
+        MxehXSqCJquxwC85kl14UMnCHw==
+X-Google-Smtp-Source: APiQypLVwllUTXQ1/Y/sPPtT0zA+jgxZzBoRbuepFmIiKnMBAa7PZ1NwnOpOyXiPbmo1Kxqkaw0QUQ==
+X-Received: by 2002:a17:90b:3018:: with SMTP id hg24mr40352004pjb.130.1589471603082;
+        Thu, 14 May 2020 08:53:23 -0700 (PDT)
 Received: from ?IPv6:2605:e000:100e:8c61:85e7:ddeb:bb07:3741? ([2605:e000:100e:8c61:85e7:ddeb:bb07:3741])
-        by smtp.gmail.com with ESMTPSA id a2sm2336742pgh.57.2020.05.14.08.43.21
+        by smtp.gmail.com with ESMTPSA id a2sm2595876pfl.28.2020.05.14.08.53.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 May 2020 08:43:21 -0700 (PDT)
-Subject: Re: regression: fixed file hang
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Thu, 14 May 2020 08:53:22 -0700 (PDT)
+Subject: Re: [PATCH RFC} io_uring: io_kiocb alloc cache
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring <io-uring@vger.kernel.org>
-References: <67435827-eb94-380c-cdca-aee69d773d4d@kernel.dk>
- <e183e1c4-8331-93c6-a8de-c9da31e6cd56@kernel.dk>
- <ac2b8f17-dd3e-c31f-d8a0-737774a2bb92@linux.alibaba.com>
+Cc:     joseph qi <joseph.qi@linux.alibaba.com>,
+        Jiufei Xue <jiufei.xue@linux.alibaba.com>
+References: <492bb956-a670-8730-a35f-1d878c27175f@kernel.dk>
+ <dc5a0caf-0ba4-bfd7-4b6e-cbcb3e6fde10@linux.alibaba.com>
+ <70602a13-f6c9-e8a8-1035-6f148ba2d6d7@kernel.dk>
+ <a68bbc0a-5bd7-06b6-1616-2704512228b8@kernel.dk>
+ <0ec1b33d-893f-1b10-128e-f8a8950b0384@gmail.com>
+ <a2b5e500-316d-dc06-1a25-72aaf67ac227@kernel.dk>
+ <d6206c24-8b4d-37d3-56bd-eac752151de9@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <946f6af2-2daf-6209-55a8-57f25d3eba30@kernel.dk>
-Date:   Thu, 14 May 2020 09:43:20 -0600
+Message-ID: <b7e7eb5e-cbea-0c59-38b1-1043b5352e4d@kernel.dk>
+Date:   Thu, 14 May 2020 09:53:21 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <ac2b8f17-dd3e-c31f-d8a0-737774a2bb92@linux.alibaba.com>
+In-Reply-To: <d6206c24-8b4d-37d3-56bd-eac752151de9@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,61 +76,92 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/13/20 11:33 PM, Xiaoguang Wang wrote:
-> hi,
+On 5/14/20 9:37 AM, Pavel Begunkov wrote:
 > 
->> On 5/13/20 12:45 PM, Jens Axboe wrote:
->>> Hi Xiaoguang,
+> 
+> On 14/05/2020 18:15, Jens Axboe wrote:
+>> On 5/14/20 8:53 AM, Pavel Begunkov wrote:
+>>> On 14/05/2020 17:33, Jens Axboe wrote:
+>>>> On 5/14/20 8:22 AM, Jens Axboe wrote:
+>>>>>> I still use my previous io_uring_nop_stress tool to evaluate the improvement
+>>>>>> in a physical machine. Memory 250GB and cpu is "Intel(R) Xeon(R) CPU E5-2682 v4 @ 2.50GHz".
+>>>>>> Before this patch:
+>>>>>> $sudo taskset -c 60 ./io_uring_nop_stress -r 300
+>>>>>> total ios: 1608773840
+>>>>>> IOPS:      5362579
+>>>>>>
+>>>>>> With this patch:
+>>>>>> sudo taskset -c 60 ./io_uring_nop_stress -r 300
+>>>>>> total ios: 1676910736
+>>>>>> IOPS:      5589702
+>>>>>> About 4.2% improvement.
+>>>>>
+>>>>> That's not bad. Can you try the patch from Pekka as well, just to see if
+>>>>> that helps for you?
+>>>>>
+>>>>> I also had another idea... We basically have two types of request life
+>>>>> times:
+>>>>>
+>>>>> 1) io_kiocb can get queued up internally
+>>>>> 2) io_kiocb completes inline
+>>>>>
+>>>>> For the latter, it's totally feasible to just have the io_kiocb on
+>>>>> stack. The downside is if we need to go the slower path, then we need to
+>>>>> alloc an io_kiocb then and copy it. But maybe that's OK... I'll play
+>>>>> with it.
 >>>
->>> Was doing some other testing today, and noticed a hang with fixed files.
->>> I did a bit of poor mans bisecting, and came up with this one:
->>>
->>> commit 0558955373023b08f638c9ede36741b0e4200f58
->>> Author: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
->>> Date:   Tue Mar 31 14:05:18 2020 +0800
->>>
->>>      io_uring: refactor file register/unregister/update handling
->>>
->>> If I revert this one, the test completes fine.
->>>
->>> The case case is pretty simple, just run t/io_uring from the fio
->>> repo, default settings:
->>>
->>> [ fio] # t/io_uring /dev/nvme0n1p2
->>> Added file /dev/nvme0n1p2
->>> sq_ring ptr = 0x0x7fe1cb81f000
->>> sqes ptr    = 0x0x7fe1cb81d000
->>> cq_ring ptr = 0x0x7fe1cb81b000
->>> polled=1, fixedbufs=1, buffered=0 QD=128, sq_ring=128, cq_ring=256
->>> submitter=345
->>> IOPS=240096, IOS/call=32/31, inflight=91 (91)
->>> IOPS=249696, IOS/call=32/31, inflight=99 (99)
->>> ^CExiting on signal 2
->>>
->>> and ctrl-c it after a second or so. You'll then notice a kworker that
->>> is stuck in io_sqe_files_unregister(), here:
->>>
->>> 	/* wait for all refs nodes to complete */
->>> 	wait_for_completion(&data->done);
->>>
->>> I'll try and debug this a bit, and for some reason it doens't trigger
->>> with the liburing fixed file setup. Just wanted to throw this out there,
->>> so if you have cycles, please do take a look at it.
+>>> Does it differ from having one pre-allocated req? Like fallback_req,
+>>> but without atomics and returned only under uring_mutex (i.e. in
+>>> __io_queue_sqe()). Putting aside its usefulness, at least it will have
+>>> a chance to work with reads/writes.
 >>
->> https://lore.kernel.org/io-uring/015659db-626c-5a78-6746-081a45175f45@kernel.dk/T/#u
-> Thanks for this fix, and sorry, it's my bad, I didn't cover this case
-> when sending patches.  Can you share your test cases or test method
-> when developing io_uring? Usually I just run test cases under
-> liburing/test, seems it's not enough.
+>> But then you need atomics. I actually think the bigger win here is not
+>> having to use atomic refcounts for this particular part, since we know
+>> the request can't get shared.
+> 
+> Don't think we need, see:
+> 
+> struct ctx {
+> 	/* protected by uring_mtx */
+> 	struct req *cache_req;
+> }
+> 
+> __io_queue_sqe()
+> {
+> 	ret = issue_inline(req);
+> 	if (completed(ret)) {
+> 		// don't need req anymore, return it
+> 		ctx->cache_req = req;
+> 	} else if (need_async) {
+> 		// still under uring_mtx, just replenish the cache
+> 		// alloc()+memcpy() here for on-stack
+> 		ctx->cache_req = alloc_req();
+> 		punt(req);
+> 	}
+> 
+> 	// restored it in any case
+> 	assert(ctx->cache_req != NULL);
+> }
+> 
+> submit_sqes() __holds(uring_mtx)
+> {
+> 	while (...) {
+> 		// already holding the mutex, no need for sync here
+> 		// also, there is always a req there
+> 		req = ctx->cache_req;
+> 		ctx->cache_req = NULL;
+> 		...
+> 	}
+> }
 
-It really should be enough, the case that triggered this issue is the
-combination of fixed files and polled IO. I'll need to add that to eg
-test/read-write.c, which does a lot of combinations already.
+Hmm yes good point, it should work pretty easily, barring the use cases
+that do IRQ complete. But that was also a special case with the other
+cache.
 
-The only issue is that polled IO only works on some files / devices.
-I've been meaning to add a config file to the liburing regression tests,
-so you can configure a device to use for testing. With an NVMe device in
-there, we should be able to have full coverage.
+> BTW, there will be a lot of problems to make either work properly with
+> IORING_FEAT_SUBMIT_STABLE.
+
+How so? Once the request is setup, any state should be retained there.
 
 -- 
 Jens Axboe

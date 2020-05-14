@@ -2,53 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C101D32AB
-	for <lists+io-uring@lfdr.de>; Thu, 14 May 2020 16:23:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D16FF1D3302
+	for <lists+io-uring@lfdr.de>; Thu, 14 May 2020 16:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbgENOXC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 May 2020 10:23:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34376 "EHLO
+        id S1728073AbgENOdm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 May 2020 10:33:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbgENOXB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 May 2020 10:23:01 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7406AC061A0C
-        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 07:23:01 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id g11so1233212plp.1
-        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 07:23:01 -0700 (PDT)
+        with ESMTP id S1726582AbgENOdm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 May 2020 10:33:42 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94A03C061A0C
+        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 07:33:41 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id 23so1380984pfy.8
+        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 07:33:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k+tvpIk0wlvX56TCldMBTkk2AUVQNc5ePQ1QMUVPUa4=;
-        b=2L1Xx6acTmAhd7XMmNNEbYxpRs6HN19gH0SL6daVuCQysuxXczU8VyNuomE6JRiTyr
-         5I3jNzZX0CN9gMhVVW7XUGHvYHe9QjNsPxlGrfwf/PNapqFPRxqpbebHlPmlrZ8bGIsx
-         IjC4xNiI3vLkkqZEOmsiDeSA3zNc0T+Xg6SP2NFhKn5z/LO/t1HB1kik1xYvVYbGqlO9
-         ybIT2UCfD/W1y3P3c5cV5h6PSdvCWt3ORuYPwDqPvbLAt2T6l2ADpXiXfPu+g5JtWyze
-         Dv/0NpqxPmCXo3Ttvg3kJUGBPROrA1Laiuhq/YkW4jymoXsQae6lr5PZuME33iWujLW0
-         uJtw==
+        bh=MkuKw+sxjvGuqxJdpesOpuEhAAy+cBgVlzhwJt6exMw=;
+        b=Pey6467nTZjbvEntOBfNxuK+MR5QXU7/6wKb+7uV5N+9OT5sSo5LNKPWxgw0C/+xA5
+         ixAXBadzLgremE7F7r1A20NT/qiSpZ7EYzYa1hjt8eI11B21QrUBHsU4HnPKda63gW/q
+         L0+Ru0xFSyNhQZUlobCPSPrc2+oLySM5GJp0PnAe3D9FKUi7Tb1asj/qmFuluLNup04e
+         W27lkuKM8gGBfMclfDcfb4pLZxFsoPfaKlZ0Ix54SKFXCo4pisc/8TppaUYnpNLN+Vlu
+         AmF8IhEG9MT1iQO2UrIviszOQR5Kcct07IEsSOLS49lSh3jP50itY1+2bz6vaqDLlxdT
+         Xs0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=k+tvpIk0wlvX56TCldMBTkk2AUVQNc5ePQ1QMUVPUa4=;
-        b=MP66B1QYl+ZDBGrOALl37kzAzOj+A14TGiOz7Qs3GxueQvm73+IYSd/AFsqNKHYRNf
-         nujEhwaeVZhPuaCQQALSjHC0FhObBXpOjG8lhVSS06Qg3LU1NQnJ50WxKIAmM91IBbue
-         E2OKEAe+yYc1f4sR+HuNoi7IVy2BGtQdam4ILPt9HCbXx9sRJJX0PCdoInomtiGfqUCz
-         eU7w8/7TCZHMZIOfAhcbGyjXlY3dUhGYYiCFvL5YrvffhtgLhVpg/vdfGe7dBS83Ptsb
-         wYIM+/bXrkEuTHALB5KrgnIVzUIvBVkIYeDFbu+BHeuESgQGnN7IR07WUs9QbKeLJk3L
-         lN6g==
-X-Gm-Message-State: AGi0PuaQ3bzJ9kYMwOXwjufE66NTBiBOKgNYcv6OJxOzDOoGGJqD7SQQ
-        vqb7HKncuDlZaZS0d/ZRHbGLqg==
-X-Google-Smtp-Source: APiQypJDmChY0GSQUpxDrHktnzFOEa+ayLLtkzUYTEjy0QZEen4OkdeL3tuN/CH0CxXFsKNByVFnpQ==
-X-Received: by 2002:a17:90a:7f83:: with SMTP id m3mr42341138pjl.147.1589466180649;
-        Thu, 14 May 2020 07:23:00 -0700 (PDT)
+        bh=MkuKw+sxjvGuqxJdpesOpuEhAAy+cBgVlzhwJt6exMw=;
+        b=GWsX1BDwROBhTowN3ymrGwoaOYgmJAMhCW05NoiKkCLI99gjtC7x0S/N62WxG/Sczj
+         d9G2SVbwPKPKLE8HHPts1r2sxzxE1cpXBVMpHK3LC2MpE9sfnoomhoHUyoY9y+k2rE/1
+         Z4fiwfG75fMRQDygqjacdC0IyoQdlC1seQNpnxTOYM5kySEIsJb+05JBmDbQyWP05vLD
+         +RZ6UALwlC6MpairwPBKUAZZXQRU+jO8NfR2xAItgja0kHXFauDtYDPuaMognEJjpqTm
+         Kd710U/1Oo32HZgO+ECbbkZAj/JL69G6f0J8WOBS380aocNmrVcJGeDVfj39tKaFy2B0
+         /8sA==
+X-Gm-Message-State: AOAM533IvRPqqTEsauBOkHfmgEYKoNKrfDPibcWvzHREoXsGLdvo9PZr
+        ElyCJhMroS7JDUP301Y0dBnPiP1uJAw=
+X-Google-Smtp-Source: ABdhPJxJ0uEAhRzNODiuXSDQgp5av5rhb69u842oH8pbvBGSbgXIYTw1+vYbZNya4Z0NbyYPtsZAMQ==
+X-Received: by 2002:a62:2ac3:: with SMTP id q186mr2702919pfq.101.1589466820476;
+        Thu, 14 May 2020 07:33:40 -0700 (PDT)
 Received: from ?IPv6:2605:e000:100e:8c61:85e7:ddeb:bb07:3741? ([2605:e000:100e:8c61:85e7:ddeb:bb07:3741])
-        by smtp.gmail.com with ESMTPSA id e1sm1555602pjv.54.2020.05.14.07.22.58
+        by smtp.gmail.com with ESMTPSA id nu10sm19707849pjb.9.2020.05.14.07.33.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 May 2020 07:22:59 -0700 (PDT)
+        Thu, 14 May 2020 07:33:39 -0700 (PDT)
 Subject: Re: [PATCH RFC} io_uring: io_kiocb alloc cache
+From:   Jens Axboe <axboe@kernel.dk>
 To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring <io-uring@vger.kernel.org>
 Cc:     joseph qi <joseph.qi@linux.alibaba.com>,
@@ -56,13 +57,13 @@ Cc:     joseph qi <joseph.qi@linux.alibaba.com>,
         Pavel Begunkov <asml.silence@gmail.com>
 References: <492bb956-a670-8730-a35f-1d878c27175f@kernel.dk>
  <dc5a0caf-0ba4-bfd7-4b6e-cbcb3e6fde10@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <70602a13-f6c9-e8a8-1035-6f148ba2d6d7@kernel.dk>
-Date:   Thu, 14 May 2020 08:22:57 -0600
+ <70602a13-f6c9-e8a8-1035-6f148ba2d6d7@kernel.dk>
+Message-ID: <a68bbc0a-5bd7-06b6-1616-2704512228b8@kernel.dk>
+Date:   Thu, 14 May 2020 08:33:37 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <dc5a0caf-0ba4-bfd7-4b6e-cbcb3e6fde10@linux.alibaba.com>
+In-Reply-To: <70602a13-f6c9-e8a8-1035-6f148ba2d6d7@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,397 +72,76 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/14/20 2:25 AM, Xiaoguang Wang wrote:
-> hi,
+On 5/14/20 8:22 AM, Jens Axboe wrote:
+>> I still use my previous io_uring_nop_stress tool to evaluate the improvement
+>> in a physical machine. Memory 250GB and cpu is "Intel(R) Xeon(R) CPU E5-2682 v4 @ 2.50GHz".
+>> Before this patch:
+>> $sudo taskset -c 60 ./io_uring_nop_stress -r 300
+>> total ios: 1608773840
+>> IOPS:      5362579
+>>
+>> With this patch:
+>> sudo taskset -c 60 ./io_uring_nop_stress -r 300
+>> total ios: 1676910736
+>> IOPS:      5589702
+>> About 4.2% improvement.
 > 
->> +
->> +static void io_req_cache_free_bulk(struct req_batch *rb)
->> +{
->> +	struct io_kiocb_cache_entry *ce;
->> +	struct io_kiocb_cache *cache;
->> +
->> +	if (rb->irq_comp)
->> +		local_irq_disable();
->> +	else
->> +		preempt_disable();
->> +
->> +	cache = this_cpu_ptr(alloc_cache);
->> +	ce = &cache->caches[rb->irq_comp];
->> +
->> +	list_splice_init(&rb->list, &ce->alloc_list);
->> +	ce->nr_avail += rb->to_free;
->> +	if (ce->nr_avail > IO_KIOCB_CACHE_MAX)
->> +		io_req_cache_reclaim(ce);
->> +
->> +	if (rb->irq_comp)
->> +		local_irq_enable();
->> +	else
->> +		preempt_enable();
->> +}
->> +
->> +static void io_req_cache_free(struct io_kiocb *req)
->> +{
->> +	const bool irq_comp = io_op_defs[req->opcode].irq_comp;
->> +	struct io_kiocb_cache_entry *ce;
->> +	struct io_kiocb_cache *cache;
->> +	unsigned long flags;
->> +
->> +	if (irq_comp)
->> +		local_irq_save(flags);
->> +	else
->> +		preempt_disable();
->> +
->> +	cache = this_cpu_ptr(alloc_cache);
->> +	ce = &cache->caches[irq_comp];
->> +
->> +	list_add(&req->list, &ce->alloc_list);
->> +	if (++ce->nr_avail > IO_KIOCB_CACHE_MAX)
->> +		io_req_cache_reclaim(ce);
-> Above codes seem that io_req_cache_reclaim() will free all reqs in
-> alloc_list, then we'll need to kmem_cache_alloc() again, I guess
-> indeed you intend to reserve IO_KIOCB_CACHE_MAX reqs in alloc_list?
-
-Yeah a thinko in that one, actually did a v2 shortly after that, just
-didn't send it out. Including it below in case you are interested, when
-it hits reclaim, it reclaims IO_KIOCB_CACHE_RECLAIM of them.
-
-> I still use my previous io_uring_nop_stress tool to evaluate the improvement
-> in a physical machine. Memory 250GB and cpu is "Intel(R) Xeon(R) CPU E5-2682 v4 @ 2.50GHz".
-> Before this patch:
-> $sudo taskset -c 60 ./io_uring_nop_stress -r 300
-> total ios: 1608773840
-> IOPS:      5362579
+> That's not bad. Can you try the patch from Pekka as well, just to see if
+> that helps for you?
 > 
-> With this patch:
-> sudo taskset -c 60 ./io_uring_nop_stress -r 300
-> total ios: 1676910736
-> IOPS:      5589702
-> About 4.2% improvement.
+> I also had another idea... We basically have two types of request life
+> times:
+> 
+> 1) io_kiocb can get queued up internally
+> 2) io_kiocb completes inline
+> 
+> For the latter, it's totally feasible to just have the io_kiocb on
+> stack. The downside is if we need to go the slower path, then we need to
+> alloc an io_kiocb then and copy it. But maybe that's OK... I'll play
+> with it.
 
-That's not bad. Can you try the patch from Pekka as well, just to see if
-that helps for you?
-
-I also had another idea... We basically have two types of request life
-times:
-
-1) io_kiocb can get queued up internally
-2) io_kiocb completes inline
-
-For the latter, it's totally feasible to just have the io_kiocb on
-stack. The downside is if we need to go the slower path, then we need to
-alloc an io_kiocb then and copy it. But maybe that's OK... I'll play
-with it.
+Can you try this with your microbenchmark? Just curious what it looks
+like for that test case if we completely take slab alloc+free out of it.
 
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d2e37215d05a..3be5f0e60d9f 100644
+index d2e37215d05a..4ecd6bd38f02 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -79,6 +79,7 @@
- #include <linux/fs_struct.h>
- #include <linux/splice.h>
- #include <linux/task_work.h>
-+#include <linux/cpuhotplug.h>
+@@ -525,6 +525,7 @@ enum {
+ 	REQ_F_POLLED_BIT,
+ 	REQ_F_BUFFER_SELECTED_BIT,
+ 	REQ_F_NO_FILE_TABLE_BIT,
++	REQ_F_STACK_REQ_BIT,
  
- #define CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -652,17 +653,10 @@ struct io_kiocb {
+ 	/* not a real bit, just to check we're not overflowing the space */
+ 	__REQ_F_LAST_BIT,
+@@ -580,6 +581,8 @@ enum {
+ 	REQ_F_BUFFER_SELECTED	= BIT(REQ_F_BUFFER_SELECTED_BIT),
+ 	/* doesn't need file table for this request */
+ 	REQ_F_NO_FILE_TABLE	= BIT(REQ_F_NO_FILE_TABLE_BIT),
++	/* on-stack req */
++	REQ_F_STACK_REQ		= BIT(REQ_F_STACK_REQ_BIT),
  };
  
- #define IO_PLUG_THRESHOLD		2
--#define IO_IOPOLL_BATCH			8
- 
- struct io_submit_state {
- 	struct blk_plug		plug;
- 
--	/*
--	 * io_kiocb alloc cache
--	 */
--	void			*reqs[IO_IOPOLL_BATCH];
--	unsigned int		free_reqs;
--
- 	/*
- 	 * File reference cache
- 	 */
-@@ -673,6 +667,27 @@ struct io_submit_state {
- 	unsigned int		ios_left;
- };
- 
-+struct io_kiocb_cache_entry {
-+	/* ready for allocation */
-+	struct list_head	alloc_list;
-+	unsigned		nr_avail;
-+
-+	/* ready for shrinker reclaim */
-+	spinlock_t		free_lock;
-+	struct list_head	free_list;
-+	unsigned		nr_free;
-+};
-+
-+struct io_kiocb_cache {
-+	/* one for requests with IRQ completion, one for no IRQ */
-+	struct io_kiocb_cache_entry	caches[2];
-+};
-+
-+#define IO_KIOCB_CACHE_MAX	256
-+#define IO_KIOCB_CACHE_RECLAIM	 16
-+
-+static struct io_kiocb_cache *alloc_cache;
-+
- struct io_op_def {
- 	/* needs req->io allocated for deferral/async */
- 	unsigned		async_ctx : 1;
-@@ -695,6 +710,8 @@ struct io_op_def {
+ struct async_poll {
+@@ -695,10 +698,14 @@ struct io_op_def {
  	unsigned		pollout : 1;
  	/* op supports buffer selection */
  	unsigned		buffer_select : 1;
-+	/* IRQ completion */
-+	unsigned		irq_comp : 1;
++	/* op can use stack req */
++	unsigned		stack_req : 1;
  };
  
  static const struct io_op_def io_op_defs[] = {
-@@ -706,6 +723,7 @@ static const struct io_op_def io_op_defs[] = {
- 		.unbound_nonreg_file	= 1,
- 		.pollin			= 1,
- 		.buffer_select		= 1,
-+		.irq_comp		= 1,
- 	},
- 	[IORING_OP_WRITEV] = {
+-	[IORING_OP_NOP] = {},
++	[IORING_OP_NOP] = {
++		.stack_req		= 1,
++	},
+ 	[IORING_OP_READV] = {
  		.async_ctx		= 1,
-@@ -714,6 +732,7 @@ static const struct io_op_def io_op_defs[] = {
- 		.hash_reg_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
-+		.irq_comp		= 1,
- 	},
- 	[IORING_OP_FSYNC] = {
- 		.needs_file		= 1,
-@@ -722,12 +741,14 @@ static const struct io_op_def io_op_defs[] = {
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollin			= 1,
-+		.irq_comp		= 1,
- 	},
- 	[IORING_OP_WRITE_FIXED] = {
- 		.needs_file		= 1,
- 		.hash_reg_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
-+		.irq_comp		= 1,
- 	},
- 	[IORING_OP_POLL_ADD] = {
- 		.needs_file		= 1,
-@@ -803,12 +824,14 @@ static const struct io_op_def io_op_defs[] = {
- 		.unbound_nonreg_file	= 1,
- 		.pollin			= 1,
- 		.buffer_select		= 1,
-+		.irq_comp		= 1,
- 	},
- 	[IORING_OP_WRITE] = {
  		.needs_mm		= 1,
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
-+		.irq_comp		= 1,
- 	},
- 	[IORING_OP_FADVISE] = {
- 		.needs_file		= 1,
-@@ -1281,54 +1304,161 @@ static inline bool io_is_fallback_req(struct io_kiocb *req)
- 			((unsigned long) req->ctx->fallback_req & ~1UL);
- }
- 
--static struct io_kiocb *io_get_fallback_req(struct io_ring_ctx *ctx)
-+static struct io_kiocb *io_get_fallback_req(struct io_ring_ctx *ctx, int op)
- {
- 	struct io_kiocb *req;
- 
- 	req = ctx->fallback_req;
--	if (!test_and_set_bit_lock(0, (unsigned long *) &ctx->fallback_req))
-+	if (!test_and_set_bit_lock(0, (unsigned long *) &ctx->fallback_req)) {
-+		req->opcode = op;
- 		return req;
-+	}
- 
- 	return NULL;
- }
- 
--static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx,
--				     struct io_submit_state *state)
-+static bool io_req_cache_steal(struct io_kiocb_cache_entry *ce)
- {
--	gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
--	struct io_kiocb *req;
-+	int nr = 0;
- 
--	if (!state) {
--		req = kmem_cache_alloc(req_cachep, gfp);
--		if (unlikely(!req))
--			goto fallback;
--	} else if (!state->free_reqs) {
--		size_t sz;
--		int ret;
-+	if (ce->nr_free < IO_KIOCB_CACHE_RECLAIM)
-+		return false;
- 
--		sz = min_t(size_t, state->ios_left, ARRAY_SIZE(state->reqs));
--		ret = kmem_cache_alloc_bulk(req_cachep, gfp, sz, state->reqs);
-+	spin_lock(&ce->free_lock);
-+	while (!list_empty(&ce->free_list)) {
-+		struct io_kiocb *req;
- 
--		/*
--		 * Bulk alloc is all-or-nothing. If we fail to get a batch,
--		 * retry single alloc to be on the safe side.
--		 */
--		if (unlikely(ret <= 0)) {
--			state->reqs[0] = kmem_cache_alloc(req_cachep, gfp);
--			if (!state->reqs[0])
--				goto fallback;
--			ret = 1;
--		}
--		state->free_reqs = ret - 1;
--		req = state->reqs[ret - 1];
--	} else {
--		state->free_reqs--;
--		req = state->reqs[state->free_reqs];
-+		req = list_first_entry(&ce->free_list, struct io_kiocb, list);
-+		list_move(&req->list, &ce->alloc_list);
-+		if (++nr >= IO_KIOCB_CACHE_RECLAIM)
-+			break;
- 	}
-+	ce->nr_avail += nr;
-+	ce->nr_free -= nr;
-+	spin_unlock(&ce->free_lock);
-+	return nr > 0;
-+}
-+
-+static struct io_kiocb *io_req_cache_alloc(int op)
-+{
-+	const bool irq_comp = io_op_defs[op].irq_comp;
-+	struct io_kiocb_cache_entry *ce;
-+	struct io_kiocb_cache *cache;
-+	struct io_kiocb *req = NULL;
-+
-+	if (irq_comp)
-+		local_irq_disable();
-+	else
-+		preempt_disable();
-+
-+	cache = this_cpu_ptr(alloc_cache);
-+	ce = &cache->caches[irq_comp];
-+
-+	if (!list_empty(&ce->alloc_list) || io_req_cache_steal(ce)) {
-+		req = list_first_entry(&ce->alloc_list, struct io_kiocb, list);
-+		list_del(&req->list);
-+		ce->nr_avail--;
-+	}
-+
-+	if (irq_comp)
-+		local_irq_enable();
-+	else
-+		preempt_enable();
-+
-+	if (req)
-+		return req;
- 
--	return req;
--fallback:
--	return io_get_fallback_req(ctx);
-+	return kmem_cache_alloc(req_cachep, GFP_KERNEL);
-+}
-+
-+static void io_req_cache_reclaim(struct io_kiocb_cache_entry *ce)
-+{
-+	LIST_HEAD(free_list);
-+	int nr = 0;
-+
-+	while (!list_empty(&ce->alloc_list)) {
-+		struct io_kiocb *req;
-+
-+		req = list_last_entry(&ce->alloc_list, struct io_kiocb, list);
-+		list_move(&req->list, &free_list);
-+		if (++nr >= IO_KIOCB_CACHE_RECLAIM)
-+			break;
-+	}
-+
-+	spin_lock(&ce->free_lock);
-+	list_splice(&free_list, &ce->free_list);
-+	ce->nr_free += nr;
-+	ce->nr_avail -= nr;
-+	spin_unlock(&ce->free_lock);
-+}
-+
-+struct req_batch {
-+	struct list_head list;
-+	int to_free;
-+	bool need_iter;
-+	bool irq_comp;
-+};
-+
-+static void io_req_cache_free_bulk(struct req_batch *rb)
-+{
-+	struct io_kiocb_cache_entry *ce;
-+	struct io_kiocb_cache *cache;
-+
-+	if (rb->irq_comp)
-+		local_irq_disable();
-+	else
-+		preempt_disable();
-+
-+	cache = this_cpu_ptr(alloc_cache);
-+	ce = &cache->caches[rb->irq_comp];
-+
-+	list_splice_init(&rb->list, &ce->alloc_list);
-+	ce->nr_avail += rb->to_free;
-+	if (ce->nr_avail > IO_KIOCB_CACHE_MAX)
-+		io_req_cache_reclaim(ce);
-+
-+	if (rb->irq_comp)
-+		local_irq_enable();
-+	else
-+		preempt_enable();
-+}
-+
-+static void io_req_cache_free(struct io_kiocb *req)
-+{
-+	const bool irq_comp = io_op_defs[req->opcode].irq_comp;
-+	struct io_kiocb_cache_entry *ce;
-+	struct io_kiocb_cache *cache;
-+	unsigned long flags;
-+
-+	if (irq_comp)
-+		local_irq_save(flags);
-+	else
-+		preempt_disable();
-+
-+	cache = this_cpu_ptr(alloc_cache);
-+	ce = &cache->caches[irq_comp];
-+
-+	list_add(&req->list, &ce->alloc_list);
-+	if (++ce->nr_avail > IO_KIOCB_CACHE_MAX)
-+		io_req_cache_reclaim(ce);
-+
-+	if (irq_comp)
-+		local_irq_restore(flags);
-+	else
-+		preempt_enable();
-+}
-+
-+static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx, int opcode)
-+{
-+	struct io_kiocb *req;
-+
-+	req = io_req_cache_alloc(opcode);
-+	if (req) {
-+		req->opcode = opcode;
-+		return req;
-+	}
-+
-+	return io_get_fallback_req(ctx, opcode);
- }
- 
- static inline void io_put_file(struct io_kiocb *req, struct file *file,
-@@ -1345,7 +1475,8 @@ static void __io_req_aux_free(struct io_kiocb *req)
+@@ -1345,7 +1352,8 @@ static void __io_req_aux_free(struct io_kiocb *req)
  	if (req->flags & REQ_F_NEED_CLEANUP)
  		io_cleanup_req(req);
  
@@ -471,113 +151,16 @@ index d2e37215d05a..3be5f0e60d9f 100644
  	if (req->file)
  		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
  	if (req->task)
-@@ -1371,28 +1502,21 @@ static void __io_free_req(struct io_kiocb *req)
+@@ -1370,6 +1378,8 @@ static void __io_free_req(struct io_kiocb *req)
+ 	}
  
  	percpu_ref_put(&req->ctx->refs);
++	if (req->flags & REQ_F_STACK_REQ)
++		return;
  	if (likely(!io_is_fallback_req(req)))
--		kmem_cache_free(req_cachep, req);
-+		io_req_cache_free(req);
+ 		kmem_cache_free(req_cachep, req);
  	else
- 		clear_bit_unlock(0, (unsigned long *) &req->ctx->fallback_req);
- }
- 
--struct req_batch {
--	void *reqs[IO_IOPOLL_BATCH];
--	int to_free;
--	int need_iter;
--};
--
- static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
- {
- 	if (!rb->to_free)
- 		return;
- 	if (rb->need_iter) {
--		int i, inflight = 0;
-+		struct io_kiocb *req;
- 		unsigned long flags;
-+		int inflight = 0;
- 
--		for (i = 0; i < rb->to_free; i++) {
--			struct io_kiocb *req = rb->reqs[i];
--
-+		list_for_each_entry(req, &rb->list, list) {
- 			if (req->flags & REQ_F_FIXED_FILE) {
- 				req->file = NULL;
- 				percpu_ref_put(req->fixed_file_refs);
-@@ -1405,9 +1529,7 @@ static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
- 			goto do_free;
- 
- 		spin_lock_irqsave(&ctx->inflight_lock, flags);
--		for (i = 0; i < rb->to_free; i++) {
--			struct io_kiocb *req = rb->reqs[i];
--
-+		list_for_each_entry(req, &rb->list, list) {
- 			if (req->flags & REQ_F_INFLIGHT) {
- 				list_del(&req->inflight_entry);
- 				if (!--inflight)
-@@ -1420,9 +1542,8 @@ static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
- 			wake_up(&ctx->inflight_wait);
- 	}
- do_free:
--	kmem_cache_free_bulk(req_cachep, rb->to_free, rb->reqs);
-+	io_req_cache_free_bulk(rb);
- 	percpu_ref_put_many(&ctx->refs, rb->to_free);
--	rb->to_free = rb->need_iter = 0;
- }
- 
- static bool io_link_cancel_timeout(struct io_kiocb *req)
-@@ -1670,11 +1791,12 @@ static inline bool io_req_multi_free(struct req_batch *rb, struct io_kiocb *req)
- 		return false;
- 
- 	if (!(req->flags & REQ_F_FIXED_FILE) || req->io)
--		rb->need_iter++;
-+		rb->need_iter |= true;
-+	if (!rb->irq_comp && io_op_defs[req->opcode].irq_comp)
-+		rb->irq_comp |= true;
- 
--	rb->reqs[rb->to_free++] = req;
--	if (unlikely(rb->to_free == ARRAY_SIZE(rb->reqs)))
--		io_free_req_many(req->ctx, rb);
-+	list_add(&req->list, &rb->list);
-+	rb->to_free++;
- 	return true;
- }
- 
-@@ -1697,10 +1819,14 @@ static int io_put_kbuf(struct io_kiocb *req)
- static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 			       struct list_head *done)
- {
--	struct req_batch rb;
-+	struct req_batch rb = {
-+		.list		= LIST_HEAD_INIT(rb.list),
-+		.to_free	= 0,
-+		.need_iter	= false,
-+		.irq_comp	= false
-+	};
- 	struct io_kiocb *req;
- 
--	rb.to_free = rb.need_iter = 0;
- 	while (!list_empty(done)) {
- 		int cflags = 0;
- 
-@@ -5703,8 +5829,6 @@ static void io_submit_state_end(struct io_submit_state *state)
- {
- 	blk_finish_plug(&state->plug);
- 	io_file_put(state);
--	if (state->free_reqs)
--		kmem_cache_free_bulk(req_cachep, state->free_reqs, state->reqs);
- }
- 
- /*
-@@ -5714,7 +5838,6 @@ static void io_submit_state_start(struct io_submit_state *state,
- 				  unsigned int max_ios)
- {
- 	blk_start_plug(&state->plug);
--	state->free_reqs = 0;
- 	state->file = NULL;
- 	state->ios_left = max_ios;
- }
-@@ -5784,7 +5907,6 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+@@ -5784,12 +5794,10 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
  	 * link list.
  	 */
  	req->sequence = ctx->cached_sq_head - ctx->cached_sq_dropped;
@@ -585,203 +168,57 @@ index d2e37215d05a..3be5f0e60d9f 100644
  	req->user_data = READ_ONCE(sqe->user_data);
  	req->io = NULL;
  	req->file = NULL;
-@@ -5872,7 +5994,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+ 	req->ctx = ctx;
+-	req->flags = 0;
+ 	/* one is dropped after submission, the other at completion */
+ 	refcount_set(&req->refs, 2);
+ 	req->task = NULL;
+@@ -5839,6 +5847,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+ {
+ 	struct io_submit_state state, *statep = NULL;
+ 	struct io_kiocb *link = NULL;
++	struct io_kiocb stack_req;
+ 	int i, submitted = 0;
+ 
+ 	/* if we have a backlog and couldn't flush it all, return BUSY */
+@@ -5865,20 +5874,31 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+ 	for (i = 0; i < nr; i++) {
+ 		const struct io_uring_sqe *sqe;
+ 		struct io_kiocb *req;
+-		int err;
++		int err, op;
+ 
+ 		sqe = io_get_sqe(ctx);
+ 		if (unlikely(!sqe)) {
  			io_consume_sqe(ctx);
  			break;
  		}
 -		req = io_alloc_req(ctx, statep);
-+		req = io_alloc_req(ctx, READ_ONCE(sqe->opcode));
- 		if (unlikely(!req)) {
- 			if (!submitted)
- 				submitted = -EAGAIN;
-@@ -7626,6 +7748,17 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 					req->task->task_works != NULL);
- 	}
- 	spin_unlock_irq(&ctx->completion_lock);
-+	seq_printf(m, "AllocCache:\n");
-+	for_each_possible_cpu(i) {
-+		struct io_kiocb_cache *cache = per_cpu_ptr(alloc_cache, i);
-+		int j;
+-		if (unlikely(!req)) {
+-			if (!submitted)
+-				submitted = -EAGAIN;
+-			break;
 +
-+		for (j = 0; j < ARRAY_SIZE(cache->caches); j++) {
-+			struct io_kiocb_cache_entry *ce = &cache->caches[j];
++		op = READ_ONCE(sqe->opcode);
 +
-+			seq_printf(m, "  cpu%d: irq=%d, nr_free=%d, nr_avail=%d\n", i, j, ce->nr_free, ce->nr_avail);
-+		}
-+	}
- 	mutex_unlock(&ctx->uring_lock);
- }
- 
-@@ -8101,8 +8234,131 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
- 	return ret;
- }
- 
-+static unsigned long io_uring_cache_count(struct shrinker *shrink,
-+					  struct shrink_control *sc)
-+{
-+	unsigned long count = 0;
-+	int cpu, i;
-+
-+	for_each_possible_cpu(cpu) {
-+		struct io_kiocb_cache *cache;
-+
-+		cache = per_cpu_ptr(alloc_cache, cpu);
-+		for (i = 0; i < ARRAY_SIZE(cache->caches); i++) {
-+			struct io_kiocb_cache_entry *ce = &cache->caches[i];
-+
-+			count += ce->nr_free;
-+		}
-+	}
-+
-+	return count;
-+}
-+
-+static unsigned long __io_uring_cache_shrink(struct io_kiocb_cache_entry *ce,
-+					     const bool irq_comp,
-+					     int *nr_to_scan)
-+{
-+	unsigned long freed = 0;
-+	struct io_kiocb *req;
-+	LIST_HEAD(free_list);
-+
-+	if (!ce->nr_free)
-+		return 0;
-+
-+	if (irq_comp)
-+		spin_lock_irq(&ce->free_lock);
-+	else
-+		spin_lock(&ce->free_lock);
-+
-+	while (!list_empty(&ce->free_list)) {
-+		req = list_first_entry(&ce->free_list, struct io_kiocb, list);
-+		list_move(&req->list, &free_list);
-+		freed++;
-+		if (!--(*nr_to_scan))
-+			break;
-+	}
-+
-+	if (irq_comp)
-+		spin_unlock_irq(&ce->free_lock);
-+	else
-+		spin_unlock(&ce->free_lock);
-+
-+	while (!list_empty(&free_list)) {
-+		req = list_first_entry(&free_list, struct io_kiocb, list);
-+		list_del(&req->list);
-+		kmem_cache_free(req_cachep, req);
-+	}
-+
-+	return freed;
-+}
-+
-+static unsigned long io_uring_cache_shrink(int nr_to_scan)
-+{
-+	long freed = 0;
-+	int cpu, i;
-+
-+	for_each_possible_cpu(cpu) {
-+		struct io_kiocb_cache *cache = per_cpu_ptr(alloc_cache, cpu);
-+
-+		for (i = 0; i < ARRAY_SIZE(cache->caches); i++) {
-+			struct io_kiocb_cache_entry *ce = &cache->caches[i];
-+
-+			freed += __io_uring_cache_shrink(ce, i, &nr_to_scan);
-+			if (!nr_to_scan)
++		if (io_op_defs[op].stack_req) {
++			req = &stack_req;
++			req->flags = REQ_F_STACK_REQ;
++		} else {
++			req = io_alloc_req(ctx, statep);
++			if (unlikely(!req)) {
++				if (!submitted)
++					submitted = -EAGAIN;
 +				break;
-+		}
-+		if (!nr_to_scan)
-+			break;
-+	}
++			}
++			req->flags = 0;
+ 		}
+ 
++		req->opcode = op;
 +
-+	return freed ?: SHRINK_STOP;
-+}
-+
-+static unsigned long io_uring_cache_scan(struct shrinker *shrink,
-+					 struct shrink_control *sc)
-+{
-+	if ((sc->gfp_mask & GFP_KERNEL) != GFP_KERNEL)
-+		return SHRINK_STOP;
-+
-+	return io_uring_cache_shrink(sc->nr_to_scan);
-+}
-+
-+static struct shrinker io_uring_shrinker = {
-+	.count_objects	= io_uring_cache_count,
-+	.scan_objects	= io_uring_cache_scan,
-+	.seeks		= DEFAULT_SEEKS,
-+};
-+
-+static void io_uring_kill_ce(struct io_kiocb_cache_entry *ce)
-+{
-+	struct io_kiocb *req;
-+
-+	list_splice_init(&ce->alloc_list, &ce->free_list);
-+
-+	while (!list_empty(&ce->free_list)) {
-+		req = list_first_entry(&ce->free_list, struct io_kiocb, list);
-+		list_del(&req->list);
-+		kmem_cache_free(req_cachep, req);
-+	}
-+
-+	ce->nr_free = ce->nr_avail = 0;
-+}
-+
-+static int io_uring_notify_dead(unsigned int cpu)
-+{
-+	struct io_kiocb_cache *cache = per_cpu_ptr(alloc_cache, cpu);
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(cache->caches); i++)
-+		io_uring_kill_ce(&cache->caches[i]);
-+
-+	return 0;
-+}
-+
- static int __init io_uring_init(void)
- {
-+	int cpu, i;
-+
- #define __BUILD_BUG_VERIFY_ELEMENT(stype, eoffset, etype, ename) do { \
- 	BUILD_BUG_ON(offsetof(stype, ename) != eoffset); \
- 	BUILD_BUG_ON(sizeof(etype) != sizeof_field(stype, ename)); \
-@@ -8142,6 +8398,25 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
- 	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
- 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
-+
-+	alloc_cache = alloc_percpu(struct io_kiocb_cache);
-+	for_each_possible_cpu(cpu) {
-+		struct io_kiocb_cache *cache = per_cpu_ptr(alloc_cache, cpu);
-+
-+		for (i = 0; i < ARRAY_SIZE(cache->caches); i++) {
-+			struct io_kiocb_cache_entry *ce = &cache->caches[i];
-+
-+			INIT_LIST_HEAD(&ce->alloc_list);
-+			spin_lock_init(&ce->free_lock);
-+			INIT_LIST_HEAD(&ce->free_list);
-+			ce->nr_free = 0;
-+			ce->nr_avail = 0;
-+		}
-+	}
-+
-+	cpuhp_setup_state_nocalls(CPUHP_IOURING_DEAD, "io_uring:dead", NULL,
-+					io_uring_notify_dead);
-+	WARN_ON(register_shrinker(&io_uring_shrinker));
- 	return 0;
- };
- __initcall(io_uring_init);
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 77d70b633531..3b80556572a5 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -60,6 +60,7 @@ enum cpuhp_state {
- 	CPUHP_LUSTRE_CFS_DEAD,
- 	CPUHP_AP_ARM_CACHE_B15_RAC_DEAD,
- 	CPUHP_PADATA_DEAD,
-+	CPUHP_IOURING_DEAD,
- 	CPUHP_WORKQUEUE_PREP,
- 	CPUHP_POWER_NUMA_PREPARE,
- 	CPUHP_HRTIMERS_PREPARE,
+ 		err = io_init_req(ctx, req, sqe, statep, async);
+ 		io_consume_sqe(ctx);
+ 		/* will complete beyond this point, count as submitted */
 
 -- 
 Jens Axboe

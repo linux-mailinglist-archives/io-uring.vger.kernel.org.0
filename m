@@ -2,343 +2,787 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A473D1D2E66
-	for <lists+io-uring@lfdr.de>; Thu, 14 May 2020 13:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0C101D32AB
+	for <lists+io-uring@lfdr.de>; Thu, 14 May 2020 16:23:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbgENLfs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 May 2020 07:35:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36466 "EHLO
+        id S1726245AbgENOXC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 May 2020 10:23:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbgENLfr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 May 2020 07:35:47 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 553BDC061A0C
-        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 04:35:47 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id g20so1462545qvb.9
-        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 04:35:47 -0700 (PDT)
+        with ESMTP id S1726066AbgENOXB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 May 2020 10:23:01 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7406AC061A0C
+        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 07:23:01 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id g11so1233212plp.1
+        for <io-uring@vger.kernel.org>; Thu, 14 May 2020 07:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/zElGm2zfL/kwgR8uLI36cmipyNAnQaRgwqOApvAPT0=;
-        b=Yl/V2FMFpX4quZBshyLTLa8m+wD7iYY52BLGCY8vBIybY3uHnVajeXTl+lBhGxchak
-         Kqh29QplIllcm1HMXjw981Aj8F5O0gH+m4h82kBr437p4nLST0QsZFZDkkKQf1pxrcXE
-         3MbL2j5Y/1nU273OcRxFkJmHAtV/ZG3Hnn64xN5czd4JfouXEd6uXVwpFTr2SbSSheLf
-         F/OnWVuxD2FbI0nM3MCuwOAvkmj6uCu8Dw8mkGA2dTxp39S/g8PtpKlz65nhgXEVctkj
-         V2I97B7A/zk2h39NdQhO78tmj4WQjhBKT1dQmxkXEXIwt868DCFck0yN6kyVJ3va2Rg5
-         3r/Q==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=k+tvpIk0wlvX56TCldMBTkk2AUVQNc5ePQ1QMUVPUa4=;
+        b=2L1Xx6acTmAhd7XMmNNEbYxpRs6HN19gH0SL6daVuCQysuxXczU8VyNuomE6JRiTyr
+         5I3jNzZX0CN9gMhVVW7XUGHvYHe9QjNsPxlGrfwf/PNapqFPRxqpbebHlPmlrZ8bGIsx
+         IjC4xNiI3vLkkqZEOmsiDeSA3zNc0T+Xg6SP2NFhKn5z/LO/t1HB1kik1xYvVYbGqlO9
+         ybIT2UCfD/W1y3P3c5cV5h6PSdvCWt3ORuYPwDqPvbLAt2T6l2ADpXiXfPu+g5JtWyze
+         Dv/0NpqxPmCXo3Ttvg3kJUGBPROrA1Laiuhq/YkW4jymoXsQae6lr5PZuME33iWujLW0
+         uJtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/zElGm2zfL/kwgR8uLI36cmipyNAnQaRgwqOApvAPT0=;
-        b=PVuuoR1gZjP1PpIpHDddqEeEW+Tl2dKZC8FHUPs8j275puY8zoSFIqoWE1kPTi/UWv
-         RgISkG1a82bkiwVkYiB9Q1EUnSRNYWmc2X+8Ia544/lZHkDcEsnwzKWctvIZqcwIlhBT
-         bljBv2xmTmP959a+a4sMr7WTOsxdqeqi1fmJ8RAnMsxQ2+/Lqsglkaa4eFC2fEEEsDB9
-         URHJrS+bIfa1BY/rPFY2Chj15ewFb8LoGml93hum4ZpYZhKdLAPn3MrAckTKCUC2XE5o
-         2Jg+sIiE3vUJUPwQ9hfYyFX8nFskmrUXNYfdCcnZoVE5Q2d0WFxfz4C2TYL5h2FXWkfw
-         kSrA==
-X-Gm-Message-State: AOAM531mMgoFVtTSm7YLkR8ioSt3qbU0V6kDasqT4zonza7MkW6ujRBp
-        ZUzdGpRRcUHP9NqXleAJUDIf1iB32AIw59GcEgiK7AI=
-X-Google-Smtp-Source: ABdhPJxPA497SMlJ9w46wXlyuDbKe6m4a+6bmLMsYjoXYgUtJnr9QhRxVhA6WiW97/3Ac4AKUJuKs0xZP3zluZsj+W8=
-X-Received: by 2002:a05:6214:1334:: with SMTP id c20mr4316610qvv.183.1589456146371;
- Thu, 14 May 2020 04:35:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <CADPKF+ene9LqKTFPUTwkdgbEe_pccZsJGjcm7cNmiq=8P_ojbA@mail.gmail.com>
- <d22e7619-3ff0-4cea-ba10-a05c2381f3b7@www.fastmail.com> <CADPKF+d1SJU9T+NFtqgRWwY3GJn1Wg06uNdSrVg_q837z_PV=A@mail.gmail.com>
- <7692E70C-A0EA-423B-883F-6BF91B0DB359@icloud.com> <CADPKF+eZCE4A2yXnQaZvq1uk3b-zR+-rwQhzA2z=v7+VsTndkQ@mail.gmail.com>
- <2F012CBD-7DB6-4E88-BFFE-63427B0DD18D@icloud.com> <CAO5MNut+nD-OqsKgae=eibWYuPim1f8-NuwqVpD87eZQnrwscA@mail.gmail.com>
- <CADPKF+dR=uQx9Dnu83ADghgei4KxwqnfBwONvp-ou--aePq0xg@mail.gmail.com>
- <c66f786b-999b-de45-ce18-f6a2df0e7d8c@gmail.com> <CADPKF+fGMYHDMdtWzuujyUqwBGJounsn3RsxgVVGaPDeLj_3TQ@mail.gmail.com>
- <ed95db2a-246b-f968-38eb-b9394b95938a@gmail.com>
-In-Reply-To: <ed95db2a-246b-f968-38eb-b9394b95938a@gmail.com>
-From:   Dmitry Sychov <dmitry.sychov@gmail.com>
-Date:   Thu, 14 May 2020 14:35:12 +0300
-Message-ID: <CADPKF+ed9hqL=2Pgjo4mn6QBjO4Z3UzPm9J_zPaVBLrJkzu+_Q@mail.gmail.com>
-Subject: Re: Any performance gains from using per thread(thread local) urings?
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Sergiy Yevtushenko <sergiy.yevtushenko@gmail.com>,
-        Mark Papadakis <markuspapadakis@icloud.com>,
-        "H. de Vries" <hdevries@fastmail.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=k+tvpIk0wlvX56TCldMBTkk2AUVQNc5ePQ1QMUVPUa4=;
+        b=MP66B1QYl+ZDBGrOALl37kzAzOj+A14TGiOz7Qs3GxueQvm73+IYSd/AFsqNKHYRNf
+         nujEhwaeVZhPuaCQQALSjHC0FhObBXpOjG8lhVSS06Qg3LU1NQnJ50WxKIAmM91IBbue
+         E2OKEAe+yYc1f4sR+HuNoi7IVy2BGtQdam4ILPt9HCbXx9sRJJX0PCdoInomtiGfqUCz
+         eU7w8/7TCZHMZIOfAhcbGyjXlY3dUhGYYiCFvL5YrvffhtgLhVpg/vdfGe7dBS83Ptsb
+         wYIM+/bXrkEuTHALB5KrgnIVzUIvBVkIYeDFbu+BHeuESgQGnN7IR07WUs9QbKeLJk3L
+         lN6g==
+X-Gm-Message-State: AGi0PuaQ3bzJ9kYMwOXwjufE66NTBiBOKgNYcv6OJxOzDOoGGJqD7SQQ
+        vqb7HKncuDlZaZS0d/ZRHbGLqg==
+X-Google-Smtp-Source: APiQypJDmChY0GSQUpxDrHktnzFOEa+ayLLtkzUYTEjy0QZEen4OkdeL3tuN/CH0CxXFsKNByVFnpQ==
+X-Received: by 2002:a17:90a:7f83:: with SMTP id m3mr42341138pjl.147.1589466180649;
+        Thu, 14 May 2020 07:23:00 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:85e7:ddeb:bb07:3741? ([2605:e000:100e:8c61:85e7:ddeb:bb07:3741])
+        by smtp.gmail.com with ESMTPSA id e1sm1555602pjv.54.2020.05.14.07.22.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 May 2020 07:22:59 -0700 (PDT)
+Subject: Re: [PATCH RFC} io_uring: io_kiocb alloc cache
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     joseph qi <joseph.qi@linux.alibaba.com>,
+        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+References: <492bb956-a670-8730-a35f-1d878c27175f@kernel.dk>
+ <dc5a0caf-0ba4-bfd7-4b6e-cbcb3e6fde10@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <70602a13-f6c9-e8a8-1035-6f148ba2d6d7@kernel.dk>
+Date:   Thu, 14 May 2020 08:22:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <dc5a0caf-0ba4-bfd7-4b6e-cbcb3e6fde10@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> If I parsed the question correctly, again, it creates a separate
-> thread pool per each new io_uring, if wasn't specified otherwise.
+On 5/14/20 2:25 AM, Xiaoguang Wang wrote:
+> hi,
+> 
+>> +
+>> +static void io_req_cache_free_bulk(struct req_batch *rb)
+>> +{
+>> +	struct io_kiocb_cache_entry *ce;
+>> +	struct io_kiocb_cache *cache;
+>> +
+>> +	if (rb->irq_comp)
+>> +		local_irq_disable();
+>> +	else
+>> +		preempt_disable();
+>> +
+>> +	cache = this_cpu_ptr(alloc_cache);
+>> +	ce = &cache->caches[rb->irq_comp];
+>> +
+>> +	list_splice_init(&rb->list, &ce->alloc_list);
+>> +	ce->nr_avail += rb->to_free;
+>> +	if (ce->nr_avail > IO_KIOCB_CACHE_MAX)
+>> +		io_req_cache_reclaim(ce);
+>> +
+>> +	if (rb->irq_comp)
+>> +		local_irq_enable();
+>> +	else
+>> +		preempt_enable();
+>> +}
+>> +
+>> +static void io_req_cache_free(struct io_kiocb *req)
+>> +{
+>> +	const bool irq_comp = io_op_defs[req->opcode].irq_comp;
+>> +	struct io_kiocb_cache_entry *ce;
+>> +	struct io_kiocb_cache *cache;
+>> +	unsigned long flags;
+>> +
+>> +	if (irq_comp)
+>> +		local_irq_save(flags);
+>> +	else
+>> +		preempt_disable();
+>> +
+>> +	cache = this_cpu_ptr(alloc_cache);
+>> +	ce = &cache->caches[irq_comp];
+>> +
+>> +	list_add(&req->list, &ce->alloc_list);
+>> +	if (++ce->nr_avail > IO_KIOCB_CACHE_MAX)
+>> +		io_req_cache_reclaim(ce);
+> Above codes seem that io_req_cache_reclaim() will free all reqs in
+> alloc_list, then we'll need to kmem_cache_alloc() again, I guess
+> indeed you intend to reserve IO_KIOCB_CACHE_MAX reqs in alloc_list?
 
-Aha, got it - finally found IORING_SETUP_ATTACH_WQ flag desc :)
+Yeah a thinko in that one, actually did a v2 shortly after that, just
+didn't send it out. Including it below in case you are interested, when
+it hits reclaim, it reclaims IO_KIOCB_CACHE_RECLAIM of them.
 
-Whats the default number of threads in a pool? Is it fixed or depends
-on the number of system CPU cores?
+> I still use my previous io_uring_nop_stress tool to evaluate the improvement
+> in a physical machine. Memory 250GB and cpu is "Intel(R) Xeon(R) CPU E5-2682 v4 @ 2.50GHz".
+> Before this patch:
+> $sudo taskset -c 60 ./io_uring_nop_stress -r 300
+> total ios: 1608773840
+> IOPS:      5362579
+> 
+> With this patch:
+> sudo taskset -c 60 ./io_uring_nop_stress -r 300
+> total ios: 1676910736
+> IOPS:      5589702
+> About 4.2% improvement.
 
-> Not sure what kind of starvation you meant, but feel free to rephrase you=
-r
-> questions if any of them weren't understood well.
+That's not bad. Can you try the patch from Pekka as well, just to see if
+that helps for you?
 
-Starvation problem arises when for example one uring becomes
-overloaded with pending tasks while another is already empty
-and the only way to mitigate the stall is to have all worker flows to
-check all other urings(steal jobs from each other)... or to use one
-shared uring at first place.
+I also had another idea... We basically have two types of request life
+times:
 
-With the increasing number of urings the cost of checking other queues
-increases leading to suppressed scaling.
+1) io_kiocb can get queued up internally
+2) io_kiocb completes inline
 
-Same thing happens on consumer side. If I'am using states decoupled
-from threads and submit(move) them(states) to random urings from a
-uring pool I have
-to check all other CQs for completed work if the CQ currently
-associated with my CPU thread is empty.
+For the latter, it's totally feasible to just have the io_kiocb on
+stack. The downside is if we need to go the slower path, then we need to
+alloc an io_kiocb then and copy it. But maybe that's OK... I'll play
+with it.
 
-> FWIW, atomics/wait-free will fail to scale good enough after some point.
 
-Yep... in general shared between multiple cores memory updates
-suppress scalability up to zero gains after like first hundred of cpu
-threads.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d2e37215d05a..3be5f0e60d9f 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -79,6 +79,7 @@
+ #include <linux/fs_struct.h>
+ #include <linux/splice.h>
+ #include <linux/task_work.h>
++#include <linux/cpuhotplug.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/io_uring.h>
+@@ -652,17 +653,10 @@ struct io_kiocb {
+ };
+ 
+ #define IO_PLUG_THRESHOLD		2
+-#define IO_IOPOLL_BATCH			8
+ 
+ struct io_submit_state {
+ 	struct blk_plug		plug;
+ 
+-	/*
+-	 * io_kiocb alloc cache
+-	 */
+-	void			*reqs[IO_IOPOLL_BATCH];
+-	unsigned int		free_reqs;
+-
+ 	/*
+ 	 * File reference cache
+ 	 */
+@@ -673,6 +667,27 @@ struct io_submit_state {
+ 	unsigned int		ios_left;
+ };
+ 
++struct io_kiocb_cache_entry {
++	/* ready for allocation */
++	struct list_head	alloc_list;
++	unsigned		nr_avail;
++
++	/* ready for shrinker reclaim */
++	spinlock_t		free_lock;
++	struct list_head	free_list;
++	unsigned		nr_free;
++};
++
++struct io_kiocb_cache {
++	/* one for requests with IRQ completion, one for no IRQ */
++	struct io_kiocb_cache_entry	caches[2];
++};
++
++#define IO_KIOCB_CACHE_MAX	256
++#define IO_KIOCB_CACHE_RECLAIM	 16
++
++static struct io_kiocb_cache *alloc_cache;
++
+ struct io_op_def {
+ 	/* needs req->io allocated for deferral/async */
+ 	unsigned		async_ctx : 1;
+@@ -695,6 +710,8 @@ struct io_op_def {
+ 	unsigned		pollout : 1;
+ 	/* op supports buffer selection */
+ 	unsigned		buffer_select : 1;
++	/* IRQ completion */
++	unsigned		irq_comp : 1;
+ };
+ 
+ static const struct io_op_def io_op_defs[] = {
+@@ -706,6 +723,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.unbound_nonreg_file	= 1,
+ 		.pollin			= 1,
+ 		.buffer_select		= 1,
++		.irq_comp		= 1,
+ 	},
+ 	[IORING_OP_WRITEV] = {
+ 		.async_ctx		= 1,
+@@ -714,6 +732,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.hash_reg_file		= 1,
+ 		.unbound_nonreg_file	= 1,
+ 		.pollout		= 1,
++		.irq_comp		= 1,
+ 	},
+ 	[IORING_OP_FSYNC] = {
+ 		.needs_file		= 1,
+@@ -722,12 +741,14 @@ static const struct io_op_def io_op_defs[] = {
+ 		.needs_file		= 1,
+ 		.unbound_nonreg_file	= 1,
+ 		.pollin			= 1,
++		.irq_comp		= 1,
+ 	},
+ 	[IORING_OP_WRITE_FIXED] = {
+ 		.needs_file		= 1,
+ 		.hash_reg_file		= 1,
+ 		.unbound_nonreg_file	= 1,
+ 		.pollout		= 1,
++		.irq_comp		= 1,
+ 	},
+ 	[IORING_OP_POLL_ADD] = {
+ 		.needs_file		= 1,
+@@ -803,12 +824,14 @@ static const struct io_op_def io_op_defs[] = {
+ 		.unbound_nonreg_file	= 1,
+ 		.pollin			= 1,
+ 		.buffer_select		= 1,
++		.irq_comp		= 1,
+ 	},
+ 	[IORING_OP_WRITE] = {
+ 		.needs_mm		= 1,
+ 		.needs_file		= 1,
+ 		.unbound_nonreg_file	= 1,
+ 		.pollout		= 1,
++		.irq_comp		= 1,
+ 	},
+ 	[IORING_OP_FADVISE] = {
+ 		.needs_file		= 1,
+@@ -1281,54 +1304,161 @@ static inline bool io_is_fallback_req(struct io_kiocb *req)
+ 			((unsigned long) req->ctx->fallback_req & ~1UL);
+ }
+ 
+-static struct io_kiocb *io_get_fallback_req(struct io_ring_ctx *ctx)
++static struct io_kiocb *io_get_fallback_req(struct io_ring_ctx *ctx, int op)
+ {
+ 	struct io_kiocb *req;
+ 
+ 	req = ctx->fallback_req;
+-	if (!test_and_set_bit_lock(0, (unsigned long *) &ctx->fallback_req))
++	if (!test_and_set_bit_lock(0, (unsigned long *) &ctx->fallback_req)) {
++		req->opcode = op;
+ 		return req;
++	}
+ 
+ 	return NULL;
+ }
+ 
+-static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx,
+-				     struct io_submit_state *state)
++static bool io_req_cache_steal(struct io_kiocb_cache_entry *ce)
+ {
+-	gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
+-	struct io_kiocb *req;
++	int nr = 0;
+ 
+-	if (!state) {
+-		req = kmem_cache_alloc(req_cachep, gfp);
+-		if (unlikely(!req))
+-			goto fallback;
+-	} else if (!state->free_reqs) {
+-		size_t sz;
+-		int ret;
++	if (ce->nr_free < IO_KIOCB_CACHE_RECLAIM)
++		return false;
+ 
+-		sz = min_t(size_t, state->ios_left, ARRAY_SIZE(state->reqs));
+-		ret = kmem_cache_alloc_bulk(req_cachep, gfp, sz, state->reqs);
++	spin_lock(&ce->free_lock);
++	while (!list_empty(&ce->free_list)) {
++		struct io_kiocb *req;
+ 
+-		/*
+-		 * Bulk alloc is all-or-nothing. If we fail to get a batch,
+-		 * retry single alloc to be on the safe side.
+-		 */
+-		if (unlikely(ret <= 0)) {
+-			state->reqs[0] = kmem_cache_alloc(req_cachep, gfp);
+-			if (!state->reqs[0])
+-				goto fallback;
+-			ret = 1;
+-		}
+-		state->free_reqs = ret - 1;
+-		req = state->reqs[ret - 1];
+-	} else {
+-		state->free_reqs--;
+-		req = state->reqs[state->free_reqs];
++		req = list_first_entry(&ce->free_list, struct io_kiocb, list);
++		list_move(&req->list, &ce->alloc_list);
++		if (++nr >= IO_KIOCB_CACHE_RECLAIM)
++			break;
+ 	}
++	ce->nr_avail += nr;
++	ce->nr_free -= nr;
++	spin_unlock(&ce->free_lock);
++	return nr > 0;
++}
++
++static struct io_kiocb *io_req_cache_alloc(int op)
++{
++	const bool irq_comp = io_op_defs[op].irq_comp;
++	struct io_kiocb_cache_entry *ce;
++	struct io_kiocb_cache *cache;
++	struct io_kiocb *req = NULL;
++
++	if (irq_comp)
++		local_irq_disable();
++	else
++		preempt_disable();
++
++	cache = this_cpu_ptr(alloc_cache);
++	ce = &cache->caches[irq_comp];
++
++	if (!list_empty(&ce->alloc_list) || io_req_cache_steal(ce)) {
++		req = list_first_entry(&ce->alloc_list, struct io_kiocb, list);
++		list_del(&req->list);
++		ce->nr_avail--;
++	}
++
++	if (irq_comp)
++		local_irq_enable();
++	else
++		preempt_enable();
++
++	if (req)
++		return req;
+ 
+-	return req;
+-fallback:
+-	return io_get_fallback_req(ctx);
++	return kmem_cache_alloc(req_cachep, GFP_KERNEL);
++}
++
++static void io_req_cache_reclaim(struct io_kiocb_cache_entry *ce)
++{
++	LIST_HEAD(free_list);
++	int nr = 0;
++
++	while (!list_empty(&ce->alloc_list)) {
++		struct io_kiocb *req;
++
++		req = list_last_entry(&ce->alloc_list, struct io_kiocb, list);
++		list_move(&req->list, &free_list);
++		if (++nr >= IO_KIOCB_CACHE_RECLAIM)
++			break;
++	}
++
++	spin_lock(&ce->free_lock);
++	list_splice(&free_list, &ce->free_list);
++	ce->nr_free += nr;
++	ce->nr_avail -= nr;
++	spin_unlock(&ce->free_lock);
++}
++
++struct req_batch {
++	struct list_head list;
++	int to_free;
++	bool need_iter;
++	bool irq_comp;
++};
++
++static void io_req_cache_free_bulk(struct req_batch *rb)
++{
++	struct io_kiocb_cache_entry *ce;
++	struct io_kiocb_cache *cache;
++
++	if (rb->irq_comp)
++		local_irq_disable();
++	else
++		preempt_disable();
++
++	cache = this_cpu_ptr(alloc_cache);
++	ce = &cache->caches[rb->irq_comp];
++
++	list_splice_init(&rb->list, &ce->alloc_list);
++	ce->nr_avail += rb->to_free;
++	if (ce->nr_avail > IO_KIOCB_CACHE_MAX)
++		io_req_cache_reclaim(ce);
++
++	if (rb->irq_comp)
++		local_irq_enable();
++	else
++		preempt_enable();
++}
++
++static void io_req_cache_free(struct io_kiocb *req)
++{
++	const bool irq_comp = io_op_defs[req->opcode].irq_comp;
++	struct io_kiocb_cache_entry *ce;
++	struct io_kiocb_cache *cache;
++	unsigned long flags;
++
++	if (irq_comp)
++		local_irq_save(flags);
++	else
++		preempt_disable();
++
++	cache = this_cpu_ptr(alloc_cache);
++	ce = &cache->caches[irq_comp];
++
++	list_add(&req->list, &ce->alloc_list);
++	if (++ce->nr_avail > IO_KIOCB_CACHE_MAX)
++		io_req_cache_reclaim(ce);
++
++	if (irq_comp)
++		local_irq_restore(flags);
++	else
++		preempt_enable();
++}
++
++static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx, int opcode)
++{
++	struct io_kiocb *req;
++
++	req = io_req_cache_alloc(opcode);
++	if (req) {
++		req->opcode = opcode;
++		return req;
++	}
++
++	return io_get_fallback_req(ctx, opcode);
+ }
+ 
+ static inline void io_put_file(struct io_kiocb *req, struct file *file,
+@@ -1345,7 +1475,8 @@ static void __io_req_aux_free(struct io_kiocb *req)
+ 	if (req->flags & REQ_F_NEED_CLEANUP)
+ 		io_cleanup_req(req);
+ 
+-	kfree(req->io);
++	if (req->io)
++		kfree(req->io);
+ 	if (req->file)
+ 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
+ 	if (req->task)
+@@ -1371,28 +1502,21 @@ static void __io_free_req(struct io_kiocb *req)
+ 
+ 	percpu_ref_put(&req->ctx->refs);
+ 	if (likely(!io_is_fallback_req(req)))
+-		kmem_cache_free(req_cachep, req);
++		io_req_cache_free(req);
+ 	else
+ 		clear_bit_unlock(0, (unsigned long *) &req->ctx->fallback_req);
+ }
+ 
+-struct req_batch {
+-	void *reqs[IO_IOPOLL_BATCH];
+-	int to_free;
+-	int need_iter;
+-};
+-
+ static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
+ {
+ 	if (!rb->to_free)
+ 		return;
+ 	if (rb->need_iter) {
+-		int i, inflight = 0;
++		struct io_kiocb *req;
+ 		unsigned long flags;
++		int inflight = 0;
+ 
+-		for (i = 0; i < rb->to_free; i++) {
+-			struct io_kiocb *req = rb->reqs[i];
+-
++		list_for_each_entry(req, &rb->list, list) {
+ 			if (req->flags & REQ_F_FIXED_FILE) {
+ 				req->file = NULL;
+ 				percpu_ref_put(req->fixed_file_refs);
+@@ -1405,9 +1529,7 @@ static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
+ 			goto do_free;
+ 
+ 		spin_lock_irqsave(&ctx->inflight_lock, flags);
+-		for (i = 0; i < rb->to_free; i++) {
+-			struct io_kiocb *req = rb->reqs[i];
+-
++		list_for_each_entry(req, &rb->list, list) {
+ 			if (req->flags & REQ_F_INFLIGHT) {
+ 				list_del(&req->inflight_entry);
+ 				if (!--inflight)
+@@ -1420,9 +1542,8 @@ static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
+ 			wake_up(&ctx->inflight_wait);
+ 	}
+ do_free:
+-	kmem_cache_free_bulk(req_cachep, rb->to_free, rb->reqs);
++	io_req_cache_free_bulk(rb);
+ 	percpu_ref_put_many(&ctx->refs, rb->to_free);
+-	rb->to_free = rb->need_iter = 0;
+ }
+ 
+ static bool io_link_cancel_timeout(struct io_kiocb *req)
+@@ -1670,11 +1791,12 @@ static inline bool io_req_multi_free(struct req_batch *rb, struct io_kiocb *req)
+ 		return false;
+ 
+ 	if (!(req->flags & REQ_F_FIXED_FILE) || req->io)
+-		rb->need_iter++;
++		rb->need_iter |= true;
++	if (!rb->irq_comp && io_op_defs[req->opcode].irq_comp)
++		rb->irq_comp |= true;
+ 
+-	rb->reqs[rb->to_free++] = req;
+-	if (unlikely(rb->to_free == ARRAY_SIZE(rb->reqs)))
+-		io_free_req_many(req->ctx, rb);
++	list_add(&req->list, &rb->list);
++	rb->to_free++;
+ 	return true;
+ }
+ 
+@@ -1697,10 +1819,14 @@ static int io_put_kbuf(struct io_kiocb *req)
+ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ 			       struct list_head *done)
+ {
+-	struct req_batch rb;
++	struct req_batch rb = {
++		.list		= LIST_HEAD_INIT(rb.list),
++		.to_free	= 0,
++		.need_iter	= false,
++		.irq_comp	= false
++	};
+ 	struct io_kiocb *req;
+ 
+-	rb.to_free = rb.need_iter = 0;
+ 	while (!list_empty(done)) {
+ 		int cflags = 0;
+ 
+@@ -5703,8 +5829,6 @@ static void io_submit_state_end(struct io_submit_state *state)
+ {
+ 	blk_finish_plug(&state->plug);
+ 	io_file_put(state);
+-	if (state->free_reqs)
+-		kmem_cache_free_bulk(req_cachep, state->free_reqs, state->reqs);
+ }
+ 
+ /*
+@@ -5714,7 +5838,6 @@ static void io_submit_state_start(struct io_submit_state *state,
+ 				  unsigned int max_ios)
+ {
+ 	blk_start_plug(&state->plug);
+-	state->free_reqs = 0;
+ 	state->file = NULL;
+ 	state->ios_left = max_ios;
+ }
+@@ -5784,7 +5907,6 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	 * link list.
+ 	 */
+ 	req->sequence = ctx->cached_sq_head - ctx->cached_sq_dropped;
+-	req->opcode = READ_ONCE(sqe->opcode);
+ 	req->user_data = READ_ONCE(sqe->user_data);
+ 	req->io = NULL;
+ 	req->file = NULL;
+@@ -5872,7 +5994,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+ 			io_consume_sqe(ctx);
+ 			break;
+ 		}
+-		req = io_alloc_req(ctx, statep);
++		req = io_alloc_req(ctx, READ_ONCE(sqe->opcode));
+ 		if (unlikely(!req)) {
+ 			if (!submitted)
+ 				submitted = -EAGAIN;
+@@ -7626,6 +7748,17 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 					req->task->task_works != NULL);
+ 	}
+ 	spin_unlock_irq(&ctx->completion_lock);
++	seq_printf(m, "AllocCache:\n");
++	for_each_possible_cpu(i) {
++		struct io_kiocb_cache *cache = per_cpu_ptr(alloc_cache, i);
++		int j;
++
++		for (j = 0; j < ARRAY_SIZE(cache->caches); j++) {
++			struct io_kiocb_cache_entry *ce = &cache->caches[j];
++
++			seq_printf(m, "  cpu%d: irq=%d, nr_free=%d, nr_avail=%d\n", i, j, ce->nr_free, ce->nr_avail);
++		}
++	}
+ 	mutex_unlock(&ctx->uring_lock);
+ }
+ 
+@@ -8101,8 +8234,131 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
+ 	return ret;
+ }
+ 
++static unsigned long io_uring_cache_count(struct shrinker *shrink,
++					  struct shrink_control *sc)
++{
++	unsigned long count = 0;
++	int cpu, i;
++
++	for_each_possible_cpu(cpu) {
++		struct io_kiocb_cache *cache;
++
++		cache = per_cpu_ptr(alloc_cache, cpu);
++		for (i = 0; i < ARRAY_SIZE(cache->caches); i++) {
++			struct io_kiocb_cache_entry *ce = &cache->caches[i];
++
++			count += ce->nr_free;
++		}
++	}
++
++	return count;
++}
++
++static unsigned long __io_uring_cache_shrink(struct io_kiocb_cache_entry *ce,
++					     const bool irq_comp,
++					     int *nr_to_scan)
++{
++	unsigned long freed = 0;
++	struct io_kiocb *req;
++	LIST_HEAD(free_list);
++
++	if (!ce->nr_free)
++		return 0;
++
++	if (irq_comp)
++		spin_lock_irq(&ce->free_lock);
++	else
++		spin_lock(&ce->free_lock);
++
++	while (!list_empty(&ce->free_list)) {
++		req = list_first_entry(&ce->free_list, struct io_kiocb, list);
++		list_move(&req->list, &free_list);
++		freed++;
++		if (!--(*nr_to_scan))
++			break;
++	}
++
++	if (irq_comp)
++		spin_unlock_irq(&ce->free_lock);
++	else
++		spin_unlock(&ce->free_lock);
++
++	while (!list_empty(&free_list)) {
++		req = list_first_entry(&free_list, struct io_kiocb, list);
++		list_del(&req->list);
++		kmem_cache_free(req_cachep, req);
++	}
++
++	return freed;
++}
++
++static unsigned long io_uring_cache_shrink(int nr_to_scan)
++{
++	long freed = 0;
++	int cpu, i;
++
++	for_each_possible_cpu(cpu) {
++		struct io_kiocb_cache *cache = per_cpu_ptr(alloc_cache, cpu);
++
++		for (i = 0; i < ARRAY_SIZE(cache->caches); i++) {
++			struct io_kiocb_cache_entry *ce = &cache->caches[i];
++
++			freed += __io_uring_cache_shrink(ce, i, &nr_to_scan);
++			if (!nr_to_scan)
++				break;
++		}
++		if (!nr_to_scan)
++			break;
++	}
++
++	return freed ?: SHRINK_STOP;
++}
++
++static unsigned long io_uring_cache_scan(struct shrinker *shrink,
++					 struct shrink_control *sc)
++{
++	if ((sc->gfp_mask & GFP_KERNEL) != GFP_KERNEL)
++		return SHRINK_STOP;
++
++	return io_uring_cache_shrink(sc->nr_to_scan);
++}
++
++static struct shrinker io_uring_shrinker = {
++	.count_objects	= io_uring_cache_count,
++	.scan_objects	= io_uring_cache_scan,
++	.seeks		= DEFAULT_SEEKS,
++};
++
++static void io_uring_kill_ce(struct io_kiocb_cache_entry *ce)
++{
++	struct io_kiocb *req;
++
++	list_splice_init(&ce->alloc_list, &ce->free_list);
++
++	while (!list_empty(&ce->free_list)) {
++		req = list_first_entry(&ce->free_list, struct io_kiocb, list);
++		list_del(&req->list);
++		kmem_cache_free(req_cachep, req);
++	}
++
++	ce->nr_free = ce->nr_avail = 0;
++}
++
++static int io_uring_notify_dead(unsigned int cpu)
++{
++	struct io_kiocb_cache *cache = per_cpu_ptr(alloc_cache, cpu);
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(cache->caches); i++)
++		io_uring_kill_ce(&cache->caches[i]);
++
++	return 0;
++}
++
+ static int __init io_uring_init(void)
+ {
++	int cpu, i;
++
+ #define __BUILD_BUG_VERIFY_ELEMENT(stype, eoffset, etype, ename) do { \
+ 	BUILD_BUG_ON(offsetof(stype, ename) != eoffset); \
+ 	BUILD_BUG_ON(sizeof(etype) != sizeof_field(stype, ename)); \
+@@ -8142,6 +8398,25 @@ static int __init io_uring_init(void)
+ 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
+ 	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
+ 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
++
++	alloc_cache = alloc_percpu(struct io_kiocb_cache);
++	for_each_possible_cpu(cpu) {
++		struct io_kiocb_cache *cache = per_cpu_ptr(alloc_cache, cpu);
++
++		for (i = 0; i < ARRAY_SIZE(cache->caches); i++) {
++			struct io_kiocb_cache_entry *ce = &cache->caches[i];
++
++			INIT_LIST_HEAD(&ce->alloc_list);
++			spin_lock_init(&ce->free_lock);
++			INIT_LIST_HEAD(&ce->free_list);
++			ce->nr_free = 0;
++			ce->nr_avail = 0;
++		}
++	}
++
++	cpuhp_setup_state_nocalls(CPUHP_IOURING_DEAD, "io_uring:dead", NULL,
++					io_uring_notify_dead);
++	WARN_ON(register_shrinker(&io_uring_shrinker));
+ 	return 0;
+ };
+ __initcall(io_uring_init);
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index 77d70b633531..3b80556572a5 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -60,6 +60,7 @@ enum cpuhp_state {
+ 	CPUHP_LUSTRE_CFS_DEAD,
+ 	CPUHP_AP_ARM_CACHE_B15_RAC_DEAD,
+ 	CPUHP_PADATA_DEAD,
++	CPUHP_IOURING_DEAD,
+ 	CPUHP_WORKQUEUE_PREP,
+ 	CPUHP_POWER_NUMA_PREPARE,
+ 	CPUHP_HRTIMERS_PREPARE,
 
-There was a paper somewhere that even having a one shared counter
-between 100+ threads already blocks the scaling completely further
-and wait-free containers are almost the same sources for mem bouncing
-as write shared data...
+-- 
+Jens Axboe
 
-On Thu, May 14, 2020 at 1:08 PM Pavel Begunkov <asml.silence@gmail.com> wro=
-te:
->
-> On 13/05/2020 22:23, Dmitry Sychov wrote:
-> >> E.g. 100+ cores hammering on a spinlock/mutex protecting an SQ wouldn'=
-t do any good.
-> >
-> > Its possible to mitigate the hammering by using proxy buffer - instead
-> > of spinning, the particular thread
-> > could add the next entry into the buffer through XADD instead, and
-> > another thread currently holding an exclusive
-> > lock could in turn check this buffer and batch-submit all pending
-> > entries to SQ before leasing SQ mutex.
->
-> Sure there are many ways, but I think my point is clear.
-> FWIW, atomics/wait-free will fail to scale good enough after some point.
->
-> >> will be offloaded to an internal thread pool (aka io-wq), which is per=
- io_uring by default, but can be shared if specified.
-> >
-> > Well, thats sounds like mumbo jumbo to me, does this mean that the
-> > kernel holds and internal pool of threads to
-> > perform uring tasks independent to the number of user urings?
->
-> If I parsed the question correctly, again, it creates a separate thread p=
-ool per
-> each new io_uring, if wasn't specified otherwise.
->
-> >
-> > If there are multiple kernel work flows bound to corresponding uring
-> > setups the issue with threads starvation could exist if they do not
-> > actively steal from each other SQs.
-> The threads can go to sleep or be dynamically created/destroyed.
->
-> Not sure what kind of starvation you meant, but feel free to rephrase you=
-r
-> questions if any of them weren't understood well.
->
-> > And starvation costs could be greater than allowing for multiple
-> > threads to dig into one uring queue, even under the exclusive lock.
-> Thread pools can be shared.
->
-> >
-> >> And there a lot of details, probably worth of a separate write-up.
-> >
-> > I've reread io_uring.pdf and there are not much tech details on the
-> > inner implementation of uring to try to apply best practices and to
-> > avoid noob questions like mine.
-> >
-> >
-> >
-> > On Wed, May 13, 2020 at 7:03 PM Pavel Begunkov <asml.silence@gmail.com>=
- wrote:
-> >>
-> >> On 13/05/2020 17:22, Dmitry Sychov wrote:
-> >>> Anyone could shed some light on the inner implementation of uring ple=
-ase? :)
-> >>
-> >> It really depends on the workload, hardware, etc.
-> >>
-> >> io_uring instances are intended to be independent, and each have one C=
-Q and SQ.
-> >> The main user's concern should be synchronisation (in userspace) on CQ=
-+SQ. E.g.
-> >> 100+ cores hammering on a spinlock/mutex protecting an SQ wouldn't do =
-any good.
-> >>
-> >> Everything that can't be inline completed\submitted during io_urng_ent=
-er(), will
-> >> be offloaded to an internal thread pool (aka io-wq), which is per io_u=
-ring by
-> >> default, but can be shared if specified. There are pros and cons, but =
-I'd
-> >> recommend first to share a single io-wq, and then experiment and tune.
-> >>
-> >> Also, in-kernel submission is not instantaneous and done by only threa=
-d at any
-> >> moment. Single io_uring may bottleneck you there or add high latency i=
-n some cases.
-> >>
-> >> And there a lot of details, probably worth of a separate write-up.
-> >>
-> >>>
-> >>> Specifically how well kernel scales with the increased number of user
-> >>> created urings?
-> >>
-> >> Should scale well, especially for rw. Just don't overthrow the kernel =
-with
-> >> threads from dozens of io-wqs.
-> >>
-> >>>
-> >>>> If kernel implementation will change from single to multiple queues,
-> >>>> user space is already prepared for this change.
-> >>>
-> >>> Thats +1 for per-thread urings. An expectation for the kernel to
-> >>> become better and better in multiple urings scaling in the future.
-> >>>
-> >>> On Wed, May 13, 2020 at 4:52 PM Sergiy Yevtushenko
-> >>> <sergiy.yevtushenko@gmail.com> wrote:
-> >>>>
-> >>>> Completely agree. Sharing state should be avoided as much as possibl=
-e.
-> >>>> Returning to original question: I believe that uring-per-thread sche=
-me is better regardless from how queue is managed inside the kernel.
-> >>>> - If there is only one queue inside the kernel, then it's more effic=
-ient to perform multiplexing/demultiplexing requests in kernel space
-> >>>> - If there are several queues inside the kernel, then user space cod=
-e better matches kernel-space code.
-> >>>> - If kernel implementation will change from single to multiple queue=
-s, user space is already prepared for this change.
-> >>>>
-> >>>>
-> >>>> On Wed, May 13, 2020 at 3:30 PM Mark Papadakis <markuspapadakis@iclo=
-ud.com> wrote:
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>>> On 13 May 2020, at 4:15 PM, Dmitry Sychov <dmitry.sychov@gmail.com=
-> wrote:
-> >>>>>>
-> >>>>>> Hey Mark,
-> >>>>>>
-> >>>>>> Or we could share one SQ and one CQ between multiple threads(bound=
- by
-> >>>>>> the max number of CPU cores) for direct read/write access using ve=
-ry
-> >>>>>> light mutex to sync.
-> >>>>>>
-> >>>>>> This also solves threads starvation issue  - thread A submits the =
-job
-> >>>>>> into shared SQ while thread B both collects and _processes_ the re=
-sult
-> >>>>>> from the shared CQ instead of waiting on his own unique CQ for nex=
-t
-> >>>>>> completion event.
-> >>>>>>
-> >>>>>
-> >>>>>
-> >>>>> Well, if the SQ submitted by A and its matching CQ is consumed by B=
-, and A will need access to that CQ because it is tightly coupled to state =
-it owns exclusively(for example), or other reasons, then you=E2=80=99d stil=
-l need to move that CQ from B back to A, or share it somehow, which seems e=
-xpensive-is.
-> >>>>>
-> >>>>> It depends on what kind of roles your threads have though; I am per=
-sonally very much against sharing state between threads unless there a real=
-ly good reason for it.
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>>> On Wed, May 13, 2020 at 2:56 PM Mark Papadakis
-> >>>>>> <markuspapadakis@icloud.com> wrote:
-> >>>>>>>
-> >>>>>>> For what it=E2=80=99s worth, I am (also) using using multiple =E2=
-=80=9Creactor=E2=80=9D (i.e event driven) cores, each associated with one O=
-S thread, and each reactor core manages its own io_uring context/queues.
-> >>>>>>>
-> >>>>>>> Even if scheduling all SQEs through a single io_uring SQ =E2=80=
-=94 by e.g collecting all such SQEs in every OS thread and then somehow =E2=
-=80=9Cmoving=E2=80=9D them to the one OS thread that manages the SQ so that=
- it can enqueue them all -- is very cheap, you =E2=80=98d still need to dra=
-in the CQ from that thread and presumably process those CQEs in a single OS=
- thread, which will definitely be more work than having each reactor/OS thr=
-ead dequeue CQEs for SQEs that itself submitted.
-> >>>>>>> You could have a single OS thread just for I/O and all other thre=
-ads could do something else but you=E2=80=99d presumably need to serialize =
-access/share state between them and the one OS thread for I/O which maybe a=
- scalability bottleneck.
-> >>>>>>>
-> >>>>>>> ( if you are curious, you can read about it here https://medium.c=
-om/@markpapadakis/building-high-performance-services-in-2020-e2dea272f6f6 )
-> >>>>>>>
-> >>>>>>> If you experiment with the various possible designs though, I=E2=
-=80=99d love it if you were to share your findings.
-> >>>>>>>
-> >>>>>>> =E2=80=94
-> >>>>>>> @markpapapdakis
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>> On 13 May 2020, at 2:01 PM, Dmitry Sychov <dmitry.sychov@gmail.c=
-om> wrote:
-> >>>>>>>>
-> >>>>>>>> Hi Hielke,
-> >>>>>>>>
-> >>>>>>>>> If you want max performance, what you generally will see in non=
--blocking servers is one event loop per core/thread.
-> >>>>>>>>> This means one ring per core/thread. Of course there is no simp=
-le answer to this.
-> >>>>>>>>> See how thread-based servers work vs non-blocking servers. E.g.=
- Apache vs Nginx or Tomcat vs Netty.
-> >>>>>>>>
-> >>>>>>>> I think a lot depends on the internal uring implementation. To w=
-hat
-> >>>>>>>> degree the kernel is able to handle multiple urings independentl=
-y,
-> >>>>>>>> without much congestion points(like updates of the same memory
-> >>>>>>>> locations from multiple threads), thus taking advantage of one r=
-ing
-> >>>>>>>> per CPU core.
-> >>>>>>>>
-> >>>>>>>> For example, if the tasks from multiple rings are later combined=
- into
-> >>>>>>>> single input kernel queue (effectively forming a congestion poin=
-t) I
-> >>>>>>>> see
-> >>>>>>>> no reason to use exclusive ring per core in user space.
-> >>>>>>>>
-> >>>>>>>> [BTW in Windows IOCP is always one input+output queue for all(ac=
-tive) threads].
-> >>>>>>>>
-> >>>>>>>> Also we could pop out multiple completion events from a single C=
-Q at
-> >>>>>>>> once to spread the handling to cores-bound threads .
-> >>>>>>>>
-> >>>>>>>> I thought about one uring per core at first, but now I'am not su=
-re -
-> >>>>>>>> maybe the kernel devs have something to add to the discussion?
-> >>>>>>>>
-> >>>>>>>> P.S. uring is the main reason I'am switching from windows to lin=
-ux dev
-> >>>>>>>> for client-sever app so I want to extract the max performance po=
-ssible
-> >>>>>>>> out of this new exciting uring stuff. :)
-> >>>>>>>>
-> >>>>>>>> Thanks, Dmitry
-> >>>>>>>
-> >>>>>
-> >>
-> >> --
-> >> Pavel Begunkov
->
-> --
-> Pavel Begunkov

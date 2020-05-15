@@ -2,64 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0D841D5640
-	for <lists+io-uring@lfdr.de>; Fri, 15 May 2020 18:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EFC91D563B
+	for <lists+io-uring@lfdr.de>; Fri, 15 May 2020 18:38:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbgEOQiU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 May 2020 12:38:20 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:27432 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726313AbgEOQiP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 May 2020 12:38:15 -0400
+        id S1726231AbgEOQiO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 May 2020 12:38:14 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28073 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726233AbgEOQiN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 May 2020 12:38:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589560693;
+        s=mimecast20190719; t=1589560692;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=7Bg7RWFLPly3TX4Y/V49rHB9a190dlTFcmjCSkHrUK0=;
-        b=JL8e68hqz97QOk+dlnTT76BNXp/fDRypnFg5LOVrrNZr8oZtipjkVkmc5t3/PcCfhPxCSo
-        Svr/4mDBQ0EkJhSLm3fIAyHiM77zKU3AbSiHktr+dvI2TjCFtmBcet8zrsNqtu6XZjgSrt
-        +YxjxUcRMXq4jolfTFTb8Kzb2soVq4Y=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-384-G5I_1StFN6-l4nBGmHPpcw-1; Fri, 15 May 2020 12:38:09 -0400
-X-MC-Unique: G5I_1StFN6-l4nBGmHPpcw-1
-Received: by mail-wr1-f72.google.com with SMTP id 30so1432538wrq.15
-        for <io-uring@vger.kernel.org>; Fri, 15 May 2020 09:38:08 -0700 (PDT)
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6gZ5R0zPx7v8Q5QUl+dC4PL1yY2tt7RqoIbj3l8sE74=;
+        b=Psye5yAzWoGgQZiNB7G+RGlp/2ujq3OuHTGWF5AgXH3A9qu23YNE8YQkUTyXmMhdXDKm+4
+        yOCZCDir6f0VXksXZBY9RBl0dHrrLO451zwZR9RviAKNC+rREpcUysnux4+tNRgBdKZ5vj
+        K7KH7MyQY01BXKtCjPF2QjWYd3V4T4g=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-216-YNocHvW0MkaG1MIBmipkuw-1; Fri, 15 May 2020 12:38:10 -0400
+X-MC-Unique: YNocHvW0MkaG1MIBmipkuw-1
+Received: by mail-wm1-f72.google.com with SMTP id x11so1226587wmc.9
+        for <io-uring@vger.kernel.org>; Fri, 15 May 2020 09:38:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7Bg7RWFLPly3TX4Y/V49rHB9a190dlTFcmjCSkHrUK0=;
-        b=WDXAbhx4wMCnri5EawtWLsEnw1ImUbe59mM0Z7CtvSUWZeK4w4EEX7PYpeMeszh4Gl
-         QxaVa6GgiIwxyCqEYHRogDqcZXXl8VGT4nrzeWUBvMQMD/7tSXm0Zn9KiSqNK3HxdjqO
-         1aJ+R/SrwzIRq++WAr7t6UzXSKELBwega21GxvqSD6Lf2yviML665NTk7FDdjMjBTMLd
-         EQsuKufS6jI2EEBPFmA9TRxr6GlwyBfN+Qt7CFg/lhstAiyGNIyXSHjokfOq4aRisRMp
-         8Yc8ndRyO9/qsh/KTF8GImnWYmDD2bYEVjQ4zITUFm9hIXzFiUiE4ToLnztsCi6BrupK
-         0b8Q==
-X-Gm-Message-State: AOAM531e4x4VMDin8oM6Pnj5L1gzkY8cDUxhiyZlpumRSSALgiRNKGMK
-        +6zQtWvtxC46hsCcTqcNUwOH7Or/GVQwnEGUC9VNKZHxyCp/wJ1GkFxKHxd7uXy3ws63DmBrB1g
-        9VJzSRCbWxrhPvmGsSmw=
-X-Received: by 2002:a5d:5449:: with SMTP id w9mr5180359wrv.361.1589560687882;
-        Fri, 15 May 2020 09:38:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwQ0wJAxWl28YCjenrP8G+kE5OMcm3BmJsWA9vMViZXynBcWONdSadJSiu/D24iHJbsAlDgVQ==
-X-Received: by 2002:a5d:5449:: with SMTP id w9mr5180340wrv.361.1589560687584;
-        Fri, 15 May 2020 09:38:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=6gZ5R0zPx7v8Q5QUl+dC4PL1yY2tt7RqoIbj3l8sE74=;
+        b=myph1NukHBuzdislkIKZr+YW0vJJhrBYgd8/1oBeRbTiopVXuF+q7jamr93cKqT6xo
+         pkwCrGwDT10IgZWTdI7C2N5ClO4vWd5zaQbfdFV08MXk9qyR/AjVJ6rZdZU4J9z/oK17
+         ChjPPSzWca1duIwfPN3fv6YG9xC3NiA3RYCcWiGBTFXWF8YG+eRG8H72KzKxLU0CCEbr
+         nGGqmyujd3LkZBJmbbqpPPcrOKT2rtc5b9RZFpTkWdBSRbLw+I05tNtjcUl11YMSGMhJ
+         CkCVjavOrgDi36AYDgd6dJowlLF1VCRLMLUCIshDGwdADpriUBbevt0I5i7hXjOaya/n
+         8XzA==
+X-Gm-Message-State: AOAM533xUekTw3PSJYFD9em4UHjCWmB1dVxbACbV+vBQSkUq4IXhAjmT
+        Yf1feYVXvSQmYiKkpqV2rZ0mlk47zO2VtiuAAF2+HKwtH5jhs1aXH/FYel/FyU4KVGCbxFCmBay
+        ALvC8oZKO9Ll0smlal0k=
+X-Received: by 2002:adf:dc0f:: with SMTP id t15mr5068323wri.165.1589560688994;
+        Fri, 15 May 2020 09:38:08 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxF+hp4GbO5uog6iIPuueL5jjs4PZEKrB1UaoTN20cj9bx0TDVFE81Yzd2+7qty/BxbZXjrMA==
+X-Received: by 2002:adf:dc0f:: with SMTP id t15mr5068296wri.165.1589560688701;
+        Fri, 15 May 2020 09:38:08 -0700 (PDT)
 Received: from steredhat.redhat.com ([79.49.207.108])
-        by smtp.gmail.com with ESMTPSA id b145sm4680274wme.41.2020.05.15.09.38.06
+        by smtp.gmail.com with ESMTPSA id b145sm4680274wme.41.2020.05.15.09.38.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2020 09:38:06 -0700 (PDT)
+        Fri, 15 May 2020 09:38:08 -0700 (PDT)
 From:   Stefano Garzarella <sgarzare@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 0/2] io_uring: add a CQ ring flag to enable/disable eventfd
- notification
-Date:   Fri, 15 May 2020 18:38:03 +0200
-Message-Id: <20200515163805.235098-1-sgarzare@redhat.com>
+Subject: [PATCH v2 1/2] io_uring: add 'cq_flags' field for the CQ ring
+Date:   Fri, 15 May 2020 18:38:04 +0200
+Message-Id: <20200515163805.235098-2-sgarzare@redhat.com>
 X-Mailer: git-send-email 2.25.4
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20200515163805.235098-1-sgarzare@redhat.com>
+References: <20200515163805.235098-1-sgarzare@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -67,38 +68,73 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-v1 -> v2:
- - changed the flag name and behaviour from IORING_CQ_NEED_EVENT to
-   IORING_CQ_EVENTFD_DISABLED [Jens]
+This patch adds the new 'cq_flags' field that should be written by
+the application and read by the kernel.
 
-The first patch adds the new 'cq_flags' field for the CQ ring. It
-should be written by the application and read by the kernel.
+This new field is available to the userspace application through
+'cq_off.flags'.
+We are using 4-bytes previously reserved and set to zero. This means
+that if the application finds this field to zero, then the new
+functionality is not supported.
 
-The second patch adds a new IORING_CQ_EVENTFD_DISABLED flag that can be
-used by the application to disable/enable eventfd notifications.
+In the next patch we will introduce the first flag available.
 
-This feature can be useful if the application are using eventfd to be
-notified when requests are completed, but they don't want a notification
-for every request.
-Of course the application can already remove the eventfd from the event
-loop, but as soon as it adds the eventfd again, it will be notified,
-even if it has already handled all the completed requests.
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ fs/io_uring.c                 | 10 +++++++++-
+ include/uapi/linux/io_uring.h |  4 +++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-The most important use case is when the registered eventfd is used to
-notify a KVM guest through irqfd and we want a mechanism to
-enable/disable interrupts.
-
-I also extended liburing API and added a test case here:
-https://github.com/stefano-garzarella/liburing/tree/eventfd-disable
-
-Stefano Garzarella (2):
-  io_uring: add 'cq_flags' field for the CQ ring
-  io_uring: add IORING_CQ_EVENTFD_DISABLED to the CQ ring flags
-
- fs/io_uring.c                 | 12 +++++++++++-
- include/uapi/linux/io_uring.h | 11 ++++++++++-
- 2 files changed, 21 insertions(+), 2 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 979d9f977409..6e8158269f3c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -142,7 +142,7 @@ struct io_rings {
+ 	 */
+ 	u32			sq_dropped;
+ 	/*
+-	 * Runtime flags
++	 * Runtime SQ flags
+ 	 *
+ 	 * Written by the kernel, shouldn't be modified by the
+ 	 * application.
+@@ -151,6 +151,13 @@ struct io_rings {
+ 	 * for IORING_SQ_NEED_WAKEUP after updating the sq tail.
+ 	 */
+ 	u32			sq_flags;
++	/*
++	 * Runtime CQ flags
++	 *
++	 * Written by the application, shouldn't be modified by the
++	 * kernel.
++	 */
++	u32                     cq_flags;
+ 	/*
+ 	 * Number of completion events lost because the queue was full;
+ 	 * this should be avoided by the application by making sure
+@@ -7834,6 +7841,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	p->cq_off.ring_entries = offsetof(struct io_rings, cq_ring_entries);
+ 	p->cq_off.overflow = offsetof(struct io_rings, cq_overflow);
+ 	p->cq_off.cqes = offsetof(struct io_rings, cqes);
++	p->cq_off.flags = offsetof(struct io_rings, cq_flags);
+ 
+ 	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
+ 			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index e48d746b8e2a..602bb0ece607 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -204,7 +204,9 @@ struct io_cqring_offsets {
+ 	__u32 ring_entries;
+ 	__u32 overflow;
+ 	__u32 cqes;
+-	__u64 resv[2];
++	__u32 flags;
++	__u32 resv1;
++	__u64 resv2;
+ };
+ 
+ /*
 -- 
 2.25.4
 

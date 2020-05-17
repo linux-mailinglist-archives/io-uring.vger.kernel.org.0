@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 346E51D679E
-	for <lists+io-uring@lfdr.de>; Sun, 17 May 2020 13:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4D5E1D679B
+	for <lists+io-uring@lfdr.de>; Sun, 17 May 2020 13:15:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbgEQLPF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 17 May 2020 07:15:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57996 "EHLO
+        id S1727964AbgEQLPI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 17 May 2020 07:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727832AbgEQLPF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 17 May 2020 07:15:05 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9486AC061A0C;
-        Sun, 17 May 2020 04:15:04 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id x27so5379008lfg.9;
-        Sun, 17 May 2020 04:15:04 -0700 (PDT)
+        with ESMTP id S1727832AbgEQLPH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 17 May 2020 07:15:07 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6839C061A0C;
+        Sun, 17 May 2020 04:15:06 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id v5so5463638lfp.13;
+        Sun, 17 May 2020 04:15:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=M+qpSkBYpmxFEZtgoh/nztF0arwafxT5xyE4pzgMNGE=;
-        b=uMYYswb4A3vQC/qhAU/KTnbU6ENUiENswRD8VCeTp4fFYYmfrqj7QI71oWKLIIZaFI
-         ewoe642GOgqoCSg3mVVkHGhvkPN8uHITWUAKb0jD0SlJfEOaVbCBt+881YTDB9Rhgt25
-         6a1lVpNQTZy8s67VbhknQv210afgpLpUDdlh64B+BLyBlrJrquwnazfcjBVWi9IIYSGT
-         7ic6km4bVIu14AKRC6G/II2Uk30EU8AiWswXOpExuMJvHxFaxvftZ55JeI1rZbWSDHIp
-         Cr5yA+awbgTLokS4zTxCmRhzG5AXwRYohxZnJDzHDwEQbezK0jccjbUHfMaze9yT0yLo
-         kQMA==
+        bh=ug9cBx5/9T7NfeIfM5vZh3BhF2fZGveeP0Cu7s5a0HY=;
+        b=F2UANZ5ErpvD1vCEztgBMke3OySxlxHHfDbr+s49PBv6x9+6RyEExT9J3xhvKmDVTk
+         ptuMBRHWa58Wt5aaCP+L4jQMcmB5GIcQQHJOTurPyx6QhpyZRZQ+XkpvGeQCCm8iPrBy
+         Hr+eInpcMxjP7/a36f/shxNU6/ctCiFQnKpQgIOiaKKOho0INQ3ZSHM3mADIw3hR3kvn
+         PnTsiLoBUXUK8r9ISyTJp76vC1q9lVXEFxeuJXcem7dele8b5KZoeyDGbhUd7ndzrqvj
+         5tn1IP1CTeQwraHy4DOZ6Kcvqsqaf1k3dJPvL1/I8eT6cfjZdIiJCfNADDh1K023Wa1s
+         P3JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=M+qpSkBYpmxFEZtgoh/nztF0arwafxT5xyE4pzgMNGE=;
-        b=TM4iFMoz5Bn9IPS/+sd/s4PHXkXBsP29yriqQqc2g2ofUtPzMkgrDLTqucdvu+GDPF
-         lB7yJ/CYzUBsziUSxvWhLVmOL0JYCdrn1HnGnkzwZn5Pv7ILW1X9bwHx31k2eOAjlPcV
-         rxWdq3TJiVMOoG1C2d7BCZG+iXvldRJ/hHLEAlmHnMWTfZqRETrMQ0RVl+cKDi2gcebF
-         MlGPr0h68lbd7uJ5Sy3VCZ64xsZqGzg5doeYydBt8pYAb4bcaE1I+iooCXvGrL6aDSSK
-         k5kpNwr8ZNkE9KFpmjGZYCsGjfno7A1Fy13gEV1PPfWPin7yHnbYYG2DKpvbtxRZAyr8
-         0mng==
-X-Gm-Message-State: AOAM531Q7MSSdRyLw75FOIKGozoJd9XkJPaWtDpr4ubTCmcirvBs41x5
-        rPUEgqONWyUwfcEHqmI9/0NzrGjJ
-X-Google-Smtp-Source: ABdhPJwP5bgoVxTG4eeWzIg0XvRvoFxF+xfKe//I4gs+h6/ONpbPAc5XQdOtk39WnnP4qqiLB2orwQ==
-X-Received: by 2002:a19:5206:: with SMTP id m6mr1287228lfb.144.1589714103004;
-        Sun, 17 May 2020 04:15:03 -0700 (PDT)
+        bh=ug9cBx5/9T7NfeIfM5vZh3BhF2fZGveeP0Cu7s5a0HY=;
+        b=jcMd3umk5hRPh3kJoxoR93zWeVfGWWjPiNQ9bpHF8z8xRyq0RgM4CKqQfOLIzQI3rO
+         IMycS8mJtXulsqb1UvwOo/A0nhgy6rIBzQkQ3Utnt8Tu94yRs0g3NycCSrPAjfFlfCSN
+         UldvvjAl4BHiPM6/W+mGivPo688jqLLDhelzE9eSKx+UCRQUXBaqzwXi1PTw4t8HRwsj
+         HU+ghde4qLss96n8QNEqWdp7CufUqvHUFSnHlwKHJxU8pa+vV8ez8CbTgAQzuO0bycJ4
+         RLS++Itzppmr3CEz4bc81s56Vih/DG0OSwgNJEZgRp8zbfYUsed0I8D2B2ta1F5dMczO
+         Hj9w==
+X-Gm-Message-State: AOAM533rTLrb4XWcdpnO2GfQzStlKyuk7/FGZsnw8IjNOG4kcrhlrTty
+        C14Am8V2M2EFTH3rhzzAcIs=
+X-Google-Smtp-Source: ABdhPJwE89XKdvNmeIzjy2cl6cG9uT1YAj2Qz3JXu1+GC/b5hXXOUFazqGzOHY9ubu/7ErjU6VJSKg==
+X-Received: by 2002:a19:c64c:: with SMTP id w73mr8002030lff.67.1589714105354;
+        Sun, 17 May 2020 04:15:05 -0700 (PDT)
 Received: from localhost.localdomain ([82.209.196.123])
-        by smtp.gmail.com with ESMTPSA id v2sm3970990ljv.86.2020.05.17.04.15.01
+        by smtp.gmail.com with ESMTPSA id v2sm3970990ljv.86.2020.05.17.04.15.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 May 2020 04:15:02 -0700 (PDT)
+        Sun, 17 May 2020 04:15:04 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] io_uring: remove req->needs_fixed_files
-Date:   Sun, 17 May 2020 14:13:40 +0300
-Message-Id: <f694f6b81e555c15ee0e75ffbe9509bbfa8d4f27.1589713554.git.asml.silence@gmail.com>
+Subject: [PATCH 2/3] io_uring: rename io_file_put()
+Date:   Sun, 17 May 2020 14:13:41 +0300
+Message-Id: <b9125175eb3c0e218e4d56958df09fa0220c691c.1589713554.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1589713554.git.asml.silence@gmail.com>
 References: <cover.1589713554.git.asml.silence@gmail.com>
@@ -63,109 +63,64 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-A submission is "async" IIF it's done by SQPOLL thread. Instead of
-passing @async flag into io_submit_sqes(), deduce it from ctx->flags.
+io_file_put() deals with flushing state's file refs, adding "state" to
+its name makes it a bit clearer. Also, avoid double check of
+state->file in __io_file_get() in some cases.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ fs/io_uring.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3d0a08560689..739aae7070c1 100644
+index 739aae7070c1..9c5a95414cbd 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -626,7 +626,6 @@ struct io_kiocb {
- 
- 	struct io_async_ctx		*io;
- 	int				cflags;
--	bool				needs_fixed_file;
- 	u8				opcode;
- 
- 	struct io_ring_ctx	*ctx;
-@@ -891,6 +890,11 @@ EXPORT_SYMBOL(io_uring_get_socket);
- 
- static void io_file_put_work(struct work_struct *work);
- 
-+static inline bool io_async_submit(struct io_ring_ctx *ctx)
-+{
-+	return ctx->flags & IORING_SETUP_SQPOLL;
-+}
-+
- static void io_ring_ctx_ref_free(struct percpu_ref *ref)
- {
- 	struct io_ring_ctx *ctx = container_of(ref, struct io_ring_ctx, refs);
-@@ -5487,7 +5491,7 @@ static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
- 	bool fixed;
- 
- 	fixed = (req->flags & REQ_F_FIXED_FILE) != 0;
--	if (unlikely(!fixed && req->needs_fixed_file))
-+	if (unlikely(!fixed && io_async_submit(req->ctx)))
- 		return -EBADF;
- 
- 	return io_file_get(state, req, fd, &req->file, fixed);
-@@ -5866,7 +5870,7 @@ static inline void io_consume_sqe(struct io_ring_ctx *ctx)
- 
- static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		       const struct io_uring_sqe *sqe,
--		       struct io_submit_state *state, bool async)
-+		       struct io_submit_state *state)
- {
- 	unsigned int sqe_flags;
- 	int id;
-@@ -5887,7 +5891,6 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	refcount_set(&req->refs, 2);
- 	req->task = NULL;
- 	req->result = 0;
--	req->needs_fixed_file = async;
- 	INIT_IO_WORK(&req->work, io_wq_submit_work);
- 
- 	if (unlikely(req->opcode >= IORING_OP_LAST))
-@@ -5928,7 +5931,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+@@ -1999,15 +1999,19 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
+ 		wake_up(&ctx->sqo_wait);
  }
  
- static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
--			  struct file *ring_file, int ring_fd, bool async)
-+			  struct file *ring_file, int ring_fd)
+-static void io_file_put(struct io_submit_state *state)
++static void __io_state_file_put(struct io_submit_state *state)
  {
- 	struct io_submit_state state, *statep = NULL;
- 	struct io_kiocb *link = NULL;
-@@ -5972,7 +5975,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 			break;
- 		}
+-	if (state->file) {
+-		int diff = state->has_refs - state->used_refs;
++	int diff = state->has_refs - state->used_refs;
  
--		err = io_init_req(ctx, req, sqe, statep, async);
-+		err = io_init_req(ctx, req, sqe, statep);
- 		io_consume_sqe(ctx);
- 		/* will complete beyond this point, count as submitted */
- 		submitted++;
-@@ -5985,7 +5988,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 		}
+-		if (diff)
+-			fput_many(state->file, diff);
+-		state->file = NULL;
+-	}
++	if (diff)
++		fput_many(state->file, diff);
++	state->file = NULL;
++}
++
++static inline void io_state_file_put(struct io_submit_state *state)
++{
++	if (state->file)
++		__io_state_file_put(state);
+ }
  
- 		trace_io_uring_submit_sqe(ctx, req->opcode, req->user_data,
--						true, async);
-+						true, io_async_submit(ctx));
- 		err = io_submit_sqe(req, sqe, &link);
- 		if (err)
- 			goto fail_req;
-@@ -6124,7 +6127,7 @@ static int io_sq_thread(void *data)
+ /*
+@@ -2026,7 +2030,7 @@ static struct file *__io_file_get(struct io_submit_state *state, int fd)
+ 			state->ios_left--;
+ 			return state->file;
  		}
- 
- 		mutex_lock(&ctx->uring_lock);
--		ret = io_submit_sqes(ctx, to_submit, NULL, -1, true);
-+		ret = io_submit_sqes(ctx, to_submit, NULL, -1);
- 		mutex_unlock(&ctx->uring_lock);
- 		timeout = jiffies + ctx->sq_thread_idle;
+-		io_file_put(state);
++		__io_state_file_put(state);
  	}
-@@ -7635,7 +7638,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		submitted = to_submit;
- 	} else if (to_submit) {
- 		mutex_lock(&ctx->uring_lock);
--		submitted = io_submit_sqes(ctx, to_submit, f.file, fd, false);
-+		submitted = io_submit_sqes(ctx, to_submit, f.file, fd);
- 		mutex_unlock(&ctx->uring_lock);
- 
- 		if (submitted != to_submit)
+ 	state->file = fget_many(fd, state->ios_left);
+ 	if (!state->file)
+@@ -5799,7 +5803,7 @@ static int io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ static void io_submit_state_end(struct io_submit_state *state)
+ {
+ 	blk_finish_plug(&state->plug);
+-	io_file_put(state);
++	io_state_file_put(state);
+ 	if (state->free_reqs)
+ 		kmem_cache_free_bulk(req_cachep, state->free_reqs, state->reqs);
+ }
 -- 
 2.24.0
 

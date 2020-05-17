@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59CE71D67B2
-	for <lists+io-uring@lfdr.de>; Sun, 17 May 2020 13:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60E941D67B4
+	for <lists+io-uring@lfdr.de>; Sun, 17 May 2020 13:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbgEQLZV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 17 May 2020 07:25:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59582 "EHLO
+        id S1727858AbgEQLZX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 17 May 2020 07:25:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727858AbgEQLZT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 17 May 2020 07:25:19 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEA29C061A0C;
-        Sun, 17 May 2020 04:25:18 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id d21so6768482ljg.9;
-        Sun, 17 May 2020 04:25:18 -0700 (PDT)
+        with ESMTP id S1728017AbgEQLZW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 17 May 2020 07:25:22 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B617AC061A0C;
+        Sun, 17 May 2020 04:25:21 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id e25so6791603ljg.5;
+        Sun, 17 May 2020 04:25:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=OTXw9mN8rXe77orjzGk/uMC+I6Mqctasvyrsu4HPajU=;
-        b=NqTvQXTw5qTVvzvB0fdq9HJIhlayeCwL/BPapVPtNuCpxT1A5Irm3P2b0OTC/l1z+w
-         c/Z6Pg4YtRW5axI3FqOXQds7n2WxZGiKrk3VxvthV4ln0kptTGE0kPMQ2A1r6nCQT38m
-         WLW3BzLhC55TGzaqo/prsg36vq5gSqjY5VVm/F9foAFPjwGK24DC03RM//PlGb/JMw/e
-         sjf2XL3BHPUmorWvkmvmLB3CXz9Be+tN47qP3XpelbqyF5jJtgebJLM/xhAaEkQb0sBQ
-         npKiLQy4zq4x8WYYG1h2pIRGyMLFxrhFS0HJ+hM2metHmbEtnb8cn0ndC77ic+3lyUY9
-         eO3Q==
+        bh=o+pYbkSn3ITUthgP/O/KucA2is0ByK/CaUJUxW9cNOA=;
+        b=neWHPpbMKoRjDFp23DjqEa9L7JhFPy6+VKxiV4A/WGtaE4EIDT4GFK2Iy0KT/RzVK9
+         NmEZH9n5vXBY6bvwnEg/554CnCZZlylID1f3jG71JjOXiBFm9dvZXIv+mx73/50DTXV9
+         4SqHZhjwL6CuegBYAKuGm/MRfqhbtUfaW0pjqdtjtjfJaduKRWDqT+zK9xYK24qcKMqt
+         2tDhOPQqe0t39qcaBOLs9yI1dGeY0WIYkG3Nr+j9KZQYzGX6g8qbsAoJV+CHcdHmSTys
+         VZeAfu1sFD1UIHc6w4qxpnOBcKNORw/MlVHyESMWIRKaeYf7g+ymILtoebEpicApHfPJ
+         xBDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OTXw9mN8rXe77orjzGk/uMC+I6Mqctasvyrsu4HPajU=;
-        b=ZZKpvhfCwrTdRryDOr2hLYyy72s3uNPYZh/fsNJ/KcZKmFX1F0vOZtTVRCt+dP0qjL
-         mV6RkKgwqTcjQ2ia140XwQX3AVXdzcObE1sq90B0EhTd1QOfEdFjN/CNNhuuJTq6gJi6
-         +lHNFqq0ttqIqt+g7lHLXXyQHc6jm1NYVIAIcfBewakP7U93T4WATL2siGZmdKolL68U
-         Rago/waeO6Yga5/r1/WEelv+z1MbLPo8uj19NqoZSB6hwdftwJ3a95F5pFKGo9E4j/hi
-         D87DEAHcm0qXVcgaNhJrmkK6iNjCQFAmz2Aw7vECKOP36/gsvg7PCUjo/5wli1tdBE+w
-         aJ6w==
-X-Gm-Message-State: AOAM530DPYlRY2gxhldsz/Aj6DMLjL0FWZXxagJ14P14sZVzA/1N6Esb
-        tw4XlT/TlN2Bsu31HZ0F7pQGgNg/
-X-Google-Smtp-Source: ABdhPJzZlwRP81DQPiSh2qI0Ov1OM9aM3Uq+DyS/UVrb+VvPIDnZ1iHH0Hy31aqeU1Fr/kp3ywQryA==
-X-Received: by 2002:a2e:5451:: with SMTP id y17mr7524337ljd.6.1589714717318;
-        Sun, 17 May 2020 04:25:17 -0700 (PDT)
+        bh=o+pYbkSn3ITUthgP/O/KucA2is0ByK/CaUJUxW9cNOA=;
+        b=FjYJ6U/bGRTQUIFv+ZziPMYvErQXp2EosumTDtYH6yPhXM/vMk03ktPeQmMXG0PVHz
+         dgw0KIjsETCIPdHKF5fUuILwoNBwQlT9SVei3z/FGxLKmD5hTk4MuUopfF45+0SznkeU
+         fbZ8pd1GRKffRICjSe7nqtyBqwn9UXRTSZs4vmYqS34cRtXlEYEt8k522+jmTJtVvfW6
+         FQg5DsM9JCzxjNywB5NFmEE9B2Mkxh/21eVB353CsbSWQFnjHjsdqFVWTh6nWyQA8i3s
+         uIhwAcY4+o5nManKMs3ApXd4API404ZWsZv/6cOTZiE+65zuNcp0keCAgyJnOjNYkSAD
+         7SRw==
+X-Gm-Message-State: AOAM531VYL9cFfat+nmk76q1pT+ZuyFzrL8+4pMWKNPm1HHcaS2DlAPa
+        rEK92w8z7Pn8F3FNRDmJIec=
+X-Google-Smtp-Source: ABdhPJxfQ6+3bm+9B4o54aWodreBnrgnHny/xfFLCZ/woMKbSGL5YjwU3y2FqmcMey4wemmUk1gpuQ==
+X-Received: by 2002:a2e:700b:: with SMTP id l11mr7580788ljc.255.1589714720157;
+        Sun, 17 May 2020 04:25:20 -0700 (PDT)
 Received: from localhost.localdomain ([82.209.196.123])
-        by smtp.gmail.com with ESMTPSA id c78sm5639828lfd.63.2020.05.17.04.25.15
+        by smtp.gmail.com with ESMTPSA id c78sm5639828lfd.63.2020.05.17.04.25.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 May 2020 04:25:16 -0700 (PDT)
+        Sun, 17 May 2020 04:25:19 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH liburing 2/4] update io_uring.h with tee()
-Date:   Sun, 17 May 2020 14:23:45 +0300
-Message-Id: <c628f0d46d138a9d6e12ec0ae3f8677601b5011e.1589714504.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 3/4] tee/test: add test for tee(2)
+Date:   Sun, 17 May 2020 14:23:46 +0300
+Message-Id: <3e3470d8699fa9a3cab1983d4f88658cc8f8432a.1589714504.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1589714504.git.asml.silence@gmail.com>
 References: <cover.1589714504.git.asml.silence@gmail.com>
@@ -63,23 +63,238 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Add tee() tests with pipe data validation
+
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- src/include/liburing/io_uring.h | 1 +
- 1 file changed, 1 insertion(+)
+ test/splice.c | 157 ++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 133 insertions(+), 24 deletions(-)
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index e48d746..a279151 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -129,6 +129,7 @@ enum {
- 	IORING_OP_SPLICE,
- 	IORING_OP_PROVIDE_BUFFERS,
- 	IORING_OP_REMOVE_BUFFERS,
-+	IORING_OP_TEE,
+diff --git a/test/splice.c b/test/splice.c
+index 1c27c8e..119c493 100644
+--- a/test/splice.c
++++ b/test/splice.c
+@@ -29,6 +29,7 @@ struct test_ctx {
+ static unsigned int splice_flags = 0;
+ static unsigned int sqe_flags = 0;
+ static int has_splice = 0;
++static int has_tee = 0;
  
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
+ static int read_buf(int fd, void *buf, int len)
+ {
+@@ -133,10 +134,11 @@ static int init_splice_ctx(struct test_ctx *ctx)
+ 	return 0;
+ }
+ 
+-static int do_splice(struct io_uring *ring,
+-			   int fd_in, loff_t off_in,
+-			   int fd_out, loff_t off_out,
+-			   unsigned int len)
++static int do_splice_op(struct io_uring *ring,
++			int fd_in, loff_t off_in,
++			int fd_out, loff_t off_out,
++			unsigned int len,
++			__u8 opcode)
+ {
+ 	struct io_uring_cqe *cqe;
+ 	struct io_uring_sqe *sqe;
+@@ -152,6 +154,7 @@ static int do_splice(struct io_uring *ring,
+ 				     len, splice_flags);
+ 		sqe->flags |= sqe_flags;
+ 		sqe->user_data = 42;
++		sqe->opcode = opcode;
+ 
+ 		ret = io_uring_submit(ring);
+ 		if (ret != 1) {
+@@ -181,6 +184,21 @@ static int do_splice(struct io_uring *ring,
+ 	return 0;
+ }
+ 
++static int do_splice(struct io_uring *ring,
++			int fd_in, loff_t off_in,
++			int fd_out, loff_t off_out,
++			unsigned int len)
++{
++	return do_splice_op(ring, fd_in, off_in, fd_out, off_out, len,
++			    IORING_OP_SPLICE);
++}
++
++static int do_tee(struct io_uring *ring, int fd_in, int fd_out, 
++		  unsigned int len)
++{
++	return do_splice_op(ring, fd_in, 0, fd_out, 0, len, IORING_OP_TEE);
++}
++
+ static void check_splice_support(struct io_uring *ring, struct test_ctx *ctx)
+ {
+ 	int ret;
+@@ -189,6 +207,14 @@ static void check_splice_support(struct io_uring *ring, struct test_ctx *ctx)
+ 	has_splice = (ret == -EBADF);
+ }
+ 
++static void check_tee_support(struct io_uring *ring, struct test_ctx *ctx)
++{
++	int ret;
++
++	ret = do_tee(ring, -1, -1, BUF_SIZE);
++	has_tee = (ret == -EBADF);
++}
++
+ static int splice_to_pipe(struct io_uring *ring, struct test_ctx *ctx)
+ {
+ 	int ret;
+@@ -267,37 +293,119 @@ static int fail_splice_pipe_offset(struct io_uring *ring, struct test_ctx *ctx)
+ 	return 0;
+ }
+ 
+-static int test_splice(struct io_uring *ring, struct test_ctx *ctx)
++static int fail_tee_nonpipe(struct io_uring *ring, struct test_ctx *ctx)
+ {
+ 	int ret;
+ 
+-	ret = splice_to_pipe(ring, ctx);
+-	if (ret) {
+-		fprintf(stderr, "splice_to_pipe failed %i %i\n",
+-			ret, errno);
++	ret = do_tee(ring, ctx->fd_in, ctx->pipe1[1], BUF_SIZE);
++	if (ret != -ESPIPE && ret != -EINVAL)
+ 		return ret;
+-	}
+ 
+-	ret = splice_from_pipe(ring, ctx);
+-	if (ret) {
+-		fprintf(stderr, "splice_from_pipe failed %i %i\n",
+-			ret, errno);
++	return 0;
++}
++
++static int fail_tee_offset(struct io_uring *ring, struct test_ctx *ctx)
++{
++	int ret;
++
++	ret = do_splice_op(ring, ctx->pipe2[0], -1, ctx->pipe1[1], 0,
++			   BUF_SIZE, IORING_OP_TEE);
++	if (ret != -ESPIPE && ret != -EINVAL)
++		return ret;
++
++	ret = do_splice_op(ring, ctx->pipe2[0], 0, ctx->pipe1[1], -1,
++			   BUF_SIZE, IORING_OP_TEE);
++	if (ret != -ESPIPE && ret != -EINVAL)
++		return ret;
++
++	return 0;
++}
++
++static int check_tee(struct io_uring *ring, struct test_ctx *ctx)
++{
++	int ret;
++
++	ret = write_buf(ctx->real_pipe1[1], ctx->buf_in, BUF_SIZE);
++	if (ret)
++		return ret;
++	ret = do_tee(ring, ctx->pipe1[0], ctx->pipe2[1], BUF_SIZE);
++	if (ret)
+ 		return ret;
+-	}
+ 
+-	ret = splice_pipe_to_pipe(ring, ctx);
++	ret = check_content(ctx->real_pipe1[0], ctx->buf_out, BUF_SIZE,
++				ctx->buf_in);
+ 	if (ret) {
+-		fprintf(stderr, "splice_pipe_to_pipe failed %i %i\n",
+-			ret, errno);
++		fprintf(stderr, "tee(), invalid src data\n");
+ 		return ret;
+ 	}
+ 
+-	ret = fail_splice_pipe_offset(ring, ctx);
++	ret = check_content(ctx->real_pipe2[0], ctx->buf_out, BUF_SIZE,
++				ctx->buf_in);
+ 	if (ret) {
+-		fprintf(stderr, "fail_splice_pipe_offset failed %i %i\n",
+-			ret, errno);
++		fprintf(stderr, "tee(), invalid dst data\n");
+ 		return ret;
+ 	}
++
++	return 0;
++}
++
++static int test_splice(struct io_uring *ring, struct test_ctx *ctx)
++{
++	int ret;
++
++	if (has_splice) {
++		ret = splice_to_pipe(ring, ctx);
++		if (ret) {
++			fprintf(stderr, "splice_to_pipe failed %i %i\n",
++				ret, errno);
++			return ret;
++		}
++
++		ret = splice_from_pipe(ring, ctx);
++		if (ret) {
++			fprintf(stderr, "splice_from_pipe failed %i %i\n",
++				ret, errno);
++			return ret;
++		}
++
++		ret = splice_pipe_to_pipe(ring, ctx);
++		if (ret) {
++			fprintf(stderr, "splice_pipe_to_pipe failed %i %i\n",
++				ret, errno);
++			return ret;
++		}
++
++		ret = fail_splice_pipe_offset(ring, ctx);
++		if (ret) {
++			fprintf(stderr, "fail_splice_pipe_offset failed %i %i\n",
++				ret, errno);
++			return ret;
++		}
++	}
++
++	if (has_tee) {
++		ret = fail_tee_nonpipe(ring, ctx);
++		if (ret) {
++			fprintf(stderr, "fail_tee_nonpipe() failed %i %i\n",
++				ret, errno);
++			return ret;
++		}
++
++		ret = fail_tee_offset(ring, ctx);
++		if (ret) {
++			fprintf(stderr, "fail_tee_offset failed %i %i\n",
++				ret, errno);
++			return ret;
++		}
++
++		ret = check_tee(ring, ctx);
++		if (ret) {
++			fprintf(stderr, "check_tee() failed %i %i\n",
++				ret, errno);
++			return ret;
++		}
++	}
++
+ 	return 0;
+ }
+ 
+@@ -321,10 +429,11 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ 	check_splice_support(&ring, &ctx);
+-	if (!has_splice) {
++	if (!has_splice)
+ 		fprintf(stdout, "skip, doesn't support splice()\n");
+-		return 0;
+-	}
++	check_tee_support(&ring, &ctx);
++	if (!has_tee)
++		fprintf(stdout, "skip, doesn't support tee()\n");
+ 
+ 	ret = test_splice(&ring, &ctx);
+ 	if (ret) {
 -- 
 2.24.0
 

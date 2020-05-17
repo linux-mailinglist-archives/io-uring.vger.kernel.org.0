@@ -2,60 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C63391D6792
-	for <lists+io-uring@lfdr.de>; Sun, 17 May 2020 13:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD19D1D6798
+	for <lists+io-uring@lfdr.de>; Sun, 17 May 2020 13:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbgEQLDk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 17 May 2020 07:03:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56244 "EHLO
+        id S1727850AbgEQLPE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 17 May 2020 07:15:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727839AbgEQLDj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 17 May 2020 07:03:39 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ADB4C061A0C;
-        Sun, 17 May 2020 04:03:39 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id h188so5497412lfd.7;
-        Sun, 17 May 2020 04:03:39 -0700 (PDT)
+        with ESMTP id S1727832AbgEQLPD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 17 May 2020 07:15:03 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5181AC061A0C;
+        Sun, 17 May 2020 04:15:03 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id g1so6765689ljk.7;
+        Sun, 17 May 2020 04:15:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+        h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=tf6aUm2aDuFG+hLIypQmHMnKFy/TkQcplzpKMuoB/JQ=;
-        b=oQygXhr8IrST0MPEj1CqVNvPH7lRqdPQFgKc+eH+g2xHhN8uXtZQSs5OFm89yandoQ
-         VqXWtw5TH4Je366HsJlfE+JBFERSGSLGhwv+6MRKrzdzwSDo/3iWOvHTItnIQrLAkIts
-         TTEvrikDQ/m71LV6Brvw4N/q1WXwIGq22+nDFCxfQxnOmWfhWMFMLt+sujt0zn8mYqyi
-         R3UCrAjy9zFMa/ssLSEgGBbHoPYwnJdgf+4jgQZeV698HkGn4qnKmjRty6msMJSAs8bI
-         PpJC5BqG7L1IClPUt7ecL91N2piVt5i08sV3SORn83D392M3toPoUL4580ih3Lr8um/N
-         Ycfg==
+        bh=RSQAPsgGzrqW7IB05tQeE8zTcJ425e34evOvuPIjr1Y=;
+        b=he8AYzJCf7a+a8FS1JLQW3b2YPl7mRZ7Qyy4jwXg8Od4ZSwiz6mpaIhwMAETWoghgQ
+         5QUOm976HCJspd/plUq3pBRcvlYoLNmJ439O4na+551VvgS4V1lDBV2P/nqQpSQ0rJoB
+         Y8dG4aMB4Dw848h3XZMRDioLvWmnBr4kyRz0lacIPVgWXtcgwcFAh13lQb/wOjFVPK2S
+         iiLdItXKDK+h9YG5gtmG7xl6PZVoOeyp/l4JCzvMxQPaVMPdQUqidfXVjrpKeUelElmg
+         PP/6YKIVBlSaerEK6HV6AnH8Eg3+HA4mF0arcaoyeRNBJTBv36xHhjYgkrqh/fynVUny
+         fuFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tf6aUm2aDuFG+hLIypQmHMnKFy/TkQcplzpKMuoB/JQ=;
-        b=s/NM1SpqSdouan/JGabv1eSUxLtwSQkPtis0ecGvMzwZxMdns4y2yIfBz8XX21TRFz
-         6KwluV6CvZh1mBfnXuVw/Me/hX++LlMzxmy3381N9isz3zOtoisVgwbAoqhkltokr4bE
-         B2gahglh1E9qtLbP42oLRvxIRIDRV+vBdh0HM/7JTGhzfo8piclMGHYcnGLRIw0pvysk
-         GeMKRfEx8QK2I+zYG+8cicspaOiwHElaFB77w7aA9q4LgSE26Dh0Ok31CpRLV9ubaaDu
-         wDb15td/B5CUpy1Kt7KlR3suLZG4XXn4GcaPG+nGaCxXhxdnUFEJ69rMHyjuEePVCKtD
-         mMlA==
-X-Gm-Message-State: AOAM530NcoKzXx2A2qSieJl95/+B/Hw9hcuK5kKkumC2ofU2BkuohlUc
-        iVKAigXRwqBPsYKwXraud/Y=
-X-Google-Smtp-Source: ABdhPJxPaqzKSuXHOYyYbsoD4bVTxzPxeE8UoiCEpFMxqQXyWs3VRgzZSVNyKziTYbC2AWHvsviivQ==
-X-Received: by 2002:ac2:4304:: with SMTP id l4mr8130303lfh.87.1589713417528;
-        Sun, 17 May 2020 04:03:37 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RSQAPsgGzrqW7IB05tQeE8zTcJ425e34evOvuPIjr1Y=;
+        b=Vm6HPpOf18QMdaVMcfM4mWpc9CmjnkMP0EfzAj/kTKvZ5kmxWdKTIgGG8xyuIVkwg4
+         kSXCmZZaX7vqpIEzC6mypTFMmfsyupZq6TR/Ej0Ojx62uHLx2YOymtIM5gfiqCqIVajN
+         mqtA9mLTHAwNpeWuQT26fY0gp5SLC+uBVzWdMWSC/D2Cb2s65FRqxCkzbEcpdJ325Cks
+         ANIy3nGBztzLBAxTwZPFkbz0VQhUwim91Zpmu0rT5V9jUDaRBL3opLEENgyyPozja0uf
+         FvozS0YbOtdHFfBTH+B33pN5MVykiUhfoRkALu7gFgQjJaofqKwf+P+mDf8/r5PZMDsY
+         8wEA==
+X-Gm-Message-State: AOAM531KT1G+0HyBt881qT7ArqUQXhHYJ7C5+oBV7zIxazhtY0ezm8tn
+        1tCBo6Af0hCUKdYKPb4Uf7ZQptoC
+X-Google-Smtp-Source: ABdhPJzXSNe5kr20fcUecD19L3CoUBiqV0xx3N7mgDQxhdUQt8LPYeZqjBDu7TT7H55+8vfAFsTopw==
+X-Received: by 2002:a05:651c:105c:: with SMTP id x28mr7570624ljm.65.1589714101645;
+        Sun, 17 May 2020 04:15:01 -0700 (PDT)
 Received: from localhost.localdomain ([82.209.196.123])
-        by smtp.gmail.com with ESMTPSA id w25sm1080333lfn.42.2020.05.17.04.03.36
+        by smtp.gmail.com with ESMTPSA id v2sm3970990ljv.86.2020.05.17.04.15.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 May 2020 04:03:37 -0700 (PDT)
+        Sun, 17 May 2020 04:15:01 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] io_uring: fix FORCE_ASYNC req preparation
-Date:   Sun, 17 May 2020 14:02:12 +0300
-Message-Id: <04738fd6d68c70df097d78539856e66986831e7f.1589712727.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 0/3] unrelated cleanups for next
+Date:   Sun, 17 May 2020 14:13:39 +0300
+Message-Id: <cover.1589713554.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1589712727.git.asml.silence@gmail.com>
-References: <cover.1589712727.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -63,37 +61,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-As for other not inlined requests, alloc req->io for FORCE_ASYNC reqs,
-so they can be prepared properly.
+Independent cleanups, that's it.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+Pavel Begunkov (3):
+  io_uring: remove req->needs_fixed_files
+  io_uring: rename io_file_put()
+  io_uring: don't repeat valid flag list
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9e81781d7632..3d0a08560689 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5692,9 +5692,15 @@ static void io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 			io_double_put_req(req);
- 		}
- 	} else if (req->flags & REQ_F_FORCE_ASYNC) {
--		ret = io_req_defer_prep(req, sqe);
--		if (unlikely(ret < 0))
--			goto fail_req;
-+		if (!req->io) {
-+			ret = -EAGAIN;
-+			if (io_alloc_async_ctx(req))
-+				goto fail_req;
-+			ret = io_req_defer_prep(req, sqe);
-+			if (unlikely(ret < 0))
-+				goto fail_req;
-+		}
-+
- 		/*
- 		 * Never try inline submit of IOSQE_ASYNC is set, go straight
- 		 * to async execution.
+ fs/io_uring.c | 47 ++++++++++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 21 deletions(-)
+
 -- 
 2.24.0
 

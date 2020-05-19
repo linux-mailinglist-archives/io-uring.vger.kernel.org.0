@@ -2,91 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E69961DA464
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 00:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 260D51DA4EC
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 00:46:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726344AbgESWVB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 May 2020 18:21:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46182 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbgESWVB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 18:21:01 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E46DC061A0F
-        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 15:21:00 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id q16so464428plr.2
-        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 15:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eqpcqJBR+hIKeZzFOfZeZqgc2os+r+pnFNGpXOBaFSI=;
-        b=IDjPALVFG7v/PkTvU++efe7fQQp1rbqlc02U7oidNA4MUgiCU1qr+QDSgEMDe3qRCg
-         B8sx7AmUZnk2WRMf3s5w0isws/KAvdRxYmLjR6eTiSZojC+UiLwVCRmF5sejuboNJf93
-         6e8BrPIRmTv0UIypXoHjfJXPdD15dgjcZLHUScVOh5B3YwYiChtsnO1wRBAK5xOzTUON
-         NPraO7xLPLZ1AFSoN+dsiUS6TdAB8894RAmcOdMNIZcGDv9enwRlp2uYI94VoiIFR4HS
-         +9539jniOakTsp5VqjRM1vl/ru/fcjzCybHI8zvpuuDtAdNewOZSwodQGW9yNWXTFPmj
-         K+2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eqpcqJBR+hIKeZzFOfZeZqgc2os+r+pnFNGpXOBaFSI=;
-        b=jdQeyj4N9CrEFCubpe/w4B0L+j1m07c3R45iVvgYtYo11uRaPrXUH82srlbV5THohB
-         etFSGRYyJY8pZnMwUvZ7sm6HdWa37sBYiLEN7Ac+bn/aZ14vCOjYm/DYBFBVmzYQe62z
-         bhBucuCQ78qGFkPm1pQXE4kS3MMHrnRwEiycRocmFVcxBEOlbaD1W6Wh2WZ/3RrByLfk
-         ssB1c/95XPYagQLkMYQfDuPl9Z3A/f4c6XX7e50w4FVlH63dC0vYAQ7dBkjD0jfUj8Xw
-         kXSjjRWjulwNwwpiAlSjbravN4ZFexgJhfGq22Y9QEdEHg6nl/UPOrL88vSD/peCqosD
-         eD0Q==
-X-Gm-Message-State: AOAM531kWwSpqVRmqOr1iB4JtfMdp48rtGG9Vn6Vr+qgGwLv/VLv1SkM
-        4JvTNx8fmx85zeCFcCMsqyizkZ69Njo=
-X-Google-Smtp-Source: ABdhPJxQ78fq+30k5hX3CZX16iAVVZ+tXdAXNieQttArqgPh3XZ8THeZrFWJt65P3tCCuYbau4Gffw==
-X-Received: by 2002:a17:90a:c385:: with SMTP id h5mr1771626pjt.147.1589926859369;
-        Tue, 19 May 2020 15:20:59 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:14f4:acbd:a5d0:25ca? ([2605:e000:100e:8c61:14f4:acbd:a5d0:25ca])
-        by smtp.gmail.com with ESMTPSA id k7sm341468pga.87.2020.05.19.15.20.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2020 15:20:58 -0700 (PDT)
-Subject: Re: [RFC 1/2] io_uring: don't use kiocb.private to store buf_index
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+        id S1726447AbgESWqd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 May 2020 18:46:33 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41620 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726064AbgESWqd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 18:46:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589928392;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=02dJ0uXJ0xn83i4+L698PBVA99CfwjQdZKndCX98MFs=;
+        b=F4ffH+DkGkRkHOPsSfT/t+aufb/Q1Hco3SJpW5flT5YejylsDkIGID+M4DXlMFKB/dswSS
+        a4oiOm7+T08lAiRlAxFHVdoFJt7NNtzC98hBckD6oMnfO1YyQLvC2LiYg+XAJRgjeubmuu
+        afIi7eRyc0gwdsTX1NoESTS6cM0t8mU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-23-VXpKR9asM_GgPnCpdOeGFw-1; Tue, 19 May 2020 18:46:28 -0400
+X-MC-Unique: VXpKR9asM_GgPnCpdOeGFw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6BE23835B41;
+        Tue, 19 May 2020 22:46:27 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 274115C1BB;
+        Tue, 19 May 2020 22:46:27 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org
-References: <1589925170-48687-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1589925170-48687-2-git-send-email-bijan.mottahedeh@oracle.com>
- <6ce9f56d-d4eb-0db1-6ea3-166aed29807f@kernel.dk>
-Message-ID: <91cd9cdb-b65a-879c-0318-a888d2658bed@kernel.dk>
-Date:   Tue, 19 May 2020 16:20:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+Subject: Re: liburing 500f9fbadef8-test test failure on top-of-tree
+References: <x49d06zd1u2.fsf@segfault.boston.devel.redhat.com>
+        <45c638c9-1ff1-efe8-7698-fb53fceb15a7@kernel.dk>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Tue, 19 May 2020 18:46:26 -0400
+In-Reply-To: <45c638c9-1ff1-efe8-7698-fb53fceb15a7@kernel.dk> (Jens Axboe's
+        message of "Tue, 19 May 2020 16:08:49 -0600")
+Message-ID: <x491rnfczlp.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <6ce9f56d-d4eb-0db1-6ea3-166aed29807f@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/19/20 4:07 PM, Jens Axboe wrote:
-> On 5/19/20 3:52 PM, Bijan Mottahedeh wrote:
->> kiocb.private is used in iomap_dio_rw() so store buf_index separately.
-> 
-> Hmm, that's no good, the owner of the iocb really should own ->private
-> as well.
-> 
-> The downside of this patch is that io_rw now spills into the next
-> cacheline, which propagates to io_kiocb as well. iocb has 4 bytes
-> of padding, but probably cleaner if we can stuff it into io_kiocb
-> instead. How about adding a u16 after opcode? There's a 2 byte
-> hole there, so it would not impact the size of io_kiocb.
+Jens Axboe <axboe@kernel.dk> writes:
 
-I applied your patch, but moved the buf_index to not grow the
-structure:
+>> Jens, what do you think?
+>
+> See: https://lore.kernel.org/io-uring/1589925170-48687-1-git-send-email-bijan.mottahedeh@oracle.com/T/#m9cec13d26c0b2db03889e1b36c9bcc20f4f8244a
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.7&id=4f4eeba87cc731b200bff9372d14a80f5996b277
+Hmm, I wonder why that hasn't landed in my inbox yet.  Oh well, glad
+it's resolved.  I think I also hit the issue fixed by patch2.  I'll test
+that as well.
 
--- 
-Jens Axboe
+Thanks!
+Jeff
 

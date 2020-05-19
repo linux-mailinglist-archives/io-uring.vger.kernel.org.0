@@ -2,113 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF221D9B94
-	for <lists+io-uring@lfdr.de>; Tue, 19 May 2020 17:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E5031DA419
+	for <lists+io-uring@lfdr.de>; Tue, 19 May 2020 23:52:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbgESPqC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 May 2020 11:46:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40408 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbgESPqB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 11:46:01 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 827EDC08C5C0
-        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 08:46:00 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id f6so22020pgm.1
-        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 08:46:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PvCPz3YR0vg4UlNDJvPu1bRvFpmBgPWFXeaDZ/wnDwg=;
-        b=fRKYJKIWvYAWoGUUtzwGlL+6v+gQEocXrfwuxuzE8WdmXp4nn5B8aJWIvXMRG6g/Em
-         iJlcn/+WgiQMI/jZ1d+H1vouO1GudBjXM5kkSkpgEX9lAjkF/LaO9iewr0TD/VgMmcRp
-         fRSu6tUyiao5Xr++Q6Ldrc1ehhtMh1Sbpsyn0IzQL8AjfoDgxrc9yRrgAg+KGKLXMr5Y
-         Axi6jfAyKJCQ9YP3KBrFJqAqGQmdhBF9cHnioW4nF9IcxErBr2EIHCwATym3C1fCqpep
-         X+jA2B4kzF6P4CyPAX83U3HXyalIihuvDVw17qhlwlQ+mfvFOmuUYLK446nmrnHMlavs
-         LOeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PvCPz3YR0vg4UlNDJvPu1bRvFpmBgPWFXeaDZ/wnDwg=;
-        b=keRtAlbqlesOLN8v+IcKL4MrQgcp7B09H5C5gbWcNGHLyamUMcRhexzdjijktPVKUC
-         T//U1hyKigL+CgeYt92XpztVQdUuzCwFh5tnBHjUyCDQ0M2O0Uw6w4wx87G8ZXNL8ZG3
-         0YU7KafqoEVsiVA7qsJa6yD5v2rToo57ZmuDl5tWln8KcYnzX2JzVdl9djV2pXhSG89t
-         kXUUYAq/lfLb4qjtVJyZDRReE5a6c7qSUDYTyCfDFj/+1I8QG/DLBi3ueQW7OOdRcEcC
-         Z6T8qbI0CoyUqPySubAqzri7nx59mOsgsrkrdW8OvxLDwpMYNjsfJffnXiSn+SxhG3Wb
-         eo0Q==
-X-Gm-Message-State: AOAM532vBJb1T32Dx/CAgahWDdMq3JpJw6SjzrnF5D+pp711/V+EST8N
-        jSiBXFgvDqay6IHL1qTYKs14BxFq5jc=
-X-Google-Smtp-Source: ABdhPJxMPSdcLnHwwzW1WaIJgu4ND+tqiQWIyzE79Zp1FNH574qvmdaLfUr8/5HXQO8htUwyp0UNdA==
-X-Received: by 2002:a62:7707:: with SMTP id s7mr19700367pfc.90.1589903160015;
-        Tue, 19 May 2020 08:46:00 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:14f4:acbd:a5d0:25ca? ([2605:e000:100e:8c61:14f4:acbd:a5d0:25ca])
-        by smtp.gmail.com with ESMTPSA id y4sm6356551pfq.10.2020.05.19.08.45.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2020 08:45:59 -0700 (PDT)
-Subject: Re: [RFC PATCH] io_uring: don't submit sqes when ctx->refs is dying
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200513123754.25189-1-xiaoguang.wang@linux.alibaba.com>
- <89e8a0b4-bc18-49c8-5628-93eb403622e2@kernel.dk>
- <1a5e92d0-02c7-44d9-07e5-50c0ca77b800@linux.alibaba.com>
- <c936eddd-f76d-9fac-09cb-717720c0da82@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <793ea8a8-b4a8-5ed9-9ce5-2a9cc0f2e143@kernel.dk>
-Date:   Tue, 19 May 2020 09:45:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <c936eddd-f76d-9fac-09cb-717720c0da82@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726283AbgESVwb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 May 2020 17:52:31 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47174 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbgESVwa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 17:52:30 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04JLpsV8142733;
+        Tue, 19 May 2020 21:52:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=eHXiWMR2T2oaEWcez2mGYdQ8Y0tGtfeDqdd4E/QDW8s=;
+ b=irHvFpMLe1yAeIYSs5jSXOf+iFS2dCXC//g75hyYnp8IChxNPzVLxZsoQWNlreFH15FU
+ UAqjuI3SkzF03YL0MBZAeCfsA7Tiw6vV/MPnW8BqIH8ASf0c7QxM9Y2fCDnZT/u+aGJH
+ rqHE8gtK+FBMc1blF+sL3gzbNaCaPW2gLakIzjm3RpwwBe/EgEFnXkApv9WYkECycKAH
+ MVQWRwazXBraEw7YN+ClieOTwpV0u9yTdT9KgOcUksj26eoGsLKNV1SK2ed0q8AC8q3q
+ 9QjHFYkztTyH3g/rLMwuemaZFdSmFmmuSMbFoh8WSsQxYWgxP8V4XFUaCReXMwU9s1/u JA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 3128tnfwmp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 May 2020 21:52:28 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04JLh9Mh159915;
+        Tue, 19 May 2020 21:52:28 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 312sxtm1tx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 May 2020 21:52:28 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 04JLqREC030593;
+        Tue, 19 May 2020 21:52:27 GMT
+Received: from ca-ldom147.us.oracle.com (/10.129.68.131)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 May 2020 14:52:27 -0700
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+To:     axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org
+Subject: [PATCH liburing 0/3] __io_uring_get_cqe() fix/optimization
+Date:   Tue, 19 May 2020 14:52:18 -0700
+Message-Id: <1589925141-48552-1-git-send-email-bijan.mottahedeh@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9626 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
+ mlxlogscore=946 bulkscore=0 mlxscore=0 suspectscore=1 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2005190183
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9626 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 cotscore=-2147483648 suspectscore=1 lowpriorityscore=0
+ adultscore=0 phishscore=0 mlxlogscore=960 mlxscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2005190184
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/16/20 3:23 AM, Xiaoguang Wang wrote:
-> hi,
-> 
->> hi,
->>
->>> On 5/13/20 6:37 AM, Xiaoguang Wang wrote:
->>>> When IORING_SETUP_SQPOLL is enabled, io_ring_ctx_wait_and_kill() will wait
->>>> for sq thread to idle by busy loop:
->>>>      while (ctx->sqo_thread && !wq_has_sleeper(&ctx->sqo_wait))
->>>>          cond_resched();
->>>> Above codes are not friendly, indeed I think this busy loop will introduce a
->>>> cpu burst in current cpu, though it maybe short.
->>>>
->>>> In this patch, if ctx->refs is dying, we forbids sq_thread from submitting
->>>> sqes anymore, just discard leftover sqes.
->>>
->>> I don't think this really changes anything. What happens if:
->>>
->>>> @@ -6051,7 +6053,8 @@ static int io_sq_thread(void *data)
->>>>           }
->>>>           mutex_lock(&ctx->uring_lock);
->>>> -        ret = io_submit_sqes(ctx, to_submit, NULL, -1, true);
->>>> +        if (likely(!percpu_ref_is_dying(&ctx->refs)))
->>>> +            ret = io_submit_sqes(ctx, to_submit, NULL, -1, true);
->>>>           mutex_unlock(&ctx->uring_lock);
->>>>           timeout = jiffies + ctx->sq_thread_idle;
->>>
->>> You check for dying here, but that could change basically while you're
->>> checking it. So you're still submitting sqes with a ref that's going
->>> away. You've only reduced the window, you haven't eliminated it.
->> Look at codes, we call percpu_ref_kill() under uring_lock, so isn't it safe
->> to check the refs' dying status? Thanks.
-> Cloud you please have a look at my explanation again? Thanks.
+This patch set and a corresponding kernel patch set are fixes and
+optimizations resulting from running unit test 500f9fbadef8-test.
 
-Sorry for the delay - you are right, we only kill it inside the ring
-mutex, so should be safe to check. Can we get by with just the very last
-check instead of checking all of the cases?
+- Patch 1 is a fix to the test hanging when it runs on a non-mq queue.
+
+The patch preserves the value of wait_nr if SETUP_IOPOLL is set
+since otherwise __sys_io_uring_enter() could never be called
+__io_uring_peek_cqe() could never find new completions.
+
+With this patch applied, two problems were hit in the kernel as described
+in the kernel patch set, which caused 500f9fbadef8-test to fail and
+to hang.  With all three patches, 500f9fbadef8-test either passes
+successfully or skips the test gracefully with the following message:
+
+Polling not supported in current dir, test skipped
+
+- Patch 2 is an optimization for io_uring_enter() system calls.
+
+If we want to wait for completions (wait_nr > 0), account for the
+completion we might fetch with __io_uring_peek_cqe().  For example,
+with wait_nr=1 and submit=0, there is no need to call io_uring_enter()
+if the peek call finds a completion.
+
+Below are the perf results for 500f9fbadef8-test without/with the fix:
+
+perf stat -e syscalls:sys_enter_io_uring_enter 500f9fbadef8-test
+
+12,289     syscalls:sys_enter_io_uring_enter
+8,193      syscalls:sys_enter_io_uring_enter
+
+- Patch 3 is a cleanup with no functional changes.
+
+Since we always have
+
+io_uring_wait_cqe_nr()
+-> __io_uring_get_cqe()
+   -> __io_uring_peek_cqe()
+
+remove the direct call from io_uring_wait_cqe_nr() to __io_uring_peek_cqe().
+
+After the removal, __io_uring_peek_cqe() is called only from
+__io_uring_get_cqe() so move the two routines together(). Without the
+move, compilation fails with a 'defined but not used' error.
+
+Bijan Mottahedeh (3):
+  preseve wait_nr if SETUP_IOPOLL is set
+  update wait_nr to account for completed event
+  remove duplicate call to __io_uring_peek_cqe()
+
+ src/include/liburing.h | 32 --------------------------------
+ src/queue.c            | 38 +++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 37 insertions(+), 33 deletions(-)
 
 -- 
-Jens Axboe
+1.8.3.1
 

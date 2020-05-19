@@ -2,63 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4781DA44D
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 00:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E69961DA464
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 00:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbgESWMY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 May 2020 18:12:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44856 "EHLO
+        id S1726344AbgESWVB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 May 2020 18:21:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbgESWMY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 18:12:24 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F96CC061A0F
-        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 15:12:24 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id v63so534980pfb.10
-        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 15:12:24 -0700 (PDT)
+        with ESMTP id S1725998AbgESWVB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 18:21:01 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E46DC061A0F
+        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 15:21:00 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id q16so464428plr.2
+        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 15:21:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DJ4BygB5peVgcFI85pUN4LwLz096RnT5vt6WinaWaks=;
-        b=S367gdO3t/rL54QDf1IBdCjXt/ZuDMT342n4oguHVfLC1jvd2/oqiY+jMrntSO+a6C
-         b0OiAO103aqSPG0kMYopW9VnUiBPqSoNvSm43QDmF9YIs3wTwDh2G19ztEszgpyyN1tq
-         ePxm2Hao+Mym1TPgjt6Lt3nqChNmlB0oCJ1ditQf9luEjtm8H4hI/0C5CUYR6TZtFrKE
-         YQHaAf3AXHFbdcvPVVhj3xviPyLmTf13EvAxXeqQaW6zf0plKTkaqmcMv64GEH7ZT0EO
-         ZJMSnZnPG/dXjtB5O1JPIpV3IVEboLAe4GP9VrtCMcy22BRn2ESOw//aICJibYyl92u+
-         hlOw==
+        bh=eqpcqJBR+hIKeZzFOfZeZqgc2os+r+pnFNGpXOBaFSI=;
+        b=IDjPALVFG7v/PkTvU++efe7fQQp1rbqlc02U7oidNA4MUgiCU1qr+QDSgEMDe3qRCg
+         B8sx7AmUZnk2WRMf3s5w0isws/KAvdRxYmLjR6eTiSZojC+UiLwVCRmF5sejuboNJf93
+         6e8BrPIRmTv0UIypXoHjfJXPdD15dgjcZLHUScVOh5B3YwYiChtsnO1wRBAK5xOzTUON
+         NPraO7xLPLZ1AFSoN+dsiUS6TdAB8894RAmcOdMNIZcGDv9enwRlp2uYI94VoiIFR4HS
+         +9539jniOakTsp5VqjRM1vl/ru/fcjzCybHI8zvpuuDtAdNewOZSwodQGW9yNWXTFPmj
+         K+2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=DJ4BygB5peVgcFI85pUN4LwLz096RnT5vt6WinaWaks=;
-        b=aYWxtALp0z7a0tWFwdoGGuHMJ6Xx/keDbnXlr2FgdQg0T9XwcLbyuadaStwqPyb4kc
-         6H+oalWFcxn3PkM9fpevFOoFK10JfMiZapj9yIU/ztTtC8aMrct4Og/ucHVM0wo6Lk0/
-         5wooTsxPWiGAY3WASo3M2QrEhwjlw2dn5JzWpk7BV1dwSuWp40Fi+GnbETVgQ9LbcwO4
-         hQ5F7lAuGVpTGZDCNXqUfo7eOcWabqjF+nxcep4K8pxUWS6GfZCtkYZpdWtvTO2atKcD
-         4f2n9cAJr9U2l4zdvIKvFgWV1dCGy+os4SoJLPkv06ODmRH/iGO8OiIi1p+QrXWQFsIe
-         fcDQ==
-X-Gm-Message-State: AOAM533lj0f2EixpsimITIiHpQjmmWfQt+nZKNVGSvmLLXMdtd5e94bE
-        oNiVz7Cd3AiXjUrvCN/HwcZ6UsRws00=
-X-Google-Smtp-Source: ABdhPJyawujmpmxD41ahOvuiMMkp0scxvOv+E3fHRVUJTEWFzPt6gGG5J/2hpaTsNUik9xA7RldNkg==
-X-Received: by 2002:a62:7d91:: with SMTP id y139mr1204489pfc.172.1589926343434;
-        Tue, 19 May 2020 15:12:23 -0700 (PDT)
+        bh=eqpcqJBR+hIKeZzFOfZeZqgc2os+r+pnFNGpXOBaFSI=;
+        b=jdQeyj4N9CrEFCubpe/w4B0L+j1m07c3R45iVvgYtYo11uRaPrXUH82srlbV5THohB
+         etFSGRYyJY8pZnMwUvZ7sm6HdWa37sBYiLEN7Ac+bn/aZ14vCOjYm/DYBFBVmzYQe62z
+         bhBucuCQ78qGFkPm1pQXE4kS3MMHrnRwEiycRocmFVcxBEOlbaD1W6Wh2WZ/3RrByLfk
+         ssB1c/95XPYagQLkMYQfDuPl9Z3A/f4c6XX7e50w4FVlH63dC0vYAQ7dBkjD0jfUj8Xw
+         kXSjjRWjulwNwwpiAlSjbravN4ZFexgJhfGq22Y9QEdEHg6nl/UPOrL88vSD/peCqosD
+         eD0Q==
+X-Gm-Message-State: AOAM531kWwSpqVRmqOr1iB4JtfMdp48rtGG9Vn6Vr+qgGwLv/VLv1SkM
+        4JvTNx8fmx85zeCFcCMsqyizkZ69Njo=
+X-Google-Smtp-Source: ABdhPJxQ78fq+30k5hX3CZX16iAVVZ+tXdAXNieQttArqgPh3XZ8THeZrFWJt65P3tCCuYbau4Gffw==
+X-Received: by 2002:a17:90a:c385:: with SMTP id h5mr1771626pjt.147.1589926859369;
+        Tue, 19 May 2020 15:20:59 -0700 (PDT)
 Received: from ?IPv6:2605:e000:100e:8c61:14f4:acbd:a5d0:25ca? ([2605:e000:100e:8c61:14f4:acbd:a5d0:25ca])
-        by smtp.gmail.com with ESMTPSA id m12sm408533pjs.41.2020.05.19.15.12.22
+        by smtp.gmail.com with ESMTPSA id k7sm341468pga.87.2020.05.19.15.20.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2020 15:12:22 -0700 (PDT)
-Subject: Re: [PATCH liburing 0/3] __io_uring_get_cqe() fix/optimization
+        Tue, 19 May 2020 15:20:58 -0700 (PDT)
+Subject: Re: [RFC 1/2] io_uring: don't use kiocb.private to store buf_index
+From:   Jens Axboe <axboe@kernel.dk>
 To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 Cc:     io-uring@vger.kernel.org
-References: <1589925141-48552-1-git-send-email-bijan.mottahedeh@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a6df5d0b-af60-6914-ab97-573d4e6306a4@kernel.dk>
-Date:   Tue, 19 May 2020 16:12:21 -0600
+References: <1589925170-48687-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1589925170-48687-2-git-send-email-bijan.mottahedeh@oracle.com>
+ <6ce9f56d-d4eb-0db1-6ea3-166aed29807f@kernel.dk>
+Message-ID: <91cd9cdb-b65a-879c-0318-a888d2658bed@kernel.dk>
+Date:   Tue, 19 May 2020 16:20:57 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <1589925141-48552-1-git-send-email-bijan.mottahedeh@oracle.com>
+In-Reply-To: <6ce9f56d-d4eb-0db1-6ea3-166aed29807f@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,52 +69,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/19/20 3:52 PM, Bijan Mottahedeh wrote:
-> This patch set and a corresponding kernel patch set are fixes and
-> optimizations resulting from running unit test 500f9fbadef8-test.
+On 5/19/20 4:07 PM, Jens Axboe wrote:
+> On 5/19/20 3:52 PM, Bijan Mottahedeh wrote:
+>> kiocb.private is used in iomap_dio_rw() so store buf_index separately.
 > 
-> - Patch 1 is a fix to the test hanging when it runs on a non-mq queue.
+> Hmm, that's no good, the owner of the iocb really should own ->private
+> as well.
 > 
-> The patch preserves the value of wait_nr if SETUP_IOPOLL is set
-> since otherwise __sys_io_uring_enter() could never be called
-> __io_uring_peek_cqe() could never find new completions.
-> 
-> With this patch applied, two problems were hit in the kernel as described
-> in the kernel patch set, which caused 500f9fbadef8-test to fail and
-> to hang.  With all three patches, 500f9fbadef8-test either passes
-> successfully or skips the test gracefully with the following message:
-> 
-> Polling not supported in current dir, test skipped
-> 
-> - Patch 2 is an optimization for io_uring_enter() system calls.
-> 
-> If we want to wait for completions (wait_nr > 0), account for the
-> completion we might fetch with __io_uring_peek_cqe().  For example,
-> with wait_nr=1 and submit=0, there is no need to call io_uring_enter()
-> if the peek call finds a completion.
-> 
-> Below are the perf results for 500f9fbadef8-test without/with the fix:
-> 
-> perf stat -e syscalls:sys_enter_io_uring_enter 500f9fbadef8-test
-> 
-> 12,289     syscalls:sys_enter_io_uring_enter
-> 8,193      syscalls:sys_enter_io_uring_enter
-> 
-> - Patch 3 is a cleanup with no functional changes.
-> 
-> Since we always have
-> 
-> io_uring_wait_cqe_nr()
-> -> __io_uring_get_cqe()
->    -> __io_uring_peek_cqe()
-> 
-> remove the direct call from io_uring_wait_cqe_nr() to __io_uring_peek_cqe().
-> 
-> After the removal, __io_uring_peek_cqe() is called only from
-> __io_uring_get_cqe() so move the two routines together(). Without the
-> move, compilation fails with a 'defined but not used' error.
+> The downside of this patch is that io_rw now spills into the next
+> cacheline, which propagates to io_kiocb as well. iocb has 4 bytes
+> of padding, but probably cleaner if we can stuff it into io_kiocb
+> instead. How about adding a u16 after opcode? There's a 2 byte
+> hole there, so it would not impact the size of io_kiocb.
 
-LGTM, thanks! I've applied them.
+I applied your patch, but moved the buf_index to not grow the
+structure:
+
+https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.7&id=4f4eeba87cc731b200bff9372d14a80f5996b277
 
 -- 
 Jens Axboe

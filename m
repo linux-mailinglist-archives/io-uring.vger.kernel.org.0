@@ -2,63 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2071DA443
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 00:08:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F4781DA44D
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 00:12:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725998AbgESWIw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 May 2020 18:08:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44304 "EHLO
+        id S1726203AbgESWMY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 May 2020 18:12:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbgESWIw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 18:08:52 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83B37C061A0F
-        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 15:08:52 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id y198so546345pfb.4
-        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 15:08:52 -0700 (PDT)
+        with ESMTP id S1725885AbgESWMY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 18:12:24 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F96CC061A0F
+        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 15:12:24 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id v63so534980pfb.10
+        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 15:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lCzwIoRbV3B/hFbrk4toi540Jp/BjB7SwvJd+Fkfoq4=;
-        b=zT0/RR/2xy0+G/k113AsV6/mKtuEcl24T8m+MvXUK/BIfEujMW82rYThPi4zCgk0lG
-         iFrJlAtUUzEdEcPqVMkIs7zwF68OMCd2WB3Wc5JUZ/RiQ7K6Ol/+zK2aAfXRtUvWJPY8
-         S9ByCA8tkxbh2Dk32dFZ3/AODXJ0e3zzdJrYfC10Xk/CJJlDhFSJbjyAyZriVm3RZe3/
-         BUTBbzbucI3KggDwHA3dNZyFiTXjnqw+QnPe7VsLBcV5V2VwZhCEC3JU0jBkCW2qDbCC
-         wme8qg7+vtJ2Ogu3nMDFQb17G0l+5qURKzHizJyMIRbp7svY6VPhvl6X6qOb43SwUI/l
-         +Syg==
+        bh=DJ4BygB5peVgcFI85pUN4LwLz096RnT5vt6WinaWaks=;
+        b=S367gdO3t/rL54QDf1IBdCjXt/ZuDMT342n4oguHVfLC1jvd2/oqiY+jMrntSO+a6C
+         b0OiAO103aqSPG0kMYopW9VnUiBPqSoNvSm43QDmF9YIs3wTwDh2G19ztEszgpyyN1tq
+         ePxm2Hao+Mym1TPgjt6Lt3nqChNmlB0oCJ1ditQf9luEjtm8H4hI/0C5CUYR6TZtFrKE
+         YQHaAf3AXHFbdcvPVVhj3xviPyLmTf13EvAxXeqQaW6zf0plKTkaqmcMv64GEH7ZT0EO
+         ZJMSnZnPG/dXjtB5O1JPIpV3IVEboLAe4GP9VrtCMcy22BRn2ESOw//aICJibYyl92u+
+         hlOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=lCzwIoRbV3B/hFbrk4toi540Jp/BjB7SwvJd+Fkfoq4=;
-        b=RdCrFF5V7hcho9V1zy2icy04ZQO3j/O74/5FN8FUROj8+fpkFaGF2utFwo97OXwzSx
-         +MBOoCSCY4r0MPmkAl5rQKNAO+EwiN6TFR/BjJcwZeuZ8mbmjQSCEn17HBgZ3HhrRycd
-         MR9cXeHi86WZsS7hoGwgn28RjSkZ4vG8+SUrNdM/0vkussWMWlApghy/QZVVE6MmVymB
-         ts8cLsdUmWuVhLjo56A5E1a0e56TP4/Vc+1Zl6OGqP8NshrEyeUJ2dVH4lmStpzPWYXM
-         Hqkvw0IvNt0HN0fvfdxKlK8vFbp8tMM+jrHK6JCui3E5MlvFmFvfYieHQd5g7mY8DLxu
-         EuWw==
-X-Gm-Message-State: AOAM5310eqrmfSswgCYLtYYanepttadnAgqM7Zd3NOtFkBkINQ9qOpeb
-        6fQQDBR6W8GFWOkdcobrTthW94DD0L8=
-X-Google-Smtp-Source: ABdhPJzc25Oru4THiuVmwn2xqQGwJ/YnOgAN0/q96lVJbMVBMFkBLP414V/efcgcFZDTZkWMdo9PUg==
-X-Received: by 2002:a63:5307:: with SMTP id h7mr1243403pgb.28.1589926131534;
-        Tue, 19 May 2020 15:08:51 -0700 (PDT)
+        bh=DJ4BygB5peVgcFI85pUN4LwLz096RnT5vt6WinaWaks=;
+        b=aYWxtALp0z7a0tWFwdoGGuHMJ6Xx/keDbnXlr2FgdQg0T9XwcLbyuadaStwqPyb4kc
+         6H+oalWFcxn3PkM9fpevFOoFK10JfMiZapj9yIU/ztTtC8aMrct4Og/ucHVM0wo6Lk0/
+         5wooTsxPWiGAY3WASo3M2QrEhwjlw2dn5JzWpk7BV1dwSuWp40Fi+GnbETVgQ9LbcwO4
+         hQ5F7lAuGVpTGZDCNXqUfo7eOcWabqjF+nxcep4K8pxUWS6GfZCtkYZpdWtvTO2atKcD
+         4f2n9cAJr9U2l4zdvIKvFgWV1dCGy+os4SoJLPkv06ODmRH/iGO8OiIi1p+QrXWQFsIe
+         fcDQ==
+X-Gm-Message-State: AOAM533lj0f2EixpsimITIiHpQjmmWfQt+nZKNVGSvmLLXMdtd5e94bE
+        oNiVz7Cd3AiXjUrvCN/HwcZ6UsRws00=
+X-Google-Smtp-Source: ABdhPJyawujmpmxD41ahOvuiMMkp0scxvOv+E3fHRVUJTEWFzPt6gGG5J/2hpaTsNUik9xA7RldNkg==
+X-Received: by 2002:a62:7d91:: with SMTP id y139mr1204489pfc.172.1589926343434;
+        Tue, 19 May 2020 15:12:23 -0700 (PDT)
 Received: from ?IPv6:2605:e000:100e:8c61:14f4:acbd:a5d0:25ca? ([2605:e000:100e:8c61:14f4:acbd:a5d0:25ca])
-        by smtp.gmail.com with ESMTPSA id 73sm349495pge.15.2020.05.19.15.08.50
+        by smtp.gmail.com with ESMTPSA id m12sm408533pjs.41.2020.05.19.15.12.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2020 15:08:50 -0700 (PDT)
-Subject: Re: liburing 500f9fbadef8-test test failure on top-of-tree
-To:     Jeff Moyer <jmoyer@redhat.com>
+        Tue, 19 May 2020 15:12:22 -0700 (PDT)
+Subject: Re: [PATCH liburing 0/3] __io_uring_get_cqe() fix/optimization
+To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 Cc:     io-uring@vger.kernel.org
-References: <x49d06zd1u2.fsf@segfault.boston.devel.redhat.com>
+References: <1589925141-48552-1-git-send-email-bijan.mottahedeh@oracle.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <45c638c9-1ff1-efe8-7698-fb53fceb15a7@kernel.dk>
-Date:   Tue, 19 May 2020 16:08:49 -0600
+Message-ID: <a6df5d0b-af60-6914-ab97-573d4e6306a4@kernel.dk>
+Date:   Tue, 19 May 2020 16:12:21 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <x49d06zd1u2.fsf@segfault.boston.devel.redhat.com>
+In-Reply-To: <1589925141-48552-1-git-send-email-bijan.mottahedeh@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,40 +67,52 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/19/20 3:58 PM, Jeff Moyer wrote:
-> Hi,
+On 5/19/20 3:52 PM, Bijan Mottahedeh wrote:
+> This patch set and a corresponding kernel patch set are fixes and
+> optimizations resulting from running unit test 500f9fbadef8-test.
 > 
-> This test case is failing for me when run atop a dm device.  The test
-> sets up a ring with IO_SETUP_IOPOLL, creates a file and opens it with
-> O_DIRECT, and then issues a writev.  The writev operation is returning
-> -22 (-EINVAL).  The failure comes from this check inside io_import_iov:
+> - Patch 1 is a fix to the test hanging when it runs on a non-mq queue.
 > 
-> 	/* buffer index only valid with fixed read/write, or buffer select  */
->         if (req->rw.kiocb.private && !(req->flags & REQ_F_BUFFER_SELECT))
->                 return -EINVAL;
+> The patch preserves the value of wait_nr if SETUP_IOPOLL is set
+> since otherwise __sys_io_uring_enter() could never be called
+> __io_uring_peek_cqe() could never find new completions.
 > 
-> req->rw.kiocb.private is being used by the iomap code to store a pointer
-> to the request queue.  The sequence of events is as follows:
+> With this patch applied, two problems were hit in the kernel as described
+> in the kernel patch set, which caused 500f9fbadef8-test to fail and
+> to hang.  With all three patches, 500f9fbadef8-test either passes
+> successfully or skips the test gracefully with the following message:
 > 
-> io_write is called in the context of the system call, it calls
-> call_write_iter, which returns -EAGAIN.  The I/O is punted to a
-> workqueue.
+> Polling not supported in current dir, test skipped
 > 
-> The work item then tries to issue the I/O after clearing IOCB_NOWAIT,
-> and for some reason fails again with -EAGAIN.
+> - Patch 2 is an optimization for io_uring_enter() system calls.
 > 
-> On the *third* call to io_write, the private pointer has been
-> overwitten, and we trigger the above -EINVAL return.
+> If we want to wait for completions (wait_nr > 0), account for the
+> completion we might fetch with __io_uring_peek_cqe().  For example,
+> with wait_nr=1 and submit=0, there is no need to call io_uring_enter()
+> if the peek call finds a completion.
 > 
-> I have no idea why we're getting EAGAIN on the first call in the
-> workqueue context, so I'm not sure if that's the problem, of if we
-> simply can't use the kiocb.private pointer for this purpose.  It seems
-> clear that once we've called into the iomap code, we can't rely on the
-> contents of kiocb.private.
+> Below are the perf results for 500f9fbadef8-test without/with the fix:
 > 
-> Jens, what do you think?
+> perf stat -e syscalls:sys_enter_io_uring_enter 500f9fbadef8-test
+> 
+> 12,289     syscalls:sys_enter_io_uring_enter
+> 8,193      syscalls:sys_enter_io_uring_enter
+> 
+> - Patch 3 is a cleanup with no functional changes.
+> 
+> Since we always have
+> 
+> io_uring_wait_cqe_nr()
+> -> __io_uring_get_cqe()
+>    -> __io_uring_peek_cqe()
+> 
+> remove the direct call from io_uring_wait_cqe_nr() to __io_uring_peek_cqe().
+> 
+> After the removal, __io_uring_peek_cqe() is called only from
+> __io_uring_get_cqe() so move the two routines together(). Without the
+> move, compilation fails with a 'defined but not used' error.
 
-See: https://lore.kernel.org/io-uring/1589925170-48687-1-git-send-email-bijan.mottahedeh@oracle.com/T/#m9cec13d26c0b2db03889e1b36c9bcc20f4f8244a
+LGTM, thanks! I've applied them.
 
 -- 
 Jens Axboe

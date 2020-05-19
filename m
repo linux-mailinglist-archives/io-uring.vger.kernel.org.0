@@ -2,99 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4401DA425
-	for <lists+io-uring@lfdr.de>; Tue, 19 May 2020 23:53:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCDC71DA42B
+	for <lists+io-uring@lfdr.de>; Tue, 19 May 2020 23:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbgESVxL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 May 2020 17:53:11 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37260 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbgESVxL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 17:53:11 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04JLpjSb041375;
-        Tue, 19 May 2020 21:53:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=7mQ05onKcDgXu/1WPn8xqAG/gPLxbvK8u1N7Gt/VRlI=;
- b=loTQx6YXcrfvfTFXi5+17cwG0woRdGVw1HPO3b30kOqbg4X9y6k6hFGEBLm11m53xRoW
- HYoqD3ER+znzYG/K3C+I8oldVTro5RA9NkbWFanDHR8fQcmbGzX22iFmSuqRTBsmKyAI
- qT+W3h7aSsoSARoxeyt38+so7K046owfUhty5zZwFtm+vYZh6FKZXpU8mEuFsjoDFg8O
- x2pnAUn2Wg0c2pdV8bITYMrYbbx6BEVmK80ETLXy1G65q6KbZWWWKDWv+fITxIdOPBpQ
- 0LxKNxz3YRk2O3pLqxDWI+V3ObEjrQ2zZJvV8dcedSgh4GFtJCqCD4hUPeDXVL8Npjuh WA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 31284m00du-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 May 2020 21:53:09 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04JLr8wI182021;
-        Tue, 19 May 2020 21:53:09 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 312sxtm25v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 May 2020 21:53:08 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 04JLqvVt005853;
-        Tue, 19 May 2020 21:52:57 GMT
-Received: from ca-ldom147.us.oracle.com (/10.129.68.131)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 May 2020 14:52:57 -0700
-From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+        id S1725998AbgESV6U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 May 2020 17:58:20 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:54727 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725885AbgESV6T (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 17:58:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589925498;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=6hfGJBDits8dEf1jDzo78leH9mA3RNXGA7WhYwfYSwU=;
+        b=Mii/iDOJ/o2wn7tGYJvoyAXknIjSJTwtZI9OPmWLkbJ64b+5wYddTHsNn94M0mly0/1k4G
+        mwCvDBqDlcT07qZqMgsXAN0S6PvtYnuxnRvGKW8P+845y9Q21MS53ixvf0gu6hh1uWQlIU
+        z8Pkg9gCa5WU/X4Q0xPrDi2fWL5h7ec=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-496-Ce9D1wSAMqujz9aVoRpR3g-1; Tue, 19 May 2020 17:58:16 -0400
+X-MC-Unique: Ce9D1wSAMqujz9aVoRpR3g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 13C061009460;
+        Tue, 19 May 2020 21:58:15 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 86C795C1D4;
+        Tue, 19 May 2020 21:58:14 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
 To:     axboe@kernel.dk
 Cc:     io-uring@vger.kernel.org
-Subject: [RFC 2/2] io_uring: mark REQ_NOWAIT for a non-mq queue as unspported
-Date:   Tue, 19 May 2020 14:52:50 -0700
-Message-Id: <1589925170-48687-3-git-send-email-bijan.mottahedeh@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1589925170-48687-1-git-send-email-bijan.mottahedeh@oracle.com>
-References: <1589925170-48687-1-git-send-email-bijan.mottahedeh@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9626 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 mlxscore=0 suspectscore=1 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2005190184
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9626 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 mlxscore=0
- cotscore=-2147483648 impostorscore=0 malwarescore=0 mlxlogscore=999
- lowpriorityscore=0 phishscore=0 spamscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2005190184
+Subject: liburing 500f9fbadef8-test test failure on top-of-tree
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Tue, 19 May 2020 17:58:13 -0400
+Message-ID: <x49d06zd1u2.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Mark a REQ_NOWAIT request for a non-mq queue as unspported instead of
-retryable since otherwise the io_uring layer will keep resubmitting
-the request.
+Hi,
 
-Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
----
- block/blk-core.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+This test case is failing for me when run atop a dm device.  The test
+sets up a ring with IO_SETUP_IOPOLL, creates a file and opens it with
+O_DIRECT, and then issues a writev.  The writev operation is returning
+-22 (-EINVAL).  The failure comes from this check inside io_import_iov:
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 5847993..3807140 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -962,14 +962,10 @@ static inline blk_status_t blk_check_zone_append(struct request_queue *q,
- 	}
- 
- 	/*
--	 * Non-mq queues do not honor REQ_NOWAIT, so complete a bio
--	 * with BLK_STS_AGAIN status in order to catch -EAGAIN and
--	 * to give a chance to the caller to repeat request gracefully.
-+	 * Non-mq queues do not honor REQ_NOWAIT, return -EOPNOTSUPP.
- 	 */
--	if ((bio->bi_opf & REQ_NOWAIT) && !queue_is_mq(q)) {
--		status = BLK_STS_AGAIN;
--		goto end_io;
--	}
-+	if ((bio->bi_opf & REQ_NOWAIT) && !queue_is_mq(q))
-+		goto not_supported;
- 
- 	if (should_fail_bio(bio))
- 		goto end_io;
--- 
-1.8.3.1
+	/* buffer index only valid with fixed read/write, or buffer select  */
+        if (req->rw.kiocb.private && !(req->flags & REQ_F_BUFFER_SELECT))
+                return -EINVAL;
+
+req->rw.kiocb.private is being used by the iomap code to store a pointer
+to the request queue.  The sequence of events is as follows:
+
+io_write is called in the context of the system call, it calls
+call_write_iter, which returns -EAGAIN.  The I/O is punted to a
+workqueue.
+
+The work item then tries to issue the I/O after clearing IOCB_NOWAIT,
+and for some reason fails again with -EAGAIN.
+
+On the *third* call to io_write, the private pointer has been
+overwitten, and we trigger the above -EINVAL return.
+
+I have no idea why we're getting EAGAIN on the first call in the
+workqueue context, so I'm not sure if that's the problem, of if we
+simply can't use the kiocb.private pointer for this purpose.  It seems
+clear that once we've called into the iomap code, we can't rely on the
+contents of kiocb.private.
+
+Jens, what do you think?
+
+-Jeff
 

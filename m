@@ -2,47 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA3251DB837
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 17:31:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3DCF1DBABC
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 19:08:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbgETPb1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 May 2020 11:31:27 -0400
-Received: from verein.lst.de ([213.95.11.211]:50373 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726596AbgETPb0 (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 20 May 2020 11:31:26 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 69DAB68BEB; Wed, 20 May 2020 17:31:23 +0200 (CEST)
-Date:   Wed, 20 May 2020 17:31:23 +0200
-From:   Christoph Hellwig <hch@lst.de>
+        id S1726805AbgETRHk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 May 2020 13:07:40 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39194 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726845AbgETRHX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 May 2020 13:07:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589994442;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=R5gtdRsL9ifN7yCZuWFMi81hopoNqGWuqIuJGxvm7G8=;
+        b=jPg8qEoAI7dNR1EN3jYX+8odSmxfTb2IUXUJ6+6AdSzt85f+QZJpFn5qMDAMKsCRcwCZvB
+        u2gHjA2OFmAn/kQUZT4EdhUyKp0PLouxrCsPQtf99yt/OPUMut/OOidO41sWubQFmwR65l
+        YmmqxJCmOmq8HiKjG+6cSUkS1BiwulM=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-385-iVjWzuFlOSGa9V3Iyu1ozw-1; Wed, 20 May 2020 13:07:17 -0400
+X-MC-Unique: iVjWzuFlOSGa9V3Iyu1ozw-1
+Received: by mail-wr1-f69.google.com with SMTP id r14so1659912wrw.8
+        for <io-uring@vger.kernel.org>; Wed, 20 May 2020 10:07:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R5gtdRsL9ifN7yCZuWFMi81hopoNqGWuqIuJGxvm7G8=;
+        b=dgn+jzBm84RFCFrmzERzK/fBMA/lKcSV1CJIaQ/b0sYUvsgkapskUPYbf0XzI9alfS
+         bFGueWo2VdWNX6J9LvYcoaNcmt754fF/tEjbV+yposgm8EDtW7dHd8AAf68h5KtdoRzy
+         zU5jbPWuCiWi2vuZhD4q8GJG2g1hVnxpTKkYajYs8thSrHua6YQXZ+3hKdlP/dS/nOK5
+         Tdpm9k67Dcxg1rCricdCAK+hBdek3f9hunbssWbAJgeJvBUbZ3u9ggpzL7BsQt1cDmyW
+         6WuTp6yMMixTXqUrZ7gv0Pgt0qr/8AYek7Tt4PVnVP4YX41g76+UQ6MODEvwHVtzhRg2
+         Bkkg==
+X-Gm-Message-State: AOAM533jVA1jUV2on1a9mcu3NRWBrt6KSsbEWkYFlnVY+0lCX8OBK3qL
+        TKb2HaMz/bRA2VsL991c55mE0LmaIVep1IY/Kgm0lDBJgkcZ1n75r6NYFD9lGF7TnlzBCSC8ruQ
+        NTxrJv5GPQWKfNanBlm4=
+X-Received: by 2002:a7b:cb96:: with SMTP id m22mr5197374wmi.164.1589994436451;
+        Wed, 20 May 2020 10:07:16 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJynFVFxeMMZ/CQT3A/ITIWWt66gwDGDa673jWSyagjowp7jh7Bk4zmW7lu95gMGrueShnLeLg==
+X-Received: by 2002:a7b:cb96:: with SMTP id m22mr5197360wmi.164.1589994436149;
+        Wed, 20 May 2020 10:07:16 -0700 (PDT)
+Received: from steredhat.redhat.com ([79.49.207.108])
+        by smtp.gmail.com with ESMTPSA id u74sm3768614wmu.13.2020.05.20.10.07.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 May 2020 10:07:15 -0700 (PDT)
+From:   Stefano Garzarella <sgarzare@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        linux-block@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Hannes Reinecke <hare@suse.com>, io-uring@vger.kernel.org
-Subject: Re: io_uring vs CPU hotplug, was Re: [PATCH 5/9] blk-mq: don't set
- data->ctx and data->hctx in blk_mq_alloc_request_hctx
-Message-ID: <20200520153123.GA2340@lst.de>
-References: <20200518131634.GA645@lst.de> <20200518141107.GA50374@T590> <20200518165619.GA17465@lst.de> <20200519015420.GA70957@T590> <20200519153000.GB22286@lst.de> <20200520011823.GA415158@T590> <20200520030424.GI416136@T590> <20200520080357.GA4197@lst.de> <8f893bb8-66a9-d311-ebd8-d5ccd8302a0d@kernel.dk> <448d3660-0d83-889b-001f-a09ea53fa117@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: [PATCH liburing v2 0/5] liburing: add helpers to enable/disable
+ eventfd notifications
+Date:   Wed, 20 May 2020 19:07:09 +0200
+Message-Id: <20200520170714.68156-1-sgarzare@redhat.com>
+X-Mailer: git-send-email 2.25.4
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <448d3660-0d83-889b-001f-a09ea53fa117@kernel.dk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, May 20, 2020 at 09:20:50AM -0600, Jens Axboe wrote:
-> Just checked, and it works fine for me. If I create an SQPOLL ring with
-> SQ_AFF set and bound to CPU 3, if CPU 3 goes offline, then the kthread
-> just appears unbound but runs just fine. When CPU 3 comes online again,
-> the mask appears correct.
-> 
-> So don't think there's anything wrong on that side. The affinity is a
-> performance optimization, not a correctness issue. Really not much we
-> can do if the chosen CPU is offlined, apart from continue to chug along.
+This series is based on top of a new IORING_CQ_EVENTFD_DISABLED
+flag available in the CQ ring flags.
 
-Ok, that sounds pretty sensible.
+I added io_uring_cq_eventfd_enabled() to get the status of eventfd
+notifications, and io_uring_cq_eventfd_toggle() to disable/enabled
+eventfd notifications.
+
+I updated man pages and I added a eventfd-disable.c test case.
+
+v1 -> v2:
+  - renamed io_uring_cq_eventfd_toggle()
+  - return EOPNOTSUPP only if we need to change the flag
+
+Stefano Garzarella (5):
+  Add CQ ring 'flags' field
+  man/io_uring_setup.2: add 'flags' field in the struct
+    io_cqring_offsets
+  Add helpers to set and get eventfd notification status
+  man/io_uring_register.2: add IORING_CQ_EVENTFD_DISABLED description
+  Add test/eventfd-disable.c test case
+
+ .gitignore                      |   1 +
+ man/io_uring_register.2         |   8 ++
+ man/io_uring_setup.2            |   3 +-
+ src/include/liburing.h          |  34 ++++++++
+ src/include/liburing/io_uring.h |  11 ++-
+ src/setup.c                     |   2 +
+ test/Makefile                   |   6 +-
+ test/eventfd-disable.c          | 148 ++++++++++++++++++++++++++++++++
+ 8 files changed, 209 insertions(+), 4 deletions(-)
+ create mode 100644 test/eventfd-disable.c
+
+-- 
+2.25.4
+

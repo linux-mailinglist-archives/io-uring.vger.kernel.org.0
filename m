@@ -2,65 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F091DB51F
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 15:34:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47AC11DB563
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 15:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbgETNeq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 May 2020 09:34:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47650 "EHLO
+        id S1726845AbgETNns (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 May 2020 09:43:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbgETNeq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 May 2020 09:34:46 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E356AC061A0E
-        for <io-uring@vger.kernel.org>; Wed, 20 May 2020 06:34:44 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id w19so1328678ply.11
-        for <io-uring@vger.kernel.org>; Wed, 20 May 2020 06:34:44 -0700 (PDT)
+        with ESMTP id S1726840AbgETNns (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 May 2020 09:43:48 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3204C061A0E
+        for <io-uring@vger.kernel.org>; Wed, 20 May 2020 06:43:46 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id x15so1596671pfa.1
+        for <io-uring@vger.kernel.org>; Wed, 20 May 2020 06:43:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=16LnBHZF+zxStGOjP0fNe1Er1jdEh4ZT6MKJIYpDgbM=;
-        b=UrDTPsjue3SeKjrjZwaV98YXJKLasuhKw0tss53P5QFtOCrgElEYFZzrs8aPVFZHsi
-         uNE1V9dAGvlBM/+yr/s7g4pbr7CWDj/pvm/oC5w+iW1kqzAVVSdvppjrIRWWF/Cs4XTB
-         WC3zxz57b50/E7nJ+RdulgNfkRHXKsRRzBdib/OVkaCgQR5tFwMm1bv7ULLKeQgsMQag
-         rvmOigC121md7QQhXu6/rbTHXI6nOMJSg6TbT61+zuXaUmeplNXw2KBbh5yeF5W9Nznz
-         Mcr3/8F2nZjn6cPqWRoGnXnAx/RZFQexfONzGmj8w3t5DesYF3WvpfiefHGtxRlWeeCj
-         Poew==
+        bh=GtMXJ8Nf0WVCEoZD1G/y/xw+6bCdGg1E+N3tCOQ4B64=;
+        b=pfHBuS+prAGy3q7PQnQUX044KZkMn0nCrKd61zKL0YcORuFwESa45r7nn1b/1Cv98W
+         V2+T+bbZS9sPUCznQCpKY50mBuuwtG0aUOcD0HSXbDg0alBsR0drnLoV2NQSe5ppHh01
+         nOXVbygeyxYT43j2D/KxlDqyQtYr8CyxoKxG6yP6sWeE5LwfDsEACLjmwu4e3lxz21Eu
+         3Tm//Q/YY4Z5iHEGmD5xa3JPjOglAA5XIL2FD7iOWE8zgCO0L4Z45EXSS28cKaIzEe8J
+         c5XBuM18Yzsdt9FwQRe4tJiKa/iu6nEvqdN02DSt9ieW7twt2BvVNA26dNQY2uX9T+xp
+         wUlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=16LnBHZF+zxStGOjP0fNe1Er1jdEh4ZT6MKJIYpDgbM=;
-        b=ZgEDwT0LX0/yL8PWXeHgphY/YBw53WfuWbGpbfAUElHXU1YYTj1hNM6szp3Z3xSD+Y
-         SAiK7iGXeUbiznYj9YP9lnWzwzhEjsLm728FhimLv7ltraSOAFTXtyxcnub1m3Z39vgz
-         hCWlIAr1teimP8n9xfuL9NFnOxsL/SWRDx2aziGC78fs3Lv55bWqlGSLCVc1Sl4rs+bo
-         Is5RcA6RNWX4f7IuOKeBFLsoDm3pOKRgcFsMZXeYcP5b5Vk3qcylnbta7tb1z6uwISj4
-         dUs6Rj+QVAQqzryE7LfOEAukn891nBF3tjejTX6L6M3D4xbsTPen56g96vHr9lMPySg2
-         w4YA==
-X-Gm-Message-State: AOAM533bXdTsA2R9a2xg1skVW3nmB/yQ7cI+QC4aOmOplTeKTwxVdC/m
-        y1YMNHkYdQXBlvD2CjKUbymoTxFFu10=
-X-Google-Smtp-Source: ABdhPJyNYKB7RX82CTHeG9Kli17jdA9wtow9N9CThs5DLhqe34IX974VKj/CXklw0QSOUJsBpa/i7w==
-X-Received: by 2002:a17:90a:21cf:: with SMTP id q73mr5490047pjc.230.1589981684299;
-        Wed, 20 May 2020 06:34:44 -0700 (PDT)
+        bh=GtMXJ8Nf0WVCEoZD1G/y/xw+6bCdGg1E+N3tCOQ4B64=;
+        b=fqnQQcm5G9afceGxqXDyjG1B/Fk4gIopYs6sg5oVkqwQDMmF2gNcNrEoU4df0e5L6D
+         8GpaFyR02B4brJbn/t3hGTy6zCHKTZI0J4dmtK05+KvZ6xjGwM6UYRRGMwE/PN4zmN2g
+         JBHLiJrlCTu7XbtT+31RqtxZ2COvTtpOe6FafmKKlgIqh1+FEr9znKa2+y2ikqfx6XlX
+         ShhKsWL8AISiB9EN3uxMBW0/X4eJ5AAol7Vs+Cd3xe/Vd7yWUptr2veIzDGMAzXK47cw
+         /ty2+xebK1QnCjeH2F82nvo6Pd2GC9UvlhUsQR84esJAxzXQZisyLOySw4MepxXTH9oN
+         Btdw==
+X-Gm-Message-State: AOAM533Z7t7YwoaYC+Una5nys9YT4A4Uuly8nBqnbNyPqlxTVQkgusZt
+        HZsYIk2qiZXPEAktSz+OIVP92frlVXg=
+X-Google-Smtp-Source: ABdhPJzgMvOfXPJyCV+rsngf3ZXqqHDrr2TwecPI26SIsc8pj61OkW72VBFs0VjD+8hiCOZd/f7Mhw==
+X-Received: by 2002:a63:451c:: with SMTP id s28mr4281685pga.340.1589982225964;
+        Wed, 20 May 2020 06:43:45 -0700 (PDT)
 Received: from [192.168.86.156] (cpe-75-85-219-51.dc.res.rr.com. [75.85.219.51])
-        by smtp.gmail.com with ESMTPSA id k29sm2022520pgf.77.2020.05.20.06.34.42
+        by smtp.gmail.com with ESMTPSA id m12sm2011456pgj.46.2020.05.20.06.43.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 May 2020 06:34:43 -0700 (PDT)
-Subject: Re: [PATCH v2] io_uring: reset -EBUSY error when io sq thread is
- waken up
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200520132435.10473-1-xiaoguang.wang@linux.alibaba.com>
+        Wed, 20 May 2020 06:43:44 -0700 (PDT)
+Subject: Re: [PATCH liburing 3/5] Add helpers to set and get eventfd
+ notification status
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org
+References: <20200515164331.236868-1-sgarzare@redhat.com>
+ <20200515164331.236868-4-sgarzare@redhat.com>
+ <5bee86d5-f8bf-5b61-dd26-5e7d0448a217@kernel.dk>
+ <20200515171111.zwgblergup6a23p2@steredhat>
+ <20200520131221.rktn7dy42e633rvg@steredhat>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <55cb5804-595a-6cbd-9669-7280722a6a07@kernel.dk>
-Date:   Wed, 20 May 2020 07:34:41 -0600
+Message-ID: <dc504f4a-6fbf-114a-086a-f6392baac84e@kernel.dk>
+Date:   Wed, 20 May 2020 07:43:43 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200520132435.10473-1-xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <20200520131221.rktn7dy42e633rvg@steredhat>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,87 +72,36 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/20/20 7:24 AM, Xiaoguang Wang wrote:
-> In io_sq_thread(), currently if we get an -EBUSY error and go to sleep,
-> we will won't clear it again, which will result in io_sq_thread() will
-> never have a chance to submit sqes again. Below test program test.c
-> can reveal this bug:
+On 5/20/20 7:12 AM, Stefano Garzarella wrote:
+>>> The bigger question is probably how to handle kernels that don't
+>>> have this feature. It'll succeed, but we'll still post events. Maybe
+>>> the kernel side should have a feature flag that we can test?
+>>
+>> I thought about that, and initially I added a
+>> IORING_FEAT_EVENTFD_DISABLE, but then I realized that we are adding
+>> the CQ 'flags' field together with the eventfd disabling feature.
+>>
+>> So I supposed that if 'p->cq_off.flags' is not zero, than the kernel
+>> supports CQ flags and also the IORING_CQ_EVENTFD_DISABLED bit.
+>>
+>> Do you think that's okay, or should we add IORING_FEAT_EVENTFD_DISABLE
+>> (or something similar)?
 > 
-> int main(int argc, char *argv[])
-> {
->         struct io_uring ring;
->         int i, fd, ret;
->         struct io_uring_sqe *sqe;
->         struct io_uring_cqe *cqe;
->         struct iovec *iovecs;
->         void *buf;
->         struct io_uring_params p;
-> 
->         if (argc < 2) {
->                 printf("%s: file\n", argv[0]);
->                 return 1;
->         }
-> 
->         memset(&p, 0, sizeof(p));
->         p.flags = IORING_SETUP_SQPOLL;
->         ret = io_uring_queue_init_params(4, &ring, &p);
->         if (ret < 0) {
->                 fprintf(stderr, "queue_init: %s\n", strerror(-ret));
->                 return 1;
->         }
-> 
->         fd = open(argv[1], O_RDONLY | O_DIRECT);
->         if (fd < 0) {
->                 perror("open");
->                 return 1;
->         }
-> 
->         iovecs = calloc(10, sizeof(struct iovec));
->         for (i = 0; i < 10; i++) {
->                 if (posix_memalign(&buf, 4096, 4096))
->                         return 1;
->                 iovecs[i].iov_base = buf;
->                 iovecs[i].iov_len = 4096;
->         }
-> 
->         ret = io_uring_register_files(&ring, &fd, 1);
->         if (ret < 0) {
->                 fprintf(stderr, "%s: register %d\n", __FUNCTION__, ret);
->                 return ret;
->         }
-> 
->         for (i = 0; i < 10; i++) {
->                 sqe = io_uring_get_sqe(&ring);
->                 if (!sqe)
->                         break;
-> 
->                 io_uring_prep_readv(sqe, 0, &iovecs[i], 1, 0);
->                 sqe->flags |= IOSQE_FIXED_FILE;
-> 
->                 ret = io_uring_submit(&ring);
->                 sleep(1);
->                 printf("submit %d\n", i);
->         }
-> 
->         for (i = 0; i < 10; i++) {
->                 io_uring_wait_cqe(&ring, &cqe);
->                 printf("receive: %d\n", i);
->                 if (cqe->res != 4096) {
->                         fprintf(stderr, "ret=%d, wanted 4096\n", cqe->res);
->                         ret = 1;
->                 }
->                 io_uring_cqe_seen(&ring, cqe);
->         }
-> 
->         close(fd);
->         io_uring_queue_exit(&ring);
->         return 0;
-> }
-> sudo ./test testfile
-> above command will hang on the tenth request, to fix this bug, when io
-> sq_thread is waken up, we reset the variable 'ret' to be zero.
+> Hi Jens,
+> I'm changing io_uring_cq_eventfd_enable() to io_uring_cq_eventfd_toggle().
 
-Applied, thanks.
+Sounds good.
+
+> Any advice on the error and eventual feature flag?
+
+I guess we can use cq_off.flags != 0 to tell if we have this feature or
+not, even though it's a bit quirky. But at the same time, probably not
+worth adding a specific feature flag for.
+
+For the error, -EOPNOTSUPP seems fine if we don't have the feature. Just
+don't flag errors for enabling when already enabled, or vice versa. It's
+inherently racy in that completions can come in while the app is calling
+the helper, so we should make the interface relaxed.
 
 -- 
 Jens Axboe

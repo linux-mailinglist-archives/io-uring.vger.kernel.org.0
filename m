@@ -2,85 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C55E1DA88B
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 05:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 449411DA88C
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2020 05:23:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbgETDWg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 May 2020 23:22:36 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:51233 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728476AbgETDWg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 23:22:36 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Tz3te8a_1589944953;
-Received: from 30.225.32.165(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Tz3te8a_1589944953)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 20 May 2020 11:22:33 +0800
-Subject: Re: [RFC PATCH] io_uring: don't submit sqes when ctx->refs is dying
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200513123754.25189-1-xiaoguang.wang@linux.alibaba.com>
- <89e8a0b4-bc18-49c8-5628-93eb403622e2@kernel.dk>
- <1a5e92d0-02c7-44d9-07e5-50c0ca77b800@linux.alibaba.com>
- <c936eddd-f76d-9fac-09cb-717720c0da82@linux.alibaba.com>
- <793ea8a8-b4a8-5ed9-9ce5-2a9cc0f2e143@kernel.dk>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <1ec2388d-97cf-a588-d74e-622dbb760a5b@linux.alibaba.com>
-Date:   Wed, 20 May 2020 11:22:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1726379AbgETDXz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 May 2020 23:23:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36994 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbgETDXz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 May 2020 23:23:55 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 892E8C061A0E
+        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 20:23:55 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id 5so623179pjd.0
+        for <io-uring@vger.kernel.org>; Tue, 19 May 2020 20:23:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=gnDYES07uSENBODB8wTkIipxmdU4MjDoJtE/1/BMewQ=;
+        b=lNSeC3UzM6szWz+CFhQ6gtzQaKbZbWnybRjwyLjgff0ERK+ODbF8Bct9wlAgXXtq8A
+         65UxsLNx8m8IkWWUogTG/M6cPNHwkCKPX9VPxYybXReSfo+g1wdMSJ+oStDczEM4xMAI
+         MS5HZLR4y2z0YRZJIjggYc1ehzY6FzrqDLhF/Fa18O/zf/PWu5lsTJXT/cBM7/d/7ZbI
+         qzJMtJQua3nq8COWqwR6t/5JL8svY2ZpYpSz9fR/pvwjo+uNWvrVAVWk8vnJ+2mevRbt
+         0NF2oGF072z+1vSt61bp4wPYcnPprVwrgiqzuGqauIIEOs2oaVPzHpXiI4W5Xw20vCMs
+         jZlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=gnDYES07uSENBODB8wTkIipxmdU4MjDoJtE/1/BMewQ=;
+        b=m/fPVotZbOGky9pEao6nk4EaXbIunYdC4XwCoTv28udkXL0SzZiN5nsRG2K0Hz/weW
+         aApubjx4RiQ69Uvlgjo0OyvWCHfKn7Ne5rvOk+P5zyTTRyt1k2B6EMC4Yy8u2yJnru4P
+         XNeJCR+N6aWcoSroZ1EGmTV/8pEGdg3B9ryKQ0C8OeCX4gI41keugrudn9w8MysezpzJ
+         OlapaUBl5a7WbD2440cjCyuQks3VUIoS3z2hlzl4T4VMNg4nphzvXX09VHxq/LCyFtPp
+         mrRDKqKVJr846xN+nqhGKwR44fcpaOsq0jQKqV3RsHRe5s2gfG+QA/mBJifFkmfExurF
+         u/sA==
+X-Gm-Message-State: AOAM532O72n5IeZj3ps7Sx6hYg3RPSQwwhzEWZHgdFGokoInQrNZ2MAh
+        Z2odQdNPRRvqfampNq4kenXE1xm9Yas=
+X-Google-Smtp-Source: ABdhPJymtMumftkIz1aRSpedZLxZqasZgEnsOTECFBkc6msDZtBiuRLN/AhwUK66ZNBhxNwFl4HQkA==
+X-Received: by 2002:a17:90a:272b:: with SMTP id o40mr2906022pje.64.1589945034679;
+        Tue, 19 May 2020 20:23:54 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:14f4:acbd:a5d0:25ca? ([2605:e000:100e:8c61:14f4:acbd:a5d0:25ca])
+        by smtp.gmail.com with ESMTPSA id b29sm731315pff.176.2020.05.19.20.23.53
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 May 2020 20:23:53 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: don't add non-IO requests to iopoll pending list
+Message-ID: <04df6eba-a433-9aad-cca9-7e76b986652f@kernel.dk>
+Date:   Tue, 19 May 2020 21:23:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <793ea8a8-b4a8-5ed9-9ce5-2a9cc0f2e143@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
+We normally disable any commands that aren't specifically poll commands
+for a ring that is setup for polling, but we do allow buffer provide and
+remove commands to support buffer selection for polled IO. Once a
+request is issued, we add it to the poll list to poll for completion. But
+we should not do that for non-IO commands, as those request complete
+inline immediately and aren't pollable. If we do, we can leave requests
+on the iopoll list after they are freed.
 
-> On 5/16/20 3:23 AM, Xiaoguang Wang wrote:
->> hi,
->>
->>> hi,
->>>
->>>> On 5/13/20 6:37 AM, Xiaoguang Wang wrote:
->>>>> When IORING_SETUP_SQPOLL is enabled, io_ring_ctx_wait_and_kill() will wait
->>>>> for sq thread to idle by busy loop:
->>>>>       while (ctx->sqo_thread && !wq_has_sleeper(&ctx->sqo_wait))
->>>>>           cond_resched();
->>>>> Above codes are not friendly, indeed I think this busy loop will introduce a
->>>>> cpu burst in current cpu, though it maybe short.
->>>>>
->>>>> In this patch, if ctx->refs is dying, we forbids sq_thread from submitting
->>>>> sqes anymore, just discard leftover sqes.
->>>>
->>>> I don't think this really changes anything. What happens if:
->>>>
->>>>> @@ -6051,7 +6053,8 @@ static int io_sq_thread(void *data)
->>>>>            }
->>>>>            mutex_lock(&ctx->uring_lock);
->>>>> -        ret = io_submit_sqes(ctx, to_submit, NULL, -1, true);
->>>>> +        if (likely(!percpu_ref_is_dying(&ctx->refs)))
->>>>> +            ret = io_submit_sqes(ctx, to_submit, NULL, -1, true);
->>>>>            mutex_unlock(&ctx->uring_lock);
->>>>>            timeout = jiffies + ctx->sq_thread_idle;
->>>>
->>>> You check for dying here, but that could change basically while you're
->>>> checking it. So you're still submitting sqes with a ref that's going
->>>> away. You've only reduced the window, you haven't eliminated it.
->>> Look at codes, we call percpu_ref_kill() under uring_lock, so isn't it safe
->>> to check the refs' dying status? Thanks.
->> Cloud you please have a look at my explanation again? Thanks.
-> 
-> Sorry for the delay - you are right, we only kill it inside the ring
-> mutex, so should be safe to check. Can we get by with just the very last
-> check instead of checking all of the cases?
-Sure, I'll send V2 soon, and thanks for reviewing, I need this patch because I'm
-writing a prototype to implement idea in this url:
-     https://lore.kernel.org/io-uring/c94098d2-279e-a552-91ec-8a8f177d770a@linux.alibaba.com/T/#t
-which needs above patch.
+Fixes: ddf0322db79c ("io_uring: add IORING_OP_PROVIDE_BUFFERS")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/io_uring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Regards,
-Xiaoguang Wang
-> 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d43f7e98e07a..f9f79ac5ac7b 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5306,7 +5306,8 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (ctx->flags & IORING_SETUP_IOPOLL) {
++	/* If the op doesn't have a file, we're not polling for it */
++	if ((ctx->flags & IORING_SETUP_IOPOLL) && req->file) {
+ 		const bool in_async = io_wq_current_is_worker();
+ 
+ 		if (req->result == -EAGAIN)
+-- 
+2.26.2
+
+-- 
+Jens Axboe
+

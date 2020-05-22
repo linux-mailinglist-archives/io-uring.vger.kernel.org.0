@@ -2,54 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B1031DEFA6
-	for <lists+io-uring@lfdr.de>; Fri, 22 May 2020 21:05:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CFA61DEFD3
+	for <lists+io-uring@lfdr.de>; Fri, 22 May 2020 21:15:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730840AbgEVTFF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 May 2020 15:05:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730866AbgEVTFD (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 22 May 2020 15:05:03 -0400
-Subject: Re: [GIT PULL] io_uring fixes for 5.7-rc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590174303;
-        bh=nctvkNR0q8oOHi3g8MVv7QBdrox+PkH3tC/gIkx0DzY=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=UohL01btv8q15v4f47WoZNdIPaGR2YO6nzCokrdREUJ40sGWu30faGECnleiEg/Lu
-         ROKDejoCDHI1vkDeYtzE+zNrwg6jOrcDox2wNphyrtIvPMluK9MQ+HQEhqVejdKXA8
-         dh83dyrfhSrXrn91st2gbgXeNJBzn9jbpIQaEyBc=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <89dab0b5-a43d-fd21-e22d-8d5d4c2ae510@kernel.dk>
-References: <89dab0b5-a43d-fd21-e22d-8d5d4c2ae510@kernel.dk>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <89dab0b5-a43d-fd21-e22d-8d5d4c2ae510@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git
- tags/io_uring-5.7-2020-05-22
-X-PR-Tracked-Commit-Id: d4ae271dfaae2a5f41c015f2f20d62a1deeec734
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 444565650a5fe9c63ddf153e6198e31705dedeb2
-Message-Id: <159017430346.18534.11150149570914168415.pr-tracker-bot@kernel.org>
-Date:   Fri, 22 May 2020 19:05:03 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        id S1730840AbgEVTP3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 May 2020 15:15:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42014 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730689AbgEVTP3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 May 2020 15:15:29 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3588C061A0E
+        for <io-uring@vger.kernel.org>; Fri, 22 May 2020 12:15:28 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id f15so4763842plr.3
+        for <io-uring@vger.kernel.org>; Fri, 22 May 2020 12:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=2pxXjhh2wQZLJvi0e+K3hm5HMY1QP111OD7JAc4kQgY=;
+        b=RlrLPJ2LYVkIEfBFh2jgsQoi7BXgq7KKdU3s3lhTdLJMZOtD0BADddoaILx7Ybobgt
+         ygzpSqDfiJrAMci1udrQRbw2gBnBG6pffd3YqppcNotOHznlAEllqNp/PDV2nfhumPH9
+         Pzx9natN0q0o0DMlgMeXucrCY+nMQSih41L0PeINW6AsXICJCWHja1WwbOUVr22fc+HL
+         E0X2LP81OQ0YAlE2jz5xd1Mf4rdkI+DZvwYVJ0DOGwbvo2G4tGyFmE/bk+6gtTSYE0mC
+         0SJWMVbqMUYBmciXjJEr/VyLdvsPgwSi7gNLzvZgP1MIp7EM3NFvpfXCQGU2I3cJSacZ
+         /UWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=2pxXjhh2wQZLJvi0e+K3hm5HMY1QP111OD7JAc4kQgY=;
+        b=rMO9yekGcPGNEJ1D+FHlcZbz4wlDm7Y7SrzQTjygqd52Gu3thE6d/7OlRkJfh/+ZsL
+         RyP+EIx/7p28t0rDdaKIaHi+HGsiLxN6glG3TKIGYorbe74sn6+XDbG7ueyFUcgAZLoa
+         q8+Ex8HiGosNAcfttQk4YZbNE7ueBfmDXLKOZrr9GgtULCxdvm6TwOlLNZ24IiNyrdik
+         5FhqtiBbK3OgOCL6H8dZZuP27smKbubqmva49+86zWdqJitFJrIFwhWBu3V0mL3vrW9B
+         v+2mmykSUaTgYyHu0xlIIQ9fJaPotvibHjVu1zE/4tP2ngEQjxJuFVFX9EN2xQSxDTfp
+         MwUA==
+X-Gm-Message-State: AOAM532tJtILoUye0QaVJFNVnHlTpMLHZ8fHUOS9Rs0ZPJkP7PMvRaHA
+        fI0IYnw1cpwghZ4PgTuXInR0etIM8Qw=
+X-Google-Smtp-Source: ABdhPJzyLewMIHVB+30rLeAvYQrBbxR3FNmtx239YKsPhNL+rUTWQBcMsawXByTppaHLmNSrv6p+JA==
+X-Received: by 2002:a17:90b:30c5:: with SMTP id hi5mr6099276pjb.110.1590174928064;
+        Fri, 22 May 2020 12:15:28 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:892a:d4e5:be12:19f? ([2605:e000:100e:8c61:892a:d4e5:be12:19f])
+        by smtp.gmail.com with ESMTPSA id i12sm7291391pjk.37.2020.05.22.12.15.27
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 May 2020 12:15:27 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: include file O_NONBLOCK state for, recvmsg/sendmsg
+Message-ID: <69ed3063-f491-2a8e-7026-871a537d6317@kernel.dk>
+Date:   Fri, 22 May 2020 13:15:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 22 May 2020 11:12:07 -0600:
+We only check for MSG_DONTWAIT in terms of whether or not we should
+be completing with -EAGAIN or retrying, ensure that we check the
+file O_NONBLOCK flag as well.
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.7-2020-05-22
+Cc: stable@vger.kernel.org # v5.3+
+Fixes: 0fa03c624d8f ("io_uring: add support for sendmsg()")
+Fixes: aa1fa28fc73e ("io_uring: add support for recvmsg()")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/444565650a5fe9c63ddf153e6198e31705dedeb2
-
-Thank you!
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0b51f21e5432..792720b2c01e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3654,7 +3654,7 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock)
+ 		}
+ 
+ 		flags = req->sr_msg.msg_flags;
+-		if (flags & MSG_DONTWAIT)
++		if ((flags & MSG_DONTWAIT) || (req->file->f_flags & O_NONBLOCK))
+ 			req->flags |= REQ_F_NOWAIT;
+ 		else if (force_nonblock)
+ 			flags |= MSG_DONTWAIT;
+@@ -3899,7 +3899,7 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock)
+ 		}
+ 
+ 		flags = req->sr_msg.msg_flags;
+-		if (flags & MSG_DONTWAIT)
++		if ((flags & MSG_DONTWAIT) || (req->file->f_flags & O_NONBLOCK))
+ 			req->flags |= REQ_F_NOWAIT;
+ 		else if (force_nonblock)
+ 			flags |= MSG_DONTWAIT;
+-- 
+2.26.2
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Jens Axboe
+

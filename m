@@ -2,67 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7031D1DD7D5
-	for <lists+io-uring@lfdr.de>; Thu, 21 May 2020 22:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B79B01DDC0E
+	for <lists+io-uring@lfdr.de>; Fri, 22 May 2020 02:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730310AbgEUUA5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 May 2020 16:00:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50570 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729780AbgEUUA5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 May 2020 16:00:57 -0400
-Received: from Galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA9A1C061A0E;
-        Thu, 21 May 2020 13:00:56 -0700 (PDT)
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jbrMP-0008Jj-44; Thu, 21 May 2020 22:00:09 +0200
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 57046100C2D; Thu, 21 May 2020 22:00:08 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Hannes Reinecke <hare@suse.com>, io-uring@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: io_uring vs CPU hotplug, was Re: [PATCH 5/9] blk-mq: don't set data->ctx and data->hctx in blk_mq_alloc_request_hctx
-In-Reply-To: <15f9f975-1baf-dc90-5730-00df08829523@kernel.dk>
-References: <20200520011823.GA415158@T590> <20200520030424.GI416136@T590> <20200520080357.GA4197@lst.de> <8f893bb8-66a9-d311-ebd8-d5ccd8302a0d@kernel.dk> <448d3660-0d83-889b-001f-a09ea53fa117@kernel.dk> <87tv0av1gu.fsf@nanos.tec.linutronix.de> <2a12a7aa-c339-1e51-de0d-9bc6ced14c64@kernel.dk> <87eereuudh.fsf@nanos.tec.linutronix.de> <20200521022746.GA730422@T590> <87367tvh6g.fsf@nanos.tec.linutronix.de> <20200521092340.GA751297@T590> <87pnaxt9nv.fsf@nanos.tec.linutronix.de> <15f9f975-1baf-dc90-5730-00df08829523@kernel.dk>
-Date:   Thu, 21 May 2020 22:00:08 +0200
-Message-ID: <87k115t5x3.fsf@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1726727AbgEVATx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 May 2020 20:19:53 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:42624 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbgEVATx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 May 2020 20:19:53 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04M0Hc2a047113;
+        Fri, 22 May 2020 00:19:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=TkIFON2IgZpeHHKLjub7/YpGISvP5nDDyrQMNgGDESw=;
+ b=bY2ZSbxF7faubK7FU+v8VjZ6udF2b+YZQrtd7U7YqEvWoWKmafEVfTCx8HFpXTcIJDge
+ UKj1QLp1CYrE6ewsd3TJjYnfw4bObV+ZRIANN1pvhWd4idhDyLen82Mx2p+aEM/0rrMg
+ eRgG3svIQ4byz0s944psFBxUm2n76cS54i2WMlkpBrifNIcWh9Or6Q9uuDodduH9H2Rs
+ Qi3ql4HBQvkSIyPnYmY22eAELTG2Q2vfxFFrCHxA2U4pYxfShsSm9xKFYJdB+jJY7atA
+ tJllxzvzNFcsdSj3A7u29govAujINOpqcsInFJ1b5a7u8/ZQOZB91xmO8mCS4N8Q8XcK EA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 31501rhs4h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 22 May 2020 00:19:51 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04M0JFNg119641;
+        Fri, 22 May 2020 00:19:50 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 312t3cs2tw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 May 2020 00:19:50 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 04M0JnVl013855;
+        Fri, 22 May 2020 00:19:49 GMT
+Received: from ca-ldom147.us.oracle.com (/10.129.68.131)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 May 2020 17:19:49 -0700
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+To:     axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/2] io_uring: call statx directly
+Date:   Thu, 21 May 2020 17:19:35 -0700
+Message-Id: <1590106777-5826-1-git-send-email-bijan.mottahedeh@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9628 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ phishscore=0 mlxscore=0 malwarescore=0 suspectscore=3 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2005220000
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9628 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=999 clxscore=1011 priorityscore=1501 cotscore=-2147483648
+ impostorscore=0 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
+ mlxscore=0 suspectscore=3 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2005220000
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Jens Axboe <axboe@kernel.dk> writes:
-> Again, this is mixing up io_uring and blk-mq. Maybe it's the fact that
-> both use 'ctx' that makes this confusing. On the blk-mq side, the 'ctx'
-> is the per-cpu queue context, for io_uring it's the io_uring instance.
+This patch set is a fix for the liburing statx test failure.
 
-Yes, that got me horribly confused. :)
+The test fails with a "Miscompare between io_uring and statx" error
+because the statx system call path has additional processing in vfs_statx():
 
-> io_sq_thread() doesn't care about any sort of percpu mappings, it's
-> happy as long as it'll keep running regardless of whether or not the
-> optional pinned CPU is selected and then offlined.
+        stat->result_mask |= STATX_MNT_ID;
+        if (path.mnt->mnt_root == path.dentry)
+                stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+        stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
 
-Fair enough.
+which then results in different result_mask values.
 
-So aside of the potential spin forever if the uring thread is lifted to
-an RT scheduling class, this looks all good.
+Allowing the system call to be invoked directly simplifies the io_uring
+interface and avoids potential future incompatibilities.  I'm not sure
+if there was other reasoning fort not doing so initially.
 
-Though I assume that if that thread is pinned and an admin pushs it into
-RT scheduling the spinning live lock can happen independent of cpu
-hotplug.
+One issue I cannot account for is the difference in "used" memory reported
+by free(1) after running the statx a large (10000) number of times.
 
-Thanks,
+The difference is significant ~100k and doesn't really change after
+dropping caches.
 
-        tglx
+I enabled memory leak detection and couldn't see anything related to the test.
+
+Bijan Mottahedeh (2):
+  statx: allow the system call to be invoked from the kernel
+  io_uring: call statx directly
+
+ fs/internal.h |  2 ++
+ fs/io_uring.c | 53 +++++++----------------------------------------------
+ fs/stat.c     | 32 +++++++++++++++++++-------------
+ 3 files changed, 28 insertions(+), 59 deletions(-)
+
+-- 
+1.8.3.1
+

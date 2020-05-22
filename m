@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8B9B1DF09D
-	for <lists+io-uring@lfdr.de>; Fri, 22 May 2020 22:24:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DECF41DF07C
+	for <lists+io-uring@lfdr.de>; Fri, 22 May 2020 22:23:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbgEVUYP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 May 2020 16:24:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52552 "EHLO
+        id S1731054AbgEVUXY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 May 2020 16:23:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731021AbgEVUXU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 22 May 2020 16:23:20 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7908C08C5C2
-        for <io-uring@vger.kernel.org>; Fri, 22 May 2020 13:23:19 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id b12so4815001plz.13
-        for <io-uring@vger.kernel.org>; Fri, 22 May 2020 13:23:19 -0700 (PDT)
+        with ESMTP id S1731046AbgEVUXW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 May 2020 16:23:22 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7C4BC061A0E
+        for <io-uring@vger.kernel.org>; Fri, 22 May 2020 13:23:21 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id d3so4835381pln.1
+        for <io-uring@vger.kernel.org>; Fri, 22 May 2020 13:23:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DT9kV8IQxC/D+uhFJsefv+iJT3TxYB4ReZ7s4ZFOil0=;
-        b=oluJiB9kWUp1jQn6GyLmG8WAT4m3lKYyoaZWl/EYudmvX4dpan5EUM8v9K2zM1/sA7
-         O3g1BfDhqlwNJGIPOYmdgugrSlOXilKAkvTeGRZUAyg+ubdWg9R3UvtbrB8ako657CER
-         OJig952C9v1iZGI2ZOQhlCVH6ErL4Ubx1gxOzYooasGRhDU0/Dt65urTRTAMtn67pdgQ
-         gEFv59qa47MpUvtQ+b2fWdA5BKzUAJwUSiYvK2yAGfBa9QmyVAXuxxZeZrInMJdae2Zk
-         mY5mg1VVp8HXmhTWFTyUwV1HXJ8c3ncMAaK9kqA0E1p1Xbei/hD9gc3x5raO9d4lvh4l
-         JTXw==
+        bh=TvoN8a3WZmoogVlnFEo2G3/jPQNtfJ5pQXb6VgaLeNI=;
+        b=BXbHdLw2u7+4v2OrPmYOPKCximguO5jiRJZaHaFHSVsvSvWUEzYysWoLSxdtoQAhVk
+         HQyzWIFFRo/mFUpenrzA6F5+44ecTT/9T8gl76XCfW+c2eXcPrv0LOIa2RbwWHAjv/HG
+         LlwUH90hb2MejF0kbDvRktH/1MKI00SlTe1zoChJciTQecxjsyBVAaG5NbzlfHNdSLJo
+         YxLoC+8l2OyrR2oOB0j03phI7j7zHKNXpqoNl19DH0baMd93TstNiHmfuTzQF3eeeuAS
+         2STt80Zor0RzeZK9zZbUp4rN1b+ryCJn37SAdistDxGmOl4mfgIIJQWGyWWE7PTGyUWw
+         nDKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DT9kV8IQxC/D+uhFJsefv+iJT3TxYB4ReZ7s4ZFOil0=;
-        b=DRwEZxIgXTsZsrMnRLVN4Avm4rCVIDjMoDzsPA3R6Wi+NERJEKM9UuItthruwZ+cOA
-         fS2Cn85X3PVZkupuM4a+XSNqVhAqo4D0LiVdYD45lxMoivJHrBPHWQRufHIBJeX1aH3O
-         XwyFmvuWg4rzev6yytckLP3d1195sDqZGYjz8hl5X+6WZ6W1oXiPl/yzM+7JOx12EPfU
-         Gceq8dF4a7PIPN9hScZ7UIt25dxVzcrJCRgK35LDDB2Xlb01+miG3KEwdhygpeOkVIWf
-         F1rylNeWseKBOG7yP4OSxGHgXoJwx9XSzv7u6uDyS+irqbz80m/KaiEr2aOo/yy6KaTk
-         oh2w==
-X-Gm-Message-State: AOAM533w6aZ0UNOh4OoAKlkIBofYhqdoJOfO1jCddHHwaJ8LZpg/7EGH
-        gVCUiaagUnJFQGt+dX8OlgzYCCwS6/s=
-X-Google-Smtp-Source: ABdhPJwRmiBEyWg7pdyhPoLxCIRWXwfGbwz6AlixTjtFq9I6DrZDtT63kPMRKd8YJFJc1xW8WultIQ==
-X-Received: by 2002:a17:90a:d3ce:: with SMTP id d14mr6342767pjw.46.1590178999200;
-        Fri, 22 May 2020 13:23:19 -0700 (PDT)
+        bh=TvoN8a3WZmoogVlnFEo2G3/jPQNtfJ5pQXb6VgaLeNI=;
+        b=dBh4uSD/pANrhWpYg66m3l2+oMDyvS4LdNQX1VWJYdGMnskyhxnQyz1yQxLE0SEBOM
+         J5YC1SNlylBiS7VLj0UwsNZlbdHuaEnpEg6xi+J5V5uF+UbMvHSSN0MAjp2Oxhce/vXI
+         XnRUcuYYPXPVmFVIIwCTKlxZhaF8JyreCrwvEJALp/weAXS/QvGy9ZT7cHGypgkxcbTI
+         ra67JjKZXtNHiq+H8b9yIPoR5U6Kt3BLkOcMlqOmBfvjeM/40ahEoPWvtHv98YTiOlMu
+         RUsytd2g7NRpmnUt5HdjzWPVpitmXB1U9dPTc5y5ZfXDCmIaDMtYH6fyYGR0Wvmqu8kG
+         iSzw==
+X-Gm-Message-State: AOAM530oMe277Che0NkUqGdrS8ZBV9vFd9MEbZ1Mu28kvlGVl+5zWkNR
+        6hSHuA57PQBDJ68EoLxRLkoICZlE0wo=
+X-Google-Smtp-Source: ABdhPJyVyvEl6dSL6IOBsJmpnycz4H0kN8LpN+dJacQOGflvQ6nocjSVsWNNdSmRA8eHxZtEk7xEXQ==
+X-Received: by 2002:a17:90a:6881:: with SMTP id a1mr6499268pjd.153.1590179000778;
+        Fri, 22 May 2020 13:23:20 -0700 (PDT)
 Received: from x1.lan ([2605:e000:100e:8c61:e0db:da55:b0a4:601])
-        by smtp.gmail.com with ESMTPSA id e19sm7295561pfn.17.2020.05.22.13.23.18
+        by smtp.gmail.com with ESMTPSA id e19sm7295561pfn.17.2020.05.22.13.23.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2020 13:23:18 -0700 (PDT)
+        Fri, 22 May 2020 13:23:20 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 01/11] block: read-ahead submission should imply no-wait as well
-Date:   Fri, 22 May 2020 14:23:01 -0600
-Message-Id: <20200522202311.10959-2-axboe@kernel.dk>
+Subject: [PATCH 02/11] mm: allow read-ahead with IOCB_NOWAIT set
+Date:   Fri, 22 May 2020 14:23:02 -0600
+Message-Id: <20200522202311.10959-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200522202311.10959-1-axboe@kernel.dk>
 References: <20200522202311.10959-1-axboe@kernel.dk>
@@ -64,27 +64,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-As read-ahead is opportunistic, don't block for request allocation.
+The read-ahead shouldn't block, so allow it to be done even if
+IOCB_NOWAIT is set in the kiocb.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/blk_types.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/filemap.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index ccb895f911b1..c296463c15eb 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -374,7 +374,8 @@ enum req_flag_bits {
- #define REQ_INTEGRITY		(1ULL << __REQ_INTEGRITY)
- #define REQ_FUA			(1ULL << __REQ_FUA)
- #define REQ_PREFLUSH		(1ULL << __REQ_PREFLUSH)
--#define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
-+#define REQ_RAHEAD		\
-+	((1ULL << __REQ_RAHEAD) | (1ULL << __REQ_NOWAIT))
- #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
- #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
- #define REQ_CGROUP_PUNT		(1ULL << __REQ_CGROUP_PUNT)
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 23a051a7ef0f..80747f1377d5 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2031,8 +2031,6 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 
+ 		page = find_get_page(mapping, index);
+ 		if (!page) {
+-			if (iocb->ki_flags & IOCB_NOWAIT)
+-				goto would_block;
+ 			page_cache_sync_readahead(mapping,
+ 					ra, filp,
+ 					index, last_index - index);
 -- 
 2.26.2
 

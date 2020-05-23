@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16ACD1DFA81
-	for <lists+io-uring@lfdr.de>; Sat, 23 May 2020 20:58:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 813BD1DFA69
+	for <lists+io-uring@lfdr.de>; Sat, 23 May 2020 20:58:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388056AbgEWS6p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 23 May 2020 14:58:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36580 "EHLO
+        id S1728595AbgEWS6H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 23 May 2020 14:58:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387593AbgEWS6F (ORCPT
+        with ESMTP id S2387867AbgEWS6F (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sat, 23 May 2020 14:58:05 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4883EC08C5C2
-        for <io-uring@vger.kernel.org>; Sat, 23 May 2020 11:58:04 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id e11so5800860pfn.3
-        for <io-uring@vger.kernel.org>; Sat, 23 May 2020 11:58:04 -0700 (PDT)
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B9A3C08C5C0
+        for <io-uring@vger.kernel.org>; Sat, 23 May 2020 11:58:05 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id t16so5754393plo.7
+        for <io-uring@vger.kernel.org>; Sat, 23 May 2020 11:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fQihCl0dLbHaElgiRrlXkibi9/E8OKsaJ7lF0uUyO/s=;
-        b=eaWQu5rIF65IIe8LNBzP1VhRXuhf/K8YuXmyjWuD3csLufjFBKBEZDaJbIB6RwswAQ
-         rDBP5Ms4v5GriXypOxasHghq7UnINAs0gaI86yQ/hNhK85oUXxh9tCLqJ+1ReVF5l/ix
-         tPRMxxn5OJgrvK94v8gqoHCYdCO3fgQMAXr+vr1QgQvnYsZJ/wdm4/qp2eaVtNDY2sgH
-         LDz+wH7VwwOwdN2+SX1xQCFbPnBR8BZ8SA2j96fkibGQYbL5STDJ4sUUYmLUjN6asTWW
-         kgkWS4yZfdrzVsXNsu8c22UnUv/buUDX4ks7m/nlfPqKjekl11LSVTWWEwpgJg0OiRni
-         cSww==
+        bh=hENt+q3Sn8CtA9tFAzdLO364i6JHcfhAdPtfDTKZjEw=;
+        b=IoUb1h2vKy+f0dtwmFTBDbGpNkk2wMhwXrlubxdrni8AO8E3DlT5YodBAgH9Bo0lAb
+         lW1WJtaBGZfKwnRBxn+qBzZenE2peUkQgkHh9d5nebmKYs9YNDiCd8dvOvjDpj5rbO/n
+         s0s7FihoaBqMkq0rzhjJcs2EnEd0abWfbDYSs2ekcPcCYLeB3N4zFnamKz+cGsxj8eNn
+         F1ChMVdkAafH9S53RqNorXpYaYMzFBN1kPsG+QlVPUMBDg9DTew082jQfzOc2ih2Qb/r
+         3M+n7gPxJSlSImnvwlieeQzY2ObPa3uuVP6JcfMVBkARc9hJaWxZEAFois6e3Jy0h+Ct
+         G8EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fQihCl0dLbHaElgiRrlXkibi9/E8OKsaJ7lF0uUyO/s=;
-        b=Npjs8XOVucUDRf3/oY8n6qBfZV5u4BnO9jCST3DaTxr0/QGB1C16zrWaIsob3dBg5U
-         8kdirwWKzCI+Ku4PIgv0+UdQ/OoAHInDwAytHaBTofMprBXWKg1rzUm3hH+m9poSq4ZH
-         SXryc1iTFaJPJdvYUTwVXS+7r6THnw/1NN/aCgX63w/IrhM5JxoAxA/xa0l1w+UQzN++
-         +UM79ci72DeW9TPX1sqFEDMIpopvFSLXNfFYIJ+StP3gSM4UScjC4cofOxAihESl4vPZ
-         0O6/0DJ9UO2RyPBh7W3IYWDHEXHz+Zqdh4S8v8DcJ+097eBI8/jve3c8EGuwNRAgbg8i
-         YTwA==
-X-Gm-Message-State: AOAM530Hd3xSBJkC3u6WLzvDjDURpfldVA9zqC8400TOxBvFnu+ybgWo
-        wYAkuCXqksAMpUu0BgXuo/gGWMYj8auFlw==
-X-Google-Smtp-Source: ABdhPJz9vqnGrCG9qj0wEnBzhySeVMrYNwRHjDaahSZXAg0rEuCiNKORSORIP7O+cxiJTr2yWj4euQ==
-X-Received: by 2002:a63:3114:: with SMTP id x20mr20316638pgx.52.1590260283492;
-        Sat, 23 May 2020 11:58:03 -0700 (PDT)
+        bh=hENt+q3Sn8CtA9tFAzdLO364i6JHcfhAdPtfDTKZjEw=;
+        b=amVVSjgFF+pBwGkwmhALQTsnYKuakCIIQHuhehYZHmXM3FG3QJFDH6RkIahvAU0xjW
+         Ui6MmQzKScfcV910EZbCkO2HwI6cdicPokbTKO9KhqQSp+TqbVPTrnx9RXdI3JduSzV4
+         G1mSrcb2kzVRUnljUbAX+hHtaPKCrNE4ScQhE62BCYBQHrD9ybmfFZgpn/db+lEutSQz
+         m2k+ICRgizpApLo256kRI9LOzHlqLbL053HD+a8mRINw5/31UcEKMVYXipk2JmU7py0k
+         jIL6tJjTQmyuurWdqTouErtoxP1uYDbd44M7szbxyzck5gHB254UTceXrFl6UYNlMdxl
+         BWkA==
+X-Gm-Message-State: AOAM531SpuKG5V1fcLOHPZWyDGSCYlZCqyptkk1juPiFTML7Cx908Ml8
+        bSYHAl1Z1cRVQnqXFF/Qp/tgcvlmkWA/kg==
+X-Google-Smtp-Source: ABdhPJz0eo745gK+bLfHgAeIdJu+l6vnctKVtOYWF0tbpRSPS4ji6QlFp3fk/3FEBowyABl4PmcaOg==
+X-Received: by 2002:a17:90b:1897:: with SMTP id mn23mr11837825pjb.84.1590260284702;
+        Sat, 23 May 2020 11:58:04 -0700 (PDT)
 Received: from x1.lan ([2605:e000:100e:8c61:c94:a67a:9209:cf5f])
-        by smtp.gmail.com with ESMTPSA id 25sm9297319pjk.50.2020.05.23.11.58.02
+        by smtp.gmail.com with ESMTPSA id 25sm9297319pjk.50.2020.05.23.11.58.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 May 2020 11:58:03 -0700 (PDT)
+        Sat, 23 May 2020 11:58:04 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 03/12] mm: abstract out wake_page_match() from wake_page_function()
-Date:   Sat, 23 May 2020 12:57:46 -0600
-Message-Id: <20200523185755.8494-4-axboe@kernel.dk>
+Subject: [PATCH 04/12] mm: add support for async page locking
+Date:   Sat, 23 May 2020 12:57:47 -0600
+Message-Id: <20200523185755.8494-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200523185755.8494-1-axboe@kernel.dk>
 References: <20200523185755.8494-1-axboe@kernel.dk>
@@ -64,115 +64,122 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-No functional changes in this patch, just in preparation for allowing
-more callers.
+Normally waiting for a page to become unlocked, or locking the page,
+requires waiting for IO to complete. Add support for lock_page_async()
+and wait_on_page_locked_async(), which are callback based instead. This
+allows a caller to get notified when a page becomes unlocked, rather
+than wait for it.
+
+We use the iocb->private field to pass in this necessary data for this
+to happen. struct wait_page_key is made public, and we define struct
+wait_page_async as the interface between the caller and the core.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/pagemap.h | 37 +++++++++++++++++++++++++++++++++++++
- mm/filemap.c            | 35 ++++-------------------------------
- 2 files changed, 41 insertions(+), 31 deletions(-)
+ include/linux/fs.h      |  2 ++
+ include/linux/pagemap.h |  9 +++++++++
+ mm/filemap.c            | 41 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 52 insertions(+)
 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7e84d823c6a8..82b989695ab9 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -314,6 +314,8 @@ enum rw_hint {
+ #define IOCB_SYNC		(1 << 5)
+ #define IOCB_WRITE		(1 << 6)
+ #define IOCB_NOWAIT		(1 << 7)
++/* iocb->private holds wait_page_async struct */
++#define IOCB_WAITQ		(1 << 8)
+ 
+ struct kiocb {
+ 	struct file		*ki_filp;
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index a8f7bd8ea1c6..53d980f2208d 100644
+index 53d980f2208d..d3e63c9c61ae 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
-@@ -456,6 +456,43 @@ static inline pgoff_t linear_page_index(struct vm_area_struct *vma,
- 	return pgoff;
- }
+@@ -495,6 +495,7 @@ static inline int wake_page_match(struct wait_page_queue *wait_page,
  
-+/* This has the same layout as wait_bit_key - see fs/cachefiles/rdwr.c */
-+struct wait_page_key {
-+	struct page *page;
-+	int bit_nr;
-+	int page_match;
-+};
-+
-+struct wait_page_queue {
-+	struct page *page;
-+	int bit_nr;
-+	wait_queue_entry_t wait;
-+};
-+
-+static inline int wake_page_match(struct wait_page_queue *wait_page,
-+				  struct wait_page_key *key)
-+{
-+	if (wait_page->page != key->page)
-+	       return 0;
-+	key->page_match = 1;
-+
-+	if (wait_page->bit_nr != key->bit_nr)
-+		return 0;
-+
-+	/*
-+	 * Stop walking if it's locked.
-+	 * Is this safe if put_and_wait_on_page_locked() is in use?
-+	 * Yes: the waker must hold a reference to this page, and if PG_locked
-+	 * has now already been set by another task, that task must also hold
-+	 * a reference to the *same usage* of this page; so there is no need
-+	 * to walk on to wake even the put_and_wait_on_page_locked() callers.
-+	 */
-+	if (test_bit(key->bit_nr, &key->page->flags))
-+		return -1;
-+
-+	return 1;
-+}
-+
  extern void __lock_page(struct page *page);
  extern int __lock_page_killable(struct page *page);
++extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
  extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+ 				unsigned int flags);
+ extern void unlock_page(struct page *page);
+@@ -531,6 +532,14 @@ static inline int lock_page_killable(struct page *page)
+ 	return 0;
+ }
+ 
++static inline int lock_page_async(struct page *page,
++				  struct wait_page_queue *wait)
++{
++	if (!trylock_page(page))
++		return __lock_page_async(page, wait);
++	return 0;
++}
++
+ /*
+  * lock_page_or_retry - Lock the page, unless this would block and the
+  * caller indicated that it can handle a retry.
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 80747f1377d5..e891b5bee8fd 100644
+index e891b5bee8fd..c746541b1d49 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -990,43 +990,16 @@ void __init pagecache_init(void)
- 	page_writeback_init();
+@@ -1183,6 +1183,42 @@ int wait_on_page_bit_killable(struct page *page, int bit_nr)
  }
+ EXPORT_SYMBOL(wait_on_page_bit_killable);
  
--/* This has the same layout as wait_bit_key - see fs/cachefiles/rdwr.c */
--struct wait_page_key {
--	struct page *page;
--	int bit_nr;
--	int page_match;
--};
--
--struct wait_page_queue {
--	struct page *page;
--	int bit_nr;
--	wait_queue_entry_t wait;
--};
--
- static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync, void *arg)
- {
- 	struct wait_page_key *key = arg;
- 	struct wait_page_queue *wait_page
- 		= container_of(wait, struct wait_page_queue, wait);
-+	int ret;
- 
--	if (wait_page->page != key->page)
--	       return 0;
--	key->page_match = 1;
--
--	if (wait_page->bit_nr != key->bit_nr)
--		return 0;
--
--	/*
--	 * Stop walking if it's locked.
--	 * Is this safe if put_and_wait_on_page_locked() is in use?
--	 * Yes: the waker must hold a reference to this page, and if PG_locked
--	 * has now already been set by another task, that task must also hold
--	 * a reference to the *same usage* of this page; so there is no need
--	 * to walk on to wake even the put_and_wait_on_page_locked() callers.
--	 */
--	if (test_bit(key->bit_nr, &key->page->flags))
--		return -1;
--
-+	ret = wake_page_match(wait_page, key);
-+	if (ret != 1)
-+		return ret;
- 	return autoremove_wake_function(wait, mode, sync, key);
++static int __wait_on_page_locked_async(struct page *page,
++				       struct wait_page_queue *wait, bool set)
++{
++	struct wait_queue_head *q = page_waitqueue(page);
++	int ret = 0;
++
++	wait->page = page;
++	wait->bit_nr = PG_locked;
++
++	spin_lock_irq(&q->lock);
++	if (set)
++		ret = !trylock_page(page);
++	else
++		ret = PageLocked(page);
++	if (ret) {
++		__add_wait_queue_entry_tail(q, &wait->wait);
++		SetPageWaiters(page);
++		if (set)
++			ret = !trylock_page(page);
++		else
++			ret = PageLocked(page);
++		/*
++		 * If we were succesful now, we know we're still on the
++		 * waitqueue as we're still under the lock. This means it's
++		 * safe to remove and return success, we know the callback
++		 * isn't going to trigger.
++		 */
++		if (!ret)
++			__remove_wait_queue(q, &wait->wait);
++		else
++			ret = -EIOCBQUEUED;
++	}
++	spin_unlock_irq(&q->lock);
++	return ret;
++}
++
+ /**
+  * put_and_wait_on_page_locked - Drop a reference and wait for it to be unlocked
+  * @page: The page to wait for.
+@@ -1345,6 +1381,11 @@ int __lock_page_killable(struct page *__page)
  }
+ EXPORT_SYMBOL_GPL(__lock_page_killable);
  
++int __lock_page_async(struct page *page, struct wait_page_queue *wait)
++{
++	return __wait_on_page_locked_async(page, wait, true);
++}
++
+ /*
+  * Return values:
+  * 1 - page is locked; mmap_sem is still held.
 -- 
 2.26.2
 

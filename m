@@ -2,181 +2,148 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9DCD1E0809
-	for <lists+io-uring@lfdr.de>; Mon, 25 May 2020 09:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA93B1E0BD7
+	for <lists+io-uring@lfdr.de>; Mon, 25 May 2020 12:31:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389037AbgEYHam (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 25 May 2020 03:30:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37114 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388947AbgEYHam (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 25 May 2020 03:30:42 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21894C061A0E;
-        Mon, 25 May 2020 00:30:42 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id l21so19490271eji.4;
-        Mon, 25 May 2020 00:30:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5rfonPZQAU0x3lqMl+lkcXTi06d4c3g+/vgihQ8n1yk=;
-        b=GsE5BPXqZHk5g2bIv7atz9cFunL+ERjc8DEd5zHUnRVF/WbDpO+y9I9tPHioCQU7lu
-         mPBaxLN7wDMHZ/p00Ge6cUxPD3+kSSQ8Pkl7CVF5pW2JR+DVMqkw1qzpf86+DO9IsVYO
-         2T8wazCGInUu2ltwdemVS99UXquRXV1o0hSxAGRn/BVbhZ60HHaqIkhMp5o1rAKrG/0M
-         k11GGA6U7v35eYX1zPSYQmjr/iVGPzbQKg/1qDdyCfi45y63theB8vCvCx8LL4/cxKcC
-         Wq3vPKmkNbtZDDfMG2c3M5G0Z/az7lAeci9fe3eWEAYyA0qz4qNQ5z9BZ0A8PZYCmXXl
-         bSlA==
+        id S2389720AbgEYKbC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 25 May 2020 06:31:02 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:22522 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389630AbgEYKbA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 25 May 2020 06:31:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590402658;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=Tjh+ltjJrGCNlnFU+WVmr7LcnYdZcqi33gjE65+/QHI=;
+        b=TyUplGI8c2ZP5h66rD62WcIHOW+kleU1/MP1bBsmvxgtf5RwECGsyKiZtX8t5G/ARCT2UZ
+        /m+dd5XgFuPO5V9ObveMZiUzbwUxDUQZFeoXYewrQd3sJ5cputqpRr22ynEDJ+XUCvzlEs
+        gFqSYMZd+uIV6+EV3wCvIeoZPkFNSOA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-414-WsZNsr7zP8SIzmCMmxHDAg-1; Mon, 25 May 2020 06:30:57 -0400
+X-MC-Unique: WsZNsr7zP8SIzmCMmxHDAg-1
+Received: by mail-wm1-f69.google.com with SMTP id p24so1883075wmc.1
+        for <io-uring@vger.kernel.org>; Mon, 25 May 2020 03:30:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=5rfonPZQAU0x3lqMl+lkcXTi06d4c3g+/vgihQ8n1yk=;
-        b=JwZvKyzANRPZ3ipK9Rw7oa57rvRnPecFg0OVeldv8RW1FOEuVJSlIe9wlS7II5aLWn
-         +BIvHqwyKNReveLuytpUehzD5TRpBGuvFKNjR+E3ZndY+egJUwjZ8PuykZBy6qMIHJ6n
-         BRPSFkxOrgHUU0AidkL0VWonF5+S8EkA+W0vKI9uYKL36ue6/D0Y8IChKSh0GRqnuFlO
-         vGIbRE3m8ojTgD8KnNjEyjUXdCvWys/WLGC/W+wTxgAvOXWrZCC5bSnMhs4S8ujO/+XK
-         xRWCP/PkHarYisy11ijd8naeL3vV1ViCqLwf/wAe4/BhHBEqgRaYNBInZN1g+vsY6FWa
-         JuOA==
-X-Gm-Message-State: AOAM530ijv/yfrZDbFNXlvP9i5Yov5dhhue9Y0msEe+wonXYJj3sOAJK
-        oooIzNfVwMJCSMiL3gzJ/O4=
-X-Google-Smtp-Source: ABdhPJwQG0i2iSkYkGK5TtEeu4oyrWWXUm6C79+dCl1PI+StIwF2kmfIaKdd41djbQ6Tg0qjmXQ8Kw==
-X-Received: by 2002:a17:906:3d69:: with SMTP id r9mr17067535ejf.20.1590391840736;
-        Mon, 25 May 2020 00:30:40 -0700 (PDT)
-Received: from [192.168.43.221] ([46.191.65.149])
-        by smtp.gmail.com with ESMTPSA id 25sm14622608ejy.32.2020.05.25.00.30.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 May 2020 00:30:40 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20200523185755.8494-1-axboe@kernel.dk>
- <20200523185755.8494-13-axboe@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH 12/12] io_uring: support true async buffered reads, if
- file provides it
-Message-ID: <8d429d6b-81ee-0a28-8533-2e1d4faa6b37@gmail.com>
-Date:   Mon, 25 May 2020 10:29:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=Tjh+ltjJrGCNlnFU+WVmr7LcnYdZcqi33gjE65+/QHI=;
+        b=h58YSysYuj/bI798YeZDbbfCvauEF1lzL1yuz1Uv5ir2RCFQmW8KQQWE8sswxcRkJX
+         tqUOrUAPspnzhJN1PrLjGHRH1RsOxxcFobkqXfyXiXHDoWjpYyPC2yGtDp2Jb8ohZDZ/
+         2ukQvxh4n9QEt4LOvfuG4hY6SYVe5BQAv9lTQ0gkDfOldTsWVU89KPtBTnSuIcjwsJ6S
+         HBb+YHXQgtllTNwg411E7rhGtfjIPph4aw3OImfGlgtYuOANGxyrA/0nmgiSVKvr9pnW
+         MAQNH7CzB1OgKKdG6QJ17cD4Dm19disPNTC0j8/mjAeZ0yxCdtRFUhXbmDtwiZxCgB5w
+         2edA==
+X-Gm-Message-State: AOAM530EDBR/1kFfW6TzR1IoEcsEUewcFtQ6HsKaWh/or8/O99XWfxSb
+        pdw6514g/Rmt8xESiQcMh8/EvMBAgSp3O8I++fovs0tDGRrNOv5lX82Sxb5uOvBHSk/iFdAq/Vd
+        y3r5fLyJm8rcZHqGSHCs=
+X-Received: by 2002:a5d:40d2:: with SMTP id b18mr12013300wrq.131.1590402655377;
+        Mon, 25 May 2020 03:30:55 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzgOrrF27/Hn0VM1GmU3rUqzoyOepUfPocXD27ULwMBIu2ooviKdrTTzCDQq+mFLo1bwXdzwQ==
+X-Received: by 2002:a5d:40d2:: with SMTP id b18mr12013273wrq.131.1590402655030;
+        Mon, 25 May 2020 03:30:55 -0700 (PDT)
+Received: from steredhat ([79.49.207.108])
+        by smtp.gmail.com with ESMTPSA id o15sm4356417wmm.31.2020.05.25.03.30.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 May 2020 03:30:54 -0700 (PDT)
+Date:   Mon, 25 May 2020 12:30:51 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: io_uring: BUG: kernel NULL pointer dereference
+Message-ID: <20200525103051.lztpbl33hsgv6grz@steredhat>
 MIME-Version: 1.0
-In-Reply-To: <20200523185755.8494-13-axboe@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 23/05/2020 21:57, Jens Axboe wrote:
-> If the file is flagged with FMODE_BUF_RASYNC, then we don't have to punt
-> the buffered read to an io-wq worker. Instead we can rely on page
-> unlocking callbacks to support retry based async IO. This is a lot more
-> efficient than doing async thread offload.
-> 
-> The retry is done similarly to how we handle poll based retry. From
-> the unlock callback, we simply queue the retry to a task_work based
-> handler.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/io_uring.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 99 insertions(+)
-> 
-...
-> +
-> +	init_task_work(&rw->task_work, io_async_buf_retry);
-> +	/* submit ref gets dropped, acquire a new one */
-> +	refcount_inc(&req->refs);
-> +	tsk = req->task;
-> +	ret = task_work_add(tsk, &rw->task_work, true);
-> +	if (unlikely(ret)) {
-> +		/* queue just for cancelation */
-> +		init_task_work(&rw->task_work, io_async_buf_cancel);
-> +		tsk = io_wq_get_task(req->ctx->io_wq);
+Hi Jens,
+using fio and io_uring engine with SQPOLL and IOPOLL enabled, I had the
+following issue that happens after 4/5 seconds fio has started.
+Initially I had this issue on Linux v5.7-rc6, but I just tried also
+Linux v5.7-rc7:
 
-IIRC, task will be put somewhere around io_free_req(). Then shouldn't here be
-some juggling with reassigning req->task with task_{get,put}()?
+[   75.343479] nvme nvme0: pci function 0000:04:00.0
+[   75.355110] nvme nvme0: 16/0/15 default/read/poll queues
+[   75.364946]  nvme0n1: p1
+[   82.739285] BUG: kernel NULL pointer dereference, address: 00000000000003b0
+[   82.747054] #PF: supervisor read access in kernel mode
+[   82.752785] #PF: error_code(0x0000) - not-present page
+[   82.758516] PGD 800000046c042067 P4D 800000046c042067 PUD 461fcf067 PMD 0 
+[   82.766186] Oops: 0000 [#1] SMP PTI
+[   82.770076] CPU: 2 PID: 1307 Comm: io_uring-sq Not tainted 5.7.0-rc7 #11
+[   82.777939] Hardware name: Dell Inc. PowerEdge R430/03XKDV, BIOS 1.2.6 06/08/2015
+[   82.786290] RIP: 0010:task_numa_work+0x4f/0x2c0
+[   82.791341] Code: 18 4c 8b 25 e3 f0 8e 01 49 8b 9f 00 08 00 00 4d 8b af c8 00 00 00 49 39 c7 0f 85 e8 01 00 00 48 89 6d 00 41 f6 47 24 04 75 67 <48> 8b ab b0 03 00 00 48 85 ed 75 16 8b 3d 6f 68 94 01 e8 aa fb 04
+[   82.812296] RSP: 0018:ffffaaa98415be10 EFLAGS: 00010246
+[   82.818123] RAX: ffff953ee36b8000 RBX: 0000000000000000 RCX: 0000000000000000
+[   82.826083] RDX: 0000000000000001 RSI: ffff953ee36b8000 RDI: ffff953ee36b8dc8
+[   82.834042] RBP: ffff953ee36b8dc8 R08: 00000000001200db R09: ffff9542e3ad2e08
+[   82.842002] R10: ffff9542ecd20070 R11: 0000000000000000 R12: 00000000fffca35b
+[   82.849962] R13: 000000012a06a949 R14: ffff9542e3ad2c00 R15: ffff953ee36b8000
+[   82.857922] FS:  0000000000000000(0000) GS:ffff953eefc40000(0000) knlGS:0000000000000000
+[   82.866948] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   82.873357] CR2: 00000000000003b0 CR3: 000000046bbd0002 CR4: 00000000001606e0
+[   82.881316] Call Trace:
+[   82.884046]  task_work_run+0x68/0xa0
+[   82.888026]  io_sq_thread+0x252/0x3d0
+[   82.892111]  ? finish_wait+0x80/0x80
+[   82.896097]  kthread+0xf9/0x130
+[   82.899598]  ? __ia32_sys_io_uring_enter+0x370/0x370
+[   82.905134]  ? kthread_park+0x90/0x90
+[   82.909217]  ret_from_fork+0x35/0x40
+[   82.913203] Modules linked in: nvme nvme_core xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_reject_ipv4 tun bridge stp llc ip6table_mangle ip6table_nat iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter rfkill sunrpc intel_rapl_msr intel_rapl_common sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul iTCO_wdt crc32_pclmul dcdbas ghash_clmulni_intel iTCO_vendor_support intel_cstate intel_uncore pcspkr intel_rapl_perf ipmi_ssif ixgbe mei_me mdio tg3 dca mei lpc_ich ipmi_si acpi_power_meter ipmi_devintf ipmi_msghandler ip_tables xfs libcrc32c mgag200 drm_kms_helper drm_vram_helper drm_ttm_helper ttm drm megaraid_sas crc32c_intel i2c_algo_bit wmi
+[   82.990613] CR2: 00000000000003b0
+[   82.994307] ---[ end trace 6d1725e8f60fece7 ]---
+[   83.039157] RIP: 0010:task_numa_work+0x4f/0x2c0
+[   83.044211] Code: 18 4c 8b 25 e3 f0 8e 01 49 8b 9f 00 08 00 00 4d 8b af c8 00 00 00 49 39 c7 0f 85 e8 01 00 00 48 89 6d 00 41 f6 47 24 04 75 67 <48> 8b ab b0 03 00 00 48 85 ed 75 16 8b 3d 6f 68 94 01 e8 aa fb 04
+[   83.065165] RSP: 0018:ffffaaa98415be10 EFLAGS: 00010246
+[   83.070993] RAX: ffff953ee36b8000 RBX: 0000000000000000 RCX: 0000000000000000
+[   83.078953] RDX: 0000000000000001 RSI: ffff953ee36b8000 RDI: ffff953ee36b8dc8
+[   83.086913] RBP: ffff953ee36b8dc8 R08: 00000000001200db R09: ffff9542e3ad2e08
+[   83.094873] R10: ffff9542ecd20070 R11: 0000000000000000 R12: 00000000fffca35b
+[   83.102833] R13: 000000012a06a949 R14: ffff9542e3ad2c00 R15: ffff953ee36b8000
+[   83.110793] FS:  0000000000000000(0000) GS:ffff953eefc40000(0000) knlGS:0000000000000000
+[   83.119821] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   83.126230] CR2: 00000000000003b0 CR3: 000000046bbd0002 CR4: 00000000001606e0
+[  113.113624] nvme nvme0: I/O 219 QID 19 timeout, aborting
+[  113.120135] nvme nvme0: Abort status: 0x0
 
-> +		task_work_add(tsk, &rw->task_work, true);
-> +	}
-> +	wake_up_process(tsk);
-> +	return 1;
-> +}
-...
->  static int io_read(struct io_kiocb *req, bool force_nonblock)
->  {
->  	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
-> @@ -2601,6 +2696,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->  	if (!ret) {
->  		ssize_t ret2;
->  
-> +retry:
->  		if (req->file->f_op->read_iter)
->  			ret2 = call_read_iter(req->file, kiocb, &iter);
->  		else
-> @@ -2619,6 +2715,9 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->  			if (!(req->flags & REQ_F_NOWAIT) &&
->  			    !file_can_poll(req->file))
->  				req->flags |= REQ_F_MUST_PUNT;
-> +			if (io_rw_should_retry(req))
+Steps I did:
 
-It looks like a state machine with IOCB_WAITQ and gotos. Wouldn't it be cleaner
-to call call_read_iter()/loop_rw_iter() here directly instead of "goto retry" ?
+  $ modprobe nvme poll_queues=15
+  $ fio fio_iou.job
 
-BTW, can this async stuff return -EAGAIN ?
+This is the fio_iou.job that I used:
 
-> +				goto retry;
-> +			kiocb->ki_flags &= ~IOCB_WAITQ;
->  			return -EAGAIN;
->  		}
->  	}
-> 
+  [global]
+  filename=/dev/nvme0n1
+  ioengine=io_uring
+  direct=1
+  runtime=60
+  ramp_time=5
+  gtod_reduce=1
 
--- 
-Pavel Begunkov
+  cpus_allowed=4
+
+  [job1]
+  rw=randread
+  bs=4K
+  iodepth=1
+  registerfiles
+  sqthread_poll=1
+  sqthread_poll_cpu=2
+  hipri
+
+I'll try to bisect, but I have some suspicions about:
+b41e98524e42 io_uring: add per-task callback handler
+
+Thanks,
+Stefano
+

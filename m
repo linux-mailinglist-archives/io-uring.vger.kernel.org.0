@@ -2,183 +2,155 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D004C1E101E
-	for <lists+io-uring@lfdr.de>; Mon, 25 May 2020 16:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBA7A1E102D
+	for <lists+io-uring@lfdr.de>; Mon, 25 May 2020 16:13:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390817AbgEYOKb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 25 May 2020 10:10:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43416 "EHLO
+        id S2390877AbgEYOMz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 25 May 2020 10:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388862AbgEYOKa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 25 May 2020 10:10:30 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C365C05BD43
-        for <io-uring@vger.kernel.org>; Mon, 25 May 2020 07:10:30 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id 5so41258pjd.0
-        for <io-uring@vger.kernel.org>; Mon, 25 May 2020 07:10:30 -0700 (PDT)
+        with ESMTP id S2388855AbgEYOMy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 25 May 2020 10:12:54 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64478C061A0E;
+        Mon, 25 May 2020 07:12:54 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id n24so20622725ejd.0;
+        Mon, 25 May 2020 07:12:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OcO07edtTN+YC22DMtvn7bgGQYHqEWV0DlbpUjGbS7Y=;
-        b=T+ZO3oLnmzEpqyJX3Z/S9uQ8MwYvxh1EQVM5sv1GujR55scKT8JXd5+I6ACdXu+aJG
-         ZCVzlmaYKXlBgtFRhM6B4nEgVBlkmZ9vs8dwsYlEJw8gTH55fG2/q2DPyK95fZ3pf8JV
-         uYWSY/iGNhlwnSz8igyUBR/nwqL8oiupeYURpk5jqVHU/JQj8KZS5a/oYy+6x/3jDZip
-         BItBtIW7+wMWwGU/gEktPgaw1IoQsOD+SdJtN09uUk7fMHDaS39uq1usKwH+WUPfoSA9
-         n1cGeACE3gNYEIOcGaUg3FdgU9d7y1aPm/8KQPF9pN5SGF1oFmN2Qoq9iPCXSJ/TzJJo
-         gX5w==
+        bh=AqVKpjpJ/UFk+n4oSRZ3Zn0OGgbKIAFSfdMT8GO0gIo=;
+        b=Nr2pEUoLJXWhk1181uvxz9kk+N8NWnRAMnFC0XDttH9ZM0dMCX7vksi2ybJEeGIr8O
+         XkK0YPIA5wEskAfwaAg2mt6dDUpOkRf4QgEDCnXpwA6VyvtlpOy/2q557pTF2mrBRvSV
+         xI09oeHxwkNnLZ+xOSYo4De3PFcFX6mUvrD84jjF50MYlTYT6etzXvi3xaV/mzgcIrvf
+         hBl8RsY49LbWuWn1+dc75Wpm4uLtCez9d3Yec5WqcE2HxPIF9k3/k2Jzr5iGo+zsgqaQ
+         s1BKVpmH4ef7sWy277i6duTzmAN3mxVGOnQew9cL0VMd9isJfsbJBSgTLLYew4XEKlfr
+         FhwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OcO07edtTN+YC22DMtvn7bgGQYHqEWV0DlbpUjGbS7Y=;
-        b=iGmQdVyRzYyL6jcVRNsVgNIYhltC3t1ZApte275bnGxc2VA2Kp/hkGkDunpo7hKziX
-         ghUFWrVfZ8Lce7AyHR7ifF0ABKHx3KL6uG5cJbSvitf/yebuGqqPLZJq1SDjItt1J9jG
-         5Urpp4aq2CaWlTTES2+JNVwdxy0Cfml6h7p7cWdvBbEopg8xvaJWKwtan0k64/G80QWW
-         Hd98XdRHEYSGksubxLts+SuDVBe75o/CXx4Qdk1zCpzr/Ww1mQXw+TmdsdR2I2Bu9Yn0
-         fAkhRgtP094VnyDuXdZxq7HduYsQ5N9F2qMe+ZkPyyAVclcJF57RvLZZ6EjESFbkS8nP
-         t3Ew==
-X-Gm-Message-State: AOAM532r5l83TutpM3T94DaK9BjmcaXJqXM2X9ogkA43nY+qyoR46Llr
-        +Oa+pUeq5F3kZDH6Fg589jmIKw==
-X-Google-Smtp-Source: ABdhPJzySSFNKQEKywjSi1ASg5xPkGeRVH8c+Jb4249ZlsxLFFSFH1lssoODFU1LFU8WtkyAuwQz2A==
-X-Received: by 2002:a17:90a:dd44:: with SMTP id u4mr19310112pjv.132.1590415829858;
-        Mon, 25 May 2020 07:10:29 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:a8a5:6c21:23f4:ef58? ([2605:e000:100e:8c61:a8a5:6c21:23f4:ef58])
-        by smtp.gmail.com with ESMTPSA id 3sm13526266pfo.27.2020.05.25.07.10.28
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=AqVKpjpJ/UFk+n4oSRZ3Zn0OGgbKIAFSfdMT8GO0gIo=;
+        b=GFnqDmVR9E9lEQgbUwlhG9jkqkxWRhcDeneZDsMVcZUXBfkrMvDx1v08iy7EUJMlOl
+         yuHTo4AzpDm9iEWg/PyxpRc7jy4NEEKgYV1GpkloCt4P+EH0c4gyIwsuqQ+p7pBzYtn5
+         6ewGk7V0xEq9Woj3Tw2co4kt0BPCuYixxwXHIG2ESkZ4hco5pE2riCgQPu/VtR/OlRPT
+         w7EIW9p1Ecwrkx2Z3lnc9MOiSimezOvP+7REnvlASDv1E8dxhFqE0uqi1mMmu8uGAA7I
+         +5WqnCZ9HeAcrvtXOSesWnOqszaXGUloiTw5IT5OWNKR9tU3Ayujdx3rcUkZEQzSf0NV
+         A88A==
+X-Gm-Message-State: AOAM533lbJvLQ/cXvuattQPTq93jC1/T1a8FXYKGKMq4KfK7Mwx8MK30
+        kVFZB2Zfed58NLnXQB8wRWuMH4wE
+X-Google-Smtp-Source: ABdhPJxLP6ArLShwYRpGh2pXtx6NvMhyStMIlnl1WZVyLLpjJ3seCjg9fDH3B00fAgIVMqeUtnEKxw==
+X-Received: by 2002:a17:906:1088:: with SMTP id u8mr19922910eju.428.1590415972828;
+        Mon, 25 May 2020 07:12:52 -0700 (PDT)
+Received: from [192.168.43.221] ([46.191.65.149])
+        by smtp.gmail.com with ESMTPSA id f5sm16776122edj.1.2020.05.25.07.12.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 May 2020 07:10:29 -0700 (PDT)
-Subject: Re: io_uring: BUG: kernel NULL pointer dereference
-To:     Stefano Garzarella <sgarzare@redhat.com>
+        Mon, 25 May 2020 07:12:52 -0700 (PDT)
+To:     Stefano Garzarella <sgarzare@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
+        linux-fsdevel@vger.kernel.org
 References: <20200525103051.lztpbl33hsgv6grz@steredhat>
  <20200525134552.5dyldwmeks3t6vj6@steredhat>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b1689238-b236-cc93-9909-c09120e7975c@kernel.dk>
-Date:   Mon, 25 May 2020 08:10:27 -0600
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: io_uring: BUG: kernel NULL pointer dereference
+Message-ID: <9e5fd20b-3427-7608-4504-455fb300c949@gmail.com>
+Date:   Mon, 25 May 2020 17:11:37 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
 In-Reply-To: <20200525134552.5dyldwmeks3t6vj6@steredhat>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/25/20 7:45 AM, Stefano Garzarella wrote:
+On 25/05/2020 16:45, Stefano Garzarella wrote:
 > On Mon, May 25, 2020 at 12:30:51PM +0200, Stefano Garzarella wrote:
->> Hi Jens,
->> using fio and io_uring engine with SQPOLL and IOPOLL enabled, I had the
->> following issue that happens after 4/5 seconds fio has started.
->> Initially I had this issue on Linux v5.7-rc6, but I just tried also
->> Linux v5.7-rc7:
->>
->> [   75.343479] nvme nvme0: pci function 0000:04:00.0
->> [   75.355110] nvme nvme0: 16/0/15 default/read/poll queues
->> [   75.364946]  nvme0n1: p1
->> [   82.739285] BUG: kernel NULL pointer dereference, address: 00000000000003b0
->> [   82.747054] #PF: supervisor read access in kernel mode
->> [   82.752785] #PF: error_code(0x0000) - not-present page
->> [   82.758516] PGD 800000046c042067 P4D 800000046c042067 PUD 461fcf067 PMD 0 
->> [   82.766186] Oops: 0000 [#1] SMP PTI
->> [   82.770076] CPU: 2 PID: 1307 Comm: io_uring-sq Not tainted 5.7.0-rc7 #11
->> [   82.777939] Hardware name: Dell Inc. PowerEdge R430/03XKDV, BIOS 1.2.6 06/08/2015
->> [   82.786290] RIP: 0010:task_numa_work+0x4f/0x2c0
->> [   82.791341] Code: 18 4c 8b 25 e3 f0 8e 01 49 8b 9f 00 08 00 00 4d 8b af c8 00 00 00 49 39 c7 0f 85 e8 01 00 00 48 89 6d 00 41 f6 47 24 04 75 67 <48> 8b ab b0 03 00 00 48 85 ed 75 16 8b 3d 6f 68 94 01 e8 aa fb 04
->> [   82.812296] RSP: 0018:ffffaaa98415be10 EFLAGS: 00010246
->> [   82.818123] RAX: ffff953ee36b8000 RBX: 0000000000000000 RCX: 0000000000000000
->> [   82.826083] RDX: 0000000000000001 RSI: ffff953ee36b8000 RDI: ffff953ee36b8dc8
->> [   82.834042] RBP: ffff953ee36b8dc8 R08: 00000000001200db R09: ffff9542e3ad2e08
->> [   82.842002] R10: ffff9542ecd20070 R11: 0000000000000000 R12: 00000000fffca35b
->> [   82.849962] R13: 000000012a06a949 R14: ffff9542e3ad2c00 R15: ffff953ee36b8000
->> [   82.857922] FS:  0000000000000000(0000) GS:ffff953eefc40000(0000) knlGS:0000000000000000
->> [   82.866948] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   82.873357] CR2: 00000000000003b0 CR3: 000000046bbd0002 CR4: 00000000001606e0
->> [   82.881316] Call Trace:
->> [   82.884046]  task_work_run+0x68/0xa0
->> [   82.888026]  io_sq_thread+0x252/0x3d0
->> [   82.892111]  ? finish_wait+0x80/0x80
->> [   82.896097]  kthread+0xf9/0x130
->> [   82.899598]  ? __ia32_sys_io_uring_enter+0x370/0x370
->> [   82.905134]  ? kthread_park+0x90/0x90
->> [   82.909217]  ret_from_fork+0x35/0x40
->> [   82.913203] Modules linked in: nvme nvme_core xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_reject_ipv4 tun bridge stp llc ip6table_mangle ip6table_nat iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter rfkill sunrpc intel_rapl_msr intel_rapl_common sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul iTCO_wdt crc32_pclmul dcdbas ghash_clmulni_intel iTCO_vendor_support intel_cstate intel_uncore pcspkr intel_rapl_perf ipmi_ssif ixgbe mei_me mdio tg3 dca mei lpc_ich ipmi_si acpi_power_meter ipmi_devintf ipmi_msghandler ip_tables xfs libcrc32c mgag200 drm_kms_helper drm_vram_helper drm_ttm_helper ttm drm megaraid_sas crc32c_intel i2c_algo_bit wmi
->> [   82.990613] CR2: 00000000000003b0
->> [   82.994307] ---[ end trace 6d1725e8f60fece7 ]---
->> [   83.039157] RIP: 0010:task_numa_work+0x4f/0x2c0
->> [   83.044211] Code: 18 4c 8b 25 e3 f0 8e 01 49 8b 9f 00 08 00 00 4d 8b af c8 00 00 00 49 39 c7 0f 85 e8 01 00 00 48 89 6d 00 41 f6 47 24 04 75 67 <48> 8b ab b0 03 00 00 48 85 ed 75 16 8b 3d 6f 68 94 01 e8 aa fb 04
->> [   83.065165] RSP: 0018:ffffaaa98415be10 EFLAGS: 00010246
->> [   83.070993] RAX: ffff953ee36b8000 RBX: 0000000000000000 RCX: 0000000000000000
->> [   83.078953] RDX: 0000000000000001 RSI: ffff953ee36b8000 RDI: ffff953ee36b8dc8
->> [   83.086913] RBP: ffff953ee36b8dc8 R08: 00000000001200db R09: ffff9542e3ad2e08
->> [   83.094873] R10: ffff9542ecd20070 R11: 0000000000000000 R12: 00000000fffca35b
->> [   83.102833] R13: 000000012a06a949 R14: ffff9542e3ad2c00 R15: ffff953ee36b8000
->> [   83.110793] FS:  0000000000000000(0000) GS:ffff953eefc40000(0000) knlGS:0000000000000000
->> [   83.119821] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   83.126230] CR2: 00000000000003b0 CR3: 000000046bbd0002 CR4: 00000000001606e0
->> [  113.113624] nvme nvme0: I/O 219 QID 19 timeout, aborting
->> [  113.120135] nvme nvme0: Abort status: 0x0
->>
->> Steps I did:
->>
->>   $ modprobe nvme poll_queues=15
->>   $ fio fio_iou.job
->>
->> This is the fio_iou.job that I used:
->>
->>   [global]
->>   filename=/dev/nvme0n1
->>   ioengine=io_uring
->>   direct=1
->>   runtime=60
->>   ramp_time=5
->>   gtod_reduce=1
->>
->>   cpus_allowed=4
->>
->>   [job1]
->>   rw=randread
->>   bs=4K
->>   iodepth=1
->>   registerfiles
->>   sqthread_poll=1
->>   sqthread_poll_cpu=2
->>   hipri
 >>
 >> I'll try to bisect, but I have some suspicions about:
 >> b41e98524e42 io_uring: add per-task callback handler
 > 
 > I confirm, the bisection ended with this:
 > b41e98524e424d104aa7851d54fd65820759875a is the first bad commit
+> 
+> I'll try to figure out what happened.
 
-I think the odd part here is that task_tick_numa() checks for a
-valid mm, and queues work if the task has it. But for the sqpoll
-kthread, the mm can come and go. By the time the task work is run,
-the mm is gone and we oops on current->mm == NULL.
+Hmm, I'd start with temporary un-union req->task_work.
+Could you give it a try?
 
-I think the below should fix it:
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 538ba5d94e99..24a8557f001f 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -2908,7 +2908,8 @@ static void task_tick_numa(struct rq *rq, struct task_struct *curr)
- 	/*
- 	 * We don't care about NUMA placement if we don't have memory.
- 	 */
--	if (!curr->mm || (curr->flags & PF_EXITING) || work->next != work)
-+	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) ||
-+	    work->next != work)
- 		return;
- 
- 	/*
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index e173cea621de..cfab79254d0a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -645,7 +645,7 @@ struct io_kiocb {
+
+ 	struct percpu_ref	*fixed_file_refs;
+
+-	union {
++	// union {
+ 		/*
+ 		 * Only commands that never go async can use the below fields,
+ 		 * obviously. Right now only IORING_OP_POLL_ADD uses them, and
+@@ -658,7 +658,7 @@ struct io_kiocb {
+ 			struct async_poll	*apoll;
+ 		};
+ 		struct io_wq_work	work;
+-	};
++	// };
+ };
+
+ #define IO_PLUG_THRESHOLD		2
+
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

@@ -2,88 +2,192 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7987E1E2EDD
-	for <lists+io-uring@lfdr.de>; Tue, 26 May 2020 21:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BC701E2F47
+	for <lists+io-uring@lfdr.de>; Tue, 26 May 2020 21:51:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390995AbgEZTcZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 May 2020 15:32:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37520 "EHLO
+        id S2389679AbgEZTv3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 May 2020 15:51:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390822AbgEZTcX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 May 2020 15:32:23 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCC62C03E96D
-        for <io-uring@vger.kernel.org>; Tue, 26 May 2020 12:32:23 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id i17so586957pli.13
-        for <io-uring@vger.kernel.org>; Tue, 26 May 2020 12:32:23 -0700 (PDT)
+        with ESMTP id S2389569AbgEZTv1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 May 2020 15:51:27 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00D03C03E96F
+        for <io-uring@vger.kernel.org>; Tue, 26 May 2020 12:51:27 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id x11so8123530plv.9
+        for <io-uring@vger.kernel.org>; Tue, 26 May 2020 12:51:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=mPMBSEoFG86rRhFkn52ippvpiiEp7k8qBw0SEV6Hwgk=;
-        b=aQdEXYgWnpFMIdZ08nHk9kPfqgbCMAss4Khem6x2kPel3ySPuXs9salp24OuZ41WyQ
-         fy/vR17C00aDRAvoC8WucIRTchIRjt7yZ/j+f5o+LiQk+tNp5DOVzt9sM/YwzzbURIQz
-         FE8lN9TD6Brz+iwZI0XWn1ZkXBxnucTstQIZbHOfrRN2V8TwjG4xlb8gmLBBl5haz63R
-         5W3HqOfzUVxq7AV+rYEW+fYlmVYEqFGioKV5WSDgoUICH5TPlCMLiL17N6sB6gCcKBiu
-         TAEN1opbo0YbMqX6l7DjDw8BlsZdfjE8dji6pvKUeMJncgplbIsETcJLCMa11ct3Iawv
-         7EUQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3vgocQPX0Uu624PG2Fri8o8+lrHBaWtJW7f03lBEuxc=;
+        b=gwggRYZamJOMYInIOlO/Q04SnoVGCJjFg/6Nj8AbQjUNnZAVI79HRFs1KsrsW8B037
+         41oP5k8Rj1YW3C67iTh+6CF16JmtkpfM8q9oSY1dsdaXfNSFE9Ssnus5ww52WkER1Ny+
+         vPaijD2dFGuGk6dDwcgcMU8RLs191JoUlYWjpEIO1MPOv2WJ6Uf0eypTxpyja4WN3sFj
+         19XkX+HMt4c5jqAILmUwqMlJEyjrGTBEc+yUA1CLaBAO00de/mOAl2uj49T1QZQkK1Rz
+         7at4zJtB1S2w7ZfT5YQI5haZWA4wRfav9yfraSTA7fVaI9gL0OhfY2j5MXe5F/IsSfGT
+         NyvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=mPMBSEoFG86rRhFkn52ippvpiiEp7k8qBw0SEV6Hwgk=;
-        b=l61rOV8C0BJgzetzUUh95lUAZEzBDzQW/AygQYqs4shprS+XYO/6hf0Qc8nhd689qG
-         T+d4xUKiTyCHLg8wY3qOB5KxUi+mQQwvbRp40KJMmPDxTrn8KXeaiyYcas6sFhdF5JTa
-         /9drMOvJDHwXDHN3GH0fDvZDuXT9StxyLqTw9jLHsoElHl1SWYp36p/gqFCc0+au0g1Q
-         E8v7oiE8DQJ9mA4PoO61V8dAOnfXD1ga6fe4Lk9C2Q5Et/FqghH2zuknzYQmscviO+TU
-         WiaA0phMZPeSkZwamxDihfinGcMNb2vLrlLa/l42ndJeZ2De9eT24ZjBX8K9SO50ttL8
-         y8mw==
-X-Gm-Message-State: AOAM5310DqaOCRsAi7aw9fGYnprJNcWHgZq1vMlxKhpFXTIp+aZmpMbm
-        z0PKJ9hZOMO1hx9bNg78wdBS2w==
-X-Google-Smtp-Source: ABdhPJz1+9mdYhlnOaOdqKsnmVPgb0+czO05jZqAokJjqgkvwtR2WA5G3WY3OLtL0JaaXWVfZ60U6g==
-X-Received: by 2002:a17:902:8d87:: with SMTP id v7mr2444717plo.153.1590521543229;
-        Tue, 26 May 2020 12:32:23 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:94bb:59d2:caf6:70e1? ([2605:e000:100e:8c61:94bb:59d2:caf6:70e1])
-        by smtp.gmail.com with ESMTPSA id y138sm310164pfb.33.2020.05.26.12.32.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 May 2020 12:32:22 -0700 (PDT)
-Subject: Re: [PATCH 0/6] random patches for 5.8
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1590513806.git.asml.silence@gmail.com>
+        bh=3vgocQPX0Uu624PG2Fri8o8+lrHBaWtJW7f03lBEuxc=;
+        b=Q84YGpYzat/ccta3gikqv7ns+0AC1wzFSMATfZwB1+DotBgPfz4mvTXEgaoRNQwsbB
+         JuAQ4BxPMtjdvgq4LPjjUEeU5VCpv/RPoGRN9gL71MifCTnAs4s40iWr4EGckLlKlJiV
+         UZMr9l9GYzDV7fDJVQ3m8BrveQaU4PyK6AZpeaRpG5IPFJ5Dt6NOsPIUYwm9O7sx937u
+         R8ssSusKiqXgM//1CE4gkWg9jK457i65RzDoAYkXiCaWf70pK8un0mUiTupQYADIGbZL
+         JImMUvda57GGhH5gq4w+pqsRbHY2BnktaryZHbkBTrPx329g4v5SrIAuE098/mGMbnyn
+         bU2w==
+X-Gm-Message-State: AOAM532dMrM6FBWsQYeZDGG5dX5WdRjCeiMaiTvFhAu6AMQloXNVpK3f
+        d+w+G3rBUq9TYUB53zFTPoTwMz77Yo/v8w==
+X-Google-Smtp-Source: ABdhPJzJ3Tq3BzFtOFHbUR4w5NteDSN5zWurQj7+sWPv13oLtiMeWlePumfMLTLd1gZHRthRJuHHcA==
+X-Received: by 2002:a17:90a:e28d:: with SMTP id d13mr918533pjz.128.1590522686069;
+        Tue, 26 May 2020 12:51:26 -0700 (PDT)
+Received: from x1.lan ([2605:e000:100e:8c61:94bb:59d2:caf6:70e1])
+        by smtp.gmail.com with ESMTPSA id c184sm313943pfc.57.2020.05.26.12.51.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 May 2020 12:51:25 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ff8f6fa6-e05a-5ac9-1d77-a8a96ca823db@kernel.dk>
-Date:   Tue, 26 May 2020 13:32:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+To:     io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org
+Subject: [PATCHSET v5 0/12] Add support for async buffered reads
+Date:   Tue, 26 May 2020 13:51:11 -0600
+Message-Id: <20200526195123.29053-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <cover.1590513806.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/26/20 11:34 AM, Pavel Begunkov wrote:
-> Nothing insteresting in particular, just start flushing stashed patches.
-> Ones in this series are pretty easy and short.
-> 
-> Pavel Begunkov (6):
->   io_uring: fix flush req->refs underflow
->   io_uring: simplify io_timeout locking
->   io_uring: don't re-read sqe->off in timeout_prep()
->   io_uring: separate DRAIN flushing into a cold path
->   io_uring: get rid of manual punting in io_close
->   io_uring: let io_req_aux_free() handle fixed files
-> 
->  fs/io_uring.c | 64 ++++++++++++++++++++-------------------------------
->  1 file changed, 25 insertions(+), 39 deletions(-)
+We technically support this already through io_uring, but it's
+implemented with a thread backend to support cases where we would
+block. This isn't ideal.
 
-Applied 1-5, thanks.
+After a few prep patches, the core of this patchset is adding support
+for async callbacks on page unlock. With this primitive, we can simply
+retry the IO operation. With io_uring, this works a lot like poll based
+retry for files that support it. If a page is currently locked and
+needed, -EIOCBQUEUED is returned with a callback armed. The callers
+callback is responsible for restarting the operation.
+
+With this callback primitive, we can add support for
+generic_file_buffered_read(), which is what most file systems end up
+using for buffered reads. XFS/ext4/btrfs/bdev is wired up, but probably
+trivial to add more.
+
+The file flags support for this by setting FMODE_BUF_RASYNC, similar
+to what we do for FMODE_NOWAIT. Open to suggestions here if this is
+the preferred method or not.
+
+In terms of results, I wrote a small test app that randomly reads 4G
+of data in 4K chunks from a file hosted by ext4. The app uses a queue
+depth of 32. If you want to test yourself, you can just use buffered=1
+with ioengine=io_uring with fio. No application changes are needed to
+use the more optimized buffered async read.
+
+preadv for comparison:
+	real    1m13.821s
+	user    0m0.558s
+	sys     0m11.125s
+	CPU	~13%
+
+Mainline:
+	real    0m12.054s
+	user    0m0.111s
+	sys     0m5.659s
+	CPU	~32% + ~50% == ~82%
+
+This patchset:
+	real    0m9.283s
+	user    0m0.147s
+	sys     0m4.619s
+	CPU	~52%
+
+The CPU numbers are just a rough estimate. For the mainline io_uring
+run, this includes the app itself and all the threads doing IO on its
+behalf (32% for the app, ~1.6% per worker and 32 of them). Context
+switch rate is much smaller with the patchset, since we only have the
+one task performing IO.
+
+Also ran a simple fio based test case, varying the queue depth from 1
+to 16, doubling every time:
+
+[buf-test]
+filename=/data/file
+direct=0
+ioengine=io_uring
+norandommap
+rw=randread
+bs=4k
+iodepth=${QD}
+randseed=89
+runtime=10s
+
+QD/Test		Patchset IOPS		Mainline IOPS
+1		9046			8294
+2		19.8k			18.9k
+4		39.2k			28.5k
+8		64.4k			31.4k
+16		65.7k			37.8k
+
+Outside of my usual environment, so this is just running on a virtualized
+NVMe device in qemu, using ext4 as the file system. NVMe isn't very
+efficient virtualized, so we run out of steam at ~65K which is why we
+flatline on the patched side (nvme_submit_cmd() eats ~75% of the test app
+CPU). Before that happens, it's a linear increase. Not shown is context
+switch rate, which is massively lower with the new code. The old thread
+offload adds a blocking thread per pending IO, so context rate quickly
+goes through the roof.
+
+The goal here is efficiency. Async thread offload adds latency, and
+it also adds noticable overhead on items such as adding pages to the
+page cache. By allowing proper async buffered read support, we don't
+have X threads hammering on the same inode page cache, we have just
+the single app actually doing IO.
+
+Been beating on this and it's solid for me, and I'm now pretty happy
+with how it all turned out. Not aware of any missing bits/pieces or
+code cleanups that need doing.
+
+Series can also be found here:
+
+https://git.kernel.dk/cgit/linux-block/log/?h=async-buffered.5
+
+or pull from:
+
+git://git.kernel.dk/linux-block async-buffered.5
+
+ fs/block_dev.c            |   2 +-
+ fs/btrfs/file.c           |   2 +-
+ fs/ext4/file.c            |   2 +-
+ fs/io_uring.c             | 130 ++++++++++++++++++++++++++++++++++++--
+ fs/xfs/xfs_file.c         |   2 +-
+ include/linux/blk_types.h |   3 +-
+ include/linux/fs.h        |  10 ++-
+ include/linux/pagemap.h   |  67 ++++++++++++++++++++
+ mm/filemap.c              | 111 ++++++++++++++++++++------------
+ 9 files changed, 279 insertions(+), 50 deletions(-)
+
+Changes since v5:
+- Correct commit message, iocb->private -> iocb->ki_waitq
+- Get rid of io_uring goto, use an iter read helper
+Changes since v3:
+- io_uring: don't retry if REQ_F_NOWAIT is set
+- io_uring: alloc req->io if the request type didn't already
+- Add iocb->ki_waitq instead of (ab)using iocb->private
+Changes since v2:
+- Get rid of unnecessary wait_page_async struct, just use wait_page_async
+- Add another prep handler, adding wake_page_match()
+- Use wake_page_match() in both callers
+Changes since v1:
+- Fix an issue with inline page locking
+- Fix a potential race with __wait_on_page_locked_async()
+- Fix a hang related to not setting page_match, thus missing a wakeup
 
 -- 
 Jens Axboe
+
 

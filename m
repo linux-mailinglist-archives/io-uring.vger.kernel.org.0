@@ -2,52 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A541E29C3
-	for <lists+io-uring@lfdr.de>; Tue, 26 May 2020 20:11:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 292521E29CC
+	for <lists+io-uring@lfdr.de>; Tue, 26 May 2020 20:13:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbgEZSLB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 May 2020 14:11:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53138 "EHLO
+        id S1728677AbgEZSMa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 May 2020 14:12:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727112AbgEZSLB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 May 2020 14:11:01 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E7F1C03E96D
-        for <io-uring@vger.kernel.org>; Tue, 26 May 2020 11:11:00 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id b91so18464445edf.3
-        for <io-uring@vger.kernel.org>; Tue, 26 May 2020 11:11:00 -0700 (PDT)
+        with ESMTP id S1728339AbgEZSMa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 May 2020 14:12:30 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE447C03E96D;
+        Tue, 26 May 2020 11:12:29 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id l21so24847266eji.4;
+        Tue, 26 May 2020 11:12:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:from:autocrypt:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=BN2z3wR6a6vj0boam0eiv2BdfvbKKftLZOU1BJ5qR+k=;
-        b=E09e3UjI4HfXUlENNexLDtzWbevl1uWKVt7igTDmkWs2wESr/V9u93+BfYuIFHLiFg
-         KmgHvZFErYFKDQh7Jc5Co+K6S2iHOgQ+96vdJMwZb1BFI2Q5Dwu/1i03XSm2PUkKvq4w
-         sFRi+P4zwg1QS8MKTZfIlhZQ+LbLE2DLOOqEb258hol/xTNSmOkIgZp6icgm3Pda4lm4
-         vPr0EutcTuyqG/lsPzARXj8SLGReCDglXRXofnh6xHAJtbr0wlba1zrx6Yg1xm5vTTSE
-         h43TqMCXHAvCJOcNLw410UwguQjM9p7TzRXMc5705m8cNTuMbY4KDiu8/phWfTLCIhDl
-         0vAA==
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UyrWKgMFxAn8D6HctBFM/hqJsEY5ARHgLrpHqlBMPtw=;
+        b=AfINMofYMY+AKu2WUfhJPci3ZYAG3mXHWZU45nrQBUf0ybSJZRHQEcdEQF+nofBS1p
+         bIN07u7ucVxr8U6jgrCxEmSxkqfj0MeVcyTipLcx0L5hDHxvKycwfzr2JoyCn2E7Cxuh
+         i/7icstnCZAuZ3+vY0/MBcW0RM+GnUKU3/zfOuAEEMqTkt1t7j9eGbW118+RNmB4MitO
+         ce3o53Y2kMCkxQWu9iucKill71QaYC8mhxNLTi9VfnGDxwK/EMpjb0AiSbleSg6J2O0O
+         KOVKhEZTuDHFx5v5ddQrOhrwWangvx0lV9FYl39il9OCp2fNqF9epr6MzRNBbnIGWeYb
+         IBWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:autocrypt:subject:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=BN2z3wR6a6vj0boam0eiv2BdfvbKKftLZOU1BJ5qR+k=;
-        b=VfoPvnocOc3NcrcN3zGXAhC9YLqxOfh0De5AvgIkF+g1Wumex8AiI0FLVc7seUkU/x
-         ktav/luQdDF8cdujWL99iVWrM6UD1fFvl4nMC1yxLT5gmcgUBYTqx8DP+yv2sJALo0JU
-         CSm558bZKu8fzKUm0uk5IUNviodStkGZXEEJn3I2VYlmKVmNO+91xST/XzFS2OhCYhk0
-         eg+4KmxvVcmY8NkArl8etFdImW+MIcunuEhEvtHsuWQeaxlDOQkIrGSGeVrq3VejdWV6
-         /yYcVoT2BEr7RMx5X9uxkx3AGboQHTMp2ZgBgX9XNHjH0qxiwc5cqm07cxMwegGhvDf2
-         jBfQ==
-X-Gm-Message-State: AOAM530Z98UeiVM/KHLy+btzyWxKsxw4BMUCevfNBJHoBT9UZZdpn8KF
-        6s59Tfu8GQG1rz6WkkiraWqKEBH1
-X-Google-Smtp-Source: ABdhPJzTUDbz7yfRsOO2pcuN823jIHaZ4hEs314co8VEwh52UCsGg0J3h1nAEbLjdvFm5Bh8M1R/Fw==
-X-Received: by 2002:aa7:d596:: with SMTP id r22mr21828664edq.379.1590516658685;
-        Tue, 26 May 2020 11:10:58 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UyrWKgMFxAn8D6HctBFM/hqJsEY5ARHgLrpHqlBMPtw=;
+        b=P1mh3IDrZjrNGhXZQhdA0CPKVJ6goFaZ5LZZTnOqtahzuZGXyDFT2T1ZwoMuPkD+dC
+         fa5DxpqPePxFmID2+e5OS6aBbf7ftJ0WxC9XGjHZw4tH5zXeIt854TnkK5LAUtRLsrYD
+         0rx2SMQsCcHAbzuQVG39r1DQkBpISURmMhvDW/HMIfdp8IR1TTLSJLezbemnHc1c2pY7
+         mIUeHD+p1hP1WBfWA0UU5TseiBM1+U9GMHQ+Vr8r6VH+Rlf6RGyA3LuqEXJGIg1/UPqb
+         CfnQYqi5DOz1uVoU3TVowoN9IfQ/R3ieiu4OKM9QqaySy6gF9YZ5FpMRzHnyXRYhp8Bi
+         miDg==
+X-Gm-Message-State: AOAM532Oca7iR5sU/DKPnSLZ9ix9lgJ8rDcs0drGs5Gamjw/gKilxnn0
+        3lwQ+1Nb0xiztlQuVCpkeCusA/lc
+X-Google-Smtp-Source: ABdhPJxdRfrmrAq2+rgcBNEmYxaCjlFMWPs/i1c6ff9fbaOrYTrZaNdoSRHjgMIh3PLa5h5WmHWDIQ==
+X-Received: by 2002:a17:906:858b:: with SMTP id v11mr2143875ejx.348.1590516748181;
+        Tue, 26 May 2020 11:12:28 -0700 (PDT)
 Received: from [192.168.43.99] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id 25sm492622ejy.32.2020.05.26.11.10.57
+        by smtp.gmail.com with ESMTPSA id j12sm559462edv.47.2020.05.26.11.12.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 May 2020 11:10:58 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
+        Tue, 26 May 2020 11:12:27 -0700 (PDT)
+Subject: Re: [PATCH 6/6] io_uring: let io_req_aux_free() handle fixed files
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1590513806.git.asml.silence@gmail.com>
+ <3e06564a15ca706f5f71ed25e8e3f5ea1520117e.1590513806.git.asml.silence@gmail.com>
+ <7c1727c0-43c2-b4dc-8093-55030ae49057@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -92,62 +98,38 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: [RFC] .flush and io_uring_cancel_files
-Message-ID: <94f75705-3506-4c58-c1ff-cced9c045956@gmail.com>
-Date:   Tue, 26 May 2020 21:09:44 +0300
+Message-ID: <7a408a46-9f9f-a5d5-ae29-93b719edf79b@gmail.com>
+Date:   Tue, 26 May 2020 21:11:14 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <7c1727c0-43c2-b4dc-8093-55030ae49057@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It looks like taking ->uring_lock should work like kind of grace
-period for struct files_struct and io_uring_flush(), and that would
-solve the race with "fcheck(ctx->ring_fd) == ctx->ring_file".
+On 26/05/2020 21:03, Jens Axboe wrote:
+> On 5/26/20 11:34 AM, Pavel Begunkov wrote:
+>> Remove duplicated code putting fixed files in io_free_req_many(),
+>> __io_req_aux_free() does the same thing, let it handle them.
+> 
+> This one is already changed in mainline:
+> 
+> 
+>> commit 9d9e88a24c1f20ebfc2f28b1762ce78c0b9e1cb3 (tag: io_uring-5.7-2020-05-15)
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Wed May 13 12:53:19 2020 -0600
+> 
+>     io_uring: polled fixed file must go through free iteration
+> 
 
-Can you take a look? If you like it, I'll send a proper patch
-and a bunch of cleanups on top.
+I see, missed it.
 
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a3dbd5f40391..012af200dc72 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5557,12 +5557,11 @@ static int io_grab_files(struct io_kiocb *req)
- 	 * the fd has changed since we started down this path, and disallow
- 	 * this operation if it has.
- 	 */
--	if (fcheck(ctx->ring_fd) == ctx->ring_file) {
--		list_add(&req->inflight_entry, &ctx->inflight_list);
--		req->flags |= REQ_F_INFLIGHT;
--		req->work.files = current->files;
--		ret = 0;
--	}
-+	list_add(&req->inflight_entry, &ctx->inflight_list);
-+	req->flags |= REQ_F_INFLIGHT;
-+	req->work.files = current->files;
-+	ret = 0;
-+
- 	spin_unlock_irq(&ctx->inflight_lock);
- 	rcu_read_unlock();
-
-@@ -7479,6 +7478,10 @@ static int io_uring_release(struct inode *inode, struct
-file *file)
- static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 				  struct files_struct *files)
- {
-+	/* wait all submitters that can race for @files */
-+	mutex_lock(&ctx->uring_lock);
-+	mutex_unlock(&ctx->uring_lock);
-+
- 	while (!list_empty_careful(&ctx->inflight_list)) {
- 		struct io_kiocb *cancel_req = NULL, *req;
- 		DEFINE_WAIT(wait);
+And thanks for adding the fixes tag for the other one.
 
 -- 
 Pavel Begunkov

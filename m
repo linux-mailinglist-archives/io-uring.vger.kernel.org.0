@@ -2,213 +2,208 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E91FC1E2356
-	for <lists+io-uring@lfdr.de>; Tue, 26 May 2020 15:51:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AD7C1E242F
+	for <lists+io-uring@lfdr.de>; Tue, 26 May 2020 16:35:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729533AbgEZNuy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 May 2020 09:50:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40562 "EHLO
+        id S1726939AbgEZOfL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 May 2020 10:35:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729400AbgEZNuw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 May 2020 09:50:52 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE7ACC03E96E
-        for <io-uring@vger.kernel.org>; Tue, 26 May 2020 06:50:51 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id q9so1365271pjm.2
-        for <io-uring@vger.kernel.org>; Tue, 26 May 2020 06:50:51 -0700 (PDT)
+        with ESMTP id S1727885AbgEZOfJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 May 2020 10:35:09 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736E1C03E96D
+        for <io-uring@vger.kernel.org>; Tue, 26 May 2020 07:35:08 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id c35so1529619edf.5
+        for <io-uring@vger.kernel.org>; Tue, 26 May 2020 07:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TsJ+ya7DLaAC9EC4liADTO0tprvxGjdA+7opmVl0FVA=;
-        b=g1/7QOjKa61RC7wBeOn5GBPb3KCi20eVgYcsv13bLH50Z/106HIIkaLsu8OSxDSIFg
-         ucdGdTmC48KzoU4rK60EfjAk9scExcaZ13dVFvi3tSLDoUcxKj/R/NFPqtNpe7MfrRXU
-         dw3ZyFTS7C4diWZUxMwp9bdibC+YFYfzhQPe0AE89vq49rIBUReh4cFWufHq8nko2pco
-         MTFYlOIl/V3YBqvvgIqihIeVIK2gPJx4HV3jVvEEkdeJvSqdMMBhrCeZukUvWBQCBePu
-         DWM01ieH5nVgZ2sYu/3BF4pfwo2Ml59RwghLR5qHs2m6V1axIso60dJSSbANhObcrRa8
-         V7Hw==
+        bh=UHCU1wRi0I0jqiY685xmbxpJCEv0pBt/N7kY2IxTHLg=;
+        b=D119WYnmZaZXsDqDvGFhODuT/ibuqn9vy7FAIvxfVTxndDA99rBloYJGRCz5Cle80a
+         eu09r4R345O+LdXQCejrbZEAQuasR2Z7lJmglSCZzah2OV2VyLHY1urT0s0mi1Iq6fLZ
+         +qFnjKqQ+8iUS1LDrbrxs4OULhDsKhjJynWzp9rKf/VN0NZLPVeeJJlNNhXigh6r4rza
+         CBHDl9aBkdLyas6Ko/OAvL4HHKXSmvkvM2qO9wDw5wkHm9vVWAhcnte9O0veq3Y8u/xD
+         TlHRPhZlHiNZ/xuxYOQBxOZXo+idxyMYE/IegWA8He/hc/PHEmdTUnvbgVjaGkRGxl5Z
+         Mytg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TsJ+ya7DLaAC9EC4liADTO0tprvxGjdA+7opmVl0FVA=;
-        b=oL5p9xmfj4NTT2uuFiJ98SV11jzdLDDJ5HiIdubwHbTDZAwOg71CXGRzYIiIDx6fAb
-         OlAjEKkLSqC1O0ktL4zhOJl34lFXYH51wJatCo3S3NO0B/llbbSh63/86kCoicXAtLTd
-         plKdfluBzsYl/dn/h4vMj7vYiwNDLLvUNusHbdMGHxMKm1r0knyGxY+9nB92+EB4BlA6
-         rOB4uBHUv+eRGcG+ok6L6CYhZ2b5Ok8MdHuGh0ix1ss3IUWjfDiMkWAhjpw6RAXbkPz1
-         kP3eR/nfJoWvJthWvjK3c2vkuEzRQcGrkRpYUupgFad51HhlVO4647SW1Xuc9o2FHVhO
-         zqrg==
-X-Gm-Message-State: AOAM530Tzc5Iv64ijqXVnSDk1EC+RpkPHQ+8hQbUjk5swbtUuKDwca0c
-        M8DqGfkJRmE88j+WNSvkPPT6hg==
-X-Google-Smtp-Source: ABdhPJwb1HZnXvh9qc7bN00VRiWnUaq6RK+j3csWhmS5gI/dE6tv/8uzHsGkFpESYgQ0S8vnjlSm/A==
-X-Received: by 2002:a17:902:502:: with SMTP id 2mr1199090plf.134.1590501051121;
-        Tue, 26 May 2020 06:50:51 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:a9e6:df54:e55e:4c47? ([2605:e000:100e:8c61:a9e6:df54:e55e:4c47])
-        by smtp.gmail.com with ESMTPSA id i3sm15567936pfe.44.2020.05.26.06.50.50
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=UHCU1wRi0I0jqiY685xmbxpJCEv0pBt/N7kY2IxTHLg=;
+        b=TBddXs1p9cP8dFYdf/LJutVUOENk7bOdKng6ITB22ED9ciNnGSeM5UIChVUFb4Yz6N
+         47abndoWHXmmrQxr+kgDQaNppNVZ1m4VCcpuiqvdZVqIU1X/r7jph2RwGYL2F5IO0Bi2
+         QKcm8uXU0fopqd/qGL7jFEnOPy2m9BgcBHcg51IRBNI7Jckyn8iUsMkeLDrPcdWbJWkS
+         4Rn8cXpT5uW6xBjQKztsfq8dzj4UdGTx54fnZqpk5+bWN+o2shUID881jWROqPhYs11m
+         jswPxNv4HSDz825Ec43MMZehaxdPp3o7I61jRLb310wzEK1s/XCPXanrCj80ecyH+lFy
+         c4JQ==
+X-Gm-Message-State: AOAM533qdGZXhQmGZWn6dWI2Rh5nACld5Au3hfkk71jeyXsU5KYIHRMa
+        DAusBw4hR0mPxhUe14EkV0o=
+X-Google-Smtp-Source: ABdhPJw/3xY8fiP+2Wox0zDRnZAxy+jhzlqyveezlsEk2MWB/+0wXn6w3TBRryKGDaySKLZLEe6KlA==
+X-Received: by 2002:a05:6402:31b1:: with SMTP id dj17mr20257483edb.142.1590503707062;
+        Tue, 26 May 2020 07:35:07 -0700 (PDT)
+Received: from [192.168.43.105] ([5.100.193.151])
+        by smtp.gmail.com with ESMTPSA id c27sm103076ejd.19.2020.05.26.07.35.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 May 2020 06:50:50 -0700 (PDT)
-Subject: Re: [PATCH 12/12] io_uring: support true async buffered reads, if
- file provides it
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20200523185755.8494-1-axboe@kernel.dk>
- <20200523185755.8494-13-axboe@kernel.dk>
- <8d429d6b-81ee-0a28-8533-2e1d4faa6b37@gmail.com>
- <717e474a-5168-8e1e-2e02-c1bdff007bd9@kernel.dk>
- <a8212987-bd06-5c67-73d7-e77a654df4ac@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <69516a01-a209-8a7e-6b9a-7d5b6fef4e96@kernel.dk>
-Date:   Tue, 26 May 2020 07:50:49 -0600
+        Tue, 26 May 2020 07:35:06 -0700 (PDT)
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
+References: <20200526064330.9322-1-xiaoguang.wang@linux.alibaba.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH 1/3] io_uring: don't use req->work.creds for inline
+ requests
+Message-ID: <fe4196c6-a069-a029-6a98-68801d088798@gmail.com>
+Date:   Tue, 26 May 2020 17:33:51 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <a8212987-bd06-5c67-73d7-e77a654df4ac@gmail.com>
+In-Reply-To: <20200526064330.9322-1-xiaoguang.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/26/20 1:44 AM, Pavel Begunkov wrote:
-> On 25/05/2020 22:59, Jens Axboe wrote:
->> On 5/25/20 1:29 AM, Pavel Begunkov wrote:
->>> On 23/05/2020 21:57, Jens Axboe wrote:
->>>> If the file is flagged with FMODE_BUF_RASYNC, then we don't have to punt
->>>> the buffered read to an io-wq worker. Instead we can rely on page
->>>> unlocking callbacks to support retry based async IO. This is a lot more
->>>> efficient than doing async thread offload.
->>>>
->>>> The retry is done similarly to how we handle poll based retry. From
->>>> the unlock callback, we simply queue the retry to a task_work based
->>>> handler.
->>>>
->>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>> ---
->>>>  fs/io_uring.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++++++
->>>>  1 file changed, 99 insertions(+)
->>>>
->>> ...
->>>> +
->>>> +	init_task_work(&rw->task_work, io_async_buf_retry);
->>>> +	/* submit ref gets dropped, acquire a new one */
->>>> +	refcount_inc(&req->refs);
->>>> +	tsk = req->task;
->>>> +	ret = task_work_add(tsk, &rw->task_work, true);
->>>> +	if (unlikely(ret)) {
->>>> +		/* queue just for cancelation */
->>>> +		init_task_work(&rw->task_work, io_async_buf_cancel);
->>>> +		tsk = io_wq_get_task(req->ctx->io_wq);
->>>
->>> IIRC, task will be put somewhere around io_free_req(). Then shouldn't here be
->>> some juggling with reassigning req->task with task_{get,put}()?
->>
->> Not sure I follow? Yes, we'll put this task again when the request
->> is freed, but not sure what you mean with juggling?
+On 26/05/2020 09:43, Xiaoguang Wang wrote:
+> In io_init_req(), if uers requires a new credentials, currently we'll
+> save it in req->work.creds, but indeed io_wq_work is designed to describe
+> needed running environment for requests that will go to io-wq, if one
+> request is going to be submitted inline, we'd better not touch io_wq_work.
+> Here add a new 'const struct cred *creds' in io_kiocb, if uers requires a
+> new credentials, inline requests can use it.
 > 
-> I meant something like:
-> 
-> ...
-> /* queue just for cancelation */
-> init_task_work(&rw->task_work, io_async_buf_cancel);
-> + put_task_struct(req->task);
-> + req->task = get_task_struct(io_wq_task);
-> 
-> 
-> but, thinking twice, if I got the whole idea right, it should be ok as
-> is -- io-wq won't go away before the request anyway, and leaving
-> req->task pinned down for a bit is not a problem.
+> This patch is also a preparation for later patch.
 
-OK good, then I thin kwe agree it's fine.
+What's the difference from keeping only one creds field in io_kiocb (i.e.
+req->work.creds), but handling it specially (i.e. always initialising)? It will
+be a lot easier than tossing it around.
 
->>>> +		task_work_add(tsk, &rw->task_work, true);
->>>> +	}
->>>> +	wake_up_process(tsk);
->>>> +	return 1;
->>>> +}
->>> ...
->>>>  static int io_read(struct io_kiocb *req, bool force_nonblock)
->>>>  {
->>>>  	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
->>>> @@ -2601,6 +2696,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->>>>  	if (!ret) {
->>>>  		ssize_t ret2;
->>>>  
->>>> +retry:
->>>>  		if (req->file->f_op->read_iter)
->>>>  			ret2 = call_read_iter(req->file, kiocb, &iter);
->>>>  		else
->>>> @@ -2619,6 +2715,9 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->>>>  			if (!(req->flags & REQ_F_NOWAIT) &&
->>>>  			    !file_can_poll(req->file))
->>>>  				req->flags |= REQ_F_MUST_PUNT;
->>>> +			if (io_rw_should_retry(req))
->>>
->>> It looks like a state machine with IOCB_WAITQ and gotos. Wouldn't it be cleaner
->>> to call call_read_iter()/loop_rw_iter() here directly instead of "goto retry" ?
->>
->> We could, probably making that part a separate helper then. How about the
->> below incremental?
+Also, the patch doubles {get,put}_creds() for sqe->personality case, and that's
+extra atomics without a good reason.
+
 > 
-> IMHO, it was easy to get lost with such implicit state switching.
-> Looks better now! See a small comment below.
-
-Agree, that is cleaner.
-
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index a5a4d9602915..669dccd81207 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -2677,6 +2677,13 @@ static bool io_rw_should_retry(struct io_kiocb *req)
->>  	return false;
->>  }
->>  
->> +static int __io_read(struct io_kiocb *req, struct iov_iter *iter)
->> +{
->> +	if (req->file->f_op->read_iter)
->> +		return call_read_iter(req->file, &req->rw.kiocb, iter);
->> +	return loop_rw_iter(READ, req->file, &req->rw.kiocb, iter);
->> +}
->> +
->>  static int io_read(struct io_kiocb *req, bool force_nonblock)
->>  {
->>  	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
->> @@ -2710,11 +2717,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->>  	if (!ret) {
->>  		ssize_t ret2;
->>  
->> -retry:
->> -		if (req->file->f_op->read_iter)
->> -			ret2 = call_read_iter(req->file, kiocb, &iter);
->> -		else
->> -			ret2 = loop_rw_iter(READ, req->file, kiocb, &iter);
->> +		ret2 = __io_read(req, &iter);
->>  
->>  		/* Catch -EAGAIN return for forced non-blocking submission */
->>  		if (!force_nonblock || ret2 != -EAGAIN) {
->> @@ -2729,8 +2732,11 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
->>  			if (!(req->flags & REQ_F_NOWAIT) &&
->>  			    !file_can_poll(req->file))
->>  				req->flags |= REQ_F_MUST_PUNT;
->> -			if (io_rw_should_retry(req))
->> -				goto retry;
->> +			if (io_rw_should_retry(req)) {
->> +				ret2 = __io_read(req, &iter);
->> +				if (ret2 != -EAGAIN)
->> +					goto out_free;
+> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+> ---
+>  fs/io_uring.c | 23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
 > 
-> "goto out_free" returns ret=0, so someone should add a cqe
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 2af87f73848e..788d960abc69 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -635,6 +635,7 @@ struct io_kiocb {
+>  	unsigned int		flags;
+>  	refcount_t		refs;
+>  	struct task_struct	*task;
+> +	const struct cred	*creds;
+>  	unsigned long		fsize;
+>  	u64			user_data;
+>  	u32			result;
+> @@ -1035,8 +1036,10 @@ static inline void io_req_work_grab_env(struct io_kiocb *req,
+>  		mmgrab(current->mm);
+>  		req->work.mm = current->mm;
+>  	}
+> -	if (!req->work.creds)
+> +	if (!req->creds)
+>  		req->work.creds = get_current_cred();
+> +	else
+> +		req->work.creds = get_cred(req->creds);
+>  	if (!req->work.fs && def->needs_fs) {
+>  		spin_lock(&current->fs->lock);
+>  		if (!current->fs->in_exec) {
+> @@ -1368,6 +1371,9 @@ static void __io_req_aux_free(struct io_kiocb *req)
+>  	if (req->flags & REQ_F_NEED_CLEANUP)
+>  		io_cleanup_req(req);
+>  
+> +	if (req->creds)
+> +		put_cred(req->creds);
+> +
+>  	kfree(req->io);
+>  	if (req->file)
+>  		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
+> @@ -5673,13 +5679,13 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  again:
+>  	linked_timeout = io_prep_linked_timeout(req);
+>  
+> -	if (req->work.creds && req->work.creds != current_cred()) {
+> +	if (req->creds && req->creds != current_cred()) {
+>  		if (old_creds)
+>  			revert_creds(old_creds);
+> -		if (old_creds == req->work.creds)
+> +		if (old_creds == req->creds)
+>  			old_creds = NULL; /* restored original creds */
+>  		else
+> -			old_creds = override_creds(req->work.creds);
+> +			old_creds = override_creds(req->creds);
+>  	}
+>  
+>  	ret = io_issue_sqe(req, sqe, true);
+> @@ -5970,11 +5976,12 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+>  
+>  	id = READ_ONCE(sqe->personality);
+>  	if (id) {
+> -		req->work.creds = idr_find(&ctx->personality_idr, id);
+> -		if (unlikely(!req->work.creds))
+> +		req->creds = idr_find(&ctx->personality_idr, id);
+> +		if (unlikely(!req->creds))
+>  			return -EINVAL;
+> -		get_cred(req->work.creds);
+> -	}
+> +		get_cred(req->creds);
+> +	} else
+> +		req->creds = NULL;
+>  
+>  	/* same numerical values with corresponding REQ_F_*, safe to copy */
+>  	req->flags |= sqe_flags;
 > 
-> if (ret2 != -EAGAIN) {
-> 	kiocb_done(kiocb, ret2);
-> 	goto free_out;
-> }
-
-Fixed up in the current one.
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

@@ -2,123 +2,209 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A51C91E33DB
-	for <lists+io-uring@lfdr.de>; Wed, 27 May 2020 01:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00A131E3EBC
+	for <lists+io-uring@lfdr.de>; Wed, 27 May 2020 12:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725857AbgEZXqt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 May 2020 19:46:49 -0400
-Received: from lavender.maple.relay.mailchannels.net ([23.83.214.99]:50472
-        "EHLO lavender.maple.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725829AbgEZXqt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 May 2020 19:46:49 -0400
-X-Greylist: delayed 461 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 May 2020 19:46:48 EDT
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id DEE21321338;
-        Tue, 26 May 2020 23:39:06 +0000 (UTC)
-Received: from pdx1-sub0-mail-a79.g.dreamhost.com (100-96-14-14.trex.outbound.svc.cluster.local [100.96.14.14])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 4B0D3321328;
-        Tue, 26 May 2020 23:39:06 +0000 (UTC)
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from pdx1-sub0-mail-a79.g.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
-        by 0.0.0.0:2500 (trex/5.18.8);
-        Tue, 26 May 2020 23:39:06 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
-X-MailChannels-Auth-Id: dreamhost
-X-Desert-Tank: 3bef43e157adcf8a_1590536346706_2123188589
-X-MC-Loop-Signature: 1590536346706:2441534636
-X-MC-Ingress-Time: 1590536346705
-Received: from pdx1-sub0-mail-a79.g.dreamhost.com (localhost [127.0.0.1])
-        by pdx1-sub0-mail-a79.g.dreamhost.com (Postfix) with ESMTP id CCE29B2BAB;
-        Tue, 26 May 2020 16:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=claycon.org; h=date:from
-        :to:cc:subject:message-id:references:mime-version:content-type
-        :in-reply-to; s=claycon.org; bh=rMrQnqbw/K8jDLgCerFmuUbWlhY=; b=
-        WcR6ssBo4jmQsfqbGuOksI4+nt9ux++iCC4PqbEIHxwrGr9g3vdVjx0V3QlEThej
-        Ge0AOTsavm+ydETWFoJLyEvnquqwgW5JT6WgX0WoBc1O15BIBKfGg8ScLxSnsGOy
-        Z46xOSelhxyOIhPeIy7lTApVIH4HTcBmqIO1AttMq6Y=
-Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a79.g.dreamhost.com (Postfix) with ESMTPSA id 978AAB2BAC;
-        Tue, 26 May 2020 16:39:03 -0700 (PDT)
-Date:   Tue, 26 May 2020 18:39:03 -0500
-X-DH-BACKEND: pdx1-sub0-mail-a79
-From:   Clay Harris <bugs@claycon.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] io_uring: call statx directly
-Message-ID: <20200526233903.qbzrbqgfhlhe62pr@ps29521.dreamhostps.com>
-References: <1590208279-33811-1-git-send-email-bijan.mottahedeh@oracle.com>
- <f00063b9-7926-9739-f599-603cdf052161@kernel.dk>
+        id S2387844AbgE0KOd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 May 2020 06:14:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387751AbgE0KOb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 May 2020 06:14:31 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D85FC061A0F
+        for <io-uring@vger.kernel.org>; Wed, 27 May 2020 03:14:31 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id l21so27407278eji.4
+        for <io-uring@vger.kernel.org>; Wed, 27 May 2020 03:14:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JoLk5LgfRbUBaUXreouzKViFqGrUJuKgv+Ap9Q9Pc4A=;
+        b=e6PsSHRmsAasyKfYR41gG9gxZh9JQYSPu35yFIxOlL+b86oPqIVgYOcDTeXaaGxeNP
+         4whPRtFJ0ktMSnwSTPg5dPsmC+8bGc9PjeDmcpOWz8NMP+gNHaLKUFZJlf7vXB8piPlB
+         R05qEuDdK3ZULAhtyrU4CmQOPm2I7bmDEk+SR+Y5jDIaflIVPZM1wtzktiV6e/0hAaZT
+         yv3O+cyciwyTvVI4OJVefKqweu3gZu1dzoEU6BrbuuArI54Ovl2LVAXD29cA28xPg3T1
+         07sssD4V+/SF01iV6BYXwtTHOe44Ut9RiI9C9m+BVMtO5bqpf9PVEpeamGhaRxw/n46u
+         A5bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=JoLk5LgfRbUBaUXreouzKViFqGrUJuKgv+Ap9Q9Pc4A=;
+        b=JHE/8XKLTvpsl6nljwNBsgy9Ziums0ShsSW6SXjlgmr9Ieo4J9L1pX5ysR90Qi+hXV
+         Ic9jIhaWVZoC+fNoMQfh26TFeomGDjL7wteIrb6omSGU6uScetYtsuvAY7GyHYqMh0LZ
+         ikhFRX+H4okxjL9naH9XVp+1ILH7kPwOA4qgh4YtqYPcU+JXVjYx3XUxRBFSng4KHu22
+         ZI6maZpM/02CuerxUi1oF4TGuz0LtwO4k66w5MCo85BSkeO8nLIRUhrJTlymti4Y+f5x
+         IlHlghCQRV24vrY02sZm9HN2uLbCZLS24VPz8MpvXYRnhKAshUkbAA2w36cnHpRqtQfC
+         EFlA==
+X-Gm-Message-State: AOAM531+esW48U0Pm5v6K/fjlwWr6CCMJQZfHVowyhUA8Qyivmo/MbYf
+        n1+dhuVnANUlYN31k3MDgng=
+X-Google-Smtp-Source: ABdhPJyJywhXdCOD9fKpz4Cnwq/8mr48xtdTT8Fq4FHg4RuMo9d/d08+A5x+XQYq2jKy1m1NEExoYw==
+X-Received: by 2002:a17:906:5210:: with SMTP id g16mr5362932ejm.197.1590574469721;
+        Wed, 27 May 2020 03:14:29 -0700 (PDT)
+Received: from [192.168.43.107] ([5.100.193.151])
+        by smtp.gmail.com with ESMTPSA id s20sm2370344eju.96.2020.05.27.03.14.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 May 2020 03:14:29 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
+References: <94f75705-3506-4c58-c1ff-cced9c045956@gmail.com>
+ <CAG48ez24_NGyYEXyO+AaWZNEkK=CVmvOQDoGUoaJxtORoLU=OA@mail.gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [RFC] .flush and io_uring_cancel_files
+Message-ID: <ab91ac71-def9-9e78-539d-05aebe7eda67@gmail.com>
+Date:   Wed, 27 May 2020 13:13:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f00063b9-7926-9739-f599-603cdf052161@kernel.dk>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-VR-OUT-STATUS: OK
-X-VR-OUT-SCORE: -100
-X-VR-OUT-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduhedruddvfedgvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuggftfghnshhusghstghrihgsvgdpffftgfetoffjqffuvfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepvehlrgihucfjrghrrhhishcuoegsuhhgshestghlrgihtghonhdrohhrgheqnecuggftrfgrthhtvghrnhepgfdtkeejhefffedvhfehtddtheekjefggeeitdejtdfhuedvgfeiveekkedvhfdvnecukfhppeeiledrudeifedrudekiedrjeegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhppdhhvghlohepphhsvdelhedvuddrughrvggrmhhhohhsthhpshdrtghomhdpihhnvghtpeeiledrudeifedrudekiedrjeegpdhrvghtuhhrnhdqphgrthhhpeevlhgrhicujfgrrhhrihhsuceosghughhssegtlhgrhigtohhnrdhorhhgqedpmhgrihhlfhhrohhmpegsuhhgshestghlrgihtghonhdrohhrghdpnhhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+In-Reply-To: <CAG48ez24_NGyYEXyO+AaWZNEkK=CVmvOQDoGUoaJxtORoLU=OA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, May 26 2020 at 16:59:23 -0600, Jens Axboe quoth thus:
-
-> On 5/22/20 10:31 PM, Bijan Mottahedeh wrote:
-> > v1 -> v2
-> > 
-> > - Separate statx and open in io_kiocb 
-> > - Remove external declarations for unused statx interfaces
-> > 
-> > This patch set is a fix for the liburing statx test failure.
-> > 
-> > The test fails with a "Miscompare between io_uring and statx" error
-> > because the statx system call path has additional processing in vfs_statx():
-> > 
-> >         stat->result_mask |= STATX_MNT_ID;
-> >         if (path.mnt->mnt_root == path.dentry)
-> >                 stat->attributes |= STATX_ATTR_MOUNT_ROOT;
-> >         stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
-> > 
-> > which then results in different result_mask values.
-> > 
-> > Allowing the system call to be invoked directly simplifies the io_uring
-> > interface and avoids potential future incompatibilities.  I'm not sure
-> > if there was other reasoning fort not doing so initially.
-> > 
-> > One issue I cannot account for is the difference in "used" memory reported
-> > by free(1) after running the statx a large (10000) number of times.
-> > 
-> > The difference is significant ~100k and doesn't really change after
-> > dropping caches.
-> > 
-> > I enabled memory leak detection and couldn't see anything related to the test.
-> > 
-> > Bijan Mottahedeh (4):
-> >   io_uring: add io_statx structure
-> >   statx: allow system call to be invoked from io_uring
-> >   io_uring: call statx directly
-> >   statx: hide interfaces no longer used by io_uring
-> > 
-> >  fs/internal.h |  4 ++--
-> >  fs/io_uring.c | 72 +++++++++++++++--------------------------------------------
-> >  fs/stat.c     | 37 +++++++++++++++++-------------
-> >  3 files changed, 42 insertions(+), 71 deletions(-)
+On 27/05/2020 01:04, Jann Horn wrote:
+> On Tue, May 26, 2020 at 8:11 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>> It looks like taking ->uring_lock should work like kind of grace
+>> period for struct files_struct and io_uring_flush(), and that would
+>> solve the race with "fcheck(ctx->ring_fd) == ctx->ring_file".
+>>
+>> Can you take a look? If you like it, I'll send a proper patch
+>> and a bunch of cleanups on top.
+>>
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index a3dbd5f40391..012af200dc72 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -5557,12 +5557,11 @@ static int io_grab_files(struct io_kiocb *req)
+>>          * the fd has changed since we started down this path, and disallow
+>>          * this operation if it has.
+>>          */
+>> -       if (fcheck(ctx->ring_fd) == ctx->ring_file) {
+>> -               list_add(&req->inflight_entry, &ctx->inflight_list);
+>> -               req->flags |= REQ_F_INFLIGHT;
+>> -               req->work.files = current->files;
+>> -               ret = 0;
+>> -       }
+>> +       list_add(&req->inflight_entry, &ctx->inflight_list);
+>> +       req->flags |= REQ_F_INFLIGHT;
+>> +       req->work.files = current->files;
+>> +       ret = 0;
+>> +
+>>         spin_unlock_irq(&ctx->inflight_lock);
+>>         rcu_read_unlock();
+>>
+>> @@ -7479,6 +7478,10 @@ static int io_uring_release(struct inode *inode, struct
+>> file *file)
+>>  static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+>>                                   struct files_struct *files)
+>>  {
+>> +       /* wait all submitters that can race for @files */
+>> +       mutex_lock(&ctx->uring_lock);
+>> +       mutex_unlock(&ctx->uring_lock);
+>> +
+>>         while (!list_empty_careful(&ctx->inflight_list)) {
+>>                 struct io_kiocb *cancel_req = NULL, *req;
+>>                 DEFINE_WAIT(wait);
 > 
-> Thanks, this looks better. For a bit of history, the initial attempt was
-> to do the statx without async offload if we could do so without blocking.
-> Without that, we may as well simplify it.
+> First off: You're removing a check in io_grab_files() without changing
+> the comment that describes the check; and the new comment you're
+> adding in io_uring_cancel_files() is IMO too short to be useful.
 
-I was thinking that there may be use cases for allowing IOSQE_FIXED_FILE +
-AT_EMPTY_PATH.  This sounds like it would make such a thing more difficult.
+Obviously, it was stripped down to show the idea, nobody is talking about
+commiting it as is. I hoped Jens remembers it well enough to understand.
+Let me describe it in more details then:
 
-> -- 
-> Jens Axboe
+> 
+> I'm trying to figure out how your change is supposed to work, and I
+> don't get it. If a submitter is just past fdget() (at which point no
+> locks are held), the ->flush() caller can instantly take and drop the
+> ->uring_lock, and then later the rest of the submission path will grab
+> an unprotected pointer to the files_struct. Am I missing something?
+
+old = tsk->files;
+task_lock(tsk);
+tsk->files = files;
+task_unlock(tsk);
+put_files_struct(old); (i.e. ->flush(old))
+
+It's from reset_files_struct(), and I presume the whole idea of
+io_uring->flush() is to protect against racing for similarly going away @old
+files. I.e. ensuring of not having io_uring requests holding @old files.
+
+The only place, where current->files are accessed and copied by io_uring, is
+io_grab_files(), which is called in the submission path. And the whole
+submission path is done under @uring_mtx.
+For your case, the submitter will take @uring_mtx only after this lock/unlock
+happened, so it won't see old files (happens-before by locking mutex).
+
+The idea behind lock/unlock is that
+- submitters already locked @uring_mtx (i.e. started submission) before the
+lock/unlock, are waited for in the flush. These can potentially access @old.
+
+- submitters, that came after the lock/unlock, won't see @old files.
+
+So, no new request associated with @old can appear after that. All's left is to
+deal with already submitted requests, that's done by the rest of
+io_uring_cancel_files().
+
+
+The thing I don't know is why current->files is originally accessed without
+protection in io_grab_files(), but presumably rcu_read_lock() there is for that
+reason.
+
+Do you see anything suspicious from the description?
+
+-- 
+Pavel Begunkov
+
+

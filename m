@@ -2,113 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB1931E3EE8
-	for <lists+io-uring@lfdr.de>; Wed, 27 May 2020 12:25:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EEDB1E444E
+	for <lists+io-uring@lfdr.de>; Wed, 27 May 2020 15:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbgE0KY7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 May 2020 06:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34694 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbgE0KY7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 May 2020 06:24:59 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B3B0C061A0F;
-        Wed, 27 May 2020 03:24:58 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id o15so6072296ejm.12;
-        Wed, 27 May 2020 03:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cL2REwYbuiFQw9+7Sm4ybcaJkH87SCGRTJq5l7sNJ/M=;
-        b=iaFdGMKGMz7aAp7G1jJxCPjb0Gv51q3YGSDlxlmJkrsD1vzbAYHRfvLl8x9l9L/I9s
-         sVBIhuBi/9emvqE6GU71ZMQaAGnqX2LhkmLjOy//hCyqZ+CXfrE/GpDmn3JL5E7a+4LV
-         a4hF20BGQS1cS+HwhCSEYhmFT8+03/ltaMV60OW8fjEkkqfjbbhunh0NHmBMoTBryGDZ
-         RbKH61dh0TVD2eCevZtDYyXGmYzlhFSiAE2f67w7Hz08rCAa57p7wNMq4Bv3V8uJHCD7
-         21llwM8BN6Ka01Hqowks9kMiqe4SPuiwE0De1gw8fjdtdWkzt5UL7XD0/TI8KfvN2CSd
-         Os7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cL2REwYbuiFQw9+7Sm4ybcaJkH87SCGRTJq5l7sNJ/M=;
-        b=DxhdJbWaA0r4JJVnCxv8K4ThFb2WlYjJh2d15ZUZA6LPvN2c0sbRD769CDm1qr62ho
-         xMyCtdgzYi2JnCQQVuxK716UN1HHoSJVuZkWDlztI6j7aKh+9yeuQAUj8eWjui38dgfl
-         oRCqDG5loklwSzBZqYw6KmpUmHxulTF4wbtUcimoC6j2U5DUWdPT5VGxZhgMkRSxFxI8
-         SUXYK8UicVOUcaB6OhfZTgYJ5o/smEVv0PhcJJn+HW3+RUaU5+oaSqlasdC1DHxjgzKg
-         74KK/xigESnasocEU6t5MOtz85OOI1mvZ/29W7LeSofwt+gN9H3l96s7eS+W+/l1Ukb/
-         jj/Q==
-X-Gm-Message-State: AOAM533YMxpcfceYPzLqw622jRotmA2njLE09LRD+eb7DOSHr0SrEkxI
-        ZCtkfR484NQdqtUaFlLNEhA=
-X-Google-Smtp-Source: ABdhPJy+ANuYRzBdhIovooVjPDuPCs0ZWfGw+3AoWhJM2BQGHx5HTBFyifvtaKMhWRjuZSlsHI795A==
-X-Received: by 2002:a17:907:1189:: with SMTP id uz9mr5170829ejb.53.1590575096781;
-        Wed, 27 May 2020 03:24:56 -0700 (PDT)
-Received: from localhost.localdomain ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id k27sm2407608eji.18.2020.05.27.03.24.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2020 03:24:56 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        id S2388647AbgE0NsZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 May 2020 09:48:25 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:55735 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388082AbgE0NsZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 May 2020 09:48:25 -0400
+Received: from threadripper.lan ([149.172.98.151]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MkpOZ-1jA3RJ26yV-00mKQD; Wed, 27 May 2020 15:48:22 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: fix overflowed reqs cancellation
-Date:   Wed, 27 May 2020 13:23:33 +0300
-Message-Id: <7acb1a15ee5a79103d71372d6330b19c5397a482.1590574948.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+Subject: [PATCH] io_uring: include linux/pagemap.h
+Date:   Wed, 27 May 2020 15:48:08 +0200
+Message-Id: <20200527134821.1001856-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:AnkI1/UfaEFGuuR8lsmWfA+cClYJaFovoQxZjwHBUBeNDV1ahjf
+ qLXvGr/UxePgpPoq/+t2mGbqkfaheo9uVoLBmzedRhUYWCUK1zt2kE/lg/3YJ0tpIsd23QW
+ IngVAeSYbhPn8DNs+ychvJ0KMGIhJQZ7p6aTYnjMTJ1fN49PDw+Y9l+P7dfXkDfM6PNtnWi
+ oqyW4MPRJAhQKAng6kIUQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gK33T4nZbcg=:4i9fO+/F8DhO4VXyAzWfXw
+ whkM41Bswq1rWhra27aXsOYJKq/S2fL7K5f4KgkEuKFvZ4oOeXKl3Z6Sw3P3U8b0pXOjp1pOK
+ sKrTRndtpb9r+za1DsbTjwxcpkJwcTo758EZ8n0FRpKH5EnnQEjhw7kbRjOj+Iz60P66TtLZf
+ aEDd74dNLeWQcoQTx+h0EJCNjXZrR06p38eexslvi2kTQ++dJ5atQRw3RF6r1iHFouVELw2mU
+ OLsVeabPzX1hGsgMTGsVorENIA2qrSv8EpFzeKgcqSYL9taF92vr4Gf3t7IhAblvklQmD/Pax
+ ShxnxopSUhtjhRBrPcDBoFeC4ROak+kXgbcfxkRq6CmdkKJG9qUTKw/+D2wtSRA4IcYReDkci
+ tH9OAkC9OAgasXz3oFo0v+w3x/ltOAe9NQc2aWQz2UPWMqmxp3sWSresDYO6muIvnrdUhZhdT
+ +6v10eE/YjGgZrbx9CY5X/SJRl/N7iifxdi3SE34Q0YrUed6cBGNxf2HFFWqWQRkacqDfGcP7
+ 39BliEHewgrmaaqf2eIp/8+JmPjaaDWR/OA1KhMY+hKfAxKgdXa6Z/jUW7i0ZplM4MC9nX1bq
+ gxSa3ieQrGaapKVXlKQe7mDZsnGSV8rplzS+2tTtaMxfincOZMiEoDBSihmStkhy/+B71ewjp
+ 8/n2nmZUgWQSqZ7sNbSRjsfFZ0ifcqXZBybM6QnAQ5OvUUcb53ASfEn4ZEEvVNq+B4LzpB4QI
+ J6AfS/k6dEvP8vHdRKeXE7r0JNdSWe/gKz84e659q9nr/GcA41OupnDTtUClHjSpAoZLuNcbt
+ 4lB5fjDlnOhEhillDubQa8+pfhkdduq9HiHKUuDenHuIwjTiY4=
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Overflowed requests in io_uring_cancel_files() should be shed only of
-inflight and overflowed refs. All other left references are owned by
-someone else. E.g. a submission ref owned by __io_queue_sqe() but not
-yet reached the point of releasing it.
+I observed a build regression in ARM randconfig builds:
 
-However, if an overflowed request in io_uring_cancel_files() had extra
-refs, after refcount_sub_and_test(2) check fails, it
+fs/io_uring.c:500:26: error: field has incomplete type 'struct wait_page_queue'
+        struct wait_page_queue          wpq;
 
-- tries to cancel the req, which is already going away. That's pointless,
-just go for the next lap of inflight waiting.
+Include the missing header file that defines the structure
+to make it build again.
 
-- io_put_req() underflowing req->refs of a potentially freed request.
-
-Fixes: 2ca10259b418 ("io_uring: prune request from overflow list on flush")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Fixes: ad9e8c18aaa2 ("io_uring: support true async buffered reads, if file provides it")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/io_uring.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ fs/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index de6547e68626..01851a74bb12 100644
+index d292b992f945..5e2a0a8809a5 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7483,19 +7483,13 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 			WRITE_ONCE(ctx->rings->cq_overflow,
- 				atomic_inc_return(&ctx->cached_cq_overflow));
- 
--			/*
--			 * Put inflight ref and overflow ref. If that's
--			 * all we had, then we're done with this request.
--			 */
--			if (refcount_sub_and_test(2, &cancel_req->refs)) {
--				io_free_req(cancel_req);
--				finish_wait(&ctx->inflight_wait, &wait);
--				continue;
--			}
-+			/* Put inflight ref and overflow ref. */
-+			io_double_put_req(cancel_req);
-+		} else {
-+			io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
-+			io_put_req(cancel_req);
- 		}
- 
--		io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
--		io_put_req(cancel_req);
- 		schedule();
- 		finish_wait(&ctx->inflight_wait, &wait);
- 	}
+@@ -55,6 +55,7 @@
+ #include <linux/fdtable.h>
+ #include <linux/mm.h>
+ #include <linux/mman.h>
++#include <linux/pagemap.h>
+ #include <linux/percpu.h>
+ #include <linux/slab.h>
+ #include <linux/kthread.h>
 -- 
-2.24.0
+2.26.2
 

@@ -2,209 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00A131E3EBC
-	for <lists+io-uring@lfdr.de>; Wed, 27 May 2020 12:14:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB1931E3EE8
+	for <lists+io-uring@lfdr.de>; Wed, 27 May 2020 12:25:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387844AbgE0KOd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 May 2020 06:14:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33088 "EHLO
+        id S1727812AbgE0KY7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 May 2020 06:24:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387751AbgE0KOb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 May 2020 06:14:31 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D85FC061A0F
-        for <io-uring@vger.kernel.org>; Wed, 27 May 2020 03:14:31 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id l21so27407278eji.4
-        for <io-uring@vger.kernel.org>; Wed, 27 May 2020 03:14:31 -0700 (PDT)
+        with ESMTP id S1726420AbgE0KY7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 May 2020 06:24:59 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B3B0C061A0F;
+        Wed, 27 May 2020 03:24:58 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id o15so6072296ejm.12;
+        Wed, 27 May 2020 03:24:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JoLk5LgfRbUBaUXreouzKViFqGrUJuKgv+Ap9Q9Pc4A=;
-        b=e6PsSHRmsAasyKfYR41gG9gxZh9JQYSPu35yFIxOlL+b86oPqIVgYOcDTeXaaGxeNP
-         4whPRtFJ0ktMSnwSTPg5dPsmC+8bGc9PjeDmcpOWz8NMP+gNHaLKUFZJlf7vXB8piPlB
-         R05qEuDdK3ZULAhtyrU4CmQOPm2I7bmDEk+SR+Y5jDIaflIVPZM1wtzktiV6e/0hAaZT
-         yv3O+cyciwyTvVI4OJVefKqweu3gZu1dzoEU6BrbuuArI54Ovl2LVAXD29cA28xPg3T1
-         07sssD4V+/SF01iV6BYXwtTHOe44Ut9RiI9C9m+BVMtO5bqpf9PVEpeamGhaRxw/n46u
-         A5bg==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cL2REwYbuiFQw9+7Sm4ybcaJkH87SCGRTJq5l7sNJ/M=;
+        b=iaFdGMKGMz7aAp7G1jJxCPjb0Gv51q3YGSDlxlmJkrsD1vzbAYHRfvLl8x9l9L/I9s
+         sVBIhuBi/9emvqE6GU71ZMQaAGnqX2LhkmLjOy//hCyqZ+CXfrE/GpDmn3JL5E7a+4LV
+         a4hF20BGQS1cS+HwhCSEYhmFT8+03/ltaMV60OW8fjEkkqfjbbhunh0NHmBMoTBryGDZ
+         RbKH61dh0TVD2eCevZtDYyXGmYzlhFSiAE2f67w7Hz08rCAa57p7wNMq4Bv3V8uJHCD7
+         21llwM8BN6Ka01Hqowks9kMiqe4SPuiwE0De1gw8fjdtdWkzt5UL7XD0/TI8KfvN2CSd
+         Os7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=JoLk5LgfRbUBaUXreouzKViFqGrUJuKgv+Ap9Q9Pc4A=;
-        b=JHE/8XKLTvpsl6nljwNBsgy9Ziums0ShsSW6SXjlgmr9Ieo4J9L1pX5ysR90Qi+hXV
-         Ic9jIhaWVZoC+fNoMQfh26TFeomGDjL7wteIrb6omSGU6uScetYtsuvAY7GyHYqMh0LZ
-         ikhFRX+H4okxjL9naH9XVp+1ILH7kPwOA4qgh4YtqYPcU+JXVjYx3XUxRBFSng4KHu22
-         ZI6maZpM/02CuerxUi1oF4TGuz0LtwO4k66w5MCo85BSkeO8nLIRUhrJTlymti4Y+f5x
-         IlHlghCQRV24vrY02sZm9HN2uLbCZLS24VPz8MpvXYRnhKAshUkbAA2w36cnHpRqtQfC
-         EFlA==
-X-Gm-Message-State: AOAM531+esW48U0Pm5v6K/fjlwWr6CCMJQZfHVowyhUA8Qyivmo/MbYf
-        n1+dhuVnANUlYN31k3MDgng=
-X-Google-Smtp-Source: ABdhPJyJywhXdCOD9fKpz4Cnwq/8mr48xtdTT8Fq4FHg4RuMo9d/d08+A5x+XQYq2jKy1m1NEExoYw==
-X-Received: by 2002:a17:906:5210:: with SMTP id g16mr5362932ejm.197.1590574469721;
-        Wed, 27 May 2020 03:14:29 -0700 (PDT)
-Received: from [192.168.43.107] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id s20sm2370344eju.96.2020.05.27.03.14.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 May 2020 03:14:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cL2REwYbuiFQw9+7Sm4ybcaJkH87SCGRTJq5l7sNJ/M=;
+        b=DxhdJbWaA0r4JJVnCxv8K4ThFb2WlYjJh2d15ZUZA6LPvN2c0sbRD769CDm1qr62ho
+         xMyCtdgzYi2JnCQQVuxK716UN1HHoSJVuZkWDlztI6j7aKh+9yeuQAUj8eWjui38dgfl
+         oRCqDG5loklwSzBZqYw6KmpUmHxulTF4wbtUcimoC6j2U5DUWdPT5VGxZhgMkRSxFxI8
+         SUXYK8UicVOUcaB6OhfZTgYJ5o/smEVv0PhcJJn+HW3+RUaU5+oaSqlasdC1DHxjgzKg
+         74KK/xigESnasocEU6t5MOtz85OOI1mvZ/29W7LeSofwt+gN9H3l96s7eS+W+/l1Ukb/
+         jj/Q==
+X-Gm-Message-State: AOAM533YMxpcfceYPzLqw622jRotmA2njLE09LRD+eb7DOSHr0SrEkxI
+        ZCtkfR484NQdqtUaFlLNEhA=
+X-Google-Smtp-Source: ABdhPJy+ANuYRzBdhIovooVjPDuPCs0ZWfGw+3AoWhJM2BQGHx5HTBFyifvtaKMhWRjuZSlsHI795A==
+X-Received: by 2002:a17:907:1189:: with SMTP id uz9mr5170829ejb.53.1590575096781;
+        Wed, 27 May 2020 03:24:56 -0700 (PDT)
+Received: from localhost.localdomain ([5.100.193.151])
+        by smtp.gmail.com with ESMTPSA id k27sm2407608eji.18.2020.05.27.03.24.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 May 2020 03:24:56 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
-References: <94f75705-3506-4c58-c1ff-cced9c045956@gmail.com>
- <CAG48ez24_NGyYEXyO+AaWZNEkK=CVmvOQDoGUoaJxtORoLU=OA@mail.gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [RFC] .flush and io_uring_cancel_files
-Message-ID: <ab91ac71-def9-9e78-539d-05aebe7eda67@gmail.com>
-Date:   Wed, 27 May 2020 13:13:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] io_uring: fix overflowed reqs cancellation
+Date:   Wed, 27 May 2020 13:23:33 +0300
+Message-Id: <7acb1a15ee5a79103d71372d6330b19c5397a482.1590574948.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez24_NGyYEXyO+AaWZNEkK=CVmvOQDoGUoaJxtORoLU=OA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 27/05/2020 01:04, Jann Horn wrote:
-> On Tue, May 26, 2020 at 8:11 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->> It looks like taking ->uring_lock should work like kind of grace
->> period for struct files_struct and io_uring_flush(), and that would
->> solve the race with "fcheck(ctx->ring_fd) == ctx->ring_file".
->>
->> Can you take a look? If you like it, I'll send a proper patch
->> and a bunch of cleanups on top.
->>
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index a3dbd5f40391..012af200dc72 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -5557,12 +5557,11 @@ static int io_grab_files(struct io_kiocb *req)
->>          * the fd has changed since we started down this path, and disallow
->>          * this operation if it has.
->>          */
->> -       if (fcheck(ctx->ring_fd) == ctx->ring_file) {
->> -               list_add(&req->inflight_entry, &ctx->inflight_list);
->> -               req->flags |= REQ_F_INFLIGHT;
->> -               req->work.files = current->files;
->> -               ret = 0;
->> -       }
->> +       list_add(&req->inflight_entry, &ctx->inflight_list);
->> +       req->flags |= REQ_F_INFLIGHT;
->> +       req->work.files = current->files;
->> +       ret = 0;
->> +
->>         spin_unlock_irq(&ctx->inflight_lock);
->>         rcu_read_unlock();
->>
->> @@ -7479,6 +7478,10 @@ static int io_uring_release(struct inode *inode, struct
->> file *file)
->>  static void io_uring_cancel_files(struct io_ring_ctx *ctx,
->>                                   struct files_struct *files)
->>  {
->> +       /* wait all submitters that can race for @files */
->> +       mutex_lock(&ctx->uring_lock);
->> +       mutex_unlock(&ctx->uring_lock);
->> +
->>         while (!list_empty_careful(&ctx->inflight_list)) {
->>                 struct io_kiocb *cancel_req = NULL, *req;
->>                 DEFINE_WAIT(wait);
-> 
-> First off: You're removing a check in io_grab_files() without changing
-> the comment that describes the check; and the new comment you're
-> adding in io_uring_cancel_files() is IMO too short to be useful.
+Overflowed requests in io_uring_cancel_files() should be shed only of
+inflight and overflowed refs. All other left references are owned by
+someone else. E.g. a submission ref owned by __io_queue_sqe() but not
+yet reached the point of releasing it.
 
-Obviously, it was stripped down to show the idea, nobody is talking about
-commiting it as is. I hoped Jens remembers it well enough to understand.
-Let me describe it in more details then:
+However, if an overflowed request in io_uring_cancel_files() had extra
+refs, after refcount_sub_and_test(2) check fails, it
 
-> 
-> I'm trying to figure out how your change is supposed to work, and I
-> don't get it. If a submitter is just past fdget() (at which point no
-> locks are held), the ->flush() caller can instantly take and drop the
-> ->uring_lock, and then later the rest of the submission path will grab
-> an unprotected pointer to the files_struct. Am I missing something?
+- tries to cancel the req, which is already going away. That's pointless,
+just go for the next lap of inflight waiting.
 
-old = tsk->files;
-task_lock(tsk);
-tsk->files = files;
-task_unlock(tsk);
-put_files_struct(old); (i.e. ->flush(old))
+- io_put_req() underflowing req->refs of a potentially freed request.
 
-It's from reset_files_struct(), and I presume the whole idea of
-io_uring->flush() is to protect against racing for similarly going away @old
-files. I.e. ensuring of not having io_uring requests holding @old files.
+Fixes: 2ca10259b418 ("io_uring: prune request from overflow list on flush")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-The only place, where current->files are accessed and copied by io_uring, is
-io_grab_files(), which is called in the submission path. And the whole
-submission path is done under @uring_mtx.
-For your case, the submitter will take @uring_mtx only after this lock/unlock
-happened, so it won't see old files (happens-before by locking mutex).
-
-The idea behind lock/unlock is that
-- submitters already locked @uring_mtx (i.e. started submission) before the
-lock/unlock, are waited for in the flush. These can potentially access @old.
-
-- submitters, that came after the lock/unlock, won't see @old files.
-
-So, no new request associated with @old can appear after that. All's left is to
-deal with already submitted requests, that's done by the rest of
-io_uring_cancel_files().
-
-
-The thing I don't know is why current->files is originally accessed without
-protection in io_grab_files(), but presumably rcu_read_lock() there is for that
-reason.
-
-Do you see anything suspicious from the description?
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index de6547e68626..01851a74bb12 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7483,19 +7483,13 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+ 			WRITE_ONCE(ctx->rings->cq_overflow,
+ 				atomic_inc_return(&ctx->cached_cq_overflow));
+ 
+-			/*
+-			 * Put inflight ref and overflow ref. If that's
+-			 * all we had, then we're done with this request.
+-			 */
+-			if (refcount_sub_and_test(2, &cancel_req->refs)) {
+-				io_free_req(cancel_req);
+-				finish_wait(&ctx->inflight_wait, &wait);
+-				continue;
+-			}
++			/* Put inflight ref and overflow ref. */
++			io_double_put_req(cancel_req);
++		} else {
++			io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
++			io_put_req(cancel_req);
+ 		}
+ 
+-		io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
+-		io_put_req(cancel_req);
+ 		schedule();
+ 		finish_wait(&ctx->inflight_wait, &wait);
+ 	}
 -- 
-Pavel Begunkov
-
+2.24.0
 

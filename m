@@ -2,85 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 28E9F1E491E
-	for <lists+io-uring@lfdr.de>; Wed, 27 May 2020 18:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE6101E4A8B
+	for <lists+io-uring@lfdr.de>; Wed, 27 May 2020 18:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389388AbgE0QDZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 May 2020 12:03:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59096 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389334AbgE0QDY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 May 2020 12:03:24 -0400
-Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EFECC03E97D
-        for <io-uring@vger.kernel.org>; Wed, 27 May 2020 09:03:24 -0700 (PDT)
-Received: by mail-qv1-xf42.google.com with SMTP id r16so2573275qvm.6
-        for <io-uring@vger.kernel.org>; Wed, 27 May 2020 09:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=S4XAF2qs5g4AY/r0EWrS8+9mLHbgcJOtXMG15PYfY1M=;
-        b=FAkcrvKPhwXHPzhdsTR4NIhbFqwfLMvAV5bGTRBFGbczDHZC/aQDPVNA9PY7cGrlvI
-         OAU7sMfEHvFrbqT7CvtkuJGTkLTQG5KPLvLc06tbn9wyvDUbjiyyqowgDNO9WndwvoJj
-         X2dl1qZDNUOZqVESipiKNZd2Z60Nw52ZyxG0kUa5w+Kb9fsoxQn99KBAnvXQXuidqHXF
-         g8B5P2fMOTarggI1cwoQW6OJquoa9Iej9VuFDR2ehmtvCwzE99l5fAoHQpqyCpeiAEEr
-         Af1ivrgSbwVp3LHhcKFdtzo1qHJKVNeAaLsKpBMc9QZNWJkGiTDvSPU22BKqJthweSfF
-         Xblw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=S4XAF2qs5g4AY/r0EWrS8+9mLHbgcJOtXMG15PYfY1M=;
-        b=kKJ+9aAKH219uintEdeDwy55mn+QcWh8hkWLut90UpOjAbCYmOHfouHlWtO1tnSc0W
-         /DT50lq0155T6QjA9BVN2C7GPZogEfTkmbv9yLCOvy0NGWNWU6+QULnFTof9Rn48n7Iz
-         lz1Rq7ps+NFL58A7h4XK25L4bAcbSPWMuXFBexgS6IKvR2yqNEOxSBRkyBK3gbzWfP6r
-         23j/JrVCrv6FdkuYoFLPoHszS6kiWSzfBfC6LcLbvKbwKEgGjzaZyQ3QL8yUeus2cR3x
-         DfPBFJBIfTcowq+KNjgAngDTQ52TzCH7jY24EC42JlVz3CuUS3ya3K94Cx79pn5RszJ9
-         e/kg==
-X-Gm-Message-State: AOAM532JSohquefwp+mj4UNgfRXiw46GFbbDusT0ggtJsh7lV1ae4y28
-        oRDEh/14kQOuuPiBtA+Rn+i13w==
-X-Google-Smtp-Source: ABdhPJyGGNRt6GbiZDvAAJR7JhnDFJNuzQwWePJEhdbGDeVQFHSsv2y//UkvfCBcqxVwmEGqiS8tHA==
-X-Received: by 2002:a0c:f486:: with SMTP id i6mr24701658qvm.190.1590595402656;
-        Wed, 27 May 2020 09:03:22 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::1:2535])
-        by smtp.gmail.com with ESMTPSA id g66sm2485148qkb.122.2020.05.27.09.03.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2020 09:03:22 -0700 (PDT)
-Date:   Wed, 27 May 2020 12:02:57 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH 04/12] mm: add support for async page locking
-Message-ID: <20200527160257.GB42293@cmpxchg.org>
-References: <20200526195123.29053-1-axboe@kernel.dk>
- <20200526195123.29053-5-axboe@kernel.dk>
- <20200526215925.GC6781@cmpxchg.org>
- <152529a5-adb4-fd7b-52ac-967500c011c9@kernel.dk>
+        id S1729359AbgE0Qlj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 May 2020 12:41:39 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:35077 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729134AbgE0Qli (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 May 2020 12:41:38 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TzpPrAH_1590597666;
+Received: from 30.39.180.53(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0TzpPrAH_1590597666)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 28 May 2020 00:41:06 +0800
+Subject: Re: [PATCH 1/3] io_uring: don't use req->work.creds for inline
+ requests
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
+References: <20200526064330.9322-1-xiaoguang.wang@linux.alibaba.com>
+ <fe4196c6-a069-a029-6a98-68801d088798@gmail.com>
+ <06081761-4aef-6423-ac70-97c62a7c0e5c@linux.alibaba.com>
+ <dc2f20fd-dd81-bc21-cd02-747b523dd915@gmail.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <52fbb449-39f7-e46a-422a-1c4d5e0ba737@linux.alibaba.com>
+Date:   Thu, 28 May 2020 00:41:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152529a5-adb4-fd7b-52ac-967500c011c9@kernel.dk>
+In-Reply-To: <dc2f20fd-dd81-bc21-cd02-747b523dd915@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, May 26, 2020 at 04:01:07PM -0600, Jens Axboe wrote:
-> On 5/26/20 3:59 PM, Johannes Weiner wrote:
-> > On Tue, May 26, 2020 at 01:51:15PM -0600, Jens Axboe wrote:
-> >> Normally waiting for a page to become unlocked, or locking the page,
-> >> requires waiting for IO to complete. Add support for lock_page_async()
-> >> and wait_on_page_locked_async(), which are callback based instead. This
-> > 
-> > wait_on_page_locked_async() is actually in the next patch, requiring
-> > some back and forth to review. I wonder if this and the next patch
-> > could be merged to have the new API and callers introduced together?
-> 
-> I'm fine with that, if that is preferable. Don't feel strongly about
-> that at all, just tried to do it as piecemeal as possible to make
-> it easier to review.
+hi Pavel,
 
-Not worth sending a new iteration over, IMO.
+> On 26/05/2020 17:59, Xiaoguang Wang wrote:
+>> hi,
+>>
+>>> On 26/05/2020 09:43, Xiaoguang Wang wrote:
+>>>> In io_init_req(), if uers requires a new credentials, currently we'll
+>>>> save it in req->work.creds, but indeed io_wq_work is designed to describe
+>>>> needed running environment for requests that will go to io-wq, if one
+>>>> request is going to be submitted inline, we'd better not touch io_wq_work.
+>>>> Here add a new 'const struct cred *creds' in io_kiocb, if uers requires a
+>>>> new credentials, inline requests can use it.
+>>>>
+>>>> This patch is also a preparation for later patch.
+>>>
+>>> What's the difference from keeping only one creds field in io_kiocb (i.e.
+>>> req->work.creds), but handling it specially (i.e. always initialising)? It will
+>>> be a lot easier than tossing it around.
+>>>
+>>> Also, the patch doubles {get,put}_creds() for sqe->personality case, and that's
+>>> extra atomics without a good reason.
+>> You're right, thanks.
+>> The original motivation for this patch is that it's just a preparation later patch
+>> "io_uring: avoid whole io_wq_work copy for inline requests", I can use
+>> io_wq_work.func
+>> to determine whether to drop io_wq_work in io_req_work_drop_env(), so if
+>> io_wq_work.func
+>> is NULL, I don't want io_wq_work has a valid creds.
+>> I'll look into whether we can just assign req->creds's pointer to
+>> io_wq_work.creds to
+>> reduce the atomic operations.
+> 
+> See a comment for the [2/3], can spark some ideas.
+> 
+> It's a bit messy and makes it more difficult to keep in mind -- all that extra
+> state (i.e. initialised or not) + caring whether func was already set. IMHO, the
+> nop-test do not really justifies extra complexity, unless the whole stuff is
+> pretty and clear. Can you benchmark something more realistic? at least
+> reads/writes to null_blk (completion_nsec=0).
+Indeed for this patch set, I also don't expect any obvious performance improvement,
+just think current codes are not good, so try to improve it.
+I will send a v2 version later, in which I'll use null_blk to evaluate performance,
+please have a check.
+
+Regards,
+Xiaoguang Wang
+
+
+> 

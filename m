@@ -2,167 +2,283 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 397251E59F1
-	for <lists+io-uring@lfdr.de>; Thu, 28 May 2020 09:56:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F7B1E5B9A
+	for <lists+io-uring@lfdr.de>; Thu, 28 May 2020 11:16:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725859AbgE1H4u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 28 May 2020 03:56:50 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:59955 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725779AbgE1H4t (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 28 May 2020 03:56:49 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R701e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TzstJ7v_1590652606;
-Received: from 30.225.32.167(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0TzstJ7v_1590652606)
+        id S1728132AbgE1JQM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 May 2020 05:16:12 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:52375 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728129AbgE1JQL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 May 2020 05:16:11 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07425;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Tzt718k_1590657361;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Tzt718k_1590657361)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 28 May 2020 15:56:47 +0800
-Subject: Re: [PATCH] io_uring: create percpu io sq thread when
- IORING_SETUP_SQ_AFF is flagged
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com, yujian.wu1@gmail.com
-References: <20200520115648.6140-1-xiaoguang.wang@linux.alibaba.com>
- <3bea8be7-2a82-cf24-a8b6-327672a64535@gmail.com>
- <242c17f3-b9b3-30cb-ff3d-a33aeef36ad1@linux.alibaba.com>
- <13dd7a1f-63df-6a0c-74ed-d5ff12a0bf96@gmail.com>
+          Thu, 28 May 2020 17:16:08 +0800
 From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <4f83f98d-65da-4ca6-db23-7993c16047de@linux.alibaba.com>
-Date:   Thu, 28 May 2020 15:56:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <13dd7a1f-63df-6a0c-74ed-d5ff12a0bf96@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, asml.silence@gmail.com,
+        joseph.qi@linux.alibaba.com,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH v3 1/2] io_uring: avoid whole io_wq_work copy for requests completed inline
+Date:   Thu, 28 May 2020 17:15:49 +0800
+Message-Id: <20200528091550.3169-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi Pavel,
+If requests can be submitted and completed inline, we don't need to
+initialize whole io_wq_work in io_init_req(), which is an expensive
+operation, add a new 'REQ_F_WORK_INITIALIZED' to control whether
+io_wq_work is initialized.
 
-> On 22/05/2020 11:33, Xiaoguang Wang wrote:
->> hi Pavel,
->>
->> First thanks for reviewing!
-> 
-> sure, you're welcome!
-> 
->>> On 20/05/2020 14:56, Xiaoguang Wang wrote:
->>>>
->>>> To fix this issue, when io_uring instance uses IORING_SETUP_SQ_AFF to specify a
->>>> cpu,  we create a percpu io sq_thread to handle multiple io_uring instances' io
->>>> requests serially. With this patch, in same environment, we get a huge
->>>> improvement:
->>>
->>> Consider that a user can issue a long sequence of requests, say 2^15 of them,
->>> and all of them will happen in a single call to io_submit_sqes(). Just preparing
->>> them would take much time, apart from that it can do some effective work for
->>> each of them, e.g. copying a page. And now there is another io_uring, caring
->>> much about latencies and nevertheless waiting for _very_ long for its turn.
->> Indeed I had thought this case before and don't clearly know how to optimize it
->> yet.
->> But I think if user has above usage scenarios, they probably shouldn't make
->> io_uring
->> instances share same cpu core. I'd like to explain more about our usage scenarios.
-> 
-> IIRC, you create _globally_ available per-cpu threads, so 2 totally independent
-> users may greatly affect each other, e.g. 2 docker containers in a hosted
-> server, and that would be nasty. But if it's limited to a "single user", it'd be
-> fine by me, see below for more details.
-> 
-> BTW, out of curiosity, what's the performance\latency impact of disabling SQPOLL
-> at all for your app? Say, comparing with non contended case.
-> 
->> In a physical machine, say there are 96 cores, and it runs multiple cgroups, every
->> cgroup run same application and will monopoly 16 cpu cores. This application will
->> create 16 io threads and every io thread will create an io_uring instance and every
->> thread will be bound to a different cpu core, these io threads will receive io
->> requests.
->> If we enable SQPOLL for these io threads, we allocate one or two cpu cores for
->> these
->> io_uring instances at most, so they must share allocated cpu core. It's totally
->> disaster
->> that some io_uring instances' busy loop in their sq_thread_idle period will
->> impact other
->> io_uring instances which have io requests to handle.
->>
->>>
->>> Another problem is that with it a user can't even guess when its SQ would be
->>> emptied, and would need to constantly poll.
->> In this patch, in every iteration, we only handle io requests already queued,
->> will not constantly poll.
-> 
-> I was talking about a user polling _from userspace_ its full SQ, to understand
-> when it can submit more. That's if it doesn't want to wait for CQEs yet for some
-> reason (e.g. useful for net apps).
-> 
->>
->>>
->>> In essence, the problem is in bypassing thread scheduling, and re-implementing
->>> poor man's version of it (round robin by io_uring).
->> Yes :) Currently I use round robin strategy to handle multiple io_uring instance
->> in every iteration.
->>
->>> The idea and the reasoning are compelling, but I think we need to do something
->>> about unrelated io_uring instances obstructing each other. At least not making
->>> it mandatory behaviour.
->>>
->>> E.g. it's totally fine by me, if a sqpoll kthread is shared between specified
->>> bunch of io_urings -- the user would be responsible for binding them and not
->>> screwing up latencies/whatever. Most probably there won't be much (priviledged)
->>> users using SQPOLL, and they all be a part of a single app, e.g. with
->>> multiple/per-thread io_urings.
->> Did you read my patch? In this patch, I have implemented this idea :)
-> 
-> Took a glance, may have overlooked things. I meant to do as in your patch, but
-> not sharing threads between ALL io_uring in the system, but rather between a
-> specified set of them. In other words, making yours @percpu_threads not global,
-> but rather binding to a set of io_urings.
-> 
-> e.g. create 2 independent per-cpu sets of threads. 1st one for {a1,a2,a3}, 2nd
-> for {b1,b2,b3}.
-> 
-> a1 = create_uring()
-> a2 = create_uring(shared_sq_threads=a1)
-> a3 = create_uring(shared_sq_threads=a1)
-> 
-> b1 = create_uring()
-> b2 = create_uring(shared_sq_threads=b1)
-> b3 = create_uring(shared_sq_threads=b1)
-Think your suggestions further more, seems that you suggest the implementation method
-io-wq adopts, which requires a valid wq_fd, and that means we can only share io-wq between
-io_uring instances belong to same process, so do io_sq_thread. This method is hard to
-implement io_sq_thread share between processes.
+I use /dev/nullb0 to evaluate performance improvement in my physical
+machine:
+  modprobe null_blk nr_devices=1 completion_nsec=0
+  sudo taskset -c 60 fio  -name=fiotest -filename=/dev/nullb0 -iodepth=128
+  -thread -rw=read -ioengine=io_uring -direct=1 -bs=4k -size=100G -numjobs=1
+  -time_based -runtime=120
 
-As I said in previous mail, I guess io_uring instances which have SQPOLL enabed and do not
-specify valid sq_thread_cpu, are not likely be used in real business environment, so I'd
-like to preserve current design in my patch, which is simple and only affects cpu-pinned case.
+before this patch:
+Run status group 0 (all jobs):
+   READ: bw=724MiB/s (759MB/s), 724MiB/s-724MiB/s (759MB/s-759MB/s),
+   io=84.8GiB (91.1GB), run=120001-120001msec
 
-What do you think? Thanks.
+With this patch:
+Run status group 0 (all jobs):
+   READ: bw=761MiB/s (798MB/s), 761MiB/s-761MiB/s (798MB/s-798MB/s),
+   io=89.2GiB (95.8GB), run=120001-120001msec
 
-Regards,
-Xiaoguang Wang
+About 5% improvement.
 
-> 
-> And then:
-> - it somehow solves the problem. As long as it doesn't effect much other users,
-> it's ok to let userspace screw itself by submitting 2^16 requests.
-> 
-> - there is still a problem with a simple round robin. E.g. >100 io_urings per
-> such set. Even though, a user may decide for itself, it worth to think about. I
-> don't want another scheduling framework here. E.g. first round-robin, then
-> weighted one, etc.
-> 
-> - it's actually not a set of threads (i.e. per-cpu) the API should operate on,
-> but just binding io_urings to a single SQPOLL thread.
-> 
-> - there is no need to restrict it to cpu-pinned case.
-> 
->>>
->>> Another way would be to switch between io_urings faster, e.g. after processing
->>> not all requests but 1 or some N of them. But that's very thin ice, and I
->>> already see other bag of issues.
->> Sounds good, could you please lift detailed issues? Thanks.
-> 
-> Sounds terrible, TBH. Especially with arbitrary length links.
-> 
-> 
+Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+---
+ fs/io-wq.h    |  5 ----
+ fs/io_uring.c | 78 ++++++++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 62 insertions(+), 21 deletions(-)
+
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index 5ba12de7572f..3d85d365d764 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -94,11 +94,6 @@ struct io_wq_work {
+ 	pid_t task_pid;
+ };
+ 
+-#define INIT_IO_WORK(work, _func)				\
+-	do {							\
+-		*(work) = (struct io_wq_work){ .func = _func };	\
+-	} while (0)						\
+-
+ static inline struct io_wq_work *wq_next_work(struct io_wq_work *work)
+ {
+ 	if (!work->list.next)
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 2af87f73848e..7ba8590a45a6 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -535,6 +535,7 @@ enum {
+ 	REQ_F_POLLED_BIT,
+ 	REQ_F_BUFFER_SELECTED_BIT,
+ 	REQ_F_NO_FILE_TABLE_BIT,
++	REQ_F_WORK_INITIALIZED_BIT,
+ 
+ 	/* not a real bit, just to check we're not overflowing the space */
+ 	__REQ_F_LAST_BIT,
+@@ -590,6 +591,8 @@ enum {
+ 	REQ_F_BUFFER_SELECTED	= BIT(REQ_F_BUFFER_SELECTED_BIT),
+ 	/* doesn't need file table for this request */
+ 	REQ_F_NO_FILE_TABLE	= BIT(REQ_F_NO_FILE_TABLE_BIT),
++	/* io_wq_work is initialized */
++	REQ_F_WORK_INITIALIZED	= BIT(REQ_F_WORK_INITIALIZED_BIT),
+ };
+ 
+ struct async_poll {
+@@ -635,6 +638,7 @@ struct io_kiocb {
+ 	unsigned int		flags;
+ 	refcount_t		refs;
+ 	struct task_struct	*task;
++	const struct cred	*creds;
+ 	unsigned long		fsize;
+ 	u64			user_data;
+ 	u32			result;
+@@ -882,6 +886,12 @@ static struct kmem_cache *req_cachep;
+ 
+ static const struct file_operations io_uring_fops;
+ 
++static inline void init_io_work(struct io_kiocb *req,
++			void (*func)(struct io_wq_work **))
++{
++	req->work = (struct io_wq_work){ .func = func };
++	req->flags |= REQ_F_WORK_INITIALIZED;
++}
+ struct sock *io_uring_get_socket(struct file *file)
+ {
+ #if defined(CONFIG_UNIX)
+@@ -1035,8 +1045,15 @@ static inline void io_req_work_grab_env(struct io_kiocb *req,
+ 		mmgrab(current->mm);
+ 		req->work.mm = current->mm;
+ 	}
+-	if (!req->work.creds)
+-		req->work.creds = get_current_cred();
++
++	if (!req->work.creds) {
++		if (!req->creds)
++			req->work.creds = get_current_cred();
++		else {
++			req->work.creds = req->creds;
++			req->creds = NULL;
++		}
++	}
+ 	if (!req->work.fs && def->needs_fs) {
+ 		spin_lock(&current->fs->lock);
+ 		if (!current->fs->in_exec) {
+@@ -1053,6 +1070,9 @@ static inline void io_req_work_grab_env(struct io_kiocb *req,
+ 
+ static inline void io_req_work_drop_env(struct io_kiocb *req)
+ {
++	if (!(req->flags & REQ_F_WORK_INITIALIZED))
++		return;
++
+ 	if (req->work.mm) {
+ 		mmdrop(req->work.mm);
+ 		req->work.mm = NULL;
+@@ -2923,7 +2943,10 @@ static int io_fsync(struct io_kiocb *req, bool force_nonblock)
+ {
+ 	/* fsync always requires a blocking context */
+ 	if (force_nonblock) {
+-		req->work.func = io_fsync_finish;
++		if (!(req->flags & REQ_F_WORK_INITIALIZED))
++			init_io_work(req, io_fsync_finish);
++		else
++			req->work.func = io_fsync_finish;
+ 		return -EAGAIN;
+ 	}
+ 	__io_fsync(req);
+@@ -2971,7 +2994,10 @@ static int io_fallocate(struct io_kiocb *req, bool force_nonblock)
+ {
+ 	/* fallocate always requiring blocking context */
+ 	if (force_nonblock) {
+-		req->work.func = io_fallocate_finish;
++		if (!(req->flags & REQ_F_WORK_INITIALIZED))
++			init_io_work(req, io_fallocate_finish);
++		else
++			req->work.func = io_fallocate_finish;
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -3500,7 +3526,10 @@ static int io_close(struct io_kiocb *req, bool force_nonblock)
+ 		/* submission ref will be dropped, take it for async */
+ 		refcount_inc(&req->refs);
+ 
+-		req->work.func = io_close_finish;
++		if (!(req->flags & REQ_F_WORK_INITIALIZED))
++			init_io_work(req, io_close_finish);
++		else
++			req->work.func = io_close_finish;
+ 		/*
+ 		 * Do manual async queue here to avoid grabbing files - we don't
+ 		 * need the files, and it'll cause io_close_finish() to close
+@@ -3563,7 +3592,10 @@ static int io_sync_file_range(struct io_kiocb *req, bool force_nonblock)
+ {
+ 	/* sync_file_range always requires a blocking context */
+ 	if (force_nonblock) {
+-		req->work.func = io_sync_file_range_finish;
++		if (!(req->flags & REQ_F_WORK_INITIALIZED))
++			init_io_work(req, io_sync_file_range_finish);
++		else
++			req->work.func = io_sync_file_range_finish;
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -4032,7 +4064,10 @@ static int io_accept(struct io_kiocb *req, bool force_nonblock)
+ 
+ 	ret = __io_accept(req, force_nonblock);
+ 	if (ret == -EAGAIN && force_nonblock) {
+-		req->work.func = io_accept_finish;
++		if (!(req->flags & REQ_F_WORK_INITIALIZED))
++			init_io_work(req, io_accept_finish);
++		else
++			req->work.func = io_accept_finish;
+ 		return -EAGAIN;
+ 	}
+ 	return 0;
+@@ -5032,6 +5067,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
+ 	if (!sqe)
+ 		return 0;
+ 
++	if (!(req->flags & REQ_F_WORK_INITIALIZED))
++		init_io_work(req, io_wq_submit_work);
++
+ 	if (io_op_defs[req->opcode].file_table) {
+ 		ret = io_grab_files(req);
+ 		if (unlikely(ret))
+@@ -5667,19 +5705,24 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_kiocb *linked_timeout;
+ 	struct io_kiocb *nxt;
+-	const struct cred *old_creds = NULL;
++	const struct cred *creds, *old_creds = NULL;
+ 	int ret;
+ 
+ again:
+ 	linked_timeout = io_prep_linked_timeout(req);
+ 
+-	if (req->work.creds && req->work.creds != current_cred()) {
++	if (req->flags & REQ_F_WORK_INITIALIZED)
++		creds = req->work.creds;
++	else
++		creds = req->creds;
++
++	if (creds && creds != current_cred()) {
+ 		if (old_creds)
+ 			revert_creds(old_creds);
+-		if (old_creds == req->work.creds)
++		if (old_creds == creds)
+ 			old_creds = NULL; /* restored original creds */
+ 		else
+-			old_creds = override_creds(req->work.creds);
++			old_creds = override_creds(creds);
+ 	}
+ 
+ 	ret = io_issue_sqe(req, sqe, true);
+@@ -5696,6 +5739,9 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 			goto exit;
+ 		}
+ punt:
++		if (!(req->flags & REQ_F_WORK_INITIALIZED))
++			init_io_work(req, io_wq_submit_work);
++
+ 		if (io_op_defs[req->opcode].file_table) {
+ 			ret = io_grab_files(req);
+ 			if (ret)
+@@ -5948,7 +5994,6 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	refcount_set(&req->refs, 2);
+ 	req->task = NULL;
+ 	req->result = 0;
+-	INIT_IO_WORK(&req->work, io_wq_submit_work);
+ 
+ 	if (unlikely(req->opcode >= IORING_OP_LAST))
+ 		return -EINVAL;
+@@ -5970,11 +6015,12 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 
+ 	id = READ_ONCE(sqe->personality);
+ 	if (id) {
+-		req->work.creds = idr_find(&ctx->personality_idr, id);
+-		if (unlikely(!req->work.creds))
++		req->creds = idr_find(&ctx->personality_idr, id);
++		if (unlikely(!req->creds))
+ 			return -EINVAL;
+-		get_cred(req->work.creds);
+-	}
++		get_cred(req->creds);
++	} else
++		req->creds = NULL;
+ 
+ 	/* same numerical values with corresponding REQ_F_*, safe to copy */
+ 	req->flags |= sqe_flags;
+-- 
+2.17.2
+

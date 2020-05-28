@@ -2,93 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 497EF1E6A94
-	for <lists+io-uring@lfdr.de>; Thu, 28 May 2020 21:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A31B1E6B00
+	for <lists+io-uring@lfdr.de>; Thu, 28 May 2020 21:31:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406499AbgE1TXc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 28 May 2020 15:23:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59736 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406205AbgE1TXa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 28 May 2020 15:23:30 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27C93C08C5C8
-        for <io-uring@vger.kernel.org>; Thu, 28 May 2020 12:23:29 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id 124so46202pgi.9
-        for <io-uring@vger.kernel.org>; Thu, 28 May 2020 12:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0gA7Ac+73j/XnZFQi1m6vn3pC8smRbdUm5Fe8cbDyhk=;
-        b=Om+LVat92f7RfQwrzgyYFTaU+jb22Q8KiUAmJI9TaxaK/Z2+G02Sv/9APyzywDHAQn
-         Ln7QkPtqftmBgBAB4LCMNXyvhNZcFe8XgdR+LctT7cHTb7V1DqY9dhhRoe985ljMbbmu
-         jnAscOpB5boyeZ/+SkqORtmWOqSkQoGaXxGTGvwSDDd1XkBBBQGdLBLlrKaHV2mH2EMx
-         P/kfVgurkkRRin6rXHRfXKstHnWkUQmCEWiv4r734Ng8gwmHlxhUggxP37jQ0QixIPnG
-         2WV+sl52+rHWgakZ+AFjDeD7H5Vru2/of/jrruf+PyAE9qImbd6R88VyiHjemZDp27+0
-         GdJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0gA7Ac+73j/XnZFQi1m6vn3pC8smRbdUm5Fe8cbDyhk=;
-        b=kOFPJnft7vQS8trVSKd0AtJQ0ZGF7FnigTr5Loy5xtvD0xy1sYuBwdnO+hwdUyN+Iz
-         brvXU6Xo9g2tZgQ6EMexiTty13JfQ3kMIQpNnPtVDdyAW0aMZ55//ihhJnYZplAd2D+2
-         o5IM4QIAzt1feTAlI0FOEbH0rdi1+W+js3PvLmk2i3TTp/Aefx2weSNwquGWw+SHmcvM
-         pMPJj3Yzi7hMupyTwEGOJDIvKh1PifRytR5KssER06xb+dB3CqefKhJevUDtxcr8l61I
-         oFh8Kg2dGtIjYKpkBIxpeFMm51gMX7+QUtloM+ItqhBqE8kBr7t331R7rksew2PMf3Mo
-         b+2w==
-X-Gm-Message-State: AOAM533k5Td4j2g/+QlzzpnzeaG3izfLQXyHllUsmr7CeW7oKDmoGqIM
-        pZwtGPcDfUCGaE0ZoQZuF2vblg==
-X-Google-Smtp-Source: ABdhPJxvks363x29yek8RaALXXC0cYu2SwUDsZ1gCb7momK0fY3oVgT+N23LBhPU5BtU9iTGBDhkUg==
-X-Received: by 2002:a63:c5a:: with SMTP id 26mr4386530pgm.270.1590693808617;
-        Thu, 28 May 2020 12:23:28 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t2sm5089134pgh.89.2020.05.28.12.23.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 May 2020 12:23:28 -0700 (PDT)
-Subject: Re: [PATCH 09/12] xfs: flag files as supporting buffered async reads
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-References: <20200526195123.29053-1-axboe@kernel.dk>
- <20200526195123.29053-10-axboe@kernel.dk> <20200528175353.GB8204@magnolia>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d723cd33-2fed-1438-d1ed-b3851edf4b98@kernel.dk>
-Date:   Thu, 28 May 2020 13:23:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S2406507AbgE1TbK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 May 2020 15:31:10 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56297 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2406318AbgE1TbJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 May 2020 15:31:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590694267;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nYiWUB99KR8oQUbnJb1Edexk+M/o3Q8sut7E1T9tkIw=;
+        b=E0BCI8AkAyMsv0zfMhw3GFtshRYfNvggHiXCGHSfAfyKfRggX98asxs4zWYWN4LOLFV1hH
+        mmJRAYUfwJN/bg1C/LjBJsmm72DTXacDsym4G253K/3p1l74Y6oAF7UYFx7cNcaUKr0eIp
+        HftpyR/G0Fi45+2l6Mq+sgLphwyN1Oo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-435-PGlJZFTyNoORd9wMgiSi9w-1; Thu, 28 May 2020 15:31:06 -0400
+X-MC-Unique: PGlJZFTyNoORd9wMgiSi9w-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CE9AB107ACF4;
+        Thu, 28 May 2020 19:31:04 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 785E661100;
+        Thu, 28 May 2020 19:31:04 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
+        io-uring@vger.kernel.org
+Subject: Re: [RFC 2/2] io_uring: mark REQ_NOWAIT for a non-mq queue as unspported
+References: <1589925170-48687-1-git-send-email-bijan.mottahedeh@oracle.com>
+        <1589925170-48687-3-git-send-email-bijan.mottahedeh@oracle.com>
+        <x495zcf29ie.fsf@segfault.boston.devel.redhat.com>
+        <0ab35b4b-be67-8977-08ea-2998a4ac1a7e@kernel.dk>
+        <798e24c7-b973-00c7-037f-4095e43515b7@kernel.dk>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Thu, 28 May 2020 15:31:03 -0400
+In-Reply-To: <798e24c7-b973-00c7-037f-4095e43515b7@kernel.dk> (Jens Axboe's
+        message of "Thu, 28 May 2020 13:22:19 -0600")
+Message-ID: <x49tuzzzwjs.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200528175353.GB8204@magnolia>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/28/20 11:53 AM, Darrick J. Wong wrote:
-> On Tue, May 26, 2020 at 01:51:20PM -0600, Jens Axboe wrote:
->> XFS uses generic_file_read_iter(), which already supports this.
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> Er... I guess that looks ok?  Assuming you've done enough qa on
-> io_uring to be able to tell if this breaks anything, since touching the
-> mm always feels murky to me:
-> 
+Jens Axboe <axboe@kernel.dk> writes:
 
-The mm bits should be fine, haven't seen anything odd in testing.
-And it's not like the mm changes are super complicated, I think
-they turned out pretty clean and straight forward.
+> I checked, and with the offending commit reverted, it behaves exactly
+> like it should - io_uring doesn't hit endless retries, and we still
+> return -EAGAIN to userspace for preadv2(..., RFW_NOWAIT) if not supported.
+> I've queued up the revert.
+>
+> Jeff, the poll test above is supposed to fail as we can't poll on dm.
+> So that part is expected.
 
-> Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+OK, works for me.  Thanks for the quick turnaround.
 
-Thanks!
-
--- 
-Jens Axboe
+-Jeff
 

@@ -2,94 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B071E8031
-	for <lists+io-uring@lfdr.de>; Fri, 29 May 2020 16:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ADC61E811F
+	for <lists+io-uring@lfdr.de>; Fri, 29 May 2020 17:02:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbgE2O16 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 May 2020 10:27:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40214 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726849AbgE2O16 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 May 2020 10:27:58 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E4FC03E969
-        for <io-uring@vger.kernel.org>; Fri, 29 May 2020 07:27:57 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id 64so1226338pfg.8
-        for <io-uring@vger.kernel.org>; Fri, 29 May 2020 07:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=B6FIZp+IHtz5uymgd/cOx3slmUv5uOkxyGhKnfI0lBo=;
-        b=aTR1nav2eJlFyzSZdtjlDJRNhtBo26rjh8ixRo7CHRQM2vurrvMqmwAFPPNEUHi94S
-         GRyndFJ7DHZseoTS0y/UL4M8uc92fRBEYrNigvCkso7nMj+E2mOopYiZ5Iat2KN8zHAa
-         F7mJpDKRcLJMWCL/NCKlFsSS+HXILjjt1C1JkfywBnjaiTyTe1NZ2V+rier2n2vDZ9Ho
-         PrEttrSBt6Gw7qCs3rXQ73n1HydIupGpe2S1LC0QHM8NpIBsWlyu3kXfF/bdtBroA1Rt
-         jd2VlUufGRlWWG7rMnYDt4idmer2E3XCH2K1MxkBDp+gaenCOkOralVcA2NB+PNdIvIt
-         ydSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=B6FIZp+IHtz5uymgd/cOx3slmUv5uOkxyGhKnfI0lBo=;
-        b=IAgeGspgT0wxDV4+7lNUYa4xl/kOAx1Iopp6txcmwNcKed5oVE3LOVmYegyR2XTgQf
-         wydlGRWVUrDTqMi7OsBwoW3/4h4ViGj7TCLv/7XRMa5oYR3JdolvpN3nfVT/4hJKuBP5
-         m5eVItO3v7PDXbw9Ja3cpdy51BJGbZVWWrPRr9oocdl2JlcT4wLD0WGZ0dLUfc40t9r/
-         OJETmKm/iSIrE0nKtBG8BWv7Q26ZSWmMh0zLWPkdfcRmQVZjI9U5YmlYaAvmXL16cBeb
-         cLRUZFUkgRACjEWtuDO/64vSux8szhTAe9Y9rpZlrlpW92RBcHngvxLJ83ozTQc8BFOo
-         gyTA==
-X-Gm-Message-State: AOAM533gozV5t57mxDKIBv4EM91N5Mz/bHUM2eW7BVhQ5+Ka23KVQ9Da
-        vY15AsjLV/O+cN/MR8BJLSxwn3C023B/gA==
-X-Google-Smtp-Source: ABdhPJyz2MD6e/m9fR1O34rBMqaAuSMfYq6jH2QU/T62YvLjqR9BMYAmJQvy7tDtUNkYwPZkPdB9sg==
-X-Received: by 2002:a65:4241:: with SMTP id d1mr2373276pgq.307.1590762477441;
-        Fri, 29 May 2020 07:27:57 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id u35sm6937074pgm.48.2020.05.29.07.27.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 May 2020 07:27:56 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] io_uring: avoid whole io_wq_work copy for requests
- completed inline
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        id S1726903AbgE2PCf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 May 2020 11:02:35 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37201 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726476AbgE2PCf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 May 2020 11:02:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590764553;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lV3Lg1mm8lwM4+kuioEU6LnhzDq9n3BD9WBg/44Moz4=;
+        b=CFm+RbtGVQIUpgtRuIG03jdqzDbpiY+X8A3QuSSnx7jxBqvDYDEx5in/S1+A8fDVnWm7i9
+        KJ3gsMOrSb4f425pjGGwKH4OvddyZ6P0kek+6lvFyj3ekbTfm7Hyyf38WQj74Fc6dnZq/x
+        X9TUA8ITyUF9qZd5C7PFpnAR7nR4ZFA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-144-kgy6AAhYMhG-7dtZ0LlZww-1; Fri, 29 May 2020 11:02:31 -0400
+X-MC-Unique: kgy6AAhYMhG-7dtZ0LlZww-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BC2E08017CC;
+        Fri, 29 May 2020 15:02:30 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 631225D9D5;
+        Fri, 29 May 2020 15:02:30 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
         io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200528091550.3169-1-xiaoguang.wang@linux.alibaba.com>
- <fa5b8034-c911-3de1-cfec-0b3a82ae701a@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ff11c9ad-c6c4-0a3d-d77f-7a34eeff1bc4@kernel.dk>
-Date:   Fri, 29 May 2020 08:27:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+Subject: Re: [RFC 2/2] io_uring: mark REQ_NOWAIT for a non-mq queue as unspported
+References: <1589925170-48687-1-git-send-email-bijan.mottahedeh@oracle.com>
+        <1589925170-48687-3-git-send-email-bijan.mottahedeh@oracle.com>
+        <x495zcf29ie.fsf@segfault.boston.devel.redhat.com>
+        <0ab35b4b-be67-8977-08ea-2998a4ac1a7e@kernel.dk>
+        <798e24c7-b973-00c7-037f-4095e43515b7@kernel.dk>
+        <x49o8q7zp21.fsf@segfault.boston.devel.redhat.com>
+        <6ca210e3-eba6-0621-3ebc-d3545f5ad7e9@kernel.dk>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Fri, 29 May 2020 11:02:29 -0400
+In-Reply-To: <6ca210e3-eba6-0621-3ebc-d3545f5ad7e9@kernel.dk> (Jens Axboe's
+        message of "Thu, 28 May 2020 17:03:39 -0600")
+Message-ID: <x49h7vyzsvu.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <fa5b8034-c911-3de1-cfec-0b3a82ae701a@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/29/20 2:58 AM, Pavel Begunkov wrote:
-> On 28/05/2020 12:15, Xiaoguang Wang wrote:
->> If requests can be submitted and completed inline, we don't need to
->> initialize whole io_wq_work in io_init_req(), which is an expensive
->> operation, add a new 'REQ_F_WORK_INITIALIZED' to control whether
->> io_wq_work is initialized.
-> 
-> It looks nicer. Especially if you'd add a helper as Jens supposed.
-> 
-> The other thing, even though I hate treating a part of the fields differently
-> from others, I don't like ->creds tossing either.
-> 
-> Did you consider trying using only ->work.creds without adding req->creds? like
-> in the untested incremental below. init_io_work() there is misleading, should be
-> somehow played around better.
+Jens Axboe <axboe@kernel.dk> writes:
 
-I had that thought too when reading the patchset, would be nice _not_ to have
-to add a new creds field.
+> On 5/28/20 4:12 PM, Jeff Moyer wrote:
+>> Jens Axboe <axboe@kernel.dk> writes:
+>> 
+>>>> poll won't work over dm, so that looks correct. What happens if you edit
+>>>> it and disable poll? Would be curious to see both buffered = 0 and
+>>>> buffered = 1 runs with that.
+>>>>
+>>>> I'll try this here too.
+>>>
+>>> I checked, and with the offending commit reverted, it behaves exactly
+>>> like it should - io_uring doesn't hit endless retries, and we still
+>>> return -EAGAIN to userspace for preadv2(..., RFW_NOWAIT) if not supported.
+>>> I've queued up the revert.
+>> 
+>> With that revert, I now see an issue with an xfs file system on top of
+>> an nvme device when running the liburing test suite:
+>> 
+>> Running test 500f9fbadef8-test
+>> Test 500f9fbadef8-test failed with ret 130
+>> 
+>> That means the test harness timed out, so we never received a
+>> completion.
+>
+> I can't reproduce this. Can you try again, and enable io_uring tracing?
+>
+> # echo 1 > /sys/kernel/debug/tracing/events/io_uring/enable
+>
+> run test
+>
+> send the 'trace' file, or take a look and see what is going on.
 
--- 
-Jens Axboe
+I took a look, and it appeared as though the issue was not in the
+kernel.  My liburing was not uptodate, and after grabbing the latest,
+the test runs to completion.
+
+Thanks!
+Jeff
 

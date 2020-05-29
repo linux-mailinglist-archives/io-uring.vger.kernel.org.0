@@ -2,172 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 388561E7BA5
-	for <lists+io-uring@lfdr.de>; Fri, 29 May 2020 13:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36AA01E800E
+	for <lists+io-uring@lfdr.de>; Fri, 29 May 2020 16:20:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725562AbgE2LWu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 May 2020 07:22:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39676 "EHLO
+        id S1726864AbgE2OUD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 May 2020 10:20:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725306AbgE2LWu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 May 2020 07:22:50 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03E75C03E969;
-        Fri, 29 May 2020 04:22:49 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id t8so1538761ilm.7;
-        Fri, 29 May 2020 04:22:48 -0700 (PDT)
+        with ESMTP id S1726816AbgE2OUD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 May 2020 10:20:03 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60A58C03E969
+        for <io-uring@vger.kernel.org>; Fri, 29 May 2020 07:20:03 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id 124so1547314pgi.9
+        for <io-uring@vger.kernel.org>; Fri, 29 May 2020 07:20:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=x4/s9euSWU0x60yfYD16U1tfLPQo/KjiUdAhxYIsof0=;
-        b=nhRLoJN5nyhV0ObcYIPhWrPyPZUIYSyd0+loBSDg/+Sa5Tm7DCS4P97K7sbT+TKX6w
-         ayn5P406wPGBx3ZaUBsTV3k92rbHqcXNnlviRImIR64EvEfO2i7O5uGCGo5ke4YO1lfU
-         mpGawYmNnp1NQUUg4oVY+zDnZcsrs/lDNAwbVI0HKxf3zDV1BbDRay+kAVFgDQwKC3es
-         rxCGSVes1wKfX85+AwlxGu4tu1Y3NDp/bNM4Bk1AAkDMibj9o/xbU2ejGKJLfL9cNkii
-         aAkTFgwj/KQmbcy+x48jX+Z+Efbs/dYctFY1iRe5Ko7hZXLG9Z1io1uzvuEtYk1Eu3On
-         UkNw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vkEBtJNath11cZhPEQ+J/gMUTCbLhM6n6v2IJ68OXjs=;
+        b=AYIx5q02AI2raQqjDWo0poLgXqqxDqP4HF6s8VDmemaiJmNdg1SNmfvvpa04MgZy4J
+         vaEAFi2bOJRJn3ludmJ/PqKNfEa41FuVu6ZhmIdR4WFkR841c/qRMzeAuoPeKiZKMjHF
+         MGixMIH0WmqcG1NQYYlQ2VL3ONWWAp0aPVSupqHGESO3Zt0Lyl4ljSBbn8a1I5wBfdDr
+         ZS/Zz79dkmRBlXH9NfTJRxmZ20S2DFMtt08Sll0qCNPAAMiTobtpRdn70QE/nMZqpjpf
+         4Y4pMdraN/sPyV1H1ggSDbpuWCJODgQygTH5cKDyuseEUBIseFHHUBwOppAfynmVvX/b
+         JMXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=x4/s9euSWU0x60yfYD16U1tfLPQo/KjiUdAhxYIsof0=;
-        b=Bk6/HGmlBYTLCZUIVPceSMFq0ANupJEJA81PFWxP5g9CDaCwwmYPxB//d7yDgYNme8
-         +ZoeCzKNnnU7ztghEskgNCH66ojiRqP7+fxywVZ98sJUCxSNQEplUhUWjqPTGtPWKcjG
-         KGt4Bp/3ktreW+1irwp0D1EEbMpnlIH2mrcrkk9RvG2szev3HTS8fLq9s0GIv7w8lflY
-         kWsCPlkui9HIRLas1mMmbvJGKadsIEdSdaQi7ktXwRrVCXSeqPbypHp00XF0WGxmgXop
-         w8CSivnwrNC97A+gZ7+OOutcQ0HXDwThqeMVTsZALcrQjjAzfW78C/yTju15EemsfIKV
-         lgRA==
-X-Gm-Message-State: AOAM533n/r/1YmjuFNag77IK08sB1EIj72rGnAkr6q2VqGA1i4QsOWHw
-        1zLQhsidvF7K3E8onjUXpKcHES2Ci8fCCLAsfx8L3xw08Bs=
-X-Google-Smtp-Source: ABdhPJxwVVPOcsy+IFnf+7rGXou9+GF93cJIPwSgAq3BUKNEOWWH6WHbiBuXvoI48t8eBUq04eaiFPgz0mejVD1sGew=
-X-Received: by 2002:a92:7311:: with SMTP id o17mr7293070ilc.176.1590751368217;
- Fri, 29 May 2020 04:22:48 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vkEBtJNath11cZhPEQ+J/gMUTCbLhM6n6v2IJ68OXjs=;
+        b=hNahAMPmAy2/Hdh3gWiXG/MsDJxUi1SwON+wEVvhYq1SbiC98dalm30TC0JPWDJ6Js
+         3dBSz23ZdVZ8+yEfJxDygKGn8bxMyY5PZeY0Y0G/JdYz0E8CccZTqezslx5vg5LT8cRe
+         D9ox3Hb3Z17i6ppeufrLeBkDpA3qw+uBKHx1gNDV8OBqSUMCiTWdJhDhId3aCOAUmxhg
+         CPJK2BEIe0Nq6t1oAYFcMxhhecagh159KWX1eK6Ba4c5JBBjgumImgufoTtX6rIw6NNJ
+         kqyi2hzEa+w8XZcHemwZz2Itm/yvhFhjHZ0WVt4WP6XRYnsIOoOV8Nhv9NIyLhudk40r
+         3y0A==
+X-Gm-Message-State: AOAM5338BGyU8PdZOcCHkES2OPGymhPyypq6OVArIuP1/4ksPANljhxX
+        d01DmR3ycjIChIjbKzRmtgo7z6Dn3JP47Q==
+X-Google-Smtp-Source: ABdhPJy1jBRDr/P7jbL5+gtrU2rlzJaOjvtwhr0uVHKmn9gYEw8V7sHZL/AUBenPv8cL0xKJtp+0VA==
+X-Received: by 2002:a62:1b87:: with SMTP id b129mr8790375pfb.162.1590762002907;
+        Fri, 29 May 2020 07:20:02 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id w190sm7355041pfw.35.2020.05.29.07.20.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 May 2020 07:20:02 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: don't set REQ_F_NOWAIT for regular files opend
+ O_NONBLOCK
+To:     Jiufei Xue <jiufei.xue@linux.alibaba.com>, io-uring@vger.kernel.org
+Cc:     joseph.qi@linux.alibaba.com
+References: <1590736708-99812-1-git-send-email-jiufei.xue@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <df16e843-6b02-e51f-c99d-9886ead20943@kernel.dk>
+Date:   Fri, 29 May 2020 08:20:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-References: <20200526195123.29053-1-axboe@kernel.dk> <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
- <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk> <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
-In-Reply-To: <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Fri, 29 May 2020 13:22:36 +0200
-Message-ID: <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
-Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1590736708-99812-1-git-send-email-jiufei.xue@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, May 29, 2020 at 12:02 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+On 5/29/20 1:18 AM, Jiufei Xue wrote:
+> When read from a regular file that was opened O_NONBLOCK, it will
+> return EAGAIN if the page is not cached, which is not expected and
+> fails the application.
+> 
+> Applications written before expect that the open flag O_NONBLOCK has
+> no effect on a regular file.
+> 
+> Fix this by not setting REQ_F_NOWAIT for regular files.
 
-[ ... ]
+Agree, this also matches what we do for sockets. You need to update
+the comment as well, though.
 
-> As I saw stallings with e2scrub_reap.service and swap partition
-> (partly seen in the boot-process and noted the UUID 3f8e).
-> I disabled e2scrub_reap.service and deactivated swap partition in /etc/fs=
-tab.
->
+-- 
+Jens Axboe
 
-I switched over from using a swap-partition to a swap-file.
-
-The boot-slowdown is "gone" in sense of 1m30s stalls or better in
-sense of boot-time is shorter.
-
-# cat systemd-analyze-time.txt
-Startup finished in 6.903s (kernel) + 1min 13.501s (userspace) =3D 1min 20.=
-404s
-graphical.target reached after 1min 13.481s in userspace
-
-# cat systemd-analyze-time_swapfile.txt
-Startup finished in 6.721s (kernel) + 1min 9.470s (userspace) =3D 1min 16.1=
-92s
-graphical.target reached after 1min 9.451s in userspace
-
-# cat systemd-analyze-blame.txt | head -20
-35.943s udisks2.service
-32.559s accounts-daemon.service
-27.925s smartmontools.service
-26.561s NetworkManager.service
-24.543s dev-sdc2.device
-24.478s polkit.service
-20.426s NetworkManager-wait-online.service
-19.785s avahi-daemon.service
-19.586s switcheroo-control.service
-19.185s rtkit-daemon.service
-18.661s wpa_supplicant.service
-18.269s systemd-logind.service
-17.627s rsyslog.service
-16.312s gpm.service
-14.842s e2scrub_reap.service
-14.387s packagekit.service
-12.017s ModemManager.service
-10.584s alsa-restore.service
- 8.407s atd.service
- 6.025s exim4.service
-
-# cat systemd-analyze-blame_swapfile.txt | head -20
-29.571s udisks2.service
-26.383s accounts-daemon.service
-24.564s smartmontools.service
-20.735s NetworkManager.service
-19.254s NetworkManager-wait-online.service
-18.675s polkit.service
-15.523s dev-sdc2.device
-14.152s avahi-daemon.service
-14.006s switcheroo-control.service
-13.800s rtkit-daemon.service
-13.662s packagekit.service
-13.353s wpa_supplicant.service
-13.178s rsyslog.service
-12.788s systemd-logind.service
-12.313s e2scrub_reap.service
-11.105s ModemManager.service
-11.003s gpm.service
-10.018s networking.service
- 6.608s apparmor.service
- 5.858s exim4.service
-
-Thanks.
-
-Time to experience with ZRAM :-).
-
-- Sedat -
-
-LINK: https://wiki.debian.org/Swap
-LINK: https://help.ubuntu.com/community/SwapFaq
-
-mount -t auto /dev/sdb1 /mnt/sandisk
-
-fallocate -l 8g /mnt/sandisk/swapfile
-
-8 x 1024 x 1024 =3D 8388608
-
-dd if=3D/dev/zero bs=3D1024 count=3D8388608 of=3D/mnt/sandisk/swapfile
-8388608+0 Datens=C3=A4tze ein
-8388608+0 Datens=C3=A4tze aus
-8589934592 bytes (8,6 GB, 8,0 GiB) copied, 176,511 s, 48,7 MB/s
-
-# chmod 600 /mnt/sandisk/swapfile
-
-# ll /mnt/sandisk/swapfile
--rw------- 1 root root 8,0G Mai 29 12:23 /mnt/sandisk/swapfile
-
-# mkswap /mnt/sandisk/swapfile
-Setting up swapspace version 1, size =3D 8 GiB (8589930496 bytes)
-no label, UUID=3Dd3b72e81-c0fc-49fa-9704-cbbaba3822fc
-
-# swapon /mnt/sandisk/swapfile
-
-# free -h
-              total        used        free      shared  buff/cache   avail=
-able
-Mem:          7,7Gi       1,6Gi       4,8Gi       167Mi       1,3Gi       5=
-,7Gi
-Swap:         8,0Gi          0B       8,0Gi
-
-- EOT -

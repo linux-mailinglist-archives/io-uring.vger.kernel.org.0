@@ -2,137 +2,172 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D2701E7A01
-	for <lists+io-uring@lfdr.de>; Fri, 29 May 2020 12:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 388561E7BA5
+	for <lists+io-uring@lfdr.de>; Fri, 29 May 2020 13:22:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725681AbgE2KCi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 May 2020 06:02:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55516 "EHLO
+        id S1725562AbgE2LWu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 May 2020 07:22:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbgE2KCh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 May 2020 06:02:37 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71E59C03E969;
-        Fri, 29 May 2020 03:02:37 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id y18so1713726iow.3;
-        Fri, 29 May 2020 03:02:37 -0700 (PDT)
+        with ESMTP id S1725306AbgE2LWu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 May 2020 07:22:50 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03E75C03E969;
+        Fri, 29 May 2020 04:22:49 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id t8so1538761ilm.7;
+        Fri, 29 May 2020 04:22:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=PRXLLP0ChGebQsjy7LttpTWT4vF15KpSJHuHPQMfXdg=;
-        b=J7Irtzhfx6yeYMngT0dh1GtsRRS/07J6BytNuUleDqw7uCTPig9ihWSvPweJPmmsy0
-         vn3SBWB0MysOQxyzA/os4hdtN8bWw59kCBuVfmpZb+O9x70WhrrYwSrV4sOf3D7HthZI
-         BqWsBJq4xfQV8f18Ytdzl/gevSCKsa1RsjOkTU7f2S7I/pZxPDGOg1evDHrNc6aWOxnw
-         WG+3cB4U8e/dkENms31Ixe5DVyhiD+I3q5B5YW9LYCGW2d5PO2H14TQQMFb5r2JzfEIp
-         WzMnwMSr1boTYAAvQpjlJWVebRP85UGdtoev9Fl0H6aYtyyUV2u/w0O4tXGkfRTTKKW6
-         JbAg==
+         :subject:to:cc:content-transfer-encoding;
+        bh=x4/s9euSWU0x60yfYD16U1tfLPQo/KjiUdAhxYIsof0=;
+        b=nhRLoJN5nyhV0ObcYIPhWrPyPZUIYSyd0+loBSDg/+Sa5Tm7DCS4P97K7sbT+TKX6w
+         ayn5P406wPGBx3ZaUBsTV3k92rbHqcXNnlviRImIR64EvEfO2i7O5uGCGo5ke4YO1lfU
+         mpGawYmNnp1NQUUg4oVY+zDnZcsrs/lDNAwbVI0HKxf3zDV1BbDRay+kAVFgDQwKC3es
+         rxCGSVes1wKfX85+AwlxGu4tu1Y3NDp/bNM4Bk1AAkDMibj9o/xbU2ejGKJLfL9cNkii
+         aAkTFgwj/KQmbcy+x48jX+Z+Efbs/dYctFY1iRe5Ko7hZXLG9Z1io1uzvuEtYk1Eu3On
+         UkNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=PRXLLP0ChGebQsjy7LttpTWT4vF15KpSJHuHPQMfXdg=;
-        b=pCtC+sL1rsyVZhD38tKxvA0OvwV6210XydbXEMc8mCrHF3ArEcR0rqfRhud8NOQU8S
-         lAPppMy2Ao4Rf9IvCfzRPegiWnXbhKcTY6UJGghhwLJ8HE26pILeIiRxVetuXuNP4b4O
-         E7g+ze8pA+ezEpzHz0UFhXl5rf2ZTYxIETAeTosP3PQzGTJADBp00NTdlQ0C/WupV36G
-         3jAouXehnRYJhfcb1dgQeFGxzPi1RwKTE326hUDNCTPqfJzbjuB+78zblgvFJpiHcPqc
-         2C5r/VL7XsoYHG0VH/IdSMYsQR7SlRGDAD0COpCD+6TsKLwVb5PPu9lspHm8zRScfTX8
-         O9uw==
-X-Gm-Message-State: AOAM5304Sqm0ZfHZjC3T+N6jJR+mBgsNFbiXUL/rUjOnbJzRk+W/r8uN
-        H8z1zNAg0G0FM1YidBxbxfP7ZgwW2MVHt3jOV3k=
-X-Google-Smtp-Source: ABdhPJzqpEoQkAYUOAOHwjoJZZG1uP7pVCnN5FOvfILoxWd1U7BINI6qEZTyxdObt9ncMCTTtfe7+0yqxvPhQUiHOgk=
-X-Received: by 2002:a02:ca18:: with SMTP id i24mr6407331jak.70.1590746556697;
- Fri, 29 May 2020 03:02:36 -0700 (PDT)
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=x4/s9euSWU0x60yfYD16U1tfLPQo/KjiUdAhxYIsof0=;
+        b=Bk6/HGmlBYTLCZUIVPceSMFq0ANupJEJA81PFWxP5g9CDaCwwmYPxB//d7yDgYNme8
+         +ZoeCzKNnnU7ztghEskgNCH66ojiRqP7+fxywVZ98sJUCxSNQEplUhUWjqPTGtPWKcjG
+         KGt4Bp/3ktreW+1irwp0D1EEbMpnlIH2mrcrkk9RvG2szev3HTS8fLq9s0GIv7w8lflY
+         kWsCPlkui9HIRLas1mMmbvJGKadsIEdSdaQi7ktXwRrVCXSeqPbypHp00XF0WGxmgXop
+         w8CSivnwrNC97A+gZ7+OOutcQ0HXDwThqeMVTsZALcrQjjAzfW78C/yTju15EemsfIKV
+         lgRA==
+X-Gm-Message-State: AOAM533n/r/1YmjuFNag77IK08sB1EIj72rGnAkr6q2VqGA1i4QsOWHw
+        1zLQhsidvF7K3E8onjUXpKcHES2Ci8fCCLAsfx8L3xw08Bs=
+X-Google-Smtp-Source: ABdhPJxwVVPOcsy+IFnf+7rGXou9+GF93cJIPwSgAq3BUKNEOWWH6WHbiBuXvoI48t8eBUq04eaiFPgz0mejVD1sGew=
+X-Received: by 2002:a92:7311:: with SMTP id o17mr7293070ilc.176.1590751368217;
+ Fri, 29 May 2020 04:22:48 -0700 (PDT)
 MIME-Version: 1.0
 References: <20200526195123.29053-1-axboe@kernel.dk> <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
- <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk>
-In-Reply-To: <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk>
+ <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk> <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
+In-Reply-To: <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
 Reply-To: sedat.dilek@gmail.com
 From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Fri, 29 May 2020 12:02:40 +0200
-Message-ID: <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
+Date:   Fri, 29 May 2020 13:22:36 +0200
+Message-ID: <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
 Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         akpm@linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On Fri, May 29, 2020 at 12:02 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+
 [ ... ]
 
-> > Hi Jens,
-> >
-> > I have pulled linux-block.git#async-buffered.5 on top of Linux v5.7-rc7.
-> >
-> > From first feelings:
-> > The booting into the system (until sddm display-login-manager) took a
-> > bit longer.
-> > The same after login and booting into KDE/Plasma.
->
-> There is no difference for "regular" use cases, only io_uring with
-> buffered reads will behave differently. So I don't think you have longer
-> boot times due to this.
+> As I saw stallings with e2scrub_reap.service and swap partition
+> (partly seen in the boot-process and noted the UUID 3f8e).
+> I disabled e2scrub_reap.service and deactivated swap partition in /etc/fs=
+tab.
 >
 
-Yupp, you are right.
+I switched over from using a swap-partition to a swap-file.
 
-The previous Linux v5.7-rc7 without your patchset shows the same symptoms.
+The boot-slowdown is "gone" in sense of 1m30s stalls or better in
+sense of boot-time is shorter.
 
-I did some debugging and optimizing with systemd-analyze boot and time.
+# cat systemd-analyze-time.txt
+Startup finished in 6.903s (kernel) + 1min 13.501s (userspace) =3D 1min 20.=
+404s
+graphical.target reached after 1min 13.481s in userspace
 
-I optimized systemd-journald.service and systemd-journal-flush.service...
+# cat systemd-analyze-time_swapfile.txt
+Startup finished in 6.721s (kernel) + 1min 9.470s (userspace) =3D 1min 16.1=
+92s
+graphical.target reached after 1min 9.451s in userspace
 
-# cat /etc/systemd/journald.conf.d/00-journal-size.conf
-[Journal]
-SystemMaxUse=50M
+# cat systemd-analyze-blame.txt | head -20
+35.943s udisks2.service
+32.559s accounts-daemon.service
+27.925s smartmontools.service
+26.561s NetworkManager.service
+24.543s dev-sdc2.device
+24.478s polkit.service
+20.426s NetworkManager-wait-online.service
+19.785s avahi-daemon.service
+19.586s switcheroo-control.service
+19.185s rtkit-daemon.service
+18.661s wpa_supplicant.service
+18.269s systemd-logind.service
+17.627s rsyslog.service
+16.312s gpm.service
+14.842s e2scrub_reap.service
+14.387s packagekit.service
+12.017s ModemManager.service
+10.584s alsa-restore.service
+ 8.407s atd.service
+ 6.025s exim4.service
 
-...and reduced the time spent flushing systemd's journal from ~30s
-down to 1,6s...
+# cat systemd-analyze-blame_swapfile.txt | head -20
+29.571s udisks2.service
+26.383s accounts-daemon.service
+24.564s smartmontools.service
+20.735s NetworkManager.service
+19.254s NetworkManager-wait-online.service
+18.675s polkit.service
+15.523s dev-sdc2.device
+14.152s avahi-daemon.service
+14.006s switcheroo-control.service
+13.800s rtkit-daemon.service
+13.662s packagekit.service
+13.353s wpa_supplicant.service
+13.178s rsyslog.service
+12.788s systemd-logind.service
+12.313s e2scrub_reap.service
+11.105s ModemManager.service
+11.003s gpm.service
+10.018s networking.service
+ 6.608s apparmor.service
+ 5.858s exim4.service
 
-# journalctl -b --unit systemd-journald.service
--- Logs begin at Fri 2020-05-29 00:58:37 CEST, end at Fri 2020-05-29
-11:42:18 CEST. --
-Mai 29 11:34:52 iniza systemd-journald[281]: Journal started
-Mai 29 11:34:52 iniza systemd-journald[281]: Runtime Journal
-(/run/log/journal/566abbcb226b405db834b17a26fe4727) is 8.0M, max
-78.5M, 70.5M free.
-Mai 29 11:34:53 iniza systemd-journald[281]: Time spent on flushing to
-/var/log/journal/566abbcb226b405db834b17a26fe4727 is 1.656233s for 765
-entries.
-Mai 29 11:34:53 iniza systemd-journald[281]: System Journal
-(/var/log/journal/566abbcb226b405db834b17a26fe4727) is 56.2M, max
-50.0M, 0B free.
+Thanks.
 
-Unfortunately, I upgraded some user-space stuff like udisks2 and
-libblockdev packages.
-Downgrading did not help and disabling the systemd-unit also.
-
-As I saw stallings with e2scrub_reap.service and swap partition
-(partly seen in the boot-process and noted the UUID 3f8e).
-I disabled e2scrub_reap.service and deactivated swap partition in /etc/fstab.
-
-Doing all above together did not help.
-
-Finally, I checked the health of the HDD where my root-fs is.
-smartmontools says everything is OK.
-
-I have not checked the status of the Ext4-FS where my root-fs is.
-Such things I do with a linux-live-system - as a Debianist I admit I
-use an ArchLinux ISO on USB-stick :-).
-
-Unsure, if I will contact the systemd (and mabye udisks) Debian folks
-to hear their opinion.
-
-Thanks Jens and your patchset.
-I don't know when I last run systemd-analyze & stuff and investigated
-so deeply :-).
-
-A lot of Hygge (I love to write wrong Huegge - see English hugs) to you Jens.
+Time to experience with ZRAM :-).
 
 - Sedat -
 
-[1] http://ftp.halifax.rwth-aachen.de/archlinux/iso/
+LINK: https://wiki.debian.org/Swap
+LINK: https://help.ubuntu.com/community/SwapFaq
+
+mount -t auto /dev/sdb1 /mnt/sandisk
+
+fallocate -l 8g /mnt/sandisk/swapfile
+
+8 x 1024 x 1024 =3D 8388608
+
+dd if=3D/dev/zero bs=3D1024 count=3D8388608 of=3D/mnt/sandisk/swapfile
+8388608+0 Datens=C3=A4tze ein
+8388608+0 Datens=C3=A4tze aus
+8589934592 bytes (8,6 GB, 8,0 GiB) copied, 176,511 s, 48,7 MB/s
+
+# chmod 600 /mnt/sandisk/swapfile
+
+# ll /mnt/sandisk/swapfile
+-rw------- 1 root root 8,0G Mai 29 12:23 /mnt/sandisk/swapfile
+
+# mkswap /mnt/sandisk/swapfile
+Setting up swapspace version 1, size =3D 8 GiB (8589930496 bytes)
+no label, UUID=3Dd3b72e81-c0fc-49fa-9704-cbbaba3822fc
+
+# swapon /mnt/sandisk/swapfile
+
+# free -h
+              total        used        free      shared  buff/cache   avail=
+able
+Mem:          7,7Gi       1,6Gi       4,8Gi       167Mi       1,3Gi       5=
+,7Gi
+Swap:         8,0Gi          0B       8,0Gi
+
+- EOT -

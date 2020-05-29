@@ -2,60 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F3D01E780C
-	for <lists+io-uring@lfdr.de>; Fri, 29 May 2020 10:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D88DF1E78E7
+	for <lists+io-uring@lfdr.de>; Fri, 29 May 2020 10:59:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725901AbgE2IR6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 May 2020 04:17:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39142 "EHLO
+        id S1725562AbgE2I7v (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 May 2020 04:59:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725562AbgE2IR5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 May 2020 04:17:57 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67CB0C03E969
-        for <io-uring@vger.kernel.org>; Fri, 29 May 2020 01:17:57 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id v19so2222135wmj.0
-        for <io-uring@vger.kernel.org>; Fri, 29 May 2020 01:17:57 -0700 (PDT)
+        with ESMTP id S1725306AbgE2I7v (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 May 2020 04:59:51 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A932CC03E969
+        for <io-uring@vger.kernel.org>; Fri, 29 May 2020 01:59:50 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id h4so2336708wmb.4
+        for <io-uring@vger.kernel.org>; Fri, 29 May 2020 01:59:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7aFnDNBZHbbo2xut9mz4nuQ46vRzCzHXfHwKpP1uZhA=;
-        b=SRjfbfdOXf0zwm9AbiZuzAF2yiSrYqF87TOOiWb8jUJacwq/yOJfLZKRVfSfxKlsxw
-         TTSbo2EUhRtTCH9VN+zfVRURdXnOWqi14lNZfAP4ZCQrurkAqFJ0HyeqqIrBqQQtxwAx
-         xDQdhlSIFpm4aw7efOvX8JTS5jOlD+QZFbZ3spR6W6/qUopxPjsfi1MIOITcZTC1hXn+
-         vp9urJKRE8EPp4kaht+3QVnykrZL5wpXVEJbBDUNB40i1zE0tItamt6yQpvkw/I+j7yk
-         QqJHOMZ9xgxxi2x8avmIoB8xh1LedgbQWzviseZDJi7q22eKrrt0fG/kti1m3e/bGKYy
-         5mAw==
+        bh=wqlpNHf32+vSr/onlAfZWWc/BiqZixBWCu54HMPoOSs=;
+        b=jY6t650KWyW1YiFswXHVCZwqcTIAgX60XhE/5AXO8T+JCfTlDricoznH+O3mnpnpD4
+         sGlvKAGMtVq2UiT2xmMtj0ftGN7zbHGAT4PrbiRyyFftJtNQf3cjpRpKWwEwjdSsQV9G
+         HkoiwrjjX7n5N1EQfU3WDhYazNVA1aOv/VeIB5xb5QznZMAjaKfep6FDiWiGNrduqZB6
+         KP73+aV+aJ2KCdE1EJxnolv2bgBR1RifVqrl93qjMVLqv6phWDmmgYX0czeQCXKC27K4
+         XJgva8LPQIqU2H6PkyS5XHs8sCfRgQ/8ob2EVqHy5Cue1o3kVl3mg3DxtjMvxMc9Crn9
+         aAXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=7aFnDNBZHbbo2xut9mz4nuQ46vRzCzHXfHwKpP1uZhA=;
-        b=JGNj3kEjiq8Y9SZMXR4B+IU5rVQtddXaY8ziWrEUmrizBAnzzrDYRVix8aMpjCc8l/
-         tkx9NigoGDDDk/VE86TFwp0IydDBlyFhWhCAfA4Sk9QdxboB5nYqNQOZPbXfKmU4kqN4
-         hU209+fT1PLb42c93hpl78PF2q6JAiZxnjZxHT8HyzJ35Dk4P5iksEKFCMa9kRsyHa0K
-         DF2GhqAVKWd/S4lf5B/Sfq6D+kNjO6owIaxanMACPtSUJKpzU2DNFPkLk5D8p/ikCV94
-         +/rRsBsoNg7fw+9yYfFBZarY1hhmR9Uln39p0MsXDbq7Lz93NYB/SFfYo5hwfW554g6G
-         0e0Q==
-X-Gm-Message-State: AOAM530CtFSJbJIOALeBHF3i2VNqVdS+SmwPOWhDkrKxm425abtYW7Di
-        R/1eliT2Scb4Jitr5bqe/Qnq4zfC
-X-Google-Smtp-Source: ABdhPJzDZe4HpfnlfRFKztXfAT3OdRTg0Z6g5Dp1RyekmJQ0aMs2FxfnPsI+5z8CGeAtTsKTfpcYwA==
-X-Received: by 2002:a1c:e40a:: with SMTP id b10mr7204414wmh.41.1590740276118;
-        Fri, 29 May 2020 01:17:56 -0700 (PDT)
+        bh=wqlpNHf32+vSr/onlAfZWWc/BiqZixBWCu54HMPoOSs=;
+        b=raA6CbXVtoPmnhw9LhkPFQPaa3T4UfrgSfnbeVSTdGhD8JWm9pMXdzLwEc/An9inJ3
+         MisRIxz9uuxpruZs+aX5opXCXBb8VFwy7BWo4yPp23AqeFelERCI6WJTpObUN8cIb1xM
+         JNBQzmB/E+TquSlmFsFl5OZF8R4DOfwoJtpqV9+3P9nWD0pinsXBQ1mt0Qv612Kn6Tu/
+         gzwd7tqJeLPzPfVST9aU8LXaFJtRB/LkoQqTaMbNjtJr0/GXZtdPWlCSSFk/ab5sks66
+         FH3p4Z1xhnyuq10TGSGSbVKhUV3x0sOJYw8j9yl7YDdVRsWUZrPAc8fxpGAh26jcQTok
+         85zw==
+X-Gm-Message-State: AOAM531nRw+SVRtEUTdUxy76XZsrIghKIaNpfFoTsGQGcdO7BoPdAER+
+        r3wGi0KB4PkdcNVt+iz9bOM95FyF
+X-Google-Smtp-Source: ABdhPJzdTWMhH+kgryTm+Ne/Mee/1U6+tyW0lulwttD1Ynf0d5ry6/d9ooLBL7PVRRLuJn6k5kCuWQ==
+X-Received: by 2002:a1c:c3d7:: with SMTP id t206mr7637917wmf.69.1590742789099;
+        Fri, 29 May 2020 01:59:49 -0700 (PDT)
 Received: from [192.168.43.204] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id z25sm10114616wmf.10.2020.05.29.01.17.55
+        by smtp.gmail.com with ESMTPSA id o20sm9326249wra.29.2020.05.29.01.59.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 May 2020 01:17:55 -0700 (PDT)
+        Fri, 29 May 2020 01:59:48 -0700 (PDT)
 To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring@vger.kernel.org
 Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-References: <20200526064330.9322-1-xiaoguang.wang@linux.alibaba.com>
- <fe4196c6-a069-a029-6a98-68801d088798@gmail.com>
- <06081761-4aef-6423-ac70-97c62a7c0e5c@linux.alibaba.com>
- <dc2f20fd-dd81-bc21-cd02-747b523dd915@gmail.com>
- <52fbb449-39f7-e46a-422a-1c4d5e0ba737@linux.alibaba.com>
+References: <20200528091550.3169-1-xiaoguang.wang@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -100,14 +96,14 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 1/3] io_uring: don't use req->work.creds for inline
- requests
-Message-ID: <f1834d89-193b-56ab-2bd6-7b31bbaf51d9@gmail.com>
-Date:   Fri, 29 May 2020 11:16:40 +0300
+Subject: Re: [PATCH v3 1/2] io_uring: avoid whole io_wq_work copy for requests
+ completed inline
+Message-ID: <fa5b8034-c911-3de1-cfec-0b3a82ae701a@gmail.com>
+Date:   Fri, 29 May 2020 11:58:33 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <52fbb449-39f7-e46a-422a-1c4d5e0ba737@linux.alibaba.com>
+In-Reply-To: <20200528091550.3169-1-xiaoguang.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -116,25 +112,112 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 27/05/2020 19:41, Xiaoguang Wang wrote:
->>
->> See a comment for the [2/3], can spark some ideas.
->>
->> It's a bit messy and makes it more difficult to keep in mind -- all that extra
->> state (i.e. initialised or not) + caring whether func was already set. IMHO, the
->> nop-test do not really justifies extra complexity, unless the whole stuff is
->> pretty and clear. Can you benchmark something more realistic? at least
->> reads/writes to null_blk (completion_nsec=0).
-> Indeed for this patch set, I also don't expect any obvious performance improvement,
-> just think current codes are not good, so try to improve it.
+On 28/05/2020 12:15, Xiaoguang Wang wrote:
+> If requests can be submitted and completed inline, we don't need to
+> initialize whole io_wq_work in io_init_req(), which is an expensive
+> operation, add a new 'REQ_F_WORK_INITIALIZED' to control whether
+> io_wq_work is initialized.
 
-I'm sure, we'll figure out something good in the process!
-There are shaky places where io_uring can use having a more orderly workflow.
+It looks nicer. Especially if you'd add a helper as Jens supposed.
 
+The other thing, even though I hate treating a part of the fields differently
+from others, I don't like ->creds tossing either.
 
-> I will send a v2 version later, in which I'll use null_blk to evaluate performance,
-> please have a check.
-> 
+Did you consider trying using only ->work.creds without adding req->creds? like
+in the untested incremental below. init_io_work() there is misleading, should be
+somehow played around better.
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 4dd3295d74f6..4086561ce444 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -643,7 +643,6 @@ struct io_kiocb {
+ 	unsigned int		flags;
+ 	refcount_t		refs;
+ 	struct task_struct	*task;
+-	const struct cred	*creds;
+ 	unsigned long		fsize;
+ 	u64			user_data;
+ 	u32			result;
+@@ -894,8 +893,16 @@ static const struct file_operations io_uring_fops;
+ static inline void init_io_work(struct io_kiocb *req,
+ 			void (*func)(struct io_wq_work **))
+ {
+-	req->work = (struct io_wq_work){ .func = func };
+-	req->flags |= REQ_F_WORK_INITIALIZED;
++	struct io_wq_work *work = &req->work;
++
++	/* work->creds are already initialised by a user */
++	work->list.next = NULL;
++	work->func = func;
++	work->files = NULL;
++	work->mm = NULL;
++	work->fs = NULL;
++	work->flags = REQ_F_WORK_INITIALIZED;
++	work->task_pid = 0;
+ }
+ struct sock *io_uring_get_socket(struct file *file)
+ {
+@@ -1019,15 +1026,9 @@ static inline void io_req_work_grab_env(struct io_kiocb *req,
+ 		mmgrab(current->mm);
+ 		req->work.mm = current->mm;
+ 	}
++	if (!req->work.creds)
++		req->work.creds = get_current_cred();
+
+-	if (!req->work.creds) {
+-		if (!req->creds)
+-			req->work.creds = get_current_cred();
+-		else {
+-			req->work.creds = req->creds;
+-			req->creds = NULL;
+-		}
+-	}
+ 	if (!req->work.fs && def->needs_fs) {
+ 		spin_lock(&current->fs->lock);
+ 		if (!current->fs->in_exec) {
+@@ -1044,6 +1045,12 @@ static inline void io_req_work_grab_env(struct io_kiocb *req,
+
+ static inline void io_req_work_drop_env(struct io_kiocb *req)
+ {
++	/* always init'ed, put before REQ_F_WORK_INITIALIZED check */
++	if (req->work.creds) {
++		put_cred(req->work.creds);
++		req->work.creds = NULL;
++	}
++
+ 	if (!(req->flags & REQ_F_WORK_INITIALIZED))
+ 		return;
+
+@@ -1051,10 +1058,6 @@ static inline void io_req_work_drop_env(struct io_kiocb *req)
+ 		mmdrop(req->work.mm);
+ 		req->work.mm = NULL;
+ 	}
+-	if (req->work.creds) {
+-		put_cred(req->work.creds);
+-		req->work.creds = NULL;
+-	}
+ 	if (req->work.fs) {
+ 		struct fs_struct *fs = req->work.fs;
+
+@@ -5901,12 +5904,12 @@ static int io_init_req(struct io_ring_ctx *ctx, struct
+io_kiocb *req,
+
+ 	id = READ_ONCE(sqe->personality);
+ 	if (id) {
+-		req->creds = idr_find(&ctx->personality_idr, id);
+-		if (unlikely(!req->creds))
++		req->work.creds = idr_find(&ctx->personality_idr, id);
++		if (unlikely(!req->work.creds))
+ 			return -EINVAL;
+-		get_cred(req->creds);
++		get_cred(req->work.creds);
+ 	} else
+-		req->creds = NULL;
++		req->work.creds = NULL;
+
+ 	/* same numerical values with corresponding REQ_F_*, safe to copy */
+ 	req->flags |= sqe_flags;
 
 -- 
 Pavel Begunkov

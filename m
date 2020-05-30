@@ -2,263 +2,184 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D10E1E91BF
-	for <lists+io-uring@lfdr.de>; Sat, 30 May 2020 15:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C892A1E91C0
+	for <lists+io-uring@lfdr.de>; Sat, 30 May 2020 15:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbgE3NgL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 30 May 2020 09:36:11 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:58927 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728941AbgE3NgL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 30 May 2020 09:36:11 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R561e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04427;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U-2WStx_1590845763;
-Received: from 30.39.138.128(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U-2WStx_1590845763)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 30 May 2020 21:36:03 +0800
-Subject: Re: [PATCH v3 1/2] io_uring: avoid whole io_wq_work copy for requests
- completed inline
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-References: <20200528091550.3169-1-xiaoguang.wang@linux.alibaba.com>
- <fa5b8034-c911-3de1-cfec-0b3a82ae701a@gmail.com>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <b472d985-0e34-c53a-e976-3a174211d12b@linux.alibaba.com>
-Date:   Sat, 30 May 2020 21:36:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1728989AbgE3Ngr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 30 May 2020 09:36:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58950 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728844AbgE3Ngq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 30 May 2020 09:36:46 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9F2CC03E969;
+        Sat, 30 May 2020 06:36:46 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id j8so2264641iog.13;
+        Sat, 30 May 2020 06:36:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=/NBbRRa5pl9eVO87iKoBTxygo81Ok3+Xzeg/mVPc/EQ=;
+        b=jfzFHsKnSjzi3p7xhDfMHYc1AeSJ/trFRssnkJ8A/gcb+l2DqxP8MxyQWQOfaRHrmP
+         MdZFppK+Zuwvd/EXRkkCJzWLafKqI96JLac48kk5+bokkrhQm+C9ifO50G7dEc0mUbkp
+         y4znc59j6hPCX9V5G1E0++2LIv/Ut1D8yUflQNlmjBDZ9dpXFWXv96spcQL+XJz2hAZf
+         rJDPeAXhUK5tnjffqGh07aYZ5mbD7W7RwjV0nwYjm2hmg1x24kZUwY4c/oNRDXhuKoWe
+         jssMZzeYRPNY21kOEqy70/0Klm+TtizQdUwykNUhHDh81SaZsNh3lvx8zZR1VE7wX95t
+         brvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=/NBbRRa5pl9eVO87iKoBTxygo81Ok3+Xzeg/mVPc/EQ=;
+        b=ugqYqfnRiT9kERwZc0r0/jB6icoh1Hgn5Y1XQaUSIDa48MDdLbl/oWpWIrpQ2j9ISt
+         MEHhtqN1unI0b08tYGq2Y555ut+cJZtdU+EbGNG0YesrkC5PGExMF9MeWd0KG6QbGv8X
+         4vwzulUAF2Bt3H/WtVoHcJcju7LLL10xRkDS3krvcr4TUKHbK+ywlVuMLItRluFTR1Hc
+         cnZKvWfkmRw/wzUSpjSIIhBrtTcFsKnk/q51hNXinNL5uMPtjOpEtyffplJd3N1pH+Za
+         k2lPZ3IYKS3HHGyqmsxkEFUWzAJ9KJZlsYaCrbC5oK7daUK9XNlzXj3izboRU87rAq8y
+         1RNQ==
+X-Gm-Message-State: AOAM532HC+gDRA6CyFnYpgicmUtPpde+USLPjgzJDNszEpPw2uMQJH7Z
+        p1Ad6pnmFm2voIivUK5lMaVFVYZftwchyQhDHcO8Pe6Dt3E=
+X-Google-Smtp-Source: ABdhPJzG40rHq7dlo3ZJjB6ZQt7oeWmTJW4IpXkErnlgoULYIQxKsHlha1AA5a2OR0O9tdBAPKVFwudCxdRYUqdLzII=
+X-Received: by 2002:a6b:750c:: with SMTP id l12mr11356161ioh.66.1590845806016;
+ Sat, 30 May 2020 06:36:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <fa5b8034-c911-3de1-cfec-0b3a82ae701a@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20200526195123.29053-1-axboe@kernel.dk> <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
+ <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk> <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
+ <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
+In-Reply-To: <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Sat, 30 May 2020 15:36:37 +0200
+Message-ID: <CA+icZUVJT8X3zyafrgbkJppsp4nJEKaLjYNs1kX8H+aY1Y10Qw@mail.gmail.com>
+Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
+> Time to experience with ZRAM :-).
 
-> On 28/05/2020 12:15, Xiaoguang Wang wrote:
->> If requests can be submitted and completed inline, we don't need to
->> initialize whole io_wq_work in io_init_req(), which is an expensive
->> operation, add a new 'REQ_F_WORK_INITIALIZED' to control whether
->> io_wq_work is initialized.
-> 
-> It looks nicer. Especially if you'd add a helper as Jens supposed.
-Sure, I'll add a helper in V4, thanks.
+I switched over from swap-file to zramswap.
 
-> 
-> The other thing, even though I hate treating a part of the fields differently
-> from others, I don't like ->creds tossing either.
-> 
-> Did you consider trying using only ->work.creds without adding req->creds? like
-> in the untested incremental below. init_io_work() there is misleading, should be
-> somehow played around better.
-But if not adding a new req->creds, I think there will be some potential risks.
-In current io_uring mainline codes, look at io_kiocb's memory layout
-crash> struct -o io_kiocb
-struct io_kiocb {
-         union {
-     [0]     struct file *file;
-     [0]     struct io_rw rw;
-     [0]     struct io_poll_iocb poll;
-     [0]     struct io_accept accept;
-     [0]     struct io_sync sync;
-     [0]     struct io_cancel cancel;
-     [0]     struct io_timeout timeout;
-     [0]     struct io_connect connect;
-     [0]     struct io_sr_msg sr_msg;
-     [0]     struct io_open open;
-     [0]     struct io_close close;
-     [0]     struct io_files_update files_update;
-     [0]     struct io_fadvise fadvise;
-     [0]     struct io_madvise madvise;
-     [0]     struct io_epoll epoll;
-     [0]     struct io_splice splice;
-     [0]     struct io_provide_buf pbuf;
-         };
-    [64] struct io_async_ctx *io;
-    [72] int cflags;
-    [76] u8 opcode;
-    [78] u16 buf_index;
-    [80] struct io_ring_ctx *ctx;
-    [88] struct list_head list;
-   [104] unsigned int flags;
-   [108] refcount_t refs;
-   [112] struct task_struct *task;
-   [120] unsigned long fsize;
-   [128] u64 user_data;
-   [136] u32 result;
-   [140] u32 sequence;
-   [144] struct list_head link_list;
-   [160] struct list_head inflight_entry;
-   [176] struct percpu_ref *fixed_file_refs;
-         union {
-             struct {
-   [184]         struct callback_head task_work;
-   [200]         struct hlist_node hash_node;
-   [216]         struct async_poll *apoll;
-             };
-   [184]     struct io_wq_work work;
-         };
-}
-SIZE: 240
+And I can definitely say, my last kernel w/o your patchset does not
+show the symptoms.
 
-struct io_wq_work {
-    [0] struct io_wq_work_node list;
-    [8] void (*func)(struct io_wq_work **);
-   [16] struct files_struct *files;
-   [24] struct mm_struct *mm;
-   [32] const struct cred *creds;
-   [40] struct fs_struct *fs;
-   [48] unsigned int flags;
-   [52] pid_t task_pid;
-}
-SIZE: 56
+# cat systemd-analyze-time_5.7.0-rc7-2-amd64-clang_2nd-try.txt
+Startup finished in 6.129s (kernel) + 44.192s (userspace) = 50.322s
+graphical.target reached after 44.168s in userspace
 
-The risk mainly comes from the union:
-union {
-	/*
-	 * Only commands that never go async can use the below fields,
-	 * obviously. Right now only IORING_OP_POLL_ADD uses them, and
-	 * async armed poll handlers for regular commands. The latter
-	 * restore the work, if needed.
-	 */
-	struct {
-		struct callback_head	task_work;
-		struct hlist_node	hash_node;
-		struct async_poll	*apoll;
-	};
-	struct io_wq_work	work;
-};
+# cat systemd-analyze-blame_5.7.0-rc7-2-amd64-clang_2nd-try.txt
+24.050s udisks2.service
+23.711s accounts-daemon.service
+18.615s dev-sdc2.device
+17.119s polkit.service
+16.980s avahi-daemon.service
+16.879s NetworkManager.service
+16.112s rtkit-daemon.service
+15.126s switcheroo-control.service
+15.117s wpa_supplicant.service
+15.105s systemd-logind.service
+14.475s NetworkManager-wait-online.service
+14.258s smartmontools.service
+13.161s zramswap.service
+ 9.522s rsyslog.service
+ 8.337s gpm.service
+ 6.026s packagekit.service
+ 5.871s ModemManager.service
+ 5.746s networking.service
+ 5.383s e2scrub_reap.service
+ 3.960s systemd-udevd.service
+ 3.396s apparmor.service
+ 3.231s exim4.service
+ 2.795s systemd-journal-flush.service
+ 2.359s alsa-restore.service
+ 2.186s systemd-rfkill.service
+ 1.878s atd.service
+ 1.164s keyboard-setup.service
+ 1.098s bluetooth.service
+ 1.089s systemd-tmpfiles-setup.service
+ 1.021s pppd-dns.service
+  968ms systemd-backlight@backlight:intel_backlight.service
+  964ms upower.service
+  937ms binfmt-support.service
+  873ms systemd-modules-load.service
+  849ms systemd-sysusers.service
+  845ms systemd-journald.service
+  683ms systemd-timesyncd.service
+  676ms modprobe@drm.service
+  641ms systemd-udev-trigger.service
+  620ms dev-hugepages.mount
+  618ms dev-mqueue.mount
+  618ms sys-kernel-debug.mount
+  617ms sys-kernel-tracing.mount
+  501ms ifupdown-wait-online.service
+  434ms systemd-sysctl.service
+  419ms systemd-random-seed.service
+  413ms systemd-tmpfiles-setup-dev.service
+  405ms user@1000.service
+  389ms systemd-remount-fs.service
+  383ms console-setup.service
+  301ms kmod-static-nodes.service
+  181ms proc-sys-fs-binfmt_misc.mount
+  174ms systemd-update-utmp.service
+   85ms systemd-user-sessions.service
+   22ms user-runtime-dir@1000.service
+   19ms systemd-update-utmp-runlevel.service
+    5ms ifupdown-pre.service
+    4ms sys-fs-fuse-connections.mount
 
-1, apoll and creds are in same memory offset, for 'async armed poll handlers' case,
-apoll will be used, that means creds will be overwrited. In patch "io_uring: avoid
-unnecessary io_wq_work copy for fast poll feature", I use REQ_F_WORK_INITIALIZED
-to control whether to do io_wq_work restore, then your below codes will break:
+[ /etc/zramswap.conf ]
 
-static inline void io_req_work_drop_env(struct io_kiocb *req)
-{
-	/* always init'ed, put before REQ_F_WORK_INITIALIZED check */
-	if (req->work.creds) {
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Here req->work.creds will be invalid, or I still need to use some space
-to record original req->work.creds, and do creds restore.
+ZRAM_SIZE_PERCENT=20
+# ZSTD support for ZRAM and ZSWAP requires Linux >= 5.7-rc+. -dileks
+ZRAM_COMPRESSION_ALGO=zstd
 
-		put_cred(req->work.creds);
-		req->work.creds = NULL;
-	}
-	if (!(req->flags & REQ_F_WORK_INITIALIZED))
-  		return;
+[ /etc/fstab ]
 
-2, For IORING_OP_POLL_ADD case, current mainline codes will use task_work and hash_node,
-32 bytes, that means io_wq_work's member list, func, files and mm would be overwrited,
-but will not touch creds, it's safe now. But if we will add some new member to
-struct {
-	struct callback_head	task_work;
-	struct hlist_node	hash_node;
-	struct async_poll	*apoll;
-};
-say callback_head adds a new member, our check will still break.
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> || <mount point> || <type> || <options> || <dump> || <pass>
+#
+# Root-FS (here: /dev/sdc2)
+UUID=<myUUID>       /       ext4    errors=remount-ro       0       1
+# SWAP (here: /dev/zram0)
+# Zram-based swap (compressed RAM block devices), for details see
+zramswap.service and zramswap.conf
 
-3. IMO, io_wq_work is just to describe needed running environment for reqs that will be
-punted to io-wq, for reqs submitted and completed inline should not touch this struct
-from software design view, and current io_kiocb is 240 bytes, and a new pointer will be
-248 bytes, still 4 cache lines for cache line 64 bytes.
+# dmesg | egrep 'zram|zswap'
+[    1.041958] zswap: loaded using pool zstd/zbud
+[   29.569355] zram: Added device: zram0
+[   29.581631] zram0: detected capacity change from 0 to 1647824896
+[   30.562279] Adding 1609200k swap on /dev/zram0.  Priority:100
+extents:1 across:1609200k SSFS
 
+# cat /sys/devices/virtual/block/zram0/comp_algorithm
+lzo lzo-rle lz4 lz4hc [zstd]
 
-Regards,
-Xiaoguang Wang
+# swapon --show
+NAME       TYPE      SIZE USED PRIO
+/dev/zram0 partition 1,5G   0B  100
 
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 4dd3295d74f6..4086561ce444 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -643,7 +643,6 @@ struct io_kiocb {
->   	unsigned int		flags;
->   	refcount_t		refs;
->   	struct task_struct	*task;
-> -	const struct cred	*creds;
->   	unsigned long		fsize;
->   	u64			user_data;
->   	u32			result;
-> @@ -894,8 +893,16 @@ static const struct file_operations io_uring_fops;
->   static inline void init_io_work(struct io_kiocb *req,
->   			void (*func)(struct io_wq_work **))
->   {
-> -	req->work = (struct io_wq_work){ .func = func };
-> -	req->flags |= REQ_F_WORK_INITIALIZED;
-> +	struct io_wq_work *work = &req->work;
-> +
-> +	/* work->creds are already initialised by a user */
-> +	work->list.next = NULL;
-> +	work->func = func;
-> +	work->files = NULL;
-> +	work->mm = NULL;
-> +	work->fs = NULL;
-> +	work->flags = REQ_F_WORK_INITIALIZED;
-> +	work->task_pid = 0;
->   }
->   struct sock *io_uring_get_socket(struct file *file)
->   {
-> @@ -1019,15 +1026,9 @@ static inline void io_req_work_grab_env(struct io_kiocb *req,
->   		mmgrab(current->mm);
->   		req->work.mm = current->mm;
->   	}
-> +	if (!req->work.creds)
-> +		req->work.creds = get_current_cred();
-> 
-> -	if (!req->work.creds) {
-> -		if (!req->creds)
-> -			req->work.creds = get_current_cred();
-> -		else {
-> -			req->work.creds = req->creds;
-> -			req->creds = NULL;
-> -		}
-> -	}
->   	if (!req->work.fs && def->needs_fs) {
->   		spin_lock(&current->fs->lock);
->   		if (!current->fs->in_exec) {
-> @@ -1044,6 +1045,12 @@ static inline void io_req_work_grab_env(struct io_kiocb *req,
-> 
->   static inline void io_req_work_drop_env(struct io_kiocb *req)
->   {
-> +	/* always init'ed, put before REQ_F_WORK_INITIALIZED check */
-> +	if (req->work.creds) {
-> +		put_cred(req->work.creds);
-> +		req->work.creds = NULL;
-> +	}
-> +
->   	if (!(req->flags & REQ_F_WORK_INITIALIZED))
->   		return;
-> 
-> @@ -1051,10 +1058,6 @@ static inline void io_req_work_drop_env(struct io_kiocb *req)
->   		mmdrop(req->work.mm);
->   		req->work.mm = NULL;
->   	}
-> -	if (req->work.creds) {
-> -		put_cred(req->work.creds);
-> -		req->work.creds = NULL;
-> -	}
->   	if (req->work.fs) {
->   		struct fs_struct *fs = req->work.fs;
-> 
-> @@ -5901,12 +5904,12 @@ static int io_init_req(struct io_ring_ctx *ctx, struct
-> io_kiocb *req,
-> 
->   	id = READ_ONCE(sqe->personality);
->   	if (id) {
-> -		req->creds = idr_find(&ctx->personality_idr, id);
-> -		if (unlikely(!req->creds))
-> +		req->work.creds = idr_find(&ctx->personality_idr, id);
-> +		if (unlikely(!req->work.creds))
->   			return -EINVAL;
-> -		get_cred(req->creds);
-> +		get_cred(req->work.creds);
->   	} else
-> -		req->creds = NULL;
-> +		req->work.creds = NULL;
-> 
->   	/* same numerical values with corresponding REQ_F_*, safe to copy */
->   	req->flags |= sqe_flags;
-> 
+# cat /proc/swaps
+Filename                                Type            Size    Used    Priority
+/dev/zram0                              partition       1609200 0       100
+
+If you have any ideas let me know.
+
+Ah, I see there is async-buffered.6.
+
+- Sedat -
+
+[1] https://aur.archlinux.org/packages/zramswap/
+[2] https://aur.archlinux.org/cgit/aur.git/tree/zramswap.conf?h=zramswap
+[3] https://aur.archlinux.org/cgit/aur.git/tree/zramswap.service?h=zramswap

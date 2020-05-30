@@ -2,120 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0432D1E8380
-	for <lists+io-uring@lfdr.de>; Fri, 29 May 2020 18:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C5601E90C4
+	for <lists+io-uring@lfdr.de>; Sat, 30 May 2020 13:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbgE2QUk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 May 2020 12:20:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58036 "EHLO
+        id S1727947AbgE3LUq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 30 May 2020 07:20:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbgE2QUj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 May 2020 12:20:39 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A3BFC03E969
-        for <io-uring@vger.kernel.org>; Fri, 29 May 2020 09:20:39 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id f21so1676298pgg.12
-        for <io-uring@vger.kernel.org>; Fri, 29 May 2020 09:20:39 -0700 (PDT)
+        with ESMTP id S1725813AbgE3LUq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 30 May 2020 07:20:46 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7C3EC03E969;
+        Sat, 30 May 2020 04:20:45 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id e1so6739632wrt.5;
+        Sat, 30 May 2020 04:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QYTmRXSXGvX7cQ+bSaHAXwGUmhYclnvRRyIDOpDKEN8=;
-        b=YicrkdZ9tioZM+v0cQSLvdU08Q6HXV2UKDCBXPW5pdQoe6/rkVFFF++aTIWCpOo8Kk
-         Du2pX3WFFCIlDQMg5cs9EKa9mck/meduu8zagnaioBj9eXfzslrtwwG5EXxwzjCBzV8m
-         z443GCYMXSDKI9ELgaXWz+C12NvIcPx5zIJ9xqu0f6T/rL7g+D7ffDKJfDVO/8bkqXwU
-         55HFIijAZnlLGjkkABKk7FP+bBZM41eTwyTSTL4ZO+Fl9roKWaSSrTox9IkFEIXf5+o3
-         ELTsCvyNRttCnrnqK1uKgDUh3MMM8adR7HFhxPe25U8ENrBvnYklija3k+6Q2IzRHU6Y
-         YKCQ==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vXWn47TE90eGiLxqQk3ONlisC+zbjCcIk4mwisteZWs=;
+        b=RUMlm3wSLWy2c6Q+QSeNgrNkeOn4nEkxFlevJESeOso872u09RMqIfp90xSqc3d2k2
+         VDTXjH74cJPAZ9rcpAfxMWTtE0IO0zT5+T3Y8dyG3WnRYAR/7AV/iuNXswzFZROzosvN
+         cPvL5SxhbfITCiZzXBJ2kOH9zOCnElwQjqNoIw11bkuEPHbeMy26iSXL6N9JkTeBlIz1
+         Pj34BJYTZ/vi64SeYPrRIDjptGYxCJnrVzEm4X9zjYq9Et2SN0ttHyV/eEuBnqcNmJWO
+         vancTiBdtMYyIdFpvc2cj4pXBcQyPdT94klQVZx+o0HxlFujTa3j1e0BOIqvTxtsNftD
+         Mzig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=QYTmRXSXGvX7cQ+bSaHAXwGUmhYclnvRRyIDOpDKEN8=;
-        b=A3e/CsmMjRI9XAWdbE343jw43PDYpe/vu+LXbD+zy2tf4UHbHNGXm8xuHqbWOMFRUw
-         PeJ8FZAOwdC5nuLE1yfC5cy6W+QI4S4ahPJDsqHkNernroEtZbQC7eQU0WxLonvX+l4y
-         RHedO+ALq9IWJaZuZql/WsoYk+vyvp3UDFnLv2UGlw3je+Y1mVhPhCYPD8OQkh+LNAOU
-         LR/UUZDTF3R3m8K8LF5URcqrxb1jLwa3khFkmKlIzCzn6+XaCsGDrKtCNIKB3DnIIQZG
-         Ta1Oz902EfV3LYUssldGIR4XXlzTh9jm2403tfgMzJ/wxS9XMKUOTQaz04KxB9yBs2b1
-         5Diw==
-X-Gm-Message-State: AOAM531oZmFRYiAIJQNRdWUXkvXp+qEXTDa++dMY5ZY3a4TydcBWbBZ2
-        NM03eQpInPA8NmNWj/PUCp1+fh6793jtKg==
-X-Google-Smtp-Source: ABdhPJziUDCn+cLl5rX7j+LIXP0zU+CooHpC/5qon1Nyqi2Th083WFGCK8Al/3A+5pXbrqR2H7NKjg==
-X-Received: by 2002:a62:1503:: with SMTP id 3mr9647398pfv.202.1590769238592;
-        Fri, 29 May 2020 09:20:38 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id gp18sm7614621pjb.38.2020.05.29.09.20.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 May 2020 09:20:38 -0700 (PDT)
-Subject: Re: [RFC 2/2] io_uring: mark REQ_NOWAIT for a non-mq queue as
- unspported
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
-        io-uring@vger.kernel.org
-References: <1589925170-48687-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1589925170-48687-3-git-send-email-bijan.mottahedeh@oracle.com>
- <x495zcf29ie.fsf@segfault.boston.devel.redhat.com>
- <0ab35b4b-be67-8977-08ea-2998a4ac1a7e@kernel.dk>
- <798e24c7-b973-00c7-037f-4095e43515b7@kernel.dk>
- <x49o8q7zp21.fsf@segfault.boston.devel.redhat.com>
- <6ca210e3-eba6-0621-3ebc-d3545f5ad7e9@kernel.dk>
- <x49h7vyzsvu.fsf@segfault.boston.devel.redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0800aa17-030d-27d7-7b00-7ef0b39d9cfe@kernel.dk>
-Date:   Fri, 29 May 2020 10:20:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        bh=vXWn47TE90eGiLxqQk3ONlisC+zbjCcIk4mwisteZWs=;
+        b=AlTuurqk5FkupZa+hJ+VENBBsTgU5s7SJMwTLyfr3oiC/HSJW3hhBkTKY88l7CE6Zu
+         nIG358eDGbYJehNH2VSNjuFR4WfysmoEodejIDIGbuFPMC66sd0IVnXPCIZKY5cBKJzx
+         rRiD5KY5Eo+aSijcUuJQbfj5eE4d36KtME5qEO7H1vyda5kEAVSFHmcGjsVgN8UsVL7q
+         guJibqDMLv94QSFvXdHu71t5xysLYUjZfHImDdOZtK7CnQot9EPRgohuwzjfwW2EWxyb
+         f4IJjyiCAGV5Ynw9MEAjCE4MbrSM8nt+IMsh+Z6LiJfCURAvuvSAyq6VvMkC9hHgxbDE
+         1EEw==
+X-Gm-Message-State: AOAM532BqebcCBgxr6ciZHeQBLBFW9Twgyk7YlbzL/pn9NdNrVTs1NK9
+        weaHMIQX8t4wYW6K6NGBTmcOi8yH
+X-Google-Smtp-Source: ABdhPJxMg54pdr5IG6e4D0jqmnGC8oWGOw/Pkt/1HrSIGsvHSU7vbZZxOtngcI7dNDKn5KL8mVnnog==
+X-Received: by 2002:a05:6000:10d2:: with SMTP id b18mr12894992wrx.366.1590837644353;
+        Sat, 30 May 2020 04:20:44 -0700 (PDT)
+Received: from localhost.localdomain ([5.100.193.151])
+        by smtp.gmail.com with ESMTPSA id d16sm2982825wmd.42.2020.05.30.04.20.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 May 2020 04:20:43 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] io_uring: fix overflowed reqs cancellation
+Date:   Sat, 30 May 2020 14:19:15 +0300
+Message-Id: <955c64413e6f3883646d8fdaefbf97438f56acca.1590832472.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <x49h7vyzsvu.fsf@segfault.boston.devel.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/29/20 9:02 AM, Jeff Moyer wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
-> 
->> On 5/28/20 4:12 PM, Jeff Moyer wrote:
->>> Jens Axboe <axboe@kernel.dk> writes:
->>>
->>>>> poll won't work over dm, so that looks correct. What happens if you edit
->>>>> it and disable poll? Would be curious to see both buffered = 0 and
->>>>> buffered = 1 runs with that.
->>>>>
->>>>> I'll try this here too.
->>>>
->>>> I checked, and with the offending commit reverted, it behaves exactly
->>>> like it should - io_uring doesn't hit endless retries, and we still
->>>> return -EAGAIN to userspace for preadv2(..., RFW_NOWAIT) if not supported.
->>>> I've queued up the revert.
->>>
->>> With that revert, I now see an issue with an xfs file system on top of
->>> an nvme device when running the liburing test suite:
->>>
->>> Running test 500f9fbadef8-test
->>> Test 500f9fbadef8-test failed with ret 130
->>>
->>> That means the test harness timed out, so we never received a
->>> completion.
->>
->> I can't reproduce this. Can you try again, and enable io_uring tracing?
->>
->> # echo 1 > /sys/kernel/debug/tracing/events/io_uring/enable
->>
->> run test
->>
->> send the 'trace' file, or take a look and see what is going on.
-> 
-> I took a look, and it appeared as though the issue was not in the
-> kernel.  My liburing was not uptodate, and after grabbing the latest,
-> the test runs to completion.
+Overflowed requests in io_uring_cancel_files() should be shed only of
+inflight and overflowed refs. All other left references are owned by
+someone else.
 
-OK good, that's a relief!
+If refcount_sub_and_test() fails, it will go further and put put extra
+ref, don't do that. Also, don't need to do io_wq_cancel_work()
+for overflowed reqs, they will be let go shortly anyway.
 
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+
+v2: don't schedule() if requests is already freed
+
+ fs/io_uring.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index bc5117ee6ce3..b1c30284efbf 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7447,10 +7447,11 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+ 				finish_wait(&ctx->inflight_wait, &wait);
+ 				continue;
+ 			}
++		} else {
++			io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
++			io_put_req(cancel_req);
+ 		}
+ 
+-		io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
+-		io_put_req(cancel_req);
+ 		schedule();
+ 		finish_wait(&ctx->inflight_wait, &wait);
+ 	}
 -- 
-Jens Axboe
+2.24.0
 

@@ -2,58 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93BA51E9376
-	for <lists+io-uring@lfdr.de>; Sat, 30 May 2020 21:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF43F1E937D
+	for <lists+io-uring@lfdr.de>; Sat, 30 May 2020 21:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbgE3TkA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 30 May 2020 15:40:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58714 "EHLO
+        id S1728998AbgE3Tqy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 30 May 2020 15:46:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbgE3TkA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 30 May 2020 15:40:00 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C064C03E969
-        for <io-uring@vger.kernel.org>; Sat, 30 May 2020 12:40:00 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id n5so7470834wmd.0
-        for <io-uring@vger.kernel.org>; Sat, 30 May 2020 12:40:00 -0700 (PDT)
+        with ESMTP id S1726898AbgE3Tqy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 30 May 2020 15:46:54 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF37BC03E969
+        for <io-uring@vger.kernel.org>; Sat, 30 May 2020 12:46:53 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id l26so7015434wme.3
+        for <io-uring@vger.kernel.org>; Sat, 30 May 2020 12:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=v+pXWgxeobg6ZCdmeIuzw2m6sTxUwkImczywxvJOfnw=;
-        b=ptp3nEXjYmUmVm43g+aQyA7rrr5R0f5daTWWrUcF7L/2vThNrUPNJJCYrSslUvR1WM
-         vJ0lODPmxy9aTBww89BfT21/yfHvmS0yCxo22GjkHXLHV2NQF9qU/QUdV+61UYf8557+
-         cW6QVbCl+SOHhRQVEQiZiOzKF+JR0gnXuHlDgqU6y41rQHyGgehMdZw7qW1pJCTSYvnV
-         R+OiTqJrlVCI/lpLGoYQpQUJXIDHgzDfyX9iQMztBYHFI0A6o1LJ7f7+//GWWADwidpr
-         wfTL1OumIoEcSRU7ges4WGkznMae8ZRdU+cKSe7O4B4sJIPkADkDrF5CCgP8q5gYeRak
-         2sQA==
+        h=to:from:autocrypt:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=5/yzlnAaUxZysUtEwHs9wEdhEX3nW12xiLPztKNdXGU=;
+        b=biq/rjZhTnGEQ/o1IHkXs/xWCok2HK07RK4UxyiiYFjd0w6nJ2yJS53g3jAbpQYT74
+         mB41Cp2e2F5lKSdBsoa7EmBMKhY7mXLFb7NGVFygxImYpDtrYoqbBFk3ucrOkQ7Y1I+j
+         Lvu2tCWgaZanncc/xn0iCvgckKRXtsXcXEnnT3C1DLtO8W/ppTWLWUk1sM7SXuwuIX2j
+         66NexZ+3sLq/Nvp5nCoqh18+BDM2/1I4VAn54nKx6wY3jY5FFwy3DdRKbgcQpIG/cJjE
+         lYsJgQqdw6VaV+CO/ihm5g65ofTSDEBTkopViFrEm2WqUj4gNfJ29eot8R9jxvELM5TZ
+         qRDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=v+pXWgxeobg6ZCdmeIuzw2m6sTxUwkImczywxvJOfnw=;
-        b=EXcgtzIo38jc6oP5VKSIzb62Ut7MpURRpR4Rcmd77t5l1J4b3R6GPDS56ymO9HZrOx
-         l+3NUNb89bnCupRsCWYhFiz62si1o6l2G/YcjQVJIRgMKc3M1XQ4NJtS9llyQTRaUNUV
-         GWk8ZYKS/fycdMipZ3n7x5SiJEYUhhGr9Ac2ha+FCeny5i/htz849c2hJwbZRcA6jXfr
-         PNQPMSSSa8z71MMXsr+bPKtWPJYTrbWEGhhkzvVTIK5ZRyliA/kJ42h2bzbICT9jNaCz
-         mAYMnbIbCtaWJKa/ol2hdfMsRhNtQJ81rR0K9atMoY4xmvhq5qB+RBwVtyOwRpefnozl
-         o+jA==
-X-Gm-Message-State: AOAM531B2ph7Lq84d6udObTfsNS0eG7WVW6HIaBnVncYFldphwJg/am6
-        HYdtl6QAKrXwxEILMGtjXqw59H/3
-X-Google-Smtp-Source: ABdhPJznqtvUt0oaBiU3jgwdgaA23QsaZSYw6DZQqmUvUOLvB0wMi/GT2gKA8fhGRb+reHWO81wT1w==
-X-Received: by 2002:a1c:a905:: with SMTP id s5mr13968005wme.120.1590867598626;
-        Sat, 30 May 2020 12:39:58 -0700 (PDT)
+        h=x-gm-message-state:to:from:autocrypt:subject:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=5/yzlnAaUxZysUtEwHs9wEdhEX3nW12xiLPztKNdXGU=;
+        b=VQcSt5s8nyB13N69oE+cKafPwY3tA+37QMQJbL+4rqdeqBwvMUwce06GlYIaJIMbaI
+         mBq3Ndhw7Hf1nbS6VSgO8xiwaYe8/ByeZrYniB1HPg7VgBGHxyjvt2zS98BHZixma3lg
+         OdGOweiVgxbJxNyCmhcHrE1w1tFQHH/MdbzwIitzF5Cv1lPD3H7tBHSA1xlLREbmF1f7
+         ir5zdxdbpsqNUcbrPK82oeFbTj7XwfijqsIaCienIApZ/+nt6iv1CwqbszJNW2PaJCTQ
+         fQpKmOohSuP+OY1OHv3sbBGqUOoWlPSGRLtqhY2DM13FR5MENZ0vRbwpiGcLgrQFNGBC
+         ImXg==
+X-Gm-Message-State: AOAM5300ZtKHu51Fj6HWsbKYLkkplT2S835TGdOrGoDsipcVdnjfFDZj
+        nA2/b/1QTDZ2wsQZ7Ob2nSO5WOCz
+X-Google-Smtp-Source: ABdhPJxqHPoThJws8Sbe2l/gh3D1w0z5MqmqHT1LT7BkuGRCN7qdMJXIB8EFpgK7sdPYEXmQ9BxUMg==
+X-Received: by 2002:a05:600c:1008:: with SMTP id c8mr14366242wmc.95.1590868012251;
+        Sat, 30 May 2020 12:46:52 -0700 (PDT)
 Received: from [192.168.43.60] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id u12sm71289wrq.90.2020.05.30.12.39.57
+        by smtp.gmail.com with ESMTPSA id b18sm14361923wrn.88.2020.05.30.12.46.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 May 2020 12:39:58 -0700 (PDT)
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-References: <20200528091550.3169-1-xiaoguang.wang@linux.alibaba.com>
- <fa5b8034-c911-3de1-cfec-0b3a82ae701a@gmail.com>
- <b472d985-0e34-c53a-e976-3a174211d12b@linux.alibaba.com>
+        Sat, 30 May 2020 12:46:51 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,14 +92,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v3 1/2] io_uring: avoid whole io_wq_work copy for requests
- completed inline
-Message-ID: <3f455162-ea38-30b0-feb0-0ee373f1f601@gmail.com>
-Date:   Sat, 30 May 2020 22:38:42 +0300
+Subject: io_uring: open/close and SQPOLL
+Message-ID: <b5860d6a-8db7-edf2-d58a-2d7d8b35edc1@gmail.com>
+Date:   Sat, 30 May 2020 22:45:36 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <b472d985-0e34-c53a-e976-3a174211d12b@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -114,75 +106,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 30/05/2020 16:36, Xiaoguang Wang wrote:
-> 
-> The risk mainly comes from the union:
-> union {
->     /*
->      * Only commands that never go async can use the below fields,
->      * obviously. Right now only IORING_OP_POLL_ADD uses them, and
->      * async armed poll handlers for regular commands. The latter
->      * restore the work, if needed.
->      */
->     struct {
->         struct callback_head    task_work;
->         struct hlist_node    hash_node;
->         struct async_poll    *apoll;
->     };
->     struct io_wq_work    work;
-> };
-> 
-> 1, apoll and creds are in same memory offset, for 'async armed poll handlers' case,
-> apoll will be used, that means creds will be overwrited. In patch "io_uring: avoid
-> unnecessary io_wq_work copy for fast poll feature", I use REQ_F_WORK_INITIALIZED
-> to control whether to do io_wq_work restore, then your below codes will break:
-
-Yes, that's an example, which doesn't even consider the second patch. But great
-that you anticipated the error. Unconditional partial copy/init probably would
-solve the issue, but let's keep it aside for now.
-
-> 
-> static inline void io_req_work_drop_env(struct io_kiocb *req)
-> {
->     /* always init'ed, put before REQ_F_WORK_INITIALIZED check */
->     if (req->work.creds) {
-> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Here req->work.creds will be invalid, or I still need to use some space
-> to record original req->work.creds, and do creds restore.
-> 
->         put_cred(req->work.creds);
->         req->work.creds = NULL;
->     }
->     if (!(req->flags & REQ_F_WORK_INITIALIZED))
->          return;
-> 
-> 2, For IORING_OP_POLL_ADD case, current mainline codes will use task_work and
-> hash_node,
-> 32 bytes, that means io_wq_work's member list, func, files and mm would be
-> overwrited,
-> but will not touch creds, it's safe now. But if we will add some new member to
-> struct {
->     struct callback_head    task_work;
->     struct hlist_node    hash_node;
->     struct async_poll    *apoll;
-> };
-> say callback_head adds a new member, our check will still break.
-> 
-> 3. IMO, io_wq_work is just to describe needed running environment for reqs that
-> will be
-> punted to io-wq, for reqs submitted and completed inline should not touch this
-> struct
-> from software design view, and current io_kiocb is 240 bytes, and a new pointer
-
-Instead, it stores an entity in 2 different places, adding yet another
-thing/state to keep in mind. Arguable. I'd rather say -- neither one is better.
-And that's why I like the simplicity of initialising it always.
+Do I miss something, or open/close/etc need an explicit check
+for IORING_SETUP_SQPOLL? E.g., now an open() request somehow
+returns -EFAULT, and that doesn't seem good.
 
 
-> will be
-> 248 bytes, still 4 cache lines for cache line 64 bytes.
-> 
-> 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 732ec73ec3c0..e841fd03d976 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3023,6 +3023,8 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	size_t len;
+ 	int ret;
+ 
++	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
++		return -EINVAL;
+ 	if (sqe->ioprio || sqe->buf_index)
+ 		return -EINVAL;
+ 	if (req->flags & REQ_F_FIXED_FILE)
+@@ -3417,6 +3419,8 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	 */
+ 	req->work.flags |= IO_WQ_WORK_NO_CANCEL;
+ 
++	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
++		return -EINVAL;
+ 	if (sqe->ioprio || sqe->off || sqe->addr || sqe->len ||
+ 	    sqe->rw_flags || sqe->buf_index)
+ 		return -EINVAL;
 
 -- 
 Pavel Begunkov

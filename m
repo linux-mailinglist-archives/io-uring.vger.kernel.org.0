@@ -2,112 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AB9F1E98C8
-	for <lists+io-uring@lfdr.de>; Sun, 31 May 2020 18:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C006A1E9A51
+	for <lists+io-uring@lfdr.de>; Sun, 31 May 2020 22:19:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725912AbgEaQQg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 31 May 2020 12:16:36 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:46723 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726193AbgEaQQg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 31 May 2020 12:16:36 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U-7d0Y2_1590941710;
-Received: from 30.15.192.46(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U-7d0Y2_1590941710)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 01 Jun 2020 00:15:11 +0800
-Subject: Re: [PATCH v4 1/2] io_uring: avoid whole io_wq_work copy for requests
- completed inline
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200530143947.21224-1-xiaoguang.wang@linux.alibaba.com>
- <8c361177-c0b0-b08c-e0a5-141f7fd948f0@kernel.dk>
- <e2040210-ab73-e82b-50ea-cdeb88c69157@kernel.dk>
- <27e264ec-2707-495f-3d24-4e9e20b86032@kernel.dk>
- <32d0768e-f7d7-1281-e9ff-e95329db9dc5@linux.alibaba.com>
- <94ed2ba3-0209-d3a1-c5f0-dc45493f4505@linux.alibaba.com>
- <a2184644-34b6-88a2-b022-e8f5e7def071@gmail.com>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <4de0ccd2-249f-26af-d815-6dba1b86b25a@linux.alibaba.com>
-Date:   Mon, 1 Jun 2020 00:15:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1727772AbgEaUTz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 31 May 2020 16:19:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60794 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbgEaUTz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 31 May 2020 16:19:55 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BAF1C061A0E
+        for <io-uring@vger.kernel.org>; Sun, 31 May 2020 13:19:54 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id o6so2538667pgh.2
+        for <io-uring@vger.kernel.org>; Sun, 31 May 2020 13:19:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=WXpkexEydca2ydTytfOH62A1hOXqS8U6kVnts+vbTFE=;
+        b=jthtBQq7Iq8MllOWe8aaY4DHaY5Ih3+TDcbD8nEOn9sg1atK45zkM65gAWLr7r3aqs
+         3ei/WxdhOa7jaLuJ2xccgaEGlhdFzhekGqk351Y5Dqw5wLGIeLNzZMm4bVfnc9f0hFte
+         gJya0R4vtopxant4RRAGRJUzCsk80O6mAKB0nkBGOWPq8ZnsCb1UJ0RFRkApGM1St+IX
+         MJFTCr1ECjT0T7/Su/80Z3jZe6LyLNl4scCo0Hj+AvN4c/EN/Ct11J021vNzvOYvpXDc
+         iJjsodudbsiP9Zrj7ZIXb/83+SVIfebjRCnb/4jryBsC1y5ecwBDNhUJw5brucfJhZgT
+         MKIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WXpkexEydca2ydTytfOH62A1hOXqS8U6kVnts+vbTFE=;
+        b=Qi0mmOHH8j1DNvfu2KDMj5Ki0pSmq2xyRSOQzX42to66ESMn+aXprUv8zgGRz2Iw5f
+         S4AIexZsdqCZCt5DZ7Laj7sgVu+RjwAe8pLdljzY+AJ+EjBUP6G7LzWN19kRtMSXJr9+
+         MIHEBIQGzx1eL+sNxHAeMsGJ/vJ+9s9s+20gQveN4e+tHU9r3qw+vJ0HMWsfvmKO2R8h
+         Zme5b1Uc+ZVDrGhdry+p4ug7GXPvq6rwtzysNxPHTyFfhMtvh7eiSrC5qneANrQ080P6
+         7fNlTanA78b96r23IkfhQw/gD2UlolKcAJ5cS0sS9MSWx5TpmIHix6uOmAhCuBmoNmPK
+         BSwA==
+X-Gm-Message-State: AOAM531KSKMTcZjhU0X24+v+/Xn3Ow631HA+Eqyl6bJqT1sdq9XU0/6T
+        uAwo1ep4RbQT5msFFUp1HjbTYqe/dD1Bjw==
+X-Google-Smtp-Source: ABdhPJzDLsa0mClAQGVlzCqCXxYfi3eS6GI/gmjXj36jkBpVzNhaLyk8n904lEga5GAdTE8Hi1PhzA==
+X-Received: by 2002:a63:5d62:: with SMTP id o34mr16309328pgm.420.1590956393597;
+        Sun, 31 May 2020 13:19:53 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id m3sm5485796pjs.17.2020.05.31.13.19.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 May 2020 13:19:53 -0700 (PDT)
+Subject: Re: IORING_OP_CLOSE fails on fd opened with O_PATH
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Clay Harris <bugs@claycon.org>, io-uring@vger.kernel.org
+References: <20200531124740.vbvc6ms7kzw447t2@ps29521.dreamhostps.com>
+ <5d8c06cb-7505-e0c5-a7f4-507e7105ce5e@kernel.dk>
+Message-ID: <4eaad89b-f6e3-2ff4-af07-f63f7ce35bdc@kernel.dk>
+Date:   Sun, 31 May 2020 14:19:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <a2184644-34b6-88a2-b022-e8f5e7def071@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5d8c06cb-7505-e0c5-a7f4-507e7105ce5e@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
-
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 12296ce3e8b9..2a3a02838f7b 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -907,9 +907,10 @@ static void io_file_put_work(struct work_struct *work);
->>>    static inline void io_req_init_async(struct io_kiocb *req,
->>>                           void (*func)(struct io_wq_work **))
->>>    {
->>> -       if (req->flags & REQ_F_WORK_INITIALIZED)
->>> -               req->work.func = func;
->>> -       else {
->>> +       if (req->flags & REQ_F_WORK_INITIALIZED) {
->>> +               if (!req->work.func)
->>> +                       req->work.func = func;
->>> +       } else {
->>>                   req->work = (struct io_wq_work){ .func = func };
->>>                   req->flags |= REQ_F_WORK_INITIALIZED;
->>>           }
->>> @@ -2920,6 +2921,8 @@ static int __io_splice_prep(struct io_kiocb *req,
->>>                   return ret;
->>>           req->flags |= REQ_F_NEED_CLEANUP;
->>>
->>> +       /* Splice will be punted aync, so initialize io_wq_work firstly_*/
->>> +       io_req_init_async(req, io_wq_submit_work);
->>>           if (!S_ISREG(file_inode(sp->file_in)->i_mode))
->>>                   req->work.flags |= IO_WQ_WORK_UNBOUND;
->>>
->>> @@ -3592,6 +3595,9 @@ static int io_statx(struct io_kiocb *req, bool force_nonblock)
->>>
->>>    static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>    {
->>> +        /* Close may be punted aync, so initialize io_wq_work firstly */
->>> +       io_req_init_async(req, io_wq_submit_work);
->>> +
->> For splice and close requests, these two about io_req_init_async() calls should be
->> io_req_init_async(req, NULL), because they change req->work.flags firstly.
+On 5/31/20 8:46 AM, Jens Axboe wrote:
+> On 5/31/20 6:47 AM, Clay Harris wrote:
+>> Tested on kernel 5.6.14
+>>
+>> $ ./closetest closetest.c
+>>
+>> path closetest.c open on fd 3 with O_RDONLY
+>>  ---- io_uring close(3)
+>>  ---- ordinary close(3)
+>> ordinary close(3) failed, errno 9: Bad file descriptor
+>>
+>>
+>> $ ./closetest closetest.c opath
+>>
+>> path closetest.c open on fd 3 with O_PATH
+>>  ---- io_uring close(3)
+>> io_uring close() failed, errno 9: Bad file descriptor
+>>  ---- ordinary close(3)
+>> ordinary close(3) returned 0
 > 
-> Please no. Such assumptions/dependencies are prone to break.
-> It'll get us subtle bugs in no time.
-> 
-> BTW, why not io_wq_submit_work in place of NULL?
-In the begin of __io_splice_prep or io_close_prep, current io_uring mainline codes will
-modify req->work.flags firstly, so we need to call io_req_init_async to initialize
-io_wq_work before the work.flags modification.
-For below codes:
-static inline void io_req_init_async(struct io_kiocb *req,
-                         void (*func)(struct io_wq_work **))
-{
-         if (req->flags & REQ_F_WORK_INITIALIZED) {
-                 if (!req->work.func)
-                         req->work.func = func;
-         } else {
-                 req->work = (struct io_wq_work){ .func = func };
-                 req->flags |= REQ_F_WORK_INITIALIZED;
-         }
-}
+> Can you include the test case, please? Should be an easy fix, but no
+> point rewriting a test case if I can avoid it...
 
-if we not pass NULL to parameter 'func', e.g. pass io_wq_submit_work, then
-we can not use io_req_init_async() to pass io_close_finish again.
+We just need this ported to stable once it goes into 5.8-rc:
 
-Now I'm confused how to write better codes based on current io_uring mainline codes :)
-If you have some free time, please have a deeper look, thanks.
+https://git.kernel.dk/cgit/linux-block/commit/?h=for-5.8/io_uring&id=904fbcb115c85090484dfdffaf7f461d96fe8e53
 
-Regards,
-Xiaoguang Wang
+-- 
+Jens Axboe
 
-
-> 

@@ -2,52 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 282141E9842
-	for <lists+io-uring@lfdr.de>; Sun, 31 May 2020 16:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A45A1E9847
+	for <lists+io-uring@lfdr.de>; Sun, 31 May 2020 16:59:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbgEaOui (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 31 May 2020 10:50:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38582 "EHLO
+        id S1728120AbgEaO7O (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 31 May 2020 10:59:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbgEaOui (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 31 May 2020 10:50:38 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11C77C061A0E
-        for <io-uring@vger.kernel.org>; Sun, 31 May 2020 07:50:38 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id e1so8941352wrt.5
-        for <io-uring@vger.kernel.org>; Sun, 31 May 2020 07:50:37 -0700 (PDT)
+        with ESMTP id S1725889AbgEaO7O (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 31 May 2020 10:59:14 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC060C061A0E
+        for <io-uring@vger.kernel.org>; Sun, 31 May 2020 07:59:13 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id x13so8940537wrv.4
+        for <io-uring@vger.kernel.org>; Sun, 31 May 2020 07:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zRApJ31uo+ny2HtqzI2bvfcyV/sqaDpyThfJQr0sj1E=;
-        b=K/i1mv7O+jFlvzXAxpia84C7uYKA7dZXPwSl5FtN5sYlAlSJnNsZZvn+0V327rtbuL
-         kdX4Axx//NK4awdCF3YlyL4QljS306v48YlQahFGAbeJ5Hlf+WtIrZ5fNH+rxP14rzjF
-         p9yUE8SUFVkQ8ZwXK7w7raMEiqKCJ4ggZpn1GE+o9iios/2szNdhqizOMG1Yj/pmjmpp
-         mB5bIJ9mxe7eTPWEcgakHALCYePRzzRDBSdBOYRu8bFO82WjCmzQXBabFSNnXwfcF9bW
-         vBtJCGN7suL4rZ3yyawEdqIEPe9glHtOySvkXzFMk0/pouk7CWW/ePttvEEn4fXohIbF
-         SwmA==
+        bh=80nn4kevgl54+UzMf4+iB3tZrpYGA5LC+7ysWWHXaZs=;
+        b=TRsuil4F0zn6RUnJhqjr6TxYeP/HQxc1MrKkHwFICwgDZLtAsNnGvw7YHXborFKX0t
+         f2esBZt8+LQ2LUhHLL4C4z2cAyi7FGMnoAuoist1ca39ljBKVxua18wvmLDCMlydTpVY
+         5xPeekECQKGbCKV8GMRQBR0pYPfymPdBQVnkA3rVFV9xWNRbX5LgRF07Yn8LPhW2GX/k
+         soMEVkiAI2oc833j3Gw1GB5krknMRkpizOCUsjHONQPi4kYpGyV4gKu7fSSKyPXizoYr
+         GM2q6N6LCT01zj776QjVRyp0hKAtBEjiIi+mCdZ4tlD782smL6weOr0HikMcK7iIWjvK
+         B4LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=zRApJ31uo+ny2HtqzI2bvfcyV/sqaDpyThfJQr0sj1E=;
-        b=TB/cjGkDk6gzZmkiQaS2QrfvTUirj3ADTmKSlZ4ue1J0Y3bTJEmrMVJ7X5iNSB4pbl
-         D7LhbDvaAeMdXilbVxx67uzhMW+5yenm+dbfqkdVwv782RxDi8qx+K7BNfqigI+lmj3o
-         eqm1Z19ORS38444GJf5VKbin8Jf0TlUgXVQhPSHMj9+5e7H9eabYlXy8mHNWkY+ZzOei
-         kIJ6jT30Pbj9e04s922V3IwBfsxT8MAxvBGcZrBpqElDvM6ZdgJSsNYrMb2FYuOTx+Ln
-         LAzkTUpWWDqdnEBSyC9XelDjSTkSPOIKNB1QLX5aeYLgjXu+VoUgrucY8O2zugraWEl8
-         sBWw==
-X-Gm-Message-State: AOAM531rrE1BPtgtUQValncPW4EFe6JcMv79hDPaKx2bCrgfq2xvgsQJ
-        xabDoOQJyojggRT9KLj7VFfFqS7U
-X-Google-Smtp-Source: ABdhPJzq4AfLK53JjH14JMb29Gp2zHNq9vzSSDS5w7bKO97izeR00KPVO2EpPgdzm2RGvY1JN6CRLA==
-X-Received: by 2002:a5d:6cce:: with SMTP id c14mr16965655wrc.377.1590936636559;
-        Sun, 31 May 2020 07:50:36 -0700 (PDT)
+        bh=80nn4kevgl54+UzMf4+iB3tZrpYGA5LC+7ysWWHXaZs=;
+        b=MXmgILAYzrh/L0aJpeHI/u++puDgf+uR83gCh5v+3HxTsig7sUUE2i48GGsrK+Y8cy
+         fbeup6poDZ/P3d0gAUOXyn718uEjiuaUN7kFDlEk7S1aJCC2vQ5CG3IyewegedQyZfo/
+         7FmMXJCM5OQmXCGaCNhSgOLuznooOmORRX/hPE7CI+92bm5lDnKtwo03RsP5czo7tnhh
+         rRJFDt/Fj43UJfnOWEw2fru0CnbkAqDnI4sFVr7w691Fl3fzNEIkwvUuUbk1Y+Hb+IjT
+         oiXDOR8AwLNQPIjtXwM3E/8boNSizRgRM7q2gzJ2vOEU68rQlNNL82qqSmu4KJASTGTi
+         AJBw==
+X-Gm-Message-State: AOAM530MAIUak8e/fpifFKsCziwLzQROkx+or35c+QWDm8MCAZZ7c+dA
+        WlzQNT4ghN7piU0MQUxWt97Rj1nA
+X-Google-Smtp-Source: ABdhPJzGMnvncjJ2t7ncS+28cKeONW6cyovzdb/D26F8uYOGFCmRU+Dl6mWULZbPqvuP40MySil9ng==
+X-Received: by 2002:adf:eb47:: with SMTP id u7mr17685726wrn.14.1590937152542;
+        Sun, 31 May 2020 07:59:12 -0700 (PDT)
 Received: from [192.168.43.60] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id u10sm7094857wmc.31.2020.05.31.07.50.35
+        by smtp.gmail.com with ESMTPSA id y5sm17542145wrs.63.2020.05.31.07.59.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 May 2020 07:50:36 -0700 (PDT)
+        Sun, 31 May 2020 07:59:12 -0700 (PDT)
 To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc:     joseph.qi@linux.alibaba.com
@@ -55,8 +55,8 @@ References: <20200530143947.21224-1-xiaoguang.wang@linux.alibaba.com>
  <8c361177-c0b0-b08c-e0a5-141f7fd948f0@kernel.dk>
  <e2040210-ab73-e82b-50ea-cdeb88c69157@kernel.dk>
  <27e264ec-2707-495f-3d24-4e9e20b86032@kernel.dk>
- <12819413-f2bf-8156-c0e2-e617ce918e76@gmail.com>
- <7734da65-33ad-5472-88f8-bdd84c5d4f41@linux.alibaba.com>
+ <32d0768e-f7d7-1281-e9ff-e95329db9dc5@linux.alibaba.com>
+ <94ed2ba3-0209-d3a1-c5f0-dc45493f4505@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -103,12 +103,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: [PATCH v4 1/2] io_uring: avoid whole io_wq_work copy for requests
  completed inline
-Message-ID: <2a16c066-5f53-80fe-8f11-bf0caf95e389@gmail.com>
-Date:   Sun, 31 May 2020 17:49:20 +0300
+Message-ID: <a2184644-34b6-88a2-b022-e8f5e7def071@gmail.com>
+Date:   Sun, 31 May 2020 17:57:56 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <7734da65-33ad-5472-88f8-bdd84c5d4f41@linux.alibaba.com>
+In-Reply-To: <94ed2ba3-0209-d3a1-c5f0-dc45493f4505@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -117,23 +117,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 31/05/2020 16:57, Xiaoguang Wang wrote:
->> There is another thing:
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 12296ce3e8b9..2a3a02838f7b 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -907,9 +907,10 @@ static void io_file_put_work(struct work_struct *work);
+>>   static inline void io_req_init_async(struct io_kiocb *req,
+>>                          void (*func)(struct io_wq_work **))
+>>   {
+>> -       if (req->flags & REQ_F_WORK_INITIALIZED)
+>> -               req->work.func = func;
+>> -       else {
+>> +       if (req->flags & REQ_F_WORK_INITIALIZED) {
+>> +               if (!req->work.func)
+>> +                       req->work.func = func;
+>> +       } else {
+>>                  req->work = (struct io_wq_work){ .func = func };
+>>                  req->flags |= REQ_F_WORK_INITIALIZED;
+>>          }
+>> @@ -2920,6 +2921,8 @@ static int __io_splice_prep(struct io_kiocb *req,
+>>                  return ret;
+>>          req->flags |= REQ_F_NEED_CLEANUP;
 >>
->> io_submit_sqes()
->>      -> io_close() (let ->flush == NULL)
->>          -> __io_close_finish()
->>              -> filp_close(req->close.put_file, *req->work.files*);
+>> +       /* Splice will be punted aync, so initialize io_wq_work firstly_*/
+>> +       io_req_init_async(req, io_wq_submit_work);
+>>          if (!S_ISREG(file_inode(sp->file_in)->i_mode))
+>>                  req->work.flags |= IO_WQ_WORK_UNBOUND;
 >>
->> where req->work.files is garbage.
-> I think this bug is independent of my patch. Without my patches, if close request
+>> @@ -3592,6 +3595,9 @@ static int io_statx(struct io_kiocb *req, bool force_nonblock)
+>>
+>>   static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>   {
+>> +        /* Close may be punted aync, so initialize io_wq_work firstly */
+>> +       io_req_init_async(req, io_wq_submit_work);
+>> +
+> For splice and close requests, these two about io_req_init_async() calls should be
+> io_req_init_async(req, NULL), because they change req->work.flags firstly.
 
-It looks like it's ok to pass NULL, at least Jens did it here and I see an
-occurrence of ->flush(NULL). And it's usually not referenced or completely
-ignored. I'll check later.
+Please no. Such assumptions/dependencies are prone to break.
+It'll get us subtle bugs in no time. 
 
-> will be submitted and completed inline, req->work.files will be NULL, it's still
-> problematic, should we use current->files here?
+BTW, why not io_wq_submit_work in place of NULL?
 
 -- 
 Pavel Begunkov

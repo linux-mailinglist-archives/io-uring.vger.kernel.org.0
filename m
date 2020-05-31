@@ -2,137 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF43F1E937D
-	for <lists+io-uring@lfdr.de>; Sat, 30 May 2020 21:46:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1ACB1E94F3
+	for <lists+io-uring@lfdr.de>; Sun, 31 May 2020 03:57:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbgE3Tqy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 30 May 2020 15:46:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59788 "EHLO
+        id S1729596AbgEaB5u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 30 May 2020 21:57:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbgE3Tqy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 30 May 2020 15:46:54 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF37BC03E969
-        for <io-uring@vger.kernel.org>; Sat, 30 May 2020 12:46:53 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id l26so7015434wme.3
-        for <io-uring@vger.kernel.org>; Sat, 30 May 2020 12:46:53 -0700 (PDT)
+        with ESMTP id S1729376AbgEaB5t (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 30 May 2020 21:57:49 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3990EC08C5C9
+        for <io-uring@vger.kernel.org>; Sat, 30 May 2020 18:57:48 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id z64so1806674pfb.1
+        for <io-uring@vger.kernel.org>; Sat, 30 May 2020 18:57:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:from:autocrypt:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=5/yzlnAaUxZysUtEwHs9wEdhEX3nW12xiLPztKNdXGU=;
-        b=biq/rjZhTnGEQ/o1IHkXs/xWCok2HK07RK4UxyiiYFjd0w6nJ2yJS53g3jAbpQYT74
-         mB41Cp2e2F5lKSdBsoa7EmBMKhY7mXLFb7NGVFygxImYpDtrYoqbBFk3ucrOkQ7Y1I+j
-         Lvu2tCWgaZanncc/xn0iCvgckKRXtsXcXEnnT3C1DLtO8W/ppTWLWUk1sM7SXuwuIX2j
-         66NexZ+3sLq/Nvp5nCoqh18+BDM2/1I4VAn54nKx6wY3jY5FFwy3DdRKbgcQpIG/cJjE
-         lYsJgQqdw6VaV+CO/ihm5g65ofTSDEBTkopViFrEm2WqUj4gNfJ29eot8R9jxvELM5TZ
-         qRDA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/WemXoImhsNurvgvrjEvBKKt3N1OcqQaztjA3rpMsOA=;
+        b=ofpa0GRSc19UCmmYAeJ1gtOd8ud77uSLXoC08oedhK8bjrfrzl8EngvyEIrG7O6r8a
+         NTVckZLNnM1BaFZ2pEkdOq4k3dioXPAbN8oKyUcZvCHIfsnlpd+xxEMoFFqTmiP1D4Ba
+         fzj1VEnxhxHiTuHBEmN+aDc9ctAMh2HuAsDSjAYXqgF6WYtQpPcDv6qTsO6dYzk5Ysbj
+         1z+ctmnbNik5+6DsIBoZBLd9dL49RSaIuDUOzb1+jg9/8j8p2ZWmyQvabuIvYkIc6GyU
+         xeJbaKTZUcxCI9a1YTz0RJLt2oO9CQlhUbLHAILywxh1pmFk8vCRsy6VDrE4MBsCMQMj
+         f+Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:autocrypt:subject:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=5/yzlnAaUxZysUtEwHs9wEdhEX3nW12xiLPztKNdXGU=;
-        b=VQcSt5s8nyB13N69oE+cKafPwY3tA+37QMQJbL+4rqdeqBwvMUwce06GlYIaJIMbaI
-         mBq3Ndhw7Hf1nbS6VSgO8xiwaYe8/ByeZrYniB1HPg7VgBGHxyjvt2zS98BHZixma3lg
-         OdGOweiVgxbJxNyCmhcHrE1w1tFQHH/MdbzwIitzF5Cv1lPD3H7tBHSA1xlLREbmF1f7
-         ir5zdxdbpsqNUcbrPK82oeFbTj7XwfijqsIaCienIApZ/+nt6iv1CwqbszJNW2PaJCTQ
-         fQpKmOohSuP+OY1OHv3sbBGqUOoWlPSGRLtqhY2DM13FR5MENZ0vRbwpiGcLgrQFNGBC
-         ImXg==
-X-Gm-Message-State: AOAM5300ZtKHu51Fj6HWsbKYLkkplT2S835TGdOrGoDsipcVdnjfFDZj
-        nA2/b/1QTDZ2wsQZ7Ob2nSO5WOCz
-X-Google-Smtp-Source: ABdhPJxqHPoThJws8Sbe2l/gh3D1w0z5MqmqHT1LT7BkuGRCN7qdMJXIB8EFpgK7sdPYEXmQ9BxUMg==
-X-Received: by 2002:a05:600c:1008:: with SMTP id c8mr14366242wmc.95.1590868012251;
-        Sat, 30 May 2020 12:46:52 -0700 (PDT)
-Received: from [192.168.43.60] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id b18sm14361923wrn.88.2020.05.30.12.46.51
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/WemXoImhsNurvgvrjEvBKKt3N1OcqQaztjA3rpMsOA=;
+        b=J4ZqLG/DsIpA/1/ONLltHzhUGzDqFmiseSJCaTikG0QUREPaJgBRafdF7fkr9jd5dm
+         roHVm8HbZmY5PXLl+OMH+5nuS+3Hb8sn8MuLTa237LvzdrNB2KtjcrhbF8vddYekW8DL
+         5eE60AxCd60ZRn6FYUiDXmOSjIWbkpVuke+GEr7DNNG5/LQ4XycOI2X7OWA+K4GOy2jG
+         uagT0m1FxZ+S5YhMt2ump2EqfjYSZkPCLG+TA7w+VkGJhIDpKLoFJYqF/4zlMtKwoE5h
+         QfArg7U7eA6UJocpBc+Uv7JWsfMYJna7SsQqtOUU+/kkHSDAw4vr+7BIoj/8NJ4SGpaA
+         pqLg==
+X-Gm-Message-State: AOAM533vvVYXNQDktPixkGtiOvVRf/ivqLd9osiTl5u0FFAcsR9Ulr/4
+        10bo+aEHket5c/OJDrgPo4VRWA==
+X-Google-Smtp-Source: ABdhPJw6sUzC2QmIdh/46N6SW7kJ6geIM+mogd6Zf0NHPly6gKiWjN/PHRTVUbAl2wQ1IE2MhqWBpA==
+X-Received: by 2002:a63:f854:: with SMTP id v20mr14543363pgj.0.1590890267589;
+        Sat, 30 May 2020 18:57:47 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id k12sm10444543pfg.177.2020.05.30.18.57.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 May 2020 12:46:51 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: io_uring: open/close and SQPOLL
-Message-ID: <b5860d6a-8db7-edf2-d58a-2d7d8b35edc1@gmail.com>
-Date:   Sat, 30 May 2020 22:45:36 +0300
+        Sat, 30 May 2020 18:57:46 -0700 (PDT)
+Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
+To:     sedat.dilek@gmail.com
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+References: <20200526195123.29053-1-axboe@kernel.dk>
+ <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
+ <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk>
+ <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
+ <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
+ <CA+icZUVJT8X3zyafrgbkJppsp4nJEKaLjYNs1kX8H+aY1Y10Qw@mail.gmail.com>
+ <CA+icZUWHOYcGUpw4gfT7xP2Twr15YbyXiWA_=Mc+f7NgzZCETw@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <230d3380-0269-d113-2c32-6e4fb94b79b8@kernel.dk>
+Date:   Sat, 30 May 2020 19:57:45 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.8.0
 MIME-Version: 1.0
+In-Reply-To: <CA+icZUWHOYcGUpw4gfT7xP2Twr15YbyXiWA_=Mc+f7NgzZCETw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Do I miss something, or open/close/etc need an explicit check
-for IORING_SETUP_SQPOLL? E.g., now an open() request somehow
-returns -EFAULT, and that doesn't seem good.
+On 5/30/20 12:57 PM, Sedat Dilek wrote:
+> Here are the numbers with your patchset:
+> 
+> # cat systemd-analyze-time_5.7.0-rc7-4-amd64-clang_2nd-try.txt
+> Startup finished in 7.229s (kernel) + 1min 18.304s (userspace) = 1min 25.534s
+> graphical.target reached after 1min 18.286s in userspace
 
+Can you see if this makes a difference?
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 732ec73ec3c0..e841fd03d976 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3023,6 +3023,8 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	size_t len;
- 	int ret;
- 
-+	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
-+		return -EINVAL;
- 	if (sqe->ioprio || sqe->buf_index)
- 		return -EINVAL;
- 	if (req->flags & REQ_F_FIXED_FILE)
-@@ -3417,6 +3419,8 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	 */
- 	req->work.flags |= IO_WQ_WORK_NO_CANCEL;
- 
-+	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
-+		return -EINVAL;
- 	if (sqe->ioprio || sqe->off || sqe->addr || sqe->len ||
- 	    sqe->rw_flags || sqe->buf_index)
- 		return -EINVAL;
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index c296463c15eb..ccb895f911b1 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -374,8 +374,7 @@ enum req_flag_bits {
+ #define REQ_INTEGRITY		(1ULL << __REQ_INTEGRITY)
+ #define REQ_FUA			(1ULL << __REQ_FUA)
+ #define REQ_PREFLUSH		(1ULL << __REQ_PREFLUSH)
+-#define REQ_RAHEAD		\
+-	((1ULL << __REQ_RAHEAD) | (1ULL << __REQ_NOWAIT))
++#define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
+ #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
+ #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
+ #define REQ_CGROUP_PUNT		(1ULL << __REQ_CGROUP_PUNT)
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

@@ -2,53 +2,22 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA141EA215
-	for <lists+io-uring@lfdr.de>; Mon,  1 Jun 2020 12:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26C7F1EA315
+	for <lists+io-uring@lfdr.de>; Mon,  1 Jun 2020 13:50:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbgFAKo2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 1 Jun 2020 06:44:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52564 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbgFAKo1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 1 Jun 2020 06:44:27 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E3B5C061A0E
-        for <io-uring@vger.kernel.org>; Mon,  1 Jun 2020 03:44:25 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id j10so10963972wrw.8
-        for <io-uring@vger.kernel.org>; Mon, 01 Jun 2020 03:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=h/ZaiG69jI5m/D7Mo6PMzjPcE/KVXqYovvhlAwq7dfU=;
-        b=TB7D/AHIM4xPCBwerENn3HFHxKuseow3cyVQxQeMwm41K4WyFjGHzk0NgTKzF52/E4
-         fq+rSElzOME0t/pnQfvmJfC5NGYmwccY/eNQ/5ky4+zGbw7l5fORr5KfTcbv5FssNUOf
-         5/fodqORCC2q1N+nLi6wYz23atAPHjnlUgyYCmlZTElJDEhsUDlCl58sEZMOHsECRA05
-         PGfN85PjU9q0uEKjYcQUk5SBO/VpdleE0C9tlJVBmFrkUD4S7dvbgi7gUadbADsETN6I
-         r3N40VCFrPeujkpydQFp0BJ9Jdu/3VzGoL5Y7jd/2xAUvUlCdJIJQDNDjUjWZOEDTXyG
-         hS1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=h/ZaiG69jI5m/D7Mo6PMzjPcE/KVXqYovvhlAwq7dfU=;
-        b=h9HzKWp79M45P2nJ1fcSmcQMpKBFlfUGUBsA3cjTu3NP8tQ5DEIrfYHgOODUdJEniP
-         VUrWFNrXoINMln/jX38X2VmWC1Utxf2/2sVRaNr9irFxUzloZ4U39vTRHq6irUk0qZXd
-         8sbZi/RY0eMIzqg3bKcroB063tgt/sSDdvO0e3CFXxKTz++YjG0nCu3kJjAyy19ZwuSK
-         XeeCUyrNE6lLc3cwXngswBmVSTQtStoqH5OxsDoXIrzYK7SGO1pD7A+6n3HxEO/JQ0wB
-         x22UDZ5kbPDxomhZ6/hemWw0cvE5AkRU3hbzKBifRaYdnr1/zMEXW3TsYbKGnzvgx5SE
-         dyXQ==
-X-Gm-Message-State: AOAM533viFyuRKo4Lacqb/7Az0Sh2vsQc4GDX5hnO2dXtiJ6RmQLnqie
-        +TU7iSRWjE664ylWGATOHkFFi+9q
-X-Google-Smtp-Source: ABdhPJyl36fmYdGesaS4IU6BwZ2ZQ3ZfxAGCF/kGCxlyG/7qFAQ+5og/1GaiiLXfHIRLQoSwUbmU0A==
-X-Received: by 2002:a5d:654c:: with SMTP id z12mr20855600wrv.315.1591008264005;
-        Mon, 01 Jun 2020 03:44:24 -0700 (PDT)
-Received: from [192.168.43.154] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id 1sm11968057wmz.13.2020.06.01.03.44.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jun 2020 03:44:23 -0700 (PDT)
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        id S1725974AbgFALux (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 1 Jun 2020 07:50:53 -0400
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:52868 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725838AbgFALux (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 1 Jun 2020 07:50:53 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U-F57jA_1591012250;
+Received: from 30.225.32.149(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U-F57jA_1591012250)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 01 Jun 2020 19:50:51 +0800
+Subject: Re: [PATCH v4 1/2] io_uring: avoid whole io_wq_work copy for requests
+ completed inline
+To:     Pavel Begunkov <asml.silence@gmail.com>,
         Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc:     joseph.qi@linux.alibaba.com
 References: <20200530143947.21224-1-xiaoguang.wang@linux.alibaba.com>
@@ -59,93 +28,53 @@ References: <20200530143947.21224-1-xiaoguang.wang@linux.alibaba.com>
  <94ed2ba3-0209-d3a1-c5f0-dc45493f4505@linux.alibaba.com>
  <a2184644-34b6-88a2-b022-e8f5e7def071@gmail.com>
  <4de0ccd2-249f-26af-d815-6dba1b86b25a@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH v4 1/2] io_uring: avoid whole io_wq_work copy for requests
- completed inline
-Message-ID: <360f970a-0984-f452-1ff0-c31988a3e4ec@gmail.com>
-Date:   Mon, 1 Jun 2020 13:43:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ <360f970a-0984-f452-1ff0-c31988a3e4ec@gmail.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <1e3224fe-73da-f12a-f094-74346a5a94ec@linux.alibaba.com>
+Date:   Mon, 1 Jun 2020 19:50:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.1
 MIME-Version: 1.0
-In-Reply-To: <4de0ccd2-249f-26af-d815-6dba1b86b25a@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <360f970a-0984-f452-1ff0-c31988a3e4ec@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 31/05/2020 19:15, Xiaoguang Wang wrote:
-> In the begin of __io_splice_prep or io_close_prep, current io_uring mainline codes will
-> modify req->work.flags firstly, so we need to call io_req_init_async to initialize
-> io_wq_work before the work.flags modification.
-> For below codes:
-> static inline void io_req_init_async(struct io_kiocb *req,
->                         void (*func)(struct io_wq_work **))
-> {
->         if (req->flags & REQ_F_WORK_INITIALIZED) {
->                 if (!req->work.func)
->                         req->work.func = func;
->         } else {
->                 req->work = (struct io_wq_work){ .func = func };
->                 req->flags |= REQ_F_WORK_INITIALIZED;
->         }
-> }
+hi,
+
+> On 31/05/2020 19:15, Xiaoguang Wang wrote:
+>> In the begin of __io_splice_prep or io_close_prep, current io_uring mainline codes will
+>> modify req->work.flags firstly, so we need to call io_req_init_async to initialize
+>> io_wq_work before the work.flags modification.
+>> For below codes:
+>> static inline void io_req_init_async(struct io_kiocb *req,
+>>                          void (*func)(struct io_wq_work **))
+>> {
+>>          if (req->flags & REQ_F_WORK_INITIALIZED) {
+>>                  if (!req->work.func)
+>>                          req->work.func = func;
+>>          } else {
+>>                  req->work = (struct io_wq_work){ .func = func };
+>>                  req->flags |= REQ_F_WORK_INITIALIZED;
+>>          }
+>> }
+>>
+>> if we not pass NULL to parameter 'func', e.g. pass io_wq_submit_work, then
+>> we can not use io_req_init_async() to pass io_close_finish again.
 > 
-> if we not pass NULL to parameter 'func', e.g. pass io_wq_submit_work, then
-> we can not use io_req_init_async() to pass io_close_finish again.
+> It's not as bad, just the thing you poked is overused and don't have strict rules.
+> I have a feeling, that for it to be done right it'd need more fundamental refactoring
+> with putting everything related to ->work closer to io_queue_async_work().
+Yes, I totally agree with you, that would be safer.
 
-It's not as bad, just the thing you poked is overused and don't have strict rules.
-I have a feeling, that for it to be done right it'd need more fundamental refactoring
-with putting everything related to ->work closer to io_queue_async_work().
+Regards,
+Xiaoguang Wang
 
 > 
-> Now I'm confused how to write better codes based on current io_uring mainline codes :)
-> If you have some free time, please have a deeper look, thanks.
-
--- 
-Pavel Begunkov
+>>
+>> Now I'm confused how to write better codes based on current io_uring mainline codes :)
+>> If you have some free time, please have a deeper look, thanks.
+> 

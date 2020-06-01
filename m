@@ -2,79 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26C7F1EA315
-	for <lists+io-uring@lfdr.de>; Mon,  1 Jun 2020 13:50:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 259B21EA50D
+	for <lists+io-uring@lfdr.de>; Mon,  1 Jun 2020 15:35:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725974AbgFALux (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 1 Jun 2020 07:50:53 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:52868 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725838AbgFALux (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 1 Jun 2020 07:50:53 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U-F57jA_1591012250;
-Received: from 30.225.32.149(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U-F57jA_1591012250)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 01 Jun 2020 19:50:51 +0800
-Subject: Re: [PATCH v4 1/2] io_uring: avoid whole io_wq_work copy for requests
- completed inline
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200530143947.21224-1-xiaoguang.wang@linux.alibaba.com>
- <8c361177-c0b0-b08c-e0a5-141f7fd948f0@kernel.dk>
- <e2040210-ab73-e82b-50ea-cdeb88c69157@kernel.dk>
- <27e264ec-2707-495f-3d24-4e9e20b86032@kernel.dk>
- <32d0768e-f7d7-1281-e9ff-e95329db9dc5@linux.alibaba.com>
- <94ed2ba3-0209-d3a1-c5f0-dc45493f4505@linux.alibaba.com>
- <a2184644-34b6-88a2-b022-e8f5e7def071@gmail.com>
- <4de0ccd2-249f-26af-d815-6dba1b86b25a@linux.alibaba.com>
- <360f970a-0984-f452-1ff0-c31988a3e4ec@gmail.com>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <1e3224fe-73da-f12a-f094-74346a5a94ec@linux.alibaba.com>
-Date:   Mon, 1 Jun 2020 19:50:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1726125AbgFANfn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 1 Jun 2020 09:35:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51920 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbgFANfn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 1 Jun 2020 09:35:43 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D04F7C061A0E;
+        Mon,  1 Jun 2020 06:35:42 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id q8so6879286iow.7;
+        Mon, 01 Jun 2020 06:35:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=Mm9uE9NM2GVLX8GeiFA3Elt/+Sx++UDtpFbF9gjRBVU=;
+        b=C44FdFHBF68VTftOHu2ACXs+04O7zuVYuR1g0PsX3OKoy0PjAHyDMVmPdzF3bry9aM
+         Y68EysdAwYXirkOl57d0NM6IZIeEyvnVOAih4vVRdbl3cx3EwI1utpqNBALnK52Cv0v0
+         crF/6ouOP/kBa5CUUilQLDqrNwvAkx3lMqxV5pDl+hi9tMaOKIknaTdfefQvDDN7xx0u
+         ekscqu13cdX7aF5jH1fbT7pGYN2CpdFdEVyoGc8/PTRhAj6JECIM8fNEf0p2SB5creY2
+         7NHSW18RpUn0wKcQQKUjfuqMEVA+nArENCwIogXm+nMDFEZ/s7Z0jcr99AM53t3XW5lz
+         uzDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=Mm9uE9NM2GVLX8GeiFA3Elt/+Sx++UDtpFbF9gjRBVU=;
+        b=O+mifLFkWx7bq3Wo5mKwRU1sxkF1AdjPVAjfx7xIsnq83kHOEmsD62l17EaLXD423m
+         o5IrvDU9Y4bNjzJp0thUbS2WPTchAIyVIAImF7me5qCU/Bs+rV+6ffk/kYLYajZVpXfb
+         fXF76Gu/s3iGqI0okvFVwfJfiAcDqSMJl6DQYWt/b0rRQHysdLp0tRrNOJTgvPVoG6xJ
+         KmWWTG9J3M67mMi/N1ndIAgh2P690W455E/8sZBWbFlbqkGe08/qu6Vz+zr+eYF0FQvJ
+         hQbr9pmYY9C4YuM6xREiBsivxnFg6ztSUz8ZxvNxgf/6gSSvHeVcms5tzqv2KYtpbeKb
+         TMIA==
+X-Gm-Message-State: AOAM533dWD+KYcHmvJfxN4oS9uAdZk08DPWOQwVrm5Yu5P2EB5AqaBYQ
+        ZvanJKkqA6ovtdGeVgT1/PawDs29Rz28hXUcs6NvBzVixRg=
+X-Google-Smtp-Source: ABdhPJwkH7gonz1/C5KKVb8WOk57OSgAr+6Z7cJaik9LJIMkyDM+qguJHo7DacZbWa0/P6rO2/sC9ATO9jBABEaBQp0=
+X-Received: by 2002:a05:6602:2dca:: with SMTP id l10mr19039638iow.163.1591018542171;
+ Mon, 01 Jun 2020 06:35:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <360f970a-0984-f452-1ff0-c31988a3e4ec@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20200526195123.29053-1-axboe@kernel.dk> <CA+icZUWfX+QmroE6j74C7o-BdfMF5=6PdYrA=5W_JCKddqkJgQ@mail.gmail.com>
+ <bab2d6f8-4c65-be21-6a8e-29b76c06807d@kernel.dk> <CA+icZUUgazqLRwnbQgFPhCa5vAsAvJhjCGMYs7KYBZgA04mSyw@mail.gmail.com>
+ <CA+icZUUwz5TPpT_zS=P4MZBDzzrAcFvZMUce8mJu8M1C7KNO5A@mail.gmail.com>
+ <CA+icZUVJT8X3zyafrgbkJppsp4nJEKaLjYNs1kX8H+aY1Y10Qw@mail.gmail.com>
+ <CA+icZUWHOYcGUpw4gfT7xP2Twr15YbyXiWA_=Mc+f7NgzZCETw@mail.gmail.com>
+ <230d3380-0269-d113-2c32-6e4fb94b79b8@kernel.dk> <CA+icZUXxmOA-5+dukCgxfSp4eVHB+QaAHO6tsgq0iioQs3Af-w@mail.gmail.com>
+ <CA+icZUV4iSjL8=wLA3qd1c5OQHX2s1M5VKj2CmJoy2rHmzSVbQ@mail.gmail.com>
+In-Reply-To: <CA+icZUV4iSjL8=wLA3qd1c5OQHX2s1M5VKj2CmJoy2rHmzSVbQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Mon, 1 Jun 2020 15:35:31 +0200
+Message-ID: <CA+icZUXkWG=08rz9Lp1-ZaRCs+GMTwEiUaFLze9xpL2SpZbdsQ@mail.gmail.com>
+Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
+Hi Jens,
 
-> On 31/05/2020 19:15, Xiaoguang Wang wrote:
->> In the begin of __io_splice_prep or io_close_prep, current io_uring mainline codes will
->> modify req->work.flags firstly, so we need to call io_req_init_async to initialize
->> io_wq_work before the work.flags modification.
->> For below codes:
->> static inline void io_req_init_async(struct io_kiocb *req,
->>                          void (*func)(struct io_wq_work **))
->> {
->>          if (req->flags & REQ_F_WORK_INITIALIZED) {
->>                  if (!req->work.func)
->>                          req->work.func = func;
->>          } else {
->>                  req->work = (struct io_wq_work){ .func = func };
->>                  req->flags |= REQ_F_WORK_INITIALIZED;
->>          }
->> }
->>
->> if we not pass NULL to parameter 'func', e.g. pass io_wq_submit_work, then
->> we can not use io_req_init_async() to pass io_close_finish again.
-> 
-> It's not as bad, just the thing you poked is overused and don't have strict rules.
-> I have a feeling, that for it to be done right it'd need more fundamental refactoring
-> with putting everything related to ->work closer to io_queue_async_work().
-Yes, I totally agree with you, that would be safer.
+with Linux v5.7 final I switched to linux-block.git/for-next and reverted...
+
+"block: read-ahead submission should imply no-wait as well"
+
+...and see no boot-slowdowns.
 
 Regards,
-Xiaoguang Wang
-
-> 
->>
->> Now I'm confused how to write better codes based on current io_uring mainline codes :)
->> If you have some free time, please have a deeper look, thanks.
-> 
+- Sedat -

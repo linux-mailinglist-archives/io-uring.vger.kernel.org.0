@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 303A91EBBC2
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jun 2020 14:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B101A1EBBC5
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jun 2020 14:36:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726868AbgFBMfg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1726977AbgFBMfg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Tue, 2 Jun 2020 08:35:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41474 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbgFBMfe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Jun 2020 08:35:34 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DBEDC08C5C1;
-        Tue,  2 Jun 2020 05:35:34 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id r9so2759000wmh.2;
-        Tue, 02 Jun 2020 05:35:33 -0700 (PDT)
+        with ESMTP id S1726809AbgFBMfg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Jun 2020 08:35:36 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D574C061A0E;
+        Tue,  2 Jun 2020 05:35:35 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id g10so2753986wmh.4;
+        Tue, 02 Jun 2020 05:35:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=GWnwsndMUFY9LbquBFm/jfHKBWZW/WFWSjyLmrgL/NM=;
-        b=fmUuB2mK4tx0D5m5tR8YUggXnSHEmV6iDXgo6qGblxl01CP4a+zvb/z7giM885pPKc
-         WFbGLL9eMJVkHnwA3hLtbCJ5km+16BZmFiUd8X2HDHAsikrC7s9B5UUlpc39INNNfLQb
-         HXZxMOusidA/W+7vWw2+WVN/1cpeFygoP5dlT6J2QNyzkog7CO/Cf7mDeiDOFXdwqjeS
-         h3Esj2F+4PfKVWjwWEaz0x/bW0VFWosj8XJ5o4P/Y9o07aHwbcn/pIAEMl4MTGHCrS6l
-         Lc6FIsIV0yFgAQu4MuHI+b2jlnIa8uE/2lStp77vmMLkwukW7KWT2bxbgvjfl+QsnA4D
-         xQ3w==
+        bh=FxnUS8ZObVKVCSq2Jz4F/IAJ47190qwak0yst9dgjek=;
+        b=KKMkyn6dSKONhsmKfb/g7H5S06IGP0LiuotpsBG3RZG8j1OH1XW2AiGHS6xvqjobj/
+         F3Yz19uXKE2j1BYDaMl1XThBWBEy3r4NXlJz/4LLJwXg44/HTMtfm6KO2ZCSdC3JyPCZ
+         +P0dagaATwA8Tei6ElsffnwwrlkwmWiXFNvhY9ciYfwYpXMGpoojHItJyPzWn/5Mnlj4
+         6TcLG8IL9rJPFtkDMUP9zBf9jsFsjXn6/bJwp6hS6BSmq7ZxGMsrH5ymlTxHywcqOMfV
+         eUpgDQCxwO5xfBE5uqGWDKYHUAo7HmK9nBEE4ZU3xJLmAqKdHcVnYhvM8zDKVYKmkMkT
+         eKnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=GWnwsndMUFY9LbquBFm/jfHKBWZW/WFWSjyLmrgL/NM=;
-        b=U+OwT2bgahDw8dtZ7QJdpIAcwE1V7MDErP8q/mUq2i+32n7ukppDYdfXE18fWSkS5T
-         SLl3ZsEVdFV7vfypKenZqYQ5kMSUIrbez2XbGlxeV7n0wHbV7FmJ1GNoO37a44naCBGh
-         mfp5noPYsFqNSu7MPWDgFxN9++GUsTARitfaq2W/roXfqy37xdVtWLkOC0+vhdKIfylY
-         eZi3RQSae2SoMwOfOxAIr4GkP2ow6vKVdOMu0wf9xZ2sH9mVG+gpkP7lVanpvXN0Oryg
-         YFROrwVhPnrMK9ofpSH6q+Uobj681PkYG6MWNqHsbxrpaiPkby4RsUY7gjOVZ5euvGbZ
-         z7Mg==
-X-Gm-Message-State: AOAM5300ISJ4j3ByZL+0CUnRRe47w5EWsrbiXVtojlcG1F7AVchFazK0
-        4OUPAdBv8+LFErW7h0VSgig=
-X-Google-Smtp-Source: ABdhPJyc0cxob7HKSo7byrAJlNjyGRFTPvbmmWypnas1K2yAcQHTWoHrsVyhe92NMZCRrOe3oveiww==
-X-Received: by 2002:a1c:2457:: with SMTP id k84mr3696965wmk.96.1591101332696;
-        Tue, 02 Jun 2020 05:35:32 -0700 (PDT)
+        bh=FxnUS8ZObVKVCSq2Jz4F/IAJ47190qwak0yst9dgjek=;
+        b=cCYmidSquHMlfNimUdB5T+rjmnIrdC8z4G3WYCPfyvLL3KGBpE9j3T88HBV6+/htFj
+         zm2z1YTOsuEAuePy9J8DUu0tD5QOYRD+01ALgIV3yrJCpKD7dMmQAeJYeY1ELhz8PSaQ
+         OJ8Hk0Zi3/UOWODxfh0dkjTyGrzYXt4pPsFqLR5DePw75mEsKkuYFgjkqIRhqHf9c/aU
+         yo9xZ8Zg4kNuEPpmVy39Rzg1VkQoO08xOWlr8okloW7+YANYQgwkQ8m0wgAoYLrP5xrX
+         gZdEjKO9XJP2KEpIbT6FPumgr6CDgMDMFMyZT7cmz+X5hfqirjpcotzYX8/78aiET1cq
+         YXMQ==
+X-Gm-Message-State: AOAM531IlkKD1yGGKdp5ls8M+0rjDBqyPkwo0Tf0BwV+3inEJZXHfHUd
+        i+CkFuAEcRdZtS3NMiGMGH4s6PJq
+X-Google-Smtp-Source: ABdhPJyHKsheIJ7IJ3//UFjMBmpBibvQKnq4u92O1ULGy2w7YRhhlT0zWlKQ/o+3EMUl8LGh8SB7kg==
+X-Received: by 2002:a1c:3c08:: with SMTP id j8mr3792272wma.23.1591101334323;
+        Tue, 02 Jun 2020 05:35:34 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id z22sm3347711wmf.9.2020.06.02.05.35.31
+        by smtp.gmail.com with ESMTPSA id z22sm3347711wmf.9.2020.06.02.05.35.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2020 05:35:32 -0700 (PDT)
+        Tue, 02 Jun 2020 05:35:33 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] io_uring: deduplicate io_openat{,2}_prep()
-Date:   Tue,  2 Jun 2020 15:34:03 +0300
-Message-Id: <ad8a7956e99a4aee62ca353c53746a93e608bed5.1591100205.git.asml.silence@gmail.com>
+Subject: [PATCH 4/4] io_uring: move send/recv IOPOLL check into prep
+Date:   Tue,  2 Jun 2020 15:34:04 +0300
+Message-Id: <1d888939d1d9ea8fd3022c866b9fe7639b3b94b9.1591100205.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1591100205.git.asml.silence@gmail.com>
 References: <cover.1591100205.git.asml.silence@gmail.com>
@@ -63,118 +63,78 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_openat_prep() and io_openat2_prep() are identical except for how
-struct open_how is built. Deduplicate it with a helper.
+Fail recv/send in case of IORING_SETUP_IOPOLL earlier during prep,
+so it'd be done only once. Removes duplication as well
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 55 ++++++++++++++++++---------------------------------
- 1 file changed, 19 insertions(+), 36 deletions(-)
+ fs/io_uring.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index cdfffc23e10a..9fe90a66a31e 100644
+index 9fe90a66a31e..d7e9090a6be7 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2985,26 +2985,21 @@ static int io_fallocate(struct io_kiocb *req, bool force_nonblock)
- 	return 0;
- }
- 
--static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	const char __user *fname;
--	u64 flags, mode;
+@@ -3541,6 +3541,9 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	struct io_async_ctx *io = req->io;
  	int ret;
  
- 	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
- 		return -EINVAL;
--	if (sqe->ioprio || sqe->buf_index)
-+	if (unlikely(sqe->ioprio || sqe->buf_index))
- 		return -EINVAL;
--	if (req->flags & REQ_F_FIXED_FILE)
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
- 		return -EBADF;
--	if (req->flags & REQ_F_NEED_CLEANUP)
--		return 0;
- 
--	mode = READ_ONCE(sqe->len);
--	flags = READ_ONCE(sqe->open_flags);
--	if (force_o_largefile())
--		flags |= O_LARGEFILE;
--	req->open.how = build_open_how(flags, mode);
-+	/* open.how should be already initialised */
-+	if (!(req->open.how.flags & O_PATH) && force_o_largefile())
-+		req->open.how.flags |= O_LARGEFILE;
- 
- 	req->open.dfd = READ_ONCE(sqe->fd);
- 	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
-@@ -3014,33 +3009,33 @@ static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		req->open.filename = NULL;
- 		return ret;
- 	}
--
- 	req->open.nofile = rlimit(RLIMIT_NOFILE);
- 	req->flags |= REQ_F_NEED_CLEANUP;
- 	return 0;
- }
- 
-+static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	u64 flags, mode;
++	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
++		return -EINVAL;
 +
-+	if (req->flags & REQ_F_NEED_CLEANUP)
-+		return 0;
-+	mode = READ_ONCE(sqe->len);
-+	flags = READ_ONCE(sqe->open_flags);
-+	req->open.how = build_open_how(flags, mode);
-+	return __io_openat_prep(req, sqe);
-+}
-+
- static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct open_how __user *how;
--	const char __user *fname;
- 	size_t len;
+ 	sr->msg_flags = READ_ONCE(sqe->msg_flags);
+ 	sr->msg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	sr->len = READ_ONCE(sqe->len);
+@@ -3570,9 +3573,6 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock)
+ 	struct socket *sock;
  	int ret;
  
--	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
+-	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
 -		return -EINVAL;
--	if (sqe->ioprio || sqe->buf_index)
+-
+ 	sock = sock_from_file(req->file, &ret);
+ 	if (sock) {
+ 		struct io_async_ctx io;
+@@ -3626,9 +3626,6 @@ static int io_send(struct io_kiocb *req, bool force_nonblock)
+ 	struct socket *sock;
+ 	int ret;
+ 
+-	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
 -		return -EINVAL;
--	if (req->flags & REQ_F_FIXED_FILE)
--		return -EBADF;
- 	if (req->flags & REQ_F_NEED_CLEANUP)
- 		return 0;
 -
--	req->open.dfd = READ_ONCE(sqe->fd);
--	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	how = u64_to_user_ptr(READ_ONCE(sqe->addr2));
- 	len = READ_ONCE(sqe->len);
--
- 	if (len < OPEN_HOW_SIZE_VER0)
- 		return -EINVAL;
+ 	sock = sock_from_file(req->file, &ret);
+ 	if (sock) {
+ 		struct io_sr_msg *sr = &req->sr_msg;
+@@ -3781,6 +3778,9 @@ static int io_recvmsg_prep(struct io_kiocb *req,
+ 	struct io_async_ctx *io = req->io;
+ 	int ret;
  
-@@ -3049,19 +3044,7 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (ret)
- 		return ret;
++	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
++		return -EINVAL;
++
+ 	sr->msg_flags = READ_ONCE(sqe->msg_flags);
+ 	sr->msg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	sr->len = READ_ONCE(sqe->len);
+@@ -3809,9 +3809,6 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock)
+ 	struct socket *sock;
+ 	int ret, cflags = 0;
  
--	if (!(req->open.how.flags & O_PATH) && force_o_largefile())
--		req->open.how.flags |= O_LARGEFILE;
+-	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+-		return -EINVAL;
 -
--	req->open.filename = getname(fname);
--	if (IS_ERR(req->open.filename)) {
--		ret = PTR_ERR(req->open.filename);
--		req->open.filename = NULL;
--		return ret;
--	}
--
--	req->open.nofile = rlimit(RLIMIT_NOFILE);
--	req->flags |= REQ_F_NEED_CLEANUP;
--	return 0;
-+	return __io_openat_prep(req, sqe);
- }
+ 	sock = sock_from_file(req->file, &ret);
+ 	if (sock) {
+ 		struct io_buffer *kbuf;
+@@ -3873,9 +3870,6 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock)
+ 	struct socket *sock;
+ 	int ret, cflags = 0;
  
- static int io_openat2(struct io_kiocb *req, bool force_nonblock)
+-	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+-		return -EINVAL;
+-
+ 	sock = sock_from_file(req->file, &ret);
+ 	if (sock) {
+ 		struct io_sr_msg *sr = &req->sr_msg;
 -- 
 2.24.0
 

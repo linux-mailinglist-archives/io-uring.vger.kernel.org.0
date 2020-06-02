@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D7301EBBC1
+	by mail.lfdr.de (Postfix) with ESMTP id 55F2E1EBBC3
 	for <lists+io-uring@lfdr.de>; Tue,  2 Jun 2020 14:35:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbgFBMff (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 2 Jun 2020 08:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41462 "EHLO
+        id S1726842AbgFBMfg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 2 Jun 2020 08:35:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbgFBMfc (ORCPT
+        with ESMTP id S1726647AbgFBMfc (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 2 Jun 2020 08:35:32 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17A44C08C5C0;
-        Tue,  2 Jun 2020 05:35:31 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id q25so2970160wmj.0;
-        Tue, 02 Jun 2020 05:35:31 -0700 (PDT)
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79239C061A0E;
+        Tue,  2 Jun 2020 05:35:32 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id r7so3269415wro.1;
+        Tue, 02 Jun 2020 05:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=llzfaOtjtxotM2PdMXaLFeIV9ii4UvCM9qWQuLi/X6s=;
-        b=hyOwp+Ai4LWZB8TCt2mfFwhM3dCVhBttcuAAAHwioJs5bvRFwpznVtz5QXgu1zxMwR
-         hxCjcjuWtvJ0KGMtpr3+egt4vcjC0pwCdU9zMs3g45gHNsy1HAW7BJIOfd2lzAPS/PqO
-         +Du2vS1ywWIi5KR3XSd8wsXbzjg9f7GXixRdWYW39e96rLC7B0WsGtd+fC/CeGef+mHz
-         XgohHBpZwPh37UydsH40Zn1iFJ/vo+BI2ZYk5lSqEwi094cUCgB665l+/Z8bZq9uyqnB
-         pbpvwLlHCtZsPMzjcT4MKn/fqoXVLPshgyH6IJIvudpqxGhV6gwuRYfYt+3SRihSaqqj
-         9pBA==
+        bh=MZ+SfmaDuBgDxZYvmgf/8bhSHRwuWaBRuxxG7F7E8UQ=;
+        b=LkMlikUYAj1UQ5B2ip812ImnfJ1gykTsF3+mP1o35yGTBCgPMvvawBoZuB1IXzCiDE
+         OTeDx0fXmt4rvqNZAu/oQsa3auJ7pSdDl8OP75cpTL0YNrUtidZYvTsmjQOEve+nco61
+         ABfCdRONbWmP/tbDowgEDsISmluWBSJl4DlZ7Hi92J0xW+BxunIlUxzNDbsSaNinEMJe
+         cBXQ+oX1H7y/7a/39I87v1vmLn2jQzklLuhr+43xksCArKHKv/+foRCXjU4VgfZKZBk/
+         xTdzMq6mzULuLfgxd72Sr+6SDmKVN/NBUzHMXV2RUGhTSJjhXjtXyBkATU9HbxkLKNen
+         D01w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=llzfaOtjtxotM2PdMXaLFeIV9ii4UvCM9qWQuLi/X6s=;
-        b=KZBVwhUj+vylOHz4FvkBYt6FV2kzHEx5jPqV2Lop8teKAulHtb1L/eaFAt+ugWCxtG
-         ChFoQTuiuijNtypnuYONF0QSR/10uSPVys9iU7ElF7zYG+OvE1HY185ivX5HlCecFE1x
-         CXlXPpKUaJBUcsGX3uOWEKNMIjbJAIQEWM/hFrDgcKXlWnmXEHpU2illty500y4Zsi5O
-         pmkDMWuUk1URrSu5SYNoDFyVKIa+UJLU65s6oLDfgAh095nVx6jvGT5ghIOc3qeK4LA3
-         vlHcgEMc0JOqWUpdIDDq3S5da3bMnh2isi93fnBdkZGWMfcVYCaRf572AoSzJgkx3tM0
-         IrXA==
-X-Gm-Message-State: AOAM531tv1ITcEwQamn4GUyThgfhwCThg8g7XT0qby4zh4xG1nXa8ZMR
-        q9RWPxsEf0iI+OG/sdv3O/o=
-X-Google-Smtp-Source: ABdhPJwN88dWWlhtGhu2sYUQ95AcNC6E4LYG7kI2bZYSZ8Qs8hglQIe3nSCEtHwWIRQnK/OARuCExg==
-X-Received: by 2002:a7b:c642:: with SMTP id q2mr3890931wmk.93.1591101329802;
-        Tue, 02 Jun 2020 05:35:29 -0700 (PDT)
+        bh=MZ+SfmaDuBgDxZYvmgf/8bhSHRwuWaBRuxxG7F7E8UQ=;
+        b=onLEH3GV213bFf9nfjXHapVR/bM0iUMIka8KGZd/B+y4nguCQlLfwgqyosSNfdVr6M
+         UxM+zCx2f5lb0it/B4HNPFdtj69mtCDuw3PHordA226vK8ZRuAYRgbKMA7lh2/jOWTyv
+         BPEc5+6u1CjL8d9TqmFymEaPF2+R5vPdfaUhRXL+PEk/wyDoU0gfMApSd1qkXoKm6QZI
+         A7fF7iJNYi5tH3LVW+wF+7pxXld2nrz5zFsvlt1bS6IVIKnW6hFOi5LUXY6M2RFNBfdE
+         uLl97ihbXn5vObI7EFRLxWztQUPvKYH6UNs9SCEEO7Tt+dgA2VKFRrB0EX+YzK58Xzig
+         435Q==
+X-Gm-Message-State: AOAM530tFA7sMpcbWS8DXuD4Rev13iPU8ykXkiQgubUv+J6RX+KnbFr4
+        fiCiaWjSQEvCledke6uFS7M2Smky
+X-Google-Smtp-Source: ABdhPJzoU14uMSUjA9P27tGATyt+BVsUxhyQO8fN1fmq0xTbar8usTaMgb3aG2L6A25COIUBE4lnQg==
+X-Received: by 2002:a5d:5585:: with SMTP id i5mr25766725wrv.112.1591101331168;
+        Tue, 02 Jun 2020 05:35:31 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id z22sm3347711wmf.9.2020.06.02.05.35.28
+        by smtp.gmail.com with ESMTPSA id z22sm3347711wmf.9.2020.06.02.05.35.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2020 05:35:29 -0700 (PDT)
+        Tue, 02 Jun 2020 05:35:30 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] io_uring: fix open/close/statx with {SQ,IO}POLL
-Date:   Tue,  2 Jun 2020 15:34:01 +0300
-Message-Id: <aacbeec9c7ed21971119aec3669dff7f707bccb2.1591100205.git.asml.silence@gmail.com>
+Subject: [PATCH 2/4] io_uring: do build_open_how() only once
+Date:   Tue,  2 Jun 2020 15:34:02 +0300
+Message-Id: <ec55440d6593cde5700ef27e6fee8807168826ef.1591100205.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1591100205.git.asml.silence@gmail.com>
 References: <cover.1591100205.git.asml.silence@gmail.com>
@@ -63,74 +63,54 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Trying to use them with IORING_SETUP_IOPOLL:
-
-RIP: 0010:io_iopoll_getevents+0x111/0x5a0
-Call Trace:
- ? _raw_spin_unlock_irqrestore+0x24/0x40
- ? do_send_sig_info+0x64/0x90
- io_iopoll_reap_events.part.0+0x5e/0xa0
- io_ring_ctx_wait_and_kill+0x132/0x1c0
- io_uring_release+0x20/0x30
- __fput+0xcd/0x230
- ____fput+0xe/0x10
- task_work_run+0x67/0xa0
- do_exit+0x353/0xb10
- ? handle_mm_fault+0xd4/0x200
- ? syscall_trace_enter+0x18c/0x2c0
- do_group_exit+0x43/0xa0
- __x64_sys_exit_group+0x18/0x20
- do_syscall_64+0x60/0x1e0
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Also SQPOLL thread can't know which file table to use with
-open/close. Disallow all these cases.
+build_open_how() is just adjusting open_flags/mode. Do it once during
+prep. It looks better than storing raw values for the future.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/io_uring.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 732ec73ec3c0..7208f91e9e77 100644
+index 7208f91e9e77..cdfffc23e10a 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2990,6 +2990,8 @@ static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	const char __user *fname;
- 	int ret;
- 
-+	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
-+		return -EINVAL;
- 	if (sqe->ioprio || sqe->buf_index)
- 		return -EINVAL;
- 	if (req->flags & REQ_F_FIXED_FILE)
-@@ -3023,6 +3025,8 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	size_t len;
- 	int ret;
- 
-+	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
-+		return -EINVAL;
- 	if (sqe->ioprio || sqe->buf_index)
- 		return -EINVAL;
- 	if (req->flags & REQ_F_FIXED_FILE)
-@@ -3373,6 +3377,8 @@ static int io_fadvise(struct io_kiocb *req, bool force_nonblock)
- 
- static int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+@@ -2988,6 +2988,7 @@ static int io_fallocate(struct io_kiocb *req, bool force_nonblock)
+ static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  {
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
- 	if (sqe->ioprio || sqe->buf_index)
- 		return -EINVAL;
- 	if (req->flags & REQ_F_FIXED_FILE)
-@@ -3417,6 +3423,8 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	 */
- 	req->work.flags |= IO_WQ_WORK_NO_CANCEL;
+ 	const char __user *fname;
++	u64 flags, mode;
+ 	int ret;
  
-+	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
-+		return -EINVAL;
- 	if (sqe->ioprio || sqe->off || sqe->addr || sqe->len ||
- 	    sqe->rw_flags || sqe->buf_index)
- 		return -EINVAL;
+ 	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
+@@ -2999,13 +3000,14 @@ static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if (req->flags & REQ_F_NEED_CLEANUP)
+ 		return 0;
+ 
+-	req->open.dfd = READ_ONCE(sqe->fd);
+-	req->open.how.mode = READ_ONCE(sqe->len);
+-	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
+-	req->open.how.flags = READ_ONCE(sqe->open_flags);
++	mode = READ_ONCE(sqe->len);
++	flags = READ_ONCE(sqe->open_flags);
+ 	if (force_o_largefile())
+-		req->open.how.flags |= O_LARGEFILE;
++		flags |= O_LARGEFILE;
++	req->open.how = build_open_how(flags, mode);
+ 
++	req->open.dfd = READ_ONCE(sqe->fd);
++	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	req->open.filename = getname(fname);
+ 	if (IS_ERR(req->open.filename)) {
+ 		ret = PTR_ERR(req->open.filename);
+@@ -3099,7 +3101,6 @@ static int io_openat2(struct io_kiocb *req, bool force_nonblock)
+ 
+ static int io_openat(struct io_kiocb *req, bool force_nonblock)
+ {
+-	req->open.how = build_open_how(req->open.how.flags, req->open.how.mode);
+ 	return io_openat2(req, force_nonblock);
+ }
+ 
 -- 
 2.24.0
 

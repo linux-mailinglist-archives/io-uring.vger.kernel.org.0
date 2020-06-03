@@ -2,57 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC6711ED320
-	for <lists+io-uring@lfdr.de>; Wed,  3 Jun 2020 17:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E48A1ED660
+	for <lists+io-uring@lfdr.de>; Wed,  3 Jun 2020 20:50:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726077AbgFCPPe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Jun 2020 11:15:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35414 "EHLO
+        id S1726034AbgFCSuO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Jun 2020 14:50:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbgFCPPe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Jun 2020 11:15:34 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15CBDC08C5C0;
-        Wed,  3 Jun 2020 08:15:34 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id x14so2800197wrp.2;
-        Wed, 03 Jun 2020 08:15:33 -0700 (PDT)
+        with ESMTP id S1725939AbgFCSuO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Jun 2020 14:50:14 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0BC2C08C5C0
+        for <io-uring@vger.kernel.org>; Wed,  3 Jun 2020 11:50:13 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id r15so3176037wmh.5
+        for <io-uring@vger.kernel.org>; Wed, 03 Jun 2020 11:50:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:references:autocrypt:message-id:date:user-agent
+        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=L0LB6MyehuyXB36O9vf01XZE3qb7dIb4GL7F2F7n2G4=;
-        b=VUGyhDIvX8yOL7+xB/AsuUl4TO4ve0rprLeLKlA0pGDCoLSXk1zpiN9JaerNsMdPba
-         5OCe4navtECv48PUrRG7eIu3M1BSsE1kSnSId0ROfdRbEIrKEkah92QxhdwzZcDdMGzl
-         Sx7mjsXHcEDQ3pPCZ3p0I7iEXFGIMuoOLTApTQvppz/ZlJYk2xqz3vXrOITd1xIU7wiD
-         hmd1nz/Glime8ph7muk2tRrqdROsPBMZC6B0xOOXo5oeqTXtsp0iPUfXuj+qkgVnnxrx
-         u0DQHrAJ8zCQdU9ClFlyJZVO/S/XXDdcnbAajnRPdGHrsRODu3YhJzIqBMyucKv/bfbs
-         bISw==
+        bh=z8tDOVt0rhkMdcJxcJyspJUzVLPi4NBwq6IpZU0viTI=;
+        b=R+dtNnR890Y+ddXXBPM2h14cmAopONfajCh/7L2aCZsavbSmXEjxDN6eR1LVdxRVVK
+         Al4fSd1kSUr1kWG9u1gRdadx4lSjXcyKrbmpNtYICUWiIKlvuenei1LWHY0WEIEqXjwQ
+         TcQ8n/zcS7uV7+o6c5MkEn9BDDm7mTN9Q4GcMiydXT8izjHiJOuIb5LdarTzTbcFCRzu
+         cu0CaQXWOV4AX83/Kkc9EEt3eL48yEYdX42T5F2KgDRfWLxQ/DMowxIJQqAj+HUyPulZ
+         2BF3TQ7rnwSXAp5+9Tin4Vq7ZGurm7/qaCOy2qhem+SAa13cSid3Z/8hr5ephFvtqx7k
+         aw5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=L0LB6MyehuyXB36O9vf01XZE3qb7dIb4GL7F2F7n2G4=;
-        b=rz9ce74bxkpYUubgylALKI5yPoEPxZ0mnlQeVn/gwq7WjVoDEssjtPLkN1h7tuBSKq
-         Wue2/oNZ9xPjI4Q+2Q0rQldzS7X5JoDPmkrcTUNEsG4fRLK61xHX4JDL0RebHnsW41+Y
-         Cf5TmKjCsrzaIfsTQz7ie3fWS5auJta1JIxgQZ/+UFC/J0c73rDRxxnh+L0ykjjV1li/
-         IhDzbfA4BKGogVU5h6LWj99UPAkdkLMm9tRgqCVoOcuYdSsw0XS87DTxlaXzNHQ5BcAK
-         YoL9E3ZAW6+yrmSu6nS2KnaHj7qvX40AODzgkkb0UGjsbDH6O0QblKfItcP/ZQADk8KM
-         Q5bQ==
-X-Gm-Message-State: AOAM533RnE2ICbNauH3zNKVMubd2LeGhSLzAMUhOtD0nG7K3dhFkysvo
-        6GhKwQPRDRoHesLc6BWc4t8A/+ZW
-X-Google-Smtp-Source: ABdhPJw2vW7fYjSxVcqdhCQZCmnq+SAguDl3AK3yU+jAKzUogeWc3VX2jzol4oJ7My7IgBBGoH3ubg==
-X-Received: by 2002:adf:e64b:: with SMTP id b11mr31066314wrn.402.1591197332395;
-        Wed, 03 Jun 2020 08:15:32 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=z8tDOVt0rhkMdcJxcJyspJUzVLPi4NBwq6IpZU0viTI=;
+        b=eiYdJCjeDIyWLMrmzuTwBqUuRuX2Tfob570hFyrAaxdYPJeAH2OKEUghmDBi/KRrgV
+         Rd4iWhgSUvUT425/ImXZGTmFFI1SR9/A0h7fz1AK8FZYINu/TsxDJScBOfCo0y0XOMyN
+         PRO3Q3zoS/6/13GHUdKfyBfj3xv9fCVn5otRFWNTqFW9NPAT5bP9B8VCFmojx4Xohlpk
+         oiTB/RuXnJh1rN1/s/BLYSHVmupfuGTreIK/Bksm+20rGlQtt8EzHari+ZOQya7kvWLC
+         ZO5hrE0veXfzApOtIZC3s4iN4MbwnOWbTb2LvulkWDKKJMP+x1OTSJV+MyfhUxbRXHvq
+         H9IA==
+X-Gm-Message-State: AOAM531wL2TkzXpV3v4Uue0rcVkQBWGo3ugMJici1lJ8WLLCXCy6sXOO
+        NK7RdbRYhXvRQ8QoWLNieDvBPw0K
+X-Google-Smtp-Source: ABdhPJz4pOJN7VsRMKRxR6rvJuS7fFo4UYVHMOwk0UNtBoglkHauAG3q7c/fSJHMQraupy7UycwKcw==
+X-Received: by 2002:a7b:c852:: with SMTP id c18mr496215wml.77.1591210212432;
+        Wed, 03 Jun 2020 11:50:12 -0700 (PDT)
 Received: from [192.168.43.207] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id z22sm3442319wmf.9.2020.06.03.08.15.31
+        by smtp.gmail.com with ESMTPSA id b132sm4178545wmh.3.2020.06.03.11.50.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jun 2020 08:15:31 -0700 (PDT)
-Subject: Re: [PATCH v3 0/4] forbid fix {SQ,IO}POLL
+        Wed, 03 Jun 2020 11:50:11 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1591196426.git.asml.silence@gmail.com>
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com, yujian.wu1@gmail.com
+References: <20200520115648.6140-1-xiaoguang.wang@linux.alibaba.com>
+ <3bea8be7-2a82-cf24-a8b6-327672a64535@gmail.com>
+ <242c17f3-b9b3-30cb-ff3d-a33aeef36ad1@linux.alibaba.com>
+ <13dd7a1f-63df-6a0c-74ed-d5ff12a0bf96@gmail.com>
+ <c077a2dc-7b69-5ee4-24a3-3dd3df57b201@linux.alibaba.com>
+ <e3c81737-ef46-37a1-9c64-b307278ca65f@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -96,43 +101,75 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <128dce39-c847-5cc3-42e7-e4eeb51b60ba@gmail.com>
-Date:   Wed, 3 Jun 2020 18:14:13 +0300
+Subject: Re: [PATCH] io_uring: create percpu io sq thread when
+ IORING_SETUP_SQ_AFF is flagged
+Message-ID: <02fddee0-fc7f-03cd-6864-db78d8749cfa@gmail.com>
+Date:   Wed, 3 Jun 2020 21:48:53 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1591196426.git.asml.silence@gmail.com>
+In-Reply-To: <e3c81737-ef46-37a1-9c64-b307278ca65f@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Not sure how this strange cv subject got copy-pasted, but
-hopefully it's clear what it does from the description.
+On 03/06/2020 17:47, Pavel Begunkov wrote:
+> On 26/05/2020 17:42, Xiaoguang Wang wrote:
+>> Yes, I don't try to make all io_uring instances in the system share threads, I just
+>> make io_uring instances which are bound to same cpu core, share one io_sq_thread that
+>> only is created once for every cpu core.
+>> Otherwise in current io_uring mainline codes, we'd better not bind different io_uring
+>> instances to same cpu core,  some instances' busy loop in its sq_thread_idle period will
+>> impact other instanes who currently there are reqs to handle.
+> 
+> I got a bit carried away from your initial case, but there is the case:
+> Let's we have 2 unrelated apps that create SQPOLL io_uring instances. Let's say they are
+> in 2 different docker container for the argument (and let's just assume a docker container
+> user can create such).
+> 
+> The first app1 submits 32K fat requests as described before. The second one (app2) is a
+> low-latency app, submits reqs by 1, but expects it to be picked really fast. And let's
+> assume their SQPOLL threads pinned to the same CPU.
+> 
+> 1. old version:
+> The CPU spends some time allocated by a scheduler on 32K requests of app1,
+> probably not issuing them all but that's fine. And then it goes to the app2.
+> So, the submit-to-pickup latency for app2 is capped by a task scheduler.
+> That's somewhat fair. 
+> 
+> 2. your version:
+> io_sq_thread first processes all 32K of requests of app1, and only then goes to app2.
+> app2 is screwed, unfair as life can be. And a malicious user can create many io_uring
+> instances as in app1. So the latency will be further multiplied.
+> 
+> 
+> Any solution I can think of is ugly and won't ever land upstream. Like creating your
+> own scheduling framework for io_uring, wiring kindof cgroups, etc. And actually SQPOLL
+> shouldn't be so ubiquitous (+needs privileges). E.g. I expect there will be a single
+> app per system using it, e.g. a database consuming most of the resources anyway.
+> And that's why I think it's better to not trying to solve your original issue.
+> 
+> 
+> However, what the patch can be easily remade into is sharing an SQPOLL thread between
+> io_uring instances of a single app/user, like passing fd described before.
+> The most obvious example is to share 1 SQPOLL thread (or N << num_cpus) between all
+> user threads, so
+> - still creating io_uring per thread to not synchronise SQ
+> - retaining CPU time for real user work (instead of having N SQPOLL threads)
+> - increasing polling efficiency (more work -- less idle polling)
+> - and scheduling/task migration, etc.
+> 
 
-On 03/06/2020 18:03, Pavel Begunkov wrote:
-> The first one adds checks {SQPOLL,IOPOLL}. IOPOLL check can be
-> moved in the common path later, or rethinked entirely, e.g.
-> not io_iopoll_req_issued()'ed for unsupported opcodes.
+Just to add a thing, basically this doesn't differ much from having 1 io_uring
+per bunch of threads but replacing SQ synchronisation with the round-robin polling.
+If going this way, it'd need a thorough evaluation of performance benefits (if any).
+
 > 
-> 3 others are just cleanups on top.
-> 
-> 
-> v2: add IOPOLL to the whole bunch of opcodes in [1/4].
->     dirty and effective.
-> v3: sent wrong set in v2, re-sending right one 
-> 
-> Pavel Begunkov (4):
->   io_uring: fix {SQ,IO}POLL with unsupported opcodes
->   io_uring: do build_open_how() only once
->   io_uring: deduplicate io_openat{,2}_prep()
->   io_uring: move send/recv IOPOLL check into prep
-> 
->  fs/io_uring.c | 94 ++++++++++++++++++++++++++-------------------------
->  1 file changed, 48 insertions(+), 46 deletions(-)
+> note: would be great to check, that it has all necessary cond_resched()
 > 
 
 -- 

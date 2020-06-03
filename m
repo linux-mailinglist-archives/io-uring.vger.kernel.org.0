@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8C991ED2F0
-	for <lists+io-uring@lfdr.de>; Wed,  3 Jun 2020 17:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30BBC1ED2F1
+	for <lists+io-uring@lfdr.de>; Wed,  3 Jun 2020 17:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbgFCPE7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Jun 2020 11:04:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33782 "EHLO
+        id S1726195AbgFCPFE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Jun 2020 11:05:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbgFCPE6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Jun 2020 11:04:58 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DE92C08C5C0;
-        Wed,  3 Jun 2020 08:04:58 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id k26so2446073wmi.4;
-        Wed, 03 Jun 2020 08:04:58 -0700 (PDT)
+        with ESMTP id S1726138AbgFCPFD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Jun 2020 11:05:03 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DA1FC08C5C0;
+        Wed,  3 Jun 2020 08:05:02 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id q11so2759429wrp.3;
+        Wed, 03 Jun 2020 08:05:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=CQNjlpqZXaTAQwDtY6Cs+PqAcVnrG7XerCH5kJph2Hw=;
-        b=asQmWpCckqhFkkfyMXh7svskO7984rwLqQL4BjE/HSrECGu4hnUsA91EqHoKFTYMk+
-         egHmRGAsOdErbRq6pO04OKGKatR3UeDWooCTnOdVriXEBGXqbjaxqsDCnWVldYjRfDT6
-         Jy2BmzD4OA5RsBGHXvnUyW/yZ4xKdfzrm4rvak9/z5gqcgBM4G+cECM0chnAMw+1Nwzj
-         zAvOpECv0zXd/UpDli8JgRvfvYYRUalZMkTYO6nWd8k5IC7jCvQNio0cWCePj6E4K5sw
-         H6f6uRFacyoVe15ImtHvGrC6AN3s+TU/99Znik3bxGhxSrH2a9GPwJVPJn2tpdravHea
-         R0gA==
+        bh=adTUwB8kFzg3Vi8cjoAvjCQW+SEJ9Zz8VHcinsh+jT4=;
+        b=UxAM9xbYeUHbvzklZsdyoEsZ07zz5rIAI73gVkEWfQ8gCcbmTve201mDhzFT4r3hMR
+         i9QZZfhkBNzBQKk0khFOZEV+puc249miL3zyszNsEhVLHbIPnRLhHS9aBv9Q+pYdvFQd
+         CAqkJevnk9TXZrPec4BNz5aPt6pAvYq/3U67ioBDkOjOOYCzn18fz0VA4qzWb/SaKknP
+         IRNtyGOmht9/HDKNcAJZChOogehWS7asHCfN8WehPXzb0EJhCxxYgb0+i+eFsnwcZ9Z4
+         Y6c3mhFI/gcptrQZ5wpsKMws1sU7m1/EFRhU9ho7M1m2djAWNVPmHxcaSRykb8ghGR+y
+         7jjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CQNjlpqZXaTAQwDtY6Cs+PqAcVnrG7XerCH5kJph2Hw=;
-        b=RczJAQGPd+EBRzj9xTXCqoit4EHFMOCJa2eC33uGSqOdMIpVM4uvK/M77K+iwNTXYA
-         XLE62ZL/XEW5Trz6YJvNXViXcCQSKp7ehr/uVgO+LebHquRWmT6FVxSA9N4yXQq30oc4
-         dRcYSSZJozOe667z4FsLztisOST4xXxmANc8/15R7xkwOm1o3u/2LmxXQQECFnsSNVs0
-         rrClLJ1d7yN7jZdCpi6p9bgvib9eKNxMrqzRH6u2sEKQTqDUgwWuv1lspS1EXCXFZhIy
-         tQj+ROXbu9lpDXk6lwfqWJP0ftaw0e6yLWVSGMYmd5/Da/r1X/4Y9z7JfaeJKswrBK6e
-         gWtw==
-X-Gm-Message-State: AOAM5303Nd4N+CUuLE6iI56xsnH0+Fs6KnGyuLRSyEXQxDYv6COOQOxn
-        F1p02ndBZ1lecFBNTstdYrLPqJQv
-X-Google-Smtp-Source: ABdhPJwyRdrGGUWaqwGhyfB0uIkexaVq+MInBkB+P0pmgV5RjhsGvIAvf+3AgEgI6GTMix7RhTk7fw==
-X-Received: by 2002:a05:600c:2945:: with SMTP id n5mr9884484wmd.189.1591196696897;
-        Wed, 03 Jun 2020 08:04:56 -0700 (PDT)
+        bh=adTUwB8kFzg3Vi8cjoAvjCQW+SEJ9Zz8VHcinsh+jT4=;
+        b=YSMrdoObHq1feY9mEWD84BBaMZnqrJ8Sy26yPEinCEWLVrZHxpnnJ/PfIvZu8STdFG
+         FgJkYhYURfnOA/ZjDodcnd7DMZ2JyqP+aBr7OQPtjUT+0gsBvehfyMQn6Q3mELSOTfd4
+         yvi2Ori91RbKueLbnynvsLhQV9JerEVFSCMLn1R8vnesAQoYkJihyqp3cbdowAVNxvPN
+         PSVfWPQp416lOBB0aEPEEVoE0DQpT2lAxFN2LKXgtXw5dTsmLBOja+V7CpBdMkSShhpT
+         woL9kH00DkNl0ApW0t/nuVWiqY1ziAI1jNXnkCko+vp6bi0gIbzZ0/mG9JEvbeE3E346
+         Xl8A==
+X-Gm-Message-State: AOAM533pYTQZYQyNUX81moNg079fqoviXqjQ83SkAiwDkPjCCcvqCsCy
+        OexettUsUVZlOMVmYcon9pkvi7uT
+X-Google-Smtp-Source: ABdhPJwIzqYlvqmS32s0MYSwSjOvZXWYdPXQ77PIvHYK+st6d95QfeoBIYcr9DL2U84+MknbbLQ+eg==
+X-Received: by 2002:a5d:628c:: with SMTP id k12mr30949523wru.211.1591196701307;
+        Wed, 03 Jun 2020 08:05:01 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id f71sm3074808wmf.22.2020.06.03.08.04.55
+        by smtp.gmail.com with ESMTPSA id f71sm3074808wmf.22.2020.06.03.08.04.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jun 2020 08:04:55 -0700 (PDT)
+        Wed, 03 Jun 2020 08:04:58 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/4] io_uring: do build_open_how() only once
-Date:   Wed,  3 Jun 2020 18:03:23 +0300
-Message-Id: <792a5db759dc99e42aefa3719a4d2779294f8240.1591196426.git.asml.silence@gmail.com>
+Subject: [PATCH v3 3/4] io_uring: deduplicate io_openat{,2}_prep()
+Date:   Wed,  3 Jun 2020 18:03:24 +0300
+Message-Id: <4649f4618d70811f765ec39714204d6de8502e13.1591196426.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1591196426.git.asml.silence@gmail.com>
 References: <cover.1591196426.git.asml.silence@gmail.com>
@@ -63,54 +63,118 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-build_open_how() is just adjusting open_flags/mode. Do it once during
-prep. It looks better than storing raw values for the future.
+io_openat_prep() and io_openat2_prep() are identical except for how
+struct open_how is built. Deduplicate it with a helper.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ fs/io_uring.c | 55 ++++++++++++++++++---------------------------------
+ 1 file changed, 19 insertions(+), 36 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fc55c44dcafe..e3cd914557ae 100644
+index e3cd914557ae..134627cbe86b 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2992,6 +2992,7 @@ static int io_fallocate(struct io_kiocb *req, bool force_nonblock)
- static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+@@ -2989,26 +2989,21 @@ static int io_fallocate(struct io_kiocb *req, bool force_nonblock)
+ 	return 0;
+ }
+ 
+-static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  {
  	const char __user *fname;
-+	u64 flags, mode;
+-	u64 flags, mode;
  	int ret;
  
  	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
-@@ -3003,13 +3004,14 @@ static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (req->flags & REQ_F_NEED_CLEANUP)
- 		return 0;
+ 		return -EINVAL;
+-	if (sqe->ioprio || sqe->buf_index)
++	if (unlikely(sqe->ioprio || sqe->buf_index))
+ 		return -EINVAL;
+-	if (req->flags & REQ_F_FIXED_FILE)
++	if (unlikely(req->flags & REQ_F_FIXED_FILE))
+ 		return -EBADF;
+-	if (req->flags & REQ_F_NEED_CLEANUP)
+-		return 0;
  
--	req->open.dfd = READ_ONCE(sqe->fd);
--	req->open.how.mode = READ_ONCE(sqe->len);
--	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
--	req->open.how.flags = READ_ONCE(sqe->open_flags);
-+	mode = READ_ONCE(sqe->len);
-+	flags = READ_ONCE(sqe->open_flags);
- 	if (force_o_largefile())
--		req->open.how.flags |= O_LARGEFILE;
-+		flags |= O_LARGEFILE;
-+	req->open.how = build_open_how(flags, mode);
+-	mode = READ_ONCE(sqe->len);
+-	flags = READ_ONCE(sqe->open_flags);
+-	if (force_o_largefile())
+-		flags |= O_LARGEFILE;
+-	req->open.how = build_open_how(flags, mode);
++	/* open.how should be already initialised */
++	if (!(req->open.how.flags & O_PATH) && force_o_largefile())
++		req->open.how.flags |= O_LARGEFILE;
  
-+	req->open.dfd = READ_ONCE(sqe->fd);
-+	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	req->open.filename = getname(fname);
- 	if (IS_ERR(req->open.filename)) {
- 		ret = PTR_ERR(req->open.filename);
-@@ -3103,7 +3105,6 @@ static int io_openat2(struct io_kiocb *req, bool force_nonblock)
- 
- static int io_openat(struct io_kiocb *req, bool force_nonblock)
- {
--	req->open.how = build_open_how(req->open.how.flags, req->open.how.mode);
- 	return io_openat2(req, force_nonblock);
+ 	req->open.dfd = READ_ONCE(sqe->fd);
+ 	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
+@@ -3018,33 +3013,33 @@ static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		req->open.filename = NULL;
+ 		return ret;
+ 	}
+-
+ 	req->open.nofile = rlimit(RLIMIT_NOFILE);
+ 	req->flags |= REQ_F_NEED_CLEANUP;
+ 	return 0;
  }
  
++static int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	u64 flags, mode;
++
++	if (req->flags & REQ_F_NEED_CLEANUP)
++		return 0;
++	mode = READ_ONCE(sqe->len);
++	flags = READ_ONCE(sqe->open_flags);
++	req->open.how = build_open_how(flags, mode);
++	return __io_openat_prep(req, sqe);
++}
++
+ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct open_how __user *how;
+-	const char __user *fname;
+ 	size_t len;
+ 	int ret;
+ 
+-	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
+-		return -EINVAL;
+-	if (sqe->ioprio || sqe->buf_index)
+-		return -EINVAL;
+-	if (req->flags & REQ_F_FIXED_FILE)
+-		return -EBADF;
+ 	if (req->flags & REQ_F_NEED_CLEANUP)
+ 		return 0;
+-
+-	req->open.dfd = READ_ONCE(sqe->fd);
+-	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	how = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+ 	len = READ_ONCE(sqe->len);
+-
+ 	if (len < OPEN_HOW_SIZE_VER0)
+ 		return -EINVAL;
+ 
+@@ -3053,19 +3048,7 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (!(req->open.how.flags & O_PATH) && force_o_largefile())
+-		req->open.how.flags |= O_LARGEFILE;
+-
+-	req->open.filename = getname(fname);
+-	if (IS_ERR(req->open.filename)) {
+-		ret = PTR_ERR(req->open.filename);
+-		req->open.filename = NULL;
+-		return ret;
+-	}
+-
+-	req->open.nofile = rlimit(RLIMIT_NOFILE);
+-	req->flags |= REQ_F_NEED_CLEANUP;
+-	return 0;
++	return __io_openat_prep(req, sqe);
+ }
+ 
+ static int io_openat2(struct io_kiocb *req, bool force_nonblock)
 -- 
 2.24.0
 

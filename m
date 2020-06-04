@@ -2,58 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BD2A1EE9BD
+	by mail.lfdr.de (Postfix) with ESMTP id E9AFA1EE9BE
 	for <lists+io-uring@lfdr.de>; Thu,  4 Jun 2020 19:49:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730124AbgFDRsi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1730055AbgFDRsi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Thu, 4 Jun 2020 13:48:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56040 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730055AbgFDRsh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Jun 2020 13:48:37 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9D26C08C5C0
-        for <io-uring@vger.kernel.org>; Thu,  4 Jun 2020 10:48:36 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id j1so3431125pfe.4
-        for <io-uring@vger.kernel.org>; Thu, 04 Jun 2020 10:48:36 -0700 (PDT)
+        with ESMTP id S1730094AbgFDRsi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Jun 2020 13:48:38 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7ACEC08C5C1
+        for <io-uring@vger.kernel.org>; Thu,  4 Jun 2020 10:48:37 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id m7so2489924plt.5
+        for <io-uring@vger.kernel.org>; Thu, 04 Jun 2020 10:48:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UQ23UMbLpnikMyJsJpi7tgybjenRgCAV4RiDM8tRNA0=;
-        b=Zg7sIE66b6CJQoMMzgAdQSjCVFIDK0iYLSeyqJHrGnsRYsDLpSsHePwMwsOUcCUMGn
-         tO1B+RtyiW/T6YUJ9IuionxmhwZ6QXVtvbJmZw3quDMZFx1miolZGbuB6KHvK+E9mDiI
-         d4hOPVtVOhDb6P3mQd9nVBFNkYFk4Eoc0Z1I4c58GxOECpR/OLRGWu153CnlEewvspCY
-         abTHjD6h+1+WXmqIGb0U5Rqeaoec5Q2IXPmtDkeZkqaGEjSUM9klxc22nrS4CWGSIK3H
-         6zuh1r2BmB//DmM4MfCmvIYc8eFJH9omQrTgQ9va1jQHaJTKACdwdSkhxBHFAURwxyEv
-         xenw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=J7LFtc41HM0xKogCHwU3PJalnMW16dWjgSOWGN/8m/o=;
+        b=Ns8gTLNpSNdYyPUANFNsD0VACkX39FNeCZ0GADBluEORkmeAnuckLCEOWMybx3pvub
+         u6UZPsvfVfWubeW7CJZ6Q9N3qn2D2qEl/sYwtk+NSnYWZTJmYdJpA3NRgLuXqWVWoSee
+         OTf3R/E/OyEAe59T9YvuFIOI1UiD2i6lIsajDTAXuAPI/dMPoi69gKYLMkw0i1xIYxa/
+         YpeO+N5Ff9U1XZDf93+V8p4XQHoUvqXIvqemoxt40FzoxlSlH+j0Rm0uRa+EgwLPdyzD
+         9l5/ojDl2QQ2bA7t2euycGt3jdcYvLpqfTuvOJH+gvaYUWbxi7ZF8cM91tEAXrrV+Iz7
+         38KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UQ23UMbLpnikMyJsJpi7tgybjenRgCAV4RiDM8tRNA0=;
-        b=rlgq74YGyuOeENhC56x1ut4USrG1RiGNJVUT5EdkRsGlmJVkEhji6l++dG0T17jHGz
-         2pHIfy1XgWAV1CV52469xe0frNZPNqKzMR3n4I9sltJezm0srDJjNSxrMvnuKfKFtcpV
-         YWejxIO1jINzTXM8SRSfii+7gYx1VhXHBGKhSqBmZTgjaN+yo/n5NSSS2pWGyEB0hQMa
-         6WOJCaXKzWi9nEZATvvV9u+pC1SYW/IFwdq8jw7ge9fmeL19g3d3jKJzTM/A/N5al66M
-         rVuAOzwVk65UL39uh9yiHLuUTIjs9NGIAhFdctnZADsoQQwsujMwIddrFq4qo0xY/K3J
-         6G0w==
-X-Gm-Message-State: AOAM532gdFDlL11qJx//sQBWq140T2Rf0ktzq9aRJVJ2b2sFc75xlcDo
-        fcHKcB7S5B/J9GXyarRZzdGayI7M5+FwuA==
-X-Google-Smtp-Source: ABdhPJzSgTLra6f/JPMoooQhL9aoeQ21nA8f0jzPcISVEZTFy8Fg4pSiqfzTl7vqVB9bLYz9A/4T2w==
-X-Received: by 2002:a62:2bc6:: with SMTP id r189mr4333039pfr.11.1591292915804;
-        Thu, 04 Jun 2020 10:48:35 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=J7LFtc41HM0xKogCHwU3PJalnMW16dWjgSOWGN/8m/o=;
+        b=YscvxY5Xp4hWkJTHVM8vXBAlr34vX7/ujcXbNXs/WR9cd0Sd25CN2BEnfJA5oE8u27
+         LPofVngP4ner+sg8pKsJ+CVxspDfy+NKS1y2OfG5U55wycmPQ0Hi5n4QIFT8lBM7BqVj
+         6NbLpgcLHpvrpM2UUCNMeWzysfV4NSZ8AvQSdYwS4rXp60vUhUDYYvAccIAsgXf9jlhw
+         akQ8A9NJ7q9KsetYvj9zTbZBmHiSpXNiWdntR7f0ClBliHQbarv6vozr3sYgxF33sSxp
+         3ILhKsssA06rpoBM/ZIUQWJIrGVnGVONdL/ypJ2qwqymnqtoQDva201rHERt7IqUOx2+
+         zoVw==
+X-Gm-Message-State: AOAM532e0mRB3jn3VaYzqYZ5wbN4pj9Ubss8z6nHFLvyhhUg59SwZocc
+        d3GKZeD21Ra7bcSNjtG8adjkctfav/ulRg==
+X-Google-Smtp-Source: ABdhPJyxh9d76lstKqGTWENz+yP3RY9tb457Oxt67I39dO7PTKYG/RiBpuw76xLbAhRNVq8OWK2ZVg==
+X-Received: by 2002:a17:90a:f011:: with SMTP id bt17mr7302365pjb.179.1591292917088;
+        Thu, 04 Jun 2020 10:48:37 -0700 (PDT)
 Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id n9sm6044494pjj.23.2020.06.04.10.48.34
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id n9sm6044494pjj.23.2020.06.04.10.48.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2020 10:48:35 -0700 (PDT)
+        Thu, 04 Jun 2020 10:48:36 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Subject: [PATCHSET] io_uring: never block for block based IO submit
-Date:   Thu,  4 Jun 2020 11:48:28 -0600
-Message-Id: <20200604174832.12905-1-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/4] block: provide plug based way of signaling forced no-wait semantics
+Date:   Thu,  4 Jun 2020 11:48:29 -0600
+Message-Id: <20200604174832.12905-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200604174832.12905-1-axboe@kernel.dk>
+References: <20200604174832.12905-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -61,17 +63,62 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We still have a case where resource starvation can cause us to block.
-I've been running with a debug patch to detect cases where an io_uring
-task can go uninterruptibly to sleep, and this is the main one.
+Provide a way for the caller to specify that IO should be marked
+with REQ_NOWAIT to avoid blocking on allocation, as well as a list
+head for caller use.
 
-This patchset provides a way for io_uring to have a holding area for
-requests that should get retried, and a way to signal to the block stack
-that we should be attempting to alloate requests with REQ_NOWAIT. When
-we finish the block plug, we re-issue any requests that failed to get
-allocated.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ block/blk-core.c       | 6 ++++++
+ include/linux/blkdev.h | 2 ++
+ 2 files changed, 8 insertions(+)
 
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 03252af8c82c..62a4904db921 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -958,6 +958,7 @@ generic_make_request_checks(struct bio *bio)
+ 	struct request_queue *q;
+ 	int nr_sectors = bio_sectors(bio);
+ 	blk_status_t status = BLK_STS_IOERR;
++	struct blk_plug *plug;
+ 	char b[BDEVNAME_SIZE];
+ 
+ 	might_sleep();
+@@ -971,6 +972,10 @@ generic_make_request_checks(struct bio *bio)
+ 		goto end_io;
+ 	}
+ 
++	plug = blk_mq_plug(q, bio);
++	if (plug && plug->nowait)
++		bio->bi_opf |= REQ_NOWAIT;
++
+ 	/*
+ 	 * For a REQ_NOWAIT based request, return -EOPNOTSUPP
+ 	 * if queue is not a request based queue.
+@@ -1800,6 +1805,7 @@ void blk_start_plug(struct blk_plug *plug)
+ 	INIT_LIST_HEAD(&plug->cb_list);
+ 	plug->rq_count = 0;
+ 	plug->multiple_queues = false;
++	plug->nowait = false;
+ 
+ 	/*
+ 	 * Store ordering should not be needed here, since a potential
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 8fd900998b4e..27887bf36d50 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1187,8 +1187,10 @@ extern void blk_set_queue_dying(struct request_queue *);
+ struct blk_plug {
+ 	struct list_head mq_list; /* blk-mq requests */
+ 	struct list_head cb_list; /* md requires an unplug callback */
++	struct list_head nowait_list;	/* caller user */
+ 	unsigned short rq_count;
+ 	bool multiple_queues;
++	bool nowait;
+ };
+ #define BLK_MAX_REQUEST_COUNT 16
+ #define BLK_PLUG_FLUSH_SIZE (128 * 1024)
 -- 
-Jens Axboe
-
+2.27.0
 

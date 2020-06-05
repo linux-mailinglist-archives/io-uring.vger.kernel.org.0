@@ -2,92 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E327F1F02DD
-	for <lists+io-uring@lfdr.de>; Sat,  6 Jun 2020 00:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1926D1F02E4
+	for <lists+io-uring@lfdr.de>; Sat,  6 Jun 2020 00:30:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbgFEW1I (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Jun 2020 18:27:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41124 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728297AbgFEW1I (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Jun 2020 18:27:08 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50374C08C5C2
-        for <io-uring@vger.kernel.org>; Fri,  5 Jun 2020 15:27:08 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id bh7so4235718plb.11
-        for <io-uring@vger.kernel.org>; Fri, 05 Jun 2020 15:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Lf8dswigcXN36mTL58uWKzPytjTdJCSSCNEKAihLYHg=;
-        b=ycmsPe9ZURPfcnHNdsrjrQ4HH9T1z0EDRgEb6mqQThbLpvnZ1fAmLxhdtJOtVTse6i
-         rhQ2gDREuFe/5Efwtb15H71Fm7WSnvmpkm4MSsKCLeUm6Ojj8y/qpWCEagrB2BDjIKGR
-         LqjuFPL8xiGYPaxpBJmNVM8AxXMoS99O9svbq9bVq7pXBAR7yawcyNqiUD4Pip/h1IZV
-         ISvqecgC2WNiKBHMdf/iEQGGJv11cQ56LSobq1nnr3tc6AogRnrmzIKisxec5Pjc/Dph
-         wxgPLiIixGrWDUt60BY664J5MY/vkeuMtxFD/aRbokoMM852Z1H+9iU/B4DGDduMPuNb
-         rpiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Lf8dswigcXN36mTL58uWKzPytjTdJCSSCNEKAihLYHg=;
-        b=mOsByPUf8aOOIEY/PDvLAyfIkqYQFuihoPaG76AXRZUD1kqhRe0uCyUImzxmc6Fh9u
-         tSaohiunklbHsNyOJGcSJ5KYMohkq10sbVySdxneMH9OHVhq4mtaTGPQkqCVXetIzu1q
-         cTSBqZiNXTeAgY1W/F9K+v/zpAJiof6pF+YRieubMa+LycBmeeSF71DUM2No+G8+TA07
-         LE3wjCRZpURm8msJOKRh+nfHpSSWe0DD6GN9s3qKJkDD27dqk1jCPzT5bjCR4LCBhl2N
-         u/MikJHOkDC/rm1PWpQpppdU7ib3UY2nACEyNcbgv282JHKp0br+MqdZUX/MGDutSisE
-         Xv6A==
-X-Gm-Message-State: AOAM531Y+e5L/ttQmFss6hGFrITPMEr8QEKMjtLK5ZRewk57fGmU4i56
-        EHSI5Xc7Sy3E5BqVNxdqPnYYbxNLf9JAVg==
-X-Google-Smtp-Source: ABdhPJyrSuYTlS42TRyPe56bBNGfZEoJtObP9JKmoY6gSG4RKfmuXkiciKlHf2VYspZIONQMpdiOpg==
-X-Received: by 2002:a17:90a:f8e:: with SMTP id 14mr5674310pjz.172.1591396027517;
-        Fri, 05 Jun 2020 15:27:07 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id 6sm501876pfi.170.2020.06.05.15.27.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jun 2020 15:27:06 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: re-issue plug based block requests that failed
-To:     sedat.dilek@gmail.com
-Cc:     io-uring@vger.kernel.org
-References: <CA+icZUXRE+++FbchwF5Rhrj5AeRY=H2T8m07Y8CV5bhu_s5OgA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8ba08c47-10ec-6c65-39c2-4d183659c8f5@kernel.dk>
-Date:   Fri, 5 Jun 2020 16:27:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1728013AbgFEWas (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Jun 2020 18:30:48 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:60427 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728157AbgFEWar (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Jun 2020 18:30:47 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 8DEA85C01DF;
+        Fri,  5 Jun 2020 18:30:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Fri, 05 Jun 2020 18:30:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=JQ0T9QXE+j7q+0Zzk3VcIyBO3AA
+        dNqka5dcc5FHLBIU=; b=IptiNzzTDPqny+GbPDBRgd/1jA9JZWGKkwYtx5wDGF6
+        n6URXZXMO+AwI9yCCdg1BAb0Fm9RP2XMt6Re0Ang4XKlX5t/OW3u74KyEhvAx1A1
+        hVRJ8Oct8yUFAl8ikcZrSmmdIKRDbw056NyLa3seSIlS+cx7SJzLt9orUweLN8Ut
+        +RH/wHZtS2MdEXkrF+4R184RxIaxICyc3HtgB8ceOUeWljsbdiJycOUd5Ubqluyq
+        ODqkYEDhuxDMjDOW86/U2TM0dXFKOkFkMmshJiHcH39Th8PHgtaPtmKEpp+XxI2k
+        nvRre4SkyYYaD68T4XxARuy4PMEEqvVz8p2BG1VSgCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=JQ0T9Q
+        XE+j7q+0Zzk3VcIyBO3AAdNqka5dcc5FHLBIU=; b=a8TzSgmfGjfQh4dnwzYtGL
+        ULR/mfNggLyqYomsibxWX7Pids+azAeMGdLg0wRt5eskYpATWNNjF8CXtnehJWzP
+        MlPkX9QWsOpVAEAq6PIjx4QQdytD8BG/03pfn1mrO5r0XM6crbzNiistvw0+TrQ2
+        j+LopnkZvoTCxBeekdcdKrzGZsPoarb3BTswobgNdeAcZF1ng0q+QOuPCkZ7na5y
+        1ZbuIEF3/70Ahs68+E+WIb8nzyrruwRVSfy+5jlHK1nYkgpOdiLjqnUFBOjF8ZnZ
+        1l5etx3lWMz4WO96hdMA+S6k6FlXZ+3QJyMXDYt60H1ptqpDFan4z1/iU+G+IaLg
+        ==
+X-ME-Sender: <xms:lcfaXj-4x3xmVznYF2BeCZ2-Qj3YeSbgpzQpApvRlXRoDoO75e7U5Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeggedgtdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
+    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
+    htthgvrhhnpedukefhkeelueegveetheelffffjeegleeuudelfeefuedtleffueejfffh
+    ueffudenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdr
+    uggv
+X-ME-Proxy: <xmx:lcfaXvsonFRgPaIjZwHYvMzyctjo5lmuTetDNZCxw15A8-a7Kdsmzg>
+    <xmx:lcfaXhBNE7yichwRk_S4Wq9NjIjN1Tpxpo4LbAsTHv0su4oLrBHjDw>
+    <xmx:lcfaXvebF5sD4wuTsCXkAlcS_IJRho_KCiHqw0HmpGsCWM1IpnxyDA>
+    <xmx:lsfaXhZRfX1AN4jJp9iyqlfrEJneTthXz3Y77ndGHLGBiQKFQ6sIWw>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C202D3060F09;
+        Fri,  5 Jun 2020 18:30:45 -0400 (EDT)
+Date:   Fri, 5 Jun 2020 15:30:44 -0700
+From:   Andres Freund <andres@anarazel.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCHSET v5 0/12] Add support for async buffered reads
+Message-ID: <20200605223044.tnh7qsox7zg5uk53@alap3.anarazel.de>
+References: <20200526195123.29053-1-axboe@kernel.dk>
+ <20200604005916.niy2mejjcsx4sv6t@alap3.anarazel.de>
+ <e3072371-1d6b-8ae5-d946-d83e60427cb0@kernel.dk>
+ <6eeff14f-befc-a5cc-08da-cb77f811fbdf@kernel.dk>
+ <20200605202028.d57nklzpeolukni7@alap3.anarazel.de>
+ <20200605203613.ogfilu2edcsfpme4@alap3.anarazel.de>
+ <75bfe993-008d-71ce-7637-369f130bd984@kernel.dk>
+ <3539a454-5321-0bdc-b59c-06f60cc64b56@kernel.dk>
+ <34aadc75-5b8a-331e-e149-45e1547b543e@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <CA+icZUXRE+++FbchwF5Rhrj5AeRY=H2T8m07Y8CV5bhu_s5OgA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34aadc75-5b8a-331e-e149-45e1547b543e@kernel.dk>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/5/20 4:05 PM, Sedat Dilek wrote:
-> Hi Jens,
+Hi,
+
+On 2020-06-05 15:21:34 -0600, Jens Axboe wrote:
+> >> I can reproduce this, and I see what it is. I'll send out a patch soonish.
+> > 
+> > Thinko, can you try with this on top?
 > 
-> with clang-10 I see this new warning in my build-log:
-> 
-> fs/io_uring.c:5958:2: warning: variable 'ret' is used uninitialized
-> whenever switch default is taken [-Wsometimes-uninitialized]
->         default:
->         ^~~~~~~
-> fs/io_uring.c:5972:27: note: uninitialized use occurs here
->         io_cqring_add_event(req, ret);
->                                  ^~~
-> fs/io_uring.c:5944:13: note: initialize the variable 'ret' to silence
-> this warning
->         ssize_t ret;
->                    ^
->                     = 0
-> 1 warning generated.
+> Sorry that was incomplete, please use this one!
 
-Thanks! I'll fold in the fix.
+That seems to fix it! Yay.
 
--- 
-Jens Axboe
 
+Bulk buffered reads somehow don't quite seem to be performing that well
+though, looking into it. Could be on the pg side too.
+
+Greetings,
+
+Andres Freund

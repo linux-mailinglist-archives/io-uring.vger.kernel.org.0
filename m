@@ -2,82 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9B4D1EF43A
-	for <lists+io-uring@lfdr.de>; Fri,  5 Jun 2020 11:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70BF21EF83E
+	for <lists+io-uring@lfdr.de>; Fri,  5 Jun 2020 14:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726321AbgFEJcN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Jun 2020 05:32:13 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46001 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbgFEJcN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Jun 2020 05:32:13 -0400
-Received: by mail-lf1-f65.google.com with SMTP id d7so5376520lfi.12;
-        Fri, 05 Jun 2020 02:32:11 -0700 (PDT)
+        id S1726606AbgFEMrZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Jun 2020 08:47:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34316 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbgFEMrZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Jun 2020 08:47:25 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21A28C08C5C2
+        for <io-uring@vger.kernel.org>; Fri,  5 Jun 2020 05:47:25 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id t7so3612457plr.0
+        for <io-uring@vger.kernel.org>; Fri, 05 Jun 2020 05:47:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=490Gf2ZQ0nyEq6XiXWuoZcDXG5zho6wXaKrFBnwAX6I=;
+        b=YJ/fPVEzCQVzHx3XF0LCWnOyVHVlaVv1Smwe4knU5+aaK/UoyrzSI8du61rjd/NI8R
+         HDGY7fgG3eGhYJHqKaW4fxetecYI4aHggN5x9KU/D9O6vzc3/Hftq8VRf1I99N+NsyPh
+         3K/TDOOs6LyOyU+tmzz6Na2LXqFLAZMU4Ml4MZfwh0icjI2AcJWFoADQ3EYuSyy2xpzx
+         fD7DIk3/QfshP7+zEdXhO/cq8dof8xYj297b/Ai2GKzuah56KswsBXWHZhM2rHK+M4KW
+         r2JqjoLAz+mSfVPOChEJsROrZ5VHHY/sNt8GX/v2R6us9p2j+NPu9IG8LhClD8Z1k8fv
+         woMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=g5N2NMGInA2QV9WtqBQogGP0D/D9maNsaZ4YU4uZz48=;
-        b=NzLa5+wkKlANdW5ackkkf3XLPi2hdBUjA8rrj1vbPEkotEE8H89CtnyowIqTe7/do1
-         y4aOWk50rPTj3ypnyBYqfb5DDcn04ZUq6RKZyevWbGpTZ8/Y2Cu3Zij8Bcpg4YiHNEHB
-         0dulLs1pRpoJ1s8fSNzfdgcPFa82fGdfGW+x9cj5cH8jOcU9SFIV22POmKXjGhbQneqJ
-         knO89G4eJ3/b3mT46BJKxkhLdkxjoVPwfv9eT9L9fEA+jSac2pLMvKlN6ZqCcAw2LBIF
-         lCOC787szFCK6DrbR98FkeJA+nrnNHzk4ppWU5/AacY3RaeP4s0sM3cBu6gmZ4OfTQa7
-         8K4w==
-X-Gm-Message-State: AOAM530t/30ftGpy1Yk2dZkDVM4AW0s8BX4IywEUr618zjxUUJY1uTOf
-        PEOVVVhOYmS55ow4N3nJdvGHQ2yV
-X-Google-Smtp-Source: ABdhPJzEShvBSqm+wr0GcXx11wzIu32MD2oktQgX8+jM/rNPIu/I4p5FH1xoe2lCR+rCfTqZrnwgYw==
-X-Received: by 2002:a19:70d:: with SMTP id 13mr4950336lfh.60.1591349530462;
-        Fri, 05 Jun 2020 02:32:10 -0700 (PDT)
-Received: from localhost.localdomain (broadband-37-110-38-130.ip.moscow.rt.ru. [37.110.38.130])
-        by smtp.googlemail.com with ESMTPSA id j26sm646272lfp.87.2020.06.05.02.32.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jun 2020 02:32:09 -0700 (PDT)
-From:   Denis Efremov <efremov@linux.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Denis Efremov <efremov@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>, io-uring@vger.kernel.org,
+        bh=490Gf2ZQ0nyEq6XiXWuoZcDXG5zho6wXaKrFBnwAX6I=;
+        b=nvg1GPGf9tI/vOajGy7xPfwvPs0x1mp08Nu/KkqoBgS42EObFAMQz4IMjctGmp1liY
+         MHJveOKN3tTIiLNA/GmI1n5HAKfExxNzF4sa2lab0j4glfXFvdozxoOpzNGsWFGPfmBA
+         F009cHJtRXG44xgGD4rZCuOMRfVMH74rbk2LPSuZlD+6rkYYa5+PVy/zZQ48V5T0b/nB
+         VMs+UKKYRbWMtgyu3mS3212eX8ka2BBV7QwSsG4p52V1igIyCT4H1S8fzXwKnFXZwH2D
+         siRoe9gTs55q4LH30fu/5bdY6RaWF1fQlXZtwei+Gdb9kImlfMurHc91jkvG226VNL/O
+         BTXQ==
+X-Gm-Message-State: AOAM531u2nRM8J4D2ZRQwSx4Qq9M5M15hLouHN+ePHiDwwk+WOO1Mpuv
+        xVVdZ4vySCUaB/SjmMBCBZurBg==
+X-Google-Smtp-Source: ABdhPJx3HI2O3F0O32IYSaYmXdqgjmrOOvr0+Gh4YuE0uQ85tItBnRvrQf84NW2ac3Qb4GHq7SRfaQ==
+X-Received: by 2002:a17:902:aa48:: with SMTP id c8mr9954036plr.128.1591361244448;
+        Fri, 05 Jun 2020 05:47:24 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id x12sm7583806pfo.72.2020.06.05.05.47.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jun 2020 05:47:23 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: use kvfree() in io_sqe_buffer_register()
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH] io_uring: use kvfree() in io_sqe_buffer_register()
-Date:   Fri,  5 Jun 2020 12:32:03 +0300
-Message-Id: <20200605093203.40087-1-efremov@linux.com>
-X-Mailer: git-send-email 2.26.2
+References: <20200605093203.40087-1-efremov@linux.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <855ab3dd-4a3b-2c66-ba82-e6a1fed2e3ee@kernel.dk>
+Date:   Fri, 5 Jun 2020 06:47:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200605093203.40087-1-efremov@linux.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Use kvfree() to free the pages and vmas, since they are allocated by
-kvmalloc_array() in a loop.
+On 6/5/20 3:32 AM, Denis Efremov wrote:
+> Use kvfree() to free the pages and vmas, since they are allocated by
+> kvmalloc_array() in a loop.
 
-Fixes: d4ef647510b1 ("io_uring: avoid page allocation warnings")
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
-I checked the v1 d4ef647510b1 discussion and these lines are using
-kvfree() https://lkml.org/lkml/2019/5/1/254. This was somehow missed
-in v2.
+Applied, thanks.
 
- fs/io_uring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9d4bd0d3a080..defb8a3538fc 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7160,8 +7160,8 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
- 
- 		ret = 0;
- 		if (!pages || nr_pages > got_pages) {
--			kfree(vmas);
--			kfree(pages);
-+			kvfree(vmas);
-+			kvfree(pages);
- 			pages = kvmalloc_array(nr_pages, sizeof(struct page *),
- 						GFP_KERNEL);
- 			vmas = kvmalloc_array(nr_pages,
 -- 
-2.26.2
+Jens Axboe
 

@@ -2,98 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6D681F0977
-	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 05:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D05B1F0AF9
+	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 13:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbgFGDz5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 6 Jun 2020 23:55:57 -0400
-Received: from lavender.maple.relay.mailchannels.net ([23.83.214.99]:3284 "EHLO
-        lavender.maple.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725818AbgFGDz4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Jun 2020 23:55:56 -0400
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id A4BBA541124
-        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 03:55:55 +0000 (UTC)
-Received: from pdx1-sub0-mail-a55.g.dreamhost.com (100-96-137-11.trex.outbound.svc.cluster.local [100.96.137.11])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 1B7C454110A
-        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 03:55:55 +0000 (UTC)
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from pdx1-sub0-mail-a55.g.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
-        by 0.0.0.0:2500 (trex/5.18.8);
-        Sun, 07 Jun 2020 03:55:55 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
-X-MailChannels-Auth-Id: dreamhost
-X-Whistle-Hook: 42f23df46f847e2c_1591502155325_1939362845
-X-MC-Loop-Signature: 1591502155324:3271733420
-X-MC-Ingress-Time: 1591502155324
-Received: from pdx1-sub0-mail-a55.g.dreamhost.com (localhost [127.0.0.1])
-        by pdx1-sub0-mail-a55.g.dreamhost.com (Postfix) with ESMTP id D2D6495B6B
-        for <io-uring@vger.kernel.org>; Sat,  6 Jun 2020 20:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=claycon.org; h=date:from
-        :to:subject:message-id:mime-version:content-type; s=claycon.org;
-         bh=Nl0c42P13IhzxA9INFqA5H8ad0k=; b=CsXseoxveeBoh6yGakKn3zQRruw1
-        NWyiTA0Y2gMuWrQWU4rOke/JLgU75y4x+s734UgSMdclxeLOv5OoCWQHfp5Io82v
-        +MAq4ZFeonQgjxxOQfxJCXaW6Ah14spId5v17u5y8LCOLuq5DOE/wbk0nxbbyH0P
-        YgxI8c7pRcvi9BE=
-Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a55.g.dreamhost.com (Postfix) with ESMTPSA id A2B7B95B9C
-        for <io-uring@vger.kernel.org>; Sat,  6 Jun 2020 20:55:54 -0700 (PDT)
-Date:   Sat, 6 Jun 2020 22:55:55 -0500
-X-DH-BACKEND: pdx1-sub0-mail-a55
-From:   Clay Harris <bugs@claycon.org>
-To:     io-uring@vger.kernel.org
-Subject: io_uring_queue_exit is REALLY slow
-Message-ID: <20200607035555.tusxvwejhnb5lz2m@ps29521.dreamhostps.com>
+        id S1726447AbgFGLl3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 7 Jun 2020 07:41:29 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:39129 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726198AbgFGLl3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 07:41:29 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U-phZHG_1591530084;
+Received: from 30.15.203.104(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U-phZHG_1591530084)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sun, 07 Jun 2020 19:41:25 +0800
+Subject: Re: [PATCH] io_uring: execute task_work_run() before dropping mm
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com, joseph.qi@linux.alibaba.com
+References: <20200606151248.17663-1-xiaoguang.wang@linux.alibaba.com>
+ <a23f96f9-fbe8-8dba-a1cd-20a3f121d868@kernel.dk>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <948c2d50-1b5a-27df-bda3-503d2f266405@linux.alibaba.com>
+Date:   Sun, 7 Jun 2020 19:41:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-VR-OUT-STATUS: OK
-X-VR-OUT-SCORE: 0
-X-VR-OUT-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduhedrudegjedggeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuggftfghnshhusghstghrihgsvgdpffftgfetoffjqffuvfenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkgggtuggfsehttdertddtredvnecuhfhrohhmpeevlhgrhicujfgrrhhrihhsuceosghughhssegtlhgrhigtohhnrdhorhhgqeenucggtffrrghtthgvrhhnpeeufedvieejudekveekgeekffdtvedufedtkeffffduudeitdduleefudegffdujeenucfkphepieelrdduieefrddukeeirdejgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehpshdvleehvddurdgurhgvrghmhhhoshhtphhsrdgtohhmpdhinhgvthepieelrdduieefrddukeeirdejgedprhgvthhurhhnqdhprghthhepvehlrgihucfjrghrrhhishcuoegsuhhgshestghlrgihtghonhdrohhrgheqpdhmrghilhhfrhhomhepsghughhssegtlhgrhigtohhnrdhorhhgpdhnrhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+In-Reply-To: <a23f96f9-fbe8-8dba-a1cd-20a3f121d868@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-So, I realize that this probably isn't something that you've looked
-at yet.  But, I was interested in a different criteria looking at
-io_uring.  That is how efficient it is for small numbers of requests
-which don't transfer much data.  In other words, what is the minimum
-amount of io_uring work for which a program speed-up can be obtained.
-I realize that this is highly dependent on how much overlap can be
-gained with async processing.
+hi,
 
-In order to get a baseline, I wrote a test program which performs
-4 opens, followed by 4 read + closes.  For the baseline I
-intentionally used files in /proc so that there would be minimum
-async and I could set IOSQE_ASYNC later.  I was quite surprised
-by the result:  Almost the entire program wall time was used in
-the io_uring_queue_exit() call.
+> On 6/6/20 9:12 AM, Xiaoguang Wang wrote:
+>> While testing io_uring in our internal kernel, note it's not upstream
+>> kernel, we see below panic:
+>> [  872.498723] x29: ffff00002d553cf0 x28: 0000000000000000
+>> [  872.508973] x27: ffff807ef691a0e0 x26: 0000000000000000
+>> [  872.519116] x25: 0000000000000000 x24: ffff0000090a7980
+>> [  872.529184] x23: ffff000009272060 x22: 0000000100022b11
+>> [  872.539144] x21: 0000000046aa5668 x20: ffff80bee8562b18
+>> [  872.549000] x19: ffff80bee8562080 x18: 0000000000000000
+>> [  872.558876] x17: 0000000000000000 x16: 0000000000000000
+>> [  872.568976] x15: 0000000000000000 x14: 0000000000000000
+>> [  872.578762] x13: 0000000000000000 x12: 0000000000000000
+>> [  872.588474] x11: 0000000000000000 x10: 0000000000000c40
+>> [  872.598324] x9 : ffff000008100c00 x8 : 000000007ffff000
+>> [  872.608014] x7 : ffff80bee8562080 x6 : ffff80beea862d30
+>> [  872.617709] x5 : 0000000000000000 x4 : ffff80beea862d48
+>> [  872.627399] x3 : ffff80bee8562b18 x2 : 0000000000000000
+>> [  872.637044] x1 : ffff0000090a7000 x0 : 0000000000208040
+>> [  872.646575] Call trace:
+>> [  872.653139]  task_numa_work+0x4c/0x310
+>> [  872.660916]  task_work_run+0xb0/0xe0
+>> [  872.668400]  io_sq_thread+0x164/0x388
+>> [  872.675829]  kthread+0x108/0x138
+>>
+>> The reason is that once io_sq_thread has a valid mm, schedule subsystem
+>> may call task_tick_numa() adding a task_numa_work() callback, which will
+>> visit mm, then above panic will happen.>
+>> To fix this bug, only call task_work_run() before dropping mm.
+> 
+> That's a bug outside of io_uring, you'll want to backport this patch
+> from 5.7:
+> 
+> commit 18f855e574d9799a0e7489f8ae6fd8447d0dd74a
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Tue May 26 09:38:31 2020 -0600
+> 
+>      sched/fair: Don't NUMA balance for kthreadsThanks, it's a better fix than mine, will backport it.
 
-I wrote another test program which does just inits followed by exits.
-There are clock_gettime()s around the io_uring_queue_init(8, &ring, 0)
-and io_uring_queue_exit() calls and I printed the ratio of the
-io_uring_queue_exit() elapsed time and the sum of elapsed time of
-both calls.
+Regards,
+Xiaoguang Wang
 
-The result varied between 0.94 and 0.99.  In other words, exit is
-between 16 and 100 times slower than init.  Average ratio was
-around 0.97.  Looking at the liburing code, exit does just what
-I'd expect (unmap pages and close io_uring fd).
-
-I would have bet the ratio would be less than 0.50.  No
-operations were ever performed by the ring, so there should be
-minimal cleanup.  Even if the kernel needed to do a bunch of
-cleanup, it shouldn't need the pages mapped into user space to work;
-same thing for the fd being open in the user process.
-
-Seems like there is some room for optimization here.
+> 
+> 

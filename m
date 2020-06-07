@@ -2,59 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 617031F0C76
-	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 17:38:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D41F21F0CBB
+	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 18:02:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgFGPiC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 7 Jun 2020 11:38:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54478 "EHLO
+        id S1726646AbgFGQCu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 7 Jun 2020 12:02:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbgFGPiC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 11:38:02 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE304C08C5C3
-        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 08:38:01 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id r15so13959025wmh.5
-        for <io-uring@vger.kernel.org>; Sun, 07 Jun 2020 08:38:01 -0700 (PDT)
+        with ESMTP id S1726643AbgFGQCt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 12:02:49 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16915C08C5C3
+        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 09:02:48 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id x6so14714898wrm.13
+        for <io-uring@vger.kernel.org>; Sun, 07 Jun 2020 09:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+5nD44ZpViHFo7/bacHrR4Io6/Ips4S3K4ZmmBsE9JY=;
-        b=DycoCDvgDgYjbxQscNIhFLZ5iLKJEfwgH6q0OkljyHTrpopBcq6dnfn1NDwHibx7sY
-         yOQgn0mNPBEM/L6HdaS98ZW+LXfEnbZvL9FXwriXeFUKHlpIL2GqpBfqLSMZixttNThV
-         EkxqCJxFyeGjl60up62qlqQ0RCuLZULPcQpV6KU0cQ3Qu1zxbX48hn/8UdYjexxBnnjL
-         0XNaCwntM+tUEiK3+NbzjgwmHrAIZXdDnKF1zE9KpaE3bs0rcKCsUpTiXAj6dpPzA4Xz
-         KGdiiQdlyK+66SwXoUZu/kshkg+viGGEN0vnGQvfhem1nUawjpQwvjApSMCh6uKuqO8U
-         fuSg==
+        h=to:cc:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=eV26UY3HUxRVp8eu8Pm0JXvbzn5JWeCOMxq4MsnuVtE=;
+        b=u8mOXxDIzNnHP4bESHi9GsYTuIY1G8QTZBVBGgabfuXvGjt7gEUi2nZ3w5vlm9qW7G
+         Izlyg3HIpcoTYb+NBj619Xh3z+SDfj8BFq+1US69l7rh6O1B3VG5UXlFeU1lzeeh61YY
+         TalruWnJunB21ho86mc1poW2c+zgw/ifQpxnXE3oCRdBqD2tpBKvMI8LeVnUUtUNTSxg
+         iqVZayYVAiDxeCapi7aeJlL8FHL8xo2w+lIYf44f9N7J5w9kc82jMNiRtwZwAQ+vS/xm
+         i1VGVHsNjTqFNf9/Fa2m1Hrx63kjKrJW+xlL9g+HOlf/KLcwiLszsOMZx6O3VCdJNI04
+         Rj4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+5nD44ZpViHFo7/bacHrR4Io6/Ips4S3K4ZmmBsE9JY=;
-        b=uUP3ubq/SIR2LrAI7/2L9reZ8/LWd9+r/tmPt3sRfmenec0kyFWsObg33shpeOZHBh
-         o3mIGRwpqiX/DN7tgcN0mO6gckKYfTWCJ3AXCWBhhUu3ZsESmB9Heiz/RftPsvEKwmv1
-         D3eWG2P6l2Wlu0Ek+qNJtJeI64jBVdwCpUSyInvGG2nNwtNACCb7ZG30CQfl9NfFrHI6
-         NysINLZQwp8CoeVo8wJRPtWjXJjO9d4yLHzUHczxcKClCl14FOCGWSaEfWujBntfyTaO
-         WWQvzI1upxE5mHwPnrHYmz49asjxCAZFxboxCIRHM9VPYBA/LsrfS64EuZ96MfWPJRwv
-         lIlg==
-X-Gm-Message-State: AOAM530Q49Chla3e+wsDEM0GxJH0xjAD2O8kCRp9H7SyAzP7v+xvllpA
-        JdBJLDkScQojvIfW87iOJlVc/fjb
-X-Google-Smtp-Source: ABdhPJzoVZXEKGwcF4pGhszNUGLtfSraOveINCdUD3SmFyk9gs6IWP2ibMsugP+CGfIMhCSd6EmYpA==
-X-Received: by 2002:a1c:ddc1:: with SMTP id u184mr11717609wmg.115.1591544280248;
-        Sun, 07 Jun 2020 08:38:00 -0700 (PDT)
+        h=x-gm-message-state:to:cc:from:autocrypt:subject:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=eV26UY3HUxRVp8eu8Pm0JXvbzn5JWeCOMxq4MsnuVtE=;
+        b=ItZh6ZP6OfsvmSk1sDOD8hrJ4RwWSJPl1geEHr8pazRfp3sf08X6hgHCeKoI40YWhU
+         l2q7KudUVjtkAta1NhXLGY4xGVdLChJJMDY/w5IqTY5vXfaoQhgb3My2YTxlByobqtRy
+         IvC4vt1EQGQeViPW5fMhPleCOoj8wO4YZznwBkCjytYxQVacoZGrhOXNZOBjvNwBqCNf
+         e0nPFkmyu8w/sgfmCKAgbCMZX87BVUfA4kmlxDF3lwWp29DJ6G9E9Z0eWVrjr6PgP+di
+         9z7X/SYQ1Z77KTvOErFWIJ7r5VsDMlPnB2K/FKV52HRqDdswgbWu3IpfDcMUJpxz8alX
+         5PLA==
+X-Gm-Message-State: AOAM531kGc9pXft+H3xk0CXb8NJqMW59gW3MIsSyuLqnkQ8tHDGoIuXT
+        Qdf6MGQQQVOG4wLs7CmgWab8Od5m
+X-Google-Smtp-Source: ABdhPJxWYOw2ZOWPdXmYVsGt0wJsvtMs2Bs6pCY+Dj0WtzGm3uoYYQhl5h9DXxq5MG5iI3tRCD4hrw==
+X-Received: by 2002:adf:d84a:: with SMTP id k10mr19186075wrl.336.1591545766755;
+        Sun, 07 Jun 2020 09:02:46 -0700 (PDT)
 Received: from [192.168.43.101] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id y80sm21152626wmc.34.2020.06.07.08.37.59
+        by smtp.gmail.com with ESMTPSA id k26sm19825738wmi.27.2020.06.07.09.02.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jun 2020 08:37:59 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: execute task_work_run() before dropping mm
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-References: <20200606151248.17663-1-xiaoguang.wang@linux.alibaba.com>
- <350132ea-aade-27f4-1fcc-ba0539a459a1@gmail.com>
- <96f61793-3b44-6de1-c3b6-b54e86d4c203@linux.alibaba.com>
+        Sun, 07 Jun 2020 09:02:46 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -99,42 +93,120 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <87c92562-b862-08d7-ce32-7c09280f0ba5@gmail.com>
-Date:   Sun, 7 Jun 2020 18:36:41 +0300
+Subject: [BUG] ->flush and links
+Message-ID: <34eb5e5a-8d37-0cae-be6c-c6ac4d85b5d4@gmail.com>
+Date:   Sun, 7 Jun 2020 19:01:27 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <96f61793-3b44-6de1-c3b6-b54e86d4c203@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/06/2020 15:37, Xiaoguang Wang wrote:
->>> The reason is that once io_sq_thread has a valid mm, schedule subsystem
->>> may call task_tick_numa() adding a task_numa_work() callback, which will
->>> visit mm, then above panic will happen.
->>>
->>> To fix this bug, only call task_work_run() before dropping mm.
->>
->> So, the problem is that poll/async paths re-issue requests with
->> __io_queue_sqe(), which doesn't care about current->mm, and which
->> can be NULL for io_sq_thread(). Right?
-> No, above panic is not triggered by poll/async paths.
-> See below code path:
-> ==> task_tick_fair()
-> ====> task_tick_numa()
-> ======> task_work_add, work is task_numa_work, which will visit mm.
-> 
-> In sqpoll mode, there maybe are sqes that need mm, then above codes
-> maybe executed by schedule subsystem. In io_sq_thread, we drop mm before
-> task_work_run, if there is a task_numa_work, panic occurs.
-> 
+There is a problem with io_uring_cancel_files -- it doesn't care about
+links. If a request with ->files is not a head of a link, it won't be
+found it in io-wq or elsewhere, and will wait for the head to be completed.
+The problem is when the head won't ever complete.
 
-Got it, thanks for explaining
+e.g. req1: read empty pipe -> req2: openat
+This leaves an uninterruptedly and indefinitely sleeping process.
+see liburing patch below.
+
+I was thinking about making dependant links traversable by io-wq cancel().
+
+The similar problem can manifest itself with pending drained requests,
+but solving this one would need cancellation of every prior request
+in the drain queue, that's kind of nasty side effect for closing an
+fd alias.
+
+Any thoughts how to better deal with it?
+
+diff --git a/test/lfs-openat.c b/test/lfs-openat.c
+index d69096e..9fb96b7 100644
+--- a/test/lfs-openat.c
++++ b/test/lfs-openat.c
+@@ -75,6 +75,58 @@ static int prepare_file(int dfd, const char* fn)
+ 	return res < 0 ? res : 0;
+ }
+ 
++static int test_linked_files(int dfd, const char *fn)
++{
++	struct io_uring ring;
++	struct io_uring_sqe *sqe;
++	char buffer[128];
++	struct iovec iov = {.iov_base = buffer, .iov_len = sizeof(buffer), };
++	int ret, fd;
++	int fds[2];
++
++	ret = io_uring_queue_init(10, &ring, 0);
++	if (ret < 0)
++		DIE("failed to init io_uring: %s\n", strerror(-ret));
++
++	if (pipe(fds)) {
++		perror("pipe");
++		return 1;
++	}
++
++	sqe = io_uring_get_sqe(&ring);
++	if (!sqe) {
++		printf("get sqe failed\n");
++		return -1;
++	}
++	io_uring_prep_readv(sqe, fds[0], &iov, 1, 0);
++	sqe->flags |= IOSQE_IO_LINK;
++
++	sqe = io_uring_get_sqe(&ring);
++	if (!sqe) {
++		fprintf(stderr, "failed to get sqe\n");
++		return 1;
++	}
++	io_uring_prep_openat(sqe, dfd, fn, OPEN_FLAGS, OPEN_MODE);
++
++	ret = io_uring_submit(&ring);
++	if (ret != 2) {
++		fprintf(stderr, "failed to submit openat: %s\n", strerror(-ret));
++		return 1;
++	}
++
++	fd = dup(ring.ring_fd);
++	if (fd < 0) {
++		fprintf(stderr, "dup() failed: %s\n", strerror(-fd));
++		return 1;
++	}
++
++	/* io_uring->flush() */
++	close(fd);
++
++	io_uring_queue_exit(&ring);
++	return 0;
++}
++
+ int main(int argc, char *argv[])
+ {
+ 	const char *fn = "io_uring_openat_test";
+@@ -93,7 +145,17 @@ int main(int argc, char *argv[])
+ 		return 1;
+ 
+ 	ret = open_io_uring(&ring, dfd, fn);
++	if (ret) {
++		fprintf(stderr, "open_io_uring() failed\n");
++		goto out;
++	}
+ 
++	ret = test_linked_files(dfd, fn);
++	if (ret) {
++		fprintf(stderr, "test_linked_files() failed\n");
++		goto out;
++	}
++out:
+ 	io_uring_queue_exit(&ring);
+ 	close(dfd);
+ 	unlink("/tmp/io_uring_openat_test");
+
 
 -- 
 Pavel Begunkov

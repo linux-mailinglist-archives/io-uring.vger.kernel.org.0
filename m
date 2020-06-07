@@ -2,52 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9012B1F0FC8
-	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 22:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 340AA1F0FE8
+	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 22:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbgFGUh7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 7 Jun 2020 16:37:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44370 "EHLO
+        id S1726823AbgFGU7B (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 7 Jun 2020 16:59:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726993AbgFGUh6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 16:37:58 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37436C08C5C3
-        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 13:37:57 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id k8so11726963edq.4
-        for <io-uring@vger.kernel.org>; Sun, 07 Jun 2020 13:37:57 -0700 (PDT)
+        with ESMTP id S1726093AbgFGU7A (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 16:59:00 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F39EC08C5C3
+        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 13:59:00 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id u26so12907340wmn.1
+        for <io-uring@vger.kernel.org>; Sun, 07 Jun 2020 13:58:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8ZIipCxC1jw2HQkvBuNwlbfm7OqUVInrBjIQtsBnLd8=;
-        b=SxVBqBiN9dxloZF0LAvsFhB1xm6npQJnybbRfC298Vi1wXodApJZ+J4ZFbPtQFpq8y
-         CbogiDz3D93ZTix96Md3CrWZkbiHvjQ/rUH/bMHDw52ORVP8czr8T2QGwVF+LobxNRao
-         ckLKqCa6JO/RhJQ62M0Jv0xaV07OYAdvq7MmEIE3UDMSCtwAQMc5LhxMDNZIRzl59aqv
-         bcAwemaQRg7Hzp8dVm1xFwgzqeye1vWXCVprsFPqEarOpLEqhkryfge5Mpqiu/pdh8OM
-         Vzr+JzZFTvZnkwu7Sqq7M2n4p0s0oEqVtO48vHDaKiqo9SmUPkfYHgK94hRpkj0m+fIU
-         k/wA==
+        bh=NZLiQfR5NOXB7nFP3mrlbc8XStqu2T3JsgS9H/cDvAI=;
+        b=ohdCOdQUuOB3hyzrWjQUQAC16ypLuJ/b7txdW7nG/i9QA8Kt/n9SGmzvyLw1C9+C0h
+         VtFYjSP62aLzrMgeMnWa6cTDAaG5clJYav14ph4Qs1ZM5KYmMhTnUHPA5yKg7Di1gH4T
+         ePEYcA6ku5awX3tgt27TOJITvZcd82MAyeqK5sEAIQagGpgwF0O6jz74v7EF8c5F5Al+
+         ZDFnRiIE7VeHjeQV9PpoKLrpX5BOcy3dovxPVstIZqTJL2wQOOLowl/g3VG65BGPHxr9
+         K9QiOWkWsidvvGll6qguXJEtGYVED6bZVY0fGh2QCnUsOfZvvjL8488zPL9a6SABCQkw
+         9Ysw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:references:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=8ZIipCxC1jw2HQkvBuNwlbfm7OqUVInrBjIQtsBnLd8=;
-        b=t9BOD5DpsnGd36PHPBVP5kFv9rQVBmPDuo59wz0jJcnheU1XK7V2B/K57uG+e5R38C
-         EZgh8h98yh1jFnfDTVpPHV4jG+2hF6cwZzWRDb3O9DKoJF3sQNB6KoXHQAJzZ9s3qFRu
-         yiUl+TDXyWnzG7c5UYsRdTtkwrzsLrG9snqy5dKy2q2w0K4sRCceSYGwcv0RitoSZbWj
-         s94hlXaTZIcEUhyoiA87SiCD3gYSqpNFNyjqIDjU9c2p1ikO/ZjR5OjDcG239OKNYngv
-         zcPkk4AGRG47cVM5IWv84URIkh8zz5vHUoU+NZ0J052MA+AUB5iWaUY9ZBLsAEG4G4t3
-         9ByQ==
-X-Gm-Message-State: AOAM532Dg2hrDx6OE7QwnbpliB5UAxIpx6zYI8vgxy+1LCROV0zqZSA9
-        4tAvqW4acfCsPZ6gp42i3Y4Yqzrn
-X-Google-Smtp-Source: ABdhPJwYdVRBcpl6U3kf5xQByOpr1kgV3Xvv9euCmgVc7oGku7ni7454Ck5KyafAba1sv25aMh5Dfw==
-X-Received: by 2002:aa7:d613:: with SMTP id c19mr18945350edr.321.1591562275694;
-        Sun, 07 Jun 2020 13:37:55 -0700 (PDT)
+        bh=NZLiQfR5NOXB7nFP3mrlbc8XStqu2T3JsgS9H/cDvAI=;
+        b=iKWcupSGeMc/ddjUyF7GfsIAyfsHUyUcgfS1ByJnr6yRfImEZ2z6WIYLegVgxS3vNt
+         OnJK5fWTLLE8ctSMkHUgvEtZeN9uff+GRK7QQ3SraX+x3Q3oEGpPmmdTPzjYbp3Wsg2h
+         20n/aVjLa1mmo88SFoihiu1xDzW4UlVOEMi9HPVpGGE11Th3PVk8rCzGI+AjC+ZVX5Qr
+         36z9bolN7kbbLqpJPI3DdAKdILcz21EMalAYjqj1lbC4Ggf2EwgnCVjKnqNxK3MzX2Vn
+         Wr4EgtcnwpM9OOzsqpwPv5HxBeF1zmwxyve4Cpz6VIO32Nb29GCfxkkxW1XOUCCd6igE
+         httw==
+X-Gm-Message-State: AOAM533FhbjRFrEPhzEbUV8yhup4j86jHq6w5WoNQvdDfLvwTenGsjJi
+        aHEPTuOh5u33PIKa8EbvUw0=
+X-Google-Smtp-Source: ABdhPJw8kN7Ea74ojjXmxlJV2uq1BDJ4IBNs4jvE0hdufYZnEeQQIibDtofy8ug9oNyMTbXcguhB8g==
+X-Received: by 2002:a1c:4808:: with SMTP id v8mr8230054wma.49.1591563538320;
+        Sun, 07 Jun 2020 13:58:58 -0700 (PDT)
 Received: from [192.168.43.135] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id u13sm9219699ejf.60.2020.06.07.13.37.54
+        by smtp.gmail.com with ESMTPSA id o15sm20144489wmm.31.2020.06.07.13.58.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jun 2020 13:37:55 -0700 (PDT)
+        Sun, 07 Jun 2020 13:58:57 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
@@ -59,6 +59,7 @@ References: <a2184644-34b6-88a2-b022-e8f5e7def071@gmail.com>
  <f7c648e7-f154-f4eb-586f-841f08b845fd@linux.alibaba.com>
  <8accdc46-53c9-cf89-1e61-51e7c269411c@gmail.com>
  <9f540577-0c13-fa4b-43c1-3c4d7cddcb8c@kernel.dk>
+ <13c85adb-6502-f9c7-ed66-9a0adffa2dc8@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -104,12 +105,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: [PATCH v5 2/2] io_uring: avoid unnecessary io_wq_work copy for
  fast poll feature
-Message-ID: <13c85adb-6502-f9c7-ed66-9a0adffa2dc8@gmail.com>
-Date:   Sun, 7 Jun 2020 23:36:35 +0300
+Message-ID: <570f0f74-82a7-2f10-b186-582380200b15@gmail.com>
+Date:   Sun, 7 Jun 2020 23:57:37 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <9f540577-0c13-fa4b-43c1-3c4d7cddcb8c@kernel.dk>
+In-Reply-To: <13c85adb-6502-f9c7-ed66-9a0adffa2dc8@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -118,43 +119,506 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/06/2020 18:02, Jens Axboe wrote:
-> On 6/3/20 7:46 AM, Pavel Begunkov wrote:
->> On 02/06/2020 04:16, Xiaoguang Wang wrote:
->>> hi Jens, Pavel,
+On 07/06/2020 23:36, Pavel Begunkov wrote:
+> On 07/06/2020 18:02, Jens Axboe wrote:
+>> On 6/3/20 7:46 AM, Pavel Begunkov wrote:
+>>> On 02/06/2020 04:16, Xiaoguang Wang wrote:
+>>>> hi Jens, Pavel,
+>>>>
+>>>> Will you have a look at this V5 version? Or we hold on this patchset, and
+>>>> do the refactoring work related io_wq_work firstly.
 >>>
->>> Will you have a look at this V5 version? Or we hold on this patchset, and
->>> do the refactoring work related io_wq_work firstly.
+>>> It's entirely up to Jens, but frankly, I think it'll bring more bugs than
+>>> merits in the current state of things.
 >>
->> It's entirely up to Jens, but frankly, I think it'll bring more bugs than
->> merits in the current state of things.
+>> Well, I'd really like to reduce the overhead where we can, particularly
+>> when the overhead just exists to cater to the slow path.
+>>
+>> Planning on taking the next week off and not do too much, but I'll see
+>> if I can get some testing in with the current patches.
+>>
 > 
-> Well, I'd really like to reduce the overhead where we can, particularly
-> when the overhead just exists to cater to the slow path.
+> I just think it should not be done at expense of robustness.
 > 
-> Planning on taking the next week off and not do too much, but I'll see
-> if I can get some testing in with the current patches.
+> e.g. instead of having tons of if's around ->func, we can get rid of
+> it and issue everything with io_wq_submit_work(). And there are plenty
+> of pros of doing that:
+> - freeing some space in io_kiocb (in req.work in particular)
+> - removing much of stuff with nice negative diffstat
+> - helping this series
+> - even safer than now -- can't be screwed with memcpy(req).
 > 
+> Extra switch-lookup in io-wq shouldn't even be noticeable considering
+> punting overhead. And even though io-wq loses some flexibility, as for
+> me that's fine as long as there is only 1 user.
 
-I just think it should not be done at expense of robustness.
-
-e.g. instead of having tons of if's around ->func, we can get rid of
-it and issue everything with io_wq_submit_work(). And there are plenty
-of pros of doing that:
-- freeing some space in io_kiocb (in req.work in particular)
-- removing much of stuff with nice negative diffstat
-- helping this series
-- even safer than now -- can't be screwed with memcpy(req).
-
-Extra switch-lookup in io-wq shouldn't even be noticeable considering
-punting overhead. And even though io-wq loses some flexibility, as for
-me that's fine as long as there is only 1 user.
+How about diff below? if split and cooked properly.
+3 files changed, 73 insertions(+), 164 deletions(-)
 
 
-And then we can go and fix every other problem until this patch set
-looks good.
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 2bfa9117bc28..a44ad3b98886 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -112,6 +112,7 @@ struct io_wq {
+ 	unsigned long state;
+ 
+ 	free_work_fn *free_work;
++	io_wq_work_fn *do_work;
+ 
+ 	struct task_struct *manager;
+ 	struct user_struct *user;
+@@ -528,7 +529,7 @@ static void io_worker_handle_work(struct io_worker *worker)
+ 
+ 			hash = io_get_work_hash(work);
+ 			linked = old_work = work;
+-			linked->func(&linked);
++			wq->do_work(&linked);
+ 			linked = (old_work == linked) ? NULL : linked;
+ 
+ 			work = next_hashed;
+@@ -785,7 +786,7 @@ static void io_run_cancel(struct io_wq_work *work, struct io_wqe *wqe)
+ 		struct io_wq_work *old_work = work;
+ 
+ 		work->flags |= IO_WQ_WORK_CANCEL;
+-		work->func(&work);
++		wq->do_work(&work);
+ 		work = (work == old_work) ? NULL : work;
+ 		wq->free_work(old_work);
+ 	} while (work);
+@@ -1027,7 +1028,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	int ret = -ENOMEM, node;
+ 	struct io_wq *wq;
+ 
+-	if (WARN_ON_ONCE(!data->free_work))
++	if (WARN_ON_ONCE(!data->free_work || !data->do_work))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	wq = kzalloc(sizeof(*wq), GFP_KERNEL);
+@@ -1041,6 +1042,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	}
+ 
+ 	wq->free_work = data->free_work;
++	wq->do_work = data->do_work;
+ 
+ 	/* caller must already hold a reference to this */
+ 	wq->user = data->user;
+@@ -1097,7 +1099,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 
+ bool io_wq_get(struct io_wq *wq, struct io_wq_data *data)
+ {
+-	if (data->free_work != wq->free_work)
++	if (data->free_work != wq->free_work || data->do_work != wq->do_work)
+ 		return false;
+ 
+ 	return refcount_inc_not_zero(&wq->use_refs);
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index df8a4cd3236d..f3bb596f5a3f 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -85,7 +85,6 @@ static inline void wq_list_del(struct io_wq_work_list *list,
+ 
+ struct io_wq_work {
+ 	struct io_wq_work_node list;
+-	void (*func)(struct io_wq_work **);
+ 	struct files_struct *files;
+ 	struct mm_struct *mm;
+ 	const struct cred *creds;
+@@ -94,9 +93,9 @@ struct io_wq_work {
+ 	pid_t task_pid;
+ };
+ 
+-#define INIT_IO_WORK(work, _func)				\
++#define INIT_IO_WORK(work)					\
+ 	do {							\
+-		*(work) = (struct io_wq_work){ .func = _func };	\
++		*(work) = (struct io_wq_work){};		\
+ 	} while (0)						\
+ 
+ static inline struct io_wq_work *wq_next_work(struct io_wq_work *work)
+@@ -108,10 +107,12 @@ static inline struct io_wq_work *wq_next_work(struct io_wq_work *work)
+ }
+ 
+ typedef void (free_work_fn)(struct io_wq_work *);
++typedef void (io_wq_work_fn)(struct io_wq_work **);
+ 
+ struct io_wq_data {
+ 	struct user_struct *user;
+ 
++	io_wq_work_fn *do_work;
+ 	free_work_fn *free_work;
+ };
+ 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 3aebbf96c123..3bfce882ede5 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -541,6 +541,7 @@ enum {
+ 	REQ_F_POLLED_BIT,
+ 	REQ_F_BUFFER_SELECTED_BIT,
+ 	REQ_F_NO_FILE_TABLE_BIT,
++	REQ_F_QUEUE_TIMEOUT_BIT,
+ 
+ 	/* not a real bit, just to check we're not overflowing the space */
+ 	__REQ_F_LAST_BIT,
+@@ -596,6 +597,8 @@ enum {
+ 	REQ_F_BUFFER_SELECTED	= BIT(REQ_F_BUFFER_SELECTED_BIT),
+ 	/* doesn't need file table for this request */
+ 	REQ_F_NO_FILE_TABLE	= BIT(REQ_F_NO_FILE_TABLE_BIT),
++	/* need to queue linked timeout */
++	REQ_F_QUEUE_TIMEOUT	= BIT(REQ_F_QUEUE_TIMEOUT_BIT),
+ };
+ 
+ struct async_poll {
+@@ -1579,16 +1582,6 @@ static void io_free_req(struct io_kiocb *req)
+ 		io_queue_async_work(nxt);
+ }
+ 
+-static void io_link_work_cb(struct io_wq_work **workptr)
+-{
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-	struct io_kiocb *link;
+-
+-	link = list_first_entry(&req->link_list, struct io_kiocb, link_list);
+-	io_queue_linked_timeout(link);
+-	io_wq_submit_work(workptr);
+-}
+-
+ static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
+ {
+ 	struct io_kiocb *link;
+@@ -1600,7 +1593,7 @@ static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
+ 	*workptr = &nxt->work;
+ 	link = io_prep_linked_timeout(nxt);
+ 	if (link)
+-		nxt->work.func = io_link_work_cb;
++		nxt->flags |= REQ_F_QUEUE_TIMEOUT;
+ }
+ 
+ /*
+@@ -2940,23 +2933,15 @@ static int io_prep_fsync(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return 0;
+ }
+ 
+-static bool io_req_cancelled(struct io_kiocb *req)
+-{
+-	if (req->work.flags & IO_WQ_WORK_CANCEL) {
+-		req_set_fail_links(req);
+-		io_cqring_add_event(req, -ECANCELED);
+-		io_put_req(req);
+-		return true;
+-	}
+-
+-	return false;
+-}
+-
+-static void __io_fsync(struct io_kiocb *req)
++static int io_fsync(struct io_kiocb *req, bool force_nonblock)
+ {
+ 	loff_t end = req->sync.off + req->sync.len;
+ 	int ret;
+ 
++	/* fsync always requires a blocking context */
++	if (force_nonblock)
++		return -EAGAIN;
++
+ 	ret = vfs_fsync_range(req->file, req->sync.off,
+ 				end > 0 ? end : LLONG_MAX,
+ 				req->sync.flags & IORING_FSYNC_DATASYNC);
+@@ -2964,53 +2949,9 @@ static void __io_fsync(struct io_kiocb *req)
+ 		req_set_fail_links(req);
+ 	io_cqring_add_event(req, ret);
+ 	io_put_req(req);
+-}
+-
+-static void io_fsync_finish(struct io_wq_work **workptr)
+-{
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-
+-	if (io_req_cancelled(req))
+-		return;
+-	__io_fsync(req);
+-	io_steal_work(req, workptr);
+-}
+-
+-static int io_fsync(struct io_kiocb *req, bool force_nonblock)
+-{
+-	/* fsync always requires a blocking context */
+-	if (force_nonblock) {
+-		req->work.func = io_fsync_finish;
+-		return -EAGAIN;
+-	}
+-	__io_fsync(req);
+ 	return 0;
+ }
+ 
+-static void __io_fallocate(struct io_kiocb *req)
+-{
+-	int ret;
+-
+-	current->signal->rlim[RLIMIT_FSIZE].rlim_cur = req->fsize;
+-	ret = vfs_fallocate(req->file, req->sync.mode, req->sync.off,
+-				req->sync.len);
+-	current->signal->rlim[RLIMIT_FSIZE].rlim_cur = RLIM_INFINITY;
+-	if (ret < 0)
+-		req_set_fail_links(req);
+-	io_cqring_add_event(req, ret);
+-	io_put_req(req);
+-}
+-
+-static void io_fallocate_finish(struct io_wq_work **workptr)
+-{
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-
+-	if (io_req_cancelled(req))
+-		return;
+-	__io_fallocate(req);
+-	io_steal_work(req, workptr);
+-}
+-
+ static int io_fallocate_prep(struct io_kiocb *req,
+ 			     const struct io_uring_sqe *sqe)
+ {
+@@ -3028,13 +2969,20 @@ static int io_fallocate_prep(struct io_kiocb *req,
+ 
+ static int io_fallocate(struct io_kiocb *req, bool force_nonblock)
+ {
++	int ret;
++
+ 	/* fallocate always requiring blocking context */
+-	if (force_nonblock) {
+-		req->work.func = io_fallocate_finish;
++	if (force_nonblock)
+ 		return -EAGAIN;
+-	}
+ 
+-	__io_fallocate(req);
++	current->signal->rlim[RLIMIT_FSIZE].rlim_cur = req->fsize;
++	ret = vfs_fallocate(req->file, req->sync.mode, req->sync.off,
++				req->sync.len);
++	current->signal->rlim[RLIMIT_FSIZE].rlim_cur = RLIM_INFINITY;
++	if (ret < 0)
++		req_set_fail_links(req);
++	io_cqring_add_event(req, ret);
++	io_put_req(req);
+ 	return 0;
+ }
+ 
+@@ -3479,53 +3427,37 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	    req->close.fd == req->ctx->ring_fd)
+ 		return -EBADF;
+ 
++	req->close.put_file = NULL;
+ 	return 0;
+ }
+ 
+-/* only called when __close_fd_get_file() is done */
+-static void __io_close_finish(struct io_kiocb *req)
+-{
+-	int ret;
+-
+-	ret = filp_close(req->close.put_file, req->work.files);
+-	if (ret < 0)
+-		req_set_fail_links(req);
+-	io_cqring_add_event(req, ret);
+-	fput(req->close.put_file);
+-	io_put_req(req);
+-}
+-
+-static void io_close_finish(struct io_wq_work **workptr)
+-{
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-
+-	/* not cancellable, don't do io_req_cancelled() */
+-	__io_close_finish(req);
+-	io_steal_work(req, workptr);
+-}
+-
+ static int io_close(struct io_kiocb *req, bool force_nonblock)
+ {
++	struct io_close *close = &req->close;
+ 	int ret;
+ 
+-	req->close.put_file = NULL;
+-	ret = __close_fd_get_file(req->close.fd, &req->close.put_file);
+-	if (ret < 0)
+-		return (ret == -ENOENT) ? -EBADF : ret;
++	/* might be already done during nonblock submission */
++	if (!close->put_file) {
++		ret = __close_fd_get_file(close->fd, &close->put_file);
++		if (ret < 0)
++			return (ret == -ENOENT) ? -EBADF : ret;
++	}
+ 
+ 	/* if the file has a flush method, be safe and punt to async */
+-	if (req->close.put_file->f_op->flush && force_nonblock) {
++	if (close->put_file->f_op->flush && force_nonblock) {
+ 		/* avoid grabbing files - we don't need the files */
+ 		req->flags |= REQ_F_NO_FILE_TABLE | REQ_F_MUST_PUNT;
+-		req->work.func = io_close_finish;
+ 		return -EAGAIN;
+ 	}
+ 
+-	/*
+-	 * No ->flush(), safely close from here and just punt the
+-	 * fput() to async context.
+-	 */
+-	__io_close_finish(req);
++	/* No ->flush() or already async, safely close from here */
++	ret = filp_close(close->put_file, req->work.files);
++	if (ret < 0)
++		req_set_fail_links(req);
++	io_cqring_add_event(req, ret);
++	fput(close->put_file);
++	close->put_file = NULL;
++	io_put_req(req);
+ 	return 0;
+ }
+ 
+@@ -3547,38 +3479,20 @@ static int io_prep_sfr(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return 0;
+ }
+ 
+-static void __io_sync_file_range(struct io_kiocb *req)
++static int io_sync_file_range(struct io_kiocb *req, bool force_nonblock)
+ {
+ 	int ret;
+ 
++	/* sync_file_range always requires a blocking context */
++	if (force_nonblock)
++		return -EAGAIN;
++
+ 	ret = sync_file_range(req->file, req->sync.off, req->sync.len,
+ 				req->sync.flags);
+ 	if (ret < 0)
+ 		req_set_fail_links(req);
+ 	io_cqring_add_event(req, ret);
+ 	io_put_req(req);
+-}
+-
+-
+-static void io_sync_file_range_finish(struct io_wq_work **workptr)
+-{
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-
+-	if (io_req_cancelled(req))
+-		return;
+-	__io_sync_file_range(req);
+-	io_steal_work(req, workptr);
+-}
+-
+-static int io_sync_file_range(struct io_kiocb *req, bool force_nonblock)
+-{
+-	/* sync_file_range always requires a blocking context */
+-	if (force_nonblock) {
+-		req->work.func = io_sync_file_range_finish;
+-		return -EAGAIN;
+-	}
+-
+-	__io_sync_file_range(req);
+ 	return 0;
+ }
+ 
+@@ -4000,49 +3914,27 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return 0;
+ }
+ 
+-static int __io_accept(struct io_kiocb *req, bool force_nonblock)
++static int io_accept(struct io_kiocb *req, bool force_nonblock)
+ {
+ 	struct io_accept *accept = &req->accept;
+-	unsigned file_flags;
++	unsigned int file_flags = force_nonblock ? O_NONBLOCK : 0;
+ 	int ret;
+ 
+-	file_flags = force_nonblock ? O_NONBLOCK : 0;
+ 	ret = __sys_accept4_file(req->file, file_flags, accept->addr,
+ 					accept->addr_len, accept->flags,
+ 					accept->nofile);
+ 	if (ret == -EAGAIN && force_nonblock)
+ 		return -EAGAIN;
+-	if (ret == -ERESTARTSYS)
+-		ret = -EINTR;
+-	if (ret < 0)
++	if (ret < 0) {
++		if (ret == -ERESTARTSYS)
++			ret = -EINTR;
+ 		req_set_fail_links(req);
++	}
+ 	io_cqring_add_event(req, ret);
+ 	io_put_req(req);
+ 	return 0;
+ }
+ 
+-static void io_accept_finish(struct io_wq_work **workptr)
+-{
+-	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-
+-	if (io_req_cancelled(req))
+-		return;
+-	__io_accept(req, false);
+-	io_steal_work(req, workptr);
+-}
+-
+-static int io_accept(struct io_kiocb *req, bool force_nonblock)
+-{
+-	int ret;
+-
+-	ret = __io_accept(req, force_nonblock);
+-	if (ret == -EAGAIN && force_nonblock) {
+-		req->work.func = io_accept_finish;
+-		return -EAGAIN;
+-	}
+-	return 0;
+-}
+-
+ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_connect *conn = &req->connect;
+@@ -5434,12 +5326,25 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	return 0;
+ }
+ 
++static void io_link_work_cb(struct io_kiocb *req)
++{
++	struct io_kiocb *link;
++
++	if (!(req->flags & REQ_F_QUEUE_TIMEOUT))
++		return;
++
++	link = list_first_entry(&req->link_list, struct io_kiocb, link_list);
++	io_queue_linked_timeout(link);
++}
++
+ static void io_wq_submit_work(struct io_wq_work **workptr)
+ {
+ 	struct io_wq_work *work = *workptr;
+ 	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
+ 	int ret = 0;
+ 
++	io_link_work_cb(req);
++
+ 	/* if NO_CANCEL is set, we must still run the work */
+ 	if ((work->flags & (IO_WQ_WORK_CANCEL|IO_WQ_WORK_NO_CANCEL)) ==
+ 				IO_WQ_WORK_CANCEL) {
+@@ -5974,7 +5879,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	refcount_set(&req->refs, 2);
+ 	req->task = NULL;
+ 	req->result = 0;
+-	INIT_IO_WORK(&req->work, io_wq_submit_work);
++	INIT_IO_WORK(&req->work);
+ 
+ 	if (unlikely(req->opcode >= IORING_OP_LAST))
+ 		return -EINVAL;
+@@ -6990,6 +6895,7 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx,
+ 
+ 	data.user = ctx->user;
+ 	data.free_work = io_free_work;
++	data.do_work = io_wq_submit_work;
+ 
+ 	if (!(p->flags & IORING_SETUP_ATTACH_WQ)) {
+ 		/* Do QD, or 4 * CPUS, whatever is smallest */
+
 
 -- 
 Pavel Begunkov
-
-

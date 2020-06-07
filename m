@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D05B1F0AF9
-	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 13:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E25A71F0B1F
+	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 14:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbgFGLl3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 7 Jun 2020 07:41:29 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:39129 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726198AbgFGLl3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 07:41:29 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U-phZHG_1591530084;
-Received: from 30.15.203.104(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U-phZHG_1591530084)
+        id S1726455AbgFGMhF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 7 Jun 2020 08:37:05 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:57586 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726447AbgFGMhF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 08:37:05 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R911e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U-pXPed_1591533420;
+Received: from 30.15.203.104(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U-pXPed_1591533420)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 07 Jun 2020 19:41:25 +0800
+          Sun, 07 Jun 2020 20:37:01 +0800
 Subject: Re: [PATCH] io_uring: execute task_work_run() before dropping mm
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, joseph.qi@linux.alibaba.com
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
 References: <20200606151248.17663-1-xiaoguang.wang@linux.alibaba.com>
- <a23f96f9-fbe8-8dba-a1cd-20a3f121d868@kernel.dk>
+ <350132ea-aade-27f4-1fcc-ba0539a459a1@gmail.com>
 From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <948c2d50-1b5a-27df-bda3-503d2f266405@linux.alibaba.com>
-Date:   Sun, 7 Jun 2020 19:41:24 +0800
+Message-ID: <96f61793-3b44-6de1-c3b6-b54e86d4c203@linux.alibaba.com>
+Date:   Sun, 7 Jun 2020 20:37:00 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.1
 MIME-Version: 1.0
-In-Reply-To: <a23f96f9-fbe8-8dba-a1cd-20a3f121d868@kernel.dk>
+In-Reply-To: <350132ea-aade-27f4-1fcc-ba0539a459a1@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
@@ -36,7 +36,7 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 hi,
 
-> On 6/6/20 9:12 AM, Xiaoguang Wang wrote:
+> On 06/06/2020 18:12, Xiaoguang Wang wrote:
 >> While testing io_uring in our internal kernel, note it's not upstream
 >> kernel, we see below panic:
 >> [  872.498723] x29: ffff00002d553cf0 x28: 0000000000000000
@@ -62,20 +62,77 @@ hi,
 >>
 >> The reason is that once io_sq_thread has a valid mm, schedule subsystem
 >> may call task_tick_numa() adding a task_numa_work() callback, which will
->> visit mm, then above panic will happen.>
+>> visit mm, then above panic will happen.
+>>
 >> To fix this bug, only call task_work_run() before dropping mm.
 > 
-> That's a bug outside of io_uring, you'll want to backport this patch
-> from 5.7:
-> 
-> commit 18f855e574d9799a0e7489f8ae6fd8447d0dd74a
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Tue May 26 09:38:31 2020 -0600
-> 
->      sched/fair: Don't NUMA balance for kthreadsThanks, it's a better fix than mine, will backport it.
+> So, the problem is that poll/async paths re-issue requests with
+> __io_queue_sqe(), which doesn't care about current->mm, and which
+> can be NULL for io_sq_thread(). Right?
+No, above panic is not triggered by poll/async paths.
+See below code path:
+==> task_tick_fair()
+====> task_tick_numa()
+======> task_work_add, work is task_numa_work, which will visit mm.
+
+In sqpoll mode, there maybe are sqes that need mm, then above codes
+maybe executed by schedule subsystem. In io_sq_thread, we drop mm before
+task_work_run, if there is a task_numa_work, panic occurs.
 
 Regards,
 Xiaoguang Wang
-
 > 
+>>
+>> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+>> ---
+>>   fs/io_uring.c | 15 ++++++++-------
+>>   1 file changed, 8 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 6391a00ff8b7..32381984b2a6 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -6134,6 +6134,13 @@ static int io_sq_thread(void *data)
+>>   		 * to enter the kernel to reap and flush events.
+>>   		 */
+>>   		if (!to_submit || ret == -EBUSY) {
+>> +			/*
+>> +			 * Current task context may already have valid mm, that
+>> +			 * means some works that visit mm may have been queued,
+>> +			 * so we must execute the works before dropping mm.
+>> +			 */
+>> +			if (current->task_works)
+>> +				task_work_run();
+> 
+> Even though you're not dropping mm, the thread might not have it in the first
+> place. see how it's done in io_init_req(). How about setting mm either lazily
+> in io_poll_task_func()/io_async_task_func(), or before task_work_run() in
+> io_sq_thread().
+> 
+>>   			/*
+>>   			 * Drop cur_mm before scheduling, we can't hold it for
+>>   			 * long periods (or over schedule()). Do this before
+>> @@ -6152,8 +6159,6 @@ static int io_sq_thread(void *data)
+>>   			if (!list_empty(&ctx->poll_list) ||
+>>   			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
+>>   			    !percpu_ref_is_dying(&ctx->refs))) {
+>> -				if (current->task_works)
+>> -					task_work_run();
+>>   				cond_resched();
+>>   				continue;
+>>   			}
+>> @@ -6185,11 +6190,7 @@ static int io_sq_thread(void *data)
+>>   					finish_wait(&ctx->sqo_wait, &wait);
+>>   					break;
+>>   				}
+>> -				if (current->task_works) {
+>> -					task_work_run();
+>> -					finish_wait(&ctx->sqo_wait, &wait);
+>> -					continue;
+>> -				}
+>> +
+>>   				if (signal_pending(current))
+>>   					flush_signals(current);
+>>   				schedule();
+>>
 > 

@@ -2,137 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E25A71F0B1F
-	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 14:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FD401F0BF3
+	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 16:37:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbgFGMhF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 7 Jun 2020 08:37:05 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:57586 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726447AbgFGMhF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 08:37:05 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R911e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U-pXPed_1591533420;
-Received: from 30.15.203.104(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U-pXPed_1591533420)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 07 Jun 2020 20:37:01 +0800
-Subject: Re: [PATCH] io_uring: execute task_work_run() before dropping mm
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-References: <20200606151248.17663-1-xiaoguang.wang@linux.alibaba.com>
- <350132ea-aade-27f4-1fcc-ba0539a459a1@gmail.com>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <96f61793-3b44-6de1-c3b6-b54e86d4c203@linux.alibaba.com>
-Date:   Sun, 7 Jun 2020 20:37:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1726528AbgFGOhe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 7 Jun 2020 10:37:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44862 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726493AbgFGOhe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 10:37:34 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 169DBC08C5C3
+        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 07:37:34 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id b201so7363124pfb.0
+        for <io-uring@vger.kernel.org>; Sun, 07 Jun 2020 07:37:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=e3MwtDOTxbOR7lPYLTdmQGe808qHDBniGvSTepYtqvs=;
+        b=IxFkowZYbVO5oYaB3JlNqJyrkUVf5M3JQhPA5kkN9RXaomk/wKQQx8SaH/FFt12dwu
+         Ut0e0vEuzI6trkek87aYAibOmQNEK1pLEh+lpFSIk78PaM/IrHFQWLMl5tXdsvx9KCco
+         ix7rohyasSjEd0Ekc/Gh+hU0bG0xk2f5ay4Qv8VeCJy/wxTNb7c7JP1JoOhkPpEiMpdL
+         lgUGFVUBPAXOIjoLm0i/1FEbF5KSIdMEPZwSGzTnGkRLBZknqJVnVyLfiqs4fQf0KKBk
+         Q/tAvegDgAzuQT/c50pzthuXbSNyST6Q3FsD+QFj1hlTU736Bk76NO5lEZ/zZgcXIidi
+         LQbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e3MwtDOTxbOR7lPYLTdmQGe808qHDBniGvSTepYtqvs=;
+        b=cJwY/QGQTa3oD8FoiYbx6y31k4qdyDVMSB3HnPxk5G1Bm3u7UOCoYt/hN6POlWjV+3
+         Zee53LKxCptug39dZeiEM0FijuHugaltpV/gs6MJhpU/XHQYPtqPcRsDAT2nLS5sO8Y6
+         rUhOQH9FDH5kGp1dunQq9KdjajXhOlCYHOkxgSiF2UuOABowbHRQRmFc4g4nSzbKKJe/
+         AFGwl7J9UwknIcjfITtVC6Z8vwzSPFhvmtCZ7Q45JFeoWmR/DTFxTlMdvwzNvurR1xHM
+         gxj/GAtZQqEcuU+fkuvdDyGkhDuLt3flfwTPs3OOrIoNVsJ6GDrEmC88rUw75DZfxkFS
+         o/Tw==
+X-Gm-Message-State: AOAM533HhRntqgQHLNPFOGI1dtBr0mX3Re+NG67mw5tX4qLaTmgPQux6
+        8pLEVz7ME6Plf4L6PLMVYHd017vBmmHuSw==
+X-Google-Smtp-Source: ABdhPJzMB7SOW76GXhxzQWmrBOEW5Ev+uliclYVdBqBbmdD2uVA80SlQyn2UBHFcuv36+YDfPmgFGQ==
+X-Received: by 2002:a65:5349:: with SMTP id w9mr17068580pgr.281.1591540653048;
+        Sun, 07 Jun 2020 07:37:33 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id o25sm3764132pgn.84.2020.06.07.07.37.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Jun 2020 07:37:32 -0700 (PDT)
+Subject: Re: io_uring_queue_exit is REALLY slow
+To:     Clay Harris <bugs@claycon.org>, io-uring@vger.kernel.org
+References: <20200607035555.tusxvwejhnb5lz2m@ps29521.dreamhostps.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c9446121-3229-565c-b946-f0efe6da52ce@kernel.dk>
+Date:   Sun, 7 Jun 2020 08:37:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <350132ea-aade-27f4-1fcc-ba0539a459a1@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200607035555.tusxvwejhnb5lz2m@ps29521.dreamhostps.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
+On 6/6/20 9:55 PM, Clay Harris wrote:
+> So, I realize that this probably isn't something that you've looked
+> at yet.  But, I was interested in a different criteria looking at
+> io_uring.  That is how efficient it is for small numbers of requests
+> which don't transfer much data.  In other words, what is the minimum
+> amount of io_uring work for which a program speed-up can be obtained.
+> I realize that this is highly dependent on how much overlap can be
+> gained with async processing.
+> 
+> In order to get a baseline, I wrote a test program which performs
+> 4 opens, followed by 4 read + closes.  For the baseline I
+> intentionally used files in /proc so that there would be minimum
+> async and I could set IOSQE_ASYNC later.  I was quite surprised
+> by the result:  Almost the entire program wall time was used in
+> the io_uring_queue_exit() call.
+> 
+> I wrote another test program which does just inits followed by exits.
+> There are clock_gettime()s around the io_uring_queue_init(8, &ring, 0)
+> and io_uring_queue_exit() calls and I printed the ratio of the
+> io_uring_queue_exit() elapsed time and the sum of elapsed time of
+> both calls.
+> 
+> The result varied between 0.94 and 0.99.  In other words, exit is
+> between 16 and 100 times slower than init.  Average ratio was
+> around 0.97.  Looking at the liburing code, exit does just what
+> I'd expect (unmap pages and close io_uring fd).
+> 
+> I would have bet the ratio would be less than 0.50.  No
+> operations were ever performed by the ring, so there should be
+> minimal cleanup.  Even if the kernel needed to do a bunch of
+> cleanup, it shouldn't need the pages mapped into user space to work;
+> same thing for the fd being open in the user process.
+> 
+> Seems like there is some room for optimization here.
 
-> On 06/06/2020 18:12, Xiaoguang Wang wrote:
->> While testing io_uring in our internal kernel, note it's not upstream
->> kernel, we see below panic:
->> [  872.498723] x29: ffff00002d553cf0 x28: 0000000000000000
->> [  872.508973] x27: ffff807ef691a0e0 x26: 0000000000000000
->> [  872.519116] x25: 0000000000000000 x24: ffff0000090a7980
->> [  872.529184] x23: ffff000009272060 x22: 0000000100022b11
->> [  872.539144] x21: 0000000046aa5668 x20: ffff80bee8562b18
->> [  872.549000] x19: ffff80bee8562080 x18: 0000000000000000
->> [  872.558876] x17: 0000000000000000 x16: 0000000000000000
->> [  872.568976] x15: 0000000000000000 x14: 0000000000000000
->> [  872.578762] x13: 0000000000000000 x12: 0000000000000000
->> [  872.588474] x11: 0000000000000000 x10: 0000000000000c40
->> [  872.598324] x9 : ffff000008100c00 x8 : 000000007ffff000
->> [  872.608014] x7 : ffff80bee8562080 x6 : ffff80beea862d30
->> [  872.617709] x5 : 0000000000000000 x4 : ffff80beea862d48
->> [  872.627399] x3 : ffff80bee8562b18 x2 : 0000000000000000
->> [  872.637044] x1 : ffff0000090a7000 x0 : 0000000000208040
->> [  872.646575] Call trace:
->> [  872.653139]  task_numa_work+0x4c/0x310
->> [  872.660916]  task_work_run+0xb0/0xe0
->> [  872.668400]  io_sq_thread+0x164/0x388
->> [  872.675829]  kthread+0x108/0x138
->>
->> The reason is that once io_sq_thread has a valid mm, schedule subsystem
->> may call task_tick_numa() adding a task_numa_work() callback, which will
->> visit mm, then above panic will happen.
->>
->> To fix this bug, only call task_work_run() before dropping mm.
-> 
-> So, the problem is that poll/async paths re-issue requests with
-> __io_queue_sqe(), which doesn't care about current->mm, and which
-> can be NULL for io_sq_thread(). Right?
-No, above panic is not triggered by poll/async paths.
-See below code path:
-==> task_tick_fair()
-====> task_tick_numa()
-======> task_work_add, work is task_numa_work, which will visit mm.
+Can you share your test case? And what kernel are you using, that's
+kind of important.
 
-In sqpoll mode, there maybe are sqes that need mm, then above codes
-maybe executed by schedule subsystem. In io_sq_thread, we drop mm before
-task_work_run, if there is a task_numa_work, panic occurs.
+There's no reason for teardown to be slow, except if you have
+pending IO that we need to either cancel or wait for. Due to
+other reasons, newer kernels will have most/some parts of
+the teardown done out-of-line.
 
-Regards,
-Xiaoguang Wang
-> 
->>
->> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
->> ---
->>   fs/io_uring.c | 15 ++++++++-------
->>   1 file changed, 8 insertions(+), 7 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 6391a00ff8b7..32381984b2a6 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -6134,6 +6134,13 @@ static int io_sq_thread(void *data)
->>   		 * to enter the kernel to reap and flush events.
->>   		 */
->>   		if (!to_submit || ret == -EBUSY) {
->> +			/*
->> +			 * Current task context may already have valid mm, that
->> +			 * means some works that visit mm may have been queued,
->> +			 * so we must execute the works before dropping mm.
->> +			 */
->> +			if (current->task_works)
->> +				task_work_run();
-> 
-> Even though you're not dropping mm, the thread might not have it in the first
-> place. see how it's done in io_init_req(). How about setting mm either lazily
-> in io_poll_task_func()/io_async_task_func(), or before task_work_run() in
-> io_sq_thread().
-> 
->>   			/*
->>   			 * Drop cur_mm before scheduling, we can't hold it for
->>   			 * long periods (or over schedule()). Do this before
->> @@ -6152,8 +6159,6 @@ static int io_sq_thread(void *data)
->>   			if (!list_empty(&ctx->poll_list) ||
->>   			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
->>   			    !percpu_ref_is_dying(&ctx->refs))) {
->> -				if (current->task_works)
->> -					task_work_run();
->>   				cond_resched();
->>   				continue;
->>   			}
->> @@ -6185,11 +6190,7 @@ static int io_sq_thread(void *data)
->>   					finish_wait(&ctx->sqo_wait, &wait);
->>   					break;
->>   				}
->> -				if (current->task_works) {
->> -					task_work_run();
->> -					finish_wait(&ctx->sqo_wait, &wait);
->> -					continue;
->> -				}
->> +
->>   				if (signal_pending(current))
->>   					flush_signals(current);
->>   				schedule();
->>
-> 
+-- 
+Jens Axboe
+

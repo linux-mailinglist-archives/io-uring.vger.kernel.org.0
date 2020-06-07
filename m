@@ -2,54 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D41F21F0CBB
-	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 18:02:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9012B1F0FC8
+	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 22:37:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbgFGQCu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 7 Jun 2020 12:02:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58296 "EHLO
+        id S1727771AbgFGUh7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 7 Jun 2020 16:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbgFGQCt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 12:02:49 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16915C08C5C3
-        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 09:02:48 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id x6so14714898wrm.13
-        for <io-uring@vger.kernel.org>; Sun, 07 Jun 2020 09:02:47 -0700 (PDT)
+        with ESMTP id S1726993AbgFGUh6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Jun 2020 16:37:58 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37436C08C5C3
+        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 13:37:57 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id k8so11726963edq.4
+        for <io-uring@vger.kernel.org>; Sun, 07 Jun 2020 13:37:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=eV26UY3HUxRVp8eu8Pm0JXvbzn5JWeCOMxq4MsnuVtE=;
-        b=u8mOXxDIzNnHP4bESHi9GsYTuIY1G8QTZBVBGgabfuXvGjt7gEUi2nZ3w5vlm9qW7G
-         Izlyg3HIpcoTYb+NBj619Xh3z+SDfj8BFq+1US69l7rh6O1B3VG5UXlFeU1lzeeh61YY
-         TalruWnJunB21ho86mc1poW2c+zgw/ifQpxnXE3oCRdBqD2tpBKvMI8LeVnUUtUNTSxg
-         iqVZayYVAiDxeCapi7aeJlL8FHL8xo2w+lIYf44f9N7J5w9kc82jMNiRtwZwAQ+vS/xm
-         i1VGVHsNjTqFNf9/Fa2m1Hrx63kjKrJW+xlL9g+HOlf/KLcwiLszsOMZx6O3VCdJNI04
-         Rj4w==
+        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8ZIipCxC1jw2HQkvBuNwlbfm7OqUVInrBjIQtsBnLd8=;
+        b=SxVBqBiN9dxloZF0LAvsFhB1xm6npQJnybbRfC298Vi1wXodApJZ+J4ZFbPtQFpq8y
+         CbogiDz3D93ZTix96Md3CrWZkbiHvjQ/rUH/bMHDw52ORVP8czr8T2QGwVF+LobxNRao
+         ckLKqCa6JO/RhJQ62M0Jv0xaV07OYAdvq7MmEIE3UDMSCtwAQMc5LhxMDNZIRzl59aqv
+         bcAwemaQRg7Hzp8dVm1xFwgzqeye1vWXCVprsFPqEarOpLEqhkryfge5Mpqiu/pdh8OM
+         Vzr+JzZFTvZnkwu7Sqq7M2n4p0s0oEqVtO48vHDaKiqo9SmUPkfYHgK94hRpkj0m+fIU
+         k/wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:autocrypt:subject:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=eV26UY3HUxRVp8eu8Pm0JXvbzn5JWeCOMxq4MsnuVtE=;
-        b=ItZh6ZP6OfsvmSk1sDOD8hrJ4RwWSJPl1geEHr8pazRfp3sf08X6hgHCeKoI40YWhU
-         l2q7KudUVjtkAta1NhXLGY4xGVdLChJJMDY/w5IqTY5vXfaoQhgb3My2YTxlByobqtRy
-         IvC4vt1EQGQeViPW5fMhPleCOoj8wO4YZznwBkCjytYxQVacoZGrhOXNZOBjvNwBqCNf
-         e0nPFkmyu8w/sgfmCKAgbCMZX87BVUfA4kmlxDF3lwWp29DJ6G9E9Z0eWVrjr6PgP+di
-         9z7X/SYQ1Z77KTvOErFWIJ7r5VsDMlPnB2K/FKV52HRqDdswgbWu3IpfDcMUJpxz8alX
-         5PLA==
-X-Gm-Message-State: AOAM531kGc9pXft+H3xk0CXb8NJqMW59gW3MIsSyuLqnkQ8tHDGoIuXT
-        Qdf6MGQQQVOG4wLs7CmgWab8Od5m
-X-Google-Smtp-Source: ABdhPJxWYOw2ZOWPdXmYVsGt0wJsvtMs2Bs6pCY+Dj0WtzGm3uoYYQhl5h9DXxq5MG5iI3tRCD4hrw==
-X-Received: by 2002:adf:d84a:: with SMTP id k10mr19186075wrl.336.1591545766755;
-        Sun, 07 Jun 2020 09:02:46 -0700 (PDT)
-Received: from [192.168.43.101] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id k26sm19825738wmi.27.2020.06.07.09.02.45
+        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=8ZIipCxC1jw2HQkvBuNwlbfm7OqUVInrBjIQtsBnLd8=;
+        b=t9BOD5DpsnGd36PHPBVP5kFv9rQVBmPDuo59wz0jJcnheU1XK7V2B/K57uG+e5R38C
+         EZgh8h98yh1jFnfDTVpPHV4jG+2hF6cwZzWRDb3O9DKoJF3sQNB6KoXHQAJzZ9s3qFRu
+         yiUl+TDXyWnzG7c5UYsRdTtkwrzsLrG9snqy5dKy2q2w0K4sRCceSYGwcv0RitoSZbWj
+         s94hlXaTZIcEUhyoiA87SiCD3gYSqpNFNyjqIDjU9c2p1ikO/ZjR5OjDcG239OKNYngv
+         zcPkk4AGRG47cVM5IWv84URIkh8zz5vHUoU+NZ0J052MA+AUB5iWaUY9ZBLsAEG4G4t3
+         9ByQ==
+X-Gm-Message-State: AOAM532Dg2hrDx6OE7QwnbpliB5UAxIpx6zYI8vgxy+1LCROV0zqZSA9
+        4tAvqW4acfCsPZ6gp42i3Y4Yqzrn
+X-Google-Smtp-Source: ABdhPJwYdVRBcpl6U3kf5xQByOpr1kgV3Xvv9euCmgVc7oGku7ni7454Ck5KyafAba1sv25aMh5Dfw==
+X-Received: by 2002:aa7:d613:: with SMTP id c19mr18945350edr.321.1591562275694;
+        Sun, 07 Jun 2020 13:37:55 -0700 (PDT)
+Received: from [192.168.43.135] ([5.100.193.151])
+        by smtp.gmail.com with ESMTPSA id u13sm9219699ejf.60.2020.06.07.13.37.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jun 2020 09:02:46 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>
+        Sun, 07 Jun 2020 13:37:55 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     joseph.qi@linux.alibaba.com
+References: <a2184644-34b6-88a2-b022-e8f5e7def071@gmail.com>
+ <20200601045626.9291-1-xiaoguang.wang@linux.alibaba.com>
+ <20200601045626.9291-2-xiaoguang.wang@linux.alibaba.com>
+ <f7c648e7-f154-f4eb-586f-841f08b845fd@linux.alibaba.com>
+ <8accdc46-53c9-cf89-1e61-51e7c269411c@gmail.com>
+ <9f540577-0c13-fa4b-43c1-3c4d7cddcb8c@kernel.dk>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -93,12 +102,14 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: [BUG] ->flush and links
-Message-ID: <34eb5e5a-8d37-0cae-be6c-c6ac4d85b5d4@gmail.com>
-Date:   Sun, 7 Jun 2020 19:01:27 +0300
+Subject: Re: [PATCH v5 2/2] io_uring: avoid unnecessary io_wq_work copy for
+ fast poll feature
+Message-ID: <13c85adb-6502-f9c7-ed66-9a0adffa2dc8@gmail.com>
+Date:   Sun, 7 Jun 2020 23:36:35 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <9f540577-0c13-fa4b-43c1-3c4d7cddcb8c@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -107,106 +118,43 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There is a problem with io_uring_cancel_files -- it doesn't care about
-links. If a request with ->files is not a head of a link, it won't be
-found it in io-wq or elsewhere, and will wait for the head to be completed.
-The problem is when the head won't ever complete.
+On 07/06/2020 18:02, Jens Axboe wrote:
+> On 6/3/20 7:46 AM, Pavel Begunkov wrote:
+>> On 02/06/2020 04:16, Xiaoguang Wang wrote:
+>>> hi Jens, Pavel,
+>>>
+>>> Will you have a look at this V5 version? Or we hold on this patchset, and
+>>> do the refactoring work related io_wq_work firstly.
+>>
+>> It's entirely up to Jens, but frankly, I think it'll bring more bugs than
+>> merits in the current state of things.
+> 
+> Well, I'd really like to reduce the overhead where we can, particularly
+> when the overhead just exists to cater to the slow path.
+> 
+> Planning on taking the next week off and not do too much, but I'll see
+> if I can get some testing in with the current patches.
+> 
 
-e.g. req1: read empty pipe -> req2: openat
-This leaves an uninterruptedly and indefinitely sleeping process.
-see liburing patch below.
+I just think it should not be done at expense of robustness.
 
-I was thinking about making dependant links traversable by io-wq cancel().
+e.g. instead of having tons of if's around ->func, we can get rid of
+it and issue everything with io_wq_submit_work(). And there are plenty
+of pros of doing that:
+- freeing some space in io_kiocb (in req.work in particular)
+- removing much of stuff with nice negative diffstat
+- helping this series
+- even safer than now -- can't be screwed with memcpy(req).
 
-The similar problem can manifest itself with pending drained requests,
-but solving this one would need cancellation of every prior request
-in the drain queue, that's kind of nasty side effect for closing an
-fd alias.
+Extra switch-lookup in io-wq shouldn't even be noticeable considering
+punting overhead. And even though io-wq loses some flexibility, as for
+me that's fine as long as there is only 1 user.
 
-Any thoughts how to better deal with it?
 
-diff --git a/test/lfs-openat.c b/test/lfs-openat.c
-index d69096e..9fb96b7 100644
---- a/test/lfs-openat.c
-+++ b/test/lfs-openat.c
-@@ -75,6 +75,58 @@ static int prepare_file(int dfd, const char* fn)
- 	return res < 0 ? res : 0;
- }
- 
-+static int test_linked_files(int dfd, const char *fn)
-+{
-+	struct io_uring ring;
-+	struct io_uring_sqe *sqe;
-+	char buffer[128];
-+	struct iovec iov = {.iov_base = buffer, .iov_len = sizeof(buffer), };
-+	int ret, fd;
-+	int fds[2];
-+
-+	ret = io_uring_queue_init(10, &ring, 0);
-+	if (ret < 0)
-+		DIE("failed to init io_uring: %s\n", strerror(-ret));
-+
-+	if (pipe(fds)) {
-+		perror("pipe");
-+		return 1;
-+	}
-+
-+	sqe = io_uring_get_sqe(&ring);
-+	if (!sqe) {
-+		printf("get sqe failed\n");
-+		return -1;
-+	}
-+	io_uring_prep_readv(sqe, fds[0], &iov, 1, 0);
-+	sqe->flags |= IOSQE_IO_LINK;
-+
-+	sqe = io_uring_get_sqe(&ring);
-+	if (!sqe) {
-+		fprintf(stderr, "failed to get sqe\n");
-+		return 1;
-+	}
-+	io_uring_prep_openat(sqe, dfd, fn, OPEN_FLAGS, OPEN_MODE);
-+
-+	ret = io_uring_submit(&ring);
-+	if (ret != 2) {
-+		fprintf(stderr, "failed to submit openat: %s\n", strerror(-ret));
-+		return 1;
-+	}
-+
-+	fd = dup(ring.ring_fd);
-+	if (fd < 0) {
-+		fprintf(stderr, "dup() failed: %s\n", strerror(-fd));
-+		return 1;
-+	}
-+
-+	/* io_uring->flush() */
-+	close(fd);
-+
-+	io_uring_queue_exit(&ring);
-+	return 0;
-+}
-+
- int main(int argc, char *argv[])
- {
- 	const char *fn = "io_uring_openat_test";
-@@ -93,7 +145,17 @@ int main(int argc, char *argv[])
- 		return 1;
- 
- 	ret = open_io_uring(&ring, dfd, fn);
-+	if (ret) {
-+		fprintf(stderr, "open_io_uring() failed\n");
-+		goto out;
-+	}
- 
-+	ret = test_linked_files(dfd, fn);
-+	if (ret) {
-+		fprintf(stderr, "test_linked_files() failed\n");
-+		goto out;
-+	}
-+out:
- 	io_uring_queue_exit(&ring);
- 	close(dfd);
- 	unlink("/tmp/io_uring_openat_test");
-
+And then we can go and fix every other problem until this patch set
+looks good.
 
 -- 
 Pavel Begunkov
+
+

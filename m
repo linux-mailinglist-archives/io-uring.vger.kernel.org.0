@@ -2,111 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80D0B1F082B
-	for <lists+io-uring@lfdr.de>; Sat,  6 Jun 2020 20:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6D681F0977
+	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2020 05:55:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbgFFSuU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 6 Jun 2020 14:50:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60738 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728823AbgFFSuU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Jun 2020 14:50:20 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CFADC03E96A
-        for <io-uring@vger.kernel.org>; Sat,  6 Jun 2020 11:50:20 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id h95so4235607pje.4
-        for <io-uring@vger.kernel.org>; Sat, 06 Jun 2020 11:50:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/uDoYpv2bKP60MocQhrXLMLY7UrOiW0rzkg/PCuwskk=;
-        b=hYa7N7my/ahO7orHcXEdaLVldPgCFeA/KOtWrb4gUEwcaOmu6QB/Oyoc1xRdfFHtqv
-         kvpU8lZzlt0/vuvyxsDLChBoH1Zw3kaa/W31AxamekGpSoPMmZMRJN/THJI7ikF1Ehbv
-         rr+7LRd1GSezCLXAPIvlDYQQmyTS4GScDXAXGoMoFgOUZyzWfYqGu8BLtOu9hs1q1Kd8
-         vw4Mz5pG0yt26NVeduPZHFur9AlCGKFgStZV+pAgHa/vjv/hhlzdSSTDfq08qOM6x2ot
-         +/4FXAkQ5+DpfsWdZH1depqBGctfohloWHPyr/fBiP+oVF7q9aQ5yUKGAvtba8hk7O0u
-         6B6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/uDoYpv2bKP60MocQhrXLMLY7UrOiW0rzkg/PCuwskk=;
-        b=DeqThnK8+hED48jGMiC1dcmBVgxdoHSmKPLgOlxFrtkFmIjPmplzOGfNPrAc34S9nu
-         crkrU1Br64Ng9Gw/1tT059e9OrhPHTXXDCNfKRETR5QHpyM1rTPO1nO1eB0J/B855Xxc
-         q3pBBc/UH864b/HMMGHgMuSeQkR/gsFm+sI3/vGVtuK5akgRVbK4TVF+1nVCDEw7Kp5R
-         mP1i47ad2w8/Jcu1AoeYR8IrVWl4Gg0TOYia7Zf6iM5zVfAWBsqMi+naipBYwuve0VEo
-         tiKDBOulljVnCXXidmZjO5vzyVXO92OLfgToZqi2QcLSGdyTyejq0krfkXNtKO0TEdVd
-         zm2Q==
-X-Gm-Message-State: AOAM533Dqsa+EyWpLGMl+B2vDCrYuNpbFYYWxgaXukGCEno/zAkto0Hi
-        AXuIkLm4BQfmmIploTxJ4PwN2eG2i9B7Iw==
-X-Google-Smtp-Source: ABdhPJz8hXxkRjnMGWbRUkvoUPoYdQAombPtWubB+h2Ro9NuXoMPQgKdFa+kxtnE2F5feDKnocmo4Q==
-X-Received: by 2002:a17:90a:43c7:: with SMTP id r65mr8871182pjg.76.1591469419374;
-        Sat, 06 Jun 2020 11:50:19 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j16sm2776423pfa.179.2020.06.06.11.50.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Jun 2020 11:50:18 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: execute task_work_run() before dropping mm
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, joseph.qi@linux.alibaba.com
-References: <20200606151248.17663-1-xiaoguang.wang@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a23f96f9-fbe8-8dba-a1cd-20a3f121d868@kernel.dk>
-Date:   Sat, 6 Jun 2020 12:50:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1726035AbgFGDz5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 6 Jun 2020 23:55:57 -0400
+Received: from lavender.maple.relay.mailchannels.net ([23.83.214.99]:3284 "EHLO
+        lavender.maple.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725818AbgFGDz4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Jun 2020 23:55:56 -0400
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id A4BBA541124
+        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 03:55:55 +0000 (UTC)
+Received: from pdx1-sub0-mail-a55.g.dreamhost.com (100-96-137-11.trex.outbound.svc.cluster.local [100.96.137.11])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 1B7C454110A
+        for <io-uring@vger.kernel.org>; Sun,  7 Jun 2020 03:55:55 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from pdx1-sub0-mail-a55.g.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
+        by 0.0.0.0:2500 (trex/5.18.8);
+        Sun, 07 Jun 2020 03:55:55 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
+X-MailChannels-Auth-Id: dreamhost
+X-Whistle-Hook: 42f23df46f847e2c_1591502155325_1939362845
+X-MC-Loop-Signature: 1591502155324:3271733420
+X-MC-Ingress-Time: 1591502155324
+Received: from pdx1-sub0-mail-a55.g.dreamhost.com (localhost [127.0.0.1])
+        by pdx1-sub0-mail-a55.g.dreamhost.com (Postfix) with ESMTP id D2D6495B6B
+        for <io-uring@vger.kernel.org>; Sat,  6 Jun 2020 20:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=claycon.org; h=date:from
+        :to:subject:message-id:mime-version:content-type; s=claycon.org;
+         bh=Nl0c42P13IhzxA9INFqA5H8ad0k=; b=CsXseoxveeBoh6yGakKn3zQRruw1
+        NWyiTA0Y2gMuWrQWU4rOke/JLgU75y4x+s734UgSMdclxeLOv5OoCWQHfp5Io82v
+        +MAq4ZFeonQgjxxOQfxJCXaW6Ah14spId5v17u5y8LCOLuq5DOE/wbk0nxbbyH0P
+        YgxI8c7pRcvi9BE=
+Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cosmos@claycon.org)
+        by pdx1-sub0-mail-a55.g.dreamhost.com (Postfix) with ESMTPSA id A2B7B95B9C
+        for <io-uring@vger.kernel.org>; Sat,  6 Jun 2020 20:55:54 -0700 (PDT)
+Date:   Sat, 6 Jun 2020 22:55:55 -0500
+X-DH-BACKEND: pdx1-sub0-mail-a55
+From:   Clay Harris <bugs@claycon.org>
+To:     io-uring@vger.kernel.org
+Subject: io_uring_queue_exit is REALLY slow
+Message-ID: <20200607035555.tusxvwejhnb5lz2m@ps29521.dreamhostps.com>
 MIME-Version: 1.0
-In-Reply-To: <20200606151248.17663-1-xiaoguang.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-VR-OUT-STATUS: OK
+X-VR-OUT-SCORE: 0
+X-VR-OUT-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduhedrudegjedggeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuggftfghnshhusghstghrihgsvgdpffftgfetoffjqffuvfenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkgggtuggfsehttdertddtredvnecuhfhrohhmpeevlhgrhicujfgrrhhrihhsuceosghughhssegtlhgrhigtohhnrdhorhhgqeenucggtffrrghtthgvrhhnpeeufedvieejudekveekgeekffdtvedufedtkeffffduudeitdduleefudegffdujeenucfkphepieelrdduieefrddukeeirdejgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehpshdvleehvddurdgurhgvrghmhhhoshhtphhsrdgtohhmpdhinhgvthepieelrdduieefrddukeeirdejgedprhgvthhurhhnqdhprghthhepvehlrgihucfjrghrrhhishcuoegsuhhgshestghlrgihtghonhdrohhrgheqpdhmrghilhhfrhhomhepsghughhssegtlhgrhigtohhnrdhorhhgpdhnrhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/6/20 9:12 AM, Xiaoguang Wang wrote:
-> While testing io_uring in our internal kernel, note it's not upstream
-> kernel, we see below panic:
-> [  872.498723] x29: ffff00002d553cf0 x28: 0000000000000000
-> [  872.508973] x27: ffff807ef691a0e0 x26: 0000000000000000
-> [  872.519116] x25: 0000000000000000 x24: ffff0000090a7980
-> [  872.529184] x23: ffff000009272060 x22: 0000000100022b11
-> [  872.539144] x21: 0000000046aa5668 x20: ffff80bee8562b18
-> [  872.549000] x19: ffff80bee8562080 x18: 0000000000000000
-> [  872.558876] x17: 0000000000000000 x16: 0000000000000000
-> [  872.568976] x15: 0000000000000000 x14: 0000000000000000
-> [  872.578762] x13: 0000000000000000 x12: 0000000000000000
-> [  872.588474] x11: 0000000000000000 x10: 0000000000000c40
-> [  872.598324] x9 : ffff000008100c00 x8 : 000000007ffff000
-> [  872.608014] x7 : ffff80bee8562080 x6 : ffff80beea862d30
-> [  872.617709] x5 : 0000000000000000 x4 : ffff80beea862d48
-> [  872.627399] x3 : ffff80bee8562b18 x2 : 0000000000000000
-> [  872.637044] x1 : ffff0000090a7000 x0 : 0000000000208040
-> [  872.646575] Call trace:
-> [  872.653139]  task_numa_work+0x4c/0x310
-> [  872.660916]  task_work_run+0xb0/0xe0
-> [  872.668400]  io_sq_thread+0x164/0x388
-> [  872.675829]  kthread+0x108/0x138
-> 
-> The reason is that once io_sq_thread has a valid mm, schedule subsystem
-> may call task_tick_numa() adding a task_numa_work() callback, which will
-> visit mm, then above panic will happen.> 
-> To fix this bug, only call task_work_run() before dropping mm.
+So, I realize that this probably isn't something that you've looked
+at yet.  But, I was interested in a different criteria looking at
+io_uring.  That is how efficient it is for small numbers of requests
+which don't transfer much data.  In other words, what is the minimum
+amount of io_uring work for which a program speed-up can be obtained.
+I realize that this is highly dependent on how much overlap can be
+gained with async processing.
 
-That's a bug outside of io_uring, you'll want to backport this patch
-from 5.7:
+In order to get a baseline, I wrote a test program which performs
+4 opens, followed by 4 read + closes.  For the baseline I
+intentionally used files in /proc so that there would be minimum
+async and I could set IOSQE_ASYNC later.  I was quite surprised
+by the result:  Almost the entire program wall time was used in
+the io_uring_queue_exit() call.
 
-commit 18f855e574d9799a0e7489f8ae6fd8447d0dd74a
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Tue May 26 09:38:31 2020 -0600
+I wrote another test program which does just inits followed by exits.
+There are clock_gettime()s around the io_uring_queue_init(8, &ring, 0)
+and io_uring_queue_exit() calls and I printed the ratio of the
+io_uring_queue_exit() elapsed time and the sum of elapsed time of
+both calls.
 
-    sched/fair: Don't NUMA balance for kthreads
+The result varied between 0.94 and 0.99.  In other words, exit is
+between 16 and 100 times slower than init.  Average ratio was
+around 0.97.  Looking at the liburing code, exit does just what
+I'd expect (unmap pages and close io_uring fd).
 
+I would have bet the ratio would be less than 0.50.  No
+operations were ever performed by the ring, so there should be
+minimal cleanup.  Even if the kernel needed to do a bunch of
+cleanup, it shouldn't need the pages mapped into user space to work;
+same thing for the fd being open in the user process.
 
--- 
-Jens Axboe
-
+Seems like there is some room for optimization here.

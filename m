@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E42F1F1EBA
-	for <lists+io-uring@lfdr.de>; Mon,  8 Jun 2020 20:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20AC01F1EB7
+	for <lists+io-uring@lfdr.de>; Mon,  8 Jun 2020 20:10:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725979AbgFHSJ7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1725968AbgFHSJ7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Mon, 8 Jun 2020 14:09:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48150 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgFHSJz (ORCPT
+        with ESMTP id S1725926AbgFHSJz (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Mon, 8 Jun 2020 14:09:55 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D3AC08C5C3;
-        Mon,  8 Jun 2020 11:09:53 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id m21so14184799eds.13;
-        Mon, 08 Jun 2020 11:09:53 -0700 (PDT)
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5904DC08C5C4;
+        Mon,  8 Jun 2020 11:09:55 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id k8so14206759edq.4;
+        Mon, 08 Jun 2020 11:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=X+SvlkZ0oJQusvz3cLXFNfNpl7D8IGGlX2QqZLIzUyA=;
-        b=XVFmSUtOkMpnFeJis8nnK0zL1cN3DvDDM5IdjUzKtyQulU0bnmiQCdVuZo+LS4t5e7
-         neowaw4h2kVHb+R6O42sN41JfRkM6OnRL85m39cmp47P9FWxvu1m25zVQeB0CfG7dlRC
-         u0AeaD0yfZbqYFIyzIwyLZu+77j9b9qIkQE+euMkVXoWUSXBxslXRi6IxrFgadPmQTtA
-         aQlsui0mudUD0NtqQi5iXTZ4intC1Sk+10JCH4/q8gOkTPexJHNIx+p8HawtfXWqq++B
-         1xjxrvAZF3RkHVcIYoUGzFGwoW24uIlOkeRiYbQAOA00P6sxBD7/dwx9RYLCJLSDOHZb
-         jblw==
+        bh=egrr6PTch3v8cncSJtFi2bP6BgWEfZPz43Zfda3r4QU=;
+        b=GULwThv8DfdRtDiNhdL0oVaHQ1+uKVuxReQpzOUfVNn7vVUpwHXNbsK6i+6GirfEx2
+         NIPfiyx+mB96CsanfD8RJYNH/6aGh//KmHwtiKE25lxpS/SRTzEx0fDjY1Co4/fryFgA
+         ylrnFN0iFgrxw262ZSd0xJ6eMfgjf4Jd0qlE4zfrfq8HPrukq4j3kMZrvb6HblwhFUxu
+         W57lvTSLxLixxOTDmwxrmePcwy2sbtj5eErx46XBijGsxnK5CHHP66EM8rJHmG7Ssf2z
+         2JijqRoaInnhSsgspOjysSyM/k5/zvvR7m7QtjdTsGh1ETA2WLzPn3MqBHM6dyqeuLJp
+         9weg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=X+SvlkZ0oJQusvz3cLXFNfNpl7D8IGGlX2QqZLIzUyA=;
-        b=dkCJOKVQNZ/0bQ7pWn9jpCW+wClaFdb8lzJ0eVchvyCjRsferx+Hry3dvFfopBcN4Y
-         DIqbRG3COvtcfAL4SWc2zP1XhhX5x6NqeTHjWqDZOxR6eD0mL/cTpCKyOd5utfAuwunG
-         pZ1hKjHoxk49qvx0yeAfFZ4yh6VbVYMK7H3FMH1HAsCg1Kwnh+9ctxuUAyeyDkV+An/G
-         gsCJtrQUJ/l0G09YbN10lVMMEnXegBm+jduxFger+/weSc5M7UgcopqsFoiottzS9FCB
-         c+O32cH9XhFC51CEuDfDhC3C3fz5cRyuJhVsZOf2e1C9PbIaSP3XGR8aCrBWxSy9zMzJ
-         wT9g==
-X-Gm-Message-State: AOAM531fISe/YztGlwrQuLL2bZjcYOwVZBYBNzMLZPMowJ7qsxlmca54
-        QCQ2QUH39qBhcONWZhZjhUydGu04
-X-Google-Smtp-Source: ABdhPJxtOMEvO+kIP0MdcyngDlxt1iQThAafRfcoSwxzgTRaWHwruU9kCpcbwSrjxGUHlcOmIx5kqw==
-X-Received: by 2002:a50:b2a1:: with SMTP id p30mr23805070edd.199.1591639792419;
-        Mon, 08 Jun 2020 11:09:52 -0700 (PDT)
+        bh=egrr6PTch3v8cncSJtFi2bP6BgWEfZPz43Zfda3r4QU=;
+        b=kqyryZ0xGJDK5i74xUnURc4/WOYYOc9fCBv0/LoH6kcPOyRA0bFL9MHmZ32+iM1mff
+         d0l7VwBDxHbtt5BPoDkuE9keB0aH0nx/pvy7itT0R7yAMgrhqfJK0VtMezN2tMHh/Bzz
+         ffO71VdWy9HAsm8Sipu8J2uogwpGLcX1N/0fCIFC6Bgfv5oYT/80u2AaZ5fM+3D3Bbef
+         gK20uaiHTFnRe12LL3aF5D+3T6TmspJU5wwZmsGTt04NXJQTzWiyomAV+n4ZWELzM33b
+         cmzWUTpohjRqKSgnDGvFaMpUPgHb/6fDmO94U+5pSoPo/U+q9uWbgBQ/J2d8h0hMTJ+5
+         co5w==
+X-Gm-Message-State: AOAM533YxeSWw1iSFaoo3IG+MOd/QECI9Bho1C/PJFOJD8ueb8kLU1rH
+        N+x8reNI/g6C1x7FpCpPcKzk1Vmm
+X-Google-Smtp-Source: ABdhPJxbStuRrWCjwifwUx/Z4Ul0ylCP0F0WnYotPea51KbavH8Rhu2X63Xv4OFa+H7iqTFS6MTPyA==
+X-Received: by 2002:a50:a0e5:: with SMTP id 92mr23641540edo.313.1591639793688;
+        Mon, 08 Jun 2020 11:09:53 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id ok21sm10515029ejb.82.2020.06.08.11.09.51
+        by smtp.gmail.com with ESMTPSA id ok21sm10515029ejb.82.2020.06.08.11.09.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2020 11:09:52 -0700 (PDT)
+        Mon, 08 Jun 2020 11:09:53 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, xiaoguang.wang@linux.alibaba.com
-Subject: [PATCH 3/4] io_uring: don't arm a timeout through work.func
-Date:   Mon,  8 Jun 2020 21:08:19 +0300
-Message-Id: <d910e433d0c9466faf3fcd9f02e864ca5bad9f1b.1591637070.git.asml.silence@gmail.com>
+Subject: [PATCH 4/4] io_wq: add per-wq work handler instead of per work
+Date:   Mon,  8 Jun 2020 21:08:20 +0300
+Message-Id: <531ae5365ab0093d7b599027e0a5536bc52d35f8.1591637070.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1591637070.git.asml.silence@gmail.com>
 References: <cover.1591637070.git.asml.silence@gmail.com>
@@ -63,90 +63,137 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Remove io_link_work_cb() -- the last custom work.func.
-Not the prettiest thing, but works. Instead of queueing a linked timeout
-in io_link_work_cb() mark a request with REQ_F_QUEUE_TIMEOUT and do
-enqueueing based on the flag in io_wq_submit_work().
+io_uring is the only user of io-wq, and now it uses only io-wq callback
+for all its requests, namely io_wq_submit_work(). Instead of storing
+work->runner callback in each instance of io_wq_work, keep it in io-wq
+itself.
+
+pros:
+- reduces io_wq_work size
+- more robust -- ->func won't be invalidated with mem{cpy,set}(req)
+- helps other work
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+ fs/io-wq.c    | 10 ++++++----
+ fs/io-wq.h    |  7 ++++---
+ fs/io_uring.c |  3 ++-
+ 3 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ce7f815658a3..adf18ff9fdb9 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -541,6 +541,7 @@ enum {
- 	REQ_F_POLLED_BIT,
- 	REQ_F_BUFFER_SELECTED_BIT,
- 	REQ_F_NO_FILE_TABLE_BIT,
-+	REQ_F_QUEUE_TIMEOUT_BIT,
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 2bfa9117bc28..a44ad3b98886 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -112,6 +112,7 @@ struct io_wq {
+ 	unsigned long state;
  
- 	/* not a real bit, just to check we're not overflowing the space */
- 	__REQ_F_LAST_BIT,
-@@ -596,6 +597,8 @@ enum {
- 	REQ_F_BUFFER_SELECTED	= BIT(REQ_F_BUFFER_SELECTED_BIT),
- 	/* doesn't need file table for this request */
- 	REQ_F_NO_FILE_TABLE	= BIT(REQ_F_NO_FILE_TABLE_BIT),
-+	/* needs to queue linked timeout */
-+	REQ_F_QUEUE_TIMEOUT	= BIT(REQ_F_QUEUE_TIMEOUT_BIT),
+ 	free_work_fn *free_work;
++	io_wq_work_fn *do_work;
+ 
+ 	struct task_struct *manager;
+ 	struct user_struct *user;
+@@ -528,7 +529,7 @@ static void io_worker_handle_work(struct io_worker *worker)
+ 
+ 			hash = io_get_work_hash(work);
+ 			linked = old_work = work;
+-			linked->func(&linked);
++			wq->do_work(&linked);
+ 			linked = (old_work == linked) ? NULL : linked;
+ 
+ 			work = next_hashed;
+@@ -785,7 +786,7 @@ static void io_run_cancel(struct io_wq_work *work, struct io_wqe *wqe)
+ 		struct io_wq_work *old_work = work;
+ 
+ 		work->flags |= IO_WQ_WORK_CANCEL;
+-		work->func(&work);
++		wq->do_work(&work);
+ 		work = (work == old_work) ? NULL : work;
+ 		wq->free_work(old_work);
+ 	} while (work);
+@@ -1027,7 +1028,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	int ret = -ENOMEM, node;
+ 	struct io_wq *wq;
+ 
+-	if (WARN_ON_ONCE(!data->free_work))
++	if (WARN_ON_ONCE(!data->free_work || !data->do_work))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	wq = kzalloc(sizeof(*wq), GFP_KERNEL);
+@@ -1041,6 +1042,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	}
+ 
+ 	wq->free_work = data->free_work;
++	wq->do_work = data->do_work;
+ 
+ 	/* caller must already hold a reference to this */
+ 	wq->user = data->user;
+@@ -1097,7 +1099,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 
+ bool io_wq_get(struct io_wq *wq, struct io_wq_data *data)
+ {
+-	if (data->free_work != wq->free_work)
++	if (data->free_work != wq->free_work || data->do_work != wq->do_work)
+ 		return false;
+ 
+ 	return refcount_inc_not_zero(&wq->use_refs);
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index df8a4cd3236d..f3bb596f5a3f 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -85,7 +85,6 @@ static inline void wq_list_del(struct io_wq_work_list *list,
+ 
+ struct io_wq_work {
+ 	struct io_wq_work_node list;
+-	void (*func)(struct io_wq_work **);
+ 	struct files_struct *files;
+ 	struct mm_struct *mm;
+ 	const struct cred *creds;
+@@ -94,9 +93,9 @@ struct io_wq_work {
+ 	pid_t task_pid;
  };
  
- struct async_poll {
-@@ -1579,16 +1582,6 @@ static void io_free_req(struct io_kiocb *req)
- 		io_queue_async_work(nxt);
+-#define INIT_IO_WORK(work, _func)				\
++#define INIT_IO_WORK(work)					\
+ 	do {							\
+-		*(work) = (struct io_wq_work){ .func = _func };	\
++		*(work) = (struct io_wq_work){};		\
+ 	} while (0)						\
+ 
+ static inline struct io_wq_work *wq_next_work(struct io_wq_work *work)
+@@ -108,10 +107,12 @@ static inline struct io_wq_work *wq_next_work(struct io_wq_work *work)
  }
  
--static void io_link_work_cb(struct io_wq_work **workptr)
--{
--	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
--	struct io_kiocb *link;
--
--	link = list_first_entry(&req->link_list, struct io_kiocb, link_list);
--	io_queue_linked_timeout(link);
--	io_wq_submit_work(workptr);
--}
--
- static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
- {
- 	struct io_kiocb *link;
-@@ -1600,7 +1593,7 @@ static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
- 	*workptr = &nxt->work;
- 	link = io_prep_linked_timeout(nxt);
- 	if (link)
--		nxt->work.func = io_link_work_cb;
-+		nxt->flags |= REQ_F_QUEUE_TIMEOUT;
- }
+ typedef void (free_work_fn)(struct io_wq_work *);
++typedef void (io_wq_work_fn)(struct io_wq_work **);
  
- /*
-@@ -5333,12 +5326,26 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	return 0;
- }
+ struct io_wq_data {
+ 	struct user_struct *user;
  
-+static void io_arm_async_linked_timeout(struct io_kiocb *req)
-+{
-+	struct io_kiocb *link;
-+
-+	/* link head's timeout is queued in io_queue_async_work() */
-+	if (!(req->flags & REQ_F_QUEUE_TIMEOUT))
-+		return;
-+
-+	link = list_first_entry(&req->link_list, struct io_kiocb, link_list);
-+	io_queue_linked_timeout(link);
-+}
-+
- static void io_wq_submit_work(struct io_wq_work **workptr)
- {
- 	struct io_wq_work *work = *workptr;
- 	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
- 	int ret = 0;
++	io_wq_work_fn *do_work;
+ 	free_work_fn *free_work;
+ };
  
-+	io_arm_async_linked_timeout(req);
-+
- 	/* if NO_CANCEL is set, we must still run the work */
- 	if ((work->flags & (IO_WQ_WORK_CANCEL|IO_WQ_WORK_NO_CANCEL)) ==
- 				IO_WQ_WORK_CANCEL) {
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index adf18ff9fdb9..b4ca6026269c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5880,7 +5880,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	refcount_set(&req->refs, 2);
+ 	req->task = NULL;
+ 	req->result = 0;
+-	INIT_IO_WORK(&req->work, io_wq_submit_work);
++	INIT_IO_WORK(&req->work);
+ 
+ 	if (unlikely(req->opcode >= IORING_OP_LAST))
+ 		return -EINVAL;
+@@ -6896,6 +6896,7 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx,
+ 
+ 	data.user = ctx->user;
+ 	data.free_work = io_free_work;
++	data.do_work = io_wq_submit_work;
+ 
+ 	if (!(p->flags & IORING_SETUP_ATTACH_WQ)) {
+ 		/* Do QD, or 4 * CPUS, whatever is smallest */
 -- 
 2.24.0
 

@@ -2,57 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C80B11F13A5
-	for <lists+io-uring@lfdr.de>; Mon,  8 Jun 2020 09:36:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AEAB1F13C2
+	for <lists+io-uring@lfdr.de>; Mon,  8 Jun 2020 09:44:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbgFHHg5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Jun 2020 03:36:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34780 "EHLO
+        id S1729020AbgFHHoa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Jun 2020 03:44:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727977AbgFHHg4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Jun 2020 03:36:56 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84340C08C5C3;
-        Mon,  8 Jun 2020 00:36:56 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id n21so2682828ejg.3;
-        Mon, 08 Jun 2020 00:36:56 -0700 (PDT)
+        with ESMTP id S1726009AbgFHHo3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Jun 2020 03:44:29 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6203C08C5C3
+        for <io-uring@vger.kernel.org>; Mon,  8 Jun 2020 00:44:29 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id d15so74276edm.10
+        for <io-uring@vger.kernel.org>; Mon, 08 Jun 2020 00:44:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZIEVPByf7q2KBEmomKulfdMrwJXv/E4f3FAMpa/LInw=;
-        b=umBGfh/3Mi0JmJ/6+2BcJDyow0tcHLXFbH/6MoST2AS20JpDr4hEFbaulEnZJObhgx
-         mcrK/4z9XOeLNiYxvpMnjtWrIeRZ4BirGx8dKaC2cZ2mV14oK015MwgUQV0mFbGGjF0G
-         f/YckSKBML8gP1v5AxhFfOryE/LJijMEo8uQH25bmjnTZek2mo49u/YnOf8kRtATUcwq
-         5kDljKv1ZMpuVFAsGIapcNEdmSWzrql5kPVuFgIG5HjcKGrsR0A5EXHLfRQS6xuEYqQb
-         /HXZ5rI5HK177mFOZmkuMf7g7f1ILhJ67RRWhqxHe/3i8rVG5dQU2QiYbL+ilY6jQjPQ
-         ENTg==
+        bh=e1IlhV9HDmMpLpi5OBJ6qZYT4Tk21nQF05pov5oJX6c=;
+        b=ZHRAdT1M6iMcBkjkd5yy7Y2WravvgBvtPBuDJKiquGPmk/IiKFKFEYwISLI2WeWtTu
+         nX74IMSnN3m+WplGekQXKQXqDuRxfTNS2Uyq/7Oc8K//BdxWOGJAPUMjSyzFIrhb73nJ
+         sv0eR43rKebQyToE7nL7Q77BUGk3mb8+g8UVvrsrCP18aqsriEs+IWl58pFxau8O072a
+         SLUwRjHVN2EWPImOb4EUzxWPbenZ9TQaAy+50HcIrgnXsbJZnjMoMlUSKMEFlJy7qDmw
+         oZ3gp/ohuzJMY0J2LeVs+EBTOCUNkPATAsApSb9WC03cJdFSlh8HBNlx8ZVweFCpQ/Eg
+         FvIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZIEVPByf7q2KBEmomKulfdMrwJXv/E4f3FAMpa/LInw=;
-        b=PCj6KBqR2T49IDc8iHTy3gv7m+Pw06SyMQKMCBwgYpxNslMtKOmT6OQ32+2EWFvGnN
-         G8gxbH7KpUiJd6u2FbkgYEVYmx0df1cdWLmgHISo1sZD3WLtZ8P9UW9UJiJ5ZQbzCn0Z
-         RvycqM4tvrXLkYNqJ50zhj6kMw8W3Epy5RXH1CSs/0asl7SNwSnD85ObcDEatTUxHZLz
-         6QX2qnV1IG+JazuBBn6Re23heeqXAVBrsmEdkFFWjFbKlDjMrCRu2y7NkX5kEdo1Zw4M
-         9Bljo3oSXhlieRrlkvwojdlLeIrq6dISUFuZoF7Zyv8vQGNSUQmfK3FTYXsc4LXw1Bpb
-         bkqw==
-X-Gm-Message-State: AOAM532fB1UZa5dCdzRAM2HAf+J2WNvjgwAtJLAsoyZVZwO8DfYhBfD+
-        0vmjIOy6X+1cflZzrx0JenR5XMYJ
-X-Google-Smtp-Source: ABdhPJxjqlnRAaXr/QjBWyRDLRzvdah9Q4LN1m7nrp0y993GA3ntu55tCfanmwXYyuhAqhbBjDpFwQ==
-X-Received: by 2002:a17:907:1110:: with SMTP id qu16mr20354098ejb.539.1591601814879;
-        Mon, 08 Jun 2020 00:36:54 -0700 (PDT)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=e1IlhV9HDmMpLpi5OBJ6qZYT4Tk21nQF05pov5oJX6c=;
+        b=TGwS5WFfsi+qvIWiBKVOy5iXoY1jUd3ZZEsRDRqKLyRCU/toZB2EL9AJIfxr+vRVpv
+         abuWJ1mELdkUVlMrGiooUFwm2yBEtSKHryDMTTRoffXCkXX5qzLbqg+cKMVvzHU7ml+z
+         RU88JPlb2NJ4+zgpKguAicX7wQ2lYJWXci23+8Eb56mP6Hu3sYN2+54MrYgafxDRvVj5
+         vUCHE6CcejgVXbl597XMV5qk61BPePNj2sSmzk9pPyCsakm2PHT8f2q2guZq1scJnBkO
+         re4MZA8z8juNnlOV5imVQSvLCppXnwe4FRJR1YBOGZuQLVUTqr03dwSP/nFf2WgOhtCu
+         Tc8A==
+X-Gm-Message-State: AOAM532eHQA/HkVJigTsxxFlgwz8PPNSMKINAMiyDb/pakwQ6queHthH
+        riVjnRt6uZVmIrtk1WQMa70XpnyR
+X-Google-Smtp-Source: ABdhPJx4t9tri+hxCnXbc+rAUTV9nhDjRtA9p6wXirAoMAReM2Ri0XRAWEC5FA2Zcui9yccufLQjwA==
+X-Received: by 2002:a05:6402:206e:: with SMTP id bd14mr21115410edb.105.1591602268403;
+        Mon, 08 Jun 2020 00:44:28 -0700 (PDT)
 Received: from [192.168.43.135] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id k8sm11311716edn.28.2020.06.08.00.36.53
+        by smtp.gmail.com with ESMTPSA id d5sm11708276edu.5.2020.06.08.00.44.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jun 2020 00:36:54 -0700 (PDT)
-Subject: Re: [PATCH 0/4] cancel all reqs of an exiting task
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1591541128.git.asml.silence@gmail.com>
- <3924c8b4-fb37-0d85-b8ce-4183e6fff317@kernel.dk>
+        Mon, 08 Jun 2020 00:44:27 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     joseph.qi@linux.alibaba.com
+References: <a2184644-34b6-88a2-b022-e8f5e7def071@gmail.com>
+ <20200601045626.9291-1-xiaoguang.wang@linux.alibaba.com>
+ <20200601045626.9291-2-xiaoguang.wang@linux.alibaba.com>
+ <f7c648e7-f154-f4eb-586f-841f08b845fd@linux.alibaba.com>
+ <8accdc46-53c9-cf89-1e61-51e7c269411c@gmail.com>
+ <9f540577-0c13-fa4b-43c1-3c4d7cddcb8c@kernel.dk>
+ <13c85adb-6502-f9c7-ed66-9a0adffa2dc8@gmail.com>
+ <570f0f74-82a7-2f10-b186-582380200b15@gmail.com>
+ <35bcf4cb-1985-74aa-5748-6ee4095acb20@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -97,55 +105,43 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <7bbbb26c-6584-16d9-76c4-a2ca00d994f3@gmail.com>
-Date:   Mon, 8 Jun 2020 10:35:34 +0300
+Subject: Re: [PATCH v5 2/2] io_uring: avoid unnecessary io_wq_work copy for
+ fast poll feature
+Message-ID: <820263b3-b5e5-bca9-eedb-4ee4e23be2b7@gmail.com>
+Date:   Mon, 8 Jun 2020 10:43:07 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <3924c8b4-fb37-0d85-b8ce-4183e6fff317@kernel.dk>
+In-Reply-To: <35bcf4cb-1985-74aa-5748-6ee4095acb20@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 08/06/2020 03:12, Jens Axboe wrote:
-> On 6/7/20 9:32 AM, Pavel Begunkov wrote:
->> io_uring_flush() {
->>         ...
->>         if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
->>                 io_wq_cancel_pid(ctx->io_wq, task_pid_vnr(current));
->> }
->>
->> This cancels only the first matched request. The pathset is mainly
->> about fixing that. [1,2] are preps, [3/4] is the fix.
->>
->> The [4/4] tries to improve the worst case for io_uring_cancel_files(),
->> that's when they are a lot of inflights with ->files. Instead of doing
->> {kill(); wait();} one by one, it cancels all of them at once.
->>
->> Pavel Begunkov (4):
->>   io-wq: reorder cancellation pending -> running
->>   io-wq: add an option to cancel all matched reqs
->>   io_uring: cancel all task's requests on exit
->>   io_uring: batch cancel in io_uring_cancel_files()
->>
->>  fs/io-wq.c    | 108 ++++++++++++++++++++++++++------------------------
->>  fs/io-wq.h    |   3 +-
->>  fs/io_uring.c |  29 ++++++++++++--
->>  3 files changed, 83 insertions(+), 57 deletions(-)
+On 08/06/2020 02:29, Jens Axboe wrote:
+> On 6/7/20 2:57 PM, Pavel Begunkov wrote:
+>> -#define INIT_IO_WORK(work, _func)				\
+>> +#define INIT_IO_WORK(work)					\
+>>  	do {							\
+>> -		*(work) = (struct io_wq_work){ .func = _func };	\
+>> +		*(work) = (struct io_wq_work){};		\
+>>  	} while (0)						\
+>>  
 > 
-> Can you rebase this to include the changing of using ->task_pid to
-> ->task instead? See:
-> 
-> https://lore.kernel.org/io-uring/87a71jjbzr.fsf@x220.int.ebiederm.org/T/#u
-> 
-> Might as well do it at the same time, imho, since the cancel-by-task is
-> being reworked anyway.
+> Would be nice to optimize this one, it's a lot of clearing for something
+> we'll generally not use at all in the fast path. Or at least keep it
+> only for before when we submit the work for async execution.
 
-Ok, I was thinking to look there after anyway
+Let's leave it to Xiaoguang and the series of the topic.
+
+> 
+> From a quick look at this, otherwise looks great! Please do split and
+> submit this.
+
+Sure. Have great time off!
 
 
 -- 

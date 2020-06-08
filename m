@@ -2,35 +2,34 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5F3B1F2EE0
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2020 02:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EECA1F3109
+	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2020 03:05:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729550AbgFIApn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Jun 2020 20:45:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58782 "EHLO mail.kernel.org"
+        id S1727846AbgFHXHU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Jun 2020 19:07:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728975AbgFHXLq (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:11:46 -0400
+        id S1727833AbgFHXHO (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 8 Jun 2020 19:07:14 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 661652151B;
-        Mon,  8 Jun 2020 23:11:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 087F020890;
+        Mon,  8 Jun 2020 23:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591657906;
-        bh=WoBvXvBT7w5MB1Ci7HGCPSvkE9k4I+qGx8ouhuGbpBE=;
+        s=default; t=1591657633;
+        bh=k4MFnelTjmAk2L09uBdFWuoRP2HDkQ+mXFg2HOps2v0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KADOENpzi4cxP4t4Fq7cuHlZ+5+7c1TbQP4G88ziw1qCEC+1L9sJp2GKhvxGgdMQ2
-         l4eA1wsaLnUV3WAsW4j5Cgcha+p0byqn6nqlFFaNd3Q6SH2HHJSuOmk5hNMC+a95ga
-         jKtfn/peoNXyE3+wmbjOHOwWjB2T35S+OQRVoqO4=
+        b=ZVX7vW6v8iqJHZXuGpNHWmisgS+lZK+pE0vkw0bdXQFEHRcqupt2uddSCKdrVPyW/
+         ex+aQmT6zIWtND/cBUF59+mu/AdVuYOMGmI3l6h9E191O4GHMOuUvNlYgftvvUrRiX
+         DsGnaG1rT8mAbjquRTrnbbKfUo29RvWD9Ky7Oyrc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 258/274] io_uring: fix overflowed reqs cancellation
-Date:   Mon,  8 Jun 2020 19:05:51 -0400
-Message-Id: <20200608230607.3361041-258-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 052/274] io_uring: cleanup io_poll_remove_one() logic
+Date:   Mon,  8 Jun 2020 19:02:25 -0400
+Message-Id: <20200608230607.3361041-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200608230607.3361041-1-sashal@kernel.org>
 References: <20200608230607.3361041-1-sashal@kernel.org>
@@ -43,43 +42,71 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 7b53d59859bc932b37895d2d37388e7fa29af7a5 ]
+[ Upstream commit 3bfa5bcb26f0b52d7ae8416aa0618fff21aceaaf ]
 
-Overflowed requests in io_uring_cancel_files() should be shed only of
-inflight and overflowed refs. All other left references are owned by
-someone else.
+We only need apoll in the one section, do the juggling with the work
+restoration there. This removes a special case further down as well.
 
-If refcount_sub_and_test() fails, it will go further and put put extra
-ref, don't do that. Also, don't need to do io_wq_cancel_work()
-for overflowed reqs, they will be let go shortly anyway.
+No functional changes in this patch.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/io_uring.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index dd90c3fcd4f5..4038ed0a5c39 100644
+index bb25e3997d41..03147b6694fd 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7467,10 +7467,11 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 				finish_wait(&ctx->inflight_wait, &wait);
- 				continue;
- 			}
-+		} else {
-+			io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
-+			io_put_req(cancel_req);
- 		}
- 
--		io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
--		io_put_req(cancel_req);
- 		schedule();
- 		finish_wait(&ctx->inflight_wait, &wait);
+@@ -4344,32 +4344,31 @@ static bool __io_poll_remove_one(struct io_kiocb *req,
+ 		do_complete = true;
  	}
+ 	spin_unlock(&poll->head->lock);
++	hash_del(&req->hash_node);
+ 	return do_complete;
+ }
+ 
+ static bool io_poll_remove_one(struct io_kiocb *req)
+ {
+-	struct async_poll *apoll = NULL;
+ 	bool do_complete;
+ 
+ 	if (req->opcode == IORING_OP_POLL_ADD) {
+ 		do_complete = __io_poll_remove_one(req, &req->poll);
+ 	} else {
+-		apoll = req->apoll;
++		struct async_poll *apoll = req->apoll;
++
+ 		/* non-poll requests have submit ref still */
+-		do_complete = __io_poll_remove_one(req, &req->apoll->poll);
+-		if (do_complete)
++		do_complete = __io_poll_remove_one(req, &apoll->poll);
++		if (do_complete) {
+ 			io_put_req(req);
+-	}
+-
+-	hash_del(&req->hash_node);
+-
+-	if (do_complete && apoll) {
+-		/*
+-		 * restore ->work because we need to call io_req_work_drop_env.
+-		 */
+-		memcpy(&req->work, &apoll->work, sizeof(req->work));
+-		kfree(apoll);
++			/*
++			 * restore ->work because we will call
++			 * io_req_work_drop_env below when dropping the
++			 * final reference.
++			 */
++			memcpy(&req->work, &apoll->work, sizeof(req->work));
++			kfree(apoll);
++		}
+ 	}
+ 
+ 	if (do_complete) {
 -- 
 2.25.1
 

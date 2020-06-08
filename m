@@ -2,198 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20AC01F1EB7
-	for <lists+io-uring@lfdr.de>; Mon,  8 Jun 2020 20:10:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 427E81F1ED0
+	for <lists+io-uring@lfdr.de>; Mon,  8 Jun 2020 20:15:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725968AbgFHSJ7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Jun 2020 14:09:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48156 "EHLO
+        id S1725993AbgFHSP2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Jun 2020 14:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbgFHSJz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Jun 2020 14:09:55 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5904DC08C5C4;
-        Mon,  8 Jun 2020 11:09:55 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id k8so14206759edq.4;
-        Mon, 08 Jun 2020 11:09:55 -0700 (PDT)
+        with ESMTP id S1726117AbgFHSPX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Jun 2020 14:15:23 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF744C08C5C2;
+        Mon,  8 Jun 2020 11:15:22 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id t18so18465547wru.6;
+        Mon, 08 Jun 2020 11:15:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=egrr6PTch3v8cncSJtFi2bP6BgWEfZPz43Zfda3r4QU=;
-        b=GULwThv8DfdRtDiNhdL0oVaHQ1+uKVuxReQpzOUfVNn7vVUpwHXNbsK6i+6GirfEx2
-         NIPfiyx+mB96CsanfD8RJYNH/6aGh//KmHwtiKE25lxpS/SRTzEx0fDjY1Co4/fryFgA
-         ylrnFN0iFgrxw262ZSd0xJ6eMfgjf4Jd0qlE4zfrfq8HPrukq4j3kMZrvb6HblwhFUxu
-         W57lvTSLxLixxOTDmwxrmePcwy2sbtj5eErx46XBijGsxnK5CHHP66EM8rJHmG7Ssf2z
-         2JijqRoaInnhSsgspOjysSyM/k5/zvvR7m7QtjdTsGh1ETA2WLzPn3MqBHM6dyqeuLJp
-         9weg==
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WUHwJX2N9pIy9QeRXyEGGmeeCpsJdb22/OGUgYWDaZs=;
+        b=fk4/Bs3DeNtMcKi5ch5N3gpQpdWFBxPVM5RpcJ9t3FMxoEzjHxmaaepAJ2zymcHdJh
+         yXspphw1FR6n2VP/gjGRziTn3+pDXuYrsdHOlip2Wnc5BCa8y+pugec77hOnp2Rvj7hS
+         mqD387luzCWwASTbyj8Tf5GSUZgR1ehDBUW75Pcvk7UErUGFeXnJvbZuy3VdX0h3XA6U
+         3tpfwxzfzdyysGaEKNBcP/V9egoxB022Jy2HJ0fvM1BMr3MySiYa749JJJ52B79MhP0w
+         GbzyVtlx+pjyYwab+AEKZtZrl7zmdG1Xblue0/O7FFw7i2qOi1GAc3/n0d77+npoTtrr
+         37tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=egrr6PTch3v8cncSJtFi2bP6BgWEfZPz43Zfda3r4QU=;
-        b=kqyryZ0xGJDK5i74xUnURc4/WOYYOc9fCBv0/LoH6kcPOyRA0bFL9MHmZ32+iM1mff
-         d0l7VwBDxHbtt5BPoDkuE9keB0aH0nx/pvy7itT0R7yAMgrhqfJK0VtMezN2tMHh/Bzz
-         ffO71VdWy9HAsm8Sipu8J2uogwpGLcX1N/0fCIFC6Bgfv5oYT/80u2AaZ5fM+3D3Bbef
-         gK20uaiHTFnRe12LL3aF5D+3T6TmspJU5wwZmsGTt04NXJQTzWiyomAV+n4ZWELzM33b
-         cmzWUTpohjRqKSgnDGvFaMpUPgHb/6fDmO94U+5pSoPo/U+q9uWbgBQ/J2d8h0hMTJ+5
-         co5w==
-X-Gm-Message-State: AOAM533YxeSWw1iSFaoo3IG+MOd/QECI9Bho1C/PJFOJD8ueb8kLU1rH
-        N+x8reNI/g6C1x7FpCpPcKzk1Vmm
-X-Google-Smtp-Source: ABdhPJxbStuRrWCjwifwUx/Z4Ul0ylCP0F0WnYotPea51KbavH8Rhu2X63Xv4OFa+H7iqTFS6MTPyA==
-X-Received: by 2002:a50:a0e5:: with SMTP id 92mr23641540edo.313.1591639793688;
-        Mon, 08 Jun 2020 11:09:53 -0700 (PDT)
-Received: from localhost.localdomain ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id ok21sm10515029ejb.82.2020.06.08.11.09.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2020 11:09:53 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=WUHwJX2N9pIy9QeRXyEGGmeeCpsJdb22/OGUgYWDaZs=;
+        b=FrCMqjM/nWdpjCgTfkbbWRxNb0ni6F7zgjB8tfjudbPbB6B8Mh1p+lwPe2lgeqXm6W
+         ab0MwTlH/uGpIHhHSwUG2rtGCEWZhA5p/Ed5hYbbKc6/lbsIcT7TMizDisgoP/3Ga1Zu
+         uFJdUMirzzn9hnLN2bcFZVAihqCt61chK1JlT3JU22g9N3MRws3qTL02lzk8Cx3cDxhU
+         JQvglvSDKcUqHJHSAfNllhBbhPb1fK2WUr5S6ergrFHmUxL2W6Y6MBzHKWu+XOiTVWPy
+         9CbtK/iHeC+xHX+iuKeSCPskPMor71IQ4JLscE1WeRRFrkR+b1Ingsy4R/cX9ZMvFKGk
+         IAwg==
+X-Gm-Message-State: AOAM531F0FVktxF2frduNIMju9EYDThliYCjOWBO1GuQV5M9V6KBmpab
+        EFgLUS+pba77t27KXovJSFpbR/6M
+X-Google-Smtp-Source: ABdhPJw1Y9Cnn6+Gh+ZM06NjCC6ogM3zVdBvUQGmts4uKhxrr8q5BZlddYmxosKY33dC7K1RoL4sgQ==
+X-Received: by 2002:adf:b198:: with SMTP id q24mr85376wra.368.1591640121560;
+        Mon, 08 Jun 2020 11:15:21 -0700 (PDT)
+Received: from [192.168.43.208] ([5.100.193.151])
+        by smtp.gmail.com with ESMTPSA id w17sm463831wra.71.2020.06.08.11.15.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jun 2020 11:15:21 -0700 (PDT)
+Subject: Re: [PATCH 0/4] remove work.func
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, xiaoguang.wang@linux.alibaba.com
-Subject: [PATCH 4/4] io_wq: add per-wq work handler instead of per work
-Date:   Mon,  8 Jun 2020 21:08:20 +0300
-Message-Id: <531ae5365ab0093d7b599027e0a5536bc52d35f8.1591637070.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1591637070.git.asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Cc:     Jens Axboe <axboe@kernel.dk>
 References: <cover.1591637070.git.asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <18e05c85-a626-82a9-b60e-d24d1c40682e@gmail.com>
+Date:   Mon, 8 Jun 2020 21:14:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1591637070.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_uring is the only user of io-wq, and now it uses only io-wq callback
-for all its requests, namely io_wq_submit_work(). Instead of storing
-work->runner callback in each instance of io_wq_work, keep it in io-wq
-itself.
+On 08/06/2020 21:08, Pavel Begunkov wrote:
+> As discussed, removing ->func from io_wq_work and moving
+> it into io-wq.
 
-pros:
-- reduces io_wq_work size
-- more robust -- ->func won't be invalidated with mem{cpy,set}(req)
-- helps other work
+Xiaoguang Wang, until Jens goes back and picks this up, I'll
+also keep the patchset in my github [1]. Just in case you'd
+want to play with it.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io-wq.c    | 10 ++++++----
- fs/io-wq.h    |  7 ++++---
- fs/io_uring.c |  3 ++-
- 3 files changed, 12 insertions(+), 8 deletions(-)
+https://github.com/isilence/linux/commits/rem_work_func
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 2bfa9117bc28..a44ad3b98886 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -112,6 +112,7 @@ struct io_wq {
- 	unsigned long state;
- 
- 	free_work_fn *free_work;
-+	io_wq_work_fn *do_work;
- 
- 	struct task_struct *manager;
- 	struct user_struct *user;
-@@ -528,7 +529,7 @@ static void io_worker_handle_work(struct io_worker *worker)
- 
- 			hash = io_get_work_hash(work);
- 			linked = old_work = work;
--			linked->func(&linked);
-+			wq->do_work(&linked);
- 			linked = (old_work == linked) ? NULL : linked;
- 
- 			work = next_hashed;
-@@ -785,7 +786,7 @@ static void io_run_cancel(struct io_wq_work *work, struct io_wqe *wqe)
- 		struct io_wq_work *old_work = work;
- 
- 		work->flags |= IO_WQ_WORK_CANCEL;
--		work->func(&work);
-+		wq->do_work(&work);
- 		work = (work == old_work) ? NULL : work;
- 		wq->free_work(old_work);
- 	} while (work);
-@@ -1027,7 +1028,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- 	int ret = -ENOMEM, node;
- 	struct io_wq *wq;
- 
--	if (WARN_ON_ONCE(!data->free_work))
-+	if (WARN_ON_ONCE(!data->free_work || !data->do_work))
- 		return ERR_PTR(-EINVAL);
- 
- 	wq = kzalloc(sizeof(*wq), GFP_KERNEL);
-@@ -1041,6 +1042,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- 	}
- 
- 	wq->free_work = data->free_work;
-+	wq->do_work = data->do_work;
- 
- 	/* caller must already hold a reference to this */
- 	wq->user = data->user;
-@@ -1097,7 +1099,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- 
- bool io_wq_get(struct io_wq *wq, struct io_wq_data *data)
- {
--	if (data->free_work != wq->free_work)
-+	if (data->free_work != wq->free_work || data->do_work != wq->do_work)
- 		return false;
- 
- 	return refcount_inc_not_zero(&wq->use_refs);
-diff --git a/fs/io-wq.h b/fs/io-wq.h
-index df8a4cd3236d..f3bb596f5a3f 100644
---- a/fs/io-wq.h
-+++ b/fs/io-wq.h
-@@ -85,7 +85,6 @@ static inline void wq_list_del(struct io_wq_work_list *list,
- 
- struct io_wq_work {
- 	struct io_wq_work_node list;
--	void (*func)(struct io_wq_work **);
- 	struct files_struct *files;
- 	struct mm_struct *mm;
- 	const struct cred *creds;
-@@ -94,9 +93,9 @@ struct io_wq_work {
- 	pid_t task_pid;
- };
- 
--#define INIT_IO_WORK(work, _func)				\
-+#define INIT_IO_WORK(work)					\
- 	do {							\
--		*(work) = (struct io_wq_work){ .func = _func };	\
-+		*(work) = (struct io_wq_work){};		\
- 	} while (0)						\
- 
- static inline struct io_wq_work *wq_next_work(struct io_wq_work *work)
-@@ -108,10 +107,12 @@ static inline struct io_wq_work *wq_next_work(struct io_wq_work *work)
- }
- 
- typedef void (free_work_fn)(struct io_wq_work *);
-+typedef void (io_wq_work_fn)(struct io_wq_work **);
- 
- struct io_wq_data {
- 	struct user_struct *user;
- 
-+	io_wq_work_fn *do_work;
- 	free_work_fn *free_work;
- };
- 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index adf18ff9fdb9..b4ca6026269c 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5880,7 +5880,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	refcount_set(&req->refs, 2);
- 	req->task = NULL;
- 	req->result = 0;
--	INIT_IO_WORK(&req->work, io_wq_submit_work);
-+	INIT_IO_WORK(&req->work);
- 
- 	if (unlikely(req->opcode >= IORING_OP_LAST))
- 		return -EINVAL;
-@@ -6896,6 +6896,7 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx,
- 
- 	data.user = ctx->user;
- 	data.free_work = io_free_work;
-+	data.do_work = io_wq_submit_work;
- 
- 	if (!(p->flags & IORING_SETUP_ATTACH_WQ)) {
- 		/* Do QD, or 4 * CPUS, whatever is smallest */
+> 
+> Pavel Begunkov (4):
+>   io_uring: don't derive close state from ->func
+>   io_uring: remove custom ->func handlers
+>   io_uring: don't arm a timeout through work.func
+>   io_wq: add per-wq work handler instead of per work
+> 
+>  fs/io-wq.c    |  10 ++-
+>  fs/io-wq.h    |   7 +-
+>  fs/io_uring.c | 221 +++++++++++++++-----------------------------------
+>  3 files changed, 74 insertions(+), 164 deletions(-)
+> 
+
 -- 
-2.24.0
-
+Pavel Begunkov

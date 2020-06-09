@@ -2,125 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 552501F3621
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2020 10:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F11B41F3C6A
+	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2020 15:29:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbgFIIc6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 Jun 2020 04:32:58 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:51721 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726463AbgFIIc6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Jun 2020 04:32:58 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07484;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U.3ia1H_1591691574;
-Received: from 30.225.32.164(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U.3ia1H_1591691574)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 09 Jun 2020 16:32:54 +0800
-Subject: Re: [PATCH v6 2/2] io_uring: avoid unnecessary io_wq_work copy for
- fast poll feature
+        id S1726937AbgFIN3K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 Jun 2020 09:29:10 -0400
+Received: from europe5.nedproductions.biz ([195.154.102.72]:54858 "EHLO
+        mail.nedproductions.biz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbgFIN3J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Jun 2020 09:29:09 -0400
+X-Greylist: delayed 559 seconds by postgrey-1.27 at vger.kernel.org; Tue, 09 Jun 2020 09:29:09 EDT
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2FDDF5E766
+        for <io-uring@vger.kernel.org>; Tue,  9 Jun 2020 14:19:49 +0100 (BST)
 To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, asml.silence@gmail.com,
-        joseph.qi@linux.alibaba.com
-References: <20200609082512.19053-1-xiaoguang.wang@linux.alibaba.com>
- <20200609082512.19053-2-xiaoguang.wang@linux.alibaba.com>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <c6a149fd-98e6-2597-40d2-6d0a861e58c9@linux.alibaba.com>
-Date:   Tue, 9 Jun 2020 16:32:54 +0800
+From:   Niall Douglas <s_sourceforge@nedprod.com>
+Subject: io_uring and POSIX read-write concurrency guarantees
+Message-ID: <ff3be659-e054-88c3-7b4b-c511f679333d@nedprod.com>
+Date:   Tue, 9 Jun 2020 14:19:48 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+ Thunderbird/68.8.1
 MIME-Version: 1.0
-In-Reply-To: <20200609082512.19053-2-xiaoguang.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
+Dear io-uring mailing list,
 
-I also use below debug patch to run test cases in liburing:
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3bec6057c189..119764d18a61 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5819,6 +5819,13 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
-         refcount_set(&req->refs, 2);
-         req->task = NULL;
-         req->result = 0;
-+       req->work.list.next = 0x1;
-+       req->work.files = 0x2;
-+       req->work.mm = 0x3;
-+       req->work.creds = 0x4;
-+       req->work.fs = 0x5;
-+       req->work.flags = 0x6;
-+       req->work.task_pid = 0x7;
+My name is Niall Douglas, author of the std::file_handle and
+std::mapped_file_handle proposal before WG21 for standardisation. I have
+been collaborating with Eric Niebler, Kirk Shoop and Lewis Baker from
+Facebook who author the Sender-Receiver proposal for standardised async
+i/o in future C++ to implement an io_uring backend for file i/o. We
+previously tried to email Jens Axboe privately about this on the 18th
+May, 25th May and 28th May, but we received no response, hence we have
+come here.
 
-All test cases pass.
+We are currently working on how best to implement async file i/o on
+Linux with io_uring, such that std::file_handle, when used with
+Sender-Receiver, does the right thing. To be specific, std::file_handle
+specifically guarantees propagation of the system's implementation of
+POSIX read-write concurrency guarantees, and indeed much file i/o code
+implicitly assumes those guarantees i.e. that reads made by thread A
+from the same inode will see the same sequence as writes made by thread
+B to overlapping regions, and that concurrent reads never see a torn
+write in progress up to IOV_MAX scatter-gather buffers.
 
-Regards,
-Xiaoguang Wang
+These guarantees are implemented by a wide range of systems: FreeBSD,
+Microsoft Windows and Mac OS have high quality implementations. Linux
+varies by filesystem and O_DIRECT flag, so for example ext4 does not
+implement the guarantees unless O_DIRECT is turned on. ZFS on Linux
+always implements them.
 
-> Basically IORING_OP_POLL_ADD command and async armed poll handlers
-> for regular commands don't touch io_wq_work, so only REQ_F_WORK_INITIALIZED
-> is set, can we do io_wq_work copy and restore.
-> 
-> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-> 
-> ---
-> V3:
->    drop the REQ_F_WORK_NEED_RESTORE flag introduced in V2 patch, just
->    use REQ_F_WORK_INITIALIZED to control whether to do io_wq_work copy
->    and restore.
-> 
-> V6:
->    rebase to io_uring-5.8.
-> ---
->   fs/io_uring.c | 13 +++++++++----
->   1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index bde8b17a7275..3bec6057c189 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -4261,7 +4261,8 @@ static void io_async_task_func(struct callback_head *cb)
->   	spin_unlock_irq(&ctx->completion_lock);
->   
->   	/* restore ->work in case we need to retry again */
-> -	memcpy(&req->work, &apoll->work, sizeof(req->work));
-> +	if (req->flags & REQ_F_WORK_INITIALIZED)
-> +		memcpy(&req->work, &apoll->work, sizeof(req->work));
->   	kfree(apoll);
->   
->   	if (!canceled) {
-> @@ -4358,7 +4359,8 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
->   		return false;
->   
->   	req->flags |= REQ_F_POLLED;
-> -	memcpy(&apoll->work, &req->work, sizeof(req->work));
-> +	if (req->flags & REQ_F_WORK_INITIALIZED)
-> +		memcpy(&apoll->work, &req->work, sizeof(req->work));
->   	had_io = req->io != NULL;
->   
->   	get_task_struct(current);
-> @@ -4383,7 +4385,8 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
->   		if (!had_io)
->   			io_poll_remove_double(req);
->   		spin_unlock_irq(&ctx->completion_lock);
-> -		memcpy(&req->work, &apoll->work, sizeof(req->work));
-> +		if (req->flags & REQ_F_WORK_INITIALIZED)
-> +			memcpy(&req->work, &apoll->work, sizeof(req->work));
->   		kfree(apoll);
->   		return false;
->   	}
-> @@ -4428,7 +4431,9 @@ static bool io_poll_remove_one(struct io_kiocb *req)
->   			 * io_req_work_drop_env below when dropping the
->   			 * final reference.
->   			 */
-> -			memcpy(&req->work, &apoll->work, sizeof(req->work));
-> +			if (req->flags & REQ_F_WORK_INITIALIZED)
-> +				memcpy(&req->work, &apoll->work,
-> +				       sizeof(req->work));
->   			kfree(apoll);
->   		}
->   	}
-> 
+
+What we would like to achieve is that process A using async file i/o
+based on io_uring would experience the POSIX read-write concurrency
+guarantees when interoperating with process B using sync file i/o upon
+the same inode. In other words, whether io_uring is used, or not, should
+have no apparent difference to C++ code.
+
+The existing ordering, pacing and linking sqes in io_uring is
+insufficient to achieve this goal because each io_uring ring buffer is
+independent of other io_uring ring buffers, and indeed also independent
+of the inode being i/o-ed upon.
+
+What we think io_uring would need to implement POSIX read-write
+concurrency guarantees for file i/o is the ability to create a global
+submission queue per-inode. All i/o in the system, including from read()
+and write(), would submit to that per-inode queue. Each inode would have
+an as-if read-write mutex. Read i/o can be dispatched in parallel. Write
+i/o waits until all preceding operations have completed, and writes then
+occur one-at-a-time, per-inode.
+
+(Strictly speaking, the POSIX read-write concurrency guarantees only
+affect *overlapping* regions. If i/o is to non-overlapping regions, it
+can execute in parallel. However, figuring out whether regions overlap
+is slow, so the simpler mechanism above is probably the best balance of
+performance to guarantee)
+
+
+I wish to be clear here: this facility should be opt-out for code which
+doesn't care about POSIX read-write concurrency guarantees e.g. if there
+can only be one thread accessing a file, we only care about performance,
+not concurrency. However, for files shared between processes, I think
+the default on Linux ought to be the same as it is on all the other
+major platforms. Then portable code works as-is on Linux. Failing that,
+standard C++ library implementers ought to be able to implement those
+guarantees for C++ code on Linux, and right now I don't believe they can
+with io_uring, they would be forced to use a threadpool doing
+synchronous i/o, which seems a shame.
+
+Feedback and questions are welcome. My thanks in advance for your time.
+
+Niall

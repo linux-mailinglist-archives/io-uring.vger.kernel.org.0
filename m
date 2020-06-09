@@ -2,100 +2,235 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F11B41F3C6A
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2020 15:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAC0E1F3E00
+	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2020 16:24:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbgFIN3K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 Jun 2020 09:29:10 -0400
-Received: from europe5.nedproductions.biz ([195.154.102.72]:54858 "EHLO
-        mail.nedproductions.biz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbgFIN3J (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Jun 2020 09:29:09 -0400
-X-Greylist: delayed 559 seconds by postgrey-1.27 at vger.kernel.org; Tue, 09 Jun 2020 09:29:09 EDT
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2FDDF5E766
-        for <io-uring@vger.kernel.org>; Tue,  9 Jun 2020 14:19:49 +0100 (BST)
-To:     io-uring@vger.kernel.org
-From:   Niall Douglas <s_sourceforge@nedprod.com>
-Subject: io_uring and POSIX read-write concurrency guarantees
-Message-ID: <ff3be659-e054-88c3-7b4b-c511f679333d@nedprod.com>
-Date:   Tue, 9 Jun 2020 14:19:48 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1728905AbgFIOYR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 Jun 2020 10:24:17 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:58157 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728601AbgFIOYQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Jun 2020 10:24:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1591712653;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=RpR4db2BYUdmK1j0ocnwY36/XEkGSRK7q+SwrEA+exk=;
+        b=TgiGUqab3QCZkytVljeE6tV8qBhQ82XXwSn1yX78Ef1liF2yvDw1x0pfCI20XtvJnJzbNK
+        N1eBMLbiHh68cbNoGCJ6nTZpAkQQI2GoWaJv5X63qWqV/eu+7D2/VP1GRsqEfeb3r0LUM4
+        FWSJOEFJeMFb09ze6LJGE4NN2GtVae0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-348-BLuYbAcqOFOukghPYmVnaw-1; Tue, 09 Jun 2020 10:24:11 -0400
+X-MC-Unique: BLuYbAcqOFOukghPYmVnaw-1
+Received: by mail-wr1-f69.google.com with SMTP id h6so8746359wrx.4
+        for <io-uring@vger.kernel.org>; Tue, 09 Jun 2020 07:24:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=RpR4db2BYUdmK1j0ocnwY36/XEkGSRK7q+SwrEA+exk=;
+        b=eDK/9AEsVBMiV0MwuVZb6B25vR3sANiZAq8ceVBD8B7U4dLLRgQgbR52HIRt3Ynl2I
+         NdW0eh7wkwmRUMJEjLORenmls4QuxkYm68Dy2Zol3GUj+sqrvVxp8Kg0AngOE9k+JzjE
+         efndVSzKGtDtTC88rYl64dA8Hjb1mEnnEVMMaa77bWuzQ9YBgs0+GppM0gXH1Sj92UJi
+         d/iY3vO8i1N5g3mo88cG11CnQ1ozSM0b7QnkxGJIiWRTCwsRHdTymQnpMBsp3SyU21Qu
+         qlrctiimIatfeHBovwumVWsMbSP+y/zGTjycaE7lMGwuWa6rO6hqOm0uGlnL4a+qF9Pq
+         7Znw==
+X-Gm-Message-State: AOAM533m702U9QhMXTI2gmamb5/G0vnNcOT5+GjCtOrkhHDfoecrvL68
+        Vam6j9Xna21NaJbgDsA/voLAWFvND+9XEG4Eow8yoHm1bSWTLBS+maT9lRE1M1wRARTV/wHt5G/
+        YvMIbnKj/4knF57tNP94=
+X-Received: by 2002:adf:ed87:: with SMTP id c7mr4789074wro.108.1591712650531;
+        Tue, 09 Jun 2020 07:24:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw7k0clUUUuo0NQ83yaXJdGTvNwA1q+8Od/NT0+Gd4O+ygFtZPfo/lB99jWrl5o+uVeAv0zqQ==
+X-Received: by 2002:adf:ed87:: with SMTP id c7mr4789051wro.108.1591712650206;
+        Tue, 09 Jun 2020 07:24:10 -0700 (PDT)
+Received: from steredhat (host-79-49-207-108.retail.telecomitalia.it. [79.49.207.108])
+        by smtp.gmail.com with ESMTPSA id e12sm3613514wro.52.2020.06.09.07.24.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2020 07:24:09 -0700 (PDT)
+Date:   Tue, 9 Jun 2020 16:24:06 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        Jeff Moyer <jmoyer@redhat.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC] io_uring: add restrictions to support untrusted applications
+ and guests
+Message-ID: <20200609142406.upuwpfmgqjeji4lc@steredhat>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Dear io-uring mailing list,
+Hi Jens,
+Stefan and I have a proposal to share with io_uring community.
+Before implementing it we would like to discuss it to receive feedbacks and
+to see if it could be accepted:
 
-My name is Niall Douglas, author of the std::file_handle and
-std::mapped_file_handle proposal before WG21 for standardisation. I have
-been collaborating with Eric Niebler, Kirk Shoop and Lewis Baker from
-Facebook who author the Sender-Receiver proposal for standardised async
-i/o in future C++ to implement an io_uring backend for file i/o. We
-previously tried to email Jens Axboe privately about this on the 18th
-May, 25th May and 28th May, but we received no response, hence we have
-come here.
+Adding restrictions to io_uring
+=====================================
+The io_uring API provides submission and completion queues for performing
+asynchronous I/O operations. The queues are located in memory that is
+accessible to both the host userspace application and the kernel, making it
+possible to monitor for activity through polling instead of system calls. This
+design offers good performance and this makes exposing io_uring to guests an
+attractive idea for improving I/O performance in virtualization.
 
-We are currently working on how best to implement async file i/o on
-Linux with io_uring, such that std::file_handle, when used with
-Sender-Receiver, does the right thing. To be specific, std::file_handle
-specifically guarantees propagation of the system's implementation of
-POSIX read-write concurrency guarantees, and indeed much file i/o code
-implicitly assumes those guarantees i.e. that reads made by thread A
-from the same inode will see the same sequence as writes made by thread
-B to overlapping regions, and that concurrent reads never see a torn
-write in progress up to IOV_MAX scatter-gather buffers.
+PoC and preliminary benchmarks
+---------------------------
+We realized a PoC, using QEMU and virtio-blk device, to share io_uring
+CQ and SQ rings with the guest.
+QEMU initializes io_uring, registers the device (NVMe) fd through
+io_uring_register(2), and maps the rings in the guest memory.
+The virtio-blk driver uses these rings to send requests instead of using
+the standard virtqueues.
 
-These guarantees are implemented by a wide range of systems: FreeBSD,
-Microsoft Windows and Mac OS have high quality implementations. Linux
-varies by filesystem and O_DIRECT flag, so for example ext4 does not
-implement the guarantees unless O_DIRECT is turned on. ZFS on Linux
-always implements them.
+The PoC implements a pure polling solution where the application is polling
+(IOPOLL enabled) in the guest and the sqpoll_kthread is polling in the host
+(SQPOLL and IOPOLL enabled).
+
+These are the encouraging results we obtained from this preliminary work;
+we used fio (rw=randread bs=4k) to measure the kIOPS on a NVMe device:
+
+- bare-metal
+                                                       iodepth
+  | fio ioengine                              |  1  |  8  |  16 |  32 |
+  |-------------------------------------------|----:|----:|----:|----:|
+  | io_uring (SQPOLL + IOPOLL)                | 119 | 550 | 581 | 585 |
+  | io_uring (IOPOLL)                         | 122 | 502 | 519 | 538 |
+
+- QEMU/KVM guest (aio=io_uring)
+                                                       iodepth
+  | virtio-blk            | fio ioengine      |  1  |  8  |  16 |  32 |
+  |-----------------------|-------------------|----:|----:|----:|----:|
+  | virtqueues            | io_uring (IOPOLL) |  27 | 144 | 209 | 266 |
+  | virtqueues + iothread | io_uring (IOPOLL) |  73 | 264 | 306 | 312 |
+  | io_uring passthrough  | io_uring (IOPOLL) | 104 | 532 | 577 | 585 |
+
+  All guest experiments are using the QEMU io_uring backend with SQPOLL and
+  IOPOLL enabled. The virtio-blk driver is modified to support blovk io_poll
+  on both virtqueues and io_uring passthrough.
+
+Before developing this proof-of-concept further we would like to discuss
+io_uring changes required to restrict rings since this mechanism is a
+prerequisite for real-world use cases where guests are untrusted.
+
+Restrictions
+------------
+This document proposes io_uring API changes that safely allow untrusted
+applications or guests to use io_uring. io_uring's existing security model is
+that of kernel system call handler code. It is designed to reject invalid
+inputs from host userspace applications. Supporting guests as io_uring API
+clients adds a new trust domain with access to even fewer resources than host
+userspace applications.
+
+Guests do not have direct access to host userspace application file descriptors
+or memory. The host userspace application, a Virtual Machine Monitor (VMM) such
+as QEMU, grants access to a subset of its file descriptors and memory. The
+allowed file descriptors are typically the disk image files belonging to the
+guest. The memory is typically the virtual machine's RAM that the VMM has
+allocated on behalf of the guest.
+
+The following extensions to the io_uring API allow the host application to
+grant access to some of its file descriptors.
+
+These extensions are designed to be applicable to other use cases besides
+untrusted guests and are not virtualization-specific. For example, the
+restrictions can be used to allow only a subset of sqe operations available to
+an application similar to seccomp syscall whitelisting.
+
+An address translation and memory restriction mechanism would also be
+necessary, but we can discuss this later.
+
+The IOURING_REGISTER_RESTRICTIONS opcode
+----------------------------------------
+The new io_uring_register(2) IOURING_REGISTER_RESTRICTIONS opcode permanently
+installs a feature whitelist on an io_ring_ctx. The io_ring_ctx can then be
+passed to untrusted code with the knowledge that only operations present in the
+whitelist can be executed.
+
+The whitelist approach ensures that new features added to io_uring do not
+accidentally become available when an existing application is launched on a
+newer kernel version.
+
+The IORING_REGISTER_RESTRICTIONS opcode takes an array of struct
+io_uring_restriction elements that describe whitelisted features:
+
+  #define IORING_REGISTER_RESTRICTIONS 11
+
+  /* struct io_uring_restriction::opcode values */
+  enum {
+      /* Allow an io_uring_register(2) opcode */
+      IORING_RESTRICTION_REGISTER_OP,
+
+      /* Allow an sqe opcode */
+      IORING_RESTRICTION_SQE_OP,
+
+      /* Only allow fixed files */
+      IORING_RESTRICTION_FIXED_FILES_ONLY,
+
+      /* Only allow registered addresses and translate them */
+      IORING_RESTRICTION_BUFFER_CHECK
+  };
+
+  struct io_uring_restriction {
+      __u16 opcode;
+      union {
+          __u8 register_op; /* IORING_RESTRICTION_REGISTER_OP */
+          __u8 sqe_op;      /* IORING_RESTRICTION_SQE_OP */
+      };
+      __u8 resv;
+      __u32 resv2[3];
+  };
+
+This call can only be made once. Afterwards it is not possible to change
+restrictions anymore. This prevents untrusted code from removing restrictions.
+
+Limiting access to io_uring operations
+--------------------------------------
+The following example shows how to whitelist IORING_OP_READV, IORING_OP_WRITEV,
+and IORING_OP_FSYNC:
+
+  struct io_uring_restriction restrictions[] = {
+      {
+          .opcode = IORING_RESTRICTION_SQE_OP,
+          .sqe_op = IORING_OP_READV,
+      },
+      {
+          .opcode = IORING_RESTRICTION_SQE_OP,
+          .sqe_op = IORING_OP_WRITEV,
+      },
+      {
+          .opcode = IORING_RESTRICTION_SQE_OP,
+          .sqe_op = IORING_OP_FSYNC,
+      },
+      ...
+  };
+
+  io_uring_register(ringfd, IORING_REGISTER_RESTRICTIONS,
+                    restrictions, ARRAY_SIZE(restrictions));
+
+Limiting access to file descriptors
+-----------------------------------
+The fixed files mechanism can be used to limit access to a set of file
+descriptors:
+
+  struct io_uring_restriction restrictions[] = {
+      {
+          .opcode = IORING_RESTRICTION_FIXED_FILES_ONLY,
+      },
+      ...
+  };
+
+  io_uring_register(ringfd, IORING_REGISTER_RESTRICTIONS,
+                    restrictions, ARRAY_SIZE(restrictions));
+
+Only requests with the sqe->flags IOSQE_FIXED_FILE bit set will be allowed.
 
 
-What we would like to achieve is that process A using async file i/o
-based on io_uring would experience the POSIX read-write concurrency
-guarantees when interoperating with process B using sync file i/o upon
-the same inode. In other words, whether io_uring is used, or not, should
-have no apparent difference to C++ code.
+Thanks for your feedback,
+Stefano
 
-The existing ordering, pacing and linking sqes in io_uring is
-insufficient to achieve this goal because each io_uring ring buffer is
-independent of other io_uring ring buffers, and indeed also independent
-of the inode being i/o-ed upon.
-
-What we think io_uring would need to implement POSIX read-write
-concurrency guarantees for file i/o is the ability to create a global
-submission queue per-inode. All i/o in the system, including from read()
-and write(), would submit to that per-inode queue. Each inode would have
-an as-if read-write mutex. Read i/o can be dispatched in parallel. Write
-i/o waits until all preceding operations have completed, and writes then
-occur one-at-a-time, per-inode.
-
-(Strictly speaking, the POSIX read-write concurrency guarantees only
-affect *overlapping* regions. If i/o is to non-overlapping regions, it
-can execute in parallel. However, figuring out whether regions overlap
-is slow, so the simpler mechanism above is probably the best balance of
-performance to guarantee)
-
-
-I wish to be clear here: this facility should be opt-out for code which
-doesn't care about POSIX read-write concurrency guarantees e.g. if there
-can only be one thread accessing a file, we only care about performance,
-not concurrency. However, for files shared between processes, I think
-the default on Linux ought to be the same as it is on all the other
-major platforms. Then portable code works as-is on Linux. Failing that,
-standard C++ library implementers ought to be able to implement those
-guarantees for C++ code on Linux, and right now I don't believe they can
-with io_uring, they would be forced to use a threadpool doing
-synchronous i/o, which seems a shame.
-
-Feedback and questions are welcome. My thanks in advance for your time.
-
-Niall

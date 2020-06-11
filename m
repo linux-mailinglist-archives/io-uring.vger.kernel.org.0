@@ -2,135 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B2D91F6B34
-	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2020 17:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A262C1F6B76
+	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2020 17:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbgFKPju (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 11 Jun 2020 11:39:50 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:38453 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728104AbgFKPju (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Jun 2020 11:39:50 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R301e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0U.HeGb6_1591889978;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U.HeGb6_1591889978)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 11 Jun 2020 23:39:44 +0800
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, asml.silence@gmail.com,
-        joseph.qi@linux.alibaba.com,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: [PATCH v2] io_uring: fix io_kiocb.flags modification race in IOPOLL mode
-Date:   Thu, 11 Jun 2020 23:39:36 +0800
-Message-Id: <20200611153936.19012-1-xiaoguang.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.2
+        id S1728641AbgFKPqX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 Jun 2020 11:46:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43692 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728675AbgFKPqW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Jun 2020 11:46:22 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 649CFC08C5C2
+        for <io-uring@vger.kernel.org>; Thu, 11 Jun 2020 08:46:21 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id y18so2470027plr.4
+        for <io-uring@vger.kernel.org>; Thu, 11 Jun 2020 08:46:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2f3tW9HBmOoXFPNLoVb9FslaVcq4vCF5hduK4aKYehk=;
+        b=a5K17ewCL1zQB6gW7JuXppbwOcQ689VvV+pORLooaK/gM/JtQkx/olQ167P8udg3ZL
+         Wnj2nDYgGhm+zGAkLzIZRQ8/F3tcn8yK+Y3cnD+SpOUlS1OIUGgf+kqL/CPStgV3V6Se
+         uDa3VXWYNoiO1/m1QRpLaEepgLyzg+LkWjuDIoAHpUcaoW9ymo7jAT2Ez050u1YHquzo
+         KONJ7r5gnf9rAnNp8VWs+JGibGRRM6l6BXfskfTOE0fHAOXIBO0EmOiMLWXWjJ0aBRAi
+         urzV0qr56Z4MJhm6Cgx/2rvjmwwjTALIuqAWft7+0IxkFy9Y4nyxd3CwvlFC6XJ7T3s3
+         uUGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2f3tW9HBmOoXFPNLoVb9FslaVcq4vCF5hduK4aKYehk=;
+        b=Hyp6u6G+7PioOUT67nP8YDcM/gC0hfKAic4pwisLZXBtG9YJEVwU0WODr4PJu1EdQB
+         5I2Be2cQMIOkQzqxA9X96IKB8tyddxuYJ7n6ZxWMK7zUC+/8C4CyyHudnlZ1CPhxYd5T
+         D80hc8AMaJlgLeKCEsEbeEbI5iuYjBE8kjwAaNJd7GScCjDPA6+WYbH6fm9EENgf0GCT
+         knq8B0DN9UgUnVxtIC5v/3xXD5oX5hO0oGRjKhV6m8qf22fryyaMfi06cCEpcq74FoF7
+         3PEMHdhWjAvUJB4huoENk9iWbYJ3knw42zes9hdX16tZh5ZqIZlHZ/oIoQzWD6IPkDU8
+         T5+Q==
+X-Gm-Message-State: AOAM532UsQFsCQjZXcO8FGq3XLzrrgaX5vvUzwq/e/P4X9ABq8IPzMTA
+        5adaOhfjvzbsq6eywGOK34VCAA==
+X-Google-Smtp-Source: ABdhPJyXqdRxDwc6M/669INToHN2Xph4LZlQoZygFrLyBJRKGH/ffn7YoSMzGtiG9uLYvDllxego7A==
+X-Received: by 2002:a17:902:e9d2:: with SMTP id 18mr8023697plk.56.1591890380666;
+        Thu, 11 Jun 2020 08:46:20 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id 12sm3555324pfj.149.2020.06.11.08.46.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jun 2020 08:46:19 -0700 (PDT)
+Subject: Re: [PATCH v2] io_uring: fix io_kiocb.flags modification race in
+ IOPOLL mode
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com, joseph.qi@linux.alibaba.com
+References: <20200611153936.19012-1-xiaoguang.wang@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <4c553854-dfe9-1529-7c07-37ba2bafb0bc@kernel.dk>
+Date:   Thu, 11 Jun 2020 09:46:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <20200611153936.19012-1-xiaoguang.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-While testing io_uring in arm, we found sometimes io_sq_thread() keeps
-polling io requests even though there are not inflight io requests in
-block layer. After some investigations, found a possible race about
-io_kiocb.flags, see below race codes:
-  1) in the end of io_write() or io_read()
-    req->flags &= ~REQ_F_NEED_CLEANUP;
-    kfree(iovec);
-    return ret;
+On 6/11/20 9:39 AM, Xiaoguang Wang wrote:
+> While testing io_uring in arm, we found sometimes io_sq_thread() keeps
+> polling io requests even though there are not inflight io requests in
+> block layer. After some investigations, found a possible race about
+> io_kiocb.flags, see below race codes:
+>   1) in the end of io_write() or io_read()
+>     req->flags &= ~REQ_F_NEED_CLEANUP;
+>     kfree(iovec);
+>     return ret;
+> 
+>   2) in io_complete_rw_iopoll()
+>     if (res != -EAGAIN)
+>         req->flags |= REQ_F_IOPOLL_COMPLETED;
+> 
+> In IOPOLL mode, io requests still maybe completed by interrupt, then
+> above codes are not safe, concurrent modifications to req->flags, which
+> is not protected by lock or is not atomic modifications. I also had
+> disassemble io_complete_rw_iopoll() in arm:
+>    req->flags |= REQ_F_IOPOLL_COMPLETED;
+>    0xffff000008387b18 <+76>:    ldr     w0, [x19,#104]
+>    0xffff000008387b1c <+80>:    orr     w0, w0, #0x1000
+>    0xffff000008387b20 <+84>:    str     w0, [x19,#104]
+> 
+> Seems that the "req->flags |= REQ_F_IOPOLL_COMPLETED;" is  load and
+> modification, two instructions, which obviously is not atomic.
+> 
+> To fix this issue, add a new iopoll_completed in io_kiocb to indicate
+> whether io request is completed.
 
-  2) in io_complete_rw_iopoll()
-    if (res != -EAGAIN)
-        req->flags |= REQ_F_IOPOLL_COMPLETED;
+Looks good, applied, thanks.
 
-In IOPOLL mode, io requests still maybe completed by interrupt, then
-above codes are not safe, concurrent modifications to req->flags, which
-is not protected by lock or is not atomic modifications. I also had
-disassemble io_complete_rw_iopoll() in arm:
-   req->flags |= REQ_F_IOPOLL_COMPLETED;
-   0xffff000008387b18 <+76>:    ldr     w0, [x19,#104]
-   0xffff000008387b1c <+80>:    orr     w0, w0, #0x1000
-   0xffff000008387b20 <+84>:    str     w0, [x19,#104]
-
-Seems that the "req->flags |= REQ_F_IOPOLL_COMPLETED;" is  load and
-modification, two instructions, which obviously is not atomic.
-
-To fix this issue, add a new iopoll_completed in io_kiocb to indicate
-whether io request is completed.
-
-Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-
----
-V2:
-  Use READ_ONCE/WRITE_ONCE while reading/setting iopoll_completed.
----
- fs/io_uring.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5b0249140ff5..61fca5afaac8 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -529,7 +529,6 @@ enum {
- 	REQ_F_INFLIGHT_BIT,
- 	REQ_F_CUR_POS_BIT,
- 	REQ_F_NOWAIT_BIT,
--	REQ_F_IOPOLL_COMPLETED_BIT,
- 	REQ_F_LINK_TIMEOUT_BIT,
- 	REQ_F_TIMEOUT_BIT,
- 	REQ_F_ISREG_BIT,
-@@ -574,8 +573,6 @@ enum {
- 	REQ_F_CUR_POS		= BIT(REQ_F_CUR_POS_BIT),
- 	/* must not punt to workers */
- 	REQ_F_NOWAIT		= BIT(REQ_F_NOWAIT_BIT),
--	/* polled IO has completed */
--	REQ_F_IOPOLL_COMPLETED	= BIT(REQ_F_IOPOLL_COMPLETED_BIT),
- 	/* has linked timeout */
- 	REQ_F_LINK_TIMEOUT	= BIT(REQ_F_LINK_TIMEOUT_BIT),
- 	/* timeout request */
-@@ -640,6 +637,8 @@ struct io_kiocb {
- 	struct io_async_ctx		*io;
- 	int				cflags;
- 	u8				opcode;
-+	/* polled IO has completed */
-+	u8				iopoll_completed;
- 
- 	u16				buf_index;
- 
-@@ -1798,7 +1797,7 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 		 * If we find a request that requires polling, break out
- 		 * and complete those lists first, if we have entries there.
- 		 */
--		if (req->flags & REQ_F_IOPOLL_COMPLETED) {
-+		if (READ_ONCE(req->iopoll_completed)) {
- 			list_move_tail(&req->list, &done);
- 			continue;
- 		}
-@@ -1979,7 +1978,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
- 		req_set_fail_links(req);
- 	req->result = res;
- 	if (res != -EAGAIN)
--		req->flags |= REQ_F_IOPOLL_COMPLETED;
-+		WRITE_ONCE(req->iopoll_completed, 1);
- }
- 
- /*
-@@ -2012,7 +2011,7 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
- 	 * For fast devices, IO may have already completed. If it has, add
- 	 * it to the front so we find it first.
- 	 */
--	if (req->flags & REQ_F_IOPOLL_COMPLETED)
-+	if (READ_ONCE(req->iopoll_completed))
- 		list_add(&req->list, &ctx->poll_list);
- 	else
- 		list_add_tail(&req->list, &ctx->poll_list);
-@@ -2140,6 +2139,7 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		kiocb->ki_flags |= IOCB_HIPRI;
- 		kiocb->ki_complete = io_complete_rw_iopoll;
- 		req->result = 0;
-+		req->iopoll_completed = 0;
- 	} else {
- 		if (kiocb->ki_flags & IOCB_HIPRI)
- 			return -EINVAL;
 -- 
-2.17.2
+Jens Axboe
 

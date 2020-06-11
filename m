@@ -2,79 +2,131 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A1E1F6105
-	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2020 06:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2144D1F64AD
+	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2020 11:25:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725824AbgFKEeM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 11 Jun 2020 00:34:12 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:38991 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725799AbgFKEeM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Jun 2020 00:34:12 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07425;MF=jiufei.xue@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0U.Eflrs_1591850040;
-Received: from localhost(mailfrom:jiufei.xue@linux.alibaba.com fp:SMTPD_---0U.Eflrs_1591850040)
+        id S1726708AbgFKJZW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 Jun 2020 05:25:22 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:35106 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726560AbgFKJZW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Jun 2020 05:25:22 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0U.G8I9p_1591867511;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U.G8I9p_1591867511)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 11 Jun 2020 12:34:01 +0800
-From:   Jiufei Xue <jiufei.xue@linux.alibaba.com>
+          Thu, 11 Jun 2020 17:25:18 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-Subject: [PATCH] change poll_events to 32 bits to cover EPOLLEXCLUSIVE
-Date:   Thu, 11 Jun 2020 12:34:00 +0800
-Message-Id: <1591850040-118753-1-git-send-email-jiufei.xue@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+Cc:     axboe@kernel.dk, asml.silence@gmail.com,
+        joseph.qi@linux.alibaba.com,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH] io_uring: fix io_kiocb.flags modification race in IOPOLL mode
+Date:   Thu, 11 Jun 2020 17:25:10 +0800
+Message-Id: <20200611092510.2963-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Jiufei Xue <jiufei.xue@alibaba.linux.com>
+While testing io_uring in arm, we found sometimes io_sq_thread() keeps
+polling io requests even though there are not inflight io requests in
+block layer. After some investigations, found a possible race about
+io_kiocb.flags, see below race codes:
+  1) in the end of io_write() or io_read()
+    req->flags &= ~REQ_F_NEED_CLEANUP;
+    kfree(iovec);
+    return ret;
 
-Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+  2) in io_complete_rw_iopoll()
+    if (res != -EAGAIN)
+        req->flags |= REQ_F_IOPOLL_COMPLETED;
+
+In IOPOLL mode, io requests still maybe completed by interrupt, then
+above codes are not safe, concurrent modifications to req->flags, which
+is not protected by lock or is not atomic modifications. I also had
+disassemble io_complete_rw_iopoll() in arm:
+   req->flags |= REQ_F_IOPOLL_COMPLETED;
+   0xffff000008387b18 <+76>:    ldr     w0, [x19,#104]
+   0xffff000008387b1c <+80>:    orr     w0, w0, #0x1000
+   0xffff000008387b20 <+84>:    str     w0, [x19,#104]
+
+Seems that the "req->flags |= REQ_F_IOPOLL_COMPLETED;" is  load and
+modification, two instructions, which obviously is not atomic.
+
+To fix this issue, add a new iopoll_completed in io_kiocb to indicate
+whether io request is completed.
+
+Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 ---
- man/io_uring_enter.2            | 2 +-
- src/include/liburing.h          | 2 +-
- src/include/liburing/io_uring.h | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ fs/io_uring.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
-index 188398b..d0d5538 100644
---- a/man/io_uring_enter.2
-+++ b/man/io_uring_enter.2
-@@ -125,7 +125,7 @@ struct io_uring_sqe {
-     union {
-         __kernel_rwf_t  rw_flags;
-         __u32    fsync_flags;
--        __u16    poll_events;
-+        __u32    poll_events;
-         __u32    sync_range_flags;
-         __u32    msg_flags;
-         __u32    timeout_flags;
-diff --git a/src/include/liburing.h b/src/include/liburing.h
-index 0192b47..b1659cc 100644
---- a/src/include/liburing.h
-+++ b/src/include/liburing.h
-@@ -253,7 +253,7 @@ static inline void io_uring_prep_sendmsg(struct io_uring_sqe *sqe, int fd,
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5b0249140ff5..0e57ca627af2 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -529,7 +529,6 @@ enum {
+ 	REQ_F_INFLIGHT_BIT,
+ 	REQ_F_CUR_POS_BIT,
+ 	REQ_F_NOWAIT_BIT,
+-	REQ_F_IOPOLL_COMPLETED_BIT,
+ 	REQ_F_LINK_TIMEOUT_BIT,
+ 	REQ_F_TIMEOUT_BIT,
+ 	REQ_F_ISREG_BIT,
+@@ -574,8 +573,6 @@ enum {
+ 	REQ_F_CUR_POS		= BIT(REQ_F_CUR_POS_BIT),
+ 	/* must not punt to workers */
+ 	REQ_F_NOWAIT		= BIT(REQ_F_NOWAIT_BIT),
+-	/* polled IO has completed */
+-	REQ_F_IOPOLL_COMPLETED	= BIT(REQ_F_IOPOLL_COMPLETED_BIT),
+ 	/* has linked timeout */
+ 	REQ_F_LINK_TIMEOUT	= BIT(REQ_F_LINK_TIMEOUT_BIT),
+ 	/* timeout request */
+@@ -640,6 +637,8 @@ struct io_kiocb {
+ 	struct io_async_ctx		*io;
+ 	int				cflags;
+ 	u8				opcode;
++	/* polled IO has completed */
++	u8				iopoll_completed;
+ 
+ 	u16				buf_index;
+ 
+@@ -1798,7 +1797,7 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ 		 * If we find a request that requires polling, break out
+ 		 * and complete those lists first, if we have entries there.
+ 		 */
+-		if (req->flags & REQ_F_IOPOLL_COMPLETED) {
++		if (req->iopoll_completed) {
+ 			list_move_tail(&req->list, &done);
+ 			continue;
+ 		}
+@@ -1979,7 +1978,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
+ 		req_set_fail_links(req);
+ 	req->result = res;
+ 	if (res != -EAGAIN)
+-		req->flags |= REQ_F_IOPOLL_COMPLETED;
++		req->iopoll_completed = 1;
  }
  
- static inline void io_uring_prep_poll_add(struct io_uring_sqe *sqe, int fd,
--					  short poll_mask)
-+					  unsigned poll_mask)
- {
- 	io_uring_prep_rw(IORING_OP_POLL_ADD, sqe, fd, NULL, 0, 0);
- 	sqe->poll_events = poll_mask;
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 92c2269..afc7edd 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -31,7 +31,7 @@ struct io_uring_sqe {
- 	union {
- 		__kernel_rwf_t	rw_flags;
- 		__u32		fsync_flags;
--		__u16		poll_events;
-+		__u32		poll_events;
- 		__u32		sync_range_flags;
- 		__u32		msg_flags;
- 		__u32		timeout_flags;
+ /*
+@@ -2012,7 +2011,7 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
+ 	 * For fast devices, IO may have already completed. If it has, add
+ 	 * it to the front so we find it first.
+ 	 */
+-	if (req->flags & REQ_F_IOPOLL_COMPLETED)
++	if (req->iopoll_completed)
+ 		list_add(&req->list, &ctx->poll_list);
+ 	else
+ 		list_add_tail(&req->list, &ctx->poll_list);
+@@ -2140,6 +2139,7 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 		kiocb->ki_flags |= IOCB_HIPRI;
+ 		kiocb->ki_complete = io_complete_rw_iopoll;
+ 		req->result = 0;
++		req->iopoll_completed = 0;
+ 	} else {
+ 		if (kiocb->ki_flags & IOCB_HIPRI)
+ 			return -EINVAL;
 -- 
-1.8.3.1
+2.17.2
 

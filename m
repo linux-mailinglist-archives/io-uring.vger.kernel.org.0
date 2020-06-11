@@ -2,65 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DDC11F6A93
-	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2020 17:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7155D1F6A9A
+	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2020 17:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728411AbgFKPGC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 11 Jun 2020 11:06:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37442 "EHLO
+        id S1728411AbgFKPIC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 Jun 2020 11:08:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728327AbgFKPGC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Jun 2020 11:06:02 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 186A9C08C5C1
-        for <io-uring@vger.kernel.org>; Thu, 11 Jun 2020 08:06:02 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id n2so2409001pld.13
-        for <io-uring@vger.kernel.org>; Thu, 11 Jun 2020 08:06:02 -0700 (PDT)
+        with ESMTP id S1728364AbgFKPIC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Jun 2020 11:08:02 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C076DC08C5C1
+        for <io-uring@vger.kernel.org>; Thu, 11 Jun 2020 08:08:00 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id 23so2781234pfw.10
+        for <io-uring@vger.kernel.org>; Thu, 11 Jun 2020 08:08:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/XozilSCMPO+DzwxXxej5kI1SBryNWue/7kNfb2/3vo=;
-        b=kHjRHotFmm6rBj91FvS6KUU/JkVu5h3m3uq3jWlbAHtd45K6fDiZ8tTTaOc4bpI17J
-         1NAl1sxJOiZBYTBaqrwk4igaIftpaV5MjtEVqzs/xLqHAVDjsL86x+rvWaVTWQyhDDct
-         ogVtrkJuytvUa1YeCa09lf9csxcaqMvgIAWkFLw/1uahgo5EIohdrk8fG3gM22a6kwuQ
-         XVGICXB9jk+muVOUA6jEqQgXR1Ez4sUI/JTewlSLDo/231nLzaBW9Z7Tw5RSIoNpI65V
-         UPiMkfID7XrZ6mPbshIfwMefWgyXCdBcSurOhHFJp6q4zKaBk7lO/5Ix+QTV06TKGVLo
-         MxCQ==
+        bh=dC25K0uzB2BNPMSrVl+BZYpPLmxAri02zjzeg81WXfs=;
+        b=RIlhaqbd5cE5TuYmZyK6Ll8a30y2IZjmc9qrFP/go9d3czn+/QGoGpgVjTAiOsx1IL
+         +r3US69/5VjP/WDq2MsOTJePjpr5PXKoDZBVO5aRABtLu12RYL5xLkqgaV3LjZf+yyq0
+         prsVuSML85SDfSHEr2B2ByyN1zV8gYZYLBH2viaMufGQRKRpOCtSfCHo+vUdtkVZrgqx
+         wU2zkV/xNWetF4mbJb2ESm1ijMagcHP+nBXAWJ+4d9CP34wNljjww+SIgptOEqVFI3b0
+         xyVGyqoYEU3TcziNc/oJw69QAmYbCGrZ2v7pmzVTS2FPQN8+0zSDjB3jDE3tdSSAfaQT
+         K9vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=/XozilSCMPO+DzwxXxej5kI1SBryNWue/7kNfb2/3vo=;
-        b=t2Y/Ksh00ezkh1+vdLVhb+SRSUYjq+SF0QM1IvRb7rzuPbvBsywtYlL1Jop1FjoUfH
-         WitFeHXNzC1mp11IQqyOFlJ7OrovhlXtOUWHgQkWgupys9mYYFnFSFrJrQZQ68Fl4iyv
-         HEkgzKFvB1xB16gqEXsZGoBpxGoozz0xKCJzXJ9XP39R8Eu9l2v8c8QfCinklMmnyknw
-         MOeYO2/iObBUq+FHL2OeDvUlrXXr1MfHQo+Ryw371eK1W0NlRpS9E18xZDqzwckHWpgF
-         aPkYF2+14sor8GO8i8EAMuztHq/W3+LRjqpwkmT5/nQvrsyDPqnjAO7oQbSAHSvLOIlI
-         Rk0w==
-X-Gm-Message-State: AOAM530xNauOS04SQDG8uWo18SMbt0mgu8NQ9bS2cWVNKftlwM/WOfOw
-        wdlMLrQsG1LL2iIv6foIwAzBZ+ZMpm/ISA==
-X-Google-Smtp-Source: ABdhPJy3gEHGoddKuFibF9G7svlQtbHLNmHdXITmW0yLIkwCj0QVIJb8lszdppUdtOep+MyRK9szqA==
-X-Received: by 2002:a17:90a:6f04:: with SMTP id d4mr7793865pjk.134.1591887961391;
-        Thu, 11 Jun 2020 08:06:01 -0700 (PDT)
+        bh=dC25K0uzB2BNPMSrVl+BZYpPLmxAri02zjzeg81WXfs=;
+        b=LtVn4CM3JZbj1Naiy65VQrUpg74DPdEimhKP6TH1ordxK6vy1ga+ejkCQMHI+0KaeV
+         XyfR2WCD4GEJ+8YQmYSW3fpZtTOsLxbEEjsINkyzB4lW8Syz6/wVgViKk+VzgFa1nVYL
+         EZe9ZiRlOglN34W8HGXxL/R9/YrQSDl5zE4EFCeZL/n4HGeQBE7OpAgrmuEYSOkiEjEi
+         geiuRqj+DJwYTm+LA9dQEzPL1mC+mR8aC50cuG0Mnl5qTOUUVEwiK98Ki8zbDx9kt4nA
+         ALSoLNBwWoHEWBS3sa2oTqz+G41aiXOWDbvZJjDCDBNqzCLW5qI8mCNnHcbF+B3m8X+0
+         q9+g==
+X-Gm-Message-State: AOAM53277bAWSPipMfXpEzXdF68eXlBiaK4NmnvM9qc8U56M+2UE4Z1V
+        8f7KmhQ4PyP2qdL9qVJy/1WEhkf3jszHqg==
+X-Google-Smtp-Source: ABdhPJxWWStq2xoYukKlfQ3aMbTA6odkBVM8E2v4A2mssnSIRHKnmPyhwxN07rX41Z7Mwx8ZcxiASA==
+X-Received: by 2002:a63:3756:: with SMTP id g22mr7095857pgn.304.1591888080083;
+        Thu, 11 Jun 2020 08:08:00 -0700 (PDT)
 Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id x1sm3305224pfn.76.2020.06.11.08.05.59
+        by smtp.gmail.com with ESMTPSA id j6sm3426297pfi.183.2020.06.11.08.07.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jun 2020 08:06:00 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: fix io_kiocb.flags modification race in IOPOLL
- mode
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, joseph.qi@linux.alibaba.com
-References: <20200611092510.2963-1-xiaoguang.wang@linux.alibaba.com>
+        Thu, 11 Jun 2020 08:07:59 -0700 (PDT)
+Subject: Re: [PATCH v2] io_uring: add EPOLLEXCLUSIVE flag to aoid thundering
+ herd type behavior
+To:     Jiufei Xue <jiufei.xue@linux.alibaba.com>, io-uring@vger.kernel.org
+Cc:     joseph.qi@linux.alibaba.com
+References: <1591849830-115806-1-git-send-email-jiufei.xue@linux.alibaba.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d0543873-7e78-62af-67fa-fa5ae9ed4e0f@kernel.dk>
-Date:   Thu, 11 Jun 2020 09:05:58 -0600
+Message-ID: <9d2dbb50-ad42-ad27-4115-ea00971e87f1@kernel.dk>
+Date:   Thu, 11 Jun 2020 09:07:57 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200611092510.2963-1-xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <1591849830-115806-1-git-send-email-jiufei.xue@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,42 +68,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/11/20 3:25 AM, Xiaoguang Wang wrote:
-> While testing io_uring in arm, we found sometimes io_sq_thread() keeps
-> polling io requests even though there are not inflight io requests in
-> block layer. After some investigations, found a possible race about
-> io_kiocb.flags, see below race codes:
->   1) in the end of io_write() or io_read()
->     req->flags &= ~REQ_F_NEED_CLEANUP;
->     kfree(iovec);
->     return ret;
+On 6/10/20 10:30 PM, Jiufei Xue wrote:
+> From: Jiufei Xue <jiufei.xue@alibaba.linux.com>
 > 
->   2) in io_complete_rw_iopoll()
->     if (res != -EAGAIN)
->         req->flags |= REQ_F_IOPOLL_COMPLETED;
+> Applications can use this flag to avoid accept thundering herd.
+> And poll_events should be changed to 32 bits to cover EPOLLEXCLUSIVE.
 > 
-> In IOPOLL mode, io requests still maybe completed by interrupt, then
-> above codes are not safe, concurrent modifications to req->flags, which
-> is not protected by lock or is not atomic modifications. I also had
-> disassemble io_complete_rw_iopoll() in arm:
->    req->flags |= REQ_F_IOPOLL_COMPLETED;
->    0xffff000008387b18 <+76>:    ldr     w0, [x19,#104]
->    0xffff000008387b1c <+80>:    orr     w0, w0, #0x1000
->    0xffff000008387b20 <+84>:    str     w0, [x19,#104]
-> 
-> Seems that the "req->flags |= REQ_F_IOPOLL_COMPLETED;" is  load and
-> modification, two instructions, which obviously is not atomic.
-> 
-> To fix this issue, add a new iopoll_completed in io_kiocb to indicate
-> whether io request is completed.
+> Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
 
-Long term, I want to ensure that IOPOLL irq completions are illegal, it
-should not be enabled (or possible) if the driver doesn't do pure polled
-completions.
+Both of your patches seem to have a weird setup where the
+From is alibaba.linux.com, and the SOB is linux.alibaba.com.
+I'm assuming the latter is the correct one, as that's where
+the email came from and the former doesn't have an MX record.
 
-Short term, I think your fix is fine, but should be turned into using
-READ_ONCE/WRITE_ONCE for the reading/setting of ->iopoll_completed.
-Can you resend it with that?
+This is 5.9 material for me. With the above fixed up, please
+turn this into a series where 1/2 is changing the poll type
+to be 32-bits, and 2/2 is the functional change that is in
+this patch.
 
 -- 
 Jens Axboe

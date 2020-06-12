@@ -2,61 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FB041F7D20
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2020 20:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE0261F7D77
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2020 21:20:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbgFLSsX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Jun 2020 14:48:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39412 "EHLO
+        id S1726384AbgFLTUd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Jun 2020 15:20:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbgFLSsX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Jun 2020 14:48:23 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE8B6C03E96F
-        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2020 11:48:22 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id f7so11095677ejq.6
-        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2020 11:48:22 -0700 (PDT)
+        with ESMTP id S1726376AbgFLTUc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Jun 2020 15:20:32 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E79C03E96F;
+        Fri, 12 Jun 2020 12:20:31 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id x14so10909165wrp.2;
+        Fri, 12 Jun 2020 12:20:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:references:autocrypt:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uiLF5rezdeianvYy1YWUJTNFWX4DwWDd279UOnYQuYg=;
-        b=s1Y9wpYzYa+8OnIi1waFkXWlBFvVzOrXJRqWGw3TOhXCidnfiuVa+txFaIwrqLGWxx
-         Gd1OXBLIgka74d5OusmwkaJGFfP1x5XQgFO/KEgHXTvjfs3eYZCMjIG0pqq5+9J1pWaQ
-         3BW2ei3IZj58WJFoIj+cFT5goICG2yYPwGtxySyJcBwNK7ruddn0eYUKdfBfM3VW5w+s
-         yzAb8LPqbo8gK0e/04puaKgRLmKE5+yy80a62q3wljXyTG9a7EeYSqldb3MR9vvzqrPo
-         sBUm5sX0sJgLV9K0oRVj8UGgECKjpiEc+Y+NWY60C8oD+QG8OdAIe32vA68dxW9BZFhK
-         c20w==
+        bh=LuXcbBtMwnamBPCkX1sG4sng+tF/heSnrzHbTXFtj4s=;
+        b=DsUa9RpV8L9CWdpiI+BPNTZXCePK54aFjub3ZKf2TOJchFwa9NIQGSb4JXdScKTrMk
+         wjSwX+aoHiSrnvefxcN2UwsXmokYoj0xkPpbxs5rODMHjF9Z0+cgNs5LXqYWTI33NwAg
+         NWDJSLVArr40a9ocogLX/KXzbHv6IML1V01voQM5iR8fB5LhW4Q0MbN9kfMBz4ipcUVv
+         UT3QzwczIXoLeLXhW7/r8PRleQmlRBubOL0aXyBdaGHDLM2JlNow6dliuD1+Azr3dM4R
+         xf4lmpRqobpOn6lYjF84tfLYVrRUjzpIFY6sEyO+GF690soLIoz9qUtqy6kqsGsV4tI5
+         rFuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uiLF5rezdeianvYy1YWUJTNFWX4DwWDd279UOnYQuYg=;
-        b=VJMLALACnRTFDhvs5n9bj4GHOb7Q/i7Y5rc8XXeDkBXUgtgNAgJoNzIP4cmkmnQiEb
-         +K88JoMfnuEP5M81D8jyH1phGOtluCUsr3dBUPT5/QI5GHkaRCldNLu2C+HifkMVGEsn
-         BxO18nqOKWgJTytH4jqxI8tnUFmGI5ZGecd+0IlO1/1/RGq7DYnzp/XxkKfK32yxmQNj
-         y4Ic7cubPMWUliDsHKtMewS6UMtLZ0VxoE3iFcMyZ22XYGjk8XtX7l724xvOcO0hrycQ
-         Vq5ixCrQ8tSoBq2GT0+BVViIvLHxTt8QgIzDQ38XZfbGpzIsMX88GBdDlsFVADOiJYTD
-         Fesg==
-X-Gm-Message-State: AOAM531ZO5WpIsgehfM1RlH+HnIy6SAP7K3utHc//57sTV5TNv4LinaC
-        /Qtqt6DWFkO2F8E2+Homj/SvfLyG
-X-Google-Smtp-Source: ABdhPJz9TPzdbMAufVL2J7A7cXo+pRLucKklZtMKLkcxQYwAuXDJ2wV5E9NoKceYDG7E+HGKzYKfgA==
-X-Received: by 2002:a17:906:b207:: with SMTP id p7mr1945560ejz.23.1591987700955;
-        Fri, 12 Jun 2020 11:48:20 -0700 (PDT)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=LuXcbBtMwnamBPCkX1sG4sng+tF/heSnrzHbTXFtj4s=;
+        b=rWOP1l5iisHaatoiixa2vrlbLW6u8YMp5qoqle2WAEWlw9IHCkILmlmYEahj+2LNuY
+         9Ab5Vf361a+OH4t7JsYxXnJXgzt8fh7lwpDaTIbO72gWgOaTi6rZAPtZR425bB95Ae/b
+         OqmKWFH/4pGQZ7VJd2Q7hF1eXnvZAfBGUkcp3fdHrg/CpSrqW3fP4KO7Q3BW5C2ARd5h
+         QuJ0snP+LMlDHn0dEQVCzD8OfJF07Panl9rLPokS6ywp56VZ9ukzKPcvQBVgK/dndif9
+         NlWacbN5qAkHMiAMUog0qgtfOdaFYPbKa6+65WliKdGuZG3HhELgJJ/kF6V2bTBsPof7
+         mo7w==
+X-Gm-Message-State: AOAM531rW8BS8wbI66TD/7hqmeJEp45qNvTT2wEMSJ1OWGZv8v/yjhga
+        c0xFPlJUtEfTEaDGlxPmGz9CImEs
+X-Google-Smtp-Source: ABdhPJwv7pPerDrvRvRngvNqO7wz80usFRNkJwzS7W+COM5DR8YBEBuRwZ1OWHPx2+vIVGjUl6TQsg==
+X-Received: by 2002:a1c:b703:: with SMTP id h3mr385091wmf.81.1591989629779;
+        Fri, 12 Jun 2020 12:20:29 -0700 (PDT)
 Received: from [192.168.43.114] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id j31sm3615822edb.12.2020.06.12.11.48.19
+        by smtp.gmail.com with ESMTPSA id e12sm11581250wro.52.2020.06.12.12.20.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2020 11:48:20 -0700 (PDT)
-Subject: Re: [RFC] do_iopoll() and *grab_env()
+        Fri, 12 Jun 2020 12:20:28 -0700 (PDT)
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <87a71jjbzr.fsf@x220.int.ebiederm.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-References: <12b44e81-332e-e53c-b5fa-09b7bf9cc082@gmail.com>
- <6f6e1aa2-87f6-b853-5009-bf0961065036@kernel.dk>
- <5347123a-a0d5-62cf-acdf-6b64083bdc74@gmail.com>
- <c93fa05c-18ef-2ebe-2d8a-ca578bd648da@kernel.dk>
- <868c9ef4-ab31-8c63-cace-9fd99c58cbb2@kernel.dk>
- <3688a25e-c405-309f-cc87-96596a5d0ed2@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -100,75 +96,132 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <cac2fead-cd42-28a2-0454-35923028651d@gmail.com>
-Date:   Fri, 12 Jun 2020 21:46:56 +0300
+Subject: Re: io_wq_work task_pid is nonsense
+Message-ID: <ffe050b6-d444-30d9-d701-b61f561118ac@gmail.com>
+Date:   Fri, 12 Jun 2020 22:19:05 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <3688a25e-c405-309f-cc87-96596a5d0ed2@gmail.com>
+In-Reply-To: <87a71jjbzr.fsf@x220.int.ebiederm.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/06/2020 21:33, Pavel Begunkov wrote:
-> On 12/06/2020 21:02, Jens Axboe wrote:
->> On 6/12/20 11:55 AM, Jens Axboe wrote:
->>> On 6/12/20 11:30 AM, Pavel Begunkov wrote:
->>>> On 12/06/2020 20:02, Jens Axboe wrote:
->>>>> On 6/11/20 9:54 AM, Pavel Begunkov wrote:
->>>>>> io_do_iopoll() can async punt a request with io_queue_async_work(),
->>>>>> so doing io_req_work_grab_env(). The problem is that iopoll() can
->>>>>> be called from who knows what context, e.g. from a completely
->>>>>> different process with its own memory space, creds, etc.
->>>>>>
->>>>>> io_do_iopoll() {
->>>>>> 	ret = req->poll();
->>>>>> 	if (ret == -EAGAIN)
->>>>>> 		io_queue_async_work()
->>>>>> 	...
->>>>>> }
->>>>>>
->>>>>>
->>>>>> I can't find it handled in io_uring. Can this even happen?
->>>>>> Wouldn't it be better to complete them with -EAGAIN?
->>>>>
->>>>> I don't think a plain -EAGAIN complete would be very useful, it's kind
->>>>> of a shitty thing to pass back to userspace when it can be avoided. For
->>>>> polled IO, we know we're doing O_DIRECT, or using fixed buffers. For the
->>>>> latter, there's no problem in retrying, regardless of context. For the
->>>>> former, I think we'd get -EFAULT mapping the IO at that point, which is
->>>>> probably reasonable. I'd need to double check, though.
->>>>
->>>> It's shitty, but -EFAULT is the best outcome. I care more about not
->>>> corrupting another process' memory if addresses coincide. AFAIK it can
->>>> happen because io_{read,write} will use iovecs for punted re-submission.
->>>>
->>>>
->>>> Unconditional in advance async_prep() is too heavy to be good. I'd love to
->>>> see something more clever, but with -EAGAIN users at least can handle it.
->>>
->>> So how about we just grab ->task for the initial issue, and retry if we
->>> find it through -EAGAIN and ->task == current. That'll be the most
->>> common case, by far, and it'll prevent passes back -EAGAIN when we
->>> really don't have to. If the task is different, then -EAGAIN makes more
->>> sense, because at that point we're passing back -EAGAIN because we
->>> really cannot feasibly handle it rather than just as a convenience.
+On 04/06/2020 14:39, Eric W. Biederman wrote:
+> I was looking at something else and I happened to come across the
+> task_pid field in struct io_wq_work.  The field is initialized with
+> task_pid_vnr.  Then it is used for cancelling pending work.
 > 
-> Yeah, I was even thinking to drag it through task_work just to call
-> *grab_env() there. Looks reasonable to me.
+> The only appropriate and safe use of task_pid_vnr is for sending
+> a pid value to userspace and that is not what is going on here.
+> 
+> This use is particularly bad as it looks like I can start a pid
+> namespace create an io work queue and create threads that happen to have
+> the userspace pid in question and then terminate them, or close their
+> io_work_queue file descriptors, and wind up closing someone else's work.
+> 
+> There is also pid wrap around, and the craziness of de_thread to contend
+> with as well.
 
-edit: *Yours looks reasonable*.
-task_work is too cumbersome for such a small nuisance.
+Thanks reporting about this. It's not as bad because it's limited to a
+single io_uring instance and is more like precautions. False positives
+should be handled in userspace.
+
+> Perhaps since all the task_pid field is used for is cancelling work for
+> an individual task you could do something like the patch below.  I am
+> assuming no reference counting is necessary as the field can not live
+> past the life of a task.
+> 
+> Of cource the fact that you don't perform this work for file descriptors
+> that are closed just before a task exits makes me wonder.
+> 
+> Can you please fix this code up to do something sensible?
+> Maybe like below?
+
+I'll deal with it. Needs a bit extra to not screw work->task refcounting,
+but the idea looks right.
 
 > 
->> Something like this, totally untested. And wants a comment too.
+> Eric
 > 
-> Looks like it. Would you leave this to me? There is another issue with
-> cancellation requiring ->task, It'd be easier to keep them together.
+> diff --git a/fs/io-wq.h b/fs/io-wq.h
+> index 5ba12de7572f..bef29fff7403 100644
+> --- a/fs/io-wq.h
+> +++ b/fs/io-wq.h
+> @@ -91,7 +91,7 @@ struct io_wq_work {
+>  	const struct cred *creds;
+>  	struct fs_struct *fs;
+>  	unsigned flags;
+> -	pid_t task_pid;
+> +	struct task_struct *task;
+>  };
+>  
+>  #define INIT_IO_WORK(work, _func)				\
+> @@ -129,7 +129,7 @@ static inline bool io_wq_is_hashed(struct io_wq_work *work)
+>  
+>  void io_wq_cancel_all(struct io_wq *wq);
+>  enum io_wq_cancel io_wq_cancel_work(struct io_wq *wq, struct io_wq_work *cwork);
+> -enum io_wq_cancel io_wq_cancel_pid(struct io_wq *wq, pid_t pid);
+> +enum io_wq_cancel io_wq_cancel_task(struct io_wq *wq, struct task_struct *task);
+>  
+>  typedef bool (work_cancel_fn)(struct io_wq_work *, void *);
+>  
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index 4023c9846860..2139a049d548 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -1004,18 +1004,16 @@ enum io_wq_cancel io_wq_cancel_work(struct io_wq *wq, struct io_wq_work *cwork)
+>  	return io_wq_cancel_cb(wq, io_wq_io_cb_cancel_data, (void *)cwork);
+>  }
+>  
+> -static bool io_wq_pid_match(struct io_wq_work *work, void *data)
+> +static bool io_wq_task_match(struct io_wq_work *work, void *data)
+>  {
+> -	pid_t pid = (pid_t) (unsigned long) data;
+> +	struct task_struct *task = data;
+>  
+> -	return work->task_pid == pid;
+> +	return work->task == task;
+>  }
+>  
+> -enum io_wq_cancel io_wq_cancel_pid(struct io_wq *wq, pid_t pid)
+> +enum io_wq_cancel io_wq_cancel_task(struct io_wq *wq, struct task_struct *task)
+>  {
+> -	void *data = (void *) (unsigned long) pid;
+> -
+> -	return io_wq_cancel_cb(wq, io_wq_pid_match, data);
+> +	return io_wq_cancel_cb(wq, io_wq_task_match, task);
+>  }
+>  
+>  struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index c687f57fb651..b9d557a21a26 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1031,8 +1031,8 @@ static inline void io_req_work_grab_env(struct io_kiocb *req,
+>  		}
+>  		spin_unlock(&current->fs->lock);
+>  	}
+> -	if (!req->work.task_pid)
+> -		req->work.task_pid = task_pid_vnr(current);
+> +	if (!req->work.task)
+> +		req->work.task = current;
+>  }
+>  
+>  static inline void io_req_work_drop_env(struct io_kiocb *req)
+> @@ -7421,7 +7421,7 @@ static int io_uring_flush(struct file *file, void *data)
+>  	 * If the task is going away, cancel work it may have pending
+>  	 */
+>  	if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
+> -		io_wq_cancel_pid(ctx->io_wq, task_pid_vnr(current));
+> +		io_wq_cancel_task(ctx->io_wq, current);
+>  
+>  	return 0;
+>  }
 > 
 
 -- 

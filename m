@@ -2,66 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FA7A1F7B17
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2020 17:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0C3F1F7BCD
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2020 18:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbgFLPuz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Jun 2020 11:50:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40274 "EHLO
+        id S1726358AbgFLQsH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Jun 2020 12:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbgFLPuz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Jun 2020 11:50:55 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD71C03E96F
-        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2020 08:50:55 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id h95so4022514pje.4
-        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2020 08:50:55 -0700 (PDT)
+        with ESMTP id S1726449AbgFLQsH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Jun 2020 12:48:07 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF9BC03E96F
+        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2020 09:48:06 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id h95so4087565pje.4
+        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2020 09:48:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aHm42q82M0WjUZUTXDzWE/eUdxh5II1qSy5d6NA2s28=;
-        b=CH+KFts+o1QoVTPhiNDeC1j2yqKZ2XFwyc8keU/b7gpUX1oiVZEL1AqTjmrBTmsER2
-         +uwaXHJyaXtEaV82/RrQ0FfPH4JlmtiScWZE68/knKn/YPDiXc68uhLkwP5BKOpNlKBX
-         FVvpsXvZnHkqUIh8/dPw61cczhctCFKkV5YY3lL/z4g0hgl80WEXrICoxM6u7gE3MXgH
-         rlqDNmDebqIONIv6V2oc6zJP3GbXi8W62WQOnlvtFOiBirQLWW+bomZgZn22KFroJ2fy
-         3s8GSEsyzEvBS/V6v3tBn29JOG4mFbiKdmC5VNO0gO0iUmYJpSOjI2SKCv1WrZDNUA3v
-         SVPA==
+        bh=0AUAcvHJwskROEjlmDaFAkKnySaij+Go6v0Bllxdf7w=;
+        b=AkwSDhQQzOofxLzEFbF+qXq58kSZ+0YE1eOkPTxzq4sZ0f7DBu5bGOfOH3nE1Jd2ms
+         FqBbl4pAztNoFFmkehCWasxq+d23r5xyEb5O5Mp49nbLBfOgVLgd/LLbZ8zsssTZUQut
+         jLex2teeJH5DwRBHaRt3KnX3lIS5UAXZ3UeGoKnnVXUfebzlWDhxjvedMhK1hQf74DUM
+         X5oJcujeNU+UZsD1CX1KaD7uHRO5DQyPbkiQczvZWaEzYKAVhvbo12IW7BugOLK3td6m
+         KhX5jWh5aZ/ER9KGziBrA6JBSDnkMFCanQhELhTBarxgww93BnUmnqNRjiFrkHwGDOZP
+         +CPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=aHm42q82M0WjUZUTXDzWE/eUdxh5II1qSy5d6NA2s28=;
-        b=mTn5OWl5cxfs2uRCft9RywE1g3fTcbUOmL+dKyQyt/RL3c+47y7v+2CXqvNRoNs6bO
-         kFNzub0o24oAnEXyYXbuH1ts63LVokx0XrRSjEN0/rO/Aayh+YK0ccL2I4NKGKcYjQxR
-         7Njd/Eb8GQLuNvQ6oEDpDIklKrKZ4z/1WGgWkUk5P0YHS6c5LrlDZ7Fi7+4JyWuDlET9
-         ji3va/7FZP9H4vLC+vL0/9BUTNer4Wyg8GXw8i5gIMtXJZdwPix1uH/r4SRYkDssqHHH
-         Zr4/8PHxI2DltqENvuiyAogSA9c1eS7cYKgqkFc0fQFZ14LLY8NiauVbNuOYLZVLRt/H
-         mFcA==
-X-Gm-Message-State: AOAM533ZN0h2H2jaZiID2KXmXe91kidv1Bewb5HgK1luiSj0OW2r0yzo
-        pHsUyFJEAzd5/EuR65eipOa4T4YlZSEGmA==
-X-Google-Smtp-Source: ABdhPJxqB72vXBOKm4jIF+ci0mqUN96hUR7XbemvV4+fpMh+UokFkG8aKHz5DiwuMpP5f8NAFQ/tJw==
-X-Received: by 2002:a17:902:3:: with SMTP id 3mr10939932pla.120.1591977053804;
-        Fri, 12 Jun 2020 08:50:53 -0700 (PDT)
+        bh=0AUAcvHJwskROEjlmDaFAkKnySaij+Go6v0Bllxdf7w=;
+        b=AgqpDFxwOJof6LzE+LnbN4XmI+6Xh5oTGHdsXK+8yDt8V3SQSuyp2oDe33MtLpB5TX
+         xRAjuhPRFs7FL2k/ereoc3+zKsfA2C2dINvmUNH8f2UnufQybge0E64rpXt9w1wEJxa2
+         CtrvtKhraQLB+YU1RwQZUDL9chU2TciOAOz+u15Av3eEDX9NrqhiMn+Kjj/WHwXwSDsm
+         aIj7PbZ59I3XGnBHW+ZeWzJxoSpnqtThIREPdtiKqMdahGgydKBNT9gfYSQ6Y44ReBIg
+         IIuwi5mpulO/7WX5mHli8FcUeaj2b95DC6nWH5aCWWPBz+Ane7wW8TOCBLT9tx/3CuQw
+         88wQ==
+X-Gm-Message-State: AOAM531NUKfRSCyD4+BZxiQSHL4O/wooPNg+ySNR4r3IXvZ+sDIaH4bk
+        +yHp3fNqcpifT6w3UpAPVIsXfh5Po6v/Iw==
+X-Google-Smtp-Source: ABdhPJwXEX+mKGNl1zdaMsPRY58b11OZwBB36Dux/sX9tAn68k2dsCfQP9vK3lym8l9mHnVHqqs6TQ==
+X-Received: by 2002:a17:90a:9dc8:: with SMTP id x8mr13263221pjv.23.1591980485844;
+        Fri, 12 Jun 2020 09:48:05 -0700 (PDT)
 Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id z8sm5768566pgc.80.2020.06.12.08.50.53
+        by smtp.gmail.com with ESMTPSA id y3sm6135635pff.37.2020.06.12.09.48.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2020 08:50:53 -0700 (PDT)
-Subject: Re: [RFC 2/2] io_uring: report pinned memory usage
+        Fri, 12 Jun 2020 09:48:05 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] io_uring: change the poll events to be 32-bits
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Cc:     io-uring@vger.kernel.org
-References: <1591928617-19924-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1591928617-19924-3-git-send-email-bijan.mottahedeh@oracle.com>
- <b08c9ee0-5127-a810-de01-ebac4d6de1ee@kernel.dk>
- <6b2ef2c9-5b58-f83e-b377-4a2e1e3e98e5@kernel.dk>
-Message-ID: <8ade3d59-5056-b6ed-37dc-3274822f2815@kernel.dk>
-Date:   Fri, 12 Jun 2020 09:50:52 -0600
+To:     Jiufei Xue <jiufei.xue@linux.alibaba.com>, io-uring@vger.kernel.org
+Cc:     joseph.qi@linux.alibaba.com
+References: <1591929018-73954-1-git-send-email-jiufei.xue@linux.alibaba.com>
+ <1591929018-73954-2-git-send-email-jiufei.xue@linux.alibaba.com>
+ <9e251ae9-ffe1-d9ea-feb5-cb9e641aeefb@kernel.dk>
+Message-ID: <f6d3c7bb-1a10-10ed-9ab3-3d7b3b78b808@kernel.dk>
+Date:   Fri, 12 Jun 2020 10:48:03 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <6b2ef2c9-5b58-f83e-b377-4a2e1e3e98e5@kernel.dk>
+In-Reply-To: <9e251ae9-ffe1-d9ea-feb5-cb9e641aeefb@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,55 +69,127 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/12/20 9:19 AM, Jens Axboe wrote:
-> On 6/12/20 9:16 AM, Jens Axboe wrote:
->> On 6/11/20 8:23 PM, Bijan Mottahedeh wrote:
->>> Long term, it makes sense to separate reporting and enforcing of pinned
->>> memory usage.
->>>
->>> Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
->>>
->>> It is useful to view
->>> ---
->>>  fs/io_uring.c | 4 ++++
->>>  1 file changed, 4 insertions(+)
->>>
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 4248726..cf3acaa 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -7080,6 +7080,8 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
->>>  static void io_unaccount_mem(struct user_struct *user, unsigned long nr_pages)
->>>  {
->>>  	atomic_long_sub(nr_pages, &user->locked_vm);
->>> +	if (current->mm)
->>> +		atomic_long_sub(nr_pages, &current->mm->pinned_vm);
->>>  }
->>>  
->>>  static int io_account_mem(struct user_struct *user, unsigned long nr_pages)
->>> @@ -7096,6 +7098,8 @@ static int io_account_mem(struct user_struct *user, unsigned long nr_pages)
->>>  			return -ENOMEM;
->>>  	} while (atomic_long_cmpxchg(&user->locked_vm, cur_pages,
->>>  					new_pages) != cur_pages);
->>> +	if (current->mm)
->>> +		atomic_long_add(nr_pages, &current->mm->pinned_vm);
->>>  
->>>  	return 0;
->>>  }
+On 6/12/20 8:58 AM, Jens Axboe wrote:
+> On 6/11/20 8:30 PM, Jiufei Xue wrote:
+>> poll events should be 32-bits to cover EPOLLEXCLUSIVE.
 >>
->> current->mm should always be valid for these, so I think you can skip the
->> checking of that and just make it unconditional.
+>> Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+>> ---
+>>  fs/io_uring.c                 | 4 ++--
+>>  include/uapi/linux/io_uring.h | 2 +-
+>>  tools/io_uring/liburing.h     | 2 +-
+>>  3 files changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 47790a2..6250227 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -4602,7 +4602,7 @@ static void io_poll_queue_proc(struct file *file, struct wait_queue_head *head,
+>>  static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>  {
+>>  	struct io_poll_iocb *poll = &req->poll;
+>> -	u16 events;
+>> +	u32 events;
+>>  
+>>  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+>>  		return -EINVAL;
+>> @@ -8196,7 +8196,7 @@ static int __init io_uring_init(void)
+>>  	BUILD_BUG_SQE_ELEM(28, /* compat */   int, rw_flags);
+>>  	BUILD_BUG_SQE_ELEM(28, /* compat */ __u32, rw_flags);
+>>  	BUILD_BUG_SQE_ELEM(28, __u32,  fsync_flags);
+>> -	BUILD_BUG_SQE_ELEM(28, __u16,  poll_events);
+>> +	BUILD_BUG_SQE_ELEM(28, __u32,  poll_events);
+>>  	BUILD_BUG_SQE_ELEM(28, __u32,  sync_range_flags);
+>>  	BUILD_BUG_SQE_ELEM(28, __u32,  msg_flags);
+>>  	BUILD_BUG_SQE_ELEM(28, __u32,  timeout_flags);
+>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>> index 92c2269..afc7edd 100644
+>> --- a/include/uapi/linux/io_uring.h
+>> +++ b/include/uapi/linux/io_uring.h
+>> @@ -31,7 +31,7 @@ struct io_uring_sqe {
+>>  	union {
+>>  		__kernel_rwf_t	rw_flags;
+>>  		__u32		fsync_flags;
+>> -		__u16		poll_events;
+>> +		__u32		poll_events;
+>>  		__u32		sync_range_flags;
+>>  		__u32		msg_flags;
+>>  		__u32		timeout_flags;
 > 
-> Two other issues with this:
-> 
-> - It's an atomic64, so seems more appropriate to use the atomic64 helpers
->   for this one.
-> - The unaccount could potentially be a different mm, if the ring is shared
->   and one task sets it up while another tears it down. So we'd need something
->   to ensure consistency here.
+> We obviously have the space in there as most other flag members are 32-bits, but
+> I'd want to double check if we're not changing the ABI here. Is this always
+> going to be safe, on any platform, regardless of endianess etc?
 
-IOW, this should just use ctx->sqo_mm, as that's grabbed and valid. Just need
-to ensure it's done correct in terms of ordering for setup.
+Double checked, and as I feared, we can't safely do this. We'll have to
+do something like the below, grabbing an unused bit of the poll mask
+space and if that's set, then store the fact that EPOLLEXCLUSIVE is set.
+So probably best to turn this just into one patch, since it doesn't make
+a lot of sense to do it as a prep patch at that point.
+
+This does have the benefit of not growing io_poll_iocb. With your patch,
+it'd go beyond a cacheline, and hence bump the size of the entire
+io_iocb as well, which would be very unfortunate.
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 155f3d830ddb..64a98bf11943 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -350,6 +350,7 @@ struct io_poll_iocb {
+ 		u64			addr;
+ 	};
+ 	__poll_t			events;
++	bool				exclusive;
+ 	bool				done;
+ 	bool				canceled;
+ 	struct wait_queue_entry		wait;
+@@ -4543,7 +4544,7 @@ static void io_poll_queue_proc(struct file *file, struct wait_queue_head *head,
+ static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_poll_iocb *poll = &req->poll;
+-	u16 events;
++	u32 events;
+ 
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+ 		return -EINVAL;
+@@ -4553,6 +4554,9 @@ static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 		return -EBADF;
+ 
+ 	events = READ_ONCE(sqe->poll_events);
++	if ((events & IORING_POLL_32BIT) &&
++	    (sqe->poll32_events & EPOLLEXCLUSIVE))
++		poll->exclusive = true;
+ 	poll->events = demangle_poll(events) | EPOLLERR | EPOLLHUP;
+ 
+ 	get_task_struct(current);
+@@ -8155,6 +8159,7 @@ static int __init io_uring_init(void)
+ 	BUILD_BUG_SQE_ELEM(28, /* compat */ __u32, rw_flags);
+ 	BUILD_BUG_SQE_ELEM(28, __u32,  fsync_flags);
+ 	BUILD_BUG_SQE_ELEM(28, __u16,  poll_events);
++	BUILD_BUG_SQE_ELEM(28, __u32,  poll32_events);
+ 	BUILD_BUG_SQE_ELEM(28, __u32,  sync_range_flags);
+ 	BUILD_BUG_SQE_ELEM(28, __u32,  msg_flags);
+ 	BUILD_BUG_SQE_ELEM(28, __u32,  timeout_flags);
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 92c22699a5a7..16d473d909eb 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -32,6 +32,7 @@ struct io_uring_sqe {
+ 		__kernel_rwf_t	rw_flags;
+ 		__u32		fsync_flags;
+ 		__u16		poll_events;
++		__u32		poll32_events;
+ 		__u32		sync_range_flags;
+ 		__u32		msg_flags;
+ 		__u32		timeout_flags;
+@@ -60,6 +61,8 @@ struct io_uring_sqe {
+ 	};
+ };
+ 
++#define IORING_POLL_32BIT	(1U << 15)
++
+ enum {
+ 	IOSQE_FIXED_FILE_BIT,
+ 	IOSQE_IO_DRAIN_BIT,
 
 -- 
 Jens Axboe

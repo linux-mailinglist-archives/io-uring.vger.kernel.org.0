@@ -2,175 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3B5A1F7CBB
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2020 20:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A98ED1F7CD5
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2020 20:24:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbgFLSC5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Jun 2020 14:02:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60582 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbgFLSC5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Jun 2020 14:02:57 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03124C03E96F
-        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2020 11:02:56 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id n2so4029576pld.13
-        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2020 11:02:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=KMdLhxIj2/PznqMQCvR0KzW1Yff4FQUIhPQnHLfe5sY=;
-        b=2RoJf5t2Y3SRjkDrjNm+M3Uonqo001ps4zZvlWVu61dL75sWWUOGARgLXFsWTaYZM0
-         0ovj1fFsD92dmA62FW29sxfiwiblXkwb+4r/T+thGfr1kCecnvofBDhk6mNV8fAcrSGI
-         WtFdmnGETDKTuvHcBe4XNDYtnaxGnUxe84owmzs74IzRQVU0wMh5IGaDnqR/rREL81mV
-         opwomnsPHT1bfUBq+bccBjhz4rAC2JE8N7Lav9sv/7DHfLbkCC1oi94SRX3XR3tFQ1NU
-         EV56qGg+Zi91Hm2sBQ5HEjN4OoyFXZjWjxa4YFZ9WOrgFhkgNSL5J2yccCMERODA+9ub
-         NqpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KMdLhxIj2/PznqMQCvR0KzW1Yff4FQUIhPQnHLfe5sY=;
-        b=K5OwvCakAFygr2CBDg5gDE8kYAG5eioigexEucQ14F4La1sQOM2ZMK+mCFNVZioizO
-         lha1w9xSXM/oLO114x2FG2kGRxAvEKZo8lQMerltB2AxVu6/Xejh4HNVo5D7Nwu19hee
-         3XnfOeL4vs1rTN2iEXbx4JT0lBQeVrev7Rt+EWJfphgdo8M45+93PSakJC2yTrZw15/r
-         xB+N0AV+KfRO9InRu8UD2otzJofmjIlprVFDINNZ1ym2a0vBosoUi2ZqjY6xZ9sW/bIG
-         ZP53+0VyUgNfueHuPlgLNc8ARsgTdQpljmibf6c6EZ1qizglfDlV5SgJBXwZO8Eorm7h
-         M7ug==
-X-Gm-Message-State: AOAM533FsX+0xX5KX9WfohTA9TS8OjsKtImbmpwfxmajv2g8gPIkVhtV
-        X8D7fAe2KnfxrEtq64cv7h/nlEH44xgK0w==
-X-Google-Smtp-Source: ABdhPJwhw4/ztlSPtgJaf27L7iE+lW2R3ot1/yR5RmFJjDg5fzBtYxKiFYCFhnMNiEWVSv1zGaLurg==
-X-Received: by 2002:a17:90b:3004:: with SMTP id hg4mr132745pjb.208.1591984975094;
-        Fri, 12 Jun 2020 11:02:55 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id z1sm6698324pfr.88.2020.06.12.11.02.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2020 11:02:54 -0700 (PDT)
-Subject: Re: [RFC] do_iopoll() and *grab_env()
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <12b44e81-332e-e53c-b5fa-09b7bf9cc082@gmail.com>
- <6f6e1aa2-87f6-b853-5009-bf0961065036@kernel.dk>
- <5347123a-a0d5-62cf-acdf-6b64083bdc74@gmail.com>
- <c93fa05c-18ef-2ebe-2d8a-ca578bd648da@kernel.dk>
-Message-ID: <868c9ef4-ab31-8c63-cace-9fd99c58cbb2@kernel.dk>
-Date:   Fri, 12 Jun 2020 12:02:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1726341AbgFLSYp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Jun 2020 14:24:45 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39346 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbgFLSYp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Jun 2020 14:24:45 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05CIMUjk029529;
+        Fri, 12 Jun 2020 18:24:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=Q9yk5/2yam4+MaSyqkv33PqnEzX9NZJ3ZBIFBRJiQk4=;
+ b=Swn7t85xTz7E3hcEi3dG/XWiL6wUd0EF2nwOBNzS/p7Ta54+xrFZLLVfstAMEvdz0dct
+ 4niVFf8KY4zqHVLdKGxHHOquyoGdJ1rr7cVIMSZjjkjmY+/aWVJMSlnru9M8wUhfpbPA
+ iEHbg1wTaIWiklyzHpi5Y7vvGNM/voL3XBq3Lu3zyb+7F+wdnvM+DkJ7rlLfRRn0vPIL
+ 6+3IDv+GIEZRGeOp+GI8NfazazapHLUsTAr6dyiClUhHtNa31jp51kFGqCc9GyNdsFDI
+ hAsT7WyF6wHUNQdD7lYtxXX9BV3NkpXSEt9TVopB5JctDrFs5CuoM+w9CP2niqPetnwV 8A== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 31g2jrpasf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 12 Jun 2020 18:24:42 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05CIGb3T169469;
+        Fri, 12 Jun 2020 18:22:42 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 31meug0vye-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 12 Jun 2020 18:22:42 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05CIMfIV032681;
+        Fri, 12 Jun 2020 18:22:41 GMT
+Received: from [10.154.146.78] (/10.154.146.78)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 12 Jun 2020 11:22:41 -0700
+Subject: Re: [RFC 1/2] io_uring: disallow overlapping ranges for buffer
+ registration
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+References: <1591928617-19924-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1591928617-19924-2-git-send-email-bijan.mottahedeh@oracle.com>
+ <b33937c3-6dbb-607a-d406-a2b42f407d86@kernel.dk>
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Message-ID: <fb0ec799-a397-ff7f-531d-6fcf8d5883cc@oracle.com>
+Date:   Fri, 12 Jun 2020 11:22:38 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <c93fa05c-18ef-2ebe-2d8a-ca578bd648da@kernel.dk>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <b33937c3-6dbb-607a-d406-a2b42f407d86@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Antivirus: Avast (VPS 200612-2, 06/12/2020), Outbound message
+X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9650 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ mlxscore=0 spamscore=0 mlxlogscore=999 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006120133
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9650 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 impostorscore=0
+ cotscore=-2147483648 priorityscore=1501 spamscore=0 suspectscore=0
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006120134
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/12/20 11:55 AM, Jens Axboe wrote:
-> On 6/12/20 11:30 AM, Pavel Begunkov wrote:
->> On 12/06/2020 20:02, Jens Axboe wrote:
->>> On 6/11/20 9:54 AM, Pavel Begunkov wrote:
->>>> io_do_iopoll() can async punt a request with io_queue_async_work(),
->>>> so doing io_req_work_grab_env(). The problem is that iopoll() can
->>>> be called from who knows what context, e.g. from a completely
->>>> different process with its own memory space, creds, etc.
->>>>
->>>> io_do_iopoll() {
->>>> 	ret = req->poll();
->>>> 	if (ret == -EAGAIN)
->>>> 		io_queue_async_work()
->>>> 	...
->>>> }
->>>>
->>>>
->>>> I can't find it handled in io_uring. Can this even happen?
->>>> Wouldn't it be better to complete them with -EAGAIN?
->>>
->>> I don't think a plain -EAGAIN complete would be very useful, it's kind
->>> of a shitty thing to pass back to userspace when it can be avoided. For
->>> polled IO, we know we're doing O_DIRECT, or using fixed buffers. For the
->>> latter, there's no problem in retrying, regardless of context. For the
->>> former, I think we'd get -EFAULT mapping the IO at that point, which is
->>> probably reasonable. I'd need to double check, though.
->>
->> It's shitty, but -EFAULT is the best outcome. I care more about not
->> corrupting another process' memory if addresses coincide. AFAIK it can
->> happen because io_{read,write} will use iovecs for punted re-submission.
->>
->>
->> Unconditional in advance async_prep() is too heavy to be good. I'd love to
->> see something more clever, but with -EAGAIN users at least can handle it.
-> 
-> So how about we just grab ->task for the initial issue, and retry if we
-> find it through -EAGAIN and ->task == current. That'll be the most
-> common case, by far, and it'll prevent passes back -EAGAIN when we
-> really don't have to. If the task is different, then -EAGAIN makes more
-> sense, because at that point we're passing back -EAGAIN because we
-> really cannot feasibly handle it rather than just as a convenience.
+On 6/12/2020 8:16 AM, Jens Axboe wrote:
+> On 6/11/20 8:23 PM, Bijan Mottahedeh wrote:
+>> Buffer registration is expensive in terms of cpu/mem overhead and there
+>> seems no good reason to allow overlapping ranges.
+> There's also no good reason to disallow it imho, so not sure we should
+> be doing that.
+>
 
-Something like this, totally untested. And wants a comment too.
+My concern was about a malicious user without CAP_IPC_LOCK abusing its 
+memlock limit and repeatedly register the same buffer as that would tie 
+up cpu/mem resources to pin up to 1TB of memory, but maybe the argument 
+is that the user should have not been granted that large of memlock 
+limit?  Also, without any restrictions, there are a huge number of ways 
+overlapping ranges could be specified, creating a very large validation 
+matrix.  What the use cases for that flexibility are though, I don't know.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 155f3d830ddb..15806f71b33e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1727,6 +1728,12 @@ static int io_put_kbuf(struct io_kiocb *req)
- 	return cflags;
- }
- 
-+static inline void req_set_fail_links(struct io_kiocb *req)
-+{
-+	if ((req->flags & (REQ_F_LINK | REQ_F_HARDLINK)) == REQ_F_LINK)
-+		req->flags |= REQ_F_FAIL_LINK;
-+}
-+
- /*
-  * Find and free completed poll iocbs
-  */
-@@ -1767,8 +1774,14 @@ static void io_iopoll_queue(struct list_head *again)
- 	do {
- 		req = list_first_entry(again, struct io_kiocb, list);
- 		list_del(&req->list);
--		refcount_inc(&req->refs);
--		io_queue_async_work(req);
-+		if (req->task == current) {
-+			refcount_inc(&req->refs);
-+			io_queue_async_work(req);
-+		} else {
-+			io_cqring_add_event(req, -EAGAIN);
-+			req_set_fail_links(req);
-+			io_put_req(req);
-+		}
- 	} while (!list_empty(again));
- }
- 
-@@ -1937,12 +1950,6 @@ static void kiocb_end_write(struct io_kiocb *req)
- 	file_end_write(req->file);
- }
- 
--static inline void req_set_fail_links(struct io_kiocb *req)
--{
--	if ((req->flags & (REQ_F_LINK | REQ_F_HARDLINK)) == REQ_F_LINK)
--		req->flags |= REQ_F_FAIL_LINK;
--}
--
- static void io_complete_rw_common(struct kiocb *kiocb, long res)
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
-@@ -2137,6 +2144,8 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 
- 		kiocb->ki_flags |= IOCB_HIPRI;
- 		kiocb->ki_complete = io_complete_rw_iopoll;
-+		req->task = current;
-+		get_task_struct(current);
- 		req->result = 0;
- 		req->iopoll_completed = 0;
- 	} else {
-
--- 
-Jens Axboe
-
+--bijan

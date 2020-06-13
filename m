@@ -2,136 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA6811F7DBB
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2020 21:42:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FDE31F8106
+	for <lists+io-uring@lfdr.de>; Sat, 13 Jun 2020 06:43:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbgFLTmN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Jun 2020 15:42:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47730 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbgFLTmN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Jun 2020 15:42:13 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2595FC03E96F
-        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2020 12:42:13 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id i4so4287407pjd.0
-        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2020 12:42:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=E2uSaq3WfWzijKh2p0u/crjYmlSr87AtAybdbMV3eLM=;
-        b=P0kr656gghrCJvEbMBD9g+iR/0VCtfLI9xOUGXJMbsxuDmF7VWOtiFIxulCPu2cpiu
-         Ji08YVoSkoblb158wBvFKAeLggkLbOlWIcYox16SrqUOX34Wm05vQmUWq7Z8M6Ru+Oix
-         lXjP7VK7OVD0FCZ/KGHtC66JDrpIo0xbsHx/Szh54Apxzs7QEKbPp2i2BVkpzk3pqNWy
-         1WvriE75KVP+ay6CpxMSr3vCivXMo0iqQb/rViU8xHPTv9ectxlRHYrxXVCO34VKEAB6
-         +C1dIYrq+XoxUo3jY9Ups380FjlP2biLyBHQ+4KEyxcTjYKQjdeQURMdiE3c7OA9WItQ
-         BrHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=E2uSaq3WfWzijKh2p0u/crjYmlSr87AtAybdbMV3eLM=;
-        b=ij+gqWku2BYDQJu1w7DZvgWA7/WInPE18q7jHJ4ndV4M+tk35qTW8Q8/USuHpNkNqQ
-         HFYYXJ93FJS77MnCWkJCVH9ixwNQ9AGAMJHncidBSLgXXraMNEK7bCP5AF8cYtezZjzn
-         SQfKPPZYIb84AlNfwwT8C3RcThYfNTV0nuqhOiE/wlXpuCjPUpHDp+WcZh/jS96vOGPY
-         howmNhktVjUTe+YEc0nVMeKMc1Z/4/er++TnC7Ad/q82VoDZzZ8r35WxtoEbHWExGdei
-         mTd53sUODYSzJSSSjIIBy1J1D7QsKLltE5kB7bqRKu2ktDPQyTJbPR6D0TfN8tcoOMjA
-         iLhQ==
-X-Gm-Message-State: AOAM530hfKHGptlMqIz2GgWUW993ig0TN/zOFzEsQBoKK6jDO7FdJZ/j
-        eXA6pUHzhzE0mQPMJ77RTJZxDrKQZbTixQ==
-X-Google-Smtp-Source: ABdhPJz2uWWRN0CrmAiD8v+V/VpzbMQpLyOpZBFR1QppQ/PnCZlCYZ/GnG8FGj4/JNraD2Iv1jyc0g==
-X-Received: by 2002:a17:90b:30d8:: with SMTP id hi24mr494339pjb.78.1591990932354;
-        Fri, 12 Jun 2020 12:42:12 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id q145sm6863932pfq.128.2020.06.12.12.42.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2020 12:42:11 -0700 (PDT)
-Subject: Re: [RFC] do_iopoll() and *grab_env()
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <12b44e81-332e-e53c-b5fa-09b7bf9cc082@gmail.com>
- <6f6e1aa2-87f6-b853-5009-bf0961065036@kernel.dk>
- <5347123a-a0d5-62cf-acdf-6b64083bdc74@gmail.com>
- <c93fa05c-18ef-2ebe-2d8a-ca578bd648da@kernel.dk>
- <868c9ef4-ab31-8c63-cace-9fd99c58cbb2@kernel.dk>
- <3688a25e-c405-309f-cc87-96596a5d0ed2@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3f78d6a2-f589-d3b1-3816-30de6e9b71df@kernel.dk>
-Date:   Fri, 12 Jun 2020 13:42:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1725535AbgFMEns (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 13 Jun 2020 00:43:48 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33866 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725287AbgFMEns (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 13 Jun 2020 00:43:48 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05D4hkPl143204;
+        Sat, 13 Jun 2020 04:43:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=YRKO4rvZ8CKCFve2eSuhNnBJY1x5JLT3fz5qTm/8/IY=;
+ b=F2oYKQ8WbkiWoEK1EOBW6dISAYUafHE/zrD38+lKL2S0+ew2Mzm26ObcMKS54cwGNRuY
+ N/u/gp9Xsdyok4dIAmpiLHoALqJSjLmUYAcNs1sVFihcO4m+m5FcFEKXu84ZnniSh5sN
+ D+e8ZqljibqmSrfQxoNtYIoDP/nBv41Xttx1NYdXhHztRJ3WxxFYI6S4Yk/ikXNCVwF1
+ w7zO1gAfcAYCHyaOMyLAK12fiKBmN9MAY18ypbEkUp7mClbErADzaOJaTY25VLk0hJmT
+ Mt7Wq05Duwwg3UpdKXQc4HVTC3mkh5MU8d8iqijf0EabV6ui8RvfGTcetA9drBw4uTlv Mw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 31mp7r0630-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 13 Jun 2020 04:43:46 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05D4ggWo129165;
+        Sat, 13 Jun 2020 04:43:45 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 31mmu8d42r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 13 Jun 2020 04:43:45 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05D4hhHM026554;
+        Sat, 13 Jun 2020 04:43:43 GMT
+Received: from [10.154.146.78] (/10.154.146.78)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 13 Jun 2020 04:43:43 +0000
+Subject: Re: [RFC 2/2] io_uring: report pinned memory usage
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+References: <1591928617-19924-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1591928617-19924-3-git-send-email-bijan.mottahedeh@oracle.com>
+ <b08c9ee0-5127-a810-de01-ebac4d6de1ee@kernel.dk>
+ <6b2ef2c9-5b58-f83e-b377-4a2e1e3e98e5@kernel.dk>
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Message-ID: <32054e77-0ee4-ebab-d2c3-fef92261eecf@oracle.com>
+Date:   Fri, 12 Jun 2020 21:43:39 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <3688a25e-c405-309f-cc87-96596a5d0ed2@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <6b2ef2c9-5b58-f83e-b377-4a2e1e3e98e5@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Antivirus: Avast (VPS 200612-2, 06/12/2020), Outbound message
+X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9650 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 phishscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006130038
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9650 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 clxscore=1015
+ cotscore=-2147483648 lowpriorityscore=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006130038
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/12/20 12:33 PM, Pavel Begunkov wrote:
-> On 12/06/2020 21:02, Jens Axboe wrote:
->> On 6/12/20 11:55 AM, Jens Axboe wrote:
->>> On 6/12/20 11:30 AM, Pavel Begunkov wrote:
->>>> On 12/06/2020 20:02, Jens Axboe wrote:
->>>>> On 6/11/20 9:54 AM, Pavel Begunkov wrote:
->>>>>> io_do_iopoll() can async punt a request with io_queue_async_work(),
->>>>>> so doing io_req_work_grab_env(). The problem is that iopoll() can
->>>>>> be called from who knows what context, e.g. from a completely
->>>>>> different process with its own memory space, creds, etc.
->>>>>>
->>>>>> io_do_iopoll() {
->>>>>> 	ret = req->poll();
->>>>>> 	if (ret == -EAGAIN)
->>>>>> 		io_queue_async_work()
->>>>>> 	...
->>>>>> }
->>>>>>
->>>>>>
->>>>>> I can't find it handled in io_uring. Can this even happen?
->>>>>> Wouldn't it be better to complete them with -EAGAIN?
->>>>>
->>>>> I don't think a plain -EAGAIN complete would be very useful, it's kind
->>>>> of a shitty thing to pass back to userspace when it can be avoided. For
->>>>> polled IO, we know we're doing O_DIRECT, or using fixed buffers. For the
->>>>> latter, there's no problem in retrying, regardless of context. For the
->>>>> former, I think we'd get -EFAULT mapping the IO at that point, which is
->>>>> probably reasonable. I'd need to double check, though.
->>>>
->>>> It's shitty, but -EFAULT is the best outcome. I care more about not
->>>> corrupting another process' memory if addresses coincide. AFAIK it can
->>>> happen because io_{read,write} will use iovecs for punted re-submission.
->>>>
->>>>
->>>> Unconditional in advance async_prep() is too heavy to be good. I'd love to
->>>> see something more clever, but with -EAGAIN users at least can handle it.
+On 6/12/2020 8:19 AM, Jens Axboe wrote:
+> On 6/12/20 9:16 AM, Jens Axboe wrote:
+>> On 6/11/20 8:23 PM, Bijan Mottahedeh wrote:
+>>> Long term, it makes sense to separate reporting and enforcing of pinned
+>>> memory usage.
 >>>
->>> So how about we just grab ->task for the initial issue, and retry if we
->>> find it through -EAGAIN and ->task == current. That'll be the most
->>> common case, by far, and it'll prevent passes back -EAGAIN when we
->>> really don't have to. If the task is different, then -EAGAIN makes more
->>> sense, because at that point we're passing back -EAGAIN because we
->>> really cannot feasibly handle it rather than just as a convenience.
-> 
-> Yeah, I was even thinking to drag it through task_work just to call
-> *grab_env() there. Looks reasonable to me.
-> 
->> Something like this, totally untested. And wants a comment too.
-> 
-> Looks like it. Would you leave this to me? There is another issue with
-> cancellation requiring ->task, It'd be easier to keep them together.
-
-Guess this ties into the next email, on using task_work? I actually
-don't think that's a bad idea. If you have a low(er) queue depth device,
-the -EAGAIN path is not necessarily that common. And task_work is a lot
-more efficient for re-submittal than async work, plus needs to grab less
-resources.
-
-So I think you should still run with it...
-
--- 
-Jens Axboe
-
+>>> Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+>>>
+>>> It is useful to view
+>>> ---
+>>>   fs/io_uring.c | 4 ++++
+>>>   1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>> index 4248726..cf3acaa 100644
+>>> --- a/fs/io_uring.c
+>>> +++ b/fs/io_uring.c
+>>> @@ -7080,6 +7080,8 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+>>>   static void io_unaccount_mem(struct user_struct *user, unsigned long nr_pages)
+>>>   {
+>>>   	atomic_long_sub(nr_pages, &user->locked_vm);
+>>> +	if (current->mm)
+>>> +		atomic_long_sub(nr_pages, &current->mm->pinned_vm);
+>>>   }
+>>>   
+>>>   static int io_account_mem(struct user_struct *user, unsigned long nr_pages)
+>>> @@ -7096,6 +7098,8 @@ static int io_account_mem(struct user_struct *user, unsigned long nr_pages)
+>>>   			return -ENOMEM;
+>>>   	} while (atomic_long_cmpxchg(&user->locked_vm, cur_pages,
+>>>   					new_pages) != cur_pages);
+>>> +	if (current->mm)
+>>> +		atomic_long_add(nr_pages, &current->mm->pinned_vm);
+>>>   
+>>>   	return 0;
+>>>   }
+>> current->mm should always be valid for these, so I think you can skip the
+>> checking of that and just make it unconditional.
+> Two other issues with this:
+>
+> - It's an atomic64, so seems more appropriate to use the atomic64 helpers
+>    for this one.
+> - The unaccount could potentially be a different mm, if the ring is shared
+>    and one task sets it up while another tears it down. So we'd need something
+>    to ensure consistency here.
+>
+Are you referring to a case where one process creates a ring and sends 
+the ring fd to another process?

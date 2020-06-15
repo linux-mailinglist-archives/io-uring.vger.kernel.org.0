@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C8CA1F9001
-	for <lists+io-uring@lfdr.de>; Mon, 15 Jun 2020 09:34:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 507371F8FFF
+	for <lists+io-uring@lfdr.de>; Mon, 15 Jun 2020 09:34:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbgFOHeu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 Jun 2020 03:34:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58528 "EHLO
+        id S1728422AbgFOHev (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Jun 2020 03:34:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbgFOHet (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Jun 2020 03:34:49 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E62B3C061A0E;
-        Mon, 15 Jun 2020 00:34:48 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id y17so15919173wrn.11;
-        Mon, 15 Jun 2020 00:34:48 -0700 (PDT)
+        with ESMTP id S1726299AbgFOHeu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Jun 2020 03:34:50 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53555C061A0E;
+        Mon, 15 Jun 2020 00:34:50 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id p5so15928115wrw.9;
+        Mon, 15 Jun 2020 00:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Z/scpk3kR4iex4ERTM3utzKEgc0eR+GVe9poH6YwaP0=;
-        b=VHHHozs/xph4kV5lNCnVW2cZ0R2bEeNTlz+sXL6mNB646wm9n/7fEnROvTFIOq1cmY
-         DGnpIfaChwgeOSK3Jzui1mKBrLRwOpdqTeITNuYsEFvjIh4d4eAGlTPjxGVrUeCMot91
-         OFg9YEwJYgV1RHvHHC6rWMMpwxIEeYww3+NOpD5gjNPrsYCNARiVK87Q+CFjqXLls9Af
-         MXWvtqTA8grQNVhiJmCzF7TFB1povvY1/1UsqPItry8wAMyDR2VznMYZRdPqSUU6Zmxu
-         tjCuEfirIjfhtnOffzSyFwBNTJcHlbji1KrW2PCZGwhMqgZLmZE7r6/NuwBVru6C6TU4
-         FqdQ==
+        bh=Qjsk++Pix8KjxxXAqgwUSe/HplN2eP5f9UTChVTDsnY=;
+        b=bre6wkYEwWhrWFm5OMw2x4DbrW33CuINRb/I2iekq9drqUy/x37EtOYszOWff045Sy
+         B7tgq/TAvAZg/Y1zUPySidgMTmoXjmsR6HS1+9toLtCG6XzMNwFR746/W1/VZfweYVXD
+         6ntBrnmGetvA8GC2m02EEKubqY5sf4Ql39uCoosgcvIyFwauF4CbWa87pBsGxXOmVh1y
+         P8ZDq6HayVLsIstrepALyZA2ohaMUFGsOBdEttZ3DY9j5BtIt32nSKD2CqlFI+IvjPMt
+         3xQ+koSxsobl/mQRlQX9LGuO1jwxsXFqey2tkLzEhJYIOyVFVyukzTt936guE6dNFpZK
+         HIgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Z/scpk3kR4iex4ERTM3utzKEgc0eR+GVe9poH6YwaP0=;
-        b=neN5DQVn0NV7LthWpRTkO2aHxGnTj3cdDdAAOLgrjbqW+2Lf1Mkkrsujt4q6CruBpW
-         YNIDHY5xQvxybL3fMEYrfWsjMaz57ZnPqP7Zp/lyYtQxOyf71y1peTEgXXDvw1nX+/hI
-         225YW9B/uqa8gC+n5ICxlIkns3mpR2xxzmsF/eDl2sqSVwaNmaGSY5PSy0qbXbAtSpez
-         +9Yrsu5IRcCWWGGgk0vWoDBMRQol81p+zbXaYc+CswPsmRFGhpFWHPpIqS6Ep+EcAcjP
-         vsz17C90s+qeBmFsEY5yr67Z6nOpUrUd3NirSU0y73RHw4I3IKQFxbBLQ8sh4dayDL3k
-         SpmA==
-X-Gm-Message-State: AOAM531m5UkLODaTAI2BlndayzU56E2/0X9dloZEUI9NCshrh5DqrNcW
-        BsIaLjwnDUnHkclUXMvAHjM=
-X-Google-Smtp-Source: ABdhPJxotSJ15l+OVBaATNGacY+Zs+4rd2S3Y/VYQmcmRWdTf0aw6aFFI3zUVsOU0uQJH8+VEdI3xA==
-X-Received: by 2002:adf:dfcf:: with SMTP id q15mr26646674wrn.373.1592206487675;
-        Mon, 15 Jun 2020 00:34:47 -0700 (PDT)
+        bh=Qjsk++Pix8KjxxXAqgwUSe/HplN2eP5f9UTChVTDsnY=;
+        b=j6TrxujhxtPUGYs9W/w1ClRzwC8vMqry6J7ljlnoG63NdsERJlx7TSjlljriQMLU6d
+         tyjBUjpdn0I0Gj4ESiPpxFynvYqWGqmE/i0LxEwqwudEi8sEE4xuld3J71o90xhkAXj2
+         nPY5rBj6utS4lwc1/k4YIGy708Fz27RbOIi9il+PJPHwZEZrPHGldqIQACY3dKmr9HTW
+         EAewgqKPa9BtaJ4/nIsKjeGXndefGJM+C+jvWSxd+U0gM1xIQfgHPorWKxCp1CqO8x9r
+         MC9TUoypeB36UJZ69wEKkfRzZRQZkt34vGUrVQ0UPyNmytbyWmXp6qf1rcqLKsCLJ/2a
+         E1Gg==
+X-Gm-Message-State: AOAM533d4IcRGjK4XbWeAN+fzn5NbjjAZIbAXPc7y7pRWOXeEzvY5Fp+
+        5vxkkeF7rU++AZ22rBVRjJs=
+X-Google-Smtp-Source: ABdhPJy6NOLZL9LObfcAG7ZT63gChmITB6+eaKDXqeL4qK7G2p8B1OXAzC6WuepeJ8GJOSE0IROcSA==
+X-Received: by 2002:a5d:5601:: with SMTP id l1mr29196223wrv.254.1592206489009;
+        Mon, 15 Jun 2020 00:34:49 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id l17sm20271324wmi.16.2020.06.15.00.34.46
+        by smtp.gmail.com with ESMTPSA id l17sm20271324wmi.16.2020.06.15.00.34.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2020 00:34:47 -0700 (PDT)
+        Mon, 15 Jun 2020 00:34:48 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     ebiederm@xmission.com
-Subject: [PATCH 1/2] io_uring: lazy get task
-Date:   Mon, 15 Jun 2020 10:33:13 +0300
-Message-Id: <2185c03aec46afef0a914674f0e2904ede6bbbba.1592206077.git.asml.silence@gmail.com>
+Subject: [PATCH 2/2] io_uring: cancel by ->task not pid
+Date:   Mon, 15 Jun 2020 10:33:14 +0300
+Message-Id: <356acaf3ea3a0f62e77a65e10c940e4656aa6b81.1592206077.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1592206077.git.asml.silence@gmail.com>
 References: <cover.1592206077.git.asml.silence@gmail.com>
@@ -64,103 +64,75 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There will be multiple places where req->task is used, so refcount-pin
-it lazily with introduced *io_{get,put}_req_task(). We need to always
-have valid ->task for cancellation reasons, but don't care about pinning
-it in some cases. That's why it sets req->task in io_req_init() and
-implements get/put laziness with a flag.
+For an exiting process it tries to cancel all its inflight requests.
+Use req->task to match such instead of work.pid. We always have
+req->task set, and it will be valid because we're matching only
+current exiting task.
 
-This also removes using @current from polling io_arm_poll_handler(),
-etc., but doesn't change observable behaviour
+Also, remove work.pid and everything related, it's useless now
 
+Reported-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 30 ++++++++++++++++++++++--------
- 1 file changed, 22 insertions(+), 8 deletions(-)
+ fs/io-wq.h    |  1 -
+ fs/io_uring.c | 16 ++++++----------
+ 2 files changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5b5cab6691d2..f05d2e45965e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -543,6 +543,7 @@ enum {
- 	REQ_F_NO_FILE_TABLE_BIT,
- 	REQ_F_QUEUE_TIMEOUT_BIT,
- 	REQ_F_WORK_INITIALIZED_BIT,
-+	REQ_F_TASK_PINNED_BIT,
- 
- 	/* not a real bit, just to check we're not overflowing the space */
- 	__REQ_F_LAST_BIT,
-@@ -602,6 +603,8 @@ enum {
- 	REQ_F_QUEUE_TIMEOUT	= BIT(REQ_F_QUEUE_TIMEOUT_BIT),
- 	/* io_wq_work is initialized */
- 	REQ_F_WORK_INITIALIZED	= BIT(REQ_F_WORK_INITIALIZED_BIT),
-+	/* req->task is refcounted */
-+	REQ_F_TASK_PINNED	= BIT(REQ_F_TASK_PINNED_BIT),
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index b72538fe5afd..071f1a997800 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -90,7 +90,6 @@ struct io_wq_work {
+ 	const struct cred *creds;
+ 	struct fs_struct *fs;
+ 	unsigned flags;
+-	pid_t task_pid;
  };
  
- struct async_poll {
-@@ -912,6 +915,21 @@ struct sock *io_uring_get_socket(struct file *file)
+ static inline struct io_wq_work *wq_next_work(struct io_wq_work *work)
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index f05d2e45965e..54addaba742d 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1065,8 +1065,6 @@ static inline void io_req_work_grab_env(struct io_kiocb *req,
+ 		}
+ 		spin_unlock(&current->fs->lock);
+ 	}
+-	if (!req->work.task_pid)
+-		req->work.task_pid = task_pid_vnr(current);
  }
- EXPORT_SYMBOL(io_uring_get_socket);
  
-+static void io_get_req_task(struct io_kiocb *req)
-+{
-+	if (req->flags & REQ_F_TASK_PINNED)
-+		return;
-+	get_task_struct(req->task);
-+	req->flags |= REQ_F_TASK_PINNED;
-+}
-+
-+/* not idempotent -- it doesn't clear REQ_F_TASK_PINNED */
-+static void __io_put_req_task(struct io_kiocb *req)
-+{
-+	if (req->flags & REQ_F_TASK_PINNED)
-+		put_task_struct(req->task);
-+}
-+
- static void io_file_put_work(struct work_struct *work);
+ static inline void io_req_work_drop_env(struct io_kiocb *req)
+@@ -7455,11 +7453,12 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+ 	}
+ }
  
- /*
-@@ -1400,9 +1418,7 @@ static void __io_req_aux_free(struct io_kiocb *req)
- 	kfree(req->io);
- 	if (req->file)
- 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
--	if (req->task)
--		put_task_struct(req->task);
+-static bool io_cancel_pid_cb(struct io_wq_work *work, void *data)
++static bool io_cancel_task_cb(struct io_wq_work *work, void *data)
+ {
+-	pid_t pid = (pid_t) (unsigned long) data;
++	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
++	struct task_struct *task = data;
+ 
+-	return work->task_pid == pid;
++	return req->task == task;
+ }
+ 
+ static int io_uring_flush(struct file *file, void *data)
+@@ -7471,11 +7470,8 @@ static int io_uring_flush(struct file *file, void *data)
+ 	/*
+ 	 * If the task is going away, cancel work it may have pending
+ 	 */
+-	if (fatal_signal_pending(current) || (current->flags & PF_EXITING)) {
+-		void *data = (void *) (unsigned long)task_pid_vnr(current);
 -
-+	__io_put_req_task(req);
- 	io_req_work_drop_env(req);
- }
+-		io_wq_cancel_cb(ctx->io_wq, io_cancel_pid_cb, data, true);
+-	}
++	if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
++		io_wq_cancel_cb(ctx->io_wq, io_cancel_task_cb, current, true);
  
-@@ -4367,8 +4383,7 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
- 		memcpy(&apoll->work, &req->work, sizeof(req->work));
- 	had_io = req->io != NULL;
- 
--	get_task_struct(current);
--	req->task = current;
-+	io_get_req_task(req);
- 	req->apoll = apoll;
- 	INIT_HLIST_NODE(&req->hash_node);
- 
-@@ -4556,8 +4571,7 @@ static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
- 	events = READ_ONCE(sqe->poll_events);
- 	poll->events = demangle_poll(events) | EPOLLERR | EPOLLHUP;
- 
--	get_task_struct(current);
--	req->task = current;
-+	io_get_req_task(req);
  	return 0;
  }
- 
-@@ -5818,7 +5832,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	req->flags = 0;
- 	/* one is dropped after submission, the other at completion */
- 	refcount_set(&req->refs, 2);
--	req->task = NULL;
-+	req->task = current;
- 	req->result = 0;
- 
- 	if (unlikely(req->opcode >= IORING_OP_LAST))
 -- 
 2.24.0
 

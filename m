@@ -2,63 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 356651F9B5E
-	for <lists+io-uring@lfdr.de>; Mon, 15 Jun 2020 17:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 027601F9B62
+	for <lists+io-uring@lfdr.de>; Mon, 15 Jun 2020 17:05:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730860AbgFOPET (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 Jun 2020 11:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43406 "EHLO
+        id S1730913AbgFOPFA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Jun 2020 11:05:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730213AbgFOPET (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Jun 2020 11:04:19 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB524C061A0E
-        for <io-uring@vger.kernel.org>; Mon, 15 Jun 2020 08:04:18 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id i12so6948345pju.3
-        for <io-uring@vger.kernel.org>; Mon, 15 Jun 2020 08:04:18 -0700 (PDT)
+        with ESMTP id S1730847AbgFOPE7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Jun 2020 11:04:59 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C16C8C05BD43
+        for <io-uring@vger.kernel.org>; Mon, 15 Jun 2020 08:04:58 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id s23so7935079pfh.7
+        for <io-uring@vger.kernel.org>; Mon, 15 Jun 2020 08:04:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=cZpiXSF12XfOjR7Rqd/jEt2LEGNKKJL/5+ZFRXFRJD0=;
-        b=eaM7SmlSIbbYYwLlQKQKN3s1VXlgvV97QWt2VnV5p4/rcL2a6keGKOmZZerVKHI+40
-         jXEPO1qVaiv5m+SXHbwhiH/PxaBUvSRXcYFvROAK3+px3uBwD5dUDIhjSChledyp5HQB
-         pre1jYyts1p/ly8H4Q3OUKwO0r5kMDzrwmD6jsnM+GHGxbVHpmeTnxbjjxnc3rY4dioj
-         kuhsgqeRwkAA+x3SVNk1bn4z7+pGD+1B0GulslAa29viVuIvdRf/TahUzErMnPjqghTP
-         vzMyWBZMlZ9hc4PzrOHP3JUE9Ib1iJF5h6H1M5DRLwpF5zTxGXdVFe9CeGp4WGr7vYe+
-         FoTw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vbfKhiMK9FyLJ1R4wzHm2mLCW6oCsbN/2Vi0OJTPAQo=;
+        b=UV0mod8bg56pi0FyFJpgtMlX23de2Qm5wpkixqrt/9rDVU8HADl5f3aptV1rzGXfOc
+         pdvaO1DPQw/7ZN2yh1ipYAxvd4STNxMN40fG6yYJjYYciSOWbbK2xQh43Sme7Bfh+0dH
+         gH8kOHv7RSrwH7tVO8IdxgjKLzQNji9ociZNigE12wE/ZOjwhHaELO4xGjKlIkrkUYDF
+         LWMMZW1dQT2alUOz/xDDBxSE98NHQ1W4jGIm2ZLc2VCNpTjzzK89m0oSUfByWMXvEaMA
+         2mPQPJE+ZJTMGqO1PcUvZZZXmRFNbXYJKIo++8x5u6P+7OLhQ+5H86ksYFaBwEQnd8Vp
+         U4bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=cZpiXSF12XfOjR7Rqd/jEt2LEGNKKJL/5+ZFRXFRJD0=;
-        b=clf/nIDIJfPKrMeyEgiClL2ex0OWwGVWW+D1QSE5b7OuPCsRcZsOpVsPieUpvbFdXB
-         uu3QoXGaRXDQ/7bU5SUK8Uh2XgkC6coFl3ngZHkg0TN/oyicTLIWVFgvHlJrJtQoZ1m1
-         fdVCZfIDes9fbruEzbbyEwQ6UViLAEly9INOuJ5bZ/PwO+Eju6AKS2tm8FRh7anxQexH
-         CbNDcCThmtCBWihdIPc+l343MhA1tA2sUl7xl7rA3xPi551AILE4cTEVnBY+wVovG3eg
-         4Ndx9NmopiLJTR3yrAKkLtBMWKXj7ChDOCtDEoqDhzyS7J6ffafIpM6vfHNnHAYU/amF
-         lJ5w==
-X-Gm-Message-State: AOAM531e2IQEg3JkfjQeEiVQrB3rh7PDKPnzpoPEBvOYlqYP6DqX2IkE
-        bd0Leiy41wpwtI6BCj81EkZKKQ==
-X-Google-Smtp-Source: ABdhPJyKaUj8lcGi70+zg9pMMQVi3VGnHiJAEoah7XZguN/TFcAWMF2yXVUmShZS3GGkR41IjANMGg==
-X-Received: by 2002:a17:902:b787:: with SMTP id e7mr11733374pls.277.1592233458327;
-        Mon, 15 Jun 2020 08:04:18 -0700 (PDT)
+        bh=vbfKhiMK9FyLJ1R4wzHm2mLCW6oCsbN/2Vi0OJTPAQo=;
+        b=pju50Ik1YUL4WLfi8FdNyMSr4hre3PVZKjxEH+yLBNI7Ne8nM0uheVTothrUOHl1hN
+         4xlDQe7yzIgH0Z5fWUbnplzOcnOuwcjwMZnc8Manoo7jNjZUWSuZb3zMj29Kwu1RoXkL
+         DSVXurd8WnBrkwKcZfhqlYv1Bfw7qW5yiYrUzZMEdPtZc58/rKPARhIOTl+U4t/93+4F
+         kBMwhJ2Dw1bLUoTDr60aIafrrgNT9LSrPrxKlfQop4thqFYiLKcitmL3SsMAm2TcDUU0
+         pXhZvDBEdMRfwbp+pfFc09E2rOyYJeYoA6BgOjKC9aiKQC1xo+63aaQVnr9B2+wYBmwL
+         T1Lw==
+X-Gm-Message-State: AOAM533XBiLqtb+hC75ZHjYPhkE/snDKZ7rdL0Cri8Ep6ZB1Vh+ot7Cg
+        XFqYcF3g4wOdmsklPcOrg3IrwQ==
+X-Google-Smtp-Source: ABdhPJzkLU5Mcmvc37UJQiY2VC0UwaTdz+1le9AnlfiahfbjtwzkcjdaekcYs22ELcQo+GXOxRaqsQ==
+X-Received: by 2002:a63:5c55:: with SMTP id n21mr20644016pgm.27.1592233498289;
+        Mon, 15 Jun 2020 08:04:58 -0700 (PDT)
 Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id u7sm14621286pfu.162.2020.06.15.08.04.17
+        by smtp.gmail.com with ESMTPSA id b10sm11376026pfb.110.2020.06.15.08.04.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jun 2020 08:04:17 -0700 (PDT)
-Subject: Re: [PATCH v2 0/4][RESEND] cancel all reqs of an exiting task
+        Mon, 15 Jun 2020 08:04:57 -0700 (PDT)
+Subject: Re: [PATCH 0/2] don't use pid for request cancellation
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <cover.1592205754.git.asml.silence@gmail.com>
+Cc:     ebiederm@xmission.com
+References: <cover.1592206077.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8033114e-069d-e8d0-f476-1f4d4bed3e25@kernel.dk>
-Date:   Mon, 15 Jun 2020 09:04:15 -0600
+Message-ID: <9b90fd1d-c60d-523a-b6b5-6c960ae52cc6@kernel.dk>
+Date:   Mon, 15 Jun 2020 09:04:56 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1592205754.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1592206077.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,21 +68,15 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/15/20 1:24 AM, Pavel Begunkov wrote:
-> io_uring_flush() {
->         ...
->         if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
->                 io_wq_cancel_pid(ctx->io_wq, task_pid_vnr(current));
-> }
+On 6/15/20 1:33 AM, Pavel Begunkov wrote:
+> Cancel requests of an extiting task based on ->task address. As
+> reported by Eric W. Biederman, using pid for this purpose is not
+> right.
 > 
-> This cancels only the first matched request. The pathset is mainly
-> about fixing that. [1,2] are preps, [3/4] is the fix.
-> 
-> The [4/4] tries to improve the worst case for io_uring_cancel_files(),
-> that's when they are a lot of inflights with ->files. Instead of doing
-> {kill(); wait();} one by one, it cancels all of them at once.
+> note: rebased on top of "cancel all" patches
 
-Applied, thanks.
+Looks good, and I had the same thought of not grabbing a ref to the
+task for the cancel case where we don't need to dereference it.
 
 -- 
 Jens Axboe

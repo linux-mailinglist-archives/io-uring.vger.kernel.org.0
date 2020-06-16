@@ -2,121 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DBFE1FBF11
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2020 21:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94E1F1FBF39
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2020 21:45:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728518AbgFPTfM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Jun 2020 15:35:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53736 "EHLO
+        id S1730998AbgFPTnl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Jun 2020 15:43:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730393AbgFPTfL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Jun 2020 15:35:11 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3A48C061573
-        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2020 12:35:09 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id k2so1888599pjs.2
-        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2020 12:35:09 -0700 (PDT)
+        with ESMTP id S1731071AbgFPTnj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Jun 2020 15:43:39 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BAEC061573
+        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2020 12:43:38 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id c3so21983488wru.12
+        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2020 12:43:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tE4hPHxedlBS9ygtlM030SerijGFDoZR98QJ3DtVf4c=;
-        b=RkG7JdM562/xJ4HW5bZac09tC1ZY7AEH+G/4+CPwXzPvKVg3ZbvCixZtOeORoZhi5r
-         lbTDfr4d+ta68CWJKgEu5jC87nB2SvhZz2DVled3XAqZaQIiB7DUAVtTvgSw2v+zV3re
-         SelF6quhb3amgkGrXoCwBcrOK7GdXhyqwRx1JszVDCho3rlZvwgtJf2oa3V6AL54xUSy
-         y7Dksixtg1/vMbOCRd66dfwcbHN/2+AoIvGHJ++UraPnIKzTODZw0zbaplburmoqNnyG
-         WEii1txKuSMlZ46wjGpdwKn/+hAl40Y1E/khnPrHRHkqh2mLa5kwHIBrX6kSytuFETAZ
-         ePcA==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AY0DJWgiKPx/Z0p/v5D2N/6h8Cv60xsDyHV/5aVXg/E=;
+        b=uB5Ec0B2dABPbIXbiwWXUEzhatdoNdqy2Lk4mW1O1CRCAcsPhALH+9Z4x4Toq6iai+
+         ddjMHqDSJVZ30+nOS2y0bJYlmpXiv7Ap7UdvVmaShs/1jamEkBut7kTEW9IHB3dA/Nk/
+         AGsF+kAgj5DWkJTxtFkwiZnhR2C3m5g5VeF3lQwAbOJxq6KvILjpuT/uwvqofwYozWri
+         p0vj6qqFrVjLuihvkgWYHqRcgLLEk4HYQN58w7XcG/xvroinOjWrcptMCYQUtU/64hNa
+         bFgrjfpjMNHeL2AVgP97tw3IpknScy5K4Jd9cvdx8xwUR2ZjhlzmcX0Po8fIUoC2OZZx
+         npug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=tE4hPHxedlBS9ygtlM030SerijGFDoZR98QJ3DtVf4c=;
-        b=RXuk1HPH5920D4jR5QXTpjhIYE5nEcvn5vjI1DTH5CjKtHgGCTx0R8dClIRP1gKIrr
-         Fy3dUvLXrK67ewG32qX0u4myjKnVs7J0dfenMj1wfAkzdQNVFWT1Srtp6PsiH14AE6VF
-         rZLWovBUDr5mLZFSMjQUQa8zYnFCm1TMfRk1QAyQw2PflkH+kb256JwP4dE/VR00vAvG
-         F3B7nE40o2faf519qgh1Kblt1r6lsvItxgUQvs3BkRhEcW9coMhtGGQwK5RbB8BVjMw1
-         aPlLho8D+cvIkCgTiWhL0YtAAYOGz/PmMJ3x13fiZLRREtAdQEevnQl2ZtA0eRFAaGpW
-         r5TQ==
-X-Gm-Message-State: AOAM533cDeKO1SEAANUhyN6nX3aOIgTiImp5ZCR4BgF4j9p9/GzzjKOw
-        Q0fzRchw7jJ9MXTJiKEFktWXekjq84zwaw==
-X-Google-Smtp-Source: ABdhPJxLSgeZCYdhV0aLa/FAnNyIZ4PQerPzEJ6VVVU+GuDxD+f0cwxLBEPf0nvZodH+Kf5ju+dmAA==
-X-Received: by 2002:a17:90a:7806:: with SMTP id w6mr4241964pjk.24.1592336108697;
-        Tue, 16 Jun 2020 12:35:08 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id a12sm3193360pjw.35.2020.06.16.12.35.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jun 2020 12:35:08 -0700 (PDT)
-Subject: Re: Does need memory barrier to synchronize req->result with
- req->iopoll_completed
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <dc28ff4f-37cf-03cb-039e-f93fefef8b96@linux.alibaba.com>
- <fdbe0ddc-7fa8-f7df-2e49-bfcea00673d0@kernel.dk>
- <0c0ec588-9fc7-1f97-7e52-80d368f8146d@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ce6b75a3-533c-e621-651e-1b29797ce50c@kernel.dk>
-Date:   Tue, 16 Jun 2020 13:35:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        bh=AY0DJWgiKPx/Z0p/v5D2N/6h8Cv60xsDyHV/5aVXg/E=;
+        b=azNwN0DlkpI+Azosln28IC63vnFftGte2+m4XbSSzoFcr2rEYUOF+r446D9jvd3w66
+         Ef3fswzHQByW7J5MAbKWugSXZB5mE8FL9S27fN8X39lYmZFJN3QGEHdJ402wJe8gesZK
+         cFfPC7tIm8IAJY1jWbSf/Feg4mWX0oWsbNukuT6U0of+cXs58RKwDuzlV8PFQ6v+fAhi
+         PrI/OoumOOGrBtJtdQ0JR/oJm8IromSc+p/a/0F+vHQC9R7tLzYz4Zd803YfILuaTgKc
+         1CHmhDqiytMVntVeLTS71qENHsJKKVi9D+KZBnh7lZvKsI0H9gN5jwyz0hEmlu70Qo3N
+         vWUg==
+X-Gm-Message-State: AOAM532Jcjiv+0XL3W/BEXiZ24a0m9KpgYyqdhjsrzbBnsgVj1A9zhBq
+        EKh4ILLlxos+9I1LtyKjqsrWM3A4
+X-Google-Smtp-Source: ABdhPJzEPY+Rofr2WGjY4Fis2Bfi5ATZvmqtzS/BPc09Yz9mEBV/3d8PyVaMajqmfbp9FWK3FPtwsQ==
+X-Received: by 2002:adf:f6ce:: with SMTP id y14mr4886927wrp.90.1592336616701;
+        Tue, 16 Jun 2020 12:43:36 -0700 (PDT)
+Received: from localhost.localdomain ([5.100.193.151])
+        by smtp.gmail.com with ESMTPSA id u130sm5518150wmg.32.2020.06.16.12.43.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jun 2020 12:43:36 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing] test/stdout: fix strcmp non-\0 string
+Date:   Tue, 16 Jun 2020 22:42:01 +0300
+Message-Id: <ec5c66bd2bf8ae8c190ebf4894f58a039c131845.1592336391.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <0c0ec588-9fc7-1f97-7e52-80d368f8146d@oracle.com>
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/16/20 11:31 AM, Bijan Mottahedeh wrote:
-> On 6/14/2020 8:36 AM, Jens Axboe wrote:
->> On 6/14/20 8:10 AM, Xiaoguang Wang wrote:
->>> hi,
->>>
->>> I have taken some further thoughts about previous IPOLL race fix patch,
->>> if io_complete_rw_iopoll() is called in interrupt context, "req->result = res"
->>> and "WRITE_ONCE(req->iopoll_completed, 1);" are independent store operations.
->>> So in io_do_iopoll(), if iopoll_completed is ture, can we make sure that
->>> req->result has already been perceived by the cpu executing io_do_iopoll()?
->> Good point, I think if we do something like the below, we should be
->> totally safe against an IRQ completion. Since we batch the completions,
->> we can get by with just a single smp_rmb() on the completion side.
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 155f3d830ddb..74c2a4709b63 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -1736,6 +1736,9 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
->>   	struct req_batch rb;
->>   	struct io_kiocb *req;
->>   
->> +	/* order with ->result store in io_complete_rw_iopoll() */
->> +	smp_rmb();
->> +
->>   	rb.to_free = rb.need_iter = 0;
->>   	while (!list_empty(done)) {
->>   		int cflags = 0;
->> @@ -1976,6 +1979,8 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
->>   	if (res != req->result)
->>   		req_set_fail_links(req);
->>   	req->result = res;
->> +	/* order with io_poll_complete() checking ->result */
->> +	smp_wmb();
->>   	if (res != -EAGAIN)
->>   		WRITE_ONCE(req->iopoll_completed, 1);
->>   }
->>
-> I'm just trying to understand how the above smp_rmb() works. When 
-> io_complete_rw_iopoll() is called, all requests on the done list have 
-> already had ->iopoll_completed checked, and given the smp_wmb(),we know 
-> the two writes were ordered, so what does the smp_rmb() achieve here 
-> exactly? What ordering does it perform?
+After copying len(str) bytes of a string, the copy won't necessary have
+\0 terminator, that makes test_pipe_io_fixed() to fail. Use memcmp().
 
-Documentation/memory-barriers.txt actually has a good example of that,
-skip to line 2219 or so.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/stdout.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/test/stdout.c b/test/stdout.c
+index 440ea20..ddc9eec 100644
+--- a/test/stdout.c
++++ b/test/stdout.c
+@@ -84,7 +84,7 @@ static int test_pipe_io_fixed(struct io_uring *ring)
+ 					(unsigned long) cqe->user_data);
+ 			goto err;
+ 		}
+-		if (cqe->user_data == 2 && strcmp(str, buffer)) {
++		if (cqe->user_data == 2 && memcmp(str, buffer, strlen(str))) {
+ 			fprintf(stderr, "read data mismatch\n");
+ 			goto err;
+ 		}
 -- 
-Jens Axboe
+2.24.0
 

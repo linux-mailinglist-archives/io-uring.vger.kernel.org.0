@@ -2,224 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B14DF1FBA05
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2020 18:08:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33DCD1FBD15
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2020 19:34:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731789AbgFPQIO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Jun 2020 12:08:14 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:45102 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732637AbgFPQIJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Jun 2020 12:08:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592323686;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zAmfsG1yWQp7htmzd31AkeGRX9NdjCJmJao6WCNJhSM=;
-        b=BmJpuHEZwKXYSOnb4vbxjFOyA3bTGKge3rlhMwBTbDLm1hUmHJ0MH3hsorfYhHU4/EPHIA
-        1CPTbLlU5gLDMAy5haVh8HtnixOVACJis5LJVEYuy/yIIwJks2vHhUsKO6VSvt5TN898LA
-        mQtHotQj+4fjXK4BJx4x3vD6WVknkkc=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-2-SH2G-6x2P-uRiPU-RHl7DA-1; Tue, 16 Jun 2020 12:08:04 -0400
-X-MC-Unique: SH2G-6x2P-uRiPU-RHl7DA-1
-Received: by mail-wm1-f71.google.com with SMTP id x6so1446239wmj.9
-        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2020 09:08:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zAmfsG1yWQp7htmzd31AkeGRX9NdjCJmJao6WCNJhSM=;
-        b=RBEwN7gRwiGKHsj54t6/Ik/R/lkfjURus6JCTo6yHpg6CowLq3r/QR2FrQ2pR0851s
-         4MJwgC6kcxFXsJJ/L6gj2sCud3sckmbrZvurB6Rjxetcy0lkLHzeToKb4BbH60sMml5/
-         P/RGWesxF53ALMb3rwro70hqn9kFBaIYIWg7xwqQxxhJhAfx2ujGNd4cg1TxgwtlypNY
-         C6Djul1C9maLRMzhGvIUHOZ7REY6Jl9By/BUS0cQ//yQYpu0LcfR+jqF1pr07rCAv5GI
-         7seQ2ICzRr+XGG2gvGgZTWjX7Pi23J5+SCTcbhPo8DkoBy8rvOoxhhlfV6xu8UgC8PnA
-         UZvw==
-X-Gm-Message-State: AOAM531MPyR5KebaMKg7fTUHhngONy0od/PRMpRM1tagl1/AhUMBUkFw
-        s9K8L3Zaa2E4iLAHbjfdWWQfLAYzw0Xv4rqXOH/M1/sJ6PlLMe7ErhTTVmPkwRadIJhjDbX79F8
-        34hpSNcQvqzoPwdfm/RU=
-X-Received: by 2002:adf:f30d:: with SMTP id i13mr3605173wro.146.1592323682798;
-        Tue, 16 Jun 2020 09:08:02 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxb5FVBHSOCazvOPkG3bOZ/JxTqnrTMlUtzCXzy6s29kSBJKESc5gH7/BCfoimMoGcNzTEObQ==
-X-Received: by 2002:adf:f30d:: with SMTP id i13mr3605125wro.146.1592323682491;
-        Tue, 16 Jun 2020 09:08:02 -0700 (PDT)
-Received: from steredhat ([5.180.207.22])
-        by smtp.gmail.com with ESMTPSA id z2sm28570535wrs.87.2020.06.16.09.07.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 09:08:01 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 18:07:57 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
+        id S1728271AbgFPRds (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Jun 2020 13:33:48 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40518 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729148AbgFPRds (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Jun 2020 13:33:48 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05GHX42F013160;
+        Tue, 16 Jun 2020 17:33:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=4STBUEmGtGL/d+DtHMlq0SQPPVJbzmE/HTPmxZGSrV8=;
+ b=bPRCCs17aCAg/xfHIfttNYGLGq1jwbSLCMoE6QDBVuJZJkqCkHMHCMm9/23PpcalM0gy
+ ktkJ7SqrIxr1KXNoXfbsi8UfvivDFfUs+mX7E5KXBV1a9G+slSMcHm2QR9qSNeG31qjQ
+ wvONgScq3JzB35haqdcYWhRUlpp0cvOwZdSfj58SzDFw7opOhpGsSA0PAol0R3s0KKhQ
+ WdNj2ubf7Ew4jszEvDVQ+11fJK7XxFDCYw0/y9PVDjOjXEzdhtODpnaq3O8jw4dX4ghP
+ 8LOeymfi8byUv//ru5pqYKzTqdHZAbLfHF5wjuC0p69zPin/v93GJl+HNCPRWxtzEKBa fA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 31p6e8060t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 16 Jun 2020 17:33:44 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05GHN637195698;
+        Tue, 16 Jun 2020 17:31:44 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 31p6s7j1nq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Jun 2020 17:31:44 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05GHVhrh015777;
+        Tue, 16 Jun 2020 17:31:43 GMT
+Received: from [10.154.162.1] (/10.154.162.1)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 16 Jun 2020 10:31:43 -0700
+Subject: Re: Does need memory barrier to synchronize req->result with
+ req->iopoll_completed
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Aleksa Sarai <asarai@suse.de>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        io-uring <io-uring@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [RFC] io_uring: add restrictions to support untrusted
- applications and guests
-Message-ID: <20200616160757.vc2jsgilvsgnrf3p@steredhat>
-References: <20200609142406.upuwpfmgqjeji4lc@steredhat>
- <CAG48ez3kdNKjif==MbX36cKNYDpZwEPMZaJQ1rrpXZZjGZwbKw@mail.gmail.com>
- <20200615133310.qwdmnctrir5zgube@steredhat>
- <f7f2841e-3dbb-377f-f8f8-826506a938a6@kernel.dk>
- <20200616091247.hdmxcrnlrrxih7my@steredhat>
- <9483bbde-b1de-93b1-a239-4ba3613a63e5@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+References: <dc28ff4f-37cf-03cb-039e-f93fefef8b96@linux.alibaba.com>
+ <fdbe0ddc-7fa8-f7df-2e49-bfcea00673d0@kernel.dk>
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Message-ID: <0c0ec588-9fc7-1f97-7e52-80d368f8146d@oracle.com>
+Date:   Tue, 16 Jun 2020 10:31:40 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9483bbde-b1de-93b1-a239-4ba3613a63e5@kernel.dk>
+In-Reply-To: <fdbe0ddc-7fa8-f7df-2e49-bfcea00673d0@kernel.dk>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Antivirus: Avast (VPS 200616-6, 06/16/2020), Outbound message
+X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9654 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
+ suspectscore=2 mlxlogscore=999 phishscore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006160123
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9654 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0
+ impostorscore=0 bulkscore=0 clxscore=1015 malwarescore=0 suspectscore=2
+ mlxscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0
+ cotscore=-2147483648 priorityscore=1501 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006160124
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 09:26:31AM -0600, Jens Axboe wrote:
-> On 6/16/20 3:12 AM, Stefano Garzarella wrote:
-> > On Mon, Jun 15, 2020 at 11:00:25AM -0600, Jens Axboe wrote:
-> >> On 6/15/20 7:33 AM, Stefano Garzarella wrote:
-> >>> On Mon, Jun 15, 2020 at 11:04:06AM +0200, Jann Horn wrote:
-> >>>> +Kees, Christian, Sargun, Aleksa, kernel-hardening for their opinions
-> >>>> on seccomp-related aspects
-> >>>>
-> >>>> On Tue, Jun 9, 2020 at 4:24 PM Stefano Garzarella <sgarzare@redhat.com> wrote:
-> >>>>> Hi Jens,
-> >>>>> Stefan and I have a proposal to share with io_uring community.
-> >>>>> Before implementing it we would like to discuss it to receive feedbacks and
-> >>>>> to see if it could be accepted:
-> >>>>>
-> >>>>> Adding restrictions to io_uring
-> >>>>> =====================================
-> >>>>> The io_uring API provides submission and completion queues for performing
-> >>>>> asynchronous I/O operations. The queues are located in memory that is
-> >>>>> accessible to both the host userspace application and the kernel, making it
-> >>>>> possible to monitor for activity through polling instead of system calls. This
-> >>>>> design offers good performance and this makes exposing io_uring to guests an
-> >>>>> attractive idea for improving I/O performance in virtualization.
-> >>>> [...]
-> >>>>> Restrictions
-> >>>>> ------------
-> >>>>> This document proposes io_uring API changes that safely allow untrusted
-> >>>>> applications or guests to use io_uring. io_uring's existing security model is
-> >>>>> that of kernel system call handler code. It is designed to reject invalid
-> >>>>> inputs from host userspace applications. Supporting guests as io_uring API
-> >>>>> clients adds a new trust domain with access to even fewer resources than host
-> >>>>> userspace applications.
-> >>>>>
-> >>>>> Guests do not have direct access to host userspace application file descriptors
-> >>>>> or memory. The host userspace application, a Virtual Machine Monitor (VMM) such
-> >>>>> as QEMU, grants access to a subset of its file descriptors and memory. The
-> >>>>> allowed file descriptors are typically the disk image files belonging to the
-> >>>>> guest. The memory is typically the virtual machine's RAM that the VMM has
-> >>>>> allocated on behalf of the guest.
-> >>>>>
-> >>>>> The following extensions to the io_uring API allow the host application to
-> >>>>> grant access to some of its file descriptors.
-> >>>>>
-> >>>>> These extensions are designed to be applicable to other use cases besides
-> >>>>> untrusted guests and are not virtualization-specific. For example, the
-> >>>>> restrictions can be used to allow only a subset of sqe operations available to
-> >>>>> an application similar to seccomp syscall whitelisting.
-> >>>>>
-> >>>>> An address translation and memory restriction mechanism would also be
-> >>>>> necessary, but we can discuss this later.
-> >>>>>
-> >>>>> The IOURING_REGISTER_RESTRICTIONS opcode
-> >>>>> ----------------------------------------
-> >>>>> The new io_uring_register(2) IOURING_REGISTER_RESTRICTIONS opcode permanently
-> >>>>> installs a feature whitelist on an io_ring_ctx. The io_ring_ctx can then be
-> >>>>> passed to untrusted code with the knowledge that only operations present in the
-> >>>>> whitelist can be executed.
-> >>>>
-> >>>> This approach of first creating a normal io_uring instance and then
-> >>>> installing restrictions separately in a second syscall means that it
-> >>>> won't be possible to use seccomp to restrict newly created io_uring
-> >>>> instances; code that should be subject to seccomp restrictions and
-> >>>> uring restrictions would only be able to use preexisting io_uring
-> >>>> instances that have already been configured by trusted code.
-> >>>>
-> >>>> So I think that from the seccomp perspective, it might be preferable
-> >>>> to set up these restrictions in the io_uring_setup() syscall. It might
-> >>>> also be a bit nicer from a code cleanliness perspective, since you
-> >>>> won't have to worry about concurrently changing restrictions.
-> >>>>
-> >>>
-> >>> Thank you for these details!
-> >>>
-> >>> It seems feasible to include the restrictions during io_uring_setup().
-> >>>
-> >>> The only doubt concerns the possibility of allowing the trusted code to
-> >>> do some operations, before passing queues to the untrusted code, for
-> >>> example registering file descriptors, buffers, eventfds, etc.
-> >>>
-> >>> To avoid this, I should include these operations in io_uring_setup(),
-> >>> adding some code that I wanted to avoid by reusing io_uring_register().
-> >>>
-> >>> If I add restrictions in io_uring_setup() and then add an operation to
-> >>> go into safe mode (e.g. a flag in io_uring_enter()), we would have the same
-> >>> problem, right?
-> >>>
-> >>> Just to be clear, I mean something like this:
-> >>>
-> >>>     /* params will include restrictions */
-> >>>     fd = io_uring_setup(entries, params);
-> >>>
-> >>>     /* trusted code */
-> >>>     io_uring_register_files(fd, ...);
-> >>>     io_uring_register_buffers(fd, ...);
-> >>>     io_uring_register_eventfd(fd, ...);
-> >>>
-> >>>     /* enable safe mode */
-> >>>     io_uring_enter(fd, ..., IORING_ENTER_ENABLE_RESTRICTIONS);
-> >>>
-> >>>
-> >>> Anyway, including a list of things to register in the 'params', passed
-> >>> to io_uring_setup(), should be feasible, if Jens agree :-)
-> >>
-> >> I wonder how best to deal with this, in terms of ring visibility vs
-> >> registering restrictions. We could potentially start the ring in a
-> >> disabled mode, if asked to. It'd still be visible in terms of having
-> >> the fd installed, but it'd just error requests. That'd leave you with
-> >> time to do the various setup routines needed before then flagging it
-> >> as enabled. My only worry on that would be adding overhead for doing
-> >> that. It'd be cheap enough to check for IORING_SETUP_DISABLED in
-> >> ctx->flags in io_uring_enter(), and return -EBADFD or something if
-> >> that's the case. That doesn't cover the SQPOLL case though, but maybe we
-> >> just don't start the sq thread if IORING_SETUP_DISABLED is set.
-> > 
-> > It seems to me a very good approach and easy to implement. In this way
-> > we can reuse io_uring_register() without having to modify too much
-> > io_uring_setup().
-> 
-> Right
-> 
-> >> We'd need a way to clear IORING_SETUP_DISABLED through
-> >> io_uring_register(). When clearing, that could then start the sq thread
-> >> as well, when SQPOLL is set.
-> > 
-> > Could we do it using io_uring_enter() since we have a flag field or
-> > do you think it's semantically incorrect?
-> 
-> Either way is probably fine, I gravitated towards io_uring_register()
-> since any io_uring_enter() should fail if the ring is disabled. But I
-> guess it's fine to allow the "enable" operation through io_uring_enter.
-> Keep in mind that io_uring_enter is the hottest path, where
-> io_uring_register is not nearly as hot and we can allow ourselves a bit
-> more flexibility there.
+On 6/14/2020 8:36 AM, Jens Axboe wrote:
+> On 6/14/20 8:10 AM, Xiaoguang Wang wrote:
+>> hi,
+>>
+>> I have taken some further thoughts about previous IPOLL race fix patch,
+>> if io_complete_rw_iopoll() is called in interrupt context, "req->result = res"
+>> and "WRITE_ONCE(req->iopoll_completed, 1);" are independent store operations.
+>> So in io_do_iopoll(), if iopoll_completed is ture, can we make sure that
+>> req->result has already been perceived by the cpu executing io_do_iopoll()?
+> Good point, I think if we do something like the below, we should be
+> totally safe against an IRQ completion. Since we batch the completions,
+> we can get by with just a single smp_rmb() on the completion side.
+>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 155f3d830ddb..74c2a4709b63 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1736,6 +1736,9 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+>   	struct req_batch rb;
+>   	struct io_kiocb *req;
+>   
+> +	/* order with ->result store in io_complete_rw_iopoll() */
+> +	smp_rmb();
+> +
+>   	rb.to_free = rb.need_iter = 0;
+>   	while (!list_empty(done)) {
+>   		int cflags = 0;
+> @@ -1976,6 +1979,8 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
+>   	if (res != req->result)
+>   		req_set_fail_links(req);
+>   	req->result = res;
+> +	/* order with io_poll_complete() checking ->result */
+> +	smp_wmb();
+>   	if (res != -EAGAIN)
+>   		WRITE_ONCE(req->iopoll_completed, 1);
+>   }
+>
+I'm just trying to understand how the above smp_rmb() works. When 
+io_complete_rw_iopoll() is called, all requests on the done list have 
+already had ->iopoll_completed checked, and given the smp_wmb(),we know 
+the two writes were ordered, so what does the smp_rmb() achieve here 
+exactly? What ordering does it perform?
 
-Right, now I see and I totally agree!
+Thanks.
 
-> 
-> In summary, I'd be fine with io_uring_enter if it's slim and lean, still
-> leaning towards doing it in io_uring_register as it seems like a more
-> natural fit.
-
-Thanks for the clarification. I'll take that into account.
-
-Stefano
+--bijan
 

@@ -2,157 +2,143 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA3F1FA415
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2020 01:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1CB81FA68F
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2020 05:04:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbgFOX0j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 Jun 2020 19:26:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36408 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725960AbgFOX0i (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Jun 2020 19:26:38 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12957C061A0E
-        for <io-uring@vger.kernel.org>; Mon, 15 Jun 2020 16:26:38 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id i27so21230157ljb.12
-        for <io-uring@vger.kernel.org>; Mon, 15 Jun 2020 16:26:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t36AfAxmVUPgFShxugWx8vpo7Nh3/W7qrT3GE6ix9Cw=;
-        b=v6geb5iM6AHcjCpEZnHGSzpWg0GuVfHjaK68MaNpr+UGU6zR41cP8Y1jAAQ3lbEilz
-         VlN8zU7ncNIKGy7DDFyPb/Yj8s2JKFfSEtczq6oK1znWXgRqulKDeortwlvoAhmwFXmg
-         QmJA3c9gtahBDqLrkBiBKeaVQjgyVZI4O1cOwY8E4mVk0mQqkpkedKpROhIdk/MsNmiv
-         T/J9mwsxBHzba/0pmSDxdj5nPHTYjkqdQ0HURBvm7puPYmZt7PqqchJYmyqdUt8HHiYp
-         DQC2GJ07KRu5R6krZ0q7ZPBjU9bK3Q/qGBevJpIFgnaa9MTEZDQNSOy56uyOiBnodppU
-         WmWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t36AfAxmVUPgFShxugWx8vpo7Nh3/W7qrT3GE6ix9Cw=;
-        b=pKoG/8riI06EJOlShp3aJZV87ydNrL5rjHT6msqYM18sZSD2TEsijU20JQ7OCdcwjc
-         wOp7OejbnNSirlVVMLRGKMPTMKl6kSIGWxjGvqscelvloD/Sal8qxM8VeNoiUcaxXtin
-         RjHwrDLTCLcospm2kGCfg7+mam2f5ffR+0I+8y0oBsiglM5QZLhcFUR5dgWEYXpgKOVi
-         HNQV8EftsG5aG+3Rn9OOHv1A1N/Z2z7z4dh2MVsdEUiby+N0OR132htFfxXEoG9ns8dF
-         bdvYaXh2G0ceiY70rUVKbgSoaPN9zWRvwMAPEapEJO5EJLM4iTVLSDMJjMQ7NSbyTLi2
-         Wblg==
-X-Gm-Message-State: AOAM533XtiFZFm+WwcdJhY08yJjzqw0Up7XIqiLyfoW16dWzHQFb6gII
-        iCC9ru1MCyWCgOv/DdL8iKQSiHxqSp+g5EDnrDphdQ==
-X-Google-Smtp-Source: ABdhPJy4UCD34ksC6HjtziYgqG6/oUIJyz4mVdKKfo9S8Dn3XQi1qU2VgKJpOgYlopCK36rFQ+Eukt7xq4Ylp48oJyo=
-X-Received: by 2002:a2e:7f02:: with SMTP id a2mr44239ljd.138.1592263595797;
- Mon, 15 Jun 2020 16:26:35 -0700 (PDT)
+        id S1726025AbgFPDEF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Jun 2020 23:04:05 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:58917 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725978AbgFPDEF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Jun 2020 23:04:05 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=jiufei.xue@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0U.jg.Q8_1592276642;
+Received: from ali-186590e05fa3.local(mailfrom:jiufei.xue@linux.alibaba.com fp:SMTPD_---0U.jg.Q8_1592276642)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 16 Jun 2020 11:04:03 +0800
+Subject: Re: [PATCH v3 1/2] io_uring: change the poll events to be 32-bits
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     joseph.qi@linux.alibaba.com
+References: <1591929018-73954-1-git-send-email-jiufei.xue@linux.alibaba.com>
+ <1591929018-73954-2-git-send-email-jiufei.xue@linux.alibaba.com>
+ <9e251ae9-ffe1-d9ea-feb5-cb9e641aeefb@kernel.dk>
+ <f6d3c7bb-1a10-10ed-9ab3-3d7b3b78b808@kernel.dk>
+ <ec18b7b6-a931-409b-6113-334974442036@linux.alibaba.com>
+ <b98ae1ed-c2b5-cfba-9a58-2fa64ffd067a@kernel.dk>
+From:   Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Message-ID: <7a311161-839c-3927-951d-3ce2bc7aa5d4@linux.alibaba.com>
+Date:   Tue, 16 Jun 2020 11:04:02 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
+ Gecko/20100101 Thunderbird/68.8.1
 MIME-Version: 1.0
-References: <20200609142406.upuwpfmgqjeji4lc@steredhat> <CAG48ez3kdNKjif==MbX36cKNYDpZwEPMZaJQ1rrpXZZjGZwbKw@mail.gmail.com>
- <20200615220143.qrm4ffbkpaew4xdv@wittgenstein>
-In-Reply-To: <20200615220143.qrm4ffbkpaew4xdv@wittgenstein>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 16 Jun 2020 01:26:09 +0200
-Message-ID: <CAG48ez17MLcj83JDOr6_GeQZ8orqL3EKHt6X=0wfr5RODVqqDA@mail.gmail.com>
-Subject: Re: [RFC] io_uring: add restrictions to support untrusted
- applications and guests
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Stefano Garzarella <sgarzare@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Aleksa Sarai <asarai@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        io-uring <io-uring@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b98ae1ed-c2b5-cfba-9a58-2fa64ffd067a@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 12:01 AM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> On Mon, Jun 15, 2020 at 11:04:06AM +0200, Jann Horn wrote:
-> > +Kees, Christian, Sargun, Aleksa, kernel-hardening for their opinions
-> > on seccomp-related aspects
->
-> Just fyi, I'm on holiday this week so my responses have some
-> non-significant lag into early next week.
->
-> >
-> > On Tue, Jun 9, 2020 at 4:24 PM Stefano Garzarella <sgarzare@redhat.com> wrote:
-> > > Hi Jens,
-> > > Stefan and I have a proposal to share with io_uring community.
-> > > Before implementing it we would like to discuss it to receive feedbacks and
-> > > to see if it could be accepted:
-> > >
-> > > Adding restrictions to io_uring
-> > > =====================================
-> > > The io_uring API provides submission and completion queues for performing
-> > > asynchronous I/O operations. The queues are located in memory that is
-> > > accessible to both the host userspace application and the kernel, making it
-> > > possible to monitor for activity through polling instead of system calls. This
-> > > design offers good performance and this makes exposing io_uring to guests an
-> > > attractive idea for improving I/O performance in virtualization.
-> > [...]
-> > > Restrictions
-> > > ------------
-> > > This document proposes io_uring API changes that safely allow untrusted
-> > > applications or guests to use io_uring. io_uring's existing security model is
-> > > that of kernel system call handler code. It is designed to reject invalid
-> > > inputs from host userspace applications. Supporting guests as io_uring API
-> > > clients adds a new trust domain with access to even fewer resources than host
-> > > userspace applications.
-> > >
-> > > Guests do not have direct access to host userspace application file descriptors
-> > > or memory. The host userspace application, a Virtual Machine Monitor (VMM) such
-> > > as QEMU, grants access to a subset of its file descriptors and memory. The
-> > > allowed file descriptors are typically the disk image files belonging to the
-> > > guest. The memory is typically the virtual machine's RAM that the VMM has
-> > > allocated on behalf of the guest.
-> > >
-> > > The following extensions to the io_uring API allow the host application to
-> > > grant access to some of its file descriptors.
-> > >
-> > > These extensions are designed to be applicable to other use cases besides
-> > > untrusted guests and are not virtualization-specific. For example, the
-> > > restrictions can be used to allow only a subset of sqe operations available to
-> > > an application similar to seccomp syscall whitelisting.
-> > >
-> > > An address translation and memory restriction mechanism would also be
-> > > necessary, but we can discuss this later.
-> > >
-> > > The IOURING_REGISTER_RESTRICTIONS opcode
-> > > ----------------------------------------
-> > > The new io_uring_register(2) IOURING_REGISTER_RESTRICTIONS opcode permanently
-> > > installs a feature whitelist on an io_ring_ctx. The io_ring_ctx can then be
-> > > passed to untrusted code with the knowledge that only operations present in the
-> > > whitelist can be executed.
-> >
-> > This approach of first creating a normal io_uring instance and then
-> > installing restrictions separately in a second syscall means that it
-> > won't be possible to use seccomp to restrict newly created io_uring
-> > instances; code that should be subject to seccomp restrictions and
-> > uring restrictions would only be able to use preexisting io_uring
-> > instances that have already been configured by trusted code.
-> >
-> > So I think that from the seccomp perspective, it might be preferable
-> > to set up these restrictions in the io_uring_setup() syscall. It might
->
-> So from what I can gather from this proposal, this would be a separate
-> security model for io_uring? I'm not to thrilled about that tbh. (There's
-> some discussion around extending seccomp - also at kernel summit.)
-> But doing the whole restriction setup in io_uring_setup() would at least
-> mean that if seccomp is extended to filter first-level pointers it could
-> know about all the security restrictions that apply to this io_uring
-> instance (Which I think you were getting at, Jann?).
 
-Yeah.
 
-> Hm, would it make sense that if a task has a seccomp filter installed
-> that blocks openat syscalls that io_uring should automatically block
-> openat() calls as well or is the expectation "just block all of io_uring
-> if you're worried about that"?
+On 2020/6/15 下午11:09, Jens Axboe wrote:
+> On 6/14/20 8:49 PM, Jiufei Xue wrote:
+>> Hi Jens,
+>>
+>> On 2020/6/13 上午12:48, Jens Axboe wrote:
+>>> On 6/12/20 8:58 AM, Jens Axboe wrote:
+>>>> On 6/11/20 8:30 PM, Jiufei Xue wrote:
+>>>>> poll events should be 32-bits to cover EPOLLEXCLUSIVE.
+>>>>>
+>>>>> Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+>>>>> ---
+>>>>>  fs/io_uring.c                 | 4 ++--
+>>>>>  include/uapi/linux/io_uring.h | 2 +-
+>>>>>  tools/io_uring/liburing.h     | 2 +-
+>>>>>  3 files changed, 4 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>>>> index 47790a2..6250227 100644
+>>>>> --- a/fs/io_uring.c
+>>>>> +++ b/fs/io_uring.c
+>>>>> @@ -4602,7 +4602,7 @@ static void io_poll_queue_proc(struct file *file, struct wait_queue_head *head,
+>>>>>  static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>>>  {
+>>>>>  	struct io_poll_iocb *poll = &req->poll;
+>>>>> -	u16 events;
+>>>>> +	u32 events;
+>>>>>  
+>>>>>  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+>>>>>  		return -EINVAL;
+>>>>> @@ -8196,7 +8196,7 @@ static int __init io_uring_init(void)
+>>>>>  	BUILD_BUG_SQE_ELEM(28, /* compat */   int, rw_flags);
+>>>>>  	BUILD_BUG_SQE_ELEM(28, /* compat */ __u32, rw_flags);
+>>>>>  	BUILD_BUG_SQE_ELEM(28, __u32,  fsync_flags);
+>>>>> -	BUILD_BUG_SQE_ELEM(28, __u16,  poll_events);
+>>>>> +	BUILD_BUG_SQE_ELEM(28, __u32,  poll_events);
+>>>>>  	BUILD_BUG_SQE_ELEM(28, __u32,  sync_range_flags);
+>>>>>  	BUILD_BUG_SQE_ELEM(28, __u32,  msg_flags);
+>>>>>  	BUILD_BUG_SQE_ELEM(28, __u32,  timeout_flags);
+>>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>>>>> index 92c2269..afc7edd 100644
+>>>>> --- a/include/uapi/linux/io_uring.h
+>>>>> +++ b/include/uapi/linux/io_uring.h
+>>>>> @@ -31,7 +31,7 @@ struct io_uring_sqe {
+>>>>>  	union {
+>>>>>  		__kernel_rwf_t	rw_flags;
+>>>>>  		__u32		fsync_flags;
+>>>>> -		__u16		poll_events;
+>>>>> +		__u32		poll_events;
+>>>>>  		__u32		sync_range_flags;
+>>>>>  		__u32		msg_flags;
+>>>>>  		__u32		timeout_flags;
+>>>>
+>>>> We obviously have the space in there as most other flag members are 32-bits, but
+>>>> I'd want to double check if we're not changing the ABI here. Is this always
+>>>> going to be safe, on any platform, regardless of endianess etc?
+>>>
+>>> Double checked, and as I feared, we can't safely do this. We'll have to
+>>> do something like the below, grabbing an unused bit of the poll mask
+>>> space and if that's set, then store the fact that EPOLLEXCLUSIVE is set.
+>>> So probably best to turn this just into one patch, since it doesn't make
+>>> a lot of sense to do it as a prep patch at that point.
+>>>
+>> Yes, Agree about that. But I also fear that if the unused bit is used
+>> in the feature, it will bring unexpected behavior.
+> 
+> Yeah, it's certainly not the prettiest and could potentially be fragile.
+> I'm open to suggestions, we need some way of signaling that the 32-bit
+> variant of the poll_events should be used. We could potentially make
+> this work by doing explicit layout for big endian vs little endian, that
+> might be prettier and wouldn't suffer from the "grab some random bit"
+> issue.
+> 
+Thank you for your suggestion, I will think about it.
 
-I mean, if we could make that automagic, that'd be kinda neat; but I'm
-slightly worried that an automated translation might end up being
-slightly inaccurate. (But maybe that's acceptable?)
+>>> This does have the benefit of not growing io_poll_iocb. With your patch,
+>>> it'd go beyond a cacheline, and hence bump the size of the entire
+>>> io_iocb as well, which would be very unfortunate.
+>>>
+>> events in io_poll_iocb is 32-bits already, so why it will bump the
+>> size of the io_iocb structure with my patch? 
+> 
+> It's not 32-bits already, it's a __poll_t type which is 16-bits only.
+> 
+Yes, it is a __poll_t type, but I found that __poll_t type is 32-bits
+with the definition below:
+
+typedef unsigned __bitwise __poll_t;
+
+And I also investigate it with crash:
+crash> io_poll_iocb -ox
+struct io_poll_iocb {
+   [0x0] struct file *file;
+         union {
+   [0x8]     struct wait_queue_head *head;
+   [0x8]     u64 addr;
+         };
+  [0x10] __poll_t events;
+  [0x14] bool done;
+  [0x15] bool canceled;
+  [0x18] struct wait_queue_entry wait;
+}

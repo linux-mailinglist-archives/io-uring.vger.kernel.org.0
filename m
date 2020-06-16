@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDAFA1FBEE1
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2020 21:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 796451FBEE0
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2020 21:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730585AbgFPTWQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Jun 2020 15:22:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51712 "EHLO
+        id S1730995AbgFPTV5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Jun 2020 15:21:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730463AbgFPTWP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Jun 2020 15:22:15 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34D99C061573
-        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2020 12:22:15 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id l10so21929903wrr.10
-        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2020 12:22:15 -0700 (PDT)
+        with ESMTP id S1730990AbgFPTV4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Jun 2020 15:21:56 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7CBCC061573
+        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2020 12:21:56 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id v24so8822392plo.6
+        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2020 12:21:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uBIiuRi+R/gki317HK3A4j11jyRBng0T910yoi7iT88=;
-        b=JZ0JzZl7rqyqqWNdnPu3SonOjMuWqKI4IgjqE9PjFnb5D9Gg4RggXTXCqfZvtDWaCR
-         7iyCRUhsHOo5+HaxmVVCwhPSgBcPiFKgXah1EP9vXYMRUTWSVe4LzUqfv5plCfqOY7VK
-         3/12q5LhebHBp6asy9BPKsVxLHPjMmB0tawGzE/chYZqWhEtixj7eIK7JA8S107ev0gM
-         1oDdOANBKZ/FqsEVkTsbCxAxrw6szJqyauDZ1WGLy/Y7lAsJJPW4c16uK/DsPVt1QzA3
-         v/TVwUNSgnHqliZknTSfUIZ3iYDI8qnl+7ivl6g2PBLGsL0h/NoU4VmeSibFR48Sez7n
-         eWBA==
+        bh=Dx911l1Udsjh3VCV8dMFbAqyTw/fhSOuhkvnuvv38X4=;
+        b=erdD1XW4EGZxgMDj3mETBAFyRwyPGJDI55t6b7ta6hHMWnyy58z1Z34nKXzfM/CW6J
+         hkxsJ4lB+7qEY7qU6FPckNhcPgXWGJrshXYRchR05XTljIdxOMefxSl/npvaNivwxdGg
+         OGHxRMMkeJiGF8YEFnv6nAGBkINqX54a2HOVHoXYJ+5BixWoGb8Xi6MCWKgbghsfKV55
+         YOdKy67Y5dWYucU6JV4RGiZUnT1AxrtI0olIYzsAnH55G8cf+eKnTfITEU/JTR8mHDlv
+         lVDalRfVGDYPPU4IKvkWqYOGEpAmJ+NiYiOHiuIV04jDGkFMEc3ODyO7zTwVljtokuSn
+         2yMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=uBIiuRi+R/gki317HK3A4j11jyRBng0T910yoi7iT88=;
-        b=QNgc1AoCSBdH3AUumBRi8y0m/MSoYXR4S6FfZWAIIQrfy0kVj7BS4I9YcgVXHpe5am
-         zdahxKYdJuwy6AS+WF+tECqHZ1mCGLNln4f8Q2qUmgys0r7GDqKUBgBwd7tg9pkjzvZC
-         my18FFMT5P7obZLnZ5FdZ5isIB8MXkxii3iRnKUiCn4ES7GhpK7YZMovebUYlUkzhmP2
-         S9rLDwIwrv3eox3jr+HhhF20zljLuh+WUZzBAojvmso89BbgHa+b72cVCp5tFSSygryb
-         K1fYk4eHNb0g4T0zKEA0Y6aOcF/Xw85MuayRryHXdFIiAJo9N20cTmI+mZIemFvD9E5J
-         0uRA==
-X-Gm-Message-State: AOAM531mzRNGum0U3e9VkmYICcUL9WfBIApJ4p8pG+LH3qDKN5bNof8N
-        dFxVpPVvziqsU4lgj5rJJjvQolJ/
-X-Google-Smtp-Source: ABdhPJzse8ncO91/kZiajvhfLqiGPksDRf5v0I+IzZcf4aTsHgNaBaFvjeSO3cjKHmpWmHAL35ACHw==
-X-Received: by 2002:a5d:49c4:: with SMTP id t4mr4496569wrs.127.1592335333824;
-        Tue, 16 Jun 2020 12:22:13 -0700 (PDT)
-Received: from [192.168.43.243] ([5.100.193.151])
-        by smtp.gmail.com with ESMTPSA id c65sm5176366wme.8.2020.06.16.12.22.12
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Dx911l1Udsjh3VCV8dMFbAqyTw/fhSOuhkvnuvv38X4=;
+        b=Ji7k3rgKoLQjgh+OL99hGs5i/scoAWE00YNLxOF5v5QWI4u4LVWoAQsXloBgFe0yog
+         6mudqyNgCyDmBE/4D0FUZW32SsMRo13esd2Ezhnz/3oZtOG56Ir2M0W4pK7SQOXAMiXG
+         fmN9E3wUGGgnPuaxeSUVvhLBaTjeBn6jlrsHSlg7GrGvWV1HW5QKkZ14Oh7w7o0BPfw2
+         MGhHCYKdmPBY4DPLd5zkFybld08UP2UcS8XbZ7eNIag8yveWVdFs2YFPjyfbhdC0XxFP
+         yGUqAI1J9V0V7CwfUGkGKEKcVVc0MjFWzZtLP2WxcjUFvZuGyrRI1AvMzHkjOlmK3hIM
+         a6Bw==
+X-Gm-Message-State: AOAM5314adnLufruFHYEkf7OehxQHHjehUynj/QwR66R7CDjV1LeeI6l
+        AtNqTt4EYwASOj+PpHkhaMllPCyVsfZrQg==
+X-Google-Smtp-Source: ABdhPJwrY8OGRI38RaWq3q2nrVzAfxExyr3bxpzJdCon5Jw4eChXz6uLLIj36m646BS4Lm27IYbRjA==
+X-Received: by 2002:a17:902:b60e:: with SMTP id b14mr3354361pls.81.1592335316096;
+        Tue, 16 Jun 2020 12:21:56 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id p12sm18145212pfq.69.2020.06.16.12.21.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jun 2020 12:22:13 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>,
-        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        io-uring@vger.kernel.org
+        Tue, 16 Jun 2020 12:21:55 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] io_uring: change the poll events to be 32-bits
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Jiufei Xue <jiufei.xue@linux.alibaba.com>, io-uring@vger.kernel.org
 Cc:     joseph.qi@linux.alibaba.com
 References: <1591929018-73954-1-git-send-email-jiufei.xue@linux.alibaba.com>
  <1591929018-73954-2-git-send-email-jiufei.xue@linux.alibaba.com>
@@ -61,55 +61,10 @@ References: <1591929018-73954-1-git-send-email-jiufei.xue@linux.alibaba.com>
  <7a311161-839c-3927-951d-3ce2bc7aa5d4@linux.alibaba.com>
  <967819fd-84c5-9329-60b6-899a2708849e@kernel.dk>
  <659bda5d-2da0-b092-9a66-1c4c4d89501a@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH v3 1/2] io_uring: change the poll events to be 32-bits
-Message-ID: <cdf0cbfe-2c3b-1240-a9b0-4b6d9bb0933f@gmail.com>
-Date:   Tue, 16 Jun 2020 22:20:46 +0300
+Message-ID: <5fc59f0b-7437-ac2c-a142-8cd7a532960c@kernel.dk>
+Date:   Tue, 16 Jun 2020 13:21:54 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.8.0
 MIME-Version: 1.0
 In-Reply-To: <659bda5d-2da0-b092-9a66-1c4c4d89501a@kernel.dk>
 Content-Type: text/plain; charset=utf-8
@@ -120,7 +75,7 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 16/06/2020 21:45, Jens Axboe wrote:
+On 6/16/20 12:45 PM, Jens Axboe wrote:
 > On 6/16/20 7:58 AM, Jens Axboe wrote:
 >> On 6/15/20 9:04 PM, Jiufei Xue wrote:
 >>>
@@ -286,7 +241,47 @@ On 16/06/2020 21:45, Jens Axboe wrote:
 >  		__u32		timeout_flags;
 > 
 
-That changes layout for big endian, isn't it? It's not ABI compatible.
+Nah this won't work, as the BE layout will be different. So how about
+this, just add a 16-bit poll_events_hi instead. App/liburing will set
+upper bits there. Something like the below, then just needs the
+exclusive wait change on top.
+
+Only downside I can see is that newer applications on older kernels will
+set EPOLLEXCLUSIVE but the kernel will ignore it. That's not a huge
+concern for this particular bit, but could be a concern if there are
+others that prove useful.
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index de1175206807..a9d74330ad6b 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4809,6 +4809,9 @@ static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 	events = READ_ONCE(sqe->poll_events);
+ 	poll->events = demangle_poll(events) | EPOLLERR | EPOLLHUP;
+ 
++	if (READ_ONCE(sqe->poll_events_hi) & EPOLLEXCLUSIVE)
++		poll->events |= EPOLLEXCLUSIVE;
++
+ 	io_get_req_task(req);
+ 	return 0;
+ }
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 92c22699a5a7..e6856d8e068f 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -31,7 +31,10 @@ struct io_uring_sqe {
+ 	union {
+ 		__kernel_rwf_t	rw_flags;
+ 		__u32		fsync_flags;
+-		__u16		poll_events;
++		struct {
++			__u16	poll_events;
++			__u16	poll_events_hi;
++		};
+ 		__u32		sync_range_flags;
+ 		__u32		msg_flags;
+ 		__u32		timeout_flags;
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

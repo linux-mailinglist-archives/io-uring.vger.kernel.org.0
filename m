@@ -2,68 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 306861FEBC8
-	for <lists+io-uring@lfdr.de>; Thu, 18 Jun 2020 08:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3D1E1FEBDD
+	for <lists+io-uring@lfdr.de>; Thu, 18 Jun 2020 09:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbgFRG4i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Jun 2020 02:56:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41706 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbgFRG4h (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Jun 2020 02:56:37 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D6ACC06174E;
-        Wed, 17 Jun 2020 23:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=uAvmk2CwDLs4X+Ko7ajFBaGyB0rcXPF4WnH3SQrYs4k=; b=iQ/jY6BwNU0GexOcII4Y8RmC90
-        vslaU7EwpUIeDbH4l3fPejGtKiiupUxIiUtFiXf9OKFRfNWnG9EfupRM5LYyTyoqkQ4NaCxf+rQEx
-        QpA0xyEbPpW6VGUiNbZPittAv+QRYNnNWsWAqedu0wTvaDrHGNzeST60Osvj66lkMXofncPReYaX4
-        xFEqPz0Pl/FlgUEfYqpEGhHy0/hcdSLaJ9QIprhDs1/QkI8aerds64dV+fhAfvor9e/DUmYIX86+S
-        TJC0Ps7C1qPcTVNwNM4UX+vYpk2ktc961oLqTiOI4ve7lfCJzRLxzGLqieBv7S/MYQVFHGZpIRreL
-        YlLoGcYw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jloTS-00012N-So; Thu, 18 Jun 2020 06:56:34 +0000
-Date:   Wed, 17 Jun 2020 23:56:34 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
-        nj.shetty@samsung.com, javier.gonz@samsung.com
-Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
-Message-ID: <20200618065634.GB24943@infradead.org>
-References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
- <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S1727809AbgFRHCF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Jun 2020 03:02:05 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:48248 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727115AbgFRHCF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Jun 2020 03:02:05 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0U.x0cQu_1592463722;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U.x0cQu_1592463722)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 18 Jun 2020 15:02:02 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, asml.silence@gmail.com,
+        joseph.qi@linux.alibaba.com,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH] io_uring: fix possible race condition against REQ_F_NEED_CLEANUP
+Date:   Thu, 18 Jun 2020 15:01:56 +0800
+Message-Id: <20200618070156.17508-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 10:53:36PM +0530, Kanchan Joshi wrote:
-> This patchset enables issuing zone-append using aio and io-uring direct-io interface.
-> 
-> For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. Application uses start LBA
-> of the zone to issue append. On completion 'res2' field is used to return
-> zone-relative offset.
-> 
-> For io-uring, this introduces three opcodes: IORING_OP_ZONE_APPEND/APPENDV/APPENDV_FIXED.
-> Since io_uring does not have aio-like res2, cqe->flags are repurposed to return zone-relative offset
+In io_read() or io_write(), when io request is submitted successfully,
+it'll go through below codes:
+    kfree(iovec);
+    req->flags &= ~REQ_F_NEED_CLEANUP;
+    return ret;
 
-And what exactly are the semantics supposed to be?  Remember the
-unix file abstractions does not know about zones at all.
+But indeed the "req->flags &= ~REQ_F_NEED_CLEANUP;" maybe dangerous,
+io request may already have been completed, then io_complete_rw_iopoll()
+and io_complete_rw() will be called, both of them will also modify
+req->flags if needed, race condition will occur, concurrent modifaction
+will happen, which is neither protected by locks nor atomic operations.
 
-I really don't think squeezing low-level not quite block storage
-protocol details into the Linux read/write path is a good idea.
+To eliminate this race, in io_read() or io_write(), if io request is
+submitted successfully, we don't remove REQ_F_NEED_CLEANUP flag. If
+REQ_F_NEED_CLEANUP is set, we'll leave __io_req_aux_free() to the
+iovec cleanup work correspondingly.
 
-What could be a useful addition is a way for O_APPEND/RWF_APPEND writes
-to report where they actually wrote, as that comes close to Zone Append
-while still making sense at our usual abstraction level for file I/O.
+Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+---
+ fs/io_uring.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 2038d52c5450..a78201b96179 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2670,8 +2670,8 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
+ 		}
+ 	}
+ out_free:
+-	kfree(iovec);
+-	req->flags &= ~REQ_F_NEED_CLEANUP;
++	if (!(req->flags & REQ_F_NEED_CLEANUP))
++		kfree(iovec);
+ 	return ret;
+ }
+ 
+@@ -2793,8 +2793,8 @@ static int io_write(struct io_kiocb *req, bool force_nonblock)
+ 		}
+ 	}
+ out_free:
+-	req->flags &= ~REQ_F_NEED_CLEANUP;
+-	kfree(iovec);
++	if (!(req->flags & REQ_F_NEED_CLEANUP))
++		kfree(iovec);
+ 	return ret;
+ }
+ 
+-- 
+2.17.2
+

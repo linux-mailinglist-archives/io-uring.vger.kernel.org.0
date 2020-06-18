@@ -2,83 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C371FF480
-	for <lists+io-uring@lfdr.de>; Thu, 18 Jun 2020 16:16:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 581881FF4C4
+	for <lists+io-uring@lfdr.de>; Thu, 18 Jun 2020 16:32:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbgFROQv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Jun 2020 10:16:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53170 "EHLO
+        id S1730672AbgFROcs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Jun 2020 10:32:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730277AbgFROQu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Jun 2020 10:16:50 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C9A4C06174E;
-        Thu, 18 Jun 2020 07:16:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=59v7DL+Q6M0O6agqJhZf72SPocZXRPqx3iv/O5eS9Zk=; b=frBBXjmKpVtAc+AqKk5DD8LQNU
-        wbXudAS7/WiZVQ1wkOg5A1ixxX85phlK37al49JjUr3uf6dYnpaQrHmHDThIfg/5T2KcquAjDchIJ
-        5tbQR1JRhwgA8oiv/tbO5pI+PrShy4gU8oT5ZvztmYtlogsPm4n6sNtO33CkT5OGOrwMhquvwhgeA
-        FC6kTYlBxc43qy5rcUEsh9gLh7ZLSPn2l/HnHnJePiJizDk7EPysFbh5hxYI8YP/llFbTe0uMMwzd
-        nXmSN6L/g4upY7k4bzc+G1g2Fnu3gFfd95Y4PN1fvigpZVS+rQYFnfavVmMWaToR0PCyznDj3IR8T
-        0pGOqomA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jlvLQ-0002tV-UP; Thu, 18 Jun 2020 14:16:44 +0000
-Date:   Thu, 18 Jun 2020 07:16:44 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, bcrl@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
-        nj.shetty@samsung.com, javier.gonz@samsung.com,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <keith.busch@wdc.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
-Message-ID: <20200618141644.GB16866@infradead.org>
-References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
- <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
- <f503c488-fa00-4fe2-1ceb-7093ea429e45@lightnvm.io>
+        with ESMTP id S1726132AbgFROcr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Jun 2020 10:32:47 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC1EAC06174E
+        for <io-uring@vger.kernel.org>; Thu, 18 Jun 2020 07:32:45 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id n2so2495836pld.13
+        for <io-uring@vger.kernel.org>; Thu, 18 Jun 2020 07:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rYLO0ARrI7ErjIzTNgGcr51P9vXBU1mF93hHf0YakPg=;
+        b=0yAplFucfBYvjNEQ6NUxxm4i7HUxU9+azZ0w/V7elPCz4X5W1KrKJ7vFdbqFSvA4wV
+         JKesC3lss8NdbjDQYurqnM/8mT2vbE2jiTThArYGWJAfhKLnKWg7cyeQZmLdcRqAJQxC
+         G9HtZe+uY34ZnqdKVMPmZf88EmM1RDVHBLPB/hw9bqDlY8LwcyDsBpkok1NSzpo5ZWc4
+         UZZYdjJrn8PTDnrXEV++lsxXZwdpbdOeNS1oIlTLfgWA4RTlmgoCGSu6zExK61nD/rNX
+         +q50NYtheo0j70DjrJdSwZUOiBDbIKOUFr7Wq9mYYoGRTjwN1+AMi+8P1YoVf6JvH672
+         DLnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rYLO0ARrI7ErjIzTNgGcr51P9vXBU1mF93hHf0YakPg=;
+        b=Ayv4MNp/ooIZINYF1WjRJRxP1viO9BGaKASPL7SDOtHDNJfeqdjc06Zk3pzNGpmjnB
+         /criUau4X6ZUHjVyfgdvLYc9cCQWizrTMTntzBQveVZKzgvld8DgtkX05rV+XHhtJbnf
+         /LEBLm30uYU80tMnoGNT45prEYFGWGunZLFdLqS+6OfmrmRRNzsacFsCoJwNymVSVU7y
+         ryBteoL34JbezlxZU3j/DJ7pqIR4aESo1qNjBnm7xb7tkODQtM/5HNK9lQlZ0EYEA0Qh
+         4q/v0ZjoO1KvS4geRznaZD6RYeACA9NwBTvwzW/SI6EtfKCKU0N/O1cSd++6MsKfn1Dl
+         23Tg==
+X-Gm-Message-State: AOAM5334CeDdX/uZnZHpCokEv2dAPq4bUbs9pmkils/Q0vizcWK/oKRy
+        exu8ieQKXgmgNQF6CN43+5Lxfs0skgyLvQ==
+X-Google-Smtp-Source: ABdhPJxg6ndVtzZJHTA8G3GOOmrOZVT4vQLyj2moxsbaZw8BpFLLaAdN4colrQ2ccn7cF2v80x8jGA==
+X-Received: by 2002:a17:90b:1009:: with SMTP id gm9mr4603336pjb.213.1592490765028;
+        Thu, 18 Jun 2020 07:32:45 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id m22sm3317637pfk.216.2020.06.18.07.32.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jun 2020 07:32:44 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: fix possible race condition against
+ REQ_F_NEED_CLEANUP
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com, joseph.qi@linux.alibaba.com
+References: <20200618070156.17508-1-xiaoguang.wang@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <603f31bb-6a2e-1d93-04e4-6499839b9f01@kernel.dk>
+Date:   Thu, 18 Jun 2020 08:32:42 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f503c488-fa00-4fe2-1ceb-7093ea429e45@lightnvm.io>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200618070156.17508-1-xiaoguang.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 10:04:32AM +0200, Matias Bjørling wrote:
-> Please provide a pointers to applications that are updated and ready to take
-> advantage of zone append.
+On 6/18/20 1:01 AM, Xiaoguang Wang wrote:
+> In io_read() or io_write(), when io request is submitted successfully,
+> it'll go through below codes:
+>     kfree(iovec);
+>     req->flags &= ~REQ_F_NEED_CLEANUP;
+>     return ret;
+> 
+> But indeed the "req->flags &= ~REQ_F_NEED_CLEANUP;" maybe dangerous,
+> io request may already have been completed, then io_complete_rw_iopoll()
+> and io_complete_rw() will be called, both of them will also modify
+> req->flags if needed, race condition will occur, concurrent modifaction
+> will happen, which is neither protected by locks nor atomic operations.
+> 
+> To eliminate this race, in io_read() or io_write(), if io request is
+> submitted successfully, we don't remove REQ_F_NEED_CLEANUP flag. If
+> REQ_F_NEED_CLEANUP is set, we'll leave __io_req_aux_free() to the
+> iovec cleanup work correspondingly.
 
-That is a pretty high bar for kernel APIs that we don't otherwise
-apply unless seriously in doubt.
+Thanks, good catch!
 
-> I do not believe it's beneficial at this point to change the libaio API,
-> applications that would want to use this API, should anyway switch to use
-> io_uring.
+-- 
+Jens Axboe
 
-I think that really depends on the amount of churn required.  We
-absolutely can expose things like small additional flags or simple
-new operations, as rewriting application to different APIs is not
-exactly trivial.  On the other hand we really shouldn't do huge
-additions to the machinery.
-
-> Please also note that applications and libraries that want to take advantage
-> of zone append, can already use the zonefs file-system, as it will use the
-> zone append command when applicable.
-
-Not really.  While we already use Zone Append in Zonefs for some cases,
-we can't fully take advantage of the scalability of Zone Append.  For
-that we'd need a way to return the file position where an O_APPEND
-write actually landed, as suggested in my earlier mail.  Which I think
-is a very useful addition, and Damien and I had looked into adding
-it both for zonefs and normal file systems, but didn't get around to
-doing the work yet.

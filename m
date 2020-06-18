@@ -2,122 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A31E1FEDB4
-	for <lists+io-uring@lfdr.de>; Thu, 18 Jun 2020 10:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 561D41FEDEB
+	for <lists+io-uring@lfdr.de>; Thu, 18 Jun 2020 10:40:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728426AbgFRIfg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Jun 2020 04:35:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56968 "EHLO
+        id S1728924AbgFRIjp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Jun 2020 04:39:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727839AbgFRIfe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Jun 2020 04:35:34 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88F11C0613ED
-        for <io-uring@vger.kernel.org>; Thu, 18 Jun 2020 01:35:32 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id l17so4329457wmj.0
-        for <io-uring@vger.kernel.org>; Thu, 18 Jun 2020 01:35:32 -0700 (PDT)
+        with ESMTP id S1728706AbgFRIjo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Jun 2020 04:39:44 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC519C0613EE
+        for <io-uring@vger.kernel.org>; Thu, 18 Jun 2020 01:39:43 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id r7so5142465wro.1
+        for <io-uring@vger.kernel.org>; Thu, 18 Jun 2020 01:39:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XeqeGCk0h227IbaUO31Te14Ep+DTbyrxKQiQv5iAGUM=;
-        b=kiq7EiV+NbQ+zkWGdgIxS4diLlNIdZsy2YpyY3fOoiZjFDoM0Aw6xumKAxZS8JZzes
-         zO3LwZzOCRwhTJFyYgu8zjkLrrxAagZ4Jghj75zv7UmdYqQRe0UQQ4rp7mQe9gT+3DBQ
-         E3KhxmSl9KeqSnzdjpseVAnl6szVQLo7mK4OSBlhrJyeLRX9wxXnNXylUlMZf3cZVOfj
-         b8NjNpKi1pG/3ppOO5b6K+Qux02YUgTs1Ps61lEFB4AE7Ah1+gUS6EmumutAEX2+bxqv
-         AYPqalk+OtcLwX1ByIUhfHA3xjSQ1z7rf263yTQoxc9nZkTIwpp1FdRddEVbaWxsJ7qt
-         9LOA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=bfGxedb35Oy+a+SaZCiApfvdfQftE+QGRqOTHCEiwk0=;
+        b=Jp9qjrjhQcFj3NXFN/4Rrfme74bB0nupeKD4ZlzQWvUS7V6iRJu1jv1Sw/xuYGTK7k
+         ej+7JPWkQcKo3Ajn043X+/+R+2UJ5jWokpn3flKm+7PyPqNh17V4WhZVxVl8UGg64Wfl
+         yLAVVzaAY5T02u0306kGK6RI1pOm68OMgMXs1Q6bzwjTyr46pYHRf/2EDMWEUCo1eENB
+         ah42bVn0bM6JaiFAzRuDUo0UXVHCUtYN8YRPwPB1XYEJI1AxR6UM7zrwjYxOlgOAVjlf
+         Murw1Sff/3vLDbdD7Obz+r4KwOHNyTfSd6/UabOTjfMlsof+K6zxD5w1t/9NBrZ/jGDZ
+         u39Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XeqeGCk0h227IbaUO31Te14Ep+DTbyrxKQiQv5iAGUM=;
-        b=AxHZ5jsBtfijJoO8XP6L6O3hLyUqsvdSCNT+o93FmyuPdUtqfHF/quktNX/P7MOHfD
-         UJIHf0yVHcwIQTx5IkF2jqTrSGu3n02YXSoeV22C8frIfZzVAwInfhPnjsHhqr+gw9K4
-         5TJjGxQU+KaqByTf/5/AZywse1dOVsb+ei2OHEXhW4jKIoHNl+lHYv7HXPdA3tzumLqt
-         OvLrHXkshXuSa4O4KdDs4ZeYjuxJEpwB+glVGlCF5hxqWwsE6mjMtIzS520NB5M8Ixv9
-         W+EhMfYyvy3qai5860HU7kyLzB8E455cFKQ0YMdaYwdWsl68NBxcvAY2KeGljezPC7O+
-         4vpQ==
-X-Gm-Message-State: AOAM5326fYHpv12UKN9tYaHd15P0Zqv6nQMIEFXZEB9RV7zji1FA2gCZ
-        iWh+z02nFPr/fkPeoRZ/bvbtjQ==
-X-Google-Smtp-Source: ABdhPJzAKFaR/sh/flHYyjmoEWwug3yFpLTufpPxJ16XUVsPQXHOB0qJvJqSG0H/AvgdiFKjJBfaiA==
-X-Received: by 2002:a1c:dcc2:: with SMTP id t185mr2957197wmg.91.1592469331180;
-        Thu, 18 Jun 2020 01:35:31 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=bfGxedb35Oy+a+SaZCiApfvdfQftE+QGRqOTHCEiwk0=;
+        b=T5c3mW8R/BEyA6E1oQI8YC00LapKInytVFfGc49f5BKHuKSkXxu8Tco3fGN7y3kydR
+         vVJH13nl1vivgNaHKhXiES+fAX9nXIyjdtgwyd2940Ij9X6vm2RrebXm1SO3qG7ZiIdV
+         ESc1FXFgGOXcAySjKXaZGzG2SkrD2MjXLLQxM/ro111PxHophEBsCOE29xsSGwGaIdcO
+         LyuyEg6HINggZK5zhqr+TbbqSRCiQsLDUa6VR6TUcV9SjWybudDJOLNGtbno+vqSO5k3
+         Qy+eAlPE62OcqQYQQcnwT/nK6Adqh5kd3hRZCWKVoX56l9TvpMRtQq3df6JDSt9COxRq
+         p5YA==
+X-Gm-Message-State: AOAM533y9TagDEj/yYFmN+SYW1EZt1hsLxeT59MjF3Ejk9OwaJM+RdAS
+        DeJoH/Rf9ot3KModnQaz8KGRpg==
+X-Google-Smtp-Source: ABdhPJyDJ4nqkXRrg8KN6BZdktgYlGnBwNdxZkxcf0GETyowwUFVAIHSwSrcMLTYoBfjtVs+p7hvSA==
+X-Received: by 2002:adf:a18b:: with SMTP id u11mr3390432wru.102.1592469582468;
+        Thu, 18 Jun 2020 01:39:42 -0700 (PDT)
 Received: from localhost ([194.62.217.57])
-        by smtp.gmail.com with ESMTPSA id z7sm1541167wmb.42.2020.06.18.01.35.30
+        by smtp.gmail.com with ESMTPSA id d24sm2471775wmb.45.2020.06.18.01.39.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jun 2020 01:35:30 -0700 (PDT)
-From:   "javier.gonz@samsung.com" <javier@javigon.com>
-X-Google-Original-From: "javier.gonz@samsung.com" <javier.gonz@samsung.com>
-Date:   Thu, 18 Jun 2020 10:35:29 +0200
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "selvakuma.s1@samsung.com" <selvakuma.s1@samsung.com>,
-        "nj.shetty@samsung.com" <nj.shetty@samsung.com>
-Subject: Re: [PATCH 3/3] io_uring: add support for zone-append
-Message-ID: <20200618083529.ciifu4chr4vrv2j5@mpHalley.local>
-References: <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
- <CGME20200617172713epcas5p352f2907a12bd4ee3c97be1c7d8e1569e@epcas5p3.samsung.com>
- <1592414619-5646-4-git-send-email-joshi.k@samsung.com>
- <CY4PR04MB37510E916B6F243D189B4EB0E79B0@CY4PR04MB3751.namprd04.prod.outlook.com>
+        Thu, 18 Jun 2020 01:39:41 -0700 (PDT)
+Date:   Thu, 18 Jun 2020 10:39:40 +0200
+From:   Javier =?utf-8?B?R29uesOhbGV6?= <javier@javigon.com>
+To:     Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
+        nj.shetty@samsung.com, Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <keith.busch@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
+Message-ID: <20200618083940.jzjtbfwwyyyhpnhs@mpHalley.local>
+References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
+ <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
+ <f503c488-fa00-4fe2-1ceb-7093ea429e45@lightnvm.io>
+ <20200618082740.i4sfoi54aed6sxnk@mpHalley.local>
+ <f9b820af-2b23-7bb4-f651-e6e1b3002ebf@lightnvm.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-In-Reply-To: <CY4PR04MB37510E916B6F243D189B4EB0E79B0@CY4PR04MB3751.namprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f9b820af-2b23-7bb4-f651-e6e1b3002ebf@lightnvm.io>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 18.06.2020 07:39, Damien Le Moal wrote:
->On 2020/06/18 2:27, Kanchan Joshi wrote:
->> From: Selvakumar S <selvakuma.s1@samsung.com>
+On 18.06.2020 10:32, Matias Bjørling wrote:
+>On 18/06/2020 10.27, Javier González wrote:
+>>On 18.06.2020 10:04, Matias Bjørling wrote:
+>>>On 17/06/2020 19.23, Kanchan Joshi wrote:
+>>>>This patchset enables issuing zone-append using aio and io-uring 
+>>>>direct-io interface.
+>>>>
+>>>>For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. 
+>>>>Application uses start LBA
+>>>>of the zone to issue append. On completion 'res2' field is used 
+>>>>to return
+>>>>zone-relative offset.
+>>>>
+>>>>For io-uring, this introduces three opcodes: 
+>>>>IORING_OP_ZONE_APPEND/APPENDV/APPENDV_FIXED.
+>>>>Since io_uring does not have aio-like res2, cqe->flags are 
+>>>>repurposed to return zone-relative offset
+>>>
+>>>Please provide a pointers to applications that are updated and 
+>>>ready to take advantage of zone append.
 >>
->> Introduce three new opcodes for zone-append -
+>>Good point. We are posting a RFC with fio support for append. We wanted
+>>to start the conversation here before.
 >>
->>    IORING_OP_ZONE_APPEND     : non-vectord, similiar to IORING_OP_WRITE
->>    IORING_OP_ZONE_APPENDV    : vectored, similar to IORING_OP_WRITEV
->>    IORING_OP_ZONE_APPEND_FIXED : append using fixed-buffers
->>
->> Repurpose cqe->flags to return zone-relative offset.
->>
->> Signed-off-by: SelvaKumar S <selvakuma.s1@samsung.com>
->> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
->> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->> Signed-off-by: Javier Gonzalez <javier.gonz@samsung.com>
->> ---
->>  fs/io_uring.c                 | 72 +++++++++++++++++++++++++++++++++++++++++--
->>  include/uapi/linux/io_uring.h |  8 ++++-
->>  2 files changed, 77 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 155f3d8..c14c873 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -649,6 +649,10 @@ struct io_kiocb {
->>  	unsigned long		fsize;
->>  	u64			user_data;
->>  	u32			result;
->> +#ifdef CONFIG_BLK_DEV_ZONED
->> +	/* zone-relative offset for append, in bytes */
->> +	u32			append_offset;
+>>We can post a fork for improve the reviews in V2.
 >
->this can overflow. u64 is needed.
+>Christoph's response points that it is not exactly clear how this 
+>matches with the POSIX API.
 
-We chose to do it this way to start with because struct io_uring_cqe
-only has space for u32 when we reuse the flags.
+Yes. We will address this.
+>
+>fio support is great - but I was thinking along the lines of 
+>applications that not only benchmark performance. fio should be part 
+>of the supported applications, but should not be the sole reason the 
+>API is added.
 
-We can of course create a new cqe structure, but that will come with
-larger changes to io_uring for supporting append.
+Agree. It is a process with different steps. We definitely want to have
+the right kernel interface before pushing any changes to libraries and /
+or applications. These will come as the interface becomes more stable.
 
-Do you believe this is a better approach?
+To start with xNVMe will be leveraging this new path. A number of
+customers are leveraging the xNVMe API for their applications already.
 
+Thanks,
 Javier
+

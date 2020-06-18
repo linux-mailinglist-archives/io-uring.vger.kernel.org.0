@@ -2,60 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B18F91FF530
-	for <lists+io-uring@lfdr.de>; Thu, 18 Jun 2020 16:46:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C4901FF518
+	for <lists+io-uring@lfdr.de>; Thu, 18 Jun 2020 16:45:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730952AbgFROp2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Jun 2020 10:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57400 "EHLO
+        id S1731039AbgFROog (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Jun 2020 10:44:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730971AbgFROoO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Jun 2020 10:44:14 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A99FC0617BB
-        for <io-uring@vger.kernel.org>; Thu, 18 Jun 2020 07:44:11 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id v11so2999446pgb.6
-        for <io-uring@vger.kernel.org>; Thu, 18 Jun 2020 07:44:11 -0700 (PDT)
+        with ESMTP id S1730978AbgFROoP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Jun 2020 10:44:15 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F26EC0617BE
+        for <io-uring@vger.kernel.org>; Thu, 18 Jun 2020 07:44:12 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id i12so2642017pju.3
+        for <io-uring@vger.kernel.org>; Thu, 18 Jun 2020 07:44:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=UWm+xgAJblrksR6J1tnnSoleBzj4zdmtzBmjubOyR4o=;
-        b=hm30VxENfZId4iIBXYzmK7NVLqG1L452OFVsVzBNxCcZsqrbma8q5o0CvvJElY7+8p
-         Vs3+SDv61eWDJjcgEcNeNVdRAryioKuqAY0VZ5KUIBPne3UmEh/fpO8LsZt7zLrRhbVF
-         r+xLfZ3r0wJVLTx1JAQn8WOQ4kpy0vI/zExZIzz2SQwYuNPeL12OnD2ggCtzoLOv29Ic
-         dmRtYj8kmpp8on0fqufKHzxL4rQ9UdLZGMuQ6WCXYxQiYiLwh6uMWp6HgQzG+k87uazV
-         SyI82aOrSqK4C/Ej6hlCmtBJKK+kxn+LVz6hW8Too2R1mZqI9Blhbsn1DdgKctf5HYDC
-         n8lA==
+        bh=SizPTgUtV3iXJFQF9neCUoo2HH9dTA+Tsyik+Qs6Rtw=;
+        b=e7NOJWPgpDilY8hAgu/E3UR0koeaR+7iSH91nRdwNwiag9SfhIjXt+DofFu1kfxmld
+         sonG2ndDZmPtvlzTnmdVx6QC5xI0mKU+4Aw8UB4nmkxFWzScSGoM7yga5MuFL/2PZJnh
+         Pi2uLHZ7iG/+7QjsmbzNkUTAyheEYTR5mB2REZBiiFdN8gvdYfMgHGneVhhGnbnz7xqE
+         NBqAPOV/8kOoplTYc3iFVcW/Ztt8ElL2AgGcFfzG4+02vqZh/PMroO9cQupkyyW6unos
+         0oclD5apnWHqq9iEooOIUY0aKLpEh6E4q1f5yO/zY9SvBTrL+8900x9yRlsIPiwznjZd
+         LoCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=UWm+xgAJblrksR6J1tnnSoleBzj4zdmtzBmjubOyR4o=;
-        b=RtDk0PngHzOvjxQFFNHHsVG6FQOpVUGddwMYvZeutzgamCDdvEPNMbLwR+XkyH+8sR
-         vTZ2Mm6Fxhjr58bwkOjEt+aKvBYMUEYhyBMexJ/Dlaemwl68sExbUYcaRi/v8uclCI7T
-         O3ElRdIak5nxPFxtD2D+CA4e0p2yoNdIuYSfQrj8YEyyXqI7cNNzt/FznHNW+c+OXGM+
-         kezlMExEuNifeNv80YP3pQbYYATWTEfbVVTiXkrrij0KI3gpK5Y46Az4PkICRK7WDCj2
-         4yQG2SOkM+2Mzy/yedGS16RmLInwxOTgIX4Gqom+Y0fYx7qQGhRKDkvlxl4oPthud8Qe
-         Qhow==
-X-Gm-Message-State: AOAM5310hFB8DUInY1zSyr8RT82Wa+RRrBc9I89i9VRK6ki9P5Htv0Mw
-        oU3jbLLSBkxEZDVGf+aLumrX1UYCMKMsFQ==
-X-Google-Smtp-Source: ABdhPJw0BKfA7CBOC1lO1/wFQlqefNyxHA+f5iR+FuKvtS2xAVdcBGbcEewx+yzDvjoPb4DPsIu+/g==
-X-Received: by 2002:a63:931b:: with SMTP id b27mr3478644pge.135.1592491450319;
-        Thu, 18 Jun 2020 07:44:10 -0700 (PDT)
+        bh=SizPTgUtV3iXJFQF9neCUoo2HH9dTA+Tsyik+Qs6Rtw=;
+        b=QKw9+vcH8t+GawlPxspHXnyrYQWNcs4huX16FyxHk6dk+JIa1EWRY+5fLrl+65eXuk
+         pJ50DPsFlMg7UQ/4F3QYEZVHluY1VAwHFTICD1BKpVrm7cu79wHzCIreDRykI620i+Yw
+         FqS2oRVmPB9D5UAgMp6G3bcmR9tbkxSOfffFgtNX1ipzLRVs8gpI24id2n0vQlyRqawo
+         oo5dAYb/kATwZps562jHgPZD6iqkA5qJeE1jnbBWNlYhyszuCRr67zA8XhJNh1Rgccum
+         6Dl2SRF+s/WZEXrtvCnu5UZent4sb9EPC8HbGUTcs1n9I8Nllhnc3stDymSPBlkFIAV9
+         9cFA==
+X-Gm-Message-State: AOAM532EDh0juowF2rbgOA0YrArW3jtgRfMGm03/7YbJ9fwOD7ONlyOL
+        KVA3Mopv41TnAukL5nBZHUcoM4AN+05utQ==
+X-Google-Smtp-Source: ABdhPJytALdF6/WXpXXo/EALA/GzyJrmCsd6yIDilF8kXfMl19bKdv+RXhHgzV2NYKcaqUbkTdgmNQ==
+X-Received: by 2002:a17:90a:b013:: with SMTP id x19mr4762711pjq.229.1592491451503;
+        Thu, 18 Jun 2020 07:44:11 -0700 (PDT)
 Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id g9sm3127197pfm.151.2020.06.18.07.44.09
+        by smtp.gmail.com with ESMTPSA id g9sm3127197pfm.151.2020.06.18.07.44.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jun 2020 07:44:09 -0700 (PDT)
+        Thu, 18 Jun 2020 07:44:11 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, akpm@linux-foundation.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: [PATCH 08/15] mm: support async buffered reads in generic_file_buffered_read()
-Date:   Thu, 18 Jun 2020 08:43:48 -0600
-Message-Id: <20200618144355.17324-9-axboe@kernel.dk>
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 09/15] fs: add FMODE_BUF_RASYNC
+Date:   Thu, 18 Jun 2020 08:43:49 -0600
+Message-Id: <20200618144355.17324-10-axboe@kernel.dk>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200618144355.17324-1-axboe@kernel.dk>
 References: <20200618144355.17324-1-axboe@kernel.dk>
@@ -70,93 +69,28 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Use the async page locking infrastructure, if IOCB_WAITQ is set in the
-passed in iocb. The caller must expect an -EIOCBQUEUED return value,
-which means that IO is started but not done yet. This is similar to how
-O_DIRECT signals the same operation. Once the callback is received by
-the caller for IO completion, the caller must retry the operation.
+If set, this indicates that the file system supports IOCB_WAITQ for
+buffered reads.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- mm/filemap.c | 38 +++++++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+ include/linux/fs.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index e8aaf43bee9f..a5b1fa8f7ce4 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1210,6 +1210,14 @@ static int __wait_on_page_locked_async(struct page *page,
- 	return ret;
- }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 6ac919b40596..3f9de90e0266 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -175,6 +175,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* File does not contribute to nr_files count */
+ #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
  
-+static int wait_on_page_locked_async(struct page *page,
-+				     struct wait_page_queue *wait)
-+{
-+	if (!PageLocked(page))
-+		return 0;
-+	return __wait_on_page_locked_async(compound_head(page), wait, false);
-+}
++/* File supports async buffered reads */
++#define FMODE_BUF_RASYNC	((__force fmode_t)0x40000000)
 +
- /**
-  * put_and_wait_on_page_locked - Drop a reference and wait for it to be unlocked
-  * @page: The page to wait for.
-@@ -2049,17 +2057,25 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 					index, last_index - index);
- 		}
- 		if (!PageUptodate(page)) {
--			if (iocb->ki_flags & IOCB_NOWAIT) {
--				put_page(page);
--				goto would_block;
--			}
--
- 			/*
- 			 * See comment in do_read_cache_page on why
- 			 * wait_on_page_locked is used to avoid unnecessarily
- 			 * serialisations and why it's safe.
- 			 */
--			error = wait_on_page_locked_killable(page);
-+			if (iocb->ki_flags & IOCB_WAITQ) {
-+				if (written) {
-+					put_page(page);
-+					goto out;
-+				}
-+				error = wait_on_page_locked_async(page,
-+								iocb->ki_waitq);
-+			} else {
-+				if (iocb->ki_flags & IOCB_NOWAIT) {
-+					put_page(page);
-+					goto would_block;
-+				}
-+				error = wait_on_page_locked_killable(page);
-+			}
- 			if (unlikely(error))
- 				goto readpage_error;
- 			if (PageUptodate(page))
-@@ -2147,7 +2163,10 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 
- page_not_up_to_date:
- 		/* Get exclusive access to the page ... */
--		error = lock_page_killable(page);
-+		if (iocb->ki_flags & IOCB_WAITQ)
-+			error = lock_page_async(page, iocb->ki_waitq);
-+		else
-+			error = lock_page_killable(page);
- 		if (unlikely(error))
- 			goto readpage_error;
- 
-@@ -2190,10 +2209,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		}
- 
- 		if (!PageUptodate(page)) {
--			if (iocb->ki_flags & IOCB_WAITQ)
--				error = lock_page_async(page, iocb->ki_waitq);
--			else
--				error = lock_page_killable(page);
-+			error = lock_page_killable(page);
- 			if (unlikely(error))
- 				goto readpage_error;
- 			if (!PageUptodate(page)) {
+ /*
+  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
+  * that indicates that they should check the contents of the iovec are
 -- 
 2.27.0
 

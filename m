@@ -2,107 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45ECB1FD6A6
-	for <lists+io-uring@lfdr.de>; Wed, 17 Jun 2020 23:05:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 306861FEBC8
+	for <lists+io-uring@lfdr.de>; Thu, 18 Jun 2020 08:56:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbgFQVFv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Jun 2020 17:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36002 "EHLO
+        id S1727115AbgFRG4i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Jun 2020 02:56:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbgFQVFu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Jun 2020 17:05:50 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5CC9C06174E
-        for <io-uring@vger.kernel.org>; Wed, 17 Jun 2020 14:05:49 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id i4so1665345pjd.0
-        for <io-uring@vger.kernel.org>; Wed, 17 Jun 2020 14:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=Z6jZ0aodOKoUvdg5lC5IfR88q4h28yCSUDl3KQFWjGM=;
-        b=0UmSKNq7pYV+R4G70DeAXukCqKPU6voX2+rCOj9HKdiZC7f0mj3dR9lGbf9bMf6S8X
-         yltADrKDQyKZ7Fh347MKVKskNcJt4xDunemWUFYrpOC09BSCqZOGaQtvknCB4mRrseDM
-         kFJaMf1104AULtPouEnNd6S1h/iHM8oJRxk9FT+33lPp+JxGUB36bw66Z/pxrf41pKJn
-         m8669eTbBDgbG8eaxzEGKJ28+ggLLP1i4b1g6VbVAabtSXgLxePicMvDUb9FgJTVhrx8
-         hthupdhvCTsD6H2kUQT4x5kK1MaPLh0iEqQEwycycYKhQASgvQA/dujd2cWHqQ2OvE3h
-         6/Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=Z6jZ0aodOKoUvdg5lC5IfR88q4h28yCSUDl3KQFWjGM=;
-        b=MryDcC8Z6H2CVL81Z1rjHrfxI5oaNk6KkfCmHym++m3cDQuj4KbHxfNtglIflB+OzM
-         a0dhY8D1YBw8hcF0v8cuExYljPCJbQ2TsPR6HjqT3hPp4QIGizhEGytoF781NlJInCcE
-         pg0S1F2bAlwIojoDVU1CU6cx+C2xZf+8ptFpjYz4m6VwomtnQMdIdARnabtwj/3ji+vp
-         A/e0j+4I5eImXxw2NdxM7s0Kw2othTZUFTBlTGJGn2WJ+HXJUWWNEjuGx1r85yWW7HoA
-         sA/BhqM6BwYEqH6nQK6BGKnnDMEjtKBhW6IJxNJ8FR99zeOVOnNdKif+4gelXwbwAEim
-         ydOw==
-X-Gm-Message-State: AOAM530z2CkxAkBjMttaIsgGz6EFnk7Y3iU+t7VvDaHui1ZRqbthsxkf
-        jhDTjM7ygclrhZVIBUrI8KQb7G32QtwQFQ==
-X-Google-Smtp-Source: ABdhPJw3SnxXvACOlg8WeaS8CjLoBqJQR16Ks3N/LdMbDTzM+92Wm9xLmrtfd/TPQMY3fCLi3NJMjg==
-X-Received: by 2002:a17:902:8c84:: with SMTP id t4mr803071plo.315.1592427948725;
-        Wed, 17 Jun 2020 14:05:48 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id f205sm669604pfa.218.2020.06.17.14.05.47
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jun 2020 14:05:48 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: reap poll completions while waiting for refs to
- drop on exit
-Message-ID: <f1c1611f-1242-2d4c-1a19-59dbf2a9c674@kernel.dk>
-Date:   Wed, 17 Jun 2020 15:05:46 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        with ESMTP id S1727010AbgFRG4h (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Jun 2020 02:56:37 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D6ACC06174E;
+        Wed, 17 Jun 2020 23:56:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uAvmk2CwDLs4X+Ko7ajFBaGyB0rcXPF4WnH3SQrYs4k=; b=iQ/jY6BwNU0GexOcII4Y8RmC90
+        vslaU7EwpUIeDbH4l3fPejGtKiiupUxIiUtFiXf9OKFRfNWnG9EfupRM5LYyTyoqkQ4NaCxf+rQEx
+        QpA0xyEbPpW6VGUiNbZPittAv+QRYNnNWsWAqedu0wTvaDrHGNzeST60Osvj66lkMXofncPReYaX4
+        xFEqPz0Pl/FlgUEfYqpEGhHy0/hcdSLaJ9QIprhDs1/QkI8aerds64dV+fhAfvor9e/DUmYIX86+S
+        TJC0Ps7C1qPcTVNwNM4UX+vYpk2ktc961oLqTiOI4ve7lfCJzRLxzGLqieBv7S/MYQVFHGZpIRreL
+        YlLoGcYw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jloTS-00012N-So; Thu, 18 Jun 2020 06:56:34 +0000
+Date:   Wed, 17 Jun 2020 23:56:34 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, selvakuma.s1@samsung.com,
+        nj.shetty@samsung.com, javier.gonz@samsung.com
+Subject: Re: [PATCH 0/3] zone-append support in aio and io-uring
+Message-ID: <20200618065634.GB24943@infradead.org>
+References: <CGME20200617172653epcas5p488de50090415eb802e62acc0e23d8812@epcas5p4.samsung.com>
+ <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If we're doing polled IO and end up having requests being submitted
-async, then completions can come in while we're waiting for refs to
-drop. We need to reap these manually, as nobody else will be looking
-for them.
+On Wed, Jun 17, 2020 at 10:53:36PM +0530, Kanchan Joshi wrote:
+> This patchset enables issuing zone-append using aio and io-uring direct-io interface.
+> 
+> For aio, this introduces opcode IOCB_CMD_ZONE_APPEND. Application uses start LBA
+> of the zone to issue append. On completion 'res2' field is used to return
+> zone-relative offset.
+> 
+> For io-uring, this introduces three opcodes: IORING_OP_ZONE_APPEND/APPENDV/APPENDV_FIXED.
+> Since io_uring does not have aio-like res2, cqe->flags are repurposed to return zone-relative offset
 
-Break the wait into 1/20th of a second time waits, and check for done
-poll completions if we time out. Otherwise we can have done poll
-completions sitting in ctx->poll_list, which needs us to reap them but
-we're just waiting for them.
+And what exactly are the semantics supposed to be?  Remember the
+unix file abstractions does not know about zones at all.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+I really don't think squeezing low-level not quite block storage
+protocol details into the Linux read/write path is a good idea.
 
----
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 98c83fbf4f88..2038d52c5450 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7363,7 +7363,17 @@ static void io_ring_exit_work(struct work_struct *work)
- 	if (ctx->rings)
- 		io_cqring_overflow_flush(ctx, true);
- 
--	wait_for_completion(&ctx->ref_comp);
-+	/*
-+	 * If we're doing polled IO and end up having requests being
-+	 * submitted async (out-of-line), then completions can come in while
-+	 * we're waiting for refs to drop. We need to reap these manually,
-+	 * as nobody else will be looking for them.
-+	 */
-+	while (!wait_for_completion_timeout(&ctx->ref_comp, HZ/20)) {
-+		io_iopoll_reap_events(ctx);
-+		if (ctx->rings)
-+			io_cqring_overflow_flush(ctx, true);
-+	}
- 	io_ring_ctx_free(ctx);
- }
- 
--- 
-Jens Axboe
-
+What could be a useful addition is a way for O_APPEND/RWF_APPEND writes
+to report where they actually wrote, as that comes close to Zone Append
+while still making sense at our usual abstraction level for file I/O.

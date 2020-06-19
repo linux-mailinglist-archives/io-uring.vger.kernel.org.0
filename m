@@ -2,186 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BADF200B2B
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2020 16:18:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72769200B53
+	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2020 16:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732901AbgFSOS3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 19 Jun 2020 10:18:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49174 "EHLO
+        id S1730213AbgFSOW0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 Jun 2020 10:22:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732461AbgFSOS2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Jun 2020 10:18:28 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A74AC06174E
-        for <io-uring@vger.kernel.org>; Fri, 19 Jun 2020 07:18:27 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id s23so4483579pfh.7
-        for <io-uring@vger.kernel.org>; Fri, 19 Jun 2020 07:18:27 -0700 (PDT)
+        with ESMTP id S1726873AbgFSOWY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Jun 2020 10:22:24 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E9BC0613EF
+        for <io-uring@vger.kernel.org>; Fri, 19 Jun 2020 07:22:24 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id s10so4574950pgm.0
+        for <io-uring@vger.kernel.org>; Fri, 19 Jun 2020 07:22:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9or/nd2d0kK7Srn2OMQLnMS4JaBmTgv5NtC1m4CDz3Y=;
-        b=hidq+qn73oekrZJeQMWvr4WMZb+WfQeaHhkjy+TnzASODcN9o/1ZBvqpqAtEUZxR4U
-         gyg+xm4oXC2LDoBZRsJE1HxWJCN+07pFM5nlU5K9jY+UEq8tHgEE61Zk6Mk89kK8lwAb
-         sDrZdLakvgdwHEsFJaLYxjIadPi+VCV+rIlEENKVvRrAsADkM4n5F8WsRnCWZAGIM73i
-         9Ql+al+T/hFRQDcZyKztART3ffyxrCy96sT83D94Dk453GQx24udsnLi0orp5BJlodSx
-         sYOUQVm6qBpfacFyXlsS5apBeHo30Y6P3118Od1ODxlyhY26fwlpwHgJN8oC1w5T9JFL
-         f+CQ==
+        bh=vxtHFfxRa6J52mPRG6jvgbvliKZllqWnNgXrzGwwQhE=;
+        b=FHU640PiXW0xLyp6AL1PCI7tRK5wZ06ZcDtLoY1aP2MLtQLYA/U8l9u+b9wpPYqO6A
+         rKlg/ouC1alQwarF28E0DQZ1SJXWsrDrDUYLSjHv95gzOTS88oBzZ0IP7kYuLRe4dEpU
+         K51/lr0hGhn6/egk9YmTp7T1VdLVAlWt3OFSjyKaAMn7Ld7iL3gdHOiFXMm/AJFzUHfu
+         wfMLS9RtdrGdqp76or0DL9iuXL2SBwqm/1H76EveVh8A5a/g6wllP0xfgCSEi5teRCjP
+         SPRU9LwxkuNVMzFCC3C33qwzViJCT+14F747rhVJ9n+i2CVu4EK2i39GuuwIMefZN7za
+         ESGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=9or/nd2d0kK7Srn2OMQLnMS4JaBmTgv5NtC1m4CDz3Y=;
-        b=aXTG9mTxCHUZPCKAOoa+Z2yHdB0whBHnIW7Vlm1I5pBAAlvpKg05G7TNZa5HwzGwvD
-         h9r7ZVfqYB36oaaKPJg9QNYUQRYdQvd27Lo3nXgaoj13IuRC8G2nkhW49mMFHgmxOtrW
-         w9S1zEK4MIAmamLkHgDlsU7zhH/bMkiRjt7hgxQ8m52n686sKrZhHAgRAiaTkUFBeq5j
-         zzzkiGAxzS+1thbcWP2WhJJuMJbX+kw14lZVe6r7wAf3BF1YgSMdTl2qcpRaobl02bRR
-         fARzJnsL/X2vzc5pZO9StnRbiAr3MELaFYYYs6jpXrpBzxXIRl+GWg9rsseuF8wCLi4M
-         5Tjw==
-X-Gm-Message-State: AOAM533Fh0l2xc6vW5KPA188Yt1NYEkHupk37u6RgXqfMtqbtimHORQy
-        JyWoFJDeMgs13K2lrGIhxL2pWQ==
-X-Google-Smtp-Source: ABdhPJyq/7BnpxKFYtTRDKR2zWyWUKbYgkCdtzqo4m2gOrQzccrbLP76ZiUIJDnBffhkSs+UaKQkyg==
-X-Received: by 2002:a63:d958:: with SMTP id e24mr3366189pgj.348.1592576306944;
-        Fri, 19 Jun 2020 07:18:26 -0700 (PDT)
+        bh=vxtHFfxRa6J52mPRG6jvgbvliKZllqWnNgXrzGwwQhE=;
+        b=BO6VFuPJmj77rYlp/aqqv/WDZvuCeEkojwQlF6tkzgaEV8DVShMuJ8FpbhRs3eMFUa
+         LQBnPArAK7CzdQt4MFGGmNhlT+Xawh0yn+tk/dgaO6xWRdXaONvX4goQHm5RKwUrDw0L
+         LExAQJ9WZ/VYc4x90cibT28vxNMaDslJN7fmvIuucprNvrTA7ESNr/DspBrFWvoV+Hwo
+         9d1Cr4BRU1l39YcyN2b1h3jZbPlqbpug3iw4MdLjzWiFANqEeVi2W6qceRV4ggXRO74m
+         LTTpdho6i+HIgOdZuKRj3xYPwonAHyxXCvOUbe68/Z8vWjfMSJPb7NCAhJMngMy9GlBy
+         oryg==
+X-Gm-Message-State: AOAM533RVkd9NvVZuPW91OFY6vYTDdN7OJajI9/qznBjHi7xps/U9p4h
+        W7KW9727jyTV7ipQch89xY6eeQ==
+X-Google-Smtp-Source: ABdhPJxRONpeZFjGL6amyDVA55vSKIbY4ULoW+nnBgRLPw2fISt14O88Or5B2Im6nt4e2+NiD0KsNQ==
+X-Received: by 2002:a65:43cb:: with SMTP id n11mr3240011pgp.160.1592576544118;
+        Fri, 19 Jun 2020 07:22:24 -0700 (PDT)
 Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id m15sm5347046pgv.45.2020.06.19.07.18.24
+        by smtp.gmail.com with ESMTPSA id p11sm6265486pfq.10.2020.06.19.07.22.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jun 2020 07:18:25 -0700 (PDT)
-Subject: Re: [PATCH 3/3] io_uring: add support for zone-append
-To:     =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>,
-        "javier.gonz@samsung.com" <javier@javigon.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "selvakuma.s1@samsung.com" <selvakuma.s1@samsung.com>,
-        "nj.shetty@samsung.com" <nj.shetty@samsung.com>
-References: <1592414619-5646-1-git-send-email-joshi.k@samsung.com>
- <CGME20200617172713epcas5p352f2907a12bd4ee3c97be1c7d8e1569e@epcas5p3.samsung.com>
- <1592414619-5646-4-git-send-email-joshi.k@samsung.com>
- <CY4PR04MB37510E916B6F243D189B4EB0E79B0@CY4PR04MB3751.namprd04.prod.outlook.com>
- <20200618083529.ciifu4chr4vrv2j5@mpHalley.local>
- <CY4PR04MB3751D5D6AFB0DA7B8A2DFF61E79B0@CY4PR04MB3751.namprd04.prod.outlook.com>
- <20200618091113.eu2xdp6zmdooy5d2@mpHalley.local>
- <20200619094149.uaorbger326s6yzz@mpHalley.local>
- <2ba2079c-9a5d-698a-a8f0-cbd6fdb9a9f0@lightnvm.io>
+        Fri, 19 Jun 2020 07:22:23 -0700 (PDT)
+Subject: Re: [PATCH 04/15] io_uring: re-issue block requests that failed
+ because of resources
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org
+References: <20200618144355.17324-1-axboe@kernel.dk>
+ <20200618144355.17324-5-axboe@kernel.dk>
+ <cdd4bf56-5a08-5d28-969f-81b70cc3c473@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ca513fd1-4ca2-c16e-8b99-73cbd7fe6290@kernel.dk>
-Date:   Fri, 19 Jun 2020 08:18:24 -0600
+Message-ID: <da21ba82-c027-0c15-93e3-a372283d7030@kernel.dk>
+Date:   Fri, 19 Jun 2020 08:22:22 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <2ba2079c-9a5d-698a-a8f0-cbd6fdb9a9f0@lightnvm.io>
+In-Reply-To: <cdd4bf56-5a08-5d28-969f-81b70cc3c473@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/19/20 5:15 AM, Matias Bjørling wrote:
-> On 19/06/2020 11.41, javier.gonz@samsung.com wrote:
->> Jens,
+On 6/19/20 8:12 AM, Pavel Begunkov wrote:
+> On 18/06/2020 17:43, Jens Axboe wrote:
+>> Mark the plug with nowait == true, which will cause requests to avoid
+>> blocking on request allocation. If they do, we catch them and reissue
+>> them from a task_work based handler.
 >>
->> Would you have time to answer a question below in this thread?
+>> Normally we can catch -EAGAIN directly, but the hard case is for split
+>> requests. As an example, the application issues a 512KB request. The
+>> block core will split this into 128KB if that's the max size for the
+>> device. The first request issues just fine, but we run into -EAGAIN for
+>> some latter splits for the same request. As the bio is split, we don't
+>> get to see the -EAGAIN until one of the actual reads complete, and hence
+>> we cannot handle it inline as part of submission.
 >>
->> On 18.06.2020 11:11, javier.gonz@samsung.com wrote:
->>> On 18.06.2020 08:47, Damien Le Moal wrote:
->>>> On 2020/06/18 17:35, javier.gonz@samsung.com wrote:
->>>>> On 18.06.2020 07:39, Damien Le Moal wrote:
->>>>>> On 2020/06/18 2:27, Kanchan Joshi wrote:
->>>>>>> From: Selvakumar S <selvakuma.s1@samsung.com>
->>>>>>>
->>>>>>> Introduce three new opcodes for zone-append -
->>>>>>>
->>>>>>>   IORING_OP_ZONE_APPEND     : non-vectord, similiar to 
->>>>>>> IORING_OP_WRITE
->>>>>>>   IORING_OP_ZONE_APPENDV    : vectored, similar to IORING_OP_WRITEV
->>>>>>>   IORING_OP_ZONE_APPEND_FIXED : append using fixed-buffers
->>>>>>>
->>>>>>> Repurpose cqe->flags to return zone-relative offset.
->>>>>>>
->>>>>>> Signed-off-by: SelvaKumar S <selvakuma.s1@samsung.com>
->>>>>>> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
->>>>>>> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->>>>>>> Signed-off-by: Javier Gonzalez <javier.gonz@samsung.com>
->>>>>>> ---
->>>>>>> fs/io_uring.c                 | 72 
->>>>>>> +++++++++++++++++++++++++++++++++++++++++--
->>>>>>> include/uapi/linux/io_uring.h |  8 ++++-
->>>>>>> 2 files changed, 77 insertions(+), 3 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>>>>> index 155f3d8..c14c873 100644
->>>>>>> --- a/fs/io_uring.c
->>>>>>> +++ b/fs/io_uring.c
->>>>>>> @@ -649,6 +649,10 @@ struct io_kiocb {
->>>>>>>     unsigned long        fsize;
->>>>>>>     u64            user_data;
->>>>>>>     u32            result;
->>>>>>> +#ifdef CONFIG_BLK_DEV_ZONED
->>>>>>> +    /* zone-relative offset for append, in bytes */
->>>>>>> +    u32            append_offset;
->>>>>>
->>>>>> this can overflow. u64 is needed.
->>>>>
->>>>> We chose to do it this way to start with because struct io_uring_cqe
->>>>> only has space for u32 when we reuse the flags.
->>>>>
->>>>> We can of course create a new cqe structure, but that will come with
->>>>> larger changes to io_uring for supporting append.
->>>>>
->>>>> Do you believe this is a better approach?
->>>>
->>>> The problem is that zone size are 32 bits in the kernel, as a number 
->>>> of sectors.
->>>> So any device that has a zone size smaller or equal to 2^31 512B 
->>>> sectors can be
->>>> accepted. Using a zone relative offset in bytes for returning zone 
->>>> append result
->>>> is OK-ish, but to match the kernel supported range of possible zone 
->>>> size, you
->>>> need 31+9 bits... 32 does not cut it.
->>>
->>> Agree. Our initial assumption was that u32 would cover current zone size
->>> requirements, but if this is a no-go, we will take the longer path.
+>> This does potentially cause re-reads of parts of the range, as the whole
+>> request is reissued. There's currently no better way to handle this.
 >>
->> Converting to u64 will require a new version of io_uring_cqe, where we
->> extend at least 32 bits. I believe this will need a whole new allocation
->> and probably ioctl().
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>  fs/io_uring.c | 148 ++++++++++++++++++++++++++++++++++++++++++--------
+>>  1 file changed, 124 insertions(+), 24 deletions(-)
 >>
->> Is this an acceptable change for you? We will of course add support for
->> liburing when we agree on the right way to do this.
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 2e257c5a1866..40413fb9d07b 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -900,6 +900,13 @@ static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
+>>  static void __io_queue_sqe(struct io_kiocb *req,
+>>  			   const struct io_uring_sqe *sqe);
+>>  
+> ...> +
+>> +static void io_rw_resubmit(struct callback_head *cb)
+>> +{
+>> +	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+>> +	struct io_ring_ctx *ctx = req->ctx;
+>> +	int err;
+>> +
+>> +	__set_current_state(TASK_RUNNING);
+>> +
+>> +	err = io_sq_thread_acquire_mm(ctx, req);
+>> +
+>> +	if (io_resubmit_prep(req, err)) {
+>> +		refcount_inc(&req->refs);
+>> +		io_queue_async_work(req);
+>> +	}
 > 
-> I took a quick look at the code. No expert, but why not use the existing 
-> userdata variable? use the lowest bits (40 bits) for the Zone Starting 
-> LBA, and use the highest (24 bits) as index into the completion data 
-> structure?
+> Hmm, I have similar stuff but for iopoll. On top removing grab_env* for
+> linked reqs and some extra. I think I'll rebase on top of this.
+
+Yes, there's certainly overlap there. I consider this series basically
+wrapped up, so feel free to just base on top of it.
+
+>> +static bool io_rw_reissue(struct io_kiocb *req, long res)
+>> +{
+>> +#ifdef CONFIG_BLOCK
+>> +	struct task_struct *tsk;
+>> +	int ret;
+>> +
+>> +	if ((res != -EAGAIN && res != -EOPNOTSUPP) || io_wq_current_is_worker())
+>> +		return false;
+>> +
+>> +	tsk = req->task;
+>> +	init_task_work(&req->task_work, io_rw_resubmit);
+>> +	ret = task_work_add(tsk, &req->task_work, true);
 > 
-> If you want to pass the memory address (same as what fio does) for the 
-> data structure used for completion, one may also play some tricks by 
-> using a relative memory address to the data structure. For example, the 
-> x86_64 architecture uses 48 address bits for its memory addresses. With 
-> 24 bit, one can allocate the completion entries in a 32MB memory range, 
-> and then use base_address + index to get back to the completion data 
-> structure specified in the sqe.
+> I don't like that the request becomes un-discoverable for cancellation
+> awhile sitting in the task_work list. Poll stuff at least have hash_node
+> for that.
 
-For any current request, sqe->user_data is just provided back as
-cqe->user_data. This would make these requests behave differently
-from everything else in that sense, which seems very confusing to me
-if I was an application writer.
-
-But generally I do agree with you, there are lots of ways to make
-< 64-bit work as a tag without losing anything or having to jump
-through hoops to do so. The lack of consistency introduced by having
-zone append work differently is ugly, though.
+Async buffered IO was never cancelable, so it doesn't really matter.
+It's tied to the task, so we know it'll get executed - either run, or
+canceled if the task is going away. This is really not that different
+from having the work discoverable through io-wq queueing before, since
+the latter could never be canceled anyway as it sits there
+uninterruptibly waiting for IO completion.
 
 -- 
 Jens Axboe

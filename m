@@ -2,108 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F8C2202A11
-	for <lists+io-uring@lfdr.de>; Sun, 21 Jun 2020 12:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D3B1202B52
+	for <lists+io-uring@lfdr.de>; Sun, 21 Jun 2020 17:23:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729831AbgFUKcQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Jun 2020 06:32:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53526 "EHLO
+        id S1730286AbgFUPXk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Jun 2020 11:23:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729724AbgFUKcP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Jun 2020 06:32:15 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C59AC061794
-        for <io-uring@vger.kernel.org>; Sun, 21 Jun 2020 03:32:14 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id dp18so14939400ejc.8
-        for <io-uring@vger.kernel.org>; Sun, 21 Jun 2020 03:32:14 -0700 (PDT)
+        with ESMTP id S1730269AbgFUPXk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Jun 2020 11:23:40 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D96BC061794
+        for <io-uring@vger.kernel.org>; Sun, 21 Jun 2020 08:23:39 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id e8so1695023pgc.5
+        for <io-uring@vger.kernel.org>; Sun, 21 Jun 2020 08:23:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FXWwVRAk0KB8D+Os5fV/CIHPSm5aVrfd9Asx5GMc9O8=;
-        b=ALB82+WyBy1Qc03IIR6TxSOzcfCwb8UMRtUJaMUCa0liDmQYlsjIdvRTwjC54lRaXR
-         SYUBV4E2x1obt0wJktlvREPmuBbcjyGFRaSD4tgRSpkU4FQXDM6TWtE9CBHU6k/PhQF0
-         fx9xRWrD2bQsV6sNz9vOk++LZXlOYUVj8TqiLzPMsX68duscdW4mWZOw1bHrKYg7gqi8
-         paxBYSuLDiH+k0FhVqhuR7RxGi7iL8HiP417LbN+cueUq4k52H0m2XztDxAN/qOZ9rZq
-         Rsb4aZGojb85Ri1D8AOuNlhBZRT6bpIPgMmC/ltS4kI3rHaUp6bFECAJkwb2yyF+f5wP
-         6n2g==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=jtWWwuYampsAJeKOqO07yWnUPyE2wUAYk9ISwMoGh1U=;
+        b=kOWyyeGO5KbWHj8aLYWlI57x0X1nhfzv88xsB/JglsuTwBNkEtTtNf9Tf3R7kdZvGQ
+         cJlEfOziOuoAcMoIIi5k/9UIgyAmfdpVriOwo5fa85py7zzM+Y9m9QsiYthBcNTX5Dz0
+         l7DEXISEePaSg+/5nZj7V6gjBdR+PFwOwE33FeMpFezZkZtW9Z2GqRa02r2Ayf29N9Cu
+         IHjzJXbUaxW1AcpOnBnBYMdUbE69GFKG57gYT2pOkx0JMec1lpz6Ov7t/tN2tu4WGckO
+         18gaMnrlgKOfQ3wvULAYZlqTq4Dkln+Xl/tTYI40v0P1PC45suo20Iaky6Ezz8f1R4WQ
+         BhCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=FXWwVRAk0KB8D+Os5fV/CIHPSm5aVrfd9Asx5GMc9O8=;
-        b=aOkZt1iApXmDXBnG5inkV35MYkRuMmmG5ayCrJ6JATtkae0ftx+DeWgqblQlMH14Aa
-         cbCo6fHb7YneTiEcoDweCSii9SX3TrblYLv3EVUibEtxmiitRjh0Kgru/GiGTrBDYqFw
-         nzUAUzz/RQYAGK3erzFGFyztFwYMH5aBGn81D8ZJJT25IT1r8jWRYghFy1qj1ebMMtOL
-         b5gMKNMPA2njgIGIGcuTiWKN39d4d6Ei78pgGTLWFbevNqXoglI6y4Pirhx3CEfr5hXd
-         +YDUThKvO5eYeqcOLyd8zLf+EhYmHKBWLUzO51riojYao8vdMMZWi1cP6r6h13n4F7+e
-         ljeg==
-X-Gm-Message-State: AOAM533YEgqarhMfdQ1tOUZBmYeHmR4ZqC+GlYnPFeO+i2naSfm6Z/H+
-        RKYwH72bYNRtwNnFt19cXRk=
-X-Google-Smtp-Source: ABdhPJzxd1/q5Ju7op2HgdotLcHCFdvhDk5DWSpX5+Dx05XJ2WwJ/jqmpkfCfOXIKgW2zri5Usv3xg==
-X-Received: by 2002:a17:906:2409:: with SMTP id z9mr11000146eja.442.1592735532977;
-        Sun, 21 Jun 2020 03:32:12 -0700 (PDT)
-Received: from localhost.localdomain ([82.209.196.123])
-        by smtp.gmail.com with ESMTPSA id ox27sm9198521ejb.101.2020.06.21.03.32.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jun 2020 03:32:12 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing] Fix hang in in io_uring_get_cqe() with iopoll
-Date:   Sun, 21 Jun 2020 13:30:29 +0300
-Message-Id: <c1c4cd592333959bf2e0a4d2381372f1b40aef7b.1592735406.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=jtWWwuYampsAJeKOqO07yWnUPyE2wUAYk9ISwMoGh1U=;
+        b=KOVA7d2JOnD/b/k3v7jHXFOo3WdrX0kdyXY6G6dh3HYbXHn4eKAX3ZfaUdlRbayLIw
+         egcJBEzUZtKdnYnsEEPUtPGjVRcYakIsIU63U8gjeDT0e7WOK+WbIQTssnR9jNTlaKbu
+         ks358tEiGM4wtyST5OR/hG6LBA9WkOTvooj8PcNUWRhrCVnvhij4bOAu7DztmjdnzDMV
+         LVK/8aiHi1DI15eh3u/jeKSw+v9+U2b806VC2ic57K7jhDsyTfg03gwPL5unreAKKTPb
+         /U5vKZw9z6GrayWeHOsntln/Lhn/uwLXNzDeKE+baPBE1pqobj4bMxgZlUUJrpfb5CTg
+         VOYA==
+X-Gm-Message-State: AOAM530syt3dvqAKLL92LOOfxaTbS5xfFC+arSJcqNsCChcJAt2IUk95
+        NFL86S015UBSQL5qAS7KQiI+c0oe8sk=
+X-Google-Smtp-Source: ABdhPJyyUKIKW+m2rDRzxhk8mDhdxAcfF8QnnxuDDBAxjZEtep2ApYhXdMhbTVVqfgrHO+nZvQ0VPw==
+X-Received: by 2002:a62:e305:: with SMTP id g5mr16826124pfh.115.1592753018492;
+        Sun, 21 Jun 2020 08:23:38 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id n8sm9382391pgi.18.2020.06.21.08.23.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jun 2020 08:23:37 -0700 (PDT)
+Subject: Re: [PATCH liburing] Fix hang in in io_uring_get_cqe() with iopoll
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <c1c4cd592333959bf2e0a4d2381372f1b40aef7b.1592735406.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b7e1f0c9-8650-d45f-5821-6c4984bec320@kernel.dk>
+Date:   Sun, 21 Jun 2020 09:23:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <c1c4cd592333959bf2e0a4d2381372f1b40aef7b.1592735406.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Because of need_resched() check, io_uring_enter() -> io_iopoll_check()
-can return 0 even if @min_complete wasn't satisfied. If that's the
-case, __io_uring_get_cqe() sets submit=0 and wait_nr=0, disabling
-setting IORING_ENTER_GETEVENTS as well. So, it goes crazy calling
-io_uring_enter() in a loop, not actually submitting nor polling.
+On 6/21/20 4:30 AM, Pavel Begunkov wrote:
+> Because of need_resched() check, io_uring_enter() -> io_iopoll_check()
+> can return 0 even if @min_complete wasn't satisfied. If that's the
+> case, __io_uring_get_cqe() sets submit=0 and wait_nr=0, disabling
+> setting IORING_ENTER_GETEVENTS as well. So, it goes crazy calling
+> io_uring_enter() in a loop, not actually submitting nor polling.
+> 
+> Set @wait_nr based on actual number of CQEs ready.
+> BTW, atomic_load_acquire() in io_uring_cq_ready() can be replaced
+> with a relaxed one for this particular place.
 
-Set @wait_nr based on actual number of CQEs ready.
-BTW, atomic_load_acquire() in io_uring_cq_ready() can be replaced
-with a relaxed one for this particular place.
+Can you preface this with an addition of __io_uring_cqe_ready() that
+doesn't include the load acquire?
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- src/queue.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Also, s/io_adjut_wait_nr/io_adjust_wait_nr for the patch.
 
-diff --git a/src/queue.c b/src/queue.c
-index 14a0777..638d0ac 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -32,6 +32,14 @@ static inline bool sq_ring_needs_enter(struct io_uring *ring,
- 	return false;
- }
- 
-+static inline unsigned int io_adjut_wait_nr(struct io_uring *ring,
-+					    unsigned int to_wait)
-+{
-+	unsigned int ready = io_uring_cq_ready(ring);
-+
-+	return (to_wait <= ready) ? 0 : (to_wait - ready);
-+}
-+
- int __io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_ptr,
- 		       unsigned submit, unsigned wait_nr, sigset_t *sigmask)
- {
-@@ -60,7 +68,8 @@ int __io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_ptr,
- 			err = -errno;
- 		} else if (ret == (int)submit) {
- 			submit = 0;
--			wait_nr = 0;
-+			if (to_wait)
-+				wait_nr = io_adjut_wait_nr(ring, to_wait);
- 		} else {
- 			submit -= ret;
- 		}
 -- 
-2.24.0
+Jens Axboe
 

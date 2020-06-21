@@ -2,43 +2,43 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DB24202CC1
-	for <lists+io-uring@lfdr.de>; Sun, 21 Jun 2020 22:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC44202CC2
+	for <lists+io-uring@lfdr.de>; Sun, 21 Jun 2020 22:36:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730702AbgFUUg5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Jun 2020 16:36:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34229 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730643AbgFUUg5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Jun 2020 16:36:57 -0400
-Received: by mail-pf1-f194.google.com with SMTP id z63so7385728pfb.1
-        for <io-uring@vger.kernel.org>; Sun, 21 Jun 2020 13:36:56 -0700 (PDT)
+        id S1730704AbgFUUg6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Jun 2020 16:36:58 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39078 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730643AbgFUUg6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Jun 2020 16:36:58 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d66so7375988pfd.6
+        for <io-uring@vger.kernel.org>; Sun, 21 Jun 2020 13:36:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SRvlSKW2+L1ZITInqz8x+X4WB8j2CsnAQUyTFXUacWs=;
-        b=SjIIW1XR2BiLFLws3dGpEQLpJBVlCYdVzWHnByqLnL5UeQpZHCpLa3JGyOQEWPANd+
-         00Hhb1pEg4LK84E8c339G6V/TvV0YGBv2jVQqMYXVnWm7rUsFxi4YXAOnIhy4AfJLJ1H
-         /97kEDGzKUUrj3zQ/U1PnyMqzIHF0yLBIYGBtESjsudGEpMA0dphhEA1dAZRLrEJEn0+
-         xbvmGkQ20r/BuOf8oTM0uRpwlmhqV+B+qSIraCbZywXzM1ihqL8V7DiZS4FY2jMdLSgg
-         0cRsq9QFdqIgKMlE6YLS4TY4Hpj27rXjXeuoTQtF59hNno6PPmtoUfIHas45Um6YW+z4
-         sZQw==
-X-Gm-Message-State: AOAM532/Uw5y5Zv9cOMBcnCPQlC3CTsOGRQiCxMnj+Uh7xFA5NF0sqni
-        kDQVbb0GmzYVn21hVVnpA4U=
-X-Google-Smtp-Source: ABdhPJx1A7pBHh/eg1eu7prHt0eNG+z2VHHhnCBliBqYJfQT4R1ztdFk9ndRCMFR6H8tDu5FsgiPqQ==
-X-Received: by 2002:aa7:9edc:: with SMTP id r28mr16908391pfq.139.1592771816468;
-        Sun, 21 Jun 2020 13:36:56 -0700 (PDT)
+        bh=ubgr7GDHwp8O+mkRkZwZzFXWvwfOrgn1g5p28KfkUTQ=;
+        b=DxKLWdVGt+P7kH43X+46NQLG39gqacqfd4LKcTlG9kMrnjxsIbvTJd3rJWZwvcovN4
+         b0WgcfjanJ6jkZGzOEnuWgfDn7F3QbO5UelOpVDuN/LQ0r4rxD7ggTM20uViniaQaqd/
+         R2N8QH0ddiMGJpUS9hGeuDbBeEnnvyYUzzKdeVHQqjwFp0ifiEgbGYJWWEr2zfNy7utW
+         QECAtzC//d2J7L5Jmqm17xpbTv/trEE4wgrUWqfNPFUICH8YKGfJzIJ7EoZiUrqtQItO
+         tdMY8i0x5f3sFEHAUP3xU9Ry4DlDX7Irz8xt6Ah7770rrpIFFXSHKiyZz1hknQEhVhQR
+         t6fQ==
+X-Gm-Message-State: AOAM532zvXWV+p5dy4AVWCpp8CTk0QWO4waqcS61wWu5octLBWeQBjGq
+        7rl646A5dyA3cH7xCTdKVMEUAFC3
+X-Google-Smtp-Source: ABdhPJyUxh3Ba8AOPxGhqSzSEhCYtqaFDhVb0IMEKf64QwvzskRIWmVUXSeyuNZ8CjK+PBFJqKyMpQ==
+X-Received: by 2002:a62:31c6:: with SMTP id x189mr18519165pfx.79.1592771817847;
+        Sun, 21 Jun 2020 13:36:57 -0700 (PDT)
 Received: from localhost.localdomain (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
-        by smtp.gmail.com with ESMTPSA id d5sm10861387pjo.20.2020.06.21.13.36.55
+        by smtp.gmail.com with ESMTPSA id d5sm10861387pjo.20.2020.06.21.13.36.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jun 2020 13:36:55 -0700 (PDT)
+        Sun, 21 Jun 2020 13:36:56 -0700 (PDT)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH liburing 2/3] src/include/liburing/barrier.h: Use C11 atomics
-Date:   Sun, 21 Jun 2020 13:36:45 -0700
-Message-Id: <20200621203646.14416-3-bvanassche@acm.org>
+Subject: [PATCH liburing 3/3] Convert __io_uring_get_sqe() from a macro into an inline function
+Date:   Sun, 21 Jun 2020 13:36:46 -0700
+Message-Id: <20200621203646.14416-4-bvanassche@acm.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200621203646.14416-1-bvanassche@acm.org>
 References: <20200621203646.14416-1-bvanassche@acm.org>
@@ -49,117 +49,64 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Instead of using a combination of open-coding atomic primitives and using
-gcc builtins, use C11 atomics for all CPU architectures. Note: despite their
-name, atomic_*() operations do not necessarily translate into an atomic
-instruction. This patch changes the order of the instructions in e.g.
-io_uring_get_sqe() but not the number of instructions generated by gcc 10
-on x86_64:
+This patch makes gcc 10 insert one additional assembly instruction in
+io_uring_get_sqe(), namely xor %r8d,%r8d. That shouldn't cause any slowdown
+since that instruction does not access memory:
 
-Without this patch:
-
-   0x0000000000000360 <+0>:     mov    0x44(%rdi),%eax
-   0x0000000000000363 <+3>:     lea    0x1(%rax),%edx
-   0x0000000000000366 <+6>:     mov    (%rdi),%rax
-   0x0000000000000369 <+9>:     mov    (%rax),%eax
-   0x000000000000036b <+11>:    mov    0x18(%rdi),%rcx
-   0x000000000000036f <+15>:    mov    %edx,%esi
-   0x0000000000000371 <+17>:    sub    %eax,%esi
-   0x0000000000000373 <+19>:    xor    %eax,%eax
-   0x0000000000000375 <+21>:    cmp    (%rcx),%esi
-   0x0000000000000377 <+23>:    ja     0x38d <io_uring_get_sqe+45>
-   0x0000000000000379 <+25>:    mov    0x10(%rdi),%rax
-   0x000000000000037d <+29>:    mov    (%rax),%eax
-   0x000000000000037f <+31>:    and    0x44(%rdi),%eax
-   0x0000000000000382 <+34>:    mov    %edx,0x44(%rdi)
-   0x0000000000000385 <+37>:    shl    $0x6,%rax
-   0x0000000000000389 <+41>:    add    0x38(%rdi),%rax
-   0x000000000000038d <+45>:    retq
-
-With this patch applied:
-
-   0x0000000000000360 <+0>:     mov    0x44(%rdi),%eax
-   0x0000000000000363 <+3>:     lea    0x1(%rax),%edx
-   0x0000000000000366 <+6>:     mov    (%rdi),%rax
-   0x0000000000000369 <+9>:     mov    %edx,%esi
-   0x000000000000036b <+11>:    mov    (%rax),%eax
-   0x000000000000036d <+13>:    sub    %eax,%esi
-   0x000000000000036f <+15>:    xor    %eax,%eax
-   0x0000000000000371 <+17>:    mov    0x18(%rdi),%rcx
-   0x0000000000000375 <+21>:    cmp    (%rcx),%esi
-   0x0000000000000377 <+23>:    ja     0x38d <io_uring_get_sqe+45>
-   0x0000000000000379 <+25>:    mov    0x10(%rdi),%rax
-   0x000000000000037d <+29>:    mov    (%rax),%eax
-   0x000000000000037f <+31>:    and    0x44(%rdi),%eax
-   0x0000000000000382 <+34>:    mov    %edx,0x44(%rdi)
-   0x0000000000000385 <+37>:    shl    $0x6,%rax
-   0x0000000000000389 <+41>:    add    0x38(%rdi),%rax
-   0x000000000000038d <+45>:    retq
+   0x0000000000000360 <+0>:     mov    (%rdi),%rax
+   0x0000000000000363 <+3>:     xor    %r8d,%r8d
+   0x0000000000000366 <+6>:     mov    (%rax),%ecx
+   0x0000000000000368 <+8>:     mov    0x44(%rdi),%eax
+   0x000000000000036b <+11>:    lea    0x1(%rax),%edx
+   0x000000000000036e <+14>:    mov    %edx,%esi
+   0x0000000000000370 <+16>:    sub    %ecx,%esi
+   0x0000000000000372 <+18>:    mov    0x18(%rdi),%rcx
+   0x0000000000000376 <+22>:    cmp    (%rcx),%esi
+   0x0000000000000378 <+24>:    ja     0x38e <io_uring_get_sqe+46>
+   0x000000000000037a <+26>:    mov    0x10(%rdi),%rcx
+   0x000000000000037e <+30>:    and    (%rcx),%eax
+   0x0000000000000380 <+32>:    mov    %edx,0x44(%rdi)
+   0x0000000000000383 <+35>:    shl    $0x6,%rax
+   0x0000000000000387 <+39>:    add    0x38(%rdi),%rax
+   0x000000000000038b <+43>:    mov    %rax,%r8
+   0x000000000000038e <+46>:    mov    %r8,%rax
+   0x0000000000000391 <+49>:    retq
 
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- src/include/liburing/barrier.h | 44 ++++++++--------------------------
- 1 file changed, 10 insertions(+), 34 deletions(-)
+ src/queue.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/src/include/liburing/barrier.h b/src/include/liburing/barrier.h
-index ad69506bb248..c8aa4210371c 100644
---- a/src/include/liburing/barrier.h
-+++ b/src/include/liburing/barrier.h
-@@ -2,6 +2,8 @@
- #ifndef LIBURING_BARRIER_H
- #define LIBURING_BARRIER_H
+diff --git a/src/queue.c b/src/queue.c
+index 3db52bd17b86..88e0294c19fb 100644
+--- a/src/queue.c
++++ b/src/queue.c
+@@ -273,16 +273,18 @@ int io_uring_submit_and_wait(struct io_uring *ring, unsigned wait_nr)
+ 	return __io_uring_submit_and_wait(ring, wait_nr);
+ }
  
-+#include <stdatomic.h>
-+
- /*
- From the kernel documentation file refcount-vs-atomic.rst:
- 
-@@ -21,40 +23,14 @@ after the acquire operation executes. This is implemented using
- :c:func:`smp_acquire__after_ctrl_dep`.
- */
- 
--/* From tools/include/linux/compiler.h */
--/* Optimization barrier */
--/* The "volatile" is due to gcc bugs */
--#define io_uring_barrier()	__asm__ __volatile__("": : :"memory")
--
--/* From tools/virtio/linux/compiler.h */
--#define IO_URING_WRITE_ONCE(var, val) \
--	(*((volatile __typeof(val) *)(&(var))) = (val))
--#define IO_URING_READ_ONCE(var) (*((volatile __typeof(var) *)(&(var))))
--
-+#define IO_URING_WRITE_ONCE(var, val)				\
-+	atomic_store_explicit(&(var), (val), memory_order_relaxed)
-+#define IO_URING_READ_ONCE(var)					\
-+	atomic_load_explicit(&(var), memory_order_relaxed)
- 
--#if defined(__x86_64__) || defined(__i386__)
--/* Adapted from arch/x86/include/asm/barrier.h */
--#define io_uring_smp_store_release(p, v)	\
--do {						\
--	io_uring_barrier();			\
--	IO_URING_WRITE_ONCE(*(p), (v));		\
--} while (0)
--
--#define io_uring_smp_load_acquire(p)			\
--({							\
--	__typeof(*p) ___p1 = IO_URING_READ_ONCE(*(p));	\
--	io_uring_barrier();				\
--	___p1;						\
+-#define __io_uring_get_sqe(sq, __head) ({				\
+-	unsigned __next = (sq)->sqe_tail + 1;				\
+-	struct io_uring_sqe *__sqe = NULL;				\
+-									\
+-	if (__next - __head <= *(sq)->kring_entries) {			\
+-		__sqe = &(sq)->sqes[(sq)->sqe_tail & *(sq)->kring_mask];\
+-		(sq)->sqe_tail = __next;				\
+-	}								\
+-	__sqe;								\
 -})
--
--#else /* defined(__x86_64__) || defined(__i386__) */
--/*
-- * Add arch appropriate definitions. Use built-in atomic operations for
-- * archs we don't have support for.
-- */
--#define io_uring_smp_store_release(p, v) \
--	__atomic_store_n(p, v, __ATOMIC_RELEASE)
--#define io_uring_smp_load_acquire(p) __atomic_load_n(p, __ATOMIC_ACQUIRE)
--#endif /* defined(__x86_64__) || defined(__i386__) */
-+#define io_uring_smp_store_release(p, v)			\
-+	atomic_store_explicit((p), (v), memory_order_release)
-+#define io_uring_smp_load_acquire(p)				\
-+	atomic_load_explicit((p), memory_order_acquire)
++static inline struct io_uring_sqe *
++__io_uring_get_sqe(struct io_uring_sq *sq, unsigned int __head)
++{
++	unsigned int __next = (sq)->sqe_tail + 1;
++	struct io_uring_sqe *__sqe = NULL;
++
++	if (__next - __head <= *(sq)->kring_entries) {
++		__sqe = &(sq)->sqes[(sq)->sqe_tail & *(sq)->kring_mask];
++		(sq)->sqe_tail = __next;
++	}
++	return __sqe;
++}
  
- #endif /* defined(LIBURING_BARRIER_H) */
+ /*
+  * Return an sqe to fill. Application must later call io_uring_submit()

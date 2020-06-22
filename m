@@ -2,111 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC44202CC2
-	for <lists+io-uring@lfdr.de>; Sun, 21 Jun 2020 22:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BEFA202E82
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2020 04:51:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730704AbgFUUg6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Jun 2020 16:36:58 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39078 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730643AbgFUUg6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Jun 2020 16:36:58 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d66so7375988pfd.6
-        for <io-uring@vger.kernel.org>; Sun, 21 Jun 2020 13:36:58 -0700 (PDT)
+        id S1731032AbgFVCur (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Jun 2020 22:50:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbgFVCuq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Jun 2020 22:50:46 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 969F7C061794
+        for <io-uring@vger.kernel.org>; Sun, 21 Jun 2020 19:50:46 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id l63so7498169pge.12
+        for <io-uring@vger.kernel.org>; Sun, 21 Jun 2020 19:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7jB6xbu7QTe+6XWdZNrUG4tChL7/R7LWiT564nwfdxg=;
+        b=joeFJ4jJo3aHYYdkNXE90Ng4PIneyKXzeuP9yWYxXqrK4OfjJ6jjPRhO33u8YqTAbJ
+         xHBwhWhHO5S0ABxSLjOOcibGb4hjbHDGOe5IKdUS6gp0Hb2qR81kjiFWS8DOLLdK8yjJ
+         VRnDFyXylNsjjc/nd4ccrVnE0OKQmbncLAHsEAO6rbq0An+0uj7pIGE9+BcttsafmBF5
+         wedkeLvFfGDHLWOfL7pNerxcGlQWLb4v0ga5QmyCIbMozY9moN7wiZzCtryphPbOnSS9
+         bcOE8RH1cjlNJQqthlhO3sJ2cc+sBsVBcwQz3TfXLrowJyDC94q17sNz27N0S1QKXKaO
+         /omA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ubgr7GDHwp8O+mkRkZwZzFXWvwfOrgn1g5p28KfkUTQ=;
-        b=DxKLWdVGt+P7kH43X+46NQLG39gqacqfd4LKcTlG9kMrnjxsIbvTJd3rJWZwvcovN4
-         b0WgcfjanJ6jkZGzOEnuWgfDn7F3QbO5UelOpVDuN/LQ0r4rxD7ggTM20uViniaQaqd/
-         R2N8QH0ddiMGJpUS9hGeuDbBeEnnvyYUzzKdeVHQqjwFp0ifiEgbGYJWWEr2zfNy7utW
-         QECAtzC//d2J7L5Jmqm17xpbTv/trEE4wgrUWqfNPFUICH8YKGfJzIJ7EoZiUrqtQItO
-         tdMY8i0x5f3sFEHAUP3xU9Ry4DlDX7Irz8xt6Ah7770rrpIFFXSHKiyZz1hknQEhVhQR
-         t6fQ==
-X-Gm-Message-State: AOAM532zvXWV+p5dy4AVWCpp8CTk0QWO4waqcS61wWu5octLBWeQBjGq
-        7rl646A5dyA3cH7xCTdKVMEUAFC3
-X-Google-Smtp-Source: ABdhPJyUxh3Ba8AOPxGhqSzSEhCYtqaFDhVb0IMEKf64QwvzskRIWmVUXSeyuNZ8CjK+PBFJqKyMpQ==
-X-Received: by 2002:a62:31c6:: with SMTP id x189mr18519165pfx.79.1592771817847;
-        Sun, 21 Jun 2020 13:36:57 -0700 (PDT)
-Received: from localhost.localdomain (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
-        by smtp.gmail.com with ESMTPSA id d5sm10861387pjo.20.2020.06.21.13.36.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jun 2020 13:36:56 -0700 (PDT)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH liburing 3/3] Convert __io_uring_get_sqe() from a macro into an inline function
-Date:   Sun, 21 Jun 2020 13:36:46 -0700
-Message-Id: <20200621203646.14416-4-bvanassche@acm.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200621203646.14416-1-bvanassche@acm.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7jB6xbu7QTe+6XWdZNrUG4tChL7/R7LWiT564nwfdxg=;
+        b=NOVOMf/THS6GnuAnfvXbQk1YDmXzycMUzh9LCRYRy0vkQvhS5pN1ByERvt4Ss8OCMd
+         HJr3z/bFE7/YLpDMU+VTirdlDmyMS3R6WtfSXXoxpcvyBkTo1T/lZk6idytqNlkEUoc/
+         RKtRRyRrj6ZYVijqbGbtW8QOimc+IeEUmVtCSQFyeG8iElcK98xwvps7kvQFOKUdUPjs
+         sl9kwj7fs/fiOgEtd4azeF0pvMuQTW2wNqVA00XJVBGAqQ8WdHIkyTKK/GYHLRNLN5f9
+         ZFEWsmwOnAq0rGW0vcjmTnVqUZbWLThLBrOiETs+NJ1O/95n/BNK9b0SS6+OkXa3lahX
+         ptqQ==
+X-Gm-Message-State: AOAM531Ye4c2Tw7MYT/Szvat0GRtFDxfrhocUioiagGBHXMJvxD0PLDY
+        8L0IuCWMcgxSrX1TGBTt+asx2vg7r7k=
+X-Google-Smtp-Source: ABdhPJzzwqj8yCo5TWYaDzmnqArFlyMFvuzGn9zmLC3NlV6kkSpe7vANxLJMyNezq1X1wdFh+1rq8A==
+X-Received: by 2002:aa7:9a5d:: with SMTP id x29mr17696155pfj.65.1592794245734;
+        Sun, 21 Jun 2020 19:50:45 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id u35sm9547796pgm.48.2020.06.21.19.50.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jun 2020 19:50:45 -0700 (PDT)
+Subject: Re: [PATCH liburing 0/3] Three small liburing patches
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     io-uring@vger.kernel.org
 References: <20200621203646.14416-1-bvanassche@acm.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <51509c5f-359b-5fad-86d3-645719662076@kernel.dk>
+Date:   Sun, 21 Jun 2020 20:50:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200621203646.14416-1-bvanassche@acm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This patch makes gcc 10 insert one additional assembly instruction in
-io_uring_get_sqe(), namely xor %r8d,%r8d. That shouldn't cause any slowdown
-since that instruction does not access memory:
+On 6/21/20 2:36 PM, Bart Van Assche wrote:
+> Hi Jens,
+> 
+> The changes in this patch series are as follows:
+> - Enable additional compiler warnings, similar to W=1 for kernel code.
+> - Simplify the barrier.h header file.
+> - Convert a macro into an inline function to allow compilers to produce
+>   better diagnostics.
+> 
+> Please consider this patch series for the official liburing repository.
 
-   0x0000000000000360 <+0>:     mov    (%rdi),%rax
-   0x0000000000000363 <+3>:     xor    %r8d,%r8d
-   0x0000000000000366 <+6>:     mov    (%rax),%ecx
-   0x0000000000000368 <+8>:     mov    0x44(%rdi),%eax
-   0x000000000000036b <+11>:    lea    0x1(%rax),%edx
-   0x000000000000036e <+14>:    mov    %edx,%esi
-   0x0000000000000370 <+16>:    sub    %ecx,%esi
-   0x0000000000000372 <+18>:    mov    0x18(%rdi),%rcx
-   0x0000000000000376 <+22>:    cmp    (%rcx),%esi
-   0x0000000000000378 <+24>:    ja     0x38e <io_uring_get_sqe+46>
-   0x000000000000037a <+26>:    mov    0x10(%rdi),%rcx
-   0x000000000000037e <+30>:    and    (%rcx),%eax
-   0x0000000000000380 <+32>:    mov    %edx,0x44(%rdi)
-   0x0000000000000383 <+35>:    shl    $0x6,%rax
-   0x0000000000000387 <+39>:    add    0x38(%rdi),%rax
-   0x000000000000038b <+43>:    mov    %rax,%r8
-   0x000000000000038e <+46>:    mov    %r8,%rax
-   0x0000000000000391 <+49>:    retq
+Thanks, applied.
 
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- src/queue.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+-- 
+Jens Axboe
 
-diff --git a/src/queue.c b/src/queue.c
-index 3db52bd17b86..88e0294c19fb 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -273,16 +273,18 @@ int io_uring_submit_and_wait(struct io_uring *ring, unsigned wait_nr)
- 	return __io_uring_submit_and_wait(ring, wait_nr);
- }
- 
--#define __io_uring_get_sqe(sq, __head) ({				\
--	unsigned __next = (sq)->sqe_tail + 1;				\
--	struct io_uring_sqe *__sqe = NULL;				\
--									\
--	if (__next - __head <= *(sq)->kring_entries) {			\
--		__sqe = &(sq)->sqes[(sq)->sqe_tail & *(sq)->kring_mask];\
--		(sq)->sqe_tail = __next;				\
--	}								\
--	__sqe;								\
--})
-+static inline struct io_uring_sqe *
-+__io_uring_get_sqe(struct io_uring_sq *sq, unsigned int __head)
-+{
-+	unsigned int __next = (sq)->sqe_tail + 1;
-+	struct io_uring_sqe *__sqe = NULL;
-+
-+	if (__next - __head <= *(sq)->kring_entries) {
-+		__sqe = &(sq)->sqes[(sq)->sqe_tail & *(sq)->kring_mask];
-+		(sq)->sqe_tail = __next;
-+	}
-+	return __sqe;
-+}
- 
- /*
-  * Return an sqe to fill. Application must later call io_uring_submit()

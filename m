@@ -2,59 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8127120528C
-	for <lists+io-uring@lfdr.de>; Tue, 23 Jun 2020 14:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFF2A2052B6
+	for <lists+io-uring@lfdr.de>; Tue, 23 Jun 2020 14:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbgFWMeQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Jun 2020 08:34:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36746 "EHLO
+        id S1732543AbgFWMl1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Jun 2020 08:41:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729574AbgFWMeQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Jun 2020 08:34:16 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C12CC061573
-        for <io-uring@vger.kernel.org>; Tue, 23 Jun 2020 05:34:16 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id h15so385068wrq.8
-        for <io-uring@vger.kernel.org>; Tue, 23 Jun 2020 05:34:15 -0700 (PDT)
+        with ESMTP id S1729611AbgFWMl0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Jun 2020 08:41:26 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDC92C061573;
+        Tue, 23 Jun 2020 05:41:25 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id t194so3044701wmt.4;
+        Tue, 23 Jun 2020 05:41:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R++gJrIRD9BexNSw9Q5JV3heI6aDrr4zaYoT3rHkFA8=;
-        b=M3U4V9TN2awa/kjG68pd06W5v9lra067I8ePlPLgbz6TMYpT133zh7JdWSXN3OpXmw
-         rjO5Tqjzy8E/xRp+ehWCJCqvdJW6oNJFQ1zhoX+fNWQmMNkxtnb6bJJbAGSsDa14j3OV
-         Ae0y9FM+EuPgjLYnVVYhzl8Ae793C8JdusnctHBwpwQvS16cwYLzacHegpAIOCIFdCE2
-         fF7NTB8lcNM2CeQknuk+yOxlxWuDmNlTXAjjggZtddz5c8tvDlFAPQP/WoW9sGPKY4S0
-         Bhb0FIxPypsgf+XdOwwrFGKsqr9pz70RzVssQ8jgmleoYYHLgLTsYcfbPHJJKk/fs7Tb
-         dy1w==
+        bh=uudyXPmH4K+yrXT/65FBE/u5/bFJbJPus9HjMbmfelU=;
+        b=b1T1QonovDjAAKw3+0p/5r+gqachr/nXLStstkoUSpbKOsP08qa7jVVE90RkGUNJgE
+         9GAKldFVs/QctI0jaz9z0hKGczwJqGPPU4xFkkkj5+K51LvSMl+KE5V70CHzldzt3MYQ
+         C1h0VXvBV2VadSy5SLo3cptAQU+I6de4N2PdO8uqr9rXcjeZ5NLCNYoypDMbQLeIjepL
+         OV3LcqlZEbRFmAgd/FmdYBumZW73JJ0IH8prfIeCttVrUByxdCfZBbUCtX/JliL6aFki
+         f/F8BCiJ6IEpUUzVu1gnvVQoLR30yX7S+9So+gfYX6jyrnlyKOt4dPHHUPhW8QMCsLN+
+         0EJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=R++gJrIRD9BexNSw9Q5JV3heI6aDrr4zaYoT3rHkFA8=;
-        b=IZEYzJuK2tE62YKt1aSYriCCE6p5jiEV1R4VMWjzxXRbbjvgkX9PI816Hw/+uN3Cwq
-         QCjIqztgiDB+Y//rEc6g8N38Gf1Y/mtJmPNonMFQ8hTEVAykg7P4UqmY1DidU6nSybME
-         puX3QGc0xamC3VmOjc9mf7F6RQ5+x3PyTzMj4ERoTyusJLlyuyZ3GKH9LonuZX/R4WCo
-         L4VqtW4mJ7xr0eiJOAdde2cTkwSE36ZwZScQ+eOOJNBSBfif4tCmwZwsnYBaukP5D4/m
-         G/+Nfk6lIGv5aSKq2kO4eBbe9lK+7zPSOuThsK1jy/clEqsmlT/CnRFcGt/bQQGr98qU
-         C/6g==
-X-Gm-Message-State: AOAM532X01cd+uVGap8avLvKSYB5WVDJeobZPp0b3GzarGYr5w6X8EPA
-        SyXJOF9CjQbK7zUu7pmjlVthT7wy
-X-Google-Smtp-Source: ABdhPJyf1k3/7DHmQNwl6iplzm1LtZAV1wC1Ss1joryj8NSqqaW1pFXRMlkOX0NM6RH9PsaBuw4mWg==
-X-Received: by 2002:adf:a514:: with SMTP id i20mr24640395wrb.112.1592915654604;
-        Tue, 23 Jun 2020 05:34:14 -0700 (PDT)
+        bh=uudyXPmH4K+yrXT/65FBE/u5/bFJbJPus9HjMbmfelU=;
+        b=lIoSmwFVpbKG89fnAG/dJ6s6aQuqNNVzDfFeRWRZo1Vr3C093tdeYLayF3pvztU0ZV
+         zb0wuyK7Y8zNTZVtt1isxJQhBsdVWXzRLGjwTYgfK8oVqrIHPJbU9MCZz30dD+63ZBya
+         ge45tJ4H7IptTuGElltO1HhjFlMbKAPkpMfN1NdC06xonfF/Wq8OFyPV5jKrM994uQui
+         qRlQkfWzD5M46nlzynoZTu+pGg8YOKfKK0J9TF/O+kD6L2erGL6vH5TnIOJoCshOklKD
+         mCPtLhY3w4XAT8enTFoPWBllNNHF+sEK1pKfZwhZMmAKLSwcqHml956StFF2rYUOoYB6
+         fO9g==
+X-Gm-Message-State: AOAM530Xt9SSq43xD69zssYTmj7mcpG0Pdsz0HL+/Nc82BcrBoQUrYb9
+        t8huhibxfbkIXgyZAxHPfhFpqHKb
+X-Google-Smtp-Source: ABdhPJxzI5YsFNYkNy0DPB9ktvhLhkWqlcVEs8OAaanY4X48AOvK5sHWxdRfXL5P+H6zcTKaAQ9N+g==
+X-Received: by 2002:a1c:dfd6:: with SMTP id w205mr5037879wmg.118.1592916084323;
+        Tue, 23 Jun 2020 05:41:24 -0700 (PDT)
 Received: from [192.168.43.181] ([5.100.193.85])
-        by smtp.gmail.com with ESMTPSA id r3sm2491759wrg.70.2020.06.23.05.34.13
+        by smtp.gmail.com with ESMTPSA id f16sm3719586wmh.27.2020.06.23.05.41.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jun 2020 05:34:14 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        io-uring <io-uring@vger.kernel.org>
-Cc:     Dust.li@linux.alibaba.com
-References: <20200622132910.GA99461@e02h04398.eu6sqa>
- <bb4b567f-4337-6c9d-62aa-fa62db2882f3@kernel.dk>
- <c0859031-f4df-8c38-d5e1-aba8f82a9f98@kernel.dk>
+        Tue, 23 Jun 2020 05:41:23 -0700 (PDT)
+Subject: Re: [PATCH 15/15] io_uring: support true async buffered reads, if
+ file provides it
+To:     io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        Jens Axboe <axboe@kernel.dk>
+References: <20200618144355.17324-1-axboe@kernel.dk>
+ <20200618144355.17324-16-axboe@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -99,59 +100,87 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [RFC] io_commit_cqring __io_cqring_fill_event take up too much
- cpu
-Message-ID: <d6038ea3-952a-3438-cd37-4bf116de4871@gmail.com>
-Date:   Tue, 23 Jun 2020 15:32:43 +0300
+Message-ID: <029947e3-7615-e446-3194-d48827730e1d@gmail.com>
+Date:   Tue, 23 Jun 2020 15:39:53 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <c0859031-f4df-8c38-d5e1-aba8f82a9f98@kernel.dk>
+In-Reply-To: <20200618144355.17324-16-axboe@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 22/06/2020 20:11, Jens Axboe wrote:
->> I think the solution here is to defer the cq ring filling + commit to the
->> caller instead of deep down the stack, I think that's a nice win in general.
->> To do that, we need to be able to do it after io_submit_sqes() has been
->> called. We can either do that inline, by passing down a list or struct
->> that allows the caller to place the request there instead of filling
->> the event, or out-of-band by having eg a percpu struct that allows the
->> same thing. In both cases, the actual call site would do something ala:
+On 18/06/2020 17:43, Jens Axboe wrote:
+> If the file is flagged with FMODE_BUF_RASYNC, then we don't have to punt
+> the buffered read to an io-wq worker. Instead we can rely on page
+> unlocking callbacks to support retry based async IO. This is a lot more
+> efficient than doing async thread offload.
+> 
+> The retry is done similarly to how we handle poll based retry. From
+> the unlock callback, we simply queue the retry to a task_work based
+> handler.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/io_uring.c | 145 +++++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 137 insertions(+), 8 deletions(-)
+> 
+...
+>  static int io_read(struct io_kiocb *req, bool force_nonblock)
+>  {
+>  	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
+> @@ -2784,10 +2907,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
+>  		unsigned long nr_segs = iter.nr_segs;
+>  		ssize_t ret2 = 0;
+>  
+> -		if (req->file->f_op->read_iter)
+> -			ret2 = call_read_iter(req->file, kiocb, &iter);
+> -		else
+> -			ret2 = loop_rw_iter(READ, req->file, kiocb, &iter);
+> +		ret2 = io_iter_do_read(req, &iter);
+>  
+>  		/* Catch -EAGAIN return for forced non-blocking submission */
+>  		if (!force_nonblock || (ret2 != -EAGAIN && ret2 != -EIO)) {
+> @@ -2799,17 +2919,26 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
+>  			ret = io_setup_async_rw(req, io_size, iovec,
+>  						inline_vecs, &iter);
+>  			if (ret)
+> -				goto out_free;
+> +				goto out;
+>  			/* any defer here is final, must blocking retry */
+>  			if (!(req->flags & REQ_F_NOWAIT) &&
+>  			    !file_can_poll(req->file))
+>  				req->flags |= REQ_F_MUST_PUNT;
+> +			/* if we can retry, do so with the callbacks armed */
+> +			if (io_rw_should_retry(req)) {
+> +				ret2 = io_iter_do_read(req, &iter);
+> +				if (ret2 == -EIOCBQUEUED) {
+> +					goto out;
+> +				} else if (ret2 != -EAGAIN) {
+> +					kiocb_done(kiocb, ret2);
+> +					goto out;
+> +				}
+> +			}
+> +			kiocb->ki_flags &= ~IOCB_WAITQ;
+>  			return -EAGAIN;
+>  		}
+>  	}
+> -out_free:
+> -	kfree(iovec);
+> -	req->flags &= ~REQ_F_NEED_CLEANUP;
 
-I had similar stuff long ago but with a different premise -- it was
-defer-batching io_put_req() without *fill_event(). It also helped to rework
-synchronisation and reduce # of atomics, and allowed req reuse.
-Probably, easier to revive if this sees the light.
+This looks fishy. For instance, if it fails early on rw_verify_area(), how would
+it free yet on-stack iovec? Is it handled somehow?
 
-
->> if (comp_list && successful_completion) {
->> 	req->result = ret;
->> 	list_add_tail(&req->list, comp_list);
->> } else {
->> 	io_cqring_add_event(req, ret);
->> 	if (!successful_completion)
->> 		req_set_fail_links(req);
->> 	io_put_req(req);
->> }
->>
->> and then have the caller iterate the list and fill completions, if it's
->> non-empty on return.
->>
->> I don't think this is necessarily hard, but to do it nicely it will
->> touch a bunch code and hence be quite a bit of churn. I do think the
->> reward is worth it though, as this applies to the "normal" submission
->> path as well, not just the SQPOLL variant.
-
-The obvious problem with CQE batching is latency, and it can be especially
-bad for SQPOLL. Can be reasonable to add "max batch" parameter to
-io_uring or along a similar vein.
-
+> +out:
+>  	return ret;
+>  }
+>  
+> 
 
 -- 
 Pavel Begunkov

@@ -2,207 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07BB12055A1
-	for <lists+io-uring@lfdr.de>; Tue, 23 Jun 2020 17:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2848D2059FE
+	for <lists+io-uring@lfdr.de>; Tue, 23 Jun 2020 19:54:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732781AbgFWPQq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Jun 2020 11:16:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33622 "EHLO
+        id S1733012AbgFWRyz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Jun 2020 13:54:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732909AbgFWPQm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Jun 2020 11:16:42 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31F6FC061573
-        for <io-uring@vger.kernel.org>; Tue, 23 Jun 2020 08:16:41 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id p11so2077709ilp.11
-        for <io-uring@vger.kernel.org>; Tue, 23 Jun 2020 08:16:41 -0700 (PDT)
+        with ESMTP id S1732973AbgFWRyz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Jun 2020 13:54:55 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF83EC061573
+        for <io-uring@vger.kernel.org>; Tue, 23 Jun 2020 10:54:53 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id t8so20270480ilm.7
+        for <io-uring@vger.kernel.org>; Tue, 23 Jun 2020 10:54:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZPLvgiMcws8wormKWikstBbELlh7wIW3pOV09wS0CDY=;
-        b=dvLhWcjaxVtqTJuS8cgIMk5AFzZLzmShfmQ2wVpxzC+cpwfIooFmPTX94bCTPdWPBA
-         wv/UoJ/pKyYiGccsTqyu+WGY2gs+h1Cv8twmmYo4qH/JRulCCZwNoq/ScXWqJFBLEiYz
-         p3wx8k11ob/hFoe31PyitWG7En/IRYvzKb1s3O9prGFip8JZ8hvUMqoeW4HoywvowxJq
-         DNMGDc1G4CAAjFg9qxYZq4KTQ5Cq7Iw6eZK3lovjumcEcN7XR7ayr5opHUzarbX32FlF
-         9L3HbibVvxfSvF4woKigV/SZPnBpbR9paRtBylc4PsvQ+TGG6Kp28PuHSqhjZ4JdvLml
-         dylA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JJjWqg7tcKBVo75aZXm2q06PHgxmjpf/xa1nFI4jIFs=;
+        b=WlAR2EYlO32R38xsgvCcSDosglkAjZFc+lQ+q9hNZE8uplGqEM/O7eIxEdyIXNshFl
+         hHvSu4w0bO/LzCFQ/9alRyZo8wh/XqtgalooUSAF9RfCArJzdV8Rfx9/hOp9GGzf4Cr/
+         i6xVqi3QckT6ZUb4ap/Qzfg9/I5q435J/iQtbeUOFEnZiKljmBaNjAOrdQUatdcLes7j
+         /BDHdIbSq2sWAgfSuYOMsiLdektLfCd313POki/bqCgSBMOilIk6clYgm6CzO9yY0YHV
+         ny67z4q0OGk7DI3Ef+Dv42yl0t8AMS/nE7JPg/V3sgfxnpiiTo1nQhrjVNLHYQYm6GgF
+         noZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZPLvgiMcws8wormKWikstBbELlh7wIW3pOV09wS0CDY=;
-        b=WGZqxHEXXdEXkgldGPsBRMVGmpAC8t+iy5jQo3nYxcSV/uCbNgo5XQ21Awe2h+cfG8
-         fxbbyaJbxjxGcEduARQYgSkPNqtrUY7kYov055IJ3jn1KJ9kHaI/laMhGyMuokpIcuD3
-         XKAe8YMXfdptBcbrT7HZ6uBLUsR+QorRPpWKNQTXZcjjrSSGoU1m9dpPJHZRfsMI18EC
-         bd+8bXfHAFOkBtAku3i71Fzas3bZwwEB8SBEwZAgHPpqE1A8Sj+4xO4QryO50gD1MHEJ
-         LZXz9YGUVfVKymjjaFBnVf+6P4hfddqVHiBXISNR/QXordBNfRPOE/S7V3aOFvt6IgEh
-         bQDA==
-X-Gm-Message-State: AOAM532IsXe/EwpEIG5ObQlk8GVrYn8QCBovA6suZFTXwKrG53fYV8um
-        bXLQZEAkhYU8dhtW3y6aLZwge3bnspI=
-X-Google-Smtp-Source: ABdhPJw31jaGOZOOfFtj9ZhqVuCiG8krtL4SUXzvxjLiScIApTyXuc5+yCIMrwlbkEhnRHJIv/kllg==
-X-Received: by 2002:a92:7792:: with SMTP id s140mr13906868ilc.66.1592925400190;
-        Tue, 23 Jun 2020 08:16:40 -0700 (PDT)
-Received: from x1.thefacebook.com ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k1sm4275180ilr.35.2020.06.23.08.16.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jun 2020 08:16:39 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JJjWqg7tcKBVo75aZXm2q06PHgxmjpf/xa1nFI4jIFs=;
+        b=PSB4dfqBNirlAQvnngWegOF2Hq4prionunTV9DZcAzwIJGIifRSxBLNA+9zNmyoO7U
+         9jHcMvsMjQ3AQa0zOh1CY6fxDfMbWniyTUN+yP8SWJPGAgrJ0qBMSvp6xCB/26qHAfBz
+         6yCR7srm/i45IgoJYIQXt85G02iYS5yZgvTil/61mxp7zYxbQUWgqt0baMDZeQVrvPFl
+         0JbK8ookeIN4+yx5acUU4hZRMyHBw7xBhJ+XSfL/2XHL53dU7TPter9/xe9wb55w10K/
+         Xl0pMEuYHvM7aLMrbAnKHqI6OWa1rgTv5MnjJ3HEzTMD7Z7tS5terAxtzJcvUUER8h0+
+         uoIw==
+X-Gm-Message-State: AOAM531H7aY5hQMdgLeks7GL9OmYFYXB4MuyYFGm0oKeoTJSyYjEuuux
+        tJUcL0ae5xixUPjAAkLKeOcT68YLo/Q=
+X-Google-Smtp-Source: ABdhPJwVpX2jfGBBcYU9m5APXHRQcwpT11CPMaS9oXBb3qNnwVd0Lg+5o4qNWI3OzcLzHFj6Xh8pGw==
+X-Received: by 2002:a92:b684:: with SMTP id m4mr15922425ill.153.1592934893191;
+        Tue, 23 Jun 2020 10:54:53 -0700 (PDT)
+Received: from [192.168.1.56] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id c3sm9913567ilr.45.2020.06.23.10.54.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jun 2020 10:54:52 -0700 (PDT)
+Subject: Re: [PATCH v2] io_uring: fix io_sq_thread no schedule when busy
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        io-uring <io-uring@vger.kernel.org>
+Cc:     Dust.li@linux.alibaba.com
+References: <a932f437e5337cbfb42db660473fa55fa7aff9f6.1592804776.git.xuanzhuo@linux.alibaba.com>
+ <bb5be3f3976e1c56f4bcc309ea417a20ea384853.1592912043.git.xuanzhuo@linux.alibaba.com>
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     xuanzhuo@linux.alibaba.com, Dust.li@linux.alibaba.com,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5/5] io_uring: enable READ/WRITE to use deferred completions
-Date:   Tue, 23 Jun 2020 09:16:29 -0600
-Message-Id: <20200623151629.17197-6-axboe@kernel.dk>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200623151629.17197-1-axboe@kernel.dk>
-References: <20200623151629.17197-1-axboe@kernel.dk>
+Message-ID: <86bb504b-1961-54c0-8a96-79e8f75f010f@kernel.dk>
+Date:   Tue, 23 Jun 2020 11:54:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <bb5be3f3976e1c56f4bcc309ea417a20ea384853.1592912043.git.xuanzhuo@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-A bit more surgery required here, as completions are generally done
-through the kiocb->ki_complete() callback, even if they complete inline.
-This enables the regular read/write path to use the io_comp_state
-logic to batch inline completions.
+On 6/23/20 5:34 AM, Xuan Zhuo wrote:
+> When the user consumes and generates sqe at a fast rate,
+> io_sqring_entries can always get sqe, and ret will not be equal to -EBUSY,
+> so that io_sq_thread will never call cond_resched or schedule, and then
+> we will get the following system error prompt:
+> 
+> rcu: INFO: rcu_sched self-detected stall on CPU
+> or
+> watchdog: BUG: soft lockup-CPU#23 stuck for 112s! [io_uring-sq:1863]
+> 
+> This patch checks whether need to call cond_resched() by checking
+> the need_resched() function every cycle.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 38 +++++++++++++++++++++++---------------
- 1 file changed, 23 insertions(+), 15 deletions(-)
+Applied, thanks.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0939f5c1a681..a4936b94988c 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2019,7 +2019,8 @@ static inline void req_set_fail_links(struct io_kiocb *req)
- 		req->flags |= REQ_F_FAIL_LINK;
- }
- 
--static void io_complete_rw_common(struct kiocb *kiocb, long res)
-+static void io_complete_rw_common(struct kiocb *kiocb, long res,
-+				  struct io_comp_state *cs)
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
- 	int cflags = 0;
-@@ -2031,7 +2032,7 @@ static void io_complete_rw_common(struct kiocb *kiocb, long res)
- 		req_set_fail_links(req);
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
- 		cflags = io_put_kbuf(req);
--	io_cqring_add_event(req, res, cflags);
-+	__io_req_complete(req, res, cflags, cs);
- }
- 
- static void io_sq_thread_drop_mm(struct io_ring_ctx *ctx)
-@@ -2134,14 +2135,18 @@ static bool io_rw_reissue(struct io_kiocb *req, long res)
- 	return false;
- }
- 
-+static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
-+			     struct io_comp_state *cs)
-+{
-+	if (!io_rw_reissue(req, res))
-+		io_complete_rw_common(&req->rw.kiocb, res, cs);
-+}
-+
- static void io_complete_rw(struct kiocb *kiocb, long res, long res2)
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
- 
--	if (!io_rw_reissue(req, res)) {
--		io_complete_rw_common(kiocb, res);
--		io_put_req(req);
--	}
-+	__io_complete_rw(req, res, res2, NULL);
- }
- 
- static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
-@@ -2375,14 +2380,15 @@ static inline void io_rw_done(struct kiocb *kiocb, ssize_t ret)
- 	}
- }
- 
--static void kiocb_done(struct kiocb *kiocb, ssize_t ret)
-+static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
-+		       struct io_comp_state *cs)
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
- 
- 	if (req->flags & REQ_F_CUR_POS)
- 		req->file->f_pos = kiocb->ki_pos;
- 	if (ret >= 0 && kiocb->ki_complete == io_complete_rw)
--		io_complete_rw(kiocb, ret, 0);
-+		__io_complete_rw(req, ret, 0, cs);
- 	else
- 		io_rw_done(kiocb, ret);
- }
-@@ -2918,7 +2924,8 @@ static int io_iter_do_read(struct io_kiocb *req, struct iov_iter *iter)
- 	return loop_rw_iter(READ, req->file, &req->rw.kiocb, iter);
- }
- 
--static int io_read(struct io_kiocb *req, bool force_nonblock)
-+static int io_read(struct io_kiocb *req, bool force_nonblock,
-+		   struct io_comp_state *cs)
- {
- 	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
- 	struct kiocb *kiocb = &req->rw.kiocb;
-@@ -2953,7 +2960,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
- 
- 		/* Catch -EAGAIN return for forced non-blocking submission */
- 		if (!force_nonblock || (ret2 != -EAGAIN && ret2 != -EIO)) {
--			kiocb_done(kiocb, ret2);
-+			kiocb_done(kiocb, ret2, cs);
- 		} else {
- 			iter.count = iov_count;
- 			iter.nr_segs = nr_segs;
-@@ -2968,7 +2975,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock)
- 				if (ret2 == -EIOCBQUEUED) {
- 					goto out_free;
- 				} else if (ret2 != -EAGAIN) {
--					kiocb_done(kiocb, ret2);
-+					kiocb_done(kiocb, ret2, cs);
- 					goto out_free;
- 				}
- 			}
-@@ -3014,7 +3021,8 @@ static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	return 0;
- }
- 
--static int io_write(struct io_kiocb *req, bool force_nonblock)
-+static int io_write(struct io_kiocb *req, bool force_nonblock,
-+		    struct io_comp_state *cs)
- {
- 	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
- 	struct kiocb *kiocb = &req->rw.kiocb;
-@@ -3083,7 +3091,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock)
- 		if (ret2 == -EOPNOTSUPP && (kiocb->ki_flags & IOCB_NOWAIT))
- 			ret2 = -EAGAIN;
- 		if (!force_nonblock || ret2 != -EAGAIN) {
--			kiocb_done(kiocb, ret2);
-+			kiocb_done(kiocb, ret2, cs);
- 		} else {
- 			iter.count = iov_count;
- 			iter.nr_segs = nr_segs;
-@@ -5409,7 +5417,7 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 			if (ret < 0)
- 				break;
- 		}
--		ret = io_read(req, force_nonblock);
-+		ret = io_read(req, force_nonblock, cs);
- 		break;
- 	case IORING_OP_WRITEV:
- 	case IORING_OP_WRITE_FIXED:
-@@ -5419,7 +5427,7 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 			if (ret < 0)
- 				break;
- 		}
--		ret = io_write(req, force_nonblock);
-+		ret = io_write(req, force_nonblock, cs);
- 		break;
- 	case IORING_OP_FSYNC:
- 		if (sqe) {
 -- 
-2.27.0
+Jens Axboe
 

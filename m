@@ -2,61 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 28B342079BF
-	for <lists+io-uring@lfdr.de>; Wed, 24 Jun 2020 18:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24DBE2079D8
+	for <lists+io-uring@lfdr.de>; Wed, 24 Jun 2020 19:04:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405183AbgFXQ6f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Jun 2020 12:58:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45634 "EHLO
+        id S2404959AbgFXREe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Jun 2020 13:04:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404796AbgFXQ6e (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Jun 2020 12:58:34 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075B4C061573;
-        Wed, 24 Jun 2020 09:58:34 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id f18so3210967wml.3;
-        Wed, 24 Jun 2020 09:58:33 -0700 (PDT)
+        with ESMTP id S2404908AbgFXREe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Jun 2020 13:04:34 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96383C061573;
+        Wed, 24 Jun 2020 10:04:33 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id f7so22882wrw.1;
+        Wed, 24 Jun 2020 10:04:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2UyvtHsqWot1NDK5U0I1dkujPWgBcNc0l066O4UC3WU=;
-        b=QzQGKKjB2zrV1FB2V51Yt3V22mpPXhweNha+MvQDlcRbOsJNRG2Wk5JGhuUSwoFMPf
-         DMmfAgxK2J0WXI7xlIxNxBY4S3yc44P2r9rWd/qJfYQn8LUqKC2UhetZzphiN+wSTq/z
-         6ren5y5oTJDNaeFLuuHF8KofYYRiGpYMbhH4YHU9dce90/+rJpiBd1AGApLJ8ooRS79O
-         SPTZpgWUZrOWoQcdo/arhUnhNh4z0yJyLzcOD7XQVdzyBITgkefeIs9X/h/Om0MgCwbS
-         yvG4FAgEZ5qX1y30outPkQRsI5foQm1NeRsPgD73ku64d6GmGzzMFO+a63/btb/U/C2Q
-         9wDg==
+        bh=RwQl92dq8Q9PdXKQM0Squzw8U4DZsEGcLEOTgyWV0yM=;
+        b=QqW2qRagG14mtxoyCiK1aL2CIBpbkW1rX21dL0LqqUAKRliRbnClsfPcYzrsmuNir9
+         XCNynsSPFLNrYc0MN7y1ZGxb3gItAxG72j+QDcOKdw9XcEf3uzXHcxEP1gsGjUXjRtdP
+         R6U9BM4oAyBxoqvS2nW766urKjhMQC5X1NvqKJPTn8AqoEQOpX6CQ4Tb5f7JCdyu38tm
+         QZEA4qfmAr13NjpgiFw+mNh2bcGnMH8Yh9YB8O7pUIAKmQzAhzjV54Nm7sPV5kErIFjG
+         3n+XdY/eDyc89WZCABqSqDeDzmYzNGBlpC2aO2NMoT2Iq3DPlF4Kg7J5CdhkfjNTsjg2
+         ktCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=2UyvtHsqWot1NDK5U0I1dkujPWgBcNc0l066O4UC3WU=;
-        b=eHnO7lEASsN2tjjZ3gpCi/A81tMn25EjCKeS6uSFvDioKAGhQGwvftHGcoQxe99A3R
-         4NKoW5y1zpSoMUj7XOjiuKCjCAWFm7lA/QqQGTEvORS1jd8sK4L9pFgQZd9PAiXP67Z8
-         usaDC3pfJcH0BKytx5izFzPeu7TfF0bezzJmEH4ECP/1dl30eWcKMoBDSyHFKdd6mRAm
-         mdb78C35OgvwsVtc4w1AgAyX5ySK2pCisK0/gGxyRQJIvBZpg3k5CUTe39Y5g4qE3KNC
-         0l3xXWDcPCvdha41EbV7BmnVglDXGIORRrEQFKGYLLGYUHnCBEZyqJtDQki1SAl/RzX1
-         dEkg==
-X-Gm-Message-State: AOAM532QGoP3RLvDXnS8VRKdRqaNVMITLwq8JBVGyyCcW+J0JrrICRAk
-        wSfCUHy8OA1AaO1K4WUxQWPjT8y8
-X-Google-Smtp-Source: ABdhPJzSwdqI/juqSfmw/8tO7p/3CHHnLcGUqCMfYg6R08O0A5vsCG9H3wPtUmsNQncTgAzC1zhEHQ==
-X-Received: by 2002:a05:600c:204d:: with SMTP id p13mr30334237wmg.88.1593017912508;
-        Wed, 24 Jun 2020 09:58:32 -0700 (PDT)
-Received: from [192.168.43.31] ([5.100.193.85])
-        by smtp.gmail.com with ESMTPSA id f186sm8569839wmf.29.2020.06.24.09.58.31
+        bh=RwQl92dq8Q9PdXKQM0Squzw8U4DZsEGcLEOTgyWV0yM=;
+        b=cABwqRWuEYbUc2alQe8O7FCfbUOc9vGwXYPrZSaQyVDbLHQ21gWh8+rVNR685r5Q13
+         3VVonUCrZiq+q1yrf7LsDbAnigYsOSoT0Jv61rlJIyGq+uU6gbNiATSiEUdBzimIfv8Z
+         f8qVeNj9KeLajVrQZf08Vz/olB2YjDhzrsEVQHgXljbyJfT8el1KpF5FzuDbddi29fXu
+         y7w560ZKraDfNr+h1biMQZmxLervSgK58zsC51gF0opyC0ARgBQ3hhDJ6XXFMpRMy+lY
+         7JNvioXOZrSdDGS7uw/ScMuPvYUQr0FI6xXTaXo9UPp3JXehfdvNbRp1LVjEFllhx6qs
+         TGXQ==
+X-Gm-Message-State: AOAM531GSbHHQgdRd/Crld42cLlLjE8VRtsAy/l9q4q68xkgLA7Sg4sa
+        OOzH/rNHMSlHIqzpg6sLyNa2MLni
+X-Google-Smtp-Source: ABdhPJyaNws8W+EP1e5mFuR5i2J3BtzJU5l4khHOQzkOqtp+eNNyAtzTnsDFc9WxeQw+HZ4m4K1VDw==
+X-Received: by 2002:adf:aad8:: with SMTP id i24mr31308635wrc.102.1593018272007;
+        Wed, 24 Jun 2020 10:04:32 -0700 (PDT)
+Received: from [192.168.43.199] ([5.100.193.85])
+        by smtp.gmail.com with ESMTPSA id i17sm22152820wrc.34.2020.06.24.10.04.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jun 2020 09:58:32 -0700 (PDT)
+        Wed, 24 Jun 2020 10:04:31 -0700 (PDT)
+Subject: Re: [PATCH 0/3] iopoll fixes
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <cover.1592863245.git.asml.silence@gmail.com>
- <0301f35644823a01cbae87e440df7d58ebcf2279.1592863245.git.asml.silence@gmail.com>
- <95b720a6-926c-a208-e929-1d0203fa8701@kernel.dk>
- <e05fc48b-684d-2980-3986-47a77af403e0@kernel.dk>
- <6714cb8f-894c-9ff1-7b3a-4f86d7dbe52a@gmail.com>
- <d33e9006-b7ef-4925-ff3f-332ab655f2ae@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+References: <cover.1593016907.git.asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -100,47 +96,40 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 1/4] io_uring: fix hanging iopoll in case of -EAGAIN
-Message-ID: <9488620d-3dec-700d-b211-cd192b4060b0@gmail.com>
-Date:   Wed, 24 Jun 2020 19:56:58 +0300
+Message-ID: <32dc23ae-bc73-b4e2-f9aa-cab59280cae4@gmail.com>
+Date:   Wed, 24 Jun 2020 20:03:00 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <d33e9006-b7ef-4925-ff3f-332ab655f2ae@kernel.dk>
+In-Reply-To: <cover.1593016907.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 23/06/2020 22:01, Jens Axboe wrote:
-> On 6/23/20 5:57 AM, Pavel Begunkov wrote:
->> On 23/06/2020 05:18, Jens Axboe wrote:
->>> On 6/22/20 8:07 PM, Jens Axboe wrote:
->>>> On 6/22/20 4:16 PM, Pavel Begunkov wrote:
->>>>> io_do_iopoll() won't do anything with a request unless
->>>>> req->iopoll_completed is set. So io_complete_rw_iopoll() has to set
->>>>> it, otherwise io_do_iopoll() will poll a file again and again even
->>>>> though the request of interest was completed long ago.
->>>>
->>>> I need to look at this again, because with this change, I previously
->>>> got various use-after-free. I haven't seen any issues with it, but
->>>> I agree, from a quick look that I'm not quite sure how it's currently
->>>> not causing hangs. Yet I haven't seen any, with targeted -EAGAIN
->>>> testing.
->>
->> Can io_complete_rw_iopoll() get -EAGAIN after being successfully enqueued
->> (i.e. EIOCBQUEUED)? It's reliably fails for me, because my hacked nullblk
->> _can_ (i.e. probabilistically returns BLK_STS_AGAIN from ->iopoll()).
+On 24/06/2020 19:50, Pavel Begunkov wrote:
+> Did more comprehensive iopoll testing and found some more problems.
 > 
-> Yes it can. The primary example would be a polled bio that gets split, into
-> let's say 4 bio's. First one queues fine, but one of the subsequent ones
-> run into request allocation failures and it gets marked as -EAGAIN.
+> [1] is from the previous series. Actually, v2 for this one, addressing
+> the double-reissue bug found by Jens. It maybe not as efficient, but
+> simple and easy to backport.
+> 
+> [2,3] current->mm NULL deref
 
-Right, thanks for the explanation. And that's the case where io_uring fails.
-Now I tested all kinds of -EAGAIN to be sure.
+And yet there are issues left... I'll resend
+
+> 
+> Pavel Begunkov (3):
+>   io_uring: fix hanging iopoll in case of -EAGAIN
+>   io_uring: fix current->mm NULL dereference on exit
+>   io_uring: fix NULL-mm for linked reqs
+> 
+>  fs/io_uring.c | 33 ++++++++++++++++++++++-----------
+>  1 file changed, 22 insertions(+), 11 deletions(-)
+> 
 
 -- 
 Pavel Begunkov

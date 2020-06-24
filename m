@@ -2,119 +2,145 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E44B207994
-	for <lists+io-uring@lfdr.de>; Wed, 24 Jun 2020 18:52:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28B342079BF
+	for <lists+io-uring@lfdr.de>; Wed, 24 Jun 2020 18:58:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404815AbgFXQwL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Jun 2020 12:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44610 "EHLO
+        id S2405183AbgFXQ6f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Jun 2020 12:58:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405226AbgFXQvy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Jun 2020 12:51:54 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AB50C061573;
-        Wed, 24 Jun 2020 09:51:54 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id g75so2956545wme.5;
-        Wed, 24 Jun 2020 09:51:54 -0700 (PDT)
+        with ESMTP id S2404796AbgFXQ6e (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Jun 2020 12:58:34 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075B4C061573;
+        Wed, 24 Jun 2020 09:58:34 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id f18so3210967wml.3;
+        Wed, 24 Jun 2020 09:58:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=G/jzq3QOfbBtu5O5mfX8exac2PYcVHQBcbTwCgdBYnI=;
-        b=Mmijw7T/sfO9YzXeLhtxpLhgyY1Y5QHzNU2BKk0KUE1J+l6D63nEqm50LRzqNsd7Bv
-         h1kIJwoGrQhUiO3/b+2u7dg4JnMWcQCWld4+bH85+TfHk//UtNK9gox93OWKPPv0xU9Q
-         2JUM2pYRypoAxVVLU6Qpjg0QQmdOFbHMeDMxaL+6uQ0CNEBHjubTJQBa4zEs63jkWP0P
-         ZqsUKiEvReZJ6c3TEDK4UXiJoyoAKxo/lj8pHsXLg5NI8zg2WPSAri+q6eE+bdyivN20
-         uNbrbJ14K0tHXjHjT+Ls1VWbQEmKz4FF279j15J2ygG3Ixs8znBww6ciDbSJJz1OyYLe
-         dyVQ==
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2UyvtHsqWot1NDK5U0I1dkujPWgBcNc0l066O4UC3WU=;
+        b=QzQGKKjB2zrV1FB2V51Yt3V22mpPXhweNha+MvQDlcRbOsJNRG2Wk5JGhuUSwoFMPf
+         DMmfAgxK2J0WXI7xlIxNxBY4S3yc44P2r9rWd/qJfYQn8LUqKC2UhetZzphiN+wSTq/z
+         6ren5y5oTJDNaeFLuuHF8KofYYRiGpYMbhH4YHU9dce90/+rJpiBd1AGApLJ8ooRS79O
+         SPTZpgWUZrOWoQcdo/arhUnhNh4z0yJyLzcOD7XQVdzyBITgkefeIs9X/h/Om0MgCwbS
+         yvG4FAgEZ5qX1y30outPkQRsI5foQm1NeRsPgD73ku64d6GmGzzMFO+a63/btb/U/C2Q
+         9wDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=G/jzq3QOfbBtu5O5mfX8exac2PYcVHQBcbTwCgdBYnI=;
-        b=LicaMjB+lrGoUIAg29T8FzXEBoj0mQlItUEJcYr2nuM/FVseF5PmTEPsMaS1b6vsmm
-         KCBKWbh5aHSBRdEkgYyeEIZcJxGDJEOgxuLOgrubELYyuPgd3YZgLXYv1PTzV8sRaXVJ
-         F2fKwAZqa3OgV4h/roiShTFUIbMv7KoeYc1wfycPvCht6SUk3RVuXMzHSa1fF3koRfdN
-         m9u8/gZC64KG0i3Sv6+Q4LAlpV2UX3MhxH1a5UsT9DSbdHW0xQu+rXZ2wRbr1gFckpil
-         p7YrXDwq3LIk4Pt2FF7mv7A/qHbfAu919X0e5PqJXTeRH+uIuWmecA7x1/ibU/ldfrLF
-         wsZQ==
-X-Gm-Message-State: AOAM531fKJ/ERXJUQBshey2qYXPIhU1YW5TZAQw+/qrfM8WzDyvfjdNk
-        FLVYcFdHlvSuwIeWxjtn/l0=
-X-Google-Smtp-Source: ABdhPJzUrraqoW09AK7kPgaShgjjwO5zGbKt5JGdmjLqgEeqA+/P98qVWu7xPA19iBiJ31jB9j6j7g==
-X-Received: by 2002:a1c:96ce:: with SMTP id y197mr32383758wmd.55.1593017512999;
-        Wed, 24 Jun 2020 09:51:52 -0700 (PDT)
-Received: from localhost.localdomain ([5.100.193.85])
-        by smtp.gmail.com with ESMTPSA id z16sm18138182wrr.35.2020.06.24.09.51.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2020 09:51:52 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2UyvtHsqWot1NDK5U0I1dkujPWgBcNc0l066O4UC3WU=;
+        b=eHnO7lEASsN2tjjZ3gpCi/A81tMn25EjCKeS6uSFvDioKAGhQGwvftHGcoQxe99A3R
+         4NKoW5y1zpSoMUj7XOjiuKCjCAWFm7lA/QqQGTEvORS1jd8sK4L9pFgQZd9PAiXP67Z8
+         usaDC3pfJcH0BKytx5izFzPeu7TfF0bezzJmEH4ECP/1dl30eWcKMoBDSyHFKdd6mRAm
+         mdb78C35OgvwsVtc4w1AgAyX5ySK2pCisK0/gGxyRQJIvBZpg3k5CUTe39Y5g4qE3KNC
+         0l3xXWDcPCvdha41EbV7BmnVglDXGIORRrEQFKGYLLGYUHnCBEZyqJtDQki1SAl/RzX1
+         dEkg==
+X-Gm-Message-State: AOAM532QGoP3RLvDXnS8VRKdRqaNVMITLwq8JBVGyyCcW+J0JrrICRAk
+        wSfCUHy8OA1AaO1K4WUxQWPjT8y8
+X-Google-Smtp-Source: ABdhPJzSwdqI/juqSfmw/8tO7p/3CHHnLcGUqCMfYg6R08O0A5vsCG9H3wPtUmsNQncTgAzC1zhEHQ==
+X-Received: by 2002:a05:600c:204d:: with SMTP id p13mr30334237wmg.88.1593017912508;
+        Wed, 24 Jun 2020 09:58:32 -0700 (PDT)
+Received: from [192.168.43.31] ([5.100.193.85])
+        by smtp.gmail.com with ESMTPSA id f186sm8569839wmf.29.2020.06.24.09.58.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jun 2020 09:58:32 -0700 (PDT)
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] io_uring: fix NULL-mm for linked reqs
-Date:   Wed, 24 Jun 2020 19:50:09 +0300
-Message-Id: <5e29e933792c363ae4da4d96dd9a041430260f83.1593016907.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1593016907.git.asml.silence@gmail.com>
-References: <cover.1593016907.git.asml.silence@gmail.com>
+References: <cover.1592863245.git.asml.silence@gmail.com>
+ <0301f35644823a01cbae87e440df7d58ebcf2279.1592863245.git.asml.silence@gmail.com>
+ <95b720a6-926c-a208-e929-1d0203fa8701@kernel.dk>
+ <e05fc48b-684d-2980-3986-47a77af403e0@kernel.dk>
+ <6714cb8f-894c-9ff1-7b3a-4f86d7dbe52a@gmail.com>
+ <d33e9006-b7ef-4925-ff3f-332ab655f2ae@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH 1/4] io_uring: fix hanging iopoll in case of -EAGAIN
+Message-ID: <9488620d-3dec-700d-b211-cd192b4060b0@gmail.com>
+Date:   Wed, 24 Jun 2020 19:56:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <d33e9006-b7ef-4925-ff3f-332ab655f2ae@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-__io_queue_sqe() tries to handle all request of a link,
-so it's not enough to grab mm in io_sq_thread_acquire_mm()
-based just on the head.
+On 23/06/2020 22:01, Jens Axboe wrote:
+> On 6/23/20 5:57 AM, Pavel Begunkov wrote:
+>> On 23/06/2020 05:18, Jens Axboe wrote:
+>>> On 6/22/20 8:07 PM, Jens Axboe wrote:
+>>>> On 6/22/20 4:16 PM, Pavel Begunkov wrote:
+>>>>> io_do_iopoll() won't do anything with a request unless
+>>>>> req->iopoll_completed is set. So io_complete_rw_iopoll() has to set
+>>>>> it, otherwise io_do_iopoll() will poll a file again and again even
+>>>>> though the request of interest was completed long ago.
+>>>>
+>>>> I need to look at this again, because with this change, I previously
+>>>> got various use-after-free. I haven't seen any issues with it, but
+>>>> I agree, from a quick look that I'm not quite sure how it's currently
+>>>> not causing hangs. Yet I haven't seen any, with targeted -EAGAIN
+>>>> testing.
+>>
+>> Can io_complete_rw_iopoll() get -EAGAIN after being successfully enqueued
+>> (i.e. EIOCBQUEUED)? It's reliably fails for me, because my hacked nullblk
+>> _can_ (i.e. probabilistically returns BLK_STS_AGAIN from ->iopoll()).
+> 
+> Yes it can. The primary example would be a polled bio that gets split, into
+> let's say 4 bio's. First one queues fine, but one of the subsequent ones
+> run into request allocation failures and it gets marked as -EAGAIN.
 
-Don't check req->needs_mm and do it always.
+Right, thanks for the explanation. And that's the case where io_uring fails.
+Now I tested all kinds of -EAGAIN to be sure.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 578ec2e39712..df0dba607966 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2000,10 +2000,9 @@ static void io_sq_thread_drop_mm(struct io_ring_ctx *ctx)
- 	}
- }
- 
--static int io_sq_thread_acquire_mm(struct io_ring_ctx *ctx,
--				   struct io_kiocb *req)
-+static int __io_sq_thread_acquire_mm(struct io_ring_ctx *ctx)
- {
--	if (io_op_defs[req->opcode].needs_mm && !current->mm) {
-+	if (!current->mm) {
- 		if (unlikely(!mmget_not_zero(ctx->sqo_mm)))
- 			return -EFAULT;
- 		kthread_use_mm(ctx->sqo_mm);
-@@ -2012,6 +2011,14 @@ static int io_sq_thread_acquire_mm(struct io_ring_ctx *ctx,
- 	return 0;
- }
- 
-+static int io_sq_thread_acquire_mm(struct io_ring_ctx *ctx,
-+				   struct io_kiocb *req)
-+{
-+	if (!io_op_defs[req->opcode].needs_mm)
-+		return 0;
-+	return __io_sq_thread_acquire_mm(ctx);
-+}
-+
- #ifdef CONFIG_BLOCK
- static bool io_resubmit_prep(struct io_kiocb *req, int error)
- {
-@@ -2788,7 +2795,7 @@ static void io_async_buf_retry(struct callback_head *cb)
- 	ctx = req->ctx;
- 
- 	__set_current_state(TASK_RUNNING);
--	if (!io_sq_thread_acquire_mm(ctx, req)) {
-+	if (!__io_sq_thread_acquire_mm(ctx)) {
- 		mutex_lock(&ctx->uring_lock);
- 		__io_queue_sqe(req, NULL);
- 		mutex_unlock(&ctx->uring_lock);
 -- 
-2.24.0
-
+Pavel Begunkov

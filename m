@@ -2,58 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DFD20798A
-	for <lists+io-uring@lfdr.de>; Wed, 24 Jun 2020 18:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B901520798D
+	for <lists+io-uring@lfdr.de>; Wed, 24 Jun 2020 18:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405197AbgFXQvu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Jun 2020 12:51:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44594 "EHLO
+        id S2405228AbgFXQvz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Jun 2020 12:51:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404870AbgFXQvu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Jun 2020 12:51:50 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE2E1C061573;
-        Wed, 24 Jun 2020 09:51:49 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id b6so2949568wrs.11;
-        Wed, 24 Jun 2020 09:51:49 -0700 (PDT)
+        with ESMTP id S2405222AbgFXQvx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Jun 2020 12:51:53 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D73DC061573;
+        Wed, 24 Jun 2020 09:51:51 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id f139so3180615wmf.5;
+        Wed, 24 Jun 2020 09:51:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=nM2coQx7hoysPBegeDWFljq+2PbJajIfawopODzY7HY=;
-        b=QDOefWcRSdTcVLuz57YrVXwp86RPEQjL9ojg7Dfb5qoAbejpNUE4RhStfS8SDTkEpe
-         Vi465cUzgzTjsjL+LIt9nsqhDq1T7/A8XaMZjzrMQqqKTK+zvaU612ttIVxOa3NZUMlV
-         tikYFlnVGX7QO1Tfj7KVqZSYPozYieOMthgYLJba9YkGdOXsH+jGpNb4pffhuFIceOzy
-         1gpD2SZMqxB4cA4K5Wor6Aeh8e6fQ/ombzLYGUtZBAoaA9YxcdxNDjttM1UOFEv29RZQ
-         qpUM2WDG6DH0u4hOAiMmyoIqduPXiRpzcAl8A2MAw+LP9pkqdcIy9gKAk6q7MNFwp8uw
-         tYwQ==
+        bh=tL+FccFFqTcjb6bX8W92TsCzve7bd5pnKbHcClrHQeo=;
+        b=nnJbg9BwB2MDzp+XFIl6Y0inVMl+qLwVAqt3Yk/thT3bpIHsZChRhB2RPcWdjuJ088
+         ZupJe/xGzNOWjXKswEWZvLeIUqSoh+2HfnluEeh3kyXMAmZmncI7qb5UAqI2ap3yPTws
+         tfHjgE1mHLbppxXp3jEmAo5CKUIsbnH3sKWQKlPAjxg4L8Si5/Nr6o5u8LIKaqzHl/SQ
+         /wMdarhNNgdsjy59n70NpGQoktrUH5glsKLWlh5eljxL1NsJyzyvguzV610Wq/b0/Ly2
+         jfDLLo2U0Yt9q+1JI6RdpyUob2hE7s2JNF5B13yfoJpMzN86P1HjPSBYvNcwdLmQj92z
+         9dMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nM2coQx7hoysPBegeDWFljq+2PbJajIfawopODzY7HY=;
-        b=ZgFZiHFhB1e9IGhNZlY/cQ0Xs5BWv8OYzvSW+rkL5Wry8Ms0qwtx/zManpV+2Z/vfn
-         1cAwHctL+FCkZHVlklGLj84I44BD4itGGhIjtVAugfvxQ5Qa/tap2sZkL5dnL2j/T68w
-         4GiOpRrSQF+lfJI6iNmVcXAvndofzhDfixeIW0wVes/+H3CAcwdMMniRrSso0/0ob9X/
-         CruQVpn7atTKi+aChZK2xE8HQ9sSiWaX32BV2nmtqLxQofSSGzynsyH7q8eiw7EnzuF9
-         cu7EU9X753Dw/GzgT1qLRu86JT9pholoYOZFklBxoX1r2M56mWFtvbegMJUradzPOCo1
-         Py4Q==
-X-Gm-Message-State: AOAM533Nm8OsE3I2lBu0VYv3QAkUA74Zx2NiGttan+HQkjZNTC88gBXq
-        hPWW5kO9x2dVoZ8nLKBF0X1F2Sx4
-X-Google-Smtp-Source: ABdhPJyhQ6lSSJ5174IhjiBn/zN4r7Js4yfDcmKEZbGVPLkaGrI0M1b4bmY161qeoZ1KUvVyGEueag==
-X-Received: by 2002:a5d:6412:: with SMTP id z18mr30112920wru.310.1593017508365;
-        Wed, 24 Jun 2020 09:51:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tL+FccFFqTcjb6bX8W92TsCzve7bd5pnKbHcClrHQeo=;
+        b=oyZSLLMnuMZxzx0k9nzfXW8nI+YRyMDY9RnUhzFpkObZESVLEEoiZ+gDJHJ056qcew
+         hi9g2ZL6z0vqw38+SeCcS2WAqhDXmvHYaN8RlPbltpnU5UWulnT19z0HvcbNh9BKExtv
+         rbUXfYOdxdETt/qre/0Glc/ML06S3h9dUbQKsNR9PnQAgTySYJ7te/g78gKF2hRPGrta
+         jzSrX0X49m18Mk290B8B1d+4fhPCb6y0rccivuxa6V97y8yoSePPDRty9nc+8SK6ABgO
+         BuhwzZsHglbjBCbutaJuwQfD3h/L8sQcHzVfK4qONFk7d/kQ2uaoOzvx84dACOlcoqG5
+         /gFw==
+X-Gm-Message-State: AOAM532Vqqh21huP8q2QZ1TwgWq31XnSQ16yMgpw3vmF5OnksJF1U60/
+        5BSotZHi2qK4dX+QkklJSPCnYb4Z
+X-Google-Smtp-Source: ABdhPJxTJXfYP902VI5+AR3tlUf5MufajhaM3ibZnApzolBSYbtbU7XYycnPlyaM6oYDlZLbUFlORQ==
+X-Received: by 2002:a1c:9acf:: with SMTP id c198mr30746114wme.172.1593017510071;
+        Wed, 24 Jun 2020 09:51:50 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.85])
-        by smtp.gmail.com with ESMTPSA id z16sm18138182wrr.35.2020.06.24.09.51.47
+        by smtp.gmail.com with ESMTPSA id z16sm18138182wrr.35.2020.06.24.09.51.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2020 09:51:47 -0700 (PDT)
+        Wed, 24 Jun 2020 09:51:49 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] iopoll fixes
-Date:   Wed, 24 Jun 2020 19:50:06 +0300
-Message-Id: <cover.1593016907.git.asml.silence@gmail.com>
+Subject: [PATCH 1/3] io_uring: fix hanging iopoll in case of -EAGAIN
+Date:   Wed, 24 Jun 2020 19:50:07 +0300
+Message-Id: <22111b29e298f5f606130fcf4307bda99dbec089.1593016907.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1593016907.git.asml.silence@gmail.com>
+References: <cover.1593016907.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -61,22 +63,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Did more comprehensive iopoll testing and found some more problems.
+io_do_iopoll() won't do anything with a request unless
+req->iopoll_completed is set. So io_complete_rw_iopoll() has to set
+it, otherwise io_do_iopoll() will poll a file again and again even
+though the request of interest was completed long time ago.
 
-[1] is from the previous series. Actually, v2 for this one, addressing
-the double-reissue bug found by Jens. It maybe not as efficient, but
-simple and easy to backport.
+Also, remove -EAGAIN check from io_issue_sqe() as it races with
+the changed lines. The request will take the long way and be
+resubmitted from io_iopoll*().
 
-[2,3] current->mm NULL deref
+Fixes: bbde017a32b3 ("io_uring: add memory barrier to synchronize
+io_kiocb's result and iopoll_completed")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Pavel Begunkov (3):
-  io_uring: fix hanging iopoll in case of -EAGAIN
-  io_uring: fix current->mm NULL dereference on exit
-  io_uring: fix NULL-mm for linked reqs
-
- fs/io_uring.c | 33 ++++++++++++++++++++++-----------
- 1 file changed, 22 insertions(+), 11 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index c686061c3762..fb88a537f471 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2104,10 +2104,8 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
+ 
+ 	WRITE_ONCE(req->result, res);
+ 	/* order with io_poll_complete() checking ->result */
+-	if (res != -EAGAIN) {
+-		smp_wmb();
+-		WRITE_ONCE(req->iopoll_completed, 1);
+-	}
++	smp_wmb();
++	WRITE_ONCE(req->iopoll_completed, 1);
+ }
+ 
+ /*
+@@ -5592,9 +5590,6 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	if ((ctx->flags & IORING_SETUP_IOPOLL) && req->file) {
+ 		const bool in_async = io_wq_current_is_worker();
+ 
+-		if (req->result == -EAGAIN)
+-			return -EAGAIN;
+-
+ 		/* workqueue context doesn't hold uring_lock, grab it now */
+ 		if (in_async)
+ 			mutex_lock(&ctx->uring_lock);
 -- 
 2.24.0
 

@@ -2,222 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD52B20A6C5
-	for <lists+io-uring@lfdr.de>; Thu, 25 Jun 2020 22:29:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E837320A795
+	for <lists+io-uring@lfdr.de>; Thu, 25 Jun 2020 23:37:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404916AbgFYU3r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Jun 2020 16:29:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46272 "EHLO
+        id S2407271AbgFYVhb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Jun 2020 17:37:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389406AbgFYU3r (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Jun 2020 16:29:47 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECD99C08C5C1
-        for <io-uring@vger.kernel.org>; Thu, 25 Jun 2020 13:29:46 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id j94so7251040wrj.0
-        for <io-uring@vger.kernel.org>; Thu, 25 Jun 2020 13:29:46 -0700 (PDT)
+        with ESMTP id S2403961AbgFYVha (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Jun 2020 17:37:30 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DE5EC08C5C1
+        for <io-uring@vger.kernel.org>; Thu, 25 Jun 2020 14:37:30 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id d66so3653244pfd.6
+        for <io-uring@vger.kernel.org>; Thu, 25 Jun 2020 14:37:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Hn2puQALKJ5LOZz9ZFx5xhrB+qjYz/nHpVo298FurM4=;
-        b=Imk0HuSWWiCo3SGY3WgX4fOXiPuNISFZSsgkE8SttszBUxyVfbbtgyEHov4LvE+v1L
-         f4n3l/csujhMoaduSZQ5SbQzNsGouVzHXwG0RQXgLEdGElDQic8btMlxbxGEm5pMZXzl
-         hP6l4rInlakCFp0lUYC+7AcwD1svbJB/JuqCNPat8OBLIcQzx3wqmAVr1xeIxu3OUFWU
-         f30UDYZGWe5J+KuB+GmXbhRyBVq8pZyMuRMfIps5L/6Eeh85mi6s0Nox0UlwnwmXW/LT
-         oq9tk9IzFvqYKh1h5vX7PGfvbBTn8CmWUCLbVoK1E+j4PPT5sY0eDjgSgFtjomdaiij/
-         X7bg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=NKpz+ygF/rgH/Rv5L0zxbGKkYxmjzocITSI++fZ5xL0=;
+        b=OMrSy6fdc94XZSeVnW9lv3sPJB0QyLnIYiqWAFqUpT2YLnpWY5N8rmG2UcRcCIYznl
+         yMb3u7Wj5u2mqtOlnRaeH5DrCCUHwhda0mgnNyaGbXDqoE+yp98a9ZsX+BV0W2G9VHcE
+         cX+/XaPTOVNR/681n0gepEqxCVUe7lF0ElrZ5An7Yuh0OouCgGIvL7Icxjr7uuxLGl4Q
+         vNjITRuPmtFWVPqVg+U9K0xE72xT4jb0oew/SQL6ufDvtMoPdqHqhfb92BHFdI6F+TZF
+         3cTNz6DRDztFoqELwFZvnh2viRWpebGtNcmlKl+LVdC6+QYzaAkzri2wO/jf03Hopq8P
+         Ebyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Hn2puQALKJ5LOZz9ZFx5xhrB+qjYz/nHpVo298FurM4=;
-        b=czb13Er+VjM/NxIh/Ya7PIb2BntXslkYPWlCnTsE5Q2PaKeOmqSUVXT3r/V1d+DtQg
-         mPGCF8tNlyfX3rT1qn0IajhVKX2wfyqM4PzqYdXP1JTBqi75RF3BOTCed1bc0GzxpOML
-         33s7HLcj2ztulHsdYPunq0fpRNmQ35CvvD0bUk2T9O1kSxpFPUHLs1tsQpJQQR2QH8JB
-         U0lRAeQPEWVlooDkF/g2rstmughpJs1FtplAyijG7e6cJSW7KpnM/BDMxpu3+BH2UcKK
-         Llg9IN9/nEsITzzgW5hB+RNVUH0X7B/Nh7VYdI4BNrTzKSPRS7NFU7bqu6Yd3vZKP+z7
-         Ba5A==
-X-Gm-Message-State: AOAM530PbZZpHyHFwAfmgnLYEjQwFBNxndWC513eRQlBoHMsI+515v6e
-        /74Y8y0Brg+4D/hASQOZ/OpKWnUH
-X-Google-Smtp-Source: ABdhPJyU+SEC+txEhaAK/qTlch/ESWWQmsVy2qm7UtihuDasK0Qo4HkP3Heff0mfzzu0pcqnCoBD6Q==
-X-Received: by 2002:adf:f18c:: with SMTP id h12mr37390903wro.375.1593116985371;
-        Thu, 25 Jun 2020 13:29:45 -0700 (PDT)
-Received: from [192.168.43.154] ([5.100.193.85])
-        by smtp.gmail.com with ESMTPSA id p185sm6312952wmp.24.2020.06.25.13.29.44
+        bh=NKpz+ygF/rgH/Rv5L0zxbGKkYxmjzocITSI++fZ5xL0=;
+        b=MV3YVWlAiiFXCQzj4SoJAsWyS9CNB/1OTsOPlBvb83VxAq4Z0zXgEJKxtAOYa72NKy
+         fvxoNfo3bc/yTXC0/8l2q/4OAISKCd34cqs2CQ+F0C6eULi9+f+rPunhz9foR7F8xv6x
+         idSo70bLjdK0RJSTQj8zyqPlk38sB66bROHinjCWzswm1E5OSvtDXO8e1BbOnzF77zLp
+         muUG1fiMYubJS90umtRqNmt99t3nOvFQuQ0dnlEIP7DHdJmqri3zJlDgJ09B+/Y3DRPF
+         uunbPtrJmOue4V/CkT+59SU1K5PuQzyEjWbd9dtSfaeC0cxzY9HSolK5DSS5R/ZqUdtw
+         cIjw==
+X-Gm-Message-State: AOAM533ms7LSd0F8F8NDEoySfAmbgQVPYzy0+uZqYIjV3HwQFwbMBGOR
+        3xDzHSDTOUh2E9uaZ1VOxujGZbU+ia9rtw==
+X-Google-Smtp-Source: ABdhPJxS9pBBrKUdIHzDnFrdMJY0hhTjc2SCZig9LklwN8R/8L6z4Medgl7jYo4jl1+FVaqI3frT3A==
+X-Received: by 2002:a63:a84d:: with SMTP id i13mr26983331pgp.342.1593121049448;
+        Thu, 25 Jun 2020 14:37:29 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id h3sm254926pjz.23.2020.06.25.14.37.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jun 2020 13:29:44 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-References: <421c3b22-2619-a9a2-a76e-ed8251c7264c@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
+        Thu, 25 Jun 2020 14:37:28 -0700 (PDT)
 Subject: Re: [PATCH] io_uring: use task_work for links if possible
-Message-ID: <e9fe5b4d-4058-dda7-eed4-2c577825aca4@gmail.com>
-Date:   Thu, 25 Jun 2020 23:28:11 +0300
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>
+References: <421c3b22-2619-a9a2-a76e-ed8251c7264c@kernel.dk>
+ <e9fe5b4d-4058-dda7-eed4-2c577825aca4@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <68603efe-8cb4-b431-fc07-652342237a23@kernel.dk>
+Date:   Thu, 25 Jun 2020 15:37:27 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <421c3b22-2619-a9a2-a76e-ed8251c7264c@kernel.dk>
+In-Reply-To: <e9fe5b4d-4058-dda7-eed4-2c577825aca4@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 25/06/2020 21:27, Jens Axboe wrote:
-> Currently links are always done in an async fashion, unless we
-> catch them inline after we successfully complete a request without
-> having to resort to blocking. This isn't necessarily the most efficient
-> approach, it'd be more ideal if we could just use the task_work handling
-> for this.
+> 
+On 6/25/20 2:28 PM, Pavel Begunkov wrote:
+> On 25/06/2020 21:27, Jens Axboe wrote:
+>> Currently links are always done in an async fashion, unless we
+>> catch them inline after we successfully complete a request without
+>> having to resort to blocking. This isn't necessarily the most efficient
+>> approach, it'd be more ideal if we could just use the task_work handling
+>> for this.
+> 
+> Well, you beat me on this. As mentioned, I was going to rebase it after
+> lending iopoll fixes. Nice numbers! A small comment below, but LGTM.
+> I'll review more formally on a fresh head.
 
-Well, you beat me on this. As mentioned, I was going to rebase it after
-lending iopoll fixes. Nice numbers! A small comment below, but LGTM.
-I'll review more formally on a fresh head.
+I thought you were doing this for the retry -EAGAIN based stuff, didn't
+know you had plans on links! If so, I would have left it alone. This was
+just a quick idea and execution this morning.
 
-Could you push it to a branch? My other patches would conflict.
+> Could you push it to a branch? My other patches would conflict.
 
-> 
-> Outside of saving an async jump, we can also do less prep work for
-> these kinds of requests.
-> 
-> Running dependent links from the task_work handler yields some nice
-> performance benefits. As an example, examples/link-cp from the liburing
-> repository uses read+write links to implement a copy operation. Without
-> this patch, the a cache fold 4G file read from a VM runs in about
-> 3 seconds:
-> 
-> $ time examples/link-cp /data/file /dev/null
-> 
-> real	0m2.986s
-> user	0m0.051s
-> sys	0m2.843s
-> 
-> and a subsequent cache hot run looks like this:
-> 
-> $ time examples/link-cp /data/file /dev/null
-> 
-> real	0m0.898s
-> user	0m0.069s
-> sys	0m0.797s
-> 
-> With this patch in place, the cold case takes about 2.4 seconds:
-> 
-> $ time examples/link-cp /data/file /dev/null
-> 
-> real	0m2.400s
-> user	0m0.020s
-> sys	0m2.366s
-> 
-> and the cache hot case looks like this:
-> 
-> $ time examples/link-cp /data/file /dev/null
-> 
-> real	0m0.676s
-> user	0m0.010s
-> sys	0m0.665s
-> 
-> As expected, the (mostly) cache hot case yields the biggest improvement,
-> running about 25% faster with this change, while the cache cold case
-> yields about a 20% increase in performance. Outside of the performance
-> increase, we're using less CPU as well, as we're not using the async
-> offload threads at all for this anymore.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> ---
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 0bba12e4e559..389274a078c8 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-...
->  
-> +static void io_sq_thread_drop_mm(struct io_ring_ctx *ctx)
-> +{
-> +	struct mm_struct *mm = current->mm;
-> +
-> +	if (mm) {
-> +		kthread_unuse_mm(mm);
-> +		mmput(mm);
-> +	}
-> +}
-> +
-> +static int io_sq_thread_acquire_mm(struct io_ring_ctx *ctx,
-> +				   struct io_kiocb *req)
-> +{
-> +	if (io_op_defs[req->opcode].needs_mm && !current->mm) {
-> +		if (unlikely(!mmget_not_zero(ctx->sqo_mm)))
-> +			return -EFAULT;
-> +		kthread_use_mm(ctx->sqo_mm);
-> +	}
-> +
-> +	return 0;
-> +}
-...
-> +static void __io_req_task_submit(struct io_kiocb *req)
-> +{
-> +	struct io_ring_ctx *ctx = req->ctx;
-> +
-> +	__set_current_state(TASK_RUNNING);
-> +	if (!io_sq_thread_acquire_mm(ctx, req)) {
+Yep, I'll push it out now.
 
-My last patch replaced it with "__" version. Is it merge problems
-or intended as this?
+>> +static void __io_req_task_submit(struct io_kiocb *req)
+>> +{
+>> +	struct io_ring_ctx *ctx = req->ctx;
+>> +
+>> +	__set_current_state(TASK_RUNNING);
+>> +	if (!io_sq_thread_acquire_mm(ctx, req)) {
+> 
+> My last patch replaced it with "__" version. Is it merge problems
+> or intended as this?
 
-> +		mutex_lock(&ctx->uring_lock);
-> +		__io_queue_sqe(req, NULL, NULL);
-> +		mutex_unlock(&ctx->uring_lock);
-> +	} else {
-> +		__io_req_task_cancel(req, -EFAULT);
-> +	}
-> +}
-> +
+I'll make sure it applies on for-5.9/io_uring, and then I'll sort out
+any merge issues by pulling in io_uring-5.8 to there, if we need to.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

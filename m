@@ -2,427 +2,266 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9429D20A4F8
-	for <lists+io-uring@lfdr.de>; Thu, 25 Jun 2020 20:27:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D48120A604
+	for <lists+io-uring@lfdr.de>; Thu, 25 Jun 2020 21:42:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404398AbgFYS1i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Jun 2020 14:27:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55692 "EHLO
+        id S2406766AbgFYTmC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Jun 2020 15:42:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404116AbgFYS1h (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Jun 2020 14:27:37 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82799C08C5C1
-        for <io-uring@vger.kernel.org>; Thu, 25 Jun 2020 11:27:37 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id s14so3147204plq.6
-        for <io-uring@vger.kernel.org>; Thu, 25 Jun 2020 11:27:37 -0700 (PDT)
+        with ESMTP id S2406069AbgFYTmB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Jun 2020 15:42:01 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 421D8C08C5C1;
+        Thu, 25 Jun 2020 12:42:01 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id u26so7396194wmn.1;
+        Thu, 25 Jun 2020 12:42:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=K5tvedByjgBGkRuu48DZn/MrJTh8+Qv5JK0BMe2eDH0=;
-        b=LhIrpsyoXGscTo1TV0SYO5MjhOV1SYA6qUS5uN4BJlsF7XtQQljSc+HD4ASwajltOg
-         nbDWDAsCOYcOVpVzFaqtBwxd927yWCldWCz/CvVi5psaDQFqLKRZnLuD3TAm9nLf9ti+
-         ++KfuD/q8D+JX6IDPbzXlb1shN+QVvzufnaHkayBnNQ15aiUFuwbv8poYsAkucu31Gst
-         1QJOhDQWcOguUH//ZO5eHuYUPInitSLsokHP915hx2IzSyFjN4XEbr5WqkyvyJKIL4a9
-         Duo8qzPM5suwlq+Ftbd8p6AudL3noMzA0kdAabv2JZmXqbVjC/TS0RAA4upPIhicWVBs
-         c06A==
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5d7yXKsJreT4Cu2Emc3DWVDyO2KlqiIjpk5Uc0grAno=;
+        b=HjfSUyCJNlrbOK3ZphHfy1CFNMGdjX43SUMxvrEDi0TC+s0SRLvtxkr7LJYiEVYIJ2
+         41zxxwb0xG7lo1OxhQfdinh5CyAV75rQ9ao1jrv7zd12YLt7ZKxDQzolrswIrWf6O+xc
+         VsNGN88J8CNZ4QC7cnadRnEwVbsr1Mu5VuT5lQ8pDfkgEvBd1mhQzQGnCR1jBQxLbgRx
+         0Tsx51nEqHZl54c+S97Ii5DXnMQFYroicheOAoSdlzEfqYFRfsTLMYJxmPrGcbEmCS/c
+         6NKQ2g4UbLQ18KNH4cDHlwe5/4P2zDqcQos8etaYgqYDdME49pXkFP/obHDg9bQR8ULM
+         /DzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=K5tvedByjgBGkRuu48DZn/MrJTh8+Qv5JK0BMe2eDH0=;
-        b=clWmDRhO1y0nYkiNOGQQgtePkD8cZEf/+nM6RWSnraVgnsj+sb7k4bfqE6phdchkne
-         0uXXRHoThHyrNzTF1zO8HDg6ZdRU6deT4be2z8U2DxNAVkaow5lYJTHntSr0CyHfJ9ps
-         uXhWwZ2W1V7o/ovUw6dV8BnRXCV8bqH0bCladbROyE5g2hRNbn2O0nF4aatu3I85EFLd
-         re7XvYwzddzM98mLg8zy7GifAuxoBXS2gbkMI4Qx74w53yCYtUH4u7oGkNJAoaUcwxec
-         JNALnBOhE7mcQgKcDk4mDs286bR7dgvOwXJU8mJO14naFhjBpvDwxyRQFF0eObzSMQEp
-         axAg==
-X-Gm-Message-State: AOAM533/Au6TUkM40dWExk+Psn0NkM6L1/9/A6ybQFtrxiQp01iXc8Qf
-        fFuoc42azboOiQtdl+C+/IQZ4X4jbo5ONg==
-X-Google-Smtp-Source: ABdhPJz1ZE4JlWVBZmjLyYVRX8ZiT/50uIx5v4a/s/MvPcdbPWlhCYeDOv8dsLETHMfur1X1F1OlOQ==
-X-Received: by 2002:a17:90a:acf:: with SMTP id r15mr4880338pje.171.1593109656506;
-        Thu, 25 Jun 2020 11:27:36 -0700 (PDT)
-Received: from [192.168.1.56] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id u20sm25383790pfk.91.2020.06.25.11.27.35
-        for <io-uring@vger.kernel.org>
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=5d7yXKsJreT4Cu2Emc3DWVDyO2KlqiIjpk5Uc0grAno=;
+        b=iszhr9hJvmpfn8rbp6OYIvkuvAcj1eGz38wN3bR2UdoasSqpCUmbLSBhvIQYbrmp7w
+         FBDPtPlciZGQimN+H1+ZzplV+74Dd7czro4aJVmi11KADoiZJbRoWPm8lXvQitt89VBn
+         PmLqpeqe8JuI27yBqrY9i9leN14vxDZ7UWBY9s8jMaU+1zsHddH1y30qsuYLGOHjJDd5
+         n8d1JmW0B5lQtNtE0B4dj1JToSMPRGekvRJjXbcC9SBCaMqgFbfvKtVVUNMvoZBIqTlA
+         tDgqgK74fOTXkiOaRs3cPiSr+FtO+YephxkXyXnmRDTgoiCMUKAeEPzUBTt8kZxbIXBA
+         zb4g==
+X-Gm-Message-State: AOAM533NpFxip1DpE2Q7KAZfEWmZ3X/GSOgbDD44hQvJ0o/az7oWwNcO
+        UbaqFKbjMbRqGmlJcKxaFQ0haouoYeE=
+X-Google-Smtp-Source: ABdhPJzP2TnATqF19pBthUKOaGqcad72qTWZ4up9MKhpGE4rVgHCsc9RU27lXnQ8I7ETdE8/+uPH4Q==
+X-Received: by 2002:a1c:2503:: with SMTP id l3mr5049987wml.188.1593114119871;
+        Thu, 25 Jun 2020 12:41:59 -0700 (PDT)
+Received: from [192.168.43.154] ([5.100.193.85])
+        by smtp.gmail.com with ESMTPSA id d201sm13529261wmd.34.2020.06.25.12.41.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jun 2020 11:27:35 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: use task_work for links if possible
-Message-ID: <421c3b22-2619-a9a2-a76e-ed8251c7264c@kernel.dk>
-Date:   Thu, 25 Jun 2020 12:27:34 -0600
+        Thu, 25 Jun 2020 12:41:59 -0700 (PDT)
+To:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, bcrl@kvack.org
+Cc:     Damien.LeMoal@wdc.com, hch@infradead.org,
+        linux-fsdevel@vger.kernel.org, mb@lightnvm.io,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        selvakuma.s1@samsung.com, nj.shetty@samsung.com,
+        javier.gonz@samsung.com
+References: <1593105349-19270-1-git-send-email-joshi.k@samsung.com>
+ <CGME20200625171838epcas5p449183e12770187142d8d55a9bf422a8d@epcas5p4.samsung.com>
+ <1593105349-19270-3-git-send-email-joshi.k@samsung.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH v2 2/2] io_uring: add support for zone-append
+Message-ID: <e84be715-923d-90a2-f3c6-3cd2503ca69b@gmail.com>
+Date:   Thu, 25 Jun 2020 22:40:24 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <1593105349-19270-3-git-send-email-joshi.k@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Currently links are always done in an async fashion, unless we
-catch them inline after we successfully complete a request without
-having to resort to blocking. This isn't necessarily the most efficient
-approach, it'd be more ideal if we could just use the task_work handling
-for this.
+On 25/06/2020 20:15, Kanchan Joshi wrote:
+> From: Selvakumar S <selvakuma.s1@samsung.com>
+> 
+> For zone-append, block-layer will return zone-relative offset via ret2
+> of ki_complete interface. Make changes to collect it, and send to
+> user-space using ceq->flags.
+> Detect and report early error if zone-append is requested with
+> fixed-buffers.
+> 
+> Signed-off-by: Selvakumar S <selvakuma.s1@samsung.com>
+> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> Signed-off-by: Javier Gonzalez <javier.gonz@samsung.com>
+> ---
+>  fs/io_uring.c | 32 ++++++++++++++++++++++++++++++--
+>  1 file changed, 30 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 155f3d8..31a9da58 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -402,6 +402,8 @@ struct io_rw {
+>  	struct kiocb			kiocb;
+>  	u64				addr;
+>  	u64				len;
+> +	/* zone-relative offset for append, in sectors */
+> +	u32			append_offset;
+>  };
+>  
+>  struct io_connect {
+> @@ -541,6 +543,7 @@ enum {
+>  	REQ_F_NO_FILE_TABLE_BIT,
+>  	REQ_F_QUEUE_TIMEOUT_BIT,
+>  	REQ_F_WORK_INITIALIZED_BIT,
+> +	REQ_F_ZONE_APPEND_BIT,
+>  
+>  	/* not a real bit, just to check we're not overflowing the space */
+>  	__REQ_F_LAST_BIT,
+> @@ -598,6 +601,8 @@ enum {
+>  	REQ_F_QUEUE_TIMEOUT	= BIT(REQ_F_QUEUE_TIMEOUT_BIT),
+>  	/* io_wq_work is initialized */
+>  	REQ_F_WORK_INITIALIZED	= BIT(REQ_F_WORK_INITIALIZED_BIT),
+> +	/* to return zone relative offset for zone append*/
+> +	REQ_F_ZONE_APPEND	= BIT(REQ_F_ZONE_APPEND_BIT),
 
-Outside of saving an async jump, we can also do less prep work for
-these kinds of requests.
+Do we need a new flag? We can check for IOCB_ZONE_APPEND, flags are always
+close by in req->rw.kiocb.ki_flags. May require to be careful about not
+setting it for read, so not screwing buf select.
 
-Running dependent links from the task_work handler yields some nice
-performance benefits. As an example, examples/link-cp from the liburing
-repository uses read+write links to implement a copy operation. Without
-this patch, the a cache fold 4G file read from a VM runs in about
-3 seconds:
+>  };
+>  
+>  struct async_poll {
+> @@ -1745,6 +1750,8 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+>  
+>  		if (req->flags & REQ_F_BUFFER_SELECTED)
+>  			cflags = io_put_kbuf(req);
+> +		if (req->flags & REQ_F_ZONE_APPEND)
+> +			cflags = req->rw.append_offset;
+>  
+>  		__io_cqring_fill_event(req, req->result, cflags);
+>  		(*nr_events)++;
+> @@ -1943,7 +1950,7 @@ static inline void req_set_fail_links(struct io_kiocb *req)
+>  		req->flags |= REQ_F_FAIL_LINK;
+>  }
+>  
+> -static void io_complete_rw_common(struct kiocb *kiocb, long res)
+> +static void io_complete_rw_common(struct kiocb *kiocb, long res, long res2)
+>  {
+>  	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
+>  	int cflags = 0;
+> @@ -1953,8 +1960,14 @@ static void io_complete_rw_common(struct kiocb *kiocb, long res)
+>  
+>  	if (res != req->result)
+>  		req_set_fail_links(req);
+> +
+>  	if (req->flags & REQ_F_BUFFER_SELECTED)
+>  		cflags = io_put_kbuf(req);
+> +
+> +	/* use cflags to return zone append completion result */
+> +	if (req->flags & REQ_F_ZONE_APPEND)
+> +		cflags = res2;
+> +
+>  	__io_cqring_add_event(req, res, cflags);
+>  }
+>  
+> @@ -1962,7 +1975,7 @@ static void io_complete_rw(struct kiocb *kiocb, long res, long res2)
+>  {
+>  	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
+>  
+> -	io_complete_rw_common(kiocb, res);
+> +	io_complete_rw_common(kiocb, res, res2);
+>  	io_put_req(req);
+>  }
+>  
+> @@ -1975,6 +1988,9 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
+>  
+>  	if (res != req->result)
+>  		req_set_fail_links(req);
+> +	if (req->flags & REQ_F_ZONE_APPEND)
+> +		req->rw.append_offset = res2;
+> +
+>  	req->result = res;
+>  	if (res != -EAGAIN)
+>  		WRITE_ONCE(req->iopoll_completed, 1);
+> @@ -2127,6 +2143,9 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  	if (kiocb->ki_flags & IOCB_NOWAIT)
+>  		req->flags |= REQ_F_NOWAIT;
+>  
+> +	if (kiocb->ki_flags & IOCB_ZONE_APPEND)
+> +		req->flags |= REQ_F_ZONE_APPEND;
+> +
+>  	if (force_nonblock)
+>  		kiocb->ki_flags |= IOCB_NOWAIT;
+>  
+> @@ -2409,6 +2428,14 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+>  
+>  	opcode = req->opcode;
+>  	if (opcode == IORING_OP_READ_FIXED || opcode == IORING_OP_WRITE_FIXED) {
+> +		/*
+> +		 * fixed-buffers not supported for zone-append.
+> +		 * This check can be removed when block-layer starts
+> +		 * supporting append with iov_iter of bvec type
+> +		 */
+> +		if (req->flags == REQ_F_ZONE_APPEND)
 
-$ time examples/link-cp /data/file /dev/null
+s/==/&/
 
-real	0m2.986s
-user	0m0.051s
-sys	0m2.843s
+> +			return -EINVAL;
+> +
+>  		*iovec = NULL;
+>  		return io_import_fixed(req, rw, iter);
+>  	}
+> @@ -2704,6 +2731,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock)
+>  		req->rw.kiocb.ki_flags &= ~IOCB_NOWAIT;
+>  
+>  	req->result = 0;
+> +
 
-and a subsequent cache hot run looks like this:
+Extra \n
 
-$ time examples/link-cp /data/file /dev/null
-
-real	0m0.898s
-user	0m0.069s
-sys	0m0.797s
-
-With this patch in place, the cold case takes about 2.4 seconds:
-
-$ time examples/link-cp /data/file /dev/null
-
-real	0m2.400s
-user	0m0.020s
-sys	0m2.366s
-
-and the cache hot case looks like this:
-
-$ time examples/link-cp /data/file /dev/null
-
-real	0m0.676s
-user	0m0.010s
-sys	0m0.665s
-
-As expected, the (mostly) cache hot case yields the biggest improvement,
-running about 25% faster with this change, while the cache cold case
-yields about a 20% increase in performance. Outside of the performance
-increase, we're using less CPU as well, as we're not using the async
-offload threads at all for this anymore.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0bba12e4e559..389274a078c8 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -898,6 +898,7 @@ enum io_mem_account {
- static void io_wq_submit_work(struct io_wq_work **workptr);
- static void io_cqring_fill_event(struct io_kiocb *req, long res);
- static void io_put_req(struct io_kiocb *req);
-+static void io_double_put_req(struct io_kiocb *req);
- static void __io_double_put_req(struct io_kiocb *req);
- static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req);
- static void io_queue_linked_timeout(struct io_kiocb *req);
-@@ -951,6 +952,34 @@ static void __io_put_req_task(struct io_kiocb *req)
- 		put_task_struct(req->task);
- }
- 
-+static void io_sq_thread_drop_mm(struct io_ring_ctx *ctx)
-+{
-+	struct mm_struct *mm = current->mm;
-+
-+	if (mm) {
-+		kthread_unuse_mm(mm);
-+		mmput(mm);
-+	}
-+}
-+
-+static int io_sq_thread_acquire_mm(struct io_ring_ctx *ctx,
-+				   struct io_kiocb *req)
-+{
-+	if (io_op_defs[req->opcode].needs_mm && !current->mm) {
-+		if (unlikely(!mmget_not_zero(ctx->sqo_mm)))
-+			return -EFAULT;
-+		kthread_use_mm(ctx->sqo_mm);
-+	}
-+
-+	return 0;
-+}
-+
-+static inline void req_set_fail_links(struct io_kiocb *req)
-+{
-+	if ((req->flags & (REQ_F_LINK | REQ_F_HARDLINK)) == REQ_F_LINK)
-+		req->flags |= REQ_F_FAIL_LINK;
-+}
-+
- static void io_file_put_work(struct work_struct *work);
- 
- /*
-@@ -1664,6 +1693,64 @@ static void io_req_find_next(struct io_kiocb *req, struct io_kiocb **nxt)
- 	}
- }
- 
-+static void __io_req_task_cancel(struct io_kiocb *req, int error)
-+{
-+	struct io_ring_ctx *ctx = req->ctx;
-+
-+	spin_lock_irq(&ctx->completion_lock);
-+	io_cqring_fill_event(req, error);
-+	io_commit_cqring(ctx);
-+	spin_unlock_irq(&ctx->completion_lock);
-+
-+	io_cqring_ev_posted(ctx);
-+	req_set_fail_links(req);
-+	io_double_put_req(req);
-+}
-+
-+static void io_req_task_cancel(struct callback_head *cb)
-+{
-+	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
-+
-+	__io_req_task_cancel(req, -ECANCELED);
-+}
-+
-+static void __io_req_task_submit(struct io_kiocb *req)
-+{
-+	struct io_ring_ctx *ctx = req->ctx;
-+
-+	__set_current_state(TASK_RUNNING);
-+	if (!io_sq_thread_acquire_mm(ctx, req)) {
-+		mutex_lock(&ctx->uring_lock);
-+		__io_queue_sqe(req, NULL, NULL);
-+		mutex_unlock(&ctx->uring_lock);
-+	} else {
-+		__io_req_task_cancel(req, -EFAULT);
-+	}
-+}
-+
-+static void io_req_task_submit(struct callback_head *cb)
-+{
-+	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
-+
-+	__io_req_task_submit(req);
-+}
-+
-+static void io_req_task_queue(struct io_kiocb *req)
-+{
-+	struct task_struct *tsk = req->task;
-+	int ret;
-+
-+	init_task_work(&req->task_work, io_req_task_submit);
-+
-+	ret = task_work_add(tsk, &req->task_work, true);
-+	if (unlikely(ret)) {
-+		init_task_work(&req->task_work, io_req_task_cancel);
-+		tsk = io_wq_get_task(req->ctx->io_wq);
-+		task_work_add(tsk, &req->task_work, true);
-+	}
-+	wake_up_process(tsk);
-+}
-+
- static void io_free_req(struct io_kiocb *req)
- {
- 	struct io_kiocb *nxt = NULL;
-@@ -1671,8 +1758,12 @@ static void io_free_req(struct io_kiocb *req)
- 	io_req_find_next(req, &nxt);
- 	__io_free_req(req);
- 
--	if (nxt)
--		io_queue_async_work(nxt);
-+	if (nxt) {
-+		if (nxt->flags & REQ_F_WORK_INITIALIZED)
-+			io_queue_async_work(nxt);
-+		else
-+			io_req_task_queue(nxt);
-+	}
- }
- 
- static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
-@@ -2013,12 +2104,6 @@ static void kiocb_end_write(struct io_kiocb *req)
- 	file_end_write(req->file);
- }
- 
--static inline void req_set_fail_links(struct io_kiocb *req)
--{
--	if ((req->flags & (REQ_F_LINK | REQ_F_HARDLINK)) == REQ_F_LINK)
--		req->flags |= REQ_F_FAIL_LINK;
--}
--
- static void io_complete_rw_common(struct kiocb *kiocb, long res,
- 				  struct io_comp_state *cs)
- {
-@@ -2035,35 +2120,6 @@ static void io_complete_rw_common(struct kiocb *kiocb, long res,
- 	__io_req_complete(req, res, cflags, cs);
- }
- 
--static void io_sq_thread_drop_mm(struct io_ring_ctx *ctx)
--{
--	struct mm_struct *mm = current->mm;
--
--	if (mm) {
--		kthread_unuse_mm(mm);
--		mmput(mm);
--	}
--}
--
--static int __io_sq_thread_acquire_mm(struct io_ring_ctx *ctx)
--{
--	if (!current->mm) {
--		if (unlikely(!mmget_not_zero(ctx->sqo_mm)))
--			return -EFAULT;
--		kthread_use_mm(ctx->sqo_mm);
--	}
--
--	return 0;
--}
--
--static int io_sq_thread_acquire_mm(struct io_ring_ctx *ctx,
--				   struct io_kiocb *req)
--{
--	if (!io_op_defs[req->opcode].needs_mm)
--		return 0;
--	return __io_sq_thread_acquire_mm(ctx);
--}
--
- #ifdef CONFIG_BLOCK
- static bool io_resubmit_prep(struct io_kiocb *req, int error)
- {
-@@ -2811,20 +2867,6 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	return 0;
- }
- 
--static void __io_async_buf_error(struct io_kiocb *req, int error)
--{
--	struct io_ring_ctx *ctx = req->ctx;
--
--	spin_lock_irq(&ctx->completion_lock);
--	io_cqring_fill_event(req, error);
--	io_commit_cqring(ctx);
--	spin_unlock_irq(&ctx->completion_lock);
--
--	io_cqring_ev_posted(ctx);
--	req_set_fail_links(req);
--	io_double_put_req(req);
--}
--
- static void io_async_buf_cancel(struct callback_head *cb)
- {
- 	struct io_async_rw *rw;
-@@ -2832,27 +2874,18 @@ static void io_async_buf_cancel(struct callback_head *cb)
- 
- 	rw = container_of(cb, struct io_async_rw, task_work);
- 	req = rw->wpq.wait.private;
--	__io_async_buf_error(req, -ECANCELED);
-+	__io_req_task_cancel(req, -ECANCELED);
- }
- 
- static void io_async_buf_retry(struct callback_head *cb)
- {
- 	struct io_async_rw *rw;
--	struct io_ring_ctx *ctx;
- 	struct io_kiocb *req;
- 
- 	rw = container_of(cb, struct io_async_rw, task_work);
- 	req = rw->wpq.wait.private;
--	ctx = req->ctx;
- 
--	__set_current_state(TASK_RUNNING);
--	if (!__io_sq_thread_acquire_mm(ctx)) {
--		mutex_lock(&ctx->uring_lock);
--		__io_queue_sqe(req, NULL, NULL);
--		mutex_unlock(&ctx->uring_lock);
--	} else {
--		__io_async_buf_error(req, -EFAULT);
--	}
-+	__io_req_task_submit(req);
- }
- 
- static int io_async_buf_func(struct wait_queue_entry *wait, unsigned mode,
-@@ -5218,22 +5251,24 @@ static int io_files_update(struct io_kiocb *req, bool force_nonblock,
- }
- 
- static int io_req_defer_prep(struct io_kiocb *req,
--			     const struct io_uring_sqe *sqe)
-+			     const struct io_uring_sqe *sqe, bool for_async)
- {
- 	ssize_t ret = 0;
- 
- 	if (!sqe)
- 		return 0;
- 
--	io_req_init_async(req);
-+	if (for_async) {
-+		io_req_init_async(req);
- 
--	if (io_op_defs[req->opcode].file_table) {
--		ret = io_grab_files(req);
--		if (unlikely(ret))
--			return ret;
--	}
-+		if (io_op_defs[req->opcode].file_table) {
-+			ret = io_grab_files(req);
-+			if (unlikely(ret))
-+				return ret;
-+		}
- 
--	io_req_work_grab_env(req, &io_op_defs[req->opcode]);
-+		io_req_work_grab_env(req, &io_op_defs[req->opcode]);
-+	}
- 
- 	switch (req->opcode) {
- 	case IORING_OP_NOP:
-@@ -5347,7 +5382,7 @@ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (!req->io) {
- 		if (io_alloc_async_ctx(req))
- 			return -EAGAIN;
--		ret = io_req_defer_prep(req, sqe);
-+		ret = io_req_defer_prep(req, sqe, true);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -5966,7 +6001,7 @@ static void io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 			ret = -EAGAIN;
- 			if (io_alloc_async_ctx(req))
- 				goto fail_req;
--			ret = io_req_defer_prep(req, sqe);
-+			ret = io_req_defer_prep(req, sqe, true);
- 			if (unlikely(ret < 0))
- 				goto fail_req;
- 		}
-@@ -6022,13 +6057,14 @@ static int io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		if (io_alloc_async_ctx(req))
- 			return -EAGAIN;
- 
--		ret = io_req_defer_prep(req, sqe);
-+		ret = io_req_defer_prep(req, sqe, false);
- 		if (ret) {
- 			/* fail even hard links since we don't submit */
- 			head->flags |= REQ_F_FAIL_LINK;
- 			return ret;
- 		}
- 		trace_io_uring_link(ctx, req, head);
-+		io_get_req_task(req);
- 		list_add_tail(&req->link_list, &head->link_list);
- 
- 		/* last request of a link, enqueue the link */
-@@ -6048,7 +6084,7 @@ static int io_submit_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 			if (io_alloc_async_ctx(req))
- 				return -EAGAIN;
- 
--			ret = io_req_defer_prep(req, sqe);
-+			ret = io_req_defer_prep(req, sqe, true);
- 			if (ret)
- 				req->flags |= REQ_F_FAIL_LINK;
- 			*link = req;
+>  	io_size = ret;
+>  	if (req->flags & REQ_F_LINK_HEAD)
+>  		req->result = io_size;
+> 
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

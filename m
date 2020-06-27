@@ -2,110 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8196920C0F1
-	for <lists+io-uring@lfdr.de>; Sat, 27 Jun 2020 13:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC00220C2CC
+	for <lists+io-uring@lfdr.de>; Sat, 27 Jun 2020 17:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbgF0LGt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 27 Jun 2020 07:06:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35420 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbgF0LGt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 27 Jun 2020 07:06:49 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12C89C03E979
-        for <io-uring@vger.kernel.org>; Sat, 27 Jun 2020 04:06:49 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id a6so11896930wrm.4
-        for <io-uring@vger.kernel.org>; Sat, 27 Jun 2020 04:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=oQpUyKwzhFyll4n64/46LXuxst6j/+b4hr4pa9KRvmo=;
-        b=Je8gPpdzAllTEEWWtgYd2qVFHcxgbLshSUraJKpUQttutCOhlLyJYCd3da/LsmRl8d
-         gi16hvOQSPVDZK4LcEbBcHEBesBoa5W0v4eeEhZK16xAsAmA5dIHrfSIgn4O5QFeFnuT
-         6bo3b82nxpJGI1R8e9QKHcp0NKkG3JMIbC882YpFkwSeWhqZmgtzBF5LIaLNN5HYtCoJ
-         eQU8YySNLtO0OB/Y+qVbapwdVev3g4xjnUAx5Oz4KRyJb9oJfc8BJtABosawduwrTML3
-         OUBjETBcfldf7z7SwEQnHGCQOY49Sp5+P7bKfiwMZYkUwB5BzuwmJJhS0p25Ir+0PMtl
-         aodQ==
+        id S1725882AbgF0P1N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 27 Jun 2020 11:27:13 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40749 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725864AbgF0P1N (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 27 Jun 2020 11:27:13 -0400
+Received: by mail-pl1-f194.google.com with SMTP id x11so5405227plo.7
+        for <io-uring@vger.kernel.org>; Sat, 27 Jun 2020 08:27:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oQpUyKwzhFyll4n64/46LXuxst6j/+b4hr4pa9KRvmo=;
-        b=JWaqx36s4BYSXaT632w2jgtflKYsZ9j0sJ6FwYrxzPLraaTQ8zcrl5VNxMsKa2U/hG
-         RRRvqYmUaG5MHyG8Ll63HSM5l8oUDGt6vw/Yoa8lVqpgspfstsJyv2YwrsKU6wfogyaS
-         ez7vkLM5TPBnTv6KU/1cjPQU0AwX7QeCbfKjxtkzy5vITCrVOIBzryIDI9ewHoxOMzHx
-         Zq7y1CMNRHLZSwCdGfPOLX1Ag5frPuv6QC3yJFHArFrznZqAc7Rz9BHNvbTn6yiP4Vck
-         q5IC26TorrWDprXuPNtGXZOPyUyytgAmJa1TV07LR+P3nREiPpCpvPNER55oD7HMpvVh
-         CX4w==
-X-Gm-Message-State: AOAM533YsCtJA9p1+vYvoJZB2b0LD4W9AH1hKHZqsiQ243FYVbtycEqF
-        DcQYB3ahhxzyXdSiQD7EYq8=
-X-Google-Smtp-Source: ABdhPJxX7jLLlpy1qG6CbHU86K9Z4cLe6kT1OYdMeqDq01toYpYv0yo3UPERhzBsq8TVJO+thROtKQ==
-X-Received: by 2002:adf:dd4a:: with SMTP id u10mr8063947wrm.169.1593256007806;
-        Sat, 27 Jun 2020 04:06:47 -0700 (PDT)
-Received: from localhost.localdomain ([5.100.193.85])
-        by smtp.gmail.com with ESMTPSA id x1sm14706721wrp.10.2020.06.27.04.06.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jun 2020 04:06:47 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 5/5] io_ring: fix req->work corruption
-Date:   Sat, 27 Jun 2020 14:04:59 +0300
-Message-Id: <dcf47f69e4973ac76af8bdbd9aed0892912943d0.1593253742.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1593253742.git.asml.silence@gmail.com>
-References: <cover.1593253742.git.asml.silence@gmail.com>
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=w2UD5eOgq5L0+Hy28v4wMHM4jLWqD7aScJcZP8wk/NA=;
+        b=dkPIR05haeAJxzbvOdRpZsx/Vn6J6yzhcyjiGRhPoH1McN64ie7XZHcJ4BVsFZjB9X
+         GjXCYzJz+wpgP6oy9gku+tg+ykEBwKgUWxtsllw5TVKE3ylBqUBlPbD3175ghy3nO+Cc
+         KKu0etuIAPzH3Rdzqf0IFFUjGxw4WQkGmMoC4ahGB1l+yQ/50KeVGR33HO8LbjstXAdq
+         sAsMUFX32yp9AXyI5Nw5ZIXfB6zoP5noWAF0pAOe0bObSrmGu8x7LBSDVcbsnoYqaD6X
+         zLRBKBnhGbK5QwpIhkBRiw5an6lzAdyvqy3waNuF+FKkZiaRG7vKRpuXPCCHfNhm1fBb
+         vT/A==
+X-Gm-Message-State: AOAM531DOA0ZmlBo4O1eQp6Iz/TOtix/QSPPrAGbn+skRCQCpOTdaAZV
+        uAPbBEgsuEVcAFP7G+1t1E6forYN
+X-Google-Smtp-Source: ABdhPJwurDIuWyBthyng46DGxaXUtO51+YqULfmfnbJJc5FEJ2QuxdbQJDGqHzJ7I6DWrcyqNSs6mA==
+X-Received: by 2002:a17:902:c411:: with SMTP id k17mr6534684plk.165.1593271632072;
+        Sat, 27 Jun 2020 08:27:12 -0700 (PDT)
+Received: from [192.168.50.147] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
+        by smtp.gmail.com with ESMTPSA id bx23sm8910748pjb.47.2020.06.27.08.27.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 Jun 2020 08:27:10 -0700 (PDT)
+Subject: Re: [RFC PATCH] Fix usage of stdatomic.h for C++ compilers
+To:     Hrvoje Zeba <zeba.hrvoje@gmail.com>, io-uring@vger.kernel.org
+References: <20200627055515.764165-1-zeba.hrvoje@gmail.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
+ mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
+ LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
+ fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
+ AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
+ 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
+ AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
+ igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
+ Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
+ jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
+ macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
+ CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
+ RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
+ PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
+ eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
+ lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
+ T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
+ ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
+ CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
+ oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
+ //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
+ mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
+ goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
+Message-ID: <b83a2cc5-31ea-9782-1eeb-70b8537f92c3@acm.org>
+Date:   Sat, 27 Jun 2020 08:27:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200627055515.764165-1-zeba.hrvoje@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-req->work and req->task_work are in union, so io_req_task_queue()
-screws everything that was in work. De-union them for now.
+On 2020-06-26 22:55, Hrvoje Zeba wrote:
+> Since b9c0bf79aa8, liburing.h doesn't compile with C++ compilers. C++
+> provides it's own <atomic> interface and <stdatomic.h> can't be used. This
+> is a minimal change to use <atomic> variants where needed.
 
-[  704.367253] BUG: unable to handle page fault for address:
-	ffffffffaf7330d0
-[  704.367256] #PF: supervisor write access in kernel mode
-[  704.367256] #PF: error_code(0x0003) - permissions violation
-[  704.367261] CPU: 6 PID: 1654 Comm: io_wqe_worker-0 Tainted: G
-I       5.8.0-rc2-00038-ge28d0bdc4863-dirty #498
-[  704.367265] RIP: 0010:_raw_spin_lock+0x1e/0x36
-...
-[  704.367276]  __alloc_fd+0x35/0x150
-[  704.367279]  __get_unused_fd_flags+0x25/0x30
-[  704.367280]  io_openat2+0xcb/0x1b0
-[  704.367283]  io_issue_sqe+0x36a/0x1320
-[  704.367294]  io_wq_submit_work+0x58/0x160
-[  704.367295]  io_worker_handle_work+0x2a3/0x430
-[  704.367296]  io_wqe_worker+0x2a0/0x350
-[  704.367301]  kthread+0x136/0x180
-[  704.367304]  ret_from_fork+0x22/0x30
+I was not aware that liburing supports C++ compilers?
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>  struct io_uring_cq {
+> -	unsigned *khead;
+> -	unsigned *ktail;
+> +	atomic_uint *khead;
+> +	atomic_uint *ktail;
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e2b5f51ebb30..bf236ba10601 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -668,12 +668,12 @@ struct io_kiocb {
- 		 * restore the work, if needed.
- 		 */
- 		struct {
--			struct callback_head	task_work;
- 			struct hlist_node	hash_node;
- 			struct async_poll	*apoll;
- 		};
- 		struct io_wq_work	work;
- 	};
-+	struct callback_head	task_work;
- };
- 
- #define IO_IOPOLL_BATCH			8
--- 
-2.24.0
+I think this is the wrong way to make liburing again compatible with
+C++ compilers. Changing these data types causes all dereferences of
+these pointers to be translated by the compiler into sequentially
+consistent atomic instructions. I expect this patch to have a
+negative impact on the performance of liburing.
 
+Bart.

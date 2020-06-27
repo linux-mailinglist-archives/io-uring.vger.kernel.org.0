@@ -2,85 +2,142 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C19EF20BD9F
-	for <lists+io-uring@lfdr.de>; Sat, 27 Jun 2020 03:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD09E20BEE8
+	for <lists+io-uring@lfdr.de>; Sat, 27 Jun 2020 07:55:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbgF0Bql (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Jun 2020 21:46:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34928 "EHLO
+        id S1725900AbgF0FzV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 27 Jun 2020 01:55:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbgF0Bql (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Jun 2020 21:46:41 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF58C03E979
-        for <io-uring@vger.kernel.org>; Fri, 26 Jun 2020 18:46:41 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id a127so5393945pfa.12
-        for <io-uring@vger.kernel.org>; Fri, 26 Jun 2020 18:46:41 -0700 (PDT)
+        with ESMTP id S1725885AbgF0FzV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 27 Jun 2020 01:55:21 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55ACBC03E979
+        for <io-uring@vger.kernel.org>; Fri, 26 Jun 2020 22:55:21 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id z63so10823258qkb.8
+        for <io-uring@vger.kernel.org>; Fri, 26 Jun 2020 22:55:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=+Fl9/p1pW4eUsRcsYTl5NIgKHt8gl0+TvFzz5VvaK48=;
-        b=02bU+Pn/U9ExWgoSYMuYzng1rROORWUAolR7MWBBnPzMdp5OGdRuG5DfpyJATB2ECo
-         vFEY0zZK2CX6xhnPWh/iES6RV7WanH4Uvs8bu1NfeHManbNCbzKn1as2nrMhqX0neuzX
-         VJDaX9xDPop7GRsA1Z60E9xOekxfiC1UOvSEpJH7OUBUNMpjFggXd3XEQb3YstM4qa1V
-         QNzo+wRxiDMVyjE+On/9To5hTVwsf1GVSysy3V2JukU2d8BH+1++OW533NAiMzy8lX3f
-         Iwroe38ZLsyuvAp2EbSMF+K5oeYQwvo9sJ5B07VnQLLmwLk1RnIZ7V9pOXDd1v/gmUfJ
-         bgQQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ivV+a2H2rkY8BwXyYD7rQ9Eiso5z/PFlGSHIBM/9rRE=;
+        b=UaX3L9ML2uzRwEt7OPRh9f1iUwYoYqXfPlG9iRSMRRG4hCuJZaD9/4OEvB0vv5QqVF
+         BxwID2zgvYEm96VUML+G43xJ0OJsN+4k5X63RQEWUdca6tKxT4ZCXPFKwEtDl5Sx2K4u
+         u17YvKfsaP4J4kIFKegVziqR00Fiw2Gv0WqblL0iydyB+HX3/ODajCpVifJg8oyhBjSu
+         Vcbn6QjEClCi9UijoihtO1jUDFa5SceDsYv298OhQwu8D7XW+B06gV7HLg52UcqrGZu6
+         RVaxlhlpBDKC6ferbjUGJ9fyP9ICnnuv/+1V7YoOJgjGn6xNMQIJ24+rMstFzqT1Fhdy
+         jcGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+Fl9/p1pW4eUsRcsYTl5NIgKHt8gl0+TvFzz5VvaK48=;
-        b=QNTLjNiUsymvH9mOQcSAiRDsm829qQRQW0hU7UBpYEbv7ToP0eWN3qqQpixqwMAdVP
-         6W2AK85xl/Hg6Xbu1Zv84S92tbcgcPZSSlWa2e2MzU6Rc5duTeh1rPPLLORQez54fUYr
-         gEhU+gBCDFf6vDHGQRKs0BDks95Bb0TFfvwe4leXF/ljpBu5G2Cyr4EkfeWhFXK31Lzw
-         ABpaesBUVj+wKkvuHBliwlV2a5qdhBEMCgoC55Htt2hgyII5waXVIVz2OKr7o1aswW5H
-         pGFL2Kb7i+Mj+vGGFs+iPWQ5KCyShBR/nt7XKlvLAomvIgjJ0TdvBabEUU1O6UXx8but
-         Wlxw==
-X-Gm-Message-State: AOAM532jhac60I5rd1RR9yRdbssQ74Je88nrwP3jaCLsl29PtfvxHQV4
-        9NRgA7C1yMro2SUeuYF7XcaGCxRyA2EW/A==
-X-Google-Smtp-Source: ABdhPJwWUwo1S3UflBqAZv2/EMg+9BAisj8FqREik2ihn9oKFVy2QdvHCEl53TXgSjSli1j/tVIywA==
-X-Received: by 2002:a63:3c41:: with SMTP id i1mr1400088pgn.349.1593222400583;
-        Fri, 26 Jun 2020 18:46:40 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id y136sm27334607pfg.55.2020.06.26.18.46.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jun 2020 18:46:40 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: fix function args for !CONFIG_NET
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org
-References: <c3db950b-9062-11bd-97e4-afe7c9bf2f27@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <bd3919c3-388c-7fd6-e03d-9c1991b089b7@kernel.dk>
-Date:   Fri, 26 Jun 2020 19:46:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        bh=ivV+a2H2rkY8BwXyYD7rQ9Eiso5z/PFlGSHIBM/9rRE=;
+        b=szwxICp3p69G9nLMYcUz+23cyoNo9UkAno7pKc3IxKs5MKK9x2xUGfSqAfiyS3ImRb
+         Jw2GcJSssy1tOksj1khzoPmUGcT1sjdD5UQJskWjCC3c3gZo8FtoNLhit2IVLc64Mxer
+         CPAvyqKK/3iJQ3cqr6EL2E/t5Zvg70xQqMrFvSvRiaG6Dqwo3lgx5RWuq/s4GSw0Y5xJ
+         0y9f/PBpsJuCYziTU58CE8ISBml/XLU8SbrhSx9a1eT29rxN/pn49Ew4ln9S0+pCpLa9
+         hrBlG9zDuJWIJnAwF0FPMay/Lu8Fc/lCtdXFnDDFRfmwYWW1iS/mEL17CNWHAcfvg2lg
+         SCqQ==
+X-Gm-Message-State: AOAM530LZenr3SEXSB/iGdFNQGVIx/KeJ0vaDSDbmsozIjgivj5qv8QU
+        +PTncjIHsXDFVa0tZBYVYdbxk4Us0YM=
+X-Google-Smtp-Source: ABdhPJxBiJ4D9C0VGPTin0KT8A/vBJ3TaFeoX9fYb97FTciLHqLHxeyeS3NFlXVVvkD4Dz2y7ogkPg==
+X-Received: by 2002:a37:45d8:: with SMTP id s207mr6194164qka.140.1593237318803;
+        Fri, 26 Jun 2020 22:55:18 -0700 (PDT)
+Received: from littletwo.lan ([2604:6000:150e:c284::e96])
+        by smtp.gmail.com with ESMTPSA id g4sm9889224qka.97.2020.06.26.22.55.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jun 2020 22:55:18 -0700 (PDT)
+From:   Hrvoje Zeba <zeba.hrvoje@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Hrvoje Zeba <zeba.hrvoje@gmail.com>
+Subject: [RFC PATCH] Fix usage of stdatomic.h for C++ compilers
+Date:   Sat, 27 Jun 2020 01:55:15 -0400
+Message-Id: <20200627055515.764165-1-zeba.hrvoje@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <c3db950b-9062-11bd-97e4-afe7c9bf2f27@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/26/20 5:32 PM, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix build errors when CONFIG_NET is not set/enabled:
-> 
-> ../fs/io_uring.c:5472:10: error: too many arguments to function ‘io_sendmsg’
-> ../fs/io_uring.c:5474:10: error: too many arguments to function ‘io_send’
-> ../fs/io_uring.c:5484:10: error: too many arguments to function ‘io_recvmsg’
-> ../fs/io_uring.c:5486:10: error: too many arguments to function ‘io_recv’
-> ../fs/io_uring.c:5510:9: error: too many arguments to function ‘io_accept’
-> ../fs/io_uring.c:5518:9: error: too many arguments to function ‘io_connect’
+Since b9c0bf79aa8, liburing.h doesn't compile with C++ compilers. C++
+provides it's own <atomic> interface and <stdatomic.h> can't be used. This
+is a minimal change to use <atomic> variants where needed.
 
-Thanks Randy, applied.
+Signed-off-by: Hrvoje Zeba <zeba.hrvoje@gmail.com>
+---
+ src/include/liburing.h         | 18 ++++++++++--------
+ src/include/liburing/barrier.h |  8 ++++++++
+ 2 files changed, 18 insertions(+), 8 deletions(-)
 
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index c9034fc..2bb6efd 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -2,10 +2,6 @@
+ #ifndef LIB_URING_H
+ #define LIB_URING_H
+ 
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+ #include <sys/socket.h>
+ #include <sys/uio.h>
+ #include <sys/stat.h>
+@@ -15,9 +11,15 @@ extern "C" {
+ #include <inttypes.h>
+ #include <time.h>
+ #include <linux/swab.h>
++
++#include "liburing/barrier.h"
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ #include "liburing/compat.h"
+ #include "liburing/io_uring.h"
+-#include "liburing/barrier.h"
+ 
+ /*
+  * Library interface to io_uring
+@@ -40,11 +42,11 @@ struct io_uring_sq {
+ };
+ 
+ struct io_uring_cq {
+-	unsigned *khead;
+-	unsigned *ktail;
++	atomic_uint *khead;
++	atomic_uint *ktail;
+ 	unsigned *kring_mask;
+ 	unsigned *kring_entries;
+-	unsigned *kflags;
++	atomic_uint *kflags;
+ 	unsigned *koverflow;
+ 	struct io_uring_cqe *cqes;
+ 
+diff --git a/src/include/liburing/barrier.h b/src/include/liburing/barrier.h
+index c8aa421..8f422eb 100644
+--- a/src/include/liburing/barrier.h
++++ b/src/include/liburing/barrier.h
+@@ -2,7 +2,15 @@
+ #ifndef LIBURING_BARRIER_H
+ #define LIBURING_BARRIER_H
+ 
++#ifdef __cplusplus
++#include <atomic>
++using std::atomic_uint;
++using std::memory_order_release;
++using std::memory_order_acquire;
++using std::memory_order_relaxed;
++#else
+ #include <stdatomic.h>
++#endif
+ 
+ /*
+ From the kernel documentation file refcount-vs-atomic.rst:
 -- 
-Jens Axboe
+2.27.0
 

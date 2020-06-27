@@ -2,143 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3890520BD9D
-	for <lists+io-uring@lfdr.de>; Sat, 27 Jun 2020 03:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C19EF20BD9F
+	for <lists+io-uring@lfdr.de>; Sat, 27 Jun 2020 03:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725997AbgF0BpT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Jun 2020 21:45:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34718 "EHLO
+        id S1726446AbgF0Bql (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Jun 2020 21:46:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbgF0BpS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Jun 2020 21:45:18 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C228EC03E979
-        for <io-uring@vger.kernel.org>; Fri, 26 Jun 2020 18:45:18 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id 35so4954497ple.0
-        for <io-uring@vger.kernel.org>; Fri, 26 Jun 2020 18:45:18 -0700 (PDT)
+        with ESMTP id S1726101AbgF0Bql (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Jun 2020 21:46:41 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF58C03E979
+        for <io-uring@vger.kernel.org>; Fri, 26 Jun 2020 18:46:41 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id a127so5393945pfa.12
+        for <io-uring@vger.kernel.org>; Fri, 26 Jun 2020 18:46:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=QPXEgo7J4Z9e1G1GN/SUEoXmwDaKN1robUkkgHLpseI=;
-        b=sv0ahYkwi/L434/tgVXF9dHBkS8kquKF3FF4JZSBkBegXeqM6fNUbzeyDP58W6CLM6
-         rK46Vy8pmMnvoQVvYA8kuhfzc8d321uUP02g75BdFMrE2L8x7ulhzDTos9ynzuq8WuDW
-         lxvkiiwJshY1VqrcpU9sEYiHtx/jJMIFBr7xBr8QxgunMYSZSmYtc2qPs8r72iEf2Lkf
-         3UXcOn9o3NZFVQVt3OECiC376C39foZcYcr9kRmERVqzhkIOxD1/xajiY7MZYW8MNqKv
-         FFl4zeH3BaPeBSB9RafR0qH6WU8OFi1A78nKKJSMv0K1BPlGdxqde6ODjbg9BaIbIj/6
-         yilQ==
+        bh=+Fl9/p1pW4eUsRcsYTl5NIgKHt8gl0+TvFzz5VvaK48=;
+        b=02bU+Pn/U9ExWgoSYMuYzng1rROORWUAolR7MWBBnPzMdp5OGdRuG5DfpyJATB2ECo
+         vFEY0zZK2CX6xhnPWh/iES6RV7WanH4Uvs8bu1NfeHManbNCbzKn1as2nrMhqX0neuzX
+         VJDaX9xDPop7GRsA1Z60E9xOekxfiC1UOvSEpJH7OUBUNMpjFggXd3XEQb3YstM4qa1V
+         QNzo+wRxiDMVyjE+On/9To5hTVwsf1GVSysy3V2JukU2d8BH+1++OW533NAiMzy8lX3f
+         Iwroe38ZLsyuvAp2EbSMF+K5oeYQwvo9sJ5B07VnQLLmwLk1RnIZ7V9pOXDd1v/gmUfJ
+         bgQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=QPXEgo7J4Z9e1G1GN/SUEoXmwDaKN1robUkkgHLpseI=;
-        b=II74BjZwYL/dRhZrQj4sLbkuUUA6ClSwcth2Fr84gYkWwOcL++8Wr6fSByexBYOPpc
-         sPpGKx+Kp9dX/DJzIdVOhXeN4Oz9bFrR3kbfYxY7BtcO8vtvFuOVqBdqD+WXNXIPSnsL
-         9DKy/Ai/S7V3CL9cSnS9oYOkcbgpKkavX8S4nuVsWq/tQLRdT0t8fb2UdueXFZp423jx
-         dYcwauiqRoLb5XDZtiGNwD0tUt/rvTE7ZfZd/Ph5VpGFjyyFvqO/wJkG945h6GzWz36d
-         lL+Gy3euBxFiTSAZJq7KFU524QZqH6fhY5+nntWnnO+5NucIuR+efyUJF7N686y+bFuf
-         IrRA==
-X-Gm-Message-State: AOAM530svW18ipwMPpelz4NrsWG1TLzDAE1ucudVVu1JuUD2jK40Knbj
-        5P7y3lIzqC8CiOcI0D1cPJpGSYQEe6OCmg==
-X-Google-Smtp-Source: ABdhPJy2ernnENTi/PwIGSIRyKHg9RHIEVTG7PxQvawj8+8gxXK/JXGXxlpUVThTu8LEOy8jeFNxkA==
-X-Received: by 2002:a17:90a:de0f:: with SMTP id m15mr5988971pjv.21.1593222317774;
-        Fri, 26 Jun 2020 18:45:17 -0700 (PDT)
+        bh=+Fl9/p1pW4eUsRcsYTl5NIgKHt8gl0+TvFzz5VvaK48=;
+        b=QNTLjNiUsymvH9mOQcSAiRDsm829qQRQW0hU7UBpYEbv7ToP0eWN3qqQpixqwMAdVP
+         6W2AK85xl/Hg6Xbu1Zv84S92tbcgcPZSSlWa2e2MzU6Rc5duTeh1rPPLLORQez54fUYr
+         gEhU+gBCDFf6vDHGQRKs0BDks95Bb0TFfvwe4leXF/ljpBu5G2Cyr4EkfeWhFXK31Lzw
+         ABpaesBUVj+wKkvuHBliwlV2a5qdhBEMCgoC55Htt2hgyII5waXVIVz2OKr7o1aswW5H
+         pGFL2Kb7i+Mj+vGGFs+iPWQ5KCyShBR/nt7XKlvLAomvIgjJ0TdvBabEUU1O6UXx8but
+         Wlxw==
+X-Gm-Message-State: AOAM532jhac60I5rd1RR9yRdbssQ74Je88nrwP3jaCLsl29PtfvxHQV4
+        9NRgA7C1yMro2SUeuYF7XcaGCxRyA2EW/A==
+X-Google-Smtp-Source: ABdhPJwWUwo1S3UflBqAZv2/EMg+9BAisj8FqREik2ihn9oKFVy2QdvHCEl53TXgSjSli1j/tVIywA==
+X-Received: by 2002:a63:3c41:: with SMTP id i1mr1400088pgn.349.1593222400583;
+        Fri, 26 Jun 2020 18:46:40 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id v28sm9733673pgc.44.2020.06.26.18.45.16
+        by smtp.gmail.com with ESMTPSA id y136sm27334607pfg.55.2020.06.26.18.46.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jun 2020 18:45:17 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: use task_work for links if possible
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <421c3b22-2619-a9a2-a76e-ed8251c7264c@kernel.dk>
- <f6ad4ae4-dc7a-1f39-d4da-40b5d6c04d04@gmail.com>
- <22c72f8a-e80d-67ea-4f89-264238e5810d@kernel.dk>
- <7bfac3fc-22be-0ec7-fb7e-4fa714091ba9@gmail.com>
+        Fri, 26 Jun 2020 18:46:40 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: fix function args for !CONFIG_NET
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org
+References: <c3db950b-9062-11bd-97e4-afe7c9bf2f27@infradead.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9f5cc1b3-637f-2caf-9808-1b11af46bfd3@kernel.dk>
-Date:   Fri, 26 Jun 2020 19:45:15 -0600
+Message-ID: <bd3919c3-388c-7fd6-e03d-9c1991b089b7@kernel.dk>
+Date:   Fri, 26 Jun 2020 19:46:38 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <7bfac3fc-22be-0ec7-fb7e-4fa714091ba9@gmail.com>
+In-Reply-To: <c3db950b-9062-11bd-97e4-afe7c9bf2f27@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/26/20 3:20 PM, Pavel Begunkov wrote:
->>>> +		tsk = io_wq_get_task(req->ctx->io_wq);
->>>> +		task_work_add(tsk, &req->task_work, true);
->>>> +	}
->>>> +	wake_up_process(tsk);
->>>> +}
->>>> +
->>>>  static void io_free_req(struct io_kiocb *req)
->>>>  {
->>>>  	struct io_kiocb *nxt = NULL;
->>>> @@ -1671,8 +1758,12 @@ static void io_free_req(struct io_kiocb *req)
->>>>  	io_req_find_next(req, &nxt);
->>>>  	__io_free_req(req);
->>>>  
->>>> -	if (nxt)
->>>> -		io_queue_async_work(nxt);
->>>> +	if (nxt) {
->>>> +		if (nxt->flags & REQ_F_WORK_INITIALIZED)
->>>> +			io_queue_async_work(nxt);
->>>
->>> Don't think it will work. E.g. io_close_prep() may have set
->>> REQ_F_WORK_INITIALIZED but without io_req_work_grab_env().
->>
->> This really doesn't change the existing path, it just makes sure we
->> don't do io_req_task_queue() on something that has already modified
->> ->work (and hence, ->task_work). This might miss cases where we have
->> only cleared it and done nothing else, but that just means we'll have
->> cases that we could potentially improve the effiency of down the line.
+On 6/26/20 5:32 PM, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> Before the patch it was always initialising linked reqs, and that would
-> work ok, if not this lazy grab_env().
+> Fix build errors when CONFIG_NET is not set/enabled:
 > 
-> E.g. req1 -> close_req
-> 
-> It calls, io_req_defer_prep(__close_req__, sqe, __false__)
-> which doesn't do grab_env() because of for_async=false,
-> but calls io_close_prep() which sets REQ_F_WORK_INITIALIZED.
-> 
-> Then, after completion of req1 it will follow added lines
-> 
-> if (nxt)
-> 	if (nxt->flags & REQ_F_WORK_INITIALIZED)
-> 		io_queue_async_work(nxt);
-> 
-> Ending up in
-> 
-> io_queue_async_work()
-> 	-> grab_env()
-> 
-> And that's who knows from which context.
-> E.g. req1 was an rw completed in an irq.
+> ../fs/io_uring.c:5472:10: error: too many arguments to function ‘io_sendmsg’
+> ../fs/io_uring.c:5474:10: error: too many arguments to function ‘io_send’
+> ../fs/io_uring.c:5484:10: error: too many arguments to function ‘io_recvmsg’
+> ../fs/io_uring.c:5486:10: error: too many arguments to function ‘io_recv’
+> ../fs/io_uring.c:5510:9: error: too many arguments to function ‘io_accept’
+> ../fs/io_uring.c:5518:9: error: too many arguments to function ‘io_connect’
 
-Hmm yes, good point, that is a problem. I don't have a good immediate
-solution for this. Do you have any suggestions on how best to handle
-this?
-
-> Not sure it's related, but fallocate shows the log below, and some
-> other tests hang the kernel as well.
-
-Yeah, that's indeed that very thing.
-
->> True, that could be false instead.
->>
->> Since these are just minor things, we can do a fix on top. I don't want
->> to reshuffle this unless I have to.
-> 
-> Agree, I have a pile on top myself.
-
-Fire away :-)
+Thanks Randy, applied.
 
 -- 
 Jens Axboe

@@ -2,43 +2,43 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6129120CA3F
-	for <lists+io-uring@lfdr.de>; Sun, 28 Jun 2020 21:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A05320CA40
+	for <lists+io-uring@lfdr.de>; Sun, 28 Jun 2020 21:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbgF1T6f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 28 Jun 2020 15:58:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41736 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbgF1T6f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Jun 2020 15:58:35 -0400
-Received: by mail-pg1-f194.google.com with SMTP id g67so6430687pgc.8
-        for <io-uring@vger.kernel.org>; Sun, 28 Jun 2020 12:58:35 -0700 (PDT)
+        id S1726747AbgF1T6g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 28 Jun 2020 15:58:36 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36415 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbgF1T6g (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Jun 2020 15:58:36 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 207so6788451pfu.3
+        for <io-uring@vger.kernel.org>; Sun, 28 Jun 2020 12:58:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=e6oDbF5oEUKuQYEHTfavhkKbL50NifOZc02/IWyqWtk=;
-        b=kPKxlwtFSS192alixH59ZFr/jFd9/Mic/XNJIQRX71SoyGzQUvs3/oEJJ7ygYjoehq
-         j90xyblCRFbAv0jY2FvSjVHn8yhbH30eQ3KqSvURDPvaRkL9A+Qwqhzpg8CTJkxsEclj
-         MP1FM7b9+p8NryWWaxRQeS0nTjvhIqxhUkOKjQo2mUX0BLtXk7t77QWuNYxyj/Xkfnaw
-         VSHyHfnlGXMQHFQ6nDlMbInNUwmgJ1KT1B+uCRBuu+8S4vQBtD5gXUgDU3HU9DR2nnR7
-         1zMKQf0MvAzVPXGKalLcUJ/aVuYFCR5k0/aWg1P8fKU8NJRIbmWzxABgmHn4SIfyDFPB
-         zwfA==
-X-Gm-Message-State: AOAM5314xbE+fMK6wiDkGf4ZbfFCWC8c6Qr97rLWuHkQAC62sb0ESJn2
-        B67YjT6PaPTWWhPoD5HVyF4QDvOd
-X-Google-Smtp-Source: ABdhPJzPJ3gjCohA31r1JlGe813Aygloejfk6MQ85EO+2idxwUg+qHEik1g6f5jziMryBIsJcJIOdQ==
-X-Received: by 2002:a63:6c1:: with SMTP id 184mr7745905pgg.262.1593374314599;
-        Sun, 28 Jun 2020 12:58:34 -0700 (PDT)
+        bh=mpSFLMmiikr7eEIZbxCFUVNoINE7Or/87VBtV4SC1FQ=;
+        b=oAFfgt3b6yHwIaEV3CBNv3NsT1y931VnFrDaGrTblhxjURv2huRKg3GLBQEkkP94qP
+         j75eodWgs1AG2/qVO7JOCqLBP40LMi8uUHWpusjcW5hQDN1hDlOs4KlUGzuuBz6UJKQW
+         EcA3KkvKArFcnku7hmG6D0tIlgcvv07Yt65CWcSjLDgstKeT4dOB2y/f7ZXuaoFwSMGP
+         2idqxDRIlguEk4iKaJ5mfPU45dr8e6++x2FeALS8lw8YwR/6JfDxBgdQhIXUL5M2PRQF
+         d8g2vLU53XT9Te028YzBAk9uDH2VJ9At7HDwrQ42rI2nXx7iR/C0CBjfhzu+7umYRgmO
+         AR1A==
+X-Gm-Message-State: AOAM532ncsE5zet3ZWWbRi/A++6igiKo/0MM5bGSCVFx0/DmuQEyDLkv
+        cz3VrTUH5I7trP83COa6ujbu/7Sc
+X-Google-Smtp-Source: ABdhPJzKDdUKZ2JqM5y4WE7D5F89z4FYcOiOuW18RejtjZPsrkEnUrZ/2j/U5GKFM96XnLkExpDyrA==
+X-Received: by 2002:a63:6741:: with SMTP id b62mr7411889pgc.58.1593374315905;
+        Sun, 28 Jun 2020 12:58:35 -0700 (PDT)
 Received: from localhost.localdomain (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
-        by smtp.gmail.com with ESMTPSA id d37sm1349394pgd.18.2020.06.28.12.58.33
+        by smtp.gmail.com with ESMTPSA id d37sm1349394pgd.18.2020.06.28.12.58.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jun 2020 12:58:33 -0700 (PDT)
+        Sun, 28 Jun 2020 12:58:35 -0700 (PDT)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH liburing 3/7] Make the liburing header files again compatible with C++
-Date:   Sun, 28 Jun 2020 12:58:19 -0700
-Message-Id: <20200628195823.18730-4-bvanassche@acm.org>
+Subject: [PATCH liburing 4/7] Add a C++ unit test
+Date:   Sun, 28 Jun 2020 12:58:20 -0700
+Message-Id: <20200628195823.18730-5-bvanassche@acm.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200628195823.18730-1-bvanassche@acm.org>
 References: <20200628195823.18730-1-bvanassche@acm.org>
@@ -49,124 +49,106 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Include <atomic> instead of <stdatomic.h> if built with a C++ compiler.
+Since the liburing header files support C++ compilers, add a C++ unit test.
+This helps to verify C++ compatibility of the liburing header files.
 
-Fixes: b9c0bf79aa87 ("src/include/liburing/barrier.h: Use C11 atomics")
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- src/include/liburing.h          |  8 +++----
- src/include/liburing/barrier.h  | 37 +++++++++++++++++++++++++++++++--
- src/include/liburing/io_uring.h |  8 +++++++
- 3 files changed, 47 insertions(+), 6 deletions(-)
+ test/Makefile       | 12 ++++++++++++
+ test/sq-full-cpp.cc | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
+ create mode 100644 test/sq-full-cpp.cc
 
-diff --git a/src/include/liburing.h b/src/include/liburing.h
-index c9034fc0df1b..76e2b854f957 100644
---- a/src/include/liburing.h
-+++ b/src/include/liburing.h
-@@ -2,10 +2,6 @@
- #ifndef LIB_URING_H
- #define LIB_URING_H
+diff --git a/test/Makefile b/test/Makefile
+index e103296fabdd..c80ad421a938 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -8,6 +8,7 @@ XCFLAGS =
+ override CFLAGS += -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare\
+ 	-D_GNU_SOURCE -D__SANE_USERSPACE_TYPES__ -L../src/ \
+ 	-I../src/include/ -include ../config-host.h
++CXXFLAGS += $(CFLAGS) -std=c++11
  
--#ifdef __cplusplus
--extern "C" {
--#endif
--
- #include <sys/socket.h>
- #include <sys/uio.h>
- #include <sys/stat.h>
-@@ -19,6 +15,10 @@ extern "C" {
- #include "liburing/io_uring.h"
- #include "liburing/barrier.h"
+ all_targets += poll poll-cancel ring-leak fsync io_uring_setup io_uring_register \
+ 	       io_uring_enter nop sq-full cq-full 35fa71a030ca-test \
+@@ -36,11 +37,18 @@ ifdef CONFIG_HAVE_STATX
+ all_targets += statx
+ endif
  
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
++ifdef CONFIG_HAVE_CXX
++all_targets += sq-full-cpp
++endif
 +
- /*
-  * Library interface to io_uring
-  */
-diff --git a/src/include/liburing/barrier.h b/src/include/liburing/barrier.h
-index 57324348466b..a4a59fb499d6 100644
---- a/src/include/liburing/barrier.h
-+++ b/src/include/liburing/barrier.h
-@@ -2,8 +2,6 @@
- #ifndef LIBURING_BARRIER_H
- #define LIBURING_BARRIER_H
+ all: $(all_targets)
  
--#include <stdatomic.h>
--
- /*
- From the kernel documentation file refcount-vs-atomic.rst:
+ %: %.c
+ 	$(QUIET_CC)$(CC) $(CFLAGS) -o $@ $< -luring $(XCFLAGS)
  
-@@ -23,6 +21,40 @@ after the acquire operation executes. This is implemented using
- :c:func:`smp_acquire__after_ctrl_dep`.
- */
- 
-+#ifdef __cplusplus
-+#include <atomic>
++%: %.cc
++	$(QUIET_CC)$(CXX) $(CXXFLAGS) -o $@ $< -luring $(XCFLAGS)
 +
-+template <typename T>
-+static inline void IO_URING_WRITE_ONCE(T &var, T val)
+ test_srcs := poll.c poll-cancel.c ring-leak.c fsync.c io_uring_setup.c \
+ 	io_uring_register.c io_uring_enter.c nop.c sq-full.c cq-full.c \
+ 	35fa71a030ca-test.c 917257daa0fe-test.c b19062a56726-test.c \
+@@ -63,6 +71,10 @@ ifdef CONFIG_HAVE_STATX
+ test_srcs += statx.c
+ endif
+ 
++ifdef CONFIG_HAVE_CXX
++test_srcs += sq-full-cpp
++endif
++
+ test_objs := $(patsubst %.c,%.ol,$(test_srcs))
+ 
+ 35fa71a030ca-test: XCFLAGS = -lpthread
+diff --git a/test/sq-full-cpp.cc b/test/sq-full-cpp.cc
+new file mode 100644
+index 000000000000..ba400996e615
+--- /dev/null
++++ b/test/sq-full-cpp.cc
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Description: test SQ queue full condition
++ *
++ */
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <string.h>
++#include <fcntl.h>
++
++#include "liburing.h"
++
++int main(int argc, char *argv[])
 +{
-+	std::atomic_store_explicit(reinterpret_cast<std::atomic<T> *>(&var),
-+				   val, std::memory_order_relaxed);
-+}
-+template <typename T>
-+static inline T IO_URING_READ_ONCE(const T &var)
-+{
-+	return std::atomic_load_explicit(
-+		reinterpret_cast<const std::atomic<T> *>(&var),
-+		std::memory_order_relaxed);
-+}
++	struct io_uring_sqe *sqe;
++	struct io_uring ring;
++	int ret, i;
 +
-+template <typename T>
-+static inline void io_uring_smp_store_release(T *p, T v)
-+{
-+	std::atomic_store_explicit(reinterpret_cast<std::atomic<T> *>(p), v,
-+				   std::memory_order_release);
++	if (argc > 1)
++		return 0;
++
++	ret = io_uring_queue_init(8, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "ring setup failed: %d\n", ret);
++		return 1;
++
++	}
++
++	i = 0;
++	while ((sqe = io_uring_get_sqe(&ring)) != NULL)
++		i++;
++
++	if (i != 8) {
++		fprintf(stderr, "Got %d SQEs, wanted 8\n", i);
++		goto err;
++	}
++
++	io_uring_queue_exit(&ring);
++	return 0;
++err:
++	io_uring_queue_exit(&ring);
++	return 1;
 +}
-+
-+template <typename T>
-+static inline T io_uring_smp_load_acquire(const T *p)
-+{
-+	return std::atomic_load_explicit(
-+		reinterpret_cast<const std::atomic<T> *>(p),
-+		std::memory_order_acquire);
-+}
-+#else
-+#include <stdatomic.h>
-+
- #define IO_URING_WRITE_ONCE(var, val)				\
- 	atomic_store_explicit((_Atomic typeof(var) *)&(var),	\
- 			      (val), memory_order_relaxed)
-@@ -36,5 +68,6 @@ after the acquire operation executes. This is implemented using
- #define io_uring_smp_load_acquire(p)				\
- 	atomic_load_explicit((_Atomic typeof(*(p)) *)(p),	\
- 			     memory_order_acquire)
-+#endif
- 
- #endif /* defined(LIBURING_BARRIER_H) */
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 785a6a4f2233..6a73522de0cb 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -11,6 +11,10 @@
- #include <linux/fs.h>
- #include <linux/types.h>
- 
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
- /*
-  * IO submission data structure (Submission Queue Entry)
-  */
-@@ -289,4 +293,8 @@ struct io_uring_probe {
- 	struct io_uring_probe_op ops[0];
- };
- 
-+#ifdef __cplusplus
-+}
-+#endif
-+
- #endif

@@ -2,72 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A50FA20C322
-	for <lists+io-uring@lfdr.de>; Sat, 27 Jun 2020 18:42:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A3D620C74C
+	for <lists+io-uring@lfdr.de>; Sun, 28 Jun 2020 11:54:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725900AbgF0Qmm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 27 Jun 2020 12:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58344 "EHLO
+        id S1726038AbgF1JyV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 28 Jun 2020 05:54:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbgF0Qmm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 27 Jun 2020 12:42:42 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DE8BC061794
-        for <io-uring@vger.kernel.org>; Sat, 27 Jun 2020 09:42:42 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id x18so11100537ilp.1
-        for <io-uring@vger.kernel.org>; Sat, 27 Jun 2020 09:42:42 -0700 (PDT)
+        with ESMTP id S1725999AbgF1JyU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Jun 2020 05:54:20 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 429D3C061794
+        for <io-uring@vger.kernel.org>; Sun, 28 Jun 2020 02:54:20 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id d15so10184444edm.10
+        for <io-uring@vger.kernel.org>; Sun, 28 Jun 2020 02:54:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LoQKXe9o5JRAUhz/Y9nqb75TfvUXP5mRg0kAlyir88w=;
-        b=fv21zefwXvJW//lvFvP82LyKu09cnhJk2OJZfDyWNsxlY7GfNRlhRa8NK9el8c3vjZ
-         DpdLfbi3FAhGM+fTOcE9fupAV3oBcdVSppIFzrIq8uc2w4VMJeWMjcxkaWorlziHQNvl
-         j5xgHGkXtQkqPzGVMwv2Umle95V3NWf1mToljxnIQwzsHEdB5oMTC+FRUudIl7dXg74v
-         gSqsOUEJ2xPlNZLwWPUAl4emcdYazNL/Xiyk0+rYZ8hBeX9DQ0FKVlwYL6yHqfNaA0fv
-         2Wx0EjQ0AXVAiFUgjtQ49pbWZEQUVWHfdKSrw+FqsIG+01et5sQV9jjDfxli0iHNQfGt
-         6UjA==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LAvaLUDgSNezA2dsMKZbYHkePReD0sNG+IxSpe3iXow=;
+        b=sKFPVmYIei8BlIm4yMdVLkCvdAx774bTNO0h0QtS8raY966qaHul46WFWB4/jm1o6r
+         51uaSZ8NLLH/nhiM+gBn0vgw5q8uht0ZK+QQfrFEQNVvEO7xB9Hf58jWu8hCYF6/0Mik
+         9wdaqzUOql31zp2zX1vdn5uq30/J+Mwk9gtI1xwtuuJtWdgDJI0BdGofcKarafdZwA0V
+         fYsNEzFYJ9t5iBmCKJNH9yk9KMVj2FMfBMQ5SHcM6Unmu/CtMdMiwU1XMLK+2a+fdrDJ
+         XjBM6iMvxBW/dDJnxieiKSQ3z6dpBYCkeF06LRWsrosOV1k9PtdiyVTZ41w9yk+ud6m9
+         DPbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LoQKXe9o5JRAUhz/Y9nqb75TfvUXP5mRg0kAlyir88w=;
-        b=rm2dF/VaFZPPM7HBFEOORZ1FITovuo3GgvqSTFNYrqpgOfwe1DdiaWq4sVFQqwh8cl
-         albefW/9fkb2jpp8xgiltiYn9gKIWnRejPxFWVd1iV2r1uJuWU0K4S3Dx7cDft4G5TMQ
-         9n4NImpgkIQZPnc5W909v0Y4WseI0hKoHz3oM7UtM4dn0zhEpkLFjtOIdK74CknKu0q6
-         A2T638dvSPPL6jvO793COu/qhZr2LsN53BEw1HncVTtQT6Gb5rwpc9e6tY+TOTtS4tCY
-         W0DYx/UJRF89K/VjnL6T0wxPFBtUf+4f0QaP3738MimdwiT8WYEv7Ezwho4RTpXOhYBe
-         MTXg==
-X-Gm-Message-State: AOAM532T66AaChhor8b+b4iGefCXwMC4J5yJ/ce8wd+1ge1AO8jkjzhQ
-        kulKTkAA2xX1EzkZvdPAty0xCu0Aq4kdRjO2RuA=
-X-Google-Smtp-Source: ABdhPJwnDBEwd1mlqkq4pWLUGDvElVGOmkrfF4++rWDSh8zBYzTfBjqvClamBNKLRxmtIll5bwCpbk1sICzwnihQDkU=
-X-Received: by 2002:a92:dc0c:: with SMTP id t12mr1191917iln.260.1593276161889;
- Sat, 27 Jun 2020 09:42:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LAvaLUDgSNezA2dsMKZbYHkePReD0sNG+IxSpe3iXow=;
+        b=adotfNQn8RE3U4Dd07m94FGXjOSHUdQk9r4f3/ir0tKYntPHSwkSR81Ev7aFpiFBJR
+         F8mZN1UJHOmi3mgkEX1WLe13cuXKW0T9HUgBIpb/HRe4KfWvjrfGs4NA+0DERtQle3i+
+         KABk349NStcTdeAmBWa78pTddthlkXsWBQBNmraV0fEiUWd6i3cUGK3XE8wzqal5m7bT
+         FFYmwPv70vszzr65V5veXmJd4c1vew6gdOuIae2x5x0VcoPO5E1tjaYG5EhjGtq+NZD6
+         T0ZsZH3MU/efPIQEs+qD432Qo31EYcwzEgkYNFGtTuz7ENRHNcuv8p5BQ6kn5Fn1To+G
+         ivdw==
+X-Gm-Message-State: AOAM532bGZFGIZ3Nn+9IjPq7TZ2smNBGQ6+XOvxQ9hrV/pQsvL06VF7d
+        MjmMgdHiTkNU6aCnT+qBea9EYVjy
+X-Google-Smtp-Source: ABdhPJweHx1/uRurh1JDnrqefqu5V2/9iIiih/GmcuEA9Wt+dzwxqRLdVwZh6CrtDsqc57pjc2lQrg==
+X-Received: by 2002:a05:6402:947:: with SMTP id h7mr12213695edz.213.1593338058909;
+        Sun, 28 Jun 2020 02:54:18 -0700 (PDT)
+Received: from localhost.localdomain ([82.209.196.123])
+        by smtp.gmail.com with ESMTPSA id w15sm10089490ejk.103.2020.06.28.02.54.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jun 2020 02:54:18 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 00/10] some fixing + refactoring batch-free
+Date:   Sun, 28 Jun 2020 12:52:28 +0300
+Message-Id: <cover.1593337097.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20200627055515.764165-1-zeba.hrvoje@gmail.com>
- <b83a2cc5-31ea-9782-1eeb-70b8537f92c3@acm.org> <CAEsUgYj6NDoHPHN+i7tsR5P0tj1Dj47ixJFhFf8UVpm7kagfhg@mail.gmail.com>
- <c9603711-18c6-217b-ced0-cc1fefec0c6e@acm.org>
-In-Reply-To: <c9603711-18c6-217b-ced0-cc1fefec0c6e@acm.org>
-From:   Hrvoje Zeba <zeba.hrvoje@gmail.com>
-Date:   Sat, 27 Jun 2020 12:42:30 -0400
-Message-ID: <CAEsUgYh-gv=yJhJ6nztDjcwwCq-_+kdk=qTuMx9cisFKYamN9A@mail.gmail.com>
-Subject: Re: [RFC PATCH] Fix usage of stdatomic.h for C++ compilers
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Jun 27, 2020 at 12:23 PM Bart Van Assche <bvanassche@acm.org> wrote:
->
-> On 2020-06-27 08:39, Hrvoje Zeba wrote:
-> > Any suggestions?
->
-> How about the two attached (untested) patches?
->
+Firing away... All for 5.9 on top of 5 previous patches fixing link
+task submission. I don't think there is much to discuss so didn't
+separate into sub-patchsets. Let me know if I should.
 
-Tested on my end, looks good.
+Batching free is inteded to be reused outside of iopoll, so
+it's a preparation but nice by itself. 
 
-Thank you!
+[8/10] looks like it, but double check would be nice.
+
+Pavel Begunkov (10):
+  io_uring: fix refs underflow in io_iopoll_queue()
+  io_uring: remove inflight batching in free_many()
+  io_uring: dismantle req early and remove need_iter
+  io_uring: batch-free linked reqs as well
+  io_uring: cosmetic changes for batch free
+  io_uring: kill REQ_F_LINK_NEXT
+  io_uring: clean up req->result setting by rw
+  io_uring: fix missing wake_up io_rw_reissue()
+  io_uring: do task_work_run() during iopoll
+  io_uring: fix iopoll -EAGAIN handling
+
+ fs/io_uring.c | 157 ++++++++++++++++++++------------------------------
+ 1 file changed, 61 insertions(+), 96 deletions(-)
+
+-- 
+2.24.0
+

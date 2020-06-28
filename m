@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 770CF20C74D
-	for <lists+io-uring@lfdr.de>; Sun, 28 Jun 2020 11:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0852620C74E
+	for <lists+io-uring@lfdr.de>; Sun, 28 Jun 2020 11:54:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726069AbgF1JyW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1726200AbgF1JyW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Sun, 28 Jun 2020 05:54:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46014 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbgF1JyV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Jun 2020 05:54:21 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D83C061794
-        for <io-uring@vger.kernel.org>; Sun, 28 Jun 2020 02:54:21 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id p20so13327908ejd.13
+        with ESMTP id S1725999AbgF1JyW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Jun 2020 05:54:22 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA7DC061794
+        for <io-uring@vger.kernel.org>; Sun, 28 Jun 2020 02:54:22 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id n24so13392880ejd.0
         for <io-uring@vger.kernel.org>; Sun, 28 Jun 2020 02:54:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=cilG4gzWHjSy9Cb9/aAw+fgXJh3Ynt0J35NCA4wQg7o=;
-        b=jRjsH7sVYvFFZz5GbJSMOACcYRWuyxWPfIzUGRK7pSz45zmNQO/BGZsi8b5SvAwhmZ
-         cvb7P2v59YkjLovjssiRWtgWumrHdn9bqjW5xOcovv0zD2ykp6YKhVo/WvfiYSLNz/dY
-         UVGc27wes/4HtnsE+lbN6garXJlVBQ0/Rt/w2eNj3H9CQO9EtSuc8fJHq9Ff78HoZvER
-         lR4ONLrsg1hnzj/s5XlalJMSsrguRM99CBoVfDJ6P5Cs4HBKB3TO09KjVxAmOXzh8P/6
-         iKgu75/0SJGegFo0HhNYR2u0sCym9QzK8ELZyLOXAHt1eguCpIz5uGjvceZrezkObv83
-         b8Jg==
+        bh=52o5QBltC4EUiT5qvM+jN6HqkvrDfPvfP4cFDeAHeGQ=;
+        b=Ml0rsbTXGYuU1BQQHKlDfMJE2I7NhNUU+JBN1SuzeOyX+qEzCRzsXunLvguQSck0yt
+         OWy5lU9EYUn8dz5/stclcGPlcMmP2MAyQO4r3VfotHTOaq40FgnKGFrRMb2SeFFvcgLL
+         EuGFpK+pBxGLKxCl5hvNp1IMXbmGUd9AJOBQmSrvE0qwZpNEaX2+HNSZujFSRG4Gz87I
+         /WJtKXLxsHnjahv59Mec46brhvKlqy0VGDkycrm+l0eRc1c2ovNW/T8FeC/LuiPxSB+o
+         t5H5wRzjgdssnBtO3wvXjB5dQeOU1DI5+tvhSnu9PWxXq+IMaLPv2iCj/zWHcVTbmkky
+         J8IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cilG4gzWHjSy9Cb9/aAw+fgXJh3Ynt0J35NCA4wQg7o=;
-        b=Rzkow698ccGz+hpzSeAc0qsiyXihhUscVEoeuaiKZpjhfL8kccsEETQtWGffD+AuEn
-         5K1tVpWov+M2t7xqzooXVGg9W69DKZ/89WAZLQtG/prXcwArlm8MwjmHYToPcwTfQzzd
-         Ayq3SYP4iGMTl90j4nkRUT9CxinrJPy5M6KJDjilXorRzUC+1BDWl7I5V9ocfJ77q8C/
-         MutwV14YKHkWD0wiROQVZf6cgSL/JjE3omrKjNPdZVh7FD0h5g4Yy1UWebrWoHBHTH33
-         6Ufn9rYAoGpFuTLeJrkFalYkEyytQa2a85XtjhIKZZeFsf2lR8Z0geneRGAR3g58RmWo
-         ul2w==
-X-Gm-Message-State: AOAM533tpHsojznPxtt4TfZ3Nbd1V9i3maN9PRcYieug1gfSHatZIZZV
-        ygtj6mGRYVj71p4npn9zK3JgcJMN
-X-Google-Smtp-Source: ABdhPJxPazXgMNcCRUhKyte3F/DtcLndEeHSszff1c4MsuVBFbcT0djc9ODLqigGxLTIXWKC4OfjHQ==
-X-Received: by 2002:a17:906:8406:: with SMTP id n6mr9253212ejx.250.1593338059937;
-        Sun, 28 Jun 2020 02:54:19 -0700 (PDT)
+        bh=52o5QBltC4EUiT5qvM+jN6HqkvrDfPvfP4cFDeAHeGQ=;
+        b=CglGT6pGrEg/l6AK2VY8iX4crorV3eaV5z37TfT+MGcgY5TW5ZHlWnD+y6B7FZrjk8
+         zxHpcJs6L7MQ1xMin1VTJz2E8RA+tx+a0JYBnMPq+FLWkIoWUlzQGdYhI8qDWQKbN3W5
+         GYFab3zNQEyCKaX/F+Gluxv/3qm53F4RjrehtAWDWljq95B8M5u0/znhnEpJzGI93pSa
+         jRH2vCtrw6FU3qEkz4VuE5UbPePWInX0/twj0VqcDiQTAGMomkY17hOpyPo4pnXRsDOs
+         y84silvhuyaNIFH0lgSkCEdE6g43Mn7NVdgn5TnIMSyteiLLSDdKqXfMIkIXaTR8rzXX
+         YMww==
+X-Gm-Message-State: AOAM533Fquf1SbRRYenBtuk528QlBNErmkKcGODHvlq9/PZFekEEXtXQ
+        lrw7zKfg2NCf3qYwFdUvCCJ/0nLD
+X-Google-Smtp-Source: ABdhPJwbkQta8289EQTBlXlstjTys9MzZ/ZfzUanaJqs2W1pEMcLfjgtywRZyRxUpcpSk08aZlJ07A==
+X-Received: by 2002:a17:906:6d49:: with SMTP id a9mr9232833ejt.435.1593338060787;
+        Sun, 28 Jun 2020 02:54:20 -0700 (PDT)
 Received: from localhost.localdomain ([82.209.196.123])
-        by smtp.gmail.com with ESMTPSA id w15sm10089490ejk.103.2020.06.28.02.54.19
+        by smtp.gmail.com with ESMTPSA id w15sm10089490ejk.103.2020.06.28.02.54.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jun 2020 02:54:19 -0700 (PDT)
+        Sun, 28 Jun 2020 02:54:20 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 01/10] io_uring: fix refs underflow in io_iopoll_queue()
-Date:   Sun, 28 Jun 2020 12:52:29 +0300
-Message-Id: <8122af4ead0571f80143c3509d71cae16b17535a.1593337097.git.asml.silence@gmail.com>
+Subject: [PATCH 02/10] io_uring: remove inflight batching in free_many()
+Date:   Sun, 28 Jun 2020 12:52:30 +0300
+Message-Id: <28545f6bafdc56009fe142c9d9fa2b0e36772285.1593337097.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1593337097.git.asml.silence@gmail.com>
 References: <cover.1593337097.git.asml.silence@gmail.com>
@@ -62,53 +62,92 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Now io_complete_rw_common() puts a ref, extra io_req_put()
-in io_iopoll_queue() causes undeflow. Remove it.
+io_free_req_many() is used only for iopoll requests, i.e. reads/writes.
+Hence no need to batch inflight unhooking. For safety, it'll be done
+by io_dismantle_req(), which replaces __io_req_aux_free(), and looks
+more solid and cleaner.
 
-[  455.998620] refcount_t: underflow; use-after-free.
-[  455.998743] WARNING: CPU: 6 PID: 285394 at lib/refcount.c:28
-	refcount_warn_saturate+0xae/0xf0
-[  455.998772] CPU: 6 PID: 285394 Comm: read-write2 Tainted: G
-          I E     5.8.0-rc2-00048-g1b1aa738f167-dirty #509
-[  455.998772] RIP: 0010:refcount_warn_saturate+0xae/0xf0
-...
-[  455.998778] Call Trace:
-[  455.998778]  io_put_req+0x44/0x50
-[  455.998778]  io_iopoll_complete+0x245/0x370
-[  455.998779]  io_iopoll_getevents+0x12f/0x1a0
-[  455.998779]  io_iopoll_reap_events.part.0+0x5e/0xa0
-[  455.998780]  io_ring_ctx_wait_and_kill+0x132/0x1c0
-[  455.998780]  io_uring_release+0x20/0x30
-[  455.998780]  __fput+0xcd/0x230
-[  455.998781]  ____fput+0xe/0x10
-[  455.998781]  task_work_run+0x67/0xa0
-[  455.998781]  do_exit+0x35d/0xb70
-[  455.998782]  do_group_exit+0x43/0xa0
-[  455.998783]  get_signal+0x140/0x900
-[  455.998783]  do_signal+0x37/0x780
-[  455.998784]  __prepare_exit_to_usermode+0x126/0x1c0
-[  455.998785]  __syscall_return_slowpath+0x3b/0x1c0
-[  455.998785]  do_syscall_64+0x5f/0xa0
-[  455.998785]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: a1d7c393c47 ("io_uring: enable READ/WRITE to use deferred completions")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/io_uring.c | 41 ++++++++---------------------------------
+ 1 file changed, 8 insertions(+), 33 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index bf236ba10601..52441f2465fe 100644
+index 52441f2465fe..28a66e85ef9f 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1904,7 +1904,6 @@ static void io_iopoll_queue(struct list_head *again)
- 		/* shouldn't happen unless io_uring is dying, cancel reqs */
- 		if (unlikely(!current->mm)) {
- 			io_complete_rw_common(&req->rw.kiocb, -EAGAIN, NULL);
--			io_put_req(req);
- 			continue;
- 		}
+@@ -1504,7 +1504,7 @@ static inline void io_put_file(struct io_kiocb *req, struct file *file,
+ 		fput(file);
+ }
  
+-static void __io_req_aux_free(struct io_kiocb *req)
++static void io_dismantle_req(struct io_kiocb *req)
+ {
+ 	if (req->flags & REQ_F_NEED_CLEANUP)
+ 		io_cleanup_req(req);
+@@ -1514,11 +1514,6 @@ static void __io_req_aux_free(struct io_kiocb *req)
+ 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
+ 	__io_put_req_task(req);
+ 	io_req_work_drop_env(req);
+-}
+-
+-static void __io_free_req(struct io_kiocb *req)
+-{
+-	__io_req_aux_free(req);
+ 
+ 	if (req->flags & REQ_F_INFLIGHT) {
+ 		struct io_ring_ctx *ctx = req->ctx;
+@@ -1530,7 +1525,11 @@ static void __io_free_req(struct io_kiocb *req)
+ 			wake_up(&ctx->inflight_wait);
+ 		spin_unlock_irqrestore(&ctx->inflight_lock, flags);
+ 	}
++}
+ 
++static void __io_free_req(struct io_kiocb *req)
++{
++	io_dismantle_req(req);
+ 	percpu_ref_put(&req->ctx->refs);
+ 	if (likely(!io_is_fallback_req(req)))
+ 		kmem_cache_free(req_cachep, req);
+@@ -1549,35 +1548,11 @@ static void io_free_req_many(struct io_ring_ctx *ctx, struct req_batch *rb)
+ 	if (!rb->to_free)
+ 		return;
+ 	if (rb->need_iter) {
+-		int i, inflight = 0;
+-		unsigned long flags;
+-
+-		for (i = 0; i < rb->to_free; i++) {
+-			struct io_kiocb *req = rb->reqs[i];
+-
+-			if (req->flags & REQ_F_INFLIGHT)
+-				inflight++;
+-			__io_req_aux_free(req);
+-		}
+-		if (!inflight)
+-			goto do_free;
+-
+-		spin_lock_irqsave(&ctx->inflight_lock, flags);
+-		for (i = 0; i < rb->to_free; i++) {
+-			struct io_kiocb *req = rb->reqs[i];
+-
+-			if (req->flags & REQ_F_INFLIGHT) {
+-				list_del(&req->inflight_entry);
+-				if (!--inflight)
+-					break;
+-			}
+-		}
+-		spin_unlock_irqrestore(&ctx->inflight_lock, flags);
++		int i;
+ 
+-		if (waitqueue_active(&ctx->inflight_wait))
+-			wake_up(&ctx->inflight_wait);
++		for (i = 0; i < rb->to_free; i++)
++			io_dismantle_req(rb->reqs[i]);
+ 	}
+-do_free:
+ 	kmem_cache_free_bulk(req_cachep, rb->to_free, rb->reqs);
+ 	percpu_ref_put_many(&ctx->refs, rb->to_free);
+ 	rb->to_free = rb->need_iter = 0;
 -- 
 2.24.0
 

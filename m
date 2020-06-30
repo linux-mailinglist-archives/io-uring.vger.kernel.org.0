@@ -2,149 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4232420F7D6
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2020 17:02:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7818120F86E
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2020 17:33:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbgF3PCW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 30 Jun 2020 11:02:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58736 "EHLO
+        id S2389385AbgF3Pd2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 30 Jun 2020 11:33:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgF3PCV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Jun 2020 11:02:21 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95B1FC061755
-        for <io-uring@vger.kernel.org>; Tue, 30 Jun 2020 08:02:21 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id n26so7045097ejx.0
-        for <io-uring@vger.kernel.org>; Tue, 30 Jun 2020 08:02:21 -0700 (PDT)
+        with ESMTP id S2389296AbgF3Pd2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Jun 2020 11:33:28 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1B80C061755
+        for <io-uring@vger.kernel.org>; Tue, 30 Jun 2020 08:33:27 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id k5so54824pjg.3
+        for <io-uring@vger.kernel.org>; Tue, 30 Jun 2020 08:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=snCNHHh5kzI2Jd2z2LXIJGWChkqn97kf+fYxNBn3+Ss=;
-        b=QDMn/yh7hCNCelKpgX7/X+HOVeNIxKzarSCqXRjIpfRW2eqOYA33ZWRhsZxyGv7+wS
-         23nGJcjiwGmpKgag4H1DCOauPFVDnsU+ktPJf+qvcBibbN084KQNJse/nzxQaYtwT45+
-         HPbllU9g9tHtZAgGZihp0XzK1oHT0wCToeWYyiyVzMAQfHcpKKCjoB0jlRJk6nLl6o73
-         QvU6ybfqTNvf4W+W0vcotFqqNxoTI3vMqBuMmMPzGh9AiNTNcdI7/OfzSjrey8S06DyK
-         hC51AJfh6dvbhOaXllkoTXcWAzgKwHfbWo33rtzcXDwqLRc0cHAp0j4o031BIP+KX0LR
-         HEPQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=tV90kEmS0zhwDrcxeH/v1cwVOiSoHoa2klebDw6RDkE=;
+        b=kyznsznzF0sdayUbXim6KsEArryvFzCp4b7boJ6Y5jqrpH0Mj7i2n9vo4EN20n7vFO
+         26B3XQ6PUsVcBK3iSfx+hKrJBwdVejSXEG8KuUH13Y8fnT0O3tF3EYTJu2xQ9QUEU5ne
+         G1ZSlmh6QWWVKGah1PpxVVOPHayv4f6owRd36HUnR2LftKKVz1YQOY6iHJzkzHXfk1eV
+         f6nT/wADe3ZMZhEmHxQH0wXffBHS5L1i3a7dl0vd8ge1GzLiBnIovqTtN7ZHe4/c8z5k
+         2YJcGL2tfxmTk5+mpp0yv6n8cJagVBoXyhYrgysvKPFhABH9nZDKXR0B6ppZ6BLZu8HW
+         S54w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=snCNHHh5kzI2Jd2z2LXIJGWChkqn97kf+fYxNBn3+Ss=;
-        b=kI5JV6GM0VLO1Ci4QnsD7WDcmn3+e7GWWxL3By7Kd3Teyx2U+UQ/K8S+pdDuuz6hp2
-         BbZJhK9JzSJd5m6hZ1h0hOoK9DNnbrZfjcYlYGW+LhQ3sMAwjw/FXqnS8XXylEkElKnV
-         YXO6qbTWAEiCfa+UgFjPemptEmwXcGowI2pembmQCuh9E5yD3fEun86gFfujRK60kvkW
-         nNPwsCbRz7r1j6kzYv2HX3xEvRGP2MTC6Ii1SVn9owRGmeFYanEB749sVuE35ijlfIau
-         bowIdeqIxmloWwC7d2UTFt5JowSad//TDIEQED8dmqb1j4v6oKmfY2OGpM521GTybD49
-         0/Gg==
-X-Gm-Message-State: AOAM533vKQfW7OvD7Z5H85nqRcv1/rdBCtWc9PzQc3HuojeT+OUZ1vWl
-        GJy1A9h8RGrnW82qjZ21U3C7QN7u
-X-Google-Smtp-Source: ABdhPJw9lB8TyzNpdix6AQHvo21AkTH7pHRfukpKYpdFwfYH8XPCx2zeh8Sm9TTuMwxGsNiU+TCiYg==
-X-Received: by 2002:a17:906:fcb1:: with SMTP id qw17mr17983963ejb.445.1593529340051;
-        Tue, 30 Jun 2020 08:02:20 -0700 (PDT)
-Received: from [192.168.43.125] ([5.100.193.85])
-        by smtp.gmail.com with ESMTPSA id k23sm2215994ejo.120.2020.06.30.08.02.19
+        bh=tV90kEmS0zhwDrcxeH/v1cwVOiSoHoa2klebDw6RDkE=;
+        b=XRHxDlUu55zDywHPW+hpzJNKIxoOZUnHm6PhJfX6GOufVZ/wrc/g0mxPHGO3URgvd2
+         68a6S3tFGHXYSevynqHn6AI/T136JfpjxuYQAeufuxBDBJFlFCaASJxiUAKmUwoqnu4f
+         S1/w2pXnp/MPgalmSt0hupGmX5HbneqJtJqvKlAbjq1Wena+ueX7skx0glHQGjPTUx51
+         By7F0ZNj0PSJdSRr2tivKjnOAyx1r6U3UdYt125tjiP4eydiLbLjnoiklLORucmVRw3b
+         58dAyi1WBpUlr6HJwXpbCGQn9BS4xv13QhLKUEhmZrgzXwMm4j1ZBGNiWId0HAALP9Cg
+         6jDw==
+X-Gm-Message-State: AOAM532gzWRtgj8CSiFwHlEUnwNqey1YA+2Mg7Prw7et9324dwwB6rYv
+        xj8c/Efkylr1bGLQQB1POIaKr+hMtpquCw==
+X-Google-Smtp-Source: ABdhPJwPvE4ag4hthSpT3Qp+xV2ZflkRoPBunEYBc/FBUwAO9bVUnm2PLKWAfK2gdNh3VUSXV1aDXA==
+X-Received: by 2002:a17:90b:3809:: with SMTP id mq9mr22417240pjb.156.1593531207087;
+        Tue, 30 Jun 2020 08:33:27 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:4113:50ea:3eb3:a39b? ([2605:e000:100e:8c61:4113:50ea:3eb3:a39b])
+        by smtp.gmail.com with ESMTPSA id u20sm2945347pfm.152.2020.06.30.08.33.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jun 2020 08:02:19 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+        Tue, 30 Jun 2020 08:33:26 -0700 (PDT)
+Subject: Re: [PATCH 2/8] io_uring: fix commit_cqring() locking in iopoll
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <cover.1593519186.git.asml.silence@gmail.com>
  <75e5bc4f60d751239afa5d7bf2ec9b49308651ac.1593519186.git.asml.silence@gmail.com>
  <65675178-365d-c859-426b-c0811a2647a3@kernel.dk>
  <6c499cf3-418d-2edf-d308-2bb5a8d1d007@gmail.com>
  <312bbba1-878c-5681-5e6c-b6de3f7feb55@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH 2/8] io_uring: fix commit_cqring() locking in iopoll
-Message-ID: <63a8fab2-820f-d0c1-ad39-a3eb7af1d872@gmail.com>
-Date:   Tue, 30 Jun 2020 18:00:43 +0300
+ <63a8fab2-820f-d0c1-ad39-a3eb7af1d872@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c9843917-cfb7-328b-06f6-64893a7654ff@kernel.dk>
+Date:   Tue, 30 Jun 2020 09:33:25 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <312bbba1-878c-5681-5e6c-b6de3f7feb55@kernel.dk>
+In-Reply-To: <63a8fab2-820f-d0c1-ad39-a3eb7af1d872@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 30/06/2020 17:46, Jens Axboe wrote:
-> On 6/30/20 8:36 AM, Pavel Begunkov wrote:
->> On 30/06/2020 17:04, Jens Axboe wrote:
->>> On 6/30/20 6:20 AM, Pavel Begunkov wrote:
->>>> Don't call io_commit_cqring() without holding the completion spinlock
->>>> in io_iopoll_complete(), it can race, e.g. with async request failing.
+On 6/30/20 9:00 AM, Pavel Begunkov wrote:
+> On 30/06/2020 17:46, Jens Axboe wrote:
+>> On 6/30/20 8:36 AM, Pavel Begunkov wrote:
+>>> On 30/06/2020 17:04, Jens Axboe wrote:
+>>>> On 6/30/20 6:20 AM, Pavel Begunkov wrote:
+>>>>> Don't call io_commit_cqring() without holding the completion spinlock
+>>>>> in io_iopoll_complete(), it can race, e.g. with async request failing.
+>>>>
+>>>> Can you be more specific?
 >>>
->>> Can you be more specific?
+>>> io_iopoll_complete()
+>>> 	-> io_req_free_batch()
+>>> 		-> io_queue_next()
+>>> 			-> io_req_task_queue()
+>>> 				-> task_work_add()
+>>>
+>>> if this task_work_add() fails, it will be redirected to io-wq manager task
+>>> to do io_req_task_cancel() -> commit_cqring().
+>>>
+>>>
+>>> And probably something similar will happen if a request currently in io-wq
+>>> is retried with
+>>> io_rw_should_retry() -> io_async_buf_func() -> task_work_add()
 >>
->> io_iopoll_complete()
->> 	-> io_req_free_batch()
->> 		-> io_queue_next()
->> 			-> io_req_task_queue()
->> 				-> task_work_add()
->>
->> if this task_work_add() fails, it will be redirected to io-wq manager task
->> to do io_req_task_cancel() -> commit_cqring().
->>
->>
->> And probably something similar will happen if a request currently in io-wq
->> is retried with
->> io_rw_should_retry() -> io_async_buf_func() -> task_work_add()
+>> For the IOPOLL setup, it should be protected by the ring mutex. Adding
+>> the irq disable + lock for polling would be a nasty performance hit.
 > 
-> For the IOPOLL setup, it should be protected by the ring mutex. Adding
-> the irq disable + lock for polling would be a nasty performance hit.
+> Ok. For what it worth, it would be easier to accidentally screw in the future.
+> I'll try it out.
+> 
+> 
+> BTW, if you're going to cherry-pick patches from this series, just push them
+> into the branch. I'll check git.kernel.dk later and resend what's left.
 
-Ok. For what it worth, it would be easier to accidentally screw in the future.
-I'll try it out.
-
-
-BTW, if you're going to cherry-pick patches from this series, just push them
-into the branch. I'll check git.kernel.dk later and resend what's left.
+Yep done, I'll push it out.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

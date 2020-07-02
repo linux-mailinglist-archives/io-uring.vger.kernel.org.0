@@ -2,119 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 735182117F8
-	for <lists+io-uring@lfdr.de>; Thu,  2 Jul 2020 03:28:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 020A0211B23
+	for <lists+io-uring@lfdr.de>; Thu,  2 Jul 2020 06:30:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbgGBBX5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 1 Jul 2020 21:23:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54746 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728536AbgGBBX4 (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 1 Jul 2020 21:23:56 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BBF12145D;
-        Thu,  2 Jul 2020 01:23:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593653036;
-        bh=FeJYSWpPkEj16ll5EuwSvsmJPTgeQNhCZZ/l+eCp2w8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LEpsozyf6RMXApLZrXyeYiLc92fWqrtut31jAJvEuJWAkkmqigAyOkVoLeeC3tlyZ
-         dbsKuOiparlf1nZNc5FGSCY0M0nfXijdvlJf7HpZRUbm/5GLkMcq6+d/Ko1ZHSPMid
-         8XvdYLkzpXXGEMWTTLVpE71faGWImnyXBx5jgZ1A=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 49/53] io_uring: fix current->mm NULL dereference on exit
-Date:   Wed,  1 Jul 2020 21:21:58 -0400
-Message-Id: <20200702012202.2700645-49-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200702012202.2700645-1-sashal@kernel.org>
-References: <20200702012202.2700645-1-sashal@kernel.org>
+        id S1726147AbgGBEa1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 2 Jul 2020 00:30:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39520 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbgGBEa0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Jul 2020 00:30:26 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDA6EC08C5DB
+        for <io-uring@vger.kernel.org>; Wed,  1 Jul 2020 21:30:26 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id o13so9869257pgf.0
+        for <io-uring@vger.kernel.org>; Wed, 01 Jul 2020 21:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=YuWU5A2IqitBQEhu7RzxvcgZH9jiOWunaMDOKPdr4C8=;
+        b=fIjN/ltnJT3kkTEpSLCLZGcyZLszso4xAq4nzS1PXln00egC0Zx+DhGISzCBzt8jhH
+         uzNjiFb0lxo0vYW7XCBfDEAuqNW0TakRC+UMnzAhllrhEh5W+ZkUNFAK9kYLCby+wJ8i
+         Ck5tWUEWPrf5nxCWu0sFFFgXtLdLOGlTbGobmQsl2xPVi7OmH2Jhh5cj2KUt3TUqrG34
+         W6FcbVfC3BfnGf3CMximDi5FXEK5WvYtBANAIMB7ZfFanloz/mWGKrzlQWUQ9PUBBItf
+         0P88Dxe5yNqsyhprd/Acn5zh5cajuDXA/ZnWOVqukhJfm/MTJppCPSHoAw5ljA2a4lZw
+         RD5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=YuWU5A2IqitBQEhu7RzxvcgZH9jiOWunaMDOKPdr4C8=;
+        b=omMnv0ylX2CStRSsrutJi7bF8eHO7IM6Y6T5rRJNwVdRkk9DppcIV+VsGGeAfLRG0i
+         a/DlCfUGiRCJgjLPImAbqVmpzcz/awQoIAaBKTPXvWXBVpS+7e9SCyBsGfL5Gl4CjYHm
+         C3aVY3pGihJCcTJo7PGxw4EnsAjJsut5Fj/LF7HXBzpfDZw+JuAvNZQOqhxkVi4RTuYX
+         CzBVcHEmtw+QT3f4p80VMmXGudqxeUcNDIH61hwAB3lZjNksvH7eCbboAgl8PQbOXBCb
+         mGRS54ZHZR1y80z/urVJVVUW2wJjYwnEVLoCDwuD3OmfCXJk90C51BQ+ELnO7IqJ8pWC
+         HUiw==
+X-Gm-Message-State: AOAM533M0hNOY4WnnsrnTClkEFAisNC6UV2NHTI8mCpJ8+6WNv2XyCvM
+        l6/MWAFyrlPDIMe8bm7/QtjUUV8kEVarbg==
+X-Google-Smtp-Source: ABdhPJy1W84Qjro6DWnqEx+YwTfLXIsNs9vkrWH8iX+a/w+C7F9p21L++ZCYkSNRgG5ej9JgiANy9g==
+X-Received: by 2002:a65:6089:: with SMTP id t9mr23264258pgu.236.1593664225960;
+        Wed, 01 Jul 2020 21:30:25 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:b0a2:2229:1cbe:53d2? ([2605:e000:100e:8c61:b0a2:2229:1cbe:53d2])
+        by smtp.gmail.com with ESMTPSA id u25sm7221103pfm.115.2020.07.01.21.30.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Jul 2020 21:30:25 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.8-rc4
+Message-ID: <ac36babd-3eb7-8f91-7ba1-e722def24b67@kernel.dk>
+Date:   Wed, 1 Jul 2020 22:30:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+Hi Linus,
 
-[ Upstream commit d60b5fbc1ce8210759b568da49d149b868e7c6d3 ]
+One fix in here, for a regression in 5.7 where a task is waiting in the
+kernel for a condition, but that condition won't become true until
+task_work is run. The task_work can't be run exactly because the task is
+waiting in the kernel, so we'll never make any progress. One example of
+that is registering an eventfd and queueing io_uring work, and then the
+task goes and waits in eventfd read with the expectation that it'll get
+woken (and read an event) when the io_uring request completes. The
+io_uring request is finished through task_work, which won't get run
+while the task is looping in eventfd read.
 
-Don't reissue requests from io_iopoll_reap_events(), the task may not
-have mm, which ends up with NULL. It's better to kill everything off on
-exit anyway.
+Please pull!
 
-[  677.734670] RIP: 0010:io_iopoll_complete+0x27e/0x630
-...
-[  677.734679] Call Trace:
-[  677.734695]  ? __send_signal+0x1f2/0x420
-[  677.734698]  ? _raw_spin_unlock_irqrestore+0x24/0x40
-[  677.734699]  ? send_signal+0xf5/0x140
-[  677.734700]  io_iopoll_getevents+0x12f/0x1a0
-[  677.734702]  io_iopoll_reap_events.part.0+0x5e/0xa0
-[  677.734703]  io_ring_ctx_wait_and_kill+0x132/0x1c0
-[  677.734704]  io_uring_release+0x20/0x30
-[  677.734706]  __fput+0xcd/0x230
-[  677.734707]  ____fput+0xe/0x10
-[  677.734709]  task_work_run+0x67/0xa0
-[  677.734710]  do_exit+0x35d/0xb70
-[  677.734712]  do_group_exit+0x43/0xa0
-[  677.734713]  get_signal+0x140/0x900
-[  677.734715]  do_signal+0x37/0x780
-[  677.734717]  ? enqueue_hrtimer+0x41/0xb0
-[  677.734718]  ? recalibrate_cpu_khz+0x10/0x10
-[  677.734720]  ? ktime_get+0x3e/0xa0
-[  677.734721]  ? lapic_next_deadline+0x26/0x30
-[  677.734723]  ? tick_program_event+0x4d/0x90
-[  677.734724]  ? __hrtimer_get_next_event+0x4d/0x80
-[  677.734726]  __prepare_exit_to_usermode+0x126/0x1c0
-[  677.734741]  prepare_exit_to_usermode+0x9/0x40
-[  677.734742]  idtentry_exit_cond_rcu+0x4c/0x60
-[  677.734743]  sysvec_reschedule_ipi+0x92/0x160
-[  677.734744]  ? asm_sysvec_reschedule_ipi+0xa/0x20
-[  677.734745]  asm_sysvec_reschedule_ipi+0x12/0x20
+The following changes since commit d60b5fbc1ce8210759b568da49d149b868e7c6d3:
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+  io_uring: fix current->mm NULL dereference on exit (2020-06-25 07:20:43 -0600)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6cf9d509371e2..43dc745727408 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -858,6 +858,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 				 struct io_uring_files_update *ip,
- 				 unsigned nr_args);
- static int io_grab_files(struct io_kiocb *req);
-+static void io_complete_rw_common(struct kiocb *kiocb, long res);
- static void io_cleanup_req(struct io_kiocb *req);
- static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
- 		       int fd, struct file **out_file, bool fixed);
-@@ -1697,6 +1698,14 @@ static void io_iopoll_queue(struct list_head *again)
- 	do {
- 		req = list_first_entry(again, struct io_kiocb, list);
- 		list_del(&req->list);
-+
-+		/* shouldn't happen unless io_uring is dying, cancel reqs */
-+		if (unlikely(!current->mm)) {
-+			io_complete_rw_common(&req->rw.kiocb, -EAGAIN);
-+			io_put_req(req);
-+			continue;
-+		}
-+
- 		refcount_inc(&req->refs);
- 		io_queue_async_work(req);
- 	} while (!list_empty(again));
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.8-2020-07-01
+
+for you to fetch changes up to ce593a6c480a22acba08795be313c0c6d49dd35d:
+
+  io_uring: use signal based task_work running (2020-06-30 12:39:05 -0600)
+
+----------------------------------------------------------------
+io_uring-5.8-2020-07-01
+
+----------------------------------------------------------------
+Jens Axboe (1):
+      io_uring: use signal based task_work running
+
+Oleg Nesterov (1):
+      task_work: teach task_work_add() to do signal_wake_up()
+
+ fs/io_uring.c                | 32 ++++++++++++++++++++++++--------
+ include/linux/sched/jobctl.h |  4 +++-
+ include/linux/task_work.h    |  5 ++++-
+ kernel/signal.c              | 10 +++++++---
+ kernel/task_work.c           | 16 ++++++++++++++--
+ 5 files changed, 52 insertions(+), 15 deletions(-)
+
 -- 
-2.25.1
+Jens Axboe
 

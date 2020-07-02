@@ -2,95 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A11210B3A
-	for <lists+io-uring@lfdr.de>; Wed,  1 Jul 2020 14:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50895211826
+	for <lists+io-uring@lfdr.de>; Thu,  2 Jul 2020 03:28:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730687AbgGAMr0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 1 Jul 2020 08:47:26 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:54722 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730671AbgGAMrZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Jul 2020 08:47:25 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R241e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0U1MtaPW_1593607641;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0U1MtaPW_1593607641)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 01 Jul 2020 20:47:21 +0800
-Date:   Wed, 1 Jul 2020 20:47:21 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Subject: Re: [PATCH] io_uring: fix req cannot arm poll after polled
-Message-ID: <20200701124721.tn5oymcoslfabifo@e02h04398.eu6sqa>
-References: <2ebb186ebbef9c5a01e27317aae664e9011acf86.1593520864.git.xuanzhuo@linux.alibaba.com>
+        id S1728784AbgGBBZ0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 1 Jul 2020 21:25:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54434 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728366AbgGBBXo (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 1 Jul 2020 21:23:44 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC2F620885;
+        Thu,  2 Jul 2020 01:23:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593653023;
+        bh=hVnObDxVcx1RGwFLMx3QUPjXV49Wc2ghcsfqJzOTPC0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1HbT+18n77Dp4VD448UuLPBCw5oukfo1SXQXVtRnflduA9ShOVyDi9ic8vBLwto6U
+         Ey98YBOQJkzamtsrCjUg6cH2NPQF/VNAy0s7cqDQeAfFFOuuNUx3sD45yK/nS3iSDZ
+         O2kOja7fEC7muaij5pw6U3LQ3IvC/HNnie8ViO6M=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.7 39/53] io_uring: fix io_sq_thread no schedule when busy
+Date:   Wed,  1 Jul 2020 21:21:48 -0400
+Message-Id: <20200702012202.2700645-39-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200702012202.2700645-1-sashal@kernel.org>
+References: <20200702012202.2700645-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2ebb186ebbef9c5a01e27317aae664e9011acf86.1593520864.git.xuanzhuo@linux.alibaba.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 
-It is true that this path is not perfect for poll, I mainly want to
-solve this bug first.
+[ Upstream commit b772f07add1c0b22e02c0f1e96f647560679d3a9 ]
 
-I have considered to prevent the network fd from entering io-wq. It
-is more reasonable to use poll for network fd. And since there is no
-relationship between the sqes of the same network fd, each will receive
-an EAGAIN and then arm poll, It is unreasonable to be wakeup at the same
-time.  Although link can solve some problems.
+When the user consumes and generates sqe at a fast rate,
+io_sqring_entries can always get sqe, and ret will not be equal to -EBUSY,
+so that io_sq_thread will never call cond_resched or schedule, and then
+we will get the following system error prompt:
 
-Back to this question, I was able to reproduce this bug yesterday, but it
-is strange that I tried various versions today, and I can't reproduce it
-anymore.
+rcu: INFO: rcu_sched self-detected stall on CPU
+or
+watchdog: BUG: soft lockup-CPU#23 stuck for 112s! [io_uring-sq:1863]
 
-The analysis at the time was that io_uring_release was not triggered. I
-guess it is because mm refers to io_uring fd, and worker refers to mm and
-enters schedule, which causes io_uring not to be completely closed.
+This patch checks whether need to call cond_resched() by checking
+the need_resched() function every cycle.
 
-But when I test today, it cannot be reproduced. When the process exits,
-the network connection will always close automatically then the worker
-exits the schedule. I don't know why it was not closed yesterday.
+Suggested-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sorry, I will test it later, if there is a conclusion I will report this
-problem again.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 1829be7f63a35..6cf9d509371e2 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6071,7 +6071,7 @@ static int io_sq_thread(void *data)
+ 		 * If submit got -EBUSY, flag us as needing the application
+ 		 * to enter the kernel to reap and flush events.
+ 		 */
+-		if (!to_submit || ret == -EBUSY) {
++		if (!to_submit || ret == -EBUSY || need_resched()) {
+ 			/*
+ 			 * Drop cur_mm before scheduling, we can't hold it for
+ 			 * long periods (or over schedule()). Do this before
+@@ -6087,7 +6087,7 @@ static int io_sq_thread(void *data)
+ 			 * more IO, we should wait for the application to
+ 			 * reap events and wake us up.
+ 			 */
+-			if (!list_empty(&ctx->poll_list) ||
++			if (!list_empty(&ctx->poll_list) || need_resched() ||
+ 			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
+ 			    !percpu_ref_is_dying(&ctx->refs))) {
+ 				if (current->task_works)
+-- 
+2.25.1
 
-Thanks jens and pavel for your time.
-
-On Tue, Jun 30, 2020 at 08:41:14PM +0800, Xuan Zhuo wrote:
-> For example, there are multiple sqes recv with the same connection.
-> When there is no data in the connection, the reqs of these sqes will
-> be armed poll. Then if only a little data is received, only one req
-> receives the data, and the other reqs get EAGAIN again. However,
-> due to this flags REQ_F_POLLED, these reqs cannot enter the
-> io_arm_poll_handler function. These reqs will be put into wq by
-> io_queue_async_work, and the flags passed by io_wqe_worker when recv
-> is called are BLOCK, which may make io_wqe_worker enter schedule in the
-> network protocol stack. When the main process of io_uring exits,
-> these io_wqe_workers still cannot exit. The connection will not be
-> actively released until the connection is closed by the peer.
->
-> So we should allow req to arm poll again.
->
-> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index e507737..a309832 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -4406,7 +4406,7 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
->
->  	if (!req->file || !file_can_poll(req->file))
->  		return false;
-> -	if (req->flags & (REQ_F_MUST_PUNT | REQ_F_POLLED))
-> +	if (req->flags & REQ_F_MUST_PUNT)
->  		return false;
->  	if (!def->pollin && !def->pollout)
->  		return false;
-> --
-> 1.8.3.1

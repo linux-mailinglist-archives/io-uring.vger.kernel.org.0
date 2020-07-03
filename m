@@ -2,96 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F84213FCF
-	for <lists+io-uring@lfdr.de>; Fri,  3 Jul 2020 21:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE9D214017
+	for <lists+io-uring@lfdr.de>; Fri,  3 Jul 2020 21:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbgGCTRI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Jul 2020 15:17:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59138 "EHLO
+        id S1726379AbgGCTqG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Jul 2020 15:46:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbgGCTRI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Jul 2020 15:17:08 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D735C061794
-        for <io-uring@vger.kernel.org>; Fri,  3 Jul 2020 12:17:08 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id o18so30916158eje.7
-        for <io-uring@vger.kernel.org>; Fri, 03 Jul 2020 12:17:08 -0700 (PDT)
+        with ESMTP id S1726368AbgGCTqG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Jul 2020 15:46:06 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A88AC061794
+        for <io-uring@vger.kernel.org>; Fri,  3 Jul 2020 12:46:06 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id p1so3704101pls.4
+        for <io-uring@vger.kernel.org>; Fri, 03 Jul 2020 12:46:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=Gype4CDbQgmsr6Q3MoeGkTYB1aX9ic4h77gFX4ILSJI=;
-        b=VaWz6AqQ7b1PMuwYQHb2RFTJngNONn6JOdsbECCu8VWXTmbK+zm6Gp3Zr4Ed7maBvJ
-         39ik+X/GF7hBSbYjgWCxp8VWPhFSt1TceGOg5CN7n8/1nNg7h/NHwxNKFx1sHYgneI+9
-         WbjxbJUSbtDf1ItoOAKmMQ/HpoJ4Emah6Roc3NYwNgAEcPL6YARW7j5db9pBhJ1EvyPs
-         b1NApHZpfYXKGL/RYWsSTpyQ1RwAtAXg386OAGlswZiq0A563T1hZ5FOpfql+jofCzu+
-         vaRI59jnufUATbhSZjSevE1s0BCoBGF+NYDUGd9Q+9JsuqQ+luzt3DvmYAhgWfnvmT4W
-         Kk+A==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=tf4uQqUqsC3/KTgqsTqxCQmOy60vm8/jis/4/QcD/uo=;
+        b=XNqfvrxJNyoWKjZrmwFmCKntRv3QopgbUWQ8mZHK0CMwbsKALsCUlG/O/0fUfD7Uo+
+         9kNTfJzukeagXE1CTMsSw/9vrseb/QBVxySGyFBEpiYLyMDXSGWHQfBczYVNI6NEQJ17
+         hKYkfGjnb2iID/TLxSQZ6aXmhddCRLYedEmtMtEUhqxha7qeDsfWx/O8J9/9ISRA7D1E
+         htAHL+c+07J5sQ8DSzukV4YmjKGWLMH7zARUQp0sDddo6qBr77SZUrZUEZqJuICfPyaC
+         rwVd9tTuL+htizKgqi6vzee1JmUnVL86zlZAd7KfZZ+DNfNz1wvCyhgx65gytVQy2m+J
+         YvQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Gype4CDbQgmsr6Q3MoeGkTYB1aX9ic4h77gFX4ILSJI=;
-        b=sIDb3RlhCCZFXn/A6O8Tk4jIXIqV0vX3eW7+f4lKolFOaglm628uXrllt46G2om4nT
-         YIKxOZ7KlgDdJzgL3OQquoU9k25zUU/H+1sryUxBqdEw86vdHwzooapRomrf/hxTf0K3
-         uALrxHpw0azcQtVxJHpI3+QkSf2vUbnfaOSC9fzKZBOSFkPfImb0pEoE5BpgJUgS6yzL
-         1X3OOtCekubgiX46io9oETq8LEQj8UM5d4YnS6RBZJSEDcidFMIqYqiZbSjtfpXfWzO1
-         j1TZw5kajoTPjyYRzpPXif5UL9N77m3TBHgiH7gptTpc46q+tO2J33fDW2BtCRvA2RW2
-         GImg==
-X-Gm-Message-State: AOAM533pMY+jSmdlzp2TmhiNiEB+2S60IYiEAdVT08AyYWYF/mv6Whun
-        sagHuAMzNhYQENQ9V3sz2NoNm4SS
-X-Google-Smtp-Source: ABdhPJxUMfrK0JXNGkBu9R3NVMdhfWM8eWlEdf79JfqgWJb9eB8flrX952ZIXurb9+o6F13I3P9Iug==
-X-Received: by 2002:a17:907:2654:: with SMTP id ar20mr31794453ejc.62.1593803826902;
-        Fri, 03 Jul 2020 12:17:06 -0700 (PDT)
-Received: from localhost.localdomain ([5.100.193.85])
-        by smtp.gmail.com with ESMTPSA id p9sm9907883ejd.50.2020.07.03.12.17.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2020 12:17:06 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/3] io_uring: fix lost cqe->flags
-Date:   Fri,  3 Jul 2020 22:15:08 +0300
-Message-Id: <0ca2e3872ff7d48132f77fb05dca3a519ee364b7.1593803244.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1593803244.git.asml.silence@gmail.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tf4uQqUqsC3/KTgqsTqxCQmOy60vm8/jis/4/QcD/uo=;
+        b=WEZzNYdaIDRrb7r0C0JukfDlaxxeQ2xMi+mr3uvVHIsjXeuG3XH5Tv9pF4kSlv7H8Q
+         s9pAMad87Hp6O1lCI5mEtWsaus2/7g6SZaQfBQ3rZfqNLxnQg/c4heQersbkz7nYo6a9
+         VsrqL8YBz9wIEzYQmh1UI7h7/wfMxbkioBqJ4tPWkrPzb7zt88sW9tYTke9fL7Irzh11
+         EmGTGxhk87Xby9wL2MCWKJkUFMB0lHaN3XPjjHwuG6/Wgl6ct4Z7TEc+WpeE5m/3gj+5
+         M9uq62mJUS9RxhsDkWNOFeQG/jrObM9PvIE4pEi86TelyTqNgXcrzZjgQIWb6ptoxDZN
+         do6w==
+X-Gm-Message-State: AOAM531geyfedUYgWDSpMv87Z256Ryjo1zVrBj2H5qe68xCMrvGjLEpu
+        O+JxhoR7BBSzebDfg/GMw16dSUw4XoK/UQ==
+X-Google-Smtp-Source: ABdhPJyD8DxesLIykQ0FLrn2yrCqFlYAc5qynAs0E+pFiQOphxSgGUdTYK+UzCdybr6WlKjGjRRnAQ==
+X-Received: by 2002:a17:902:8301:: with SMTP id bd1mr33127955plb.64.1593805565509;
+        Fri, 03 Jul 2020 12:46:05 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id ev14sm1465644pjb.0.2020.07.03.12.46.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Jul 2020 12:46:04 -0700 (PDT)
+Subject: Re: [PATCH 0/3] bunch of fixes
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <cover.1593803244.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b9153f0b-6858-639c-be0f-e26b329cf4ee@kernel.dk>
+Date:   Fri, 3 Jul 2020 13:46:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1593803244.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Don't forget to fill cqe->flags properly in
-io_submit_flush_completions()
+On 7/3/20 1:15 PM, Pavel Begunkov wrote:
+> Just random patches for 5.9. [1,3] are fixes.
+> 
+> Pavel Begunkov (3):
+>   io_uring: fix mis-refcounting linked timeouts
+>   io_uring: keep queue_sqe()'s fail path separately
+>   io_uring: fix lost cqe->flags
+> 
+>  fs/io_uring.c | 59 +++++++++++++++++----------------------------------
+>  1 file changed, 20 insertions(+), 39 deletions(-)
 
-Fixes: a1d7c393c4711 ("io_uring: enable READ/WRITE to use deferred completions")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+LGTM, applied, thanks.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d61d8bc0cfc0..a2459504b371 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1416,7 +1416,7 @@ static void io_submit_flush_completions(struct io_comp_state *cs)
- 
- 		req = list_first_entry(&cs->list, struct io_kiocb, list);
- 		list_del(&req->list);
--		io_cqring_fill_event(req, req->result);
-+		__io_cqring_fill_event(req, req->result, req->cflags);
- 		if (!(req->flags & REQ_F_LINK_HEAD)) {
- 			req->flags |= REQ_F_COMP_LOCKED;
- 			io_put_req(req);
-@@ -1441,6 +1441,7 @@ static void __io_req_complete(struct io_kiocb *req, long res, unsigned cflags,
- 		io_put_req(req);
- 	} else {
- 		req->result = res;
-+		req->cflags = cflags;
- 		list_add_tail(&req->list, &cs->list);
- 		if (++cs->nr >= 32)
- 			io_submit_flush_completions(cs);
 -- 
-2.24.0
+Jens Axboe
 

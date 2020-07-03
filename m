@@ -2,74 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE8542131CB
-	for <lists+io-uring@lfdr.de>; Fri,  3 Jul 2020 04:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 688A3213FA2
+	for <lists+io-uring@lfdr.de>; Fri,  3 Jul 2020 20:48:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbgGCCkS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 2 Jul 2020 22:40:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47350 "EHLO
+        id S1726148AbgGCSsj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Jul 2020 14:48:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbgGCCkS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 2 Jul 2020 22:40:18 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17A3C08C5C1
-        for <io-uring@vger.kernel.org>; Thu,  2 Jul 2020 19:40:17 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id z24so10023907ljn.8
-        for <io-uring@vger.kernel.org>; Thu, 02 Jul 2020 19:40:17 -0700 (PDT)
+        with ESMTP id S1726147AbgGCSsj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Jul 2020 14:48:39 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C7AAC061794
+        for <io-uring@vger.kernel.org>; Fri,  3 Jul 2020 11:48:38 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id f18so25671975wrs.0
+        for <io-uring@vger.kernel.org>; Fri, 03 Jul 2020 11:48:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pY1zmuqLqCEdS/VLal5ncqX2RzevlQB07OvZeqJKvBw=;
-        b=uyCLPkLwGXSwCNC9nd4vZCNP5qZ9f4fx0g0yj/dAXa+/BfUXfqAxhi5LIRSunzHHO/
-         dw3JWSG9nVTH3YoGAWSStw8/xT/Mn/8tw7rWrItZBrovDs1/ybUh0hK3ZjmGBKzbGZPe
-         Crnv3FGk72EATa4uE0AGOo9qv8e2HmGZIR/euZVoz5fv7S9GjjGvnP/usdG5MgYGWjtW
-         hIDcUHYcscYcTK93rUr2FWKURcr8igJybQZ5Lugmua+3V8v1SEbWV1px+zgis4e7JPPX
-         rm5O047F3TaiIRG2nz+CVfLqTaHaZkgVFw1K0jDTTIXSeNVuLafJ6FrSqS4wDm+ALes4
-         FiIw==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=fnaq+4JzEEM5eIoG/yGUElJ8ggwK5uFxmVYorNjjoFU=;
+        b=fSJwmiq7SmnmSChZz3AGny22WKLnv0H/xUkCiYysGnxn8vafgzQUqttS43Xej3g1VK
+         raNpitdlWxDuGQogkdGBU5nQKcInHisTAfcHQ8UdHWD4nelxA1D3G6/ZAd2Fq0TTqRFi
+         ZI9Tj3vB3n/3pFSrpMJGSe8Hg8SI218gra2aV0r93pjf0z3mXkJfDaYjBKBYJacA4jlg
+         LB+9a4+lLIv8kFEZotz8PI/Glsy/DZldJ9sGKnwqqLau8uy4Xsy1SQhomlPzB1fbpSVQ
+         XcDVMHSfq/eCHRvIliSRqH4Ryg92tt1sbicCaHBeP+NWnCvK7fqeB0geZbRdaZEqHCT6
+         mG2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pY1zmuqLqCEdS/VLal5ncqX2RzevlQB07OvZeqJKvBw=;
-        b=pr8w39ytqgHSimEzyOfldBQcJLt9yFi51nb6BeyqhzmboP5BoMjf3k7+hBQRoPtPTm
-         hTM8lhCSK9chLzZthQwexKhCNScx0k1tlLAIriYxRHvl+6SysIZSdvZCxGB7Rc0Hcq37
-         HAUUApm3Ivwky8vzccjI23Lq2zs4BL+cHeWfuCE2XK8HqbnLLFHzTJv/IR3DzxdkbUB0
-         g2bVmPTqYiXttvi0uIMO5iBkkqaaRh42DFaQ8cnhWIL04TF+5XALsUl8lHURDTQ+Pk7H
-         zk1oeN51tRpGl7i6Q/aZSdVkKhRJ2mh8jlzrtifLk8Qpjc7sTFh1Q2zuFnmOQvPUsrxv
-         Kvsg==
-X-Gm-Message-State: AOAM533hEllmQeMHHcG9gKo/JRP1RmUR6yYXyEXlgemFXyhq0H2dmTm2
-        +3a3BMDNS4SRZa8Xa0Xe9286k38/iZWMyMMPx91qtaxZmJE=
-X-Google-Smtp-Source: ABdhPJyi3y9Anp5u0pnxE6WzpZmnu3dPcHHy5ekI903PMLQmsBCea7UX5Ad8QzHrrAmTfhZFqcHDPCFTrQcFEdXXRyc=
-X-Received: by 2002:a05:651c:21c:: with SMTP id y28mr7713930ljn.139.1593744015974;
- Thu, 02 Jul 2020 19:40:15 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=fnaq+4JzEEM5eIoG/yGUElJ8ggwK5uFxmVYorNjjoFU=;
+        b=Pe4Mn66y6hQLxE3mqqfpru09jQmY0n3luWo37g5Hen1L158KoTHg2EH8SyFzZ/9GGJ
+         IHn01/Y7W8jhTyTBX8mtaKumzULY0vgU0LBXz8VeY6UuXyuasitjPDdeKJu17Df82Wmw
+         fC8z18VYVKKx8yDWK4c/K9s14GBr4w8HA84qhtHLoCrAn90vAl8qpPFSBxg9Cji2eYL4
+         BtKOcjXPjB8CJdAcz5QenO0vAjWMNBuXIUWESczong/tltpGC4CXx5W2bGlGAC3O3Bja
+         iPS0XwXGNeBHpF2T+Gw3gITngL0kr4DXrARNWw/eeo47kAd+eU3jg4h5K8AugDbokgwL
+         XKEA==
+X-Gm-Message-State: AOAM531tYqy9Fzf8Y85BmKvvZOgrJ9Tmx8Y+KP8KoRVuoty8XvH/nfGY
+        wIuY4Bxlu5Nd8PWYZ2YC1DLVn5me5qAmMR2ZgnzDrHESmDM=
+X-Google-Smtp-Source: ABdhPJyFsp6+hVW8SoizumHr+W2Y4A8D67PZnrXgLSg/dqf5dJ/u3LZOBP56Q5/gUveKt36WhKHeJ5KeDv1zZltRhLg=
+X-Received: by 2002:adf:f083:: with SMTP id n3mr38279246wro.297.1593802117084;
+ Fri, 03 Jul 2020 11:48:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1593424923.git.asml.silence@gmail.com> <1221be71ac8977607748d381f90439af4781c1e5.1593424923.git.asml.silence@gmail.com>
-In-Reply-To: <1221be71ac8977607748d381f90439af4781c1e5.1593424923.git.asml.silence@gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 3 Jul 2020 04:39:48 +0200
-Message-ID: <CAG48ez2yJdH3W_PHzvEuwpORB6MoTf9M5nOm1JL3H-wAnkJBBA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] io_uring: fix use after free
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+From:   Daniele Salvatore Albano <d.albano@gmail.com>
+Date:   Fri, 3 Jul 2020 20:48:10 +0200
+Message-ID: <CAKq9yRg1NkEOei-G8JKMMo-cTCp128aPPONeLCGPFLqD5w+fkA@mail.gmail.com>
+Subject: Keep getting the same buffer ID when RECV with IOSQE_BUFFER_SELECT
+To:     io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jun 29, 2020 at 10:44 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> After __io_free_req() put a ctx ref, it should assumed that the ctx may
-> already be gone. However, it can be accessed to put back fallback req.
-> Free req first and then put a req.
+Hi,
 
-Please stick "Fixes" tags on bug fixes to make it easy to see when the
-fixed bug was introduced (especially for ones that fix severe issues
-like UAFs). From a cursory glance, it kinda seems like this one
-_might_ have been introduced in 2b85edfc0c90ef, which would mean that
-it landed in 5.6? But I can't really tell for sure without investing
-more time; you probably know that better.
+I have recently started to play with io_uring and liburing but I am
+facing an odd issue, of course initially I thought it was my code but
+after further investigation and testing some other code (
+https://github.com/frevib/io_uring-echo-server/tree/io-uring-op-provide-buffers
+) I faced the same behaviour.
 
-And if this actually does affect existing releases, please also stick
-a "Cc: stable@vger.kernel.org" tag on it so that the fix can be
-shipped to users of those releases.
+When using the IOSQE_BUFFER_SELECT with RECV I always get the first
+read right but all the subsequent return a buffer id different from
+what was used by the kernel.
+
+The problem starts to happen only after io_uring_prep_provide_buffers
+is invoked to put back the buffer, the bid set is the one from cflags
+>> 16.
+
+The logic is as follow:
+- io_uring_prep_provide_buffers + io_uring_submit + io_uring_wait_cqe
+initialize all the buffers at the beginning
+- within io_uring_for_each_cqe, when accepting a new connection a recv
+sqe is submitted with the IOSQE_BUFFER_SELECT flag
+- within io_uring_for_each_cqe, when recv a send sqe is submitted
+using as buffer the one specified in cflags >> 16
+- within io_uring_for_each_cqe, when send a provide buffers for the
+bid used to send the data and a recv sqes are submitted.
+
+If I drop io_uring_prep_provide_buffers both in my code and in the
+code I referenced above it just works, but of course at some point
+there are no more buffers available.
+
+To further debug the issue I reduced the amount of provided buffers
+and started to print out the entire bufferset and I noticed that after
+the first correct RECV the kernel stores the data in the first buffer
+of the group id but always returns the last buffer id.
+It is like after calling io_uring_prep_provide_buffers the information
+on the kernel side gets corrupted, I tried to follow the logic on the
+kernel side but there is nothing apparent that would make me
+understand why I am facing this behaviour.
+
+The original author of that code told me on SO that he wrote & tested
+it on the kernel 5.6 + the provide buffers branch, I am facing this
+issue with 5.7.6, 5.8-rc1 and 5.8-rc3. The liburing library is built
+out of the branch, I didn't do too much testing with different
+versions but I tried to figure out where the issue was for the last
+week and within this period I have pulled multiple times the repo.
+
+Any hint or suggestion?
+
+
+Thanks!
+Daniele

@@ -2,185 +2,174 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD02214EA3
-	for <lists+io-uring@lfdr.de>; Sun,  5 Jul 2020 20:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A82214EA8
+	for <lists+io-uring@lfdr.de>; Sun,  5 Jul 2020 20:52:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbgGESwM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 5 Jul 2020 14:52:12 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:31458 "EHLO
+        id S1728116AbgGESwR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 5 Jul 2020 14:52:17 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:31484 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbgGESwL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 5 Jul 2020 14:52:11 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200705185206epoutp04a178485092545844f82a266f51bd7614~e7_6yPUyQ1096410964epoutp04U
-        for <io-uring@vger.kernel.org>; Sun,  5 Jul 2020 18:52:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200705185206epoutp04a178485092545844f82a266f51bd7614~e7_6yPUyQ1096410964epoutp04U
+        with ESMTP id S1728034AbgGESwQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 5 Jul 2020 14:52:16 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200705185213epoutp047affbe5facb7d3f02db9a26f2546d330~e7-BqvnSC1096410964epoutp04X
+        for <io-uring@vger.kernel.org>; Sun,  5 Jul 2020 18:52:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200705185213epoutp047affbe5facb7d3f02db9a26f2546d330~e7-BqvnSC1096410964epoutp04X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1593975126;
-        bh=hQPezt3s8OlsiuExPu77NlEiYYJbDQhcCBCIducGDuk=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=Vfn1H4BtPwXy4+Mu8sDvEt25ifHaqhB+ADZdkO4NXeKu28djW+Gq4Bo+XlS87QVa7
-         DFGjNKNI8ZViRr1hq5hUwh59cboTVe7Gl2aoImIuXKWvPAo5WvwHewZeaRQsCFaC85
-         Oq1QSctTxs+2IvU2M9RdYDf3XNvDlwyPHDSP62Cs=
+        s=mail20170921; t=1593975134;
+        bh=EdQAf5+zw6N5J2+HOrsvrQfxx8kc7JZeLZVVK6M6PcA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=TCGvSGVyqOKSya2EEIuudSvnZj5fnJRrSwoTnr5kY4jH09H83B+QgsK0iBJcrOiAi
+         PNhxyOeKwO5R1lWtfF/DzJ/mHJ+Wma5Gw/8kDUD84szYoe9LttBuX0NhA2tsU9hvNY
+         Bag031VVnUjczQb3NDjpYsXQqftHbSBpkWOoBU44=
 Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20200705185205epcas5p180e3a8deef1fcacdb76d934a7fef28e7~e7_6C_L5Y0734507345epcas5p1U;
-        Sun,  5 Jul 2020 18:52:05 +0000 (GMT)
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20200705185212epcas5p3f7db3dbbf75a909dbc5d85f66b033014~e7-AqOR6C0482204822epcas5p3x;
+        Sun,  5 Jul 2020 18:52:12 +0000 (GMT)
 Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
         epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8D.B7.09703.551220F5; Mon,  6 Jul 2020 03:52:05 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200705185204epcas5p3adeb4fc3473c5fc0472a7396783c5267~e7_5JGHy90482204822epcas5p3n;
-        Sun,  5 Jul 2020 18:52:04 +0000 (GMT)
+        4F.B7.09703.C51220F5; Mon,  6 Jul 2020 03:52:12 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200705185211epcas5p4059d05d2fcedb91829300a7a7d03fda3~e7_-ewc7F1418914189epcas5p45;
+        Sun,  5 Jul 2020 18:52:11 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200705185204epsmtrp2f0e02848992e9a6786497f596d97f99f~e7_5IS-JF1855618556epsmtrp2w;
-        Sun,  5 Jul 2020 18:52:04 +0000 (GMT)
-X-AuditID: b6c32a4a-4b5ff700000025e7-2a-5f022155462e
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200705185211epsmtrp1bb12d193d2271b7451da13042d046c6d~e7_-dwRAV0303903039epsmtrp10;
+        Sun,  5 Jul 2020 18:52:11 +0000 (GMT)
+X-AuditID: b6c32a4a-4cbff700000025e7-37-5f02215c0cd3
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        48.37.08303.451220F5; Mon,  6 Jul 2020 03:52:04 +0900 (KST)
+        D9.37.08303.B51220F5; Mon,  6 Jul 2020 03:52:11 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.110.206.5]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200705185202epsmtip2da00bd83855b850f39e7db1e956e44a9~e7_3DMwUB3251332513epsmtip2u;
-        Sun,  5 Jul 2020 18:52:02 +0000 (GMT)
+        20200705185209epsmtip2b4cf5e349418fb0b9c4ddd3670b42090~e7_9FQgN73204832048epsmtip2s;
+        Sun,  5 Jul 2020 18:52:08 +0000 (GMT)
 From:   Kanchan Joshi <joshi.k@samsung.com>
 To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org
 Cc:     hch@infradead.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
         linux-fsdevel@vger.kernel.org, mb@lightnvm.io,
         linux-kernel@vger.kernel.org, linux-aio@kvack.org,
         io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Kanchan Joshi <joshi.k@samsung.com>
-Subject: [PATCH v3 0/4] zone-append support in io-uring and aio
-Date:   Mon,  6 Jul 2020 00:17:46 +0530
-Message-Id: <1593974870-18919-1-git-send-email-joshi.k@samsung.com>
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Subject: [PATCH v3 1/4] fs: introduce FMODE_ZONE_APPEND and IOCB_ZONE_APPEND
+Date:   Mon,  6 Jul 2020 00:17:47 +0530
+Message-Id: <1593974870-18919-2-git-send-email-joshi.k@samsung.com>
 X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSZ0wTYRjmux7ttUnlrEQ/qqJUTKQoKGI4FcWI0QtGozGg4oBGLoiy2hNQ
-        ooQIZZQUCZQpGEPE1PoDrCejFMSW4UCw4ohGVgTFAZpWkbDU0qL/nu9Z7/Pjw1iCdEchFhV7
-        jpLFSqJFbB5aa/QQrwt2Q8LW11k8ialilSNRrqkFxO3eK2xCMcughDxzHCGe5FUixJi8CyXa
-        fo+yCVXRZUA0vfUk9E2PUKJHV84m1HWtKPFCVckiumc6HHc4kQ1lvRzyrlpM9jxNILXmfA6Z
-        83ICkLmMBpAWrSuZ2ZKDkNqhUeQAN5TnH0FFRyVSMu/t4bzTg51VaHyn63lT/xd2KlBBBeBi
-        EPeFv6s/AgXgYQK8EcCX12ZQ28MM4HjLbbtiAfBm62POfKT5oZZjE3R/Bcss55+reliFKACG
-        sXEP+KwgwQqdcX/YcMPdamHhWQicvcUAK78ID4C6EqG1E8VXw+zRCcSK+XggrK2ZZNtuucI3
-        XdksaxbicgxeVlbbR+yC9a8y7aZF8HMHY+eF0DLWZOdpOPmuzR7OAvB1ailqEwKgST8zt5P1
-        d2e1zttKs/AFUDk1NEdDnA+zMgQ2txvsyx92tOElcLDkhh2T8EGPaa5RgJ+A6UoG5IFlZf9L
-        rwOgAS5UPB0TSdGb4n1iqSQvWhJDJ8RGep2Ki9GCuY8iDqoHgwPfvQwAwYABQIwlcuYrPUGY
-        gB8huZBMyeLCZAnRFG0ASzFUtIQvmug8KcAjJeeosxQVT8nmVQTjClMRkeJTtMJdNdJ4fGtI
-        wzI6Qu8V3OC+y2l2+fRARss184qK8JTncYVRNVJRJnHgeZG4fcSwB6vadnfzk4vCLa4rjT9G
-        u1OD8yfWJkv18uKR4o4Lx5uD1D0h+8LLy893/pQKjfr9Lcd+Lb9zSL5zfwWjWV23hZOd6MQp
-        ZdRnC/qTVOPfUmo2Xu0+Oj3+tH23j480L2a4CRH4nTjJVKYZ90nDx9bcCjxyqbWQCn39QMc9
-        86HYr+Jrn3pwYVdir9bZN7dtb8fw/fQNh0fe378nC1N+8i9AGMzoZ5IMFJhdKImDyFc21YwY
-        tNykXIM5oMth1czBRhN/MU+68IzmR5rbTU6VCKVPSzaIWTJa8geHwFSrlwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsWy7bCSvG6IIlO8waH92ha/p09htZizahuj
-        xeq7/WwWXf+2sFi0tn9jsjg9YRGTxbvWcywWR/+/ZbOYMq2J0WLvLW2LPXtPslhc3jWHzWLF
-        9iMsFlemLGK2OP/3OKsDv8fOWXfZPTav0PK4fLbUY9OnSewe3Vd/MHr0bVnF6PF5k5xH+4Fu
-        Jo9NT94yBXBGcdmkpOZklqUW6dslcGU8PLOUpeCMXMXF+6/ZGhinSHQxcnJICJhI7Duxib2L
-        kYtDSGAHo8SRvidsEAlxieZrP9ghbGGJlf+eQxV9ZJS4NmcXSxcjBwebgKbEhcmlIDUiAg4S
-        XccfM4HUMAtMYZJ4emo+M0iNsIC9xK4ZUiA1LAKqEp1vfzCB2LwCzhLbNvyC2iUncfNcJ/ME
-        Rp4FjAyrGCVTC4pz03OLDQuM8lLL9YoTc4tL89L1kvNzNzGCw1ZLawfjnlUf9A4xMnEwHmKU
-        4GBWEuHt1WaMF+JNSaysSi3Kjy8qzUktPsQozcGiJM77ddbCOCGB9MSS1OzU1ILUIpgsEwen
-        VAPTubkV7x5OZbyulNne23vFza//vP9NV3lPjb8P1zxiSpvu1TInkXuXpvkH+8rbRyOjNgaW
-        yp7pV+qeu3Gb52f12VL9dku417FcENA13RRyPUru0z5j525Omc1c82L4o1ZO4uy32nunpvP+
-        f6VTVzguf5ybzyGmrrnh+KZJN+6pPHz3SOT8drOm1/sOG3Zz3f24oeRyZ/E5k3DT/7N1DXUU
-        niz8v2DdGqb1LwOD6uwPa+94z2gtf69ZmWOn9LniiVEvDHae3+UmNfVp/ostv01M182/wFGt
-        c3NHWpfbx7b/C/r4XFtuLbBMK6rnPvHQ7mZ8IIu5uFDGUxVz20edqcZz1jyauCDrokPKK0MN
-        jwO6SizFGYmGWsxFxYkAwPqMfMoCAAA=
-X-CMS-MailID: 20200705185204epcas5p3adeb4fc3473c5fc0472a7396783c5267
+In-Reply-To: <1593974870-18919-1-git-send-email-joshi.k@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSaUwTURSFfTPTdopWJ8XEJ+JCgRhqRBE0z7jgho5GAvpLCYpVxkKEgi11
+        qxhAKaUNgkpksW5AFDGKFoJQBE21YkGoFmRLJaJFBXdwISAopVX/ffeec899uXkkzr/AciOj
+        JQmMVCKKEbBdiIoHPsL54R5YxEJzmx8azslmIW1JBUDXX2SykXq0nECpaT8w1JBVgKFPqU0E
+        em0d4CDj749slH02BaCaznnobo2JQM16LRsV33lIoIrhizhqyS7A0ftBExuZR+pYq/h0Vf4L
+        Dl1WLKSbG+W0rv80h9Y8HwT0yfISQA/oZtFp9zUYrbN9xEK5YS7LI5mY6AOMdMHKXS5RhZ15
+        WLze9VDbryxWEkih1IBLQioAGqsfse3Mp6oBHLwfqAYuY9wP4NtXD4CjGAAwrcDG+jvRbqti
+        OQQ9gPW1mcQ/182Ox5gakCSb8oFPz8jtOJVaDquKvOwWnErDYavJMh7kSm2GQw3vMDsTlDds
+        vNgI7Myj1sJ6UynbsWwW7GhKx+3MpdZBZXUDbg+CVCUJW5Lfju+CY4LmK+3wu8K+unKOg91g
+        b6bSyTI4ZDU6Z1UAtiXlEQ4hED67OzKeg4+9uVS/wN7GqckwY9jmjOdBlZLvcHvArtM9zjtM
+        g925RU6m4dO8IuC4Yg6Ayfo5WWBm/v/QSwCUgOlMvCxWzMgWxy+SMAd9ZaJYmVwi9t0TF6sD
+        419IuKkSdL/84msAGAkMAJK4YCovYx6I4PMiRYePMNK4CKk8hpEZwAySEEzjCQaf7ORTYlEC
+        s49h4hnpXxUjuW5J2IQo61ZBwI7Xu/fmnzD/NmtCw9sjUJB3yJDqRsqG4MIS63Flj7+78vsp
+        YVd/y3ZtHM+2+abiztyUJ4VvSEn7lNrPu+oSR/Uhy47d05sKI2d/Dfomql2RLG+1eG7d4aMg
+        uEe6z6SCOdbcCbzb6TfCHlvU33met/Z5Gm6dK6OL3d+sV3gH+vdi+aXGdG7mlX4ppV0iSgx+
+        x7n0Y7Wib015R/S2+qCA9MCehGtcvw9bRkavNgu14Srq3HujbSLTlYt+WVozdOdPeeRsvFy2
+        dO5u6QGL+INbd0+H//NJisTO6UeTFSEbztaUafb3NvmGfur76bNXcGKN3Fx5OCxG7K7y0hsE
+        hCxK5CfEpTLRH4P2NpuxAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsWy7bCSvG60IlO8wamVSha/p09htZizahuj
+        xeq7/WwWXf+2sFi0tn9jsjg9YRGTxbvWcywWj+98Zrc4+v8tm8WUaU2MFntvaVvs2XuSxeLy
+        rjlsFiu2H2Gx2PZ7PrPFlSmLmC1e/zjJZnH+73FWByGPnbPusntsXqHlcflsqcemT5PYPbqv
+        /mD06NuyitHj8yY5j/YD3Uwem568ZQrgjOKySUnNySxLLdK3S+DKWHxrJlPBLuGK638msDYw
+        Ngl0MXJySAiYSNx4spO1i5GLQ0hgB6PE2ZMLmCES4hLN136wQ9jCEiv/PQezhQQ+Mkos+mDS
+        xcjBwSagKXFhcilIWETAQaLr+GMmkDnMAlOZJeY2H2ADSQgL+Ej8Ov2CCcRmEVCVODv/LCOI
+        zSvgLHHq5Ho2iPlyEjfPdYLt5RRwkWjbfZoZZL4QUM3US4oTGPkWMDKsYpRMLSjOTc8tNiww
+        ykst1ytOzC0uzUvXS87P3cQIjgEtrR2Me1Z90DvEyMTBeIhRgoNZSYS3V5sxXog3JbGyKrUo
+        P76oNCe1+BCjNAeLkjjv11kL44QE0hNLUrNTUwtSi2CyTBycUg1MJZOKTjFq/ymPNP230afs
+        44L3k6K3bDyU8CV3rWrA3vmZK5dPeyD45JALV98m3sVaQVHNOx0X6Rk0P79SEfuyQ4PH/0wJ
+        Q5zipqszFjhOTGWZWXu96e6dLTdv5dot/2gqsk0tUGWqTXihZfLnbYJLC9TMCzcKaDBW/e3l
+        1pedyLhrJZ+PiJ+hvMH7o7/nss/3D5rS0nuQ6btzw5mCVkY/kWMt/1Xmfr183W7GidqE5TMz
+        C9c1/tqyMuZEvX7kO5cU+RUSL/uv8c2cq+XYNefknsLVYX9kanh2PdPpUL0X5lpcsubk6swb
+        XTlN3TuuxdTemrf/0RpP8ZzdqZauva8rhDUT11qd2My+z3KCuy+TEktxRqKhFnNRcSIAqAaK
+        GPACAAA=
+X-CMS-MailID: 20200705185211epcas5p4059d05d2fcedb91829300a7a7d03fda3
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
-X-CMS-RootMailID: 20200705185204epcas5p3adeb4fc3473c5fc0472a7396783c5267
-References: <CGME20200705185204epcas5p3adeb4fc3473c5fc0472a7396783c5267@epcas5p3.samsung.com>
+X-CMS-RootMailID: 20200705185211epcas5p4059d05d2fcedb91829300a7a7d03fda3
+References: <1593974870-18919-1-git-send-email-joshi.k@samsung.com>
+        <CGME20200705185211epcas5p4059d05d2fcedb91829300a7a7d03fda3@epcas5p4.samsung.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Changes since v2:
-- Use file append infra (O_APPEND/RWF_APPEND) to trigger zone-append
-(Christoph, Wilcox)
-- Added Block I/O path changes (Damien). Avoided append split into multi-bio.
-- Added patch to extend zone-append in block-layer to support bvec iov_iter.
-Append using io-uring fixed-buffer is enabled with this.
-- Made io-uring support code more concise, added changes mentioned by Pavel.
+Enable zone-append using existing O_APPEND and RWF_APPEND infra.
+Unlike file-append, zone-apppend requires bit of additional processing
+in common path to send completion-result to upper layer. To skip that
+for non-zoned block-devices/files, introduce FMODE_ZONE_APPEND and
+IOCB_ZONE_APPEND.
+When a file is opened, it can subscribe to zone-append by setting
+FMODE_ZONE_APPEND. Add IOCB_ZONE_APPEND which is set in kiocb->ki_flags
+if write meets existing file-append critera, and file has subscribed to
+zone-append.
 
-v2: https://lore.kernel.org/io-uring/1593105349-19270-1-git-send-email-joshi.k@samsung.com/
-
-Changes since v1:
-- No new opcodes in uring or aio. Use RWF_ZONE_APPEND flag instead.
-- linux-aio changes vanish because of no new opcode
-- Fixed the overflow and other issues mentioned by Damien
-- Simplified uring support code, fixed the issues mentioned by Pavel
-- Added error checks for io-uring fixed-buffer and sync kiocb
-
-v1: https://lore.kernel.org/io-uring/1592414619-5646-1-git-send-email-joshi.k@samsung.com/
-
-Cover letter (updated):
-
-This patchset enables zone-append using io-uring/linux-aio, on block IO path.
-Purpose is to provide zone-append consumption ability to applications which are
-using zoned-block-device directly.
-Application can send write with existing O/RWF_APPEND;On a zoned-block-device
-this will trigger zone-append. On regular block device existing behavior is
-retained. However, infra allows zone-append to be triggered on any file if
-FMODE_ZONE_APPEND (new kernel-only fmode) is set during open.
-
-With zone-append, written-location within zone is known only after completion.
-So apart from usual return value of write, additional mean is needed to obtain
-the actual written location.
-
-In aio, this is returned to application using res2 field of io_event -
-
-struct io_event {
-        __u64           data;           /* the data field from the iocb */
-        __u64           obj;            /* what iocb this event came from */
-        __s64           res;            /* result code for this event */
-        __s64           res2;           /* secondary result */
-};
-
-In io-uring, cqe->flags is repurposed for zone-append result.
-
-struct io_uring_cqe {
-        __u64   user_data;      /* sqe->data submission passed back */
-        __s32   res;            /* result code for this event */
-        __u32   flags;
-};
-
-32 bit flags is not sufficient, to cover zone-size represented by chunk_sectors.
-Discussions in the LKML led to following ways to go about it -
-Option 1: Return zone-relative offset in sector/512b unit
-Option 2: Return zone-relative offset in bytes
-
-With option #1, io-uring changes remain minimal, relatively clean, and extra
-checks and conversions are avoided in I/O path. Also ki_complete interface change
-is avoided (last parameter ret2 is of long type, which cannot store return value
-in bytes). Bad part of the choice is - return value is in 512b units and not in
-bytes. To hide that, a wrapper needs to be written in user-space that converts
-cqe->flags value to bytes and combines with zone-start.
-
-Option #2 requires pulling some bits from cqe->res and combine those with
-cqe->flags to store result in bytes. This bitwise scattering needs to be done
-by kernel in I/O path, and application still needs to have a relatively
-heavyweight wrapper to assemble the pieces so that both cqe->res and append
-location are derived correctly.
-
-Patchset picks option #1.
-
-Kanchan Joshi (2):
-  fs: introduce FMODE_ZONE_APPEND and IOCB_ZONE_APPEND
-  block: enable zone-append for iov_iter of bvec type
-
-Selvakumar S (2):
-  block: add zone append handling for direct I/O path
-  io_uring: add support for zone-append
-
- block/bio.c        | 31 ++++++++++++++++++++++++++++---
- fs/block_dev.c     | 49 ++++++++++++++++++++++++++++++++++++++++---------
- fs/io_uring.c      | 21 +++++++++++++++++++--
+Signed-off-by: Selvakumar S <selvakuma.s1@samsung.com>
+Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+Signed-off-by: Javier Gonzalez <javier.gonz@samsung.com>
+---
  include/linux/fs.h | 14 ++++++++++++--
- 4 files changed, 99 insertions(+), 16 deletions(-)
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 6c4ab4d..ef13df4 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -175,6 +175,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* File does not contribute to nr_files count */
+ #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
+ 
++/* File can support zone-append */
++#define FMODE_ZONE_APPEND	((__force fmode_t)0x40000000)
++
+ /*
+  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
+  * that indicates that they should check the contents of the iovec are
+@@ -315,6 +318,7 @@ enum rw_hint {
+ #define IOCB_SYNC		(1 << 5)
+ #define IOCB_WRITE		(1 << 6)
+ #define IOCB_NOWAIT		(1 << 7)
++#define IOCB_ZONE_APPEND	(1 << 8)
+ 
+ struct kiocb {
+ 	struct file		*ki_filp;
+@@ -3427,8 +3431,11 @@ static inline bool vma_is_fsdax(struct vm_area_struct *vma)
+ static inline int iocb_flags(struct file *file)
+ {
+ 	int res = 0;
+-	if (file->f_flags & O_APPEND)
++	if (file->f_flags & O_APPEND) {
+ 		res |= IOCB_APPEND;
++		if (file->f_mode & FMODE_ZONE_APPEND)
++			res |= IOCB_ZONE_APPEND;
++	}
+ 	if (file->f_flags & O_DIRECT)
+ 		res |= IOCB_DIRECT;
+ 	if ((file->f_flags & O_DSYNC) || IS_SYNC(file->f_mapping->host))
+@@ -3454,8 +3461,11 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+ 		ki->ki_flags |= IOCB_DSYNC;
+ 	if (flags & RWF_SYNC)
+ 		ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
+-	if (flags & RWF_APPEND)
++	if (flags & RWF_APPEND) {
+ 		ki->ki_flags |= IOCB_APPEND;
++		if (ki->ki_filp->f_mode & FMODE_ZONE_APPEND)
++			ki->ki_flags |= IOCB_ZONE_APPEND;
++	}
+ 	return 0;
+ }
+ 
 -- 
 2.7.4
 

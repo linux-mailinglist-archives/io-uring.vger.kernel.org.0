@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFAA1215A2D
+	by mail.lfdr.de (Postfix) with ESMTP id 5F53D215A2B
 	for <lists+io-uring@lfdr.de>; Mon,  6 Jul 2020 17:01:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729257AbgGFPBY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 6 Jul 2020 11:01:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60952 "EHLO
+        id S1729268AbgGFPBZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 6 Jul 2020 11:01:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729121AbgGFPBY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Jul 2020 11:01:24 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3809C061755
-        for <io-uring@vger.kernel.org>; Mon,  6 Jul 2020 08:01:23 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id o8so39755223wmh.4
-        for <io-uring@vger.kernel.org>; Mon, 06 Jul 2020 08:01:23 -0700 (PDT)
+        with ESMTP id S1729121AbgGFPBZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Jul 2020 11:01:25 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F0EC061755
+        for <io-uring@vger.kernel.org>; Mon,  6 Jul 2020 08:01:24 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id b6so41313580wrs.11
+        for <io-uring@vger.kernel.org>; Mon, 06 Jul 2020 08:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=XSM+wNbUpBErdeGCpkm3vYzq+wancK5WjdL49sdHWdo=;
-        b=tGhGdPDHDLdNw7yl+lj2s34C3SSYRBR/SXB16PSuUegpxuctKgX4npkX4JUe1kMw5E
-         vbV+jIk4cK2qKuBgeG5VN8PdJV1D+/L1pBwiwNajbgvt0BzfP3j5jYjiOqPSz40kOyzE
-         tn7yzSwbHkFm2EcYvhcYZogAtuWIBaH1wL9Tdv8u5dvxM/IIqY/8w/Vv6pXivLdQtQip
-         l9ywHLl1kKTRJKwucqwfPYHousD5wgE4kYCRGP04NAHzFX7H8BGQyx38aZLMqCzGCSlY
-         7hxihgxEcOlkHWC4OzdPEohYB5Jpmw0UqlnmJWlrO/kdKF4EfoW5pfF51eSb59IWMrzr
-         6Ksg==
+        bh=kdZSl9K8MVVajtvjSWxTm+p7YgzxpNHKuBHS9gWIfb0=;
+        b=h+8BHER0KZAQnSD/xFTFiRfwuksAKTugX0UMY5tfn/Gw8KIqA8abFCl8v08gjnXPg2
+         lrAM9XAbEc9B0nvIsEiIxroKloCb5O+i8xaYHjn09Y4TAY8+g+4tbyX5VlNl7kgiQF1j
+         80vsZ4tTSRpdDTvt87yJrEMSXXvyzB22kiwejkopBupSP9c7Ppyn959VixDTspC7Pqf0
+         3YHwNP55dTjbexqxf/2YbhvwfoFxPhpBEVwAg8SaCldEpcJXd/aWJK9Z0jfTv5BhYAbT
+         DDg94gJ+KHIz6cLPsR0A20M20usvXDdtVelDQhRUKhZ9R/UOFEdd4TAI+L0E0rmob4eO
+         1pqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XSM+wNbUpBErdeGCpkm3vYzq+wancK5WjdL49sdHWdo=;
-        b=J0nhuZMnwZ8C2BMO4KTtM4R6lT3kJ+JVL04rHXloaWEJnX1BjB3EWz/mAtGYxLSDov
-         SPvsppklZS496K4lQ/f75ZFqX91Fiu0I4QkMKZ/rogJF3YlcQDEJQxI/aELTHbBwlkOv
-         GTfcgMiRXQsW95aLb4FMP6W5/fq7iMrau0KFmcCHxZu0LyYwQ0QORKW+u8SjFrucQMYZ
-         l9R0h2M6yDkJWOOuhf+5ifPzGnG33+shJYJceUzzsdkebumr1MTyID+vKf+EyHMy9tI9
-         00siMa5yjwQD23EtFGYkaUfC32yXAGzS2XE6q153G2tudzgu89T+Qt2kVq5JDNOhovku
-         4X4g==
-X-Gm-Message-State: AOAM5313+SNJa7LhjZeU65OLhXHYqdLr9KmgseOK8Ic5Lph+EOXKxO8J
-        cJjw7GIjs+gIz4khOnrTUH4=
-X-Google-Smtp-Source: ABdhPJwCEgoqVNMbe9ThvPhoGKNKQYH8hqCNGeVDlLGlE+C30PO/YZIi9AsHK/R1D4nmCxuwYQVQ3g==
-X-Received: by 2002:a1c:2905:: with SMTP id p5mr38231613wmp.91.1594047682483;
-        Mon, 06 Jul 2020 08:01:22 -0700 (PDT)
+        bh=kdZSl9K8MVVajtvjSWxTm+p7YgzxpNHKuBHS9gWIfb0=;
+        b=mQuZqRJa/sfF1llSB250vacUhRWYUcC5nR+VaaMT4jN/XVYFx2xGBK62uswq9AuxL3
+         dSXeUFRmfZoC/gjbaxv6R01yriE1eIANZHN3aBtU7C5XG2Bi7XounWD2pQft6Fqw8Cm4
+         1qXStuCKnP8TYbvv8tXlmQnqCILP90B7wASwQqxtwLzB7cehvwEh28o52e+Y53IT77M5
+         SDLa2TAt35Q4nk2gQT1igMDIxZ9SVNF+AQzYQ8Eu6c3Y2mMrpZjbEalYELhD4pOuyyIe
+         5E59PnpWBsuQxtuaTpBAaPsCLW8YZJ+TRT+UjII+JNGwMgmEK+/L7ph/MHPtp0iXPdOA
+         pFpw==
+X-Gm-Message-State: AOAM532Urhe3N63I3dTy2AMtlM9F9nRwHBFR3WI5b/lGEnoWfzy7LMs+
+        CRKeH3uJdlinr/cnkfIfy9gtBmuT
+X-Google-Smtp-Source: ABdhPJxAZpDSfxzYFIHtV6efIRjTH32MzQTwCZItc+xL4tPIFJpavKTTFwcoh6Kd8xoulYmJD6/Uww==
+X-Received: by 2002:a5d:5310:: with SMTP id e16mr47139069wrv.289.1594047683701;
+        Mon, 06 Jul 2020 08:01:23 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id k18sm15626168wrx.34.2020.07.06.08.01.21
+        by smtp.gmail.com with ESMTPSA id k18sm15626168wrx.34.2020.07.06.08.01.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2020 08:01:22 -0700 (PDT)
+        Mon, 06 Jul 2020 08:01:23 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2 1/3] io_uring: don't delay iopoll'ed req completion
-Date:   Mon,  6 Jul 2020 17:59:29 +0300
-Message-Id: <b10180e4f58ab85a2b32a61a71fbbfab72344b18.1594047465.git.asml.silence@gmail.com>
+Subject: [PATCH v2 2/3] io_uring: fix stopping iopoll'ing too early
+Date:   Mon,  6 Jul 2020 17:59:30 +0300
+Message-Id: <064b9efdfdf59b289f6ae399e09d5dfdf37f3083.1594047465.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1594047465.git.asml.silence@gmail.com>
 References: <cover.1594047465.git.asml.silence@gmail.com>
@@ -62,37 +62,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-->iopoll() may have completed current request, but instead of reaping
-it, io_do_iopoll() just continues with the next request in the list.
-As a result it can leave just polled and completed request in the list
-up until next syscall. Even outer loop in io_iopoll_getevents() doesn't
-help the situation.
-
-E.g. poll_list: req0 -> req1
-If req0->iopoll() completed both requests, and @min<=1,
-then @req0 will be left behind.
-
-Check whether a req was completed after ->iopoll().
+Nobody adjusts *nr_events (number of completed requests) before calling
+io_iopoll_getevents(), so the passed @min shouldn't be adjusted as well.
+Othewise it can return less than initially asked @min without hitting
+need_resched().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/io_uring.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a2459504b371..50f9260eea9b 100644
+index 50f9260eea9b..020944a193d0 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2008,6 +2008,10 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
+@@ -2037,7 +2037,7 @@ static int io_iopoll_getevents(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ 		ret = io_do_iopoll(ctx, nr_events, min);
  		if (ret < 0)
- 			break;
+ 			return ret;
+-		if (!min || *nr_events >= min)
++		if (*nr_events >= min)
+ 			return 0;
+ 	}
  
-+		/* iopoll may have completed current req */
-+		if (READ_ONCE(req->iopoll_completed))
-+			list_move_tail(&req->list, &done);
-+
- 		if (ret && spin)
- 			spin = false;
+@@ -2080,8 +2080,6 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned *nr_events,
+ 	 */
+ 	mutex_lock(&ctx->uring_lock);
+ 	do {
+-		int tmin = 0;
+-
+ 		/*
+ 		 * Don't enter poll loop if we already have events pending.
+ 		 * If we do, we can potentially be spinning for commands that
+@@ -2106,10 +2104,7 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned *nr_events,
+ 			mutex_lock(&ctx->uring_lock);
+ 		}
+ 
+-		if (*nr_events < min)
+-			tmin = min - *nr_events;
+-
+-		ret = io_iopoll_getevents(ctx, nr_events, tmin);
++		ret = io_iopoll_getevents(ctx, nr_events, min);
+ 		if (ret <= 0)
+ 			break;
  		ret = 0;
 -- 
 2.24.0

@@ -2,161 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 100A2216D9F
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jul 2020 15:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89BBE216DA6
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jul 2020 15:25:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbgGGNYg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Jul 2020 09:24:36 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:34776 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726745AbgGGNYg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jul 2020 09:24:36 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U22DYQH_1594128271;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U22DYQH_1594128271)
+        id S1728122AbgGGNZz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Jul 2020 09:25:55 -0400
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:48419 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725944AbgGGNZz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jul 2020 09:25:55 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01358;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U222y8y_1594128351;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U222y8y_1594128351)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 07 Jul 2020 21:24:32 +0800
+          Tue, 07 Jul 2020 21:25:52 +0800
 From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 To:     io-uring@vger.kernel.org
 Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com,
         Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: [PATCH] io_uring: export cq overflow status to userspace
-Date:   Tue,  7 Jul 2020 21:24:20 +0800
-Message-Id: <20200707132420.2007-1-xiaoguang.wang@linux.alibaba.com>
+Subject: [LIBURING] Check cq ring overflow status
+Date:   Tue,  7 Jul 2020 21:25:41 +0800
+Message-Id: <20200707132541.2107-1-xiaoguang.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.17.2
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-For those applications which are not willing to use io_uring_enter()
-to reap and handle cqes, they may completely rely on liburing's
-io_uring_peek_cqe(), but if cq ring has overflowed, currently because
-io_uring_peek_cqe() is not aware of this overflow, it won't enter
-kernel to flush cqes, below test program can reveal this bug:
-
-static void test_cq_overflow(struct io_uring *ring)
-{
-        struct io_uring_cqe *cqe;
-        struct io_uring_sqe *sqe;
-        int issued = 0;
-        int ret = 0;
-
-        do {
-                sqe = io_uring_get_sqe(ring);
-                if (!sqe) {
-                        fprintf(stderr, "get sqe failed\n");
-                        break;;
-                }
-                ret = io_uring_submit(ring);
-                if (ret <= 0) {
-                        if (ret != -EBUSY)
-                                fprintf(stderr, "sqe submit failed: %d\n", ret);
-                        break;
-                }
-                issued++;
-        } while (ret > 0);
-        assert(ret == -EBUSY);
-
-        printf("issued requests: %d\n", issued);
-
-        while (issued) {
-                ret = io_uring_peek_cqe(ring, &cqe);
-                if (ret) {
-                        if (ret != -EAGAIN) {
-                                fprintf(stderr, "peek completion failed: %s\n",
-                                        strerror(ret));
-                                break;
-                        }
-                        printf("left requets: %d\n", issued);
-                        continue;
-                }
-                io_uring_cqe_seen(ring, cqe);
-                issued--;
-                printf("left requets: %d\n", issued);
-        }
-}
-
-int main(int argc, char *argv[])
-{
-        int ret;
-        struct io_uring ring;
-
-        ret = io_uring_queue_init(16, &ring, 0);
-        if (ret) {
-                fprintf(stderr, "ring setup failed: %d\n", ret);
-                return 1;
-        }
-
-        test_cq_overflow(&ring);
-        return 0;
-}
-
-To fix this issue, export cq overflow status to userspace, then
-helper functions() in liburing, such as io_uring_peek_cqe, can be
-aware of this cq overflow and do flush accordingly.
+If cq ring has been overflowed, need to enter kernel to flush cqes.
 
 Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 ---
- fs/io_uring.c                 | 12 ++++++++++++
- include/uapi/linux/io_uring.h |  2 +-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ src/include/liburing.h          |  1 +
+ src/include/liburing/io_uring.h |  2 +-
+ src/queue.c                     | 22 +++++++++++++++++-----
+ src/setup.c                     |  2 ++
+ 4 files changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d37d7ea5ebe5..30f50d72b6d5 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -157,6 +157,14 @@ struct io_rings {
- 	 * kernel.
- 	 */
- 	u32                     cq_flags;
-+	/*
-+	 * Runtime CQ overflow flags
-+	 *
-+	 * Written by the kernel, shouldn't be modified by the
-+	 * application.
-+	 *
-+	 */
-+	u32                     cq_check_overflow;
- 	/*
- 	 * Number of completion events lost because the queue was full;
- 	 * this should be avoided by the application by making sure
-@@ -1274,6 +1282,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
- 	if (cqe) {
- 		clear_bit(0, &ctx->sq_check_overflow);
- 		clear_bit(0, &ctx->cq_check_overflow);
-+		WRITE_ONCE(ctx->rings->cq_check_overflow, 0);
- 	}
- 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
- 	io_cqring_ev_posted(ctx);
-@@ -1311,6 +1320,7 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
- 		if (list_empty(&ctx->cq_overflow_list)) {
- 			set_bit(0, &ctx->sq_check_overflow);
- 			set_bit(0, &ctx->cq_check_overflow);
-+			WRITE_ONCE(ctx->rings->cq_check_overflow, 1);
- 		}
- 		req->flags |= REQ_F_OVERFLOW;
- 		refcount_inc(&req->refs);
-@@ -7488,6 +7498,7 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 			if (list_empty(&ctx->cq_overflow_list)) {
- 				clear_bit(0, &ctx->sq_check_overflow);
- 				clear_bit(0, &ctx->cq_check_overflow);
-+				WRITE_ONCE(ctx->rings->cq_check_overflow, 0);
- 			}
- 			spin_unlock_irq(&ctx->completion_lock);
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 0505a4f..9f7df1f 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -46,6 +46,7 @@ struct io_uring_cq {
+ 	unsigned *kring_entries;
+ 	unsigned *kflags;
+ 	unsigned *koverflow;
++	unsigned *kcheck_overflow;
+ 	struct io_uring_cqe *cqes;
  
-@@ -7960,6 +7971,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	p->cq_off.overflow = offsetof(struct io_rings, cq_overflow);
- 	p->cq_off.cqes = offsetof(struct io_rings, cqes);
- 	p->cq_off.flags = offsetof(struct io_rings, cq_flags);
-+	p->cq_off.check_overflow = offsetof(struct io_rings, cq_check_overflow);
- 
- 	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
- 			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 92c22699a5a7..2ae6adc6d22d 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -206,7 +206,7 @@ struct io_cqring_offsets {
+ 	size_t ring_sz;
+diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
+index 6a73522..15e273b 100644
+--- a/src/include/liburing/io_uring.h
++++ b/src/include/liburing/io_uring.h
+@@ -211,7 +211,7 @@ struct io_cqring_offsets {
  	__u32 overflow;
  	__u32 cqes;
  	__u32 flags;
@@ -164,6 +62,69 @@ index 92c22699a5a7..2ae6adc6d22d 100644
 +	__u32 check_overflow;
  	__u64 resv2;
  };
+ 
+diff --git a/src/queue.c b/src/queue.c
+index 88e0294..36f00bf 100644
+--- a/src/queue.c
++++ b/src/queue.c
+@@ -32,6 +32,14 @@ static inline bool sq_ring_needs_enter(struct io_uring *ring,
+ 	return false;
+ }
+ 
++static inline bool cq_ring_needs_flush(struct io_uring *ring)
++{
++	if (!ring->cq.kcheck_overflow)
++		return false;
++
++	return IO_URING_READ_ONCE(*ring->cq.kcheck_overflow);
++}
++
+ static int __io_uring_peek_cqe(struct io_uring *ring,
+ 			       struct io_uring_cqe **cqe_ptr)
+ {
+@@ -68,21 +76,25 @@ int __io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_ptr,
+ 
+ 	do {
+ 		unsigned flags = 0;
++		bool cq_overflow_flush = false;
+ 
+ 		err = __io_uring_peek_cqe(ring, &cqe);
+ 		if (err)
+ 			break;
+-		if (!cqe && !to_wait && !submit) {
+-			err = -EAGAIN;
+-			break;
++		if (!cqe) {
++			cq_overflow_flush = cq_ring_needs_flush(ring);
++			if (!to_wait && !submit && !cq_overflow_flush) {
++				err = -EAGAIN;
++				break;
++			}
+ 		}
+ 		if (wait_nr && cqe)
+ 			wait_nr--;
+-		if (wait_nr)
++		if (wait_nr || cq_overflow_flush)
+ 			flags = IORING_ENTER_GETEVENTS;
+ 		if (submit)
+ 			sq_ring_needs_enter(ring, submit, &flags);
+-		if (wait_nr || submit)
++		if (wait_nr || submit || cq_overflow_flush)
+ 			ret = __sys_io_uring_enter(ring->ring_fd, submit,
+ 						   wait_nr, flags, sigmask);
+ 		if (ret < 0) {
+diff --git a/src/setup.c b/src/setup.c
+index 860c112..1a03cc3 100644
+--- a/src/setup.c
++++ b/src/setup.c
+@@ -78,6 +78,8 @@ err:
+ 	cq->cqes = cq->ring_ptr + p->cq_off.cqes;
+ 	if (p->cq_off.flags)
+ 		cq->kflags = cq->ring_ptr + p->cq_off.flags;
++	if (p->cq_off.check_overflow)
++		cq->kcheck_overflow = cq->ring_ptr + p->cq_off.check_overflow;
+ 	return 0;
+ }
  
 -- 
 2.17.2

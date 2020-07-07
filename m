@@ -2,57 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0B2A216DE5
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jul 2020 15:38:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA6F216DE6
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jul 2020 15:38:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbgGGNiN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Jul 2020 09:38:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44348 "EHLO
+        id S1728121AbgGGNiS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Jul 2020 09:38:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726951AbgGGNiN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jul 2020 09:38:13 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC8CC061755
-        for <io-uring@vger.kernel.org>; Tue,  7 Jul 2020 06:38:12 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id z13so45178790wrw.5
-        for <io-uring@vger.kernel.org>; Tue, 07 Jul 2020 06:38:12 -0700 (PDT)
+        with ESMTP id S1726951AbgGGNiS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jul 2020 09:38:18 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 281D9C061755
+        for <io-uring@vger.kernel.org>; Tue,  7 Jul 2020 06:38:18 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id w3so34092813wmi.4
+        for <io-uring@vger.kernel.org>; Tue, 07 Jul 2020 06:38:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=jN1c2VbD9pYcG4iLjm7Ul3HpteWxaKFqQrNVVkJfal8=;
-        b=ryIzUNrKHJpDG/w05MAR4kTFWyGtx93YZnInthJ8Va2d5ivIX0C4Ikq4GEGuriI2qF
-         THS+6hBzvniD5kAt73dcR8WxNx4kncURvbfhDJigWSA9hnrRbqA7ie/a26kTQXP2PU4w
-         +Z0M6DkewIfZcizxKzxnTj3LEuXR55gIA7zowqn8kfDYlzLV3eHF0IFQyilhBnVwnieW
-         YSq6aENhdGnY9LffPGOiD3hMRvK8Unicbo9Sw9RnPmaGmAW6pxnfSSZBEbZIOrAVS4uX
-         XHnrwQtH955Zh7RyDm6azU+uhz9/GmxqX9CXatwXx0cPIGwR7zzcFxQfDztCN+fldRQ4
-         RHZw==
+        bh=tnN/2RuAXCjihiyyVXQqYnN8hK+GfmJ0N3bWnM2HCx4=;
+        b=cxOrJEwkSx1SrULlO+aEPFlAclR/p/tkZywYfEthmQ5YBueGFUmcIMCXozaAUFs6RN
+         jmE58pssEu7MEAg/Tl5WK+Buq2oaI52bEawNNxe/13AJfeQSLwRA1pB/HDoju1Rnw30c
+         Gm7A9POtNFz0LWFX7sUT9Pldnbkwrp0oQkiytCvlJBJyir7lO8PYOooKBv6dpApjKWln
+         NDXifO+lbY3/3095WUtbMASRTKQNRLw6XN4Nv1aqBvG83nNf8lzfX6EbMowF+sqVaMer
+         h2ScqUHtF7ofO8uK88OYAKAjKwx4H808Xg1NStzgiR6OZBgGVstmCoMCgoi+iaLofNxD
+         GqYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jN1c2VbD9pYcG4iLjm7Ul3HpteWxaKFqQrNVVkJfal8=;
-        b=sifCNvapQMCOP4ZdBc3X8xDRIIUhrDqKm8ORMC/vNn//2Cffi8LJHcOG8rYGI8Wmh2
-         U6va+8rGoZD9W5qh55ZxC0wOMNZDoWCdpnNU1VPVq7+ZswHBXT+38oc11yt317TJ60fS
-         XywNWrAHEEtt2Rh3z/DlUG/8bRMj+7Ef6bXeGF9VVDTmIIY5Le6luQtMeT0F8sYgyM09
-         WOIn7qEEbcjQdVe3PLQCV8VNwvQbvEGk9k7PO/RngBqjD2h+E7yDINGkpldJBxz5jOiS
-         /QW6m3c74BN5AsqaR1gi0om785xfnXDwOTioVfMDDTbnlsKDLK7w7dkqC96mGpGeW+vh
-         EtlA==
-X-Gm-Message-State: AOAM531YGvwImioLxqouSFtuy2XQd5OHuMLXoGTtlzDT/+9Lz7ZD3Jr9
-        xBZvnTovoYunYHPFDHoAyY8=
-X-Google-Smtp-Source: ABdhPJx2v/afNzg4WyRImxp3hZm/PesI/VnE6rWTYI0pm2U0Jj/GFE2xQiluHLfoOLh/Il0rUR2CFw==
-X-Received: by 2002:a5d:4607:: with SMTP id t7mr57858922wrq.251.1594129091586;
-        Tue, 07 Jul 2020 06:38:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tnN/2RuAXCjihiyyVXQqYnN8hK+GfmJ0N3bWnM2HCx4=;
+        b=E6KtRSngjK6Nzep5wOkvF8dZNDY3R+jz95Sv3+RUl5laR6/O8v8Z4ZZIFNEgtTCuV+
+         Cet71aAndMeKq/u/jCYT5hdxHpHRcl1Er6RpRjNd6YLwcjFcM2OPUKPUwvSzwECLE6uw
+         5fm6VGM4exPq2UUDZp9oa/bsuvFU9NXezlhoPU2DDY8gXx/mqd3WKmRaKonpJYUHieE6
+         espZ11Z8ioXQPfCr5tvwJmSkgJm49pob2XsttqUleD11IlYLKU1GesKknFNUByz+9pRM
+         CPC4o8ANlBkLBKL1jU2pGZzq6GseBKZ0hzI32G+1RtUCM5WJcItOVmyzYJtqb9HMPzXi
+         Bdig==
+X-Gm-Message-State: AOAM533tekl87jUb1R6wyq7Ol+c9AjD5g8C4B3uaXEISXQniXifVWSAo
+        R27/jRWKgdB/IqCIgzpDxg9uWInR
+X-Google-Smtp-Source: ABdhPJznNYPpJNK7AXH/kyJajSG57h/n3zwT6l4zi/dpF/KEDX4pKWoqW9PWL3VfGshpdBWXvVSUSg==
+X-Received: by 2002:a1c:1d46:: with SMTP id d67mr4571209wmd.152.1594129096802;
+        Tue, 07 Jul 2020 06:38:16 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id 14sm1093663wmk.19.2020.07.07.06.38.10
+        by smtp.gmail.com with ESMTPSA id 14sm1093663wmk.19.2020.07.07.06.38.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2020 06:38:11 -0700 (PDT)
+        Tue, 07 Jul 2020 06:38:16 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [RFC 0/3] reduce CPU usage on exit for IOPOLL
-Date:   Tue,  7 Jul 2020 16:36:19 +0300
-Message-Id: <cover.1594128832.git.asml.silence@gmail.com>
+Subject: [PATCH 1/3] io_uring: partially inline io_iopoll_getevents()
+Date:   Tue,  7 Jul 2020 16:36:20 +0300
+Message-Id: <50c3b8a518d1fc3b6ff48252ddeeeacbb012b1d4.1594128832.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1594128832.git.asml.silence@gmail.com>
+References: <cover.1594128832.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -60,23 +62,43 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-[1,2] are small preps for the future that should change
-nothing functionally.
+io_iopoll_reap_events() doesn't care about returned valued of
+io_iopoll_getevents() and does the same checks for list emptiness
+and need_resched(). Just use io_do_iopoll().
 
-[3] helps to reduce CPU usage on exit. We don't care about latency
-and CQEs when io_uring is going away, so checking it every HZ/20
-should be enough
-Please, check the assumptions, because I hope that nobody expects
- ->iopoll() to do real work but not just completing.
+io_sq_thread() doesn't check return value as well. It also passes min=0,
+so there never be the second iteration inside io_poll_getevents().
+Inline it there too.
 
-Pavel Begunkov (3):
-  io_uring: partially inline io_iopoll_getevents()
-  io_uring: remove nr_events arg from iopoll_check()
-  io_uring: don't burn CPU for iopoll on exit
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- fs/io_uring.c | 39 ++++++++++++++++++---------------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 54756ae94bcd..db8dd2cdd2cb 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2057,7 +2057,7 @@ static void io_iopoll_reap_events(struct io_ring_ctx *ctx)
+ 	while (!list_empty(&ctx->poll_list)) {
+ 		unsigned int nr_events = 0;
+ 
+-		io_iopoll_getevents(ctx, &nr_events, 1);
++		io_do_iopoll(ctx, &nr_events, 1);
+ 
+ 		/*
+ 		 * Ensure we allow local-to-the-cpu processing to take place,
+@@ -6311,8 +6311,8 @@ static int io_sq_thread(void *data)
+ 			unsigned nr_events = 0;
+ 
+ 			mutex_lock(&ctx->uring_lock);
+-			if (!list_empty(&ctx->poll_list))
+-				io_iopoll_getevents(ctx, &nr_events, 0);
++			if (!list_empty(&ctx->poll_list) && !need_resched())
++				io_do_iopoll(ctx, &nr_events, 0);
+ 			else
+ 				timeout = jiffies + ctx->sq_thread_idle;
+ 			mutex_unlock(&ctx->uring_lock);
 -- 
 2.24.0
 

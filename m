@@ -2,173 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89B82216EB3
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jul 2020 16:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A00A3216ECD
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jul 2020 16:32:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbgGGO2X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Jul 2020 10:28:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52156 "EHLO
+        id S1728110AbgGGOcC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Jul 2020 10:32:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbgGGO2X (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jul 2020 10:28:23 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEF0C061755
-        for <io-uring@vger.kernel.org>; Tue,  7 Jul 2020 07:28:23 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id q8so43362323iow.7
-        for <io-uring@vger.kernel.org>; Tue, 07 Jul 2020 07:28:23 -0700 (PDT)
+        with ESMTP id S1727793AbgGGOcC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jul 2020 10:32:02 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47E4FC08C5E2
+        for <io-uring@vger.kernel.org>; Tue,  7 Jul 2020 07:32:02 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id l1so1424395ioh.5
+        for <io-uring@vger.kernel.org>; Tue, 07 Jul 2020 07:32:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PnRFrWSYf/FZeqNV55RWDQdyOKsjLYLfvKaccxSNUsc=;
-        b=D51efw/6lj2JdhIB8qhlPlauFaB8AinuM1VmgyavyIjZAUdubuyaw2V7OvXQlYjrhC
-         Usl/FQtoJQglVTknLZBKZ7llTPgc4Q4G9/xafh/HYSUkQgL5kpwvbG5vGRqQ5+SPKYdp
-         bcoj0SnaOlvv25AyU7VR4kP/uAZZbGwRUvJeHRwho8qoCRDRLCxvDc9Ly6e0o5fCREyT
-         TgxMKnV0VnpdlBOQMJzwjYb0rjhZTgtFUHkfb0vkkgVMjHgo1nlqGYpN39NzEdYY2p5w
-         cHYxVODdO7lZVZj4bBAnorQgUF7kpQRH8htUpEWL4NMcaLxuOaTdVxF9zwZhOa2LJRpS
-         3AOA==
+        bh=K9wtGrRmm/8ioPgsuW/ScKzBbF1VAv0JgQlxPuaeZjA=;
+        b=JGTzfnCq2nLpWgT0i7AllodECtqIXc0lJai/AdmQNrYkIOD+LRzHS62If436OjZZ3y
+         gz7dHtnAhIElDndYwbPYyOpuDSH5GBd1lLBu+mL2tIY6ACa6KkahSdPTT3meGSRzwu3m
+         8QUYEGRFeuLy2VcuM6yGDL7mJsQqncBHsTwuuWbTXerN0cEGb0mJz72UJItyM9bOwI8j
+         ikQNiuc6d5gMEHhSVqb7alcfRt+DtPS++HhgDfhX/VUmJGPByXmQ08e8+M7nV19M425K
+         xU7PDUIhdH/MJn7F07/L4BHgx/xR9sC46PGo26+B4ZYGbMw7rFzNXV/zrK3oGsXJ9wNy
+         W+8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=PnRFrWSYf/FZeqNV55RWDQdyOKsjLYLfvKaccxSNUsc=;
-        b=sVCH2PtS38NdzDUF4yqGegoBjMlIAtjdcyjlqNa2uwuzxHsUQDuy/wRxCr8K3lsq4/
-         PfSavHBvcFFnlAUWFxfUtCOEmAX3f9+X8sZCJqWVQa/SFrLtFxvJNXI9Fp+sL7QEQrM3
-         yttt3nOv76Sr7CwmqWueHQw+qs97mnJWrmfH0fVAjMe8s9Faac9zMxQu94Gor8wUR+9C
-         M5KqG3ri54RUnMKIYBQouojtULquVzV/9oBv0yhXvikXm6BIyAqOtUXdibsMCG7qLCD7
-         3AS2brwaI88lhY0Hd/FR/yhh67C8WWtOAJytY83C9WTqq6kuIzdrBn1pe+TtehFyLLbj
-         eSqg==
-X-Gm-Message-State: AOAM533Z/ECEt0/MI4dT+IalL0dB3ZrA8PfSf6KPwilq4CoPm0cqkEA0
-        G4zEbAf31w5OhsQJnBk1+pekrYSmZROsPA==
-X-Google-Smtp-Source: ABdhPJwqsHPm0STzzZ+kGsSqNNbFyrqfQ7ewxwD76+hrHmmd5Mj3HP9lQvbq7qjsWRT+tOnZPyl9ZQ==
-X-Received: by 2002:a05:6602:2cc9:: with SMTP id j9mr31241538iow.181.1594132102532;
-        Tue, 07 Jul 2020 07:28:22 -0700 (PDT)
+        bh=K9wtGrRmm/8ioPgsuW/ScKzBbF1VAv0JgQlxPuaeZjA=;
+        b=QzFztpQlNMXajeriqnxtbJtEW7D1EvNsy89dhBcmMmfuHHpCN09IESqzI8hjGSIpJ7
+         ecCbIrSfGrSn2ZY1B8tkZL9ctl5EE8GitvURL8cDTN0t8oJ4XKTE+9lwfRmVevAcHkft
+         Nn1tDNrqO/FzED4q1hotERu7zmciX3Fe9pI6GNgfkaVlu2icCj//sx+vrbcVnlqISYid
+         NhfInj9g4ZhvGUkLNhosgJAnbw+n7YCtjq2frz/0uaox0DsqIFSU+DoqnN0gFAQDar54
+         sCxNwdFxdriz3DRuLNJzG4R7iRo35vaaQOBH/fsx0svd8XewCssCC9f/KBx6Cs7ZE8qa
+         Q6cg==
+X-Gm-Message-State: AOAM533R4jdMc3Vvcbz5vST0+ewzoX0XKA15e7YktOJrZ2DhF+F5CB1Q
+        8AV9zfDlYzJjqWwZpE+goqjMYg==
+X-Google-Smtp-Source: ABdhPJxwqxcaRrvKoFd0HyQLe2vIc0kunz65FpiBhfVS0IaAWWJE8PhV/N97KGvKH2kLRP5T0Bk2Ag==
+X-Received: by 2002:a05:6602:5db:: with SMTP id w27mr31920956iox.58.1594132320139;
+        Tue, 07 Jul 2020 07:32:00 -0700 (PDT)
 Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id z9sm12988733ilz.45.2020.07.07.07.28.21
+        by smtp.gmail.com with ESMTPSA id l10sm12956943ilc.52.2020.07.07.07.31.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jul 2020 07:28:21 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: export cq overflow status to userspace
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20200707132420.2007-1-xiaoguang.wang@linux.alibaba.com>
+        Tue, 07 Jul 2020 07:31:59 -0700 (PDT)
+Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
+To:     =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>
+References: <20200618144355.17324-1-axboe@kernel.dk>
+ <20200618144355.17324-6-axboe@kernel.dk>
+ <20200624010253.GB5369@dread.disaster.area>
+ <20200624014645.GJ21350@casper.infradead.org>
+ <bad52be9-ae44-171b-8dbf-0d98eedcadc0@kernel.dk>
+ <70b0427c-7303-8f45-48bd-caa0562a2951@kernel.dk>
+ <20200624164127.GP21350@casper.infradead.org>
+ <8835b6f2-b3c5-c9a0-2119-1fb161cf87dd@kernel.dk>
+ <CAHpGcMJsrQXX4OQe6MqjyTt8BOLZw-y1ixdk76p_DsZONyEJcQ@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0ebded37-3660-e3c0-aa51-d3d7e56d634c@kernel.dk>
-Date:   Tue, 7 Jul 2020 08:28:20 -0600
+Message-ID: <b147aa47-940c-c641-3dac-8d99f8789a47@kernel.dk>
+Date:   Tue, 7 Jul 2020 08:31:58 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200707132420.2007-1-xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <CAHpGcMJsrQXX4OQe6MqjyTt8BOLZw-y1ixdk76p_DsZONyEJcQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/7/20 7:24 AM, Xiaoguang Wang wrote:
-> For those applications which are not willing to use io_uring_enter()
-> to reap and handle cqes, they may completely rely on liburing's
-> io_uring_peek_cqe(), but if cq ring has overflowed, currently because
-> io_uring_peek_cqe() is not aware of this overflow, it won't enter
-> kernel to flush cqes, below test program can reveal this bug:
+On 7/7/20 5:38 AM, Andreas Grünbacher wrote:
+> Am Mi., 24. Juni 2020 um 18:48 Uhr schrieb Jens Axboe <axboe@kernel.dk>:
+>>
+>> On 6/24/20 10:41 AM, Matthew Wilcox wrote:
+>>> On Wed, Jun 24, 2020 at 09:35:19AM -0600, Jens Axboe wrote:
+>>>> On 6/24/20 9:00 AM, Jens Axboe wrote:
+>>>>> On 6/23/20 7:46 PM, Matthew Wilcox wrote:
+>>>>>> I'd be quite happy to add a gfp_t to struct readahead_control.
+>>>>>> The other thing I've been looking into for other reasons is adding
+>>>>>> a memalloc_nowait_{save,restore}, which would avoid passing down
+>>>>>> the gfp_t.
+>>>>>
+>>>>> That was my first thought, having the memalloc_foo_save/restore for
+>>>>> this. I don't think adding a gfp_t to readahead_control is going
+>>>>> to be super useful, seems like the kind of thing that should be
+>>>>> non-blocking by default.
+>>>>
+>>>> We're already doing memalloc_nofs_save/restore in
+>>>> page_cache_readahead_unbounded(), so I think all we need is to just do a
+>>>> noio dance in generic_file_buffered_read() and that should be enough.
+>>>
+>>> I think we can still sleep though, right?  I was thinking more
+>>> like this:
+>>>
+>>> http://git.infradead.org/users/willy/linux.git/shortlog/refs/heads/memalloc
+>>
+>> Yeah, that's probably better. How do we want to handle this? I've already
+>> got the other bits queued up. I can either add them to the series, or
+>> pull a branch that'll go into Linus as well.
 > 
-> static void test_cq_overflow(struct io_uring *ring)
-> {
->         struct io_uring_cqe *cqe;
->         struct io_uring_sqe *sqe;
->         int issued = 0;
->         int ret = 0;
+> Also note my conflicting patch that introduces a IOCB_NOIO flag for
+> fixing a gfs2 regression:
 > 
->         do {
->                 sqe = io_uring_get_sqe(ring);
->                 if (!sqe) {
->                         fprintf(stderr, "get sqe failed\n");
->                         break;;
->                 }
->                 ret = io_uring_submit(ring);
->                 if (ret <= 0) {
->                         if (ret != -EBUSY)
->                                 fprintf(stderr, "sqe submit failed: %d\n", ret);
->                         break;
->                 }
->                 issued++;
->         } while (ret > 0);
->         assert(ret == -EBUSY);
-> 
->         printf("issued requests: %d\n", issued);
-> 
->         while (issued) {
->                 ret = io_uring_peek_cqe(ring, &cqe);
->                 if (ret) {
->                         if (ret != -EAGAIN) {
->                                 fprintf(stderr, "peek completion failed: %s\n",
->                                         strerror(ret));
->                                 break;
->                         }
->                         printf("left requets: %d\n", issued);
->                         continue;
->                 }
->                 io_uring_cqe_seen(ring, cqe);
->                 issued--;
->                 printf("left requets: %d\n", issued);
->         }
-> }
-> 
-> int main(int argc, char *argv[])
-> {
->         int ret;
->         struct io_uring ring;
-> 
->         ret = io_uring_queue_init(16, &ring, 0);
->         if (ret) {
->                 fprintf(stderr, "ring setup failed: %d\n", ret);
->                 return 1;
->         }
-> 
->         test_cq_overflow(&ring);
->         return 0;
-> }
-> 
-> To fix this issue, export cq overflow status to userspace, then
-> helper functions() in liburing, such as io_uring_peek_cqe, can be
-> aware of this cq overflow and do flush accordingly.
+> https://lore.kernel.org/linux-fsdevel/20200703095325.1491832-2-agruenba@redhat.com/
 
-Is there any way we can accomplish the same without exporting
-another set of flags? Would it be enough for the SQPOLl thread to set
-IORING_SQ_NEED_WAKEUP if we're in overflow condition? That should
-result in the app entering the kernel when it's flushed the user CQ
-side, and then the sqthread could attempt to flush the pending
-events as well.
-
-Something like this, totally untested...
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d37d7ea5ebe5..d409bd68553f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6110,8 +6110,18 @@ static int io_sq_thread(void *data)
- 		}
- 
- 		mutex_lock(&ctx->uring_lock);
--		if (likely(!percpu_ref_is_dying(&ctx->refs)))
-+		if (likely(!percpu_ref_is_dying(&ctx->refs))) {
-+retry:
- 			ret = io_submit_sqes(ctx, to_submit, NULL, -1);
-+			if (unlikely(ret == -EBUSY)) {
-+				ctx->rings->sq_flags |= IORING_SQ_NEED_WAKEUP;
-+				smp_mb();
-+				if (io_cqring_overflow_flush(ctx, false)) {
-+					ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
-+					goto retry;
-+				}
-+			}
-+		}
- 		mutex_unlock(&ctx->uring_lock);
- 		timeout = jiffies + ctx->sq_thread_idle;
- 	}
+Yeah I noticed, pretty easy to resolve though.
 
 -- 
 Jens Axboe

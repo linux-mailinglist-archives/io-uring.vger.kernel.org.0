@@ -2,65 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 171F72173CF
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jul 2020 18:21:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C68552173EB
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jul 2020 18:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbgGGQVS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Jul 2020 12:21:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41626 "EHLO
+        id S1727789AbgGGQ1o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Jul 2020 12:27:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727886AbgGGQVS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jul 2020 12:21:18 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 622BEC061755
-        for <io-uring@vger.kernel.org>; Tue,  7 Jul 2020 09:21:18 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id t27so31548551ill.9
-        for <io-uring@vger.kernel.org>; Tue, 07 Jul 2020 09:21:18 -0700 (PDT)
+        with ESMTP id S1726911AbgGGQ1n (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jul 2020 12:27:43 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33350C061755
+        for <io-uring@vger.kernel.org>; Tue,  7 Jul 2020 09:27:43 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id f18so37793399wrs.0
+        for <io-uring@vger.kernel.org>; Tue, 07 Jul 2020 09:27:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ylXLDPwjFwmNUX021iadtYVQcvfBwbfAN12x96EMekU=;
-        b=NPb157AWz4yddSc2cQeFATh1/6cybV/M0QCmEGk0NxwpuHaVc5hllxortFUJd74Vcn
-         iRPSimRdxYRRCaake0SrQs6UQw2jGRPN30vnoLaZ5S5HiXhwpOe+UCyBvdn5qk2a7Bz0
-         04VzLnlHM713YBqYzXmg4aPVa3pUMfxUm8fsu2nqDA9qY3ujRtNbZd+3tK7djhfH9rYS
-         kERRAQjAjQ4qOj4fxGX8ttzS6GBj/IpsjBElPYmFMYsCN3pBV8+kVJ1pmRjS4IQ8RigW
-         zAF2MEEDgpWpkrO5avoTIP55zh40zWcXE5vihJOPXut3d9puKFimAcMy85IIJxej//N/
-         hWCQ==
+        bh=B8t6tm0a6BAqo0JL0iy03fVwyUMieBdgEgJAzfwtl4E=;
+        b=kcRhYHVaL0b4p/YiSCdxQ8Tpz+lQekoQwYdPm2jExbbQN7RPPGZnJ2seT0ArY9k/in
+         iYOYYM6LJQzI0FhjcOf6X5jxJClamETZmeJni+cpJFInA2OaH4sJpIIEuLzq0ngnkK1t
+         5IAlnZreAwYDfJyXwjm/U4Np9TNPzLGPiKC7mCFcMv/8Rw2n6EqqFRQFW/P430veNLi2
+         aDktlG87aACQuu32iIiPP8HxgLaFPYUruO4h0Llel0BCBiTXy87ZernmZ8NIQ5YPkTIz
+         sSe6mqJDsjKwto/UkDSrgvtZdY8Ygg+7Hqw45yZ5e5ShLlnYjKnl7KktEuA7cPi1XzRm
+         pn/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ylXLDPwjFwmNUX021iadtYVQcvfBwbfAN12x96EMekU=;
-        b=tqfHfezGwrYDCPCUMK2Enb66f2QWjNREOZK9rq/ClPbpMkbRx5f6dH6faz7NEzAroo
-         hqLTOpByFZlyOafixxVQ3XHpTaUOG2lpXy3LhP3f29RBBMSbhYeZJP070KzVpFTAGJ1Y
-         +21bx7a46vA7+WKeNRA2lqdjI6vvmCnqrqOHULUCJ7sSUnIuv2tUzs6yNe8U6StFN8wz
-         YS9JfBJpowdSY2lGCmGaFEhxZxgYl7crZbTkB/HFP6DwCWP+MaATXs4Y8ddfR7hns4VF
-         d7XT7U1N3g1+h6+kgCsMvHNj8Z2jJc8xeT+k+4Fqm+TXdG26YO6uVEQgeLipePAJzdbK
-         wcNw==
-X-Gm-Message-State: AOAM5315W1NRxTpdgnHTRhBFb6RJfo74itAKYQZs4qMMEXqT4ziq9KVl
-        m1qll1sx9+lEomAlfjF0PV2RQQi2yYMGPQ==
-X-Google-Smtp-Source: ABdhPJz+o+5s4fpFpyd4V3BzCzj0BfD1OfQjpW7MIYidUlHO+gl4nK4YdEgo0YWjzYwD8VfEMZi9Xw==
-X-Received: by 2002:a05:6e02:46:: with SMTP id i6mr35283991ilr.91.1594138876538;
-        Tue, 07 Jul 2020 09:21:16 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t14sm13642133ilk.17.2020.07.07.09.21.15
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=B8t6tm0a6BAqo0JL0iy03fVwyUMieBdgEgJAzfwtl4E=;
+        b=AJV+SrxcKruAMIAI8ptoYex3NDKYzX8cKnJJJeon+1h/4hKnd+JJPMn/3LU96hP+uk
+         J+uoL8a3dsfWyBiF6t9/M8m1x89KS3I7kBFpdSgToQdlSSbHjv3aoB9dU0j8MVMLZ3A5
+         rPxF6yxwyAf75h8wg2/nFRvtsm8R1Xq5goeG+O1qxwrDJjST9LLWsCZ4LL58qCzAngn0
+         CIVvkysrrtaSqH7LXz2XpagT913d7wn360fUFhfyKdmoKMPt+OGpSd4iRTwh/wb+5wMi
+         9FUwpkgNChusFg6RVIsRptwYo3pJg+nDLrXOTvjVne8OM5kYTgKUUBmPqjxM5+aqqNru
+         D26g==
+X-Gm-Message-State: AOAM531ANRiFHsAV4/0GNXOI7h4Q4p+7xqeLhi7/PopsL91ACUKzUCRG
+        3iPi0OdNA6X94ON0uVHwcJDP0Wzi
+X-Google-Smtp-Source: ABdhPJxd+dgk9Pe/vmXqmH0O7FVtt9MTHTN4Alju5i0OEka4WDY4gQyv98De1Gf0nJiz44eyANrd/Q==
+X-Received: by 2002:a5d:4b84:: with SMTP id b4mr57352982wrt.334.1594139261813;
+        Tue, 07 Jul 2020 09:27:41 -0700 (PDT)
+Received: from [192.168.43.42] ([5.100.193.69])
+        by smtp.gmail.com with ESMTPSA id 138sm4975302wmb.1.2020.07.07.09.27.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jul 2020 09:21:15 -0700 (PDT)
+        Tue, 07 Jul 2020 09:27:40 -0700 (PDT)
 Subject: Re: [PATCH] io_uring: export cq overflow status to userspace
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+To:     Jens Axboe <axboe@kernel.dk>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring@vger.kernel.org
 Cc:     joseph.qi@linux.alibaba.com
 References: <20200707132420.2007-1-xiaoguang.wang@linux.alibaba.com>
  <0ebded37-3660-e3c0-aa51-d3d7e56d634c@kernel.dk>
-Message-ID: <bb9e165a-3193-5da2-d342-e5d9ed200070@kernel.dk>
-Date:   Tue, 7 Jul 2020 10:21:14 -0600
+ <bb9e165a-3193-5da2-d342-e5d9ed200070@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <7262c580-6b98-3dce-3cd7-1bb0ce4c39ed@gmail.com>
+Date:   Tue, 7 Jul 2020 19:25:58 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <0ebded37-3660-e3c0-aa51-d3d7e56d634c@kernel.dk>
+In-Reply-To: <bb9e165a-3193-5da2-d342-e5d9ed200070@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,220 +114,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/7/20 8:28 AM, Jens Axboe wrote:
-> On 7/7/20 7:24 AM, Xiaoguang Wang wrote:
->> For those applications which are not willing to use io_uring_enter()
->> to reap and handle cqes, they may completely rely on liburing's
->> io_uring_peek_cqe(), but if cq ring has overflowed, currently because
->> io_uring_peek_cqe() is not aware of this overflow, it won't enter
->> kernel to flush cqes, below test program can reveal this bug:
+...
+>>>
+>>> To fix this issue, export cq overflow status to userspace, then
+>>> helper functions() in liburing, such as io_uring_peek_cqe, can be
+>>> aware of this cq overflow and do flush accordingly.
 >>
->> static void test_cq_overflow(struct io_uring *ring)
->> {
->>         struct io_uring_cqe *cqe;
->>         struct io_uring_sqe *sqe;
->>         int issued = 0;
->>         int ret = 0;
+>> Is there any way we can accomplish the same without exporting
+>> another set of flags? Would it be enough for the SQPOLl thread to set
+>> IORING_SQ_NEED_WAKEUP if we're in overflow condition? That should
+>> result in the app entering the kernel when it's flushed the user CQ
+>> side, and then the sqthread could attempt to flush the pending
+>> events as well.
 >>
->>         do {
->>                 sqe = io_uring_get_sqe(ring);
->>                 if (!sqe) {
->>                         fprintf(stderr, "get sqe failed\n");
->>                         break;;
->>                 }
->>                 ret = io_uring_submit(ring);
->>                 if (ret <= 0) {
->>                         if (ret != -EBUSY)
->>                                 fprintf(stderr, "sqe submit failed: %d\n", ret);
->>                         break;
->>                 }
->>                 issued++;
->>         } while (ret > 0);
->>         assert(ret == -EBUSY);
->>
->>         printf("issued requests: %d\n", issued);
->>
->>         while (issued) {
->>                 ret = io_uring_peek_cqe(ring, &cqe);
->>                 if (ret) {
->>                         if (ret != -EAGAIN) {
->>                                 fprintf(stderr, "peek completion failed: %s\n",
->>                                         strerror(ret));
->>                                 break;
->>                         }
->>                         printf("left requets: %d\n", issued);
->>                         continue;
->>                 }
->>                 io_uring_cqe_seen(ring, cqe);
->>                 issued--;
->>                 printf("left requets: %d\n", issued);
->>         }
->> }
->>
->> int main(int argc, char *argv[])
->> {
->>         int ret;
->>         struct io_uring ring;
->>
->>         ret = io_uring_queue_init(16, &ring, 0);
->>         if (ret) {
->>                 fprintf(stderr, "ring setup failed: %d\n", ret);
->>                 return 1;
->>         }
->>
->>         test_cq_overflow(&ring);
->>         return 0;
->> }
->>
->> To fix this issue, export cq overflow status to userspace, then
->> helper functions() in liburing, such as io_uring_peek_cqe, can be
->> aware of this cq overflow and do flush accordingly.
+>> Something like this, totally untested...
 > 
-> Is there any way we can accomplish the same without exporting
-> another set of flags? Would it be enough for the SQPOLl thread to set
-> IORING_SQ_NEED_WAKEUP if we're in overflow condition? That should
-> result in the app entering the kernel when it's flushed the user CQ
-> side, and then the sqthread could attempt to flush the pending
-> events as well.
+> OK, took a closer look at this, it's a generic thing, not just
+> SQPOLL related. My bad!
 > 
-> Something like this, totally untested...
+> Anyway, my suggestion would be to add IORING_SQ_CQ_OVERFLOW to the
+> existing flags, and then make a liburing change almost identical to
+> what you had.
 
-OK, took a closer look at this, it's a generic thing, not just
-SQPOLL related. My bad!
+How about CQ being full as an indicator that flush is required?
+With a properly set CQ size there shouldn't be much false positives.
 
-Anyway, my suggestion would be to add IORING_SQ_CQ_OVERFLOW to the
-existing flags, and then make a liburing change almost identical to
-what you had.
-
-Hence kernel side:
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d37d7ea5ebe5..af9fd5cefc51 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1234,11 +1234,12 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
- 	struct io_uring_cqe *cqe;
- 	struct io_kiocb *req;
- 	unsigned long flags;
-+	bool ret = true;
- 	LIST_HEAD(list);
- 
- 	if (!force) {
- 		if (list_empty_careful(&ctx->cq_overflow_list))
--			return true;
-+			goto done;
- 		if ((ctx->cached_cq_tail - READ_ONCE(rings->cq.head) ==
- 		    rings->cq_ring_entries))
- 			return false;
-@@ -1284,7 +1285,11 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
- 		io_put_req(req);
- 	}
- 
--	return cqe != NULL;
-+	ret = cqe != NULL;
-+done:
-+	if (ret)
-+		ctx->rings->sq_flags &= ~IORING_SQ_CQ_OVERFLOW;
-+	return ret;
- }
- 
- static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
-@@ -5933,10 +5938,13 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 	int i, submitted = 0;
- 
- 	/* if we have a backlog and couldn't flush it all, return BUSY */
--	if (test_bit(0, &ctx->sq_check_overflow)) {
-+	if (unlikely(test_bit(0, &ctx->sq_check_overflow))) {
- 		if (!list_empty(&ctx->cq_overflow_list) &&
--		    !io_cqring_overflow_flush(ctx, false))
-+		    !io_cqring_overflow_flush(ctx, false)) {
-+			ctx->rings->sq_flags |= IORING_SQ_CQ_OVERFLOW;
-+			smp_mb();
- 			return -EBUSY;
-+		}
- 	}
- 
- 	/* make sure SQ entry isn't read before tail */
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 92c22699a5a7..9c7e028beda5 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -197,6 +197,7 @@ struct io_sqring_offsets {
-  * sq_ring->flags
-  */
- #define IORING_SQ_NEED_WAKEUP	(1U << 0) /* needs io_uring_enter wakeup */
-+#define IORING_SQ_CQ_OVERFLOW	(1U << 1) /* app needs to enter kernel */
- 
- struct io_cqring_offsets {
- 	__u32 head;
-
-and then this for the liburing side:
-
-
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 6a73522..e4314ed 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -202,6 +202,7 @@ struct io_sqring_offsets {
-  * sq_ring->flags
-  */
- #define IORING_SQ_NEED_WAKEUP	(1U << 0) /* needs io_uring_enter wakeup */
-+#define IORING_SQ_CQ_OVERFLOW	(1U << 1)
- 
- struct io_cqring_offsets {
- 	__u32 head;
-diff --git a/src/queue.c b/src/queue.c
-index 88e0294..1f00251 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -32,6 +32,11 @@ static inline bool sq_ring_needs_enter(struct io_uring *ring,
- 	return false;
- }
- 
-+static inline bool cq_ring_needs_flush(struct io_uring *ring)
-+{
-+	return IO_URING_READ_ONCE(*ring->sq.kflags) & IORING_SQ_CQ_OVERFLOW;
-+}
-+
- static int __io_uring_peek_cqe(struct io_uring *ring,
- 			       struct io_uring_cqe **cqe_ptr)
- {
-@@ -67,22 +72,26 @@ int __io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_ptr,
- 	int ret = 0, err;
- 
- 	do {
-+		bool cq_overflow_flush = false;
- 		unsigned flags = 0;
- 
- 		err = __io_uring_peek_cqe(ring, &cqe);
- 		if (err)
- 			break;
- 		if (!cqe && !to_wait && !submit) {
--			err = -EAGAIN;
--			break;
-+			if (!cq_ring_needs_flush(ring)) {
-+				err = -EAGAIN;
-+				break;
-+			}
-+			cq_overflow_flush = true;
- 		}
- 		if (wait_nr && cqe)
- 			wait_nr--;
--		if (wait_nr)
-+		if (wait_nr || cq_overflow_flush)
- 			flags = IORING_ENTER_GETEVENTS;
- 		if (submit)
- 			sq_ring_needs_enter(ring, submit, &flags);
--		if (wait_nr || submit)
-+		if (wait_nr || submit || cq_overflow_flush)
- 			ret = __sys_io_uring_enter(ring->ring_fd, submit,
- 						   wait_nr, flags, sigmask);
- 		if (ret < 0) {
-
-If you agree with this approach, could you test this and resubmit the
-two patches?
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

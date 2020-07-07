@@ -2,104 +2,157 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6BBE216BC2
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jul 2020 13:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ACA2216D1B
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jul 2020 14:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbgGGLiO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Jul 2020 07:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53950 "EHLO
+        id S1728100AbgGGMsG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Jul 2020 08:48:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbgGGLiN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jul 2020 07:38:13 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9254BC061755;
-        Tue,  7 Jul 2020 04:38:13 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id s21so20520121ilk.5;
-        Tue, 07 Jul 2020 04:38:13 -0700 (PDT)
+        with ESMTP id S1725944AbgGGMsF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Jul 2020 08:48:05 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21950C061755
+        for <io-uring@vger.kernel.org>; Tue,  7 Jul 2020 05:48:05 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id q5so44965148wru.6
+        for <io-uring@vger.kernel.org>; Tue, 07 Jul 2020 05:48:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1+9PXsEHC8Tau1MQTySeSJIu15QBhP57I+JN1uapBu0=;
-        b=JirTA1RlvJAlDXxssPiBjYAQw8/IAQxOLQXqoDRmUr5Q7eXEI05rN0ZCnBmWsZzbFe
-         Fse1fi06L+PCjopdbPPnGNT1QeQojO3coqU1ja8XSjRjF03hlXmzC0GLIWJUCIhcm3yk
-         nexkBSFm9tW9pjzicOY0yEmXy+WBwvcexBGHnjSkhPXZDAx3P2pkRwd5xKSEENjE1Alf
-         /1Yf7FdVFHCXNGYnUEcg0LUccx2gPlnuBsZkwpRz7lZ661siGnnxrpYu/I5r8bEADam2
-         6S/vUj52Ak5EkHTaIEoaCCDdPgdGT6/tL9DFm402FNQaW5itQi11KgZOCG3mUTv8/4uC
-         Sehw==
+        h=subject:from:cc:references:to:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6SE2K9sBUku4RHQpf6q5qaMdV+eKi8ozCqFlHAdLsJk=;
+        b=a+I9nV62plPgEmDWlYcsuqiD4zmWItwTYL69xz/Gz+oKuBH4zJgOzYh+0mf5cyWGSl
+         KCivgo+90kI27Vsb7Vlo+te3BbTlwGpinURdNPY3KC9oS5DSTUb8gKtVBtUp55uZEyb5
+         TY8RHbjk8y982dIBZUrPUFjPbGZn6d5NkIgZuVneRqedrrvk1oLUif6+TTXemytBQiQ4
+         JUdpQjX9yYpD839NcduFLsIDKfLwXQFdCrDnLc3B+WA9HaALfyvMdKUNJESCaIGG0TZy
+         tBoi3lkWnJET+nqfuAT5+ZXC7OOPO7WBoRseonO7hxs+1mRSD1N9UE/RKgicfiBOCh/N
+         trKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1+9PXsEHC8Tau1MQTySeSJIu15QBhP57I+JN1uapBu0=;
-        b=roTmvF9pSzP0C2GBAH1L1L5m5N5ApQJd7NdN2TO0kvX60qIzpg4GmXmBEmgHNMjuVP
-         ZIi2ln2QsJSKGzgS+OwpQDFccaB+LJJkK7jmImZ3+AZSArminYMtjgHC+5bolCfsi+5n
-         PiK2BwCqDvqz+yxo9M/lBcleKCaXjqkDpcQoQj+gakjzq0TXv9kIuyx+syZFbfS8MGmC
-         3EG9CL/B0wKRxTXaHg5ZzXk+qlOw+a36awZyrVAgnCbaiYaxv+ABxFJD/WLW37egz7M5
-         kYcKhuxALSJ5RDO2+eftVMJm2ZCy3hJoh/uDCecVAP5DbvexxyxX2us3VKcokZVWM+dB
-         Z5vg==
-X-Gm-Message-State: AOAM531UH367wOKFaPJXdpKTUFsnErJqOVtlJgISOxupgX455U/er8H5
-        HF++VJ4NCCZFNPBUQiB1WJ29bhIml8mMKkhVbh8=
-X-Google-Smtp-Source: ABdhPJyLy71kFINoMC1IHKN/W9Wzb6/SH2hqLTyUZVHsX7LIVZCqyVklNgrjn7GmuSwIHTTceD6R3Lnu4FTNFB1XILg=
-X-Received: by 2002:a92:c7ab:: with SMTP id f11mr36287094ilk.50.1594121892966;
- Tue, 07 Jul 2020 04:38:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200618144355.17324-1-axboe@kernel.dk> <20200618144355.17324-6-axboe@kernel.dk>
- <20200624010253.GB5369@dread.disaster.area> <20200624014645.GJ21350@casper.infradead.org>
- <bad52be9-ae44-171b-8dbf-0d98eedcadc0@kernel.dk> <70b0427c-7303-8f45-48bd-caa0562a2951@kernel.dk>
- <20200624164127.GP21350@casper.infradead.org> <8835b6f2-b3c5-c9a0-2119-1fb161cf87dd@kernel.dk>
-In-Reply-To: <8835b6f2-b3c5-c9a0-2119-1fb161cf87dd@kernel.dk>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Tue, 7 Jul 2020 13:38:01 +0200
-Message-ID: <CAHpGcMJsrQXX4OQe6MqjyTt8BOLZw-y1ixdk76p_DsZONyEJcQ@mail.gmail.com>
-Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
+        h=x-gm-message-state:subject:from:cc:references:to:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=6SE2K9sBUku4RHQpf6q5qaMdV+eKi8ozCqFlHAdLsJk=;
+        b=htdUkRNz0nzEGtojDnFhHuKH0skNCM9ixo86+YawKTVkUmCT9eAMo5crfOhBcUUYEP
+         7NLIhvyHlpeb20ibzPXn0RE+y8sqZDYWiVYxmK4gCQdAlcpeI2gc45mECjRJZq/EK75l
+         qUKvGRxDYFE7c+KwEIbv7hVKzT1vHYkhQ8YjvbyuYcKAVd1MUswVa3CJ30X/HVokPJlR
+         yjp9ZuD3HFhIUpUesrCl9qggVXbTZZ3C5hlsbbxq9J830fcytAXg23Y/kN1Qy9ZIj/HL
+         WAU3blj9Rf/Nrfxa95Uhgwdwem38FQfy8Gjuzx0i+7s9fgmXUVVAjQmErFIsihLsLddK
+         4qQA==
+X-Gm-Message-State: AOAM533205bKljNsDw/+ZffC8ZRvhe/6R1QTKNz/H0mNdcxdHtIym1z4
+        6k6kt8SupEyfDIUpAohZwo/2Yfed
+X-Google-Smtp-Source: ABdhPJyw/okCKxxiWFRW9NWzqf3sArNiFCI//uZ1v4csluuq0Vqlm4GATzv7LVY4Bmmr5Oo8qaoTXw==
+X-Received: by 2002:a5d:4a42:: with SMTP id v2mr49958726wrs.33.1594126083475;
+        Tue, 07 Jul 2020 05:48:03 -0700 (PDT)
+Received: from [192.168.43.52] ([5.100.193.69])
+        by smtp.gmail.com with ESMTPSA id d2sm856571wrs.95.2020.07.07.05.48.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jul 2020 05:48:02 -0700 (PDT)
+Subject: Re: [PATCH 5/5] io_uring: fix use after free
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jann Horn <jannh@google.com>, io-uring <io-uring@vger.kernel.org>
+References: <cover.1593424923.git.asml.silence@gmail.com>
+ <1221be71ac8977607748d381f90439af4781c1e5.1593424923.git.asml.silence@gmail.com>
+ <CAG48ez2yJdH3W_PHzvEuwpORB6MoTf9M5nOm1JL3H-wAnkJBBA@mail.gmail.com>
+ <f7f4724d-a869-c867-ad8e-b2a59e89c727@gmail.com>
+ <CAG48ez3fR1QyVXapvwbYzbtv4AEb0BY2ebKsV7vNFLE-6NaUQA@mail.gmail.com>
+ <4f5ecae5-8272-04aa-775e-293dfef82383@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <463baa76-18ef-b98a-070f-416cdf00250d@gmail.com>
+Date:   Tue, 7 Jul 2020 15:46:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <4f5ecae5-8272-04aa-775e-293dfef82383@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Am Mi., 24. Juni 2020 um 18:48 Uhr schrieb Jens Axboe <axboe@kernel.dk>:
->
-> On 6/24/20 10:41 AM, Matthew Wilcox wrote:
-> > On Wed, Jun 24, 2020 at 09:35:19AM -0600, Jens Axboe wrote:
-> >> On 6/24/20 9:00 AM, Jens Axboe wrote:
-> >>> On 6/23/20 7:46 PM, Matthew Wilcox wrote:
-> >>>> I'd be quite happy to add a gfp_t to struct readahead_control.
-> >>>> The other thing I've been looking into for other reasons is adding
-> >>>> a memalloc_nowait_{save,restore}, which would avoid passing down
-> >>>> the gfp_t.
-> >>>
-> >>> That was my first thought, having the memalloc_foo_save/restore for
-> >>> this. I don't think adding a gfp_t to readahead_control is going
-> >>> to be super useful, seems like the kind of thing that should be
-> >>> non-blocking by default.
-> >>
-> >> We're already doing memalloc_nofs_save/restore in
-> >> page_cache_readahead_unbounded(), so I think all we need is to just do a
-> >> noio dance in generic_file_buffered_read() and that should be enough.
-> >
-> > I think we can still sleep though, right?  I was thinking more
-> > like this:
-> >
-> > http://git.infradead.org/users/willy/linux.git/shortlog/refs/heads/memalloc
->
-> Yeah, that's probably better. How do we want to handle this? I've already
-> got the other bits queued up. I can either add them to the series, or
-> pull a branch that'll go into Linus as well.
+On 04/07/2020 09:49, Pavel Begunkov wrote:
+> On 04/07/2020 00:32, Jann Horn wrote:
+>> On Fri, Jul 3, 2020 at 9:50 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>> On 03/07/2020 05:39, Jann Horn wrote:
+>>>> On Mon, Jun 29, 2020 at 10:44 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>> After __io_free_req() put a ctx ref, it should assumed that the ctx may
+>>>>> already be gone. However, it can be accessed to put back fallback req.
+>>>>> Free req first and then put a req.
+>>>>
+>>>> Please stick "Fixes" tags on bug fixes to make it easy to see when the
+>>>> fixed bug was introduced (especially for ones that fix severe issues
+>>>> like UAFs). From a cursory glance, it kinda seems like this one
+>>>> _might_ have been introduced in 2b85edfc0c90ef, which would mean that
+>>>> it landed in 5.6? But I can't really tell for sure without investing
+>>>> more time; you probably know that better.
+>>>
+>>> It was there from the beginning,
+>>> 0ddf92e848ab7 ("io_uring: provide fallback request for OOM situations")
+>>>
+>>>>
+>>>> And if this actually does affect existing releases, please also stick
+>>>> a "Cc: stable@vger.kernel.org" tag on it so that the fix can be
+>>>> shipped to users of those releases.
+>>>
+>>> As mentioned in the cover letter, it's pretty unlikely to ever happen.
+>>> No one seems to have seen it since its introduction in November 2019.
+>>> And as the patch can't be backported automatically, not sure it's worth
+>>> the effort. Am I misjudging here?
+>>
+>> Use-after-free bugs are often security bugs; in particular when, as in
+>> this case, data is written through the freed pointer. That means that
+>> even if this is extremely unlikely to occur in practice under normal
+>> circumstances, you should assume that someone may invest a significant
+>> amount of time into engineering some way to make this bug happen. If
 
-Also note my conflicting patch that introduces a IOCB_NOIO flag for
-fixing a gfs2 regression:
+Jens, how would you prefer to handle this for 5.8? I can send a patch, but
+1. it's fixed in for-5.9
+2. it would be a merge conflict regardless of 1.
 
-https://lore.kernel.org/linux-fsdevel/20200703095325.1491832-2-agruenba@redhat.com/
-
-Thanks,
-Andreas
+-- 
+Pavel Begunkov

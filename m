@@ -2,281 +2,161 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B7F218BF6
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jul 2020 17:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BD4218C86
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jul 2020 18:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730315AbgGHPni (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jul 2020 11:43:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33240 "EHLO
+        id S1730266AbgGHQIQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Jul 2020 12:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730545AbgGHPlq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jul 2020 11:41:46 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11E74C061A0B
-        for <io-uring@vger.kernel.org>; Wed,  8 Jul 2020 08:41:46 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id c16so47483323ioi.9
-        for <io-uring@vger.kernel.org>; Wed, 08 Jul 2020 08:41:46 -0700 (PDT)
+        with ESMTP id S1730234AbgGHQIQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jul 2020 12:08:16 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54B46C08C5DC
+        for <io-uring@vger.kernel.org>; Wed,  8 Jul 2020 09:08:16 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id lx13so32488806ejb.4
+        for <io-uring@vger.kernel.org>; Wed, 08 Jul 2020 09:08:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=clHMhe6qVnv5ly8L5/GZeOajpz5AqYI57hi/uKTJuvA=;
-        b=G5cACxvK/haQZKq9zgPLteTDsBWRjtAb8bCPQpoU0L2HiExW3iMTZlJsjmCELfmg8u
-         8bCBMry4JUHKsV3SUbQMLGidkomV5jkH5B9Th4miuaP2JeDbXlfkrzKmydbCsJ6U/NbC
-         AD81oIcmP9NNYLRaC0dn1/r8fVphsRHJEGSIrm7EVs/SttajfflPZCzQ/Vo2LOwIrYah
-         ap3VqRXNhoj4vqdUTucjQrs/cj0H6mucaKZc7/5IvvUKjoI5TEOxNhab8KVr5mL8REIu
-         ffzDBYYRrFea9i3K7DLR1ppK8e6hAL2U3t8LUiAIFL8wkyaddyTuOecyYLhhSiuBV+zL
-         VJQw==
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=HqpBY7r7cMmdxSomsxil1bu4vGv+J4OJWZNNfUv/dZM=;
+        b=TsT/rSU0rnR5xGbl/M/14iPag3TvmnldihTNk7Rpc2tIBuwM43sdJZ88gwylItA8dw
+         /LLoBTgoMlE+BsqiKmvh+AI0PumbsszW+VZ9ulB7aPx6Psu5d6WMhG5N6pxxZ6ovCTnH
+         gjoyIJ437nkHN8N2u6yxBGsHzFdWPsMRNJek0HPE07ZtzHWYEDKQmYO3OGVavyM/QT7d
+         C72+HVsc59mvH5AOpq1JAH0Gi5IQ64VxOEze5O8GWkXkrohOcVXhZ0WJb7X7OFcOzK+b
+         XyuDNiMz+T1LPbEw2AltMBvRMQBrMRfg5deI9GOpksLfLBTdwXZ5ZF6Wtneai1XkZVuA
+         CPtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=clHMhe6qVnv5ly8L5/GZeOajpz5AqYI57hi/uKTJuvA=;
-        b=dnnm6QcD017fQ/fw/TPguGSBVocTPxmPxhnZopOHuE1+WYMkBIZtzu1nis55vystZM
-         dlgXwIIuOtWOttDK9pObVhgW1uFENgLxbXJf9PBVellEscYWPmmvA/UgTT9N3+Ah1i1I
-         cf161y1w0hZSfjDVgD5F1U4apSferjka3/yoIEpepLwOXWMJEX7qz9j1m1UPBQNSnVHC
-         4rLn0Xlyyavp/nTo0M4CNJt6dMMqU0Q5qouebzaroGKZwt6su7G1evBx1S2gxT2ltLoX
-         8BJXvCKgnPdPztX5tHU9EnvxL83cdFxiFjlw/OCx3GYBcA6tJkeqNUQwpOe/BfJdcUKO
-         +Lhg==
-X-Gm-Message-State: AOAM532CYBFwx6zw4Nq2Y3B0gprT9/0rRiDgt7ySml53Y2U1kxDaQY6A
-        Zw1G9SJZkVSoELu4o/jZbrAqDmFnkSuDCg==
-X-Google-Smtp-Source: ABdhPJx/QLbKUmlEUpFjR2GayBIuWepU41w7g8/9mR8dRhmhVRaYIwAtbsxK0qq2r/uc+JxbJwDkFg==
-X-Received: by 2002:a6b:661a:: with SMTP id a26mr37370793ioc.197.1594222905246;
-        Wed, 08 Jul 2020 08:41:45 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id p84sm43747ill.64.2020.07.08.08.41.44
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=HqpBY7r7cMmdxSomsxil1bu4vGv+J4OJWZNNfUv/dZM=;
+        b=E8VGOqJMlcQioTS2IjlXu9sazqyWiAiQ/DKSV+wA/eRuANH2qDie1LeEO2aOctDYjb
+         YbLwAW+hvQcD+NP5487gqYvLvnB63pdFxvQfNBUXPxwfVjuFCgo4qulW9v/NHVP4BFts
+         bywDlFDbX7l4dWdEGzPhb8K+e5UgdXsbXr1PCDOnkQJXuKbREz14vAd6vXyNNowkgwf+
+         Ys3HJ+FpJC/6Z0+krU4FkWSZDiQqG7uOB4KwAz0XA4HDr/qUXoO3Wsf5bAisF9yDvuRz
+         TtNm1+pJKm2lGWKtwMrz2YchbGg1WHtVZiA88KEhyVJWugcuAwnysYV94a8jtgVwbWyP
+         J+gw==
+X-Gm-Message-State: AOAM533e7iPuIq3gpEfqmrWbVNJ9kDwQYGxKcOKuD8wI1BA4wqbb9Dut
+        pBLrRLViLcWB7cNx/jBkmDbeUg==
+X-Google-Smtp-Source: ABdhPJzFmbEoWRJtTJrtEq1GYcXtnsEsi025KjmbmGjkw8A5ckMUVYg/t+96wXuRw5d3teUIwmknUg==
+X-Received: by 2002:a17:906:7855:: with SMTP id p21mr41176812ejm.492.1594224494867;
+        Wed, 08 Jul 2020 09:08:14 -0700 (PDT)
+Received: from [192.168.2.16] (5.186.127.235.cgn.fibianet.dk. [5.186.127.235])
+        by smtp.gmail.com with ESMTPSA id b98sm8352edf.24.2020.07.08.09.08.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jul 2020 08:41:44 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: export cq overflow status to userspace
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, joseph.qi@linux.alibaba.com
-References: <c4e40cba-4171-a253-8813-ca833c8ce575@linux.alibaba.com>
- <D59FC4AE-8D3B-44F4-A6AA-91722D97E202@kernel.dk>
- <83a3a0eb-8dea-20ad-ffc5-619226b47998@linux.alibaba.com>
- <f2cad5fb-7daf-611e-91dd-81d3eb268d26@kernel.dk>
- <54ce9903-4016-5b30-2fe9-397da9161bfe@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6c770628-34bd-f75a-3d4a-c1810f652054@kernel.dk>
-Date:   Wed, 8 Jul 2020 09:41:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <54ce9903-4016-5b30-2fe9-397da9161bfe@linux.alibaba.com>
+        Wed, 08 Jul 2020 09:08:13 -0700 (PDT)
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+Date:   Wed, 8 Jul 2020 18:08:12 +0200
+Message-Id: <36C0AD99-0D75-40D4-B704-507A222AEB81@javigon.com>
+References: <33b9887b-eaba-c7be-5dfd-fc7e7d416f48@kernel.dk>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, hch@infradead.org, damien.lemoal@wdc.com,
+        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+        mb@lightnvm.io, linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+In-Reply-To: <33b9887b-eaba-c7be-5dfd-fc7e7d416f48@kernel.dk>
+To:     Jens Axboe <axboe@kernel.dk>
+X-Mailer: iPhone Mail (17F80)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/8/20 9:39 AM, Xiaoguang Wang wrote:
-> hi,
-> 
->> On 7/7/20 11:29 PM, Xiaoguang Wang wrote:
->>> I modify above test program a bit:
->>> #include <errno.h>
->>> #include <stdio.h>
->>> #include <unistd.h>
->>> #include <stdlib.h>
->>> #include <string.h>
->>> #include <fcntl.h>
->>> #include <assert.h>
->>>
->>> #include "liburing.h"
->>>
->>> static void test_cq_overflow(struct io_uring *ring)
->>> {
->>>           struct io_uring_cqe *cqe;
->>>           struct io_uring_sqe *sqe;
->>>           int issued = 0;
->>>           int ret = 0;
->>>           int i;
->>>
->>>           for (i = 0; i < 33; i++) {
->>>                   sqe = io_uring_get_sqe(ring);
->>>                   if (!sqe) {
->>>                           fprintf(stderr, "get sqe failed\n");
->>>                           break;;
->>>                   }
->>>                   ret = io_uring_submit(ring);
->>>                   if (ret <= 0) {
->>>                           if (ret != -EBUSY)
->>>                                   fprintf(stderr, "sqe submit failed: %d\n", ret);
->>>                           break;
->>>                   }
->>>                   issued++;
->>>           }
->>>
->>>           printf("issued requests: %d\n", issued);
->>>
->>>           while (issued) {
->>>                   ret = io_uring_peek_cqe(ring, &cqe);
->>>                   if (ret) {
->>>                           if (ret != -EAGAIN) {
->>>                                   fprintf(stderr, "peek completion failed: %s\n",
->>>                                           strerror(ret));
->>>                                   break;
->>>                           }
->>>                           printf("left requets: %d %d\n", issued, IO_URING_READ_ONCE(*ring->sq.kflags));
->>>                           continue;
->>>                   }
->>>                   io_uring_cqe_seen(ring, cqe);
->>>                   issued--;
->>>                   printf("left requets: %d\n", issued);
->>>           }
->>> }
->>>
->>> int main(int argc, char *argv[])
->>> {
->>>           int ret;
->>>           struct io_uring ring;
->>>
->>>           ret = io_uring_queue_init(16, &ring, 0);
->>>           if (ret) {
->>>                   fprintf(stderr, "ring setup failed: %d\n", ret);
->>>                   return 1;
->>>           }
->>>
->>>           test_cq_overflow(&ring);
->>>           return 0;
->>> }
->>>
->>> Though with your patches applied, we still can not peek the last cqe.
->>> This test program will only issue 33 sqes, so it won't get EBUSY error.
->>
->> How about we make this even simpler, then - make the
->> IORING_SQ_CQ_OVERFLOW actually track the state, rather than when we fail
->> on submission. The liburing change would be the same, the kernel side
->> would then look like the below.
->>
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 4c9a494c9f9f..01981926cdf4 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -1342,6 +1342,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
->>   	if (cqe) {
->>   		clear_bit(0, &ctx->sq_check_overflow);
->>   		clear_bit(0, &ctx->cq_check_overflow);
->> +		ctx->rings->sq_flags &= ~IORING_SQ_CQ_OVERFLOW;
->>   	}
->>   	spin_unlock_irqrestore(&ctx->completion_lock, flags);
->>   	io_cqring_ev_posted(ctx);
->> @@ -1379,6 +1380,7 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
->>   		if (list_empty(&ctx->cq_overflow_list)) {
->>   			set_bit(0, &ctx->sq_check_overflow);
->>   			set_bit(0, &ctx->cq_check_overflow);
->> +			ctx->rings->sq_flags |= IORING_SQ_CQ_OVERFLOW;
->>   		}
->>   		req->flags |= REQ_F_OVERFLOW;
->>   		refcount_inc(&req->refs);
->> @@ -6375,9 +6377,9 @@ static int io_sq_thread(void *data)
->>   			}
->>   
->>   			/* Tell userspace we may need a wakeup call */
->> +			spin_lock_irq(&ctx->completion_lock);
->>   			ctx->rings->sq_flags |= IORING_SQ_NEED_WAKEUP;
->> -			/* make sure to read SQ tail after writing flags */
->> -			smp_mb();
->> +			spin_unlock_irq(&ctx->completion_lock);
->>   
->>   			to_submit = io_sqring_entries(ctx);
->>   			if (!to_submit || ret == -EBUSY) {
->> @@ -6400,7 +6402,9 @@ static int io_sq_thread(void *data)
->>   			}
->>   			finish_wait(&ctx->sqo_wait, &wait);
->>   
->> +			spin_lock_irq(&ctx->completion_lock);
->>   			ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
->> +			spin_unlock_irq(&ctx->completion_lock);
->>   		}
->>   
->>   		mutex_lock(&ctx->uring_lock);
->> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->> index 8d033961cb78..91953b543125 100644
->> --- a/include/uapi/linux/io_uring.h
->> +++ b/include/uapi/linux/io_uring.h
->> @@ -198,6 +198,7 @@ struct io_sqring_offsets {
->>    * sq_ring->flags
->>    */
->>   #define IORING_SQ_NEED_WAKEUP	(1U << 0) /* needs io_uring_enter wakeup */
->> +#define IORING_SQ_CQ_OVERFLOW	(1U << 1) /* app needs to enter kernel */
->>   
->>   struct io_cqring_offsets {
->>   	__u32 head;
->>
-> Looks good, I think it'll work now.
-> I'll test and send patches soon, thanks.
 
-One missing bit clear, and I corrected that last comment. Just base on
-this one, thanks!
+> On 8 Jul 2020, at 17.06, Jens Axboe <axboe@kernel.dk> wrote:
+>=20
+> =EF=BB=BFOn 7/8/20 9:02 AM, Matthew Wilcox wrote:
+>>> On Wed, Jul 08, 2020 at 08:59:50AM -0600, Jens Axboe wrote:
+>>> On 7/8/20 8:58 AM, Matthew Wilcox wrote:
+>>>> On Wed, Jul 08, 2020 at 08:54:07AM -0600, Jens Axboe wrote:
+>>>>> On 7/8/20 6:58 AM, Kanchan Joshi wrote:
+>>>>>>>> +#define IOCB_NO_CMPL        (15 << 28)
+>>>>>>>>=20
+>>>>>>>> struct kiocb {
+>>>>>>>> [...]
+>>>>>>>> -    void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
+>>>>>>>> +    loff_t __user *ki_uposp;
+>>>>>>>> -    int            ki_flags;
+>>>>>>>> +    unsigned int        ki_flags;
+>>>>>>>>=20
+>>>>>>>> +typedef void ki_cmpl(struct kiocb *, long ret, long ret2);
+>>>>>>>> +static ki_cmpl * const ki_cmpls[15];
+>>>>>>>>=20
+>>>>>>>> +void ki_complete(struct kiocb *iocb, long ret, long ret2)
+>>>>>>>> +{
+>>>>>>>> +    unsigned int id =3D iocb->ki_flags >> 28;
+>>>>>>>> +
+>>>>>>>> +    if (id < 15)
+>>>>>>>> +        ki_cmpls[id](iocb, ret, ret2);
+>>>>>>>> +}
+>>>>>>>>=20
+>>>>>>>> +int kiocb_cmpl_register(void (*cb)(struct kiocb *, long, long))
+>>>>>>>> +{
+>>>>>>>> +    for (i =3D 0; i < 15; i++) {
+>>>>>>>> +        if (ki_cmpls[id])
+>>>>>>>> +            continue;
+>>>>>>>> +        ki_cmpls[id] =3D cb;
+>>>>>>>> +        return id;
+>>>>>>>> +    }
+>>>>>>>> +    WARN();
+>>>>>>>> +    return -1;
+>>>>>>>> +}
+>>>>>>>=20
+>>>>>>> That could work, we don't really have a lot of different completion
+>>>>>>> types in the kernel.
+>>>>>>=20
+>>>>>> Thanks, this looks sorted.
+>>>>>=20
+>>>>> Not really, someone still needs to do that work. I took a quick look, a=
+nd
+>>>>> most of it looks straight forward. The only potential complication is
+>>>>> ocfs2, which does a swap of the completion for the kiocb. That would j=
+ust
+>>>>> turn into an upper flag swap. And potential sync kiocb with NULL
+>>>>> ki_complete. The latter should be fine, I think we just need to reserv=
+e
+>>>>> completion nr 0 for being that.
+>>>>=20
+>>>> I was reserving completion 15 for that ;-)
+>>>>=20
+>>>> +#define IOCB_NO_CMPL        (15 << 28)
+>>>> ...
+>>>> +    if (id < 15)
+>>>> +        ki_cmpls[id](iocb, ret, ret2);
+>>>>=20
+>>>> Saves us one pointer in the array ...
+>>>=20
+>>> That works. Are you going to turn this into an actual series of patches,=
 
+>>> adding the functionality and converting users?
+>>=20
+>> I was under the impression Kanchan was going to do that, but I can run it=
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4c9a494c9f9f..0b6a4b2d7e76 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1342,6 +1342,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
- 	if (cqe) {
- 		clear_bit(0, &ctx->sq_check_overflow);
- 		clear_bit(0, &ctx->cq_check_overflow);
-+		ctx->rings->sq_flags &= ~IORING_SQ_CQ_OVERFLOW;
- 	}
- 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
- 	io_cqring_ev_posted(ctx);
-@@ -1379,6 +1380,7 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
- 		if (list_empty(&ctx->cq_overflow_list)) {
- 			set_bit(0, &ctx->sq_check_overflow);
- 			set_bit(0, &ctx->cq_check_overflow);
-+			ctx->rings->sq_flags |= IORING_SQ_CQ_OVERFLOW;
- 		}
- 		req->flags |= REQ_F_OVERFLOW;
- 		refcount_inc(&req->refs);
-@@ -6375,9 +6377,9 @@ static int io_sq_thread(void *data)
- 			}
- 
- 			/* Tell userspace we may need a wakeup call */
-+			spin_lock_irq(&ctx->completion_lock);
- 			ctx->rings->sq_flags |= IORING_SQ_NEED_WAKEUP;
--			/* make sure to read SQ tail after writing flags */
--			smp_mb();
-+			spin_unlock_irq(&ctx->completion_lock);
- 
- 			to_submit = io_sqring_entries(ctx);
- 			if (!to_submit || ret == -EBUSY) {
-@@ -6400,7 +6402,9 @@ static int io_sq_thread(void *data)
- 			}
- 			finish_wait(&ctx->sqo_wait, &wait);
- 
-+			spin_lock_irq(&ctx->completion_lock);
- 			ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
-+			spin_unlock_irq(&ctx->completion_lock);
- 		}
- 
- 		mutex_lock(&ctx->uring_lock);
-@@ -7810,6 +7814,7 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 			if (list_empty(&ctx->cq_overflow_list)) {
- 				clear_bit(0, &ctx->sq_check_overflow);
- 				clear_bit(0, &ctx->cq_check_overflow);
-+				ctx->rings->sq_flags &= ~IORING_SQ_CQ_OVERFLOW;
- 			}
- 			spin_unlock_irq(&ctx->completion_lock);
- 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 8d033961cb78..d65fde732518 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -198,6 +198,7 @@ struct io_sqring_offsets {
-  * sq_ring->flags
-  */
- #define IORING_SQ_NEED_WAKEUP	(1U << 0) /* needs io_uring_enter wakeup */
-+#define IORING_SQ_CQ_OVERFLOW	(1U << 1) /* CQ ring is overflown */
- 
- struct io_cqring_offsets {
- 	__u32 head;
+>> off quickly ...
+>=20
+> I just wanted to get clarification there, because to me it sounded like
+> you expected Kanchan to do it, and Kanchan assuming it "was sorted". I'd
+> consider that a prerequisite for the append series as far as io_uring is
+> concerned, hence _someone_ needs to actually do it ;-)
+>=20
 
--- 
-Jens Axboe
+I believe Kanchan meant that now the trade-off we were asking to clear out i=
+s sorted.=20
 
+We will send a new version shortly for the current functionality - we can se=
+e what we are missing on when the uring interface is clear.=20
+
+We really want this to be stable as a lot of other things are depending on t=
+his (e.g., fio patches)
+
+Javier=

@@ -2,60 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB6B7219246
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jul 2020 23:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A891219249
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jul 2020 23:19:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbgGHVSC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jul 2020 17:18:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57078 "EHLO
+        id S1725964AbgGHVTT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Jul 2020 17:19:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgGHVSC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jul 2020 17:18:02 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BC68C061A0B
-        for <io-uring@vger.kernel.org>; Wed,  8 Jul 2020 14:18:02 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id gc9so116169pjb.2
-        for <io-uring@vger.kernel.org>; Wed, 08 Jul 2020 14:18:02 -0700 (PDT)
+        with ESMTP id S1725903AbgGHVTT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jul 2020 17:19:19 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD9BC061A0B
+        for <io-uring@vger.kernel.org>; Wed,  8 Jul 2020 14:19:19 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id f16so120950pjt.0
+        for <io-uring@vger.kernel.org>; Wed, 08 Jul 2020 14:19:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=vv68x9SyvRhGqitYXr8FYZE9kVtAZHNXCyl5tRHN7qI=;
-        b=FaEi03fjp9juvK+9ymnJbo0OG0XKaRx5OY1uQW73ga2dKn1DxGfru+Obvjc+ALfCSw
-         dsYL40JebOfHWma0q74zDEbIy9hhhVO4bCTVld0ZXxjR2a+meaMpEGzW6BY/nXpVP6Gs
-         0vUBPZ83zqRBb+25emHcUL4a+zr2CbVPc6AFPNabJb3P4ahGdiLv2fUAne2L5FksLiUs
-         T0eZt542c10hCqPAAm6M8RLKmyVDBGonvc3uYi1u4xClD3/4qfaIugJQB1oXTLHsUh+A
-         iZTQQhGrzMw/kDgdn2LGmKBYwzb197j+6zxYv6n/Uf9YAxfQE6bFUSI3M84plnvVsaTx
-         SYwA==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=Lw00I39tMMHoHHOPSgKttYErvt005RuGUQAb9q20a8A=;
+        b=jrwYgAF6dJvXuG89/k7P/OJDUiiD7BekAwAZ9AjD50arRtxnE1xbe/1MpU1O0Lodfo
+         /M/hrJZMrYQOUzuPeNYuEnbUToY225dveCdAfTZyqzPdSRsoW1QS2XR30KkOPuVJr9Yc
+         VY0CR/gykanfPGLh8krT2ekfXGxaYo5FstDlWgxAMsaU0t+A1ZizMOi2OvT1rSxNiYiR
+         N4XRPtcYcW19ZHRJlPawrUviUvbfQOYB8KRMYrWFR0hQPEfuZoYr0WxBxSCQFSh45gQ5
+         Xuq4lwixERgdUBOvTnrfkkIwuic2XXpjip3rIqBjwDYQRFGwmhUjdvCPPm1wveBrXDu8
+         TZ7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=vv68x9SyvRhGqitYXr8FYZE9kVtAZHNXCyl5tRHN7qI=;
-        b=i9uvaRqKVOwQ71/E3TDBgarihZbpTyC94dIFaL5ZpY8cd57vlRSWypxPq2YKxAezD+
-         HotRqBsX/t0xp6n9IXcTJHUMRsv7Sh4LANDj8LMGOiVptpTPPaO2EuBLyl6mbtKNvbBi
-         6dl/HuIqMjImP4Uuw2bjJ20rwMPH/cxC+U2xNqDxTZwqGt/GHjX76nqJZ03C8o5xE1D/
-         eXGjwrUyE9/MXlb8CZRwY4B0AtC9aIdHxJAE1XcKxx1FLpmHF6vXnnLjSBeV3EtrYhTH
-         ObTq/+IsurgKKR62kxTIzBybeICBsqCJ+9tVt/g34FLUDlpKiX9TZf5hF9PB+pmCEx0N
-         mejQ==
-X-Gm-Message-State: AOAM531QKB/LqjGrN5K/iTeFS0j2HD/zRPOjHHmsSeXpOJxUYU24yVt0
-        7i0nLGmWAD6on1F90sAwtnrwngwFMBgcZA==
-X-Google-Smtp-Source: ABdhPJys/s/u+O4YEFG+S95UCHQThy8wp1Xwm6avDLH6nVOf1l1aTgrpjy6joQw8Zr3zPDqrbKoUFw==
-X-Received: by 2002:a17:90a:7487:: with SMTP id p7mr11554894pjk.233.1594243081736;
-        Wed, 08 Jul 2020 14:18:01 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Lw00I39tMMHoHHOPSgKttYErvt005RuGUQAb9q20a8A=;
+        b=iUfU26IS2aDFdnBVU8ut9YoJdBzrri2vCTNjFURXNmVKlTwbGd78V7apTDu3ADsoce
+         OGsIOnXLFKYSl760p2SNQb7DlSRLwZJmk1gvnnpnmD5T/+TXJS/J4W2+Dl0qjwAKJwCe
+         de8HtjQeLEIq2n9qCQtI7KVPoC5p3n39TqVokBeSbsIKlOJ7Jjui7fdk3V5BJfph8FVz
+         WY74+oKp6kR2EpndJoifHn1q4RFXSdKcVwXkT8ji26DfCkGE5BFoKAoRzskiDAyCceek
+         CHLwTzdqkwQxCsEMEMw2qXDcg1zHywAqdw6RnSehzP26xbVD13+j+hisKt08O0A9YX4X
+         8MDw==
+X-Gm-Message-State: AOAM533zJ4fHbCR5kwR6X/RGH5DZhxInPjF+LIJlAs1JFnngprIdb//C
+        54rTs2zk/aFD0mBTIamsa29EUkNJlebw6Q==
+X-Google-Smtp-Source: ABdhPJxFk6OzPfyfbBJ6Y7pA3+dQxrzhMXVcgKwa/YBiviVpwmnSF2gXlbj0pVd/y7uB6PmLl77NmQ==
+X-Received: by 2002:a17:902:a389:: with SMTP id x9mr12670402pla.63.1594243158500;
+        Wed, 08 Jul 2020 14:19:18 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id a9sm637760pfr.103.2020.07.08.14.18.01
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id i132sm683452pfe.9.2020.07.08.14.19.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jul 2020 14:18:01 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
+        Wed, 08 Jul 2020 14:19:18 -0700 (PDT)
+Subject: Re: [PATCH] .gitignore: add new test binaries
+To:     Tobias Klauser <tklauser@distanz.ch>, io-uring@vger.kernel.org
+References: <20200708211648.19189-1-tklauser@distanz.ch>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: only call kfree() for a non-zero pointer
-Message-ID: <cb22e312-0476-eb8e-bef6-3f844886f9c5@kernel.dk>
-Date:   Wed, 8 Jul 2020 15:18:00 -0600
+Message-ID: <d8c25995-2af3-f461-58ff-153773be8d82@kernel.dk>
+Date:   Wed, 8 Jul 2020 15:19:17 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20200708211648.19189-1-tklauser@distanz.ch>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,34 +66,7 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It's safe to call kfree() with a NULL pointer, but it's also pointless.
-Most of the time we don't have any data to free, and at millions of
-requests per second, the redundant function call adds noticeable
-overhead (about 1.3% of the runtime).
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-Kinda silly, this is 100% reproducible. Actually somewhat baffled
-that kfree() isn't a inline, to avoid a function call if the pointer
-is NULL.
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 14168fbc7d79..51ff88330f9a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1519,7 +1519,8 @@ static void io_dismantle_req(struct io_kiocb *req)
- 	if (req->flags & REQ_F_NEED_CLEANUP)
- 		io_cleanup_req(req);
- 
--	kfree(req->io);
-+	if (req->io)
-+		kfree(req->io);
- 	if (req->file)
- 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
- 	__io_put_req_task(req);
+Applied, thanks.
 
 -- 
 Jens Axboe
-

@@ -2,193 +2,323 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E15218954
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jul 2020 15:40:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF5F721899A
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jul 2020 15:59:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbgGHNkI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jul 2020 09:40:08 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:44689 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729798AbgGHNkH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jul 2020 09:40:07 -0400
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200708134004epoutp045eb8d5ba334017a24747cd07a8139366~fyqVY6aJI0192701927epoutp04h
-        for <io-uring@vger.kernel.org>; Wed,  8 Jul 2020 13:40:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200708134004epoutp045eb8d5ba334017a24747cd07a8139366~fyqVY6aJI0192701927epoutp04h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1594215604;
-        bh=8olNTXPEO9AiHbyDOEdhyHG15yYRp1t1bGMsJZeRYXo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LVS9aFnDk0/1nT634YDsgL7rYhv3gcPCC9DLgYgSRN/UE3JdGFFMeHTV5aozWT35t
-         bPv55ZiGNZieWLvvbR+zDM+HQ0+XrB+BKj8CRObGYtdurqgjDxDthZszjsbqyiAMw9
-         dNzVQYrpdePcHrsUwr96nCDOjCoyFyLzUbal1g7M=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20200708134003epcas5p3b8d4642c76d4a9e1a0be1a799bedadbc~fyqUpO3BM3071330713epcas5p3G;
-        Wed,  8 Jul 2020 13:40:03 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2E.72.09475.3BCC50F5; Wed,  8 Jul 2020 22:40:03 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200708130103epcas5p3d4d6a9a340f405e2a955e25018ee3556~fyIRMr2S42478724787epcas5p3s;
-        Wed,  8 Jul 2020 13:01:03 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200708130103epsmtrp270b27ef57ecfe75ed707c6eca2d72753~fyIRLoUAN0037100371epsmtrp25;
-        Wed,  8 Jul 2020 13:01:03 +0000 (GMT)
-X-AuditID: b6c32a4b-39fff70000002503-5d-5f05ccb34d82
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        23.6C.08303.F83C50F5; Wed,  8 Jul 2020 22:01:03 +0900 (KST)
-Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200708130101epsmtip241d423671fe7c7d46015b34ba48814a3~fyIOx-zaa1837818378epsmtip2g;
-        Wed,  8 Jul 2020 13:01:00 +0000 (GMT)
-Date:   Wed, 8 Jul 2020 18:28:05 +0530
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, hch@infradead.org, Damien.LeMoal@wdc.com,
-        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-        mb@lightnvm.io, linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Selvakumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-Message-ID: <20200708125805.GA16495@test-zns>
-MIME-Version: 1.0
-In-Reply-To: <145cc0ad-af86-2d6a-78b3-9ade007aae52@kernel.dk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLKsWRmVeSWpSXmKPExsWy7bCmlu7mM6zxBhuXalvMWbWN0WL13X42
-        i65/W1gsWtu/MVmcnrCIyeJd6zkWi8d3PrNbTJnWxGix95a2xZ69J1ksLu+aw2axYvsRFott
-        v+czW7z+cZLN4vzf46wWv3/MYXMQ8Ng56y67x+YVWh6Xz5Z6bPo0id2j++oPRo++LasYPT5v
-        kvNoP9DN5LHpyVumAM4oLpuU1JzMstQifbsErozrc26wFswXrZjS9JGlgbFVsIuRk0NCwERi
-        4Z4XLCC2kMBuRomFOwu7GLmA7E+MEk/adrBBOJ8ZJb5M+MQC07Fo0w1miMQuRom9tyeyQjjP
-        GCV+b2wFq2IRUJHYsHotexcjBwebgKbEhcmlIGERAQWJnt8rwaYyC2xklri59BtYvbCAo8Tn
-        nScZQep5BXQl3p4qAQnzCghKnJz5BKyEU8BW4smrq4wgtqiAssSBbceZIA56wCGxscMApFVC
-        wEWib4IORFhY4tXxLewQtpTE53d72SDsYolfd46C3S8h0MEocb1hJtRj9hIX9/wFm8kskCGx
-        Y+scqGZZiamn1kHF+SR6fz+B2ssrsWMejK0ocW/SU1YIW1zi4YwlULaHxIVbx9kh4fOPWWLl
-        lEusExjlZyH5bRaSfRC2lUTnhybWWUD/MAtISyz/xwFhakqs36W/gJF1FaNkakFxbnpqsWmB
-        cV5quV5xYm5xaV66XnJ+7iZGcArU8t7B+OjBB71DjEwcjIcYJTiYlUR4DRRZ44V4UxIrq1KL
-        8uOLSnNSiw8xSnOwKInzKv04EyckkJ5YkpqdmlqQWgSTZeLglGpgao8wWM/8uPLt0V47sWMV
-        Qhl/rpz8feV3cdm9ew0cL+JWFCQ+e7ltSXaqT5H3T86LW/e0CBbtzc6ZEp2TuL6xxM9H6LzV
-        jvVsT7K+PFbfzfs77MT/r8emtVdIrVBY/mBX9bUKVtGsyY9sA4N4Pxd8z/s5Mf7Gn++lv/Jv
-        nl5x5+KZ8AdCn1c4Mbgu57zkpM37TtjWKdb29+r0h7FX+rRYvdpi72xYIRLMHyDuEa4u9NHy
-        YsJKa7GpMhfSnvB0vLq7+8rlHB1LqfOJ1iwsE8RU7mqFG6XPK6kIXFAnOSWUV+6Y3xHV4+5r
-        3+aXZ8UrpHxdYjnD6u1CP5nDIhnzqyeE3y6790zbzKjynWDnlndrlViKMxINtZiLihMB1E5i
-        +PADAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsWy7bCSvG7/YdZ4g/lXlCzmrNrGaLH6bj+b
-        Rde/LSwWre3fmCxOT1jEZPGu9RyLxeM7n9ktpkxrYrTYe0vbYs/ekywWl3fNYbNYsf0Ii8W2
-        3/OZLV7/OMlmcf7vcVaL3z/msDkIeOycdZfdY/MKLY/LZ0s9Nn2axO7RffUHo0ffllWMHp83
-        yXm0H+hm8tj05C1TAGcUl01Kak5mWWqRvl0CV0b7xOlMBReFKuZdvszUwHiRr4uRk0NCwERi
-        0aYbzF2MXBxCAjsYJQ7vbGCCSIhLNF/7wQ5hC0us/PecHaLoCaPE+yd3mUESLAIqEhtWrwVK
-        cHCwCWhKXJhcChIWEVCQ6Pm9kg2knllgK7PE14Oz2UASwgKOEp93nmQEqecV0JV4e6oEYuY/
-        ZolZf7eALeMVEJQ4OfMJC4jNLGAmMW/zQ2aQemYBaYnl/zhAwpwCthJPXl1lBLFFBZQlDmw7
-        zjSBUXAWku5ZSLpnIXQvYGRexSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRHH9aWjsY
-        96z6oHeIkYmD8RCjBAezkgivgSJrvBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHer7MWxgkJpCeW
-        pGanphakFsFkmTg4pRqY+KqKZfdM2KjitqXh4Z0D4tEPG5aqnfshnDl540qvozfWWv5eq5d3
-        wLHAcaJKsJD8xvpcM+eLmdMqJyxZVfztb9+5gOKvxwM2puT0LnDfw3Woc/elReFrftjw2f2Z
-        /9n4dERSdKpOetodd4638hfETqxivC8b2mgVHlLUt0+/4qKA/KMZKs9fn7v0wVf31X6/rwXn
-        KyQ8KoOvqP6zXSJus+dnyh2Tz7ULXGa0N1c+N5nJfnVXy3kxYf3fTrOl/F7xmTAa7XhwJWBd
-        r3/6HfVLyxxF+zMPxpQuP3Rtrf1UI9EXv+clhGt7h/0q3ZLLYq6sYXHW/r+YbbHee17xiwmL
-        23NERT/cmOl16N6ZjTMYlFiKMxINtZiLihMB9zl9Yy4DAAA=
-X-CMS-MailID: 20200708130103epcas5p3d4d6a9a340f405e2a955e25018ee3556
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----FBC7EIImzEv-3WQrgwRbJYn4xAlwhlhWWV1zALX9mq8rjZSB=_e89f5_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200707223803epcas5p41814360c764d6b5f67fdbf173a8ba64e
-References: <20200706141002.GZ25523@casper.infradead.org>
-        <4a9bf73e-f3ee-4f06-7fad-b8f8861b0bc1@kernel.dk>
-        <20200706143208.GA25523@casper.infradead.org>
-        <20200707151105.GA23395@test-zns>
-        <20200707155237.GM25523@casper.infradead.org>
-        <20200707202342.GA28364@test-zns>
-        <7a44d9c6-bf7d-0666-fc29-32c3cba9d1d8@kernel.dk>
-        <20200707221812.GN25523@casper.infradead.org>
-        <CGME20200707223803epcas5p41814360c764d6b5f67fdbf173a8ba64e@epcas5p4.samsung.com>
-        <145cc0ad-af86-2d6a-78b3-9ade007aae52@kernel.dk>
+        id S1728148AbgGHN7c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Jul 2020 09:59:32 -0400
+Received: from dispatch1-us1.ppe-hosted.com ([67.231.154.164]:56714 "EHLO
+        dispatch1-us1.ppe-hosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729595AbgGHN7c (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jul 2020 09:59:32 -0400
+Received: from mx1-us1.ppe-hosted.com (unknown [10.110.50.143])
+        by dispatch1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id 32102200A5
+        for <io-uring@vger.kernel.org>; Wed,  8 Jul 2020 13:59:31 +0000 (UTC)
+Received: from us4-mdac16-68.at1.mdlocal (unknown [10.110.50.185])
+        by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id 311AE8009B
+        for <io-uring@vger.kernel.org>; Wed,  8 Jul 2020 13:59:31 +0000 (UTC)
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mx1-us1.ppe-hosted.com (unknown [10.110.49.30])
+        by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id BFB5D40079
+        for <io-uring@vger.kernel.org>; Wed,  8 Jul 2020 13:59:30 +0000 (UTC)
+Received: from mx2.vailsys.com (mx2.vailsys.com [63.209.137.144])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id A9473140096
+        for <io-uring@vger.kernel.org>; Wed,  8 Jul 2020 13:59:30 +0000 (UTC)
+Received: from dfsmtp.vail (dfsmtp.vail [192.168.129.173])
+        by mx2.vailsys.com (Postfix) with ESMTPS id 69F7CC960D;
+        Wed,  8 Jul 2020 09:59:30 -0400 (EDT)
+Received: from sdlsip03.vail (sdlsip03.vail [172.20.152.161])
+        by dfsmtp.vail (Postfix) with ESMTPS id 5215021714B;
+        Wed,  8 Jul 2020 08:59:30 -0500 (CDT)
+Received: by sdlsip03.vail (Postfix, from userid 1001)
+        id 1A56A1005C51; Wed,  8 Jul 2020 08:59:30 -0500 (CDT)
+From:   Alex Nash <nash@vailsys.com>
+To:     io-uring@vger.kernel.org
+Cc:     Alex Nash <nash@vailsys.com>
+Subject: [PATCH] io_uring: add support for sendto(2) and recvfrom(2)
+Date:   Wed,  8 Jul 2020 08:59:28 -0500
+Message-Id: <20200708135928.24475-1-nash@vailsys.com>
+X-Mailer: git-send-email 2.18.4
+In-Reply-To: <a2399c89-2c45-375c-7395-b5caf556ec3d@kernel.dk>
+References: <a2399c89-2c45-375c-7395-b5caf556ec3d@kernel.dk>
+X-MDID: 1594216771-tigZO_CxBO7b
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-------FBC7EIImzEv-3WQrgwRbJYn4xAlwhlhWWV1zALX9mq8rjZSB=_e89f5_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+This adds IORING_OP_SENDTO for sendto(2) support, and IORING_OP_RECVFROM
+for recvfrom(2) support.
 
-On Tue, Jul 07, 2020 at 04:37:55PM -0600, Jens Axboe wrote:
->On 7/7/20 4:18 PM, Matthew Wilcox wrote:
->> On Tue, Jul 07, 2020 at 02:40:06PM -0600, Jens Axboe wrote:
->>>>> so we have another 24 bytes before io_kiocb takes up another cacheline.
->>>>> If that's a serious problem, I have an idea about how to shrink struct
->>>>> kiocb by 8 bytes so struct io_rw would have space to store another
->>>>> pointer.
->>>> Yes, io_kiocb has room. Cache-locality wise whether that is fine or
->>>> it must be placed within io_rw - I'll come to know once I get to
->>>> implement this. Please share the idea you have, it can come handy.
->>>
->>> Except it doesn't, I'm not interested in adding per-request type fields
->>> to the generic part of it. Before we know it, we'll blow past the next
->>> cacheline.
->>>
->>> If we can find space in the kiocb, that'd be much better. Note that once
->>> the async buffered bits go in for 5.9, then there's no longer a 4-byte
->>> hole in struct kiocb.
->>
->> Well, poot, I was planning on using that.  OK, how about this:
->
->Figured you might have had your sights set on that one, which is why I
->wanted to bring it up upfront :-)
->
->> +#define IOCB_NO_CMPL		(15 << 28)
->>
->>  struct kiocb {
->> [...]
->> -	void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
->> +	loff_t __user *ki_uposp;
->> -	int			ki_flags;
->> +	unsigned int		ki_flags;
->>
->> +typedef void ki_cmpl(struct kiocb *, long ret, long ret2);
->> +static ki_cmpl * const ki_cmpls[15];
->>
->> +void ki_complete(struct kiocb *iocb, long ret, long ret2)
->> +{
->> +	unsigned int id = iocb->ki_flags >> 28;
->> +
->> +	if (id < 15)
->> +		ki_cmpls[id](iocb, ret, ret2);
->> +}
->>
->> +int kiocb_cmpl_register(void (*cb)(struct kiocb *, long, long))
->> +{
->> +	for (i = 0; i < 15; i++) {
->> +		if (ki_cmpls[id])
->> +			continue;
->> +		ki_cmpls[id] = cb;
->> +		return id;
->> +	}
->> +	WARN();
->> +	return -1;
->> +}
->
->That could work, we don't really have a lot of different completion
->types in the kernel.
+Signed-off-by: Alex Nash <nash@vailsys.com>
+---
+ fs/io_uring.c                 | 89 +++++++++++++++++++++++++++++++----
+ include/linux/socket.h        |  2 +
+ include/uapi/linux/io_uring.h |  3 ++
+ net/socket.c                  |  4 +-
+ 4 files changed, 86 insertions(+), 12 deletions(-)
 
-Thanks, this looks sorted.
-The last thing is about the flag used to trigger this processing. 
-Will it be fine to intoduce new flag (RWF_APPEND2 or RWF_APPEND_OFFSET)
-instead of using RWF_APPEND? 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d37d7ea5ebe5..7fa4ddd2f364 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -414,7 +414,14 @@ struct io_sr_msg {
+ 	struct file			*file;
+ 	union {
+ 		struct user_msghdr __user *msg;
+-		void __user		*buf;
++		struct {
++			void __user	*buf;
++			struct sockaddr __user *addr;
++			union {
++				void __user	*recvfrom_addr_len;
++				size_t		sendto_addr_len;
++			};
++		} sr;
+ 	};
+ 	int				msg_flags;
+ 	int				bgid;
+@@ -878,6 +885,18 @@ static const struct io_op_def io_op_defs[] = {
+ 		.hash_reg_file		= 1,
+ 		.unbound_nonreg_file	= 1,
+ 	},
++	[IORING_OP_SENDTO] = {
++		.needs_mm		= 1,
++		.needs_file		= 1,
++		.unbound_nonreg_file	= 1,
++		.pollout		= 1,
++	},
++	[IORING_OP_RECVFROM] = {
++		.needs_mm		= 1,
++		.needs_file		= 1,
++		.unbound_nonreg_file	= 1,
++		.pollin			= 1,
++	},
+ };
+ 
+ static void io_wq_submit_work(struct io_wq_work **workptr);
+@@ -3545,8 +3564,18 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		sr->msg_flags |= MSG_CMSG_COMPAT;
+ #endif
+ 
+-	if (!io || req->opcode == IORING_OP_SEND)
++	switch (req->opcode) {
++	case IORING_OP_SENDMSG:
++		if (!io)
++			return 0;
++		break;
++	case IORING_OP_SEND:
++		return 0;
++	case IORING_OP_SENDTO:
++		sr->sr.addr = u64_to_user_ptr(READ_ONCE(sqe->addr2));
++		sr->sr.sendto_addr_len = READ_ONCE(sqe->addr3);
+ 		return 0;
++	}
+ 	/* iovec is already imported */
+ 	if (req->flags & REQ_F_NEED_CLEANUP)
+ 		return 0;
+@@ -3620,20 +3649,29 @@ static int io_send(struct io_kiocb *req, bool force_nonblock)
+ 
+ 	sock = sock_from_file(req->file, &ret);
+ 	if (sock) {
++		struct sockaddr_storage address;
+ 		struct io_sr_msg *sr = &req->sr_msg;
+ 		struct msghdr msg;
+ 		struct iovec iov;
+ 		unsigned flags;
+ 
+-		ret = import_single_range(WRITE, sr->buf, sr->len, &iov,
++		ret = import_single_range(WRITE, sr->sr.buf, sr->len, &iov,
+ 						&msg.msg_iter);
+ 		if (ret)
+ 			return ret;
+ 
+-		msg.msg_name = NULL;
++		if (req->opcode == IORING_OP_SEND || sr->sr.addr == NULL) {
++			msg.msg_name = NULL;
++			msg.msg_namelen = 0;
++		} else {
++			ret = move_addr_to_kernel(sr->sr.addr, sr->sr.sendto_addr_len, &address);
++			if (ret)
++				return ret;
++			msg.msg_name = (struct sockaddr *)&address;
++			msg.msg_namelen = sr->sr.sendto_addr_len;
++		}
+ 		msg.msg_control = NULL;
+ 		msg.msg_controllen = 0;
+-		msg.msg_namelen = 0;
+ 
+ 		flags = req->sr_msg.msg_flags;
+ 		if (flags & MSG_DONTWAIT)
+@@ -3783,8 +3821,18 @@ static int io_recvmsg_prep(struct io_kiocb *req,
+ 		sr->msg_flags |= MSG_CMSG_COMPAT;
+ #endif
+ 
+-	if (!io || req->opcode == IORING_OP_RECV)
++	switch (req->opcode) {
++	case IORING_OP_RECVMSG:
++		if (!io)
++			return 0;
++		break;
++	case IORING_OP_RECV:
++		return 0;
++	case IORING_OP_RECVFROM:
++		sr->sr.addr = u64_to_user_ptr(READ_ONCE(sqe->addr2));
++		sr->sr.recvfrom_addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr3));
+ 		return 0;
++	}
+ 	/* iovec is already imported */
+ 	if (req->flags & REQ_F_NEED_CLEANUP)
+ 		return 0;
+@@ -3864,8 +3912,9 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock)
+ 
+ 	sock = sock_from_file(req->file, &ret);
+ 	if (sock) {
++		struct sockaddr_storage address;
+ 		struct io_sr_msg *sr = &req->sr_msg;
+-		void __user *buf = sr->buf;
++		void __user *buf = sr->sr.buf;
+ 		struct msghdr msg;
+ 		struct iovec iov;
+ 		unsigned flags;
+@@ -3884,13 +3933,17 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock)
+ 		}
+ 
+ 		req->flags |= REQ_F_NEED_CLEANUP;
+-		msg.msg_name = NULL;
+ 		msg.msg_control = NULL;
+ 		msg.msg_controllen = 0;
+ 		msg.msg_namelen = 0;
+ 		msg.msg_iocb = NULL;
+ 		msg.msg_flags = 0;
+ 
++		if (req->opcode == IORING_OP_RECV)
++			msg.msg_name = NULL;
++		else
++			msg.msg_name = (struct sockaddr *)&address;
++
+ 		flags = req->sr_msg.msg_flags;
+ 		if (flags & MSG_DONTWAIT)
+ 			req->flags |= REQ_F_NOWAIT;
+@@ -3900,10 +3953,20 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock)
+ 		ret = sock_recvmsg(sock, &msg, flags);
+ 		if (force_nonblock && ret == -EAGAIN)
+ 			return -EAGAIN;
+-		if (ret == -ERESTARTSYS)
+-			ret = -EINTR;
++		if (unlikely(ret < 0)) {
++			if (ret == -ERESTARTSYS)
++				ret = -EINTR;
++			goto out;
++		}
++		if (req->opcode == IORING_OP_RECVFROM && sr->sr.addr) {
++			int err = move_addr_to_user(&address, msg.msg_namelen,
++						    sr->sr.addr, sr->sr.recvfrom_addr_len);
++			if (err < 0)
++				ret = err;
++		}
+ 	}
+ 
++out:
+ 	kfree(kbuf);
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+ 	__io_cqring_add_event(req, ret, cflags);
+@@ -4997,10 +5060,12 @@ static int io_req_defer_prep(struct io_kiocb *req,
+ 		break;
+ 	case IORING_OP_SENDMSG:
+ 	case IORING_OP_SEND:
++	case IORING_OP_SENDTO:
+ 		ret = io_sendmsg_prep(req, sqe);
+ 		break;
+ 	case IORING_OP_RECVMSG:
+ 	case IORING_OP_RECV:
++	case IORING_OP_RECVFROM:
+ 		ret = io_recvmsg_prep(req, sqe);
+ 		break;
+ 	case IORING_OP_CONNECT:
+@@ -5125,6 +5190,7 @@ static void io_cleanup_req(struct io_kiocb *req)
+ 			kfree(io->msg.iov);
+ 		break;
+ 	case IORING_OP_RECV:
++	case IORING_OP_RECVFROM:
+ 		if (req->flags & REQ_F_BUFFER_SELECTED)
+ 			kfree(req->sr_msg.kbuf);
+ 		break;
+@@ -5205,6 +5271,7 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 		break;
+ 	case IORING_OP_SENDMSG:
+ 	case IORING_OP_SEND:
++	case IORING_OP_SENDTO:
+ 		if (sqe) {
+ 			ret = io_sendmsg_prep(req, sqe);
+ 			if (ret < 0)
+@@ -5217,6 +5284,7 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 		break;
+ 	case IORING_OP_RECVMSG:
+ 	case IORING_OP_RECV:
++	case IORING_OP_RECVFROM:
+ 		if (sqe) {
+ 			ret = io_recvmsg_prep(req, sqe);
+ 			if (ret)
+@@ -8266,6 +8334,7 @@ static int __init io_uring_init(void)
+ 	BUILD_BUG_SQE_ELEM(40, __u16,  buf_index);
+ 	BUILD_BUG_SQE_ELEM(42, __u16,  personality);
+ 	BUILD_BUG_SQE_ELEM(44, __s32,  splice_fd_in);
++	BUILD_BUG_SQE_ELEM(48, __s64,  addr3);
+ 
+ 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
+ 	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index 04d2bc97f497..92c4a269a80d 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -364,6 +364,8 @@ struct ucred {
+ #define IPX_TYPE	1
+ 
+ extern int move_addr_to_kernel(void __user *uaddr, int ulen, struct sockaddr_storage *kaddr);
++extern int move_addr_to_user(struct sockaddr_storage *kaddr, int klen,
++			     void __user *uaddr, int __user *ulen);
+ extern int put_cmsg(struct msghdr*, int level, int type, int len, void *data);
+ 
+ struct timespec64;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 92c22699a5a7..c52658393a1c 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -55,6 +55,7 @@ struct io_uring_sqe {
+ 			/* personality to use, if used */
+ 			__u16	personality;
+ 			__s32	splice_fd_in;
++			__u64	addr3;
+ 		};
+ 		__u64	__pad2[3];
+ 	};
+@@ -130,6 +131,8 @@ enum {
+ 	IORING_OP_PROVIDE_BUFFERS,
+ 	IORING_OP_REMOVE_BUFFERS,
+ 	IORING_OP_TEE,
++	IORING_OP_SENDTO,
++	IORING_OP_RECVFROM,
+ 
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
+diff --git a/net/socket.c b/net/socket.c
+index 976426d03f09..f3609e64cec9 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -217,8 +217,8 @@ int move_addr_to_kernel(void __user *uaddr, int ulen, struct sockaddr_storage *k
+  *	specified. Zero is returned for a success.
+  */
+ 
+-static int move_addr_to_user(struct sockaddr_storage *kaddr, int klen,
+-			     void __user *uaddr, int __user *ulen)
++int move_addr_to_user(struct sockaddr_storage *kaddr, int klen,
++		      void __user *uaddr, int __user *ulen)
+ {
+ 	int err;
+ 	int len;
+-- 
+2.18.4
 
-New flag will do what RWF_APPEND does and will also return the 
-written-location (and therefore expects pointer setup in application).
-
-------FBC7EIImzEv-3WQrgwRbJYn4xAlwhlhWWV1zALX9mq8rjZSB=_e89f5_
-Content-Type: text/plain; charset="utf-8"
-
-
-------FBC7EIImzEv-3WQrgwRbJYn4xAlwhlhWWV1zALX9mq8rjZSB=_e89f5_--

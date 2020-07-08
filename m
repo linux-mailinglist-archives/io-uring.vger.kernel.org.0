@@ -2,30 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A80B6218A8C
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jul 2020 16:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9101218A95
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jul 2020 16:59:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbgGHO7B (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jul 2020 10:59:01 -0400
-Received: from casper.infradead.org ([90.155.50.34]:36584 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728932AbgGHO7B (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jul 2020 10:59:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=HXY6HyjdszjWPlFmwnu7PpLohHyegjNp5zS3C0BgjdM=; b=WPlORj9uxpDZmh4ZtrCe+13y0J
-        TTC5I/io9fZVm04GjLP53C1pskY9DoFzCXzafhan+OEHLFqMzALjBb3+iX3ygsiFypEe4QXWI9465
-        JFmq+bUhkNm6OIBZ4+dtJzW0eoL9yhBeAuICktm4q90n/WDglp6KgEjT57ACusXeBFppQSlinK4XS
-        PpxEZ1+VRg9HopJ0sw8oVuLBaWETsvEQFLqA5mF+KOEQtXY0fsbqMIBSeSBQ9hrjVrR//bC3btKQD
-        NhBLIt0wWyk0l6dUK/2j8LO+2ZVhOOnfvaxEVNe6UgRB+U7YrO34j3x/3BJxqmF354/HXA30/QPqU
-        Ea+Hhm4g==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jtBWl-0000r7-8z; Wed, 08 Jul 2020 14:58:27 +0000
-Date:   Wed, 8 Jul 2020 15:58:26 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
+        id S1730021AbgGHO7x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Jul 2020 10:59:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54986 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729921AbgGHO7x (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jul 2020 10:59:53 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 495CAC08C5DC
+        for <io-uring@vger.kernel.org>; Wed,  8 Jul 2020 07:59:53 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id o3so21934259ilo.12
+        for <io-uring@vger.kernel.org>; Wed, 08 Jul 2020 07:59:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tOY5WWCurwXjUIdxuXnE2O00KAaJIFSGqD8NNrWHd48=;
+        b=J6Mu+tQo2VKTqNJY50vJGPEqgC2Hv2aO92KQYyUke8OoZ31C2NM3Uy7BOsMKJ19i+b
+         FsZ+fS8EG0HEEzm9wMnX/88vLlZrLyIwGfMVOomLJO6ZuTg6C4UC/1jA5DqgJ79OuKWh
+         wDtqW0c3HvdgHjm4+ZPTC653WUHfhOwIxvkevNULcfj8BacfLzKL9G9TfHZNt0NBcnzI
+         2Wn1MTlzuFtMvQ9TcRRYi4oLArSc26gYcZOvwMSNZbipCBe1WQYV4tU6G0g5BPXX+pTq
+         mtp2eou8bi3zeegoHKAZ1DbCm4/m4ExV1/lw+3CVBjqu47X75ckXC+LMgE2TuA+7YCGZ
+         FQ+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tOY5WWCurwXjUIdxuXnE2O00KAaJIFSGqD8NNrWHd48=;
+        b=CO7P3eDGqTi4xguHspz+Rw/AzjXz5PJudM+LfjPcMukDNO1EhRVDncUg7CmhH8OE5M
+         pbvRIc7aECAm/bogwTv2tnLGtafjWWu4L0sJsVJqOeHrAYkJjIsYYKw+Wo9/cZgqJc39
+         Txfqs7y/4ArcSjtz078LFuhAtyrWnw0g9gdEK83fcKYQgpJ19qNkjQTsT6NQRQs922/L
+         fHbLXT1W4YwcX6W9Q+R+kdaMHjhbBJcUh2QAXrnkBbPCKP4YAPGE5Qwgmvann15ZztHT
+         1B1Owl/vyXD/XbDQN63vlDNEI5lwMfYsuIZLAagY/3wTIYYsIbV7D+9TTOL4Z8G8jsdD
+         /UXg==
+X-Gm-Message-State: AOAM530cukM55LZpP8j+auWYLWBlNYuk3dTt/AcdQ+etNNYWERuJUZbl
+        3OTcQDlgqwaJyBuwa1qTE9bR5U9A/OOLkw==
+X-Google-Smtp-Source: ABdhPJzW1SMwnOLpN7lFVQUfbRGF1gkxnasd9s/n2z/WxcfCHkKq5ESuknHV13j9k73vJICdlC1Zlg==
+X-Received: by 2002:a92:d6d2:: with SMTP id z18mr40514146ilp.272.1594220392530;
+        Wed, 08 Jul 2020 07:59:52 -0700 (PDT)
+Received: from [192.168.1.58] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id m16sm13933887ili.26.2020.07.08.07.59.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jul 2020 07:59:51 -0700 (PDT)
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
         bcrl@kvack.org, hch@infradead.org, Damien.LeMoal@wdc.com,
         asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
@@ -34,8 +58,6 @@ Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
         Selvakumar S <selvakuma.s1@samsung.com>,
         Nitesh Shetty <nj.shetty@samsung.com>,
         Javier Gonzalez <javier.gonz@samsung.com>
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-Message-ID: <20200708145826.GS25523@casper.infradead.org>
 References: <20200706143208.GA25523@casper.infradead.org>
  <20200707151105.GA23395@test-zns>
  <20200707155237.GM25523@casper.infradead.org>
@@ -46,66 +68,81 @@ References: <20200706143208.GA25523@casper.infradead.org>
  <145cc0ad-af86-2d6a-78b3-9ade007aae52@kernel.dk>
  <20200708125805.GA16495@test-zns>
  <2962cd68-de34-89be-0464-8b102a3f1d0e@kernel.dk>
+ <20200708145826.GS25523@casper.infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b1c58211-496a-ed85-a9bb-0d0cc56e250c@kernel.dk>
+Date:   Wed, 8 Jul 2020 08:59:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2962cd68-de34-89be-0464-8b102a3f1d0e@kernel.dk>
+In-Reply-To: <20200708145826.GS25523@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jul 08, 2020 at 08:54:07AM -0600, Jens Axboe wrote:
-> On 7/8/20 6:58 AM, Kanchan Joshi wrote:
-> >>> +#define IOCB_NO_CMPL		(15 << 28)
-> >>>
-> >>>  struct kiocb {
-> >>> [...]
-> >>> -	void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
-> >>> +	loff_t __user *ki_uposp;
-> >>> -	int			ki_flags;
-> >>> +	unsigned int		ki_flags;
-> >>>
-> >>> +typedef void ki_cmpl(struct kiocb *, long ret, long ret2);
-> >>> +static ki_cmpl * const ki_cmpls[15];
-> >>>
-> >>> +void ki_complete(struct kiocb *iocb, long ret, long ret2)
-> >>> +{
-> >>> +	unsigned int id = iocb->ki_flags >> 28;
-> >>> +
-> >>> +	if (id < 15)
-> >>> +		ki_cmpls[id](iocb, ret, ret2);
-> >>> +}
-> >>>
-> >>> +int kiocb_cmpl_register(void (*cb)(struct kiocb *, long, long))
-> >>> +{
-> >>> +	for (i = 0; i < 15; i++) {
-> >>> +		if (ki_cmpls[id])
-> >>> +			continue;
-> >>> +		ki_cmpls[id] = cb;
-> >>> +		return id;
-> >>> +	}
-> >>> +	WARN();
-> >>> +	return -1;
-> >>> +}
-> >>
-> >> That could work, we don't really have a lot of different completion
-> >> types in the kernel.
-> > 
-> > Thanks, this looks sorted.
+On 7/8/20 8:58 AM, Matthew Wilcox wrote:
+> On Wed, Jul 08, 2020 at 08:54:07AM -0600, Jens Axboe wrote:
+>> On 7/8/20 6:58 AM, Kanchan Joshi wrote:
+>>>>> +#define IOCB_NO_CMPL		(15 << 28)
+>>>>>
+>>>>>  struct kiocb {
+>>>>> [...]
+>>>>> -	void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
+>>>>> +	loff_t __user *ki_uposp;
+>>>>> -	int			ki_flags;
+>>>>> +	unsigned int		ki_flags;
+>>>>>
+>>>>> +typedef void ki_cmpl(struct kiocb *, long ret, long ret2);
+>>>>> +static ki_cmpl * const ki_cmpls[15];
+>>>>>
+>>>>> +void ki_complete(struct kiocb *iocb, long ret, long ret2)
+>>>>> +{
+>>>>> +	unsigned int id = iocb->ki_flags >> 28;
+>>>>> +
+>>>>> +	if (id < 15)
+>>>>> +		ki_cmpls[id](iocb, ret, ret2);
+>>>>> +}
+>>>>>
+>>>>> +int kiocb_cmpl_register(void (*cb)(struct kiocb *, long, long))
+>>>>> +{
+>>>>> +	for (i = 0; i < 15; i++) {
+>>>>> +		if (ki_cmpls[id])
+>>>>> +			continue;
+>>>>> +		ki_cmpls[id] = cb;
+>>>>> +		return id;
+>>>>> +	}
+>>>>> +	WARN();
+>>>>> +	return -1;
+>>>>> +}
+>>>>
+>>>> That could work, we don't really have a lot of different completion
+>>>> types in the kernel.
+>>>
+>>> Thanks, this looks sorted.
+>>
+>> Not really, someone still needs to do that work. I took a quick look, and
+>> most of it looks straight forward. The only potential complication is
+>> ocfs2, which does a swap of the completion for the kiocb. That would just
+>> turn into an upper flag swap. And potential sync kiocb with NULL
+>> ki_complete. The latter should be fine, I think we just need to reserve
+>> completion nr 0 for being that.
 > 
-> Not really, someone still needs to do that work. I took a quick look, and
-> most of it looks straight forward. The only potential complication is
-> ocfs2, which does a swap of the completion for the kiocb. That would just
-> turn into an upper flag swap. And potential sync kiocb with NULL
-> ki_complete. The latter should be fine, I think we just need to reserve
-> completion nr 0 for being that.
+> I was reserving completion 15 for that ;-)
+> 
+> +#define IOCB_NO_CMPL		(15 << 28)
+> ...
+> +	if (id < 15)
+> +		ki_cmpls[id](iocb, ret, ret2);
+> 
+> Saves us one pointer in the array ...
 
-I was reserving completion 15 for that ;-)
+That works. Are you going to turn this into an actual series of patches,
+adding the functionality and converting users?
 
-+#define IOCB_NO_CMPL		(15 << 28)
-...
-+	if (id < 15)
-+		ki_cmpls[id](iocb, ret, ret2);
+-- 
+Jens Axboe
 
-Saves us one pointer in the array ...

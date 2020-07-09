@@ -2,149 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 672E721A780
-	for <lists+io-uring@lfdr.de>; Thu,  9 Jul 2020 21:06:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3AB821A987
+	for <lists+io-uring@lfdr.de>; Thu,  9 Jul 2020 23:09:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbgGITGN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Jul 2020 15:06:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33360 "EHLO
+        id S1726220AbgGIVJG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Jul 2020 17:09:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbgGITGM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Jul 2020 15:06:12 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51ADBC08C5CE;
-        Thu,  9 Jul 2020 12:06:12 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id r12so3474489wrj.13;
-        Thu, 09 Jul 2020 12:06:12 -0700 (PDT)
+        with ESMTP id S1726193AbgGIVJF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Jul 2020 17:09:05 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1547C08C5CE
+        for <io-uring@vger.kernel.org>; Thu,  9 Jul 2020 14:09:05 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id t27so3248285ill.9
+        for <io-uring@vger.kernel.org>; Thu, 09 Jul 2020 14:09:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z1gOyGKslSEgJ3uSJ29Ov3ex1KeLqnCoWQCiP6rXu5g=;
-        b=h0ry14inpKQY/lgHJlfsRpCXkn6trDC9VWetEduPFj/XVI13O84Lfqc/nMYTQhh47Z
-         3qddP59YfKyrznOyEQx2jyvWA81O8XFr7p7RoSxCbQ1GJxJ710rQSwpuabzwbnjquJvu
-         vKTbqlCK41l/iCLzCusA1J3Dpu1Xxss1V5kTkq75L5cFmWojyG02o4VYvJnH5/GnVKJ+
-         kNEUbLENHG1VLeAk6AFSlouAYUK2bLpIKhRDfkvCg4Kn0+tVhF5iDCVyh5kQuaQD8sav
-         8VlIYTA0lpCIqBrcI+7aeW3zEPxT64K3a0M0gotyHnfWRAI6mNuy07OiLqyj7CWLJ6Ww
-         G9AQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=z5kpSTPgzXajn8kVyl05Fgx6NyHfybhlZ8GJxgZxMMU=;
+        b=tFD4oTC42uZfPuPLSs7A/P6FzslnesaflcAKM9TD5fPSlArPg8QjYFtoeXefuOHweD
+         1pU3bWPoHM7YHhoMe3MicW3PbSiw+6ff8fgfFYellXwAvI+POr3tZ9WaNMlJOgSX9Gy5
+         NZaRxAFNUd3lxc/jDn7Iov+yTXv/Q3+YzGzIv72o91Ay4pszU6FWbcVWRy+y5Vfqd3mw
+         /kixgaJOQAYXB999qEYFJI+TWHk6OPLUGNrdrGHJZ3t55TwrJp8TNLPWPxKzrd5rmUWw
+         MshHAytW8SldSIPp/vzuT80h8G8m6lFMp/WSXz9iAGq48jBZKprNylY61CuoC8M6kqZ5
+         BDtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z1gOyGKslSEgJ3uSJ29Ov3ex1KeLqnCoWQCiP6rXu5g=;
-        b=F/4Se9PUSbck1uygYBG+tGjVABHpyNOh0/tfWRSDbAQtEa96LMjdkUVMBLz1hpVQbT
-         zk+R9kYsUgMZRroRDPRdUrXmBoeGLFtPPamS1K4ruUnJeuOwh0VPoOdlbGgt37oUn0IK
-         D3+ooi1QGkhix/1K+ob14XSw+a/sI2J/wcQEdGLeTRTnPcYuyCpJzOZX/9+5uLZnSnc5
-         O+IngaW35790MoK8PWCP3fJ7xkujp4v0YvxUou71O5Ssw8Ey2AB3WPj7JXk3gEn4MfVh
-         UbNO38X57CoSDrCYih8Jlr/KdNEwg6rAAm6xOPhoeJftc4kftuZF6VI+Hh480/7Zwp3E
-         djEg==
-X-Gm-Message-State: AOAM532fPhcWdkDZ6WgJvYGU+qszLCF72Qlds09Bs5sHM/uEAgcyy3NA
-        WPWGcyRxvPs4BaxwH276i1nsSg+sZYtnrPfpnek=
-X-Google-Smtp-Source: ABdhPJwLNiWelIIW1U0lqwsr/Exp78LayRoHPkAYDJ3WdTDokbN20vizSsKcVJ7zA1RQDN2wjNC90ggUTGSyekhCbxA=
-X-Received: by 2002:adf:8444:: with SMTP id 62mr61802850wrf.278.1594321570845;
- Thu, 09 Jul 2020 12:06:10 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=z5kpSTPgzXajn8kVyl05Fgx6NyHfybhlZ8GJxgZxMMU=;
+        b=InyGn3XHKjLfkHFWLheSM6DGCZoeMtG6mg43vAAWVDfAPks+YwH92EV1T0af122DEQ
+         B58hVfvFDTmP7Ww+dHAJCRC7oGAJeBdLqc90twDfWosjJHm1ZCUIx7yooMyQ7Hajbkzx
+         KS7Nz28091byXzdU6YOP5nZaJYQrGqvkg/IkcpXtbb1YWt1BuZZGQQyr1jZOcc7j8NVN
+         IsC4ETtn67bsYw+FTwQi4PkWXa6TqsDTBVbwP84LRq8MS369KyzxBlFrwqvnBsxe2Jkq
+         nYXmqlKO9C3iOmhBpNW6aKK9kGslrDXFLDkpsUtwerXBF0FcvFq9X6STacdwSkKRTRg+
+         OBKA==
+X-Gm-Message-State: AOAM533vQASYtgbFySULw8zppawo9iS/eVB7cuKsoyRmxt8GOZ401T5y
+        PQE42vVmuBC4P8LDExAWpuSiOI9Zed2kdA==
+X-Google-Smtp-Source: ABdhPJzwmkGsdezjW25DIJzysZy8HJI9rwEd6JT2U+NvxNnW9w4VTosWvtMXeeaXqsW7B1DeZRRqEw==
+X-Received: by 2002:a92:bb55:: with SMTP id w82mr50156887ili.146.1594328944457;
+        Thu, 09 Jul 2020 14:09:04 -0700 (PDT)
+Received: from [192.168.1.58] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id a13sm2358844ilk.19.2020.07.09.14.09.03
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jul 2020 14:09:03 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: remove dead 'ctx' argument and move forward
+ declaration
+Message-ID: <fb623ee3-37ab-7b61-b62b-f38854443e98@kernel.dk>
+Date:   Thu, 9 Jul 2020 15:09:02 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <1593974870-18919-1-git-send-email-joshi.k@samsung.com>
- <CGME20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7@epcas5p1.samsung.com>
- <1593974870-18919-5-git-send-email-joshi.k@samsung.com> <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk>
- <20200709085501.GA64935@infradead.org> <adc14700-8e95-10b2-d914-afa5029ae80c@kernel.dk>
- <20200709140053.GA7528@infradead.org> <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk>
- <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com> <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk>
-In-Reply-To: <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Fri, 10 Jul 2020 00:35:43 +0530
-Message-ID: <CA+1E3rLna6VVuwMSHVVEFmrgsTyJN=U4CcZtxSGWYr_UYV7AmQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
-        linux-fsdevel@vger.kernel.org,
-        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Selvakumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jul 10, 2020 at 12:20 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 7/9/20 12:36 PM, Kanchan Joshi wrote:
-> > On Thu, Jul 9, 2020 at 7:36 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> On 7/9/20 8:00 AM, Christoph Hellwig wrote:
-> >>> On Thu, Jul 09, 2020 at 07:58:04AM -0600, Jens Axboe wrote:
-> >>>>> We don't actually need any new field at all.  By the time the write
-> >>>>> returned ki_pos contains the offset after the write, and the res
-> >>>>> argument to ->ki_complete contains the amount of bytes written, which
-> >>>>> allow us to trivially derive the starting position.
-> >
-> > Deriving starting position was not the purpose at all.
-> > But yes, append-offset is not needed, for a different reason.
-> > It was kept for uring specific handling. Completion-result from lower
-> > layer was always coming to uring in ret2 via ki_complete(....,ret2).
-> > And ret2 goes to CQE (and user-space) without any conversion in between.
-> > For polled-completion, there is a short window when we get ret2 but cannot
-> > write into CQE immediately, so thought of storing that in append_offset
-> > (but should not have done, solving was possible without it).
-> >
-> > FWIW, if we move to indirect-offset approach, append_offset gets
-> > eliminated automatically, because there is no need to write to CQE
-> > itself.
-> >
-> >>>> Then let's just do that instead of jumping through hoops either
-> >>>> justifying growing io_rw/io_kiocb or turning kiocb into a global
-> >>>> completion thing.
-> >>>
-> >>> Unfortunately that is a totally separate issue - the in-kernel offset
-> >>> can be trivially calculated.  But we still need to figure out a way to
-> >>> pass it on to userspace.  The current patchset does that by abusing
-> >>> the flags, which doesn't really work as the flags are way too small.
-> >>> So we somewhere need to have an address to do the put_user to.
-> >>
-> >> Right, we're just trading the 'append_offset' for a 'copy_offset_here'
-> >> pointer, which are stored in the same spot...
-> >
-> > The address needs to be stored somewhere. And there does not seem
-> > other option but to use io_kiocb?
->
-> That is where it belongs, not sure this was ever questioned. And inside
-> io_rw at that.
->
-> > The bigger problem with address/indirect-offset is to be able to write
-> > to it during completion as process-context is different. Will that
-> > require entering into task_work_add() world, and may make it costly
-> > affair?
->
-> It might, if you have IRQ context for the completion. task_work isn't
-> expensive, however. It's not like a thread offload.
->
-> > Using flags have not been liked here, but given the upheaval involved so
-> > far I have begun to feel - it was keeping things simple. Should it be
-> > reconsidered?
->
-> It's definitely worth considering, especially since we can use cflags
-> like Pavel suggested upfront and not need any extra storage. But it
-> brings us back to the 32-bit vs 64-bit discussion, and then using blocks
-> instead of bytes. Which isn't exactly super pretty.
->
-I agree that what we had was not great.
-Append required special treatment (conversion for sector to bytes) for io_uring.
-And we were planning a user-space wrapper to abstract that.
+We don't use 'ctx' at all in io_sq_thread_drop_mm(), it just works
+on the mm of the current task. Drop the argument.
 
-But good part (as it seems now) was: append result went along with cflags at
-virtually no additional cost. And uring code changes became super clean/minimal
-with further revisions.
-While indirect-offset requires doing allocation/mgmt in application,
-io-uring submission
-and in completion path (which seems trickier), and those CQE flags
-still get written
-user-space and serve no purpose for append-write.
+Move io_file_put_work() to where we have the other forward declarations
+of functions.
 
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+No functional changes, just cleanups I came across while doing other
+work.
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 7f2a2cb5c056..3ce02a1613cc 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -902,6 +902,7 @@ static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
+ static void __io_queue_sqe(struct io_kiocb *req,
+ 			   const struct io_uring_sqe *sqe,
+ 			   struct io_comp_state *cs);
++static void io_file_put_work(struct work_struct *work);
+ 
+ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+ 			       struct iovec **iovec, struct iov_iter *iter,
+@@ -942,7 +943,7 @@ static void __io_put_req_task(struct io_kiocb *req)
+ 		put_task_struct(req->task);
+ }
+ 
+-static void io_sq_thread_drop_mm(struct io_ring_ctx *ctx)
++static void io_sq_thread_drop_mm(void)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 
+@@ -977,8 +978,6 @@ static inline void req_set_fail_links(struct io_kiocb *req)
+ 		req->flags |= REQ_F_FAIL_LINK;
+ }
+ 
+-static void io_file_put_work(struct work_struct *work);
+-
+ /*
+  * Note: must call io_req_init_async() for the first time you
+  * touch any members of io_wq_work.
+@@ -6339,7 +6338,7 @@ static int io_sq_thread(void *data)
+ 			 * adding ourselves to the waitqueue, as the unuse/drop
+ 			 * may sleep.
+ 			 */
+-			io_sq_thread_drop_mm(ctx);
++			io_sq_thread_drop_mm();
+ 
+ 			/*
+ 			 * We're polling. If we're within the defined idle
+@@ -6410,7 +6409,7 @@ static int io_sq_thread(void *data)
+ 
+ 	io_run_task_work();
+ 
+-	io_sq_thread_drop_mm(ctx);
++	io_sq_thread_drop_mm();
+ 	revert_creds(old_cred);
+ 
+ 	kthread_parkme();
 -- 
-Joshi
+Jens Axboe
+

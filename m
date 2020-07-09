@@ -2,103 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 094F621960E
-	for <lists+io-uring@lfdr.de>; Thu,  9 Jul 2020 04:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17BA3219D5F
+	for <lists+io-uring@lfdr.de>; Thu,  9 Jul 2020 12:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbgGICMp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jul 2020 22:12:45 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60244 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726118AbgGICMo (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 8 Jul 2020 22:12:44 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 772BA91C3703B6672BBD;
-        Thu,  9 Jul 2020 10:12:43 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Thu, 9 Jul 2020
- 10:12:41 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <io-uring@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <axboe@kernel.dk>
-Subject: [PATCH] io_uring: fix memleak in __io_sqe_files_update()
-Date:   Thu, 9 Jul 2020 10:11:41 +0000
-Message-ID: <20200709101141.3261977-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        id S1726345AbgGIKQO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Jul 2020 06:16:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35656 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbgGIKQN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Jul 2020 06:16:13 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 337FAC061A0B;
+        Thu,  9 Jul 2020 03:16:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=+4y1tH7JgQGg/m4Y2HPNpPcl0NpQqyVNAfEoubft9uY=; b=kfAlLVsRpqnbZQEAK40SMcQERa
+        AJ3dkC/7hx9RCDtrf0/3gke1gSrkFxyJf+EkHzqRSG2oK+901gljldEXBKdkGbomGpYn1EapFRu6Q
+        HtpsebXW3mT3AJ7A/iUdncW27w3voAXB1ykeDfelYyIfxvgjmF32l4dB+dqkg6GDU3HVaDCf1B3VM
+        hl9DInOwoFkeAlr6t+Hz9maFrGkMHr+BcG6SApp1XiUze3uBczRlS9d45yOfyfdaQ8BymLq8TlYfV
+        Bp9/pC3nrvuEJg/IaqP0CHEfyJgNA9ZAl4XPHDXNx6u58PfGJvJfsmDwELO/eD2GabcXZTwTR2gff
+        AFhDMLkg==;
+Received: from [2001:4bb8:188:5f50:7053:304b:bf82:82cf] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jtTax-0000ZA-F3; Thu, 09 Jul 2020 10:15:59 +0000
+Date:   Thu, 9 Jul 2020 12:15:59 +0200
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, hch@infradead.org, Damien.LeMoal@wdc.com,
+        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+        mb@lightnvm.io, linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+Message-ID: <20200709085501.GA64935@infradead.org>
+References: <1593974870-18919-1-git-send-email-joshi.k@samsung.com>
+ <CGME20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7@epcas5p1.samsung.com>
+ <1593974870-18919-5-git-send-email-joshi.k@samsung.com>
+ <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.124.27]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-I got a memleak report when doing some fuzz test:
+On Sun, Jul 05, 2020 at 03:00:47PM -0600, Jens Axboe wrote:
+> > diff --git a/fs/io_uring.c b/fs/io_uring.c
+> > index 155f3d8..cbde4df 100644
+> > --- a/fs/io_uring.c
+> > +++ b/fs/io_uring.c
+> > @@ -402,6 +402,8 @@ struct io_rw {
+> >  	struct kiocb			kiocb;
+> >  	u64				addr;
+> >  	u64				len;
+> > +	/* zone-relative offset for append, in sectors */
+> > +	u32			append_offset;
+> >  };
+> 
+> I don't like this very much at all. As it stands, the first cacheline
+> of io_kiocb is set aside for request-private data. io_rw is already
+> exactly 64 bytes, which means that you're now growing io_rw beyond
+> a cacheline and increasing the size of io_kiocb as a whole.
+> 
+> Maybe you can reuse io_rw->len for this, as that is only used on the
+> submission side of things.
 
-BUG: memory leak
-unreferenced object 0xffff888113e02300 (size 488):
-comm "syz-executor401", pid 356, jiffies 4294809529 (age 11.954s)
-hex dump (first 32 bytes):
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
-a0 a4 ce 19 81 88 ff ff 60 ce 09 0d 81 88 ff ff ........`.......
-backtrace:
-[<00000000129a84ec>] kmem_cache_zalloc include/linux/slab.h:659 [inline]
-[<00000000129a84ec>] __alloc_file+0x25/0x310 fs/file_table.c:101
-[<000000003050ad84>] alloc_empty_file+0x4f/0x120 fs/file_table.c:151
-[<000000004d0a41a3>] alloc_file+0x5e/0x550 fs/file_table.c:193
-[<000000002cb242f0>] alloc_file_pseudo+0x16a/0x240 fs/file_table.c:233
-[<00000000046a4baa>] anon_inode_getfile fs/anon_inodes.c:91 [inline]
-[<00000000046a4baa>] anon_inode_getfile+0xac/0x1c0 fs/anon_inodes.c:74
-[<0000000035beb745>] __do_sys_perf_event_open+0xd4a/0x2680 kernel/events/core.c:11720
-[<0000000049009dc7>] do_syscall_64+0x56/0xa0 arch/x86/entry/common.c:359
-[<00000000353731ca>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-BUG: memory leak
-unreferenced object 0xffff8881152dd5e0 (size 16):
-comm "syz-executor401", pid 356, jiffies 4294809529 (age 11.954s)
-hex dump (first 16 bytes):
-01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 ................
-backtrace:
-[<0000000074caa794>] kmem_cache_zalloc include/linux/slab.h:659 [inline]
-[<0000000074caa794>] lsm_file_alloc security/security.c:567 [inline]
-[<0000000074caa794>] security_file_alloc+0x32/0x160 security/security.c:1440
-[<00000000c6745ea3>] __alloc_file+0xba/0x310 fs/file_table.c:106
-[<000000003050ad84>] alloc_empty_file+0x4f/0x120 fs/file_table.c:151
-[<000000004d0a41a3>] alloc_file+0x5e/0x550 fs/file_table.c:193
-[<000000002cb242f0>] alloc_file_pseudo+0x16a/0x240 fs/file_table.c:233
-[<00000000046a4baa>] anon_inode_getfile fs/anon_inodes.c:91 [inline]
-[<00000000046a4baa>] anon_inode_getfile+0xac/0x1c0 fs/anon_inodes.c:74
-[<0000000035beb745>] __do_sys_perf_event_open+0xd4a/0x2680 kernel/events/core.c:11720
-[<0000000049009dc7>] do_syscall_64+0x56/0xa0 arch/x86/entry/common.c:359
-[<00000000353731ca>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-If io_sqe_file_register() failed, we need put the file that get by fget()
-to avoid the memleak.
-
-Fixes: c3a31e605620 ("io_uring: add support for IORING_REGISTER_FILES_UPDATE")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- fs/io_uring.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e507737f044e..5c2487d954b2 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6814,8 +6814,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 			}
- 			table->files[index] = file;
- 			err = io_sqe_file_register(ctx, file, i);
--			if (err)
-+			if (err) {
-+				fput(file);
- 				break;
-+			}
- 		}
- 		nr_args--;
- 		done++;
--- 
-2.17.1
-
+We don't actually need any new field at all.  By the time the write
+returned ki_pos contains the offset after the write, and the res
+argument to ->ki_complete contains the amount of bytes written, which
+allow us to trivially derive the starting position.

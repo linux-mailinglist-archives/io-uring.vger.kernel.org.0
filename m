@@ -2,85 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C21E621B723
-	for <lists+io-uring@lfdr.de>; Fri, 10 Jul 2020 15:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FAB221B73B
+	for <lists+io-uring@lfdr.de>; Fri, 10 Jul 2020 15:55:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbgGJNv1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Jul 2020 09:51:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37998 "EHLO
+        id S1726496AbgGJNz1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Jul 2020 09:55:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbgGJNv0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Jul 2020 09:51:26 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB2CC08C5DC;
-        Fri, 10 Jul 2020 06:51:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GzHj4CEVr0oUdolRmXviOzvrbW+eqpTTu5OyjK0tKsE=; b=ucDfWFoRjeYNSOVqTXosnNhriM
-        WQDGoFaij3+kJn+YGVd1wlY2XgK6k0T07jwYz6xR2Cwm07yXp582rbktduPDkqzjvj2vdc1STGGQW
-        HxTfEAXSByu1MasCJdFWlWpm5udkli+OVbbzf9WZTHYFzQoYcbLOWTr5nVMwzMWBgm76vo85KXF/o
-        WHGt5JglwzU/rFb4ba2riO/WODj0BEZtk583pZMP4JlTY1wuCHGknNxhtW3tojtsdRGdt/ebMrFbM
-        lu+RLZ8XjbW1K9OPfIJgO1fel7KpbhdIpsInu++IcroKbkYqDBs6y0B3CLzJkLWXZylTo7HmBhCDo
-        XOJePRvQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jttQt-0004Pi-Cf; Fri, 10 Jul 2020 13:51:19 +0000
-Date:   Fri, 10 Jul 2020 14:51:19 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Kanchan Joshi <joshiiitr@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
-        linux-fsdevel@vger.kernel.org, Matias Bj??rling <mb@lightnvm.io>,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Selvakumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-Message-ID: <20200710135119.GL12769@casper.infradead.org>
-References: <20200709085501.GA64935@infradead.org>
- <adc14700-8e95-10b2-d914-afa5029ae80c@kernel.dk>
- <20200709140053.GA7528@infradead.org>
- <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk>
- <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com>
- <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk>
- <CA+1E3rLna6VVuwMSHVVEFmrgsTyJN=U4CcZtxSGWYr_UYV7AmQ@mail.gmail.com>
- <20200710131054.GB7491@infradead.org>
- <20200710134824.GK12769@casper.infradead.org>
- <20200710134932.GA16257@infradead.org>
+        with ESMTP id S1726725AbgGJNz1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Jul 2020 09:55:27 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 634C2C08C5CE
+        for <io-uring@vger.kernel.org>; Fri, 10 Jul 2020 06:55:27 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id k23so6051884iom.10
+        for <io-uring@vger.kernel.org>; Fri, 10 Jul 2020 06:55:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=LUR7XSl4anzG9Xow4IF929hO3tW1sLSj0vwm/LGn9gI=;
+        b=aL5K9lSvDwzR7w9kcIEWCXKfwG4tc8Ig+sZWqeRf+DxyBU5Z46UQmxRAZr6xBm8oII
+         6yd15P8qwTbMysb0qEq92xN6eda3Yuy48sUgfEtKhNTACeGONRmkC2K4nNjicISF0JAJ
+         q36ZdZryHEiISE9vqGUMG2ExuuAAANUuSYXIGHxa6/ylKYKoPq1M9n+Nzr9k5TWdnI34
+         ZKs9G4hhfLLAX+AgoH2pWaEhCOHiT6ZpWUUVP9s3kB7LGvcfaCF8qbaII7aGWAmHZ6I3
+         FZjdtd6ws4XYMeVfZrhBKk2UTGSc/Ate5tlFpdDrE9cTk0jlnHG76/41gOsyEkOisror
+         1oCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LUR7XSl4anzG9Xow4IF929hO3tW1sLSj0vwm/LGn9gI=;
+        b=kF42AKkLZHpc5DyBDxOdimnrle5bfBOKXnrZJpo6G0bafYleed0yrQzBT8SQpjnI/e
+         3kJ1vS1pZR3Ioc/xefL+0TPGesP+uM6n+RpTXPSnSz7xeaOQqgiWYEY0Oon4q7huXNz/
+         COj6CII2f5WgkFxwAQ9nu2gfsU6uuAw5w+hZtaQ+MCOh0L68XemuCZv3bk53+CSDrtLj
+         BUUBI0pU5ES6mLyn/7bE66XMWGVcsEJudpwdqP6BTn72j84Rmge+48iym3N7VcB1xxoT
+         KG5BRtzwsS/WsiLXH+oIRHGz9fhY5xHsajUKALrCHUMUTzCc2jolDYMfZp16/XFWCiMX
+         OCcw==
+X-Gm-Message-State: AOAM533HEDW5jcK3eAvVoJvqAlstt7K7ONpxZ0xGMzeuXhRaKpnRUyMM
+        Nl9fJISqPYYbrPop+qtcNuS3UYTJxFp8xA==
+X-Google-Smtp-Source: ABdhPJz25JQq+ja9ySdHbT+X3SjbRaLqQ7dM3tGyk05eA4PKgDElMLMtNouK3yaMMyH9Cvocvk0WlQ==
+X-Received: by 2002:a05:6602:29d2:: with SMTP id z18mr46754677ioq.185.1594389326291;
+        Fri, 10 Jul 2020 06:55:26 -0700 (PDT)
+Received: from [192.168.1.58] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id 69sm3595594ile.60.2020.07.10.06.55.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jul 2020 06:55:24 -0700 (PDT)
+Subject: Re: [PATCH] test/statx: verify against statx(2) on all archs
+To:     Tobias Klauser <tklauser@distanz.ch>, io-uring@vger.kernel.org
+References: <20200709213452.21290-1-tklauser@distanz.ch>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <304e4cdb-f090-ef90-18e1-d677d659918a@kernel.dk>
+Date:   Fri, 10 Jul 2020 07:55:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200710134932.GA16257@infradead.org>
+In-Reply-To: <20200709213452.21290-1-tklauser@distanz.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jul 10, 2020 at 02:49:32PM +0100, Christoph Hellwig wrote:
-> On Fri, Jul 10, 2020 at 02:48:24PM +0100, Matthew Wilcox wrote:
-> > If we're going to go the route of changing the CQE, how about:
-> > 
-> >  struct io_uring_cqe {
-> >          __u64   user_data;      /* sqe->data submission passed back */
-> > -        __s32   res;            /* result code for this event */
-> > -        __u32   flags;
-> > +	union {
-> > +		struct {
-> > +		        __s32   res;            /* result code for this event */
-> > +		        __u32   flags;
-> > +		};
-> > +		__s64	res64;
-> > +	};
-> >  };
-> > 
-> > then we don't need to change the CQE size and it just depends on the SQE
-> > whether the CQE for it uses res+flags or res64.
+On 7/9/20 3:34 PM, Tobias Klauser wrote:
+> Use __NR_statx in do_statx and unconditionally use it to check the
+> result on all architectures, not just x86_64. This relies on the
+> fact that __NR_statx should be defined if struct statx and STATX_ALL are
+> available as well.
 > 
-> How do you return a status code or short write when you just have
-> a u64 that is needed for the offset?
+> Don't fail the test if the statx syscall returns EOPNOTSUPP though.
 
-it's an s64 not a u64 so you can return a negative errno.  i didn't
-think we allowed short writes for objects-which-have-a-pos.
+Applied, thanks.
+
+-- 
+Jens Axboe
+

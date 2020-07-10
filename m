@@ -2,111 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC35721BA34
-	for <lists+io-uring@lfdr.de>; Fri, 10 Jul 2020 18:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E73121BAB1
+	for <lists+io-uring@lfdr.de>; Fri, 10 Jul 2020 18:20:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbgGJQBY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Jul 2020 12:01:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58180 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727074AbgGJQBX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Jul 2020 12:01:23 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33454C08C5CE
-        for <io-uring@vger.kernel.org>; Fri, 10 Jul 2020 09:01:22 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id l1so6560206ioh.5
-        for <io-uring@vger.kernel.org>; Fri, 10 Jul 2020 09:01:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=CT8GfIgnhQopWm8iDNrvhIrzFdMDsa9H0pNwgHwkLh4=;
-        b=Yoy2AF0Hlb25wfR80l47A00iDMoRp5YDNhyRFuXfbtPhZPrppiweVtxfl0EA63y95e
-         NqLjp0CSKEfkKEDplqCeo/BSn0HO1ugY+1wyWMZRg1Kv3VyoQhP5YIBuifgY/xLpee/D
-         WCzRcYAiDkwxZF7p4r4dopZtrouc5G85QR28xgEntuRFohB9lZZI/GOLpglmG0j4m/QA
-         qTWOHJtYArbfV1mBwWusCP3+60N1r75M8zjM9pqM05XLbDjcFyqkklv2TBkXoH2KgqNs
-         JODXbfw9qIP3aY1L/FQJ3FL/xqP8SaLRBMwwxIERQAt5vP5Sqp/dlmmvJUPTOi3Pfdtl
-         CYCQ==
+        id S1728100AbgGJQUa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Jul 2020 12:20:30 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29326 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728066AbgGJQU3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Jul 2020 12:20:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594398027;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=q9OBXiOBnT1mGmZ2eGcWLsQs9qpaRL+ZvL1+d8k1S8o=;
+        b=Ldff6CVasNoL8PPdBcU6R+25SgoPJk92ZVmGDxy0/UColbCC7pPloOyvDE+YnbhGwKraaP
+        aMWhWp6lQXxCXF8oFV5XRaWINZiyd/5LVSHwmnc6Zb2+HVAJRLlEcy+qTgwfJLbUeAowj+
+        gJt9pOhuCOpXI2DsB2I/eDjFifly4cs=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-409-NNFwSb_BMdm6JgN_RFeFnA-1; Fri, 10 Jul 2020 12:20:23 -0400
+X-MC-Unique: NNFwSb_BMdm6JgN_RFeFnA-1
+Received: by mail-wm1-f69.google.com with SMTP id z74so1858848wmc.4
+        for <io-uring@vger.kernel.org>; Fri, 10 Jul 2020 09:20:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=CT8GfIgnhQopWm8iDNrvhIrzFdMDsa9H0pNwgHwkLh4=;
-        b=ijVZ8QsO26idQOL3kW5YKt6aWKs9WnjSkFW6im3mQyXaWmjzDRuLJo8nHw7hokasV+
-         q3oK/OQq1r9DMyZHbF+MC9B+7SpxO4+hyh65fZBKfF3YwTMaks5xtlwUficgGE6xsOkh
-         p70UMNQtbpx5Qu9p5l49U4Uf3aQOdcWCCjxc5E5iVWTroAtZlAPlrBFbBr184pxUbhSg
-         +cmXGlCWElfaLTdTcBOr3iJd4/AUDiVJUjhkQdNYJ2BRdFqgFldeCuRjZYnJEbWAZuI3
-         engByIT1Q+5/tuURNp0e3w1zlvek4ZYsjoyC8sVUP89gy+ZqZKw5s0vh03ZmpNR6d/xK
-         PgiA==
-X-Gm-Message-State: AOAM533Hm33ubLAWuqK9v/k9rVG05PcFDGFf3/WGrh88U0aJzY33gYYA
-        +ZDBJulEb/aCoAp17QOSdGVhmA==
-X-Google-Smtp-Source: ABdhPJxuXGAJ6xxmDfDRjdZr/xZDFyFSQ8yhw/xlqTPSYGv4M4BL2OyRyl45qSWxa6wvuKUegWVcKg==
-X-Received: by 2002:a6b:6b18:: with SMTP id g24mr45766867ioc.8.1594396881588;
-        Fri, 10 Jul 2020 09:01:21 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id a10sm3590388iln.20.2020.07.10.09.01.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jul 2020 09:01:21 -0700 (PDT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.8-rc5
-Message-ID: <2a7f5f56-a1be-46fc-7b5f-4cc35ca4b33d@kernel.dk>
-Date:   Fri, 10 Jul 2020 10:01:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=q9OBXiOBnT1mGmZ2eGcWLsQs9qpaRL+ZvL1+d8k1S8o=;
+        b=kzGV/Yp3nZ9c+z5W73vKtqxRsGoBK5FsdkQjbeNT/p9ZDIt25IGnox84GVcUWcq4Zg
+         FZrPr3F0oAXrLdifLaWVDXXOgGbDadPYW/+IFKRY3GtZn0Kv/r10KVnm1aQxjYJludBf
+         cRX4M/babxaV7zX0E+naEt9HkiaUKp73EWQAu4CEyeYiSLaIa7KTgPqj5wyjsK/4j1qG
+         3Fo4ZIuoBDOgXNX4mYSoKlEii8RqIMQqpRiLhKPRy1Pj8K2tZSXyPt9PJgZo31iRSKGl
+         muBrzNS55i2l0udi09wdJY8sfpzM3PuO1q7ZBf05hAJmM16GmkmrSwQxAoch/T+huewb
+         nnqQ==
+X-Gm-Message-State: AOAM530Huj1/CGYChLJLwNvyqC5Lrb/QJgBrKUcUGH2wKeSJTWwyapnw
+        9QV0hJ3UY/AOoxV4Kt69xA6JkvV7nj0fpV/ESngJ+JIC/m27Lc1azHUEWu/8b4z4d6jOaswLwL+
+        IxFrTpr0yQ/E8Aupcee0=
+X-Received: by 2002:a5d:630c:: with SMTP id i12mr75515902wru.158.1594398022819;
+        Fri, 10 Jul 2020 09:20:22 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwNg29SHEj/1kCIq20X+QBQi6Vi8ell7jTihmuv4S0/ilMJ558e1BkioaTjMsJllIACTM1T8A==
+X-Received: by 2002:a5d:630c:: with SMTP id i12mr75515878wru.158.1594398022605;
+        Fri, 10 Jul 2020 09:20:22 -0700 (PDT)
+Received: from steredhat ([5.180.207.22])
+        by smtp.gmail.com with ESMTPSA id 129sm10475853wmd.48.2020.07.10.09.20.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jul 2020 09:20:22 -0700 (PDT)
+Date:   Fri, 10 Jul 2020 18:20:17 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Sargun Dhillon <sargun@sargun.me>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Jann Horn <jannh@google.com>, Aleksa Sarai <asarai@suse.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Moyer <jmoyer@redhat.com>
+Subject: Re: [PATCH RFC 0/3] io_uring: add restrictions to support untrusted
+ applications and guests
+Message-ID: <20200710162017.qdu34ermtxh3rfgl@steredhat>
+References: <20200710141945.129329-1-sgarzare@redhat.com>
+ <20200710153309.GA4699@char.us.oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200710153309.GA4699@char.us.oracle.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+Hi Konrad,
 
-- Fix memleak for error path in registered files (Yang)
-- Export CQ overflow state in flags, necessary to fix a case where
-  liburing doesn't know if it needs to enter the kernel (Xiaoguang)
-- Fix for a regression in when user memory is accounted freed, causing
-  issues with back-to-back ring exit + init if the ulimit -l setting is
-  very tight.
+On Fri, Jul 10, 2020 at 11:33:09AM -0400, Konrad Rzeszutek Wilk wrote:
+> .snip..
+> > Just to recap the proposal, the idea is to add some restrictions to the
+> > operations (sqe, register, fixed file) to safely allow untrusted applications
+> > or guests to use io_uring queues.
+> 
+> Hi!
+> 
+> This is neat and quite cool - but one thing that keeps nagging me is
+> what how much overhead does this cut from the existing setup when you use
+> virtio (with guests obviously)?
 
-Please pull!
+I need to do more tests, but the preliminary results that I reported on
+the original proposal [1] show an overhead of ~ 4.17 uS (with iodepth=1)
+when I'm using virtio ring processed in a dedicated iothread:
 
+  - 73 kIOPS using virtio-blk + QEMU iothread + io_uring backend
+  - 104 kIOPS using io_uring passthrough
 
-The following changes since commit b7db41c9e03b5189bc94993bd50e4506ac9e34c1:
+>                                 That is from a high level view the
+> beaty of io_uring being passed in the guest is you don't have the
+> virtio ring -> io_uring processing, right?
 
-  io_uring: fix regression with always ignoring signals in io_cqring_wait() (2020-07-04 13:44:45 -0600)
+Right, and potentially we can share the io_uring queues directly to the
+guest userspace applications, cutting down the cost of Linux block
+layer in the guest.
 
-are available in the Git repository at:
+Thanks for your feedback,
+Stefano
 
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.8-2020-07-10
-
-for you to fetch changes up to 309fc03a3284af62eb6082fb60327045a1dabf57:
-
-  io_uring: account user memory freed when exit has been queued (2020-07-10 09:18:35 -0600)
-
-----------------------------------------------------------------
-io_uring-5.8-2020-07-10
-
-----------------------------------------------------------------
-Jens Axboe (1):
-      io_uring: account user memory freed when exit has been queued
-
-Xiaoguang Wang (1):
-      io_uring: export cq overflow status to userspace
-
-Yang Yingliang (2):
-      io_uring: fix memleak in __io_sqe_files_update()
-      io_uring: fix memleak in io_sqe_files_register()
-
- fs/io_uring.c                 | 29 +++++++++++++++++++++++------
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 24 insertions(+), 6 deletions(-)
-
--- 
-Jens Axboe
+[1] https://lore.kernel.org/io-uring/20200609142406.upuwpfmgqjeji4lc@steredhat/
 

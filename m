@@ -2,144 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 456F721BC9B
-	for <lists+io-uring@lfdr.de>; Fri, 10 Jul 2020 19:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8212C21C358
+	for <lists+io-uring@lfdr.de>; Sat, 11 Jul 2020 11:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbgGJRwv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Jul 2020 13:52:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47192 "EHLO
+        id S1726900AbgGKJbS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 11 Jul 2020 05:31:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbgGJRwv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Jul 2020 13:52:51 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C14C08E6DC
-        for <io-uring@vger.kernel.org>; Fri, 10 Jul 2020 10:52:51 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id i4so6877279iov.11
-        for <io-uring@vger.kernel.org>; Fri, 10 Jul 2020 10:52:51 -0700 (PDT)
+        with ESMTP id S1726262AbgGKJbS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Jul 2020 05:31:18 -0400
+Received: from mail-qt1-x849.google.com (mail-qt1-x849.google.com [IPv6:2607:f8b0:4864:20::849])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D046CC08C5DD
+        for <io-uring@vger.kernel.org>; Sat, 11 Jul 2020 02:31:17 -0700 (PDT)
+Received: by mail-qt1-x849.google.com with SMTP id 71so5976825qte.5
+        for <io-uring@vger.kernel.org>; Sat, 11 Jul 2020 02:31:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=X4sn28XQAInZ6oRA/4Miu/453HHyk6jIfO1A6nENhso=;
-        b=ZOwmy3TcyKaYApKKIQPxqj0LaKTYVT7Yme9kGN/xV7hHfvlyAwatmbOYm1j0fas7mF
-         5ROVhfgF9tarevn4hiEZhn7AcCnN6kSKkA53aFbJdS7IVJqgfI7pX7sMVIOphfExGnpg
-         5JtVT5rTSDrM8HYhogou6Z8s46HSr3YVCvtQq+aJYqXxuyYm4Z7Ur0DOvFv80a/ISPTD
-         FK/UA61DACU3FI3jSQ54LvnEZ5CntbU7BYeHIHHiaiA++Bh5kd4Hlz76H+3lbj4IFkZo
-         +ddZgu2t9g24vcKnMae55i04/pg+X13EK++ZigSSfoJtwccft/3D6UK6AyWtLLeoxFld
-         yr2g==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=RiNoald4P65ewGZ3qyOBFYa1p/mffGn8Nb9u85nR6Po=;
+        b=iCHI8sBp8m/jRigdwPRMg49nNr6VQtUurXKlRRLPwmHHQcVWHDdJ/HO0RmZXZJJEnK
+         y7oVOBFA/0+XBhz4eratYiybJCi2olmv69wCB9jdzOqk3g7SQePHDs3Mhy4Z7sS54LQ9
+         qH5tf3L0TsUSVbb2POglsMPEbtHpq0E02fdwYx+kChY4DJieZGWtMaPn4tksKujwOFNI
+         ud0P/oHjt6pOAt9n+xwsxG9TMztu9LRklR37StWNmLeDsoWlX8QLSoF+pEZLvzXDDqy+
+         C6WYsioxVOTFSI2/Il8QwoH5QQ52gayFvjZNBgz7Ay48sBLAc8CAV4sTprGkv1rLPDa8
+         QFtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=X4sn28XQAInZ6oRA/4Miu/453HHyk6jIfO1A6nENhso=;
-        b=S58Z6HRjPBocjfLoJeGnpveeqhDTN3jgAnRax3l2blPAbMpOiPdGhmbuB29oXs+GST
-         iZLTK/fKHdUpHzFlZRGyTsx00BVuuFi/D2ubuASbHZDWGHXfE7+j7Gh5KLhyEqo3sGfr
-         NbVxzKbhnKnSMTwDnHJsi/Vq3OMltxkpPAUw1+yCz0Jhy9rH8i1j85etWbyUICfvFB2z
-         SC40nuv+cKJsfuVXP0gNh4bM3wCZ4X+wG0susuD0rARvX1Kkx6Qsebu8C+WiYJgxUx3X
-         LUmyKBZ48PGcj8HiDspPzrFfUSP7nzikssBOFSOfzPq031l+m9gclgAka7Kfk4bsYwDh
-         Kbzw==
-X-Gm-Message-State: AOAM531DHWmZZ+K18pl+gyVZTah8y38xYfHOy0HnXEdPpj225B+XKLyE
-        /7/FVv24TezYJW3k3CeBrZDpCUovG39d8Q==
-X-Google-Smtp-Source: ABdhPJwPQKF+EcvlyUkz8Mn5ccD8YvTlNprEGWbyCG+1XhL4L0vi4FeRZSlpkfHNv5e7wABJkHpTaQ==
-X-Received: by 2002:a5d:8d12:: with SMTP id p18mr48507405ioj.148.1594403570543;
-        Fri, 10 Jul 2020 10:52:50 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id c29sm3947388ilg.53.2020.07.10.10.52.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jul 2020 10:52:49 -0700 (PDT)
-Subject: Re: [PATCH RFC 2/3] io_uring: add IOURING_REGISTER_RESTRICTIONS
- opcode
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Jann Horn <jannh@google.com>, Aleksa Sarai <asarai@suse.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Moyer <jmoyer@redhat.com>
-References: <20200710141945.129329-1-sgarzare@redhat.com>
- <20200710141945.129329-3-sgarzare@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f39fe84d-1353-1066-c7fc-770054f7129e@kernel.dk>
-Date:   Fri, 10 Jul 2020 11:52:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200710141945.129329-3-sgarzare@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=RiNoald4P65ewGZ3qyOBFYa1p/mffGn8Nb9u85nR6Po=;
+        b=f3EinIJmjE/IPdAMQr4YUK923KccVQY8zu3XsNqVa1f2tCnQwggTHODmItQLYn7wm/
+         UzTM4WukgT6XvzQUQ2idVJCGzZpJcbcTLrgXPJaT8hhq5jGM3MvmrrgxTv7BbY+k75Ce
+         34yYD6gnNU+sisMmSXo1MOagJzlZGOZmKbDslJzLc2Zv0fTaSAk2ARyrnVllgpGr03Gh
+         KPTcXcSkl2yakRjBZSvKN/fUvVDQFt8fqYIBacVH463J4wYmdlZMUvNqSfYos4m+VonF
+         YMhQ6/Ba/higikmoeChZOKxy6Sh3qdXks3nHQ9UdZJGwX/RWkbR4PcGrONjBQBitcHBv
+         H4MQ==
+X-Gm-Message-State: AOAM531hqxL+e/dX9N8JG2cSioXmOJ7cd4LttVYGWFyrDhEKKvwHbzMQ
+        yH1ASnXiFiYwXuwGE5NoLlUsRGA0vjkP
+X-Google-Smtp-Source: ABdhPJxLLCzenMO0y7wauOafO4mpsiFXlQtMYGF0breGuPRUhSG2eOQJT86Eggz+N+0smeIeu71SdHD6Suk4
+X-Received: by 2002:a05:6214:14e5:: with SMTP id k5mr48788572qvw.125.1594459875360;
+ Sat, 11 Jul 2020 02:31:15 -0700 (PDT)
+Date:   Sat, 11 Jul 2020 11:31:11 +0200
+Message-Id: <20200711093111.2490946-1-dvyukov@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
+Subject: [PATCH] io_uring: fix sq array offset calculation
+From:   Dmitry Vyukov <dvyukov@google.com>
+To:     axboe@kernel.dk
+Cc:     necip@google.com, Dmitry Vyukov <dvyukov@google.com>,
+        io-uring@vger.kernel.org, Hristo Venev <hristo@venev.name>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/10/20 8:19 AM, Stefano Garzarella wrote:
-> The new io_uring_register(2) IOURING_REGISTER_RESTRICTIONS opcode
-> permanently installs a feature whitelist on an io_ring_ctx.
-> The io_ring_ctx can then be passed to untrusted code with the
-> knowledge that only operations present in the whitelist can be
-> executed.
-> 
-> The whitelist approach ensures that new features added to io_uring
-> do not accidentally become available when an existing application
-> is launched on a newer kernel version.
+rings_size() sets sq_offset to the total size of the rings
+(the returned value which is used for memory allocation).
+This is wrong: sq array should be located within the rings,
+not after them. Set sq_offset to where it should be.
 
-Keeping with the trend of the times, you should probably use 'allowlist'
-here instead of 'whitelist'.
-> 
-> Currently is it possible to restrict sqe opcodes and register
-> opcodes. It is also possible to allow only fixed files.
-> 
-> IOURING_REGISTER_RESTRICTIONS can only be made once. Afterwards
-> it is not possible to change restrictions anymore.
-> This prevents untrusted code from removing restrictions.
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: io-uring@vger.kernel.org
+Cc: Hristo Venev <hristo@venev.name>
+Fixes: 75b28affdd6a ("io_uring: allocate the two rings together")
 
-A few comments below.
+---
+This looks so wrong and yet io_uring works.
+So I am either missing something very obvious here,
+or io_uring worked only due to lucky side-effects
+of rounding size to power-of-2 number of pages
+(which gave it enough slack at the end),
+maybe reading/writing some unrelated memory
+with some sizes.
+If I am wrong, please poke my nose into what I am not seeing.
+Otherwise, we probably need to CC stable as well.
+---
+ fs/io_uring.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> @@ -337,6 +344,7 @@ struct io_ring_ctx {
->  	struct llist_head		file_put_llist;
->  
->  	struct work_struct		exit_work;
-> +	struct io_restriction		restrictions;
->  };
->  
->  /*
-
-Since very few will use this feature, was going to suggest that we make
-it dynamically allocated. But it's just 32 bytes, currently, so probably
-not worth the effort...
-
-> @@ -5491,6 +5499,11 @@ static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
->  	if (unlikely(!fixed && io_async_submit(req->ctx)))
->  		return -EBADF;
->  
-> +	if (unlikely(!fixed && req->ctx->restrictions.enabled &&
-> +		     test_bit(IORING_RESTRICTION_FIXED_FILES_ONLY,
-> +			      req->ctx->restrictions.restriction_op)))
-> +		return -EACCES;
-> +
->  	return io_file_get(state, req, fd, &req->file, fixed);
->  }
-
-This one hurts, though. I don't want any extra overhead from the
-feature, and you're digging deep in ctx here to figure out of we need to
-check.
-
-Generally, all the checking needs to be out-of-line, and it needs to
-base the decision on whether to check something or not on a cache hot
-piece of data. So I'd suggest to turn all of these into some flag.
-ctx->flags generally mirrors setup flags, so probably just add a:
-
-	unsigned int restrictions : 1;
-
-after eventfd_async : 1 in io_ring_ctx. That's free, plenty of room
-there and that cacheline is already pulled in for reading.
-
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index ca8abde48b6c7..c4c3731ed41e9 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7063,6 +7063,9 @@ static unsigned long rings_size(unsigned sq_entries, unsigned cq_entries,
+ 		return SIZE_MAX;
+ #endif
+ 
++	if (sq_offset)
++		*sq_offset = off;
++
+ 	sq_array_size = array_size(sizeof(u32), sq_entries);
+ 	if (sq_array_size == SIZE_MAX)
+ 		return SIZE_MAX;
+@@ -7070,9 +7073,6 @@ static unsigned long rings_size(unsigned sq_entries, unsigned cq_entries,
+ 	if (check_add_overflow(off, sq_array_size, &off))
+ 		return SIZE_MAX;
+ 
+-	if (sq_offset)
+-		*sq_offset = off;
+-
+ 	return off;
+ }
+ 
 -- 
-Jens Axboe
+2.27.0.383.g050319c2ae-goog
 

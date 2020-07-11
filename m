@@ -2,118 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ACA221C4E4
-	for <lists+io-uring@lfdr.de>; Sat, 11 Jul 2020 17:47:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AC3021C4E5
+	for <lists+io-uring@lfdr.de>; Sat, 11 Jul 2020 17:52:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbgGKPrJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 11 Jul 2020 11:47:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51026 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728441AbgGKPrJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Jul 2020 11:47:09 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC359C08C5DD
-        for <io-uring@vger.kernel.org>; Sat, 11 Jul 2020 08:47:08 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id b9so3465775plx.6
-        for <io-uring@vger.kernel.org>; Sat, 11 Jul 2020 08:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jxMjkqN1zCXHmIxhYd7vQaL5SxQgJ4Y1Ox07mYbjzBk=;
-        b=C76noFlcqllIAvQI0LGUH0EIjE/XivNVK8ZU2oSL/+O3iO2wt75+wSb1Iez+Qpy4O6
-         sxS0QMuEPXccBhWZcgYHVKLx97GpO6JTAmw6TtQdaeg7rFkj5KqYqgWdf5h0DmTQxZr3
-         CObtkl4ZiyeTrV52usbOUd2XClBmMNbttJ3Q6mYomtQyZRGyBC08FmQ6F3UqaLswvPhF
-         9pgihF5GmQLcz4FcRwk70in0/kA6pr0KVEW67kIjIQogvnOkj1b5UCD1bibZi1cvKwDb
-         eRfVA2KIpw1uWGV5ME47LPK5LSMW3XIED2JVXuNtYNMxEWXFb4bWBKer/0X8+qACZSlz
-         uu3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jxMjkqN1zCXHmIxhYd7vQaL5SxQgJ4Y1Ox07mYbjzBk=;
-        b=nhs9rTQj2MaxhP2uC+woQ5JDpRSyRB03UE9vdSZqe+ipf7AyA/GB7QQZYfd2ZTxNGU
-         Rez+v6stVfrT6c3JGKvb7B/fPz0wqOfAoZOz2FZghO0a4PH8MXFvZkX7xOQDfn0FXxZU
-         uIbT3BHs4DWgAzwyPSJFdZDFNLooKu+V1+0HCRgaURdxxoRCxSu2WcrlqJnE9g+WpZFX
-         BnYb0qVtSXTTTfx9qHjHsjZnyYco2hvjTPIVh438BSxF3dhjDO/x3NZPLsYyX7ZhsMGH
-         puuo5KwMc+PGnCu/kKj8Nty8RJurQ2U55T58pGihCXxsqeD2AkMmFoIyNR0XZ5cWRQy8
-         GnTA==
-X-Gm-Message-State: AOAM530s4wQ7Em18L7gPgB3zknrS5A5oSXe3t2w+V/4FFTo8GathtY+w
-        a445sKNJvcYpRRqUGX7/qi6Sww==
-X-Google-Smtp-Source: ABdhPJwrOhdpGJ4la2rIv/FAasHVZ8ciiDiBtGgQsWkeWlY1RHjqcOPzNn1SDMsGRY8P76SH/CtToQ==
-X-Received: by 2002:a17:90b:11d8:: with SMTP id gv24mr11141974pjb.131.1594482428235;
-        Sat, 11 Jul 2020 08:47:08 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id s194sm9065668pgs.24.2020.07.11.08.47.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Jul 2020 08:47:07 -0700 (PDT)
+        id S1728415AbgGKPwb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 11 Jul 2020 11:52:31 -0400
+Received: from mtel-bg02.venev.name ([77.70.28.44]:37644 "EHLO
+        mtel-bg02.venev.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728390AbgGKPwb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Jul 2020 11:52:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
+         s=default; h=MIME-Version:Content-Type:References:In-Reply-To:Date:Cc:To:
+        From:Subject:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=rEPqBCwZONQ6AYSXcYS8o2o8OQwz8FfbDMCeocDNvWQ=; b=tZYX4iWC40Qvfm5tkYTqhEFWIE
+        icFUCUVWLizCLw6W3wmkgZ8ncj0je3r7tzlFOGZmdQQU3YGmK8NfVDaTevq1rdXQUZJaxiqYdpbOf
+        iUbWp/4smWmv9TEGpTB6byQ7O0VieS3rFv9EhznH3jguIQBiVmKgBba/j7QeCcx0teO0Rtk2qjTFw
+        Cba74xef6A0/1xonWKUlZAxNfE7Pvb3myjgPk9Vl3QPqJo4IE9wgeIbfvEi5RpRPaHkOkEArFUv7M
+        PmPqBWKtaXfXPypoNC1+c5CQ8JoBoES5hCx0juDPc7a/lKg42EYMmwI5LAylkWyWkh+av2u/cMOxk
+        3kpvXgCY9OAcE37PeXMPVgykVg9vgvUUDgBnF7SSJdeov3aDTenatyoN9BblYF2Tul2J35LGMqscG
+        IE3ffX0HA9xF5xFU90WU7CXCME8TrtcpnuqzcmxKF44MiX9XNw21CWxgcfIfi/ckAJA9BV44fCZrI
+        sC6JVPH4xZL2xl/wArkR6/mYQr3PM9KHrJxV8lqjP3c18jEn+e+8H20c9XKjsF3TIsv5VqWBR8zjA
+        1+IFphL6QQ/KRhiKLezhG0oBBODZ9nF7S32jp5R0b9qGgXVbPlDRIw9pZS1i7XSShqPyaLtgSGsCd
+        mIyFs+dO2VgmENYWF0fvXcDRPztMTm+yA2JhEquAE=;
+X-Check-Malware: ok
+Received: from mtel-bg02.venev.name
+        by mtel-bg02.venev.name with esmtpsa
+        (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+        (envelope-from <hristo@venev.name>)
+        id 1juHnc-000bGq-UY; Sat, 11 Jul 2020 15:52:25 +0000
+Message-ID: <7f128319f405358aa448a869a3a634a6cbc1469f.camel@venev.name>
 Subject: Re: [PATCH] io_uring: fix sq array offset calculation
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Necip Fazil Yildiran <necip@google.com>, io-uring@vger.kernel.org,
-        Hristo Venev <hristo@venev.name>
+From:   Hristo Venev <hristo@venev.name>
+To:     Dmitry Vyukov <dvyukov@google.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     Necip Fazil Yildiran <necip@google.com>, io-uring@vger.kernel.org
+Date:   Sat, 11 Jul 2020 18:52:19 +0300
+In-Reply-To: <CACT4Y+YGwr+1k=rsJhMsnyQL4C+S2s9t7Cz5Axwc9fO5Ap4HbQ@mail.gmail.com>
 References: <20200711093111.2490946-1-dvyukov@google.com>
- <7d4e4f01-17d4-add1-5643-1df6a6868cb3@kernel.dk>
- <CACT4Y+YGwr+1k=rsJhMsnyQL4C+S2s9t7Cz5Axwc9fO5Ap4HbQ@mail.gmail.com>
- <09c57874-9176-0e9d-4260-2072b91275a8@kernel.dk>
-Message-ID: <ce790156-2faa-637b-2dbd-bddc853564e3@kernel.dk>
-Date:   Sat, 11 Jul 2020 09:47:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+         <7d4e4f01-17d4-add1-5643-1df6a6868cb3@kernel.dk>
+         <CACT4Y+YGwr+1k=rsJhMsnyQL4C+S2s9t7Cz5Axwc9fO5Ap4HbQ@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-7aVTSutN4x7dkjL4pPhK"
+User-Agent: Evolution 3.36.3 (3.36.3-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <09c57874-9176-0e9d-4260-2072b91275a8@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/11/20 9:36 AM, Jens Axboe wrote:
-> On 7/11/20 9:31 AM, Dmitry Vyukov wrote:
->> On Sat, Jul 11, 2020 at 5:16 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>> On 7/11/20 3:31 AM, Dmitry Vyukov wrote:
->>>> rings_size() sets sq_offset to the total size of the rings
->>>> (the returned value which is used for memory allocation).
->>>> This is wrong: sq array should be located within the rings,
->>>> not after them. Set sq_offset to where it should be.
->>>>
->>>> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
->>>> Cc: io-uring@vger.kernel.org
->>>> Cc: Hristo Venev <hristo@venev.name>
->>>> Fixes: 75b28affdd6a ("io_uring: allocate the two rings together")
->>>>
->>>> ---
->>>> This looks so wrong and yet io_uring works.
->>>> So I am either missing something very obvious here,
->>>> or io_uring worked only due to lucky side-effects
->>>> of rounding size to power-of-2 number of pages
->>>> (which gave it enough slack at the end),
->>>> maybe reading/writing some unrelated memory
->>>> with some sizes.
->>>> If I am wrong, please poke my nose into what I am not seeing.
->>>> Otherwise, we probably need to CC stable as well.
->>>
->>> Well that's a noodle scratcher, it's definitely been working fine,
->>> and I've never seen any out-of-bounds on any of the testing I do.
->>> I regularly run anything with KASAN enabled too.
->>
->> Looking at the code more, I am not sure how it may not corrupt memory.
->> There definitely should be some combinations where accessing
->> sq_entries*sizeof(u32) more memory won't be OK.
->> May be worth adding a test that allocates all possible sizes for sq/cq
->> and fills both rings.
-> 
-> Yeah, actually doing that right now just to verify it.
 
-Did that, full utilization of the sq ring and the cq ring, and not
-seeing anything trigger or wrong. I'd need to look closer, but it
-just might be that the power-of-2 sizes end up saving us from doom
-and gloom.
+--=-7aVTSutN4x7dkjL4pPhK
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Jens Axboe
+On Sat, 2020-07-11 at 17:31 +0200, Dmitry Vyukov wrote:
+> Looking at the code more, I am not sure how it may not corrupt
+> memory.
+> There definitely should be some combinations where accessing
+> sq_entries*sizeof(u32) more memory won't be OK.
+> May be worth adding a test that allocates all possible sizes for
+> sq/cq
+> and fills both rings.
+
+The layout (after the fix) is roughly as follows:
+
+1. struct io_rings - ~192 bytes, maybe 256
+2. cqes - (32 << n) bytes
+3. sq_array - (4 << n) bytes
+
+The bug was that the sq_array was offset by (4 << n) bytes. I think
+issues can only occur when
+
+    PAGE_ALIGN(192 + (32 << n) + (4 << n) + (4 << n))
+    !=3D
+    PAGE_ALIGN(192 + (32 << n) + (4 << n))
+
+It looks like this never happens. We got lucky.
+
+--=-7aVTSutN4x7dkjL4pPhK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJGBAABCgAwFiEEWGQszEdDPeR3PQQhxqlBR4WW3HoFAl8J4DMSHGhyaXN0b0B2
+ZW5ldi5uYW1lAAoJEMapQUeFltx6BRgQAI98gSXP66zxBGMu4WxCd1Nl2gcO/LXa
+koEsg+Kyq2STWgQ3ySk0wwrZ79ZRqZWbqosZQ5oii8DaobgAg2ob04l2U7XhlJfv
+Q/eU/qjKrWt3ZzeLvVi8WQNXA0RbDBwUtjtrRm+aQ8IKoctZclr9/n1jFsgsbSjk
+22eU7FNiGbZ5jj6sA/qccRjn83teTsJJC9MBIweV1opY9lCxbSFdiShWTQCO2Q8m
+CmacbquwBXiQTcYkY4q61x+qdZRjU77nB/E4q5Tk2Ep42BD2TeosViuaxNsQ8fi1
+O4HinD1L9POkcZUS1kvmqKE7E3oLDW0jIdPQDfSvndqhZhOOXGrepY4QR5Hk9D+T
+rAbUIYr2l0kbqsJ98Cg1r/mx1VI4+/hTvgLLpyWaNtHykjtPkHPK0l+RSMtUGkZ5
+uqngt59PU7gIecAHhf5Ozv5A9aX9uWiXpnzF6TNQoRhmczifE1be2UXPTQPA1HZo
+mIkxD3D0DNLadZY0b4D9dWtWaR740+ICDza3oXu0YbFK+SJf8josFnu4+Ialioo9
+eWOkWD3F8fD2x3zNk0sXOlQcmhUu2Pj5W6l8wxiQeOn6JApi4e7+nMZN4Su2fzhh
+vxEtIUByoE7LCEphHMj8Ixe8ysuMNcttLYubW2KaOFYlv8xJM6IreRKzm7cA9hVO
+ch0ynFIma+pS
+=CeTe
+-----END PGP SIGNATURE-----
+
+--=-7aVTSutN4x7dkjL4pPhK--
 

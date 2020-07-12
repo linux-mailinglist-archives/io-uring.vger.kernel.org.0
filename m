@@ -2,59 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BCD421C858
-	for <lists+io-uring@lfdr.de>; Sun, 12 Jul 2020 11:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5255421C884
+	for <lists+io-uring@lfdr.de>; Sun, 12 Jul 2020 12:25:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbgGLJnX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 12 Jul 2020 05:43:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45822 "EHLO
+        id S1728670AbgGLKZV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 12 Jul 2020 06:25:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbgGLJnX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jul 2020 05:43:23 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C68EC061794
-        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:23 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id a1so2698583edt.10
-        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:23 -0700 (PDT)
+        with ESMTP id S1727777AbgGLKZV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jul 2020 06:25:21 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3A3CC061794;
+        Sun, 12 Jul 2020 03:25:20 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id ga4so10921655ejb.11;
+        Sun, 12 Jul 2020 03:25:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=Kl+ETg2iqBIX4rEHr3haTBoktKVciCXhPOAMd41WWLI=;
-        b=rgNXjZPhmvs6TTWZk/jA6cKSPYieULlFE/MYgrVMOLvUg5OHb2qVJ4/rg+HIdMzGXT
-         +2ckxcc03XROQo5FrHjlubszQI5YdTrKyv7jkrCysjhuntMGvaSI+I6Y2KZOcpj0GwVI
-         EykNtfmpwyciVzF6CCS6t/poNVzYmy9uLlJxwgz/69fptnkxMivwEkwZmFu1jzxM0MAW
-         GegYWrA7TxRWiUxY1H1ZtC4CWMPSy/XfW2s6i34SeW32DOonmoM5SFvD60dMPBltnzIY
-         vOX0YOV4Au8GLKrYfqPjMgkkHHrUF0Ojmen60jl9u4uxVc/NCefRVYm3SDMk8Mb/yDeo
-         62FA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=BklUmOJzay1uK19VmlrmlVYNXA/Uomou+PJbzVp04D8=;
+        b=f5hTh6O1TTBWn0QIuEFAvuYjjpaef3nla57Lrsy/tEugfWzWnFuYdc/d7QDEMlfZ7z
+         6i64T/0wrKLnjx5xSLhpJlY59o+Qu+88c6vqKjol28Ru9cAtH/KpoattzY4QA3nlGogx
+         js/JcmJMlC/DIKq5S8nn66ka+Wz8li24+Yd9bL3sA2gT6VQgHmli2TIFeeMvUTpaejyN
+         8ix3n8xvORlc3vbrJdHTN99jvau6Sp1VZ1cpublWNkNC0a2KNSbnRPQQlDC8jk//HZ5U
+         mW98rWRExNLVqBqwYWNMtBjm+iUpQTy3kSvqArwB0LbaKLk2fm+fgofJWUqJWSnHUVxm
+         r0Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Kl+ETg2iqBIX4rEHr3haTBoktKVciCXhPOAMd41WWLI=;
-        b=qxBFyUQXEPEaqUUlVvpMwTvQZdtbcrOAv9+v534Hvq0lAGovgi+U1OH7QpJxHw3swY
-         KoMMF9oV6YxengxMKRbc+WH6fcby0qkbeJqLwO+f5bQjCneClL9BtzN9KgGthglItPJe
-         r7SAN997cpJh4SDzfllNpQoDFGRhPXopgdrJP4z3PQa3mZhjk9RhNpI+T3TEW3fAHYfp
-         bzGczXjdX/amxXsmE5r48latR9DcZ2XLrJRB7nS5ZCFrFg0M2IFePQ6AzHyjF2eMWAxd
-         WUMLkhlG1Q+BuHZSt9iRrh0/6NXJNYIRMV3cc0+JBi9r48dlLL5+IaYvEjVEzucSLguD
-         7bqA==
-X-Gm-Message-State: AOAM533RJ342OKwboMiyHqfmnZi2aabwR1NMXpyoqZdRspuY3ZXDQimI
-        OtNpxm8QUD+lQtDKpwc5XN06R0fT
-X-Google-Smtp-Source: ABdhPJz7fPL6tGWE8R68ThWfxNo/rzEHjrKUXTozD5UkGSb6C0R1akxUoxg1kjZSimLf7+iuj6aJHA==
-X-Received: by 2002:a50:f9c9:: with SMTP id a9mr89781691edq.89.1594547001907;
-        Sun, 12 Jul 2020 02:43:21 -0700 (PDT)
+        bh=BklUmOJzay1uK19VmlrmlVYNXA/Uomou+PJbzVp04D8=;
+        b=Em5hms1IOGUeWMB0Sb19yh93IFiZpLwSs2OlnxfrwLBEe0CXrjEK3IDPKqMfh/WshP
+         dmCkXU6d0/1omLI561/IQTlA4mXC0JgFq3kfcdy3EIHP1y+88tPw+zTag4911NtGrpIx
+         c+u1stMbytjJww8nUrpev9D9xG8clUE5TISJ2z8W/I7MDvFyP8jUdP5VIw5uPcSYUmoV
+         YPsveNrTGwQAuMakxFizqbEUsW1KNMut9p53Uo/eSctCIWfF6myxNP6U5MfsiR0G+R/h
+         wab6bf4wUuQ7MOXMCD3Wh5oDgFcYuA9/DPEMfZcHQCfnX+NFmvZ6jP0EEQkApk/a0KnK
+         zTOw==
+X-Gm-Message-State: AOAM533XnneVa7qW28Oi/kCu6PLHp+ktXd4J2k8C4ow2mEr1qomsaaWq
+        Thp3lSg9206eDwRCIKjQ4bWfrRcy
+X-Google-Smtp-Source: ABdhPJzughq2eLqR8+bAgXYlE+87yGBajL3QGoabCPd+YlAWgx5+ciwTBtyPIv+hQ/CpnucxYVPYgw==
+X-Received: by 2002:a17:906:4bcf:: with SMTP id x15mr58377063ejv.188.1594549519132;
+        Sun, 12 Jul 2020 03:25:19 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id a8sm7283718ejp.51.2020.07.12.02.43.21
+        by smtp.gmail.com with ESMTPSA id q3sm8722869eds.41.2020.07.12.03.25.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jul 2020 02:43:21 -0700 (PDT)
+        Sun, 12 Jul 2020 03:25:18 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 9/9] io_uring: place cflags into completion data
-Date:   Sun, 12 Jul 2020 12:41:15 +0300
-Message-Id: <238845b25937d2d9641c9007e53784481dc6ab41.1594546078.git.asml.silence@gmail.com>
+Cc:     stable@vger.kernel.org
+Subject: [PATCH v2] io_uring: fix missing msg_name assignment
+Date:   Sun, 12 Jul 2020 13:23:08 +0300
+Message-Id: <1b98c048b3a0cad032affc44fa08ff7fd8f8f2b3.1594549283.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1594546078.git.asml.silence@gmail.com>
-References: <cover.1594546078.git.asml.silence@gmail.com>
+In-Reply-To: <fcf14a85d9478be55b72551b3046e898503950c9.1594537448.git.asml.silence@gmail.com>
+References: <fcf14a85d9478be55b72551b3046e898503950c9.1594537448.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
@@ -62,71 +63,37 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-req->cflags is used only for defer-completion path, just use
-completion data to store it. With the 4 bytes from the ->sequence
-patch and compacting io_kiocb, this frees 8 bytes.
+Ensure to set msg.msg_name for the async portion of send/recvmsg,
+as the header copy will copy to/from it.
 
+Cc: stable@vger.kernel.org # 5.5, 5.6, 5.7
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+v2: don't miss out compat for recv
+
+ fs/io_uring.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index db7f86b6da09..08af9abe69e3 100644
+index 7f2a2cb5c056..0ecd70dbf0fd 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -492,6 +492,7 @@ struct io_statx {
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-+	int				cflags;
- };
+@@ -3913,6 +3913,7 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if (req->flags & REQ_F_NEED_CLEANUP)
+ 		return 0;
  
- struct io_async_connect {
-@@ -633,7 +634,6 @@ struct io_kiocb {
- 	};
++	io->msg.msg.msg_name = &io->msg.addr;
+ 	io->msg.iov = io->msg.fast_iov;
+ 	ret = sendmsg_copy_msghdr(&io->msg.msg, sr->msg, sr->msg_flags,
+ 					&io->msg.iov);
+@@ -4094,6 +4095,7 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
  
- 	struct io_async_ctx		*io;
--	int				cflags;
- 	u8				opcode;
- 	/* polled IO has completed */
- 	u8				iopoll_completed;
-@@ -1347,7 +1347,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
- 		if (cqe) {
- 			WRITE_ONCE(cqe->user_data, req->user_data);
- 			WRITE_ONCE(cqe->res, req->result);
--			WRITE_ONCE(cqe->flags, req->cflags);
-+			WRITE_ONCE(cqe->flags, req->compl.cflags);
- 		} else {
- 			WRITE_ONCE(ctx->rings->cq_overflow,
- 				atomic_inc_return(&ctx->cached_cq_overflow));
-@@ -1402,7 +1402,7 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
- 		req->flags |= REQ_F_OVERFLOW;
- 		refcount_inc(&req->refs);
- 		req->result = res;
--		req->cflags = cflags;
-+		req->compl.cflags = cflags;
- 		list_add_tail(&req->compl.list, &ctx->cq_overflow_list);
- 	}
- }
-@@ -1435,7 +1435,7 @@ static void io_submit_flush_completions(struct io_comp_state *cs)
+ static int io_recvmsg_copy_hdr(struct io_kiocb *req, struct io_async_ctx *io)
+ {
++	io->msg.msg.msg_name = &io->msg.addr;
+ 	io->msg.iov = io->msg.fast_iov;
  
- 		req = list_first_entry(&cs->list, struct io_kiocb, compl.list);
- 		list_del(&req->compl.list);
--		__io_cqring_fill_event(req, req->result, req->cflags);
-+		__io_cqring_fill_event(req, req->result, req->compl.cflags);
- 		if (!(req->flags & REQ_F_LINK_HEAD)) {
- 			req->flags |= REQ_F_COMP_LOCKED;
- 			io_put_req(req);
-@@ -1463,7 +1463,7 @@ static void __io_req_complete(struct io_kiocb *req, long res, unsigned cflags,
- 			io_cleanup_req(req);
- 
- 		req->result = res;
--		req->cflags = cflags;
-+		req->compl.cflags = cflags;
- 		list_add_tail(&req->compl.list, &cs->list);
- 		if (++cs->nr >= 32)
- 			io_submit_flush_completions(cs);
+ #ifdef CONFIG_COMPAT
 -- 
 2.24.0
 

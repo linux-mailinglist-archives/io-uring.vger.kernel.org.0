@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE97621C857
-	for <lists+io-uring@lfdr.de>; Sun, 12 Jul 2020 11:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BCD421C858
+	for <lists+io-uring@lfdr.de>; Sun, 12 Jul 2020 11:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbgGLJnW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 12 Jul 2020 05:43:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45814 "EHLO
+        id S1728669AbgGLJnX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 12 Jul 2020 05:43:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbgGLJnW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jul 2020 05:43:22 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF625C061794
-        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:21 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id n2so8167439edr.5
-        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:21 -0700 (PDT)
+        with ESMTP id S1727777AbgGLJnX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jul 2020 05:43:23 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C68EC061794
+        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:23 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id a1so2698583edt.10
+        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=s+l20BzTPq+glHmb73AlJC0mzVDeeZwmqHJKFji0+MU=;
-        b=Ke4U/SiUZteIeqsM8XQohWSIhbO1L5rbyhHLvjM51+jlO6GfBBn9ULNbm2D3zZIgwR
-         E9ExACOKibubjIV4B+n+/1C+zCqesg7hj9HBaonJz7YbWl/ZFUMkt8pA/OMgUcrPUPKq
-         jwyRViNocKXqT8AZandmebmRpYZ99iSg3sEzpvToZphKqyLI6zXWmd/POFYeA325Qpn6
-         o6RCj/mr3s8FILdu2kgwJ9p/90OqFSrcV7bpN6/Pd7PnTpzRioQTPQGDrQ/U6RngKU0Z
-         06ztn1OTJBYNDNQvFOgnftd6fDy+iQz8zKa2gkTiReHv9oZaSgJ8/SDVxFxhVwhRdEYi
-         jCmw==
+        bh=Kl+ETg2iqBIX4rEHr3haTBoktKVciCXhPOAMd41WWLI=;
+        b=rgNXjZPhmvs6TTWZk/jA6cKSPYieULlFE/MYgrVMOLvUg5OHb2qVJ4/rg+HIdMzGXT
+         +2ckxcc03XROQo5FrHjlubszQI5YdTrKyv7jkrCysjhuntMGvaSI+I6Y2KZOcpj0GwVI
+         EykNtfmpwyciVzF6CCS6t/poNVzYmy9uLlJxwgz/69fptnkxMivwEkwZmFu1jzxM0MAW
+         GegYWrA7TxRWiUxY1H1ZtC4CWMPSy/XfW2s6i34SeW32DOonmoM5SFvD60dMPBltnzIY
+         vOX0YOV4Au8GLKrYfqPjMgkkHHrUF0Ojmen60jl9u4uxVc/NCefRVYm3SDMk8Mb/yDeo
+         62FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=s+l20BzTPq+glHmb73AlJC0mzVDeeZwmqHJKFji0+MU=;
-        b=dEvp1E0ZoyFHZbROs6XNJwnDj1IOnNy5sgv+EwXuoKQCtKWue12++lzuml7G6emmK+
-         VcABNbADDWS2sbrFeM6pOh2lIQUbfBzB2/T0t9k5pBZx+cFYu/qKq8YQHJt6TmPmwN7W
-         OMibJ8SMvfJTTN3eypzgji0ZnqRNatmR7rf5BbJkwj19lPuXYIXfSlGX+B9gOmvRoAXt
-         SuDmc/ARzXrr2jiZCHHcpMXYFFOmPHPpeMGsim6nuOqnuPR4U4gmSfNNtVbVSD9tA+Ux
-         GmEdpww3dEp51qWvza71BRgWwUXqrdwF4A62QaF8T4UKQTthsVJYofQiSFoDBbcOOGgX
-         AEUQ==
-X-Gm-Message-State: AOAM5326sYkBqVSTpD4J7Ce/ZrKiquZsAKHbzGVGXwFWXIUN2IdVAsFz
-        F8AM4cQVTIBFIAfvUH3sgtZnt2CL
-X-Google-Smtp-Source: ABdhPJzVzUoFxPfiRgdbfLhMh14xqxofm4nwGVlkSlteDxGp9e3YXYUFLQPZuu89/+++viB6aje4+g==
-X-Received: by 2002:aa7:d4c1:: with SMTP id t1mr77801402edr.253.1594547000652;
-        Sun, 12 Jul 2020 02:43:20 -0700 (PDT)
+        bh=Kl+ETg2iqBIX4rEHr3haTBoktKVciCXhPOAMd41WWLI=;
+        b=qxBFyUQXEPEaqUUlVvpMwTvQZdtbcrOAv9+v534Hvq0lAGovgi+U1OH7QpJxHw3swY
+         KoMMF9oV6YxengxMKRbc+WH6fcby0qkbeJqLwO+f5bQjCneClL9BtzN9KgGthglItPJe
+         r7SAN997cpJh4SDzfllNpQoDFGRhPXopgdrJP4z3PQa3mZhjk9RhNpI+T3TEW3fAHYfp
+         bzGczXjdX/amxXsmE5r48latR9DcZ2XLrJRB7nS5ZCFrFg0M2IFePQ6AzHyjF2eMWAxd
+         WUMLkhlG1Q+BuHZSt9iRrh0/6NXJNYIRMV3cc0+JBi9r48dlLL5+IaYvEjVEzucSLguD
+         7bqA==
+X-Gm-Message-State: AOAM533RJ342OKwboMiyHqfmnZi2aabwR1NMXpyoqZdRspuY3ZXDQimI
+        OtNpxm8QUD+lQtDKpwc5XN06R0fT
+X-Google-Smtp-Source: ABdhPJz7fPL6tGWE8R68ThWfxNo/rzEHjrKUXTozD5UkGSb6C0R1akxUoxg1kjZSimLf7+iuj6aJHA==
+X-Received: by 2002:a50:f9c9:: with SMTP id a9mr89781691edq.89.1594547001907;
+        Sun, 12 Jul 2020 02:43:21 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id a8sm7283718ejp.51.2020.07.12.02.43.19
+        by smtp.gmail.com with ESMTPSA id a8sm7283718ejp.51.2020.07.12.02.43.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jul 2020 02:43:20 -0700 (PDT)
+        Sun, 12 Jul 2020 02:43:21 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 8/9] io_uring: remove sequence from io_kiocb
-Date:   Sun, 12 Jul 2020 12:41:14 +0300
-Message-Id: <73b43fa23ea60e58ab020b43a52593df3a43b480.1594546078.git.asml.silence@gmail.com>
+Subject: [PATCH 9/9] io_uring: place cflags into completion data
+Date:   Sun, 12 Jul 2020 12:41:15 +0300
+Message-Id: <238845b25937d2d9641c9007e53784481dc6ab41.1594546078.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1594546078.git.asml.silence@gmail.com>
 References: <cover.1594546078.git.asml.silence@gmail.com>
@@ -62,136 +62,71 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-req->sequence is used only for deferred (i.e. DRAIN) requests, but is
-a burden of every request even if isn't used. Remove req->sequence from
-io_kiocb together with its initialisation in io_init_req(). In place of
-that keep the field in io_defer_entry, and calculate it in
-io_req_defer()'s slow path.
+req->cflags is used only for defer-completion path, just use
+completion data to store it. With the 4 bytes from the ->sequence
+patch and compacting io_kiocb, this frees 8 bytes.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 40 ++++++++++++++++++++++++++--------------
- 1 file changed, 26 insertions(+), 14 deletions(-)
+ fs/io_uring.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 93e8192983e1..db7f86b6da09 100644
+index db7f86b6da09..08af9abe69e3 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -639,6 +639,7 @@ struct io_kiocb {
- 	u8				iopoll_completed;
- 
- 	u16				buf_index;
-+	u32				result;
- 
- 	struct io_ring_ctx	*ctx;
- 	unsigned int		flags;
-@@ -646,8 +647,6 @@ struct io_kiocb {
- 	struct task_struct	*task;
- 	unsigned long		fsize;
- 	u64			user_data;
--	u32			result;
--	u32			sequence;
- 
- 	struct list_head	link_list;
- 
-@@ -681,6 +680,7 @@ struct io_kiocb {
- struct io_defer_entry {
- 	struct list_head	list;
- 	struct io_kiocb		*req;
-+	u32			seq;
+@@ -492,6 +492,7 @@ struct io_statx {
+ struct io_completion {
+ 	struct file			*file;
+ 	struct list_head		list;
++	int				cflags;
  };
  
- #define IO_IOPOLL_BATCH			8
-@@ -1088,13 +1088,13 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	return NULL;
- }
+ struct io_async_connect {
+@@ -633,7 +634,6 @@ struct io_kiocb {
+ 	};
  
--static inline bool req_need_defer(struct io_kiocb *req)
-+static bool req_need_defer(struct io_kiocb *req, u32 seq)
- {
- 	if (unlikely(req->flags & REQ_F_IO_DRAIN)) {
- 		struct io_ring_ctx *ctx = req->ctx;
- 
--		return req->sequence != ctx->cached_cq_tail
--					+ atomic_read(&ctx->cached_cq_overflow);
-+		return seq != ctx->cached_cq_tail
-+				+ atomic_read(&ctx->cached_cq_overflow);
+ 	struct io_async_ctx		*io;
+-	int				cflags;
+ 	u8				opcode;
+ 	/* polled IO has completed */
+ 	u8				iopoll_completed;
+@@ -1347,7 +1347,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+ 		if (cqe) {
+ 			WRITE_ONCE(cqe->user_data, req->user_data);
+ 			WRITE_ONCE(cqe->res, req->result);
+-			WRITE_ONCE(cqe->flags, req->cflags);
++			WRITE_ONCE(cqe->flags, req->compl.cflags);
+ 		} else {
+ 			WRITE_ONCE(ctx->rings->cq_overflow,
+ 				atomic_inc_return(&ctx->cached_cq_overflow));
+@@ -1402,7 +1402,7 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
+ 		req->flags |= REQ_F_OVERFLOW;
+ 		refcount_inc(&req->refs);
+ 		req->result = res;
+-		req->cflags = cflags;
++		req->compl.cflags = cflags;
+ 		list_add_tail(&req->compl.list, &ctx->cq_overflow_list);
  	}
- 
- 	return false;
-@@ -1237,7 +1237,7 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
- 		struct io_defer_entry *de = list_first_entry(&ctx->defer_list,
- 						struct io_defer_entry, list);
- 
--		if (req_need_defer(de->req))
-+		if (req_need_defer(de->req, de->seq))
- 			break;
- 		list_del_init(&de->list);
- 		/* punt-init is done before queueing for defer */
-@@ -5400,14 +5400,30 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	return ret;
  }
+@@ -1435,7 +1435,7 @@ static void io_submit_flush_completions(struct io_comp_state *cs)
  
-+static int io_get_sequence(struct io_kiocb *req)
-+{
-+	struct io_kiocb *pos;
-+	struct io_ring_ctx *ctx = req->ctx;
-+	u32 nr_reqs = 1;
-+
-+	if (req->flags & REQ_F_LINK_HEAD)
-+		list_for_each_entry(pos, &req->link_list, link_list)
-+			nr_reqs++;
-+
-+	return ctx->cached_sq_head - ctx->cached_sq_dropped - nr_reqs;
-+}
-+
-+
- static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_defer_entry *de;
- 	int ret;
-+	u32 seq;
+ 		req = list_first_entry(&cs->list, struct io_kiocb, compl.list);
+ 		list_del(&req->compl.list);
+-		__io_cqring_fill_event(req, req->result, req->cflags);
++		__io_cqring_fill_event(req, req->result, req->compl.cflags);
+ 		if (!(req->flags & REQ_F_LINK_HEAD)) {
+ 			req->flags |= REQ_F_COMP_LOCKED;
+ 			io_put_req(req);
+@@ -1463,7 +1463,7 @@ static void __io_req_complete(struct io_kiocb *req, long res, unsigned cflags,
+ 			io_cleanup_req(req);
  
- 	/* Still need defer if there is pending req in defer list. */
--	if (!req_need_defer(req) && list_empty_careful(&ctx->defer_list))
-+	if (likely(list_empty_careful(&ctx->defer_list) &&
-+		!(req->flags & REQ_F_IO_DRAIN)))
- 		return 0;
- 
- 	if (!req->io) {
-@@ -5422,8 +5438,9 @@ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (!de)
- 		return -ENOMEM;
- 
-+	seq = io_get_sequence(req);
- 	spin_lock_irq(&ctx->completion_lock);
--	if (!req_need_defer(req) && list_empty(&ctx->defer_list)) {
-+	if (!req_need_defer(req, seq) && list_empty(&ctx->defer_list)) {
- 		spin_unlock_irq(&ctx->completion_lock);
- 		kfree(de);
- 		return 0;
-@@ -5431,6 +5448,7 @@ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	trace_io_uring_defer(ctx, req, req->user_data);
- 	de->req = req;
-+	de->seq = seq;
- 	list_add_tail(&de->list, &ctx->defer_list);
- 	spin_unlock_irq(&ctx->completion_lock);
- 	return -EIOCBQUEUED;
-@@ -6207,12 +6225,6 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	unsigned int sqe_flags;
- 	int id;
- 
--	/*
--	 * All io need record the previous position, if LINK vs DARIN,
--	 * it can be used to mark the position of the first IO in the
--	 * link list.
--	 */
--	req->sequence = ctx->cached_sq_head - ctx->cached_sq_dropped;
- 	req->opcode = READ_ONCE(sqe->opcode);
- 	req->user_data = READ_ONCE(sqe->user_data);
- 	req->io = NULL;
+ 		req->result = res;
+-		req->cflags = cflags;
++		req->compl.cflags = cflags;
+ 		list_add_tail(&req->compl.list, &cs->list);
+ 		if (++cs->nr >= 32)
+ 			io_submit_flush_completions(cs);
 -- 
 2.24.0
 

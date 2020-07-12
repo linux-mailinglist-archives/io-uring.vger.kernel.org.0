@@ -2,62 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FAD021CA13
-	for <lists+io-uring@lfdr.de>; Sun, 12 Jul 2020 17:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D0E821CA25
+	for <lists+io-uring@lfdr.de>; Sun, 12 Jul 2020 18:30:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbgGLP7L (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 12 Jul 2020 11:59:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46760 "EHLO
+        id S1728882AbgGLQao (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 12 Jul 2020 12:30:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728854AbgGLP7L (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jul 2020 11:59:11 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0310AC061794
-        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 08:59:10 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id u5so4883312pfn.7
-        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 08:59:10 -0700 (PDT)
+        with ESMTP id S1728859AbgGLQan (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jul 2020 12:30:43 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5F5C08C5DB
+        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 09:30:43 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id o22so4982182pjw.2
+        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 09:30:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=rCUr70PBm03rm1kcL7BHJsBV86MBxPVl+9xm7KFkHkM=;
-        b=qx+VmWnsK36uyPoS6Z2EfVBqtWUjc99g8p3/LO7fVMNghcamb4OOPAkv5H8sRw+Y+a
-         UjyzFhOvAGfuYm7pY6n5VJvQ33RHf84jO8nEUI81F1Md1CBW+Ag85eHPv0qBYdBMXNMg
-         Mp7ZLpcKeFu2t+HVs+kz6aihC39H4ZA708/MVgpoflX1Siisxckagl3WgtzSSoD/Kklu
-         ui6n6jtmMtwuXHswvejY0BNGl4BzCHXjd+ZFyEPkH98qUpHSuMnvrCYLUDXXSNxbjDwu
-         FCVImmifQwWJHGtNwrdQwKcFwio5GdviSwG4Ob6tgAJbLSGX3QumwcEswN4p0fZ9FRuP
-         OuIg==
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=fduEEX0FvmLvbjM6DjKUizgxNHtjjRTc20Yn5n2GOU4=;
+        b=uF/QHLQpIEkXpsDzG6f4pmhhE6qd8Z/6Z1lxRzQNgJES9td/xuPCsUWjaFhAlRoGqv
+         Kr10QnkY9xqNmEu++t1ZGnBUXDpGTw0i8nQrxwLGrm8IT/wcJXGtx3cDvFfLirVv/RRt
+         /xGMIujy+bPfN2tgXps+2+sid/uBaRwmZ49ZerJSk6VNeuftQP/y/6qPQqgcz/4V4YYL
+         WlwE/eiSuGFKqg6c3aEMg7l9p9Ti9D9MBTFSmuT6xlqiECAkCYWDomuUVEyPh+CSy4Jh
+         VkQ44y3grWAO7hLcaMg+fxkvEO5W/aq8zyoSQIltKTNC9yCKoOGN9+t4v5dn1r/60xDl
+         JTzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rCUr70PBm03rm1kcL7BHJsBV86MBxPVl+9xm7KFkHkM=;
-        b=C33J4k4G/i8qVMBFVudI8qSeqC/BcdQXFqt4+YhkUbQdqN0wCb4hBqU3vGtWfjoR5I
-         tfckvUDwSwYYX7R0a64DqXvynJaiZ0+D6sqln6hHQPJhANE8CScozJ5Bjo9PNO8jVuX5
-         KuGPbrEO4SoaXSo98v2Q82cYoEKaWEB9OGOi6crVAyoD3rCvZ8zjoHqSGIw0AX/JHLRb
-         IQ5qCpCMAJ47/npYp6xLLvzlNoeD1/GAbFpmGjfa0HnYUspIK7MUQJOhtDtOs0/4qNnK
-         8s46pJKHB+1A0yICUyd3bFhtEVFh2E/4qiW4CGKdqOkgSExnQJZwLyQnCohPcizAKJQI
-         h90A==
-X-Gm-Message-State: AOAM532gPzKHQScgjzokxpVkIQ2yRQlSSiV8V8xR3cMzKjnVFRnH8dhL
-        +TlDqPbdP2lzgvkzogjZ+HBpywZgbA4IVg==
-X-Google-Smtp-Source: ABdhPJy0wAXhBDQUxaDc89bDoaTn+gAoHPz5PDTKBXvKdMCcXK1Dv6UXTmiaVAR5pbMctycsgyYTGQ==
-X-Received: by 2002:a63:5004:: with SMTP id e4mr43952786pgb.208.1594569549811;
-        Sun, 12 Jul 2020 08:59:09 -0700 (PDT)
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=fduEEX0FvmLvbjM6DjKUizgxNHtjjRTc20Yn5n2GOU4=;
+        b=A25KbSjMXTKgZLHqwFslyFVhmSZwCobmVW22zyauvz0HF+AKrcixF+uRRvZdF+bmyn
+         H3d+yizQkdKjzJI8/aEheESzGMWMmxWPhhS9aaUs21J36Xj20w2Guz6DB/BzMdRO5Qdl
+         NEMKzOUagzgsaK34OQGxlJuIK1VIXm3vKeHNMz41xDmfyhcBcsDZCMHGyRxARFzut3GP
+         XUZ9u6UDrli/KnlrzzRUv0ag5tZ72ea43TRlzPInkRen6iKdNdqrV2prLLcfWSvymiGV
+         DAZk9tGTRVoOLcXekhQbuxAnWfveiWljKluHFx+6AeB6gTbr8ET8KH7MhCmjRnIjhVOC
+         sl+A==
+X-Gm-Message-State: AOAM533uD0tnBVgmlKYURmhsfg+pW2LFEjSJrdyW5kz+JxtufcPYQ4vn
+        gc9pPXoE4hr/2MQw1QW6wDZkdw==
+X-Google-Smtp-Source: ABdhPJwdHApLEQXID+EPdWAxQbWH/w7vmc3jSPVQLWW6Te77B3fnsXw+3basNFqIrvxZNLWQ0CJAMQ==
+X-Received: by 2002:a17:90a:30c2:: with SMTP id h60mr15281620pjb.23.1594571442362;
+        Sun, 12 Jul 2020 09:30:42 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id e5sm11518170pjy.26.2020.07.12.08.59.09
+        by smtp.gmail.com with ESMTPSA id n2sm11176025pgv.37.2020.07.12.09.30.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Jul 2020 08:59:09 -0700 (PDT)
-Subject: Re: [RFC 0/9] scrap 24 bytes from io_kiocb
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1594546078.git.asml.silence@gmail.com>
+        Sun, 12 Jul 2020 09:30:41 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <edfa9852-695d-d122-91f8-66a888b482c0@kernel.dk>
-Date:   Sun, 12 Jul 2020 09:59:08 -0600
+Subject: [GIT PULL] io_uring fixes for 5.8-rc5
+Message-ID: <4583056e-bec6-f26a-5194-1add6f2b619f@kernel.dk>
+Date:   Sun, 12 Jul 2020 10:30:40 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1594546078.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,23 +65,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/12/20 3:41 AM, Pavel Begunkov wrote:
-> Make io_kiocb slimmer by 24 bytes mainly by revising lists usage. The
-> drawback is adding extra kmalloc in draining path, but that's a slow
-> path, so meh. It also frees some space for the deferred completion path
-> if would be needed in the future, but the main idea here is to shrink it
-> to 3 cachelines in the end.
-> 
-> I'm not happy yet with a few details, so that's not final, but it would
-> be lovely to hear some feedback.
+Hi Linus,
 
-I think it looks pretty good, most of the changes are straight forward.
-Adding a completion entry that shares the submit space is a good idea,
-and really helps bring it together.
+Two late fixes again, but they should make -rc5.
 
-From a quick look, the only part I'm not super crazy about is patch #3.
-I'd probably rather use a generic list name and not unionize the tw
-lists.
+- Fix missing msg_name assignment in certain cases (Pavel)
+
+- Correct a previous fix for full coverage (Pavel)
+
+Please pull!
+
+
+The following changes since commit 309fc03a3284af62eb6082fb60327045a1dabf57:
+
+  io_uring: account user memory freed when exit has been queued (2020-07-10 09:18:35 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.8-2020-07-12
+
+for you to fetch changes up to 16d598030a37853a7a6b4384cad19c9c0af2f021:
+
+  io_uring: fix not initialised work->flags (2020-07-12 09:40:50 -0600)
+
+----------------------------------------------------------------
+io_uring-5.8-2020-07-12
+
+----------------------------------------------------------------
+Pavel Begunkov (2):
+      io_uring: fix missing msg_name assignment
+      io_uring: fix not initialised work->flags
+
+ fs/io_uring.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 -- 
 Jens Axboe

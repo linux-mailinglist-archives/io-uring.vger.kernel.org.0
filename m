@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD2521C852
-	for <lists+io-uring@lfdr.de>; Sun, 12 Jul 2020 11:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD20521C853
+	for <lists+io-uring@lfdr.de>; Sun, 12 Jul 2020 11:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbgGLJnM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 12 Jul 2020 05:43:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45784 "EHLO
+        id S1728341AbgGLJnO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 12 Jul 2020 05:43:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbgGLJnM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jul 2020 05:43:12 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BB22C061794
-        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:12 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id dg28so8163975edb.3
-        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:12 -0700 (PDT)
+        with ESMTP id S1727777AbgGLJnO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jul 2020 05:43:14 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD676C061794
+        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:13 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id w16so10894086ejj.5
+        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=BpPNJvn1yFuMPXTdbq86yNvr+CG7WeGoR2coY4fNqJs=;
-        b=QtzkCtDCiEpsYPualnY5qAFOiZ55i3HEuxR3VaXHjh9FCh+Z2JOCxd/SWTgr8qtkaA
-         X7hfKSdfWIxDoxrvmlz0BXFcj1MOrTfXWpI7ccpP2eJ5feVVaLqRH60O8oCN5EWO0NjT
-         Dv8LXtNrxTzARjGSN25W4/956/bQPwM6dTWY921KJ8rxpDt6RoRmaiaksLC1CR6XEYHH
-         +NHPWOeQaaaJufvBIohIbRJXWheZ5tfSO+3r7D1Fpo6R5JXEZwir0Ho6Cw9Qbkvpm2Jr
-         Bhe5Kqu4xYLSRbpNfHR3niGCo/8MlLCT5tKWv1JyFQwwDEj/N/EVpXFaQzRowN/ErlCm
-         cAFQ==
+        bh=dcXrcuxbJK3MCbL02vjQxa4zV2KZ/CqQISwOVB0wdTQ=;
+        b=uevwJrl+19W8Il4FTfUs920djEhBCRL4I0Tk37O7UgLVxx0K4tiqmVArYnyDaavbH0
+         g6jV51sUiuDvA1lQu59ZwIDJbrtwG/jtio6k8DIkCCTg+MtoKOe1YIYTUPq/2ifTpj5/
+         jhI/qxj0MCRRY9KCo7aBY8CNC+XYEI1Uo4yZNmiqYuB1ebmFMIUC2K8SgtaEHVtpm0qm
+         CDYAoU9DXtq8Hzfq39P4TjYemHU2qDUutJsIk2O5DF8RNMmaAFSgnQMdZTrUOjTxqI2v
+         iBfK/avc5gViMioXhJqhgtYF9/RR9lf9BhSYkH9VnPeDAewJNmyOUHX0wCUATvqqsoYu
+         vY8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BpPNJvn1yFuMPXTdbq86yNvr+CG7WeGoR2coY4fNqJs=;
-        b=Pj+UtKpBDKtRvTFk4VZKX2BleccpQgAef5NljFstoSmhk9ZxUCMHjIvRb3f41aSy8P
-         F5skcgl8bsWnz02lYRoNOGVv/NYGK9icQWI6MNNPZvrgoHjVMXeOqjIcGWf3W27gS7mH
-         GEAvoERTUh0UPw4Spi7PmYePyCPMSXI7jrxJyOfj1+m9SPzdgzsWJPq3WVbq15srJ6Fx
-         e+6PtOP7rAc9c4o7gBtsGGKBsB6TeDbkeYGu28Bcsu6jTKYRmqTEVtVG3d0VzOehvp7u
-         RTA66UW3Prmta1ozbylDDbUuFzJm1O4cfiXUnvJ30btNmichOSFkloE7wMe/8qsMRbXy
-         59TA==
-X-Gm-Message-State: AOAM531PGVN7ASSMrXudkKDqATBCOkX2EQx5NFsC4TSR8L9tL8sv/OPL
-        s8sYNZLBKGH2cYOH58giyI8=
-X-Google-Smtp-Source: ABdhPJyqtC76X98aBvOCexO+WkH4zWGOK+4CueY7xSLDYYSogb2nr+ATDc5YS9U+RFJmqwliI+Brgw==
-X-Received: by 2002:aa7:d04e:: with SMTP id n14mr63608196edo.161.1594546990951;
-        Sun, 12 Jul 2020 02:43:10 -0700 (PDT)
+        bh=dcXrcuxbJK3MCbL02vjQxa4zV2KZ/CqQISwOVB0wdTQ=;
+        b=NvWrM6n41sFaj6hCeMWU4fZ4Of3/tFnbuSR+BVp8i2rpykeBM0kSK6xAWPPyMmWjQc
+         uFC8ir6OQd0S0fCYenNYcgmkjJMk1jaA+YeXuX/unVK7srHxY9EgFzN9pfkhdK/WCNUX
+         nvLtfhjzg+SpwKePXE/Wm3vubAApQk+4OgfRUtSZAAUMY6qS77evIoKZM80OVtSNH14e
+         xfL9LsaNCMfcScJk75HITyVP3W3GXNK/u98Qg3udI5BpsMpY6dgIie6+VVochHfXRb6s
+         ptLwiaHKZ6osjgWlLOsj/HjczT6NIcmVdVYF+ETFwY01joEo/d2mr1grtg56xfAA9PUz
+         3fQg==
+X-Gm-Message-State: AOAM533yKeeKeepNW/YWXFFUZTA3GQ/CczIPAqMzKzSkpIZLZBMPrwwM
+        m3XXfZGCNuIo39SL7H/opSWcCmry
+X-Google-Smtp-Source: ABdhPJzL7xg8mj0YTCVHwP/8LBNt8vie7SM99JCh8AqjFGyccWDLhAquX9O7bU3nUgNv1YaRIwKJ7A==
+X-Received: by 2002:a17:906:5246:: with SMTP id y6mr22647353ejm.316.1594546992526;
+        Sun, 12 Jul 2020 02:43:12 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id a8sm7283718ejp.51.2020.07.12.02.43.09
+        by smtp.gmail.com with ESMTPSA id a8sm7283718ejp.51.2020.07.12.02.43.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jul 2020 02:43:10 -0700 (PDT)
+        Sun, 12 Jul 2020 02:43:12 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/9] io_uring: use inflight_entry list for iopolling
-Date:   Sun, 12 Jul 2020 12:41:09 +0300
-Message-Id: <cacce7513f73e617bbdfebd847b5ea9741ed6485.1594546078.git.asml.silence@gmail.com>
+Subject: [PATCH 4/9] io_uring: use competion list for CQ overflow
+Date:   Sun, 12 Jul 2020 12:41:10 +0300
+Message-Id: <7afe44908236ed556ebdc600e22a1f71255287d1.1594546078.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1594546078.git.asml.silence@gmail.com>
 References: <cover.1594546078.git.asml.silence@gmail.com>
@@ -62,112 +62,68 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-req->inflight_entry is used to track requests with ->files, and the
-only iopoll'ed requests (i.e. read/write) don't have it. Use
-req->inflight_entry for iopoll path, btw aliasing it in union
-with a more proper name for clarity.
+As with the completion path, use compl.list for overflowed requests. If
+cleaned up properly, nobody needs per-op data there anymore.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+ fs/io_uring.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 669a131c22ec..bb92cc736afe 100644
+index bb92cc736afe..88c3092399e2 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -651,7 +651,14 @@ struct io_kiocb {
+@@ -1335,8 +1335,8 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+ 			break;
  
- 	struct list_head	link_list;
- 
--	struct list_head	inflight_entry;
-+	/*
-+	 * @inflight_entry is for reqs with ->files (see io_op_def::file_table)
-+	 * @iopoll_list is for read/write requests
-+	 */
-+	union {
-+		struct list_head	inflight_entry;
-+		struct list_head	iopoll_list;
-+	};
- 
- 	struct percpu_ref	*fixed_file_refs;
- 
-@@ -1937,8 +1944,8 @@ static void io_iopoll_queue(struct list_head *again)
- 	struct io_kiocb *req;
- 
- 	do {
--		req = list_first_entry(again, struct io_kiocb, list);
--		list_del(&req->list);
-+		req = list_first_entry(again, struct io_kiocb, iopoll_list);
-+		list_del(&req->iopoll_list);
- 		if (!io_rw_reissue(req, -EAGAIN))
- 			io_complete_rw_common(&req->rw.kiocb, -EAGAIN, NULL);
- 	} while (!list_empty(again));
-@@ -1961,13 +1968,13 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 	while (!list_empty(done)) {
- 		int cflags = 0;
- 
--		req = list_first_entry(done, struct io_kiocb, list);
-+		req = list_first_entry(done, struct io_kiocb, iopoll_list);
- 		if (READ_ONCE(req->result) == -EAGAIN) {
- 			req->iopoll_completed = 0;
--			list_move_tail(&req->list, &again);
-+			list_move_tail(&req->iopoll_list, &again);
- 			continue;
- 		}
--		list_del(&req->list);
-+		list_del(&req->iopoll_list);
- 
- 		if (req->flags & REQ_F_BUFFER_SELECTED)
- 			cflags = io_put_kbuf(req);
-@@ -2003,7 +2010,7 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 	spin = !ctx->poll_multi_file && *nr_events < min;
- 
- 	ret = 0;
--	list_for_each_entry_safe(req, tmp, &ctx->iopoll_list, list) {
-+	list_for_each_entry_safe(req, tmp, &ctx->iopoll_list, iopoll_list) {
- 		struct kiocb *kiocb = &req->rw.kiocb;
- 
- 		/*
-@@ -2012,7 +2019,7 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 		 * and complete those lists first, if we have entries there.
- 		 */
- 		if (READ_ONCE(req->iopoll_completed)) {
--			list_move_tail(&req->list, &done);
-+			list_move_tail(&req->iopoll_list, &done);
- 			continue;
- 		}
- 		if (!list_empty(&done))
-@@ -2024,7 +2031,7 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 
- 		/* iopoll may have completed current req */
- 		if (READ_ONCE(req->iopoll_completed))
--			list_move_tail(&req->list, &done);
-+			list_move_tail(&req->iopoll_list, &done);
- 
- 		if (ret && spin)
- 			spin = false;
-@@ -2291,7 +2298,7 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
- 		struct io_kiocb *list_req;
- 
- 		list_req = list_first_entry(&ctx->iopoll_list, struct io_kiocb,
+ 		req = list_first_entry(&ctx->cq_overflow_list, struct io_kiocb,
 -						list);
-+						iopoll_list);
- 		if (list_req->file != req->file)
- 			ctx->poll_multi_file = true;
- 	}
-@@ -2301,9 +2308,9 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
- 	 * it to the front so we find it first.
- 	 */
- 	if (READ_ONCE(req->iopoll_completed))
--		list_add(&req->list, &ctx->iopoll_list);
-+		list_add(&req->iopoll_list, &ctx->iopoll_list);
- 	else
--		list_add_tail(&req->list, &ctx->iopoll_list);
-+		list_add_tail(&req->iopoll_list, &ctx->iopoll_list);
+-		list_move(&req->list, &list);
++						compl.list);
++		list_move(&req->compl.list, &list);
+ 		req->flags &= ~REQ_F_OVERFLOW;
+ 		if (cqe) {
+ 			WRITE_ONCE(cqe->user_data, req->user_data);
+@@ -1357,8 +1357,8 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+ 	io_cqring_ev_posted(ctx);
  
- 	if ((ctx->flags & IORING_SETUP_SQPOLL) &&
- 	    wq_has_sleeper(&ctx->sqo_wait))
+ 	while (!list_empty(&list)) {
+-		req = list_first_entry(&list, struct io_kiocb, list);
+-		list_del(&req->list);
++		req = list_first_entry(&list, struct io_kiocb, compl.list);
++		list_del(&req->compl.list);
+ 		io_put_req(req);
+ 	}
+ 
+@@ -1386,6 +1386,9 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
+ 		WRITE_ONCE(ctx->rings->cq_overflow,
+ 				atomic_inc_return(&ctx->cached_cq_overflow));
+ 	} else {
++		if (req->flags & REQ_F_NEED_CLEANUP)
++			io_cleanup_req(req);
++
+ 		if (list_empty(&ctx->cq_overflow_list)) {
+ 			set_bit(0, &ctx->sq_check_overflow);
+ 			set_bit(0, &ctx->cq_check_overflow);
+@@ -1394,7 +1397,7 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
+ 		refcount_inc(&req->refs);
+ 		req->result = res;
+ 		req->cflags = cflags;
+-		list_add_tail(&req->list, &ctx->cq_overflow_list);
++		list_add_tail(&req->compl.list, &ctx->cq_overflow_list);
+ 	}
+ }
+ 
+@@ -7822,7 +7825,7 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+ 
+ 		if (cancel_req->flags & REQ_F_OVERFLOW) {
+ 			spin_lock_irq(&ctx->completion_lock);
+-			list_del(&cancel_req->list);
++			list_del(&cancel_req->compl.list);
+ 			cancel_req->flags &= ~REQ_F_OVERFLOW;
+ 			if (list_empty(&ctx->cq_overflow_list)) {
+ 				clear_bit(0, &ctx->sq_check_overflow);
 -- 
 2.24.0
 

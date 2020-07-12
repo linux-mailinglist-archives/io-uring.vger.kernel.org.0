@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4736B21C855
-	for <lists+io-uring@lfdr.de>; Sun, 12 Jul 2020 11:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 723E821C856
+	for <lists+io-uring@lfdr.de>; Sun, 12 Jul 2020 11:43:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbgGLJnS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 12 Jul 2020 05:43:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45800 "EHLO
+        id S1728662AbgGLJnV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 12 Jul 2020 05:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbgGLJnR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jul 2020 05:43:17 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7381FC061794
-        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:17 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id w6so10879238ejq.6
-        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:17 -0700 (PDT)
+        with ESMTP id S1727777AbgGLJnU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Jul 2020 05:43:20 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9461CC061794
+        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:20 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id b15so8143250edy.7
+        for <io-uring@vger.kernel.org>; Sun, 12 Jul 2020 02:43:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=hERDq9zEYBq5a9P0a0NQGJDMh0W1tgDHewSUpcBownY=;
-        b=fzYU+ynxbLRDuHvE9OGpOs1X7k+On9LxMe2ujrhve5pPCGrYRPal615H1uAWGJL3F9
-         +9jW7FGsSsVzD+90bh1XSlxG/Ymim1n08iNcExiDKCc4CBmOMYaeYvBwH8yUBtqcMeUV
-         lrOIGrhVLjhH5aAShkYzaMhGboY+B5pXoUL6YK1eSAm1ifNdg/8pAg3AMAdNnVeKNKWk
-         KrTrvst8bdun8SekR74fABMPbLhFAsT3NDC5o6MUrY3bFV5MSOKXQoSN+ExUCwWYbavC
-         LJ5meTQwA1zdXf+xzf30kpQEhnRoBvMLNsdQiy29wD0eMpW5MUkxVFgUtLGPhHdRFgoz
-         NQ8A==
+        bh=ANsSW+jX81BSKSeQ0JlpFNIwDpIQmJIXWPQBg0yDtQ4=;
+        b=DfUISm3odZgZJu2rOB6t9onAM0rN82hv9caX12jrCWxXdWvKb/FPsQnraDkTHWE36X
+         ySB2NZtIshuE38DY/wnurUa2gEpiwmShX4Qr/8kpKOoi9K1kTkZcl41Jwkx3ZRq+f7Zw
+         Y3qhrMUixDIzz6StHdi8TLf7E89H9dEWGCdgKblrCXqBkoDy25k6N0+IvuSTWg+nzGiK
+         IDibI5zy3Q/SlJ4hPtPeo3eMTyHJyJikVpmMXsJ0vc8UsitJkvIRLz3RyveZB5HmQGVP
+         BtLIhFyuxuuDl5SeP0pnyeR/6D5AZLmX1WqO/d2RcJ+9XUI2XcSzfPmflx/FroYgEk7F
+         nZKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hERDq9zEYBq5a9P0a0NQGJDMh0W1tgDHewSUpcBownY=;
-        b=JAeJ7pQFE/lCzYihkixXWEd3XmBF6kjq710W0zb0UAkOTbxywzpSwa0sPfJq92ExVH
-         6jpL+smFVDFBSTXUrlxtB5GMha6pd8t3Pg3a0lvFvWqj1YGWDTMyBi+VAIXd9wHJRo9W
-         q0ApxEgk2NKDSdHkqilLK3XiBFg2RYxykyFoM9Y0o4kbcpYC6BCgnni1lV+hhgZ7iDtT
-         3NFQ2BKlylhA+QmUM8ol4D1NZqOsigA5Ku/ytlUL0n2TkwKUIpa/Pu1ZDJfiKN4xwxWz
-         LgTI6BcIUI9SxzIhWzMZNl1fm11bR5WGXIn2C/HHYAj+OsGM83w4prus/ByKDzrvKvFk
-         dcrA==
-X-Gm-Message-State: AOAM532CiKgMCpOgRl4GYeDIRHnlJRw7xnKlxmaxSwZVG8exgWOb/9CI
-        wRkZ/X6XLz8CqIKKxMXzygWRTh99
-X-Google-Smtp-Source: ABdhPJxWbNaQCY3aCOVTPrbHZY1euLw8alMcw4Bk9ClU/RG1tNrVKRZc9NZzs9hXCtQuDbFtn34zcg==
-X-Received: by 2002:a17:906:3789:: with SMTP id n9mr6114107ejc.512.1594546996167;
-        Sun, 12 Jul 2020 02:43:16 -0700 (PDT)
+        bh=ANsSW+jX81BSKSeQ0JlpFNIwDpIQmJIXWPQBg0yDtQ4=;
+        b=HLpTyBgPQLbIdqlVOwAtXeU6BiIjwlakFtoA2+lLyL8AEMXjgzcsq5qUVTirxVSNXM
+         dQsQP/wzUBUAZtM1M29rPjwkWwp/a0wQP6Svn4cQ98ppHDZl2cfbxgq50irPmTzU4DWV
+         5+mX4lw/BbBd+lcyggViR8zCwgvsQh4D39NOv3hKv4SOtikzrQVtii+NDhJF3PDq23TY
+         zI9AGDzDdLNH+up4eDM10NXQQhqy7CgmmOnWr+VFsl1OpOtr0vVFztRY6BqzFlGvJjnf
+         knzNz3LlOo8dY5u1o/3ghpY5/UOdVtOOkHK6JSgLUZ7GEkJsYpo4XjQFS4SbZbGqg5qo
+         fM+Q==
+X-Gm-Message-State: AOAM530iEs9xY80hxYbNtBEZHVNW4nrJB/CStR92vpcFCubLxarX8y/x
+        TrElxZZ6vyERipvWG9fHo9j/CNFn
+X-Google-Smtp-Source: ABdhPJwBMt2opSeFyOUjpr71VdNTsCHzpRCltO4r0UEyLfov3Lgz2yy59tQy0uXIbx7H0mg5OqC+eg==
+X-Received: by 2002:aa7:c24d:: with SMTP id y13mr89667596edo.123.1594546999333;
+        Sun, 12 Jul 2020 02:43:19 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id a8sm7283718ejp.51.2020.07.12.02.43.15
+        by smtp.gmail.com with ESMTPSA id a8sm7283718ejp.51.2020.07.12.02.43.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jul 2020 02:43:15 -0700 (PDT)
+        Sun, 12 Jul 2020 02:43:18 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 6/9] io_uring: remove init for unused list
-Date:   Sun, 12 Jul 2020 12:41:12 +0300
-Message-Id: <f409d6120a9099792a2d1b634c08649bfea6b76b.1594546078.git.asml.silence@gmail.com>
+Subject: [PATCH 7/9] io_uring: kill rq->list and allocate it on demand
+Date:   Sun, 12 Jul 2020 12:41:13 +0300
+Message-Id: <35689abd988d34fdbc3da7ced9e45aa45c112ac4.1594546078.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1594546078.git.asml.silence@gmail.com>
 References: <cover.1594546078.git.asml.silence@gmail.com>
@@ -62,25 +62,91 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-poll*() doesn't use req->list, don't init it.
+The only user of req->list is DRAIN, hence instead of keeping a separate
+per request list for it, just allocate a separate defer entry when
+needed, that's a slow path anyway.
+This removes req->list and so sheds 16 bytes from io_kiocb.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/io_uring.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 81e7bb226dbd..38ffcfca9b34 100644
+index 38ffcfca9b34..93e8192983e1 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -4973,7 +4973,6 @@ static int io_poll_add(struct io_kiocb *req)
- 	__poll_t mask;
+@@ -641,7 +641,6 @@ struct io_kiocb {
+ 	u16				buf_index;
  
- 	INIT_HLIST_NODE(&req->hash_node);
--	INIT_LIST_HEAD(&req->list);
- 	ipt.pt._qproc = io_poll_queue_proc;
+ 	struct io_ring_ctx	*ctx;
+-	struct list_head	list;
+ 	unsigned int		flags;
+ 	refcount_t		refs;
+ 	struct task_struct	*task;
+@@ -679,6 +678,11 @@ struct io_kiocb {
+ 	struct callback_head	task_work;
+ };
  
- 	mask = __io_arm_poll_handler(req, &req->poll, &ipt, poll->events,
++struct io_defer_entry {
++	struct list_head	list;
++	struct io_kiocb		*req;
++};
++
+ #define IO_IOPOLL_BATCH			8
+ 
+ struct io_comp_state {
+@@ -1230,14 +1234,15 @@ static void io_kill_timeouts(struct io_ring_ctx *ctx)
+ static void __io_queue_deferred(struct io_ring_ctx *ctx)
+ {
+ 	do {
+-		struct io_kiocb *req = list_first_entry(&ctx->defer_list,
+-							struct io_kiocb, list);
++		struct io_defer_entry *de = list_first_entry(&ctx->defer_list,
++						struct io_defer_entry, list);
+ 
+-		if (req_need_defer(req))
++		if (req_need_defer(de->req))
+ 			break;
+-		list_del_init(&req->list);
++		list_del_init(&de->list);
+ 		/* punt-init is done before queueing for defer */
+-		__io_queue_async_work(req);
++		__io_queue_async_work(de->req);
++		kfree(de);
+ 	} while (!list_empty(&ctx->defer_list));
+ }
+ 
+@@ -5398,6 +5403,7 @@ static int io_req_defer_prep(struct io_kiocb *req,
+ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
++	struct io_defer_entry *de;
+ 	int ret;
+ 
+ 	/* Still need defer if there is pending req in defer list. */
+@@ -5412,15 +5418,20 @@ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 			return ret;
+ 	}
+ 	io_prep_async_link(req);
++	de = kmalloc(sizeof(*de), GFP_KERNEL);
++	if (!de)
++		return -ENOMEM;
+ 
+ 	spin_lock_irq(&ctx->completion_lock);
+ 	if (!req_need_defer(req) && list_empty(&ctx->defer_list)) {
+ 		spin_unlock_irq(&ctx->completion_lock);
++		kfree(de);
+ 		return 0;
+ 	}
+ 
+ 	trace_io_uring_defer(ctx, req, req->user_data);
+-	list_add_tail(&req->list, &ctx->defer_list);
++	de->req = req;
++	list_add_tail(&de->list, &ctx->defer_list);
+ 	spin_unlock_irq(&ctx->completion_lock);
+ 	return -EIOCBQUEUED;
+ }
 -- 
 2.24.0
 

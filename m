@@ -2,125 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9C6221D2B5
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2020 11:24:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 982A121D7F6
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2020 16:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbgGMJYn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Jul 2020 05:24:43 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:32333 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726360AbgGMJYm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Jul 2020 05:24:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594632281;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8taBpeNWfYvGCIuu+3RcwP8mgr+DtPBfUd45yt6a9tM=;
-        b=eWwcMIJqBhlKBxHmuHRc22ra6gg5WxyyHZIRR8yYcgQFV4A71bBe9ELfBWWAuz9cC/QgL+
-        t3kSXMBrqJUtSlS7aJsLW3OklZR5S6Lxz2RxddAk5h+jgENlBT6UmfxOrMHVMmlme6BIUS
-        UUnh2frH7XiY/5/wPWa+ZY2QAMQC12M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-352-p6tDz3eYNamNtlQUM20UWg-1; Mon, 13 Jul 2020 05:24:39 -0400
-X-MC-Unique: p6tDz3eYNamNtlQUM20UWg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D3A3F19200C3;
-        Mon, 13 Jul 2020 09:24:37 +0000 (UTC)
-Received: from localhost (ovpn-114-66.ams2.redhat.com [10.36.114.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C68C719D61;
-        Mon, 13 Jul 2020 09:24:36 +0000 (UTC)
-Date:   Mon, 13 Jul 2020 10:24:35 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Sargun Dhillon <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Jann Horn <jannh@google.com>, Aleksa Sarai <asarai@suse.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>
-Subject: Re: [PATCH RFC 0/3] io_uring: add restrictions to support untrusted
- applications and guests
-Message-ID: <20200713092435.GC28639@stefanha-x1.localdomain>
-References: <20200710141945.129329-1-sgarzare@redhat.com>
- <20200710153309.GA4699@char.us.oracle.com>
- <20200710162017.qdu34ermtxh3rfgl@steredhat>
+        id S1730028AbgGMOLh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Jul 2020 10:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55078 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729782AbgGMOLg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Jul 2020 10:11:36 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2FCC061755
+        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2020 07:11:36 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id k5so6313911pjg.3
+        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2020 07:11:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=E5YrUYeH9bksQKwP5x56t7ynpO3MqgPfl74AqooGFcU=;
+        b=BkS2knp5aUVmo+4oB0268gcWsFQfpDwcHln51KJOKsJ51OFiNUc23lvOIV90VISu7Q
+         +/muUatgcm5uMhLAX5+aXhPJavUoFEcDRMzxsoPEj/HEXALNbtSqu8UJfQj5YxItuco9
+         XYIOTzBLb23N8ZwjTMs2o+HX86H+bzytQFdAN4IOy/wDJe5FT/xzN0rhqUH/qLOa8tfI
+         JEawTdj7Iyllxn4Qfh2cKer1Rgy1MfjiFkNCFaVFacXd6FweKHkF5Sx1oCYYDBbI7N0Y
+         uLR7y5L6hisqRd+MYBLYFdimalnHFrKie89aPhfseRGOkXN4Y0fIfKd+3tTRrWvKKO9z
+         7qiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=E5YrUYeH9bksQKwP5x56t7ynpO3MqgPfl74AqooGFcU=;
+        b=LpjlSDLWyy++FbFkJIi3xJGIY/X8CYHELtTVnmXNB164R/nH3EMsAEEJEhM6LZsUPl
+         LABtcZE0zR71dEG8ao4fRdCR12qNweGGnsXLldcPgkQGPvNbwUC7xrYRCH1wV+MX6wOl
+         flB88bxEHKNt/SyMLTT6H0BFSb1gpF7qgfllpoGiaJOx7Je9lrpPUCuOLpkc1CK2Bvcm
+         GEOt1rCqkQvB45m6/mDgsWX0ZxZpt16hRgtD/azlR2OPS8XvUoXUM4G+QO5Oo/6v9e3g
+         lWox/XcwWFuvSJ7oNd+5dk6dx1azefxAlngDVnQ/Fc1LnFqP5px/6vzTkYiEqRJ1joLS
+         e77w==
+X-Gm-Message-State: AOAM533FA3Lb+w4RZDH1GaRCrElwtkQtpVFnDYAPPQAt3rVRwbfGkG9e
+        dCwmnyTuAUMXpMbGPEXu7vBnTTC4lGOErQ==
+X-Google-Smtp-Source: ABdhPJweycGIhhHPcOK71W/c7YvAPgcEBp43V9whEzDZy6IZyIRZptRAocyOTcMOCIsf9kLmUzAMyA==
+X-Received: by 2002:a17:90b:3750:: with SMTP id ne16mr20174354pjb.6.1594649495461;
+        Mon, 13 Jul 2020 07:11:35 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id z11sm14736823pfk.46.2020.07.13.07.11.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2020 07:11:34 -0700 (PDT)
+Subject: Re: [PATCH 5.9] io_uring: replace rw->task_work with rq->task_work
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <6cd829a0f19a26aa1c40b06dde74af949e8c68a5.1594574510.git.asml.silence@gmail.com>
+ <5356a79b-1a65-a8bb-2f21-a416566bad1a@kernel.dk>
+ <494e8054-38dc-4987-e82b-00edeb70400c@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9a16ad22-bdf6-45b4-f6bc-803719d86a94@kernel.dk>
+Date:   Mon, 13 Jul 2020 08:11:32 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200710162017.qdu34ermtxh3rfgl@steredhat>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZwgA9U+XZDXt4+m+"
-Content-Disposition: inline
+In-Reply-To: <494e8054-38dc-4987-e82b-00edeb70400c@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
---ZwgA9U+XZDXt4+m+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/13/20 2:03 AM, Pavel Begunkov wrote:
+> On 12/07/2020 23:29, Jens Axboe wrote:
+>> On 7/12/20 11:42 AM, Pavel Begunkov wrote:
+>>> io_kiocb::task_work was de-unionised, and is not planned to be shared
+>>> back, because it's too useful and commonly used. Hence, instead of
+>>> keeping a separate task_work in struct io_async_rw just reuse
+>>> req->task_work.
+>>
+>> This is a good idea, req->task_work is a first class citizen these days.
+>> Unfortunately it doesn't do much good for io_async_ctx, since it's so
+>> huge with the msghdr related bits. It'd be nice to do something about
+>> that too, though not a huge priority as allocating async context is
+> 
+> We can allocate not an entire struct/union io_async_ctx but its particular
+> member. Should be a bit better for writes.
 
-On Fri, Jul 10, 2020 at 06:20:17PM +0200, Stefano Garzarella wrote:
-> On Fri, Jul 10, 2020 at 11:33:09AM -0400, Konrad Rzeszutek Wilk wrote:
-> > .snip..
-> > > Just to recap the proposal, the idea is to add some restrictions to t=
-he
-> > > operations (sqe, register, fixed file) to safely allow untrusted appl=
-ications
-> > > or guests to use io_uring queues.
-> >=20
-> > Hi!
-> >=20
-> > This is neat and quite cool - but one thing that keeps nagging me is
-> > what how much overhead does this cut from the existing setup when you u=
-se
-> > virtio (with guests obviously)?
->=20
-> I need to do more tests, but the preliminary results that I reported on
-> the original proposal [1] show an overhead of ~ 4.17 uS (with iodepth=3D1=
-)
-> when I'm using virtio ring processed in a dedicated iothread:
->=20
->   - 73 kIOPS using virtio-blk + QEMU iothread + io_uring backend
->   - 104 kIOPS using io_uring passthrough
->=20
-> >                                 That is from a high level view the
-> > beaty of io_uring being passed in the guest is you don't have the
-> > virtio ring -> io_uring processing, right?
->=20
-> Right, and potentially we can share the io_uring queues directly to the
-> guest userspace applications, cutting down the cost of Linux block
-> layer in the guest.
+Right, we probably just need to turn req->io into a:
 
-Another factor is that the guest submits requests directly to the host
-kernel sqpoll thread. When a virtqueue is used the sqpoll thread cannot
-poll it directly so another host thread (QEMU) needs to poll the
-virtqueue. The same applies for the completion code path.
+	void *async_ctx;
 
-Stefan
+and have it be assigned with the various types that are needed for
+async deferral.
 
---ZwgA9U+XZDXt4+m+
-Content-Type: application/pgp-signature; name="signature.asc"
+> And if we can save another 16B in io_async_rw, it'd be 3 cachelines for
+> io_async_rw. E.g. there are two 4B holes in struct wait_page_queue, one is
+> from "int bit_nr", the second is inside "wait_queue_entry_t wait".
 
------BEGIN PGP SIGNATURE-----
+An easy 8 bytes is just turning nr_segs and size into 32-bit types. The
+size will never be more than 2G, and segs is limited at 1k iirc.
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl8MKFMACgkQnKSrs4Gr
-c8iWaQgAkvf4Ga+PHPaSTucaASbYCgeYbSgiUPCLRsOB0g2+3HM6buSTHpdfYoUk
-Fy1Y3Yl7cDqGmCCHdTx9rYTQCd6SYSElqylNNnn6yEMiMgvcYcK4xn+wgY8BxVGy
-yIv0Rl52ucmtkQ4Iry5mA/vSNZiiVnDyP5Mq9EahEKDO9RtC0duf4xJeR1Lhyk9G
-QDbDx9I2/TZgsxar1+Tettaf6vbC1d8S5WCSSktvMl7Jn2zP/uyJg9DyuMCRWMVl
-YPX8SPGK/Kr0uKRWkWtBdbK0TuDJtM5i8hdD59ppdQaSwt7JrmowOFDKg9iznl4r
-Z9f95iJ6QD2dHTtGo4Yc5WKyhZ9BmA==
-=KoLY
------END PGP SIGNATURE-----
-
---ZwgA9U+XZDXt4+m+--
+-- 
+Jens Axboe
 

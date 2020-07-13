@@ -2,52 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FFDA21D182
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2020 10:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9D0621D183
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2020 10:19:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbgGMITZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Jul 2020 04:19:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55488 "EHLO
+        id S1726725AbgGMITd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Jul 2020 04:19:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbgGMITY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Jul 2020 04:19:24 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 988E1C061755
-        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2020 01:19:24 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id ga4so15474004ejb.11
-        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2020 01:19:24 -0700 (PDT)
+        with ESMTP id S1725818AbgGMITd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Jul 2020 04:19:33 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8154C061755
+        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2020 01:19:32 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id w6so15482558ejq.6
+        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2020 01:19:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FBC6tnEKKXyThx6a9eVIgSnRN3wb13o5O8Ym1EQ5vuE=;
-        b=tmD2NH9VwA4jmEMh4A1MkwY0PLdTrwJgXaYB1y7xYdxL1CLECsx/XQAiThXjv+fkCr
-         iNhG42S2igFzlMPVluL+4QUHbOYZl8D3Ek9IWkiY3hHhy7RQhYCiBs8s6vBOImHSQ+AA
-         H9KDmkU66173F+lpoWCkpAz2Zt63xYITAyfKM5XJMOVNxIu1nqat5hnGQDTjuFxdqB5w
-         OFt7bYXBO959LfGNyAlsgDVxW2jNgd9ahYfPIE2zQWI78K3xH4B1Q2SZkMy2TftWJ8Yk
-         MyJmEFE2Ot8lSshBhWwrWXdaDDAxkKNZhCeWdezuF1e1EmozSulJ9hfKCLHbAnqx18SF
-         eCZA==
+        bh=0aNCvV9gaXx1OdLaf4Ger1zIYJFx+Lp4b2FZO0AUo5U=;
+        b=kSEF+HoEHhLhKM1H8rf7qdEFpKFITSXYvnKEAz5UDR/WEoQhQ+2fb+FLiwKipfjypm
+         3qMsxuWeg39TwtDq225zvOODhCeqBWVzaF0vDUzLiV6FFl2Q5KCaXLAY1X3jWqFROfVz
+         tRvKP4f1HF1SzGVKfNgyUCZW6/pT6eR2se6A8jkiB+s2CDkWLKc8SNWAR45H33wySuCh
+         s0ws4TOBHfX6PEUZ8N1PVqU+KoYdT3ws1SBCePzjo8ygm9zxnghPQ3GcixrYNBQD4rq/
+         I60fP39Dd2l55XSwi7ljq+0i/CrTqMAcDo8zZ6lbO19XzJxDYCdB+F3T4cY5SaVN4xjo
+         KMBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=FBC6tnEKKXyThx6a9eVIgSnRN3wb13o5O8Ym1EQ5vuE=;
-        b=Z6phN7ZLvviIMoEvWnuM9E8s3wk/JEm87owO7e42QBK36xjmLW/PkGune6t2FUFe/F
-         DBsJJMnL8ZdZ12SrLshUXgrY7RGDIKkS3+nSdd7VzUS2brM02dHEX5PeyZyR0Np7i+TI
-         CGulcjMdZ5jgTdoitqOBj9qDhsn/g/O1WMwtAASVQhWojsd1dED4F8TVtimZzw1dUaRs
-         nIFnrw5Yh947c9CdRDe4X19L8e0n/sDkMNGUo3mfbPbMyOwjztyl82XXr8fH8+0lO3hB
-         AzVHzg/oSIc8TjB793Boj74d5FxjuwDTsrhTD1b3Q6eS++gftqZxJ/PtPG4k8XsWCmOo
-         OKSQ==
-X-Gm-Message-State: AOAM531kTHLr1S09Q5QffdkoSbcn/lYnCitJ+XMrchdFNRiyBYbyo0Ax
-        nB2gdnYlynPTQqeF6CXzo/uiXnVU
-X-Google-Smtp-Source: ABdhPJwTxe4jPifnTA8DA/5SKiYGUkj1ZIsdWZ9HmVzvADJNKdC1oLTIsr70n0LIVK8/3wFiyNGmCA==
-X-Received: by 2002:a17:906:7247:: with SMTP id n7mr72816825ejk.105.1594628362917;
-        Mon, 13 Jul 2020 01:19:22 -0700 (PDT)
+        bh=0aNCvV9gaXx1OdLaf4Ger1zIYJFx+Lp4b2FZO0AUo5U=;
+        b=qK41HOumbzWGrPQChao2WMJhaZZuDECWXrlKTT7w7+T8cfrAJhTTYyFsrju9u3j1Es
+         rUrW0HtUsbF/eNFxfybUcxmQnL4UaF2i9Lj8l9PPQQ6c168QVcdabxp5rINf6IoHOjrq
+         gzVpvuN1DRTXyRH0MvEsqWrXtD1WF6k+CCD0P7WsdFNNrpDkuOb+oOitwRqIBJIbUEmj
+         8bD2iNCr/iPMAGMsraUxboAehEXsSpWp9Z3t/ZpIePy/+AXSmwSM6ZkvhofV427d2vmi
+         VxKeKBRyoauNk60c7F9pxWPch0slGILAKyRnuHJ3cfPanqq/9hWgscNBIaMcbPHHhgYu
+         7f2w==
+X-Gm-Message-State: AOAM533gzlSUw6rcuZpnogRPqPnXis7QjWxxxIWgLOmgdM8gXyKBnFZh
+        3VLh+entBP32fwksW5vsrBA4jnsT
+X-Google-Smtp-Source: ABdhPJwIRVyGnRkZKSw7gkO9cNdqK9M+0WftOX2+K+hfDraCYnr6CZcCrY6/ShK5k5qVYlxUwv01Vg==
+X-Received: by 2002:a17:906:c155:: with SMTP id dp21mr69756497ejc.92.1594628371234;
+        Mon, 13 Jul 2020 01:19:31 -0700 (PDT)
 Received: from [192.168.43.17] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id aq25sm9329133ejc.11.2020.07.13.01.19.21
+        by smtp.gmail.com with ESMTPSA id p9sm9201135ejd.50.2020.07.13.01.19.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jul 2020 01:19:22 -0700 (PDT)
+        Mon, 13 Jul 2020 01:19:30 -0700 (PDT)
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <cover.1594546078.git.asml.silence@gmail.com>
  <edfa9852-695d-d122-91f8-66a888b482c0@kernel.dk>
@@ -98,8 +98,8 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: [RFC 0/9] scrap 24 bytes from io_kiocb
-Message-ID: <755ed6b1-ad23-ea48-6b15-1e7e358c1975@gmail.com>
-Date:   Mon, 13 Jul 2020 11:17:36 +0300
+Message-ID: <7368254d-1f2c-2cc9-1198-8a666f7f8864@gmail.com>
+Date:   Mon, 13 Jul 2020 11:17:46 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
@@ -157,7 +157,7 @@ one is easy to grep.
 > been getting closer to that already.
 
 It's definitely not a single patch. I'm going to prepare a series for
-discussion later, and then we'll see whether it worths it.
+discussion later, and then we'll see whether it worth it.
 
 
 > Definitely always interested in shrinking io_kiocb, just need to keep

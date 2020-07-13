@@ -2,68 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 177B021E1CF
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2020 23:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3C1321E1E0
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2020 23:09:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbgGMVAh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Jul 2020 17:00:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33744 "EHLO
+        id S1726338AbgGMVJb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Jul 2020 17:09:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbgGMVAh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Jul 2020 17:00:37 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32082C061755
-        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2020 14:00:37 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id y2so15046623ioy.3
-        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2020 14:00:37 -0700 (PDT)
+        with ESMTP id S1726325AbgGMVJb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Jul 2020 17:09:31 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D21A9C061755
+        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2020 14:09:30 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id f23so15074254iof.6
+        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2020 14:09:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=rUr4GvyNB8aSV8jPovxxmig4JjAndY/rOncXm/y71GM=;
-        b=GeIxqbuMZB5zNUZhaP7PEt2sHxWbw/EX624IV/PCpWA+8Fn1JIM8HINX7rFAeX6gGE
-         RCQx/4JD3aScS0/qy3S495EUmxUavlxb61czyHYL90xVqh1Rogelcr808bD6mf500bU0
-         94aZAhOBPyQu7uPSWc8zJGMCYJiBtVFho1hn6OupPLygJqScwSmhXwPoanhsczax5141
-         Q0rDHnS6bZ1wOAIBtYheIwVqXrhf21d6O25PD7YWpsXDrAzxSFk999VXltb2bxq5ue7Z
-         DwSnw6bhwJIl967qyXXOCCoXUQOpx98AXXd+Ek3epd06r+LSJmWsCqH+1C6Ew76g5EKE
-         7cTg==
+        bh=HhM8dC9kj4ZOktxI0B+N+OGmGJKxZTsWApDyJkX6Mjk=;
+        b=rstChivOOP6xuTufJEud3LAGu0cJ4WUWVIK+a21FwYiaX54E0wuQ86+8qPYzEWVmJf
+         KOmJpBrOXoTDyyUilt26hpOU1UTiIjULRbo9/c5iujvbAAtRCxJtY5NldJETj+YlXerX
+         CcJFQbR74+gEZsq4DPyYC7lx/453GacjpDYAJGUPgC7uKxJdhAiBpoUcisn2FjUjxVQv
+         LKZapPBJlzeYGb4Wy7HFRFA+q4xt5ciGeN76nDaDtaYs0flobbK775mhhPjvKBqn0Y/E
+         iw0bO9e7eEWNxRB+9WVQ8L2kYZy5ltNF1lhmWpfksIRzqLasRmReLGsp4LPTKhTSX4Ri
+         kURw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=rUr4GvyNB8aSV8jPovxxmig4JjAndY/rOncXm/y71GM=;
-        b=YBwXGlARlqLKd3zpW6qg9iQKGNgohoPZBrIKkmPBb78e0Xw8saoA3SyVz98M58fRtZ
-         8dvWtY0/t1sHgeMsakw9z0m6+GaAIWM6gfr2TwBs1tXYJ/36dletfQyLq/E0qahIWgag
-         DgywfG+6RmqDNicFiOwCcur+QjaM+EFBMwAM80fgkqWbMH1P0iuCnMF7AzVLKQob2sX2
-         6xteiBkRESXuEtrqRGpbVAZsP6hqnpLhfhLR7lfBb5PVa2gmtHaZ+d9Uk/ijTd0T4o4V
-         ME0rjUYqAZj9J0d3p4wh1xG4v1xjBxZtY9shd5XG1nXG83MJPFH2VIUKg6kA5bsXpjw5
-         E42w==
-X-Gm-Message-State: AOAM531qmtVHyw9UBZwFXyLREz45YiOMTAwACEcEjziJjpG4KLbmiWi5
-        LohpggD3GgRyBv/SpoO90b894EE4OAb9MA==
-X-Google-Smtp-Source: ABdhPJzgYC9xY6FnOrTcEDTY7KrSKBARFW9j7qycbv1LhP/2ufs7hP21wtav8Wd4JPRaRiPAdkz2mA==
-X-Received: by 2002:a02:cd91:: with SMTP id l17mr2191356jap.88.1594674035629;
-        Mon, 13 Jul 2020 14:00:35 -0700 (PDT)
+        bh=HhM8dC9kj4ZOktxI0B+N+OGmGJKxZTsWApDyJkX6Mjk=;
+        b=O7D40uGY2A33/pEhZ3dk4jByG6yNUiPFur7zpRy+mO4TaU3DuK83DLI3HU9wjw14Tz
+         TE7o/pCsTOpbr2hdWOcX1x2qG5TmvE538pnytM187LlzRfny+PgjNXN++zrbHXjyCWz9
+         zzsdJB9std+pJ8kbqovLqgzf7CvxNjREZgcGvUpksaCBwkeHT0jTCgcU2LtkLDqhmhHY
+         sQsTB3d/QLnzevHFz8gZqlT//9AHsRPHDv9aXw91HbPVUg2TcUasCCFbvisKJrphkm13
+         FCjU5khikWi0D9tTrVDwEYFjwRzTRonaBPtL5CNmRMS4iMB0i/sXjF1J0Wh9pOyLjntg
+         11zw==
+X-Gm-Message-State: AOAM531czZuEXMT8hq/EoGQrSKRB1aj4Rdba16OLpPHO63ZilrZa55q4
+        +6jQdcl0guUXWII9HpPfFh+qWkMZnTU9iw==
+X-Google-Smtp-Source: ABdhPJwxz1inYkSMV1fq+iBBmB3SGRqEoeXqgHvPS1Pq3qFurg8L9PV/y00NpUkbvYY3VKL5Pu5NHw==
+X-Received: by 2002:a02:c043:: with SMTP id u3mr2263387jam.39.1594674569813;
+        Mon, 13 Jul 2020 14:09:29 -0700 (PDT)
 Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k24sm9133914ilg.66.2020.07.13.14.00.34
+        by smtp.gmail.com with ESMTPSA id u3sm8051336iol.41.2020.07.13.14.09.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jul 2020 14:00:35 -0700 (PDT)
-Subject: Re: [RFC 0/9] scrap 24 bytes from io_kiocb
+        Mon, 13 Jul 2020 14:09:29 -0700 (PDT)
+Subject: Re: [PATCH 3/3] io_uring: follow **iovec idiom in io_import_iovec
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1594546078.git.asml.silence@gmail.com>
- <edfa9852-695d-d122-91f8-66a888b482c0@kernel.dk>
- <618bc9a5-420c-b176-df86-260734270f56@gmail.com>
- <3b3ee104-ee6b-7147-0677-bd0eb4efe76e@kernel.dk>
- <7368254d-1f2c-2cc9-1198-8a666f7f8864@gmail.com>
- <e1e53293-c57a-6c65-0e88-eb4414783f05@kernel.dk>
- <8776cf1b-c00d-26c3-7807-f76f8d9843de@gmail.com>
+References: <cover.1594669730.git.asml.silence@gmail.com>
+ <49c2ae6de356110544826092b5d08cb1927940ce.1594669730.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8789b1d2-2949-84be-58e4-fa56db348337@kernel.dk>
-Date:   Mon, 13 Jul 2020 15:00:34 -0600
+Message-ID: <e3ac43ac-be8c-2812-1008-6a66542a2592@kernel.dk>
+Date:   Mon, 13 Jul 2020 15:09:28 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <8776cf1b-c00d-26c3-7807-f76f8d9843de@gmail.com>
+In-Reply-To: <49c2ae6de356110544826092b5d08cb1927940ce.1594669730.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -72,69 +67,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/13/20 2:45 PM, Pavel Begunkov wrote:
-> On 13/07/2020 17:12, Jens Axboe wrote:
->> On 7/13/20 2:17 AM, Pavel Begunkov wrote:
->>> On 12/07/2020 23:32, Jens Axboe wrote:
->>>> On 7/12/20 11:34 AM, Pavel Begunkov wrote:
->>>>> On 12/07/2020 18:59, Jens Axboe wrote:
->>>>>> On 7/12/20 3:41 AM, Pavel Begunkov wrote:
->>>>>>> Make io_kiocb slimmer by 24 bytes mainly by revising lists usage. The
->>>>>>> drawback is adding extra kmalloc in draining path, but that's a slow
->>>>>>> path, so meh. It also frees some space for the deferred completion path
->>>>>>> if would be needed in the future, but the main idea here is to shrink it
->>>>>>> to 3 cachelines in the end.
->>>>>>>
->>>>>>> I'm not happy yet with a few details, so that's not final, but it would
->>>>>>> be lovely to hear some feedback.
->>>>>>
->>>>>> I think it looks pretty good, most of the changes are straight forward.
->>>>>> Adding a completion entry that shares the submit space is a good idea,
->>>>>> and really helps bring it together.
->>>>>>
->>>>>> From a quick look, the only part I'm not super crazy about is patch #3.
->>>>>
->>>>> Thanks!
->>>>>
->>>>>> I'd probably rather use a generic list name and not unionize the tw
->>>>>> lists.
->>>>>
->>>>> I don't care much, but without compiler's help always have troubles
->>>>> finding and distinguishing something as generic as "list".
->>>>
->>>> To me, it's easier to verify that we're doing the right thing when they
->>>> use the same list member. Otherwise you have to cross reference two
->>>> different names, easier to shoot yourself in the foot that way. So I'd
->>>> prefer just retaining it as 'list' or something generic.
->>>
->>> If you don't have objections, I'll just leave it "inflight_entry". This
->>> one is easy to grep.
->>
->> Sure, don't have strong feelings on the actual name.
->>
->>>>> BTW, I thought out how to bring it down to 3 cache lines, but that would
->>>>> require taking io_wq_work out of io_kiocb and kmalloc'ing it on demand.
->>>>> And there should also be a bunch of nice side effects like improving apoll.
->>>>
->>>> How would this work with the current use of io_wq_work as storage for
->>>> whatever bits we're hanging on to? I guess it could work with a prep
->>>> series first more cleanly separating it, though I do feel like we've
->>>> been getting closer to that already.
->>>
->>> It's definitely not a single patch. I'm going to prepare a series for
->>> discussion later, and then we'll see whether it worth it.
->>
->> Definitely not. Let's flesh this one out first, then we can move on.
-> 
-> But not a lot of work either.
+On 7/13/20 1:59 PM, Pavel Begunkov wrote:
+> @@ -3040,8 +3040,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+>  		}
+>  	}
+>  out_free:
+> -	if (!(req->flags & REQ_F_NEED_CLEANUP))
+> -		kfree(iovec);
+> +	kfree(iovec);
+>  	return ret;
+>  }
 
-Great
+Faster to do:
 
-> I've got a bit lost, do you mean to flesh out the idea or this
-> "loose 24 bytes" series?
+if (iovec)
+	kfree(iovec)
 
-The latter, but I'm already looking over your v2, so I guess that's
-taken care of.
+to avoid a stupid call. Kind of crazy, but I just verified with this one
+as well that it's worth about 1.3% CPU in my stress test.
+
+Apart from that, looks good, I just folded in that change.
 
 -- 
 Jens Axboe

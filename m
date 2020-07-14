@@ -2,141 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6363321E9D9
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2020 09:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08BD721EA6D
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2020 09:41:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725945AbgGNHRV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Jul 2020 03:17:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43652 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbgGNHRU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jul 2020 03:17:20 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23918C061755;
-        Tue, 14 Jul 2020 00:17:20 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id bm28so14071183edb.2;
-        Tue, 14 Jul 2020 00:17:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uL/pCchFQcexJop7i0+ssZbCLLEOeuiKRpXqF5hkshw=;
-        b=eqW/v9ZZKefry1pax8L2HmwnHPkOVRzIvlK/RLWWVW7bUHP3G72zhoZ3oAA1B4yXKb
-         V/NiglySA9Uj8RiGtj7nBbrL4XaD4rj5hierse+sCH0WZP6PYq6g+CtxdF3prF8uD8Zm
-         uIoF1XKZzWre/hvrQWN/SR0/cpSgsw1Fpgei0NQEMBJv/+Jhf51OvrFqMTqYieqwgEHA
-         jhu/xNT2N3JeMHceSabMf1UqgcgTzjVehyMBVHBaSA+AfDxgPSrvTA8pTKyHEzZyX7xr
-         44txf+jZTVvmiN/MS9fa3oB3TdIxaf+CGImLUYUyECxASh7jgFW4bADY/NMV6U5RDqQd
-         wmbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uL/pCchFQcexJop7i0+ssZbCLLEOeuiKRpXqF5hkshw=;
-        b=sxPGIhg1frVWh9SYTXYnPnqegGsGv1x6/q4bFKycJMoKHvMVtp8aok3rYjLCzCVYxH
-         ynBBkxtDAEXvJESwTQNmpdc5UDOgTnZOg2DIu7IcTtW2hw0Ww678ghgeKtWkNWu+tKdx
-         TtL0OgbuByI+4uVhS//An1jxfPv9OziZCVplGYUdWAH9N8WboAb96il1ja+b3qzC2eoI
-         0WVrFifpWgomy//or1M+IsPp6qFTe0Omz9G22BaSjYChLqsqnc6WBsqGHLcXuJybCSl1
-         F1kaKDkMnM/dkjhP1gOSAuTLf6gcQ+ooqoK2ziJYNJ5t5h096Ij0+fm8+HxIw1P7nvTh
-         kH4Q==
-X-Gm-Message-State: AOAM5316O4KW2A0LKyt79HrSOQB1FXztbZ7gZ79yiF0m/43gTaHPmw90
-        kdaBi+nCrB7+p/nttv5tKAh3xVnu
-X-Google-Smtp-Source: ABdhPJyOyDqBc6wAfG420LeV552PNPLJgCr8WuB7mw/z38O+KtAhud2J7s32DzzqGfrNrFy246AuVA==
-X-Received: by 2002:aa7:d4ca:: with SMTP id t10mr3119735edr.244.1594711038449;
-        Tue, 14 Jul 2020 00:17:18 -0700 (PDT)
-Received: from [192.168.43.236] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id z22sm13682826edx.72.2020.07.14.00.17.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jul 2020 00:17:17 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1594683622.git.asml.silence@gmail.com>
- <fc03ea42-8f83-1a49-2ea2-9697c797e76b@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH 0/5] batch completion + freeing improvements
-Message-ID: <4cfeff8d-cdd2-a705-4b59-0c0e1a6c213a@gmail.com>
-Date:   Tue, 14 Jul 2020 10:15:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1725883AbgGNHld (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Jul 2020 03:41:33 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:39375 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbgGNHlc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jul 2020 03:41:32 -0400
+X-Originating-IP: 50.39.163.217
+Received: from localhost (50-39-163-217.bvtn.or.frontiernet.net [50.39.163.217])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 8BCAA240007;
+        Tue, 14 Jul 2020 07:41:28 +0000 (UTC)
+Date:   Tue, 14 Jul 2020 00:41:26 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+Subject: [PATCH] tools: io_uring-bench: rename gettid to avoid conflict with
+ glibc
+Message-ID: <0d4af5e77c9f5f3fe490f0287072084ed8624c56.1594712356.git.josh@joshtriplett.org>
 MIME-Version: 1.0
-In-Reply-To: <fc03ea42-8f83-1a49-2ea2-9697c797e76b@kernel.dk>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 14/07/2020 04:08, Jens Axboe wrote:
-> On 7/13/20 5:41 PM, Pavel Begunkov wrote:
->> Different batching improvements, that's it.
->>
->> Unfortunately, I don't have a decent SSD/setup at hand to
->> benchmark it properly.
-> 
-> I do though, but I'm not seeing any improvement with this, whereas
-> some of the previous series made nice improvements... If anything
-> maybe it's a bit slower.
+Current glibc defines a gettid function, which results in the following error:
 
-Thanks for testing it, appreciate that. Probably, the array did
-something wrong with your caches, or the 2-step approach is to blame.
-I'll try to refine and/or resend parts after closer benchmarking.
+io_uring-bench.c:133:12: error: static declaration of ‘gettid’ follows non-static declaration
+  133 | static int gettid(void)
+      |            ^~~~~~
+In file included from /usr/include/unistd.h:1170,
+                 from io_uring-bench.c:27:
+/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:34:16: note: previous declaration of ‘gettid’ was here
+   34 | extern __pid_t gettid (void) __THROW;
+      |                ^~~~~~
 
-> 
->> p.s. if extra 32 pointers on stack would be a problem, I wanted for
->> long to put submit_state into ctx itself.
-> 
-> It's getting up there... But really depends on how early in the stack,
-> so 32 could _probably_ work, though usually batched on-stack counts
-> are a bit lower than that.
+Rename the syscall-based gettid to sys_gettid to avoid a name conflict.
 
-On a fresh head 250 bytes looks too much, I agree. That considering
-that io_uring is stacking on top of vfs or near that, and there are
-already fast_iovec/msg.
+Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+---
+Another alternative would be for io_uring-bench to count on recent
+glibc, and call settid without defining its own version.
 
+ tools/io_uring/io_uring-bench.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/io_uring/io_uring-bench.c b/tools/io_uring/io_uring-bench.c
+index 0f257139b003..850f0ee90828 100644
+--- a/tools/io_uring/io_uring-bench.c
++++ b/tools/io_uring/io_uring-bench.c
+@@ -130,7 +130,7 @@ static int io_uring_register_files(struct submitter *s)
+ 					s->nr_files);
+ }
+ 
+-static int gettid(void)
++static int sys_gettid(void)
+ {
+ 	return syscall(__NR_gettid);
+ }
+@@ -281,7 +281,7 @@ static void *submitter_fn(void *data)
+ 	struct io_sq_ring *ring = &s->sq_ring;
+ 	int ret, prepped;
+ 
+-	printf("submitter=%d\n", gettid());
++	printf("submitter=%d\n", sys_gettid());
+ 
+ 	srand48_r(pthread_self(), &s->rand);
+ 
 -- 
-Pavel Begunkov
+2.28.0.rc0
+

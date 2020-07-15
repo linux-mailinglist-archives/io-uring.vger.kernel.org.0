@@ -2,112 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2A52220F83
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jul 2020 16:36:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC7C3221170
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jul 2020 17:45:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729087AbgGOOf4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jul 2020 10:35:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52342 "EHLO
+        id S1725861AbgGOPoX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jul 2020 11:44:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729055AbgGOOfz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jul 2020 10:35:55 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A73F8C08C5DE
-        for <io-uring@vger.kernel.org>; Wed, 15 Jul 2020 07:35:55 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id m16so2471485pls.5
-        for <io-uring@vger.kernel.org>; Wed, 15 Jul 2020 07:35:55 -0700 (PDT)
+        with ESMTP id S1725835AbgGOPoX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jul 2020 11:44:23 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 681BDC061755
+        for <io-uring@vger.kernel.org>; Wed, 15 Jul 2020 08:44:23 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id t4so2389858iln.1
+        for <io-uring@vger.kernel.org>; Wed, 15 Jul 2020 08:44:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=yhR2xx3ll78zXx4v/LleHZDLIGASUAw7oXjwdcYoQnM=;
-        b=MBTmhayGzIbypNDEFm2+paSuwfcC+PzqE85tReoauMa8/vlEuTbLPAXgN9+8qVkcNT
-         yGNU7gl/zluURp9BUENw3LJ4rFqKK/8Ff3aRUbs7uTkYSeZwW3aDJgw4Kt3y+YyUVgap
-         0Zoy3gWJ2MC50r6ZcK2DVZ/eywPJseJ4IQfjEcO37x2ua0wTNQCE2y3Qf9A5N9IFiZH3
-         TV20PfmuxIw8NVCsuD+kmZ/Sgqsg/HqB0qdOSMeiMCizUz5tGze/hYcp6asxJeM5mtMB
-         DgMTMy20N6K6A7ufGOkrKyndioWzeqygDTq2Q7VudYC1FYDBSTz+eJgpCU7AeeAih/Ao
-         uuaQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=5VDzqNDhtdaEbf6M4ISMd6Vo5LLgkMPqTWY+wSFErh8=;
+        b=1fI7iOV4BTV02RxF4CsFEMYGHURsTDhtW7pXgR6j4mE6nX7mo61HYRGzuL8Opn5fsc
+         kzk+Aq16eHC7UcGb0Z8XEICz6u6fNzTuZTgRS+lEupKIvaL4Nb6agszYqM7nnYeyiUus
+         1QW5wwHAm/glAsn1m7o8eT+NFtQlJ2KatZvs08Oe0ADllxaLdRaLnszBMWOFgLhYwhv6
+         xpWp/pPxybuWEu2B4xhQm8BgnztqUiI3c6h2NI0t7Szk+R6bfR131sQ8YAv+i6q8+m9M
+         YZ42NpG1lxQbXVyZYrfZRYnkGYWZhiothALKkmyz6T6mrR8ikuQ/ywKymTBQfutTUsuG
+         VHRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=yhR2xx3ll78zXx4v/LleHZDLIGASUAw7oXjwdcYoQnM=;
-        b=oEeRcNYcKqkK0bWD08Ilf27cUtUiO40WLXFOBDeH8AVDvD/3ihPEq7TFQnU1dEfNUF
-         NhkCrfRZKGE6CgJfCPL3PYYGVw/UOJl5fTVI7k2A0RzrGL4YJi80UX7t2+md/LaIgiTc
-         YJt34Z+WQKqd2Gk04EAGPtoE0jJ3jjfvWarpUYbdppoROBD2laydPmq3psCJzg9QQLAW
-         o6hKnSXPCAY2DSxKR0WfQFiUupjfxGIVUsXDu8SuWSH1JlI3IV/FbUZ53sz/QLNz53Gp
-         gKP3xT7mEPt5EA1q/WAeDEzP2mbcyXWv0RD07BdEwPey518oSfdPj83AtfUzmcEovH6u
-         8q/Q==
-X-Gm-Message-State: AOAM533pIuwlOuO2BOIXYDZ9qpaGfdxvgpoInxEqnmLVzUXTM3iChj2g
-        09Df/pWvktw9foEYegKGFJ6h5Mm40OyrLA==
-X-Google-Smtp-Source: ABdhPJx+DB3uxvOEpxqYRcjJv7aAG86vLrcHnfdyXOzjYxTb/HN/VlnnEvVbdEuur4NmvWF0oRc3Vw==
-X-Received: by 2002:a17:90a:7406:: with SMTP id a6mr9616376pjg.152.1594823753194;
-        Wed, 15 Jul 2020 07:35:53 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:14c:4e33:547f:e274? ([2601:646:c200:1ef2:14c:4e33:547f:e274])
-        by smtp.gmail.com with ESMTPSA id y7sm2101353pfq.69.2020.07.15.07.35.51
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5VDzqNDhtdaEbf6M4ISMd6Vo5LLgkMPqTWY+wSFErh8=;
+        b=QNMd/OrEhsnp+44d/VHIi0waa8ztH7JDIwu95lOB3+fT52sYHb72A3oI5TchsoLlbk
+         dB6o0cuvG9LL8+FXxdBnPxJuMfYfcnMqbk6rf3tcEGRFw2v3P/UdAYthhKbaicO9sw5V
+         mfJypq3QsUCQaw1DaZf1XgadPvfiN8NQRdpP2lJwJ7ZWgCs0jBK5sycaW60m7ek9q8Qp
+         8wL3Z7TnHU6w3th8/gDB5a3WJf58q4YERqbHKTP/bznDSOSAVXimL95thOJ7x0jAUYzW
+         cKrRiD5OPi66fBDiZ7OUT0QR94x5nCoZNuxZPHJpEEyGRoQgWuVcHa++mpgsoXt73Y1l
+         KgQw==
+X-Gm-Message-State: AOAM5322hMgpLPxZaSyYcPDgcSCKJTrGBVhGzVtjr9QiRZMDON4CZqOK
+        qOqpJo5gGbUR1fzQZotdTISD+hVrSKw6Pg==
+X-Google-Smtp-Source: ABdhPJwca4eHkTdehyy79HQHMtbJC2GWkzIHkHlubF7tiGOPo7HRTPnWhw3JsaehubxQoo5LNKj5dA==
+X-Received: by 2002:a92:dc90:: with SMTP id c16mr122762iln.202.1594827862418;
+        Wed, 15 Jul 2020 08:44:22 -0700 (PDT)
+Received: from [192.168.1.58] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id u65sm1265579iod.45.2020.07.15.08.44.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jul 2020 07:35:51 -0700 (PDT)
+        Wed, 15 Jul 2020 08:44:21 -0700 (PDT)
+Subject: Re: [PATCH 0/4] quick unrelated cleanups
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1594806332.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <839dc20d-6fbf-b8d1-f16b-05d78e1a984b@kernel.dk>
+Date:   Wed, 15 Jul 2020 09:44:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <cover.1594806332.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: strace of io_uring events?
-Date:   Wed, 15 Jul 2020 07:35:50 -0700
-Message-Id: <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
-References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
-Cc:     strace-devel@lists.strace.io, io-uring@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-X-Mailer: iPhone Mail (17F80)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On 7/15/20 3:46 AM, Pavel Begunkov wrote:
+> Probably, can be picked separately, but bundled for
+> convenience.
+> 
+> Pavel Begunkov (4):
+>   io_uring: inline io_req_work_grab_env()
+>   io_uring: remove empty cleanup of OP_OPEN* reqs
+>   io_uring: alloc ->io in io_req_defer_prep()
+>   io_uring/io-wq: move RLIMIT_FSIZE to io-wq
+> 
+>  fs/io-wq.c    |  1 +
+>  fs/io-wq.h    |  1 +
+>  fs/io_uring.c | 95 +++++++++++++++++++--------------------------------
+>  3 files changed, 37 insertions(+), 60 deletions(-)
 
+Look (and test) fine, applied. Thanks!
 
-> On Jul 15, 2020, at 4:12 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
->=20
-> =EF=BB=BFHi,
->=20
-> This thread is to discuss the possibility of stracing requests
-> submitted through io_uring.   I'm not directly involved in io_uring
-> development, so I'm posting this out of  interest in using strace on
-> processes utilizing io_uring.
->=20
-> io_uring gives the developer a way to bypass the syscall interface,
-> which results in loss of information when tracing.  This is a strace
-> fragment on  "io_uring-cp" from liburing:
->=20
-> io_uring_enter(5, 40, 0, 0, NULL, 8)    =3D 40
-> io_uring_enter(5, 1, 0, 0, NULL, 8)     =3D 1
-> io_uring_enter(5, 1, 0, 0, NULL, 8)     =3D 1
-> ...
->=20
-> What really happens are read + write requests.  Without that
-> information the strace output is mostly useless.
->=20
-> This loss of information is not new, e.g. calls through the vdso or
-> futext fast paths are also invisible to strace.  But losing filesystem
-> I/O calls are a major blow, imo.
->=20
-> What do people think?
->=20
-> =46rom what I can tell, listing the submitted requests on
-> io_uring_enter() would not be hard.  Request completion is
-> asynchronous, however, and may not require  io_uring_enter() syscall.
-> Am I correct?
->=20
-> Is there some existing tracing infrastructure that strace could use to
-> get async completion events?  Should we be introducing one?
->=20
->=20
+-- 
+Jens Axboe
 
-Let=E2=80=99s add some seccomp folks. We probably also want to be able to ru=
-n seccomp-like filters on io_uring requests. So maybe io_uring should call i=
-nto seccomp-and-tracing code for each action.=

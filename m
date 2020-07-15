@@ -2,52 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C192207CD
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jul 2020 10:51:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C6F8220804
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jul 2020 11:02:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730418AbgGOIv0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jul 2020 04:51:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55706 "EHLO
+        id S1729983AbgGOJCJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jul 2020 05:02:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729618AbgGOIvZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jul 2020 04:51:25 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92D42C061755;
-        Wed, 15 Jul 2020 01:51:25 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id n26so1373982ejx.0;
-        Wed, 15 Jul 2020 01:51:25 -0700 (PDT)
+        with ESMTP id S1728250AbgGOJCI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jul 2020 05:02:08 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4193C061755;
+        Wed, 15 Jul 2020 02:02:07 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id ga4so1350331ejb.11;
+        Wed, 15 Jul 2020 02:02:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=txoJOOAr0ku04ztfGeJfOmNP/IA3KSD8q9V1QgCkZzQ=;
-        b=sReJIDJW/NSiPJ1XNNo9NxMS0ReT2pnz5V+fPJCnR9h+Puign104X+rYs4UagHkN0R
-         iUlJdJ1TKj8eNSW2tvIkLH760la6vHqJACxyjWF8qrGFXwXzr/JYOPmQOlCUCqHMOWaD
-         rTRyYB9Y3lBmFK1LyuszZXdmCDzy1j1yOUQhobEIO0vwnFbFTvmdNdPQtb+2Nro2PLT7
-         6TkGT0m4xPkV51Mfe++v2fZ5nIZS2ydtIqIxK4x8egOm5mq7+yPVYMWF4y/GlZR0Nj1I
-         O0gydvUU+ZhIWcyu1cbpNCHL8xj4h9D3YxbNHeAbZGOyE4edkw/oNOuRZKiE+WfeVBg4
-         R/iA==
+        bh=zLtHd+L1gvf9Mf73u2Vk+fGKGwNYy8l9W26vD58LKbY=;
+        b=U4PE0wsxb5dm52D6WG63DhDxMllhdzx76pIDkWl8rVmzALIWt/cPi62NBoHIqJz3ic
+         2bYNBQ9JUreZRnSvBb7aF39dIDx6sLIcBgbyIXq+y18hg4DE0mDA1PXO39YudWPaUfbB
+         +uVCLUqWz8aI5vNPpRAJAfcRfNbWw8eez5vbJliCNzM/g4KWVqmyz1dQkEaHFHrRmC01
+         IesWp9RKWl73suFiSpQTeKERboqXqtASbXdMzbVLFXybUH/jWlR+WwiXV7jGjwdO2aeC
+         fZlwx1ftu7dUZqxJDKeBbACsy6NA4mpiPSieFqWsYuagNJyEOLyLPGxXZ3QKnk6+iG7I
+         cGpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=txoJOOAr0ku04ztfGeJfOmNP/IA3KSD8q9V1QgCkZzQ=;
-        b=nXTnc7paaWFEl0xIvZYc0TIrBfPISXzJqk8/NoeRU7WRz1r6Q4/Agbka7WqWtpjGLr
-         j8+QyBw9Q3NdSaVBX4xsAMF8dxUM5viTc+9hPDVFw2TP10ZoDy0OOj4uxekZM3U5i/eP
-         69/dnmyJ5phnT7X899YfSW0fd1cy5dFnQ9BPASSFhnvaC7ji4LahcHYjM2hb1szFR4jB
-         ER1SfqgIvqAjm3gdDQQXqdPqpdv/Vnq1eRPV0bjZ/LE2Aq+nz4kvARsNWhYIpkmLazcb
-         4ZLm00wgHYJ1hZ3gzdFRw8sSAx+OAXNp5K7dc+IZCG1onAuM3cB/xMein/DE3C/7/k6F
-         oi2g==
-X-Gm-Message-State: AOAM532Oe7KrqQmaz3XoRDxx3/JT0P7Thk30Abywvn+9wgklTvV9pReS
-        6pmudYzbjEsoIOUh0M46Dym4ZEaKZLE=
-X-Google-Smtp-Source: ABdhPJxDGucO9Kx1cwEfPk29VnCtghOTl6tenRsE/JEDH1l8huAOVBLVaNS6gcNZQyETV2nIqXCiPg==
-X-Received: by 2002:a17:906:fa9b:: with SMTP id lt27mr7929676ejb.365.1594803083844;
-        Wed, 15 Jul 2020 01:51:23 -0700 (PDT)
+        bh=zLtHd+L1gvf9Mf73u2Vk+fGKGwNYy8l9W26vD58LKbY=;
+        b=QHkuMOVLcDoFBvpa3ZHUo6ZmdEsnKkgTzsWXTa7ZSsMudZKRyYRmi77iWwAP8X1bKs
+         XvLMprlT99ZPdPzwVFAleDJiGPChFrOfraLzY8tqr3Jf+/4g1RecLqWpeI/Oug1z/Uv/
+         LDG8VH8bq8OYzLDLfFqXljDXMTqClK4upnvO5Y/E9fOqAxypFBBrF0wqP1nU5QfZINfs
+         ZFk176Nj1kCpLGfOLUKaEmI8fZVY31by7+30i3G/alIFpD+fsfSldKT46Bhkenr1scY+
+         vIsKF8I/rdIy8rQOT+jU4z2Ev/bw+h96fgoGzEpQPKKXrdaP6mXPLUKSB4hlj+rJ67AM
+         460Q==
+X-Gm-Message-State: AOAM532D2YmvqdnQvWB+1+7oZzcERm6fvW+tdTtyv7QXIcrWEhrZ6c+1
+        rYXH7wg8423HrE108n+u3XfROZQ9bPs=
+X-Google-Smtp-Source: ABdhPJxMw6SQ5yL8X9owvNPMH0CVQQKkqEb9cHoW8Hhw3M/5RBiDT1kMx4yjEn28VEOMLptwqkQHNA==
+X-Received: by 2002:a17:906:38d6:: with SMTP id r22mr8276033ejd.219.1594803726163;
+        Wed, 15 Jul 2020 02:02:06 -0700 (PDT)
 Received: from [192.168.43.236] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id u13sm1429627ejc.72.2020.07.15.01.51.21
+        by smtp.gmail.com with ESMTPSA id v9sm1451053ejd.102.2020.07.15.02.02.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jul 2020 01:51:23 -0700 (PDT)
+        Wed, 15 Jul 2020 02:02:05 -0700 (PDT)
+Subject: Re: [PATCH 0/3] readfile(2): a new syscall to make open/read/close
+ faster
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Pavel Machek <pavel@denx.de>, Greg KH <gregkh@linuxfoundation.org>,
         Jan Ziak <0xe2.0x9a.0x9b@gmail.com>,
@@ -64,7 +67,7 @@ References: <CAODFU0q6CrUB_LkSdrbp5TQ4Jm6Sw=ZepZwD-B7-aFudsOvsig@mail.gmail.com>
  <CAJfpegvroouw5ndHv+395w5PP1c+pUyp=-T8qhhvSnFbhbRehg@mail.gmail.com>
  <7584d754-2044-a892-cf29-65259b9c4eb1@gmail.com>
  <CAJfpegvkw5Exptz=gY5bRy2U8GjvTo+muBHsgdF_PA5=hyhmSA@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <b3adac43-f4ec-7820-1297-59eee206f308@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -108,78 +111,80 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 0/3] readfile(2): a new syscall to make open/read/close
- faster
-Message-ID: <b3adac43-f4ec-7820-1297-59eee206f308@gmail.com>
-Date:   Wed, 15 Jul 2020 11:49:36 +0300
+Message-ID: <df17d629-59ea-3262-fae4-28c05e5c9294@gmail.com>
+Date:   Wed, 15 Jul 2020 12:00:19 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegvkw5Exptz=gY5bRy2U8GjvTo+muBHsgdF_PA5=hyhmSA@mail.gmail.com>
+In-Reply-To: <b3adac43-f4ec-7820-1297-59eee206f308@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 15/07/2020 11:41, Miklos Szeredi wrote:
-> On Wed, Jul 15, 2020 at 10:33 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> On 14/07/2020 14:55, Miklos Szeredi wrote:
->>> On Tue, Jul 14, 2020 at 1:36 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>>
->>>> On 14/07/2020 11:07, Miklos Szeredi wrote:
->>>>> On Tue, Jul 14, 2020 at 8:51 AM Pavel Machek <pavel@denx.de> wrote:
->>>>>>
->>>>>> Hi!
->>>>>>
->>>>>>>> At first, I thought that the proposed system call is capable of
->>>>>>>> reading *multiple* small files using a single system call - which
->>>>>>>> would help increase HDD/SSD queue utilization and increase IOPS (I/O
->>>>>>>> operations per second) - but that isn't the case and the proposed
->>>>>>>> system call can read just a single file.
->>>>>>>
->>>>>>> If you want to do this for multple files, use io_ring, that's what it
->>>>>>> was designed for.  I think Jens was going to be adding support for the
->>>>>>> open/read/close pattern to it as well, after some other more pressing
->>>>>>> features/fixes were finished.
->>>>>>
->>>>>> What about... just using io_uring for single file, too? I'm pretty
->>>>>> sure it can be wrapped in a library that is simple to use, avoiding
->>>>>> need for new syscall.
->>>>>
->>>>> Just wondering:  is there a plan to add strace support to io_uring?
->>>>> And I don't just mean the syscalls associated with io_uring, but
->>>>> tracing the ring itself.
->>>>
->>>> What kind of support do you mean? io_uring is asynchronous in nature
->>>> with all intrinsic tracing/debugging/etc. problems of such APIs.
->>>> And there are a lot of handy trace points, are those not enough?
->>>>
->>>> Though, this can be an interesting project to rethink how async
->>>> APIs are worked with.
+On 15/07/2020 11:49, Pavel Begunkov wrote:
+> On 15/07/2020 11:41, Miklos Szeredi wrote:
+>> On Wed, Jul 15, 2020 at 10:33 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
 >>>
->>> Yeah, it's an interesting problem.  The uring has the same events, as
->>> far as I understand, that are recorded in a multithreaded strace
->>> output (syscall entry, syscall exit); nothing more is needed>
->>> I do think this needs to be integrated into strace(1), otherwise the
->>> usefulness of that tool (which I think is *very* high) would go down
->>> drastically as io_uring usage goes up.
+>>> On 14/07/2020 14:55, Miklos Szeredi wrote:
+>>>> On Tue, Jul 14, 2020 at 1:36 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>>
+>>>>> On 14/07/2020 11:07, Miklos Szeredi wrote:
+>>>>>> On Tue, Jul 14, 2020 at 8:51 AM Pavel Machek <pavel@denx.de> wrote:
+>>>>>>>
+>>>>>>> Hi!
+>>>>>>>
+>>>>>>>>> At first, I thought that the proposed system call is capable of
+>>>>>>>>> reading *multiple* small files using a single system call - which
+>>>>>>>>> would help increase HDD/SSD queue utilization and increase IOPS (I/O
+>>>>>>>>> operations per second) - but that isn't the case and the proposed
+>>>>>>>>> system call can read just a single file.
+>>>>>>>>
+>>>>>>>> If you want to do this for multple files, use io_ring, that's what it
+>>>>>>>> was designed for.  I think Jens was going to be adding support for the
+>>>>>>>> open/read/close pattern to it as well, after some other more pressing
+>>>>>>>> features/fixes were finished.
+>>>>>>>
+>>>>>>> What about... just using io_uring for single file, too? I'm pretty
+>>>>>>> sure it can be wrapped in a library that is simple to use, avoiding
+>>>>>>> need for new syscall.
+>>>>>>
+>>>>>> Just wondering:  is there a plan to add strace support to io_uring?
+>>>>>> And I don't just mean the syscalls associated with io_uring, but
+>>>>>> tracing the ring itself.
+>>>>>
+>>>>> What kind of support do you mean? io_uring is asynchronous in nature
+>>>>> with all intrinsic tracing/debugging/etc. problems of such APIs.
+>>>>> And there are a lot of handy trace points, are those not enough?
+>>>>>
+>>>>> Though, this can be an interesting project to rethink how async
+>>>>> APIs are worked with.
+>>>>
+>>>> Yeah, it's an interesting problem.  The uring has the same events, as
+>>>> far as I understand, that are recorded in a multithreaded strace
+>>>> output (syscall entry, syscall exit); nothing more is needed>
+>>>> I do think this needs to be integrated into strace(1), otherwise the
+>>>> usefulness of that tool (which I think is *very* high) would go down
+>>>> drastically as io_uring usage goes up.
+>>>
+>>> Not touching the topic of usefulness of strace + io_uring, but I'd rather
+>>> have a tool that solves a problem, than a problem that created and honed
+>>> for a tool.
 >>
->> Not touching the topic of usefulness of strace + io_uring, but I'd rather
->> have a tool that solves a problem, than a problem that created and honed
->> for a tool.
+>> Sorry, I'm not getting the metaphor.  Can you please elaborate?
 > 
-> Sorry, I'm not getting the metaphor.  Can you please elaborate?
+> Sure, I mean _if_ there are tools that conceptually suit better, I'd
+> prefer to work with them, then trying to shove a new and possibly alien
+> infrastructure into strace.
+> 
+> But my knowledge of strace is very limited, so can't tell whether that's
+> the case. E.g. can it utilise static trace points?
 
-Sure, I mean _if_ there are tools that conceptually suit better, I'd
-prefer to work with them, then trying to shove a new and possibly alien
-infrastructure into strace.
-
-But my knowledge of strace is very limited, so can't tell whether that's
-the case. E.g. can it utilise static trace points?
-
+I think, if you're going to push this idea, we should start a new thread
+CC'ing strace devs.
+	
 -- 
 Pavel Begunkov

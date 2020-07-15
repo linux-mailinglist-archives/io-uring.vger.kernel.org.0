@@ -2,142 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F3802211F7
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jul 2020 18:09:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DA7122135C
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jul 2020 19:11:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbgGOQIw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jul 2020 12:08:52 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:45418 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726907AbgGOQIr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jul 2020 12:08:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594829298;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BvLLniNma7qFXHVXKr+V0FVyWHhRwlayjCU6NK0NUYE=;
-        b=DOiQ7MLUIje3p1oWz/ilpQ/Og1/f9DDDVy+MvbU4FKPBqXaaok6qpxKo4HLtsly71uHV79
-        1YP5kQaOpgRXMltE8aIfcCzhtemHfKVmUWxNh3ljMMAZEEQtJU3HN74ZFiivkbf3R+BGH8
-        G5ETXnY61QkwdBJ3nHGidBg2T7MU/Oc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-259-orQPS7gsM5uj0AkVb_lqTg-1; Wed, 15 Jul 2020 12:08:14 -0400
-X-MC-Unique: orQPS7gsM5uj0AkVb_lqTg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3F11118FF66A;
-        Wed, 15 Jul 2020 16:08:12 +0000 (UTC)
-Received: from bogon.redhat.com (ovpn-13-249.pek2.redhat.com [10.72.13.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6EFA16FDD1;
-        Wed, 15 Jul 2020 16:08:10 +0000 (UTC)
-From:   Zorro Lang <zlang@redhat.com>
-To:     fstests@vger.kernel.org
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/3] fsstress: fix memory leak in do_aio_rw
-Date:   Thu, 16 Jul 2020 00:07:55 +0800
-Message-Id: <20200715160755.14392-4-zlang@redhat.com>
-In-Reply-To: <20200715160755.14392-1-zlang@redhat.com>
-References: <20200715160755.14392-1-zlang@redhat.com>
+        id S1725838AbgGORLl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jul 2020 13:11:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48402 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbgGORLk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jul 2020 13:11:40 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4394C061755;
+        Wed, 15 Jul 2020 10:11:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=/3C71ZT3/i2h5AJy/cEm92ILo4xf+uGspmUX8gIFfeA=; b=MAVaNZA+4wpy8N4a8DV7/Ey1CO
+        GcBUwEULIN7wwZiVhAlrDdIJFQD9VpE3iPyjIIGRbhVdrbIZuUM38ANGXN5h7cYqbCSfuiKOa/nqA
+        fmwc29uOkslNoqgBO46J36qQjj44j+13NO7DbCzSI+GnahliapIMXgNYoHkZ6MM7Jw1O9gwKlyqna
+        TfloKaHI+Mqvj+ASJdKE89s34OEQ0qPFsHatLjeKnZoULJs77ihoOz1LmVhGvxpsEotOUlx/CCC2I
+        X3mBTnliBCoyp9ymhP+9TSGaUc+j+L2wOHjgrvaoMPJmMFy7xGA1TUlTtz3X8DpGZT2lNo5ZWdUGD
+        uLnap6ng==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jvkwM-00022G-Uq; Wed, 15 Jul 2020 17:11:31 +0000
+Date:   Wed, 15 Jul 2020 18:11:30 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Stefano Garzarella <sgarzare@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: strace of io_uring events?
+Message-ID: <20200715171130.GG12769@casper.infradead.org>
+References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
+ <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If io_submit or io_getevents fails, the do_aio_rw() won't free the
-"buf" and cause memory leak.
+On Wed, Jul 15, 2020 at 07:35:50AM -0700, Andy Lutomirski wrote:
+> > On Jul 15, 2020, at 4:12 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > 
+> > <feff>Hi,
 
-Signed-off-by: Zorro Lang <zlang@redhat.com>
----
- ltp/fsstress.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+feff?  Are we doing WTF-16 in email now?  ;-)
 
-diff --git a/ltp/fsstress.c b/ltp/fsstress.c
-index a11206d4..410a2437 100644
---- a/ltp/fsstress.c
-+++ b/ltp/fsstress.c
-@@ -2099,8 +2099,7 @@ do_aio_rw(int opno, long r, int flags)
- 	if (!get_fname(FT_REGFILE, r, &f, NULL, NULL, &v)) {
- 		if (v)
- 			printf("%d/%d: do_aio_rw - no filename\n", procid, opno);
--		free_pathname(&f);
--		return;
-+		goto aio_out3;
- 	}
- 	fd = open_path(&f, flags|O_DIRECT);
- 	e = fd < 0 ? errno : 0;
-@@ -2109,16 +2108,13 @@ do_aio_rw(int opno, long r, int flags)
- 		if (v)
- 			printf("%d/%d: do_aio_rw - open %s failed %d\n",
- 			       procid, opno, f.path, e);
--		free_pathname(&f);
--		return;
-+		goto aio_out3;
- 	}
- 	if (fstat64(fd, &stb) < 0) {
- 		if (v)
- 			printf("%d/%d: do_aio_rw - fstat64 %s failed %d\n",
- 			       procid, opno, f.path, errno);
--		free_pathname(&f);
--		close(fd);
--		return;
-+		goto aio_out2;
- 	}
- 	inode_info(st, sizeof(st), &stb, v);
- 	if (!iswrite && stb.st_size == 0) {
-@@ -2150,6 +2146,12 @@ do_aio_rw(int opno, long r, int flags)
- 	else if (len > diob.d_maxiosz)
- 		len = diob.d_maxiosz;
- 	buf = memalign(diob.d_mem, len);
-+	if (!buf) {
-+		if (v)
-+			printf("%d/%d: do_aio_rw - memalign failed\n",
-+			       procid, opno);
-+		goto aio_out2;
-+	}
- 
- 	if (iswrite) {
- 		off = (off64_t)(lr % MIN(stb.st_size + (1024 * 1024), MAXFSIZE));
-@@ -2166,27 +2168,26 @@ do_aio_rw(int opno, long r, int flags)
- 		if (v)
- 			printf("%d/%d: %s - io_submit failed %d\n",
- 			       procid, opno, iswrite ? "awrite" : "aread", e);
--		free_pathname(&f);
--		close(fd);
--		return;
-+		goto aio_out1;
- 	}
- 	if ((e = io_getevents(io_ctx, 1, 1, &event, NULL)) != 1) {
- 		if (v)
- 			printf("%d/%d: %s - io_getevents failed %d\n",
- 			       procid, opno, iswrite ? "awrite" : "aread", e);
--		free_pathname(&f);
--		close(fd);
--		return;
-+		goto aio_out1;
- 	}
- 
- 	e = event.res != len ? event.res2 : 0;
--	free(buf);
- 	if (v)
- 		printf("%d/%d: %s %s%s [%lld,%d] %d\n",
- 		       procid, opno, iswrite ? "awrite" : "aread",
- 		       f.path, st, (long long)off, (int)len, e);
--	free_pathname(&f);
-+ aio_out1:
-+	free(buf);
-+ aio_out2:
- 	close(fd);
-+ aio_out3:
-+	free_pathname(&f);
- }
- #endif
- 
--- 
-2.20.1
+> > 
+> > This thread is to discuss the possibility of stracing requests
+> > submitted through io_uring.   I'm not directly involved in io_uring
+> > development, so I'm posting this out of  interest in using strace on
+> > processes utilizing io_uring.
+> > 
+> > io_uring gives the developer a way to bypass the syscall interface,
+> > which results in loss of information when tracing.  This is a strace
+> > fragment on  "io_uring-cp" from liburing:
+> > 
+> > io_uring_enter(5, 40, 0, 0, NULL, 8)    = 40
+> > io_uring_enter(5, 1, 0, 0, NULL, 8)     = 1
+> > io_uring_enter(5, 1, 0, 0, NULL, 8)     = 1
+> > ...
+> > 
+> > What really happens are read + write requests.  Without that
+> > information the strace output is mostly useless.
+> > 
+> > This loss of information is not new, e.g. calls through the vdso or
+> > futext fast paths are also invisible to strace.  But losing filesystem
+> > I/O calls are a major blow, imo.
+> > 
+> > What do people think?
+> > 
+> > From what I can tell, listing the submitted requests on
+> > io_uring_enter() would not be hard.  Request completion is
+> > asynchronous, however, and may not require  io_uring_enter() syscall.
+> > Am I correct?
+> > 
+> > Is there some existing tracing infrastructure that strace could use to
+> > get async completion events?  Should we be introducing one?
+> > 
+> > 
+> 
+> Let’s add some seccomp folks. We probably also want to be able to run seccomp-like filters on io_uring requests. So maybe io_uring should call into seccomp-and-tracing code for each action.
 
+Adding Stefano since he had a complementary proposal for iouring
+restrictions that weren't exactly seccomp.

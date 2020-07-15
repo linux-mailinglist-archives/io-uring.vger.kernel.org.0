@@ -2,97 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DA7122135C
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jul 2020 19:11:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAA20221501
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jul 2020 21:22:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725838AbgGORLl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jul 2020 13:11:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48402 "EHLO
+        id S1726776AbgGOTWs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jul 2020 15:22:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbgGORLk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jul 2020 13:11:40 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4394C061755;
-        Wed, 15 Jul 2020 10:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=/3C71ZT3/i2h5AJy/cEm92ILo4xf+uGspmUX8gIFfeA=; b=MAVaNZA+4wpy8N4a8DV7/Ey1CO
-        GcBUwEULIN7wwZiVhAlrDdIJFQD9VpE3iPyjIIGRbhVdrbIZuUM38ANGXN5h7cYqbCSfuiKOa/nqA
-        fmwc29uOkslNoqgBO46J36qQjj44j+13NO7DbCzSI+GnahliapIMXgNYoHkZ6MM7Jw1O9gwKlyqna
-        TfloKaHI+Mqvj+ASJdKE89s34OEQ0qPFsHatLjeKnZoULJs77ihoOz1LmVhGvxpsEotOUlx/CCC2I
-        X3mBTnliBCoyp9ymhP+9TSGaUc+j+L2wOHjgrvaoMPJmMFy7xGA1TUlTtz3X8DpGZT2lNo5ZWdUGD
-        uLnap6ng==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jvkwM-00022G-Uq; Wed, 15 Jul 2020 17:11:31 +0000
-Date:   Wed, 15 Jul 2020 18:11:30 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Stefano Garzarella <sgarzare@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: strace of io_uring events?
-Message-ID: <20200715171130.GG12769@casper.infradead.org>
-References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
- <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
+        with ESMTP id S1726661AbgGOTWs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jul 2020 15:22:48 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D847BC061755
+        for <io-uring@vger.kernel.org>; Wed, 15 Jul 2020 12:22:47 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id a21so3346331ejj.10
+        for <io-uring@vger.kernel.org>; Wed, 15 Jul 2020 12:22:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Dy7Ks+G/TEY13hlyA6NE2O4raUgka82zeTtioFQbzhI=;
+        b=H2gwz2kR1IKY7h8K89QhetnaX7SOZJVsHMIR00dijjorTmGu/FPFU02Qj6kwQZeiuk
+         gH+QA95s9Q5jWlKw0WAbQfxkLIiilI7KWajRgEqXBolI1E9IE4M0nClqjkauxZ3Q8DTC
+         U7CVdfv+Sd4rKmwCx3jznVu47v1w3afteZJXwjlnkZQoo7oF90XSg27D+cFBLPeEDSBo
+         3ph9y6bi+bWQs7tVtCXdgdxtAHLMhIYRDe1z+AnHfgiRkY6VD+kyarU4fISpOlkfL4go
+         YcfxvdXxUmMF5Cg9OiGKgUoukqq0iLdjssUE0rhxY/eedXzsoPwWscJepV8kK721S2yI
+         llBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Dy7Ks+G/TEY13hlyA6NE2O4raUgka82zeTtioFQbzhI=;
+        b=PUhHPCruN79b53CXf7L653C2b3Wqd5OnnoB54EYJ2TKE2Wv4c8AsCxQDsRvXnwi8hz
+         qfSYCczskHp70X+4DkN9eVHRDpmBgH07fsHvRKiM4yd4G4bUaLJIZQ4fB8x8eXX0YK0E
+         wn6kRze7ANW3ffp0XKDUY7Yva+rbnX+u8m5s1a8WmWE1mioWf909Oarbu+lhGGVojL1k
+         mx8icz2aghldXCMR4LYjMNkVBHTfE7OuKxhoI0BFQvWVxAVjmfKvPdwvJWPWRRyhzpCx
+         JRILYkuO3JzMkeN5JItyJLzwe73xxSUDCa+Pj+4zl400pwkhpTvo/9me3oJ/u75UjZh4
+         ET5Q==
+X-Gm-Message-State: AOAM532jK7U2E3AhYATB/agZjz8oKCGMdjL+Fcq05ra4F/zjO2IN9vOY
+        NWpD4okm4SeClCeXqY3KMHC9jH6b
+X-Google-Smtp-Source: ABdhPJw8qEgfdk2i8EquNTTtY9twwG7h7AekqjMNdQq4CeU7IRr3zMXdUBfw5xVHF9GAZEj2gVpSlg==
+X-Received: by 2002:a17:906:94c4:: with SMTP id d4mr464171ejy.232.1594840966417;
+        Wed, 15 Jul 2020 12:22:46 -0700 (PDT)
+Received: from localhost.localdomain ([5.100.193.69])
+        by smtp.gmail.com with ESMTPSA id v9sm2894578ejd.102.2020.07.15.12.22.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2020 12:22:45 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 5.8] io_uring: fix recvmsg selected buf leak
+Date:   Wed, 15 Jul 2020 22:20:45 +0300
+Message-Id: <5b7c61cc77e0b85a4cfecf768be1c3982eb8ae05.1594840376.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jul 15, 2020 at 07:35:50AM -0700, Andy Lutomirski wrote:
-> > On Jul 15, 2020, at 4:12 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > 
-> > <feff>Hi,
+io_recvmsg() doesn't free memory allocated for struct io_buffer.
+Fix it.
 
-feff?  Are we doing WTF-16 in email now?  ;-)
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
 
-> > 
-> > This thread is to discuss the possibility of stracing requests
-> > submitted through io_uring.   I'm not directly involved in io_uring
-> > development, so I'm posting this out of  interest in using strace on
-> > processes utilizing io_uring.
-> > 
-> > io_uring gives the developer a way to bypass the syscall interface,
-> > which results in loss of information when tracing.  This is a strace
-> > fragment on  "io_uring-cp" from liburing:
-> > 
-> > io_uring_enter(5, 40, 0, 0, NULL, 8)    = 40
-> > io_uring_enter(5, 1, 0, 0, NULL, 8)     = 1
-> > io_uring_enter(5, 1, 0, 0, NULL, 8)     = 1
-> > ...
-> > 
-> > What really happens are read + write requests.  Without that
-> > information the strace output is mostly useless.
-> > 
-> > This loss of information is not new, e.g. calls through the vdso or
-> > futext fast paths are also invisible to strace.  But losing filesystem
-> > I/O calls are a major blow, imo.
-> > 
-> > What do people think?
-> > 
-> > From what I can tell, listing the submitted requests on
-> > io_uring_enter() would not be hard.  Request completion is
-> > asynchronous, however, and may not require  io_uring_enter() syscall.
-> > Am I correct?
-> > 
-> > Is there some existing tracing infrastructure that strace could use to
-> > get async completion events?  Should we be introducing one?
-> > 
-> > 
-> 
-> Let’s add some seccomp folks. We probably also want to be able to run seccomp-like filters on io_uring requests. So maybe io_uring should call into seccomp-and-tracing code for each action.
+1. This one is ugly, but automatically mergeable.
+I have a half prepared set for-5.9.
 
-Adding Stefano since he had a complementary proposal for iouring
-restrictions that weren't exactly seccomp.
+2. to reproduce run
+sudo sh -c 'for i in $(seq 1 100000000); do ./send_recvmsg; done'
+
+and look for growing "kmalloc-32" slab
+p.s. test(1, 0) in send_recvmsg.c is the one leaking
+
+ fs/io_uring.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 9fd7e69696c3..74bc4a04befa 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3845,10 +3845,16 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock)
+ 
+ 		ret = __sys_recvmsg_sock(sock, &kmsg->msg, req->sr_msg.msg,
+ 						kmsg->uaddr, flags);
+-		if (force_nonblock && ret == -EAGAIN)
+-			return io_setup_async_msg(req, kmsg);
++		if (force_nonblock && ret == -EAGAIN) {
++			ret = io_setup_async_msg(req, kmsg);
++			if (ret != -EAGAIN)
++				kfree(kbuf);
++			return ret;
++		}
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
++		if (kbuf)
++			kfree(kbuf);
+ 	}
+ 
+ 	if (kmsg && kmsg->iov != kmsg->fast_iov)
+-- 
+2.24.0
+

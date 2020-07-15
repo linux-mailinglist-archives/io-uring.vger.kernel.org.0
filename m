@@ -2,64 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BAEC221548
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jul 2020 21:43:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFFE122159D
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jul 2020 21:56:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbgGOTnz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jul 2020 15:43:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
+        id S1726870AbgGOT4M (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jul 2020 15:56:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbgGOTny (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jul 2020 15:43:54 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6356C061755;
-        Wed, 15 Jul 2020 12:43:53 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id ga4so3417798ejb.11;
-        Wed, 15 Jul 2020 12:43:53 -0700 (PDT)
+        with ESMTP id S1726650AbgGOT4L (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jul 2020 15:56:11 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 228D1C061755
+        for <io-uring@vger.kernel.org>; Wed, 15 Jul 2020 12:56:11 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id o11so4112983wrv.9
+        for <io-uring@vger.kernel.org>; Wed, 15 Jul 2020 12:56:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iaLGexaSw4FQvPhMT9GEqm7GZkiMzvFUAf6J/Ie1zOA=;
-        b=ExaZGhoDR2ndnOqNntbrwWNIBpldsMx/kGfINn/oieckd2ZAnOdyl8/0/8NgHgHHeC
-         onOQwXpudiyWKJ+I0SkS0OveCxqZMjrrZgN7gD6tleGHGZBaaR1axLFbbrO6QCnCO4xP
-         1FKB4tJpPwaXljdhatldDhQH3ASqG9HqU7vyD5QClCxfZNfLKFSbPq0oDDR8wsWv5Dij
-         BPasKLZwzd44d/jwCpQhs37K0FROo0KEPrMVLTa7TYZdTt+7Y5pHoWFnYVNqwQaMR+Eh
-         9ozGo+/geqdnLHZAulFsZ/02Mrasqt7Sk0Rc9NJlYzdahvbizQbjPF9adHNZJqq9PzgD
-         puRw==
+        bh=Sze9JGS9PBcW6EBkXqr2qxtzXJHKSDXrmMgBBU2ojCA=;
+        b=CUweVtwa/o3lJzkyg+2B4cjeKUo8G9Vo9LwKGQjcAFQVkmKIJhWeCQKD8BWXEo2lOz
+         wlMjQxy6bQEpXV9hZsfIiZdMg0EDRWdFysmV2wVbnknNmSe7UPjv6qjdlfTqooQ1bo/f
+         zLv9VA6eFxJpCZ0i5Tsb6/mx9eC/rTcQDwZ5GObwLAH6nProuawrFuDMpL3fYfz5abKq
+         Kp2IUFerLWajus65VYSpUEutMA6oEGtxfsFYyM0OMm7+ZV+qFNIkeY6yrOLc8IaT5JWR
+         JLL+8kGtbPflWD2w4uIPVhFPF1BsaQXXHgiiemmNrf4riLaoLDUPS0VLIWOLkFgTnCYW
+         1J+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=iaLGexaSw4FQvPhMT9GEqm7GZkiMzvFUAf6J/Ie1zOA=;
-        b=OAFWkX+9bG6MMfYehZdwCDGN38sL9jvVtGnrba4CqrFWOX05TAdupHVKX3x/3d+LAS
-         ZSK764MtqdW1Jeju79j2CVakYlIjuZTTnBGDZweDnUZ518l2aYTZxldO+E8S33b0IIQ+
-         IadP6sw3vByMNrqdOCVH9o6zh5AjrAiqRmdFdzCaQMbDEUmbF40YrN+jgx0Tt9NkFKJF
-         iKCQkxWSgJJH/UwdKfunt5EF26KprV2FV76aNgzlrDY+YaYcZx2EMjEpu3mvwUbectbn
-         qryclx1OBO7IQjz3o0E/m0g9EhtqK9GwIEUNr183vfTaq/xIshzANnek+zwp0tGUjzgV
-         VkCA==
-X-Gm-Message-State: AOAM531fi2+tLtWahqrbDj3oq+8H28SANoxaKanI66CdIaDDpi2fTyOZ
-        73vRZN0MMDwth9bM1S4UEINNdrPgXog=
-X-Google-Smtp-Source: ABdhPJyzNKFw1M0wjMMFZxBhJp2hgNFM/MGMacBI9InXmClalXZd3CNIgy0jyccKprE3eYn0Z7dOWA==
-X-Received: by 2002:a17:906:1402:: with SMTP id p2mr528029ejc.126.1594842232060;
-        Wed, 15 Jul 2020 12:43:52 -0700 (PDT)
+        bh=Sze9JGS9PBcW6EBkXqr2qxtzXJHKSDXrmMgBBU2ojCA=;
+        b=CTLpnEgweVcXpS5IVk11zErTKf8bhYBB/6PMKe/vK2gOyQA/zBwvW/osb+9MOGDtdT
+         armg/wXyO8hHI1+UlH0eqVqIJZUKhYBXXQVFFAjlk1tGwePANj5Ho0EAJxXpHdT7LyoL
+         HItQXvdyHM9JHILKZFQK7ZemdiExXtgllruzkMrC5Od05iOgaFNLv/nlxqygB86dAZVR
+         lCJ29UexP6Rpv66nBfF+QJ85SgtTac0sVoDA1VciKSaWAhllOhRqVf+VKCYYjP/1xM7I
+         CN+KTT0aiTXHQ3zc1NmH/MsgDNsOWt30d2ueTmU+SoRl7s+1QueEUGk5npF2MMHHIW0n
+         aLbA==
+X-Gm-Message-State: AOAM5323JRZg81NLrqA9SgXor93TTve60lTtDogfPX5AlsAh5cbP+MXb
+        s2ZfYJRWsld0vSpRaZ3mHUQCERXCxkk=
+X-Google-Smtp-Source: ABdhPJxWCDkTR4jZinMffzmENz3jpfJjiTjn+DHgPlJpqL1y6F5B9IEhhOz1mA8GbwfMQhk6cXYyWw==
+X-Received: by 2002:a5d:60d1:: with SMTP id x17mr1045115wrt.293.1594842969186;
+        Wed, 15 Jul 2020 12:56:09 -0700 (PDT)
 Received: from [192.168.43.238] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id o6sm3112602edr.94.2020.07.15.12.43.50
+        by smtp.gmail.com with ESMTPSA id 92sm5312081wrr.96.2020.07.15.12.56.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jul 2020 12:43:51 -0700 (PDT)
-To:     Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Stefano Garzarella <sgarzare@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
- <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
- <20200715171130.GG12769@casper.infradead.org>
+        Wed, 15 Jul 2020 12:56:08 -0700 (PDT)
+To:     Josh Triplett <josh@joshtriplett.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+References: <5e04f8fc6b0a2e218ace517bc9acf0d44530c430.1594759879.git.josh@joshtriplett.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -104,13 +95,14 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: strace of io_uring events?
-Message-ID: <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com>
-Date:   Wed, 15 Jul 2020 22:42:04 +0300
+Subject: Re: [WIP PATCH] io_uring: Support opening a file into the fixed-file
+ table
+Message-ID: <3fa35c6e-58df-09c5-3b7b-ded4f57356e8@gmail.com>
+Date:   Wed, 15 Jul 2020 22:54:21 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200715171130.GG12769@casper.infradead.org>
+In-Reply-To: <5e04f8fc6b0a2e218ace517bc9acf0d44530c430.1594759879.git.josh@joshtriplett.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -119,73 +111,272 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 15/07/2020 20:11, Matthew Wilcox wrote:
-> On Wed, Jul 15, 2020 at 07:35:50AM -0700, Andy Lutomirski wrote:
->>> On Jul 15, 2020, at 4:12 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
->>>
->>> <feff>Hi,
+On 15/07/2020 00:08, Josh Triplett wrote:
+> Add a new operation IORING_OP_OPENAT2_FIXED_FILE, which opens a file
+> into the fixed-file table rather than installing a file descriptor.
+> Using a new operation avoids having an IOSQE flag that almost all
+> operations will need to ignore; io_openat2_fixed_file also has
+> substantially different control-flow than io_openat2, and it can avoid
+> requiring the file table if not needed for the dirfd.
 > 
-> feff?  Are we doing WTF-16 in email now?  ;-)
+> (This intentionally does not use the IOSQE_FIXED_FILE flag, because
+> semantically, IOSQE_FIXED_FILE for openat2 should mean to interpret the
+> dirfd as a fixed-file-table index, and that would be useful future
+> behavior for both IORING_OP_OPENAT2 and IORING_OP_OPENAT2_FIXED_FILE.)
 > 
->>>
->>> This thread is to discuss the possibility of stracing requests
->>> submitted through io_uring.   I'm not directly involved in io_uring
->>> development, so I'm posting this out of  interest in using strace on
->>> processes utilizing io_uring.
->>>
->>> io_uring gives the developer a way to bypass the syscall interface,
->>> which results in loss of information when tracing.  This is a strace
->>> fragment on  "io_uring-cp" from liburing:
->>>
->>> io_uring_enter(5, 40, 0, 0, NULL, 8)    = 40
->>> io_uring_enter(5, 1, 0, 0, NULL, 8)     = 1
->>> io_uring_enter(5, 1, 0, 0, NULL, 8)     = 1
->>> ...
->>>
->>> What really happens are read + write requests.  Without that
->>> information the strace output is mostly useless.
->>>
->>> This loss of information is not new, e.g. calls through the vdso or
->>> futext fast paths are also invisible to strace.  But losing filesystem
->>> I/O calls are a major blow, imo.
-
-To clear details for those who are not familiar with io_uring:
-
-io_uring has a pair of queues, submission (SQ) and completion queues (CQ),
-both shared between kernel and user spaces. The userspace submits requests
-by filling a chunk of memory in SQ. The kernel picks up SQ entries in
-(syscall io_uring_enter) or asynchronously by polling SQ.
-
-CQ entries are filled by the kernel completely asynchronously and
-in parallel. Some users just poll CQ to get them, but also have a way
-to wait for them.
-
->>>
->>> What do people think?
->>>
->>> From what I can tell, listing the submitted requests on
->>> io_uring_enter() would not be hard.  Request completion is
->>> asynchronous, however, and may not require  io_uring_enter() syscall.
->>> Am I correct?
-
-Both, submission and completion sides may not require a syscall.
-
->>>
->>> Is there some existing tracing infrastructure that strace could use to
->>> get async completion events?  Should we be introducing one?
-
-There are static trace points covering all needs.
-
-And if not used the whole thing have to be zero-overhead. Otherwise
-there is perf, which is zero-overhead, and this IMHO won't fly. 
-
->>
->> Let’s add some seccomp folks. We probably also want to be able to run
->> seccomp-like filters on io_uring requests. So maybe io_uring should
->> call into seccomp-and-tracing code for each action.
+> Create a new io_sqe_files_add_new function to add a single new file to
+> the fixed-file table. This function returns -EBUSY if attempting to
+> overwrite an existing file.
 > 
-> Adding Stefano since he had a complementary proposal for iouring
-> restrictions that weren't exactly seccomp.
+> Provide a new field to pass along the fixed-file-table index for an
+> open-like operation; future operations such as
+> IORING_OP_ACCEPT_FIXED_FILE can use the same index.
+> 
+> Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+> ---
+> 
+> (Should this check for and reject open flags like O_CLOEXEC that only
+> affect the file descriptor?)
+> 
+> I've tested this (and I'll send my liburing patch momentarily), and it
+> works fine if you do the open in one batch and operate on the fixed-file
+> in another batch. As discussed via Twitter, opening and operating on a
+> file in the same batch will require changing other operations to obtain
+> their fixed-file entries later, post-prep.
+> 
+> It might make sense to do and test that for one operation at a time, and
+> add a .late_fixed_file flag to the operation definition for operations
+> that support that.
+> 
+> It might also make sense to have the prep for
+> IORING_OP_OPENAT2_FIXED_FILE stick an indication in the fixed-file table
+> that there *will* be a file there later, perhaps an
+> ERR_PTR(-EINPROGRESS), and make sure there isn't one already, to detect
+> potential errors earlier and to let the prep for other operations
+> confirm that there *will* be a file; on the other hand, that would mean
+> there's an invalid non-NULL file pointer in the fixed file table, which
+> seems potentially error-prone if any operation ever forgets that.
+> 
+> The other next step would be to add an IORING_OP_CLOSE_FIXED_FILE
+> (separate from the existing CLOSE op) that removes an entry currently in
+> the fixed file table and calls fput on it. (With some care, that
+> *should* be possible even for an entry that was originally registered
+> from a file descriptor.)
+> 
+> And finally, we should have an IORING_OP_FIXED_FILE_TO_FD operation,
+> which calls get_unused_fd_flags (with specified flags to allow for
+> O_CLOEXEC) and then fd_install. That allows opening a file via io_uring,
+> operating on it via the ring, but then also operating on it via other
+> syscalls (or inheriting it or anything else you can do with a file
+> descriptor).
+> 
+>  fs/io_uring.c                 | 90 ++++++++++++++++++++++++++++++++++-
+>  include/uapi/linux/io_uring.h |  6 ++-
+>  2 files changed, 94 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 9fd7e69696c3..df6f017ef8e8 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -425,6 +425,7 @@ struct io_sr_msg {
+>  struct io_open {
+>  	struct file			*file;
+>  	int				dfd;
+> +	u32				open_fixed_idx;
+>  	struct filename			*filename;
+>  	struct open_how			how;
+>  	unsigned long			nofile;
+> @@ -878,6 +879,10 @@ static const struct io_op_def io_op_defs[] = {
+>  		.hash_reg_file		= 1,
+>  		.unbound_nonreg_file	= 1,
+>  	},
+> +	[IORING_OP_OPENAT2_FIXED_FILE] = {
+> +		.file_table		= 1,
+> +		.needs_fs		= 1,
+> +	},
+>  };
+>  
+>  static void io_wq_submit_work(struct io_wq_work **workptr);
+> @@ -886,6 +891,9 @@ static void io_put_req(struct io_kiocb *req);
+>  static void __io_double_put_req(struct io_kiocb *req);
+>  static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req);
+>  static void io_queue_linked_timeout(struct io_kiocb *req);
+> +static int io_sqe_files_add_new(struct io_ring_ctx *ctx,
+> +				u32 index,
+> +				struct file *file);
+>  static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  				 struct io_uring_files_update *ip,
+>  				 unsigned nr_args);
+> @@ -3060,10 +3068,48 @@ static int io_openat2_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  					len);
+>  	if (ret)
+>  		return ret;
+> +	req->open.open_fixed_idx = READ_ONCE(sqe->open_fixed_idx);
+>  
+>  	return __io_openat_prep(req, sqe);
+>  }
+>  
+> +static int io_openat2_fixed_file(struct io_kiocb *req, bool force_nonblock)
+> +{
+
+How about having it in io_openat2()? There are almost identical, that would be
+just a couple of if's.
+
+> +	struct io_open *open = &req->open;
+> +	struct open_flags op;
+> +	struct file *file;
+> +	int ret;
+> +
+> +	if (force_nonblock) {
+> +		/* only need file table for an actual valid fd */
+> +		if (open->dfd == -1 || open->dfd == AT_FDCWD)
+> +			req->flags |= REQ_F_NO_FILE_TABLE;
+> +		return -EAGAIN;
+> +	}
+> +
+> +	ret = build_open_flags(&open->how, &op);
+> +	if (ret)
+> +		goto err;
+> +
+> +	file = do_filp_open(open->dfd, open->filename, &op);
+> +	if (IS_ERR(file)) {
+> +		ret = PTR_ERR(file);
+> +	} else {
+> +		fsnotify_open(file);
+> +		ret = io_sqe_files_add_new(req->ctx, open->open_fixed_idx, file);
+> +		if (ret)
+> +			fput(file);
+> +	}
+> +err:
+> +	putname(open->filename);
+> +	req->flags &= ~REQ_F_NEED_CLEANUP;
+> +	if (ret < 0)
+> +		req_set_fail_links(req);
+> +	io_cqring_add_event(req, ret);
+> +	io_put_req(req);
+
+These 2 lines are better to be replace with (since 5.9):
+
+io_req_complete(req, ret);
+
+> +	return 0;
+> +}
+> +
+>  static int io_openat2(struct io_kiocb *req, bool force_nonblock)
+>  {
+>  	struct open_flags op;
+> @@ -5048,6 +5094,7 @@ static int io_req_defer_prep(struct io_kiocb *req,
+>  		ret = io_madvise_prep(req, sqe);
+>  		break;
+>  	case IORING_OP_OPENAT2:
+> +	case IORING_OP_OPENAT2_FIXED_FILE:
+>  		ret = io_openat2_prep(req, sqe);
+>  		break;
+>  	case IORING_OP_EPOLL_CTL:
+> @@ -5135,6 +5182,7 @@ static void io_cleanup_req(struct io_kiocb *req)
+>  		break;
+>  	case IORING_OP_OPENAT:
+>  	case IORING_OP_OPENAT2:
+> +	case IORING_OP_OPENAT2_FIXED_FILE:
+
+These OPENAT cases weren't doing anything, so were killed,
+as should be this line.
+
+>  		break;
+>  	case IORING_OP_SPLICE:
+>  	case IORING_OP_TEE:
+> @@ -5329,12 +5377,17 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  		ret = io_madvise(req, force_nonblock);
+>  		break;
+>  	case IORING_OP_OPENAT2:
+> +	case IORING_OP_OPENAT2_FIXED_FILE:
+>  		if (sqe) {
+>  			ret = io_openat2_prep(req, sqe);
+>  			if (ret)
+>  				break;
+>  		}
+> -		ret = io_openat2(req, force_nonblock);
+> +		if (req->opcode == IORING_OP_OPENAT2) {
+> +			ret = io_openat2(req, force_nonblock);
+> +		} else {
+> +			ret = io_openat2_fixed_file(req, force_nonblock);
+> +		}
+
+We don't need all these brackets for one liners
+
+>  		break;
+>  	case IORING_OP_EPOLL_CTL:
+>  		if (sqe) {
+> @@ -6791,6 +6844,41 @@ static int io_queue_file_removal(struct fixed_file_data *data,
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Add a single new file in an empty entry of the fixed file table. Does not
+> + * allow overwriting an existing entry; returns -EBUSY in that case.
+> + */
+> +static int io_sqe_files_add_new(struct io_ring_ctx *ctx,
+> +				u32 index,
+> +				struct file *file)
+> +{
+> +	struct fixed_file_table *table;
+> +	u32 i;
+> +	int err;
+> +
+> +	if (unlikely(index > ctx->nr_user_files))
+> +		return -EINVAL;
+> +	i = array_index_nospec(index, ctx->nr_user_files);
+> +	table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
+> +	index = i & IORING_FILE_TABLE_MASK;
+> +	if (unlikely(table->files[index]))
+> +		return -EBUSY;
+> +	/*
+> +	 * Don't allow io_uring instances to be registered. If UNIX isn't
+> +	 * enabled, then this causes a reference cycle and this instance can
+> +	 * never get freed. If UNIX is enabled we'll handle it just fine, but
+> +	 * there's still no point in allowing a ring fd as it doesn't support
+> +	 * regular read/write anyway.
+> +	 */
+> +	if (unlikely(file->f_op == &io_uring_fops))
+> +		return -EBADF;
+> +	err = io_sqe_file_register(ctx, file, i);
+> +	if (err)
+> +		return err;
+> +	table->files[index] = file;
+> +	return 0;
+> +}
+> +
+>  static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  				 struct io_uring_files_update *up,
+>  				 unsigned nr_args)
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 7843742b8b74..95f107e6f65e 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -54,7 +54,10 @@ struct io_uring_sqe {
+>  			} __attribute__((packed));
+>  			/* personality to use, if used */
+>  			__u16	personality;
+> -			__s32	splice_fd_in;
+> +			union {
+> +				__s32	splice_fd_in;
+> +				__s32	open_fixed_idx;
+> +			};
+>  		};
+>  		__u64	__pad2[3];
+>  	};
+> @@ -130,6 +133,7 @@ enum {
+>  	IORING_OP_PROVIDE_BUFFERS,
+>  	IORING_OP_REMOVE_BUFFERS,
+>  	IORING_OP_TEE,
+> +	IORING_OP_OPENAT2_FIXED_FILE,
+
+I think, it's better to reuse IORING_OP_OPENAT2.
+E.g. fixed version if "open_fixed_idx != 0" or something similar.
+
+>  
+>  	/* this goes last, obviously */
+>  	IORING_OP_LAST,
 > 
 
 -- 

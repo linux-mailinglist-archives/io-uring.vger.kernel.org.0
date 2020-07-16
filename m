@@ -2,127 +2,166 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E24CF2226BD
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jul 2020 17:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B3D0222837
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jul 2020 18:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbgGPPTk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jul 2020 11:19:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55480 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728651AbgGPPTj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jul 2020 11:19:39 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18712C08C5C0
-        for <io-uring@vger.kernel.org>; Thu, 16 Jul 2020 08:19:37 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id ch3so4976877pjb.5
-        for <io-uring@vger.kernel.org>; Thu, 16 Jul 2020 08:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=HozkydmQpUvKd5NOCtzfpodg8BolrSSLpRppwaD1xMw=;
-        b=fjQCXssPxi4AjoXO4i5b2uodaOc83MJhnRTmtQeSd8KG0GnTJh8pMVwicp08Mg6cV/
-         PM2aJ65QS5F9K4jur1fgGCr2XAUDR56tq8TRLnpoC5h6PjiDp4gPPzzBFOBoChUYqju8
-         Nm0X11EpEfvlUee3IBx6hBV3SOZiV4gWiaPHc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HozkydmQpUvKd5NOCtzfpodg8BolrSSLpRppwaD1xMw=;
-        b=b7ehaVLzX1ocfE0OYkYUT4oV1h8DpEOLU2wxVCmxGosdvjKebrTolty4r1GE5K3P4e
-         +pwF5RjWnKQnnFyqaoCfG+Hq50XUGXR88wnMHO1yM8n1MKUKECKyX1x9rrUFpF6vQjV1
-         eaKYMCGAcolzUVPm4zZo0UKX8cpsgzH4HB4kjJqhsRo6pKRqSkAbGeX5RIdOAAc/ylpw
-         aUAg8tk6jg55qWsCFmlB+TP5GaHquw4AS5LKPvr40yL5a4WT690oA8FxQLfEeuB4+ybH
-         Z38ljQwqSzWRzBWnSZb5ImWwlrFS+ycmC36cObmj3NjPyKhCSiWkmwmiRO2VxJvTO8Se
-         hSvg==
-X-Gm-Message-State: AOAM530oo5QCBaqiDfX+ZssarUdrqoD3ywAP4fSstljKgiMvayojEmiv
-        ltD1sgKY9k820ktDmFyws6iMgQ==
-X-Google-Smtp-Source: ABdhPJx1Qzrb9/OmTn8DkAEQY+LMixE4pooCV6vy4o7tTITmHOHavW7fFOZs81EuNnKruvEtLAHwkQ==
-X-Received: by 2002:a17:902:bb83:: with SMTP id m3mr3611207pls.209.1594912776507;
-        Thu, 16 Jul 2020 08:19:36 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id m20sm4225468pgn.62.2020.07.16.08.19.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 08:19:35 -0700 (PDT)
-Date:   Thu, 16 Jul 2020 08:19:34 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
+        id S1729151AbgGPQZE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jul 2020 12:25:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35700 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728837AbgGPQZD (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 16 Jul 2020 12:25:03 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCEEB2074B
+        for <io-uring@vger.kernel.org>; Thu, 16 Jul 2020 16:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594916703;
+        bh=p0w3EEAD5X53cCqDFmoE6un1clNbYGiJ/DMa0RV+rfI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yAj2KihHyUS0XU5c+XLdrccZniFtQURmn47hIVuaqVi7YwvUC5wy5/LPReb0zG2y8
+         yTIznCUpNbfm02LXaUfrNi1/9wl1N4UBhZMLYNgTGx8avENMAwoHR9RFT0K8QqQ49h
+         gVfqvEJ33BZMt5jmgooHcFZaPFk36MTqZP86z1JQ=
+Received: by mail-wm1-f47.google.com with SMTP id q15so10856531wmj.2
+        for <io-uring@vger.kernel.org>; Thu, 16 Jul 2020 09:25:02 -0700 (PDT)
+X-Gm-Message-State: AOAM531OB8rdE03xuQWGy2JiN7v8qZU7Ya1aUCjXNEFt3+cWD2tIyp0Z
+        1thOMDPiDPpI4qsEKAzz4253WjtUGs54qmKmIQ2qKg==
+X-Google-Smtp-Source: ABdhPJx4aHgQedBYAiS/i+maR6+HLKjkrpnmZif6PsbomewsecKvhVh0PDhmC4WGpinWqQzmno1SRYT3WT0rxEG8RsY=
+X-Received: by 2002:a7b:c09a:: with SMTP id r26mr4960600wmh.176.1594916701395;
+ Thu, 16 Jul 2020 09:25:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
+ <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net> <20200715171130.GG12769@casper.infradead.org>
+ <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com> <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
+ <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com> <202007151511.2AA7718@keescook>
+In-Reply-To: <202007151511.2AA7718@keescook>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 16 Jul 2020 09:24:48 -0700
+X-Gmail-Original-Message-ID: <CALCETrVD1hTc5QDL5=DNkLSS5Qu_AuEC-QZQAuZY0tCP1giMwQ@mail.gmail.com>
+Message-ID: <CALCETrVD1hTc5QDL5=DNkLSS5Qu_AuEC-QZQAuZY0tCP1giMwQ@mail.gmail.com>
+Subject: Re: strace of io_uring events?
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
         Jann Horn <jannh@google.com>,
         Stefano Garzarella <sgarzare@redhat.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         strace-devel@lists.strace.io, io-uring@vger.kernel.org,
         Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: Re: strace of io_uring events?
-Message-ID: <202007160812.A8D43ABBBE@keescook>
-References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
- <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
- <20200715171130.GG12769@casper.infradead.org>
- <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com>
- <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
- <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com>
- <202007151511.2AA7718@keescook>
- <20200716131755.l5tsyhupimpinlfi@yavin.dot.cyphar.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200716131755.l5tsyhupimpinlfi@yavin.dot.cyphar.com>
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 11:17:55PM +1000, Aleksa Sarai wrote:
-> On 2020-07-15, Kees Cook <keescook@chromium.org> wrote:
-> > In the basic case of "I want to run strace", this is really just a
-> > creative use of ptrace in that interception is being used only for
-> > reporting. Does ptrace need to grow a way to create/attach an io_uring
-> > eventfd? Or should there be an entirely different tool for
-> > administrative analysis of io_uring events (kind of how disk IO can be
-> > monitored)?
-> 
-> I would hope that we wouldn't introduce ptrace to io_uring, because
-> unless we plan to attach to io_uring events via GDB it's simply the
-> wrong tool for the job. strace does use ptrace, but that's mostly
-> because Linux's dynamic tracing was still in its infancy at the time
-> (and even today it requires more privileges than ptrace) -- but you can
-> emulate strace using bpftrace these days fairly easily.
-> 
-> So really what is being asked here is "can we make it possible to debug
-> io_uring programs as easily as traditional I/O programs". And this does
-> not require ptrace, nor should ptrace be part of this discussion IMHO. I
-> believe this issue (along with seccomp-style filtering) have been
-> mentioned informally in the past, but I am happy to finally see a thread
-> about this appear.
+> On Jul 15, 2020, at 4:07 PM, Kees Cook <keescook@chromium.org> wrote:
+>
+> =EF=BB=BFEarlier Andy Lutomirski wrote:
+>> Let=E2=80=99s add some seccomp folks. We probably also want to be able t=
+o run
+>> seccomp-like filters on io_uring requests. So maybe io_uring should call=
+ into
+>> seccomp-and-tracing code for each action.
+>
+> Okay, I'm finally able to spend time looking at this. And thank you to
+> the many people that CCed me into this and earlier discussions (at least
+> Jann, Christian, and Andy).
+>
+> It *seems* like there is a really clean mapping of SQE OPs to syscalls.
+> To that end, yes, it should be trivial to add ptrace and seccomp support
+> (sort of). The trouble comes for doing _interception_, which is how both
+> ptrace and seccomp are designed.
+>
+> In the basic case of seccomp, various syscalls are just being checked
+> for accept/reject. It seems like that would be easy to wire up. For the
+> more ptrace-y things (SECCOMP_RET_TRAP, SECCOMP_RET_USER_NOTIF, etc),
+> I think any such results would need to be "upgraded" to "reject". Things
+> are a bit complex in that seccomp's form of "reject" can be "return
+> errno" (easy) or it can be "kill thread (or thread_group)" which ...
+> becomes less clear. (More on this later.)
 
-Yeah, I don't see any sane way to attach ptrace, especially when what's
-wanted is just "io_uring action logging", which is a much more narrow
-issue, and one that doesn't map well to processes.
+My intuition is not to do this kind of creative reinterpretation of
+return values. Instead let=E2=80=99s have a new type of seccomp filter
+specifically for io_uring. So we can have SECCOMP_IO_URING_ACCEPT,
+ERRNO, and eventually other things. We probably will want a user
+notifier feature for io_uring, but I'd be a bit surprised if it ends
+up ABI-compatible with current users of user notifiers.
 
-Can the io_uring eventfd be used for this kind of thing? It seems
-io_uring just needs a way to gain an administrative path to opening it?
+> - There appear to be three classes of desired restrictions:
+>  - opcodes for io_uring_register() (which can be enforced entirely with
+>    seccomp right now).
 
-> > Solving the mapping of seccomp interception types into CQEs (or anything
-> > more severe) will likely inform what it would mean to map ptrace events
-> > to CQEs. So, I think they're related, and we should get seccomp hooked
-> > up right away, and that might help us see how (if) ptrace should be
-> > attached.
-> 
-> We could just emulate the seccomp-bpf API with the pseudo-syscalls done
-> as a result of CQEs, though I'm not sure how happy folks will be with
-> this kind of glue code in "seccomp-uring" (though in theory it would
-> allow us to attach existing filters to io_uring...).
+Agreed.
 
-Looking at the per-OP "syscall" implementations, I'm kind of alarmed
-that some (e.g. openat2) are rather "open coded". It seems like this
-should be fixed to have at least a common entry point for both io_uring
-and proper syscalls.
+>  - opcodes from SQEs (this _could_ be intercepted by seccomp, but is
+>    not currently written)
 
--- 
-Kees Cook
+As above, I think this should be intercepted by seccomp, but in a new
+mode.  I think that existing seccomp filters should not intercept it.
+
+>  - opcodes of the types of restrictions to restrict... for making sure
+>    things can't be changed after being set? seccomp already enforces
+>    that kind of "can only be made stricter"
+
+Agreed.
+
+>
+> - How does no_new_privs play a role in the existing io_uring credential
+>  management? Using _any_ kind of syscall-effective filtering, whether
+>  it's seccomp or Stefano's existing proposal, needs to address the
+>  potential inheritable restrictions across privilege boundaries (which is
+>  what no_new_privs tries to eliminate). In regular syscall land, this is
+>  an issue when a filter follows a process through setuid via execve()
+>  and it gains privileges that now the filter-creator can trick into
+>  doing weird stuff -- io_uring has a concept of alternative credentials
+>  so I have to ask about it. (I don't *think* there would be a path to
+>  install a filter before gaining privilege, but I likely just
+>  need to do my homework on the io_uring internals. Regardless,
+>  use of seccomp by io_uring would need to have this issue "solved"
+>  in the sense that it must be "safe" to filter io_uring OPs, from a
+>  privilege-boundary-crossing perspective.
+>
+> - From which task perspective should filters be applied? It seems like it
+>  needs to follow the io_uring personalities, as that contains the
+>  credentials. (This email is a brain-dump so far -- I haven't gone to
+>  look to see if that means io_uring is literally getting a reference to
+>  struct cred; I assume so.) Seccomp filters are attached to task_struct.
+>  However, for v5.9, seccomp will gain a more generalized get/put system
+>  for having filters attached to the SECCOMP_RET_USER_NOTIF fd. Adding
+>  more get/put-ers for some part of the io_uring context shouldn't
+>  be hard.
+
+Let's ignore personalities for a moment (and see below).  Thinking
+through the possibilities:
+
+A: io_uring seccomp filters are attached to tasks.  When an io_uring
+is created, it inherits an immutable copy of its creating task's
+filter, and that's the filter set that applies to that io_uring
+instance.  This could have somewhat bizarre consequences if the fd
+gets passed around, but io_uring already has odd security effects if
+fds are passed around.  It has the annoying property that, if a
+library creates an io_uring and then a seccomp filter is loaded, the
+io_uring bypasses the library.
+
+B: The same, but the io_uring references the creating task so new
+filters on the task apply to the io_uring, too.  This allows loading
+and then sandboxing.  Is this too bizarre overall?
+
+C: io_uring filters are attached directly to io_urings.  This has the
+problem where an io_uring created before a task sandboxes itself isn't
+sandboxed.  It also would require that a filter be able to hook
+io_uring creation to sandbox it.
+
+Does anyone actually pass io_urings around with SCM_RIGHTS?  It would
+be really nice if we could make the default be that io_urings are
+bound to their creating mm and can't be used outside it.  Then
+creating an mm-crossing io_uring could, itself, be restricted.
+
+In any case, my inclination is to go for choice B.  Choice C could
+also be supported if there's a use case.

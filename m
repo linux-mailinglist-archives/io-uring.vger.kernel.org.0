@@ -2,181 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A064222C9A
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jul 2020 22:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF42222CA3
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jul 2020 22:20:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbgGPUSd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jul 2020 16:18:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45254 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728788AbgGPUSc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jul 2020 16:18:32 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A653C061755;
-        Thu, 16 Jul 2020 13:18:32 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id o8so11479216wmh.4;
-        Thu, 16 Jul 2020 13:18:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hT1ysO8UtcshQI1jXyBj8JCzEF++nOcaQlKMyGdyebI=;
-        b=gPyJXh21xqwg6wi5lQgsCnsHNHIw9zktYFEeZM4/dwWJwAfEuNc0aXHghzkPptrEiu
-         cAh9PlzMYLW0zPNTVC+VV8PCDQUjKDgyhyjllp/rVI5iLFzOi7t7aWFaFO8xCxODZEkU
-         u8/Y+QJ5lc/6Ty/GTE/GXgFOZ/loWYpedar5hfUCbuagq5kvlrFQxbjpLbLzd4Zeyhw4
-         R81cod5MZcfun9atECCis6ywDNt9vo6LS0fiJx8oiusJNMeNe7us4GOjM5yrg9NPkNpl
-         k/KDljEdwh3CfUFlMWz+dMFc4sdS7diIT8HcyIyDelxqrIAODpPXuPuzOI7w8a1Q9Xdz
-         YJPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=hT1ysO8UtcshQI1jXyBj8JCzEF++nOcaQlKMyGdyebI=;
-        b=pTajQw3UbO56Wk5by9fQIIigUYtbc6TWmOO0s6DLBfh+QzyctO/78qsEZC/8DdUA7M
-         KmnOvzngfMNZM2gX2V/A3sBUY1L3MPyyLI1MzvyQN/1q/HqvTG41ULV1pA2vFsnyiFRq
-         9Y3wVnntOowTIjO2Fn+DMf/0ND5A7zvTCSsihmEIZs261KrnUscIhX3BY/86u7cPy8tB
-         bkLdduwodFoKe2ychd9jIeoEXIOkm9m5cxbUvVaa1/wm5KxHnzElOoUBfL/9DZ4c4+JX
-         rmTFl6kDRP4zT0qyE9t0CDfbj/d7z15NLmVpv72xEYoblBdlSgo9kqtY5D+yBd0+ueEX
-         vO6g==
-X-Gm-Message-State: AOAM530FmgkopV3Byn1dbNBz/uM8QpvMUkBQ51WJ8BbNbS7Z4ZljMYMH
-        hdIb74TaqesI3SRl2SZ//grlDqSn6w8=
-X-Google-Smtp-Source: ABdhPJw8nV+8IAqaXqIGkoX8kBdfOHm2J50mIVqOpgcP41uZ6JJSTEB1svlXncB9MoytaJ+z1MBJWw==
-X-Received: by 2002:a7b:cc92:: with SMTP id p18mr6057089wma.4.1594930710261;
-        Thu, 16 Jul 2020 13:18:30 -0700 (PDT)
-Received: from [192.168.43.238] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id k18sm10805024wrx.34.2020.07.16.13.18.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jul 2020 13:18:29 -0700 (PDT)
-Subject: Re: [PATCH RFC v2 1/3] io_uring: use an enumeration for
- io_uring_register(2) opcodes
-To:     Stefano Garzarella <sgarzare@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Kees Cook <keescook@chromium.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
-        linux-kernel@vger.kernel.org
-References: <20200716124833.93667-1-sgarzare@redhat.com>
- <20200716124833.93667-2-sgarzare@redhat.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <ca242a15-576d-4099-a5f8-85c08985e3ff@gmail.com>
-Date:   Thu, 16 Jul 2020 23:16:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1729623AbgGPUUG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jul 2020 16:20:06 -0400
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:50197 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728788AbgGPUUG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jul 2020 16:20:06 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 49442FC0;
+        Thu, 16 Jul 2020 16:20:05 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 16 Jul 2020 16:20:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=qfgNIC42NOB5kPR3PBqlqX5LDBZ
+        3P4P3pWgAu3K1pRI=; b=DP/kkoYvry1u+T9LK/pQ9vANimHgXnzEEzS9trOtXWr
+        ACrYvHlkyhOXsa52OWY2s++5H/egMhVlvx1/pCMyNmcGFq+CIb/wIQtmP3/UOOpf
+        L8Y8/3Gn9TEjDpPW1m0BjynLQHmZHQtujwc+HjDXOQYvh7gxpdlRU96q7is1WkbY
+        Nd22C7a4Wd3PLQaASUr2usT6r/8Yg4PMgLCdwuWSsBcY+/wonzZKZhiKnGsExGLp
+        igNW58RzEsRZx7fBezPHZ9G/GpjNEjMQoiPr6gshZw/X9EVh8Hjm/z3glsKxf06w
+        b/aRmpvbBYBDMCx8q3d7BpQ0AR6yqAGlsFoSYc6dzdg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=qfgNIC
+        42NOB5kPR3PBqlqX5LDBZ3P4P3pWgAu3K1pRI=; b=d6PNevcZn28F32gibVKsHj
+        8SY4Vt+KmLR6ofLtxYpQz9v+hrp3jBBl9spuS1S1NCljGHV17/3zo1UAILDefUud
+        DQ85jAGJpFUPQLOpuLZzqH1TnMawjEVmy0XsHAyzLqBbqX1jYIH31SRKY4S6Rm/d
+        NgW8Rz3M5e+g3+4kvlbHl0BBJ4G4u9OuuhZg2bhgdZkl5+1jndifmmf8B3UGHpJj
+        NuigXYoug2yzSjuXZdYPe1ZbEItBIoh3NiQq2airmYihpIXJiMJVrYqedO7vKS8b
+        smv6+UCsmTsEnybQHQdZcpVVUWmv7MnxHqKZMfyzrK5Te4M1LDM/DaLfL6ciKnXA
+        ==
+X-ME-Sender: <xms:dLYQX_31MjlUG79PuZnMyNbhiVmOgZfakSm9mDUkfgR2lqximceyJA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrfeeggddugeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
+    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
+    htthgvrhhnpedukefhkeelueegveetheelffffjeegleeuudelfeefuedtleffueejfffh
+    ueffudenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdr
+    uggv
+X-ME-Proxy: <xmx:dLYQX-Em5paH_Dtf-N8nkg2ECR0myrgJoOm9CXGAegYu8KiyRLMaNw>
+    <xmx:dLYQX_4LufPHcDyCw-vbk-3ws2WcVrPoXTo2hXT5h_vMBLUgjIN7Eg>
+    <xmx:dLYQX027m53rBtXuYEDjx3nZGrwnnYQL-q3Qw8ESEvTEOHxk4kAnYw>
+    <xmx:dLYQX9z0GTOF79W6-PZvbQ-vOKwf8GYXJoYC5e9uQ0vLa1AKciG1ow>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5AD1B328005A;
+        Thu, 16 Jul 2020 16:20:04 -0400 (EDT)
+Date:   Thu, 16 Jul 2020 13:20:02 -0700
+From:   Andres Freund <andres@anarazel.de>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: Re: io_uring_setup spuriously returning ENOMEM for one user
+Message-ID: <20200716202002.ccuidrqbknvzhxiv@alap3.anarazel.de>
+References: <20200716200543.iyrurpmcvrycekom@alap3.anarazel.de>
+ <af57a2d2-86d2-96f7-5f63-19b02d800e71@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200716124833.93667-2-sgarzare@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af57a2d2-86d2-96f7-5f63-19b02d800e71@gmail.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 16/07/2020 15:48, Stefano Garzarella wrote:
-> The enumeration allows us to keep track of the last
-> io_uring_register(2) opcode available.
-> 
-> Behaviour and opcodes names don't change.
-> 
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
->  include/uapi/linux/io_uring.h | 27 ++++++++++++++++-----------
->  1 file changed, 16 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 7843742b8b74..efc50bd0af34 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -253,17 +253,22 @@ struct io_uring_params {
->  /*
->   * io_uring_register(2) opcodes and arguments
->   */
-> -#define IORING_REGISTER_BUFFERS		0
-> -#define IORING_UNREGISTER_BUFFERS	1
-> -#define IORING_REGISTER_FILES		2
-> -#define IORING_UNREGISTER_FILES		3
-> -#define IORING_REGISTER_EVENTFD		4
-> -#define IORING_UNREGISTER_EVENTFD	5
-> -#define IORING_REGISTER_FILES_UPDATE	6
-> -#define IORING_REGISTER_EVENTFD_ASYNC	7
-> -#define IORING_REGISTER_PROBE		8
-> -#define IORING_REGISTER_PERSONALITY	9
-> -#define IORING_UNREGISTER_PERSONALITY	10
-> +enum {
-> +	IORING_REGISTER_BUFFERS,
-> +	IORING_UNREGISTER_BUFFERS,
-> +	IORING_REGISTER_FILES,
-> +	IORING_UNREGISTER_FILES,
-> +	IORING_REGISTER_EVENTFD,
-> +	IORING_UNREGISTER_EVENTFD,
-> +	IORING_REGISTER_FILES_UPDATE,
-> +	IORING_REGISTER_EVENTFD_ASYNC,
-> +	IORING_REGISTER_PROBE,
-> +	IORING_REGISTER_PERSONALITY,
-> +	IORING_UNREGISTER_PERSONALITY,
-> +
-> +	/* this goes last */
-> +	IORING_REGISTER_LAST
-> +};
+Hi,
 
-It breaks userspace API. E.g.
-
-#ifdef IORING_REGISTER_BUFFERS
-
->  
->  struct io_uring_files_update {
->  	__u32 offset;
+On 2020-07-16 23:12:41 +0300, Pavel Begunkov wrote:
+> On 16/07/2020 23:05, Andres Freund wrote:
+> > Hi,
+> > 
+> > While testing the error handling of my uring using postgres branch I
+> > just encountered the situation that io_uring_setup() always fails with
+> > ENOMEN.
+> > 
+> > It only does so for the user I did the testing on and not for other
+> > users. During the testing a few io_uring using processes were kill -9'd
+> > and a few core-dumped after abort(). No io_uring using processes are
+> > still alive.
+> > 
+> > As the issue only happens to the one uid I suspect that
+> > current_user()->locked_mem got corrupted, perhaps after hitting the
+> > limit for real.
 > 
+> Any chance it's using SQPOLL mode?
 
--- 
-Pavel Begunkov
+No. It's a "plain" uring. The only thing that could be considered
+special is that one of the rings is shared between processes (which all
+run as the same user).
+
+Greetings,
+
+Andres Freund

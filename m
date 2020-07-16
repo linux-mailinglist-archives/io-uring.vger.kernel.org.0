@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4D61222CD4
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jul 2020 22:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D5B5222CD5
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jul 2020 22:32:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbgGPUaK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jul 2020 16:30:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47048 "EHLO
+        id S1726224AbgGPUaL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jul 2020 16:30:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbgGPUaJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jul 2020 16:30:09 -0400
+        with ESMTP id S1725921AbgGPUaL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jul 2020 16:30:11 -0400
 Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81BE0C061755
-        for <io-uring@vger.kernel.org>; Thu, 16 Jul 2020 13:30:09 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id 17so12895649wmo.1
-        for <io-uring@vger.kernel.org>; Thu, 16 Jul 2020 13:30:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5AEFC061755
+        for <io-uring@vger.kernel.org>; Thu, 16 Jul 2020 13:30:10 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id f139so12887796wmf.5
+        for <io-uring@vger.kernel.org>; Thu, 16 Jul 2020 13:30:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=SPET3zFeJ4X44nPP3f3fEAl8Xb6uBh/iaenDAy5J7Iw=;
-        b=sxZ0/x/G8TQVW8mm0o7xkjETPIxe1MujzzrFRM6QVPQ9g4SstbWpjAChVmoeYRliQ+
-         P+VyMU9lmOZqrVNllIXnkGtGqHYkw0xN371VR4OL4hXU6gzeyebn0sHuRrIMDMzbUt0I
-         eER+bsaAFjA1pWR3nnnWDyY0vJ4Fi13ejHYMPS/CG+DAI8m0LnyH9UOO9KB13zKRbm0m
-         N7lG4F6xc9sht3JBXzr7CcC5l13rEo7t3JLwi2RkF0TBnliCpSODQp0WLWwGjE/pOEVe
-         yjJI+v9LhGsvH6wAPmyoIYT7F+ocx3El4x8+tNBEAWqBdDeTxqi0P7ZvjQ6OArAaFvHM
-         g38w==
+        bh=/JkyFhaOKnlFUzQDk0THElW5UuNKZQhzmy3W/GZhOYc=;
+        b=UWeJI1eR1IrWnpNVpn3f+q53QtvOtLZezxCtzw6wicGVgjuFir1yOUGww1vYt2Gxy8
+         u5G0TU2o8XSZoV2Lmk1Ca22u+uax9HYvdBFNUjNZRJfEm6u24hrIYrdozG9PRP+W+pLf
+         3TKhuCw4js0AgWVlss0TYoIxiHZgmt222sEr2FAlDaxhhMTLxCxVrtPC7nF5a7U3OlP2
+         mh5CnGuLVRkLWVBWPu14zplYNe9ySCJdMxwD1B9PWyhBFcSWkCA6BoTey8bWMkiHfxfT
+         N/xe8J5w2PgNCwJl1x8dI/aqMWwYptNybJQl/U2DD8q0FYxm2YrM4exkpCCRUZC2mTkc
+         3xsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SPET3zFeJ4X44nPP3f3fEAl8Xb6uBh/iaenDAy5J7Iw=;
-        b=EwMb511ost1Bz43s8XetT+BTVx6IvFnbl1j4fKkJg3EVH47LGdRuHXZQGNX1oZgKck
-         5v65GElbaiGOoiruVS0IcyisELSvaR9uXpG7XcRz/mQvi+2TCY7xze+yNh8Wt6Oxjfza
-         E9cXUgjnGBDeKTtLWU77qbqAKi8eP6jSWiAaYtBB0DR9RxtsQUuyKYgfLIFwrSpUFBFb
-         Rg4cTd/ui6V/oaaTPJDh1Md6zhs7d95T/j0lWpTMP5TmkbtRgL/8ZlinvKUXdB6W+zsQ
-         hPFjJ+L+jzJd9W6wEgaAyo/LRaoKyMVqk95KzwKeXafuyXO7iz0bKKFMJsZZFlElTCMQ
-         rkqQ==
-X-Gm-Message-State: AOAM532U9GKEsQLgAfN8j+94WbLxzrkIT2Vzkj2AI43wOi8aKuvSBcGQ
-        3HNN7L9Y8NkfAwNB6m8ViIc=
-X-Google-Smtp-Source: ABdhPJzeNHUsaopz9M39i9TvksKuK6ZCal7c7CVih5GvReJRByJzJ1uNBuInnoxS4anuJDB25eSURw==
-X-Received: by 2002:a7b:c09a:: with SMTP id r26mr5741341wmh.176.1594931408216;
-        Thu, 16 Jul 2020 13:30:08 -0700 (PDT)
+        bh=/JkyFhaOKnlFUzQDk0THElW5UuNKZQhzmy3W/GZhOYc=;
+        b=tx2FwWRTaH83jlUwuByGF6ylOX9LKW78uU57U5vfyPTP0+fvLxKBT2sYW+p3sJOI57
+         px54SVfxPL5ma6dYgC3Htt3DqqXrVBgsEgiZQWwAEVothyyfA1dsSYrRwjBgJKDMxC3p
+         aCJwQamtEicsriirN5Ahl88ryBbeNW1P+BxSU4923+5NCxwCsusI/6rKxPpaf2yxv3pG
+         4Z4G/EZdRt8c4F/nKuXmnu9uuxRTbbUWXODLqbCsfrM3P13eUobjtcEa1OjxkO6xN3gh
+         ClJGCjP6sP5uyTzI71XjChQToaFG+xBgKHqxcOY50Hmz0XfrgemBS7Q2IgMJV9UIA2+X
+         9APg==
+X-Gm-Message-State: AOAM53234d4pdNEb1ZvYBYZwZlrbGe0Dmh3oylYzNYztbiSgP18o4nKG
+        4XJdUwJ3ZMId9plTm8u2Y8Y=
+X-Google-Smtp-Source: ABdhPJz2D+fRNoHM0A6W0qTc3EM9VrFVuakCSZIBmaIND7uZpkfZaZArxF3k+B7eYt68byENmYSDIg==
+X-Received: by 2002:a1c:6706:: with SMTP id b6mr5554829wmc.167.1594931409641;
+        Thu, 16 Jul 2020 13:30:09 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id v5sm9939823wmh.12.2020.07.16.13.30.07
+        by smtp.gmail.com with ESMTPSA id v5sm9939823wmh.12.2020.07.16.13.30.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 13:30:07 -0700 (PDT)
+        Thu, 16 Jul 2020 13:30:09 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 5/7] io_uring: move BUFFER_SELECT check into *recv[msg]
-Date:   Thu, 16 Jul 2020 23:28:03 +0300
-Message-Id: <34b905526712be27ba8af56c4a00fd1d7b8ac69d.1594930020.git.asml.silence@gmail.com>
+Subject: [PATCH 6/7] io_uring: extract io_put_kbuf() helper
+Date:   Thu, 16 Jul 2020 23:28:04 +0300
+Message-Id: <5b452eed4f84cecb61fce77ab9d06cd3a9d9574b.1594930020.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1594930020.git.asml.silence@gmail.com>
 References: <cover.1594930020.git.asml.silence@gmail.com>
@@ -62,70 +62,68 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Move REQ_F_BUFFER_SELECT flag check out of io_recv_buffer_select(), and
-do that in its call sites That saves us from double error checking and
-possibly an extra func call.
+Extract a common helper for cleaning up a selected buffer, this will be
+used shortly. By the way, correct cflags types to unsigned and, as kbufs
+are anyway tracked by a flag, remove useless zeroing req->rw.addr.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ fs/io_uring.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c837a465b53a..eabc03320901 100644
+index eabc03320901..c723f15c5463 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -4101,9 +4101,6 @@ static struct io_buffer *io_recv_buffer_select(struct io_kiocb *req,
- 	struct io_sr_msg *sr = &req->sr_msg;
- 	struct io_buffer *kbuf;
+@@ -1922,20 +1922,25 @@ static inline unsigned int io_sqring_entries(struct io_ring_ctx *ctx)
+ 	return smp_load_acquire(&rings->sq.tail) - ctx->cached_sq_head;
+ }
  
--	if (!(req->flags & REQ_F_BUFFER_SELECT))
--		return NULL;
--
- 	kbuf = io_buffer_select(req, &sr->len, sr->bgid, sr->kbuf, needs_lock);
- 	if (IS_ERR(kbuf))
- 		return kbuf;
-@@ -4153,7 +4150,7 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
+-static int io_put_kbuf(struct io_kiocb *req)
++static unsigned int io_put_kbuf(struct io_kiocb *req, struct io_buffer *kbuf)
  {
- 	struct io_async_msghdr iomsg, *kmsg;
- 	struct socket *sock;
 -	struct io_buffer *kbuf;
-+	struct io_buffer *kbuf = NULL;
- 	unsigned flags;
- 	int ret, cflags = 0;
+-	int cflags;
++	unsigned int cflags;
  
-@@ -4175,10 +4172,10 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 		kmsg = &iomsg;
- 	}
+-	kbuf = (struct io_buffer *) (unsigned long) req->rw.addr;
+ 	cflags = kbuf->bid << IORING_CQE_BUFFER_SHIFT;
+ 	cflags |= IORING_CQE_F_BUFFER;
+-	req->rw.addr = 0;
+ 	req->flags &= ~REQ_F_BUFFER_SELECTED;
+ 	kfree(kbuf);
+ 	return cflags;
+ }
  
--	kbuf = io_recv_buffer_select(req, &cflags, !force_nonblock);
--	if (IS_ERR(kbuf)) {
--		return PTR_ERR(kbuf);
--	} else if (kbuf) {
-+	if (req->flags & REQ_F_BUFFER_SELECT) {
-+		kbuf = io_recv_buffer_select(req, &cflags, !force_nonblock);
-+		if (IS_ERR(kbuf))
-+			return PTR_ERR(kbuf);
- 		kmsg->fast_iov[0].iov_base = u64_to_user_ptr(kbuf->addr);
- 		iov_iter_init(&kmsg->msg.msg_iter, READ, kmsg->iov,
- 				1, req->sr_msg.len);
-@@ -4225,11 +4222,12 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock,
- 	if (unlikely(!sock))
- 		return ret;
++static inline unsigned int io_put_rw_kbuf(struct io_kiocb *req)
++{
++	struct io_buffer *kbuf;
++
++	kbuf = (struct io_buffer *) (unsigned long) req->rw.addr;
++	return io_put_kbuf(req, kbuf);
++}
++
+ static inline bool io_run_task_work(void)
+ {
+ 	if (current->task_works) {
+@@ -1985,7 +1990,7 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ 		list_del(&req->inflight_entry);
  
--	kbuf = io_recv_buffer_select(req, &cflags, !force_nonblock);
--	if (IS_ERR(kbuf))
--		return PTR_ERR(kbuf);
--	else if (kbuf)
-+	if (req->flags & REQ_F_BUFFER_SELECT) {
-+		kbuf = io_recv_buffer_select(req, &cflags, !force_nonblock);
-+		if (IS_ERR(kbuf))
-+			return PTR_ERR(kbuf);
- 		buf = u64_to_user_ptr(kbuf->addr);
-+	}
+ 		if (req->flags & REQ_F_BUFFER_SELECTED)
+-			cflags = io_put_kbuf(req);
++			cflags = io_put_rw_kbuf(req);
  
- 	ret = import_single_range(READ, buf, sr->len, &iov, &msg.msg_iter);
- 	if (unlikely(ret))
+ 		__io_cqring_fill_event(req, req->result, cflags);
+ 		(*nr_events)++;
+@@ -2177,7 +2182,7 @@ static void io_complete_rw_common(struct kiocb *kiocb, long res,
+ 	if (res != req->result)
+ 		req_set_fail_links(req);
+ 	if (req->flags & REQ_F_BUFFER_SELECTED)
+-		cflags = io_put_kbuf(req);
++		cflags = io_put_rw_kbuf(req);
+ 	__io_req_complete(req, res, cflags, cs);
+ }
+ 
 -- 
 2.24.0
 

@@ -2,152 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA53D2249DE
-	for <lists+io-uring@lfdr.de>; Sat, 18 Jul 2020 10:34:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 973FB224BDF
+	for <lists+io-uring@lfdr.de>; Sat, 18 Jul 2020 16:37:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbgGRIe4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 18 Jul 2020 04:34:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41382 "EHLO
+        id S1727924AbgGROhH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 18 Jul 2020 10:37:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729015AbgGRIev (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Jul 2020 04:34:51 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2C62C0619D3;
-        Sat, 18 Jul 2020 01:34:50 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id q7so15309077ljm.1;
-        Sat, 18 Jul 2020 01:34:50 -0700 (PDT)
+        with ESMTP id S1726574AbgGROhG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Jul 2020 10:37:06 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD195C0619D2
+        for <io-uring@vger.kernel.org>; Sat, 18 Jul 2020 07:37:06 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id l6so6673720plt.7
+        for <io-uring@vger.kernel.org>; Sat, 18 Jul 2020 07:37:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=QYsmohHX4ln1V0gQOEGp8gE+5TZzMMGOeU8S/vpgEPo=;
-        b=M2s4NCYDfJimKFQMOmTfY4Xvpulv2i8U+qQt4ANGT+CErJXdML4ivd78j/XVD9R77I
-         W4ajBPu2Ltwo45UJmlIgGXukRnpsrNcGdev+JoCiW/kSfIeS6AFCcYbsBOWs9+1Rlj0n
-         ig2imsD1/aLyTR5qqIiFIlNNwU0DOwCjqxfE3op/xPhoPFHDZfRmjvF/nPO0kJmfyhSJ
-         YYg2O/8NQFbmp//EeDUhMrY1iySIE2R0pJ54UdToBiXWd90aREXDDa65QxVcuK0ZH+fn
-         dScO79Xhmlp4LaRN9Yxpy/Ng9fiScLZIogznwO37C+4YwjFamjep0PluMJvYsnJUrNGP
-         Oh7w==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=OBxVyEg3bdADV2OFLorxOQYOlQLEYNXuUZHrmed//Yw=;
+        b=q2pKauGPutsq7X/osxzAdP5R7jcR5hBKTkgNFUITBMeyRr7tGwBmdGB9kN2OFkPtVo
+         gC4XGaD+1zUxruSNgagkQNlrOkj0vn70BB/iKFO0RKgU3zU3jPVdgOnviczuueRHXohG
+         Y+6GFTAcJRjMeoZFOGGfkUpD8sAsx6enVEwELdO4zoPNdjxGCr6Ad0z4DxarEjMBlwBM
+         n9/vveTB0K+Dn4nbCUTi07m+MAQC3gMss5Iaa+sx/RA6IrYz9HBoiX7WAcj3lLQ6IJzi
+         QBpKtiGi/Lma/Vqhkkl/DUhrKgTFI188Ed2YhkainYCc8LisQ6magBWtWF/HAw+3loww
+         rKlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QYsmohHX4ln1V0gQOEGp8gE+5TZzMMGOeU8S/vpgEPo=;
-        b=N8AibMJ2cZSnUTfOjbaNhCGHJH1lK0/2RVW3UBAUYjBSpEqdo7y269RnSarLiyDjs3
-         XLOhZWYwbqudzSYx3+RGfuU7ToG+iMQo9YN+lPV863JzqY0U0AUZ1hR4/pUKw9puvf93
-         qMGUS/A2Ybsu2kb4SnmzMafZ1ZZ8zWKwGsEjD65I5SUDkTmZc6y13tXlbCyMbsbmb3kR
-         kmDIJ/pAQTj46nuPFDQ6c5hMfe4YaacN8TArlV5j5FCPR192fz6Xs5R6vKkRIn54/lPr
-         SnsU71KdZ0iHSn9Mprql1yvdfQ/69jUHl47itJx+rRgyGzpAFsYyYqiKfRs4d9TDnAUQ
-         51jw==
-X-Gm-Message-State: AOAM533y4T0qQ3VKG7B4Z6kduRVO+Qo55TtWqfjBQrs/ZXtIfgbIz0Nm
-        V8O6We36ucAGQ+s/jWVusTA/Qqyb
-X-Google-Smtp-Source: ABdhPJyQ5aDJMIiAzOmkliORJIVZKK6iYVcEk3DBcZzY7O/fEaLm3XtksjIeGlZuOczK5ku4yNiZ9A==
-X-Received: by 2002:a2e:9a0f:: with SMTP id o15mr6279795lji.450.1595061289390;
-        Sat, 18 Jul 2020 01:34:49 -0700 (PDT)
-Received: from localhost.localdomain ([82.209.196.123])
-        by smtp.gmail.com with ESMTPSA id u26sm2789226lfq.72.2020.07.18.01.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Jul 2020 01:34:48 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OBxVyEg3bdADV2OFLorxOQYOlQLEYNXuUZHrmed//Yw=;
+        b=JROmCngTJkbS4fXy5xA7lspwz8HMZg9QZRI7dSfRvZjKul4+TTuniNXIB5rfC5lcc0
+         0bhnPfe2ye3nWiTuPGYX0qXj2OplrCwSdVyrORTeshnoEb/YmyOGnAGagWNYBC+21/J0
+         ExKbCC3baF6ECo3desxxXSFxo9SwzdHVGYuUwJnDkaPMxhCckUImuVHgTL7dMMe3Kr4N
+         dMKnw9pwwRDDSinY6js+6c5lx5KYeZXfC521gJL0dxnvQzxEsPRdAMdXoFjsnqTvCQOk
+         hTlwh9VlHqouvQK3cjPXIi/164hX0fl/h9GS3zrZcGq0IQiUJxGeU91KOu+83FoQTLOp
+         oOhQ==
+X-Gm-Message-State: AOAM5313VVi3GexBYl61OFVvZ6MHxuVUwRLrrAY0NjsTNja9iXSF7ZxJ
+        qReyhjww6rzwCW/sghDO8TwXFr4seubWXA==
+X-Google-Smtp-Source: ABdhPJwXzTRqkExLgXXpeJ9pKSnTxCd2wGCBsaRl6vw30r3m2wm8UvlbYoxwS/CEUBpUgKiBOWi6WA==
+X-Received: by 2002:a17:90a:ea05:: with SMTP id w5mr14758483pjy.175.1595083026148;
+        Sat, 18 Jul 2020 07:37:06 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id y18sm10841886pff.10.2020.07.18.07.37.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Jul 2020 07:37:05 -0700 (PDT)
+Subject: Re: [PATCH 0/2] task_put batching
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] io_uring: batch put_task_struct()
-Date:   Sat, 18 Jul 2020 11:32:52 +0300
-Message-Id: <8a0e399414ec362ee0c587f4bdca968d4fa04be7.1595021626.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1595021626.git.asml.silence@gmail.com>
 References: <cover.1595021626.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <cf209c59-547e-0a69-244d-7c1fec00a978@kernel.dk>
+Date:   Sat, 18 Jul 2020 08:37:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1595021626.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-As every iopoll request have a task ref, it becomes expensive to put
-them one by one, instead we can put several at once integrating that
-into io_req_free_batch().
+On 7/18/20 2:32 AM, Pavel Begunkov wrote:
+> For my a bit exaggerated test case perf continues to show high CPU
+> cosumption by io_dismantle(), and so calling it io_iopoll_complete().
+> Even though the patch doesn't yield throughput increase for my setup,
+> probably because the effect is hidden behind polling, but it definitely
+> improves relative percentage. And the difference should only grow with
+> increasing number of CPUs. Another reason to have this is that atomics
+> may affect other parallel tasks (e.g. which doesn't use io_uring)
+> 
+> before:
+> io_iopoll_complete: 5.29%
+> io_dismantle_req:   2.16%
+> 
+> after:
+> io_iopoll_complete: 3.39%
+> io_dismantle_req:   0.465%
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+Still not seeing a win here, but it's clean and it _should_ work. For
+some reason I end up getting the offset in task ref put growing the
+fput_many(). Which doesn't (on the surface) make a lot of sense, but
+may just mean that we have some weird side effects.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 57e1f26b6a6b..b52aa0d8b09d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1543,7 +1543,6 @@ static void io_dismantle_req(struct io_kiocb *req)
- 		kfree(req->io);
- 	if (req->file)
- 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
--	__io_put_req_task(req);
- 	io_req_clean_work(req);
- 
- 	if (req->flags & REQ_F_INFLIGHT) {
-@@ -1563,6 +1562,7 @@ static void __io_free_req(struct io_kiocb *req)
- 	struct io_ring_ctx *ctx;
- 
- 	io_dismantle_req(req);
-+	__io_put_req_task(req);
- 	ctx = req->ctx;
- 	if (likely(!io_is_fallback_req(req)))
- 		kmem_cache_free(req_cachep, req);
-@@ -1806,8 +1806,18 @@ static void io_free_req(struct io_kiocb *req)
- struct req_batch {
- 	void *reqs[IO_IOPOLL_BATCH];
- 	int to_free;
-+
-+	struct task_struct	*task;
-+	int			task_refs;
- };
- 
-+static inline void io_init_req_batch(struct req_batch *rb)
-+{
-+	rb->to_free = 0;
-+	rb->task_refs = 0;
-+	rb->task = NULL;
-+}
-+
- static void __io_req_free_batch_flush(struct io_ring_ctx *ctx,
- 				      struct req_batch *rb)
- {
-@@ -1821,6 +1831,10 @@ static void io_req_free_batch_finish(struct io_ring_ctx *ctx,
- {
- 	if (rb->to_free)
- 		__io_req_free_batch_flush(ctx, rb);
-+	if (rb->task) {
-+		put_task_struct_many(rb->task, rb->task_refs);
-+		rb->task = NULL;
-+	}
- }
- 
- static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req)
-@@ -1832,6 +1846,16 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req)
- 	if (req->flags & REQ_F_LINK_HEAD)
- 		io_queue_next(req);
- 
-+	if (req->flags & REQ_F_TASK_PINNED) {
-+		if (req->task != rb->task && rb->task) {
-+			put_task_struct_many(rb->task, rb->task_refs);
-+			rb->task = req->task;
-+			rb->task_refs = 0;
-+		}
-+		rb->task_refs++;
-+		req->flags &= ~REQ_F_TASK_PINNED;
-+	}
-+
- 	io_dismantle_req(req);
- 	rb->reqs[rb->to_free++] = req;
- 	if (unlikely(rb->to_free == ARRAY_SIZE(rb->reqs)))
-@@ -1977,7 +2001,7 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 	/* order with ->result store in io_complete_rw_iopoll() */
- 	smp_rmb();
- 
--	rb.to_free = 0;
-+	io_init_req_batch(&rb);
- 	while (!list_empty(done)) {
- 		int cflags = 0;
- 
+I have applied it, thanks.
+
 -- 
-2.24.0
+Jens Axboe
 

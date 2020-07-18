@@ -2,82 +2,144 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BED0A224BE1
-	for <lists+io-uring@lfdr.de>; Sat, 18 Jul 2020 16:37:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4537B224D57
+	for <lists+io-uring@lfdr.de>; Sat, 18 Jul 2020 19:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbgGROhR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 18 Jul 2020 10:37:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40136 "EHLO
+        id S1726690AbgGRR3e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 18 Jul 2020 13:29:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbgGROhQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Jul 2020 10:37:16 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90613C0619D2
-        for <io-uring@vger.kernel.org>; Sat, 18 Jul 2020 07:37:16 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id g67so8110399pgc.8
-        for <io-uring@vger.kernel.org>; Sat, 18 Jul 2020 07:37:16 -0700 (PDT)
+        with ESMTP id S1726648AbgGRR3d (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Jul 2020 13:29:33 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BC6C0619D2
+        for <io-uring@vger.kernel.org>; Sat, 18 Jul 2020 10:29:33 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id c80so18614642wme.0
+        for <io-uring@vger.kernel.org>; Sat, 18 Jul 2020 10:29:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=l5YWaw5ixjhtAYjd1G7ciSiLIU/kiucshTPeB3U3VoQ=;
-        b=l1x11iJAKEHrWwujJIpETBnskYVztvx6O/sfkRtek979BMRII2IihQbN6kGJ1k1HdT
-         2ExwWpJyXIGW4bp7qRR+akuH9L9ojvKV2PMJegNzYBqbbdAgpvX6/E9VptnsVtKm2YmY
-         iEuhfOyPED8GbPqjRIT3suWAZG86scwzkxX1E+2Ba9GWp0tTox4FBAEzYiZXDBOsouQw
-         lv5iXhgFrD7qR1+6a6TNCLF2RiBlXYYYRGr12JWNaTeFlWxRXA1xajNPnLXV+yX3tyyV
-         8/ugQQJKpc6J72ZMXGuHejc/5SvrLiIcBgpXkVyTzPxYIBlG413UOn/7FYBSpXm4OIi0
-         ffVg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zxR/M1uGKBQ+DjHs2ip29WULr/5SFv0EuoLzf8ctuBo=;
+        b=VaL2r5sby0VGu+2FRNrp4ZuIfDdWl79oj6P43+WAqBtwPNx/5YXbocDlX3QXfE6vl0
+         XEVQ7ABtV47yWJprJupE6dknVcVdZefnDSz4SyjmOVZ0hTbDe48oCkZE/UK84JZIButG
+         Z5p+v6Wy7/mT4pCIhWgFMQXlRnOKNXIWi3PX2njNIGuNIZsnPLqLVir5KHK7AIB7+Qfv
+         VY0awD8g+iLhN0AMhR4ywKuo7GYygrPBe37OSVaUmkYyVDl6p14zJ5Hfj9laqRtP8wRz
+         B6u8e8ZzF4966R9J/TT0vzzvxdRDVGfK54J7WqsNvSrDcomHEmuiwjPp+a3sFPopDTTk
+         3HZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=l5YWaw5ixjhtAYjd1G7ciSiLIU/kiucshTPeB3U3VoQ=;
-        b=b/A7YSUjgaLKO3FLIKBAo2p3cjFfM5gc9vrobW+9pAvJR6/sp56lF1dISMuh63NtPu
-         ISTS9J4XQ5MgsqgCgAxOEsBJiErDA4DtudNecY9w+yq23JhisDJgVquv+pgWUKUIu/cn
-         May45h7TF0vzS5gy6D4t0txzBch/beOcd/NM2TmUY+g4RvYFS55izm1O6XpXOR+sw3eB
-         ggxm5+HkBy5Ivt19KCYkm/Ycj4wBGS5SpGC+gtyRAm2y8zGdckS6Xgd1HkwHZjfGzf/W
-         7Etns97yDk9EC3rBLtuarthJdHasOjZP5mhsiNO8wM7m5ybvZdpyP8d1IGnq2aHyEkut
-         Xtyg==
-X-Gm-Message-State: AOAM532RjUTeVMsTh5wAvPpao1+ugVEG15UTIyNAHZwELiMGyqVlYTLv
-        GUjJhCvz1gE1iWHz3xFbR9GSlpMca0Q4sQ==
-X-Google-Smtp-Source: ABdhPJzr32g9ST8Al/h/yHguTxtR3oam/fts3eQAOEqg1KfQwMADKL8y4AxU4R9aE5wq8ssCLV+T+Q==
-X-Received: by 2002:a63:925a:: with SMTP id s26mr12572854pgn.21.1595083035879;
-        Sat, 18 Jul 2020 07:37:15 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id c1sm5947874pje.9.2020.07.18.07.37.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Jul 2020 07:37:15 -0700 (PDT)
-Subject: Re: [PATCH 5.9 0/2] memory accounting fixes
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1595017706.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7adeba63-f143-c212-a8f7-3f026ffd9b1e@kernel.dk>
-Date:   Sat, 18 Jul 2020 08:37:14 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zxR/M1uGKBQ+DjHs2ip29WULr/5SFv0EuoLzf8ctuBo=;
+        b=MJgmHp66ZbMJ+CRCvRqmAaX/cACF6WTwNsK7n3ngzslfzIdCVGt3VGpPBxROylG6sj
+         LQGkXIeBvFR3uQd+hDPYW5t6jEEJGBl0oNKZppR8lsZqD3aKbrdV8gOx+9VX/Mdyn6FB
+         zvfWXbLzYDcoZFvexNCgigRI144ISPlAXtDWfb5+2apbtegHMK2FyQ0kkJt91mixQWhn
+         9LHstdYMK8984E4sjtaKoDPpEAQvrQjy0tzroCsJNASlH34Uz/uUebQlDPtUOYKdg09j
+         2z1NIeqfDP08KrXaumdA5/paaheI1nh73xDHa/uZVkjt6zL5K6FrwqwJF/kfSAeZXMG3
+         6fXA==
+X-Gm-Message-State: AOAM532W9zwJsKpEzIL+J8muEvl1cSqocUv/fKHoV1RsfRavOG4PcWf0
+        +6OYjNlr7o3IPYLH+1PRH49iWvJYbRYWbwEjsLZnt/gE
+X-Google-Smtp-Source: ABdhPJyVj7pMOUc517EiLtJiJfv5vrodYznhD9/GF9hXyVPG/JqNmWktpfPB/sbBV+iAQJ7mnFBNUHWfoYjQnu6kQYM=
+X-Received: by 2002:a1c:e143:: with SMTP id y64mr14195647wmg.90.1595093370931;
+ Sat, 18 Jul 2020 10:29:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cover.1595017706.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAKq9yRh2Q2fJuEM1X6GV+G7dAyGv2=wdGbPQ4X0y_CP=wJcKwg@mail.gmail.com>
+ <CAKq9yRiSyHJu7voNUiXbwm36cRjU+VdcSXYkGPDGWai0w8BG=w@mail.gmail.com>
+ <bf3df7ce-7127-2481-602c-ee18733b02bd@kernel.dk> <CAKq9yRhrqMv44sHK-P_A7=OUvLXf=3dZxPysVrPP=sL43ZGiDQ@mail.gmail.com>
+ <4f0f5fba-797b-5505-b4fa-6e46b2b036e6@kernel.dk>
+In-Reply-To: <4f0f5fba-797b-5505-b4fa-6e46b2b036e6@kernel.dk>
+From:   Daniele Salvatore Albano <d.albano@gmail.com>
+Date:   Sat, 18 Jul 2020 18:29:04 +0100
+Message-ID: <CAKq9yRjwp6_hYbG3j11ekAg_1iJ8h_aLM+Kq7uCmgYvOHESFaA@mail.gmail.com>
+Subject: Re: [PATCH] io_files_update_prep shouldn't consider all the flags invalid
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/18/20 2:31 AM, Pavel Begunkov wrote:
-> Two small memory accounting fixes for 5.9
-> 
-> Pavel Begunkov (2):
->   io_uring: don't miscount pinned memory
->   io_uring: return locked and pinned page accounting
-> 
->  fs/io_uring.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+On Fri, 17 Jul 2020 at 23:48, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 7/17/20 4:39 PM, Daniele Salvatore Albano wrote:
+> > Sure thing, tomorrow I will put it together, review all the other ops
+> > as well, just in case (although I believe you may already have done
+> > it), and test it.
+>
+> I did take a quick look and these were the three I found. There
+> shouldn't be others, so I think we're good there.
+>
+> > For the test cases, should I submit a separate patch for liburing or
+> > do you prefer to use pull requests on gh?
+>
+> Either one is fine, I can work with either.
+>
+> --
+> Jens Axboe
+>
 
-Thanks, applied.
+I changed the patch name considering that is now affecting multiple
+functions, I will also create the PR for the test cases but it may
+take a few days, I wasn't using the other 2 functions and need to do
+some testing.
 
--- 
-Jens Axboe
+---
 
+[PATCH] allow flags in io_timeout_remove_prep, io_async_cancel_prep
+ and io_files_update_prep
+
+io_timeout_remove_prep, io_async_cancel_prep and io_files_update_prep
+should allow valid flags.
+
+Signed-off-by: Daniele Albano <d.albano@gmail.com>
+---
+ fs/io_uring.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index ba70dc62f15f..3101b4a36bc9 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5010,7 +5010,11 @@ static int io_timeout_remove_prep(struct io_kiocb *req,
+ {
+        if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+                return -EINVAL;
+-       if (sqe->flags || sqe->ioprio || sqe->buf_index || sqe->len)
++
++    if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
++        return -EINVAL;
++
++    if (unlikely(sqe->ioprio || sqe->buf_index || sqe->len))
+                return -EINVAL;
+
+        req->timeout.addr = READ_ONCE(sqe->addr);
+@@ -5186,8 +5190,11 @@ static int io_async_cancel_prep(struct io_kiocb *req,
+ {
+        if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+                return -EINVAL;
+-       if (sqe->flags || sqe->ioprio || sqe->off || sqe->len ||
+-           sqe->cancel_flags)
++
++    if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
++        return -EINVAL;
++
++    if (unlikely(sqe->ioprio || sqe->off || sqe->len || sqe->cancel_flags))
+                return -EINVAL;
+
+        req->cancel.addr = READ_ONCE(sqe->addr);
+@@ -5205,7 +5212,10 @@ static int io_async_cancel(struct io_kiocb *req)
+ static int io_files_update_prep(struct io_kiocb *req,
+                                const struct io_uring_sqe *sqe)
+ {
+-       if (sqe->flags || sqe->ioprio || sqe->rw_flags)
++    if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
++        return -EINVAL;
++
++    if (unlikely(sqe->ioprio || sqe->rw_flags))
+                return -EINVAL;
+
+        req->files_update.offset = READ_ONCE(sqe->off);
+--
+2.25.1

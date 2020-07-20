@@ -2,96 +2,127 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 754D6226CC4
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jul 2020 19:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC841226CF9
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jul 2020 19:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbgGTRDO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Jul 2020 13:03:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51880 "EHLO
+        id S1729155AbgGTRO1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Jul 2020 13:14:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728346AbgGTRDO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jul 2020 13:03:14 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16861C061794;
-        Mon, 20 Jul 2020 10:03:14 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id a15so3637538wrh.10;
-        Mon, 20 Jul 2020 10:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2z6vfRN45O58360WXxB9JosENc0eD1jtyLCvWHGh1YY=;
-        b=NDSdkoTtQtN9k8e5yU0/Q6OJPgewxcja66aFKP8Z7ADQhogTJURkNUpGl91G2fpCCU
-         oIkZoqpmJ/x1DP3gXTsvgKPG2qkgxg7rLWiYBSMsPyfyECt8X4/CYlT8TvVEBnGbPnvO
-         yhxBYdlA2ZXvEuMIGUxXzn75G7Kua2nEsR2NMUAkmMiJg5uOmfWYmmVFAbfbQbesJWEt
-         LlS6Ou/POWTJOLnbo/h7xECwdjuxZ1t2atpEjWmxDllEDUmevYK9J1jM8unZROSC3aJf
-         TER0ScfQ2MpTlWMVo4cYQaU10tOokxlhrgFoiZVHfW2W4jXw8xxyOoPY/JVpEy8KWQ/C
-         V9Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2z6vfRN45O58360WXxB9JosENc0eD1jtyLCvWHGh1YY=;
-        b=rNTqgr0YeqS5MJRRck2jJ1YubKfKVvWigWXM0S4618NGxcbRyAxKc1sh2Foej0fZhu
-         +ofG0U/2CfPSX+VWDj3uj15ovuULmAC+By0O20VKi9DN6TBuyGNnFetAAojkKMYHdZXJ
-         5pHH16LjotwTm7CPZmIW2NOnuUu8WKzN7s+ho9VGkfeKaszCeeNfP0tz9InarT8w/L/J
-         MphzfIxTe1IAqrDFpa5PaEdjD0dvRAkkHyoyuiKXaqE4LwkLisVvfxZr/70kLXHerrUb
-         zv/nz2PnjpEhjQeS/9YhEnONw+r16lkXzrLeBfU6TOFPDVcYjnRQ94DNXZ88PBgO/jx6
-         jRRQ==
-X-Gm-Message-State: AOAM532a58aXQpjytQf7UTc9NmbqDEbbcmi+t6LMo1xibH88B85pNdpA
-        pLPaRhplkjA5QV+QcU6j+nGVIyhcOqvYfaT2DQ0=
-X-Google-Smtp-Source: ABdhPJzLTTWPjYGX0RzMnJeUOLrnHeGFH1UOcpvlUTIsjffcPcqfeW0pNI6XGZeS+hFgMQxoz0bLNak5dIzAX9LyPrY=
-X-Received: by 2002:adf:f0ce:: with SMTP id x14mr22109097wro.137.1595264592763;
- Mon, 20 Jul 2020 10:03:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <1593974870-18919-5-git-send-email-joshi.k@samsung.com>
- <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk> <20200709085501.GA64935@infradead.org>
- <adc14700-8e95-10b2-d914-afa5029ae80c@kernel.dk> <20200709140053.GA7528@infradead.org>
- <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk> <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com>
- <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk> <20200710130912.GA7491@infradead.org>
- <CA+1E3rJSiS58TE=hHv5wVv-umJ19_7zKv-JqZTNzD=xi3MoX1g@mail.gmail.com> <20200710134350.GA14704@infradead.org>
-In-Reply-To: <20200710134350.GA14704@infradead.org>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Mon, 20 Jul 2020 22:32:45 +0530
-Message-ID: <CA+1E3r+DgR=vVCsUv0cCbPC4MV3Rxfyzee-HWwTogSQ-7F=MoA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>,
-        viro@zeniv.linux.org.uk, bcrl@kvack.org, Damien.LeMoal@wdc.com,
-        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-        "Matias Bj??rling" <mb@lightnvm.io>, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org,
+        with ESMTP id S1728889AbgGTRO0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jul 2020 13:14:26 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DA64C061794;
+        Mon, 20 Jul 2020 10:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=d45SJ+BOtrVprN5peIref8u4gVYNL9L8EWPr0CD0nOs=; b=Qn43UcExzwvyrabYv+bSaietLB
+        7P14B46c5KQm8NZYBan4GaRIDj45LsNwNwArUaU7OZLcrqyZKS5Tx2dr5uXoM1glReH6jW+FCBglM
+        XF+a8BwEWiZDXEDjXK9/kMkqlBKagUZH8nJ9xSCyIP/7MgjMAtfZ/gFCWM0Ywp01yCVpNBt0oSi4B
+        k70PZdwvZ+vYVilV9Nz8vXzLSrpSG8VrAPGlioDQ04QqEWiSM/D337Su2iMlGk/DuUJSc7xtlxu/E
+        T9mqc5nb+1xZYcUoVVltrip1njtJjF4677m/yH6bIeCltwnH6o7AQ4eEqxD+WAYKME/lPsa0VsOlB
+        hVNDoRcg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jxZMm-0005hb-71; Mon, 20 Jul 2020 17:14:16 +0000
+Date:   Mon, 20 Jul 2020 18:14:16 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
+        linux-fsdevel@vger.kernel.org, Matias Bj??rling <mb@lightnvm.io>,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
         Selvakumar S <selvakuma.s1@samsung.com>,
         Nitesh Shetty <nj.shetty@samsung.com>,
         Javier Gonzalez <javier.gonz@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+Message-ID: <20200720171416.GY12769@casper.infradead.org>
+References: <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk>
+ <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com>
+ <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk>
+ <CA+1E3rLna6VVuwMSHVVEFmrgsTyJN=U4CcZtxSGWYr_UYV7AmQ@mail.gmail.com>
+ <20200710131054.GB7491@infradead.org>
+ <20200710134824.GK12769@casper.infradead.org>
+ <20200710134932.GA16257@infradead.org>
+ <20200710135119.GL12769@casper.infradead.org>
+ <CA+1E3rKOZUz7oZ_DGW6xZPQaDu+T5iEKXctd+gsJw05VwpGQSQ@mail.gmail.com>
+ <CA+1E3r+j=amkEg-_KUKSiu6gt2TRU6AU-_jwnB1C6wHHKnptfQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+1E3r+j=amkEg-_KUKSiu6gt2TRU6AU-_jwnB1C6wHHKnptfQ@mail.gmail.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jul 10, 2020 at 7:13 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Fri, Jul 10, 2020 at 06:59:45PM +0530, Kanchan Joshi wrote:
-> > > block doesn't work for the case of writes to files that don't have
-> > > to be aligned in any way.  And that I think is the more broadly
-> > > applicable use case than zone append on block devices.
-> >
-> > But when can it happen that we do zone-append on a file (zonefs I
-> > asssume), and device returns a location (write-pointer essentially)
-> > which is not in multiple of 512b?
->
-> All the time.  You open a file with O_APPEND.  You write a record to
-> it of any kind of size, then the next write will return the position
-> it got written at, which can be anything.
-I understand if this is about cached write and we are talking about
-O_APPEND in general.
-But for direct block I/O write and ZoneFS writes, page-cache is not
-used, so write(and zone-append result) will be aligned to underlying
-block size.
-Even though this patchset uses O_APPEND, it filters regular files and
-non zoned-block devices by using new FMODE_ZONE_APPEND flag.
+On Mon, Jul 20, 2020 at 10:19:57PM +0530, Kanchan Joshi wrote:
+> On Fri, Jul 10, 2020 at 7:41 PM Kanchan Joshi <joshiiitr@gmail.com> wrote:
+> > If we are doing this for zone-append (and not general cases), "__s64
+> > res64" should work -.
+> > 64 bits = 1 (sign) + 23 (bytes-copied: cqe->res) + 40
+> > (written-location: chunk_sector bytes limit)
 
--- 
-Joshi
+No, don't do this.
+
+ struct io_uring_cqe {
+	__u64   user_data;      /* sqe->data submission passed back */
+-	__s32   res;            /* result code for this event */
+-	__u32   flags;
++	union {
++		struct {
++			__s32   res;    /* result code for this event */
++			__u32   flags;
++		};
++		__s64		res64;
++	};
+ };
+
+Return the value in bytes in res64, or a negative errno.  Done.
+			
+>   * IO completion data structure (Completion Queue Entry)
+>   */
+>  struct io_uring_cqe {
+> -       __u64   user_data;      /* sqe->data submission passed back */
+> -       __s32   res;            /* result code for this event */
+> -       __u32   flags;
+> +       __u64   user_data;      /* sqe->data submission passed back */
+> +        union {
+> +                struct {
+> +                        __s32   res;            /* result code for
+> this event */
+> +                        __u32   flags;
+> +                };
+> +               /* Alternate for zone-append */
+> +               struct {
+> +                       union {
+> +                               /*
+> +                                * kernel uses this to store append result
+> +                                * Most significant 23 bits to return number of
+> +                                * bytes or error, and least significant 41 bits
+> +                                * to return zone-relative offset in bytes
+> +                                * */
+> +                               __s64 res64;
+> +                               /*for user-space ease, kernel does not use*/
+> +                               struct {
+> +#if defined(__LITTLE_ENDIAN_BITFIELD)
+> +                                       __u64 append_offset :
+> APPEND_OFFSET_BITS;
+> +                                       __s32 append_res : APPEND_RES_BITS;
+> +#elif defined(__BIG_ENDIAN_BITFIELD)
+> +                                       __s32 append_res : APPEND_RES_BITS;
+> +                                       __u64 append_offset :
+> APPEND_OFFSET_BITS;
+> +#endif
+> +                               }__attribute__ ((__packed__));
+> +                       };
+> +                };
+> +        };
+>  };
+> 
+> -- 
+> Joshi

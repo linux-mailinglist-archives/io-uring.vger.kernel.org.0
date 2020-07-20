@@ -2,182 +2,170 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BC11226BC7
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jul 2020 18:44:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C762D226C1A
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jul 2020 18:47:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730213AbgGTQo1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Jul 2020 12:44:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48954 "EHLO
+        id S1730953AbgGTQrA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Jul 2020 12:47:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730062AbgGTQo1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jul 2020 12:44:27 -0400
+        with ESMTP id S1730047AbgGTQq6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jul 2020 12:46:58 -0400
 Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6851C061794;
-        Mon, 20 Jul 2020 09:44:26 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id 184so194387wmb.0;
-        Mon, 20 Jul 2020 09:44:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E18C0619D2;
+        Mon, 20 Jul 2020 09:46:58 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id o2so190224wmh.2;
+        Mon, 20 Jul 2020 09:46:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FkAjRdHklpwnzf5ObLsuA3GFD4vyVGnXFL8jiWrqROU=;
-        b=RQq8OwCZQn3IhLEoGLu1YnMOSxtGQgfKHbS8/XwIJ2gww9jVlLYUcmtLgJATPuOe5l
-         36Dj1eWRkDkxYWajk+V7sZ7zhV6TVkQL1dZsZpOgUbYgResOksiWtA9NlLmzR/natLRa
-         KJYxGleEw5TAoKKbLy0jY+Qpm51GzZ/XdbgwR/4h4i+/VtUz5039/3YlXz4xtvXXsK48
-         rRSPq8l7ZecaoMqUbvZ3j9yywXv7RFr/s4ZRU/dy47iLCPVN9DOIOrtlZlnJiYaZxb4q
-         TrcW45nFwN3LY8G9dM6rFx+NznCmUneIhnIGbgUnF4SAxfLMZoh0SdwCrNl4D2VkOFHB
-         tKjw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9TUkabklxIXk2rG01tEVzaKI9h1RHrZIgtt3w/3l2iM=;
+        b=cqgBjnypFa1cbeUeu4WKA3uvV4175XXicaesi3cB7HqFuZkvUS3EnOHeMfJwNpNlcu
+         thvdafoSdEpu3CyPa0BvtB18a649D+XC6ajS63SeSnJp6XDu18WDcEJTK8klZNzdximZ
+         VuENIM+1ZvbGer8HlSEIJ5nBBP/QCWiT36HTgRFZfhMl74u3ZylqJREsFY0Lwc7KPZfZ
+         CVu19F0/MAN2L88oyFeatinyVCcE8rFRVB0KHI7TQT2a/Fv/pRVO9FMOnNYPgoKZVlO4
+         hlQqnmp+3KYZ9wrW6RC9f04lVmriNZKKST63JfVFty4Y9voY7HrmjAKp9hJlI1COu6AR
+         TYWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FkAjRdHklpwnzf5ObLsuA3GFD4vyVGnXFL8jiWrqROU=;
-        b=TpqkNAfUlbu4A2YCawhY/XIFEou8BMZ0kla+Lraw9EkRoHMhgLPm5YFPCEaSuPzfRi
-         bpsO/S/L684lybeyU2dEbM1MsRRCPPgT04KbHmCmo6Av7nZYe5V/7saM134cocfMEspr
-         zO9sqy9ZSQXo4jMp2bD0HhMDtNGPQIlyE2t3FT3WrwKYraXRBchuwRKCybqa3O17NrhN
-         TBGnI2G1T5zacpxsyjl6A5BwEzqEOj1+XTa4V2GCN9wwLmqybgF8Vh3bawuyn0BUKtj+
-         8IEPpwAgXHt5k4DYnJLZgL826ZTkDNkPEPw04hNu/RYbhDfNF7BFEOb3Ri96V7xNURVY
-         fiSg==
-X-Gm-Message-State: AOAM532oNHTV//7o6QIX+UJ7ETM9G51oZMihdyq/EQNdukXAviX9L3rN
-        480LGw3zRvswyGZg2qEZjctTPNio
-X-Google-Smtp-Source: ABdhPJyxN+Mqn9hYY4iCQ/v2TN++IL9cba4eoZ43cw2h1m5nmmaOOUprOgMo0kCbpeENrxBJBeUVaA==
-X-Received: by 2002:a1c:4b09:: with SMTP id y9mr241459wma.46.1595263465285;
-        Mon, 20 Jul 2020 09:44:25 -0700 (PDT)
-Received: from [192.168.43.17] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id x9sm36740wmk.45.2020.07.20.09.44.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jul 2020 09:44:24 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1595021626.git.asml.silence@gmail.com>
- <cf209c59-547e-0a69-244d-7c1fec00a978@kernel.dk>
- <b01e7f2d-d9a6-5593-3afb-5008d96695c6@gmail.com>
- <a2aa8de0-a2d0-3381-3415-4b523c2b66a5@kernel.dk>
- <5b20b94d-13f7-66ee-610a-6f37ec8caa8d@gmail.com>
- <35740763-8123-a0d7-3cc6-593c7fcc63e7@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH 0/2] task_put batching
-Message-ID: <f23434a2-dcc5-6f50-89a3-0a1a92740d73@gmail.com>
-Date:   Mon, 20 Jul 2020 19:42:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9TUkabklxIXk2rG01tEVzaKI9h1RHrZIgtt3w/3l2iM=;
+        b=mt66boa/ILERyE81gMU+dgOyJczfAxN2dRToEms2isikkt+Xn2W9qrRxu1gCh6AJQd
+         BhFCxp4UeoW+LWcyW5gkyj6DiOOYTnJytApYVsVF9gLMpa4OxLPvRWz1rWH7SIOgJK0/
+         gFV+NlnsFV+7uZ2jhd4XGEnDeTLpFzvtPQpfCc6H7vFeVVoeCvBaCfGDIPR37uK3aO44
+         8EW/h7C6YPu0n+BcETWiNEd9Ba5EEg6TSf7zXcWpGKnswD5zo3xo0Y5nAVhlVkPwgtIc
+         2rxhoRrRqHKm23xGTwv+ashf5mBGr1ZRi/Fnncpg5QnMplnkKzB4ObNCjOOAN4Tf8PKh
+         wCMw==
+X-Gm-Message-State: AOAM531dngUaN1OfmoLCkbp8t5koWX0m9sF7/5/WQx75M9CRkNBmcFbj
+        NBJx7ytNfpR16KrYM3nkbM39RKwi1tQUrdYvXyg=
+X-Google-Smtp-Source: ABdhPJwHnWafr2ui/E9BQNR1LWn8VA0FKZgs+fhoDxBR6hA5H0uc44yL3f5SpS8O04T80tEL381rAROIPtdr1Fbg7hY=
+X-Received: by 2002:a1c:2485:: with SMTP id k127mr220540wmk.138.1595263616571;
+ Mon, 20 Jul 2020 09:46:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <35740763-8123-a0d7-3cc6-593c7fcc63e7@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CGME20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7@epcas5p1.samsung.com>
+ <1593974870-18919-5-git-send-email-joshi.k@samsung.com> <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk>
+ <20200709085501.GA64935@infradead.org> <adc14700-8e95-10b2-d914-afa5029ae80c@kernel.dk>
+ <20200709140053.GA7528@infradead.org> <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk>
+ <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com>
+ <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk> <CA+1E3rLna6VVuwMSHVVEFmrgsTyJN=U4CcZtxSGWYr_UYV7AmQ@mail.gmail.com>
+ <20200710131054.GB7491@infradead.org> <9e870249-01db-c68d-ea65-28edc3c1f071@kernel.dk>
+In-Reply-To: <9e870249-01db-c68d-ea65-28edc3c1f071@kernel.dk>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Mon, 20 Jul 2020 22:16:28 +0530
+Message-ID: <CA+1E3rK9LCmB4Lt8hTLrCx7bXaF6sETWgm=M6=D6grOnGSgiRQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
+        linux-fsdevel@vger.kernel.org, "Matias Bj??rling" <mb@lightnvm.io>,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 20/07/2020 19:11, Jens Axboe wrote:
-> On 7/20/20 10:06 AM, Pavel Begunkov wrote:
->> On 20/07/2020 18:49, Jens Axboe wrote:
->>> On 7/20/20 9:22 AM, Pavel Begunkov wrote:
->>>> On 18/07/2020 17:37, Jens Axboe wrote:
->>>>> On 7/18/20 2:32 AM, Pavel Begunkov wrote:
->>>>>> For my a bit exaggerated test case perf continues to show high CPU
->>>>>> cosumption by io_dismantle(), and so calling it io_iopoll_complete().
->>>>>> Even though the patch doesn't yield throughput increase for my setup,
->>>>>> probably because the effect is hidden behind polling, but it definitely
->>>>>> improves relative percentage. And the difference should only grow with
->>>>>> increasing number of CPUs. Another reason to have this is that atomics
->>>>>> may affect other parallel tasks (e.g. which doesn't use io_uring)
->>>>>>
->>>>>> before:
->>>>>> io_iopoll_complete: 5.29%
->>>>>> io_dismantle_req:   2.16%
->>>>>>
->>>>>> after:
->>>>>> io_iopoll_complete: 3.39%
->>>>>> io_dismantle_req:   0.465%
->>>>>
->>>>> Still not seeing a win here, but it's clean and it _should_ work. For
->>>>> some reason I end up getting the offset in task ref put growing the
->>>>> fput_many(). Which doesn't (on the surface) make a lot of sense, but
->>>>> may just mean that we have some weird side effects.
->>>>
->>>> It grows because the patch is garbage, the second condition is always false.
->>>> See the diff. Could you please drop both patches?
->>>
->>> Hah, indeed. With this on top, it looks like it should in terms of
->>> performance and profiles.
->>
->> It just shows, that it doesn't really matters for a single-threaded app,
->> as expected. Worth to throw some contention though. I'll think about
->> finding some time to get/borrow a multi-threaded one.
-> 
-> But it kind of did here, ended up being mostly a wash in terms of perf
-> here as my testing reported. With the incremental applied, it's up a bit
-> over before the task put batching.
+On Fri, Jul 10, 2020 at 7:39 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 7/10/20 7:10 AM, Christoph Hellwig wrote:
+> > On Fri, Jul 10, 2020 at 12:35:43AM +0530, Kanchan Joshi wrote:
+> >> Append required special treatment (conversion for sector to bytes) for io_uring.
+> >> And we were planning a user-space wrapper to abstract that.
+> >>
+> >> But good part (as it seems now) was: append result went along with cflags at
+> >> virtually no additional cost. And uring code changes became super clean/minimal
+> >> with further revisions.
+> >> While indirect-offset requires doing allocation/mgmt in application,
+> >> io-uring submission
+> >> and in completion path (which seems trickier), and those CQE flags
+> >> still get written
+> >> user-space and serve no purpose for append-write.
+> >
+> > I have to say that storing the results in the CQE generally make
+> > so much more sense.  I wonder if we need a per-fd "large CGE" flag
+> > that adds two extra u64s to the CQE, and some ops just require this
+> > version.
+>
+> I have been pondering the same thing, we could make certain ops consume
+> two CQEs if it makes sense. It's a bit ugly on the app side with two
+> different CQEs for a request, though. We can't just treat it as a large
+> CQE, as they might not be sequential if we happen to wrap. But maybe
+> it's not too bad.
 
-Hmm, I need to get used to sensitivity of your box, that's a good one!
+Did some work on the two-cqe scheme for zone-append.
+First CQE is the same (as before), while second CQE does not keep
+res/flags and instead has 64bit result to report append-location.
+It would look like this -
 
-Do you mean, that the buggy version without atomics was on par comparing
-to not having it at all, but the fixed/updated one is a bit faster? Sounds
-like micro binary differences, like a bit altered jumps.
+struct io_uring_cqe {
+        __u64   user_data;      /* sqe->data submission passed back */
+-       __s32   res;            /* result code for this event */
+-       __u32   flags;
++       union {
++               struct {
++                       __s32   res;            /* result code for this event */
++                       __u32   flags;
++               };
++               __u64   append_res;   /*only used for append, in
+secondary cqe */
++       };
 
-It'd also interesting to know, what degree of coalescing in
-io_iopoll_complete() you manage to get with that.
+And kernel will produce two CQEs for append completion-
 
->>> I can just fold this into the existing one, if you'd like.
->>
->> Would be nice. I'm going to double-check the counter and re-measure anyway.
->> BTW, how did you find it? A tool or a proc file would be awesome.
-> 
-> For this kind of testing, I just use t/io_uring out of fio. It's probably
-> the lowest overhead kind of tool:
-> 
-> # sudo taskset -c 0 t/io_uring -b512 -p1 /dev/nvme2n1
+static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
+{
+-       struct io_uring_cqe *cqe;
++       struct io_uring_cqe *cqe, *cqe2 = NULL;
 
-I use io_uring-bench.c from time to time, but didn't know it continued living
-under fio/t/. Thanks! I also put it under cshield for more consistency, but it
-looks like io-wq ignores that.
+-       cqe = io_get_cqring(ctx);
++       if (unlikely(req->flags & REQ_F_ZONE_APPEND))
++ /* obtain two CQEs for append. NULL if two CQEs are not available */
++               cqe = io_get_two_cqring(ctx, &cqe2);
++       else
++               cqe = io_get_cqring(ctx);
++
+        if (likely(cqe)) {
+                WRITE_ONCE(cqe->user_data, req->user_data);
+                WRITE_ONCE(cqe->res, res);
+                WRITE_ONCE(cqe->flags, cflags);
++               /* update secondary cqe for zone-append */
++               if (req->flags & REQ_F_ZONE_APPEND) {
++                       WRITE_ONCE(cqe2->append_res,
++                               (u64)req->append_offset << SECTOR_SHIFT);
++                       WRITE_ONCE(cqe2->user_data, req->user_data);
++               }
+  mutex_unlock(&ctx->uring_lock);
+
+
+This seems to go fine in Kernel.
+But the application will have few differences such as:
+
+- When it submits N appends, and decides to wait for all completions
+it needs to specify min_complete as 2*N (or at least 2N-1).
+Two appends will produce 4 completion events, and if application
+decides to wait for both it must specify 4 (or 3).
+
+io_uring_enter(unsigned int fd, unsigned int to_submit,
+                   unsigned int min_complete, unsigned int flags,
+                   sigset_t *sig);
+
+- Completion-processing sequence for mixed-workload (few reads + few
+appends, on the same ring).
+Currently there is a one-to-one relationship. Application looks at N
+CQE entries, and treats each as distinct IO completion - a for loop
+does the work.
+With two-cqe scheme, extracting, from a bunch of completion, the ones
+for read (one cqe) and append (two cqe): flow gets somewhat
+non-linear.
+
+Perhaps this is not too bad, but felt that it must be put here upfront.
 
 -- 
-Pavel Begunkov
+Kanchan Joshi

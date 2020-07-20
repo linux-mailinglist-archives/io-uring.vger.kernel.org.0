@@ -2,101 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F624226CC1
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jul 2020 19:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754D6226CC4
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jul 2020 19:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730579AbgGTRCX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Jul 2020 13:02:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51748 "EHLO
+        id S1728412AbgGTRDO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Jul 2020 13:03:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732626AbgGTRCW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jul 2020 13:02:22 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62081C0619D5
-        for <io-uring@vger.kernel.org>; Mon, 20 Jul 2020 10:02:22 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id o3so13887899ilo.12
-        for <io-uring@vger.kernel.org>; Mon, 20 Jul 2020 10:02:22 -0700 (PDT)
+        with ESMTP id S1728346AbgGTRDO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jul 2020 13:03:14 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16861C061794;
+        Mon, 20 Jul 2020 10:03:14 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id a15so3637538wrh.10;
+        Mon, 20 Jul 2020 10:03:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lLa51XHV19pSn8dCau2GuTKu0LZrcXv1DrhKxMQG6SQ=;
-        b=VcHZcngkwm/n7gdBFYMeUsSdh5uZvMVcDjIBV3ECeQR8GAZCLzW/ix7cDJDD4mkw8j
-         XvXBGxCga3mtMWCHZyakDM16MKnA20qLojDjxmaMOM2hAQFo3xkfcuygPVr3do95FJzw
-         /iXRZJCdZkPfSkB027sq0tDcY4+Y38vvKTW4YXISYUWJRLtYsTQuEP1+Oc87ev80laL2
-         G+ZPldX2GCPKQ3LR3oUw2d1qiycFNcp19R40LW3VYX2NPOi3FQI7ZWFNsRui/BDnepP8
-         mnc7/F2Cq94AzCvhFEBa3icJeg/Eox3xAjWyP1BRBrgbuMzqTYQIPa05G9ZF9RHUN9aI
-         BGqg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2z6vfRN45O58360WXxB9JosENc0eD1jtyLCvWHGh1YY=;
+        b=NDSdkoTtQtN9k8e5yU0/Q6OJPgewxcja66aFKP8Z7ADQhogTJURkNUpGl91G2fpCCU
+         oIkZoqpmJ/x1DP3gXTsvgKPG2qkgxg7rLWiYBSMsPyfyECt8X4/CYlT8TvVEBnGbPnvO
+         yhxBYdlA2ZXvEuMIGUxXzn75G7Kua2nEsR2NMUAkmMiJg5uOmfWYmmVFAbfbQbesJWEt
+         LlS6Ou/POWTJOLnbo/h7xECwdjuxZ1t2atpEjWmxDllEDUmevYK9J1jM8unZROSC3aJf
+         TER0ScfQ2MpTlWMVo4cYQaU10tOokxlhrgFoiZVHfW2W4jXw8xxyOoPY/JVpEy8KWQ/C
+         V9Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lLa51XHV19pSn8dCau2GuTKu0LZrcXv1DrhKxMQG6SQ=;
-        b=VBZbYKCZGsfnhY1J7oP+h6cQgTuwysTlZKVPsKpp1cRZZpxCp07F8Hid02xboOWUD7
-         9WanrLmZpuO/nzvM6TiLP7MclesVKrB74+4GFvM4nj5/O0TjVLzITNAAdFAjc4NXwghX
-         x4OtAo1pt4CWxXMBvyyLcFxwTwfBgDs+zmhLdD3Yq1EKc3kwwQ6nFVY2784M6i1KnWEa
-         yr9JZNbuUaotIyFtufOYE1YlXQ1vCatsd/n/rYV9Z2GYieGvdZJXzhm0ixXLRZQeAeee
-         k2GmUNWcUq/7OQ5VJclvSxAazg7Xp9Fe3pexBv1y07J6h/+hy5kkq2YRf0AZ4zSCxEhY
-         rcuQ==
-X-Gm-Message-State: AOAM531arBjgJE8FNhc8iLxfi6BIj7WmJMa+KqWGFtVyD+Ut1nQhZgln
-        ovVfQDrnA9X9ERvH987XQSkDIYJfLq2ZYg==
-X-Google-Smtp-Source: ABdhPJz5zLxNXcsTdxphGCNjFI0YjQ5J7FtVKPPcrF4sltl8mBBoIBkKciDhL+q4GYsjdYBiefx/jQ==
-X-Received: by 2002:a92:c689:: with SMTP id o9mr24384488ilg.302.1595264541233;
-        Mon, 20 Jul 2020 10:02:21 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id m2sm9126349iln.1.2020.07.20.10.02.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jul 2020 10:02:20 -0700 (PDT)
-Subject: Re: io_uring vs in_compat_syscall()
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org
-References: <ceb21006-26d0-b216-84a9-5da0b89b5fbf@kernel.dk>
- <BACE670C-6A65-4D86-BC5F-A7EA267C3140@amacapital.net>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b754dad5-ee85-8a2f-f41a-8bdc56de42e8@kernel.dk>
-Date:   Mon, 20 Jul 2020 11:02:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2z6vfRN45O58360WXxB9JosENc0eD1jtyLCvWHGh1YY=;
+        b=rNTqgr0YeqS5MJRRck2jJ1YubKfKVvWigWXM0S4618NGxcbRyAxKc1sh2Foej0fZhu
+         +ofG0U/2CfPSX+VWDj3uj15ovuULmAC+By0O20VKi9DN6TBuyGNnFetAAojkKMYHdZXJ
+         5pHH16LjotwTm7CPZmIW2NOnuUu8WKzN7s+ho9VGkfeKaszCeeNfP0tz9InarT8w/L/J
+         MphzfIxTe1IAqrDFpa5PaEdjD0dvRAkkHyoyuiKXaqE4LwkLisVvfxZr/70kLXHerrUb
+         zv/nz2PnjpEhjQeS/9YhEnONw+r16lkXzrLeBfU6TOFPDVcYjnRQ94DNXZ88PBgO/jx6
+         jRRQ==
+X-Gm-Message-State: AOAM532a58aXQpjytQf7UTc9NmbqDEbbcmi+t6LMo1xibH88B85pNdpA
+        pLPaRhplkjA5QV+QcU6j+nGVIyhcOqvYfaT2DQ0=
+X-Google-Smtp-Source: ABdhPJzLTTWPjYGX0RzMnJeUOLrnHeGFH1UOcpvlUTIsjffcPcqfeW0pNI6XGZeS+hFgMQxoz0bLNak5dIzAX9LyPrY=
+X-Received: by 2002:adf:f0ce:: with SMTP id x14mr22109097wro.137.1595264592763;
+ Mon, 20 Jul 2020 10:03:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <BACE670C-6A65-4D86-BC5F-A7EA267C3140@amacapital.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1593974870-18919-5-git-send-email-joshi.k@samsung.com>
+ <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk> <20200709085501.GA64935@infradead.org>
+ <adc14700-8e95-10b2-d914-afa5029ae80c@kernel.dk> <20200709140053.GA7528@infradead.org>
+ <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk> <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com>
+ <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk> <20200710130912.GA7491@infradead.org>
+ <CA+1E3rJSiS58TE=hHv5wVv-umJ19_7zKv-JqZTNzD=xi3MoX1g@mail.gmail.com> <20200710134350.GA14704@infradead.org>
+In-Reply-To: <20200710134350.GA14704@infradead.org>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Mon, 20 Jul 2020 22:32:45 +0530
+Message-ID: <CA+1E3r+DgR=vVCsUv0cCbPC4MV3Rxfyzee-HWwTogSQ-7F=MoA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>,
+        viro@zeniv.linux.org.uk, bcrl@kvack.org, Damien.LeMoal@wdc.com,
+        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+        "Matias Bj??rling" <mb@lightnvm.io>, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/20/20 10:58 AM, Andy Lutomirski wrote:
-> 
->> On Jul 20, 2020, at 9:37 AM, Jens Axboe <axboe@kernel.dk> wrote:
->>
->> ﻿On 7/20/20 12:10 AM, Christoph Hellwig wrote:
->>> Hi Jens,
->>>
->>> I just found a (so far theoretical) issue with the io_uring submission
->>> offloading to workqueues or threads.  We have lots of places using
->>> in_compat_syscall() to check if a syscall needs compat treatmenet.
->>> While the biggest users is iocttl(), we also have a fair amount of
->>> places using in_compat_task() in read and write methods, and these
->>> will not do the wrong thing when used with io_uring under certain
->>> conditions.  I'm not sure how to best fix this, except for making sure
->>> in_compat_syscall() returns true one way or another for these cases.
->>
->> We can probably propagate this information in the io_kiocb via a flag,
->> and have the io-wq worker set TS_COMPAT if that's the case.
->>
-> 
-> Is TS_COMPAT actually a cross-arch concept for which this is safe?
-> Having a real arch helper for “set the current syscall arch for the
-> current kernel thread” seems more sensible to me. 
-
-Sure, I'd consider that implementation detail for the actual patch(es)
-for this issue.
+On Fri, Jul 10, 2020 at 7:13 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Fri, Jul 10, 2020 at 06:59:45PM +0530, Kanchan Joshi wrote:
+> > > block doesn't work for the case of writes to files that don't have
+> > > to be aligned in any way.  And that I think is the more broadly
+> > > applicable use case than zone append on block devices.
+> >
+> > But when can it happen that we do zone-append on a file (zonefs I
+> > asssume), and device returns a location (write-pointer essentially)
+> > which is not in multiple of 512b?
+>
+> All the time.  You open a file with O_APPEND.  You write a record to
+> it of any kind of size, then the next write will return the position
+> it got written at, which can be anything.
+I understand if this is about cached write and we are talking about
+O_APPEND in general.
+But for direct block I/O write and ZoneFS writes, page-cache is not
+used, so write(and zone-append result) will be aligned to underlying
+block size.
+Even though this patchset uses O_APPEND, it filters regular files and
+non zoned-block devices by using new FMODE_ZONE_APPEND flag.
 
 -- 
-Jens Axboe
-
+Joshi

@@ -2,55 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5536A228972
-	for <lists+io-uring@lfdr.de>; Tue, 21 Jul 2020 21:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B32228990
+	for <lists+io-uring@lfdr.de>; Tue, 21 Jul 2020 21:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730908AbgGUTsK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Jul 2020 15:48:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728683AbgGUTsJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jul 2020 15:48:09 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D6DC061794
-        for <io-uring@vger.kernel.org>; Tue, 21 Jul 2020 12:48:09 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id o1so10720541plk.1
-        for <io-uring@vger.kernel.org>; Tue, 21 Jul 2020 12:48:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UUqZmjgdo9ykriUF/GuqAUCJ9QXVmG7xeNk5lX9ipg4=;
-        b=1J19NgJz3/rK7I31B00sZF6r5LMVhqYTdmvj+8EWMAny8GgrJ287L3M+LIrXJe10br
-         zZYRXpQeN2xdSgf0w8Xx98Eqgx8cbd4a5jwYw05Vuzo10ZdvinLnHNVHEsLbOrgRw5eg
-         CasK1exaFIlzudv0MPxgjsw6e8Y+p7NynEltm0D8OVmDok2dDux2Bqm836QWWqdyqODE
-         tWLjYmtpsynCPNdnecS0oJOUow8YMgzH/4xaStADsx1VFyUNXVEY51lueGtxr2jfOwLI
-         eUeHAIbwF8ULOjMDnfQaPbQ251jSL9P0m9q4153z9qq18KIR18j3WPtCa0aeT0EEOTee
-         /K1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UUqZmjgdo9ykriUF/GuqAUCJ9QXVmG7xeNk5lX9ipg4=;
-        b=DRPj9doANd4jr1hODWeiEE0yGIGYP0PfFiPZL8IoPtuBkNtThKIWqmLfL6r9vEhkq0
-         NYQgn9yhRYctYK9eM+4KVlCUPHkp3+Z6HhkWgFjircUqClcy45s6TW0x3jw3zD4FLMNe
-         XLQwA3RhBTeU2SJrFinmUsoJlwD137VgLkJVflnJ5FV1xfOjBfu5TiRugl13btTu0vpe
-         QHCRfU8HYIo/Lbac00iwOyCBXgIpzQLLbND9PvN1ABIu3JEV/2XIxf96e6qKypy8yvTn
-         AiLLm+uSq46NxoIOisy7EmvQoW1OUyWZ4Ekb0xH1tkRDDALpqt97YXP3cHNNqy2Lq2Uw
-         Al4Q==
-X-Gm-Message-State: AOAM533S7A/5qKmXDu/e+f8pjIb/2M54lz8wkQqiopVp6eY5KGIjZQ6c
-        GxzNKBRYC8XO8Hqntx1ZqO2meQ==
-X-Google-Smtp-Source: ABdhPJwlDQfd5cuBNL1ACBG1kwWp8gefHkeSzrDCn5tqmtohlMFcS+FN1TP/waCGpEMLoNU0HmSbYw==
-X-Received: by 2002:a17:90b:2350:: with SMTP id ms16mr6699673pjb.224.1595360889144;
-        Tue, 21 Jul 2020 12:48:09 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id b21sm21601232pfp.172.2020.07.21.12.48.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jul 2020 12:48:08 -0700 (PDT)
-Subject: Re: strace of io_uring events?
+        id S1731019AbgGUT4H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Jul 2020 15:56:07 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:44937 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730664AbgGUT4H (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jul 2020 15:56:07 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.west.internal (Postfix) with ESMTP id 1D38EB24;
+        Tue, 21 Jul 2020 15:56:05 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Tue, 21 Jul 2020 15:56:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=AqPj1xBhDhu20FWDwJyJBEuqNaN
+        WXORj4eQ/tBPqOlo=; b=fimQshPgm3sthCqApa+djmcfCkLSFwHY7QblvbjAlcv
+        fPAeBpiKsqs0mi3QLh/mXmVgdoJGl9yF7GQdobNdc899gi75MM7QXJSWdeGAzP7s
+        pSqG/bclBObeMUkxz/dRBESdzacl39lEoopnuJpHNa6X9FXj5KSV36Yywu6LzFHw
+        3zpOiEbxa7VY7ly3+0eWQJu/UGasSNqBBg0G6xEinO3fsdd0gj2taDBAEmvjobeS
+        K5vsV8vy83764Ae5qR8ReCf/r3JLq6FCORMmJgZ/60QZzT4RIZEmQ0fN3oZb/CbS
+        N9buoYDtMl3zFfWbIKyZrEurHDEhE/bkHpvmbn4Yutg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=AqPj1x
+        BhDhu20FWDwJyJBEuqNaNWXORj4eQ/tBPqOlo=; b=K/5IJJUrbwW7dfc8maPE+b
+        At1jqzRMcstf7E7PyDytihqi9rgeeXyx3p0UJTKG3eIJTnB02AAm+JC3CkttZ1Nd
+        N5rkxvIOVIKX0sXbOw6Xl0dJ6Si2ntASsU/3OSsxiTrWjuz7m829nn7ktLAS9vJj
+        1vx11jy/npcDV7Jc2zUTA74XOI1Kmtnw2OEoJCMvdXazgipT2WxsWbJ/ij9/DyHu
+        FIVXQ2b1z72wtETwOJ6brF9P0Z/Q6A/Gve6m0KxtOEyKNilXxL0FjJn1JKD6gl/m
+        d08EhKLjB0eiZWiicGMDLi507bD9Gf4F9WbkBlx52akc8iLr8JJURQhViOaQIvjQ
+        ==
+X-ME-Sender: <xms:U0gXX1BbjEuZJLnXVBMnFHroxMl5BibM0qAtr6bkg7dMLo4sON80Vw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrgeejgddukecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
+    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuggftrfgrth
+    htvghrnhepudekhfekleeugeevteehleffffejgeelueduleeffeeutdelffeujeffhfeu
+    ffdunecukfhppeeijedrudeitddrvddujedrvdehtdenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvshesrghnrghrrgiivghlrdgu
+    vg
+X-ME-Proxy: <xmx:U0gXXzjdghqmMlw7WediaYzLllFxn2LxGNJllOUpgDSuqZ-hxCZbKg>
+    <xmx:U0gXXwnZeFN_lhM63aiWn5O1_93UPi2dBowYmfp_xaeVgadEQpVMcg>
+    <xmx:U0gXX_zqoUSlbBlfwdJaX8O4ZT4TRWw2jROrdu-Ebqc34t548T75Xw>
+    <xmx:VEgXX0CFoh3getAHlxnjfGPVIDQ-t-68uLE8Ky6zUZaCy3MT4-sknx5BgGI>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 655F930600B1;
+        Tue, 21 Jul 2020 15:56:03 -0400 (EDT)
+Date:   Tue, 21 Jul 2020 12:56:02 -0700
+From:   Andres Freund <andres@anarazel.de>
 To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Andres Freund <andres@anarazel.de>,
+Cc:     Jens Axboe <axboe@kernel.dk>,
         Stefano Garzarella <sgarzare@redhat.com>,
         Christoph Hellwig <hch@lst.de>,
         Kees Cook <keescook@chromium.org>,
@@ -65,13 +71,9 @@ Cc:     Andres Freund <andres@anarazel.de>,
         LKML <linux-kernel@vger.kernel.org>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Stefan Hajnoczi <stefanha@redhat.com>
-References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
- <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
- <20200715171130.GG12769@casper.infradead.org>
- <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com>
- <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
- <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com>
- <202007151511.2AA7718@keescook> <20200716131404.bnzsaarooumrp3kx@steredhat>
+Subject: Re: strace of io_uring events?
+Message-ID: <20200721195602.qtncgzddl7y55b6l@alap3.anarazel.de>
+References: <20200716131404.bnzsaarooumrp3kx@steredhat>
  <202007160751.ED56C55@keescook>
  <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
  <CALCETrXSPdiVCgh3h=q7w9RyiKnp-=8jOHoFHX=an0cWqK7bzQ@mail.gmail.com>
@@ -81,97 +83,26 @@ References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
  <CALCETrUvOuKZWiQeZhf9DXyjS4OQdyW+s1YMh+vwe605jBS3LQ@mail.gmail.com>
  <65ad6c17-37d0-da30-4121-43554ad8f51f@kernel.dk>
  <CALCETrV_tOziNJOp8xanmCU0yJEHcGQk0TBxeiK4U7AVewkgAw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6f0d61a4-f9c1-6978-5897-9e50a8f212f4@kernel.dk>
-Date:   Tue, 21 Jul 2020 13:48:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <CALCETrV_tOziNJOp8xanmCU0yJEHcGQk0TBxeiK4U7AVewkgAw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/21/20 1:44 PM, Andy Lutomirski wrote:
-> On Tue, Jul 21, 2020 at 11:39 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 7/21/20 11:44 AM, Andy Lutomirski wrote:
->>> On Tue, Jul 21, 2020 at 10:30 AM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> On 7/21/20 11:23 AM, Andy Lutomirski wrote:
->>>>> On Tue, Jul 21, 2020 at 8:31 AM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>
->>>>>> On 7/21/20 9:27 AM, Andy Lutomirski wrote:
->>>>>>> On Fri, Jul 17, 2020 at 1:02 AM Stefano Garzarella <sgarzare@redhat.com> wrote:
->>>>>>>>
->>>>>>>> On Thu, Jul 16, 2020 at 08:12:35AM -0700, Kees Cook wrote:
->>>>>>>>> On Thu, Jul 16, 2020 at 03:14:04PM +0200, Stefano Garzarella wrote:
->>>>>>>
->>>>>>>>> access (IIUC) is possible without actually calling any of the io_uring
->>>>>>>>> syscalls. Is that correct? A process would receive an fd (via SCM_RIGHTS,
->>>>>>>>> pidfd_getfd, or soon seccomp addfd), and then call mmap() on it to gain
->>>>>>>>> access to the SQ and CQ, and off it goes? (The only glitch I see is
->>>>>>>>> waking up the worker thread?)
->>>>>>>>
->>>>>>>> It is true only if the io_uring istance is created with SQPOLL flag (not the
->>>>>>>> default behaviour and it requires CAP_SYS_ADMIN). In this case the
->>>>>>>> kthread is created and you can also set an higher idle time for it, so
->>>>>>>> also the waking up syscall can be avoided.
->>>>>>>
->>>>>>> I stared at the io_uring code for a while, and I'm wondering if we're
->>>>>>> approaching this the wrong way. It seems to me that most of the
->>>>>>> complications here come from the fact that io_uring SQEs don't clearly
->>>>>>> belong to any particular security principle.  (We have struct creds,
->>>>>>> but we don't really have a task or mm.)  But I'm also not convinced
->>>>>>> that io_uring actually supports cross-mm submission except by accident
->>>>>>> -- as it stands, unless a user is very careful to only submit SQEs
->>>>>>> that don't use user pointers, the results will be unpredictable.
->>>>>>
->>>>>> How so?
->>>>>
->>>>> Unless I've missed something, either current->mm or sqo_mm will be
->>>>> used depending on which thread ends up doing the IO.  (And there might
->>>>> be similar issues with threads.)  Having the user memory references
->>>>> end up somewhere that is an implementation detail seems suboptimal.
->>>>
->>>> current->mm is always used from the entering task - obviously if done
->>>> synchronously, but also if it needs to go async. The only exception is a
->>>> setup with SQPOLL, in which case ctx->sqo_mm is the task that set up the
->>>> ring. SQPOLL requires root privileges to setup, and there's no task
->>>> entering the io_uring at all necessarily. It'll just submit sqes with
->>>> the credentials that are registered with the ring.
->>>
->>> Really?  I admit I haven't fully followed how the code works, but it
->>> looks like anything that goes through the io_queue_async_work() path
->>> will use sqo_mm, and can't most requests that end up blocking end up
->>> there?  It looks like, even if SQPOLL is not set, the mm used will
->>> depend on whether the request ends up blocking and thus getting queued
->>> for later completion.
->>>
->>> Or does some magic I missed make this a nonissue.
->>
->> No, you are wrong. The logic works as I described it.
-> 
+Hi,
+
+On 2020-07-21 12:44:09 -0700, Andy Lutomirski wrote:
 > Can you enlighten me?  I don't see any iov_iter_get_pages() calls or
 > equivalents.  If an IO is punted, how does the data end up in the
 > io_uring_enter() caller's mm?
 
-If the SQE needs to be punted to an io-wq worker, then
-io_prep_async_work() is ultimately called before it's queued with the
-io-wq worker. That grabs anything we need to successfully process this
-request, user access and all. io-wq then assumes the right "context" to
-performn that request. As the async punt is always done on behalf of the
-task that is submitting the IO (via io_uring_enter()), that is the
-context that we grab and use for that particular request.
+For operations needing that io_op_def.needs_mm is true. Which is checked
+by io_prep_async_work(), adding the current mm to req. On the wq side
+io_wq_switch_mm() uses that mm when executing the queue entry.
 
-You keep looking at ctx->sqo_mm, and I've told you several times that
-it's only related to the SQPOLL thread. If you don't use SQPOLL, no
-request will ever use it.
+Greetings,
 
--- 
-Jens Axboe
-
+Andres Freund

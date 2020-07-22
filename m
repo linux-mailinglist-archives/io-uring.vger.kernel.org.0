@@ -2,107 +2,169 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B32228990
-	for <lists+io-uring@lfdr.de>; Tue, 21 Jul 2020 21:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EE47228E38
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jul 2020 04:35:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731019AbgGUT4H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Jul 2020 15:56:07 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:44937 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730664AbgGUT4H (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jul 2020 15:56:07 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 1D38EB24;
-        Tue, 21 Jul 2020 15:56:05 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Tue, 21 Jul 2020 15:56:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=AqPj1xBhDhu20FWDwJyJBEuqNaN
-        WXORj4eQ/tBPqOlo=; b=fimQshPgm3sthCqApa+djmcfCkLSFwHY7QblvbjAlcv
-        fPAeBpiKsqs0mi3QLh/mXmVgdoJGl9yF7GQdobNdc899gi75MM7QXJSWdeGAzP7s
-        pSqG/bclBObeMUkxz/dRBESdzacl39lEoopnuJpHNa6X9FXj5KSV36Yywu6LzFHw
-        3zpOiEbxa7VY7ly3+0eWQJu/UGasSNqBBg0G6xEinO3fsdd0gj2taDBAEmvjobeS
-        K5vsV8vy83764Ae5qR8ReCf/r3JLq6FCORMmJgZ/60QZzT4RIZEmQ0fN3oZb/CbS
-        N9buoYDtMl3zFfWbIKyZrEurHDEhE/bkHpvmbn4Yutg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=AqPj1x
-        BhDhu20FWDwJyJBEuqNaNWXORj4eQ/tBPqOlo=; b=K/5IJJUrbwW7dfc8maPE+b
-        At1jqzRMcstf7E7PyDytihqi9rgeeXyx3p0UJTKG3eIJTnB02AAm+JC3CkttZ1Nd
-        N5rkxvIOVIKX0sXbOw6Xl0dJ6Si2ntASsU/3OSsxiTrWjuz7m829nn7ktLAS9vJj
-        1vx11jy/npcDV7Jc2zUTA74XOI1Kmtnw2OEoJCMvdXazgipT2WxsWbJ/ij9/DyHu
-        FIVXQ2b1z72wtETwOJ6brF9P0Z/Q6A/Gve6m0KxtOEyKNilXxL0FjJn1JKD6gl/m
-        d08EhKLjB0eiZWiicGMDLi507bD9Gf4F9WbkBlx52akc8iLr8JJURQhViOaQIvjQ
-        ==
-X-ME-Sender: <xms:U0gXX1BbjEuZJLnXVBMnFHroxMl5BibM0qAtr6bkg7dMLo4sON80Vw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrgeejgddukecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
-    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuggftrfgrth
-    htvghrnhepudekhfekleeugeevteehleffffejgeelueduleeffeeutdelffeujeffhfeu
-    ffdunecukfhppeeijedrudeitddrvddujedrvdehtdenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvshesrghnrghrrgiivghlrdgu
-    vg
-X-ME-Proxy: <xmx:U0gXXzjdghqmMlw7WediaYzLllFxn2LxGNJllOUpgDSuqZ-hxCZbKg>
-    <xmx:U0gXXwnZeFN_lhM63aiWn5O1_93UPi2dBowYmfp_xaeVgadEQpVMcg>
-    <xmx:U0gXX_zqoUSlbBlfwdJaX8O4ZT4TRWw2jROrdu-Ebqc34t548T75Xw>
-    <xmx:VEgXX0CFoh3getAHlxnjfGPVIDQ-t-68uLE8Ky6zUZaCy3MT4-sknx5BgGI>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 655F930600B1;
-        Tue, 21 Jul 2020 15:56:03 -0400 (EDT)
-Date:   Tue, 21 Jul 2020 12:56:02 -0700
-From:   Andres Freund <andres@anarazel.de>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Kees Cook <keescook@chromium.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: Re: strace of io_uring events?
-Message-ID: <20200721195602.qtncgzddl7y55b6l@alap3.anarazel.de>
-References: <20200716131404.bnzsaarooumrp3kx@steredhat>
- <202007160751.ED56C55@keescook>
- <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
- <CALCETrXSPdiVCgh3h=q7w9RyiKnp-=8jOHoFHX=an0cWqK7bzQ@mail.gmail.com>
- <39a3378a-f8f3-6706-98c8-be7017e64ddb@kernel.dk>
- <CALCETrXAxFzuRB5EJZR7bbgfrEcNc=9_E7wwhPaZ3YGJ1=DZ0w@mail.gmail.com>
- <ba989463-c627-8af7-9234-4dc8ac4eea0e@kernel.dk>
- <CALCETrUvOuKZWiQeZhf9DXyjS4OQdyW+s1YMh+vwe605jBS3LQ@mail.gmail.com>
- <65ad6c17-37d0-da30-4121-43554ad8f51f@kernel.dk>
- <CALCETrV_tOziNJOp8xanmCU0yJEHcGQk0TBxeiK4U7AVewkgAw@mail.gmail.com>
+        id S1731595AbgGVCfa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Jul 2020 22:35:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54222 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731614AbgGVCf2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jul 2020 22:35:28 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A08C0619DB
+        for <io-uring@vger.kernel.org>; Tue, 21 Jul 2020 19:35:28 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id a15so358123wrh.10
+        for <io-uring@vger.kernel.org>; Tue, 21 Jul 2020 19:35:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daurnimator.com; s=daurnimator;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vabpDlkoU/kJ8BojIIe5Ve9vPK2Kt2NAQYVhz9bpinI=;
+        b=ONvSKHxX28zKqql0VPKDWT4e/fQMIxT0JhHw7TGTv+Dch5cbmqxgZIusSPqt8IUSM5
+         HCjI8bhyaFg08oWFUF1KDZszvb9vmYFqNWGpJGXxfHgRSMfgCtIGmS11Y73TYMbdmU8+
+         uiiBopEfnz+Wuf1tHPDMIwFZekfNOWPhhQrOU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vabpDlkoU/kJ8BojIIe5Ve9vPK2Kt2NAQYVhz9bpinI=;
+        b=nyJhisBaF9VG2ZTuEQ+sQzHr1SNpfQJ4Z/aQ4RsSLeVdMFpMfFzIfyFcRraVIahd6Y
+         E+yx2xbkOpcJ3hyxvzSH0wLsOmdsKSFHKHy/Bjv636Lj1MZLvoGMUi9h8AZCxiG5sJ0k
+         Otg9/WaBPc72jE9FI+JSMLYL1aLiiYcfxCISkO7/+oJEu3X3Gp4fZDVWka1fFV8Kot8C
+         spgFzsBQ+Ou7I25smfdN4+DlhdXZledBr36DkgOWgSnPULdD+xCaasePT6a8BoEaLhZ2
+         pTJ/Lpd8RJ8YvrSKYJhogfs07Ny/pofB9CLQH3DFXVxebeGX9s4Predp3/vOnfnY04gK
+         a/OQ==
+X-Gm-Message-State: AOAM5311gz2gYpNSiZFtfn0JjpDQ2VGACG5+aqKJ4NuA+xMdVhFafFzY
+        lUFf6JqTd/ueJUtrA+q+gZF1Rc8+5fh3bdP1DRfxUw==
+X-Google-Smtp-Source: ABdhPJwfCgvHceNJHN8LjCWPt6NW6WkoqvznlurWy5Aso0Evjbq7qPAlCxHm3n3vJUkWvMP/G2V48hN4+lgytDWXXCY=
+X-Received: by 2002:adf:f485:: with SMTP id l5mr7095489wro.147.1595385326963;
+ Tue, 21 Jul 2020 19:35:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrV_tOziNJOp8xanmCU0yJEHcGQk0TBxeiK4U7AVewkgAw@mail.gmail.com>
+References: <20200716124833.93667-1-sgarzare@redhat.com> <20200716124833.93667-3-sgarzare@redhat.com>
+ <0fbb0393-c14f-3576-26b1-8bb22d2e0615@kernel.dk> <20200721104009.lg626hmls5y6ihdr@steredhat>
+ <15f7fcf5-c5bb-7752-fa9a-376c4c7fc147@kernel.dk>
+In-Reply-To: <15f7fcf5-c5bb-7752-fa9a-376c4c7fc147@kernel.dk>
+From:   Daurnimator <quae@daurnimator.com>
+Date:   Wed, 22 Jul 2020 12:35:15 +1000
+Message-ID: <CAEnbY+fCP-HS_rWfOF2rnUPos-eZRF1dL+m2Q8CZidi_W=a7xw@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 2/3] io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stefano Garzarella <sgarzare@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Kees Cook <keescook@chromium.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Jann Horn <jannh@google.com>,
+        io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+On Wed, 22 Jul 2020 at 03:11, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 7/21/20 4:40 AM, Stefano Garzarella wrote:
+> > On Thu, Jul 16, 2020 at 03:26:51PM -0600, Jens Axboe wrote:
+> >> On 7/16/20 6:48 AM, Stefano Garzarella wrote:
+> >>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> >>> index efc50bd0af34..0774d5382c65 100644
+> >>> --- a/include/uapi/linux/io_uring.h
+> >>> +++ b/include/uapi/linux/io_uring.h
+> >>> @@ -265,6 +265,7 @@ enum {
+> >>>     IORING_REGISTER_PROBE,
+> >>>     IORING_REGISTER_PERSONALITY,
+> >>>     IORING_UNREGISTER_PERSONALITY,
+> >>> +   IORING_REGISTER_RESTRICTIONS,
+> >>>
+> >>>     /* this goes last */
+> >>>     IORING_REGISTER_LAST
+> >>> @@ -293,4 +294,30 @@ struct io_uring_probe {
+> >>>     struct io_uring_probe_op ops[0];
+> >>>  };
+> >>>
+> >>> +struct io_uring_restriction {
+> >>> +   __u16 opcode;
+> >>> +   union {
+> >>> +           __u8 register_op; /* IORING_RESTRICTION_REGISTER_OP */
+> >>> +           __u8 sqe_op;      /* IORING_RESTRICTION_SQE_OP */
+> >>> +   };
+> >>> +   __u8 resv;
+> >>> +   __u32 resv2[3];
+> >>> +};
+> >>> +
+> >>> +/*
+> >>> + * io_uring_restriction->opcode values
+> >>> + */
+> >>> +enum {
+> >>> +   /* Allow an io_uring_register(2) opcode */
+> >>> +   IORING_RESTRICTION_REGISTER_OP,
+> >>> +
+> >>> +   /* Allow an sqe opcode */
+> >>> +   IORING_RESTRICTION_SQE_OP,
+> >>> +
+> >>> +   /* Only allow fixed files */
+> >>> +   IORING_RESTRICTION_FIXED_FILES_ONLY,
+> >>> +
+> >>> +   IORING_RESTRICTION_LAST
+> >>> +};
+> >>> +
+> >>
+> >> Not sure I totally love this API. Maybe it'd be cleaner to have separate
+> >> ops for this, instead of muxing it like this. One for registering op
+> >> code restrictions, and one for disallowing other parts (like fixed
+> >> files, etc).
+> >>
+> >> I think that would look a lot cleaner than the above.
+> >>
+> >
+> > Talking with Stefan, an alternative, maybe more near to your suggestion,
+> > would be to remove the 'struct io_uring_restriction' and add the
+> > following register ops:
+> >
+> >     /* Allow an sqe opcode */
+> >     IORING_REGISTER_RESTRICTION_SQE_OP
+> >
+> >     /* Allow an io_uring_register(2) opcode */
+> >     IORING_REGISTER_RESTRICTION_REG_OP
+> >
+> >     /* Register IORING_RESTRICTION_*  */
+> >     IORING_REGISTER_RESTRICTION_OP
+> >
+> >
+> >     enum {
+> >         /* Only allow fixed files */
+> >         IORING_RESTRICTION_FIXED_FILES_ONLY,
+> >
+> >         IORING_RESTRICTION_LAST
+> >     }
+> >
+> >
+> > We can also enable restriction only when the rings started, to avoid to
+> > register IORING_REGISTER_ENABLE_RINGS opcode. Once rings are started,
+> > the restrictions cannot be changed or disabled.
+>
+> My concerns are largely:
+>
+> 1) An API that's straight forward to use
+> 2) Something that'll work with future changes
+>
+> The "allow these opcodes" is straightforward, and ditto for the register
+> opcodes. The fixed file I guess is the odd one out. So if we need to
+> disallow things in the future, we'll need to add a new restriction
+> sub-op. Should this perhaps be "these flags must be set", and that could
+> easily be augmented with "these flags must not be set"?
+>
+> --
+> Jens Axboe
+>
 
-On 2020-07-21 12:44:09 -0700, Andy Lutomirski wrote:
-> Can you enlighten me?  I don't see any iov_iter_get_pages() calls or
-> equivalents.  If an IO is punted, how does the data end up in the
-> io_uring_enter() caller's mm?
-
-For operations needing that io_op_def.needs_mm is true. Which is checked
-by io_prep_async_work(), adding the current mm to req. On the wq side
-io_wq_switch_mm() uses that mm when executing the queue entry.
-
-Greetings,
-
-Andres Freund
+This is starting to sound a lot like seccomp filtering.
+Perhaps we should go straight to adding a BPF hook that fires when
+reading off the submission queue?

@@ -2,82 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F9B22A5F0
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jul 2020 05:17:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36E4522A5FF
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jul 2020 05:25:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731405AbgGWDRp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Jul 2020 23:17:45 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8254 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728902AbgGWDRo (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 22 Jul 2020 23:17:44 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id F226415FB4F193D458E8;
-        Thu, 23 Jul 2020 11:17:40 +0800 (CST)
-Received: from huawei.com (10.175.104.57) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.487.0; Thu, 23 Jul 2020
- 11:17:37 +0800
-From:   Li Heng <liheng40@huawei.com>
-To:     <axboe@kernel.dk>, <viro@zeniv.linux.org.uk>
-CC:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] io_uring: Remove redundant NULL check
-Date:   Thu, 23 Jul 2020 11:19:10 +0800
-Message-ID: <1595474350-10039-1-git-send-email-liheng40@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S2387497AbgGWDZL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Jul 2020 23:25:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59328 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728902AbgGWDZK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jul 2020 23:25:10 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E075C0619DC
+        for <io-uring@vger.kernel.org>; Wed, 22 Jul 2020 20:25:10 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id j20so2301407pfe.5
+        for <io-uring@vger.kernel.org>; Wed, 22 Jul 2020 20:25:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9MVfx3nOR6UuOciR/xo7cXZ/th4WV5eo7kpG1rG3ysA=;
+        b=sYGg/2srzRVqnhZoUg5o1/8tbs+uw5e5GRk9Prg191UfP1xoMwvH723Ge9XxV8UQ+Y
+         4CEWot9lS0SqzGP8KRgPxAJxpC/eEprKLS3vIBqZ5aANULGw14jQP2A7earpJeHPMRIR
+         h03gCHjIS00DOdkrfY88+LkPeWA803BH19mIOcX825pt//wFRoKWgLX/4GQxUeM57uDp
+         WyjOxQQ4rtE7lDBcbhS6m9tuIqe5ezBXIEwPrhUrtefYV324MprVw5BfPaQGw3Ip0u/v
+         Aa//OtUahu1SxHH+0XFEgauJFf2i+AujXdahv7KDbKSx8tvSGdZciHACQveIiHGHIFa7
+         5V6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9MVfx3nOR6UuOciR/xo7cXZ/th4WV5eo7kpG1rG3ysA=;
+        b=DP8JEuWdf0TysaOTaVKPjXaK+I8xKn+FJlSr4UQ6K1LQNimx9KZPNrP8Ill7ZhAUny
+         0relRjD1Kxg3JZ2Dn8N34/+P7H2qCOJr6bIRSce97QbMinbIHgkYKQ/Srs9qb4tfrmU5
+         gl9oLwCeIF5sO1eqIeXCqyGTt7XC19cgdSbSoicSeiSIpzFEgX79zoev/wAaVELkt1Oe
+         NK7tvn17ALFpnMA/OK6NghxcTSu7OLuXk8fg6h/Wac4OasAcYt+eroxqgZJ9SAlpVvgH
+         Qit/QXmuDZf+6WFLFQPR/Fr/Pbi4uBq3//qL3G3KFvm1d95bfLlXZkqbVVddmrlRytR4
+         kXsg==
+X-Gm-Message-State: AOAM531KeBukYeNjPuhPQH2iowXpLFqHhVOIoRIC4zhQDgWXSQBVHdnd
+        KI1XA6u6M0gj8vyio2Vu742kbg==
+X-Google-Smtp-Source: ABdhPJyG7BgknGC9wMaKL2Q7w46TNfVt44bgRZhyUF0TneCCHjumSEJ/mUDzmmYzIcEUfulF3SLN8A==
+X-Received: by 2002:aa7:9685:: with SMTP id f5mr2422134pfk.223.1595474710040;
+        Wed, 22 Jul 2020 20:25:10 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id b128sm1001418pfg.114.2020.07.22.20.25.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jul 2020 20:25:09 -0700 (PDT)
+Subject: Re: [PATCH -next] io_uring: Remove redundant NULL check
+To:     Li Heng <liheng40@huawei.com>, viro@zeniv.linux.org.uk
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1595474350-10039-1-git-send-email-liheng40@huawei.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c05036b0-49c0-411c-6051-27dee4a0f2b4@kernel.dk>
+Date:   Wed, 22 Jul 2020 21:25:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.57]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1595474350-10039-1-git-send-email-liheng40@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Fix below warnings reported by coccicheck:
-./fs/io_uring.c:1544:2-7: WARNING: NULL check before some freeing functions is not needed.
-./fs/io_uring.c:3095:2-7: WARNING: NULL check before some freeing functions is not needed.
-./fs/io_uring.c:3195:2-7: WARNING: NULL check before some freeing functions is not needed.
+On 7/22/20 9:19 PM, Li Heng wrote:
+> Fix below warnings reported by coccicheck:
+> ./fs/io_uring.c:1544:2-7: WARNING: NULL check before some freeing functions is not needed.
+> ./fs/io_uring.c:3095:2-7: WARNING: NULL check before some freeing functions is not needed.
+> ./fs/io_uring.c:3195:2-7: WARNING: NULL check before some freeing functions is not needed.
 
-Signed-off-by: Li Heng <liheng40@huawei.com>
----
- fs/io_uring.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Not needed, but it's faster that way. See recent discussions on the
+io-uring list. Hence they are very much on purpose, and it'd be great if
+someone would ensure that kfree() was an inline that checks for non-NULL
+before calling __kfree() or whatever the real function would then be.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6587935..71ac3f7 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1540,8 +1540,7 @@ static void io_dismantle_req(struct io_kiocb *req)
- {
- 	io_clean_op(req);
- 
--	if (req->io)
--		kfree(req->io);
-+	kfree(req->io);
- 	if (req->file)
- 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
- 	io_req_clean_work(req);
-@@ -3091,8 +3090,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
- 		}
- 	}
- out_free:
--	if (iovec)
--		kfree(iovec);
-+	kfree(iovec);
- 	return ret;
- }
- 
-@@ -3191,8 +3189,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
- 		}
- 	}
- out_free:
--	if (iovec)
--		kfree(iovec);
-+	kfree(iovec);
- 	return ret;
- }
- 
 -- 
-2.7.4
+Jens Axboe
 

@@ -2,99 +2,117 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0E5D22B955
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jul 2020 00:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A56822BF02
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jul 2020 09:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbgGWWYT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 23 Jul 2020 18:24:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38352 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbgGWWYT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Jul 2020 18:24:19 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04C34C0619D3
-        for <io-uring@vger.kernel.org>; Thu, 23 Jul 2020 15:24:18 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id a24so3857679pfc.10
-        for <io-uring@vger.kernel.org>; Thu, 23 Jul 2020 15:24:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=skSWS32b9DGs298/tAqjkQilS6cwdTVHkOwCuWNAXZA=;
-        b=Vnof6EyMrTvTDrpTzczb4IzSr1DGwghaSkOLMOe/rLcQwPoK/nayLuCHoeP/Avd3Pz
-         7Wnuo0Jr7HBmuGvc37I3MmkiSpaXS/9bY8tam2qc/LDk0xpX5v2OdGLR6F5sjbqs/PBd
-         XnV+5SrVEc+Cu7Y7JoyxbUYRTyOqEL56OhtxxDipWIa1YXg96gVao3ojVHvEk7ocU0/X
-         94RxYDdW1fanEK2jrT48zvjs7ncOqDGpJSXGhI8ChprT8nq5tWhBaf2D7Ukgf5uMe2D3
-         XLJvBdihVptajxeBQoUQdjIkRNqSpdO9akC/LAHtG1wUg4iL7GMAeG0YQI4HdsOyy7V4
-         2UVQ==
+        id S1726727AbgGXHZU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Jul 2020 03:25:20 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37055 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726666AbgGXHZT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jul 2020 03:25:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1595575518;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fuErLOqr2wiHuSm1n+glJqJxYG3jv4lWg3NgZEQOlPE=;
+        b=fPQU5YAOHeVpb/XBWql+enb3J1xB5CBDy8DczdAQ4HtDXLrq8hROvvEqGYJd8krSqb0GtK
+        6Bisi/7F3+nHql9oAOKzUp6l1c61KzJQ03Vxaod6kWTUW2DuihfXEcd+huwbjRLhTEtY1F
+        EubOu984psNZZTE6mSmraAEp0snG5Mk=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-400-1iPoeSo6PKq_YOqG684fug-1; Fri, 24 Jul 2020 03:25:16 -0400
+X-MC-Unique: 1iPoeSo6PKq_YOqG684fug-1
+Received: by mail-wr1-f72.google.com with SMTP id s23so1718357wrb.12
+        for <io-uring@vger.kernel.org>; Fri, 24 Jul 2020 00:25:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=skSWS32b9DGs298/tAqjkQilS6cwdTVHkOwCuWNAXZA=;
-        b=TRdDfMYKywN2+dc6SoOZia2TZ/vnidBrbQT1AjydhFUmlE6ubPaS8BhUJ9JhNSxaW/
-         Dssx6V402Q8BZOxceXwg/5/kko1vdUbOQN7aJqN0iVJL7Zj5bgM3U7/Jio/t6tNATHKm
-         aaNtGsODbIShwBRKYjFKPLlZjdrRHP25sdgebh6XjhtC/4P8XNzf7Uej6esGKPcZLNdq
-         Zyp9oWlItIR7D4yL22JEQ3lWk0MN+djBwK+Fn2LbrtMzb6/vp2hjvrdlD9U8rFlj8otN
-         y81BbldNzGsIsAhmRS4w0/Q82OS1qzOv6sSV7vn9xKEotHdvxcdKyjUkbDG2bKNDdHQc
-         Cc2Q==
-X-Gm-Message-State: AOAM531HJzRiMjJ93DsovoZsVwe93fJqB6Qeav8jHpycqGYSgpP/u2vh
-        61uaKxlZb/Oi3wpNRV2MgFoFJ5HV06gAzA==
-X-Google-Smtp-Source: ABdhPJyrowabJIt0f8VfuyD70bCxkMpAelPmWHH1cAo9dVHAScf0l4Wdq2XgMFAorjkpiFM5uoHdxA==
-X-Received: by 2002:aa7:91cd:: with SMTP id z13mr6346277pfa.133.1595543057861;
-        Thu, 23 Jul 2020 15:24:17 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id u24sm4003506pfm.211.2020.07.23.15.24.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jul 2020 15:24:17 -0700 (PDT)
-Subject: Re: [RFC][BUG] io_uring: fix work corruption for poll_add
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <eaa5b0f65c739072b3f0c9165ff4f9110ae399c4.1595527863.git.asml.silence@gmail.com>
- <57971720-992a-593c-dc3e-9f5fe8c76f1f@kernel.dk>
-Message-ID: <0c52fec1-48a3-f9fe-0d35-adf6da600c2c@kernel.dk>
-Date:   Thu, 23 Jul 2020 16:24:15 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fuErLOqr2wiHuSm1n+glJqJxYG3jv4lWg3NgZEQOlPE=;
+        b=AMMXtMxy9l9IvUZF05lr2EnGeHrWbV4nPc+dHfJjCXtfNeIXJr8JGmXiZJX2Ofcefr
+         fbbEoZUF9LRLVnJarXe/L3TbnLMn8M8oOkzGxkbBoMf9AZEiRDVNMpogKeba58W4lOCy
+         rorLraewBdmpRTe1Cht7c2BAYd7lJWkfM58gVQhJrR/KYZ5/rLxkDImSAAnP/6vGIV9U
+         rpTt1fk0RlK4dyc5Rq9tdL2D430DX9mazBxGclqAXhMwBM7SBqFH8qbzZ8Ho2RrtgTi+
+         wazVm4eyKkLl+Dsm7isO2Mdi6sA362quFLl9uyFggYcIG1u5iz8oagxrEK8DpdE6S9Lt
+         015w==
+X-Gm-Message-State: AOAM530NH5tWYGn1v9nTuG4vh1NGcdQx3heLX+TKoBBfdHjBQSDgz7wg
+        nrh8JrbzqZvQhxK80zmn1Je6EzmBreUcxYyfxyDWor01+iKhmWFREhgCz4XX3xX/HCocyg1Yg0C
+        9/8S3VQrYw0AG9NIIqSA=
+X-Received: by 2002:adf:bb52:: with SMTP id x18mr7081709wrg.325.1595575515196;
+        Fri, 24 Jul 2020 00:25:15 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwjC5TNOMsbWloWKiM1fPLp95PjAuhLTb70ke99fpxMRmPpCdyrTQ/Uxi1NsfB0ImOP4RPRkA==
+X-Received: by 2002:adf:bb52:: with SMTP id x18mr7081693wrg.325.1595575514967;
+        Fri, 24 Jul 2020 00:25:14 -0700 (PDT)
+Received: from steredhat.lan ([5.171.199.112])
+        by smtp.gmail.com with ESMTPSA id p25sm5864195wmg.39.2020.07.24.00.25.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jul 2020 00:25:14 -0700 (PDT)
+Date:   Fri, 24 Jul 2020 09:25:09 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Colin Walters <walters@verbum.org>
+Cc:     Andy Lutomirski <luto@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>,
+        Kees Cook <keescook@chromium.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Subject: Re: strace of io_uring events?
+Message-ID: <20200724072509.sgqlbuocpo2peian@steredhat.lan>
+References: <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com>
+ <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
+ <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com>
+ <202007151511.2AA7718@keescook>
+ <20200716131404.bnzsaarooumrp3kx@steredhat>
+ <202007160751.ED56C55@keescook>
+ <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
+ <CALCETrXSPdiVCgh3h=q7w9RyiKnp-=8jOHoFHX=an0cWqK7bzQ@mail.gmail.com>
+ <20200721155848.32xtze5ntvcmjv63@steredhat>
+ <d57e169a-55a0-4fa2-a7f2-9a462a786a38@www.fastmail.com>
 MIME-Version: 1.0
-In-Reply-To: <57971720-992a-593c-dc3e-9f5fe8c76f1f@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d57e169a-55a0-4fa2-a7f2-9a462a786a38@www.fastmail.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/23/20 4:16 PM, Jens Axboe wrote:
-> On 7/23/20 12:12 PM, Pavel Begunkov wrote:
->> poll_add can have req->work initialised, which will be overwritten in
->> __io_arm_poll_handler() because of the union. Luckily, hash_node is
->> zeroed in the end, so the damage is limited to lost put for work.creds,
->> and probably corrupted work.list.
->>
->> That's the easiest and really dirty fix, which rearranges members in the
->> union, arm_poll*() modifies and zeroes only work.files and work.mm,
->> which are never taken for poll add.
->> note: io_kiocb is exactly 4 cachelines now.
+On Thu, Jul 23, 2020 at 09:37:40AM -0400, Colin Walters wrote:
+> On Tue, Jul 21, 2020, at 11:58 AM, Stefano Garzarella wrote:
 > 
-> I don't think there's a way around moving task_work out, just like it
-> was done on 5.9. The problem is that we could put the environment bits
-> before doing task_work_add(), but we might need them if the subsequent
-> queue ends up having to go async. So there's really no know when we can
-> put them, outside of when the request finishes. Hence, we are kind of
-> SOL here.
+> > my use case concerns virtualization. The idea, that I described in the
+> > proposal of io-uring restrictions [1], is to share io_uring CQ and SQ queues
+> > with a guest VM for block operations.
+> 
+> Virtualization being a strong security barrier is in eternal conflict
+> with maximizing performance.  All of these "let's add a special
+> guest/host channel" are high risk areas.
+> 
+> And this effort in particular - is it *really* worth it to expose a
+> brand new, fast moving Linux kernel interface (that probably hasn't
+> been fuzzed as much as it needs to be) to virtual machines?
+> 
 
-Actually, if we do go async, then we can just grab the environment
-again. We're in the same task at that point. So maybe it'd be better to
-work on ensuring that the request is either in the valid work state, or
-empty work if using task_work.
+It is an experiment to explore the potential of io_uring. In addition
+the restrictions can also be useful for other use case, for example if
+a process  wants to allow another process to use io_uring, but only allowing
+a subset of operations.
 
-Only potential complication with that is doing io_req_work_drop_env()
-from the waitqueue handler, at least the ->needs_fs part won't like that
-too much.
+> People who want maximum performance at the cost of a bit of security
+> already have the choice to use Linux containers, where they can use
+> io_uring natively.
+> 
 
--- 
-Jens Axboe
+Thanks,
+Stefano
 

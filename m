@@ -2,117 +2,151 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A56822BF02
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jul 2020 09:25:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 027AE22C587
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jul 2020 14:48:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbgGXHZU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Jul 2020 03:25:20 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37055 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726666AbgGXHZT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jul 2020 03:25:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595575518;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fuErLOqr2wiHuSm1n+glJqJxYG3jv4lWg3NgZEQOlPE=;
-        b=fPQU5YAOHeVpb/XBWql+enb3J1xB5CBDy8DczdAQ4HtDXLrq8hROvvEqGYJd8krSqb0GtK
-        6Bisi/7F3+nHql9oAOKzUp6l1c61KzJQ03Vxaod6kWTUW2DuihfXEcd+huwbjRLhTEtY1F
-        EubOu984psNZZTE6mSmraAEp0snG5Mk=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-400-1iPoeSo6PKq_YOqG684fug-1; Fri, 24 Jul 2020 03:25:16 -0400
-X-MC-Unique: 1iPoeSo6PKq_YOqG684fug-1
-Received: by mail-wr1-f72.google.com with SMTP id s23so1718357wrb.12
-        for <io-uring@vger.kernel.org>; Fri, 24 Jul 2020 00:25:16 -0700 (PDT)
+        id S1726366AbgGXMsL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Jul 2020 08:48:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59336 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726280AbgGXMsL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jul 2020 08:48:11 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6008C0619D3
+        for <io-uring@vger.kernel.org>; Fri, 24 Jul 2020 05:48:10 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id l4so9804117ejd.13
+        for <io-uring@vger.kernel.org>; Fri, 24 Jul 2020 05:48:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=a5YIsDfD2FQohOlldSDvwVAGf5dQceF3fXWIqPJ5J3A=;
+        b=Dgz/+nDENUG/aSu5SaILanIWe9jhe6OzdF+DBMarMbpGpy1ucW0fTsIbVPbNuGzY4h
+         KAouZEZ8cNSpkHpu55VDLGj7K3bNLyhgF/N88/A9QMzvuHkbDMfNukVmhZwSaiZmXaHw
+         sRm4YAtWml0iQ7NiucSR/Kr1599scVhEcl7lL1bkaIrJQ5Vix8vOi7j6/3GDT5w5kHv4
+         dFxipA6vh2w97VM8Zh/maNHCgD9E5CUIqMcMx9PEDT/izXVALN9Z/4Aj6d0QkOSy8ezV
+         mZrgXGjMCaSTGvymZUaxDvBKlGUmNV268ouzYogA7+LSTs0P5bZ1SZ8LTcxGmJhFb14I
+         chJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fuErLOqr2wiHuSm1n+glJqJxYG3jv4lWg3NgZEQOlPE=;
-        b=AMMXtMxy9l9IvUZF05lr2EnGeHrWbV4nPc+dHfJjCXtfNeIXJr8JGmXiZJX2Ofcefr
-         fbbEoZUF9LRLVnJarXe/L3TbnLMn8M8oOkzGxkbBoMf9AZEiRDVNMpogKeba58W4lOCy
-         rorLraewBdmpRTe1Cht7c2BAYd7lJWkfM58gVQhJrR/KYZ5/rLxkDImSAAnP/6vGIV9U
-         rpTt1fk0RlK4dyc5Rq9tdL2D430DX9mazBxGclqAXhMwBM7SBqFH8qbzZ8Ho2RrtgTi+
-         wazVm4eyKkLl+Dsm7isO2Mdi6sA362quFLl9uyFggYcIG1u5iz8oagxrEK8DpdE6S9Lt
-         015w==
-X-Gm-Message-State: AOAM530NH5tWYGn1v9nTuG4vh1NGcdQx3heLX+TKoBBfdHjBQSDgz7wg
-        nrh8JrbzqZvQhxK80zmn1Je6EzmBreUcxYyfxyDWor01+iKhmWFREhgCz4XX3xX/HCocyg1Yg0C
-        9/8S3VQrYw0AG9NIIqSA=
-X-Received: by 2002:adf:bb52:: with SMTP id x18mr7081709wrg.325.1595575515196;
-        Fri, 24 Jul 2020 00:25:15 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwjC5TNOMsbWloWKiM1fPLp95PjAuhLTb70ke99fpxMRmPpCdyrTQ/Uxi1NsfB0ImOP4RPRkA==
-X-Received: by 2002:adf:bb52:: with SMTP id x18mr7081693wrg.325.1595575514967;
-        Fri, 24 Jul 2020 00:25:14 -0700 (PDT)
-Received: from steredhat.lan ([5.171.199.112])
-        by smtp.gmail.com with ESMTPSA id p25sm5864195wmg.39.2020.07.24.00.25.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2020 00:25:14 -0700 (PDT)
-Date:   Fri, 24 Jul 2020 09:25:09 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Colin Walters <walters@verbum.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>,
-        Kees Cook <keescook@chromium.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: Re: strace of io_uring events?
-Message-ID: <20200724072509.sgqlbuocpo2peian@steredhat.lan>
-References: <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com>
- <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
- <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com>
- <202007151511.2AA7718@keescook>
- <20200716131404.bnzsaarooumrp3kx@steredhat>
- <202007160751.ED56C55@keescook>
- <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
- <CALCETrXSPdiVCgh3h=q7w9RyiKnp-=8jOHoFHX=an0cWqK7bzQ@mail.gmail.com>
- <20200721155848.32xtze5ntvcmjv63@steredhat>
- <d57e169a-55a0-4fa2-a7f2-9a462a786a38@www.fastmail.com>
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=a5YIsDfD2FQohOlldSDvwVAGf5dQceF3fXWIqPJ5J3A=;
+        b=IgkZmXL2BmIKfK0mcW7cofGJoCb3Eubqbm+bdbcSpIEzb2qxZQYWieUrTw7T7FWkc6
+         CUEQOAbeHrDaZ9In6wrlGmCftabu+ebaERPTVtLPCuaK4hXx5xTl55EXjygBDJAASiWK
+         NBc/2XP3iEwmVBVhK7cY/f22NMGdfun60W0IKDYmTYJNvnBpGnt2rMBoC4QPe51CQqbi
+         tnCUsA0n83j/k3zdtf3XMPZ6pSeXxLAbIetA4/2D+mBBpM9zFJZHcbgIta0jq985AJg8
+         5KCiUtUL2eGCF+uMLGfGoIdceLYPSa0sgOItVwgWaMK5JgusmQn9uL9CxhY2MDvlfNfM
+         d2fw==
+X-Gm-Message-State: AOAM531qbnVkPxWuTdFn3R3d+fs3/eWvhiFMlT22VFx7h7Z6sndpAWN/
+        npUpjHaUT1Onp6RMAY9pUZMMi4sF
+X-Google-Smtp-Source: ABdhPJxnRq5T95pqABNFp8WxNfGUfEsxM7HMJg3UDFU6O4wmvQyChYXoZ3p3ZxZ/tjnBVyVLF8DWUw==
+X-Received: by 2002:a17:906:240d:: with SMTP id z13mr8889859eja.346.1595594889042;
+        Fri, 24 Jul 2020 05:48:09 -0700 (PDT)
+Received: from [192.168.43.57] ([5.100.193.69])
+        by smtp.gmail.com with ESMTPSA id fx16sm615336ejb.9.2020.07.24.05.48.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Jul 2020 05:48:08 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <eaa5b0f65c739072b3f0c9165ff4f9110ae399c4.1595527863.git.asml.silence@gmail.com>
+ <57971720-992a-593c-dc3e-9f5fe8c76f1f@kernel.dk>
+ <0c52fec1-48a3-f9fe-0d35-adf6da600c2c@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [RFC][BUG] io_uring: fix work corruption for poll_add
+Message-ID: <ae6eca27-c0e2-384f-df89-2cd8b46bd6e6@gmail.com>
+Date:   Fri, 24 Jul 2020 15:46:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d57e169a-55a0-4fa2-a7f2-9a462a786a38@www.fastmail.com>
+In-Reply-To: <0c52fec1-48a3-f9fe-0d35-adf6da600c2c@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jul 23, 2020 at 09:37:40AM -0400, Colin Walters wrote:
-> On Tue, Jul 21, 2020, at 11:58 AM, Stefano Garzarella wrote:
-> 
-> > my use case concerns virtualization. The idea, that I described in the
-> > proposal of io-uring restrictions [1], is to share io_uring CQ and SQ queues
-> > with a guest VM for block operations.
-> 
-> Virtualization being a strong security barrier is in eternal conflict
-> with maximizing performance.  All of these "let's add a special
-> guest/host channel" are high risk areas.
-> 
-> And this effort in particular - is it *really* worth it to expose a
-> brand new, fast moving Linux kernel interface (that probably hasn't
-> been fuzzed as much as it needs to be) to virtual machines?
-> 
+On 24/07/2020 01:24, Jens Axboe wrote:
+> On 7/23/20 4:16 PM, Jens Axboe wrote:
+>> On 7/23/20 12:12 PM, Pavel Begunkov wrote:
+>>> poll_add can have req->work initialised, which will be overwritten in
+>>> __io_arm_poll_handler() because of the union. Luckily, hash_node is
+>>> zeroed in the end, so the damage is limited to lost put for work.creds,
+>>> and probably corrupted work.list.
+>>>
+>>> That's the easiest and really dirty fix, which rearranges members in the
+>>> union, arm_poll*() modifies and zeroes only work.files and work.mm,
+>>> which are never taken for poll add.
+>>> note: io_kiocb is exactly 4 cachelines now.
+>>
+>> I don't think there's a way around moving task_work out, just like it
 
-It is an experiment to explore the potential of io_uring. In addition
-the restrictions can also be useful for other use case, for example if
-a process  wants to allow another process to use io_uring, but only allowing
-a subset of operations.
++hash_node. I was thinking to do apoll alloc+memcpy as for rw, but this
+one is ugly.
 
-> People who want maximum performance at the cost of a bit of security
-> already have the choice to use Linux containers, where they can use
-> io_uring natively.
+>> was done on 5.9. The problem is that we could put the environment bits
+>> before doing task_work_add(), but we might need them if the subsequent
+>> queue ends up having to go async. So there's really no know when we can
+>> put them, outside of when the request finishes. Hence, we are kind of
+>> SOL here.
 > 
+> Actually, if we do go async, then we can just grab the environment
+> again. We're in the same task at that point. So maybe it'd be better to
+> work on ensuring that the request is either in the valid work state, or
+> empty work if using task_work.
+> 
+> Only potential complication with that is doing io_req_work_drop_env()
+> from the waitqueue handler, at least the ->needs_fs part won't like that
+> too much.
 
-Thanks,
-Stefano
+Considering that work->list is removed before executing io_wq_work, it
+should work. And if done only for poll_add, which needs nothing and ends up
+with creds, there shouldn't be any problems. I'll try this out
 
+-- 
+Pavel Begunkov

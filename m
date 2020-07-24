@@ -2,57 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 027AE22C587
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jul 2020 14:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA20622C596
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jul 2020 14:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbgGXMsL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Jul 2020 08:48:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59336 "EHLO
+        id S1726488AbgGXMyb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Jul 2020 08:54:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbgGXMsL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jul 2020 08:48:11 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6008C0619D3
-        for <io-uring@vger.kernel.org>; Fri, 24 Jul 2020 05:48:10 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id l4so9804117ejd.13
-        for <io-uring@vger.kernel.org>; Fri, 24 Jul 2020 05:48:10 -0700 (PDT)
+        with ESMTP id S1726235AbgGXMya (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jul 2020 08:54:30 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 495C8C0619D3
+        for <io-uring@vger.kernel.org>; Fri, 24 Jul 2020 05:54:30 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id w9so9851652ejc.8
+        for <io-uring@vger.kernel.org>; Fri, 24 Jul 2020 05:54:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a5YIsDfD2FQohOlldSDvwVAGf5dQceF3fXWIqPJ5J3A=;
-        b=Dgz/+nDENUG/aSu5SaILanIWe9jhe6OzdF+DBMarMbpGpy1ucW0fTsIbVPbNuGzY4h
-         KAouZEZ8cNSpkHpu55VDLGj7K3bNLyhgF/N88/A9QMzvuHkbDMfNukVmhZwSaiZmXaHw
-         sRm4YAtWml0iQ7NiucSR/Kr1599scVhEcl7lL1bkaIrJQ5Vix8vOi7j6/3GDT5w5kHv4
-         dFxipA6vh2w97VM8Zh/maNHCgD9E5CUIqMcMx9PEDT/izXVALN9Z/4Aj6d0QkOSy8ezV
-         mZrgXGjMCaSTGvymZUaxDvBKlGUmNV268ouzYogA7+LSTs0P5bZ1SZ8LTcxGmJhFb14I
-         chJw==
+        bh=/iKCn7y4gSKtJLyQYo52Pcik+KPjDZ7sDnZpCF/hJQ4=;
+        b=jahYr4hgaxHReXK5U5ATBJ73j5lUyIKgyv783dV1RXGd3p/z+n2u2OUdtrMuzmmA0C
+         MyeW2Wfttfb+9bWExw62O1lU0xiZ+N3mdGdDbhYVSSIedJ2wuN43kOGn87AUcDv9FHeY
+         okduuHAXpSvHpmODorZOF1kG60hoNM3roluohjv6J2R8UIVJ1S1vsMklh0pTqYVlmjcy
+         J6KqzVITz36xleT5/tUJsTAoDKgE6Np0pa9zXiCZDI7Vdq8CTSPETh+H6ZZbLyjb+dfZ
+         ftN3hg2pXebftWhkkj29Hr29sCVWDhCi0bzyc5xnfpdYiClYgCmA5pIR7x0qO/03GwCt
+         iI/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=a5YIsDfD2FQohOlldSDvwVAGf5dQceF3fXWIqPJ5J3A=;
-        b=IgkZmXL2BmIKfK0mcW7cofGJoCb3Eubqbm+bdbcSpIEzb2qxZQYWieUrTw7T7FWkc6
-         CUEQOAbeHrDaZ9In6wrlGmCftabu+ebaERPTVtLPCuaK4hXx5xTl55EXjygBDJAASiWK
-         NBc/2XP3iEwmVBVhK7cY/f22NMGdfun60W0IKDYmTYJNvnBpGnt2rMBoC4QPe51CQqbi
-         tnCUsA0n83j/k3zdtf3XMPZ6pSeXxLAbIetA4/2D+mBBpM9zFJZHcbgIta0jq985AJg8
-         5KCiUtUL2eGCF+uMLGfGoIdceLYPSa0sgOItVwgWaMK5JgusmQn9uL9CxhY2MDvlfNfM
-         d2fw==
-X-Gm-Message-State: AOAM531qbnVkPxWuTdFn3R3d+fs3/eWvhiFMlT22VFx7h7Z6sndpAWN/
-        npUpjHaUT1Onp6RMAY9pUZMMi4sF
-X-Google-Smtp-Source: ABdhPJxnRq5T95pqABNFp8WxNfGUfEsxM7HMJg3UDFU6O4wmvQyChYXoZ3p3ZxZ/tjnBVyVLF8DWUw==
-X-Received: by 2002:a17:906:240d:: with SMTP id z13mr8889859eja.346.1595594889042;
-        Fri, 24 Jul 2020 05:48:09 -0700 (PDT)
+        bh=/iKCn7y4gSKtJLyQYo52Pcik+KPjDZ7sDnZpCF/hJQ4=;
+        b=iilWjdODZIwqVlYehuyx3c0699tffKYKwPGpsfd6PGlBQ5v/i9y4Yr1ggMcDUbGVUu
+         g5IlBbpnS4mGgdEeq8ieKsvisOR8xeHYTDMJsbqrqDSBF0tdBXhE4El49CZuLy4QZmFX
+         xJ1iqv+Tan/xJ1V6z8It9MBUAUZAgr05WCVE9R+B9Xa0/vc4jqaps8YkqRWemi4IrS4/
+         LD5EYNrC5TTGg9s5Vg3tKN9xkYBCFepMJMraw/4ENTgtFIGjKdQS5Bavr7nKJk/T6Ftn
+         Mq2obgYlFkmznINz+SY/9GkKZNADuP88KZn1zJIW6whbtemqDWnf5WraFHI5dtRSsBBp
+         104w==
+X-Gm-Message-State: AOAM530LvTL/KpIMxFcT6kLZuGLLUSnv8ErpNVNarD2K+by6nKy8DvJG
+        Yohr4Sa2buMujyTGIt3euUbMnSIs
+X-Google-Smtp-Source: ABdhPJy5RwEWf9i1XnWY+k6KNRUtqTmQP+gAt5ZOK7Ffc11DOODCYiePlmMScyqlmS61BDF7bW/sYw==
+X-Received: by 2002:a17:906:1187:: with SMTP id n7mr8690987eja.161.1595595268762;
+        Fri, 24 Jul 2020 05:54:28 -0700 (PDT)
 Received: from [192.168.43.57] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id fx16sm615336ejb.9.2020.07.24.05.48.06
+        by smtp.gmail.com with ESMTPSA id f10sm598281ejx.95.2020.07.24.05.54.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jul 2020 05:48:08 -0700 (PDT)
+        Fri, 24 Jul 2020 05:54:28 -0700 (PDT)
+Subject: Re: [RFC][BUG] io_uring: fix work corruption for poll_add
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <eaa5b0f65c739072b3f0c9165ff4f9110ae399c4.1595527863.git.asml.silence@gmail.com>
  <57971720-992a-593c-dc3e-9f5fe8c76f1f@kernel.dk>
  <0c52fec1-48a3-f9fe-0d35-adf6da600c2c@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <ae6eca27-c0e2-384f-df89-2cd8b46bd6e6@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -96,57 +98,60 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [RFC][BUG] io_uring: fix work corruption for poll_add
-Message-ID: <ae6eca27-c0e2-384f-df89-2cd8b46bd6e6@gmail.com>
-Date:   Fri, 24 Jul 2020 15:46:15 +0300
+Message-ID: <209efa89-fb7f-3be3-4be1-f67477b220f1@gmail.com>
+Date:   Fri, 24 Jul 2020 15:52:35 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <0c52fec1-48a3-f9fe-0d35-adf6da600c2c@kernel.dk>
+In-Reply-To: <ae6eca27-c0e2-384f-df89-2cd8b46bd6e6@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 24/07/2020 01:24, Jens Axboe wrote:
-> On 7/23/20 4:16 PM, Jens Axboe wrote:
->> On 7/23/20 12:12 PM, Pavel Begunkov wrote:
->>> poll_add can have req->work initialised, which will be overwritten in
->>> __io_arm_poll_handler() because of the union. Luckily, hash_node is
->>> zeroed in the end, so the damage is limited to lost put for work.creds,
->>> and probably corrupted work.list.
+On 24/07/2020 15:46, Pavel Begunkov wrote:
+> On 24/07/2020 01:24, Jens Axboe wrote:
+>> On 7/23/20 4:16 PM, Jens Axboe wrote:
+>>> On 7/23/20 12:12 PM, Pavel Begunkov wrote:
+>>>> poll_add can have req->work initialised, which will be overwritten in
+>>>> __io_arm_poll_handler() because of the union. Luckily, hash_node is
+>>>> zeroed in the end, so the damage is limited to lost put for work.creds,
+>>>> and probably corrupted work.list.
+>>>>
+>>>> That's the easiest and really dirty fix, which rearranges members in the
+>>>> union, arm_poll*() modifies and zeroes only work.files and work.mm,
+>>>> which are never taken for poll add.
+>>>> note: io_kiocb is exactly 4 cachelines now.
 >>>
->>> That's the easiest and really dirty fix, which rearranges members in the
->>> union, arm_poll*() modifies and zeroes only work.files and work.mm,
->>> which are never taken for poll add.
->>> note: io_kiocb is exactly 4 cachelines now.
+>>> I don't think there's a way around moving task_work out, just like it
+> 
+> +hash_node. I was thinking to do apoll alloc+memcpy as for rw, but this
+> one is ugly.
+> 
+>>> was done on 5.9. The problem is that we could put the environment bits
+>>> before doing task_work_add(), but we might need them if the subsequent
+>>> queue ends up having to go async. So there's really no know when we can
+>>> put them, outside of when the request finishes. Hence, we are kind of
+>>> SOL here.
 >>
->> I don't think there's a way around moving task_work out, just like it
-
-+hash_node. I was thinking to do apoll alloc+memcpy as for rw, but this
-one is ugly.
-
->> was done on 5.9. The problem is that we could put the environment bits
->> before doing task_work_add(), but we might need them if the subsequent
->> queue ends up having to go async. So there's really no know when we can
->> put them, outside of when the request finishes. Hence, we are kind of
->> SOL here.
+>> Actually, if we do go async, then we can just grab the environment
+>> again. We're in the same task at that point. So maybe it'd be better to
+>> work on ensuring that the request is either in the valid work state, or
+>> empty work if using task_work.
+>>
+>> Only potential complication with that is doing io_req_work_drop_env()
+>> from the waitqueue handler, at least the ->needs_fs part won't like that
+>> too much.
 > 
-> Actually, if we do go async, then we can just grab the environment
-> again. We're in the same task at that point. So maybe it'd be better to
-> work on ensuring that the request is either in the valid work state, or
-> empty work if using task_work.
-> 
-> Only potential complication with that is doing io_req_work_drop_env()
-> from the waitqueue handler, at least the ->needs_fs part won't like that
-> too much.
+> Considering that work->list is removed before executing io_wq_work, it
+> should work. And if done only for poll_add, which needs nothing and ends up
+> with creds, there shouldn't be any problems. I'll try this out
 
-Considering that work->list is removed before executing io_wq_work, it
-should work. And if done only for poll_add, which needs nothing and ends up
-with creds, there shouldn't be any problems. I'll try this out
+Except for custom ->creds assigned at the beginning with the personality
+feature. Does poll ever use it?
 
 -- 
 Pavel Begunkov

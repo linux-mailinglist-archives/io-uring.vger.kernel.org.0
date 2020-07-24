@@ -2,78 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29FB722CE99
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jul 2020 21:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D5E22D142
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jul 2020 23:41:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbgGXTXN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Jul 2020 15:23:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36836 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbgGXTXN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jul 2020 15:23:13 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57750C0619D3
-        for <io-uring@vger.kernel.org>; Fri, 24 Jul 2020 12:23:13 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id j19so5865234pgm.11
-        for <io-uring@vger.kernel.org>; Fri, 24 Jul 2020 12:23:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=w2NaCjbBDiQGc9B3pS2XLjC72qctmFrNuT1yGCXH9VI=;
-        b=IiZArhaMTedNICtv7CUQvWMMgmFfVzEqCwrvTOCIN0YoqJKczqGOKvZFn81ZdH8LGY
-         MQYJjThpc5nCcbh9A6z0bl8G0Fy8pM0Ct/NuYSYOMR/o3ih/S0eY5m9QSf9tK1OoxP2m
-         LLUBbVQGM88+iIm4dJxWrkHkTaybtj0OjMcR/hAbL/jCihrsVA8E7INfa0mub79QcyAu
-         A5IBwU8IlQu9EgkrdzgKQa9EsQVMn/q8MG7AbU2GgpJEpNxRHB6/9fBI7RMVYpN2+QsO
-         AGaoIOWOsQEnOnbxnIVTi7Rr5lh07CyRcj7U+vRN6dc3ww1cYRPLiVToa8xN5MBjPXHm
-         bYIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w2NaCjbBDiQGc9B3pS2XLjC72qctmFrNuT1yGCXH9VI=;
-        b=VojHWfJ4vYUCceB8Jr7DHZtBJqK26Qj7DxaMO7AvEOBEbmnOpgx/WppuhnB/PDjn9t
-         q+VvwqbMNwtN8aDJSldKcY6VVkPe0bGZ1tKdlO4vhBbKppsZgDkpTrZU6tO8uejI5pAm
-         pfdi0T36RLh2c9eOVEvSQtkG0ZjHqA+DBwJypCoinWg4geoejk+DltEvqoSy280rBOWj
-         qOwTN2oKB1fRtiY9IkmEdnBQE3gI3p1SfihqrRuhD8GgVHA5sKkjNf18VRUcHvTfK9i+
-         YUdEuGvcQ+KJLZPcv8bEL3ANoUehPQXZ2sTXku+eGc75fXlV/N47yDVB03iVdgqV8ziT
-         gXpQ==
-X-Gm-Message-State: AOAM5315CHHAV8yDstvfQjkafFam4tpaAFoPDk1UBNhNF91X4a0EB4wm
-        ODNHUHyjNBs6DBLzwN0HTrH1UU3pOjE=
-X-Google-Smtp-Source: ABdhPJxW6ahNOOYZmtYW3co4HpYch0LScKdIASVsW4DWyNVC4JyCo+Fz4lCXuK+qT2KBJ1MGNVt6Pg==
-X-Received: by 2002:aa7:848b:: with SMTP id u11mr10096230pfn.72.1595618592392;
-        Fri, 24 Jul 2020 12:23:12 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id l23sm6386749pjy.45.2020.07.24.12.23.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jul 2020 12:23:11 -0700 (PDT)
-Subject: Re: [PATCH 0/2] two 5.8 fixes
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1595610422.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2aa2d8ad-b532-e4ab-5e5b-a9f112b62474@kernel.dk>
-Date:   Fri, 24 Jul 2020 13:23:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <cover.1595610422.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727041AbgGXVkH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Jul 2020 17:40:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726982AbgGXVkG (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 24 Jul 2020 17:40:06 -0400
+Subject: Re: [GIT PULL] io_uring fixes for 5.8-rc7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595626806;
+        bh=0+600BdVgHoptk4/RtcfOxs3DdcwnpXeQwal0/gJBcI=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=eJYDmW1t3qOqGR5HkPSvYn2MJqvhkjo80sOevbwJ2MGybM2g1OH3WmvOsZ+t3Iawn
+         z+gg+Gzj5od6l5WoLsnhmBAb68pTnOFrTe6CZXXKDez5iFCEViu2YO4JmjXWcSxOvI
+         RaT4OTV64w3EgSJwX2xTdeotbQgasLBv7hqRob/4=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <c07ebe12-2b16-3811-9abc-d3e8d99b54db@kernel.dk>
+References: <c07ebe12-2b16-3811-9abc-d3e8d99b54db@kernel.dk>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <c07ebe12-2b16-3811-9abc-d3e8d99b54db@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git
+ tags/io_uring-5.8-2020-07-24
+X-PR-Tracked-Commit-Id: 3e863ea3bb1a2203ae648eb272db0ce6a1a2072c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1f68f31b51507e1ad647aa3a43c295eb024490ad
+Message-Id: <159562680626.3064.10524082755470255037.pr-tracker-bot@kernel.org>
+Date:   Fri, 24 Jul 2020 21:40:06 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/24/20 11:07 AM, Pavel Begunkov wrote:
-> [2/2] is actually fixed in 5.9, but apparently it wasn't just a
-> speculation but rather an actual issue. It fixes locally, by moving
-> put out of lock, because don't see a reason why it's there.
+The pull request you sent on Fri, 24 Jul 2020 10:49:14 -0600:
 
-Thanks, I applied with the fixed spelling, and shuffled things around
-a bit.
+> git://git.kernel.dk/linux-block.git tags/io_uring-5.8-2020-07-24
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1f68f31b51507e1ad647aa3a43c295eb024490ad
+
+Thank you!
 
 -- 
-Jens Axboe
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker

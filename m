@@ -2,62 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBCCE22D87F
-	for <lists+io-uring@lfdr.de>; Sat, 25 Jul 2020 17:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA5D022D880
+	for <lists+io-uring@lfdr.de>; Sat, 25 Jul 2020 17:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgGYPpv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 25 Jul 2020 11:45:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56304 "EHLO
+        id S1726870AbgGYPsP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 25 Jul 2020 11:48:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbgGYPpv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Jul 2020 11:45:51 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67265C08C5C0
-        for <io-uring@vger.kernel.org>; Sat, 25 Jul 2020 08:45:51 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id mn17so6895863pjb.4
-        for <io-uring@vger.kernel.org>; Sat, 25 Jul 2020 08:45:51 -0700 (PDT)
+        with ESMTP id S1726727AbgGYPsP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Jul 2020 11:48:15 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F41C08C5C0
+        for <io-uring@vger.kernel.org>; Sat, 25 Jul 2020 08:48:15 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id f9so908794pju.4
+        for <io-uring@vger.kernel.org>; Sat, 25 Jul 2020 08:48:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=apI2WcJ3cP5FsW9oyoPGDSlj3mRPg7fg8dqub0Wmbo4=;
-        b=v4icdX9kWxOZeUO5ELZ1K73Z9LAbBLKvy4/zy1iCOp4KWy3nECABg9CclsI0VZxFAK
-         uQWtGoeokU9MYoGfPjRZoJX7tnehinFZzAcq6z70B4M15PQOZl1uNXGzHFXm9zwBu8OT
-         chhRWn6cZfbWTkEPWEyJopF3QVpu8fkHeH1cy1Dh0wFgo7qZYCFGPDGAMMpx9P0dz0XB
-         3T6paT/LNEO3RtpdxIWMyfiw6sTZ6x+HStlNnp8SJ4lmGwPwpzCOjf1ZJjN8+iUSuviP
-         4ou/XTWhJtKrnlCGvwUqdQJYMQYYZmThambposi4P5bLqJBPANBb4N0ZtPgspLV8Ul+8
-         Q/uQ==
+        bh=UjGjOTucuQx950dHaC8N3Lkjpl0aSUSZWvHB3qkH3og=;
+        b=pE05VwZVZ3pTG+KetVi2rGuGnUqF49dVJZJkrlM12F/l+zMdzqPM9Btv+0LcqIBirw
+         aTzBSwcksmTQyjwzbZkQfrfT01f7JZ9lk/WiRFMXFoGQ8bht1ogHBlTP8dxWuji3xo8Y
+         Xp0SR5BpvnhrEQn8hogfQ3Nj25m5vcEri0g/XN17teQHDpzfDlj+XiNV+ZuLMUExiy+M
+         wvtvYgYVaIDEwfLIm/pwyQrKxD7iVi541FSyoaRIHEh7CXqUW1ze4gYpJnRpjKq8GTpm
+         LkFR8nV50A1/hzCTt6qz8Ucwu3SMpL3/1+ikemmeYgaOx+dI2SG8s5j+bdvSxj06GiAh
+         RI9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=apI2WcJ3cP5FsW9oyoPGDSlj3mRPg7fg8dqub0Wmbo4=;
-        b=EvTf6hH+/RO50EJz8V8d2EfxPyn9TXz2WEH+gukldC5BDl1bG2SxIL863IQySWlMW8
-         ypJ7DSHih2MldFR6oJ6NdXECHh2H2IrunF22QEWu9YbKsCOzIjk34Ij78V2+5FD3QRIy
-         UglEGmqX2iYwyoKSx3byqe2xMsD/uNvI7fZqvY0zrGAAsGHIdqLdpG8TSr91P9mhPu/m
-         CfW/mKymxVqx2YiKGMUEi/JeBC5OG7mO6R9Fd2F5hgS+S2MFlq+5mzhFCk1WTeHYAUmx
-         NRxTWoFelGKNmIjkFyW10/sQ28gaBZzz4Cqrw/OW78tidASLsaEOBA+z1+F5uC+GFUZH
-         SfOg==
-X-Gm-Message-State: AOAM531mTvuBBmq/IFzNq24mcAtqOX+F3lWYlAnl6RPEjP1f5bgKpQom
-        NV5JRkwqLMFuXLve4LZLBs1nZktIobY=
-X-Google-Smtp-Source: ABdhPJw7irQXosYQpbdoOjsdcMFcX+/M//ckPmTpEhQ0NIAAXHBXef4q8EAB0+2KRghkuZH2xiRhzA==
-X-Received: by 2002:a17:902:c3ca:: with SMTP id j10mr13133835plj.171.1595691950293;
-        Sat, 25 Jul 2020 08:45:50 -0700 (PDT)
+        bh=UjGjOTucuQx950dHaC8N3Lkjpl0aSUSZWvHB3qkH3og=;
+        b=atsWH0AymecBr0cv5I8Vw8QUwoWddRTjFnLdW3SIxZTlS6KoUwbe0QkfvOHO1dGYr8
+         94I0zxljSUF9oL1R6DBgXhXf3cnOvLDSk888o8q3oaMtrH4v2F6bFTArU+r3QMFgc9nq
+         FEHDfgb/v1xC1nWECVFBjxSI9KzShqv4abWFg28g4hl1XF3OE+KfF2k9GzJvbpJcAzuT
+         MX3EReGhlmrAqSl2wFRt+uS4QM6MVpvfZ1tNKqdI3vcEbTLmQRACXUbhhfbYLycx6E2U
+         IQsDIQ7RkBvYf6hIF92tzLAJDEVUHrVUajrHhLvmfOkN+QZMceNUuTHBIcB4q9oIvx4p
+         vX6Q==
+X-Gm-Message-State: AOAM530ARe39GA8oRNljh527Y90RyGj4AUkV3lGYN2uEUwEXnwqKevO0
+        mX5GQBb+WCLahS3XVQ+7tpxiBHzchf4=
+X-Google-Smtp-Source: ABdhPJzBdvDH/gooqy/AHwqCfe7ZSfKBvupl2/SL2kh4lexPMn66uI3Xspqaje9jPoFmSnM6HiH5ag==
+X-Received: by 2002:a17:90a:d081:: with SMTP id k1mr3077482pju.177.1595692093096;
+        Sat, 25 Jul 2020 08:48:13 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id kx3sm8912952pjb.32.2020.07.25.08.45.49
+        by smtp.gmail.com with ESMTPSA id n18sm10078140pfd.99.2020.07.25.08.48.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Jul 2020 08:45:49 -0700 (PDT)
-Subject: Re: [RFC 0/2] 3 cacheline io_kiocb
+        Sat, 25 Jul 2020 08:48:12 -0700 (PDT)
+Subject: Re: [PATCH 0/4] 5.9 fixes
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1595664743.git.asml.silence@gmail.com>
+References: <cover.1595677308.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <467e93fb-876d-e2a5-7596-4b9e21317d67@kernel.dk>
-Date:   Sat, 25 Jul 2020 09:45:48 -0600
+Message-ID: <11b4d4e1-b93f-81bf-4307-4482e1400898@kernel.dk>
+Date:   Sat, 25 Jul 2020 09:48:11 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1595664743.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1595677308.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,34 +66,10 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/25/20 2:31 AM, Pavel Begunkov wrote:
-> That's not final for a several reasons, but good enough for discussion.
-> That brings io_kiocb down to 192B. I didn't try to benchmark it
-> properly, but quick nop test gave +5% throughput increase.
-> 7531 vs 7910 KIOPS with fio/t/io_uring
-> 
-> The whole situation is obviously a bunch of tradeoffs. For instance,
-> instead of shrinking it, we can inline apoll to speed apoll path.
-> 
-> [2/2] just for a reference, I'm thinking about other ways to shrink it.
-> e.g. ->link_list can be a single-linked list with linked tiemouts
-> storing a back-reference. This can turn out to be better, because
-> that would move ->fixed_file_refs to the 2nd cacheline, so we won't
-> ever touch 3rd cacheline in the submission path.
-> Any other ideas?
+On 7/25/20 5:41 AM, Pavel Begunkov wrote:
+> Unrelated to each other fixes/cleanups for 5.9
 
-Nothing noticeable for me, still about the same performance. But
-generally speaking, I don't necessarily think we need to go all in on
-making this as tiny as possible. It's much more important to chase the
-items where we only use 2 cachelines for the hot path, and then we have
-the extra space in there already for the semi hot paths like poll driven
-retry. Yes, we're still allocating from a pool that has slightly larger
-objects, but that doesn't really matter _that_ much. Avoiding an extra
-kmalloc+kfree for the semi hot paths are a bigger deal than making
-io_kiocb smaller and smaller.
-
-That said, for no-brainer changes, we absolutely should make it smaller.
-I just don't want to jump through convoluted hoops to get there.
+Applied, thanks.
 
 -- 
 Jens Axboe

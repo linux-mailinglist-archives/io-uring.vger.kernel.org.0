@@ -2,103 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45AAA22D720
-	for <lists+io-uring@lfdr.de>; Sat, 25 Jul 2020 13:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBCCE22D87F
+	for <lists+io-uring@lfdr.de>; Sat, 25 Jul 2020 17:45:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgGYLoE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 25 Jul 2020 07:44:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47370 "EHLO
+        id S1726842AbgGYPpv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 25 Jul 2020 11:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbgGYLoE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Jul 2020 07:44:04 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A55C0619D3
-        for <io-uring@vger.kernel.org>; Sat, 25 Jul 2020 04:44:04 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id o18so12489402eje.7
-        for <io-uring@vger.kernel.org>; Sat, 25 Jul 2020 04:44:04 -0700 (PDT)
+        with ESMTP id S1726694AbgGYPpv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Jul 2020 11:45:51 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67265C08C5C0
+        for <io-uring@vger.kernel.org>; Sat, 25 Jul 2020 08:45:51 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id mn17so6895863pjb.4
+        for <io-uring@vger.kernel.org>; Sat, 25 Jul 2020 08:45:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=cEWPasNSNjSKGX3kzgKTDV+j34rMNoUQbN1nMwRJa80=;
-        b=XtGzvfkVyU8LW5gtpXyV/FgA05vQpsFhEhjtqS0FieFeA9I9L/844vdGXJustNneju
-         Du9cAMrQZu24SeIMmwyLd3PtR0hPm3nee8m2vseE7LxA/dlngPhd/WmKJH3PVQOUT564
-         zkBqzo1tWlLAPCnQSj7SH5WQw07Zcw/QcN3Ye22z9bqJJHpX1Idyn+Ke9lxo0KnjXR+c
-         XXPcuWc9CrQ95pGzmyiFnd+wyjfVLTImuEBH3qZ2p9IVix1d9ql6RbqX/KVkg3KdfElq
-         +dbDQlHF2qH7G96qJNJd4ry//TO4QLDybOk8VIjgDafqdUaTtwgpbSuZ4pGPOrSTCW5X
-         k4xQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=apI2WcJ3cP5FsW9oyoPGDSlj3mRPg7fg8dqub0Wmbo4=;
+        b=v4icdX9kWxOZeUO5ELZ1K73Z9LAbBLKvy4/zy1iCOp4KWy3nECABg9CclsI0VZxFAK
+         uQWtGoeokU9MYoGfPjRZoJX7tnehinFZzAcq6z70B4M15PQOZl1uNXGzHFXm9zwBu8OT
+         chhRWn6cZfbWTkEPWEyJopF3QVpu8fkHeH1cy1Dh0wFgo7qZYCFGPDGAMMpx9P0dz0XB
+         3T6paT/LNEO3RtpdxIWMyfiw6sTZ6x+HStlNnp8SJ4lmGwPwpzCOjf1ZJjN8+iUSuviP
+         4ou/XTWhJtKrnlCGvwUqdQJYMQYYZmThambposi4P5bLqJBPANBb4N0ZtPgspLV8Ul+8
+         Q/uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cEWPasNSNjSKGX3kzgKTDV+j34rMNoUQbN1nMwRJa80=;
-        b=t9uB8G0ZF3ejg4V19PlNXqI6CwpFL6r9pLV5Ed5U2nt2ZGsj/E/oHnj3AefHYNyU7D
-         F4tEyXiRR2d7slaZpz93ULTa/2wtIUSYco8GL/Jcb3sXMq4y1ax8+rTiJoz9YJQ+SsRK
-         U3JU+uIr8jw+SX0A+CVRJHH258P+By0NKZGGnytovHzG78diktC38nlLSP22t5+OR/gs
-         FJ6fFO88exCjg8M+UyeHCI0h2zfb61ok/Pxu0Wilsw21Qa6O3JZqiujzGGt9/CeCndy8
-         2BoHJ3GrpcCNz6PVyPW5V9149I22cog1UeGIbCK1O4XK3mPGkfIIOPY6CWsJ6Dz5ElXg
-         1cjQ==
-X-Gm-Message-State: AOAM533ZYnWFcB5d0COJ8t9j9ggypyxCIHXklmXYYNeRuqgO0qJk5wgZ
-        R+banv4zWFnusAyE2XJzzjPpCi4w
-X-Google-Smtp-Source: ABdhPJyiuLsgrTeslk4ZJNI8L7gxNdpv0oAhuY78tMzon61OKvFsNkkK+4gmw5393C2UPrl2vj/oHw==
-X-Received: by 2002:a17:906:1104:: with SMTP id h4mr4142313eja.456.1595677442773;
-        Sat, 25 Jul 2020 04:44:02 -0700 (PDT)
-Received: from localhost.localdomain ([82.209.196.123])
-        by smtp.gmail.com with ESMTPSA id i7sm2743601eds.91.2020.07.25.04.44.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Jul 2020 04:44:02 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 4/4] io_uring: fix racy req->flags modification
-Date:   Sat, 25 Jul 2020 14:42:01 +0300
-Message-Id: <0db13b23d17709d5136e0f517c9fed3732f4a9bd.1595677308.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1595677308.git.asml.silence@gmail.com>
-References: <cover.1595677308.git.asml.silence@gmail.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=apI2WcJ3cP5FsW9oyoPGDSlj3mRPg7fg8dqub0Wmbo4=;
+        b=EvTf6hH+/RO50EJz8V8d2EfxPyn9TXz2WEH+gukldC5BDl1bG2SxIL863IQySWlMW8
+         ypJ7DSHih2MldFR6oJ6NdXECHh2H2IrunF22QEWu9YbKsCOzIjk34Ij78V2+5FD3QRIy
+         UglEGmqX2iYwyoKSx3byqe2xMsD/uNvI7fZqvY0zrGAAsGHIdqLdpG8TSr91P9mhPu/m
+         CfW/mKymxVqx2YiKGMUEi/JeBC5OG7mO6R9Fd2F5hgS+S2MFlq+5mzhFCk1WTeHYAUmx
+         NRxTWoFelGKNmIjkFyW10/sQ28gaBZzz4Cqrw/OW78tidASLsaEOBA+z1+F5uC+GFUZH
+         SfOg==
+X-Gm-Message-State: AOAM531mTvuBBmq/IFzNq24mcAtqOX+F3lWYlAnl6RPEjP1f5bgKpQom
+        NV5JRkwqLMFuXLve4LZLBs1nZktIobY=
+X-Google-Smtp-Source: ABdhPJw7irQXosYQpbdoOjsdcMFcX+/M//ckPmTpEhQ0NIAAXHBXef4q8EAB0+2KRghkuZH2xiRhzA==
+X-Received: by 2002:a17:902:c3ca:: with SMTP id j10mr13133835plj.171.1595691950293;
+        Sat, 25 Jul 2020 08:45:50 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id kx3sm8912952pjb.32.2020.07.25.08.45.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Jul 2020 08:45:49 -0700 (PDT)
+Subject: Re: [RFC 0/2] 3 cacheline io_kiocb
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1595664743.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <467e93fb-876d-e2a5-7596-4b9e21317d67@kernel.dk>
+Date:   Sat, 25 Jul 2020 09:45:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1595664743.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Changing req->flags from any context other than where it's executed is
-racy. io_uring_cancel_files() does that for overflowed requests.
-Instead, keep track of already visited ones by initialising the overflow
-list node.
+On 7/25/20 2:31 AM, Pavel Begunkov wrote:
+> That's not final for a several reasons, but good enough for discussion.
+> That brings io_kiocb down to 192B. I didn't try to benchmark it
+> properly, but quick nop test gave +5% throughput increase.
+> 7531 vs 7910 KIOPS with fio/t/io_uring
+> 
+> The whole situation is obviously a bunch of tradeoffs. For instance,
+> instead of shrinking it, we can inline apoll to speed apoll path.
+> 
+> [2/2] just for a reference, I'm thinking about other ways to shrink it.
+> e.g. ->link_list can be a single-linked list with linked tiemouts
+> storing a back-reference. This can turn out to be better, because
+> that would move ->fixed_file_refs to the 2nd cacheline, so we won't
+> ever touch 3rd cacheline in the submission path.
+> Any other ideas?
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Nothing noticeable for me, still about the same performance. But
+generally speaking, I don't necessarily think we need to go all in on
+making this as tiny as possible. It's much more important to chase the
+items where we only use 2 cachelines for the hot path, and then we have
+the extra space in there already for the semi hot paths like poll driven
+retry. Yes, we're still allocating from a pool that has slightly larger
+objects, but that doesn't really matter _that_ much. Avoiding an extra
+kmalloc+kfree for the semi hot paths are a bigger deal than making
+io_kiocb smaller and smaller.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3e406bc1f855..8eec2c5fbc9e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7873,8 +7873,11 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 
- 		if (cancel_req->flags & REQ_F_OVERFLOW) {
- 			spin_lock_irq(&ctx->completion_lock);
--			list_del(&cancel_req->compl.list);
--			cancel_req->flags &= ~REQ_F_OVERFLOW;
-+
-+			if (list_empty(&cancel_req->compl.list))
-+				goto out_wait;
-+			list_del_init(&cancel_req->compl.list);
-+
- 			if (list_empty(&ctx->cq_overflow_list)) {
- 				clear_bit(0, &ctx->sq_check_overflow);
- 				clear_bit(0, &ctx->cq_check_overflow);
-@@ -7898,7 +7901,7 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 			io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
- 			io_put_req(cancel_req);
- 		}
--
-+out_wait:
- 		schedule();
- 		finish_wait(&ctx->inflight_wait, &wait);
- 	}
+That said, for no-brainer changes, we absolutely should make it smaller.
+I just don't want to jump through convoluted hoops to get there.
+
 -- 
-2.24.0
+Jens Axboe
 

@@ -2,74 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2D4E22FDA5
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jul 2020 01:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D90522FF18
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jul 2020 03:50:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbgG0XYR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Jul 2020 19:24:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728107AbgG0XYQ (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 27 Jul 2020 19:24:16 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 942A322B43;
-        Mon, 27 Jul 2020 23:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595892254;
-        bh=ynynujcxmyyhcNW5Tocpx7HlDZIU0je/hY3rdK5Rswg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lCgoIiCnqFrO0Z3kiiy8ePsIqUb2D/juIxRRN/hflgFE4WreoqzEiLbXdpEEauBnc
-         7x+YkNLlS655vk+t3lEVZf69uvzCKdpXdV7PFB62gPVw+H35guBdN4CNkDxhhNUAYq
-         Rijgmf+ymGOYQRn9D/QjJMDh6O56+cWApKM5a3ZM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 21/25] io_uring: missed req_init_async() for IOSQE_ASYNC
-Date:   Mon, 27 Jul 2020 19:23:41 -0400
-Message-Id: <20200727232345.717432-21-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200727232345.717432-1-sashal@kernel.org>
-References: <20200727232345.717432-1-sashal@kernel.org>
+        id S1726932AbgG1BuK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Jul 2020 21:50:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59472 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbgG1BuK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jul 2020 21:50:10 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 017BAC061794;
+        Mon, 27 Jul 2020 18:50:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=sO5DBW8cKfAwrO4ChCjI6ktCdvfob49E/MQneeyqWGA=; b=EQh16+tJezpBCQzOPoGKRmK7tx
+        rUU9S+ewLhBxfY8sfxvrACb0HgWQEPyDfriXZeY+1Qcy4tXecE1iY6bb6bP9rKhRfcA9karWizDFU
+        X34xVM3QWYJJgdaxRjX7FiNqBbKem5a6KzCdvnt3EDLC43aUe4/uPzlusL2HHlvG7A+4sjD+ArBK9
+        hBhsC+AiRxftL568fyevrFOI6ONxLd//10BOX7rIcO04xzcTZpuTsfRj9Rqgx35X42iaxgXILc+Fm
+        /TZi9plKEEjDqiXHrQYcehpFRjT7NCFWeL1PjxuyH+wPoP9Ax8AkSMVN9NZEoOMb+izFu2nk2kb05
+        uWWJ+D6Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k0Ekh-00070f-DB; Tue, 28 Jul 2020 01:50:00 +0000
+Date:   Tue, 28 Jul 2020 02:49:59 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, bcrl@kvack.org, Damien.LeMoal@wdc.com,
+        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-api@vger.kernel.org, Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Subject: Re: [PATCH v4 1/6] fs: introduce FMODE_ZONE_APPEND and
+ IOCB_ZONE_APPEND
+Message-ID: <20200728014959.GO23808@casper.infradead.org>
+References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
+ <CGME20200724155258epcas5p1a75b926950a18cd1e6c8e7a047e6c589@epcas5p1.samsung.com>
+ <1595605762-17010-2-git-send-email-joshi.k@samsung.com>
+ <20200726151810.GA25328@infradead.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200726151810.GA25328@infradead.org>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Sun, Jul 26, 2020 at 04:18:10PM +0100, Christoph Hellwig wrote:
+> Zone append is a protocol context that ha not business showing up
+> in a file system interface.  The right interface is a generic way
+> to report the written offset for an append write for any kind of file.
+> So we should pick a better name like FMODE_REPORT_APPEND_OFFSET
+> (not that I particularly like that name, but it is the best I could
+> quickly come up with).
 
-[ Upstream commit 3e863ea3bb1a2203ae648eb272db0ce6a1a2072c ]
-
-IOSQE_ASYNC branch of io_queue_sqe() is another place where an
-unitialised req->work can be accessed (i.e. prior io_req_init_async()).
-Nothing really bad though, it just looses IO_WQ_WORK_CONCURRENT flag.
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 12ab983474dff..5153286345714 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5794,6 +5794,7 @@ static void io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		 * Never try inline submit of IOSQE_ASYNC is set, go straight
- 		 * to async execution.
- 		 */
-+		io_req_init_async(req);
- 		req->work.flags |= IO_WQ_WORK_CONCURRENT;
- 		io_queue_async_work(req);
- 	} else {
--- 
-2.25.1
-
+Is it necessarily *append*?  There were a spate of papers about ten
+years ago for APIs that were "write anywhere and I'll tell you where it
+ended up".  So FMODE_ANONYMOUS_WRITE perhaps?

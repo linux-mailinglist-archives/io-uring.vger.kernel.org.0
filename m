@@ -2,176 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DBF8231C86
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jul 2020 12:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 175F42323BD
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jul 2020 19:51:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbgG2KKX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Jul 2020 06:10:23 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:57811 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725851AbgG2KKW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Jul 2020 06:10:22 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R911e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=jiufei.xue@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0U48pIS-_1596017419;
-Received: from localhost(mailfrom:jiufei.xue@linux.alibaba.com fp:SMTPD_---0U48pIS-_1596017419)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 29 Jul 2020 18:10:19 +0800
-From:   Jiufei Xue <jiufei.xue@linux.alibaba.com>
-To:     axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org, Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Subject: [PATCH liburing 2/2] test/timeout: add testcase for new timeout interface
-Date:   Wed, 29 Jul 2020 18:10:15 +0800
-Message-Id: <1596017415-39101-3-git-send-email-jiufei.xue@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1596017415-39101-1-git-send-email-jiufei.xue@linux.alibaba.com>
+        id S1726480AbgG2RvM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Jul 2020 13:51:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbgG2RvM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Jul 2020 13:51:12 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33455C061794
+        for <io-uring@vger.kernel.org>; Wed, 29 Jul 2020 10:51:12 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id g6so5230080ilc.7
+        for <io-uring@vger.kernel.org>; Wed, 29 Jul 2020 10:51:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4e7BnlZAOb2j5vo7O8ophS/nhAuYKwAVuz5Bvo/hZWw=;
+        b=1rXLnpyQRjMe7kyyRhgr+GwCDGDVJmo1zYUAThR8FDmKcTctBooFoOIyQZFz2mQupR
+         RWI35TYdVAI/t9RNaYwFXb2TP+1mqmMxsFd66oEFVSSefroqb6qo4n6yChuoZvWXNS7C
+         UXmKT89mZVWmZSorRALjfJ2F81x9B4gAS5HJ2Blz3uQpB8Bs311O94/h3EZPoqunhtnv
+         vQWqmLPJmcey7oFekMzGxHzraIMizRDfq5PIQfvgqwJUpbm7oX5waokmu9rl28JfTn1a
+         Jv6HWsBzh+/W6dah6/UPgDbIRFXDjyATCiG1iMVVhgpVILhlisH7bWwIQqrZZiIGw/zE
+         5yvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4e7BnlZAOb2j5vo7O8ophS/nhAuYKwAVuz5Bvo/hZWw=;
+        b=jMR0Ms2hTpz59a8IjIpEcf9I6jR0/cV7pLFFFVq5mo1UrEF5jP1RqSF4Pedo1AvqoV
+         OGh9YM/eiadazm5KOW6MGCAUk9XAoSXQwWWnNw2bkIxK7u6nQRB4NjrVR2jWJuWNmAFy
+         snwkNo68zT20XJgb/VZfHNV4HaPwZ+6xadqR9O22zBlq2QJVHIrUNrqbLBB/Wk4EwKlF
+         rsTVoIvKKUJE4lMF9uuw33cqnBB3O5ptlv53PuozsZdUT2GDIEa8mPlutn5uPD02YPTn
+         rBUQC8Urp9rQp7qzXzM3JkMsuDUMbwS6Iy0Ny25gQN+BzsWdh3Hg8jbPwcVzRwuG8/l9
+         KMdA==
+X-Gm-Message-State: AOAM533eFfppvanjMpb3fA9Oo++F1ZtYp7p1wc0reT8VF/KVrCyqK+mh
+        VeHIGp9ElCOpiThiGs02F+7nIAosEFs=
+X-Google-Smtp-Source: ABdhPJyUoqVjAETUcrULRELCyToxuWwkLc7K4b8aUUbe94smj4INKpqVoaNCiCZo1YLyEvFggzXxFA==
+X-Received: by 2002:a92:c7c7:: with SMTP id g7mr2060359ilk.304.1596045071272;
+        Wed, 29 Jul 2020 10:51:11 -0700 (PDT)
+Received: from [192.168.1.58] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id s8sm1359747iow.11.2020.07.29.10.51.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jul 2020 10:51:10 -0700 (PDT)
+Subject: Re: [PATCH liburing 1/2] io_uring_enter: add timeout support
+To:     Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org
 References: <1596017415-39101-1-git-send-email-jiufei.xue@linux.alibaba.com>
+ <1596017415-39101-2-git-send-email-jiufei.xue@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0f6cdf31-fbec-d447-989d-969bb936838a@kernel.dk>
+Date:   Wed, 29 Jul 2020 11:51:10 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <1596017415-39101-2-git-send-email-jiufei.xue@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
----
- test/Makefile  |  1 +
- test/timeout.c | 93 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 94 insertions(+)
+On 7/29/20 4:10 AM, Jiufei Xue wrote:
+> Kernel can handle timeout when feature IORING_FEAT_GETEVENTS_TIMEOUT
+> supported. Add two new interfaces: io_uring_wait_cqes2(),
+> io_uring_wait_cqe_timeout2() for applications to use this feature.
 
-diff --git a/test/Makefile b/test/Makefile
-index a693d6f..8892ee9 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -89,6 +89,7 @@ submit-reuse: XCFLAGS = -lpthread
- poll-v-poll: XCFLAGS = -lpthread
- across-fork: XCFLAGS = -lpthread
- ce593a6c480a-test: XCFLAGS = -lpthread
-+timeout: XCFLAGS = -lpthread
- 
- install: $(all_targets) runtests.sh runtests-loop.sh
- 	$(INSTALL) -D -d -m 755 $(datadir)/liburing-test/
-diff --git a/test/timeout.c b/test/timeout.c
-index 7e9f11d..5002ff4 100644
---- a/test/timeout.c
-+++ b/test/timeout.c
-@@ -10,6 +10,7 @@
- #include <string.h>
- #include <fcntl.h>
- #include <sys/time.h>
-+#include <pthread.h>
- 
- #include "liburing.h"
- #include "../src/syscall.h"
-@@ -18,6 +19,11 @@
- static int not_supported;
- static int no_modify;
- 
-+struct thread_data {
-+	struct io_uring *ring;
-+	volatile int do_exit;
-+};
-+
- static void msec_to_ts(struct __kernel_timespec *ts, unsigned int msec)
- {
- 	ts->tv_sec = msec / 1000;
-@@ -232,6 +238,87 @@ err:
- 	return 1;
- }
- 
-+static void *test_reap_thread_fn(void *__data)
-+{
-+	struct thread_data *data = __data;
-+	struct io_uring *ring = (struct io_uring *)data->ring;
-+	struct io_uring_cqe *cqe;
-+	struct __kernel_timespec ts;
-+	int ret, i = 0;
-+
-+	msec_to_ts(&ts, TIMEOUT_MSEC);
-+	while (!data->do_exit) {
-+		ret = io_uring_wait_cqes2(ring, &cqe, 2, &ts, NULL);
-+		if (ret == -ETIME) {
-+			if (i == 2)
-+				break;
-+			else
-+				continue;
-+		} else if (ret < 0) {
-+			fprintf(stderr, "%s: wait timeout failed: %d\n", __FUNCTION__, ret);
-+			goto err;
-+		}
-+		ret = cqe->res;
-+		if (ret < 0) {
-+			fprintf(stderr, "res: %d\n", ret);
-+			goto err;
-+		}
-+
-+		io_uring_cqe_seen(ring, cqe);
-+		i++;
-+	}
-+
-+	if (i != 2) {
-+		fprintf(stderr, "got %d completions\n", i);
-+		ret = 1;
-+		goto err;
-+	}
-+	return NULL;
-+
-+err:
-+	return (void *)(intptr_t)ret;
-+}
-+
-+static int test_single_timeout_wait_new(struct io_uring *ring)
-+{
-+	struct thread_data data;
-+	struct io_uring_sqe *sqe;
-+	pthread_t reap_thread;
-+	int ret;
-+	void *retval;
-+
-+	if (!(ring->features & IORING_FEAT_GETEVENTS_TIMEOUT)) {
-+		fprintf(stdout, "feature IORING_FEAT_GETEVENTS_TIMEOUT not supported.\n");
-+		return 0;
-+	}
-+
-+	data.ring = ring;
-+	data.do_exit = 0;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	io_uring_prep_nop(sqe);
-+	io_uring_sqe_set_data(sqe, (void *) 1);
-+
-+	sqe = io_uring_get_sqe(ring);
-+	io_uring_prep_nop(sqe);
-+	io_uring_sqe_set_data(sqe, (void *) 1);
-+
-+	pthread_create(&reap_thread, NULL, test_reap_thread_fn, &data);
-+
-+	ret = io_uring_submit(ring);
-+	if (ret <= 0) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	sleep(1);
-+	data.do_exit = 1;
-+	pthread_join(reap_thread, &retval);
-+	return (int)(intptr_t)retval;
-+err:
-+	return 1;
-+}
-+
- /*
-  * Test single timeout waking us up
-  */
-@@ -1054,6 +1141,12 @@ int main(int argc, char *argv[])
- 		return ret;
- 	}
- 
-+	ret = test_single_timeout_wait_new(&ring);
-+	if (ret) {
-+		fprintf(stderr, "test_single_timeout_wait_new failed\n");
-+		return ret;
-+	}
-+
- 	/*
- 	 * this test must go last, it kills the ring
- 	 */
+Why add new new interfaces, when the old ones already pass in the
+timeout? Surely they could just use this new feature, instead of the
+internal timeout, if it's available?
+
+> diff --git a/src/include/liburing.h b/src/include/liburing.h
+> index 0505a4f..6176a63 100644
+> --- a/src/include/liburing.h
+> +++ b/src/include/liburing.h
+> @@ -56,6 +56,7 @@ struct io_uring {
+>  	struct io_uring_sq sq;
+>  	struct io_uring_cq cq;
+>  	unsigned flags;
+> +	unsigned features;
+>  	int ring_fd;
+>  };
+
+This breaks the API, as it changes the size of the ring...
+
 -- 
-1.8.3.1
+Jens Axboe
 

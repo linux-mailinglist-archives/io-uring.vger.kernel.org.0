@@ -2,56 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42E032337C3
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jul 2020 19:35:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4AD12337D3
+	for <lists+io-uring@lfdr.de>; Thu, 30 Jul 2020 19:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730216AbgG3RfK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Jul 2020 13:35:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55648 "EHLO
+        id S1730204AbgG3RkL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Jul 2020 13:40:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbgG3RfK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jul 2020 13:35:10 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B31C061574
-        for <io-uring@vger.kernel.org>; Thu, 30 Jul 2020 10:35:10 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id a14so3571031edx.7
-        for <io-uring@vger.kernel.org>; Thu, 30 Jul 2020 10:35:10 -0700 (PDT)
+        with ESMTP id S1726275AbgG3RkK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jul 2020 13:40:10 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17734C061574;
+        Thu, 30 Jul 2020 10:40:10 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id l4so28732638ejd.13;
+        Thu, 30 Jul 2020 10:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=grtLM2wuFPTIXJb4FkaFlVlU3LSMFApNGIBKPxbNXo8=;
-        b=M6+TKw/UJL3UrW6YOGLmaDKBnVV31Ae1/bLUpD01EKIRUupS7OdoodmKfjproAHyTB
-         h/E1JdQCQXggd1JYTdRaCpqLpIBghFqeygvIn5LGxGrwLLkdLH84TUiuxVhT5gynq7n4
-         B7igXhYo/rUIkXe3ce7bl7FEwruvwbeCid1ZY9+KqBaLi4L0u9mwjYnf9t2mFSB3fOS3
-         gBmydeC8o8ME6DgUXK5znvYvB+7fSw0JWhFBMAVoXC8fdQOPUv8m5niOho5pdyb+4uet
-         eoof7edU4gqxPcchgz8Dq6RrMoysTo/D9w8EftkffSLIryjMbHH3Bsv8VUzzowCVMfy3
-         K/Xg==
+        bh=57buPu3RSckYOKI160Z+8gEbPTD+M0olDRxGQGG8nII=;
+        b=kUT7NHTQWpOO08Ul5JZmrXN83dLFKt1rZez5ZKSDUw01+5yhFx2LgOBwmfYjoU5Ttc
+         N3DL6r3cCTPExx6Fq7peaBcMnV5spUohR/ZCmprOIyF1mVXV67ozBKQc1uXhpC2Zq63+
+         GEKiwn0cExjUcoOlaY9GmWS4pvrM8wLkjW/QJ0gfXMAPa0nbZZ2/mYiH7tzFZ85gDJOQ
+         xjpULsKC7MFoeuK5je9unGoLyIF0P3hX873mS1szfDbtbG0K9FFQEF/8sPUu6vUVn0eJ
+         4eo9lzvrEx1tNBmbN/4aN2OmVOC4W3wTg9htvRLAvuAZHm4Y23NaWmIKPY8mOwWdT7cE
+         /XvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=grtLM2wuFPTIXJb4FkaFlVlU3LSMFApNGIBKPxbNXo8=;
-        b=mgdfCNKrJUqZMEvioE4SoAdi59h7jVY7bl2UzC/5NWTDLOVlA/F93seEjw0LgD4eKH
-         3fwfxWlR6qi1bUii7+NbTeyzHxQNk7kLF4ot1oKTGjOe80CHn0HiL08aQeFcaxPYFkyh
-         96bx7l1dQbmdy0ylsSFVZ3xJmb1WsiBYHiutRBx1GcqALBgo8Jg95tuSJR4as5oO1yZq
-         x88xhXSBVdBMeBItQjHW4KVOfgVHeZAC1OtRKD2n9SU9qTSt9gEr5lUoRx0qVVbpAci3
-         tAe4kdZUqaayaBmomNJvs+iocyXanzlTY8uEvVf2YuVHWldH4imm4dNCGV2yBXVmf8lT
-         F6HQ==
-X-Gm-Message-State: AOAM530/5sE1DwDPFb743qxH8+KnOYxmqflsm9DnnGIyDNm4DD9EOjf/
-        +ca0rT4LdxJXLpbi3HAiNM4oqSwB
-X-Google-Smtp-Source: ABdhPJyjCZjKUKzq7lMef20qeOGhpOhiTo435l9QHNhtc3ydVC6o0OTMFqLM6WQVyYxqvlEPuU5xPg==
-X-Received: by 2002:aa7:c88f:: with SMTP id p15mr63380eds.33.1596130508609;
-        Thu, 30 Jul 2020 10:35:08 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=57buPu3RSckYOKI160Z+8gEbPTD+M0olDRxGQGG8nII=;
+        b=pv47VBQOWz7iC4BTYdLM3gcP/gK29w8uYmJHTjEkzqdBXPtIHaa1YKH8CBCG/yhsf3
+         XXXtJ7o8woynudKBo8fh2DlKeQLetRZCrl94sREty3UOncuB+Am0eoLQAknAOBWOEPYe
+         AgwS2aCh7EtsXacFsOCupksklp0nlDfdIIUMqq7SmmBm5r35pAMZNmNUKhswLY/Lqxf4
+         MxQFVLO0x87wxVe1QRDeYRmTwWxWVDGeNSyZV+vt/eUMu46gZ2ePjQORGwVxlm3W6D/f
+         NWvcbN6kd2J+TY12EgVovRZ0L2MpIKV5UJtWmc+Udu3udND9KM+HDl2Fow6R0w1BQhzM
+         wrnQ==
+X-Gm-Message-State: AOAM533OWcYDbxFJTsTlGK3bvlK2IDe5EifnibU14KyWhYLlqdW46aT4
+        8GSnsWREhFFeeTRsLkwqwIhBI8LU2hM=
+X-Google-Smtp-Source: ABdhPJwVA2R/OgzlWx53pIoKFoJFOEqZj84CJrfi4Dlnl+k5tbNXhclVeoFmgDGyd2rDtyJDUeOwKA==
+X-Received: by 2002:a17:906:e0c2:: with SMTP id gl2mr223796ejb.160.1596130808712;
+        Thu, 30 Jul 2020 10:40:08 -0700 (PDT)
 Received: from [192.168.43.105] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id d24sm6876731edz.77.2020.07.30.10.35.07
+        by smtp.gmail.com with ESMTPSA id m13sm7037286edi.89.2020.07.30.10.40.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jul 2020 10:35:07 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1596123376.git.asml.silence@gmail.com>
- <ba9c998d27e8e75467b09d8a2716cf6618b7cd93.1596123376.git.asml.silence@gmail.com>
- <d2347d32-7651-b34b-a7ca-5993b49a2147@kernel.dk>
+        Thu, 30 Jul 2020 10:40:08 -0700 (PDT)
+Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
+To:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-api@vger.kernel.org,
+        SelvaKumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
+ <CGME20200724155350epcas5p3b8f1d59eda7f8fbb38c828f692d42fd6@epcas5p3.samsung.com>
+ <1595605762-17010-7-git-send-email-joshi.k@samsung.com>
+ <f5416bd4-93b3-4d14-3266-bdbc4ae1990b@kernel.dk>
+ <CA+1E3rJAa3E2Ti0fvvQTzARP797qge619m4aYLjXeR3wxdFwWw@mail.gmail.com>
+ <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk>
+ <e871eef2-8a93-fdbc-b762-2923526a2db4@gmail.com>
+ <80d27717-080a-1ced-50d5-a3a06cf06cd3@kernel.dk>
+ <da4baa8c-76b0-7255-365c-d8b58e322fd0@gmail.com>
+ <65a7e9a6-aede-31ce-705c-b7f94f079112@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -96,62 +114,124 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 3/6] io_uring: fix racy overflow count reporting
-Message-ID: <07b1ee0e-72d9-a202-34ac-8095628c72f8@gmail.com>
-Date:   Thu, 30 Jul 2020 20:33:12 +0300
+Message-ID: <d4f9a5d3-1df2-1060-94fa-f77441a89299@gmail.com>
+Date:   Thu, 30 Jul 2020 20:38:10 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <d2347d32-7651-b34b-a7ca-5993b49a2147@kernel.dk>
+In-Reply-To: <65a7e9a6-aede-31ce-705c-b7f94f079112@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 30/07/2020 20:18, Jens Axboe wrote:
-> On 7/30/20 9:43 AM, Pavel Begunkov wrote:
->> All ->cq_overflow modifications should be under completion_lock,
->> otherwise it can report a wrong number to the userspace. Fix it in
->> io_uring_cancel_files().
+On 30/07/2020 20:16, Jens Axboe wrote:
+> On 7/30/20 10:26 AM, Pavel Begunkov wrote:
+>> On 30/07/2020 19:13, Jens Axboe wrote:
+>>> On 7/30/20 10:08 AM, Pavel Begunkov wrote:
+>>>> On 27/07/2020 23:34, Jens Axboe wrote:
+>>>>> On 7/27/20 1:16 PM, Kanchan Joshi wrote:
+>>>>>> On Fri, Jul 24, 2020 at 10:00 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>>>>
+>>>>>>> On 7/24/20 9:49 AM, Kanchan Joshi wrote:
+>>>>>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>>>>>>> index 7809ab2..6510cf5 100644
+>>>>>>>> --- a/fs/io_uring.c
+>>>>>>>> +++ b/fs/io_uring.c
+>>>>>>>> @@ -1284,8 +1301,15 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
+>>>>>>>>       cqe = io_get_cqring(ctx);
+>>>>>>>>       if (likely(cqe)) {
+>>>>>>>>               WRITE_ONCE(cqe->user_data, req->user_data);
+>>>>>>>> -             WRITE_ONCE(cqe->res, res);
+>>>>>>>> -             WRITE_ONCE(cqe->flags, cflags);
+>>>>>>>> +             if (unlikely(req->flags & REQ_F_ZONE_APPEND)) {
+>>>>>>>> +                     if (likely(res > 0))
+>>>>>>>> +                             WRITE_ONCE(cqe->res64, req->rw.append_offset);
+>>>>>>>> +                     else
+>>>>>>>> +                             WRITE_ONCE(cqe->res64, res);
+>>>>>>>> +             } else {
+>>>>>>>> +                     WRITE_ONCE(cqe->res, res);
+>>>>>>>> +                     WRITE_ONCE(cqe->flags, cflags);
+>>>>>>>> +             }
+>>>>>>>
+>>>>>>> This would be nice to keep out of the fast path, if possible.
+>>>>>>
+>>>>>> I was thinking of keeping a function-pointer (in io_kiocb) during
+>>>>>> submission. That would have avoided this check......but argument count
+>>>>>> differs, so it did not add up.
+>>>>>
+>>>>> But that'd grow the io_kiocb just for this use case, which is arguably
+>>>>> even worse. Unless you can keep it in the per-request private data,
+>>>>> but there's no more room there for the regular read/write side.
+>>>>>
+>>>>>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>>>>>>>> index 92c2269..2580d93 100644
+>>>>>>>> --- a/include/uapi/linux/io_uring.h
+>>>>>>>> +++ b/include/uapi/linux/io_uring.h
+>>>>>>>> @@ -156,8 +156,13 @@ enum {
+>>>>>>>>   */
+>>>>>>>>  struct io_uring_cqe {
+>>>>>>>>       __u64   user_data;      /* sqe->data submission passed back */
+>>>>>>>> -     __s32   res;            /* result code for this event */
+>>>>>>>> -     __u32   flags;
+>>>>>>>> +     union {
+>>>>>>>> +             struct {
+>>>>>>>> +                     __s32   res;    /* result code for this event */
+>>>>>>>> +                     __u32   flags;
+>>>>>>>> +             };
+>>>>>>>> +             __s64   res64;  /* appending offset for zone append */
+>>>>>>>> +     };
+>>>>>>>>  };
+>>>>>>>
+>>>>>>> Is this a compatible change, both for now but also going forward? You
+>>>>>>> could randomly have IORING_CQE_F_BUFFER set, or any other future flags.
+>>>>>>
+>>>>>> Sorry, I didn't quite understand the concern. CQE_F_BUFFER is not
+>>>>>> used/set for write currently, so it looked compatible at this point.
+>>>>>
+>>>>> Not worried about that, since we won't ever use that for writes. But it
+>>>>> is a potential headache down the line for other flags, if they apply to
+>>>>> normal writes.
+>>>>>
+>>>>>> Yes, no room for future flags for this operation.
+>>>>>> Do you see any other way to enable this support in io-uring?
+>>>>>
+>>>>> Honestly I think the only viable option is as we discussed previously,
+>>>>> pass in a pointer to a 64-bit type where we can copy the additional
+>>>>> completion information to.
+>>>>
+>>>> TBH, I hate the idea of such overhead/latency at times when SSDs can
+>>>> serve writes in less than 10ms. Any chance you measured how long does it
+>>>
+>>> 10us? :-)
 >>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>  fs/io_uring.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
+>> Hah, 10us indeed :)
 >>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 11f4ab87e08f..6e2322525da6 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -7847,10 +7847,9 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
->>  				clear_bit(0, &ctx->cq_check_overflow);
->>  				ctx->rings->sq_flags &= ~IORING_SQ_CQ_OVERFLOW;
->>  			}
->> -			spin_unlock_irq(&ctx->completion_lock);
->> -
->>  			WRITE_ONCE(ctx->rings->cq_overflow,
->>  				atomic_inc_return(&ctx->cached_cq_overflow));
->> +			spin_unlock_irq(&ctx->completion_lock);
+>>>
+>>>> take to drag through task_work?
+>>>
+>>> A 64-bit value copy is really not a lot of overhead... But yes, we'd
+>>> need to push the completion through task_work at that point, as we can't
+>>> do it from the completion side. That's not a lot of overhead, and most
+>>> notably, it's overhead that only affects this particular type.
+>>>
+>>> That's not a bad starting point, and something that can always be
+>>> optimized later if need be. But I seriously doubt it'd be anything to
+>>> worry about.
+>>
+>> I probably need to look myself how it's really scheduled, but if you don't
+>> mind, here is a quick question: if we do work_add(task) when the task is
+>> running in the userspace, wouldn't the work execution wait until the next
+>> syscall/allotted time ends up?
 > 
-> Torn writes? Not sure I see what the issue here, can you expand?
+> It'll get the task to enter the kernel, just like signal delivery. The only
+> tricky part is really if we have a dependency waiting in the kernel, like
+> the recent eventfd fix.
 
-No, just off-by-one(many). E.g.
-
-let: cached_overflow = 0;
-
-        CPU 1                   |               CPU 2
-====================================================================
-t = ++cached_overflow // t == 1 |
-                                | t2 = ++cached_overflow // t2 == 2
-                                | WRITE_ONCE(cq_overflow, t2)
-WRITE_ONCE(cq_overflow, t1) 	|
-
-
-So, ctx->rings->cq_overflow == 1, but ctx->cached_cq_overflow == 2.
-A minor problem and easy to fix.
+I see, thanks for sorting this out!
 
 -- 
 Pavel Begunkov

@@ -2,55 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81065233629
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jul 2020 17:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2C7F23365D
+	for <lists+io-uring@lfdr.de>; Thu, 30 Jul 2020 18:10:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729882AbgG3P7s (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Jul 2020 11:59:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40902 "EHLO
+        id S1729935AbgG3QK2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Jul 2020 12:10:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbgG3P7r (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jul 2020 11:59:47 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3232C061574;
-        Thu, 30 Jul 2020 08:59:46 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id f24so8002355ejx.6;
-        Thu, 30 Jul 2020 08:59:46 -0700 (PDT)
+        with ESMTP id S1729459AbgG3QK1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jul 2020 12:10:27 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24109C061574;
+        Thu, 30 Jul 2020 09:10:27 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id c15so10689948edj.3;
+        Thu, 30 Jul 2020 09:10:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wd33f2D/h4PcgaV0nXqpx6aSm+kT8PptW8Hl5mbozss=;
-        b=I0OErlVkq4M4V9d9PqGtUTwFzQlckaRlAv5g5goQ1OWGmpd3mdLo5VdoGTyZEtnBHw
-         YA2jM82jJWn0+xh2h3j+0M06FrU/RrDMUOvEI+ONUMnd4+oHKAPlzsvHwWuBX42ETUz2
-         Rpu46zOORipC9fgep425koBRNg7op90I/UFQ10FzjSNzglY2pyeUv7hkGG49UJ2G5WSd
-         4l+pwX2VnOwWYR0wzXLHUdzizDOFEEkiRXprHZXTuUYUTTgyPtXP8FG4OJ/pwayxTVxR
-         1nnjDDIiChH9mhNJ41MIxjfJSyPQt415Kc4JZUdU9FA2N1MH3adQgjmpTpi67Km9RP2o
-         aghQ==
+        bh=eo9PvK1FJGvbYrJLMMSODvaUPOt9BkCNoEhylnHRrU4=;
+        b=J+mc9/JaP8AYxRGYLIA3B8cE5gEN3H++zt4wieVbiwtDPiVG5ge+Lf0oxzrrsypkmE
+         ZDQzhISrbx5nnSm/7EWiB471Zx4m2zE56Xz27MjAsz6jHrZ5jrkAQu5dndNQPU16+w+F
+         fUo7rY9oUlBPD12kakW8RswGea1g9Iuo6bQVMC+2xV0RCUp4CDr4Em2WevI9HWsbmbff
+         bxfUaOdOVU//5T3BSBT1NMkzgV0SjunszuPQ9POsubUf4Mhp4clHFkBOSvLLW+JhtrJl
+         HdPQlUes3fIYQb49Kyu8eCaY0Gwy17OO5Pf+S/0wQbAZ9qqFQBpeTXXinqeWsT5wUFLy
+         4I4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=wd33f2D/h4PcgaV0nXqpx6aSm+kT8PptW8Hl5mbozss=;
-        b=CaqmGIMPSEY2rnfFlcoOubw/bl2yvhE3p6TcfA84qVDTLbZbLE91DUPv3lJVblExBz
-         ur+4T+VTFB0oUJFJ99vtFJMXt+ctTlrXoYA/sIKioh8/7qnmk3soV/+99HkC0Ir4eeoz
-         OvfNfk9YGdZ7KhYRW3kibPDVvEGA+Dnjd/kwwFpec8IX8ECwhEuQgxIWQZfwN6f13znK
-         Q12oc/RL2eumvdPPbo4ssBXBF0qVZNE9500ACYlPbQgXVaaVNqvpO6qJwT9fwxh+qpOn
-         KFPtTjll1KdeqSjuCtu1eRbzYp90C1yMrV1PW3hoDs6ZC35b+NAS0uByMPOiB+6XMJTs
-         RttQ==
-X-Gm-Message-State: AOAM532UC0tevfv68bDIMlG+pcf77Fe2lJ2XjnwOrtD89n/uyklNFDzq
-        69Jkklj5kQZoPnyQdT1ap5g=
-X-Google-Smtp-Source: ABdhPJz5eB+KGh2glC/CMjn1WMXD9J6IpdbmzIjCrVaMZrLYoDjmJ/5uKKzl8GKS4Nw6YiIgZZ2lfQ==
-X-Received: by 2002:a17:906:b046:: with SMTP id bj6mr3370177ejb.349.1596124785467;
-        Thu, 30 Jul 2020 08:59:45 -0700 (PDT)
+        bh=eo9PvK1FJGvbYrJLMMSODvaUPOt9BkCNoEhylnHRrU4=;
+        b=rKin1bD4qFmPIAcBB0DWpRpTcnAKRUS5uAFGskvxb/KKeHh7fPs4CBAAPgG0QWC6Wf
+         LbULaqk+0oqrFm6OAcHySz7gRheJHSq3+Wo+Q9h8M1XsmDXHDxoZrnhj1QWV5IN5SiGu
+         AuDe6sMF7EEx4ZkP3gXX9Y50Yq6Gz/pA4MGOIz0eVqyfH7MEoCbp2lkkYHUHKBpjWfY4
+         WBK5x/CfFRTwcOG6HNQ69y5hHpdkKCgXh8PyVdxUDRDZUrwwKSeIokBsDgGk33JomB2x
+         arsKBhNLRaAWMWA5PIv8AscJ7TA0NTyM/5ZdcrtiaLDdOSmVHt4P/xIo7uBbzCyNxeuc
+         dmlw==
+X-Gm-Message-State: AOAM53038TXf5XSV9UYlCifKyqznSxaDiPNwxP0OcBQoIMYi7mltoNZq
+        J3ZEjBvTtslDLRI7H2xn+Ww=
+X-Google-Smtp-Source: ABdhPJyYt7By6mBB1oOrN8tXg18owvXw/2BYthniNkFPHC4qH3/1UnpFnQAdj6ycZ7vz1kG/BVZZdg==
+X-Received: by 2002:a05:6402:339:: with SMTP id q25mr3313588edw.268.1596125425830;
+        Thu, 30 Jul 2020 09:10:25 -0700 (PDT)
 Received: from [192.168.43.105] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id lc18sm6525610ejb.29.2020.07.30.08.59.43
+        by smtp.gmail.com with ESMTPSA id l23sm5955630eje.46.2020.07.30.09.10.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jul 2020 08:59:44 -0700 (PDT)
-To:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, bcrl@kvack.org
-Cc:     willy@infradead.org, hch@infradead.org, Damien.LeMoal@wdc.com,
+        Thu, 30 Jul 2020 09:10:25 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-aio@kvack.org, io-uring@vger.kernel.org,
         linux-block@vger.kernel.org, linux-api@vger.kernel.org,
@@ -60,6 +62,9 @@ Cc:     willy@infradead.org, hch@infradead.org, Damien.LeMoal@wdc.com,
 References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
  <CGME20200724155350epcas5p3b8f1d59eda7f8fbb38c828f692d42fd6@epcas5p3.samsung.com>
  <1595605762-17010-7-git-send-email-joshi.k@samsung.com>
+ <f5416bd4-93b3-4d14-3266-bdbc4ae1990b@kernel.dk>
+ <CA+1E3rJAa3E2Ti0fvvQTzARP797qge619m4aYLjXeR3wxdFwWw@mail.gmail.com>
+ <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -105,12 +110,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
-Message-ID: <2d3c8287-55cf-0150-acd6-19feb9e85771@gmail.com>
-Date:   Thu, 30 Jul 2020 18:57:47 +0300
+Message-ID: <e871eef2-8a93-fdbc-b762-2923526a2db4@gmail.com>
+Date:   Thu, 30 Jul 2020 19:08:28 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1595605762-17010-7-git-send-email-joshi.k@samsung.com>
+In-Reply-To: <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -119,81 +124,99 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 24/07/2020 18:49, Kanchan Joshi wrote:
-> From: SelvaKumar S <selvakuma.s1@samsung.com>
+On 27/07/2020 23:34, Jens Axboe wrote:
+> On 7/27/20 1:16 PM, Kanchan Joshi wrote:
+>> On Fri, Jul 24, 2020 at 10:00 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>
+>>> On 7/24/20 9:49 AM, Kanchan Joshi wrote:
+>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>>> index 7809ab2..6510cf5 100644
+>>>> --- a/fs/io_uring.c
+>>>> +++ b/fs/io_uring.c
+>>>> @@ -1284,8 +1301,15 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
+>>>>       cqe = io_get_cqring(ctx);
+>>>>       if (likely(cqe)) {
+>>>>               WRITE_ONCE(cqe->user_data, req->user_data);
+>>>> -             WRITE_ONCE(cqe->res, res);
+>>>> -             WRITE_ONCE(cqe->flags, cflags);
+>>>> +             if (unlikely(req->flags & REQ_F_ZONE_APPEND)) {
+>>>> +                     if (likely(res > 0))
+>>>> +                             WRITE_ONCE(cqe->res64, req->rw.append_offset);
+>>>> +                     else
+>>>> +                             WRITE_ONCE(cqe->res64, res);
+>>>> +             } else {
+>>>> +                     WRITE_ONCE(cqe->res, res);
+>>>> +                     WRITE_ONCE(cqe->flags, cflags);
+>>>> +             }
+>>>
+>>> This would be nice to keep out of the fast path, if possible.
+>>
+>> I was thinking of keeping a function-pointer (in io_kiocb) during
+>> submission. That would have avoided this check......but argument count
+>> differs, so it did not add up.
 > 
-> Repurpose [cqe->res, cqe->flags] into cqe->res64 (signed) to report
-> 64bit written-offset for zone-append. The appending-write which requires
-> reporting written-location (conveyed by IOCB_ZONE_APPEND flag) is
-> ensured not to be a short-write; this avoids the need to report
-> number-of-bytes-copied.
-> append-offset is returned by lower-layer to io-uring via ret2 of
-> ki_complete interface. Make changes to collect it and send to user-space
-> via cqe->res64.
+> But that'd grow the io_kiocb just for this use case, which is arguably
+> even worse. Unless you can keep it in the per-request private data,
+> but there's no more room there for the regular read/write side.
 > 
-> Signed-off-by: SelvaKumar S <selvakuma.s1@samsung.com>
-> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> Signed-off-by: Javier Gonzalez <javier.gonz@samsung.com>
-> ---
->  fs/io_uring.c                 | 49 ++++++++++++++++++++++++++++++++++++-------
->  include/uapi/linux/io_uring.h |  9 ++++++--
->  2 files changed, 48 insertions(+), 10 deletions(-)
+>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>>>> index 92c2269..2580d93 100644
+>>>> --- a/include/uapi/linux/io_uring.h
+>>>> +++ b/include/uapi/linux/io_uring.h
+>>>> @@ -156,8 +156,13 @@ enum {
+>>>>   */
+>>>>  struct io_uring_cqe {
+>>>>       __u64   user_data;      /* sqe->data submission passed back */
+>>>> -     __s32   res;            /* result code for this event */
+>>>> -     __u32   flags;
+>>>> +     union {
+>>>> +             struct {
+>>>> +                     __s32   res;    /* result code for this event */
+>>>> +                     __u32   flags;
+>>>> +             };
+>>>> +             __s64   res64;  /* appending offset for zone append */
+>>>> +     };
+>>>>  };
+>>>
+>>> Is this a compatible change, both for now but also going forward? You
+>>> could randomly have IORING_CQE_F_BUFFER set, or any other future flags.
+>>
+>> Sorry, I didn't quite understand the concern. CQE_F_BUFFER is not
+>> used/set for write currently, so it looked compatible at this point.
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 7809ab2..6510cf5 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-...
-> @@ -1244,8 +1254,15 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
->  		req->flags &= ~REQ_F_OVERFLOW;
->  		if (cqe) {
->  			WRITE_ONCE(cqe->user_data, req->user_data);
-> -			WRITE_ONCE(cqe->res, req->result);
-> -			WRITE_ONCE(cqe->flags, req->cflags);
-> +			if (unlikely(req->flags & REQ_F_ZONE_APPEND)) {
-> +				if (likely(req->result > 0))
-> +					WRITE_ONCE(cqe->res64, req->rw.append_offset);
-> +				else
-> +					WRITE_ONCE(cqe->res64, req->result);
-> +			} else {
-> +				WRITE_ONCE(cqe->res, req->result);
-> +				WRITE_ONCE(cqe->flags, req->cflags);
-> +			}
->  		} else {
->  			WRITE_ONCE(ctx->rings->cq_overflow,
->  				atomic_inc_return(&ctx->cached_cq_overflow));
-> @@ -1284,8 +1301,15 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
->  	cqe = io_get_cqring(ctx);
->  	if (likely(cqe)) {
->  		WRITE_ONCE(cqe->user_data, req->user_data);
-> -		WRITE_ONCE(cqe->res, res);
-> -		WRITE_ONCE(cqe->flags, cflags);
-> +		if (unlikely(req->flags & REQ_F_ZONE_APPEND)) {
-> +			if (likely(res > 0))
-> +				WRITE_ONCE(cqe->res64, req->rw.append_offset);
+> Not worried about that, since we won't ever use that for writes. But it
+> is a potential headache down the line for other flags, if they apply to
+> normal writes.
+> 
+>> Yes, no room for future flags for this operation.
+>> Do you see any other way to enable this support in io-uring?
+> 
+> Honestly I think the only viable option is as we discussed previously,
+> pass in a pointer to a 64-bit type where we can copy the additional
+> completion information to.
 
-1. as I mentioned before, that's not not nice to ignore @cflags
-2. that's not the right place for opcode specific handling
-3. it doesn't work with overflowed reqs, see the final else below
+TBH, I hate the idea of such overhead/latency at times when SSDs can
+serve writes in less than 10ms. Any chance you measured how long does it
+take to drag through task_work?
 
-For this scheme, I'd pass @append_offset as an argument. That should
-also remove this extra if from the fast path, which Jens mentioned.
-
-> +			else
-> +				WRITE_ONCE(cqe->res64, res);
-> +		} else {
-> +			WRITE_ONCE(cqe->res, res);
-> +			WRITE_ONCE(cqe->flags, cflags);
-> +		}
->  	} else if (ctx->cq_overflow_flushed) {
->  		WRITE_ONCE(ctx->rings->cq_overflow,
->  				atomic_inc_return(&ctx->cached_cq_overflow));
-> @@ -1943,7 +1967,7 @@ static inline void req_set_fail_links(struct io_kiocb *req)
->  		req->flags |= REQ_F_FAIL_LINK;
->  }
->  
-
+> 
+>>> Layout would also be different between big and little endian, so not
+>>> even that easy to set aside a flag for this. But even if that was done,
+>>> we'd still have this weird API where liburing or the app would need to
+>>> distinguish this cqe from all others based on... the user_data? Hence
+>>> liburing can't do it, only the app would be able to.
+>>>
+>>> Just seems like a hack to me.
+>>
+>> Yes, only user_data to distinguish. Do liburing helpers need to look
+>> at cqe->res (and decide something) before returning the cqe to
+>> application?
+> 
+> They generally don't, outside of the internal timeout. But it's an issue
+> for the API, as it forces applications to handle the CQEs a certain way.
+> Normally there's flexibility. This makes the append writes behave
+> differently than everything else, which is never a good idea.
+> 
 
 -- 
 Pavel Begunkov

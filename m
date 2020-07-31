@@ -2,157 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD7C23409F
-	for <lists+io-uring@lfdr.de>; Fri, 31 Jul 2020 09:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 870952340A3
+	for <lists+io-uring@lfdr.de>; Fri, 31 Jul 2020 09:59:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731822AbgGaH6X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Jul 2020 03:58:23 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:45003 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731684AbgGaH6W (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jul 2020 03:58:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596182300;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=84tLlFhyX5yQ5ssNIgVXDIYFq1uCyZ1N5Ve3Yue5jsc=;
-        b=Q0j3G3jxMKoBkfMkavmHRBzYqmpf2WMuosKfzBthIoKJX8QU9+D6uMVoX8XcDpo2EO0L0d
-        X10GOpFsALCgNBcBEa+ffKnvSNlNhUbKL3CwxYRWsUthi92vEEfHKu0l5fYM8y6XW0Tncw
-        kmw+FPdu4fUejosJ0OK11zsXjHR+3tE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-241-OEc1kFGmO4WWujQ-XhZfow-1; Fri, 31 Jul 2020 03:58:18 -0400
-X-MC-Unique: OEc1kFGmO4WWujQ-XhZfow-1
-Received: by mail-wr1-f69.google.com with SMTP id t3so7809522wrr.5
-        for <io-uring@vger.kernel.org>; Fri, 31 Jul 2020 00:58:18 -0700 (PDT)
+        id S1731706AbgGaH6x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 31 Jul 2020 03:58:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47080 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731684AbgGaH6w (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Jul 2020 03:58:52 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B01BC061574;
+        Fri, 31 Jul 2020 00:58:52 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id g8so7782904wmk.3;
+        Fri, 31 Jul 2020 00:58:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cTyazyYhJvUjN7a2Z4vhY4OPwuV7RiSwhqqKSl6uwS4=;
+        b=cqcr9/BGTVGV5eLNZYxJLpiQ9zQ9uUBx0U9phhALKfBmj3H1Ly5IjBDuCR8W6fB43t
+         Z/+OylPZCJR+MuNTHsIH2hggC/RuHaGQ6B0nlf/ZI0AcnhG1twITAS4fET/myTe8HQ9c
+         l33p4GTO7epKW9P+rpzY85naKonMEwkUBVbxsuQ4TQVmlJaGYBj3cjymi5aglGlEPS4Q
+         6scVBWiakVdV5WPNCQ8JNjoiQQFRRTfxiIyP/1DmUnZn4f93aE0oR8gSLGC5s79KaOYD
+         s1aXsGM6/VUA6w8NHWBfjIjWPFWhxFPsIq5yNMQqlyXoH/cmzyoPY1mKaOlwAzpuXNAN
+         BXZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=84tLlFhyX5yQ5ssNIgVXDIYFq1uCyZ1N5Ve3Yue5jsc=;
-        b=sWrm2GO/CaxtWgqipjM+Ln673o06FpQWsWAWQX7EzUzCeyb9EuHEyBVVugFpvlf3n5
-         pARNw+N6uLnCep19SgpKjqz/ptWYQVVJyb/V5AfJj1jtowNFxuvdOXYy8W6c+iWNl0f+
-         c6adQcHVdFDnrRSElfwkjSMlzS/QgzXbfoOFzYdlygRD46YfcyiTUb+Mblf22o7jtkgQ
-         uVTDqkSySVWW9kOk9nnXUi1aD4e7e3dWntMx5LG+CPea9Xxv/6EPneAsefe10ueGyAIL
-         ZPx6ns4hbh4whF7H0k6SlgZRh6pj3JHM7CtnMLgcBx+xy2wgbOPScS/yZsLa36oy++7u
-         XO+w==
-X-Gm-Message-State: AOAM531VIa1ca571QGHYaJrmM8cMNJttse5bxhmsRVyTNnr8tB+vk2T8
-        dsR74KjHRRbbC1IN93Bz8NNUkqsPhPq07TR8uofqqDM3YBnl0ckL3prfJursWP/PH6+ZZzvjyJz
-        CnIGD3z92L9aJe7M+Xww=
-X-Received: by 2002:a5d:6646:: with SMTP id f6mr2322297wrw.155.1596182297356;
-        Fri, 31 Jul 2020 00:58:17 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwg3vxSVrk32ILOZGXQoal40vZ/kQMjl/7R1XUZZ0f//VcKOhzCU6FvM9FdTHXSwSs8UzvHCw==
-X-Received: by 2002:a5d:6646:: with SMTP id f6mr2322282wrw.155.1596182297060;
-        Fri, 31 Jul 2020 00:58:17 -0700 (PDT)
-Received: from steredhat ([5.180.207.22])
-        by smtp.gmail.com with ESMTPSA id b139sm13367476wmd.19.2020.07.31.00.58.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2020 00:58:16 -0700 (PDT)
-Date:   Fri, 31 Jul 2020 09:58:13 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Subject: Re: [PATCH] io_uring: don't touch 'ctx' after installing file
- descriptor
-Message-ID: <20200731075813.wi4cyjmz7cql6mry@steredhat>
-References: <5c2ac23d-3801-c06f-8bf6-4096fef88113@kernel.dk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cTyazyYhJvUjN7a2Z4vhY4OPwuV7RiSwhqqKSl6uwS4=;
+        b=rosesuFqrodKRlgvhlzq4nhl8nWOnv+CQYPAaflh7RWZWLCgCs3L3IyAeYKlCKVq6z
+         RSZR7jLjsJ8tiABwovNJOTX/wWM7n66DGZrZDhxo9xlSeS8Ni6iqy8zX46MG4s3yyfLE
+         LkXKSG9qg7gq8Pfr4Dr72E/JsB7aBQ3lbBRm5QLh3QF/zAPhAKikOZJ3wWoaFyEvhczX
+         LzRAW12y/LzS7freXEOl0YPwaei2nN7lRMB/dKCkC+AakWGu/9xAxpZQTNAjy8pVS6z9
+         Tior3FCvb1+RpCIV6JI5KBrCqoGGfVASSkdQWRzeLzaojhfuWI1ttE0k7n+5IdduhLvX
+         eI/w==
+X-Gm-Message-State: AOAM533sIU6CM9qFHWx/jshyL7IyyNqvYFqi62+Xovv3iy49rf4xmrVu
+        NJeDLAu0a6ILRzC633d1CtEXSJT1g2im+T9WWpA=
+X-Google-Smtp-Source: ABdhPJxNw7Svuw5TllltfhvwrWmcKb/9/XdA7oHnRTAloSkB3rov2jCYV3IjcA5AbRGDfz1qzi3lBfppauTNKt8MG64=
+X-Received: by 2002:a05:600c:21cd:: with SMTP id x13mr2898582wmj.155.1596182331066;
+ Fri, 31 Jul 2020 00:58:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c2ac23d-3801-c06f-8bf6-4096fef88113@kernel.dk>
+References: <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk>
+ <e871eef2-8a93-fdbc-b762-2923526a2db4@gmail.com> <80d27717-080a-1ced-50d5-a3a06cf06cd3@kernel.dk>
+ <da4baa8c-76b0-7255-365c-d8b58e322fd0@gmail.com> <65a7e9a6-aede-31ce-705c-b7f94f079112@kernel.dk>
+ <d4f9a5d3-1df2-1060-94fa-f77441a89299@gmail.com> <CA+1E3rJ3SoLU9aYcugAQgJnSPnJtcCwjZdMREXS3FTmXgy3yow@mail.gmail.com>
+ <f030a338-cd52-2e83-e1da-bdbca910d49e@kernel.dk> <CA+1E3rKxZk2CatTuPcQq5d14vXL9_9LVb2_+AfR2m9xn2WTZdg@mail.gmail.com>
+ <MWHPR04MB3758DC08EA17780E498E9EC0E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731064526.GA25674@infradead.org> <MWHPR04MB37581344328A42EA7F5ED13EE74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+In-Reply-To: <MWHPR04MB37581344328A42EA7F5ED13EE74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Fri, 31 Jul 2020 13:28:24 +0530
+Message-ID: <CA+1E3rLM4G4SwzD6RWsK6Ssp7NmhiPedZDjrqN3kORQr9fxCtw@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     "hch@infradead.org" <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "bcrl@kvack.org" <bcrl@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        SelvaKumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jul 30, 2020 at 01:47:52PM -0600, Jens Axboe wrote:
-> As soon as we install the file descriptor, we have to assume that it
-> can get arbitrarily closed. We currently account memory (and note that
-> we did) after installing the ring fd, which means that it could be a
-> potential use-after-free condition if the fd is closed right after
-> being installed, but before we fiddle with the ctx.
-> 
-> In fact, syzbot reported this exact scenario:
-> 
-> BUG: KASAN: use-after-free in io_account_mem fs/io_uring.c:7397 [inline]
-> BUG: KASAN: use-after-free in io_uring_create fs/io_uring.c:8369 [inline]
-> BUG: KASAN: use-after-free in io_uring_setup+0x2797/0x2910 fs/io_uring.c:8400
-> Read of size 1 at addr ffff888087a41044 by task syz-executor.5/18145
-> 
-> CPU: 0 PID: 18145 Comm: syz-executor.5 Not tainted 5.8.0-rc7-next-20200729-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x18f/0x20d lib/dump_stack.c:118
->  print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
->  __kasan_report mm/kasan/report.c:513 [inline]
->  kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
->  io_account_mem fs/io_uring.c:7397 [inline]
->  io_uring_create fs/io_uring.c:8369 [inline]
->  io_uring_setup+0x2797/0x2910 fs/io_uring.c:8400
->  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x45c429
-> Code: 8d b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 5b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f8f121d0c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> RAX: ffffffffffffffda RBX: 0000000000008540 RCX: 000000000045c429
-> RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000196
-> RBP: 000000000078bf38 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000078bf0c
-> R13: 00007fff86698cff R14: 00007f8f121d19c0 R15: 000000000078bf0c
-> 
-> Move the accounting of the ring used locked memory before we get and
-> install the ring file descriptor.
+On Fri, Jul 31, 2020 at 12:29 PM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
+>
+> On 2020/07/31 15:45, hch@infradead.org wrote:
+> > On Fri, Jul 31, 2020 at 06:42:10AM +0000, Damien Le Moal wrote:
+> >>> - We may not be able to use RWF_APPEND, and need exposing a new
+> >>> type/flag (RWF_INDIRECT_OFFSET etc.) user-space. Not sure if this
+> >>> sounds outrageous, but is it OK to have uring-only flag which can be
+> >>> combined with RWF_APPEND?
+> >>
+> >> Why ? Where is the problem ? O_APPEND/RWF_APPEND is currently meaningless for
+> >> raw block device accesses. We could certainly define a meaning for these in the
+> >> context of zoned block devices.
+> >
+> > We can't just add a meaning for O_APPEND on block devices now,
+> > as it was previously silently ignored.  I also really don't think any
+> > of these semantics even fit the block device to start with.  If you
+> > want to work on raw zones use zonefs, that's what is exists for.
+>
+> Which is fine with me. Just trying to say that I think this is exactly the
+> discussion we need to start with. What interface do we implement...
+>
+> Allowing zone append only through zonefs as the raw block device equivalent, all
+> the O_APPEND/RWF_APPEND semantic is defined and the "return written offset"
+> implementation in VFS would be common for all file systems, including regular
+> ones. Beside that, there is I think the question of short writes... Not sure if
+> short writes can currently happen with async RWF_APPEND writes to regular files.
+> I think not but that may depend on the FS.
 
-Maybe we can add:
-Fixes: 309758254ea6 ("io_uring: report pinned memory usage")
+generic_write_check_limits (called by generic_write_checks, used by
+most FS) may make it short, and AFAIK it does not depend on
+async/sync.
+This was one of the reason why we chose to isolate the operation by a
+different IOCB flag and not by IOCB_APPEND alone.
 
-The patch LGTM:
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+For block-device these checks are not done, but there is another place
+when it receives writes spanning beyond EOF and iov_iter_truncate()
+adjusts it before sending it down.
+And we return failure for that case in V4-  "Ref: [PATCH v4 3/6] uio:
+return status with iov truncation"
 
-Thanks,
-Stefano
 
-> 
-> Cc: stable@vger.kernel.org
-> Reported-by: syzbot+9d46305e76057f30c74e@syzkaller.appspotmail.com
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> ---
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index fabf0b692384..33702f3b5af8 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -8329,6 +8329,15 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
->  		ret = -EFAULT;
->  		goto err;
->  	}
-> +
-> +	/*
-> +	 * Account memory _before_ installing the file descriptor. Once
-> +	 * the descriptor is installed, it can get closed at any time.
-> +	 */
-> +	io_account_mem(ctx, ring_pages(p->sq_entries, p->cq_entries),
-> +		       ACCT_LOCKED);
-> +	ctx->limit_mem = limit_mem;
-> +
->  	/*
->  	 * Install ring fd as the very last thing, so we don't risk someone
->  	 * having closed it before we finish setup
-> @@ -8338,9 +8347,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
->  		goto err;
->  
->  	trace_io_uring_create(ret, ctx, p->sq_entries, p->cq_entries, p->flags);
-> -	io_account_mem(ctx, ring_pages(p->sq_entries, p->cq_entries),
-> -		       ACCT_LOCKED);
-> -	ctx->limit_mem = limit_mem;
->  	return ret;
->  err:
->  	io_ring_ctx_wait_and_kill(ctx);
-> 
-> -- 
-> Jens Axboe
-> 
-
+-- 
+Joshi

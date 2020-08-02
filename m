@@ -2,77 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FBB7235397
-	for <lists+io-uring@lfdr.de>; Sat,  1 Aug 2020 19:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CE5E235978
+	for <lists+io-uring@lfdr.de>; Sun,  2 Aug 2020 19:19:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbgHARDk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 1 Aug 2020 13:03:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40306 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727904AbgHARDk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Aug 2020 13:03:40 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AE9EC06174A
-        for <io-uring@vger.kernel.org>; Sat,  1 Aug 2020 10:03:40 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id p3so17622541pgh.3
-        for <io-uring@vger.kernel.org>; Sat, 01 Aug 2020 10:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=zvhP+JMA/dEllbo3oCJGxPVR4nrKQ2we50OsqYjwgjg=;
-        b=bz1fpGctgTvpk9i3wU6T5eHiRyFQntlME1ynIfPenA5753EgrqJ3OUkr3IyFs1fiA+
-         9FaPb8o6QPAspo1q26ACoZ1EhXSF5SOumzE4tTYeHi1fhWJx9vuQvcQWeiNO8zpjdCma
-         XzkapDzxtXfNHpaar4eeN3wSEw/llBnO3X8DH5w7Hma/VRTyHZ+ZmUUmHBC+LtEoJt5w
-         zsPPwJnhnAN4BwSQlYtWxiWbplwDvZVzZ/KfQsycHFKw582Wa03m3oDXjST0GO5WpYBc
-         MDkKcaMZX0zCOG10muPFUujmQrRB6DKV+6V3vHII5CFwY+yUuodFkotg4uZIOf5OmonN
-         EZ+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zvhP+JMA/dEllbo3oCJGxPVR4nrKQ2we50OsqYjwgjg=;
-        b=YaXNsO0OfpTiAeLYKO4F5V197NY7foPEON5yDrEucmjTUNFAQwqPNrNmoTK+cfdrND
-         Rb9qR7N0BGy2kjKFT4OYuDiCG3HTkyafrPR19/Epz3nvVz0UuK/bMwzSEjLYPY9KexNa
-         Vf1lm0p47n1ueppzHlb3rhLwNmu9j+BFHWm1t7wVjFxTvFz+ep3bnN5KLhXGf3nYr4Iu
-         ItABzHj4e8MXKSn3dQLHX//WLXFylTqBO01vlnGLlbOqp4FPV+qufxcT9NF2aOrQe6Hs
-         5Wh73z1D9BCHXhCIkZK9bqkngFN61IFf5qQVgOCPCdr79rluYw5GXv9YZIgdkJp+w9PR
-         9RFQ==
-X-Gm-Message-State: AOAM531CMy5TNmBIMmh21tCeVoPcrYgR9FhHPXllM8vK+UYQw6mnqZ93
-        nHdUh9UVQYSeUemNx9hyMuPDephsUsQ=
-X-Google-Smtp-Source: ABdhPJyZUjc9B38z7RRXuxjyB3ZNgsGAWOCMcvbxpw2peJHeK/Y7CyicyBiBK208YZOjlAu4utXA+Q==
-X-Received: by 2002:a62:78d6:: with SMTP id t205mr9025623pfc.68.1596301419363;
-        Sat, 01 Aug 2020 10:03:39 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id w70sm14094105pfc.98.2020.08.01.10.03.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Aug 2020 10:03:38 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: flip if handling after io_setup_async_rw
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <b5a869f3f739854a0458cc32be9af96e79b62dbc.1596275586.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <90fc3c0d-054f-4abf-ad5d-623609335a34@kernel.dk>
-Date:   Sat, 1 Aug 2020 11:03:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726789AbgHBRTp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 2 Aug 2020 13:19:45 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:42314 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725793AbgHBRTo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 2 Aug 2020 13:19:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596388783;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rQMSjrPRC4wFlmbSDPDwXTgwvvtavqffSQ+AKyhY+pE=;
+        b=cqauke+Chsd02m5kOVyWOWmfvIEEADwkWhcm1DFWYZzaRXUGsVyzRNbWHoqk5Ty3YvzyhT
+        X2ier/xprUA1MQ0pEPiHkzjRwE4/qfXP4nPf3vc9BtDEFnwQ3ht/vwM35i+uU9rj1LYd65
+        ez48h7YFHwQ8PYmRfls9/ZQsJAgniXg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-483-ei1DFMbVNUitLzHTS7O-6g-1; Sun, 02 Aug 2020 13:19:41 -0400
+X-MC-Unique: ei1DFMbVNUitLzHTS7O-6g-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 24D2F8005B0;
+        Sun,  2 Aug 2020 17:19:40 +0000 (UTC)
+Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9314C5D9CD;
+        Sun,  2 Aug 2020 17:19:39 +0000 (UTC)
+Date:   Mon, 3 Aug 2020 01:32:10 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     fstests@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 2/4] fsstress: reduce the number of events when io_setup
+Message-ID: <20200802173210.GN2937@dhcp-12-102.nay.redhat.com>
+Mail-Followup-To: Jeff Moyer <jmoyer@redhat.com>, fstests@vger.kernel.org,
+        io-uring@vger.kernel.org
+References: <20200728182320.8762-1-zlang@redhat.com>
+ <20200728182320.8762-3-zlang@redhat.com>
+ <x49ft9am7is.fsf@segfault.boston.devel.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <b5a869f3f739854a0458cc32be9af96e79b62dbc.1596275586.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <x49ft9am7is.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/1/20 4:50 AM, Pavel Begunkov wrote:
-> As recently done with with send/recv, flip the if after
-> rw_verify_aread() in io_{read,write}() and tabulise left bits left.
-> This removes mispredicted by a compiler jump on the success/fast path.
+On Wed, Jul 29, 2020 at 03:43:39PM -0400, Jeff Moyer wrote:
+> Zorro Lang <zlang@redhat.com> writes:
+> 
+> > The original number(128) of aio events for io_setup is a little big.
+> > When try to run lots of fsstress processes(e.g. -p 1000) always hit
+> > io_setup EAGAIN error, due to the nr_events exceeds the limit of
+> > available events. So reduce it from 128 to 64, to make more fsstress
+> > processes can do AIO test.
+> 
+> It looks to me as though there's only ever one request in flight.  I'd
+> just set it to 1.
+> 
+> Also, you've included another change not mentioned in your changelog.
+> Please make sure the changelog matches what's done in the patch.
 
-Applied, thanks.
+Thanks Jeff, I'll rewrite this patch:) Do you have any review points about
+those two IO_URING related patches (1/4 and 4/4), or it looks good to you?
 
--- 
-Jens Axboe
+Thanks,
+Zorro
+
+> 
+> -Jeff
+> 
+> >
+> > Signed-off-by: Zorro Lang <zlang@redhat.com>
+> > ---
+> >  ltp/fsstress.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/ltp/fsstress.c b/ltp/fsstress.c
+> > index 388ace50..a11206d4 100644
+> > --- a/ltp/fsstress.c
+> > +++ b/ltp/fsstress.c
+> > @@ -28,6 +28,7 @@
+> >  #endif
+> >  #ifdef AIO
+> >  #include <libaio.h>
+> > +#define AIO_ENTRIES	64
+> >  io_context_t	io_ctx;
+> >  #endif
+> >  #ifdef URING
+> > @@ -699,8 +700,8 @@ int main(int argc, char **argv)
+> >  			}
+> >  			procid = i;
+> >  #ifdef AIO
+> > -			if (io_setup(128, &io_ctx) != 0) {
+> > -				fprintf(stderr, "io_setup failed");
+> > +			if (io_setup(AIO_ENTRIES, &io_ctx) != 0) {
+> > +				fprintf(stderr, "io_setup failed\n");
+> >  				exit(1);
+> >  			}
+> >  #endif
+> > @@ -714,7 +715,7 @@ int main(int argc, char **argv)
+> >  				doproc();
+> >  #ifdef AIO
+> >  			if(io_destroy(io_ctx) != 0) {
+> > -				fprintf(stderr, "io_destroy failed");
+> > +				fprintf(stderr, "io_destroy failed\n");
+> >  				return 1;
+> >  			}
+> >  #endif
+> 
 

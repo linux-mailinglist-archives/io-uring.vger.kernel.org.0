@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1F6323D10D
-	for <lists+io-uring@lfdr.de>; Wed,  5 Aug 2020 21:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC0DD23D120
+	for <lists+io-uring@lfdr.de>; Wed,  5 Aug 2020 21:57:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728607AbgHETzr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 Aug 2020 15:55:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46396 "EHLO
+        id S1728557AbgHET4f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 Aug 2020 15:56:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728043AbgHEQqQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Aug 2020 12:46:16 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49672C061757;
-        Wed,  5 Aug 2020 03:53:57 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id t10so19702088plz.10;
-        Wed, 05 Aug 2020 03:53:57 -0700 (PDT)
+        with ESMTP id S1727997AbgHEQoM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Aug 2020 12:44:12 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0148C061A12;
+        Wed,  5 Aug 2020 04:02:52 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id d4so4097242pjx.5;
+        Wed, 05 Aug 2020 04:02:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
         bh=n6eJX7kP2wSPXMfsAV6wxlSNMqm5O3KWO3aWCRlizZw=;
-        b=ZzlJ8kJoS7x+Dr6GTqIhchPVuBKmZlR0zUuECW0cbKEhBrYElwE7LQ7jHTErhJ2kQl
-         HVQnpAfXI+4M6TyxQykGyIWV17dv2YXk0J5lTE69XNDRBK1LXR0ximX3GaeNG22uFydr
-         Ok3z75gZLQbISvYmmqbaV8a5heyCDdNjeOWBaKc0+opsTD+mbUh7CtRNmRPhtkIwOuMG
-         dx04lDe4XSlsBbdWF8ZOdG5ItJ0gSmBe0Pq1nnheKKv4mTaT+zeDTyaNbciggbhd/rcG
-         Lc8JSrmCjV1KbqbJi1/NV+Nm4P/P1CRcg8AemG9hRxKK2zDn99xZmgc4m5/u2GoEItk2
-         GPJQ==
+        b=WHgwAwvGvRyR9z7Kg8J7F3TC6ELolpIM8EzhYIR5T5G4X09MVlel8RxeVdqDOqOyn6
+         AC6IC6uFVItVprIRkPgZSWqcUqNLXx7xAwYyYND6hr3AizvEWANNRTxp8vVb5M2UmqED
+         Q9CAkMw+xGw37LRm3A9+2vN56bAgxeoF9Y2vavrAG0aSoeIM/2Gdb1gxvwnfjUvNEP7b
+         juRGD6iu9TT4OZvyJBLQgrEEcnqapaX2enXLuVLjin7a0U/qOuOlgh6VvTGC6wGlPU69
+         qz6aDp7ZvBH2FLMgg0KBUxlG+p/4KHvfoUzIySEx/JE37+w/9HMCPlY56R0UMFNkOp7N
+         PQDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition;
         bh=n6eJX7kP2wSPXMfsAV6wxlSNMqm5O3KWO3aWCRlizZw=;
-        b=e5O2msKvhjNQIJGwkKYmDI9kFjPhe/fF79YhuHi5TfW1y9XEKWONSOURpUgnH3hmjo
-         ZUiXL01mhX2v9+BdB206RDWAWifm57bVoFaQqYGDCz4J4hN9n+Dh0L4H9NBAlIBmDhdl
-         dPqiQbH3HkVa/+9kWnREPDVjZx/Lr0SOoi22vnLPn5YrOfr3RIJiDMFxHawGatuo4CfS
-         3hk6hvhmPY0cN6nRr7a0tdOtsqVoW/W1OlJleJO9tsnPm0Lsvr8y/4gQo2Pf049mVdez
-         jhZcHgC4Vuocm3L86o7v/ZR44D/sUPyWwbRIELBRemL0MgGEXrYRSfBF4PEXiMbJUjaz
-         WOSw==
-X-Gm-Message-State: AOAM532skLEgb8PIog7ltvzatOmMAStVqOKgKEO1l7d0fh9OXD/wrf/U
-        /GSF7gvS+A3uCCQlsruppmhxMXqv9Tc=
-X-Google-Smtp-Source: ABdhPJx8eWt5XQbC91jHW+PQBpRVhEPK391Djy5BqFygVS6+lYLLwe83RtbnRNGUGjnUrVZMyGDKEA==
-X-Received: by 2002:a17:90a:5d15:: with SMTP id s21mr2766192pji.154.1596624835362;
-        Wed, 05 Aug 2020 03:53:55 -0700 (PDT)
-Received: from localhost ([104.192.108.10])
-        by smtp.gmail.com with ESMTPSA id n25sm2978818pff.51.2020.08.05.03.53.53
+        b=kDyYc5r/vuOnBVIhOBPHGWYKgDfKMN5C+CjZfSkYCcth6uUlF/8VjFzzBqIAvFDYec
+         nK/W02gRj7ls9UUzlItGkEEa7hdP3rzB6cKe7JjvSIhB0XZVBCQcr51btmAPEc8uI7Yl
+         v43FkFQM6eACIfzqQrkK60mch8eIQvyG4hRWGquga2HrDq8zl04NcTTzEkTeU7xgu8ZU
+         C7Td1OgxljqWIeeGrLvDR3K/8vr/j9yZSI/KH6TsqZdXCqGCUZ4k2Ci0ETUEF5DP9/bu
+         Vk3zJXHKcSMNBZHebS8f+MURWrFifpJ2ZUVwayMpzMNR3ZGIiFD556LGpzZjL1w7Px80
+         yqJw==
+X-Gm-Message-State: AOAM532/s2muLNFkp/D6Ti5tlPXbxHDt8JaYmPGpmPULztpylJhZMDc0
+        /smTOPj8gbzIEydSh9zVeMu81DE1dqw=
+X-Google-Smtp-Source: ABdhPJxuCEsGWC4i96omyDhF8gwgTmWnArbP+a1FvuTmXULly9O1KvTcdGL8mI4o2c3q1qcwrM7N8g==
+X-Received: by 2002:a17:90b:1295:: with SMTP id fw21mr2464220pjb.81.1596625372271;
+        Wed, 05 Aug 2020 04:02:52 -0700 (PDT)
+Received: from localhost ([104.192.108.9])
+        by smtp.gmail.com with ESMTPSA id t2sm3171859pfb.123.2020.08.05.04.02.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Aug 2020 03:53:54 -0700 (PDT)
-Date:   Wed, 5 Aug 2020 03:53:50 -0700
+        Wed, 05 Aug 2020 04:02:51 -0700 (PDT)
+Date:   Wed, 5 Aug 2020 04:02:47 -0700
 From:   Guoyu Huang <hgy5945@gmail.com>
 To:     viro@zeniv.linux.org.uk, axboe@kernel.dk
 Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring: Fix NULL pointer dereference in loop_rw_write()
-Message-ID: <20200805105350.GA102801@ubuntu>
+Subject: [PATCH] io_uring: Fix NULL pointer dereference in loop_rw_iter()
+Message-ID: <20200805110247.GA103385@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline

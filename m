@@ -2,68 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE44B23DE6C
-	for <lists+io-uring@lfdr.de>; Thu,  6 Aug 2020 19:25:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F25223E4E3
+	for <lists+io-uring@lfdr.de>; Fri,  7 Aug 2020 01:57:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729854AbgHFRZF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 6 Aug 2020 13:25:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44924 "EHLO
+        id S1726197AbgHFX5d (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 6 Aug 2020 19:57:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729783AbgHFRDF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Aug 2020 13:03:05 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4AB5C08E8BB
-        for <io-uring@vger.kernel.org>; Thu,  6 Aug 2020 06:47:04 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id d22so6650241pfn.5
-        for <io-uring@vger.kernel.org>; Thu, 06 Aug 2020 06:47:02 -0700 (PDT)
+        with ESMTP id S1726027AbgHFX5d (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Aug 2020 19:57:33 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 150CCC061574
+        for <io-uring@vger.kernel.org>; Thu,  6 Aug 2020 16:57:33 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id k18so24342pfp.7
+        for <io-uring@vger.kernel.org>; Thu, 06 Aug 2020 16:57:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sRlaU+fjgD3nsBQRldYy12BoTnkaiLHOOWLmhuZ7Hns=;
-        b=b1/e36uVY4XnX33kjlwggXJIqASCkfTNQt+Qas+MAU1WTRVakK7otwxuP3e36KI7tB
-         ycuicjH7/qnpr4/MIB2zVlvuUnP1uLJjSEYO53vtjSOw/zafcA3Az7gTgjeH4axvjaCS
-         VnQrnzKbhWLn6wo64RqHhrJnEuINmdNG1kGKSoRwNHBN/pfQIsq8EloQI47x3CTmhueO
-         veO4xEkoi6rMg/qGXQ3n4wl4KE6dUSoNuLxyP/1pKbdG9tl2sS08A8CN+WRQ+Etwtip9
-         /SVcE5sq3J0YFa4OniwutZ0mOdjsuRX6v7AlLBorV23FdhBrAQkMfJiHXvMmq5FST60r
-         OKCA==
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=3CrmlIxVhpMLcMWr7s4rLEupo3OLqktKvK0T2ee7Y6w=;
+        b=Y1g5H+1gDX7MIdTyZvNV75d/eZ6nH/LORHgZBdZaf0D7xoLUrh0E3mNmTIwedr54/T
+         R+uQoBkGFJ3yFdz4+B25wy/fUBQ/FOJMOFh/i2NT5bF+9OL6rn6yHOEagcOSmVUW1BmP
+         IL+3dVynP2C9xR9PAb9a1fxOygfPRbbST61Yy4FBI31+/v/LNvGp4ystdugM1ntFCsRn
+         bV0Gzv7t3tVvYV+lAf10uyrXc3ldlgzikUw3xIBUlnnrDQ5vNVTkZwZCQyr+1wBfUoLs
+         gWbpGhM3I0M0nTSC6zEMiBs4M3AMY9qZimacyy8YHiT2FYQddcXgLF9VoE/q28ERBsTw
+         HyIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sRlaU+fjgD3nsBQRldYy12BoTnkaiLHOOWLmhuZ7Hns=;
-        b=l0IMnZ3rL4ujDDXEPsNki/HqE6Vz2JapV0rDWoikN4MfQ/RpEp2GrYzlLTRcaULPs1
-         B8bGp2ZjC1UsyXNRLhP/s90urAy4ju06fPl2VwECZ6fFnUiRRB9XLUuSTvYdP2nQFb4t
-         HX1VCgqklQ/hMn4FT41jxeX5CywehmeFrLCa+o7KGbzj2UX0PS58JTHGm8QRX24iybsf
-         flh5OUCRlbQZSqfaLBXKLyxSUZ/q+X0ayQ4DORtcy1nRqgSidhqmDo+Qg+5W1tOwGH91
-         ZR5BrL7Suq6Z9ReuhkaLEOwYbp8X/ETo21i4qgDtOxHxOjxtGcYQaYZ4vc4hyC2irkx5
-         M/ng==
-X-Gm-Message-State: AOAM533g/z7DOo9wYAcQ4tJosjL1qW/cmz1Mq5gpBrls1KZBj7afHUoR
-        JvQzp4CE3sGWtZe4HPwNoKfNKHEF+0g=
-X-Google-Smtp-Source: ABdhPJxXLaQE4l7K2P3Y2xyJrOASNDNIfXivlF/ibMZJP8ztk+DzIg9ETcpqfHyYEycoXu5tayIxDg==
-X-Received: by 2002:a05:6a00:2b7:: with SMTP id q23mr8525607pfs.101.1596721611966;
-        Thu, 06 Aug 2020 06:46:51 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=3CrmlIxVhpMLcMWr7s4rLEupo3OLqktKvK0T2ee7Y6w=;
+        b=IkNY4ddkEvytZxj7gw9rFsC8MUHkp7NTPilvpZxt9rbbj0RETBmFafxEbjUFIxBhYn
+         lJKF56hIBzwaypmIV2YejTiC6R4kx1BdxEm/ZirvyAjX/jLFdj0NimiEqyLSHuMJqGDn
+         xqEaiqaP9zeQRcS2oTUq/qVj6mRgeeNU+wzrDyQBN3kkDrSXd+3xOEwnXdOPSpKn7QJq
+         amCuOOF6fC0jU8jWsPBIt9RxE/3gy+xrK6WvrBaBmVJtO4D/TIHqElwCUtPQp+1a5tFT
+         HrkZ9yoNavOlJIiAFovz0BigfaA+IREj8JtWv74HRVPPOznUd0793oB7xfF1ibArIujX
+         YwOg==
+X-Gm-Message-State: AOAM533BE/SF4EcorpocWP4wu4k9XIZIk5ZU9R2Be6dg97HIwrD3MafI
+        P1zOPCiNDqeVzXz8szOUIEdWRVOpckA=
+X-Google-Smtp-Source: ABdhPJw2aeBasaZqxW1W5KttQKuHFtZzh+Ci198APlYF2bW1UEBbVVp7F0cG/KvDt+hE2WtW/922vQ==
+X-Received: by 2002:a63:5a59:: with SMTP id k25mr2980291pgm.116.1596758252019;
+        Thu, 06 Aug 2020 16:57:32 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id e3sm7316946pgu.40.2020.08.06.06.46.50
+        by smtp.gmail.com with ESMTPSA id t19sm9962471pfq.179.2020.08.06.16.57.31
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Aug 2020 06:46:51 -0700 (PDT)
-Subject: Re: [PATCH 2/2] io_uring: account locked memory before potential
- error case
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     io-uring@vger.kernel.org
-References: <20200805190224.401962-1-axboe@kernel.dk>
- <20200805190224.401962-3-axboe@kernel.dk>
- <20200806074231.mlmfbsl4shvvzodm@steredhat>
- <e7d046e3-8202-4c70-c6fb-760e3da63f24@kernel.dk>
- <20200806133848.xbpueoydtemjgofy@steredhat>
+        Thu, 06 Aug 2020 16:57:31 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <761a5a67-b96e-e27c-3dee-03bd4886378d@kernel.dk>
-Date:   Thu, 6 Aug 2020 07:46:49 -0600
+Subject: [PATCH] io_uring: use TWA_SIGNAL for task_work related to eventfd
+Message-ID: <d6e647c8-5448-e496-10c0-3c319b0f4a03@kernel.dk>
+Date:   Thu, 6 Aug 2020 17:57:30 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200806133848.xbpueoydtemjgofy@steredhat>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -72,48 +64,85 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/6/20 7:38 AM, Stefano Garzarella wrote:
-> On Thu, Aug 06, 2020 at 07:21:30AM -0600, Jens Axboe wrote:
->> On 8/6/20 1:42 AM, Stefano Garzarella wrote:
->>> On Wed, Aug 05, 2020 at 01:02:24PM -0600, Jens Axboe wrote:
->>>> The tear down path will always unaccount the memory, so ensure that we
->>>> have accounted it before hitting any of them.
->>>>
->>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>> ---
->>>>  fs/io_uring.c | 16 ++++++++--------
->>>>  1 file changed, 8 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>> index 0d857f7ca507..7c42f63fbb0a 100644
->>>> --- a/fs/io_uring.c
->>>> +++ b/fs/io_uring.c
->>>> @@ -8341,6 +8341,14 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
->>>>  	ctx->user = user;
->>>>  	ctx->creds = get_current_cred();
->>>>  
->>>> +	/*
->>>> +	 * Account memory _before_ installing the file descriptor. Once
->>>> +	 * the descriptor is installed, it can get closed at any time.
->>>> +	 */
->>>
->>> What about update a bit the comment?
->>> Maybe adding the commit description in this comment.
->>
->> I updated the comment:
->>
->> /*
->>  * Account memory _before_ installing the file descriptor. Once
->>  * the descriptor is installed, it can get closed at any time. Also
->>  * do this before hitting the general error path, as ring freeing
->>  * will un-account as well.
->> */
-> 
-> Now it looks better!
-> 
-> Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+An earlier commit:
 
-Thanks, added.
+b7db41c9e03b ("io_uring: fix regression with always ignoring signals in io_cqring_wait()")
+
+ensured that we didn't get stuck waiting for eventfd reads when it's
+registered with the io_uring ring for event notification, but that didn't
+cover the general case of waiting on eventfd and having that dependency
+between io_uring and eventfd.
+
+Ensure that we use signaled notification for anything related to eventfd.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index df466ef81ddd..4eb7ae838f61 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -321,7 +321,7 @@ static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
+ }
+ #endif
+ 
+-static const struct file_operations eventfd_fops = {
++const struct file_operations eventfd_fops = {
+ #ifdef CONFIG_PROC_FS
+ 	.show_fdinfo	= eventfd_show_fdinfo,
+ #endif
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index e9b27cdaa735..c76062be9c4c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1720,7 +1720,7 @@ static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb)
+ 	 */
+ 	if (ctx->flags & IORING_SETUP_SQPOLL)
+ 		notify = 0;
+-	else if (ctx->cq_ev_fd)
++	else if (ctx->cq_ev_fd || (req->file && eventfd_file(req->file)))
+ 		notify = TWA_SIGNAL;
+ 
+ 	ret = task_work_add(tsk, cb, notify);
+diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+index dc4fd8a6644d..2e5eeb3a813c 100644
+--- a/include/linux/eventfd.h
++++ b/include/linux/eventfd.h
+@@ -14,6 +14,7 @@
+ #include <linux/err.h>
+ #include <linux/percpu-defs.h>
+ #include <linux/percpu.h>
++#include <linux/fs.h>
+ 
+ /*
+  * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
+@@ -49,6 +50,13 @@ static inline bool eventfd_signal_count(void)
+ 	return this_cpu_read(eventfd_wake_count);
+ }
+ 
++extern const struct file_operations eventfd_fops;
++
++static inline bool evenfd_file(struct file *file)
++{
++	return file->f_op == &eventfd_fops;
++}
++
+ #else /* CONFIG_EVENTFD */
+ 
+ /*
+@@ -82,6 +90,11 @@ static inline bool eventfd_signal_count(void)
+ 	return false;
+ }
+ 
++static inline bool eventfd_file(struct file *file)
++{
++	return false;
++}
++
+ #endif
+ 
+ #endif /* _LINUX_EVENTFD_H */
 
 -- 
 Jens Axboe

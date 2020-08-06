@@ -2,136 +2,125 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F40723D7B9
-	for <lists+io-uring@lfdr.de>; Thu,  6 Aug 2020 09:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA0723DE33
+	for <lists+io-uring@lfdr.de>; Thu,  6 Aug 2020 19:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbgHFHuD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 6 Aug 2020 03:50:03 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44377 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728850AbgHFHtq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Aug 2020 03:49:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596700180;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xB6SfwN9zZAFK1inviExT4PSWJ9s32aoWCOt/UwHdpI=;
-        b=OiMKltL0s/mtZ9+RLEkA8jiypTUUTAY+mdwMlBxrn/k9v3ZXUYswSIqCnFvA38mT1bwaeE
-        wNjZ+3EKMpFIASdnAOEU1cJWvTznJKDk0CY1konzJ/Xx4Jn4zrpwsISFcQqqftMLNM/1Wz
-        bIF0zC0gJYCFD9DAW6a4rXHt8YNa5mc=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-347-KWaqNNlaOKu94TXiFUW_JA-1; Thu, 06 Aug 2020 03:49:38 -0400
-X-MC-Unique: KWaqNNlaOKu94TXiFUW_JA-1
-Received: by mail-wr1-f69.google.com with SMTP id z1so14409631wrn.18
-        for <io-uring@vger.kernel.org>; Thu, 06 Aug 2020 00:49:38 -0700 (PDT)
+        id S1728044AbgHFRX3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 6 Aug 2020 13:23:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729959AbgHFRFI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Aug 2020 13:05:08 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A53F8C034617
+        for <io-uring@vger.kernel.org>; Thu,  6 Aug 2020 06:20:32 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id c6so6665975pje.1
+        for <io-uring@vger.kernel.org>; Thu, 06 Aug 2020 06:20:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bx2+PmwZa1OtGv3itEqCRg9j5lI+TVeLmlYRsYMctuY=;
+        b=vgYFrfKU6hefukTGaE/nrWZCZcNEl0bRMcHS6opgOxqKZFMdoZnkDGfTd4P6UHsTZf
+         kqycsru2ehwIzpLH/aUxogiVUvPx97ahCiJFdAFoVJxnKvk09S2iUC9vkftVsYEGV4+u
+         Jv/XpLrTaIAUcQaEjVtsaS2j0BACQGg0D1vlvt21T/SjPNq42P89ofypB/U2nTp+agtQ
+         nAOuMdVTZ997pYRPJckHz2CtR5byLDLmONWv50aya2G4iWA62ksHZ9IDihvaIYPxEJYo
+         OqUdfrtsMKQJFVAFTBkHkgCHL8eML/LaXgdbrpFbrSiirhG/9ecWoRS0KAnqTC39T2pJ
+         rJ6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xB6SfwN9zZAFK1inviExT4PSWJ9s32aoWCOt/UwHdpI=;
-        b=K/UeIwbNfWmQeCJJgoZGNL0iFxcBW+LX66akZKrJmOtoXeNjDWSKHEkpUBW9530DWo
-         ejLLybZp8RSpLoX4I/9RhIioIl8MzYgfQiKbRtuX/n1VJbO/x4mCkfZzPnJfjt913sKo
-         bNFEQ0xRpzfv266M3aA6YP2dwYIfqX8qtHRkjFmjFX/wo07ZKy4BDNTPKzxFOh1klDq9
-         oGNRF0kcyg8jpcNw3TeXtuQlqQa3K7jjLiO2+5xen3mBZ1j0DIuaIGgLzflxzJSuwf0P
-         Ef4vXOfcEVyWDAWtC+ZMPcUy7e3Db42FhWfphyBs8YlMKolf0Ag3NR9CErqMcQs/E7Xg
-         iIyg==
-X-Gm-Message-State: AOAM532oVDIq/u7WhBqy6MZkaCw4ZPNv/Jv09IP1SeefMeeF01xqJQSB
-        vDOFtYN5IA4Px2sK9haZQjvTe2Il91ggGAzZG3jwODKFPKPWnBjFg+15S0+rwJLRDShAI48ykMN
-        0uwUm1KA9xjrieFdnl+s=
-X-Received: by 2002:a1c:e244:: with SMTP id z65mr6663774wmg.34.1596700177237;
-        Thu, 06 Aug 2020 00:49:37 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzZ5kIFKf/UdkmWPj9U+O2NxXnYswiWnhDgQNIX/nObMw+EYpBVxwz7xoUqJ3nnWezsts3JEg==
-X-Received: by 2002:a1c:e244:: with SMTP id z65mr6663754wmg.34.1596700176991;
-        Thu, 06 Aug 2020 00:49:36 -0700 (PDT)
-Received: from steredhat ([5.180.207.22])
-        by smtp.gmail.com with ESMTPSA id l18sm5580825wrm.52.2020.08.06.00.49.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Aug 2020 00:49:36 -0700 (PDT)
-Date:   Thu, 6 Aug 2020 09:49:29 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <asarai@suse.de>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v3 0/3] io_uring: add restrictions to support untrusted
- applications and guests
-Message-ID: <20200806074929.bl6utxrmmx3hf2y2@steredhat>
-References: <20200728160101.48554-1-sgarzare@redhat.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bx2+PmwZa1OtGv3itEqCRg9j5lI+TVeLmlYRsYMctuY=;
+        b=hYYU9nBZRj1sUbMhl5JOqHhDx1GsVy0lQGiVozsY08mlBd6QMG1YV0gB3Y3rQfLm26
+         OYi9Hv2zqXOR8jteXB2RzX+WEcH0qViGQFP1FK8z0brLrInA3PkGAHuQwr60J5uoyOkK
+         tnkoOdnKo+MB42H/I0sd3BpSUH/4Aa1m/uKCD0tpRubUSym8EWIBlBAeCCUQ16i0gaDo
+         nUcbrZMO/T8+5gH3BkFLB6+NTU5vX3o8sJcJuNb8/A391atMfhXipZhNX75v/VHxQy7R
+         uvXEtXPeFTP2ZkXtTb6Ondz67CeGexeUogjZtxC5OsEeuocvUa3Nd2HyTztF/60ak8Yt
+         dOYw==
+X-Gm-Message-State: AOAM533W+4OGOcLKPKI4bw38+wuoQAgQQuOT3Hlaiz+iZJAJO/75VTDb
+        kznC3Ci7ZYYapBL6nkcbqJWlMg==
+X-Google-Smtp-Source: ABdhPJyouGBPqU8zyXa83rQM3O8SKSIiLRlfUaA3UuuXpjLZg6BDDNO+r2qzqMWtxGqjYiSTn2N0dA==
+X-Received: by 2002:a17:902:8d95:: with SMTP id v21mr7843652plo.108.1596720031923;
+        Thu, 06 Aug 2020 06:20:31 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id x8sm8817351pfp.101.2020.08.06.06.20.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Aug 2020 06:20:30 -0700 (PDT)
+Subject: Re: [PATCH 1/2] io_uring: set ctx sq/cq entry count earlier
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org, stable@vger.kernel.org
+References: <20200805190224.401962-1-axboe@kernel.dk>
+ <20200805190224.401962-2-axboe@kernel.dk>
+ <20200806073933.khoasyujngaxbcq4@steredhat>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8277cc52-b591-e577-6a99-dd9c8a8146ab@kernel.dk>
+Date:   Thu, 6 Aug 2020 07:20:29 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200728160101.48554-1-sgarzare@redhat.com>
+In-Reply-To: <20200806073933.khoasyujngaxbcq4@steredhat>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Gentle ping.
+On 8/6/20 1:39 AM, Stefano Garzarella wrote:
+> On Wed, Aug 05, 2020 at 01:02:23PM -0600, Jens Axboe wrote:
+>> If we hit an earlier error path in io_uring_create(), then we will have
+>> accounted memory, but not set ctx->{sq,cq}_entries yet. Then when the
+>> ring is torn down in error, we use those values to unaccount the memory.
+>>
+>> Ensure we set the ctx entries before we're able to hit a potential error
+>> path.
+>>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>  fs/io_uring.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 8f96566603f3..0d857f7ca507 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -8193,6 +8193,10 @@ static int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+>>  	struct io_rings *rings;
+>>  	size_t size, sq_array_offset;
+>>  
+>> +	/* make sure these are sane, as we already accounted them */
+>> +	ctx->sq_entries = p->sq_entries;
+>> +	ctx->cq_entries = p->cq_entries;
+>> +
+>>  	size = rings_size(p->sq_entries, p->cq_entries, &sq_array_offset);
+>>  	if (size == SIZE_MAX)
+>>  		return -EOVERFLOW;
+>> @@ -8209,8 +8213,6 @@ static int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+>>  	rings->cq_ring_entries = p->cq_entries;
+>>  	ctx->sq_mask = rings->sq_ring_mask;
+>>  	ctx->cq_mask = rings->cq_ring_mask;
+>> -	ctx->sq_entries = rings->sq_ring_entries;
+>> -	ctx->cq_entries = rings->cq_ring_entries;
+>>  
+>>  	size = array_size(sizeof(struct io_uring_sqe), p->sq_entries);
+>>  	if (size == SIZE_MAX) {
+>> -- 
+>> 2.28.0
+>>
+> 
+> While reviewing I was asking if we should move io_account_mem() before
+> io_allocate_scq_urings(), then I saw the second patch :-)
 
-I'll rebase on master, but if there are any things that I can improve,
-I'll be happy to do.
+Indeed, just split it in two to avoid any extra issues around backporting.
 
-Thanks,
-Stefano
+> Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-On Tue, Jul 28, 2020 at 06:00:58PM +0200, Stefano Garzarella wrote:
-> v3:
->  - added IORING_RESTRICTION_SQE_FLAGS_ALLOWED and
->    IORING_RESTRICTION_SQE_FLAGS_REQUIRED
->  - removed IORING_RESTRICTION_FIXED_FILES_ONLY opcode
->  - enabled restrictions only when the rings start
-> 
-> RFC v2: https://lore.kernel.org/io-uring/20200716124833.93667-1-sgarzare@redhat.com
-> 
-> RFC v1: https://lore.kernel.org/io-uring/20200710141945.129329-1-sgarzare@redhat.com
-> 
-> Following the proposal that I send about restrictions [1], I wrote this series
-> to add restrictions in io_uring.
-> 
-> I also wrote helpers in liburing and a test case (test/register-restrictions.c)
-> available in this repository:
-> https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
-> 
-> Just to recap the proposal, the idea is to add some restrictions to the
-> operations (sqe opcode and flags, register opcode) to safely allow untrusted
-> applications or guests to use io_uring queues.
-> 
-> The first patch changes io_uring_register(2) opcodes into an enumeration to
-> keep track of the last opcode available.
-> 
-> The second patch adds IOURING_REGISTER_RESTRICTIONS opcode and the code to
-> handle restrictions.
-> 
-> The third patch adds IORING_SETUP_R_DISABLED flag to start the rings disabled,
-> allowing the user to register restrictions, buffers, files, before to start
-> processing SQEs.
-> 
-> Comments and suggestions are very welcome.
-> 
-> Thank you in advance,
-> Stefano
-> 
-> [1] https://lore.kernel.org/io-uring/20200609142406.upuwpfmgqjeji4lc@steredhat/
-> 
-> Stefano Garzarella (3):
->   io_uring: use an enumeration for io_uring_register(2) opcodes
->   io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
->   io_uring: allow disabling rings during the creation
-> 
->  fs/io_uring.c                 | 167 ++++++++++++++++++++++++++++++++--
->  include/uapi/linux/io_uring.h |  60 +++++++++---
->  2 files changed, 207 insertions(+), 20 deletions(-)
-> 
-> -- 
-> 2.26.2
-> 
+Thanks, added.
+
+-- 
+Jens Axboe
 

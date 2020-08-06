@@ -2,122 +2,136 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 892AD23D79C
-	for <lists+io-uring@lfdr.de>; Thu,  6 Aug 2020 09:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F40723D7B9
+	for <lists+io-uring@lfdr.de>; Thu,  6 Aug 2020 09:50:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728459AbgHFHmo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 6 Aug 2020 03:42:44 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46606 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727998AbgHFHmk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Aug 2020 03:42:40 -0400
+        id S1728860AbgHFHuD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 6 Aug 2020 03:50:03 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44377 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728850AbgHFHtq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Aug 2020 03:49:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596699758;
+        s=mimecast20190719; t=1596700180;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=9DgNQaGMq045VNsDMt7arHvCe+ceyFhnvLTuiY14Nyo=;
-        b=coOmYURsVUB8Wc1fnoZkNNG7oMJspkWiUTOrkoVXedda/Azl4JIm5UQE2TkmCrV/G0+zT0
-        lZU3W4LsdWMIRpY90S6H/Exp3pcbXlNfOqbdOHAYubLFdT0ylB0ov5kl+U/A6G0WTPvtA2
-        oSOhDd0sMX86oiIkDcasEfcv+wgUHKU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-339-bqqwPrVIOuC7fWcJ-NBYZw-1; Thu, 06 Aug 2020 03:42:36 -0400
-X-MC-Unique: bqqwPrVIOuC7fWcJ-NBYZw-1
-Received: by mail-wm1-f72.google.com with SMTP id u14so2702497wml.0
-        for <io-uring@vger.kernel.org>; Thu, 06 Aug 2020 00:42:36 -0700 (PDT)
+        bh=xB6SfwN9zZAFK1inviExT4PSWJ9s32aoWCOt/UwHdpI=;
+        b=OiMKltL0s/mtZ9+RLEkA8jiypTUUTAY+mdwMlBxrn/k9v3ZXUYswSIqCnFvA38mT1bwaeE
+        wNjZ+3EKMpFIASdnAOEU1cJWvTznJKDk0CY1konzJ/Xx4Jn4zrpwsISFcQqqftMLNM/1Wz
+        bIF0zC0gJYCFD9DAW6a4rXHt8YNa5mc=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-347-KWaqNNlaOKu94TXiFUW_JA-1; Thu, 06 Aug 2020 03:49:38 -0400
+X-MC-Unique: KWaqNNlaOKu94TXiFUW_JA-1
+Received: by mail-wr1-f69.google.com with SMTP id z1so14409631wrn.18
+        for <io-uring@vger.kernel.org>; Thu, 06 Aug 2020 00:49:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=9DgNQaGMq045VNsDMt7arHvCe+ceyFhnvLTuiY14Nyo=;
-        b=G0OeCsMa+oUkdVKlhobSTqtPEymbnSclEIsJnE+MEWMuajXmCeMnjIeF2Q8HTInpMA
-         VqMvYm46QZWtQurbz9xBiGEmxZ7jFiX9mALNRNtt5uxtKBDVMIVexdoRPkYPKZol/lbU
-         U1r/LjU/DEyy2lLyNfLkatXxhOwJQ1ls5PmmJrxRVzCfZmpqkdEcBe4P5Le3LA0I47eb
-         +xcNCo79atwP51zIybrWI5X+8BbkXJV+MdZQk+1RUqG9WdCg0mR9CYj38DYIxqIg2FnF
-         RqCw8iEEuf3NRzymfvnsCSaSHP42D8vzeUuyHtBAOqldZuJcxc6uH/5cKpDC5hoF0WkI
-         /crQ==
-X-Gm-Message-State: AOAM53228XI2cCCV0WjReGiav47j17nBB6e2nLMg2AkSK724HpoPX8n0
-        CvL5MKVO1CM1hrr9BlZB5RgeiIzwpJ1XElRYOBbO4gec8dD5QvNDcKzmiK6A4E/5yBNkrQbw5DW
-        1HBe0gghF92NkWFqIivc=
-X-Received: by 2002:a1c:660a:: with SMTP id a10mr6335755wmc.115.1596699755564;
-        Thu, 06 Aug 2020 00:42:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzPMeQz/1TQGmlC78Lgr0+9xfq3YQpwVFaCo3MM8wA2VFxVsNKX2+/m3tbqdwPXiuEhF4WM/w==
-X-Received: by 2002:a1c:660a:: with SMTP id a10mr6335741wmc.115.1596699755315;
-        Thu, 06 Aug 2020 00:42:35 -0700 (PDT)
+        bh=xB6SfwN9zZAFK1inviExT4PSWJ9s32aoWCOt/UwHdpI=;
+        b=K/UeIwbNfWmQeCJJgoZGNL0iFxcBW+LX66akZKrJmOtoXeNjDWSKHEkpUBW9530DWo
+         ejLLybZp8RSpLoX4I/9RhIioIl8MzYgfQiKbRtuX/n1VJbO/x4mCkfZzPnJfjt913sKo
+         bNFEQ0xRpzfv266M3aA6YP2dwYIfqX8qtHRkjFmjFX/wo07ZKy4BDNTPKzxFOh1klDq9
+         oGNRF0kcyg8jpcNw3TeXtuQlqQa3K7jjLiO2+5xen3mBZ1j0DIuaIGgLzflxzJSuwf0P
+         Ef4vXOfcEVyWDAWtC+ZMPcUy7e3Db42FhWfphyBs8YlMKolf0Ag3NR9CErqMcQs/E7Xg
+         iIyg==
+X-Gm-Message-State: AOAM532oVDIq/u7WhBqy6MZkaCw4ZPNv/Jv09IP1SeefMeeF01xqJQSB
+        vDOFtYN5IA4Px2sK9haZQjvTe2Il91ggGAzZG3jwODKFPKPWnBjFg+15S0+rwJLRDShAI48ykMN
+        0uwUm1KA9xjrieFdnl+s=
+X-Received: by 2002:a1c:e244:: with SMTP id z65mr6663774wmg.34.1596700177237;
+        Thu, 06 Aug 2020 00:49:37 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzZ5kIFKf/UdkmWPj9U+O2NxXnYswiWnhDgQNIX/nObMw+EYpBVxwz7xoUqJ3nnWezsts3JEg==
+X-Received: by 2002:a1c:e244:: with SMTP id z65mr6663754wmg.34.1596700176991;
+        Thu, 06 Aug 2020 00:49:36 -0700 (PDT)
 Received: from steredhat ([5.180.207.22])
-        by smtp.gmail.com with ESMTPSA id f15sm5214783wmj.39.2020.08.06.00.42.34
+        by smtp.gmail.com with ESMTPSA id l18sm5580825wrm.52.2020.08.06.00.49.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Aug 2020 00:42:34 -0700 (PDT)
-Date:   Thu, 6 Aug 2020 09:42:31 +0200
+        Thu, 06 Aug 2020 00:49:36 -0700 (PDT)
+Date:   Thu, 6 Aug 2020 09:49:29 +0200
 From:   Stefano Garzarella <sgarzare@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org
-Subject: Re: [PATCH 2/2] io_uring: account locked memory before potential
- error case
-Message-ID: <20200806074231.mlmfbsl4shvvzodm@steredhat>
-References: <20200805190224.401962-1-axboe@kernel.dk>
- <20200805190224.401962-3-axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aleksa Sarai <asarai@suse.de>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v3 0/3] io_uring: add restrictions to support untrusted
+ applications and guests
+Message-ID: <20200806074929.bl6utxrmmx3hf2y2@steredhat>
+References: <20200728160101.48554-1-sgarzare@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200805190224.401962-3-axboe@kernel.dk>
+In-Reply-To: <20200728160101.48554-1-sgarzare@redhat.com>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Aug 05, 2020 at 01:02:24PM -0600, Jens Axboe wrote:
-> The tear down path will always unaccount the memory, so ensure that we
-> have accounted it before hitting any of them.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/io_uring.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 0d857f7ca507..7c42f63fbb0a 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -8341,6 +8341,14 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
->  	ctx->user = user;
->  	ctx->creds = get_current_cred();
->  
-> +	/*
-> +	 * Account memory _before_ installing the file descriptor. Once
-> +	 * the descriptor is installed, it can get closed at any time.
-> +	 */
+Gentle ping.
 
-What about update a bit the comment?
-Maybe adding the commit description in this comment.
-
-> +	io_account_mem(ctx, ring_pages(p->sq_entries, p->cq_entries),
-> +		       ACCT_LOCKED);
-> +	ctx->limit_mem = limit_mem;
-> +
->  	ret = io_allocate_scq_urings(ctx, p);
->  	if (ret)
->  		goto err;
-> @@ -8377,14 +8385,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
->  		goto err;
->  	}
->  
-> -	/*
-> -	 * Account memory _before_ installing the file descriptor. Once
-> -	 * the descriptor is installed, it can get closed at any time.
-> -	 */
-> -	io_account_mem(ctx, ring_pages(p->sq_entries, p->cq_entries),
-> -		       ACCT_LOCKED);
-> -	ctx->limit_mem = limit_mem;
-> -
->  	/*
->  	 * Install ring fd as the very last thing, so we don't risk someone
->  	 * having closed it before we finish setup
-> -- 
-> 2.28.0
-> 
+I'll rebase on master, but if there are any things that I can improve,
+I'll be happy to do.
 
 Thanks,
 Stefano
+
+On Tue, Jul 28, 2020 at 06:00:58PM +0200, Stefano Garzarella wrote:
+> v3:
+>  - added IORING_RESTRICTION_SQE_FLAGS_ALLOWED and
+>    IORING_RESTRICTION_SQE_FLAGS_REQUIRED
+>  - removed IORING_RESTRICTION_FIXED_FILES_ONLY opcode
+>  - enabled restrictions only when the rings start
+> 
+> RFC v2: https://lore.kernel.org/io-uring/20200716124833.93667-1-sgarzare@redhat.com
+> 
+> RFC v1: https://lore.kernel.org/io-uring/20200710141945.129329-1-sgarzare@redhat.com
+> 
+> Following the proposal that I send about restrictions [1], I wrote this series
+> to add restrictions in io_uring.
+> 
+> I also wrote helpers in liburing and a test case (test/register-restrictions.c)
+> available in this repository:
+> https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
+> 
+> Just to recap the proposal, the idea is to add some restrictions to the
+> operations (sqe opcode and flags, register opcode) to safely allow untrusted
+> applications or guests to use io_uring queues.
+> 
+> The first patch changes io_uring_register(2) opcodes into an enumeration to
+> keep track of the last opcode available.
+> 
+> The second patch adds IOURING_REGISTER_RESTRICTIONS opcode and the code to
+> handle restrictions.
+> 
+> The third patch adds IORING_SETUP_R_DISABLED flag to start the rings disabled,
+> allowing the user to register restrictions, buffers, files, before to start
+> processing SQEs.
+> 
+> Comments and suggestions are very welcome.
+> 
+> Thank you in advance,
+> Stefano
+> 
+> [1] https://lore.kernel.org/io-uring/20200609142406.upuwpfmgqjeji4lc@steredhat/
+> 
+> Stefano Garzarella (3):
+>   io_uring: use an enumeration for io_uring_register(2) opcodes
+>   io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
+>   io_uring: allow disabling rings during the creation
+> 
+>  fs/io_uring.c                 | 167 ++++++++++++++++++++++++++++++++--
+>  include/uapi/linux/io_uring.h |  60 +++++++++---
+>  2 files changed, 207 insertions(+), 20 deletions(-)
+> 
+> -- 
+> 2.26.2
+> 
 

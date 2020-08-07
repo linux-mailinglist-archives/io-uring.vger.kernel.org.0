@@ -2,103 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C111723E8BB
-	for <lists+io-uring@lfdr.de>; Fri,  7 Aug 2020 10:17:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08DCE23F191
+	for <lists+io-uring@lfdr.de>; Fri,  7 Aug 2020 18:56:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgHGIR1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Aug 2020 04:17:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44850 "EHLO
+        id S1725900AbgHGQ4C (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Aug 2020 12:56:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbgHGIR1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Aug 2020 04:17:27 -0400
-Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B11EC061574
-        for <io-uring@vger.kernel.org>; Fri,  7 Aug 2020 01:17:27 -0700 (PDT)
-Received: by mail-qv1-xf43.google.com with SMTP id j10so369075qvo.13
-        for <io-uring@vger.kernel.org>; Fri, 07 Aug 2020 01:17:27 -0700 (PDT)
+        with ESMTP id S1725893AbgHGQ4B (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Aug 2020 12:56:01 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C011BC061756
+        for <io-uring@vger.kernel.org>; Fri,  7 Aug 2020 09:56:01 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id z20so1322009plo.6
+        for <io-uring@vger.kernel.org>; Fri, 07 Aug 2020 09:56:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=AoKThlq6VtqLQY35g2UBR3GmiVU5JuS1iQetbPRkfpg=;
-        b=C9nQAzKvBxHmBb2jbvCpHWh1SrhzQq7f2tl/NluBPjU2zgTNRdbiMaDMFp2mWIDmdk
-         BNMoX1hcQ4Qr429MRDWx0DE+/n62bxxhpiXdswA7sS1W0m2OnL1Xwx56XlN0Q9CaAoSe
-         X2sPPkr9oHx/bh7JddxVG+gYcBgxO7yRvwIbEZwb5i2ScS5/+7kY9717PUErTSDyavca
-         L5+CnPnCQbsOPUg8zHbPUZuSQZSELCbvhysy4gDgpNQVbMFKODEcXIUbxhb1e1Kf/+FA
-         X2fhFEBF3mn5g5y4zZNBf6HaN390Ysk5x1HcFTJdCU7cq6dn88Fpbqd0AKNB5Lm1li0B
-         vP+g==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=SHmi8Gvw/Gpw0qYZnNiHRJJAK4MoE0DIlocKPPpOBj0=;
+        b=QH2wRwoEGLUE9yggrGzQ54HIpf+gcc52e0vsOYq78JEYp1PFohkg6IGhW3a+a9utUT
+         eLu/Ad4mDlOhYsfoUc+LH2BSbZpPzjRYPMcAdly2WdEjPP0niHifNHlQ7nhnTXiDR+Q/
+         6W/9Uw+/jbFmncLAeq/GjH74qW8eh26uEIJw8GP5A5BJ2YdgmzNLE2KZclFueSeWPlSZ
+         LnQfPhPTwjrh8VejsTh0nZM1fDt3Y5zFhCzmGaTAIscWAcdoeg45q/ypJhwsuRoo2JJY
+         n8+J3knNUgXvBv3pao+HT6d9Ji9bjsLCKP50oxeYi4i5Dt9fh7c4AEYQRMe50pnKzR9r
+         xB9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=AoKThlq6VtqLQY35g2UBR3GmiVU5JuS1iQetbPRkfpg=;
-        b=ellhGK92DukwrZ0MVP+mw/bM/1Vw0Xe0ikpkMJVmd/kb9YA9Nk0FROnLLlMrZ+wCKZ
-         7A86uIOICQdd+H0lmGrb3pn99XG7QtbocE2wtyPE32DncbzxqLFZaecVvFMOt+4g6F4B
-         MOIPTi9/6Y7WjTEU3q44Kca935+Re431zOwXTdJCffvxPQzqoWNo2mwKCl0mmpCboieO
-         OCIigzNTZxGkwOWI15yQpOV16W8LCuH71yKIsQvUhw6cEYd+RmuoBdXJTe0svmPwcGvV
-         8opL7FCrPMaCecMIc5eTDb5IIbHAEAvb0ymbj8H4fHiwBidBIo7uo26X2Qto3WdIPcFI
-         kb9w==
-X-Gm-Message-State: AOAM533tjowMJEx/SeRIVgQp2pDm4XVazWv27fkwkyasmERO53cthrL4
-        4iXs43t6wv7tMAe5JIvbiqKCyDO4JviygwSH0WI=
-X-Google-Smtp-Source: ABdhPJwS2Ah+I4KYSvZj3vM0dNjlFEDU60arJ9BaCK7mPu8Axui0fdu8hWUd0dBpCaFJs4+jLQKZ+vsVw8QAcbmIptI=
-X-Received: by 2002:a0c:fa0a:: with SMTP id q10mr13714485qvn.33.1596788245107;
- Fri, 07 Aug 2020 01:17:25 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=SHmi8Gvw/Gpw0qYZnNiHRJJAK4MoE0DIlocKPPpOBj0=;
+        b=rTNDSixNLKhlNiDqifdPT0x5wuh2cKhOQqxlbYdVHJlF+h59TgkPfRmZ7oMwkK59Kz
+         vDVulkij62GRBCUmx5eRCgIWXa7Rjs3qHM18SF1cNdDN/iAtGpX9macDsbmHpVIUfmHJ
+         hp5Z/MZRQHHDX7qLGgv6fiSwsAC8JBMRqDPk0cDx10exuFTssh/AEmQRcoE/+bvpBPpr
+         orf7H34HIEHoYqAXgUu/t4++NBRbICPZ1L8usi1v3cPgCgjhKLNlzCEKrv4hZ7sBbfzV
+         n4xnKukAL77GZBX8J0b7VqILXUo5vDktT50rhvaxq9JTCWLJjmBc0aU9fFN5h/ImT+xH
+         RlJA==
+X-Gm-Message-State: AOAM531+q71I+NqTEcdK1KjGG30/XUtow0tyey6P6Ugyg2xMwpYzUtwG
+        PbE/fdYVr5tPUnXYFywNLo3Hjx6/Qac=
+X-Google-Smtp-Source: ABdhPJwX7gniD6aZUdTvKF9zpdx3RrV0VJKySevDo+gpDOk/hhxK5Q2UZBk/N25hjd3u5sCUDmLFIg==
+X-Received: by 2002:a17:90a:c208:: with SMTP id e8mr14206115pjt.73.1596819360128;
+        Fri, 07 Aug 2020 09:56:00 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id e8sm13494543pfd.34.2020.08.07.09.55.59
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Aug 2020 09:55:59 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH v2] io_uring: use TWA_SIGNAL for task_work if the task isn't
+ running
+Message-ID: <ba5b8ee4-2c6f-dec7-97f2-d02c8b3fe3f8@kernel.dk>
+Date:   Fri, 7 Aug 2020 10:55:58 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <CAAss7+rhVS669Q=PCHrmHXbr067HpdC7Dtu0ogm4u-uj6-qK3Q@mail.gmail.com>
- <2cc90695-3705-b602-beac-db2252d13b86@gmail.com>
-In-Reply-To: <2cc90695-3705-b602-beac-db2252d13b86@gmail.com>
-From:   Josef <josef.grieb@gmail.com>
-Date:   Fri, 7 Aug 2020 10:17:13 +0200
-Message-ID: <CAAss7+rbm8D8OyM1gjj7wXCizVPeGxh19WUOiiX3bzcqe4v2zQ@mail.gmail.com>
-Subject: Re: wake up io_uring_enter(...IORING_ENTER_GETEVENTS..) via eventfd
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+An earlier commit:
 
-yeah thanks, there is already a fix patch from Jens [PATCH] io_uring:
-use TWA_SIGNAL for task_work related to eventfd
+b7db41c9e03b ("io_uring: fix regression with always ignoring signals in io_cqring_wait()")
 
+ensured that we didn't get stuck waiting for eventfd reads when it's
+registered with the io_uring ring for event notification, but we still
+have a gap where the task can be waiting on other events in the kernel
+and need a bigger nudge to make forward progress.
 
-On Fri, 7 Aug 2020 at 09:31, Pavel Begunkov <asml.silence@gmail.com> wrote:
->
-> Hi,
->
-> I'd love to help but don't have time at the moment. I'll take a look but
-> in a week, either send it to io-uring@vger.kernel.org. Jens deals with
-> such stuff lightning fast!
->
-> > io_uring application should be a single thread in my application which
-> > means a different thread wakes up io_uring_enter via eventfd. The issue is
-> > that io_uring_enter(fd, 0, min_complete, IORING_ENTER_GETEVENTS, 0) which
-> > is blocking doesn't get any poling event from eventfd_write when both
-> > functions are executed in different threads
->
-> Yeah, sounds strange. Did you try to do the same but without io_uring?
-> e.g. with write(2), select(2).
->
-> >
-> >
-> > here small example
-> >
-> > https://gist.github.com/1Jo1/6496d1b8b6b363c301271340e2eab95b
-> >
-> >
-> > io_uring_enter will get a polling event if you move eventfd_write(efd,
-> > (eventfd_t) 1L) to the main thread,
-> >
-> > I don't get it..probably I missed something, why can't I run both functions
-> > on different threads, any ideas what the cause might be?
-> >
-> >
-> > (Linux Kernel 5.7.10-201) liburing 0.6 & 0.7
-> >
-> > ---
-> > Josef
-> >
->
-> --
-> Pavel Begunkov
+Ensure that we use signaled notifications for a task that isn't currently
+running, to be certain the work is seen and processed immediately.
+
+Cc: stable@vger.kernel.org # v5.7+
+Reported-by: Josef <josef.grieb@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+This isn't perfect, as it'll use TWA_SIGNAL even for cases where we
+don't absolutely need it (like task waiting for completions in
+io_cqring_wait()), but we don't have a good way to tell right now. We
+can probably improve on this in the future, for now I think this is the
+best solution.
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index e9b27cdaa735..b4300a61f231 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1720,7 +1720,7 @@ static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb)
+ 	 */
+ 	if (ctx->flags & IORING_SETUP_SQPOLL)
+ 		notify = 0;
+-	else if (ctx->cq_ev_fd)
++	else if (ctx->cq_ev_fd || (tsk->state != TASK_RUNNING))
+ 		notify = TWA_SIGNAL;
+ 
+ 	ret = task_work_add(tsk, cb, notify);
+
+-- 
+Jens Axboe
+

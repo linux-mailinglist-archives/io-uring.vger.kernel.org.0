@@ -2,42 +2,43 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B4342409D7
-	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 17:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 723CD2409FE
+	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 17:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbgHJPgV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Aug 2020 11:36:21 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:49236 "EHLO
+        id S1728638AbgHJPhj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Aug 2020 11:37:39 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:44672 "EHLO
         mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728433AbgHJPgS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 11:36:18 -0400
-Received: by mail-io1-f70.google.com with SMTP id c1so3780990ioh.16
-        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 08:36:18 -0700 (PDT)
+        with ESMTP id S1728660AbgHJPhT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 11:37:19 -0400
+Received: by mail-io1-f70.google.com with SMTP id m12so7307679iov.11
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 08:37:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=vZw9RbfxaQ9aaX5fp2x2dWUjGcoH4rsgQ56zPcM+UN8=;
-        b=gmNs8MdGPsi3/V/wDjYu7qDj7sHsb99MIfvk6OkQltZ6RsAab9+66XmiLf7gybOK19
-         PD6W0l0lOP+roO9WR8G++q7FU/LvIGqYQPZbk91/2uSG9bY6OQuy8fsCfxWTj6m42wy6
-         PEagga79iIwXZnx306oPGOqdXqg+LLT9wIVdHrd/D5J3tWOfyjoly+7pYRjOZbtC6IzR
-         1L0hJYil3UYNos7TYSzGciGQGnQZrr9gvHlRIUU+TR1Djyk4qOsrWFBSMYfA37kKzcBF
-         5rNnKjfW2X6tJNMf+ziWH7IU5piJh+BA1m7R0Wg9H7/+7izdkrSp+nwkjiEuUBX5Cbpi
-         5Gpw==
-X-Gm-Message-State: AOAM5333owHwDAmmoSw4JLJcz2f/fEikwRDjec9PURGOKoFNBMC4K3f+
-        nfj09olGwt3gHoKU3Fp2sQAhkyF5laf9xh997rv/UDDiFXhY
-X-Google-Smtp-Source: ABdhPJz4BEuyUlRkLLENFQWlyJ8VgZPOIftgvZgvRSY3OgPxyEGs87e9uMIb0DQqMTIpSVw7C/Y9CRqCfG6WgTReE4lc2bCcGQ7t
+        bh=sqCUJZ0N9QFf8u5nVlxIsNMxdST4jwToDGJoW6/Pw1g=;
+        b=JbqtEa+nyCVtpKtDsCGMffUdLGudH/AFeISTwGQgmyzgQDlmJHyyi7dnBbBMIM1p3H
+         ASmf4E5Ge7lqf11jiKuXMkpbf3MzF/6U0aFkRnB6HWI8Wk9OwaNnP6dfiPqrnGbkO+8L
+         0IG6UQvW4jUHSazbD5eNGmQ0WVo7fULWBAF1oIanidCZPQPyqeJvpxFPR68PA2MwII6t
+         1tdjBQIDPUSa+SHdk17o8Wejn5NSrR1UZUaY5TQYV1VgSp7VP7oxliIv4XqNfrjMgvG/
+         PCvZje/4lmdI7F4VjXdHVov1lbvWpQpCLsHOJ3GrARDzTbSJ/9F+p+wzMrGJqqBGBlLF
+         oJzQ==
+X-Gm-Message-State: AOAM532wot0cJ8+sulf5G8ElhRf5LIijTNS9mEJXwhmDBe5XiDQqZ3VC
+        kbzgmOR6woZOnzadyadQi4dXs7PJcze7yUFovUCsIREn/wz9
+X-Google-Smtp-Source: ABdhPJwCy+ROg82sfsfHuaVqzXKtqhKu2XUEFcRwp+YNDxdNPxUqSNJ96j1/8Mw4j1J4Y0HfLqE2o6CKe6kCM6CTVOoT/25sLI96
 MIME-Version: 1.0
-X-Received: by 2002:a5d:924c:: with SMTP id e12mr18077837iol.28.1597073778088;
- Mon, 10 Aug 2020 08:36:18 -0700 (PDT)
-Date:   Mon, 10 Aug 2020 08:36:18 -0700
+X-Received: by 2002:a92:8b51:: with SMTP id i78mr17461223ild.179.1597073837991;
+ Mon, 10 Aug 2020 08:37:17 -0700 (PDT)
+Date:   Mon, 10 Aug 2020 08:37:17 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000391eaf05ac87b74d@google.com>
-Subject: INFO: task hung in io_uring_flush
-From:   syzbot <syzbot+6338dcebf269a590b668@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <000000000000cb5dff05ac87ba2e@google.com>
+Subject: possible deadlock in io_timeout_fn
+From:   syzbot <syzbot+ef4b654b49ed7ff049bf@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, bijan.mottahedeh@oracle.com,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
@@ -48,108 +49,249 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    9420f1ce Merge tag 'pinctrl-v5.9-1' of git://git.kernel.or..
+HEAD commit:    449dc8c9 Merge tag 'for-v5.9' of git://git.kernel.org/pub/..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1637701c900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=72cf85e4237850c8
-dashboard link: https://syzkaller.appspot.com/bug?extid=6338dcebf269a590b668
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141dde52900000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b196aa900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11293dc6900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9d25235bf0162fbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=ef4b654b49ed7ff049bf
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126b0f1a900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e32994900000
+
+The issue was bisected to:
+
+commit e62753e4e2926f249d088cc0517be5ed4efec6d6
+Author: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Date:   Sat May 23 04:31:18 2020 +0000
+
+    io_uring: call statx directly
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1195de52900000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1395de52900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1595de52900000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6338dcebf269a590b668@syzkaller.appspotmail.com
+Reported-by: syzbot+ef4b654b49ed7ff049bf@syzkaller.appspotmail.com
+Fixes: e62753e4e292 ("io_uring: call statx directly")
 
-INFO: task syz-executor672:7284 blocked for more than 143 seconds.
-      Not tainted 5.8.0-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor672 D28360  7284   6846 0x80004000
-Call Trace:
- context_switch kernel/sched/core.c:3778 [inline]
- __schedule+0x8e5/0x21e0 kernel/sched/core.c:4527
- schedule+0xd0/0x2a0 kernel/sched/core.c:4602
- io_uring_cancel_files fs/io_uring.c:7897 [inline]
- io_uring_flush+0x740/0xa90 fs/io_uring.c:7914
- filp_close+0xb4/0x170 fs/open.c:1282
- close_files fs/file.c:401 [inline]
- put_files_struct fs/file.c:429 [inline]
- put_files_struct+0x1cc/0x350 fs/file.c:426
- exit_files+0x7e/0xa0 fs/file.c:458
- do_exit+0xb43/0x29f0 kernel/exit.c:801
- do_group_exit+0x125/0x310 kernel/exit.c:903
- __do_sys_exit_group kernel/exit.c:914 [inline]
- __se_sys_exit_group kernel/exit.c:912 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:912
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x440938
-Code: Bad RIP value.
-RSP: 002b:00007ffc0e913ed8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440938
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004c01d0 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d21a0 R14: 0000000000000000 R15: 0000000000000000
+========================================================
+WARNING: possible irq lock inversion dependency detected
+5.8.0-syzkaller #0 Not tainted
+--------------------------------------------------------
+syz-executor659/6838 just changed the state of lock:
+ffff8880a8bc44d8 (&ctx->completion_lock){-...}-{2:2}, at: io_timeout_fn+0x6b/0x360 fs/io_uring.c:4999
+but this lock took another, HARDIRQ-unsafe lock in the past:
+ (&fs->lock){+.+.}-{2:2}
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/1161:
- #0: ffffffff89bd62c0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5825
-1 lock held by in:imklog/6515:
- #0: ffff8880a5ca6930 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:930
 
-=============================================
+and interrupts could create inverse lock ordering between them.
 
-NMI backtrace for cpu 0
-CPU: 0 PID: 1161 Comm: khungtaskd Not tainted 5.8.0-syzkaller #0
+
+other info that might help us debug this:
+ Possible interrupt unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&fs->lock);
+                               local_irq_disable();
+                               lock(&ctx->completion_lock);
+                               lock(&fs->lock);
+  <Interrupt>
+    lock(&ctx->completion_lock);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor659/6838:
+ #0: ffff8880a8bc4428 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter fs/io_uring.c:8035 [inline]
+ #0: ffff8880a8bc4428 (&ctx->uring_lock){+.+.}-{3:3}, at: __se_sys_io_uring_enter+0x19d/0x1300 fs/io_uring.c:7995
+
+the shortest dependencies between 2nd lock and 1st lock:
+ -> (&fs->lock){+.+.}-{2:2} {
+    HARDIRQ-ON-W at:
+                      lock_acquire+0x160/0x730 kernel/locking/lockdep.c:5005
+                      __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+                      _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+                      spin_lock include/linux/spinlock.h:354 [inline]
+                      set_fs_pwd+0x3b/0x220 fs/fs_struct.c:39
+                      init_chdir+0xe2/0x10b fs/init.c:54
+                      devtmpfs_setup+0xa5/0xd4 drivers/base/devtmpfs.c:415
+                      devtmpfsd+0x11/0x40 drivers/base/devtmpfs.c:430
+                      kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+                      ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+    SOFTIRQ-ON-W at:
+                      lock_acquire+0x160/0x730 kernel/locking/lockdep.c:5005
+                      __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+                      _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+                      spin_lock include/linux/spinlock.h:354 [inline]
+                      set_fs_pwd+0x3b/0x220 fs/fs_struct.c:39
+                      init_chdir+0xe2/0x10b fs/init.c:54
+                      devtmpfs_setup+0xa5/0xd4 drivers/base/devtmpfs.c:415
+                      devtmpfsd+0x11/0x40 drivers/base/devtmpfs.c:430
+                      kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+                      ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+    INITIAL USE at:
+                     lock_acquire+0x160/0x730 kernel/locking/lockdep.c:5005
+                     __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+                     _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+                     spin_lock include/linux/spinlock.h:354 [inline]
+                     set_fs_pwd+0x3b/0x220 fs/fs_struct.c:39
+                     init_chdir+0xe2/0x10b fs/init.c:54
+                     devtmpfs_setup+0xa5/0xd4 drivers/base/devtmpfs.c:415
+                     devtmpfsd+0x11/0x40 drivers/base/devtmpfs.c:430
+                     kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+                     ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+  }
+  ... key      at: [<ffffffff8b84e190>] copy_fs_struct.__key+0x0/0x10
+  ... acquired at:
+   lock_acquire+0x160/0x730 kernel/locking/lockdep.c:5005
+   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+   _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+   spin_lock include/linux/spinlock.h:354 [inline]
+   io_req_clean_work fs/io_uring.c:1126 [inline]
+   io_dismantle_req+0x285/0x5d0 fs/io_uring.c:1544
+   __io_free_req+0x24/0x190 fs/io_uring.c:1562
+   __io_double_put_req fs/io_uring.c:1909 [inline]
+   __io_fail_links+0x1d7/0x6c0 fs/io_uring.c:1659
+   io_fail_links fs/io_uring.c:1675 [inline]
+   __io_req_find_next fs/io_uring.c:1698 [inline]
+   io_req_find_next+0x101a/0x1260 fs/io_uring.c:1706
+   io_steal_work fs/io_uring.c:1897 [inline]
+   io_wq_submit_work+0x446/0x590 fs/io_uring.c:5792
+   io_worker_handle_work+0xf8f/0x1570 fs/io-wq.c:527
+   io_wqe_worker+0x2ff/0x810 fs/io-wq.c:569
+   kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+   ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+-> (&ctx->completion_lock){-...}-{2:2} {
+   IN-HARDIRQ-W at:
+                    lock_acquire+0x160/0x730 kernel/locking/lockdep.c:5005
+                    __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+                    _raw_spin_lock_irqsave+0x9e/0xc0 kernel/locking/spinlock.c:159
+                    io_timeout_fn+0x6b/0x360 fs/io_uring.c:4999
+                    __run_hrtimer kernel/time/hrtimer.c:1520 [inline]
+                    __hrtimer_run_queues+0x47f/0x930 kernel/time/hrtimer.c:1584
+                    hrtimer_interrupt+0x373/0xd60 kernel/time/hrtimer.c:1646
+                    local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1079 [inline]
+                    __sysvec_apic_timer_interrupt+0xf0/0x260 arch/x86/kernel/apic/apic.c:1096
+                    asm_call_on_stack+0xf/0x20 arch/x86/entry/entry_64.S:706
+                    __run_on_irqstack arch/x86/include/asm/irq_stack.h:22 [inline]
+                    run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:48 [inline]
+                    sysvec_apic_timer_interrupt+0x94/0xf0 arch/x86/kernel/apic/apic.c:1090
+                    asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:581
+                    arch_local_irq_enable arch/x86/include/asm/paravirt.h:780 [inline]
+                    __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:168 [inline]
+                    _raw_spin_unlock_irq+0x57/0x80 kernel/locking/spinlock.c:199
+                    spin_unlock_irq include/linux/spinlock.h:404 [inline]
+                    io_timeout fs/io_uring.c:5162 [inline]
+                    io_issue_sqe+0x5b64/0xb8c0 fs/io_uring.c:5594
+                    __io_queue_sqe+0x287/0xff0 fs/io_uring.c:5981
+                    io_submit_sqe fs/io_uring.c:6130 [inline]
+                    io_submit_sqes+0x14cf/0x25d0 fs/io_uring.c:6327
+                    __do_sys_io_uring_enter fs/io_uring.c:8036 [inline]
+                    __se_sys_io_uring_enter+0x1af/0x1300 fs/io_uring.c:7995
+                    do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+                    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+   INITIAL USE at:
+                   lock_acquire+0x160/0x730 kernel/locking/lockdep.c:5005
+                   __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+                   _raw_spin_lock_irqsave+0x9e/0xc0 kernel/locking/spinlock.c:159
+                   io_cqring_add_event fs/io_uring.c:1419 [inline]
+                   __io_req_complete+0x15e/0x2c0 fs/io_uring.c:1458
+                   io_issue_sqe+0x8678/0xb8c0 fs/io_uring.c:3569
+                   io_wq_submit_work+0x35e/0x590 fs/io_uring.c:5775
+                   io_worker_handle_work+0xf8f/0x1570 fs/io-wq.c:527
+                   io_wqe_worker+0x2ff/0x810 fs/io-wq.c:569
+                   kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+                   ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+ }
+ ... key      at: [<ffffffff8b84ef58>] io_ring_ctx_alloc.__key.111+0x0/0x10
+ ... acquired at:
+   mark_lock_irq kernel/locking/lockdep.c:3568 [inline]
+   mark_lock+0x529/0x1b00 kernel/locking/lockdep.c:4006
+   mark_usage kernel/locking/lockdep.c:3902 [inline]
+   __lock_acquire+0xa5c/0x2ab0 kernel/locking/lockdep.c:4380
+   lock_acquire+0x160/0x730 kernel/locking/lockdep.c:5005
+   __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+   _raw_spin_lock_irqsave+0x9e/0xc0 kernel/locking/spinlock.c:159
+   io_timeout_fn+0x6b/0x360 fs/io_uring.c:4999
+   __run_hrtimer kernel/time/hrtimer.c:1520 [inline]
+   __hrtimer_run_queues+0x47f/0x930 kernel/time/hrtimer.c:1584
+   hrtimer_interrupt+0x373/0xd60 kernel/time/hrtimer.c:1646
+   local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1079 [inline]
+   __sysvec_apic_timer_interrupt+0xf0/0x260 arch/x86/kernel/apic/apic.c:1096
+   asm_call_on_stack+0xf/0x20 arch/x86/entry/entry_64.S:706
+   __run_on_irqstack arch/x86/include/asm/irq_stack.h:22 [inline]
+   run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:48 [inline]
+   sysvec_apic_timer_interrupt+0x94/0xf0 arch/x86/kernel/apic/apic.c:1090
+   asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:581
+   arch_local_irq_enable arch/x86/include/asm/paravirt.h:780 [inline]
+   __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:168 [inline]
+   _raw_spin_unlock_irq+0x57/0x80 kernel/locking/spinlock.c:199
+   spin_unlock_irq include/linux/spinlock.h:404 [inline]
+   io_timeout fs/io_uring.c:5162 [inline]
+   io_issue_sqe+0x5b64/0xb8c0 fs/io_uring.c:5594
+   __io_queue_sqe+0x287/0xff0 fs/io_uring.c:5981
+   io_submit_sqe fs/io_uring.c:6130 [inline]
+   io_submit_sqes+0x14cf/0x25d0 fs/io_uring.c:6327
+   __do_sys_io_uring_enter fs/io_uring.c:8036 [inline]
+   __se_sys_io_uring_enter+0x1af/0x1300 fs/io_uring.c:7995
+   do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+
+stack backtrace:
+CPU: 1 PID: 6838 Comm: syz-executor659 Not tainted 5.8.0-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
+ <IRQ>
  __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x18f/0x20d lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
- nmi_trigger_cpumask_backtrace+0x1b3/0x223 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
- watchdog+0xd7d/0x1000 kernel/hung_task.c:295
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 3889 Comm: systemd-journal Not tainted 5.8.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:66
-Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8 c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
-RSP: 0018:ffffc90005277d08 EFLAGS: 00010246
-RAX: 00000000000c1e00 RBX: 0000000000000cc0 RCX: 00000000000006c0
-RDX: 0000000000001000 RSI: 0000000000000000 RDI: ffff88809de8b540
-RBP: ffff8880aa240900 R08: ffff88809de8ac00 R09: ffff88809de8ac00
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000286
-R13: 0000000000000cc0 R14: ffff8880aa240900 R15: ffff88809de8ac00
-FS:  00007fa07185e8c0(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa06ec13000 CR3: 00000000927ab000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- slab_alloc mm/slab.c:3310 [inline]
- kmem_cache_alloc+0x2e0/0x3a0 mm/slab.c:3482
- getname_flags.part.0+0x50/0x4f0 fs/namei.c:138
- getname_flags include/linux/audit.h:320 [inline]
- getname+0x8e/0xd0 fs/namei.c:209
- do_sys_openat2+0xf5/0x420 fs/open.c:1168
- do_sys_open fs/open.c:1190 [inline]
- __do_sys_open fs/open.c:1198 [inline]
- __se_sys_open fs/open.c:1194 [inline]
- __x64_sys_open+0x119/0x1c0 fs/open.c:1194
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ dump_stack+0x1f0/0x31e lib/dump_stack.c:118
+ print_irq_inversion_bug+0xb67/0xe90 kernel/locking/lockdep.c:3428
+ check_usage_forwards+0x13f/0x240 kernel/locking/lockdep.c:3453
+ mark_lock_irq kernel/locking/lockdep.c:3568 [inline]
+ mark_lock+0x529/0x1b00 kernel/locking/lockdep.c:4006
+ mark_usage kernel/locking/lockdep.c:3902 [inline]
+ __lock_acquire+0xa5c/0x2ab0 kernel/locking/lockdep.c:4380
+ lock_acquire+0x160/0x730 kernel/locking/lockdep.c:5005
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x9e/0xc0 kernel/locking/spinlock.c:159
+ io_timeout_fn+0x6b/0x360 fs/io_uring.c:4999
+ __run_hrtimer kernel/time/hrtimer.c:1520 [inline]
+ __hrtimer_run_queues+0x47f/0x930 kernel/time/hrtimer.c:1584
+ hrtimer_interrupt+0x373/0xd60 kernel/time/hrtimer.c:1646
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1079 [inline]
+ __sysvec_apic_timer_interrupt+0xf0/0x260 arch/x86/kernel/apic/apic.c:1096
+ asm_call_on_stack+0xf/0x20 arch/x86/entry/entry_64.S:706
+ </IRQ>
+ __run_on_irqstack arch/x86/include/asm/irq_stack.h:22 [inline]
+ run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:48 [inline]
+ sysvec_apic_timer_interrupt+0x94/0xf0 arch/x86/kernel/apic/apic.c:1090
+ asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:581
+RIP: 0010:__raw_spin_unlock_irq include/linux/spinlock_api_smp.h:169 [inline]
+RIP: 0010:_raw_spin_unlock_irq+0x57/0x80 kernel/locking/spinlock.c:199
+Code: 00 00 00 00 fc ff df 80 3c 08 00 74 0c 48 c7 c7 c8 14 4d 89 e8 6a 28 8b f9 48 83 3d 0a a9 23 01 00 74 25 fb 66 0f 1f 44 00 00 <bf> 01 00 00 00 e8 6f 62 27 f9 65 8b 05 34 92 d8 77 85 c0 74 02 5b
+RSP: 0018:ffffc9000102f8f0 EFLAGS: 00000286
+RAX: 1ffffffff129a299 RBX: ffff8880a8bc44c0 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff88296b8f
+RBP: ffffc9000102fb80 R08: dffffc0000000000 R09: fffffbfff167c6b8
+R10: fffffbfff167c6b8 R11: 0000000000000000 R12: 0000000000000000
+R13: dffffc0000000000 R14: ffff8880a2dfdc08 R15: ffff8880a2dfdc58
+ spin_unlock_irq include/linux/spinlock.h:404 [inline]
+ io_timeout fs/io_uring.c:5162 [inline]
+ io_issue_sqe+0x5b64/0xb8c0 fs/io_uring.c:5594
+ __io_queue_sqe+0x287/0xff0 fs/io_uring.c:5981
+ io_submit_sqe fs/io_uring.c:6130 [inline]
+ io_submit_sqes+0x14cf/0x25d0 fs/io_uring.c:6327
+ __do_sys_io_uring_enter fs/io_uring.c:8036 [inline]
+ __se_sys_io_uring_enter+0x1af/0x1300 fs/io_uring.c:7995
+ do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x7fa070dee840
-Code: 73 01 c3 48 8b 0d 68 77 20 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 89 bb 20 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e f6 ff ff 48 89 04 24
-RSP: 002b:00007ffe015fba28 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007ffe015fbd30 RCX: 00007fa070dee840
-RDX: 00000000000001a0 RSI: 0000000000080042 RDI: 00005605a9deabc0
-RBP: 000000000000000d R08: 0000000000000000 R09: 00000000ffffffff
-R10: 0000000000000069 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00005605a9ddd060 R14: 00007ffe015fbcf0 R15: 00005605a9deac10
+RIP: 0033:0x440b99
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffea6abdbf8 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440b99
+RDX: 0000000000000000 RSI: 000000000000450c RDI: 0000000000000005
+RBP: 00000000006cb018 R08
 
 
 ---
@@ -159,5 +301,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this issue, for details see:
 https://goo.gl/tpsmEJ#testing-patches

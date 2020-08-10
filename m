@@ -2,144 +2,419 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C3BC240AFE
-	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 18:10:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16179240B6C
+	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 18:53:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726499AbgHJQK2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Aug 2020 12:10:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42712 "EHLO
+        id S1728030AbgHJQxU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Aug 2020 12:53:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbgHJQK1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 12:10:27 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D127C061756;
-        Mon, 10 Aug 2020 09:10:27 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id f26so8796076ljc.8;
-        Mon, 10 Aug 2020 09:10:27 -0700 (PDT)
+        with ESMTP id S1727771AbgHJQxT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 12:53:19 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2FBCC061756
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 09:53:18 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id m71so5393968pfd.1
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 09:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=n9aATTiWeg3eGm4JQNFh3hVmy+5EHRdeMVoNfdIDaVc=;
-        b=XHGpd34R1ZumOZvay2qCWEMVUwtJjMxwLmDZJMi/D2cKOsK3PbjarhJwjrhxwKvyLY
-         my65PXjsgbnWtjyzLBWN3JYcDB+4OZO2ekklaUTYv8Em9/EIalOhrxZKC5ZWxzC0Tj0a
-         prXAsDqiomS4CNGZrNNkwnPA4EvzZylcF9z91xxBU5oqNT5qdE6Qmty3p6WvlrxJTJMU
-         ci9Nvne8npUs6H1ctIaZuKVorU6ADhmoE3tXBzNFTED5Qg9b+sKyyUJYDOq6mF/AH4YB
-         UhKlYVCZ5YqRFpXCFyf01rFaf4vE1ISV4GWBgVzGr8EJWezroaJjoorsS2pDqAM+bh7G
-         WE5w==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=demJTYvqVm7/B6udfKKYTH8CSRdpCicL24k0feQJYaM=;
+        b=CBweG1tmjjNO38Xjm2I54pGGQ80yt7+dLFbqURBEoszlZGZsKCBjh0Phw+Zs7vGM4K
+         we0ZMJHQuWD/5/JopeOeqczO4T7aBxm4CiQplJK8oinmBG5yXTYLYz8/Ei4Blwza+RUR
+         ahu0InJqD7NR+ZcSxYvILhBYxtmLO02rJ/MC0qTxjw7h5WGWOg5DDBXZNSJTGyGVek8k
+         nXUOvbvvI4JQIzEyTSPXEya49UAfxNLIEQqq8Ac3r5xizf0ujKbTT9pIxFGIWqh962lG
+         YWbjp695vF2NCt2qkUD3OcsR2eVjGPwdBHUv/y7PKqyvI+KKERJ+7BYtGx4kN0dUpDKM
+         5zzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=n9aATTiWeg3eGm4JQNFh3hVmy+5EHRdeMVoNfdIDaVc=;
-        b=pWYnX0FV+x8PS4e8T09ouGd5Ef+KuwLvvqhTYkE/GTvbheHk82A2w68W0CHaVOvIB3
-         eerrM8mg7EyCA4rVahoz9QpRW3rbJ/xrtxwmSl2Rdgj0oyPFVd75ua8HXyGErAdN3IRZ
-         /E3syPzCD1khNeN+8hDKkE2CGmt0gK1ypntnasBrFIRIGKdXrbPIVb31Rzgpdwv1UDLQ
-         ejfz38hr220mv7b34RPHmkZ0cGAlMcGH2Z4rzwXFuazMTGFdnLKO4BOi+Mx86BxDFIqm
-         cwTBuBUoIX1VtlCimYmZs8ui2N3shCOypNrI8CeDkvTm7YrMJ0r08ttQD3xwjuFBjfxN
-         VUdQ==
-X-Gm-Message-State: AOAM532EVtFmfAMLVEOFyqFurHmVdwWTS7xE5vtYD2NvdetHtXzyM26M
-        tnEXS+qhSxaUiaUtCspngZg=
-X-Google-Smtp-Source: ABdhPJxB/evje8kcCGJlAvVWY5CucYiyFf9xHIaEK7LD0LFgKStP/rwtPQRXLNHjaSZoRVuK5W6g+Q==
-X-Received: by 2002:a05:651c:543:: with SMTP id q3mr911983ljp.145.1597075825642;
-        Mon, 10 Aug 2020 09:10:25 -0700 (PDT)
-Received: from [192.168.88.55] ([195.91.224.52])
-        by smtp.gmail.com with ESMTPSA id d13sm10834194lfl.89.2020.08.10.09.10.24
+        bh=demJTYvqVm7/B6udfKKYTH8CSRdpCicL24k0feQJYaM=;
+        b=onkB3gHqiAP3iMzrNP/45inIw0KX17sT3ZFXqevKRBPxCT/PYag2LhtmFx3Pbfh8Xn
+         ZZS9kJ+8bN6hiYUG53EfVi5VKXrufFoF73Ieab5J31k3Ub+os9iO6eeo18+BX9IrVhOK
+         04UNBrGnVENQIIDGCmO4SSCBd30V+nY8wbTPm8EhMew0baIsFOWmhNLkT8RlATkPMKbg
+         O8wFt2L6ZyF+d8F+Sfp9QALs7M0d5QDmFyJ5zxUeYqe7Inupe+rHvRnownIk/hpoY/kH
+         rCyBl/n7zVllV4Js+YhaR3HPIFcdyhrh/JbL3bqzvPuUb/lIT8NZsF0j8j4wt8mrFjYm
+         J+Mg==
+X-Gm-Message-State: AOAM5312UFiR5a+sCN3qmaCJeaM7CPyyY3F+KBF1dXsHE3bWbsmifnkf
+        dDw+rm0B9GqLGWzYgNoaMzSELQ==
+X-Google-Smtp-Source: ABdhPJwDpfTqcEJ1ZVvlAC41XmgUyGzPmHUdduAl3NVuhoPhe8VvQdCO3mXG85FYMz4us2RpFoR00g==
+X-Received: by 2002:a62:26c2:: with SMTP id m185mr1916989pfm.115.1597078397875;
+        Mon, 10 Aug 2020 09:53:17 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id cv3sm85858pjb.45.2020.08.10.09.53.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Aug 2020 09:10:25 -0700 (PDT)
-To:     syzbot <syzbot+6338dcebf269a590b668@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
+        Mon, 10 Aug 2020 09:53:17 -0700 (PDT)
+Subject: Re: possible deadlock in io_timeout_fn
+To:     syzbot <syzbot+ef4b654b49ed7ff049bf@syzkaller.appspotmail.com>,
+        bijan.mottahedeh@oracle.com, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000099566305ac881a16@google.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: INFO: task hung in io_uring_flush
-Message-ID: <bff14407-8ad7-fdda-e5cf-0dabc1acbb0d@gmail.com>
-Date:   Mon, 10 Aug 2020 19:08:23 +0300
+References: <000000000000cb5dff05ac87ba2e@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <739db873-d8f2-c7fa-a5fc-19b4c7e107e6@kernel.dk>
+Date:   Mon, 10 Aug 2020 10:53:16 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <00000000000099566305ac881a16@google.com>
+In-Reply-To: <000000000000cb5dff05ac87ba2e@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/08/2020 19:04, syzbot wrote:
-> syzbot has bisected this issue to:
+On 8/10/20 9:37 AM, syzbot wrote:
+> Hello,
 > 
-> commit f86cd20c9454847a524ddbdcdec32c0380ed7c9b
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Wed Jan 29 20:46:44 2020 +0000
+> syzbot found the following issue on:
 > 
->     io_uring: fix linked command file table usage
-
-There are several known problems with io_uring_cancel_files() including
-races and hangs. I had some drafts and going to patch it in a week or so.
-
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16db4d3a900000
-> start commit:   9420f1ce Merge tag 'pinctrl-v5.9-1' of git://git.kernel.or..
+> HEAD commit:    449dc8c9 Merge tag 'for-v5.9' of git://git.kernel.org/pub/..
 > git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=15db4d3a900000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11db4d3a900000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=72cf85e4237850c8
-> dashboard link: https://syzkaller.appspot.com/bug?extid=6338dcebf269a590b668
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141dde52900000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b196aa900000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11293dc6900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9d25235bf0162fbc
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ef4b654b49ed7ff049bf
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126b0f1a900000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e32994900000
 > 
-> Reported-by: syzbot+6338dcebf269a590b668@syzkaller.appspotmail.com
-> Fixes: f86cd20c9454 ("io_uring: fix linked command file table usage")
+> The issue was bisected to:
 > 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> commit e62753e4e2926f249d088cc0517be5ed4efec6d6
+> Author: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+> Date:   Sat May 23 04:31:18 2020 +0000
 > 
+>     io_uring: call statx directly
+
+I don't think this one is to blame, it's a generic issue with needing
+to put the file table from the error/fail path.
+
+Something like the below should fix it - if we have the completion
+lock locked, then punt the file table put to a safe context through
+task_work instead. Looks bigger than it is, due to moving some of
+the generic task_work handling functions up a bit.
+
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index f9be665d1c5e..5df805d6251e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1108,10 +1108,16 @@ static void __io_commit_cqring(struct io_ring_ctx *ctx)
+ 	}
+ }
+ 
+-static void io_req_clean_work(struct io_kiocb *req)
++/*
++ * Returns true if we need to defer file table putting. This can only happen
++ * from the error path with REQ_F_COMP_LOCKED set.
++ */
++static bool io_req_clean_work(struct io_kiocb *req)
+ {
+ 	if (!(req->flags & REQ_F_WORK_INITIALIZED))
+-		return;
++		return false;
++
++	req->flags &= ~REQ_F_WORK_INITIALIZED;
+ 
+ 	if (req->work.mm) {
+ 		mmdrop(req->work.mm);
+@@ -1124,6 +1130,9 @@ static void io_req_clean_work(struct io_kiocb *req)
+ 	if (req->work.fs) {
+ 		struct fs_struct *fs = req->work.fs;
+ 
++		if (req->flags & REQ_F_COMP_LOCKED)
++			return true;
++
+ 		spin_lock(&req->work.fs->lock);
+ 		if (--fs->users)
+ 			fs = NULL;
+@@ -1132,7 +1141,8 @@ static void io_req_clean_work(struct io_kiocb *req)
+ 			free_fs_struct(fs);
+ 		req->work.fs = NULL;
+ 	}
+-	req->flags &= ~REQ_F_WORK_INITIALIZED;
++
++	return false;
+ }
+ 
+ static void io_prep_async_work(struct io_kiocb *req)
+@@ -1544,7 +1554,7 @@ static inline void io_put_file(struct io_kiocb *req, struct file *file,
+ 		fput(file);
+ }
+ 
+-static void io_dismantle_req(struct io_kiocb *req)
++static bool io_dismantle_req(struct io_kiocb *req)
+ {
+ 	io_clean_op(req);
+ 
+@@ -1552,7 +1562,6 @@ static void io_dismantle_req(struct io_kiocb *req)
+ 		kfree(req->io);
+ 	if (req->file)
+ 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
+-	io_req_clean_work(req);
+ 
+ 	if (req->flags & REQ_F_INFLIGHT) {
+ 		struct io_ring_ctx *ctx = req->ctx;
+@@ -1564,15 +1573,108 @@ static void io_dismantle_req(struct io_kiocb *req)
+ 			wake_up(&ctx->inflight_wait);
+ 		spin_unlock_irqrestore(&ctx->inflight_lock, flags);
+ 	}
++
++	return io_req_clean_work(req);
+ }
+ 
+-static void __io_free_req(struct io_kiocb *req)
++static void __io_req_task_cancel(struct io_kiocb *req, int error)
+ {
+-	struct io_ring_ctx *ctx;
++	struct io_ring_ctx *ctx = req->ctx;
++
++	spin_lock_irq(&ctx->completion_lock);
++	io_cqring_fill_event(req, error);
++	io_commit_cqring(ctx);
++	spin_unlock_irq(&ctx->completion_lock);
++
++	io_cqring_ev_posted(ctx);
++	req_set_fail_links(req);
++	io_double_put_req(req);
++}
++
++static void io_req_task_cancel(struct callback_head *cb)
++{
++	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
++
++	__io_req_task_cancel(req, -ECANCELED);
++}
++
++static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb)
++{
++	struct task_struct *tsk = req->task;
++	struct io_ring_ctx *ctx = req->ctx;
++	int ret, notify = TWA_RESUME;
++
++	ret = __task_work_add(tsk, cb);
++	if (unlikely(ret))
++		return ret;
++
++	/*
++	 * SQPOLL kernel thread doesn't need notification, just a wakeup.
++	 * For any other work, use signaled wakeups if the task isn't
++	 * running to avoid dependencies between tasks or threads. If
++	 * the issuing task is currently waiting in the kernel on a thread,
++	 * and same thread is waiting for a completion event, then we need
++	 * to ensure that the issuing task processes task_work. TWA_SIGNAL
++	 * is needed for that.
++	 */
++	if (ctx->flags & IORING_SETUP_SQPOLL)
++		notify = 0;
++	else if (READ_ONCE(tsk->state) != TASK_RUNNING)
++		notify = TWA_SIGNAL;
++
++	__task_work_notify(tsk, notify);
++	wake_up_process(tsk);
++	return 0;
++}
++
++static void __io_req_task_submit(struct io_kiocb *req)
++{
++	struct io_ring_ctx *ctx = req->ctx;
++
++	if (!__io_sq_thread_acquire_mm(ctx)) {
++		mutex_lock(&ctx->uring_lock);
++		__io_queue_sqe(req, NULL, NULL);
++		mutex_unlock(&ctx->uring_lock);
++	} else {
++		__io_req_task_cancel(req, -EFAULT);
++	}
++}
++
++static void io_req_task_submit(struct callback_head *cb)
++{
++	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
++
++	__io_req_task_submit(req);
++}
++
++
++static void __io_req_task_queue(struct io_kiocb *req, task_work_func_t func)
++{
++	int ret;
++
++	init_task_work(&req->task_work, func);
++
++	ret = io_req_task_work_add(req, &req->task_work);
++	if (unlikely(ret)) {
++		struct task_struct *tsk;
++
++		init_task_work(&req->task_work, io_req_task_cancel);
++		tsk = io_wq_get_task(req->ctx->io_wq);
++		task_work_add(tsk, &req->task_work, 0);
++		wake_up_process(tsk);
++	}
++}
++
++static void io_req_task_queue(struct io_kiocb *req)
++{
++	__io_req_task_queue(req, io_req_task_submit);
++}
++
++static void __io_free_req_finish(struct io_kiocb *req)
++{
++	struct io_ring_ctx *ctx = req->ctx;
+ 
+-	io_dismantle_req(req);
+ 	__io_put_req_task(req);
+-	ctx = req->ctx;
+ 	if (likely(!io_is_fallback_req(req)))
+ 		kmem_cache_free(req_cachep, req);
+ 	else
+@@ -1580,6 +1682,29 @@ static void __io_free_req(struct io_kiocb *req)
+ 	percpu_ref_put(&ctx->refs);
+ }
+ 
++static void io_req_task_file_table_put(struct callback_head *cb)
++{
++	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
++	struct fs_struct *fs = req->work.fs;
++
++	spin_lock(&req->work.fs->lock);
++	if (--fs->users)
++		fs = NULL;
++	spin_unlock(&req->work.fs->lock);
++	if (fs)
++		free_fs_struct(fs);
++	req->work.fs = NULL;
++	__io_free_req_finish(req);
++}
++
++static void __io_free_req(struct io_kiocb *req)
++{
++	if (!io_dismantle_req(req))
++		__io_free_req_finish(req);
++	else
++		__io_req_task_queue(req, io_req_task_file_table_put);
++}
++
+ static bool io_link_cancel_timeout(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+@@ -1667,6 +1792,7 @@ static void __io_fail_links(struct io_kiocb *req)
+ 		trace_io_uring_fail_link(req, link);
+ 
+ 		io_cqring_fill_event(link, -ECANCELED);
++		link->flags |= REQ_F_COMP_LOCKED;
+ 		__io_double_put_req(link);
+ 		req->flags &= ~REQ_F_LINK_TIMEOUT;
+ 	}
+@@ -1717,93 +1843,6 @@ static struct io_kiocb *io_req_find_next(struct io_kiocb *req)
+ 	return __io_req_find_next(req);
+ }
+ 
+-static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb)
+-{
+-	struct task_struct *tsk = req->task;
+-	struct io_ring_ctx *ctx = req->ctx;
+-	int ret, notify = TWA_RESUME;
+-
+-	ret = __task_work_add(tsk, cb);
+-	if (unlikely(ret))
+-		return ret;
+-
+-	/*
+-	 * SQPOLL kernel thread doesn't need notification, just a wakeup.
+-	 * For any other work, use signaled wakeups if the task isn't
+-	 * running to avoid dependencies between tasks or threads. If
+-	 * the issuing task is currently waiting in the kernel on a thread,
+-	 * and same thread is waiting for a completion event, then we need
+-	 * to ensure that the issuing task processes task_work. TWA_SIGNAL
+-	 * is needed for that.
+-	 */
+-	if (ctx->flags & IORING_SETUP_SQPOLL)
+-		notify = 0;
+-	else if (READ_ONCE(tsk->state) != TASK_RUNNING)
+-		notify = TWA_SIGNAL;
+-
+-	__task_work_notify(tsk, notify);
+-	wake_up_process(tsk);
+-	return 0;
+-}
+-
+-static void __io_req_task_cancel(struct io_kiocb *req, int error)
+-{
+-	struct io_ring_ctx *ctx = req->ctx;
+-
+-	spin_lock_irq(&ctx->completion_lock);
+-	io_cqring_fill_event(req, error);
+-	io_commit_cqring(ctx);
+-	spin_unlock_irq(&ctx->completion_lock);
+-
+-	io_cqring_ev_posted(ctx);
+-	req_set_fail_links(req);
+-	io_double_put_req(req);
+-}
+-
+-static void io_req_task_cancel(struct callback_head *cb)
+-{
+-	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+-
+-	__io_req_task_cancel(req, -ECANCELED);
+-}
+-
+-static void __io_req_task_submit(struct io_kiocb *req)
+-{
+-	struct io_ring_ctx *ctx = req->ctx;
+-
+-	if (!__io_sq_thread_acquire_mm(ctx)) {
+-		mutex_lock(&ctx->uring_lock);
+-		__io_queue_sqe(req, NULL, NULL);
+-		mutex_unlock(&ctx->uring_lock);
+-	} else {
+-		__io_req_task_cancel(req, -EFAULT);
+-	}
+-}
+-
+-static void io_req_task_submit(struct callback_head *cb)
+-{
+-	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+-
+-	__io_req_task_submit(req);
+-}
+-
+-static void io_req_task_queue(struct io_kiocb *req)
+-{
+-	int ret;
+-
+-	init_task_work(&req->task_work, io_req_task_submit);
+-
+-	ret = io_req_task_work_add(req, &req->task_work);
+-	if (unlikely(ret)) {
+-		struct task_struct *tsk;
+-
+-		init_task_work(&req->task_work, io_req_task_cancel);
+-		tsk = io_wq_get_task(req->ctx->io_wq);
+-		task_work_add(tsk, &req->task_work, 0);
+-		wake_up_process(tsk);
+-	}
+-}
+-
+ static void io_queue_next(struct io_kiocb *req)
+ {
+ 	struct io_kiocb *nxt = io_req_find_next(req);
+@@ -1872,7 +1911,7 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req)
+ 		req->flags &= ~REQ_F_TASK_PINNED;
+ 	}
+ 
+-	io_dismantle_req(req);
++	WARN_ON_ONCE(io_dismantle_req(req));
+ 	rb->reqs[rb->to_free++] = req;
+ 	if (unlikely(rb->to_free == ARRAY_SIZE(rb->reqs)))
+ 		__io_req_free_batch_flush(req->ctx, rb);
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

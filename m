@@ -2,39 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3C402409FA
-	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 17:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82157240ABF
+	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 17:46:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbgHJPhZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Aug 2020 11:37:25 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:54365 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728685AbgHJPhT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 11:37:19 -0400
-Received: by mail-il1-f199.google.com with SMTP id a17so8088230ilb.21
-        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 08:37:18 -0700 (PDT)
+        id S1727794AbgHJPq0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Aug 2020 11:46:26 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:36840 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727790AbgHJPqZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 11:46:25 -0400
+Received: by mail-io1-f72.google.com with SMTP id h205so7357340iof.3
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 08:46:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=vgKXH4WJ5mL8jBHkC4QRYXqac1PdnedowUxx7rlEsuM=;
-        b=e4ID7BSLwSbYaVQEONraHXjI+S/EzVcEgWJOW2v/lEAMbafBIyGnrm+f8BkOrlQovt
-         1DQJhig6ffnHXdOheh+VzzQA3xxKDU8Z0QHkSM4BvjaVuycIYs5J1KRKF5IH38Pwl1WZ
-         EPIJaVnvMV3sWnLlPxD45KEncPjjH72ZJmayAiIDW2XVv1tUNV6L7kCGX4tLq4Hq8lQz
-         Lsns4pkP8XdNbHS6eAgreM6xTnwMpFxa/6VFQR+8FV1Wntc/qAueVPPWpSmDdBprhFfI
-         xLXRKJ08tQ+KoHdAB8/0SdERdUh+3FDGMRRdTABpCEiP43RG65JTJOVqRodG1f0nvn9w
-         FjeQ==
-X-Gm-Message-State: AOAM532v5CkbBiUril/kB+KajvLK/uhHdTw9OfqPe7Zq6iLX5vSJR/vB
-        fyzyhEblg3/ToDwcUqK9Y/Du15GL2YdfkKu4VowiFx6tFb04
-X-Google-Smtp-Source: ABdhPJwD0PYJDlH/aA+YionM4F0yS0UeZ+HmBNJlwl9iWQ+7lRzbMHmYr6o24OoWR3/2wrpeUcHk4LmvarRQkZICd8vhhm4wa+T7
+        bh=SHAexMyW7z201Yxw9hnQ8uPlGiip1/BeDLnLE7U9rJo=;
+        b=Tii5Xr5CZhfhWQgYLnYr2WZFjuRLirzPYd+wSX3wDlmsh2srcegiBEmfUeZ0Fl9kN+
+         DlOzub60RIUOn0MACJBLAiYDsD5xfd0xSqwlAipboIJlA+rv+L8LbHjt5OKnumHQQs7Z
+         7G5lFNNeNJHARXRqmJHC2wyfhRMNTsVXGh2R2hrRKYKOjWvi/pNzgaZGKAXJE/3If05e
+         NdVIxpGNXf4x4mXTsJANmSidlv8GKMfp9EhtUJITYRePN1ZZrZPKy37N5ldi4SY+7mF/
+         nx8+Q4cwKmONPvkI+5Y1qxTKmPyHShGG+V/6AvmNq9f6usERB2BeRE/DeUblN04jnBAn
+         nhYw==
+X-Gm-Message-State: AOAM531YXbfwa0FI56iqdJoMTZ8EduoCTMKWCN2iufLzj8IaMmTsTL+t
+        94dcBxI7DMgpzx/ia0jHmtZm6vIiGewVVN5De9u2eUl2vBnP
+X-Google-Smtp-Source: ABdhPJwp+HLP3iQxO3liiiRpmTkJSrG5YWUlMOGePiAkgtJDyFSg+uttF8UMfBG3ecCN/S84Pv15S0aZzzwuNWMJOAckDOjPiSjG
 MIME-Version: 1.0
-X-Received: by 2002:a92:c7ae:: with SMTP id f14mr19137037ilk.39.1597073838340;
- Mon, 10 Aug 2020 08:37:18 -0700 (PDT)
-Date:   Mon, 10 Aug 2020 08:37:18 -0700
+X-Received: by 2002:a92:d9d1:: with SMTP id n17mr17253665ilq.182.1597074385031;
+ Mon, 10 Aug 2020 08:46:25 -0700 (PDT)
+Date:   Mon, 10 Aug 2020 08:46:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d07f9605ac87ba9e@google.com>
-Subject: possible deadlock in io_queue_linked_timeout
-From:   syzbot <syzbot+d4586d3028284ff8a0be@syzkaller.appspotmail.com>
+Message-ID: <00000000000066583105ac87dbf4@google.com>
+Subject: BUG: unable to handle kernel NULL pointer dereference in loop_rw_iter
+From:   syzbot <syzbot+1abbd16e49910f6bbe45@syzkaller.appspotmail.com>
 To:     axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
@@ -48,83 +48,64 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    06a81c1c Merge tag 'arm64-fixes' of git://git.kernel.org/p..
+HEAD commit:    9420f1ce Merge tag 'pinctrl-v5.9-1' of git://git.kernel.or..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13fbac1c900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf68a13f867fd1b4
-dashboard link: https://syzkaller.appspot.com/bug?extid=d4586d3028284ff8a0be
+console output: https://syzkaller.appspot.com/x/log.txt?x=13662f62900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=72cf85e4237850c8
+dashboard link: https://syzkaller.appspot.com/bug?extid=1abbd16e49910f6bbe45
 compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1362024e900000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1672fd34900000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15929006900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15e196aa900000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d4586d3028284ff8a0be@syzkaller.appspotmail.com
+Reported-by: syzbot+1abbd16e49910f6bbe45@syzkaller.appspotmail.com
 
-============================================
-WARNING: possible recursive locking detected
-5.8.0-syzkaller #0 Not tainted
---------------------------------------------
-syz-executor880/6847 is trying to acquire lock:
-ffff8880a19214d8 (&ctx->completion_lock){....}-{2:2}, at: spin_lock_irq include/linux/spinlock.h:379 [inline]
-ffff8880a19214d8 (&ctx->completion_lock){....}-{2:2}, at: io_queue_linked_timeout+0x4c/0x200 fs/io_uring.c:5928
-
-but task is already holding lock:
-ffff8880a19214d8 (&ctx->completion_lock){....}-{2:2}, at: io_cqring_overflow_flush+0x814/0xaa0 fs/io_uring.c:1333
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&ctx->completion_lock);
-  lock(&ctx->completion_lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-1 lock held by syz-executor880/6847:
- #0: ffff8880a19214d8 (&ctx->completion_lock){....}-{2:2}, at: io_cqring_overflow_flush+0x814/0xaa0 fs/io_uring.c:1333
-
-stack backtrace:
-CPU: 1 PID: 6847 Comm: syz-executor880 Not tainted 5.8.0-syzkaller #0
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+#PF: supervisor instruction fetch in kernel mode
+#PF: error_code(0x0010) - not-present page
+PGD a652e067 P4D a652e067 PUD a652f067 PMD 0 
+Oops: 0010 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 7461 Comm: io_wqe_worker-0 Not tainted 5.8.0-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x18f/0x20d lib/dump_stack.c:118
- print_deadlock_bug kernel/locking/lockdep.c:2391 [inline]
- check_deadlock kernel/locking/lockdep.c:2432 [inline]
- validate_chain kernel/locking/lockdep.c:3202 [inline]
- __lock_acquire.cold+0x115/0x396 kernel/locking/lockdep.c:4426
- lock_acquire+0x1f1/0xad0 kernel/locking/lockdep.c:5005
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
- _raw_spin_lock_irq+0x5b/0x80 kernel/locking/spinlock.c:167
- spin_lock_irq include/linux/spinlock.h:379 [inline]
- io_queue_linked_timeout+0x4c/0x200 fs/io_uring.c:5928
- __io_queue_async_work+0x1f8/0x4c0 fs/io_uring.c:1192
- __io_queue_deferred fs/io_uring.c:1237 [inline]
- io_commit_cqring+0x456/0x7a0 fs/io_uring.c:1265
- io_cqring_overflow_flush+0x5b8/0xaa0 fs/io_uring.c:1359
- io_ring_ctx_wait_and_kill+0x30e/0x600 fs/io_uring.c:7808
- io_uring_release+0x3e/0x50 fs/io_uring.c:7829
- __fput+0x285/0x920 fs/file_table.c:281
- task_work_run+0xdd/0x190 kernel/task_work.c:135
- exit_task_work include/linux/task_work.h:25 [inline]
- do_exit+0xb7d/0x29f0 kernel/exit.c:806
- do_group_exit+0x125/0x310 kernel/exit.c:903
- __do_sys_exit_group kernel/exit.c:914 [inline]
- __se_sys_exit_group kernel/exit.c:912 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:912
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43f598
+RIP: 0010:0x0
 Code: Bad RIP value.
-RSP: 002b:00007ffd3a4fbaa8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043f598
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004beda8 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d11a0 R14: 0000000000000000 R15: 0000000000000000
+RSP: 0018:ffffc9000804f910 EFLAGS: 00010246
+RAX: 1ffffffff10b0b9b RBX: dffffc0000000000 RCX: ffff88808962e1c8
+RDX: 000000000000003c RSI: 0000000020000740 RDI: ffff88809fb2dcc0
+RBP: 0000000020000740 R08: ffffc9000804fa28 R09: ffff8880a7639c0f
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffc9000804fa28
+R13: ffffffff88585cc0 R14: 000000000000003c R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 000000008e2a7000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ loop_rw_iter.part.0+0x26e/0x450 fs/io_uring.c:2850
+ loop_rw_iter fs/io_uring.c:2829 [inline]
+ io_write+0x6a2/0x7a0 fs/io_uring.c:3190
+ io_issue_sqe+0x1b0/0x60d0 fs/io_uring.c:5530
+ io_wq_submit_work+0x183/0x3d0 fs/io_uring.c:5775
+ io_worker_handle_work+0xa45/0x13f0 fs/io-wq.c:527
+ io_wqe_worker+0xbf0/0x10e0 fs/io-wq.c:569
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Modules linked in:
+CR2: 0000000000000000
+---[ end trace 97e511c5a98da2fe ]---
+RIP: 0010:0x0
+Code: Bad RIP value.
+RSP: 0018:ffffc9000804f910 EFLAGS: 00010246
+RAX: 1ffffffff10b0b9b RBX: dffffc0000000000 RCX: ffff88808962e1c8
+RDX: 000000000000003c RSI: 0000000020000740 RDI: ffff88809fb2dcc0
+RBP: 0000000020000740 R08: ffffc9000804fa28 R09: ffff8880a7639c0f
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffc9000804fa28
+R13: ffffffff88585cc0 R14: 000000000000003c R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f84c3b15028 CR3: 000000008e2a7000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---

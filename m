@@ -2,60 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B9D724112F
-	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 21:53:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90A0B24117F
+	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 22:12:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbgHJTxQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Aug 2020 15:53:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48588 "EHLO
+        id S1726611AbgHJUMV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Aug 2020 16:12:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728099AbgHJTxQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 15:53:16 -0400
+        with ESMTP id S1726481AbgHJUMV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 16:12:21 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB15CC061756;
-        Mon, 10 Aug 2020 12:53:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBFD4C061756;
+        Mon, 10 Aug 2020 13:12:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=gc8xlQBhhYuNt1vX0skCipVMdjr1NoGLoeS5+nC7osc=; b=nDr7JriQkkNERVl7hb4AmM4bbl
-        X1Y8cncuzP4z16igTnuC1r6Hs4Kd5dd/2JdrOquAQLK9/1/YoGJiF0YEO3mrg30E4U0zsDrokN7oW
-        RQNrMPodoYTszyvJLbXEkbfLserLdp5iUO9F9fzYaAgReLlsYo4LQVm9xxi+4G9Ok8CGQahsM+hB1
-        iC1YyJdKBNP9CdtIGkw4Nrf3ju4X4OE6IHOn5MWc8dybSHxlXFlMF9JqKcq6gHBJ0yRfVGm63x3yw
-        6TOoVVFB+/qLm8VXNqrwT+L484DGtuL1/Only8rTC12vgsa93UGZIw7faPAMqnRMNNL2EJPjCt2SB
-        wHfadXLA==;
+        bh=p+O5toKMk/YnlDlStHbGOELvhO9uaKOaIXKSC93w+JA=; b=rvCUTiFWiBdbSRwfn6/xoZVxJH
+        5cDhXdRfT/ClZqQpzrVg4YAm1veleQXklLyhEy5EsvuECixhD00jBRBPFF3OgEehKeQpMAKwNsjpN
+        S6DsoempqiW6Q0PsMIun0oG1SvUqlzVDjszu1TUI1jvnA3u7pjNCP/iYFndpSOo8sl0bxpOTME/rz
+        /05gqK/v1F2U9ttxfu83f8rI3/aqxEoxKj1yHRUPEO9hz4m807T2PwCdkr6IZUpGcqJhXtQC3oG2K
+        fIdHgekrEPDMr7wkkTW9LQR1LxeCsD+tbTd0SE4DPfyDkKzMOuMBNNs9amZao2lZQJhgwqfQGY41x
+        1yOvGjzA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k5Dr7-0004eb-0m; Mon, 10 Aug 2020 19:53:13 +0000
+        id 1k5E9V-0005v2-OR; Mon, 10 Aug 2020 20:12:17 +0000
 Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A7E419801BE; Mon, 10 Aug 2020 21:53:11 +0200 (CEST)
-Date:   Mon, 10 Aug 2020 21:53:11 +0200
+        id 552D6980D39; Mon, 10 Aug 2020 22:12:13 +0200 (CEST)
+Date:   Mon, 10 Aug 2020 22:12:13 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] kernel: split task_work_add() into two separate
- helpers
-Message-ID: <20200810195311.GA3982@worktop.programming.kicks-ass.net>
+Cc:     io-uring@vger.kernel.org, stable@vger.kernel.org,
+        Josef <josef.grieb@gmail.com>, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 2/2] io_uring: use TWA_SIGNAL for task_work if the task
+ isn't running
+Message-ID: <20200810201213.GB3982@worktop.programming.kicks-ass.net>
 References: <20200808183439.342243-1-axboe@kernel.dk>
- <20200808183439.342243-2-axboe@kernel.dk>
- <20200810113740.GR2674@hirez.programming.kicks-ass.net>
- <ae401501-ede0-eb08-12b7-1d50f6b3eaa5@kernel.dk>
- <a420842b-40af-8e39-591e-ae70d797e241@kernel.dk>
+ <20200808183439.342243-3-axboe@kernel.dk>
+ <20200810114256.GS2674@hirez.programming.kicks-ass.net>
+ <a6ee0a6d-5136-4fe9-8906-04fe6420aad9@kernel.dk>
+ <07df8ab4-16a8-8537-b4fe-5438bd8110cf@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a420842b-40af-8e39-591e-ae70d797e241@kernel.dk>
+In-Reply-To: <07df8ab4-16a8-8537-b4fe-5438bd8110cf@kernel.dk>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Aug 10, 2020 at 11:51:33AM -0600, Jens Axboe wrote:
+On Mon, Aug 10, 2020 at 01:21:48PM -0600, Jens Axboe wrote:
 
-> Added a note of that in the commit message, otherwise the patch is
-> unchanged:
+> >> Wait.. so the only change here is that you look at tsk->state, _after_
+> >> doing __task_work_add(), but nothing, not the Changelog nor the comment
+> >> explains this.
+> >>
+> >> So you're relying on __task_work_add() being an smp_mb() vs the add, and
+> >> you order this against the smp_mb() in set_current_state() ?
+> >>
+> >> This really needs spelling out.
+> > 
+> > I'll update the changelog, it suffers a bit from having been reused from
+> > the earlier versions. Thanks for checking!
 > 
-> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.9&id=67e5aca3cb1bd40de0392fea5a661eae2372d6cc
+> I failed to convince myself that the existing construct was safe, so
+> here's an incremental on top of that. Basically we re-check the task
+> state _after_ the initial notification, to protect ourselves from the
+> case where we initially find the task running, but between that check
+> and when we do the notification, it's now gone to sleep. Should be
+> pretty slim, but I think it's there.
+> 
+> Hence do a loop around it, if we're using TWA_RESUME.
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 44ac103483b6..a4ecb6c7e2b0 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1780,12 +1780,27 @@ static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb)
+>  	 * to ensure that the issuing task processes task_work. TWA_SIGNAL
+>  	 * is needed for that.
+>  	 */
+> -	if (ctx->flags & IORING_SETUP_SQPOLL)
+> +	if (ctx->flags & IORING_SETUP_SQPOLL) {
+>  		notify = 0;
+> -	else if (READ_ONCE(tsk->state) != TASK_RUNNING)
+> -		notify = TWA_SIGNAL;
+> +	} else {
+> +		bool notified = false;
+>  
+> -	__task_work_notify(tsk, notify);
+> +		/*
+> +		 * If the task is running, TWA_RESUME notify is enough. Make
+> +		 * sure to re-check after we've sent the notification, as not
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Could we get a clue as to why TWA_RESUME is enough when it's running? I
+presume it is because we'll do task_work_run() somewhere before we
+block, but having an explicit reference here might help someone new to
+this make sense of it all.
+
+> +		 * to have a race between the check and the notification. This
+> +		 * only applies for TWA_RESUME, as TWA_SIGNAL is safe with a
+> +		 * sleeping task
+> +		 */
+> +		do {
+> +			if (READ_ONCE(tsk->state) != TASK_RUNNING)
+> +				notify = TWA_SIGNAL;
+> +			else if (notified)
+> +				break;
+> +			__task_work_notify(tsk, notify);
+> +			notified = true;
+> +		} while (notify != TWA_SIGNAL);
+> +	}
+>  	wake_up_process(tsk);
+>  	return 0;
+>  }
+
+Would it be clearer to write it like so perhaps?
+
+	/*
+	 * Optimization; when the task is RUNNING we can do with a
+	 * cheaper TWA_RESUME notification because,... <reason goes
+	 * here>. Otherwise do the more expensive, but always correct
+	 * TWA_SIGNAL.
+	 */
+	if (READ_ONCE(tsk->state) == TASK_RUNNING) {
+		__task_work_notify(tsk, TWA_RESUME);
+		if (READ_ONCE(tsk->state) == TASK_RUNNING)
+			return;
+	}
+	__task_work_notify(tsk, TWA_SIGNAL);
+	wake_up_process(tsk);
+
+
+

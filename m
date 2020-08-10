@@ -2,122 +2,153 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4350D2411CC
-	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 22:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A9002411D2
+	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 22:37:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbgHJUgM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Aug 2020 16:36:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55212 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbgHJUgM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 16:36:12 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80DB6C061756
-        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 13:36:11 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id z14so11116371ljm.1
-        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 13:36:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ys0PPIaowDblp47MmQ67XHzGcdkz/IvEj8kEa9cSJOg=;
-        b=uwEeQUTc3SopDhbrB3fAuH9UiFcYvUf6cRMVHU9kvtWacwpPUeE3pVSHTyrfegjiY+
-         Nac9twhqm1E7qgtV6bsnBhrSbtrAMUl0u3o//PXZcsBtiNgIUGjHza4B/WgFx3/ztTc/
-         ZtkQ/xcitw9zu2OzpSvnitFK3tPHGXyHDLhryhbQVccyJ2eb0vQueijOxY6UkHrw+Iy+
-         Wwq4Ot25NIA53P6g1uxV/Qof+n+KVTo9weWTEKzj6BoYL/xGgpyLU84gufAllZVQj+75
-         d/f3jFhdaHu4IAiU18V8wuHD8dl2GXEF0N37zTB/VCTEiWVUORopTrDx9TUSB1X/C53U
-         FgeA==
+        id S1726501AbgHJUhT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Aug 2020 16:37:19 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:55469 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbgHJUhS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 16:37:18 -0400
+Received: by mail-il1-f198.google.com with SMTP id q17so3867926ile.22
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 13:37:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ys0PPIaowDblp47MmQ67XHzGcdkz/IvEj8kEa9cSJOg=;
-        b=VKkbA4c5J7OQBPDZVWmO2z+9tGanhHFaDSwPx0+joByJwKvLGjuci1jUjFIBmqKp7+
-         RrA94XABJ1hjL0GbWxEei8TAupfEYmulpypSb/QnZVSLV1sO0RLuY3A8rafGMcfIwusi
-         tNDM71t+QJXKm8E8HcfL4ZpJDPnmKS2C/IEZhFIu6cmQ12SO7gRhA3ZXIZ0eIASFmhAD
-         UQwCPAVs8Eb+wyvHAs9wrRTqXt6GKP4OZVT3OfC7unnHsw1nX2RmQ8F3Kwa48IlTpAdX
-         r/1xv3M/Vslnc02P86ninHcGBWAzilSVreEeVaOls8ePhVKR8WvlIgujHCNRPG8vixAx
-         vzbw==
-X-Gm-Message-State: AOAM531plQJD35rycI/WXR2N0GDM7qgzt47nuPlBkW3OpEbha3ulqoCz
-        Je7PwFQ5ebym8/+oOzqNbKoKgfuB9Ksw6MHNyTVgLw==
-X-Google-Smtp-Source: ABdhPJw66y9OOJO9r1nbxjPpmNhECAHQcjYEwR3UNwwSknRVVPBmP2V+RXpeIZwyBpxfDC4Vmc9QvF0yBW9pugwF2s4=
-X-Received: by 2002:a2e:302:: with SMTP id 2mr1289664ljd.156.1597091769650;
- Mon, 10 Aug 2020 13:36:09 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=jS1QhIpDWAybN3/rlAubKTo0kERuNQcJeBNxwDNaJb8=;
+        b=WX9qcI1hGV7IKnzlpwZjjl3VI4DKhwrlAFn5Cx4PuXLBOe5tnG/FuDK4cFQSbKXXFU
+         JpAQqRA3jkWR+4cuBw3wwuOJkUVTCT5wkGpnFhrsc4GYXc0QuK2XUwJ6yoXMT63uEy4N
+         8an0ht4gtRnYcwMCTrwXUOHGBHavLTFV4/Tri5KoePl80OWpoZrCxx+EldfZOWm4j0nX
+         42tFEvrS/F/pvMTbD6kEh+7vypRdza/be/6jibpKHX+i4GYAykh7rU6cIkbIbdSR8rw7
+         yeesALgJCC5Veptsk6IhYyrot6iqLNtbPPMVpeufL5T+fVBMvirDpnLoEvjqLp+2C3Xz
+         XnIA==
+X-Gm-Message-State: AOAM531s9r+/IfM9ksgzIpDtdJoGPFJR1r0w8aSYI4nFk5vQMGOM+Le3
+        KaRhFWx7v+C6xp/uTsYuk+htyNOHH983TVPKQ47jLBZ1qNI/
+X-Google-Smtp-Source: ABdhPJyptFFiDVTYZlHIWIwqGQHG79vYSxw25ZonY4cvb285CFWWMwIlkFh+k/k6io3NjMnXY1r0mXFG9AbRdjdLviLJGz9y1bpL
 MIME-Version: 1.0
-References: <20200808183439.342243-1-axboe@kernel.dk> <20200808183439.342243-3-axboe@kernel.dk>
- <20200810114256.GS2674@hirez.programming.kicks-ass.net> <a6ee0a6d-5136-4fe9-8906-04fe6420aad9@kernel.dk>
- <07df8ab4-16a8-8537-b4fe-5438bd8110cf@kernel.dk> <20200810201213.GB3982@worktop.programming.kicks-ass.net>
- <4a8fa719-330f-d380-522f-15d79c74ca9a@kernel.dk> <faf2c2ae-834e-8fa2-12f3-ae07f8a68e14@kernel.dk>
-In-Reply-To: <faf2c2ae-834e-8fa2-12f3-ae07f8a68e14@kernel.dk>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 10 Aug 2020 22:35:41 +0200
-Message-ID: <CAG48ez0+=+Q0tjdFxjbbZbZJNkimYL9Bd5odr0T9oWwty6qgoQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] io_uring: use TWA_SIGNAL for task_work if the task
- isn't running
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Josef <josef.grieb@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
+X-Received: by 2002:a92:d590:: with SMTP id a16mr6513877iln.87.1597091836660;
+ Mon, 10 Aug 2020 13:37:16 -0700 (PDT)
+Date:   Mon, 10 Aug 2020 13:37:16 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000991ae405ac8beb12@google.com>
+Subject: INFO: task can't die in io_uring_flush
+From:   syzbot <syzbot+6d70b15b0d106c3450c5@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Aug 10, 2020 at 10:25 PM Jens Axboe <axboe@kernel.dk> wrote:
-> On 8/10/20 2:13 PM, Jens Axboe wrote:
-> >> Would it be clearer to write it like so perhaps?
-> >>
-> >>      /*
-> >>       * Optimization; when the task is RUNNING we can do with a
-> >>       * cheaper TWA_RESUME notification because,... <reason goes
-> >>       * here>. Otherwise do the more expensive, but always correct
-> >>       * TWA_SIGNAL.
-> >>       */
-> >>      if (READ_ONCE(tsk->state) == TASK_RUNNING) {
-> >>              __task_work_notify(tsk, TWA_RESUME);
-> >>              if (READ_ONCE(tsk->state) == TASK_RUNNING)
-> >>                      return;
-> >>      }
-> >>      __task_work_notify(tsk, TWA_SIGNAL);
-> >>      wake_up_process(tsk);
-> >
-> > Yeah that is easier to read, wasn't a huge fan of the loop since it's
-> > only a single retry kind of condition. I'll adopt this suggestion,
-> > thanks!
->
-> Re-write it a bit on top of that, just turning it into two separate
-> READ_ONCE, and added appropriate comments. For the SQPOLL case, the
-> wake_up_process() is enough, so we can clean up that if/else.
->
-> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.9&id=49bc5c16483945982cf81b0109d7da7cd9ee55ed
+Hello,
 
-I think I'm starting to understand the overall picture here, and I
-think if my understanding is correct, your solution isn't going to
-work properly.
+syzbot found the following issue on:
 
-My understanding of the scenario you're trying to address is:
+HEAD commit:    f80535b9 Add linux-next specific files for 20200810
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11df00d6900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2055bd0d83d5ee16
+dashboard link: https://syzkaller.appspot.com/bug?extid=6d70b15b0d106c3450c5
+compiler:       gcc (GCC) 10.1.0-syz 20200507
 
- - task A starts up io_uring
- - task A tells io_uring to bump the counter of an eventfd E when work
-has been completed
- - task A submits some work ("read a byte from file descriptor X", or
-something like that)
- - io_uring internally starts an asynchronous I/O operation, with a callback C
- - task A calls read(E, &counter, sizeof(counter)) to wait for events
-to be processed
- - the async I/O operation finishes, C is invoked, and C schedules
-task_work for task A
+Unfortunately, I don't have any reproducer for this issue yet.
 
-And here you run into a deadlock, because the task_work will only run
-when task A returns from the syscall, but the syscall will only return
-once the task_work is executing and has finished the I/O operation.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6d70b15b0d106c3450c5@syzkaller.appspotmail.com
+
+INFO: task syz-executor.5:31048 can't die for more than 143 seconds.
+syz-executor.5  D28360 31048   7448 0x00000004
+Call Trace:
+ context_switch kernel/sched/core.c:3778 [inline]
+ __schedule+0x8e5/0x21e0 kernel/sched/core.c:4527
+ schedule+0xd0/0x2a0 kernel/sched/core.c:4602
+ io_uring_cancel_files fs/io_uring.c:7897 [inline]
+ io_uring_flush+0x740/0xa90 fs/io_uring.c:7914
+ filp_close+0xb4/0x170 fs/open.c:1276
+ __close_fd+0x2f/0x50 fs/file.c:671
+ __do_sys_close fs/open.c:1295 [inline]
+ __se_sys_close fs/open.c:1293 [inline]
+ __x64_sys_close+0x69/0x100 fs/open.c:1293
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x416981
+Code: Bad RIP value.
+RSP: 002b:00007ffe164f4ff0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000416981
+RDX: 0000000000000000 RSI: 00000000000010bc RDI: 0000000000000003
+RBP: 0000000000000001 R08: 00000000102b50bc R09: 00000000102b50c0
+R10: 00007ffe164f50e0 R11: 0000000000000293 R12: 0000000001191d50
+R13: 0000000000126257 R14: ffffffffffffffff R15: 000000000118bf2c
+INFO: task syz-executor.5:31048 blocked for more than 143 seconds.
+      Not tainted 5.8.0-next-20200810-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor.5  D28360 31048   7448 0x00000004
+Call Trace:
+ context_switch kernel/sched/core.c:3778 [inline]
+ __schedule+0x8e5/0x21e0 kernel/sched/core.c:4527
+ schedule+0xd0/0x2a0 kernel/sched/core.c:4602
+ io_uring_cancel_files fs/io_uring.c:7897 [inline]
+ io_uring_flush+0x740/0xa90 fs/io_uring.c:7914
+ filp_close+0xb4/0x170 fs/open.c:1276
+ __close_fd+0x2f/0x50 fs/file.c:671
+ __do_sys_close fs/open.c:1295 [inline]
+ __se_sys_close fs/open.c:1293 [inline]
+ __x64_sys_close+0x69/0x100 fs/open.c:1293
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x416981
+Code: Bad RIP value.
+RSP: 002b:00007ffe164f4ff0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000416981
+RDX: 0000000000000000 RSI: 00000000000010bc RDI: 0000000000000003
+RBP: 0000000000000001 R08: 00000000102b50bc R09: 00000000102b50c0
+R10: 00007ffe164f50e0 R11: 0000000000000293 R12: 0000000001191d50
+R13: 0000000000126257 R14: ffffffffffffffff R15: 000000000118bf2c
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/1170:
+ #0: ffffffff89c66c40 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5825
+1 lock held by in:imklog/6542:
+ #0: ffff88809e544630 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:930
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 1170 Comm: khungtaskd Not tainted 5.8.0-next-20200810-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
+ nmi_trigger_cpumask_backtrace+0x1b3/0x223 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
+ watchdog+0xd89/0xf30 kernel/hung_task.c:339
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 6543 Comm: rs:main Q:Reg Not tainted 5.8.0-next-20200810-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0033:0x55c2017dc011
+Code: e7 e8 03 5d fc ff 4c 89 e7 48 89 c5 e8 d8 5c fc ff 48 63 54 24 2c 4c 63 e0 89 44 24 1c 48 89 d8 4c 01 e0 48 01 d0 80 7d 00 20 <41> 0f 95 c5 4d 8d 6c 05 13 41 8b 47 08 49 39 c5 72 13 4c 89 ee 4c
+RSP: 002b:00007faa8110e810 EFLAGS: 00000202
+RAX: 0000000000000032 RBX: 0000000000000009 RCX: 0000000000000000
+RDX: 0000000000000007 RSI: 00007faa8110e840 RDI: 00007faa7401fb70
+RBP: 00007faa7401fcb0 R08: 0000000000000000 R09: 0000000000000000
+R10: 000055c201a19280 R11: 0000000000000000 R12: 0000000000000022
+R13: 0000000000000000 R14: 00007faa7401fd68 R15: 00007faa78019c00
+FS:  00007faa8110f700 GS:  0000000000000000
 
 
-If that is the scenario you're trying to solve here (where you're
-trying to force a task that's in the middle of some syscall that's
-completely unrelated to io_uring to return back to syscall context), I
-don't think this will work: It might well be that the task has e.g.
-just started entering the read() syscall, and is *about to* block, but
-is currently still running.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.

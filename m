@@ -2,118 +2,192 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 82157240ABF
-	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 17:46:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD6C9240ADA
+	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 17:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbgHJPq0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Aug 2020 11:46:26 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:36840 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727790AbgHJPqZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 11:46:25 -0400
-Received: by mail-io1-f72.google.com with SMTP id h205so7357340iof.3
-        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 08:46:25 -0700 (PDT)
+        id S1727028AbgHJPzV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Aug 2020 11:55:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40396 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbgHJPzU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 11:55:20 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52826C061787
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 08:55:20 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id z20so5130256plo.6
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 08:55:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=zhOM5a+db+03fu+9y+KxnwpweHHDcuys502DsmoxXhA=;
+        b=RvBExdkmAnkEgOU6Nk2vKZAwFQtYELi1S05QGaY2btfkBADpiYjpkJ7NP5nf0OsOa4
+         UQM/FJqfeF+8Wa8px8VUNM1HFR1xfquXIGgc1HGYIeCGWPzy35fia4JArsDV98K8vu7D
+         LvpzHFUSJ3Cr3ZdwkymRADgiY2ZI2BLDxjcMsR9UJ+Up6xwwNzh+c1qUWauE/l9KM6u6
+         LYAS2XW1wns6e7aSBI4M5yjsgixUuRivdxtxmhuxm6MqnbTcc5m0Mzm1a5QbabZgBcdV
+         vm5N9gAjWyyepf7xoba8s/OH/wop7ELxgVk/cVuJOgVVHkP7qbu0XeOPDd+pLnmo42xP
+         udRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=SHAexMyW7z201Yxw9hnQ8uPlGiip1/BeDLnLE7U9rJo=;
-        b=Tii5Xr5CZhfhWQgYLnYr2WZFjuRLirzPYd+wSX3wDlmsh2srcegiBEmfUeZ0Fl9kN+
-         DlOzub60RIUOn0MACJBLAiYDsD5xfd0xSqwlAipboIJlA+rv+L8LbHjt5OKnumHQQs7Z
-         7G5lFNNeNJHARXRqmJHC2wyfhRMNTsVXGh2R2hrRKYKOjWvi/pNzgaZGKAXJE/3If05e
-         NdVIxpGNXf4x4mXTsJANmSidlv8GKMfp9EhtUJITYRePN1ZZrZPKy37N5ldi4SY+7mF/
-         nx8+Q4cwKmONPvkI+5Y1qxTKmPyHShGG+V/6AvmNq9f6usERB2BeRE/DeUblN04jnBAn
-         nhYw==
-X-Gm-Message-State: AOAM531YXbfwa0FI56iqdJoMTZ8EduoCTMKWCN2iufLzj8IaMmTsTL+t
-        94dcBxI7DMgpzx/ia0jHmtZm6vIiGewVVN5De9u2eUl2vBnP
-X-Google-Smtp-Source: ABdhPJwp+HLP3iQxO3liiiRpmTkJSrG5YWUlMOGePiAkgtJDyFSg+uttF8UMfBG3ecCN/S84Pv15S0aZzzwuNWMJOAckDOjPiSjG
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zhOM5a+db+03fu+9y+KxnwpweHHDcuys502DsmoxXhA=;
+        b=EaWVmtyZrVxG0FHV8WyZFaWXeMCObf7EeCF3BBjPtamjau8ZvBcD0bASxc4/V15SLJ
+         CXEdGYnOuh1NS477YO2WXEswSA8eO74DdWwDSIth0o2ZbkiHc1PdqmozGSsyKZ0frxfZ
+         d9vMSg1jorNpgLK8q5VMk+ua1NH+Z2McmUCOZy6npeP/SzQ1O2W/3nhQ+y+1bPCZ6ZYa
+         nSKGCX3FsLN6em+KMus2wp2jJxF7kzBPmzB55qmo1jQrczQ+L6jci2EU3cH/uvjSW8nx
+         lg1Hg5ayAaRi+qyUwDdirx/kJBa5/9NqQ/ad5m/UrLKkABRe/tbdsHuF9PmCWf1fQbgs
+         8atA==
+X-Gm-Message-State: AOAM532sGeWLJ92p8HRU6sZCHsvsTkwGpUpHUtro5JQaha2VeMth1i/B
+        7UfgYxAoei5dDhpL5FKKoSde/VQVljk=
+X-Google-Smtp-Source: ABdhPJzS8pMd0LP91YQq4K7gL3JBidwfv5SgjeMK+Al5ZyYEWz94BQMEK2mULY/PgMZVaibUFKaGZQ==
+X-Received: by 2002:a17:90a:4e42:: with SMTP id t2mr8373707pjl.121.1597074919593;
+        Mon, 10 Aug 2020 08:55:19 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id x22sm22145374pfn.41.2020.08.10.08.55.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Aug 2020 08:55:19 -0700 (PDT)
+Subject: Re: possible deadlock in __io_queue_deferred
+To:     syzbot <syzbot+996f91b6ec3812c48042@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <00000000000035fdf505ac87b7f9@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <76cc7c43-2ebb-180d-c2c8-912972a3f258@kernel.dk>
+Date:   Mon, 10 Aug 2020 09:55:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:d9d1:: with SMTP id n17mr17253665ilq.182.1597074385031;
- Mon, 10 Aug 2020 08:46:25 -0700 (PDT)
-Date:   Mon, 10 Aug 2020 08:46:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000066583105ac87dbf4@google.com>
-Subject: BUG: unable to handle kernel NULL pointer dereference in loop_rw_iter
-From:   syzbot <syzbot+1abbd16e49910f6bbe45@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <00000000000035fdf505ac87b7f9@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 8/10/20 9:36 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    449dc8c9 Merge tag 'for-v5.9' of git://git.kernel.org/pub/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14d41e02900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9d25235bf0162fbc
+> dashboard link: https://syzkaller.appspot.com/bug?extid=996f91b6ec3812c48042
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133c9006900000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1191cb1a900000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+996f91b6ec3812c48042@syzkaller.appspotmail.com
 
-syzbot found the following issue on:
-
-HEAD commit:    9420f1ce Merge tag 'pinctrl-v5.9-1' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13662f62900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=72cf85e4237850c8
-dashboard link: https://syzkaller.appspot.com/bug?extid=1abbd16e49910f6bbe45
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15929006900000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15e196aa900000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1abbd16e49910f6bbe45@syzkaller.appspotmail.com
-
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD a652e067 P4D a652e067 PUD a652f067 PMD 0 
-Oops: 0010 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 7461 Comm: io_wqe_worker-0 Not tainted 5.8.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:0x0
-Code: Bad RIP value.
-RSP: 0018:ffffc9000804f910 EFLAGS: 00010246
-RAX: 1ffffffff10b0b9b RBX: dffffc0000000000 RCX: ffff88808962e1c8
-RDX: 000000000000003c RSI: 0000000020000740 RDI: ffff88809fb2dcc0
-RBP: 0000000020000740 R08: ffffc9000804fa28 R09: ffff8880a7639c0f
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffc9000804fa28
-R13: ffffffff88585cc0 R14: 000000000000003c R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 000000008e2a7000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- loop_rw_iter.part.0+0x26e/0x450 fs/io_uring.c:2850
- loop_rw_iter fs/io_uring.c:2829 [inline]
- io_write+0x6a2/0x7a0 fs/io_uring.c:3190
- io_issue_sqe+0x1b0/0x60d0 fs/io_uring.c:5530
- io_wq_submit_work+0x183/0x3d0 fs/io_uring.c:5775
- io_worker_handle_work+0xa45/0x13f0 fs/io-wq.c:527
- io_wqe_worker+0xbf0/0x10e0 fs/io-wq.c:569
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-Modules linked in:
-CR2: 0000000000000000
----[ end trace 97e511c5a98da2fe ]---
-RIP: 0010:0x0
-Code: Bad RIP value.
-RSP: 0018:ffffc9000804f910 EFLAGS: 00010246
-RAX: 1ffffffff10b0b9b RBX: dffffc0000000000 RCX: ffff88808962e1c8
-RDX: 000000000000003c RSI: 0000000020000740 RDI: ffff88809fb2dcc0
-RBP: 0000000020000740 R08: ffffc9000804fa28 R09: ffff8880a7639c0f
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffc9000804fa28
-R13: ffffffff88585cc0 R14: 000000000000003c R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f84c3b15028 CR3: 000000008e2a7000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Thanks, the below should fix this one.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 443eecdfeda9..f9be665d1c5e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -898,6 +898,7 @@ static void io_put_req(struct io_kiocb *req);
+ static void io_double_put_req(struct io_kiocb *req);
+ static void __io_double_put_req(struct io_kiocb *req);
+ static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req);
++static void __io_queue_linked_timeout(struct io_kiocb *req);
+ static void io_queue_linked_timeout(struct io_kiocb *req);
+ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 				 struct io_uring_files_update *ip,
+@@ -1179,7 +1180,7 @@ static void io_prep_async_link(struct io_kiocb *req)
+ 			io_prep_async_work(cur);
+ }
+ 
+-static void __io_queue_async_work(struct io_kiocb *req)
++static struct io_kiocb *__io_queue_async_work(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_kiocb *link = io_prep_linked_timeout(req);
+@@ -1187,16 +1188,19 @@ static void __io_queue_async_work(struct io_kiocb *req)
+ 	trace_io_uring_queue_async_work(ctx, io_wq_is_hashed(&req->work), req,
+ 					&req->work, req->flags);
+ 	io_wq_enqueue(ctx->io_wq, &req->work);
+-
+-	if (link)
+-		io_queue_linked_timeout(link);
++	return link;
+ }
+ 
+ static void io_queue_async_work(struct io_kiocb *req)
+ {
++	struct io_kiocb *link;
++
+ 	/* init ->work of the whole link before punting */
+ 	io_prep_async_link(req);
+-	__io_queue_async_work(req);
++	link = __io_queue_async_work(req);
++
++	if (link)
++		io_queue_linked_timeout(link);
+ }
+ 
+ static void io_kill_timeout(struct io_kiocb *req)
+@@ -1229,12 +1233,19 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
+ 	do {
+ 		struct io_defer_entry *de = list_first_entry(&ctx->defer_list,
+ 						struct io_defer_entry, list);
++		struct io_kiocb *link;
+ 
+ 		if (req_need_defer(de->req, de->seq))
+ 			break;
+ 		list_del_init(&de->list);
+ 		/* punt-init is done before queueing for defer */
+-		__io_queue_async_work(de->req);
++		link = __io_queue_async_work(de->req);
++		if (link) {
++			__io_queue_linked_timeout(link);
++			/* drop submission reference */
++			link->flags |= REQ_F_COMP_LOCKED;
++			io_put_req(link);
++		}
+ 		kfree(de);
+ 	} while (!list_empty(&ctx->defer_list));
+ }
+@@ -5945,15 +5956,12 @@ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
+ 	return HRTIMER_NORESTART;
+ }
+ 
+-static void io_queue_linked_timeout(struct io_kiocb *req)
++static void __io_queue_linked_timeout(struct io_kiocb *req)
+ {
+-	struct io_ring_ctx *ctx = req->ctx;
+-
+ 	/*
+ 	 * If the list is now empty, then our linked request finished before
+ 	 * we got a chance to setup the timer
+ 	 */
+-	spin_lock_irq(&ctx->completion_lock);
+ 	if (!list_empty(&req->link_list)) {
+ 		struct io_timeout_data *data = &req->io->timeout;
+ 
+@@ -5961,6 +5969,14 @@ static void io_queue_linked_timeout(struct io_kiocb *req)
+ 		hrtimer_start(&data->timer, timespec64_to_ktime(data->ts),
+ 				data->mode);
+ 	}
++}
++
++static void io_queue_linked_timeout(struct io_kiocb *req)
++{
++	struct io_ring_ctx *ctx = req->ctx;
++
++	spin_lock_irq(&ctx->completion_lock);
++	__io_queue_linked_timeout(req);
+ 	spin_unlock_irq(&ctx->completion_lock);
+ 
+ 	/* drop submission reference */
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Jens Axboe
+

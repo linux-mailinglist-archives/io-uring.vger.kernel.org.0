@@ -2,54 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EDB4241194
-	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 22:16:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE0672411AD
+	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 22:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbgHJUQk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Aug 2020 16:16:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52216 "EHLO
+        id S1726633AbgHJUZw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Aug 2020 16:25:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbgHJUQj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 16:16:39 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFF08C061756
-        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 13:16:39 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id t10so5660953plz.10
-        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 13:16:39 -0700 (PDT)
+        with ESMTP id S1726629AbgHJUZv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 16:25:51 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D74F2C061787
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 13:25:51 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id f10so5677670plj.8
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 13:25:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0arKLvml0m+DT+Vh3G9XF/qsgSjLN36L2lo966JcA2k=;
-        b=uO92z1Cc+VMQDCMVrvmfaWD+1TgmM2ebbClnJ1HM5ZHIdUyYzDr+DbBj2T3/t4tscT
-         zkE5IiSaS85RcoFxmlrCgi0cjT+556JTQ1eEsWiGkN5JiQ4xHUa4rCXGkoGDiT9fQt61
-         Yom3fdpmHVnrZkCPHC4/+MYGEdE2/E4cDrSn2wGLXfXlHvolT6hsQinFOx9yJ8zP7omq
-         qVHVYK++775Tx5Geqo/njAy9b8FunD2D2l3Qt9c8EcjWGkeVQznEhkBHfN/u15TQJg/r
-         OC5qxrEFCQtxxQSvtOFh+i4WZ+gYWiK83Epb25LgI5jnjJ7DLGv7aBG5nLcm8oDv7VlL
-         i3OA==
+        bh=RRLcm95D7HwMHaQnVWovL6Jt789Auw0R/IxjYUIgfDI=;
+        b=jIn+6dVX0w6H1UkPp5bq5zh8cKwk6cgHdlGreLxuRjrDnHNacJ3LPEa29/bA4Xsbt4
+         n7rZd7hq9bDILOditfdn9ZyW6YNUqf8SPUoS1k+4mIozPv6ZwSkzxDHgaxzc8Dvp5OIk
+         KtJmXANS/zNbdksrYadq3n/gm8o0rxMvc6KL0yxdWp6K8Bd7FPTlJl2Ku4ao40vBqg6E
+         kJs1BTpGD8V5uQfEtShDsSjYYVeqU+jhxHFhG/XqYTIXkk7DBffhPxXKo1zkJlJokM7y
+         Sz8WTaLQuKi34Ix8E4NCGfThA166KSwN6nFDSe3FYNn7m6+wlB2O6yRGRz6KuCawLjlh
+         eV1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=0arKLvml0m+DT+Vh3G9XF/qsgSjLN36L2lo966JcA2k=;
-        b=SWCez8a7zsygPgX57ovZvvzE2IMriGrwgbHY6lwAPc4AAfm0cIjphv09CB3zggq+xW
-         4T0le6iNpK1taLJzs7BcRTFIXTuO7gq9yRrbasQXpS7V3SI+zPWkhV18xJ6Uy5UUmruj
-         smW/jRxO/cNfVaIZCgXz/24u/VNlmTJVT2W3GHl5b7DsK1u+n5wVhLqJtnBtjFhA1Za0
-         XpZNQ0nQCko977Oc207CeYqZUJoW7zKpWjlPiJYHJ5cYtA+SadT2jKZeW29j2sM44Esf
-         mgrpbeaUON8APzIwFH5RQFtbRkU0dn2xuYK/noiW/4s73FC23N9bd6BhYaS0gtQo1v1m
-         edpQ==
-X-Gm-Message-State: AOAM532GinPTpg9fpykYMwlzdKVSThRHfSUElmn24I+5ip/DeDxLU4E0
-        2u/ChFMbw0K8QzJwy6Uxml3+4A==
-X-Google-Smtp-Source: ABdhPJzOTmqu/HeKYrR9DpvzQvZNZ88Rw6YZayzvUt3wOSIB/AII0XpqnRR2CW8QH7+4Zr3XgU9QHw==
-X-Received: by 2002:a17:902:a418:: with SMTP id p24mr26748875plq.55.1597090599428;
-        Mon, 10 Aug 2020 13:16:39 -0700 (PDT)
+        bh=RRLcm95D7HwMHaQnVWovL6Jt789Auw0R/IxjYUIgfDI=;
+        b=sEUTRzkVzTg1ZLfjYTE7rDLC814PoPRRDsl+v0gFb22ovMXX/a0dL3p8lIIGYWUxze
+         YxVaz5/Ida1ZXCG83m8o6HMAbBq9w+Uj0x1SeNPOxavEdJR2ZjHkfUkR9qeNQ06VPV2t
+         TWJ9pE33QYwGcd4WeBgD1ndrOgPsmg9JFMfsp5oDmRlzXmKDFDvjnHS4QA/iXabG5KS6
+         O8CCpK1//3az1eY0VipIW7nzPIpA4ZDSZFzRpBYiLYvEuy8aiWm/quPH2Qa1NcaD3HIy
+         SuUaK/lPMTJ3kUxhEKngKThn4p3DBSanrFhzQQIlihjQjuVeO6si2n8je2a1vqPAsiP/
+         5kpw==
+X-Gm-Message-State: AOAM533hCEAyJ/47t2JnOIPB/SJ3InVYVKg6HH3Z9fmvCkVTvxHj94CX
+        o/uVo6hcg+cZge5qJLLDWYMmEQ==
+X-Google-Smtp-Source: ABdhPJzNkt4Nzse2R+VrHUxk9eshJpjIXsfDLUFSztzOeH4EaCdRt7ZtsITBM2udJ2RqyRVPhbr/Nw==
+X-Received: by 2002:a17:90a:1a02:: with SMTP id 2mr973622pjk.95.1597091151271;
+        Mon, 10 Aug 2020 13:25:51 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id y29sm22981976pfr.11.2020.08.10.13.16.38
+        by smtp.gmail.com with ESMTPSA id e20sm375038pjr.28.2020.08.10.13.25.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Aug 2020 13:16:38 -0700 (PDT)
+        Mon, 10 Aug 2020 13:25:50 -0700 (PDT)
 Subject: Re: [PATCH 2/2] io_uring: use TWA_SIGNAL for task_work if the task
  isn't running
+From:   Jens Axboe <axboe@kernel.dk>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     io-uring@vger.kernel.org, stable@vger.kernel.org,
         Josef <josef.grieb@gmail.com>, Oleg Nesterov <oleg@redhat.com>
@@ -59,13 +60,13 @@ References: <20200808183439.342243-1-axboe@kernel.dk>
  <a6ee0a6d-5136-4fe9-8906-04fe6420aad9@kernel.dk>
  <07df8ab4-16a8-8537-b4fe-5438bd8110cf@kernel.dk>
  <20200810201213.GB3982@worktop.programming.kicks-ass.net>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1b2d9682-b53c-2e28-4b74-81039ac3a6bc@kernel.dk>
-Date:   Mon, 10 Aug 2020 14:16:37 -0600
+ <4a8fa719-330f-d380-522f-15d79c74ca9a@kernel.dk>
+Message-ID: <faf2c2ae-834e-8fa2-12f3-ae07f8a68e14@kernel.dk>
+Date:   Mon, 10 Aug 2020 14:25:48 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200810201213.GB3982@worktop.programming.kicks-ass.net>
+In-Reply-To: <4a8fa719-330f-d380-522f-15d79c74ca9a@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,58 +75,32 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/10/20 2:12 PM, Peter Zijlstra wrote:
-> On Mon, Aug 10, 2020 at 01:21:48PM -0600, Jens Axboe wrote:
+On 8/10/20 2:13 PM, Jens Axboe wrote:
+>> Would it be clearer to write it like so perhaps?
+>>
+>> 	/*
+>> 	 * Optimization; when the task is RUNNING we can do with a
+>> 	 * cheaper TWA_RESUME notification because,... <reason goes
+>> 	 * here>. Otherwise do the more expensive, but always correct
+>> 	 * TWA_SIGNAL.
+>> 	 */
+>> 	if (READ_ONCE(tsk->state) == TASK_RUNNING) {
+>> 		__task_work_notify(tsk, TWA_RESUME);
+>> 		if (READ_ONCE(tsk->state) == TASK_RUNNING)
+>> 			return;
+>> 	}
+>> 	__task_work_notify(tsk, TWA_SIGNAL);
+>> 	wake_up_process(tsk);
 > 
->>>> Wait.. so the only change here is that you look at tsk->state, _after_
->>>> doing __task_work_add(), but nothing, not the Changelog nor the comment
->>>> explains this.
->>>>
->>>> So you're relying on __task_work_add() being an smp_mb() vs the add, and
->>>> you order this against the smp_mb() in set_current_state() ?
->>>>
->>>> This really needs spelling out.
->>>
->>> I'll update the changelog, it suffers a bit from having been reused from
->>> the earlier versions. Thanks for checking!
->>
->> I failed to convince myself that the existing construct was safe, so
->> here's an incremental on top of that. Basically we re-check the task
->> state _after_ the initial notification, to protect ourselves from the
->> case where we initially find the task running, but between that check
->> and when we do the notification, it's now gone to sleep. Should be
->> pretty slim, but I think it's there.
->>
->> Hence do a loop around it, if we're using TWA_RESUME.
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 44ac103483b6..a4ecb6c7e2b0 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -1780,12 +1780,27 @@ static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb)
->>  	 * to ensure that the issuing task processes task_work. TWA_SIGNAL
->>  	 * is needed for that.
->>  	 */
->> -	if (ctx->flags & IORING_SETUP_SQPOLL)
->> +	if (ctx->flags & IORING_SETUP_SQPOLL) {
->>  		notify = 0;
->> -	else if (READ_ONCE(tsk->state) != TASK_RUNNING)
->> -		notify = TWA_SIGNAL;
->> +	} else {
->> +		bool notified = false;
->>  
->> -	__task_work_notify(tsk, notify);
->> +		/*
->> +		 * If the task is running, TWA_RESUME notify is enough. Make
->> +		 * sure to re-check after we've sent the notification, as not
-> 
-> Could we get a clue as to why TWA_RESUME is enough when it's running? I
-> presume it is because we'll do task_work_run() somewhere before we
-> block, but having an explicit reference here might help someone new to
-> this make sense of it all.
+> Yeah that is easier to read, wasn't a huge fan of the loop since it's
+> only a single retry kind of condition. I'll adopt this suggestion,
+> thanks!
 
-Right, it's because we're sure to run task_work in that case. I'll
-update the comment.
+Re-write it a bit on top of that, just turning it into two separate
+READ_ONCE, and added appropriate comments. For the SQPOLL case, the
+wake_up_process() is enough, so we can clean up that if/else.
+
+https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.9&id=49bc5c16483945982cf81b0109d7da7cd9ee55ed
 
 -- 
 Jens Axboe

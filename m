@@ -2,121 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF8F024056B
-	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 13:43:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FE4C2405B3
+	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 14:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbgHJLnC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Aug 2020 07:43:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58072 "EHLO
+        id S1726766AbgHJMTt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Aug 2020 08:19:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbgHJLnB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 07:43:01 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A231C061756;
-        Mon, 10 Aug 2020 04:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=rUV8TXBIF69VSVuOkNWllqKBBv485GNQxeZ0WslsuZ8=; b=BdG9w4gzRBOt0kOfkwBh8eN1lc
-        Edl/E9w5HnGanLdGs1iPbmWqMD7K4OBdBrq4HuQn3+PCMAI0NJoZuHAny3xzlNgmpkl8df4AykuOk
-        PggZEZnx800pQNGzKRsCfSkqAwljfFW+VOy/5afvknkEvSyzqaRq5m09t1u1OykVn+jEM4uOBdLbH
-        h0vD6yDoalhD1c4WCXi1mbyqg+XkPa44l/JA3d5zx1zzRQVZztf0UYHlylEbVYrHhwIXW2qocmLRg
-        cB6swyEDDFTW+nl07poOPQxjcugzBeeEIx0Vh5FTYKSfVu0W5yC6on3QbiAYEHTSADkQ0q4ofAay3
-        bomoP3hw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k56Cf-0005Ca-Ru; Mon, 10 Aug 2020 11:42:58 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 71D35300DAE;
-        Mon, 10 Aug 2020 13:42:56 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5506823D39366; Mon, 10 Aug 2020 13:42:56 +0200 (CEST)
-Date:   Mon, 10 Aug 2020 13:42:56 +0200
-From:   peterz@infradead.org
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, stable@vger.kernel.org,
-        Josef <josef.grieb@gmail.com>
-Subject: Re: [PATCH 2/2] io_uring: use TWA_SIGNAL for task_work if the task
- isn't running
-Message-ID: <20200810114256.GS2674@hirez.programming.kicks-ass.net>
-References: <20200808183439.342243-1-axboe@kernel.dk>
- <20200808183439.342243-3-axboe@kernel.dk>
+        with ESMTP id S1726645AbgHJMTt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 08:19:49 -0400
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F381FC061756
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 05:19:48 -0700 (PDT)
+Received: by mail-vs1-xe35.google.com with SMTP id a1so4085096vsp.4
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 05:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=Duxa+mmNF3T3C2WDKsmzowR2OzvdY892XFjTPp0RWRI=;
+        b=RgXxDPyymH17aXc59iEgstnLzsdIabjezhH0Fb8wKDQR0rWEM1EfDiS67nN68t7c+t
+         X93W4QArIykjEOstGXCBMcpBIDhM5EXhsEu1HS3seycoibLibOC0pNXUfMsP0/1efaI5
+         j7bEFdFpSkBWJ04aIOzAkcxvDF6yTkDNTH4+bEb4Peb4mccJ+b+IqyJtArgcq36oDGvP
+         ZzOakURDyBeNiti4O69pVl11ZmhlI2lj00+AqQFrpefk4HIVhxAkVF4u8RqHmwiHZRWu
+         gjokICzPmKU6fjZ5CPhNguszXC8s68Nz0f8CsrepBYM+e6Ha8LkGyfMDYvGdM/81dObT
+         tS4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=Duxa+mmNF3T3C2WDKsmzowR2OzvdY892XFjTPp0RWRI=;
+        b=CYadCyc4fLff04pKbJTDCI285Bqg6iKqdfnqo0k42SAle4LKpioPXqNZXq7gLomB67
+         1m9xIoe7PK+71n0IFOyVDVezKjwjzUm7QFsXQt75Ep9uQtBgGG2SFlIBTi1TWT6m0S0E
+         qe1gNlRuf4AEWHzt27mlY95wXrR5Tt3tjz1TjS722eJMSTijeph88F1RsWuHyiYMBJot
+         Os1xWBZ0yMiU3MulBuYhv1G6jlbFXV9yRmUfgYMPxy3sTe9g4Yimt9e3xBzU+tLPkpiY
+         PwJfarooRUEyIXIV7VofCcMTFzVsFYiPuuyYe2uHeoC13aiHbD2P3g8ECspYxDnF+Ehr
+         SaXw==
+X-Gm-Message-State: AOAM531a1Vkznwe7mtARbh34t/Dkguya9wHie6pUrWEPB9abTGuIidcD
+        81RU/yTXVosm6sap27EW7uarHsG0IeYNxnJPr/o=
+X-Google-Smtp-Source: ABdhPJzJ1RbTgnSu+Ihlxo0IbIJN2AKOH1qUKmPxSZdTBGMV1K1jsuP4B6PoIcbjA5uA1cvkrHz+q6YOyz2GxDSysKs=
+X-Received: by 2002:a05:6102:85:: with SMTP id t5mr19756644vsp.1.1597061985978;
+ Mon, 10 Aug 2020 05:19:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200808183439.342243-3-axboe@kernel.dk>
+Received: by 2002:ab0:234f:0:0:0:0:0 with HTTP; Mon, 10 Aug 2020 05:19:44
+ -0700 (PDT)
+Reply-To: sctnld11170@tlen.pl
+From:   "Mr. Scott Donald" <mes64543@gmail.com>
+Date:   Mon, 10 Aug 2020 05:19:44 -0700
+Message-ID: <CAF4hjb-uX0R8cmUr9OhtErtq3x1eQbR_NKvsRQAF5xiR5OrgEA@mail.gmail.com>
+Subject: Hello. Please
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Aug 08, 2020 at 12:34:39PM -0600, Jens Axboe wrote:
-> An earlier commit:
-> 
-> b7db41c9e03b ("io_uring: fix regression with always ignoring signals in io_cqring_wait()")
-> 
-> ensured that we didn't get stuck waiting for eventfd reads when it's
-> registered with the io_uring ring for event notification, but we still
-> have a gap where the task can be waiting on other events in the kernel
-> and need a bigger nudge to make forward progress.
-> 
-> Ensure that we use signaled notifications for a task that isn't currently
-> running, to be certain the work is seen and processed immediately.
-> 
-> Cc: stable@vger.kernel.org # v5.7+
-> Reported-by: Josef <josef.grieb@gmail.com>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/io_uring.c | 22 ++++++++++++++--------
->  1 file changed, 14 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index e9b27cdaa735..443eecdfeda9 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1712,21 +1712,27 @@ static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb)
->  	struct io_ring_ctx *ctx = req->ctx;
->  	int ret, notify = TWA_RESUME;
->  
-> +	ret = __task_work_add(tsk, cb);
-> +	if (unlikely(ret))
-> +		return ret;
-> +
->  	/*
->  	 * SQPOLL kernel thread doesn't need notification, just a wakeup.
-> -	 * If we're not using an eventfd, then TWA_RESUME is always fine,
-> -	 * as we won't have dependencies between request completions for
-> -	 * other kernel wait conditions.
-> +	 * For any other work, use signaled wakeups if the task isn't
-> +	 * running to avoid dependencies between tasks or threads. If
-> +	 * the issuing task is currently waiting in the kernel on a thread,
-> +	 * and same thread is waiting for a completion event, then we need
-> +	 * to ensure that the issuing task processes task_work. TWA_SIGNAL
-> +	 * is needed for that.
->  	 */
->  	if (ctx->flags & IORING_SETUP_SQPOLL)
->  		notify = 0;
-> -	else if (ctx->cq_ev_fd)
-> +	else if (READ_ONCE(tsk->state) != TASK_RUNNING)
->  		notify = TWA_SIGNAL;
->  
-> -	ret = task_work_add(tsk, cb, notify);
-> -	if (!ret)
-> -		wake_up_process(tsk);
-> -	return ret;
-> +	__task_work_notify(tsk, notify);
-> +	wake_up_process(tsk);
-> +	return 0;
->  }
+--=20
+Dear Friend,
 
-Wait.. so the only change here is that you look at tsk->state, _after_
-doing __task_work_add(), but nothing, not the Changelog nor the comment
-explains this.
+I'm Mr. Scott Donald a Successful businessMan dealing with
+Exportation, I got your mail contact through search to let you know my
+intension and my Ugly Situation Am a dying Man here in Los Angeles
+California Hospital Bed in (USA), I Lost my Wife and my only Daughter
+for Covid-19 and I also have a problem in my Health and I can die
+anytime I Know,
 
-So you're relying on __task_work_add() being an smp_mb() vs the add, and
-you order this against the smp_mb() in set_current_state() ?
+I have a project that I am about to hand over to you. and I already
+instructed the Bankia S.A. Madrid, Spain(BSA) to transfer my fund sum
+of =C2=A33,7M GBP. Equivalent to =E2=82=AC4,077,033.91 EUR, to you as to en=
+able you
+to give 50% of this fund to Charitable Home in your State and take 50%
+don't think otherwise and why would anybody send someone you barely
+know to help you deliver a message, help me do this for the happiness
+of my soul and for God to mercy me and my Family and give Us a good
+place.
 
-This really needs spelling out.
+please, do as I said there was someone from your State that I deeply
+love so very very much and I miss her so badly I have no means to
+reach any Charitable Home there. that is why I go for a personal
+search of the Country and State and I got your mail contact through
+search to let you know my Bitterness and please, help me is getting
+Dark I ask my Doctor to help me keep you notice failure for me to
+reach you in person Your urgent Response, here is my Doctor Whats-app
+Number for urgent notice +13019692737
+
+Hope To Hear From You. I'm sending this email to you for the second
+time yet no response from you.
+
+My Regards.
+
+Mr. Scott Donald
+CEO

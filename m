@@ -2,78 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76D2224107F
-	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 21:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B9D724112F
+	for <lists+io-uring@lfdr.de>; Mon, 10 Aug 2020 21:53:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729205AbgHJTaj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Aug 2020 15:30:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37608 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728922AbgHJTKX (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 10 Aug 2020 15:10:23 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7FDC22B47;
-        Mon, 10 Aug 2020 19:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597086622;
-        bh=B7pz3A/RGxlVPXqUbuyVNgpNuReQn/DdqP+RwKMq5vo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PiYnedJVx/Eu7fcr+nuZ2pfgM5io3xIT0SkSFNRgMhAWpxSEnzYxUd0rjYm6/jfvC
-         t1yNtc7m09ScS6ev2bS7Z00uxoeX76b0Z3KzLCbBMHaoQrVJk7X0kbFw+E5hBiGJMD
-         iTTLytYWZFngBvmpfGkCBDXd2wL6mppJwJWqzFPE=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 61/64] io_uring: fix racy overflow count reporting
-Date:   Mon, 10 Aug 2020 15:08:56 -0400
-Message-Id: <20200810190859.3793319-61-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200810190859.3793319-1-sashal@kernel.org>
-References: <20200810190859.3793319-1-sashal@kernel.org>
+        id S1728253AbgHJTxQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Aug 2020 15:53:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48588 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728099AbgHJTxQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 15:53:16 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB15CC061756;
+        Mon, 10 Aug 2020 12:53:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gc8xlQBhhYuNt1vX0skCipVMdjr1NoGLoeS5+nC7osc=; b=nDr7JriQkkNERVl7hb4AmM4bbl
+        X1Y8cncuzP4z16igTnuC1r6Hs4Kd5dd/2JdrOquAQLK9/1/YoGJiF0YEO3mrg30E4U0zsDrokN7oW
+        RQNrMPodoYTszyvJLbXEkbfLserLdp5iUO9F9fzYaAgReLlsYo4LQVm9xxi+4G9Ok8CGQahsM+hB1
+        iC1YyJdKBNP9CdtIGkw4Nrf3ju4X4OE6IHOn5MWc8dybSHxlXFlMF9JqKcq6gHBJ0yRfVGm63x3yw
+        6TOoVVFB+/qLm8VXNqrwT+L484DGtuL1/Only8rTC12vgsa93UGZIw7faPAMqnRMNNL2EJPjCt2SB
+        wHfadXLA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k5Dr7-0004eb-0m; Mon, 10 Aug 2020 19:53:13 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A7E419801BE; Mon, 10 Aug 2020 21:53:11 +0200 (CEST)
+Date:   Mon, 10 Aug 2020 21:53:11 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] kernel: split task_work_add() into two separate
+ helpers
+Message-ID: <20200810195311.GA3982@worktop.programming.kicks-ass.net>
+References: <20200808183439.342243-1-axboe@kernel.dk>
+ <20200808183439.342243-2-axboe@kernel.dk>
+ <20200810113740.GR2674@hirez.programming.kicks-ass.net>
+ <ae401501-ede0-eb08-12b7-1d50f6b3eaa5@kernel.dk>
+ <a420842b-40af-8e39-591e-ae70d797e241@kernel.dk>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a420842b-40af-8e39-591e-ae70d797e241@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Mon, Aug 10, 2020 at 11:51:33AM -0600, Jens Axboe wrote:
 
-[ Upstream commit b2bd1cf99f3e7c8fbf12ea07af2c6998e1209e25 ]
+> Added a note of that in the commit message, otherwise the patch is
+> unchanged:
+> 
+> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.9&id=67e5aca3cb1bd40de0392fea5a661eae2372d6cc
 
-All ->cq_overflow modifications should be under completion_lock,
-otherwise it can report a wrong number to the userspace. Fix it in
-io_uring_cancel_files().
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index acd98df1f7d44..73f5e0a9bf2bd 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7529,10 +7529,9 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 				clear_bit(0, &ctx->cq_check_overflow);
- 				ctx->rings->sq_flags &= ~IORING_SQ_CQ_OVERFLOW;
- 			}
--			spin_unlock_irq(&ctx->completion_lock);
--
- 			WRITE_ONCE(ctx->rings->cq_overflow,
- 				atomic_inc_return(&ctx->cached_cq_overflow));
-+			spin_unlock_irq(&ctx->completion_lock);
- 
- 			/*
- 			 * Put inflight ref and overflow ref. If that's
--- 
-2.25.1
-
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>

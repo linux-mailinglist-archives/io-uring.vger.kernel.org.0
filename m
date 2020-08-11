@@ -2,105 +2,192 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A54FC241671
-	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 08:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F08241673
+	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 08:47:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbgHKGp0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Aug 2020 02:45:26 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46656 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727066AbgHKGp0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Aug 2020 02:45:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597128325;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=czXFqG4tjLmePzUl08OufkGazYH+w8veG3hkn0vFyZc=;
-        b=O0SULEwi67nqun9bGbGCfJvC5G91HY1FPE48hjmIrFK9hBxVEFiiYKDhw6do1GbJ3ZZ0xt
-        dsH1L0HnCKsMVaV+fPDwKBcWzrMawDXQMS26wNweBw91xyP56EGUBQy4huH0QVnZEp4EY2
-        uOodTcsHwojF6x86yHpU5PfoMcsMdvE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-313-u18WSPM6Nt-7SBb5LvgW4Q-1; Tue, 11 Aug 2020 02:45:21 -0400
-X-MC-Unique: u18WSPM6Nt-7SBb5LvgW4Q-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B68211DE0;
-        Tue, 11 Aug 2020 06:45:19 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.186])
-        by smtp.corp.redhat.com (Postfix) with SMTP id C57B990E9B;
-        Tue, 11 Aug 2020 06:45:17 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 11 Aug 2020 08:45:19 +0200 (CEST)
-Date:   Tue, 11 Aug 2020 08:45:16 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Josef <josef.grieb@gmail.com>
-Subject: Re: [PATCH 2/2] io_uring: use TWA_SIGNAL for task_work if the task
- isn't running
-Message-ID: <20200811064516.GA21797@redhat.com>
-References: <4a8fa719-330f-d380-522f-15d79c74ca9a@kernel.dk>
- <faf2c2ae-834e-8fa2-12f3-ae07f8a68e14@kernel.dk>
- <CAG48ez0+=+Q0tjdFxjbbZbZJNkimYL9Bd5odr0T9oWwty6qgoQ@mail.gmail.com>
- <03c0e282-5317-ea45-8760-2c3f56eec0c0@kernel.dk>
- <20200810211057.GG3982@worktop.programming.kicks-ass.net>
- <5628f79b-6bfb-b054-742a-282663cb2565@kernel.dk>
- <CAG48ez2dEyxe_ioQaDC3JTdSyLsdOiFKZvk6LGP00ELSfSvhvg@mail.gmail.com>
- <1629f8a9-cee0-75f1-810a-af32968c4055@kernel.dk>
- <dfc3bf88-39a3-bd38-b7b6-5435262013d5@kernel.dk>
- <CAG48ez2EzOpWZbhnuBxVBXjRbLZULJJeeTBsdbL6Hzh9-1YYhA@mail.gmail.com>
+        id S1728116AbgHKGrT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Aug 2020 02:47:19 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:43205 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727066AbgHKGrT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Aug 2020 02:47:19 -0400
+Received: by mail-io1-f72.google.com with SMTP id f19so9015209iol.10
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 23:47:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ALLgFYzJu8xYow6jwfC/O/mtKqGLcRdyWSt6PNLRIOE=;
+        b=ccUD/MYI4pz/8VD9ofrsmY+wclfaJQOTQkxxcR2RLxpj4AMII8paJWnOCFCyAfqJ6l
+         aIAyETCpp/ScjtAx25Cv7d2fdR1wVOKm/1LFC+lgmd3b/mfrDvpkOgLbx7yaPCPbT2Qp
+         vvj+hOKskp2OE2mxDH0+gv795XUwepVdLyDwcXbduZSud/NJ3J8jQwxrXTqKKfoQsUO6
+         IvRhoryCM/K5SMq32nOzDpz+cadNcv5OuYn5aHNEuqrgm12FZwkMqVyxxOEwFIyClOXQ
+         Lel40owMeGPmQS69tGO5Z8AAp86fDmgY1Znm25CC+A3vn/ZZayy67uATKQd0L+Z13PMI
+         WU2g==
+X-Gm-Message-State: AOAM530DVGoLUT132rJQU8LEi5I9I7cOzPduCEeHxTpsBfaEZsPlgg9M
+        OJ3f2SN8epDC3MOTRhkQV2Jt38Tysfo7tHTgCivvUoUdaXRA
+X-Google-Smtp-Source: ABdhPJwsQJoDHRXwvBGadlNgxs/TtlOVxU5vI+1XAOWQ07/0G8DKpifSYhjJFyWYQFFnzzwuWqpPnogZ1ICepLxDeXQ1restm2Gb
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2EzOpWZbhnuBxVBXjRbLZULJJeeTBsdbL6Hzh9-1YYhA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Received: by 2002:a5d:9d8a:: with SMTP id 10mr21911301ion.195.1597128437091;
+ Mon, 10 Aug 2020 23:47:17 -0700 (PDT)
+Date:   Mon, 10 Aug 2020 23:47:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002753ac05ac9471f4@google.com>
+Subject: KASAN: use-after-free Read in io_async_task_func
+From:   syzbot <syzbot+9b260fc33297966f5a8e@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 08/11, Jann Horn wrote:
->
-> > --- a/kernel/task_work.c
-> > +++ b/kernel/task_work.c
-> > @@ -42,7 +42,8 @@ task_work_add(struct task_struct *task, struct callback_head *work, int notify)
-> >                 set_notify_resume(task);
-> >                 break;
-> >         case TWA_SIGNAL:
-> > -               if (lock_task_sighand(task, &flags)) {
-> > +               if (!(task->jobctl & JOBCTL_TASK_WORK) &&
-> > +                   lock_task_sighand(task, &flags)) {
-> >                         task->jobctl |= JOBCTL_TASK_WORK;
-> >                         signal_wake_up(task, 0);
-> >                         unlock_task_sighand(task, &flags);
-> 
-> I think that should work in theory, but if you want to be able to do a
-> proper unlocked read of task->jobctl here, then I think you'd have to
-> use READ_ONCE() here
+Hello,
 
-Agreed,
+syzbot found the following issue on:
 
-> and make all existing writes to ->jobctl use
-> WRITE_ONCE().
+HEAD commit:    fc80c51f Merge tag 'kbuild-v5.9' of git://git.kernel.org/p..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17601ab2900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d48472fcc2f68903
+dashboard link: https://syzkaller.appspot.com/bug?extid=9b260fc33297966f5a8e
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174272b2900000
 
-->jobctl is always modified with ->siglock held, do we really need
-WRITE_ONCE() ?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9b260fc33297966f5a8e@syzkaller.appspotmail.com
 
-> Also, I think that to make this work, stuff like get_signal() will
-> need to use memory barriers to ensure that reads from ->task_works are
-> ordered after ->jobctl has been cleared
+==================================================================
+BUG: KASAN: use-after-free in instrument_atomic_read include/linux/instrumented.h:56 [inline]
+BUG: KASAN: use-after-free in atomic64_read include/asm-generic/atomic-instrumented.h:837 [inline]
+BUG: KASAN: use-after-free in atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
+BUG: KASAN: use-after-free in __mutex_unlock_slowpath+0x88/0x590 kernel/locking/mutex.c:1237
+Read of size 8 at addr ffff8880952503c0 by task syz-executor.1/23201
 
-Why? I don't follow.
+CPU: 0 PID: 23201 Comm: syz-executor.1 Not tainted 5.8.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1f0/0x31e lib/dump_stack.c:118
+ print_address_description+0x66/0x620 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report+0x132/0x1d0 mm/kasan/report.c:530
+ check_memory_region_inline mm/kasan/generic.c:183 [inline]
+ check_memory_region+0x2b5/0x2f0 mm/kasan/generic.c:192
+ instrument_atomic_read include/linux/instrumented.h:56 [inline]
+ atomic64_read include/asm-generic/atomic-instrumented.h:837 [inline]
+ atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
+ __mutex_unlock_slowpath+0x88/0x590 kernel/locking/mutex.c:1237
+ io_async_task_func+0x485/0x610 fs/io_uring.c:4689
+ task_work_run+0x137/0x1c0 kernel/task_work.c:135
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:139 [inline]
+ exit_to_user_mode_prepare+0xfa/0x1c0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x5e/0x1a0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45ce69
+Code: 2d b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb b5 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f6719775c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
+RAX: fffffffffffffffe RBX: 0000000000004f40 RCX: 000000000045ce69
+RDX: 0000000000000043 RSI: 0000000000000000 RDI: 0000000000000006
+RBP: 000000000118c010 R08: 0000000020000140 R09: 0000000000000000
+R10: 0000000020000000 R11: 0000000000000246 R12: 000000000118bfcc
+R13: 00007fff62cc118f R14: 00007f67197769c0 R15: 000000000118bfcc
 
-Afaics, we only need to ensure that task_work_add() checks JOBCTL_TASK_WORK
-after it adds the new work to the ->task_works list, and we can rely on
-cmpxchg() ?
+Allocated by task 23153:
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc+0x100/0x130 mm/kasan/common.c:461
+ kmem_cache_alloc_trace+0x1f6/0x2f0 mm/slab.c:3550
+ kmalloc include/linux/slab.h:554 [inline]
+ kzalloc include/linux/slab.h:666 [inline]
+ io_ring_ctx_alloc fs/io_uring.c:1030 [inline]
+ io_uring_create fs/io_uring.c:8308 [inline]
+ io_uring_setup fs/io_uring.c:8401 [inline]
+ __do_sys_io_uring_setup fs/io_uring.c:8407 [inline]
+ __se_sys_io_uring_setup+0x5ce/0x2c70 fs/io_uring.c:8404
+ do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Oleg.
+Freed by task 5:
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_set_track+0x3d/0x70 mm/kasan/common.c:56
+ kasan_set_free_info+0x17/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xdd/0x110 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3418 [inline]
+ kfree+0x10a/0x220 mm/slab.c:3756
+ process_one_work+0x789/0xfc0 kernel/workqueue.c:2269
+ worker_thread+0xaa4/0x1460 kernel/workqueue.c:2415
+ kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
 
+Last call_rcu():
+ kasan_save_stack+0x27/0x50 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x7b/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2894 [inline]
+ call_rcu+0x139/0x840 kernel/rcu/tree.c:2968
+ __percpu_ref_switch_to_atomic lib/percpu-refcount.c:192 [inline]
+ __percpu_ref_switch_mode+0x2c1/0x4f0 lib/percpu-refcount.c:237
+ percpu_ref_kill_and_confirm+0x8f/0x130 lib/percpu-refcount.c:350
+ percpu_ref_kill include/linux/percpu-refcount.h:136 [inline]
+ io_ring_ctx_wait_and_kill+0x3c/0x570 fs/io_uring.c:7797
+ io_uring_release+0x59/0x70 fs/io_uring.c:7829
+ __fput+0x34f/0x7b0 fs/file_table.c:281
+ task_work_run+0x137/0x1c0 kernel/task_work.c:135
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:139 [inline]
+ exit_to_user_mode_prepare+0xfa/0x1c0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x5e/0x1a0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Second to last call_rcu():
+ kasan_save_stack+0x27/0x50 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x7b/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2894 [inline]
+ call_rcu+0x139/0x840 kernel/rcu/tree.c:2968
+ __percpu_ref_switch_to_atomic lib/percpu-refcount.c:192 [inline]
+ __percpu_ref_switch_mode+0x2c1/0x4f0 lib/percpu-refcount.c:237
+ percpu_ref_kill_and_confirm+0x8f/0x130 lib/percpu-refcount.c:350
+ percpu_ref_kill include/linux/percpu-refcount.h:136 [inline]
+ io_ring_ctx_wait_and_kill+0x3c/0x570 fs/io_uring.c:7797
+ io_uring_release+0x59/0x70 fs/io_uring.c:7829
+ __fput+0x34f/0x7b0 fs/file_table.c:281
+ task_work_run+0x137/0x1c0 kernel/task_work.c:135
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:139 [inline]
+ exit_to_user_mode_prepare+0xfa/0x1c0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x5e/0x1a0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The buggy address belongs to the object at ffff888095250000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 960 bytes inside of
+ 2048-byte region [ffff888095250000, ffff888095250800)
+The buggy address belongs to the page:
+page:000000005a2c89d9 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x95250
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea00024ca6c8 ffffea00024d8c48 ffff8880aa440800
+raw: 0000000000000000 ffff888095250000 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888095250280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888095250300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888095250380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                           ^
+ ffff888095250400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888095250480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

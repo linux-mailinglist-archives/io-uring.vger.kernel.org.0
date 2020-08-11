@@ -2,70 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F282241CA6
-	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 16:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2568241CCF
+	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 16:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbgHKOpt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Aug 2020 10:45:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53352 "EHLO
+        id S1728844AbgHKO7H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Aug 2020 10:59:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728786AbgHKOps (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Aug 2020 10:45:48 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B8DC06174A
-        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 07:45:48 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id t6so1998449pjr.0
-        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 07:45:48 -0700 (PDT)
+        with ESMTP id S1728788AbgHKO7G (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Aug 2020 10:59:06 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8416BC06174A
+        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 07:59:06 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id h12so6835162pgm.7
+        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 07:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0TKJ8QiOGw2cS0Spzetvjqqgie96cDTA3YQauzdWsow=;
-        b=sE1l4Jh9OMKhr6xkroUSS+SsiF3XTlxMVq54bvxBNHB0HnSBRmgi14cdjhUvy/fMtl
-         gdau5+ZUXd9R7E1FQD26A22G4PI6hs0d1cDOFFVFNLUWQpYYKdeKQTWk+LmlJvc3PpSj
-         NNboc4l12wzSTutNqGLd4oNJ9OxsfwP3ugQOa0LDf01ZD2l9kQQUnAio+1EI8/F6I90y
-         CBoOE14OjyFNaHXtsLxUWEkFLeYfyBzqp9C5rmJHYr87GWLRcJwzW4LskCOJSZhri+m0
-         0XIDSqFtVfWxMBbJUwblt5zoQxxSCllh59qRDLqYCf1N12aUch673H4de3PfwPlPUxMx
-         6eBQ==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=jn3G3go0uPIm6/Hv6VYyRGg4+qh3uHywEaZstpdHmqw=;
+        b=mqJNQ44TtJ6eSbTsFSka9uUnR9iHP9wmGrDflP72AxbNjpFIg5qmwC5ltvASUfNtrz
+         rDC6jsr3LoS4H07TtLAAgauYI7TM1heqoJRDYDaGE+AyXRYeEzybVaRan7++hxvZ7mYT
+         KA+Z4p6w4Qw0wro9ZMjIjMvclTjLbtsURAej0QvU/9GyU1LmxxZNv2MNF1pDOJwtqNtY
+         aqR7OqiLNyyOerQ9XMJ3181UKcXoJDwRmnI1YszX7GJbQtKlz6YsdGQVOQAFJ5Q88smU
+         ll4MgqqDX3BF1IhsVv9fOUzv3nZUOdSSPUT7sc2l9ZNRDz97dxI1Qtmbx5f7yuDPzVn4
+         4FJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=0TKJ8QiOGw2cS0Spzetvjqqgie96cDTA3YQauzdWsow=;
-        b=V5fEKb20+55Jpe/DZC7LbVHjjWuCe6FoaOTky4WL26drKXNTH8xturUBqcwHNx7oFo
-         +t+TXHOR0ae6PkjCrWAw0ljWKkClB6O7iIQuydPSq79B0Acsr9Tc1PtzpqpJmAVCbb32
-         HOhJL2HN+EWOqKKHJmhXkFQh9PmWjc8n7y7MUpThY8zgi6k3H+V82376OmV0QlF+Dkp1
-         jQMJ2OwWSpzuTC7hjLITQQSmcSlDjSZ7PErRtPuavaCR/lSdYRGw3/fwbgUos/Lbtipf
-         4VzyY1RYlHO08e/KVAbHW+dxrslGZRcrtopX9D1Ui5G6WQl+bjm15sYgRAo3h+28edUf
-         JdKg==
-X-Gm-Message-State: AOAM532cSXTQKL5fypJtf9lsx03nG2YgRBAJvHqogqdqoEVs/ugJigiR
-        f1RH5lLT8ZuBWH6Fn3zg8bhBgA==
-X-Google-Smtp-Source: ABdhPJzVUb/kkKz4xX9b2SpN/rk2/QXWukAxXF6jnULCHWiub9Vfnn7sZ2Fu/H7SPfgKF+vPez+WeQ==
-X-Received: by 2002:a17:90a:3ac5:: with SMTP id b63mr1480680pjc.3.1597157147934;
-        Tue, 11 Aug 2020 07:45:47 -0700 (PDT)
+        bh=jn3G3go0uPIm6/Hv6VYyRGg4+qh3uHywEaZstpdHmqw=;
+        b=oEqN5wyxlWNZrSkWjmUqiB3YyJXqSDEMEIWT7UFtruD4JCoQSo3kmMOEBMAR6ICgY7
+         SlzwBtE26JJCXFzytXMrh19DtpsnVH289pkY2xxggZQq0lk3JYiRHy7ATzBA9cpVfiYB
+         QCwxFB/uci1NFEppBAk97tXYMA+tyH3+GzirRjaKW3KfFMDdP1D/YQOodBXs48qQowj1
+         9rs7ytqAG8MXCAwUa801n9UrwcQ9bVP4xAhbWlpguezbP3iboYQPGpkmXj389X+mBTUJ
+         OMSXHaJN9FHTmCyy/KZJorHwpTP/rZBwg3fyYObw9F9E20DzOKL9rxCkigZahjvUJCQ3
+         wzsQ==
+X-Gm-Message-State: AOAM530PgZUsERSaw0g0ygVW4MTfmt+i5mQZxLx3rfubetyaEtemZDWC
+        +dFC1Sd1l9+2vSb/LjQMlRahvA==
+X-Google-Smtp-Source: ABdhPJwR2RwU3XLPwDMfiZ4lA5am8iXtiBK2wvM66c8X+SJGZdRgi5U5zFEVPVxqUa5iZurGC3XMmQ==
+X-Received: by 2002:aa7:8431:: with SMTP id q17mr6925533pfn.132.1597157945813;
+        Tue, 11 Aug 2020 07:59:05 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id bv17sm3003751pjb.0.2020.08.11.07.45.46
+        by smtp.gmail.com with ESMTPSA id z6sm26342004pfg.68.2020.08.11.07.59.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 07:45:47 -0700 (PDT)
-Subject: Re: possible deadlock in __io_queue_deferred
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     syzbot <syzbot+996f91b6ec3812c48042@syzkaller.appspotmail.com>,
+        Tue, 11 Aug 2020 07:59:05 -0700 (PDT)
+Subject: Re: memory leak in io_submit_sqes
+To:     syzbot <syzbot+a730016dc0bdce4f6ff5@syzkaller.appspotmail.com>,
         io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
         viro@zeniv.linux.org.uk
-References: <00000000000035fdf505ac87b7f9@google.com>
- <76cc7c43-2ebb-180d-c2c8-912972a3f258@kernel.dk>
- <20200811140010.gigc2amchytqmrkk@steredhat>
- <504b4b08-30c1-4ca8-ab3b-c9f0b58f0cfa@kernel.dk>
- <20200811144419.blu4wufu7t4dfqin@steredhat>
+References: <000000000000f50fb505ac9a72c9@google.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <23b58871-b8b6-9f5c-2a7b-f4bade6dee6e@kernel.dk>
-Date:   Tue, 11 Aug 2020 08:45:46 -0600
+Message-ID: <b8c5db23-c3cf-7daf-6a0a-8a5f713e9803@kernel.dk>
+Date:   Tue, 11 Aug 2020 08:59:03 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200811144419.blu4wufu7t4dfqin@steredhat>
+In-Reply-To: <000000000000f50fb505ac9a72c9@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,49 +69,62 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/11/20 8:44 AM, Stefano Garzarella wrote:
-> On Tue, Aug 11, 2020 at 08:21:12AM -0600, Jens Axboe wrote:
->> On 8/11/20 8:00 AM, Stefano Garzarella wrote:
->>> On Mon, Aug 10, 2020 at 09:55:17AM -0600, Jens Axboe wrote:
->>>> On 8/10/20 9:36 AM, syzbot wrote:
->>>>> Hello,
->>>>>
->>>>> syzbot found the following issue on:
->>>>>
->>>>> HEAD commit:    449dc8c9 Merge tag 'for-v5.9' of git://git.kernel.org/pub/..
->>>>> git tree:       upstream
->>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=14d41e02900000
->>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=9d25235bf0162fbc
->>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=996f91b6ec3812c48042
->>>>> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133c9006900000
->>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1191cb1a900000
->>>>>
->>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>>>> Reported-by: syzbot+996f91b6ec3812c48042@syzkaller.appspotmail.com
->>>>
->>>> Thanks, the below should fix this one.
->>>
->>> Yeah, it seems right to me, since only __io_queue_deferred() (invoked by
->>> io_commit_cqring()) can be called with 'completion_lock' held.
->>
->> Right
->>
->>> Just out of curiosity, while exploring the code I noticed that we call
->>> io_commit_cqring() always with the 'completion_lock' held, except in the
->>> io_poll_* functions.
->>>
->>> That's because then there can't be any concurrency?
->>
->> Do you mean the iopoll functions? Because we're definitely holding it
->> for the io_poll_* functions.
+On 8/11/20 7:57 AM, syzbot wrote:
+> Hello,
 > 
-> Right, the only one seems io_iopoll_complete().
+> syzbot found the following issue on:
 > 
-> So, IIUC, in this case we are actively polling the level below,
-> so there shouldn't be any asynchronous events, is it right?
+> HEAD commit:    d6efb3ac Merge tag 'tty-5.9-rc1' of git://git.kernel.org/p..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13cb0762900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=42163327839348a9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a730016dc0bdce4f6ff5
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e877dc900000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1608291a900000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+a730016dc0bdce4f6ff5@syzkaller.appspotmail.com
+> 
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> BUG: memory leak
+> unreferenced object 0xffff888124949100 (size 256):
+>   comm "syz-executor808", pid 6480, jiffies 4294949911 (age 33.960s)
+>   hex dump (first 32 bytes):
+>     00 78 74 2a 81 88 ff ff 00 00 00 00 00 00 00 00  .xt*............
+>     90 b0 51 81 ff ff ff ff 00 00 00 00 00 00 00 00  ..Q.............
+>   backtrace:
+>     [<0000000084e46f34>] io_alloc_req fs/io_uring.c:1503 [inline]
+>     [<0000000084e46f34>] io_submit_sqes+0x5dc/0xc00 fs/io_uring.c:6306
+>     [<000000006d4e19eb>] __do_sys_io_uring_enter+0x582/0x830 fs/io_uring.c:8036
+>     [<00000000a4116b07>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>     [<0000000067b2aefc>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> BUG: memory leak
+> unreferenced object 0xffff88811751d200 (size 96):
+>   comm "syz-executor808", pid 6480, jiffies 4294949911 (age 33.960s)
+>   hex dump (first 32 bytes):
+>     00 78 74 2a 81 88 ff ff 00 00 00 00 00 00 00 00  .xt*............
+>     0e 01 00 00 00 00 75 22 00 00 00 00 00 0f 1f 04  ......u"........
+>   backtrace:
+>     [<00000000073ea2ba>] kmalloc include/linux/slab.h:555 [inline]
+>     [<00000000073ea2ba>] io_arm_poll_handler fs/io_uring.c:4773 [inline]
+>     [<00000000073ea2ba>] __io_queue_sqe+0x445/0x6b0 fs/io_uring.c:5988
+>     [<000000001551bde0>] io_queue_sqe+0x309/0x550 fs/io_uring.c:6060
+>     [<000000002dfb908f>] io_submit_sqe fs/io_uring.c:6130 [inline]
+>     [<000000002dfb908f>] io_submit_sqes+0x8b8/0xc00 fs/io_uring.c:6327
+>     [<000000006d4e19eb>] __do_sys_io_uring_enter+0x582/0x830 fs/io_uring.c:8036
+>     [<00000000a4116b07>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>     [<0000000067b2aefc>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Right, that's serialized by itself.
+This one looks very odd, and I cannot reproduce it. The socket() calls
+reliably fails for me, and even if I hack it to use 0 for protocol instead
+of 2, I don't see anything interesting happening here. An IORING_OP_WRITEV
+is submitted on the socket, which just fails with ENOTCONN.
 
 -- 
 Jens Axboe

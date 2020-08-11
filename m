@@ -2,175 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D37ED241BCE
-	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 15:53:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D4C241BDF
+	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 15:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbgHKNxD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Aug 2020 09:53:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45166 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728705AbgHKNw7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Aug 2020 09:52:59 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6405CC061788
-        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 06:52:59 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id r4so6854436pls.2
-        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 06:52:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=hBzW2ieVn9S8WRpjKKZgk2Q3k8ADXArcvCAn26f+FAQ=;
-        b=orVavcgkq+oqS6qEImOMZ7TduLcai2+huD3HOzc8GZ81U9cIjaQ3KO3g8aRDLC5qhm
-         tBkfM656WfiKaIUq7+ys9Tb3NWPAseTKmhaVbeuD2Qse6kHpyMmmzW4QyfQkZDQnMztJ
-         TwJrhe5Nm814ITfkYa1qv8vLqdavM8GecCVkKJPgolAmQPdogKIacoekFViV0SxRm2Fr
-         5FJhC2BRs0m09S+5VGzFyFMZJc0VT/idJguqhrnc+TUbXLzHOGAiCIeQlAzclGvpsFlI
-         EYlb7tdV0SvpeGIdNQjFpafNS6HvZuC5vDCYvrX0izWvA8d7Kk2ZIX84hyRMqvpuKqli
-         EbnQ==
+        id S1728727AbgHKN5S (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Aug 2020 09:57:18 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:44167 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728516AbgHKN5S (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Aug 2020 09:57:18 -0400
+Received: by mail-io1-f71.google.com with SMTP id m12so9737768iov.11
+        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 06:57:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hBzW2ieVn9S8WRpjKKZgk2Q3k8ADXArcvCAn26f+FAQ=;
-        b=Ks4UXfBC13Fa+93hJok7pXOzMhmoQh4VWyotAvF8I1Eg+QD0h4jE+m5g0OEvnmQFob
-         TqlePXuQNOZLzOievWbBQthNR2a1A1TunUoxmNNOF6SM1WjNp7f9wKQkEvHEGsZ5wIOf
-         WZohEEuIpw9DgPXp6451dKFiSjc0K4TSJHOQQeEohWKwG9iNYcSCg3Bd67BXhSNEZLxG
-         G52njd9yPmaTTvxCDOp1vH4lRBBKJao6g73wJ/6RwB/nkZTGzDON2uW2D5zWgp/1/0VE
-         rfNwgseq8BYnO84ooErfBfXFYI1zgSrmv4sb9EmcZEz+FsAFmW4i8TajtQhDEXAvqVUw
-         XITw==
-X-Gm-Message-State: AOAM531oA2EG746qCiNt/SyNbEQxGMluDor1kxG8TUDJhIu199UJgv0K
-        H6U4w0V+wAJVbmT6ETZLYD0mjA==
-X-Google-Smtp-Source: ABdhPJx12PhBcxf+TNd8YFsjKf2yGKjJp+AULNeiYiPgLCw5lrr7juZl0TULuUBcIPn0OeevPFd6kg==
-X-Received: by 2002:a17:90b:164a:: with SMTP id il10mr1284815pjb.2.1597153978420;
-        Tue, 11 Aug 2020 06:52:58 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id in12sm2924184pjb.29.2020.08.11.06.52.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 06:52:57 -0700 (PDT)
-Subject: Re: KASAN: use-after-free Read in io_async_task_func
-To:     syzbot <syzbot+9b260fc33297966f5a8e@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <0000000000002753ac05ac9471f4@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <4acc639d-ec4a-e630-3a0b-33c4f675b41d@kernel.dk>
-Date:   Tue, 11 Aug 2020 07:52:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=+cHgg9a8eJJddqLe/oCJVSWP9J8KQvuNJEZvME5xXmA=;
+        b=Nt0CTE3ViP0eXpUmpi4QqvDMRBo+8Qf4z+sb+YXCIT+pif6K6IqXHmyMvCdAXxsnOK
+         UO616yrsyjpRPEJSDQ3oGy6vwd+mKqXtno0AzLdM8dfdlZHKL83tt5efatUJ+Bdn3arl
+         Afg+w/v9dH/PoXY3wp9EmNOwwX02ZD4k8LfdY/KkKhlDQMDOG1FV70OLdJXyHCKt0IX7
+         nRto6Ke5nw1IfACeinFGv/EZerMvP98xhGvhd8FaL/K+OkAI1E3bItDjG7xFppkQNMT7
+         Cb8+us3TRquQEmzFKfz65335WtvrlH6uMIhElSZDQ4ojEIb4Z1PyAMTkC3C7WjJDS9f1
+         sVoA==
+X-Gm-Message-State: AOAM531MBfp+IvOCXi1p4jA5YhgEafZ1ST0WYjto5sEnUN3RqUOrnNYX
+        C6Zo8CqWFDwJqYZhh43JW24kcuGWYD+mqSq3+kta/MuEWSKE
+X-Google-Smtp-Source: ABdhPJzs9eayEdRluYFEuglfzFGulTDu+xWt1TmqdMl9GvrP3V31DsgZogEIIu9s8vdOXfBs4Z46I6DETIsQ3oOb27AArE8NQjvQ
 MIME-Version: 1.0
-In-Reply-To: <0000000000002753ac05ac9471f4@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:9307:: with SMTP id d7mr17785704jah.71.1597154237154;
+ Tue, 11 Aug 2020 06:57:17 -0700 (PDT)
+Date:   Tue, 11 Aug 2020 06:57:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f50fb505ac9a72c9@google.com>
+Subject: memory leak in io_submit_sqes
+From:   syzbot <syzbot+a730016dc0bdce4f6ff5@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/11/20 12:47 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    fc80c51f Merge tag 'kbuild-v5.9' of git://git.kernel.org/p..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17601ab2900000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d48472fcc2f68903
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9b260fc33297966f5a8e
-> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174272b2900000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+9b260fc33297966f5a8e@syzkaller.appspotmail.com
+Hello,
 
-I think the below should fix it, for this use case and potentially others.
-If the ring is closed and the task_work bound req is holding the last
-reference, we need to hold a ctx reference around it.
+syzbot found the following issue on:
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5488698189da..cc4bb16ff570 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1821,8 +1821,10 @@ static void __io_req_task_submit(struct io_kiocb *req)
- static void io_req_task_submit(struct callback_head *cb)
- {
- 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
-+	struct io_ring_ctx *ctx = req->ctx;
- 
- 	__io_req_task_submit(req);
-+	percpu_ref_put(&ctx->refs);
- }
- 
- static void io_req_task_queue(struct io_kiocb *req)
-@@ -1830,6 +1832,7 @@ static void io_req_task_queue(struct io_kiocb *req)
- 	int ret;
- 
- 	init_task_work(&req->task_work, io_req_task_submit);
-+	percpu_ref_get(&req->ctx->refs);
- 
- 	ret = io_req_task_work_add(req, &req->task_work);
- 	if (unlikely(ret)) {
-@@ -2318,6 +2321,8 @@ static void io_rw_resubmit(struct callback_head *cb)
- 		refcount_inc(&req->refs);
- 		io_queue_async_work(req);
- 	}
-+
-+	percpu_ref_put(&ctx->refs);
- }
- #endif
- 
-@@ -2330,6 +2335,8 @@ static bool io_rw_reissue(struct io_kiocb *req, long res)
- 		return false;
- 
- 	init_task_work(&req->task_work, io_rw_resubmit);
-+	percpu_ref_get(&req->ctx->refs);
-+
- 	ret = io_req_task_work_add(req, &req->task_work);
- 	if (!ret)
- 		return true;
-@@ -3033,6 +3040,8 @@ static int io_async_buf_func(struct wait_queue_entry *wait, unsigned mode,
- 	list_del_init(&wait->entry);
- 
- 	init_task_work(&req->task_work, io_req_task_submit);
-+	percpu_ref_get(&req->ctx->refs);
-+
- 	/* submit ref gets dropped, acquire a new one */
- 	refcount_inc(&req->refs);
- 	ret = io_req_task_work_add(req, &req->task_work);
-@@ -4565,6 +4574,8 @@ static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
- 
- 	req->result = mask;
- 	init_task_work(&req->task_work, func);
-+	percpu_ref_get(&req->ctx->refs);
-+
- 	/*
- 	 * If this fails, then the task is exiting. When a task exits, the
- 	 * work gets canceled, so just cancel this request as well instead
-@@ -4652,11 +4663,13 @@ static void io_poll_task_handler(struct io_kiocb *req, struct io_kiocb **nxt)
- static void io_poll_task_func(struct callback_head *cb)
- {
- 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
-+	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_kiocb *nxt = NULL;
- 
- 	io_poll_task_handler(req, &nxt);
- 	if (nxt)
- 		__io_req_task_submit(nxt);
-+	percpu_ref_put(&ctx->refs);
- }
- 
- static int io_poll_double_wake(struct wait_queue_entry *wait, unsigned mode,
-@@ -4752,6 +4765,7 @@ static void io_async_task_func(struct callback_head *cb)
- 
- 	if (io_poll_rewait(req, &apoll->poll)) {
- 		spin_unlock_irq(&ctx->completion_lock);
-+		percpu_ref_put(&ctx->refs);
- 		return;
- 	}
- 
+HEAD commit:    d6efb3ac Merge tag 'tty-5.9-rc1' of git://git.kernel.org/p..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13cb0762900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=42163327839348a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=a730016dc0bdce4f6ff5
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e877dc900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1608291a900000
 
--- 
-Jens Axboe
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a730016dc0bdce4f6ff5@syzkaller.appspotmail.com
 
+executing program
+executing program
+executing program
+executing program
+executing program
+BUG: memory leak
+unreferenced object 0xffff888124949100 (size 256):
+  comm "syz-executor808", pid 6480, jiffies 4294949911 (age 33.960s)
+  hex dump (first 32 bytes):
+    00 78 74 2a 81 88 ff ff 00 00 00 00 00 00 00 00  .xt*............
+    90 b0 51 81 ff ff ff ff 00 00 00 00 00 00 00 00  ..Q.............
+  backtrace:
+    [<0000000084e46f34>] io_alloc_req fs/io_uring.c:1503 [inline]
+    [<0000000084e46f34>] io_submit_sqes+0x5dc/0xc00 fs/io_uring.c:6306
+    [<000000006d4e19eb>] __do_sys_io_uring_enter+0x582/0x830 fs/io_uring.c:8036
+    [<00000000a4116b07>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+    [<0000000067b2aefc>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff88811751d200 (size 96):
+  comm "syz-executor808", pid 6480, jiffies 4294949911 (age 33.960s)
+  hex dump (first 32 bytes):
+    00 78 74 2a 81 88 ff ff 00 00 00 00 00 00 00 00  .xt*............
+    0e 01 00 00 00 00 75 22 00 00 00 00 00 0f 1f 04  ......u"........
+  backtrace:
+    [<00000000073ea2ba>] kmalloc include/linux/slab.h:555 [inline]
+    [<00000000073ea2ba>] io_arm_poll_handler fs/io_uring.c:4773 [inline]
+    [<00000000073ea2ba>] __io_queue_sqe+0x445/0x6b0 fs/io_uring.c:5988
+    [<000000001551bde0>] io_queue_sqe+0x309/0x550 fs/io_uring.c:6060
+    [<000000002dfb908f>] io_submit_sqe fs/io_uring.c:6130 [inline]
+    [<000000002dfb908f>] io_submit_sqes+0x8b8/0xc00 fs/io_uring.c:6327
+    [<000000006d4e19eb>] __do_sys_io_uring_enter+0x582/0x830 fs/io_uring.c:8036
+    [<00000000a4116b07>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+    [<0000000067b2aefc>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

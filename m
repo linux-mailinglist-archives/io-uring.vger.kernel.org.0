@@ -2,74 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48CE6241382
-	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 01:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06A93241488
+	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 03:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbgHJXDa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Aug 2020 19:03:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49772 "EHLO
+        id S1727941AbgHKBZQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Aug 2020 21:25:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbgHJXDa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 19:03:30 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE1E6C061787
-        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 16:03:29 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id y6so5884061plt.3
-        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 16:03:29 -0700 (PDT)
+        with ESMTP id S1727094AbgHKBZP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Aug 2020 21:25:15 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DABDDC06174A
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 18:25:14 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id i92so767392pje.0
+        for <io-uring@vger.kernel.org>; Mon, 10 Aug 2020 18:25:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RhGl5aAnfF/BQXqz/MC7L9FOMBP1d+PqSfo/ugCUrnc=;
-        b=vKzfUH8mbF/lhof7jqzTDAHUZg2nS8pYqAocFG+3PGEPxsrMyQYSoVhkjSrt63Ugjo
-         3mzhxjfv0Rm3DVkE8BiamPLYiwqpUOsYeZkY+W+EBp4KRiexXmERkpUFMbn8jYE0sTdS
-         MfhvSYIPzaWdV3C6E21CsVDz4rpJUdIyB59cAWL4/98gJwUeSSTTogyyEyOXh1GMQjBG
-         S9CsrDhpAKnCcV74+chwfTO+BQuJKcw6pHsIrC8zvHCx/9B67dL1n2ObhQ/wUIhmx9O9
-         FNmsUCkH5l+VeKFlR2BJPOGxAs5ErebttAMIucVy2/QjIQtbUPDd/nM3NzduIKcWMGXH
-         Z0tg==
+        bh=PCpfFhVUaRaWr6RthgpF9Kzm/HJjZsLLuTqDdDfEeJo=;
+        b=GRRaih/uF2Fj9QRRqaeXSp060VJRmf2HUVA8kO0fyrDYKrIihfJF+m4bcqOqPa7I4c
+         N/BOmFlWoX05vnCiy+fAHnFHcFJmFXIUZSSUp/zW8bF+JFrrVLnKTHNG0d3QKHM+X6lD
+         QlGq1oYnxCJFRPduCya2O0WaIRD+yj0kEELEILn80M+OdjPzah+Nhc4Nvf52aUqhvDt9
+         RT62beivdIo+oVDq2FL6Hf1ta23uWA+a3+sKDS5CsMD68nBEs2wOOyKClrKOIkvWnXmm
+         fWG20RvZrAwwULAKhsShjrEEYGHCeVxtAItPY7+puTuH1dC0NDY12vtjWY9o3MkkOXcP
+         y0Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=RhGl5aAnfF/BQXqz/MC7L9FOMBP1d+PqSfo/ugCUrnc=;
-        b=tKwH9FthlxiRZMsjPZVBznrmOfZrUE26l+AupRLUKoC1Ahj6XKgfcygvTS4gV3Aofp
-         p7WNQiqYt/3Zg45jqvsG+5DpPm+Jr5s2ckGt5KrXvvxqRPHvWNMtRHaavmufvENNlyLH
-         xjMKvW9UdypY2UPEndmNuAc0N0STCJr8qvSODL6ki4Dzg/Ooh7YKu2ZS4y+f5044L0Dk
-         2ts+KwAESpYhC+QvST5FBFBANsuW+OM+cpFPCzcaruNQ/04dPmUkWszm8l/L6H8M5Mgd
-         VK9A3pYtub0JPHIx/xr/BK4i55TsHLw52KTfpJVnKhLH7r82nSSuHbil8AlK3PJkZrVk
-         ra6Q==
-X-Gm-Message-State: AOAM532m7vH6CF1pGbnx9uuH5lzuhGqzw9Z9+/MP3gN68oMeTXhK4Vlw
-        EY5nsDFAhd4rlW0JDROnb5WGdA==
-X-Google-Smtp-Source: ABdhPJxaG+83Ln1EMRF7FhBciv88ind8OKJkJj4KMWNkMA4RDPdpHXJzQxhM3X6nIafRMxmlUU1yFQ==
-X-Received: by 2002:a17:902:aa91:: with SMTP id d17mr26879095plr.27.1597100609171;
-        Mon, 10 Aug 2020 16:03:29 -0700 (PDT)
+        bh=PCpfFhVUaRaWr6RthgpF9Kzm/HJjZsLLuTqDdDfEeJo=;
+        b=l/l6Vi65xpyQnb4D+d1A9AtdLTPJ4w7gy8CcCfdUPaIm1F5zpJlNcxasNzQ+ec1v1i
+         XYgyf74Gv544SFj5hLFcFnX7RhcGF8i9KQB2ssw4Swk3iGYcdqMXJLeVZzE4Q8ep2Gvr
+         Ic6JwrKnbt9Q+t3SeLP5HAuR4MT5NiAUd3UJVu03ydm1yDY+/YWQ7278sSQVlgr2KFYI
+         Rys6ZHQulzJp4yExJvG6FxYLbDVF7N3ctgj+4yRFQAZ9/g211ioD1UN1QfoWLzeP6Hcg
+         Fk7Eivg/l+VRYzEkWsfL9oMhMIH03hjb4yhehnOdAbGckW8aX2luLSzYISywuVCn2kQt
+         AIfg==
+X-Gm-Message-State: AOAM530nDXauA1D349W0ZEiOxuZy7RmaaX87pVgq6aC6zw4kIg3Qxtxm
+        Ok6Uo1dTAiEons7JbCqAj4ldhw==
+X-Google-Smtp-Source: ABdhPJy6ZRX599Qb4c20ndcyS+2w/BW3ofi9VGW/qu9/wIua4zCGR63q5jRXQzMcdH29G9kgmwSXDA==
+X-Received: by 2002:a17:902:9683:: with SMTP id n3mr26229324plp.65.1597109114159;
+        Mon, 10 Aug 2020 18:25:14 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id z25sm23545541pfg.150.2020.08.10.16.03.27
+        by smtp.gmail.com with ESMTPSA id a26sm19410236pgm.20.2020.08.10.18.25.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Aug 2020 16:03:28 -0700 (PDT)
-Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        Johannes Weiner <hannes@cmpxchg.org>
-References: <20200618144355.17324-1-axboe@kernel.dk>
- <20200618144355.17324-6-axboe@kernel.dk>
- <20200624010253.GB5369@dread.disaster.area>
- <20200624014645.GJ21350@casper.infradead.org>
- <bad52be9-ae44-171b-8dbf-0d98eedcadc0@kernel.dk>
- <70b0427c-7303-8f45-48bd-caa0562a2951@kernel.dk>
- <20200624164127.GP21350@casper.infradead.org>
- <8835b6f2-b3c5-c9a0-2119-1fb161cf87dd@kernel.dk>
- <20200810225601.GE2079@dread.disaster.area>
+        Mon, 10 Aug 2020 18:25:13 -0700 (PDT)
+Subject: Re: [PATCH 2/2] io_uring: use TWA_SIGNAL for task_work if the task
+ isn't running
+To:     Jann Horn <jannh@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        stable <stable@vger.kernel.org>, Josef <josef.grieb@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>
+References: <20200808183439.342243-1-axboe@kernel.dk>
+ <20200808183439.342243-3-axboe@kernel.dk>
+ <20200810114256.GS2674@hirez.programming.kicks-ass.net>
+ <a6ee0a6d-5136-4fe9-8906-04fe6420aad9@kernel.dk>
+ <07df8ab4-16a8-8537-b4fe-5438bd8110cf@kernel.dk>
+ <20200810201213.GB3982@worktop.programming.kicks-ass.net>
+ <4a8fa719-330f-d380-522f-15d79c74ca9a@kernel.dk>
+ <faf2c2ae-834e-8fa2-12f3-ae07f8a68e14@kernel.dk>
+ <CAG48ez0+=+Q0tjdFxjbbZbZJNkimYL9Bd5odr0T9oWwty6qgoQ@mail.gmail.com>
+ <03c0e282-5317-ea45-8760-2c3f56eec0c0@kernel.dk>
+ <20200810211057.GG3982@worktop.programming.kicks-ass.net>
+ <5628f79b-6bfb-b054-742a-282663cb2565@kernel.dk>
+ <CAG48ez2dEyxe_ioQaDC3JTdSyLsdOiFKZvk6LGP00ELSfSvhvg@mail.gmail.com>
+ <1629f8a9-cee0-75f1-810a-af32968c4055@kernel.dk>
+ <dfc3bf88-39a3-bd38-b7b6-5435262013d5@kernel.dk>
+ <CAG48ez2EzOpWZbhnuBxVBXjRbLZULJJeeTBsdbL6Hzh9-1YYhA@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cf2384d3-8707-3a83-a667-8a0024867cdb@kernel.dk>
-Date:   Mon, 10 Aug 2020 17:03:27 -0600
+Message-ID: <bdfb29ff-1a17-0813-9bed-21f2583d971e@kernel.dk>
+Date:   Mon, 10 Aug 2020 19:25:11 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200810225601.GE2079@dread.disaster.area>
+In-Reply-To: <CAG48ez2EzOpWZbhnuBxVBXjRbLZULJJeeTBsdbL6Hzh9-1YYhA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -78,58 +86,67 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/10/20 4:56 PM, Dave Chinner wrote:
-> On Wed, Jun 24, 2020 at 10:44:21AM -0600, Jens Axboe wrote:
->> On 6/24/20 10:41 AM, Matthew Wilcox wrote:
->>> On Wed, Jun 24, 2020 at 09:35:19AM -0600, Jens Axboe wrote:
->>>> On 6/24/20 9:00 AM, Jens Axboe wrote:
->>>>> On 6/23/20 7:46 PM, Matthew Wilcox wrote:
->>>>>> I'd be quite happy to add a gfp_t to struct readahead_control.
->>>>>> The other thing I've been looking into for other reasons is adding
->>>>>> a memalloc_nowait_{save,restore}, which would avoid passing down
->>>>>> the gfp_t.
+On 8/10/20 4:41 PM, Jann Horn wrote:
+> On Tue, Aug 11, 2020 at 12:01 AM Jens Axboe <axboe@kernel.dk> wrote:
+>> On 8/10/20 3:28 PM, Jens Axboe wrote:
+>>> On 8/10/20 3:26 PM, Jann Horn wrote:
+>>>> On Mon, Aug 10, 2020 at 11:12 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>> On 8/10/20 3:10 PM, Peter Zijlstra wrote:
+>>>>>> On Mon, Aug 10, 2020 at 03:06:49PM -0600, Jens Axboe wrote:
+>>>>>>
+>>>>>>> should work as far as I can tell, but I don't even know if there's a
+>>>>>>> reliable way to do task_in_kernel().
+>>>>>>
+>>>>>> Only on NOHZ_FULL, and tracking that is one of the things that makes it
+>>>>>> so horribly expensive.
 >>>>>
->>>>> That was my first thought, having the memalloc_foo_save/restore for
->>>>> this. I don't think adding a gfp_t to readahead_control is going
->>>>> to be super useful, seems like the kind of thing that should be
->>>>> non-blocking by default.
+>>>>> Probably no other way than to bite the bullet and just use TWA_SIGNAL
+>>>>> unconditionally...
 >>>>
->>>> We're already doing memalloc_nofs_save/restore in
->>>> page_cache_readahead_unbounded(), so I think all we need is to just do a
->>>> noio dance in generic_file_buffered_read() and that should be enough.
+>>>> Why are you trying to avoid using TWA_SIGNAL? Is there a specific part
+>>>> of handling it that's particularly slow?
 >>>
->>> I think we can still sleep though, right?  I was thinking more
->>> like this:
+>>> Not particularly slow, but it's definitely heavier than TWA_RESUME. And
+>>> as we're driving any pollable async IO through this, just trying to
+>>> ensure it's as light as possible.
 >>>
->>> http://git.infradead.org/users/willy/linux.git/shortlog/refs/heads/memalloc
+>>> It's not a functional thing, just efficiency.
 >>
->> Yeah, that's probably better. How do we want to handle this? I've already
->> got the other bits queued up. I can either add them to the series, or
->> pull a branch that'll go into Linus as well.
+>> Ran some quick testing in a vm, which is worst case for this kind of
+>> thing as any kind of mucking with interrupts is really slow. And the hit
+>> is substantial. Though with the below, we're basically at parity again.
+>> Just for discussion...
+>>
+>>
+>> diff --git a/kernel/task_work.c b/kernel/task_work.c
+>> index 5c0848ca1287..ea2c683c8563 100644
+>> --- a/kernel/task_work.c
+>> +++ b/kernel/task_work.c
+>> @@ -42,7 +42,8 @@ task_work_add(struct task_struct *task, struct callback_head *work, int notify)
+>>                 set_notify_resume(task);
+>>                 break;
+>>         case TWA_SIGNAL:
+>> -               if (lock_task_sighand(task, &flags)) {
+>> +               if (!(task->jobctl & JOBCTL_TASK_WORK) &&
+>> +                   lock_task_sighand(task, &flags)) {
+>>                         task->jobctl |= JOBCTL_TASK_WORK;
+>>                         signal_wake_up(task, 0);
+>>                         unlock_task_sighand(task, &flags);
 > 
-> Jens, Willy,
+> I think that should work in theory, but if you want to be able to do a
+> proper unlocked read of task->jobctl here, then I think you'd have to
+> use READ_ONCE() here and make all existing writes to ->jobctl use
+> WRITE_ONCE().
 > 
-> Now that this patch has been merged and IOCB_NOWAIT semantics ifor
-> buffered reads are broken in Linus' tree, what's the plan to get
-> this regression fixed before 5.9 releases?
+> Also, I think that to make this work, stuff like get_signal() will
+> need to use memory barriers to ensure that reads from ->task_works are
+> ordered after ->jobctl has been cleared - ideally written such that on
+> the fastpath, the memory barrier doesn't execute.
 
-Not sure where Willy's work went on this topic, but it is on my radar. But
-I think we can do something truly simple now that we have IOCB_NOIO:
-
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bd7ec3eaeed0..f1cca4bfdd7b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3293,7 +3293,7 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
- 	if (flags & RWF_NOWAIT) {
- 		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
- 			return -EOPNOTSUPP;
--		kiocb_flags |= IOCB_NOWAIT;
-+		kiocb_flags |= IOCB_NOWAIT | IOCB_NOIO;
- 	}
- 	if (flags & RWF_HIPRI)
- 		kiocb_flags |= IOCB_HIPRI;
+I wonder if it's possible to just make it safe for the io_uring case,
+since a bigger change would make this performance regression persistent
+in this release... Would still require the split add/notification patch,
+but that one is trivial.
 
 -- 
 Jens Axboe

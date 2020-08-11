@@ -2,76 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55386241B5B
-	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 15:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D37ED241BCE
+	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 15:53:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbgHKNGZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Aug 2020 09:06:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37994 "EHLO
+        id S1728741AbgHKNxD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Aug 2020 09:53:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728526AbgHKNGY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Aug 2020 09:06:24 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B47C0C061787
-        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 06:06:24 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id q19so438259pll.0
-        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 06:06:24 -0700 (PDT)
+        with ESMTP id S1728705AbgHKNw7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Aug 2020 09:52:59 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6405CC061788
+        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 06:52:59 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id r4so6854436pls.2
+        for <io-uring@vger.kernel.org>; Tue, 11 Aug 2020 06:52:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kqgrbgaDbYSWjzibEGpg4nka7M4G8sEc7lFMN/sJpKA=;
-        b=TAj+vpG8IS8cYJZ+IAY60l/htOSbR/qIZUhksnHHgX1FY4pOQtEY6CFi3HC48NXtyS
-         NjccgTp+0FfL6tKvJkV+CXOYGcPH1uJcAp87SthFqpFLosxVqQHGLOfYnP/9VmugagWs
-         OoN7Rn9rlcwKOBvCXgkzaw/OZ/YyjaFTEyWEKcJJwRLl+TMddPW+JoZuIHTKgZ+wUbtT
-         kjqbsdBzEAXN71Vj1po7VpOrS0qyftbn2GQ/WkVB2cjPfW+Bb2yU7YvfV0HVGzJrf4pE
-         FYFhD8AlZ/wJPKWS5o4/a6rRnRxOYGyii5+f44/z38Qyi3zKFJWX7eHgT4OUnUUMF7Te
-         oE2Q==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=hBzW2ieVn9S8WRpjKKZgk2Q3k8ADXArcvCAn26f+FAQ=;
+        b=orVavcgkq+oqS6qEImOMZ7TduLcai2+huD3HOzc8GZ81U9cIjaQ3KO3g8aRDLC5qhm
+         tBkfM656WfiKaIUq7+ys9Tb3NWPAseTKmhaVbeuD2Qse6kHpyMmmzW4QyfQkZDQnMztJ
+         TwJrhe5Nm814ITfkYa1qv8vLqdavM8GecCVkKJPgolAmQPdogKIacoekFViV0SxRm2Fr
+         5FJhC2BRs0m09S+5VGzFyFMZJc0VT/idJguqhrnc+TUbXLzHOGAiCIeQlAzclGvpsFlI
+         EYlb7tdV0SvpeGIdNQjFpafNS6HvZuC5vDCYvrX0izWvA8d7Kk2ZIX84hyRMqvpuKqli
+         EbnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=kqgrbgaDbYSWjzibEGpg4nka7M4G8sEc7lFMN/sJpKA=;
-        b=D+/KWHqsK26h7hHgnMiHFho3bgDJVBYtirZ9W3sJTQS5vbIawN0rwfa7VAgGFop46N
-         wbR/5XrWm6MXQ7lkfR5KVtvrSJFZikykdizXUxmaMwFrgscoECbVn7IO+OeJNQh5DHHr
-         WAjBp99JNgAbBDFXR3UW6RXuQdJNyP3OhqU/M46XIMohiBC1xkoIztDpW0iHEhJ3W5+S
-         nfqUDhBjGjRisx4viFxfc1JyQWedXqdJ15ZMt6bkHNP+k5GDstpBfx6EtFTjrpcDPFUr
-         urdU8jupLwnxDNxjE+F3mRK9Ek914/NYtj7FfjHbHnVQW28ml0qJnTMbtf4kry4fqyau
-         kf/A==
-X-Gm-Message-State: AOAM531ZOqbZGmk9VZBc7Yba4q9ot3XgXc0v+l5IqGYxbs5YDQ7sN05Y
-        p56MBOSHRq9HAqVnhLsQUXDOGA==
-X-Google-Smtp-Source: ABdhPJwF+bHd6KY2p1P8e9lx9oFImI5KZZLHZ+E6L7JgNPeCpkJOeRRWvVQbICk8vNLW8FvDyRKtfg==
-X-Received: by 2002:a17:902:6b0a:: with SMTP id o10mr761491plk.249.1597151184016;
-        Tue, 11 Aug 2020 06:06:24 -0700 (PDT)
+        bh=hBzW2ieVn9S8WRpjKKZgk2Q3k8ADXArcvCAn26f+FAQ=;
+        b=Ks4UXfBC13Fa+93hJok7pXOzMhmoQh4VWyotAvF8I1Eg+QD0h4jE+m5g0OEvnmQFob
+         TqlePXuQNOZLzOievWbBQthNR2a1A1TunUoxmNNOF6SM1WjNp7f9wKQkEvHEGsZ5wIOf
+         WZohEEuIpw9DgPXp6451dKFiSjc0K4TSJHOQQeEohWKwG9iNYcSCg3Bd67BXhSNEZLxG
+         G52njd9yPmaTTvxCDOp1vH4lRBBKJao6g73wJ/6RwB/nkZTGzDON2uW2D5zWgp/1/0VE
+         rfNwgseq8BYnO84ooErfBfXFYI1zgSrmv4sb9EmcZEz+FsAFmW4i8TajtQhDEXAvqVUw
+         XITw==
+X-Gm-Message-State: AOAM531oA2EG746qCiNt/SyNbEQxGMluDor1kxG8TUDJhIu199UJgv0K
+        H6U4w0V+wAJVbmT6ETZLYD0mjA==
+X-Google-Smtp-Source: ABdhPJx12PhBcxf+TNd8YFsjKf2yGKjJp+AULNeiYiPgLCw5lrr7juZl0TULuUBcIPn0OeevPFd6kg==
+X-Received: by 2002:a17:90b:164a:: with SMTP id il10mr1284815pjb.2.1597153978420;
+        Tue, 11 Aug 2020 06:52:58 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id c4sm22966780pfo.163.2020.08.11.06.06.22
+        by smtp.gmail.com with ESMTPSA id in12sm2924184pjb.29.2020.08.11.06.52.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 06:06:23 -0700 (PDT)
-Subject: Re: [PATCH 2/2] io_uring: use TWA_SIGNAL for task_work if the task
- isn't running
-To:     Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Jann Horn <jannh@google.com>, io-uring <io-uring@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Josef <josef.grieb@gmail.com>
-References: <20200810211057.GG3982@worktop.programming.kicks-ass.net>
- <5628f79b-6bfb-b054-742a-282663cb2565@kernel.dk>
- <CAG48ez2dEyxe_ioQaDC3JTdSyLsdOiFKZvk6LGP00ELSfSvhvg@mail.gmail.com>
- <1629f8a9-cee0-75f1-810a-af32968c4055@kernel.dk>
- <dfc3bf88-39a3-bd38-b7b6-5435262013d5@kernel.dk>
- <CAG48ez2EzOpWZbhnuBxVBXjRbLZULJJeeTBsdbL6Hzh9-1YYhA@mail.gmail.com>
- <20200811064516.GA21797@redhat.com>
- <20200811065659.GQ3982@worktop.programming.kicks-ass.net>
- <20200811071401.GB21797@redhat.com>
- <20200811074538.GS3982@worktop.programming.kicks-ass.net>
- <20200811081033.GD21797@redhat.com>
+        Tue, 11 Aug 2020 06:52:57 -0700 (PDT)
+Subject: Re: KASAN: use-after-free Read in io_async_task_func
+To:     syzbot <syzbot+9b260fc33297966f5a8e@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <0000000000002753ac05ac9471f4@google.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <efc48e5e-d4fc-bbaf-467c-24210eb77d9b@kernel.dk>
-Date:   Tue, 11 Aug 2020 07:06:21 -0600
+Message-ID: <4acc639d-ec4a-e630-3a0b-33c4f675b41d@kernel.dk>
+Date:   Tue, 11 Aug 2020 07:52:55 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200811081033.GD21797@redhat.com>
+In-Reply-To: <0000000000002753ac05ac9471f4@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -80,47 +69,107 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/11/20 2:10 AM, Oleg Nesterov wrote:
-> On 08/11, Peter Zijlstra wrote:
->>
->> On Tue, Aug 11, 2020 at 09:14:02AM +0200, Oleg Nesterov wrote:
->>> On 08/11, Peter Zijlstra wrote:
->>>>
->>>> On Tue, Aug 11, 2020 at 08:45:16AM +0200, Oleg Nesterov wrote:
->>>>>
->>>>> ->jobctl is always modified with ->siglock held, do we really need
->>>>> WRITE_ONCE() ?
->>>>
->>>> In theory, yes. The compiler doesn't know about locks, it can tear
->>>> writes whenever it feels like it.
->>>
->>> Yes, but why does this matter? Could you spell please?
->>
->> Ah, well, that I don't konw. Why do we need the READ_ONCE() ?
->>
->> It does:
->>
->>> +               if (!(task->jobctl & JOBCTL_TASK_WORK) &&
->>> +                   lock_task_sighand(task, &flags)) {
->>
->> and the lock_task_sighand() implies barrier(), so I thought the reason
->> for the READ_ONCE() was load-tearing, and then we need WRITE_ONCE() to
->> avoid store-tearing.
+On 8/11/20 12:47 AM, syzbot wrote:
+> Hello,
 > 
-> I don't think we really need READ_ONCE() for correctness, compiler can't
-> reorder this LOAD with cmpxchg() above, and I think we don't care about
-> load-tearing.
+> syzbot found the following issue on:
 > 
-> But I guess we need READ_ONCE() or data_race() to shut kcsan up.
+> HEAD commit:    fc80c51f Merge tag 'kbuild-v5.9' of git://git.kernel.org/p..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17601ab2900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d48472fcc2f68903
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9b260fc33297966f5a8e
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174272b2900000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9b260fc33297966f5a8e@syzkaller.appspotmail.com
 
-Thanks, reading through this thread makes me feel better. I agree that
-we'll need READ_ONCE() just to shut up analyzers.
+I think the below should fix it, for this use case and potentially others.
+If the ring is closed and the task_work bound req is holding the last
+reference, we need to hold a ctx reference around it.
 
-I'd really like to get this done at the same time as the io_uring
-change. Are you open to doing the READ_ONCE() based JOBCTL_TASK_WORK
-addition for 5.9? Alternatively we can retain the 1/2 patch from this
-series and I'll open-code it in io_uring, but seems pointless as
-io_uring is the only user of TWA_SIGNAL in the kernel anyway.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5488698189da..cc4bb16ff570 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1821,8 +1821,10 @@ static void __io_req_task_submit(struct io_kiocb *req)
+ static void io_req_task_submit(struct callback_head *cb)
+ {
+ 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
++	struct io_ring_ctx *ctx = req->ctx;
+ 
+ 	__io_req_task_submit(req);
++	percpu_ref_put(&ctx->refs);
+ }
+ 
+ static void io_req_task_queue(struct io_kiocb *req)
+@@ -1830,6 +1832,7 @@ static void io_req_task_queue(struct io_kiocb *req)
+ 	int ret;
+ 
+ 	init_task_work(&req->task_work, io_req_task_submit);
++	percpu_ref_get(&req->ctx->refs);
+ 
+ 	ret = io_req_task_work_add(req, &req->task_work);
+ 	if (unlikely(ret)) {
+@@ -2318,6 +2321,8 @@ static void io_rw_resubmit(struct callback_head *cb)
+ 		refcount_inc(&req->refs);
+ 		io_queue_async_work(req);
+ 	}
++
++	percpu_ref_put(&ctx->refs);
+ }
+ #endif
+ 
+@@ -2330,6 +2335,8 @@ static bool io_rw_reissue(struct io_kiocb *req, long res)
+ 		return false;
+ 
+ 	init_task_work(&req->task_work, io_rw_resubmit);
++	percpu_ref_get(&req->ctx->refs);
++
+ 	ret = io_req_task_work_add(req, &req->task_work);
+ 	if (!ret)
+ 		return true;
+@@ -3033,6 +3040,8 @@ static int io_async_buf_func(struct wait_queue_entry *wait, unsigned mode,
+ 	list_del_init(&wait->entry);
+ 
+ 	init_task_work(&req->task_work, io_req_task_submit);
++	percpu_ref_get(&req->ctx->refs);
++
+ 	/* submit ref gets dropped, acquire a new one */
+ 	refcount_inc(&req->refs);
+ 	ret = io_req_task_work_add(req, &req->task_work);
+@@ -4565,6 +4574,8 @@ static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
+ 
+ 	req->result = mask;
+ 	init_task_work(&req->task_work, func);
++	percpu_ref_get(&req->ctx->refs);
++
+ 	/*
+ 	 * If this fails, then the task is exiting. When a task exits, the
+ 	 * work gets canceled, so just cancel this request as well instead
+@@ -4652,11 +4663,13 @@ static void io_poll_task_handler(struct io_kiocb *req, struct io_kiocb **nxt)
+ static void io_poll_task_func(struct callback_head *cb)
+ {
+ 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
++	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_kiocb *nxt = NULL;
+ 
+ 	io_poll_task_handler(req, &nxt);
+ 	if (nxt)
+ 		__io_req_task_submit(nxt);
++	percpu_ref_put(&ctx->refs);
+ }
+ 
+ static int io_poll_double_wake(struct wait_queue_entry *wait, unsigned mode,
+@@ -4752,6 +4765,7 @@ static void io_async_task_func(struct callback_head *cb)
+ 
+ 	if (io_poll_rewait(req, &apoll->poll)) {
+ 		spin_unlock_irq(&ctx->completion_lock);
++		percpu_ref_put(&ctx->refs);
+ 		return;
+ 	}
+ 
 
 -- 
 Jens Axboe

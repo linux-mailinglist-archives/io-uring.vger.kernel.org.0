@@ -2,42 +2,47 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B41C241794
-	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 09:49:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48EC42417FF
+	for <lists+io-uring@lfdr.de>; Tue, 11 Aug 2020 10:10:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbgHKHtd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Aug 2020 03:49:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45762 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728060AbgHKHtc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Aug 2020 03:49:32 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37DB1C06174A;
-        Tue, 11 Aug 2020 00:49:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+TJ/vqDKzK90+hFON4erIAG/H/xM0Uf9CVDVNzbr/jk=; b=vUsE5pszqbqW+rNKIucpamldWG
-        3N4ra9yWtZ2GOn2xWUVuvTb/C4UYILB8oGyLb8Z8s/UXVDkudXC2uNvkaWG48NBaZgjYj865BvILd
-        79eNl4Yc0PcNTEbS/sdRdfujaQBVIws9QUB9KuLSyVDIRnDPmGVBO+LEAngsK5chgDEdpXEGUYHki
-        sVuy7bpLgdQzz1E5ODMSYsHgQ5YceLrGjwJmY2VuUfVfRW4VOZSOBd/sEBxtvSo+6ymAmTDrInC4V
-        eoFKmvSjnPisOvi0NLuEwHRSl6mRAROd+OrCVG+iWUMwakhfxvpPRFQIMl2iqSKHzumeMsdgL1UgP
-        qrMbHwkg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k5P2F-0000at-Cy; Tue, 11 Aug 2020 07:49:27 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 915A0980C9D; Tue, 11 Aug 2020 09:49:25 +0200 (CEST)
-Date:   Tue, 11 Aug 2020 09:49:25 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Oleg Nesterov <oleg@redhat.com>
+        id S1728225AbgHKIKn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Aug 2020 04:10:43 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33690 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727998AbgHKIKn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Aug 2020 04:10:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597133442;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ETM5SVJgSYa28QAQrXzkvKzwfyNa1RWXhMMsF/tbcjU=;
+        b=ReZHC+SFw30c1koZqsu6d1BFNkMMfcHigtyBUNSi5rJbCTquwWk4Q9/VWxQju4brRw6Sve
+        lfePjBeGFNBdA7i0K8XhG/MM+y35MK3zo9/5KWkRBmYfwDaFVC+EoKS1q0sAFk6mWI6ihC
+        eMjkTwk7Gtf9SvsvkyGuPjL6b1PWo5E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-356-H20mh8tYNymRfg1oA-_Fkw-1; Tue, 11 Aug 2020 04:10:38 -0400
+X-MC-Unique: H20mh8tYNymRfg1oA-_Fkw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 01C998015F0;
+        Tue, 11 Aug 2020 08:10:37 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.186])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 547D617B9B;
+        Tue, 11 Aug 2020 08:10:35 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 11 Aug 2020 10:10:36 +0200 (CEST)
+Date:   Tue, 11 Aug 2020 10:10:34 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
         io-uring <io-uring@vger.kernel.org>,
         stable <stable@vger.kernel.org>, Josef <josef.grieb@gmail.com>
 Subject: Re: [PATCH 2/2] io_uring: use TWA_SIGNAL for task_work if the task
  isn't running
-Message-ID: <20200811074925.GT3982@worktop.programming.kicks-ass.net>
+Message-ID: <20200811081033.GD21797@redhat.com>
 References: <20200810211057.GG3982@worktop.programming.kicks-ass.net>
  <5628f79b-6bfb-b054-742a-282663cb2565@kernel.dk>
  <CAG48ez2dEyxe_ioQaDC3JTdSyLsdOiFKZvk6LGP00ELSfSvhvg@mail.gmail.com>
@@ -47,20 +52,21 @@ References: <20200810211057.GG3982@worktop.programming.kicks-ass.net>
  <20200811064516.GA21797@redhat.com>
  <20200811065659.GQ3982@worktop.programming.kicks-ass.net>
  <20200811071401.GB21797@redhat.com>
- <20200811072637.GC21797@redhat.com>
+ <20200811074538.GS3982@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200811072637.GC21797@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200811074538.GS3982@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 11, 2020 at 09:26:37AM +0200, Oleg Nesterov wrote:
-> On 08/11, Oleg Nesterov wrote:
-> >
+On 08/11, Peter Zijlstra wrote:
+>
+> On Tue, Aug 11, 2020 at 09:14:02AM +0200, Oleg Nesterov wrote:
 > > On 08/11, Peter Zijlstra wrote:
 > > >
 > > > On Tue, Aug 11, 2020 at 08:45:16AM +0200, Oleg Nesterov wrote:
@@ -72,9 +78,23 @@ On Tue, Aug 11, 2020 at 09:26:37AM +0200, Oleg Nesterov wrote:
 > > > writes whenever it feels like it.
 > >
 > > Yes, but why does this matter? Could you spell please?
-> 
-> Do you mean that compiler can temporary set/clear JOBCTL_TASK_WORK
-> when it sets/clears another bit?
+>
+> Ah, well, that I don't konw. Why do we need the READ_ONCE() ?
+>
+> It does:
+>
+> > +               if (!(task->jobctl & JOBCTL_TASK_WORK) &&
+> > +                   lock_task_sighand(task, &flags)) {
+>
+> and the lock_task_sighand() implies barrier(), so I thought the reason
+> for the READ_ONCE() was load-tearing, and then we need WRITE_ONCE() to
+> avoid store-tearing.
 
-Possibly, afaict the compiler is allowed to 'spill' intermediate state
-into the variable. If any intermediate state has the bit clear,...
+I don't think we really need READ_ONCE() for correctness, compiler can't
+reorder this LOAD with cmpxchg() above, and I think we don't care about
+load-tearing.
+
+But I guess we need READ_ONCE() or data_race() to shut kcsan up.
+
+Oleg.
+

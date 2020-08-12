@@ -2,59 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A892242E78
-	for <lists+io-uring@lfdr.de>; Wed, 12 Aug 2020 20:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7857C242E7A
+	for <lists+io-uring@lfdr.de>; Wed, 12 Aug 2020 20:24:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbgHLSWz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Aug 2020 14:22:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54192 "EHLO
+        id S1726531AbgHLSYy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Aug 2020 14:24:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbgHLSWy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Aug 2020 14:22:54 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72DFFC061383
-        for <io-uring@vger.kernel.org>; Wed, 12 Aug 2020 11:22:54 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id w14so3337488ljj.4
-        for <io-uring@vger.kernel.org>; Wed, 12 Aug 2020 11:22:54 -0700 (PDT)
+        with ESMTP id S1726512AbgHLSYy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Aug 2020 14:24:54 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AD35C061383
+        for <io-uring@vger.kernel.org>; Wed, 12 Aug 2020 11:24:54 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id 140so1671848lfi.5
+        for <io-uring@vger.kernel.org>; Wed, 12 Aug 2020 11:24:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JBig+ox7igRkw6u7DbxbCUZ+wEfWI1v03T1q29uN3xI=;
-        b=ZJy5iiP+QWwMVKX0+2JIYygwVnIz+QpIUonqbt1nHrp+ivZA1D0jPqL4lI0ZIQYIqk
-         7Uqc8aZE4wQOWecERoyLDNPl+Y99sky2H0AMVPb/gLgO7+VtZOlpzKXPtOgd9IxhDnBj
-         0y7VQ6QDdfvpGgJGXC4Li0BwZ8bHnckvUCkby/9DMetCJTa0t0hXvAAuxYhcFaL+UK0C
-         lQsWHgfWUSHpgFzeI4IkZtTGO8HJwWU03iDRx8HB6BUg0kZt13Me0+Y7s75uqNJR4HR4
-         mw75tipcddw3Nn/2PtOrS0O0g7gNCSt73PU5fKGK3KoF3eyqxwwbu1Eus4EC7IxF+xG/
-         DQ9A==
+        bh=xjpQ3kGXsSDwFX9VpcVr0zDslf8Q18FnrnUhbwCCQtg=;
+        b=nJ3xZl4QtEAobTvw2tdbKyJWi4jXCtfsXe35tLhYTvMM80dzPDZHzBxptm04oEVhW/
+         PJBgJd2Y7fUOatkfX4JvEYCDTRjAF4OJDFNR0OiAMdexXJNl3ZIwhHA26jqXq6vdzeks
+         wtJUrPTi/CIviyUcVChBjlesRPMpTYZODY9TFROyUVgLIqUmPW/TcNGCiWDB1V5kdY4S
+         1Mfslmhn7vqXYTaPWBfOabmky6jCYeqlM5zOb5gyybcz6Bq63aRe3nA7MyJ1RqMRaHdU
+         yUt37pvyc597hmEEqsH7asgiX024u5DSbQxds3Ahj19QLbGV9EUbMlj9shxsn70HR4wh
+         5jQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=JBig+ox7igRkw6u7DbxbCUZ+wEfWI1v03T1q29uN3xI=;
-        b=bB9QGA7y0sQfn87wchrm8udW/Opn+6c5rN2C3qMDz6JNoKyU4cWfIOqOiRtqW1XLAk
-         wCgNjshHltX1me4RkR0RpQkOH/16YJ2rdZKAswHIuC23r+BCd9yFPQGrXpYvbZNjkoMP
-         UgcOR2ganMV1w0qsBsD4PtfYCzMDT09J1XgBYwNwDdUc91o8f8w16HPYXy3+GZf0ZRMo
-         +YIAPxgKpSyTaSPPDqi1La1IYrHvWPNqEWJ5MRayosawLnMAHhCbUZPdJgb+C3WJZXJT
-         c3zmHXAjaWwiJiNhUzFGmeSVRcHld5XZlYoqmDfu9k1ft/259/0uVt9p7rSjOCLjwEh5
-         W0Wg==
-X-Gm-Message-State: AOAM532r25hOgu3tKl2jSft2N/fGV3XZBIbG0+v5LRtr9TjVLW8H1p2g
-        z0WLzlS6Qif/3ZgPhLvX88jZ6l8qQqE=
-X-Google-Smtp-Source: ABdhPJzrqvGa5+KZOq9wNREKbtZYfiYbCJUk+U2jPi/4yfgnYnBh+CwsL3iMxnJOeCHUUgrcCNeV+g==
-X-Received: by 2002:a2e:b610:: with SMTP id r16mr199171ljn.439.1597256572309;
-        Wed, 12 Aug 2020 11:22:52 -0700 (PDT)
+        bh=xjpQ3kGXsSDwFX9VpcVr0zDslf8Q18FnrnUhbwCCQtg=;
+        b=O+ei4Tr6c+GxLMZeGTH26gN2u4yehU87zALzupu3qLHcNAzPZekjI7tRdPwVJsWurX
+         QSqw00ZIVLpK8vvOOODwcoNAfpgQdyLqOwZj+hygape/s4p47uPl3AjTz0CwUclNeVK6
+         KjZohw7wOEZPO5yXlcEA+fkJxIebV5hJCmxFFml751T5auvetFBuL1ne+vMHHL0i/0s5
+         kbTJFsyam7lqiJJIOYnuOiaWPUNHkJArYUxjIUdkdJpnU+fHR2Fs41ZzDS86G8nESN0C
+         j4vZajfolJPp4RadQy9Ero4NLjMxEAndVpG5tRIq5zCfXuR1b75AqkCrjLeQiE8l0UOV
+         6bpg==
+X-Gm-Message-State: AOAM533ue0zuiyHyH/gC96Gk2j69Wou3uBX5cJeUUQHRrJHT3NXxHExC
+        9RL9CtZ3Aoveh50bFPl9n6w=
+X-Google-Smtp-Source: ABdhPJx1oWS9M95YIyJY7n0qA8GuGBAitDyvFEi/oyejc4QoujLqDgmYArHKrcie0bC6DktiHL26OQ==
+X-Received: by 2002:ac2:5550:: with SMTP id l16mr312573lfk.187.1597256692503;
+        Wed, 12 Aug 2020 11:24:52 -0700 (PDT)
 Received: from [192.168.88.63] ([195.91.224.52])
-        by smtp.gmail.com with ESMTPSA id u5sm630389lfi.91.2020.08.12.11.22.51
+        by smtp.gmail.com with ESMTPSA id 203sm640846lfk.49.2020.08.12.11.24.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Aug 2020 11:22:51 -0700 (PDT)
+        Wed, 12 Aug 2020 11:24:52 -0700 (PDT)
 Subject: Re: io_uring process termination/killing is not working
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, Josef <josef.grieb@gmail.com>,
         io-uring@vger.kernel.org
 Cc:     norman@apache.org
 References: <CAAss7+pf+CGQiSDM8_fhsHRwjWUxESPcJMhOOsDOitqePQxCrg@mail.gmail.com>
  <dc3562d8-dc67-c623-36ee-38885b4c1682@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <8e734ada-7f28-22df-5f30-027aca3695d1@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -98,12 +99,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <8e734ada-7f28-22df-5f30-027aca3695d1@gmail.com>
-Date:   Wed, 12 Aug 2020 21:20:49 +0300
+Message-ID: <5fa9e01f-137d-b0f8-211a-975c7ed56419@gmail.com>
+Date:   Wed, 12 Aug 2020 21:22:49 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <dc3562d8-dc67-c623-36ee-38885b4c1682@kernel.dk>
+In-Reply-To: <8e734ada-7f28-22df-5f30-027aca3695d1@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -112,26 +113,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/08/2020 21:05, Jens Axboe wrote:
-> On 8/12/20 11:58 AM, Josef wrote:
->> Hi,
+On 12/08/2020 21:20, Pavel Begunkov wrote:
+> On 12/08/2020 21:05, Jens Axboe wrote:
+>> On 8/12/20 11:58 AM, Josef wrote:
+>>> Hi,
+>>>
+>>> I have a weird issue on kernel 5.8.0/5.8.1, SIGINT even SIGKILL
+>>> doesn't work to kill this process(always state D or D+), literally I
+>>> have to terminate my VM because even the kernel can't kill the process
+>>> and no issue on 5.7.12-201, however if IOSQE_IO_LINK is not set, it
+>>> works
+>>>
+>>> I've attached a file to reproduce it
+>>> or here
+>>> https://gist.github.com/1Jo1/15cb3c63439d0c08e3589cfa98418b2c
 >>
->> I have a weird issue on kernel 5.8.0/5.8.1, SIGINT even SIGKILL
->> doesn't work to kill this process(always state D or D+), literally I
->> have to terminate my VM because even the kernel can't kill the process
->> and no issue on 5.7.12-201, however if IOSQE_IO_LINK is not set, it
->> works
->>
->> I've attached a file to reproduce it
->> or here
->> https://gist.github.com/1Jo1/15cb3c63439d0c08e3589cfa98418b2c
+>> Thanks, I'll take a look at this. It's stuck in uninterruptible
+>> state, which is why you can't kill it.
 > 
-> Thanks, I'll take a look at this. It's stuck in uninterruptible
-> state, which is why you can't kill it.
+> It looks like one of the hangs I've been talking about a few days ago,
+> an accept is inflight but can't be found by cancel_files() because it's
+> in a link.
 
-It looks like one of the hangs I've been talking about a few days ago,
-an accept is inflight but can't be found by cancel_files() because it's
-in a link.
+BTW, I described it a month ago, there were more details.
 
 -- 
 Pavel Begunkov

@@ -2,164 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85F75243D01
-	for <lists+io-uring@lfdr.de>; Thu, 13 Aug 2020 18:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A6A8243D4C
+	for <lists+io-uring@lfdr.de>; Thu, 13 Aug 2020 18:25:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726305AbgHMQJZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 Aug 2020 12:09:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57844 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbgHMQJY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Aug 2020 12:09:24 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9A20C061757
-        for <io-uring@vger.kernel.org>; Thu, 13 Aug 2020 09:09:24 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id z3so6009966ilh.3
-        for <io-uring@vger.kernel.org>; Thu, 13 Aug 2020 09:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NdS9w7PkEEsdQFKsh6kciz0K10Kas7ggz9J7x3UjBY0=;
-        b=OEDsnwUvH38ukKP7VZE/BiuidLSK0QXGRQyy1oPp8jqKytsXgoUnvTGGucNlyN/wyu
-         Z8BCgzYh0uaZ83qslFJAy1hfQ5sAFNOgPHAAt9uHOFHluKyi5yP1qK0MO2t9kDFhZKYc
-         osdbiVZXgCKcBIlO4qqFAgYrgePkeqI1Zyylzja3NQDwqUF3R3n+oGDVlDcsQHvU0Dee
-         50hLgSL0ETtU6oYzWRccUrb5lbLHpJiNs8ofmHHAVeORotht8/Fz1oEcwT2lH913RbMa
-         FCrgNtFt092uAq2B+GEdoNg2N3qN0aH6jFy6UyzCJ0Tu+S9nq24tSiQOn9qLsS8h3R/O
-         Dt0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NdS9w7PkEEsdQFKsh6kciz0K10Kas7ggz9J7x3UjBY0=;
-        b=EKZ4ItEObR+MWgzyKAW7dDNBz8v2bJ0Fhrz0sQJB7RCOeUJYvlvyHEx7pu3QWdVXGv
-         x53k2vKclYwEXUQO+FA70cLFgAtT7/ZfBDeEZgoOrNGndePskeEIPOFCZ5Pyrso35lPE
-         QpUEYzaY5ZYagD47j9vzZIAyF/bQWnfgNIAZSnhavwW8RgNLS1QbfoUkPP4nuPC7Qhgc
-         ePz2yOB0MqLUKMOUWPSZfgAL4gefsIOyefJiPy7Hvq7UltGCRrsnetdTH2N3y3cvj7US
-         biqFkr/elEGgPe2p1chvD9yp2qC+KS2ySRDlatS/CcT7nqH1cOz7wUHqYjKfYxJXXCb3
-         dlPQ==
-X-Gm-Message-State: AOAM532nxvKGtODIDmzqu19YFLT2NjgU0iqS/FH68zl4jZX+z4S9xamQ
-        vWrgS11Nkv1Y99O8a35hg9mLOA==
-X-Google-Smtp-Source: ABdhPJypqy/CmAC9tsWeeXM2e6PDVaah9SbFdEXU8uI0dDdFTJj1zvVZdFN35gnUq6EhKPZ3kmjALg==
-X-Received: by 2002:a92:6d0c:: with SMTP id i12mr4836294ilc.37.1597334963883;
-        Thu, 13 Aug 2020 09:09:23 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id s6sm2944692ilq.73.2020.08.13.09.09.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Aug 2020 09:09:23 -0700 (PDT)
-Subject: Re: io_uring process termination/killing is not working
-To:     Josef <josef.grieb@gmail.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        norman@apache.org
-References: <CAAss7+pf+CGQiSDM8_fhsHRwjWUxESPcJMhOOsDOitqePQxCrg@mail.gmail.com>
- <dc3562d8-dc67-c623-36ee-38885b4c1682@kernel.dk>
- <8e734ada-7f28-22df-5f30-027aca3695d1@gmail.com>
- <5fa9e01f-137d-b0f8-211a-975c7ed56419@gmail.com>
- <d0d1f797-c958-ac17-1f11-96f6ba6dbf37@gmail.com>
- <d0621b79-4277-a9ad-208e-b60153c08d15@kernel.dk>
- <CAAss7+rk5jH5Peov-Scffp3cmRpk3=0suBZvw1RFTEc7a6Rstw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e0387a97-0b3c-fd41-8060-3f118221bba6@kernel.dk>
-Date:   Thu, 13 Aug 2020 10:09:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <CAAss7+rk5jH5Peov-Scffp3cmRpk3=0suBZvw1RFTEc7a6Rstw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726557AbgHMQZz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 Aug 2020 12:25:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726612AbgHMQZz (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 13 Aug 2020 12:25:55 -0400
+Received: from localhost (unknown [70.37.104.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5226B20866;
+        Thu, 13 Aug 2020 16:25:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597335954;
+        bh=y/F+LaeL/US8587B8F0XjnYAiuJDd9qUk91CTydy1nA=;
+        h=Date:From:To:To:To:Cc:Cc:Subject:In-Reply-To:References:From;
+        b=O+cOgOV9RwIT6LWs4gzVhiExoxcGQXJbWnW6PwesBh4HErR9G3h0F3IDAlkxiZFtX
+         IKLhp486APRVsh8i7BJPrj+vEZnKQeaYbEFhZBS/yGDqJuX0FdVXnol9c8Vh2fV2OP
+         0e4oN0w+l3CurEzkgUB4VU2ooUeKHZliUDYZ89fg=
+Date:   Thu, 13 Aug 2020 16:25:53 +0000
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Cc:     peterz@infradead.org, Jens Axboe <axboe@kernel.dk>
+Cc:     stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] io_uring: use TWA_SIGNAL for task_work if the task isn't running
+In-Reply-To: <20200808183439.342243-3-axboe@kernel.dk>
+References: <20200808183439.342243-3-axboe@kernel.dk>
+Message-Id: <20200813162554.5226B20866@mail.kernel.org>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/13/20 10:07 AM, Josef wrote:
-> On Thu, 13 Aug 2020 at 01:32, Jens Axboe <axboe@kernel.dk> wrote:
->> Yeah I think you're right. How about something like the below? That'll
->> potentially cancel more than just the one we're looking for, but seems
->> kind of silly to only cancel from the file table holding request and to
->> the end.
->>
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 8a2afd8c33c9..0630a9622baa 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -4937,6 +5003,7 @@ static bool io_poll_remove_one(struct io_kiocb *req)
->>                 io_cqring_fill_event(req, -ECANCELED);
->>                 io_commit_cqring(req->ctx);
->>                 req->flags |= REQ_F_COMP_LOCKED;
->> +               req_set_fail_links(req);
->>                 io_put_req(req);
->>         }
->>
->> @@ -7935,6 +8002,47 @@ static bool io_wq_files_match(struct io_wq_work *work, void *data)
->>         return work->files == files;
->>  }
->>
->> +static bool __io_poll_remove_link(struct io_kiocb *preq, struct io_kiocb *req)
->> +{
->> +       struct io_kiocb *link;
->> +
->> +       if (!(preq->flags & REQ_F_LINK_HEAD))
->> +               return false;
->> +
->> +       list_for_each_entry(link, &preq->link_list, link_list) {
->> +               if (link != req)
->> +                       break;
->> +               io_poll_remove_one(preq);
->> +               return true;
->> +       }
->> +
->> +       return false;
->> +}
->> +
->> +/*
->> + * We're looking to cancel 'req' because it's holding on to our files, but
->> + * 'req' could be a link to another request. See if it is, and cancel that
->> + * parent request if so.
->> + */
->> +static void io_poll_remove_link(struct io_ring_ctx *ctx, struct io_kiocb *req)
->> +{
->> +       struct hlist_node *tmp;
->> +       struct io_kiocb *preq;
->> +       int i;
->> +
->> +       spin_lock_irq(&ctx->completion_lock);
->> +       for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
->> +               struct hlist_head *list;
->> +
->> +               list = &ctx->cancel_hash[i];
->> +               hlist_for_each_entry_safe(preq, tmp, list, hash_node) {
->> +                       if (__io_poll_remove_link(preq, req))
->> +                               break;
->> +               }
->> +       }
->> +       spin_unlock_irq(&ctx->completion_lock);
->> +}
->> +
->>  static void io_uring_cancel_files(struct io_ring_ctx *ctx,
->>                                   struct files_struct *files)
->>  {
->> @@ -7989,6 +8097,8 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
->>                         }
->>                 } else {
->>                         io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
->> +                       /* could be a link, check and remove if it is */
->> +                       io_poll_remove_link(ctx, cancel_req);
->>                         io_put_req(cancel_req);
->>                 }
->>
->>
-> 
-> btw it works for me thanks
+Hi
 
-Thanks for testing, I've committed an updated version that also ensures
-we find timeout based links:
+[This is an automated email]
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.9&id=f254ac04c8744cf7bfed012717eac34eacc65dfb
+This commit has been processed because it contains a -stable tag.
+The stable tag indicates that it's relevant for the following trees: 5.7+
+
+The bot has tested the following trees: v5.8, v5.7.14.
+
+v5.8: Failed to apply! Possible dependencies:
+    3fa5e0f33128 ("io_uring: optimise io_req_find_next() fast check")
+    4503b7676a2e ("io_uring: catch -EIO from buffered issue request failure")
+    7c86ffeeed30 ("io_uring: deduplicate freeing linked timeouts")
+    9b0d911acce0 ("io_uring: kill REQ_F_LINK_NEXT")
+    9b5f7bd93272 ("io_uring: replace find_next() out param with ret")
+    a1d7c393c471 ("io_uring: enable READ/WRITE to use deferred completions")
+    b63534c41e20 ("io_uring: re-issue block requests that failed because of resources")
+    bcf5a06304d6 ("io_uring: support true async buffered reads, if file provides it")
+    c2c4c83c58cb ("io_uring: use new io_req_task_work_add() helper throughout")
+    c40f63790ec9 ("io_uring: use task_work for links if possible")
+    e1e16097e265 ("io_uring: provide generic io_req_complete() helper")
+
+v5.7.14: Failed to apply! Possible dependencies:
+    0cdaf760f42e ("io_uring: remove req->needs_fixed_files")
+    310672552f4a ("io_uring: async task poll trigger cleanup")
+    3fa5e0f33128 ("io_uring: optimise io_req_find_next() fast check")
+    405a5d2b2762 ("io_uring: avoid unnecessary io_wq_work copy for fast poll feature")
+    4a38aed2a0a7 ("io_uring: batch reap of dead file registrations")
+    4dd2824d6d59 ("io_uring: lazy get task")
+    7c86ffeeed30 ("io_uring: deduplicate freeing linked timeouts")
+    7cdaf587de7c ("io_uring: avoid whole io_wq_work copy for requests completed inline")
+    7d01bd745a8f ("io_uring: remove obsolete 'state' parameter")
+    9b0d911acce0 ("io_uring: kill REQ_F_LINK_NEXT")
+    9b5f7bd93272 ("io_uring: replace find_next() out param with ret")
+    c2c4c83c58cb ("io_uring: use new io_req_task_work_add() helper throughout")
+    c40f63790ec9 ("io_uring: use task_work for links if possible")
+    d4c81f38522f ("io_uring: don't arm a timeout through work.func")
+    f5fa38c59cb0 ("io_wq: add per-wq work handler instead of per work")
+
+
+NOTE: The patch will not be queued to stable trees until it is upstream.
+
+How should we proceed with this patch?
 
 -- 
-Jens Axboe
-
+Thanks
+Sasha

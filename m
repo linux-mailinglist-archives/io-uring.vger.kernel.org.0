@@ -2,203 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FDF624325C
-	for <lists+io-uring@lfdr.de>; Thu, 13 Aug 2020 04:08:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4B10243C8E
+	for <lists+io-uring@lfdr.de>; Thu, 13 Aug 2020 17:33:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbgHMCIz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Aug 2020 22:08:55 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:53350 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726419AbgHMCIz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Aug 2020 22:08:55 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R321e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07484;MF=jiufei.xue@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0U5c1zBj_1597284530;
-Received: from ali-186590e05fa3.local(mailfrom:jiufei.xue@linux.alibaba.com fp:SMTPD_---0U5c1zBj_1597284530)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 13 Aug 2020 10:08:51 +0800
-Subject: Re: [PATCH v2] io_uring: add timeout support for io_uring_enter()
-To:     axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org, metze@samba.org
-References: <1596533282-16791-1-git-send-email-jiufei.xue@linux.alibaba.com>
-From:   Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Message-ID: <83d46b00-ba99-ec6f-3b46-5049d2ee608b@linux.alibaba.com>
-Date:   Thu, 13 Aug 2020 10:08:50 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
- Gecko/20100101 Thunderbird/68.11.0
+        id S1726583AbgHMPdr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 Aug 2020 11:33:47 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56115 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726730AbgHMPdq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Aug 2020 11:33:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597332825;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=U+DZxetMKI4jVQKv/cLX0z4HNCC6l+3oyJGtLYHcX8o=;
+        b=XAWewq3B9ffElLPLK8aqXEdtA0lEYNv0TEcNPEvzuPpuKkqxxXovnF9IBkamQqxqnwOH5d
+        vbaiYgvvqm0SkxTxkI0w1i/SA50l6SAEi0TPTa0z0WXMiD5c3dNd4H8VCRVQTV4MerO89+
+        qCIVor4oyVizlmurC+dje/EROwsSDUU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-381-rFiyPInxM7CpmkqnLbRD4g-1; Thu, 13 Aug 2020 11:33:19 -0400
+X-MC-Unique: rFiyPInxM7CpmkqnLbRD4g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DDC1910060C3;
+        Thu, 13 Aug 2020 15:33:17 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-113-140.ams2.redhat.com [10.36.113.140])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C3F4360C04;
+        Thu, 13 Aug 2020 15:33:02 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <asarai@suse.de>,
+        io-uring@vger.kernel.org
+Subject: [PATCH v4 0/3] io_uring: add restrictions to support untrusted
+ applications and guests
+Date:   Thu, 13 Aug 2020 17:32:51 +0200
+Message-Id: <20200813153254.93731-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1596533282-16791-1-git-send-email-jiufei.xue@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+v4:
+ - rebased on top of io_uring-5.9
+ - fixed io_uring_enter() exit path when ring is disabled
 
-Could you please review this patch?
+v3: https://lore.kernel.org/io-uring/20200728160101.48554-1-sgarzare@redhat.c=
+om/
+RFC v2: https://lore.kernel.org/io-uring/20200716124833.93667-1-sgarzare@redh=
+at.com
+RFC v1: https://lore.kernel.org/io-uring/20200710141945.129329-1-sgarzare@red=
+hat.com
 
-Thinks,
-Jiufei
+Following the proposal that I send about restrictions [1], I wrote this series
+to add restrictions in io_uring.
 
-On 2020/8/4 下午5:28, Jiufei Xue wrote:
-> Now users who want to get woken when waiting for events should submit a
-> timeout command first. It is not safe for applications that split SQ and
-> CQ handling between two threads, such as mysql. Users should synchronize
-> the two threads explicitly to protect SQ and that will impact the
-> performance.
-> 
-> This patch adds support for timeout to existing io_uring_enter(). To
-> avoid overloading arguments, it introduces a new parameter structure
-> which contains sigmask and timeout.
-> 
-> I have tested the workloads with one thread submiting nop requests
-> while the other reaping the cqe with timeout. It shows 1.8~2x faster
-> when the iodepth is 16.
-> 
-> Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-> ---
->  fs/io_uring.c                 | 45 +++++++++++++++++++++++++++++++++++++------
->  include/uapi/linux/io_uring.h |  7 +++++++
->  2 files changed, 46 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 2a3af95..cdd89e4 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6514,7 +6514,8 @@ static int io_wake_function(struct wait_queue_entry *curr, unsigned int mode,
->   * application must reap them itself, as they reside on the shared cq ring.
->   */
->  static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
-> -			  const sigset_t __user *sig, size_t sigsz)
-> +			  const sigset_t __user *sig, size_t sigsz,
-> +			  struct __kernel_timespec __user *uts)
->  {
->  	struct io_wait_queue iowq = {
->  		.wq = {
-> @@ -6526,6 +6527,8 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  		.to_wait	= min_events,
->  	};
->  	struct io_rings *rings = ctx->rings;
-> +	struct timespec64 ts;
-> +	signed long timeout = 0;
->  	int ret = 0;
->  
->  	do {
-> @@ -6548,6 +6551,12 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  			return ret;
->  	}
->  
-> +	if (uts) {
-> +		if (get_timespec64(&ts, uts))
-> +			return -EFAULT;
-> +		timeout = timespec64_to_jiffies(&ts);
-> +	}
-> +
->  	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
->  	trace_io_uring_cqring_wait(ctx, min_events);
->  	do {
-> @@ -6569,7 +6578,14 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  		}
->  		if (io_should_wake(&iowq, false))
->  			break;
-> -		schedule();
-> +		if (uts) {
-> +			if ((timeout = schedule_timeout(timeout)) == 0) {
-> +				ret = -ETIME;
-> +				break;
-> +			}
-> +		} else {
-> +			schedule();
-> +		}
->  	} while (1);
->  	finish_wait(&ctx->wait, &iowq.wq);
->  
-> @@ -7993,19 +8009,36 @@ static unsigned long io_uring_nommu_get_unmapped_area(struct file *file,
->  #endif /* !CONFIG_MMU */
->  
->  SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
-> -		u32, min_complete, u32, flags, const sigset_t __user *, sig,
-> +		u32, min_complete, u32, flags, const void __user *, argp,
->  		size_t, sigsz)
->  {
->  	struct io_ring_ctx *ctx;
->  	long ret = -EBADF;
->  	int submitted = 0;
->  	struct fd f;
-> +	const sigset_t __user *sig;
-> +	struct __kernel_timespec __user *ts;
-> +	struct io_uring_getevents_arg arg;
->  
->  	io_run_task_work();
->  
-> -	if (flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP))
-> +	if (flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
-> +		      IORING_ENTER_GETEVENTS_TIMEOUT))
->  		return -EINVAL;
->  
-> +	/* deal with IORING_ENTER_GETEVENTS_TIMEOUT */
-> +	if (flags & IORING_ENTER_GETEVENTS_TIMEOUT) {
-> +		if (!(flags & IORING_ENTER_GETEVENTS))
-> +			return -EINVAL;
-> +		if (copy_from_user(&arg, argp, sizeof(arg)))
-> +			return -EFAULT;
-> +		sig = arg.sigmask;
-> +		ts = arg.ts;
-> +	} else {
-> +		sig = (const sigset_t __user *)argp;
-> +		ts = NULL;
-> +	}
-> +
->  	f = fdget(fd);
->  	if (!f.file)
->  		return -EBADF;
-> @@ -8052,7 +8085,7 @@ static unsigned long io_uring_nommu_get_unmapped_area(struct file *file,
->  		    !(ctx->flags & IORING_SETUP_SQPOLL)) {
->  			ret = io_iopoll_check(ctx, min_complete);
->  		} else {
-> -			ret = io_cqring_wait(ctx, min_complete, sig, sigsz);
-> +			ret = io_cqring_wait(ctx, min_complete, sig, sigsz, ts);
->  		}
->  	}
->  
-> @@ -8346,7 +8379,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
->  	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
->  			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
->  			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL |
-> -			IORING_FEAT_POLL_32BITS;
-> +			IORING_FEAT_POLL_32BITS | IORING_FEAT_GETEVENTS_TIMEOUT;
->  
->  	if (copy_to_user(params, p, sizeof(*p))) {
->  		ret = -EFAULT;
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index d65fde7..70764d2 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -224,6 +224,7 @@ struct io_cqring_offsets {
->   */
->  #define IORING_ENTER_GETEVENTS	(1U << 0)
->  #define IORING_ENTER_SQ_WAKEUP	(1U << 1)
-> +#define IORING_ENTER_GETEVENTS_TIMEOUT	(1U << 2)
->  
->  /*
->   * Passed in for io_uring_setup(2). Copied back with updated info on success
-> @@ -251,6 +252,7 @@ struct io_uring_params {
->  #define IORING_FEAT_CUR_PERSONALITY	(1U << 4)
->  #define IORING_FEAT_FAST_POLL		(1U << 5)
->  #define IORING_FEAT_POLL_32BITS 	(1U << 6)
-> +#define IORING_FEAT_GETEVENTS_TIMEOUT	(1U << 7)
->  
->  /*
->   * io_uring_register(2) opcodes and arguments
-> @@ -290,4 +292,9 @@ struct io_uring_probe {
->  	struct io_uring_probe_op ops[0];
->  };
->  
-> +struct io_uring_getevents_arg {
-> +	sigset_t *sigmask;
-> +	struct __kernel_timespec *ts;
-> +};
-> +
->  #endif
-> 
+I also wrote helpers in liburing and a test case (test/register-restrictions.=
+c)
+available in this repository:
+https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
+
+Just to recap the proposal, the idea is to add some restrictions to the
+operations (sqe opcode and flags, register opcode) to safely allow untrusted
+applications or guests to use io_uring queues.
+
+The first patch changes io_uring_register(2) opcodes into an enumeration to
+keep track of the last opcode available.
+
+The second patch adds IOURING_REGISTER_RESTRICTIONS opcode and the code to
+handle restrictions.
+
+The third patch adds IORING_SETUP_R_DISABLED flag to start the rings disabled,
+allowing the user to register restrictions, buffers, files, before to start
+processing SQEs.
+
+Comments and suggestions are very welcome.
+
+Thank you in advance,
+Stefano
+
+[1] https://lore.kernel.org/io-uring/20200609142406.upuwpfmgqjeji4lc@steredha=
+t/
+
+Stefano Garzarella (3):
+  io_uring: use an enumeration for io_uring_register(2) opcodes
+  io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
+  io_uring: allow disabling rings during the creation
+
+ fs/io_uring.c                 | 160 ++++++++++++++++++++++++++++++++--
+ include/uapi/linux/io_uring.h |  60 ++++++++++---
+ 2 files changed, 203 insertions(+), 17 deletions(-)
+
+--=20
+2.26.2
+

@@ -2,180 +2,203 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B208243173
-	for <lists+io-uring@lfdr.de>; Thu, 13 Aug 2020 01:32:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FDF624325C
+	for <lists+io-uring@lfdr.de>; Thu, 13 Aug 2020 04:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgHLXcG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Aug 2020 19:32:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46138 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgHLXcF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Aug 2020 19:32:05 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9076C061383
-        for <io-uring@vger.kernel.org>; Wed, 12 Aug 2020 16:32:05 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id m34so1831415pgl.11
-        for <io-uring@vger.kernel.org>; Wed, 12 Aug 2020 16:32:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=X1f7IK2Pz3P56Q5nbShvsUCj8kJPMfZNf8B/BLSuT4g=;
-        b=GgGoBLC1gWzE5BHqqzp25AeG+21OElPIgjm0fmARtixa/HmAWHgngG+SLmTpxTJKIk
-         DO2CHi6uGgJXDKgWbVuWGyF0e9yFVPPySBmNXQGL19CiPDVownknAZd3AEFKyfO40zYZ
-         gVPZ6KoosaZMd4Q9D/hD36MTLh5HYq9XsA2ILGXkCl+U1vv2Lr0L9RNw8ouYYyXw7lHh
-         E8fu4q0uSKMKQ5lQJXYqVe8Lmb5OhC1K47cCTnoFLVi7euS9ieNRG2Uk9XLz4WJFwVOp
-         JZt9FW9Vq90yNxEG2GWVRiKdy+KJAb6+wV138572S+bl4JQDTPlDDTuUPX+FjCiKZWbU
-         NfbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=X1f7IK2Pz3P56Q5nbShvsUCj8kJPMfZNf8B/BLSuT4g=;
-        b=tEJ15Ts4d29d1o97YXlE9ncHnGNmtjd4krdde94YzDw46qGDvY+Gs31R/yBYMy01fC
-         anRDl6ILPZ+yyj027DR8VFLnQmV0khGDBFQw0GI79OvUafOaIzF/w32W/S6bJMaQm23W
-         CCuXtiFkcInv0r1BSP1zc1eSsEs8+11+1VWkUm072q5FDy06gpoLmwhzDBFiu8kOAUfP
-         hOOxzQkKFVY7B8+b62bJJ3zMFsw5epQNRZDELOQdm2ASEylNkW8VIUxhOwV+ZGwKggXo
-         agRc11nraAe7LB5weycRMXBG+pGwkEuqa2gh/0WgQA3gjUOhvApfSHfZIvTZZhtSgKAX
-         6RVg==
-X-Gm-Message-State: AOAM533hrq/gcO6wejEEDVMOEJK62EoHKIpVN3DFIeb0fL7kQf3Ko9yw
-        z9b2sIfq9N4+Lf4h1jRLW7jSoxQc37w=
-X-Google-Smtp-Source: ABdhPJzqG0Vsc40vkNHHITk65j3mDIIT3cArcmRbF4s0zqSQXw/xAwFowtQICGoPKYwfIWgiljC+DQ==
-X-Received: by 2002:a63:f444:: with SMTP id p4mr1279816pgk.451.1597275124192;
-        Wed, 12 Aug 2020 16:32:04 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j5sm3544275pfg.80.2020.08.12.16.32.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Aug 2020 16:32:03 -0700 (PDT)
-Subject: Re: io_uring process termination/killing is not working
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Josef <josef.grieb@gmail.com>, io-uring@vger.kernel.org
-Cc:     norman@apache.org
-References: <CAAss7+pf+CGQiSDM8_fhsHRwjWUxESPcJMhOOsDOitqePQxCrg@mail.gmail.com>
- <dc3562d8-dc67-c623-36ee-38885b4c1682@kernel.dk>
- <8e734ada-7f28-22df-5f30-027aca3695d1@gmail.com>
- <5fa9e01f-137d-b0f8-211a-975c7ed56419@gmail.com>
- <d0d1f797-c958-ac17-1f11-96f6ba6dbf37@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d0621b79-4277-a9ad-208e-b60153c08d15@kernel.dk>
-Date:   Wed, 12 Aug 2020 17:32:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726526AbgHMCIz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Aug 2020 22:08:55 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:53350 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726419AbgHMCIz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Aug 2020 22:08:55 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R321e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07484;MF=jiufei.xue@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0U5c1zBj_1597284530;
+Received: from ali-186590e05fa3.local(mailfrom:jiufei.xue@linux.alibaba.com fp:SMTPD_---0U5c1zBj_1597284530)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 13 Aug 2020 10:08:51 +0800
+Subject: Re: [PATCH v2] io_uring: add timeout support for io_uring_enter()
+To:     axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org, metze@samba.org
+References: <1596533282-16791-1-git-send-email-jiufei.xue@linux.alibaba.com>
+From:   Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Message-ID: <83d46b00-ba99-ec6f-3b46-5049d2ee608b@linux.alibaba.com>
+Date:   Thu, 13 Aug 2020 10:08:50 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
+ Gecko/20100101 Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <d0d1f797-c958-ac17-1f11-96f6ba6dbf37@gmail.com>
+In-Reply-To: <1596533282-16791-1-git-send-email-jiufei.xue@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/12/20 12:28 PM, Pavel Begunkov wrote:
-> On 12/08/2020 21:22, Pavel Begunkov wrote:
->> On 12/08/2020 21:20, Pavel Begunkov wrote:
->>> On 12/08/2020 21:05, Jens Axboe wrote:
->>>> On 8/12/20 11:58 AM, Josef wrote:
->>>>> Hi,
->>>>>
->>>>> I have a weird issue on kernel 5.8.0/5.8.1, SIGINT even SIGKILL
->>>>> doesn't work to kill this process(always state D or D+), literally I
->>>>> have to terminate my VM because even the kernel can't kill the process
->>>>> and no issue on 5.7.12-201, however if IOSQE_IO_LINK is not set, it
->>>>> works
->>>>>
->>>>> I've attached a file to reproduce it
->>>>> or here
->>>>> https://gist.github.com/1Jo1/15cb3c63439d0c08e3589cfa98418b2c
->>>>
->>>> Thanks, I'll take a look at this. It's stuck in uninterruptible
->>>> state, which is why you can't kill it.
->>>
->>> It looks like one of the hangs I've been talking about a few days ago,
->>> an accept is inflight but can't be found by cancel_files() because it's
->>> in a link.
->>
->> BTW, I described it a month ago, there were more details.
+Hi Jens,
+
+Could you please review this patch?
+
+Thinks,
+Jiufei
+
+On 2020/8/4 下午5:28, Jiufei Xue wrote:
+> Now users who want to get woken when waiting for events should submit a
+> timeout command first. It is not safe for applications that split SQ and
+> CQ handling between two threads, such as mysql. Users should synchronize
+> the two threads explicitly to protect SQ and that will impact the
+> performance.
 > 
-> https://lore.kernel.org/io-uring/34eb5e5a-8d37-0cae-be6c-c6ac4d85b5d4@gmail.com
-
-Yeah I think you're right. How about something like the below? That'll
-potentially cancel more than just the one we're looking for, but seems
-kind of silly to only cancel from the file table holding request and to
-the end.
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 8a2afd8c33c9..0630a9622baa 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4937,6 +5003,7 @@ static bool io_poll_remove_one(struct io_kiocb *req)
- 		io_cqring_fill_event(req, -ECANCELED);
- 		io_commit_cqring(req->ctx);
- 		req->flags |= REQ_F_COMP_LOCKED;
-+		req_set_fail_links(req);
- 		io_put_req(req);
- 	}
- 
-@@ -7935,6 +8002,47 @@ static bool io_wq_files_match(struct io_wq_work *work, void *data)
- 	return work->files == files;
- }
- 
-+static bool __io_poll_remove_link(struct io_kiocb *preq, struct io_kiocb *req)
-+{
-+	struct io_kiocb *link;
-+
-+	if (!(preq->flags & REQ_F_LINK_HEAD))
-+		return false;
-+
-+	list_for_each_entry(link, &preq->link_list, link_list) {
-+		if (link != req)
-+			break;
-+		io_poll_remove_one(preq);
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+/*
-+ * We're looking to cancel 'req' because it's holding on to our files, but
-+ * 'req' could be a link to another request. See if it is, and cancel that
-+ * parent request if so.
-+ */
-+static void io_poll_remove_link(struct io_ring_ctx *ctx, struct io_kiocb *req)
-+{
-+	struct hlist_node *tmp;
-+	struct io_kiocb *preq;
-+	int i;
-+
-+	spin_lock_irq(&ctx->completion_lock);
-+	for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
-+		struct hlist_head *list;
-+
-+		list = &ctx->cancel_hash[i];
-+		hlist_for_each_entry_safe(preq, tmp, list, hash_node) {
-+			if (__io_poll_remove_link(preq, req))
-+				break;
-+		}
-+	}
-+	spin_unlock_irq(&ctx->completion_lock);
-+}
-+
- static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 				  struct files_struct *files)
- {
-@@ -7989,6 +8097,8 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 			}
- 		} else {
- 			io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
-+			/* could be a link, check and remove if it is */
-+			io_poll_remove_link(ctx, cancel_req);
- 			io_put_req(cancel_req);
- 		}
- 
-
--- 
-Jens Axboe
-
+> This patch adds support for timeout to existing io_uring_enter(). To
+> avoid overloading arguments, it introduces a new parameter structure
+> which contains sigmask and timeout.
+> 
+> I have tested the workloads with one thread submiting nop requests
+> while the other reaping the cqe with timeout. It shows 1.8~2x faster
+> when the iodepth is 16.
+> 
+> Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+> ---
+>  fs/io_uring.c                 | 45 +++++++++++++++++++++++++++++++++++++------
+>  include/uapi/linux/io_uring.h |  7 +++++++
+>  2 files changed, 46 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 2a3af95..cdd89e4 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -6514,7 +6514,8 @@ static int io_wake_function(struct wait_queue_entry *curr, unsigned int mode,
+>   * application must reap them itself, as they reside on the shared cq ring.
+>   */
+>  static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+> -			  const sigset_t __user *sig, size_t sigsz)
+> +			  const sigset_t __user *sig, size_t sigsz,
+> +			  struct __kernel_timespec __user *uts)
+>  {
+>  	struct io_wait_queue iowq = {
+>  		.wq = {
+> @@ -6526,6 +6527,8 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  		.to_wait	= min_events,
+>  	};
+>  	struct io_rings *rings = ctx->rings;
+> +	struct timespec64 ts;
+> +	signed long timeout = 0;
+>  	int ret = 0;
+>  
+>  	do {
+> @@ -6548,6 +6551,12 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  			return ret;
+>  	}
+>  
+> +	if (uts) {
+> +		if (get_timespec64(&ts, uts))
+> +			return -EFAULT;
+> +		timeout = timespec64_to_jiffies(&ts);
+> +	}
+> +
+>  	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
+>  	trace_io_uring_cqring_wait(ctx, min_events);
+>  	do {
+> @@ -6569,7 +6578,14 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  		}
+>  		if (io_should_wake(&iowq, false))
+>  			break;
+> -		schedule();
+> +		if (uts) {
+> +			if ((timeout = schedule_timeout(timeout)) == 0) {
+> +				ret = -ETIME;
+> +				break;
+> +			}
+> +		} else {
+> +			schedule();
+> +		}
+>  	} while (1);
+>  	finish_wait(&ctx->wait, &iowq.wq);
+>  
+> @@ -7993,19 +8009,36 @@ static unsigned long io_uring_nommu_get_unmapped_area(struct file *file,
+>  #endif /* !CONFIG_MMU */
+>  
+>  SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+> -		u32, min_complete, u32, flags, const sigset_t __user *, sig,
+> +		u32, min_complete, u32, flags, const void __user *, argp,
+>  		size_t, sigsz)
+>  {
+>  	struct io_ring_ctx *ctx;
+>  	long ret = -EBADF;
+>  	int submitted = 0;
+>  	struct fd f;
+> +	const sigset_t __user *sig;
+> +	struct __kernel_timespec __user *ts;
+> +	struct io_uring_getevents_arg arg;
+>  
+>  	io_run_task_work();
+>  
+> -	if (flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP))
+> +	if (flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
+> +		      IORING_ENTER_GETEVENTS_TIMEOUT))
+>  		return -EINVAL;
+>  
+> +	/* deal with IORING_ENTER_GETEVENTS_TIMEOUT */
+> +	if (flags & IORING_ENTER_GETEVENTS_TIMEOUT) {
+> +		if (!(flags & IORING_ENTER_GETEVENTS))
+> +			return -EINVAL;
+> +		if (copy_from_user(&arg, argp, sizeof(arg)))
+> +			return -EFAULT;
+> +		sig = arg.sigmask;
+> +		ts = arg.ts;
+> +	} else {
+> +		sig = (const sigset_t __user *)argp;
+> +		ts = NULL;
+> +	}
+> +
+>  	f = fdget(fd);
+>  	if (!f.file)
+>  		return -EBADF;
+> @@ -8052,7 +8085,7 @@ static unsigned long io_uring_nommu_get_unmapped_area(struct file *file,
+>  		    !(ctx->flags & IORING_SETUP_SQPOLL)) {
+>  			ret = io_iopoll_check(ctx, min_complete);
+>  		} else {
+> -			ret = io_cqring_wait(ctx, min_complete, sig, sigsz);
+> +			ret = io_cqring_wait(ctx, min_complete, sig, sigsz, ts);
+>  		}
+>  	}
+>  
+> @@ -8346,7 +8379,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+>  	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
+>  			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
+>  			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL |
+> -			IORING_FEAT_POLL_32BITS;
+> +			IORING_FEAT_POLL_32BITS | IORING_FEAT_GETEVENTS_TIMEOUT;
+>  
+>  	if (copy_to_user(params, p, sizeof(*p))) {
+>  		ret = -EFAULT;
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index d65fde7..70764d2 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -224,6 +224,7 @@ struct io_cqring_offsets {
+>   */
+>  #define IORING_ENTER_GETEVENTS	(1U << 0)
+>  #define IORING_ENTER_SQ_WAKEUP	(1U << 1)
+> +#define IORING_ENTER_GETEVENTS_TIMEOUT	(1U << 2)
+>  
+>  /*
+>   * Passed in for io_uring_setup(2). Copied back with updated info on success
+> @@ -251,6 +252,7 @@ struct io_uring_params {
+>  #define IORING_FEAT_CUR_PERSONALITY	(1U << 4)
+>  #define IORING_FEAT_FAST_POLL		(1U << 5)
+>  #define IORING_FEAT_POLL_32BITS 	(1U << 6)
+> +#define IORING_FEAT_GETEVENTS_TIMEOUT	(1U << 7)
+>  
+>  /*
+>   * io_uring_register(2) opcodes and arguments
+> @@ -290,4 +292,9 @@ struct io_uring_probe {
+>  	struct io_uring_probe_op ops[0];
+>  };
+>  
+> +struct io_uring_getevents_arg {
+> +	sigset_t *sigmask;
+> +	struct __kernel_timespec *ts;
+> +};
+> +
+>  #endif
+> 

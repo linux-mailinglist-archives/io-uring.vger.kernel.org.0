@@ -2,247 +2,256 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B0F0243C97
-	for <lists+io-uring@lfdr.de>; Thu, 13 Aug 2020 17:34:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1402243CFA
+	for <lists+io-uring@lfdr.de>; Thu, 13 Aug 2020 18:07:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbgHMPeP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 Aug 2020 11:34:15 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58284 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726576AbgHMPeO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Aug 2020 11:34:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597332852;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xzivr37W6Sz/OFkat8WISQrphMPdi2PlV4uzOfubSgg=;
-        b=gGvfwBtkh5RtP18LZlcKA9J+cw7xGLCj5l+bfM0324WOmoi8NqG3kv8oxRLZ+MaLkSdlYo
-        hrul+0KRTn5d4EmXhB0mpW6XbB6em9FEFsya3yTDU/a1qfEQLkHfjzNShrDf1QgkiGG8AZ
-        3d1n8UU1aBoaZ4c8qoM9b9HTsyrXVhw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-391-14sqnvJ0PGe7-Ac8Ox3DLQ-1; Thu, 13 Aug 2020 11:34:10 -0400
-X-MC-Unique: 14sqnvJ0PGe7-Ac8Ox3DLQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C53A1807321;
-        Thu, 13 Aug 2020 15:34:08 +0000 (UTC)
-Received: from steredhat.redhat.com (ovpn-113-140.ams2.redhat.com [10.36.113.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6443C60C04;
-        Thu, 13 Aug 2020 15:33:49 +0000 (UTC)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <asarai@suse.de>,
-        io-uring@vger.kernel.org
-Subject: [PATCH v4 3/3] io_uring: allow disabling rings during the creation
-Date:   Thu, 13 Aug 2020 17:32:54 +0200
-Message-Id: <20200813153254.93731-4-sgarzare@redhat.com>
-In-Reply-To: <20200813153254.93731-1-sgarzare@redhat.com>
-References: <20200813153254.93731-1-sgarzare@redhat.com>
+        id S1726249AbgHMQHm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 Aug 2020 12:07:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57584 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbgHMQHm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Aug 2020 12:07:42 -0400
+Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7BF8C061757
+        for <io-uring@vger.kernel.org>; Thu, 13 Aug 2020 09:07:41 -0700 (PDT)
+Received: by mail-qv1-xf43.google.com with SMTP id r19so2851908qvw.11
+        for <io-uring@vger.kernel.org>; Thu, 13 Aug 2020 09:07:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bX97ss88UuBsRhIlc2+E5NQVMRFpQjp3KqzkhDmleXQ=;
+        b=veHAFfPmksrkhJK+WuP6VSMD0ygjF+Dk8eBj+KH5Pkcf0qycqMHX/gnIy7uj0rkKDy
+         BC2U+fAfhSBn7GBFH9OtW4ayHtZqZ8CXlihqtOpMnwA+7Lk/IczenLstQ4GX5bA29Zlt
+         bag6C/XRX2y+xNvgD5gVV/7EWbM1r8oSMLzMEcosGLNPiFY06tU9E3yO92EYBrn8XO02
+         hrumPPDjNIrOMaA/+cBcwUrRTRBLOVGlekqLho195W84ZD72gc0HiOkZLQJL7o2NYoGi
+         S3StREXnKDqb4fMPPRNlkFveAT3fsKGJBx65FZgPmxvwfMWSZm1xmnARtRqkr8lsURQE
+         rTcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bX97ss88UuBsRhIlc2+E5NQVMRFpQjp3KqzkhDmleXQ=;
+        b=RsrP85RDNWh9lsiYwhap1EM1ZLh4/kWsAsd/wVQVmmwo7GtnyEvIxjPfKMEGFYmsyQ
+         H2YMjSvbTRspxnjjJpd1R2icd/eFYRMQjA4rY859jAuvBZOE3DBlGCfUXej3f+YT19sH
+         t5dBVEd7Xg11tv0/xgs1ZkGrNMsuefR5hsV58riu7MofbGbW5Dm3e+ulMBcykqwzHvlp
+         MmDZ6wpB1z1qZe1iFTivlwYJJvEmNLW8+n6u1QUN2KswU8zxDRpWLOLO0MWQ8w9C64oZ
+         F0MCWHjJeSHv/3jfRu3jpsTydFNofPj3pQafswKH1v2KaelTLyefDO5g8uzBBmn12WGL
+         dkZQ==
+X-Gm-Message-State: AOAM532jghZ4ufe71mLsCUeojLpQhTZ2gz3OL2CZtc+hkTS66dZLRT4V
+        CiHxH8CfSFcgj3aLvoXy82+e4tJEZG4o/Jn5pKJKzxfVqWQ=
+X-Google-Smtp-Source: ABdhPJzf9ldYgU+Enl6GsRon5UQX2SH/LFGnkOt0FXtvJGp6faK33NI9qE3WBpI+WwNzMzd7cycpdT4oDTvl74AlmNI=
+X-Received: by 2002:a0c:fa0a:: with SMTP id q10mr5389799qvn.33.1597334860404;
+ Thu, 13 Aug 2020 09:07:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <CAAss7+pf+CGQiSDM8_fhsHRwjWUxESPcJMhOOsDOitqePQxCrg@mail.gmail.com>
+ <dc3562d8-dc67-c623-36ee-38885b4c1682@kernel.dk> <8e734ada-7f28-22df-5f30-027aca3695d1@gmail.com>
+ <5fa9e01f-137d-b0f8-211a-975c7ed56419@gmail.com> <d0d1f797-c958-ac17-1f11-96f6ba6dbf37@gmail.com>
+ <d0621b79-4277-a9ad-208e-b60153c08d15@kernel.dk>
+In-Reply-To: <d0621b79-4277-a9ad-208e-b60153c08d15@kernel.dk>
+From:   Josef <josef.grieb@gmail.com>
+Date:   Thu, 13 Aug 2020 18:07:29 +0200
+Message-ID: <CAAss7+rk5jH5Peov-Scffp3cmRpk3=0suBZvw1RFTEc7a6Rstw@mail.gmail.com>
+Subject: Re: io_uring process termination/killing is not working
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        norman@apache.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This patch adds a new IORING_SETUP_R_DISABLED flag to start the
-rings disabled, allowing the user to register restrictions,
-buffers, files, before to start processing SQEs.
+On Thu, 13 Aug 2020 at 01:32, Jens Axboe <axboe@kernel.dk> wrote:
+> Yeah I think you're right. How about something like the below? That'll
+> potentially cancel more than just the one we're looking for, but seems
+> kind of silly to only cancel from the file table holding request and to
+> the end.
+>
+>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 8a2afd8c33c9..0630a9622baa 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -4937,6 +5003,7 @@ static bool io_poll_remove_one(struct io_kiocb *req)
+>                 io_cqring_fill_event(req, -ECANCELED);
+>                 io_commit_cqring(req->ctx);
+>                 req->flags |= REQ_F_COMP_LOCKED;
+> +               req_set_fail_links(req);
+>                 io_put_req(req);
+>         }
+>
+> @@ -7935,6 +8002,47 @@ static bool io_wq_files_match(struct io_wq_work *work, void *data)
+>         return work->files == files;
+>  }
+>
+> +static bool __io_poll_remove_link(struct io_kiocb *preq, struct io_kiocb *req)
+> +{
+> +       struct io_kiocb *link;
+> +
+> +       if (!(preq->flags & REQ_F_LINK_HEAD))
+> +               return false;
+> +
+> +       list_for_each_entry(link, &preq->link_list, link_list) {
+> +               if (link != req)
+> +                       break;
+> +               io_poll_remove_one(preq);
+> +               return true;
+> +       }
+> +
+> +       return false;
+> +}
+> +
+> +/*
+> + * We're looking to cancel 'req' because it's holding on to our files, but
+> + * 'req' could be a link to another request. See if it is, and cancel that
+> + * parent request if so.
+> + */
+> +static void io_poll_remove_link(struct io_ring_ctx *ctx, struct io_kiocb *req)
+> +{
+> +       struct hlist_node *tmp;
+> +       struct io_kiocb *preq;
+> +       int i;
+> +
+> +       spin_lock_irq(&ctx->completion_lock);
+> +       for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
+> +               struct hlist_head *list;
+> +
+> +               list = &ctx->cancel_hash[i];
+> +               hlist_for_each_entry_safe(preq, tmp, list, hash_node) {
+> +                       if (__io_poll_remove_link(preq, req))
+> +                               break;
+> +               }
+> +       }
+> +       spin_unlock_irq(&ctx->completion_lock);
+> +}
+> +
+>  static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+>                                   struct files_struct *files)
+>  {
+> @@ -7989,6 +8097,8 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+>                         }
+>                 } else {
+>                         io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
+> +                       /* could be a link, check and remove if it is */
+> +                       io_poll_remove_link(ctx, cancel_req);
+>                         io_put_req(cancel_req);
+>                 }
+>
+>
 
-When IORING_SETUP_R_DISABLED is set, SQE are not processed and
-SQPOLL kthread is not started.
+btw it works for me thanks
 
-The restrictions registration are allowed only when the rings
-are disable to prevent concurrency issue while processing SQEs.
+--
+Josef
 
-The rings can be enabled using IORING_REGISTER_ENABLE_RINGS
-opcode with io_uring_register(2).
 
-Suggested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
-v4:
- - fixed io_uring_enter() exit path when ring is disabled
-
-v3:
- - enabled restrictions only when the rings start
-
-RFC v2:
- - removed return value of io_sq_offload_start()
----
- fs/io_uring.c                 | 52 ++++++++++++++++++++++++++++++-----
- include/uapi/linux/io_uring.h |  2 ++
- 2 files changed, 47 insertions(+), 7 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index cb365e6e0af7..09fedc380a41 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -226,6 +226,7 @@ struct io_restriction {
- 	DECLARE_BITMAP(sqe_op, IORING_OP_LAST);
- 	u8 sqe_flags_allowed;
- 	u8 sqe_flags_required;
-+	bool registered;
- };
- 
- struct io_ring_ctx {
-@@ -7420,8 +7421,8 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx,
- 	return ret;
- }
- 
--static int io_sq_offload_start(struct io_ring_ctx *ctx,
--			       struct io_uring_params *p)
-+static int io_sq_offload_create(struct io_ring_ctx *ctx,
-+				struct io_uring_params *p)
- {
- 	int ret;
- 
-@@ -7458,7 +7459,6 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
- 			ctx->sqo_thread = NULL;
- 			goto err;
- 		}
--		wake_up_process(ctx->sqo_thread);
- 	} else if (p->flags & IORING_SETUP_SQ_AFF) {
- 		/* Can't have SQ_AFF without SQPOLL */
- 		ret = -EINVAL;
-@@ -7479,6 +7479,12 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
- 	return ret;
- }
- 
-+static void io_sq_offload_start(struct io_ring_ctx *ctx)
-+{
-+	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sqo_thread)
-+		wake_up_process(ctx->sqo_thread);
-+}
-+
- static inline void __io_unaccount_mem(struct user_struct *user,
- 				      unsigned long nr_pages)
- {
-@@ -8218,6 +8224,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	if (!percpu_ref_tryget(&ctx->refs))
- 		goto out_fput;
- 
-+	if (ctx->flags & IORING_SETUP_R_DISABLED)
-+		goto out_fput;
-+
- 	/*
- 	 * For SQ polling, the thread will do all submissions and completions.
- 	 * Just return the requested submit count, and wake the thread if
-@@ -8532,10 +8541,13 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	if (ret)
- 		goto err;
- 
--	ret = io_sq_offload_start(ctx, p);
-+	ret = io_sq_offload_create(ctx, p);
- 	if (ret)
- 		goto err;
- 
-+	if (!(p->flags & IORING_SETUP_R_DISABLED))
-+		io_sq_offload_start(ctx);
-+
- 	memset(&p->sq_off, 0, sizeof(p->sq_off));
- 	p->sq_off.head = offsetof(struct io_rings, sq.head);
- 	p->sq_off.tail = offsetof(struct io_rings, sq.tail);
-@@ -8598,7 +8610,8 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 
- 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
- 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
--			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ))
-+			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
-+			IORING_SETUP_R_DISABLED))
- 		return -EINVAL;
- 
- 	return  io_uring_create(entries, &p, params);
-@@ -8681,8 +8694,12 @@ static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
- 	size_t size;
- 	int i, ret;
- 
-+	/* Restrictions allowed only if rings started disabled */
-+	if (!(ctx->flags & IORING_SETUP_R_DISABLED))
-+		return -EINVAL;
-+
- 	/* We allow only a single restrictions registration */
--	if (ctx->restricted)
-+	if (ctx->restrictions.registered)
- 		return -EBUSY;
- 
- 	if (!arg || nr_args > IORING_MAX_RESTRICTIONS)
-@@ -8732,7 +8749,7 @@ static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
- 		}
- 	}
- 
--	ctx->restricted = 1;
-+	ctx->restrictions.registered = true;
- 
- 	ret = 0;
- out:
-@@ -8744,6 +8761,21 @@ static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
- 	return ret;
- }
- 
-+static int io_register_enable_rings(struct io_ring_ctx *ctx)
-+{
-+	if (!(ctx->flags & IORING_SETUP_R_DISABLED))
-+		return -EINVAL;
-+
-+	if (ctx->restrictions.registered)
-+		ctx->restricted = 1;
-+
-+	ctx->flags &= ~IORING_SETUP_R_DISABLED;
-+
-+	io_sq_offload_start(ctx);
-+
-+	return 0;
-+}
-+
- static bool io_register_op_must_quiesce(int op)
- {
- 	switch (op) {
-@@ -8865,6 +8897,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 			break;
- 		ret = io_unregister_personality(ctx, nr_args);
- 		break;
-+	case IORING_REGISTER_ENABLE_RINGS:
-+		ret = -EINVAL;
-+		if (arg || nr_args)
-+			break;
-+		ret = io_register_enable_rings(ctx);
-+		break;
- 	case IORING_REGISTER_RESTRICTIONS:
- 		ret = io_register_restrictions(ctx, arg, nr_args);
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index be54bc3cf173..ddb30513e027 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -95,6 +95,7 @@ enum {
- #define IORING_SETUP_CQSIZE	(1U << 3)	/* app defines CQ size */
- #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
- #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
-+#define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
- 
- enum {
- 	IORING_OP_NOP,
-@@ -268,6 +269,7 @@ enum {
- 	IORING_REGISTER_PERSONALITY,
- 	IORING_UNREGISTER_PERSONALITY,
- 	IORING_REGISTER_RESTRICTIONS,
-+	IORING_REGISTER_ENABLE_RINGS,
- 
- 	/* this goes last */
- 	IORING_REGISTER_LAST
--- 
-2.26.2
-
+On Thu, 13 Aug 2020 at 01:32, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 8/12/20 12:28 PM, Pavel Begunkov wrote:
+> > On 12/08/2020 21:22, Pavel Begunkov wrote:
+> >> On 12/08/2020 21:20, Pavel Begunkov wrote:
+> >>> On 12/08/2020 21:05, Jens Axboe wrote:
+> >>>> On 8/12/20 11:58 AM, Josef wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> I have a weird issue on kernel 5.8.0/5.8.1, SIGINT even SIGKILL
+> >>>>> doesn't work to kill this process(always state D or D+), literally I
+> >>>>> have to terminate my VM because even the kernel can't kill the process
+> >>>>> and no issue on 5.7.12-201, however if IOSQE_IO_LINK is not set, it
+> >>>>> works
+> >>>>>
+> >>>>> I've attached a file to reproduce it
+> >>>>> or here
+> >>>>> https://gist.github.com/1Jo1/15cb3c63439d0c08e3589cfa98418b2c
+> >>>>
+> >>>> Thanks, I'll take a look at this. It's stuck in uninterruptible
+> >>>> state, which is why you can't kill it.
+> >>>
+> >>> It looks like one of the hangs I've been talking about a few days ago,
+> >>> an accept is inflight but can't be found by cancel_files() because it's
+> >>> in a link.
+> >>
+> >> BTW, I described it a month ago, there were more details.
+> >
+> > https://lore.kernel.org/io-uring/34eb5e5a-8d37-0cae-be6c-c6ac4d85b5d4@gmail.com
+>
+> Yeah I think you're right. How about something like the below? That'll
+> potentially cancel more than just the one we're looking for, but seems
+> kind of silly to only cancel from the file table holding request and to
+> the end.
+>
+>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 8a2afd8c33c9..0630a9622baa 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -4937,6 +5003,7 @@ static bool io_poll_remove_one(struct io_kiocb *req)
+>                 io_cqring_fill_event(req, -ECANCELED);
+>                 io_commit_cqring(req->ctx);
+>                 req->flags |= REQ_F_COMP_LOCKED;
+> +               req_set_fail_links(req);
+>                 io_put_req(req);
+>         }
+>
+> @@ -7935,6 +8002,47 @@ static bool io_wq_files_match(struct io_wq_work *work, void *data)
+>         return work->files == files;
+>  }
+>
+> +static bool __io_poll_remove_link(struct io_kiocb *preq, struct io_kiocb *req)
+> +{
+> +       struct io_kiocb *link;
+> +
+> +       if (!(preq->flags & REQ_F_LINK_HEAD))
+> +               return false;
+> +
+> +       list_for_each_entry(link, &preq->link_list, link_list) {
+> +               if (link != req)
+> +                       break;
+> +               io_poll_remove_one(preq);
+> +               return true;
+> +       }
+> +
+> +       return false;
+> +}
+> +
+> +/*
+> + * We're looking to cancel 'req' because it's holding on to our files, but
+> + * 'req' could be a link to another request. See if it is, and cancel that
+> + * parent request if so.
+> + */
+> +static void io_poll_remove_link(struct io_ring_ctx *ctx, struct io_kiocb *req)
+> +{
+> +       struct hlist_node *tmp;
+> +       struct io_kiocb *preq;
+> +       int i;
+> +
+> +       spin_lock_irq(&ctx->completion_lock);
+> +       for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
+> +               struct hlist_head *list;
+> +
+> +               list = &ctx->cancel_hash[i];
+> +               hlist_for_each_entry_safe(preq, tmp, list, hash_node) {
+> +                       if (__io_poll_remove_link(preq, req))
+> +                               break;
+> +               }
+> +       }
+> +       spin_unlock_irq(&ctx->completion_lock);
+> +}
+> +
+>  static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+>                                   struct files_struct *files)
+>  {
+> @@ -7989,6 +8097,8 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+>                         }
+>                 } else {
+>                         io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
+> +                       /* could be a link, check and remove if it is */
+> +                       io_poll_remove_link(ctx, cancel_req);
+>                         io_put_req(cancel_req);
+>                 }
+>
+>
+> --
+> Jens Axboe
+>

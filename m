@@ -2,223 +2,199 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 600F9245340
-	for <lists+io-uring@lfdr.de>; Sat, 15 Aug 2020 23:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99D9824521C
+	for <lists+io-uring@lfdr.de>; Sat, 15 Aug 2020 23:43:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbgHOV7r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 15 Aug 2020 17:59:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45612 "EHLO
+        id S1726429AbgHOVnV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 15 Aug 2020 17:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728878AbgHOVvi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Aug 2020 17:51:38 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D38E0C004595
-        for <io-uring@vger.kernel.org>; Sat, 15 Aug 2020 11:48:54 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id t11so5580586plr.5
-        for <io-uring@vger.kernel.org>; Sat, 15 Aug 2020 11:48:54 -0700 (PDT)
+        with ESMTP id S1726004AbgHOVnV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Aug 2020 17:43:21 -0400
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F12C03D1C5
+        for <io-uring@vger.kernel.org>; Sat, 15 Aug 2020 14:43:20 -0700 (PDT)
+Received: by mail-qt1-x843.google.com with SMTP id o22so9651632qtt.13
+        for <io-uring@vger.kernel.org>; Sat, 15 Aug 2020 14:43:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Z2xPpRoHP7BzvSX2rjf/bwJ13SQNsG5PYmvhRIAd2sU=;
-        b=BGEhN/WbxTSkRKE60J3CvxmlY0UKRwp/ZAg2U45KlXRgN/v22AODymoCybBpuELHV0
-         gJiM8R0WOAwzDxsIYSpFiIrtUl6bPq4CRMs7zzUC85FWMhbaZA6TQo5KugLzFSwFV+M5
-         DETZEEYKUO3FHXdeFU5FPCcxbslgBH1bLKQYKi+xkXMquvWPJGCrtbRidRLvonRf8XKm
-         MASkzLIGO//+pjB4BrxXuiUtW9kWXJNEd+OEeLjxyTEBRAwfC73k3K3Qn2sV0yHOFLMe
-         sd9D2+Q4fxUE0wHI7tUlUKxhmH2LM/eULQgvaVqrUXvh/U7N7SrzPaR6krKkJkazlHXj
-         7kgg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A2pjSIi0V+WxuISit7Z3mDAAp/laGecQN3RIlMayV1g=;
+        b=l9tfmPjYmJjjZtS1G0ArsTl0ihOWkhMfT8yQtyXT/lXcYiyq4yb54ITB+qWy4gW6m9
+         wKXqXdyVNjBhrgqg+sTMPp/aB6AVPg0G/eTEp24sWg5R+dG4b9SEi2P4u/bQbbil+8T4
+         Xl/MXAY+V9Guh34exIri9+vTYrr2CPGiA5VdMpJN7XbvY4fq5emVqX2gEuokwtx+PBxq
+         pWuMOMtnpM2zRMX+lM7/EmvNkdiC81em2PGD6vtKx95nLSbdoHOt247CjI6GV7BcVhgb
+         hWS4Qn9Z6YMMFHl7HFoj1Zm7unA8A9GQnOb/p5DAxyPpELIGlciLyzsnM/yTqx8gN/DF
+         ytHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Z2xPpRoHP7BzvSX2rjf/bwJ13SQNsG5PYmvhRIAd2sU=;
-        b=ogWhh2qPQ9JBHxA++ekQmH/470xxLoo38pWVmNDnN10JC0IudjS2BFfLx+cYHgwcH2
-         4S7kqsD7AQeMXqOA6iZpxyaEUdnjsVI1SM4LuZnwwXyaOouE+rk/cdVl8BjmKSiE9+GH
-         rAR6AsKIzoZSDzKasXzzYLDNyamkk7/m6HW1hEuXse+80HLXfouqJ+6wxAiyjP/1nTRb
-         KGBzUoxS72LN5h2FNuLpZaujaslo7RWUBfI2MuNr3PjM6yzUyw1X+wQhFrxxste4rZnj
-         60kpvBPn3igm6MAEuwlZHKeBlIopp8T+rd5SuC0kK89I+8fUGiIWp+6Bc2yG15z2DM//
-         Chag==
-X-Gm-Message-State: AOAM532KiWD42mMCUsdZ8PjHIGvKRaMEtQGf89J0mQxYu1p1MmV9tc3I
-        EpGz8nAfGiIO3hgT6v0ZKFI/Bg==
-X-Google-Smtp-Source: ABdhPJx2mzq8cS50/9IeaIq3A/NHdBiAOJ23/yFhnZW3jwTW9wfQhvvXukV2bvVi1sqca5xchRsk+w==
-X-Received: by 2002:a17:90a:c781:: with SMTP id gn1mr6629664pjb.151.1597517334243;
-        Sat, 15 Aug 2020 11:48:54 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:6299:2df1:e468:6351? ([2605:e000:100e:8c61:6299:2df1:e468:6351])
-        by smtp.gmail.com with ESMTPSA id b63sm12599824pfg.43.2020.08.15.11.48.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Aug 2020 11:48:53 -0700 (PDT)
-Subject: Re: general protection fault in io_poll_double_wake
-From:   Jens Axboe <axboe@kernel.dk>
-To:     syzbot <syzbot+7f617d4a9369028b8a2c@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <00000000000018f60505aced798e@google.com>
- <fb1fe8ff-5c79-a020-f6ea-a28f974bde6b@kernel.dk>
-Message-ID: <178c8252-eb93-daaf-61fd-f0652de3b658@kernel.dk>
-Date:   Sat, 15 Aug 2020 11:48:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A2pjSIi0V+WxuISit7Z3mDAAp/laGecQN3RIlMayV1g=;
+        b=B+AAGDo0taNnVPQg3+vhfVPlvLibPu3/W8+lr8S6FXEoCh6zEBeXpfh4LPlFgRkma7
+         Vmz8xtOpgG2CvNQcFArFHiUbaoIvVN10d9AqBHjMZhL8d1i28O/JeK4quWJJT7wZum8G
+         37kfAw7gpj80675fowQXuOkYFsD1VmVC7wwRPcFE8N2F/hpOXoNWH+xiLIav3uvB19at
+         p8sZ3loDkt4a2y97yAD6bIAhTWYYlY3QOuZZ9iAn+YffyisAIBCMI3h5bSt2vqRzzJE7
+         zhVeEqQhTd/MDVG8n7BJPxPYVYKR62RtyhJmK7Vo+eZciPhN0IcNBfr0atIbDlHkSPnh
+         oHUA==
+X-Gm-Message-State: AOAM533nWJnrUc2psg4lvt1Vc58ACs5SadpxEXQnAMND6dYJDbReuDQt
+        zcdJI0FYMOKSBsCTo5a/FYQ1eRMNjGqj1ucu7Bo=
+X-Google-Smtp-Source: ABdhPJzRbxKI+sUoHwdYVDTfNfVjFnUb09CIqjszujfmwB09WY0c6J7TlMCkUUiZmFz/A8sqJX/M7bRQnQFBaZa8n5c=
+X-Received: by 2002:ac8:4b4d:: with SMTP id e13mr7536382qts.256.1597527799812;
+ Sat, 15 Aug 2020 14:43:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <fb1fe8ff-5c79-a020-f6ea-a28f974bde6b@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAAss7+pf+CGQiSDM8_fhsHRwjWUxESPcJMhOOsDOitqePQxCrg@mail.gmail.com>
+ <dc3562d8-dc67-c623-36ee-38885b4c1682@kernel.dk> <8e734ada-7f28-22df-5f30-027aca3695d1@gmail.com>
+ <5fa9e01f-137d-b0f8-211a-975c7ed56419@gmail.com> <d0d1f797-c958-ac17-1f11-96f6ba6dbf37@gmail.com>
+ <d0621b79-4277-a9ad-208e-b60153c08d15@kernel.dk> <bb45665c-1311-807d-5a03-459cf3cbd103@gmail.com>
+ <d06c7f29-726b-d46a-8c51-0dc47ef374ad@kernel.dk> <63024e23-2b71-937a-6759-17916743c16c@gmail.com>
+In-Reply-To: <63024e23-2b71-937a-6759-17916743c16c@gmail.com>
+From:   Josef <josef.grieb@gmail.com>
+Date:   Sat, 15 Aug 2020 23:43:08 +0200
+Message-ID: <CAAss7+qGqCpp8dWpDR2rVJERwtV7r=9vEajOMqbhkSQ8Y-yteQ@mail.gmail.com>
+Subject: Re: io_uring process termination/killing is not working
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     norman@apache.org
+Content-Type: multipart/mixed; boundary="00000000000006f59c05acf16dbe"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/15/20 11:16 AM, Jens Axboe wrote:
-> On 8/15/20 10:00 AM, syzbot wrote:
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    7fca4dee Merge tag 'powerpc-5.9-2' of git://git.kernel.org..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1264d116900000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=21f0d1d2df6d5fc
->> dashboard link: https://syzkaller.appspot.com/bug?extid=7f617d4a9369028b8a2c
->> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f211d2900000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1721b0ce900000
->>
->> The issue was bisected to:
->>
->> commit 18bceab101adde8f38de76016bc77f3f25cf22f4
->> Author: Jens Axboe <axboe@kernel.dk>
->> Date:   Fri May 15 17:56:54 2020 +0000
->>
->>     io_uring: allow POLL_ADD with double poll_wait() users
-> 
-> I can reproduce this, I'll fix it up. Thanks!
+--00000000000006f59c05acf16dbe
+Content-Type: text/plain; charset="UTF-8"
 
-This should fix it:
+it seems to be that read event doesn't work properly, but I'm not sure
+if it is related to what Pavel mentioned
+poll<link>accept works but not poll<link>read -> cqe still receives
+poll event but no read event, however I received a read event after
+the third request via telnet
+
+I just tested https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=io_uring-5.9&id=d4e7cd36a90e38e0276d6ce0c20f5ccef17ec38c
+and
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=io_uring-5.9&id=227c0c9673d86732995474d277f84e08ee763e46
+(but it works on Linux 5.7)
 
 
-From 34fc8d0b76572c9fb184ab589d682dccfeb5c039 Mon Sep 17 00:00:00 2001
-From: Jens Axboe <axboe@kernel.dk>
-Date: Sat, 15 Aug 2020 11:44:50 -0700
-Subject: [PATCH] io_uring: sanitize double poll handling
+On Sat, 15 Aug 2020 at 18:50, Pavel Begunkov <asml.silence@gmail.com> wrote:
+>
+> On 15/08/2020 18:12, Jens Axboe wrote:
+> > On 8/15/20 12:45 AM, Pavel Begunkov wrote:
+> >> On 13/08/2020 02:32, Jens Axboe wrote:
+> >>> On 8/12/20 12:28 PM, Pavel Begunkov wrote:
+> >>>> On 12/08/2020 21:22, Pavel Begunkov wrote:
+> >>>>> On 12/08/2020 21:20, Pavel Begunkov wrote:
+> >>>>>> On 12/08/2020 21:05, Jens Axboe wrote:
+> >>>>>>> On 8/12/20 11:58 AM, Josef wrote:
+> >>>>>>>> Hi,
+> >>>>>>>>
+> >>>>>>>> I have a weird issue on kernel 5.8.0/5.8.1, SIGINT even SIGKILL
+> >>>>>>>> doesn't work to kill this process(always state D or D+), literally I
+> >>>>>>>> have to terminate my VM because even the kernel can't kill the process
+> >>>>>>>> and no issue on 5.7.12-201, however if IOSQE_IO_LINK is not set, it
+> >>>>>>>> works
+> >>>>>>>>
+> >>>>>>>> I've attached a file to reproduce it
+> >>>>>>>> or here
+> >>>>>>>> https://gist.github.com/1Jo1/15cb3c63439d0c08e3589cfa98418b2c
+> >>>>>>>
+> >>>>>>> Thanks, I'll take a look at this. It's stuck in uninterruptible
+> >>>>>>> state, which is why you can't kill it.
+> >>>>>>
+> >>>>>> It looks like one of the hangs I've been talking about a few days ago,
+> >>>>>> an accept is inflight but can't be found by cancel_files() because it's
+> >>>>>> in a link.
+> >>>>>
+> >>>>> BTW, I described it a month ago, there were more details.
+> >>>>
+> >>>> https://lore.kernel.org/io-uring/34eb5e5a-8d37-0cae-be6c-c6ac4d85b5d4@gmail.com
+> >>>
+> >>> Yeah I think you're right. How about something like the below? That'll
+> >>> potentially cancel more than just the one we're looking for, but seems
+> >>> kind of silly to only cancel from the file table holding request and to
+> >>> the end.
+> >>
+> >> The bug is not poll/t-out related, IIRC my test reproduces it with
+> >> read(pipe)->open(). See the previously sent link.
+> >
+> > Right, but in this context for poll, I just mean any request that has a
+> > poll handler armed. Not necessarily only a pure poll. The patch should
+> > fix your case, too.
+>
+> Ok. I was thinking about sleeping in io_read(), etc. from io-wq context.
+> That should have the same effect.
+>
+> >
+> >> As mentioned, I'm going to patch that up, if you won't beat me on that.
+> >
+> > Please test and send a fix if you find something! I'm going to ship what
+> > I have this weekend, but we can always add a fix on top if we need
+> > anything.
+>
+> Sure
+>
+> --
+> Pavel Begunkov
 
-There's a bit of confusion on the matching pairs of poll vs double poll,
-depending on if the request is a pure poll (IORING_OP_POLL_ADD) or
-poll driven retry.
+--
+Josef Grieb
 
-Add io_poll_get_double() that returns the double poll waitqueue, if any,
-and io_poll_get_single() that returns the original poll waitqueue. With
-that, remove the argument to io_poll_remove_double().
+--00000000000006f59c05acf16dbe
+Content-Type: application/octet-stream; name="io_uring_read_issue.c"
+Content-Disposition: attachment; filename="io_uring_read_issue.c"
+Content-Transfer-Encoding: base64
+Content-ID: <f_kdw6o1l60>
+X-Attachment-Id: f_kdw6o1l60
 
-Finally ensure that wait->private is cleared once the double poll handler
-has run, so that remove knows it's already been seen.
-
-Cc: stable@vger.kernel.org # v5.8
-Reported-by: syzbot+7f617d4a9369028b8a2c@syzkaller.appspotmail.com
-Fixes: 18bceab101ad ("io_uring: allow POLL_ADD with double poll_wait() users")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 34 +++++++++++++++++++++++++---------
- 1 file changed, 25 insertions(+), 9 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7dd6df15bc49..cb030912bf5e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4649,9 +4649,24 @@ static bool io_poll_rewait(struct io_kiocb *req, struct io_poll_iocb *poll)
- 	return false;
- }
- 
--static void io_poll_remove_double(struct io_kiocb *req, void *data)
-+static struct io_poll_iocb *io_poll_get_double(struct io_kiocb *req)
- {
--	struct io_poll_iocb *poll = data;
-+	/* pure poll stashes this in ->io, poll driven retry elsewhere */
-+	if (req->opcode == IORING_OP_POLL_ADD)
-+		return (struct io_poll_iocb *) req->io;
-+	return req->apoll->double_poll;
-+}
-+
-+static struct io_poll_iocb *io_poll_get_single(struct io_kiocb *req)
-+{
-+	if (req->opcode == IORING_OP_POLL_ADD)
-+		return &req->poll;
-+	return &req->apoll->poll;
-+}
-+
-+static void io_poll_remove_double(struct io_kiocb *req)
-+{
-+	struct io_poll_iocb *poll = io_poll_get_double(req);
- 
- 	lockdep_assert_held(&req->ctx->completion_lock);
- 
-@@ -4671,7 +4686,7 @@ static void io_poll_complete(struct io_kiocb *req, __poll_t mask, int error)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 
--	io_poll_remove_double(req, req->io);
-+	io_poll_remove_double(req);
- 	req->poll.done = true;
- 	io_cqring_fill_event(req, error ? error : mangle_poll(mask));
- 	io_commit_cqring(ctx);
-@@ -4711,7 +4726,7 @@ static int io_poll_double_wake(struct wait_queue_entry *wait, unsigned mode,
- 			       int sync, void *key)
- {
- 	struct io_kiocb *req = wait->private;
--	struct io_poll_iocb *poll = req->apoll->double_poll;
-+	struct io_poll_iocb *poll = io_poll_get_single(req);
- 	__poll_t mask = key_to_poll(key);
- 
- 	/* for instances that support it check for an event match first: */
-@@ -4725,6 +4740,8 @@ static int io_poll_double_wake(struct wait_queue_entry *wait, unsigned mode,
- 		done = list_empty(&poll->wait.entry);
- 		if (!done)
- 			list_del_init(&poll->wait.entry);
-+		/* make sure double remove sees this as being gone */
-+		wait->private = NULL;
- 		spin_unlock(&poll->head->lock);
- 		if (!done)
- 			__io_async_wake(req, poll, mask, io_poll_task_func);
-@@ -4808,7 +4825,7 @@ static void io_async_task_func(struct callback_head *cb)
- 	if (hash_hashed(&req->hash_node))
- 		hash_del(&req->hash_node);
- 
--	io_poll_remove_double(req, apoll->double_poll);
-+	io_poll_remove_double(req);
- 	spin_unlock_irq(&ctx->completion_lock);
- 
- 	if (!READ_ONCE(apoll->poll.canceled))
-@@ -4919,7 +4936,7 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
- 	ret = __io_arm_poll_handler(req, &apoll->poll, &ipt, mask,
- 					io_async_wake);
- 	if (ret || ipt.error) {
--		io_poll_remove_double(req, apoll->double_poll);
-+		io_poll_remove_double(req);
- 		spin_unlock_irq(&ctx->completion_lock);
- 		kfree(apoll->double_poll);
- 		kfree(apoll);
-@@ -4951,14 +4968,13 @@ static bool io_poll_remove_one(struct io_kiocb *req)
- {
- 	bool do_complete;
- 
-+	io_poll_remove_double(req);
-+
- 	if (req->opcode == IORING_OP_POLL_ADD) {
--		io_poll_remove_double(req, req->io);
- 		do_complete = __io_poll_remove_one(req, &req->poll);
- 	} else {
- 		struct async_poll *apoll = req->apoll;
- 
--		io_poll_remove_double(req, apoll->double_poll);
--
- 		/* non-poll requests have submit ref still */
- 		do_complete = __io_poll_remove_one(req, &apoll->poll);
- 		if (do_complete) {
--- 
-2.28.0
-
-
--- 
-Jens Axboe
-
+I2luY2x1ZGUgPGVycm5vLmg+CiNpbmNsdWRlIDxmY250bC5oPgojaW5jbHVkZSA8bmV0aW5ldC9p
+bi5oPgojaW5jbHVkZSA8c3RkaW8uaD4KI2luY2x1ZGUgPHN0ZGxpYi5oPgojaW5jbHVkZSA8c3Ry
+aW5nLmg+CiNpbmNsdWRlIDxzdHJpbmdzLmg+CiNpbmNsdWRlIDxzeXMvc29ja2V0Lmg+CiNpbmNs
+dWRlIDx1bmlzdGQuaD4KI2luY2x1ZGUgPHBvbGwuaD4KI2luY2x1ZGUgImxpYnVyaW5nLmgiCgoj
+ZGVmaW5lIEJBQ0tMT0cgNTEyCgojZGVmaW5lIFBPUlQgOTMwMAoKc3RydWN0IGlvX3VyaW5nIHJp
+bmc7CgpjaGFyIGJ1ZlsxMDBdOwoKdm9pZCBhZGRfcG9sbChpbnQgZmQpIHsKICAgIHN0cnVjdCBp
+b191cmluZ19zcWUgKnNxZSA9IGlvX3VyaW5nX2dldF9zcWUoJnJpbmcpOwogICAgaW9fdXJpbmdf
+cHJlcF9wb2xsX2FkZChzcWUsIGZkLCBQT0xMSU4pOwogICAgc3FlLT51c2VyX2RhdGEgPSAxOwog
+ICAgc3FlLT5mbGFncyB8PSBJT1NRRV9JT19MSU5LOwp9Cgp2b2lkIGFkZF9hY2NlcHQoaW50IGZk
+KSB7CiAgICBzdHJ1Y3QgaW9fdXJpbmdfc3FlICpzcWUgPSBpb191cmluZ19nZXRfc3FlKCZyaW5n
+KTsKICAgIGlvX3VyaW5nX3ByZXBfYWNjZXB0KHNxZSwgZmQsIDAsIDAsIFNPQ0tfTk9OQkxPQ0sg
+fCBTT0NLX0NMT0VYRUMpOwogICAgc3FlLT51c2VyX2RhdGEgPSAyOwogICAgc3FlLT5mbGFncyB8
+PSBJT1NRRV9JT19MSU5LOwp9Cgp2b2lkIGFkZF9yZWFkKGludCBmZCkgewogICAgc3RydWN0IGlv
+X3VyaW5nX3NxZSAqc3FlID0gaW9fdXJpbmdfZ2V0X3NxZSgmcmluZyk7CiAgICBpb191cmluZ19w
+cmVwX3JlYWQoc3FlLCBmZCwgJmJ1ZiwgMTAwLCAwKTsKICAgIHNxZS0+dXNlcl9kYXRhID0gMzsK
+ICAgIHNxZS0+ZmxhZ3MgfD0gSU9TUUVfSU9fTElOSzsKfQoKaW50IHNldHVwX2lvX3VyaW5nKCkg
+ewogICAgaW50IHJldCA9IGlvX3VyaW5nX3F1ZXVlX2luaXQoMTYsICZyaW5nLCAwKTsKICAgIGlm
+IChyZXQpIHsKICAgICAgICBmcHJpbnRmKHN0ZGVyciwgIlVuYWJsZSB0byBzZXR1cCBpb191cmlu
+ZzogJXNcbiIsIHN0cmVycm9yKC1yZXQpKTsKICAgICAgICByZXR1cm4gMTsKICAgIH0KICAgIHJl
+dHVybiAwOwp9CgppbnQgbWFpbihpbnQgYXJnYywgY2hhciAqYXJndltdKSB7CgogICAgc3RydWN0
+IHNvY2thZGRyX2luIHNlcnZfYWRkcjsKCiAgICBzZXR1cF9pb191cmluZygpOwogICAgCiAgICBp
+bnQgc29ja19saXN0ZW5fZmQgPSBzb2NrZXQoQUZfSU5FVCwgU09DS19TVFJFQU0gfCBTT0NLX05P
+TkJMT0NLLCAwKTsKICAgIGNvbnN0IGludCB2YWwgPSAxOwogICAgc2V0c29ja29wdChzb2NrX2xp
+c3Rlbl9mZCwgU09MX1NPQ0tFVCwgU09fUkVVU0VBRERSLCAmdmFsLCBzaXplb2YodmFsKSk7Cgog
+ICAgbWVtc2V0KCZzZXJ2X2FkZHIsIDAsIHNpemVvZihzZXJ2X2FkZHIpKTsKICAgIHNlcnZfYWRk
+ci5zaW5fZmFtaWx5ID0gQUZfSU5FVDsKICAgIHNlcnZfYWRkci5zaW5fcG9ydCA9IGh0b25zKFBP
+UlQpOwogICAgc2Vydl9hZGRyLnNpbl9hZGRyLnNfYWRkciA9IElOQUREUl9BTlk7CgogICAgaWYg
+KGJpbmQoc29ja19saXN0ZW5fZmQsIChzdHJ1Y3Qgc29ja2FkZHIgKikmc2Vydl9hZGRyLCBzaXpl
+b2Yoc2Vydl9hZGRyKSkgPCAwKSB7CiAgICAgICAgIHBlcnJvcigiRXJyb3IgYmluZGluZyBzb2Nr
+ZXRcbiIpOwogICAgICAgICBleGl0KDEpOwogICAgIH0KICAgIGlmIChsaXN0ZW4oc29ja19saXN0
+ZW5fZmQsIEJBQ0tMT0cpIDwgMCkgewogICAgICAgICBwZXJyb3IoIkVycm9yIGxpc3RlbmluZyBv
+biBzb2NrZXRcbiIpOwogICAgICAgICBleGl0KDEpOwogICAgfQoKICAgIHNldHVwX2lvX3VyaW5n
+KCk7CgogICAgYWRkX3BvbGwoc29ja19saXN0ZW5fZmQpOwogICAgYWRkX2FjY2VwdChzb2NrX2xp
+c3Rlbl9mZCk7CiAgICBpb191cmluZ19zdWJtaXQoJnJpbmcpOwoKICAgIHdoaWxlICgxKSB7CiAg
+ICAgICAgc3RydWN0IGlvX3VyaW5nX2NxZSAqY3FlOwogICAgICAgIGlvX3VyaW5nX3dhaXRfY3Fl
+KCZyaW5nLCAmY3FlKTsKCiAgICAgICAgcHJpbnRmKCJSZXM6IHJlczogJWRcbiIsIGNxZS0+cmVz
+KTsKICAgICAgICAKICAgICAgICBpZiAoY3FlLT51c2VyX2RhdGEgPT0gMSkgewogICAgICAgICAg
+ICBwcmludGYoIlBvbGwgRXZlbnRcbiIpOwogICAgICAgIH0KICAgICAgICAKICAgICAgICBpZiAo
+Y3FlLT51c2VyX2RhdGEgPT0gMiAmJiBjcWUtPnJlcyA+IDApIHsKICAgICAgICAgICAgcHJpbnRm
+KCJBY2NlcHQgRXZlbnRcbiIpOwogICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICBhZGRf
+cG9sbChzb2NrX2xpc3Rlbl9mZCk7CiAgICAgICAgICAgIGFkZF9hY2NlcHQoc29ja19saXN0ZW5f
+ZmQpOwoKICAgICAgICAgICAgLy9hdm9pZCBsaW5rIGJldHdlZW4gYWRkX2FjY2VwdCBhbmQgYWRk
+X3BvbGwKICAgICAgICAgICAgc3RydWN0IGlvX3VyaW5nX3NxZSAqc3FlID0gaW9fdXJpbmdfZ2V0
+X3NxZSgmcmluZyk7CiAgICAgICAgICAgIGlvX3VyaW5nX3ByZXBfbm9wKHNxZSk7IAoKICAgICAg
+ICAgICAgYWRkX3BvbGwoY3FlLT5yZXMpOwogICAgICAgICAgICBhZGRfcmVhZChjcWUtPnJlcyk7
+CiAgICAgICAgfQoKICAgICAgICBpZiAoY3FlLT51c2VyX2RhdGEgPT0gMykgewogICAgICAgICAg
+ICBwcmludGYoIlJlYWQgQnVmOiAlcyBcbiIsIGJ1Zik7CiAgICAgICAgfQogICAgICAgIGlvX3Vy
+aW5nX3N1Ym1pdCgmcmluZyk7CgogICAgICAgIGlvX3VyaW5nX2NxZV9zZWVuKCZyaW5nLCBjcWUp
+OwogICAgfQoKICAgIGlvX3VyaW5nX3F1ZXVlX2V4aXQoJnJpbmcpOwoKICAgIHJldHVybiAwOwp9
+--00000000000006f59c05acf16dbe--

@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0E6924584F
-	for <lists+io-uring@lfdr.de>; Sun, 16 Aug 2020 17:23:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91F4D2458CF
+	for <lists+io-uring@lfdr.de>; Sun, 16 Aug 2020 19:30:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbgHPPW7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 16 Aug 2020 11:22:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37192 "EHLO
+        id S1729360AbgHPRaN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 16 Aug 2020 13:30:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726407AbgHPPW6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Aug 2020 11:22:58 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B9DCC061786
-        for <io-uring@vger.kernel.org>; Sun, 16 Aug 2020 08:22:57 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id c10so6917513pjn.1
-        for <io-uring@vger.kernel.org>; Sun, 16 Aug 2020 08:22:57 -0700 (PDT)
+        with ESMTP id S1726511AbgHPRaM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Aug 2020 13:30:12 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 037EBC061786
+        for <io-uring@vger.kernel.org>; Sun, 16 Aug 2020 10:30:12 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id 189so6316653pgg.13
+        for <io-uring@vger.kernel.org>; Sun, 16 Aug 2020 10:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PVOyNfwN5m3nAmoJsFst0bPqdPGq9jMDVYbsbztjMsQ=;
-        b=u7du3PK9tmk8KzEbIvsHYC+rARy5cwZurltc7mF37ma82W+ZNgn72OOkkic+yJ3t4C
-         4lFECr0ru44o96+yskEALy8nW9gt3vbQHJvj6JpUAYxY1IVdAENhLj/luSrIumdfzMcm
-         wgvxoLjPx/2+jFmKrfIum6WkTRRT7J2I4l1qPjQTkcw/ZssoCZpvanDrupOkhbdpnqyr
-         v8rRt/ZDHp0f0LsfkRrXDKoRB7DRyQD7n6HaKvIosXgHRS0ONXfMlSzQS8RZcOq6KKl+
-         nJXl/3w/UcLWcnd19T+TvumA+/yaydlvtGVqtmVM9s4FvtRNZ+pcmWCja75S3eLPw/K8
-         Yf7Q==
+        bh=H+oqfjIold60myOL8GEmLDENSo7NlBhIn6Su2HtZ6vE=;
+        b=MAHOg7z4/Ysm8krWHk3MLQO2L7CACfMZdndetcRB6AJWI88zOtKPb9UYKjw1I8dbCM
+         GxT450rD0nz8M/KBK9Q7JNHmNdZPDI0MtYfXEDYMDdiEHm7n7ulbXsr0sOeVNQ6xqJYi
+         TkqMWTXJMqRjd+tDT0ZShzcZMJ6IrDOSlMIJfvSXEL0TaCpD52/ML0T6EB16EbgJHySI
+         ggg1Qfs5JUw7j3sbGGqykpCFqR+U9zJJBIi0vCpm5BySZYy1AmpM3ykMaj2i4JpsdBKV
+         ZuckSbqlDogid36gKQuzxxqQpa6GcJP/FYrx/xQMunoVLJXVRd8XhrV27ZwtXGHKzWFV
+         k+8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=PVOyNfwN5m3nAmoJsFst0bPqdPGq9jMDVYbsbztjMsQ=;
-        b=DdEeCtgBtlem2v89enhaNZ+4U2YUFh6rQzgwgQBe/1OrBlQ62KqCIkeFs533LZCTaG
-         2M8Hiho7jtRJli6Wa9KUsCxJz4yIlcMBBdI0xlw4+xclxKg5c9lgx8XlKPqqKwKNNsYS
-         TJE5w91Prn3MqHvVf9qttSRLpkaiBuTb/SY3l0jELPf3HAwbx3B7D3OUHkK4s8jGi/TM
-         mwAh+J11x0053ivefxT3tI3lZ4y0zu0uye8D4mfHy7WV0KweAu2dpTiZA/A5FmRiElEt
-         CMNEtczasQICdPC4VS4ekvhD7KIsUuzoe4qeCUf307KJW2dMxIPJBrOKyGy2YRtGaC7N
-         ARzw==
-X-Gm-Message-State: AOAM532y2ePalZwV/WcL5XMmLTfnaU5ThGoaUHfsNSViyZSI496v/kOl
-        x4wJA1HfJR68qMniuw/lwd7Snp7OJrXVxw==
-X-Google-Smtp-Source: ABdhPJzUmDYr4J5/xVm7rNq8BpOXmP71Aaet4RyDuTsvhFp1JiZE9Nu5P4q3BKBwjwlhSOPDNCvsRQ==
-X-Received: by 2002:a17:902:ea8c:: with SMTP id x12mr8522487plb.60.1597591375394;
-        Sun, 16 Aug 2020 08:22:55 -0700 (PDT)
+        bh=H+oqfjIold60myOL8GEmLDENSo7NlBhIn6Su2HtZ6vE=;
+        b=cLRv1r3nF34VEXIGMvcphvxNGk+WOSwpHCZlqt+z5fq3mMb8HAsdFwA95mhSMqXYm3
+         c3XUJczHCCTAO/sIgQAd61hlbUsYcW2XmH1g2a5hf7iseTkO1ed7u3Xcv6IyvYjBJNSA
+         R5IdtrDQf5156Kr5aVtkU6lsJppVij0Wql+d6YuSb1qE9KpVXXRQ1QXYpsePJOesi+Zr
+         PyZVgm/8n/r9sQ5s+mmifTYkHoMvRbO8Gwe94Pr6aAv2yFaE+wk0xBYg/zzeD1f3HX0y
+         g634iXxFQwelWi0iMP3z7xIanabt3cYgGWH/w9+WSHIyTXMibK4PbSp7wP5R3V5eS2bY
+         1MVw==
+X-Gm-Message-State: AOAM532TclUpz2e2ULr/kZhWR4fFJCuK0hLhdnlH1FajmD4RlDmp3tqV
+        iL2PfTH9EmM1Q/0EobxGnyXAUQ==
+X-Google-Smtp-Source: ABdhPJxu+TKa8GYzHckDc4UZknOsXs2E2JGXVzIxFPb1opTAaX+QF8GUY2+UbsEImOZ4vZzrN6b2eg==
+X-Received: by 2002:aa7:8ec4:: with SMTP id b4mr8352317pfr.227.1597599010503;
+        Sun, 16 Aug 2020 10:30:10 -0700 (PDT)
 Received: from ?IPv6:2605:e000:100e:8c61:80d9:87c:7a0f:8256? ([2605:e000:100e:8c61:80d9:87c:7a0f:8256])
-        by smtp.gmail.com with ESMTPSA id m19sm13854743pgd.21.2020.08.16.08.22.54
+        by smtp.gmail.com with ESMTPSA id y72sm16640966pfg.58.2020.08.16.10.30.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Aug 2020 08:22:54 -0700 (PDT)
+        Sun, 16 Aug 2020 10:30:09 -0700 (PDT)
 Subject: Re: io_uring process termination/killing is not working
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Josef <josef.grieb@gmail.com>, io-uring@vger.kernel.org
+To:     Josef <josef.grieb@gmail.com>, io-uring@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>
 Cc:     norman@apache.org
 References: <CAAss7+pf+CGQiSDM8_fhsHRwjWUxESPcJMhOOsDOitqePQxCrg@mail.gmail.com>
  <dc3562d8-dc67-c623-36ee-38885b4c1682@kernel.dk>
@@ -62,14 +62,20 @@ References: <CAAss7+pf+CGQiSDM8_fhsHRwjWUxESPcJMhOOsDOitqePQxCrg@mail.gmail.com>
  <bb45665c-1311-807d-5a03-459cf3cbd103@gmail.com>
  <d06c7f29-726b-d46a-8c51-0dc47ef374ad@kernel.dk>
  <63024e23-2b71-937a-6759-17916743c16c@gmail.com>
- <86295255-567d-e756-5ca3-138d349a5ea1@kernel.dk>
- <d2341bc7-e7c8-110f-e60c-39fc03c62160@kernel.dk>
-Message-ID: <67cf568c-27fc-d298-5267-1212f9421b74@kernel.dk>
-Date:   Sun, 16 Aug 2020 08:22:53 -0700
+ <CAAss7+qGqCpp8dWpDR2rVJERwtV7r=9vEajOMqbhkSQ8Y-yteQ@mail.gmail.com>
+ <fa0c9555-d6bc-33a3-b6d1-6a95a744c69f@kernel.dk>
+ <904b4d74-09ec-0bd3-030a-59b09fb1a7da@kernel.dk>
+ <CAAss7+r8CZMVmxj0_mHTPUVbp3BzT4LGa2uEUjCK1NpXQnDkdw@mail.gmail.com>
+ <390e6d95-040b-404e-58c4-d633d6d0041d@kernel.dk>
+ <63b47134-ad9c-4305-3a19-8c5deb7da686@kernel.dk>
+ <CAAss7+o+py+ui=nbW03V_RADxnTE6Dz9q229rnpn+YeWu5GP=w@mail.gmail.com>
+ <689aa6e9-bfff-3353-fc09-d8dec49485bd@kernel.dk>
+Message-ID: <b35ac93e-cf5f-ee98-404d-358674d51075@kernel.dk>
+Date:   Sun, 16 Aug 2020 10:30:08 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <d2341bc7-e7c8-110f-e60c-39fc03c62160@kernel.dk>
+In-Reply-To: <689aa6e9-bfff-3353-fc09-d8dec49485bd@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -78,118 +84,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/16/20 7:53 AM, Jens Axboe wrote:
-> On 8/16/20 6:45 AM, Jens Axboe wrote:
->> On 8/15/20 9:48 AM, Pavel Begunkov wrote:
->>> On 15/08/2020 18:12, Jens Axboe wrote:
->>>> On 8/15/20 12:45 AM, Pavel Begunkov wrote:
->>>>> On 13/08/2020 02:32, Jens Axboe wrote:
->>>>>> On 8/12/20 12:28 PM, Pavel Begunkov wrote:
->>>>>>> On 12/08/2020 21:22, Pavel Begunkov wrote:
->>>>>>>> On 12/08/2020 21:20, Pavel Begunkov wrote:
->>>>>>>>> On 12/08/2020 21:05, Jens Axboe wrote:
->>>>>>>>>> On 8/12/20 11:58 AM, Josef wrote:
->>>>>>>>>>> Hi,
->>>>>>>>>>>
->>>>>>>>>>> I have a weird issue on kernel 5.8.0/5.8.1, SIGINT even SIGKILL
->>>>>>>>>>> doesn't work to kill this process(always state D or D+), literally I
->>>>>>>>>>> have to terminate my VM because even the kernel can't kill the process
->>>>>>>>>>> and no issue on 5.7.12-201, however if IOSQE_IO_LINK is not set, it
->>>>>>>>>>> works
->>>>>>>>>>>
->>>>>>>>>>> I've attached a file to reproduce it
->>>>>>>>>>> or here
->>>>>>>>>>> https://gist.github.com/1Jo1/15cb3c63439d0c08e3589cfa98418b2c
->>>>>>>>>>
->>>>>>>>>> Thanks, I'll take a look at this. It's stuck in uninterruptible
->>>>>>>>>> state, which is why you can't kill it.
->>>>>>>>>
->>>>>>>>> It looks like one of the hangs I've been talking about a few days ago,
->>>>>>>>> an accept is inflight but can't be found by cancel_files() because it's
->>>>>>>>> in a link.
->>>>>>>>
->>>>>>>> BTW, I described it a month ago, there were more details.
->>>>>>>
->>>>>>> https://lore.kernel.org/io-uring/34eb5e5a-8d37-0cae-be6c-c6ac4d85b5d4@gmail.com
->>>>>>
->>>>>> Yeah I think you're right. How about something like the below? That'll
->>>>>> potentially cancel more than just the one we're looking for, but seems
->>>>>> kind of silly to only cancel from the file table holding request and to
->>>>>> the end.
->>>>>
->>>>> The bug is not poll/t-out related, IIRC my test reproduces it with
->>>>> read(pipe)->open(). See the previously sent link.
->>>>
->>>> Right, but in this context for poll, I just mean any request that has a
->>>> poll handler armed. Not necessarily only a pure poll. The patch should
->>>> fix your case, too.
->>>
->>> Ok. I was thinking about sleeping in io_read(), etc. from io-wq context.
->>> That should have the same effect.
+On 8/15/20 8:20 PM, Jens Axboe wrote:
+> On 8/15/20 8:14 PM, Josef wrote:
+>>>> Hence it'd be helpful if you explain what your expectations are of
+>>>> the program, and how that differs from how it behaves
 >>
->> We already cancel any blocking work for the exiting task - but we do
->> that _after_ trying to cancel files, so we should probably just swap
->> those around in io_uring_flush(). That'll remove any need to find and
->> cancel those explicitly in io_uring_cancel_files().
-> 
-> I guess there's still the case of the task just closing the fd, not
-> necessarily exiting. So I do agree with you that the io-wq case is still
-> unhandled. I'll take a look...
+>> yeah that's true, I'm sorry about that.
+>>
+>>>> Are you sure your code is correct? I haven't looked too closely, but it
+>>>> doesn't look very solid. There's no error checking, and you seem to be
+>>>> setting up two rings (one overwriting the other). FWIW, I get the same
+>>>> behavior on 5.7-stable and the above branch, except that the 5.7 hangs
+>>>> on exit due to the other bug you found and that is fixed in the 5.9
+>>>> branch.
+>>>>
+>>>
+>>> Took a closer look, and made a few tweaks. Got rid of the extra links
+>>> and the nop, and I added a poll+read resubmit when a read completes.
+>>> Not sure how your program could work without that, if you expect it
+>>> to continue to echo out what is written on the connection? Also killed
+>>> that extra ring init.
 
-The below should do it.
+BTW, something I think you're aware of, but wanted to bring up
+explicitly - if IORING_FEAT_FAST_POLL is available in the ring features,
+then you generally don't want/need to link potentially blocking requests
+on pollable files with a poll in front. io_uring will do this
+internally, and save you an sqe and completion event for each of these
+types of requests.
 
+Your test case is a perfect example of that, neither the accept nor the
+socket read would need a poll linked in front of them, as they are both
+pollable file types and will not trigger use of an async thread to wait
+for the event. Instead an internal poll is armed which will trigger the
+issue of that request, when the socket is ready.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index dc506b75659c..346a3eb84785 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8063,6 +8063,33 @@ static bool io_timeout_remove_link(struct io_ring_ctx *ctx,
- 	return found;
- }
- 
-+static bool io_cancel_link_cb(struct io_wq_work *work, void *data)
-+{
-+	return io_match_link(container_of(work, struct io_kiocb, work), data);
-+}
-+
-+static void io_attempt_cancel(struct io_ring_ctx *ctx, struct io_kiocb *req)
-+{
-+	enum io_wq_cancel cret;
-+
-+	/* cancel this particular work, if it's running */
-+	cret = io_wq_cancel_work(ctx->io_wq, &req->work);
-+	if (cret != IO_WQ_CANCEL_NOTFOUND)
-+		return;
-+
-+	/* find links that hold this pending, cancel those */
-+	cret = io_wq_cancel_cb(ctx->io_wq, io_cancel_link_cb, req, true);
-+	if (cret != IO_WQ_CANCEL_NOTFOUND)
-+		return;
-+
-+	/* if we have a poll link holding this pending, cancel that */
-+	if (io_poll_remove_link(ctx, req))
-+		return;
-+
-+	/* final option, timeout link is holding this req pending */
-+	io_timeout_remove_link(ctx, req);
-+}
-+
- static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 				  struct files_struct *files)
- {
-@@ -8116,10 +8143,8 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 				continue;
- 			}
- 		} else {
--			io_wq_cancel_work(ctx->io_wq, &cancel_req->work);
--			/* could be a link, check and remove if it is */
--			if (!io_poll_remove_link(ctx, cancel_req))
--				io_timeout_remove_link(ctx, cancel_req);
-+			/* cancel this request, or head link requests */
-+			io_attempt_cancel(ctx, cancel_req);
- 			io_put_req(cancel_req);
- 		}
- 
 -- 
 Jens Axboe
 

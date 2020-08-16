@@ -2,761 +2,451 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13424245533
-	for <lists+io-uring@lfdr.de>; Sun, 16 Aug 2020 03:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15B6F245576
+	for <lists+io-uring@lfdr.de>; Sun, 16 Aug 2020 04:30:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbgHPBoN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 15 Aug 2020 21:44:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53556 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728774AbgHPBoM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Aug 2020 21:44:12 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BC94C061786
-        for <io-uring@vger.kernel.org>; Sat, 15 Aug 2020 18:44:12 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id t6so6016205pjr.0
-        for <io-uring@vger.kernel.org>; Sat, 15 Aug 2020 18:44:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=EMPCgnFp3k4zf8DBYHwxenbSK9kKwDCP7jo8BbFQtRo=;
-        b=Vpan/CH0jFmZTq/1Y6YGrctZlu7wgeICIoF73ZDVnGwjHvZKMbR4BVEy6FTeqkiJIH
-         vFPa8bnS2GbLSlxlzmQRVno9xuD0IKCzH2JT8hDYwgur6mg0i3zfB7Wy0SyuzDrnLHXi
-         KMJNRhz5F8koutnLSrv5PPhZ261kExxxrdZvgcianMxNDSrKrXTS5Z/yTKMqvLUYDuNl
-         zooYOjk0n4VtjFYkvKZVxGVZ3oAa1G7XaRmYOAa9GA0F2rymQZaMCL4tJ6QIuL0b5rwq
-         Q/C9W63Poa4zN9ASk4b8CIFjQQKoD8fUyCVxiilQUcGH5mZDGj0LeGGtCYj4RTrulxq0
-         IQRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=EMPCgnFp3k4zf8DBYHwxenbSK9kKwDCP7jo8BbFQtRo=;
-        b=iMLSDMlFT5LwXp+D1qbnkZUohJt4fNFD2CTuYLDiR+GsP53dBLgkQIrZgFc0UsjryW
-         7lXzJYnDlytQAk8Teglv1X9F+0iwSpOIv/VVyFq0KX+I6+PuRI3yjnjr/dj2L8L3cEkt
-         O66el6Z235/naFBM0qnHi5pDYi4+gjLHTgzeZTwL+zYjlzv8qzAi50eKveuV6B7Nx6IX
-         oq/dTMIPolN7zBslV8c3HJqNFprIz68vAKXHBZUNOEiK2zK7SclTlgJmsyUx+G3KXItE
-         HWo5TcnV6zj46Vwg/CqX83tLo8/KDT0SxVBYE1KzKSXLL1mfHDIUExe4G1utNGoasLeq
-         RzWg==
-X-Gm-Message-State: AOAM531e7sd8hS4tmKCeNSL0s1SzkXYlxLm7FV+Y7GNPXTEVF6lvjGQX
-        FfVYsmRBeTAq4qgGQXyFY+km62a9kYzO1g==
-X-Google-Smtp-Source: ABdhPJxwvK9nDNNrjPQkUA2Y2X5qs7saNzlpElUjPaBVDYGBh5VH9QxRoaQSDfk3Tz5+aQkjoVKTRw==
-X-Received: by 2002:a17:90a:2169:: with SMTP id a96mr7119399pje.132.1597542251461;
-        Sat, 15 Aug 2020 18:44:11 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:6299:2df1:e468:6351? ([2605:e000:100e:8c61:6299:2df1:e468:6351])
-        by smtp.gmail.com with ESMTPSA id a17sm13467761pfk.29.2020.08.15.18.44.10
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Aug 2020 18:44:10 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH for-next] io_uring: get rid of req->io/io_async_ctx union
-Message-ID: <9ff8c154-881e-4f38-eb1a-fb26a87821f0@kernel.dk>
-Date:   Sat, 15 Aug 2020 18:44:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1729216AbgHPCaX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 15 Aug 2020 22:30:23 -0400
+Received: from mail.cmpwn.com ([45.56.77.53]:57572 "EHLO mail.cmpwn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726926AbgHPCaW (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sat, 15 Aug 2020 22:30:22 -0400
+X-Greylist: delayed 599 seconds by postgrey-1.27 at vger.kernel.org; Sat, 15 Aug 2020 22:30:21 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=cmpwn.com; s=cmpwn;
+        t=1597544421; bh=rwqZKVXGe5ZnblXp3Lha5hh9S9hcwBD7hB1C9ycX8DA=;
+        h=Subject:From:To:Date;
+        b=JHU8vMBFFaF/FwsyVSUY0rwQeVtg5HTwS5tNxrnHrMS0AbDAuZG9TCpAzvoc8rLfM
+         LtBIeGbu7nsQP7XLgGS+9MzUqSz3XTJbYxAke5RL4wAd6i3hQaem2AQfnA5hvkLFrg
+         ukJvcO/8w7i6+IfjOiwVU1vJA1aUmglOAOx4PGJo=
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Subject: Consistently reproducible deadlock with simple io_uring program
+From:   "Drew DeVault" <sir@cmpwn.com>
+To:     <io-uring@vger.kernel.org>
+Date:   Sat, 15 Aug 2020 22:12:28 -0400
+Message-Id: <C4Y22EC7RW97.3K03685KXYM5S@homura>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Kernel 5.7.12-arch1-1 x86_64, Arch Linux.
 
-There's really no point in having this union, it just means that we're
-always allocating enough room to cater to any command. But that's
-pointless, as the ->io field is request type private anyway.
+I'm working on a new implementation of the userspace end of io_uring for
+a new programming language under design. The program is pretty simple:
+it sets up an io_uring with flags set to zero, obtains an SQE, prepares
+it to read 1024 bytes from stdin, and then calls io_uring_enter with
+submit and min_complete both set to 1.
 
-This gets rid of the io_async_ctx structure, and fills in the required
-size in the io_op_defs[] instead.
+The code is set up to grab the CQE and interpret the data in the buffer
+after this, but I'm not sure if this side ever gets run in userspace,
+because my kernel immediately locks up after I press enter on the
+controlling terminal to submit some data to stdin.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+I have uploaded a binary which reproduces the problem here:
 
----
+https://yukari.sr.ht/io_uring-crashme
 
-I wanted to get rid of ->needs_async_data (which used to be ->async_ctx)
-in the io_op_defs, but with the retry code, we have a case where a
-command (like a read/read-fixed, ditto writes) will need async_data
-setup even if it doesn't usually. This means that we need both a size
-field and a 'usually needs it' flag like we had before as well.
-Alternatively, we could pass in the size to the alloc function instead.
-We have 3 bits left in io_op_defs as it stands after this patch, which
-is probably fine... So I preferred this approach.
+If you want to reproduce it from source, reach out to me out of band; it
+will be a challenge. This new programming langauge is technically GPL'd,
+but it hasn't been released to the public, YMMV getting it set up on
+localhost, and it doesn't generate DWARF symbols so you're going to be
+debugging assembly no matter what.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index dc506b75659c..bdfedabdc2ea 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -514,15 +514,6 @@ struct io_async_rw {
- 	struct wait_page_queue		wpq;
- };
- 
--struct io_async_ctx {
--	union {
--		struct io_async_rw	rw;
--		struct io_async_msghdr	msg;
--		struct io_async_connect	connect;
--		struct io_timeout_data	timeout;
--	};
--};
--
- enum {
- 	REQ_F_FIXED_FILE_BIT	= IOSQE_FIXED_FILE_BIT,
- 	REQ_F_IO_DRAIN_BIT	= IOSQE_IO_DRAIN_BIT,
-@@ -632,7 +623,8 @@ struct io_kiocb {
- 		struct io_completion	compl;
- 	};
- 
--	struct io_async_ctx		*io;
-+	/* opcode allocated if it needs to store data for async defer */
-+	void				*async_data;
- 	u8				opcode;
- 	/* polled IO has completed */
- 	u8				iopoll_completed;
-@@ -700,8 +692,6 @@ struct io_submit_state {
- };
- 
- struct io_op_def {
--	/* needs req->io allocated for deferral/async */
--	unsigned		async_ctx : 1;
- 	/* needs current->mm setup, does mm access */
- 	unsigned		needs_mm : 1;
- 	/* needs req->file assigned */
-@@ -723,27 +713,34 @@ struct io_op_def {
- 	unsigned		pollout : 1;
- 	/* op supports buffer selection */
- 	unsigned		buffer_select : 1;
-+	/* needs rlimit(RLIMIT_FSIZE) assigned */
- 	unsigned		needs_fsize : 1;
-+	/* must always have async data allocated */
-+	unsigned		needs_async_data : 1;
-+	/* size of async data needed, if any */
-+	unsigned short		async_size;
- };
- 
- static const struct io_op_def io_op_defs[] = {
- 	[IORING_OP_NOP] = {},
- 	[IORING_OP_READV] = {
--		.async_ctx		= 1,
- 		.needs_mm		= 1,
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollin			= 1,
- 		.buffer_select		= 1,
-+		.needs_async_data	= 1,
-+		.async_size		= sizeof(struct io_async_rw),
- 	},
- 	[IORING_OP_WRITEV] = {
--		.async_ctx		= 1,
- 		.needs_mm		= 1,
- 		.needs_file		= 1,
- 		.hash_reg_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
- 		.needs_fsize		= 1,
-+		.needs_async_data	= 1,
-+		.async_size		= sizeof(struct io_async_rw),
- 	},
- 	[IORING_OP_FSYNC] = {
- 		.needs_file		= 1,
-@@ -752,6 +749,7 @@ static const struct io_op_def io_op_defs[] = {
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollin			= 1,
-+		.async_size		= sizeof(struct io_async_rw),
- 	},
- 	[IORING_OP_WRITE_FIXED] = {
- 		.needs_file		= 1,
-@@ -759,6 +757,7 @@ static const struct io_op_def io_op_defs[] = {
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
- 		.needs_fsize		= 1,
-+		.async_size		= sizeof(struct io_async_rw),
- 	},
- 	[IORING_OP_POLL_ADD] = {
- 		.needs_file		= 1,
-@@ -769,25 +768,28 @@ static const struct io_op_def io_op_defs[] = {
- 		.needs_file		= 1,
- 	},
- 	[IORING_OP_SENDMSG] = {
--		.async_ctx		= 1,
- 		.needs_mm		= 1,
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.needs_fs		= 1,
- 		.pollout		= 1,
-+		.needs_async_data	= 1,
-+		.async_size		= sizeof(struct io_async_msghdr),
- 	},
- 	[IORING_OP_RECVMSG] = {
--		.async_ctx		= 1,
- 		.needs_mm		= 1,
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.needs_fs		= 1,
- 		.pollin			= 1,
- 		.buffer_select		= 1,
-+		.needs_async_data	= 1,
-+		.async_size		= sizeof(struct io_async_msghdr),
- 	},
- 	[IORING_OP_TIMEOUT] = {
--		.async_ctx		= 1,
- 		.needs_mm		= 1,
-+		.needs_async_data	= 1,
-+		.async_size		= sizeof(struct io_timeout_data),
- 	},
- 	[IORING_OP_TIMEOUT_REMOVE] = {},
- 	[IORING_OP_ACCEPT] = {
-@@ -799,15 +801,17 @@ static const struct io_op_def io_op_defs[] = {
- 	},
- 	[IORING_OP_ASYNC_CANCEL] = {},
- 	[IORING_OP_LINK_TIMEOUT] = {
--		.async_ctx		= 1,
- 		.needs_mm		= 1,
-+		.needs_async_data	= 1,
-+		.async_size		= sizeof(struct io_timeout_data),
- 	},
- 	[IORING_OP_CONNECT] = {
--		.async_ctx		= 1,
- 		.needs_mm		= 1,
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
-+		.needs_async_data	= 1,
-+		.async_size		= sizeof(struct io_async_connect),
- 	},
- 	[IORING_OP_FALLOCATE] = {
- 		.needs_file		= 1,
-@@ -837,6 +841,7 @@ static const struct io_op_def io_op_defs[] = {
- 		.unbound_nonreg_file	= 1,
- 		.pollin			= 1,
- 		.buffer_select		= 1,
-+		.async_size		= sizeof(struct io_async_rw),
- 	},
- 	[IORING_OP_WRITE] = {
- 		.needs_mm		= 1,
-@@ -844,6 +849,7 @@ static const struct io_op_def io_op_defs[] = {
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
- 		.needs_fsize		= 1,
-+		.async_size		= sizeof(struct io_async_rw),
- 	},
- 	[IORING_OP_FADVISE] = {
- 		.needs_file		= 1,
-@@ -1215,9 +1221,10 @@ static void io_queue_async_work(struct io_kiocb *req)
- 
- static void io_kill_timeout(struct io_kiocb *req)
- {
-+	struct io_timeout_data *io = req->async_data;
- 	int ret;
- 
--	ret = hrtimer_try_to_cancel(&req->io->timeout.timer);
-+	ret = hrtimer_try_to_cancel(&io->timer);
- 	if (ret != -1) {
- 		atomic_set(&req->ctx->cq_timeouts,
- 			atomic_read(&req->ctx->cq_timeouts) + 1);
-@@ -1558,8 +1565,8 @@ static bool io_dismantle_req(struct io_kiocb *req)
- {
- 	io_clean_op(req);
- 
--	if (req->io)
--		kfree(req->io);
-+	if (req->async_data)
-+		kfree(req->async_data);
- 	if (req->file)
- 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
- 
-@@ -1624,10 +1631,11 @@ static void __io_free_req(struct io_kiocb *req)
- 
- static bool io_link_cancel_timeout(struct io_kiocb *req)
- {
-+	struct io_timeout_data *io = req->async_data;
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
--	ret = hrtimer_try_to_cancel(&req->io->timeout.timer);
-+	ret = hrtimer_try_to_cancel(&io->timer);
- 	if (ret != -1) {
- 		io_cqring_fill_event(req, -ECANCELED);
- 		io_commit_cqring(ctx);
-@@ -2588,13 +2596,14 @@ static void kiocb_done(struct kiocb *kiocb, ssize_t ret,
- 		       struct io_comp_state *cs)
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
-+	struct io_async_rw *io = req->async_data;
- 
- 	/* add previously done IO, if any */
--	if (req->io && req->io->rw.bytes_done > 0) {
-+	if (io && io->bytes_done > 0) {
- 		if (ret < 0)
--			ret = req->io->rw.bytes_done;
-+			ret = io->bytes_done;
- 		else
--			ret += req->io->rw.bytes_done;
-+			ret += io->bytes_done;
- 	}
- 
- 	if (req->flags & REQ_F_CUR_POS)
-@@ -2828,8 +2837,8 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
- 	ssize_t ret;
- 	u8 opcode;
- 
--	if (req->io) {
--		struct io_async_rw *iorw = &req->io->rw;
-+	if (req->async_data) {
-+		struct io_async_rw *iorw = req->async_data;
- 
- 		*iovec = NULL;
- 		return iov_iter_count(&iorw->iter);
-@@ -2940,7 +2949,7 @@ static ssize_t loop_rw_iter(int rw, struct file *file, struct kiocb *kiocb,
- static void io_req_map_rw(struct io_kiocb *req, const struct iovec *iovec,
- 			  const struct iovec *fast_iov, struct iov_iter *iter)
- {
--	struct io_async_rw *rw = &req->io->rw;
-+	struct io_async_rw *rw = req->async_data;
- 
- 	memcpy(&rw->iter, iter, sizeof(*iter));
- 	rw->free_iovec = NULL;
-@@ -2965,28 +2974,29 @@ static void io_req_map_rw(struct io_kiocb *req, const struct iovec *iovec,
- 	}
- }
- 
--static inline int __io_alloc_async_ctx(struct io_kiocb *req)
-+static inline int __io_alloc_async_data(struct io_kiocb *req)
- {
--	req->io = kmalloc(sizeof(*req->io), GFP_KERNEL);
--	return req->io == NULL;
-+	WARN_ON_ONCE(!io_op_defs[req->opcode].async_size);
-+	req->async_data = kmalloc(io_op_defs[req->opcode].async_size, GFP_KERNEL);
-+	return req->async_data == NULL;
- }
- 
--static int io_alloc_async_ctx(struct io_kiocb *req)
-+static int io_alloc_async_data(struct io_kiocb *req)
- {
--	if (!io_op_defs[req->opcode].async_ctx)
-+	if (!io_op_defs[req->opcode].needs_async_data)
- 		return 0;
- 
--	return  __io_alloc_async_ctx(req);
-+	return  __io_alloc_async_data(req);
- }
- 
- static int io_setup_async_rw(struct io_kiocb *req, const struct iovec *iovec,
- 			     const struct iovec *fast_iov,
- 			     struct iov_iter *iter, bool force)
- {
--	if (!force && !io_op_defs[req->opcode].async_ctx)
-+	if (!force && !io_op_defs[req->opcode].needs_async_data)
- 		return 0;
--	if (!req->io) {
--		if (__io_alloc_async_ctx(req))
-+	if (!req->async_data) {
-+		if (__io_alloc_async_data(req))
- 			return -ENOMEM;
- 
- 		io_req_map_rw(req, iovec, fast_iov, iter);
-@@ -2997,15 +3007,15 @@ static int io_setup_async_rw(struct io_kiocb *req, const struct iovec *iovec,
- static inline int io_rw_prep_async(struct io_kiocb *req, int rw,
- 				   bool force_nonblock)
- {
--	struct io_async_rw *iorw = &req->io->rw;
-+	struct io_async_rw *iorw = req->async_data;
- 	ssize_t ret;
- 
- 	iorw->iter.iov = iorw->fast_iov;
--	/* reset ->io around the iovec import, we don't want to use it */
--	req->io = NULL;
-+	/* reset ->async_data around the iovec import, we don't want to use it */
-+	req->async_data = NULL;
- 	ret = io_import_iovec(rw, req, (struct iovec **) &iorw->iter.iov,
- 				&iorw->iter, !force_nonblock);
--	req->io = container_of(iorw, struct io_async_ctx, rw);
-+	req->async_data = iorw;
- 	if (unlikely(ret < 0))
- 		return ret;
- 
-@@ -3026,7 +3036,7 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		return -EBADF;
- 
- 	/* either don't need iovec imported or already have it */
--	if (!req->io || req->flags & REQ_F_NEED_CLEANUP)
-+	if (!req->async_data || req->flags & REQ_F_NEED_CLEANUP)
- 		return 0;
- 	return io_rw_prep_async(req, READ, force_nonblock);
- }
-@@ -3109,6 +3119,7 @@ static inline int kiocb_wait_page_queue_init(struct kiocb *kiocb,
-  */
- static bool io_rw_should_retry(struct io_kiocb *req)
- {
-+	struct io_async_rw *rw = req->async_data;
- 	struct kiocb *kiocb = &req->rw.kiocb;
- 	int ret;
- 
-@@ -3126,8 +3137,7 @@ static bool io_rw_should_retry(struct io_kiocb *req)
- 	if (file_can_poll(req->file) || !(req->file->f_mode & FMODE_BUF_RASYNC))
- 		return false;
- 
--	ret = kiocb_wait_page_queue_init(kiocb, &req->io->rw.wpq,
--						io_async_buf_func, req);
-+	ret = kiocb_wait_page_queue_init(kiocb, &rw->wpq, io_async_buf_func, req);
- 	if (!ret) {
- 		io_get_req_task(req);
- 		return true;
-@@ -3152,11 +3162,12 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
- 	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
- 	struct kiocb *kiocb = &req->rw.kiocb;
- 	struct iov_iter __iter, *iter = &__iter;
-+	struct io_async_rw *rw = req->async_data;
- 	ssize_t io_size, ret, ret2;
- 	size_t iov_count;
- 
--	if (req->io)
--		iter = &req->io->rw.iter;
-+	if (rw)
-+		iter = &rw->iter;
- 
- 	ret = io_import_iovec(READ, req, &iovec, iter, !force_nonblock);
- 	if (ret < 0)
-@@ -3208,12 +3219,13 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
- 		ret = ret2;
- 		goto out_free;
- 	}
-+	rw = req->async_data;
- 	/* it's copied and will be cleaned with ->io */
- 	iovec = NULL;
- 	/* now use our persistent iterator, if we aren't already */
--	iter = &req->io->rw.iter;
-+	iter = &rw->iter;
- retry:
--	req->io->rw.bytes_done += ret;
-+	rw->bytes_done += ret;
- 	/* if we can retry, do so with the callbacks armed */
- 	if (!io_rw_should_retry(req)) {
- 		kiocb->ki_flags &= ~IOCB_WAITQ;
-@@ -3256,7 +3268,7 @@ static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		return -EBADF;
- 
- 	/* either don't need iovec imported or already have it */
--	if (!req->io || req->flags & REQ_F_NEED_CLEANUP)
-+	if (!req->async_data || req->flags & REQ_F_NEED_CLEANUP)
- 		return 0;
- 	return io_rw_prep_async(req, WRITE, force_nonblock);
- }
-@@ -3267,11 +3279,12 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
- 	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
- 	struct kiocb *kiocb = &req->rw.kiocb;
- 	struct iov_iter __iter, *iter = &__iter;
-+	struct io_async_rw *rw = req->async_data;
- 	size_t iov_count;
- 	ssize_t ret, ret2, io_size;
- 
--	if (req->io)
--		iter = &req->io->rw.iter;
-+	if (rw)
-+		iter = &rw->iter;
- 
- 	ret = io_import_iovec(WRITE, req, &iovec, iter, !force_nonblock);
- 	if (ret < 0)
-@@ -4037,15 +4050,18 @@ static int io_sync_file_range(struct io_kiocb *req, bool force_nonblock)
- static int io_setup_async_msg(struct io_kiocb *req,
- 			      struct io_async_msghdr *kmsg)
- {
--	if (req->io)
-+	struct io_async_msghdr *async_msg = req->async_data;
-+
-+	if (async_msg)
- 		return -EAGAIN;
--	if (io_alloc_async_ctx(req)) {
-+	if (io_alloc_async_data(req)) {
- 		if (kmsg->iov != kmsg->fast_iov)
- 			kfree(kmsg->iov);
- 		return -ENOMEM;
- 	}
-+	async_msg = req->async_data;
- 	req->flags |= REQ_F_NEED_CLEANUP;
--	memcpy(&req->io->msg, kmsg, sizeof(*kmsg));
-+	memcpy(async_msg, kmsg, sizeof(*kmsg));
- 	return -EAGAIN;
- }
- 
-@@ -4060,8 +4076,8 @@ static int io_sendmsg_copy_hdr(struct io_kiocb *req,
- 
- static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
-+	struct io_async_msghdr *async_msg = req->async_data;
- 	struct io_sr_msg *sr = &req->sr_msg;
--	struct io_async_ctx *io = req->io;
- 	int ret;
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-@@ -4076,13 +4092,13 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		sr->msg_flags |= MSG_CMSG_COMPAT;
- #endif
- 
--	if (!io || req->opcode == IORING_OP_SEND)
-+	if (!async_msg || !io_op_defs[req->opcode].needs_async_data)
- 		return 0;
- 	/* iovec is already imported */
- 	if (req->flags & REQ_F_NEED_CLEANUP)
- 		return 0;
- 
--	ret = io_sendmsg_copy_hdr(req, &io->msg);
-+	ret = io_sendmsg_copy_hdr(req, async_msg);
- 	if (!ret)
- 		req->flags |= REQ_F_NEED_CLEANUP;
- 	return ret;
-@@ -4100,9 +4116,9 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (unlikely(!sock))
- 		return ret;
- 
--	if (req->io) {
--		kmsg = &req->io->msg;
--		kmsg->msg.msg_name = &req->io->msg.addr;
-+	if (req->async_data) {
-+		kmsg = req->async_data;
-+		kmsg->msg.msg_name = &kmsg->addr;
- 		/* if iov is set, it's allocated already */
- 		if (!kmsg->iov)
- 			kmsg->iov = kmsg->fast_iov;
-@@ -4289,8 +4305,8 @@ static inline unsigned int io_put_recv_kbuf(struct io_kiocb *req)
- static int io_recvmsg_prep(struct io_kiocb *req,
- 			   const struct io_uring_sqe *sqe)
- {
-+	struct io_async_msghdr *async_msg = req->async_data;
- 	struct io_sr_msg *sr = &req->sr_msg;
--	struct io_async_ctx *io = req->io;
- 	int ret;
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-@@ -4306,13 +4322,13 @@ static int io_recvmsg_prep(struct io_kiocb *req,
- 		sr->msg_flags |= MSG_CMSG_COMPAT;
- #endif
- 
--	if (!io || req->opcode == IORING_OP_RECV)
-+	if (!async_msg || !io_op_defs[req->opcode].needs_async_data)
- 		return 0;
- 	/* iovec is already imported */
- 	if (req->flags & REQ_F_NEED_CLEANUP)
- 		return 0;
- 
--	ret = io_recvmsg_copy_hdr(req, &io->msg);
-+	ret = io_recvmsg_copy_hdr(req, async_msg);
- 	if (!ret)
- 		req->flags |= REQ_F_NEED_CLEANUP;
- 	return ret;
-@@ -4331,9 +4347,9 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (unlikely(!sock))
- 		return ret;
- 
--	if (req->io) {
--		kmsg = &req->io->msg;
--		kmsg->msg.msg_name = &req->io->msg.addr;
-+	if (req->async_data) {
-+		kmsg = req->async_data;
-+		kmsg->msg.msg_name = &kmsg->addr;
- 		/* if iov is set, it's allocated already */
- 		if (!kmsg->iov)
- 			kmsg->iov = kmsg->fast_iov;
-@@ -4475,7 +4491,7 @@ static int io_accept(struct io_kiocb *req, bool force_nonblock,
- static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_connect *conn = &req->connect;
--	struct io_async_ctx *io = req->io;
-+	struct io_async_connect *io = req->async_data;
- 
- 	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_SQPOLL)))
- 		return -EINVAL;
-@@ -4489,22 +4505,22 @@ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return 0;
- 
- 	return move_addr_to_kernel(conn->addr, conn->addr_len,
--					&io->connect.address);
-+					&io->address);
- }
- 
- static int io_connect(struct io_kiocb *req, bool force_nonblock,
- 		      struct io_comp_state *cs)
- {
--	struct io_async_ctx __io, *io;
-+	struct io_async_connect __io, *io;
- 	unsigned file_flags;
- 	int ret;
- 
--	if (req->io) {
--		io = req->io;
-+	if (req->async_data) {
-+		io = req->async_data;
- 	} else {
- 		ret = move_addr_to_kernel(req->connect.addr,
- 						req->connect.addr_len,
--						&__io.connect.address);
-+						&__io.address);
- 		if (ret)
- 			goto out;
- 		io = &__io;
-@@ -4512,16 +4528,17 @@ static int io_connect(struct io_kiocb *req, bool force_nonblock,
- 
- 	file_flags = force_nonblock ? O_NONBLOCK : 0;
- 
--	ret = __sys_connect_file(req->file, &io->connect.address,
-+	ret = __sys_connect_file(req->file, &io->address,
- 					req->connect.addr_len, file_flags);
- 	if ((ret == -EAGAIN || ret == -EINPROGRESS) && force_nonblock) {
--		if (req->io)
-+		if (req->async_data)
- 			return -EAGAIN;
--		if (io_alloc_async_ctx(req)) {
-+		if (io_alloc_async_data(req)) {
- 			ret = -ENOMEM;
- 			goto out;
- 		}
--		memcpy(&req->io->connect, &__io.connect, sizeof(__io.connect));
-+		io = req->async_data;
-+		memcpy(req->async_data, &__io, sizeof(__io));
- 		return -EAGAIN;
- 	}
- 	if (ret == -ERESTARTSYS)
-@@ -4654,9 +4671,9 @@ static bool io_poll_rewait(struct io_kiocb *req, struct io_poll_iocb *poll)
- 
- static struct io_poll_iocb *io_poll_get_double(struct io_kiocb *req)
- {
--	/* pure poll stashes this in ->io, poll driven retry elsewhere */
-+	/* pure poll stashes this in ->async_data, poll driven retry elsewhere */
- 	if (req->opcode == IORING_OP_POLL_ADD)
--		return (struct io_poll_iocb *) req->io;
-+		return req->async_data;
- 	return req->apoll->double_poll;
- }
- 
-@@ -5083,7 +5100,7 @@ static void io_poll_queue_proc(struct file *file, struct wait_queue_head *head,
- {
- 	struct io_poll_table *pt = container_of(p, struct io_poll_table, pt);
- 
--	__io_queue_proc(&pt->req->poll, pt, head, (struct io_poll_iocb **) &pt->req->io);
-+	__io_queue_proc(&pt->req->poll, pt, head, (struct io_poll_iocb **) &pt->req->async_data);
- }
- 
- static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-@@ -5166,11 +5183,12 @@ static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
- 
- static int __io_timeout_cancel(struct io_kiocb *req)
- {
-+	struct io_timeout_data *io = req->async_data;
- 	int ret;
- 
- 	list_del_init(&req->timeout.list);
- 
--	ret = hrtimer_try_to_cancel(&req->io->timeout.timer);
-+	ret = hrtimer_try_to_cancel(&io->timer);
- 	if (ret == -1)
- 		return -EALREADY;
- 
-@@ -5257,10 +5275,10 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 
- 	req->timeout.off = off;
- 
--	if (!req->io && io_alloc_async_ctx(req))
-+	if (!req->async_data && io_alloc_async_data(req))
- 		return -ENOMEM;
- 
--	data = &req->io->timeout;
-+	data = req->async_data;
- 	data->req = req;
- 
- 	if (get_timespec64(&data->ts, u64_to_user_ptr(sqe->addr)))
-@@ -5278,7 +5296,7 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- static int io_timeout(struct io_kiocb *req)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
--	struct io_timeout_data *data = &req->io->timeout;
-+	struct io_timeout_data *data = req->async_data;
- 	struct list_head *entry;
- 	u32 tail, off = req->timeout.off;
- 
-@@ -5447,7 +5465,7 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	if (!sqe)
- 		return 0;
- 
--	if (io_alloc_async_ctx(req))
-+	if (io_alloc_async_data(req))
- 		return -EAGAIN;
- 	ret = io_prep_work_files(req);
- 	if (unlikely(ret))
-@@ -5584,7 +5602,7 @@ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (!req_need_defer(req, seq) && list_empty_careful(&ctx->defer_list))
- 		return 0;
- 
--	if (!req->io) {
-+	if (!req->async_data) {
- 		ret = io_req_defer_prep(req, sqe);
- 		if (ret)
- 			return ret;
-@@ -5612,8 +5630,6 @@ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- static void __io_clean_op(struct io_kiocb *req)
- {
--	struct io_async_ctx *io = req->io;
--
- 	if (req->flags & REQ_F_BUFFER_SELECTED) {
- 		switch (req->opcode) {
- 		case IORING_OP_READV:
-@@ -5636,15 +5652,19 @@ static void __io_clean_op(struct io_kiocb *req)
- 		case IORING_OP_READ:
- 		case IORING_OP_WRITEV:
- 		case IORING_OP_WRITE_FIXED:
--		case IORING_OP_WRITE:
--			if (io->rw.free_iovec)
--				kfree(io->rw.free_iovec);
-+		case IORING_OP_WRITE: {
-+			struct io_async_rw *io = req->async_data;
-+			if (io->free_iovec)
-+				kfree(io->free_iovec);
- 			break;
-+			}
- 		case IORING_OP_RECVMSG:
--		case IORING_OP_SENDMSG:
--			if (io->msg.iov != io->msg.fast_iov)
--				kfree(io->msg.iov);
-+		case IORING_OP_SENDMSG: {
-+			struct io_async_msghdr *io = req->async_data;
-+			if (io->iov != io->fast_iov)
-+				kfree(io->iov);
- 			break;
-+			}
- 		case IORING_OP_SPLICE:
- 		case IORING_OP_TEE:
- 			io_put_file(req, req->splice.file_in,
-@@ -6080,7 +6100,7 @@ static void __io_queue_linked_timeout(struct io_kiocb *req)
- 	 * we got a chance to setup the timer
- 	 */
- 	if (!list_empty(&req->link_list)) {
--		struct io_timeout_data *data = &req->io->timeout;
-+		struct io_timeout_data *data = req->async_data;
- 
- 		data->timer.function = io_link_timeout_fn;
- 		hrtimer_start(&data->timer, timespec64_to_ktime(data->ts),
-@@ -6204,7 +6224,7 @@ static void io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 			io_req_complete(req, ret);
- 		}
- 	} else if (req->flags & REQ_F_FORCE_ASYNC) {
--		if (!req->io) {
-+		if (!req->async_data) {
- 			ret = io_req_defer_prep(req, sqe);
- 			if (unlikely(ret))
- 				goto fail_req;
-@@ -6387,7 +6407,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 
- 	req->opcode = READ_ONCE(sqe->opcode);
- 	req->user_data = READ_ONCE(sqe->user_data);
--	req->io = NULL;
-+	req->async_data = NULL;
- 	req->file = NULL;
- 	req->ctx = ctx;
- 	req->flags = 0;
+Here's the dmesg from the point of failure:
 
--- 
-Jens Axboe
-
+general protection fault, probably for non-canonical address 0xf9c24bfaaad4=
+2e48: 0000 [#1] PREEMPT SMP PTI
+CPU: 6 PID: 2187 Comm: example Not tainted 5.7.12-arch1-1 #1
+Hardware name: System manufacturer System Product Name/SABERTOOTH Z77, BIOS=
+ 1805 12/19/2012
+RIP: 0010:io_poll_double_wake+0x12/0xc0
+Code: 70 ff ff ff e8 4d 94 cc ff e9 66 ff ff ff 66 2e 0f 1f 84 00 00 00 00 =
+00 0f 1f 44 00 00 41 55 41 54 49 89 cc 55 53 48 8b 5f 08 <48> 8b 83 e0 00 0=
+0 00 48 8b 68 40 85 c9 74 08 45 31 ed 85 4d 10 74
+RSP: 0018:ffff94f381e83d90 EFLAGS: 00010046
+RAX: ffffffff9273b570 RBX: f9c24bfaaad42e48 RCX: 0000000000000004
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8a8713698e18
+RBP: 0000000000000000 R08: 0000000000000004 R09: ffff94f381e83e08
+R10: 000000000000eae3 R11: 000000000000edb8 R12: 0000000000000004
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000004
+FS:  0000000000000000(0000) GS:ffff8a874ed80000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f71cfc23008 CR3: 00000003d89fe005 CR4: 00000000001606e0
+Call Trace:
+ __wake_up_common+0x7a/0x140
+ __wake_up_common_lock+0x7d/0xc0
+ tty_write+0x1f5/0x2d0
+ vfs_write+0xb6/0x1a0
+ ksys_write+0x67/0xe0
+ do_syscall_64+0x49/0x90
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x405c3a
+Code: c3 48 89 f8 0f 05 c3 48 89 f8 48 89 f7 0f 05 c3 48 89 f8 48 89 f7 48 =
+89 d6 0f 05 c3 48 89 f8 48 89 f7 48 89 d6 48 89 ca 0f 05 <c3> 48 89 f8 4d 8=
+9 c2 48 89 f7 48 89 d6 48 89 ca 0f 05 c3 48 89 f8
+RSP: 002b:00007fffcc5e4088 EFLAGS: 00000206 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f71cfb24010 RCX: 0000000000405c3a
+RDX: 000000000000000d RSI: 00007f71cfb24018 RDI: 0000000000000001
+RBP: 00007fffcc5e4090 R08: 0000000000007ffe R09: 0000000000000000
+R10: 0000000000000022 R11: 0000000000000206 R12: 000000000000000d
+R13: 000000000000000d R14: 0000000000000000 R15: 0000000000000000
+Modules linked in: fuse tcp_bbr xt_conntrack xt_MASQUERADE nf_conntrack_net=
+link nfnetlink xfrm_user xfrm_algo xt_addrtype iptable_filter iptable_nat n=
+f_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge tun ov=
+erlay cfg80211 8021q garp mrp stp llc btrfs blake2b_generic xor raid6_pq nl=
+s_iso8859_1 nls_cp437 libcrc32c vfat fat intel_rapl_msr intel_rapl_common x=
+86_pkg_temp_thermal intel_powerclamp coretemp snd_hda_codec_realtek loop sn=
+d_hda_codec_generic ledtrig_audio kvm_intel snd_hda_codec_hdmi uvcvideo snd=
+_hda_intel iTCO_wdt eeepc_wmi videobuf2_vmalloc snd_intel_dspcfg videobuf2_=
+memops iTCO_vendor_support mei_hdcp kvm ir_rc5_decoder snd_usb_audio snd_hd=
+a_codec asus_wmi videobuf2_v4l2 snd_hda_core snd_usbmidi_lib videobuf2_comm=
+on battery irqbypass snd_rawmidi sparse_keymap rapl rfkill wmi_bmof mxm_wmi=
+ snd_seq_device intel_cstate joydev videodev snd_hwdep rc_streamzap intel_u=
+ncore streamzap snd_pcm mc xpad input_leds mousedev ff_memless i2c_i801 pcs=
+pkr snd_timer
+ lpc_ich evdev e1000e snd mei_me mei soundcore ie31200_edac mac_hid wmi sg =
+crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 usb_s=
+torage dm_crypt hid_logitech_hidpp hid_logitech_dj hid_generic usbhid hid d=
+m_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel aesni_=
+intel crypto_simd cryptd glue_helper sr_mod cdrom xhci_pci xhci_hcd ehci_pc=
+i ehci_hcd amdgpu gpu_sched i2c_algo_bit ttm drm_kms_helper syscopyarea sys=
+fillrect sysimgblt fb_sys_fops cec rc_core drm agpgart
+---[ end trace ab3ac727daf5393c ]---
+RIP: 0010:io_poll_double_wake+0x12/0xc0
+Code: 70 ff ff ff e8 4d 94 cc ff e9 66 ff ff ff 66 2e 0f 1f 84 00 00 00 00 =
+00 0f 1f 44 00 00 41 55 41 54 49 89 cc 55 53 48 8b 5f 08 <48> 8b 83 e0 00 0=
+0 00 48 8b 68 40 85 c9 74 08 45 31 ed 85 4d 10 74
+RSP: 0018:ffff94f381e83d90 EFLAGS: 00010046
+RAX: ffffffff9273b570 RBX: f9c24bfaaad42e48 RCX: 0000000000000004
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8a8713698e18
+RBP: 0000000000000000 R08: 0000000000000004 R09: ffff94f381e83e08
+R10: 000000000000eae3 R11: 000000000000edb8 R12: 0000000000000004
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000004
+FS:  0000000000000000(0000) GS:ffff8a874ed80000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f71cfc23008 CR3: 00000003d89fe005 CR4: 00000000001606e0
+note: example[2187] exited with preempt_count 1
+[drm] Fence fallback timer expired on ring gfx
+[drm] Fence fallback timer expired on ring gfx
+logitech-hidpp-device 0003:046D:4086.0007: HID++ 4.2 device connected.
+[drm:amdgpu_dm_atomic_commit_tail [amdgpu]] *ERROR* Waiting for fences time=
+d out!
+[drm:amdgpu_dm_atomic_commit_tail [amdgpu]] *ERROR* Waiting for fences time=
+d out!
+[drm:amdgpu_dm_atomic_commit_tail [amdgpu]] *ERROR* Waiting for fences time=
+d out!
+[drm:drm_atomic_helper_wait_for_flip_done [drm_kms_helper]] *ERROR* [CRTC:5=
+3:crtc-3] flip_done timed out
+[drm:drm_atomic_helper_wait_for_flip_done [drm_kms_helper]] *ERROR* [CRTC:4=
+9:crtc-1] flip_done timed out
+[drm:drm_atomic_helper_wait_for_flip_done [drm_kms_helper]] *ERROR* [CRTC:4=
+7:crtc-0] flip_done timed out
+[drm:drm_atomic_helper_wait_for_flip_done [drm_kms_helper]] *ERROR* [CRTC:5=
+1:crtc-2] flip_done timed out
+l[623]: 2020/08/15 21:54:41 Disconnected TCP: 200:67bf:6b04:3787:d0b6:7f11:=
+af29:f2f6@fe80::d10e:85b7:16d7:64d3%eno1, source fe80::b820:25cb:2b61:c156%=
+eno1; error: message error: EOF
+watchdog: BUG: soft lockup - CPU#5 stuck for 22s! [sshd:2215]
+Modules linked in: fuse tcp_bbr xt_conntrack xt_MASQUERADE nf_conntrack_net=
+link nfnetlink xfrm_user xfrm_algo xt_addrtype iptable_filter iptable_nat n=
+f_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge tun ov=
+erlay cfg80211 8021q garp mrp stp llc btrfs blake2b_generic xor raid6_pq nl=
+s_iso8859_1 nls_cp437 libcrc32c vfat fat intel_rapl_msr intel_rapl_common x=
+86_pkg_temp_thermal intel_powerclamp coretemp snd_hda_codec_realtek loop sn=
+d_hda_codec_generic ledtrig_audio kvm_intel snd_hda_codec_hdmi uvcvideo snd=
+_hda_intel iTCO_wdt eeepc_wmi videobuf2_vmalloc snd_intel_dspcfg videobuf2_=
+memops iTCO_vendor_support mei_hdcp kvm ir_rc5_decoder snd_usb_audio snd_hd=
+a_codec asus_wmi videobuf2_v4l2 snd_hda_core snd_usbmidi_lib videobuf2_comm=
+on battery irqbypass snd_rawmidi sparse_keymap rapl rfkill wmi_bmof mxm_wmi=
+ snd_seq_device intel_cstate joydev videodev snd_hwdep rc_streamzap intel_u=
+ncore streamzap snd_pcm mc xpad input_leds mousedev ff_memless i2c_i801 pcs=
+pkr snd_timer
+ lpc_ich evdev e1000e snd mei_me mei soundcore ie31200_edac mac_hid wmi sg =
+crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 usb_s=
+torage dm_crypt hid_logitech_hidpp hid_logitech_dj hid_generic usbhid hid d=
+m_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel aesni_=
+intel crypto_simd cryptd glue_helper sr_mod cdrom xhci_pci xhci_hcd ehci_pc=
+i ehci_hcd amdgpu gpu_sched i2c_algo_bit ttm drm_kms_helper syscopyarea sys=
+fillrect sysimgblt fb_sys_fops cec rc_core drm agpgart
+CPU: 5 PID: 2215 Comm: sshd Tainted: G      D           5.7.12-arch1-1 #1
+Hardware name: System manufacturer System Product Name/SABERTOOTH Z77, BIOS=
+ 1805 12/19/2012
+RIP: 0010:smp_call_function_many_cond+0x2a6/0x2f0
+Code: 00 3b 05 91 3d 62 01 89 c7 0f 83 f4 fd ff ff 48 63 c7 49 8b 55 00 48 =
+03 14 c5 40 49 61 93 8b 42 18 a8 01 74 09 f3 90 8b 42 18 <a8> 01 75 f7 eb c=
+9 48 c7 c2 20 4c b6 93 48 89 ee 44 89 ff e8 b2 63
+RSP: 0018:ffff94f381e3fba0 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000002
+RDX: ffff8a874ecb43c0 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: 0000000000000007 R08: 0000000000000000 R09: 0000000000000002
+R10: 0000000000000005 R11: 0000000000000005 R12: 0000000000000000
+R13: ffff8a874ed6df40 R14: 0000000000000140 R15: ffff8a874ed6df48
+FS:  00007fbdd188e780(0000) GS:ffff8a874ed40000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055d2322e10d0 CR3: 00000003da81a003 CR4: 00000000001606e0
+Call Trace:
+ ? insert_vmap_area.constprop.0+0x93/0xd0
+ ? load_new_mm_cr3+0x110/0x110
+ ? load_new_mm_cr3+0x110/0x110
+ on_each_cpu+0x43/0xb0
+ __purge_vmap_area_lazy+0x6d/0x6e0
+ _vm_unmap_aliases.part.0+0x110/0x140
+ change_page_attr_set_clr+0xc4/0x1f0
+ set_memory_ro+0x26/0x30
+ bpf_int_jit_compile+0x3e2/0x40b
+ bpf_prog_select_runtime+0x101/0x1a0
+ bpf_migrate_filter+0x130/0x180
+ bpf_prog_create_from_user+0x178/0x1f0
+ do_seccomp+0x2d4/0x9f0
+ __do_sys_prctl+0x4bc/0x640
+ do_syscall_64+0x49/0x90
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7fbdd1a52421
+Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 08 00 00 00 48 89 44 =
+24 08 48 8d 44 24 20 48 89 44 24 10 b8 9d 00 00 00 0f 05 <48> 3d 00 f0 ff f=
+f 77 17 48 8b 4c 24 18 64 48 2b 0c 25 28 00 00 00
+RSP: 002b:00007fff42a7eef0 EFLAGS: 00000246 ORIG_RAX: 000000000000009d
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fbdd1a52421
+RDX: 000055d23232a0a0 RSI: 0000000000000002 RDI: 0000000000000016
+RBP: 00007fff42a7ef50 R08: 0000000000000000 R09: 00007fff42a7e5f0
+R10: 0000000000000000 R11: 0000000000000246 R12: 000055d2324be200
+R13: 00007fff42a7f0a0 R14: 000055d2324beca0 R15: 000055d2324cf630
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu:         3-...0: (2 GPs behind) idle=3D5b2/1/0x4000000000000000 softirq=
+=3D8426/8427 fqs=3D5771 last_accelerate: 60ae/a6ff dyntick_enabled: 1
+        (detected by 0, t=3D18003 jiffies, g=3D22689, q=3D114787)
+Sending NMI from CPU 0 to CPUs 3:
+NMI watchdog: Watchdog detected hard LOCKUP on cpu 2
+Modules linked in: fuse tcp_bbr xt_conntrack xt_MASQUERADE nf_conntrack_net=
+link nfnetlink xfrm_user xfrm_algo xt_addrtype iptable_filter iptable_nat n=
+f_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge tun ov=
+erlay cfg80211 8021q garp mrp stp llc btrfs blake2b_generic xor raid6_pq nl=
+s_iso8859_1 nls_cp437 libcrc32c vfat fat intel_rapl_msr intel_rapl_common x=
+86_pkg_temp_thermal intel_powerclamp coretemp snd_hda_codec_realtek loop sn=
+d_hda_codec_generic ledtrig_audio kvm_intel snd_hda_codec_hdmi uvcvideo snd=
+_hda_intel iTCO_wdt eeepc_wmi videobuf2_vmalloc snd_intel_dspcfg videobuf2_=
+memops iTCO_vendor_support mei_hdcp kvm ir_rc5_decoder snd_usb_audio snd_hd=
+a_codec asus_wmi videobuf2_v4l2 snd_hda_core snd_usbmidi_lib videobuf2_comm=
+on battery irqbypass snd_rawmidi sparse_keymap rapl rfkill wmi_bmof mxm_wmi=
+ snd_seq_device intel_cstate joydev videodev snd_hwdep rc_streamzap intel_u=
+ncore streamzap snd_pcm mc xpad input_leds mousedev ff_memless i2c_i801 pcs=
+pkr snd_timer
+ lpc_ich evdev e1000e snd mei_me mei soundcore ie31200_edac mac_hid wmi sg =
+crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 usb_s=
+torage dm_crypt hid_logitech_hidpp hid_logitech_dj hid_generic usbhid hid d=
+m_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel aesni_=
+intel crypto_simd cryptd glue_helper sr_mod cdrom xhci_pci xhci_hcd ehci_pc=
+i ehci_hcd amdgpu gpu_sched i2c_algo_bit ttm drm_kms_helper syscopyarea sys=
+fillrect sysimgblt fb_sys_fops cec rc_core drm agpgart
+CPU: 2 PID: 1649 Comm: fish Tainted: G      D           5.7.12-arch1-1 #1
+Hardware name: System manufacturer System Product Name/SABERTOOTH Z77, BIOS=
+ 1805 12/19/2012
+RIP: 0010:native_queued_spin_lock_slowpath+0x1a7/0x220
+Code: 0c f5 40 49 61 93 48 89 11 8b 4a 08 85 c9 75 09 f3 90 8b 4a 08 85 c9 =
+74 f7 48 8b 32 48 85 f6 74 3a 0f 18 0e eb 02 f3 90 8b 0b <66> 85 c9 75 f7 8=
+9 cf 66 31 ff 39 c7 74 4e c6 03 01 48 85 f6 74 0e
+RSP: 0018:ffff94f381d97d90 EFLAGS: 00000002
+RAX: 00000000000c0000 RBX: ffff8a871407da08 RCX: 00000000000c0101
+RDX: ffff8a874ecadcc0 RSI: 0000000000000000 RDI: ffff8a871407da08
+RBP: ffff8a874ecadcc0 R08: 0000000000000001 R09: 0000000040000000
+R10: 0000000000000400 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff8a8713c90400 R14: 0000000000000001 R15: ffff8a871407d800
+FS:  00007f379527ad00(0000) GS:ffff8a874ec80000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffda6be1fb8 CR3: 00000003d5416006 CR4: 00000000001606e0
+Call Trace:
+ _raw_spin_lock_irqsave+0x44/0x50
+ add_wait_queue+0x15/0x40
+ n_tty_write+0xc2/0x4d0
+ ? __wake_up_sync_key+0x20/0x20
+ tty_write+0x19b/0x2d0
+ ? n_tty_receive_char_lnext+0x190/0x190
+ vfs_write+0xb6/0x1a0
+ ksys_write+0x67/0xe0
+ do_syscall_64+0x49/0x90
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7f3795386b8f
+Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 a9 54 f9 ff 48 8b 54 24 18 =
+48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff f=
+f 77 31 44 89 c7 48 89 44 24 08 e8 dc 54 f9 ff 48
+RSP: 002b:00007ffda6be2310 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f3795386b8f
+RDX: 0000000000000001 RSI: 00007ffda6be23f0 RDI: 0000000000000001
+RBP: 00007ffda6be23f0 R08: 0000000000000000 R09: 00007ffda6be2358
+R10: 0000000000000004 R11: 0000000000000293 R12: 0000000000000001
+R13: 00007f3795457500 R14: 0000000000000001 R15: 00007f3795457700
+NMI watchdog: Watchdog detected hard LOCKUP on cpu 3
+Modules linked in: fuse tcp_bbr xt_conntrack xt_MASQUERADE nf_conntrack_net=
+link nfnetlink xfrm_user xfrm_algo xt_addrtype iptable_filter iptable_nat n=
+f_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge tun ov=
+erlay cfg80211 8021q garp mrp stp llc btrfs blake2b_generic xor raid6_pq nl=
+s_iso8859_1 nls_cp437 libcrc32c vfat fat intel_rapl_msr intel_rapl_common x=
+86_pkg_temp_thermal intel_powerclamp coretemp snd_hda_codec_realtek loop sn=
+d_hda_codec_generic ledtrig_audio kvm_intel snd_hda_codec_hdmi uvcvideo snd=
+_hda_intel iTCO_wdt eeepc_wmi videobuf2_vmalloc snd_intel_dspcfg videobuf2_=
+memops iTCO_vendor_support mei_hdcp kvm ir_rc5_decoder snd_usb_audio snd_hd=
+a_codec asus_wmi videobuf2_v4l2 snd_hda_core snd_usbmidi_lib videobuf2_comm=
+on battery irqbypass snd_rawmidi sparse_keymap rapl rfkill wmi_bmof mxm_wmi=
+ snd_seq_device intel_cstate joydev videodev snd_hwdep rc_streamzap intel_u=
+ncore streamzap snd_pcm mc xpad input_leds mousedev ff_memless i2c_i801 pcs=
+pkr snd_timer
+ lpc_ich evdev e1000e snd mei_me mei soundcore ie31200_edac mac_hid wmi sg =
+crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 usb_s=
+torage dm_crypt hid_logitech_hidpp hid_logitech_dj hid_generic usbhid hid d=
+m_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel aesni_=
+intel crypto_simd cryptd glue_helper sr_mod cdrom xhci_pci xhci_hcd ehci_pc=
+i ehci_hcd amdgpu gpu_sched i2c_algo_bit ttm drm_kms_helper syscopyarea sys=
+fillrect sysimgblt fb_sys_fops cec rc_core drm agpgart
+CPU: 3 PID: 1652 Comm: PTY reader Tainted: G      D           5.7.12-arch1-=
+1 #1
+Hardware name: System manufacturer System Product Name/SABERTOOTH Z77, BIOS=
+ 1805 12/19/2012
+RIP: 0010:native_queued_spin_lock_slowpath+0x66/0x220
+Code: 79 f0 0f ba 2b 08 0f 92 c0 0f b6 c0 c1 e0 08 89 c2 8b 03 30 e4 09 d0 =
+a9 00 01 ff ff 75 53 85 c0 74 0e 8b 03 84 c0 74 08 f3 90 <8b> 03 84 c0 75 f=
+8 b8 01 00 00 00 66 89 03 5b 65 48 ff 05 9b 45 b2
+RSP: 0018:ffff94f381ecbcf0 EFLAGS: 00000002
+RAX: 00000000000c0101 RBX: ffff8a871407da08 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8a871407da08
+RBP: 7fffffffffffffff R08: 0000000000000004 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000246
+R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000001
+FS:  00007f6cb0b77700(0000) GS:ffff8a874ecc0000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffa622c0710 CR3: 00000003ff000003 CR4: 00000000001606e0
+Call Trace:
+ _raw_spin_lock_irqsave+0x44/0x50
+ __wake_up_common_lock+0x63/0xc0
+ n_tty_read+0x48a/0x9c0
+ ? preempt_count_add+0x68/0xa0
+ ? ep_read_events_proc+0xd0/0xd0
+ ? _raw_write_lock_irq+0x1a/0x40
+ ? _raw_write_unlock_irq+0x19/0x30
+ ? ep_scan_ready_list.constprop.0+0x17c/0x190
+ ? __wake_up_sync_key+0x20/0x20
+ tty_read+0x86/0x100
+ vfs_read+0x9d/0x150
+ ksys_read+0x67/0xe0
+ do_syscall_64+0x49/0x90
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7f6ce3e5d87c
+Code: ec 28 48 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 89 fc ff ff 48 8b =
+54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 31 c0 0f 05 <48> 3d 00 f0 ff f=
+f 77 34 44 89 c7 48 89 44 24 08 e8 bf fc ff ff 48
+RSP: 002b:00007f6cb0b65940 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f6ce3e5d87c
+RDX: 0000000000010000 RSI: 00007f6cb0b661c8 RDI: 000000000000000f
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000510
+R10: 00000000ffffffff R11: 0000000000000246 R12: 000000000000000b
+R13: 00007f6cb0b65a60 R14: 00007f6cb0b65ef0 R15: 00007f6cb0b65980
+NMI backtrace for cpu 3
+CPU: 3 PID: 1652 Comm: PTY reader Tainted: G      D      L    5.7.12-arch1-=
+1 #1
+Hardware name: System manufacturer System Product Name/SABERTOOTH Z77, BIOS=
+ 1805 12/19/2012
+RIP: 0010:native_queued_spin_lock_slowpath+0x66/0x220
+Code: 79 f0 0f ba 2b 08 0f 92 c0 0f b6 c0 c1 e0 08 89 c2 8b 03 30 e4 09 d0 =
+a9 00 01 ff ff 75 53 85 c0 74 0e 8b 03 84 c0 74 08 f3 90 <8b> 03 84 c0 75 f=
+8 b8 01 00 00 00 66 89 03 5b 65 48 ff 05 9b 45 b2
+RSP: 0018:ffff94f381ecbcf0 EFLAGS: 00000002
+RAX: 00000000000c0101 RBX: ffff8a871407da08 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8a871407da08
+RBP: 7fffffffffffffff R08: 0000000000000004 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000246
+R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000001
+FS:  00007f6cb0b77700(0000) GS:ffff8a874ecc0000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffa622c0710 CR3: 00000003ff000003 CR4: 00000000001606e0
+Call Trace:
+ _raw_spin_lock_irqsave+0x44/0x50
+ __wake_up_common_lock+0x63/0xc0
+ n_tty_read+0x48a/0x9c0
+ ? preempt_count_add+0x68/0xa0
+ ? ep_read_events_proc+0xd0/0xd0
+ ? _raw_write_lock_irq+0x1a/0x40
+ ? _raw_write_unlock_irq+0x19/0x30
+ ? ep_scan_ready_list.constprop.0+0x17c/0x190
+ ? __wake_up_sync_key+0x20/0x20
+ tty_read+0x86/0x100
+ vfs_read+0x9d/0x150
+ ksys_read+0x67/0xe0
+ do_syscall_64+0x49/0x90
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7f6ce3e5d87c
+Code: ec 28 48 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 89 fc ff ff 48 8b =
+54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 31 c0 0f 05 <48> 3d 00 f0 ff f=
+f 77 34 44 89 c7 48 89 44 24 08 e8 bf fc ff ff 48
+RSP: 002b:00007f6cb0b65940 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f6ce3e5d87c
+RDX: 0000000000010000 RSI: 00007f6cb0b661c8 RDI: 000000000000000f
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000510
+R10: 00000000ffffffff R11: 0000000000000246 R12: 000000000000000b
+R13: 00007f6cb0b65a60 R14: 00007f6cb0b65ef0 R15: 00007f6cb0b65980
+watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [kworker/0:2:166]
+Modules linked in: fuse tcp_bbr xt_conntrack xt_MASQUERADE nf_conntrack_net=
+link nfnetlink xfrm_user xfrm_algo xt_addrtype iptable_filter iptable_nat n=
+f_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge tun ov=
+erlay cfg80211 8021q garp mrp stp llc btrfs blake2b_generic xor raid6_pq nl=
+s_iso8859_1 nls_cp437 libcrc32c vfat fat intel_rapl_msr intel_rapl_common x=
+86_pkg_temp_thermal intel_powerclamp coretemp snd_hda_codec_realtek loop sn=
+d_hda_codec_generic ledtrig_audio kvm_intel snd_hda_codec_hdmi uvcvideo snd=
+_hda_intel iTCO_wdt eeepc_wmi videobuf2_vmalloc snd_intel_dspcfg videobuf2_=
+memops iTCO_vendor_support mei_hdcp kvm ir_rc5_decoder snd_usb_audio snd_hd=
+a_codec asus_wmi videobuf2_v4l2 snd_hda_core snd_usbmidi_lib videobuf2_comm=
+on battery irqbypass snd_rawmidi sparse_keymap rapl rfkill wmi_bmof mxm_wmi=
+ snd_seq_device intel_cstate joydev videodev snd_hwdep rc_streamzap intel_u=
+ncore streamzap snd_pcm mc xpad input_leds mousedev ff_memless i2c_i801 pcs=
+pkr snd_timer
+ lpc_ich evdev e1000e snd mei_me mei soundcore ie31200_edac mac_hid wmi sg =
+crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 usb_s=
+torage dm_crypt hid_logitech_hidpp hid_logitech_dj hid_generic usbhid hid d=
+m_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel aesni_=
+intel crypto_simd cryptd glue_helper sr_mod cdrom xhci_pci xhci_hcd ehci_pc=
+i ehci_hcd amdgpu gpu_sched i2c_algo_bit ttm drm_kms_helper syscopyarea sys=
+fillrect sysimgblt fb_sys_fops cec rc_core drm agpgart
+CPU: 0 PID: 166 Comm: kworker/0:2 Tainted: G      D      L    5.7.12-arch1-=
+1 #1
+Hardware name: System manufacturer System Product Name/SABERTOOTH Z77, BIOS=
+ 1805 12/19/2012
+Workqueue: events netstamp_clear
+RIP: 0010:smp_call_function_many_cond+0x2a3/0x2f0
+Code: 23 63 3b 00 3b 05 91 3d 62 01 89 c7 0f 83 f4 fd ff ff 48 63 c7 49 8b =
+55 00 48 03 14 c5 40 49 61 93 8b 42 18 a8 01 74 09 f3 90 <8b> 42 18 a8 01 7=
+5 f7 eb c9 48 c7 c2 20 4c b6 93 48 89 ee 44 89 ff
+RSP: 0018:ffff94f380463d90 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000002
+RDX: ffff8a874ecb30a0 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: 0000000000000007 R08: 0000000000000000 R09: 0000000000000002
+R10: 0000000000000005 R11: 0000000000000005 R12: 0000000000000000
+R13: ffff8a874ec2df40 R14: 0000000000000140 R15: ffff8a874ec2df48
+FS:  0000000000000000(0000) GS:ffff8a874ec00000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c509b63000 CR3: 000000040b506005 CR4: 00000000001606f0
+Call Trace:
+ ? _raw_spin_unlock+0x16/0x30
+ ? poke_int3_handler+0x110/0x110
+ ? poke_int3_handler+0x110/0x110
+ ? rescuer_thread+0x3f0/0x3f0
+ on_each_cpu+0x43/0xb0
+ text_poke_bp_batch+0x9f/0x190
+ text_poke_finish+0x1b/0x26
+ arch_jump_label_transform_apply+0x16/0x30
+ static_key_enable_cpuslocked+0x57/0x90
+ static_key_enable+0x16/0x20
+ process_one_work+0x1da/0x3d0
+ ? rescuer_thread+0x3f0/0x3f0
+ worker_thread+0x4d/0x3e0
+ ? rescuer_thread+0x3f0/0x3f0
+ kthread+0x13e/0x160
+ ? __kthread_bind_mask+0x60/0x60
+ ret_from_fork+0x35/0x40
+watchdog: BUG: soft lockup - CPU#5 stuck for 22s! [sshd:2215]

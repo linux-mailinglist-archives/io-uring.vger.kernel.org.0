@@ -2,39 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B2D247466
-	for <lists+io-uring@lfdr.de>; Mon, 17 Aug 2020 21:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE38024773C
+	for <lists+io-uring@lfdr.de>; Mon, 17 Aug 2020 21:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390089AbgHQTJR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 17 Aug 2020 15:09:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52698 "EHLO mail.kernel.org"
+        id S1729193AbgHQPU6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 17 Aug 2020 11:20:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387552AbgHQPmd (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 17 Aug 2020 11:42:33 -0400
+        id S1729302AbgHQPUw (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 17 Aug 2020 11:20:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B746320760;
-        Mon, 17 Aug 2020 15:42:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AE9920729;
+        Mon, 17 Aug 2020 15:20:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597678951;
-        bh=FF9yg5Lc3uJgdvr2qf/PcEfwb6Gc7NL6cBLxzjc8CS8=;
+        s=default; t=1597677651;
+        bh=ZQqVU7TG/KpLcPr0o/0mZ3eI0AAOkC63u17RKU6K1lI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P2gkoS6wIXckcogzlS5Sy1DmJGwqLJ95lpaipXMZU4Wg2o4KWC9hNe5uf0SDwNOFd
-         2pAEpQSLAw749w4fj4PeR0WH1sMJy4YmyeIIV43a41J4WujAAnMqeHUKSMIbR5xoQE
-         vGF8aTHv+dPSEMMMXYiyt0aczs7zli4YmoXttL8Q=
+        b=fJ9lE/uw/pVaEbSP5J41Zs2Q/K/3vwu5ea7Sm3dAL7bFsr3R//8QcYTE+6a3L/Fku
+         IcRczP5BezhIjvHinMHcq2F+Pk2eqzTiSuVcDBkaIOLLh7nkRBvEAEyGuRuUyuTM3L
+         dw+t4I4PTOywe/cs7atFcBRvu/V+kWsTHGyxjMkk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
         Hristo Venev <hristo@venev.name>, io-uring@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.7 045/393] io_uring: fix sq array offset calculation
-Date:   Mon, 17 Aug 2020 17:11:35 +0200
-Message-Id: <20200817143821.785749994@linuxfoundation.org>
+Subject: [PATCH 5.8 052/464] io_uring: fix sq array offset calculation
+Date:   Mon, 17 Aug 2020 17:10:05 +0200
+Message-Id: <20200817143836.252163777@linuxfoundation.org>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200817143819.579311991@linuxfoundation.org>
-References: <20200817143819.579311991@linuxfoundation.org>
+In-Reply-To: <20200817143833.737102804@linuxfoundation.org>
+References: <20200817143833.737102804@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -64,10 +64,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5405362ae35f1..04694f6c30a04 100644
+index 95bacab047ddb..8503aec7ea295 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7139,6 +7139,9 @@ static unsigned long rings_size(unsigned sq_entries, unsigned cq_entries,
+@@ -7093,6 +7093,9 @@ static unsigned long rings_size(unsigned sq_entries, unsigned cq_entries,
  		return SIZE_MAX;
  #endif
  
@@ -77,7 +77,7 @@ index 5405362ae35f1..04694f6c30a04 100644
  	sq_array_size = array_size(sizeof(u32), sq_entries);
  	if (sq_array_size == SIZE_MAX)
  		return SIZE_MAX;
-@@ -7146,9 +7149,6 @@ static unsigned long rings_size(unsigned sq_entries, unsigned cq_entries,
+@@ -7100,9 +7103,6 @@ static unsigned long rings_size(unsigned sq_entries, unsigned cq_entries,
  	if (check_add_overflow(off, sq_array_size, &off))
  		return SIZE_MAX;
  

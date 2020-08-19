@@ -2,39 +2,41 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E7E524A006
-	for <lists+io-uring@lfdr.de>; Wed, 19 Aug 2020 15:33:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC24024A198
+	for <lists+io-uring@lfdr.de>; Wed, 19 Aug 2020 16:22:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbgHSNd3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Aug 2020 09:33:29 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:39322 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728477AbgHSNdY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Aug 2020 09:33:24 -0400
-Date:   Wed, 19 Aug 2020 15:33:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1597844001;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=j26P1hmMzhjjiQWadqBC++aWmgqGQBIpscfoookHO7c=;
-        b=hf88cTNZ1SOB3MaTW01c8emUFzoah0YdeFMG/8cV/LEODUBIeo3Qd+vjeBXJGfjyk/Mnx0
-        YnVyb1ms3B8gG1aEGlYvyntvLsIk1LZGaWrx4Ibf8fX/LpyF9PkqHe/gdR8DAMjB9QaVu9
-        kUk7ZSVf8757vmPHfipJZ81z9gVQ4ZDNIBKfGP9RH8SfrWT/MtozhHHzgc+VEWIVDdmg6r
-        Df4Zx4EgWutcPWWZFay/EIeP8K9hd9Lll6HLcNMsSyzcol6maG4F/zCkfGnykgdCOkf8Ze
-        NdqpPtyzyfgjKpMKZ9Di5lCesYXOCK83mPtTnxDOAuvr3erbpBjZHRuROhqKEQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1597844001;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=j26P1hmMzhjjiQWadqBC++aWmgqGQBIpscfoookHO7c=;
-        b=ZZUocbmvcwrAvDla1gFf7SNVdsVvxiO2q9egKN5TAEkys7fV0dn7MTVc4cWNIcmkYA86h3
-        nqQo3FccIQ6Cf8Aw==
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     peterz@infradead.org
+        id S1726766AbgHSOV7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Aug 2020 10:21:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbgHSOV6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Aug 2020 10:21:58 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A798C061757;
+        Wed, 19 Aug 2020 07:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=OM9WQWb562JnQ8J9qmB6TNE93wwhfVi68/R72R/S3h0=; b=BUM4YlZD5Yzmb8kaTUCuZ6lBKL
+        sDkrBxK8WowYEFSqfVTPPZMnOn8zTD2mLHohwdxCiIDp92t/Gs0Da+jg9LgTXbCOXXmH5vXocflo3
+        4cQrotNxKJ994S1WlTq8sVi+GhSNXq9fBNY0FmxCEw/pqL6a02cINpbs3s9kGcVAJugcl4u0QfvcG
+        Jzp0W4//UkQV81HYqI5VCVAaQc7hnJRt72wcDM+htFYNRFfwXOWkFmcGaVlBcHM9+1sL+w1xc/G8r
+        xEIBJQ+DOcVJUNPf5PqDb405kHSlQ8HXtH8busyTSb3Uk68tXQwhMgVzlZRwNY44I5zS0U+tvFsrZ
+        kFnJgdlA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k8Oy9-0004od-0T; Wed, 19 Aug 2020 14:21:37 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C297F3003E1;
+        Wed, 19 Aug 2020 16:21:34 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AB49F20D805B3; Wed, 19 Aug 2020 16:21:34 +0200 (CEST)
+Date:   Wed, 19 Aug 2020 16:21:34 +0200
+From:   peterz@infradead.org
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
         Ingo Molnar <mingo@redhat.com>,
         Juri Lelli <juri.lelli@redhat.com>,
@@ -46,86 +48,58 @@ Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: [RFC PATCH] sched: Invoke io_wq_worker_sleeping() with enabled
  preemption
-Message-ID: <20200819133320.bxwb3ikjswyhmsyg@linutronix.de>
+Message-ID: <20200819142134.GD2674@hirez.programming.kicks-ass.net>
 References: <20200819123758.6v45rj2gvojddsnn@linutronix.de>
  <20200819131507.GC2674@hirez.programming.kicks-ass.net>
+ <20200819133320.bxwb3ikjswyhmsyg@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200819131507.GC2674@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200819133320.bxwb3ikjswyhmsyg@linutronix.de>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2020-08-19 15:15:07 [+0200], peterz@infradead.org wrote:
+On Wed, Aug 19, 2020 at 03:33:20PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2020-08-19 15:15:07 [+0200], peterz@infradead.org wrote:
 
-> > -	if (tsk->flags & (PF_WQ_WORKER | PF_IO_WORKER)) {
-> > +	if (tsk->flags & PF_WQ_WORKER) {
-> >  		preempt_disable();
-> > -		if (tsk->flags & PF_WQ_WORKER)
-> > -			wq_worker_sleeping(tsk);
-> > -		else
-> > -			io_wq_worker_sleeping(tsk);
-> > +		wq_worker_sleeping(tsk);
-> >  		preempt_enable_no_resched();
-> >  	}
-> > =20
-> >  	if (tsk_is_pi_blocked(tsk))
-> >  		return;
-> > =20
-> > +	if (tsk->flags & PF_IO_WORKER)
-> > +		io_wq_worker_sleeping(tsk);
-> > +
->=20
-> Urgh, so this adds a branch in what is normally considered a fairly hot
-> path.
->=20
-> I'm thinking that the raw_spinlock_t option would permit leaving that
-> single:
->=20
-> 	if (tsk->flags & (PF_WQ_WORKER | PF_IO_WORKER))
->=20
-> branch intact?
+> If you want to optimize further, we could move PF_IO_WORKER to an lower
+> bit. x86 can test for both via
+> (gcc-10)
+> |         testl   $536870944, 44(%rbp)    #, _11->flags
+> |         jne     .L1635  #,
+> 
+> (clang-9)
+> |         testl   $536870944, 44(%rbx)    # imm = 0x20000020
+> |         je      .LBB112_6
+> 
+> 
+> but ARM can't and does
+> |          ldr     r1, [r5, #16]   @ tsk_3->flags, tsk_3->flags
+> |         mov     r2, #32 @ tmp157,
+> |         movt    r2, 8192        @ tmp157,
+> |         tst     r2, r1  @ tmp157, tsk_3->flags
+> |         beq     .L998           @,
+> 
+> same ARM64
+> |         ldr     w0, [x20, 60]   //, _11->flags
+> |         and     w0, w0, 1073741792      // tmp117, _11->flags,
+> |         and     w0, w0, -536870849      // tmp117, tmp117,
+> |         cbnz    w0, .L453       // tmp117,
+> 
+> using 0x10 for PF_IO_WORKER instead will turn this into:
+> |         ldr     w0, [x20, 60]   //, _11->flags
+> |         tst     w0, 48  // _11->flags,
+> |         bne     .L453           //,
+> 
+> ARM:
+> |         ldr     r2, [r5, #16]   @ tsk_3->flags, tsk_3->flags
+> |         tst     r2, #48 @ tsk_3->flags,
+> |         beq     .L998           @,
 
-The compiler generates code to test for both flags at once. If none of
-both possible flags are set then there is one branch (get out and bring
-me to tst_is_pi=E2=80=A6).
-And yes, with raw_spinlock_t we could keep that one branch.
-
-If you want to optimize further, we could move PF_IO_WORKER to an lower
-bit. x86 can test for both via
-(gcc-10)
-|         testl   $536870944, 44(%rbp)    #, _11->flags
-|         jne     .L1635  #,
-
-(clang-9)
-|         testl   $536870944, 44(%rbx)    # imm =3D 0x20000020
-|         je      .LBB112_6
+Good point, AFAICT there's a number of low bits still open (and we can
+shuffle if we have to), so sure put a patch in to that effect while
+you're at it.
 
 
-but ARM can't and does
-|          ldr     r1, [r5, #16]   @ tsk_3->flags, tsk_3->flags
-|         mov     r2, #32 @ tmp157,
-|         movt    r2, 8192        @ tmp157,
-|         tst     r2, r1  @ tmp157, tsk_3->flags
-|         beq     .L998           @,
-
-same ARM64
-|         ldr     w0, [x20, 60]   //, _11->flags
-|         and     w0, w0, 1073741792      // tmp117, _11->flags,
-|         and     w0, w0, -536870849      // tmp117, tmp117,
-|         cbnz    w0, .L453       // tmp117,
-
-using 0x10 for PF_IO_WORKER instead will turn this into:
-|         ldr     w0, [x20, 60]   //, _11->flags
-|         tst     w0, 48  // _11->flags,
-|         bne     .L453           //,
-
-ARM:
-|         ldr     r2, [r5, #16]   @ tsk_3->flags, tsk_3->flags
-|         tst     r2, #48 @ tsk_3->flags,
-|         beq     .L998           @,
-
-Sebastian

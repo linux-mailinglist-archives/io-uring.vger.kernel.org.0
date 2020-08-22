@@ -2,108 +2,170 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFBBD24E92F
-	for <lists+io-uring@lfdr.de>; Sat, 22 Aug 2020 20:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73E5024E92D
+	for <lists+io-uring@lfdr.de>; Sat, 22 Aug 2020 20:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbgHVSFU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 22 Aug 2020 14:05:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45698 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727899AbgHVSFM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 22 Aug 2020 14:05:12 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E243CC061574
-        for <io-uring@vger.kernel.org>; Sat, 22 Aug 2020 11:05:11 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id j21so2528639pgi.9
-        for <io-uring@vger.kernel.org>; Sat, 22 Aug 2020 11:05:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=ihNBJDNPSWZRuoXh5a+5v17Soc4HFTOTJzR76aNE+O0=;
-        b=vbPpLGrDfJeCwpYqjLLxcj4OT7IiNMEK+vXxh2OLzJnQk38gW4F5Mefk5KHGceBuUG
-         wDlpv4XTxfyHN2n7NNidRCbT8xoFjtVKYlveD+qVTTdOkmDZCFjgHfcT/UmEIJzveNhm
-         QvviDcIHI0rtQCCYGtHnNE4iBDPW9xd/UC2y19AuY+moHyxOLLXT0p2mIYtjs7p68Tpu
-         eK4EcdK6MPbqpnu5dYtrqMQVN0VkEvibqhoQeK33YBn6afH9ox2F6jC5h++rGZmp7MPi
-         dkQT741HQhqdTEwYqMbabeiEz5m8PG0wT7UVW1bRQLNcXVsvbVoWBD24+7xx1bUXyrRn
-         mFyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ihNBJDNPSWZRuoXh5a+5v17Soc4HFTOTJzR76aNE+O0=;
-        b=Ai/vFF0QmSMRe6d10Zkb05ktnnblhB9O91qUR8hS+HRSuIfMdQhavXQvyhRoz5zlyw
-         RgpE9ILa8sliKz3Znqa50KfCA1MBbO4VQ4jHWuQHbFohsJ9goDZHZzHjTpadXd9AgBza
-         2EuvMkYHZU+P4V5CVn1jFcyYNK/Bd4ssmaBm86enoPsQJIibwHlh3fvRgF8xV6DXuBMH
-         rSg2/5WoIiKdmH+Gp/v4WzX5zYj8J6sUkhoZS43qJfNORv5pLNIHUoUzBRAnNyjGWdF6
-         TYkuWHJ5T5CifSVu22HVJju4/crzsT1LF2cWf8SZ8WA8k0ih6VlxCbuNZuAuig29ogJ+
-         8EcA==
-X-Gm-Message-State: AOAM530mkgC8smxmt5MqjG43c2NRiDH919HkDHvp0Kn4QEUafQdDqiEq
-        Bh8u4Z1OG4NdJDWk6hmytxN+tQ==
-X-Google-Smtp-Source: ABdhPJxOP6OJTTFVgEeCMuLru8GvBVOpXTB4PV/+kergfc3Qb0DZIXZBZui6BFwjVPttn/2KGhCL7Q==
-X-Received: by 2002:a63:3850:: with SMTP id h16mr5980618pgn.218.1598119511153;
-        Sat, 22 Aug 2020 11:05:11 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id u14sm6164124pfm.103.2020.08.22.11.05.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Aug 2020 11:05:10 -0700 (PDT)
-Subject: Re: [PATCH v2 1/4] fsstress: add IO_URING read and write operations
-To:     fstests@vger.kernel.org, io-uring@vger.kernel.org,
+        id S1727945AbgHVSCG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 22 Aug 2020 14:02:06 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:33173 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728120AbgHVSCF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 22 Aug 2020 14:02:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598119323;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W6lgVmh2wlooy/jOjkjYLUIvHE4cxHds3iJ0UWbp83U=;
+        b=S823tc4CFNRquckVaci8+YgjtDKB1n5/hutbTvxfimlaYAiuxDZOwjgbjcSv1danDYERx9
+        rEMqSd+UGBdVZz2Osd+35bVxzKffBYAj9cOSXN5SfaVIl8/DkWeN9Rb+Z4pd6WMm7qJoU/
+        DrDS3hFyZrDWh/NfJUr4uHeUiLOPhUM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-313-EsJCpst0MDqaXtzRlbEOFw-1; Sat, 22 Aug 2020 14:02:00 -0400
+X-MC-Unique: EsJCpst0MDqaXtzRlbEOFw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 10FE51876562;
+        Sat, 22 Aug 2020 18:01:37 +0000 (UTC)
+Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7FD537AEFE;
+        Sat, 22 Aug 2020 18:01:35 +0000 (UTC)
+Date:   Sun, 23 Aug 2020 02:14:46 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     fstests@vger.kernel.org, io-uring@vger.kernel.org,
         jmoyer@redhat.com
+Subject: Re: [PATCH v2 1/4] fsstress: add IO_URING read and write operations
+Message-ID: <20200822181445.GS2937@dhcp-12-102.nay.redhat.com>
+Mail-Followup-To: Jens Axboe <axboe@kernel.dk>, fstests@vger.kernel.org,
+        io-uring@vger.kernel.org, jmoyer@redhat.com
 References: <20200809063040.15521-1-zlang@redhat.com>
  <20200809063040.15521-2-zlang@redhat.com>
  <01c7353f-338b-99cd-d7d1-fe92b0badd84@kernel.dk>
- <20200822181445.GS2937@dhcp-12-102.nay.redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7739965c-e7a0-62a7-9c9e-1178bf280af0@kernel.dk>
-Date:   Sat, 22 Aug 2020 12:05:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200822181445.GS2937@dhcp-12-102.nay.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01c7353f-338b-99cd-d7d1-fe92b0badd84@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/22/20 12:14 PM, Zorro Lang wrote:
->>> +	if ((e = io_uring_submit(&ring)) != 1) {
->>> +		if (v)
->>> +			printf("%d/%d: %s - io_uring_submit failed %d\n", procid, opno,
->>> +			       iswrite ? "uring_write" : "uring_read", e);
->>> +		goto uring_out1;
->>> +	}
->>> +	if ((e = io_uring_wait_cqe(&ring, &cqe)) < 0) {
->>> +		if (v)
->>> +			printf("%d/%d: %s - io_uring_wait_cqe failed %d\n", procid, opno,
->>> +			       iswrite ? "uring_write" : "uring_read", e);
->>> +		goto uring_out1;
->>> +	}
->>
->> You could use io_uring_submit_and_wait() here, that'll save a system
->> call for sync IO. Same comment goes for 4/4.
+On Sun, Aug 09, 2020 at 11:51:45AM -0600, Jens Axboe wrote:
+> On 8/9/20 12:30 AM, Zorro Lang wrote:
+> > @@ -2170,6 +2189,108 @@ do_aio_rw(int opno, long r, int flags)
+> >  }
+> >  #endif
+> >  
+> > +#ifdef URING
+> > +void
+> > +do_uring_rw(int opno, long r, int flags)
+> > +{
+> > +	char		*buf;
+> > +	int		e;
+> > +	pathname_t	f;
+> > +	int		fd;
+> > +	size_t		len;
+> > +	int64_t		lr;
+> > +	off64_t		off;
+> > +	struct stat64	stb;
+> > +	int		v;
+> > +	char		st[1024];
+> > +	struct io_uring_sqe	*sqe;
+> > +	struct io_uring_cqe	*cqe;
+> > +	struct iovec	iovec;
+> > +	int		iswrite = (flags & (O_WRONLY | O_RDWR)) ? 1 : 0;
+> > +
+> > +	init_pathname(&f);
+> > +	if (!get_fname(FT_REGFILE, r, &f, NULL, NULL, &v)) {
+> > +		if (v)
+> > +			printf("%d/%d: do_uring_rw - no filename\n", procid, opno);
+> > +		goto uring_out3;
+> > +	}
+> > +	fd = open_path(&f, flags);
+> > +	e = fd < 0 ? errno : 0;
+> > +	check_cwd();
+> > +	if (fd < 0) {
+> > +		if (v)
+> > +			printf("%d/%d: do_uring_rw - open %s failed %d\n",
+> > +			       procid, opno, f.path, e);
+> > +		goto uring_out3;
+> > +	}
+> > +	if (fstat64(fd, &stb) < 0) {
+> > +		if (v)
+> > +			printf("%d/%d: do_uring_rw - fstat64 %s failed %d\n",
+> > +			       procid, opno, f.path, errno);
+> > +		goto uring_out2;
+> > +	}
+> > +	inode_info(st, sizeof(st), &stb, v);
+> > +	if (!iswrite && stb.st_size == 0) {
+> > +		if (v)
+> > +			printf("%d/%d: do_uring_rw - %s%s zero size\n", procid, opno,
+> > +			       f.path, st);
+> > +		goto uring_out2;
+> > +	}
+> > +	sqe = io_uring_get_sqe(&ring);
+> > +	if (!sqe) {
+> > +		if (v)
+> > +			printf("%d/%d: do_uring_rw - io_uring_get_sqe failed\n",
+> > +			       procid, opno);
+> > +		goto uring_out2;
+> > +	}
+> > +	lr = ((int64_t)random() << 32) + random();
+> > +	len = (random() % FILELEN_MAX) + 1;
+> > +	buf = malloc(len);
+> > +	if (!buf) {
+> > +		if (v)
+> > +			printf("%d/%d: do_uring_rw - malloc failed\n",
+> > +			       procid, opno);
+> > +		goto uring_out2;
+> > +	}
+> > +	iovec.iov_base = buf;
+> > +	iovec.iov_len = len;
+> > +	if (iswrite) {
+> > +		off = (off64_t)(lr % MIN(stb.st_size + (1024 * 1024), MAXFSIZE));
+> > +		off %= maxfsize;
+> > +		memset(buf, nameseq & 0xff, len);
+> > +		io_uring_prep_writev(sqe, fd, &iovec, 1, off);
+> > +	} else {
+> > +		off = (off64_t)(lr % stb.st_size);
+> > +		io_uring_prep_readv(sqe, fd, &iovec, 1, off);
+> > +	}
+> > +
+> > +	if ((e = io_uring_submit(&ring)) != 1) {
+> > +		if (v)
+> > +			printf("%d/%d: %s - io_uring_submit failed %d\n", procid, opno,
+> > +			       iswrite ? "uring_write" : "uring_read", e);
+> > +		goto uring_out1;
+> > +	}
+> > +	if ((e = io_uring_wait_cqe(&ring, &cqe)) < 0) {
+> > +		if (v)
+> > +			printf("%d/%d: %s - io_uring_wait_cqe failed %d\n", procid, opno,
+> > +			       iswrite ? "uring_write" : "uring_read", e);
+> > +		goto uring_out1;
+> > +	}
 > 
-> Hi Jens,
+> You could use io_uring_submit_and_wait() here, that'll save a system
+> call for sync IO. Same comment goes for 4/4.
+
+Hi Jens,
+
+Sorry I think I haven't learned about io_uring enough, why the
+io_uring_submit_and_wait can save a system call? Is it same with
+io_uring_submit(), except a wait_nr ? The io_uring_wait_cqe() and
+io_uring_cqe_seen() are still needed, right?
+
+Thanks,
+Zorro
+
 > 
-> Sorry I think I haven't learned about io_uring enough, why the
-> io_uring_submit_and_wait can save a system call? Is it same with
-> io_uring_submit(), except a wait_nr ? The io_uring_wait_cqe() and
-> io_uring_cqe_seen() are still needed, right?
-
-If you just call io_uring_submit(), it'll enter the kernel and submit
-that IO. Then right after that you're saying "I want to wait for
-completion of a request", which is then another system call. If you do
-io_uring_submit_and_wait() you're entering the kernel with the intent of
-"submit my request(s), and wait for N requests" hence only doing a
-single system call even though it's an async interface.
-
-Nothing else changes, io_uring_wait_cqe() will not enter the kernel if a
-cqe is available in the ring already.
-
--- 
-Jens Axboe
+> Apart from that, looks pretty straight forward to me.
+> 
+> -- 
+> Jens Axboe
+> 
 

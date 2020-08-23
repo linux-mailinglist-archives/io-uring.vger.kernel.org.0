@@ -2,164 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E96524EEF3
-	for <lists+io-uring@lfdr.de>; Sun, 23 Aug 2020 19:05:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF4B24EF0D
+	for <lists+io-uring@lfdr.de>; Sun, 23 Aug 2020 19:35:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725996AbgHWRFH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 23 Aug 2020 13:05:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60544 "EHLO
+        id S1727968AbgHWRfj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 23 Aug 2020 13:35:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbgHWRFF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Aug 2020 13:05:05 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FA8DC061573
-        for <io-uring@vger.kernel.org>; Sun, 23 Aug 2020 10:05:04 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id a79so3565495pfa.8
-        for <io-uring@vger.kernel.org>; Sun, 23 Aug 2020 10:05:04 -0700 (PDT)
+        with ESMTP id S1726792AbgHWRfi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Aug 2020 13:35:38 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17845C061573;
+        Sun, 23 Aug 2020 10:35:38 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id c8so2650081edn.8;
+        Sun, 23 Aug 2020 10:35:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=Qf6TJS4T9y+v8Of57I4G/jyR9kP5q7LoI+sViYW/+90=;
-        b=GRnzdOcAzgeNvLVmQlj2H4nZd78Mdl7Yr273zK22ttz8LTgfbtDJnhYcm07zAOnxCr
-         zxEl66me1oKVSVLhC5ynHKfyNsw2v8s5s+fxuW1/sQKE6jDMd4rympcmeVodn780PTgM
-         VlQ37jGawMva/27NwRrZscH7YaTxaZeH0U/BWWNsUFtuUTAWSVKQNmDWAXktqXWvOjXi
-         RnMR+FmfZXIYxv9boq0I57DSwGbAfOSUziHEuwyuEjendqiU6n3v7//ymOtj2ODRU/CB
-         67jUKSMOYDjn/lthoh8MrI+gFS6uwqTCymau7i0kuSik05t/xogyCqRjVXLP8/OMmWvG
-         Y6mQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yhZn5iplZfVv2iHxZYHx5EH11yZHLF/xgxbFt5zcxMI=;
+        b=czjVz3Qpf9F2LM3ydzqJAaOb6tQSum6uy2cnKW1j9Da2zRoKaBiThKyltRNi46GFUO
+         9RZWw1FBl0ScBM1myJmWdjjJpz500DBF13lJkqO9gKFMGz6zi1krW3WWcHWTRzTw30rN
+         kEhMDDAdG4Ozi5L0Ki5ziNUo30VuyiatQaVOWnSeSuM/bdiBzJ1fFuaJr8WzTrlXUbWX
+         5R+kE9WuqzO4kbtw9wW3M97Vkj0G66li0aKbPkxaA1UCr1s/blqos4kNwJmGauyWyhrU
+         kjWz8X9TPTg1HdM5XYhtECxfF2D0RgLB0dwd1GTS5RJByLuStWcr9VkHdPxrAUf0ChTB
+         R3bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=Qf6TJS4T9y+v8Of57I4G/jyR9kP5q7LoI+sViYW/+90=;
-        b=purpwnaJNb9ABMn66o4pzzKwU8xwSyNBlgfafQ7TJq5VoykH4Y7ocpK/EWpbUGb7vD
-         Yg8q9ym9+WqGRds+0l5LzrnUVcgBJq9SIaP7SHFJVTK3pw6nRd2YPB3W4ib4Xx4iNhHz
-         MFfMDx2VjW6aci4V5uU8yvg9p0aa7jxzaGmePAKVSPHwkJFmo7yCFYSeEBSuSokCgFWF
-         Vad5TzG7N+xuEq5wyqfbtTzgDKPxt2puwtv/j6//tmfHJpgzzhuHtmHZIvWmcjFj5mtb
-         dwheL4/4La3+yHlTQs2hQZvToE/5/uaXrkYAMMLPF1FKiV4ukl9P4ftScfPmGigV5XiK
-         XRuw==
-X-Gm-Message-State: AOAM533v4hO40iH5FyVeOJ2y6Eb5QqB0hH0a8/ncY+7yWJD0kyHfAAMY
-        T9QomQDxeKOyaWNtduV29rtPu6DVbCff1Cyj
-X-Google-Smtp-Source: ABdhPJyB9A4qd0b+3i7APj5Tn7jmiCKVoyNuOzeOiL0HI3HJAXRCcZ4zNdXXGrpB+resmuht+VfNAQ==
-X-Received: by 2002:a63:7704:: with SMTP id s4mr1154638pgc.78.1598202303432;
-        Sun, 23 Aug 2020 10:05:03 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id x17sm8399054pfn.160.2020.08.23.10.05.01
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Aug 2020 10:05:02 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: don't recurse on tsk->sighand->siglock with
- signalfd
-Message-ID: <71d54db9-5415-5e23-96a5-8639f60b9280@kernel.dk>
-Date:   Sun, 23 Aug 2020 11:05:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yhZn5iplZfVv2iHxZYHx5EH11yZHLF/xgxbFt5zcxMI=;
+        b=I0ohBwX7H+WV0G0m6DNuLFsW9GTqUYvThx4bkhj2Ad12odaHifzSYAXFosldC74pa/
+         8KQNY2eP4mrPB1KlZmjSwjf2scwcgxEzpPUAmfpFv5dN4bWeG7HvFoNe5LRVf1ds5oCK
+         bICZivGGS6ngooP5+xYPh5Pr+ZViHgIYjkbslCvFsiTKKDwGHy0vK0OPcmZGF5z//EAx
+         893RONUg/6n9NBFiQYP+PGZz2A/JoEQlvFhmXOmHPqdxFoZEvARzouwnziTIpBT6EoHG
+         0c+K+dBOhIDxzxgBR5u2EMsZbSoTd0Nlhg7ci+nOtz8g46K8OWqY9F4nq0hOG7adkD4d
+         WogA==
+X-Gm-Message-State: AOAM531D3zx2dD/zbih2h3GPBH8IA3/h7viD12shLRWWAXzL1tYrwjca
+        NuSOnToUNNgtYu0lmDWWlCw=
+X-Google-Smtp-Source: ABdhPJy34JwBoWwr4MdQaUs03XiTpdmjQAqKazkDmarJFZlEVtw7P8myNj3zZ8+PvyPvSFbxzrB7GQ==
+X-Received: by 2002:aa7:d293:: with SMTP id w19mr2077998edq.119.1598204136794;
+        Sun, 23 Aug 2020 10:35:36 -0700 (PDT)
+Received: from localhost.localdomain ([5.100.200.56])
+        by smtp.gmail.com with ESMTPSA id s4sm7004086ejx.94.2020.08.23.10.35.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Aug 2020 10:35:36 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     stable@vger.kernel.org, Dmitry Shulyak <yashulyak@gmail.com>
+Subject: [PATCH] io-wq: fix hang after cancelling pending work
+Date:   Sun, 23 Aug 2020 20:33:10 +0300
+Message-Id: <c62b225cc7019d0a8ef686d0f87dd1612d9768ab.1598203901.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If an application is doing reads on signalfd, and we arm the poll handler
-because there's no data available, then the wakeup can recurse on the
-tasks sighand->siglock as the signal delivery from task_work_add() will
-use TWA_SIGNAL and that attempts to lock it again.
+Don't forget to update wqe->hash_tail after cancelling a pending work.
 
-We can detect the signalfd case pretty easily by comparing the poll->head
-wait_queue_head_t with the target task signalfd wait queue. Just use
-normal task wakeup for this case.
-
-Cc: stable@vger.kernel.org # v5.7+
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
+Cc: stable@vger.kernel.org # 5.7+
+Reported-by: Dmitry Shulyak <yashulyak@gmail.com>
+Fixes: 86f3cd1b589a1 ("io-wq: handle hashed writes in chains")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
+ fs/io-wq.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 91e2cc8414f9..c9d526ff55e0 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1746,7 +1746,8 @@ static struct io_kiocb *io_req_find_next(struct io_kiocb *req)
- 	return __io_req_find_next(req);
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index e92c4724480c..414beb543883 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -925,6 +925,24 @@ static bool io_wq_worker_cancel(struct io_worker *worker, void *data)
+ 	return match->nr_running && !match->cancel_all;
  }
  
--static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb)
-+static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb,
-+				bool twa_signal_ok)
- {
- 	struct task_struct *tsk = req->task;
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -1759,7 +1760,7 @@ static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb)
- 	 * will do the job.
- 	 */
- 	notify = 0;
--	if (!(ctx->flags & IORING_SETUP_SQPOLL))
-+	if (!(ctx->flags & IORING_SETUP_SQPOLL) && twa_signal_ok)
- 		notify = TWA_SIGNAL;
- 
- 	ret = task_work_add(tsk, cb, notify);
-@@ -1819,7 +1820,7 @@ static void io_req_task_queue(struct io_kiocb *req)
- 	init_task_work(&req->task_work, io_req_task_submit);
- 	percpu_ref_get(&req->ctx->refs);
- 
--	ret = io_req_task_work_add(req, &req->task_work);
-+	ret = io_req_task_work_add(req, &req->task_work, true);
- 	if (unlikely(ret)) {
- 		struct task_struct *tsk;
- 
-@@ -2322,7 +2323,7 @@ static bool io_rw_reissue(struct io_kiocb *req, long res)
- 	init_task_work(&req->task_work, io_rw_resubmit);
- 	percpu_ref_get(&req->ctx->refs);
- 
--	ret = io_req_task_work_add(req, &req->task_work);
-+	ret = io_req_task_work_add(req, &req->task_work, true);
- 	if (!ret)
- 		return true;
- #endif
-@@ -3044,7 +3045,7 @@ static int io_async_buf_func(struct wait_queue_entry *wait, unsigned mode,
- 
- 	/* submit ref gets dropped, acquire a new one */
- 	refcount_inc(&req->refs);
--	ret = io_req_task_work_add(req, &req->task_work);
-+	ret = io_req_task_work_add(req, &req->task_work, true);
- 	if (unlikely(ret)) {
- 		struct task_struct *tsk;
- 
-@@ -4566,6 +4567,7 @@ struct io_poll_table {
- static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
- 			   __poll_t mask, task_work_func_t func)
- {
-+	bool twa_signal_ok;
- 	int ret;
- 
- 	/* for instances that support it check for an event match first: */
-@@ -4580,13 +4582,21 @@ static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
- 	init_task_work(&req->task_work, func);
- 	percpu_ref_get(&req->ctx->refs);
- 
-+	/*
-+	 * If we using the signalfd wait_queue_head for this wakeup, then
-+	 * it's not safe to use TWA_SIGNAL as we could be recursing on the
-+	 * tsk->sighand->siglock on doing the wakeup. Should not be needed
-+	 * either, as the normal wakeup will suffice.
-+	 */
-+	twa_signal_ok = (poll->head != &req->task->sighand->signalfd_wqh);
++static inline void io_wqe_remove_pending(struct io_wqe *wqe,
++					 struct io_wq_work *work,
++					 struct io_wq_work_node *prev)
++{
++	unsigned int hash = io_get_work_hash(work);
++	struct io_wq_work *prev_work = NULL;
 +
- 	/*
- 	 * If this fails, then the task is exiting. When a task exits, the
- 	 * work gets canceled, so just cancel this request as well instead
- 	 * of executing it. We can't safely execute it anyway, as we may not
- 	 * have the needed state needed for it anyway.
- 	 */
--	ret = io_req_task_work_add(req, &req->task_work);
-+	ret = io_req_task_work_add(req, &req->task_work, twa_signal_ok);
- 	if (unlikely(ret)) {
- 		struct task_struct *tsk;
- 
++	if (io_wq_is_hashed(work) && work == wqe->hash_tail[hash]) {
++		if (prev)
++			prev_work = container_of(prev, struct io_wq_work, list);
++		if (prev_work && io_get_work_hash(prev_work) == hash)
++			wqe->hash_tail[hash] = prev_work;
++		else
++			wqe->hash_tail[hash] = NULL;
++	}
++	wq_list_del(&wqe->work_list, &work->list, prev);
++}
++
+ static void io_wqe_cancel_pending_work(struct io_wqe *wqe,
+ 				       struct io_cb_cancel_data *match)
+ {
+@@ -938,8 +956,7 @@ static void io_wqe_cancel_pending_work(struct io_wqe *wqe,
+ 		work = container_of(node, struct io_wq_work, list);
+ 		if (!match->fn(work, match->data))
+ 			continue;
+-
+-		wq_list_del(&wqe->work_list, node, prev);
++		io_wqe_remove_pending(wqe, work, prev);
+ 		spin_unlock_irqrestore(&wqe->lock, flags);
+ 		io_run_cancel(work, wqe);
+ 		match->nr_pending++;
 -- 
-Jens Axboe
+2.24.0
 

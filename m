@@ -2,106 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8B1F2506DE
-	for <lists+io-uring@lfdr.de>; Mon, 24 Aug 2020 19:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFCBD250A1E
+	for <lists+io-uring@lfdr.de>; Mon, 24 Aug 2020 22:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbgHXRsu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Aug 2020 13:48:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36758 "EHLO
+        id S1725904AbgHXUiM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Aug 2020 16:38:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbgHXRsu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Aug 2020 13:48:50 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A51C061573
-        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 10:48:50 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id d18so266574iop.13
-        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 10:48:49 -0700 (PDT)
+        with ESMTP id S1726853AbgHXUiJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Aug 2020 16:38:09 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8701CC061755
+        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 13:38:09 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id l2so7588980eji.3
+        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 13:38:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=sdeSqMirw+foGwElawVONvtaro86x3slIaIXpjcD7Gc=;
-        b=qrW+XdaMgHRWljhLNQB4ttQVigJhS4KeHpzD6tgKKEciOUnOefpcUzM0RdmcgDZjOP
-         a8nvEXtxx6bzIS3kagYHoGRoSLcLZmDu7GBzkbwfcRUJRoXavdHx4EnpvbC1T8lXUopw
-         SBbwLdlJwVmrxLHkgxg7YpejUoa9Uuvy1hlE3FIRctBJHQKPRweYpyKUPdm8ykQy/Sg7
-         EDuTK6PygKXMxP1jWfC9XbMuIVieBMMn0+PbYU4ljmt8IguaZvS45nGZRA1uQ+8jDGCu
-         xyKk9Yu2H2JIYNaE8LT6M8raPVNSxvpQWbeesptdY/omPhrPCrjbHIZYq8Uh0OUsop8L
-         ODiw==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=udbXB0cqc6FeDI1dwpJcz5FAtXPFWwVOxIeJtbziwu4=;
+        b=kP1KO/MrCa/hXCjusNYPsIbZ2h2/ZHMj68ZOJha1in6PLt6VVZ0z6lRUfHGCs6Q9Re
+         aOc2WgzEaDkqq561RYtU7YLHwFrUl4/sOMJYo1PC2JFW65ri8hZHj3RHn5LJ/EUWZCbM
+         +vb100ubsK6Mk5ULOLX5Q5rjbVbzCXx0zH3rnCnOMKvWG0RCf6o7koHdSLSSHPn3ZzyO
+         wDd99Ce4JOQTrgpJDtHr3bwJ/90CPbA2gCeB994n0SboNSrrVS6YAmT42UNHqbtc2s+h
+         ucVuJtaXTJ7jqk0zueZCdmD6KAMCbUYEtRoMRD28geeScXrz9WePzaZJtqWCoEI1Kkqu
+         rmLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=sdeSqMirw+foGwElawVONvtaro86x3slIaIXpjcD7Gc=;
-        b=Cu2B/IhRTEaPOvbXc2HxKgGG/H5ftgZ4+sZTd2PPJYL1GfCM36c+WZlH5auJ06wKl4
-         JV2uX/qjteDtH27xfJQhfQCVC0E9J03lA9nDpezTxDxVKOrhMLf5EauFujBEyI1HR7zO
-         eLJTC/NJUTYDD5/0yKjyrUw6nK0Pt1ly8nwNJUyZYpfanrE6ZCICvg2fh84ZtgDBuQSz
-         qmfyvnYoIDdL/OG/I20AkuIvSjoUXhTmQYXBcdnDdsE+1peSSOrZEem8sHpLVx2DP5WJ
-         PNANKVFkGG5ZofaQvDehdMJxyZv6VXLN/S8B/CGEaTlbvYEc2fg8P+y249VLV6csjPKS
-         dHaA==
-X-Gm-Message-State: AOAM531D07l3LXhfYX0PNP32ibRf+yUaLxJ456aEki4RhSnsxeXT5LW1
-        3uu5+8SUcPt/JIq5K4AAYPppeC4VKXfVdokr
-X-Google-Smtp-Source: ABdhPJylkQ9XwX+/n3MnlWbMp+jW/nftHADAvOjOJVgQkQ65NteQOYORFa5w2QL0XETbGhh1rAFvPw==
-X-Received: by 2002:a6b:e216:: with SMTP id z22mr5493767ioc.97.1598291325150;
-        Mon, 24 Aug 2020 10:48:45 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l5sm7490506ios.3.2020.08.24.10.48.44
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2020 10:48:44 -0700 (PDT)
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: revert consumed iov_iter bytes on error
-Message-ID: <a2e5bc52-d31a-3447-c4be-46d6bb1fd4b8@kernel.dk>
-Date:   Mon, 24 Aug 2020 11:48:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=udbXB0cqc6FeDI1dwpJcz5FAtXPFWwVOxIeJtbziwu4=;
+        b=pE5MQ6Y2VezKe5Y6S5XYqVgWV65M8EbHK19G3klq2biH4EN+OPSNCkZ0LYKUYy9GNw
+         4yjKVeuNeJpefF6jk268sn+XzEiMJY8+WvbTeb4cIF2rJWbnaeEqLoFA9QpLorH7cmqm
+         JKYupffA/OuUTqyAyWZ5p+GUB5WM6NnVFqa21jnywP9iMP6SXmpKdZ+lpHPiizgIv4L/
+         ksHuIxAKi8pacZjaUW4gSxpslAGf6yerTTirhD7hbBzbmDNfk5JdsI1Iu0f/FAOa7M6P
+         Eyye6B7QsRBmE48YC07CBhnplwjmZzT9XgVp31VqIjc9HN8oYsyjJxsmNyJKhjY56gFF
+         vImA==
+X-Gm-Message-State: AOAM532mQ9mCzrpigVjp3/ehtXC5rsw1YJrHckGULlZolXUl4EMPYD9K
+        512aCAudXeRtIOO9X35IjHo=
+X-Google-Smtp-Source: ABdhPJwhNkGoZJapFTusRnFM0Y5MdEHFBGpABfmQd7Gzi9ATUKIj9ifxqN9QSRXBJ/rsndR6/qVGHw==
+X-Received: by 2002:a17:907:72c8:: with SMTP id du8mr7076289ejc.237.1598301488242;
+        Mon, 24 Aug 2020 13:38:08 -0700 (PDT)
+Received: from localhost.localdomain ([5.100.192.234])
+        by smtp.gmail.com with ESMTPSA id y4sm2345538ejj.30.2020.08.24.13.38.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Aug 2020 13:38:07 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 5.8] io_uring: fix missing ->mm on exit
+Date:   Mon, 24 Aug 2020 23:35:36 +0300
+Message-Id: <25db35fc25aa7111f67a6747b1281c5151432f8f.1598300802.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Some consumers of the iov_iter will return an error, but still have
-bytes consumed in the iterator. This is an issue for -EAGAIN, since we
-rely on a sane iov_iter state across retries.
+do_exit() first drops current->mm and then runs task_work, from where
+io_sq_thread_acquire_mm() would try to set mm for a user dying process.
 
-Fix this by ensuring that we revert consumed bytes, if any, if the file
-operations have consumed any bytes from iterator. This is similar to what
-generic_file_read_iter() does, and is always safe as we have the previous
-bytes count handy already.
+[  208.004249] WARNING: CPU: 2 PID: 1854 at
+	kernel/kthread.c:1238 kthread_use_mm+0x244/0x270
+[  208.004287]  kthread_use_mm+0x244/0x270
+[  208.004288]  io_sq_thread_acquire_mm.part.0+0x54/0x80
+[  208.004290]  io_async_task_func+0x258/0x2ac
+[  208.004291]  task_work_run+0xc8/0x210
+[  208.004294]  do_exit+0x1b8/0x430
+[  208.004295]  do_group_exit+0x44/0xac
+[  208.004296]  get_signal+0x164/0x69c
+[  208.004298]  do_signal+0x94/0x1d0
+[  208.004299]  do_notify_resume+0x18c/0x340
+[  208.004300]  work_pending+0x8/0x3d4
 
-Fixes: ff6165b2d7f6 ("io_uring: retain iov_iter state over io_read/io_write calls")
-Reported-by: Dmitry Shulyak <yashulyak@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
+Reported-by: Roman Gershman <>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
+ fs/io_uring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c9d526ff55e0..e030b33fa53e 100644
+index 493e5047e67c..a8b3a608c553 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -3153,6 +3153,8 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
- 	} else if (ret == -EAGAIN) {
- 		if (!force_nonblock)
- 			goto done;
-+		/* some cases will consume bytes even on error returns */
-+		iov_iter_revert(iter, iov_count - iov_iter_count(iter));
- 		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
- 		if (ret)
- 			goto out_free;
-@@ -3294,6 +3296,8 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
- 	if (!force_nonblock || ret2 != -EAGAIN) {
- 		kiocb_done(kiocb, ret2, cs);
- 	} else {
-+		/* some cases will consume bytes even on error returns */
-+		iov_iter_revert(iter, iov_count - iov_iter_count(iter));
- copy_iov:
- 		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
- 		if (!ret)
-
+@@ -4313,7 +4313,8 @@ static int io_sq_thread_acquire_mm(struct io_ring_ctx *ctx,
+ 				   struct io_kiocb *req)
+ {
+ 	if (io_op_defs[req->opcode].needs_mm && !current->mm) {
+-		if (unlikely(!mmget_not_zero(ctx->sqo_mm)))
++		if (unlikely(!(ctx->flags & IORING_SETUP_SQPOLL) ||
++			     !mmget_not_zero(ctx->sqo_mm)))
+ 			return -EFAULT;
+ 		kthread_use_mm(ctx->sqo_mm);
+ 	}
 -- 
-Jens Axboe
+2.24.0
 

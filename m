@@ -2,198 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C5A724F0F5
-	for <lists+io-uring@lfdr.de>; Mon, 24 Aug 2020 03:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE41524FBAF
+	for <lists+io-uring@lfdr.de>; Mon, 24 Aug 2020 12:41:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgHXBtz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 23 Aug 2020 21:49:55 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:47407 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726600AbgHXBty (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Aug 2020 21:49:54 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07425;MF=jiufei.xue@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0U6bjJSk_1598233789;
-Received: from ali-186590e05fa3.local(mailfrom:jiufei.xue@linux.alibaba.com fp:SMTPD_---0U6bjJSk_1598233789)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 24 Aug 2020 09:49:50 +0800
-Subject: Re: [PATCH v2] io_uring: add timeout support for io_uring_enter()
-To:     axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org, metze@samba.org
-References: <1596533282-16791-1-git-send-email-jiufei.xue@linux.alibaba.com>
-From:   Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Message-ID: <1311456d-6d12-03e4-3b3b-ff9ab48495d2@linux.alibaba.com>
-Date:   Mon, 24 Aug 2020 09:49:49 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
- Gecko/20100101 Thunderbird/68.11.0
+        id S1727813AbgHXKlQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Aug 2020 06:41:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54322 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbgHXKlK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Aug 2020 06:41:10 -0400
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43E8CC061755
+        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 03:41:06 -0700 (PDT)
+Received: by mail-qv1-xf2d.google.com with SMTP id s15so3471072qvv.7
+        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 03:41:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=nrgPYb9eYYRB4kqx8NyxdoJAys+pE6Xw0XKKImlMci0=;
+        b=HkZg5FCC91ITjsk2L5OTsdqKOPBVfSnUeTfPOpIpgadjtpMwRY6ni6K3zHwrHMZZKz
+         ymnZ5OexkScOuiO1tFwcq30MV+6o7pjAQcpovvWGmzaEohvhFFQQDwoBM6cEBGkSHSLk
+         2Gvvgb2RZzgb7OD//twFMhMNq9Lt85kjhrmzqxPWrq0P/vCome3PqjyhQnEkD9nIA4/J
+         i7uoBqt9XrmPerDBD3VRIxvfe+HzHNsKaNbpbRzzmMGMueDFucPtl+pX8a0UVXOjW7Ya
+         3x0VaxxQtEqxT1ZlC3GpK8p4XvqbnqU8fIZDcVnpvE5Gg4wp6TniPful1wVaVMv+ljc9
+         D4Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=nrgPYb9eYYRB4kqx8NyxdoJAys+pE6Xw0XKKImlMci0=;
+        b=lyoZzcv3kEZOb3SUdCktq9jDqnMbuKxDeL6y2mzBbc63ZefPI142j964RJr+z2YoSj
+         npKIyZxnX7lRFLAeWO93ggbOWnyAtLKr1Oodk3yU5TaF19/3tfktJ5GtWEuJY6HaIQTi
+         6G946+bSFQlpz4//3HK4Bpr6VubEAscbDdrQRPJYGuGXJGjf25FfVXpXubDHJkst95LF
+         0CntBK9cufvtHN1u49eWkDa4lEEEf3Kzo/nU8tli6t3CGX8dsFj2rFYlNinPOCimsPaZ
+         39Lfv16GA3BMmiV7aBm5rmMTU6ea908Ik4Fi4w9ZRhsKh+pbMlBK3+awupzHNgVLHx2k
+         OvuA==
+X-Gm-Message-State: AOAM531nQlOFA5ZQgNNbJbWVCKCAISsy9kZfZPrwgNATJ5Lz51Gbn0vj
+        aO8uct5Mt+bjRO9tndMhpPtuJTeAU+UNutFSvb5T/DppWuFexA==
+X-Google-Smtp-Source: ABdhPJzDN4NgVWWablvRzWs7neLubbNBUEGw97bVhYEXFm/KDk9Wsj2ybUeuNuMoy2Ur9alKeTO1A3K6RarerJoWZqc=
+X-Received: by 2002:a05:6214:12b4:: with SMTP id w20mr4177711qvu.32.1598265664320;
+ Mon, 24 Aug 2020 03:41:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1596533282-16791-1-git-send-email-jiufei.xue@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From:   Dmitry Shulyak <yashulyak@gmail.com>
+Date:   Mon, 24 Aug 2020 13:40:52 +0300
+Message-ID: <CAF-ewDqBd4gSLGOdHE8g57O_weMTH0B-WbfobJud3h6poH=fBg@mail.gmail.com>
+Subject: Large number of empty reads on 5.9-rc2 under moderate load
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-ping...
+In the program, I am submitting a large number of concurrent read
+requests with o_direct. In both scenarios the number of concurrent
+read requests is limited to 20 000, with only difference being that
+for 512b total number of reads is 8millions and for 8kb - 1million. On
+5.8.3 I didn't see any empty reads at all.
 
-On 2020/8/4 下午5:28, Jiufei Xue wrote:
-> Now users who want to get woken when waiting for events should submit a
-> timeout command first. It is not safe for applications that split SQ and
-> CQ handling between two threads, such as mysql. Users should synchronize
-> the two threads explicitly to protect SQ and that will impact the
-> performance.
-> 
-> This patch adds support for timeout to existing io_uring_enter(). To
-> avoid overloading arguments, it introduces a new parameter structure
-> which contains sigmask and timeout.
-> 
-> I have tested the workloads with one thread submiting nop requests
-> while the other reaping the cqe with timeout. It shows 1.8~2x faster
-> when the iodepth is 16.
-> 
-> Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-> ---
->  fs/io_uring.c                 | 45 +++++++++++++++++++++++++++++++++++++------
->  include/uapi/linux/io_uring.h |  7 +++++++
->  2 files changed, 46 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 2a3af95..cdd89e4 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6514,7 +6514,8 @@ static int io_wake_function(struct wait_queue_entry *curr, unsigned int mode,
->   * application must reap them itself, as they reside on the shared cq ring.
->   */
->  static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
-> -			  const sigset_t __user *sig, size_t sigsz)
-> +			  const sigset_t __user *sig, size_t sigsz,
-> +			  struct __kernel_timespec __user *uts)
->  {
->  	struct io_wait_queue iowq = {
->  		.wq = {
-> @@ -6526,6 +6527,8 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  		.to_wait	= min_events,
->  	};
->  	struct io_rings *rings = ctx->rings;
-> +	struct timespec64 ts;
-> +	signed long timeout = 0;
->  	int ret = 0;
->  
->  	do {
-> @@ -6548,6 +6551,12 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  			return ret;
->  	}
->  
-> +	if (uts) {
-> +		if (get_timespec64(&ts, uts))
-> +			return -EFAULT;
-> +		timeout = timespec64_to_jiffies(&ts);
-> +	}
-> +
->  	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
->  	trace_io_uring_cqring_wait(ctx, min_events);
->  	do {
-> @@ -6569,7 +6578,14 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  		}
->  		if (io_should_wake(&iowq, false))
->  			break;
-> -		schedule();
-> +		if (uts) {
-> +			if ((timeout = schedule_timeout(timeout)) == 0) {
-> +				ret = -ETIME;
-> +				break;
-> +			}
-> +		} else {
-> +			schedule();
-> +		}
->  	} while (1);
->  	finish_wait(&ctx->wait, &iowq.wq);
->  
-> @@ -7993,19 +8009,36 @@ static unsigned long io_uring_nommu_get_unmapped_area(struct file *file,
->  #endif /* !CONFIG_MMU */
->  
->  SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
-> -		u32, min_complete, u32, flags, const sigset_t __user *, sig,
-> +		u32, min_complete, u32, flags, const void __user *, argp,
->  		size_t, sigsz)
->  {
->  	struct io_ring_ctx *ctx;
->  	long ret = -EBADF;
->  	int submitted = 0;
->  	struct fd f;
-> +	const sigset_t __user *sig;
-> +	struct __kernel_timespec __user *ts;
-> +	struct io_uring_getevents_arg arg;
->  
->  	io_run_task_work();
->  
-> -	if (flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP))
-> +	if (flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
-> +		      IORING_ENTER_GETEVENTS_TIMEOUT))
->  		return -EINVAL;
->  
-> +	/* deal with IORING_ENTER_GETEVENTS_TIMEOUT */
-> +	if (flags & IORING_ENTER_GETEVENTS_TIMEOUT) {
-> +		if (!(flags & IORING_ENTER_GETEVENTS))
-> +			return -EINVAL;
-> +		if (copy_from_user(&arg, argp, sizeof(arg)))
-> +			return -EFAULT;
-> +		sig = arg.sigmask;
-> +		ts = arg.ts;
-> +	} else {
-> +		sig = (const sigset_t __user *)argp;
-> +		ts = NULL;
-> +	}
-> +
->  	f = fdget(fd);
->  	if (!f.file)
->  		return -EBADF;
-> @@ -8052,7 +8085,7 @@ static unsigned long io_uring_nommu_get_unmapped_area(struct file *file,
->  		    !(ctx->flags & IORING_SETUP_SQPOLL)) {
->  			ret = io_iopoll_check(ctx, min_complete);
->  		} else {
-> -			ret = io_cqring_wait(ctx, min_complete, sig, sigsz);
-> +			ret = io_cqring_wait(ctx, min_complete, sig, sigsz, ts);
->  		}
->  	}
->  
-> @@ -8346,7 +8379,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
->  	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
->  			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
->  			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL |
-> -			IORING_FEAT_POLL_32BITS;
-> +			IORING_FEAT_POLL_32BITS | IORING_FEAT_GETEVENTS_TIMEOUT;
->  
->  	if (copy_to_user(params, p, sizeof(*p))) {
->  		ret = -EFAULT;
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index d65fde7..70764d2 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -224,6 +224,7 @@ struct io_cqring_offsets {
->   */
->  #define IORING_ENTER_GETEVENTS	(1U << 0)
->  #define IORING_ENTER_SQ_WAKEUP	(1U << 1)
-> +#define IORING_ENTER_GETEVENTS_TIMEOUT	(1U << 2)
->  
->  /*
->   * Passed in for io_uring_setup(2). Copied back with updated info on success
-> @@ -251,6 +252,7 @@ struct io_uring_params {
->  #define IORING_FEAT_CUR_PERSONALITY	(1U << 4)
->  #define IORING_FEAT_FAST_POLL		(1U << 5)
->  #define IORING_FEAT_POLL_32BITS 	(1U << 6)
-> +#define IORING_FEAT_GETEVENTS_TIMEOUT	(1U << 7)
->  
->  /*
->   * io_uring_register(2) opcodes and arguments
-> @@ -290,4 +292,9 @@ struct io_uring_probe {
->  	struct io_uring_probe_op ops[0];
->  };
->  
-> +struct io_uring_getevents_arg {
-> +	sigset_t *sigmask;
-> +	struct __kernel_timespec *ts;
-> +};
-> +
->  #endif
-> 
+BenchmarkReadAt/uring_512-8              8000000              1879
+ns/op         272.55 MB/s
+BenchmarkReadAt/uring_8192-8             1000000             18178
+ns/op         450.65 MB/s
+
+I am seeing the same numbers in iotop, so pretty confident that the
+benchmark is fine. Below is a version with regular syscalls and
+threads (note that this is with golang):
+
+BenchmarkReadAt/os_512-256               8000000              4393
+ns/op         116.55 MB/s
+BenchmarkReadAt/os_8192-256              1000000             18811
+ns/op         435.48 MB/s
+
+I run the same program on 5.9-rc.2 and noticed that for workload with
+8kb buffer and 1mill reads I had to make more than 7 millions retries,
+which obviously makes the program very slow. For 512b and 8million
+reads there were only 22 000 retries, but it is still very slow for
+some other reason.
+
+BenchmarkReadAt/uring_512-8  8000000       8432 ns/op   60.72 MB/s
+BenchmarkReadAt/uring_8192-8 1000000      42603 ns/op 192.29 MB/s
+
+In iotop i am seeing a huge increase for 8kb, actual disk read goes up
+to 2gb/s, which looks somewhat suspicious given that my ssd should
+support only 450mb/s. If I will lower the number of concurrent
+requests to 1000, then there are almost no empty reads and numbers for
+8kb go back to the same level I saw with 5.8.3.
+
+Is it a regression or should I throttle submissions?

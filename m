@@ -2,71 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A74EA2506C5
-	for <lists+io-uring@lfdr.de>; Mon, 24 Aug 2020 19:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8B1F2506DE
+	for <lists+io-uring@lfdr.de>; Mon, 24 Aug 2020 19:48:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbgHXRoz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Aug 2020 13:44:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36158 "EHLO
+        id S1726870AbgHXRsu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Aug 2020 13:48:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbgHXRox (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Aug 2020 13:44:53 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A46EC061573
-        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 10:44:53 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id c6so7981844ilo.13
-        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 10:44:53 -0700 (PDT)
+        with ESMTP id S1726661AbgHXRsu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Aug 2020 13:48:50 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A51C061573
+        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 10:48:50 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id d18so266574iop.13
+        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 10:48:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=76ZRRv/9zXrx7IX7RJ7YwmpW1Qr4VucHp1pYnesDFCg=;
-        b=B9VDU0ryyzZ9XgagxKOi7ErnCwyQMZT8dPHlF0MiFlbXckX5GjirY+tbL/GTKoylGO
-         Z0orq3c7EE9QFZA8x1ds4XyWuZ8XHnHWuFwAxjvONicKnRJj22jAoMhcl1uzMmY2P5zW
-         M9KfEozsnHsIr7q58tsp9PZ92wXJH7/XhBlCslbXXThXPJ6dhk1jfK1vTYAj7DDuW1eH
-         nab/ZiQ0bmlUWGXf1gzm9U/CcNOx0wtVJ2Jlo6S0+c6JgolNtbleoPKgQwkHksvUyOdS
-         c3X/zEdbjgnpcOYeOX8oc5Jp81Cl2ze2gXOGFt8Z4d0tekDTA/y2OX2bl6jgti3aDxYH
-         ycxQ==
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=sdeSqMirw+foGwElawVONvtaro86x3slIaIXpjcD7Gc=;
+        b=qrW+XdaMgHRWljhLNQB4ttQVigJhS4KeHpzD6tgKKEciOUnOefpcUzM0RdmcgDZjOP
+         a8nvEXtxx6bzIS3kagYHoGRoSLcLZmDu7GBzkbwfcRUJRoXavdHx4EnpvbC1T8lXUopw
+         SBbwLdlJwVmrxLHkgxg7YpejUoa9Uuvy1hlE3FIRctBJHQKPRweYpyKUPdm8ykQy/Sg7
+         EDuTK6PygKXMxP1jWfC9XbMuIVieBMMn0+PbYU4ljmt8IguaZvS45nGZRA1uQ+8jDGCu
+         xyKk9Yu2H2JIYNaE8LT6M8raPVNSxvpQWbeesptdY/omPhrPCrjbHIZYq8Uh0OUsop8L
+         ODiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=76ZRRv/9zXrx7IX7RJ7YwmpW1Qr4VucHp1pYnesDFCg=;
-        b=ers3Hz6k146T1vMzZ2kHz91HuTcuxFIlBH4Fvb5NJ6h+jeTeW3KugBVXsgpsOGvAx9
-         M13E+G5I3moN//9LBeTeYQ8Gx2hD4fzguFk8lHtqoU7I7H4tjdlaGXfeoPiW0zcfChD/
-         S9hso+o5Wpkdo+GFtPubEck6rthlTxBPxvU0j8gl9iFSLPVRt1cZrG+uHCotCsJWgQ2W
-         p74h0BTv9qY8WA4sAiOBiMzzq+BZFTCHwCaJ/GafdXKQnu+bmlD2szDQkVaD/uViBS9p
-         3DdyrrCR9PwR9EfafE+DzqqTXss2jG7dfin3zpJXJGzXGjDiHeOJKYTtBQwOmY1ccWzZ
-         CKMw==
-X-Gm-Message-State: AOAM533cr7/54MfPSydllzXaV52tZDKXAKq4j1rnOYV7SVkFxSnRYOqe
-        PzKKAiubRkxGnQki4hF7aqmABwTMPnIstC9U
-X-Google-Smtp-Source: ABdhPJzVFlQd1TD1xd9lsoKz0yDi262KBolN+Mgp1MTicX/zFNu+qHfUxOz8SkugB6xmPvhv972dRw==
-X-Received: by 2002:a92:9a94:: with SMTP id c20mr5289559ill.37.1598291087881;
-        Mon, 24 Aug 2020 10:44:47 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=sdeSqMirw+foGwElawVONvtaro86x3slIaIXpjcD7Gc=;
+        b=Cu2B/IhRTEaPOvbXc2HxKgGG/H5ftgZ4+sZTd2PPJYL1GfCM36c+WZlH5auJ06wKl4
+         JV2uX/qjteDtH27xfJQhfQCVC0E9J03lA9nDpezTxDxVKOrhMLf5EauFujBEyI1HR7zO
+         eLJTC/NJUTYDD5/0yKjyrUw6nK0Pt1ly8nwNJUyZYpfanrE6ZCICvg2fh84ZtgDBuQSz
+         qmfyvnYoIDdL/OG/I20AkuIvSjoUXhTmQYXBcdnDdsE+1peSSOrZEem8sHpLVx2DP5WJ
+         PNANKVFkGG5ZofaQvDehdMJxyZv6VXLN/S8B/CGEaTlbvYEc2fg8P+y249VLV6csjPKS
+         dHaA==
+X-Gm-Message-State: AOAM531D07l3LXhfYX0PNP32ibRf+yUaLxJ456aEki4RhSnsxeXT5LW1
+        3uu5+8SUcPt/JIq5K4AAYPppeC4VKXfVdokr
+X-Google-Smtp-Source: ABdhPJylkQ9XwX+/n3MnlWbMp+jW/nftHADAvOjOJVgQkQ65NteQOYORFa5w2QL0XETbGhh1rAFvPw==
+X-Received: by 2002:a6b:e216:: with SMTP id z22mr5493767ioc.97.1598291325150;
+        Mon, 24 Aug 2020 10:48:45 -0700 (PDT)
 Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id u4sm4457802iol.17.2020.08.24.10.44.46
+        by smtp.gmail.com with ESMTPSA id l5sm7490506ios.3.2020.08.24.10.48.44
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2020 10:44:47 -0700 (PDT)
-Subject: Re: Large number of empty reads on 5.9-rc2 under moderate load
+        Mon, 24 Aug 2020 10:48:44 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Dmitry Shulyak <yashulyak@gmail.com>
-Cc:     io-uring@vger.kernel.org
-References: <CAF-ewDqBd4gSLGOdHE8g57O_weMTH0B-WbfobJud3h6poH=fBg@mail.gmail.com>
- <7a148c5e-4403-9c8e-cc08-98cd552a7322@kernel.dk>
- <CAF-ewDpvLwkiZ3sJMT64e=efCRFYVkt2Z71==1FztLg=vZN8fg@mail.gmail.com>
- <06d07d6c-3e91-b2a7-7e03-f6390e787085@kernel.dk>
- <da7b74d2-5825-051d-14a9-a55002616071@kernel.dk>
- <CAF-ewDrMO-qGOfXdZUyaGBzH+yY3EBPHCO_bMvj6yXhZeCFaEw@mail.gmail.com>
- <282f1b86-0cf3-dd8d-911f-813d3db44352@kernel.dk>
- <CAF-ewDrRqiYqXHhbHtWjsc0VuJQLUynkiO13zH_g2RZ1DbVMMg@mail.gmail.com>
- <ddc3c126-d1bd-a345-552b-35b35c507575@kernel.dk>
-Message-ID: <42573664-450d-bfe4-aa96-ca1ae0704adb@kernel.dk>
-Date:   Mon, 24 Aug 2020 11:44:45 -0600
+Subject: [PATCH] io_uring: revert consumed iov_iter bytes on error
+Message-ID: <a2e5bc52-d31a-3447-c4be-46d6bb1fd4b8@kernel.dk>
+Date:   Mon, 24 Aug 2020 11:48:44 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <ddc3c126-d1bd-a345-552b-35b35c507575@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -75,69 +64,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/24/20 10:18 AM, Jens Axboe wrote:
-> On 8/24/20 10:13 AM, Dmitry Shulyak wrote:
->> On Mon, 24 Aug 2020 at 19:10, Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>> On 8/24/20 9:33 AM, Dmitry Shulyak wrote:
->>>> On Mon, 24 Aug 2020 at 17:45, Jens Axboe <axboe@kernel.dk> wrote:
->>>>>
->>>>> On 8/24/20 8:06 AM, Jens Axboe wrote:
->>>>>> On 8/24/20 5:09 AM, Dmitry Shulyak wrote:
->>>>>>> library that i am using https://github.com/dshulyak/uring
->>>>>>> It requires golang 1.14, if installed, benchmark can be run with:
->>>>>>> go test ./fs -run=xx -bench=BenchmarkReadAt/uring_8 -benchtime=1000000x
->>>>>>> go test ./fs -run=xx -bench=BenchmarkReadAt/uring_5 -benchtime=8000000x
->>>>>>>
->>>>>>> note that it will setup uring instance per cpu, with shared worker pool.
->>>>>>> it will take me too much time to implement repro in c, but in general
->>>>>>> i am simply submitting multiple concurrent
->>>>>>> read requests and watching read rate.
->>>>>>
->>>>>> I'm fine with trying your Go version, but I can into a bit of trouble:
->>>>>>
->>>>>> axboe@amd ~/g/go-uring (master)>
->>>>>> go test ./fs -run=xx -bench=BenchmarkReadAt/uring_8 -benchtime=1000000x
->>>>>> # github.com/dshulyak/uring/fixed
->>>>>> fixed/allocator.go:38:48: error: incompatible type for field 2 in struct construction (cannot use type uint64 as type syscall.Iovec_len_t)
->>>>>>    38 |  iovec := []syscall.Iovec{{Base: &mem[0], Len: uint64(size)}}
->>>>>>       |                                                ^
->>>>>> FAIL  github.com/dshulyak/uring/fs [build failed]
->>>>>> FAIL
->>>>>> axboe@amd ~/g/go-uring (master)> go version
->>>>>> go version go1.14.6 gccgo (Ubuntu 10.2.0-5ubuntu1~20.04) 10.2.0 linux/amd64
->>>>>
->>>>> Alright, got it working. What device are you running this on? And am I
->>>>> correct in assuming you get short reads, or rather 0 reads? What file
->>>>> system?
->>>>
->>>> Was going to look into this.
->>>> I am getting 0 reads. This is on some old kingston ssd, ext4.
->>>
->>> I can't seem to reproduce this. I do see some cqe->res == 0 completes,
->>> but those appear to be NOPs. And they trigger at the start and end. I'll
->>> keep poking.
->>
->> Nops are used for draining and closing rings at the end of benchmarks.
->> It also appears in the beginning because of the way golang runs
->> benchmarks...
-> 
-> OK, just checking if it was expected.
-> 
-> But I can reproduce it now, turns out I was running XFS and that doesn't
-> trigger it. With ext4, I do see zero sized read completions. I'll keep
-> poking.
+Some consumers of the iov_iter will return an error, but still have
+bytes consumed in the iterator. This is an issue for -EAGAIN, since we
+rely on a sane iov_iter state across retries.
 
-Can you try with this? Looks like some cases will consume bytes from the
-iterator even if they ultimately return an error. If we've consumed bytes
-but need to trigger retry, ensure we revert the consumed bytes.
+Fix this by ensuring that we revert consumed bytes, if any, if the file
+operations have consumed any bytes from iterator. This is similar to what
+generic_file_read_iter() does, and is always safe as we have the previous
+bytes count handy already.
 
+Fixes: ff6165b2d7f6 ("io_uring: retain iov_iter state over io_read/io_write calls")
+Reported-by: Dmitry Shulyak <yashulyak@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 91e2cc8414f9..609b4996a4e9 100644
+index c9d526ff55e0..e030b33fa53e 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -3152,6 +3152,8 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+@@ -3153,6 +3153,8 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
  	} else if (ret == -EAGAIN) {
  		if (!force_nonblock)
  			goto done;
@@ -146,7 +92,7 @@ index 91e2cc8414f9..609b4996a4e9 100644
  		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
  		if (ret)
  			goto out_free;
-@@ -3293,6 +3295,8 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+@@ -3294,6 +3296,8 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
  	if (!force_nonblock || ret2 != -EAGAIN) {
  		kiocb_done(kiocb, ret2, cs);
  	} else {

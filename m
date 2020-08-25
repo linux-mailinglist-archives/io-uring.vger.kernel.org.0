@@ -2,95 +2,154 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 02DB825132A
-	for <lists+io-uring@lfdr.de>; Tue, 25 Aug 2020 09:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B01125149F
+	for <lists+io-uring@lfdr.de>; Tue, 25 Aug 2020 10:52:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729398AbgHYH2v (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 Aug 2020 03:28:51 -0400
-Received: from sonic309-15.consmr.mail.bf2.yahoo.com ([74.6.129.125]:39887
-        "EHLO sonic309-15.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729194AbgHYH2u (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Aug 2020 03:28:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1598340529; bh=Hx2q6/wky65uES3PZmzO6PcrQE/ji4ygndkQ4MNzRq8=; h=Date:From:Reply-To:Subject:References:From:Subject; b=W5vRISjHZryU0Px9pCam6Jjtn9755eiK/07O1LNIBIZKuX54PHQpBe+vGQfbtpxUwXQMe4a8PMTfemjmA37f224l3zq8CIZ/Ee5LitZ3EfWiI3dOY/h2O+6EfxwnO4OLiQ9v3TX2faQkuNsMMVMbVOPSIHE9QPFe4nnycEOUkhSdQfdrBFhm5sNL1lGShQDc5ycdEr+xMcUggldQYCtfPMFJiLXbkUDJRpgagJFDbdqSL2YyDcW7bKCuZzSJ97JUtKWBUlQTH/AzOK6d7KCJdE3VkoOe1HnHkc+0jk3iB5/NPK4XuPFxtLoZUjD9HbTgDBoVByH9cHWxAjic4wNkMg==
-X-YMail-OSG: kTFlHf0VM1kMoG3Z27HSviDowYvT.Vd8Lt3XGGg73IYD3.pirgNrrvZfIbXja3S
- JEaBhxsWzlHdEjFY6O09IbU1.CVYAvZUPy3OjOhqX0I3FihXtaKu6bEE42g5mqcrgu1D00ESCCpr
- FdzM5Xqsdkt_X7vq1.nIJQQSdeAk0U4yLavVEY3GzE4a.TQfVpR9lkDqw7DBIEmAqGkm4kxnaGnq
- wZEMLRADPOKbtcjJUr4RZFctEnVa4ieNvlPAD5RP9pJW2LyIw25UnoLPsOuHBB9LXBnQvrnAGs_a
- SUjMFc6hztAVbvhvV088j._PwHkT.bS0fOrieholfHPmUsq8pyJ.3OEVMnPa71Jo1FxYAKMKPaTF
- BZ3zqhKq3XtE.EM0WOTxPRjRfR8f4bA.tXkAPDJwMvFO0Xz0k.OabAn5SuQWrzsbWi0KLmyuyIfJ
- FauCZjqtlz2XuevRn1JCDYcPNCotgPEkrNT4iWlgplsG8Gt3Tck8tLC7B_6Fu3uTT.4NzfkrCkCn
- aPCxlQhiBrS1c1CpOKDUz7g9_0HTTtQIzqijQG3IrgKump41C52t_YrRiiJEeykb6EetioMdnKeD
- Q99KBwv0lilUvj2gCUGJnBgjicTDsDyp2RFtTjo.pf4W3B_X3rRjBgJ.acVJGStSVSvlRMBWc0PG
- TsqGHTshpMp92YYDXMG8ZfRFh5vszZr6BN0.1Bc7sdPYIOuyjY6vXJriR5Dze_WCddpnGCIFX0RW
- gIol8WyxsdbvbgMaPcrXaMpkVZ0FpE7AHgB.PYHGT.6EOjWL2djDEd6s4U9IOkB9hwAi6WsDQvd6
- rtTZfoDL3N9wYhfJsBJlrwp74bA11I0EGLi_5Q0SFSENUy6VSuE9S.s83QkndZEwih8aa7K3.H7b
- BLGZ3YHd2vqWLDJiwNJRsur8OqQnz.L64nhhqkn9ctOFaYQGqGlJSb8TRqmDN7HCxIjUXb6TvybK
- BNOGv2d_1wPstJdNWoIS2HJO7oJqlj_ddPm8uPmZKxB2Ed7KMYsFI81J6dhNZqTCx7OSgnnjI.Zn
- erWfZGggz49wr_XT2W4FwZGmGtp5z3AqBhbPKCo3hE2L.ufLSyWZrxclYK9fpNE_RRzF_5wB2HNC
- Bq0MRkk5GdkKGKaYXpVd_cYhWC77QaYFXY12FpoL5xEeSdLk7uQ7EKYwy4dn6tYMD2V2hXuBzFQD
- tBNQ3oGyPXlVXw2dj1k8CEI9l7swAUWGTcnS7VT91.E.TL59EkI3pHWR8wspiLLHxqCQCTVxen.h
- vMgMtZXh2dF1j.GHQcKr5Kr54E3DdrjILI7z00e_l_9Fn0Q3sGDV_fin3WX11nCHBlFDwDNNM9qn
- F04oPkeArVzLHk5RBSL_evG_vfdQbHHiu9VP8LtevckhsfVcsRALYF1sPlIEnJt0yom2bDhrD.Ht
- u7t9C.MrYdgdi7p6mvg5UOeQFGUCT.K3lLhRXJj9Asyrw5s3Ohw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.bf2.yahoo.com with HTTP; Tue, 25 Aug 2020 07:28:49 +0000
-Date:   Tue, 25 Aug 2020 07:28:48 +0000 (UTC)
-From:   Sgt Vivian Robert <sgtvivarob@gmail.com>
-Reply-To: sgtvivarob@gmail.com
-Message-ID: <653746008.5254685.1598340528745@mail.yahoo.com>
-Subject:  kindly respond to my mail
+        id S1725936AbgHYIw2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 Aug 2020 04:52:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36346 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbgHYIw1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Aug 2020 04:52:27 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEA09C061574
+        for <io-uring@vger.kernel.org>; Tue, 25 Aug 2020 01:52:26 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id u3so10233263qkd.9
+        for <io-uring@vger.kernel.org>; Tue, 25 Aug 2020 01:52:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gaCBewwpabkMrS4ToRtqJsHXuCZO3TzKg5nwUPaP+PY=;
+        b=ZChZP2pr3PNQy6v4rA8QfMUIH+FShq3+VI5BTUbMgVRZ1auLUf4xaNlVmXOU32/eQc
+         f7/TSbGzNzIS0uwR2xWfV8UYoxThQ37qtJp9lDxw2D9bdq+65rrNlmuojbae0E00QC9n
+         TGMv6Qy0gEQkhCH3HsHEmPa9nLXlTQSV4hPjN5tq4RLSrVBfJwyNH1aT4YBWCyaYNqF/
+         eSCdpVOmdg2XWy9jhm/bQ4l/wrJ83FWAcwiTCS7D+oRB1UI/XzvW4Ikgy2KsDxn6QStr
+         tMsjHgFoczdwti6fNpIXACwqMQNaccsZHbnYrUNuTJ/0TF/0vPLryXwLQlW3YA+CR5O2
+         Q/7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gaCBewwpabkMrS4ToRtqJsHXuCZO3TzKg5nwUPaP+PY=;
+        b=r90tLtSpV1kCRwWc+/1i76TddtIXR7Mdo0ARJbQ4rgefFqZT+FNhDD+X9fZutE/uol
+         tCQvmVAEeO+dE7KpOTxJQ0s+m4SjXsDZuWldbAirGV6okhuHkUUiDn47iUT4jl3zyL0X
+         rr7vVcXLS5pQE6cgE5eAep2hkX6E6O3CB7cL75mE0cjjouLVKngRtF2OSgjbfOqmMpXU
+         tcEz4PG1z7NN8LjgQFH/qIMPR7xn7S/97XjuYkdndHpL9WDNO81nhIuxTAECD+U/l+hN
+         xrnnPH6rLHVSKBXCelePzO9xCKak94v1Yk2F7JP6t6mWdYaEOsijmkjwcaWCqK238gWU
+         lF+A==
+X-Gm-Message-State: AOAM5321IcCwUKzzUqlSprrjBWkTIQKHu2rp+NyhzYNvfL81MgsfjwkG
+        cK1vHJ952rrCQCcZQ8ucgP8Z8jwrikJ/m9eppn73A4T72V8=
+X-Google-Smtp-Source: ABdhPJwRwZACmguPcgaWVZxkVfxSAeslUT6pyPrYxd8o/0D7kRLOchtQPG5gF+N5+s5a+awlkYKHt9cVTXVaax8FBfM=
+X-Received: by 2002:a37:5fc4:: with SMTP id t187mr8680123qkb.224.1598345546113;
+ Tue, 25 Aug 2020 01:52:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-References: <653746008.5254685.1598340528745.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.16455 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:79.0) Gecko/20100101 Firefox/79.0
-To:     unlisted-recipients:; (no To-header on input)
+References: <CAF-ewDqBd4gSLGOdHE8g57O_weMTH0B-WbfobJud3h6poH=fBg@mail.gmail.com>
+ <7a148c5e-4403-9c8e-cc08-98cd552a7322@kernel.dk> <CAF-ewDpvLwkiZ3sJMT64e=efCRFYVkt2Z71==1FztLg=vZN8fg@mail.gmail.com>
+ <06d07d6c-3e91-b2a7-7e03-f6390e787085@kernel.dk> <da7b74d2-5825-051d-14a9-a55002616071@kernel.dk>
+ <CAF-ewDrMO-qGOfXdZUyaGBzH+yY3EBPHCO_bMvj6yXhZeCFaEw@mail.gmail.com>
+ <282f1b86-0cf3-dd8d-911f-813d3db44352@kernel.dk> <CAF-ewDrRqiYqXHhbHtWjsc0VuJQLUynkiO13zH_g2RZ1DbVMMg@mail.gmail.com>
+ <ddc3c126-d1bd-a345-552b-35b35c507575@kernel.dk> <42573664-450d-bfe4-aa96-ca1ae0704adb@kernel.dk>
+In-Reply-To: <42573664-450d-bfe4-aa96-ca1ae0704adb@kernel.dk>
+From:   Dmitry Shulyak <yashulyak@gmail.com>
+Date:   Tue, 25 Aug 2020 11:52:14 +0300
+Message-ID: <CAF-ewDqffa=e-EBOdreX9S7CXagM-ohQSsyyDMooDR83W9kjGg@mail.gmail.com>
+Subject: Re: Large number of empty reads on 5.9-rc2 under moderate load
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+this patch fixes the issue with 0 reads. there seems to be a
+regression that is not specific to uring,
+regular syscall reads slowed down noticeably.
 
-
-Good=C2=A0Day,=C2=A0I=C2=A0am=C2=A0glad=C2=A0to=C2=A0contact=C2=A0you=C2=A0=
-through=C2=A0this=C2=A0medium=C2=A0I=E2=80=99m=C2=A0Sgt=C2=A0Vivian=C2=A0Ro=
-bert=C2=A0am=C2=A0from=C2=A0united=C2=A0state,=C2=A028=C2=A0years=C2=A0old=
-=C2=A0single=C2=A0I=C2=A0am=C2=A0the=C2=A0only=C2=A0surviving=C2=A0child=C2=
-=A0of=C2=A0my=C2=A0late=C2=A0parents,=C2=A0I=C2=A0am=C2=A0America=C2=A0fema=
-le=C2=A0soldier=C2=A0presently=C2=A0in=C2=A0Afghanistan=C2=A0for=C2=A0the=
-=C2=A0training,=C2=A0advising=C2=A0the=C2=A0Afghan=C2=A0forces=C2=A0and=C2=
-=A0also=C2=A0helping=C2=A0in=C2=A0stabilizing=C2=A0the=C2=A0country=C2=A0ag=
-ainst=C2=A0security=C2=A0challenges,=C2=A0am=C2=A0Actually=C2=A0seeking=C2=
-=A0your=C2=A0assistance=C2=A0to=C2=A0evacuate=C2=A0the=C2=A0sum=C2=A0of=C2=
-=A0$3.5=C2=A0million,=C2=A0This=C2=A0money=C2=A0I=C2=A0got=C2=A0it=C2=A0as=
-=C2=A0my=C2=A0reward=C2=A0in=C2=A0service=C2=A0by=C2=A0Afghanistan=C2=A0gov=
-ernment=C2=A0to=C2=A0support=C2=A0me=C2=A0for=C2=A0my=C2=A0Good=C2=A0job=C2=
-=A0in=C2=A0their=C2=A0land.=C2=A0Right=C2=A0now,=C2=A0I=C2=A0want=C2=A0you=
-=C2=A0to=C2=A0stand=C2=A0as=C2=A0my=C2=A0beneficiary=C2=A0and=C2=A0receive=
-=C2=A0the=C2=A0fund=C2=A0my=C2=A0certificate=C2=A0of=C2=A0deposit=C2=A0from=
-=C2=A0the=C2=A0Bank=C2=A0where=C2=A0this=C2=A0fund=C2=A0deposited=C2=A0and=
-=C2=A0my=C2=A0authorization=C2=A0letter=C2=A0is=C2=A0with=C2=A0me=C2=A0now.=
-My=C2=A0contact=C2=A0with=C2=A0you=C2=A0is=C2=A0not=C2=A0by=C2=A0my=C2=A0po=
-wer=C2=A0but=C2=A0it=C2=A0is=C2=A0divinely=C2=A0made=C2=A0for=C2=A0God's=C2=
-=A0purpose=C2=A0to=C2=A0be=C2=A0fulfilled=C2=A0in=C2=A0our=C2=A0lives.=C2=
-=A0I=C2=A0want=C2=A0you=C2=A0to=C2=A0be=C2=A0rest=C2=A0assured=C2=A0that=C2=
-=A0this=C2=A0transaction=C2=A0is=C2=A0legitimate=C2=A0and=C2=A0a=C2=A0100%=
-=C2=A0risk=C2=A0free=C2=A0involvement,=C2=A0all=C2=A0you=C2=A0have=C2=A0to=
-=C2=A0do=C2=A0is=C2=A0to=C2=A0keep=C2=A0it=C2=A0secret=C2=A0and=C2=A0confid=
-ential=C2=A0to=C2=A0yourself=C2=A0,=C2=A0this=C2=A0transaction=C2=A0will=C2=
-=A0not=C2=A0take=C2=A0more=C2=A0than=C2=A07=C2=A0working=C2=A0banking=C2=A0=
-days=C2=A0for=C2=A0the=C2=A0money=C2=A0to=C2=A0get=C2=A0into=C2=A0your=C2=
-=A0account=C2=A0based=C2=A0on=C2=A0your=C2=A0sincerity=C2=A0and=C2=A0cooper=
-ation.=C2=A0i=C2=A0want=C2=A0you=C2=A0to=C2=A0take=C2=A040%=C2=A0Percent=C2=
-=A0of=C2=A0the=C2=A0total=C2=A0money=C2=A0for=C2=A0your=C2=A0personal=C2=A0=
-use=C2=A0While=C2=A020%=C2=A0Percent=C2=A0of=C2=A0the=C2=A0money=C2=A0will=
-=C2=A0go=C2=A0to=C2=A0charity,=C2=A0people=C2=A0in=C2=A0the=C2=A0street=C2=
-=A0and=C2=A0helping=C2=A0the=C2=A0orphanage=C2=A0the=C2=A0remaining=C2=A040=
-%=C2=A0percent=C2=A0of=C2=A0the=C2=A0total=C2=A0money=C2=A0.you=C2=A0will=
-=C2=A0assist=C2=A0me=C2=A0to=C2=A0invest=C2=A0it=C2=A0in=C2=A0a=C2=A0good=
-=C2=A0profitable=C2=A0Venture=C2=A0or=C2=A0you=C2=A0keep=C2=A0it=C2=A0for=
-=C2=A0me=C2=A0until=C2=A0I=C2=A0arrive=C2=A0your=C2=A0country.=C2=A0If=C2=
-=A0you=E2=80=99re=C2=A0willing=C2=A0to=C2=A0assist=C2=A0me=C2=A0contact=C2=
-=A0me=C2=A0through=C2=A0my=C2=A0email=C2=A0address=C2=A0=E2=80=9Csgtvivarob=
-@gmail.com.
-
-Stg=C2=A0Vivian=C2=A0Robert
+On Mon, 24 Aug 2020 at 20:44, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 8/24/20 10:18 AM, Jens Axboe wrote:
+> > On 8/24/20 10:13 AM, Dmitry Shulyak wrote:
+> >> On Mon, 24 Aug 2020 at 19:10, Jens Axboe <axboe@kernel.dk> wrote:
+> >>>
+> >>> On 8/24/20 9:33 AM, Dmitry Shulyak wrote:
+> >>>> On Mon, 24 Aug 2020 at 17:45, Jens Axboe <axboe@kernel.dk> wrote:
+> >>>>>
+> >>>>> On 8/24/20 8:06 AM, Jens Axboe wrote:
+> >>>>>> On 8/24/20 5:09 AM, Dmitry Shulyak wrote:
+> >>>>>>> library that i am using https://github.com/dshulyak/uring
+> >>>>>>> It requires golang 1.14, if installed, benchmark can be run with:
+> >>>>>>> go test ./fs -run=xx -bench=BenchmarkReadAt/uring_8 -benchtime=1000000x
+> >>>>>>> go test ./fs -run=xx -bench=BenchmarkReadAt/uring_5 -benchtime=8000000x
+> >>>>>>>
+> >>>>>>> note that it will setup uring instance per cpu, with shared worker pool.
+> >>>>>>> it will take me too much time to implement repro in c, but in general
+> >>>>>>> i am simply submitting multiple concurrent
+> >>>>>>> read requests and watching read rate.
+> >>>>>>
+> >>>>>> I'm fine with trying your Go version, but I can into a bit of trouble:
+> >>>>>>
+> >>>>>> axboe@amd ~/g/go-uring (master)>
+> >>>>>> go test ./fs -run=xx -bench=BenchmarkReadAt/uring_8 -benchtime=1000000x
+> >>>>>> # github.com/dshulyak/uring/fixed
+> >>>>>> fixed/allocator.go:38:48: error: incompatible type for field 2 in struct construction (cannot use type uint64 as type syscall.Iovec_len_t)
+> >>>>>>    38 |  iovec := []syscall.Iovec{{Base: &mem[0], Len: uint64(size)}}
+> >>>>>>       |                                                ^
+> >>>>>> FAIL  github.com/dshulyak/uring/fs [build failed]
+> >>>>>> FAIL
+> >>>>>> axboe@amd ~/g/go-uring (master)> go version
+> >>>>>> go version go1.14.6 gccgo (Ubuntu 10.2.0-5ubuntu1~20.04) 10.2.0 linux/amd64
+> >>>>>
+> >>>>> Alright, got it working. What device are you running this on? And am I
+> >>>>> correct in assuming you get short reads, or rather 0 reads? What file
+> >>>>> system?
+> >>>>
+> >>>> Was going to look into this.
+> >>>> I am getting 0 reads. This is on some old kingston ssd, ext4.
+> >>>
+> >>> I can't seem to reproduce this. I do see some cqe->res == 0 completes,
+> >>> but those appear to be NOPs. And they trigger at the start and end. I'll
+> >>> keep poking.
+> >>
+> >> Nops are used for draining and closing rings at the end of benchmarks.
+> >> It also appears in the beginning because of the way golang runs
+> >> benchmarks...
+> >
+> > OK, just checking if it was expected.
+> >
+> > But I can reproduce it now, turns out I was running XFS and that doesn't
+> > trigger it. With ext4, I do see zero sized read completions. I'll keep
+> > poking.
+>
+> Can you try with this? Looks like some cases will consume bytes from the
+> iterator even if they ultimately return an error. If we've consumed bytes
+> but need to trigger retry, ensure we revert the consumed bytes.
+>
+>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 91e2cc8414f9..609b4996a4e9 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -3152,6 +3152,8 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+>         } else if (ret == -EAGAIN) {
+>                 if (!force_nonblock)
+>                         goto done;
+> +               /* some cases will consume bytes even on error returns */
+> +               iov_iter_revert(iter, iov_count - iov_iter_count(iter));
+>                 ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
+>                 if (ret)
+>                         goto out_free;
+> @@ -3293,6 +3295,8 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+>         if (!force_nonblock || ret2 != -EAGAIN) {
+>                 kiocb_done(kiocb, ret2, cs);
+>         } else {
+> +               /* some cases will consume bytes even on error returns */
+> +               iov_iter_revert(iter, iov_count - iov_iter_count(iter));
+>  copy_iov:
+>                 ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
+>                 if (!ret)
+>
+> --
+> Jens Axboe
+>

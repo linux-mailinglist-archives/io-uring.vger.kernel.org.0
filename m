@@ -2,86 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41C95250A37
-	for <lists+io-uring@lfdr.de>; Mon, 24 Aug 2020 22:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 239DB250CBD
+	for <lists+io-uring@lfdr.de>; Tue, 25 Aug 2020 02:08:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbgHXUoX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Aug 2020 16:44:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36012 "EHLO
+        id S1726041AbgHYAIp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Aug 2020 20:08:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726051AbgHXUoW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Aug 2020 16:44:22 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A14EC061574
-        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 13:44:22 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id ds1so60321pjb.1
-        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 13:44:22 -0700 (PDT)
+        with ESMTP id S1726090AbgHYAIo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Aug 2020 20:08:44 -0400
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1817EC061574
+        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 17:08:44 -0700 (PDT)
+Received: by mail-vs1-xe2c.google.com with SMTP id a13so5420530vso.12
+        for <io-uring@vger.kernel.org>; Mon, 24 Aug 2020 17:08:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=rMo5GhUGgbB8ntX0Ys4+egTaRDOcEjLVx0XDFt+GTB8=;
-        b=AydXAP8UqATK6wFfR6pvtPu+6AUdJZExSBOvUwcsH6oyHugrANwp2NVplJWPipCQad
-         cpuca4rZnppTAePKZn54GndqjQlVdSE6kJDBkFMpa+wEXiG/7QGq9AZfANEodRDmSmjF
-         y9D3+DOYuIue/VpDR/9ed8XOWzb+jjHTlHiQxw8Xbl0SD57BCFGkk/FZkVu/6rIr47YR
-         wCcFqBkZR+L2UndJroknTC54r6SZC1PxvAVf0J65wvws8LrK9ZhSAdSREurxK0FxHNta
-         90snx9w+JtE/7P5b5fJX6ZV+xRW9rvGSkW5UtTgthl9fmmhl3cjKvvtd2FF8NlUcYf33
-         xQBg==
+        d=twosixlabs-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=cOZLPbGdSS30S8EDu1lXsLlW25UDxWTiobWQ6RmxJwk=;
+        b=HVGMA6GLPK/I4ofPVxL59hPANBrFoWGlzuNQ+7l9fx2JSuS4slkwa4fCYlKAVZ9Xn8
+         praCe2bWS7nFPZwFsJibzXKuuKfGfFJB2Ppa2voVjGOooSkinZPqIMt9bn75pBUSPaDk
+         OBV83R0YjusXqHVogmJb4LqqDstOuY/h2Zo3szidRj5diSkpCTaWzszLv796pzorX8xJ
+         6UM/saD4eyBab8trX6pNyxK33jky71pOR5IA7g5+UP+dNr+a8rHHD+g9dl8kiq9sJ8UJ
+         fM1i6DkZU5gr5AOZlhD5ejTxaNYP0gcqFRBA+3g6gTHwFhOvxgDMVH6ZdeXNvG//ZCMJ
+         niXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rMo5GhUGgbB8ntX0Ys4+egTaRDOcEjLVx0XDFt+GTB8=;
-        b=GPLM/dFk+sy+6vkcgiPb08DsSlJ4ep+XPAi/4xBs6Zdh18IxapYeWUezUOZ3Ea3P0S
-         lqWiM7qB5R+ct9IVolxz+aDq72merbl2WU5XtWO13/53GPj52ftcIk/PqNI0OgiyVg7g
-         jGj6d5rkL4iPD/riYGVIVAmiyLa89oKGM9YlMA/UEQ5x0pVqUW9htCt2+vAVyCiOQr3H
-         TNVLAGbpuDZMAy8YwZ8/ZFEREw0zkAM3uxO3puZF8qYOU+rmVYdg7DhrmF7odMpjsx1C
-         i0j0tZeTBRki9XSl1bG4hg4dJIY1bcAQzI9+rhsLdeXiFmroqaoahB4liApZujuEEjuU
-         80CQ==
-X-Gm-Message-State: AOAM533bLGHCxQrVSsLggsdsv98CWj0mCeLNBvVTk54JBUat7IL4k8Hs
-        rTxImJ4jlgmkyZt60ijQDVMqx0Ycf+Hbx/ZE
-X-Google-Smtp-Source: ABdhPJwMF3VUisg0r8bT1nMHATSAyFFmmjg3xmv/L2F4pDMBowOp6lZw3aTnOTCUMzvWovgNQRv0iQ==
-X-Received: by 2002:a17:90a:13c4:: with SMTP id s4mr816717pjf.141.1598301860115;
-        Mon, 24 Aug 2020 13:44:20 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c085:21e8::193f? ([2620:10d:c090:400::5:b493])
-        by smtp.gmail.com with ESMTPSA id 29sm404365pje.10.2020.08.24.13.44.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2020 13:44:19 -0700 (PDT)
-Subject: Re: [PATCH 5.8] io_uring: fix missing ->mm on exit
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <25db35fc25aa7111f67a6747b1281c5151432f8f.1598300802.git.asml.silence@gmail.com>
- <392dc86b-52ac-1ca4-d942-51261d1f7a9f@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <56724eaf-d143-82c8-31e1-4b5d4d29fe9b@kernel.dk>
-Date:   Mon, 24 Aug 2020 14:44:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=cOZLPbGdSS30S8EDu1lXsLlW25UDxWTiobWQ6RmxJwk=;
+        b=KNFOuY6GIdE5a7JSf02f8aSyCUbzKF8gw8gLGF3kz8/t5EV5hxNOkKJSQlANXa+9Cb
+         i2nIfKRqtIWkgKrT1t+TjJibuilaVJ+ONTbW4llE+1c2GMe69j3e2dVrQdbUZuraQx0h
+         ZIh8+PjPNhXNSUHTLR/mV6hNrUb0/oPYmnvKkrDkLigWoQQlRdOGH5TZlurfZWdHkYuD
+         Lx0zRzDtrunFQY0QgdjA2K5aCVzJG3/UYC3ATmVue5x/Hq9E4Q2je+ppWbeTg8Q3fCrE
+         qwEjwWJviqcHoHfmKem4OWoZlnkPLn88BA8CSSIE72+670mnR2+Qo/rUBe3ND42OWz/r
+         KDFg==
+X-Gm-Message-State: AOAM533a5+juvknPOlrVIR5CpFewIH78u72Ikd7/LAB/drqYEHf8uxkZ
+        e3aSpVwa6Twr4GtnBi4WLlPLRTMt3+/a1+zxQlk/h5byIhviJBsj
+X-Google-Smtp-Source: ABdhPJx0+iLjvmjMIYIdcshVTL6niOSM5ILmT0HCBlm9TyuiqhkKJlIxvEfL2J+3wCJO3hYL5ub1VmHYppWvvVDrGXs=
+X-Received: by 2002:a67:f44d:: with SMTP id r13mr4581257vsn.184.1598314122754;
+ Mon, 24 Aug 2020 17:08:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <392dc86b-52ac-1ca4-d942-51261d1f7a9f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Michael Spiegel <michael.spiegel@twosixlabs.com>
+Date:   Mon, 24 Aug 2020 20:08:32 -0400
+Message-ID: <CAKm_-fgeS=-pQJs3ZO0Kju-r2piO39Xnt-CtWoicfOe0a4SF8A@mail.gmail.com>
+Subject: unix pipe example?
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/24/20 2:40 PM, Pavel Begunkov wrote:
-> On 24/08/2020 23:35, Pavel Begunkov wrote:
->> do_exit() first drops current->mm and then runs task_work, from where
->> io_sq_thread_acquire_mm() would try to set mm for a user dying process.
-> 
-> This is a backport of [1] + [2] for 5.8. Let's wait to see if
-> Roman Gershman can test it.
-> 
-> [1] 8eb06d7e8dd85 ("io_uring: fix missing ->mm on exit")
-> [2] cbcf72148da4a ("io_uring: return locked and pinned page accounting")
+Hello,
 
-Yes, would be great if we could test. And provide an email, too :-)
+Is there an example of using io-uring or liburing to implement a unix
+pipe, if such an example even makes sense? One consumer process and
+one producer process, not forked from a common parent. I tried
+searching for an implementation online but couldn't find it. I started
+writing an implementation myself using liburing and using a unix
+domain socket to share the ring_fd. But it seemed like the
+io_uring_params also needed to be shared across the processes? Looking
+through the mailing list archives there is some mention of wiring up
+io_uring support for pipe2 in the future, which is equivalent to what
+I am looking for.
 
-Once that's settled, I'll shove this to 5.8-stable.
-
--- 
-Jens Axboe
-
+--Michael

@@ -2,64 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1652D251998
-	for <lists+io-uring@lfdr.de>; Tue, 25 Aug 2020 15:28:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63C4A2519E8
+	for <lists+io-uring@lfdr.de>; Tue, 25 Aug 2020 15:40:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbgHYN2h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 Aug 2020 09:28:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51992 "EHLO
+        id S1726218AbgHYNkg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 Aug 2020 09:40:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726691AbgHYN2d (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Aug 2020 09:28:33 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F88C061574
-        for <io-uring@vger.kernel.org>; Tue, 25 Aug 2020 06:28:33 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id w20so9104275iom.1
-        for <io-uring@vger.kernel.org>; Tue, 25 Aug 2020 06:28:33 -0700 (PDT)
+        with ESMTP id S1726551AbgHYNjw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Aug 2020 09:39:52 -0400
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A65C0617A9
+        for <io-uring@vger.kernel.org>; Tue, 25 Aug 2020 06:39:47 -0700 (PDT)
+Received: by mail-io1-xd2e.google.com with SMTP id s2so12497463ioo.2
+        for <io-uring@vger.kernel.org>; Tue, 25 Aug 2020 06:39:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4LfcM0Vj7+BoAatRL8zG+OxKSsjIhu6dkepwvpEanm4=;
-        b=USjeTBPK5KJEsGWJam7S/O54tpyJ4nAyXNLp7OYnUsyWnnuqYXsQHO4/JS1pyS8+pm
-         gHER5/1xP44L3u1l2RupNb16V244G4HSIoePOglpO08IvOh9xgehrZ+uAurimKVyX91E
-         U4zpTg1C1AGxfr0VqEe6AxHmeV4jG+A48/kGEIas4ucKR0BHoAvLB9Toj+iH2tPnmDYW
-         Z+WCKmHdEGt/4mbwMRrJdvFxCcmKPp9mPoUM70qH4uecyrmN7IY7e3VdGKbx3qjnNXoa
-         9qNQYIqDoVErNWVS8WLFKGrP5b5569JEseK4rRQhgCUyFm/QR46ng+AEqUoR6D5sdMWl
-         lcnA==
+        bh=sCIyfbyLPajZzm/nkZQjt2emAfD5sYHSpzDHfjMkJC8=;
+        b=w1Rl3nI/cXGdnXWu3alxiw0NJ1wFgTUZalV5QXU64Q2KIRlV/w9lChPZ7ThauC9BkB
+         jCOPhLwKoL5QlQLDmYWmV38PId9QAqwm5PWBOrpcHpVcdf5K25j/T6hS0PMgIB0DAFMv
+         Eex7A1m8o9vV7SiXYeQJrt6XziFJ1y06VS5UF5iKiwkRjPKGsqgupRiAo67gudLtMMy/
+         a8buIcVe4iSgII7+ZHU5saKlNQ051YlXppdIFWdYgfanGbwSxPahxvCNeVxhjW2MMc73
+         O62a4QGzievyivHgpZ9GzJ5Qtw+LOqGYaiglpIRPVuyg3XV9ynAtEF0nk/XijvUn5xKh
+         E+0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=4LfcM0Vj7+BoAatRL8zG+OxKSsjIhu6dkepwvpEanm4=;
-        b=tUmO2+PRfk9cdLiw2DNr8qjNUcJSD5ld5pEKCUvCgmU2jRICC4XtYC4/ydmVYvB8Dd
-         5gTcBU8tDe0WdKQ0BWjNHDFjqM5kU5SJEyadroAhHgrnTYWSUlFUR3FUhjUAnvMMaYjp
-         fEhQbF9RnWcMwM0f9IdV3LRM0t19nLevMAUXKkkVEldX0mzREbw1J5nTj6XHNvTs8omZ
-         IBZR0p2YtAF62nnUdgqI+kDBVZhpX2VAsvcbS6JF9YDxX68Sy6/ZPQfZ5btqhAwcUcUa
-         W+ME/gcWAlu6rMlA2R1FazGe9KPPh817aAoltpnC9a8/GN+Bodu81AGGrHKzCY5xKdhu
-         dkag==
-X-Gm-Message-State: AOAM533d1LEqx3oJkMBLvqb3xMi6ByjpIPU9qLQMGP/gZYG2rXgaoYpI
-        Dj/sy6Obtm/7bTUQ6QeGfPMfDZzWyx/VNhox
-X-Google-Smtp-Source: ABdhPJwVe3elKyIoBK5CUNWZKYI9QZDShEa/Og8cQNHbSo3udlLhlC9ThP/HTBcG915yWj8YwhgYeQ==
-X-Received: by 2002:a5d:871a:: with SMTP id u26mr8587762iom.92.1598362110319;
-        Tue, 25 Aug 2020 06:28:30 -0700 (PDT)
+        bh=sCIyfbyLPajZzm/nkZQjt2emAfD5sYHSpzDHfjMkJC8=;
+        b=OUExv/cK19fK8fUjJMrCxoSIvzU6k6hZoc6CNg8dokOy9V3B+h6tMJImxumiNLatiQ
+         pUNkRk/rc7yU43mejXwyFJYXG31McXuNrYP6o/Iy3f94KJrjlpm6TvBs8y/xd7GEJZe8
+         VPojWozS6gO6qtwHjd+0tx0r0vxjZNmk5AL+MEhZwEzJfGTyIB7O+3k2nx2PoGFNYFvT
+         2A+et8ggvyOhvwaft2tfuAQ9EEDAvXIyub7ufQP0ofHosy9gQW/toa1M9yF7Ea7MBOoa
+         abadvbre5MOv9S52CKAFyPGqQXmjlaKOrVQDmgqTYCwzJFmzQ1ppMHahridKyfLyU5QA
+         ZBOw==
+X-Gm-Message-State: AOAM5303I6xI1CJw/+3oXwsiCJdnxZPWQ9kGFu8EKMqmaX/XyHSASglm
+        LCwTCl7G+Ibm2Y0mmWhdjg6d5oOP1hIf39ee
+X-Google-Smtp-Source: ABdhPJy/ZFiOKpbFt42693LluWDkD1pLd9f8iHGWXTyQphuIgWXqFQLgKT9vMF5qqmAp7H/jflGCpA==
+X-Received: by 2002:a02:c919:: with SMTP id t25mr10791172jao.38.1598362783717;
+        Tue, 25 Aug 2020 06:39:43 -0700 (PDT)
 Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id s21sm8673928ios.48.2020.08.25.06.28.29
+        by smtp.gmail.com with ESMTPSA id s13sm9132811iln.12.2020.08.25.06.39.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2020 06:28:29 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: revert consumed iov_iter bytes on error
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <a2e5bc52-d31a-3447-c4be-46d6bb1fd4b8@kernel.dk>
- <20200825123332.lb3o5ah53jar7mbw@steredhat>
+        Tue, 25 Aug 2020 06:39:41 -0700 (PDT)
+Subject: Re: Large number of empty reads on 5.9-rc2 under moderate load
+To:     Dmitry Shulyak <yashulyak@gmail.com>
+Cc:     io-uring@vger.kernel.org
+References: <CAF-ewDqBd4gSLGOdHE8g57O_weMTH0B-WbfobJud3h6poH=fBg@mail.gmail.com>
+ <7a148c5e-4403-9c8e-cc08-98cd552a7322@kernel.dk>
+ <CAF-ewDpvLwkiZ3sJMT64e=efCRFYVkt2Z71==1FztLg=vZN8fg@mail.gmail.com>
+ <06d07d6c-3e91-b2a7-7e03-f6390e787085@kernel.dk>
+ <da7b74d2-5825-051d-14a9-a55002616071@kernel.dk>
+ <CAF-ewDrMO-qGOfXdZUyaGBzH+yY3EBPHCO_bMvj6yXhZeCFaEw@mail.gmail.com>
+ <282f1b86-0cf3-dd8d-911f-813d3db44352@kernel.dk>
+ <CAF-ewDrRqiYqXHhbHtWjsc0VuJQLUynkiO13zH_g2RZ1DbVMMg@mail.gmail.com>
+ <ddc3c126-d1bd-a345-552b-35b35c507575@kernel.dk>
+ <42573664-450d-bfe4-aa96-ca1ae0704adb@kernel.dk>
+ <CAF-ewDqffa=e-EBOdreX9S7CXagM-ohQSsyyDMooDR83W9kjGg@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <70fdcdf4-3e57-0913-04d5-beab4fec6f91@kernel.dk>
-Date:   Tue, 25 Aug 2020 07:28:28 -0600
+Message-ID: <8076e289-2e0b-5676-aaac-eff94245a298@kernel.dk>
+Date:   Tue, 25 Aug 2020 07:39:40 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200825123332.lb3o5ah53jar7mbw@steredhat>
+In-Reply-To: <CAF-ewDqffa=e-EBOdreX9S7CXagM-ohQSsyyDMooDR83W9kjGg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,64 +77,14 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/25/20 6:33 AM, Stefano Garzarella wrote:
-> On Mon, Aug 24, 2020 at 11:48:44AM -0600, Jens Axboe wrote:
->> Some consumers of the iov_iter will return an error, but still have
->> bytes consumed in the iterator. This is an issue for -EAGAIN, since we
->> rely on a sane iov_iter state across retries.
->>
->> Fix this by ensuring that we revert consumed bytes, if any, if the file
->> operations have consumed any bytes from iterator. This is similar to what
->> generic_file_read_iter() does, and is always safe as we have the previous
->> bytes count handy already.
->>
->> Fixes: ff6165b2d7f6 ("io_uring: retain iov_iter state over io_read/io_write calls")
->> Reported-by: Dmitry Shulyak <yashulyak@gmail.com>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>
->> ---
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index c9d526ff55e0..e030b33fa53e 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -3153,6 +3153,8 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
->>  	} else if (ret == -EAGAIN) {
->>  		if (!force_nonblock)
->>  			goto done;
->> +		/* some cases will consume bytes even on error returns */
->> +		iov_iter_revert(iter, iov_count - iov_iter_count(iter));
->>  		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
->>  		if (ret)
->>  			goto out_free;
->> @@ -3294,6 +3296,8 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
->>  	if (!force_nonblock || ret2 != -EAGAIN) {
->>  		kiocb_done(kiocb, ret2, cs);
->>  	} else {
->> +		/* some cases will consume bytes even on error returns */
->> +		iov_iter_revert(iter, iov_count - iov_iter_count(iter));
->>  copy_iov:
->>  		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
->>  		if (!ret)
->>
-> 
-> What about moving iov_iter_revert() in io_setup_async_rw(), passing
-> iov_initial_count as parameter?
-> 
-> Maybe it's out of purpose since we use it even when we're not trying
-> again.
+On 8/25/20 2:52 AM, Dmitry Shulyak wrote:
+> this patch fixes the issue with 0 reads. there seems to be a
+> regression that is not specific to uring,
+> regular syscall reads slowed down noticeably.
 
-The read side looks a little nicer, since we keep it close to where the
--EAGAIN happened. And as you mention, we don't need it for all the async
-setup cases, only the ones where we tried to do IO first.
-io_setup_async_rw is already pretty busy with arguments, so I think
-that'd just make it harder to follow.
-
-> Anyway the patch LGTM:
-> 
-> Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-
-Thanks, added.
+Do you have a test case? Related to specific system calls, or just
+overall? My initial suspicion would be Yet Another one of the
+security fixes...
 
 -- 
 Jens Axboe

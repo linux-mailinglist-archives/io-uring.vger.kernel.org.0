@@ -2,49 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ED6A25386C
-	for <lists+io-uring@lfdr.de>; Wed, 26 Aug 2020 21:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FDA7253870
+	for <lists+io-uring@lfdr.de>; Wed, 26 Aug 2020 21:43:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbgHZTkx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Aug 2020 15:40:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51238 "EHLO
+        id S1726802AbgHZTnL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Aug 2020 15:43:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727104AbgHZTkv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Aug 2020 15:40:51 -0400
+        with ESMTP id S1726723AbgHZTnK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Aug 2020 15:43:10 -0400
 Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2911EC061757
-        for <io-uring@vger.kernel.org>; Wed, 26 Aug 2020 12:40:51 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id 67so1599087pgd.12
-        for <io-uring@vger.kernel.org>; Wed, 26 Aug 2020 12:40:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC72CC061574
+        for <io-uring@vger.kernel.org>; Wed, 26 Aug 2020 12:43:09 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id l191so1618674pgd.5
+        for <io-uring@vger.kernel.org>; Wed, 26 Aug 2020 12:43:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=dSakW77xCiSA5fE92SUgWSBVc4QxiTq31NeLlsC4iFg=;
-        b=VWhtWvqrmDlLgP5IoVdxqiPa54SABR3BHMz8veK4DE7RS5r9FdBeTxrta0h0MeqBNj
-         MtlYu0R3sWrjlNeBq2vpa4ed25Es3FS2palRH/FeV8ZVJ7p0W3xyPaDQTfr24TqanHmn
-         LFLB1QRKPHSwsqeXR/wncpgGF5/+A4Dm3qZ7A=
+        bh=sSiqGYhL6mx7GdlZDbkT4CADd/LuyDj2qvehSXEkfFs=;
+        b=c0wPYmScaFMOZj7JWatRYkrF0jD6jFzMN0Md0N1TNOWQ9Ph4qv2dl5i7bl2XuK/2g8
+         QKQ+2ztblAFVz0LXeFtgAblEZtefFyuhCfkrAiGsrXjmDzeryGjhlqYD71z0uo1vnxHD
+         Gt8H/Qw2aAnM1D6yPctfoHqtXYkRpOmyeWoJQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=dSakW77xCiSA5fE92SUgWSBVc4QxiTq31NeLlsC4iFg=;
-        b=NmNZK9Z0Bu2aMmx+wy4Lh1w1Rk0M7Ankq1HFVHxCS9x+8+oVaT2PkYz4ER8W8i6Inq
-         eoys1RBe8ihA2FeaMMtbEDhgrrb3LrttEx18sQLwWNxGuyVEBkPGzq19ntyKM9gIYEq+
-         smH/PJUaLJHClpgR44uNQhNnQIwX2rNXVwuaGXXzasdJULgG+WDhQj9V3jRGgR88XTpR
-         pLCrVUDQzvpM0VS5CZKj9xudFBnIiCj2/x5/KgL4SEQfZaA2GWC7r9/hbDDtrrBSXOR+
-         /jBQEu4kdnIa4mQycZsTFbVrmHE1PznzzhbuzTvXiRuAaQCRGJ7wtaB6M/lU1ZBgnos9
-         RUXA==
-X-Gm-Message-State: AOAM532+JaGQb5C7o1zbnb2//Fq00BmnVv7JQLio4K3TMvolyUk/avts
-        9QsugaKMbvbr97LP3Gx7PAxIRw==
-X-Google-Smtp-Source: ABdhPJyXEKxXHXf5cRg3/3OzMrYtkIyhnNNSdxI6Puywl/QUiLpeWpXICM+kla3UsLYeJUISDEHNYg==
-X-Received: by 2002:a63:cd56:: with SMTP id a22mr11535786pgj.259.1598470850778;
-        Wed, 26 Aug 2020 12:40:50 -0700 (PDT)
+        bh=sSiqGYhL6mx7GdlZDbkT4CADd/LuyDj2qvehSXEkfFs=;
+        b=uTPphUvNG2nx89f9KXn2LbFbYHtovaGrbdjVF3qNm1xgbb9p8mAinjyZg2ARMSBkwV
+         ktZl7W5ulmjKURivqckRvaCseNZ2Sp4b9tWmJ54J5jDot9cPcq/jCHtgwBQd7lgltUfm
+         X1wqzDJ5M6dYVo1VWZnNGgm+THjX5yrEpdK7BbQIe62TqXOTpwSFdubTiSJBJeNLMTNN
+         EDXauPTxnFvLbhfRtsl2ntdDXT1xDFLiDD+uyZBwGeLQjCXmoOBre9tYxacUIZyofoR1
+         Juis2Q9T1yDhSvRSRPqK0lig+L8VtACO/B5luSuHMW3GiisHfN2IwRX1KTm7Qoc2bdmE
+         Ng/A==
+X-Gm-Message-State: AOAM533MtQiejGb6OBu51/tpEyYtxMUwl1lQwIh4R3nGYUwcUtleal5D
+        VplFRePe3ghy/XsA1NAWjl0Gow==
+X-Google-Smtp-Source: ABdhPJyQnpR7N2xazFbp7J7MUFKkTkxsUr7ZQgxByGJ39DlvvIGGA/PzpplC4Eu0qakGcWY/M93Ulg==
+X-Received: by 2002:a63:4450:: with SMTP id t16mr11747991pgk.3.1598470989316;
+        Wed, 26 Aug 2020 12:43:09 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a13sm3048078pgn.17.2020.08.26.12.40.49
+        by smtp.gmail.com with ESMTPSA id bo13sm114165pjb.23.2020.08.26.12.43.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Aug 2020 12:40:49 -0700 (PDT)
-Date:   Wed, 26 Aug 2020 12:40:48 -0700
+        Wed, 26 Aug 2020 12:43:08 -0700 (PDT)
+Date:   Wed, 26 Aug 2020 12:43:07 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Stefano Garzarella <sgarzare@redhat.com>
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -58,7 +58,7 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         io-uring@vger.kernel.org
 Subject: Re: [PATCH v4 1/3] io_uring: use an enumeration for
  io_uring_register(2) opcodes
-Message-ID: <202008261240.CC4BAB0CBD@keescook>
+Message-ID: <202008261241.074D8765@keescook>
 References: <20200813153254.93731-1-sgarzare@redhat.com>
  <20200813153254.93731-2-sgarzare@redhat.com>
 MIME-Version: 1.0
@@ -77,8 +77,44 @@ On Thu, Aug 13, 2020 at 05:32:52PM +0200, Stefano Garzarella wrote:
 > Behaviour and opcodes names don't change.
 > 
 > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> ---
+>  include/uapi/linux/io_uring.h | 27 ++++++++++++++++-----------
+>  1 file changed, 16 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index d65fde732518..cdc98afbacc3 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -255,17 +255,22 @@ struct io_uring_params {
+>  /*
+>   * io_uring_register(2) opcodes and arguments
+>   */
+> -#define IORING_REGISTER_BUFFERS		0
+> -#define IORING_UNREGISTER_BUFFERS	1
+> -#define IORING_REGISTER_FILES		2
+> -#define IORING_UNREGISTER_FILES		3
+> -#define IORING_REGISTER_EVENTFD		4
+> -#define IORING_UNREGISTER_EVENTFD	5
+> -#define IORING_REGISTER_FILES_UPDATE	6
+> -#define IORING_REGISTER_EVENTFD_ASYNC	7
+> -#define IORING_REGISTER_PROBE		8
+> -#define IORING_REGISTER_PERSONALITY	9
+> -#define IORING_UNREGISTER_PERSONALITY	10
+> +enum {
+> +	IORING_REGISTER_BUFFERS,
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Actually, one *tiny* thought. Since this is UAPI, do we want to be extra
+careful here and explicitly assign values? We can't change the meaning
+of a number (UAPI) but we can add new ones, etc? This would help if an
+OP were removed (to stop from triggering a cascade of changed values)...
+
+for example:
+
+enum {
+	IORING_REGISTER_BUFFERS = 0,
+	IORING_UNREGISTER_BUFFERS = 1,
+	...
+
 
 -- 
 Kees Cook

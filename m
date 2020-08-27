@@ -2,54 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E3E9254773
-	for <lists+io-uring@lfdr.de>; Thu, 27 Aug 2020 16:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 516D225472E
+	for <lists+io-uring@lfdr.de>; Thu, 27 Aug 2020 16:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbgH0OuK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Aug 2020 10:50:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52862 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727950AbgH0N5S (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Aug 2020 09:57:18 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC7C0C061264
-        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 06:49:49 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id c6so4871121ilo.13
-        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 06:49:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ummG6Am4WVVHwG6OsEcF+5DXkgqqBrieiDmLqcZ52gg=;
-        b=i2xtwAqsurDUjdtcPOaRrUkN3kpRZdtKTDcjz9HwCGEOxQ6uuUwwioX2ctbvc+wVAg
-         +yIMBIVx4k5ydmaIA9+tRqrgESalSpR4HUJeavh/6+Z6tCm5LqgyImSd2vkjqiCjv0i/
-         +6uLeOZI/DQgZjzXsYQeAHPmy35xX0EdHohzYOUyUox6E65KaArNi4HMiwvJ4k44Z61m
-         1jj6+YKH+IbuKTnNTTYDGnWG5gtcgWxE/NmKF5V2XVaOu+5mig9Gz8SswY2+rgZCbn2D
-         J4sE12JGv+dI7ZhKQKveG/+f0eQ5+zgP+N7m8entyPNUh5ztEe9hGXqr6UnmXdFWHAaO
-         8A3A==
+        id S1728046AbgH0OnQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Aug 2020 10:43:16 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:46057 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728010AbgH0Olk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Aug 2020 10:41:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598539297;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kSkJbE4XJrwDOFMLE7e16e7obrhoIIgU7bHmd2/ZWC4=;
+        b=HDO4OhGKNgBp6QYNS+SMvx8dHCbko6RogmMZ74Dh+Hq4tb0wkUURO32DpxPnFUVQAmErFO
+        a8f2AezJ1fzN3G2e2Ph+Mak+eWOsR666JDxlq01XFeZ1SV/j8cmiSes3isrRCUT2STRJcG
+        jM9IF3JyYv48+A3CGkxEPmlrP5tYuWE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-377-Wj6Ra9VENC-_cRCNHY4bGQ-1; Thu, 27 Aug 2020 10:41:35 -0400
+X-MC-Unique: Wj6Ra9VENC-_cRCNHY4bGQ-1
+Received: by mail-wm1-f70.google.com with SMTP id f125so2218610wma.3
+        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 07:41:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ummG6Am4WVVHwG6OsEcF+5DXkgqqBrieiDmLqcZ52gg=;
-        b=eCoBqp8EBbPOEgcGfmmKoq1DKB/XMJ39vf4hrpmB7xX04SOaRSDfM7h5unx0Cu0RrP
-         ivDNujoWqLOFadjFNtsEV/HiVDKoP7Q0ZLbFUx3171+iXdg6+i8m8z2ogn0eZCPn8J/G
-         XkwTPbEsDN2qCvyoAbnjlRPB0BAo7bG44+KUEsg5Kg+LOoCrrqZOzMR/3F/B7cT5jIuS
-         fqpRMVJdjYuJzK/7xywsIyhOmmSPipMoqsPZ8A3UQprb0X09lTp2X+T13cITN9ctNaAT
-         BpGHpFc/Ft6YaWn1kZSaeT5fT9H2GQbk2RvUvViqUBpGlSmovO02301vwGIF+hOVkcuf
-         pZ0w==
-X-Gm-Message-State: AOAM533V6j3/YimFAQC/e4F3zWIgUEwk2tsqyr/3EJo0mmQ7EM5WIENP
-        Mpv3V4SvNXnH8+vFQhDkoUyxUpiJg55R3BhV
-X-Google-Smtp-Source: ABdhPJxg8EFdtE5lch9P7WZZq4szMfYAPC4FnMVG1t1FuT14x/ja8mX6J3/sRpVLkRSFUHuqrwmpSg==
-X-Received: by 2002:a92:1b84:: with SMTP id f4mr17224386ill.180.1598536187325;
-        Thu, 27 Aug 2020 06:49:47 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k2sm1230975ioj.2.2020.08.27.06.49.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 06:49:46 -0700 (PDT)
-Subject: Re: [PATCH v5 2/3] io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
-To:     Stefano Garzarella <sgarzare@redhat.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kSkJbE4XJrwDOFMLE7e16e7obrhoIIgU7bHmd2/ZWC4=;
+        b=epL1Ksyr4i1IPy086mpvCU86hAe+kpgZKiaaZ6F97knkwBZTrM1VV1Jm6Xb+Xd4UK/
+         EzzNBkRSPLbjNteV0T6QCmjAUEmkXTMJ60TbYpO4xILQdLkPaLrW8Kj3w1F9rW8mxIWW
+         TEa3lNjZGW/cztft5qgZ3rCX7uFOQ27F/QVOsRF3rXwU4/Z9ZnFS7FSFY99axaPK74Mz
+         IqaH2ZgNKv3BZgkphLIRrBwOnvDJNfCUt8Xg16rrbbGRslNt3D5OobKfhv3pC8eNv9Sf
+         aFhfT+FRNOoXaPe3x9HbPpYhQFlr4gp3NignAYgyYRx0Ewnzn42w8F4Mf29jRVQDwjYv
+         9PJA==
+X-Gm-Message-State: AOAM5331szF8aLEA82kzkDyLAI0Y1/F8LCE+kcHmKNuJi3NvseDwYsy9
+        dltSSAGklulyTgCSq4rWAQh3+XW0vY5g3A439pQ2V8grQ4h+82kOYIvCkOAqC8KKYKxZdafXEST
+        qGo5aVCpjrAd1/USabQY=
+X-Received: by 2002:a05:600c:2292:: with SMTP id 18mr11627458wmf.136.1598539294168;
+        Thu, 27 Aug 2020 07:41:34 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwLjn6ioesLZuvJno4GpX4fuvfwIAu0+UbwSF5co10COtOk6HNz4fDGRY0086+HvxSJxGfKEA==
+X-Received: by 2002:a05:600c:2292:: with SMTP id 18mr11627429wmf.136.1598539293910;
+        Thu, 27 Aug 2020 07:41:33 -0700 (PDT)
+Received: from steredhat.lan ([5.170.39.106])
+        by smtp.gmail.com with ESMTPSA id a3sm5579959wme.34.2020.08.27.07.41.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Aug 2020 07:41:33 -0700 (PDT)
+Date:   Thu, 27 Aug 2020 16:41:29 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Aleksa Sarai <asarai@suse.de>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
@@ -60,119 +62,75 @@ Cc:     Aleksa Sarai <asarai@suse.de>,
         linux-kernel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
         Kees Cook <keescook@chromium.org>,
         Jeff Moyer <jmoyer@redhat.com>
+Subject: Re: [PATCH v5 0/3] io_uring: add restrictions to support untrusted
+ applications and guests
+Message-ID: <20200827144129.5yvu2icj7a5jfp3p@steredhat.lan>
 References: <20200827134044.82821-1-sgarzare@redhat.com>
- <20200827134044.82821-3-sgarzare@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <206a32b6-ba20-fc91-1906-e6bf377798ae@kernel.dk>
-Date:   Thu, 27 Aug 2020 07:49:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <2ded8df7-6dcb-ee8a-c1fd-e0c420b7b95d@kernel.dk>
+ <20200827141002.an34n2nx6m4dfhce@steredhat.lan>
+ <f7c0ff79-87c0-6c7e-b048-b82a45d0f44a@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20200827134044.82821-3-sgarzare@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f7c0ff79-87c0-6c7e-b048-b82a45d0f44a@kernel.dk>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/27/20 7:40 AM, Stefano Garzarella wrote:
-> @@ -6414,6 +6425,19 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
->  	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS))
->  		return -EINVAL;
->  
-> +	if (unlikely(ctx->restricted)) {
-> +		if (!test_bit(req->opcode, ctx->restrictions.sqe_op))
-> +			return -EACCES;
-> +
-> +		if ((sqe_flags & ctx->restrictions.sqe_flags_required) !=
-> +		    ctx->restrictions.sqe_flags_required)
-> +			return -EACCES;
-> +
-> +		if (sqe_flags & ~(ctx->restrictions.sqe_flags_allowed |
-> +				  ctx->restrictions.sqe_flags_required))
-> +			return -EACCES;
-> +	}
-> +
+On Thu, Aug 27, 2020 at 08:10:49AM -0600, Jens Axboe wrote:
+> On 8/27/20 8:10 AM, Stefano Garzarella wrote:
+> > On Thu, Aug 27, 2020 at 07:50:44AM -0600, Jens Axboe wrote:
+> >> On 8/27/20 7:40 AM, Stefano Garzarella wrote:
+> >>> v5:
+> >>>  - explicitly assigned enum values [Kees]
+> >>>  - replaced kmalloc/copy_from_user with memdup_user [kernel test robot]
+> >>>  - added Kees' R-b tags
+> >>>
+> >>> v4: https://lore.kernel.org/io-uring/20200813153254.93731-1-sgarzare@redhat.com/
+> >>> v3: https://lore.kernel.org/io-uring/20200728160101.48554-1-sgarzare@redhat.com/
+> >>> RFC v2: https://lore.kernel.org/io-uring/20200716124833.93667-1-sgarzare@redhat.com
+> >>> RFC v1: https://lore.kernel.org/io-uring/20200710141945.129329-1-sgarzare@redhat.com
+> >>>
+> >>> Following the proposal that I send about restrictions [1], I wrote this series
+> >>> to add restrictions in io_uring.
+> >>>
+> >>> I also wrote helpers in liburing and a test case (test/register-restrictions.c)
+> >>> available in this repository:
+> >>> https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
+> >>>
+> >>> Just to recap the proposal, the idea is to add some restrictions to the
+> >>> operations (sqe opcode and flags, register opcode) to safely allow untrusted
+> >>> applications or guests to use io_uring queues.
+> >>>
+> >>> The first patch changes io_uring_register(2) opcodes into an enumeration to
+> >>> keep track of the last opcode available.
+> >>>
+> >>> The second patch adds IOURING_REGISTER_RESTRICTIONS opcode and the code to
+> >>> handle restrictions.
+> >>>
+> >>> The third patch adds IORING_SETUP_R_DISABLED flag to start the rings disabled,
+> >>> allowing the user to register restrictions, buffers, files, before to start
+> >>> processing SQEs.
+> >>>
+> >>> Comments and suggestions are very welcome.
+> >>
+> >> Looks good to me, just a few very minor comments in patch 2. If you
+> >> could fix those up, let's get this queued for 5.10.
+> >>
+> > 
+> > Sure, I'll fix the issues. This is great :-)
+> 
+> Thanks! I'll pull in your liburing tests as well once we get the kernel
+> side sorted.
 
-This should be a separate function, ala:
+Yeah. Let me know if you'd prefer that I send patches on io-uring ML.
 
-if (unlikely(ctx->restricted)) {
-	ret = io_check_restriction(ctx, req);
-	if (ret)
-		return ret;
-}
+About io-uring UAPI, do you think we should set explicitly the enum
+values also for IOSQE_*_BIT and IORING_OP_*?
 
-to move it totally out of the (very) hot path.
+I can send a separated patch for this.
 
->  	if ((sqe_flags & IOSQE_BUFFER_SELECT) &&
->  	    !io_op_defs[req->opcode].buffer_select)
->  		return -EOPNOTSUPP;
-> @@ -8714,6 +8738,71 @@ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
->  	return -EINVAL;
->  }
->  
-> +static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
-> +				    unsigned int nr_args)
-> +{
-> +	struct io_uring_restriction *res;
-> +	size_t size;
-> +	int i, ret;
-> +
-> +	/* We allow only a single restrictions registration */
-> +	if (ctx->restricted)
-> +		return -EBUSY;
-> +
-> +	if (!arg || nr_args > IORING_MAX_RESTRICTIONS)
-> +		return -EINVAL;
-> +
-> +	size = array_size(nr_args, sizeof(*res));
-> +	if (size == SIZE_MAX)
-> +		return -EOVERFLOW;
-> +
-> +	res = memdup_user(arg, size);
-> +	if (IS_ERR(res))
-> +		return PTR_ERR(res);
-> +
-> +	for (i = 0; i < nr_args; i++) {
-> +		switch (res[i].opcode) {
-> +		case IORING_RESTRICTION_REGISTER_OP:
-> +			if (res[i].register_op >= IORING_REGISTER_LAST) {
-> +				ret = -EINVAL;
-> +				goto out;
-> +			}
-> +
-> +			__set_bit(res[i].register_op,
-> +				  ctx->restrictions.register_op);
-> +			break;
-> +		case IORING_RESTRICTION_SQE_OP:
-> +			if (res[i].sqe_op >= IORING_OP_LAST) {
-> +				ret = -EINVAL;
-> +				goto out;
-> +			}
-> +
-> +			__set_bit(res[i].sqe_op, ctx->restrictions.sqe_op);
-> +			break;
-> +		case IORING_RESTRICTION_SQE_FLAGS_ALLOWED:
-> +			ctx->restrictions.sqe_flags_allowed = res[i].sqe_flags;
-> +			break;
-> +		case IORING_RESTRICTION_SQE_FLAGS_REQUIRED:
-> +			ctx->restrictions.sqe_flags_required = res[i].sqe_flags;
-> +			break;
-> +		default:
-> +			ret = -EINVAL;
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	ctx->restricted = 1;
-> +
-> +	ret = 0;
-
-I'd set ret = 0 above the switch, that's the usual idiom - start at
-zero, have someone set it to -ERROR if something fails.
-
--- 
-Jens Axboe
+Thanks,
+Stefano
 

@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB136255157
-	for <lists+io-uring@lfdr.de>; Fri, 28 Aug 2020 00:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63285255158
+	for <lists+io-uring@lfdr.de>; Fri, 28 Aug 2020 00:52:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgH0WwB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Aug 2020 18:52:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51958 "EHLO
+        id S1727834AbgH0WwC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Aug 2020 18:52:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbgH0WwA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Aug 2020 18:52:00 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66161C061264
-        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 15:52:00 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id 67so4385995pgd.12
-        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 15:52:00 -0700 (PDT)
+        with ESMTP id S1726953AbgH0WwB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Aug 2020 18:52:01 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570E2C061264
+        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 15:52:01 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id k18so4638970pfp.7
+        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 15:52:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=NR3FBoYgz2/aSwjStmlglDRsJ7qeatEgECJE4KoKkXo=;
-        b=FyfwXvGdAEhVU0rckv0IM6v/x4qYd7q0b4mdN51TsiM2PHchMJ6HKKmEjGQy2PiJY9
-         lJWd8XJ/CLrsQ1U28Ndfy/q7ETp0WiYLYXZcDYvdXuPpiEs/OVkiYUepSoVvFQmrcmEz
-         x+pgO4Vgo+a2DS2bNceVMK3IPdXM4Nc8Oi926dKUrIAjuNnlt6n5v08Z2LcLymHqW6vM
-         pAuSvD7IABAI30gQAd4RZQDufHPz1cAVn91F1RWvRbaxItfaJDifl9rzpJEKUnAma6pu
-         0UQQfdXa0/Br+UYAx+cwH0pvjsF0mxr6RYVte+nEWO1Xi+gEj8uw4hzQAshbV5IuuCQk
-         JxiA==
+        bh=X5b2t70KTKIbGjXzNmfiw6qbTP+tp7fpMEwkNhnQw7o=;
+        b=xshBMJWpe3241mj6sHV5usXCQc9qHFXhH7HA+Prsi7J9AL3Av/dEEiuqZHK8lVkxXW
+         CewI19H4qvKatheOAdynCXB++d+hjtuCnYNb45IR6zBX965ssU7OONqXTiZvFDBgXYUS
+         6EdLl79EHUsi2odbO8Yuzw4OlqUlJtMv7fmzHjjSxZOYey1BJUPnKFOJTsTzt0bYvhZ4
+         8IyUR9yzsPe6LK7BZ+tV5jEj3k3/0oa8fQdQk8mzWdAIRdmnyEbb3ZGFNkUga4SRENeU
+         GNjCAdNbJ0gHG9vGVkjOOIdJ/enJwSdgqH2JCLuzbvlZVC59F2JlIswtbqfIhyx+r8sM
+         +RSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NR3FBoYgz2/aSwjStmlglDRsJ7qeatEgECJE4KoKkXo=;
-        b=B5rI4EmXpLsko3eKPHXbH00ZLs7uubEEChdKg3UtcAgC470mgP2GtpzKrEKcangu/C
-         aEV/LUr29OffRb+B2F63K6gAvoY3B9BYvDMQrKKUhY3QsnDBtRxQ0egEBPdf6DqiLUDC
-         dZtv9G/T6vYII/S6wahKFrckSLotdf4Vny+0liYgDt6fJptrXk2VZyVoZQNA0y9ONAIx
-         j2qTwOM+kKsnxr58BANtBDMUyJqUbGuJ3OFIR7TtGvdw7seM/3VcLZ9spxEMsGStVvRU
-         7dazbaRfqJlhapBpqLXFjbMlMoftMeL0OXG81u51MPPhPQJptw1tdwWydpk+2dx16CVp
-         STkQ==
-X-Gm-Message-State: AOAM533Z5AYBlTupeCxCczT42GrEkwLJNJOlV/BrONJzAcLHlvu+B1k9
-        SaiQxujgrtHPGOdmH2/QlYCukTyBzQXmFhDH
-X-Google-Smtp-Source: ABdhPJxupCjFBU6ABXwKXunH0hLcppzhmx4jYcDsnqLUFu6gFXw51CsuYs2gpbt5iHHVnR5qNUP5XQ==
-X-Received: by 2002:a63:fa01:: with SMTP id y1mr15969149pgh.284.1598568719655;
-        Thu, 27 Aug 2020 15:51:59 -0700 (PDT)
+        bh=X5b2t70KTKIbGjXzNmfiw6qbTP+tp7fpMEwkNhnQw7o=;
+        b=r9zF3wifS6EXjxf/Y7gP6AOge3LXvWa1kkUZQUwhNG895eSRjoMzbBA3GFPONfo5Q8
+         AGySM/FdLJs2FoEVM7AebWldtj5wjcSRC1qdNifONJBBXaXkeNc9C+7klnEC1HkwDUAE
+         pPk9H4FOWFlttPMUdxcloML/UgDP3yneD2ev7eeqE0W7fi1esfnGQ1/b570KWEx+m/Jh
+         Sec/+lqcNs7ntdZi+IVaL1/53rWacKqPmkwYP/IX8bBiLtpKYGOgx9yaLbG4Yik7JZal
+         pOMWaZVEbn/M7x/pr09XGhPBUlORcKlCaYD1QsKoGpj/2Pw+cwQXwch0eXcSSuSymAHV
+         AsSQ==
+X-Gm-Message-State: AOAM5323bL2CeFHzjV88V1QxK2AUMb78tfY3XD7/PMIbzhEvgJ9zrakn
+        wYCUC2bSOJUCTP62CasFalhA2eCd/2kUCmwP
+X-Google-Smtp-Source: ABdhPJwTTwKBzUAiIP2qLfwLuS3MeJCoeCgAzmujhrALvLbUzRJgOeKx5ELrc8cBVUNqVp4+hXSaUw==
+X-Received: by 2002:a63:f813:: with SMTP id n19mr15954232pgh.34.1598568720609;
+        Thu, 27 Aug 2020 15:52:00 -0700 (PDT)
 Received: from localhost.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id js19sm3087868pjb.33.2020.08.27.15.51.58
+        by smtp.gmail.com with ESMTPSA id js19sm3087868pjb.33.2020.08.27.15.51.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2020 15:51:59 -0700 (PDT)
+        Thu, 27 Aug 2020 15:52:00 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Andres Freund <andres@anarazel.de>
-Subject: [PATCH 1/2] io_uring: fix IOPOLL -EAGAIN retries
-Date:   Thu, 27 Aug 2020 16:49:54 -0600
-Message-Id: <20200827224955.642443-2-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 2/2] io_uring: don't bounce block based -EAGAIN retry off task_work
+Date:   Thu, 27 Aug 2020 16:49:55 -0600
+Message-Id: <20200827224955.642443-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200827224955.642443-1-axboe@kernel.dk>
 References: <20200827224955.642443-1-axboe@kernel.dk>
@@ -63,55 +63,61 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This normally isn't hit, as polling is mostly done on NVMe with deep
-queue depths. But if we do run into request starvation, we need to
-ensure that retries are properly serialized.
+These events happen inline from submission, so there's no need to
+bounce them through the original task. Just set them up for retry
+and issue retry directly instead of going over task_work.
 
-Reported-by: Andres Freund <andres@anarazel.de>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/io_uring.c | 26 ++++++--------------------
+ 1 file changed, 6 insertions(+), 20 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6df08287c59e..d27fe2b742d8 100644
+index d27fe2b742d8..81143458f3b6 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1150,7 +1150,7 @@ static void io_prep_async_work(struct io_kiocb *req)
- 	io_req_init_async(req);
+@@ -2295,22 +2295,6 @@ static bool io_resubmit_prep(struct io_kiocb *req, int error)
+ 	io_req_complete(req, ret);
+ 	return false;
+ }
+-
+-static void io_rw_resubmit(struct callback_head *cb)
+-{
+-	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+-	struct io_ring_ctx *ctx = req->ctx;
+-	int err;
+-
+-	err = io_sq_thread_acquire_mm(ctx, req);
+-
+-	if (io_resubmit_prep(req, err)) {
+-		refcount_inc(&req->refs);
+-		io_queue_async_work(req);
+-	}
+-
+-	percpu_ref_put(&ctx->refs);
+-}
+ #endif
  
- 	if (req->flags & REQ_F_ISREG) {
--		if (def->hash_reg_file)
-+		if (def->hash_reg_file || (req->ctx->flags & IORING_SETUP_IOPOLL))
- 			io_wq_hash_work(&req->work, file_inode(req->file));
- 	} else {
- 		if (def->unbound_nonreg_file)
-@@ -3157,7 +3157,8 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
- 		ret = 0;
- 		goto out_free;
- 	} else if (ret == -EAGAIN) {
--		if (!force_nonblock)
-+		/* IOPOLL retry should happen for io-wq threads */
-+		if (!force_nonblock && !(req->ctx->flags & IORING_SETUP_IOPOLL))
- 			goto done;
- 		/* some cases will consume bytes even on error returns */
- 		iov_iter_revert(iter, iov_count - iov_iter_count(iter));
-@@ -3301,11 +3302,14 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
- 	if (ret2 == -EOPNOTSUPP && (kiocb->ki_flags & IOCB_NOWAIT))
- 		ret2 = -EAGAIN;
- 	if (!force_nonblock || ret2 != -EAGAIN) {
-+		/* IOPOLL retry should happen for io-wq threads */
-+		if ((req->ctx->flags & IORING_SETUP_IOPOLL) && ret2 == -EAGAIN)
-+			goto copy_iov;
- 		kiocb_done(kiocb, ret2, cs);
- 	} else {
-+copy_iov:
- 		/* some cases will consume bytes even on error returns */
- 		iov_iter_revert(iter, iov_count - iov_iter_count(iter));
--copy_iov:
- 		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
- 		if (!ret)
- 			return -EAGAIN;
+ static bool io_rw_reissue(struct io_kiocb *req, long res)
+@@ -2321,12 +2305,14 @@ static bool io_rw_reissue(struct io_kiocb *req, long res)
+ 	if ((res != -EAGAIN && res != -EOPNOTSUPP) || io_wq_current_is_worker())
+ 		return false;
+ 
+-	init_task_work(&req->task_work, io_rw_resubmit);
+-	percpu_ref_get(&req->ctx->refs);
++	ret = io_sq_thread_acquire_mm(req->ctx, req);
+ 
+-	ret = io_req_task_work_add(req, &req->task_work, true);
+-	if (!ret)
++	if (io_resubmit_prep(req, ret)) {
++		refcount_inc(&req->refs);
++		io_queue_async_work(req);
+ 		return true;
++	}
++
+ #endif
+ 	return false;
+ }
 -- 
 2.28.0
 

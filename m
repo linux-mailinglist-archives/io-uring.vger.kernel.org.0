@@ -2,39 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE8325463A
-	for <lists+io-uring@lfdr.de>; Thu, 27 Aug 2020 15:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3720254664
+	for <lists+io-uring@lfdr.de>; Thu, 27 Aug 2020 16:04:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726123AbgH0Npl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Aug 2020 09:45:41 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:34234 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728014AbgH0NlV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Aug 2020 09:41:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598535674;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=psWUqAIUCBktAIdbYbu1Z+WKwvyIp9OeRhsDYOnwnmE=;
-        b=ScPOG99pAzWc5TdCRcPZdL9sTLSoXp/KdGMsDaT6CSPU7Xo2bySfT0VSy3hGJ0fZ+60nBo
-        5yeQf7nC8BYiJLzKKfIAL3J61R9DmW5ecFaPW1buSu4yIr6w31IrczLkOHFLkrPTEbeK5F
-        QII141/7x+F1QU321g8aWI4PwYodRm8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-385-3AekxEdzOg64YY2A_-5ErA-1; Thu, 27 Aug 2020 09:41:10 -0400
-X-MC-Unique: 3AekxEdzOg64YY2A_-5ErA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0EA4D425D1;
-        Thu, 27 Aug 2020 13:41:07 +0000 (UTC)
-Received: from steredhat.redhat.com (ovpn-113-96.ams2.redhat.com [10.36.113.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B49CD702E7;
-        Thu, 27 Aug 2020 13:41:03 +0000 (UTC)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
+        id S1726882AbgH0OEF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Aug 2020 10:04:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53936 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728053AbgH0ODp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Aug 2020 10:03:45 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA0CC061234
+        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 06:50:47 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id e17so508199ils.10
+        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 06:50:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iAwILKXaGwE32BKWKaWMGVaA1oh3sBt+J35AZWjjyZY=;
+        b=qxwcVn5JQ9XYTQbP2HLcOTAwz30rF8EQCFatdqtquebkoj614HXR5RCCZn47g/sFms
+         b1B9FEawJrQ0st6va0eVKzrouTvhxlfCKY5lceQ5M0mEFmP87mCM1WfcXMY0rTnFfVWm
+         ySrewvO/AFV5vFAEV6VVxXDaIpQGU8hvL4BcPZuxNtv5wV6r5lx2MWlDm6fmA38V1ah8
+         r1c5ALWfnWIYR9RXi08rgC36D4UJkyd3fxxLQOp2nslXWKm67FvJLiKHgCs5NPTS1n7/
+         7nibAib6cK52NRtC/4y31vn1506yvBpqn+dx3MKZwQuMTZ4yMdm+HHMTG3w2Tel1aVZ1
+         ytUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iAwILKXaGwE32BKWKaWMGVaA1oh3sBt+J35AZWjjyZY=;
+        b=m3u1XVZlK3ArRv8z5HYX6hGwQb3JSfWxc9Ppg1IeqNgiI8LitCwATDAugMWNSTaPmM
+         9T3FRtiSqdZ5NyIInwiLpCiy0oUx19Um6aE9mMZTV45LbMQYqSap2CZlZ/gnNfn5POIT
+         h1Xi7T/+jZh/HvKcJ3XIiT6Rh/kjIJ3rqbdMDYvneFB3ePxp8z2WjROpS6y8hsNj4nGQ
+         j3zrFbnTq5A01w0u0/QH8MExs5H6HzKyx8jwEIyTvTKsz4VlPl25gO90KPb0Z+NLoPxf
+         j4P/g41p8h60EqeBkwKC07UCRX1WjopTvZ8LXONN+fwEFujRzKMQeoepfRiSWOcpGrEC
+         vS8w==
+X-Gm-Message-State: AOAM531YH9f5AU8yuesLEdMTeZs79wsmP5GTo8udiW7eRvPtpBwfih0D
+        VsHDPYILMsCpdJ0de6ZSuP8l/g==
+X-Google-Smtp-Source: ABdhPJzOPDGdpeaugrph99pH0rYwmDwtHxNDF8nsNnio4tgus2HsTtEiJ9SU9c3mUcm6yO9cBck+8w==
+X-Received: by 2002:a05:6e02:1066:: with SMTP id q6mr17103230ilj.29.1598536245882;
+        Thu, 27 Aug 2020 06:50:45 -0700 (PDT)
+Received: from [192.168.1.58] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id 79sm1247128ilc.9.2020.08.27.06.50.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Aug 2020 06:50:45 -0700 (PDT)
+Subject: Re: [PATCH v5 0/3] io_uring: add restrictions to support untrusted
+ applications and guests
+To:     Stefano Garzarella <sgarzare@redhat.com>
 Cc:     Aleksa Sarai <asarai@suse.de>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
@@ -45,206 +61,59 @@ Cc:     Aleksa Sarai <asarai@suse.de>,
         linux-kernel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
         Kees Cook <keescook@chromium.org>,
         Jeff Moyer <jmoyer@redhat.com>
-Subject: [PATCH v5 3/3] io_uring: allow disabling rings during the creation
-Date:   Thu, 27 Aug 2020 15:40:44 +0200
-Message-Id: <20200827134044.82821-4-sgarzare@redhat.com>
-In-Reply-To: <20200827134044.82821-1-sgarzare@redhat.com>
 References: <20200827134044.82821-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2ded8df7-6dcb-ee8a-c1fd-e0c420b7b95d@kernel.dk>
+Date:   Thu, 27 Aug 2020 07:50:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <20200827134044.82821-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This patch adds a new IORING_SETUP_R_DISABLED flag to start the
-rings disabled, allowing the user to register restrictions,
-buffers, files, before to start processing SQEs.
+On 8/27/20 7:40 AM, Stefano Garzarella wrote:
+> v5:
+>  - explicitly assigned enum values [Kees]
+>  - replaced kmalloc/copy_from_user with memdup_user [kernel test robot]
+>  - added Kees' R-b tags
+> 
+> v4: https://lore.kernel.org/io-uring/20200813153254.93731-1-sgarzare@redhat.com/
+> v3: https://lore.kernel.org/io-uring/20200728160101.48554-1-sgarzare@redhat.com/
+> RFC v2: https://lore.kernel.org/io-uring/20200716124833.93667-1-sgarzare@redhat.com
+> RFC v1: https://lore.kernel.org/io-uring/20200710141945.129329-1-sgarzare@redhat.com
+> 
+> Following the proposal that I send about restrictions [1], I wrote this series
+> to add restrictions in io_uring.
+> 
+> I also wrote helpers in liburing and a test case (test/register-restrictions.c)
+> available in this repository:
+> https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
+> 
+> Just to recap the proposal, the idea is to add some restrictions to the
+> operations (sqe opcode and flags, register opcode) to safely allow untrusted
+> applications or guests to use io_uring queues.
+> 
+> The first patch changes io_uring_register(2) opcodes into an enumeration to
+> keep track of the last opcode available.
+> 
+> The second patch adds IOURING_REGISTER_RESTRICTIONS opcode and the code to
+> handle restrictions.
+> 
+> The third patch adds IORING_SETUP_R_DISABLED flag to start the rings disabled,
+> allowing the user to register restrictions, buffers, files, before to start
+> processing SQEs.
+> 
+> Comments and suggestions are very welcome.
 
-When IORING_SETUP_R_DISABLED is set, SQE are not processed and
-SQPOLL kthread is not started.
+Looks good to me, just a few very minor comments in patch 2. If you
+could fix those up, let's get this queued for 5.10.
 
-The restrictions registration are allowed only when the rings
-are disable to prevent concurrency issue while processing SQEs.
-
-The rings can be enabled using IORING_REGISTER_ENABLE_RINGS
-opcode with io_uring_register(2).
-
-Suggested-by: Jens Axboe <axboe@kernel.dk>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
-v4:
- - fixed io_uring_enter() exit path when ring is disabled
-
-v3:
- - enabled restrictions only when the rings start
-
-RFC v2:
- - removed return value of io_sq_offload_start()
----
- fs/io_uring.c                 | 52 ++++++++++++++++++++++++++++++-----
- include/uapi/linux/io_uring.h |  2 ++
- 2 files changed, 47 insertions(+), 7 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 93b023930b0b..1820f704e6ca 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -226,6 +226,7 @@ struct io_restriction {
- 	DECLARE_BITMAP(sqe_op, IORING_OP_LAST);
- 	u8 sqe_flags_allowed;
- 	u8 sqe_flags_required;
-+	bool registered;
- };
- 
- struct io_ring_ctx {
-@@ -7481,8 +7482,8 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx,
- 	return ret;
- }
- 
--static int io_sq_offload_start(struct io_ring_ctx *ctx,
--			       struct io_uring_params *p)
-+static int io_sq_offload_create(struct io_ring_ctx *ctx,
-+				struct io_uring_params *p)
- {
- 	int ret;
- 
-@@ -7516,7 +7517,6 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
- 			ctx->sqo_thread = NULL;
- 			goto err;
- 		}
--		wake_up_process(ctx->sqo_thread);
- 	} else if (p->flags & IORING_SETUP_SQ_AFF) {
- 		/* Can't have SQ_AFF without SQPOLL */
- 		ret = -EINVAL;
-@@ -7533,6 +7533,12 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
- 	return ret;
- }
- 
-+static void io_sq_offload_start(struct io_ring_ctx *ctx)
-+{
-+	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sqo_thread)
-+		wake_up_process(ctx->sqo_thread);
-+}
-+
- static inline void __io_unaccount_mem(struct user_struct *user,
- 				      unsigned long nr_pages)
- {
-@@ -8279,6 +8285,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	if (!percpu_ref_tryget(&ctx->refs))
- 		goto out_fput;
- 
-+	if (ctx->flags & IORING_SETUP_R_DISABLED)
-+		goto out_fput;
-+
- 	/*
- 	 * For SQ polling, the thread will do all submissions and completions.
- 	 * Just return the requested submit count, and wake the thread if
-@@ -8596,10 +8605,13 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	if (ret)
- 		goto err;
- 
--	ret = io_sq_offload_start(ctx, p);
-+	ret = io_sq_offload_create(ctx, p);
- 	if (ret)
- 		goto err;
- 
-+	if (!(p->flags & IORING_SETUP_R_DISABLED))
-+		io_sq_offload_start(ctx);
-+
- 	memset(&p->sq_off, 0, sizeof(p->sq_off));
- 	p->sq_off.head = offsetof(struct io_rings, sq.head);
- 	p->sq_off.tail = offsetof(struct io_rings, sq.tail);
-@@ -8662,7 +8674,8 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 
- 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
- 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
--			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ))
-+			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
-+			IORING_SETUP_R_DISABLED))
- 		return -EINVAL;
- 
- 	return  io_uring_create(entries, &p, params);
-@@ -8745,8 +8758,12 @@ static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
- 	size_t size;
- 	int i, ret;
- 
-+	/* Restrictions allowed only if rings started disabled */
-+	if (!(ctx->flags & IORING_SETUP_R_DISABLED))
-+		return -EINVAL;
-+
- 	/* We allow only a single restrictions registration */
--	if (ctx->restricted)
-+	if (ctx->restrictions.registered)
- 		return -EBUSY;
- 
- 	if (!arg || nr_args > IORING_MAX_RESTRICTIONS)
-@@ -8791,7 +8808,7 @@ static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
- 		}
- 	}
- 
--	ctx->restricted = 1;
-+	ctx->restrictions.registered = true;
- 
- 	ret = 0;
- out:
-@@ -8803,6 +8820,21 @@ static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
- 	return ret;
- }
- 
-+static int io_register_enable_rings(struct io_ring_ctx *ctx)
-+{
-+	if (!(ctx->flags & IORING_SETUP_R_DISABLED))
-+		return -EINVAL;
-+
-+	if (ctx->restrictions.registered)
-+		ctx->restricted = 1;
-+
-+	ctx->flags &= ~IORING_SETUP_R_DISABLED;
-+
-+	io_sq_offload_start(ctx);
-+
-+	return 0;
-+}
-+
- static bool io_register_op_must_quiesce(int op)
- {
- 	switch (op) {
-@@ -8924,6 +8956,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 			break;
- 		ret = io_unregister_personality(ctx, nr_args);
- 		break;
-+	case IORING_REGISTER_ENABLE_RINGS:
-+		ret = -EINVAL;
-+		if (arg || nr_args)
-+			break;
-+		ret = io_register_enable_rings(ctx);
-+		break;
- 	case IORING_REGISTER_RESTRICTIONS:
- 		ret = io_register_restrictions(ctx, arg, nr_args);
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 6e7f2e5e917b..a0c85e0e9016 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -95,6 +95,7 @@ enum {
- #define IORING_SETUP_CQSIZE	(1U << 3)	/* app defines CQ size */
- #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
- #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
-+#define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
- 
- enum {
- 	IORING_OP_NOP,
-@@ -268,6 +269,7 @@ enum {
- 	IORING_REGISTER_PERSONALITY		= 9,
- 	IORING_UNREGISTER_PERSONALITY		= 10,
- 	IORING_REGISTER_RESTRICTIONS		= 11,
-+	IORING_REGISTER_ENABLE_RINGS		= 12,
- 
- 	/* this goes last */
- 	IORING_REGISTER_LAST
 -- 
-2.26.2
+Jens Axboe
 

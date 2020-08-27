@@ -2,109 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B406253ED1
-	for <lists+io-uring@lfdr.de>; Thu, 27 Aug 2020 09:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D14FB253EFF
+	for <lists+io-uring@lfdr.de>; Thu, 27 Aug 2020 09:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbgH0HSP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Aug 2020 03:18:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29820 "EHLO
+        id S1727913AbgH0HYM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Aug 2020 03:24:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:35997 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727030AbgH0HSO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Aug 2020 03:18:14 -0400
+        by vger.kernel.org with ESMTP id S1726851AbgH0HYM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Aug 2020 03:24:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598512691;
+        s=mimecast20190719; t=1598513050;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=u9fFbu1GhOR5EEBDVCiFc4v2JfgRv9dRTWq43a81ToQ=;
-        b=RGBDWIK3G1NQQkSAwosQoT3Q5eSWHJy201C0S2AGNDU0gCkW+f9WfkL69xlIj1++3JQoCx
-        pKTlR9dwzOjmcAcImxT0vWTNEWM/p5456/vkfwhwwoA3sfYF6h+YqZ+VVzGjHm4wfKiLOY
-        2kMHQSTJuQ9xPuZn0+I8NVoR3TuMTBk=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-455-7_TquxknOT6KyFQl3s4Awg-1; Thu, 27 Aug 2020 03:18:08 -0400
-X-MC-Unique: 7_TquxknOT6KyFQl3s4Awg-1
-Received: by mail-wr1-f69.google.com with SMTP id f7so1166997wrs.8
-        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 00:18:08 -0700 (PDT)
+        bh=ri7f4MnEHGg+Eh3Xov6f6gkwDfi0Dd6vvMS8AIDLQKU=;
+        b=YCB/pEU9HC71u0HFEKaE7mDZ3JDRBj/nk3+0p/EJchISNgeqQkzTtAoaeSKHvfRtaJCQSj
+        lVby6HvILsJ3qNQWeiTfJfDyQ0RfW2/TK1FljMIcMevWzWEzpyOc9DPUNo35gqzShfGSJP
+        G37O/F1rh5eHEl50SpcwagGgm6vSw6w=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-232-QungrlhnP-6KR7J3wY5XMg-1; Thu, 27 Aug 2020 03:24:08 -0400
+X-MC-Unique: QungrlhnP-6KR7J3wY5XMg-1
+Received: by mail-wm1-f70.google.com with SMTP id p184so1794962wmp.7
+        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 00:24:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=u9fFbu1GhOR5EEBDVCiFc4v2JfgRv9dRTWq43a81ToQ=;
-        b=W2FI30TSVB/uTIq2QTE+10kvggBmK8wLrpxqjCVuEm0xxvt5UQSDPvIIqOuuYtyQJG
-         eBwE6vKZIDdNN+0nVNKhi8JUTLnOEK4/Qfn61UZeakmDbBkwno+TLnmICWFtQFeaIwI2
-         adJuBPf9hB6Shqt7dJliNUgk8L0qZToHM+E+1L7+UBnPoZ7R7lhVEwD1FsUVZPZGtE5U
-         SL4Au8gxXYGy+jW8JNxbYTqzBedTEhOxJylnQWo+N26W1PK81WdTl9ErLJgixsasywuH
-         l1vTFgxKTvuOR4CEVAEu6jQpozYa9es+WvHbUKmNY99cXAKHMvFWoFs9Z7qFoEysxsY5
-         DoUw==
-X-Gm-Message-State: AOAM531hXRy7bxCVkLllhxy/JnvR0y0CbARsHK6sYBogvMqv1B3yhZbN
-        WlnnvQsiq8CRrWPtTTBaPCOxAM6oo78ByO4QLlTB38XAQjv7gBR5MFYhq64/NrpidgKdQa+Nqft
-        GZnk1pWHqADyfsAXGmPg=
-X-Received: by 2002:adf:b349:: with SMTP id k9mr13694176wrd.135.1598512687410;
-        Thu, 27 Aug 2020 00:18:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxwtPSLbAoCV+fY+tWZVhYam7dcbiUmX7cOj0w7rM1ddAdGJMa85Kp5T8Bt7PKtypBfPZj1aw==
-X-Received: by 2002:adf:b349:: with SMTP id k9mr13694156wrd.135.1598512687137;
-        Thu, 27 Aug 2020 00:18:07 -0700 (PDT)
+        bh=ri7f4MnEHGg+Eh3Xov6f6gkwDfi0Dd6vvMS8AIDLQKU=;
+        b=oK+wnPiLb4IuLx/dIoCx61fy9wbig+jx+HGC0+uhyq9IC9ofnKZq/LHL1fWK1ywOti
+         WyVEPKs4lS/LkrDgC3GXKoyQaXMCbedS/8zMpd7An+L1iePZP2hZWmDb6eG5V0ZrqZfj
+         dvdXXByW8ZFkflmjpjRixTDmhllEXBPoFY+stKtilE2bqsUDcD7ZIBcxHmDox1qsgP3d
+         a81WPItTWnnIKOvigC+ZwCkWL5UvseeNwiwssdVg0KHYJNnMgtrFeyihWY+uXlPykH9+
+         91ZcVf1L+odgSpiGl3oOjTdscLz66e6NV72kHzgIQPkMPwgAvBnWZ+vQkbZENf1ehBKB
+         1PMQ==
+X-Gm-Message-State: AOAM533D3AKa7d4NuGPIbOwQnLjYQDzX9IKJg50Y9drIv82XBJKa/IAE
+        0ZaifJCmE0Yp1gllAxvMBmtrlCX3FVDIkVVARSr18FPJH3X/CVMubb93/f+7KzwgixyvrCo1Kvu
+        R0CjXYfAcpykSbkogclY=
+X-Received: by 2002:a5d:4ecf:: with SMTP id s15mr19040986wrv.202.1598513047593;
+        Thu, 27 Aug 2020 00:24:07 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy9Qp8WqcCYQavb33blI2gxdMXFRgjEWEltO/ZyM+YWomBld9pX31Pz59UjLz4iXha0wYfDuw==
+X-Received: by 2002:a5d:4ecf:: with SMTP id s15mr19040959wrv.202.1598513047320;
+        Thu, 27 Aug 2020 00:24:07 -0700 (PDT)
 Received: from steredhat.lan ([5.180.207.22])
-        by smtp.gmail.com with ESMTPSA id s12sm3022065wmj.26.2020.08.27.00.18.05
+        by smtp.gmail.com with ESMTPSA id t25sm3145541wmj.18.2020.08.27.00.24.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2020 00:18:06 -0700 (PDT)
-Date:   Thu, 27 Aug 2020 09:18:02 +0200
+        Thu, 27 Aug 2020 00:24:06 -0700 (PDT)
+Date:   Thu, 27 Aug 2020 09:24:01 +0200
 From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
+To:     Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
         Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Sargun Dhillon <sargun@sargun.me>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <asarai@suse.de>,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] io_uring: allow disabling rings during the
- creation
-Message-ID: <20200827071802.6tzntmixnxc67y33@steredhat.lan>
+        kernel list <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH v4 0/3] io_uring: add restrictions to support untrusted
+ applications and guests
+Message-ID: <20200827072401.6o5bqg6r5iozpcgc@steredhat.lan>
 References: <20200813153254.93731-1-sgarzare@redhat.com>
- <20200813153254.93731-4-sgarzare@redhat.com>
- <202008261248.BB37204250@keescook>
+ <CAGxU2F55zzMzc043P88TWJNr2poUTVwrRmu86qyh0uM-8gimng@mail.gmail.com>
+ <82061082-42c8-1e1c-1f36-6f42e7dd10cb@kernel.dk>
+ <202008261237.904C1E6@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202008261248.BB37204250@keescook>
+In-Reply-To: <202008261237.904C1E6@keescook>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Aug 26, 2020 at 12:50:31PM -0700, Kees Cook wrote:
-> On Thu, Aug 13, 2020 at 05:32:54PM +0200, Stefano Garzarella wrote:
-> > This patch adds a new IORING_SETUP_R_DISABLED flag to start the
-> > rings disabled, allowing the user to register restrictions,
-> > buffers, files, before to start processing SQEs.
+On Wed, Aug 26, 2020 at 12:40:24PM -0700, Kees Cook wrote:
+> On Wed, Aug 26, 2020 at 10:47:36AM -0600, Jens Axboe wrote:
+> > On 8/25/20 9:20 AM, Stefano Garzarella wrote:
+> > > Hi Jens,
+> > > this is a gentle ping.
+> > > 
+> > > I'll respin, using memdup_user() for restriction registration.
+> > > I'd like to get some feedback to see if I should change anything else.
+> > > 
+> > > Do you think it's in good shape?
 > > 
-> > When IORING_SETUP_R_DISABLED is set, SQE are not processed and
-> > SQPOLL kthread is not started.
-> > 
-> > The restrictions registration are allowed only when the rings
-> > are disable to prevent concurrency issue while processing SQEs.
-> > 
-> > The rings can be enabled using IORING_REGISTER_ENABLE_RINGS
-> > opcode with io_uring_register(2).
-> > 
-> > Suggested-by: Jens Axboe <axboe@kernel.dk>
-> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > As far as I'm concerned, this is fine. But I want to make sure that Kees
+> > is happy with it, as he's the one that's been making noise on this front.
 > 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Oop! Sorry, I didn't realize this was blocked on me. Once I saw how
+> orthogonal io_uring was to "regular" process trees, I figured this
+> series didn't need seccomp input. (I mean, I am still concerned about
+> attack surface reduction, but that seems like a hard problem given
+> io_uring's design -- it is, however, totally covered by the LSMs, so I'm
+> satisfied from that perspective.)
 > 
-> Where can I find the io_uring selftests? I'd expect an additional set of
-> patches to implement the selftests for this new feature.
+> I'll go review... thanks for the poke. :)
+> 
 
-Since the io_uring selftests are stored in the liburing repository, I created
-a new test case (test/register-restrictions.c) in my fork and I'll send it
-when this series is accepted. It's available in this repository:
+Jens, Kees, thanks for your feedbacks!
+I'll send v5 adding the values to the enumerations.
 
-https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
-
-Thanks for the review,
 Stefano
 

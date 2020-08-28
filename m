@@ -2,72 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 494AD25532C
-	for <lists+io-uring@lfdr.de>; Fri, 28 Aug 2020 05:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 861702561D0
+	for <lists+io-uring@lfdr.de>; Fri, 28 Aug 2020 22:03:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727892AbgH1DBS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Aug 2020 23:01:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33848 "EHLO
+        id S1726524AbgH1UD3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 28 Aug 2020 16:03:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbgH1DBQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Aug 2020 23:01:16 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BE1EC06121B
-        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 20:01:16 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id 17so5058810pfw.9
-        for <io-uring@vger.kernel.org>; Thu, 27 Aug 2020 20:01:16 -0700 (PDT)
+        with ESMTP id S1725979AbgH1UD1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Aug 2020 16:03:27 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 416BCC061264
+        for <io-uring@vger.kernel.org>; Fri, 28 Aug 2020 13:03:25 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id c142so1116851pfb.7
+        for <io-uring@vger.kernel.org>; Fri, 28 Aug 2020 13:03:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IiuhGhzNgL/DLui8gzTK8ao7Oz/TOVe+cUKUpQqg/f0=;
-        b=A21YlOTJEsZNmnka2SfNcYfgw1+lPMwJqhBVCkpEPv7LqDIBnDQ1HyazAFYe3K5uz2
-         P9BSVvy4PZtAGr2MZ3SLhzIdEgEEDcCVNXLIHl0XN5Suu0YyGuHwSJfASthuIGbDq3IQ
-         vb5ym4nNJOEbsawe5V/XdyIOduT+k+Bd5H2LWHDaJWDfIhRafUXcWvZYFFuV3PUwNYps
-         k20xTAnBGa9QEmhjnP0csDgUrCHWALxg/bbUVlV1EJmuQQMn2axcjNTl7+5TB7+HJd9P
-         /X1wZdjRci0LnAeuD+O5cXn22bEFiQ2dk5WQ8V1bV2NqM4SlAQ33C+QNdmaOGpA7Eikx
-         YclQ==
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=h7Ftm48B3zFmIS9M4aT7GVlSUnSM7LcCY/YqVFwhLHo=;
+        b=XUd1hfAyoS3QpCSSDAtZZ4HWcuSrlNFYYcOyQBKSJodElFHPqQmepn/jSxfDhXtjph
+         IMLLUf86iQd+mOQcSNo4mtJhoj+wykLrWjnJ+TQ5GessrrCwly5QOj92iAFong1Tu7yM
+         cG8/D3zz7cai+Z5TdtOB3VPw6LVfosJU5uVBBKJig3gmXJxg76P88VpwTM4SR11yn7hL
+         tbYigjN6TOgmffKRkck0h5OZPorG8r4cs1tzcXkRxPhTN11Ng5PBIxWWb5BhaX5Orpp5
+         XyVCVKrZQKaPI1Zgrxou88EbFniVHY3NQdMDf6vTaw42heBSSFpQVrngznIShUAyaBQp
+         PK5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IiuhGhzNgL/DLui8gzTK8ao7Oz/TOVe+cUKUpQqg/f0=;
-        b=jXSCOh7daVqZFYr11dixuM6xE0PMuxSz3+VaULIZBfCj5LaZX9nFZIJp8wEoPFN/0t
-         05s24bBMf+rwfmqzX8fX/C5tCtH2wa0rXRK15JF6ia5aK2ezyo4j26vwcvRM028xpkTB
-         +wixlCBhu3CfvdK/5AkS7fUfSE7w25xO9StnWMFQNRdPAa0tcPmdFtoGIv08Mx2G+fr5
-         OyzZI6JSJ6AnA6m+UCwmdF1YDCfo9IU2qEjAhQP24ex4Z5HaZGnttxihaIVdZohldAeR
-         C0P1jidM98eb8RP3WYzf3d2T9aQXe7IuP1sCJGCdvAHrpn0FfCtrVxxNwr8pDXl6NNS+
-         HKSA==
-X-Gm-Message-State: AOAM532ih0J4m6QZKT10FtHfWwvXYLivmTDwHKbvDw+09C5uofskQCFu
-        QjEhLue3Gax9rm1P2vdXWa8jQg==
-X-Google-Smtp-Source: ABdhPJwOvqqC+wLSGyfhpDIPXvlFwqQ3jCC/e/zr3AGe57QwIOArUNETxLAixcYF7uYEXMzihbQNmw==
-X-Received: by 2002:a05:6a00:15cb:: with SMTP id o11mr19227116pfu.263.1598583675314;
-        Thu, 27 Aug 2020 20:01:15 -0700 (PDT)
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=h7Ftm48B3zFmIS9M4aT7GVlSUnSM7LcCY/YqVFwhLHo=;
+        b=QmZbPtr7cVC0aplYgDw2BpgH+70X088YmneDnfuSA+e7rZOjlRbZaJ4uGhRTbhtaAl
+         OmYRm9S5MiHcN9t6KtSkY926NumVAq4fUMI4QT48bvbAuAkJ2boafE0SK6/s+8KX7XqU
+         zi8v/nLDnD7xR8sNcpiKHTwrZyGsNWEUPmAFCjmm9HtMpYe+SBbEPaR3+kWvq7j/0oS3
+         U2vDWX6dceqLrk+hmrhnDHnXI8Hl/TeM52P9svfieR+/l4LSSwobPiHRQplDGHrHV1MU
+         XVgp7OHIlNMLslFGhAqDDwZhQbSZguORwtKsXZopUITzLOlmkuZOWCzO9nZ6bpFk3fn6
+         Wa8A==
+X-Gm-Message-State: AOAM530HVEwBS8B05GIY6Chvh7e/fW5Vza5aIJCRXe95odaoQU7IphYz
+        Bbezm5RadnWzeNxMWrvQVaTnNsM3JObl2sZj
+X-Google-Smtp-Source: ABdhPJxSXzNhTuv3cHgMU3UDiBBvHEeMnOCm0dbPY8aUswPt0mPJGecOb/Hx4Q2e3wEFwkGsInCCGg==
+X-Received: by 2002:a62:b608:: with SMTP id j8mr542187pff.126.1598645004641;
+        Fri, 28 Aug 2020 13:03:24 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id t10sm3575280pgp.15.2020.08.27.20.01.13
+        by smtp.gmail.com with ESMTPSA id x1sm262394pfp.7.2020.08.28.13.03.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 20:01:14 -0700 (PDT)
-Subject: Re: [PATCH v6 0/3] io_uring: add restrictions to support untrusted
- applications and guests
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        Aleksa Sarai <asarai@suse.de>,
-        Sargun Dhillon <sargun@sargun.me>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <20200827145831.95189-1-sgarzare@redhat.com>
+        Fri, 28 Aug 2020 13:03:23 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8a86fc8a-56f6-351e-aaee-d80c4798d152@kernel.dk>
-Date:   Thu, 27 Aug 2020 21:01:12 -0600
+Subject: [GIT PULL] io_uring fixes for 5.9-rc3
+Message-ID: <654bd4f0-7d2b-a39c-46ab-e7d180246bdd@kernel.dk>
+Date:   Fri, 28 Aug 2020 14:03:22 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200827145831.95189-1-sgarzare@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,39 +65,63 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/27/20 8:58 AM, Stefano Garzarella wrote:
-> v6:
->  - moved restriction checks in a function [Jens]
->  - changed ret value handling in io_register_restrictions() [Jens]
-> 
-> v5: https://lore.kernel.org/io-uring/20200827134044.82821-1-sgarzare@redhat.com/
-> v4: https://lore.kernel.org/io-uring/20200813153254.93731-1-sgarzare@redhat.com/
-> v3: https://lore.kernel.org/io-uring/20200728160101.48554-1-sgarzare@redhat.com/
-> RFC v2: https://lore.kernel.org/io-uring/20200716124833.93667-1-sgarzare@redhat.com
-> RFC v1: https://lore.kernel.org/io-uring/20200710141945.129329-1-sgarzare@redhat.com
-> 
-> Following the proposal that I send about restrictions [1], I wrote this series
-> to add restrictions in io_uring.
-> 
-> I also wrote helpers in liburing and a test case (test/register-restrictions.c)
-> available in this repository:
-> https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
-> 
-> Just to recap the proposal, the idea is to add some restrictions to the
-> operations (sqe opcode and flags, register opcode) to safely allow untrusted
-> applications or guests to use io_uring queues.
-> 
-> The first patch changes io_uring_register(2) opcodes into an enumeration to
-> keep track of the last opcode available.
-> 
-> The second patch adds IOURING_REGISTER_RESTRICTIONS opcode and the code to
-> handle restrictions.
-> 
-> The third patch adds IORING_SETUP_R_DISABLED flag to start the rings disabled,
-> allowing the user to register restrictions, buffers, files, before to start
-> processing SQEs.
+Hi Linus,
 
-Applied, thanks.
+A few fixes in here, all based on reports and test cases from folks
+using it. Most of it is stable material as well.
+
+- Hashed work cancelation fix (Pavel)
+
+- poll wakeup signalfd fix
+
+- memlock accounting fix
+
+- nonblocking poll retry fix
+
+- Ensure we never return -ERESTARTSYS for reads
+
+- Ensure offset == -1 is consistent with preadv2() as documented
+
+- IOPOLL -EAGAIN handling fixes
+
+- Remove useless task_work bounce for block based -EAGAIN retry 
+
+Please pull!
+
+
+The following changes since commit 867a23eab52847d41a0a6eae41a64d76de7782a8:
+
+  io_uring: kill extra iovec=NULL in import_iovec() (2020-08-20 05:36:19 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.9-2020-08-28
+
+for you to fetch changes up to fdee946d0925f971f167d2606984426763355e4f:
+
+  io_uring: don't bounce block based -EAGAIN retry off task_work (2020-08-27 16:48:34 -0600)
+
+----------------------------------------------------------------
+io_uring-5.9-2020-08-28
+
+----------------------------------------------------------------
+Jens Axboe (9):
+      io_uring: don't recurse on tsk->sighand->siglock with signalfd
+      io_uring: revert consumed iov_iter bytes on error
+      io_uring: fix imbalanced sqo_mm accounting
+      io_uring: don't use poll handler if file can't be nonblocking read/written
+      io_uring: ensure read requests go through -ERESTART* transformation
+      io_uring: make offset == -1 consistent with preadv2/pwritev2
+      io_uring: clear req->result on IOPOLL re-issue
+      io_uring: fix IOPOLL -EAGAIN retries
+      io_uring: don't bounce block based -EAGAIN retry off task_work
+
+Pavel Begunkov (1):
+      io-wq: fix hang after cancelling pending hashed work
+
+ fs/io-wq.c    | 21 +++++++++++--
+ fs/io_uring.c | 99 ++++++++++++++++++++++++++++++++++-------------------------
+ 2 files changed, 76 insertions(+), 44 deletions(-)
 
 -- 
 Jens Axboe

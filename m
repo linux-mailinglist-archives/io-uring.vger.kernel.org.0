@@ -2,77 +2,153 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72670256A70
-	for <lists+io-uring@lfdr.de>; Sat, 29 Aug 2020 23:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0671256ADE
+	for <lists+io-uring@lfdr.de>; Sun, 30 Aug 2020 02:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbgH2VbR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 29 Aug 2020 17:31:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32978 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbgH2VbM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Aug 2020 17:31:12 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A2EC061573
-        for <io-uring@vger.kernel.org>; Sat, 29 Aug 2020 14:31:11 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id o18so3642325eje.7
-        for <io-uring@vger.kernel.org>; Sat, 29 Aug 2020 14:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nametag.social; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=F6QA/b71n9GBNNBrL3qsDOkszcl9nHy/lA8BIXtPLtg=;
-        b=v/2AFp2SZFYxERWiJ7T0ixgNayyvZrubEmhS52gQRnyf8DO98BVIngio/COoc+tqFX
-         pF8hDQpDivmEVdGkkGnWJGfHAnSvhBfc5vaOMLI4tjMoMgaulVDWZDojZbUEOWAzRS9v
-         nTdnoC1LMIMVrRnqNsGYsMjzu6Tg10S/ZhuEhx4uJuOsJKGudP2g89i66CT4/xbEaj3l
-         1hx5NAXEkIKpktvnu8m2mM2ltx5mVR5/p4ltkymYaJG1+aUD0zPOEIa0mfXkNL0JU3EY
-         /Y/WhTWSuzaS9DHQG7jANUo4MfnTHEb5eF6nP6/fSLJvr4hokt4i8FnEHIvApH2C6ncE
-         omOQ==
+        id S1728445AbgH3AI2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 29 Aug 2020 20:08:28 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:49819 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728109AbgH3AIQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Aug 2020 20:08:16 -0400
+Received: by mail-il1-f198.google.com with SMTP id b18so2225918ilh.16
+        for <io-uring@vger.kernel.org>; Sat, 29 Aug 2020 17:08:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=F6QA/b71n9GBNNBrL3qsDOkszcl9nHy/lA8BIXtPLtg=;
-        b=WP/ZTugc8JAebVtJG+bQHs5A19QvSLTqloRO1mUmDaTGwYt6ehc4Ydo1/cjv9CUg1b
-         MlMCVVtv8Ep7+Q2COXbMnZM6ozLP3+xaWO1PbchOMmmskcubtedetY0mKHOC8BfMjHQK
-         noPxi2NEQZrKAClzNTh2mo61YtJ5j10d+7wUITIavt9pbhzAdnXoZvuAyPG3EoagaLCu
-         hJgfsXrcdvvSRsHZD5T4+zlFME4FcpcbV5Nv45uh8Tlv1If320FvNXmmvqOw4Q5qM4v9
-         anB0e2JqSco6rhVpsY61UYxnB5Fi4otwYSfknq0sxgrEEsdq70xtpg4dWSEc0sHvKsL9
-         wV7w==
-X-Gm-Message-State: AOAM531DxvHfqjxUS5EOvdHq6QGYgTsOvIHlXan7NMz8VP9xKS8csxvR
-        o4P/v0ePpaxTXr82EiXBYPfIINh2Ij+qK2BHvIFFg6LIu7jf8A==
-X-Google-Smtp-Source: ABdhPJxR4PLroelDdr/Z8eb62fim7mhSeGfTf3AdEfzbZ3QGGe2pMZUES0wTQiLVEbEx1d9C1Go75RVAMFRzw8+NKaY=
-X-Received: by 2002:a17:906:9416:: with SMTP id q22mr4581184ejx.391.1598736667295;
- Sat, 29 Aug 2020 14:31:07 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=WP/oTxD4ikGNevYxi/Gik02i9253kfcXZ0yBayVCSiw=;
+        b=KP6ULYqU/EErSxIZgu0QVocNalIm4m7sV4WkqLZ11KWVr24Wv66OB8syOvax/o56+V
+         cWttkrQlL3WP678KEsKyP2VavI7a6hPQoQgrezIuYt9/sktJ0cSR7gM8T20yjICsqjFm
+         d8afq8P1ysdVJwpc2mKQI8cudUBnDDbpQ3gnYlWWKZbIJjAra+H618knIMwT1ABVC1qz
+         em8wsGVEturLgwX97YUn0BWU8R6DLblNlqb8k22//bAs57qNmE6ALji5uOFFgP7VRIhc
+         Dyp9ukU6Cgh6jr2Hv7hcR/erXQg31EYSQfK0JIgUNCRe9i/VrdzugGpznwPy1y+nqzM4
+         883A==
+X-Gm-Message-State: AOAM533NVPR29qbloOKYKaDtpAKwv+eqAU/XDblb1TWoMrl2hCkOg2mg
+        27W9p7j84tjC5dbItAQvw3cZdeVrlHwnHsBlPMR249/ZfqOR
+X-Google-Smtp-Source: ABdhPJw0JMQM6lalm7PDDjvr3fjL+p7YaO8HuhgTbLhVq72JaBaadXE+3ga9zfRLPZamFWJ2sINujFnqlzWJO93bryjdalEo7G+0
 MIME-Version: 1.0
-From:   Victor Stewart <v@nametag.social>
-Date:   Sat, 29 Aug 2020 17:30:56 -0400
-Message-ID: <CAM1kxwiDwDLWm-KY3KGE2vkBiCuYze9S+XCnthvyK=gNNMjkRQ@mail.gmail.com>
-Subject: IORING_OP_SENDMSG_FIXED + IORING_OP_RECVMSG_FIXED
-To:     io-uring@vger.kernel.org
+X-Received: by 2002:a92:5e5b:: with SMTP id s88mr3893010ilb.65.1598746095507;
+ Sat, 29 Aug 2020 17:08:15 -0700 (PDT)
+Date:   Sat, 29 Aug 2020 17:08:15 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001bdf9705ae0d151b@google.com>
+Subject: possible deadlock in __lock_task_sighand
+From:   syzbot <syzbot+6e8f5b555cce8fac0423@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, christian@brauner.io, ebiederm@xmission.com,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liuzhiqiang26@huawei.com,
+        oleg@redhat.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello all my name is Victor Stewart.
+Hello,
 
-I just mentioned to Jens on Twitter how fixed sendmsg and recvmsg
-would be fantastic additions for burgeoning QUIC traffic.
+syzbot found the following issue on:
 
-We have MSG_ZEROCOPY, but it's fairly dead on arrival. For one, it's
-only on the send side. It also involves locking pages into memory for
-each send. Testing has shown it's only worth using for >10KB sends,
-and even still only improves production traffic by single digit %s
-(cite LWN).
+HEAD commit:    abb3438d Merge tag 'm68knommu-for-v5.9-rc3' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10bb5105900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=978db74cb30aa994
+dashboard link: https://syzkaller.appspot.com/bug?extid=6e8f5b555cce8fac0423
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123a3996900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=158b8eb6900000
 
-so Jens suggested I post here to see if anyone is already working on
-this. And if not, if someone would like to collaborate?
+The issue was bisected to:
 
-I've never contributed to the kernel before so I wouldn't know where
-to begin with tooling, testing and guidelines, but I would enjoy
-learning by doing.
+commit 0ba9c9edcd152158a0e321a4c13ac1dfc571ff3d
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Fri Aug 7 01:41:50 2020 +0000
 
-Probably a weekend's work. Seems trivial enough to flag msg_iov as
-within a registered buffer, on the back of fixed reads and writes. The
-rest of msghdr is doubtfully worth the aggravation.
+    io_uring: use TWA_SIGNAL for task_work uncondtionally
 
-V
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1672c549900000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1572c549900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1172c549900000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6e8f5b555cce8fac0423@syzkaller.appspotmail.com
+Fixes: 0ba9c9edcd15 ("io_uring: use TWA_SIGNAL for task_work uncondtionally")
+
+============================================
+WARNING: possible recursive locking detected
+5.9.0-rc2-syzkaller #0 Not tainted
+--------------------------------------------
+syz-executor339/7010 is trying to acquire lock:
+ffff888094030058 (&sighand->siglock){....}-{2:2}, at: __lock_task_sighand+0x106/0x2d0 kernel/signal.c:1390
+
+but task is already holding lock:
+ffff888094030058 (&sighand->siglock){....}-{2:2}, at: force_sig_info_to_task+0x6c/0x3a0 kernel/signal.c:1316
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&sighand->siglock);
+  lock(&sighand->siglock);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+3 locks held by syz-executor339/7010:
+ #0: ffff888094030058 (&sighand->siglock){....}-{2:2}, at: force_sig_info_to_task+0x6c/0x3a0 kernel/signal.c:1316
+ #1: ffff8880940300a0 (&sighand->signalfd_wqh){....}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:122
+ #2: ffffffff89bd6900 (rcu_read_lock){....}-{1:2}, at: __lock_task_sighand+0x0/0x2d0 kernel/signal.c:1352
+
+stack backtrace:
+CPU: 1 PID: 7010 Comm: syz-executor339 Not tainted 5.9.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ print_deadlock_bug kernel/locking/lockdep.c:2391 [inline]
+ check_deadlock kernel/locking/lockdep.c:2432 [inline]
+ validate_chain kernel/locking/lockdep.c:3202 [inline]
+ __lock_acquire.cold+0x115/0x396 kernel/locking/lockdep.c:4426
+ lock_acquire+0x1f1/0xad0 kernel/locking/lockdep.c:5005
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x8c/0xc0 kernel/locking/spinlock.c:159
+ __lock_task_sighand+0x106/0x2d0 kernel/signal.c:1390
+ lock_task_sighand include/linux/sched/signal.h:687 [inline]
+ task_work_add+0x1d7/0x290 kernel/task_work.c:51
+ io_req_task_work_add fs/io_uring.c:1765 [inline]
+ __io_async_wake+0x415/0x980 fs/io_uring.c:4589
+ __wake_up_common+0x147/0x650 kernel/sched/wait.c:93
+ __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:123
+ signalfd_notify include/linux/signalfd.h:22 [inline]
+ __send_signal+0x75b/0xf90 kernel/signal.c:1163
+ force_sig_info_to_task+0x2a0/0x3a0 kernel/signal.c:1333
+ force_sig_fault_to_task kernel/signal.c:1672 [inline]
+ force_sig_fault+0xb0/0xf0 kernel/signal.c:1679
+ __bad_area_nosemaphore+0x32a/0x480 arch/x86/mm/fault.c:778
+ do_user_addr_fault+0x852/0xbf0 arch/x86/mm/fault.c:1257
+ handle_page_fault arch/x86/mm/fault.c:1351 [inline]
+ exc_page_fault+0xa8/0x160 arch/x86/mm/fault.c:1404
+ asm_exc_page_fault+0x1e/0x30 arch/x86/include/asm/idtentry.h:538
+RIP: 0033:0x4013f9
+Code: 00 20 00 c6 04 25 3d 02 00 20 00 c6 04 25 3e 02 00 20 00 c6 04 25 3f 02 00 20 00 48 8b 15 a7 ac 2d 00 48 8b 34 25 00 02 00 20 <8b> 8a 0c 01 00 00 48 89 30 48 8b 34 25 08 02 00 20 c1 e1 04 48 89
+RSP: 002b:00007f8507d67d10 EFLAGS: 00010246
+RAX: ffffffffffffffff RBX: 00000000006f0038 RCX: 0000000000000000
+RDX: ffffffffffffffff RSI: 0000000600000002 RDI: 0000000000000000
+RBP: 00000000006f0030 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006f003c
+R13: 00007f8507d67d10 R14: 00007f8507d67d10 R15: 0000000000000001
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

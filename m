@@ -2,74 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1E2B2590CF
-	for <lists+io-uring@lfdr.de>; Tue,  1 Sep 2020 16:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0641E25A1D0
+	for <lists+io-uring@lfdr.de>; Wed,  2 Sep 2020 01:10:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbgIAOif (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 1 Sep 2020 10:38:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42810 "EHLO
+        id S1726140AbgIAXKs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 1 Sep 2020 19:10:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728018AbgIAOR6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Sep 2020 10:17:58 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AFA4C06125E
-        for <io-uring@vger.kernel.org>; Tue,  1 Sep 2020 07:17:56 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id q3so593050pls.11
-        for <io-uring@vger.kernel.org>; Tue, 01 Sep 2020 07:17:56 -0700 (PDT)
+        with ESMTP id S1726050AbgIAXKs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Sep 2020 19:10:48 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 027A1C061244
+        for <io-uring@vger.kernel.org>; Tue,  1 Sep 2020 16:10:48 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id 31so1511289pgy.13
+        for <io-uring@vger.kernel.org>; Tue, 01 Sep 2020 16:10:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KeS8GKVJq4T+CUgWiidHvzznWbWtkMB2WevyIbiUS5I=;
-        b=XLzONATGaZUk6RmUTMF0GqUspbosIonDxdLp5n7lUSWgIaD9z1FySY8zCcjgDgdO9c
-         UfwDEOX20gSkEu9ogQk1AmBfwiYDZAMyTtT+OQwliywIdq0yzqV5xju1jDq8CypTR7er
-         AcudE8BiwbZkuQsOze0xqL/NtoOQdF5TsCWkedgUUBmTzuyg+2CZrBvq7hkqKwQVvtWZ
-         mhkPySDERdy15+hmLSDJMq0rV3bsG+0B+YBokrPl2XrFYDExJFQrB3umYTmJPnKTIwJp
-         15CukajAo9d9+K+gzOSNhPvM1zW6CcXg0x5QhowwfWHJR8hE1n9+0MQfFCi+HslBbPvJ
-         ysrQ==
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=nKaDFiAxU7RaYDV2wQm6sT6F+T1lXqOzT+1BowGGCSg=;
+        b=EMeLKLlbc1mqzDYHUt/Sh1q29dwIH2AO1YVcXHI5NmlxpsIt9nZuuQILMV5g36EtV1
+         POY/Vv19gasAEAOIovJ3iDuEVhZswMjRzvj/AGUQlZv7ccxIwVRXjaaDNWvIxsjeK/p+
+         NM3hPYLaz9J0W6cYHC82OMEGUmmeerP7fOb1D6O2LDUegSWXqwHV0jKtrenPD2M6ZA37
+         VlHqDYK0GgJ6rCpZxDUTbiXzTgAiB/6xQkaVNdsOZBtl2vKwUKK52DAjR1+AUqynlMMC
+         XG+p/o03t08F6LuaZdvRCeYGc0kJJNRxNifMFUW5JLH9xCG9kYnjvR/qJKQ4Kbv5Peev
+         FqfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KeS8GKVJq4T+CUgWiidHvzznWbWtkMB2WevyIbiUS5I=;
-        b=HBU0snYB7ZRfXumdITaFnvJ91s54btqm0Pu6tFGCddb6TetL+dm5l1IRXjfsMWzOGu
-         3FVw9LPKykN9V1UdFLxk49IkzfnktMWR62DUtatkOZVH5vI8aH0ZKqei1tMjr5pTCAG0
-         zlUzzbJgTcWq5/qHbWfag8L3KPOppRVJMXquOYP6h6ue1WAwSdxhT2Wit+KW1TKinuRC
-         geb/xjqkNQcbLjndwJQUcrYPgbVokDvaOrTULBHASbJL+Ok4D4rSu5Sr8hYO7hQzUpHg
-         eiUUYa7fopHR04lHCSAIWrgPVP+YFJu+0bgNn/9Ix2lGofLg46fJzChPaoIiBcdLGyV4
-         3EWg==
-X-Gm-Message-State: AOAM531LMjnZvVrzI0YO97lAnQxvdNiwcXZbENUYu3FvLs3vqjnxxcBg
-        wDTquAIMSaM0CB0r7nWF2/eG9A==
-X-Google-Smtp-Source: ABdhPJwTKTTtzYF2fDa2cowvfZektAF3tPSKAyVIQ88mb1mgNFiqoQOXUnIV/DKwOj3wmrEflZZYiA==
-X-Received: by 2002:a17:902:ff12:: with SMTP id f18mr560148plj.118.1598969875941;
-        Tue, 01 Sep 2020 07:17:55 -0700 (PDT)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=nKaDFiAxU7RaYDV2wQm6sT6F+T1lXqOzT+1BowGGCSg=;
+        b=UZDA+x6FkYr6z/ktmSHNvwFWlMW/P+Afs3P6pACRIjqyVpu0eN5ago+SaaDYlmaAou
+         onrrVJmMqWY/SQbY+TWUg6hJkAeYnnJ2Ej2C1rbUDvH5DEaWoptV4uvv1sQDIAVDnTnP
+         2OHpp7rmSvpg2KaalZEgXVhFEr3N/2NFMztrRRo8jPGv7/MMyhM3JxYOIVky2wY5jw8Q
+         0EGXCcIdlvwrqz2b1hexmza3LrbKweP/4wp7HKOBJiEzFJXBUq+ADcZqh8XzXxJ9xEu+
+         0hikWiEukWcwUsYzeBhfHEEfsg6Z/iywSp1TwEsGvcSIPR/6LE8yiTS2lQ35XvpsE37a
+         b5Mw==
+X-Gm-Message-State: AOAM530FHjwdkeOFlzXwQ7ITETZ7leCZhO6WNib/GOaliUInUjeWFB8y
+        0xIQHnKhyAPtKN4od/YuFzXG3HxNx/x2LNJ2
+X-Google-Smtp-Source: ABdhPJxYOSvAqiNGXkw+A57ZuNIztYalhtSI9r6hipo0sjDmy88daSggisVqq0M64tblmOnvio0vng==
+X-Received: by 2002:aa7:8285:: with SMTP id s5mr486778pfm.226.1599001846958;
+        Tue, 01 Sep 2020 16:10:46 -0700 (PDT)
 Received: from [192.168.1.187] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id c8sm2041855pfc.203.2020.09.01.07.17.54
+        by smtp.gmail.com with ESMTPSA id q5sm3131593pgi.31.2020.09.01.16.10.45
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Sep 2020 07:17:55 -0700 (PDT)
-Subject: Re: [PATCH v2] io_wq: Make io_wqe::lock a raw_spinlock_t
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20200819123758.6v45rj2gvojddsnn@linutronix.de>
- <20200819131507.GC2674@hirez.programming.kicks-ass.net>
- <f26205ac-9da9-253e-ea43-db2417714a94@kernel.dk>
- <20200819194443.eabkhlkocvkgifyh@linutronix.de>
- <20200901084146.4ttqrom2avcoatea@linutronix.de>
+        Tue, 01 Sep 2020 16:10:46 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <dd494f20-40d3-1abd-697b-f69d3edbb406@kernel.dk>
-Date:   Tue, 1 Sep 2020 08:17:54 -0600
+Subject: [PATCH for-next] io_uring: allow non-fixed files with SQPOLL
+Message-ID: <f56e97d5-b47c-1310-863a-50664056e5a7@kernel.dk>
+Date:   Tue, 1 Sep 2020 17:10:45 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200901084146.4ttqrom2avcoatea@linutronix.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -78,39 +64,132 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/1/20 2:41 AM, Sebastian Andrzej Siewior wrote:
-> During a context switch the scheduler invokes wq_worker_sleeping() with
-> disabled preemption. Disabling preemption is needed because it protects
-> access to `worker->sleeping'. As an optimisation it avoids invoking
-> schedule() within the schedule path as part of possible wake up (thus
-> preempt_enable_no_resched() afterwards).
-> 
-> The io-wq has been added to the mix in the same section with disabled
-> preemption. This breaks on PREEMPT_RT because io_wq_worker_sleeping()
-> acquires a spinlock_t. Also within the schedule() the spinlock_t must be
-> acquired after tsk_is_pi_blocked() otherwise it will block on the
-> sleeping lock again while scheduling out.
-> 
-> While playing with `io_uring-bench' I didn't notice a significant
-> latency spike after converting io_wqe::lock to a raw_spinlock_t. The
-> latency was more or less the same.
-> 
-> In order to keep the spinlock_t it would have to be moved after the
-> tsk_is_pi_blocked() check which would introduce a branch instruction
-> into the hot path.
-> 
-> The lock is used to maintain the `work_list' and wakes one task up at
-> most.
-> Should io_wqe_cancel_pending_work() cause latency spikes, while
-> searching for a specific item, then it would need to drop the lock
-> during iterations.
-> revert_creds() is also invoked under the lock. According to debug
-> cred::non_rcu is 0. Otherwise it should be moved outside of the locked
-> section because put_cred_rcu()->free_uid() acquires a sleeping lock.
-> 
-> Convert io_wqe::lock to a raw_spinlock_t.c
+The restriction of needing fixed files for SQPOLL is problematic, and
+prevents/inhibits several valid uses cases.
 
-Thanks, I've applied this for 5.10.
+There's no real good reason for us not to allow it, except we need to
+have the sqpoll thread inherit current->files from the task that setup
+the ring. We can't easily do that, since we'd introduce a circular
+reference by holding on to our own file table.
+
+If we wait for the sqpoll thread to exit when the ring fd is closed,
+then we can safely reference the task files_struct without holding
+a reference to it. And once we inherit that in the SQPOLL thread, we
+can support non-fixed files for SQPOLL.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 7fcf83592046..1ac8e8bb7657 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -279,6 +279,13 @@ struct io_ring_ctx {
+ 	struct mm_struct	*sqo_mm;
+ 	wait_queue_head_t	sqo_wait;
+ 
++	/*
++	 * For SQPOLL usage - no reference is held to this file table, we
++	 * rely on fops->flush() and our callback there waiting for the users
++	 * to finish.
++	 */
++	struct files_struct	*sqo_files;
++
+ 	/*
+ 	 * If used, fixed file set. Writers must ensure that ->refs is dead,
+ 	 * readers must ensure that ->refs is alive as long as the file* is
+@@ -6045,13 +6052,7 @@ static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
+ static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
+ 			   int fd)
+ {
+-	bool fixed;
+-
+-	fixed = (req->flags & REQ_F_FIXED_FILE) != 0;
+-	if (unlikely(!fixed && io_async_submit(req->ctx)))
+-		return -EBADF;
+-
+-	return io_file_get(state, req, fd, &req->file, fixed);
++	return io_file_get(state, req, fd, &req->file, req->flags & REQ_F_FIXED_FILE);
+ }
+ 
+ static int io_grab_files(struct io_kiocb *req)
+@@ -6621,6 +6622,10 @@ static int io_sq_thread(void *data)
+ 
+ 	old_cred = override_creds(ctx->creds);
+ 
++	task_lock(current);
++	current->files = ctx->sqo_files;
++	task_unlock(current);
++
+ 	timeout = jiffies + ctx->sq_thread_idle;
+ 	while (!kthread_should_park()) {
+ 		unsigned int to_submit;
+@@ -6719,6 +6724,9 @@ static int io_sq_thread(void *data)
+ 	io_run_task_work();
+ 
+ 	io_sq_thread_drop_mm();
++	task_lock(current);
++	current->files = NULL;
++	task_unlock(current);
+ 	revert_creds(old_cred);
+ 
+ 	kthread_parkme();
+@@ -7549,6 +7557,13 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 		if (!capable(CAP_SYS_ADMIN))
+ 			goto err;
+ 
++		/*
++		 * We will exit the sqthread before current exits, so we can
++		 * avoid taking a reference here and introducing weird
++		 * circular dependencies on the files table.
++		 */
++		ctx->sqo_files = current->files;
++
+ 		ctx->sq_thread_idle = msecs_to_jiffies(p->sq_thread_idle);
+ 		if (!ctx->sq_thread_idle)
+ 			ctx->sq_thread_idle = HZ;
+@@ -7586,6 +7601,7 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 
+ 	return 0;
+ err:
++	ctx->sqo_files = NULL;
+ 	io_finish_async(ctx);
+ 	return ret;
+ }
+@@ -8239,8 +8254,10 @@ static int io_uring_flush(struct file *file, void *data)
+ 	/*
+ 	 * If the task is going away, cancel work it may have pending
+ 	 */
+-	if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
++	if (fatal_signal_pending(current) || (current->flags & PF_EXITING)) {
++		io_sq_thread_stop(ctx);
+ 		io_wq_cancel_cb(ctx->io_wq, io_cancel_task_cb, current, true);
++	}
+ 
+ 	return 0;
+ }
+@@ -8690,7 +8707,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
+ 			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
+ 			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL |
+-			IORING_FEAT_POLL_32BITS;
++			IORING_FEAT_POLL_32BITS | IORING_FEAT_SQPOLL_NONFIXED;
+ 
+ 	if (copy_to_user(params, p, sizeof(*p))) {
+ 		ret = -EFAULT;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 3e45de39e04b..02528ec8e81b 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -255,6 +255,7 @@ struct io_uring_params {
+ #define IORING_FEAT_CUR_PERSONALITY	(1U << 4)
+ #define IORING_FEAT_FAST_POLL		(1U << 5)
+ #define IORING_FEAT_POLL_32BITS 	(1U << 6)
++#define IORING_FEAT_SQPOLL_NONFIXED	(1U << 7)
+ 
+ /*
+  * io_uring_register(2) opcodes and arguments
 
 -- 
 Jens Axboe

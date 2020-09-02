@@ -2,64 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F244525A28E
-	for <lists+io-uring@lfdr.de>; Wed,  2 Sep 2020 03:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4412E25A2A5
+	for <lists+io-uring@lfdr.de>; Wed,  2 Sep 2020 03:31:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726140AbgIBBJS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 1 Sep 2020 21:09:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58800 "EHLO
+        id S1726122AbgIBBbL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 1 Sep 2020 21:31:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbgIBBJR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Sep 2020 21:09:17 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84404C061244
-        for <io-uring@vger.kernel.org>; Tue,  1 Sep 2020 18:09:17 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id b124so1873003pfg.13
-        for <io-uring@vger.kernel.org>; Tue, 01 Sep 2020 18:09:17 -0700 (PDT)
+        with ESMTP id S1726116AbgIBBbK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Sep 2020 21:31:10 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB87C061244
+        for <io-uring@vger.kernel.org>; Tue,  1 Sep 2020 18:31:10 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id q1so1540088pjd.1
+        for <io-uring@vger.kernel.org>; Tue, 01 Sep 2020 18:31:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MLNPIsz4cIO7RiuVCK+zVZhZQaDgIV9rfQM/QNTIVRY=;
-        b=vxY53cY6icbF0VJTChpmcdpFcfidHgzL+uuPY4DSgzkvxNW2xQpPESsuj69MDcIWH5
-         aWHvGcbPabbxQ/3ncBIQkfsK8ljxxTZc4aH5HMaIKepx5KVh0OXo2D0XOLiYq1Af56U/
-         8CHNAvnvF7EZQHcjZp5zW+bI3r2hJe+Q4VzJjZts/pWMKwMtM9TzRQv6J8XrpZH6p+fy
-         BTKJdNks52BusOl4965V3xfqY9iMg85JPgK1wLIGzN7qkoenNxC8AX+LSS41Z+4XXbbj
-         y5u/QWbzAAFA4GrEO1ukWG+qXUWbdiWHioiBAob4DVJsHn8MzH65OpGoFcFa/iMhPxSy
-         Sgiw==
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=y7RbGPARQjn6TirZ4f/2e9aykZ6xofiCnvXJX7Gy1/I=;
+        b=Lwv95SCPcml0Ksj7QNFEjL1xZtdf9HCbzWGDXsowUQZFPErvCn1RitlBXlRaesUHBZ
+         IaPtf901HzKW4Mpw3hJbta0gOIzUOteuup9M2Uz6YlHZwceVvpamfq676cE65MbgmRxh
+         olBLE8E/uRYP+geE1rQY5tyjZYpp3//Bgn8LuZMZgBnrtEp+x2giBjX0RKbpMrsj4v5k
+         Mvyg7hUm1mZW2kKKTYCUu1XWvjvRkfDIv/iirje9rA9Jz053MqIvDleYkBq/EwttcFzV
+         oaQ6nEht3TSiUIHw3nkAmMxwSnVlPAU5V1Yygr5XRxqeXeM00cvRl2tksiJrA1kOry9g
+         s3Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MLNPIsz4cIO7RiuVCK+zVZhZQaDgIV9rfQM/QNTIVRY=;
-        b=h782SEJkCgwvrclXnrtfuyIjLo3xYrKQKfobbiRFh9KuKdzhtq7FY2TrZTCxcsZ3pz
-         WQGqi5WhX24ZmscDhMw9We45KPu/seUPdvhOrwuPh6laEsWG/aBBLwpqMxDNRr3dV5Ya
-         2GAmhxEvkf5L129nBT0cxTSxb5J72EWyhn6UOZgJGpIaZp+bcu4hmTqjdT/CDhkwTEwT
-         SC8rpu2A0W6/IikP2/MOVV4y3YiK9pzuZbnXgcbDfn+mRevfPEF9dqFpctBeUjYiFz1H
-         uNg3F53nvL67SbOqcklx6oLahKAO/RgRsYVSEFtkSeP3Z2OySxbls7A4pKSk65RtLnw2
-         +8gQ==
-X-Gm-Message-State: AOAM532BxDs9PuMKGPR71aZfU8BgjPJQEZQfypZiixEkcJZFdRNwnOTE
-        CznBsd3TQfh+kE3MxLZ9yeK+7XwgpyoXAajy
-X-Google-Smtp-Source: ABdhPJzqI68acBqQG8vF8V8UpR0mq/vsjIQuRcS04PGjcqCL5PelB49aZY7Y9K15leCEsmULIBmJuQ==
-X-Received: by 2002:a62:486:: with SMTP id 128mr864517pfe.163.1599008956312;
-        Tue, 01 Sep 2020 18:09:16 -0700 (PDT)
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=y7RbGPARQjn6TirZ4f/2e9aykZ6xofiCnvXJX7Gy1/I=;
+        b=tsCKupdU+KkyNzfsi///nN0kXXR1mBMHe+ERt3Oejj+mM9ho7xwpVD/2Y7mK+GcSwG
+         jWI58zKKsmzHXbjc8xI/D0qt9sNobGY8wSMuoII7+EmJ5KZZH2eakO4Avo70+sCacOjB
+         ry8jZ5M+zpJtq+j5KwQ8ZcsXA6kag6rPMfQ4ODdqzWZiOesjkFJNZte4wT0++wFlC6Vr
+         XMJlmyGbWKVxdOUZvtlqLE22kM2Nrtzv5s+YMuhJ2xNzHb4cy9VhvhtM0168iGexJw/3
+         8vT2pz8aP1z1VOTO6VdILFIQrLzxiwWHndHQdvI5x30v1dvL4dMsi9ySkv5UF6vqpeeq
+         gD2g==
+X-Gm-Message-State: AOAM532W8KpVtAk/a9mls2I0MNQa5HsLW9BtDm8NMxbmZd3zEKEhuwgC
+        45QlqHx4ugXYp6G6F5DhkK9jcQ==
+X-Google-Smtp-Source: ABdhPJwyCNXbd3mtkC8sWJIX5OGklcSgunX1KTZ3+GdFmFwhDcOpDQTa10S7EpPE6LnSh8DcncegPw==
+X-Received: by 2002:a17:902:720a:: with SMTP id ba10mr3904519plb.41.1599010269410;
+        Tue, 01 Sep 2020 18:31:09 -0700 (PDT)
 Received: from [192.168.1.187] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id b64sm3221929pfa.200.2020.09.01.18.09.15
+        by smtp.gmail.com with ESMTPSA id c199sm1447412pfc.128.2020.09.01.18.31.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Sep 2020 18:09:15 -0700 (PDT)
-Subject: Re: [PATCH for-next] io_uring: allow non-fixed files with SQPOLL
-To:     Jann Horn <jannh@google.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <f56e97d5-b47c-1310-863a-50664056e5a7@kernel.dk>
- <CAG48ez12XsTUtxrebDzGQD5bYwss3hUguTHtfE-L3XstGPuTCw@mail.gmail.com>
+        Tue, 01 Sep 2020 18:31:08 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cd15e379-36bb-d1fa-74d6-da1a953d0146@kernel.dk>
-Date:   Tue, 1 Sep 2020 19:09:14 -0600
+Subject: [PATCH v2 for-next] io_uring: allow non-fixed files with SQPOLL
+To:     io-uring <io-uring@vger.kernel.org>
+Cc:     Jann Horn <jannh@google.com>
+Message-ID: <cf8bdc95-1718-60d6-beb3-2b8909106d2c@kernel.dk>
+Date:   Tue, 1 Sep 2020 19:31:07 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez12XsTUtxrebDzGQD5bYwss3hUguTHtfE-L3XstGPuTCw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,73 +64,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/1/20 6:15 PM, Jann Horn wrote:
-> On Wed, Sep 2, 2020 at 1:11 AM Jens Axboe <axboe@kernel.dk> wrote:
->> The restriction of needing fixed files for SQPOLL is problematic, and
->> prevents/inhibits several valid uses cases.
->>
->> There's no real good reason for us not to allow it, except we need to
->> have the sqpoll thread inherit current->files from the task that setup
->> the ring. We can't easily do that, since we'd introduce a circular
->> reference by holding on to our own file table.
->>
->> If we wait for the sqpoll thread to exit when the ring fd is closed,
->> then we can safely reference the task files_struct without holding
->> a reference to it. And once we inherit that in the SQPOLL thread, we
->> can support non-fixed files for SQPOLL.
-> [...]
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> [...]
->> +       /*
->> +        * For SQPOLL usage - no reference is held to this file table, we
->> +        * rely on fops->flush() and our callback there waiting for the users
->> +        * to finish.
->> +        */
->> +       struct files_struct     *sqo_files;
-> [...]
->> @@ -6621,6 +6622,10 @@ static int io_sq_thread(void *data)
->>
->>         old_cred = override_creds(ctx->creds);
->>
->> +       task_lock(current);
->> +       current->files = ctx->sqo_files;
->> +       task_unlock(current);
-> [...]
->> @@ -7549,6 +7557,13 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
->>                 if (!capable(CAP_SYS_ADMIN))
->>                         goto err;
->>
->> +               /*
->> +                * We will exit the sqthread before current exits, so we can
->> +                * avoid taking a reference here and introducing weird
->> +                * circular dependencies on the files table.
->> +                */
->> +               ctx->sqo_files = current->files;
-> [...]
->> @@ -8239,8 +8254,10 @@ static int io_uring_flush(struct file *file, void *data)
->>         /*
->>          * If the task is going away, cancel work it may have pending
->>          */
->> -       if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
->> +       if (fatal_signal_pending(current) || (current->flags & PF_EXITING)) {
->> +               io_sq_thread_stop(ctx);
->>                 io_wq_cancel_cb(ctx->io_wq, io_cancel_task_cb, current, true);
->> +       }
-> 
-> What happens when the uring setup syscall fails around
-> io_uring_get_fd() (after the sq offload thread was started, but before
-> an fd was installed)? Will that also properly wait for the sq_thread
-> to go away before returning from the syscall (at which point the
-> files_struct could disappear)?
+The restriction of needing fixed files for SQPOLL is problematic, and
+prevents/inhibits several valid uses cases.
 
-Thanks for taking a look, Jann - I actually meant to CC you on this one
-explicitly, but forgot.
+There's no real good reason for us not to allow it, except we need to
+have the sqpoll thread inherit current->files from the task that setup
+the ring. We can't easily do that, since we'd introduce a circular
+reference by holding on to our own file table.
 
-Good question, we do need to handle the error case there and wait for
-the thread to exit to avoid a potential use-after-free on the file
-structure of the current->files. This one-liner addition (and comment)
-should ensure we do just that.
+If we wait for the sqpoll thread to exit when the ring fd is closed,
+then we can safely reference the task files_struct without holding
+a reference to it. And once we inherit that in the SQPOLL thread, we
+can support non-fixed files for SQPOLL.
 
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+v2: Ensure we exit SQPOLL thread on ring creation error
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
 index 7fcf83592046..d97601cacd7f 100644

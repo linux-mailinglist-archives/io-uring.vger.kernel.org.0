@@ -2,210 +2,162 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4412E25A2A5
-	for <lists+io-uring@lfdr.de>; Wed,  2 Sep 2020 03:31:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1256225A4C8
+	for <lists+io-uring@lfdr.de>; Wed,  2 Sep 2020 07:05:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726122AbgIBBbL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 1 Sep 2020 21:31:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34320 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbgIBBbK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Sep 2020 21:31:10 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB87C061244
-        for <io-uring@vger.kernel.org>; Tue,  1 Sep 2020 18:31:10 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id q1so1540088pjd.1
-        for <io-uring@vger.kernel.org>; Tue, 01 Sep 2020 18:31:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=y7RbGPARQjn6TirZ4f/2e9aykZ6xofiCnvXJX7Gy1/I=;
-        b=Lwv95SCPcml0Ksj7QNFEjL1xZtdf9HCbzWGDXsowUQZFPErvCn1RitlBXlRaesUHBZ
-         IaPtf901HzKW4Mpw3hJbta0gOIzUOteuup9M2Uz6YlHZwceVvpamfq676cE65MbgmRxh
-         olBLE8E/uRYP+geE1rQY5tyjZYpp3//Bgn8LuZMZgBnrtEp+x2giBjX0RKbpMrsj4v5k
-         Mvyg7hUm1mZW2kKKTYCUu1XWvjvRkfDIv/iirje9rA9Jz053MqIvDleYkBq/EwttcFzV
-         oaQ6nEht3TSiUIHw3nkAmMxwSnVlPAU5V1Yygr5XRxqeXeM00cvRl2tksiJrA1kOry9g
-         s3Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=y7RbGPARQjn6TirZ4f/2e9aykZ6xofiCnvXJX7Gy1/I=;
-        b=tsCKupdU+KkyNzfsi///nN0kXXR1mBMHe+ERt3Oejj+mM9ho7xwpVD/2Y7mK+GcSwG
-         jWI58zKKsmzHXbjc8xI/D0qt9sNobGY8wSMuoII7+EmJ5KZZH2eakO4Avo70+sCacOjB
-         ry8jZ5M+zpJtq+j5KwQ8ZcsXA6kag6rPMfQ4ODdqzWZiOesjkFJNZte4wT0++wFlC6Vr
-         XMJlmyGbWKVxdOUZvtlqLE22kM2Nrtzv5s+YMuhJ2xNzHb4cy9VhvhtM0168iGexJw/3
-         8vT2pz8aP1z1VOTO6VdILFIQrLzxiwWHndHQdvI5x30v1dvL4dMsi9ySkv5UF6vqpeeq
-         gD2g==
-X-Gm-Message-State: AOAM532W8KpVtAk/a9mls2I0MNQa5HsLW9BtDm8NMxbmZd3zEKEhuwgC
-        45QlqHx4ugXYp6G6F5DhkK9jcQ==
-X-Google-Smtp-Source: ABdhPJwyCNXbd3mtkC8sWJIX5OGklcSgunX1KTZ3+GdFmFwhDcOpDQTa10S7EpPE6LnSh8DcncegPw==
-X-Received: by 2002:a17:902:720a:: with SMTP id ba10mr3904519plb.41.1599010269410;
-        Tue, 01 Sep 2020 18:31:09 -0700 (PDT)
-Received: from [192.168.1.187] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id c199sm1447412pfc.128.2020.09.01.18.31.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Sep 2020 18:31:08 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2 for-next] io_uring: allow non-fixed files with SQPOLL
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Jann Horn <jannh@google.com>
-Message-ID: <cf8bdc95-1718-60d6-beb3-2b8909106d2c@kernel.dk>
-Date:   Tue, 1 Sep 2020 19:31:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726177AbgIBFFv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 2 Sep 2020 01:05:51 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:49337 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726140AbgIBFFu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Sep 2020 01:05:50 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0U7gnjga_1599023145;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0U7gnjga_1599023145)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 02 Sep 2020 13:05:45 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH] io_uring: don't take percpu_ref operations for registered files in IOPOLL mode
+Date:   Wed,  2 Sep 2020 13:05:38 +0800
+Message-Id: <20200902050538.8350-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.2
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The restriction of needing fixed files for SQPOLL is problematic, and
-prevents/inhibits several valid uses cases.
+In io_file_get() and io_put_file(), currently we use percpu_ref_get() and
+percpu_ref_put() for registered files, but it's hard to say they're very
+light-weight synchronization primitives, especially in arm platform. In one
+our arm machine, I get below perf data(registered files enabled):
+Samples: 98K of event 'cycles:ppp', Event count (approx.): 63789396810
+Overhead  Command      Shared Object     Symbol
+   ...
+   0.78%  io_uring-sq  [kernel.vmlinux]  [k] io_file_get
+There is an obvious overhead that can not be ignored.
 
-There's no real good reason for us not to allow it, except we need to
-have the sqpoll thread inherit current->files from the task that setup
-the ring. We can't easily do that, since we'd introduce a circular
-reference by holding on to our own file table.
+Currently I don't find any good and generic solution for this issue, but
+in IOPOLL mode, given that we can always ensure get/put registered files
+under uring_lock, we can use a simple and plain u64 counter to synchronize
+with registered files update operations in __io_sqe_files_update().
 
-If we wait for the sqpoll thread to exit when the ring fd is closed,
-then we can safely reference the task files_struct without holding
-a reference to it. And once we inherit that in the SQPOLL thread, we
-can support non-fixed files for SQPOLL.
+With this patch, perf data show shows:
+Samples: 104K of event 'cycles:ppp', Event count (approx.): 67478249890
+Overhead  Command      Shared Object     Symbol
+   ...
+   0.27%  io_uring-sq  [kernel.vmlinux]  [k] io_file_get
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
+Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 ---
-
-v2: Ensure we exit SQPOLL thread on ring creation error
+ fs/io_uring.c | 58 ++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 50 insertions(+), 8 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7fcf83592046..d97601cacd7f 100644
+index ce69bd9b0838..186072861af9 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -279,6 +279,13 @@ struct io_ring_ctx {
- 	struct mm_struct	*sqo_mm;
- 	wait_queue_head_t	sqo_wait;
+@@ -195,6 +195,11 @@ struct fixed_file_table {
  
+ struct fixed_file_ref_node {
+ 	struct percpu_ref		refs;
 +	/*
-+	 * For SQPOLL usage - no reference is held to this file table, we
-+	 * rely on fops->flush() and our callback there waiting for the users
-+	 * to finish.
++	 * Track the number of reqs that reference this node, currently it's
++	 * only used in IOPOLL mode.
 +	 */
-+	struct files_struct	*sqo_files;
-+
- 	/*
- 	 * If used, fixed file set. Writers must ensure that ->refs is dead,
- 	 * readers must ensure that ->refs is alive as long as the file* is
-@@ -6045,13 +6052,7 @@ static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
- static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
- 			   int fd)
- {
--	bool fixed;
--
--	fixed = (req->flags & REQ_F_FIXED_FILE) != 0;
--	if (unlikely(!fixed && io_async_submit(req->ctx)))
--		return -EBADF;
--
--	return io_file_get(state, req, fd, &req->file, fixed);
-+	return io_file_get(state, req, fd, &req->file, req->flags & REQ_F_FIXED_FILE);
- }
- 
- static int io_grab_files(struct io_kiocb *req)
-@@ -6621,6 +6622,10 @@ static int io_sq_thread(void *data)
- 
- 	old_cred = override_creds(ctx->creds);
- 
-+	task_lock(current);
-+	current->files = ctx->sqo_files;
-+	task_unlock(current);
-+
- 	timeout = jiffies + ctx->sq_thread_idle;
- 	while (!kthread_should_park()) {
- 		unsigned int to_submit;
-@@ -6719,6 +6724,9 @@ static int io_sq_thread(void *data)
- 	io_run_task_work();
- 
- 	io_sq_thread_drop_mm();
-+	task_lock(current);
-+	current->files = NULL;
-+	task_unlock(current);
- 	revert_creds(old_cred);
- 
- 	kthread_parkme();
-@@ -7549,6 +7557,13 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 		if (!capable(CAP_SYS_ADMIN))
- 			goto err;
- 
-+		/*
-+		 * We will exit the sqthread before current exits, so we can
-+		 * avoid taking a reference here and introducing weird
-+		 * circular dependencies on the files table.
-+		 */
-+		ctx->sqo_files = current->files;
-+
- 		ctx->sq_thread_idle = msecs_to_jiffies(p->sq_thread_idle);
- 		if (!ctx->sq_thread_idle)
- 			ctx->sq_thread_idle = HZ;
-@@ -7586,6 +7601,7 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 
- 	return 0;
- err:
-+	ctx->sqo_files = NULL;
- 	io_finish_async(ctx);
- 	return ret;
- }
-@@ -8239,8 +8255,10 @@ static int io_uring_flush(struct file *file, void *data)
- 	/*
- 	 * If the task is going away, cancel work it may have pending
++	u64				count;
+ 	struct list_head		node;
+ 	struct list_head		file_list;
+ 	struct fixed_file_data		*file_data;
+@@ -651,7 +656,10 @@ struct io_kiocb {
  	 */
--	if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
-+	if (fatal_signal_pending(current) || (current->flags & PF_EXITING)) {
-+		io_sq_thread_stop(ctx);
- 		io_wq_cancel_cb(ctx->io_wq, io_cancel_task_cb, current, true);
-+	}
+ 	struct list_head		inflight_entry;
  
- 	return 0;
+-	struct percpu_ref		*fixed_file_refs;
++	union {
++		struct percpu_ref		*fixed_file_refs;
++		struct fixed_file_ref_node	*fixed_file_ref_node;
++	};
+ 	struct callback_head		task_work;
+ 	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
+ 	struct hlist_node		hash_node;
+@@ -1544,9 +1552,20 @@ static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx,
+ static inline void io_put_file(struct io_kiocb *req, struct file *file,
+ 			  bool fixed)
+ {
+-	if (fixed)
+-		percpu_ref_put(req->fixed_file_refs);
+-	else
++	struct io_ring_ctx *ctx = req->ctx;
++
++	if (fixed) {
++		/* See same comments in io_sqe_files_unregister(). */
++		if (ctx->flags & IORING_SETUP_IOPOLL) {
++			struct fixed_file_ref_node *ref_node = req->fixed_file_ref_node;
++			struct percpu_ref *refs = &ref_node->refs;
++
++			ref_node->count--;
++			if ((ctx->file_data->cur_refs != refs) && !ref_node->count)
++				percpu_ref_kill(refs);
++		} else
++			percpu_ref_put(req->fixed_file_refs);
++	} else
+ 		fput(file);
  }
-@@ -8690,7 +8708,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
- 			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
- 			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL |
--			IORING_FEAT_POLL_32BITS;
-+			IORING_FEAT_POLL_32BITS | IORING_FEAT_SQPOLL_NONFIXED;
  
- 	if (copy_to_user(params, p, sizeof(*p))) {
- 		ret = -EFAULT;
-@@ -8708,6 +8726,12 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	trace_io_uring_create(ret, ctx, p->sq_entries, p->cq_entries, p->flags);
- 	return ret;
- err:
+@@ -5967,8 +5986,21 @@ static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
+ 		fd = array_index_nospec(fd, ctx->nr_user_files);
+ 		file = io_file_from_index(ctx, fd);
+ 		if (file) {
+-			req->fixed_file_refs = ctx->file_data->cur_refs;
+-			percpu_ref_get(req->fixed_file_refs);
++			struct percpu_ref *refs = ctx->file_data->cur_refs;
++
++			/*
++			 * In IOPOLL mode, we can always ensure get/put registered files under
++			 * uring_lock, so we can use a simple and plain u64 counter to synchronize
++			 * with registered files update operations in __io_sqe_files_update.
++			 */
++			if (ctx->flags & IORING_SETUP_IOPOLL) {
++				req->fixed_file_ref_node = container_of(refs,
++						struct fixed_file_ref_node, refs);
++				req->fixed_file_ref_node->count++;
++			} else {
++				req->fixed_file_refs = refs;
++				percpu_ref_get(refs);
++			}
+ 		}
+ 	} else {
+ 		trace_io_uring_file_get(ctx, fd);
+@@ -6781,7 +6813,12 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 		ref_node = list_first_entry(&data->ref_list,
+ 				struct fixed_file_ref_node, node);
+ 	spin_unlock(&data->lock);
+-	if (ref_node)
 +	/*
-+	 * Our wait-and-kill does do this, but we need it done before we
-+	 * exit as the SQPOLL thread could already be active and the current
-+	 * files could be done as soon as we exit here.
++	 * If count is not zero, that means we're in IOPOLL mode, and there are
++	 * still reqs that reference this ref_node, let the final req do the
++	 * percpu_ref_kill job.
 +	 */
-+	io_finish_async(ctx);
- 	io_ring_ctx_wait_and_kill(ctx);
- 	return ret;
- }
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 3e45de39e04b..02528ec8e81b 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -255,6 +255,7 @@ struct io_uring_params {
- #define IORING_FEAT_CUR_PERSONALITY	(1U << 4)
- #define IORING_FEAT_FAST_POLL		(1U << 5)
- #define IORING_FEAT_POLL_32BITS 	(1U << 6)
-+#define IORING_FEAT_SQPOLL_NONFIXED	(1U << 7)
++	if (ref_node && !ref_node->count)
+ 		percpu_ref_kill(&ref_node->refs);
  
- /*
-  * io_uring_register(2) opcodes and arguments
-
+ 	percpu_ref_kill(&data->refs);
+@@ -7363,7 +7400,12 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 	}
+ 
+ 	if (needs_switch) {
+-		percpu_ref_kill(data->cur_refs);
++		struct fixed_file_ref_node *old_ref_node = container_of(data->cur_refs,
++				struct fixed_file_ref_node, refs);
++
++		/* See same comments in io_sqe_files_unregister(). */
++		if (!old_ref_node->count)
++			percpu_ref_kill(data->cur_refs);
+ 		spin_lock(&data->lock);
+ 		list_add(&ref_node->node, &data->ref_list);
+ 		data->cur_refs = &ref_node->refs;
 -- 
-Jens Axboe
+2.17.2
 

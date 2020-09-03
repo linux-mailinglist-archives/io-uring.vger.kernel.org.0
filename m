@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF0925B8B7
+	by mail.lfdr.de (Postfix) with ESMTP id 928F325B8B8
 	for <lists+io-uring@lfdr.de>; Thu,  3 Sep 2020 04:21:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbgICCVJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 2 Sep 2020 22:21:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37232 "EHLO
+        id S1727921AbgICCVK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 2 Sep 2020 22:21:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727921AbgICCVI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Sep 2020 22:21:08 -0400
+        with ESMTP id S1726821AbgICCVJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Sep 2020 22:21:09 -0400
 Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE294C061244
-        for <io-uring@vger.kernel.org>; Wed,  2 Sep 2020 19:21:07 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id w7so968587pfi.4
-        for <io-uring@vger.kernel.org>; Wed, 02 Sep 2020 19:21:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F1E8C061245
+        for <io-uring@vger.kernel.org>; Wed,  2 Sep 2020 19:21:09 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id k15so942844pfc.12
+        for <io-uring@vger.kernel.org>; Wed, 02 Sep 2020 19:21:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5vPvKZSCDTewOQL7Zk2TfYJ4uTHSN6aO/4VElkMYPlo=;
-        b=k8U98ee98lnZr4YJMnnDjpvK6DkSAf/MO+bfvzP74Me4xSFpEIisg2CWKnMS/uHjCD
-         Pb+R/fy2R8P/V27aaDAZSyjVb2XZi0wbAkuDONYYWdqAiuVU3Gp+8vm7DPnbHOdfReCw
-         CujLA7xvXXqJjmXd1cmfWT1JZR0+VwtXa92C0Pf4vSzYiL7Rbx9Y/EpJHyNiEGDg6zvs
-         cfiKbA1NF1GoOLmLE0TjVJ1/IQPo+ImWXa7Blfq4OibtT4cwU5yCSyzHjQQC5O915/I0
-         JErkBPLi+0IUL1F9IMOKTo2WJsp474uhRlzBUZmypNYgGHF/8qo72g64YFNtDbPHhMcZ
-         4/mQ==
+        bh=9g7RtwVCTrkh9qi8douF+65xnwooZxp22rKnIV2uaeg=;
+        b=Cdpcdr8AS28Og/CGhvDpw8XX4gPDuwTCrSkAUY6nWaSsnUevelexF6mBrCohcLnmP+
+         ohLjS8BTxx+JjvejJR0VVyczSuxbqP3nhXrB/Y1LOjiJatUCSv2XIu12sX9z2JXHY0Dp
+         3dC4+qULJUHGxBBYh3QFCAfz27kOi7L5buT9dBfSZ7cKkWxE9O/dyE7Y+hSyfjj+ByRZ
+         QwSarXrj4M/xYx2SfC64MdsM+iYHu3M0UIvEdYqYcqT03ca53rkPfW/XaDtgroViZusy
+         A4HgHJChA9YrpWxSxyFrYEBl/58F+Q+wfIDt6lKRlKaMOZXwuwE7wsPYUQcKvCllrKCB
+         O6wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5vPvKZSCDTewOQL7Zk2TfYJ4uTHSN6aO/4VElkMYPlo=;
-        b=b1+sFYpEKXDyG/vc/aLLI0nmaW/auA2WJNHw7p3o+dG3trrWhy3bWGjHnfx1RQtSVV
-         mT4PVTPze4cVkc44XnaA1M03VeKCal5skU32bGtmNDgD0+kna/5K/deToS46otV+ut4V
-         6Mz7rb/h57RLInlaZuKSBkddCMAPudaEI3voZEeIBbjezcL0FyyQGiiE1fJevzVJ78Q8
-         5IFBfIgCbMz4saZo6mTt8MaShJ4L7tRU1kgxyDoC5sKYkiw4cxgSxyVSU2GVL9Vx7ENl
-         tdpG4p1+njdCo0SWKpKjiviilTTdySVeoXz+11BNno2bzpqqObY8raQZf1lF3ZrzmsSl
-         Cf7Q==
-X-Gm-Message-State: AOAM533piG7HvcJj9j7eabrR0Vr3zQ0lKxtOAmciN01PjELIkjJ/5i7a
-        w2y1gaOSng+PRS8hF3YSRNgqpDFKM4Sz+RGr
-X-Google-Smtp-Source: ABdhPJzwGmYGD/dF3C3tPPx7WocEgRw9J+2K70a/yD3+c1cbfI1KVAScPwV96fK8nQupm3D8SDYa4Q==
-X-Received: by 2002:a62:ce41:0:b029:13c:1611:66bc with SMTP id y62-20020a62ce410000b029013c161166bcmr553048pfg.7.1599099667169;
-        Wed, 02 Sep 2020 19:21:07 -0700 (PDT)
+        bh=9g7RtwVCTrkh9qi8douF+65xnwooZxp22rKnIV2uaeg=;
+        b=nAmsoMYdVScJ5m55wNNNsbNKhV5V286lCrK7lZ5XWrpR7J6odYDTAzdX5DjtMLCTI/
+         sCd13JOk9be67zTedJ6OavYBtqsMTvh0fAjqZ5IlHTVTVlNCNviY5MFnulGXcNciS8hC
+         aT47T7C7x55Y7E5IGatm4JyWYbpdj31GqQI6cv8xlSd2jGiJ232OIU5i7M8qbQQeVssz
+         vZtdf8OrjxwG+WCgreAVpfSoT8dqmHBd7T0eqqs5go3vo1MpEeG3o2NWXSxZEzqC00KQ
+         P74lu5z6KPh7rrz3w12Ub5yfcy/h1hZXgMdvBhsJaKnbaQ08AZokLGjBfGSlG7gAkXe2
+         IwXw==
+X-Gm-Message-State: AOAM532dYtGRrLIk8KiPdye+W1n6P/YqT1monPIy9ye534QjOAYyB+bU
+        LTjw3mm4O29hAVoANEPXErs8fRodF54crFIS
+X-Google-Smtp-Source: ABdhPJziw/HdrXB1p7FtQLuvhAj6UKlznDlSV+BmJppfeP5dCB9wt3e3xQMjb7K+BGizW4YDrH9lSg==
+X-Received: by 2002:a62:4d41:: with SMTP id a62mr1448960pfb.234.1599099668337;
+        Wed, 02 Sep 2020 19:21:08 -0700 (PDT)
 Received: from localhost.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id ie13sm663102pjb.5.2020.09.02.19.21.06
+        by smtp.gmail.com with ESMTPSA id ie13sm663102pjb.5.2020.09.02.19.21.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2020 19:21:06 -0700 (PDT)
+        Wed, 02 Sep 2020 19:21:07 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 7/8] io_uring: base SQPOLL handling off io_sq_data
-Date:   Wed,  2 Sep 2020 20:20:52 -0600
-Message-Id: <20200903022053.912968-8-axboe@kernel.dk>
+Subject: [PATCH 8/8] io_uring: enable IORING_SETUP_ATTACH_WQ to attach to SQPOLL thread too
+Date:   Wed,  2 Sep 2020 20:20:53 -0600
+Message-Id: <20200903022053.912968-9-axboe@kernel.dk>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200903022053.912968-1-axboe@kernel.dk>
 References: <20200903022053.912968-1-axboe@kernel.dk>
@@ -63,197 +63,121 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Remove the SQPOLL thread from the ctx, and use the io_sq_data as the
-data structure we pass in. io_sq_data has a list of ctx's that we can
-then iterate over and handle.
-
-As of now we're ready to handle multiple ctx's, though we're still just
-handling a single one after this patch.
+We support using IORING_SETUP_ATTACH_WQ to share async backends between
+rings created by the same process, this now also allows the same to
+happen with SQPOLL. The setup procedure remains the same, the caller
+sets io_uring_params->wq_fd to the 'parent' context, and then the newly
+created ring will attach to that async backend.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 101 +++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 72 insertions(+), 29 deletions(-)
+ fs/io_uring.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 35ea69aad9c0..5bafc7a2c65c 100644
+index 5bafc7a2c65c..07e16049e62d 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -231,6 +231,12 @@ struct io_restriction {
- 
+@@ -232,6 +232,10 @@ struct io_restriction {
  struct io_sq_data {
  	refcount_t		refs;
+ 
++	/* global sqd lookup */
++	struct list_head	all_sqd_list;
++	int			attach_fd;
 +
-+	/* ctx's that are using this sqd */
-+	struct list_head	ctx_list;
-+	struct list_head	ctx_new_list;
-+	struct mutex		ctx_lock;
-+
- 	struct task_struct	*thread;
+ 	/* ctx's that are using this sqd */
+ 	struct list_head	ctx_list;
+ 	struct list_head	ctx_new_list;
+@@ -241,6 +245,9 @@ struct io_sq_data {
  	struct wait_queue_head	wait;
  };
-@@ -290,6 +296,7 @@ struct io_ring_ctx {
- 	struct files_struct	*sqo_files;
  
- 	struct wait_queue_entry	sqo_wait_entry;
-+	struct list_head	sqd_list;
++static LIST_HEAD(sqd_list);
++static DEFINE_MUTEX(sqd_lock);
++
+ struct io_ring_ctx {
+ 	struct {
+ 		struct percpu_ref	refs;
+@@ -6975,14 +6982,38 @@ static void io_put_sq_data(struct io_sq_data *sqd)
+ 			kthread_stop(sqd->thread);
+ 		}
  
- 	struct io_sq_data	*sq_data;	/* if using sq thread polling */
- 
-@@ -1090,6 +1097,7 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 		goto err;
- 
- 	ctx->flags = p->flags;
-+	INIT_LIST_HEAD(&ctx->sqd_list);
- 	init_waitqueue_head(&ctx->cq_wait);
- 	INIT_LIST_HEAD(&ctx->cq_overflow_list);
- 	init_completion(&ctx->ref_comp);
-@@ -6712,49 +6720,74 @@ static enum sq_ret __io_sq_thread(struct io_ring_ctx *ctx,
- 	return SQT_DID_WORK;
++		mutex_lock(&sqd_lock);
++		list_del(&sqd->all_sqd_list);
++		mutex_unlock(&sqd_lock);
++
+ 		kfree(sqd);
+ 	}
  }
  
-+static void io_sqd_init_new(struct io_sq_data *sqd)
++static struct io_sq_data *io_attach_sq_data(struct io_uring_params *p)
 +{
-+	struct io_ring_ctx *ctx;
++	struct io_sq_data *sqd, *ret = ERR_PTR(-ENXIO);
 +
-+	while (!list_empty(&sqd->ctx_new_list)) {
-+		ctx = list_first_entry(&sqd->ctx_new_list, struct io_ring_ctx, sqd_list);
-+		init_wait(&ctx->sqo_wait_entry);
-+		ctx->sqo_wait_entry.func = io_sq_wake_function;
-+		list_move_tail(&ctx->sqd_list, &sqd->ctx_list);
-+		complete(&ctx->sq_thread_comp);
++	mutex_lock(&sqd_lock);
++	list_for_each_entry(sqd, &sqd_list, all_sqd_list) {
++		if (sqd->attach_fd == p->wq_fd) {
++			refcount_inc(&sqd->refs);
++			ret = sqd;
++			break;
++		}
 +	}
++	mutex_unlock(&sqd_lock);
++
++	return ret;
 +}
 +
- static int io_sq_thread(void *data)
+ static struct io_sq_data *io_get_sq_data(struct io_uring_params *p)
  {
--	struct io_ring_ctx *ctx = data;
--	const struct cred *old_cred;
-+	struct io_sq_data *sqd = data;
-+	struct io_ring_ctx *ctx;
- 	unsigned long start_jiffies;
+ 	struct io_sq_data *sqd;
  
--	init_wait(&ctx->sqo_wait_entry);
--	ctx->sqo_wait_entry.func = io_sq_wake_function;
-+	start_jiffies = jiffies;
-+	while (!kthread_should_park()) {
-+		const struct cred *old_cred = NULL;
-+		enum sq_ret ret = 0;
- 
--	complete(&ctx->sq_thread_comp);
-+		mutex_lock(&sqd->ctx_lock);
- 
--	old_cred = override_creds(ctx->creds);
-+		if (unlikely(!list_empty(&sqd->ctx_new_list)))
-+			io_sqd_init_new(sqd);
- 
--	task_lock(current);
--	current->files = ctx->sqo_files;
--	task_unlock(current);
-+		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-+			if (current->cred != ctx->creds) {
-+				if (old_cred)
-+					revert_creds(old_cred);
-+				old_cred = override_creds(ctx->creds);
-+			}
- 
--	start_jiffies = jiffies;
--	while (!kthread_should_park()) {
--		enum sq_ret ret;
-+			if (current->files != ctx->sqo_files) {
-+				task_lock(current);
-+				current->files = ctx->sqo_files;
-+				task_unlock(current);
-+			}
- 
--		ret = __io_sq_thread(ctx, start_jiffies);
--		switch (ret) {
--		case SQT_IDLE:
--			schedule();
--			start_jiffies = jiffies;
--			continue;
--		case SQT_SPIN:
-+			ret |= __io_sq_thread(ctx, start_jiffies);
++	if (p->flags & IORING_SETUP_ATTACH_WQ)
++		return io_attach_sq_data(p);
 +
-+			io_sq_thread_drop_mm();
-+		}
-+
-+		mutex_unlock(&sqd->ctx_lock);
-+
-+		if (old_cred)
-+			revert_creds(old_cred);
-+
-+		if (ret & SQT_SPIN) {
- 			io_run_task_work();
- 			cond_resched();
--			fallthrough;
--		case SQT_DID_WORK:
--			continue;
-+		} else if (ret == SQT_IDLE) {
-+			schedule();
-+			start_jiffies = jiffies;
- 		}
- 	}
- 
- 	io_run_task_work();
- 
--	io_sq_thread_drop_mm();
--	task_lock(current);
--	current->files = NULL;
--	task_unlock(current);
--	revert_creds(old_cred);
-+	if (current->files) {
-+		task_lock(current);
-+		current->files = NULL;
-+		task_unlock(current);
-+	}
- 
- 	kthread_parkme();
- 
-@@ -6955,6 +6988,9 @@ static struct io_sq_data *io_get_sq_data(struct io_uring_params *p)
+ 	sqd = kzalloc(sizeof(*sqd), GFP_KERNEL);
+ 	if (!sqd)
  		return ERR_PTR(-ENOMEM);
- 
- 	refcount_set(&sqd->refs, 1);
-+	INIT_LIST_HEAD(&sqd->ctx_list);
-+	INIT_LIST_HEAD(&sqd->ctx_new_list);
-+	mutex_init(&sqd->ctx_lock);
+@@ -6992,6 +7023,10 @@ static struct io_sq_data *io_get_sq_data(struct io_uring_params *p)
+ 	INIT_LIST_HEAD(&sqd->ctx_new_list);
+ 	mutex_init(&sqd->ctx_lock);
  	init_waitqueue_head(&sqd->wait);
++
++	mutex_lock(&sqd_lock);
++	list_add_tail(&sqd->all_sqd_list, &sqd_list);
++	mutex_unlock(&sqd_lock);
  	return sqd;
  }
-@@ -6967,6 +7003,10 @@ static void io_sq_thread_stop(struct io_ring_ctx *ctx)
- 		if (sqd->thread)
- 			wait_for_completion(&ctx->sq_thread_comp);
  
-+		mutex_lock(&sqd->ctx_lock);
-+		list_del(&ctx->sqd_list);
-+		mutex_unlock(&sqd->ctx_lock);
+@@ -7675,6 +7710,9 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 		if (!ctx->sq_thread_idle)
+ 			ctx->sq_thread_idle = HZ;
+ 
++		if (sqd->thread)
++			goto done;
 +
- 		io_put_sq_data(sqd);
- 		ctx->sq_data = NULL;
+ 		if (p->flags & IORING_SETUP_SQ_AFF) {
+ 			int cpu = p->sq_thread_cpu;
+ 
+@@ -7701,6 +7739,7 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 		goto err;
  	}
-@@ -7620,6 +7660,9 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 			goto err;
- 		}
- 		ctx->sq_data = sqd;
-+		mutex_lock(&sqd->ctx_lock);
-+		list_add(&ctx->sqd_list, &sqd->ctx_new_list);
-+		mutex_unlock(&sqd->ctx_lock);
  
- 		/*
- 		 * We will exit the sqthread before current exits, so we can
-@@ -7641,10 +7684,10 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 			if (!cpu_online(cpu))
- 				goto err;
++done:
+ 	ret = io_init_wq_offload(ctx, p);
+ 	if (ret)
+ 		goto err;
+@@ -8831,6 +8870,10 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	if (ret < 0)
+ 		goto err;
  
--			sqd->thread = kthread_create_on_cpu(io_sq_thread, ctx,
-+			sqd->thread = kthread_create_on_cpu(io_sq_thread, sqd,
- 							cpu, "io_uring-sq");
- 		} else {
--			sqd->thread = kthread_create(io_sq_thread, ctx,
-+			sqd->thread = kthread_create(io_sq_thread, sqd,
- 							"io_uring-sq");
- 		}
- 		if (IS_ERR(sqd->thread)) {
++	if ((ctx->flags & (IORING_SETUP_SQPOLL | IORING_SETUP_ATTACH_WQ)) ==
++	    IORING_SETUP_SQPOLL)
++		ctx->sq_data->attach_fd = ret;
++
+ 	trace_io_uring_create(ret, ctx, p->sq_entries, p->cq_entries, p->flags);
+ 	return ret;
+ err:
 -- 
 2.28.0
 

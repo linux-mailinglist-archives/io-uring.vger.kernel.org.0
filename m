@@ -2,104 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F30925DCE3
-	for <lists+io-uring@lfdr.de>; Fri,  4 Sep 2020 17:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D097F25E307
+	for <lists+io-uring@lfdr.de>; Fri,  4 Sep 2020 22:49:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730460AbgIDPLm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 4 Sep 2020 11:11:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38488 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729942AbgIDPLl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Sep 2020 11:11:41 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52C23C061244
-        for <io-uring@vger.kernel.org>; Fri,  4 Sep 2020 08:11:40 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id h2so1312803plr.0
-        for <io-uring@vger.kernel.org>; Fri, 04 Sep 2020 08:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=LVv7QjLLBEpSW7WnhjcYOrk1O+Km/9FIYCfDL5fWQAc=;
-        b=BAMXWAEtd9yE9CITTwLIjbowcowuh5w5V1KRW9Br4LbOD/CA6G+NRQaGyeIIYdp1/X
-         lbAjoYs3DFRUl5YTXHFNz0gdFsuCCOsqmmKh0im2auoKklT/Lcl0iRZDbT7pTEBsND5r
-         FKGJkvanG7LKbMDpZB2KsVxqPyX+yFxQxk7pSQqjEtb6kFFkhdzvzzgbxv67VO6sJ8+D
-         61UmySXNdTkAMxRTCLo7SCKpMBSC9pnYVnH8keFnoo3IlwwZdTsE9COsS25eimMnfYXw
-         4HNHdA+1Mcc7DmnBkBYiwgORsdx+L1au/8ns0ey0mZfRDDxzyY37e2TCOsXrSP9mtUcC
-         2AwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=LVv7QjLLBEpSW7WnhjcYOrk1O+Km/9FIYCfDL5fWQAc=;
-        b=rK01dWqZa24B31HGiBjswoG4Uh5K/1+X8T9Yw7xcV5soCb730wijk1FMYDUX4GtNP8
-         ywXuXXaDOgL83cmQZnOtREIb/1sZ9e+M5ZqGUlsgetVJaqIvAyLRL1QKBzOhNd3Nvgkk
-         bFavxlt27blH6MQhVcOAWZ1E2lnZhmKJbzUGPThOWSRCZXwXFl/T4nx+xYOHaReEupP2
-         AJri3cQRTtrHwC40pjBOhmvbiSLIi3N6PnBEYvGSNNP0zDJpdZDH4ym/n5Vit0yZH3fg
-         dZYbzX1J1LUEelDfzg8dcZfIBz2BF8j+Ik3303hjVVVbyg2ZkzXSIZHVVJUovl9i3sy9
-         lb8g==
-X-Gm-Message-State: AOAM531EWxYGtLI8/JWGUNlF0MmyXzSET3J9OCuXw+qhVpCVpOrONtqY
-        4e2eGpG1J1N50WNgcqB0jbSABi+2JTqTC1LX
-X-Google-Smtp-Source: ABdhPJwKd1TBm5RbuwEdsI3gRZra9YD3y0SlNrANrjQ/h2Tkenwtyifhf29MgepF+tWrbN4rKylAwQ==
-X-Received: by 2002:a17:902:ff02:: with SMTP id f2mr8902202plj.218.1599232299725;
-        Fri, 04 Sep 2020 08:11:39 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c085:21cf::1188? ([2620:10d:c090:400::5:1a09])
-        by smtp.gmail.com with ESMTPSA id v10sm6679560pff.192.2020.09.04.08.11.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2020 08:11:38 -0700 (PDT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
+        id S1726791AbgIDUt3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 4 Sep 2020 16:49:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32826 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728098AbgIDUtO (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 4 Sep 2020 16:49:14 -0400
+Subject: Re: [GIT PULL] io_uring fixes for 5.9-rc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599252554;
+        bh=2xnkVTRAJH7WPP8mrrRiCAQ6w9+g+OvEXz2Fsic1YNo=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=jt4jzJNnJ2S3OX0b9J4Rs7vvZhbPQIpW/FkR41pQMpcHAp/4Jm1SUgzGE646KGN6c
+         cGdUVFTbY7/KbKZSzmTMenB6suvu273v8kDB3IE3uHmy4LvuQ+vObYOSQ6SSMMm+GL
+         8PQMARsm+TYtiRLhdLdwfPG0OukxIsU/3AuOGEnI=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <b380d9cf-2558-b354-981c-e9e868f9587b@kernel.dk>
+References: <b380d9cf-2558-b354-981c-e9e868f9587b@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <b380d9cf-2558-b354-981c-e9e868f9587b@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.9-2020-09-04
+X-PR-Tracked-Commit-Id: 355afaeb578abac907217c256a844cfafb0337b2
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d849ca483dba7546ad176da83bf66d1c013725f6
+Message-Id: <159925255407.25529.8029905792568894265.pr-tracker-bot@kernel.org>
+Date:   Fri, 04 Sep 2020 20:49:14 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.9-rc4
-Message-ID: <b380d9cf-2558-b354-981c-e9e868f9587b@kernel.dk>
-Date:   Fri, 4 Sep 2020 09:11:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Fri, 4 Sep 2020 09:11:37 -0600:
 
-- -EAGAIN with O_NONBLOCK retry fix
+> git://git.kernel.dk/linux-block.git tags/io_uring-5.9-2020-09-04
 
-- Two small fixes for registered files (Jiufei)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d849ca483dba7546ad176da83bf66d1c013725f6
 
-Please pull!
-
-
-The following changes since commit fdee946d0925f971f167d2606984426763355e4f:
-
-  io_uring: don't bounce block based -EAGAIN retry off task_work (2020-08-27 16:48:34 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.9-2020-09-04
-
-for you to fetch changes up to 355afaeb578abac907217c256a844cfafb0337b2:
-
-  io_uring: no read/write-retry on -EAGAIN error and O_NONBLOCK marked file (2020-09-02 10:20:41 -0600)
-
-----------------------------------------------------------------
-io_uring-5.9-2020-09-04
-
-----------------------------------------------------------------
-Jens Axboe (1):
-      io_uring: no read/write-retry on -EAGAIN error and O_NONBLOCK marked file
-
-Jiufei Xue (2):
-      io_uring: fix removing the wrong file in __io_sqe_files_update()
-      io_uring: set table->files[i] to NULL when io_sqe_file_register failed
-
- fs/io_uring.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Thank you!
 
 -- 
-Jens Axboe
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html

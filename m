@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59E9C25EB12
+	by mail.lfdr.de (Postfix) with ESMTP id DCAC425EB14
 	for <lists+io-uring@lfdr.de>; Sat,  5 Sep 2020 23:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbgIEVs3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1728449AbgIEVs3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Sat, 5 Sep 2020 17:48:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37264 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728688AbgIEVsZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 5 Sep 2020 17:48:25 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8193C061249
-        for <io-uring@vger.kernel.org>; Sat,  5 Sep 2020 14:48:24 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id t16so4415359edw.7
-        for <io-uring@vger.kernel.org>; Sat, 05 Sep 2020 14:48:24 -0700 (PDT)
+        with ESMTP id S1728647AbgIEVsY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 5 Sep 2020 17:48:24 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EACC3C061247
+        for <io-uring@vger.kernel.org>; Sat,  5 Sep 2020 14:48:23 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id j11so13127067ejk.0
+        for <io-uring@vger.kernel.org>; Sat, 05 Sep 2020 14:48:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=pBnkV0jzBADEETy5dy3nnX2RJI1XhGgFaPxW2RCiV/k=;
-        b=IJhi5mjQXpvQISPrKm5DZzXPm7aoUhHbOXI4sGDW66HQWKzoHrIF2/Scr5FBHktdhZ
-         IULgvJeDDvr4mTqW0sYKn9dbPd8qTw0J2YjqBBPls+0eWKWYpPuA3+ePTTRlyPnS/nMI
-         dlAfr+vjVxOtMHMUNsSRBVvfYWAQsS3zIPMdKAgfeThOgWVT2J5KqwEYKUwHzYC5cdoa
-         Wq/nlPnYU1JEkud/UtlQdKsnxmEisdDL1n1RZy6sKEgzEu2f7eqbKUr9vjtUCYrlXu9G
-         xNgfPXtCEXP7aIB2x61rjjsDhQ7FpidSstanmPuu9KasvKT6+ZeQkreN/woYAtFXd2hJ
-         rkFw==
+        bh=DYBzKs+tjeN1qZ6+Mf5LCNqQaCahpZmYn7vGp1+TLBM=;
+        b=L921zxqo70R+rOUdE4YCwLoK0ML08oC8B5pRmn81XEinJXf9KmIq4XwxHoYMXq6WDC
+         hk9IpnbpEFFLG9k8TTSDjSQJJ3GHNoYHMLGdhqFq2KQHiZssap+JRpX9/QvsRrCqufp7
+         FgF4vYRXoZbIbIroLLrdldBNtg3sVtRVldyVSRjp2LzhQnQELXK6pWgbvx4IJJnMv9vk
+         fO1ubODrxZ8UighdMehCYh0AsepqXJAHZ4+CBrZAtuzH7YM6qhQ6TF2jA++FFP5N3Zp1
+         PEPj4fb/Bf7YrRGDqmC4CLio91H3wh4DXDkKIJ/Z9/vLRINwz/xlYfTYMsjrXwVINYDL
+         c2Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pBnkV0jzBADEETy5dy3nnX2RJI1XhGgFaPxW2RCiV/k=;
-        b=iSoJF9ttfWldOdmtGJgujsTTFIC1nCDuL1cwaj+2qquc1Ul9Ux+M/9sGsiOscuR8Rz
-         a8Zy3b/ieppKQnR5vClFPU5/nSIO6OPeZP/hpCd15wW0Nn5nRmouJOgjg2CanxMWWgCM
-         dkW845i9rlDZNMbRnU5mjBG79QSP0iHyIJO3JLtRxBkSml7BymcFqLGMApRsPEL0Qqmk
-         xeJAIWMIAde1MobnZ7GtQ9gJ0g+Gigj3qamCRl84BY/N5frbtq8sYkOAXDvgbx2IYYpa
-         m/ydgb5mEN6Nt5bJWZZgjIyI4QJuXn+2jtJJwXrRD7COGmrR9KRTrN2C0AWwzFVz0i1D
-         6xZg==
-X-Gm-Message-State: AOAM533g+PADOsVTHy5PNrgHJNIRE5azXMVzn5eK0niXVGVVEYxa1I82
-        PAZGDXntoTyb+j5AX2jYKh0=
-X-Google-Smtp-Source: ABdhPJzk+Cb6RI2LPZ4G+E239AEiCz5ruqU2a7X1BNMA87vg+ByCCixRYlwfxYzIOhsZxm70SOmPKA==
-X-Received: by 2002:a05:6402:1d93:: with SMTP id dk19mr15064631edb.198.1599342501436;
-        Sat, 05 Sep 2020 14:48:21 -0700 (PDT)
+        bh=DYBzKs+tjeN1qZ6+Mf5LCNqQaCahpZmYn7vGp1+TLBM=;
+        b=RZA9rHwRE4uoTeYo+Sukcz4h+egCDYh1ksmuwie0U9LvgXKAlHKJgprlPXgEY8NEn8
+         4Psu5iLgd5JHe2cQeDi/EW/HlF6YVtMwA6a1KQqOskyZI6sG/9xYqXcFauW73WXlprTo
+         P5MFAbrPChrOWkFb5WCCXCpCE8vqa4RLQrneJ0WZqz7wqja6aSFxYNS2ZaujJOnscciH
+         WUVaMWy5kZYsalET0Rs/tTsbmFM+nXzhcPuXKUXrbX2FcQmvsNe5uhT1ME2nYkbBmmBN
+         1nIm8/MTL67gpL/+za3VBp9j4mWEweveusW7uEMyLMDkgQPotnySWk9WMJTdMCWG+rF7
+         bE6g==
+X-Gm-Message-State: AOAM533NjnXQFoSBw/CFUQqTeHpwDhNW7WLr5wKKL/B+Vkh4QjRJUbHz
+        +8XnW+2XUEjqh9ywtRQUZWwNII7zqko=
+X-Google-Smtp-Source: ABdhPJyXgvsqBvNwSmV7nhUg91KWoWqGXlDQOO2Fa2WNHUMH4JoNpUFobaMF27P9SPFxawoTqLQarg==
+X-Received: by 2002:a17:906:76c7:: with SMTP id q7mr14531388ejn.541.1599342502589;
+        Sat, 05 Sep 2020 14:48:22 -0700 (PDT)
 Received: from localhost.localdomain ([5.100.192.56])
-        by smtp.gmail.com with ESMTPSA id g25sm7965603edu.53.2020.09.05.14.48.20
+        by smtp.gmail.com with ESMTPSA id g25sm7965603edu.53.2020.09.05.14.48.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Sep 2020 14:48:21 -0700 (PDT)
+        Sat, 05 Sep 2020 14:48:22 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/4] io_uring: fix ovelapped memcpy in io_req_map_rw()
-Date:   Sun,  6 Sep 2020 00:45:47 +0300
-Message-Id: <2acfe0165377015983a0f285bf6242f8fa4232d6.1599341028.git.asml.silence@gmail.com>
+Subject: [PATCH 4/4] io_uring: kill extra user_bufs check
+Date:   Sun,  6 Sep 2020 00:45:48 +0300
+Message-Id: <bf649f4931ad406bfa4b4f1730d7de120fbd0a06.1599341028.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1599341028.git.asml.silence@gmail.com>
 References: <cover.1599341028.git.asml.silence@gmail.com>
@@ -62,34 +62,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When io_req_map_rw() is called from io_rw_prep_async(), it memcpy()
-iorw->iter into itself. Even though it doesn't lead to an error, such a
-memcpy()'s aliasing rules violation is considered to be a bad practise.
-
-Inline io_req_map_rw() into io_rw_prep_async(). We don't really need any
-remapping there, so it's much simpler than the generic implementation.
+Testing ctx->user_bufs for NULL in io_import_fixed() is not neccessary,
+because in that case ctx->nr_user_bufs would be zero, and the following
+check would fail.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/io_uring.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 03808e865dde..fc2aaaaca908 100644
+index fc2aaaaca908..2e3adf9d17dd 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2986,7 +2986,10 @@ static inline int io_rw_prep_async(struct io_kiocb *req, int rw,
- 	if (unlikely(ret < 0))
- 		return ret;
+@@ -2587,18 +2587,12 @@ static ssize_t io_import_fixed(struct io_kiocb *req, int rw,
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	size_t len = req->rw.len;
+ 	struct io_mapped_ubuf *imu;
+-	u16 index, buf_index;
++	u16 index, buf_index = req->buf_index;
+ 	size_t offset;
+ 	u64 buf_addr;
  
--	io_req_map_rw(req, iov, iorw->fast_iov, &iorw->iter);
-+	iorw->bytes_done = 0;
-+	iorw->free_iovec = iov;
-+	if (iov)
-+		req->flags |= REQ_F_NEED_CLEANUP;
- 	return 0;
- }
- 
+-	/* attempt to use fixed buffers without having provided iovecs */
+-	if (unlikely(!ctx->user_bufs))
+-		return -EFAULT;
+-
+-	buf_index = req->buf_index;
+ 	if (unlikely(buf_index >= ctx->nr_user_bufs))
+ 		return -EFAULT;
+-
+ 	index = array_index_nospec(buf_index, ctx->nr_user_bufs);
+ 	imu = &ctx->user_bufs[index];
+ 	buf_addr = req->rw.addr;
 -- 
 2.24.0
 

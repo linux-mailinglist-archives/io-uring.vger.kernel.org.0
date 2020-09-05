@@ -2,117 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3521F25E891
-	for <lists+io-uring@lfdr.de>; Sat,  5 Sep 2020 17:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B65025E931
+	for <lists+io-uring@lfdr.de>; Sat,  5 Sep 2020 19:03:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbgIEPLH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 5 Sep 2020 11:11:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32898 "EHLO
+        id S1728397AbgIERDQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 5 Sep 2020 13:03:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbgIEPK6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 5 Sep 2020 11:10:58 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 182C4C061244
-        for <io-uring@vger.kernel.org>; Sat,  5 Sep 2020 08:10:56 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id 5so5853702pgl.4
-        for <io-uring@vger.kernel.org>; Sat, 05 Sep 2020 08:10:56 -0700 (PDT)
+        with ESMTP id S1726468AbgIERDP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 5 Sep 2020 13:03:15 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03B8C061244
+        for <io-uring@vger.kernel.org>; Sat,  5 Sep 2020 10:03:14 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id q9so9512405wmj.2
+        for <io-uring@vger.kernel.org>; Sat, 05 Sep 2020 10:03:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=AweOnh58sZBmQHGt6UjeoZ8ximjxIjYRFBv3zvxvIy4=;
-        b=kH3IsxOzpjWnZXMYXInyBmuBS49vLCoAt3Ntuy66ffB+1ODQ5eOYUS+7robyWeOVgb
-         RKDG+jn+J/TeNP2xxUifxzfH7NP9GllKysmBe8H/amsBctrAO1To3wpw1EU9Rp7skvhH
-         ExusSmBDopZlxD9W1eH4Z6rFWpLp2egOFuTwgmnYKZ45RdmXDgj93cMDOSmUUc7aobT3
-         A/yDFH9lz2YqLtMTXFyQwTsFvjSj1Eo75QtpDeMwiPcVdPoxeWkHj+Imfbby5/O6iw8U
-         ho/KB6HuVbRENQOfZoNINcPmFEs2+abkOZgwfGd3LPHTlaj6n50BH31TWdawfbecVBLq
-         zkDQ==
+        d=googlemail.com; s=20161025;
+        h=from:content-transfer-encoding:mime-version:subject:message-id:date
+         :to;
+        bh=Qia2MyHCPJcAe7pgKBNE4nd24lPeR0oqtsBWzkt0U/w=;
+        b=IlDAUTAP58gFB0INS94Rjmw9bazB2H7jhXRO39SDUQlYYcmHQ0SVLRUx8vBXgvCVxu
+         8LRd1k7Gmq2Ofx76E9VlgrmTqRWmWlzwvYYftp+uEYe/NJMsCwPABQMCKoFT2oyA2RKK
+         TqnAwr5kfbZxz5ZVQAh4ac969rHC50P3gf3IYECsq++CwNN6UUdTDZ0q7CxXER26eqNO
+         leMPrI28bPznaJfpaY/nvFTNCXwk4ftrVF6bNfzb7Q8oSl3Rzl1iBR6Yl4zot8pmhfDj
+         5PszFRJatnMjfbuOMGT4F+khF5mhvWR+RtXOw4ZIMSt3OA3Lu5sd6+ZL9FabAz/+08BJ
+         w9yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AweOnh58sZBmQHGt6UjeoZ8ximjxIjYRFBv3zvxvIy4=;
-        b=a3F96O0+gX0bHMBW7ZJBz8g1PT3U7R5Gm5Frri3cZSSIJy0NrLHRJZVAlbfBwsDr/V
-         +7QBH1HV+O7clsx9QOQSt0d5bvRk3HY6Hllt0dXPBsgbIxwbVDp2DUueKKUB4jaBB7Vs
-         Opbz9UUn/TX9Z4cNdQjCy5BjOP4gR++dJcQUCyqZN9QkmvSLJvapKUOfg82XFg4MdAb6
-         LuWUodfvNL9e6inUn6FnJtb6IgMMew/L9lYbACQ8wX7MnCiwOJM7zD2hTRLJ+osNeM0G
-         3raHz4SwVrSTuP33neB2t2gg13auWaEw8U2wGDp6iYpuZNA5cSbFdC350EZeU9+QI4vA
-         i/AQ==
-X-Gm-Message-State: AOAM530CHiSbM5/g3v4iOv7FkpNB1XJPiujBmG1xUtHRHKOG/eHGhISu
-        49ATUs+V/bs4uwtFgoZkEqvnsewJjsuUxSyO
-X-Google-Smtp-Source: ABdhPJx8Oxiyo0btRkBSruVTA4OCtJW990U9N9buOK+h7Np2/tagv8I9K0hp/nwSGJQnYepBBhCmYA==
-X-Received: by 2002:a63:ff11:: with SMTP id k17mr8196570pgi.352.1599318652981;
-        Sat, 05 Sep 2020 08:10:52 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id y128sm9591316pfy.74.2020.09.05.08.10.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Sep 2020 08:10:52 -0700 (PDT)
-Subject: Re: WRITEV with IOSQE_ASYNC broken?
-To:     Pavel Begunkov <asml.silence@gmail.com>, nick@nickhill.org,
-        io-uring@vger.kernel.org
-References: <382946a1d3513fbb1354c8e2c875e036@nickhill.org>
- <bfd153eb-0ab9-5864-ca5d-1bc8298f7a21@kernel.dk>
- <fe3784cf-3389-6096-9dfd-f3aa8cd3a769@kernel.dk>
- <d8404079-fe7e-3f42-4460-22328b12b0fa@kernel.dk>
- <484b5876-a2e6-3e02-a566-10c5a02241e8@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <17c49959-c049-3586-6459-79c056f779ba@kernel.dk>
-Date:   Sat, 5 Sep 2020 09:10:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <484b5876-a2e6-3e02-a566-10c5a02241e8@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:content-transfer-encoding:mime-version
+         :subject:message-id:date:to;
+        bh=Qia2MyHCPJcAe7pgKBNE4nd24lPeR0oqtsBWzkt0U/w=;
+        b=Ec5yCKRfB2DLRcH/mwPwayZWZQBOHJVZZWMAwWLj5ZOaUoqOcOUvGF8li3OcG1oiIY
+         cLQjXRLdgH/NwKbkUFHKmwahN3ybDVe0FZfGlPzBTLBtHXUG/lYK+we1W40IrilMYOJG
+         YX0031yJyy0fB3WcrsLfLpMXs2kQFvNvlOxvmsxl1n0/VE1Y4Rx+ylUhlkr6xfC3jFPG
+         k1YHSycTYOIVmTt3Oq0ugE50HXGrAElnntZOVlupmGDazH248KBFz4NCLYItvjvgl9tA
+         WGe0wbrT3JIMjvki+ADYVZX6GaHKhjRfZfZfdlGu7YCddUEqPF955zpVqjXj/ERxDP3S
+         HCMQ==
+X-Gm-Message-State: AOAM530yJrgHI+daSL93NMxqoVcp3d62tZ/BmW1P0e0ivi1Bw7tyf/hf
+        Z5bYy7fDoOT3eE7zf8ZyBGo7CfRCuCa9EQ==
+X-Google-Smtp-Source: ABdhPJyMx5trnZcyybHo+KCV1TKbshRlccSGeDtmE1bReD2qfsNMn//ZkPt0OXi/XY18ydLN5Zw6YQ==
+X-Received: by 2002:a05:600c:2906:: with SMTP id i6mr5372657wmd.48.1599325393237;
+        Sat, 05 Sep 2020 10:03:13 -0700 (PDT)
+Received: from macbook-pro.lan (ip-95-222-154-235.hsi15.unitymediagroup.de. [95.222.154.235])
+        by smtp.googlemail.com with ESMTPSA id n4sm1422240wmd.26.2020.09.05.10.03.12
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 05 Sep 2020 10:03:12 -0700 (PDT)
+From:   Norman Maurer <norman.maurer@googlemail.com>
+Content-Type: text/plain;
+        charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Support for shutdown
+Message-Id: <406D0D85-DF4B-4EAA-A6FA-D1EEC3F6343E@googlemail.com>
+Date:   Sat, 5 Sep 2020 19:03:12 +0200
+To:     io-uring@vger.kernel.org
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/4/20 11:50 PM, Pavel Begunkov wrote:
-> On 05/09/2020 07:35, Jens Axboe wrote:
->> On 9/4/20 9:57 PM, Jens Axboe wrote:
->>> On 9/4/20 9:53 PM, Jens Axboe wrote:
->>>> On 9/4/20 9:22 PM, nick@nickhill.org wrote:
->>>>> Hi,
->>>>>
->>>>> I am helping out with the netty io_uring integration, and came across 
->>>>> some strange behaviour which seems like it might be a bug related to 
->>>>> async offload of read/write iovecs.
->>>>>
->>>>> Basically a WRITEV SQE seems to fail reliably with -BADADDRESS when the 
->>>>> IOSQE_ASYNC flag is set but works fine otherwise (everything else the 
->>>>> same). This is with 5.9.0-rc3.
->>>>
->>>> Do you see it just on 5.9-rc3, or also 5.8? Just curious... But that is
->>>> very odd in any case, ASYNC writev is even part of the regular tests.
->>>> Any sort of deferral, be it explicit via ASYNC or implicit through
->>>> needing to retry, saves all the needed details to retry without
->>>> needing any of the original context.
->>>>
->>>> Can you narrow down what exactly is being written - like file type,
->>>> buffered/O_DIRECT, etc. What file system, what device is hosting it.
->>>> The more details the better, will help me narrow down what is going on.
->>>
->>> Forgot, also size of the IO (both total, but also number of iovecs in
->>> that particular request.
->>>
->>> Essentially all the details that I would need to recreate what you're
->>> seeing.
->>
->> Turns out there was a bug in the explicit handling, new in the current
->> -rc series. Can you try and add the below?
-> 
-> Hah, absolutely the same patch was in a series I was going to send
-> today, but with a note that it works by luck so not a bug. Apparently,
-> it is :)> 
-> BTW, const in iter->iov is guarding from such cases, yet another proof
-> that const casts are evil.
+Hi there,
 
-Definitely, not a great idea to begin with...
+As you may have noticed from previous emails we are currently writing a =
+new transport for netty that will use io_uring under the hood for max =
+performance. One thing that is missing at the moment is the support for =
+=E2=80=9Cshutdown=E2=80=9D. Shutdown is quite useful in TCP land when =
+you only want to close either input or output of the connection.
 
--- 
-Jens Axboe
+Is this something you think that can be added in the future ? This would =
+be a perfect addition to the already existing close support.
+
+Thanks
+Norman=20
 

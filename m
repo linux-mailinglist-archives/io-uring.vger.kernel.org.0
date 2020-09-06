@@ -2,397 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF5DE25EF08
-	for <lists+io-uring@lfdr.de>; Sun,  6 Sep 2020 18:13:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 906EC25EF64
+	for <lists+io-uring@lfdr.de>; Sun,  6 Sep 2020 19:55:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729004AbgIFQN4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 6 Sep 2020 12:13:56 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:59966 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728991AbgIFQNy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 6 Sep 2020 12:13:54 -0400
+        id S1729041AbgIFRz0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 6 Sep 2020 13:55:26 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29490 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726209AbgIFRzY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 6 Sep 2020 13:55:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599408831;
+        s=mimecast20190719; t=1599414922;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=D2YWQPDDVmDBZfUqhjcsEKtKJeS7nYnGKthcQjduJws=;
-        b=H+7stHyuX5CT6NFouOqiB+MrdNT2omkpIB/jwBVRQYmQc9dbahPjf5RGgHvVc8JbuVO5c0
-        /4UbX9PpShI7dN82dJ4l8WrhXiG61DPhbXTiOuwhMWqHjdn1aqGKAdaw3eYjeO3OWwzcF9
-        Akxk70hUb/xjdQ2QcRvzmHsn4qne8i0=
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=i2fzJoK/5rqCoc2fDEyi/R2ZRblVt7u5wMJFb4+7B7o=;
+        b=GfmiETTKweqYf4XtrYBWBiHMor6Qe/QjGPeynViHSY76/sPmfvpFyHKXAN+5VNgFPcYDcO
+        HJFEA5zM5ZX6eA/NPItRadrMjIhxQW43UQHTvCsdriffsleSDIg07b2oAxf4kXISeVTbLL
+        BIAdzD0URnKMJqozHyjELzbQa0wqW6M=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-306-Cj1HKFOXO-yTJjAUkt4a-g-1; Sun, 06 Sep 2020 12:13:49 -0400
-X-MC-Unique: Cj1HKFOXO-yTJjAUkt4a-g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-344-5t8XIlnpNOq0G76iEUrC5g-1; Sun, 06 Sep 2020 13:55:18 -0400
+X-MC-Unique: 5t8XIlnpNOq0G76iEUrC5g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 559F5802B71;
-        Sun,  6 Sep 2020 16:13:48 +0000 (UTC)
-Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C15D51002382;
-        Sun,  6 Sep 2020 16:13:47 +0000 (UTC)
-Date:   Mon, 7 Sep 2020 00:27:27 +0800
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6F765802B5C;
+        Sun,  6 Sep 2020 17:55:17 +0000 (UTC)
+Received: from bogon.redhat.com (ovpn-12-98.pek2.redhat.com [10.72.12.98])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DCF589CBA;
+        Sun,  6 Sep 2020 17:55:15 +0000 (UTC)
 From:   Zorro Lang <zlang@redhat.com>
-To:     Brian Foster <bfoster@redhat.com>, fstests@vger.kernel.org,
-        axboe@kernel.dk, io-uring@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] fsx: add IO_URING test
-Message-ID: <20200906162727.GC2937@dhcp-12-102.nay.redhat.com>
-Mail-Followup-To: Brian Foster <bfoster@redhat.com>,
-        fstests@vger.kernel.org, axboe@kernel.dk, io-uring@vger.kernel.org
-References: <20200823063032.17297-1-zlang@redhat.com>
- <20200823063032.17297-5-zlang@redhat.com>
- <20200903124413.GD444163@bfoster>
- <20200906155516.GB2937@dhcp-12-102.nay.redhat.com>
+To:     fstests@vger.kernel.org
+Cc:     bfoster@redhat.com, io-uring@vger.kernel.org
+Subject: [PATCH v4 0/5] fsstress,fsx: add io_uring test and do some fix
+Date:   Mon,  7 Sep 2020 01:55:08 +0800
+Message-Id: <20200906175513.17595-1-zlang@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200906155516.GB2937@dhcp-12-102.nay.redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Sep 06, 2020 at 11:55:16PM +0800, Zorro Lang wrote:
-> On Thu, Sep 03, 2020 at 08:44:13AM -0400, Brian Foster wrote:
-> > On Sun, Aug 23, 2020 at 02:30:32PM +0800, Zorro Lang wrote:
-> > > New IO_URING test for fsx, use -U option to enable IO_URING test.
-> > > 
-> > > Signed-off-by: Zorro Lang <zlang@redhat.com>
-> > > ---
-> > 
-> > Note that this one doesn't compile if one of the ifdefs doesn't evaluate
-> > true:
-> > 
-> > fsx.c:2551:6: error: #elif with no expression
-> >  2551 | #elif
-> >       |      ^
-> >     [CC]    fsx
-> > fsx.c: In function 'fsx_rw':
-> > fsx.c:2551:6: error: #elif with no expression
-> >  2551 | #elif
-> >       |      ^
-> > gmake[2]: *** [Makefile:52: fsx] Error 1
-> > gmake[1]: *** [include/buildrules:30: ltp] Error 2
-> > make: *** [Makefile:53: default] Error 2
-> > 
-> > I suspect you want to replace both of those with #else. Otherwise mostly
-> > some aesthetic comments...
-> 
-> Sorry, that's truely a mistake, I'll fix it :)
-> 
-> > 
-> > >  ltp/fsx.c | 158 +++++++++++++++++++++++++++++++++++++++++++++++++-----
-> > >  1 file changed, 144 insertions(+), 14 deletions(-)
-> > > 
-> > > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > > index 7c76655a..05663528 100644
-> > > --- a/ltp/fsx.c
-> > > +++ b/ltp/fsx.c
-> > ...
-> > > @@ -176,21 +179,17 @@ int	integrity = 0;			/* -i flag */
-> > >  int	fsxgoodfd = 0;
-> > >  int	o_direct;			/* -Z */
-> > >  int	aio = 0;
-> > > +int	uring = 0;
-> > >  int	mark_nr = 0;
-> > >  
-> > >  int page_size;
-> > >  int page_mask;
-> > >  int mmap_mask;
-> > > -#ifdef AIO
-> > > -int aio_rw(int rw, int fd, char *buf, unsigned len, unsigned offset);
-> > > +int fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset);
-> > >  #define READ 0
-> > >  #define WRITE 1
-> > > -#define fsxread(a,b,c,d)	aio_rw(READ, a,b,c,d)
-> > > -#define fsxwrite(a,b,c,d)	aio_rw(WRITE, a,b,c,d)
-> > > -#else
-> > > -#define fsxread(a,b,c,d)	read(a,b,c)
-> > > -#define fsxwrite(a,b,c,d)	write(a,b,c)
-> > > -#endif
-> > > +#define fsxread(a,b,c,d)	fsx_rw(READ, a,b,c,d)
-> > > +#define fsxwrite(a,b,c,d)	fsx_rw(WRITE, a,b,c,d)
-> > >  
-> > 
-> > Could we do the refactoring that introduces fsx_rw and shuffles around
-> > some of the existing AIO in an initial refactoring patch?
-> 
-> May I save this pre-patch, if you don't insist on that :-P
-> 
-> > 
-> > >  const char *replayops = NULL;
-> > >  const char *recordops = NULL;
-> > ...
-> > > @@ -2425,13 +2427,131 @@ out_error:
-> > >  	errno = -ret;
-> > >  	return -1;
-> > >  }
-> > > +#endif
-> > > +
-> > > +#ifdef URING
-> > 
-> > A whitespace line here...
-> > 
-> > > +struct io_uring ring;
-> > > +#define URING_ENTRIES	1024
-> > 
-> > ... and here would help readability.
-> > 
-> > > +int
-> > > +uring_setup()
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	ret = io_uring_queue_init(URING_ENTRIES, &ring, 0);
-> > > +	if (ret != 0) {
-> > > +		fprintf(stderr, "uring_setup: io_uring_queue_init failed: %s\n",
-> > > +                        strerror(ret));
-> > > +                return -1;
-> > > +        }
-> > > +        return 0;
-> > 
-> > Looks like some whitespace damage here.
-> > 
-> > Also, the fsstress patch has a io_uring_queue_exit() call but I don't
-> > see one in this patch. Is that not needed?
-> 
-> There's not aio_destroy() either. I think due to fsstress is a multi-process
-> test, so it'd like to destroy io_uring or aio at each process end. But fsx is
-> a pure single process test, the io_uring or aio will destroyed when fsx exit.
-> I can add io_uring_queue_exit() and aio_destroy() if you think it would be
-> better.
-> 
-> > 
-> > > +}
-> > >  
-> > > -int aio_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> > > +int
-> > > +__uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> > 
-> > Do we still need the __ in the function names here and for __aio_rw()?
-> 
-> I don't think it's needed. I use the "__" just due to the old __aio_rw() has. I
-> can remove both "__" of __aio_rw and __uring_rw.
-> 
-> > 
-> > >  {
-> > > +	struct io_uring_sqe	*sqe;
-> > > +	struct io_uring_cqe	*cqe;
-> > > +	struct iovec		iovec;
-> > >  	int ret;
-> > > +	int res, res2 = 0;
-> > > +	char *p = buf;
-> > > +	unsigned l = len;
-> > > +	unsigned o = offset;
-> > > +
-> > > +
-> > > +	/*
-> > > +	 * Due to io_uring tries non-blocking IOs (especially read), that
-> > > +	 * always cause 'normal' short reading. To avoid this short read
-> > > +	 * fail, try to loop read/write (escpecilly read) data.
-> > > +	 */
-> > > + uring_loop:
-> > > +	sqe = io_uring_get_sqe(&ring);
-> > > +	if (!sqe) {
-> > > +		fprintf(stderr, "uring_rw: io_uring_get_sqe failed: %s\n",
-> > > +		        strerror(errno));
-> > > +		return -1;
-> > > +        }
-> > > +
-> > > +	iovec.iov_base = p;
-> > > +	iovec.iov_len = l;
-> > > +	if (rw == READ) {
-> > > +		io_uring_prep_readv(sqe, fd, &iovec, 1, o);
-> > > +	} else {
-> > > +		io_uring_prep_writev(sqe, fd, &iovec, 1, o);
-> > > +	}
-> > > +
-> > > +	ret = io_uring_submit_and_wait(&ring, 1);
-> > > +	if (ret != 1) {
-> > > +		fprintf(stderr, "errcode=%d\n", -ret);
-> > > +		fprintf(stderr, "uring %s: io_uring_submit failed: %s\n",
-> > > +		        rw == READ ? "read":"write", strerror(-ret));
-> > > +		goto uring_error;
-> > > +	}
-> > > +
-> > > +	ret = io_uring_wait_cqe(&ring, &cqe);
-> > > +	if (ret < 0) {
-> > > +		if (ret == 0)
-> > 
-> > That doesn't look right since we only get here if ret < 0.
-> 
-> Thanks, it should be (ret <= 0)
+This patchset tries to add new IO_URING test into fsstress [1/5] and fsx
+[4/5 and 5/5]. And then do some changes and bug fix by the way [2/5 and 3/5].
 
-Sorry, I just checked io_uring_wait_cqe() code, it returns 0 on success.
-So my "if (ret == 0)" checking is totally wrong, I'll remove it :)
+fsstress and fsx are important tools in xfstests to do filesystem I/Os test,
+lots of test cases use it. So add IO_URING operation into fsstress and fsx
+will help to cover IO_URING test from fs side.
 
-/*
- * Return an IO completion, waiting for it if necessary. Returns 0 with
- * cqe_ptr filled in on success, -errno on failure.
- */
-static inline int io_uring_wait_cqe(struct io_uring *ring,
-                                    struct io_uring_cqe **cqe_ptr)
+I'm not an IO_URING expert, so cc io-uring@ list, please feel free to
+tell me if you find something wrong or have any suggestions to improve
+the test.
 
-> 
-> > 
-> > > +			fprintf(stderr, "uring %s: no events available\n",
-> > > +			        rw == READ ? "read":"write");
-> > > +		else {
-> > > +			fprintf(stderr, "errcode=%d\n", -ret);
-> > > +			fprintf(stderr, "uring %s: io_uring_wait_cqe failed: %s\n",
-> > > +			        rw == READ ? "read":"write", strerror(-ret));
-> > > +		}
-> > > +		goto uring_error;
-> > > +	}
-> > > +	res = cqe->res;
-> > > +	io_uring_cqe_seen(&ring, cqe);
-> > > +
-> > > +	res2 += res;
-> > > +	if (len != res2) {
-> > > +		if (res > 0) {
-> > > +			o += res;
-> > > +			l -= res;
-> > > +			p += res;
-> > > +			if (l > 0)
-> > > +				goto uring_loop;
-> > > +		} else if (res < 0) {
-> > > +			ret = res;
-> > > +			fprintf(stderr, "errcode=%d\n", -ret);
-> > > +			fprintf(stderr, "uring %s: io_uring failed: %s\n",
-> > > +			        rw == READ ? "read":"write", strerror(-ret));
-> > > +			goto uring_error;
-> > 
-> > Can we elevate the error checks into the top level rather than nesting
-> > logic like this? It's a little confusing to read and it looks
-> > particularly odd since we've already done res2 += res before we get
-> > here.
-> > 
-> > Also I'm wondering if this whole function would read a little better as
-> > a do {} while() loop rather than using a label and goto.
-> 
-> Sure, I'll try to change that.
-> 
-> > 
-> > > +		} else {
-> > > +			fprintf(stderr, "uring %s bad io length: %d instead of %u\n",
-> > > +			        rw == READ ? "read":"write", res2, len);
-> > > +		}
-> > > +	}
-> > > +	return res2;
-> > > +
-> > > + uring_error:
-> > > +	/*
-> > > +	 * The caller expects error return in traditional libc
-> > > +	 * convention, i.e. -1 and the errno set to error.
-> > > +	 */
-> > > +	errno = -ret;
-> > > +	return -1;
-> > > +}
-> > > +#endif
-> > > +
-> > > +int fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> > > +{
-> > > +	int ret = -1;
-> > >  
-> > >  	if (aio) {
-> > > +#ifdef AIO
-> > >  		ret = __aio_rw(rw, fd, buf, len, offset);
-> > > +#elif
-> > > +		fprintf(stderr, "io_rw: need AIO support!\n");
-> > > +		exit(111);
-> > > +#endif
-> > > +	} else if (uring) {
-> > > +#ifdef URING
-> > > +		ret = __uring_rw(rw, fd, buf, len, offset);
-> > > +#elif
-> > > +		fprintf(stderr, "io_rw: need IO_URING support!\n");
-> > > +		exit(111);
-> > > +#endif
-> > 
-> > I think the ifdefs would be cleaner if used to define stubbed out
-> > variants of the associated functions. E.g.:
-> > 
-> > #ifdef URING
-> > int
-> > __uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> > {
-> > 	<do uring I/O>
-> > }
-> > #else
-> > int
-> > __uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> > {
-> > 	fprintf(stderr, "io_rw: need IO_URING support!\n");
-> > 	exit(111);
-> > }
-> > #endif
-> 
-> Sure, will do that.
-> 
-> Thanks for your review, Brian!
-> Zorro
-> 
-> > 
-> > Brian
-> > 
-> > >  	} else {
-> > >  		if (rw == READ)
-> > >  			ret = read(fd, buf, len);
-> > > @@ -2441,8 +2561,6 @@ int aio_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> > >  	return ret;
-> > >  }
-> > >  
-> > > -#endif
-> > > -
-> > >  #define test_fallocate(mode) __test_fallocate(mode, #mode)
-> > >  
-> > >  int
-> > > @@ -2496,7 +2614,7 @@ main(int argc, char **argv)
-> > >  	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
-> > >  
-> > >  	while ((ch = getopt_long(argc, argv,
-> > > -				 "b:c:dfg:i:j:kl:m:no:p:qr:s:t:w:xyABD:EFJKHzCILN:OP:RS:WXZ",
-> > > +				 "b:c:dfg:i:j:kl:m:no:p:qr:s:t:w:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > >  				 longopts, NULL)) != EOF)
-> > >  		switch (ch) {
-> > >  		case 'b':
-> > > @@ -2604,6 +2722,9 @@ main(int argc, char **argv)
-> > >  		case 'A':
-> > >  		        aio = 1;
-> > >  			break;
-> > > +		case 'U':
-> > > +		        uring = 1;
-> > > +			break;
-> > >  		case 'D':
-> > >  			debugstart = getnum(optarg, &endp);
-> > >  			if (debugstart < 1)
-> > > @@ -2694,6 +2815,11 @@ main(int argc, char **argv)
-> > >  	if (argc != 1)
-> > >  		usage();
-> > >  
-> > > +	if (aio && uring) {
-> > > +		fprintf(stderr, "-A and -U shouldn't be used together\n");
-> > > +		usage();
-> > > +	}
-> > > +
-> > >  	if (integrity && !dirpath) {
-> > >  		fprintf(stderr, "option -i <logdev> requires -P <dirpath>\n");
-> > >  		usage();
-> > > @@ -2784,6 +2910,10 @@ main(int argc, char **argv)
-> > >  	if (aio) 
-> > >  		aio_setup();
-> > >  #endif
-> > > +#ifdef URING
-> > > +	if (uring)
-> > > +		uring_setup();
-> > > +#endif
-> > >  
-> > >  	if (!(o_flags & O_TRUNC)) {
-> > >  		off_t ret;
-> > > -- 
-> > > 2.20.1
-> > > 
+V2 did below changes:
+1) 1/4 change the definition of URING_ENTRIES to 1
+2) 2/4 change the difinition of AIO_ENTRIES to 1, undo an unrelated changed line
+3) 4/4 turn to use io_uring_prep_readv/io_uring_prep_writev, due to old
+       liburing(0.2-2) doesn't support io_uring_prep_read/io_uring_prep_write.
+
+V3 changed io_uring_submit(&ring) to io_uring_submit_and_wait(&ring, 1). I'm
+not sure if this's the real mean of Jens Axboe's review point, please check.
+  https://marc.info/?l=fstests&m=159811932808057&w=2
+
+V4 did below changes:
+1) 1/5 change the "goto" related code of do_uring_rw()
+2) 3/5 similar change as above
+3) 4/5 new patch, separated from original 4/4 patch
+3) 5/5 change #elif to #else
+4) 5/5 change __uring_rw to uring_rw.
+5) 5/5 change the loop logic in uring_rw().
+
+Thanks for Brian's review points.
+
+Thanks,
+Zorro
+
+
 

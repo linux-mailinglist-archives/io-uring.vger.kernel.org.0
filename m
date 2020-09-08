@@ -2,188 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 61C1C261391
-	for <lists+io-uring@lfdr.de>; Tue,  8 Sep 2020 17:33:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FE5E26138D
+	for <lists+io-uring@lfdr.de>; Tue,  8 Sep 2020 17:33:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbgIHPdD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Sep 2020 11:33:03 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:27147 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730203AbgIHPYI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Sep 2020 11:24:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599578641;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Kn9hbknpyWVhQlSOafeEsxNFb47fyKdNL+eDglfupFs=;
-        b=P3gVrXwfazCOFGcC0RjjOr2bdrwAZb/6JbShfW5xA6MGy0uC7rXa6Jy7LEYCfzgUBPI2iJ
-        mJ5p5aJUmJ7PTJS0kFipSpKRg34VEhVI+N8VGFLovL7/Q6Dvz5k/ZFF72ffP8IdmWp+YVO
-        bjhsKh1or7sTiIPE5dT9qWAjaj39FVo=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-268-YYJc5cTwNDGlExvEGRXfEg-1; Tue, 08 Sep 2020 10:10:08 -0400
-X-MC-Unique: YYJc5cTwNDGlExvEGRXfEg-1
-Received: by mail-wm1-f70.google.com with SMTP id m125so4776152wmm.7
-        for <io-uring@vger.kernel.org>; Tue, 08 Sep 2020 07:10:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Kn9hbknpyWVhQlSOafeEsxNFb47fyKdNL+eDglfupFs=;
-        b=NSYMr5lDiHT9MdQP2se/P7r05xf8rs/QJ890ZlReQyihNY9RHk+2g+KOJuMWf1oGur
-         TtnSkXxtM4ZRo39u4ukqmXqyYg+gbsGDZxJIuJUiwkDraZs+uN2/oTeWwFu8AZnC9Z9l
-         IoproltCdIKAUSx3+VgCmlNnVWRHYkk8AmTe78NpF5BNQtkPgN44NInVO6g73NPHLsav
-         DvlZxVIwf+98uVdacGjFDpLu63w6iv1nmCJ3diPNLUCv4vqO9Gz3t50hlAO9y4SzwsxB
-         pVA02rjhuckvypIGaLUCiQiJeFLe0Na2sGUL5VtvMT6y0QhrrQf+omFLPqo/KuWar1Tg
-         Eg2Q==
-X-Gm-Message-State: AOAM5328d/cPMX+sgE+NEun0W62CMbhI/DPjVD6nfZvgCzxhpbDMDhaY
-        mpnacz0Gk+Uwm4Gv9ubLeFtJyKjzvO+YltWGtABfkJWLktOiHtFYC8exImhCLuWMjWzf4x9cFY5
-        kqTKvzylecW0RyCxcXmY=
-X-Received: by 2002:a5d:67d2:: with SMTP id n18mr26920277wrw.223.1599574207373;
-        Tue, 08 Sep 2020 07:10:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwCoZsLpCl42/yvJP59b0CJVR6x3OGhbvD44BBTGIzdJCIH1DWhXch6JnHrzE/D/eGYFzCq9A==
-X-Received: by 2002:a5d:67d2:: with SMTP id n18mr26920239wrw.223.1599574207050;
-        Tue, 08 Sep 2020 07:10:07 -0700 (PDT)
-Received: from steredhat (host-79-53-225-185.retail.telecomitalia.it. [79.53.225.185])
-        by smtp.gmail.com with ESMTPSA id y1sm34416524wru.87.2020.09.08.07.10.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2020 07:10:06 -0700 (PDT)
-Date:   Tue, 8 Sep 2020 16:10:03 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        Aleksa Sarai <asarai@suse.de>,
-        Sargun Dhillon <sargun@sargun.me>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v6 3/3] io_uring: allow disabling rings during the
- creation
-Message-ID: <20200908141003.wsm6pclfj6tsaffr@steredhat>
-References: <20200827145831.95189-1-sgarzare@redhat.com>
- <20200827145831.95189-4-sgarzare@redhat.com>
- <20200908134448.sg7evdrfn6xa67sn@steredhat>
- <045e0907-4771-0b7f-d52a-4af8197e6954@kernel.dk>
+        id S1730478AbgIHPcx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Sep 2020 11:32:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48784 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730283AbgIHPYH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Sep 2020 11:24:07 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83CC5C08C5ED;
+        Tue,  8 Sep 2020 08:18:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=hyoD9QmcI5oiNUeN3ikrG7yLEGezAUx3TNWi/z6zbWI=; b=pgKsLb/aVboApOOdFqn5zDVWgG
+        Snx9karx64Rd7CkJliDojwf8qA6Vh8rEzXBdRiZ8IQONB/Feeejk7hc6VphgfXzIdXRcmZqmEQSAj
+        5+cj7IfmEd2fNt84yK5+jgEZ9BGWTAAdzs+64KItaB1DXE5Kc0WjadecA0kyx3wIm0Py7BPINIWFK
+        K6h868Fkl8wsC8soHGKMlfCMsIA1vDWjYdnTq579hK/y7Muua+Oimtkv6XxgFIkUy04p3qROWpPGg
+        BhIPKafV1qYxUpaG3uBP5qGUxTfc4x7kGtPFdj3u0f6h5QbDHQSj5enIFCSO0WKCv3+p/khC8QmVr
+        ujFJjjAA==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kFfNh-0004N6-CU; Tue, 08 Sep 2020 15:18:01 +0000
+Date:   Tue, 8 Sep 2020 16:18:01 +0100
+From:   "hch@infradead.org" <hch@infradead.org>
+To:     Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     "hch@infradead.org" <hch@infradead.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "bcrl@kvack.org" <bcrl@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        SelvaKumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>
+Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
+Message-ID: <20200908151801.GA16742@infradead.org>
+References: <CA+1E3rLM4G4SwzD6RWsK6Ssp7NmhiPedZDjrqN3kORQr9fxCtw@mail.gmail.com>
+ <MWHPR04MB375863C20C1EF2CB27E62703E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731091416.GA29634@infradead.org>
+ <MWHPR04MB37586D39CA389296CE0252A4E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731094135.GA4104@infradead.org>
+ <MWHPR04MB3758A4B2967DB1FABAAD9265E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731125110.GA11500@infradead.org>
+ <CY4PR04MB37517D633920E4D31AC6EA0DE74B0@CY4PR04MB3751.namprd04.prod.outlook.com>
+ <20200814081411.GA16943@infradead.org>
+ <CA+1E3r+WXC_MK5Zf2OZEv17ddJDjtXbhpRFoeDns4F341xMhow@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <045e0907-4771-0b7f-d52a-4af8197e6954@kernel.dk>
+In-Reply-To: <CA+1E3r+WXC_MK5Zf2OZEv17ddJDjtXbhpRFoeDns4F341xMhow@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Sep 08, 2020 at 07:57:08AM -0600, Jens Axboe wrote:
-> On 9/8/20 7:44 AM, Stefano Garzarella wrote:
-> > Hi Jens,
-> > 
-> > On Thu, Aug 27, 2020 at 04:58:31PM +0200, Stefano Garzarella wrote:
-> >> This patch adds a new IORING_SETUP_R_DISABLED flag to start the
-> >> rings disabled, allowing the user to register restrictions,
-> >> buffers, files, before to start processing SQEs.
-> >>
-> >> When IORING_SETUP_R_DISABLED is set, SQE are not processed and
-> >> SQPOLL kthread is not started.
-> >>
-> >> The restrictions registration are allowed only when the rings
-> >> are disable to prevent concurrency issue while processing SQEs.
-> >>
-> >> The rings can be enabled using IORING_REGISTER_ENABLE_RINGS
-> >> opcode with io_uring_register(2).
-> >>
-> >> Suggested-by: Jens Axboe <axboe@kernel.dk>
-> >> Reviewed-by: Kees Cook <keescook@chromium.org>
-> >> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> >> ---
-> >> v4:
-> >>  - fixed io_uring_enter() exit path when ring is disabled
-> >>
-> >> v3:
-> >>  - enabled restrictions only when the rings start
-> >>
-> >> RFC v2:
-> >>  - removed return value of io_sq_offload_start()
-> >> ---
-> >>  fs/io_uring.c                 | 52 ++++++++++++++++++++++++++++++-----
-> >>  include/uapi/linux/io_uring.h |  2 ++
-> >>  2 files changed, 47 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> >> index 5f62997c147b..b036f3373fbe 100644
-> >> --- a/fs/io_uring.c
-> >> +++ b/fs/io_uring.c
-> >> @@ -226,6 +226,7 @@ struct io_restriction {
-> >>  	DECLARE_BITMAP(sqe_op, IORING_OP_LAST);
-> >>  	u8 sqe_flags_allowed;
-> >>  	u8 sqe_flags_required;
-> >> +	bool registered;
-> >>  };
-> >>  
-> >>  struct io_ring_ctx {
-> >> @@ -7497,8 +7498,8 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx,
-> >>  	return ret;
-> >>  }
-> >>  
-> >> -static int io_sq_offload_start(struct io_ring_ctx *ctx,
-> >> -			       struct io_uring_params *p)
-> >> +static int io_sq_offload_create(struct io_ring_ctx *ctx,
-> >> +				struct io_uring_params *p)
-> >>  {
-> >>  	int ret;
-> >>  
-> >> @@ -7532,7 +7533,6 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
-> >>  			ctx->sqo_thread = NULL;
-> >>  			goto err;
-> >>  		}
-> >> -		wake_up_process(ctx->sqo_thread);
-> >>  	} else if (p->flags & IORING_SETUP_SQ_AFF) {
-> >>  		/* Can't have SQ_AFF without SQPOLL */
-> >>  		ret = -EINVAL;
-> >> @@ -7549,6 +7549,12 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
-> >>  	return ret;
-> >>  }
-> >>  
-> >> +static void io_sq_offload_start(struct io_ring_ctx *ctx)
-> >> +{
-> >> +	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sqo_thread)
-> >> +		wake_up_process(ctx->sqo_thread);
-> >> +}
-> >> +
-> >>  static inline void __io_unaccount_mem(struct user_struct *user,
-> >>  				      unsigned long nr_pages)
-> >>  {
-> >> @@ -8295,6 +8301,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
-> >>  	if (!percpu_ref_tryget(&ctx->refs))
-> >>  		goto out_fput;
-> >>  
-> >> +	if (ctx->flags & IORING_SETUP_R_DISABLED)
-> >> +		goto out_fput;
-> >> +
-> > 
-> > While writing the man page paragraph, I discovered that if the rings are
-> > disabled I returned ENXIO error in io_uring_enter(), coming from the previous
-> > check.
-> > 
-> > I'm not sure it is the best one, maybe I can return EBADFD or another
-> > error.
-> > 
-> > What do you suggest?
-> 
-> EBADFD seems indeed the most appropriate - the fd is valid, but not in the
-> right state to do this.
+On Mon, Sep 07, 2020 at 12:31:42PM +0530, Kanchan Joshi wrote:
+> But there are use-cases which benefit from supporting zone-append on
+> raw block-dev path.
+> Certain user-space log-structured/cow FS/DB will use the device that
+> way. Aerospike is one example.
+> Pass-through is synchronous, and we lose the ability to use io-uring.
 
-Yeah, the same interpretation as mine!
-
-Also, in io_uring_register() I'm returning EINVAL if the rings are not
-disabled and the user wants to register restrictions.
-Maybe also in this case I can return EBADFD.
-
-I'll send a patch with the fixes.
-
-Thanks,
-Stefano
-
+So use zonefs, which is designed exactly for that use case.

@@ -2,66 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81A9F262344
-	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 00:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4177426239E
+	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 01:34:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbgIHWyv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Sep 2020 18:54:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35266 "EHLO
+        id S1729305AbgIHXea (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Sep 2020 19:34:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbgIHWyu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Sep 2020 18:54:50 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85CA1C061573
-        for <io-uring@vger.kernel.org>; Tue,  8 Sep 2020 15:54:50 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id n14so414773pff.6
-        for <io-uring@vger.kernel.org>; Tue, 08 Sep 2020 15:54:50 -0700 (PDT)
+        with ESMTP id S1726434AbgIHXea (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Sep 2020 19:34:30 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA847C061573
+        for <io-uring@vger.kernel.org>; Tue,  8 Sep 2020 16:34:29 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id o68so619112pfg.2
+        for <io-uring@vger.kernel.org>; Tue, 08 Sep 2020 16:34:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=1ysC2IkdV6cGCsIiy06GR85oBuHTvW0j5QcGpJgCOsE=;
-        b=SO4NKUATjaaQrQsQTi7m78ra4uw6dOdxaeHbNsMLyFZ8GyKU4Rvhbdty6JCAloEAvX
-         kPWGWDka7sjwKlIiVjM36lBYB8OOWfPGudbs2mitglCnlWZpUkXH0oFulItY0BrwPVq8
-         plyfrTcTs6Lnk6m8DvEZaWyQBFEKef4q9WXnn/LhtURcLTwUWBXF9oLJ6+mEkuV8yuXH
-         a3fPrWvADDwRg5akRM251nbLIkTy1wqeayS0up00IlBJtAui9tvJVPlxkS/hLxoj/0iN
-         BY5/lzZ4IBt06GRNCbZXjiozCCjGxQ/fimoX0KMvxCFF8qOtIAUUoBL4gJ8VhNTDWTnP
-         RFUw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4HrkVBDdSztaoOjJqy3mdmyRFgVANQWzA+9waayHCYA=;
+        b=u11P+PRulRREYp/VsWb5uscxyszxeRv3edudPvEJ16z5O0KJ+DqMft5CjoH4uAUCOp
+         TJc6T4MV7I4tgySi9haP/Vv1D0k7rnZRV8fXRLYytt34NIAC4FImrcJ8/nYuUq1sU1hA
+         emWB2khEQwWZl6niP9PUJWCYR0KxKtkqsfW/n+2iWGduPjSQvU+VPi0tDXRSGdyGojO2
+         CVlT9pWzMOjhxEMYHE7zcZIMDB/CrJFMj5FvcxiGJAuW9Jq5TrZNsT0b8mGoWkbrGoKx
+         18tyICJ/AxXiGLv/JV/d0jI7L+wVX3e8nKWItWY4aw7F9Bwp/YkTMgQXHFLO4ht3wg94
+         Idew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=1ysC2IkdV6cGCsIiy06GR85oBuHTvW0j5QcGpJgCOsE=;
-        b=ihq003HvAz8Qhs5QzjgAvRAc3uFMjYfZsp4EvSs2XYiy8eL8H9wrdVXmzW6gN3xRhn
-         Ki/Tkz06sUKrY7UXGdxdhA/L55MDOynLEtLNhTH8uxFNSxAWT2BgZdAFZ7A3VbyOHSky
-         N/ugk7naqind1rSpbC8+q2V7g3eTSsF5uYqtzhXs165tyVq5Z8ANFZHBV3sQDrZ1hBJa
-         nqj/6nMqV7Xgu/MPYD6Ynzlq3koT+u5bzfjoY/UnbDjFdsvIYdO7zX52YzQObZGkplLa
-         7CMO7EMR4MpBOfD7cQiZ8S2bEq8QlcjTCt5MVc/r/5FTFwRcCNTbc8gMauPPJa6mx2OO
-         op8Q==
-X-Gm-Message-State: AOAM532SdwyDhY7xt/uteX13Li/ikuCzIk3BkfpvmfBzHgB6gZqumI/J
-        bCbi6qGqT60F+ix9JCW6zt2O5vRQMQK1hei6
-X-Google-Smtp-Source: ABdhPJw5vaGnlV5ij4CwGDmBMWL8922HjOsfgNztvldPyQnJNh3HhFnaaTU63ZLawgMdQbAZl2mCiQ==
-X-Received: by 2002:a17:902:a509:b029:d0:cb2d:f26e with SMTP id s9-20020a170902a509b02900d0cb2df26emr1189430plq.7.1599605689576;
-        Tue, 08 Sep 2020 15:54:49 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id y128sm435488pfy.74.2020.09.08.15.54.48
+        bh=4HrkVBDdSztaoOjJqy3mdmyRFgVANQWzA+9waayHCYA=;
+        b=qQPiGEpwM14sCoGhvMzGMsphNMneQrj4rXapjXicS4aEMPJgg6+UuR3D+ytNdJT7DK
+         CXIPD3/Up2gelCj9/C5h0+gT8ShD51RMiwDS4ugFUDT5ySoGYeoYZzklvrue83PF0mFp
+         8w2NAmoPojQbKq82AW8LLHqvsAsYd4MbyiUJ7b3PAwLevGVcHnpYftAW7Duv5Aj6wzlY
+         PlNbeATXmq9dmGJQ2QcDfhi1xbdzSzNrEZyON0SzjsfGxyORCQWvXCfnEGikKJ6oT03d
+         YPszVMOSTi0nDvwjd4rZvjyMdJBdjEZg0rL+vi+zwDxL9GdELn18BeTlCE9fS/+OEM22
+         48Cg==
+X-Gm-Message-State: AOAM531ybAhZhGV7z6JvnvnGiZdd69mNNq9PE2S9eSO8s4Uf2TW2FZyH
+        LcTh3Pb3QDU36iM1W3c2JhG4FQ==
+X-Google-Smtp-Source: ABdhPJwaXBjoCop88KqOTK4/ZX75q6XE+iMB1mJmEx1t0iV2J3qqVqngBHzQB1rtrKx/odO06oQP2w==
+X-Received: by 2002:a63:ff5d:: with SMTP id s29mr892130pgk.442.1599608069307;
+        Tue, 08 Sep 2020 16:34:29 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c085:21c8::1926? ([2620:10d:c090:400::5:4e45])
+        by smtp.gmail.com with ESMTPSA id c127sm458986pfa.165.2020.09.08.16.34.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2020 15:54:49 -0700 (PDT)
-Subject: Re: [PATCH for-next] io_uring: ensure IOSQE_ASYNC file table grabbing
- works, with SQPOLL
+        Tue, 08 Sep 2020 16:34:28 -0700 (PDT)
+Subject: Re: [PATCH next] io_uring: fix task hung in io_uring_setup
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        syzbot+107dd59d1efcaf3ffca4@syzkaller.appspotmail.com,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Kees Cook <keescook@chromium.org>
+References: <20200903132119.14564-1-hdanton@sina.com>
+ <9bef23b1-6791-6601-4368-93de53212b22@kernel.dk>
+ <8031fbe7-9e69-4a79-3b42-55b2a1a690e3@gmail.com>
+ <20200908000339.2260-1-hdanton@sina.com>
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <b105ea32-3831-b3c5-3993-4b38cc966667@kernel.dk>
- <8f6871c4-1344-8556-25a7-5c875aebe4a5@gmail.com>
- <622649c5-e30d-bc3c-4709-bbe60729cca1@kernel.dk>
-Message-ID: <1c088b17-53bb-0d6d-6573-a1958db88426@kernel.dk>
-Date:   Tue, 8 Sep 2020 16:54:47 -0600
+Message-ID: <c7a4b985-6f22-96b7-d84c-cf3c91ddf79c@kernel.dk>
+Date:   Tue, 8 Sep 2020 17:34:26 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <622649c5-e30d-bc3c-4709-bbe60729cca1@kernel.dk>
+In-Reply-To: <20200908000339.2260-1-hdanton@sina.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,41 +75,21 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/8/20 3:22 PM, Jens Axboe wrote:
-> On 9/8/20 2:58 PM, Pavel Begunkov wrote:
->> On 08/09/2020 20:48, Jens Axboe wrote:
->>> Fd instantiating commands like IORING_OP_ACCEPT now work with SQPOLL, but
->>> we have an error in grabbing that if IOSQE_ASYNC is set. Ensure we assign
->>> the ring fd/file appropriately so we can defer grab them.
->>
->> IIRC, for fcheck() in io_grab_files() to work it should be under fdget(),
->> that isn't the case with SQPOLL threads. Am I mistaken?
->>
->> And it looks strange that the following snippet will effectively disable
->> such requests.
->>
->> fd = dup(ring_fd)
->> close(ring_fd)
->> ring_fd = fd
+On 9/7/20 6:03 PM, Hillf Danton wrote:
 > 
-> Not disagreeing with that, I think my initial posting made it clear
-> it was a hack. Just piled it in there for easier testing in terms
-> of functionality.
+> On Mon, 7 Sep 2020 06:55:04 Jens Axboe wrote:
+>> On 9/7/20 2:50 AM, Pavel Begunkov wrote:
+>>>
+>>> BTW, I don't see the patch itself, and it's neither in io_uring, block
+>>> nor fs mailing lists. Hillf, could you please CC proper lists next time?
 > 
-> But the next question is how to do this right...
+> Yes, I can. So will I send io_uring patches with Pavel Cced.
 
-Looking at this a bit more, and I don't necessarily think there's a
-better option. If you dup+close, then it just won't work. We have no
-way of knowing if the 'fd' changed, but we can detect if it was closed
-and then we'll end up just EBADF'ing the requests.
+While that is nice, it should not be necessary. We need to ensure that your
+emails reach the list, that's more important than needing to CC a specific
+person, because it still means that everyone else doesn't see it.
 
-So right now the answer is that we can support this just fine with
-SQPOLL, but you better not dup and close the original fd. Which is not
-ideal, but better than NOT being able to support it.
-
-Only other option I see is to to provide an io_uring_register()
-command to update the fd/file associated with it. Which may be useful,
-it allows a process to indeed to this, if it absolutely has to.
+Do you get an error from vger, or does it simply not show up?
 
 -- 
 Jens Axboe

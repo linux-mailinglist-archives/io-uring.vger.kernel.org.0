@@ -2,162 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BAE42621A0
-	for <lists+io-uring@lfdr.de>; Tue,  8 Sep 2020 23:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67A232621A1
+	for <lists+io-uring@lfdr.de>; Tue,  8 Sep 2020 23:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbgIHVAq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Sep 2020 17:00:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45870 "EHLO
+        id S1729912AbgIHVBK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Sep 2020 17:01:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728197AbgIHVAl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Sep 2020 17:00:41 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F54CC061573
-        for <io-uring@vger.kernel.org>; Tue,  8 Sep 2020 14:00:40 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id l63so464031edl.9
-        for <io-uring@vger.kernel.org>; Tue, 08 Sep 2020 14:00:40 -0700 (PDT)
+        with ESMTP id S1728390AbgIHVBJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Sep 2020 17:01:09 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B92AFC061573;
+        Tue,  8 Sep 2020 14:01:08 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id gr14so429862ejb.1;
+        Tue, 08 Sep 2020 14:01:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=z0OVPsRjFh8JdFuKU/q47TyvttZ8Bv68EKjhBB29gfQ=;
-        b=FmJfaPjUKnUH+fP8b8VgksoNYRnFJ1HiCQ+0D2bfnmbSUCv4QoYqWEcRNPKvD15/Lu
-         Nt0Kk8N7cvrQDOJvL6OFNpc2YqKbYIeyCtLizbz8FMiL0xaCgumPp0YNQJ3Yc5w0FikB
-         va+x3hmXs7Dgl98HuqzPGteQ5ibxqaUw2CYSOfoOLKWDZiVHo7nHWak+kYcjiOx17G2L
-         CWtV9wQgIVd38H6gMNOpUI7CSc8G1lbyrgB5fEdcA30Kt2mkafAPJ+7vTkmdARh5o4yo
-         msZBu2/01GiUdwdRdGoVyvvJgMo2eTBTZhJU8Q2qJVw3/MJAR9LaiwnUwAhPaPYaNUYd
-         yKSw==
+        bh=yuZq5gRtjnAOy/yKCa2afgQGQUjqZmPhiIecQIYO4eA=;
+        b=qZsEpHsLLfxCed5410SrA8rAmZ525i2i7c4wbc8OXp8N6SlmVDp7h0875MI+d+P1AS
+         yxU3wkXW4yiC+OW0P3j5dz9gOgAbwa1iNrlGZoAtC7msxKu+2dvktj66eIX2ytjX1E/9
+         tlhUG1EWTLUt2uNd2eqM3WIyc/KT3lRvmJawNkK1qRtTlpUbJx333MGi2U++GtNkJzUy
+         sGoKssErH5fzsyim9s8uSE9ZKabk2XzzJd8SS7nR+YI01aoe2wNNm2CZdHxQ0uf/2J8q
+         p2iYtl/pXLibEbGb1vYO+scourbh+gHjRlX1qwaizNbyoVtz1VHcqi9rEv24HjIgIIwE
+         yciw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=z0OVPsRjFh8JdFuKU/q47TyvttZ8Bv68EKjhBB29gfQ=;
-        b=tAJSVBY2hAHg6UDtO0hxdUB9r1lcq+fJieobe3u+HzfeqGoeguaoU+HvsjhJp3vMuH
-         YPOwKP7WN1gYcPc6ImsaZRozA5ObgNvzXN3mGUaVoVGAy0j2h9MTsVFI1VYJU+iOdtFq
-         uQPxI42yoiYJGQr5LcfEIC1GWMelXuqk6s/ysPYqsj9+SoFU4tdn7UcwYpppA7wHYrUt
-         gZuJ2Dw1sIYpSKtAtH/kbTBPQRcL/JW66eBi+MPyYebVZt2f99aoSKWE8k6GLcHLZN8a
-         hAJiEi7G2EDAorjIhHJj/D0l8ZEWMp7LX7NvhoCEie2dCHpCa4iBJ2PVnVLdfVxNW4rZ
-         bFTw==
-X-Gm-Message-State: AOAM531T9Whsx0DmBBEViTb1V+1Vw3XI+MD4lyQ9/KV8rTCY7gC79uCU
-        NY5JKCq5SiJuuMaBwU8ZcJUCaHgXehY=
-X-Google-Smtp-Source: ABdhPJyyQXmaP3xzzEz9GSyAA3AUpErSl/PtZd1K+oKqgGiqNe40NF9L8sBwgF5eBBHTNJULHn711A==
-X-Received: by 2002:a05:6402:2d9:: with SMTP id b25mr924078edx.131.1599598838398;
-        Tue, 08 Sep 2020 14:00:38 -0700 (PDT)
+        bh=yuZq5gRtjnAOy/yKCa2afgQGQUjqZmPhiIecQIYO4eA=;
+        b=Cb6vozJOaeXOdLgj6vwxPZeXjPElhw0QIsjCWog3519ITh13njLSUkgdB/qI0z7rL1
+         A/Jbu1H4Ev+5nOR2R4fzjkQYuhN28ZlXdFJuHXX9mj0yc/6Kus2CK917QKf26ydC2ZKG
+         8zWX9a1/EgiChRAsY7Ob9caX03FNcfwVeH8HVuBLPKXEhDHGgMTU/UFYoiS+yp88+nsy
+         /WuW0hLwvcRsGRxx6SHopYIaExkbsZMbhCjGxlxshObkfh+ulLxbw2L13q8Ko+e0a4S/
+         3IsLABTo9VI1k7234VlewlRSp+gd2rOvR+KLy/AA6hnKis/MoOKE7Fua2CeBVRHBaCl8
+         zDeg==
+X-Gm-Message-State: AOAM530LwXPg6u43RY6wi0YjZZPoKWrwk+tIT5/f1wEKg3DQydm6fT4N
+        5+r71flYmFbov45gyt9vf7s=
+X-Google-Smtp-Source: ABdhPJxd/YVT4oASVxc+tdLEjp4ZtwajtJ+9bkMQrQ6WgK3fNzWkGQeJPkcAanshpa+NFiZECBmYgg==
+X-Received: by 2002:a17:906:fcc7:: with SMTP id qx7mr377519ejb.254.1599598864615;
+        Tue, 08 Sep 2020 14:01:04 -0700 (PDT)
 Received: from [192.168.43.239] ([5.100.193.184])
-        by smtp.gmail.com with ESMTPSA id w8sm240172ejo.117.2020.09.08.14.00.37
+        by smtp.gmail.com with ESMTPSA id bx24sm257157ejb.51.2020.09.08.14.01.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2020 14:00:37 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-References: <b105ea32-3831-b3c5-3993-4b38cc966667@kernel.dk>
+        Tue, 08 Sep 2020 14:01:03 -0700 (PDT)
+Subject: Re: [PATCH next] io_uring: fix task hung in io_uring_setup
+To:     Hillf Danton <hdanton@sina.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk,
+        syzbot+107dd59d1efcaf3ffca4@syzkaller.appspotmail.com,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Kees Cook <keescook@chromium.org>
+References: <20200903132119.14564-1-hdanton@sina.com>
+ <9bef23b1-6791-6601-4368-93de53212b22@kernel.dk>
+ <8031fbe7-9e69-4a79-3b42-55b2a1a690e3@gmail.com>
+ <20200908000339.2260-1-hdanton@sina.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH for-next] io_uring: ensure IOSQE_ASYNC file table grabbing
- works, with SQPOLL
-Message-ID: <8f6871c4-1344-8556-25a7-5c875aebe4a5@gmail.com>
-Date:   Tue, 8 Sep 2020 23:58:12 +0300
+Message-ID: <778a8166-e031-e691-a44b-1199c68d6a29@gmail.com>
+Date:   Tue, 8 Sep 2020 23:58:39 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <b105ea32-3831-b3c5-3993-4b38cc966667@kernel.dk>
+In-Reply-To: <20200908000339.2260-1-hdanton@sina.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 08/09/2020 20:48, Jens Axboe wrote:
-> Fd instantiating commands like IORING_OP_ACCEPT now work with SQPOLL, but
-> we have an error in grabbing that if IOSQE_ASYNC is set. Ensure we assign
-> the ring fd/file appropriately so we can defer grab them.
-
-IIRC, for fcheck() in io_grab_files() to work it should be under fdget(),
-that isn't the case with SQPOLL threads. Am I mistaken?
-
-And it looks strange that the following snippet will effectively disable
-such requests.
-
-fd = dup(ring_fd)
-close(ring_fd)
-ring_fd = fd
-
+On 08/09/2020 03:03, Hillf Danton wrote:
 > 
-> Reported-by: Josef Grieb <josef.grieb@gmail.com>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/io_uring.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> On Mon, 7 Sep 2020 06:55:04 Jens Axboe wrote:
+>> On 9/7/20 2:50 AM, Pavel Begunkov wrote:
+>>>
+>>> BTW, I don't see the patch itself, and it's neither in io_uring, block
+>>> nor fs mailing lists. Hillf, could you please CC proper lists next time?
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 80913973337a..e21a7a9c6a59 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6757,7 +6757,7 @@ static enum sq_ret __io_sq_thread(struct io_ring_ctx *ctx,
->  
->  	mutex_lock(&ctx->uring_lock);
->  	if (likely(!percpu_ref_is_dying(&ctx->refs)))
-> -		ret = io_submit_sqes(ctx, to_submit, NULL, -1);
-> +		ret = io_submit_sqes(ctx, to_submit, ctx->ring_file, ctx->ring_fd);
->  	mutex_unlock(&ctx->uring_lock);
->  
->  	if (!io_sqring_full(ctx) && wq_has_sleeper(&ctx->sqo_sq_wait))
-> @@ -8966,6 +8966,11 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
->  		goto err;
->  	}
->  
-> +	if (p->flags & IORING_SETUP_SQPOLL) {
-> +		ctx->ring_fd = fd;
-> +		ctx->ring_file = file;
-> +	}
-> +
->  	ret = io_sq_offload_create(ctx, p);
->  	if (ret)
->  		goto err;
+> Yes, I can. So will I send io_uring patches with Pavel Cced.
+
+Thanks
+
+>>
+>> He did, but I'm guessing that vger didn't like the email for whatever
+>> reason. Hillf, did you get an error back from vger when sending the pat	
 > 
+> My inbox, a simple free mail, is perhaps blocked as spam at the vger end.
 
 -- 
 Pavel Begunkov

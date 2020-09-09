@@ -2,189 +2,207 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95D65263359
-	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 19:02:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94D2D2635F9
+	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 20:27:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbgIIRCL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Sep 2020 13:02:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50484 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730633AbgIIPut (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Sep 2020 11:50:49 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F42BC061756
-        for <io-uring@vger.kernel.org>; Wed,  9 Sep 2020 08:50:47 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id z22so4260054ejl.7
-        for <io-uring@vger.kernel.org>; Wed, 09 Sep 2020 08:50:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dkNS/DzRr2t2lfPj8nBnwKRpKNjtaAI2AePD5q0os1A=;
-        b=ew/fIukmYLKERD9r710RsiVNaY+WgJJ9yXhFtpRCKnjuMwGb+wufYID+eO04fsbYke
-         eRagMV5h1ySnTEBUQo5kADc5/g0iynj9Tu+ZRZQcMCSx9lAyAKxQ43x49B7JQeeD9IZK
-         Mex1q3t89oQ2Vna90Q62Kxki6ORWEJUFMisZJ+4Pri7jqT2M8finSwY+LCeWsP4Qy1lc
-         He6cuKKInbv4aFLdiHuRYbkku/SuTcS931AhlVQDyEZESPKzTtf+Sg2A8lbDpNN/0fzA
-         7IMIvCRVpMv3oLqdWLVjeDm0eW7kjWHbzgd66eXc6g92YVi52ONEJiWQhGCri1QGHacX
-         JwUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dkNS/DzRr2t2lfPj8nBnwKRpKNjtaAI2AePD5q0os1A=;
-        b=XaVqxxauIhZbhkCho7hOKprcFIW2d07TG3oBpJEvor5MR+sdIP65wJKZYwWcfgXJTB
-         eIUN4a7td2+PAAAfkY0DbbTYo4IPoQbhAAaW1hb/Aso+XY8V5c0+E3jTqxNv1hkNfEgE
-         mTJ91/qmwlbyqiiosniRPDw6MDNVmgHqJLyehIRZDcYVPL8u7twobZy/CnkQUXcFKKP5
-         q6eXCUpm8LJ4Gdt+8o35ZQkDLhjKBJLhlifFiF36A8s9J0alLooGEMm/JlkxJxrLW2Dw
-         ySUIVbJ6P9p27tMkDWFJz30rsP2R0UjZuUuNIE+P+xl8gEjN970UOGDZ9K6r7hPiWopc
-         exlA==
-X-Gm-Message-State: AOAM532+lLRjqQ9t/22SoCZYWt8X5ju3/XIkYxfDr7paE4GOQac7gNCA
-        c+jLYWiWNlHdbOjkO4r/8jYs8EQY/Mk=
-X-Google-Smtp-Source: ABdhPJxXJyEzatjCwdTjwjChPnTbYLyF4Vc1CtrvMBf9VGKshe/HlkPzkoyK3y44cKsw+Q+3XfNwTQ==
-X-Received: by 2002:a17:906:3e08:: with SMTP id k8mr4214092eji.480.1599666644421;
-        Wed, 09 Sep 2020 08:50:44 -0700 (PDT)
-Received: from [192.168.43.239] ([5.100.193.184])
-        by smtp.gmail.com with ESMTPSA id f13sm2715469ejb.81.2020.09.09.08.50.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2020 08:50:43 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-References: <b105ea32-3831-b3c5-3993-4b38cc966667@kernel.dk>
- <8f6871c4-1344-8556-25a7-5c875aebe4a5@gmail.com>
- <622649c5-e30d-bc3c-4709-bbe60729cca1@kernel.dk>
- <1c088b17-53bb-0d6d-6573-a1958db88426@kernel.dk>
- <801ed334-54ea-bdee-4d81-34b7e358b506@gmail.com>
- <370c055e-fa8d-0b80-bd34-ba3ba9bc6b37@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH for-next] io_uring: ensure IOSQE_ASYNC file table grabbing
- works, with SQPOLL
-Message-ID: <74c2802e-788e-d6b2-3ee6-5ef67950dc94@gmail.com>
-Date:   Wed, 9 Sep 2020 18:48:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1728363AbgIIS1R (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Sep 2020 14:27:17 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23618 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725772AbgIIS1O (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Sep 2020 14:27:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1599676032;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=CYZ5JMSY2FFuHVs8u88U7no0/w4MDoHZyXU/VG8Mbsk=;
+        b=AbU4vC3WlW+MTqEsCFB0Z6oOf52XGDiwCoO3TSfu79J8XFjCAWiVJzvjNbcoa3MpFCRXwW
+        HTNfC1JeOw66BPOlRHMOJqTdC9eQEWuEBqf0lSKydYZ1CJmeewTiXRHtqCIvr+ebkzRArP
+        DAhHzDqoVoPMqXj9KWaKj1MNklR4dIc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-264-DTsmZyYpM4ikkz89GyVH2A-1; Wed, 09 Sep 2020 14:27:09 -0400
+X-MC-Unique: DTsmZyYpM4ikkz89GyVH2A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8A4A21DE01
+        for <io-uring@vger.kernel.org>; Wed,  9 Sep 2020 18:27:08 +0000 (UTC)
+Received: from work (unknown [10.40.192.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 03D7E838BF
+        for <io-uring@vger.kernel.org>; Wed,  9 Sep 2020 18:27:07 +0000 (UTC)
+Date:   Wed, 9 Sep 2020 20:27:03 +0200
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     io-uring@vger.kernel.org
+Subject: A way to run liburing tests on emulated nvme in qemu
+Message-ID: <20200909182703.d3wjz3rxys6haij6@work>
 MIME-Version: 1.0
-In-Reply-To: <370c055e-fa8d-0b80-bd34-ba3ba9bc6b37@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 09/09/2020 16:10, Jens Axboe wrote:
-> On 9/9/20 1:09 AM, Pavel Begunkov wrote:
->> On 09/09/2020 01:54, Jens Axboe wrote:
->>> On 9/8/20 3:22 PM, Jens Axboe wrote:
->>>> On 9/8/20 2:58 PM, Pavel Begunkov wrote:
->>>>> On 08/09/2020 20:48, Jens Axboe wrote:
->>>>>> Fd instantiating commands like IORING_OP_ACCEPT now work with SQPOLL, but
->>>>>> we have an error in grabbing that if IOSQE_ASYNC is set. Ensure we assign
->>>>>> the ring fd/file appropriately so we can defer grab them.
->>>>>
->>>>> IIRC, for fcheck() in io_grab_files() to work it should be under fdget(),
->>>>> that isn't the case with SQPOLL threads. Am I mistaken?
->>>>>
->>>>> And it looks strange that the following snippet will effectively disable
->>>>> such requests.
->>>>>
->>>>> fd = dup(ring_fd)
->>>>> close(ring_fd)
->>>>> ring_fd = fd
->>>>
->>>> Not disagreeing with that, I think my initial posting made it clear
->>>> it was a hack. Just piled it in there for easier testing in terms
->>>> of functionality.
->>>>
->>>> But the next question is how to do this right...> 
->>> Looking at this a bit more, and I don't necessarily think there's a
->>> better option. If you dup+close, then it just won't work. We have no
->>> way of knowing if the 'fd' changed, but we can detect if it was closed
->>> and then we'll end up just EBADF'ing the requests.
->>>
->>> So right now the answer is that we can support this just fine with
->>> SQPOLL, but you better not dup and close the original fd. Which is not
->>> ideal, but better than NOT being able to support it.
->>>
->>> Only other option I see is to to provide an io_uring_register()
->>> command to update the fd/file associated with it. Which may be useful,
->>> it allows a process to indeed to this, if it absolutely has to.
->>
->> Let's put aside such dirty hacks, at least until someone actually
->> needs it. Ideally, for many reasons I'd prefer to get rid of
-> 
-> BUt it is actually needed, otherwise we're even more in a limbo state of
-> "SQPOLL works for most things now, just not all". And this isn't that
-> hard to make right - on the flush() side, we just need to park/stall the
+Hi,
 
-I understand that it isn't hard, but I just don't want to expose it to
-the userspace, a) because it's a userspace API, so couldn't probably be
-killed in the future, b) works around kernel's problems, and so
-shouldn't really be exposed to the userspace in normal circumstances.
+because I didn't have an acces to a nvme HW I created a simple set of
+scripts to help me run the liburing test suite on emulated nvme device
+in qemu. This has also an advantage of being able to test it on different
+architectures.
 
-And it's not generic enough because of a possible "many fds -> single
-file" mapping, and there will be a lot of questions and problems.
+Here is a repository on gihub.
+https://github.com/lczerner/qemu-test-iouring
 
-e.g. if a process shares a io_uring with another process, then
-dup()+close() would require not only this hook but also additional
-inter-process synchronisation. And so on.
+I am attaching a README file to give you some sence of what it is.
+
+It is still work in progress and only supports x86_64 and ppc64 at the
+moment. It is very much Fedora centric as that's what I am using. But
+maybe someone find some use for it. Of course I accept patches/PRs.
+
+Cheers,
+-Lukas
 
 
-> thread and clear the ring_fd/ring_file, then mark the ring as needing a
-> queue enter. On the queue enter, we re-set the fd/file if they're NULL,
-> unpark/unstall the thread. That's it. I'll write this up and test it.
-> 
->> fcheck(ctx->ring_fd) in favour of synchronisation in io_grab_files(),
->> but I wish I knew how.
-> 
-> That'd be nice, and apply equally to all cases as the SQPOLL case isn't
-> special at all anymore.
 
-I miss the whole story, have you asked fs guys about the problem?
-Or is it known that nothing would work?
+# Run liburing tests on emulated nvme in qemu
 
--- 
-Pavel Begunkov
+> QEMU with nvme support is required (v5.1.0 and later)!
+> See <https://www.qemu.org/2020/08/11/qemu-5-1-0/>
+
+Since not everyone has access to the proper nvme HW, let alone on multiple
+architectures. This project aims to provide a convenient set of scripts to
+run liburing tests on qemu emulated nvme device with polling support on
+various architectures.
+
+Currently only x86_64 and ppc64 is supported, but I hope to expand it soon.
+
+> This is still very much work-in-progress. Use with caution!
+
+## How it works
+
+ 1. It takes an OS image (rpm based such as Fedora, or CentOS) and makes some
+    initial system preparations after which it will boot into the system.
+ 2. Qemu provides the system with a emulated nvme device with polling support.
+ 3. When booting for the first time it will install required tools to build
+    and test liburing, update kernel and optionally install provided
+    rpm packages. Then it reboots, possibly into new kernel.
+ 4. Assuming the installation was successful, it will create a partition on
+    a nvme drive. One to use for block device testing and the other for a
+    file based testing.
+ 5. Clone the liburing from a git repository and build it.
+ 6. Run the tests with `make runtests`
+ 7. After the test the virtual machine is shut down and the logs are copied
+    over to the local host.
+
+## Required tools
+
+The following tools are required by the script:
+
+* virt-sysprep
+* qemu-system-x86_64
+* qemu-system-ppc64
+* wget
+* virt-copy-out
+
+On Fedora you should be able to install all of that with the following command:
+
+> dnf -y install libguestfs-tools-c qemu-system-x86-core qemu-system-ppc-core wget
+
+## How to use it
+
+The configuration file provides a convenient way to have a different setup
+for a different OS and/or architecture.
+
+For example you can have multiple configuration files like this:
+
+ * config.fedora.x86_64
+ * config.rhel.x86_64
+ * config.rhel.ppc64
+
+Those can differ in ARCH, IMG etc. Additionally you can provide a custom rpm
+repository containing a custom kernel, or kernel rpm package directly and
+number of other options.
+
+Conveniently the IMG can be URL and the image is downloaded automatically
+if it does not exist yet.
+
+Then, you can run the tests for example like this:
+
+	./qemu-test-iouring.sh -C config.rhel.x86_64 -c
+
+	./qemu-test-iouring.sh -C config.fedora.x86_64 -c -p kernel-5.9.0_rc3+-1.x86_64.rpm
+
+	./qemu-test-iouring.sh -C config.rhel.ppc64 -c -r test.repo
+
+> Note that you can use the -c option to preserve the original OS image.
+> Otherwise the image will be changed directly and it currently does not
+> provide a way to reinstall kernel or add additional packaged once the
+> image is initialized. This is likely to change in the future.
+
+## Configuration file
+
+You can find example configuration file in `config.example`
+
+	# Configuration file for qemu-test-iouring. Copy this file to config.local,
+	# nncomment and specify values to change defaults.
+	#
+	# Default architecture
+	# ARCH="x86_64"
+	#
+	# Initialize the image before running virtual machine
+	# 1 - initialize the image (default)
+	# 0 - do not initialize the image
+	# IMG_INIT=1
+	#
+	# Do not run on spefified image, but rather create copy of it first
+	# and run on that.
+	# 0 - run on the provided image (default)
+	# 1 - run on the copy of the provided image
+	# COPY_IMG=0
+	#
+	# Specify additional file to copy into the virtual machine. See
+	# man virt-builder for more information on --copy-in option
+	# COPY_IN=""
+	#
+	# List of excluded tests
+	# TEST_EXCLUDE=""
+	#
+	# Default image to run with. Will be overriden by -I option
+	# IMG=""
+	#
+	# Default nvme image to run with. Will be overriden by -N option
+	# NVME_IMG=""
+	#
+	# Specify liburing git repository and optionaly branch
+	# LIBURING_GIT="git://git.kernel.dk/liburing -b master"
+
+## Usage
+
+You can see what options are supported using help `./qemu-test-iouring.sh -h`
+
+	Usage: ./qemu-test-iouring.sh [-h] [-n] [-d] [-c] [-a ARCH] [-I IMG] [-r REPO] [-N NVME]
+		-h		Print this help
+		-C CONFIG	Specify custom configuration file. This option
+				can only be specified once. (Default "./config.local")
+		-a ARCH		Specify architecture to run (default: x86_64).
+				Supported: x86_64 ppc64le
+		-I IMG		OS image with Fedora, Centos or Rhel. Can be
+				existing file, or http(s) url.
+		-N NVME		Nvme image to run on. It needs to be at least
+				1GB in size.
+		-r REPO		Specify yum repository file to include in guest.
+				Can be repeated to include multiple files and
+				implies image initialization.
+		-n		Do not initialize the image with virt-sysprep
+		-d		Do not run liburing tests on startup. Implies
+				image initialization.
+		-c		Do not run on specified image, but rather create
+				copy of it first.
+		-e		Exclude test. Can be repeated to exclude
+				multiple tests.
+		-p PKG		RPM package to install in guest
+
+	Example: ././qemu-test-iouring.sh -a ppc64le -r test.repo -c -I fedora.img -N nvme.img
+

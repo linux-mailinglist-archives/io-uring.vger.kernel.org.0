@@ -2,72 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34E542631A5
-	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 18:22:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6726026323F
+	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 18:38:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730744AbgIIQWZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Sep 2020 12:22:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55502 "EHLO
+        id S1731028AbgIIQif (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Sep 2020 12:38:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730469AbgIIQWU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Sep 2020 12:22:20 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823CCC0612ED
-        for <io-uring@vger.kernel.org>; Wed,  9 Sep 2020 07:24:50 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id z25so3292394iol.10
-        for <io-uring@vger.kernel.org>; Wed, 09 Sep 2020 07:24:50 -0700 (PDT)
+        with ESMTP id S1731090AbgIIQhQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Sep 2020 12:37:16 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6396FC06135C
+        for <io-uring@vger.kernel.org>; Wed,  9 Sep 2020 07:03:36 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id t16so2376462ilf.13
+        for <io-uring@vger.kernel.org>; Wed, 09 Sep 2020 07:03:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=J42uWZO91Vl6z53QuSqgDQ5nEZPu3ErBMsf2V3eJXao=;
-        b=vwgyAFNFY0Rk6tGpJrQKkFa2XORu9tkWL3MOvEnxMWQSsbJhAjs0wQkh45yfbxgWty
-         P4LutOppwndoh6fYhlpY/FnHJ7s6roKt4SmQ4ZpkvlcGIxjeXF2o2A/OxCF6LlScMtNO
-         sd1g73r4KiQVkYw0cr9Uby1XQGWuAPxYLmrDOkiYBuC6w2Lor4MVkXLDdEJOmCpTmfNV
-         OooUgHeq067qTX1T/mzo/jYDU8gFVMGTX7A+wovVWcHT9Cn1BOV0cJ5c90cqkK04z5zV
-         FQRf3f1tWU3m+KnOqKecj1nxHPOb0476pqidIdfBKhmVP8zKJt2dC5dXnsGG8kbtXB49
-         uuAQ==
+        bh=kCsxeCMw67opcoElUs8hZzWLlvUYaz8JdahayB2RUI4=;
+        b=y8KsdU2xS4h9wwHh/xYDwErwKAwdbag1RHnw+sM66m/fustnVCcke5hzrzLLhpqjyI
+         gAKCWN9X6Ps6x4mAijLqE21trmg9mvsJQ6ZXE0ar9XW5AIXWCAZTNu+/gqEJ6wq0O0gL
+         AzlVewdt+lb/VWNKuLkTogy0q7/FP96IucjOTs0oY3gRRxpBURUZKYXuGXdIarA/8MZG
+         bVbuGmOJ4V48/zvhddDGTpiR5+vFcOkBtV4tQZyGNtf7K6xTmUEgpvSiEmEAXSDc32oN
+         uTt5aC7e2b47Bf/C77XLGczztZb6xRGZ3YIqp8kpjfAi8rNQJ7u+jP0IMx/wbKphG5W1
+         NfiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=J42uWZO91Vl6z53QuSqgDQ5nEZPu3ErBMsf2V3eJXao=;
-        b=e26Ve5JGXg5sMxx9MiFKR2zBQe41h7sU+onmGoTAlD79FGHxZXi3WvxfTootceqYFT
-         1gDfOSE+/w82fgScr7397tpYvRydY6li5lQyfa5U5fhL+KDlACVvv1YpkeRljRddxq6G
-         g42xQrGSd8FDKvDbnZx++7ChpdLpfgdO2I8zvC0JyGJI4eY66FSwzvnDmZ0ByprhPYIO
-         3ZCs1XL/CFGI2PMudOzKifMrXcQ1ETxqx0WGZkrF8mHlmioTdLgzs8kkBvqRcxVB2dZ9
-         oApq8rgtFVha0fmn8duCOklsNs2CGCQwEkz1UN19dQcvS+yJaOrAjlG0U3qynP7vfEpw
-         ZeAA==
-X-Gm-Message-State: AOAM533Iko7lPIpblPiYkWDoDhHdXs5ylikm5Tgh/o2Iax49oWE5mjeD
-        vkYfg1ZSoxaoDz8PJ1uiTgF8DA==
-X-Google-Smtp-Source: ABdhPJzw71ClM3e9xwflgpNGkqys4GZLnoSdxzDPCJW81NzzXlaCm+tbHvqOkGBBc4MqR9ZnkKGG6w==
-X-Received: by 2002:a02:1142:: with SMTP id 63mr4314795jaf.73.1599661486949;
-        Wed, 09 Sep 2020 07:24:46 -0700 (PDT)
+        bh=kCsxeCMw67opcoElUs8hZzWLlvUYaz8JdahayB2RUI4=;
+        b=XFO2bSIqtEFXwD3gn1t1uBRGsmYwttp5Ehgu0qW0iOHrGlrF8nRoGSMdolUQXbPNQu
+         rwJkQ3hneGSMG5xCh9ecFHN2GNXItSE8Ku3vSnKzgEa9spvOgf5NRe+yJBRB53FHWbsJ
+         kUboXHPR6Yfu8jCsczZPDPtkejoRw7WqVP9OdD4pxpK4RR1VZPYvMG//weKcGRdKLRiS
+         GBHp/RES6TOJtnmqNG5m3/lYv4z4T8Xm2SVh51eVQiEXRWuMi4n76a+4FZQPFwInuHqX
+         iClETbOWzkZMd5vawMtXUcYXY2aA+/YU1teZsX++kS5kg70GTAw+7jC6wG+h7w1qmYQS
+         ctHQ==
+X-Gm-Message-State: AOAM533wOEHpnF1lCuk1w6LBjt5sfxH2w3cJpPjbyfmLsykc5WzKQ/eJ
+        jeWuGqxHPsdesK7zL3VPSNqr3A==
+X-Google-Smtp-Source: ABdhPJywiqVd3crHHoKQ2WPdED4AxcZSebQ/f1P0yVO+Jydm2uWgdHboDeu9R4fZh5S89cAdslOriA==
+X-Received: by 2002:a92:985a:: with SMTP id l87mr3668939ili.2.1599660214146;
+        Wed, 09 Sep 2020 07:03:34 -0700 (PDT)
 Received: from [192.168.1.10] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 2sm1457722ilj.24.2020.09.09.07.24.45
+        by smtp.gmail.com with ESMTPSA id c2sm1464286ilo.7.2020.09.09.07.03.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2020 07:24:46 -0700 (PDT)
-Subject: Re: [PATCH next] io_uring: fix task hung in io_uring_setup
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        syzbot+107dd59d1efcaf3ffca4@syzkaller.appspotmail.com,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Kees Cook <keescook@chromium.org>
-References: <20200903132119.14564-1-hdanton@sina.com>
- <9bef23b1-6791-6601-4368-93de53212b22@kernel.dk>
- <8031fbe7-9e69-4a79-3b42-55b2a1a690e3@gmail.com>
- <20200908000339.2260-1-hdanton@sina.com>
- <20200909001943.18916-1-hdanton@sina.com>
+        Wed, 09 Sep 2020 07:03:33 -0700 (PDT)
+Subject: Re: INFO: task hung in io_sq_thread_stop
+To:     Stefano Garzarella <sgarzare@redhat.com>,
+        syzbot <syzbot+3c23789ea938faaef049@syzkaller.appspotmail.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <00000000000030a45905aedd879d@google.com>
+ <20200909100355.ibz4jc5ctnwbmy5v@steredhat>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e04aea6a-4049-da2e-e8e8-9025aa03268b@kernel.dk>
-Date:   Wed, 9 Sep 2020 08:24:45 -0600
+Message-ID: <fa8f11bf-d0e6-42b9-0a2e-2bb4c8679b99@kernel.dk>
+Date:   Wed, 9 Sep 2020 08:03:32 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200909001943.18916-1-hdanton@sina.com>
+In-Reply-To: <20200909100355.ibz4jc5ctnwbmy5v@steredhat>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,36 +71,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/8/20 6:19 PM, Hillf Danton wrote:
-> 
-> On Tue, 8 Sep 2020 17:34:26 -0600 Jens Axboe wrote:
->> On 9/7/20 6:03 PM, Hillf Danton wrote:
->>> On Mon, 7 Sep 2020 06:55:04 Jens Axboe wrote:
->>>> On 9/7/20 2:50 AM, Pavel Begunkov wrote:
->>>>>
->>>>> BTW, I don't see the patch itself, and it's neither in io_uring, block
->>>>> nor fs mailing lists. Hillf, could you please CC proper lists next time?
->>>
->>> Yes, I can. So will I send io_uring patches with Pavel Cced.
+On 9/9/20 4:03 AM, Stefano Garzarella wrote:
+> On Wed, Sep 09, 2020 at 01:49:22AM -0700, syzbot wrote:
+>> Hello,
 >>
->> While that is nice, it should not be necessary. We need to ensure that your
->> emails reach the list, that's more important than needing to CC a specific
->> person, because it still means that everyone else doesn't see it.
+>> syzbot found the following issue on:
 >>
->> Do you get an error from vger, or does it simply not show up?
+>> HEAD commit:    dff9f829 Add linux-next specific files for 20200908
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=112f880d900000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=37b3426c77bda44c
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=3c23789ea938faaef049
+>> compiler:       gcc (GCC) 10.1.0-syz 20200507
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c082a5900000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1474f5f9900000
+>>
+>> Bisection is inconclusive: the first bad commit could be any of:
+>>
+>> d730b1a2 io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
+>> 7ec3d1dd io_uring: allow disabling rings during the creation
 > 
-> After tapping the send button for this message, I will receive a message
-> from the sina mail server saying it failed to deliver it to one of the
-> targets (abc@vger.kernel.org), which has been happing over the past a
-> couple of years. One of the redhat guys, I can't remmenber his name,
-> once tryied to help me solve the problem, by sending somebody@vger a
-> message explaining what was going on, but failed. AFAIC there's a
-> glitch in exchanging info between the sina server and the server at the
-> vger end, and it seems it would take more time than thought to figure
-> it out. So let it be for now.
+> I'm not sure it is related, but while rebasing I forgot to update the
+> right label in the error path.
+> 
+> Since the check of ring state is after the increase of ctx refcount, we
+> need to decrease it jumping to 'out' label instead of 'out_fput':
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index d00eb6bf6ce9..f35da516095a 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -8649,7 +8649,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+>                 goto out_fput;
+> 
+>         if (ctx->flags & IORING_SETUP_R_DISABLED)
+> -               goto out_fput;
+> +               goto out;
+> 
+>         /*
+>          * For SQ polling, the thread will do all submissions and completions.
+> 
+> I'll send a patch ASAP and check if it solves this issue.
 
-Might be worthwhile to just have a gmail account for sending patches
-and replying to list emails?
+I think that's a separate bug, it's definitely a bug. So please do send
+the fix, thanks.
 
 -- 
 Jens Axboe

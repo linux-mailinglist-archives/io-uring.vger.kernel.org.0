@@ -2,207 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94D2D2635F9
-	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 20:27:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58676263609
+	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 20:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbgIIS1R (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Sep 2020 14:27:17 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23618 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725772AbgIIS1O (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Sep 2020 14:27:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599676032;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type;
-        bh=CYZ5JMSY2FFuHVs8u88U7no0/w4MDoHZyXU/VG8Mbsk=;
-        b=AbU4vC3WlW+MTqEsCFB0Z6oOf52XGDiwCoO3TSfu79J8XFjCAWiVJzvjNbcoa3MpFCRXwW
-        HTNfC1JeOw66BPOlRHMOJqTdC9eQEWuEBqf0lSKydYZ1CJmeewTiXRHtqCIvr+ebkzRArP
-        DAhHzDqoVoPMqXj9KWaKj1MNklR4dIc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-264-DTsmZyYpM4ikkz89GyVH2A-1; Wed, 09 Sep 2020 14:27:09 -0400
-X-MC-Unique: DTsmZyYpM4ikkz89GyVH2A-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8A4A21DE01
-        for <io-uring@vger.kernel.org>; Wed,  9 Sep 2020 18:27:08 +0000 (UTC)
-Received: from work (unknown [10.40.192.106])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 03D7E838BF
-        for <io-uring@vger.kernel.org>; Wed,  9 Sep 2020 18:27:07 +0000 (UTC)
-Date:   Wed, 9 Sep 2020 20:27:03 +0200
-From:   Lukas Czerner <lczerner@redhat.com>
-To:     io-uring@vger.kernel.org
-Subject: A way to run liburing tests on emulated nvme in qemu
-Message-ID: <20200909182703.d3wjz3rxys6haij6@work>
+        id S1728264AbgIISat (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Sep 2020 14:30:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbgIISar (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Sep 2020 14:30:47 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 995B7C061755
+        for <io-uring@vger.kernel.org>; Wed,  9 Sep 2020 11:30:47 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id u6so4235280iow.9
+        for <io-uring@vger.kernel.org>; Wed, 09 Sep 2020 11:30:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=98xyvtYgbwa5J67c7RkI6GnQwliGFXe74W0JhOQBOmc=;
+        b=Aai15vFl3dYqGw9K5b3xK4POAF5zorYpaKKRyIxIZqV4MkjapQJdc5WoBCxIdDvoQe
+         7FdlRAedwzY1qpqwlJ5d+oVkEoZFtbyilOo5PeMvP4vfl//XjFD28AIWbmbRXihnb49x
+         JbVoj7qo0eWkzJVqnZ3EfR9rqCRwG9dCMJoxkLi4ToOLHhfZC3SzjOM+82YB9SjmG1R5
+         a33hxHQK4Io4do/ldHL0Nwp+Us6ESgUxv94eNJDwEE8kOAIZj98CWh42I5BQfrPOtm/D
+         GfnSrPywZHKaSWgiqluDNEtHluhP8WGr1YnzmI21OdCOYBTano9T1NdzUMKvE3YznXEE
+         +6HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=98xyvtYgbwa5J67c7RkI6GnQwliGFXe74W0JhOQBOmc=;
+        b=b49cGFQikHPt1OpnpYf8+9JYTUTzyyPuEPlbCwEnE2/8wxWdUKsQnor3vt5O2n+fFU
+         um2mwpoqLpbBSHpe7kYlo/7NxaUCa1k1c2gdy4y5JLZKOy50d2sqoxhquxd1QRa4lX8e
+         A0li5lrcSa/XvQUmS2VMTeSRCtPtrmJnJFIxViVN9pAbIjudn5RDGD4naLXyD2x4Sobs
+         qIEyow4WNMh/R88+jtAGPMLD9F59MSLIrkjuqqP1oA+9/06rN1JKlf05oy7EaALzp8AW
+         YIeWSuxCB4os89ibVUJaTE8ZRgo21lmdKHx7oe9tw+XWNKuE4Y/viwNxE+6g6I0j2ENe
+         5Kbw==
+X-Gm-Message-State: AOAM53291BCWQzOV63pDHM3ZtV8+MdtS02qzaxR6aG9/an2CGU6onTnf
+        uN9e6LjK316B26GxxuC9o5e76Q==
+X-Google-Smtp-Source: ABdhPJzDQCDM7qsjK2rY35N17lqTgsC2hAs5QECTlf9biMd54YdHkaHJRtjNBTH3FQACUVf86OCMNw==
+X-Received: by 2002:a05:6602:2f88:: with SMTP id u8mr4410307iow.175.1599676246841;
+        Wed, 09 Sep 2020 11:30:46 -0700 (PDT)
+Received: from [192.168.1.10] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id u9sm1501725iow.26.2020.09.09.11.30.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Sep 2020 11:30:46 -0700 (PDT)
+Subject: Re: [PATCH for-next] io_uring: fix ctx refcounting in
+ io_uring_enter()
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20200909151900.60321-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9080c3fa-a726-b664-f634-0ea7dfda80e0@kernel.dk>
+Date:   Wed, 9 Sep 2020 12:30:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <20200909151900.60321-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+On 9/9/20 9:19 AM, Stefano Garzarella wrote:
+> If the ring is disabled we don't decrease the 'ctx' refcount since
+> we wrongly jump to 'out_fput' label.
+> 
+> Instead let's jump to 'out' label where we decrease the 'ctx' refcount.
 
-because I didn't have an acces to a nvme HW I created a simple set of
-scripts to help me run the liburing test suite on emulated nvme device
-in qemu. This has also an advantage of being able to test it on different
-architectures.
+Applied, thanks.
 
-Here is a repository on gihub.
-https://github.com/lczerner/qemu-test-iouring
-
-I am attaching a README file to give you some sence of what it is.
-
-It is still work in progress and only supports x86_64 and ppc64 at the
-moment. It is very much Fedora centric as that's what I am using. But
-maybe someone find some use for it. Of course I accept patches/PRs.
-
-Cheers,
--Lukas
-
-
-
-# Run liburing tests on emulated nvme in qemu
-
-> QEMU with nvme support is required (v5.1.0 and later)!
-> See <https://www.qemu.org/2020/08/11/qemu-5-1-0/>
-
-Since not everyone has access to the proper nvme HW, let alone on multiple
-architectures. This project aims to provide a convenient set of scripts to
-run liburing tests on qemu emulated nvme device with polling support on
-various architectures.
-
-Currently only x86_64 and ppc64 is supported, but I hope to expand it soon.
-
-> This is still very much work-in-progress. Use with caution!
-
-## How it works
-
- 1. It takes an OS image (rpm based such as Fedora, or CentOS) and makes some
-    initial system preparations after which it will boot into the system.
- 2. Qemu provides the system with a emulated nvme device with polling support.
- 3. When booting for the first time it will install required tools to build
-    and test liburing, update kernel and optionally install provided
-    rpm packages. Then it reboots, possibly into new kernel.
- 4. Assuming the installation was successful, it will create a partition on
-    a nvme drive. One to use for block device testing and the other for a
-    file based testing.
- 5. Clone the liburing from a git repository and build it.
- 6. Run the tests with `make runtests`
- 7. After the test the virtual machine is shut down and the logs are copied
-    over to the local host.
-
-## Required tools
-
-The following tools are required by the script:
-
-* virt-sysprep
-* qemu-system-x86_64
-* qemu-system-ppc64
-* wget
-* virt-copy-out
-
-On Fedora you should be able to install all of that with the following command:
-
-> dnf -y install libguestfs-tools-c qemu-system-x86-core qemu-system-ppc-core wget
-
-## How to use it
-
-The configuration file provides a convenient way to have a different setup
-for a different OS and/or architecture.
-
-For example you can have multiple configuration files like this:
-
- * config.fedora.x86_64
- * config.rhel.x86_64
- * config.rhel.ppc64
-
-Those can differ in ARCH, IMG etc. Additionally you can provide a custom rpm
-repository containing a custom kernel, or kernel rpm package directly and
-number of other options.
-
-Conveniently the IMG can be URL and the image is downloaded automatically
-if it does not exist yet.
-
-Then, you can run the tests for example like this:
-
-	./qemu-test-iouring.sh -C config.rhel.x86_64 -c
-
-	./qemu-test-iouring.sh -C config.fedora.x86_64 -c -p kernel-5.9.0_rc3+-1.x86_64.rpm
-
-	./qemu-test-iouring.sh -C config.rhel.ppc64 -c -r test.repo
-
-> Note that you can use the -c option to preserve the original OS image.
-> Otherwise the image will be changed directly and it currently does not
-> provide a way to reinstall kernel or add additional packaged once the
-> image is initialized. This is likely to change in the future.
-
-## Configuration file
-
-You can find example configuration file in `config.example`
-
-	# Configuration file for qemu-test-iouring. Copy this file to config.local,
-	# nncomment and specify values to change defaults.
-	#
-	# Default architecture
-	# ARCH="x86_64"
-	#
-	# Initialize the image before running virtual machine
-	# 1 - initialize the image (default)
-	# 0 - do not initialize the image
-	# IMG_INIT=1
-	#
-	# Do not run on spefified image, but rather create copy of it first
-	# and run on that.
-	# 0 - run on the provided image (default)
-	# 1 - run on the copy of the provided image
-	# COPY_IMG=0
-	#
-	# Specify additional file to copy into the virtual machine. See
-	# man virt-builder for more information on --copy-in option
-	# COPY_IN=""
-	#
-	# List of excluded tests
-	# TEST_EXCLUDE=""
-	#
-	# Default image to run with. Will be overriden by -I option
-	# IMG=""
-	#
-	# Default nvme image to run with. Will be overriden by -N option
-	# NVME_IMG=""
-	#
-	# Specify liburing git repository and optionaly branch
-	# LIBURING_GIT="git://git.kernel.dk/liburing -b master"
-
-## Usage
-
-You can see what options are supported using help `./qemu-test-iouring.sh -h`
-
-	Usage: ./qemu-test-iouring.sh [-h] [-n] [-d] [-c] [-a ARCH] [-I IMG] [-r REPO] [-N NVME]
-		-h		Print this help
-		-C CONFIG	Specify custom configuration file. This option
-				can only be specified once. (Default "./config.local")
-		-a ARCH		Specify architecture to run (default: x86_64).
-				Supported: x86_64 ppc64le
-		-I IMG		OS image with Fedora, Centos or Rhel. Can be
-				existing file, or http(s) url.
-		-N NVME		Nvme image to run on. It needs to be at least
-				1GB in size.
-		-r REPO		Specify yum repository file to include in guest.
-				Can be repeated to include multiple files and
-				implies image initialization.
-		-n		Do not initialize the image with virt-sysprep
-		-d		Do not run liburing tests on startup. Implies
-				image initialization.
-		-c		Do not run on specified image, but rather create
-				copy of it first.
-		-e		Exclude test. Can be repeated to exclude
-				multiple tests.
-		-p PKG		RPM package to install in guest
-
-	Example: ././qemu-test-iouring.sh -a ppc64le -r test.repo -c -I fedora.img -N nvme.img
+-- 
+Jens Axboe
 

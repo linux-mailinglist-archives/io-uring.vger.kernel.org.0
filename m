@@ -2,149 +2,189 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0089A2633DB
-	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 19:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95D65263359
+	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 19:02:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730388AbgIIRLh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Sep 2020 13:11:37 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40618 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729663AbgIIPdV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Sep 2020 11:33:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599665564;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=YDCg8To8PVZc/Jy4VpaJ8RUW2JiYebaTzDo+8HJa1Rs=;
-        b=UgdqYyCYujoMgztJHPGb/s++My6LYZpCEkL0UpFxdigr1x0qMLOFvy7PVuKrjWJFjGL7ve
-        QnoOqv5eIOkoQUanWqQsI4vMNjA+u2M3TtUMvjBJQUsKs2X3gpkOqS8t2nl2iwcyfUTDo0
-        gYJlYg43qYwTnh2oZia71kmqJg6Ql/c=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-362-AdTREXdFPM28ummk6nO9Ug-1; Wed, 09 Sep 2020 11:32:41 -0400
-X-MC-Unique: AdTREXdFPM28ummk6nO9Ug-1
-Received: by mail-wm1-f70.google.com with SMTP id l26so960135wmg.7
-        for <io-uring@vger.kernel.org>; Wed, 09 Sep 2020 08:32:40 -0700 (PDT)
+        id S1730531AbgIIRCL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Sep 2020 13:02:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730633AbgIIPut (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Sep 2020 11:50:49 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F42BC061756
+        for <io-uring@vger.kernel.org>; Wed,  9 Sep 2020 08:50:47 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id z22so4260054ejl.7
+        for <io-uring@vger.kernel.org>; Wed, 09 Sep 2020 08:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dkNS/DzRr2t2lfPj8nBnwKRpKNjtaAI2AePD5q0os1A=;
+        b=ew/fIukmYLKERD9r710RsiVNaY+WgJJ9yXhFtpRCKnjuMwGb+wufYID+eO04fsbYke
+         eRagMV5h1ySnTEBUQo5kADc5/g0iynj9Tu+ZRZQcMCSx9lAyAKxQ43x49B7JQeeD9IZK
+         Mex1q3t89oQ2Vna90Q62Kxki6ORWEJUFMisZJ+4Pri7jqT2M8finSwY+LCeWsP4Qy1lc
+         He6cuKKInbv4aFLdiHuRYbkku/SuTcS931AhlVQDyEZESPKzTtf+Sg2A8lbDpNN/0fzA
+         7IMIvCRVpMv3oLqdWLVjeDm0eW7kjWHbzgd66eXc6g92YVi52ONEJiWQhGCri1QGHacX
+         JwUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YDCg8To8PVZc/Jy4VpaJ8RUW2JiYebaTzDo+8HJa1Rs=;
-        b=h1Biqp9SR+ObThgNYjL1cwKJjBOCCtdprlvmkjmYdFWa5tMart+vjnF6b39LN+oymA
-         chgFUmF7yf6m/NGcLdt/pu7ZWJXfFbkwnzE+4TMMl1QMCOIq/3DoW22hxtTpd3lU8yzw
-         X+pc9vWPg9bzWBoY/+7BeGSLzX5A5nnH89kbAlhmpD4eKKii5WDG3qjSh6UrvTH7MTWm
-         6XNlfSAEoCgW56QiHoyo9ureeM1wXkK0G5j2hY3B/9+SEWWO1uNenukzROKmmsAKSlDa
-         ES4pe+NLjfNEbV5Yc3U98e6OdtG3XP6U2HJfOs1+JtxJF21z8uvZoY0FXouZzuDYLx4O
-         LBGQ==
-X-Gm-Message-State: AOAM530VrNBRzdYpWM8Eb8fzSpDXz+3GlObwBnNBpXnZasNfoQsES59T
-        /pmPRdkJQe3+0cUwF5UmyrFUsoG3L7hVs8mPfyNEWdq9QcPhViehBS7Fgb5Uw+sbelUGU5biJ14
-        xZYlUhC8A4qrdEnlDrTY=
-X-Received: by 2002:a1c:c910:: with SMTP id f16mr4070524wmb.82.1599665559654;
-        Wed, 09 Sep 2020 08:32:39 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwrl9uLP4HdYT7AmY2PVq8Ybf24Jg2oS57iN373p/WZoSRqKSAYvg4TV3HV/QODmFgBvBaGVA==
-X-Received: by 2002:a1c:c910:: with SMTP id f16mr4070489wmb.82.1599665559309;
-        Wed, 09 Sep 2020 08:32:39 -0700 (PDT)
-Received: from steredhat (host-79-53-225-185.retail.telecomitalia.it. [79.53.225.185])
-        by smtp.gmail.com with ESMTPSA id 70sm4689288wme.15.2020.09.09.08.32.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2020 08:32:38 -0700 (PDT)
-Date:   Wed, 9 Sep 2020 17:32:35 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, Hillf Danton <hdanton@sina.com>
-Cc:     syzbot <syzbot+3c23789ea938faaef049@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: INFO: task hung in io_sq_thread_stop
-Message-ID: <20200909153235.joqj6hjyxug3wtwv@steredhat>
-References: <00000000000030a45905aedd879d@google.com>
- <20200909134317.19732-1-hdanton@sina.com>
- <4d55d988-d45e-ba36-fed7-342e0a6ab16e@kernel.dk>
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dkNS/DzRr2t2lfPj8nBnwKRpKNjtaAI2AePD5q0os1A=;
+        b=XaVqxxauIhZbhkCho7hOKprcFIW2d07TG3oBpJEvor5MR+sdIP65wJKZYwWcfgXJTB
+         eIUN4a7td2+PAAAfkY0DbbTYo4IPoQbhAAaW1hb/Aso+XY8V5c0+E3jTqxNv1hkNfEgE
+         mTJ91/qmwlbyqiiosniRPDw6MDNVmgHqJLyehIRZDcYVPL8u7twobZy/CnkQUXcFKKP5
+         q6eXCUpm8LJ4Gdt+8o35ZQkDLhjKBJLhlifFiF36A8s9J0alLooGEMm/JlkxJxrLW2Dw
+         ySUIVbJ6P9p27tMkDWFJz30rsP2R0UjZuUuNIE+P+xl8gEjN970UOGDZ9K6r7hPiWopc
+         exlA==
+X-Gm-Message-State: AOAM532+lLRjqQ9t/22SoCZYWt8X5ju3/XIkYxfDr7paE4GOQac7gNCA
+        c+jLYWiWNlHdbOjkO4r/8jYs8EQY/Mk=
+X-Google-Smtp-Source: ABdhPJxXJyEzatjCwdTjwjChPnTbYLyF4Vc1CtrvMBf9VGKshe/HlkPzkoyK3y44cKsw+Q+3XfNwTQ==
+X-Received: by 2002:a17:906:3e08:: with SMTP id k8mr4214092eji.480.1599666644421;
+        Wed, 09 Sep 2020 08:50:44 -0700 (PDT)
+Received: from [192.168.43.239] ([5.100.193.184])
+        by smtp.gmail.com with ESMTPSA id f13sm2715469ejb.81.2020.09.09.08.50.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Sep 2020 08:50:43 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <b105ea32-3831-b3c5-3993-4b38cc966667@kernel.dk>
+ <8f6871c4-1344-8556-25a7-5c875aebe4a5@gmail.com>
+ <622649c5-e30d-bc3c-4709-bbe60729cca1@kernel.dk>
+ <1c088b17-53bb-0d6d-6573-a1958db88426@kernel.dk>
+ <801ed334-54ea-bdee-4d81-34b7e358b506@gmail.com>
+ <370c055e-fa8d-0b80-bd34-ba3ba9bc6b37@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH for-next] io_uring: ensure IOSQE_ASYNC file table grabbing
+ works, with SQPOLL
+Message-ID: <74c2802e-788e-d6b2-3ee6-5ef67950dc94@gmail.com>
+Date:   Wed, 9 Sep 2020 18:48:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d55d988-d45e-ba36-fed7-342e0a6ab16e@kernel.dk>
+In-Reply-To: <370c055e-fa8d-0b80-bd34-ba3ba9bc6b37@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Sep 09, 2020 at 08:05:33AM -0600, Jens Axboe wrote:
-> On 9/9/20 7:43 AM, Hillf Danton wrote:
-> > 
-> > On Wed, 9 Sep 2020 12:03:55 +0200 Stefano Garzarella wrote:
-> >> On Wed, Sep 09, 2020 at 01:49:22AM -0700, syzbot wrote:
-> >>> Hello,
-> >>>
-> >>> syzbot found the following issue on:
-> >>>
-> >>> HEAD commit:    dff9f829 Add linux-next specific files for 20200908
-> >>> git tree:       linux-next
-> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=112f880d900000
-> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=37b3426c77bda44c
-> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=3c23789ea938faaef049
-> >>> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> >>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c082a5900000
-> >>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1474f5f9900000
-> >>>
-> >>> Bisection is inconclusive: the first bad commit could be any of:
-> >>>
-> >>> d730b1a2 io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
-> >>> 7ec3d1dd io_uring: allow disabling rings during the creation
-> >>
-> >> I'm not sure it is related, but while rebasing I forgot to update the
-> >> right label in the error path.
-> >>
-> >> Since the check of ring state is after the increase of ctx refcount, we
-> >> need to decrease it jumping to 'out' label instead of 'out_fput':
-> > 
-> > I think we need to fix 6a7bb9ff5744 ("io_uring: remove need for
-> > sqd->ctx_lock in io_sq_thread()") because the syzbot report
-> > indicates the io_sq_thread has to wake up the kworker before
-> > scheduling, and in turn the kworker has the chance to unpark it.
-> > 
-> > Below is the minimum walkaround I can have because it can't
-> > ensure the parker will be waken in every case.
-> > 
-> > --- a/fs/io_uring.c
-> > +++ b/fs/io_uring.c
-> > @@ -6834,6 +6834,10 @@ static int io_sq_thread(void *data)
-> >  			io_sq_thread_drop_mm();
-> >  		}
-> >  
-> > +		if (kthread_should_park()) {
-> > +			/* wake up parker before scheduling */
-> > +			continue;
-> > +		}
-> >  		if (ret & SQT_SPIN) {
-> >  			io_run_task_work();
-> >  			cond_resched();
-> > 
+On 09/09/2020 16:10, Jens Axboe wrote:
+> On 9/9/20 1:09 AM, Pavel Begunkov wrote:
+>> On 09/09/2020 01:54, Jens Axboe wrote:
+>>> On 9/8/20 3:22 PM, Jens Axboe wrote:
+>>>> On 9/8/20 2:58 PM, Pavel Begunkov wrote:
+>>>>> On 08/09/2020 20:48, Jens Axboe wrote:
+>>>>>> Fd instantiating commands like IORING_OP_ACCEPT now work with SQPOLL, but
+>>>>>> we have an error in grabbing that if IOSQE_ASYNC is set. Ensure we assign
+>>>>>> the ring fd/file appropriately so we can defer grab them.
+>>>>>
+>>>>> IIRC, for fcheck() in io_grab_files() to work it should be under fdget(),
+>>>>> that isn't the case with SQPOLL threads. Am I mistaken?
+>>>>>
+>>>>> And it looks strange that the following snippet will effectively disable
+>>>>> such requests.
+>>>>>
+>>>>> fd = dup(ring_fd)
+>>>>> close(ring_fd)
+>>>>> ring_fd = fd
+>>>>
+>>>> Not disagreeing with that, I think my initial posting made it clear
+>>>> it was a hack. Just piled it in there for easier testing in terms
+>>>> of functionality.
+>>>>
+>>>> But the next question is how to do this right...> 
+>>> Looking at this a bit more, and I don't necessarily think there's a
+>>> better option. If you dup+close, then it just won't work. We have no
+>>> way of knowing if the 'fd' changed, but we can detect if it was closed
+>>> and then we'll end up just EBADF'ing the requests.
+>>>
+>>> So right now the answer is that we can support this just fine with
+>>> SQPOLL, but you better not dup and close the original fd. Which is not
+>>> ideal, but better than NOT being able to support it.
+>>>
+>>> Only other option I see is to to provide an io_uring_register()
+>>> command to update the fd/file associated with it. Which may be useful,
+>>> it allows a process to indeed to this, if it absolutely has to.
+>>
+>> Let's put aside such dirty hacks, at least until someone actually
+>> needs it. Ideally, for many reasons I'd prefer to get rid of
 > 
-> I think this should go in the slow path:
+> BUt it is actually needed, otherwise we're even more in a limbo state of
+> "SQPOLL works for most things now, just not all". And this isn't that
+> hard to make right - on the flush() side, we just need to park/stall the
+
+I understand that it isn't hard, but I just don't want to expose it to
+the userspace, a) because it's a userspace API, so couldn't probably be
+killed in the future, b) works around kernel's problems, and so
+shouldn't really be exposed to the userspace in normal circumstances.
+
+And it's not generic enough because of a possible "many fds -> single
+file" mapping, and there will be a lot of questions and problems.
+
+e.g. if a process shares a io_uring with another process, then
+dup()+close() would require not only this hook but also additional
+inter-process synchronisation. And so on.
+
+
+> thread and clear the ring_fd/ring_file, then mark the ring as needing a
+> queue enter. On the queue enter, we re-set the fd/file if they're NULL,
+> unpark/unstall the thread. That's it. I'll write this up and test it.
 > 
+>> fcheck(ctx->ring_fd) in favour of synchronisation in io_grab_files(),
+>> but I wish I knew how.
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 652cc53432d4..1c4fa2a0fd82 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6839,6 +6839,8 @@ static int io_sq_thread(void *data)
->  		} else if (ret == SQT_IDLE) {
->  			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
->  				io_ring_set_wakeup_flag(ctx);
-> +			if (kthread_should_park())
-> +				continue;
->  			schedule();
->  			start_jiffies = jiffies;
->  		}
-> 
+> That'd be nice, and apply equally to all cases as the SQPOLL case isn't
+> special at all anymore.
 
-Yes, I agree since only in this case the kthread is not rescheduled.
+I miss the whole story, have you asked fs guys about the problem?
+Or is it known that nothing would work?
 
-Thanks both for the fix :-)
-Feel free to add my R-b:
-
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-
+-- 
+Pavel Begunkov

@@ -2,246 +2,157 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C88162625F2
-	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 05:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58F7326282A
+	for <lists+io-uring@lfdr.de>; Wed,  9 Sep 2020 09:11:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbgIIDoc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Sep 2020 23:44:32 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:54733 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725984AbgIIDo2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Sep 2020 23:44:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599623066;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kl3ykfqlCfmI1FYDEWFA5ocyrEq9f27pvma5ikAQwbE=;
-        b=GkgHXFkucu3w+9GZ65bghCcx5iaxKBQvL8JhsMsutJZTIrKB3y2liDjNBMg4vBNFTa/C3q
-        63spG0DZdp/ysHMLyAk/5HtgG0hRjJQQootWEUkyY9r4W6S2h9SntBnWP1+LcXOP/HWsqI
-        uPNMJmdKAtG7ne0SVM+5IAqpRMNyp6A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-391-a_jamZHCMBKhDM0QnDJW-Q-1; Tue, 08 Sep 2020 23:44:24 -0400
-X-MC-Unique: a_jamZHCMBKhDM0QnDJW-Q-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 674561019632;
-        Wed,  9 Sep 2020 03:44:23 +0000 (UTC)
-Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D4CEF7E46E;
-        Wed,  9 Sep 2020 03:44:22 +0000 (UTC)
-Date:   Wed, 9 Sep 2020 11:58:07 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     fstests@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH v4 5/5] fsx: add IO_URING test
-Message-ID: <20200909035807.GE2937@dhcp-12-102.nay.redhat.com>
-Mail-Followup-To: Brian Foster <bfoster@redhat.com>,
-        fstests@vger.kernel.org, io-uring@vger.kernel.org
-References: <20200906175513.17595-1-zlang@redhat.com>
- <20200906175513.17595-6-zlang@redhat.com>
- <20200908183625.GE737175@bfoster>
+        id S1725975AbgIIHL5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Sep 2020 03:11:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54856 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbgIIHLz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Sep 2020 03:11:55 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D43C061573
+        for <io-uring@vger.kernel.org>; Wed,  9 Sep 2020 00:11:55 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id z22so1998297ejl.7
+        for <io-uring@vger.kernel.org>; Wed, 09 Sep 2020 00:11:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iYPk04Ba5kJwk9651p7tIZd7TTGFYI1Sbmgq3t1BJxs=;
+        b=MwdpsPigMo531Too0UorIGjfRZK+DFz6jl49wkAQ51UticJCHGTFCnbvTfrp1leCBp
+         n5FnuzQ5+ak33faowhgE+gVH1TUWF9skpcwXUmr4st/u0Usfxh2IvV/vSQjBJ6hfLZLc
+         QqjJJA2h+V7s90JYVrmXN5dJmIIMhxNzWefumKeHk7V4yRyWsbO0zBMVU113B5p9DEZH
+         evw5BRTM9+xtzgSbFMR/gc7tnqs3V7Qpye4J41fN5kxoP8D1YQj2xX985Y3q6dIauaK6
+         ZK6YRypfiKXEe9MFR/N7nLYsU3dZoWtZWU2vcg6rjlBy8nCqyMwnLZV+HZaxmNwjNk+U
+         FOhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iYPk04Ba5kJwk9651p7tIZd7TTGFYI1Sbmgq3t1BJxs=;
+        b=TVGUh5dwrl3kuXFZUz1eUyKcljDNg3xkrWhjQRFnOi/JVrtdbVqfgFQfGqHXLyLKaa
+         1MdszrILOlmIPRdjZI2iEBihp5iDZfV1MOT/FWNtU4T/WiJkP2tYJ1IWi6TvnUm8IGPA
+         /3jA7jzZ41IU4weCPHJTTwpA7CqNSSGtyzDUR7WfzvjJRnGKsS2bLYAHBA3yr9DTn4/x
+         leIrTWWiLFnOAf1auDk+3Ljqox2cHAp2/A2/LEktJBFjU15gB7OerDOfV7VHI0Aa+BF1
+         LvVcKM/Eu2gxguqFcxJAR6IOG59VcVS17CPJfLbAwVxPPH/eXghEPoi7WND7xcLoZ/5k
+         zfIw==
+X-Gm-Message-State: AOAM532pNeh5s9e89qjlnosiVAh+rsLiEjbcEjJWUYLIQyEgsbQ01G5b
+        bU2nvmpuxX3hl6p5tcHMBtEWMTTKlbc=
+X-Google-Smtp-Source: ABdhPJygHXZl6k4q1vToxfegZ4aj7/RstxWU6UJOrh/8KIYEbMIeHRl0Bb0NgzuxM7D2CkkU0ne+Gg==
+X-Received: by 2002:a17:906:bc47:: with SMTP id s7mr2417218ejv.354.1599635513762;
+        Wed, 09 Sep 2020 00:11:53 -0700 (PDT)
+Received: from [192.168.43.239] ([5.100.193.184])
+        by smtp.gmail.com with ESMTPSA id k25sm1184793ejk.3.2020.09.09.00.11.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Sep 2020 00:11:53 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <b105ea32-3831-b3c5-3993-4b38cc966667@kernel.dk>
+ <8f6871c4-1344-8556-25a7-5c875aebe4a5@gmail.com>
+ <622649c5-e30d-bc3c-4709-bbe60729cca1@kernel.dk>
+ <1c088b17-53bb-0d6d-6573-a1958db88426@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH for-next] io_uring: ensure IOSQE_ASYNC file table grabbing
+ works, with SQPOLL
+Message-ID: <801ed334-54ea-bdee-4d81-34b7e358b506@gmail.com>
+Date:   Wed, 9 Sep 2020 10:09:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200908183625.GE737175@bfoster>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <1c088b17-53bb-0d6d-6573-a1958db88426@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Sep 08, 2020 at 02:36:25PM -0400, Brian Foster wrote:
-> On Mon, Sep 07, 2020 at 01:55:13AM +0800, Zorro Lang wrote:
-> > New IO_URING test for fsx, use -U option to enable IO_URING test.
-> > 
-> > Signed-off-by: Zorro Lang <zlang@redhat.com>
-> > ---
+On 09/09/2020 01:54, Jens Axboe wrote:
+> On 9/8/20 3:22 PM, Jens Axboe wrote:
+>> On 9/8/20 2:58 PM, Pavel Begunkov wrote:
+>>> On 08/09/2020 20:48, Jens Axboe wrote:
+>>>> Fd instantiating commands like IORING_OP_ACCEPT now work with SQPOLL, but
+>>>> we have an error in grabbing that if IOSQE_ASYNC is set. Ensure we assign
+>>>> the ring fd/file appropriately so we can defer grab them.
+>>>
+>>> IIRC, for fcheck() in io_grab_files() to work it should be under fdget(),
+>>> that isn't the case with SQPOLL threads. Am I mistaken?
+>>>
+>>> And it looks strange that the following snippet will effectively disable
+>>> such requests.
+>>>
+>>> fd = dup(ring_fd)
+>>> close(ring_fd)
+>>> ring_fd = fd
+>>
+>> Not disagreeing with that, I think my initial posting made it clear
+>> it was a hack. Just piled it in there for easier testing in terms
+>> of functionality.
+>>
+>> But the next question is how to do this right...> 
+> Looking at this a bit more, and I don't necessarily think there's a
+> better option. If you dup+close, then it just won't work. We have no
+> way of knowing if the 'fd' changed, but we can detect if it was closed
+> and then we'll end up just EBADF'ing the requests.
 > 
-> Just a couple nits...
+> So right now the answer is that we can support this just fine with
+> SQPOLL, but you better not dup and close the original fd. Which is not
+> ideal, but better than NOT being able to support it.
 > 
-> >  ltp/fsx.c | 134 ++++++++++++++++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 131 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > index 92f506ba..e7f23d15 100644
-> > --- a/ltp/fsx.c
-> > +++ b/ltp/fsx.c
-> ...
-> > @@ -2429,6 +2436,113 @@ aio_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> ...
-> > +int
-> > +uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> > +{
-> > +	struct io_uring_sqe     *sqe;
-> > +	struct io_uring_cqe     *cqe;
-> > +	struct iovec            iovec;
-> > +	int ret;
-> > +	int res, res2 = 0;
-> > +	char *p = buf;
-> > +	unsigned l = len;
-> > +	unsigned o = offset;
-> 
-> It looks a little odd that some variable names are aligned with tabs
-> while others use a single space.. I'm not sure we care one way or
-> another for xfstests, but perhaps use one approach or the other..?
-> 
-> > +
-> > +	/*
-> > +	 * Due to io_uring tries non-blocking IOs (especially read), that
-> > +	 * always cause 'normal' short reading. To avoid this short read
-> > +	 * fail, try to loop read/write (escpecilly read) data.
-> > +	 */
-> > +	while (l > 0) {
-> > +		sqe = io_uring_get_sqe(&ring);
-> > +		if (!sqe) {
-> > +			fprintf(stderr, "uring_rw: io_uring_get_sqe failed: %s\n",
-> > +					strerror(errno));
-> > +			return -1;
-> > +		}
-> > +
-> > +		iovec.iov_base = p;
-> > +		iovec.iov_len = l;
-> > +		if (rw == READ) {
-> > +			io_uring_prep_readv(sqe, fd, &iovec, 1, o);
-> > +		} else {
-> > +			io_uring_prep_writev(sqe, fd, &iovec, 1, o);
-> > +		}
-> > +
-> > +		ret = io_uring_submit_and_wait(&ring, 1);
-> > +		if (ret != 1) {
-> > +			fprintf(stderr, "errcode=%d\n", -ret);
-> > +			fprintf(stderr, "uring %s: io_uring_submit failed: %s\n",
-> > +					rw == READ ? "read":"write", strerror(-ret));
-> > +			goto uring_error;
-> > +		}
-> > +
-> > +		ret = io_uring_wait_cqe(&ring, &cqe);
-> > +		if (ret != 0) {
-> > +			fprintf(stderr, "errcode=%d\n", -ret);
-> > +			fprintf(stderr, "uring %s: io_uring_wait_cqe failed: %s\n",
-> > +					rw == READ ? "read":"write", strerror(-ret));
-> > +			goto uring_error;
-> > +		}
-> > +
-> > +		res = cqe->res;
-> 
-> If we assign ret here instead of res, it looks like we could optimize
-> away res entirely.
+> Only other option I see is to to provide an io_uring_register()
+> command to update the fd/file associated with it. Which may be useful,
+> it allows a process to indeed to this, if it absolutely has to.
 
-I think you're right, I'll think more about that, then send V5 patches out.
-As you've ACKed this patchset, I'll add "Reviewed-by Brian" in V5, many
-thanks for your review :)
+Let's put aside such dirty hacks, at least until someone actually
+needs it. Ideally, for many reasons I'd prefer to get rid of
+fcheck(ctx->ring_fd) in favour of synchronisation in
+io_grab_files(), but I wish I knew how.
 
-> 
-> Nits and my limited experience with uring aside, the patch otherwise
-> LGTM. Are you planning any new tests to take advantage of this,
-> particularly since it looks like -A (-U disabled) is the default? In any
-> event, a quick test run of fsstress/fsx doesn't seem to explode:
-
-Yes, I'm preparing more patches to use the -U option of fsx. I'll send them
-out after this patchset get merged :)
-
-> 
-> Reviewed-by: Brian Foster <bfoster@redhat.com>
-> 
-> > +		io_uring_cqe_seen(&ring, cqe);
-> > +
-> > +		if (res > 0) {
-> > +			o += res;
-> > +			l -= res;
-> > +			p += res;
-> > +			res2 += res;
-> > +		} else if (res < 0) {
-> > +			ret = res;
-> > +			fprintf(stderr, "errcode=%d\n", -ret);
-> > +			fprintf(stderr, "uring %s: io_uring failed: %s\n",
-> > +					rw == READ ? "read":"write", strerror(-ret));
-> > +			goto uring_error;
-> > +		} else {
-> > +			fprintf(stderr, "uring %s bad io length: %d instead of %u\n",
-> > +					rw == READ ? "read":"write", res2, len);
-> > +			break;
-> > +		}
-> > +	}
-> > +	return res2;
-> > +
-> > + uring_error:
-> > +	/*
-> > +	 * The caller expects error return in traditional libc
-> > +	 * convention, i.e. -1 and the errno set to error.
-> > +	 */
-> > +	errno = -ret;
-> > +	return -1;
-> > +}
-> > +#else
-> > +int
-> > +uring_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> > +{
-> > +	fprintf(stderr, "io_rw: need IO_URING support!\n");
-> > +	exit(111);
-> > +}
-> > +#endif
-> > +
-> >  int
-> >  fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> >  {
-> > @@ -2436,6 +2550,8 @@ fsx_rw(int rw, int fd, char *buf, unsigned len, unsigned offset)
-> >  
-> >  	if (aio) {
-> >  		ret = aio_rw(rw, fd, buf, len, offset);
-> > +	} else if (uring) {
-> > +		ret = uring_rw(rw, fd, buf, len, offset);
-> >  	} else {
-> >  		if (rw == READ)
-> >  			ret = read(fd, buf, len);
-> > @@ -2498,7 +2614,7 @@ main(int argc, char **argv)
-> >  	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
-> >  
-> >  	while ((ch = getopt_long(argc, argv,
-> > -				 "b:c:dfg:i:j:kl:m:no:p:qr:s:t:w:xyABD:EFJKHzCILN:OP:RS:WXZ",
-> > +				 "b:c:dfg:i:j:kl:m:no:p:qr:s:t:w:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> >  				 longopts, NULL)) != EOF)
-> >  		switch (ch) {
-> >  		case 'b':
-> > @@ -2606,6 +2722,9 @@ main(int argc, char **argv)
-> >  		case 'A':
-> >  			aio = 1;
-> >  			break;
-> > +		case 'U':
-> > +			uring = 1;
-> > +			break;
-> >  		case 'D':
-> >  			debugstart = getnum(optarg, &endp);
-> >  			if (debugstart < 1)
-> > @@ -2696,6 +2815,11 @@ main(int argc, char **argv)
-> >  	if (argc != 1)
-> >  		usage();
-> >  
-> > +	if (aio && uring) {
-> > +		fprintf(stderr, "-A and -U shouldn't be used together\n");
-> > +		usage();
-> > +	}
-> > +
-> >  	if (integrity && !dirpath) {
-> >  		fprintf(stderr, "option -i <logdev> requires -P <dirpath>\n");
-> >  		usage();
-> > @@ -2786,6 +2910,10 @@ main(int argc, char **argv)
-> >  	if (aio) 
-> >  		aio_setup();
-> >  #endif
-> > +#ifdef URING
-> > +	if (uring)
-> > +		uring_setup();
-> > +#endif
-> >  
-> >  	if (!(o_flags & O_TRUNC)) {
-> >  		off_t ret;
-> > -- 
-> > 2.20.1
-> > 
-> 
-
+-- 
+Pavel Begunkov

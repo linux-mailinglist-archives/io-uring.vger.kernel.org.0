@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8912C2651C7
-	for <lists+io-uring@lfdr.de>; Thu, 10 Sep 2020 23:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44B5C2654DD
+	for <lists+io-uring@lfdr.de>; Fri, 11 Sep 2020 00:11:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbgIJVCN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Sep 2020 17:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32830 "EHLO
+        id S1725550AbgIJWL5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Sep 2020 18:11:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbgIJVBs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Sep 2020 17:01:48 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7364DC061573
-        for <io-uring@vger.kernel.org>; Thu, 10 Sep 2020 14:01:48 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id t7so628736pjd.3
-        for <io-uring@vger.kernel.org>; Thu, 10 Sep 2020 14:01:48 -0700 (PDT)
+        with ESMTP id S1725294AbgIJWLz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Sep 2020 18:11:55 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 831BDC061573
+        for <io-uring@vger.kernel.org>; Thu, 10 Sep 2020 15:11:55 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id l191so5088803pgd.5
+        for <io-uring@vger.kernel.org>; Thu, 10 Sep 2020 15:11:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:cc:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=na5aimpD77C9U/xAAtbsbc4OSTzlkC+VkceNuAV8xq0=;
-        b=0W/48R0jQOvot1ck5fqnSJU4CGEe1zvzRK8spF63QBHeZVqhdwQbT9Qvagk2wQlqWi
-         O+yoZLdWd1cbwmNnaVGkJwdIvrYO1kz83bKQngfmlCScU2Ha4o5CaPZ1RyfvFGypi2xU
-         1iumYRDOrVEAh5GczcIFrST/DpVhe41vUzcgigFNnJp97xztas1HRPqmIFwvoQY8a19b
-         TQe6NJNuBJ0z563a3svq45ynm2xfyldcLLteWzzLWRPe+rzc5OnGqbMSK0DJUZsqeQwm
-         ivhx++H10oUB1FA9aPWJC49/iLxmPPI23Ifb4EO/1qvnDUDRQ5GuvRrYDenhPL5Nhw4J
-         04WA==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language;
+        bh=UK1YImjjN9OM5XUt04EcEBlzBu4qhyGeIGE/FROunGg=;
+        b=rivKi9GqVCBDAMxrJPjMu9lsUc+VUUzGwht9+7gfHagAmW/1kefbdrVsiHHoI5TJfk
+         7BhDI//CQNdUmtMKIeiK/uYrTWpKaigfS5x3BCSWUcgddthWe8MPhw9Pcdq1i0FUsq9o
+         xT6VEtKsDs6ORyQY6ULZp6icgSsa14401Y08kJ2gyqQjYGAfBCE2ay1bqsRhvwJEevl3
+         BrXblrLI/29BL5vwfblS7Cw+QFVjr9XjYN5e/LjzBwIhn43sI4yksauEU69Gf5Eg+aRf
+         TRCFCDmrzln+5CAdE+e7YL797koUVK5dHb6/bu4pE+UN7XopLUhKK9CMbRG7O0/0cc/+
+         wL6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:cc:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=na5aimpD77C9U/xAAtbsbc4OSTzlkC+VkceNuAV8xq0=;
-        b=rd8jskIbICyYHa0V6g8Nj5ebPCDy55H9ZSXF+f15YNxRvySyxf5gU5KzE4DOYE5IH2
-         lBqic01QozP8EJIee94Ga03ZfUAXTbKXkXOzC7htSEUiICDA07QYJ23qWRkEXMglQUXt
-         Cu1PeaXCeHZtlwlu99gn9Pmmy4Bt4zeT3PSN98ZJIRojQ5EK4Vt9BJbzRLFod7i5Iv3n
-         DCtsK//mCF33PKHk5EgH91e1nD1dNLn9z907+uYXG7vc52znKR6QpViPcAbSAIohnWxO
-         didoY5C6dQpKV3JFZk4v97WprdB4Glx4RA0U2HWyvbmQFMcKhksWpHhsb0r5YaehqTH9
-         7wXQ==
-X-Gm-Message-State: AOAM5302aV5AkKsVoHI2gmBiC18nBlprlfSrjGEb/+ZhrWv6FqocGuZp
-        QgTeOOAC7YZoXpoLgr1bNpxUsQ==
-X-Google-Smtp-Source: ABdhPJx7fIgVquapRNoy3MEoLDzTz+IjVpFNC+qjJyXqJ/FMeZXmMEO1lJGBmYQlS4WvH9HeVdypCQ==
-X-Received: by 2002:a17:90a:ad8b:: with SMTP id s11mr1724749pjq.40.1599771705381;
-        Thu, 10 Sep 2020 14:01:45 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language;
+        bh=UK1YImjjN9OM5XUt04EcEBlzBu4qhyGeIGE/FROunGg=;
+        b=mx03W3GTOsoIOyb8yXc5crlzuI+i1o/D5xy6yaOAkzEbAWPAbDFxMIgiWraPIC6B0s
+         N5F8FYHTFDmr7r8nhlv8VWjHCOPz0PhHBLqsRRAEIFfRFODxgAH1vLa25+BuUGCEOLZx
+         t6tc3MtnqneLuDwVbJbmdm4FCjPGEkIeSSDHGwbQvPUx3kPNIfqZNYQ1XG6xpTKnSpws
+         vOqAABtZOzwQu+WTssenexi2/zwnYws4kyqoj3AucHbzTCMLEZig5bLjYK8eZyvPPHfL
+         SlwHlDQJln5Em5aKbY05wkgvhGLttZAIy93foNV00gSh4kMh5T7gtP1mjn6ffG4dPn3h
+         YbSg==
+X-Gm-Message-State: AOAM530DM7Ib65FchGH6FLqkj7dMVKL3c9cV50aIcMKwcQCbBnQ97nzw
+        XvPHI8InytHpfxZroNLRcywEpA==
+X-Google-Smtp-Source: ABdhPJxD/VGPDHricqtqHwgtvZIzl7++Fh7JF4NrlPPHNPd4Pi/gDGSNTwG9XiKY91vmtEgpa+ti2Q==
+X-Received: by 2002:aa7:8b0c:: with SMTP id f12mr7401458pfd.58.1599775914940;
+        Thu, 10 Sep 2020 15:11:54 -0700 (PDT)
 Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id u138sm6928634pfc.218.2020.09.10.14.01.43
+        by smtp.gmail.com with ESMTPSA id fz22sm32008pjb.46.2020.09.10.15.11.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Sep 2020 14:01:44 -0700 (PDT)
+        Thu, 10 Sep 2020 15:11:53 -0700 (PDT)
 Subject: Re: [PATCH for-next] io_uring: ensure IOSQE_ASYNC file table grabbing
  works, with SQPOLL
 From:   Jens Axboe <axboe@kernel.dk>
 To:     Pavel Begunkov <asml.silence@gmail.com>,
         io-uring <io-uring@vger.kernel.org>
+Cc:     Jann Horn <jannh@google.com>
 References: <b105ea32-3831-b3c5-3993-4b38cc966667@kernel.dk>
  <8f6871c4-1344-8556-25a7-5c875aebe4a5@gmail.com>
  <622649c5-e30d-bc3c-4709-bbe60729cca1@kernel.dk>
@@ -64,135 +64,165 @@ References: <b105ea32-3831-b3c5-3993-4b38cc966667@kernel.dk>
  <33a6730c-8e0c-e34f-9094-c256a13961cd@gmail.com>
  <163d7844-e2a4-2739-af4e-79f4a3ec9a1d@kernel.dk>
  <73b8038a-eedf-04f7-6991-938512faaee6@kernel.dk>
-Cc:     Jann Horn <jannh@google.com>
-Message-ID: <f1c8b60c-a142-70bb-7a3d-03bf6a2106a2@kernel.dk>
-Date:   Thu, 10 Sep 2020 15:01:43 -0600
+ <f1c8b60c-a142-70bb-7a3d-03bf6a2106a2@kernel.dk>
+Message-ID: <eefc2ece-0beb-c27a-2785-19cf1d6aab92@kernel.dk>
+Date:   Thu, 10 Sep 2020 16:11:52 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <73b8038a-eedf-04f7-6991-938512faaee6@kernel.dk>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <f1c8b60c-a142-70bb-7a3d-03bf6a2106a2@kernel.dk>
+Content-Type: multipart/mixed;
+ boundary="------------0244F1EF373A2B67D1B8C320"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/10/20 12:18 PM, Jens Axboe wrote:
-> On 9/10/20 7:11 AM, Jens Axboe wrote:
->> On 9/10/20 6:37 AM, Pavel Begunkov wrote:
->>> On 09/09/2020 19:07, Jens Axboe wrote:
->>>> On 9/9/20 9:48 AM, Pavel Begunkov wrote:
->>>>> On 09/09/2020 16:10, Jens Axboe wrote:
->>>>>> On 9/9/20 1:09 AM, Pavel Begunkov wrote:
->>>>>>> On 09/09/2020 01:54, Jens Axboe wrote:
->>>>>>>> On 9/8/20 3:22 PM, Jens Axboe wrote:
->>>>>>>>> On 9/8/20 2:58 PM, Pavel Begunkov wrote:
->>>>>>>>>> On 08/09/2020 20:48, Jens Axboe wrote:
->>>>>>>>>>> Fd instantiating commands like IORING_OP_ACCEPT now work with SQPOLL, but
->>>>>>>>>>> we have an error in grabbing that if IOSQE_ASYNC is set. Ensure we assign
->>>>>>>>>>> the ring fd/file appropriately so we can defer grab them.
+This is a multi-part message in MIME format.
+--------------0244F1EF373A2B67D1B8C320
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+On 9/10/20 3:01 PM, Jens Axboe wrote:
+> On 9/10/20 12:18 PM, Jens Axboe wrote:
+>> On 9/10/20 7:11 AM, Jens Axboe wrote:
+>>> On 9/10/20 6:37 AM, Pavel Begunkov wrote:
+>>>> On 09/09/2020 19:07, Jens Axboe wrote:
+>>>>> On 9/9/20 9:48 AM, Pavel Begunkov wrote:
+>>>>>> On 09/09/2020 16:10, Jens Axboe wrote:
+>>>>>>> On 9/9/20 1:09 AM, Pavel Begunkov wrote:
+>>>>>>>> On 09/09/2020 01:54, Jens Axboe wrote:
+>>>>>>>>> On 9/8/20 3:22 PM, Jens Axboe wrote:
+>>>>>>>>>> On 9/8/20 2:58 PM, Pavel Begunkov wrote:
+>>>>>>>>>>> On 08/09/2020 20:48, Jens Axboe wrote:
+>>>>>>>>>>>> Fd instantiating commands like IORING_OP_ACCEPT now work with SQPOLL, but
+>>>>>>>>>>>> we have an error in grabbing that if IOSQE_ASYNC is set. Ensure we assign
+>>>>>>>>>>>> the ring fd/file appropriately so we can defer grab them.
+>>>>>>>>>>>
+>>>>>>>>>>> IIRC, for fcheck() in io_grab_files() to work it should be under fdget(),
+>>>>>>>>>>> that isn't the case with SQPOLL threads. Am I mistaken?
+>>>>>>>>>>>
+>>>>>>>>>>> And it looks strange that the following snippet will effectively disable
+>>>>>>>>>>> such requests.
+>>>>>>>>>>>
+>>>>>>>>>>> fd = dup(ring_fd)
+>>>>>>>>>>> close(ring_fd)
+>>>>>>>>>>> ring_fd = fd
 >>>>>>>>>>
->>>>>>>>>> IIRC, for fcheck() in io_grab_files() to work it should be under fdget(),
->>>>>>>>>> that isn't the case with SQPOLL threads. Am I mistaken?
+>>>>>>>>>> Not disagreeing with that, I think my initial posting made it clear
+>>>>>>>>>> it was a hack. Just piled it in there for easier testing in terms
+>>>>>>>>>> of functionality.
 >>>>>>>>>>
->>>>>>>>>> And it looks strange that the following snippet will effectively disable
->>>>>>>>>> such requests.
->>>>>>>>>>
->>>>>>>>>> fd = dup(ring_fd)
->>>>>>>>>> close(ring_fd)
->>>>>>>>>> ring_fd = fd
+>>>>>>>>>> But the next question is how to do this right...> 
+>>>>>>>>> Looking at this a bit more, and I don't necessarily think there's a
+>>>>>>>>> better option. If you dup+close, then it just won't work. We have no
+>>>>>>>>> way of knowing if the 'fd' changed, but we can detect if it was closed
+>>>>>>>>> and then we'll end up just EBADF'ing the requests.
 >>>>>>>>>
->>>>>>>>> Not disagreeing with that, I think my initial posting made it clear
->>>>>>>>> it was a hack. Just piled it in there for easier testing in terms
->>>>>>>>> of functionality.
+>>>>>>>>> So right now the answer is that we can support this just fine with
+>>>>>>>>> SQPOLL, but you better not dup and close the original fd. Which is not
+>>>>>>>>> ideal, but better than NOT being able to support it.
 >>>>>>>>>
->>>>>>>>> But the next question is how to do this right...> 
->>>>>>>> Looking at this a bit more, and I don't necessarily think there's a
->>>>>>>> better option. If you dup+close, then it just won't work. We have no
->>>>>>>> way of knowing if the 'fd' changed, but we can detect if it was closed
->>>>>>>> and then we'll end up just EBADF'ing the requests.
+>>>>>>>>> Only other option I see is to to provide an io_uring_register()
+>>>>>>>>> command to update the fd/file associated with it. Which may be useful,
+>>>>>>>>> it allows a process to indeed to this, if it absolutely has to.
 >>>>>>>>
->>>>>>>> So right now the answer is that we can support this just fine with
->>>>>>>> SQPOLL, but you better not dup and close the original fd. Which is not
->>>>>>>> ideal, but better than NOT being able to support it.
->>>>>>>>
->>>>>>>> Only other option I see is to to provide an io_uring_register()
->>>>>>>> command to update the fd/file associated with it. Which may be useful,
->>>>>>>> it allows a process to indeed to this, if it absolutely has to.
+>>>>>>>> Let's put aside such dirty hacks, at least until someone actually
+>>>>>>>> needs it. Ideally, for many reasons I'd prefer to get rid of
 >>>>>>>
->>>>>>> Let's put aside such dirty hacks, at least until someone actually
->>>>>>> needs it. Ideally, for many reasons I'd prefer to get rid of
+>>>>>>> BUt it is actually needed, otherwise we're even more in a limbo state of
+>>>>>>> "SQPOLL works for most things now, just not all". And this isn't that
+>>>>>>> hard to make right - on the flush() side, we just need to park/stall the
 >>>>>>
->>>>>> BUt it is actually needed, otherwise we're even more in a limbo state of
->>>>>> "SQPOLL works for most things now, just not all". And this isn't that
->>>>>> hard to make right - on the flush() side, we just need to park/stall the
+>>>>>> I understand that it isn't hard, but I just don't want to expose it to
+>>>>>> the userspace, a) because it's a userspace API, so couldn't probably be
+>>>>>> killed in the future, b) works around kernel's problems, and so
+>>>>>> shouldn't really be exposed to the userspace in normal circumstances.
+>>>>>>
+>>>>>> And it's not generic enough because of a possible "many fds -> single
+>>>>>> file" mapping, and there will be a lot of questions and problems.
+>>>>>>
+>>>>>> e.g. if a process shares a io_uring with another process, then
+>>>>>> dup()+close() would require not only this hook but also additional
+>>>>>> inter-process synchronisation. And so on.
 >>>>>
->>>>> I understand that it isn't hard, but I just don't want to expose it to
->>>>> the userspace, a) because it's a userspace API, so couldn't probably be
->>>>> killed in the future, b) works around kernel's problems, and so
->>>>> shouldn't really be exposed to the userspace in normal circumstances.
->>>>>
->>>>> And it's not generic enough because of a possible "many fds -> single
->>>>> file" mapping, and there will be a lot of questions and problems.
->>>>>
->>>>> e.g. if a process shares a io_uring with another process, then
->>>>> dup()+close() would require not only this hook but also additional
->>>>> inter-process synchronisation. And so on.
+>>>>> I think you're blowing this out of proportion. Just to restate the
 >>>>
->>>> I think you're blowing this out of proportion. Just to restate the
+>>>> I just think that if there is a potentially cleaner solution without
+>>>> involving userspace, we should try to look for it first, even if it
+>>>> would take more time. That was the point.
 >>>
->>> I just think that if there is a potentially cleaner solution without
->>> involving userspace, we should try to look for it first, even if it
->>> would take more time. That was the point.
+>>> Regardless of whether or not we can eliminate that need, at least it'll
+>>> be a relaxing of the restriction, not an increase of it. It'll never
+>>> hurt to do an extra system call for the case where you're swapping fds.
+>>> I do get your point, I just don't think it's a big deal.
 >>
->> Regardless of whether or not we can eliminate that need, at least it'll
->> be a relaxing of the restriction, not an increase of it. It'll never
->> hurt to do an extra system call for the case where you're swapping fds.
->> I do get your point, I just don't think it's a big deal.
+>> BTW, I don't see how we can ever get rid of a need to enter the kernel,
+>> we'd need some chance at grabbing the updated ->files, for instance.
+>> Might be possible to hold a reference to the task and grab it from
+>> there, though feels a bit iffy to hold a task reference from the ring on
+>> the task that holds a reference to the ring. Haven't looked too close,
+>> should work though as this won't hold a file/files reference, it's just
+>> a freeing reference.
 > 
-> BTW, I don't see how we can ever get rid of a need to enter the kernel,
-> we'd need some chance at grabbing the updated ->files, for instance.
-> Might be possible to hold a reference to the task and grab it from
-> there, though feels a bit iffy to hold a task reference from the ring on
-> the task that holds a reference to the ring. Haven't looked too close,
-> should work though as this won't hold a file/files reference, it's just
-> a freeing reference.
+> Sort of half assed attempt...
+> 
+> Idea is to assign a ->files sequence before we grab files, and then
+> compare with the current one once we need to use the files. If they
+> mismatch, we -ECANCELED the request.
+> 
+> For SQPOLL, don't grab ->files upfront, grab a reference to the task
+> instead. Use the task reference to assign files when we need it.
+> 
+> Adding Jann to help poke holes in this scheme. I'd be surprised if it's
+> solid as-is, but hopefully we can build on this idea and get rid of the
+> fcheck().
 
-Sort of half assed attempt...
+Split it into two, to make it easier to reason about. Added a few
+comments, etc.
 
-Idea is to assign a ->files sequence before we grab files, and then
-compare with the current one once we need to use the files. If they
-mismatch, we -ECANCELED the request.
+-- 
+Jens Axboe
 
-For SQPOLL, don't grab ->files upfront, grab a reference to the task
-instead. Use the task reference to assign files when we need it.
 
-Adding Jann to help poke holes in this scheme. I'd be surprised if it's
-solid as-is, but hopefully we can build on this idea and get rid of the
-fcheck().
+--------------0244F1EF373A2B67D1B8C320
+Content-Type: text/x-patch; charset=UTF-8;
+ name="0002-io_uring-implement-flush-sequence-to-handle-files-va.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0002-io_uring-implement-flush-sequence-to-handle-files-va.pa";
+ filename*1="tch"
+
+From 766f5ffcfc9e511c6b26abb8a80e935359a5185f Mon Sep 17 00:00:00 2001
+From: Jens Axboe <axboe@kernel.dk>
+Date: Thu, 10 Sep 2020 16:06:21 -0600
+Subject: [PATCH 2/2] io_uring: implement ->flush() sequence to handle ->files
+ validity
+
+The current scheme stashes away ->ring_fd and ->ring_file, and uses
+that to check against whether or not ->files could have changed. This
+works, but doesn't work so well for SQPOLL. If the application does
+close the ring_fd, then we require that applications enter the kernel
+to refresh our state.
+
+Add an atomic sequence for the ->flush() count on the ring fd, and if
+we get a mismatch between checking this sequence before and after
+grabbing the ->files, then we fail the request.
+
+This should offer the same protection that we currently have, with the
+added benefit of being able to update the ->files automatically.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/io_uring.c | 131 +++++++++++++++++++++++++++++---------------------
+ 1 file changed, 77 insertions(+), 54 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 98cddcc03a16..0517ffa6cb11 100644
+index 5d0247875237..bf994f195aaf 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -290,11 +290,10 @@ struct io_ring_ctx {
- 	struct io_wq		*io_wq;
- 	struct mm_struct	*sqo_mm;
- 	/*
--	 * For SQPOLL usage - no reference is held to this file table, we
--	 * rely on fops->flush() and our callback there waiting for the users
--	 * to finish.
-+	 * For SQPOLL usage - we hold a reference to the parent task, so we
-+	 * have access to the ->files
- 	 */
--	struct files_struct	*sqo_files;
-+	struct task_struct	*sqo_task;
- 
- 	struct wait_queue_entry	sqo_wait_entry;
- 	struct list_head	sqd_list;
-@@ -309,8 +308,11 @@ struct io_ring_ctx {
+@@ -308,8 +308,11 @@ struct io_ring_ctx {
  	 */
  	struct fixed_file_data	*file_data;
  	unsigned		nr_user_files;
@@ -206,7 +236,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  
  	/* if used, fixed mapped user buffers */
  	unsigned		nr_user_bufs;
-@@ -395,6 +397,7 @@ struct io_close {
+@@ -394,6 +397,7 @@ struct io_close {
  	struct file			*file;
  	struct file			*put_file;
  	int				fd;
@@ -214,7 +244,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  };
  
  struct io_timeout_data {
-@@ -410,6 +413,7 @@ struct io_accept {
+@@ -409,6 +413,7 @@ struct io_accept {
  	int __user			*addr_len;
  	int				flags;
  	unsigned long			nofile;
@@ -222,7 +252,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  };
  
  struct io_sync {
-@@ -462,6 +466,7 @@ struct io_sr_msg {
+@@ -461,6 +466,7 @@ struct io_sr_msg {
  struct io_open {
  	struct file			*file;
  	int				dfd;
@@ -230,7 +260,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	struct filename			*filename;
  	struct open_how			how;
  	unsigned long			nofile;
-@@ -472,6 +477,7 @@ struct io_files_update {
+@@ -471,6 +477,7 @@ struct io_files_update {
  	u64				arg;
  	u32				nr_args;
  	u32				offset;
@@ -238,7 +268,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  };
  
  struct io_fadvise {
-@@ -493,6 +499,7 @@ struct io_epoll {
+@@ -492,6 +499,7 @@ struct io_epoll {
  	int				epfd;
  	int				op;
  	int				fd;
@@ -246,7 +276,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	struct epoll_event		event;
  };
  
-@@ -519,6 +526,7 @@ struct io_statx {
+@@ -518,6 +526,7 @@ struct io_statx {
  	int				dfd;
  	unsigned int			mask;
  	unsigned int			flags;
@@ -254,10 +284,18 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	const char __user		*filename;
  	struct statx __user		*buffer;
  };
-@@ -3861,6 +3869,20 @@ static int io_provide_buffers(struct io_kiocb *req, bool force_nonblock,
+@@ -3860,6 +3869,28 @@ static int io_provide_buffers(struct io_kiocb *req, bool force_nonblock,
  	return 0;
  }
  
++/*
++ * Check that our ->files sequence matches. If files isn't assigned yet,
++ * just store the current sequence. If they are assigned, check against
++ * the sequence from when they got assigned. If we get a mismatch, we fail
++ * the request. This is only applicable to requests that sets ->file_table
++ * in io_op_defs[], indicating that they need access to the file_struct
++ * when executed async.
++ */
 +static int io_check_files_seq(struct io_kiocb *req, int *seq)
 +{
 +	struct io_ring_ctx *ctx = req->ctx;
@@ -269,13 +307,13 @@ index 98cddcc03a16..0517ffa6cb11 100644
 +		return 0;
 +	}
 +
-+	return -ECANCELED;
++	return -EBADF;
 +}
 +
  static int io_epoll_ctl_prep(struct io_kiocb *req,
  			     const struct io_uring_sqe *sqe)
  {
-@@ -3882,6 +3904,7 @@ static int io_epoll_ctl_prep(struct io_kiocb *req,
+@@ -3881,6 +3912,7 @@ static int io_epoll_ctl_prep(struct io_kiocb *req,
  			return -EFAULT;
  	}
  
@@ -283,7 +321,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	return 0;
  #else
  	return -EOPNOTSUPP;
-@@ -3895,10 +3918,15 @@ static int io_epoll_ctl(struct io_kiocb *req, bool force_nonblock,
+@@ -3894,10 +3926,15 @@ static int io_epoll_ctl(struct io_kiocb *req, bool force_nonblock,
  	struct io_epoll *ie = &req->epoll;
  	int ret;
  
@@ -299,7 +337,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	if (ret < 0)
  		req_set_fail_links(req);
  	__io_req_complete(req, ret, 0, cs);
-@@ -3994,6 +4022,7 @@ static int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+@@ -3993,6 +4030,7 @@ static int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  	req->statx.filename = u64_to_user_ptr(READ_ONCE(sqe->addr));
  	req->statx.buffer = u64_to_user_ptr(READ_ONCE(sqe->addr2));
  	req->statx.flags = READ_ONCE(sqe->statx_flags);
@@ -307,7 +345,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  
  	return 0;
  }
-@@ -4003,6 +4032,10 @@ static int io_statx(struct io_kiocb *req, bool force_nonblock)
+@@ -4002,6 +4040,10 @@ static int io_statx(struct io_kiocb *req, bool force_nonblock)
  	struct io_statx *ctx = &req->statx;
  	int ret;
  
@@ -318,7 +356,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	if (force_nonblock) {
  		/* only need file table for an actual valid fd */
  		if (ctx->dfd == -1 || ctx->dfd == AT_FDCWD)
-@@ -4013,6 +4046,7 @@ static int io_statx(struct io_kiocb *req, bool force_nonblock)
+@@ -4012,6 +4054,7 @@ static int io_statx(struct io_kiocb *req, bool force_nonblock)
  	ret = do_statx(ctx->dfd, ctx->filename, ctx->flags, ctx->mask,
  		       ctx->buffer);
  
@@ -326,7 +364,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	if (ret < 0)
  		req_set_fail_links(req);
  	io_req_complete(req, ret);
-@@ -4038,11 +4072,11 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+@@ -4037,11 +4080,11 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  		return -EBADF;
  
  	req->close.fd = READ_ONCE(sqe->fd);
@@ -340,7 +378,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	return 0;
  }
  
-@@ -4052,6 +4086,10 @@ static int io_close(struct io_kiocb *req, bool force_nonblock,
+@@ -4051,6 +4094,10 @@ static int io_close(struct io_kiocb *req, bool force_nonblock,
  	struct io_close *close = &req->close;
  	int ret;
  
@@ -351,7 +389,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	/* might be already done during nonblock submission */
  	if (!close->put_file) {
  		ret = __close_fd_get_file(close->fd, &close->put_file);
-@@ -4070,10 +4108,11 @@ static int io_close(struct io_kiocb *req, bool force_nonblock,
+@@ -4069,10 +4116,11 @@ static int io_close(struct io_kiocb *req, bool force_nonblock,
  
  	/* No ->flush() or already async, safely close from here */
  	ret = filp_close(close->put_file, req->work.files);
@@ -365,7 +403,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	__io_req_complete(req, ret, 0, cs);
  	return 0;
  }
-@@ -4527,6 +4566,7 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+@@ -4526,6 +4574,7 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  	accept->addr_len = u64_to_user_ptr(READ_ONCE(sqe->addr2));
  	accept->flags = READ_ONCE(sqe->accept_flags);
  	accept->nofile = rlimit(RLIMIT_NOFILE);
@@ -373,7 +411,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	return 0;
  }
  
-@@ -4537,6 +4577,10 @@ static int io_accept(struct io_kiocb *req, bool force_nonblock,
+@@ -4536,6 +4585,10 @@ static int io_accept(struct io_kiocb *req, bool force_nonblock,
  	unsigned int file_flags = force_nonblock ? O_NONBLOCK : 0;
  	int ret;
  
@@ -384,7 +422,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	if (req->file->f_flags & O_NONBLOCK)
  		req->flags |= REQ_F_NOWAIT;
  
-@@ -4545,6 +4589,7 @@ static int io_accept(struct io_kiocb *req, bool force_nonblock,
+@@ -4544,6 +4597,7 @@ static int io_accept(struct io_kiocb *req, bool force_nonblock,
  					accept->nofile);
  	if (ret == -EAGAIN && force_nonblock)
  		return -EAGAIN;
@@ -392,7 +430,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	if (ret < 0) {
  		if (ret == -ERESTARTSYS)
  			ret = -EINTR;
-@@ -5514,6 +5559,7 @@ static int io_files_update_prep(struct io_kiocb *req,
+@@ -5513,6 +5567,7 @@ static int io_files_update_prep(struct io_kiocb *req,
  	if (!req->files_update.nr_args)
  		return -EINVAL;
  	req->files_update.arg = READ_ONCE(sqe->addr);
@@ -400,7 +438,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	return 0;
  }
  
-@@ -5524,6 +5570,10 @@ static int io_files_update(struct io_kiocb *req, bool force_nonblock,
+@@ -5523,6 +5578,10 @@ static int io_files_update(struct io_kiocb *req, bool force_nonblock,
  	struct io_uring_files_update up;
  	int ret;
  
@@ -411,7 +449,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	if (force_nonblock)
  		return -EAGAIN;
  
-@@ -5533,7 +5583,7 @@ static int io_files_update(struct io_kiocb *req, bool force_nonblock,
+@@ -5532,7 +5591,7 @@ static int io_files_update(struct io_kiocb *req, bool force_nonblock,
  	mutex_lock(&ctx->uring_lock);
  	ret = __io_sqe_files_update(ctx, &up, req->files_update.nr_args);
  	mutex_unlock(&ctx->uring_lock);
@@ -420,7 +458,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	if (ret < 0)
  		req_set_fail_links(req);
  	__io_req_complete(req, ret, 0, cs);
-@@ -6119,34 +6169,21 @@ static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
+@@ -6118,34 +6177,21 @@ static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
  
  static int io_grab_files(struct io_kiocb *req)
  {
@@ -460,7 +498,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  }
  
  static inline int io_prep_work_files(struct io_kiocb *req)
-@@ -6706,14 +6743,7 @@ static enum sq_ret __io_sq_thread(struct io_ring_ctx *ctx,
+@@ -6705,14 +6751,7 @@ static enum sq_ret __io_sq_thread(struct io_ring_ctx *ctx,
  		mutex_unlock(&ctx->uring_lock);
  	}
  
@@ -476,7 +514,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  
  	/*
  	 * If submit got -EBUSY, flag us as needing the application
-@@ -6757,7 +6787,7 @@ static enum sq_ret __io_sq_thread(struct io_ring_ctx *ctx,
+@@ -6756,7 +6795,7 @@ static enum sq_ret __io_sq_thread(struct io_ring_ctx *ctx,
  		}
  
  		to_submit = io_sqring_entries(ctx);
@@ -485,19 +523,124 @@ index 98cddcc03a16..0517ffa6cb11 100644
  			return SQT_IDLE;
  
  		finish_wait(&sqd->wait, &ctx->sqo_wait_entry);
-@@ -6824,9 +6854,9 @@ static int io_sq_thread(void *data)
+@@ -8547,6 +8586,9 @@ static int io_uring_flush(struct file *file, void *data)
+ {
+ 	struct io_ring_ctx *ctx = file->private_data;
+ 
++	/* assume current files sequence is no longer valid */
++	atomic_inc(&ctx->files_seq);
++
+ 	io_uring_cancel_files(ctx, data);
+ 
+ 	/*
+@@ -8558,13 +8600,8 @@ static int io_uring_flush(struct file *file, void *data)
+ 	} else if (ctx->flags & IORING_SETUP_SQPOLL) {
+ 		struct io_sq_data *sqd = ctx->sq_data;
+ 
+-		/* Ring is being closed, mark us as neding new assignment */
++		/* quiesce sqpoll thread */
+ 		io_sq_thread_park(sqd);
+-		mutex_lock(&ctx->uring_lock);
+-		ctx->ring_fd = -1;
+-		ctx->ring_file = NULL;
+-		mutex_unlock(&ctx->uring_lock);
+-		io_ring_set_wakeup_flag(ctx);
+ 		io_sq_thread_unpark(sqd);
+ 	}
+ 
+@@ -8701,18 +8738,6 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 	if (ctx->flags & IORING_SETUP_SQPOLL) {
+ 		if (!list_empty_careful(&ctx->cq_overflow_list))
+ 			io_cqring_overflow_flush(ctx, false);
+-		if (fd != ctx->ring_fd) {
+-			struct io_sq_data *sqd = ctx->sq_data;
+-
+-			io_sq_thread_park(sqd);
+-
+-			mutex_lock(&ctx->uring_lock);
+-			ctx->ring_fd = fd;
+-			ctx->ring_file = f.file;
+-			mutex_unlock(&ctx->uring_lock);
+-
+-			io_sq_thread_unpark(sqd);
+-		}
+ 		if (flags & IORING_ENTER_SQ_WAKEUP)
+ 			wake_up(&ctx->sq_data->wait);
+ 		if (flags & IORING_ENTER_SQ_WAIT)
+@@ -8720,8 +8745,6 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 		submitted = to_submit;
+ 	} else if (to_submit) {
+ 		mutex_lock(&ctx->uring_lock);
+-		ctx->ring_fd = fd;
+-		ctx->ring_file = f.file;
+ 		submitted = io_submit_sqes(ctx, to_submit);
+ 		mutex_unlock(&ctx->uring_lock);
+ 
+-- 
+2.28.0
+
+
+--------------0244F1EF373A2B67D1B8C320
+Content-Type: text/x-patch; charset=UTF-8;
+ name="0001-io_uring-stash-ctx-task-reference-instead-of-task-fi.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-io_uring-stash-ctx-task-reference-instead-of-task-fi.pa";
+ filename*1="tch"
+
+From e9194eaa20005913b3c39a5c5124c3f803e4074a Mon Sep 17 00:00:00 2001
+From: Jens Axboe <axboe@kernel.dk>
+Date: Thu, 10 Sep 2020 16:01:15 -0600
+Subject: [PATCH 1/2] io_uring: stash ctx task reference instead of task files
+
+We can grab a reference to the task instead of stashing away the task
+files_struct. This is doable without creating a circular reference
+between the ring fd and the task itself.
+
+This is in preparation for handling the ->files assignment a bit
+differently, so we don't need to force SQPOLL to enter the kernel for
+an update.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/io_uring.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 98cddcc03a16..5d0247875237 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -290,11 +290,10 @@ struct io_ring_ctx {
+ 	struct io_wq		*io_wq;
+ 	struct mm_struct	*sqo_mm;
+ 	/*
+-	 * For SQPOLL usage - no reference is held to this file table, we
+-	 * rely on fops->flush() and our callback there waiting for the users
+-	 * to finish.
++	 * For SQPOLL usage - we hold a reference to the parent task, so we
++	 * have access to the ->files
+ 	 */
+-	struct files_struct	*sqo_files;
++	struct task_struct	*sqo_task;
+ 
+ 	struct wait_queue_entry	sqo_wait_entry;
+ 	struct list_head	sqd_list;
+@@ -6824,10 +6823,12 @@ static int io_sq_thread(void *data)
  				old_cred = override_creds(ctx->creds);
  			}
  
 -			if (current->files != ctx->sqo_files) {
 +			if (current->files != ctx->sqo_task->files) {
++				task_lock(ctx->sqo_task);
  				task_lock(current);
 -				current->files = ctx->sqo_files;
 +				current->files = ctx->sqo_task->files;
  				task_unlock(current);
++				task_unlock(ctx->sqo_task);
  			}
  
-@@ -7148,6 +7178,11 @@ static void io_finish_async(struct io_ring_ctx *ctx)
+ 			ret |= __io_sq_thread(ctx, start_jiffies, cap_entries);
+@@ -7148,6 +7149,11 @@ static void io_finish_async(struct io_ring_ctx *ctx)
  		io_wq_destroy(ctx->io_wq);
  		ctx->io_wq = NULL;
  	}
@@ -509,7 +652,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  }
  
  #if defined(CONFIG_UNIX)
-@@ -7794,11 +7829,11 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+@@ -7794,11 +7800,11 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
  		mutex_unlock(&sqd->ctx_lock);
  
  		/*
@@ -525,7 +668,7 @@ index 98cddcc03a16..0517ffa6cb11 100644
  
  		ctx->sq_thread_idle = msecs_to_jiffies(p->sq_thread_idle);
  		if (!ctx->sq_thread_idle)
-@@ -7840,7 +7875,10 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+@@ -7840,7 +7846,10 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
  
  	return 0;
  err:
@@ -537,62 +680,24 @@ index 98cddcc03a16..0517ffa6cb11 100644
  	io_finish_async(ctx);
  	return ret;
  }
-@@ -8538,6 +8576,9 @@ static int io_uring_flush(struct file *file, void *data)
- {
- 	struct io_ring_ctx *ctx = file->private_data;
- 
-+	/* assume current files sequence is no longer valid */
-+	atomic_inc(&ctx->files_seq);
-+
- 	io_uring_cancel_files(ctx, data);
- 
- 	/*
-@@ -8549,14 +8590,8 @@ static int io_uring_flush(struct file *file, void *data)
- 	} else if (ctx->flags & IORING_SETUP_SQPOLL) {
- 		struct io_sq_data *sqd = ctx->sq_data;
- 
--		/* Ring is being closed, mark us as neding new assignment */
-+		/* quiesce sqpoll thread */
- 		io_sq_thread_park(sqd);
--		mutex_lock(&ctx->uring_lock);
--		ctx->ring_fd = -1;
--		ctx->ring_file = NULL;
--		ctx->sqo_files = NULL;
--		mutex_unlock(&ctx->uring_lock);
--		io_ring_set_wakeup_flag(ctx);
- 		io_sq_thread_unpark(sqd);
- 	}
- 
-@@ -8693,19 +8728,6 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	if (ctx->flags & IORING_SETUP_SQPOLL) {
- 		if (!list_empty_careful(&ctx->cq_overflow_list))
- 			io_cqring_overflow_flush(ctx, false);
--		if (fd != ctx->ring_fd) {
--			struct io_sq_data *sqd = ctx->sq_data;
--
--			io_sq_thread_park(sqd);
--
--			mutex_lock(&ctx->uring_lock);
--			ctx->ring_fd = fd;
--			ctx->ring_file = f.file;
--			ctx->sqo_files = current->files;
--			mutex_unlock(&ctx->uring_lock);
--
--			io_sq_thread_unpark(sqd);
--		}
- 		if (flags & IORING_ENTER_SQ_WAKEUP)
- 			wake_up(&ctx->sq_data->wait);
- 		if (flags & IORING_ENTER_SQ_WAIT)
-@@ -8713,8 +8735,6 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		submitted = to_submit;
- 	} else if (to_submit) {
+@@ -8554,7 +8563,6 @@ static int io_uring_flush(struct file *file, void *data)
  		mutex_lock(&ctx->uring_lock);
--		ctx->ring_fd = fd;
--		ctx->ring_file = f.file;
- 		submitted = io_submit_sqes(ctx, to_submit);
+ 		ctx->ring_fd = -1;
+ 		ctx->ring_file = NULL;
+-		ctx->sqo_files = NULL;
  		mutex_unlock(&ctx->uring_lock);
+ 		io_ring_set_wakeup_flag(ctx);
+ 		io_sq_thread_unpark(sqd);
+@@ -8701,7 +8709,6 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 			mutex_lock(&ctx->uring_lock);
+ 			ctx->ring_fd = fd;
+ 			ctx->ring_file = f.file;
+-			ctx->sqo_files = current->files;
+ 			mutex_unlock(&ctx->uring_lock);
  
-
+ 			io_sq_thread_unpark(sqd);
 -- 
-Jens Axboe
+2.28.0
 
+
+--------------0244F1EF373A2B67D1B8C320--

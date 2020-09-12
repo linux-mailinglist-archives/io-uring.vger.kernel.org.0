@@ -2,152 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF4B2675F1
-	for <lists+io-uring@lfdr.de>; Sat, 12 Sep 2020 00:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74ACC267BCB
+	for <lists+io-uring@lfdr.de>; Sat, 12 Sep 2020 20:49:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725928AbgIKWdJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 11 Sep 2020 18:33:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43796 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbgIKWdG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Sep 2020 18:33:06 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4757C061573
-        for <io-uring@vger.kernel.org>; Fri, 11 Sep 2020 15:33:05 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id d19so1546471pld.0
-        for <io-uring@vger.kernel.org>; Fri, 11 Sep 2020 15:33:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Py8fTBOEMx6DrsjAYeg1N0Su7QTORsdKNbGjjgnh/18=;
-        b=jnpkAX/qxJMXKCikew5jf20BNbTEXOA5nmWKej1w+3RbxcBIWFouo3XssA+PdtkWOx
-         89p8Nv/K4W/8rH0wuoB5DTQAXF6FZkFZUz6V21sgKcShY7cs2+rda3GYnAeb7OfkdLNH
-         6VMDPbbuAwIPBFLJzm59SKJqBryQY9imw1kpciLgK1UezYLtPdZ8VFs/Tp8ArfdyR7HU
-         YP9fjY6G/I4JpxIeA9fQ2vnutEn/MywndEYXle251LmsFlO1Q5D1UY1s9mnZb9KLu0PY
-         5JCuTaPGBe/GsSCGXr3iYZx56UNUNKq77LrL3Ijplv8n1yZvRKerqBgUvv7rk4iEaGel
-         Xgxg==
+        id S1725880AbgILSta (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 12 Sep 2020 14:49:30 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:44047 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbgILSt1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 12 Sep 2020 14:49:27 -0400
+Received: by mail-il1-f197.google.com with SMTP id j11so9550798ilr.11
+        for <io-uring@vger.kernel.org>; Sat, 12 Sep 2020 11:49:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Py8fTBOEMx6DrsjAYeg1N0Su7QTORsdKNbGjjgnh/18=;
-        b=Di9eWcwNe7loG/N2TUVBtadA8QswxY58MzvVi3eMzKZpVXhcZ7tFeZknFA+ScZuMWp
-         01YawEq2OLSFTCx3z5jvo5jYXsm6D5NCShndooLA2VdjnEQtiV6L6wlnjGdxgghgcby5
-         1zpj87gvtE8PQmGZahQR1oKLagxbM6qy8DRPOBTTL2HOwuSkq2M+Eqvf8Jtxqf2UKMo9
-         nYppq0vIC+5aed9FVBqkNGPmOqwYQQEbQUn8WYxEIJxk70yhKR0nNK4H+XnhSTlAazyH
-         I7MDk2KeB2UdRvLyT3lgGOR9MqAHXO4N1Z3G1lIKkZMQfnOwATT1b1Okn+u7kifl8XQz
-         blOQ==
-X-Gm-Message-State: AOAM532O8v+hVpEAFZkskmtux61khnS3QmPY2VyrQBUH9w1sinKOFHL/
-        DRdEN1Fgnn0h/JVwZxxMBEmyIQ==
-X-Google-Smtp-Source: ABdhPJy7pHmja3uUb0bS7rsqxhKOazd5JzvxdExZ7oQCs5m1Dd9i58KlHgBvqjDT0A8DCjSKyCdrRA==
-X-Received: by 2002:a17:90b:1988:: with SMTP id mv8mr4242806pjb.23.1599863585159;
-        Fri, 11 Sep 2020 15:33:05 -0700 (PDT)
-Received: from ?IPv6:2600:380:4955:1abc:b8c:928e:5fe6:fb78? ([2600:380:4955:1abc:b8c:928e:5fe6:fb78])
-        by smtp.gmail.com with ESMTPSA id y202sm3223092pfc.179.2020.09.11.15.33.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Sep 2020 15:33:04 -0700 (PDT)
-Subject: Re: [PATCH 2/2] io_uring: implement ->flush() sequence to handle
- ->files validity
-To:     Jann Horn <jannh@google.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <20200911212625.630477-1-axboe@kernel.dk>
- <20200911212625.630477-3-axboe@kernel.dk>
- <CAG48ez06Pm1h7CH3nYojwqnSFrHhfrn1tcFxRrpu68Da=6tCGQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <62081d59-d793-b5bb-f4da-5cbe6e17e6c0@kernel.dk>
-Date:   Fri, 11 Sep 2020 16:33:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=z5R//UxRboItQPh7MDI3JddIQL61MajQx6warYtOYbk=;
+        b=lHEkDrXn0qo70XG2RqHIrCiImIejcI2wr4OJnqMaCwDz50Tbpz1A0/CF30VZH8lwY1
+         JCYd3+A1gdwoDkgbLaIqdr0QGPwt1Scg4nlr8cwFPrkHPvNAEnDsZkZE+cwQ8ILBIVEw
+         pQIscl0YAoKfLY3mGxF6HfFVkopLqqX2y9vHXgOtEo12mBSny0p38ZPGDD0p92pKpUmp
+         7bwvcigys+tpJtuL9kwT/5z8QrKMaKFpKvYbGBjdF6N+YKiNS2U5Zn0tJFRM0WC3TVdL
+         TwMev50GfnOOR2mGcOtfVeiXEsMn/uQW4ZOlfBTYnDhZNjBqVeGxtLQNuDylMRxPqCxy
+         BA/A==
+X-Gm-Message-State: AOAM530wGWtXsxnOkXCtoBeCvr4SDHMQNhCWCFgtWYlDXyBvd5jVzbtk
+        6nN8K2tXevhLAJVsDhGMgNrnrPq4etylPefFMkmKvzqzeEmT
+X-Google-Smtp-Source: ABdhPJxSw+rGOoF525+CoZRVY7+xls38p9IS6yfSueGw6LmNHJqJuQICeDB3rXspXnSC3chEEdehPq/J6p1+ACim7BWVBTjAPkmR
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez06Pm1h7CH3nYojwqnSFrHhfrn1tcFxRrpu68Da=6tCGQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:c914:: with SMTP id t20mr6965290jao.117.1599936566237;
+ Sat, 12 Sep 2020 11:49:26 -0700 (PDT)
+Date:   Sat, 12 Sep 2020 11:49:26 -0700
+In-Reply-To: <0000000000004ba2fe05aebfc526@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b1a2f805af224224@google.com>
+Subject: Re: WARNING: refcount bug in io_wqe_worker
+From:   syzbot <syzbot+956ef5eac18eadd0fb7f@syzkaller.appspotmail.com>
+To:     anant.thazhemadam@gmail.com, asml.silence@gmail.com,
+        axboe@kernel.dk, hdanton@sina.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/11/20 3:57 PM, Jann Horn wrote:
-> On Fri, Sep 11, 2020 at 11:28 PM Jens Axboe <axboe@kernel.dk> wrote:
->> The current scheme stashes away ->ring_fd and ->ring_file, and uses
->> that to check against whether or not ->files could have changed. This
->> works, but doesn't work so well for SQPOLL. If the application does
->> close the ring_fd, then we require that applications enter the kernel
->> to refresh our state.
-> 
-> I don't understand the intent; please describe the scenario this is
-> trying to fix. Is this something about applications that call dup()
-> and close() on the uring fd, or something like that?
+syzbot has found a reproducer for the following issue on:
 
-Sorry, I guess it should have been clearer. It's basically just a
-replacement for the old fcheck(), to guard against dup and close between
-when we grab the ->files and actually use them. So functionally it
-should not be any different, unless I messed something up, but it allows
-us to be a bit more flexible in how we handle it. The scope should be
-more exact now, as it's between when we grab the ->files and when we
-actually use them.
+HEAD commit:    729e3d09 Merge tag 'ceph-for-5.9-rc5' of git://github.com/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f2ce0d900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c61610091f4ca8c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=956ef5eac18eadd0fb7f
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f3a853900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157f7263900000
 
->> Add an atomic sequence for the ->flush() count on the ring fd, and if
->> we get a mismatch between checking this sequence before and after
->> grabbing the ->files, then we fail the request.
-> 
-> Is this expected to actually be possible during benign usage?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+956ef5eac18eadd0fb7f@syzkaller.appspotmail.com
 
-Doesn't introduce any new failure cases here. If you submit an IO that
-needs to use the file table and close the ring fd in between, then the
-IO _will_ get canceled.
-
->> This should offer the same protection that we currently have, with the
->> added benefit of being able to update the ->files automatically.
-> 
-> Please clarify what "update the ->files" is about.
-
-async commands that need to use current->files - that means SQPOLL, and
-it means regular uses cases that end up being punted to async execution.
-Hope this helps?
-
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>  fs/io_uring.c | 137 ++++++++++++++++++++++++++++++--------------------
->>  1 file changed, 83 insertions(+), 54 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 4958a9dca51a..49be5e21f166 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -308,8 +308,11 @@ struct io_ring_ctx {
->>          */
->>         struct fixed_file_data  *file_data;
->>         unsigned                nr_user_files;
->> -       int                     ring_fd;
->> -       struct file             *ring_file;
->> +
->> +       /* incremented when ->flush() is called */
->> +       atomic_t                files_seq;
-> 
-> If this ends up landing, all of this should probably use 64-bit types
-> (atomic64_t and s64). 32-bit counters in fast syscalls can typically
-> be wrapped around in a reasonable amount of time. (For example, the
-> VMA cache sequence number wraparound issue
-> <https://googleprojectzero.blogspot.com/2018/09/a-cache-invalidation-bug-in-linux.html>
-> could be triggered in about an hour according to my blogpost from back
-> then. For this sequence number, it should be significantly faster, I
-> think.)
-
-Yeah good point, we should use atomic64 and s64 for for the other parts.
-I'll make that change right now, so I don't forget...
-
-> (I haven't properly looked at the rest of this patch so far - I stared
-> at it for a bit, but wasn't able to immediately figure out what's
-> actually going on. So I figured I'd ask the more fundamental questions
-> first.)
-
-Hope the above helps!
-
--- 
-Jens Axboe
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 0 PID: 7382 at lib/refcount.c:28 refcount_warn_saturate+0x1d1/0x1e0 lib/refcount.c:28
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 7382 Comm: io_wqe_worker-1 Not tainted 5.9.0-rc4-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x198/0x1fd lib/dump_stack.c:118
+ panic+0x347/0x7c0 kernel/panic.c:231
+ __warn.cold+0x20/0x46 kernel/panic.c:600
+ report_bug+0x1bd/0x210 lib/bug.c:198
+ handle_bug+0x38/0x90 arch/x86/kernel/traps.c:234
+ exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:254
+ asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:536
+RIP: 0010:refcount_warn_saturate+0x1d1/0x1e0 lib/refcount.c:28
+Code: e9 db fe ff ff 48 89 df e8 2c dd 18 fe e9 8a fe ff ff e8 c2 d6 d8 fd 48 c7 c7 60 dc 93 88 c6 05 0d 0d 12 07 01 e8 b1 d7 a9 fd <0f> 0b e9 af fe ff ff 0f 1f 84 00 00 00 00 00 41 56 41 55 41 54 55
+RSP: 0018:ffffc9000810fe08 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff88809592a200 RSI: ffffffff815db9a7 RDI: fffff52001021fb3
+RBP: 0000000000000003 R08: 0000000000000001 R09: ffff8880ae6318e7
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff88809a6080b8
+R13: ffff8880a7896e30 R14: ffff8880a7896e00 R15: ffff8880a6727f00
+ refcount_sub_and_test include/linux/refcount.h:274 [inline]
+ refcount_dec_and_test include/linux/refcount.h:294 [inline]
+ io_worker_exit fs/io-wq.c:236 [inline]
+ io_wqe_worker+0xcdb/0x10e0 fs/io-wq.c:596
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 

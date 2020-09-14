@@ -2,215 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7893D2686BA
-	for <lists+io-uring@lfdr.de>; Mon, 14 Sep 2020 10:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5FC326870C
+	for <lists+io-uring@lfdr.de>; Mon, 14 Sep 2020 10:18:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbgINICz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Sep 2020 04:02:55 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43499 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726122AbgINICv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Sep 2020 04:02:51 -0400
+        id S1726186AbgINISj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Sep 2020 04:18:39 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:32631 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726139AbgINIGI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Sep 2020 04:06:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600070569;
+        s=mimecast20190719; t=1600070744;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=7qkLrk8oFTkLu/qeNEH0NqnfnkcSVIVp8/l5gLhzm90=;
-        b=byaImQm68Pypmzj0y7jW2nIZQVJ7NzCNHZGciPKgmVKRhfuMEJ3oqGt+C0W7kfiMsPvx0e
-        k8Pm+ebaEXK+R3iZtJ1L15GYWQFJEESxH4wybu8Yh6c+6yy+lqKhDC1Q9N0Sf4Rfldzy+u
-        DosSb4VY1iWFzJemImZk1AAHwQ0Jc/4=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-537-98R1zhhhPdehBhu_H4czPg-1; Mon, 14 Sep 2020 04:02:47 -0400
-X-MC-Unique: 98R1zhhhPdehBhu_H4czPg-1
-Received: by mail-wr1-f71.google.com with SMTP id g6so6587444wrv.3
-        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 01:02:46 -0700 (PDT)
+        bh=ah/7JZ3FhL4+IfM21SDySx/N6XTyrRtw0c9SJaONCMg=;
+        b=MwD8kP4T4icAXOzbLD4Mu4ATUJKdB0s01gdA9BLtFCbXE+bIBb34Pyosvf81y3w96jYNNh
+        c+/7ymvPu8LaFaI4945qDYsesBvp/vlzmXcrOshZHWZzgCseaUiiO3TEon7SzHUVRC5mfe
+        eEBrJ5khrIDp1Y+oujzepAw2u8VV6yY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-321-yD2rt6w1PrGTU9CDtXyTkw-1; Mon, 14 Sep 2020 04:05:42 -0400
+X-MC-Unique: yD2rt6w1PrGTU9CDtXyTkw-1
+Received: by mail-wr1-f69.google.com with SMTP id o6so6563614wrp.1
+        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 01:05:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=7qkLrk8oFTkLu/qeNEH0NqnfnkcSVIVp8/l5gLhzm90=;
-        b=nlb3YrYYNKVo+PGpdD45OqQBYRMrtKgmTsmL68ZgkMuCThCYe8enI8TBfYr6Y8XJJ4
-         W/h4TEwIabXQ/Kw3YwITAFzL8aucUyEhzX1vLHDyE/sbNA4OLfOsxY1zFEzaRCrZQ1bs
-         kYGckznY3x3WYBmd663P3MEnItDsBIJmhx9HSa7hRSgH3Eztu7A2j1xSFYrSPajXuu06
-         u+IrIp/jZfQsohA/0WC/NzV+Je0a58Adgn/wUKOMRtqIhCQ2iNlwdIoCsY9q0f4PaEUB
-         qFgY3O+xT+RcXWUBpdIu0J6O9nSl8gPjEvRs17Kp9/bg66EoVGYSoyg4D5ESn0uWmjLP
-         umJA==
-X-Gm-Message-State: AOAM531i8BcK4i+LHl8d8970YbbfA/Yimu0USkHzslxeuXhAt0OE7dzP
-        n/sV/2/1GI7j049gY7+ba0ppAkz6VSEEEWwzh+kuhgpOnWlDSQNN/TSdFVUivlCnky1lJpl4fgH
-        fYiFDFgroi+VzaeoYFjs=
-X-Received: by 2002:a5d:4cc1:: with SMTP id c1mr14488214wrt.122.1600070565578;
-        Mon, 14 Sep 2020 01:02:45 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyybtu3wLwPrUVuG6y1d827PYb4+fMX5rSrsoRiyiOjQro4hDsSsNCIDkSm9q1yRyNMatJKCg==
-X-Received: by 2002:a5d:4cc1:: with SMTP id c1mr14488186wrt.122.1600070565303;
-        Mon, 14 Sep 2020 01:02:45 -0700 (PDT)
+        bh=ah/7JZ3FhL4+IfM21SDySx/N6XTyrRtw0c9SJaONCMg=;
+        b=a/cI0QlVrdR0eIxRXf3qoY8fJ3IVTAy8ynGxLNvoREB/E53gaYmbRibAto/4hafflh
+         KDdbZeAieL6swnBs3noQxZyeHJM+A+0bSPZLDsrMc5I+jS9ftXxhYQ5sw9lxBjs02Rhl
+         RgkxPNNx6YatAoNKtDJElWzPA4GBHcviW5xbFqTl1Mr/ObovTcqbmWGYolk1QzTePZNW
+         jzjFRLi7BnjyN9GZRcA14KE24J9rp2kfo+PD+1uDlzwELWm7+4i8tuFigJxfu7i7Dvwg
+         yY4+cB1UtM4PDMMhXI+wAsthGB8E0oHQLY4xdwgwOjKFpq+xu24EEkzvvAQCchIXPj5l
+         vp0g==
+X-Gm-Message-State: AOAM531uy1Y5WEw/ijwybcYAWfBm8m16zyAjs3Y2TUpr2ttnchYxw7it
+        A3tefbFZJiU3ankAoCdhNqeT7AmIpVPFMxPEA0VN3yh7IcKGheAjGMaIal/4CNFuIUGLkw4hCYG
+        3JaFJrQm47P43K6JIHxs=
+X-Received: by 2002:adf:cc8c:: with SMTP id p12mr15051445wrj.92.1600070740836;
+        Mon, 14 Sep 2020 01:05:40 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxNWAA+VC6Vv/Gx/VPVlov5nDySuyU4Ne7h5LIQho215gxKlinuQ4wkVEc3qtrRVHbcQwic+Q==
+X-Received: by 2002:adf:cc8c:: with SMTP id p12mr15051424wrj.92.1600070740647;
+        Mon, 14 Sep 2020 01:05:40 -0700 (PDT)
 Received: from steredhat (host-79-51-197-141.retail.telecomitalia.it. [79.51.197.141])
-        by smtp.gmail.com with ESMTPSA id y5sm18968771wrh.6.2020.09.14.01.02.44
+        by smtp.gmail.com with ESMTPSA id t22sm21041873wmt.1.2020.09.14.01.05.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 01:02:44 -0700 (PDT)
-Date:   Mon, 14 Sep 2020 10:02:42 +0200
+        Mon, 14 Sep 2020 01:05:40 -0700 (PDT)
+Date:   Mon, 14 Sep 2020 10:05:37 +0200
 From:   Stefano Garzarella <sgarzare@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org
-Subject: Re: [PATCH liburing 2/3] man/io_uring_register.2: add description of
- restrictions
-Message-ID: <20200914080242.w3tmy2owzxlhivb6@steredhat>
+Subject: Re: [PATCH liburing 3/3] man/io_uring_enter.2: add EACCES and EBADFD
+ errors
+Message-ID: <20200914080537.2ybouuxtjvckorc2@steredhat>
 References: <20200911133408.62506-1-sgarzare@redhat.com>
- <20200911133408.62506-3-sgarzare@redhat.com>
- <13663e4a-d5a0-17c2-199a-46d03700de6e@kernel.dk>
+ <20200911133408.62506-4-sgarzare@redhat.com>
+ <d38ae8b4-cb3e-3ebf-63e3-08a1f24ddcbb@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <13663e4a-d5a0-17c2-199a-46d03700de6e@kernel.dk>
+In-Reply-To: <d38ae8b4-cb3e-3ebf-63e3-08a1f24ddcbb@kernel.dk>
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Sep 11, 2020 at 09:33:01AM -0600, Jens Axboe wrote:
+On Fri, Sep 11, 2020 at 09:36:02AM -0600, Jens Axboe wrote:
 > On 9/11/20 7:34 AM, Stefano Garzarella wrote:
-> > Starting from Linux 5.10 io_uring supports restrictions.
-> > This patch describes how to register restriction, enable io_uring
-> > ring, and potential errors returned by io_uring_register(2).
+> > These new errors are added with the restriction series recently
+> > merged in io_uring (Linux 5.10).
 > > 
 > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
 > > ---
-> >  man/io_uring_register.2 | 79 +++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 77 insertions(+), 2 deletions(-)
+> >  man/io_uring_enter.2 | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
 > > 
-> > diff --git a/man/io_uring_register.2 b/man/io_uring_register.2
-> > index 5022c03..ce39ada 100644
-> > --- a/man/io_uring_register.2
-> > +++ b/man/io_uring_register.2
-> > @@ -19,7 +19,8 @@ io_uring_register \- register files or user buffers for asynchronous I/O
-> >  
-> >  The
-> >  .BR io_uring_register ()
-> > -system call registers user buffers or files for use in an
-> > +system call registers resources (e.g. user buffers, files, eventfd,
-> > +personality, restrictions) for use in an
-> >  .BR io_uring (7)
-> >  instance referenced by
-> >  .IR fd .
-> > @@ -232,6 +233,58 @@ must be set to the id in question, and
-> >  .I arg
-> >  must be set to NULL. Available since 5.6.
-> >  
-> > +.TP
-> > +.B IORING_REGISTER_ENABLE_RINGS
-> > +This operation enables io_uring ring started in a disabled state
-> 
-> enables an io_uring
-> 
-> > +.RB (IORING_SETUP_R_DISABLED
-> > +was specified in the call to
-> > +.BR io_uring_setup (2)).
-> > +While the io_uring ring is disabled, submissions are not allowed and
-> > +registrations are not restricted.
-> > +
-> > +After the execution of this operation, the io_uring ring is enabled:
-> > +submissions and registration are allowed, but they will
-> > +be validated following the registered restrictions (if any).
-> > +This operation takes no argument, must be invoked with
-> > +.I arg
-> > +set to NULL and
-> > +.I nr_args
-> > +set to zero. Available since 5.10.
-> > +
-> > +.TP
-> > +.B IORING_REGISTER_RESTRICTIONS
-> > +.I arg
-> > +points to a
-> > +.I struct io_uring_restriction
-> > +array of
-> > +.I nr_args
-> > +entries.
-> > +
-> > +With an entry it is possible to allow an
-> > +.BR io_uring_register ()
-> > +.I opcode,
-> > +or specify which
-> > +.I opcode
-> > +and
-> > +.I flags
-> > +of the submission queue entry are allowed,
-> > +or require certain
-> > +.I flags
-> > +to be specified (these flags must be set on each submission queue entry).
-> > +
-> > +All the restrictions must be submitted with a single
-> > +.BR io_uring_register ()
-> > +call and they are handled as an allowlist (opcodes and flags not registered,
-> > +are not allowed).
-> > +
-> > +Restrictions can be registered only if the io_uring ring started in a disabled
-> > +state
-> > +.RB (IORING_SETUP_R_DISABLED
-> > +must be specified in the call to
-> > +.BR io_uring_setup (2)).
-> > +
-> > +Available since 5.10.
-> > +
-> >  .SH RETURN VALUE
-> >  
-> >  On success,
-> > @@ -242,16 +295,30 @@ is set accordingly.
-> >  
+> > diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+> > index 5443d5f..4773dfd 100644
+> > --- a/man/io_uring_enter.2
+> > +++ b/man/io_uring_enter.2
+> > @@ -842,6 +842,16 @@ is set appropriately.
+> >  .PP
 > >  .SH ERRORS
 > >  .TP
 > > +.B EACCES
 > > +The
+> > +.I flags
+> > +field or
 > > +.I opcode
-> > +field is not allowed due to registered restrictions.
+> > +in a submission queue entry is not allowed due to registered restrictions.
+> > +See
+> > +.BR io_uring_register (2)
+> > +for details on how restrictions work.
 > > +.TP
-> >  .B EBADF
-> >  One or more fds in the
-> >  .I fd
-> >  array are invalid.
+> >  .B EAGAIN
+> >  The kernel was unable to allocate memory for the request, or otherwise ran out
+> >  of resources to handle it. The application should wait for some completions and
+> > @@ -861,6 +871,14 @@ field in the submission queue entry is invalid, or the
+> >  flag was set in the submission queue entry, but no files were registered
+> >  with the io_uring instance.
 > >  .TP
 > > +.B EBADFD
-> > +.B IORING_REGISTER_ENABLE_RINGS
-> > +or
-> > +.B IORING_REGISTER_RESTRICTIONS
-> > +was specified, but the io_uring ring is not disabled.
+> > +The
+> > +.I fd
+> > +field in the submission queue entry is valid, but the io_uring ring is not
+> > +in the right state (enabled). See
+> > +.BR io_uring_register (2)
+> > +for details on how to enable the ring.
 > > +.TP
-> >  .B EBUSY
-> >  .B IORING_REGISTER_BUFFERS
-> >  or
-> >  .B IORING_REGISTER_FILES
-> > -was specified, but there were already buffers or files registered.
-> > +or
-> > +.B IORING_REGISTER_RESTRICTIONS
-> > +was specified, but there were already buffers or files or restrictions
-> > +registered.
 > 
-> buffers, files, or restrictions
-> 
-> >  .TP
-> >  .B EFAULT
-> >  buffer is outside of the process' accessible address space, or
-> > @@ -283,6 +350,14 @@ is non-zero or
-> >  .I arg
-> >  is non-NULL.
-> >  .TP
-> > +.B EINVAL
-> > +.B IORING_REGISTER_RESTRICTIONS
-> > +was specified, but
-> > +.I nr_args
-> > +exceeds the maximum allowed number of restrictions or restriction
-> > +.I opcode
-> > +is invalid.
-> > +.TP
-> >  .B EMFILE
-> >  .B IORING_REGISTER_FILES
-> >  was specified and
-> 
-> Apart from that, looks good to me.
-> 
+> I actually think some of this needs general updating. io_uring_enter()
+> will not return an error on behalf of an sqe, it'll only return an error
+> if one happened outside the context of a specific sqe. Any error
+> specific to an sqe will generate a cqe with the result.
+
+Mmm, right.
+
+For example in this case, EACCES is returned by a cqe and EBADFD is
+returned by io_uring_enter().
+
+Should we create 2 error sections?
 
 Thanks,
-I'll fix the issues in the v2.
-
 Stefano
 

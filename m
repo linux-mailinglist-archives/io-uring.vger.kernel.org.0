@@ -2,112 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 965EE26918A
-	for <lists+io-uring@lfdr.de>; Mon, 14 Sep 2020 18:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B06542693A6
+	for <lists+io-uring@lfdr.de>; Mon, 14 Sep 2020 19:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbgINQb3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Sep 2020 12:31:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56104 "EHLO
+        id S1725976AbgINRit (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Sep 2020 13:38:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbgINQ0J (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Sep 2020 12:26:09 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F34B8C06178C
-        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 09:26:08 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id y74so673346iof.12
-        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 09:26:08 -0700 (PDT)
+        with ESMTP id S1726384AbgINM0L (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Sep 2020 08:26:11 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1DDBC06121D
+        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 04:57:54 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id m17so19696765ioo.1
+        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 04:57:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=W5NispRd57eK9c26j4M9JUK235lryxlMuTrOL2Rnlps=;
-        b=O5E4n4OVkh6UhjnwpkIO0udqbdrmSPQEB1V7liRUk8GvivQanZIZnmrYrqnYscijSE
-         fHRC8LFvTZYNopntDDDJFJEjljWpc1OhHmCrlrQgoGlvjAlqCA5LGKBseW103bno0yr8
-         X1lKrleJJUIlbgB/oILLTtBF33pcU9DiYO8wysXnJKsd2gMpqSUHP5tGDiegaGCS62nF
-         BCSvqxpchxcF8UUsxbad15NIec2FdWJkfBvi8GBQFFS4X0HSUUuG+M820yP4XCRzcs96
-         5Z3xo1xaYK5hS/L0EYdRcXunU2ycuFa2ofziTi0DytRyXQsiD4gvJUbgbjXAEO+VKH06
-         sm1g==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=gxYQz48aGorfvze6exW0FuIKKJvVhs5z+cRnEenJUaY=;
+        b=WQ25T1T8nOFRrXtOMxWvxZqQwK2s+mcHIvrJp1pQG1KToWiI+A1DWwaYqqjUnAKXOz
+         CX4bvzyA2TPHZpPT4jTdMzdfkF1jSWDqmo172bkbQ8I0ALk1BJ/hYXyx5hu/6f6lrYCf
+         Q5xkP8tma5yxuiCuHLYl3F3RKpiGo8Ro64t7EJKVbPI07CtKhACFuKYRKAGUwvrrZfNq
+         j+6X1EfVOrtVuTDTPbEoFd0MaFqTU/g9E1K6yd59qoka4KAPiuoMV58bp31Z8CKEWKF0
+         la6fp6OCyio7Y1CTKUN4jKJ8g8M6dyzUUJ/JKjyVzIXNMbBv8Nds/OoaxP5f1hRclmSL
+         M2UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=W5NispRd57eK9c26j4M9JUK235lryxlMuTrOL2Rnlps=;
-        b=rezWsKu3SSRehJFw9Jr/EV9lnMLbAh/h4usV2TxwdkLm7xlQY6rrFpiBp11U9zWEMm
-         9xMQ4iRtDmccBQh1IJnKfVLWmDrqYuoAoL2sjxIfA39vvMHsx/3CHfPvMzQepZVuKFcO
-         ejYCgF34tFfMQBos4TxF+mhk8mHIV7TiwxHlOjVAvXoBgefiYyiRFjax77leEzGEu2cY
-         Tg/qmtqm29SPS6roFuuWdT+aO5jRlLUtcy/cIqlYEJsjGIoT/IMOTPWvdBuQXNh517KO
-         4/89TaKIyxi8RqSHBWuIxn5X+C6A/aRNVLWlkGlwgwWqYhgtGctv7VObAnKGnRW/tU5Z
-         dFGQ==
-X-Gm-Message-State: AOAM531CWtcz334qGpXPSuRxMw485HCHhhOyOsy2yFKBR+FBxAQetKcd
-        Ak755Rw0mXHvTbKUYiHZ6VuxCYq4GD1t4zjk
-X-Google-Smtp-Source: ABdhPJy7Ly3paORVvapO67YFq/zfPZnhZzNP/glqBMjSzvA/DvCWUzfupFU3MYtu0I4cnbMek+65aw==
-X-Received: by 2002:a5d:80d6:: with SMTP id h22mr11794868ior.154.1600100768072;
-        Mon, 14 Sep 2020 09:26:08 -0700 (PDT)
-Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id o12sm7032261ilq.29.2020.09.14.09.26.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 09:26:07 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/5] io_uring: don't run task work on an exiting task
-Date:   Mon, 14 Sep 2020 10:25:53 -0600
-Message-Id: <20200914162555.1502094-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200914162555.1502094-1-axboe@kernel.dk>
-References: <20200914162555.1502094-1-axboe@kernel.dk>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=gxYQz48aGorfvze6exW0FuIKKJvVhs5z+cRnEenJUaY=;
+        b=pdttdNJqO2LLyUS11bOAUCje6OLohaG2Rh6k6bJcKcjLMtQMbZ89eGIu2mZKM3Ub7T
+         eA7ast7ITRs3bLR63oVf9ruFEXKzIOPD1nnW1JNKBD3qYQc1grAOzLhAJKzkpsUBQFo+
+         5NmHdQo9M3DyoXig7G2GpjKD72i0lg3llo9OK0HZW3gNBNgy7OOdF+zaJoEx9uQScIF1
+         DgStROhZc93C67uZufDI0VN3ADZ4JL/WbLDxcJtif9q+AG0VWRKIHj+JXV90X1RxvkJQ
+         FfudV86tCPpis6onRQlakft4M4jHjJXoenOuMJH11J8NHcQjusXqb+KyBC7oDJYpnAuX
+         BXjQ==
+X-Gm-Message-State: AOAM530TZoiEi2ZTlQDt7gKW0DRiSK5hd3KSK8LD2b8pWB7rRPQPeiy6
+        PC4tVpJKe0erdzq2ouYzqyl8zp2ThAlOZHxhbxU=
+X-Google-Smtp-Source: ABdhPJwfe27VdQeBQX2+uxaUP3xI/Ig+VzkiyCgKnnbnaQgvpBo35fCm0PVcR4GveAQs1cF5lJbEaq73vXQeTsztD/Q=
+X-Received: by 2002:a05:6638:3b5:: with SMTP id z21mr12919616jap.33.1600084674004;
+ Mon, 14 Sep 2020 04:57:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac0:a30a:0:0:0:0:0 with HTTP; Mon, 14 Sep 2020 04:57:53
+ -0700 (PDT)
+Reply-To: mrsmegwilliam6@gmail.com
+From:   Ms Mary Mcniff <diplmatemarkwilliam@gmail.com>
+Date:   Mon, 14 Sep 2020 04:57:53 -0700
+Message-ID: <CAC-KMFsY0_pkW0URQBBLwC2Wssin+DCDxr3BYifRW6KX3fG+mg@mail.gmail.com>
+Subject: Your Respond ASAP
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This isn't safe, and isn't needed either. We are guaranteed that any
-work we queue is on a live task (and will be run), or it goes to
-our backup io-wq threads if the task is exiting.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 01756a131be6..a29c8913b1f0 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1753,6 +1753,9 @@ static int io_req_task_work_add(struct io_kiocb *req, struct callback_head *cb,
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret, notify;
- 
-+	if (tsk->flags & PF_EXITING)
-+		return -ESRCH;
-+
- 	/*
- 	 * SQPOLL kernel thread doesn't need notification, just a wakeup. For
- 	 * all other cases, use TWA_SIGNAL unconditionally to ensure we're
-@@ -2012,6 +2015,12 @@ static inline unsigned int io_put_rw_kbuf(struct io_kiocb *req)
- 
- static inline bool io_run_task_work(void)
- {
-+	/*
-+	 * Not safe to run on exiting task, and the task_work handling will
-+	 * not add work to such a task.
-+	 */
-+	if (unlikely(current->flags & PF_EXITING))
-+		return false;
- 	if (current->task_works) {
- 		__set_current_state(TASK_RUNNING);
- 		task_work_run();
-@@ -8184,6 +8193,8 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
- 		/* cancel this request, or head link requests */
- 		io_attempt_cancel(ctx, cancel_req);
- 		io_put_req(cancel_req);
-+		/* cancellations _may_ trigger task work */
-+		io_run_task_work();
- 		schedule();
- 		finish_wait(&ctx->inflight_wait, &wait);
- 	}
 -- 
-2.28.0
+From Chief Compliance Officer, Citigroup Inc CITIBANK
+388 Greenwich St, New York, 10013, United States United.
+PAYMENT CODE: FRB010
+Swift: PTBLBXXX
+==============================================
 
+Attention: Beneficiary,
+
+We write to inform you that Series of meetings have been held over the
+past 2 weeks with the Secretary General of United Nations,U.S
+Department of State and Dubai Union Organization this ended last
+week.And parcel is under our custody right now, It will deliver to you
+within 24 hours once you clear the charges which will cost you
+according to the BANKERS COURIER SERVICES that wish to deliver your
+ATM CARD card to
+you immediately.
+
+However, it is the pleasure of this office to inform you that your ATM
+CARD number; is 29741733 and it has been approved and upgraded in your
+favor .you call me for the pin code numbers. The ATM CARD value is us
+$10.5 Million only.
+
+Kindly contact the paying bank for the claim of your ATM visa card
+payment fund $10,500,000.00 through the below contact information;
+
+Contact Person:Mr Williams S Young
+Director of Financial Controller
+Bank Name: CITIBANK
+Bank address; 388 Greenwich St,
+New York City,10013, United States
+Email:mrsmegwilliam6@gmail.com
+
+Reconfirm the following information?
+
+(1)Your Full Name=============
+(2)Mobile Phone Number======
+(3)Current Home Address==== ====
+(4)Fax Number================
+(5)Passport/Drivers license ======
+
+Endeavor to keep me posted once you contacted the officer in charge
+through the above mentioned information.
+
+Your timely response is highly appreciated.To this end, you are
+required to forward your payment information as follows to enable us
+load your fund into the card with your information and deliver it to
+your door step. as the BANKERS COURIER SERVICES are in charge of the
+delivery services to your destination.
+
+Yours truly;
+
+Ms Mary Mcniff.
+Chief Compliance Officer, Citigroup Inc
+FEDERAL RESERVE SYSTEM.
+Email: marymcniff7@gmail.com.

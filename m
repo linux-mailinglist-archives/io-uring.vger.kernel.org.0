@@ -2,62 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4C51268FD2
-	for <lists+io-uring@lfdr.de>; Mon, 14 Sep 2020 17:27:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30628269028
+	for <lists+io-uring@lfdr.de>; Mon, 14 Sep 2020 17:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbgINP1k (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Sep 2020 11:27:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46956 "EHLO
+        id S1726340AbgINPil (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Sep 2020 11:38:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbgINP1T (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Sep 2020 11:27:19 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E0BEC06174A
-        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 08:27:18 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id q4so4102538ils.4
-        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 08:27:18 -0700 (PDT)
+        with ESMTP id S1726331AbgINPij (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Sep 2020 11:38:39 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF7E4C06174A
+        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 08:38:27 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id j2so532254ioj.7
+        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 08:38:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=KSgdYHWdyQE2DZIRIMQjAN7eUlp05ySgkkWzGXUXs9Y=;
-        b=a4YVnjHYn3oQzhU5/2d04f5P4nzzbv35irUCHc1ie5Y6BmhpHHjNGdI2UHER+c37t3
-         ALcoSMzBrO1M7CoFQZOhYJhbaTD73t2F3fZZrdPi1UtUYBRt9vHKTOC6xY6VBDE+e++p
-         iHs6qZEfppQ4eHl+RvFo5ASlAHCjYLM1370Ee7YVWHyIda7Utt0SPLpxm6P+7KRwv0yx
-         J1yUQp5u5Vx/45QQ5qmWBiM8LyCnP5O8Xc7Jk6eIARCLJKqW17OOWacSK+BDM/TgnQsF
-         4RPv4FAsxxgn5BrLH33ojEeKFTQ/GZzut/eESuo+DeQ/bfhra3FfgI/L32P8grQIMVlY
-         gcoA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ehciV16R0PLZncUz8yW56qMCE2FjEMwn4smZK9F3bfA=;
+        b=riVnXmCee0hy+YxZgq06u26aBLOXvd1911UCmp26gRTYP4s8JH/Rkq3u70HyhVGyBS
+         jzgr9Pqs1JSQaoTrGTBGoYocHJ3Bo6JZogdqyKTwEPERvQ+QV8y9XGHS6FPHYTCeCQdV
+         BhE/TNoBT2shkOCXHucG7h7eusMuIyQdAxvYezkEj5cxk/hij/6mi2hSdHPzVy1AAN5O
+         NHD3qz3MdqmMO8ZOwVsx0UbSPBSHqrLHfuDddR7gH5VZIO7+78D4c4ZONhuPKASGx8q2
+         LcfIrdg8m0Q2KDWeC5Lw5SyTZA7TYMBfKFLH5vfuvaLeonygCHgUKYo1enOKS+EO0tz8
+         6k3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=KSgdYHWdyQE2DZIRIMQjAN7eUlp05ySgkkWzGXUXs9Y=;
-        b=ELImQUBoSegs9IfNr6/vyDCntl+Ng6n30Kmn/xsAXwFppmTI4uW4cbRhYvrSYE9kri
-         cqzEztBrtHyLxKgRKdtLI4ldmeEScz749p4/S13RqeXttHaqI/XBBCUlLfGhKIKVpse9
-         ZjqSkMe1WqZ2Tx+aOdgFJ7oLy1Wf9IWNFG1NpbNVlPF220WsyCm5mueXQfH0vPLyFQzk
-         xc3BO9P3Ws2E3/+fA9AX5XPTrbM/D4j3W0tG+loYgwMClowPc4WKAEgqySj9c/VMb11J
-         2RYmALaOOuk5vpLR3U7ty/O8xoiqwT11YRHKkxxzz4F4zdSzJwZs0KqJA51dC7owUy7u
-         JaZA==
-X-Gm-Message-State: AOAM533Ke7KZ2NnGBI72htCWoLno4ENLMeN7m74uNZxjMt6NiZxZBUUV
-        kBoqtZVBwpP7guzfpZM1YaOmwUlDPzQtkKV9
-X-Google-Smtp-Source: ABdhPJwMg4pFd0P7J8rawWcKACtiCqP1kiW2/6sQyM4LzO/8dngN7qRFh8Lcd1lv8iRSDBff5qvf1A==
-X-Received: by 2002:a92:c8c4:: with SMTP id c4mr12619460ilq.287.1600097237197;
-        Mon, 14 Sep 2020 08:27:17 -0700 (PDT)
+        bh=ehciV16R0PLZncUz8yW56qMCE2FjEMwn4smZK9F3bfA=;
+        b=o7R8zx8+md8tnQK8mNFNjISnKfHAIIEkN1uRnOTEJhajltTzVfyQ3vJ0a6gbykCXMG
+         UjiXFdA/dLyBFzspRmj4CN6zEy4RoD445H30waPPa2obyZRH8F8+4t3TJL3vchOvOd9z
+         ZN3in0SHrD3+n9h0e2U4Qzxnr/m0vgLtQLsgEH5rQ4ilY7kXlPIGKjuU4A2kEyY7fpbU
+         Lbh+3cyQ0TBlKa+ErqCyR8E7yb5GF9tTdYvWywUqFU6rACs2hlbSWMg21cEhTXRoJyw3
+         9Ym3ZMF0FdkWx4XX1La5PBxsuhQioGXs1ne7P+ir9OtCCaiG9iuDeUJkS7wk8m50TSYd
+         /MSA==
+X-Gm-Message-State: AOAM530M3FNvECj8n70hB/EojV/7nVpHw1puVbkWOaUl6lRCtGvALlVd
+        K5mLSyfZQiz8HJ42N7iT3fnePLknZ8NNdorR
+X-Google-Smtp-Source: ABdhPJzhyHpUFE+5v1Eq1JhVd4SDn2ECe9+72b3abkQtDiBzsb2XddZlV2OlKIKj3kRLVRhtyBkVww==
+X-Received: by 2002:a6b:7717:: with SMTP id n23mr11853457iom.151.1600097907051;
+        Mon, 14 Sep 2020 08:38:27 -0700 (PDT)
 Received: from [192.168.1.10] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id u9sm5819067iow.26.2020.09.14.08.27.16
+        by smtp.gmail.com with ESMTPSA id k16sm6050385ioc.15.2020.09.14.08.38.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Sep 2020 08:27:16 -0700 (PDT)
-Subject: Re: IO_URING on XFS regression bug report
-To:     Zorro Lang <zlang@redhat.com>, io-uring@vger.kernel.org
-References: <20200914074559.GM2937@dhcp-12-102.nay.redhat.com>
+        Mon, 14 Sep 2020 08:38:26 -0700 (PDT)
+Subject: Re: [PATCH liburing 3/3] man/io_uring_enter.2: add EACCES and EBADFD
+ errors
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org
+References: <20200911133408.62506-1-sgarzare@redhat.com>
+ <20200911133408.62506-4-sgarzare@redhat.com>
+ <d38ae8b4-cb3e-3ebf-63e3-08a1f24ddcbb@kernel.dk>
+ <20200914080537.2ybouuxtjvckorc2@steredhat>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9d3c38bc-302c-5eb6-c772-7072a75eaf74@kernel.dk>
-Date:   Mon, 14 Sep 2020 09:27:15 -0600
+Message-ID: <dc01a74f-db66-0da9-20b7-b6c6e6cb1640@kernel.dk>
+Date:   Mon, 14 Sep 2020 09:38:25 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200914074559.GM2937@dhcp-12-102.nay.redhat.com>
+In-Reply-To: <20200914080537.2ybouuxtjvckorc2@steredhat>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,68 +71,68 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/14/20 1:45 AM, Zorro Lang wrote:
-> Hi,
+On 9/14/20 2:05 AM, Stefano Garzarella wrote:
+> On Fri, Sep 11, 2020 at 09:36:02AM -0600, Jens Axboe wrote:
+>> On 9/11/20 7:34 AM, Stefano Garzarella wrote:
+>>> These new errors are added with the restriction series recently
+>>> merged in io_uring (Linux 5.10).
+>>>
+>>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>>> ---
+>>>  man/io_uring_enter.2 | 18 ++++++++++++++++++
+>>>  1 file changed, 18 insertions(+)
+>>>
+>>> diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+>>> index 5443d5f..4773dfd 100644
+>>> --- a/man/io_uring_enter.2
+>>> +++ b/man/io_uring_enter.2
+>>> @@ -842,6 +842,16 @@ is set appropriately.
+>>>  .PP
+>>>  .SH ERRORS
+>>>  .TP
+>>> +.B EACCES
+>>> +The
+>>> +.I flags
+>>> +field or
+>>> +.I opcode
+>>> +in a submission queue entry is not allowed due to registered restrictions.
+>>> +See
+>>> +.BR io_uring_register (2)
+>>> +for details on how restrictions work.
+>>> +.TP
+>>>  .B EAGAIN
+>>>  The kernel was unable to allocate memory for the request, or otherwise ran out
+>>>  of resources to handle it. The application should wait for some completions and
+>>> @@ -861,6 +871,14 @@ field in the submission queue entry is invalid, or the
+>>>  flag was set in the submission queue entry, but no files were registered
+>>>  with the io_uring instance.
+>>>  .TP
+>>> +.B EBADFD
+>>> +The
+>>> +.I fd
+>>> +field in the submission queue entry is valid, but the io_uring ring is not
+>>> +in the right state (enabled). See
+>>> +.BR io_uring_register (2)
+>>> +for details on how to enable the ring.
+>>> +.TP
+>>
+>> I actually think some of this needs general updating. io_uring_enter()
+>> will not return an error on behalf of an sqe, it'll only return an error
+>> if one happened outside the context of a specific sqe. Any error
+>> specific to an sqe will generate a cqe with the result.
 > 
-> Due to I don't know how to report a bug to io_uring maillist, I didn't find a
-> proper bug component for io_uring. So I have to send this email directly to
-> report this bug:
+> Mmm, right.
 > 
->   https://bugzilla.kernel.org/show_bug.cgi?id=209243
+> For example in this case, EACCES is returned by a cqe and EBADFD is
+> returned by io_uring_enter().
 > 
-> Due to it's reproducible on XFS+LVM, but the first failed commit is an io_uring
-> patch:
-> 
->   bcf5a06304d6 ("io_uring: support true async buffered reads, if file provides it")
-> 
-> So I'm not sure if it's an io_uring bug or xfs bug, so report to io_uring@ list to
-> help to analyze this failure.
+> Should we create 2 error sections?
 
-Can you try with the below?
+Yep, I think we should. One that describes that io_uring_enter() would
+return in terms of errors, and one that describes cqe->res returns.
 
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 892a8dcf92c7..6c6aa37031d5 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2293,13 +2293,17 @@ static bool io_resubmit_prep(struct io_kiocb *req, int error)
- 		goto end_req;
- 	}
- 
--	ret = io_import_iovec(rw, req, &iovec, &iter, false);
--	if (ret < 0)
--		goto end_req;
--	ret = io_setup_async_rw(req, iovec, inline_vecs, &iter, false);
--	if (!ret)
-+	if (!req->io) {
-+		ret = io_import_iovec(rw, req, &iovec, &iter, false);
-+		if (ret < 0)
-+			goto end_req;
-+		ret = io_setup_async_rw(req, iovec, inline_vecs, &iter, false);
-+		if (!ret)
-+			return true;
-+		kfree(iovec);
-+	} else {
- 		return true;
--	kfree(iovec);
-+	}
- end_req:
- 	req_set_fail_links(req);
- 	io_req_complete(req, ret);
-@@ -3096,6 +3100,13 @@ static bool io_rw_should_retry(struct io_kiocb *req)
- 	if (file_can_poll(req->file) || !(req->file->f_mode & FMODE_BUF_RASYNC))
- 		return false;
- 
-+	/*
-+	 * If we can't do nonblock submit without -EAGAIN direct return,
-+	 * then don't use the retry based approach.
-+	 */
-+	if (!io_file_supports_async(req->file, READ))
-+		return false;
-+
- 	wait->wait.func = io_async_buf_func;
- 	wait->wait.private = req;
- 	wait->wait.flags = 0;
+Are you up for this? Would be a great change, making it a lot more
+accurate.
 
 -- 
 Jens Axboe

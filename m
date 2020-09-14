@@ -2,144 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFEFD26919E
-	for <lists+io-uring@lfdr.de>; Mon, 14 Sep 2020 18:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8109226918C
+	for <lists+io-uring@lfdr.de>; Mon, 14 Sep 2020 18:31:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbgINQdT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Sep 2020 12:33:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:38470 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726174AbgINQDT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Sep 2020 12:03:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600099371;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=P4EcRJzHBVhG1AHJYDfhpMOIq/bL3fXRmHwzcE2CSEM=;
-        b=Y5VgxWkLap0b0opLPTFc6itOzUi3/SYaXTovYDENJqK4ULVh/IbQ4YbUZZu0HiVW/yE2rv
-        S8F1mZjXpbM5EBfjp8Xh5PUjsPjQz532xKgWUoIfCN7ypgXaWzQrmLhYSSkcl6Ekz4oSc/
-        kzUnmXrTYAaW67BXAgD7SmMgx4N8bEA=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-592-UxjTy176N-WMZInuQFozSQ-1; Mon, 14 Sep 2020 12:02:49 -0400
-X-MC-Unique: UxjTy176N-WMZInuQFozSQ-1
-Received: by mail-wr1-f69.google.com with SMTP id f18so37773wrv.19
-        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 09:02:49 -0700 (PDT)
+        id S1725999AbgINQbh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Sep 2020 12:31:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56092 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbgINQ0H (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Sep 2020 12:26:07 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA75C061788
+        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 09:26:06 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id a8so166850ilk.1
+        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 09:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RFnfZytjklQ+7pYys60IfyrHOHTrYbp9e4RL+6PGCH4=;
+        b=Gg6EIZdBLOL/uaIGKl7tzehKzT5MknOK9GS94ViLY5cfORngsyCcJUIUvgtYrx57xS
+         +vIMeytvZyqE6FDZXueSefO3C3ZB0suCi/DiGQV7l8MnnIZ2YbhnEzYMOxLJP5nntxJC
+         X2Ad6ragY++Wq2JuDJ+TgXmEYiNufb3h0iMEoxYX4P+xwluSJCITt5tprOF8vpz01gMP
+         9DhAm1xlYXF998SxqqfGpHCo0AKA5FmWTH2p8H0a46GZh8wx7iEKDYZPxc4BfXySfCPh
+         Luyh4+8i15RlDNLm6KqaqoD5kL/2JMAH5rvzCEsWK+fOF4RZ+rrWoc99Epx13WfzUd29
+         LV5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=P4EcRJzHBVhG1AHJYDfhpMOIq/bL3fXRmHwzcE2CSEM=;
-        b=t0+Ofd5Mjok5uWbOmlSqsg5QHsd3iD61b4Xno4O1IGHosdz1AA0GqpOmwqESiX7eDa
-         lAtUXoP0Y6/PlfeLkc0Q1sVq+s1BOeRFe4szZXSppOg/p5MHCKg2oA34GgNVFmjiG/0q
-         M6iEZHnwYGy0P/FoifB8IsPAfYQMhESf3NfOH2is3qgoKCxDf2u1r4YVw99EeZv/OPBO
-         28XaU9ka/HdqHTwZ4Q/j5aLQEl8tSfffZxSIWyXaDZSp/JQrvl3ecebADE6VL8gz6D1o
-         rASuporDlb8A2B9aQ9T5RxTJoIGIMUM2A1xd8k4xsu2KK4x9jl26BD89v02O/LYWfM7N
-         Qd3w==
-X-Gm-Message-State: AOAM533wFRS30S7nDDSxoyKqHeIIEx1xMdpnws7ot1gLaVWenkX5gH/w
-        wI3UbAMeiVJK9VBtFOdXLJUsNyXoyJulvYSL2BoigVULg4KhMwGko7/TObprFbAeTlD4+GuapQ6
-        FiuVXx8WQ/EMI2+KnJfE=
-X-Received: by 2002:adf:e2c7:: with SMTP id d7mr16590262wrj.110.1600099367650;
-        Mon, 14 Sep 2020 09:02:47 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxWv8TNQN2mFtmo8Hg2xtFYV0CSgU4qFBX0CF5Vzsebbgi5NbuTSg8FAOuECiXvau4q8ieo6g==
-X-Received: by 2002:adf:e2c7:: with SMTP id d7mr16590232wrj.110.1600099367380;
-        Mon, 14 Sep 2020 09:02:47 -0700 (PDT)
-Received: from steredhat (host-79-51-197-141.retail.telecomitalia.it. [79.51.197.141])
-        by smtp.gmail.com with ESMTPSA id n10sm7467444wmk.7.2020.09.14.09.02.46
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RFnfZytjklQ+7pYys60IfyrHOHTrYbp9e4RL+6PGCH4=;
+        b=igaTS1nWPeUvP/mrYdXgXlsifcX5HBYhd96bc1wyzbQjyjdEYNILdU52bErHNA8Dw8
+         8IowO1GogmTnrOij/VM9gNCgime5avxRYbPnRYLx+I8IU5QNzzBBERmanr3HnY1rMpWw
+         G1pt0yZCD+sLPxHtztzHFFOH3RH6+xk40ucFa+33G1EqtLpa+/YNkZbbIfSrJUNqgDfv
+         4BJ5lw5ao25DZWJdFFTHYrp0tjTNrYbGVbGpKpQWZYjgS4XRwBSOVoY/Vx4ji1hhmLW3
+         RRpgIIHFNrOj3Y0yxWV5Br7Ad9yiaV7SeWsXwMWGvWehN6P7+vNDav1cSHb8m62Qq9ut
+         SmVQ==
+X-Gm-Message-State: AOAM5322Xrqi1VS8/j0tRisEqNqJTspMK5/dNVET1LscYFe9kDXbILuV
+        2970BvI3wVuR+LBESIFfj7CYJ2a6wge0NvOV
+X-Google-Smtp-Source: ABdhPJzzVaDPC33B0FvgIpwE3PPGcUDRmwbLrGzu02v5rvqxXO74/MYuZwXgk60ZXe0gWRUhcTP9Kg==
+X-Received: by 2002:a92:105:: with SMTP id 5mr12070351ilb.36.1600100764805;
+        Mon, 14 Sep 2020 09:26:04 -0700 (PDT)
+Received: from x1.localdomain ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id o12sm7032261ilq.29.2020.09.14.09.26.04
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 09:02:46 -0700 (PDT)
-Date:   Mon, 14 Sep 2020 18:02:43 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org
-Subject: Re: [PATCH liburing 3/3] man/io_uring_enter.2: add EACCES and EBADFD
- errors
-Message-ID: <20200914160243.o4vldl5isqktrvdd@steredhat>
-References: <20200911133408.62506-1-sgarzare@redhat.com>
- <20200911133408.62506-4-sgarzare@redhat.com>
- <d38ae8b4-cb3e-3ebf-63e3-08a1f24ddcbb@kernel.dk>
- <20200914080537.2ybouuxtjvckorc2@steredhat>
- <dc01a74f-db66-0da9-20b7-b6c6e6cb1640@kernel.dk>
+        Mon, 14 Sep 2020 09:26:04 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET 0/5] io_uring fixes for 5.9
+Date:   Mon, 14 Sep 2020 10:25:50 -0600
+Message-Id: <20200914162555.1502094-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc01a74f-db66-0da9-20b7-b6c6e6cb1640@kernel.dk>
+Content-Transfer-Encoding: 8bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 09:38:25AM -0600, Jens Axboe wrote:
-> On 9/14/20 2:05 AM, Stefano Garzarella wrote:
-> > On Fri, Sep 11, 2020 at 09:36:02AM -0600, Jens Axboe wrote:
-> >> On 9/11/20 7:34 AM, Stefano Garzarella wrote:
-> >>> These new errors are added with the restriction series recently
-> >>> merged in io_uring (Linux 5.10).
-> >>>
-> >>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> >>> ---
-> >>>  man/io_uring_enter.2 | 18 ++++++++++++++++++
-> >>>  1 file changed, 18 insertions(+)
-> >>>
-> >>> diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
-> >>> index 5443d5f..4773dfd 100644
-> >>> --- a/man/io_uring_enter.2
-> >>> +++ b/man/io_uring_enter.2
-> >>> @@ -842,6 +842,16 @@ is set appropriately.
-> >>>  .PP
-> >>>  .SH ERRORS
-> >>>  .TP
-> >>> +.B EACCES
-> >>> +The
-> >>> +.I flags
-> >>> +field or
-> >>> +.I opcode
-> >>> +in a submission queue entry is not allowed due to registered restrictions.
-> >>> +See
-> >>> +.BR io_uring_register (2)
-> >>> +for details on how restrictions work.
-> >>> +.TP
-> >>>  .B EAGAIN
-> >>>  The kernel was unable to allocate memory for the request, or otherwise ran out
-> >>>  of resources to handle it. The application should wait for some completions and
-> >>> @@ -861,6 +871,14 @@ field in the submission queue entry is invalid, or the
-> >>>  flag was set in the submission queue entry, but no files were registered
-> >>>  with the io_uring instance.
-> >>>  .TP
-> >>> +.B EBADFD
-> >>> +The
-> >>> +.I fd
-> >>> +field in the submission queue entry is valid, but the io_uring ring is not
-> >>> +in the right state (enabled). See
-> >>> +.BR io_uring_register (2)
-> >>> +for details on how to enable the ring.
-> >>> +.TP
-> >>
-> >> I actually think some of this needs general updating. io_uring_enter()
-> >> will not return an error on behalf of an sqe, it'll only return an error
-> >> if one happened outside the context of a specific sqe. Any error
-> >> specific to an sqe will generate a cqe with the result.
-> > 
-> > Mmm, right.
-> > 
-> > For example in this case, EACCES is returned by a cqe and EBADFD is
-> > returned by io_uring_enter().
-> > 
-> > Should we create 2 error sections?
-> 
-> Yep, I think we should. One that describes that io_uring_enter() would
-> return in terms of errors, and one that describes cqe->res returns.
+Various fixes that were found through testing and inspection. Some by
+myself, others reported.
 
-Yeah, that would be much better!
+-- 
+Jens Axboe
 
-> 
-> Are you up for this? Would be a great change, making it a lot more
-> accurate.
-
-Sure! I'll prepare a patch with this change, and I'll also try to catch
-all possible return values, then I'll rebase this series on top of that.
-
-Thanks,
-Stefano
 

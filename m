@@ -2,150 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8B22269B41
-	for <lists+io-uring@lfdr.de>; Tue, 15 Sep 2020 03:35:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F33326A795
+	for <lists+io-uring@lfdr.de>; Tue, 15 Sep 2020 16:54:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726034AbgIOBfw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Sep 2020 21:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56270 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbgIOBfu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Sep 2020 21:35:50 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D7AC06174A
-        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 18:35:50 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id fa1so925828pjb.0
-        for <io-uring@vger.kernel.org>; Mon, 14 Sep 2020 18:35:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/hyiLfxwKKD7LHwDVBxJisVr6uWuWEUmiDno8KhH8LY=;
-        b=M10GlsiJnTZjSzHKEmgPGpWZn1EemhaR8PKcDOyrwLEmnkn7pvvCsOvcsa0+9z/qJq
-         /bzUcGIvdu7DLhXp0HN/sIQ07x5sBpio5ReSGiRU2udb5B4tJ3YTT+3qb0CPHQVVv1XR
-         d4PqgroW6JP8oRBfDkukLv0Z99SVOdRlySegvCqUfTB2XxLnOCHkfizNaZUEwpThgdbM
-         kKvvkm3K/aId80ofgrNGUpxkEBz94MHD4zD79zXlAJNExRaY6WuqUXOmgHBxcFxQZXLv
-         rXdpvsVZw0nnTZp4Bgy5O5o6L3NadZDSmvOkB2HRaWjyKewCfSFeBWvioxoY3p141JJo
-         6Uow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/hyiLfxwKKD7LHwDVBxJisVr6uWuWEUmiDno8KhH8LY=;
-        b=fO5mZ9kBeQCcDzT4jr1q057hnQyXLXwGfZ+6O3XMjZYekXmFYMRWeorN6aumUw4pl9
-         88xARrA/ALY8FOVsSQ44haze+IZ4XZ4/NQcvHknUxGfNIoC0RB1YIHQMnGzTXrztPhtw
-         26iK0gYTIORsb/+zw+CyzbRx6Fav62SFwoSxvnkErYElY1+EQTCVc0uvab8XFj96JbwX
-         nSX8+LYj4tFVzQaOgCTQRkcT9IwE5LICGmUZwYXwsFBbiobtCBx9Yi7BsFiixPyBjqeM
-         VPcJsog+RAH9i3uk31R2BEUfsfiryMiYf3MtY1HdcsyvaaYe12E4T4pKv4z5FPcdYkRW
-         YcBg==
-X-Gm-Message-State: AOAM532QayMvky2RtR6CMadOSC2ZCcz4B+oSMWLCacU0RxFEAsrn5zZT
-        voxRkV2iaM6/jrwfckRUQPU+DlksqFEdWaZL
-X-Google-Smtp-Source: ABdhPJyBbX7l9YeJvC7ZsJcJ0jbYVl3K1B39vz8ECIr/jILcQAPUQOR3So3zps7Nooq8PKfwwMWvWg==
-X-Received: by 2002:a17:90a:bc8d:: with SMTP id x13mr1957351pjr.229.1600133749741;
-        Mon, 14 Sep 2020 18:35:49 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id y202sm11714540pfc.179.2020.09.14.18.35.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Sep 2020 18:35:49 -0700 (PDT)
-Subject: Re: [PATCH liburing 3/3] man/io_uring_enter.2: add EACCES and EBADFD
- errors
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     io-uring@vger.kernel.org
-References: <20200911133408.62506-1-sgarzare@redhat.com>
- <20200911133408.62506-4-sgarzare@redhat.com>
- <d38ae8b4-cb3e-3ebf-63e3-08a1f24ddcbb@kernel.dk>
- <20200914080537.2ybouuxtjvckorc2@steredhat>
- <dc01a74f-db66-0da9-20b7-b6c6e6cb1640@kernel.dk>
- <20200914160243.o4vldl5isqktrvdd@steredhat>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5796f215-f259-6833-ae39-e3a341cedf8f@kernel.dk>
-Date:   Mon, 14 Sep 2020 19:35:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727047AbgIOOyX convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Tue, 15 Sep 2020 10:54:23 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:37852 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727269AbgIOOyP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Sep 2020 10:54:15 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-170-Vmfa8msMO7ujZNhOLACOTA-1; Tue, 15 Sep 2020 15:53:56 +0100
+X-MC-Unique: Vmfa8msMO7ujZNhOLACOTA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 15 Sep 2020 15:53:55 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 15 Sep 2020 15:53:55 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH 0/9 next] Changes to code that reads iovec from userspace
+Thread-Topic: [PATCH 0/9 next] Changes to code that reads iovec from userspace
+Thread-Index: AdaLbm9Qca9t5oGhTxOmCTQi7ZvXMg==
+Date:   Tue, 15 Sep 2020 14:53:55 +0000
+Message-ID: <a7d3fd12c89241ebba0310d1e65d2449@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-In-Reply-To: <20200914160243.o4vldl5isqktrvdd@steredhat>
-Content-Type: text/plain; charset=utf-8
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0.003
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: io-uring-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/14/20 10:02 AM, Stefano Garzarella wrote:
-> On Mon, Sep 14, 2020 at 09:38:25AM -0600, Jens Axboe wrote:
->> On 9/14/20 2:05 AM, Stefano Garzarella wrote:
->>> On Fri, Sep 11, 2020 at 09:36:02AM -0600, Jens Axboe wrote:
->>>> On 9/11/20 7:34 AM, Stefano Garzarella wrote:
->>>>> These new errors are added with the restriction series recently
->>>>> merged in io_uring (Linux 5.10).
->>>>>
->>>>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
->>>>> ---
->>>>>  man/io_uring_enter.2 | 18 ++++++++++++++++++
->>>>>  1 file changed, 18 insertions(+)
->>>>>
->>>>> diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
->>>>> index 5443d5f..4773dfd 100644
->>>>> --- a/man/io_uring_enter.2
->>>>> +++ b/man/io_uring_enter.2
->>>>> @@ -842,6 +842,16 @@ is set appropriately.
->>>>>  .PP
->>>>>  .SH ERRORS
->>>>>  .TP
->>>>> +.B EACCES
->>>>> +The
->>>>> +.I flags
->>>>> +field or
->>>>> +.I opcode
->>>>> +in a submission queue entry is not allowed due to registered restrictions.
->>>>> +See
->>>>> +.BR io_uring_register (2)
->>>>> +for details on how restrictions work.
->>>>> +.TP
->>>>>  .B EAGAIN
->>>>>  The kernel was unable to allocate memory for the request, or otherwise ran out
->>>>>  of resources to handle it. The application should wait for some completions and
->>>>> @@ -861,6 +871,14 @@ field in the submission queue entry is invalid, or the
->>>>>  flag was set in the submission queue entry, but no files were registered
->>>>>  with the io_uring instance.
->>>>>  .TP
->>>>> +.B EBADFD
->>>>> +The
->>>>> +.I fd
->>>>> +field in the submission queue entry is valid, but the io_uring ring is not
->>>>> +in the right state (enabled). See
->>>>> +.BR io_uring_register (2)
->>>>> +for details on how to enable the ring.
->>>>> +.TP
->>>>
->>>> I actually think some of this needs general updating. io_uring_enter()
->>>> will not return an error on behalf of an sqe, it'll only return an error
->>>> if one happened outside the context of a specific sqe. Any error
->>>> specific to an sqe will generate a cqe with the result.
->>>
->>> Mmm, right.
->>>
->>> For example in this case, EACCES is returned by a cqe and EBADFD is
->>> returned by io_uring_enter().
->>>
->>> Should we create 2 error sections?
->>
->> Yep, I think we should. One that describes that io_uring_enter() would
->> return in terms of errors, and one that describes cqe->res returns.
-> 
-> Yeah, that would be much better!
-> 
->>
->> Are you up for this? Would be a great change, making it a lot more
->> accurate.
-> 
-> Sure! I'll prepare a patch with this change, and I'll also try to catch
-> all possible return values, then I'll rebase this series on top of that.
 
-Awesome! It'll be a really nice improvement.
+The canonical code to read iov[] from userspace is currently:
+	struct iovec iovstack[UIO_FASTIOV];
+	struct iovec *iov;
+	...
+	iov = iovstack;
+	rc = import_iovec(..., UIO_FASTIOV, &iov, &iter);
+	if (rc < 0)
+		return rc;
+	...
+	kfree(iov);
 
--- 
-Jens Axboe
+Note that the 'iov' parameter is used for two different things.
+On input it is an iov[] that can be used.
+On output it is an iov[] array that must be freed.
+
+If 'iovstack' is passed, the count is actually always UIO_FASTIOV (8)
+although in some places the array definition is in a different file
+(never mind function) from the constant used.
+
+import_iovec() itself is just a wrapper to rw_copy_check_uvector().
+So everything is passed through to a second function.
+Several items are 'passed by reference' - adding to the code paths.
+
+On success import_iovec() returned the transfer count.
+Only one caller looks at it, the count is also in iter.count.
+
+The new canonical code is:
+	struct iov_cache cache;
+	struct iovec *iov;
+	...
+	iov = iovec_import(..., &cache, &iter);
+	if (IS_ERR(iov))
+		return PTR_ERR(iov);
+	...
+	kfree(iov);
+
+Since 'struct iov_cache' is a fixed size there is no need to pass in
+a length (correct or not!). It can still be NULL (used by the scsi code).
+
+iovec_import() contains the code that used to be in rw_copy_check_uvector()
+and then sets up the iov_iter.
+
+rw_copy_check_uvector() is no more.
+The only other caller was in mm/process_vm_access.c when reading the
+iov[] for the target process addresses when copying from a different process.
+This can extract the iov[] from an extra 'struct iov_iter'.
+
+In passing I noticed an access_ok() call on each fragment.
+I hope this is just there to bail out early!
+It is also skipped in process_vm_rw(). I did a quick look but couldn't
+see an obvious equivalent check.
+
+I've only done minimal changes to fs/io_uring.c
+Once it has been converted to use iovec_import() the import_iovec()
+functions can be deleted.
+
+Patches 1, 2 and 3 need to be applied first.
+Patches 4 to 9 can be applied in any order.
+
+There should be measurable (if small) improvements to the recvmmsg() and
+sendmmsg() system calls.
+
+David Laight (9):
+  1) mm:process_vm_access Call import_iovec() instead of rw_copy_check_uvector()
+  2) fs: Move rw_copy_check_uvector() into lib/iov_iter.c and make static.
+  3) lib/iov_iter: Improved function for importing iovec[] from userpace.
+  4) fs/io_uring Don't use the return value from import_iovec().
+  5) scsi: Use iovec_import() instead of import_iovec().
+  6) security/keys: Use iovec_import() instead of import_iovec().
+  7) mm/process_vm_access: Use iovec_import() instead of import_iovec().
+  8) fs: Use iovec_import() instead of import_iovec().
+  9) net/socket: Use iovec_import() instead of import_iovec().
+
+ block/scsi_ioctl.c     |  14 ++-
+ drivers/scsi/sg.c      |  14 +--
+ fs/aio.c               |  34 +++---
+ fs/io_uring.c          |  21 ++--
+ fs/read_write.c        | 248 ++++++-----------------------------------
+ fs/splice.c            |  22 ++--
+ include/linux/compat.h |   6 -
+ include/linux/fs.h     |   5 -
+ include/linux/socket.h |  15 +--
+ include/linux/uio.h    |  14 +++
+ include/net/compat.h   |   5 +-
+ lib/iov_iter.c         | 200 +++++++++++++++++++++++++++++----
+ mm/process_vm_access.c |  82 +++++++-------
+ net/compat.c           |  17 ++-
+ net/socket.c           |  66 +++++------
+ security/keys/compat.c |  11 +-
+ security/keys/keyctl.c |  10 +-
+ 17 files changed, 386 insertions(+), 398 deletions(-)
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 

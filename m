@@ -2,43 +2,43 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C32726CB8F
-	for <lists+io-uring@lfdr.de>; Wed, 16 Sep 2020 22:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3299126CB82
+	for <lists+io-uring@lfdr.de>; Wed, 16 Sep 2020 22:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbgIPU3v (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Sep 2020 16:29:51 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:41891 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726988AbgIPRYN (ORCPT
+        id S1727177AbgIPU26 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Sep 2020 16:28:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:31653 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726981AbgIPRYN (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 16 Sep 2020 13:24:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600276999;
+        s=mimecast20190719; t=1600276996;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QS+wO1bOb/MZuessqndV980gLlA0r3NSlKNgcyqbDF8=;
-        b=h83x/N0zB2bxF/pwYlovSZvnHgZpeooSdFp5NpzmDzul47fuPErGCoJzdDsH47JeKFO0La
-        23GfKYhfcAyFsS5YrfE/ZsM6+v/W10KeKk2zSx8BjSGDRGhi2kZjvwaC/5t1ESySgXgbqu
-        PQIiE1wmXoCD2KXy7pJh/c7jiwMa1B4=
+        bh=idfy7Syf4ATJlYyYq2/4nEP2ORzJWyRGssBVYHwWpOI=;
+        b=bt4mdDFmeRQFNDRxC8YhmBHVySHTVhDrYIT0u5NR1sKhXqMwg3JnqvmMcPS/t+GXm87FJL
+        aMoCdxFaj1EDH1N67976yU9WYJ4bM34taPE1gQ11NqZ7GkW356tlWOlyGGYAxPJUZ0CZfv
+        lLe47tFPeTChaPpigBykPjsvDqAQzGU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-88-S2zDtxUwP0qPfPW2gHSa2Q-1; Wed, 16 Sep 2020 13:15:02 -0400
-X-MC-Unique: S2zDtxUwP0qPfPW2gHSa2Q-1
+ us-mta-310-o9IeegJIM1-JxV9HfxTM3Q-1; Wed, 16 Sep 2020 13:15:06 -0400
+X-MC-Unique: o9IeegJIM1-JxV9HfxTM3Q-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4D7D84E245;
-        Wed, 16 Sep 2020 17:14:53 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9DD7018C5233;
+        Wed, 16 Sep 2020 17:14:56 +0000 (UTC)
 Received: from bogon.redhat.com (ovpn-13-242.pek2.redhat.com [10.72.13.242])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9809860CC0;
-        Wed, 16 Sep 2020 17:14:52 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5370E60BFA;
+        Wed, 16 Sep 2020 17:14:55 +0000 (UTC)
 From:   Zorro Lang <zlang@redhat.com>
 To:     fstests@vger.kernel.org
 Cc:     io-uring@vger.kernel.org
-Subject: [PATCH 2/3] generic: fsx IO_URING soak tests
-Date:   Thu, 17 Sep 2020 01:14:42 +0800
-Message-Id: <20200916171443.29546-3-zlang@redhat.com>
+Subject: [PATCH 3/3] generic: IO_URING direct IO fsx test
+Date:   Thu, 17 Sep 2020 01:14:43 +0800
+Message-Id: <20200916171443.29546-4-zlang@redhat.com>
 In-Reply-To: <20200916171443.29546-1-zlang@redhat.com>
 References: <20200916171443.29546-1-zlang@redhat.com>
 MIME-Version: 1.0
@@ -49,59 +49,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-After fsx supports IO_URING read/write, add a test to do IO_URING
-soak test of fsx.
+After fsx supports IO_URING read/write, add IO_URING direct IO fsx
+test with different read/write size and concurrent buffered IO.
 
 Signed-off-by: Zorro Lang <zlang@redhat.com>
 ---
- common/rc             | 16 ++++++++++++
- tests/generic/609     | 58 +++++++++++++++++++++++++++++++++++++++++++
- tests/generic/609.out |  2 ++
+ tests/generic/610     | 52 +++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/610.out |  7 ++++++
  tests/generic/group   |  1 +
- 4 files changed, 77 insertions(+)
- create mode 100755 tests/generic/609
- create mode 100644 tests/generic/609.out
+ 3 files changed, 60 insertions(+)
+ create mode 100755 tests/generic/610
+ create mode 100644 tests/generic/610.out
 
-diff --git a/common/rc b/common/rc
-index aa5a7409..b6b39eba 100644
---- a/common/rc
-+++ b/common/rc
-@@ -1984,6 +1984,22 @@ _require_aiodio()
-     _require_odirect
- }
- 
-+# this test requires that the kernel supports IO_URING
-+_require_io_uring()
-+{
-+	$here/src/feature -R
-+	case $? in
-+	0)
-+		;;
-+	1)
-+		_notrun "kernel does not support IO_URING"
-+		;;
-+	*)
-+		_fail "unexpected error testing for IO_URING support"
-+		;;
-+	esac
-+}
-+
- # this test requires that a test program exists under src/
- # $1 - command (require)
- #
-diff --git a/tests/generic/609 b/tests/generic/609
+diff --git a/tests/generic/610 b/tests/generic/610
 new file mode 100755
-index 00000000..1d9b6fed
+index 00000000..fc3f4c2a
 --- /dev/null
-+++ b/tests/generic/609
-@@ -0,0 +1,58 @@
++++ b/tests/generic/610
+@@ -0,0 +1,52 @@
 +#! /bin/bash
 +# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2020 Red Hat Inc.  All Rights Reserved.
++# Copyright (c) 2020 YOUR NAME HERE.  All Rights Reserved.
 +#
-+# FS QA Test 609
++# FS QA Test 610
 +#
-+# IO_URING soak buffered fsx test
++# IO_URING direct IO fsx test
 +#
 +seq=`basename $0`
 +seqres=$RESULT_DIR/$seq
@@ -126,50 +98,49 @@ index 00000000..1d9b6fed
 +rm -f $seqres.full
 +
 +# real QA test starts here
-+
-+# Modify as appropriate.
 +_supported_fs generic
 +_supported_os Linux
 +_require_test
++_require_odirect
 +_require_io_uring
 +
-+# Run fsx for a million ops or more
-+nr_ops=$((100000 * TIME_FACTOR))
-+op_sz=$((128000 * LOAD_FACTOR))
-+file_sz=$((600000 * LOAD_FACTOR))
-+fsx_file=$TEST_DIR/fsx.$seq
++psize=`$here/src/feature -s`
++bsize=`_min_dio_alignment $TEST_DEV`
++run_fsx -S 0 -U -N 20000           -l 600000 -r PSIZE -w BSIZE -Z -R -W
++run_fsx -S 0 -U -N 20000 -o 8192   -l 600000 -r PSIZE -w BSIZE -Z -R -W
++run_fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -R -W
 +
-+fsx_args=(-S 0)
-+fsx_args+=(-U)
-+fsx_args+=(-q)
-+fsx_args+=(-N $nr_ops)
-+fsx_args+=(-p $((nr_ops / 100)))
-+fsx_args+=(-o $op_sz)
-+fsx_args+=(-l $file_sz)
-+
-+run_fsx "${fsx_args[@]}" | sed -e '/^fsx.*/d'
++# change readbdy/writebdy to double page size
++psize=$((psize * 2))
++run_fsx -S 0 -U -N 20000           -l 600000 -r PSIZE -w PSIZE -Z -R -W
++run_fsx -S 0 -U -N 20000 -o 256000 -l 600000 -r PSIZE -w PSIZE -Z -R -W
++run_fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -W
 +
 +# success, all done
-+echo "Silence is golden"
 +status=0
 +exit
-diff --git a/tests/generic/609.out b/tests/generic/609.out
+diff --git a/tests/generic/610.out b/tests/generic/610.out
 new file mode 100644
-index 00000000..0d75b384
+index 00000000..97ad41a3
 --- /dev/null
-+++ b/tests/generic/609.out
-@@ -0,0 +1,2 @@
-+QA output created by 609
-+Silence is golden
++++ b/tests/generic/610.out
+@@ -0,0 +1,7 @@
++QA output created by 610
++fsx -S 0 -U -N 20000 -l 600000 -r PSIZE -w BSIZE -Z -R -W
++fsx -S 0 -U -N 20000 -o 8192 -l 600000 -r PSIZE -w BSIZE -Z -R -W
++fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -R -W
++fsx -S 0 -U -N 20000 -l 600000 -r PSIZE -w PSIZE -Z -R -W
++fsx -S 0 -U -N 20000 -o 256000 -l 600000 -r PSIZE -w PSIZE -Z -R -W
++fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -W
 diff --git a/tests/generic/group b/tests/generic/group
-index aa969bcb..cf50f4a1 100644
+index cf50f4a1..60280dc2 100644
 --- a/tests/generic/group
 +++ b/tests/generic/group
-@@ -611,3 +611,4 @@
- 606 auto attr quick dax
+@@ -612,3 +612,4 @@
  607 auto attr quick dax
  608 auto attr quick dax
-+609 auto rw io_uring
+ 609 auto rw io_uring
++610 auto rw io_uring
 -- 
 2.20.1
 

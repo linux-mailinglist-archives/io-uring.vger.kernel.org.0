@@ -2,67 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FCDF26D0BD
-	for <lists+io-uring@lfdr.de>; Thu, 17 Sep 2020 03:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B283E26D20D
+	for <lists+io-uring@lfdr.de>; Thu, 17 Sep 2020 06:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbgIQBmK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Sep 2020 21:42:10 -0400
-Received: from mail-io1-f80.google.com ([209.85.166.80]:33624 "EHLO
-        mail-io1-f80.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbgIQBmJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Sep 2020 21:42:09 -0400
-Received: by mail-io1-f80.google.com with SMTP id l22so640466iol.0
-        for <io-uring@vger.kernel.org>; Wed, 16 Sep 2020 18:42:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=/sygnsQByh+EwXCfZR6Do2whKxLsSoSrY8B6J/yTUtY=;
-        b=KeNV1IG6SADDtV5cNJV5rKnOiB/eAPuKig8CzyzKogMfPhyfxDLRxzwO/9vR8BzKnV
-         3/4WrCwTRQCCILa0o/p4GOuq9TXahSLKy3BnAHtKNMqJ9zZlQ6mmIHfRAjKjwypFU01a
-         fHCjUHze47jWhAyBOx5mauglB3ufruYXWAd7CXJyC0DpjguIyJqLRhwI9LZaahJah8XW
-         dGpprSETNb8WkWNEVLur8/L9V7An8CihhurJhQJ1mA2gptqyoBLOpR4x7FMBP8zv4pJ7
-         JqTbBk5aX3lG8hXzLJtAoR8Abd8dir/GFoBWO/mzl5O42IZHDlnRdQyMv+kRB++a6j0y
-         Bt8Q==
-X-Gm-Message-State: AOAM533MPVSXzEUi3s6EMb6XIT8XasCnbooKdBillNnD1aCt/EDbOUF8
-        2qwax+8B4HNiNBYBgofR6J5EJE/VpeBbUY9AfuuRpHcEs0lV
-X-Google-Smtp-Source: ABdhPJxVMb+uOEerKF5s9Gb1ikE6JGsTujv7BAzkTlHPxkcCj/j3pCJ5o+iyWmzehBveVDnI38KnOrlXHDSc07kAYD3TL0Ym9yYi
+        id S1725886AbgIQEHN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Sep 2020 00:07:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20152 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725858AbgIQEHM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Sep 2020 00:07:12 -0400
+X-Greylist: delayed 848 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 00:07:11 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600315630;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zRnjsjM+bZcokNABizcWKx42JBN6OfYS2zb31dj0Zo0=;
+        b=Y5KQ/mSP5U+1PZXAY/bWL55dKC1BWZxybf8BFxRLVpktn1HNZpWZGJWj5YF0DLprNbvlZs
+        jpNkFc3AvDokv8KUWTkj0VJFFy0GoHqhOKcFWf7bN8qZ7VSzuJl61U6etNpIhGQDkF3Ppb
+        kBeRRoxmRIMt/7AioezdBMg8VfHFCwA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-240-s_z3h0ZSMiOQtw3PLgPB8A-1; Wed, 16 Sep 2020 23:51:48 -0400
+X-MC-Unique: s_z3h0ZSMiOQtw3PLgPB8A-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 49B52427F2;
+        Thu, 17 Sep 2020 03:51:47 +0000 (UTC)
+Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B834E10021AA;
+        Thu, 17 Sep 2020 03:51:46 +0000 (UTC)
+Date:   Thu, 17 Sep 2020 12:05:47 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     fstests@vger.kernel.org
+Cc:     io-uring@vger.kernel.org
+Subject: Re: [PATCH 0/3] src/feature: add IO_URING feature checking
+Message-ID: <20200917040546.GO2937@dhcp-12-102.nay.redhat.com>
+Mail-Followup-To: fstests@vger.kernel.org, io-uring@vger.kernel.org
+References: <20200916122327.398-1-zlang@redhat.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:6607:: with SMTP id k7mr24979424jac.91.1600306928703;
- Wed, 16 Sep 2020 18:42:08 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 18:42:08 -0700
-In-Reply-To: <000000000000391eaf05ac87b74d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000004632a05af787ebf@google.com>
-Subject: Re: INFO: task hung in io_uring_flush
-From:   syzbot <syzbot+6338dcebf269a590b668@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200916122327.398-1-zlang@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+On Wed, Sep 16, 2020 at 08:23:24PM +0800, Zorro Lang wrote:
+> This patchset bases on https://patchwork.kernel.org/cover/11769847/, which
+> makes xfstests fsstress and fsx supports IO_URING.
+> 
+> The io_uring IOs in fsstress will be run automatically when fsstress get
+> running. But fsx need a special option '-U' to run IO_URING read/write, so
+> add two new cases to xfstests to do fsx buffered and direct IO IO_URING
+> test.
+> 
+> [1/3] new helper to require io_uring feature
+> [2/3] fsx buffered IO io_uring test
+> [3/3] fsx direct IO io_uring test
+> 
+> And the [2/3] just found an io_uring regression bug (need LVM TEST_DEV):
+> https://bugzilla.kernel.org/show_bug.cgi?id=209243
+> 
+> Feel free to tell me, if you have more suggestions to test io_uring on
+> filesystem.
+> 
+> Thanks,
+> Zorro
 
-commit b7ddce3cbf010edbfac6c6d8cc708560a7bcd7a4
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Sat Sep 5 21:45:14 2020 +0000
+Err... Sorry about 3 duplicate patchset. I tried to sent this patchset 3 times
+yesterday, but all failed, and I got feedback from server:
+  "The message you sent to fstests@vger.kernel.org hasn't been delivered yet due to: Communications error."
 
-    io_uring: fix cancel of deferred reqs with ->files
+I thought these emails have been abandoned, never know they're delayed. Please
+only review the last patchset of these duplicate things.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=173d9b0d900000
-start commit:   9123e3a7 Linux 5.9-rc1
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3d400a47d1416652
-dashboard link: https://syzkaller.appspot.com/bug?extid=6338dcebf269a590b668
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1573f116900000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=144d3072900000
+Thanks,
+Zorro
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> 
 
-#syz fix: io_uring: fix cancel of deferred reqs with ->files
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection

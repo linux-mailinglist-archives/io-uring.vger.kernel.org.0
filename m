@@ -2,28 +2,27 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 10288270E98
-	for <lists+io-uring@lfdr.de>; Sat, 19 Sep 2020 16:31:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4370B270EA5
+	for <lists+io-uring@lfdr.de>; Sat, 19 Sep 2020 16:54:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgISObG convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Sat, 19 Sep 2020 10:31:06 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:55240 "EHLO
+        id S1726539AbgISOyQ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Sat, 19 Sep 2020 10:54:16 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:49258 "EHLO
         eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726481AbgISObG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 19 Sep 2020 10:31:06 -0400
+        by vger.kernel.org with ESMTP id S1726491AbgISOyQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 19 Sep 2020 10:54:16 -0400
 Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
  TLS) by relay.mimecast.com with ESMTP id
- uk-mta-281-bAjbsE6rN1eTAY15huzJqA-1; Sat, 19 Sep 2020 15:24:11 +0100
-X-MC-Unique: bAjbsE6rN1eTAY15huzJqA-1
+ uk-mta-123-Q8cAoOVtN9-3ia4vwC15wg-1; Sat, 19 Sep 2020 15:53:09 +0100
+X-MC-Unique: Q8cAoOVtN9-3ia4vwC15wg-1
 Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
  AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Sat, 19 Sep 2020 15:24:10 +0100
+ Server (TLS) id 15.0.1347.2; Sat, 19 Sep 2020 15:53:08 +0100
 Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
  AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Sat, 19 Sep 2020 15:24:10 +0100
+ Sat, 19 Sep 2020 15:53:08 +0100
 From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
+To:     'Al Viro' <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
 CC:     Andrew Morton <akpm@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
@@ -47,13 +46,16 @@ CC:     Andrew Morton <akpm@linux-foundation.org>,
         "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>
-Subject: RE: let import_iovec deal with compat_iovecs as well
-Thread-Topic: let import_iovec deal with compat_iovecs as well
-Thread-Index: AQHWjbnKEn35LxofhEeT1lmdzdUiWqlwBNiw
-Date:   Sat, 19 Sep 2020 14:24:10 +0000
-Message-ID: <2c7bf42ee4314484ae0177280cd8f5f3@AcuMS.aculab.com>
+Subject: RE: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+Thread-Topic: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+Thread-Index: AQHWjcPPLxbJUITJXkeWJwtHmAdwxKlwCErw
+Date:   Sat, 19 Sep 2020 14:53:08 +0000
+Message-ID: <6d064d8688324279af89152a8da22d69@AcuMS.aculab.com>
 References: <20200918124533.3487701-1-hch@lst.de>
-In-Reply-To: <20200918124533.3487701-1-hch@lst.de>
+ <20200918124533.3487701-2-hch@lst.de>
+ <20200918134012.GY3421308@ZenIV.linux.org.uk> <20200918134406.GA17064@lst.de>
+ <20200918135822.GZ3421308@ZenIV.linux.org.uk>
+In-Reply-To: <20200918135822.GZ3421308@ZenIV.linux.org.uk>
 Accept-Language: en-GB, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
@@ -71,20 +73,58 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Christoph Hellwig
-> Sent: 18 September 2020 13:45
+From: Al Viro
+> Sent: 18 September 2020 14:58
 > 
-> this series changes import_iovec to transparently deal with comat iovec
-> structures, and then cleanups up a lot of code dupliation.  But to get
-> there it first has to fix the pre-existing bug that io_uring compat
-> contexts don't trigger the in_compat_syscall() check.  This has so far
-> been relatively harmless as very little code callable from io_uring used
-> the check, and even that code that could be called usually wasn't.
+> On Fri, Sep 18, 2020 at 03:44:06PM +0200, Christoph Hellwig wrote:
+> > On Fri, Sep 18, 2020 at 02:40:12PM +0100, Al Viro wrote:
+> > > >  	/* Vector 0x110 is LINUX_32BIT_SYSCALL_TRAP */
+> > > > -	return pt_regs_trap_type(current_pt_regs()) == 0x110;
+> > > > +	return pt_regs_trap_type(current_pt_regs()) == 0x110 ||
+> > > > +		(current->flags & PF_FORCE_COMPAT);
+> > >
+> > > Can't say I like that approach ;-/  Reasoning about the behaviour is much
+> > > harder when it's controlled like that - witness set_fs() shite...
+> >
+> > I don't particularly like it either.  But do you have a better idea
+> > how to deal with io_uring vs compat tasks?
+> 
+> <wry> git rm fs/io_uring.c would make a good starting point </wry>
+> Yes, I know it's not going to happen, but one can dream...
 
-I thought about that change while writing my import_iovec() => iovec_import()
-patch - and thought that the io_uring code would (as usual) cause grief.
+Maybe the io_uring code needs some changes to make it vaguely safe.
+- No support for 32-bit compat mixed working (or at all?).
+  Plausibly a special worker could do 32bit work.
+- ring structure (I'm assuming mapped by mmap()) never mapped
+  in more than one process (not cloned by fork()).
+- No implicit handover of files to another process.
+  Would need an munmap, handover, mmap sequence.
 
-Christoph - did you see those patches?
+In any case the io_ring rather abuses the import_iovec() interface.
+
+The canonical sequence is (types from memory):
+	struct iovec cache[8], *iov = cache;
+	struct iter iter;
+	...
+	rval = import_iovec(..., &iov, 8, &iter);
+	// Do read/write user using 'iter'
+	free(iov);
+
+I don't think there is any strict requirement that iter.iov
+is set to either 'cache' or 'iov' (it probably must point
+into one of them.)
+But the io_uring code will make that assumption because the
+actual copies can be done much later and it doesn't save 'iter'.
+It gets itself in a right mess because it doesn't separate
+the 'address I need to free' from 'the iov[] for any transfers'.
+
+io_uring is also the only code that relies on import_iovec()
+returning the iter.count on success.
+It would be much better to have:
+	iov = import_iovec(..., &cache, ...);
+	free(iov);
+and use ERR_PTR() et al for error detectoion.
+
 	David
 
 -

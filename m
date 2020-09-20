@@ -2,38 +2,28 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5AE82717EA
-	for <lists+io-uring@lfdr.de>; Sun, 20 Sep 2020 22:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9DC5271821
+	for <lists+io-uring@lfdr.de>; Sun, 20 Sep 2020 23:13:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbgITUt1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Sep 2020 16:49:27 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:59005 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726126AbgITUt1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Sep 2020 16:49:27 -0400
-Received: from mail-qt1-f182.google.com ([209.85.160.182]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1N8XHb-1kWs4J3JmT-014Ptw; Sun, 20 Sep 2020 22:49:23 +0200
-Received: by mail-qt1-f182.google.com with SMTP id g3so10564365qtq.10;
-        Sun, 20 Sep 2020 13:49:21 -0700 (PDT)
-X-Gm-Message-State: AOAM533FAqUmi9ggyBgk95+0qEs9x8sjXEEQE6YM9b/GmWlH5oFml7xM
-        tQFQtTWGHBUJ+ZKkulQ0J5mbPHkWHrsIJ3/Vf1A=
-X-Google-Smtp-Source: ABdhPJwBXwBil3iRHV11f3BxYsgRD++l69TenwTYSqKgYe+2Dux9TFUrSKvqlq1FFlXpzrttVMSzDz47tEK6RfJnMjg=
-X-Received: by 2002:aed:2ce5:: with SMTP id g92mr30020804qtd.204.1600634960428;
- Sun, 20 Sep 2020 13:49:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200918124533.3487701-1-hch@lst.de> <20200918124533.3487701-2-hch@lst.de>
- <20200920151510.GS32101@casper.infradead.org> <20200920180742.GN3421308@ZenIV.linux.org.uk>
- <20200920190159.GT32101@casper.infradead.org> <20200920191031.GQ3421308@ZenIV.linux.org.uk>
- <20200920192259.GU32101@casper.infradead.org> <CALCETrXVtBkxNJcMxf9myaKT9snHKbCWUenKHGRfp8AOtORBPg@mail.gmail.com>
-In-Reply-To: <CALCETrXVtBkxNJcMxf9myaKT9snHKbCWUenKHGRfp8AOtORBPg@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sun, 20 Sep 2020 22:49:03 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a37BRFj_qg61gP2oVrjJzBrZ58y1vggeTk_5n55Ou5U2Q@mail.gmail.com>
-Message-ID: <CAK8P3a37BRFj_qg61gP2oVrjJzBrZ58y1vggeTk_5n55Ou5U2Q@mail.gmail.com>
-Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
+        id S1726544AbgITVNq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Sep 2020 17:13:46 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:20024 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726467AbgITVNi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Sep 2020 17:13:38 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-64-HkvgTllpM-iYq_Po-gc7vg-1; Sun, 20 Sep 2020 22:13:25 +0100
+X-MC-Unique: HkvgTllpM-iYq_Po-gc7vg-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Sun, 20 Sep 2020 22:13:24 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Sun, 20 Sep 2020 22:13:24 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Arnd Bergmann' <arnd@arndb.de>, Andy Lutomirski <luto@kernel.org>
+CC:     Matthew Wilcox <willy@infradead.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -49,57 +39,74 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         linux-block <linux-block@vger.kernel.org>,
         Linux SCSI List <linux-scsi@vger.kernel.org>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
+        linux-aio <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
         linux-arch <linux-arch@vger.kernel.org>,
         Linux-MM <linux-mm@kvack.org>,
         Network Development <netdev@vger.kernel.org>,
-        keyrings@vger.kernel.org,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:CVl0ZST0kq+ZM8bIyVy4buxByYewwVWTGaSQX2cG7S+fxfOLfg4
- 3IYQ1WP9vOXA8wRJwMcZrEPB4//duV8Ezeyis3yGi12DLKgs/AttJWnePBnn8Tp2+uaC/ge
- glaUSs0pf4QOVqQCS3dbPqrr+HVUhs3EVO6/ZQWS1fjn9MdptiKjtHzdDpBD3MOE+/lqWn4
- qrZAlLdnkVWlRVBK6p/Xg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:f3fveQ4ykwA=:KAthfX0nOA+uyVgjLJ5kAm
- +/NVDftUAleKVGB39k3aR+WDoJXnKOKr6t0aNGpkuqe7jfEq/uGu2lDt3nAOfF8VCbJPOf4sD
- EgLD/hnHr9RytPu/kIn5l/M3EBZ8RMtiJ1xJQZNflulbXLsBTwNWmmZ8iZ6gB6DuAOUBSBxSC
- t853woJyRuBR5tuswbZynFfuGe33fG3jbhQK7yAXsaw9n7fUE0xDXyYvaZCdUz8xqATZDqjey
- nYZQbfbxA4yMlNPr70CtwEsRXZfZeS1qFqGeT43XWfVwEWJi2jjBUEMh4JhQ21IT5k7O+EobU
- kGGbTkmhquG64kwlsXoOIPQrgEv7h40navwp6Hox2SlcjftISGtvKG5O/CcTZ1vU4HX/HvuHC
- kFKPhyT89sDque3Fz2CYyKS24aoMJMsiee2bPj12K0A1+lSil9cIuWHnhrgHHYwgzFDFNtLC0
- WyJH63cIEgohAbXtU9AmMhBTOAYK2MBtu5WarlG36VJyxmIEXBsEi8AiU6DMZrkNB7rKhw0SH
- g7tVgijFac4tF/ImrUh3277u2SPu3b+aCRqOSlL6ujCW6QJNhZT6bEH0UzrVkMQOPe8RX4mqd
- 3Q3/xiTMKfaOWNw4LpD2G3oAnrxTrvMVK64rlvlguG9O2vzugecMZ1ODciPfxq+rXPGyAfJRu
- pLeh2aR8vSevKSlkxmTUYkCNXe8vIwxrPDZQZuIOzVaJqVxHH4NzxwbWjk5IyiiV3590nWd2f
- UB4Gj65iTtx5p/d2Mv52pqinXBPIOrh02+jFufA90d1Pj9Az9vPqOY5Df2zY2LWHaUsBZXxB0
- BqJAswtSXAA97rNNoyP5162ODXNDLV8UHH0m6k/E9vkD8feGqKIjajwGStAE1k0b1BXWEin
+Subject: RE: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+Thread-Topic: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+Thread-Index: AQHWj495LxbJUITJXkeWJwtHmAdwxKlyBKsQ
+Date:   Sun, 20 Sep 2020 21:13:24 +0000
+Message-ID: <8363d874e503470f8caa201e85e9fbd4@AcuMS.aculab.com>
+References: <20200918124533.3487701-1-hch@lst.de>
+ <20200918124533.3487701-2-hch@lst.de>
+ <20200920151510.GS32101@casper.infradead.org>
+ <20200920180742.GN3421308@ZenIV.linux.org.uk>
+ <20200920190159.GT32101@casper.infradead.org>
+ <20200920191031.GQ3421308@ZenIV.linux.org.uk>
+ <20200920192259.GU32101@casper.infradead.org>
+ <CALCETrXVtBkxNJcMxf9myaKT9snHKbCWUenKHGRfp8AOtORBPg@mail.gmail.com>
+ <CAK8P3a37BRFj_qg61gP2oVrjJzBrZ58y1vggeTk_5n55Ou5U2Q@mail.gmail.com>
+In-Reply-To: <CAK8P3a37BRFj_qg61gP2oVrjJzBrZ58y1vggeTk_5n55Ou5U2Q@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Sep 20, 2020 at 9:28 PM Andy Lutomirski <luto@kernel.org> wrote:
-> On Sun, Sep 20, 2020 at 12:23 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Sun, Sep 20, 2020 at 08:10:31PM +0100, Al Viro wrote:
-> > > IMO it's much saner to mark those and refuse to touch them from io_uring...
-> >
-> > Simpler solution is to remove io_uring from the 32-bit syscall list.
-> > If you're a 32-bit process, you don't get to use io_uring.  Would
-> > any real users actually care about that?
->
-> We could go one step farther and declare that we're done adding *any*
-> new compat syscalls :)
+RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAyMCBTZXB0ZW1iZXIgMjAyMCAyMTo0OQ0KPiAN
+Cj4gT24gU3VuLCBTZXAgMjAsIDIwMjAgYXQgOToyOCBQTSBBbmR5IEx1dG9taXJza2kgPGx1dG9A
+a2VybmVsLm9yZz4gd3JvdGU6DQo+ID4gT24gU3VuLCBTZXAgMjAsIDIwMjAgYXQgMTI6MjMgUE0g
+TWF0dGhldyBXaWxjb3ggPHdpbGx5QGluZnJhZGVhZC5vcmc+IHdyb3RlOg0KPiA+ID4NCj4gPiA+
+IE9uIFN1biwgU2VwIDIwLCAyMDIwIGF0IDA4OjEwOjMxUE0gKzAxMDAsIEFsIFZpcm8gd3JvdGU6
+DQo+ID4gPiA+IElNTyBpdCdzIG11Y2ggc2FuZXIgdG8gbWFyayB0aG9zZSBhbmQgcmVmdXNlIHRv
+IHRvdWNoIHRoZW0gZnJvbSBpb191cmluZy4uLg0KPiA+ID4NCj4gPiA+IFNpbXBsZXIgc29sdXRp
+b24gaXMgdG8gcmVtb3ZlIGlvX3VyaW5nIGZyb20gdGhlIDMyLWJpdCBzeXNjYWxsIGxpc3QuDQo+
+ID4gPiBJZiB5b3UncmUgYSAzMi1iaXQgcHJvY2VzcywgeW91IGRvbid0IGdldCB0byB1c2UgaW9f
+dXJpbmcuICBXb3VsZA0KPiA+ID4gYW55IHJlYWwgdXNlcnMgYWN0dWFsbHkgY2FyZSBhYm91dCB0
+aGF0Pw0KPiA+DQo+ID4gV2UgY291bGQgZ28gb25lIHN0ZXAgZmFydGhlciBhbmQgZGVjbGFyZSB0
+aGF0IHdlJ3JlIGRvbmUgYWRkaW5nICphbnkqDQo+ID4gbmV3IGNvbXBhdCBzeXNjYWxscyA6KQ0K
+PiANCj4gV291bGQgeW91IGFsc28gc3RvcCBhZGRpbmcgc3lzdGVtIGNhbGxzIHRvIG5hdGl2ZSAz
+Mi1iaXQgc3lzdGVtcyB0aGVuPw0KPiANCj4gT24gbWVtb3J5IGNvbnN0cmFpbmVkIHN5c3RlbXMg
+KGxlc3MgdGhhbiAyR0IgYS50Lm0uKSwgdGhlcmUgaXMgc3RpbGwgYQ0KPiBzdHJvbmcgZGVtYW5k
+IGZvciBydW5uaW5nIDMyLWJpdCB1c2VyIHNwYWNlLCBidXQgYWxsIG9mIHRoZSByZWNlbnQgQXJt
+DQo+IGNvcmVzIChhZnRlciBDb3J0ZXgtQTU1KSBkcm9wcGVkIHRoZSBhYmlsaXR5IHRvIHJ1biAz
+Mi1iaXQga2VybmVscywgc28NCj4gdGhhdCBjb21wYXQgbW9kZSBtYXkgZXZlbnR1YWxseSBiZWNv
+bWUgdGhlIHByaW1hcnkgd2F5IHRvIHJ1bg0KPiBMaW51eCBvbiBjaGVhcCBlbWJlZGRlZCBzeXN0
+ZW1zLg0KPiANCj4gSSBkb24ndCB0aGluayB0aGVyZSBpcyBhbnkgY2hhbmNlIHdlIGNhbiByZWFs
+aXN0aWNhbGx5IHRha2UgYXdheSBpb191cmluZw0KPiBmcm9tIHRoZSAzMi1iaXQgQUJJIGFueSBt
+b3JlIG5vdy4NCg0KQ2FuJ3QgaXQganVzdCBydW4gcmVxdWVzdHMgZnJvbSAzMmJpdCBhcHBzIGlu
+IGEga2VybmVsIHRocmVhZCB0aGF0IGhhcw0KdGhlICdpbl9jb21wYXRfc3lzY2FsbCcgZmxhZyBz
+ZXQ/DQpOb3QgdGhhdCBpIHJlY2FsbCBzZWVpbmcgdGhlIGNvZGUgd2hlcmUgaXQgc2F2ZXMgdGhl
+ICdjb21wYXQnIG5hdHVyZQ0Kb2YgYW55IHJlcXVlc3RzLg0KDQpJdCBpcyBhbHJlYWR5IGNvbXBs
+ZXRlbHkgZipja2VkIGlmIHlvdSB0cnkgdG8gcGFzcyB0aGUgY29tbWFuZCByaW5nDQp0byBhIGNo
+aWxkIHByb2Nlc3MgLSBpdCB1c2VzIHRoZSB3cm9uZyAnbW0nLg0KSSBzdXNwZWN0IHRoZXJlIGFy
+ZSBzb21lIHJlYWxseSBob3JyaWQgc2VjdXJpdHkgaG9sZXMgaW4gdGhhdCBhcmVhLg0KDQoJRGF2
+aWQuDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3Vu
+dCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3
+Mzg2IChXYWxlcykNCg==
 
-Would you also stop adding system calls to native 32-bit systems then?
-
-On memory constrained systems (less than 2GB a.t.m.), there is still a
-strong demand for running 32-bit user space, but all of the recent Arm
-cores (after Cortex-A55) dropped the ability to run 32-bit kernels, so
-that compat mode may eventually become the primary way to run
-Linux on cheap embedded systems.
-
-I don't think there is any chance we can realistically take away io_uring
-from the 32-bit ABI any more now.
-
-      Arnd

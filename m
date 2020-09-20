@@ -2,98 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 441ED27158D
-	for <lists+io-uring@lfdr.de>; Sun, 20 Sep 2020 18:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12E6A271619
+	for <lists+io-uring@lfdr.de>; Sun, 20 Sep 2020 18:59:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbgITQFc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Sep 2020 12:05:32 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:39439 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbgITQFc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Sep 2020 12:05:32 -0400
-X-Greylist: delayed 305 seconds by postgrey-1.27 at vger.kernel.org; Sun, 20 Sep 2020 12:05:29 EDT
-Received: from mail-qk1-f178.google.com ([209.85.222.178]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MkHIV-1kmRhc3esD-00kdPN; Sun, 20 Sep 2020 18:00:22 +0200
-Received: by mail-qk1-f178.google.com with SMTP id n133so12380961qkn.11;
-        Sun, 20 Sep 2020 09:00:20 -0700 (PDT)
-X-Gm-Message-State: AOAM533qKODglS4xYl9kvQmhZXZaVTIiXwaJgVF2yRB76sPP90XoTjCw
-        kj9TpYQGvekzM+ISXbnVYovs8FTeynGFIH15g70=
-X-Google-Smtp-Source: ABdhPJxWyfvCzQQBAWL//h6npTn88fQ05xaOWJspiDrXO43nFmdBtx69etP6R9R9/pXauFf/MfRV57t9JJqYkZya4Ms=
-X-Received: by 2002:a37:5d8:: with SMTP id 207mr42809575qkf.352.1600617619461;
- Sun, 20 Sep 2020 09:00:19 -0700 (PDT)
+        id S1726456AbgITQ7v (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Sep 2020 12:59:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48304 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726437AbgITQ7u (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sun, 20 Sep 2020 12:59:50 -0400
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 084B921D7A
+        for <io-uring@vger.kernel.org>; Sun, 20 Sep 2020 16:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600621190;
+        bh=x0CbGoy7QDKeuRiDyZ0r+bpumnscmCVOPI/85NlktW8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gJKTktW4SZM9Nk5DOVt1OrRoD5xvcMTHGvsORGcnvvYrrRwkT7FctEN7F9OgfkMkf
+         go8qh4j37RWcESJvMJRLehEaF3oKhwPYJJdJDts/+toGi7k1LIglAiuuVrdC6I4+Xp
+         /LzZmxNyVgp/8l8nI8i/3m9FhkW6jCz/eC4EQY4Q=
+Received: by mail-wm1-f46.google.com with SMTP id w2so9874467wmi.1
+        for <io-uring@vger.kernel.org>; Sun, 20 Sep 2020 09:59:49 -0700 (PDT)
+X-Gm-Message-State: AOAM530IFH+Grucr7nylH0DojZrwSOcffcAPJI8Wqp32q2tRZhp0KaBA
+        iZR4ezk7XeSt8I7Xtem3bibixfML3IjnpRN2m/YIUA==
+X-Google-Smtp-Source: ABdhPJwqhOCovrDdCcRZECZNQYs8Sx/d9wwPnQKSY4d4VjHeXmP8XzKxWrTfmcwJ7rQVtp7oa0fbaMUpJAjukisl/1Y=
+X-Received: by 2002:a1c:7e15:: with SMTP id z21mr25730921wmc.21.1600621188572;
+ Sun, 20 Sep 2020 09:59:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200918124533.3487701-1-hch@lst.de> <20200918124533.3487701-2-hch@lst.de>
- <20200920151510.GS32101@casper.infradead.org>
-In-Reply-To: <20200920151510.GS32101@casper.infradead.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sun, 20 Sep 2020 18:00:03 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0utXQj+yLh3n2mvi-mX_fPnxz3hKB7+wEof53EgNzDvQ@mail.gmail.com>
-Message-ID: <CAK8P3a0utXQj+yLh3n2mvi-mX_fPnxz3hKB7+wEof53EgNzDvQ@mail.gmail.com>
+References: <20200919224122.GJ3421308@ZenIV.linux.org.uk> <36CF3DE7-7B4B-41FD-9818-FDF8A5B440FB@amacapital.net>
+ <20200919232411.GK3421308@ZenIV.linux.org.uk> <CALCETrViwOdFia_aX4p4riE8aqop1zoOqVfiQtSAZEzheC+Ozg@mail.gmail.com>
+ <20200920025745.GL3421308@ZenIV.linux.org.uk>
+In-Reply-To: <20200920025745.GL3421308@ZenIV.linux.org.uk>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 20 Sep 2020 09:59:36 -0700
+X-Gmail-Original-Message-ID: <CALCETrWj1i-oyfA1rCXsNqdJddK6Vwm=W31YEf=k-OMBTC0vHw@mail.gmail.com>
+Message-ID: <CALCETrWj1i-oyfA1rCXsNqdJddK6Vwm=W31YEf=k-OMBTC0vHw@mail.gmail.com>
 Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Andy Lutomirski <luto@kernel.org>, Christoph Hellwig <hch@lst.de>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
         Parisc List <linux-parisc@vger.kernel.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
         linux-s390 <linux-s390@vger.kernel.org>,
         sparclinux <sparclinux@vger.kernel.org>,
         linux-block <linux-block@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
         linux-arch <linux-arch@vger.kernel.org>,
         Linux-MM <linux-mm@kvack.org>,
-        Networking <netdev@vger.kernel.org>, keyrings@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        keyrings@vger.kernel.org,
         LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:lNDlWc0Buitw3L4uhuGtwQ92/NRgJbW9dL1xVEoFiwPKF+Mna8g
- BdP2KanFhFZuk3fOTGN57tEkQzL1ph3WKs2AcSgU+CeX+Ab2aERPVddznUdHaAMJppuee5s
- VIzbmjWQQ6+7BmTHrEHpxP7MhzZM11lo/1SLP22iLAA/opCSIrmhMpGbvqQGIi5najpAfXU
- +us3JHjWmqydWqbJaik7g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:koVQKgDw1ps=:5DnzZQRl1EHXfqQOtB9AEO
- 8LsJA55f4BHxbC8gAoxD+kRjupir2dQuMbIC8KqnCdIH+kvYSiSkIinTU9xpxUOeb+g32taG7
- zgq6lmW7E5alsrjFHoOQQKogd0w0mc2OGa4QK6KvH3LQo12fLACLCOBRI2wn24vJjLsbxkxRb
- 4oYL2jKyvvhL2VnVwPpBwsuSplYCc3GxF+GDG5vQ1yi9F81STd0Poo6xk4GcNSGY9qCM+iV8s
- ws1gkcxwsdvCnL19oa9rOJArnlrJZ1yuLVD/zgEBvYpE6pT4cbDpDxm9wwz8LvBIVVcSvtP+x
- mGyk94+jKKOcC4qo56LW/S6BdlfLKXngB+47S7vyiuguaerjb/f0onmPVCrHlQfMOMddPJI2Q
- iF4PakYD/N03OMnZH0v5aT6z1n9Vsw/WiHVC6UB+iYwnl65YgnV56/uzHE9CWtLgwvLT2LVr0
- 2rlO4pJITDI3YgCjOslL0kHeuQBxhsgriFD4o8lWb9XupiqWVmME+nL0OpvCKPqgaEdru2crA
- DHQp2ZOKW/Vrmc9VPnmxTP8IsJi/5omjKJISQ/MFQhjf8n5y3sCSwV5gsRMrIQ78Tv/mYe0vN
- Tbnr8srZbeLfOjwP3pmLLBIhiYojZy9DQcNElLAnvxpGjaYzyghV6Mfy/YTZHWmqSaftc5GwP
- 8grNy2d63/jYMUkWJGMhLFNVRRNGMo0ZycHypsyEPRpsrTEWcYnu7jX1YQ8NQKqDRNIaXPOku
- lcyUiNYvv0oeXDvk9dCa/fIcuQJsKbx3iEcteoJ01nHt5W6GiI7gNqZ/J9sU2SoxLMtUzbBN5
- byu/tynrEax34vsa7Kj7rpMoaW+IQI2MlJDDEvcpHvQ1b/DsDYzBhyzBPk0kGcim1jhR59wiB
- c02AOlR+yAnCATNXkBXRLt4fXccXJQIXUEA+8lQUzXBQQz61Cq2yBh/qpLJ9yDAFryEa0EfxT
- Y2XgNfg7XJgsE0EzIhjvN+HfpTmhyKqv8PlD/O0KT7LvHC634CcvqYLogbGi9LtSR0hYjdr3s
- z80HG5R+AV6wWxHfpckQZ2B39gic1ALUxLEB8vinlCM1FeG5vQBv/3ibyRh66P+8IG4U1xwvD
- XXIZ+YgI1v6GUGzoth2LtiY9Ga6lA3L2xY7u0QWjNIdR+XaRSxFFiCuQx1o4l3E3CFTutHgk4
- dwMcdjnfbCv+zXITdgRWP2uabB
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Sep 20, 2020 at 5:15 PM Matthew Wilcox <willy@infradead.org> wrote:
+On Sat, Sep 19, 2020 at 7:57 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> On Fri, Sep 18, 2020 at 02:45:25PM +0200, Christoph Hellwig wrote:
-> > Add a flag to force processing a syscall as a compat syscall.  This is
-> > required so that in_compat_syscall() works for I/O submitted by io_uring
-> > helper threads on behalf of compat syscalls.
+> On Sat, Sep 19, 2020 at 05:14:41PM -0700, Andy Lutomirski wrote:
 >
-> Al doesn't like this much, but my suggestion is to introduce two new
-> opcodes -- IORING_OP_READV32 and IORING_OP_WRITEV32.  The compat code
-> can translate IORING_OP_READV to IORING_OP_READV32 and then the core
-> code can know what that user pointer is pointing to.
+> > > 2) have you counted the syscalls that do and do not need that?
+> >
+> > No.
+>
+> Might be illuminating...
+>
+> > > 3) how many of those realistically *can* be unified with their
+> > > compat counterparts?  [hint: ioctl(2) cannot]
+> >
+> > There would be no requirement to unify anything.  The idea is that
+> > we'd get rid of all the global state flags.
+>
+> _What_ global state flags?  When you have separate SYSCALL_DEFINE3(ioctl...)
+> and COMPAT_SYSCALL_DEFINE3(ioctl...), there's no flags at all, global or
+> local.  They only come into the play when you try to share the same function
+> for both, right on the top level.
 
-How is that different from the current approach of storing the ABI as
-a flag in ctx->compat?
+...
 
-     Arnd
+>
+> > For ioctl, we'd have a new file_operation:
+> >
+> > long ioctl(struct file *, unsigned int, unsigned long, enum syscall_arch);
+> >
+> > I'm not saying this is easy, but I think it's possible and the result
+> > would be more obviously correct than what we have now.
+>
+> No, it would not.  Seriously, from time to time a bit of RTFS before grand
+> proposals turns out to be useful.
+
+As one example, look at __sys_setsockopt().  It's called for the
+native and compat versions, and it contains an in_compat_syscall()
+check.  (This particularly check looks dubious to me, but that's
+another story.)  If this were to be done with equivalent semantics
+without a separate COMPAT_DEFINE_SYSCALL and without
+in_compat_syscall(), there would need to be some indication as to
+whether this is compat or native setsockopt.  There are other
+setsockopt implementations in the net stack with more
+legitimate-seeming uses of in_compat_syscall() that would need some
+other mechanism if in_compat_syscall() were to go away.
+
+setsockopt is (I hope!) out of scope for io_uring, but the situation
+isn't fundamentally different from read and write.

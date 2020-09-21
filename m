@@ -2,88 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3F142721F4
-	for <lists+io-uring@lfdr.de>; Mon, 21 Sep 2020 13:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5BCA2726A3
+	for <lists+io-uring@lfdr.de>; Mon, 21 Sep 2020 16:09:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbgIULLh convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Mon, 21 Sep 2020 07:11:37 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:38101 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726436AbgIULLc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Sep 2020 07:11:32 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-233-9UYq0ao9O6ejB4ujVxtO9g-1; Mon, 21 Sep 2020 12:11:22 +0100
-X-MC-Unique: 9UYq0ao9O6ejB4ujVxtO9g-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 21 Sep 2020 12:11:21 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 21 Sep 2020 12:11:21 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@lst.de>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        id S1726496AbgIUOJl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Sep 2020 10:09:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38302 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbgIUOJk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Sep 2020 10:09:40 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DB4EC061755;
+        Mon, 21 Sep 2020 07:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5z+nT9DLNYpnZdX2p/A/Uj6Iw3m/Dm3X+A2sRHM2Sw8=; b=YCvsJ8QAivd0kiBxMhH8zI6ld2
+        dxecllp2hObiTjswAkaOEPy4nIaOSt7eKX1MkZBSl/byZKc4E803ZZH5062ZYKnW+V73XhKHdxeK4
+        tjrWzyJO7lVKQb+vA9iKuvghqZX912IlsuF0xxclpn7MYfFcvM47OPWuBpfbE+GNzhugw18XimuNl
+        1CoNaLxpAHeH3+AKoM+75id0MvySxR2b5SDaenlEQH/kKBQZ8m3iRuHufHLZwGg4XPS3BqTDcpLjA
+        p+N3BlfPxibCFwCPNRyEUWdqL+XjU96GIKxa6yTX0zjTmhY6TvsQCtPp3j3qczEIsScdy8LSoMEL/
+        N9P5tkkA==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kKMVb-0006QJ-O3; Mon, 21 Sep 2020 14:09:35 +0000
+Date:   Mon, 21 Sep 2020 15:09:35 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: let import_iovec deal with compat_iovecs as well
-Thread-Topic: let import_iovec deal with compat_iovecs as well
-Thread-Index: AQHWjbnKEn35LxofhEeT1lmdzdUiWqlwBNiwgAJx3YCAAH2K4A==
-Date:   Mon, 21 Sep 2020 11:11:21 +0000
-Message-ID: <ac8a3691c4f5442f908c51298260ca0e@AcuMS.aculab.com>
-References: <20200918124533.3487701-1-hch@lst.de>
- <2c7bf42ee4314484ae0177280cd8f5f3@AcuMS.aculab.com>
- <20200921044125.GA16522@lst.de>
-In-Reply-To: <20200921044125.GA16522@lst.de>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/9 next] mm:process_vm_access Call import_iovec()
+ instead of rw_copy_check_uvector()
+Message-ID: <20200921140935.GA24515@infradead.org>
+References: <e47d19f9c946423db88de10b4753ecfb@AcuMS.aculab.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e47d19f9c946423db88de10b4753ecfb@AcuMS.aculab.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> On Sat, Sep 19, 2020 at 02:24:10PM +0000, David Laight wrote:
-> > I thought about that change while writing my import_iovec() => iovec_import()
-> > patch - and thought that the io_uring code would (as usual) cause grief.
-> >
-> > Christoph - did you see those patches?
+On Tue, Sep 15, 2020 at 02:55:08PM +0000, David Laight wrote:
+> 
+> This is the only direct call of rw_copy_check_uvector().
+> Removing it lets rw_copy_check_uvector() be inlined into
+> import_iovec() and the horrid calling conventions fixed.
 
-Link to cover email.
+This looks sensible, but as-is will create a warning when actually
+this code.
 
-https://lkml.org/lkml/2020/9/15/661
+This is the variant I picked up as a prep patch for the compat
+iovec handling, which passes the relevant LTP tests:
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+http://git.infradead.org/users/hch/misc.git/commitdiff/9e3cf5d0f13572310354bf6c62e1feb9fb232266

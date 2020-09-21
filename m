@@ -2,57 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0134272BC0
-	for <lists+io-uring@lfdr.de>; Mon, 21 Sep 2020 18:23:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E6CD272C40
+	for <lists+io-uring@lfdr.de>; Mon, 21 Sep 2020 18:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbgIUQXR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Sep 2020 12:23:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59162 "EHLO
+        id S1728108AbgIUQ3K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Sep 2020 12:29:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbgIUQXR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Sep 2020 12:23:17 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C542EC061755;
-        Mon, 21 Sep 2020 09:23:16 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id a9so108514wmm.2;
-        Mon, 21 Sep 2020 09:23:16 -0700 (PDT)
+        with ESMTP id S1727237AbgIUQ3K (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Sep 2020 12:29:10 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD62C061755;
+        Mon, 21 Sep 2020 09:29:09 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id k15so13454277wrn.10;
+        Mon, 21 Sep 2020 09:29:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IvRIyYO3t2SUgu0arXiDBfv6J5V0f2K0pu+NF0qCX5w=;
-        b=Sc96S6lfmurSpfOzVka44PHPQYNuWoG7JxCB4XIUf9HPO88rqJ+GWaU7/Y9y20Ow8M
-         Di7TJYVba9SsbXwHrsQvQvoBR2Nnm2mDgusw9rNGcnvKI4lT7c8atlnPUkT8nbzGd/E7
-         MKgVHJkc+3wIQtro6A/DqbjOOTLY92BDRoYn0lM3n9CiOUzTJK/Gn2dgL4adn1jdQqgE
-         GNxDUaobxhydr/wUBBdueva2w+Wf6ylcpl7wzPsamNhCaU6uo6ck2Wb1uRgTUuOUO+bU
-         HGFzFO1HgQxb8gSQefH7PcwwxXwudPQ8DWavTZ9E2fjqDXcxcFOe//Zso6LpQiW58B+x
-         UucA==
+        bh=Ig9fkY9C2Y84krmAg0pv6yN2grF2V7HY6EFIY/9v1ZM=;
+        b=k4+LZRY51/xO31zQuNU9/l6MdiT3upfvsRjjx2MFhIasJQDdkf4X03AQi/w0gbpsHq
+         1ZvFdZaVjByVh6BxW+h55gzXRYf1aAyR55t+WbrUC3vh+jzJ1uk/re1GyUBLQ34IH4I5
+         UmlCJuJKikvdCfNhMntToiafYGDSZ9SwWltoqp83ZTzG57udsF+vuvjxlQsONQxbAn5M
+         F7ss+zKZlUN56d8njJPknysTb+bHc0YJxBDSkQgpDX2d7edz1O1tGFf1OQ838WAerlBl
+         SMuuqOJ32TFqIVQ3GpL3sACGHcYMYIYteL4+8t5j0OVIfYeBT/T8qJWetSP3aSfHRuYP
+         AL0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=IvRIyYO3t2SUgu0arXiDBfv6J5V0f2K0pu+NF0qCX5w=;
-        b=A6MCYliyLky0CzdB8Kii9j37ZOqsCDPEuPs0dEOZNiRRJ8Ef9B9MinIzBPSiCa/4tY
-         Df04RlBDtnJ53fJz2iq8euZRRqVpcBcskoZpV3EF2IAGqRlrudQ7pHQ176UUQ8qyBLel
-         p+JGVxOF4iGiaDDw2aqcMLrG1ya2E3O7urXNZz53h51OnX8Rgsn5mcKtB7GnnAIA4c+Z
-         ido5Y1rpV0fYJ/+OxoniEL3In61ocTuqkqP1Ebxwlj6o0Ifo+k2Ayfk1gFKkqATFMb48
-         JRZMORs1SIlnX4/6o8G8yGyMUUtfTlCNCfyVla1/HrsgMCqnA/2bx21B19UFZyp14W+E
-         paTg==
-X-Gm-Message-State: AOAM531Vh1TjdyEvzt4EF36HhQwt59RDXCcaJrpsErNFlAK/Nzb+hlkY
-        TDqJkZUWxsHFguonU44VEjd+n10XT8YkQA==
-X-Google-Smtp-Source: ABdhPJyYfk+EzbFnRftaSb6O/4j5H92Q+rKsLnOqJxPSmwFSmKmQaK8gbExjV0xQhTxCqhQoZcucgw==
-X-Received: by 2002:a05:600c:4142:: with SMTP id h2mr184584wmm.128.1600705395307;
-        Mon, 21 Sep 2020 09:23:15 -0700 (PDT)
+        bh=Ig9fkY9C2Y84krmAg0pv6yN2grF2V7HY6EFIY/9v1ZM=;
+        b=lghl0rmguGCj8H35xRL6Q0/APCiLIOqDdRrny7EvLJ6Uo24DQxc5jKkGFstrOPE7AK
+         DF9rq3ILmyz5/ZOVUep4goOcurJBScDEajXhOuadCQyR1lJYT/o3gR19xrGWxWVuUN4T
+         q1zg4OIDa1GLsycfbH/Kg/fmXirCywEEvNMS3vWU8+Wb/vhxJ/ESjgUHdcebIhNx3HeP
+         zOGWrbQ8PfR01mMGYaL2aLUWHG4T1JIRUXL2sXhTdlXtfl9CLgQHbnEBTKUt0N78u/oR
+         xi5wodmYVKAnDO4lQUzobPKWHG3qwyWqu427y4ZUNe+ZE+tCPeZTAQT6c+0IIX1fT2PL
+         25rw==
+X-Gm-Message-State: AOAM531KBpJ0YdcgJ3ggsnSetwnGBCL+un73Kv6jEjVVxc7u/eLm8X5L
+        5mJDCu2iTwJH6xk0iLVhqsv3VZBnb408YQ==
+X-Google-Smtp-Source: ABdhPJyL7gcNUaX/nUnMt5+gfAjECufJs1bzTkqLDmssP7QHEfmqaw2l5Q2j2C9IowIR+04zdsxj6g==
+X-Received: by 2002:adf:9d44:: with SMTP id o4mr555520wre.361.1600705748336;
+        Mon, 21 Sep 2020 09:29:08 -0700 (PDT)
 Received: from [192.168.43.240] ([5.100.192.97])
-        by smtp.gmail.com with ESMTPSA id t6sm23571512wre.30.2020.09.21.09.23.11
+        by smtp.gmail.com with ESMTPSA id s80sm139327wme.41.2020.09.21.09.29.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Sep 2020 09:23:14 -0700 (PDT)
+        Mon, 21 Sep 2020 09:29:07 -0700 (PDT)
 Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-To:     William Kucharski <kucharsk@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
@@ -65,8 +64,13 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-mm@kvack.org, netdev@vger.kernel.org,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20200920151510.GS32101@casper.infradead.org>
- <76A432F3-4532-42A4-900E-16C0AC2D21D8@gmail.com>
+References: <20200918124533.3487701-1-hch@lst.de>
+ <20200918124533.3487701-2-hch@lst.de>
+ <20200920151510.GS32101@casper.infradead.org>
+ <20200920180742.GN3421308@ZenIV.linux.org.uk>
+ <20200920190159.GT32101@casper.infradead.org>
+ <20200920191031.GQ3421308@ZenIV.linux.org.uk>
+ <20200920192259.GU32101@casper.infradead.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -111,37 +115,29 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <2f2ee014-688e-8835-369b-61deb0688c73@gmail.com>
-Date:   Mon, 21 Sep 2020 19:20:42 +0300
+Message-ID: <4d07ec00-d1fb-1710-063e-670a18c33caf@gmail.com>
+Date:   Mon, 21 Sep 2020 19:26:34 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <76A432F3-4532-42A4-900E-16C0AC2D21D8@gmail.com>
+In-Reply-To: <20200920192259.GU32101@casper.infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 20/09/2020 18:55, William Kucharski wrote:
-> I really like that as it’s self-documenting and anyone debugging it can see what is actually being used at a glance.
-
-Also creates special cases for things that few people care about,
-and makes it a pain for cross-platform (cross-bitness) development.
-
+On 20/09/2020 22:22, Matthew Wilcox wrote:
+> On Sun, Sep 20, 2020 at 08:10:31PM +0100, Al Viro wrote:
+>> IMO it's much saner to mark those and refuse to touch them from io_uring...
 > 
->> On Sep 20, 2020, at 09:15, Matthew Wilcox <willy@infradead.org> wrote:
->>
->> ﻿On Fri, Sep 18, 2020 at 02:45:25PM +0200, Christoph Hellwig wrote:
->>> Add a flag to force processing a syscall as a compat syscall.  This is
->>> required so that in_compat_syscall() works for I/O submitted by io_uring
->>> helper threads on behalf of compat syscalls.
->>
->> Al doesn't like this much, but my suggestion is to introduce two new
->> opcodes -- IORING_OP_READV32 and IORING_OP_WRITEV32.  The compat code
->> can translate IORING_OP_READV to IORING_OP_READV32 and then the core
->> code can know what that user pointer is pointing to.
+> Simpler solution is to remove io_uring from the 32-bit syscall list.
+> If you're a 32-bit process, you don't get to use io_uring.  Would
+> any real users actually care about that?
+
+There were .net and\or wine (which AFAIK often works in compat) guys
+experimenting with io_uring, they might want it.
 
 -- 
 Pavel Begunkov

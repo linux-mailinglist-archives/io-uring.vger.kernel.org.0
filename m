@@ -2,25 +2,25 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0721B272911
-	for <lists+io-uring@lfdr.de>; Mon, 21 Sep 2020 16:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3782327293D
+	for <lists+io-uring@lfdr.de>; Mon, 21 Sep 2020 16:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbgIUOuH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Mon, 21 Sep 2020 10:50:07 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:24702 "EHLO
+        id S1727683AbgIUO57 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Mon, 21 Sep 2020 10:57:59 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:43290 "EHLO
         eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726584AbgIUOuH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Sep 2020 10:50:07 -0400
+        by vger.kernel.org with ESMTP id S1726973AbgIUO56 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Sep 2020 10:57:58 -0400
 Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
  TLS) by relay.mimecast.com with ESMTP id
- uk-mta-86-4QhIQ9m2OJi1xwkLWjnc0A-1; Mon, 21 Sep 2020 15:50:02 +0100
-X-MC-Unique: 4QhIQ9m2OJi1xwkLWjnc0A-1
+ uk-mta-131-fTlCPAkmNqyVcSMjZfvb1A-1; Mon, 21 Sep 2020 15:57:54 +0100
+X-MC-Unique: fTlCPAkmNqyVcSMjZfvb1A-1
 Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
  AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 21 Sep 2020 15:50:01 +0100
+ Server (TLS) id 15.0.1347.2; Mon, 21 Sep 2020 15:57:53 +0100
 Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
  AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 21 Sep 2020 15:50:01 +0100
+ Mon, 21 Sep 2020 15:57:53 +0100
 From:   David Laight <David.Laight@ACULAB.COM>
 To:     'Christoph Hellwig' <hch@infradead.org>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -30,16 +30,16 @@ CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH 5/9 next] scsi: Use iovec_import() instead of
- import_iovec().
-Thread-Topic: [PATCH 5/9 next] scsi: Use iovec_import() instead of
- import_iovec().
-Thread-Index: AdaLbdBrrJnvb+q4Sa6RtPibF1KBcwErGHIAAAK0UcA=
-Date:   Mon, 21 Sep 2020 14:50:01 +0000
-Message-ID: <ce03301db65f4fee8c9da25a6bc980f7@AcuMS.aculab.com>
-References: <27be46ece36c42d6a7dabf62c6ac7a98@AcuMS.aculab.com>
- <20200921142204.GE24515@infradead.org>
-In-Reply-To: <20200921142204.GE24515@infradead.org>
+Subject: RE: [PATCH 3/9 next] lib/iov_iter: Improved function for importing
+ iovec[] from userpace.
+Thread-Topic: [PATCH 3/9 next] lib/iov_iter: Improved function for importing
+ iovec[] from userpace.
+Thread-Index: AdaLbgrHxt5yVpCaR/OQiuIAS4DQuQEqpZKAAAOMgSA=
+Date:   Mon, 21 Sep 2020 14:57:53 +0000
+Message-ID: <715ff68740fe4f1eb2c7713584450f1e@AcuMS.aculab.com>
+References: <a24498efacd94e61a2af9df3976b0de6@AcuMS.aculab.com>
+ <20200921141051.GC24515@infradead.org>
+In-Reply-To: <20200921141051.GC24515@infradead.org>
 Accept-Language: en-GB, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
@@ -58,43 +58,33 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 From: Christoph Hellwig
-> Sent: 21 September 2020 15:22
+> Sent: 21 September 2020 15:11
 > 
-> So looking at the various callers I'm not sure this API is the
-> best.  If we want to do something fancy I'd hide the struct iovec
-> instances entirely with something like:
+> On Tue, Sep 15, 2020 at 02:55:17PM +0000, David Laight wrote:
+> >
+> > import_iovec() has a 'pointer by reference' parameter to pass in the
+> > (on-stack) iov[] cache and return the address of a larger copy that
+> > the caller must free.
+> > This is non-intuitive, faffy to setup, and not that efficient.
+> > Instead just pass in the address of the cache and return the address
+> > to free (on success) or PTR_ERR() (on error).
 > 
-> struct iov_storage {
-> 	struct iovec stack[UIO_FASTIOV], *vec;
-> }
-> 
-> int iov_iter_import_iovec(struct iov_iter *iter, struct iov_storage *s,
-> 		const struct iovec __user *vec, unsigned long nr_segs,
-> 		int type);
-> 
-> and then add a new helper to free the thing if needed:
-> 
-> void iov_iter_release_iovec(struct iov_storage *s)
-> {
-> 	if (s->vec != s->stack)
-> 		kfree(s->vec);
-> }
+> To me it seems pretty sensible, and in fact the conversions to your
+> new API seem to add more lines than they remove.
 
-I didn't think of going that far.
-There are 2 call sites (in scsi) that don't pass the cache.
+They probably add a line because the two variables get defined on
+separate lines.
 
-Given that the 'buffer to free' address probably needs to
-be spilled to stack forcing in into an on-stack structure
-that is already passed by address is probably a good idea.
+The problem is the inefficiency of passing the addresses by 'double
+reference'.
+Although your suggestion of putting the 'address to free' in the
+same structure as the cache does resolve that.
+It also gets rid of all the PTR_ERR() faffing.
+Still probably best to return 0 on success.
+Plenty of code was converting the +ve to 0.
 
-The iov_iter_release_iovec() should be static inline and just:
-	if (s->vec)
-		kfree(s->vec);
-You want the test because 99.99% of the time it will be NULL.
-The kernel iov[] to use is iter.iov not part of the cache.
-
-That will be a bigger change on the io_uring code.
-(The patch I didn't write.)
+I might to a v2 on top of your compat iovec changes - once they
+hit Linus's tree.
 
 	David
 

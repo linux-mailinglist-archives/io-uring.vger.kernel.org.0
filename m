@@ -2,152 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0855272743
-	for <lists+io-uring@lfdr.de>; Mon, 21 Sep 2020 16:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F4442727D6
+	for <lists+io-uring@lfdr.de>; Mon, 21 Sep 2020 16:39:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbgIUOfI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Sep 2020 10:35:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42230 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727495AbgIUOen (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Sep 2020 10:34:43 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB16FC061755;
-        Mon, 21 Sep 2020 07:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=7X3/qUs2y75UUlnvdA2vy1FAPs/IUNMhWXsjmEB0AzE=; b=dy92xMt8/hhoU3g/sIuxnNLbl+
-        Nnj6ERvpkc1IlL4sj5dIfssSenGvxA+3UGeocqvvW0bK5nqyD87xGywyHMO50b64xETvy6f5C7+jz
-        1ZJdm/VV09ZRLwsDyyLcMHfrELH2D1eYj+5bsTBZ25lWk1XsOFQFh/AQieGYsKfS5OUz5LASsN8I6
-        rzYxMMIXRXL89rVEiOUMrkOHhm1UEwQ9++bKqy6M9HdkYA+B0GjI6rNatMh1zg7somA/Qq96o55Q6
-        DVSHIhrhVnj3cQpJ/EO6vPX4LRYcTqqLU1MH8+ta4C+5jNV0FqKzNBOSq9JjyuaCqWmJpW60ZG8SO
-        wRMk55nw==;
-Received: from p4fdb0c34.dip0.t-ipconnect.de ([79.219.12.52] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kKMtm-0007tU-EZ; Mon, 21 Sep 2020 14:34:34 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 11/11] security/keys: remove compat_keyctl_instantiate_key_iov
-Date:   Mon, 21 Sep 2020 16:34:34 +0200
-Message-Id: <20200921143434.707844-12-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200921143434.707844-1-hch@lst.de>
-References: <20200921143434.707844-1-hch@lst.de>
+        id S1727693AbgIUOiK convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Mon, 21 Sep 2020 10:38:10 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:51728 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727680AbgIUOiH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Sep 2020 10:38:07 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-140-oNDip4LCObWi5fVxcGZ2UA-1; Mon, 21 Sep 2020 15:38:02 +0100
+X-MC-Unique: oNDip4LCObWi5fVxcGZ2UA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 21 Sep 2020 15:38:02 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 21 Sep 2020 15:38:02 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christoph Hellwig' <hch@infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH 4/9 next] fs/io_uring Don't use the return value from
+ import_iovec().
+Thread-Topic: [PATCH 4/9 next] fs/io_uring Don't use the return value from
+ import_iovec().
+Thread-Index: AdaLbe1b5RzSfSnfQoqJG9wxedvDFgEq0XAAAALSu0A=
+Date:   Mon, 21 Sep 2020 14:38:02 +0000
+Message-ID: <4b204a3e4db74cb2bd8c81e31f6b359b@AcuMS.aculab.com>
+References: <0dc67994b6b2478caa3d96a9e24d2bfb@AcuMS.aculab.com>
+ <20200921141456.GD24515@infradead.org>
+In-Reply-To: <20200921141456.GD24515@infradead.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Now that import_iovec handles compat iovecs, the native version of
-keyctl_instantiate_key_iov can be used for the compat case as well.
+From: Christoph Hellwig
+> Sent: 21 September 2020 15:15
+> 
+> On Tue, Sep 15, 2020 at 02:55:20PM +0000, David Laight wrote:
+> >
+> > This is the only code that relies on import_iovec() returning
+> > iter.count on success.
+> > This allows a better interface to import_iovec().
+> 
+> This looks generall sane, but a comment below:
+> 
+> > @@ -3123,7 +3123,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+> >  	if (ret < 0)
+> >  		return ret;
+> >  	iov_count = iov_iter_count(iter);
+> > -	io_size = ret;
+> > +	io_size = iov_count;
+> >  	req->result = io_size;
+> >  	ret = 0;
+> >
+> > @@ -3246,7 +3246,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+> >  	if (ret < 0)
+> >  		return ret;
+> >  	iov_count = iov_iter_count(iter);
+> > -	io_size = ret;
+> > +	io_size = iov_count;
+> >  	req->result = io_size;
+> 
+> I tink the local iov_count variable can go away in both functions,
+> as io_size only changes after the last use of iov_count (io_read) or
+> not at all (io_write).
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- security/keys/compat.c   | 36 ++----------------------------------
- security/keys/internal.h |  5 -----
- security/keys/keyctl.c   |  2 +-
- 3 files changed, 3 insertions(+), 40 deletions(-)
+Yes, the compiler will probably make that optimisation.
+I did a minimal change because my head hurts whenever I look at io_uring.c.
 
-diff --git a/security/keys/compat.c b/security/keys/compat.c
-index 7ae531db031cf8..1545efdca56227 100644
---- a/security/keys/compat.c
-+++ b/security/keys/compat.c
-@@ -11,38 +11,6 @@
- #include <linux/slab.h>
- #include "internal.h"
- 
--/*
-- * Instantiate a key with the specified compatibility multipart payload and
-- * link the key into the destination keyring if one is given.
-- *
-- * The caller must have the appropriate instantiation permit set for this to
-- * work (see keyctl_assume_authority).  No other permissions are required.
-- *
-- * If successful, 0 will be returned.
-- */
--static long compat_keyctl_instantiate_key_iov(
--	key_serial_t id,
--	const struct compat_iovec __user *_payload_iov,
--	unsigned ioc,
--	key_serial_t ringid)
--{
--	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
--	struct iov_iter from;
--	long ret;
+	David
+
 -
--	if (!_payload_iov)
--		ioc = 0;
--
--	ret = import_iovec(WRITE, (const struct iovec __user *)_payload_iov,
--			   ioc, ARRAY_SIZE(iovstack), &iov, &from);
--	if (ret < 0)
--		return ret;
--
--	ret = keyctl_instantiate_key_common(id, &from, ringid);
--	kfree(iov);
--	return ret;
--}
--
- /*
-  * The key control system call, 32-bit compatibility version for 64-bit archs
-  */
-@@ -113,8 +81,8 @@ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
- 		return keyctl_reject_key(arg2, arg3, arg4, arg5);
- 
- 	case KEYCTL_INSTANTIATE_IOV:
--		return compat_keyctl_instantiate_key_iov(
--			arg2, compat_ptr(arg3), arg4, arg5);
-+		return keyctl_instantiate_key_iov(arg2, compat_ptr(arg3), arg4,
-+						  arg5);
- 
- 	case KEYCTL_INVALIDATE:
- 		return keyctl_invalidate_key(arg2);
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 338a526cbfa516..9b9cf3b6fcbb4d 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -262,11 +262,6 @@ extern long keyctl_instantiate_key_iov(key_serial_t,
- 				       const struct iovec __user *,
- 				       unsigned, key_serial_t);
- extern long keyctl_invalidate_key(key_serial_t);
--
--struct iov_iter;
--extern long keyctl_instantiate_key_common(key_serial_t,
--					  struct iov_iter *,
--					  key_serial_t);
- extern long keyctl_restrict_keyring(key_serial_t id,
- 				    const char __user *_type,
- 				    const char __user *_restriction);
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 9febd37a168fd0..e26bbccda7ccee 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -1164,7 +1164,7 @@ static int keyctl_change_reqkey_auth(struct key *key)
-  *
-  * If successful, 0 will be returned.
-  */
--long keyctl_instantiate_key_common(key_serial_t id,
-+static long keyctl_instantiate_key_common(key_serial_t id,
- 				   struct iov_iter *from,
- 				   key_serial_t ringid)
- {
--- 
-2.28.0
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 

@@ -2,99 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4442727D6
-	for <lists+io-uring@lfdr.de>; Mon, 21 Sep 2020 16:39:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 944EE2728D8
+	for <lists+io-uring@lfdr.de>; Mon, 21 Sep 2020 16:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbgIUOiK convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Mon, 21 Sep 2020 10:38:10 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:51728 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727680AbgIUOiH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Sep 2020 10:38:07 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-140-oNDip4LCObWi5fVxcGZ2UA-1; Mon, 21 Sep 2020 15:38:02 +0100
-X-MC-Unique: oNDip4LCObWi5fVxcGZ2UA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 21 Sep 2020 15:38:02 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 21 Sep 2020 15:38:02 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH 4/9 next] fs/io_uring Don't use the return value from
- import_iovec().
-Thread-Topic: [PATCH 4/9 next] fs/io_uring Don't use the return value from
- import_iovec().
-Thread-Index: AdaLbe1b5RzSfSnfQoqJG9wxedvDFgEq0XAAAALSu0A=
-Date:   Mon, 21 Sep 2020 14:38:02 +0000
-Message-ID: <4b204a3e4db74cb2bd8c81e31f6b359b@AcuMS.aculab.com>
-References: <0dc67994b6b2478caa3d96a9e24d2bfb@AcuMS.aculab.com>
- <20200921141456.GD24515@infradead.org>
-In-Reply-To: <20200921141456.GD24515@infradead.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1728074AbgIUOsU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Sep 2020 10:48:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728146AbgIUOsT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Sep 2020 10:48:19 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EACAC061755;
+        Mon, 21 Sep 2020 07:48:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=GrLgQ81RMs4yZLkbL25hSswMVubhakBrsXk6y8LUTp8=; b=S8rXcGNBi4i4qPD575hId32KQP
+        nqI0uPNrzjdQyj4vl0WSsJjqoLdiHU15JD1QivHJE4gsE9/TJFijUkmzx5PTowCkBnlyPqxob4RLC
+        g2OXJsSYMe2XxF/qrlzQ7lUj5CLowOZfdUeitiDgvjL0vok0YlCDOptjFYkIwRz2amnUfKLAMpxWs
+        2L9E7YRIK5ucqdS/0WgivYaSwDXpH/HNj0bdbbrCRjJyIOhnR4envxalVmDy7Nd3SjyV7VPX22s6G
+        He+tEU28SCP4TsdzxKZjtGYCdDpqu2O8SYVePA8n7SQLKmiA0QJhgmYonOPb/A76qlqHpCJlQFCa1
+        Z1eFhQPA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kKN6v-0001MT-TO; Mon, 21 Sep 2020 14:48:09 +0000
+Date:   Mon, 21 Sep 2020 15:48:09 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 02/11] mm: call import_iovec() instead of
+ rw_copy_check_uvector() in process_vm_rw()
+Message-ID: <20200921144809.GV32101@casper.infradead.org>
+References: <20200921143434.707844-1-hch@lst.de>
+ <20200921143434.707844-3-hch@lst.de>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200921143434.707844-3-hch@lst.de>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Christoph Hellwig
-> Sent: 21 September 2020 15:15
-> 
-> On Tue, Sep 15, 2020 at 02:55:20PM +0000, David Laight wrote:
-> >
-> > This is the only code that relies on import_iovec() returning
-> > iter.count on success.
-> > This allows a better interface to import_iovec().
-> 
-> This looks generall sane, but a comment below:
-> 
-> > @@ -3123,7 +3123,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
-> >  	if (ret < 0)
-> >  		return ret;
-> >  	iov_count = iov_iter_count(iter);
-> > -	io_size = ret;
-> > +	io_size = iov_count;
-> >  	req->result = io_size;
-> >  	ret = 0;
-> >
-> > @@ -3246,7 +3246,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
-> >  	if (ret < 0)
-> >  		return ret;
-> >  	iov_count = iov_iter_count(iter);
-> > -	io_size = ret;
-> > +	io_size = iov_count;
-> >  	req->result = io_size;
-> 
-> I tink the local iov_count variable can go away in both functions,
-> as io_size only changes after the last use of iov_count (io_read) or
-> not at all (io_write).
+On Mon, Sep 21, 2020 at 04:34:25PM +0200, Christoph Hellwig wrote:
+>  {
+> -	WARN_ON(direction & ~(READ | WRITE));
+> +	WARN_ON(direction & ~(READ | WRITE | CHECK_IOVEC_ONLY));
 
-Yes, the compiler will probably make that optimisation.
-I did a minimal change because my head hurts whenever I look at io_uring.c.
+This is now a no-op because:
 
-	David
+include/linux/fs.h:#define CHECK_IOVEC_ONLY -1
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+I'd suggest we renumber it to 2?
 
+(READ is 0, WRITE is 1.  This WARN_ON should probably be
+	WARN_ON(direction > CHECK_IOVEC_ONLY)

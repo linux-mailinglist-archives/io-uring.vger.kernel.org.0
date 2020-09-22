@@ -2,146 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C7227466E
-	for <lists+io-uring@lfdr.de>; Tue, 22 Sep 2020 18:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F200027473B
+	for <lists+io-uring@lfdr.de>; Tue, 22 Sep 2020 19:07:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbgIVQUO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Sep 2020 12:20:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54898 "EHLO
+        id S1726607AbgIVRHU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Sep 2020 13:07:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726667AbgIVQUO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Sep 2020 12:20:14 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0EA4C0613CF
-        for <io-uring@vger.kernel.org>; Tue, 22 Sep 2020 09:20:13 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id u24so1550402pgi.1
-        for <io-uring@vger.kernel.org>; Tue, 22 Sep 2020 09:20:13 -0700 (PDT)
+        with ESMTP id S1726563AbgIVRHU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Sep 2020 13:07:20 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42B60C061755
+        for <io-uring@vger.kernel.org>; Tue, 22 Sep 2020 10:07:20 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id x22so8217583pfo.12
+        for <io-uring@vger.kernel.org>; Tue, 22 Sep 2020 10:07:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=OuYZ36WnxwIp9b6camA1INonBCd7PS5F7n5lbvDtQoE=;
-        b=vkrTbtOH4vHnR/84aYqVDHrQ5AGvI5gJZ+epaaRbPDginNWZ7IQOaHp0KiQGLoRIqK
-         lCtpCBfEppwh5xdm5Fg2E09yGBsQ1omUh0FsVnB0AGbc0KabsZevsMs5kdugIv8CVE5/
-         WA4g4A2X6yhuybhLsZ26G3b/9jK9koGpq3H8xumPWJXJrnSzbLUYbfDR++IgN0bKoBQq
-         n0DG/oDelKPnE35WpGCvEELD66Jz17cs7lC56sr6mITihQA1DVJ1mt9BGhniHUyWF6Lh
-         zzYPOu4uBf4nQ34xtWqSlA6XpnJ8NFviCNNpjE2H0nhrpatshwJ5hPmeTiRqtrX3VMpc
-         QmhQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=qN7SFU2dhcxyjoItGgpNRR8UnnLTaYdcEBc0FU5f+iY=;
+        b=FeZg+yMPXx4Qr4+Bh/ENN8vowhkjIiqpvpa3CZsDhYFPJwLlvTeP6PsDssoUxNsG9G
+         OvMu7TPFGZ79XvT9lkB/8Or1tjcI/liACPbTY5Ox/DToMYPkDKzrvyi1OEpJaYDeRMsm
+         tDjuBb1JIlnoK80FQVe1M4m9py/sc2Z0JMkLJZZeJ1ubcxEGIpmHTv55M72Dz3cAZuhc
+         5AmMhCQhf4CsyBNDPN8j4TjwhxqJZ46zGHrrKgIOlX9dDmHEqUircaxvQkie8Bh6Frvm
+         TnwZjVUwu6RKT42edZPLru4SR0iLVmHL51K2p2vzPJUG8gbk2asl6adaUl69P2QnSpUY
+         k5wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=OuYZ36WnxwIp9b6camA1INonBCd7PS5F7n5lbvDtQoE=;
-        b=nLtNe2oVXUpGJn+PJfOzIEzIDKD6D9KxiDHyK4pFtSX2QZ2UdEqc4IuLHblYhIZzbr
-         5LIzexiUSGGmjyNo1pRazzjqW5IWP05uGCd+K3D5m9t21Gs1b8CG+Wfx1QyGNPLhLC8Q
-         fjpGf2wrvn24ngEcWMgcV9fsmAKjGjAcK5pXaiIM1FduXLk125CLnkT54/h53D5aF9je
-         w2B/tf8qBOauKXstqq9FvSnZ1nOzuXgta8KnUhGcH2jF3wDZAOLzMKf47mMfjantuqCA
-         OFiXXLyh25JREGti19sFYSREvEXj7itgY4TyehQXMBqDMfhSxjRCS7XToXaxZSkZmybi
-         IZig==
-X-Gm-Message-State: AOAM532M0rk9xBiIm46S9Bs7Hsj8rQo/9kTPn49zPzqyiF1ogZjqg8ma
-        dL2FMgVzH3VEGyxkmgW/huJVfw==
-X-Google-Smtp-Source: ABdhPJzVdW+N5Ufbpna8vjsXyt2h2YPelrT15cDlhJa791IGnC+04vroQZTdEBrKNKjccVmTF6OthA==
-X-Received: by 2002:a17:902:fe88:b029:d2:2a16:254 with SMTP id x8-20020a170902fe88b02900d22a160254mr5598643plm.23.1600791613205;
-        Tue, 22 Sep 2020 09:20:13 -0700 (PDT)
-Received: from localhost.localdomain ([2601:646:c200:1ef2:f4bd:fe2:85ed:ea92])
-        by smtp.gmail.com with ESMTPSA id gk14sm2982522pjb.41.2020.09.22.09.20.09
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=qN7SFU2dhcxyjoItGgpNRR8UnnLTaYdcEBc0FU5f+iY=;
+        b=Qdziiung5QGFtdnIsdZCaBwL7dHIhxcpg8i8f4NR1KAQTqiYKHM+U+S7F77cSUTexR
+         CgUN6pN39TBSInlaDTlK9C+AtN15HGqEySMhE6QIV9QKYCLaqW0Fd/Ypd57QxZ8MqLr7
+         mq/m8w6mYRG+76ylVD+6Oyzfr/T0l04khgz01fqNUZiWT+tYQ0Zehhg9IjEgfrscMv3/
+         ZZ/ZCJmi/99ZDbj1KlsRaroO8//2HLLufGzHZLeNyhNJHQ0YQ4mO9mSyy83RBPYhcuO9
+         Dvku3e5Xj0EBvF37B7fNVgR44VRYeq1j5G5g/Lrb9AZOiKzh8gFPAIy1feOKqaSsPyH/
+         Z8QQ==
+X-Gm-Message-State: AOAM530WkUE5yvIE9JQ2a2+NHElnytbndXwYASHYXWQ3uVALxmkAu9Om
+        dM9f9GijGpsuTgbS7ed2vAM16g==
+X-Google-Smtp-Source: ABdhPJy60TbV4qhSIZFZBwhLm1nvhVxJ2xB14oZxPIRrCmVohH/YxLbDwsWgrlTpW6I7Ieg2/PMBWw==
+X-Received: by 2002:a62:7743:0:b029:13c:1611:658e with SMTP id s64-20020a6277430000b029013c1611658emr4834552pfc.11.1600794439731;
+        Tue, 22 Sep 2020 10:07:19 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id 72sm15396669pfx.79.2020.09.22.10.07.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Sep 2020 09:20:12 -0700 (PDT)
+        Tue, 22 Sep 2020 10:07:19 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.9-rc
+Message-ID: <14cc3fb9-2f6e-ef49-c98b-994048c0b4d3@kernel.dk>
+Date:   Tue, 22 Sep 2020 11:07:18 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-Date:   Tue, 22 Sep 2020 09:20:07 -0700
-Message-Id: <446566DF-ECBC-449C-92A1-A7D5AEBE9935@amacapital.net>
-References: <CAK8P3a39jN+t2hhLg0oKZnbYATQXmYE2-Z1JkmFyc1EPdg1HXw@mail.gmail.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Network Development <netdev@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
-In-Reply-To: <CAK8P3a39jN+t2hhLg0oKZnbYATQXmYE2-Z1JkmFyc1EPdg1HXw@mail.gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-X-Mailer: iPhone Mail (18A373)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hi Linus,
+
+A few fixes - most of them regression fixes from this cycle, but also a
+few stable heading fixes, and a build fix for the included demo tool
+since some systems now actually have gettid() available.
+
+Please pull.
 
 
-> On Sep 22, 2020, at 2:01 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->=20
-> =EF=BB=BFOn Tue, Sep 22, 2020 at 9:59 AM Pavel Begunkov <asml.silence@gmai=
-l.com> wrote:
->>> On 22/09/2020 10:23, Arnd Bergmann wrote:
->>> On Tue, Sep 22, 2020 at 8:32 AM Pavel Begunkov <asml.silence@gmail.com> w=
-rote:
->>>> On 22/09/2020 03:58, Andy Lutomirski wrote:
->>>>> On Mon, Sep 21, 2020 at 5:24 PM Pavel Begunkov <asml.silence@gmail.com=
-> wrote:
->>>>> I may be looking at a different kernel than you, but aren't you
->>>>> preventing creating an io_uring regardless of whether SQPOLL is
->>>>> requested?
->>>>=20
->>>> I diffed a not-saved file on a sleepy head, thanks for noticing.
->>>> As you said, there should be an SQPOLL check.
->>>>=20
->>>> ...
->>>> if (ctx->compat && (p->flags & IORING_SETUP_SQPOLL))
->>>>        goto err;
->>>=20
->>> Wouldn't that mean that now 32-bit containers behave differently
->>> between compat and native execution?
->>>=20
->>> I think if you want to prevent 32-bit applications from using SQPOLL,
->>> it needs to be done the same way on both to be consistent:
->>=20
->> The intention was to disable only compat not native 32-bit.
->=20
-> I'm not following why that would be considered a valid option,
-> as that clearly breaks existing users that update from a 32-bit
-> kernel to a 64-bit one.
->=20
-> Taking away the features from users that are still on 32-bit kernels
-> already seems questionable to me, but being inconsistent
-> about it seems much worse, in particular when the regression
-> is on the upgrade path.
->=20
->>> Can we expect all existing and future user space to have a sane
->>> fallback when IORING_SETUP_SQPOLL fails?
->>=20
->> SQPOLL has a few differences with non-SQPOLL modes, but it's easy
->> to convert between them. Anyway, SQPOLL is a privileged special
->> case that's here for performance/latency reasons, I don't think
->> there will be any non-accidental users of it.
->=20
-> Ok, so the behavior of 32-bit tasks would be the same as running
-> the same application as unprivileged 64-bit tasks, with applications
-> already having to implement that fallback, right?
->=20
->=20
+The following changes since commit c127a2a1b7baa5eb40a7e2de4b7f0c51ccbbb2ef:
 
-I don=E2=80=99t have any real preference wrt SQPOLL, and it may be that we h=
-ave a problem even without SQPOLL when IO gets punted without one of the fix=
-es discussed.
+  io_uring: fix linked deferred ->files cancellation (2020-09-05 16:02:42 -0600)
 
-But banning the mismatched io_uring and io_uring_enter seems like it may be w=
-orthwhile regardless.=
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.9-2020-09-22
+
+for you to fetch changes up to 4eb8dded6b82e184c09bb963bea0335fa3f30b55:
+
+  io_uring: fix openat/openat2 unified prep handling (2020-09-21 07:51:03 -0600)
+
+----------------------------------------------------------------
+io_uring-5.9-2020-09-22
+
+----------------------------------------------------------------
+Douglas Gilbert (1):
+      tools/io_uring: fix compile breakage
+
+Jens Axboe (7):
+      io_uring: grab any needed state during defer prep
+      io_uring: drop 'ctx' ref on task work cancelation
+      io_uring: don't run task work on an exiting task
+      io_uring: don't re-setup vecs/iter in io_resumit_prep() is already there
+      io_uring: don't use retry based buffered reads for non-async bdev
+      io_uring: mark statx/files_update/epoll_ctl as non-SQPOLL
+      io_uring: fix openat/openat2 unified prep handling
+
+ fs/io_uring.c                   | 49 ++++++++++++++++++++++++++++++++---------
+ tools/io_uring/io_uring-bench.c |  4 ++--
+ 2 files changed, 40 insertions(+), 13 deletions(-)
+
+-- 
+Jens Axboe
+

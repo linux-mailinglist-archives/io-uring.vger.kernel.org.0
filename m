@@ -2,74 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0933027588B
-	for <lists+io-uring@lfdr.de>; Wed, 23 Sep 2020 15:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 044CE2759AD
+	for <lists+io-uring@lfdr.de>; Wed, 23 Sep 2020 16:17:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbgIWNXJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Sep 2020 09:23:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51380 "EHLO
+        id S1726228AbgIWORF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Sep 2020 10:17:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgIWNXI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Sep 2020 09:23:08 -0400
+        with ESMTP id S1726130AbgIWORF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Sep 2020 10:17:05 -0400
 Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A9BC0613CE;
-        Wed, 23 Sep 2020 06:23:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E07F8C0613CE;
+        Wed, 23 Sep 2020 07:17:04 -0700 (PDT)
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kL4jW-004YbY-CV; Wed, 23 Sep 2020 13:22:54 +0000
-Date:   Wed, 23 Sep 2020 14:22:54 +0100
+        id 1kL5Zm-004aBB-Mq; Wed, 23 Sep 2020 14:16:54 +0000
+Date:   Wed, 23 Sep 2020 15:16:54 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Lutomirski <luto@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Network Development <netdev@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-Message-ID: <20200923132254.GI3421308@ZenIV.linux.org.uk>
-References: <563138b5-7073-74bc-f0c5-b2bad6277e87@gmail.com>
- <486c92d0-0f2e-bd61-1ab8-302524af5e08@gmail.com>
- <CALCETrW3rwGsgfLNnu_0JAcL5jvrPVTLTWM3JpbB5P9Hye6Fdw@mail.gmail.com>
- <d5c6736a-2cb4-4e22-78da-a667bda5c05a@gmail.com>
- <CALCETrUEC81va8-fuUXG1uA5rbKxnKDYsDOXC70_HtKD4LAeAg@mail.gmail.com>
- <e0a1b4d1-ff47-18d1-d535-c62812cb3105@gmail.com>
- <CAK8P3a2-6JNS38EbZcLrk=cTT526oP=Rf0aoqWNSJ-k4XTYehQ@mail.gmail.com>
- <f25b4708-eba6-78d6-03f9-5bfb04e07627@gmail.com>
- <CAK8P3a39jN+t2hhLg0oKZnbYATQXmYE2-Z1JkmFyc1EPdg1HXw@mail.gmail.com>
- <91209170-dcb4-d9ee-afa0-a819f8877b86@gmail.com>
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 3/9] iov_iter: refactor rw_copy_check_uvector and
+ import_iovec
+Message-ID: <20200923141654.GJ3421308@ZenIV.linux.org.uk>
+References: <20200923060547.16903-1-hch@lst.de>
+ <20200923060547.16903-4-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <91209170-dcb4-d9ee-afa0-a819f8877b86@gmail.com>
+In-Reply-To: <20200923060547.16903-4-hch@lst.de>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 11:01:34AM +0300, Pavel Begunkov wrote:
+On Wed, Sep 23, 2020 at 08:05:41AM +0200, Christoph Hellwig wrote:
 
-> > I'm not following why that would be considered a valid option,
-> > as that clearly breaks existing users that update from a 32-bit
-> > kernel to a 64-bit one.
-> 
-> Do you mean users who move 32-bit binaries (without recompiling) to a
-> new x64 kernel? Does the kernel guarantees that to work?
+> +struct iovec *iovec_from_user(const struct iovec __user *uvec,
+> +		unsigned long nr_segs, unsigned long fast_segs,
 
-Yes.
+Hmm...  For fast_segs unsigned long had always been ridiculous
+(4G struct iovec on caller stack frame?), but that got me wondering about
+nr_segs and I wish I'd thought of that when introducing import_iovec().
 
-No further (printable) comments for now...
+The thing is, import_iovec() takes unsigned int there.  Which is fine
+(hell, the maximal value that can be accepted in 1024), except that
+we do pass unsigned long syscall argument to it in some places.
+
+E.g. vfs_readv() quietly truncates vlen to 32 bits, and vlen can
+come unchanged through sys_readv() -> do_readv() -> vfs_readv().
+With unsigned long passed by syscall glue.
+
+AFAICS, passing 4G+1 as the third argument to readv(2) on 64bit box
+will be quietly treated as 1 these days.  Which would be fine, except
+that before "switch {compat_,}do_readv_writev() to {compat_,}import_iovec()"
+it used to fail with -EINVAL.
+
+Userland, BTW, describes readv(2) iovcnt as int; process_vm_readv(),
+OTOH, has these counts unsigned long from the userland POV...
+
+I suppose we ought to switch import_iovec() to unsigned long for nr_segs ;-/
+Strictly speaking that had been a userland ABI change, even though nothing
+except regression tests checking for expected errors would've been likely
+to notice.  And it looks like no regression tests covered that one...
+
+Linus, does that qualify for your "if no userland has noticed the change,
+it's not a breakage"?

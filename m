@@ -2,42 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E6B64276172
-	for <lists+io-uring@lfdr.de>; Wed, 23 Sep 2020 21:53:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EA8827631F
+	for <lists+io-uring@lfdr.de>; Wed, 23 Sep 2020 23:30:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbgIWTxJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Sep 2020 15:53:09 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:49141 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbgIWTxJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Sep 2020 15:53:09 -0400
-Received: from mail-qk1-f175.google.com ([209.85.222.175]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1Mof1D-1knLhY1WDR-00p1Cg; Wed, 23 Sep 2020 21:53:05 +0200
-Received: by mail-qk1-f175.google.com with SMTP id c62so1009747qke.1;
-        Wed, 23 Sep 2020 12:53:03 -0700 (PDT)
-X-Gm-Message-State: AOAM530ZlfmksSqecWKDQ3DFtZU062m1eW50TJHuAOM1NehNCZNSs1hi
-        XGsSJeH6U+rOX7g6WJ5h3KiEI72zgD5M/7gTGgc=
-X-Google-Smtp-Source: ABdhPJw80vxbxwT0bQ4Vkw0aE+k6Uuv2/dRNGRP/PGmAg2m3M1syddgA8VQgAKVqDM0S7SkWa6ZTkZVQ5JNt1c0Eq1g=
-X-Received: by 2002:a37:5d8:: with SMTP id 207mr1587539qkf.352.1600890783036;
- Wed, 23 Sep 2020 12:53:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200923060547.16903-1-hch@lst.de> <20200923060547.16903-6-hch@lst.de>
- <20200923142549.GK3421308@ZenIV.linux.org.uk> <20200923143251.GA14062@lst.de>
- <20200923145901.GN3421308@ZenIV.linux.org.uk> <20200923163831.GO3421308@ZenIV.linux.org.uk>
- <CAK8P3a3nkLUOkR+jwz2_2LcYTUTqdVf8JOtZqKWbtEDotNhFZA@mail.gmail.com> <20200923194755.GR3421308@ZenIV.linux.org.uk>
-In-Reply-To: <20200923194755.GR3421308@ZenIV.linux.org.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 23 Sep 2020 21:52:47 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1VPh0ufiUMbcRuj9wrpqojzQ_8mO68Vjc8yzLGxVNkpw@mail.gmail.com>
-Message-ID: <CAK8P3a1VPh0ufiUMbcRuj9wrpqojzQ_8mO68Vjc8yzLGxVNkpw@mail.gmail.com>
-Subject: Re: [PATCH 5/9] fs: remove various compat readv/writev helpers
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
+        id S1726691AbgIWVa3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Sep 2020 17:30:29 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:51257 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726381AbgIWVa3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Sep 2020 17:30:29 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-222-k0JZSzTkPJOZPjS-rTcoJw-1; Wed, 23 Sep 2020 22:30:26 +0100
+X-MC-Unique: k0JZSzTkPJOZPjS-rTcoJw-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 23 Sep 2020 22:30:25 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 23 Sep 2020 22:30:25 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Arnd Bergmann' <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>
+CC:     Christoph Hellwig <hch@lst.de>,
         Andrew Morton <akpm@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>,
         David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
@@ -48,55 +37,65 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         linux-block <linux-block@vger.kernel.org>,
         linux-scsi <linux-scsi@vger.kernel.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
+        linux-aio <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
         linux-arch <linux-arch@vger.kernel.org>,
         Linux-MM <linux-mm@kvack.org>,
-        Networking <netdev@vger.kernel.org>, keyrings@vger.kernel.org,
+        Networking <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:FcOmYEc7S70x327+yC5nQPBEM0rt3a6h0aY4XmvYdCQO/8YHm6L
- kQ4zWoMsMiqUpkNCuPq40vpPiey/pLiaKIbN7QkQudHxc4Jh3awCIgTkZ9zYNjIGusQwsP4
- 1f1B0nElrTF0UDKdAoVLxWVksyAkcP1rgW6OWMr1s5U6Ho/SuN3wPdE/qoJwLEFRspiRqUj
- yq6+or7yQpPXAv/J1caXQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WeZ7mFq3nUo=:ejU75HdVaJwErPbl07WyY/
- SzJqUDCrQEJB1WeBXC2y8Ssm/xYmjapzEBN2ahXTydur/hOzj69Kg2Qzgtoc3VNc8XFmw919o
- ESSsgSfQzPzPrlX3MgopJwOnkQ3I4bvWzTa2ZlS7YrZa/AyhvFw4gd4FCpGxRi6WmPfp76f1e
- myF7aStZTXsarPDA2STRNrZOIUYyDueuimX9V2S7rv5BW/onorUna7NOsEwkE7aU0mJt+v0Hl
- HIA6IfIR05QbpoKPI/OpdgJEact/NAJX3zC1ZJXh62ABmy+E/nnChSTV1nsGJIXjNhCuBVdFk
- bQBjXBaT8FGfl83RztO1RmQ3bqsqk8ku9XIaqGrmQ9i5OX6DAQHK7c30Vm+EMZDuan5IKUoxh
- cYHDHFlB37P7T0CXow6euG48MwQQRXwNWG94LigYmIKrGfCNIQ4DHyCeRw1+68wkbtADxLVH8
- CB0nRpMe7rUrmHGpqYNqt8wLM0pJKHM0tsjdDP650XCTmpPS3/NlStYy3mgCJIW9hqkuS7w7A
- GkIBYy2IUu1bbRxzL8ypcn4Cp96IkenTf/tXQXtLAggbQEk+CIKr/QP9S6AMOum8srwv1+VKM
- ORMh1sY7JkDqzxIAYpvgHUPA1mej8HF4555mPWMlPk7ICBIsJDcaGzkmlBgB6B23rbiKuCCsr
- iyC89P2nxjFi+GzaaYFHYRrz399DxPlViaNhzrAVJsWX0gM3VD02wi37/y8AW5K3d0vI6p/7f
- DV1q85DyULmO6ez5MisWBBUBROpFlvx1IghlxiINd/QvCa5H+comengpnbWjgMe/VluZszkB9
- P0Qk+w+vd9NiE3WeN+I42nTS8gMPYeMp7/0S9Nib8gESVnNDFc2shVtY2bhFcaVX6Tkq2thRH
- 4RYELGgsPV/p/jHf0yA1sgT5WRYlN6txBoLIeSX9HQ3uUovY6j9F6HIzPfzzcZCcKlkVPUElJ
- DqEhYfcAAh7V0lJVm7vBtu55QYk5+o4wTMvTEFkCyMYNWNypOQGY7
+Subject: RE: [PATCH 5/9] fs: remove various compat readv/writev helpers
+Thread-Topic: [PATCH 5/9] fs: remove various compat readv/writev helpers
+Thread-Index: AQHWkdnPrERbulCBlEyrFz5+sRsKWql2urog
+Date:   Wed, 23 Sep 2020 21:30:25 +0000
+Message-ID: <2e11ea867c644c5d96f8e4930e5c730d@AcuMS.aculab.com>
+References: <20200923060547.16903-1-hch@lst.de>
+ <20200923060547.16903-6-hch@lst.de>
+ <20200923142549.GK3421308@ZenIV.linux.org.uk> <20200923143251.GA14062@lst.de>
+ <20200923145901.GN3421308@ZenIV.linux.org.uk>
+ <20200923163831.GO3421308@ZenIV.linux.org.uk>
+ <CAK8P3a3nkLUOkR+jwz2_2LcYTUTqdVf8JOtZqKWbtEDotNhFZA@mail.gmail.com>
+In-Reply-To: <CAK8P3a3nkLUOkR+jwz2_2LcYTUTqdVf8JOtZqKWbtEDotNhFZA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 9:48 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> FWIW, after playing with that for a while...  Do we really want the
-> compat_sys_...() declarations to live in linux/compat.h?  Most of
-> the users of that file don't want those; why not move them to
-> linux/syscalls.h?
+RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAyMyBTZXB0ZW1iZXIgMjAyMCAxOTo0Ng0KLi4u
+DQo+IFJlZ2FyZGxlc3Mgb2YgdGhhdCwgYW5vdGhlciBhZHZhbnRhZ2Ugb2YgaGF2aW5nIHRoZSBT
+WVNDQUxMX0RFQ0xBUkV4KCkNCj4gd291bGQgYmUgdGhlIGFiaWxpdHkgdG8gaW5jbHVkZSB0aGF0
+IGhlYWRlciBmaWxlIGZyb20gZWxzZXdoZXJlIHdpdGggYSBkaWZmZXJlbnQNCj4gbWFjcm8gZGVm
+aW5pdGlvbiB0byBjcmVhdGUgYSBtYWNoaW5lLXJlYWRhYmxlIHZlcnNpb24gb2YgdGhlIGludGVy
+ZmFjZSB3aGVuDQo+IGNvbWJpbmVkIHdpdGggdGhlIHN5c2NhbGwudGJsIGZpbGVzLiBUaGlzIGNv
+dWxkIGJlIHVzZWQgdG8gY3JlYXRlIGEgdXNlcg0KPiBzcGFjZSBzdHViIGZvciBjYWxsaW5nIGlu
+dG8gdGhlIGxvdy1sZXZlbCBzeXNjYWxsIHJlZ2FyZGxlc3Mgb2YgdGhlDQo+IGxpYmMgaW50ZXJm
+YWNlcywNCj4gb3IgZm9yIHN5bmNocm9uaXppbmcgdGhlIGludGVyZmFjZXMgd2l0aCBzdHJhY2Us
+IHFlbXUtdXNlciwgb3IgYW55dGhpbmcgdGhhdA0KPiBuZWVkcyB0byBkZWFsIHdpdGggdGhlIGxv
+dy1sZXZlbCBpbnRlcmZhY2UuDQoNCkEgc2ltaWxhciAndHJpY2snICh0aGF0IHByb2JhYmx5IHdv
+bid0IHdvcmsgaGVyZSkgaXMgdG8gcGFzcw0KdGhlIG5hbWUgb2YgYSAjZGVmaW5lIGZ1bmN0aW9u
+IGFzIGEgcGFyYW1ldGVyIHRvIGFub3RoZXIgZGVmaW5lLg0KVXNlZnVsIGZvciBkZWZpbmluZyBj
+b25zdGFudHMgYW5kIGVycm9yIHN0cmluZ3MgdG9nZXRoZXIuIGVnOg0KI2RlZmluZSBUUkFGRklD
+X0xJR0hUUyh4KSBcDQoJeChSRUQsIDAsICJSZWQiKSBcDQoJeChZRUxMT1csIDEsICJZZWxsb3cp
+IFwNCgl4KEdSRUVOLCAyLCAiR1JFRU4pDQoNCllvdSBjYW4gdGhlbiBkbyB0aGluZyBsaWtlOg0K
+I2RlZmluZSB4KHRva2VuLCB2YWx1ZSwgc3RyaW5nKSB0b2tlbiA9IHZhbHVlLA0KZW51bSB7VFJB
+RkZJQ19MSUdIVFMoeCkgTlVNX0xJR0hUU307DQojdW5kZWYgeA0KI2RlZmluZSB4KHRva2VuLCB2
+YWx1ZSwgc3RyaW5nKSBbdmFsdWVdID0gc3RyaW5nLA0KY29uc3QgY2hhciAqY29sb3Vyc1tdID0g
+e1RSQUZGSUNfTElHSFRTKHgpfTsNCiN1bmRlZiB4DQp0byBpbml0aWFsaXNlIGNvbnN0YW50cyBh
+bmQgYSBuYW1lIHRhYmxlIHRoYXQgYXJlIGFsd2F5cyBpbiBzeW5jLg0KDQpJdCBpcyBhbHNvIGEg
+Z29vZCB3YXkgdG8gZ2VuZXJhdGUgc291cmNlIGxpbmVzIHRoYXQgYXJlIG92ZXIgMU1CLg0KDQoJ
+RGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1v
+dW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEz
+OTczODYgKFdhbGVzKQ0K
 
-Sure, let's do that. The trend overall is to integrate the compat stuff
-more closely into where the native implementation lives, so this
-would just follow that trend.
-
-I think with Christoph's latest patches, about half of them are
-going away as well.
-
-> Reason: there's a lot more users of linux/compat.h than those of
-> linux/syscalls.h - it's pulled by everything in the networking stack,
-> for starters...
-
-Right, the network headers pull in almost everything else through
-multiple indirect inclusions, anything we can do to reduce that
-helps.
-
-     Arnd

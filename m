@@ -2,52 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11DB7274BE9
-	for <lists+io-uring@lfdr.de>; Wed, 23 Sep 2020 00:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 285DB275126
+	for <lists+io-uring@lfdr.de>; Wed, 23 Sep 2020 08:08:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbgIVWPY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Sep 2020 18:15:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbgIVWPY (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 22 Sep 2020 18:15:24 -0400
-Subject: Re: [GIT PULL] io_uring fixes for 5.9-rc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600812924;
-        bh=UVJzguGCm44sfbkoHo41EuT7SFHdka4Xy+rfnaiGpOA=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=frTxDX0JEbe2wEYp3edRiiErA3OqcQ4gxCQzP+Vs/6zHp/XKmVgPirUtrBeVynBTj
-         t5cuD+v5yvS2aylJk7xE9tklQwpNuoBwO2h88qGmCuIWreUK1PcnMDRBY26wPrDRFk
-         1XodOs7QFkg9psHZM2y3FoogKYSVsn7uVsiEuuKk=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <14cc3fb9-2f6e-ef49-c98b-994048c0b4d3@kernel.dk>
-References: <14cc3fb9-2f6e-ef49-c98b-994048c0b4d3@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <14cc3fb9-2f6e-ef49-c98b-994048c0b4d3@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.9-2020-09-22
-X-PR-Tracked-Commit-Id: 4eb8dded6b82e184c09bb963bea0335fa3f30b55
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0baca070068c58b95e342881d9da4840d5cf3bd1
-Message-Id: <160081292404.1950.8126323357580620009.pr-tracker-bot@kernel.org>
-Date:   Tue, 22 Sep 2020 22:15:24 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        id S1726819AbgIWGHb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Sep 2020 02:07:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40788 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbgIWGGD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Sep 2020 02:06:03 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B74F2C0613D1;
+        Tue, 22 Sep 2020 23:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=1Vh0dAKOdnXFeXkvpj04uvS6NbxfgNRMpuVYVFb02f4=; b=UHUJHa1QYjtLCQQD5BgcksLg9Q
+        ogJ562LcQiJIT5vdgrH0k4zEs1KHZKEtE5FKLLBpdPMh61bVcd85zhmEsDbr6XSCO5/IYcC5xosc+
+        +Bs/Af8KVfawjVAHZhgFtXS8OiPnerF4zdWvt5BNj0oHrZft0kEI4+9TtBZcFd3lyEVe37nzNVbH0
+        aZadmqU25GvmueBPpKO5jnBNpPCgYeh+qgig1FxlRqFgPDmiWBJxKwTYM40NB0p30YQScbA4MiDmO
+        lYYgIhxZbqaTBRDM4Yi29He2+pqLkpKcUM8CEtjyUQQ2/n3lFqVS/1SQoX+7346gfnroqdVZS236p
+        XbWKDsJg==;
+Received: from p4fdb0c34.dip0.t-ipconnect.de ([79.219.12.52] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kKxuZ-0003T1-26; Wed, 23 Sep 2020 06:05:51 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: let import_iovec deal with compat_iovecs as well v3
+Date:   Wed, 23 Sep 2020 08:05:38 +0200
+Message-Id: <20200923060547.16903-1-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Tue, 22 Sep 2020 11:07:18 -0600:
+Hi Al,
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.9-2020-09-22
+this series changes import_iovec to transparently deal with comat iovec
+structures, and then cleanups up a lot of code dupliation.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0baca070068c58b95e342881d9da4840d5cf3bd1
+Changes since v2:
+ - revert the switch of the access process vm sysclls to iov_iter
+ - refactor the import_iovec internals differently
+ - switch aio to use __import_iovec
 
-Thank you!
+Changes since v1:
+ - improve a commit message
+ - drop a pointless unlikely
+ - drop the PF_FORCE_COMPAT flag
+ - add a few more cleanups (including two from David Laight)
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Diffstat:
+ arch/arm64/include/asm/unistd32.h                  |   10 
+ arch/mips/kernel/syscalls/syscall_n32.tbl          |   10 
+ arch/mips/kernel/syscalls/syscall_o32.tbl          |   10 
+ arch/parisc/kernel/syscalls/syscall.tbl            |   10 
+ arch/powerpc/kernel/syscalls/syscall.tbl           |   10 
+ arch/s390/kernel/syscalls/syscall.tbl              |   10 
+ arch/sparc/kernel/syscalls/syscall.tbl             |   10 
+ arch/x86/entry/syscall_x32.c                       |    5 
+ arch/x86/entry/syscalls/syscall_32.tbl             |   10 
+ arch/x86/entry/syscalls/syscall_64.tbl             |   10 
+ block/scsi_ioctl.c                                 |   12 
+ drivers/scsi/sg.c                                  |    9 
+ fs/aio.c                                           |   38 --
+ fs/io_uring.c                                      |   20 -
+ fs/read_write.c                                    |  362 +--------------------
+ fs/splice.c                                        |   57 ---
+ include/linux/compat.h                             |   24 -
+ include/linux/fs.h                                 |   11 
+ include/linux/uio.h                                |   10 
+ include/uapi/asm-generic/unistd.h                  |   12 
+ lib/iov_iter.c                                     |  161 +++++++--
+ mm/process_vm_access.c                             |   85 ----
+ net/compat.c                                       |    4 
+ security/keys/compat.c                             |   37 --
+ security/keys/internal.h                           |    5 
+ security/keys/keyctl.c                             |    2 
+ tools/include/uapi/asm-generic/unistd.h            |   12 
+ tools/perf/arch/powerpc/entry/syscalls/syscall.tbl |   10 
+ tools/perf/arch/s390/entry/syscalls/syscall.tbl    |   10 
+ tools/perf/arch/x86/entry/syscalls/syscall_64.tbl  |   10 
+ 30 files changed, 280 insertions(+), 706 deletions(-)

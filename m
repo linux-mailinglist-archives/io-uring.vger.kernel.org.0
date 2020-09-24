@@ -2,96 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 788182765D9
-	for <lists+io-uring@lfdr.de>; Thu, 24 Sep 2020 03:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC2FA27669F
+	for <lists+io-uring@lfdr.de>; Thu, 24 Sep 2020 04:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbgIXB3Y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Sep 2020 21:29:24 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51190 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725273AbgIXB3Y (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 23 Sep 2020 21:29:24 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 356281B3AF01F3B73C0D;
-        Thu, 24 Sep 2020 09:29:22 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.487.0; Thu, 24 Sep 2020
- 09:29:15 +0800
-From:   Ye Bin <yebin10@huawei.com>
-To:     <axboe@kernel.dk>, <io-uring@vger.kernel.org>
-CC:     Ye Bin <yebin10@huawei.com>
-Subject: [PATCH] io_uring: Remove unneeded NULL check before free
-Date:   Thu, 24 Sep 2020 09:36:06 +0800
-Message-ID: <20200924013606.93616-1-yebin10@huawei.com>
-X-Mailer: git-send-email 2.16.2.dirty
+        id S1726414AbgIXCvp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Sep 2020 22:51:45 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:45729 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726281AbgIXCvp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Sep 2020 22:51:45 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R481e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0U9v3MqP_1600915902;
+Received: from localhost(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0U9v3MqP_1600915902)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 24 Sep 2020 10:51:42 +0800
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH] io_uring: show sqthread pid and cpu in fdinfo
+Date:   Thu, 24 Sep 2020 10:51:42 +0800
+Message-Id: <1600915902-15143-1-git-send-email-joseph.qi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Fixes coccicheck warnig:
-fs//io_uring.c:5775:4-9: WARNING: NULL check before some freeing
-functions is not needed.
-fs//io_uring.c:1617:2-7: WARNING: NULL check before some freeing
-functions is not needed.
-fs//io_uring.c:3291:2-7: WARNING: NULL check before some freeing
-functions is not needed.
-fs//io_uring.c:3398:2-7: WARNING: NULL check before some freeing
-functions is not needed.
+In most cases we'll specify IORING_SETUP_SQPOLL and run multiple
+io_uring instances in a host. Since all sqthreads are named
+"io_uring-sq", it's hard to distinguish the relations between
+application process and its io_uring sqthread.
+With this patch, application can get its corresponding sqthread pid
+and cpu through show_fdinfo.
+Steps:
+1. Get io_uring fd first.
+$ ls -l /proc/<pid>/fd | grep -w io_uring
+2. Then get io_uring instance related info, including corresponding
+sqthread pid and cpu.
+$ cat /proc/<pid>/fdinfo/<io_uring_fd>
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Ye Bin <yebin10@huawei.com>
+pos:	0
+flags:	02000002
+mnt_id:	13
+SqThread:	6929
+SqThreadCpu:	2
+UserFiles:	1
+    0: testfile
+UserBufs:	0
+PollList:
+
+Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 ---
- fs/io_uring.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+1. Go to upstream/4.9/4.19？(N)
+2. Backport from upstream？(N)
+3. Summarized pre-commmit testing in Aone (Y)
+4. Aone URL (https://aone.alibaba-inc.com/task/29517834)
+5. Use CONFIG_xxx ? (N)
+6. Use sysfs or boot parameter to turn off code changes? (N)
+7. Any kernel-userspace API/ABI changes? (N)
+8. I have full maintenance commitments for my 50+ code changes (Y)
+
+ fs/io_uring.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 815be15c2aee..23f99ffbb480 100644
+index c718ac0..5171de0 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1613,8 +1613,7 @@ static bool io_dismantle_req(struct io_kiocb *req)
- {
- 	io_clean_op(req);
+@@ -7934,6 +7934,10 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 	int i;
  
--	if (req->async_data)
--		kfree(req->async_data);
-+	kfree(req->async_data);
- 	if (req->file)
- 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
- 
-@@ -3287,8 +3286,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
- 	ret = 0;
- out_free:
- 	/* it's reportedly faster than delegating the null check to kfree() */
--	if (iovec)
--		kfree(iovec);
-+	kfree(iovec);
- 	return ret;
- }
- 
-@@ -3394,8 +3392,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
- 	}
- out_free:
- 	/* it's reportedly faster than delegating the null check to kfree() */
--	if (iovec)
--		kfree(iovec);
-+	kfree(iovec);
- 	return ret;
- }
- 
-@@ -5771,8 +5768,7 @@ static void __io_clean_op(struct io_kiocb *req)
- 		case IORING_OP_WRITE_FIXED:
- 		case IORING_OP_WRITE: {
- 			struct io_async_rw *io = req->async_data;
--			if (io->free_iovec)
--				kfree(io->free_iovec);
-+			kfree(io->free_iovec);
- 			break;
- 			}
- 		case IORING_OP_RECVMSG:
+ 	mutex_lock(&ctx->uring_lock);
++	seq_printf(m, "SqThread:\t%d\n", (ctx->flags & IORING_SETUP_SQPOLL) ?
++					 task_pid_nr(ctx->sqo_thread) : -1);
++	seq_printf(m, "SqThreadCpu:\t%d\n", (ctx->flags & IORING_SETUP_SQPOLL) ?
++					    task_cpu(ctx->sqo_thread) : -1);
+ 	seq_printf(m, "UserFiles:\t%u\n", ctx->nr_user_files);
+ 	for (i = 0; i < ctx->nr_user_files; i++) {
+ 		struct fixed_file_table *table;
 -- 
-2.16.2.dirty
+1.8.3.1
 

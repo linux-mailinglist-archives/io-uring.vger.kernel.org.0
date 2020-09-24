@@ -2,30 +2,27 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC2FA27669F
-	for <lists+io-uring@lfdr.de>; Thu, 24 Sep 2020 04:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 938012766A1
+	for <lists+io-uring@lfdr.de>; Thu, 24 Sep 2020 04:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbgIXCvp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Sep 2020 22:51:45 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:45729 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726281AbgIXCvp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Sep 2020 22:51:45 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R481e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0U9v3MqP_1600915902;
-Received: from localhost(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0U9v3MqP_1600915902)
+        id S1726281AbgIXCz1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Sep 2020 22:55:27 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:42105 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726196AbgIXCz1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Sep 2020 22:55:27 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0U9vmSlV_1600916124;
+Received: from localhost(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0U9vmSlV_1600916124)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 24 Sep 2020 10:51:42 +0800
+          Thu, 24 Sep 2020 10:55:24 +0800
 From:   Joseph Qi <joseph.qi@linux.alibaba.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring <io-uring@vger.kernel.org>,
         Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: [PATCH] io_uring: show sqthread pid and cpu in fdinfo
-Date:   Thu, 24 Sep 2020 10:51:42 +0800
-Message-Id: <1600915902-15143-1-git-send-email-joseph.qi@linux.alibaba.com>
+Subject: [PATCH RESEND] io_uring: show sqthread pid and cpu in fdinfo
+Date:   Thu, 24 Sep 2020 10:55:24 +0800
+Message-Id: <1600916124-19563-1-git-send-email-joseph.qi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
@@ -55,23 +52,14 @@ PollList:
 
 Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 ---
-1. Go to upstream/4.9/4.19？(N)
-2. Backport from upstream？(N)
-3. Summarized pre-commmit testing in Aone (Y)
-4. Aone URL (https://aone.alibaba-inc.com/task/29517834)
-5. Use CONFIG_xxx ? (N)
-6. Use sysfs or boot parameter to turn off code changes? (N)
-7. Any kernel-userspace API/ABI changes? (N)
-8. I have full maintenance commitments for my 50+ code changes (Y)
-
  fs/io_uring.c | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c718ac0..5171de0 100644
+index 8b426aa..9c8b3b3 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7934,6 +7934,10 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+@@ -8415,6 +8415,10 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
  	int i;
  
  	mutex_lock(&ctx->uring_lock);

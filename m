@@ -2,100 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA8827631F
-	for <lists+io-uring@lfdr.de>; Wed, 23 Sep 2020 23:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 788182765D9
+	for <lists+io-uring@lfdr.de>; Thu, 24 Sep 2020 03:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbgIWVa3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Sep 2020 17:30:29 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:51257 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726381AbgIWVa3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Sep 2020 17:30:29 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-222-k0JZSzTkPJOZPjS-rTcoJw-1; Wed, 23 Sep 2020 22:30:26 +0100
-X-MC-Unique: k0JZSzTkPJOZPjS-rTcoJw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 23 Sep 2020 22:30:25 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 23 Sep 2020 22:30:25 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Arnd Bergmann' <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Networking <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Subject: RE: [PATCH 5/9] fs: remove various compat readv/writev helpers
-Thread-Topic: [PATCH 5/9] fs: remove various compat readv/writev helpers
-Thread-Index: AQHWkdnPrERbulCBlEyrFz5+sRsKWql2urog
-Date:   Wed, 23 Sep 2020 21:30:25 +0000
-Message-ID: <2e11ea867c644c5d96f8e4930e5c730d@AcuMS.aculab.com>
-References: <20200923060547.16903-1-hch@lst.de>
- <20200923060547.16903-6-hch@lst.de>
- <20200923142549.GK3421308@ZenIV.linux.org.uk> <20200923143251.GA14062@lst.de>
- <20200923145901.GN3421308@ZenIV.linux.org.uk>
- <20200923163831.GO3421308@ZenIV.linux.org.uk>
- <CAK8P3a3nkLUOkR+jwz2_2LcYTUTqdVf8JOtZqKWbtEDotNhFZA@mail.gmail.com>
-In-Reply-To: <CAK8P3a3nkLUOkR+jwz2_2LcYTUTqdVf8JOtZqKWbtEDotNhFZA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1726193AbgIXB3Y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Sep 2020 21:29:24 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51190 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725273AbgIXB3Y (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 23 Sep 2020 21:29:24 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 356281B3AF01F3B73C0D;
+        Thu, 24 Sep 2020 09:29:22 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.487.0; Thu, 24 Sep 2020
+ 09:29:15 +0800
+From:   Ye Bin <yebin10@huawei.com>
+To:     <axboe@kernel.dk>, <io-uring@vger.kernel.org>
+CC:     Ye Bin <yebin10@huawei.com>
+Subject: [PATCH] io_uring: Remove unneeded NULL check before free
+Date:   Thu, 24 Sep 2020 09:36:06 +0800
+Message-ID: <20200924013606.93616-1-yebin10@huawei.com>
+X-Mailer: git-send-email 2.16.2.dirty
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAyMyBTZXB0ZW1iZXIgMjAyMCAxOTo0Ng0KLi4u
-DQo+IFJlZ2FyZGxlc3Mgb2YgdGhhdCwgYW5vdGhlciBhZHZhbnRhZ2Ugb2YgaGF2aW5nIHRoZSBT
-WVNDQUxMX0RFQ0xBUkV4KCkNCj4gd291bGQgYmUgdGhlIGFiaWxpdHkgdG8gaW5jbHVkZSB0aGF0
-IGhlYWRlciBmaWxlIGZyb20gZWxzZXdoZXJlIHdpdGggYSBkaWZmZXJlbnQNCj4gbWFjcm8gZGVm
-aW5pdGlvbiB0byBjcmVhdGUgYSBtYWNoaW5lLXJlYWRhYmxlIHZlcnNpb24gb2YgdGhlIGludGVy
-ZmFjZSB3aGVuDQo+IGNvbWJpbmVkIHdpdGggdGhlIHN5c2NhbGwudGJsIGZpbGVzLiBUaGlzIGNv
-dWxkIGJlIHVzZWQgdG8gY3JlYXRlIGEgdXNlcg0KPiBzcGFjZSBzdHViIGZvciBjYWxsaW5nIGlu
-dG8gdGhlIGxvdy1sZXZlbCBzeXNjYWxsIHJlZ2FyZGxlc3Mgb2YgdGhlDQo+IGxpYmMgaW50ZXJm
-YWNlcywNCj4gb3IgZm9yIHN5bmNocm9uaXppbmcgdGhlIGludGVyZmFjZXMgd2l0aCBzdHJhY2Us
-IHFlbXUtdXNlciwgb3IgYW55dGhpbmcgdGhhdA0KPiBuZWVkcyB0byBkZWFsIHdpdGggdGhlIGxv
-dy1sZXZlbCBpbnRlcmZhY2UuDQoNCkEgc2ltaWxhciAndHJpY2snICh0aGF0IHByb2JhYmx5IHdv
-bid0IHdvcmsgaGVyZSkgaXMgdG8gcGFzcw0KdGhlIG5hbWUgb2YgYSAjZGVmaW5lIGZ1bmN0aW9u
-IGFzIGEgcGFyYW1ldGVyIHRvIGFub3RoZXIgZGVmaW5lLg0KVXNlZnVsIGZvciBkZWZpbmluZyBj
-b25zdGFudHMgYW5kIGVycm9yIHN0cmluZ3MgdG9nZXRoZXIuIGVnOg0KI2RlZmluZSBUUkFGRklD
-X0xJR0hUUyh4KSBcDQoJeChSRUQsIDAsICJSZWQiKSBcDQoJeChZRUxMT1csIDEsICJZZWxsb3cp
-IFwNCgl4KEdSRUVOLCAyLCAiR1JFRU4pDQoNCllvdSBjYW4gdGhlbiBkbyB0aGluZyBsaWtlOg0K
-I2RlZmluZSB4KHRva2VuLCB2YWx1ZSwgc3RyaW5nKSB0b2tlbiA9IHZhbHVlLA0KZW51bSB7VFJB
-RkZJQ19MSUdIVFMoeCkgTlVNX0xJR0hUU307DQojdW5kZWYgeA0KI2RlZmluZSB4KHRva2VuLCB2
-YWx1ZSwgc3RyaW5nKSBbdmFsdWVdID0gc3RyaW5nLA0KY29uc3QgY2hhciAqY29sb3Vyc1tdID0g
-e1RSQUZGSUNfTElHSFRTKHgpfTsNCiN1bmRlZiB4DQp0byBpbml0aWFsaXNlIGNvbnN0YW50cyBh
-bmQgYSBuYW1lIHRhYmxlIHRoYXQgYXJlIGFsd2F5cyBpbiBzeW5jLg0KDQpJdCBpcyBhbHNvIGEg
-Z29vZCB3YXkgdG8gZ2VuZXJhdGUgc291cmNlIGxpbmVzIHRoYXQgYXJlIG92ZXIgMU1CLg0KDQoJ
-RGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1v
-dW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEz
-OTczODYgKFdhbGVzKQ0K
+Fixes coccicheck warnig:
+fs//io_uring.c:5775:4-9: WARNING: NULL check before some freeing
+functions is not needed.
+fs//io_uring.c:1617:2-7: WARNING: NULL check before some freeing
+functions is not needed.
+fs//io_uring.c:3291:2-7: WARNING: NULL check before some freeing
+functions is not needed.
+fs//io_uring.c:3398:2-7: WARNING: NULL check before some freeing
+functions is not needed.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+---
+ fs/io_uring.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 815be15c2aee..23f99ffbb480 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1613,8 +1613,7 @@ static bool io_dismantle_req(struct io_kiocb *req)
+ {
+ 	io_clean_op(req);
+ 
+-	if (req->async_data)
+-		kfree(req->async_data);
++	kfree(req->async_data);
+ 	if (req->file)
+ 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
+ 
+@@ -3287,8 +3286,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+ 	ret = 0;
+ out_free:
+ 	/* it's reportedly faster than delegating the null check to kfree() */
+-	if (iovec)
+-		kfree(iovec);
++	kfree(iovec);
+ 	return ret;
+ }
+ 
+@@ -3394,8 +3392,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+ 	}
+ out_free:
+ 	/* it's reportedly faster than delegating the null check to kfree() */
+-	if (iovec)
+-		kfree(iovec);
++	kfree(iovec);
+ 	return ret;
+ }
+ 
+@@ -5771,8 +5768,7 @@ static void __io_clean_op(struct io_kiocb *req)
+ 		case IORING_OP_WRITE_FIXED:
+ 		case IORING_OP_WRITE: {
+ 			struct io_async_rw *io = req->async_data;
+-			if (io->free_iovec)
+-				kfree(io->free_iovec);
++			kfree(io->free_iovec);
+ 			break;
+ 			}
+ 		case IORING_OP_RECVMSG:
+-- 
+2.16.2.dirty
 

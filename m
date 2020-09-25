@@ -2,152 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11CD7277F7F
-	for <lists+io-uring@lfdr.de>; Fri, 25 Sep 2020 06:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD8732782C6
+	for <lists+io-uring@lfdr.de>; Fri, 25 Sep 2020 10:32:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbgIYExA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Sep 2020 00:53:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49430 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbgIYEwF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Sep 2020 00:52:05 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4077AC0613CE;
-        Thu, 24 Sep 2020 21:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=7X3/qUs2y75UUlnvdA2vy1FAPs/IUNMhWXsjmEB0AzE=; b=rj0XDp8uPSxcFWegIpHdgd9P2W
-        C+tprcq6864iqgbcp5H4iIODTIo5tCQ0qDP/KeidYUv3PasCLpAEAT+LJm0Jj2FppcYGkG/y6sxcl
-        UoGQQZrZxBSbgeVpmO0GY94F8eOhJGQSuwRuSPxO6jIan4/4ujpCcdQXHiw0iAzOrXpO4Gn5r6l7g
-        uEnQPUL31d/eJfTm9tKxykGcSc9oHEoC3GNSwpAyuPlOCI+A/jDGpBDM/kuY8lSk5MdbKwGwajT6y
-        pRdVgA2AQsC8qrAaohbb7uoyYXfgJcBynl1Pz14zbi2i+0fYizQFCTsaLYJG7jbPVM4V+fsJ6DuGO
-        NU9DZnpw==;
-Received: from p4fdb0c34.dip0.t-ipconnect.de ([79.219.12.52] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kLfiB-0002ru-4C; Fri, 25 Sep 2020 04:51:59 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 9/9] security/keys: remove compat_keyctl_instantiate_key_iov
-Date:   Fri, 25 Sep 2020 06:51:46 +0200
-Message-Id: <20200925045146.1283714-10-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200925045146.1283714-1-hch@lst.de>
-References: <20200925045146.1283714-1-hch@lst.de>
+        id S1727063AbgIYIcU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Sep 2020 04:32:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:43207 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726990AbgIYIcT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Sep 2020 04:32:19 -0400
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601022738;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TKoL37A5XuAnt9jnwVWFE5yXi8J32yxwwLje6wN+ynI=;
+        b=XH8WnoeMK2Gs5uYyVxm0hS1Dy3qjEHxNY6IxpvCFzxSQ1AwtqeYcpzvndG6arENDAe6E2r
+        U7ey1TMDskcAzXIdWe/bwV0zPP44KF3fsSBYJ++pnbtY73YqKsyJvPUaKq/5qu4vIIsYOz
+        hZNp+SmoGO3HVRm5BE1JaWA3yKHzqzQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-192-oHTYjr4PPmeMEr9JqKEp2w-1; Fri, 25 Sep 2020 04:32:15 -0400
+X-MC-Unique: oHTYjr4PPmeMEr9JqKEp2w-1
+Received: by mail-wr1-f71.google.com with SMTP id a10so772481wrw.22
+        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 01:32:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TKoL37A5XuAnt9jnwVWFE5yXi8J32yxwwLje6wN+ynI=;
+        b=S5660tcCushapukDU2pPV+X099akY/j0Xx9T3TMtAKMevRf3EAeqCKU6xK5YBovMWx
+         PmlOIQd1bF19ZM9SgmhfALDQ9HPpZs2PX1uoZhHpyMqU71F411fOFchyt5RCT5Q5Qnkv
+         bUFJ9dPZFf/dHwHxmeCshrVo0pQv+/xk7vDBmf5lF404uBrGRluflUzdIJR0vBZ0wqOh
+         W5xa4jU/aPjoIQxS1OGWCEY5teBW05onnYcXPA1Uv5NrIV0IpmUa44wgyj6RfWWyAPsl
+         X5qCuWHk++PgUFYdQJ0XYgPExpOBYyzDHjpNeuqzxSFE6PTLPAxSSBupKSHQ784x4/04
+         gqlg==
+X-Gm-Message-State: AOAM530Wj4CwCA8cczyMTEVpFhYrJm9mF8ay9E3zYi0sm8QkEC+j602V
+        1Lj2/geMFQJB2vYliShPFu3yXyi1EFNW0Nq2RgfI7s3Fi7K9Aq8zflNl4SqcFok99Oy9KAlyLgC
+        kn9AYZ/xcwFC5pRjfKBE=
+X-Received: by 2002:a1c:6555:: with SMTP id z82mr1851977wmb.101.1601022734224;
+        Fri, 25 Sep 2020 01:32:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzR1WX4CEXwaLozrvZMsSgcq/K8L7nTLptigsPxZgytFVVP+DikmreYZ0jKDSqXNdW47a6XWg==
+X-Received: by 2002:a1c:6555:: with SMTP id z82mr1851957wmb.101.1601022733956;
+        Fri, 25 Sep 2020 01:32:13 -0700 (PDT)
+Received: from steredhat (host-80-116-189-193.retail.telecomitalia.it. [80.116.189.193])
+        by smtp.gmail.com with ESMTPSA id n10sm2053405wmk.7.2020.09.25.01.32.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Sep 2020 01:32:13 -0700 (PDT)
+Date:   Fri, 25 Sep 2020 10:32:10 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH] io_uring: ensure open/openat2 name is cleaned on
+ cancelation
+Message-ID: <20200925083210.xwfmssdvg4t6j3ar@steredhat>
+References: <ea883f39-0da5-fcd3-a069-43d7f5002380@kernel.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea883f39-0da5-fcd3-a069-43d7f5002380@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Now that import_iovec handles compat iovecs, the native version of
-keyctl_instantiate_key_iov can be used for the compat case as well.
+On Thu, Sep 24, 2020 at 02:59:33PM -0600, Jens Axboe wrote:
+> io_uring: ensure open/openat2 name is cleaned on cancelation
+> 
+> If we cancel these requests, we'll leak the memory associated with the
+> filename. Add them to the table of ops that need cleaning, if
+> REQ_F_NEED_CLEANUP is set.
+> 
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- security/keys/compat.c   | 36 ++----------------------------------
- security/keys/internal.h |  5 -----
- security/keys/keyctl.c   |  2 +-
- 3 files changed, 3 insertions(+), 40 deletions(-)
+IIUC we inadvertently removed 'putname(req->open.filename)' from the cleanup
+function in commit e62753e4e292 ("io_uring: call statx directly").
 
-diff --git a/security/keys/compat.c b/security/keys/compat.c
-index 7ae531db031cf8..1545efdca56227 100644
---- a/security/keys/compat.c
-+++ b/security/keys/compat.c
-@@ -11,38 +11,6 @@
- #include <linux/slab.h>
- #include "internal.h"
- 
--/*
-- * Instantiate a key with the specified compatibility multipart payload and
-- * link the key into the destination keyring if one is given.
-- *
-- * The caller must have the appropriate instantiation permit set for this to
-- * work (see keyctl_assume_authority).  No other permissions are required.
-- *
-- * If successful, 0 will be returned.
-- */
--static long compat_keyctl_instantiate_key_iov(
--	key_serial_t id,
--	const struct compat_iovec __user *_payload_iov,
--	unsigned ioc,
--	key_serial_t ringid)
--{
--	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
--	struct iov_iter from;
--	long ret;
--
--	if (!_payload_iov)
--		ioc = 0;
--
--	ret = import_iovec(WRITE, (const struct iovec __user *)_payload_iov,
--			   ioc, ARRAY_SIZE(iovstack), &iov, &from);
--	if (ret < 0)
--		return ret;
--
--	ret = keyctl_instantiate_key_common(id, &from, ringid);
--	kfree(iov);
--	return ret;
--}
--
- /*
-  * The key control system call, 32-bit compatibility version for 64-bit archs
-  */
-@@ -113,8 +81,8 @@ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
- 		return keyctl_reject_key(arg2, arg3, arg4, arg5);
- 
- 	case KEYCTL_INSTANTIATE_IOV:
--		return compat_keyctl_instantiate_key_iov(
--			arg2, compat_ptr(arg3), arg4, arg5);
-+		return keyctl_instantiate_key_iov(arg2, compat_ptr(arg3), arg4,
-+						  arg5);
- 
- 	case KEYCTL_INVALIDATE:
- 		return keyctl_invalidate_key(arg2);
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 338a526cbfa516..9b9cf3b6fcbb4d 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -262,11 +262,6 @@ extern long keyctl_instantiate_key_iov(key_serial_t,
- 				       const struct iovec __user *,
- 				       unsigned, key_serial_t);
- extern long keyctl_invalidate_key(key_serial_t);
--
--struct iov_iter;
--extern long keyctl_instantiate_key_common(key_serial_t,
--					  struct iov_iter *,
--					  key_serial_t);
- extern long keyctl_restrict_keyring(key_serial_t id,
- 				    const char __user *_type,
- 				    const char __user *_restriction);
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 9febd37a168fd0..e26bbccda7ccee 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -1164,7 +1164,7 @@ static int keyctl_change_reqkey_auth(struct key *key)
-  *
-  * If successful, 0 will be returned.
-  */
--long keyctl_instantiate_key_common(key_serial_t id,
-+static long keyctl_instantiate_key_common(key_serial_t id,
- 				   struct iov_iter *from,
- 				   key_serial_t ringid)
- {
--- 
-2.28.0
+Should we add the Fixes tag?
+
+    Fixes: e62753e4e292 ("io_uring: call statx directly")
+
+I'm not sure since the code is changed a bit.
+
+Anyway the patch LGTM:
+
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+
+Thanks,
+Stefano
+
+> Cc: stable@vger.kernel.org # v5.6+
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> --
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index e6004b92e553..0ab16df31288 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -5671,6 +5671,11 @@ static void __io_clean_op(struct io_kiocb *req)
+>  			io_put_file(req, req->splice.file_in,
+>  				    (req->splice.flags & SPLICE_F_FD_IN_FIXED));
+>  			break;
+> +		case IORING_OP_OPENAT:
+> +		case IORING_OP_OPENAT2:
+> +			if (req->open.filename)
+> +				putname(req->open.filename);
+> +			break;
+>  		}
+>  		req->flags &= ~REQ_F_NEED_CLEANUP;
+>  	}
+> 
+> -- 
+> Jens Axboe
+> 
 

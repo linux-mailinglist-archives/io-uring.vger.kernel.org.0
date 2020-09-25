@@ -2,85 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AB00278FEC
-	for <lists+io-uring@lfdr.de>; Fri, 25 Sep 2020 19:56:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF452279333
+	for <lists+io-uring@lfdr.de>; Fri, 25 Sep 2020 23:23:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbgIYR4O (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Sep 2020 13:56:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57786 "EHLO
+        id S1729035AbgIYVXX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Sep 2020 17:23:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbgIYR4O (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Sep 2020 13:56:14 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4861CC0613CE
-        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 10:56:14 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id b17so2115646pji.1
-        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 10:56:14 -0700 (PDT)
+        with ESMTP id S1728983AbgIYVXT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Sep 2020 17:23:19 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA638C0613D5
+        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 14:23:18 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id s14so92715pju.1
+        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 14:23:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Fbp0kr6bqhXmCNxLPzCmnGOQELT0Tqz/++7V/bMm/RQ=;
-        b=H9EzJ8w9lQ4QFj5jIfJwzKUKzTmF8z6aSTE3PMdI3Vy2gzX1Gvquh6ho1/50c355a3
-         g3XDDgf6kgKI+X58cGvCybRjWoYuiNDtsJFltDMVz0mLuae4bavtx9Xo8BzxspZwlafs
-         8gl3aCYHQ8xtsTMb3Apzo8tbjXqNmDV2gtzeHKzlfvhQ+bC/sHo1C3hy83CtzGcbGeOn
-         PvHAeimi8jVaWBlOo4M81bUNYxR7iy497xXUajnUh0dl1d/BH8qo5go5AEIHm4oCPkf9
-         FcFZz92SYu9X57RiwH8+7968ynCKTAxhN+5sXQ4PaCINt06VxJ1mYufBPu+ZpW0h9Prk
-         q8Vw==
+        bh=0YOb8ZDq0Y6kchWaIZPJa/N63+vnWXVeYZA3nVgbbFo=;
+        b=ZP5rH9fKYTI8foSAnWly099niDXKL1xI05QpHRaLvT6PF/LOcQnePWA10KPt0jZWlI
+         DTZCMLFWcju+JducoEY17x9m60Z0XHr7uh1vQeByhcGsVzqwhlJ6tXc06TqwKiliTeRy
+         +ycOEteZAy5QdaYeSZOzEvXV+TNMZJK1PLjnsf4/Fp4pPOShw5X1tlgBNWBoRehg1rQw
+         OUfvvBFmB9QD7RrXG5sTuW3ZWX9lMatKm6SWD8ZpN2vQ/ZAxrQsmTrLFmYJbdjG8FfsF
+         Sc5MxxTMi8MDdnj6xuzq7Q/gk1sDr4GPnCQlkOEFXvIdA9ZH7omHUiWP6KdG99ScLeYi
+         DIzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Fbp0kr6bqhXmCNxLPzCmnGOQELT0Tqz/++7V/bMm/RQ=;
-        b=P3/aLx8lY1uU4DTSfe84Yog1k8KEfBK8AEPEGIYlwh81PKOq7mG4nG1IS/8h4kaaGS
-         /Us2tTpUMg9BcG/TylXok17/gNbvWjV7SwTuOKA33ezosNUv4wlmQujI1x7q1fBaoO8i
-         ZcmzFCml4kDRirIZgqOxe60GKEyNqqgtq5fK9x0/57fByGYvIc6h+hQQuFh1vcICu2yC
-         5o8jovTzHjhqGwLKRosZ2ZMj4QuypGzmLo+GUO4uq2z4bcrDUxBmpjolrWVFYaZK0DHD
-         PiJ4O69WTi1x8Zco6QLPTsKaVjQq2hfb5xygcHNwNtRVkDgTtu/RX7ZrgMUBYh6ZdPiK
-         vVog==
-X-Gm-Message-State: AOAM533BYzT0P6M9c3srj8kS7gb1tcTPn3Gzlg2ttkHZcupSZc8xQB+M
-        pds+2rz7Qo4PyI2Z+/OKww7sFA==
-X-Google-Smtp-Source: ABdhPJxCACjEyZNZf74JzWLp+z4Pg2DWFNRXagLHW7i9f9luu63jf/t5uigAs9UqPjXPvTbUOzWmaQ==
-X-Received: by 2002:a17:90a:fb84:: with SMTP id cp4mr686050pjb.14.1601056573624;
-        Fri, 25 Sep 2020 10:56:13 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id o5sm2545214pjs.13.2020.09.25.10.56.12
+        bh=0YOb8ZDq0Y6kchWaIZPJa/N63+vnWXVeYZA3nVgbbFo=;
+        b=LY3DFSx/cUj/+qOcGxvuLruiYhHsaJ3sfghlekba0gdV0PozZoo0cnTEoc9OQ0tuQI
+         SMS6tVha1aF0pEDX+qTACQYOp9A29EQLt7VkYG/XTJR96thdMttY/1PVNmm1wWb/FWky
+         10XKh7mUj5BWCS4dp5ODcG9CkyZtSl5U/stULBEToPH1Qh4i3FIK0xiuNEIKvAgGo96y
+         Kb7ZmctDtHwwfMeqnUluizuwsu4CBhj/aOMMKVd2gVk2kstjX/saHhfVgxlSdEcMyyl4
+         oG9ZWEVRd0QCaWxIjAXSbzZsknkdLaijHhQqGQAUfxEPDb8Xy/3pYzLyndHHLvG99Y/U
+         4mFw==
+X-Gm-Message-State: AOAM5329Rght1Xu1KvCXye1r7XicXVYbnqkxyLCEq0/ap+npIifICqIb
+        voQOc3rko0nE/OFZCrYp4khgXwiCb/a4GsHM
+X-Google-Smtp-Source: ABdhPJxdGMZlIlrndztzyy3FAW3beUa9ppiOnrhOCiGj+2956pibz2l/qJVvTm+GFN3khP4YoZPgAg==
+X-Received: by 2002:a17:90b:617:: with SMTP id gb23mr448815pjb.36.1601068998083;
+        Fri, 25 Sep 2020 14:23:18 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id i9sm3594474pfq.53.2020.09.25.14.23.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Sep 2020 10:56:12 -0700 (PDT)
-Subject: Re: SQPOLL fd close(2) question
-To:     Josef <josef.grieb@gmail.com>, io-uring <io-uring@vger.kernel.org>
-Cc:     norman@apache.org
-References: <CAAss7+rWKd7QCLaizuWa0dFETzzVajWR4Dw7g+ToC0LLHcA08w@mail.gmail.com>
+        Fri, 25 Sep 2020 14:23:17 -0700 (PDT)
+Subject: Re: [Question] about async buffered reads feature
+To:     Hao_Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org
+References: <a1bd6dfd-c911-dfe8-ec7f-4fac5ac8c73e@linux.alibaba.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9f1ac2d3-6491-bd5a-99ea-8274a8a19e2b@kernel.dk>
-Date:   Fri, 25 Sep 2020 11:56:12 -0600
+Message-ID: <09ea598d-6721-4e67-df4a-2bbb8ada24d9@kernel.dk>
+Date:   Fri, 25 Sep 2020 15:23:16 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAAss7+rWKd7QCLaizuWa0dFETzzVajWR4Dw7g+ToC0LLHcA08w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <a1bd6dfd-c911-dfe8-ec7f-4fac5ac8c73e@linux.alibaba.com>
+Content-Type: text/plain; charset=gbk
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/25/20 10:21 AM, Josef wrote:
-> Hi,
+On 9/25/20 3:18 AM, Hao_Xu wrote:
+> Hi Jens,
+> I'm doing tests about this feature: [PATCHSET RFC 0/11] Add support for 
+> async buffered reads
+> But currently with fio testing, I found the code doesn't go to the 
+> essential places in the function generic_file_buffered_read:
 > 
-> I implemented SQPOLL in netty for 5.8/5.9, to close a fd I need to
-> delete the entry first, it seems to fail with error -EADDRINUSE when I
-> remove the fd entry, close(2) it and the same socket(with the same
-> address) is created again,, is that known?
-> I assume that io_uring still has some reference to this, however
-> io_uring_unregister_files works fine but the drawback would be that I
-> need to wait until the ring is idle
+>            if (iocb->ki_flags & IOCB_WAITQ) {
+>                    if (written) {
+>                            put_page(page);
+>                            goto out;
+>                    }
+>                    error = wait_on_page_locked_async(page,
+>                                                    iocb->ki_waitq);
+>            } else {
+> 
+> and
+> 
+>    page_not_up_to_date:
+>           /* Get exclusive access to the page ... */
+>           if (iocb->ki_flags & IOCB_WAITQ)
+>                   error = lock_page_async(page, iocb->ki_waitq);
+>           else
 
-If you have a file registered, that holds a reference to it. So when
-you then otherwise close it in the app, it's similar to having done
-a dup() on it and just closing the original. So yes, this is known and
-expected, I'm afraid.
+Can you try with this added? Looks like a regression got introduced...
+
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 40670ad4446c..99b842ac2dc0 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3339,10 +3339,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+ 			goto done;
+ 		/* some cases will consume bytes even on error returns */
+ 		iov_iter_revert(iter, iov_count - iov_iter_count(iter));
+-		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
+-		if (ret)
+-			goto out_free;
+-		return -EAGAIN;
++		goto copy_iov;
+ 	} else if (ret < 0) {
+ 		/* make sure -ERESTARTSYS -> -EINTR is done */
+ 		goto done;
 
 -- 
 Jens Axboe

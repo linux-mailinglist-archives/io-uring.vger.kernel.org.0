@@ -2,65 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CC852789D6
-	for <lists+io-uring@lfdr.de>; Fri, 25 Sep 2020 15:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57EA2278C06
+	for <lists+io-uring@lfdr.de>; Fri, 25 Sep 2020 17:06:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbgIYNnP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Sep 2020 09:43:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46526 "EHLO
+        id S1729092AbgIYPGD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Sep 2020 11:06:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728333AbgIYNnP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Sep 2020 09:43:15 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D77C0613CE
-        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 06:43:14 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id q4so1867142pjh.5
-        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 06:43:14 -0700 (PDT)
+        with ESMTP id S1728423AbgIYPGD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Sep 2020 11:06:03 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F35FC0613CE
+        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 08:06:03 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id md22so1456725pjb.0
+        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 08:06:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XWcmG+F7FbNh/q4vWwYlmzSTHgXWNZpHjcDsYW0n7+g=;
-        b=T5nnXLMEI+0PXGQ0PqbbLbvmi0O+cTuQSJwl+rZHGZznlY71HZqzPj+Ax/mJHAs7F8
-         c1D51/KNNlNDDAU59RLwnxzrBXZt5QrYDAHqiaa4/SQ1qZITXFckQwMuAq9YkFBygpkq
-         LUzjE20s1ACepJsqmj9fUnhEE9gV/fLfafgoQdyA5Ratj9va5SnWZ8QNmCBtjkRGhfqz
-         cjVdRl+kxq5YdQYGv815Hf4RgNCTGggQtA/EBnRl9zlfUyQ8u+YLd53OM8SKNeLDmMLF
-         +ghbrpqdc1NnIPhIX4+4Kb282ebVCzfeHiPZEd1/WLZcAAKBbM7RKkSlS1kK2IWeNkvp
-         5ngA==
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=U3rAWzNXCK2+8FhVnXH+5e+yrkKXpyTZGdaq+nvWyUc=;
+        b=cYOlqM+L8QM8MrcUNE7QRrg2Klp4f6yWltaDPW8ZM9HNTjWe4nH9OS1emgzp2JGVSQ
+         dRe1kbCn9zVMdUQoocpn7x74EzUBeR6AagoTPoYQ8JALjFrqMLxCa5q5HX9VGR0T89gO
+         Sdq/8rFMMr4aA07iowAZ16ROjE/qu64GLyrAocP/PZEnyq3xPU5bvtBi5WnmzeKMfKjo
+         sLZV6b66TqCGuebur0duC/3WWRzBy6N1aNPkUXtjlqXi5RYaPFwlxcwoxWf+FgKznmn/
+         nCH1DnttpgkAhtUW+OU9rF+BuoKhNCJgh/xbnGKMh7scnDnxrLjZVnRKj8RCkp0KJaOm
+         To/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XWcmG+F7FbNh/q4vWwYlmzSTHgXWNZpHjcDsYW0n7+g=;
-        b=cN3Yhqqn4E2WDEvD8v6ctrCpDLLaCuqkhWK6kw+ziL/3ajA42xGahzPlbUQj0bZAzD
-         xpAF4eVNdVf+d37I8L6SI9+G6+DZyx1OBlPaKSkv47SQUquPooqXWBdxcxdM/C7kOprY
-         bmevtRvW2BjiSrjeeK0972F7UE5ogB89Sisk2C9mluZLfwJetIiP5WP34brJT5rRsFr5
-         +9YvOw3hpKI07s0c4VIVRbqZNpVwRPzOXWp9GLAXPYOaPmqpEBEHPBVefDROrmhOnmnZ
-         TgN5VixAp3nHTTjWM915V2oEr48dNPlBSC58EzOl3l5HAI5Y+5MjB+hNjGTPnFi+5pdf
-         TFoQ==
-X-Gm-Message-State: AOAM533t9+7Sjrwa972ZPg7GNtj/QcJpfdnVEyHJ1uOsze60eb3Trfgb
-        0wGfURxjUTpegpCpuJfgYmkzdH/33abd/w==
-X-Google-Smtp-Source: ABdhPJyLAamy2cDTXNtMAMlQLYhhUulTAA5yygwR4x38EqMEwJ/Ki5DcryjJd6LWsmfCCdST8sVdNA==
-X-Received: by 2002:a17:90a:ec06:: with SMTP id l6mr412660pjy.66.1601041393990;
-        Fri, 25 Sep 2020 06:43:13 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id i17sm2729683pfa.2.2020.09.25.06.43.13
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=U3rAWzNXCK2+8FhVnXH+5e+yrkKXpyTZGdaq+nvWyUc=;
+        b=Cp+zVTnsnN0OpbyeIfWNl2T5iabCZzHRbgN53tpoT/plGckJ1UG757x4IAgG84luR9
+         WaDJFDdW4Ey8IQnVUtnHQRUy0F8wQyQMi/NHlx+ueQegRn93oZsqT3/qNbSnIsgN3RGa
+         cFmFBV8J68nCQ/iB3nwpjP6hOBDG818agMUuLtGNjpSR0SIu2+7Wm+zafizHf8wxmonY
+         S7he/4ZE7bM7aV23yn3K3XZVvY874d91qkjaydOKLcuV40O2et3OKaFdBQi8AuVhjIar
+         NDGYMYNYINe8QLEyXiTqMQ5I4GvkovOemFzzvLqp7HXZx0iSvuVibkOefxyoSrf7XVcR
+         yTNQ==
+X-Gm-Message-State: AOAM530ZqZAgabFNUxck9f0UuhG7RJ1uExLR96DecvjO6cNX2OQP0PT1
+        wnzQTIrSW5QIbDN5dDLBUQGTMla578IdEQ==
+X-Google-Smtp-Source: ABdhPJxJtfOYVFBTJJNZXEHmuB/YqcWz4aRUVbNICQYN7dIl2Vvqo1YDqhslIuG2Jj1WNrD5d/F/rw==
+X-Received: by 2002:a17:90a:ea08:: with SMTP id w8mr80214pjy.124.1601046362242;
+        Fri, 25 Sep 2020 08:06:02 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c085:21c8::11de? ([2620:10d:c090:400::5:c9f4])
+        by smtp.gmail.com with ESMTPSA id o15sm2636357pgi.74.2020.09.25.08.06.01
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Sep 2020 06:43:13 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: ensure open/openat2 name is cleaned on
- cancelation
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <ea883f39-0da5-fcd3-a069-43d7f5002380@kernel.dk>
- <20200925083210.xwfmssdvg4t6j3ar@steredhat>
+        Fri, 25 Sep 2020 08:06:01 -0700 (PDT)
+To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <be2b8cf8-5548-0e43-348f-00086dbde419@kernel.dk>
-Date:   Fri, 25 Sep 2020 07:43:12 -0600
+Subject: [PATCH] io_uring: don't unconditionally set plug->nowait = true
+Message-ID: <1e9b172d-7f00-b651-7615-313ac055a1d6@kernel.dk>
+Date:   Fri, 25 Sep 2020 09:06:00 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200925083210.xwfmssdvg4t6j3ar@steredhat>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,31 +63,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/25/20 2:32 AM, Stefano Garzarella wrote:
-> On Thu, Sep 24, 2020 at 02:59:33PM -0600, Jens Axboe wrote:
->> io_uring: ensure open/openat2 name is cleaned on cancelation
->>
->> If we cancel these requests, we'll leak the memory associated with the
->> filename. Add them to the table of ops that need cleaning, if
->> REQ_F_NEED_CLEANUP is set.
->>
-> 
-> IIUC we inadvertently removed 'putname(req->open.filename)' from the cleanup
-> function in commit e62753e4e292 ("io_uring: call statx directly").
-> 
-> Should we add the Fixes tag?
-> 
->     Fixes: e62753e4e292 ("io_uring: call statx directly")
+This causes all the bios to be submitted with REQ_NOWAIT, which can be
+problematic on either btrfs or on file systems that otherwise use a mix
+of block devices where only some of them support it.
 
-You are right, I got a bit tricked by it since that commit removed
-the putname(), and then later on we got rid of the (now) empty
-openat/openat2 entries.
+For now, just remove the setting of plug->nowait = true.
 
-I'll add the fixes, which means it's 5.8 only.
+Reported-by: Dan Melnic <dmm@fb.com>
+Reported-by: Brian Foster <bfoster@redhat.com>
+Fixes: b63534c41e20 ("io_uring: re-issue block requests that failed because of resources")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-> Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+---
 
-Added, thanks for reviewing!
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0ab16df31288..ad828fa19af4 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6353,9 +6353,6 @@ static void io_submit_state_start(struct io_submit_state *state,
+ 				  struct io_ring_ctx *ctx, unsigned int max_ios)
+ {
+ 	blk_start_plug(&state->plug);
+-#ifdef CONFIG_BLOCK
+-	state->plug.nowait = true;
+-#endif
+ 	state->comp.nr = 0;
+ 	INIT_LIST_HEAD(&state->comp.list);
+ 	state->comp.ctx = ctx;
 
 -- 
 Jens Axboe

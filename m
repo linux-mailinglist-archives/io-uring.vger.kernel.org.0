@@ -2,70 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B628D2794D8
-	for <lists+io-uring@lfdr.de>; Sat, 26 Sep 2020 01:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44DDC279870
+	for <lists+io-uring@lfdr.de>; Sat, 26 Sep 2020 12:38:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbgIYXks (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Sep 2020 19:40:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54946 "EHLO
+        id S1726183AbgIZKiK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 26 Sep 2020 06:38:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbgIYXks (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Sep 2020 19:40:48 -0400
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B6E9C0613CE
-        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 16:40:48 -0700 (PDT)
-Received: by mail-qt1-x833.google.com with SMTP id 19so3634415qtp.1
-        for <io-uring@vger.kernel.org>; Fri, 25 Sep 2020 16:40:48 -0700 (PDT)
+        with ESMTP id S1725208AbgIZKiJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 26 Sep 2020 06:38:09 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5139C0613CE
+        for <io-uring@vger.kernel.org>; Sat, 26 Sep 2020 03:38:09 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id d13so4519151pgl.6
+        for <io-uring@vger.kernel.org>; Sat, 26 Sep 2020 03:38:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wbTW0N3pi00kDwcqmPd1UFIZvUvq8Ftlt0qpbFDenUI=;
-        b=DwXuIxH8zb2QzBgOtcPoqKXfqplqsXOlTr+dswWKq1bXytRtsLo/aW9sEYLPWcq6ao
-         wxubO5OmtQ/OpOta0M/LcGE3L5ln2TodASyANzDVVZZ3ds+eDf2uVo3FxMcNWSin5/4h
-         81oqTaR1rwsQ/pGB48gtoPpVvFmF1jXAg4Ms/5RTuTiZrdz5inasXrs1tqg9Yjxl6H26
-         CybgdaOhno8yPtaqXvMlEXnEEf7A90yCDrxaVsGtnisUYB0JJ9KRpfx4XB0pYbLqO0Yd
-         SdIJjt3ILufF5zMGpjo8X90WCkfaM676yoaoe6qWGp3SfA7czOo73JJzefAZx6/cv7gs
-         Q31g==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=nwfl/lq62BitkYKKljOu/Q51PCsKRJSgIX5wZoOi3oI=;
+        b=NsTaMYUEPNBEl1Pzu5Gqkx/YyTb9he0wpQDZe2mN4Uc1ZhdvBroSjmeUxP532rkSOs
+         1cdH1MPkdHeiD1WvgeLSQNC7cRrrgXwvswMW+vGDLmKBQarvAePu9bACFBfPzKXh/3wZ
+         uCZHY65WiNty3oR7WZEL81A3nAqsMdkQ2T0xugwOB7nZ4UtZSLUhlNuvuTRcNqg07H7B
+         XJPpU6UXr3xoHlLGyBTqyT9dFfktpWoJHQOQOWVn42KdU2aJMYLvaXixyZX3Mq4aHVyK
+         7c/2L2Toq8Hyx9tO035ka3oXFtcNnRJoaFKbQVaouiAOgyHR1skHW7ltOHiSWGYN39qi
+         q41g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wbTW0N3pi00kDwcqmPd1UFIZvUvq8Ftlt0qpbFDenUI=;
-        b=DfmoXlEuvPm4YJLpEtIWYzPhKHTtL6+XuuZmQRkeLV/lsA/EYvP/eLHrlE46+/e7hT
-         FJA5ayvDnO/kninLEGN9EdEFJLQwaCPXcQflWNCBM/fAoTadwyGHnvtHSeeldMUVudqb
-         jsGkYSTle2m+iIhu2hVLYYafpOrk8Km8ndMp2xH0GtrY2qsMg93i8n4P7g5wK74DObnT
-         o/g8CRiJkBwuynWQFPHYUIBNyZxVV6CuQ6ZoBnYJIONVe9ZcXRdIKQmJbxWajAALkrpt
-         4gLj0LeBwgZaQchHwLfEU+6UYhlss7BbLVv+jr1isr65Knu6RLUadSZUBrR6oviUeIhq
-         C1Aw==
-X-Gm-Message-State: AOAM531T0nfgHH47ZbeemBovPZAdmqWhM/34o/rca/F4LVQntsQI8VQU
-        lhO73kwCMfA+26AVlJsddCEBBo1bAJP2ZCE0dsCo0iwc+s5SPw==
-X-Google-Smtp-Source: ABdhPJxXHAt+nfhvgRWLjgw5wZgd6eA6NVp8c/9aKZtbAcZEj/3CiXz3q7h9By+R4oUs0VHTNt0nzQgok6hXW1KLVkw=
-X-Received: by 2002:ac8:3713:: with SMTP id o19mr2215692qtb.256.1601077247610;
- Fri, 25 Sep 2020 16:40:47 -0700 (PDT)
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=nwfl/lq62BitkYKKljOu/Q51PCsKRJSgIX5wZoOi3oI=;
+        b=WCDCWt2p5lBhfJuiRcMEXHsCFPJwSu6WGe7WPq+/6YWAocv4aaI1ZJ2xEJDCyTlBls
+         1Dmfqp48JEwVZ/0FDv4x154bm/2tiu5t2PpgSWPXjlAvkmvHafmB0cn5bpGA5WdBxdMH
+         Szn53ho8NId+XVX1WXKvizunRL3KkNAjZq8vD5EVngzQRIes52IXAoPpJbGG+F7xnOxd
+         xk8Y+MtnglSn61PfX29uYLjUvsfo/99A8eSLtnS9LZpi1MiFTJoFo0276jnPR6EPfktj
+         mhERrEEiw9fXuKQhbnNrRJk+kkDtYE9S2ypgsjWVEIWAL77/avvy3ADid1ihJAZBIxg5
+         Dyfg==
+X-Gm-Message-State: AOAM532iEOwp5QPmffifM423deOxk8G1b94iYVhA6x3rwZ4UPAyDpJEk
+        7YllLs1XDfjfaMx6E6JyuJIq+Q==
+X-Google-Smtp-Source: ABdhPJzWS2S6+JPBXNWk5aDAyGJye2nQkN2CGcidP2w+hj4511pqgQAifUIlIW7YZv1A4y202j3yGg==
+X-Received: by 2002:a63:204c:: with SMTP id r12mr2481344pgm.262.1601116688969;
+        Sat, 26 Sep 2020 03:38:08 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id f5sm4711685pfj.212.2020.09.26.03.38.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Sep 2020 03:38:08 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.9-rc
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-ID: <e5c4b3b9-84c2-adf8-6449-459524695431@kernel.dk>
+Date:   Sat, 26 Sep 2020 04:38:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <CAAss7+rWKd7QCLaizuWa0dFETzzVajWR4Dw7g+ToC0LLHcA08w@mail.gmail.com>
- <9f1ac2d3-6491-bd5a-99ea-8274a8a19e2b@kernel.dk>
-In-Reply-To: <9f1ac2d3-6491-bd5a-99ea-8274a8a19e2b@kernel.dk>
-From:   Josef <josef.grieb@gmail.com>
-Date:   Sat, 26 Sep 2020 01:40:36 +0200
-Message-ID: <CAAss7+psYrRTdgbX0hFniUUmuBNTPbzRKGGg7v1E1N+C08FE8A@mail.gmail.com>
-Subject: Re: SQPOLL fd close(2) question
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-Cc:     norman@apache.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> If you have a file registered, that holds a reference to it. So when
-> you then otherwise close it in the app, it's similar to having done
-> a dup() on it and just closing the original. So yes, this is known and
-> expected, I'm afraid.
+Hi Linus,
 
-Thanks for clarification, the only way to delete the file registered
-reference is to use io_uring_unregister_files right?
-I don't think that we can support SQPOLL for 5.8/5.9, but at least for 5.10+ :)
+Two fixes for regressions in this cycle, and one that goes to 5.8
+stable.
 
----
-Josef Grieb
+- Fix leak of getname() retrieved filename
+- Removal of plug->nowait assignment, fixing a regression with btrfs
+- Fix for async buffered retry
+
+Please pull.
+
+
+The following changes since commit 4eb8dded6b82e184c09bb963bea0335fa3f30b55:
+
+  io_uring: fix openat/openat2 unified prep handling (2020-09-21 07:51:03 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.9-2020-09-25
+
+for you to fetch changes up to f38c7e3abfba9a9e180b34f642254c43782e7ffe:
+
+  io_uring: ensure async buffered read-retry is setup properly (2020-09-25 15:39:13 -0600)
+
+----------------------------------------------------------------
+io_uring-5.9-2020-09-25
+
+----------------------------------------------------------------
+Jens Axboe (3):
+      io_uring: ensure open/openat2 name is cleaned on cancelation
+      io_uring: don't unconditionally set plug->nowait = true
+      io_uring: ensure async buffered read-retry is setup properly
+
+ fs/io_uring.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+-- 
+Jens Axboe
+

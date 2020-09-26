@@ -2,89 +2,145 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCA2B27989C
-	for <lists+io-uring@lfdr.de>; Sat, 26 Sep 2020 12:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 836A12798A0
+	for <lists+io-uring@lfdr.de>; Sat, 26 Sep 2020 12:58:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbgIZKxS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 26 Sep 2020 06:53:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45188 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725208AbgIZKxR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 26 Sep 2020 06:53:17 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AB76C0613CE
-        for <io-uring@vger.kernel.org>; Sat, 26 Sep 2020 03:53:17 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id mn7so811643pjb.5
-        for <io-uring@vger.kernel.org>; Sat, 26 Sep 2020 03:53:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tHCYM+BiDqwtlNHehOh/PBH/KXQt1NJlXqit8LBZ04A=;
-        b=LEko5i44A1vrMDGEEcBhEBlk7Oxr/ePiUfSH21KLjWHVBjIpE/IvLkbuEPpanjF5VO
-         3w7sx2w3yJhzIaffxslZ1PGfo6/L+HH/dcmvNPKC+KIaOkVk++8CnIXhwkVOAeK3tpKK
-         egIbzK2RSBcoXu3KnmOUb49R61isNC3hgLwiWe+Pt6pw6/+5+P/SC5DxXxu3Vy2fK9Lc
-         BbCmIESN9Xe/PrSGH73ketBLfFWWSxQc52y+YJEvihiveFvCHZgapwFP/XB+nMocR5kx
-         pygTM9kuwS5MdpCTMYeIPw873zSazW4dCc6ziHEbplDrZbpnOpTR0Cj87kxqGTKhRXaS
-         J5dQ==
+        id S1726183AbgIZK6X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 26 Sep 2020 06:58:23 -0400
+Received: from mail-il1-f207.google.com ([209.85.166.207]:43432 "EHLO
+        mail-il1-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbgIZK6S (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 26 Sep 2020 06:58:18 -0400
+Received: by mail-il1-f207.google.com with SMTP id t11so4481247ilj.10
+        for <io-uring@vger.kernel.org>; Sat, 26 Sep 2020 03:58:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tHCYM+BiDqwtlNHehOh/PBH/KXQt1NJlXqit8LBZ04A=;
-        b=eaRP297B0iphrROPK+IFmIPJ5tWPmOzzn7qFmQT+fgapy9YzqHEuF6RJIwEsGAQ9nj
-         ZeZEgxYzP2Gwl14Sn7mevkCXT43YiA/7NOWr/MSz1NDSTH6+8aqFeoSFB8j+Lpp8nd2J
-         XHyi5TlbUGWKNoONOy/6DIPWYLvE5ZAHOwFmXsAtJjI2sdRw6S6kHEr2/0HWW4+FUC6s
-         U4Aqv2ZuQaXy6/+0ishmlIE5r72NEAFSMIEPTTfVTaxFkvw7TYvGzE8Dp1aBIYaSrDSH
-         QO3dGWwAPZG0/koM9NzuijYDtANgI7acQSiVZWKLxkXwi62o1009tBarZqaNWpAsxb/+
-         Y0aQ==
-X-Gm-Message-State: AOAM53372yqyqlwg8E4whn99c+aPNLCfR5fzR5FFn8a2ITzjQOuIIcxW
-        9TIuluGec6sKNY6JokGPYwMsLVFM1tTl08JC
-X-Google-Smtp-Source: ABdhPJxsAsc19eKxKbQexQBXyLiF14clWxi8LjdBvNCUEznn8gLOujngqvqhpNQSnUlZJha2JV8qMg==
-X-Received: by 2002:a17:90a:d3cd:: with SMTP id d13mr1728730pjw.70.1601117597038;
-        Sat, 26 Sep 2020 03:53:17 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id e10sm4826460pgb.45.2020.09.26.03.53.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Sep 2020 03:53:16 -0700 (PDT)
-Subject: Re: SQPOLL fd close(2) question
-To:     Josef <josef.grieb@gmail.com>, io-uring <io-uring@vger.kernel.org>
-Cc:     norman@apache.org
-References: <CAAss7+rWKd7QCLaizuWa0dFETzzVajWR4Dw7g+ToC0LLHcA08w@mail.gmail.com>
- <9f1ac2d3-6491-bd5a-99ea-8274a8a19e2b@kernel.dk>
- <CAAss7+psYrRTdgbX0hFniUUmuBNTPbzRKGGg7v1E1N+C08FE8A@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <46cda4dd-2f7e-67df-1757-3e7f087adf8d@kernel.dk>
-Date:   Sat, 26 Sep 2020 04:53:15 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=TtTv3mjkQp5CKRWiMYylgUft3vHyjPQyIuTYGFhYbxk=;
+        b=V289S8hWVLNEgJwLOerqiHsyqLd6Y1aHf94jnWikMDhgvrW1CyWghoXJbRL5ftdzFG
+         +txmvFUuivJ1sGeMCL3qaSNYQ9zZ2/DZNQgJEGJgTobexYapkxEqz5HdD/ODVBRT/o1H
+         bbf5lHvQy9Qqa2omykhkZb2dnterOqf7y5QXcS0d5AWdZDThbMqwtlJifmmgmAHemoYg
+         WJ+HNh1p/3wmBde64BPl6z6Fv84QYMBThMw2VuJVXDZBG1MDUVq9XZfvnyICrUT4JBmb
+         vcI2AZGbJQqjC+ciT6TOwt1MT8WBb/izjIgY/Yao8+UMSzqFWx1eM6hsy9gbQfsjeFBH
+         pHhA==
+X-Gm-Message-State: AOAM531Q+oPGHlXEv+8L8KPrk/ZYreX1WGfs0MrOxvmLYkUMAhX7C3lv
+        bdnG67Dh7U6IBdKC2DSzgCH6Er0CoqP1WDRwO0gjHwFMs8nC
+X-Google-Smtp-Source: ABdhPJyaDtGw4JMShzXBdwFY588MGEE6JZE1cHLw1152lrqsPXUYZA1du2CBVfmk5FS80UL/1ryGJ8J0gVzKTrkBU3kljUDSk84+
 MIME-Version: 1.0
-In-Reply-To: <CAAss7+psYrRTdgbX0hFniUUmuBNTPbzRKGGg7v1E1N+C08FE8A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:144f:: with SMTP id l15mr2546075jad.5.1601117896999;
+ Sat, 26 Sep 2020 03:58:16 -0700 (PDT)
+Date:   Sat, 26 Sep 2020 03:58:16 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007e88ec05b0354fdd@google.com>
+Subject: KASAN: use-after-free Read in io_wqe_worker
+From:   syzbot <syzbot+9af99580130003da82b1@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/25/20 5:40 PM, Josef wrote:
->> If you have a file registered, that holds a reference to it. So when
->> you then otherwise close it in the app, it's similar to having done
->> a dup() on it and just closing the original. So yes, this is known and
->> expected, I'm afraid.
-> 
-> Thanks for clarification, the only way to delete the file registered
-> reference is to use io_uring_unregister_files right?
+Hello,
 
-Correct, that's the only way to trigger the final fput() that'll
-close the socket (for real).
+syzbot found the following issue on:
 
-> I don't think that we can support SQPOLL for 5.8/5.9, but at least for 5.10+ :)
+HEAD commit:    98477740 Merge branch 'rcu/urgent' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=153e929b900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af502ec9a451c9fc
+dashboard link: https://syzkaller.appspot.com/bug?extid=9af99580130003da82b1
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14138009900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17d0f809900000
 
-It'll be a lot more generically useful once we have non-registered file
-support, so I'd probably just ignore it for now for your use case.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9af99580130003da82b1@syzkaller.appspotmail.com
 
--- 
-Jens Axboe
+==================================================================
+BUG: KASAN: use-after-free in __lock_acquire+0x92/0x2ae0 kernel/locking/lockdep.c:4311
+Read of size 8 at addr ffff88821ae5f818 by task io_wqe_worker-0/11054
 
+CPU: 1 PID: 11054 Comm: io_wqe_worker-0 Not tainted 5.9.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1d6/0x29e lib/dump_stack.c:118
+ print_address_description+0x66/0x620 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report+0x132/0x1d0 mm/kasan/report.c:530
+ __lock_acquire+0x92/0x2ae0 kernel/locking/lockdep.c:4311
+ lock_acquire+0x148/0x720 kernel/locking/lockdep.c:5029
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
+ _raw_spin_lock_irq+0xa6/0xc0 kernel/locking/spinlock.c:167
+ spin_lock_irq include/linux/spinlock.h:379 [inline]
+ io_wqe_worker+0x756/0x810 fs/io-wq.c:589
+ kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+Allocated by task 11048:
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc+0x100/0x130 mm/kasan/common.c:461
+ kmem_cache_alloc_node_trace+0x1f7/0x2a0 mm/slab.c:3594
+ kmalloc_node include/linux/slab.h:572 [inline]
+ kzalloc_node include/linux/slab.h:677 [inline]
+ io_wq_create+0x295/0x880 fs/io-wq.c:1064
+ io_init_wq_offload fs/io_uring.c:7432 [inline]
+ io_sq_offload_start fs/io_uring.c:7504 [inline]
+ io_uring_create fs/io_uring.c:8625 [inline]
+ io_uring_setup fs/io_uring.c:8694 [inline]
+ __do_sys_io_uring_setup fs/io_uring.c:8700 [inline]
+ __se_sys_io_uring_setup+0x18ed/0x2a00 fs/io_uring.c:8697
+ do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Freed by task 128:
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_set_track+0x3d/0x70 mm/kasan/common.c:56
+ kasan_set_free_info+0x17/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xdd/0x110 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3418 [inline]
+ kfree+0x113/0x200 mm/slab.c:3756
+ __io_wq_destroy fs/io-wq.c:1138 [inline]
+ io_wq_destroy+0x470/0x510 fs/io-wq.c:1146
+ io_finish_async fs/io_uring.c:6836 [inline]
+ io_ring_ctx_free fs/io_uring.c:7870 [inline]
+ io_ring_exit_work+0x195/0x520 fs/io_uring.c:7954
+ process_one_work+0x789/0xfc0 kernel/workqueue.c:2269
+ worker_thread+0xaa4/0x1460 kernel/workqueue.c:2415
+ kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+The buggy address belongs to the object at ffff88821ae5f800
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 24 bytes inside of
+ 1024-byte region [ffff88821ae5f800, ffff88821ae5fc00)
+The buggy address belongs to the page:
+page:000000008e41b1c2 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x21ae5f
+flags: 0x57ffe0000000200(slab)
+raw: 057ffe0000000200 ffffea00086a10c8 ffffea00085d1848 ffff8880aa440700
+raw: 0000000000000000 ffff88821ae5f000 0000000100000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88821ae5f700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88821ae5f780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88821ae5f800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88821ae5f880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88821ae5f900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

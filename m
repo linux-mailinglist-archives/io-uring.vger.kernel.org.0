@@ -2,58 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5032527B072
-	for <lists+io-uring@lfdr.de>; Mon, 28 Sep 2020 17:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C14327B0FB
+	for <lists+io-uring@lfdr.de>; Mon, 28 Sep 2020 17:35:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbgI1PBY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 28 Sep 2020 11:01:24 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:52085 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbgI1PBX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Sep 2020 11:01:23 -0400
-Received: by mail-io1-f69.google.com with SMTP id o7so782902iof.18
-        for <io-uring@vger.kernel.org>; Mon, 28 Sep 2020 08:01:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:cc;
-        bh=vgUtXMoVzIZuhx8MiM8mjs9qIwIIfUuwYTFaRd2LK1M=;
-        b=Ho4tlhpV0NARm6ewYmcaRJG5D6+XrJl9g2+KqC3ocN2ThOXmBoanEVGK+Q64UDoktT
-         f4YCxNdS+dk/G3dcjiJ8RpbpuoS9Rx+euZcW31HrLCRliUUyKozFZEZsXmGzkQdxj/Zu
-         9l2Zb2wk6nwpWlT4YxKsGRJBQmCMrcemICWVH+IFu+Lfb4UmxTFyIkyGXZ1zaAD3TlGj
-         zC+DwHvw3kEVn1fTy5XNC7nGAc3rUuUoTL8G/luRBDo87fVzu/78G4G/wDmDF7XQqJaw
-         eR1e0KwExWXuH4pzbRkGb1PGazVm8bYYMXod0auFjmLeyUZogg5nj+BpZaTJeHNyiNmX
-         5BLQ==
-X-Gm-Message-State: AOAM532FAo/myD7ByUMYr+iGPwG0qZ8lskDt+rM/CL8mhX1ivy+MSgZ+
-        SK7FT+1o+pIXFKOO+JzNQFZ88S8hIvc15MH2yFpCOq4W627f
-X-Google-Smtp-Source: ABdhPJzvmXPhbd+OnJjeaLpf0fv/dOPSi+n2gUF1+r+JZy/3sFGdT1z/4lOKD5DI7cxhl3aBCCDj2qXGrL7rRLGXhmlGS74ESKhd
+        id S1726466AbgI1PfO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 28 Sep 2020 11:35:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:56523 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726281AbgI1PfO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Sep 2020 11:35:14 -0400
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601307313;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=J3rzuo7zJOX22NydR7GLnnKTFuPemymtgB85z2Njrr4=;
+        b=gQX4V3cdmoEZdNT7WGVWu4ohzKIb7b3ZZr2mm7lP75Yac6TQE3Y3xwfRiOXJALgOl8uBeZ
+        inseLicBKn5s2Y0+vQAyoLMYZo6y0Z1M3yKvq7Ua1ZbignrxZa4ILeocCAb2HcFeMN/HGe
+        lY9NM17PJxqJ0Aw5W4lbMil0kxPkXT0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-432-S4PyOOrsOHG02MB5Ru_B0Q-1; Mon, 28 Sep 2020 11:35:11 -0400
+X-MC-Unique: S4PyOOrsOHG02MB5Ru_B0Q-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B42281084D76;
+        Mon, 28 Sep 2020 15:35:09 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-115-63.ams2.redhat.com [10.36.115.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 48E2E78482;
+        Mon, 28 Sep 2020 15:35:08 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     stable@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, io-uring@vger.kernel.org,
+        axboe@kernel.dk
+Subject: [PATCH 5.8] io_uring: ensure open/openat2 name is cleaned on cancelation
+Date:   Mon, 28 Sep 2020 17:35:07 +0200
+Message-Id: <20200928153507.27420-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:4805:: with SMTP id v5mr1662666ila.170.1601305282258;
- Mon, 28 Sep 2020 08:01:22 -0700 (PDT)
-Date:   Mon, 28 Sep 2020 08:01:22 -0700
-In-Reply-To: <69d85830-b846-72ad-7315-545509f3a099@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000086c59505b060f073@google.com>
-Subject: Re: Re: possible deadlock in io_write
-From:   syzbot <syzbot+2f8fa4e860edc3066aba@syzkaller.appspotmail.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> Not the prettiest solution, but I don't think that's a real concern as
-> this is just for human consumption.
->
-> #syz test: git://git.kernel.dk/linux-block io_uring-5.9
+From: Jens Axboe <axboe@kernel.dk>
 
-This crash does not have a reproducer. I cannot test it.
+[ Upstream commit f3cd4850504ff612d0ea77a0aaf29b66c98fcefe ]
 
->
-> -- 
-> Jens Axboe
->
+If we cancel these requests, we'll leak the memory associated with the
+filename. Add them to the table of ops that need cleaning, if
+REQ_F_NEED_CLEANUP is set.
+
+Cc: stable@vger.kernel.org
+Fixes: e62753e4e292 ("io_uring: call statx directly")
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ fs/io_uring.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d05023ca74bd..864341445926 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5252,6 +5252,8 @@ static void io_cleanup_req(struct io_kiocb *req)
+ 		break;
+ 	case IORING_OP_OPENAT:
+ 	case IORING_OP_OPENAT2:
++		if (req->open.filename)
++			putname(req->open.filename);
+ 		break;
+ 	case IORING_OP_SPLICE:
+ 	case IORING_OP_TEE:
+-- 
+2.26.2
+

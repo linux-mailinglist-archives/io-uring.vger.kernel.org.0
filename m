@@ -2,39 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF80927A860
-	for <lists+io-uring@lfdr.de>; Mon, 28 Sep 2020 09:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9CC927A864
+	for <lists+io-uring@lfdr.de>; Mon, 28 Sep 2020 09:17:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbgI1HR0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 28 Sep 2020 03:17:26 -0400
-Received: from mail-il1-f205.google.com ([209.85.166.205]:50142 "EHLO
-        mail-il1-f205.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbgI1HRZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Sep 2020 03:17:25 -0400
-Received: by mail-il1-f205.google.com with SMTP id o18so68636ilm.16
+        id S1726500AbgI1HRh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 28 Sep 2020 03:17:37 -0400
+Received: from mail-io1-f77.google.com ([209.85.166.77]:45195 "EHLO
+        mail-io1-f77.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbgI1HR0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Sep 2020 03:17:26 -0400
+Received: by mail-io1-f77.google.com with SMTP id h21so98352iof.12
         for <io-uring@vger.kernel.org>; Mon, 28 Sep 2020 00:17:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=GHGGR4Zfn1U2MwoQAnVbHF7lefhURprcgm/RtnFwDRQ=;
-        b=oeLoMK8oOk7N0fYv9fLQB3MTTYOsP8FaKGEag9Ikzh95gTbWL93Fq8p+ys4KJmYq/p
-         n/NjWaJE0yDSulSc2Ky8ermlpbBslH5gOKYl1kevl3woMYrjfyCSfNCC/O9SN05V9SVy
-         TKTgOfHSCt1G4lBnEgjsJPOUbav4blvVN3I4/waT2pasdlJlgxUW516A7MaQxlp310uN
-         KUlWOI9A62viJjNSW+MFPLl/d0pKlQ2qYXw+WjLg9vhFOl2+8r4I2vYj/PD6O4ricM9C
-         VmvRiIYsj6ECDIi2H/8tlXUi2I1XQXjBMBiAiEdzflJ4zSRxZ7tub6xrYnPKZtpWU0Jr
-         2EuQ==
-X-Gm-Message-State: AOAM532nU4tBN4DtQ6xmCoq18hsuQaVGV5VqcCSVTTWMivlasZalx7at
-        9clTCqlEhMhcdSpu/0N8afGDik0RNdzjcez1zt7kTY9lXZXp
-X-Google-Smtp-Source: ABdhPJwkfJxPhyjGtwfnoYbPxJx2Gypp/5FpZVK82XXdI5Exe87xWNsfIU11of/7hMYigERZk0exFULdXDuusHWvcR5e3moApY3X
+        bh=XbPuch1ZotLQyYuXlwTI1LGYIWVJyxJ84pFPhbD6uyI=;
+        b=GjPVIYAs7Og/SbjUzn7j5fxpjnBxoHp8Cm/AljsXQumAPpm8q10l4Va+2LTyAeOlO1
+         KdAWfdf/+yOJ5vVLjSsquBSF6i/8uJBC4fb/GZgIdiZIZ8/V+IHlz3uCukt8TaM3m7qJ
+         JkUrVP1rxpuoYqrTrqv1NnDJzNpYF1WhSR43T/LVvhvyiqHGyyrWpmp+CkilB229c9aR
+         XGu6d0veUMqQxHlKjHPLTaj5LvWQwtmREUZxeaTc3mFbVw+od38/XbfLQIzUD+6KTdG9
+         PSS3nA1eQ/I4hi3FpDeW+N6c+q/fyqyLdXyEBMBhANjiObWWH0bGZ4+XKgzhlah4zY8z
+         pGHg==
+X-Gm-Message-State: AOAM5333fwwwYlnU4pzc+dWnqd8S7JPHKYKw8oXLGNJdQhcTzpoCwW3s
+        IdqaG+4bNJbPGozkXIN0JHyJ16JhvlZkirEo8yFStsR7s44b
+X-Google-Smtp-Source: ABdhPJyChCnLT+cKsSlDlT8aiZZa/myOgUNdCCATPU5nHYLGF/QEZx2D+Lpp5YJ+nao4wb44tZ6nd6D940VZyHnulusvdeQwdMW4
 MIME-Version: 1.0
-X-Received: by 2002:a6b:da19:: with SMTP id x25mr6111900iob.12.1601277444720;
- Mon, 28 Sep 2020 00:17:24 -0700 (PDT)
-Date:   Mon, 28 Sep 2020 00:17:24 -0700
+X-Received: by 2002:a92:d07:: with SMTP id 7mr51097iln.243.1601277445316; Mon,
+ 28 Sep 2020 00:17:25 -0700 (PDT)
+Date:   Mon, 28 Sep 2020 00:17:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000478f3a05b05a7539@google.com>
-Subject: general protection fault in io_poll_double_wake (2)
-From:   syzbot <syzbot+81b3883093f772addf6d@syzkaller.appspotmail.com>
+Message-ID: <00000000000050a4fd05b05a7579@google.com>
+Subject: possible deadlock in io_write
+From:   syzbot <syzbot+2f8fa4e860edc3066aba@syzkaller.appspotmail.com>
 To:     axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
@@ -47,77 +47,146 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    d1d2220c Add linux-next specific files for 20200924
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1550b609900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=254e028a642027c
-dashboard link: https://syzkaller.appspot.com/bug?extid=81b3883093f772addf6d
+HEAD commit:    eeddbe68 Merge tag 's390-5.9-7' of git://git.kernel.org/pu..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=148c13d3900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=240e2ebab67245c7
+dashboard link: https://syzkaller.appspot.com/bug?extid=2f8fa4e860edc3066aba
 compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15946317900000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1266c5ad900000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+81b3883093f772addf6d@syzkaller.appspotmail.com
+Reported-by: syzbot+2f8fa4e860edc3066aba@syzkaller.appspotmail.com
 
-IPVS: ftp: loaded support on port[0] = 21
-general protection fault, probably for non-canonical address 0xdffffc0000000009: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000048-0x000000000000004f]
-CPU: 0 PID: 6874 Comm: syz-executor749 Not tainted 5.9.0-rc6-next-20200924-syzkaller #0
+======================================================
+WARNING: possible circular locking dependency detected
+5.9.0-rc6-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor.2/19710 is trying to acquire lock:
+ffff888098ddc450 (sb_writers#4){.+.+}-{0:0}, at: io_write+0x6b5/0xb30 fs/io_uring.c:3296
+
+but task is already holding lock:
+ffff8880a11b8428 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0xe9a/0x1bd0 fs/io_uring.c:8348
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&ctx->uring_lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:956 [inline]
+       __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
+       __io_uring_show_fdinfo fs/io_uring.c:8417 [inline]
+       io_uring_show_fdinfo+0x194/0xc70 fs/io_uring.c:8460
+       seq_show+0x4a8/0x700 fs/proc/fd.c:65
+       seq_read+0x432/0x1070 fs/seq_file.c:208
+       do_loop_readv_writev fs/read_write.c:734 [inline]
+       do_loop_readv_writev fs/read_write.c:721 [inline]
+       do_iter_read+0x48e/0x6e0 fs/read_write.c:955
+       vfs_readv+0xe5/0x150 fs/read_write.c:1073
+       kernel_readv fs/splice.c:355 [inline]
+       default_file_splice_read.constprop.0+0x4e6/0x9e0 fs/splice.c:412
+       do_splice_to+0x137/0x170 fs/splice.c:871
+       splice_direct_to_actor+0x307/0x980 fs/splice.c:950
+       do_splice_direct+0x1b3/0x280 fs/splice.c:1059
+       do_sendfile+0x55f/0xd40 fs/read_write.c:1540
+       __do_sys_sendfile64 fs/read_write.c:1601 [inline]
+       __se_sys_sendfile64 fs/read_write.c:1587 [inline]
+       __x64_sys_sendfile64+0x1cc/0x210 fs/read_write.c:1587
+       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+       entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+-> #1 (&p->lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:956 [inline]
+       __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
+       seq_read+0x61/0x1070 fs/seq_file.c:155
+       pde_read fs/proc/inode.c:306 [inline]
+       proc_reg_read+0x221/0x300 fs/proc/inode.c:318
+       do_loop_readv_writev fs/read_write.c:734 [inline]
+       do_loop_readv_writev fs/read_write.c:721 [inline]
+       do_iter_read+0x48e/0x6e0 fs/read_write.c:955
+       vfs_readv+0xe5/0x150 fs/read_write.c:1073
+       kernel_readv fs/splice.c:355 [inline]
+       default_file_splice_read.constprop.0+0x4e6/0x9e0 fs/splice.c:412
+       do_splice_to+0x137/0x170 fs/splice.c:871
+       splice_direct_to_actor+0x307/0x980 fs/splice.c:950
+       do_splice_direct+0x1b3/0x280 fs/splice.c:1059
+       do_sendfile+0x55f/0xd40 fs/read_write.c:1540
+       __do_sys_sendfile64 fs/read_write.c:1601 [inline]
+       __se_sys_sendfile64 fs/read_write.c:1587 [inline]
+       __x64_sys_sendfile64+0x1cc/0x210 fs/read_write.c:1587
+       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+       entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+-> #0 (sb_writers#4){.+.+}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:2496 [inline]
+       check_prevs_add kernel/locking/lockdep.c:2601 [inline]
+       validate_chain kernel/locking/lockdep.c:3218 [inline]
+       __lock_acquire+0x2a96/0x5780 kernel/locking/lockdep.c:4441
+       lock_acquire+0x1f3/0xaf0 kernel/locking/lockdep.c:5029
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write+0x228/0x450 fs/super.c:1672
+       io_write+0x6b5/0xb30 fs/io_uring.c:3296
+       io_issue_sqe+0x18f/0x5c50 fs/io_uring.c:5719
+       __io_queue_sqe+0x280/0x1160 fs/io_uring.c:6175
+       io_queue_sqe+0x692/0xfa0 fs/io_uring.c:6254
+       io_submit_sqe fs/io_uring.c:6324 [inline]
+       io_submit_sqes+0x1761/0x2400 fs/io_uring.c:6521
+       __do_sys_io_uring_enter+0xeac/0x1bd0 fs/io_uring.c:8349
+       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+       entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+other info that might help us debug this:
+
+Chain exists of:
+  sb_writers#4 --> &p->lock --> &ctx->uring_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ctx->uring_lock);
+                               lock(&p->lock);
+                               lock(&ctx->uring_lock);
+  lock(sb_writers#4);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.2/19710:
+ #0: ffff8880a11b8428 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0xe9a/0x1bd0 fs/io_uring.c:8348
+
+stack backtrace:
+CPU: 0 PID: 19710 Comm: syz-executor.2 Not tainted 5.9.0-rc6-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:io_poll_get_single fs/io_uring.c:4778 [inline]
-RIP: 0010:io_poll_double_wake+0x51/0x510 fs/io_uring.c:4845
-Code: fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 9e 03 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 5d 08 48 8d 7b 48 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 06 0f 8e 63 03 00 00 0f b6 6b 48 bf 06 00 00
-RSP: 0018:ffffc90001c1fb70 EFLAGS: 00010006
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000004
-RDX: 0000000000000009 RSI: ffffffff81d9b3ad RDI: 0000000000000048
-RBP: dffffc0000000000 R08: ffff8880a3cac798 R09: ffffc90001c1fc60
-R10: fffff52000383f73 R11: 0000000000000000 R12: 0000000000000004
-R13: ffff8880a3cac798 R14: ffff8880a3cac7a0 R15: 0000000000000004
-FS:  0000000001f98880(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f18886916c0 CR3: 0000000094c5a000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- __wake_up_common+0x147/0x650 kernel/sched/wait.c:93
- __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:123
- tty_ldisc_hangup+0x1cf/0x680 drivers/tty/tty_ldisc.c:735
- __tty_hangup.part.0+0x403/0x870 drivers/tty/tty_io.c:625
- __tty_hangup drivers/tty/tty_io.c:575 [inline]
- tty_vhangup+0x1d/0x30 drivers/tty/tty_io.c:698
- pty_close+0x3f5/0x550 drivers/tty/pty.c:79
- tty_release+0x455/0xf60 drivers/tty/tty_io.c:1679
- __fput+0x285/0x920 fs/file_table.c:281
- task_work_run+0xdd/0x190 kernel/task_work.c:141
- tracehook_notify_resume include/linux/tracehook.h:188 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:165 [inline]
- exit_to_user_mode_prepare+0x1e2/0x1f0 kernel/entry/common.c:192
- syscall_exit_to_user_mode+0x7a/0x2c0 kernel/entry/common.c:267
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x198/0x1fd lib/dump_stack.c:118
+ check_noncircular+0x324/0x3e0 kernel/locking/lockdep.c:1827
+ check_prev_add kernel/locking/lockdep.c:2496 [inline]
+ check_prevs_add kernel/locking/lockdep.c:2601 [inline]
+ validate_chain kernel/locking/lockdep.c:3218 [inline]
+ __lock_acquire+0x2a96/0x5780 kernel/locking/lockdep.c:4441
+ lock_acquire+0x1f3/0xaf0 kernel/locking/lockdep.c:5029
+ percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+ __sb_start_write+0x228/0x450 fs/super.c:1672
+ io_write+0x6b5/0xb30 fs/io_uring.c:3296
+ io_issue_sqe+0x18f/0x5c50 fs/io_uring.c:5719
+ __io_queue_sqe+0x280/0x1160 fs/io_uring.c:6175
+ io_queue_sqe+0x692/0xfa0 fs/io_uring.c:6254
+ io_submit_sqe fs/io_uring.c:6324 [inline]
+ io_submit_sqes+0x1761/0x2400 fs/io_uring.c:6521
+ __do_sys_io_uring_enter+0xeac/0x1bd0 fs/io_uring.c:8349
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x401210
-Code: 01 f0 ff ff 0f 83 20 0c 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 83 3d dd 24 2d 00 00 75 14 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 f4 0b 00 00 c3 48 83 ec 08 e8 5a 01 00 00
-RSP: 002b:00007ffcdc2c7408 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000401210
-RDX: 0000000000000000 RSI: 000000000000450c RDI: 0000000000000003
-RBP: 00007ffcdc2c7410 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402290
-R13: 0000000000402320 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace b71b955b40cc85b6 ]---
-RIP: 0010:io_poll_get_single fs/io_uring.c:4778 [inline]
-RIP: 0010:io_poll_double_wake+0x51/0x510 fs/io_uring.c:4845
-Code: fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 9e 03 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 5d 08 48 8d 7b 48 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 06 0f 8e 63 03 00 00 0f b6 6b 48 bf 06 00 00
-RSP: 0018:ffffc90001c1fb70 EFLAGS: 00010006
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000004
-RDX: 0000000000000009 RSI: ffffffff81d9b3ad RDI: 0000000000000048
-RBP: dffffc0000000000 R08: ffff8880a3cac798 R09: ffffc90001c1fc60
-R10: fffff52000383f73 R11: 0000000000000000 R12: 0000000000000004
-R13: ffff8880a3cac798 R14: ffff8880a3cac7a0 R15: 0000000000000004
-FS:  0000000001f98880(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f18886916c0 CR3: 0000000094c5a000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+RIP: 0033:0x45e179
+Code: 3d b2 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 0b b2 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f1194e74c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 00000000000082c0 RCX: 000000000045e179
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000004
+RBP: 000000000118cf98 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118cf4c
+R13: 00007ffd1aa5756f R14: 00007f1194e759c0 R15: 000000000118cf4c
 
 
 ---
@@ -127,5 +196,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches

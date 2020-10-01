@@ -2,126 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E322280323
-	for <lists+io-uring@lfdr.de>; Thu,  1 Oct 2020 17:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53FA42803EB
+	for <lists+io-uring@lfdr.de>; Thu,  1 Oct 2020 18:27:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732119AbgJAPtJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Oct 2020 11:49:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731917AbgJAPtJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Oct 2020 11:49:09 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C172DC0613D0;
-        Thu,  1 Oct 2020 08:49:08 -0700 (PDT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1601567346;
+        id S1732208AbgJAQ13 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Oct 2020 12:27:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31109 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732046AbgJAQ13 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Oct 2020 12:27:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601569648;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=UM0JZQ72FkjBPMNhFWZ2Two/L1BX9C8tgytDYVf/RhQ=;
-        b=rqYFIwf3UxNUqitpDNZ3t/Z78J6IhNj6IZ4wQNTCc043ezyXQ6jDV1EQBXEzLfnRWTz8lU
-        lB4/gNfxCpBrcRalduBnmHKcRAwkadJcjDcE+DAwtbwcBwNQCVScuctqbMHm9SMV6x/YCM
-        gfmIQGyvV/XqOXDnEBXS5+S3Vt8vqSf8HK2bqasL2Jx/3OlwO2qkwg841GOhuETxYiymsb
-        xeHJHgvJBlWqaURc6+pT1xJuLow0V76NzlDR+IMBlEShm2TmPq+o97cFPEZUB9XdOCFZH1
-        Jfe4yVhGRd8fz6GCL2XdbmEKWbUJJeQZy3hdSF5+sSe5P9OrYMdsyyAiJ6Xf4w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1601567346;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UM0JZQ72FkjBPMNhFWZ2Two/L1BX9C8tgytDYVf/RhQ=;
-        b=N+Mm42UgmgrrnX+5c8fQc/8rqkv3rT/6SmljLmsVQR63Yq65LFEI43rWxqHAStuCweS3a2
-        kkViMpxsDYiaR0Dw==
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH RFC] kernel: decouple TASK_WORK TWA_SIGNAL handling from signals
-In-Reply-To: <3eafe8ec-7d31-bd46-8641-2d26aca5420d@kernel.dk>
-References: <0b5336a7-c975-a8f8-e988-e983e2340d99@kernel.dk> <875z7uezys.fsf@nanos.tec.linutronix.de> <3eafe8ec-7d31-bd46-8641-2d26aca5420d@kernel.dk>
-Date:   Thu, 01 Oct 2020 17:49:05 +0200
-Message-ID: <87362yeyku.fsf@nanos.tec.linutronix.de>
+        bh=WpyfW6uB/uLX11MkTOm4JRQtX6e9GzHMT50ADwTIIHk=;
+        b=NYWL3ujdIOROWaip1KgAdRCMNP29E3ylff2ddZF3o7PGcbp9PRS/YRyFfsLb+80TTcz/t0
+        Li/AexIcUWPP6EsmY7gb1cDRModpuEwz99qUK4QBzgdMaYfvigjoFXrnmxkzCOXUOf88V3
+        uU/CS3Y5pRbEBG82+vAUWUfmYO7REV4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-467-m49T-GglN5m-W8mAaGTrZA-1; Thu, 01 Oct 2020 12:27:24 -0400
+X-MC-Unique: m49T-GglN5m-W8mAaGTrZA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 320951DE0E;
+        Thu,  1 Oct 2020 16:27:23 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.152])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B56BD60BF1;
+        Thu,  1 Oct 2020 16:27:21 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu,  1 Oct 2020 18:27:22 +0200 (CEST)
+Date:   Thu, 1 Oct 2020 18:27:20 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH RFC v2] kernel: decouple TASK_WORK TWA_SIGNAL handling
+ from signals
+Message-ID: <20201001162719.GD13633@redhat.com>
+References: <3ce9e205-aad0-c9ce-86a7-b281f1c0237a@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ce9e205-aad0-c9ce-86a7-b281f1c0237a@kernel.dk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Oct 01 2020 at 09:26, Jens Axboe wrote:
-> On 10/1/20 9:19 AM, Thomas Gleixner wrote:
->>>  	ret = task_work_add(tsk, cb, notify);
->>> -	if (!ret)
->>> +	if (!ret && !notify)
->> 
->> !notify assumes that TWA_RESUME == 0. Fun to debug if that ever changes.
+Jens,
+
+I'll read this version tomorrow, but:
+
+On 10/01, Jens Axboe wrote:
 >
-> Agree, I'll make that
->
-> 	if (!ret && notify != TWA_SIGNAL)
->
-> instead, that's more sane.
+>  static inline int signal_pending(struct task_struct *p)
+>  {
+> -	return unlikely(test_tsk_thread_flag(p,TIF_SIGPENDING));
+> +#ifdef TIF_TASKWORK
+> +	/*
+> +	 * TIF_TASKWORK isn't really a signal, but it requires the same
+> +	 * behavior of restarting the system call to force a kernel/user
+> +	 * transition.
+> +	 */
+> +	return unlikely(test_tsk_thread_flag(p, TIF_SIGPENDING) ||
+> +			test_tsk_thread_flag(p, TIF_TASKWORK));
+> +#else
+> +	return unlikely(test_tsk_thread_flag(p, TIF_SIGPENDING));
+> +#endif
 
-It's not more sane. It's just more correct.
+This change alone is already very wrong.
 
->> This is really a hack. TWA_SIGNAL is a misnomer with the new
->> functionality and combined with the above
->> 
->>          if (!ret && !notify)
->>   		wake_up_process(tsk);
->> 
->> there is not really a big difference between TWA_RESUME and TWA_SIGNAL
->> anymore. Just the delivery mode and the syscall restart magic.
->
-> Agree, maybe it'd make more sense to rename TWA_SIGNAL to TWA_RESTART or
-> something like that. The only user of this is io_uring, so it's not like
-> it's a lot of churn to do so.
+signal_pending(task) == T means that this task will do get_signal() as
+soon as it can, and this basically means you can't "divorce" SIGPENDING
+and TASKWORK.
 
-I really hate that extra TIF flag just for this. We have way too many
-already and there is work in progress already to address that. I told
-other people already that new TIF flags are not going to happen unless
-the mess is cleaned up. There is work in progress to do so.
+Simple example. Suppose we have a single-threaded task T.
 
->> This needs a lot more thoughts.
->
-> Definitely, which is why I'm posting it as an RFC. It fixes a real
-> performance regression, and there's no reliable way to use TWA_RESUME
-> that I can tell.
+Someone does task_work_add(T, TWA_SIGNAL). This makes signal_pending()==T
+and this is what we need.
 
-It's not a performance regression simply because the stuff you had in
-the first place which had more performance was broken. We are not
-measuring broken vs. correct, really.
+Now suppose that another task sends a signal to T before T calls
+task_work_run() and clears TIF_TASKWORK. In this case SIGPENDING won't
+be set because signal_pending() is already set (see wants_signal), and
+this means that T won't notice this signal.
 
-You are looking for a way to make stuff perform better and that's
-something totally different and does not need to be rushed. Especially
-rushing stuff into sensible areas like the entry code is not going to
-happen just because you screwed up your initial design.
-
-> What kind of restart behavior do we need? Before this change, everytime
-> _TIF_SIGPENDING is set and we don't deliver a signal in the loop, we go
-> through the syscall restart code. After this change, we only do so at
-> the end. I'm assuming that's your objection?
-
-No. That should work by some definition of work, but doing a restart
-while delivering a signal cannot work at all.
-
-> For _TIF_TASKWORK, we'll always want to restat the system call, if we
-> were currently doing one. For signals, only if we didn't deliver a
-> signal. So we'll want to retain the restart inside signal delivery?
-
-No. This needs more thoughts about how restart handling is supposed to
-work in the bigger picture and I'm not going to look at new versions of
-this which are rushed out every half an hour unless there is a proper
-analysis of how all this should play together in a way which does not
-make an utter mess of everything.
-
-Thanks,
-
-        tglx
-
-
-
-
-
+Oleg.
 

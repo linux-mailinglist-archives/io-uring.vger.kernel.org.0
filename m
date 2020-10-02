@@ -2,66 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5226228172D
-	for <lists+io-uring@lfdr.de>; Fri,  2 Oct 2020 17:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA0DF2817A1
+	for <lists+io-uring@lfdr.de>; Fri,  2 Oct 2020 18:17:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387965AbgJBPxy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Oct 2020 11:53:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39340 "EHLO
+        id S1726386AbgJBQRJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Oct 2020 12:17:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbgJBPxu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Oct 2020 11:53:50 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3C8C0613D0
-        for <io-uring@vger.kernel.org>; Fri,  2 Oct 2020 08:53:49 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id b12so1651486ilh.12
-        for <io-uring@vger.kernel.org>; Fri, 02 Oct 2020 08:53:49 -0700 (PDT)
+        with ESMTP id S1726017AbgJBQRJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Oct 2020 12:17:09 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D58B6C0613D0
+        for <io-uring@vger.kernel.org>; Fri,  2 Oct 2020 09:17:07 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id z4so2444328wrr.4
+        for <io-uring@vger.kernel.org>; Fri, 02 Oct 2020 09:17:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        d=gmail.com; s=20161025;
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FbzYt+1lqJQv+Lx05+RRyPDz9iRfh2zyAaBiUET49Dc=;
-        b=BdiF/jQHkXOGJ5tGB7XMAQY3DWt9p2gn//KwbsXishc37at0GxMGsz3BqaHq+6Tb+Z
-         lavVukWvQu9yruLKDUNeCt0bCIHftctaFyTEsaW4XvB95yKWABJbP0V8pxt5hL7qeWLl
-         YNLp/bHplcCa+IIqog1ljsc82OJEejzY40f4h40IzjYHXq4LYpOniRMPu7NvnSPTCA40
-         itljo27NycITPYXMd4G8VMwPXbw2VXgS5Iy1Ow0kTuJZ1P62zxm4faMz/hDxeo49+xan
-         9TFFLXKMe0vGQdFEE+pyHucsWA+r7xlT4GFuAYukfv8D/0HfwAUStaX9xVBNDNQ6Luqj
-         9+Cg==
+        bh=W1OZLoTkeHh8vn+DiKDzqBJfz6fzBnIMm+Jqtxh6H1Q=;
+        b=ui2cHtYhSgBi9SCGBhUGh3l1BHPpYNxsZ8C7Y34uyIZxJRVBvHEc9pnganQUzWqHo6
+         pso7Hv/waVG42JOyI4+wDXEJsI6Reu4394ptZUhu4jC2LvO29pM/XpsybEDLz/Pv4AZx
+         zA5DzUUiZaGMc/Y7NmB9XMCmpkWbiXxf16sfz+pCKfhznaVzF2euuI48j373yVFcdSLB
+         dwURH2dTXmf6Yb+ftkML6elzQ7cdNvarVU/6iAaLlWj8ayk/y0Fz9NpNouiek+YG/WAW
+         E3/qhnFhxHOsG8YrSni67WvihD2dg7vaY8AfEUix301uvVKp02f4B/iWtEUkcl5lEZVE
+         2e7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=FbzYt+1lqJQv+Lx05+RRyPDz9iRfh2zyAaBiUET49Dc=;
-        b=nnluawqHw1gTtJFk09AqIwgTrHGuPoxreFoU/Vro+2RvxWzuRU0KsMRDRdfNL1os/s
-         KvJcSQEmw+nh0mVN8Efj8dBaQB0RfdSik8pf8fjPahBoia0oYuYbr+ZDLzuTBJR/gQLX
-         rvaBgui4Ppi2/+anOjo/xI14YXUaZJflBS85fu2EoBhBThqO+nIElQCyamoAAEKsNPri
-         3f12wYJDT+ijW9GUy/pUm9mH8qvytKgfmXngczoF5DRDnuYWrIGeo/l5GxDfUhgOI7D9
-         IJlJNUuctuiaZh2QcL5PMBufdSz9f0pJHtJuU/SMrRJ9wex7BWUDgZNnCpgDBZGYL22Z
-         Y4Bw==
-X-Gm-Message-State: AOAM531XsarTTfWN3ZfqY6QEhN0pT4lZuoB9maAOvsyQNDAV5AzSdpgc
-        M60Hwm8DpJk1VA4SONAJikXmng==
-X-Google-Smtp-Source: ABdhPJwNMa0GiYKCdyEnbZDrl+NAj5pyHSFmIKe53+DJgSLqdjRwXMzubUGSmi/zc+E0oYxtNBibzg==
-X-Received: by 2002:a92:c148:: with SMTP id b8mr1843075ilh.269.1601654028568;
-        Fri, 02 Oct 2020 08:53:48 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id y28sm962240ilk.13.2020.10.02.08.53.47
+        bh=W1OZLoTkeHh8vn+DiKDzqBJfz6fzBnIMm+Jqtxh6H1Q=;
+        b=b9yhA4/thaPmkDfkmld+ZIStirkfkAaRdwYTLD7EF+QM0ueyMPgDFkaXnAn3QF5+O4
+         jGXgMdE1LueeZfLXUM+PZhnbYNyPjBd1ts3L4e9JCJkWu+6vIwkBkCTivooh+yfdl1ff
+         TsDX3JeOTosgXFYIVlxcxs90TSyqq/3tbs46k5kfvIWluy6Ad4rXI9gr/sVlM1hEu/kN
+         SrDNJBQ6wvWvEwvOPhmMZ10wIsg8pR8iIdXsU9+OhT0srASHm9GxkcG7DyyChVzpbvd1
+         Zo1AKMTTC3PoaweiGYog/wHCRcT4Kr+xSFD/h41MVkzKwebQI7FTXXb/Qcdrt8lK9QiO
+         nSLw==
+X-Gm-Message-State: AOAM530WZHoDsIiCuCmdAq3TnNRcnNAYuye0FqR8BtoM8TWfrdmEkOi8
+        YjUXChgfvWI4KSm+KntpfzNntGNPUp4=
+X-Google-Smtp-Source: ABdhPJwgTkyg2snaDK+7Ytz/Uk+0nWIUErsc9Jh2NvMwRThTIvAP/5lE9uCq4CWBedCt94lutkw/MQ==
+X-Received: by 2002:adf:eb04:: with SMTP id s4mr4177442wrn.81.1601655426221;
+        Fri, 02 Oct 2020 09:17:06 -0700 (PDT)
+Received: from [192.168.1.151] (host109-152-100-194.range109-152.btcentralplus.com. [109.152.100.194])
+        by smtp.gmail.com with ESMTPSA id s19sm2418141wmc.0.2020.10.02.09.17.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Oct 2020 08:53:47 -0700 (PDT)
-Subject: Re: [PATCH 3/3] task_work: use TIF_TASKWORK if available
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        peterz@infradead.org, tglx@linutronix.de
-References: <20201001194208.1153522-1-axboe@kernel.dk>
- <20201001194208.1153522-4-axboe@kernel.dk>
- <20201002151415.GA29066@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fb15a44f-3fdf-2f12-ee85-f229bd261419@kernel.dk>
-Date:   Fri, 2 Oct 2020 09:53:47 -0600
+        Fri, 02 Oct 2020 09:17:05 -0700 (PDT)
+Subject: Re: [PATCH 1/5] io_uring: grab any needed state during defer prep
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20200914162555.1502094-1-axboe@kernel.dk>
+ <20200914162555.1502094-2-axboe@kernel.dk>
+ <77283ddd-77d9-41e1-31d2-2b9734ee2388@gmail.com>
+ <79e9d619-882b-8915-32df-ced1886e1eb3@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <f61a349a-8348-04a3-fc4d-0a15344664fd@gmail.com>
+Date:   Fri, 2 Oct 2020 19:14:27 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201002151415.GA29066@redhat.com>
+In-Reply-To: <79e9d619-882b-8915-32df-ced1886e1eb3@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,76 +111,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/2/20 9:14 AM, Oleg Nesterov wrote:
-> Heh. To be honest I don't really like 1-2 ;)
-> 
-> Unfortunately, I do not see a better approach right now. Let me think
-> until Monday, it is not that I think I will find a better solution, but
-> I'd like to try anyway.
-> 
-> Let me comment 3/3 for now.
+On 19/09/2020 19:56, Pavel Begunkov wrote:
+> On 19/09/2020 18:27, Pavel Begunkov wrote:
+>> On 14/09/2020 19:25, Jens Axboe wrote:
+>>> Always grab work environment for deferred links. The assumption that we
+>>> will be running it always from the task in question is false, as exiting
+>>> tasks may mean that we're deferring this one to a thread helper. And at
+>>> that point it's too late to grab the work environment.
+> Forgot that they will be cancelled there. So, how it could happen?
+> Is that the initial thread will run task_work but loosing
+> some resources like mm prior to that? e.g. in do_exit()
 
-Thanks, appreciate your time on this!
+Jens, please let me know when you get time for that. I was thinking that
+you were meaning do_exit(), which does task_work_run() after killing mm,
+etc., but you mentioned a thread helper in the description... Which one
+do you mean?
 
->> +static void task_work_signal(struct task_struct *task)
->> +{
->> +#ifndef TIF_TASKWORK
->> +	unsigned long flags;
->> +
->> +	/*
->> +	 * Only grab the sighand lock if we don't already have some
->> +	 * task_work pending. This pairs with the smp_store_mb()
->> +	 * in get_signal(), see comment there.
->> +	 */
->> +	if (!(READ_ONCE(task->jobctl) & JOBCTL_TASK_WORK) &&
->> +	    lock_task_sighand(task, &flags)) {
->> +		task->jobctl |= JOBCTL_TASK_WORK;
->> +		signal_wake_up(task, 0);
->> +		unlock_task_sighand(task, &flags);
->> +	}
->> +#else
->> +	set_tsk_thread_flag(task, TIF_TASKWORK);
->> +	set_notify_resume(task);
->> +#endif
+>
+>>
+>>>
+>>> Fixes: debb85f496c9 ("io_uring: factor out grab_env() from defer_prep()")
+>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>> ---
+>>>  fs/io_uring.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>> index 175fb647d099..be9d628e7854 100644
+>>> --- a/fs/io_uring.c
+>>> +++ b/fs/io_uring.c
+>>> @@ -5449,6 +5449,8 @@ static int io_req_defer_prep(struct io_kiocb *req,
+>>>  	if (unlikely(ret))
+>>>  		return ret;
+>>>  
+>>> +	io_prep_async_work(req);
+>>> +
+>>>  	switch (req->opcode) {
+>>>  	case IORING_OP_NOP:
+>>>  		break;
+>>>
+>>
 > 
-> Again, I can't understand. task_work_signal(task) should set TIF_TASKWORK
-> to make signal_pending() = T _and_ wake/kick the target up, just like
-> signal_wake_up() does. Why do we set TIF_NOTIFY_RESUME ?
-> 
-> So I think that if we are going to add TIF_TASKWORK we should generalize
-> this logic and turn it into TIF_NOTIFY_SIGNAL. Similar to TIF_NOTIFY_RESUME
-> but implies signal_pending().
-> 
-> IOW, something like
-> 
-> 	void set_notify_signal(task)
-> 	{
-> 		if (!test_and_set_tsk_thread_flag(task, TIF_NOTIFY_SIGNAL)) {
-> 			if (!wake_up_state(task, TASK_INTERRUPTIBLE))
-> 				kick_process(t);
-> 		}
-> 	}
-> 
-> 	// called by exit_to_user_mode_loop() if ti_work & _TIF_NOTIFY_SIGNAL
-> 	void tracehook_notify_signal(regs)
-> 	{
-> 		clear_thread_flag(TIF_NOTIFY_SIGNAL);
-> 		smp_mb__after_atomic();
-> 		if (unlikely(current->task_works))
-> 			task_work_run();
-> 	}
-> 
-> This way task_work_run() doesn't need to clear TIF_NOTIFY_SIGNAL and it can
-> have more users.
-> 
-> What do you think?
-
-I like that. It'll achieve the same thing as far as I'm concerned, but not
-tie the functionality to task_work. Not that we have anything that'd use
-it right now, but it still seems like a better base.
-
-I'll adapt patch 2+3 for this, thanks Oleg.
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

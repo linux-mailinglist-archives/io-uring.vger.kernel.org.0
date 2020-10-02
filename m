@@ -2,156 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E215281ABE
-	for <lists+io-uring@lfdr.de>; Fri,  2 Oct 2020 20:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF3A281B5C
+	for <lists+io-uring@lfdr.de>; Fri,  2 Oct 2020 21:10:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387692AbgJBSUi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Oct 2020 14:20:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31287 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726215AbgJBSUh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Oct 2020 14:20:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1601662836;
+        id S2387692AbgJBTKn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Oct 2020 15:10:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41850 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbgJBTKn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Oct 2020 15:10:43 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 333B3C0613D0;
+        Fri,  2 Oct 2020 12:10:43 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1601665840;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=lqqL3jwW0Qxyljotmq4NPWT4XpzpY6tFGrdJ6FJR2t4=;
-        b=dMlSRi+LJzbKdyP9hMsuvtzg9R6vuSX/UtTsBK0mwOxNhWrcCiwIAWJP1e8DJTCrwXEv/1
-        cbdLraIEGWOrMrtsllFUslvjIAG4+bqMwaP4KDvIM+EZwtzqo6JGMs5m9tBjOl0P/sQ8AS
-        SNTArvIGqmC3f/ENb6j7EBSwO5JBb+o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-565-U-JaIaSIMKi43Vr2Vudc8Q-1; Fri, 02 Oct 2020 14:20:34 -0400
-X-MC-Unique: U-JaIaSIMKi43Vr2Vudc8Q-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B12C3801ADA;
-        Fri,  2 Oct 2020 18:20:33 +0000 (UTC)
-Received: from bfoster (ovpn-114-177.rdu2.redhat.com [10.10.114.177])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4DEFA55784;
-        Fri,  2 Oct 2020 18:20:33 +0000 (UTC)
-Date:   Fri, 2 Oct 2020 14:20:31 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     Zorro Lang <zlang@redhat.com>
-Cc:     fstests@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH 3/3] generic: IO_URING direct IO fsx test
-Message-ID: <20201002182031.GE4708@bfoster>
-References: <20200916171443.29546-1-zlang@redhat.com>
- <20200916171443.29546-4-zlang@redhat.com>
+        bh=eJktxSNhWJM/BgeMFlAldxUGknWBDzKoGcVcbfFdWEU=;
+        b=UO32msFoUsnCGcCU/nloBL/pLMHuNB23dbBu2ZIdqhsgz9R9A47l+q5WEy5Wb5i5jVkG/t
+        tyIp+WV6ug3qNcoGQqihonvjKn1XL3j/7WK9/0n3+yxMQuRwcYTuDBzCwBOO8kmM+7Q9Vp
+        KNkeJos/TCphe8Lx/DxqHll/LW0UdwymfyzgzcCVpfAZJRzMl3ZY+k+mzVjr0txX7lHzsM
+        gPPQl2Ohob8X6I7oCEmllAvLmo1CYaURiXlcF8Y9HmO1ceRGr6Ku27AV68XPLGjj/KsMgs
+        2yGmUh8SVcU8aEM07fXjecPGvRlQpwG7ki2y87i6EEjuRGmJhwe882dwOEH4fA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1601665840;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eJktxSNhWJM/BgeMFlAldxUGknWBDzKoGcVcbfFdWEU=;
+        b=kyckBGqyHRgAFJ5nX3wgecTnJO8ACh6+1GODnqeRu6rUz0IBTSZYtE6DSkEdH4UCm/ne+m
+        8CJrryjS68tFs6Cg==
+To:     Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        peterz@infradead.org
+Subject: Re: [PATCH 3/3] task_work: use TIF_TASKWORK if available
+In-Reply-To: <4c9dbcc4-cae7-c7ad-8066-31d49239750a@kernel.dk>
+References: <20201001194208.1153522-1-axboe@kernel.dk> <20201001194208.1153522-4-axboe@kernel.dk> <20201002151415.GA29066@redhat.com> <871rigejb8.fsf@nanos.tec.linutronix.de> <4c9dbcc4-cae7-c7ad-8066-31d49239750a@kernel.dk>
+Date:   Fri, 02 Oct 2020 21:10:40 +0200
+Message-ID: <87y2kocukv.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200916171443.29546-4-zlang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 01:14:43AM +0800, Zorro Lang wrote:
-> After fsx supports IO_URING read/write, add IO_URING direct IO fsx
-> test with different read/write size and concurrent buffered IO.
-> 
-> Signed-off-by: Zorro Lang <zlang@redhat.com>
-> ---
->  tests/generic/610     | 52 +++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/610.out |  7 ++++++
->  tests/generic/group   |  1 +
->  3 files changed, 60 insertions(+)
->  create mode 100755 tests/generic/610
->  create mode 100644 tests/generic/610.out
-> 
-> diff --git a/tests/generic/610 b/tests/generic/610
-> new file mode 100755
-> index 00000000..fc3f4c2a
-> --- /dev/null
-> +++ b/tests/generic/610
-> @@ -0,0 +1,52 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2020 YOUR NAME HERE.  All Rights Reserved.
+On Fri, Oct 02 2020 at 09:52, Jens Axboe wrote:
+> On 10/2/20 9:31 AM, Thomas Gleixner wrote:
+>>> This way task_work_run() doesn't need to clear TIF_NOTIFY_SIGNAL and it can
+>>> have more users.
+>> 
+>> I think it's fundamentaly wrong that we have several places and several
+>> flags which handle task_work_run() instead of having exactly one place
+>> and one flag.
+>
+> I don't disagree with that. I know it's not happening in this series, but
+> if we to the TIF_NOTIFY_SIGNAL route and get all archs supporting that,
+> then we can kill the signal and notify resume part of running task_work.
+> And that leaves us with exactly one place that runs it.
+>
+> So we can potentially improve the current situation in that regard.
 
-The copyright needs fixing.
-
-> +#
-> +# FS QA Test 610
-> +#
-> +# IO_URING direct IO fsx test
-> +#
-> +seq=`basename $0`
-> +seqres=$RESULT_DIR/$seq
-> +echo "QA output created by $seq"
-> +
-> +here=`pwd`
-> +tmp=/tmp/$$
-> +status=1	# failure is the default!
-> +trap "_cleanup; exit \$status" 0 1 2 3 15
-> +
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -f $tmp.*
-> +}
-> +
-> +# get standard environment, filters and checks
-> +. ./common/rc
-> +. ./common/filter
-> +
-> +# remove previous $seqres.full before test
-> +rm -f $seqres.full
-> +
-> +# real QA test starts here
-> +_supported_fs generic
-> +_supported_os Linux
-> +_require_test
-> +_require_odirect
-> +_require_io_uring
-> +
-> +psize=`$here/src/feature -s`
-> +bsize=`_min_dio_alignment $TEST_DEV`
-> +run_fsx -S 0 -U -N 20000           -l 600000 -r PSIZE -w BSIZE -Z -R -W
-> +run_fsx -S 0 -U -N 20000 -o 8192   -l 600000 -r PSIZE -w BSIZE -Z -R -W
-> +run_fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -R -W
-> +
-> +# change readbdy/writebdy to double page size
-> +psize=$((psize * 2))
-> +run_fsx -S 0 -U -N 20000           -l 600000 -r PSIZE -w PSIZE -Z -R -W
-> +run_fsx -S 0 -U -N 20000 -o 256000 -l 600000 -r PSIZE -w PSIZE -Z -R -W
-> +run_fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -W
-> +
-
-Can you elaborate on why PSIZE/BSIZE are used where they are for the
-writebdy option? Also is -R intentionally dropped from the final test?
-
-Brian
-
-> +# success, all done
-> +status=0
-> +exit
-> diff --git a/tests/generic/610.out b/tests/generic/610.out
-> new file mode 100644
-> index 00000000..97ad41a3
-> --- /dev/null
-> +++ b/tests/generic/610.out
-> @@ -0,0 +1,7 @@
-> +QA output created by 610
-> +fsx -S 0 -U -N 20000 -l 600000 -r PSIZE -w BSIZE -Z -R -W
-> +fsx -S 0 -U -N 20000 -o 8192 -l 600000 -r PSIZE -w BSIZE -Z -R -W
-> +fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -R -W
-> +fsx -S 0 -U -N 20000 -l 600000 -r PSIZE -w PSIZE -Z -R -W
-> +fsx -S 0 -U -N 20000 -o 256000 -l 600000 -r PSIZE -w PSIZE -Z -R -W
-> +fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -W
-> diff --git a/tests/generic/group b/tests/generic/group
-> index cf50f4a1..60280dc2 100644
-> --- a/tests/generic/group
-> +++ b/tests/generic/group
-> @@ -612,3 +612,4 @@
->  607 auto attr quick dax
->  608 auto attr quick dax
->  609 auto rw io_uring
-> +610 auto rw io_uring
-> -- 
-> 2.20.1
-> 
-
+I'll think about it over the weekend.

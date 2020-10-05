@@ -2,246 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEACF283833
-	for <lists+io-uring@lfdr.de>; Mon,  5 Oct 2020 16:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F542838EF
+	for <lists+io-uring@lfdr.de>; Mon,  5 Oct 2020 17:04:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725911AbgJEOp1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Oct 2020 10:45:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726604AbgJEOpL (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 5 Oct 2020 10:45:11 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A0A220E65;
-        Mon,  5 Oct 2020 14:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601909110;
-        bh=f4N4EKrt9xHR04GJyg5J9X0kQBs5sQGI8StR/bJxlRU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OZgMShqwxM0TtFiwSQjKOxbxcfHd4kxHvHgk/Vg/NYdvnsSYb21sqHUllJbbOJLPg
-         HEO86C1/JCEXmTKchlWouhACRCRucunH3Gjz3NMqa27qINl1fZe05BO4Ma+FQtLRVr
-         2o7gdcs/T6uHby13dVnd1X+ENcDpE8DePME3m5e8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot+2f8fa4e860edc3066aba@syzkaller.appspotmail.com,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 07/12] io_uring: fix potential ABBA deadlock in ->show_fdinfo()
-Date:   Mon,  5 Oct 2020 10:44:55 -0400
-Message-Id: <20201005144501.2527477-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201005144501.2527477-1-sashal@kernel.org>
-References: <20201005144501.2527477-1-sashal@kernel.org>
+        id S1726616AbgJEPEp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Oct 2020 11:04:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbgJEPEp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Oct 2020 11:04:45 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB6AC0613CE
+        for <io-uring@vger.kernel.org>; Mon,  5 Oct 2020 08:04:44 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id n6so3008663ioc.12
+        for <io-uring@vger.kernel.org>; Mon, 05 Oct 2020 08:04:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ygm9tOI5Xt1uO5vTjLLaVjSmH29apSK8TYFI2iYmjQ8=;
+        b=KzrI7ptH6OVXtQcBwLwuI9qJjwQeBp1wCZhyo7t4OfZoSp8jSgp1I6464fktCwNo+A
+         UPsBSjc/CVCqIkxCYKrCy7RwGK+BEQyx5dD+3ZW9pIHSMO/RAYPPuyirlDOkOmnuoFm3
+         4LDjaRehvVlW2tTGqIoBKs3SZQXefWNZanOf/LzGzkIuOVh3DfTCclEMAB5SSObsWYgg
+         qFGoTPYvMp8Jp7grRQcy8dn1xisVxCpwXqqb4jWfuyjQT3irF17GwMgyYwJe3QD0Ng68
+         SeTpjCNYZs1kAHWAoyVi/MhafenupDUe75bEoRw1mydqolhgTitGvJ6TUR4FrxFYqbLd
+         O/qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ygm9tOI5Xt1uO5vTjLLaVjSmH29apSK8TYFI2iYmjQ8=;
+        b=Yl2AA25P5NWJWa30pZeIstDTdqh0Kxa0Q+JdVcUFw8itJIzqpOk81CDIozN8zAYmBl
+         rOEXR/cvFtS/LPqu9bpO+IpHs28ocVCWouNpf0rowTgcNGE+wb2wbNtBJcxE90Wv5QDd
+         7cb0TOTHHPGnQNQI6eHy2CHeBvoT1EFCE+Z8Inhir0SDxZcFesb8f5h59ihOdgjDzIiO
+         dOUV/uTqvgLqKJjaos2JIaaBAB50H/6d7onria81f7zujBSa1Pxcy/Gxv3ZIEqnMqbgL
+         3xY1Jwcuzx9nQtJspMG6no82uRO3DWwYlt/7Wg0H3vWEOFyrsvdVYqYB+4TkElb7spp0
+         EdDw==
+X-Gm-Message-State: AOAM530X5iJ4HnPy2xhv2T1tmXp/cnQjf+RDqwO7ZFGoYuvqZQgTJdaY
+        uDz31Jpb9x4QyOaewcNrNkQa3A==
+X-Google-Smtp-Source: ABdhPJz9phS5bF37gNvcJ53Bc2xYRCou3ON/bdXJfbQuH4hTa9/6uN6shgizOuJ2MgvU+uBX3rLqSw==
+X-Received: by 2002:a02:b388:: with SMTP id p8mr306351jan.129.1601910283681;
+        Mon, 05 Oct 2020 08:04:43 -0700 (PDT)
+Received: from p1.localdomain ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id 15sm33140ilz.66.2020.10.05.08.04.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Oct 2020 08:04:43 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Cc:     peterz@infradead.org, oleg@redhat.com, tglx@linutronix.de
+Subject: [PATCHSET RFC v3 0/6] Add support for TIF_NOTIFY_SIGNAL
+Date:   Mon,  5 Oct 2020 09:04:32 -0600
+Message-Id: <20201005150438.6628-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+Hi,
 
-[ Upstream commit fad8e0de4426a776c9bcb060555e7c09e2d08db6 ]
+The goal is this patch series is to decouple TWA_SIGNAL based task_work
+from real signals and signal delivery. The motivation is speeding up
+TWA_SIGNAL based task_work, particularly for threaded setups where
+->sighand is shared across threads.
 
-syzbot reports a potential lock deadlock between the normal IO path and
-->show_fdinfo():
+Patch 1 is just a cleanup patchs, since I noticed that notify_resume
+handling has some arch redundancy..
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.9.0-rc6-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.2/19710 is trying to acquire lock:
-ffff888098ddc450 (sb_writers#4){.+.+}-{0:0}, at: io_write+0x6b5/0xb30 fs/io_uring.c:3296
+Patch 2 provides an abstraction around signal_pending(), in preparation
+for allowing TIF_NOTIFY_SIGNAL to break scheduling loops.
 
-but task is already holding lock:
-ffff8880a11b8428 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0xe9a/0x1bd0 fs/io_uring.c:8348
+Patch 3 just splits system call restart handling from the arch signal
+delivery. Only the generic entry code is updated.
 
-which lock already depends on the new lock.
+Patch 4 adds generic support for TIF_NOTIFY_SIGNAL, calling the
+appropriate tracehook_notify_signal() if TIF_NOTIFY_SIGNAL is set.
 
-the existing dependency chain (in reverse order) is:
+Patch 5 just defines TIF_NOTIFY_SIGNAL for x86, since the generic code
+is now ready for it.
 
--> #2 (&ctx->uring_lock){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-       __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
-       __io_uring_show_fdinfo fs/io_uring.c:8417 [inline]
-       io_uring_show_fdinfo+0x194/0xc70 fs/io_uring.c:8460
-       seq_show+0x4a8/0x700 fs/proc/fd.c:65
-       seq_read+0x432/0x1070 fs/seq_file.c:208
-       do_loop_readv_writev fs/read_write.c:734 [inline]
-       do_loop_readv_writev fs/read_write.c:721 [inline]
-       do_iter_read+0x48e/0x6e0 fs/read_write.c:955
-       vfs_readv+0xe5/0x150 fs/read_write.c:1073
-       kernel_readv fs/splice.c:355 [inline]
-       default_file_splice_read.constprop.0+0x4e6/0x9e0 fs/splice.c:412
-       do_splice_to+0x137/0x170 fs/splice.c:871
-       splice_direct_to_actor+0x307/0x980 fs/splice.c:950
-       do_splice_direct+0x1b3/0x280 fs/splice.c:1059
-       do_sendfile+0x55f/0xd40 fs/read_write.c:1540
-       __do_sys_sendfile64 fs/read_write.c:1601 [inline]
-       __se_sys_sendfile64 fs/read_write.c:1587 [inline]
-       __x64_sys_sendfile64+0x1cc/0x210 fs/read_write.c:1587
-       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-       entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Patch 6 finally allows task_work to use notify_signal to handle
+TWA_SIGNAL based task_work.
 
--> #1 (&p->lock){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-       __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
-       seq_read+0x61/0x1070 fs/seq_file.c:155
-       pde_read fs/proc/inode.c:306 [inline]
-       proc_reg_read+0x221/0x300 fs/proc/inode.c:318
-       do_loop_readv_writev fs/read_write.c:734 [inline]
-       do_loop_readv_writev fs/read_write.c:721 [inline]
-       do_iter_read+0x48e/0x6e0 fs/read_write.c:955
-       vfs_readv+0xe5/0x150 fs/read_write.c:1073
-       kernel_readv fs/splice.c:355 [inline]
-       default_file_splice_read.constprop.0+0x4e6/0x9e0 fs/splice.c:412
-       do_splice_to+0x137/0x170 fs/splice.c:871
-       splice_direct_to_actor+0x307/0x980 fs/splice.c:950
-       do_splice_direct+0x1b3/0x280 fs/splice.c:1059
-       do_sendfile+0x55f/0xd40 fs/read_write.c:1540
-       __do_sys_sendfile64 fs/read_write.c:1601 [inline]
-       __se_sys_sendfile64 fs/read_write.c:1587 [inline]
-       __x64_sys_sendfile64+0x1cc/0x210 fs/read_write.c:1587
-       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-       entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Changes since v2:
+- notify resume cleanup
+- split patch series
+- improve commit messages and comments
+- kvm TIF_NOTIFY_SIGNAL handling
 
--> #0 (sb_writers#4){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:2496 [inline]
-       check_prevs_add kernel/locking/lockdep.c:2601 [inline]
-       validate_chain kernel/locking/lockdep.c:3218 [inline]
-       __lock_acquire+0x2a96/0x5780 kernel/locking/lockdep.c:4441
-       lock_acquire+0x1f3/0xaf0 kernel/locking/lockdep.c:5029
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write+0x228/0x450 fs/super.c:1672
-       io_write+0x6b5/0xb30 fs/io_uring.c:3296
-       io_issue_sqe+0x18f/0x5c50 fs/io_uring.c:5719
-       __io_queue_sqe+0x280/0x1160 fs/io_uring.c:6175
-       io_queue_sqe+0x692/0xfa0 fs/io_uring.c:6254
-       io_submit_sqe fs/io_uring.c:6324 [inline]
-       io_submit_sqes+0x1761/0x2400 fs/io_uring.c:6521
-       __do_sys_io_uring_enter+0xeac/0x1bd0 fs/io_uring.c:8349
-       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-       entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-other info that might help us debug this:
-
-Chain exists of:
-  sb_writers#4 --> &p->lock --> &ctx->uring_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ctx->uring_lock);
-                               lock(&p->lock);
-                               lock(&ctx->uring_lock);
-  lock(sb_writers#4);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.2/19710:
- #0: ffff8880a11b8428 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0xe9a/0x1bd0 fs/io_uring.c:8348
-
-stack backtrace:
-CPU: 0 PID: 19710 Comm: syz-executor.2 Not tainted 5.9.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x198/0x1fd lib/dump_stack.c:118
- check_noncircular+0x324/0x3e0 kernel/locking/lockdep.c:1827
- check_prev_add kernel/locking/lockdep.c:2496 [inline]
- check_prevs_add kernel/locking/lockdep.c:2601 [inline]
- validate_chain kernel/locking/lockdep.c:3218 [inline]
- __lock_acquire+0x2a96/0x5780 kernel/locking/lockdep.c:4441
- lock_acquire+0x1f3/0xaf0 kernel/locking/lockdep.c:5029
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write+0x228/0x450 fs/super.c:1672
- io_write+0x6b5/0xb30 fs/io_uring.c:3296
- io_issue_sqe+0x18f/0x5c50 fs/io_uring.c:5719
- __io_queue_sqe+0x280/0x1160 fs/io_uring.c:6175
- io_queue_sqe+0x692/0xfa0 fs/io_uring.c:6254
- io_submit_sqe fs/io_uring.c:6324 [inline]
- io_submit_sqes+0x1761/0x2400 fs/io_uring.c:6521
- __do_sys_io_uring_enter+0xeac/0x1bd0 fs/io_uring.c:8349
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45e179
-Code: 3d b2 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 0b b2 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f1194e74c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-RAX: ffffffffffffffda RBX: 00000000000082c0 RCX: 000000000045e179
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000004
-RBP: 000000000118cf98 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118cf4c
-R13: 00007ffd1aa5756f R14: 00007f1194e759c0 R15: 000000000118cf4c
-
-Fix this by just not diving into details if we fail to trylock the
-io_uring mutex. We know the ctx isn't going away during this operation,
-but we cannot safely iterate buffers/files/personalities if we don't
-hold the io_uring mutex.
-
-Reported-by: syzbot+2f8fa4e860edc3066aba@syzkaller.appspotmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1d5640cc2a488..25017418348ca 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7994,11 +7994,19 @@ static int io_uring_show_cred(int id, void *p, void *data)
- 
- static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- {
-+	bool has_lock;
- 	int i;
- 
--	mutex_lock(&ctx->uring_lock);
-+	/*
-+	 * Avoid ABBA deadlock between the seq lock and the io_uring mutex,
-+	 * since fdinfo case grabs it in the opposite direction of normal use
-+	 * cases. If we fail to get the lock, we just don't iterate any
-+	 * structures that could be going away outside the io_uring mutex.
-+	 */
-+	has_lock = mutex_trylock(&ctx->uring_lock);
-+
- 	seq_printf(m, "UserFiles:\t%u\n", ctx->nr_user_files);
--	for (i = 0; i < ctx->nr_user_files; i++) {
-+	for (i = 0; has_lock && i < ctx->nr_user_files; i++) {
- 		struct fixed_file_table *table;
- 		struct file *f;
- 
-@@ -8010,13 +8018,13 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 			seq_printf(m, "%5u: <none>\n", i);
- 	}
- 	seq_printf(m, "UserBufs:\t%u\n", ctx->nr_user_bufs);
--	for (i = 0; i < ctx->nr_user_bufs; i++) {
-+	for (i = 0; has_lock && i < ctx->nr_user_bufs; i++) {
- 		struct io_mapped_ubuf *buf = &ctx->user_bufs[i];
- 
- 		seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf,
- 						(unsigned int) buf->len);
- 	}
--	if (!idr_is_empty(&ctx->personality_idr)) {
-+	if (has_lock && !idr_is_empty(&ctx->personality_idr)) {
- 		seq_printf(m, "Personalities:\n");
- 		idr_for_each(&ctx->personality_idr, io_uring_show_cred, m);
- 	}
-@@ -8031,7 +8039,8 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 					req->task->task_works != NULL);
- 	}
- 	spin_unlock_irq(&ctx->completion_lock);
--	mutex_unlock(&ctx->uring_lock);
-+	if (has_lock)
-+		mutex_unlock(&ctx->uring_lock);
- }
- 
- static void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
 -- 
-2.25.1
+Jens Axboe
+
 

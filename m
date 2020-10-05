@@ -2,193 +2,246 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11FFA2832A2
-	for <lists+io-uring@lfdr.de>; Mon,  5 Oct 2020 10:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEACF283833
+	for <lists+io-uring@lfdr.de>; Mon,  5 Oct 2020 16:45:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbgJEI4T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Oct 2020 04:56:19 -0400
-Received: from mail-il1-f206.google.com ([209.85.166.206]:51783 "EHLO
-        mail-il1-f206.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbgJEI4T (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Oct 2020 04:56:19 -0400
-Received: by mail-il1-f206.google.com with SMTP id e3so6703610ilq.18
-        for <io-uring@vger.kernel.org>; Mon, 05 Oct 2020 01:56:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Amwp1aqa7bTc2xanzlXXNgO7NgBXnd0zxzTo/kSRKZ4=;
-        b=NE+SGEuALU5tNo6oJ0HE0PQjyWwsICuDfDZ5pjpakdK87x+qJ9UWcRX/Nq3N8Wevbl
-         7cCewSvZJcyN3ceY9CpVqjSn+WpAG8O7nbYJ3J1T1BnBmEJzLfr5PbkXuZv4AoW2lhlG
-         kMFEZZUY+iHA1aIoQBKZY5GNCxryDwpeV0Z7U/lCIRU5Fp6WG0XsvNM2IyOIVPoKQb2G
-         pgyvnpaijNJ0VK4Sug3V0HYQjTFHSkaeuCU1lfInKkCvvWzL4XsnDFo3q/UNSAvTEEJj
-         3gyZpqwk6+fSAGIg+TRT3gnkeLZkhbNOML2juSExVhstQFlrxopV968qPzIVO468uOGM
-         FUlg==
-X-Gm-Message-State: AOAM530DTwRrbLtDMGWteM/gIib5ZsPvKxhNKN7lwjazZn7ayEUv8QfV
-        TFoS441KqyoEaL5XspIwy6fv6E5Av6lNFXOmidF9+RHysz3y
-X-Google-Smtp-Source: ABdhPJz3JXucT/swRsk+KIgFBhBuEK/6ZIeOJpjrlErbuuvYmaYmsTK0T6RYtV+OwHha6Wy2dAHmV1TceajiSoT4jt4LsTh/NmKg
+        id S1725911AbgJEOp1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Oct 2020 10:45:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726604AbgJEOpL (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 5 Oct 2020 10:45:11 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A0A220E65;
+        Mon,  5 Oct 2020 14:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601909110;
+        bh=f4N4EKrt9xHR04GJyg5J9X0kQBs5sQGI8StR/bJxlRU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OZgMShqwxM0TtFiwSQjKOxbxcfHd4kxHvHgk/Vg/NYdvnsSYb21sqHUllJbbOJLPg
+         HEO86C1/JCEXmTKchlWouhACRCRucunH3Gjz3NMqa27qINl1fZe05BO4Ma+FQtLRVr
+         2o7gdcs/T6uHby13dVnd1X+ENcDpE8DePME3m5e8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot+2f8fa4e860edc3066aba@syzkaller.appspotmail.com,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.8 07/12] io_uring: fix potential ABBA deadlock in ->show_fdinfo()
+Date:   Mon,  5 Oct 2020 10:44:55 -0400
+Message-Id: <20201005144501.2527477-7-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201005144501.2527477-1-sashal@kernel.org>
+References: <20201005144501.2527477-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:46:: with SMTP id i6mr9221812ilr.74.1601888177519;
- Mon, 05 Oct 2020 01:56:17 -0700 (PDT)
-Date:   Mon, 05 Oct 2020 01:56:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca835605b0e8a723@google.com>
-Subject: KASAN: use-after-free Read in idr_for_each (2)
-From:   syzbot <syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+From: Jens Axboe <axboe@kernel.dk>
 
-syzbot found the following issue on:
+[ Upstream commit fad8e0de4426a776c9bcb060555e7c09e2d08db6 ]
 
-HEAD commit:    472e5b05 pipe: remove pipe_wait() and fix wakeup race with..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ae0d47900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=89ab6a0c48f30b49
-dashboard link: https://syzkaller.appspot.com/bug?extid=12056a09a0311d758e60
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-userspace arch: i386
+syzbot reports a potential lock deadlock between the normal IO path and
+->show_fdinfo():
 
-Unfortunately, I don't have any reproducer for this issue yet.
+======================================================
+WARNING: possible circular locking dependency detected
+5.9.0-rc6-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor.2/19710 is trying to acquire lock:
+ffff888098ddc450 (sb_writers#4){.+.+}-{0:0}, at: io_write+0x6b5/0xb30 fs/io_uring.c:3296
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com
+but task is already holding lock:
+ffff8880a11b8428 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0xe9a/0x1bd0 fs/io_uring.c:8348
 
-==================================================================
-BUG: KASAN: use-after-free in radix_tree_next_slot include/linux/radix-tree.h:421 [inline]
-BUG: KASAN: use-after-free in idr_for_each+0x206/0x220 lib/idr.c:202
-Read of size 8 at addr ffff88804eb9cb30 by task kworker/u4:8/13668
+which lock already depends on the new lock.
 
-CPU: 1 PID: 13668 Comm: kworker/u4:8 Not tainted 5.9.0-rc7-syzkaller #0
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&ctx->uring_lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:956 [inline]
+       __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
+       __io_uring_show_fdinfo fs/io_uring.c:8417 [inline]
+       io_uring_show_fdinfo+0x194/0xc70 fs/io_uring.c:8460
+       seq_show+0x4a8/0x700 fs/proc/fd.c:65
+       seq_read+0x432/0x1070 fs/seq_file.c:208
+       do_loop_readv_writev fs/read_write.c:734 [inline]
+       do_loop_readv_writev fs/read_write.c:721 [inline]
+       do_iter_read+0x48e/0x6e0 fs/read_write.c:955
+       vfs_readv+0xe5/0x150 fs/read_write.c:1073
+       kernel_readv fs/splice.c:355 [inline]
+       default_file_splice_read.constprop.0+0x4e6/0x9e0 fs/splice.c:412
+       do_splice_to+0x137/0x170 fs/splice.c:871
+       splice_direct_to_actor+0x307/0x980 fs/splice.c:950
+       do_splice_direct+0x1b3/0x280 fs/splice.c:1059
+       do_sendfile+0x55f/0xd40 fs/read_write.c:1540
+       __do_sys_sendfile64 fs/read_write.c:1601 [inline]
+       __se_sys_sendfile64 fs/read_write.c:1587 [inline]
+       __x64_sys_sendfile64+0x1cc/0x210 fs/read_write.c:1587
+       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+       entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+-> #1 (&p->lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:956 [inline]
+       __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
+       seq_read+0x61/0x1070 fs/seq_file.c:155
+       pde_read fs/proc/inode.c:306 [inline]
+       proc_reg_read+0x221/0x300 fs/proc/inode.c:318
+       do_loop_readv_writev fs/read_write.c:734 [inline]
+       do_loop_readv_writev fs/read_write.c:721 [inline]
+       do_iter_read+0x48e/0x6e0 fs/read_write.c:955
+       vfs_readv+0xe5/0x150 fs/read_write.c:1073
+       kernel_readv fs/splice.c:355 [inline]
+       default_file_splice_read.constprop.0+0x4e6/0x9e0 fs/splice.c:412
+       do_splice_to+0x137/0x170 fs/splice.c:871
+       splice_direct_to_actor+0x307/0x980 fs/splice.c:950
+       do_splice_direct+0x1b3/0x280 fs/splice.c:1059
+       do_sendfile+0x55f/0xd40 fs/read_write.c:1540
+       __do_sys_sendfile64 fs/read_write.c:1601 [inline]
+       __se_sys_sendfile64 fs/read_write.c:1587 [inline]
+       __x64_sys_sendfile64+0x1cc/0x210 fs/read_write.c:1587
+       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+       entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+-> #0 (sb_writers#4){.+.+}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:2496 [inline]
+       check_prevs_add kernel/locking/lockdep.c:2601 [inline]
+       validate_chain kernel/locking/lockdep.c:3218 [inline]
+       __lock_acquire+0x2a96/0x5780 kernel/locking/lockdep.c:4441
+       lock_acquire+0x1f3/0xaf0 kernel/locking/lockdep.c:5029
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write+0x228/0x450 fs/super.c:1672
+       io_write+0x6b5/0xb30 fs/io_uring.c:3296
+       io_issue_sqe+0x18f/0x5c50 fs/io_uring.c:5719
+       __io_queue_sqe+0x280/0x1160 fs/io_uring.c:6175
+       io_queue_sqe+0x692/0xfa0 fs/io_uring.c:6254
+       io_submit_sqe fs/io_uring.c:6324 [inline]
+       io_submit_sqes+0x1761/0x2400 fs/io_uring.c:6521
+       __do_sys_io_uring_enter+0xeac/0x1bd0 fs/io_uring.c:8349
+       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+       entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+other info that might help us debug this:
+
+Chain exists of:
+  sb_writers#4 --> &p->lock --> &ctx->uring_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ctx->uring_lock);
+                               lock(&p->lock);
+                               lock(&ctx->uring_lock);
+  lock(sb_writers#4);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.2/19710:
+ #0: ffff8880a11b8428 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0xe9a/0x1bd0 fs/io_uring.c:8348
+
+stack backtrace:
+CPU: 0 PID: 19710 Comm: syz-executor.2 Not tainted 5.9.0-rc6-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: events_unbound io_ring_exit_work
 Call Trace:
  __dump_stack lib/dump_stack.c:77 [inline]
  dump_stack+0x198/0x1fd lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
- __kasan_report mm/kasan/report.c:513 [inline]
- kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
- radix_tree_next_slot include/linux/radix-tree.h:421 [inline]
- idr_for_each+0x206/0x220 lib/idr.c:202
- io_destroy_buffers fs/io_uring.c:7889 [inline]
- io_ring_ctx_free fs/io_uring.c:7904 [inline]
- io_ring_exit_work+0x363/0x6d0 fs/io_uring.c:7979
- process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-
-Allocated by task 17016:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_set_track mm/kasan/common.c:56 [inline]
- __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
- slab_post_alloc_hook mm/slab.h:518 [inline]
- slab_alloc mm/slab.c:3316 [inline]
- kmem_cache_alloc+0x13a/0x3f0 mm/slab.c:3486
- radix_tree_node_alloc.constprop.0+0x7c/0x350 lib/radix-tree.c:275
- idr_get_free+0x4c5/0x940 lib/radix-tree.c:1505
- idr_alloc_u32+0x170/0x2d0 lib/idr.c:46
- idr_alloc+0xc2/0x130 lib/idr.c:87
- io_provide_buffers fs/io_uring.c:3768 [inline]
- io_issue_sqe+0x48d2/0x5c50 fs/io_uring.c:5906
- __io_queue_sqe+0x280/0x1160 fs/io_uring.c:6178
- io_queue_sqe+0x692/0xfa0 fs/io_uring.c:6257
- io_submit_sqe fs/io_uring.c:6327 [inline]
- io_submit_sqes+0x1759/0x23f0 fs/io_uring.c:6521
+ check_noncircular+0x324/0x3e0 kernel/locking/lockdep.c:1827
+ check_prev_add kernel/locking/lockdep.c:2496 [inline]
+ check_prevs_add kernel/locking/lockdep.c:2601 [inline]
+ validate_chain kernel/locking/lockdep.c:3218 [inline]
+ __lock_acquire+0x2a96/0x5780 kernel/locking/lockdep.c:4441
+ lock_acquire+0x1f3/0xaf0 kernel/locking/lockdep.c:5029
+ percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+ __sb_start_write+0x228/0x450 fs/super.c:1672
+ io_write+0x6b5/0xb30 fs/io_uring.c:3296
+ io_issue_sqe+0x18f/0x5c50 fs/io_uring.c:5719
+ __io_queue_sqe+0x280/0x1160 fs/io_uring.c:6175
+ io_queue_sqe+0x692/0xfa0 fs/io_uring.c:6254
+ io_submit_sqe fs/io_uring.c:6324 [inline]
+ io_submit_sqes+0x1761/0x2400 fs/io_uring.c:6521
  __do_sys_io_uring_enter+0xeac/0x1bd0 fs/io_uring.c:8349
- do_syscall_32_irqs_on arch/x86/entry/common.c:78 [inline]
- __do_fast_syscall_32+0x60/0x90 arch/x86/entry/common.c:137
- do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:160
- entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45e179
+Code: 3d b2 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 0b b2 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f1194e74c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 00000000000082c0 RCX: 000000000045e179
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000004
+RBP: 000000000118cf98 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118cf4c
+R13: 00007ffd1aa5756f R14: 00007f1194e759c0 R15: 000000000118cf4c
 
-Freed by task 16:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
- kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
- __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
- __cache_free mm/slab.c:3422 [inline]
- kmem_cache_free.part.0+0x74/0x1e0 mm/slab.c:3697
- rcu_do_batch kernel/rcu/tree.c:2430 [inline]
- rcu_core+0x5ca/0x1130 kernel/rcu/tree.c:2658
- __do_softirq+0x1f8/0xb23 kernel/softirq.c:298
+Fix this by just not diving into details if we fail to trylock the
+io_uring mutex. We know the ctx isn't going away during this operation,
+but we cannot safely iterate buffers/files/personalities if we don't
+hold the io_uring mutex.
 
-Last call_rcu():
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
- __call_rcu kernel/rcu/tree.c:2896 [inline]
- call_rcu+0x15e/0x7c0 kernel/rcu/tree.c:2970
- radix_tree_node_free lib/radix-tree.c:309 [inline]
- delete_node+0x591/0x8c0 lib/radix-tree.c:572
- __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1378
- radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1429
- __io_remove_buffers fs/io_uring.c:3666 [inline]
- __io_remove_buffers fs/io_uring.c:3645 [inline]
- __io_destroy_buffers+0x161/0x200 fs/io_uring.c:7883
- idr_for_each+0x113/0x220 lib/idr.c:208
- io_destroy_buffers fs/io_uring.c:7889 [inline]
- io_ring_ctx_free fs/io_uring.c:7904 [inline]
- io_ring_exit_work+0x363/0x6d0 fs/io_uring.c:7979
- process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-
-Second to last call_rcu():
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
- __call_rcu kernel/rcu/tree.c:2896 [inline]
- call_rcu+0x15e/0x7c0 kernel/rcu/tree.c:2970
- radix_tree_node_free lib/radix-tree.c:309 [inline]
- radix_tree_shrink lib/radix-tree.c:535 [inline]
- delete_node+0x37a/0x8c0 lib/radix-tree.c:553
- __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1378
- radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1429
- free_pid+0xa1/0x260 kernel/pid.c:151
- __change_pid+0x1c7/0x2d0 kernel/pid.c:352
- __unhash_process kernel/exit.c:77 [inline]
- __exit_signal kernel/exit.c:147 [inline]
- release_task+0xd29/0x14d0 kernel/exit.c:198
- wait_task_zombie kernel/exit.c:1088 [inline]
- wait_consider_task+0x2fd2/0x3b70 kernel/exit.c:1315
- do_wait_thread kernel/exit.c:1378 [inline]
- do_wait+0x376/0xa00 kernel/exit.c:1449
- kernel_wait4+0x14c/0x260 kernel/exit.c:1621
- do_syscall_32_irqs_on arch/x86/entry/common.c:78 [inline]
- __do_fast_syscall_32+0x60/0x90 arch/x86/entry/common.c:137
- do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:160
- entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
-
-The buggy address belongs to the object at ffff88804eb9cb00
- which belongs to the cache radix_tree_node of size 576
-The buggy address is located 48 bytes inside of
- 576-byte region [ffff88804eb9cb00, ffff88804eb9cd40)
-The buggy address belongs to the page:
-page:00000000a35d3b6e refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88804eb9cffb pfn:0x4eb9c
-flags: 0xfffe0000000200(slab)
-raw: 00fffe0000000200 ffffea00013ab388 ffffea0002927748 ffff8880aa06f000
-raw: ffff88804eb9cffb ffff88804eb9c000 0000000100000005 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff88804eb9ca00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88804eb9ca80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88804eb9cb00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff88804eb9cb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88804eb9cc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
+Reported-by: syzbot+2f8fa4e860edc3066aba@syzkaller.appspotmail.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/io_uring.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 1d5640cc2a488..25017418348ca 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7994,11 +7994,19 @@ static int io_uring_show_cred(int id, void *p, void *data)
+ 
+ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ {
++	bool has_lock;
+ 	int i;
+ 
+-	mutex_lock(&ctx->uring_lock);
++	/*
++	 * Avoid ABBA deadlock between the seq lock and the io_uring mutex,
++	 * since fdinfo case grabs it in the opposite direction of normal use
++	 * cases. If we fail to get the lock, we just don't iterate any
++	 * structures that could be going away outside the io_uring mutex.
++	 */
++	has_lock = mutex_trylock(&ctx->uring_lock);
++
+ 	seq_printf(m, "UserFiles:\t%u\n", ctx->nr_user_files);
+-	for (i = 0; i < ctx->nr_user_files; i++) {
++	for (i = 0; has_lock && i < ctx->nr_user_files; i++) {
+ 		struct fixed_file_table *table;
+ 		struct file *f;
+ 
+@@ -8010,13 +8018,13 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 			seq_printf(m, "%5u: <none>\n", i);
+ 	}
+ 	seq_printf(m, "UserBufs:\t%u\n", ctx->nr_user_bufs);
+-	for (i = 0; i < ctx->nr_user_bufs; i++) {
++	for (i = 0; has_lock && i < ctx->nr_user_bufs; i++) {
+ 		struct io_mapped_ubuf *buf = &ctx->user_bufs[i];
+ 
+ 		seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf,
+ 						(unsigned int) buf->len);
+ 	}
+-	if (!idr_is_empty(&ctx->personality_idr)) {
++	if (has_lock && !idr_is_empty(&ctx->personality_idr)) {
+ 		seq_printf(m, "Personalities:\n");
+ 		idr_for_each(&ctx->personality_idr, io_uring_show_cred, m);
+ 	}
+@@ -8031,7 +8039,8 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 					req->task->task_works != NULL);
+ 	}
+ 	spin_unlock_irq(&ctx->completion_lock);
+-	mutex_unlock(&ctx->uring_lock);
++	if (has_lock)
++		mutex_unlock(&ctx->uring_lock);
+ }
+ 
+ static void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+-- 
+2.25.1
+

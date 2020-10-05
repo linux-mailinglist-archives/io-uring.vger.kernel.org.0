@@ -2,196 +2,172 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FF252838F7
-	for <lists+io-uring@lfdr.de>; Mon,  5 Oct 2020 17:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E2E6283CB5
+	for <lists+io-uring@lfdr.de>; Mon,  5 Oct 2020 18:45:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbgJEPFA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Oct 2020 11:05:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44948 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727043AbgJEPEx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Oct 2020 11:04:53 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7C9C0613AB
-        for <io-uring@vger.kernel.org>; Mon,  5 Oct 2020 08:04:51 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id v8so9471106iom.6
-        for <io-uring@vger.kernel.org>; Mon, 05 Oct 2020 08:04:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=m8iZ8MjkSc6erbT/UXuLX8pK+PMOfNjl6qhqMPOTqMQ=;
-        b=DvdzXRPPZtb8tpBLfxyvRj9sOIvmqo2lz8j8U0Ud4nt4OoJsEJ9EW2yJDM9vE6oPj+
-         GHl1Q2fxc9FKSCuGWFg7qlyq974nMDmcYSqDCsjXRBI2Rm4MNLiQ8TzoQJrSvH8AEBMd
-         s9AJSMMrtnxN7bzuwjioqsjQpSjKixr/rhkx1jajrglR6/y1Kdd4ZXM2dbQfP1qTUldb
-         +HYWC5kVfEw9diYQpJI97XmBasMH37ps7VY7mAAivQrq89U31VC8SbUvdGiQHm7ttR3T
-         iIyhiTGOCMj2qC90BDzeHYTPMmesd4REufs9ESuX/AyUzDjGv4QZa8xdEQNQcrayD+m4
-         GlJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=m8iZ8MjkSc6erbT/UXuLX8pK+PMOfNjl6qhqMPOTqMQ=;
-        b=uWwThtCExV2Fdn5DCL8puo9522NSQuN+LTB1ABtTn+fvbQsqmFF17zVD5EPbiZlepK
-         2LE870jXib+m/x/568PsR/0uc3Ybt2xhEkcHCABCJVKSrDGhTsWMMu/EO/0N1+2XbohP
-         1J+km71NEOiUummM1/RDUzkvutE8KOqqceJSwbFUAHstYJjz4cA15F3tdmjlXYZpRnMB
-         4YHBtG1sRmTux7p7F0IW8w+QUjE5NEoWh300SB9bbS9RXbr7mMh6Tba1y2B4+ZLHbOGc
-         iRcPhNKjwzqJoyV8abcXt2RE8foI8yySYTnR7P/pwVAxbnr+yyZOdHP+VH02t2iQgUNZ
-         dReQ==
-X-Gm-Message-State: AOAM530Hkv8CRJamiEpkkCqlU//oZwgkhFhVSLKSCkOfBRpWZ1WfOciG
-        gJV/qK6VyQaM+pRXUBRwZAzLcg==
-X-Google-Smtp-Source: ABdhPJyPmhv+W28xa2YPihJ8SpTVhGAnY3sRwSGmW6cXOSEqjGi9G6bUrm3BCSL3VgxNutC925W5Aw==
-X-Received: by 2002:a05:6638:10e9:: with SMTP id g9mr302722jae.139.1601910290342;
-        Mon, 05 Oct 2020 08:04:50 -0700 (PDT)
-Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 15sm33140ilz.66.2020.10.05.08.04.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2020 08:04:49 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Cc:     peterz@infradead.org, oleg@redhat.com, tglx@linutronix.de,
-        Jens Axboe <axboe@kernel.dk>,
-        Roman Gershman <romger@amazon.com>
-Subject: [PATCH 6/6] task_work: use TIF_NOTIFY_SIGNAL if available
-Date:   Mon,  5 Oct 2020 09:04:38 -0600
-Message-Id: <20201005150438.6628-7-axboe@kernel.dk>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201005150438.6628-1-axboe@kernel.dk>
-References: <20201005150438.6628-1-axboe@kernel.dk>
+        id S1727069AbgJEQpN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Oct 2020 12:45:13 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:42272 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbgJEQpM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Oct 2020 12:45:12 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 095Ge8qN154387;
+        Mon, 5 Oct 2020 16:45:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=hLjK2hMGMtYoln2Xf+r7ll0kB2WsYowLHYRxYE4dHXQ=;
+ b=kUFNpOQ9xlQcalJ8TAxaVhLXK12X4R/w6CD/1RUpdTRrN0SnBVNyAkjVMmwty41Vfd+g
+ LYYTyUgk8OlrxCfZVv4LX6XbbrWTFNuC/OSn7IoxYGS/00RFyZy4Vssj8E697rIw2GJK
+ VdoOngB/w62+yqFzLK8dBHDgr+NnqDdxLCV165ScQhRh/rTWWkqDmNr9Qb4Aq8sqwRdv
+ 2DCoFUm60VMoR3nTCp5qaKjnhgbbmi4sBKX2mBC6seMSNwfLogdo2gupUQtXlIZvHP1+
+ VFKApHQDgh27v9+04IYjwgPUxgexhrdnuRkXxaIJkgtyZktJaicIS3G4ggNap+O2F+7M Jg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 33xetaprxr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 05 Oct 2020 16:45:10 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 095GfCXM196370;
+        Mon, 5 Oct 2020 16:45:10 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 33y2vkr8tc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 05 Oct 2020 16:45:10 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 095Gj9Z2014586;
+        Mon, 5 Oct 2020 16:45:09 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 05 Oct 2020 09:45:09 -0700
+Date:   Mon, 5 Oct 2020 09:45:10 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Zorro Lang <zlang@redhat.com>
+Cc:     fstests@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 3/3] generic: IO_URING direct IO fsx test
+Message-ID: <20201005164510.GG49541@magnolia>
+References: <20200916171443.29546-1-zlang@redhat.com>
+ <20200916171443.29546-4-zlang@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200916171443.29546-4-zlang@redhat.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9765 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ malwarescore=0 suspectscore=1 spamscore=0 phishscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2010050122
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9765 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 mlxscore=0
+ clxscore=1011 priorityscore=1501 adultscore=0 mlxlogscore=999 phishscore=0
+ impostorscore=0 malwarescore=0 suspectscore=1 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2010050122
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If the arch supports TIF_NOTIFY_SIGNAL, then use that for TWA_SIGNAL as
-it's more efficient than using the signal delivery method. This is
-especially true on threaded applications, where ->sighand is shared
-across threads, but it's also lighter weight on non-shared cases.
+On Thu, Sep 17, 2020 at 01:14:43AM +0800, Zorro Lang wrote:
+> After fsx supports IO_URING read/write, add IO_URING direct IO fsx
+> test with different read/write size and concurrent buffered IO.
+> 
+> Signed-off-by: Zorro Lang <zlang@redhat.com>
 
-io_uring is a heavy consumer of TWA_SIGNAL based task_work. On my test
-box, even just using 16 threads shows a nice improvement running an
-io_uring based echo server.
+Funny, I would have expected this to be a clone of generic/521, much
+like the previous test was a clone of g/522.  I guess it's fine to test
+various fsx parameters, but in that case, is there a reason /not/ to
+have a long soak io_uring directio test?
 
-stock kernel:
-0.01% <= 0.1 milliseconds
-95.86% <= 0.2 milliseconds
-98.27% <= 0.3 milliseconds
-99.71% <= 0.4 milliseconds
-100.00% <= 0.5 milliseconds
-100.00% <= 0.6 milliseconds
-100.00% <= 0.7 milliseconds
-100.00% <= 0.8 milliseconds
-100.00% <= 0.9 milliseconds
-100.00% <= 1.0 milliseconds
-100.00% <= 1.1 milliseconds
-100.00% <= 2 milliseconds
-100.00% <= 3 milliseconds
-100.00% <= 3 milliseconds
-1378930.00 requests per second
-~1600% CPU
+--D
 
-1.38M requests/second, and all 16 CPUs are maxed out.
-
-patched kernel:
-0.01% <= 0.1 milliseconds
-98.24% <= 0.2 milliseconds
-99.47% <= 0.3 milliseconds
-99.99% <= 0.4 milliseconds
-100.00% <= 0.5 milliseconds
-100.00% <= 0.6 milliseconds
-100.00% <= 0.7 milliseconds
-100.00% <= 0.8 milliseconds
-100.00% <= 0.9 milliseconds
-100.00% <= 1.2 milliseconds
-1666111.38 requests per second
-~1450% CPU
-
-1.67M requests/second, and we're no longer just hammering on the sighand
-lock. The original reporter states:
-
-"For 5.7.15 my benchmark achieves 1.6M qps and system cpu is at ~80%.
- for 5.7.16 or later it achieves only 1M qps and the system cpu is is
- at ~100%"
-
-with the only difference there being that TWA_SIGNAL is used
-unconditionally in 5.7.16, since we need it to be able to solve an
-inability to run task_work if the application is waiting in the kernel
-already on an event that needs task_work run to be satisfied. Also
-see commit 0ba9c9edcd15.
-
-Reported-by: Roman Gershman <romger@amazon.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- kernel/task_work.c | 41 +++++++++++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index 613b2d634af8..95604e57af46 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -5,6 +5,34 @@
- 
- static struct callback_head work_exited; /* all we need is ->next == NULL */
- 
-+/*
-+ * TWA_SIGNAL signaling - use TIF_NOTIFY_SIGNAL, if available, as it's faster
-+ * than TIF_SIGPENDING as there's no dependency on ->sighand. The latter is
-+ * shared for threads, and can cause contention on sighand->lock. Even for
-+ * the non-threaded case TIF_NOTIFY_SIGNAL is more efficient, as no locking
-+ * or IRQ disabling is involved for notification (or running) purposes.
-+ */
-+static void task_work_notify_signal(struct task_struct *task)
-+{
-+#ifdef TIF_NOTIFY_SIGNAL
-+	set_notify_signal(task);
-+#else
-+	unsigned long flags;
-+
-+	/*
-+	 * Only grab the sighand lock if we don't already have some
-+	 * task_work pending. This pairs with the smp_store_mb()
-+	 * in get_signal(), see comment there.
-+	 */
-+	if (!(READ_ONCE(task->jobctl) & JOBCTL_TASK_WORK) &&
-+	    lock_task_sighand(task, &flags)) {
-+		task->jobctl |= JOBCTL_TASK_WORK;
-+		signal_wake_up(task, 0);
-+		unlock_task_sighand(task, &flags);
-+	}
-+#endif
-+}
-+
- /**
-  * task_work_add - ask the @task to execute @work->func()
-  * @task: the task which should run the callback
-@@ -28,7 +56,6 @@ int
- task_work_add(struct task_struct *task, struct callback_head *work, int notify)
- {
- 	struct callback_head *head;
--	unsigned long flags;
- 
- 	do {
- 		head = READ_ONCE(task->task_works);
-@@ -42,17 +69,7 @@ task_work_add(struct task_struct *task, struct callback_head *work, int notify)
- 		set_notify_resume(task);
- 		break;
- 	case TWA_SIGNAL:
--		/*
--		 * Only grab the sighand lock if we don't already have some
--		 * task_work pending. This pairs with the smp_store_mb()
--		 * in get_signal(), see comment there.
--		 */
--		if (!(READ_ONCE(task->jobctl) & JOBCTL_TASK_WORK) &&
--		    lock_task_sighand(task, &flags)) {
--			task->jobctl |= JOBCTL_TASK_WORK;
--			signal_wake_up(task, 0);
--			unlock_task_sighand(task, &flags);
--		}
-+		task_work_notify_signal(task);
- 		break;
- 	}
- 
--- 
-2.28.0
-
+> ---
+>  tests/generic/610     | 52 +++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/610.out |  7 ++++++
+>  tests/generic/group   |  1 +
+>  3 files changed, 60 insertions(+)
+>  create mode 100755 tests/generic/610
+>  create mode 100644 tests/generic/610.out
+> 
+> diff --git a/tests/generic/610 b/tests/generic/610
+> new file mode 100755
+> index 00000000..fc3f4c2a
+> --- /dev/null
+> +++ b/tests/generic/610
+> @@ -0,0 +1,52 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2020 YOUR NAME HERE.  All Rights Reserved.
+> +#
+> +# FS QA Test 610
+> +#
+> +# IO_URING direct IO fsx test
+> +#
+> +seq=`basename $0`
+> +seqres=$RESULT_DIR/$seq
+> +echo "QA output created by $seq"
+> +
+> +here=`pwd`
+> +tmp=/tmp/$$
+> +status=1	# failure is the default!
+> +trap "_cleanup; exit \$status" 0 1 2 3 15
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	rm -f $tmp.*
+> +}
+> +
+> +# get standard environment, filters and checks
+> +. ./common/rc
+> +. ./common/filter
+> +
+> +# remove previous $seqres.full before test
+> +rm -f $seqres.full
+> +
+> +# real QA test starts here
+> +_supported_fs generic
+> +_supported_os Linux
+> +_require_test
+> +_require_odirect
+> +_require_io_uring
+> +
+> +psize=`$here/src/feature -s`
+> +bsize=`_min_dio_alignment $TEST_DEV`
+> +run_fsx -S 0 -U -N 20000           -l 600000 -r PSIZE -w BSIZE -Z -R -W
+> +run_fsx -S 0 -U -N 20000 -o 8192   -l 600000 -r PSIZE -w BSIZE -Z -R -W
+> +run_fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -R -W
+> +
+> +# change readbdy/writebdy to double page size
+> +psize=$((psize * 2))
+> +run_fsx -S 0 -U -N 20000           -l 600000 -r PSIZE -w PSIZE -Z -R -W
+> +run_fsx -S 0 -U -N 20000 -o 256000 -l 600000 -r PSIZE -w PSIZE -Z -R -W
+> +run_fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -W
+> +
+> +# success, all done
+> +status=0
+> +exit
+> diff --git a/tests/generic/610.out b/tests/generic/610.out
+> new file mode 100644
+> index 00000000..97ad41a3
+> --- /dev/null
+> +++ b/tests/generic/610.out
+> @@ -0,0 +1,7 @@
+> +QA output created by 610
+> +fsx -S 0 -U -N 20000 -l 600000 -r PSIZE -w BSIZE -Z -R -W
+> +fsx -S 0 -U -N 20000 -o 8192 -l 600000 -r PSIZE -w BSIZE -Z -R -W
+> +fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -R -W
+> +fsx -S 0 -U -N 20000 -l 600000 -r PSIZE -w PSIZE -Z -R -W
+> +fsx -S 0 -U -N 20000 -o 256000 -l 600000 -r PSIZE -w PSIZE -Z -R -W
+> +fsx -S 0 -U -N 20000 -o 128000 -l 600000 -r PSIZE -w BSIZE -Z -W
+> diff --git a/tests/generic/group b/tests/generic/group
+> index cf50f4a1..60280dc2 100644
+> --- a/tests/generic/group
+> +++ b/tests/generic/group
+> @@ -612,3 +612,4 @@
+>  607 auto attr quick dax
+>  608 auto attr quick dax
+>  609 auto rw io_uring
+> +610 auto rw io_uring
+> -- 
+> 2.20.1
+> 

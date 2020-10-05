@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD1F2838F4
-	for <lists+io-uring@lfdr.de>; Mon,  5 Oct 2020 17:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D3A62838FB
+	for <lists+io-uring@lfdr.de>; Mon,  5 Oct 2020 17:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbgJEPEv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Oct 2020 11:04:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44922 "EHLO
+        id S1727040AbgJEPFG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Oct 2020 11:05:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbgJEPEr (ORCPT
+        with ESMTP id S1727050AbgJEPEr (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Mon, 5 Oct 2020 11:04:47 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5AB0C0613A7
-        for <io-uring@vger.kernel.org>; Mon,  5 Oct 2020 08:04:46 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id t7so2871855ilf.10
-        for <io-uring@vger.kernel.org>; Mon, 05 Oct 2020 08:04:46 -0700 (PDT)
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C72C0613A7
+        for <io-uring@vger.kernel.org>; Mon,  5 Oct 2020 08:04:47 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id k25so9469824ioh.7
+        for <io-uring@vger.kernel.org>; Mon, 05 Oct 2020 08:04:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OKHEwyhXDdp8uX1hEir8o6uX9DNPT+xN2S2hGhhzuBw=;
-        b=tIMTDmTzfwS7O3XCnluqjFDBpyKHZIDbOfqT737mh9wXmgemyUhXuOBlIgSfN18mgK
-         g617dRgIWiiGX987GCRpK/JAARRv34ZXwbuXjbYB3Ft7Q0FxbwrDGayyPjR5NipCAqL2
-         wAnnqGmhWtuGY1ftqQ6KspYK2c1s2r5CEHOg4nyTKCeauz7W1j27Waj3iYHMz0m1gXUn
-         B7X3C7E7NDp6WKzdUW2kmABEcIXw4On42PXnv+fGB24DZ9F1VudIWAaFZpMadtbWoNom
-         o8g0Vau2GMUN+knSnaK6nHOunBjQsQ8Z3cm4hgIAUWKS9lzbJdYd1WS3tXIG3Kpfi6kw
-         uxtA==
+        bh=nckRBTGeDDjcz+ETZlQhgF2+vU8phSO5Wlot907KKh8=;
+        b=NI0qHIG+x+V105yV6CIY8r8q2789zfyV4oFmCNEh9maLUBvgR9B3ZKhXJ41Q70Zt5e
+         Zjv/7gVzToXI9DKvjXunWz33dtTwPPzeGhJVk03x5aQjQwuTNCMxCAfVJnenWUHtYYWI
+         7UfbwmZFCdvhv+X7Wlm7lmv4DD/K5m+OufvFqlhezwuKosX4myrihrIDqcskwuIMOOB1
+         0oIbQZNXRR5EtiULeLUkVQ2GfxXthOQDjMU4YuarwiE8l5JzUxjG9yVm4dYR0KohCcAj
+         9OQ3L8fOfErn1UnnWBkSjEFa/o+1oxHN+77xdMHn/MdVzcsZSvJD2logAcm6oxii/wk2
+         /Iyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OKHEwyhXDdp8uX1hEir8o6uX9DNPT+xN2S2hGhhzuBw=;
-        b=mAfrPUghl2AbA8EZxuXJ2JDCxkQsFeKLY38zMtv7CzJLr+NhvN1/AdG7FcCIvGALef
-         +rHmb+uAO4ydBpMwHLvJ0NKP/P8teMH0Oms5g+CwS32OXfp6vR1Igs1ECY+Jc3kjVXhB
-         6TLJojOMuvJga2rI250g6cYVxoVFdiawfdV5KT/y+LQOqcbrdrYxM9mLo66nXhzoGtF6
-         jypyGPC0+AByNZgA3ii2Ip055NXasitp9sYabtf/4AP8nHxRdKdGNyZSPxnLxpWGfgNQ
-         Kv7l8fT6kyr2kDTpZdDIUpe5jTqpOf9l/oLltPbRB+xCPYK1g792iSZbvwotMTH8piV6
-         CRmA==
-X-Gm-Message-State: AOAM530tDAPZBbvqxv0beX9kMPqcZU5VzQczIuzkl7WWfcwHHVvyHWQW
-        Z8czDJFARfYDJTS/blQsSsfA8kzMpWVp0w==
-X-Google-Smtp-Source: ABdhPJwisHkH1ck+5kUQXkK8CqvLUdy6QGv8Fx/w34hqXi3pbdf1CcmnggEElptLJisMkm24giCHjA==
-X-Received: by 2002:a92:9859:: with SMTP id l86mr12800760ili.167.1601910285907;
-        Mon, 05 Oct 2020 08:04:45 -0700 (PDT)
+        bh=nckRBTGeDDjcz+ETZlQhgF2+vU8phSO5Wlot907KKh8=;
+        b=VCinXfkOJ2hMJwF5+dcRS5LRhrm70AjeMt3VvMYvnn8T2vyyAEkhdvM4j6QjjfV7xp
+         sabstRtsGQ8NCqepB4Oc2CTDXdnnalSbW9QlJ32QrRuATkLVSgyHRHgjXzpP6eaXNnxL
+         xloqWjdTtggYthYHDpBTlJbMV58k+8x3sljOqAi2ZY+23QbiKr/oVJG3aC4gOlb0A1L1
+         UoOZAoPuUQCXT2f6LKc7t5YYqOUwIrOTbvtzLIc2/mSUmrdpkMoQS0s48sY7NIRPE2aA
+         ALV/uneDaOpDEj9rAvvikO8Se2wkbSEemC56H1PYiH1J2bCJb14j/2PWPNRTmWKaK9Fx
+         h7Wg==
+X-Gm-Message-State: AOAM531w9yVVdGrxUeHJfLUba+iiuUNzcJHk6fWoCzdk1TT36v6+rKDu
+        vVLe9xVRxmn4kJ9h29SwXTg9cw==
+X-Google-Smtp-Source: ABdhPJwJkJ1C1akV4PeShn9PnVfu2A8L8gSmo4iJvYHZcyTzMT7bsKDXHcAOFE1szHMNz7ChGvuRqw==
+X-Received: by 2002:a5e:d606:: with SMTP id w6mr200118iom.67.1601910286760;
+        Mon, 05 Oct 2020 08:04:46 -0700 (PDT)
 Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 15sm33140ilz.66.2020.10.05.08.04.44
+        by smtp.gmail.com with ESMTPSA id 15sm33140ilz.66.2020.10.05.08.04.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2020 08:04:45 -0700 (PDT)
+        Mon, 05 Oct 2020 08:04:46 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
 Cc:     peterz@infradead.org, oleg@redhat.com, tglx@linutronix.de,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/6] kernel: add task_sigpending() helper
-Date:   Mon,  5 Oct 2020 09:04:34 -0600
-Message-Id: <20201005150438.6628-3-axboe@kernel.dk>
+Subject: [PATCH 3/6] kernel: split syscall restart from signal handling
+Date:   Mon,  5 Oct 2020 09:04:35 -0600
+Message-Id: <20201005150438.6628-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201005150438.6628-1-axboe@kernel.dk>
 References: <20201005150438.6628-1-axboe@kernel.dk>
@@ -63,155 +63,142 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is in preparation for maintaining signal_pending() as the decider
-of whether or not a schedule() loop should be broken, or continue
-sleeping. This is different than the core signal use cases, where we
-really want to know if an actual signal is pending or not.
-task_sigpending() returns non-zero if TIF_SIGPENDING is set.
+Move the restart syscall logic into a separate generic entry helper,
+and handle that part separately from signal checking and delivery.
 
-Only core kernel use cases should care about the distinction between
-the two, make sure those use the task_sigpending() helper.
+This is in preparation for being able to do syscall restarting
+independently from handling signals.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/sched/signal.h | 13 +++++++++----
- kernel/events/uprobes.c      |  2 +-
- kernel/ptrace.c              |  2 +-
- kernel/signal.c              | 12 ++++++------
- 4 files changed, 17 insertions(+), 12 deletions(-)
+ arch/x86/kernel/signal.c     | 32 ++++++++++++++++++--------------
+ include/linux/entry-common.h | 14 ++++++++++++--
+ kernel/entry/common.c        | 11 ++++++++---
+ 3 files changed, 38 insertions(+), 19 deletions(-)
 
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 1bad18a1d8ba..e6f34d8fbf4d 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -353,11 +353,16 @@ static inline int restart_syscall(void)
- 	return -ERESTARTNOINTR;
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index be0d7d4152ec..5dc1eeaf0866 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -799,21 +799,8 @@ static inline unsigned long get_nr_restart_syscall(const struct pt_regs *regs)
+ #endif
  }
  
--static inline int signal_pending(struct task_struct *p)
-+static inline int task_sigpending(struct task_struct *p)
+-/*
+- * Note that 'init' is a special process: it doesn't get signals it doesn't
+- * want to handle. Thus you cannot kill init even with a SIGKILL even by
+- * mistake.
+- */
+-void arch_do_signal(struct pt_regs *regs)
++void arch_restart_syscall(struct pt_regs *regs)
  {
- 	return unlikely(test_tsk_thread_flag(p,TIF_SIGPENDING));
- }
- 
-+static inline int signal_pending(struct task_struct *p)
-+{
-+	return task_sigpending(p);
+-	struct ksignal ksig;
+-
+-	if (get_signal(&ksig)) {
+-		/* Whee! Actually deliver the signal.  */
+-		handle_signal(&ksig, regs);
+-		return;
+-	}
+-
+ 	/* Did we come from a system call? */
+ 	if (syscall_get_nr(current, regs) >= 0) {
+ 		/* Restart the system call - no handlers present */
+@@ -831,12 +818,29 @@ void arch_do_signal(struct pt_regs *regs)
+ 			break;
+ 		}
+ 	}
 +}
 +
- static inline int __fatal_signal_pending(struct task_struct *p)
- {
- 	return unlikely(sigismember(&p->pending.signal, SIGKILL));
-@@ -365,14 +370,14 @@ static inline int __fatal_signal_pending(struct task_struct *p)
++/*
++ * Note that 'init' is a special process: it doesn't get signals it doesn't
++ * want to handle. Thus you cannot kill init even with a SIGKILL even by
++ * mistake.
++ */
++bool arch_do_signal(struct pt_regs *regs)
++{
++	struct ksignal ksig;
++
++	if (get_signal(&ksig)) {
++		/* Whee! Actually deliver the signal.  */
++		handle_signal(&ksig, regs);
++		return true;
++	}
  
- static inline int fatal_signal_pending(struct task_struct *p)
- {
--	return signal_pending(p) && __fatal_signal_pending(p);
-+	return task_sigpending(p) && __fatal_signal_pending(p);
+ 	/*
+ 	 * If there's no signal to deliver, we just put the saved sigmask
+ 	 * back.
+ 	 */
+ 	restore_saved_sigmask();
++	return false;
  }
  
- static inline int signal_pending_state(long state, struct task_struct *p)
- {
- 	if (!(state & (TASK_INTERRUPTIBLE | TASK_WAKEKILL)))
- 		return 0;
--	if (!signal_pending(p))
-+	if (!task_sigpending(p))
- 		return 0;
- 
- 	return (state & TASK_INTERRUPTIBLE) || __fatal_signal_pending(p);
-@@ -389,7 +394,7 @@ static inline bool fault_signal_pending(vm_fault_t fault_flags,
- {
- 	return unlikely((fault_flags & VM_FAULT_RETRY) &&
- 			(fatal_signal_pending(current) ||
--			 (user_mode(regs) && signal_pending(current))));
-+			 (user_mode(regs) && task_sigpending(current))));
- }
- 
- /*
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 0e18aaf23a7b..8bb26a338e06 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1973,7 +1973,7 @@ bool uprobe_deny_signal(void)
- 
- 	WARN_ON_ONCE(utask->state != UTASK_SSTEP);
- 
--	if (signal_pending(t)) {
-+	if (task_sigpending(t)) {
- 		spin_lock_irq(&t->sighand->siglock);
- 		clear_tsk_thread_flag(t, TIF_SIGPENDING);
- 		spin_unlock_irq(&t->sighand->siglock);
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 43d6179508d6..583b8da4c207 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -773,7 +773,7 @@ static int ptrace_peek_siginfo(struct task_struct *child,
- 		data += sizeof(siginfo_t);
- 		i++;
- 
--		if (signal_pending(current))
-+		if (task_sigpending(current))
- 			break;
- 
- 		cond_resched();
-diff --git a/kernel/signal.c b/kernel/signal.c
-index a38b3edc6851..d57aafd9116c 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -983,7 +983,7 @@ static inline bool wants_signal(int sig, struct task_struct *p)
- 	if (task_is_stopped_or_traced(p))
- 		return false;
- 
--	return task_curr(p) || !signal_pending(p);
-+	return task_curr(p) || !task_sigpending(p);
- }
- 
- static void complete_signal(int sig, struct task_struct *p, enum pid_type type)
-@@ -2822,7 +2822,7 @@ static void retarget_shared_pending(struct task_struct *tsk, sigset_t *which)
- 		/* Remove the signals this thread can handle. */
- 		sigandsets(&retarget, &retarget, &t->blocked);
- 
--		if (!signal_pending(t))
-+		if (!task_sigpending(t))
- 			signal_wake_up(t, 0);
- 
- 		if (sigisemptyset(&retarget))
-@@ -2856,7 +2856,7 @@ void exit_signals(struct task_struct *tsk)
- 
- 	cgroup_threadgroup_change_end(tsk);
- 
--	if (!signal_pending(tsk))
-+	if (!task_sigpending(tsk))
- 		goto out;
- 
- 	unblocked = tsk->blocked;
-@@ -2900,7 +2900,7 @@ long do_no_restart_syscall(struct restart_block *param)
- 
- static void __set_task_blocked(struct task_struct *tsk, const sigset_t *newset)
- {
--	if (signal_pending(tsk) && !thread_group_empty(tsk)) {
-+	if (task_sigpending(tsk) && !thread_group_empty(tsk)) {
- 		sigset_t newblocked;
- 		/* A set of now blocked but previously unblocked signals. */
- 		sigandnsets(&newblocked, newset, &current->blocked);
-@@ -4447,7 +4447,7 @@ SYSCALL_DEFINE0(pause)
- 		__set_current_state(TASK_INTERRUPTIBLE);
- 		schedule();
- 	}
--	return -ERESTARTNOHAND;
-+	return task_sigpending(current) ? -ERESTARTNOHAND : -ERESTARTSYS;
- }
- 
- #endif
-@@ -4462,7 +4462,7 @@ static int sigsuspend(sigset_t *set)
- 		schedule();
- 	}
- 	set_restore_sigmask();
--	return -ERESTARTNOHAND;
-+	return task_sigpending(current) ? -ERESTARTNOHAND : -ERESTARTSYS;
- }
+ void signal_fault(struct pt_regs *regs, void __user *frame, char *where)
+diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
+index 159c7476b11b..ccfcc4769925 100644
+--- a/include/linux/entry-common.h
++++ b/include/linux/entry-common.h
+@@ -262,9 +262,19 @@ static __always_inline void arch_exit_to_user_mode(void) { }
+  * arch_do_signal -  Architecture specific signal delivery function
+  * @regs:	Pointer to currents pt_regs
+  *
+- * Invoked from exit_to_user_mode_loop().
++ * Invoked from exit_to_user_mode_loop(). Returns true if a signal was
++ * handled.
+  */
+-void arch_do_signal(struct pt_regs *regs);
++bool arch_do_signal(struct pt_regs *regs);
++
++/**
++ * arch_restart_syscall -  Architecture specific syscall restarting
++ * @regs:	Pointer to currents pt_regs
++ *
++ * Invoked from exit_to_user_mode_loop(), if we need to restart the current
++ * system call.
++ */
++void arch_restart_syscall(struct pt_regs *regs);
  
  /**
+  * arch_syscall_exit_tracehook - Wrapper around tracehook_report_syscall_exit()
+diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+index d20ab4ac7183..0c0cc3cf3eba 100644
+--- a/kernel/entry/common.c
++++ b/kernel/entry/common.c
+@@ -135,11 +135,13 @@ static __always_inline void exit_to_user_mode(void)
+ }
+ 
+ /* Workaround to allow gradual conversion of architecture code */
+-void __weak arch_do_signal(struct pt_regs *regs) { }
++bool __weak arch_do_signal(struct pt_regs *regs) { return true; }
+ 
+ static unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
+ 					    unsigned long ti_work)
+ {
++	bool restart_sys = ti_work & _TIF_SIGPENDING;
++
+ 	/*
+ 	 * Before returning to user space ensure that all pending work
+ 	 * items have been completed.
+@@ -157,8 +159,8 @@ static unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
+ 		if (ti_work & _TIF_PATCH_PENDING)
+ 			klp_update_patch_state(current);
+ 
+-		if (ti_work & _TIF_SIGPENDING)
+-			arch_do_signal(regs);
++		if ((ti_work & _TIF_SIGPENDING) && arch_do_signal(regs))
++			restart_sys = false;
+ 
+ 		if (ti_work & _TIF_NOTIFY_RESUME) {
+ 			tracehook_notify_resume(regs);
+@@ -177,6 +179,9 @@ static unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
+ 		ti_work = READ_ONCE(current_thread_info()->flags);
+ 	}
+ 
++	if (restart_sys)
++		arch_restart_syscall(regs);
++
+ 	/* Return the latest work state for arch_exit_to_user_mode() */
+ 	return ti_work;
+ }
 -- 
 2.28.0
 

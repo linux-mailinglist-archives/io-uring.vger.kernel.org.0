@@ -2,20 +2,20 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0BD9283973
-	for <lists+io-uring@lfdr.de>; Mon,  5 Oct 2020 17:24:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D982838F9
+	for <lists+io-uring@lfdr.de>; Mon,  5 Oct 2020 17:05:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbgJEPYv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Oct 2020 11:24:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48058 "EHLO
+        id S1726617AbgJEPFG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Oct 2020 11:05:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725960AbgJEPYu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Oct 2020 11:24:50 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4C90C0613A7
-        for <io-uring@vger.kernel.org>; Mon,  5 Oct 2020 08:24:50 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id k6so9578722ior.2
-        for <io-uring@vger.kernel.org>; Mon, 05 Oct 2020 08:24:50 -0700 (PDT)
+        with ESMTP id S1727056AbgJEPEu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Oct 2020 11:04:50 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0D29C0613A9
+        for <io-uring@vger.kernel.org>; Mon,  5 Oct 2020 08:04:49 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id q7so2745620ile.8
+        for <io-uring@vger.kernel.org>; Mon, 05 Oct 2020 08:04:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
@@ -32,14 +32,14 @@ X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
         bh=azCwtwWl5ATB3D4FLVSirtqWYtNN30f962gtbhkaMz4=;
-        b=PKv6ApOP/1PzIYjNwwgZZ/8BeC5WZqVQ7tiYBsowPSe0770Y4zGYaUNFLyLIrTzWH4
-         ryDnKAYl7bB9EKu1d73itTcnbG6WI1HoowEwICE3SmLmQO7k8zoIfGioAb1zKXiMgmh8
-         TaTdBLi8myKH2+668uqdDLiofKAIfdiQAA+ZyZEAlpW5iGMKDA8AS2Es6AWI7QWMIpJi
-         JNya+/qXy7NGziw5HBJgSt1eNqo6SiNYnhXteeiBNMOCbd++RekGjoqQUZgyJA6pWD8g
-         2Bkivk2qBwLPNV5TSSlukfUnKlK66UxAlNKaUP6JwB78FaRhzI7OvFfTmh8YaPSPKICd
-         xuBg==
-X-Gm-Message-State: AOAM530ipOrV941TJcOlYKl6NvaxM2HIRG+MQIKx7AxBLRC7hH2N5Etq
-        81dGJCZealmt0N/ZmFv44TVhdU58aYREAQ==
+        b=lu6wkqPFlEarSipFUitRUD9D/fNXydblWAeM6XYS7pkziftWBUaU9dcvd41wPZpXq4
+         BMzkPfQdBqO5G0O/8ni3DSEKmB3FHSfQS6dDLLbyY2IYkQ0sCRef+7mcikiW4J9GHia0
+         lxUgfq3h8aOCv59UR1m6BBjnNCL5394XfyoBAxhX4KPaTdF2UNbNNzgwMkqyweSnHFkk
+         qmLockD/PgG2TiqCXyzjdjCf6b69MEGcS+h0G5HPPmKLZf+qMsX35TvsrvYLMWIhFG5e
+         T1jGkDI/xJzJZtqw5DT/cZjOBKF2d++5KJ9YL4Z0JDsjHqhtZHdro9foyGbsqliBV0L4
+         68yw==
+X-Gm-Message-State: AOAM530lWBZQMZCLqI2DGfAQhGEyJe/dhnb/dG//SrWNw9yjr1hz+tu/
+        4bpqMaRuhDvN0vKGn37wsO3YUVFVuXKfxQ==
 X-Google-Smtp-Source: ABdhPJyse3fhw5d/uhWcVuCiiOAU49VBlsslmtKgMJPOQ45lfuqLFm+fY0FnJGFCyuPJu5zNKY+ZEQ==
 X-Received: by 2002:a92:4448:: with SMTP id a8mr12205553ilm.73.1601910288673;
         Mon, 05 Oct 2020 08:04:48 -0700 (PDT)

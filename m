@@ -2,81 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AC1B287537
-	for <lists+io-uring@lfdr.de>; Thu,  8 Oct 2020 15:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A87CC287547
+	for <lists+io-uring@lfdr.de>; Thu,  8 Oct 2020 15:36:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730233AbgJHNYv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Oct 2020 09:24:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39307 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725882AbgJHNYv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Oct 2020 09:24:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602163490;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4Udupsb/n1o2VfYDaX1x29f+NgYQ2LOLwGNy4Q7PY2E=;
-        b=LxXmFLlsx96Y1yjScf3rcwtqNNtVWXstwnWDNsrs5b8Wxxo8cv5w85ayP/KlKzS0puMCkX
-        Wqx/VYaO99Zmo9ayZutFGMA0Ukuh8eysjL+cVVwVUWfQP3Ps4vp9F8dqwYtjpXTpPCFb6f
-        mn3XL91wuaKMKkHsCv2dc023KvxG27E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-407-ctcnHB4eNPWFuYNpHtqVPw-1; Thu, 08 Oct 2020 09:24:48 -0400
-X-MC-Unique: ctcnHB4eNPWFuYNpHtqVPw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 26F03425D1;
-        Thu,  8 Oct 2020 13:24:47 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.132])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B24B360BFA;
-        Thu,  8 Oct 2020 13:24:45 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu,  8 Oct 2020 15:24:46 +0200 (CEST)
-Date:   Thu, 8 Oct 2020 15:24:44 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
+        id S1730335AbgJHNgQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Oct 2020 09:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbgJHNgN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Oct 2020 09:36:13 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CD73C061755
+        for <io-uring@vger.kernel.org>; Thu,  8 Oct 2020 06:36:12 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id r10so812965ilm.11
+        for <io-uring@vger.kernel.org>; Thu, 08 Oct 2020 06:36:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=e7rKdhz9ciQ35grcxHtJq/vbArd/VYg41u1IRyoy8VI=;
+        b=HfGsbetB6A3geRl7IVm3II/NsMYKjFCFSFfoj1iukhJmepiTMLgPiaDn5YGf4i9jz2
+         TqzIuKIFdAe11i4HznOu927mFEkzbGbAUlRPOXKK0LtJT4hLAcZdpODNOt9fOtxaUhQv
+         k8uAtIVRYHNJi7p8BAWiPjXYOwRdIKTL5bHK+Yzu+P77q2eQzbDsVgeJPVl9KUe5cIF0
+         MmGOb6XJUvNH96DiwSkhKRHbINUNOs3sRNpDrKBQkzU5TGoao/lz8X24GZjZWS/F1Ft6
+         it2raX3dGmumll3aktLzsGWbzLAgFFLyoH3G7uz0iKOpx01VF03O90IU0ZFs2adTgnvV
+         SVKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e7rKdhz9ciQ35grcxHtJq/vbArd/VYg41u1IRyoy8VI=;
+        b=nxV5fz71nQXDPIOlIzGTn6zhloejnnMIc/zO6zrXWyySVDf4MQzbqWjT4FjZ+2IxuA
+         9QII8BpmZoaKMmRk7eI5S6lgaD1dVZRedTUkjd88sC77tjEUGp1g+Vql0c+1XSNlZbOV
+         4PLV/nh5jetKWUP+fRFMOT1cqq8MQeRKdZfw0Gw3/Mi3qu0HIRSTv7uiINv921NDcxyJ
+         V9t6dsIDLu0c31ISkJMzf3PUG6jQ1C7/A4FJFOgTyGDOHBxAiMiUYXJZPUfOX5UmQ5jA
+         4jt4NvQWi8pZZn/fmJe6juv1GHgMO4bRzc5Jh8Ksa2OVmQvnHn5BzIzYm17CQzXCGZUN
+         EhrQ==
+X-Gm-Message-State: AOAM533NCgVnb1PpI6LlqCZip8xhQd0yA2+/CyXfgRcMqGsc82IfSpbk
+        V3G6Kql6e89ntwwNGt6vkZopEMposQp/9w==
+X-Google-Smtp-Source: ABdhPJz6tDDYK+6C45xazMybLC2eN+4Dol/Z1XWOgrGCAjKxpHzNLZq/+mSHZoSnPk7k+mx1rgBKMQ==
+X-Received: by 2002:a92:2591:: with SMTP id l139mr6902795ill.271.1602164171318;
+        Thu, 08 Oct 2020 06:36:11 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id m10sm2636882ilg.74.2020.10.08.06.36.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Oct 2020 06:36:10 -0700 (PDT)
+Subject: Re: [PATCH 1/6] tracehook: clear TIF_NOTIFY_RESUME in
+ tracehook_notify_resume()
+To:     Oleg Nesterov <oleg@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
         peterz@infradead.org, tglx@linutronix.de
-Subject: Re: [PATCH 2/6] kernel: add task_sigpending() helper
-Message-ID: <20201008132444.GF9995@redhat.com>
 References: <20201005150438.6628-1-axboe@kernel.dk>
- <20201005150438.6628-3-axboe@kernel.dk>
+ <20201005150438.6628-2-axboe@kernel.dk> <20201008123748.GD9995@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <641b5760-3b0d-0ac9-02e0-5322daba7dad@kernel.dk>
+Date:   Thu, 8 Oct 2020 07:36:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201005150438.6628-3-axboe@kernel.dk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20201008123748.GD9995@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/05, Jens Axboe wrote:
->
-> @@ -4447,7 +4447,7 @@ SYSCALL_DEFINE0(pause)
->  		__set_current_state(TASK_INTERRUPTIBLE);
->  		schedule();
->  	}
-> -	return -ERESTARTNOHAND;
-> +	return task_sigpending(current) ? -ERESTARTNOHAND : -ERESTARTSYS;
->  }
->
->  #endif
-> @@ -4462,7 +4462,7 @@ static int sigsuspend(sigset_t *set)
->  		schedule();
->  	}
->  	set_restore_sigmask();
-> -	return -ERESTARTNOHAND;
-> +	return task_sigpending(current) ? -ERESTARTNOHAND : -ERESTARTSYS;
->  }
+On 10/8/20 6:37 AM, Oleg Nesterov wrote:
+> Jens, sorry for delay..
 
-Both changes are equally wrong. Why do you think sigsuspend() should ever
-return -ERESTARTSYS ?
+No worries, thanks for looking at it!
 
-If get_signal() deques a signal, handle_signal() will restart this syscall
-if ERESTARTSYS, this is wrong.
+> On 10/05, Jens Axboe wrote:
+>>
+>> All the callers currently do this, clean it up and move the clearing
+>> into tracehook_notify_resume() instead.
+> 
+> To me this looks like a good cleanup regardless.
 
-Oleg.
+Thanks.
+
+-- 
+Jens Axboe
 

@@ -2,103 +2,126 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E3E72876B1
-	for <lists+io-uring@lfdr.de>; Thu,  8 Oct 2020 17:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0D4F287716
+	for <lists+io-uring@lfdr.de>; Thu,  8 Oct 2020 17:28:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730807AbgJHPG6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Oct 2020 11:06:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34212 "EHLO
+        id S1730992AbgJHP16 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Oct 2020 11:27:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729833AbgJHPG6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Oct 2020 11:06:58 -0400
+        with ESMTP id S1730990AbgJHP15 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Oct 2020 11:27:57 -0400
 Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0007CC0613D2
-        for <io-uring@vger.kernel.org>; Thu,  8 Oct 2020 08:06:57 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id b1so1719850iot.4
-        for <io-uring@vger.kernel.org>; Thu, 08 Oct 2020 08:06:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B1A9C061755
+        for <io-uring@vger.kernel.org>; Thu,  8 Oct 2020 08:27:56 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id q9so6579869iow.6
+        for <io-uring@vger.kernel.org>; Thu, 08 Oct 2020 08:27:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZxKtwUQfrtFYgPTxfC0Fr3xXNcfRnpRDzLAYbyjbzuM=;
-        b=Gzcc57vRbr6VO4vEeBUtqil9Id3YUAK5ngOU2/LVbUCIgmxdivLIOnF+tE/ko9lDyQ
-         dQISWMxo+FS4G6+N6GAhoZzeAm6F6gMVpE2fDBuDcbdhwUjzY7e5wibddcOjzIB17W50
-         lyZv9z8nRRfNnz6FRvrdISVO65gmX8l7fk0gq2TK2qr6AMaioseYYjGGbG4qy8T3YY1o
-         LT8eF3CC6HHsEdRKxCpj4yyN7WttblXGSo807j+sKPBC16+2OL+DtA3sapp/1oG/5zkJ
-         PX1L8O7y0KWY6Krm+WFhvA+boEykxr3dbga4GF44LpxrIAsAJHG2+fYI44Ol+9Yduqgl
-         EUxg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Kf1FHcscdRPc5Run8iqbfToPP1jlTdzpFNUhRWFKvq8=;
+        b=eYrIc4DKiojP3lwG3IPCBV8LMMb4cffXdyL4ngIrVpvRzeUq+7RJO4ggvSr5oq3PH+
+         9R5/J3k0eSpWrwe9oQl6dEOM1xMkNmNTCQ81bMxRRnydgDx+nsn3xsq5DAbU5UE7F3iC
+         oUy5jC8M7b5N/aL4BFL2YOavkNQ7bqXveYSgK/57ErT4ZfrcnGXDvN1KerT2oE27cLaa
+         zU7OTlgAr6BHrFX1LyHCDC3JCpknJddQyblZxkA1nVYEYcI/q7lr8nNTr3bjbF3oLM7P
+         x7ZTutF7y0Af9ieWXhFaSYTec5l+a380qOK7Y2yaDTda/KCVYlsKDiBFhpQFpw8kbGac
+         EOpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZxKtwUQfrtFYgPTxfC0Fr3xXNcfRnpRDzLAYbyjbzuM=;
-        b=Upvtm10VjcV1CYR/dHo0tbyEcz+9+8BuyxpR6Io9SbWwTmdn3WFDVh/nSdnVKMO1io
-         EuAZCI/h6vKojFZoyzc3xattwVo/W4lr8v+vLu5sHrLGodXND7NWw+ky4PMpKbne4HIk
-         eOTl7cdsUVcOVAxlFeL63uGrcNjEwI0HcF4c37ldHjjeM1wEbarK4dLVRVGRftW6Papq
-         rU2ECbzxxQSbBDjzwMBAm9l7TZQzNNgaLHo8l+wNDa8ul5jvf3WK5+pXyz+RFeRWiVtV
-         OoKIbb0SBJxzwfnmftUhFNkCSY2HFbUEFMNUgBb26xtNqMI+C74Fd55J+Gt2XomyuVXy
-         AQIw==
-X-Gm-Message-State: AOAM533uht2Iat0ojBJf/dpHgEKaDNpO/5oM7ihOGraRSrgHVlN1TfbD
-        dygi3ivRPD4mfxZi4tK0ZRPd4Q==
-X-Google-Smtp-Source: ABdhPJzh6GEeDAHNvf2NyuZLqbKGR56JcQdByd83UwZQfjgGYtgahxjk2v32Dj59boxf4SP+dAu9fw==
-X-Received: by 2002:a6b:6f09:: with SMTP id k9mr6262905ioc.21.1602169617117;
-        Thu, 08 Oct 2020 08:06:57 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id c8sm601392ils.50.2020.10.08.08.06.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Oct 2020 08:06:56 -0700 (PDT)
-Subject: Re: inconsistent lock state in xa_destroy
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     syzbot <syzbot+cdcbdc0bd42e559b52b9@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <00000000000045ac4605b12a1720@google.com>
- <de842e7f-fa50-193b-b1d7-c573e515ef8b@kernel.dk>
- <20201008150518.GG20115@casper.infradead.org>
+        bh=Kf1FHcscdRPc5Run8iqbfToPP1jlTdzpFNUhRWFKvq8=;
+        b=hHWWicEmuRruDVPeTI3h3Y9rl44VomgEKYvg8j3iAyiW6e3ncvdz9SbwNFgVoasxVK
+         pnyQGuwgTz5eZXeNvoEkN79V8OZSS0h6e6Hl/Qx23ZvxXi3ZSNpnhnjUKQiTVdz/cmOL
+         q7Qz9j7BbWPJjl3UBuzccHvVpWJb1Yvm0o+SlP0lu3/qZrxRdMDCkOwZuQ/XjlygFPQn
+         qBy6h+7vKFd3maXT8C+0XHoE5Oe9k0a4SyHyx8fVABG0OfpsQBJoL8/9/Qpo+teXbO2B
+         4w765Lp/luJrdqcCfX9J4VT4DZ4ehEV+t7C/ICfSfgD1mGYUXqOUXuyJAhxhZjM56P4t
+         e70Q==
+X-Gm-Message-State: AOAM531GkJ+ba3XKmRXwE6HbM+acUIy3ctzs6G3eB/oBj0TXNHreQVhw
+        6FxLhMueKP9cibfBhqUHdFHeCA==
+X-Google-Smtp-Source: ABdhPJxS38WsptZEv2BWRJ7clN9DvJ5Lqor+vrAgcuBuwv1RTMrhVhavYM519/V3o3lz7GRRKxeEOg==
+X-Received: by 2002:a5d:8188:: with SMTP id u8mr6754266ion.66.1602170875610;
+        Thu, 08 Oct 2020 08:27:55 -0700 (PDT)
+Received: from p1.localdomain ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id l77sm2866260ill.4.2020.10.08.08.27.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Oct 2020 08:27:54 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ecfb657e-91fe-5e53-20b7-63e9e6105986@kernel.dk>
-Date:   Thu, 8 Oct 2020 09:06:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Cc:     peterz@infradead.org, oleg@redhat.com, tglx@linutronix.de
+Subject: [PATCHSET v4] Add support for TIF_NOTIFY_SIGNAL
+Date:   Thu,  8 Oct 2020 09:27:48 -0600
+Message-Id: <20201008152752.218889-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20201008150518.GG20115@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/8/20 9:05 AM, Matthew Wilcox wrote:
-> On Thu, Oct 08, 2020 at 09:01:57AM -0600, Jens Axboe wrote:
->> On 10/8/20 9:00 AM, syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following issue on:
->>>
->>> HEAD commit:    e4fb79c7 Add linux-next specific files for 20201008
->>> git tree:       linux-next
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=12555227900000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=568d41fe4341ed0f
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=cdcbdc0bd42e559b52b9
->>> compiler:       gcc (GCC) 10.1.0-syz 20200507
->>>
->>> Unfortunately, I don't have any reproducer for this issue yet.
->>>
->>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>> Reported-by: syzbot+cdcbdc0bd42e559b52b9@syzkaller.appspotmail.com
->>
->> Already pushed out a fix for this, it's really an xarray issue where it just
->> assumes that destroy can irq grab the lock.
-> 
-> ... nice of you to report the issue to the XArray maintainer.
+Hi,
 
-This is from not even 12h ago, 10h of which I was offline. It wasn't on
-the top of my list of priority items to tackle this morning, but it
-is/was on the list.
+The goal is this patch series is to decouple TWA_SIGNAL based task_work
+from real signals and signal delivery. The motivation is speeding up
+TWA_SIGNAL based task_work, particularly for threaded setups where
+->sighand is shared across threads. See the last patch for numbers.
+
+v4 is nicely reduced, thanks to feedback from Oleg, dropping two of the
+core patches and resulting in something that is easier to adopt in other
+archs as well.
+
+ arch/alpha/kernel/signal.c         |  1 -
+ arch/arc/kernel/signal.c           |  2 +-
+ arch/arm/kernel/signal.c           |  1 -
+ arch/arm64/kernel/signal.c         |  1 -
+ arch/c6x/kernel/signal.c           |  4 +--
+ arch/csky/kernel/signal.c          |  1 -
+ arch/h8300/kernel/signal.c         |  4 +--
+ arch/hexagon/kernel/process.c      |  1 -
+ arch/ia64/kernel/process.c         |  2 +-
+ arch/m68k/kernel/signal.c          |  2 +-
+ arch/microblaze/kernel/signal.c    |  2 +-
+ arch/mips/kernel/signal.c          |  1 -
+ arch/nds32/kernel/signal.c         |  4 +--
+ arch/nios2/kernel/signal.c         |  2 +-
+ arch/openrisc/kernel/signal.c      |  1 -
+ arch/parisc/kernel/signal.c        |  4 +--
+ arch/powerpc/kernel/signal.c       |  1 -
+ arch/riscv/kernel/signal.c         |  4 +--
+ arch/s390/kernel/signal.c          |  1 -
+ arch/sh/kernel/signal_32.c         |  4 +--
+ arch/sparc/kernel/signal_32.c      |  4 +--
+ arch/sparc/kernel/signal_64.c      |  4 +--
+ arch/um/kernel/process.c           |  2 +-
+ arch/x86/include/asm/thread_info.h |  2 ++
+ arch/x86/kernel/signal.c           |  5 +++-
+ arch/xtensa/kernel/signal.c        |  2 +-
+ include/linux/entry-common.h       |  6 ++++-
+ include/linux/entry-kvm.h          |  4 +--
+ include/linux/sched/signal.h       | 20 ++++++++++++---
+ include/linux/tracehook.h          | 31 ++++++++++++++++++++--
+ kernel/entry/common.c              |  3 +--
+ kernel/entry/kvm.c                 |  7 ++---
+ kernel/events/uprobes.c            |  2 +-
+ kernel/signal.c                    |  8 +++---
+ kernel/task_work.c                 | 41 +++++++++++++++++++++---------
+ 35 files changed, 113 insertions(+), 71 deletions(-)
+
+Also find the changes here:
+
+https://git.kernel.dk/cgit/linux-block/log/?h=tif-task_work
+
+Changes since v3:
+
+- Drop not needed io_uring change
+- Drop syscall restart split, handle TIF_NOTIFY_SIGNAL from the arch
+  signal handling, using task_sigpending() to see if we need to care
+  about real signals.
+- Fix a few over-zelaous task_sigpending() changes
+- Cleanup WARN_ON() in restore_saved_sigmask_unless()
 
 -- 
 Jens Axboe
+
 

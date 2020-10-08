@@ -2,196 +2,133 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 197F728771D
-	for <lists+io-uring@lfdr.de>; Thu,  8 Oct 2020 17:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC63E28771F
+	for <lists+io-uring@lfdr.de>; Thu,  8 Oct 2020 17:28:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730996AbgJHP2I (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Oct 2020 11:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37456 "EHLO
+        id S1730931AbgJHP2r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Oct 2020 11:28:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731010AbgJHP2C (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Oct 2020 11:28:02 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D72CAC0613D6
-        for <io-uring@vger.kernel.org>; Thu,  8 Oct 2020 08:28:00 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id y20so2411491iod.5
-        for <io-uring@vger.kernel.org>; Thu, 08 Oct 2020 08:28:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=m8iZ8MjkSc6erbT/UXuLX8pK+PMOfNjl6qhqMPOTqMQ=;
-        b=TDVK74UH5Cx1P4TZPLEfge0uEYCsREV3Ep420h4PYroi4S1NxPWSCc2wbh1SY9LSZS
-         IYBZ3286+WCNciOgwdhueW3w+kS9HCqeVSGrIVXChmhhZlInS1bSMCzfLJjL0dGj3cBz
-         S7IeRN9S5w2rQMpK9q1KdpSful71GMMb0o4j/rFkBuL7GveYD4ocLy3UqvKgqBiGD27d
-         U0MeRhqcDmLYznPEU1hpmTDfiXDCah0+ZnPViog8jF1C6si9fJXK9d4yFHlIJcUHsL+A
-         RXlztD/bWiI4z+Gr2kd5v2uuXD7SdRxuDxzgNobOlpZIFhzsPH1Xf7oShdBTcJJoN91n
-         ZFcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=m8iZ8MjkSc6erbT/UXuLX8pK+PMOfNjl6qhqMPOTqMQ=;
-        b=sBpZfVucF67o4kBSnQrLDBvETOx14b1yZr5LYWhDw1Y6OInttNeNGNVNM7YepAjtQy
-         VDWDfI8JOjbiqCZX2l4zeBDn8IZ+OUctGASKa7d8MySMz2dDJSRb6MRdAlTzMeDRJrtA
-         UDLAg6FkZ9YnqUUwD88EamkmOhMaZhgXvTpjK1xbz67x2MTURtzaDeffU7TYdzyEy2SF
-         81Kjjv+1SzbXjwwIPVlXtOGr2nRCQneYYLPwCfER8VozkLdcGydMK88GcqjtCzyQAf5b
-         il+4Ao4ywhmqP3p+HVVwcwzyF2vSPPSFmI4fFHvuc2buk7PGRvlBd04JEq9VOpMK9vmg
-         NIJQ==
-X-Gm-Message-State: AOAM5323Q6JfHA8grQGEQTTtdTXIBqiMLSdn8L0+HFq7FStip5lDVCtX
-        aDPbQjAiexupxm1n012cDVTOCw==
-X-Google-Smtp-Source: ABdhPJwVRB/C7li7I0p6fC6QrodonEwUPbNeUGqrvSEOZ4X7lkqXM8jleZiOqjeOZsb9uIZW7PQXfQ==
-X-Received: by 2002:a02:3213:: with SMTP id j19mr7167710jaa.135.1602170880139;
-        Thu, 08 Oct 2020 08:28:00 -0700 (PDT)
-Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l77sm2866260ill.4.2020.10.08.08.27.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2020 08:27:59 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Cc:     peterz@infradead.org, oleg@redhat.com, tglx@linutronix.de,
-        Jens Axboe <axboe@kernel.dk>,
-        Roman Gershman <romger@amazon.com>
-Subject: [PATCH 4/4] task_work: use TIF_NOTIFY_SIGNAL if available
-Date:   Thu,  8 Oct 2020 09:27:52 -0600
-Message-Id: <20201008152752.218889-5-axboe@kernel.dk>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201008152752.218889-1-axboe@kernel.dk>
-References: <20201008152752.218889-1-axboe@kernel.dk>
+        with ESMTP id S1730550AbgJHP2r (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Oct 2020 11:28:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAF17C061755;
+        Thu,  8 Oct 2020 08:28:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KTnCY2TC0EEDY87TJ5e0IxZJrc3I29yWn7wm8w//0YU=; b=cn4jHTWHF0dMQGfH+Wlmn7RoRc
+        wKxkeGZGZX5O0bvFm1r83vQWN7GJbqR6S0K+eJQ/13r99OV/DCtx/Jmtf9z5x7hj3S0iB4FYDMs9Z
+        XwhZ5tdZXLHej+oIqdV7VuTXMrN1KFIvsHz3UoY3jOWbznZZdqNpPF8v5kwJhg8BhE/xcvgyz51Sq
+        8ZA2QvO64ZgK1Jfj+SHPqy+8jyOPGCNZGunwf2SYrFRVSIN3bQcn2a7UWPyuUNWEA3OJA3x3YcZNA
+        QOngRmq70pf/bcKP77QCMQx8faIAMZ3T+rxnnc6kHKnFnB1xUntDLLwWpON61lWVaPozN76OAVhYi
+        Hz93dyqQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kQXqW-00007S-Lh; Thu, 08 Oct 2020 15:28:44 +0000
+Date:   Thu, 8 Oct 2020 16:28:44 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     syzbot <syzbot+cdcbdc0bd42e559b52b9@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: inconsistent lock state in xa_destroy
+Message-ID: <20201008152844.GI20115@casper.infradead.org>
+References: <00000000000045ac4605b12a1720@google.com>
+ <de842e7f-fa50-193b-b1d7-c573e515ef8b@kernel.dk>
+ <20201008150518.GG20115@casper.infradead.org>
+ <ecfb657e-91fe-5e53-20b7-63e9e6105986@kernel.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ecfb657e-91fe-5e53-20b7-63e9e6105986@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If the arch supports TIF_NOTIFY_SIGNAL, then use that for TWA_SIGNAL as
-it's more efficient than using the signal delivery method. This is
-especially true on threaded applications, where ->sighand is shared
-across threads, but it's also lighter weight on non-shared cases.
+On Thu, Oct 08, 2020 at 09:06:56AM -0600, Jens Axboe wrote:
+> On 10/8/20 9:05 AM, Matthew Wilcox wrote:
+> > On Thu, Oct 08, 2020 at 09:01:57AM -0600, Jens Axboe wrote:
+> >> On 10/8/20 9:00 AM, syzbot wrote:
+> >>> Hello,
+> >>>
+> >>> syzbot found the following issue on:
+> >>>
+> >>> HEAD commit:    e4fb79c7 Add linux-next specific files for 20201008
+> >>> git tree:       linux-next
+> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=12555227900000
+> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=568d41fe4341ed0f
+> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=cdcbdc0bd42e559b52b9
+> >>> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> >>>
+> >>> Unfortunately, I don't have any reproducer for this issue yet.
+> >>>
+> >>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >>> Reported-by: syzbot+cdcbdc0bd42e559b52b9@syzkaller.appspotmail.com
+> >>
+> >> Already pushed out a fix for this, it's really an xarray issue where it just
+> >> assumes that destroy can irq grab the lock.
+> > 
+> > ... nice of you to report the issue to the XArray maintainer.
+> 
+> This is from not even 12h ago, 10h of which I was offline. It wasn't on
+> the top of my list of priority items to tackle this morning, but it
+> is/was on the list.
 
-io_uring is a heavy consumer of TWA_SIGNAL based task_work. On my test
-box, even just using 16 threads shows a nice improvement running an
-io_uring based echo server.
+How's this?
 
-stock kernel:
-0.01% <= 0.1 milliseconds
-95.86% <= 0.2 milliseconds
-98.27% <= 0.3 milliseconds
-99.71% <= 0.4 milliseconds
-100.00% <= 0.5 milliseconds
-100.00% <= 0.6 milliseconds
-100.00% <= 0.7 milliseconds
-100.00% <= 0.8 milliseconds
-100.00% <= 0.9 milliseconds
-100.00% <= 1.0 milliseconds
-100.00% <= 1.1 milliseconds
-100.00% <= 2 milliseconds
-100.00% <= 3 milliseconds
-100.00% <= 3 milliseconds
-1378930.00 requests per second
-~1600% CPU
-
-1.38M requests/second, and all 16 CPUs are maxed out.
-
-patched kernel:
-0.01% <= 0.1 milliseconds
-98.24% <= 0.2 milliseconds
-99.47% <= 0.3 milliseconds
-99.99% <= 0.4 milliseconds
-100.00% <= 0.5 milliseconds
-100.00% <= 0.6 milliseconds
-100.00% <= 0.7 milliseconds
-100.00% <= 0.8 milliseconds
-100.00% <= 0.9 milliseconds
-100.00% <= 1.2 milliseconds
-1666111.38 requests per second
-~1450% CPU
-
-1.67M requests/second, and we're no longer just hammering on the sighand
-lock. The original reporter states:
-
-"For 5.7.15 my benchmark achieves 1.6M qps and system cpu is at ~80%.
- for 5.7.16 or later it achieves only 1M qps and the system cpu is is
- at ~100%"
-
-with the only difference there being that TWA_SIGNAL is used
-unconditionally in 5.7.16, since we need it to be able to solve an
-inability to run task_work if the application is waiting in the kernel
-already on an event that needs task_work run to be satisfied. Also
-see commit 0ba9c9edcd15.
-
-Reported-by: Roman Gershman <romger@amazon.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- kernel/task_work.c | 41 +++++++++++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index 613b2d634af8..95604e57af46 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -5,6 +5,34 @@
- 
- static struct callback_head work_exited; /* all we need is ->next == NULL */
- 
-+/*
-+ * TWA_SIGNAL signaling - use TIF_NOTIFY_SIGNAL, if available, as it's faster
-+ * than TIF_SIGPENDING as there's no dependency on ->sighand. The latter is
-+ * shared for threads, and can cause contention on sighand->lock. Even for
-+ * the non-threaded case TIF_NOTIFY_SIGNAL is more efficient, as no locking
-+ * or IRQ disabling is involved for notification (or running) purposes.
-+ */
-+static void task_work_notify_signal(struct task_struct *task)
-+{
-+#ifdef TIF_NOTIFY_SIGNAL
-+	set_notify_signal(task);
-+#else
-+	unsigned long flags;
-+
-+	/*
-+	 * Only grab the sighand lock if we don't already have some
-+	 * task_work pending. This pairs with the smp_store_mb()
-+	 * in get_signal(), see comment there.
-+	 */
-+	if (!(READ_ONCE(task->jobctl) & JOBCTL_TASK_WORK) &&
-+	    lock_task_sighand(task, &flags)) {
-+		task->jobctl |= JOBCTL_TASK_WORK;
-+		signal_wake_up(task, 0);
-+		unlock_task_sighand(task, &flags);
-+	}
-+#endif
-+}
-+
- /**
-  * task_work_add - ask the @task to execute @work->func()
-  * @task: the task which should run the callback
-@@ -28,7 +56,6 @@ int
- task_work_add(struct task_struct *task, struct callback_head *work, int notify)
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 1e4ed5bce5dc..d84cb98d5485 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1999,21 +1999,32 @@ EXPORT_SYMBOL_GPL(xa_delete_node);	/* For the benefit of the test suite */
+  * xa_destroy() - Free all internal data structures.
+  * @xa: XArray.
+  *
+- * After calling this function, the XArray is empty and has freed all memory
+- * allocated for its internal data structures.  You are responsible for
+- * freeing the objects referenced by the XArray.
+- *
+- * Context: Any context.  Takes and releases the xa_lock, interrupt-safe.
++ * After calling this function, the XArray is empty and has freed all
++ * memory allocated for its internal data structures.  You are responsible
++ * for freeing the objects referenced by the XArray.
++ *
++ * You do not need to call xa_destroy() if you know the XArray is
++ * already empty.  The IDR used to require this, so you may see some
++ * old code calling idr_destroy() or xa_destroy() on arrays which we
++ * know to be empty, but new code should not do this.
++ *
++ * Context: If the XArray is protected by an IRQ-safe lock, this function
++ * must not be called from interrupt context or with interrupts disabled.
++ * Otherwise it may be called from any context.  It will take and release
++ * the xa_lock with the appropriate disabling & enabling of softirqs
++ * or interrupts.
+  */
+ void xa_destroy(struct xarray *xa)
  {
- 	struct callback_head *head;
+ 	XA_STATE(xas, xa, 0);
 -	unsigned long flags;
++	unsigned int lock_type = xa_lock_type(xa);
+ 	void *entry;
  
- 	do {
- 		head = READ_ONCE(task->task_works);
-@@ -42,17 +69,7 @@ task_work_add(struct task_struct *task, struct callback_head *work, int notify)
- 		set_notify_resume(task);
- 		break;
- 	case TWA_SIGNAL:
--		/*
--		 * Only grab the sighand lock if we don't already have some
--		 * task_work pending. This pairs with the smp_store_mb()
--		 * in get_signal(), see comment there.
--		 */
--		if (!(READ_ONCE(task->jobctl) & JOBCTL_TASK_WORK) &&
--		    lock_task_sighand(task, &flags)) {
--			task->jobctl |= JOBCTL_TASK_WORK;
--			signal_wake_up(task, 0);
--			unlock_task_sighand(task, &flags);
--		}
-+		task_work_notify_signal(task);
- 		break;
- 	}
+ 	xas.xa_node = NULL;
+-	xas_lock_irqsave(&xas, flags);
++	xas_lock_type(&xas, lock_type);
+ 	entry = xa_head_locked(xa);
++	if (!entry)
++		goto out;
+ 	RCU_INIT_POINTER(xa->xa_head, NULL);
+ 	xas_init_marks(&xas);
+ 	if (xa_zero_busy(xa))
+@@ -2021,7 +2032,8 @@ void xa_destroy(struct xarray *xa)
+ 	/* lockdep checks we're still holding the lock in xas_free_nodes() */
+ 	if (xa_is_node(entry))
+ 		xas_free_nodes(&xas, xa_to_node(entry));
+-	xas_unlock_irqrestore(&xas, flags);
++out:
++	xas_unlock_type(&xas, lock_type);
+ }
+ EXPORT_SYMBOL(xa_destroy);
  
--- 
-2.28.0
-

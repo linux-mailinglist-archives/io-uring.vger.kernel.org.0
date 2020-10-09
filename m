@@ -2,122 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 612B02894AF
-	for <lists+io-uring@lfdr.de>; Fri,  9 Oct 2020 21:54:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC600289ACD
+	for <lists+io-uring@lfdr.de>; Fri,  9 Oct 2020 23:36:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391313AbgJITyq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 9 Oct 2020 15:54:46 -0400
-Received: from mga12.intel.com ([192.55.52.136]:29419 "EHLO mga12.intel.com"
+        id S2388902AbgJIVfR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 9 Oct 2020 17:35:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391275AbgJITyL (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 9 Oct 2020 15:54:11 -0400
-IronPort-SDR: q1PZMJUmKFKlQ0BClGvwyzOjNwzGSo5B944T29UwXjVfp2YopDniYa7pTU6UFtwNvsti9h6T08
- dfV2TT7Nz02w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="144851137"
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; 
-   d="scan'208";a="144851137"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2020 12:54:10 -0700
-IronPort-SDR: LoljxrxdEbdUiebRGt6guGtjo6SPfpWGHMJuLgTgYB7BeDU8CJtiGau7DzbQyZ+Y5gpHVnCtT5
- urTwCEpflSRg==
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; 
-   d="scan'208";a="343972696"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2020 12:54:09 -0700
-From:   ira.weiny@intel.com
-To:     Andrew Morton <akpm@linux-foundation.org>,
+        id S2388587AbgJIVei (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 9 Oct 2020 17:34:38 -0400
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44F7C21D6C;
+        Fri,  9 Oct 2020 21:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602279277;
+        bh=af4HYKUXjfzQEnpRkoqrLOtb/VuZgD2GaaA85DESAB8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mAKgXcy5CifgRYN2i2C2c94+Jg5oLVaoZk49jTIFxseeqdMtEOOqP5cL66hXhKNTI
+         eNSQDBkgqgAc1Wd7XIXje+joGiBVI4yatMIDb1+kpBlSLeGvwRiFFGcw+A+0IeryZM
+         wi38bfOOqpr1rBlahq6SJoGGKG4xvvKCLXOhXA9s=
+Date:   Fri, 9 Oct 2020 14:34:34 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     ira.weiny@intel.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, linux-aio@kvack.org,
+        linux-efi@vger.kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        target-devel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, samba-technical@lists.samba.org,
+        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org,
+        x86@kernel.org, amd-gfx@lists.freedesktop.org,
+        linux-afs@lists.infradead.org, cluster-devel@redhat.com,
+        linux-cachefs@redhat.com, intel-wired-lan@lists.osuosl.org,
+        xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org,
+        Fenghua Yu <fenghua.yu@intel.com>, ecryptfs@vger.kernel.org,
+        linux-um@lists.infradead.org, intel-gfx@lists.freedesktop.org,
+        linux-erofs@lists.ozlabs.org, reiserfs-devel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Dan Williams <dan.j.williams@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
-        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
-        reiserfs-devel@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
-        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
-Subject: [PATCH RFC PKS/PMEM 58/58] [dax|pmem]: Enable stray access protection
-Date:   Fri,  9 Oct 2020 12:50:33 -0700
-Message-Id: <20201009195033.3208459-59-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
-In-Reply-To: <20201009195033.3208459-1-ira.weiny@intel.com>
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH RFC PKS/PMEM 22/58] fs/f2fs: Utilize new kmap_thread()
+Message-ID: <20201009213434.GA839@sol.localdomain>
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
+ <20201009195033.3208459-23-ira.weiny@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201009195033.3208459-23-ira.weiny@intel.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Fri, Oct 09, 2020 at 12:49:57PM -0700, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> The kmap() calls in this FS are localized to a single thread.  To avoid
+> the over head of global PKRS updates use the new kmap_thread() call.
+> 
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Chao Yu <chao@kernel.org>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+>  fs/f2fs/f2fs.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index d9e52a7f3702..ff72a45a577e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2410,12 +2410,12 @@ static inline struct page *f2fs_pagecache_get_page(
+>  
+>  static inline void f2fs_copy_page(struct page *src, struct page *dst)
+>  {
+> -	char *src_kaddr = kmap(src);
+> -	char *dst_kaddr = kmap(dst);
+> +	char *src_kaddr = kmap_thread(src);
+> +	char *dst_kaddr = kmap_thread(dst);
+>  
+>  	memcpy(dst_kaddr, src_kaddr, PAGE_SIZE);
+> -	kunmap(dst);
+> -	kunmap(src);
+> +	kunmap_thread(dst);
+> +	kunmap_thread(src);
+>  }
 
-Protecting against stray writes is particularly important for PMEM
-because, unlike writes to anonymous memory, writes to PMEM persists
-across a reboot.  Thus data corruption could result in permanent loss of
-data.
+Wouldn't it make more sense to switch cases like this to kmap_atomic()?
+The pages are only mapped to do a memcpy(), then they're immediately unmapped.
 
-While stray writes are more serious than reads, protection is also
-enabled for reads.  This helps to detect bugs in code which would
-incorrectly access device memory and prevents a more serious machine
-checks should those bug reads from a poison page.
-
-Enable stray access protection by setting the flag in pgmap which
-requests it.  There is no option presented to the user.  If Zone Device
-Access Protection not be supported this flag will have no affect.
-
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
----
- drivers/dax/device.c  | 2 ++
- drivers/nvdimm/pmem.c | 2 ++
- 2 files changed, 4 insertions(+)
-
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index 1e89513f3c59..e6fb35b4f0fb 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -430,6 +430,8 @@ int dev_dax_probe(struct device *dev)
- 	}
- 
- 	dev_dax->pgmap.type = MEMORY_DEVICE_GENERIC;
-+	dev_dax->pgmap.flags |= PGMAP_PROT_ENABLED;
-+
- 	addr = devm_memremap_pages(dev, &dev_dax->pgmap);
- 	if (IS_ERR(addr))
- 		return PTR_ERR(addr);
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index e4dc1ae990fc..9fcd8338e23f 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -426,6 +426,8 @@ static int pmem_attach_disk(struct device *dev,
- 		return -EBUSY;
- 	}
- 
-+	pmem->pgmap.flags |= PGMAP_PROT_ENABLED;
-+
- 	q = blk_alloc_queue(dev_to_node(dev));
- 	if (!q)
- 		return -ENOMEM;
--- 
-2.28.0.rc0.12.gb6a658bd00c9
-
+- Eric

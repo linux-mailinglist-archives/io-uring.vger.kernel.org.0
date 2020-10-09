@@ -2,65 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8D2D288C5F
-	for <lists+io-uring@lfdr.de>; Fri,  9 Oct 2020 17:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A00CA288C76
+	for <lists+io-uring@lfdr.de>; Fri,  9 Oct 2020 17:21:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389214AbgJIPQX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 9 Oct 2020 11:16:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60666 "EHLO
+        id S2389236AbgJIPVa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 9 Oct 2020 11:21:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388533AbgJIPQW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Oct 2020 11:16:22 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC710C0613D2
-        for <io-uring@vger.kernel.org>; Fri,  9 Oct 2020 08:16:22 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id p11so4602817pld.5
-        for <io-uring@vger.kernel.org>; Fri, 09 Oct 2020 08:16:22 -0700 (PDT)
+        with ESMTP id S2387664AbgJIPVa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Oct 2020 11:21:30 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3645CC0613D2
+        for <io-uring@vger.kernel.org>; Fri,  9 Oct 2020 08:21:28 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id g9so7424163pgh.8
+        for <io-uring@vger.kernel.org>; Fri, 09 Oct 2020 08:21:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=s/sPpyq4lTHRHob1KiXQqTKj8DhUh+ZWT1QGn6lwICM=;
-        b=MA72PDCMnz5+Uq0lokZDZUEz3/+onI2Fuanfh7FHn4b+sxJa3oAafzDdytqYm9uG3e
-         vhWLRkT7To8dAIcQbV+VFwgGVzkbXG212ZftJNXt4djRHHAD/pOIf+zIgN917a5R/HrG
-         IakIlh1PEjZHtdzmVbVnz4uKPKRItJOQWtM8qq/fa3HeBItRx7oiY+qBDRIF1hNNxnf6
-         vJoOcbbrqNYeBaMI92YHmfm1vnjx1PKLdN3fK2BGZzkK5uwaOc4jIIAvE4eQ6YW8OFyy
-         v/AL6YmvrbYQIvl9EaDybCG2nuYnrCoKpkjJqtahDLXng75amzff3j2HVeYOAKiUVARZ
-         dQRA==
+        bh=1l5bQ+lqgCSA/OaJHeyIm/1E5UGT669jRSDiiWTQv9I=;
+        b=brT8d82RuNrUqMXWLQfdFIuobfKiEJIqSIwJD8P+BnfqDb3rb8iuhuCoXdtHdH9tFh
+         Pva7sJfJoXRCNIb6ZKbIQ2OM+6GTuJbzIijQBwTzaNCUhnq7ovAK6X5WYkV6iVdHb8O7
+         biCufPq1qQLyo/3OgQ3z1QqGonl2Ts0G8YtrPjbKVwk7Lq7YydxQ5qDX6mmRGzTlssQU
+         EX863ruA2BMcXl2pCSqsVtkJXLQGqw7/L+YGwgg6bdIu3TJLnDn7X39xJ+kvRZjIXYu7
+         40ScFjJhy8xgya7iFVHluj7DYlCrkxomHZheUpmww4EnWGLjTc0vSmtz3vMu+CO/AVaQ
+         wJMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=s/sPpyq4lTHRHob1KiXQqTKj8DhUh+ZWT1QGn6lwICM=;
-        b=Th7J7e/upCa1GvxlGb0VUyheOQ/eRz0sXlVfcmPvCGg5/vWSp1DP5hMQIL4Ffvhndk
-         FO5UDDlw+QOS6lFcaQkxtUPnJERp5HLKGUEcf0cyhqaoYWr4eZ1K/nSLDp6nK56l9Q25
-         prEiZSQ9x1oq2UrdIU7AU2h1DdGvV9JAuY32UHnaE20T837TsW7ErQLWN9kSce6SoIhI
-         pLeLIVUYmL+oOua40sIzOE86jNMjco4q0RMpEaGUEYZ+a+Cy1j/cYvvUEfxGeYCSD40r
-         JbYpNjTZFgMfAJaKxqpkUXg6caeiguyiNj1iEp8jpj0V65tiwwsImbxL9I3TZ9dvr3fN
-         aYPg==
-X-Gm-Message-State: AOAM5319EsTfK9WkPKIp4AhyxEG6LAy7a1VIpPpUrtgspvOVYcVpWPXQ
-        Y6cvUOmyAB5vQFeYZa0BRSEiCw==
-X-Google-Smtp-Source: ABdhPJy4sehD0xdkrNx3fIXPsV8QMpK1YcRBTKuxAUvdGBnKYWNpnzCG5Tp2QVxXB7EkHo2BnfMpUA==
-X-Received: by 2002:a17:902:54e:b029:d2:ab75:3864 with SMTP id 72-20020a170902054eb02900d2ab753864mr12399618plf.50.1602256582273;
-        Fri, 09 Oct 2020 08:16:22 -0700 (PDT)
+        bh=1l5bQ+lqgCSA/OaJHeyIm/1E5UGT669jRSDiiWTQv9I=;
+        b=HA1zCrLzT5WBa2CYjHSOeTa8ErWb2YlB052sUoJ8jEd0cSaQaXqtj9ijtH0qEne8mt
+         ac8YU2e0V251ohd7I3NkoqShXa3RhoLGU7ji3kSLv9r6gYDKbZk7T70V/WEMKiTIrwHR
+         rK/dMs6YhQ1ypkJfbnIwCQN3moGAWE45vvA+2VUGAeL9e1I0VB3UeGfret5HvBFF0Cbc
+         6vWO0hlJwONcbQSe0Zz9qfOaYO5Cf6cdntgoVEFzbiPFQrSuzzMiZsc07bOQcAx1bhRs
+         Vv1bwYFgK+63z7ciJQIIj41UsAWVHGy5b7OW+pd99Gwel+/98MCa69x70LjUuy7G2Zjb
+         ProA==
+X-Gm-Message-State: AOAM531SA4W+xCOpZUf3qENM1eq5VotikyN83B4v7ie7ievMs1NZ1F7G
+        vA6/IS/SDwGB4WnLHSQdSUccEw==
+X-Google-Smtp-Source: ABdhPJwUMZx9n5iEt9MhvI4G8mWEw6oBLxru3MuJM1VuUFIOvRfTfC6Jet8YwH35gE0WPxK1J+y/Cw==
+X-Received: by 2002:a17:90b:4189:: with SMTP id hh9mr5249219pjb.199.1602256887739;
+        Fri, 09 Oct 2020 08:21:27 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id n125sm11249062pfn.185.2020.10.09.08.16.20
+        by smtp.gmail.com with ESMTPSA id t13sm11594162pjo.15.2020.10.09.08.21.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Oct 2020 08:16:21 -0700 (PDT)
-Subject: Re: [PATCHSET v4] Add support for TIF_NOTIFY_SIGNAL
-To:     Oleg Nesterov <oleg@redhat.com>
+        Fri, 09 Oct 2020 08:21:27 -0700 (PDT)
+Subject: Re: [PATCHSET RFC v3 0/6] Add support for TIF_NOTIFY_SIGNAL
+To:     Miroslav Benes <mbenes@suse.cz>, Oleg Nesterov <oleg@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        peterz@infradead.org, tglx@linutronix.de
-References: <20201008152752.218889-1-axboe@kernel.dk>
- <20201009143009.GA14523@redhat.com>
+        peterz@infradead.org, tglx@linutronix.de,
+        live-patching@vger.kernel.org
+References: <20201005150438.6628-1-axboe@kernel.dk>
+ <20201008145610.GK9995@redhat.com>
+ <alpine.LSU.2.21.2010090959260.23400@pobox.suse.cz>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8f9d8948-7e20-f0f1-7722-e7c0c6531b6f@kernel.dk>
-Date:   Fri, 9 Oct 2020 09:16:19 -0600
+Message-ID: <e33ec671-3143-d720-176b-a8815996fd1c@kernel.dk>
+Date:   Fri, 9 Oct 2020 09:21:25 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201009143009.GA14523@redhat.com>
+In-Reply-To: <alpine.LSU.2.21.2010090959260.23400@pobox.suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,27 +70,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/9/20 8:30 AM, Oleg Nesterov wrote:
-> On 10/08, Jens Axboe wrote:
->>
->> Changes since v3:
->>
->> - Drop not needed io_uring change
->> - Drop syscall restart split, handle TIF_NOTIFY_SIGNAL from the arch
->>   signal handling, using task_sigpending() to see if we need to care
->>   about real signals.
->> - Fix a few over-zelaous task_sigpending() changes
->> - Cleanup WARN_ON() in restore_saved_sigmask_unless()
+On 10/9/20 2:01 AM, Miroslav Benes wrote:
+> On Thu, 8 Oct 2020, Oleg Nesterov wrote:
 > 
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+>> On 10/05, Jens Axboe wrote:
+>>>
+>>> Hi,
+>>>
+>>> The goal is this patch series is to decouple TWA_SIGNAL based task_work
+>>> from real signals and signal delivery.
+>>
+>> I think TIF_NOTIFY_SIGNAL can have more users. Say, we can move
+>> try_to_freeze() from get_signal() to tracehook_notify_signal(), kill
+>> fake_signal_wake_up(), and remove freezing() from recalc_sigpending().
+>>
+>> Probably the same for TIF_PATCH_PENDING, klp_send_signals() can use
+>> set_notify_signal() rather than signal_wake_up().
+> 
+> Yes, that was my impression from the patch set too, when I accidentally 
+> noticed it.
+> 
+> Jens, could you CC our live patching ML when you submit v4, please? It 
+> would be a nice cleanup.
 
-Thanks, added.
+Definitely, though it'd be v5 at this point. But we really need to get
+all archs supporting TIF_NOTIFY_SIGNAL first. Once we have that, there's
+a whole slew of cleanups that'll fall out naturally:
 
-> but let me comment 3/4...
+- Removal of JOBCTL_TASK_WORK
+- Removal of special path for TWA_SIGNAL in task_work
+- TIF_PATCH_PENDING can be converted and then removed
+- try_to_freeze() cleanup that Oleg mentioned
 
-Updated for that one too, this is the current patch:
-
-https://git.kernel.dk/cgit/linux-block/commit/?h=tif-task_work&id=b6d5da9ba8e31f7b222172c1626cfd0f5d035083
+And probably more I'm not thinking of right now :-)
 
 -- 
 Jens Axboe

@@ -2,125 +2,162 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1E1A289DC9
-	for <lists+io-uring@lfdr.de>; Sat, 10 Oct 2020 05:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D8F9289E71
+	for <lists+io-uring@lfdr.de>; Sat, 10 Oct 2020 06:50:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbgJJDKe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 9 Oct 2020 23:10:34 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:11466 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730256AbgJJCyU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Oct 2020 22:54:20 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f8121a50000>; Fri, 09 Oct 2020 19:51:17 -0700
-Received: from [10.2.51.144] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 10 Oct
- 2020 02:53:07 +0000
-Subject: Re: [PATCH RFC PKS/PMEM 57/58] nvdimm/pmem: Stray access protection
- for pmem->virt_addr
-To:     <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Borislav Petkov" <bp@alien8.de>,
+        id S1726619AbgJJEpt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 10 Oct 2020 00:45:49 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:59176 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726886AbgJJEn7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 10 Oct 2020 00:43:59 -0400
+X-Greylist: delayed 3548 seconds by postgrey-1.27 at vger.kernel.org; Sat, 10 Oct 2020 00:43:28 EDT
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kR5ma-003qSe-1R; Fri, 09 Oct 2020 21:42:56 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kR5mZ-0002tO-03; Fri, 09 Oct 2020 21:42:55 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     ira.weiny@intel.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     <x86@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-nvdimm@lists.01.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kselftest@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <kvm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <bpf@vger.kernel.org>, <kexec@lists.infradead.org>,
-        <linux-bcache@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <devel@driverdev.osuosl.org>, <linux-efi@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <target-devel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
-        <ceph-devel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
-        <linux-aio@kvack.org>, <io-uring@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-um@lists.infradead.org>,
-        <linux-ntfs-dev@lists.sourceforge.net>,
-        <reiserfs-devel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-nilfs@vger.kernel.org>, <cluster-devel@redhat.com>,
-        <ecryptfs@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
-        <linux-btrfs@vger.kernel.org>, <linux-afs@lists.infradead.org>,
-        <linux-rdma@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <intel-gfx@lists.freedesktop.org>, <drbd-dev@lists.linbit.com>,
-        <linux-block@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
-        <linux-cachefs@redhat.com>, <samba-technical@lists.samba.org>,
-        <intel-wired-lan@lists.osuosl.org>
+        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
+        reiserfs-devel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
+        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
- <20201009195033.3208459-58-ira.weiny@intel.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <bd3f5ece-0e7b-4c15-abbc-1b3b943334dc@nvidia.com>
-Date:   Fri, 9 Oct 2020 19:53:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        <20201009195033.3208459-52-ira.weiny@intel.com>
+Date:   Fri, 09 Oct 2020 22:43:15 -0500
+In-Reply-To: <20201009195033.3208459-52-ira.weiny@intel.com> (ira weiny's
+        message of "Fri, 9 Oct 2020 12:50:26 -0700")
+Message-ID: <87k0vysq3w.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20201009195033.3208459-58-ira.weiny@intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1602298277; bh=hKwlK3WolBLUufkeWDHCi6j+X4NXa8gQFiKyGjbOY3s=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=edx7xet+HWktPTMH7LfazMaeZj84i5/Le7BE3m/9xNKYA9bmh246jZEvn48F/uMcW
-         RRn8BggXdwK6EgYw84fvX6LW3WH/wQjijcVtcfekd8K6KkJdzgyiWWhhWRHsAgsUWu
-         ErO3rgTi0L/NWozRhmjxim3aejVQ7k0j+Xmczu6ahvjgHQEdG1f6IxukspiHHh4eDZ
-         vXW13vRjbU9kKvq3xSMRRweChxuwg1Gt9UWgcBiwICYzh7lbhEKe0zR7+e8y/8iSgu
-         9o2Hr0ioZGbS1OLU7+SDtKlkAPg/fZiUxFefl5DnOwU2H5+VRhK6GCiKvAXlVbpTMd
-         H8SS1utYxNiTQ==
+Content-Type: text/plain
+X-XM-SPF: eid=1kR5mZ-0002tO-03;;;mid=<87k0vysq3w.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+M6Nwc1eevosTTnX6IxBw6BnHTGm05YjI=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,T_TooManySym_03,T_XMDrugObfuBody_08,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;ira.weiny@intel.com
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 512 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 13 (2.5%), b_tie_ro: 11 (2.2%), parse: 1.72
+        (0.3%), extract_message_metadata: 23 (4.4%), get_uri_detail_list: 2.3
+        (0.5%), tests_pri_-1000: 25 (4.8%), tests_pri_-950: 1.65 (0.3%),
+        tests_pri_-900: 1.39 (0.3%), tests_pri_-90: 81 (15.8%), check_bayes:
+        78 (15.3%), b_tokenize: 16 (3.2%), b_tok_get_all: 9 (1.8%),
+        b_comp_prob: 2.3 (0.5%), b_tok_touch_all: 47 (9.1%), b_finish: 1.06
+        (0.2%), tests_pri_0: 332 (64.8%), check_dkim_signature: 0.75 (0.1%),
+        check_dkim_adsp: 18 (3.5%), poll_dns_idle: 0.34 (0.1%), tests_pri_10:
+        4.5 (0.9%), tests_pri_500: 25 (5.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH RFC PKS/PMEM 51/58] kernel: Utilize new kmap_thread()
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/9/20 12:50 PM, ira.weiny@intel.com wrote:
+ira.weiny@intel.com writes:
+
 > From: Ira Weiny <ira.weiny@intel.com>
-> 
-> The pmem driver uses a cached virtual address to access its memory
-> directly.  Because the nvdimm driver is well aware of the special
-> protections it has mapped memory with, we call dev_access_[en|dis]able()
-> around the direct pmem->virt_addr (pmem_addr) usage instead of the
-> unnecessary overhead of trying to get a page to kmap.
-> 
+>
+> This kmap() call is localized to a single thread.  To avoid the over
+> head of global PKRS updates use the new kmap_thread() call.
+
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+
+>
+> Cc: Eric Biederman <ebiederm@xmission.com>
 > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 > ---
->   drivers/nvdimm/pmem.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index fab29b514372..e4dc1ae990fc 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -148,7 +148,9 @@ static blk_status_t pmem_do_read(struct pmem_device *pmem,
->   	if (unlikely(is_bad_pmem(&pmem->bb, sector, len)))
->   		return BLK_STS_IOERR;
->   
-> +	dev_access_enable(false);
->   	rc = read_pmem(page, page_off, pmem_addr, len);
-> +	dev_access_disable(false);
-
-Hi Ira!
-
-The APIs should be tweaked to use a symbol (GLOBAL, PER_THREAD), instead of
-true/false. Try reading the above and you'll see that it sounds like it's
-doing the opposite of what it is ("enable_this(false)" sounds like a clumsy
-API design to *disable*, right?). And there is no hint about the scope.
-
-And it *could* be so much more readable like this:
-
-     dev_access_enable(DEV_ACCESS_THIS_THREAD);
-
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+>  kernel/kexec_core.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> index c19c0dad1ebe..272a9920c0d6 100644
+> --- a/kernel/kexec_core.c
+> +++ b/kernel/kexec_core.c
+> @@ -815,7 +815,7 @@ static int kimage_load_normal_segment(struct kimage *image,
+>  		if (result < 0)
+>  			goto out;
+>  
+> -		ptr = kmap(page);
+> +		ptr = kmap_thread(page);
+>  		/* Start with a clear page */
+>  		clear_page(ptr);
+>  		ptr += maddr & ~PAGE_MASK;
+> @@ -828,7 +828,7 @@ static int kimage_load_normal_segment(struct kimage *image,
+>  			memcpy(ptr, kbuf, uchunk);
+>  		else
+>  			result = copy_from_user(ptr, buf, uchunk);
+> -		kunmap(page);
+> +		kunmap_thread(page);
+>  		if (result) {
+>  			result = -EFAULT;
+>  			goto out;
+> @@ -879,7 +879,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>  			goto out;
+>  		}
+>  		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+> -		ptr = kmap(page);
+> +		ptr = kmap_thread(page);
+>  		ptr += maddr & ~PAGE_MASK;
+>  		mchunk = min_t(size_t, mbytes,
+>  				PAGE_SIZE - (maddr & ~PAGE_MASK));
+> @@ -895,7 +895,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>  		else
+>  			result = copy_from_user(ptr, buf, uchunk);
+>  		kexec_flush_icache_page(page);
+> -		kunmap(page);
+> +		kunmap_thread(page);
+>  		arch_kexec_pre_free_pages(page_address(page), 1);
+>  		if (result) {
+>  			result = -EFAULT;

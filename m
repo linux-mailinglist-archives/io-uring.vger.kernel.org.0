@@ -2,33 +2,30 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EAA5289CE6
-	for <lists+io-uring@lfdr.de>; Sat, 10 Oct 2020 03:12:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BB16289D50
+	for <lists+io-uring@lfdr.de>; Sat, 10 Oct 2020 03:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729376AbgJJBK6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 9 Oct 2020 21:10:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35146 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729044AbgJJAkf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Oct 2020 20:40:35 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37EE0C0613D9;
-        Fri,  9 Oct 2020 17:40:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wylOEgAZGPAkxCdlobMzyIfu/ZrVv1Os6TQldUFLziM=; b=F41ki3gR7FBgwnVausn+Ym7HP1
-        XlPOrKIoC49hpvUE9/aWBoH68sW9nzN+roolJxog6JtW0hinw+GJGJQweM2tJ1u8x4huOElOun4HX
-        OLG5RHoBoAf3CSIzFNHpVgsRU+TgTIZh4srysDUduyMdIIxPlPK5JA/amN/knuZnCqa9Zv6UObB0o
-        hZnMFz1K/YCtH1pW7cz6Th6CIA0I8ero69lmDRA42tDkhymN2BfqXsEeqYlbw/xTqpsZhH92AuKGR
-        +ciamleDZuZCDFfE/FcJg9XsXU418hEml49KDOM/rl5J3rO0lFNTAWXDAV5Z24k3Ay+VgEnmqYlhx
-        rI3nBVLQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kR2vS-0004My-FJ; Sat, 10 Oct 2020 00:39:54 +0000
-Date:   Sat, 10 Oct 2020 01:39:54 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
+        id S1729725AbgJJBqI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 9 Oct 2020 21:46:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59324 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728994AbgJJBak (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 9 Oct 2020 21:30:40 -0400
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E006206D9;
+        Sat, 10 Oct 2020 01:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602293439;
+        bh=sHFyDh52gnsvc+uI8yhUC5uDYbYkQCvra+rDiRMmAvs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kwaFsg+FwkcbT1hA6vX2rbzC7SEHg0ckV7q6+TfKUuTYp7lijGzsxhx1D9MfT9qZg
+         puzd9VwNUhNC7pSZTswv9TmxeVvsyOKe33XMZMPqVG5rfdvIuh+YhVfWI5Z4mrkh0S
+         V8+sp7izCEY2Jms4cmTCzh86mPIYz7uaZ6k3dzLQ=
+Date:   Fri, 9 Oct 2020 18:30:36 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     ira.weiny@intel.com, Andrew Morton <akpm@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
@@ -61,43 +58,57 @@ Cc:     ira.weiny@intel.com, Andrew Morton <akpm@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Subject: Re: [PATCH RFC PKS/PMEM 22/58] fs/f2fs: Utilize new kmap_thread()
-Message-ID: <20201010003954.GW20115@casper.infradead.org>
+Message-ID: <20201010013036.GD1122@sol.localdomain>
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
  <20201009195033.3208459-23-ira.weiny@intel.com>
  <20201009213434.GA839@sol.localdomain>
+ <20201010003954.GW20115@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201009213434.GA839@sol.localdomain>
+In-Reply-To: <20201010003954.GW20115@casper.infradead.org>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Oct 09, 2020 at 02:34:34PM -0700, Eric Biggers wrote:
-> On Fri, Oct 09, 2020 at 12:49:57PM -0700, ira.weiny@intel.com wrote:
-> > The kmap() calls in this FS are localized to a single thread.  To avoid
-> > the over head of global PKRS updates use the new kmap_thread() call.
-> >
-> > @@ -2410,12 +2410,12 @@ static inline struct page *f2fs_pagecache_get_page(
-> >  
-> >  static inline void f2fs_copy_page(struct page *src, struct page *dst)
-> >  {
-> > -	char *src_kaddr = kmap(src);
-> > -	char *dst_kaddr = kmap(dst);
-> > +	char *src_kaddr = kmap_thread(src);
-> > +	char *dst_kaddr = kmap_thread(dst);
-> >  
-> >  	memcpy(dst_kaddr, src_kaddr, PAGE_SIZE);
-> > -	kunmap(dst);
-> > -	kunmap(src);
-> > +	kunmap_thread(dst);
-> > +	kunmap_thread(src);
-> >  }
+On Sat, Oct 10, 2020 at 01:39:54AM +0100, Matthew Wilcox wrote:
+> On Fri, Oct 09, 2020 at 02:34:34PM -0700, Eric Biggers wrote:
+> > On Fri, Oct 09, 2020 at 12:49:57PM -0700, ira.weiny@intel.com wrote:
+> > > The kmap() calls in this FS are localized to a single thread.  To avoid
+> > > the over head of global PKRS updates use the new kmap_thread() call.
+> > >
+> > > @@ -2410,12 +2410,12 @@ static inline struct page *f2fs_pagecache_get_page(
+> > >  
+> > >  static inline void f2fs_copy_page(struct page *src, struct page *dst)
+> > >  {
+> > > -	char *src_kaddr = kmap(src);
+> > > -	char *dst_kaddr = kmap(dst);
+> > > +	char *src_kaddr = kmap_thread(src);
+> > > +	char *dst_kaddr = kmap_thread(dst);
+> > >  
+> > >  	memcpy(dst_kaddr, src_kaddr, PAGE_SIZE);
+> > > -	kunmap(dst);
+> > > -	kunmap(src);
+> > > +	kunmap_thread(dst);
+> > > +	kunmap_thread(src);
+> > >  }
+> > 
+> > Wouldn't it make more sense to switch cases like this to kmap_atomic()?
+> > The pages are only mapped to do a memcpy(), then they're immediately unmapped.
 > 
-> Wouldn't it make more sense to switch cases like this to kmap_atomic()?
-> The pages are only mapped to do a memcpy(), then they're immediately unmapped.
+> Maybe you missed the earlier thread from Thomas trying to do something
+> similar for rather different reasons ...
+> 
+> https://lore.kernel.org/lkml/20200919091751.011116649@linutronix.de/
 
-Maybe you missed the earlier thread from Thomas trying to do something
-similar for rather different reasons ...
+I did miss it.  I'm not subscribed to any of the mailing lists it was sent to.
 
-https://lore.kernel.org/lkml/20200919091751.011116649@linutronix.de/
+Anyway, it shouldn't matter.  Patchsets should be standalone, and not require
+reading random prior threads on linux-kernel to understand.
+
+And I still don't really understand.  After this patchset, there is still code
+nearly identical to the above (doing a temporary mapping just for a memcpy) that
+would still be using kmap_atomic().  Is the idea that later, such code will be
+converted to use kmap_thread() instead?  If not, why use one over the other?
+
+- Eric

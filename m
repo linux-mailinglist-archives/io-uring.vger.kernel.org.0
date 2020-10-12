@@ -2,93 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 732AC28BE3D
-	for <lists+io-uring@lfdr.de>; Mon, 12 Oct 2020 18:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0019528BF02
+	for <lists+io-uring@lfdr.de>; Mon, 12 Oct 2020 19:27:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390612AbgJLQox (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Oct 2020 12:44:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390257AbgJLQox (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Oct 2020 12:44:53 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BED7C0613D0;
-        Mon, 12 Oct 2020 09:44:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=l9dol8BjF52rFe8mzz85c9RZmeAYDZ2M1zPXpY3Bxec=; b=cjGmRDHB+K+xo1zaI46uR/JWZM
-        mu6b6OfRoAYfgdNA5Kf5Iurex6D1FcBZ+mRQhj12vLi3isoy7f1JrMIQOIfa61TejqqWEwpL43yKb
-        2mAeiG7QIg8Vb+ajA0gepoKbc6o17WQEzV+UWJKTyQWQStoFHb/kNJEfYbWmPc27vxrcwV1GpTL/g
-        cqcPit9vRB3f1Zs6upmREd44qhzYUWIO5sf13vXmWctx364S7GYQlJM4ZaGSBTPIwUKM8imQUHEl+
-        YU7Gj26Vo02zH0C4u7a3/EscApIpoLOe+KQejmiwTcRHTR/bJWdX/slhogDIyA7BDVBafjowKFz4j
-        1dyYxPzg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kS0wA-0004gO-8Q; Mon, 12 Oct 2020 16:44:38 +0000
-Date:   Mon, 12 Oct 2020 17:44:38 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, linux-aio@kvack.org,
-        linux-efi@vger.kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        target-devel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-kselftest@vger.kernel.org, samba-technical@lists.samba.org,
-        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org,
-        x86@kernel.org, amd-gfx@lists.freedesktop.org,
-        linux-afs@lists.infradead.org, cluster-devel@redhat.com,
-        linux-cachefs@redhat.com, intel-wired-lan@lists.osuosl.org,
-        xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org,
-        Fenghua Yu <fenghua.yu@intel.com>, ecryptfs@vger.kernel.org,
-        linux-um@lists.infradead.org, intel-gfx@lists.freedesktop.org,
-        linux-erofs@lists.ozlabs.org, reiserfs-devel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH RFC PKS/PMEM 22/58] fs/f2fs: Utilize new kmap_thread()
-Message-ID: <20201012164438.GA20115@casper.infradead.org>
-References: <20201009195033.3208459-1-ira.weiny@intel.com>
- <20201009195033.3208459-23-ira.weiny@intel.com>
- <20201009213434.GA839@sol.localdomain>
- <20201010003954.GW20115@casper.infradead.org>
- <20201010013036.GD1122@sol.localdomain>
- <20201012065635.GB2046448@iweiny-DESK2.sc.intel.com>
- <20201012161946.GA858@sol.localdomain>
- <5d621db9-23d4-e140-45eb-d7fca2093d2b@intel.com>
+        id S2404039AbgJLR1u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Oct 2020 13:27:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40582 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390753AbgJLR1u (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 12 Oct 2020 13:27:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 458A6AC6C;
+        Mon, 12 Oct 2020 17:27:49 +0000 (UTC)
+Date:   Mon, 12 Oct 2020 19:27:48 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Jens Axboe <axboe@kernel.dk>
+cc:     Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCHSET RFC v3 0/6] Add support for TIF_NOTIFY_SIGNAL
+In-Reply-To: <9a01ab10-3140-3fa6-0fcf-07d3179973f2@kernel.dk>
+Message-ID: <alpine.LSU.2.21.2010121921420.10435@pobox.suse.cz>
+References: <20201005150438.6628-1-axboe@kernel.dk> <20201008145610.GK9995@redhat.com> <alpine.LSU.2.21.2010090959260.23400@pobox.suse.cz> <e33ec671-3143-d720-176b-a8815996fd1c@kernel.dk> <9a01ab10-3140-3fa6-0fcf-07d3179973f2@kernel.dk>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5d621db9-23d4-e140-45eb-d7fca2093d2b@intel.com>
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Oct 12, 2020 at 09:28:29AM -0700, Dave Hansen wrote:
-> kmap_atomic() is always preferred over kmap()/kmap_thread().
-> kmap_atomic() is _much_ more lightweight since its TLB invalidation is
-> always CPU-local and never broadcast.
-> 
-> So, basically, unless you *must* sleep while the mapping is in place,
-> kmap_atomic() is preferred.
+On Sat, 10 Oct 2020, Jens Axboe wrote:
 
-But kmap_atomic() disables preemption, so the _ideal_ interface would map
-it only locally, then on preemption make it global.  I don't even know
-if that _can_ be done.  But this email makes it seem like kmap_atomic()
-has no downsides.
+> On 10/9/20 9:21 AM, Jens Axboe wrote:
+> > On 10/9/20 2:01 AM, Miroslav Benes wrote:
+> >> On Thu, 8 Oct 2020, Oleg Nesterov wrote:
+> >>
+> >>> On 10/05, Jens Axboe wrote:
+> >>>>
+> >>>> Hi,
+> >>>>
+> >>>> The goal is this patch series is to decouple TWA_SIGNAL based task_work
+> >>>> from real signals and signal delivery.
+> >>>
+> >>> I think TIF_NOTIFY_SIGNAL can have more users. Say, we can move
+> >>> try_to_freeze() from get_signal() to tracehook_notify_signal(), kill
+> >>> fake_signal_wake_up(), and remove freezing() from recalc_sigpending().
+> >>>
+> >>> Probably the same for TIF_PATCH_PENDING, klp_send_signals() can use
+> >>> set_notify_signal() rather than signal_wake_up().
+> >>
+> >> Yes, that was my impression from the patch set too, when I accidentally 
+> >> noticed it.
+> >>
+> >> Jens, could you CC our live patching ML when you submit v4, please? It 
+> >> would be a nice cleanup.
+> > 
+> > Definitely, though it'd be v5 at this point. But we really need to get
+> > all archs supporting TIF_NOTIFY_SIGNAL first. Once we have that, there's
+> > a whole slew of cleanups that'll fall out naturally:
+> > 
+> > - Removal of JOBCTL_TASK_WORK
+> > - Removal of special path for TWA_SIGNAL in task_work
+> > - TIF_PATCH_PENDING can be converted and then removed
+> > - try_to_freeze() cleanup that Oleg mentioned
+> > 
+> > And probably more I'm not thinking of right now :-)
+> 
+> Here's the current series, I took a stab at converting all archs to
+> support TIF_NOTIFY_SIGNAL so we have a base to build on top of. Most
+> of them were straight forward, but I need someone to fixup powerpc,
+> verify arm and s390.
+> 
+> But it's a decent start I think, and means that we can drop various
+> bits as is done at the end of the series. I could swap things around
+> a bit and avoid having the intermediate step, but I envision that
+> getting this in all archs will take a bit longer than just signing off
+> on the generic/x86 bits. So probably best to keep the series as it is
+> for now, and work on getting the arch bits verified/fixed/tested.
+> 
+> https://git.kernel.dk/cgit/linux-block/log/?h=tif-task_work
+
+Thanks, Jens.
+
+Crude diff for live patching on top of the series is below. Tested only on 
+x86_64, but it passes the tests without an issue.
+
+Miroslav
+
+---
+diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+index f6310f848f34..3a4beb9395c4 100644
+--- a/kernel/livepatch/transition.c
++++ b/kernel/livepatch/transition.c
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/cpu.h>
+ #include <linux/stacktrace.h>
++#include <linux/tracehook.h>
+ #include "core.h"
+ #include "patch.h"
+ #include "transition.h"
+@@ -369,9 +370,7 @@ static void klp_send_signals(void)
+                         * Send fake signal to all non-kthread tasks which are
+                         * still not migrated.
+                         */
+-                       spin_lock_irq(&task->sighand->siglock);
+-                       signal_wake_up(task, 0);
+-                       spin_unlock_irq(&task->sighand->siglock);
++                       set_notify_signal(task);
+                }
+        }
+        read_unlock(&tasklist_lock);
+diff --git a/kernel/signal.c b/kernel/signal.c
+index a15c584a0455..b7cf4eda8611 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -181,8 +181,7 @@ void recalc_sigpending_and_wake(struct task_struct *t)
+ 
+ void recalc_sigpending(void)
+ {
+-       if (!recalc_sigpending_tsk(current) && !freezing(current) &&
+-           !klp_patch_pending(current))
++       if (!recalc_sigpending_tsk(current) && !freezing(current))
+                clear_thread_flag(TIF_SIGPENDING);
+ 
+ }
+

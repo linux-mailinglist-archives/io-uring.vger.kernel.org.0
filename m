@@ -2,77 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BB2128D4F8
-	for <lists+io-uring@lfdr.de>; Tue, 13 Oct 2020 21:50:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C7E728D500
+	for <lists+io-uring@lfdr.de>; Tue, 13 Oct 2020 21:57:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732519AbgJMTut (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Oct 2020 15:50:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57436 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732504AbgJMTus (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Oct 2020 15:50:48 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA0CC0613D2
-        for <io-uring@vger.kernel.org>; Tue, 13 Oct 2020 12:50:48 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id f21so660622ljh.7
-        for <io-uring@vger.kernel.org>; Tue, 13 Oct 2020 12:50:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oStFpL1sAklg8aQ9yJTrzYQkDSOL/BdJXdvIHiiieQ4=;
-        b=EgxwghXHbFhUzfXmwnW3oWkcTuf9hghKJ+L0vimiZ2lNhz9ijKRICn6R1+VFJwxRfd
-         3DO4aIph84yByZbN+yybxkssHP/RBykec4Cl4VJE58xKoOtU7gZtEMDeQg0S2eROjjBH
-         rhqhqOEG94lka1wG1vNOxQhSRsutJq3Z20kn8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oStFpL1sAklg8aQ9yJTrzYQkDSOL/BdJXdvIHiiieQ4=;
-        b=YV+tEHykzqkqSnAoivG/kkRSxp9clLY70db34dYeFkXlw3KSRuC5lHkUe0KZd2RYr6
-         UzFozr4wgqzBkXaXp9vHyI6eoiVT8Zdbf9K4D3YnoBTHbBNhfqNToy973E+6jh0aKI5X
-         Lgc0v2uc7iop/gtjNa26g8aUVN5a7+wdt7ThcuyHlFXZEPXsw85koHqeWAWQHlFmnv+7
-         mPLzWLSmNa+evlHMOjNSP+FcG6mA5FDJ8WmEUNpiV10IS7eFegmqtKKlxwsN0jRPX/nW
-         N4SisU5/A9XTdbfDiG7ZCva/+jWP+b+d+K9PN0deF7doXE/B0klQTdJgTBqkB5Glzbl0
-         crCg==
-X-Gm-Message-State: AOAM532SAtEGz/utN23EgrN6taYQYyEz5ZVFiHdeBItYgtnHx+xy05CW
-        WkrVjmoGSmEn0yD+U0/acmrXYUl0ad3Xig==
-X-Google-Smtp-Source: ABdhPJyaP3hSpzGGIcRotdTj5m528IH0/fIh/5r2jqxqAHYCFMcqvisF99XzqzxU5byTA6oxsSrObg==
-X-Received: by 2002:a2e:a41b:: with SMTP id p27mr494817ljn.30.1602618646745;
-        Tue, 13 Oct 2020 12:50:46 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id z19sm240731lfr.46.2020.10.13.12.50.45
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Oct 2020 12:50:46 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id d24so1052722lfa.8
-        for <io-uring@vger.kernel.org>; Tue, 13 Oct 2020 12:50:45 -0700 (PDT)
-X-Received: by 2002:a19:cbcb:: with SMTP id b194mr322674lfg.133.1602618645500;
- Tue, 13 Oct 2020 12:50:45 -0700 (PDT)
+        id S1727986AbgJMT53 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Oct 2020 15:57:29 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:37861 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726848AbgJMT53 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Oct 2020 15:57:29 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UBxxpSw_1602619045;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UBxxpSw_1602619045)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 14 Oct 2020 03:57:26 +0800
+Subject: Re: Loophole in async page I/O
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     io-uring@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Jens Axboe <axboe@kernel.dk>
+References: <20201012211355.GC20115@casper.infradead.org>
+ <6e341fd1-bd2a-7774-5323-41f3a0531295@linux.alibaba.com>
+ <20201013120119.GD20115@casper.infradead.org>
+From:   Hao_Xu <haoxu@linux.alibaba.com>
+Message-ID: <34097eb9-c517-6ddb-1765-433e7d5083ed@linux.alibaba.com>
+Date:   Wed, 14 Oct 2020 03:57:25 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.3.2
 MIME-Version: 1.0
-References: <36a6706d-73e1-64e7-f1f8-8f5ef246d3ea@kernel.dk>
- <CAHk-=wgUjjxhe2qREhdDm5VYYmLJWG2e_-+rgChf1aBkBqmtHw@mail.gmail.com> <a81737e4-44da-cffc-cba0-8aec984df240@kernel.dk>
-In-Reply-To: <a81737e4-44da-cffc-cba0-8aec984df240@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 13 Oct 2020 12:50:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjAYpRhQkaFvqu+CnNcTHiMFrry_Ma6S8xGT_3BDEJkpA@mail.gmail.com>
-Message-ID: <CAHk-=wjAYpRhQkaFvqu+CnNcTHiMFrry_Ma6S8xGT_3BDEJkpA@mail.gmail.com>
-Subject: Re: [GIT PULL] io_uring updates for 5.10-rc1
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201013120119.GD20115@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 12:49 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> What clang are you using?
-
-I have a self-built clang version from their development tree, since
-I've been using it for the "asm goto with outputs" testing.
-
-But I bet this happens with just regular reasonably up-to-date clang too.
-
-            Linus
+在 2020/10/13 下午8:01, Matthew Wilcox 写道:
+> On Tue, Oct 13, 2020 at 01:13:48PM +0800, Hao_Xu wrote:
+>> 在 2020/10/13 上午5:13, Matthew Wilcox 写道:
+>>> This one's pretty unlikely, but there's a case in buffered reads where
+>>> an IOCB_WAITQ read can end up sleeping.
+>>>
+>>> generic_file_buffered_read():
+>>>                   page = find_get_page(mapping, index);
+>>> ...
+>>>                   if (!PageUptodate(page)) {
+>>> ...
+>>>                           if (iocb->ki_flags & IOCB_WAITQ) {
+>>> ...
+>>>                                   error = wait_on_page_locked_async(page,
+>>>                                                                   iocb->ki_waitq);
+>>> wait_on_page_locked_async():
+>>>           if (!PageLocked(page))
+>>>                   return 0;
+>>> (back to generic_file_buffered_read):
+>>>                           if (!mapping->a_ops->is_partially_uptodate(page,
+>>>                                                           offset, iter->count))
+>>>                                   goto page_not_up_to_date_locked;
+>>>
+>>> page_not_up_to_date_locked:
+>>>                   if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT)) {
+>>>                           unlock_page(page);
+>>>                           put_page(page);
+>>>                           goto would_block;
+>>>                   }
+>>> ...
+>>>                   error = mapping->a_ops->readpage(filp, page);
+>>> (will unlock page on I/O completion)
+>>>                   if (!PageUptodate(page)) {
+>>>                           error = lock_page_killable(page);
+>>>
+>>> So if we have IOCB_WAITQ set but IOCB_NOWAIT clear, we'll call ->readpage()
+>>> and wait for the I/O to complete.  I can't quite figure out if this is
+>>> intentional -- I think not; if I understand the semantics right, we
+>>> should be returning -EIOCBQUEUED and punting to an I/O thread to
+>>> kick off the I/O and wait.
+>>>
+>>> I think the right fix is to return -EIOCBQUEUED from
+>>> wait_on_page_locked_async() if the page isn't locked.  ie this:
+>>>
+>>> @@ -1258,7 +1258,7 @@ static int wait_on_page_locked_async(struct page *page,
+>>>                                        struct wait_page_queue *wait)
+>>>    {
+>>>           if (!PageLocked(page))
+>>> -               return 0;
+>>> +               return -EIOCBQUEUED;
+>>>           return __wait_on_page_locked_async(compound_head(page), wait, false);
+>>>    }
+>>> But as I said, I'm not sure what the semantics are supposed to be.
+>>>
+>> Hi Matthew,
+>> which kernel version are you use, I believe I've fixed this case in the
+>> commit c8d317aa1887b40b188ec3aaa6e9e524333caed1
+> 
+> Ah, I don't have that commit in my tree.
+> 
+> Nevertheless, there is still a problem.  The ->readpage implementation
+> is not required to execute asynchronously.  For example, it may enter
+> page reclaim by using GFP_KERNEL.  Indeed, I feel it is better if it
+> works synchronously as it can then report the actual error from an I/O
+> instead of the almost-meaningless -EIO.
+> 
+> This patch series documents 12 filesystems which implement ->readpage
+> in a synchronous way today (for at least some cases) and converts iomap
+> to be synchronous (making two more filesystems synchronous).
+> 
+> https://lore.kernel.org/linux-fsdevel/20201009143104.22673-1-willy@infradead.org/
+> 
+Thanks, Matthew. I didn't have this knowledge before, thank you for your 
+share and information. It's really kind of you. I'll look into it soon.

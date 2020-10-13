@@ -2,116 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E29228CDA3
-	for <lists+io-uring@lfdr.de>; Tue, 13 Oct 2020 14:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A69F28D0B4
+	for <lists+io-uring@lfdr.de>; Tue, 13 Oct 2020 16:54:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbgJMMBZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Oct 2020 08:01:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41408 "EHLO
+        id S1726428AbgJMOyO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Oct 2020 10:54:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728880AbgJMMBW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Oct 2020 08:01:22 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17DD1C0613D0
-        for <io-uring@vger.kernel.org>; Tue, 13 Oct 2020 05:01:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=nGSQDj4jA0m6sANkGtqZGLzb1UI0qYH2Ar16VGRbXF4=; b=csFRzz8WMszJ5i6gxkQGMgqTD6
-        /LvPP7UhO/574MHoHGQ1DSaFJZbURVNqhiR4Dkf3qDKdog/Hwf+SZaAK3klEoP8JzlAhD+jCSt2eQ
-        GubisM65AP9UzOo6H1Z9UYe8bDMA+INWD+HotblhC3SP/DCFwvXXz7vig+lgxlengw0417Sib9xL8
-        dIX6dGGL9Vs/w0Eir2FRV2b3lWNQqJ6lfc/anFlE6p/CjkC/9+Y3rOIXFApjBw/WV/LgoHgHNauIT
-        y/m+JrqDtEno/9IsLa5ivTpgcb5QwW9hVTLHu1G5Q9iFMIFCkt+To18ebXTi1Lu8cLLY3RzavV6ZU
-        abJGshEA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSIzX-0004IL-Oq; Tue, 13 Oct 2020 12:01:19 +0000
-Date:   Tue, 13 Oct 2020 13:01:19 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hao_Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: Loophole in async page I/O
-Message-ID: <20201013120119.GD20115@casper.infradead.org>
-References: <20201012211355.GC20115@casper.infradead.org>
- <6e341fd1-bd2a-7774-5323-41f3a0531295@linux.alibaba.com>
+        with ESMTP id S1726371AbgJMOyO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Oct 2020 10:54:14 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92DE3C0613D0
+        for <io-uring@vger.kernel.org>; Tue, 13 Oct 2020 07:54:12 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id l16so24994ilj.9
+        for <io-uring@vger.kernel.org>; Tue, 13 Oct 2020 07:54:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=aEM+DQgIP9xjX2uWYnX4NfT9JoK1ZQgw7DpN3I7DuYA=;
+        b=qyYsuwhmwI+z3TLs6CSxbw2TXiU3aOx03thl3xVMy7/kak9ileXyLS7uo95lotUvYc
+         fLEjUTnqg001NRaChPz/IEJ2nZUnTY/VXur0nsAuGveipEaH0sfP532URnK/bN6REY4T
+         o8vKBBfjLlYOxlDn13RSh7EPjbI/CGsgmFac1gKIPhhMwYaiEgKdkpnbUG/6tJm9V9O5
+         XwHyvcZ6x4hNY8D+pwybeqDfNMzC9MuhNCgTZXQG4fyXDCkqiG+hqKqR8iDtctjfec27
+         JMP7v/WBjfq9kyFNQdlA8CYCaVNIHfgPMPTwrhNtnErZdC1vq9KkhRIQnJQPJub/a5vh
+         9vQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aEM+DQgIP9xjX2uWYnX4NfT9JoK1ZQgw7DpN3I7DuYA=;
+        b=KKQK6u/ZTq2/skv02OJ+T9CZ8Jl/+G4mmfnzBT2asCsLQW8l0MS67UJ40U6tcf7z7N
+         RgjdFacpr+1qu1q/9DnDV+jEAQBVZNu79b7xU2MGNyAQexNKMmd4BNcNdFB1KvzAsfM7
+         UDN+Ry0vXrqE/lzHuq8/zKC19ByCrWxmQVR/VNRkGXhHuzO6Xg9E3RnMkMZdmmTlN6/G
+         KeGFjGO84r0Xyt67KYV6+6AN1ePtHiAjHWQ7s51jPaYwimQnmvAcrhqqjk9xwMGaKqpX
+         Ad1teeBkmBJuoBXJpBHrcQ0s7qm+9AIdRAcHCnNLLI56UNBbfk9lAnakskNzs0/bJ+T+
+         y7Qw==
+X-Gm-Message-State: AOAM532NLJ0XyMgAUxF6nMMZtHgYZfwYR91amLHTCKhjRP7tbOODH2Zu
+        jFZB2qSGfoLbpFFmBIhGKKtotZQxjuZSsA==
+X-Google-Smtp-Source: ABdhPJyr56N7j1cVd1yN6s//GZ07z58dC2AFJ/iWaRzQqqj5EFKIlpkLLaE/vAR3TOIIzkSmxqLsXA==
+X-Received: by 2002:a05:6e02:e4f:: with SMTP id l15mr289475ilk.142.1602600851310;
+        Tue, 13 Oct 2020 07:54:11 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id e11sm42347ilp.7.2020.10.13.07.54.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Oct 2020 07:54:10 -0700 (PDT)
+Subject: Re: [PATCH 3/5] io_uring: don't put a poll req under spinlock
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1602577875.git.asml.silence@gmail.com>
+ <a723ec3fb07e906f28631d3a67b4d125b513b9ee.1602577875.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <04f2d94c-0e75-b251-e244-b7ac95863862@kernel.dk>
+Date:   Tue, 13 Oct 2020 08:54:10 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <a723ec3fb07e906f28631d3a67b4d125b513b9ee.1602577875.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6e341fd1-bd2a-7774-5323-41f3a0531295@linux.alibaba.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 01:13:48PM +0800, Hao_Xu wrote:
-> 在 2020/10/13 上午5:13, Matthew Wilcox 写道:
-> > This one's pretty unlikely, but there's a case in buffered reads where
-> > an IOCB_WAITQ read can end up sleeping.
-> > 
-> > generic_file_buffered_read():
-> >                  page = find_get_page(mapping, index);
-> > ...
-> >                  if (!PageUptodate(page)) {
-> > ...
-> >                          if (iocb->ki_flags & IOCB_WAITQ) {
-> > ...
-> >                                  error = wait_on_page_locked_async(page,
-> >                                                                  iocb->ki_waitq);
-> > wait_on_page_locked_async():
-> >          if (!PageLocked(page))
-> >                  return 0;
-> > (back to generic_file_buffered_read):
-> >                          if (!mapping->a_ops->is_partially_uptodate(page,
-> >                                                          offset, iter->count))
-> >                                  goto page_not_up_to_date_locked;
-> > 
-> > page_not_up_to_date_locked:
-> >                  if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT)) {
-> >                          unlock_page(page);
-> >                          put_page(page);
-> >                          goto would_block;
-> >                  }
-> > ...
-> >                  error = mapping->a_ops->readpage(filp, page);
-> > (will unlock page on I/O completion)
-> >                  if (!PageUptodate(page)) {
-> >                          error = lock_page_killable(page);
-> > 
-> > So if we have IOCB_WAITQ set but IOCB_NOWAIT clear, we'll call ->readpage()
-> > and wait for the I/O to complete.  I can't quite figure out if this is
-> > intentional -- I think not; if I understand the semantics right, we
-> > should be returning -EIOCBQUEUED and punting to an I/O thread to
-> > kick off the I/O and wait.
-> > 
-> > I think the right fix is to return -EIOCBQUEUED from
-> > wait_on_page_locked_async() if the page isn't locked.  ie this:
-> > 
-> > @@ -1258,7 +1258,7 @@ static int wait_on_page_locked_async(struct page *page,
-> >                                       struct wait_page_queue *wait)
-> >   {
-> >          if (!PageLocked(page))
-> > -               return 0;
-> > +               return -EIOCBQUEUED;
-> >          return __wait_on_page_locked_async(compound_head(page), wait, false);
-> >   }
-> > But as I said, I'm not sure what the semantics are supposed to be.
-> > 
-> Hi Matthew,
-> which kernel version are you use, I believe I've fixed this case in the
-> commit c8d317aa1887b40b188ec3aaa6e9e524333caed1
+On 10/13/20 2:43 AM, Pavel Begunkov wrote:
+> Move io_put_req() in io_poll_task_handler() from under spinlock. That's
+> a good rule to minimise time within spinlock sections, and
+> performance-wise it should affect only rare cases/slow-path.
 
-Ah, I don't have that commit in my tree.
+It's actually more important not to bounce on the lock, especially
+when the extra path isn't that long. You'll end up with the same hold
+time, just split, but the downside is that you'll dirty that lock twice
+instead of one.
 
-Nevertheless, there is still a problem.  The ->readpage implementation
-is not required to execute asynchronously.  For example, it may enter
-page reclaim by using GFP_KERNEL.  Indeed, I feel it is better if it
-works synchronously as it can then report the actual error from an I/O
-instead of the almost-meaningless -EIO.
+So while I think the patch is fine as it avoids REQ_F_COMP_LOCKED,
+I don't think the commit message really reflects reality. I'll
+adjust it a bit.
 
-This patch series documents 12 filesystems which implement ->readpage
-in a synchronous way today (for at least some cases) and converts iomap
-to be synchronous (making two more filesystems synchronous).
-
-https://lore.kernel.org/linux-fsdevel/20201009143104.22673-1-willy@infradead.org/
+-- 
+Jens Axboe
 

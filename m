@@ -2,88 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0B9528CC74
-	for <lists+io-uring@lfdr.de>; Tue, 13 Oct 2020 13:26:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E29228CDA3
+	for <lists+io-uring@lfdr.de>; Tue, 13 Oct 2020 14:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgJML0G (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Oct 2020 07:26:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35930 "EHLO
+        id S1727440AbgJMMBZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Oct 2020 08:01:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbgJML0F (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Oct 2020 07:26:05 -0400
+        with ESMTP id S1728880AbgJMMBW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Oct 2020 08:01:22 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BDA2C0613D0;
-        Tue, 13 Oct 2020 04:26:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17DD1C0613D0
+        for <io-uring@vger.kernel.org>; Tue, 13 Oct 2020 05:01:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ap+vugPRXoOSJhloW5EJc9FGxy9ZwiLwbnG+7+pEMhA=; b=a/Sp1GZZiVtkIrsbDZFKKgQTkQ
-        FS+JHTt9pp+5vCrBdk0ac5b7U8ZgZGFScrKiULCJv4PZD4wWqOSzzq06ZoGh/8vFLI33VuvYYBdii
-        wZ4VlXJvl5fnmlD+q4pIJJmvrTs/0jX/FIDmEAYUX2+Mt6vIwB3sAbRYRgWIA8hB4i4EWyZuWPFOQ
-        rIaV+GwSaVBgBLKvO/SsFSj7I46VHFxg38PLmJQ+Oh1DkRIQcIx5NIWLGcWnDXshQ14JMdlpURiF2
-        LxyBxRGv+1Wkfh31jf6dzRr+U4xHgvz3PsshAxeZoaF0OQPY6Fl5VA2XZOxLonra6CTBCfgsfUBp/
-        6eTYHzgA==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSIR6-0001VK-7P; Tue, 13 Oct 2020 11:25:44 +0000
-Date:   Tue, 13 Oct 2020 12:25:44 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     ira.weiny@intel.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
-        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
-        reiserfs-devel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
-        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
-Subject: Re: [PATCH RFC PKS/PMEM 24/58] fs/freevxfs: Utilize new kmap_thread()
-Message-ID: <20201013112544.GA5249@infradead.org>
-References: <20201009195033.3208459-1-ira.weiny@intel.com>
- <20201009195033.3208459-25-ira.weiny@intel.com>
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=nGSQDj4jA0m6sANkGtqZGLzb1UI0qYH2Ar16VGRbXF4=; b=csFRzz8WMszJ5i6gxkQGMgqTD6
+        /LvPP7UhO/574MHoHGQ1DSaFJZbURVNqhiR4Dkf3qDKdog/Hwf+SZaAK3klEoP8JzlAhD+jCSt2eQ
+        GubisM65AP9UzOo6H1Z9UYe8bDMA+INWD+HotblhC3SP/DCFwvXXz7vig+lgxlengw0417Sib9xL8
+        dIX6dGGL9Vs/w0Eir2FRV2b3lWNQqJ6lfc/anFlE6p/CjkC/9+Y3rOIXFApjBw/WV/LgoHgHNauIT
+        y/m+JrqDtEno/9IsLa5ivTpgcb5QwW9hVTLHu1G5Q9iFMIFCkt+To18ebXTi1Lu8cLLY3RzavV6ZU
+        abJGshEA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kSIzX-0004IL-Oq; Tue, 13 Oct 2020 12:01:19 +0000
+Date:   Tue, 13 Oct 2020 13:01:19 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hao_Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: Loophole in async page I/O
+Message-ID: <20201013120119.GD20115@casper.infradead.org>
+References: <20201012211355.GC20115@casper.infradead.org>
+ <6e341fd1-bd2a-7774-5323-41f3a0531295@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201009195033.3208459-25-ira.weiny@intel.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6e341fd1-bd2a-7774-5323-41f3a0531295@linux.alibaba.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> -	kaddr = kmap(pp);
-> +	kaddr = kmap_thread(pp);
->  	memcpy(kaddr, vip->vii_immed.vi_immed + offset, PAGE_SIZE);
-> -	kunmap(pp);
-> +	kunmap_thread(pp);
+On Tue, Oct 13, 2020 at 01:13:48PM +0800, Hao_Xu wrote:
+> 在 2020/10/13 上午5:13, Matthew Wilcox 写道:
+> > This one's pretty unlikely, but there's a case in buffered reads where
+> > an IOCB_WAITQ read can end up sleeping.
+> > 
+> > generic_file_buffered_read():
+> >                  page = find_get_page(mapping, index);
+> > ...
+> >                  if (!PageUptodate(page)) {
+> > ...
+> >                          if (iocb->ki_flags & IOCB_WAITQ) {
+> > ...
+> >                                  error = wait_on_page_locked_async(page,
+> >                                                                  iocb->ki_waitq);
+> > wait_on_page_locked_async():
+> >          if (!PageLocked(page))
+> >                  return 0;
+> > (back to generic_file_buffered_read):
+> >                          if (!mapping->a_ops->is_partially_uptodate(page,
+> >                                                          offset, iter->count))
+> >                                  goto page_not_up_to_date_locked;
+> > 
+> > page_not_up_to_date_locked:
+> >                  if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT)) {
+> >                          unlock_page(page);
+> >                          put_page(page);
+> >                          goto would_block;
+> >                  }
+> > ...
+> >                  error = mapping->a_ops->readpage(filp, page);
+> > (will unlock page on I/O completion)
+> >                  if (!PageUptodate(page)) {
+> >                          error = lock_page_killable(page);
+> > 
+> > So if we have IOCB_WAITQ set but IOCB_NOWAIT clear, we'll call ->readpage()
+> > and wait for the I/O to complete.  I can't quite figure out if this is
+> > intentional -- I think not; if I understand the semantics right, we
+> > should be returning -EIOCBQUEUED and punting to an I/O thread to
+> > kick off the I/O and wait.
+> > 
+> > I think the right fix is to return -EIOCBQUEUED from
+> > wait_on_page_locked_async() if the page isn't locked.  ie this:
+> > 
+> > @@ -1258,7 +1258,7 @@ static int wait_on_page_locked_async(struct page *page,
+> >                                       struct wait_page_queue *wait)
+> >   {
+> >          if (!PageLocked(page))
+> > -               return 0;
+> > +               return -EIOCBQUEUED;
+> >          return __wait_on_page_locked_async(compound_head(page), wait, false);
+> >   }
+> > But as I said, I'm not sure what the semantics are supposed to be.
+> > 
+> Hi Matthew,
+> which kernel version are you use, I believe I've fixed this case in the
+> commit c8d317aa1887b40b188ec3aaa6e9e524333caed1
 
-You only Cced me on this particular patch, which means I have absolutely
-no idea what kmap_thread and kunmap_thread actually do, and thus can't
-provide an informed review.
+Ah, I don't have that commit in my tree.
 
-That being said I think your life would be a lot easier if you add
-helpers for the above code sequence and its counterpart that copies
-to a potential hughmem page first, as that hides the implementation
-details from most users.
+Nevertheless, there is still a problem.  The ->readpage implementation
+is not required to execute asynchronously.  For example, it may enter
+page reclaim by using GFP_KERNEL.  Indeed, I feel it is better if it
+works synchronously as it can then report the actual error from an I/O
+instead of the almost-meaningless -EIO.
+
+This patch series documents 12 filesystems which implement ->readpage
+in a synchronous way today (for at least some cases) and converts iomap
+to be synchronous (making two more filesystems synchronous).
+
+https://lore.kernel.org/linux-fsdevel/20201009143104.22673-1-willy@infradead.org/
+

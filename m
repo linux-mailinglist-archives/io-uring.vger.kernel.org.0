@@ -2,110 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C7E728D500
-	for <lists+io-uring@lfdr.de>; Tue, 13 Oct 2020 21:57:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC6DC28D50A
+	for <lists+io-uring@lfdr.de>; Tue, 13 Oct 2020 22:02:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbgJMT53 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Oct 2020 15:57:29 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:37861 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726848AbgJMT53 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Oct 2020 15:57:29 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UBxxpSw_1602619045;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UBxxpSw_1602619045)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 14 Oct 2020 03:57:26 +0800
-Subject: Re: Loophole in async page I/O
+        id S1727159AbgJMUC2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Oct 2020 16:02:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59232 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbgJMUC2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Oct 2020 16:02:28 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7997C061755;
+        Tue, 13 Oct 2020 13:02:27 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kSQUX-00H96b-NT; Tue, 13 Oct 2020 20:01:49 +0000
+Date:   Tue, 13 Oct 2020 21:01:49 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Matthew Wilcox <willy@infradead.org>
-Cc:     io-uring@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>
-References: <20201012211355.GC20115@casper.infradead.org>
- <6e341fd1-bd2a-7774-5323-41f3a0531295@linux.alibaba.com>
- <20201013120119.GD20115@casper.infradead.org>
-From:   Hao_Xu <haoxu@linux.alibaba.com>
-Message-ID: <34097eb9-c517-6ddb-1765-433e7d5083ed@linux.alibaba.com>
-Date:   Wed, 14 Oct 2020 03:57:25 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.3.2
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Pitre <nico@fluxnic.net>, X86 ML <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, linux-kselftest@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, bpf@vger.kernel.org,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
+        devel@driverdev.osuosl.org, linux-efi <linux-efi@vger.kernel.org>,
+        linux-mmc@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
+        target-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
+        reiserfs-devel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-afs@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, intel-gfx@lists.freedesktop.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        linux-cachefs@redhat.com, samba-technical@lists.samba.org,
+        intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH RFC PKS/PMEM 33/58] fs/cramfs: Utilize new kmap_thread()
+Message-ID: <20201013200149.GI3576660@ZenIV.linux.org.uk>
+References: <20201009195033.3208459-1-ira.weiny@intel.com>
+ <20201009195033.3208459-34-ira.weiny@intel.com>
+ <CAPcyv4gL3jfw4d+SJGPqAD3Dp4F_K=X3domuN4ndAA1FQDGcPg@mail.gmail.com>
+ <20201013193643.GK20115@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20201013120119.GD20115@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201013193643.GK20115@casper.infradead.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2020/10/13 下午8:01, Matthew Wilcox 写道:
-> On Tue, Oct 13, 2020 at 01:13:48PM +0800, Hao_Xu wrote:
->> 在 2020/10/13 上午5:13, Matthew Wilcox 写道:
->>> This one's pretty unlikely, but there's a case in buffered reads where
->>> an IOCB_WAITQ read can end up sleeping.
->>>
->>> generic_file_buffered_read():
->>>                   page = find_get_page(mapping, index);
->>> ...
->>>                   if (!PageUptodate(page)) {
->>> ...
->>>                           if (iocb->ki_flags & IOCB_WAITQ) {
->>> ...
->>>                                   error = wait_on_page_locked_async(page,
->>>                                                                   iocb->ki_waitq);
->>> wait_on_page_locked_async():
->>>           if (!PageLocked(page))
->>>                   return 0;
->>> (back to generic_file_buffered_read):
->>>                           if (!mapping->a_ops->is_partially_uptodate(page,
->>>                                                           offset, iter->count))
->>>                                   goto page_not_up_to_date_locked;
->>>
->>> page_not_up_to_date_locked:
->>>                   if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT)) {
->>>                           unlock_page(page);
->>>                           put_page(page);
->>>                           goto would_block;
->>>                   }
->>> ...
->>>                   error = mapping->a_ops->readpage(filp, page);
->>> (will unlock page on I/O completion)
->>>                   if (!PageUptodate(page)) {
->>>                           error = lock_page_killable(page);
->>>
->>> So if we have IOCB_WAITQ set but IOCB_NOWAIT clear, we'll call ->readpage()
->>> and wait for the I/O to complete.  I can't quite figure out if this is
->>> intentional -- I think not; if I understand the semantics right, we
->>> should be returning -EIOCBQUEUED and punting to an I/O thread to
->>> kick off the I/O and wait.
->>>
->>> I think the right fix is to return -EIOCBQUEUED from
->>> wait_on_page_locked_async() if the page isn't locked.  ie this:
->>>
->>> @@ -1258,7 +1258,7 @@ static int wait_on_page_locked_async(struct page *page,
->>>                                        struct wait_page_queue *wait)
->>>    {
->>>           if (!PageLocked(page))
->>> -               return 0;
->>> +               return -EIOCBQUEUED;
->>>           return __wait_on_page_locked_async(compound_head(page), wait, false);
->>>    }
->>> But as I said, I'm not sure what the semantics are supposed to be.
->>>
->> Hi Matthew,
->> which kernel version are you use, I believe I've fixed this case in the
->> commit c8d317aa1887b40b188ec3aaa6e9e524333caed1
+On Tue, Oct 13, 2020 at 08:36:43PM +0100, Matthew Wilcox wrote:
+
+> static inline void copy_to_highpage(struct page *to, void *vfrom, unsigned int size)
+> {
+> 	char *vto = kmap_atomic(to);
 > 
-> Ah, I don't have that commit in my tree.
+> 	memcpy(vto, vfrom, size);
+> 	kunmap_atomic(vto);
+> }
 > 
-> Nevertheless, there is still a problem.  The ->readpage implementation
-> is not required to execute asynchronously.  For example, it may enter
-> page reclaim by using GFP_KERNEL.  Indeed, I feel it is better if it
-> works synchronously as it can then report the actual error from an I/O
-> instead of the almost-meaningless -EIO.
-> 
-> This patch series documents 12 filesystems which implement ->readpage
-> in a synchronous way today (for at least some cases) and converts iomap
-> to be synchronous (making two more filesystems synchronous).
-> 
-> https://lore.kernel.org/linux-fsdevel/20201009143104.22673-1-willy@infradead.org/
-> 
-Thanks, Matthew. I didn't have this knowledge before, thank you for your 
-share and information. It's really kind of you. I'll look into it soon.
+> in linux/highmem.h ?
+
+You mean, like
+static void memcpy_from_page(char *to, struct page *page, size_t offset, size_t len)
+{
+        char *from = kmap_atomic(page);
+        memcpy(to, from + offset, len);
+        kunmap_atomic(from);
+}
+
+static void memcpy_to_page(struct page *page, size_t offset, const char *from, size_t len)
+{
+        char *to = kmap_atomic(page);
+        memcpy(to + offset, from, len);
+        kunmap_atomic(to);
+}
+
+static void memzero_page(struct page *page, size_t offset, size_t len)
+{
+        char *addr = kmap_atomic(page);
+        memset(addr + offset, 0, len);
+        kunmap_atomic(addr);
+}
+
+in lib/iov_iter.c?  FWIW, I don't like that "highpage" in the name and
+highmem.h as location - these make perfect sense regardless of highmem;
+they are normal memory operations with page + offset used instead of
+a pointer...

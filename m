@@ -2,98 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C30F28D5E7
-	for <lists+io-uring@lfdr.de>; Tue, 13 Oct 2020 22:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0453628D612
+	for <lists+io-uring@lfdr.de>; Tue, 13 Oct 2020 23:01:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbgJMUxi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Oct 2020 16:53:38 -0400
-Received: from mga17.intel.com ([192.55.52.151]:54071 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbgJMUxi (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Tue, 13 Oct 2020 16:53:38 -0400
-IronPort-SDR: gI8MkOnOGO61aP07XY6CCWHG9J8FvCUX/dOJGBzQnYJFTP4ej18aKmY+Fn52D+I38Lw4zhRGT9
- RQaSxhwXc52g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="145845033"
-X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="145845033"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 13:53:36 -0700
-IronPort-SDR: 6pC5EU5QwoXbsJ9AhSALdpEnefHex0iyEFu7THvX1eaSFNd77CbWePaQQdxa3yUvYDZ6VBgRvg
- Vwn0OOQPMwwA==
-X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="313946459"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 13:53:35 -0700
-Date:   Tue, 13 Oct 2020 13:52:49 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
-        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
-        reiserfs-devel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
-        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
-Subject: Re: [PATCH RFC PKS/PMEM 24/58] fs/freevxfs: Utilize new kmap_thread()
-Message-ID: <20201013205248.GJ2046448@iweiny-DESK2.sc.intel.com>
-References: <20201009195033.3208459-1-ira.weiny@intel.com>
- <20201009195033.3208459-25-ira.weiny@intel.com>
- <20201013112544.GA5249@infradead.org>
+        id S1726878AbgJMVA7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Oct 2020 17:00:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40040 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbgJMVA6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Oct 2020 17:00:58 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD054C061755
+        for <io-uring@vger.kernel.org>; Tue, 13 Oct 2020 14:00:58 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id a17so134707pju.1
+        for <io-uring@vger.kernel.org>; Tue, 13 Oct 2020 14:00:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=35KdctzIrSBX2mg6IoDLEL1qwd4y1P4GeBRmVWUjxAk=;
+        b=HeWN9uPQx7edJWlSQV4WI0zrWQ/4+cArpAu3sGJzpjcHnYQ0RnSUocrK3ge2ZhP+JZ
+         pLdBt+dUNJnbCEL69MledzokOcmLYb/1KxvXSF0vIQVM6auH0A93k8npU/x5A/70Wgdc
+         kRz36KHAFHQfQ3LGJQvkx9Kf2CWbZ6Buq6FDeE410jyTdKtKhIxm5DpSI/3nkNqC4Oy9
+         RJwWPbTbI568Rnxj0eSOZBz2K3C00UBe8bj41TjbemrjlgZXYj49soVw+vhFPFSBqG7c
+         nxbyRNrltQ/AhA9qQuwFJoE5MtmukSIXVwZ38A91olrtAAhztZSxG3QKdUWpMbLKz7qh
+         pnrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=35KdctzIrSBX2mg6IoDLEL1qwd4y1P4GeBRmVWUjxAk=;
+        b=BRfr7CV+Mp/TEDZKznWlf9X0CxKCQzTLBxPeQcA/7v9QO5zRImUeL5GEGSTyA5RGcR
+         DovAoqW50FMYpYl+7pM9b07C4vT+I5vvwHkHXfQ+DnGsS80WRFngNh1QZaVijOGUVSQt
+         Ltsuh0BXrlmrFDrwDxFlPxZlDmazvDoghWSUXAptIUhTvXRsNSeQu9aIMfpMrCkfRZVm
+         2+PeccarjXHYp8geEQeSD5DaCxIT4sZAunuY8pMGBDHaRWdcu5/I5MKpsmRxh0SynY86
+         oWKJd5sH4WlwjHV7bx7wZzfbTthcmFjdqZRFYttJLCp7KeidsZjpEhqrX7EB4xb0fF0o
+         wf+g==
+X-Gm-Message-State: AOAM532f62gwdpov3E+sogPaSu6Ow4d7BIz5CxIVwQt6uACFDeQqshCX
+        SnCasmM9RdWOTSyp8fsBx6wKyw==
+X-Google-Smtp-Source: ABdhPJzEkiDHxZwinBbb70w4edrvZ5KbQj6DFDmXtrUEZVKUuoLWH+/LYYGiHOx3TfcYkg9gL17jTA==
+X-Received: by 2002:a17:902:c313:b029:d4:b6ac:7b5a with SMTP id k19-20020a170902c313b02900d4b6ac7b5amr1523992plx.39.1602622858128;
+        Tue, 13 Oct 2020 14:00:58 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id l18sm548332pfd.210.2020.10.13.14.00.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Oct 2020 14:00:57 -0700 (PDT)
+Subject: Re: [GIT PULL] io_uring updates for 5.10-rc1
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <36a6706d-73e1-64e7-f1f8-8f5ef246d3ea@kernel.dk>
+ <CAHk-=wgUjjxhe2qREhdDm5VYYmLJWG2e_-+rgChf1aBkBqmtHw@mail.gmail.com>
+ <a81737e4-44da-cffc-cba0-8aec984df240@kernel.dk>
+ <3e37f236-c0ce-abb0-fa89-2118dd18d042@rasmusvillemoes.dk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7f2c7699-b8f4-3b50-d1c9-beeb429e32e4@kernel.dk>
+Date:   Tue, 13 Oct 2020 15:00:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201013112544.GA5249@infradead.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <3e37f236-c0ce-abb0-fa89-2118dd18d042@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 12:25:44PM +0100, Christoph Hellwig wrote:
-> > -	kaddr = kmap(pp);
-> > +	kaddr = kmap_thread(pp);
-> >  	memcpy(kaddr, vip->vii_immed.vi_immed + offset, PAGE_SIZE);
-> > -	kunmap(pp);
-> > +	kunmap_thread(pp);
+On 10/13/20 2:49 PM, Rasmus Villemoes wrote:
+> On 13/10/2020 21.49, Jens Axboe wrote:
+>> On 10/13/20 1:46 PM, Linus Torvalds wrote:
+>>> On Mon, Oct 12, 2020 at 6:46 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>> Here are the io_uring updates for 5.10.
+>>>
+>>> Very strange. My clang build gives a warning I've never seen before:
+>>>
+>>>    /tmp/io_uring-dd40c4.s:26476: Warning: ignoring changed section
+>>> attributes for .data..read_mostly
+>>>
+>>> and looking at what clang generates for the *.s file, it seems to be
+>>> the "section" line in:
+>>>
+>>>         .type   io_op_defs,@object      # @io_op_defs
+>>>         .section        .data..read_mostly,"a",@progbits
+>>>         .p2align        4
+>>>
+>>> I think it's the combination of "const" and "__read_mostly".
+>>>
+>>> I think the warning is sensible: how can a piece of data be both
+>>> "const" and "__read_mostly"? If it's "const", then it's not "mostly"
+>>> read - it had better be _always_ read.
+>>>
+>>> I'm letting it go, and I've pulled this (gcc doesn't complain), but
+>>> please have a look.
+>>
+>> Huh weird, I'll take a look. FWIW, the construct isn't unique across
+>> the kernel.
 > 
-> You only Cced me on this particular patch, which means I have absolutely
-> no idea what kmap_thread and kunmap_thread actually do, and thus can't
-> provide an informed review.
+> Citation needed. There's lots of "pointer to const foo" stuff declared
+> as __read_mostly, but I can't find any objects that are themselves both
+> const and __read_mostly. Other than that io_op_defs and io_uring_fops now.
 
-Sorry the list was so big I struggled with who to CC and on which patches.
+You are right, they are all pointers, so not the same. I'll just revert
+the patch.
 
-> 
-> That being said I think your life would be a lot easier if you add
-> helpers for the above code sequence and its counterpart that copies
-> to a potential hughmem page first, as that hides the implementation
-> details from most users.
+-- 
+Jens Axboe
 
-Matthew Wilcox and Al Viro have suggested similar ideas.
-
-https://lore.kernel.org/lkml/20201013205012.GI2046448@iweiny-DESK2.sc.intel.com/
-
-Ira

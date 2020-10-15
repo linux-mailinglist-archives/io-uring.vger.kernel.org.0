@@ -2,143 +2,166 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF72328F024
-	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 12:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D37AD28EFEA
+	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 12:14:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgJOKZQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Oct 2020 06:25:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47530 "EHLO
+        id S1727439AbgJOKOp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 15 Oct 2020 06:14:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbgJOKZP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 06:25:15 -0400
-X-Greylist: delayed 1115 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 15 Oct 2020 03:25:14 PDT
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2189C0613D2
-        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 03:25:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:To:CC;
-        bh=jYfSUkd7rE/dxyv673+lN2R59fwQKLG7l9AuOA6yo2A=; b=PT5OcfPJkRnz5rgMls3N5ngnwb
-        NQFT++5lYRFgh1UsqJAuMMRCrKIF2Ijos4Bi9gT0PutxmGUTm1YPniLDLnJhjxycvienbHpSDX5kW
-        BiJyopjC+ub82lZMMga1fT4SWKAZQIE3wCnzqZXQwwH3iYsgClK5bjFJPpaBBqiKZVaKau0cYeUHj
-        N/erkaBdz1RKd43rEsq0SSUHfNK958KZsEz2paPamLWbsc0LMWmHwInkVZ4mDC0+Q4a4GHWot0bO3
-        rhgtM4iGLoYMyrebUzZFqb3bzfM9D5/2eC4ACj9LENNLDFyYkGRnUnX/BpEL8DhALTMD7cx40H4NZ
-        IaOMUWLz47aNoe9FGThqTKGUvSZ057JMgqtKQhwi7j8FyNNp6Blk0SW7aLznaWTHbObyvxL50rK03
-        Px9edUDYE7I1ewrfWOv0kp414LWM5h/GdCLVDSryu4QOvcL7KKgwfXsuomFBud9aoNwCKt5UGqXWk
-        0Pt4nmqBw4Fa/WEQPpOQrhyJ;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1kT09d-00071e-VL; Thu, 15 Oct 2020 10:06:38 +0000
-Subject: Re: Samba with multichannel and io_uring
-To:     Stefan Metzmacher <metze@samba.org>,
-        Samba Technical <samba-technical@lists.samba.org>,
-        io-uring <io-uring@vger.kernel.org>
-References: <53d63041-5931-c5f2-2f31-50b5cbe09ec8@samba.org>
-From:   Ralph Boehme <slow@samba.org>
-Autocrypt: addr=slow@samba.org; keydata=
- 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
-Message-ID: <b272e0b4-d3f6-700e-d870-2f6a4d73d17f@samba.org>
-Date:   Thu, 15 Oct 2020 12:06:36 +0200
+        with ESMTP id S1726709AbgJOKOo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 06:14:44 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7284CC061755
+        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 03:14:44 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id e23so2575934wme.2
+        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 03:14:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vDpTeVUL6ZBBKiaeJL0+InmhAMK6VjE45/S12IvvCVU=;
+        b=ENHSzPB+2bkKf3XMpF1+cnfPdQgGhgMI9FhttBAvo8oS/W+QxLVJQWfqJ2244RaOii
+         364XYyMDpsztNpWZ8ENZ1/sEi/tu2r+GGfd0oSdM2+Yz8s6E+92LHpHk/M/+h3t3o49m
+         1B0/O/qgAh4q9IlRrvKYR1Ogw1i9PP23VW9Of2GAxERU11lU8YyP6uKpZW9B17ju97cc
+         JGBpqD3bZ0n/UOZQYqRpt0iU7fq130b1np7jfR+cptVo3xJNzwkia+MMQhy6zMLqFl6X
+         E5MB7VsAZjg4JvZG/On4T2PhSr2/mWOGGRd1cQ9xdzgKeTgzgts68Nim9adBgjK1C/eN
+         45BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=vDpTeVUL6ZBBKiaeJL0+InmhAMK6VjE45/S12IvvCVU=;
+        b=r5xnR0W1d/M+oz7qviPsxnR1zQyXVkfhKwWXpJhWwcF0R4LsAoIIOMY1C7Wn9koEt4
+         NRco7Cas7obWL5GDsd8YV0G0545Jragfepa7phTZMFPS9wVTrDn0d50RRfg1MviUhPDV
+         Kka1FBguisY5J9vwQ6cWB9RqR/K2HywAtIK3QZlLKpx2SXljF0Cs73ybHlHFvZQD2VQv
+         XQUU45RL59THuRiwQ6yBMq+nF1GP91ZltujgUhGYJyvEpKMDSoEHSzopthHgUDrb71Qw
+         +ZvEmwJthQLdPvkzSNDb+1O5S4hZ8bnHmPFplPTcGmTeu5GpHyxVYz9AM0eBqjh6UpyZ
+         OJIw==
+X-Gm-Message-State: AOAM531lalD33vlEfBCsmPJZNRrS5jEqwWpFkTOrT8pN35od/yDs6LQd
+        nNLUo8zz1QnzCEBt8R3cNcY=
+X-Google-Smtp-Source: ABdhPJzbOioaY+BXpK7ONSUPib7iSBVfMwkpo5YJRdBRrIVCA0qRFj5deexr93h0h3vgcH3dcJkAbA==
+X-Received: by 2002:a05:600c:29ce:: with SMTP id s14mr3112312wmd.47.1602756883168;
+        Thu, 15 Oct 2020 03:14:43 -0700 (PDT)
+Received: from [192.168.1.125] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
+        by smtp.gmail.com with ESMTPSA id s2sm3753798wmf.45.2020.10.15.03.14.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Oct 2020 03:14:42 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH 2/2] io_uring: optimise io_fail_links()
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+References: <cover.1602703669.git.asml.silence@gmail.com>
+ <3341227735910a265b494d22645061a6bdcb225d.1602703669.git.asml.silence@gmail.com>
+ <20201015085319.GA3683749@ubuntu-m3-large-x86>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <7e293894-823c-5b91-1b55-f5941c82d83e@gmail.com>
+Date:   Thu, 15 Oct 2020 11:11:52 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <53d63041-5931-c5f2-2f31-50b5cbe09ec8@samba.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="RW10drWOsQmqaqXZtkUyQZUFGXI9MIdy9"
+In-Reply-To: <20201015085319.GA3683749@ubuntu-m3-large-x86>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---RW10drWOsQmqaqXZtkUyQZUFGXI9MIdy9
-Content-Type: multipart/mixed; boundary="i1Pa8Vbu52aZtyqN76hUV3uSKLSpvkppV"
+On 15/10/2020 09:53, Nathan Chancellor wrote:
+> On Wed, Oct 14, 2020 at 08:44:22PM +0100, Pavel Begunkov wrote:
+>> -		io_put_req_deferred(link, 2);
+>> +
+>> +		/*
+>> +		 * It's ok to free under spinlock as they're not linked anymore,
+>> +		 * but avoid REQ_F_WORK_INITIALIZED because it may deadlock on
+>> +		 * work.fs->lock.
+>> +		 */
+>> +		if (link->flags | REQ_F_WORK_INITIALIZED)
+>> +			io_put_req_deferred(link, 2);
+>> +		else
+>> +			io_double_put_req(link);
+> 
+> fs/io_uring.c:1816:19: warning: bitwise or with non-zero value always
+> evaluates to true [-Wtautological-bitwise-compare]
+>                 if (link->flags | REQ_F_WORK_INITIALIZED)
+>                     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+> 1 warning generated.
+> 
+> According to the comment, was it intended for that to be a bitwise AND
+> then negated to check for the absence of it? If so, wouldn't it be
+> clearer to flip the condition so that a negation is not necessary like
+> below? I can send a formal patch if my analysis is correct but if not,
+> feel free to fix it yourself and add
 
---i1Pa8Vbu52aZtyqN76hUV3uSKLSpvkppV
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+I have no idea what have happened, but yeah, there should be "&",
+though without any additional negation. That's because deferred
+version is safer. 
 
-Hey metze,
-
-Am 10/15/20 um 11:58 AM schrieb Stefan Metzmacher via samba-technical:
-> I'm not sure when all this will be production ready, but it's great to =
-know
-> the potential we have on a modern Linux kernel!
-
-awesome! Thanks for sharing this!
-
--slow
-
---=20
-Ralph Boehme, Samba Team                https://samba.org/
-Samba Developer, SerNet GmbH   https://sernet.de/en/samba/
-GPG-Fingerprint   FAE2C6088A24252051C559E4AA1E9B7126399E46
+Nathan, thanks for letting know!
+Jens, could you please fold in the change below.
 
 
---i1Pa8Vbu52aZtyqN76hUV3uSKLSpvkppV--
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 66c41d53a9d3..2c83c2688ec5 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1813,7 +1813,7 @@ static void __io_fail_links(struct io_kiocb *req)
+ 		 * but avoid REQ_F_WORK_INITIALIZED because it may deadlock on
+ 		 * work.fs->lock.
+ 		 */
+-		if (link->flags | REQ_F_WORK_INITIALIZED)
++		if (link->flags & REQ_F_WORK_INITIALIZED)
+ 			io_put_req_deferred(link, 2);
+ 		else
+ 			io_double_put_req(link);
 
---RW10drWOsQmqaqXZtkUyQZUFGXI9MIdy9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+-- 
+Pavel Begunkov
 
-iQIzBAEBCAAdFiEE+uLGCIokJSBRxVnkqh6bcSY5nkYFAl+IHywACgkQqh6bcSY5
-nkaFJQ//dozVjWRdDdaaH5Is8NfS8odpzw0uL5H6X7/mTP8h0+VduIVCIKrpxdDx
-zhRxuKJipFwKhMx8TIICe51vvEhQCbp4aGs6p9K+4IRCbjXlRfjAYc0/xnjsq2yh
-VYuWrF6FZ8njtiWhtUDMGA8amSFAnOL6bB3bVmZzUAxtxo8fND0QJ3M0vN+0C1kc
-pROHrkbu45ISMZyj0YelitMUCisboRsf7ylfeaEBQKLija7Bpqu7oDkxHNgIixGn
-rg/aaHY+znq37WQNu80mKGreal7NbNzn1SoEAffa0TIhe6T0cmEPOqt1skFmmC74
-1uq0O0hUp70gSkjonCQuHRftsAmL/Ytca4/IizItbvsd1Dtuce5QzjZz954T1OQM
-EVS7b8RF6Zgl1UkNlkUk6XOhYegrcypBQVmTimYPyH9HeRs0Ghf6iZGyecS+B+4L
-kuHIAqdXU4N+TMdOA/Aekn6R44MlpOlle/CIXqckB/gzihijv1Wwwjzq5eo4qbQt
-81TWMnYxMi6cGhTaK+h+EMjWTMeEAfP2vAPg89PY/tFyeM48PTd4OgurKOTLjdoP
-QCz/nEw3Kvt8V1QTongBwTl3b25KfjSFIRre0iNPZ+y5hzjzJ+m29DfEpd1yRwBm
-5b3oqmbgn+u1RuzidKFcBrvBL5l/DjuFduJaXTdwZ0ck2UT6qSg=
-=3GWD
------END PGP SIGNATURE-----
 
---RW10drWOsQmqaqXZtkUyQZUFGXI9MIdy9--

@@ -2,189 +2,135 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8296C28EA66
-	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 03:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73DFF28EED0
+	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 10:53:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgJOBoi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 14 Oct 2020 21:44:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51514 "EHLO
+        id S1730352AbgJOIxX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 15 Oct 2020 04:53:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728242AbgJOBoi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Oct 2020 21:44:38 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9ED0C0613D5
-        for <io-uring@vger.kernel.org>; Wed, 14 Oct 2020 13:57:13 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id c20so547982pfr.8
-        for <io-uring@vger.kernel.org>; Wed, 14 Oct 2020 13:57:13 -0700 (PDT)
+        with ESMTP id S1726329AbgJOIxX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 04:53:23 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26957C061755
+        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 01:53:23 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id n6so3304423ioc.12
+        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 01:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rB+nux/G63c9eToXeI6vLA96Dmc4GWb9o2DHQhmU3f8=;
-        b=GQuUjqftHZ1hj+U0ECf2WAA6GKVkFpnO+VQCz+g1DPBDomLRX1aVn2L+fxoQXtAcu2
-         lqtU7MbDFowvGrPLtf4iXI1io3CW4k2+X46zKiq6muR6qxLzDgrMbh2zP8M+X+zycW9R
-         +LYvamnsltATfog4crQOEgZ0A7MQQBgKgAyJ2zHc+0f3DZwtYN8hBK6QYn1ftKIJXITc
-         PmUhKruXLRDkE6xgX/GbbqhcJDq5oHQDsx1/PRRNByvEvBxwAPWgF0qU9nqMgn1daBdv
-         IvqVnxCZCV8fHDymFrEqbTscNaS4ruQ2wkJmGM0QDkq17NNrDlZBQJMd7fLXCagg/+Lp
-         HuJw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jjiCvGcCqX6kxSFTlIIsiLCTdISobZ1LNpDvp+votn8=;
+        b=KRq/Jr3X2UETLCiBmq8NTQQxSWd8iyKlKSBr/VUrzomayzrl7Iz1/939eQOaV9KW3M
+         SDbhR8maeYcaGfEkZVbGqB0Xx6uGYViRsviFRwL/nHr9n8gEc7EpZM6b2tp4XmAHouhI
+         kazPtMpe+Z7F1zHRRHSG4on/EUzqK2I3ehZq+R2UoDQjnhpn6jd/7xLm1tpvW23gR1Zr
+         2iiOvz6yH0S/JgwPTtiOfdIvSK3wh68w/8xcYq7oWw/XytRnOs42oUitBqrsCWgHQGyE
+         4zYu4/CPi4hAMV5pyioTu0A9NpWJfP7YvO/P89dbKOYl8PikHkPkCWjluOYBJkxnlB0v
+         /N2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rB+nux/G63c9eToXeI6vLA96Dmc4GWb9o2DHQhmU3f8=;
-        b=E9R20+SkIgThTkIJJEEpHxeiQI9jalxo7JOUtLslA9hyDr3e0S9WcMX7WEEzgJ2PEG
-         lehupCJG8F6svMpaeiI5du/tiHfqVkmgnHU39VBRQnaWTvEG45vRkaPqqpygGwOX4HBr
-         tKJhPUem/Nlw2nFihpjsnHwHvPZ0g7bzf1ALXbvd5MvpavvCOlGhdy2bKI3eyiYSU+ic
-         sd21LEcyueq8I+TKVc8QeBlDlXUwDG5Y/LqGDGrvV5MTO9fsmlzwete6ow9vvYltaoIh
-         QIxn9bfAwDvS3GJi9DCRKPcl7zmGeCelX8i7DQjUY2ATHrCM9y9B5Ukpc2gFF7rf8IQi
-         jbUg==
-X-Gm-Message-State: AOAM53243Q/Q3HBWynhCX86wYVLLU5j9Wwt0e2Rtt4eJ00EzfNECn0TM
-        4TCo1Y4gIy5ErzK79UJ1ac9CccE7taKJFGz/
-X-Google-Smtp-Source: ABdhPJxUzd6DEYBr13xTg8AcG4zBV9/rrSVZqSbN9qFp9yxybZ1gZwT7+o60jJd6ceXlYXIYVVouyA==
-X-Received: by 2002:a63:4c6:: with SMTP id 189mr629552pge.233.1602709033183;
-        Wed, 14 Oct 2020 13:57:13 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id s11sm429086pjz.29.2020.10.14.13.57.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Oct 2020 13:57:12 -0700 (PDT)
-Subject: Re: Loophole in async page I/O
-To:     Hao_Xu <haoxu@linux.alibaba.com>,
-        Matthew Wilcox <willy@infradead.org>, io-uring@vger.kernel.org
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20201012211355.GC20115@casper.infradead.org>
- <14d97ab3-edf7-c72a-51eb-d335e2768b65@kernel.dk>
- <0a2918fc-b2e4-bea0-c7e1-265a3da65fc9@kernel.dk>
- <22881662-a503-1706-77e2-8f71bf41fe49@kernel.dk>
- <22435d46-bf78-ee8d-4470-bb3bcbc20cf2@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <794bb5f3-b9c3-b3f1-df42-fe2167175d23@kernel.dk>
-Date:   Wed, 14 Oct 2020 14:57:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jjiCvGcCqX6kxSFTlIIsiLCTdISobZ1LNpDvp+votn8=;
+        b=YtyMm20usJBY5trMoCYzcqxLLPK4wtBLlN2X7pwzE6R/sNjygxwrIdB2O1wBserWxg
+         0iSOG2z5qqIK+sNkpg2Uk7k9X5OluVFajDi2YAJotclqcLtFrznPYcHzOTMSqjbcEvXD
+         JVCF+wSv8rM/uuItXVYviEWkDvo3NK9zahiBJ2Ax8BiehIlqdwsU5U8esqAPp76qFA3x
+         vyrmw9v/ssMGqrkwiJzW5yH68IFEYmIZHz57+6yPpiiJbZ7dnW8b9fSYZ9YPbxnRESlg
+         U3vLD0a7Mf6XsP3YQ2+mtspztSbT5kt5BTmi90xNqxUh6H0+MieHOWsDwTp9D9WlVcZX
+         j3Mw==
+X-Gm-Message-State: AOAM533Mout4YFmKJJ5Q3tE2JlpniirFxg9qasz/W5lb+bcALx+chhNn
+        YnqZS36vgeJf94nms4MWpg0=
+X-Google-Smtp-Source: ABdhPJx4j48t6c0dgguzbuhRZFPz6+NqH7/h16WwV9no8VbT5M5DheIfFyLr51IH7q3xmugAl3KP3Q==
+X-Received: by 2002:a02:a0c2:: with SMTP id i2mr2633811jah.92.1602752002140;
+        Thu, 15 Oct 2020 01:53:22 -0700 (PDT)
+Received: from ubuntu-m3-large-x86 ([2604:1380:45d1:2600::3])
+        by smtp.gmail.com with ESMTPSA id b9sm1914868ilq.51.2020.10.15.01.53.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Oct 2020 01:53:21 -0700 (PDT)
+Date:   Thu, 15 Oct 2020 01:53:19 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH 2/2] io_uring: optimise io_fail_links()
+Message-ID: <20201015085319.GA3683749@ubuntu-m3-large-x86>
+References: <cover.1602703669.git.asml.silence@gmail.com>
+ <3341227735910a265b494d22645061a6bdcb225d.1602703669.git.asml.silence@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <22435d46-bf78-ee8d-4470-bb3bcbc20cf2@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3341227735910a265b494d22645061a6bdcb225d.1602703669.git.asml.silence@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/14/20 2:31 PM, Hao_Xu wrote:
-> Hi Jens,
-> I've done some tests for the new fix code with readahead disabled from 
-> userspace. Here comes some results.
-> For the perf reports, since I'm new to kernel stuff, still investigating 
-> on it.
-> I'll keep addressing the issue which causes the difference among the 
-> four perf reports(in which the  copy_user_enhanced_fast_string() catches 
-> my eyes)
+On Wed, Oct 14, 2020 at 08:44:22PM +0100, Pavel Begunkov wrote:
+> Optimise put handling in __io_fail_links() after removing
+> REQ_F_COMP_LOCKED.
 > 
-> my environment is:
->      server: physical server
->      kernel: mainline 5.9.0-rc8+ latest commit 6f2f486d57c4d562cdf4
->      fs: ext4
->      device: nvme ssd
->      fio: 3.20
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> I did the tests by setting and commenting the code:
->      filp->f_mode |= FMODE_BUF_RASYNC;
-> in fs/ext4/file.c ext4_file_open()
-
-You don't have to modify the kernel, if you use a newer fio then you can
-essentially just add:
-
---force_async=1
-
-after setting the engine to io_uring to get the same effect. Just a
-heads up, as that might make it easier for you.
-
-> the IOPS with readahead disabled from userspace is below:
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index f61af4d487fd..271a016e8507 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1816,7 +1816,16 @@ static void __io_fail_links(struct io_kiocb *req)
+>  		trace_io_uring_fail_link(req, link);
+>  
+>  		io_cqring_fill_event(link, -ECANCELED);
+> -		io_put_req_deferred(link, 2);
+> +
+> +		/*
+> +		 * It's ok to free under spinlock as they're not linked anymore,
+> +		 * but avoid REQ_F_WORK_INITIALIZED because it may deadlock on
+> +		 * work.fs->lock.
+> +		 */
+> +		if (link->flags | REQ_F_WORK_INITIALIZED)
+> +			io_put_req_deferred(link, 2);
+> +		else
+> +			io_double_put_req(link);
+>  	}
+>  
+>  	io_commit_cqring(ctx);
+> -- 
+> 2.24.0
 > 
-> with new fix code(force readahead)
-> QD/Test        FMODE_BUF_RASYNC set    FMODE_BUF_RASYNC not set
-> 1                    10.8k                  10.3k
-> 2                    21.2k                  20.1k
-> 4                    41.1k                  39.1k
-> 8                    76.1k                  72.2k
-> 16                   133k                   126k
-> 32                   169k                   147k
-> 64                   176k                   160k
-> 128                  (1)187k                (2)156k
-> 
-> now async buffered reads feature looks better in terms of IOPS,
-> but it still looks similar with the async buffered reads feature in the 
-> mainline code.
 
-I'd say it looks better all around. And what you're completely
-forgetting here is that when FMODE_BUF_RASYNC isn't set, then you're
-using QD number of async workers to achieve that result. Hence you have
-1..128 threads potentially running on that one, vs having a _single_
-process running with FMODE_BUF_RASYNC.
+This part of commit 9c357fed168a ("io_uring: fix REQ_F_COMP_LOCKED by
+killing it") causes a clang warning:
 
-> with mainline code(the fix code in commit c8d317aa1887 ("io_uring: fix 
-> async buffered reads when readahead is disabled"))
-> QD/Test        FMODE_BUF_RASYNC set    FMODE_BUF_RASYNC not set
-> 1                       10.9k            10.2k
-> 2                       21.6k            20.2k
-> 4                       41.0k            39.9k
-> 8                       79.7k            75.9k
-> 16                      141k             138k
-> 32                      169k             237k
-> 64                      190k             316k
-> 128                     (3)195k          (4)315k
-> 
-> Considering the number in place (1)(2)(3)(4), the new fix doesn't seem 
-> to fix the slow down
-> but make the number (4) become number (2)
+fs/io_uring.c:1816:19: warning: bitwise or with non-zero value always
+evaluates to true [-Wtautological-bitwise-compare]
+                if (link->flags | REQ_F_WORK_INITIALIZED)
+                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
 
-Not sure why there would be a difference between 2 and 4, that does seem
-odd. I'll see if I can reproduce that. More questions below.
+According to the comment, was it intended for that to be a bitwise AND
+then negated to check for the absence of it? If so, wouldn't it be
+clearer to flip the condition so that a negation is not necessary like
+below? I can send a formal patch if my analysis is correct but if not,
+feel free to fix it yourself and add
 
-> the perf reports of (1)(2)(3)(4) situations are:
-> (1)
->    9 # Overhead  Command  Shared Object       Symbol
->   10 # ........  .......  .................. 
-> ..............................................
->   11 #
->   12     10.19%  fio      [kernel.vmlinux]    [k] 
-> copy_user_enhanced_fast_string
->   13      8.53%  fio      fio                 [.] clock_thread_fn
->   14      4.67%  fio      [kernel.vmlinux]    [k] xas_load
->   15      2.18%  fio      [kernel.vmlinux]    [k] clear_page_erms
->   16      2.02%  fio      libc-2.24.so        [.] __memset_avx2_erms
->   17      1.55%  fio      [kernel.vmlinux]    [k] mutex_unlock
->   18      1.51%  fio      [kernel.vmlinux]    [k] shmem_getpage_gfp
->   19      1.48%  fio      [kernel.vmlinux]    [k] native_irq_return_iret
->   20      1.48%  fio      [kernel.vmlinux]    [k] get_page_from_freelist
->   21      1.46%  fio      [kernel.vmlinux]    [k] generic_file_buffered_read
->   22      1.45%  fio      [nvme]              [k] nvme_irq
->   23      1.25%  fio      [kernel.vmlinux]    [k] __list_del_entry_valid
->   24      1.22%  fio      [kernel.vmlinux]    [k] free_pcppages_bulk
->   25      1.15%  fio      [kernel.vmlinux]    [k] _raw_spin_lock
->   26      1.12%  fio      fio                 [.] get_io_u
->   27      0.81%  fio      [ext4]              [k] ext4_mpage_readpages
->   28      0.78%  fio      fio                 [.] fio_gettime
->   29      0.76%  fio      [kernel.vmlinux]    [k] find_get_entries
->   30      0.75%  fio      [vdso]              [.] __vdso_clock_gettime
->   31      0.73%  fio      [kernel.vmlinux]    [k] release_pages
->   32      0.68%  fio      [kernel.vmlinux]    [k] find_get_entry
->   33      0.68%  fio      fio                 [.] io_u_queued_complete
->   34      0.67%  fio      [kernel.vmlinux]    [k] io_async_buf_func
->   35      0.65%  fio      [kernel.vmlinux]    [k] io_submit_sqes
+Reported-by: Nathan Chancellor <natechancellor@gmail.com>
 
-These profiles are of marginal use, as you're only profiling fio itself,
-not all of the async workers that are running for !FMODE_BUF_RASYNC.
-
-How long does the test run? It looks suspect that clock_thread_fn shows
-up in the profiles at all.
-
-And is it actually doing IO, or are you using shm/tmpfs for this test?
-Isn't ext4 hosting the file? I see a lot of shmem_getpage_gfp(), makes
-me a little confused.
-
--- 
-Jens Axboe
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 66c41d53a9d3..28b1a0fede3e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1813,10 +1813,10 @@ static void __io_fail_links(struct io_kiocb *req)
+ 		 * but avoid REQ_F_WORK_INITIALIZED because it may deadlock on
+ 		 * work.fs->lock.
+ 		 */
+-		if (link->flags | REQ_F_WORK_INITIALIZED)
+-			io_put_req_deferred(link, 2);
+-		else
++		if (link->flags & REQ_F_WORK_INITIALIZED)
+ 			io_double_put_req(link);
++		else
++			io_put_req_deferred(link, 2);
+ 	}
+ 
+ 	io_commit_cqring(ctx);

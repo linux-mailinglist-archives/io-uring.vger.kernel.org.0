@@ -2,72 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C806C28F4F5
-	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 16:42:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93ED928F4F8
+	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 16:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388583AbgJOOmt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Oct 2020 10:42:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:60983 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388146AbgJOOms (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 10:42:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602772968;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=78VLYdCYoG9Jop6L4V/VZuQfN2yvIOeKYNKNorl+SNo=;
-        b=hPXtgkbOS5ZlTQPtf9SORwLKhwWPglTvNdWFstUjfe48UyMjJ/oPoZRPJn5JaL91AhbWZ5
-        Ch4PabY3AblmWEb9J49U+X9He/asChDEXuaqBhRkVEZ5DRie6x3oxwlS7MN8oq4ZadHzt1
-        kVdgKTuofK7YymhOV/6VkqR9SoyNVbg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-452-GO_ko-UNMDG6Pbn1ee4a2A-1; Thu, 15 Oct 2020 10:42:46 -0400
-X-MC-Unique: GO_ko-UNMDG6Pbn1ee4a2A-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ED7DBE9006;
-        Thu, 15 Oct 2020 14:42:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.193.8])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6560E5D9D5;
-        Thu, 15 Oct 2020 14:42:43 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 15 Oct 2020 16:42:44 +0200 (CEST)
-Date:   Thu, 15 Oct 2020 16:42:42 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
+        id S1728888AbgJOOnW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 15 Oct 2020 10:43:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730675AbgJOOnW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 10:43:22 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24AF2C061755
+        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 07:43:22 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id m17so4779216ioo.1
+        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 07:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ie9/ha5W60N8m8YRhYtdsvKY55MzTG5lK18D7sYLmZg=;
+        b=ycpzMcDJv99EtYoJWm1mgWNtohMb7/vp/H6DfJ1wMoga6tvYRqqmmTRdw5dwlJ7Um4
+         rFS4KaApUEZJvuKf7cYKrLdoYVV4b5boKU6/eCAHPUZvZtkM+l1hQC1y7rBwFBz8P2s3
+         3KUcWCyX14RbG+mrwaH8itNzQX9XITnxsGcUsM1GIiceWhbjNa/aIeA+2nGBv6u96i9z
+         ddmjrBVEeckAOhxEopGxO963af64vVp8FByMNeTYd0raPsyZtnmYj66Vbr0lq6Xs+Zw6
+         Xzpv6qWemMlGy6Jx+bMChQI837lX8uqVZzvhhu/Il1rR+F3rZGjSzKt/HEGD6DATuerr
+         vOrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ie9/ha5W60N8m8YRhYtdsvKY55MzTG5lK18D7sYLmZg=;
+        b=Hn7ru082u/RAIuwJ1YPK//jlHLHRSJSI/gOLEUMxkh4Bhq7jlcS3UNJCZw3hrDkbRO
+         cRp0Qe3E0JQr5kKmrNhmHvMgdnwz1ZglxX5U/UPHgfMmWhImPNic91ZvuEMOr2sWv6Ug
+         bWPpmKKYThFqqluXiaNQR8EwYwPErz7xm//8Ko7smRLz/naHxp+UDe+weZ7cVbKL8dQE
+         sTeE2cgNwfS8uU3/TSGb4hpLX80dbCjPaw3p04tfDk3Nk/2VL3kv7xbRjv/r2adomCMH
+         XviNFR+fend32rOvqnQSIgtN/WeTYmyatAF5EWgZq+vmFHsfmyLPHp3M1hqAAxRNKsVH
+         OuoA==
+X-Gm-Message-State: AOAM530JqCgnO3Wa6DyAR0uc1FQP+dN131ZMt93magGtByWLvBR++hEo
+        2bO9WHR9DvHbQbKITcV7NT0wiA==
+X-Google-Smtp-Source: ABdhPJw/UDXrw1xnVIb5gHVbQMACmh88peCTZR7MxwbJLEB8v09xV9AJAfp/Zh+zL+Vqb2TZkZMY9Q==
+X-Received: by 2002:a02:cce6:: with SMTP id l6mr3919982jaq.32.1602773001466;
+        Thu, 15 Oct 2020 07:43:21 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id i29sm2963138ile.45.2020.10.15.07.43.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Oct 2020 07:43:20 -0700 (PDT)
+Subject: Re: [PATCH 3/5] kernel: add support for TIF_NOTIFY_SIGNAL
+To:     Oleg Nesterov <oleg@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
         peterz@infradead.org, tglx@linutronix.de
-Subject: Re: [PATCH 2/5] kernel: add task_sigpending() helper
-Message-ID: <20201015144241.GG24156@redhat.com>
 References: <20201015131701.511523-1-axboe@kernel.dk>
- <20201015131701.511523-3-axboe@kernel.dk>
+ <20201015131701.511523-4-axboe@kernel.dk> <20201015143151.GB24156@redhat.com>
+ <5d231aa1-b8c7-ae4e-90bb-211f82b57547@kernel.dk>
+ <20201015143728.GE24156@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <788b31b7-6acc-cc85-5e91-d0c2538341b7@kernel.dk>
+Date:   Thu, 15 Oct 2020 08:43:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201015131701.511523-3-axboe@kernel.dk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20201015143728.GE24156@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/15, Jens Axboe wrote:
->
-> This is in preparation for maintaining signal_pending() as the decider
-> of whether or not a schedule() loop should be broken, or continue
-> sleeping. This is different than the core signal use cases, where we
-> really want to know if an actual signal is pending or not.
-> task_sigpending() returns non-zero if TIF_SIGPENDING is set.
+On 10/15/20 8:37 AM, Oleg Nesterov wrote:
+> On 10/15, Jens Axboe wrote:
+>>
+>> On 10/15/20 8:31 AM, Oleg Nesterov wrote:
+>>> On 10/15, Jens Axboe wrote:
+>>>>
+>>>>  static inline int signal_pending(struct task_struct *p)
+>>>>  {
+>>>> +#if defined(CONFIG_GENERIC_ENTRY) && defined(TIF_NOTIFY_SIGNAL)
+>>>> +	/*
+>>>> +	 * TIF_NOTIFY_SIGNAL isn't really a signal, but it requires the same
+>>>> +	 * behavior in terms of ensuring that we break out of wait loops
+>>>> +	 * so that notify signal callbacks can be processed.
+>>>> +	 */
+>>>> +	if (unlikely(test_tsk_thread_flag(p, TIF_NOTIFY_SIGNAL)))
+>>>> +		return 1;
+>>>> +#endif
+>>>>  	return task_sigpending(p);
+>>>>  }
+>>>
+>>> I don't understand why does this version requires CONFIG_GENERIC_ENTRY.
+>>>
+>>> Afaics, it is very easy to change all the non-x86 arches to support
+>>> TIF_NOTIFY_SIGNAL, but it is not trivial to change them all to use
+>>> kernel/entry/common.c ?
+>>
+>> I think that Thomas wants to gate TIF_NOTIFY_SIGNAL on conversion to
+>> the generic entry code?
 > 
-> Only core kernel use cases should care about the distinction between
-> the two, make sure those use the task_sigpending() helper.
-> 
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> Then I think TIF_NOTIFY_SIGNAL will be never fully supported ;)
 
-the same,
+That is indeed a worry. From a functionality point of view, with the
+major archs supporting it, I'm not too worried about that side. But it
+does mean that we'll be stuck with the ifdeffery forever, which isn't
+great.
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Thomas, are you fine with decoupling this from CONFIG_GENERIC_ENTRY,
+based on the above concerns?
+
+-- 
+Jens Axboe
 

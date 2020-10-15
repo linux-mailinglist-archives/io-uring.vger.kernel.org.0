@@ -2,79 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FF9628F56E
-	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 17:01:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E6DB28F5B1
+	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 17:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388686AbgJOPBP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Oct 2020 11:01:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33990 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388086AbgJOPBP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 11:01:15 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2ADCC061755;
-        Thu, 15 Oct 2020 08:01:14 -0700 (PDT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1602774073;
+        id S2389493AbgJOPSF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 15 Oct 2020 11:18:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:37292 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388086AbgJOPSF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 11:18:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1602775083;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=+DuzvGKr+uouQPicd3btzTpBKj/5LVLg1yi/nXnEH1M=;
-        b=mDMRS/8Et7iVSKGXRG0qPg3GpdinFibrmtscDezhbH4liiBttp5q78MM84WhBgjcFM4KBm
-        0R5bGiuJFiP5vgDnebSITaFljWa/pXVPjUrWBfh7/4r8R8dNAzTD/ZQlRKPTKioFp/X0Rm
-        Ufkt9ooD/LPSdrmUJn6f6WXi8jyhW2aT+/ZptAj7EFdKGTbcN6TXDSelPUTUppAv4cwnNY
-        3zo7Q8rYY6d6AdTejhqVtBnbBGBE6hx8g0MjOckTt7CztrqBVskc149aCzprowHXwhdNEA
-        fSNZrALNGPCepVpCjULiys/SxRN+tMGR1FiWMWojXoB1r8H/8+E0cI71zu35rQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1602774073;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+DuzvGKr+uouQPicd3btzTpBKj/5LVLg1yi/nXnEH1M=;
-        b=eztVgQEYp+HzQIkMh71WxUwdkCYIhvU3k+Rlk0GbSO0yB7CAcXf9YgE65sVh7V59zpNRIm
-        HQbLwiakXwA2LUBA==
-To:     Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        peterz@infradead.org
-Subject: Re: [PATCH 3/5] kernel: add support for TIF_NOTIFY_SIGNAL
-In-Reply-To: <20201015143728.GE24156@redhat.com>
-References: <20201015131701.511523-1-axboe@kernel.dk> <20201015131701.511523-4-axboe@kernel.dk> <20201015143151.GB24156@redhat.com> <5d231aa1-b8c7-ae4e-90bb-211f82b57547@kernel.dk> <20201015143728.GE24156@redhat.com>
-Date:   Thu, 15 Oct 2020 17:01:13 +0200
-Message-ID: <87r1pzv8hy.fsf@nanos.tec.linutronix.de>
+        bh=ZmIzkd5uRDI24FvTtgkvnJd3MIzG72UtYvWuNQeQTr0=;
+        b=bBPbFS63o5u4w2+q2kY5KV2N5ENwEpZLO96eCa7fv8GTEZCqhMkxSR7fmd74pC2FEsx3Nu
+        U+wEfhwqVbO1FRptASg1PoyV5g2AAWDX/6AvL62+rFmKGMJdrMrfWVet4QnFXlEPfT6hK2
+        dJb0X1pjEE/J3/fTz9UMnzTHOwGT3dQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-408-bNInItiKNX-b_VsXjfsoGg-1; Thu, 15 Oct 2020 11:18:01 -0400
+X-MC-Unique: bNInItiKNX-b_VsXjfsoGg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9D57618BE161;
+        Thu, 15 Oct 2020 15:17:59 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.193.8])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 31C4D73661;
+        Thu, 15 Oct 2020 15:17:57 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 15 Oct 2020 17:17:59 +0200 (CEST)
+Date:   Thu, 15 Oct 2020 17:17:56 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, peterz@infradead.org
+Subject: Re: [PATCH 4/5] x86: wire up TIF_NOTIFY_SIGNAL
+Message-ID: <20201015151756.GK24156@redhat.com>
+References: <20201015143409.GC24156@redhat.com>
+ <87v9fbv8te.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87v9fbv8te.fsf@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Oct 15 2020 at 16:37, Oleg Nesterov wrote:
-> On 10/15, Jens Axboe wrote:
->> On 10/15/20 8:31 AM, Oleg Nesterov wrote:
->> > I don't understand why does this version requires CONFIG_GENERIC_ENTRY.
->> > 
->> > Afaics, it is very easy to change all the non-x86 arches to support
->> > TIF_NOTIFY_SIGNAL, but it is not trivial to change them all to use
->> > kernel/entry/common.c ?
->> 
->> I think that Thomas wants to gate TIF_NOTIFY_SIGNAL on conversion to
->> the generic entry code?
+On 10/15, Thomas Gleixner wrote:
 >
-> Then I think TIF_NOTIFY_SIGNAL will be never fully supported ;)
+> On Thu, Oct 15 2020 at 16:34, Oleg Nesterov wrote:
+> > On 10/15, Thomas Gleixner wrote:
+> >> Instead of adding this to every architectures signal magic, we can
+> >> handle TIF_NOTIFY_SIGNAL in the core code:
+> >>
+> >> static void handle_singal_work(ti_work, regs)
+> >> {
+> >> 	if (ti_work & _TIF_NOTIFY_SIGNAL)
+> >>         	tracehook_notify_signal();
+> >>
+> >>         arch_do_signal(ti_work, regs);
+> >> }
+> >>
+> >>       loop {
+> >>       		if (ti_work & (SIGPENDING | NOTIFY_SIGNAL))
+> >>                 	handle_signal_work(ti_work, regs);
+> >>       }
+> >
+> > To me this looks like unnecessary complication. We need to change
+> > every architecture anyway, how can this helper help?
+>
+> You need to change ONE architecture because nobody else uses the common
+> entry loop right now.
 
-Yeah, we proliferate crap on that basis forever. _ALL_ architectures
-have the very same entry/exit ordering problems (or subsets and
-different ones) which we fixed on x86.
+so we need to change other arches to use the common entry loop.
 
-So no, we don't want to have 24 different variants of the same thing
-again. That's what common code is for.
+> For those who move over they have to supply
+> arch_do_signal() anyway,
 
-Not doing that is making the life of everyone working on core
-infrastructure pointlessly harder. Architecture people still have enough
-ways to screw everyone up.
+and this arch_do_signal() should be changed to check _TIF_SIGPENDING.
 
-Thanks,
 
-        tglx
 
+See also my replies to 3/5. I strongly disagree with CONFIG_GENERIC_ENTRY.
+But even if we require CONFIG_GENERIC_ENTRY, why do we want this helper?
+
+We can just change exit_to_user_mode_loop() to do
+
+	if (ti_work & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL)) {
+		if (ti_work & _TIF_NOTIFY_SIGNAL)
+			tracehook_notify_signal();
+		arch_do_signal(ti_work, regs);
+	}
+
+but I'd prefer to handle SIGPENDING/NOTIFY_SIGNAL in one place.
+
+Oleg.
 

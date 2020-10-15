@@ -2,165 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56B0728F128
-	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 13:27:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5405928F1C8
+	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 14:02:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbgJOL1f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Oct 2020 07:27:35 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:45102 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729009AbgJOL1O (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 07:27:14 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R641e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UC6KmHT_1602761229;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UC6KmHT_1602761229)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 15 Oct 2020 19:27:09 +0800
-Subject: Re: Loophole in async page I/O
-To:     Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
-        io-uring@vger.kernel.org
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20201012211355.GC20115@casper.infradead.org>
- <14d97ab3-edf7-c72a-51eb-d335e2768b65@kernel.dk>
- <0a2918fc-b2e4-bea0-c7e1-265a3da65fc9@kernel.dk>
- <22881662-a503-1706-77e2-8f71bf41fe49@kernel.dk>
- <22435d46-bf78-ee8d-4470-bb3bcbc20cf2@linux.alibaba.com>
- <794bb5f3-b9c3-b3f1-df42-fe2167175d23@kernel.dk>
-From:   Hao_Xu <haoxu@linux.alibaba.com>
-Message-ID: <d8e87cb0-3880-742f-9478-6d71b5406b19@linux.alibaba.com>
-Date:   Thu, 15 Oct 2020 19:27:09 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.3.2
+        id S2387627AbgJOMAX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 15 Oct 2020 08:00:23 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34427 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730039AbgJOLzy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 07:55:54 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1kT1rK-0004cr-Mt; Thu, 15 Oct 2020 11:55:50 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] io_uring: fix flags check for the REQ_F_WORK_INITIALIZED setting
+Date:   Thu, 15 Oct 2020 12:55:50 +0100
+Message-Id: <20201015115550.485235-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <794bb5f3-b9c3-b3f1-df42-fe2167175d23@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2020/10/15 上午4:57, Jens Axboe 写道:
-> On 10/14/20 2:31 PM, Hao_Xu wrote:
->> Hi Jens,
->> I've done some tests for the new fix code with readahead disabled from
->> userspace. Here comes some results.
->> For the perf reports, since I'm new to kernel stuff, still investigating
->> on it.
->> I'll keep addressing the issue which causes the difference among the
->> four perf reports(in which the  copy_user_enhanced_fast_string() catches
->> my eyes)
->>
->> my environment is:
->>       server: physical server
->>       kernel: mainline 5.9.0-rc8+ latest commit 6f2f486d57c4d562cdf4
->>       fs: ext4
->>       device: nvme ssd
->>       fio: 3.20
->>
->> I did the tests by setting and commenting the code:
->>       filp->f_mode |= FMODE_BUF_RASYNC;
->> in fs/ext4/file.c ext4_file_open()
-> 
-> You don't have to modify the kernel, if you use a newer fio then you can
-> essentially just add:
-> 
-> --force_async=1
-> 
-> after setting the engine to io_uring to get the same effect. Just a
-> heads up, as that might make it easier for you.
-> 
->> the IOPS with readahead disabled from userspace is below:
->>
->> with new fix code(force readahead)
->> QD/Test        FMODE_BUF_RASYNC set    FMODE_BUF_RASYNC not set
->> 1                    10.8k                  10.3k
->> 2                    21.2k                  20.1k
->> 4                    41.1k                  39.1k
->> 8                    76.1k                  72.2k
->> 16                   133k                   126k
->> 32                   169k                   147k
->> 64                   176k                   160k
->> 128                  (1)187k                (2)156k
->>
->> now async buffered reads feature looks better in terms of IOPS,
->> but it still looks similar with the async buffered reads feature in the
->> mainline code.
-> 
-> I'd say it looks better all around. And what you're completely
-> forgetting here is that when FMODE_BUF_RASYNC isn't set, then you're
-> using QD number of async workers to achieve that result. Hence you have
-> 1..128 threads potentially running on that one, vs having a _single_
-> process running with FMODE_BUF_RASYNC.
-I totally agree with this, the server I use has many cpus which makes 
-the multiple async workers works exactly parallelly.
+From: Colin Ian King <colin.king@canonical.com>
 
-> 
->> with mainline code(the fix code in commit c8d317aa1887 ("io_uring: fix
->> async buffered reads when readahead is disabled"))
->> QD/Test        FMODE_BUF_RASYNC set    FMODE_BUF_RASYNC not set
->> 1                       10.9k            10.2k
->> 2                       21.6k            20.2k
->> 4                       41.0k            39.9k
->> 8                       79.7k            75.9k
->> 16                      141k             138k
->> 32                      169k             237k
->> 64                      190k             316k
->> 128                     (3)195k          (4)315k
->>
->> Considering the number in place (1)(2)(3)(4), the new fix doesn't seem
->> to fix the slow down
->> but make the number (4) become number (2)
-> 
-> Not sure why there would be a difference between 2 and 4, that does seem
-> odd. I'll see if I can reproduce that. More questions below.
-> 
->> the perf reports of (1)(2)(3)(4) situations are:
->> (1)
->>     9 # Overhead  Command  Shared Object       Symbol
->>    10 # ........  .......  ..................
->> ..............................................
->>    11 #
->>    12     10.19%  fio      [kernel.vmlinux]    [k]
->> copy_user_enhanced_fast_string
->>    13      8.53%  fio      fio                 [.] clock_thread_fn
->>    14      4.67%  fio      [kernel.vmlinux]    [k] xas_load
->>    15      2.18%  fio      [kernel.vmlinux]    [k] clear_page_erms
->>    16      2.02%  fio      libc-2.24.so        [.] __memset_avx2_erms
->>    17      1.55%  fio      [kernel.vmlinux]    [k] mutex_unlock
->>    18      1.51%  fio      [kernel.vmlinux]    [k] shmem_getpage_gfp
->>    19      1.48%  fio      [kernel.vmlinux]    [k] native_irq_return_iret
->>    20      1.48%  fio      [kernel.vmlinux]    [k] get_page_from_freelist
->>    21      1.46%  fio      [kernel.vmlinux]    [k] generic_file_buffered_read
->>    22      1.45%  fio      [nvme]              [k] nvme_irq
->>    23      1.25%  fio      [kernel.vmlinux]    [k] __list_del_entry_valid
->>    24      1.22%  fio      [kernel.vmlinux]    [k] free_pcppages_bulk
->>    25      1.15%  fio      [kernel.vmlinux]    [k] _raw_spin_lock
->>    26      1.12%  fio      fio                 [.] get_io_u
->>    27      0.81%  fio      [ext4]              [k] ext4_mpage_readpages
->>    28      0.78%  fio      fio                 [.] fio_gettime
->>    29      0.76%  fio      [kernel.vmlinux]    [k] find_get_entries
->>    30      0.75%  fio      [vdso]              [.] __vdso_clock_gettime
->>    31      0.73%  fio      [kernel.vmlinux]    [k] release_pages
->>    32      0.68%  fio      [kernel.vmlinux]    [k] find_get_entry
->>    33      0.68%  fio      fio                 [.] io_u_queued_complete
->>    34      0.67%  fio      [kernel.vmlinux]    [k] io_async_buf_func
->>    35      0.65%  fio      [kernel.vmlinux]    [k] io_submit_sqes
-> 
-> These profiles are of marginal use, as you're only profiling fio itself,
-> not all of the async workers that are running for !FMODE_BUF_RASYNC.
-> 
-Ah, I got it. Thanks.
-> How long does the test run? It looks suspect that clock_thread_fn shows
-> up in the profiles at all.
-> 
-it runs about 5 msec, randread 4G with bs=4k
-> And is it actually doing IO, or are you using shm/tmpfs for this test?
-> Isn't ext4 hosting the file? I see a lot of shmem_getpage_gfp(), makes
-> me a little confused.
-> 
-I'm using ext4 on real nvme ssd device. from the call stack, the 
-shm_getpage_gfp is from __memset_avx2_erms in libc.
-there are ext4 related functions in all the four reports.
-I'm doing more to check if it is my test process causing high IOPS in 
-case (4).
+Currently the check for REQ_F_WORK_INITIALIZED is always true because
+the | operator is being used. I believe this check should be checking
+if the bit is set using the & operator.
+
+Addresses-Coverity: ("Wrong operator used")
+Fixes: 9c357fed168a ("io_uring: fix REQ_F_COMP_LOCKED by killing it")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 01d0b35415dc..5ef54df03d7c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1813,7 +1813,7 @@ static void __io_fail_links(struct io_kiocb *req)
+ 		 * but avoid REQ_F_WORK_INITIALIZED because it may deadlock on
+ 		 * work.fs->lock.
+ 		 */
+-		if (link->flags | REQ_F_WORK_INITIALIZED)
++		if (link->flags & REQ_F_WORK_INITIALIZED)
+ 			io_put_req_deferred(link, 2);
+ 		else
+ 			io_double_put_req(link);
+-- 
+2.27.0
 

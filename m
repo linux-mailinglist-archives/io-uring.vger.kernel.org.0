@@ -2,67 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC2F28F2EC
-	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 15:09:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F4E928F2F7
+	for <lists+io-uring@lfdr.de>; Thu, 15 Oct 2020 15:12:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbgJONJP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Oct 2020 09:09:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44696 "EHLO
+        id S1728884AbgJONMU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 15 Oct 2020 09:12:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727281AbgJONJP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 09:09:15 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0515CC061755
-        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 06:09:13 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id o4so531728iov.13
-        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 06:09:13 -0700 (PDT)
+        with ESMTP id S1728820AbgJONMT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Oct 2020 09:12:19 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 621C2C0613D2
+        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 06:12:18 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id j8so4034311ilk.0
+        for <io-uring@vger.kernel.org>; Thu, 15 Oct 2020 06:12:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yJdroy89KvK6LNKaU+WV9fMwsRWYupTkFWAQ9ViniDg=;
-        b=HYjVQIluVHNIFFux0imW2H68/LZZPuauvn9BxVqOIvekT4Q8ek2iIGF1OUxzJly6IA
-         JoACzZqmJx55tir91994eLziafAOz/4JusUVp+TYAgK1TyK8N+EtyfgJlzl5IHEhaBBX
-         znRA50vE057uKxF7tgiQN16mfD3WbYlxhAVv80BqrnApIOcMviGvIr09d3wv7lmp6tRp
-         vb8hGL7AP3N8gv8Xj9C4wpqjoBCZk6eIEXPgj3Z+m47mp3chbRmbZyU4W2d0+Rz/5QFS
-         2BoUEwAwPUC80E50w/rqy5IvAoR/9baUHZamBGlGYpY6OWtsnrvhxa6zRhkQ8dOnGBKf
-         y0Ew==
+        bh=JrQAp+G/w/HRcUvrALtAjr5XUD+f148osx1+XDbx/fQ=;
+        b=TMPDsFEY6QcbJz9eph5zwMwK3REFYpu/Kf99wKKHvUNjeCFeqY6R4mTOZY23moUy26
+         rurYaAvGUoHOtOoW+PHtt5/hXy+/j9VbDMicj8j+TyBnkBB20/J6FDtPRzgBNL49uuyw
+         CWKU3iFSYQLEpKIJCE9vhLrdWLv518JmrDHPkYRnHhJBJYn3KupmFAlwk8OHpWXg1sQB
+         RMd0Ynbr9DG5O4vK98dJCSYrY1ArHTTIYOflX4lx35q3XLYxiaTm27ZFwkr6UDSxjlK8
+         92zMXuTRKuoSztsTjE3N0yJfnq4Jk7d7yGtKXx3fLeZqjL3rnL6PRpSFH9Cnynkba7fP
+         W4eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=yJdroy89KvK6LNKaU+WV9fMwsRWYupTkFWAQ9ViniDg=;
-        b=g6K1Q3zg5/JkREyHByRWw4ArS/TEJ2yKnDC1R5KFTYDwblXFNuiMjoNhb3AI8UeZ9Z
-         pmU2oiaLqAawUZMke9a0Pgj/fG+nol/2uWxmlPB2AjoBt6k+BUDyaY00qAmisViSHg7c
-         rJG8OVZ7+CfXP2lHAQ3xMgTYuVT8dEvPOfFbL03qBWg5dAPLTK10gaxh6EXUySlhX3ul
-         YogLQafqVR8jQAcxdIhp+GccOdhc4PCf2+lz+o27YcrUrn2ukPYNvmnlGXByItkSMm3n
-         PQo43lgMhwXj2TU5fX00YzL2KEaQf33COHj509qkbVEfsQBIDWF+5tJ+oElzc+zI+2iE
-         AlrQ==
-X-Gm-Message-State: AOAM533eJ3f30PqFoCxaopfP6/uCCHIGdPreJBsfet9KmBEuSetGgTT9
-        4qVIC1QAGCnwTNvLMTJeaoctcSVQ+VrXdw==
-X-Google-Smtp-Source: ABdhPJwOpB1sX9u1V7PXqY7owBv8VaFqkh4jV+snq5sy1I0PwEe2i4AjsPZftLhwGUAU8rI/kMDIyQ==
-X-Received: by 2002:a05:6638:f03:: with SMTP id h3mr3341435jas.36.1602767353121;
-        Thu, 15 Oct 2020 06:09:13 -0700 (PDT)
+        bh=JrQAp+G/w/HRcUvrALtAjr5XUD+f148osx1+XDbx/fQ=;
+        b=LvmfdGPBo1G3txGnNYW3zH2HkCSjX3PCPhf2BgJzlp1FBsUB+rJ85fW9zpJTNe7eUK
+         4q4loikWhAhIG93EBwvOMEvqThi6QJ3fNZN869CWj5jxvdSUtG3gXjUv7mj52sZbFiH+
+         mIFCfbsFTeUnF/96Jm2Q/zj33b/EzRD6MlJmTYKXt9p+ykmdCNDacpB2KJLYCKk7nsgf
+         R7eKP5PLkBW7WnORCtijocEZA16Ofogl4QoiyOEol56GHftT7s9cRipcDLW47YsCo9hi
+         1pznS/6tIGkR1k9cBrv7zGUoYIImryYlcbPIWDO9GIdUo2uTJpp8y39x/bDy/NSxWoqh
+         CWWQ==
+X-Gm-Message-State: AOAM530c1VluALEIHFE01MzZxDMABeEWoP09EFcMdDMej8RnQiaEf2N0
+        czLkXlox+ZcidSDVeh4squcebA==
+X-Google-Smtp-Source: ABdhPJzckRjsyjtt2YkhjIXx9g5RUmeO3YBn9nUW/Tceos9xwTtJgiku1z+klmtZupOu/z8YA1c/QQ==
+X-Received: by 2002:a92:7742:: with SMTP id s63mr833462ilc.74.1602767537685;
+        Thu, 15 Oct 2020 06:12:17 -0700 (PDT)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id y6sm2460127ili.36.2020.10.15.06.09.12
+        by smtp.gmail.com with ESMTPSA id h125sm793569iof.53.2020.10.15.06.12.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Oct 2020 06:09:12 -0700 (PDT)
-Subject: Re: [PATCH 2/2] io_uring: optimise io_fail_links()
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Cc:     io-uring@vger.kernel.org, clang-built-linux@googlegroups.com
-References: <cover.1602703669.git.asml.silence@gmail.com>
- <3341227735910a265b494d22645061a6bdcb225d.1602703669.git.asml.silence@gmail.com>
- <20201015085319.GA3683749@ubuntu-m3-large-x86>
- <7e293894-823c-5b91-1b55-f5941c82d83e@gmail.com>
+        Thu, 15 Oct 2020 06:12:17 -0700 (PDT)
+Subject: Re: [PATCH][next] io_uring: fix flags check for the
+ REQ_F_WORK_INITIALIZED setting
+To:     Colin King <colin.king@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20201015115550.485235-1-colin.king@canonical.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <01c6d077-f6fa-a8da-449a-d0c1c4d59012@kernel.dk>
-Date:   Thu, 15 Oct 2020 07:09:11 -0600
+Message-ID: <fc06e668-e358-9009-441e-d70b64285536@kernel.dk>
+Date:   Thu, 15 Oct 2020 07:12:16 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <7e293894-823c-5b91-1b55-f5941c82d83e@gmail.com>
+In-Reply-To: <20201015115550.485235-1-colin.king@canonical.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,41 +70,15 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/15/20 4:11 AM, Pavel Begunkov wrote:
-> On 15/10/2020 09:53, Nathan Chancellor wrote:
->> On Wed, Oct 14, 2020 at 08:44:22PM +0100, Pavel Begunkov wrote:
->>> -		io_put_req_deferred(link, 2);
->>> +
->>> +		/*
->>> +		 * It's ok to free under spinlock as they're not linked anymore,
->>> +		 * but avoid REQ_F_WORK_INITIALIZED because it may deadlock on
->>> +		 * work.fs->lock.
->>> +		 */
->>> +		if (link->flags | REQ_F_WORK_INITIALIZED)
->>> +			io_put_req_deferred(link, 2);
->>> +		else
->>> +			io_double_put_req(link);
->>
->> fs/io_uring.c:1816:19: warning: bitwise or with non-zero value always
->> evaluates to true [-Wtautological-bitwise-compare]
->>                 if (link->flags | REQ_F_WORK_INITIALIZED)
->>                     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
->> 1 warning generated.
->>
->> According to the comment, was it intended for that to be a bitwise AND
->> then negated to check for the absence of it? If so, wouldn't it be
->> clearer to flip the condition so that a negation is not necessary like
->> below? I can send a formal patch if my analysis is correct but if not,
->> feel free to fix it yourself and add
+On 10/15/20 5:55 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> I have no idea what have happened, but yeah, there should be "&",
-> though without any additional negation. That's because deferred
-> version is safer. 
-> 
-> Nathan, thanks for letting know!
-> Jens, could you please fold in the change below.
+> Currently the check for REQ_F_WORK_INITIALIZED is always true because
+> the | operator is being used. I believe this check should be checking
+> if the bit is set using the & operator.
 
-Done.
+It should - I folded in the incremental from Pavel. This just meant that
+we took the slow and safe path, but it obviously should be an AND here.
 
 -- 
 Jens Axboe

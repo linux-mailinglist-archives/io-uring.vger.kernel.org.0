@@ -2,73 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C9E5290B13
-	for <lists+io-uring@lfdr.de>; Fri, 16 Oct 2020 20:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53AAF290B19
+	for <lists+io-uring@lfdr.de>; Fri, 16 Oct 2020 20:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390785AbgJPSFx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 16 Oct 2020 14:05:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59718 "EHLO
+        id S2390831AbgJPSHX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Oct 2020 14:07:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390770AbgJPSFx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Oct 2020 14:05:53 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D7B9C0613D3
-        for <io-uring@vger.kernel.org>; Fri, 16 Oct 2020 11:05:53 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id n9so1899880pgf.9
-        for <io-uring@vger.kernel.org>; Fri, 16 Oct 2020 11:05:53 -0700 (PDT)
+        with ESMTP id S2390732AbgJPSHX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Oct 2020 14:07:23 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E652C061755
+        for <io-uring@vger.kernel.org>; Fri, 16 Oct 2020 11:07:23 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id e10so1953457pfj.1
+        for <io-uring@vger.kernel.org>; Fri, 16 Oct 2020 11:07:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lstQ2Z70FH3wyPnp+HqoxtSj5rPcg2/41zwZVIkct8c=;
-        b=awm5/19UPz2M0E4ycu7+1ioAE+jZd3anvlQXZ4l3NUeA1EpyB/0stdCEy9k2vOoYOw
-         XRnXvNL/Mds0BmVz6azbKku0tTofKH3KuZF3UIXpjWC9otjSYHeNB0tNz8Rb3sY49qHO
-         gYCX7k4V2AlWjLxTTSAcxn8myMPKxFX69iCm+SiXoXZ/qd5P0egrxd0K92qFn1rTcepz
-         zqyD9z1Gd+lWVHpIH2+9nnGZGLI2I0JPYBOLU6X5v9VUhWU/ArSwHM1CIDi4QYTTwbs/
-         qgMcW/U2OY5q/PvCsLO0SJKXS8lBvh9izMwyHRLlON+1UmNBUNYLec2LnuH9ATcUPhmN
-         sntA==
+        bh=GJ0kW23Ft7kWH2L+opK74RczYd3mTtbU1W4ReHf2wes=;
+        b=XY5Y7p5QtxRuSw0s8op8laLGN1x/0bHaeejX4lFztMjppPwiehLWiY2y+X17MyA/YX
+         W4aagBo/SZFPaVx7CjuCWTqzaFGJ8ekZiPC7AfEVSeKT301Mk2c8zm5eRkrcLZmOL1cD
+         33s7QxQzaTbSyB/ak/9eSkQQJHF0e4XB+F9p6/UmioVNNjbv923RXtXWlnwL7bnSWgPE
+         MrQUP4DedDsJpztWyEWi7bd7TENuLPy/wyx+rg0OMxjlez6RhBd79ccI/+NpgqoIYJfj
+         8NRjIkim8/UahBCMNW7UaPMuvIgGK87ykuVo/czcznvz5K5RAho2kTvqO2Q2IFskPne2
+         1+zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=lstQ2Z70FH3wyPnp+HqoxtSj5rPcg2/41zwZVIkct8c=;
-        b=iEhDq+ucqxcozXQunsnUJ2z6zLoZujZrepYq2EqXI2tggD1/gXPGtxQq6TXyVxGel/
-         fp5HwOp/Y4YeZOy2bJFeoLsxd6lXFA/CijFq23ZlTLmVPkncEL4JkiDfCjp7uShy40sU
-         Gm8t0luJXZ8Rck0ityHWLysWCx0s3J6Wt647qpEHSliqjzfroWoeFwNdlkg+SrYvIo+N
-         iAGTMdo9t27O6hBwpsWmJZyxiDLMjTh5x/ZhR/WFBRqbV+hdZ50Vgy3qbTGh7uTv3GYe
-         fdHTrYo4gCO/KwutnnoogFH4psfwfRgITVO1MuDjWqMdSQ+Jw+RlIe80kTw6wtd1Byxb
-         lAVw==
-X-Gm-Message-State: AOAM531RTXou3G2Oa0mf3wZTZMlsRTsvqple7VQeesSu/2AbgKNhnmYH
-        pbqovcs8E4AZCVg1ebo9gjskxg==
-X-Google-Smtp-Source: ABdhPJzmvXyJ5VEstqxjlUGRcXManh5vIBl3gwE/eQHWKVVW76Inr0FfAEuxrM8eyDoxCWhq8bA6AQ==
-X-Received: by 2002:a63:3fc7:: with SMTP id m190mr4079513pga.293.1602871552667;
-        Fri, 16 Oct 2020 11:05:52 -0700 (PDT)
+        bh=GJ0kW23Ft7kWH2L+opK74RczYd3mTtbU1W4ReHf2wes=;
+        b=gw3Nz/yn0cEvJ8RC1bOY2Vkifx4EPELjJwV+DLTfSUW++jcz+8YoMkH11bQ6gub3L3
+         aMNkVfQEbeaXc8WMU5d9xu4LAsKvCTQQOUBqXfmN1lfvBWrYWbH9fW3f40uVUfcObteg
+         GvYEDkjh2l7fPr6wJZkncY18QpV2RoCFCmrowRWEyCoN0NqVHtFOyzDHcBoAfQLaFrc+
+         u58s/sp/U5Zz8XeOuyy25BBEphcPGt1neHqzEGQD+rU3ae+BcWOgC5nN57oPrHiDE7Js
+         EKv6Q8HToqGssnX3yqm+1KT6712EECFAf2ANXMpbdDUY9f2VFbv5QpIrOjDDYzGTFOEg
+         a7Dg==
+X-Gm-Message-State: AOAM532WaxQ5hpZXU1L684l/GxiVXUr/Rnr//znhMIC+0OJ69pcOYcKT
+        cuXXCkned+zZOahlZ7e4SUEk0uj7eI6OYfDf
+X-Google-Smtp-Source: ABdhPJyttTkUxmZoD0Pgnp7k3WrSY+ASrIX7oi3nhBE1KZq63c5P53fwgPS446EK0NGdb83pMsrmdA==
+X-Received: by 2002:a63:5b60:: with SMTP id l32mr4300008pgm.134.1602871642764;
+        Fri, 16 Oct 2020 11:07:22 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j11sm3513818pfh.143.2020.10.16.11.05.51
+        by smtp.gmail.com with ESMTPSA id c21sm3609040pfo.139.2020.10.16.11.07.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Oct 2020 11:05:52 -0700 (PDT)
-Subject: Re: [PATCH 5/5] task_work: use TIF_NOTIFY_SIGNAL if available
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        peterz@infradead.org, Roman Gershman <romger@amazon.com>
-References: <20201015131701.511523-1-axboe@kernel.dk>
- <20201015131701.511523-6-axboe@kernel.dk> <20201015154953.GM24156@redhat.com>
- <e17cd91e-97b2-1eae-964b-fc90f8f9ef31@kernel.dk>
- <87a6wmv93v.fsf@nanos.tec.linutronix.de>
- <871rhyv7a8.fsf@nanos.tec.linutronix.de>
- <fbaab94b-dd85-9756-7a99-06bf684b80a4@kernel.dk>
- <87a6wmtfvb.fsf@nanos.tec.linutronix.de> <20201016145138.GB21989@redhat.com>
- <1a89eacd-830e-7310-0e56-9b4b389cdc5d@kernel.dk>
- <874kmuaw13.fsf@nanos.tec.linutronix.de>
+        Fri, 16 Oct 2020 11:07:22 -0700 (PDT)
+Subject: Re: io_uring possibly the culprit for qemu hang (linux-5.4.y)
+To:     Ju Hyung Park <qkrwngud825@gmail.com>,
+        Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org, qemu-devel@nongnu.org
+References: <CAD14+f3G2f4QEK+AQaEjAG4syUOK-9bDagXa8D=RxdFWdoi5fQ@mail.gmail.com>
+ <20201001085900.ms5ix2zyoid7v3ra@steredhat>
+ <CAD14+f1m8Xk-VC1nyMh-X4BfWJgObb74_nExhO0VO3ezh_G2jA@mail.gmail.com>
+ <20201002073457.jzkmefo5c65zlka7@steredhat>
+ <CAD14+f0h4Vp=bsgpByTmaOU-Vbz6nnShDHg=0MSg4WO5ZyO=vA@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ce2160c6-666b-0231-3c8d-499958ef733d@kernel.dk>
-Date:   Fri, 16 Oct 2020 12:05:50 -0600
+Message-ID: <05afcc49-5076-1368-3cc7-99abcf44847a@kernel.dk>
+Date:   Fri, 16 Oct 2020 12:07:21 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <874kmuaw13.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <CAD14+f0h4Vp=bsgpByTmaOU-Vbz6nnShDHg=0MSg4WO5ZyO=vA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,42 +71,17 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/16/20 12:03 PM, Thomas Gleixner wrote:
-> On Fri, Oct 16 2020 at 08:53, Jens Axboe wrote:
->> On 10/16/20 8:51 AM, Oleg Nesterov wrote:
->>> On 10/16, Thomas Gleixner wrote:
->>>>
->>>> With moving the handling into get_signal() you don't need more changes
->>>> to arch/* than adding the TIF bit, right?
->>>
->>> we still need to do something like
->>>
->>> 	-	if (thread_flags & _TIF_SIGPENDING)
->>> 	+	if (thread_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
->>> 			do_signal(...);
->>>
->>> and add _TIF_NOTIFY_SIGNAL to the WORK-PENDING mask in arch/* code.
->>
->> Yes, but it becomes really minimal at that point, and just that. There's
->> no touching any of the arch do_signal() code.
->>
->> Just finished the update of the branch to this model, and it does simplify
->> things quite a bit! Most arch patches are now exactly just what you write
->> above, no more.
+On 10/16/20 12:04 PM, Ju Hyung Park wrote:
+> A small update:
 > 
-> Except for all the nasty ones which have these checks in ASM :)
+> As per Stefano's suggestion, disabling io_uring support from QEMU from
+> the configuration step did fix the problem and I'm no longer having
+> hangs.
+> 
+> Looks like it __is__ an io_uring issue :(
 
-Actually not that many of them, and the biggest part of that set are
-easy enough too (just adding the mask to the check). The only exceptions
-are where TIF_NOTIFY_SIGNAL end up spilling over 8/16-bit, and the
-particular arch currently uses some mask compare variant that now needs
-to be modified. powerpc was the worst there, but I'm told a free bit
-will show up in the merge window so all my powerpc asm fiddling was for
-naught :-)
-
-Only remaining issue I'm aware of in the arch conversions is arm, which
-runs into this exact issue. Need to check with some arm guys on what the
-best approach is there...
+Would be great if you could try 5.4.71 and see if that helps for your
+issue.
 
 -- 
 Jens Axboe

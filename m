@@ -2,98 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E89829094B
-	for <lists+io-uring@lfdr.de>; Fri, 16 Oct 2020 18:06:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBE30290B0E
+	for <lists+io-uring@lfdr.de>; Fri, 16 Oct 2020 20:03:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407132AbgJPQG2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 16 Oct 2020 12:06:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41252 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405432AbgJPQG1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Oct 2020 12:06:27 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78D17C061755
-        for <io-uring@vger.kernel.org>; Fri, 16 Oct 2020 09:06:26 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id n9so1708330pgt.8
-        for <io-uring@vger.kernel.org>; Fri, 16 Oct 2020 09:06:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=NuRq6Ozb7VpJd7RAoCR5EP362roeiSgqhawOdKQ6JUE=;
-        b=OtP7/TXXa7Fmvhze//ZGRpup+mfu+rIRMz6PWqlJ9/tczjk0WmKsrt0oeusbiCNKug
-         CD3ZHCwT2bZD/BssRzts0NF/jXu85Yeyq03Rw9RQjX1/47FPsQOwvUhSLxsYLGLMf57D
-         Bwp18cEM1lo044wqfRrJz2lSKRBBobx/XC7nvkdLQ1cq0xNB8hsL6vshqLf5Iis4WnxR
-         Ffkp6lcsMl2I/vPQUzQhHIyBmklnaMGH0S+NOaTko82uFEaJu4DsHz9w7VSEl2qFxEFd
-         HNMYHyg+O09AMejiW/VdRX0xV8bL34v7nlnbvlBzX2NjZQIKPOV6HiWi/VlgD8ldkEyH
-         pVyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NuRq6Ozb7VpJd7RAoCR5EP362roeiSgqhawOdKQ6JUE=;
-        b=kn1hqRF0p7VOtU4JG2kX6TXVoExSRA8gmoWhMnmq4Wa+puIzrfiV/iHV+ks/opW/33
-         Z7nI8GQOhiq2W8Yar2ZtgvuNWXXm62KfUDOH1JADCBv5AGa2lwq6nJ6QLyJxf07jz5X4
-         aes1A6VbE8l6S7dGIM6LAe2oIzW35EfLN7fih4J80LNlDmU10Ls9EGvkZs9WcMvJIEmv
-         i6/CWc3iBU+WTYdJFpihmu0DqVlv20sP0XCnpoXHpJJlIcVdmwRGLzEbiRyTzQP+ar87
-         uC60Apj6tsKoh5naua9IxS5i9Le3aOIsFYP0xN/EO+tgAaNTowcedpmRt2k+RyVUf2Nd
-         +iHQ==
-X-Gm-Message-State: AOAM530s+8Ty6v463WdQnuOFfVNRFf04cRtAAtjNDz9KjBONI/VrVC22
-        BxB/KhwtLl+Tbv+zXUj7iBvICcPDjv+WpLpr
-X-Google-Smtp-Source: ABdhPJzVfJJzF+FaqbrjVpgXENhDDoECvIfbEp2ZDWyjvfrq3+F+6eJbAc0Jo4gXmreGuQMPgLWZ7g==
-X-Received: by 2002:a65:6712:: with SMTP id u18mr3639698pgf.84.1602864385781;
-        Fri, 16 Oct 2020 09:06:25 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id d128sm3309995pfd.94.2020.10.16.09.06.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Oct 2020 09:06:25 -0700 (PDT)
-Subject: Re: Samba with multichannel and io_uring
-To:     Stefan Metzmacher <metze@samba.org>,
-        Samba Technical <samba-technical@lists.samba.org>,
-        io-uring <io-uring@vger.kernel.org>
-References: <53d63041-5931-c5f2-2f31-50b5cbe09ec8@samba.org>
- <efb8b619-ca06-5c6b-e052-0c40b64b9904@kernel.dk>
- <6e7ea4e7-8ef7-9ad4-1377-08749f9bae0b@samba.org>
- <18e153db-5ee9-f286-58ae-30065feda737@kernel.dk>
- <892e855a-9c4f-ea5b-6728-f02df271c2c8@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <461e4fc4-0e7d-2a6f-f2eb-a962b077ed81@kernel.dk>
-Date:   Fri, 16 Oct 2020 10:06:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S2390346AbgJPSDH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Oct 2020 14:03:07 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:46092 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387509AbgJPSDH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Oct 2020 14:03:07 -0400
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1602871386;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VjN47K1oRc9Uf/luZGiXWJiCGTO/s1PL6HhypKJDE2Q=;
+        b=WprMmSjcUBCd+LqmcC2gB1CcFxwAHpvQBnJIdzVwBAT1qAekwpAU5Dbt25J8CJvIFGKYW7
+        tZML5GsXmAY2qY/kKMJpGwDwbuHxWjLqu7grCPxoklSBWJKZ4sYINii6dkXmQUwfOkL/xZ
+        /kDKUD1o82xkRdQKQwLqRzozdLk72IqJcao0K7Ky2cJj81yT49YlLk0k7uuxWE4nl6nb0B
+        xOTfoSjlWjaiZZyKHiFH7yy2PyEVdviIdlD6qwNiEgcrEMyhEiWhGNMNo168YsMlyrH7nj
+        iYGBo4csD2L8Z9W+CuHmiRiy6CVI9kGiXV2cy2748L7aqjwF7w1Toa2Aiu057Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1602871386;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VjN47K1oRc9Uf/luZGiXWJiCGTO/s1PL6HhypKJDE2Q=;
+        b=/1McgWzP+vZ+PGht2uWGHFsQMF0oMXXCvUssNI8fYGSNvuRHLoTIe5OxfRpLEMd4AH74Mf
+        Dl6lmorJ3AhoSnCw==
+To:     Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        peterz@infradead.org, Roman Gershman <romger@amazon.com>
+Subject: Re: [PATCH 5/5] task_work: use TIF_NOTIFY_SIGNAL if available
+In-Reply-To: <1a89eacd-830e-7310-0e56-9b4b389cdc5d@kernel.dk>
+References: <20201015131701.511523-1-axboe@kernel.dk> <20201015131701.511523-6-axboe@kernel.dk> <20201015154953.GM24156@redhat.com> <e17cd91e-97b2-1eae-964b-fc90f8f9ef31@kernel.dk> <87a6wmv93v.fsf@nanos.tec.linutronix.de> <871rhyv7a8.fsf@nanos.tec.linutronix.de> <fbaab94b-dd85-9756-7a99-06bf684b80a4@kernel.dk> <87a6wmtfvb.fsf@nanos.tec.linutronix.de> <20201016145138.GB21989@redhat.com> <1a89eacd-830e-7310-0e56-9b4b389cdc5d@kernel.dk>
+Date:   Fri, 16 Oct 2020 20:03:04 +0200
+Message-ID: <874kmuaw13.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <892e855a-9c4f-ea5b-6728-f02df271c2c8@samba.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/16/20 10:03 AM, Stefan Metzmacher wrote:
->>
->> I don't think that's too important, as it's just a snapshot in time. So
->> it'll fluctuate based on the role of the worker.
->>
->>> I just found that proc_task_name() handles PF_WQ_WORKER special
->>> and cat /proc/$pid/comm can expose something like:
->>>   kworker/u17:2-btrfs-worker-high
->>
->> Yep, that's how they do fancier names. It's been on my agenda for a while
->> to do something about this, I'll try and cook something up for 5.11.
-> 
-> With a function like wq_worker_comm being called by proc_task_name(),
-> you would capture current IO_WORKER_F_BOUND state and alter the name.
+On Fri, Oct 16 2020 at 08:53, Jens Axboe wrote:
+> On 10/16/20 8:51 AM, Oleg Nesterov wrote:
+>> On 10/16, Thomas Gleixner wrote:
+>>>
+>>> With moving the handling into get_signal() you don't need more changes
+>>> to arch/* than adding the TIF bit, right?
+>> 
+>> we still need to do something like
+>> 
+>> 	-	if (thread_flags & _TIF_SIGPENDING)
+>> 	+	if (thread_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
+>> 			do_signal(...);
+>> 
+>> and add _TIF_NOTIFY_SIGNAL to the WORK-PENDING mask in arch/* code.
+>
+> Yes, but it becomes really minimal at that point, and just that. There's
+> no touching any of the arch do_signal() code.
+>
+> Just finished the update of the branch to this model, and it does simplify
+> things quite a bit! Most arch patches are now exactly just what you write
+> above, no more.
 
-Oh yes, it'll be accurate enough, my point is just that by the time you
-see it, reality might be different. But that's fine, that's how they
-work.
-
-> Please CC me on your patches in that direction.
-
-Will do!
-
--- 
-Jens Axboe
-
+Except for all the nasty ones which have these checks in ASM :)

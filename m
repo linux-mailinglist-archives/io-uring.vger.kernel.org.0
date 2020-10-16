@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FBA5290917
-	for <lists+io-uring@lfdr.de>; Fri, 16 Oct 2020 18:02:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 781A0290919
+	for <lists+io-uring@lfdr.de>; Fri, 16 Oct 2020 18:02:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410533AbgJPQCi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 16 Oct 2020 12:02:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40602 "EHLO
+        id S2410535AbgJPQCj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Oct 2020 12:02:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2410466AbgJPQCh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Oct 2020 12:02:37 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CFAAC0613D3
-        for <io-uring@vger.kernel.org>; Fri, 16 Oct 2020 09:02:37 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id h4so1773553pjk.0
-        for <io-uring@vger.kernel.org>; Fri, 16 Oct 2020 09:02:37 -0700 (PDT)
+        with ESMTP id S2410466AbgJPQCj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Oct 2020 12:02:39 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E326AC061755
+        for <io-uring@vger.kernel.org>; Fri, 16 Oct 2020 09:02:38 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id y14so1731116pfp.13
+        for <io-uring@vger.kernel.org>; Fri, 16 Oct 2020 09:02:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kD3LFOV0aWodyJxHZ2ZGxlgwSC2ygFvIkyQtGWPV4Dc=;
-        b=ttHAy607hxlhNjJ9hb0q0FNRy6A2+DjM1GTQYoCc+HClVjb2RmLp0Mr3Ru3DS3B1Fy
-         5RpFxoerNyXamHYR4Y0b2X7A1RVIpzmvRTWDP6u2nlvZUR64BAoIWKWXjBwmjMkxFwPk
-         Gl283L3q1DzH7iydh/YtZzzTkZNOgVHLFXDVBbcG8uD2/djEdCB+b/62D1N3163NXqc6
-         XXxyTGQ1hq0p0S5UKkci/W9ue2IceMHkGSeBtT3LsYlcydpnVSwSNiI1SC2o+h/LWaX3
-         Dd6AH3LOvnyudqPQH6nQ4gT39kNDympjf3DY0Ty8W7uMsQ4ZFxQuwavJNm2svCuXleNA
-         riXg==
+        bh=0/3OjceFQvDrtrEvZxO0Kp9nsYQxCs33ugsAC0C+ZaY=;
+        b=H/5YFGyZXwO8vNxt1lh+ryjnz8VDQyXDogCjwXhFtSFvngl1XRUXu649l4ZsiXJFc/
+         5FJ22gn0a9CVn4Xpur3WmgxlfEBEsZmxhEqoUTrKLEIsAmuDaVQ9zNj+OeXjhaKDfyg0
+         AR5v+obSkNIiq1lOH2c7NoB5WUd4l7HKEGdZIJHMRCcAgW4HHM1gLvOXsqG+fEV2nGTt
+         ooeRv2JAWOR+o9wtDge9Do5/8LiOtDgRlZHhwHRKmIkYyvpP+y4cmtNMPn9Q/p9EmcNZ
+         xbMDnVKf1Fzz4NzthuyuKSUbzu534XaN2dfD3Ty4SKNpzpPRN/v6l73BXVLLhxjDOvvW
+         2uow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kD3LFOV0aWodyJxHZ2ZGxlgwSC2ygFvIkyQtGWPV4Dc=;
-        b=I1WgeTlZMnJzF2EisQZw8lADS3B8e8J8hONVGKzgHV6xjm5wIIJkVyDalEaajT1AoF
-         ULG9dvxSUt/lmOZMGb6CWtjQIqGmmnEaMtLJ0klYxpgI5WNmfgufC4DWGrX8TOcN4EmO
-         RiLJ7sEk0fGsebZtoxW0LfbK110CIiQh7p6YQYUyzJHhyOCqNl4jvu15/AlB7nS4lTo9
-         zMEVPCiIbRzshtrc4sJgw7Ce0rJ6VXZfvwRkOiUnoawxYxA4GNShj6WgA0SlO07tJV3L
-         ETB8D5sjfSlBAMvF3iPNTJuVp8nOUOYWwgd5IJKSn0ARGQ6VGGDljSe85Sss/LYlL2go
-         Wfeg==
-X-Gm-Message-State: AOAM530CstSiZXpWpCBPivnCtd+fCGQwfsR5+5p1o4ruG7kA+Nw8aGIy
-        uMdwEkaV3YkNSDjfSY2c1SLJSIVgVKRQI/hh
-X-Google-Smtp-Source: ABdhPJyiFe1gwJljXJzujFbF254Of3Bp0WlUpRu8IXmChukMhoLXYPiVlduHLcWtXpo7YPX2bMbZ6Q==
-X-Received: by 2002:a17:902:8bc4:b029:d2:8cec:1fae with SMTP id r4-20020a1709028bc4b02900d28cec1faemr4916848plo.23.1602864156242;
-        Fri, 16 Oct 2020 09:02:36 -0700 (PDT)
+        bh=0/3OjceFQvDrtrEvZxO0Kp9nsYQxCs33ugsAC0C+ZaY=;
+        b=lkOskDz/q5wip/rK1N4LOVtFADyJLsBzbNntdLh5ZMiQwzZOqvF0briTBSWwMZCRci
+         HE/P+D5eYS8Sl1Ukf4S+C7ru+EguBaDeMsKSyI1QSrxHigImKhkR7HVYVdQmv/lvkFdb
+         ypoawwmdqIeWaVQxLoot189/guvzEK1OuY4K/hnEW+2/NX9yPycG1+Bn8C0/kGYVC96e
+         mOjUM90vqCkJBkHlfZVHSQokR+Vm1o8juh5dWQ6fqi+XDoiEw9T7QWI3iZVU9bQ373EM
+         b0HlWBEAUdURR5cWmFlnMNPcVmES5PacVy0O5wLLvFYCQZlctYob9Tvr8DtWrFsHr/4S
+         EXbA==
+X-Gm-Message-State: AOAM533Lp9U6x13kF1tg8OUEBMZeCeX3MlHiQ8jTvPgVE0LVR0arIsjL
+        KZX+43n/ttMwwI7YcXsRpzIEVoNJXOE4LZ/H
+X-Google-Smtp-Source: ABdhPJxBN9R+94VSbui2FNlb5R1VeJivAFxxUhtRv6ZD1jm11WjY256nLgER+NyxYHoEMzV8LXK/+w==
+X-Received: by 2002:aa7:875a:0:b029:155:7c08:f2ed with SMTP id g26-20020aa7875a0000b02901557c08f2edmr4582206pfo.52.1602864157429;
+        Fri, 16 Oct 2020 09:02:37 -0700 (PDT)
 Received: from p1.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id t13sm3190109pfc.1.2020.10.16.09.02.35
+        by smtp.gmail.com with ESMTPSA id t13sm3190109pfc.1.2020.10.16.09.02.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2020 09:02:35 -0700 (PDT)
+        Fri, 16 Oct 2020 09:02:36 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 06/18] io_uring: don't put a poll req under spinlock
-Date:   Fri, 16 Oct 2020 10:02:12 -0600
-Message-Id: <20201016160224.1575329-7-axboe@kernel.dk>
+Subject: [PATCH 07/18] io_uring: dig out COMP_LOCK from deep call chain
+Date:   Fri, 16 Oct 2020 10:02:13 -0600
+Message-Id: <20201016160224.1575329-8-axboe@kernel.dk>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201016160224.1575329-1-axboe@kernel.dk>
 References: <20201016160224.1575329-1-axboe@kernel.dk>
@@ -65,33 +65,109 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Pavel Begunkov <asml.silence@gmail.com>
 
-Move io_put_req() in io_poll_task_handler() from under spinlock. This
-eliminates the need to use REQ_F_COMP_LOCKED, at the expense of
-potentially having to grab the lock again. That's still a better trade
-off than relying on the locked flag.
+io_req_clean_work() checks REQ_F_COMP_LOCK to pass this two layers up.
+Move the check up into __io_free_req(), so at least it doesn't looks so
+ugly and would facilitate further changes.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/io_uring.c | 33 +++++++++------------------------
+ 1 file changed, 9 insertions(+), 24 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 60b58aa44e60..728df7c6324c 100644
+index 728df7c6324c..b76aecb3443d 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -4843,10 +4843,9 @@ static void io_poll_task_handler(struct io_kiocb *req, struct io_kiocb **nxt)
- 
- 	hash_del(&req->hash_node);
- 	io_poll_complete(req, req->result, 0);
--	req->flags |= REQ_F_COMP_LOCKED;
--	*nxt = io_put_req_find_next(req);
- 	spin_unlock_irq(&ctx->completion_lock);
- 
-+	*nxt = io_put_req_find_next(req);
- 	io_cqring_ev_posted(ctx);
+@@ -1181,14 +1181,10 @@ static void __io_commit_cqring(struct io_ring_ctx *ctx)
+ 	}
  }
  
+-/*
+- * Returns true if we need to defer file table putting. This can only happen
+- * from the error path with REQ_F_COMP_LOCKED set.
+- */
+-static bool io_req_clean_work(struct io_kiocb *req)
++static void io_req_clean_work(struct io_kiocb *req)
+ {
+ 	if (!(req->flags & REQ_F_WORK_INITIALIZED))
+-		return false;
++		return;
+ 
+ 	req->flags &= ~REQ_F_WORK_INITIALIZED;
+ 
+@@ -1207,9 +1203,6 @@ static bool io_req_clean_work(struct io_kiocb *req)
+ 	if (req->work.fs) {
+ 		struct fs_struct *fs = req->work.fs;
+ 
+-		if (req->flags & REQ_F_COMP_LOCKED)
+-			return true;
+-
+ 		spin_lock(&req->work.fs->lock);
+ 		if (--fs->users)
+ 			fs = NULL;
+@@ -1218,8 +1211,6 @@ static bool io_req_clean_work(struct io_kiocb *req)
+ 			free_fs_struct(fs);
+ 		req->work.fs = NULL;
+ 	}
+-
+-	return false;
+ }
+ 
+ static void io_prep_async_work(struct io_kiocb *req)
+@@ -1699,7 +1690,7 @@ static inline void io_put_file(struct io_kiocb *req, struct file *file,
+ 		fput(file);
+ }
+ 
+-static bool io_dismantle_req(struct io_kiocb *req)
++static void io_dismantle_req(struct io_kiocb *req)
+ {
+ 	io_clean_op(req);
+ 
+@@ -1708,7 +1699,7 @@ static bool io_dismantle_req(struct io_kiocb *req)
+ 	if (req->file)
+ 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
+ 
+-	return io_req_clean_work(req);
++	io_req_clean_work(req);
+ }
+ 
+ static void __io_free_req_finish(struct io_kiocb *req)
+@@ -1731,21 +1722,15 @@ static void __io_free_req_finish(struct io_kiocb *req)
+ static void io_req_task_file_table_put(struct callback_head *cb)
+ {
+ 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+-	struct fs_struct *fs = req->work.fs;
+-
+-	spin_lock(&req->work.fs->lock);
+-	if (--fs->users)
+-		fs = NULL;
+-	spin_unlock(&req->work.fs->lock);
+-	if (fs)
+-		free_fs_struct(fs);
+-	req->work.fs = NULL;
++
++	io_dismantle_req(req);
+ 	__io_free_req_finish(req);
+ }
+ 
+ static void __io_free_req(struct io_kiocb *req)
+ {
+-	if (!io_dismantle_req(req)) {
++	if (!(req->flags & REQ_F_COMP_LOCKED)) {
++		io_dismantle_req(req);
+ 		__io_free_req_finish(req);
+ 	} else {
+ 		int ret;
+@@ -2057,7 +2042,7 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req)
+ 	}
+ 	rb->task_refs++;
+ 
+-	WARN_ON_ONCE(io_dismantle_req(req));
++	io_dismantle_req(req);
+ 	rb->reqs[rb->to_free++] = req;
+ 	if (unlikely(rb->to_free == ARRAY_SIZE(rb->reqs)))
+ 		__io_req_free_batch_flush(req->ctx, rb);
 -- 
 2.28.0
 

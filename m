@@ -2,72 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9C7C29020E
-	for <lists+io-uring@lfdr.de>; Fri, 16 Oct 2020 11:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3394029024E
+	for <lists+io-uring@lfdr.de>; Fri, 16 Oct 2020 11:56:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405757AbgJPJjp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 16 Oct 2020 05:39:45 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:43452 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405486AbgJPJjp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Oct 2020 05:39:45 -0400
+        id S2406459AbgJPJz0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Oct 2020 05:55:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39990 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406446AbgJPJzW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Oct 2020 05:55:22 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34864C061755;
+        Fri, 16 Oct 2020 02:55:22 -0700 (PDT)
 From:   Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1602841183;
+        s=2020; t=1602842120;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=IQSAq0DmcMCp8Il1c6ZBuGTyHZ8gpfRWlnpFLmWcST8=;
-        b=axWfea24jcPVqd7XdMsnD60n55IHtNcbIBDwPGWKdVDMyPtkNbS9+pSReoCZVQXdIIE1KW
-        W9seUIsKWQNaG5mp78Fi3tJfXHC3ZsCEOYOs7mHUiE9P2xw92kIl5E0s/3P1j3/hG2iO0r
-        mDb87G+alYm2ooFjXtFUEGzmV1mqKnpxtf+pZGDWq9YpEYxHAV7mBmSUjgJe4z8d5dgEWb
-        cRI8aJjCFp5TYud7cRlDcHCCN8WgHJtAy5S1bC6Jzcr5ml7ofgObhAhImvixXzDV9RSNKK
-        DkgL1WYQzrolmNs+7TmOnx9vwGpC3F4iAlvfnlN7RfbJ7lJ+AYhYZiUtcttBIw==
+        bh=JQCk6sSw96dKkKWAw68t6bVaXj3z565GzsunHnpV0/c=;
+        b=T3NsBOLqXbyJX0qxq53mu2tDtBbnoSucVZGFpFhI7Z6J0s7/YVfyDGP0SkDj7nN5EUSDkN
+        DWu0ko6dhh5S20q/N28Us3g42NHsxVNK16KiROcgjqs5Qu8W9WxoLO4bVvO+PJlEEmVIKm
+        gzYeOf8d8MDxrxnZ1Bocdu0+Hi+5VAsGXmMhjcbAX1yvd9FZEllse1HjB/a1iBQ3LHxGb5
+        BKhdKN6k00dYRgPWjoy+EJZ1d7jhzHHoAoSDJZP6AthHg34jaDQ2XweEcC5AT9XiUYnzM6
+        xIfRWVNrMuMSc9RTabYUcdwYBo3pa6LzeMdQlgZ+4e/3JNcMtYBzyLP5t0Gn+g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1602841183;
+        s=2020e; t=1602842120;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=IQSAq0DmcMCp8Il1c6ZBuGTyHZ8gpfRWlnpFLmWcST8=;
-        b=c3yXCUWPSkn+oH+vHxi4tK25AE8sUcYOc5AMFY4+3uAfbvQAZMObx/dg3TWPw5rXZZhQNQ
-        5FKr74oQ0fuKSmCg==
-To:     Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        peterz@infradead.org, Roman Gershman <romger@amazon.com>
-Subject: Re: [PATCH 5/5] task_work: use TIF_NOTIFY_SIGNAL if available
-In-Reply-To: <87a6wmv93v.fsf@nanos.tec.linutronix.de>
-References: <20201015131701.511523-1-axboe@kernel.dk> <20201015131701.511523-6-axboe@kernel.dk> <20201015154953.GM24156@redhat.com> <e17cd91e-97b2-1eae-964b-fc90f8f9ef31@kernel.dk> <87a6wmv93v.fsf@nanos.tec.linutronix.de>
-Date:   Fri, 16 Oct 2020 11:39:43 +0200
-Message-ID: <871rhyv7a8.fsf@nanos.tec.linutronix.de>
+        bh=JQCk6sSw96dKkKWAw68t6bVaXj3z565GzsunHnpV0/c=;
+        b=JKdCEipqAbkRwKZMerW1WttJwL4M4wO2zLIpCLUc2HtCjygDsGQh+sk3OfMvIyunHTlK0c
+        hFrPm0MS5ThVHWBg==
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, peterz@infradead.org
+Subject: Re: [PATCH 4/5] x86: wire up TIF_NOTIFY_SIGNAL
+In-Reply-To: <20201015143409.GC24156@redhat.com>
+References: <20201015131701.511523-1-axboe@kernel.dk> <20201015131701.511523-5-axboe@kernel.dk> <87o8l3a8af.fsf@nanos.tec.linutronix.de> <20201015143409.GC24156@redhat.com>
+Date:   Fri, 16 Oct 2020 11:55:20 +0200
+Message-ID: <87y2k6trzr.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Oct 16 2020 at 11:00, Thomas Gleixner wrote:
-> On Thu, Oct 15 2020 at 12:39, Jens Axboe wrote:
->> On 10/15/20 9:49 AM, Oleg Nesterov wrote:
-> So if you change #2 to:
+On Thu, Oct 15 2020 at 16:34, Oleg Nesterov wrote:
+> On 10/15, Thomas Gleixner wrote:
+>> Instead of adding this to every architectures signal magic, we can
+>> handle TIF_NOTIFY_SIGNAL in the core code:
+>> 
+>> static void handle_singal_work(ti_work, regs)
+>> {
+>> 	if (ti_work & _TIF_NOTIFY_SIGNAL)
+>>         	tracehook_notify_signal();
+>> 
+>>         arch_do_signal(ti_work, regs);
+>> }
+>> 
+>>       loop {
+>>       		if (ti_work & (SIGPENDING | NOTIFY_SIGNAL))
+>>                 	handle_signal_work(ti_work, regs);
+>>       }
 >
->    Drop the CONFIG_GENERIC_ENTRY dependency, make _all_ architectures
->    use TIF_NOTIFY_SIGNAL and clean up the jobctl and whatever related
->    mess.
->
-> and actually act apon it, then I'm fine with that approach.
+> To me this looks like unnecessary complication. We need to change
+> every architecture anyway, how can this helper help?
 
-Which makes me rethink my view on Olegs suggestion:
+This is about the generic entry code. For the users of that it makes
+absolutely no sense to have that in architecture code.
 
->>> You can simply nack the patch which adds TIF_NOTIFY_SIGNAL to
->>> arch/xxx/include/asm/thread_info.h.
+Something which every architecture needs to do in the exactly same way
+goes into the common code. If not, you can spare the exercise of having
+common code in the first place.
 
-That's a truly great suggestion:
+Also arch_do_signal() becomes a misnomer with this new magic.
 
-   X86 is going to have that TIF bit once the above is available.
+static void handle_signal_work(ti_work, regs)
+{
+	if (ti_work & _TIF_NOTIFY_SIGNAL)
+        	tracehook_notify_signal();
 
-I'm happy to help with the merge logistics of this.
+        arch_do_signal_or_restart(ti_work, regs);
+}
+
+which makes it entirely clear what this is about.
 
 Thanks,
 
         tglx
-

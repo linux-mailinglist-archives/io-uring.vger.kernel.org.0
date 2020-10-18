@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0A1829169B
+	by mail.lfdr.de (Postfix) with ESMTP id 0498B29169A
 	for <lists+io-uring@lfdr.de>; Sun, 18 Oct 2020 11:20:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725298AbgJRJUw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1726285AbgJRJUw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Sun, 18 Oct 2020 05:20:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53718 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbgJRJUv (ORCPT
+        with ESMTP id S1725298AbgJRJUv (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sun, 18 Oct 2020 05:20:51 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B3D9C061755
-        for <io-uring@vger.kernel.org>; Sun, 18 Oct 2020 02:20:50 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id e23so7428067wme.2
-        for <io-uring@vger.kernel.org>; Sun, 18 Oct 2020 02:20:50 -0700 (PDT)
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE82C0613CE
+        for <io-uring@vger.kernel.org>; Sun, 18 Oct 2020 02:20:51 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id n15so8097722wrq.2
+        for <io-uring@vger.kernel.org>; Sun, 18 Oct 2020 02:20:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=SpRtmWpIWo2mr1Bkro/1jtA0VJ1xvH7b4a9UveCo0uM=;
-        b=Hcsfa2Dpm361ngziraxcPqoh9buUZL1aZ/WJx9f2vgpdlDt/KrZGfZninyjTWmGxzm
-         ILRGEnzjOX6U6e09FbWOIyLR4AZrhjruoEp85/6N+GcTlHH5XVTHUO+V5JtnAc6CcIKk
-         Afcb2FVD0tKMr1CAio8iOeLAv2bDT1fFq3CoPc32QSgaWc/H2oYa2BuvoxYG+F2Ll3s0
-         xKeiHA/vZp/m8RMRp8pHGgnJSHFo9ReMvjv0u1RhbVQW1o0JnsKtlc6ct+Ij35V/WjKK
-         0aggHMGWU83vWJeEe2C3+JqP9T9zhTT/Algw0QVhwNGmaWbxfj3UfOzFFprDdjY/n5TP
-         BB1g==
+        bh=GmJONCtUDCocCX708rkSzcCDDElS1xy5FRbYRvL+eLo=;
+        b=Tfa9WPnTrtbUG8Sflj7g9cQh3PhL3ZvzKy0l9sSLhOdqqM17K9Axw1wFsPNifYxpkC
+         vef78voN1KVAladPGBluqaJXw26LvoQlv1FyhWwIZCM2mNcwvrLggxhCvBT5zfN+f6+s
+         LE+wn3dvcKzhZrckhEoHKf54A4e9wENbif6aKw7GxN+AZ3xBvG2jHZEEU2SggWgGHdl/
+         65euUXBBBepkjPkzaB6AGZg1pT556oMOOlKww2NgaWV76wtU5wKQDfPW9WgO+0/wGmOS
+         viPsQ12yVMvI+AuhA/vXS6ALZt+eysGFrxdOpvutebMEn+fUAW1n51SE2idOVgQgOwSF
+         0rQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SpRtmWpIWo2mr1Bkro/1jtA0VJ1xvH7b4a9UveCo0uM=;
-        b=nB5Bw0jGXt5eWLZUholQXEo3S7RtyM8yogndD46tZ7DGftTpi1iUdinXSEcCMGCYjM
-         2LXfrJPo84MwjI0hhqwBTHrKYcyLyIJQVuei7NNgmWlLq6klS8z3aiUdElRbpTCMBKAP
-         micXh63R1t2FMbHCapjdESrdRTxvLQ+LxQeIQUgMAN3oXlIDtkEUdDlS58cqwmkoW4uQ
-         xZy5D0GiK00zZ7Ui69UdkfULNC16Z0ScJo09QUvMAIJobjnR6xJcTpwho+RRH7Ah4B+Y
-         29dqaEyaSZzeY3JR3qUCeijL6o5Vuo4UiHLX6YAf0M8O8Tkxtpzwr0i06woXi3OG4tFi
-         Nr+A==
-X-Gm-Message-State: AOAM533B3ZWcWuhIR3x4UKA/90420UKc73W8mLWevgvEeFzgQtjkIGRZ
-        njWaHuP8O1tYNKQr0JNU8hmPhtQc6X1fxA==
-X-Google-Smtp-Source: ABdhPJzjqdMRVMbwpZx2qJLfwbdukcGQLnQNDcx7Xoif+YeKPl6Ny4lHURAjYRyK/HtGrW252O9QVQ==
-X-Received: by 2002:a1c:7d49:: with SMTP id y70mr5455441wmc.103.1603012849068;
-        Sun, 18 Oct 2020 02:20:49 -0700 (PDT)
+        bh=GmJONCtUDCocCX708rkSzcCDDElS1xy5FRbYRvL+eLo=;
+        b=PYhCxg3Ph+u940+s7mqOOWDr8XyovmcVIc8MCkpSZ71dfYgKI4JtEdM0BUSdu1hHKE
+         aA/EytWietAx28DJBKc27hYOuJjzag82vHDS7cnOVUcd/TPpdjZ1uSII6y8m1SHl3Sh5
+         hw6rh2PHozDdF7saCS+0eS7emi8F066zhBP7b3rFXD1luFmqvGuz0mUkJjaSx2blu/fc
+         JMGw49N+iJYY7PsRZfZ/nTP8nTYMmD7x7U7KorbzspjvQ7Pw/gvzbE36EemolxZtZPVd
+         fcZo17cHDBJst+By+F09MS64rztckHq8a0eFef98piFpDowXnkiwrJ6YKdzoHfQJblHQ
+         c4TA==
+X-Gm-Message-State: AOAM532q4xYRoyoFnSDVRlot2TzB5fvLHPS+LmfHbs5m3S9/W4INbaxp
+        N1KidupZ+UpIU4zdLtCxLnE=
+X-Google-Smtp-Source: ABdhPJw7w399yQDjHbdglweBoRpD38fXFR7VqSRvgI1ZXT4cfSNYBsdvj+huKkcI/NppDGQRuLnz4Q==
+X-Received: by 2002:adf:eccb:: with SMTP id s11mr13994292wro.135.1603012850136;
+        Sun, 18 Oct 2020 02:20:50 -0700 (PDT)
 Received: from localhost.localdomain (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
-        by smtp.gmail.com with ESMTPSA id w11sm12782984wrs.26.2020.10.18.02.20.48
+        by smtp.gmail.com with ESMTPSA id w11sm12782984wrs.26.2020.10.18.02.20.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Oct 2020 02:20:48 -0700 (PDT)
+        Sun, 18 Oct 2020 02:20:49 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 6/7] io_uring: inline io_poll_task_handler()
-Date:   Sun, 18 Oct 2020 10:17:42 +0100
-Message-Id: <480348e38810f765423a464f759698954643f3f9.1603011899.git.asml.silence@gmail.com>
+Subject: [PATCH 7/7] io_uring: do poll's hash_node init in common code
+Date:   Sun, 18 Oct 2020 10:17:43 +0100
+Message-Id: <a2a03d41d389ccddb174e645d5b0e93a979bbf6f.1603011899.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1603011899.git.asml.silence@gmail.com>
 References: <cover.1603011899.git.asml.silence@gmail.com>
@@ -61,62 +61,43 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_poll_task_handler() doesn't add clarity, inline it in its only user.
+Move INIT_HLIST_NODE(&req->hash_node) into __io_arm_poll_handler(), so
+that it doesn't duplicated and common poll code would be responsible for
+it.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 31 ++++++++++++-------------------
- 1 file changed, 12 insertions(+), 19 deletions(-)
+ fs/io_uring.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 70f4f1ce3011..81b0b38ee506 100644
+index 81b0b38ee506..95d2bb7069c6 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -4924,32 +4924,25 @@ static void io_poll_complete(struct io_kiocb *req, __poll_t mask, int error)
- 	io_commit_cqring(ctx);
- }
- 
--static void io_poll_task_handler(struct io_kiocb *req, struct io_kiocb **nxt)
-+static void io_poll_task_func(struct callback_head *cb)
- {
-+	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+@@ -5096,6 +5096,7 @@ static __poll_t __io_arm_poll_handler(struct io_kiocb *req,
  	struct io_ring_ctx *ctx = req->ctx;
-+	struct io_kiocb *nxt;
+ 	bool cancel = false;
  
- 	if (io_poll_rewait(req, &req->poll)) {
- 		spin_unlock_irq(&ctx->completion_lock);
--		return;
--	}
--
--	hash_del(&req->hash_node);
--	io_poll_complete(req, req->result, 0);
--	spin_unlock_irq(&ctx->completion_lock);
--
--	*nxt = io_put_req_find_next(req);
--	io_cqring_ev_posted(ctx);
--}
-+	} else {
-+		hash_del(&req->hash_node);
-+		io_poll_complete(req, req->result, 0);
-+		spin_unlock_irq(&ctx->completion_lock);
++	INIT_HLIST_NODE(&req->hash_node);
+ 	io_init_poll_iocb(poll, mask, wake_func);
+ 	poll->file = req->file;
+ 	poll->wait.private = req;
+@@ -5157,7 +5158,6 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
  
--static void io_poll_task_func(struct callback_head *cb)
--{
--	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
--	struct io_ring_ctx *ctx = req->ctx;
--	struct io_kiocb *nxt = NULL;
-+		nxt = io_put_req_find_next(req);
-+		io_cqring_ev_posted(ctx);
-+		if (nxt)
-+			__io_req_task_submit(nxt);
-+	}
+ 	req->flags |= REQ_F_POLLED;
+ 	req->apoll = apoll;
+-	INIT_HLIST_NODE(&req->hash_node);
  
--	io_poll_task_handler(req, &nxt);
--	if (nxt)
--		__io_req_task_submit(nxt);
- 	percpu_ref_put(&ctx->refs);
- }
+ 	mask = 0;
+ 	if (def->pollin)
+@@ -5350,7 +5350,6 @@ static int io_poll_add(struct io_kiocb *req)
+ 	struct io_poll_table ipt;
+ 	__poll_t mask;
  
+-	INIT_HLIST_NODE(&req->hash_node);
+ 	ipt.pt._qproc = io_poll_queue_proc;
+ 
+ 	mask = __io_arm_poll_handler(req, &req->poll, &ipt, poll->events,
 -- 
 2.24.0
 

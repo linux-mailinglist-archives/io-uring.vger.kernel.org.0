@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01A7C291697
+	by mail.lfdr.de (Postfix) with ESMTP id D1A54291698
 	for <lists+io-uring@lfdr.de>; Sun, 18 Oct 2020 11:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbgJRJUs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 18 Oct 2020 05:20:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53706 "EHLO
+        id S1726258AbgJRJUt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 18 Oct 2020 05:20:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S1725298AbgJRJUs (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sun, 18 Oct 2020 05:20:48 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 966C4C0613CE
-        for <io-uring@vger.kernel.org>; Sun, 18 Oct 2020 02:20:47 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id 13so7441147wmf.0
-        for <io-uring@vger.kernel.org>; Sun, 18 Oct 2020 02:20:47 -0700 (PDT)
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93222C061755
+        for <io-uring@vger.kernel.org>; Sun, 18 Oct 2020 02:20:48 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id h7so8095590wre.4
+        for <io-uring@vger.kernel.org>; Sun, 18 Oct 2020 02:20:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=UNJ3OGz4vF0DqwDRGrdTdH+VRYxcdSnqAG5IXs/NI+g=;
-        b=Lh71fCgAftrf80M3Xu6bw2KhH0TSdS2thrGzbKgdOVANo1/oK/hGxFkCO9ItwLN+1G
-         NhAdnAP5391Rv3LNsMuvS7s2JmHRamAK+6owi4pgmyqeTQRPry2XCnE3qpOlvZOlzC1B
-         4N0+nnAgMt4zLiABk9Eg74+6S4fTRdPtIPQC76QIsXPT32jsKtxOESRVdLuEpXPQtEHL
-         CvdOPnaWX7VoZA4lScBy+KeFc4QuHDWy936iAQL5Wil1ougeXsS74wd3ZQGQf+EcdCgB
-         +r4V3tNkbUYwsaH3QYXkDIgkh/6rGL1gH3NeIZeRKAuBrT1pL9Ov2eUjVa0WemZqOQdw
-         SnCg==
+        bh=UNhUCo2rMuzvjyB/GCW1QnYbiXZVEemfm+BuYi2gV5g=;
+        b=psTaUbss360a/Tt1zaVcCXb9S1WJFpv/FwLETkHPj0R4qxM+u1CAA9IB2eyiQu//u0
+         QC4iNLx5O0kPdIH//4mNLgmdlWBhUV3uNYRiee1To5E7MdF8KpH6/myhl1VcPK8z3fwa
+         t7+7XOKUqzayHcKO/b+iEf0mLOyYh1YoRspRiIHn++zjngk6X/lip2H5LMqXUxkPN7PQ
+         iG1VBAtuJdKwg74N8sNDDJXK5WUByqQDIoDtF+2yhyaOF7cgkfyjuS5Bh6jl/Tc38EIX
+         IVwALXL3FalwV0Z6Sb2BeRuvcueH9/SnLD5BSP1wQPdqdGOfXLmFGBcs01IWjLD13Ymz
+         BAjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UNJ3OGz4vF0DqwDRGrdTdH+VRYxcdSnqAG5IXs/NI+g=;
-        b=HPXAuwJLiryYt/5CnbpRl9JED+k5jF16fVmrlYnkPFEv2SdkRibVN8vUxm4CkshiM4
-         1pyKodzFWZqJwdJ/GMZ9jtCkRCo4UONDs9tWqE065eiwi9M4/IjGfIB/g9KU9gXEMOul
-         6BsWPEKKkukJt1dTVKnpMJ4nDv1zstHXt85qQR7XYOkBLWA5uYa4uZLLUHPfuLqPkJ6Q
-         9yUh2Z0IKF/RFqajcFOxUdv0KLhgsSnPE50Jt/ZLdGZbokDWeW7Z5sDFrArxCH83HX36
-         ZI1yLgm2K7N8Cr8E2dL+uVYcBW7sPpCiEcsMSXYeF8czwQ7rqCXFQOfIhsy0EvIL8L6z
-         pcOA==
-X-Gm-Message-State: AOAM533yYaeLW9cC/qVwfepeoysWwo3whzxSgfFgWk+BbUU8pjK6xnT2
-        X02IgOPI+4AJT+LJjXipXF8pIH1UKKN63g==
-X-Google-Smtp-Source: ABdhPJzatcOJH21VKwkkXNfn1mmuDORDVbfnUvFU68xpxQXIJIWsTWyV2a3h6RCB18FU+6DF0bnfug==
-X-Received: by 2002:a1c:4604:: with SMTP id t4mr12125383wma.48.1603012846386;
-        Sun, 18 Oct 2020 02:20:46 -0700 (PDT)
+        bh=UNhUCo2rMuzvjyB/GCW1QnYbiXZVEemfm+BuYi2gV5g=;
+        b=Ea+Nbkbuh3qPhUDR6fZ2Ud6BuhnjNcNL8rkhf+D7iiT6r4tCQUb1NdFxohfC6SyDHL
+         0E5ARr5T3fqIjPF1mF7CwfhEhqnxbNqAucfG6K4iYtPRpgOsFznsV+v9U9hvD1rN+3VK
+         NneviEZWYi23e/OUI2RJhEC/RKz3DXZa0qkb0X4Y3nXuhg6x698oEaIJCTAEdbpG6xP1
+         aABnsQ74p7VoJcXkF8aoU92FKyWdR8Af04dChlAqNkt2wXuXdUEDOjJmNEJhG0bszFmx
+         qSyPNCYuohF2Q7e6NQ4PSAcQDzsDOAqmUKahuzzmIFW39IFrpeRa/SO0OKT/Y/9kA3Xi
+         fSTw==
+X-Gm-Message-State: AOAM530o56ixhFRIt4Ni4bCWqH7cvhGTg+hcNmS3ByMmEDzRXzG3Na29
+        lYI6omU5zsMklO6MSWwXvmmaGL8ar0FmGA==
+X-Google-Smtp-Source: ABdhPJzzQKOvCObEVjIFoCsmaUMOrR1uC7SkG3FrXfN2bJ2YdTpvKH+WflPTCYm93gNQRuEGjQpJyQ==
+X-Received: by 2002:adf:f101:: with SMTP id r1mr14907756wro.392.1603012847370;
+        Sun, 18 Oct 2020 02:20:47 -0700 (PDT)
 Received: from localhost.localdomain (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
-        by smtp.gmail.com with ESMTPSA id w11sm12782984wrs.26.2020.10.18.02.20.45
+        by smtp.gmail.com with ESMTPSA id w11sm12782984wrs.26.2020.10.18.02.20.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Oct 2020 02:20:45 -0700 (PDT)
+        Sun, 18 Oct 2020 02:20:46 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/7] io_uring: inline io_fail_links()
-Date:   Sun, 18 Oct 2020 10:17:39 +0100
-Message-Id: <3dc7ff2a6d38e41b30e2be90c32bdc9c27a981d2.1603011899.git.asml.silence@gmail.com>
+Subject: [PATCH 4/7] io_uring: make cached_cq_overflow non atomic_t
+Date:   Sun, 18 Oct 2020 10:17:40 +0100
+Message-Id: <fe7201d945acd0174a178f75cd6d07c8315afb03.1603011899.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1603011899.git.asml.silence@gmail.com>
 References: <cover.1603011899.git.asml.silence@gmail.com>
@@ -61,47 +61,59 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Inline io_fail_links() and kill extra io_cqring_ev_posted().
+ctx->cached_cq_overflow is changed only under completion_lock. Convert
+it from atomic_t to just int, and mark all places when it's read without
+lock with READ_ONCE, which guarantees atomicity (relaxed ordering).
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ fs/io_uring.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 048db9d3002c..43c92a3088d8 100644
+index 43c92a3088d8..c7ccd2500597 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1913,10 +1913,12 @@ static struct io_kiocb *io_req_link_next(struct io_kiocb *req)
- /*
-  * Called if REQ_F_LINK_HEAD is set, and we fail the head request
-  */
--static void __io_fail_links(struct io_kiocb *req)
-+static void io_fail_links(struct io_kiocb *req)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
-+	unsigned long flags;
+@@ -277,7 +277,7 @@ struct io_ring_ctx {
+ 		unsigned		sq_mask;
+ 		unsigned		sq_thread_idle;
+ 		unsigned		cached_sq_dropped;
+-		atomic_t		cached_cq_overflow;
++		unsigned		cached_cq_overflow;
+ 		unsigned long		sq_check_overflow;
  
-+	spin_lock_irqsave(&ctx->completion_lock, flags);
- 	while (!list_empty(&req->link_list)) {
- 		struct io_kiocb *link = list_first_entry(&req->link_list,
- 						struct io_kiocb, link_list);
-@@ -1938,15 +1940,6 @@ static void __io_fail_links(struct io_kiocb *req)
+ 		struct list_head	defer_list;
+@@ -1179,7 +1179,7 @@ static bool req_need_defer(struct io_kiocb *req, u32 seq)
+ 		struct io_ring_ctx *ctx = req->ctx;
+ 
+ 		return seq != ctx->cached_cq_tail
+-				+ atomic_read(&ctx->cached_cq_overflow);
++				+ READ_ONCE(ctx->cached_cq_overflow);
  	}
  
- 	io_commit_cqring(ctx);
--}
--
--static void io_fail_links(struct io_kiocb *req)
--{
--	struct io_ring_ctx *ctx = req->ctx;
--	unsigned long flags;
--
--	spin_lock_irqsave(&ctx->completion_lock, flags);
--	__io_fail_links(req);
- 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
+ 	return false;
+@@ -1624,8 +1624,9 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
+ 			WRITE_ONCE(cqe->res, req->result);
+ 			WRITE_ONCE(cqe->flags, req->compl.cflags);
+ 		} else {
++			ctx->cached_cq_overflow++;
+ 			WRITE_ONCE(ctx->rings->cq_overflow,
+-				atomic_inc_return(&ctx->cached_cq_overflow));
++				   ctx->cached_cq_overflow);
+ 		}
+ 	}
  
- 	io_cqring_ev_posted(ctx);
+@@ -1667,8 +1668,8 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
+ 		 * then we cannot store the request for later flushing, we need
+ 		 * to drop it on the floor.
+ 		 */
+-		WRITE_ONCE(ctx->rings->cq_overflow,
+-				atomic_inc_return(&ctx->cached_cq_overflow));
++		ctx->cached_cq_overflow++;
++		WRITE_ONCE(ctx->rings->cq_overflow, ctx->cached_cq_overflow);
+ 	} else {
+ 		if (list_empty(&ctx->cq_overflow_list)) {
+ 			set_bit(0, &ctx->sq_check_overflow);
 -- 
 2.24.0
 

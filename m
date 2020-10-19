@@ -2,99 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0201292AD1
-	for <lists+io-uring@lfdr.de>; Mon, 19 Oct 2020 17:49:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0364292F2B
+	for <lists+io-uring@lfdr.de>; Mon, 19 Oct 2020 22:08:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730051AbgJSPtO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Oct 2020 11:49:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54490 "EHLO
+        id S1729419AbgJSUI3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Oct 2020 16:08:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730060AbgJSPtO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Oct 2020 11:49:14 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3924FC0613CE
-        for <io-uring@vger.kernel.org>; Mon, 19 Oct 2020 08:49:14 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id d3so321758wma.4
-        for <io-uring@vger.kernel.org>; Mon, 19 Oct 2020 08:49:14 -0700 (PDT)
+        with ESMTP id S1727068AbgJSUI2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Oct 2020 16:08:28 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D7F0C0613CE
+        for <io-uring@vger.kernel.org>; Mon, 19 Oct 2020 13:08:28 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id b23so637122pgb.3
+        for <io-uring@vger.kernel.org>; Mon, 19 Oct 2020 13:08:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KNu4snfhjRPqeLe9Q4Dezh89wv/9BLmjMR0qxpcYaI8=;
-        b=bJfBfG4MLM7A10D8Jv09kA/JcZKPXn++B4/Qr+qMkaXPY5b/tgddfvpjg4RQifFW7k
-         jG28YHXr8S49pBBZHp578ryu/iByA6YgLMIVV28Nt7h6BD/sBp3C3l6N18Z8oUOIhbhs
-         6V+mQo69mYpOEx+Xiu5CQ25Y9oMjMoT4YyHDKMU2NCeLsbs9OZb8ferQXuLmsvKfFggQ
-         ufd4W11tGV8Al7niEgE/e1Fjn75YFdO/TnB+fqKiAc9j7VAM1J3xM95xMU52utOtYiCR
-         +dxlfNpNLznWL8SdOhkw2fmVXU2tJu/W8xVlP0UxdgYU89utEaHvP5JTKObrI9VRauS2
-         78sg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=2wZPpu0aGlbtm+XgcSDnaVdeFp3eHUKf8pNZgHdaOdk=;
+        b=OI15J4ab6RHRWJiTz3XKYLXWlsy+gkwCc+AsVHZzFM0W6jh2qCINm4vl2uKHYGtyhp
+         qDEnxw0NoRWnnLbjTGVk3LyYiwRDBCevKv+Iae0Itl0hPm2ogwpk7VBw0Cmx9czP4GaT
+         heVLuGATmyAOfsicvX0Kp0uVbSegZf1l5noZmSCGFfy6VCr6lsgizlVjYmVPgM8KygNL
+         E8e8Dh9MtTeMYRx5NMGQZ2JE91oU78dzF0bWGzi7hrEMNHG8nO9gU/jRFmctQR/eQ9Lr
+         ABVB2grPvuqZ1nZIEdZZ25XPuFD+W1k6urFZlxS8h/m7uORKPCK3Yz49LtmCO340btPB
+         pvrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=KNu4snfhjRPqeLe9Q4Dezh89wv/9BLmjMR0qxpcYaI8=;
-        b=tIEC/RcoptISgGfjekPDQMpc4cwo1fWwvp+hgwWGRajqodr51JafOw81IMjAAChGCl
-         yMIK8UleRrQ4i+eRSo3uDJZ+aIrCaiO1di19vnGFwjmB8AYbw5wHQCYRozUtc5xYtOAx
-         Za4WKhG7VhDQCA0XAza5Qye3O613GsqZiMNDmuXw5uMI9kKXRRcxO0p0lox1iC+Cddq6
-         Nk6mqULq9bXq9urcbdqhvlP9Uc6CoHCXbqmbUXewp2gc0iRPGw0e9DtsX08/lgDcJ/e8
-         5xHxkwcV0ZhrFeGQM+zNo7zZeWaZYoC0xafMXe5jypZQ3SsPPTLoMAdxEOssCIy0m2Y0
-         ImYg==
-X-Gm-Message-State: AOAM532xDVhWslTECcQyoYvvm3Y2d3v+dzfmYbfyJWN0SnByMoxSkbC8
-        K/BUyhfUfB4N+JLLv1bbIjwLGtALsT7cig==
-X-Google-Smtp-Source: ABdhPJwEFyveooohfVhrMx8Gbevb6lMWJARPw2Jq8JLtSQ0HrCXR9zraF+87TcilGm1DWzySKKBo5A==
-X-Received: by 2002:a1c:6804:: with SMTP id d4mr24679wmc.27.1603122552932;
-        Mon, 19 Oct 2020 08:49:12 -0700 (PDT)
-Received: from localhost.localdomain (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
-        by smtp.gmail.com with ESMTPSA id z6sm164654wrm.33.2020.10.19.08.49.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2020 08:49:12 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing] test/lfs-open: less limited test_drained_files
-Date:   Mon, 19 Oct 2020 16:46:11 +0100
-Message-Id: <d6fd0e761f9daafcd4a8092117dfd751c94f2a06.1603122173.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=2wZPpu0aGlbtm+XgcSDnaVdeFp3eHUKf8pNZgHdaOdk=;
+        b=SrWIVS6Za/giL1Oco8UZiqrgCGBZUKHbcpJHO4SYhf9HKWcP8Dza1s37/NyBYYnWPY
+         f3/euDp6o54Pujly3MnW0Sv0PVYiB3QPXug7YYBc4Hi01TdaCX471hk8RMh8/btfhwgQ
+         fGF+vQZgm0Y9d8CFNKMd/n+zQmN25Xb6aGiC6C0iE6QkR78MopAdY0UsPix7aDox9i7J
+         kZH4aWTVPNKQ/0pKqNW7bfOePNYY7DXVLM2/uQuXQu1Fw6jfr0sT9BCHVP/H9UHEtDFN
+         zc+EFEuv2rMhhZOpksvCtgzoJ7BAc6QO38Pw59CRUtuEvYIDYJ9DHTkx3d0IDQ6HKVAq
+         1F9g==
+X-Gm-Message-State: AOAM533xXSh0vRaW9Jje9CESOFWwRpqQXUTayLJFALk5vqbRCe0q2Alf
+        HNHmvc2DXnPKLE2joZUWYswUdMWQSJxqmglt
+X-Google-Smtp-Source: ABdhPJxG1Nma6In5zCJdUtRXEmMiAap/Nbplaulz8bHyJUdGkW2yPYLFkLO8zjHwxi3V43mBoGfAmQ==
+X-Received: by 2002:a63:c00c:: with SMTP id h12mr1155324pgg.237.1603138107183;
+        Mon, 19 Oct 2020 13:08:27 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id q16sm597265pfj.117.2020.10.19.13.08.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Oct 2020 13:08:26 -0700 (PDT)
+Subject: Re: [PATCH for-5.10] io_uring: remove req cancel in ->flush()
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <21aca47e03c82a06e4ea1140b328a86d04d1f422.1603122023.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ca4c9b80-78de-eae2-55cf-8d7c3f09ca80@kernel.dk>
+Date:   Mon, 19 Oct 2020 14:08:25 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <21aca47e03c82a06e4ea1140b328a86d04d1f422.1603122023.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-close(dup(io_uring)) should not neccessary cancel all requests with
-files, because files are not yet going away. Test that it doesn't hang
-after close() and exits, that's enough.
+On 10/19/20 9:45 AM, Pavel Begunkov wrote:
+> Every close(io_uring) causes cancellation of all inflight requests
+> carrying ->files. That's not nice but was neccessary up until recently.
+> Now task->files removal is handled in the core code, so that part of
+> flush can be removed.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/lfs-openat.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+It does change the behavior, but I'd wager that's safe. One minor
+comment:
 
-diff --git a/test/lfs-openat.c b/test/lfs-openat.c
-index 921e2a1..3fa0b99 100644
---- a/test/lfs-openat.c
-+++ b/test/lfs-openat.c
-@@ -202,18 +202,11 @@ static int test_drained_files(int dfd, const char *fn, bool linked, bool prepend
- 		return 1;
- 	}
- 
--	/* io_uring->flush() */
-+	/*
-+	 * close(), which triggers ->flush(), and io_uring_queue_exit()
-+	 * should successfully return and not hang.
-+	 */
- 	close(fd);
--
--	for (i = 0; i < to_cancel; i++) {
--		ret = io_uring_wait_cqe(&ring, &cqe);
--		if (cqe->res != -ECANCELED) {
--			fprintf(stderr, "fail cqe->res=%d\n", cqe->res);
--			return 1;
--		}
--		io_uring_cqe_seen(&ring, cqe);
--	}
--
- 	io_uring_queue_exit(&ring);
- 	return 0;
- }
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 95d2bb7069c6..6536e24eb44e 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -8748,16 +8748,12 @@ void __io_uring_task_cancel(void)
+>  
+>  static int io_uring_flush(struct file *file, void *data)
+>  {
+> -	struct io_ring_ctx *ctx = file->private_data;
+> +	bool exiting = !data;
+>  
+> -	/*
+> -	 * If the task is going away, cancel work it may have pending
+> -	 */
+>  	if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
+> -		data = NULL;
+> +		exiting = true;
+>  
+> -	io_uring_cancel_task_requests(ctx, data);
+> -	io_uring_attempt_task_drop(file, !data);
+> +	io_uring_attempt_task_drop(file, exiting);
+>  	return 0;
+>  }
+
+Why not just keep the !data for task_drop? Would make the diff take
+away just the hunk we're interested in. Even adding a comment would be
+better, imho.
+
 -- 
-2.24.0
+Jens Axboe
 

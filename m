@@ -2,56 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54873294053
-	for <lists+io-uring@lfdr.de>; Tue, 20 Oct 2020 18:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E66CC29408E
+	for <lists+io-uring@lfdr.de>; Tue, 20 Oct 2020 18:32:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732503AbgJTQSg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 20 Oct 2020 12:18:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57238 "EHLO
+        id S2394700AbgJTQca (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 20 Oct 2020 12:32:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732501AbgJTQSg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Oct 2020 12:18:36 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0638FC0613CE
-        for <io-uring@vger.kernel.org>; Tue, 20 Oct 2020 09:18:36 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id g12so2879197wrp.10
-        for <io-uring@vger.kernel.org>; Tue, 20 Oct 2020 09:18:35 -0700 (PDT)
+        with ESMTP id S2394634AbgJTQc3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Oct 2020 12:32:29 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53FF3C0613CE
+        for <io-uring@vger.kernel.org>; Tue, 20 Oct 2020 09:32:27 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id y12so2946617wrp.6
+        for <io-uring@vger.kernel.org>; Tue, 20 Oct 2020 09:32:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fzY8/AJPqF6hwTWb2jujFHzgHPBcjVz96KZ8XfzDfwI=;
-        b=afkoGPpkhtPFNvaJy7n1ISz2t8q8qyA3j9uB5LHHekCV5ZGKIJyFYL+dedgyX+Hrys
-         8YzDOpkvaNp/JqQSPkRLHcHFtlteh5pNd+M16hYFJhwX+PYOYnztKFWALFTBntxeElRL
-         sFgB7E7VLiA3DtCyIaIZZJFRPANcNbY/uZ7PleZbUyw8d+pxt2aED/gNJjaQgWMm1ixn
-         eqmfKBUiiArGuzqGIB0O27r5uVp6tBXS+Jsozb8wAjB7eb0CLugEM9fl0xX5eGegFA3e
-         S+qyNtXrXLamBri3fBv2HoRVsb+DLrw4aMGmzBzY7m3ZjergG9T8utSv1O9qjbTDKVNd
-         Ilkg==
+        bh=saZ+VpA8/T5K5OIZTukX5Ar9cXG6WHILjaqAIFg6pho=;
+        b=UKEahRq+R36lZQ8FEtwEk2lWr2gaA4fNo3qlAmLeOrEqE8k7chp6OtoHzJH5ksreaJ
+         Nh7cW2Ili1AAwlpAp/eOwSh+QjEzVoNfcFv5MwrXdTHWGrkW7+l6TJQUPmKys90KHHF/
+         YIL+O30Rbco1qECmuzvN5yRAbBj6UYuMcRLIceJ+o+yZnEd8L2IRXRnAj7xBjOSH0xkF
+         9/uViviM1WXuSX4sxQr/vVMq38IaR6J0fwHEWf50jfodv177OYjFqYZKctswQ+r/m/bT
+         4ELTNPty9vnRhoXU5di5ga4IdFFcdEXXKYEKd7Rx6szYXAtaKIyYY9/ucD6MyStP4P95
+         eGDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=fzY8/AJPqF6hwTWb2jujFHzgHPBcjVz96KZ8XfzDfwI=;
-        b=BMEtS8oJ0yQEP3ZXLckRhDQhC/maOlGuzPw0h7BPEonA9EZTmX0Mr2i9T+skCdhUPp
-         rWxjompQ7slnr88AsRgv5xm1E/+UsQl2Zhm+Flqk/OZD62A8Nmxq9X1aYk049ASkEzqb
-         kZgo5L4L2mzmyVbN8UuKF6iXqkv+L7EOSBfHx+j2ghAEzRCb6iH/wGV7+xjMMEK1EiGm
-         4p6lJUeefJtdeExvELRqIrCSbv5Eg1UJH9J5qsQZkUUH6UJDzTd4WY1ORsVZjJ/epXzQ
-         1zGW9m8YH8VR/2R0yxGVkHvCj3eAoXvXlkjz0KtIS7bWRz2D1PWDCVGOcRh0IvSN/Snv
-         93MA==
-X-Gm-Message-State: AOAM532Uz120cG6/Zjg7TcMVzNsVNOzpZ8uvpyCY+ouUvtoIKHlOKcCn
-        QO4qypVWPls9UWUSPIEDm+J2519nDWUqdQ==
-X-Google-Smtp-Source: ABdhPJyxXyym6KmnkXBkBIWPrvgCmSZG01t/X04ptA0JllBPc4DRMhk3giex6N/JjNngE80wbed13w==
-X-Received: by 2002:adf:e4ca:: with SMTP id v10mr4655049wrm.53.1603210714358;
-        Tue, 20 Oct 2020 09:18:34 -0700 (PDT)
-Received: from [192.168.1.182] (host109-152-100-228.range109-152.btcentralplus.com. [109.152.100.228])
-        by smtp.gmail.com with ESMTPSA id y21sm3187539wma.19.2020.10.20.09.18.33
+        bh=saZ+VpA8/T5K5OIZTukX5Ar9cXG6WHILjaqAIFg6pho=;
+        b=MD15LNYZW07cLUimLO1Wb+UK2vfYVPr6SbeLna42cMYzzpwj/TkNu+mxbzULCSJVEq
+         p1LKRPuMNBvzRdc5v0I8cYnA2e7Ng3lwNz6EV8eQReIh2HRyIlzifQwp0IPi7HCE7yY5
+         0l7VXNP4tMxnIFsddJaeVmaiVMmESo1AMx//tzqKzgvjv58NHUsWkTE+kLF2mSNpLVNE
+         rzo1ZNU008P9xnaVx3Ftwy8aeNM7XaA42BCuwoZDUqpSTeZOWRk0SjX7JG0G8HYHWCCJ
+         EBX/UQArljzY/uLgVxl+Xq7v7W3YgRTkBsbRxxZtW+gITUFkV3F+eDumTqv/iPKkkB6Z
+         B5Gw==
+X-Gm-Message-State: AOAM531cMPkyVGcdQ8Jm55LGgtkNqdqucD8KKptymGFmvF3WaO9kxhQQ
+        QTp3cLshaSJZApJUgDaY3hsU49IPK1MtMQ==
+X-Google-Smtp-Source: ABdhPJzSWoUs+xrYzb5rz5mp2dd+dEU96BNgIHpGEwN3oOIeFkqHg+4EiRlPCylGeyeHzfpewgHlcA==
+X-Received: by 2002:adf:f482:: with SMTP id l2mr4435280wro.26.1603211545803;
+        Tue, 20 Oct 2020 09:32:25 -0700 (PDT)
+Received: from [192.168.1.182] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
+        by smtp.gmail.com with ESMTPSA id w11sm3768192wrs.26.2020.10.20.09.32.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Oct 2020 09:18:33 -0700 (PDT)
-Subject: Re: [PATCH liburing] test/lfs-open: less limited test_drained_files
+        Tue, 20 Oct 2020 09:32:25 -0700 (PDT)
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <d6fd0e761f9daafcd4a8092117dfd751c94f2a06.1603122173.git.asml.silence@gmail.com>
- <f7625f7f-86e5-fd4a-4f71-ae76110dfd68@kernel.dk>
+References: <21aca47e03c82a06e4ea1140b328a86d04d1f422.1603122023.git.asml.silence@gmail.com>
+ <ca4c9b80-78de-eae2-55cf-8d7c3f09ca80@kernel.dk>
+ <1799a7cf-7443-7eff-37b1-b3bf3f352968@gmail.com>
+ <d55aa3c1-7eb4-b3a4-4a34-41d566d5c559@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -96,28 +97,55 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <2b69f0fa-ba17-d9fd-e83e-e73db32c010d@gmail.com>
-Date:   Tue, 20 Oct 2020 17:15:39 +0100
+Subject: Re: [PATCH for-5.10] io_uring: remove req cancel in ->flush()
+Message-ID: <523e6ffa-49f9-e48b-369c-14cae0783b79@gmail.com>
+Date:   Tue, 20 Oct 2020 17:29:30 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <f7625f7f-86e5-fd4a-4f71-ae76110dfd68@kernel.dk>
+In-Reply-To: <d55aa3c1-7eb4-b3a4-4a34-41d566d5c559@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 20/10/2020 15:12, Jens Axboe wrote:
-> On 10/19/20 9:46 AM, Pavel Begunkov wrote:
->> close(dup(io_uring)) should not neccessary cancel all requests with
->> files, because files are not yet going away. Test that it doesn't hang
->> after close() and exits, that's enough.
+On 20/10/2020 15:09, Jens Axboe wrote:
+> On 10/19/20 5:40 PM, Pavel Begunkov wrote:
+>> On 19/10/2020 21:08, Jens Axboe wrote:
+>>> On 10/19/20 9:45 AM, Pavel Begunkov wrote:
+>>>> Every close(io_uring) causes cancellation of all inflight requests
+>>>> carrying ->files. That's not nice but was neccessary up until recently.
+>>>> Now task->files removal is handled in the core code, so that part of
+>>>> flush can be removed.
+>>>
+>>> Why not just keep the !data for task_drop? Would make the diff take
+>>> away just the hunk we're interested in. Even adding a comment would be
+>>> better, imho.
+>>
+>> That would look cleaner, but I just left what already was there. TBH,
+>> I don't even entirely understand why exiting=!data. Looking up how
+>> exit_files() works, it passes down non-NULL files to
+>> put_files_struct() -> ... filp_close() -> f_op->flush().
+>>
+>> I'm curious how does this filp_close(file, files=NULL) happens?
 > 
-> Applied with the below incremental.
+> It doesn't, we just clear it internall to match all requests, not just
+> files backed ones.
 
-Thanks! My gcc 9 didn't warn me for some reason.
+Then my "bool exiting = !data;" at the start doesn't make sense since
+passed in @data is always non-NULL.
+
+> 
+>> Moreover, if that's exit_files() which is interesting, then first
+>> it calls io_uring_cancel_task_requests(), which should remove all
+>> struct file from tctx->xa. I haven't tested it though.
+> 
+> Yep, further cleanups are certainly possible there.
+> 
+> I've queued this up, thanks.
+> 
 
 -- 
 Pavel Begunkov

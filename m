@@ -2,347 +2,999 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E9962936BA
-	for <lists+io-uring@lfdr.de>; Tue, 20 Oct 2020 10:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B47293977
+	for <lists+io-uring@lfdr.de>; Tue, 20 Oct 2020 12:57:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387920AbgJTIYC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 20 Oct 2020 04:24:02 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:60032 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728071AbgJTIYC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Oct 2020 04:24:02 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UCdOUmP_1603182238;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UCdOUmP_1603182238)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 20 Oct 2020 16:23:58 +0800
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, asml.silence@gmail.com,
-        joseph.qi@linux.alibaba.com,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Subject: [PATCH 2/2] io_uring: support multiple rings to share same poll thread by specifying same cpu
-Date:   Tue, 20 Oct 2020 16:23:45 +0800
-Message-Id: <20201020082345.19628-3-xiaoguang.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20201020082345.19628-1-xiaoguang.wang@linux.alibaba.com>
-References: <20201020082345.19628-1-xiaoguang.wang@linux.alibaba.com>
+        id S2390504AbgJTK5Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 20 Oct 2020 06:57:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:27205 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392321AbgJTK5Q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Oct 2020 06:57:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603191430;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/OsvtHWPSog2PiNtuhM3qRS8Lm0N5I3geLvAru2hNls=;
+        b=BK2QXjX4kiyb2gf1mF8VCvAo1v5ujS4OA0Zyvl3UbJwKAlTDpW5P7n1ZKal7wJanasmSg/
+        01fKSp4MHjqkyewzFE+Sp+dE+bh31/+LaZMUwEU0zSNywDqJs73w/WDn0IGXBwZ06d6Aei
+        rETYpU+BZJMlEuLWgqucDPhFTQwt3/I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-386-vvJGUCbHMiSkXdREIniLhA-1; Tue, 20 Oct 2020 06:57:08 -0400
+X-MC-Unique: vvJGUCbHMiSkXdREIniLhA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7805857050;
+        Tue, 20 Oct 2020 10:57:07 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.195.190])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 969F355760;
+        Tue, 20 Oct 2020 10:57:05 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 20 Oct 2020 12:57:06 +0200 (CEST)
+Date:   Tue, 20 Oct 2020 12:57:04 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        peterz@infradead.org, tglx@linutronix.de
+Subject: introduce asm-generic/thread_info.h ?
+Message-ID: <20201020105703.GA10315@redhat.com>
+References: <20201015131701.511523-1-axboe@kernel.dk>
+ <20201015131701.511523-5-axboe@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201015131701.511523-5-axboe@kernel.dk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We have already supported multiple rings to share one same poll thread
-by passing IORING_SETUP_ATTACH_WQ, but it's not that convenient to use.
-IORING_SETUP_ATTACH_WQ needs users to ensure that a parent ring instance
-has already existed, that means it will require app to regulate the
-creation oder between uring instances.
+On 10/15, Jens Axboe wrote:
+>
+> --- a/arch/x86/include/asm/thread_info.h
+> +++ b/arch/x86/include/asm/thread_info.h
+> @@ -93,6 +93,7 @@ struct thread_info {
+>  #define TIF_NOTSC		16	/* TSC is not accessible in userland */
+>  #define TIF_IA32		17	/* IA32 compatibility process */
+>  #define TIF_SLD			18	/* Restore split lock detection on context switch */
+> +#define TIF_NOTIFY_SIGNAL	19	/* signal notifications exist */
+>  #define TIF_MEMDIE		20	/* is terminating due to OOM killer */
+>  #define TIF_POLLING_NRFLAG	21	/* idle is polling for TIF_NEED_RESCHED */
+>  #define TIF_IO_BITMAP		22	/* uses I/O bitmap */
 
-Currently we can make this a bit simpler, for those rings which will
-have SQPOLL enabled and are willing to be bound to one same cpu, add a
-capability that these rings can share one poll thread by specifying
-a new IORING_SETUP_SQPOLL_PERCPU flag, then we have 3 cases
-  1, IORING_SETUP_ATTACH_WQ: if user specifies this flag, we'll always
-try to attach this ring to an existing ring's corresponding poll thread,
-no matter whether IORING_SETUP_SQ_AFF or IORING_SETUP_SQPOLL_PERCPU is
-set.
-  2, IORING_SETUP_SQ_AFF and IORING_SETUP_SQPOLL_PERCPU are both enabled,
-for this case, we'll create a single poll thread to be shared by these
-rings, and this poll thread is bound to a fixed cpu.
-  3, for any other cases, we'll just create one new poll thread for the
-corresponding ring.
+This is offtopic, but I am wondering if something like the patch below
+makes any sense.
 
-And for case 2, don't need to regulate creation oder of multiple uring
-instances, we use a mutex to synchronize creation, for example, say five
-rings which all have IORING_SETUP_SQ_AFF & IORING_SETUP_SQPOLL_PERCPU
-enabled, and are willing to be bound same cpu, one ring that gets the
-mutex lock will create one poll thread, the other four rings will just
-attach themselves the previous created poll thread once they get lock
-successfully.
+It moves the common TIF_ flags into include/asm-generic/thread_info.h
 
-To implement above function, define a percpu io_sq_data array:
-    static struct io_sq_data __percpu *percpu_sqd;
-When IORING_SETUP_SQ_AFF and IORING_SETUP_SQPOLL_PERCPU are both enabled,
-we will use struct io_uring_params' sq_thread_cpu to locate corresponding
-sqd, and use this sqd to save poll thread info.
+Generated by this script:
 
-Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
----
- fs/io_uring.c                 | 142 +++++++++++++++++++++++++++-------
- include/uapi/linux/io_uring.h |   1 +
- 2 files changed, 115 insertions(+), 28 deletions(-)
+	#!/usr/bin/perl -w
+	use strict;
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f7b65a9ed5b8..b9ebf1ca93d7 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -235,6 +235,7 @@ struct io_restriction {
- struct io_sq_data {
- 	refcount_t		refs;
- 	struct mutex		lock;
-+	struct mutex		percpu_sq_lock;
- 
- 	/* ctx's that are using this sqd */
- 	struct list_head	ctx_list;
-@@ -247,6 +248,8 @@ struct io_sq_data {
- 	unsigned		sq_thread_idle;
- };
- 
-+static struct io_sq_data __percpu *percpu_sqd;
+	# the (probably incomplete) list of arches which have some bits
+	# hardcoded
+	my $SKIP = join '|', qw(c6x sparc);
+
+	# the (incomplete) list of "safe" flags which can be moved into
+	# asm-generic even if not supported
+	my @SAFE = qw(TIF_SECCOMP TIF_UPROBE);
+
+	my %tifs;
+
+	my @files = grep {
+		open my $fd, '<', $_ or die $_;
+		my $has; local $_;
+		/^\s*#define\s*(TIF_\w+)\s+\d+\b/ and $has = ++$tifs{$1}
+			while <$fd>;
+		$has;
+	}	grep !m{^arch/($SKIP)/}o,
+		split "\n", qx(find arch/*/include/asm/thread_info*.h);
+
+	my %comm = map +($_,1), grep $tifs{$_} == @files, keys %tifs;
+	$comm{$_} = $tifs{$_} = 1 for @SAFE;
+
+	our $ctr;
+
+	my @comm = sort keys %comm;
+	print "--- /dev/null\n+++ x/include/asm-generic/thread_info.h\n";
+	print "@@ -0,0 +1,@{[2*@comm+3]} @@\n";
+	print "+#define $_\t@{[$ctr++]}\n" for @comm;
+	print "+\n+#define TIF__ARCH\t$ctr\n+\n";
+	print "+#define _$_\t(1 << $_)\n" for @comm;
+
+	sub patch
+	{
+		return $_ unless /^(\s*#define\s*)(_)?(TIF_\w+)/ and $tifs{$3};
+		return if $comm{$3}; return $_ if $2;
+		(!$ctr && "#include <asm-generic/thread_info.h>\n\n")
+			. s/\b\d+/(TIF__ARCH+@{[$ctr++]})/r;
+	}
+
+	for my $file (sort @files) {
+		open my $fd, '<', $file or die;
+		open my $diff, "|diff -u --label=x/$file $file --label=x/$file -"
+			or die;
+		$ctr = 0; print $diff patch while <$fd>;
+	}
+
+Oleg.
+
+--- /dev/null
++++ x/include/asm-generic/thread_info.h
+@@ -0,0 +1,17 @@
++#define TIF_MEMDIE	0
++#define TIF_NEED_RESCHED	1
++#define TIF_NOTIFY_RESUME	2
++#define TIF_SECCOMP	3
++#define TIF_SIGPENDING	4
++#define TIF_SYSCALL_TRACE	5
++#define TIF_UPROBE	6
 +
- struct io_ring_ctx {
- 	struct {
- 		struct percpu_ref	refs;
-@@ -6504,10 +6507,12 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
- 	if (cap_entries && to_submit > 8)
- 		to_submit = 8;
- 
--	mutex_lock(&ctx->uring_lock);
--	if (likely(!percpu_ref_is_dying(&ctx->refs)))
--		ret = io_submit_sqes(ctx, to_submit);
--	mutex_unlock(&ctx->uring_lock);
-+	if (to_submit) {
-+		mutex_lock(&ctx->uring_lock);
-+		if (likely(!percpu_ref_is_dying(&ctx->refs)))
-+			ret = io_submit_sqes(ctx, to_submit);
-+		mutex_unlock(&ctx->uring_lock);
-+	}
- 
- 	if (!io_sqring_full(ctx) && wq_has_sleeper(&ctx->sqo_sq_wait))
- 		wake_up(&ctx->sqo_sq_wait);
-@@ -6814,8 +6819,17 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
- 	return 0;
- }
- 
--static void io_put_sq_data(struct io_sq_data *sqd)
-+static void io_put_sq_data(struct io_ring_ctx *ctx, struct io_sq_data *sqd)
- {
-+	int percpu_sqd = 0;
++#define TIF__ARCH	7
 +
-+	if ((ctx->flags & IORING_SETUP_SQ_AFF) &&
-+	    (ctx->flags & IORING_SETUP_SQPOLL_PERCPU))
-+		percpu_sqd = 1;
++#define _TIF_MEMDIE	(1 << TIF_MEMDIE)
++#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
++#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
++#define _TIF_SECCOMP	(1 << TIF_SECCOMP)
++#define _TIF_SIGPENDING	(1 << TIF_SIGPENDING)
++#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
++#define _TIF_UPROBE	(1 << TIF_UPROBE)
+--- x/arch/alpha/include/asm/thread_info.h
++++ x/arch/alpha/include/asm/thread_info.h
+@@ -57,19 +57,12 @@
+  *
+  * TIF_SYSCALL_TRACE is known to be 0 via blbs.
+  */
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+-#define TIF_SYSCALL_AUDIT	4	/* syscall audit active */
+-#define TIF_DIE_IF_KERNEL	9	/* dik recursion lock */
+-#define TIF_MEMDIE		13	/* is terminating due to OOM killer */
+-#define TIF_POLLING_NRFLAG	14	/* idle is polling for TIF_NEED_RESCHED */
++#include <asm-generic/thread_info.h>
 +
-+	if (percpu_sqd)
-+		mutex_lock(&sqd->percpu_sq_lock);
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+0)	/* syscall audit active */
++#define TIF_DIE_IF_KERNEL	(TIF__ARCH+1)	/* dik recursion lock */
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+2)	/* idle is polling for TIF_NEED_RESCHED */
+ 
+-#define _TIF_SYSCALL_TRACE	(1<<TIF_SYSCALL_TRACE)
+-#define _TIF_SIGPENDING		(1<<TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1<<TIF_NEED_RESCHED)
+-#define _TIF_NOTIFY_RESUME	(1<<TIF_NOTIFY_RESUME)
+ #define _TIF_SYSCALL_AUDIT	(1<<TIF_SYSCALL_AUDIT)
+ #define _TIF_POLLING_NRFLAG	(1<<TIF_POLLING_NRFLAG)
+ 
+--- x/arch/arc/include/asm/thread_info.h
++++ x/arch/arc/include/asm/thread_info.h
+@@ -74,22 +74,14 @@
+  * - pending work-to-be-done flags are in LSW
+  * - other flags in MSW
+  */
+-#define TIF_RESTORE_SIGMASK	0	/* restore sig mask in do_signal() */
+-#define TIF_NOTIFY_RESUME	1	/* resumption notification requested */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+-#define TIF_SYSCALL_AUDIT	4	/* syscall auditing active */
+-#define TIF_SYSCALL_TRACE	15	/* syscall trace active */
++#include <asm-generic/thread_info.h>
 +
- 	if (refcount_dec_and_test(&sqd->refs)) {
- 		/*
- 		 * The park is a bit of a work-around, without it we get
-@@ -6827,8 +6841,14 @@ static void io_put_sq_data(struct io_sq_data *sqd)
- 			kthread_stop(sqd->thread);
- 		}
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+0)	/* restore sig mask in do_signal() */
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+1)	/* syscall auditing active */
  
--		kfree(sqd);
-+		if (!percpu_sqd)
-+			kfree(sqd);
-+		else
-+			sqd->thread = NULL;
- 	}
+ /* true if poll_idle() is polling TIF_NEED_RESCHED */
+-#define TIF_MEMDIE		16
+ 
+-#define _TIF_SYSCALL_TRACE	(1<<TIF_SYSCALL_TRACE)
+-#define _TIF_NOTIFY_RESUME	(1<<TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1<<TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1<<TIF_NEED_RESCHED)
+ #define _TIF_SYSCALL_AUDIT	(1<<TIF_SYSCALL_AUDIT)
+-#define _TIF_MEMDIE		(1<<TIF_MEMDIE)
+ 
+ /* work to do on interrupt/exception return */
+ #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
+--- x/arch/arm/include/asm/thread_info.h
++++ x/arch/arm/include/asm/thread_info.h
+@@ -127,27 +127,16 @@
+  *  TIF_USEDFPU		- FPU was used by this task this quantum (SMP)
+  *  TIF_POLLING_NRFLAG	- true if poll_idle() is polling TIF_NEED_RESCHED
+  */
+-#define TIF_SIGPENDING		0	/* signal pending */
+-#define TIF_NEED_RESCHED	1	/* rescheduling necessary */
+-#define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
+-#define TIF_UPROBE		3	/* breakpointed or singlestepping */
+-#define TIF_SYSCALL_TRACE	4	/* syscall trace active */
+-#define TIF_SYSCALL_AUDIT	5	/* syscall auditing active */
+-#define TIF_SYSCALL_TRACEPOINT	6	/* syscall tracepoint instrumentation */
+-#define TIF_SECCOMP		7	/* seccomp syscall filtering active */
++#include <asm-generic/thread_info.h>
+ 
+-#define TIF_USING_IWMMXT	17
+-#define TIF_MEMDIE		18	/* is terminating due to OOM killer */
+-#define TIF_RESTORE_SIGMASK	20
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+0)	/* syscall auditing active */
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+1)	/* syscall tracepoint instrumentation */
 +
-+	if (percpu_sqd)
-+		mutex_unlock(&sqd->percpu_sq_lock);
- }
++#define TIF_USING_IWMMXT	(TIF__ARCH+2)
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+3)
  
- static struct io_sq_data *io_attach_sq_data(struct io_uring_params *p)
-@@ -6857,13 +6877,10 @@ static struct io_sq_data *io_attach_sq_data(struct io_uring_params *p)
- 	return sqd;
- }
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_UPROBE		(1 << TIF_UPROBE)
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
+-#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ #define _TIF_USING_IWMMXT	(1 << TIF_USING_IWMMXT)
  
--static struct io_sq_data *io_get_sq_data(struct io_uring_params *p)
-+static struct io_sq_data *io_alloc_sq_data(struct io_uring_params *p)
- {
- 	struct io_sq_data *sqd;
+ /* Checks for any syscall work in entry-common.S */
+--- x/arch/arm64/include/asm/thread_info.h
++++ x/arch/arm64/include/asm/thread_info.h
+@@ -61,37 +61,26 @@
  
--	if (p->flags & IORING_SETUP_ATTACH_WQ)
--		return io_attach_sq_data(p);
+ #endif
+ 
+-#define TIF_SIGPENDING		0	/* signal pending */
+-#define TIF_NEED_RESCHED	1	/* rescheduling necessary */
+-#define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
+-#define TIF_FOREIGN_FPSTATE	3	/* CPU's FP state is not current's */
+-#define TIF_UPROBE		4	/* uprobe breakpoint or singlestep */
+-#define TIF_FSCHECK		5	/* Check FS is USER_DS on return */
+-#define TIF_SYSCALL_TRACE	8	/* syscall trace active */
+-#define TIF_SYSCALL_AUDIT	9	/* syscall auditing */
+-#define TIF_SYSCALL_TRACEPOINT	10	/* syscall tracepoint for ftrace */
+-#define TIF_SECCOMP		11	/* syscall secure computing */
+-#define TIF_SYSCALL_EMU		12	/* syscall emulation active */
+-#define TIF_MEMDIE		18	/* is terminating due to OOM killer */
+-#define TIF_FREEZE		19
+-#define TIF_RESTORE_SIGMASK	20
+-#define TIF_SINGLESTEP		21
+-#define TIF_32BIT		22	/* 32bit process */
+-#define TIF_SVE			23	/* Scalable Vector Extension in use */
+-#define TIF_SVE_VL_INHERIT	24	/* Inherit sve_vl_onexec across exec */
+-#define TIF_SSBD		25	/* Wants SSB mitigation */
+-#define TIF_TAGGED_ADDR		26	/* Allow tagged user addresses */
++#include <asm-generic/thread_info.h>
++
++#define TIF_FOREIGN_FPSTATE	(TIF__ARCH+0)	/* CPU's FP state is not current's */
++#define TIF_FSCHECK		(TIF__ARCH+1)	/* Check FS is USER_DS on return */
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+2)	/* syscall auditing */
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+3)	/* syscall tracepoint for ftrace */
++#define TIF_SYSCALL_EMU		(TIF__ARCH+4)	/* syscall emulation active */
++#define TIF_FREEZE		(TIF__ARCH+5)
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+6)
++#define TIF_SINGLESTEP		(TIF__ARCH+7)
++#define TIF_32BIT		(TIF__ARCH+8)	/* 32bit process */
++#define TIF_SVE			(TIF__ARCH+9)	/* Scalable Vector Extension in use */
++#define TIF_SVE_VL_INHERIT	(TIF__ARCH+10)	/* Inherit sve_vl_onexec across exec */
++#define TIF_SSBD		(TIF__ARCH+11)	/* Wants SSB mitigation */
++#define TIF_TAGGED_ADDR		(TIF__ARCH+12)	/* Allow tagged user addresses */
+ 
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+ #define _TIF_FOREIGN_FPSTATE	(1 << TIF_FOREIGN_FPSTATE)
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
+-#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
+-#define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_FSCHECK		(1 << TIF_FSCHECK)
+ #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+ #define _TIF_32BIT		(1 << TIF_32BIT)
+--- x/arch/csky/include/asm/thread_info.h
++++ x/arch/csky/include/asm/thread_info.h
+@@ -57,29 +57,17 @@
+ 
+ #endif /* !__ASSEMBLY__ */
+ 
+-#define TIF_SIGPENDING		0	/* signal pending */
+-#define TIF_NOTIFY_RESUME	1       /* callback before returning to user */
+-#define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+-#define TIF_UPROBE		3	/* uprobe breakpoint or singlestep */
+-#define TIF_SYSCALL_TRACE	4	/* syscall trace active */
+-#define TIF_SYSCALL_TRACEPOINT	5       /* syscall tracepoint instrumentation */
+-#define TIF_SYSCALL_AUDIT	6	/* syscall auditing */
+-#define TIF_POLLING_NRFLAG	16	/* poll_idle() is TIF_NEED_RESCHED */
+-#define TIF_MEMDIE		18      /* is terminating due to OOM killer */
+-#define TIF_RESTORE_SIGMASK	20	/* restore signal mask in do_signal() */
+-#define TIF_SECCOMP		21	/* secure computing */
++#include <asm-generic/thread_info.h>
++
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+0)       /* syscall tracepoint instrumentation */
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+1)	/* syscall auditing */
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+2)	/* poll_idle() is TIF_NEED_RESCHED */
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+3)	/* restore signal mask in do_signal() */
+ 
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+ #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+-#define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+-#define _TIF_MEMDIE		(1 << TIF_MEMDIE)
+ #define _TIF_RESTORE_SIGMASK	(1 << TIF_RESTORE_SIGMASK)
+-#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ 
+ #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
+ 				 _TIF_NOTIFY_RESUME | _TIF_UPROBE)
+--- x/arch/h8300/include/asm/thread_info.h
++++ x/arch/h8300/include/asm/thread_info.h
+@@ -63,22 +63,15 @@
+ /*
+  * thread information flag bit numbers
+  */
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_SIGPENDING		1	/* signal pending */
+-#define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+-#define TIF_SINGLESTEP		3	/* singlestepping active */
+-#define TIF_MEMDIE		4	/* is terminating due to OOM killer */
+-#define TIF_RESTORE_SIGMASK	5	/* restore signal mask in do_signal() */
+-#define TIF_NOTIFY_RESUME	6	/* callback before returning to user */
+-#define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+-#define TIF_SYSCALL_TRACEPOINT	8	/* for ftrace syscall instrumentation */
+-#define TIF_POLLING_NRFLAG	9	/* true if poll_idle() is polling TIF_NEED_RESCHED */
++#include <asm-generic/thread_info.h>
++
++#define TIF_SINGLESTEP		(TIF__ARCH+0)	/* singlestepping active */
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+1)	/* restore signal mask in do_signal() */
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+2)	/* syscall auditing active */
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+3)	/* for ftrace syscall instrumentation */
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+4)	/* true if poll_idle() is polling TIF_NEED_RESCHED */
+ 
+ /* as above, but as bit values */
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+ #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
+--- x/arch/hexagon/include/asm/thread_info.h
++++ x/arch/hexagon/include/asm/thread_info.h
+@@ -89,19 +89,12 @@
+  * - other flags in MSW
+  */
+ 
+-#define TIF_SYSCALL_TRACE       0       /* syscall trace active */
+-#define TIF_NOTIFY_RESUME       1       /* resumption notification requested */
+-#define TIF_SIGPENDING          2       /* signal pending */
+-#define TIF_NEED_RESCHED        3       /* rescheduling necessary */
+-#define TIF_SINGLESTEP          4       /* restore ss @ return to usr mode */
+-#define TIF_RESTORE_SIGMASK     6       /* restore sig mask in do_signal() */
++#include <asm-generic/thread_info.h>
++
++#define TIF_SINGLESTEP          (TIF__ARCH+0)       /* restore ss @ return to usr mode */
++#define TIF_RESTORE_SIGMASK     (TIF__ARCH+1)       /* restore sig mask in do_signal() */
+ /* true if poll_idle() is polling TIF_NEED_RESCHED */
+-#define TIF_MEMDIE              17      /* OOM killer killed process */
+ 
+-#define _TIF_SYSCALL_TRACE      (1 << TIF_SYSCALL_TRACE)
+-#define _TIF_NOTIFY_RESUME      (1 << TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING         (1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED       (1 << TIF_NEED_RESCHED)
+ #define _TIF_SINGLESTEP         (1 << TIF_SINGLESTEP)
+ 
+ /* work to do on interrupt/exception return - All but TIF_SYSCALL_TRACE */
+--- x/arch/ia64/include/asm/thread_info.h
++++ x/arch/ia64/include/asm/thread_info.h
+@@ -98,25 +98,18 @@
+  * - pending work-to-be-done flags are in least-significant 16 bits, other flags
+  *   in top 16 bits
+  */
+-#define TIF_SIGPENDING		0	/* signal pending */
+-#define TIF_NEED_RESCHED	1	/* rescheduling necessary */
+-#define TIF_SYSCALL_TRACE	2	/* syscall trace active */
+-#define TIF_SYSCALL_AUDIT	3	/* syscall auditing active */
+-#define TIF_SINGLESTEP		4	/* restore singlestep on return to user mode */
+-#define TIF_NOTIFY_RESUME	6	/* resumption notification requested */
+-#define TIF_MEMDIE		17	/* is terminating due to OOM killer */
+-#define TIF_MCA_INIT		18	/* this task is processing MCA or INIT */
+-#define TIF_DB_DISABLED		19	/* debug trap disabled for fsyscall */
+-#define TIF_RESTORE_RSE		21	/* user RBS is newer than kernel RBS */
+-#define TIF_POLLING_NRFLAG	22	/* idle is polling for TIF_NEED_RESCHED */
++#include <asm-generic/thread_info.h>
++
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+0)	/* syscall auditing active */
++#define TIF_SINGLESTEP		(TIF__ARCH+1)	/* restore singlestep on return to user mode */
++#define TIF_MCA_INIT		(TIF__ARCH+2)	/* this task is processing MCA or INIT */
++#define TIF_DB_DISABLED		(TIF__ARCH+3)	/* debug trap disabled for fsyscall */
++#define TIF_RESTORE_RSE		(TIF__ARCH+4)	/* user RBS is newer than kernel RBS */
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+5)	/* idle is polling for TIF_NEED_RESCHED */
+ 
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+ #define _TIF_SYSCALL_TRACEAUDIT	(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SINGLESTEP)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+ #define _TIF_MCA_INIT		(1 << TIF_MCA_INIT)
+ #define _TIF_DB_DISABLED	(1 << TIF_DB_DISABLED)
+ #define _TIF_RESTORE_RSE	(1 << TIF_RESTORE_RSE)
+--- x/arch/m68k/include/asm/thread_info.h
++++ x/arch/m68k/include/asm/thread_info.h
+@@ -60,12 +60,9 @@
+  * bits 0-7 are tested at every exception exit
+  * bits 8-15 are also tested at syscall exit
+  */
+-#define TIF_NOTIFY_RESUME	5	/* callback before returning to user */
+-#define TIF_SIGPENDING		6	/* signal pending */
+-#define TIF_NEED_RESCHED	7	/* rescheduling necessary */
+-#define TIF_DELAYED_TRACE	14	/* single step a syscall */
+-#define TIF_SYSCALL_TRACE	15	/* syscall trace active */
+-#define TIF_MEMDIE		16	/* is terminating due to OOM killer */
+-#define TIF_RESTORE_SIGMASK	18	/* restore signal mask in do_signal */
++#include <asm-generic/thread_info.h>
++
++#define TIF_DELAYED_TRACE	(TIF__ARCH+0)	/* single step a syscall */
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+1)	/* restore signal mask in do_signal */
+ 
+ #endif	/* _ASM_M68K_THREAD_INFO_H */
+--- x/arch/microblaze/include/asm/thread_info.h
++++ x/arch/microblaze/include/asm/thread_info.h
+@@ -101,27 +101,18 @@
+  * - pending work-to-be-done flags are in LSW
+  * - other flags in MSW
+  */
+-#define TIF_SYSCALL_TRACE	0 /* syscall trace active */
+-#define TIF_NOTIFY_RESUME	1 /* resumption notification requested */
+-#define TIF_SIGPENDING		2 /* signal pending */
+-#define TIF_NEED_RESCHED	3 /* rescheduling necessary */
+ /* restore singlestep on return to user mode */
+-#define TIF_SINGLESTEP		4
+-#define TIF_MEMDIE		6	/* is terminating due to OOM killer */
+-#define TIF_SYSCALL_AUDIT	9       /* syscall auditing active */
+-#define TIF_SECCOMP		10      /* secure computing */
++#include <asm-generic/thread_info.h>
++
++#define TIF_SINGLESTEP		(TIF__ARCH+0)
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+1)       /* syscall auditing active */
+ 
+ /* true if poll_idle() is polling TIF_NEED_RESCHED */
+-#define TIF_POLLING_NRFLAG	16
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+2)
+ 
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+ #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+ #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+-#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ 
+ /* work to do in syscall trace */
+ #define _TIF_WORK_SYSCALL_MASK  (_TIF_SYSCALL_TRACE | _TIF_SINGLESTEP | \
+--- x/arch/mips/include/asm/thread_info.h
++++ x/arch/mips/include/asm/thread_info.h
+@@ -109,36 +109,25 @@
+  * - pending work-to-be-done flags are in LSW
+  * - other flags in MSW
+  */
+-#define TIF_SIGPENDING		1	/* signal pending */
+-#define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+-#define TIF_SYSCALL_AUDIT	3	/* syscall auditing active */
+-#define TIF_SECCOMP		4	/* secure computing */
+-#define TIF_NOTIFY_RESUME	5	/* callback before returning to user */
+-#define TIF_UPROBE		6	/* breakpointed or singlestepping */
+-#define TIF_RESTORE_SIGMASK	9	/* restore signal mask in do_signal() */
+-#define TIF_USEDFPU		16	/* FPU was used by this task this quantum (SMP) */
+-#define TIF_MEMDIE		18	/* is terminating due to OOM killer */
+-#define TIF_NOHZ		19	/* in adaptive nohz mode */
+-#define TIF_FIXADE		20	/* Fix address errors in software */
+-#define TIF_LOGADE		21	/* Log address errors to syslog */
+-#define TIF_32BIT_REGS		22	/* 32-bit general purpose registers */
+-#define TIF_32BIT_ADDR		23	/* 32-bit address space (o32/n32) */
+-#define TIF_FPUBOUND		24	/* thread bound to FPU-full CPU set */
+-#define TIF_LOAD_WATCH		25	/* If set, load watch registers */
+-#define TIF_SYSCALL_TRACEPOINT	26	/* syscall tracepoint instrumentation */
+-#define TIF_32BIT_FPREGS	27	/* 32-bit floating point registers */
+-#define TIF_HYBRID_FPREGS	28	/* 64b FP registers, odd singles in bits 63:32 of even doubles */
+-#define TIF_USEDMSA		29	/* MSA has been used this quantum */
+-#define TIF_MSA_CTX_LIVE	30	/* MSA context must be preserved */
+-#define TIF_SYSCALL_TRACE	31	/* syscall trace active */
++#include <asm-generic/thread_info.h>
++
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+0)	/* syscall auditing active */
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+1)	/* restore signal mask in do_signal() */
++#define TIF_USEDFPU		(TIF__ARCH+2)	/* FPU was used by this task this quantum (SMP) */
++#define TIF_NOHZ		(TIF__ARCH+3)	/* in adaptive nohz mode */
++#define TIF_FIXADE		(TIF__ARCH+4)	/* Fix address errors in software */
++#define TIF_LOGADE		(TIF__ARCH+5)	/* Log address errors to syslog */
++#define TIF_32BIT_REGS		(TIF__ARCH+6)	/* 32-bit general purpose registers */
++#define TIF_32BIT_ADDR		(TIF__ARCH+7)	/* 32-bit address space (o32/n32) */
++#define TIF_FPUBOUND		(TIF__ARCH+8)	/* thread bound to FPU-full CPU set */
++#define TIF_LOAD_WATCH		(TIF__ARCH+9)	/* If set, load watch registers */
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+10)	/* syscall tracepoint instrumentation */
++#define TIF_32BIT_FPREGS	(TIF__ARCH+11)	/* 32-bit floating point registers */
++#define TIF_HYBRID_FPREGS	(TIF__ARCH+12)	/* 64b FP registers, odd singles in bits 63:32 of even doubles */
++#define TIF_USEDMSA		(TIF__ARCH+13)	/* MSA has been used this quantum */
++#define TIF_MSA_CTX_LIVE	(TIF__ARCH+14)	/* MSA context must be preserved */
+ 
+-#define _TIF_SYSCALL_TRACE	(1<<TIF_SYSCALL_TRACE)
+-#define _TIF_SIGPENDING		(1<<TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1<<TIF_NEED_RESCHED)
+ #define _TIF_SYSCALL_AUDIT	(1<<TIF_SYSCALL_AUDIT)
+-#define _TIF_SECCOMP		(1<<TIF_SECCOMP)
+-#define _TIF_NOTIFY_RESUME	(1<<TIF_NOTIFY_RESUME)
+-#define _TIF_UPROBE		(1<<TIF_UPROBE)
+ #define _TIF_USEDFPU		(1<<TIF_USEDFPU)
+ #define _TIF_NOHZ		(1<<TIF_NOHZ)
+ #define _TIF_FIXADE		(1<<TIF_FIXADE)
+--- x/arch/nds32/include/asm/thread_info.h
++++ x/arch/nds32/include/asm/thread_info.h
+@@ -44,21 +44,14 @@
+  *  TIF_NOTIFY_RESUME	- callback before returning to user
+  *  TIF_POLLING_NRFLAG	- true if poll_idle() is polling TIF_NEED_RESCHED
+  */
+-#define TIF_SIGPENDING		1
+-#define TIF_NEED_RESCHED	2
+-#define TIF_SINGLESTEP		3
+-#define TIF_NOTIFY_RESUME	4	/* callback before returning to user */
+-#define TIF_SYSCALL_TRACE	8
+-#define TIF_POLLING_NRFLAG	17
+-#define TIF_MEMDIE		18
+-#define TIF_FREEZE		19
+-#define TIF_RESTORE_SIGMASK	20
++#include <asm-generic/thread_info.h>
++
++#define TIF_SINGLESTEP		(TIF__ARCH+0)
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+1)
++#define TIF_FREEZE		(TIF__ARCH+2)
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+3)
+ 
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+ #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+ #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+ #define _TIF_FREEZE		(1 << TIF_FREEZE)
+ #define _TIF_RESTORE_SIGMASK	(1 << TIF_RESTORE_SIGMASK)
+--- x/arch/nios2/include/asm/thread_info.h
++++ x/arch/nios2/include/asm/thread_info.h
+@@ -79,23 +79,14 @@
+  * - pending work-to-be-done flags are in LSW
+  * - other flags in MSW
+  */
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_NOTIFY_RESUME	1	/* resumption notification requested */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+-#define TIF_MEMDIE		4	/* is terminating due to OOM killer */
+-#define TIF_SECCOMP		5	/* secure computing */
+-#define TIF_SYSCALL_AUDIT	6	/* syscall auditing active */
+-#define TIF_RESTORE_SIGMASK	9	/* restore signal mask in do_signal() */
++#include <asm-generic/thread_info.h>
+ 
+-#define TIF_POLLING_NRFLAG	16	/* true if poll_idle() is polling
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+0)	/* syscall auditing active */
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+1)	/* restore signal mask in do_signal() */
++
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+2)	/* true if poll_idle() is polling
+ 					   TIF_NEED_RESCHED */
+ 
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_RESTORE_SIGMASK	(1 << TIF_RESTORE_SIGMASK)
+ #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+--- x/arch/openrisc/include/asm/thread_info.h
++++ x/arch/openrisc/include/asm/thread_info.h
+@@ -91,23 +91,16 @@
+  *   - pending work-to-be-done flags are in LSW
+  *   - other flags in MSW
+  */
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_NOTIFY_RESUME	1	/* resumption notification requested */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+-#define TIF_SINGLESTEP		4	/* restore singlestep on return to user
++#include <asm-generic/thread_info.h>
++
++#define TIF_SINGLESTEP		(TIF__ARCH+0)	/* restore singlestep on return to user
+ 					 * mode
+ 					 */
+-#define TIF_SYSCALL_TRACEPOINT  8       /* for ftrace syscall instrumentation */
+-#define TIF_RESTORE_SIGMASK     9
+-#define TIF_POLLING_NRFLAG	16	/* true if poll_idle() is polling						 * TIF_NEED_RESCHED
++#define TIF_SYSCALL_TRACEPOINT  (TIF__ARCH+1)       /* for ftrace syscall instrumentation */
++#define TIF_RESTORE_SIGMASK     (TIF__ARCH+2)
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+3)	/* true if poll_idle() is polling						 * TIF_NEED_RESCHED
+ 					 */
+-#define TIF_MEMDIE              17
+ 
+-#define _TIF_SYSCALL_TRACE	(1<<TIF_SYSCALL_TRACE)
+-#define _TIF_NOTIFY_RESUME	(1<<TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1<<TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1<<TIF_NEED_RESCHED)
+ #define _TIF_SINGLESTEP		(1<<TIF_SINGLESTEP)
+ #define _TIF_POLLING_NRFLAG	(1<<TIF_POLLING_NRFLAG)
+ 
+--- x/arch/parisc/include/asm/thread_info.h
++++ x/arch/parisc/include/asm/thread_info.h
+@@ -46,29 +46,20 @@
+ /*
+  * thread information flags
+  */
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_SIGPENDING		1	/* signal pending */
+-#define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+-#define TIF_POLLING_NRFLAG	3	/* true if poll_idle() is polling TIF_NEED_RESCHED */
+-#define TIF_32BIT               4       /* 32 bit binary */
+-#define TIF_MEMDIE		5	/* is terminating due to OOM killer */
+-#define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+-#define TIF_NOTIFY_RESUME	8	/* callback before returning to user */
+-#define TIF_SINGLESTEP		9	/* single stepping? */
+-#define TIF_BLOCKSTEP		10	/* branch stepping? */
+-#define TIF_SECCOMP		11	/* secure computing */
+-#define TIF_SYSCALL_TRACEPOINT	12	/* syscall tracepoint instrumentation */
++#include <asm-generic/thread_info.h>
++
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+0)	/* true if poll_idle() is polling TIF_NEED_RESCHED */
++#define TIF_32BIT               (TIF__ARCH+1)       /* 32 bit binary */
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+2)	/* syscall auditing active */
++#define TIF_SINGLESTEP		(TIF__ARCH+3)	/* single stepping? */
++#define TIF_BLOCKSTEP		(TIF__ARCH+4)	/* branch stepping? */
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+5)	/* syscall tracepoint instrumentation */
+ 
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+ #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+ #define _TIF_32BIT		(1 << TIF_32BIT)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+ #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+ #define _TIF_BLOCKSTEP		(1 << TIF_BLOCKSTEP)
+-#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
+ 
+ #define _TIF_USER_WORK_MASK     (_TIF_SIGPENDING | _TIF_NOTIFY_RESUME | \
+--- x/arch/powerpc/include/asm/thread_info.h
++++ x/arch/powerpc/include/asm/thread_info.h
+@@ -87,46 +87,35 @@
+ /*
+  * thread information flag bit numbers
+  */
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_SIGPENDING		1	/* signal pending */
+-#define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+-#define TIF_FSCHECK		3	/* Check FS is USER_DS on return */
+-#define TIF_SYSCALL_EMU		4	/* syscall emulation active */
+-#define TIF_RESTORE_TM		5	/* need to restore TM FP/VEC/VSX */
+-#define TIF_PATCH_PENDING	6	/* pending live patching update */
+-#define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+-#define TIF_SINGLESTEP		8	/* singlestepping active */
+-#define TIF_NOHZ		9	/* in adaptive nohz mode */
+-#define TIF_SECCOMP		10	/* secure computing */
+-#define TIF_RESTOREALL		11	/* Restore all regs (implies NOERROR) */
+-#define TIF_NOERROR		12	/* Force successful syscall return */
+-#define TIF_NOTIFY_RESUME	13	/* callback before returning to user */
+-#define TIF_UPROBE		14	/* breakpointed or single-stepping */
+-#define TIF_SYSCALL_TRACEPOINT	15	/* syscall tracepoint instrumentation */
+-#define TIF_EMULATE_STACK_STORE	16	/* Is an instruction emulation
++#include <asm-generic/thread_info.h>
++
++#define TIF_FSCHECK		(TIF__ARCH+0)	/* Check FS is USER_DS on return */
++#define TIF_SYSCALL_EMU		(TIF__ARCH+1)	/* syscall emulation active */
++#define TIF_RESTORE_TM		(TIF__ARCH+2)	/* need to restore TM FP/VEC/VSX */
++#define TIF_PATCH_PENDING	(TIF__ARCH+3)	/* pending live patching update */
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+4)	/* syscall auditing active */
++#define TIF_SINGLESTEP		(TIF__ARCH+5)	/* singlestepping active */
++#define TIF_NOHZ		(TIF__ARCH+6)	/* in adaptive nohz mode */
++#define TIF_RESTOREALL		(TIF__ARCH+7)	/* Restore all regs (implies NOERROR) */
++#define TIF_NOERROR		(TIF__ARCH+8)	/* Force successful syscall return */
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+9)	/* syscall tracepoint instrumentation */
++#define TIF_EMULATE_STACK_STORE	(TIF__ARCH+10)	/* Is an instruction emulation
+ 						for stack store? */
+-#define TIF_MEMDIE		17	/* is terminating due to OOM killer */
+ #if defined(CONFIG_PPC64)
+-#define TIF_ELF2ABI		18	/* function descriptors must die! */
++#define TIF_ELF2ABI		(TIF__ARCH+11)	/* function descriptors must die! */
+ #endif
+-#define TIF_POLLING_NRFLAG	19	/* true if poll_idle() is polling TIF_NEED_RESCHED */
+-#define TIF_32BIT		20	/* 32 bit binary */
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+12)	/* true if poll_idle() is polling TIF_NEED_RESCHED */
++#define TIF_32BIT		(TIF__ARCH+13)	/* 32 bit binary */
+ 
+ /* as above, but as bit values */
+-#define _TIF_SYSCALL_TRACE	(1<<TIF_SYSCALL_TRACE)
+-#define _TIF_SIGPENDING		(1<<TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1<<TIF_NEED_RESCHED)
+ #define _TIF_POLLING_NRFLAG	(1<<TIF_POLLING_NRFLAG)
+ #define _TIF_32BIT		(1<<TIF_32BIT)
+ #define _TIF_RESTORE_TM		(1<<TIF_RESTORE_TM)
+ #define _TIF_PATCH_PENDING	(1<<TIF_PATCH_PENDING)
+ #define _TIF_SYSCALL_AUDIT	(1<<TIF_SYSCALL_AUDIT)
+ #define _TIF_SINGLESTEP		(1<<TIF_SINGLESTEP)
+-#define _TIF_SECCOMP		(1<<TIF_SECCOMP)
+ #define _TIF_RESTOREALL		(1<<TIF_RESTOREALL)
+ #define _TIF_NOERROR		(1<<TIF_NOERROR)
+-#define _TIF_NOTIFY_RESUME	(1<<TIF_NOTIFY_RESUME)
+-#define _TIF_UPROBE		(1<<TIF_UPROBE)
+ #define _TIF_SYSCALL_TRACEPOINT	(1<<TIF_SYSCALL_TRACEPOINT)
+ #define _TIF_EMULATE_STACK_STORE	(1<<TIF_EMULATE_STACK_STORE)
+ #define _TIF_NOHZ		(1<<TIF_NOHZ)
+--- x/arch/riscv/include/asm/thread_info.h
++++ x/arch/riscv/include/asm/thread_info.h
+@@ -71,23 +71,14 @@
+  * - pending work-to-be-done flags are in lowest half-word
+  * - other flags in upper half-word(s)
+  */
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+-#define TIF_RESTORE_SIGMASK	4	/* restore signal mask in do_signal() */
+-#define TIF_MEMDIE		5	/* is terminating due to OOM killer */
+-#define TIF_SYSCALL_TRACEPOINT  6       /* syscall tracepoint instrumentation */
+-#define TIF_SYSCALL_AUDIT	7	/* syscall auditing */
+-#define TIF_SECCOMP		8	/* syscall secure computing */
++#include <asm-generic/thread_info.h>
++
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+0)	/* restore signal mask in do_signal() */
++#define TIF_SYSCALL_TRACEPOINT  (TIF__ARCH+1)       /* syscall tracepoint instrumentation */
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+2)	/* syscall auditing */
+ 
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+ #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+-#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ 
+ #define _TIF_WORK_MASK \
+ 	(_TIF_NOTIFY_RESUME | _TIF_SIGPENDING | _TIF_NEED_RESCHED)
+--- x/arch/s390/include/asm/thread_info.h
++++ x/arch/s390/include/asm/thread_info.h
+@@ -58,33 +58,24 @@
+  * thread information flags bit numbers
+  */
+ /* _TIF_WORK bits */
+-#define TIF_NOTIFY_RESUME	0	/* callback before returning to user */
+-#define TIF_SIGPENDING		1	/* signal pending */
+-#define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+-#define TIF_UPROBE		3	/* breakpointed or single-stepping */
+-#define TIF_GUARDED_STORAGE	4	/* load guarded storage control block */
+-#define TIF_PATCH_PENDING	5	/* pending live patching update */
+-#define TIF_PGSTE		6	/* New mm's will use 4K page tables */
+-#define TIF_ISOLATE_BP		8	/* Run process with isolated BP */
+-#define TIF_ISOLATE_BP_GUEST	9	/* Run KVM guests with isolated BP */
 -
- 	sqd = kzalloc(sizeof(*sqd), GFP_KERNEL);
- 	if (!sqd)
- 		return ERR_PTR(-ENOMEM);
-@@ -6873,7 +6890,9 @@ static struct io_sq_data *io_get_sq_data(struct io_uring_params *p)
- 	INIT_LIST_HEAD(&sqd->ctx_new_list);
- 	mutex_init(&sqd->ctx_lock);
- 	mutex_init(&sqd->lock);
-+	mutex_init(&sqd->percpu_sq_lock);
- 	init_waitqueue_head(&sqd->wait);
+-#define TIF_31BIT		16	/* 32bit process */
+-#define TIF_MEMDIE		17	/* is terminating due to OOM killer */
+-#define TIF_RESTORE_SIGMASK	18	/* restore signal mask in do_signal() */
+-#define TIF_SINGLE_STEP		19	/* This task is single stepped */
+-#define TIF_BLOCK_STEP		20	/* This task is block stepped */
+-#define TIF_UPROBE_SINGLESTEP	21	/* This task is uprobe single stepped */
++#include <asm-generic/thread_info.h>
 +
- 	return sqd;
- }
++#define TIF_GUARDED_STORAGE	(TIF__ARCH+0)	/* load guarded storage control block */
++#define TIF_PATCH_PENDING	(TIF__ARCH+1)	/* pending live patching update */
++#define TIF_PGSTE		(TIF__ARCH+2)	/* New mm's will use 4K page tables */
++#define TIF_ISOLATE_BP		(TIF__ARCH+3)	/* Run process with isolated BP */
++#define TIF_ISOLATE_BP_GUEST	(TIF__ARCH+4)	/* Run KVM guests with isolated BP */
++
++#define TIF_31BIT		(TIF__ARCH+5)	/* 32bit process */
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+6)	/* restore signal mask in do_signal() */
++#define TIF_SINGLE_STEP		(TIF__ARCH+7)	/* This task is single stepped */
++#define TIF_BLOCK_STEP		(TIF__ARCH+8)	/* This task is block stepped */
++#define TIF_UPROBE_SINGLESTEP	(TIF__ARCH+9)	/* This task is uprobe single stepped */
  
-@@ -6895,6 +6914,43 @@ static void io_sq_thread_park(struct io_sq_data *sqd)
- 	kthread_park(sqd->thread);
- }
- 
-+static void io_attach_ctx_to_sqd(struct io_sq_data *sqd, struct io_ring_ctx *ctx)
-+{
-+	ctx->sq_data = sqd;
-+	io_sq_thread_park(sqd);
-+	mutex_lock(&sqd->ctx_lock);
-+	list_add(&ctx->sqd_list, &sqd->ctx_new_list);
-+	mutex_unlock(&sqd->ctx_lock);
-+	io_sq_thread_unpark(sqd);
-+}
-+
-+static struct io_sq_data *io_find_or_create_percpu_sq_thread(struct io_ring_ctx *ctx,
-+					struct io_uring_params *p)
-+{
-+	struct io_sq_data *sqd;
-+	struct task_struct *tsk;
-+	int cpu = p->sq_thread_cpu;
-+
-+	sqd = per_cpu_ptr(percpu_sqd, cpu);
-+	mutex_lock(&sqd->percpu_sq_lock);
-+	if (sqd->thread) {
-+		refcount_inc(&sqd->refs);
-+		mutex_unlock(&sqd->percpu_sq_lock);
-+		return sqd;
-+	}
-+
-+	tsk = kthread_create_on_cpu(io_sq_thread, sqd, cpu, "io_uring-sq");
-+	if (IS_ERR(tsk)) {
-+		sqd = ERR_PTR(PTR_ERR(tsk));
-+		goto out;
-+	}
-+	sqd->thread = tsk;
-+	refcount_set(&sqd->refs, 1);
-+out:
-+	mutex_unlock(&sqd->percpu_sq_lock);
-+	return sqd;
-+}
-+
- static void io_sq_thread_stop(struct io_ring_ctx *ctx)
- {
- 	struct io_sq_data *sqd = ctx->sq_data;
-@@ -6921,7 +6977,7 @@ static void io_sq_thread_stop(struct io_ring_ctx *ctx)
- 		if (sqd->thread)
- 			io_sq_thread_unpark(sqd);
- 
--		io_put_sq_data(sqd);
-+		io_put_sq_data(ctx, sqd);
- 		ctx->sq_data = NULL;
- 	}
- }
-@@ -7578,25 +7634,29 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 		if (!capable(CAP_SYS_ADMIN))
- 			goto err;
- 
--		sqd = io_get_sq_data(p);
--		if (IS_ERR(sqd)) {
--			ret = PTR_ERR(sqd);
--			goto err;
--		}
+ /* _TIF_TRACE bits */
+-#define TIF_SYSCALL_TRACE	24	/* syscall trace active */
+-#define TIF_SYSCALL_AUDIT	25	/* syscall auditing active */
+-#define TIF_SECCOMP		26	/* secure computing */
+-#define TIF_SYSCALL_TRACEPOINT	27	/* syscall tracepoint instrumentation */
 -
--		ctx->sq_data = sqd;
--		io_sq_thread_park(sqd);
--		mutex_lock(&sqd->ctx_lock);
--		list_add(&ctx->sqd_list, &sqd->ctx_new_list);
--		mutex_unlock(&sqd->ctx_lock);
--		io_sq_thread_unpark(sqd);
--
- 		ctx->sq_thread_idle = msecs_to_jiffies(p->sq_thread_idle);
- 		if (!ctx->sq_thread_idle)
- 			ctx->sq_thread_idle = HZ;
+-#define _TIF_NOTIFY_RESUME	BIT(TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		BIT(TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	BIT(TIF_NEED_RESCHED)
+-#define _TIF_UPROBE		BIT(TIF_UPROBE)
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+10)	/* syscall auditing active */
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+11)	/* syscall tracepoint instrumentation */
++
+ #define _TIF_GUARDED_STORAGE	BIT(TIF_GUARDED_STORAGE)
+ #define _TIF_PATCH_PENDING	BIT(TIF_PATCH_PENDING)
+ #define _TIF_ISOLATE_BP		BIT(TIF_ISOLATE_BP)
+@@ -93,9 +84,7 @@
+ #define _TIF_31BIT		BIT(TIF_31BIT)
+ #define _TIF_SINGLE_STEP	BIT(TIF_SINGLE_STEP)
  
--		if (sqd->thread)
--			goto done;
-+		if (p->flags & IORING_SETUP_ATTACH_WQ) {
-+			sqd = io_attach_sq_data(p);
-+			if (IS_ERR(sqd)) {
-+				ret = PTR_ERR(sqd);
-+				goto err;
-+			}
-+			io_attach_ctx_to_sqd(sqd, ctx);
-+			if (sqd->thread)
-+				goto done;
-+		}
-+
-+		if (!(p->flags & IORING_SETUP_SQ_AFF) ||
-+		    !(p->flags & IORING_SETUP_SQPOLL_PERCPU)) {
-+			sqd = io_alloc_sq_data(p);
-+			if (IS_ERR(sqd)) {
-+				ret = PTR_ERR(sqd);
-+				goto err;
-+			}
-+		}
+-#define _TIF_SYSCALL_TRACE	BIT(TIF_SYSCALL_TRACE)
+ #define _TIF_SYSCALL_AUDIT	BIT(TIF_SYSCALL_AUDIT)
+-#define _TIF_SECCOMP		BIT(TIF_SECCOMP)
+ #define _TIF_SYSCALL_TRACEPOINT	BIT(TIF_SYSCALL_TRACEPOINT)
  
- 		if (p->flags & IORING_SETUP_SQ_AFF) {
- 			int cpu = p->sq_thread_cpu;
-@@ -7607,7 +7667,14 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 			if (!cpu_online(cpu))
- 				goto err;
+ #endif /* _ASM_THREAD_INFO_H */
+--- x/arch/sh/include/asm/thread_info.h
++++ x/arch/sh/include/asm/thread_info.h
+@@ -102,24 +102,15 @@
+  *   we blow the tst immediate size constraints and need to fix up
+  *   arch/sh/kernel/entry-common.S.
+  */
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_SIGPENDING		1	/* signal pending */
+-#define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+-#define TIF_SINGLESTEP		4	/* singlestepping active */
+-#define TIF_SYSCALL_AUDIT	5	/* syscall auditing active */
+-#define TIF_SECCOMP		6	/* secure computing */
+-#define TIF_NOTIFY_RESUME	7	/* callback before returning to user */
+-#define TIF_SYSCALL_TRACEPOINT	8	/* for ftrace syscall instrumentation */
+-#define TIF_POLLING_NRFLAG	17	/* true if poll_idle() is polling TIF_NEED_RESCHED */
+-#define TIF_MEMDIE		18	/* is terminating due to OOM killer */
++#include <asm-generic/thread_info.h>
++
++#define TIF_SINGLESTEP		(TIF__ARCH+0)	/* singlestepping active */
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+1)	/* syscall auditing active */
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+2)	/* for ftrace syscall instrumentation */
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+3)	/* true if poll_idle() is polling TIF_NEED_RESCHED */
  
--			sqd->thread = kthread_create_on_cpu(io_sq_thread, sqd,
-+			if (p->flags & IORING_SETUP_SQPOLL_PERCPU) {
-+				sqd = io_find_or_create_percpu_sq_thread(ctx, p);
-+				if (IS_ERR(sqd)) {
-+					ret = PTR_ERR(sqd);
-+					goto err;
-+				}
-+			} else
-+				sqd->thread = kthread_create_on_cpu(io_sq_thread, sqd,
- 							cpu, "io_uring-sq");
- 		} else {
- 			sqd->thread = kthread_create(io_sq_thread, sqd,
-@@ -7618,6 +7685,8 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 			sqd->thread = NULL;
- 			goto err;
- 		}
-+		io_attach_ctx_to_sqd(sqd, ctx);
-+
- 		ret = io_uring_alloc_task_context(sqd->thread);
- 		if (ret)
- 			goto err;
-@@ -9157,7 +9226,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
- 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
- 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
--			IORING_SETUP_R_DISABLED))
-+			IORING_SETUP_R_DISABLED | IORING_SETUP_SQPOLL_PERCPU))
- 		return -EINVAL;
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+ #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+-#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+ #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
+ #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
  
- 	return  io_uring_create(entries, &p, params);
-@@ -9500,6 +9569,8 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
+--- x/arch/um/include/asm/thread_info.h
++++ x/arch/um/include/asm/thread_info.h
+@@ -54,21 +54,12 @@
  
- static int __init io_uring_init(void)
- {
-+	int cpu;
-+
- #define __BUILD_BUG_VERIFY_ELEMENT(stype, eoffset, etype, ename) do { \
- 	BUILD_BUG_ON(offsetof(stype, ename) != eoffset); \
- 	BUILD_BUG_ON(sizeof(etype) != sizeof_field(stype, ename)); \
-@@ -9540,6 +9611,21 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
- 	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
- 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
-+
-+	percpu_sqd = alloc_percpu(struct io_sq_data);
-+
-+	for_each_possible_cpu(cpu) {
-+		struct io_sq_data *sqd;
-+
-+		sqd = per_cpu_ptr(percpu_sqd, cpu);
-+		INIT_LIST_HEAD(&sqd->ctx_list);
-+		INIT_LIST_HEAD(&sqd->ctx_new_list);
-+		mutex_init(&sqd->ctx_lock);
-+		mutex_init(&sqd->lock);
-+		mutex_init(&sqd->percpu_sq_lock);
-+		init_waitqueue_head(&sqd->wait);
-+
-+	}
- 	return 0;
- };
- __initcall(io_uring_init);
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 98d8e06dea22..a162b077a453 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -96,6 +96,7 @@ enum {
- #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
- #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
- #define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
-+#define IORING_SETUP_SQPOLL_PERCPU	(1U << 7)	/* use percpu SQ poll thread */
+ #endif
  
- enum {
- 	IORING_OP_NOP,
--- 
-2.17.2
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_SIGPENDING		1	/* signal pending */
+-#define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+-#define TIF_RESTART_BLOCK	4
+-#define TIF_MEMDIE		5	/* is terminating due to OOM killer */
+-#define TIF_SYSCALL_AUDIT	6
+-#define TIF_RESTORE_SIGMASK	7
+-#define TIF_NOTIFY_RESUME	8
+-#define TIF_SECCOMP		9	/* secure computing */
++#include <asm-generic/thread_info.h>
++
++#define TIF_RESTART_BLOCK	(TIF__ARCH+0)
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+1)
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+2)
+ 
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_MEMDIE		(1 << TIF_MEMDIE)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+-#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ 
+ #endif
+--- x/arch/x86/include/asm/thread_info.h
++++ x/arch/x86/include/asm/thread_info.h
+@@ -74,49 +74,38 @@
+  * - these are process state flags that various assembly files
+  *   may need to access
+  */
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+-#define TIF_SINGLESTEP		4	/* reenable singlestep on user return*/
+-#define TIF_SSBD		5	/* Speculative store bypass disable */
+-#define TIF_SYSCALL_EMU		6	/* syscall emulation active */
+-#define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+-#define TIF_SECCOMP		8	/* secure computing */
+-#define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
+-#define TIF_SPEC_FORCE_UPDATE	10	/* Force speculation MSR update in context switch */
+-#define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+-#define TIF_UPROBE		12	/* breakpointed or singlestepping */
+-#define TIF_PATCH_PENDING	13	/* pending live patching update */
+-#define TIF_NEED_FPU_LOAD	14	/* load FPU on return to userspace */
+-#define TIF_NOCPUID		15	/* CPUID is not accessible in userland */
+-#define TIF_NOTSC		16	/* TSC is not accessible in userland */
+-#define TIF_IA32		17	/* IA32 compatibility process */
+-#define TIF_SLD			18	/* Restore split lock detection on context switch */
+-#define TIF_MEMDIE		20	/* is terminating due to OOM killer */
+-#define TIF_POLLING_NRFLAG	21	/* idle is polling for TIF_NEED_RESCHED */
+-#define TIF_IO_BITMAP		22	/* uses I/O bitmap */
+-#define TIF_FORCED_TF		24	/* true if TF in eflags artificially */
+-#define TIF_BLOCKSTEP		25	/* set when we want DEBUGCTLMSR_BTF */
+-#define TIF_LAZY_MMU_UPDATES	27	/* task is updating the mmu lazily */
+-#define TIF_SYSCALL_TRACEPOINT	28	/* syscall tracepoint instrumentation */
+-#define TIF_ADDR32		29	/* 32-bit address space on 64 bits */
+-#define TIF_X32			30	/* 32-bit native x86-64 binary */
+-#define TIF_FSCHECK		31	/* Check FS is USER_DS on return */
++#include <asm-generic/thread_info.h>
++
++#define TIF_SINGLESTEP		(TIF__ARCH+0)	/* reenable singlestep on user return*/
++#define TIF_SSBD		(TIF__ARCH+1)	/* Speculative store bypass disable */
++#define TIF_SYSCALL_EMU		(TIF__ARCH+2)	/* syscall emulation active */
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+3)	/* syscall auditing active */
++#define TIF_SPEC_IB		(TIF__ARCH+4)	/* Indirect branch speculation mitigation */
++#define TIF_SPEC_FORCE_UPDATE	(TIF__ARCH+5)	/* Force speculation MSR update in context switch */
++#define TIF_USER_RETURN_NOTIFY	(TIF__ARCH+6)	/* notify kernel of userspace return */
++#define TIF_PATCH_PENDING	(TIF__ARCH+7)	/* pending live patching update */
++#define TIF_NEED_FPU_LOAD	(TIF__ARCH+8)	/* load FPU on return to userspace */
++#define TIF_NOCPUID		(TIF__ARCH+9)	/* CPUID is not accessible in userland */
++#define TIF_NOTSC		(TIF__ARCH+10)	/* TSC is not accessible in userland */
++#define TIF_IA32		(TIF__ARCH+11)	/* IA32 compatibility process */
++#define TIF_SLD			(TIF__ARCH+12)	/* Restore split lock detection on context switch */
++#define TIF_POLLING_NRFLAG	(TIF__ARCH+13)	/* idle is polling for TIF_NEED_RESCHED */
++#define TIF_IO_BITMAP		(TIF__ARCH+14)	/* uses I/O bitmap */
++#define TIF_FORCED_TF		(TIF__ARCH+15)	/* true if TF in eflags artificially */
++#define TIF_BLOCKSTEP		(TIF__ARCH+16)	/* set when we want DEBUGCTLMSR_BTF */
++#define TIF_LAZY_MMU_UPDATES	(TIF__ARCH+17)	/* task is updating the mmu lazily */
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+18)	/* syscall tracepoint instrumentation */
++#define TIF_ADDR32		(TIF__ARCH+19)	/* 32-bit address space on 64 bits */
++#define TIF_X32			(TIF__ARCH+20)	/* 32-bit native x86-64 binary */
++#define TIF_FSCHECK		(TIF__ARCH+21)	/* Check FS is USER_DS on return */
+ 
+-#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+ #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+ #define _TIF_SSBD		(1 << TIF_SSBD)
+ #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+-#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ #define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
+ #define _TIF_SPEC_FORCE_UPDATE	(1 << TIF_SPEC_FORCE_UPDATE)
+ #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+-#define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+ #define _TIF_NEED_FPU_LOAD	(1 << TIF_NEED_FPU_LOAD)
+ #define _TIF_NOCPUID		(1 << TIF_NOCPUID)
+--- x/arch/xtensa/include/asm/thread_info.h
++++ x/arch/xtensa/include/asm/thread_info.h
+@@ -106,25 +106,17 @@
+  * thread information flags
+  * - these are process state flags that various assembly files may need to access
+  */
+-#define TIF_SYSCALL_TRACE	0	/* syscall trace active */
+-#define TIF_SIGPENDING		1	/* signal pending */
+-#define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+-#define TIF_SINGLESTEP		3	/* restore singlestep on return to user mode */
+-#define TIF_SYSCALL_TRACEPOINT	4	/* syscall tracepoint instrumentation */
+-#define TIF_MEMDIE		5	/* is terminating due to OOM killer */
+-#define TIF_RESTORE_SIGMASK	6	/* restore signal mask in do_signal() */
+-#define TIF_NOTIFY_RESUME	7	/* callback before returning to user */
+-#define TIF_DB_DISABLED		8	/* debug trap disabled for syscall */
+-#define TIF_SYSCALL_AUDIT	9	/* syscall auditing active */
+-#define TIF_SECCOMP		10	/* secure computing */
++#include <asm-generic/thread_info.h>
++
++#define TIF_SINGLESTEP		(TIF__ARCH+0)	/* restore singlestep on return to user mode */
++#define TIF_SYSCALL_TRACEPOINT	(TIF__ARCH+1)	/* syscall tracepoint instrumentation */
++#define TIF_RESTORE_SIGMASK	(TIF__ARCH+2)	/* restore signal mask in do_signal() */
++#define TIF_DB_DISABLED		(TIF__ARCH+3)	/* debug trap disabled for syscall */
++#define TIF_SYSCALL_AUDIT	(TIF__ARCH+4)	/* syscall auditing active */
+ 
+-#define _TIF_SYSCALL_TRACE	(1<<TIF_SYSCALL_TRACE)
+-#define _TIF_SIGPENDING		(1<<TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1<<TIF_NEED_RESCHED)
+ #define _TIF_SINGLESTEP		(1<<TIF_SINGLESTEP)
+ #define _TIF_SYSCALL_TRACEPOINT	(1<<TIF_SYSCALL_TRACEPOINT)
+ #define _TIF_SYSCALL_AUDIT	(1<<TIF_SYSCALL_AUDIT)
+-#define _TIF_SECCOMP		(1<<TIF_SECCOMP)
+ 
+ #define _TIF_WORK_MASK		(_TIF_SYSCALL_TRACE | _TIF_SINGLESTEP | \
+ 				 _TIF_SYSCALL_TRACEPOINT | \
 

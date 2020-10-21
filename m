@@ -2,88 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D41DA2953C6
-	for <lists+io-uring@lfdr.de>; Wed, 21 Oct 2020 22:59:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5FFE295531
+	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 01:39:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505701AbgJUU76 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Wed, 21 Oct 2020 16:59:58 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:38536 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2440004AbgJUU7t (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Oct 2020 16:59:49 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-133-TE6JN5gZMAinUsbykq2bUQ-1; Wed, 21 Oct 2020 21:59:44 +0100
-X-MC-Unique: TE6JN5gZMAinUsbykq2bUQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 21 Oct 2020 21:59:43 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 21 Oct 2020 21:59:43 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Greg KH' <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S2507143AbgJUXjc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 21 Oct 2020 19:39:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439511AbgJUXjc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Oct 2020 19:39:32 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86217C0613CE;
+        Wed, 21 Oct 2020 16:39:31 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kVNhK-005pSF-DC; Wed, 21 Oct 2020 23:39:14 +0000
+Date:   Thu, 22 Oct 2020 00:39:14 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, kernel-team@android.com,
         Andrew Morton <akpm@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
  rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Index: AQHWp8T3NDfnH4y9nkGWtfqJueR1KKmiiApA
-Date:   Wed, 21 Oct 2020 20:59:43 +0000
-Message-ID: <b416290b76684ac392e8c43d764645f8@AcuMS.aculab.com>
+Message-ID: <20201021233914.GR3576660@ZenIV.linux.org.uk>
 References: <20200925045146.1283714-1-hch@lst.de>
- <20200925045146.1283714-3-hch@lst.de> <20201021161301.GA1196312@kroah.com>
-In-Reply-To: <20201021161301.GA1196312@kroah.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+ <20200925045146.1283714-3-hch@lst.de>
+ <20201021161301.GA1196312@kroah.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201021161301.GA1196312@kroah.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Greg KH
-> Sent: 21 October 2020 17:13
-> 
+On Wed, Oct 21, 2020 at 06:13:01PM +0200, Greg KH wrote:
 > On Fri, Sep 25, 2020 at 06:51:39AM +0200, Christoph Hellwig wrote:
 > > From: David Laight <David.Laight@ACULAB.COM>
-> >
+> > 
 > > This lets the compiler inline it into import_iovec() generating
 > > much better code.
-> >
+> > 
 > > Signed-off-by: David Laight <david.laight@aculab.com>
 > > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > > ---
@@ -99,21 +70,10 @@ From: Greg KH
 > thing in the testing framework, so any hints that people can provide
 > would be most appreciated.
 
-My original commit just moved the function source from one file to another.
-So it is odd that it makes any difference.
-I don't even know if it gets inlined by Christoph's actual patch.
-(I have another patch that depended on it that I need to resubmit.)
+It's a pure move - modulo changed line breaks in the argument lists
+the functions involved are identical before and after that (just checked
+that directly, by checking out the trees before and after, extracting two
+functions in question from fs/read_write.c and lib/iov_iter.c (before and
+after, resp.) and checking the diff between those.
 
-Some of the other changes from Christoph's same patch set might
-make a difference though.
-
-Might be worth forcing it to be not inlined - so it is no change.
-Or try adding a kernel log to import_iovec() or the associated
-copy failing.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+How certain is your bisection?

@@ -2,78 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5FFE295531
-	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 01:39:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 255D4295625
+	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 03:47:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2507143AbgJUXjc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 21 Oct 2020 19:39:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
+        id S2894795AbgJVBrH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 21 Oct 2020 21:47:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439511AbgJUXjc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Oct 2020 19:39:32 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86217C0613CE;
-        Wed, 21 Oct 2020 16:39:31 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVNhK-005pSF-DC; Wed, 21 Oct 2020 23:39:14 +0000
-Date:   Thu, 22 Oct 2020 00:39:14 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, kernel-team@android.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201021233914.GR3576660@ZenIV.linux.org.uk>
-References: <20200925045146.1283714-1-hch@lst.de>
- <20200925045146.1283714-3-hch@lst.de>
- <20201021161301.GA1196312@kroah.com>
+        with ESMTP id S2442706AbgJVBrG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Oct 2020 21:47:06 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3AD0C0613CE
+        for <io-uring@vger.kernel.org>; Wed, 21 Oct 2020 18:47:06 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id y14so126973pfp.13
+        for <io-uring@vger.kernel.org>; Wed, 21 Oct 2020 18:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=OmAwvBZ9uAhPDlxcIDcn1mXNop70iw8qcrz1ASYUCIo=;
+        b=eAgwJrplAA6FZa0sMS3olAK5KHxsOFla4bdkWmIbXoYlRELG7dBVAo0snK+RpzuYdF
+         Nn1HDEHmYPQWHXCZZAk17b4gDKCINAmPsYZ4hDxZ7ozjRE8Frwu83r8M+iBNRz5Ridw5
+         vceacWO2UEKqOEhi4x16jOCJvmgV+v9+fL0ok2h8GYc6IWUAT3mSMyvlXYPO3Ag1tddz
+         8OaftMqKVv+qr9vhiDFfj9SdnUbKk1hOyGy2q2vcJ1OFWD2maND+RbcA8vDTBWfDUfUD
+         rijX46sPPety8RfT0KYUf6viMDo9VE/ehP7q8cwUU+5c3/GV+V1y0JLpY1s7Rnib+G/y
+         EnHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OmAwvBZ9uAhPDlxcIDcn1mXNop70iw8qcrz1ASYUCIo=;
+        b=QLIKuOOI4jS8i6ucOiFznqk9+bwAFDsPgwaf5yAFEaG4FoQHx1fky3L1s7V8Q2TcPz
+         VD/H9BTOomH2W6ln8uXgLBZ66U3FN/lTkazTTlyzFJHXq6ikZs7RKxPl9mbTOm3FLnAO
+         fF12PVIZF9hXzJE8mODq2L5qMpCWEEJY2Mivqs4EzHYJVs4m3H02+ARvtXZRid7mUhfy
+         WjRXD6LJBA07N2/amSe1cQXOB8xOwkUhBnviI+aLkWFe8NU0agJdEjg8/c1u5laCSnE5
+         l/qM/pZLy8W9q6xKnHM7XGqlQRzXdcMyfHDCGtNVmcyQ2pGUfjDa6up2NoaNk2kY9nDE
+         LDcQ==
+X-Gm-Message-State: AOAM5316SeENNFaEoPxxwXD4qTdqdVIIrQ1ohdicjLXJPTpHLcaPAUWA
+        Y6zyf2pCmST4ta4U/HL1f6GGCyicBG5Nlg==
+X-Google-Smtp-Source: ABdhPJwIOu434YeiK4aYxJmi//GHdAb6O7c3P6mn7F2RgYAZ8NaSb3qmkMPIwpfGTNuZcKwNmOCpTw==
+X-Received: by 2002:a65:628f:: with SMTP id f15mr374062pgv.168.1603331225334;
+        Wed, 21 Oct 2020 18:47:05 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id f66sm20619pfa.59.2020.10.21.18.47.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Oct 2020 18:47:04 -0700 (PDT)
+Subject: Re: [PATCH liburing] add C11 support
+To:     Simon Zeni <simon@bl4ckb0ne.ca>, io-uring@vger.kernel.org
+References: <20201021154215.148695-1-simon@bl4ckb0ne.ca>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <66afb9a4-6329-e4f2-defe-491a5d497611@kernel.dk>
+Date:   Wed, 21 Oct 2020 19:47:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201021161301.GA1196312@kroah.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20201021154215.148695-1-simon@bl4ckb0ne.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Oct 21, 2020 at 06:13:01PM +0200, Greg KH wrote:
-> On Fri, Sep 25, 2020 at 06:51:39AM +0200, Christoph Hellwig wrote:
-> > From: David Laight <David.Laight@ACULAB.COM>
-> > 
-> > This lets the compiler inline it into import_iovec() generating
-> > much better code.
-> > 
-> > Signed-off-by: David Laight <david.laight@aculab.com>
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  fs/read_write.c | 179 ------------------------------------------------
-> >  lib/iov_iter.c  | 176 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 176 insertions(+), 179 deletions(-)
-> 
-> Strangely, this commit causes a regression in Linus's tree right now.
-> 
-> I can't really figure out what the regression is, only that this commit
-> triggers a "large Android system binary" from working properly.  There's
-> no kernel log messages anywhere, and I don't have any way to strace the
-> thing in the testing framework, so any hints that people can provide
-> would be most appreciated.
+On 10/21/20 9:42 AM, Simon Zeni wrote:
+> Signed-off-by: Simon Zeni <simon@bl4ckb0ne.ca>
 
-It's a pure move - modulo changed line breaks in the argument lists
-the functions involved are identical before and after that (just checked
-that directly, by checking out the trees before and after, extracting two
-functions in question from fs/read_write.c and lib/iov_iter.c (before and
-after, resp.) and checking the diff between those.
+This really needs a changelog explaining what is being done, and why.
 
-How certain is your bisection?
+-- 
+Jens Axboe
+

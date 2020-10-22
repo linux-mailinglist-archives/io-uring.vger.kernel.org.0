@@ -2,130 +2,251 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4269D296415
-	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 19:52:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65E82296419
+	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 19:54:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S368354AbgJVRwh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 13:52:37 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33872 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S368353AbgJVRwh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 13:52:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603389155;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=B38cdsCA6j2pG8/siEMaNeU7S5Xwhw+lvST8nlcR5Es=;
-        b=ZzuIEr/Wl58ytd8Mth2YHw/pgtInp9r+YwjztIzPpW+e+3HLb9TiSuPZ6T/Sc+7dx0Q24v
-        xh5kg6vrXdn7duqGemI7hIfrOLrMdLIh37KwOu4SjhKwynsAiy6p61/ZGV+eIgBrkw3601
-        OW6g/tt+vmGXY5ZgK5rM5XkWXXXSS/I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-305-Kn2l5idqOoO0dang8YhjyQ-1; Thu, 22 Oct 2020 13:52:33 -0400
-X-MC-Unique: Kn2l5idqOoO0dang8YhjyQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3E982804B6A;
-        Thu, 22 Oct 2020 17:52:32 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E297F60C04;
-        Thu, 22 Oct 2020 17:52:31 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2] io_uring: remove req cancel in ->flush()
-References: <6cffe73a8a44084289ac792e7b152e01498ea1ef.1603380957.git.asml.silence@gmail.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Thu, 22 Oct 2020 13:52:30 -0400
-In-Reply-To: <6cffe73a8a44084289ac792e7b152e01498ea1ef.1603380957.git.asml.silence@gmail.com>
-        (Pavel Begunkov's message of "Thu, 22 Oct 2020 16:38:27 +0100")
-Message-ID: <x491rhq6tcx.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S368342AbgJVRyU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 13:54:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37050 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2901123AbgJVRyU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 13:54:20 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8393C0613D4
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 10:54:19 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id a17so1453281pju.1
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 10:54:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fN98WKFQMgEXMlp8i3NGUVnGVw+6y+e2V0ke9rhUWSA=;
+        b=BKV40KcFYv/RT7WI/LzYvQYye/7QuyEZeVOFKBpWDRGSNerYyXtKTvLxKg7AQQyR6a
+         B6ov6UgSF+CT0yFZ5Kpm//JhG6JX+erMmrvxUD0nM2EPok7DJ1dyb0csZXVH+J57G76o
+         JEKNKLPukNE3mXje8tahLR4x5JyOobyLEq7zPqSmgsU53Cxt6nYjuHUBVcdVMcbrcilK
+         K/V95Mavbng7Vx66laYlk4QUwTrTI6xWi8qckIoCQ5E2cwAi2ki1g0yQJTA0k1YggZ8N
+         +hx8KG1AyjINmebjC8dKCAdqeNm9iI1l37J/7olC9z6B/lTJyWVJjteE9X9SnKXuuDmh
+         S8ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fN98WKFQMgEXMlp8i3NGUVnGVw+6y+e2V0ke9rhUWSA=;
+        b=jE7Q1M1/fseGj6xBAlZIaBnFvURFLhQksn8pqJhsAcu8XAI68l9cW0t9l/UMHjGBcv
+         i/riBMk/uq43Ba2OreMvREARh+J4xJbuBqSwCMocRhBzFxaJHF/Zo07tlVsWPLvKiyFL
+         DluPi8o8uvkkbIazSWfhr7NUWxwyBgpFr0Kdn8IxeozYxZZQ9gJi0tCfsZA7P4TDrU9v
+         ymmWAt20C309Sgky9qrd7sJDiGeSAKa3VN6fd3kweGDWT4hxOBtXqv2djwuSHeMdqb0D
+         lXkuiTQAIwl5BVK6zzJ2dneWmovWjI5bIh3iQXER1Np2YxtjmClSZKReLz0ef6m9/pxo
+         HEHw==
+X-Gm-Message-State: AOAM531ty4DffXdlYiON0BHTtTbFI3+IzgUvbUNZFsQ+KcgH6udenn5c
+        jR+YbbToaKOb0ff71Lex78q6LrHviPEgJx7Zj3Vr1Q==
+X-Google-Smtp-Source: ABdhPJwKMlfWHWIfBAFNm3K11R3iXcLN/39e27pMOK/669Q9lQtbTX5Z9LF4v87HnqXK2It7QLj5rkKD4/EUsxOxOjE=
+X-Received: by 2002:a17:902:c40b:b029:d3:def2:d90f with SMTP id
+ k11-20020a170902c40bb02900d3def2d90fmr3352248plk.29.1603389258899; Thu, 22
+ Oct 2020 10:54:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <20201021233914.GR3576660@ZenIV.linux.org.uk> <20201022082654.GA1477657@kroah.com>
+ <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com> <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
+ <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com> <20201022090155.GA1483166@kroah.com>
+ <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com> <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
+ <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com> <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022132342.GB8781@lst.de> <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
+In-Reply-To: <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 22 Oct 2020 10:54:06 -0700
+Message-ID: <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        David Hildenbrand <david@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="0000000000003743e505b2462753"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Pavel Begunkov <asml.silence@gmail.com> writes:
+--0000000000003743e505b2462753
+Content-Type: text/plain; charset="UTF-8"
 
-> Every close(io_uring) causes cancellation of all inflight requests
-> carrying ->files. That's not nice but was neccessary up until recently.
-> Now task->files removal is handled in the core code, so that part of
-> flush can be removed.
+On Thu, Oct 22, 2020 at 9:35 AM David Laight <David.Laight@aculab.com> wrote:
+>
+> From: Christoph Hellwig
+> > Sent: 22 October 2020 14:24
+> >
+> > On Thu, Oct 22, 2020 at 11:36:40AM +0200, David Hildenbrand wrote:
+> > > My thinking: if the compiler that calls import_iovec() has garbage in
+> > > the upper 32 bit
+> > >
+> > > a) gcc will zero it out and not rely on it being zero.
+> > > b) clang will not zero it out, assuming it is zero.
+> > >
+> > > But
+> > >
+> > > a) will zero it out when calling the !inlined variant
+> > > b) clang will zero it out when calling the !inlined variant
+> > >
+> > > When inlining, b) strikes. We access garbage. That would mean that we
+> > > have calling code that's not generated by clang/gcc IIUC.
+> >
+> > Most callchains of import_iovec start with the assembly syscall wrappers.
+>
+> Wait...
+> readv(2) defines:
+>         ssize_t readv(int fd, const struct iovec *iov, int iovcnt);
+>
+> But the syscall is defined as:
+>
+> SYSCALL_DEFINE3(readv, unsigned long, fd, const struct iovec __user *, vec,
+>                 unsigned long, vlen)
+> {
+>         return do_readv(fd, vec, vlen, 0);
+> }
+>
+> I'm guessing that nothing actually masks the high bits that come
+> from an application that is compiled with clang?
+>
+> The vlen is 'unsigned long' through the first few calls.
+> So unless there is a non-inlined function than takes vlen
+> as 'int' the high garbage bits from userspace are kept.
 
-I don't understand the motivation for this patch.  Why would an
-application close the io_uring fd with outstanding requests?
-
--Jeff
+Yeah, that's likely a bug: https://godbolt.org/z/KfsPKs
 
 >
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
-> v2: move exiting checks into io_uring_attempt_task_drop() (Jens)
->     remove not needed __io_uring_attempt_task_drop()
->
->  fs/io_uring.c | 28 +++++-----------------------
->  1 file changed, 5 insertions(+), 23 deletions(-)
->
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 754363ff3ad6..29170bbdd708 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -8668,19 +8668,11 @@ static void io_uring_del_task_file(struct file *file)
->  		fput(file);
->  }
->  
-> -static void __io_uring_attempt_task_drop(struct file *file)
-> -{
-> -	struct file *old = xa_load(&current->io_uring->xa, (unsigned long)file);
-> -
-> -	if (old == file)
-> -		io_uring_del_task_file(file);
-> -}
-> -
->  /*
->   * Drop task note for this file if we're the only ones that hold it after
->   * pending fput()
->   */
-> -static void io_uring_attempt_task_drop(struct file *file, bool exiting)
-> +static void io_uring_attempt_task_drop(struct file *file)
->  {
->  	if (!current->io_uring)
->  		return;
-> @@ -8688,10 +8680,9 @@ static void io_uring_attempt_task_drop(struct file *file, bool exiting)
->  	 * fput() is pending, will be 2 if the only other ref is our potential
->  	 * task file note. If the task is exiting, drop regardless of count.
->  	 */
-> -	if (!exiting && atomic_long_read(&file->f_count) != 2)
-> -		return;
-> -
-> -	__io_uring_attempt_task_drop(file);
-> +	if (fatal_signal_pending(current) || (current->flags & PF_EXITING) ||
-> +	    atomic_long_read(&file->f_count) == 2)
-> +		io_uring_del_task_file(file);
->  }
->  
->  void __io_uring_files_cancel(struct files_struct *files)
-> @@ -8749,16 +8740,7 @@ void __io_uring_task_cancel(void)
->  
->  static int io_uring_flush(struct file *file, void *data)
->  {
-> -	struct io_ring_ctx *ctx = file->private_data;
-> -
-> -	/*
-> -	 * If the task is going away, cancel work it may have pending
-> -	 */
-> -	if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
-> -		data = NULL;
-> -
-> -	io_uring_cancel_task_requests(ctx, data);
-> -	io_uring_attempt_task_drop(file, !data);
-> +	io_uring_attempt_task_drop(file);
->  	return 0;
->  }
+> Which makes it a bug in the kernel C syscall wrappers.
+> They need to explicitly mask the high bits of 32bit
+> arguments on arm64 but not x86-64.
 
+Why not x86-64? Wouldn't it be *any* LP64 ISA?
+
+Attaching a patch that uses the proper width, but I'm pretty sure
+there's still a signedness issue .  Greg, would you mind running this
+through the wringer?
+
+>
+> What does the ARM EABI say about register parameters?
+
+AAPCS is the ABI for 64b ARM, IIUC, which is the ISA GKH is reporting
+the problem against. IIUC, EABI is one of the 32b ABIs.  aarch64 is
+LP64 just like x86_64.
+
+--
+Thanks,
+~Nick Desaulniers
+
+--0000000000003743e505b2462753
+Content-Type: application/octet-stream; 
+	name="0001-fs-fix-up-type-confusion-in-readv-writev.patch"
+Content-Disposition: attachment; 
+	filename="0001-fs-fix-up-type-confusion-in-readv-writev.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_kgl4e4rn0>
+X-Attachment-Id: f_kgl4e4rn0
+
+RnJvbSBhYWUyNmIxM2ZmYjllMzhiYjQ2YjhjODU5ODU3NjFiNWYxOTZiNmY2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBOaWNrIERlc2F1bG5pZXJzIDxuZGVzYXVsbmllcnNAZ29vZ2xl
+LmNvbT4KRGF0ZTogVGh1LCAyMiBPY3QgMjAyMCAxMDoyMzo0NyAtMDcwMApTdWJqZWN0OiBbUEFU
+Q0hdIGZzOiBmaXggdXAgdHlwZSBjb25mdXNpb24gaW4gcmVhZHYvd3JpdGV2CgpUaGUgc3lzY2Fs
+bCBpbnRlcmZhY2UgZG9lc24ndCBtYXRjaCB1cCB3aXRoIHRoZSBpbnRlcmZhY2UgbGliYyBpcyB1
+c2luZwpvciB0aGF0J3MgZGVmaW5lZCBpbiB0aGUgbWFudWFsIHBhZ2VzLgoKc3NpemVfdCByZWFk
+dihpbnQgZmQsIGNvbnN0IHN0cnVjdCBpb3ZlYyAqaW92LCBpbnQgaW92Y250KTsKc3NpemVfdCB3
+cml0ZXYoaW50IGZkLCBjb25zdCBzdHJ1Y3QgaW92ZWMgKmlvdiwgaW50IGlvdmNudCk7CgpUaGUg
+a2VybmVsIHdhcyBkZWZpbmluZyBgaW92Y250YCBhcyBgdW5zaWduZWQgbG9uZ2Agd2hpY2ggaXMg
+YSBwcm9ibGVtCndoZW4gdXNlcnNwYWNlIHVuZGVyc3RhbmRzIHRoaXMgdG8gYmUgYGludGAuCgoo
+VGhlcmUncyBzdGlsbCBsaWtlbHkgYSBzaWduZWRuZXNzIGJ1ZyBoZXJlLCBidXQgdXNlIHRoZSBw
+cm9wZXIgd2lkdGhzCnRoYXQgaW1wb3J0X2lvdmVjKCkgZXhwZWN0cy4pCgpTaWduZWQtb2ZmLWJ5
+OiBOaWNrIERlc2F1bG5pZXJzIDxuZGVzYXVsbmllcnNAZ29vZ2xlLmNvbT4KLS0tCiBmcy9yZWFk
+X3dyaXRlLmMgICAgfCAxMCArKysrKy0tLS0tCiBmcy9zcGxpY2UuYyAgICAgICAgfCAgMiArLQog
+aW5jbHVkZS9saW51eC9mcy5oIHwgIDIgKy0KIGxpYi9pb3ZfaXRlci5jICAgICB8ICA0ICsrLS0K
+IDQgZmlsZXMgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQoKZGlmZiAt
+LWdpdCBhL2ZzL3JlYWRfd3JpdGUuYyBiL2ZzL3JlYWRfd3JpdGUuYwppbmRleCAxOWY1YzRiZjc1
+YWEuLmI4NThmMzlhNDQ3NSAxMDA2NDQKLS0tIGEvZnMvcmVhZF93cml0ZS5jCisrKyBiL2ZzL3Jl
+YWRfd3JpdGUuYwpAQCAtODkwLDcgKzg5MCw3IEBAIHNzaXplX3QgdmZzX2l0ZXJfd3JpdGUoc3Ry
+dWN0IGZpbGUgKmZpbGUsIHN0cnVjdCBpb3ZfaXRlciAqaXRlciwgbG9mZl90ICpwcG9zLAogRVhQ
+T1JUX1NZTUJPTCh2ZnNfaXRlcl93cml0ZSk7CiAKIHNzaXplX3QgdmZzX3JlYWR2KHN0cnVjdCBm
+aWxlICpmaWxlLCBjb25zdCBzdHJ1Y3QgaW92ZWMgX191c2VyICp2ZWMsCi0JCSAgdW5zaWduZWQg
+bG9uZyB2bGVuLCBsb2ZmX3QgKnBvcywgcndmX3QgZmxhZ3MpCisJCSAgdW5zaWduZWQgaW50IHZs
+ZW4sIGxvZmZfdCAqcG9zLCByd2ZfdCBmbGFncykKIHsKIAlzdHJ1Y3QgaW92ZWMgaW92c3RhY2tb
+VUlPX0ZBU1RJT1ZdOwogCXN0cnVjdCBpb3ZlYyAqaW92ID0gaW92c3RhY2s7CkBAIC05MDcsNyAr
+OTA3LDcgQEAgc3NpemVfdCB2ZnNfcmVhZHYoc3RydWN0IGZpbGUgKmZpbGUsIGNvbnN0IHN0cnVj
+dCBpb3ZlYyBfX3VzZXIgKnZlYywKIH0KIAogc3RhdGljIHNzaXplX3QgdmZzX3dyaXRldihzdHJ1
+Y3QgZmlsZSAqZmlsZSwgY29uc3Qgc3RydWN0IGlvdmVjIF9fdXNlciAqdmVjLAotCQkgICB1bnNp
+Z25lZCBsb25nIHZsZW4sIGxvZmZfdCAqcG9zLCByd2ZfdCBmbGFncykKKwkJICAgdW5zaWduZWQg
+aW50IHZsZW4sIGxvZmZfdCAqcG9zLCByd2ZfdCBmbGFncykKIHsKIAlzdHJ1Y3QgaW92ZWMgaW92
+c3RhY2tbVUlPX0ZBU1RJT1ZdOwogCXN0cnVjdCBpb3ZlYyAqaW92ID0gaW92c3RhY2s7CkBAIC05
+MjUsNyArOTI1LDcgQEAgc3RhdGljIHNzaXplX3QgdmZzX3dyaXRldihzdHJ1Y3QgZmlsZSAqZmls
+ZSwgY29uc3Qgc3RydWN0IGlvdmVjIF9fdXNlciAqdmVjLAogfQogCiBzdGF0aWMgc3NpemVfdCBk
+b19yZWFkdih1bnNpZ25lZCBsb25nIGZkLCBjb25zdCBzdHJ1Y3QgaW92ZWMgX191c2VyICp2ZWMs
+Ci0JCQl1bnNpZ25lZCBsb25nIHZsZW4sIHJ3Zl90IGZsYWdzKQorCQkJdW5zaWduZWQgaW50IHZs
+ZW4sIHJ3Zl90IGZsYWdzKQogewogCXN0cnVjdCBmZCBmID0gZmRnZXRfcG9zKGZkKTsKIAlzc2l6
+ZV90IHJldCA9IC1FQkFERjsKQEAgLTEwMjUsMTMgKzEwMjUsMTMgQEAgc3RhdGljIHNzaXplX3Qg
+ZG9fcHdyaXRldih1bnNpZ25lZCBsb25nIGZkLCBjb25zdCBzdHJ1Y3QgaW92ZWMgX191c2VyICp2
+ZWMsCiB9CiAKIFNZU0NBTExfREVGSU5FMyhyZWFkdiwgdW5zaWduZWQgbG9uZywgZmQsIGNvbnN0
+IHN0cnVjdCBpb3ZlYyBfX3VzZXIgKiwgdmVjLAotCQl1bnNpZ25lZCBsb25nLCB2bGVuKQorCQl1
+bnNpZ25lZCBpbnQsIHZsZW4pCiB7CiAJcmV0dXJuIGRvX3JlYWR2KGZkLCB2ZWMsIHZsZW4sIDAp
+OwogfQogCiBTWVNDQUxMX0RFRklORTMod3JpdGV2LCB1bnNpZ25lZCBsb25nLCBmZCwgY29uc3Qg
+c3RydWN0IGlvdmVjIF9fdXNlciAqLCB2ZWMsCi0JCXVuc2lnbmVkIGxvbmcsIHZsZW4pCisJCXVu
+c2lnbmVkIGludCwgdmxlbikKIHsKIAlyZXR1cm4gZG9fd3JpdGV2KGZkLCB2ZWMsIHZsZW4sIDAp
+OwogfQpkaWZmIC0tZ2l0IGEvZnMvc3BsaWNlLmMgYi9mcy9zcGxpY2UuYwppbmRleCA3MGNjNTJh
+Zjc4MGIuLjc1MDhlY2NmYTE0MyAxMDA2NDQKLS0tIGEvZnMvc3BsaWNlLmMKKysrIGIvZnMvc3Bs
+aWNlLmMKQEAgLTM0Miw3ICszNDIsNyBAQCBjb25zdCBzdHJ1Y3QgcGlwZV9idWZfb3BlcmF0aW9u
+cyBub3N0ZWFsX3BpcGVfYnVmX29wcyA9IHsKIEVYUE9SVF9TWU1CT0wobm9zdGVhbF9waXBlX2J1
+Zl9vcHMpOwogCiBzdGF0aWMgc3NpemVfdCBrZXJuZWxfcmVhZHYoc3RydWN0IGZpbGUgKmZpbGUs
+IGNvbnN0IHN0cnVjdCBrdmVjICp2ZWMsCi0JCQkgICAgdW5zaWduZWQgbG9uZyB2bGVuLCBsb2Zm
+X3Qgb2Zmc2V0KQorCQkJICAgIHVuc2lnbmVkIGludCB2bGVuLCBsb2ZmX3Qgb2Zmc2V0KQogewog
+CW1tX3NlZ21lbnRfdCBvbGRfZnM7CiAJbG9mZl90IHBvcyA9IG9mZnNldDsKZGlmZiAtLWdpdCBh
+L2luY2x1ZGUvbGludXgvZnMuaCBiL2luY2x1ZGUvbGludXgvZnMuaAppbmRleCBjNGFlOWNhZmJi
+YmEuLjIxMWJjZTVlNmU2MCAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9mcy5oCisrKyBiL2lu
+Y2x1ZGUvbGludXgvZnMuaApAQCAtMTg5NSw3ICsxODk1LDcgQEAgc3RhdGljIGlubGluZSBpbnQg
+Y2FsbF9tbWFwKHN0cnVjdCBmaWxlICpmaWxlLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkK
+IGV4dGVybiBzc2l6ZV90IHZmc19yZWFkKHN0cnVjdCBmaWxlICosIGNoYXIgX191c2VyICosIHNp
+emVfdCwgbG9mZl90ICopOwogZXh0ZXJuIHNzaXplX3QgdmZzX3dyaXRlKHN0cnVjdCBmaWxlICos
+IGNvbnN0IGNoYXIgX191c2VyICosIHNpemVfdCwgbG9mZl90ICopOwogZXh0ZXJuIHNzaXplX3Qg
+dmZzX3JlYWR2KHN0cnVjdCBmaWxlICosIGNvbnN0IHN0cnVjdCBpb3ZlYyBfX3VzZXIgKiwKLQkJ
+dW5zaWduZWQgbG9uZywgbG9mZl90ICosIHJ3Zl90KTsKKwkJdW5zaWduZWQgaW50LCBsb2ZmX3Qg
+KiwgcndmX3QpOwogZXh0ZXJuIHNzaXplX3QgdmZzX2NvcHlfZmlsZV9yYW5nZShzdHJ1Y3QgZmls
+ZSAqLCBsb2ZmX3QgLCBzdHJ1Y3QgZmlsZSAqLAogCQkJCSAgIGxvZmZfdCwgc2l6ZV90LCB1bnNp
+Z25lZCBpbnQpOwogZXh0ZXJuIHNzaXplX3QgZ2VuZXJpY19jb3B5X2ZpbGVfcmFuZ2Uoc3RydWN0
+IGZpbGUgKmZpbGVfaW4sIGxvZmZfdCBwb3NfaW4sCmRpZmYgLS1naXQgYS9saWIvaW92X2l0ZXIu
+YyBiL2xpYi9pb3ZfaXRlci5jCmluZGV4IDE2MzUxMTFjNWJkMi4uZGVkOWQ5YzRlYjI4IDEwMDY0
+NAotLS0gYS9saWIvaW92X2l0ZXIuYworKysgYi9saWIvaW92X2l0ZXIuYwpAQCAtMTczNCw3ICsx
+NzM0LDcgQEAgc3RydWN0IGlvdmVjICppb3ZlY19mcm9tX3VzZXIoY29uc3Qgc3RydWN0IGlvdmVj
+IF9fdXNlciAqdXZlYywKIH0KIAogc3NpemVfdCBfX2ltcG9ydF9pb3ZlYyhpbnQgdHlwZSwgY29u
+c3Qgc3RydWN0IGlvdmVjIF9fdXNlciAqdXZlYywKLQkJIHVuc2lnbmVkIG5yX3NlZ3MsIHVuc2ln
+bmVkIGZhc3Rfc2Vncywgc3RydWN0IGlvdmVjICoqaW92cCwKKwkJIHVuc2lnbmVkIGludCBucl9z
+ZWdzLCB1bnNpZ25lZCBpbnQgZmFzdF9zZWdzLCBzdHJ1Y3QgaW92ZWMgKippb3ZwLAogCQkgc3Ry
+dWN0IGlvdl9pdGVyICppLCBib29sIGNvbXBhdCkKIHsKIAlzc2l6ZV90IHRvdGFsX2xlbiA9IDA7
+CkBAIC0xODAzLDcgKzE4MDMsNyBAQCBzc2l6ZV90IF9faW1wb3J0X2lvdmVjKGludCB0eXBlLCBj
+b25zdCBzdHJ1Y3QgaW92ZWMgX191c2VyICp1dmVjLAogICogUmV0dXJuOiBOZWdhdGl2ZSBlcnJv
+ciBjb2RlIG9uIGVycm9yLCBieXRlcyBpbXBvcnRlZCBvbiBzdWNjZXNzCiAgKi8KIHNzaXplX3Qg
+aW1wb3J0X2lvdmVjKGludCB0eXBlLCBjb25zdCBzdHJ1Y3QgaW92ZWMgX191c2VyICp1dmVjLAot
+CQkgdW5zaWduZWQgbnJfc2VncywgdW5zaWduZWQgZmFzdF9zZWdzLAorCQkgdW5zaWduZWQgaW50
+IG5yX3NlZ3MsIHVuc2lnbmVkIGludCBmYXN0X3NlZ3MsCiAJCSBzdHJ1Y3QgaW92ZWMgKippb3Zw
+LCBzdHJ1Y3QgaW92X2l0ZXIgKmkpCiB7CiAJcmV0dXJuIF9faW1wb3J0X2lvdmVjKHR5cGUsIHV2
+ZWMsIG5yX3NlZ3MsIGZhc3Rfc2VncywgaW92cCwgaSwKLS0gCjIuMjkuMC5yYzEuMjk3LmdmYTk3
+NDNlNTAxLWdvb2cKCg==
+--0000000000003743e505b2462753--

@@ -2,81 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 417CA29648B
-	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 20:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2AC42964D2
+	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 20:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2899798AbgJVSUE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 14:20:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41014 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2899050AbgJVSUE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 14:20:04 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C73FCC0613CE;
-        Thu, 22 Oct 2020 11:20:03 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVfBg-006PPz-Ar; Thu, 22 Oct 2020 18:19:44 +0000
-Date:   Thu, 22 Oct 2020 19:19:44 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     David Laight <David.Laight@aculab.com>,
-        'Christoph Hellwig' <hch@lst.de>,
-        David Hildenbrand <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201022181944.GU3576660@ZenIV.linux.org.uk>
-References: <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
- <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
- <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022132342.GB8781@lst.de>
- <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
- <20201022164040.GV20115@casper.infradead.org>
+        id S2902433AbgJVStK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 14:49:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:58445 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2902420AbgJVStK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 14:49:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603392549;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=iXfDaAWBketQcSV06j5zjgysbHPt12Wzk+IUxgP2fOQ=;
+        b=cOxIYeVVwouOlTzbABqGjVFkGSDRG3Fm170VAkNiOt2rDen1q11QPHZq8m/H1+evxah9tP
+        9zACpdppoKJDH9KnKWQUuU8l4YNheEim9yiuzkT2sGftXewSJfDE0QjYSNnNyZYWbX9lOt
+        vOS9R72gIpsLOyzO/tP/b2pi5aK6zX4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-66-SsxX0NAGMJ6fUdEhwNK3Zw-1; Thu, 22 Oct 2020 14:49:06 -0400
+X-MC-Unique: SsxX0NAGMJ6fUdEhwNK3Zw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B9AED1018F7E;
+        Thu, 22 Oct 2020 18:49:05 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 693FF6EF41;
+        Thu, 22 Oct 2020 18:49:05 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH v2] io_uring: remove req cancel in ->flush()
+References: <6cffe73a8a44084289ac792e7b152e01498ea1ef.1603380957.git.asml.silence@gmail.com>
+        <x491rhq6tcx.fsf@segfault.boston.devel.redhat.com>
+        <8b1a53d2-d25f-2afb-7cf7-7a78f5d3ba29@kernel.dk>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Thu, 22 Oct 2020 14:49:04 -0400
+In-Reply-To: <8b1a53d2-d25f-2afb-7cf7-7a78f5d3ba29@kernel.dk> (Jens Axboe's
+        message of "Thu, 22 Oct 2020 12:01:07 -0600")
+Message-ID: <x49r1pq5c67.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201022164040.GV20115@casper.infradead.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 05:40:40PM +0100, Matthew Wilcox wrote:
-> On Thu, Oct 22, 2020 at 04:35:17PM +0000, David Laight wrote:
-> > Wait...
-> > readv(2) defines:
-> > 	ssize_t readv(int fd, const struct iovec *iov, int iovcnt);
-> 
-> It doesn't really matter what the manpage says.  What does the AOSP
-> libc header say?
+Jens Axboe <axboe@kernel.dk> writes:
 
-FWIW, see https://www.spinics.net/lists/linux-scsi/msg147836.html and
-subthread from there on...
+> On 10/22/20 11:52 AM, Jeff Moyer wrote:
+>> Pavel Begunkov <asml.silence@gmail.com> writes:
+>> 
+>>> Every close(io_uring) causes cancellation of all inflight requests
+>>> carrying ->files. That's not nice but was neccessary up until recently.
+>>> Now task->files removal is handled in the core code, so that part of
+>>> flush can be removed.
+>> 
+>> I don't understand the motivation for this patch.  Why would an
+>> application close the io_uring fd with outstanding requests?
+>
+> It normally wouldn't, of course. It's important to understand that this
+> triggers for _any_ close. So if the app did a dup+close, then it'd
+> still trigger.
+
+Ah, I see.  That makes more sense, thanks.
+
+-Jeff
+

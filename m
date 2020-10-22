@@ -2,146 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EEA22965CE
-	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 22:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 406AC296610
+	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 22:39:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2506545AbgJVUL2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 16:11:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58228 "EHLO
+        id S371815AbgJVUjY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 16:39:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2506693AbgJVUL2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 16:11:28 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C8FC0613D8
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 13:11:27 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id 144so1905168pfb.4
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 13:11:27 -0700 (PDT)
+        with ESMTP id S2901257AbgJVUjY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 16:39:24 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20D6DC0613CE
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 13:39:24 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id z5so3107712iob.1
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 13:39:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GumHU2X+g85YksdsSI4rtK9zksU56rVy/CgxVuW0jEM=;
-        b=vObNVdN2VFhAojESuCXkrxhn1YIwWVv+1XhIW4tZBL+fxMiFOMf/wpbwdQdbTEuqzU
-         didUUL5vkJxiQnySAkNm5bA5dzi4HDPRY/b2q9PCHYr38o1QdWg4eoCCMy0LZ69odEBE
-         EeVL+yKYldv1+Aa2ZS3w6i1XFzR6cyTrr6WpyCHfwh/bI39Aml+4GPRR3PK53sN4m6b3
-         rUVDazS3OFa6481GJ9+htMab1H1YbLsr5SViapf30nhQCEj8D6AxmtXaycQnaAAFnPK+
-         ve/0E2puLZtKaH/rY1wRoNU3uLbs1Hp/JNHjorNUJ0gL9lCRxpciXdv4OO2qkM+X3ZVh
-         gy/g==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=fdLgn9PF+OrOW7hXK5dM+CxzAjaneGEKBn3TeSdtTfg=;
+        b=IfSlIytkPYe2VpR8u/0y5NWNhntYaKrYq2StMqaksCFhqgBWGbVnWP0bb2MWk0OR18
+         TZ40xsWOE83OwgD8aMX4JM5T8HTQC+SrbI9zKEwF5C8JA83HCyQ9Ese+rTJMhIzXNFVh
+         kzV/C2HrGcADRmmwmKX0WQZl9b/ghQ4ffHMNKf7AS5zaLGrMAPFyHoAoxQvxQW0K2mMS
+         SM4Krxi/NPn3utLzSURptoUgF0L0poQyTmAVHJV5vRnbvKK6lY403yV6076OjsB79ZOS
+         MNxL6924DWGHqK1TDDoju0zkXeailVkyr6OFGEdF13e/BHtlrsNv/fnl76aoprqXoN/v
+         0fcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GumHU2X+g85YksdsSI4rtK9zksU56rVy/CgxVuW0jEM=;
-        b=Mr4o+mXtEiZlhCiBjTd89ipcldRM0gq0E9zvBR2Ossx209z5/GNnMXE2CIYLvF30sy
-         0ePKN8Tn2D+wbw+WJhgOpWB7a2yxmhR2vRi4e1SuIAHGuBQNvonr2p3wP8FsL9mUGeau
-         qbu+eyV/Zy9JAKmLXepnXZkKz/3VM+V5um/wKuG9R5r4vv0imXR7ZUaAKw94HPwSDlj5
-         u+CZooJ2wf2XvevczxWbIZufesFn/omAOSBFEOHzm2lP0XsdkS37L7ZrsQrQ7Eeesmjf
-         fAmZJ4XhYMgtV4mZZd8S6U3vUDd3vJhdHVQxWN9U94YaA5ZBrt61wSlOfZw3m65apuCD
-         alAQ==
-X-Gm-Message-State: AOAM533N77MzLCEdAjXTd+8EeEWhRspbkPuZj73C/602AUFHZwZ/xRtW
-        cf9lH1wK6x9UH4L2FbJ30U+/0erT6Nux8OzPwZ0l3g==
-X-Google-Smtp-Source: ABdhPJzJwPfOlPnqmI7/5P7ibjxaxjQ3K/49C5Uiz6yY7FpMEBFECdyjYA4Y8meqnBbTveKDbTZgpESx4RovmeoudXg=
-X-Received: by 2002:a17:90a:740a:: with SMTP id a10mr3865197pjg.32.1603397486718;
- Thu, 22 Oct 2020 13:11:26 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fdLgn9PF+OrOW7hXK5dM+CxzAjaneGEKBn3TeSdtTfg=;
+        b=g0Prs3o6+VLr5gd9jLaqudvAcEa63/2NWRBtUvDJloEcK18DZXYPUAHglD0ZGSsfd+
+         kiZxnp0CD0ikkEcfoDTv2N0AC5awrKWXzbkW0y13Vdg9DkEHfkUKj3VMU1xD5iIOBDUU
+         jfheolizIscav+gjbX6zOuxcf+wf+pVmiuLqNPzfF+AQEM3Nc1usMJyHKprzhywyBRze
+         azEE+dv5v/Seg0ZxmHPLzDbgdcUDEdX9aqyJYW/T0v83uHgKifRrJYrq+skSjqmXydcZ
+         FkcPMqlsx9RUuqwxQ6a1iT8689RWCbRpRlIQERxCBWGgfApwrFw9q10BL0kQLVkO+Pv7
+         pe5Q==
+X-Gm-Message-State: AOAM532IAnze8tDF8eNyKrSZPEYP1jn1eiaGNZtMmLkuqkCGtCW7iPUc
+        gIr87uvaIKvrxehaC78Rgva9pRUuGSvUBA==
+X-Google-Smtp-Source: ABdhPJzKOnc7+chDE1jZk0gugO6rPreU3+jr5rh64e6tgdmIRCdCkCkBpFKP9PnXRUfJ1/xra7DE2A==
+X-Received: by 2002:a05:6638:211:: with SMTP id e17mr3205812jaq.18.1603399163139;
+        Thu, 22 Oct 2020 13:39:23 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id h125sm1421065iof.53.2020.10.22.13.39.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Oct 2020 13:39:22 -0700 (PDT)
+Subject: Re: [PATCH v2] io_uring: remove req cancel in ->flush()
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <6cffe73a8a44084289ac792e7b152e01498ea1ef.1603380957.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <804d44cb-7929-dfc6-0328-16348ebec159@kernel.dk>
+Date:   Thu, 22 Oct 2020 14:39:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201022090155.GA1483166@kroah.com> <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com> <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com> <20201022132342.GB8781@lst.de>
- <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com> <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
- <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
- <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com> <20201022192458.GV3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201022192458.GV3576660@ZenIV.linux.org.uk>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 22 Oct 2020 13:11:14 -0700
-Message-ID: <CAKwvOdkLHozVUs85Wx-_qo2OfbdkKwtmaJfQFJfvxi_vpEYxWQ@mail.gmail.com>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        David Laight <David.Laight@aculab.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Hildenbrand <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <6cffe73a8a44084289ac792e7b152e01498ea1ef.1603380957.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 12:25 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Thu, Oct 22, 2020 at 12:04:52PM -0700, Nick Desaulniers wrote:
->
-> > Passing an `unsigned long` as an `unsigned int` does no such
-> > narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
-> > calls, no masking instructions).
-> > So if rw_copy_check_uvector() is inlined into import_iovec() (looking
-> > at the mainline@1028ae406999), then children calls of
-> > `rw_copy_check_uvector()` will be interpreting the `nr_segs` register
-> > unmodified, ie. garbage in the upper 32b.
->
-> FWIW,
->
-> void f(unsinged long v)
-> {
->         if (v != 1)
->                 printf("failed\n");
-> }
->
-> void g(unsigned int v)
-> {
->         f(v);
-> }
->
-> void h(unsigned long v)
-> {
->         g(v);
-> }
->
-> main()
-> {
->         h(0x100000001);
-> }
+On 10/22/20 9:38 AM, Pavel Begunkov wrote:
+> Every close(io_uring) causes cancellation of all inflight requests
+> carrying ->files. That's not nice but was neccessary up until recently.
+> Now task->files removal is handled in the core code, so that part of
+> flush can be removed.
 
-A good/analogous example, but things get weird when the leaf node in
-the call chain is inline asm: https://godbolt.org/z/s19TY5
-
-(I'm not sure that's precisely what's going on here; I'll need to dive
-more into the calls rw_copy_check_uvector() makes to see if there's
-inline asm somewhere, pretty sure calls to get_user with `nr_regs`
-exist).
-
->
-> must not produce any output on a host with 32bit int and 64bit long, regardless of
-> the inlining, having functions live in different compilation units, etc.
->
-> Depending upon the calling conventions, compiler might do truncation in caller or
-> in a callee, but it must be done _somewhere_.
-
-
+Applied, thanks.
 
 -- 
-Thanks,
-~Nick Desaulniers
+Jens Axboe
+

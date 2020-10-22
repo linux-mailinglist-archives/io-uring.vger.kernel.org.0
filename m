@@ -2,127 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 486AF2961E5
-	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 17:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0333296276
+	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 18:15:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S368794AbgJVPu0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 11:50:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45896 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S368790AbgJVPuZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 11:50:25 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31D6EC0613CE
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 08:50:25 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id d78so2645236wmd.3
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 08:50:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=tqM4wRMx5rUI5AKPCfAlzM7vXY5idNjIlYEzQ9Kidqw=;
-        b=gsZXCozIzrU+KZiv+5frQ95n/GDwpcQ4BmOSHuDVYFdUTMZ+8hhi3Ss5qC0FkH7xh4
-         Se2I6mhfTUHFDDtzoxvlNl/aHEnN5MsMCU6FgLUnb7HDUFCmsoWgkpFsM7YzG0l0E3sz
-         /slCsLZi5q9/OlRqeb8ETO7JnOo3PyxQsf3uycbtmYKYPGt68WbPzbbcYGjuABl9y8rx
-         QELmL+PjWunCvN4W3Ux7K0+D5Y1CBzf+cloBxg5pwM5yz9okoYPh1jBW51WWkvZc33+4
-         pwoYnthMX+F5vqTyCyfEm4xmJEC43XikInm5fSn8u5kmPYYr5/BvWuSRXSIRCE2hi9Fa
-         7aTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tqM4wRMx5rUI5AKPCfAlzM7vXY5idNjIlYEzQ9Kidqw=;
-        b=Q+oxK3Eb6oBrKIBWxZokUS9y8PDkJYuEl1RglpYWr7ONeu8ddSahULzrUmUuR0ChZ8
-         +ZaaP8DEPmDI1+e6C066uB8X4tL+EC1t8d8Kb8De1y4xUFJy+jjXnZWU4oQ5jTtX8Nnr
-         s4wBv0k9Wj9fLR6ziSeC/BLAZuejlHHIgzQ+/96fO7aEJupxVFpnKvcmQqNrspQ3e/Wl
-         iCtD97/7zMBmxXwsC4sUm3PuQ3SHCgNCxEkTW6t28jNPPty6Q8fEN0Laqbok8GoY6D35
-         +jucPYHI1EkoAvdDFqdvFR8lL9uobnqylwqke9Cu1GjQB16XmVBXQOw2KAzQ4xqKn0v5
-         dUKA==
-X-Gm-Message-State: AOAM533d2Lm1kreJ8kQV4NDbQ6EL6bmN5VenoZD/9YqC1qM5n5EOX447
-        d71dY/oiz0pkT4GZHVOx7M5RvXX9wDD3CA==
-X-Google-Smtp-Source: ABdhPJz3vGC67VZ+Ebd6wagrcEyLJu6LtzVRz7wcO7SiswYiNBzZ8P7y1eYynsvDz07rDOJQaxpUhA==
-X-Received: by 2002:a1c:dc43:: with SMTP id t64mr3288519wmg.6.1603381823945;
-        Thu, 22 Oct 2020 08:50:23 -0700 (PDT)
-Received: from localhost.localdomain (host109-152-100-228.range109-152.btcentralplus.com. [109.152.100.228])
-        by smtp.gmail.com with ESMTPSA id m12sm4448653wrs.92.2020.10.22.08.50.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2020 08:50:23 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/3] io_uring: simplify __io_queue_sqe()
-Date:   Thu, 22 Oct 2020 16:47:18 +0100
-Message-Id: <7b6991fbca6c258af1092d8a04d45b4e7801e078.1603381526.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1603381526.git.asml.silence@gmail.com>
-References: <cover.1603381526.git.asml.silence@gmail.com>
+        id S2901587AbgJVQPK convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Thu, 22 Oct 2020 12:15:10 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:35739 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2901605AbgJVQPJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 12:15:09 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-158-p8RgjWwGO4aFW5kpOv-aSA-1; Thu, 22 Oct 2020 17:15:06 +0100
+X-MC-Unique: p8RgjWwGO4aFW5kpOv-aSA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 22 Oct 2020 17:15:05 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 22 Oct 2020 17:15:05 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Greg KH' <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+CC:     David Hildenbrand <david@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAAVswJgAAaEtA=
+Date:   Thu, 22 Oct 2020 16:15:05 +0000
+Message-ID: <80332728fbc3438f806aee74003e26c1@AcuMS.aculab.com>
+References: <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
+ <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
+ <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
+ <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com>
+ <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
+ <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
+ <CAK8P3a1B7OVdyzW0-97JwzZiwp0D0fnSfyete16QTvPp_1m07A@mail.gmail.com>
+ <20201022144021.GA1969554@kroah.com>
+In-Reply-To: <20201022144021.GA1969554@kroah.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Restructure __io_queue_sqe() so it follows simple if/else if/else
-control flow. It's more readable and removes extra goto/labels.
+From: Greg KH
+> Sent: 22 October 2020 15:40
+> 
+> On Thu, Oct 22, 2020 at 04:28:20PM +0200, Arnd Bergmann wrote:
+...
+> > Can you attach the iov_iter.s files from the broken build, plus the
+> > one with 'noinline' for comparison? Maybe something can be seen
+> > in there.
+> 
+> I don't know how to extract the .s files easily from the AOSP build
+> system, I'll look into that.  I'm also now testing by downgrading to an
+> older version of clang (10 instead of 11), to see if that matters at all
+> or not...
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
+Back from a day out - after it stopped raining.
+Trying to use up leave before the end of the year.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 05b30212d9e6..754363ff3ad6 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6182,7 +6182,6 @@ static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req)
- static void __io_queue_sqe(struct io_kiocb *req, struct io_comp_state *cs)
- {
- 	struct io_kiocb *linked_timeout;
--	struct io_kiocb *nxt;
- 	const struct cred *old_creds = NULL;
- 	int ret;
- 
-@@ -6217,30 +6216,25 @@ static void __io_queue_sqe(struct io_kiocb *req, struct io_comp_state *cs)
- 
- 		if (linked_timeout)
- 			io_queue_linked_timeout(linked_timeout);
--		goto exit;
--	}
-+	} else if (likely(!ret)) {
-+		/* drop submission reference */
-+		req = io_put_req_find_next(req);
-+		if (linked_timeout)
-+			io_queue_linked_timeout(linked_timeout);
- 
--	if (unlikely(ret)) {
-+		if (req) {
-+			if (!(req->flags & REQ_F_FORCE_ASYNC))
-+				goto again;
-+			io_queue_async_work(req);
-+		}
-+	} else {
- 		/* un-prep timeout, so it'll be killed as any other linked */
- 		req->flags &= ~REQ_F_LINK_TIMEOUT;
- 		req_set_fail_links(req);
- 		io_put_req(req);
- 		io_req_complete(req, ret);
--		goto exit;
- 	}
- 
--	/* drop submission reference */
--	nxt = io_put_req_find_next(req);
--	if (linked_timeout)
--		io_queue_linked_timeout(linked_timeout);
+Can you use objdump on the kernel binary itself and cut out
+the single function?
+
+	David
+
 -
--	if (nxt) {
--		req = nxt;
--		if (!(req->flags & REQ_F_FORCE_ASYNC))
--			goto again;
--		io_queue_async_work(req);
--	}
--exit:
- 	if (old_creds)
- 		revert_creds(old_creds);
- }
--- 
-2.24.0
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 

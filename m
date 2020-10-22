@@ -2,68 +2,28 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C0CF2964F8
-	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 21:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39BB5296540
+	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 21:25:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S369871AbgJVTFJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 15:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47998 "EHLO
+        id S370161AbgJVTZP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 15:25:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S369863AbgJVTFH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 15:05:07 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E7BC0613D6
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 12:05:04 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id bh6so1462584plb.5
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 12:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ob2vCJvO6llStuDKjUpnqeOT2ObygH+mOzcnW04eANY=;
-        b=KQqTFOK8RfeQlRsCMQ+rOlUOsaIw3aFT2tl0EvIIitPh93BRypnBq10dbZ1VQInVA9
-         YBqadNAg8WpA2s2M51/9SZIy6oP0pnbbWbfMb7wIWJV2snjJBMbyo5oSDcHw4N1zr7/S
-         VZLvINfglpSloiYKbOwAZRZgsEq5EwVd6j156C6w/ZUnsQNcPlNYKpHJP5uI2nd5y9vn
-         Eb462d8qlKbplpH5u1WCwEWQN9mxoYO0QRuuyd1KRKvAJJWpZKPK5rzGEmieFY4kQrsm
-         FHET+zmyltpbQH7fuqtpyH09Ge3zLiQZSD5eVuK163dQLFMNQGhprwY4hoqO0xWMFeFJ
-         fZNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ob2vCJvO6llStuDKjUpnqeOT2ObygH+mOzcnW04eANY=;
-        b=k1r0FQY+MKPtyIlYEE4LZsNFgCE6+X16WA85LZVwBGarPETNpkxrKkBRBS3yBpRkpR
-         aHaHMWj7yvz28d1jDVzJpKdQps2MGk3yjYySv0VvjFT9VnsiamIH5aI6110RxEupf1Jz
-         2RrOf0nuC8a2pzOp+cXCQaaGzeSPfic47sKTQbeEWfLxXA4v/tKNjFfDT2fbz5oZUx9G
-         r+/1GGO1wB7SVuTNiuF+c2/hOr/p4r0TqMSmiivnKMNG1LB4kPJ0JUTEm2ejzIMwj4Se
-         ELtoEWGBy7OuuPMdzYII3EFPSzP+hQxX/Mk/rRmzVq0WhSDhr30VPrxvQoSsjQ39nGC9
-         bpvA==
-X-Gm-Message-State: AOAM5305tkuB35a1DDq1/VOFBN+IEB6XJAkyP1G+hIRYlu3RGwW73BQ0
-        /Dtopiqh1xXPS7dgxu3ss+T24eidZkpRLrYxnHR8Kg==
-X-Google-Smtp-Source: ABdhPJywMCKq0vfUuAKWQ9RLmH3NxEeoaMuMMn+wDHsffqxkAqXyKJ4o6MiCnyTmuBnnGxJWFn5poUUGRnshTJa4lRY=
-X-Received: by 2002:a17:902:c40b:b029:d3:def2:d90f with SMTP id
- k11-20020a170902c40bb02900d3def2d90fmr3608595plk.29.1603393503931; Thu, 22
- Oct 2020 12:05:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201021233914.GR3576660@ZenIV.linux.org.uk> <20201022082654.GA1477657@kroah.com>
- <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com> <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
- <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com> <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com> <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com> <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022132342.GB8781@lst.de> <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
- <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com> <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
-In-Reply-To: <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 22 Oct 2020 12:04:52 -0700
-Message-ID: <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Laight <David.Laight@aculab.com>,
+        with ESMTP id S370155AbgJVTZP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 15:25:15 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81851C0613CE;
+        Thu, 22 Oct 2020 12:25:14 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kVgCo-006RRM-M6; Thu, 22 Oct 2020 19:24:58 +0000
+Date:   Thu, 22 Oct 2020 20:24:58 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        David Laight <David.Laight@aculab.com>,
         Christoph Hellwig <hch@lst.de>,
         David Hildenbrand <david@redhat.com>,
         Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
         "kernel-team@android.com" <kernel-team@android.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>,
@@ -87,66 +47,63 @@ Cc:     David Laight <David.Laight@aculab.com>,
         "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201022192458.GV3576660@ZenIV.linux.org.uk>
+References: <20201022090155.GA1483166@kroah.com>
+ <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
+ <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
+ <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
+ <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022132342.GB8781@lst.de>
+ <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
+ <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
+ <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
+ <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 11:13 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Thu, Oct 22, 2020 at 7:54 PM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> > On Thu, Oct 22, 2020 at 9:35 AM David Laight <David.Laight@aculab.com> wrote:
-> > >
-> > > Which makes it a bug in the kernel C syscall wrappers.
-> > > They need to explicitly mask the high bits of 32bit
-> > > arguments on arm64 but not x86-64.
-> >
-> > Why not x86-64? Wouldn't it be *any* LP64 ISA?
->
-> x86-64 is slightly special because most instructions on a 32-bit
-> argument clear the upper 32 bits, while on most architectures
-> the same instruction would leave the upper bits unchanged.
+On Thu, Oct 22, 2020 at 12:04:52PM -0700, Nick Desaulniers wrote:
 
-Oh interesting, depends on the operations too on x86_64 IIUC?
+> Passing an `unsigned long` as an `unsigned int` does no such
+> narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
+> calls, no masking instructions).
+> So if rw_copy_check_uvector() is inlined into import_iovec() (looking
+> at the mainline@1028ae406999), then children calls of
+> `rw_copy_check_uvector()` will be interpreting the `nr_segs` register
+> unmodified, ie. garbage in the upper 32b.
 
->
-> > Attaching a patch that uses the proper width, but I'm pretty sure
-> > there's still a signedness issue .  Greg, would you mind running this
-> > through the wringer?
->
-> I would not expect this to change anything for the bug that Greg
-> is chasing, unless there is also a bug in clang.
->
-> In the version before the patch, we get a 64-bit argument from
-> user space, which may consist of the intended value in the lower
-> bits plus garbage in the upper bits. However, vlen only gets
-> passed down  into import_iovec() without any other operations
-> on it, and since import_iovec takes a 32-bit argument, this is
-> where it finally gets narrowed.
+FWIW,
 
-Passing an `unsigned long` as an `unsigned int` does no such
-narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
-calls, no masking instructions).
-So if rw_copy_check_uvector() is inlined into import_iovec() (looking
-at the mainline@1028ae406999), then children calls of
-`rw_copy_check_uvector()` will be interpreting the `nr_segs` register
-unmodified, ie. garbage in the upper 32b.
+void f(unsinged long v)
+{
+	if (v != 1)
+		printf("failed\n");
+}
 
->
-> After your patch, the SYSCALL_DEFINE3() does the narrowing
-> conversion with the same clearing of the upper bits.
->
-> If there is a problem somewhere leading up to import_iovec(),
-> it would have to in some code that expects to get a 32-bit
-> register argument but gets called with a register that has
-> garbage in the upper bits /without/ going through a correct
-> sanitizing function like SYSCALL_DEFINE3().
->
->       Arnd
+void g(unsigned int v)
+{
+	f(v);
+}
 
+void h(unsigned long v)
+{
+	g(v);
+}
 
+main()
+{
+	h(0x100000001);
+}
 
--- 
-Thanks,
-~Nick Desaulniers
+must not produce any output on a host with 32bit int and 64bit long, regardless of
+the inlining, having functions live in different compilation units, etc.
+
+Depending upon the calling conventions, compiler might do truncation in caller or
+in a callee, but it must be done _somewhere_.

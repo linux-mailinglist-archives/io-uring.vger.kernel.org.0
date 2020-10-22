@@ -2,75 +2,151 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2AC42964D2
-	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 20:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C0CF2964F8
+	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 21:05:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2902433AbgJVStK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 14:49:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:58445 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2902420AbgJVStK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 14:49:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603392549;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iXfDaAWBketQcSV06j5zjgysbHPt12Wzk+IUxgP2fOQ=;
-        b=cOxIYeVVwouOlTzbABqGjVFkGSDRG3Fm170VAkNiOt2rDen1q11QPHZq8m/H1+evxah9tP
-        9zACpdppoKJDH9KnKWQUuU8l4YNheEim9yiuzkT2sGftXewSJfDE0QjYSNnNyZYWbX9lOt
-        vOS9R72gIpsLOyzO/tP/b2pi5aK6zX4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-66-SsxX0NAGMJ6fUdEhwNK3Zw-1; Thu, 22 Oct 2020 14:49:06 -0400
-X-MC-Unique: SsxX0NAGMJ6fUdEhwNK3Zw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B9AED1018F7E;
-        Thu, 22 Oct 2020 18:49:05 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 693FF6EF41;
-        Thu, 22 Oct 2020 18:49:05 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2] io_uring: remove req cancel in ->flush()
-References: <6cffe73a8a44084289ac792e7b152e01498ea1ef.1603380957.git.asml.silence@gmail.com>
-        <x491rhq6tcx.fsf@segfault.boston.devel.redhat.com>
-        <8b1a53d2-d25f-2afb-7cf7-7a78f5d3ba29@kernel.dk>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Thu, 22 Oct 2020 14:49:04 -0400
-In-Reply-To: <8b1a53d2-d25f-2afb-7cf7-7a78f5d3ba29@kernel.dk> (Jens Axboe's
-        message of "Thu, 22 Oct 2020 12:01:07 -0600")
-Message-ID: <x49r1pq5c67.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S369871AbgJVTFJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 15:05:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47998 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S369863AbgJVTFH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 15:05:07 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E7BC0613D6
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 12:05:04 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id bh6so1462584plb.5
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 12:05:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ob2vCJvO6llStuDKjUpnqeOT2ObygH+mOzcnW04eANY=;
+        b=KQqTFOK8RfeQlRsCMQ+rOlUOsaIw3aFT2tl0EvIIitPh93BRypnBq10dbZ1VQInVA9
+         YBqadNAg8WpA2s2M51/9SZIy6oP0pnbbWbfMb7wIWJV2snjJBMbyo5oSDcHw4N1zr7/S
+         VZLvINfglpSloiYKbOwAZRZgsEq5EwVd6j156C6w/ZUnsQNcPlNYKpHJP5uI2nd5y9vn
+         Eb462d8qlKbplpH5u1WCwEWQN9mxoYO0QRuuyd1KRKvAJJWpZKPK5rzGEmieFY4kQrsm
+         FHET+zmyltpbQH7fuqtpyH09Ge3zLiQZSD5eVuK163dQLFMNQGhprwY4hoqO0xWMFeFJ
+         fZNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ob2vCJvO6llStuDKjUpnqeOT2ObygH+mOzcnW04eANY=;
+        b=k1r0FQY+MKPtyIlYEE4LZsNFgCE6+X16WA85LZVwBGarPETNpkxrKkBRBS3yBpRkpR
+         aHaHMWj7yvz28d1jDVzJpKdQps2MGk3yjYySv0VvjFT9VnsiamIH5aI6110RxEupf1Jz
+         2RrOf0nuC8a2pzOp+cXCQaaGzeSPfic47sKTQbeEWfLxXA4v/tKNjFfDT2fbz5oZUx9G
+         r+/1GGO1wB7SVuTNiuF+c2/hOr/p4r0TqMSmiivnKMNG1LB4kPJ0JUTEm2ejzIMwj4Se
+         ELtoEWGBy7OuuPMdzYII3EFPSzP+hQxX/Mk/rRmzVq0WhSDhr30VPrxvQoSsjQ39nGC9
+         bpvA==
+X-Gm-Message-State: AOAM5305tkuB35a1DDq1/VOFBN+IEB6XJAkyP1G+hIRYlu3RGwW73BQ0
+        /Dtopiqh1xXPS7dgxu3ss+T24eidZkpRLrYxnHR8Kg==
+X-Google-Smtp-Source: ABdhPJywMCKq0vfUuAKWQ9RLmH3NxEeoaMuMMn+wDHsffqxkAqXyKJ4o6MiCnyTmuBnnGxJWFn5poUUGRnshTJa4lRY=
+X-Received: by 2002:a17:902:c40b:b029:d3:def2:d90f with SMTP id
+ k11-20020a170902c40bb02900d3def2d90fmr3608595plk.29.1603393503931; Thu, 22
+ Oct 2020 12:05:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20201021233914.GR3576660@ZenIV.linux.org.uk> <20201022082654.GA1477657@kroah.com>
+ <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com> <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
+ <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com> <20201022090155.GA1483166@kroah.com>
+ <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com> <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
+ <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com> <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022132342.GB8781@lst.de> <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
+ <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com> <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
+In-Reply-To: <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 22 Oct 2020 12:04:52 -0700
+Message-ID: <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Hildenbrand <david@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Jens Axboe <axboe@kernel.dk> writes:
-
-> On 10/22/20 11:52 AM, Jeff Moyer wrote:
->> Pavel Begunkov <asml.silence@gmail.com> writes:
->> 
->>> Every close(io_uring) causes cancellation of all inflight requests
->>> carrying ->files. That's not nice but was neccessary up until recently.
->>> Now task->files removal is handled in the core code, so that part of
->>> flush can be removed.
->> 
->> I don't understand the motivation for this patch.  Why would an
->> application close the io_uring fd with outstanding requests?
+On Thu, Oct 22, 2020 at 11:13 AM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> It normally wouldn't, of course. It's important to understand that this
-> triggers for _any_ close. So if the app did a dup+close, then it'd
-> still trigger.
+> On Thu, Oct 22, 2020 at 7:54 PM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+> > On Thu, Oct 22, 2020 at 9:35 AM David Laight <David.Laight@aculab.com> wrote:
+> > >
+> > > Which makes it a bug in the kernel C syscall wrappers.
+> > > They need to explicitly mask the high bits of 32bit
+> > > arguments on arm64 but not x86-64.
+> >
+> > Why not x86-64? Wouldn't it be *any* LP64 ISA?
+>
+> x86-64 is slightly special because most instructions on a 32-bit
+> argument clear the upper 32 bits, while on most architectures
+> the same instruction would leave the upper bits unchanged.
 
-Ah, I see.  That makes more sense, thanks.
+Oh interesting, depends on the operations too on x86_64 IIUC?
 
--Jeff
+>
+> > Attaching a patch that uses the proper width, but I'm pretty sure
+> > there's still a signedness issue .  Greg, would you mind running this
+> > through the wringer?
+>
+> I would not expect this to change anything for the bug that Greg
+> is chasing, unless there is also a bug in clang.
+>
+> In the version before the patch, we get a 64-bit argument from
+> user space, which may consist of the intended value in the lower
+> bits plus garbage in the upper bits. However, vlen only gets
+> passed down  into import_iovec() without any other operations
+> on it, and since import_iovec takes a 32-bit argument, this is
+> where it finally gets narrowed.
 
+Passing an `unsigned long` as an `unsigned int` does no such
+narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
+calls, no masking instructions).
+So if rw_copy_check_uvector() is inlined into import_iovec() (looking
+at the mainline@1028ae406999), then children calls of
+`rw_copy_check_uvector()` will be interpreting the `nr_segs` register
+unmodified, ie. garbage in the upper 32b.
+
+>
+> After your patch, the SYSCALL_DEFINE3() does the narrowing
+> conversion with the same clearing of the upper bits.
+>
+> If there is a problem somewhere leading up to import_iovec(),
+> it would have to in some code that expects to get a 32-bit
+> register argument but gets called with a register that has
+> garbage in the upper bits /without/ going through a correct
+> sanitizing function like SYSCALL_DEFINE3().
+>
+>       Arnd
+
+
+
+-- 
+Thanks,
+~Nick Desaulniers

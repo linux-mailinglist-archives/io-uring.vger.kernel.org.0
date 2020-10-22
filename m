@@ -2,142 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABA61295B1C
-	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 11:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 670F8295B33
+	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 11:02:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2509147AbgJVJBT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 05:01:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2509093AbgJVJBT (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 22 Oct 2020 05:01:19 -0400
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28A9221775;
-        Thu, 22 Oct 2020 09:01:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603357277;
-        bh=rAUCu3y7+03C75oqJ/20IK+Enh1/ET9ZKI7jdElMjo4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ad/zpVq/zKZLTkR1qraoAyhbAOsAvF+KdoSyEBs42/YLrGpiLyddqpRptp/SZLyPi
-         jIHhSoabF1qMfT1ObkraxF/Ul+8o1N2gos3O4YOsvBymdBfz2InJa17WOryGKFU6TA
-         RNvXrxZvulro6hjQh6nEdXR7Oy+/eCOK/s20i5z4=
-Date:   Thu, 22 Oct 2020 11:01:55 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201022090155.GA1483166@kroah.com>
-References: <20200925045146.1283714-1-hch@lst.de>
- <20200925045146.1283714-3-hch@lst.de>
- <20201021161301.GA1196312@kroah.com>
- <20201021233914.GR3576660@ZenIV.linux.org.uk>
- <20201022082654.GA1477657@kroah.com>
- <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com>
- <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
- <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
+        id S2509224AbgJVJCW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 05:02:22 -0400
+Received: from mail-eopbgr760058.outbound.protection.outlook.com ([40.107.76.58]:39278
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2509157AbgJVJCR (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Thu, 22 Oct 2020 05:02:17 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WEOUn0u9JfE6tL0vCI3+6nG/ym+dkaw2RFS9c9WX8ybqIel0S9cFvudQWXHk6j42MfI8cyR6FmtVkjw+ylsWINC+UeO32cWekJbKt7WPpRsMmo+VFBurIcG8W/Opd8VUjkHwOArkg7Oh1XoRdvG+SUpWusVEzSbD6gBrhf9ZH5VTAfHgLTqY2IycUC/wL0nNhPDc0Bn2nVKt9oCMV28GPwsizWTlKavTW7kBITUWtbpBK2V60ebmNnmKFr3qmVcobvWJjnTqufdhW68wIuUbUl7N/fNTZmTV4Dmonr+oz59tUxjiDoGwNoPH2SHmHsK3uM1L0Shzitwv5ZToS1FwRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uk8pkplVnHuKZvsbWclz8S0909p2sLHVLhH81NFbJJI=;
+ b=jB1Eb8IiZ9lXb572qh5cwMA0WpRYhLUL5nmM0I2yi1WF0gc+UwL3WJj0AU/EOF8Ad2Z9ExDAjyZihE88JOnpnNGWVvgNG9BBSnlUVjyE1pzXcXB7ZfKWbhgtAl1txkiHTbmrr78W/JCxz1bbL28yXRoKM9uHtbeguCx4EM4v4OjbpMGfar/836tNiGEVosp0CULNa3tCq2hHb6GIKO4Rg/H9X6RZI49T/Y1IoHornmy/03RwFOp+NWxFlLg8stGManpcbOYDbtNlRPHHjs5NJAjyL0zfAyQDO9qEXkwzOQd/HVIlVUUH49LwhYs6s7azVvWgdaN2G7EE3xmOtb/Gmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=windriversystems.onmicrosoft.com;
+ s=selector2-windriversystems-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uk8pkplVnHuKZvsbWclz8S0909p2sLHVLhH81NFbJJI=;
+ b=URuiOowBJyukzEgTtDaOPfyw8bdlSpu+wpy9Y6My+VdvE1xza10/5+Y71jcn8ebtuKdT2nycg3hpfoaUEfSWcumK28wuXqHWXH/uBTOhvPLos1z0WZwhR+pQaa3Pr+3LH9NpapRtxrrUn6xWx9RFWB1gr//nubAE7Nlx5HZ7PQg=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=windriver.com;
+Received: from BYAPR11MB2632.namprd11.prod.outlook.com (2603:10b6:a02:c4::17)
+ by BYAPR11MB2678.namprd11.prod.outlook.com (2603:10b6:a02:c1::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.28; Thu, 22 Oct
+ 2020 09:02:14 +0000
+Received: from BYAPR11MB2632.namprd11.prod.outlook.com
+ ([fe80::80e9:e002:eeff:4d05]) by BYAPR11MB2632.namprd11.prod.outlook.com
+ ([fe80::80e9:e002:eeff:4d05%3]) with mapi id 15.20.3455.030; Thu, 22 Oct 2020
+ 09:02:14 +0000
+To:     axboe@kernel.dk
+Cc:     viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+From:   "Zhang,Qiang" <qiang.zhang@windriver.com>
+Subject: Question on io-wq
+Message-ID: <98c41fba-87fe-b08d-2c8c-da404f91ef31@windriver.com>
+Date:   Thu, 22 Oct 2020 17:02:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [60.247.85.82]
+X-ClientProxiedBy: HK2PR04CA0043.apcprd04.prod.outlook.com
+ (2603:1096:202:14::11) To BYAPR11MB2632.namprd11.prod.outlook.com
+ (2603:10b6:a02:c4::17)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [128.224.162.183] (60.247.85.82) by HK2PR04CA0043.apcprd04.prod.outlook.com (2603:1096:202:14::11) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.18 via Frontend Transport; Thu, 22 Oct 2020 09:02:12 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 60611272-6a28-4648-e1f3-08d876692b3d
+X-MS-TrafficTypeDiagnostic: BYAPR11MB2678:
+X-Microsoft-Antispam-PRVS: <BYAPR11MB267819351A9B90026B9F1506FF1D0@BYAPR11MB2678.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: iqDC6JIymOk9zGi8q1NM3tmERIsNF8Q8vkekF2Jth8+q+Ddn86o+f6JfTq2a8sN/YC8b1plG0h3mEcNgAKj1YA91ga5WYPze5gOByHGCu3x9Vs3Mt2yL9hk2qmAKnEYW/hRwKrk+9WgwtBbkcRDeLEBn5bupErg3oZUz+OEALE9Z936G/rHa13IEMz+FHNa7CYuMiv8yyJHf9gARLGkqUV0TsyqiyPRwwfcGNREyD0NlymTpVwhJxicN6fhh8LzLD4DbVOxriH0mIDs0qRAXRVUtjX64XoNIz9LZ8gBKquNuUJ3rSAasxtG0OgdBcK2Man2JgRnOSXqbdSZSfPtXPCKrdn8iT33TUPxNf4gZ7y8VYo0tCd9SB/qDVuOGMvhPezwdJNPrPkfD7CTuDnDX/Q==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2632.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(39850400004)(396003)(346002)(136003)(366004)(2616005)(8676002)(316002)(956004)(6916009)(5660300002)(4744005)(478600001)(6706004)(16576012)(6666004)(3480700007)(31686004)(66476007)(66556008)(16526019)(26005)(186003)(8936002)(36756003)(86362001)(66946007)(31696002)(52116002)(2906002)(83380400001)(6486002)(4326008)(78286007)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: Zm51450Kxx7dAyrGrY0X85ptQtrzlaOeAFiM0yslfKy8ehOSdfqdpMIIXQ2CiSjA64iMXjjYtk8b4j3BcFFdiHGbzbmstNhf2LC+il0n2Se2TIUqLkOgqAwElI5LjdaIkvx3OWQDs6Sk6ADCnHdMEqrh+ScHUMueuWzQ+Lr/2ZNEnq6LquInuPDUxowBEbT9nnF8CNI46a120kfVEWsraGlufSqvlQxLOLSqfhTa8cs+pSFWuenzcce8IadxbGf4TZOB93kvJzCkl0Tdoky0wLTHRsOE+H4xVuDMSL1pmsNv1kMuAjcb050NrBL22l6r9n1LXS3CoINenDKWvsN+kvxmUh3VZKASJsEfy47v1h1nsuoG5acsJlq6hz3mTUCOp57LrmYNZ4dsS/ACxV2uXsmB2PZJmj3UonxRHN+xu22fPbStorACtrKkP8PQFWBr8YMkIbqi6Qx8i6cPkat7vyhvJ8OYpsHTjbzEh/KXi5RMi7MnpGz+NHFRS+fU7Dqn4ml/xmcfU67xC3UyxFLDodYkNIoa1aQoopfRW6H8lvrWbxBi42viiK8JmmwPK/VAUeBOqjDhT7eGRTFtgBuJNNTj8EIoSlYHIvb21xR0kj9EXvjr2FI7A6ahrhglTxKn18f2buQ8ABweN3dc+WmyQg==
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60611272-6a28-4648-e1f3-08d876692b3d
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2632.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2020 09:02:14.3823
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xC5uFoKdSRbCsJBnEGsxfyGVJ927Ty8RTIJFSzL4KKSYZ9LZsP/s+g2X7U1uy1VHfKMezpv9uTeluyfqh9TyySxIBsXMUf8oHm5UltHZALs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2678
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 10:48:59AM +0200, David Hildenbrand wrote:
-> On 22.10.20 10:40, David Laight wrote:
-> > From: David Hildenbrand
-> >> Sent: 22 October 2020 09:35
-> >>
-> >> On 22.10.20 10:26, Greg KH wrote:
-> >>> On Thu, Oct 22, 2020 at 12:39:14AM +0100, Al Viro wrote:
-> >>>> On Wed, Oct 21, 2020 at 06:13:01PM +0200, Greg KH wrote:
-> >>>>> On Fri, Sep 25, 2020 at 06:51:39AM +0200, Christoph Hellwig wrote:
-> >>>>>> From: David Laight <David.Laight@ACULAB.COM>
-> >>>>>>
-> >>>>>> This lets the compiler inline it into import_iovec() generating
-> >>>>>> much better code.
-> >>>>>>
-> >>>>>> Signed-off-by: David Laight <david.laight@aculab.com>
-> >>>>>> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> >>>>>> ---
-> >>>>>>  fs/read_write.c | 179 ------------------------------------------------
-> >>>>>>  lib/iov_iter.c  | 176 +++++++++++++++++++++++++++++++++++++++++++++++
-> >>>>>>  2 files changed, 176 insertions(+), 179 deletions(-)
-> >>>>>
-> >>>>> Strangely, this commit causes a regression in Linus's tree right now.
-> >>>>>
-> >>>>> I can't really figure out what the regression is, only that this commit
-> >>>>> triggers a "large Android system binary" from working properly.  There's
-> >>>>> no kernel log messages anywhere, and I don't have any way to strace the
-> >>>>> thing in the testing framework, so any hints that people can provide
-> >>>>> would be most appreciated.
-> >>>>
-> >>>> It's a pure move - modulo changed line breaks in the argument lists
-> >>>> the functions involved are identical before and after that (just checked
-> >>>> that directly, by checking out the trees before and after, extracting two
-> >>>> functions in question from fs/read_write.c and lib/iov_iter.c (before and
-> >>>> after, resp.) and checking the diff between those.
-> >>>>
-> >>>> How certain is your bisection?
-> >>>
-> >>> The bisection is very reproducable.
-> >>>
-> >>> But, this looks now to be a compiler bug.  I'm using the latest version
-> >>> of clang and if I put "noinline" at the front of the function,
-> >>> everything works.
-> >>
-> >> Well, the compiler can do more invasive optimizations when inlining. If
-> >> you have buggy code that relies on some unspecified behavior, inlining
-> >> can change the behavior ... but going over that code, there isn't too
-> >> much action going on. At least nothing screamed at me.
-> > 
-> > Apart from all the optimisations that get rid off the 'pass be reference'
-> > parameters and strange conditional tests.
-> > Plenty of scope for the compiler getting it wrong.
-> > But nothing even vaguely illegal.
-> 
-> Not the first time that people blame the compiler to then figure out
-> that something else is wrong ... but maybe this time is different :)
 
-I agree, I hate to blame the compiler, that's almost never the real
-problem, but this one sure "feels" like it.
+Hi Jens Axboe
 
-I'm running some more tests, trying to narrow things down as just adding
-a "noinline" to the function that got moved here doesn't work on Linus's
-tree at the moment because the function was split into multiple
-functions.
+There are some problem in 'io_wqe_worker' thread, when the 
+'io_wqe_worker' be create and  Setting the affinity of CPUs in NUMA 
+nodes, due to CPU hotplug, When the last CPU going down, the 
+'io_wqe_worker' thread will run anywhere. when the CPU in the node goes 
+online again, we should restore their cpu bindings?
 
-Give me a few hours...
+Thanks
+Qiang
 
-thanks,
-
-greg k-h

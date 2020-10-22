@@ -2,57 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D87C296715
-	for <lists+io-uring@lfdr.de>; Fri, 23 Oct 2020 00:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AFDB296717
+	for <lists+io-uring@lfdr.de>; Fri, 23 Oct 2020 00:24:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S372763AbgJVWYx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 18:24:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50504 "EHLO
+        id S372765AbgJVWYz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 18:24:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S372761AbgJVWYx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 18:24:53 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25106C0613CF
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 15:24:52 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id bh6so1725041plb.5
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 15:24:52 -0700 (PDT)
+        with ESMTP id S372761AbgJVWYz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 18:24:55 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435D2C0613CE
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 15:24:53 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id 10so2167159pfp.5
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 15:24:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=p1PEjZMi5EYWA6YIE+BLpOzIq2ss5gn1qcCP5TXuptw=;
-        b=fFbBRPzfwZoQR24kiPpNNCPhb17efT+xqfm+eQIz/5W24xs8r2dbX1Jc7u2s1sj9JS
-         ZChqs1mq98KxC26nz5IXB94EgHlPpg57cEMOMS4ZHz+X1MKtOZ3GK2JR2b+QYrRe9NCj
-         E3O21Zy9aaX2MQAsTL+0wVL4VhS/SzKmzNdur7tVL/97KTL5el10V0ybY4Z+nKeQFWWb
-         2vLy0/wZ76h6jOxD7M1s+EvYRTG5vnS8ct06Dp4XtfqRlvJmZpCCGtjZ3fRlQxbhZTDn
-         8DEdtPASem3062rVOEBr2hB4ZbymUdmJFbORBg2hcGugVxUjCV2n8vZ9B1Wo0Mbf6ZSg
-         x7AA==
+        bh=PinDMonzaC9Fo1dIXndOoyioe1Vf0FgHAWoXMyqb5sI=;
+        b=w92yuiWgdLDYwhZIfAX73cWtY5Z0M1TJafr71DAUqwRwvM5ZS3LaI4OSTRhUjarPgS
+         VC/j0BvmrkYsh6ECZUTJBSPaR+Wz6Cff2/uKeF/KK/Lfvl/er7V8HaMPdKUZE39TV0da
+         6DclO1EGjNIAc6u0fE7taCB3Siw9Hw3l0wEcMOqzRghsbfcaiQThE9H2ezj5zAjMQ0sW
+         KMQYn2fipJ0ZP+d2kDm6+KCy4IKZXl/dgmDFJwODWOU9CncxX5jWGYpIPX8dVD8EPhYQ
+         sCuEpjl+kkdQbRjWw9css880fJD3RXrlgN0JHE5fBvOHEGlZ/BPimCE8ZIRf1aB0DRNf
+         xcQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=p1PEjZMi5EYWA6YIE+BLpOzIq2ss5gn1qcCP5TXuptw=;
-        b=SYhUte+8ipAiV5OOjTAxHBhIbgr4+IQSxAetKl5QM7dTNR4lFhrZyrEJFoxRhQQw0t
-         Gt11GdgP70WAYDJDtkSLbs7xxpUy5oAlPFgjGVbE0rTYGEJt49F7nnrEy3e++xh6L0i2
-         ZNDS1jcdG/b7SOPdAo7mWlcjVbJZF0U9RDxKLBmxBzVu5Wxa2FzYaX3JomvNu5fO9Xag
-         +JA5n2U02eRr93Rwxz6Uoxt7ntslmML8uh1t+LV3SqPqUDZs/grkszeM/wUBx93lfqM8
-         O6BBBKxeO/jOXtRwY/jkFnm5WCwGH/FHeDoyjJOdmdzXQzTBsjo3njoefVSsttVk+qsp
-         F80Q==
-X-Gm-Message-State: AOAM530x11FXbMJuoJ3xLdIC94qw0prRGguzADyfBdQ2Uwj57J+tUnN6
-        AKfxHyR8Qy6imWQTbDTxMFPurLNjf/X9ew==
-X-Google-Smtp-Source: ABdhPJzelTNHCrX3t2n+pibgGV+ifC39UXFiFgIV9RpsMNpqSj+ucuoJGa9/GZnJSRHnAGy3j1nRhA==
-X-Received: by 2002:a17:902:b08b:b029:d5:f570:d514 with SMTP id p11-20020a170902b08bb02900d5f570d514mr4631227plr.68.1603405491431;
-        Thu, 22 Oct 2020 15:24:51 -0700 (PDT)
+        bh=PinDMonzaC9Fo1dIXndOoyioe1Vf0FgHAWoXMyqb5sI=;
+        b=HgeNk9T4j5vrAjrQc55+EAwaVJq0/SRZj5OlpZCHrQMvy2AuQ19vpzl/9ym14RSX4k
+         bLvZ6ikUoHLhJCiRRFJ836EyAxRvICxZjJ2KMB4AxmjOoKme257ZKRLXPhIkSGW9p4Iw
+         jS1cmyA1Hk0T0DoYJgNEPw0DFgMc4hoCRNucGuonLyE8EYeS39b7vIk4o9LhFir/SD1I
+         QtMLGOoHnudeOBF5TfLrKzSwtUCpdK0n01vFgBIsyjISrN9A4mm/FgHNy3YR62PUgj9g
+         Bt2f/F8oeZPCVXbET3abUMtE7IbGBQVAZk4ffs8Y+0idxmKrSF5476ODu1px9wNsF+mA
+         cDkA==
+X-Gm-Message-State: AOAM530LzJM+rvpv2uOr/KeGxYiDHt/EHClh1yDkHFQ35QRfbRjziJhT
+        Z7zAnak02OoIxq5tLOySsdJ/FHlVaAkZdw==
+X-Google-Smtp-Source: ABdhPJzUFIw2QqAM1pEtVda16wfRJCbggQcJjzuvQxDdw3Jd3Gz9vgJMZlJxZf26zgvX8thG5QGa4w==
+X-Received: by 2002:a63:fd08:: with SMTP id d8mr4141029pgh.406.1603405492565;
+        Thu, 22 Oct 2020 15:24:52 -0700 (PDT)
 Received: from localhost.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id e5sm3516437pfl.216.2020.10.22.15.24.50
+        by smtp.gmail.com with ESMTPSA id e5sm3516437pfl.216.2020.10.22.15.24.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2020 15:24:50 -0700 (PDT)
+        Thu, 22 Oct 2020 15:24:52 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/4] io_uring: unify fsize with def->work_flags
-Date:   Thu, 22 Oct 2020 16:24:44 -0600
-Message-Id: <20201022222447.62020-2-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Zhang Qiang <qiang.zhang@windriver.com>
+Subject: [PATCH 2/4] io-wq: re-set NUMA node affinities if CPUs come online
+Date:   Thu, 22 Oct 2020 16:24:45 -0600
+Message-Id: <20201022222447.62020-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.29.0
 In-Reply-To: <20201022222447.62020-1-axboe@kernel.dk>
 References: <20201022222447.62020-1-axboe@kernel.dk>
@@ -62,129 +63,132 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This one was missed in the earlier conversion, should be included like
-any of the other IO identity flags. Make sure we restore to RLIM_INIFITY
-when dropping the personality again.
+We correctly set io-wq NUMA node affinities when the io-wq context is
+setup, but if an entire node CPU set is offlined and then brought back
+online, the per node affinities are broken. Ensure that we set them
+again whenever a CPU comes online. This ensures that we always track
+the right node affinity. The usual cpuhp notifiers are used to drive it.
 
-Fixes: 98447d65b4a7 ("io_uring: move io identity items into separate struct")
+Reported-by: Zhang Qiang <qiang.zhang@windriver.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io-wq.c    |  8 ++++++--
- fs/io-wq.h    |  1 +
- fs/io_uring.c | 23 +++++++++++------------
- 3 files changed, 18 insertions(+), 14 deletions(-)
+ fs/io-wq.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 54 insertions(+), 4 deletions(-)
 
 diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 7cb3b4cb9b11..4012ff541b7b 100644
+index 4012ff541b7b..d3165ce339c2 100644
 --- a/fs/io-wq.c
 +++ b/fs/io-wq.c
-@@ -187,7 +187,8 @@ static bool __io_worker_unuse(struct io_wqe *wqe, struct io_worker *worker)
- 		worker->blkcg_css = NULL;
- 	}
- #endif
--
-+	if (current->signal->rlim[RLIMIT_FSIZE].rlim_cur != RLIM_INFINITY)
-+		current->signal->rlim[RLIMIT_FSIZE].rlim_cur = RLIM_INFINITY;
- 	return dropped_lock;
- }
+@@ -19,6 +19,7 @@
+ #include <linux/task_work.h>
+ #include <linux/blk-cgroup.h>
+ #include <linux/audit.h>
++#include <linux/cpu.h>
  
-@@ -483,7 +484,10 @@ static void io_impersonate_work(struct io_worker *worker,
- 	if ((work->flags & IO_WQ_WORK_CREDS) &&
- 	    worker->cur_creds != work->identity->creds)
- 		io_wq_switch_creds(worker, work);
--	current->signal->rlim[RLIMIT_FSIZE].rlim_cur = work->identity->fsize;
-+	if (work->flags & IO_WQ_WORK_FSIZE)
-+		current->signal->rlim[RLIMIT_FSIZE].rlim_cur = work->identity->fsize;
-+	else if (current->signal->rlim[RLIMIT_FSIZE].rlim_cur != RLIM_INFINITY)
-+		current->signal->rlim[RLIMIT_FSIZE].rlim_cur = RLIM_INFINITY;
- 	io_wq_switch_blkcg(worker, work);
- #ifdef CONFIG_AUDIT
- 	current->loginuid = work->identity->loginuid;
-diff --git a/fs/io-wq.h b/fs/io-wq.h
-index be21c500c925..cba36f03c355 100644
---- a/fs/io-wq.h
-+++ b/fs/io-wq.h
-@@ -17,6 +17,7 @@ enum {
- 	IO_WQ_WORK_MM		= 128,
- 	IO_WQ_WORK_CREDS	= 256,
- 	IO_WQ_WORK_BLKCG	= 512,
-+	IO_WQ_WORK_FSIZE	= 1024,
+ #include "io-wq.h"
  
- 	IO_WQ_HASH_SHIFT	= 24,	/* upper 8 bits are used for hash key */
+@@ -123,9 +124,13 @@ struct io_wq {
+ 	refcount_t refs;
+ 	struct completion done;
+ 
++	struct hlist_node cpuhp_node;
++
+ 	refcount_t use_refs;
  };
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 09e7a5f20060..aeef02b0cf12 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -753,8 +753,6 @@ struct io_op_def {
- 	unsigned		pollout : 1;
- 	/* op supports buffer selection */
- 	unsigned		buffer_select : 1;
--	/* needs rlimit(RLIMIT_FSIZE) assigned */
--	unsigned		needs_fsize : 1;
- 	/* must always have async data allocated */
- 	unsigned		needs_async_data : 1;
- 	/* size of async data needed, if any */
-@@ -778,10 +776,10 @@ static const struct io_op_def io_op_defs[] = {
- 		.hash_reg_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
--		.needs_fsize		= 1,
- 		.needs_async_data	= 1,
- 		.async_size		= sizeof(struct io_async_rw),
--		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_BLKCG,
-+		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_BLKCG |
-+						IO_WQ_WORK_FSIZE,
- 	},
- 	[IORING_OP_FSYNC] = {
- 		.needs_file		= 1,
-@@ -799,9 +797,8 @@ static const struct io_op_def io_op_defs[] = {
- 		.hash_reg_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
--		.needs_fsize		= 1,
- 		.async_size		= sizeof(struct io_async_rw),
--		.work_flags		= IO_WQ_WORK_BLKCG,
-+		.work_flags		= IO_WQ_WORK_BLKCG | IO_WQ_WORK_FSIZE,
- 	},
- 	[IORING_OP_POLL_ADD] = {
- 		.needs_file		= 1,
-@@ -859,8 +856,7 @@ static const struct io_op_def io_op_defs[] = {
- 	},
- 	[IORING_OP_FALLOCATE] = {
- 		.needs_file		= 1,
--		.needs_fsize		= 1,
--		.work_flags		= IO_WQ_WORK_BLKCG,
-+		.work_flags		= IO_WQ_WORK_BLKCG | IO_WQ_WORK_FSIZE,
- 	},
- 	[IORING_OP_OPENAT] = {
- 		.work_flags		= IO_WQ_WORK_FILES | IO_WQ_WORK_BLKCG |
-@@ -890,9 +886,9 @@ static const struct io_op_def io_op_defs[] = {
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
--		.needs_fsize		= 1,
- 		.async_size		= sizeof(struct io_async_rw),
--		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_BLKCG,
-+		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_BLKCG |
-+						IO_WQ_WORK_FSIZE,
- 	},
- 	[IORING_OP_FADVISE] = {
- 		.needs_file		= 1,
-@@ -1293,8 +1289,11 @@ static bool io_grab_identity(struct io_kiocb *req)
- 	struct io_identity *id = req->work.identity;
- 	struct io_ring_ctx *ctx = req->ctx;
  
--	if (def->needs_fsize && id->fsize != rlimit(RLIMIT_FSIZE))
--		return false;
-+	if (def->work_flags & IO_WQ_WORK_FSIZE) {
-+		if (id->fsize != rlimit(RLIMIT_FSIZE))
-+			return false;
-+		req->work.flags |= IO_WQ_WORK_FSIZE;
-+	}
++static enum cpuhp_state io_wq_online;
++
+ static bool io_worker_get(struct io_worker *worker)
+ {
+ 	return refcount_inc_not_zero(&worker->ref);
+@@ -1091,10 +1096,12 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 		return ERR_PTR(-ENOMEM);
  
- 	if (!(req->work.flags & IO_WQ_WORK_FILES) &&
- 	    (def->work_flags & IO_WQ_WORK_FILES) &&
+ 	wq->wqes = kcalloc(nr_node_ids, sizeof(struct io_wqe *), GFP_KERNEL);
+-	if (!wq->wqes) {
+-		kfree(wq);
+-		return ERR_PTR(-ENOMEM);
+-	}
++	if (!wq->wqes)
++		goto err_wq;
++
++	ret = cpuhp_state_add_instance_nocalls(io_wq_online, &wq->cpuhp_node);
++	if (ret)
++		goto err_wqes;
+ 
+ 	wq->free_work = data->free_work;
+ 	wq->do_work = data->do_work;
+@@ -1102,6 +1109,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	/* caller must already hold a reference to this */
+ 	wq->user = data->user;
+ 
++	ret = -ENOMEM;
+ 	for_each_node(node) {
+ 		struct io_wqe *wqe;
+ 		int alloc_node = node;
+@@ -1145,9 +1153,12 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	ret = PTR_ERR(wq->manager);
+ 	complete(&wq->done);
+ err:
++	cpuhp_state_remove_instance_nocalls(io_wq_online, &wq->cpuhp_node);
+ 	for_each_node(node)
+ 		kfree(wq->wqes[node]);
++err_wqes:
+ 	kfree(wq->wqes);
++err_wq:
+ 	kfree(wq);
+ 	return ERR_PTR(ret);
+ }
+@@ -1164,6 +1175,8 @@ static void __io_wq_destroy(struct io_wq *wq)
+ {
+ 	int node;
+ 
++	cpuhp_state_remove_instance_nocalls(io_wq_online, &wq->cpuhp_node);
++
+ 	set_bit(IO_WQ_BIT_EXIT, &wq->state);
+ 	if (wq->manager)
+ 		kthread_stop(wq->manager);
+@@ -1191,3 +1204,40 @@ struct task_struct *io_wq_get_task(struct io_wq *wq)
+ {
+ 	return wq->manager;
+ }
++
++static bool io_wq_worker_affinity(struct io_worker *worker, void *data)
++{
++	struct task_struct *task = worker->task;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&task->pi_lock, flags);
++	do_set_cpus_allowed(task, cpumask_of_node(worker->wqe->node));
++	task->flags |= PF_NO_SETAFFINITY;
++	raw_spin_unlock_irqrestore(&task->pi_lock, flags);
++	return false;
++}
++
++static int io_wq_cpu_online(unsigned int cpu, struct hlist_node *node)
++{
++	struct io_wq *wq = hlist_entry_safe(node, struct io_wq, cpuhp_node);
++	int i;
++
++	rcu_read_lock();
++	for_each_node(i)
++		io_wq_for_each_worker(wq->wqes[i], io_wq_worker_affinity, NULL);
++	rcu_read_unlock();
++	return 0;
++}
++
++static __init int io_wq_init(void)
++{
++	int ret;
++
++	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN, "io-wq/online",
++					io_wq_cpu_online, NULL);
++	if (ret < 0)
++		return ret;
++	io_wq_online = ret;
++	return 0;
++}
++subsys_initcall(io_wq_init);
 -- 
 2.29.0
 

@@ -2,73 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 010122961E2
+	by mail.lfdr.de (Postfix) with ESMTP id 6F9CB2961E3
 	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 17:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S368791AbgJVPuX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 11:50:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45886 "EHLO
+        id S368792AbgJVPuY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 11:50:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S368790AbgJVPuW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 11:50:22 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BBE2C0613CE
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 08:50:22 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id j7so3030251wrt.9
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 08:50:22 -0700 (PDT)
+        with ESMTP id S368790AbgJVPuX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 11:50:23 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90D54C0613CE
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 08:50:23 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id a72so2636850wme.5
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 08:50:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=0q73s/P2cLlb5CN+UnDLuRBmHYGOhXwMoBOnZ6xOr4o=;
-        b=Mv2cvkPhLpYGFZV1cCzUTT0LmUBNj0p3DFlsNyzVneQMG4m+n6PQkpC4rekNh4WFyu
-         RptqUlp2N32eSzWw4nG+rfqKTQ74CRxDS20CdMwbUrEibumpyKiPyhFVIXOmgN9bLByv
-         ESAXd08V+UTLMjFjjsqZEHNt+PDZ8La3D6VcfSn6ZZnXS9pQXZsPc7ic9R7qwu7uM7UI
-         LUSnfEvTnFcjxCSitbBYNoT8r0tPpd5g2weQ1oirJmW9V5nlQehV6fFCoSYysrN6j8WU
-         ySBRDfF15d0kHU3BB2dy4zKtWS7NdEzI8SQQiko0V4nqt4TbCKu9cUIY6gf+ZqbCs+Z+
-         0FRA==
+        bh=VepszvSI548H01WCFP8XKeZ3DwaaSCDPJ4OGVqV5PBM=;
+        b=gZf+NwMvle+1Qi+RZ8Dwd1grkGh4NSlY/RcwXNIekECH16HvFPilB/fLv2jpVVaWLT
+         Ph4rF50WNoTOc48FBbvtNJPRzY5TPSMjBGTF8/3BDGaeIDthTSkdWhX2YtV1FPOc40BK
+         d2NHy8dd1xNSRVrv2n2vxL7xOALtqe/B5n/fIs7u85wfwIQzLkKB5JRdXE+Hin0AzNtl
+         +t82Xlwy9a1D93/vG/E+6yne/vncU03yWT/DAaEQUVET1R5yrZEr4o4xlUuJPAnqVwrS
+         kw7XbfwqPY5vfb3+THZiubBy+7gYBb60xEgPR0B4eQuQIqDK5VzuQOiWp4wYA2NvVKjJ
+         sn+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0q73s/P2cLlb5CN+UnDLuRBmHYGOhXwMoBOnZ6xOr4o=;
-        b=pkSfZoFgVo2uftw1aJ1Lg50g3VH1Au4OGJIfxzPcqh0f/0Qdcfwy81G7LtdSBn8Lb1
-         i1Qw+xAXep2rkRmsm+xWF/yvsy0NV/3SD6GwU0G1ZVL9Dpl+VQ448v8Q4UBPcBsW0yrM
-         Pi46X/PeYTax6GqjSMLV9jMxZYzf31mK0I5jrf/WnuvQv1etVeZCJ8L8P2NVcwQ3vdY1
-         1px+AdhQzFUhmFEXXglePHR0TZ0gHdqbFL4ZHKEIfb+m2c6mELUIZkUXWElJmEz5ll8m
-         HGuQaWyHCdyZ+CVE7p0onjKjfxj8ZVT9QXf8jVVQllTL2+T8EJAufK8No4rYlqxoxjde
-         QF1w==
-X-Gm-Message-State: AOAM532gffJojKT69qEX3pbFwSAyRLimDXnaKN+BLEfjt/0vAQwS+WKi
-        qu6+IAfvlletsBFm+avTAXrUSC5LBZhWOg==
-X-Google-Smtp-Source: ABdhPJx1q/Uh9LJr0GrEJJUqg0s8vzJdfr47H8uwvJJXAzorCoYto2PvFT16ABVVkNcrl1yruYuGsA==
-X-Received: by 2002:adf:ed06:: with SMTP id a6mr3296837wro.375.1603381821294;
-        Thu, 22 Oct 2020 08:50:21 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VepszvSI548H01WCFP8XKeZ3DwaaSCDPJ4OGVqV5PBM=;
+        b=NZtxGson4JtAK0DUFc4a8uIM0KOIf1NZSgjcc4C7tTfcgB45HQe9dHdL+iwMu4tt+Z
+         2SHqIXhxTj/1f+7TSvtxRQPC001/fgaFZdVqJAMRjdpurTKLcq+Z98fjK2v0ACDZ5sw/
+         mCWpBHdSERenTgIvZPgZauqSsVe+7IXuB8ogjY7tzRNaV3Skckej/yyO4dZnS6YO0cNF
+         CFS99m3XlbY5sXnLzq4O2se43wDLrmuCYswDDW59p2yCw0lUowJVTCUFpSNGZ2Zdz8fM
+         gbeQCuRAzBHlqaT2Kr+iWkuXhB/0L3gu3XcrGmFP2cR3zTOnsl6Cye1S/2z5vELg6RZ1
+         /RQA==
+X-Gm-Message-State: AOAM5307fJX+wQfDhYiczByBNNizNlcyUvREOG0cAeT2T4g7h3P6vvoW
+        hE5+iF1bpE6KezT+MIqmcQE=
+X-Google-Smtp-Source: ABdhPJwJYDWZRoACLIYWGIaIjPrrBEky0+mWfVdBHAAx8UVfO5xJU46UpDIgu5iYEiTvnGYxCyev1A==
+X-Received: by 2002:a1c:4c05:: with SMTP id z5mr3113143wmf.122.1603381822229;
+        Thu, 22 Oct 2020 08:50:22 -0700 (PDT)
 Received: from localhost.localdomain (host109-152-100-228.range109-152.btcentralplus.com. [109.152.100.228])
-        by smtp.gmail.com with ESMTPSA id m12sm4448653wrs.92.2020.10.22.08.50.20
+        by smtp.gmail.com with ESMTPSA id m12sm4448653wrs.92.2020.10.22.08.50.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2020 08:50:20 -0700 (PDT)
+        Thu, 22 Oct 2020 08:50:21 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 0/3] __io_queue_sqe() cleanups
-Date:   Thu, 22 Oct 2020 16:47:15 +0100
-Message-Id: <cover.1603381526.git.asml.silence@gmail.com>
+Subject: [PATCH 1/3] io_uring: don't miss setting IO_WQ_WORK_CONCURRENT
+Date:   Thu, 22 Oct 2020 16:47:16 +0100
+Message-Id: <30ce59cbaab4da30a7df6af0034d7b1791993058.1603381526.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1603381526.git.asml.silence@gmail.com>
+References: <cover.1603381526.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Refactor __io_queue_sqe(). Easier to read, hopefully better optimisable.
+Set IO_WQ_WORK_CONCURRENT for all REQ_F_FORCE_ASYNC requests, do that in
+that is also looks better.
 
-Pavel Begunkov (3):
-  io_uring: don't miss setting IO_WQ_WORK_CONCURRENT
-  io_uring: simplify nxt propagation in io_queue_sqe
-  io_uring: simplify __io_queue_sqe()
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
- fs/io_uring.c | 42 ++++++++++++++----------------------------
- 1 file changed, 14 insertions(+), 28 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 8e48e47906ba..9aeaa6f4a593 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1362,6 +1362,9 @@ static void io_prep_async_work(struct io_kiocb *req)
+ 	io_req_init_async(req);
+ 	id = req->work.identity;
+ 
++	if (req->flags & REQ_F_FORCE_ASYNC)
++		req->work.flags |= IO_WQ_WORK_CONCURRENT;
++
+ 	if (req->flags & REQ_F_ISREG) {
+ 		if (def->hash_reg_file || (ctx->flags & IORING_SETUP_IOPOLL))
+ 			io_wq_hash_work(&req->work, file_inode(req->file));
+@@ -6265,13 +6268,6 @@ static void io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 			if (unlikely(ret))
+ 				goto fail_req;
+ 		}
+-
+-		/*
+-		 * Never try inline submit of IOSQE_ASYNC is set, go straight
+-		 * to async execution.
+-		 */
+-		io_req_init_async(req);
+-		req->work.flags |= IO_WQ_WORK_CONCURRENT;
+ 		io_queue_async_work(req);
+ 	} else {
+ 		if (sqe) {
 -- 
 2.24.0
 

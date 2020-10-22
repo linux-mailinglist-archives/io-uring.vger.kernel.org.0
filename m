@@ -2,21 +2,21 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39BB5296540
-	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 21:25:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E7729654C
+	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 21:27:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S370161AbgJVTZP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 15:25:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51098 "EHLO
+        id S2508036AbgJVT1b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 15:27:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S370155AbgJVTZP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 15:25:15 -0400
+        with ESMTP id S2506002AbgJVT1a (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 15:27:30 -0400
 Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81851C0613CE;
-        Thu, 22 Oct 2020 12:25:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B305C0613CE;
+        Thu, 22 Oct 2020 12:27:30 -0700 (PDT)
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVgCo-006RRM-M6; Thu, 22 Oct 2020 19:24:58 +0000
-Date:   Thu, 22 Oct 2020 20:24:58 +0100
+        id 1kVgF8-006RYP-BX; Thu, 22 Oct 2020 19:27:22 +0000
+Date:   Thu, 22 Oct 2020 20:27:22 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Nick Desaulniers <ndesaulniers@google.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -49,9 +49,8 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         <linux-security-module@vger.kernel.org>
 Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
  rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201022192458.GV3576660@ZenIV.linux.org.uk>
-References: <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
+Message-ID: <20201022192722.GW3576660@ZenIV.linux.org.uk>
+References: <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
  <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
  <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
  <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
@@ -60,50 +59,29 @@ References: <20201022090155.GA1483166@kroah.com>
  <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
  <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
  <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
+ <20201022192458.GV3576660@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
+In-Reply-To: <20201022192458.GV3576660@ZenIV.linux.org.uk>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 12:04:52PM -0700, Nick Desaulniers wrote:
+On Thu, Oct 22, 2020 at 08:24:58PM +0100, Al Viro wrote:
+> On Thu, Oct 22, 2020 at 12:04:52PM -0700, Nick Desaulniers wrote:
+> 
+> > Passing an `unsigned long` as an `unsigned int` does no such
+> > narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
+> > calls, no masking instructions).
+> > So if rw_copy_check_uvector() is inlined into import_iovec() (looking
+> > at the mainline@1028ae406999), then children calls of
+> > `rw_copy_check_uvector()` will be interpreting the `nr_segs` register
+> > unmodified, ie. garbage in the upper 32b.
+> 
+> FWIW,
+> 
+> void f(unsinged long v)
 
-> Passing an `unsigned long` as an `unsigned int` does no such
-> narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
-> calls, no masking instructions).
-> So if rw_copy_check_uvector() is inlined into import_iovec() (looking
-> at the mainline@1028ae406999), then children calls of
-> `rw_copy_check_uvector()` will be interpreting the `nr_segs` register
-> unmodified, ie. garbage in the upper 32b.
-
-FWIW,
-
-void f(unsinged long v)
-{
-	if (v != 1)
-		printf("failed\n");
-}
-
-void g(unsigned int v)
-{
-	f(v);
-}
-
-void h(unsigned long v)
-{
-	g(v);
-}
-
-main()
-{
-	h(0x100000001);
-}
-
-must not produce any output on a host with 32bit int and 64bit long, regardless of
-the inlining, having functions live in different compilation units, etc.
-
-Depending upon the calling conventions, compiler might do truncation in caller or
-in a callee, but it must be done _somewhere_.
+s/unsinged/unsigned/, obviously...

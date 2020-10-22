@@ -2,140 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34F652966F2
-	for <lists+io-uring@lfdr.de>; Fri, 23 Oct 2020 00:07:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7304E29670C
+	for <lists+io-uring@lfdr.de>; Fri, 23 Oct 2020 00:23:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S368902AbgJVWHI convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Thu, 22 Oct 2020 18:07:08 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:56018 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S368851AbgJVWHI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 18:07:08 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-164-7-H9NMQeNwGwZfcU7aRApw-1; Thu, 22 Oct 2020 23:07:03 +0100
-X-MC-Unique: 7-H9NMQeNwGwZfcU7aRApw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 22 Oct 2020 23:07:02 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 22 Oct 2020 23:07:02 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Al Viro' <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>
-CC:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
-        "David Hildenbrand" <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAAQY5tgAAwVkCAADSfg4AALKrQ
-Date:   Thu, 22 Oct 2020 22:07:02 +0000
-Message-ID: <f35a74d034054d7fa8ce8835afb1ca6c@AcuMS.aculab.com>
-References: <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022132342.GB8781@lst.de>
- <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
- <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
- <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
- <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
- <20201022192458.GV3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201022192458.GV3576660@ZenIV.linux.org.uk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S369599AbgJVWXC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 18:23:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50214 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S369533AbgJVWXB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 18:23:01 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6BC5C0613CE
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 15:23:01 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id h2so1706332pll.11
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 15:23:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TwHuXdlT7Cza/mMEZSjwV4RM5ad6+7cCRD+g7I9ZbaA=;
+        b=w2/kYqpQCglHr+yzI3Y9A6Z/Ae1zwwYHRcg8tBONhFYboiYIC68J2viEjcFncgWzx9
+         yGCiz6AuxhT3HpsIBpLPLMDZkyGDEZKwpnfRJtOaXTc9vNn/jQoKv45NPmHpUIhzEdCd
+         bQuMoD5MIiXB+J5uryztti6CII3H59UDl+2NyTIuHwhc0pEfhpZ+dsL30lryqlL/Rj3o
+         owD4LM97v0IcP7Hab4oZMBmu0cxT9vnibk7AfkPzkDhSb/vC4BGTi1GUy6S/TQRdMlpk
+         bwkVEhypvweveUE09PZlIB7R3uEpPXWrfVWq6jRZ6nuEGz+x49qi0J7g96EWUN79NZwu
+         hDKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TwHuXdlT7Cza/mMEZSjwV4RM5ad6+7cCRD+g7I9ZbaA=;
+        b=oca2uw1jWZqRFZzyd3xp8TVpZ7L6DxZ3MuCOhTG3CFNoBg5AZ3mDaRwp9bSOxeoOQb
+         WmA0jZ/GlOpM1IZ+wYmo7rEC/yIjsaqn7ShZ6UrNJ0Fg3ZHnyZXo5wB02L4pk+oP9Vui
+         mRPuzMkaeLy9WWvtgGdVmfsnk915bYiQAqTmQIyu3lx8G7zuM4T/6TZkTD+mAck9qHAX
+         muYyX3pWwwJTpFVtuYojD5xuquO4yYvhM6KR/QUDt1ZX59ZsLZz8IiVSY2wXFVcvXz0/
+         Mw+vHojGxi+X1XUUU9FL3V5kb98SbkQtTjqXs2ag0pHCAjgBgUPULfx8/4BrONPT4RGP
+         k9FQ==
+X-Gm-Message-State: AOAM530hBupfomYx6DwCaomld1WITwAa1CMLN91ZnYSL+AeYCg/Jujq+
+        wW9Wf8KdsKFiUv1e5RAzpCTaSk9v8Fz2kQ==
+X-Google-Smtp-Source: ABdhPJynbUgHJ3XfJOSA+d1m0CSkc5GM+Y+o/NR9/VRzf8O/aGBkPTgxDKQJtjQi5/9jfekyzcua7g==
+X-Received: by 2002:a17:902:b604:b029:d3:7919:bb39 with SMTP id b4-20020a170902b604b02900d37919bb39mr4816918pls.78.1603405380857;
+        Thu, 22 Oct 2020 15:23:00 -0700 (PDT)
+Received: from localhost.localdomain ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id w205sm3332194pfc.78.2020.10.22.15.23.00
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Oct 2020 15:23:00 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Subject: Fixes for 5.10
+Date:   Thu, 22 Oct 2020 16:22:54 -0600
+Message-Id: <20201022222258.61124-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.29.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Al Viro
-> Sent: 22 October 2020 20:25
-> 
-> On Thu, Oct 22, 2020 at 12:04:52PM -0700, Nick Desaulniers wrote:
-> 
-> > Passing an `unsigned long` as an `unsigned int` does no such
-> > narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
-> > calls, no masking instructions).
-> > So if rw_copy_check_uvector() is inlined into import_iovec() (looking
-> > at the mainline@1028ae406999), then children calls of
-> > `rw_copy_check_uvector()` will be interpreting the `nr_segs` register
-> > unmodified, ie. garbage in the upper 32b.
-> 
-> FWIW,
-> 
-> void f(unsinged long v)
-> {
-> 	if (v != 1)
-> 		printf("failed\n");
-> }
-> 
-> void g(unsigned int v)
-> {
-> 	f(v);
-> }
-> 
-> void h(unsigned long v)
-> {
-> 	g(v);
-> }
-> 
-> main()
-> {
-> 	h(0x100000001);
-> }
-> 
-> must not produce any output on a host with 32bit int and 64bit long, regardless of
-> the inlining, having functions live in different compilation units, etc.
-> 
-> Depending upon the calling conventions, compiler might do truncation in caller or
-> in a callee, but it must be done _somewhere_.
+Hi,
 
-Put g() in a separate compilation unit and use the 'wrong' type
-in the prototypes t() used to call g() and g() uses to call f().
+- fsize unification with the flags based setup
+- NUMA affinity fix for hotplug/unplug
+- loop_rw_iter() fix for the set_fs changes
+- splice fix for the set_fs changes
 
-Then you might see where and masking does (or does not) happen.
+-- 
+Jens Axboe
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
 

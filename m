@@ -2,33 +2,35 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2918F296698
-	for <lists+io-uring@lfdr.de>; Thu, 22 Oct 2020 23:28:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 556702966DE
+	for <lists+io-uring@lfdr.de>; Fri, 23 Oct 2020 00:04:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2898151AbgJVV2q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 17:28:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41926 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2507136AbgJVV2q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 17:28:46 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0E9C0613CE;
-        Thu, 22 Oct 2020 14:28:45 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVi8K-006V84-LA; Thu, 22 Oct 2020 21:28:28 +0000
-Date:   Thu, 22 Oct 2020 22:28:28 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Laight <David.Laight@aculab.com>,
-        Christoph Hellwig <hch@lst.de>,
+        id S372604AbgJVWEL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 18:04:11 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:43189 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S372597AbgJVWEK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 18:04:10 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-54-c4HvqyNFM-2aq9v5IErLvg-1; Thu, 22 Oct 2020 23:04:06 +0100
+X-MC-Unique: c4HvqyNFM-2aq9v5IErLvg-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 22 Oct 2020 23:04:04 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 22 Oct 2020 23:04:04 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Nick Desaulniers' <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>
+CC:     Christoph Hellwig <hch@lst.de>,
         David Hildenbrand <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
+        "Greg KH" <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         "kernel-team@android.com" <kernel-team@android.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        Jens Axboe <axboe@kernel.dk>,
         David Howells <dhowells@redhat.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
@@ -49,67 +51,54 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
  rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201022212828.GZ3576660@ZenIV.linux.org.uk>
-References: <20201022090155.GA1483166@kroah.com>
+Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAAQY5tgAAwVkCAAC8KZoAAMCkw
+Date:   Thu, 22 Oct 2020 22:04:04 +0000
+Message-ID: <15c3f5926f9c4f67b53f1ed26c41a62e@AcuMS.aculab.com>
+References: <20201021233914.GR3576660@ZenIV.linux.org.uk>
+ <20201022082654.GA1477657@kroah.com>
+ <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com>
+ <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
+ <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
+ <20201022090155.GA1483166@kroah.com>
  <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
  <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
  <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
  <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
  <20201022132342.GB8781@lst.de>
  <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
- <20201022164040.GV20115@casper.infradead.org>
- <CAKwvOdnq-yYLcF_coo=jMV-RH-SkuNp_kMB+KCBF5cz3PwiB8g@mail.gmail.com>
- <20201022205932.GB3613750@gmail.com>
+ <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
+ <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
+ <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
+In-Reply-To: <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201022205932.GB3613750@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 01:59:32PM -0700, Eric Biggers wrote:
+RnJvbTogTmljayBEZXNhdWxuaWVycw0KPiBTZW50OiAyMiBPY3RvYmVyIDIwMjAgMjA6MDUNCj4g
+DQouLi4NCj4gUGFzc2luZyBhbiBgdW5zaWduZWQgbG9uZ2AgYXMgYW4gYHVuc2lnbmVkIGludGAg
+ZG9lcyBubyBzdWNoDQo+IG5hcnJvd2luZzogaHR0cHM6Ly9nb2Rib2x0Lm9yZy96L1R2Zk14ZSAo
+c2FtZSB2aWNlLXZlcnNhLCBqdXN0IHRhaWwNCj4gY2FsbHMsIG5vIG1hc2tpbmcgaW5zdHJ1Y3Rp
+b25zKS4NCg0KUmlnaHQgYnV0IGlzIHRoZSBjYWxsZWQgZnVuY3Rpb24gZ29pbmcgdG8gdXNlIDMy
+Yml0IG9wcw0KYW5kL29yIG1hc2sgdGhlIHJlZ2lzdGVyPw0KQ2VydGFpbmx5IHRoYXQgaXMgbGlr
+ZWx5IG9uIHg4Ni02NC4NCg0KSSd2ZSByYXRoZXIgbG9zdCB0cmFjayBvZiB3aGVyZSB0aGUgbWFz
+a2luZyBpcyBleHBlY3RlZA0KdG8gaGFwcGVuLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBB
+ZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMs
+IE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-> Also note the following program succeeds on Linux 5.9 on x86_64.  On kernels
-> that have this bug, it should fail.  (I couldn't get it to actually fail, so it
-> must depend on the compiler and/or the kernel config...)
-
-It doesn't.  See https://www.spinics.net/lists/linux-scsi/msg147836.html for
-discussion of that mess.
-
-ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
-                  unsigned long vlen, loff_t *pos, rwf_t flags)
-{
-        struct iovec iovstack[UIO_FASTIOV];
-        struct iovec *iov = iovstack;
-        struct iov_iter iter;
-        ssize_t ret;
-
-        ret = import_iovec(READ, vec, vlen, ARRAY_SIZE(iovstack), &iov, &iter);
-        if (ret >= 0) {
-                ret = do_iter_read(file, &iter, pos, flags);
-                kfree(iov);
-        }
-
-        return ret;
-}
-
-and import_iovec() takes unsigned int as the third argument, so it *will*
-truncate to 32 bits, no matter what.  Has done so since 0504c074b546
-"switch {compat_,}do_readv_writev() to {compat_,}import_iovec()" back in
-March 2015.  Yes, it was an incompatible userland ABI change, even though
-nothing that used glibc/uclibc/dietlibc would've noticed.
-
-Better yet, up until 2.1.90pre1 passing a 64bit value as the _first_ argument
-of readv(2) used to fail with -EBADF if it was too large; at that point it
-started to get quietly truncated to 32bit first.  And again, no libc users
-would've noticed (neither would anything except deliberate regression test
-looking for that specific behaviour).
-
-Note that we also have process_madvise(2) with size_t for vlen (huh?  It's
-a number of array elements, not an object size) and process_vm_{read,write}v(2),
-that have unsigned long for the same thing.  And the last two *are* using
-the same unsigned long from glibc POV.

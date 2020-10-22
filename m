@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEA70296716
-	for <lists+io-uring@lfdr.de>; Fri, 23 Oct 2020 00:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 742C8296718
+	for <lists+io-uring@lfdr.de>; Fri, 23 Oct 2020 00:24:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S372764AbgJVWYy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Oct 2020 18:24:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50514 "EHLO
+        id S372766AbgJVWY6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Oct 2020 18:24:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S372761AbgJVWYy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 18:24:54 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3229CC0613CF
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 15:24:54 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id c20so2166517pfr.8
-        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 15:24:54 -0700 (PDT)
+        with ESMTP id S372761AbgJVWY4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Oct 2020 18:24:56 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59C28C0613CE
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 15:24:55 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id o9so1713517plx.10
+        for <io-uring@vger.kernel.org>; Thu, 22 Oct 2020 15:24:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=R4HF3ZPPmNYAYd78JzkiBYt49AZyQYqCb7Mcda7OhbQ=;
-        b=tdgg/AF3hVE0MX6vhOsQqr/4dz6/LMRm3L7ZVIze8v6uFHrZCSkh4P/gv1LWc/Yfoq
-         dOOK2CjyMYfdJQ9vzgPtpCH3/t672djzq9C4t8rEy2OW9YC5Ogp6bwfMx9BaFAThJzi0
-         QggS8U3qt8toBHCzpn8anxp0SfkcYrc2yX6d7iu6gRo5DcOWFV8/Zs7t5XU5yFc+6lRc
-         zOHLUTq8ZrTm8vR0n9lSPDmTNVP1hxKKZ+2eKWPbi0FG5gRbFq1lvg27hmcW/TzBtOQ1
-         nW5D07Y53XxldhgOk50OtuzElUaQPZOs1gZEcptTBgPv19kXvTfCVk9zmP6GerCyCS1B
-         MnBA==
+        bh=2LtcIpK4Q4iLBP2w7UhfR96BPjR+fhgUZtzjipu+IWI=;
+        b=x1jjTTGbEkEGWjLHpK1oEot1ck5vwR6n4umtPERuv90ETEKvTJ07X1KrDZ/j8V7kcP
+         qqA1XGfPy2VdevqKQl9zNpL1nnp8pyiZ6y1ZC0iJhreEBKTudT7vhNEeo4tR7oS7p/Yd
+         MhIuHqf6P0FkDQwC+ARNH4lXWwayPwusj4GU6Vn7F0lil/p6mmbYkKNRH97esY9ndXG/
+         JN0UO2Pr6NZgI94vvVECaeT/HVE8hgzpjySa79F9hatB4sbwL9139XiPj60oG8Lj0dkI
+         V/65UAAKcjvcH6vwUJm/fZote/GuENG6Rt5nhWt8diqSXKbcNtymSBxJDUMejh5tSuFM
+         AUkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=R4HF3ZPPmNYAYd78JzkiBYt49AZyQYqCb7Mcda7OhbQ=;
-        b=cu4Lumll+J0wwDgN2DhkgF2Xwu9Kd+7buccGE4nikcfmbBmZ0xpTr7mFloIhBROxG1
-         P7JQx20hIsGSwRAw6syCS3/cuKCiifPGVEg+56MozcqORFHxcLru9RaGUF8s280i3toN
-         YkORkBAiwTlTq37FSysSVSRBCRlcS40lNnOmrNbYHzcsEBrqgJuv909EEahE907xFefn
-         rfOY41ZLHs1S5ft/m8ZbcBaSG50PY3mRCRAXMJgeDNNpME6JHVyDACQBtbHHVBVIr8At
-         jga52tH+HAVxxRrtiAuxJmB5/UV05px1/70pOoB9r6WdibRfiYCcaScDbqLBKvwpiKad
-         YUCw==
-X-Gm-Message-State: AOAM530rk9O/QDQuraoEkXEDwbUnbR8AYC+soeJIqPc3GaQZQaOrm0PE
-        3MKZaWMIXuJHPPlohthYakCd2hivldHHkg==
-X-Google-Smtp-Source: ABdhPJxvyxCM/p4f/EMPz4UOBufoBKfoR8rxh3h87A0hbDie7M5YNDtQOWOvSx2vb7w6qyTd1p2BJg==
-X-Received: by 2002:a17:90a:6301:: with SMTP id e1mr4434408pjj.131.1603405493491;
-        Thu, 22 Oct 2020 15:24:53 -0700 (PDT)
+        bh=2LtcIpK4Q4iLBP2w7UhfR96BPjR+fhgUZtzjipu+IWI=;
+        b=dtrGq6/PbKZJ3vxXijOSbH8GQk8B52cP4z655UBQRHxleu2+xqaGkEd5omemH/eFl4
+         VTaqi6kgmVSjycSeTCVkVbcYAVTGMumtu3C0kQR2fPj++ES7Xm5exuwx05+G3icltehu
+         71ZC6T7kXrm57YMntaNrixw74vioXV8mb1mDHt9E6wjQRc6BACVd/pNiEstN7REuyn8k
+         qAHT3WauOqYHv/S1p4gW52YJfr0XZBPpETvy0t7GlGrKuebsVmehx1SlyvRBSCHi+zTs
+         JHeb9CxW/T8nCPm99ahqXfqcjld2bzE07lse0c6pSTTF0XjEwk6pStEaW406njvz/rLV
+         0YmQ==
+X-Gm-Message-State: AOAM530Eckxtnz5VYB8vUxMOgXi6wifytm09gKk9aXHQBp+lFw8pmE5C
+        7R9OzptzUbmprqeG1iDH0ewiS3AnH5Unww==
+X-Google-Smtp-Source: ABdhPJzw5e6uqrPkBO8wEowt15ICNXoB0taSqwl6ooSEYanSwvDnYQBYEDyYT/7YXjtUGySdmVkczA==
+X-Received: by 2002:a17:902:8508:b029:d5:af79:8b40 with SMTP id bj8-20020a1709028508b02900d5af798b40mr4534268plb.28.1603405494641;
+        Thu, 22 Oct 2020 15:24:54 -0700 (PDT)
 Received: from localhost.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id e5sm3516437pfl.216.2020.10.22.15.24.52
+        by smtp.gmail.com with ESMTPSA id e5sm3516437pfl.216.2020.10.22.15.24.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2020 15:24:53 -0700 (PDT)
+        Thu, 22 Oct 2020 15:24:54 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/4] io_uring: make loop_rw_iter() use original user supplied pointers
-Date:   Thu, 22 Oct 2020 16:24:46 -0600
-Message-Id: <20201022222447.62020-4-axboe@kernel.dk>
+Subject: [PATCH 4/4] splice: change exported internal do_splice() helper to take kernel offset
+Date:   Thu, 22 Oct 2020 16:24:47 -0600
+Message-Id: <20201022222447.62020-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.29.0
 In-Reply-To: <20201022222447.62020-1-axboe@kernel.dk>
 References: <20201022222447.62020-1-axboe@kernel.dk>
@@ -62,87 +62,149 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We jump through a hoop for fixed buffers, where we first map these to
-a bvec(), then kmap() the bvec to obtain the pointer we copy to/from.
-This was always a bit ugly, and with the set_fs changes, it ends up
-being practically problematic as well.
-
-There's no need to jump through these hoops, just use the original user
-pointers and length for the non iter based read/write.
+With the set_fs change, we can no longer rely on copy_{to,from}_user()
+accepting a kernel pointer. Clean this up and change the internal helper
+that io_uring uses to deal with kernel pointers instead. This puts the
+offset copy in/out in __do_splice() instead, which just calls the same
+helper.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+ fs/splice.c            | 63 +++++++++++++++++++++++++++++++++---------
+ include/linux/splice.h |  4 +--
+ 2 files changed, 52 insertions(+), 15 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 45320458a5f9..70ce36612e12 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3115,9 +3115,10 @@ static inline loff_t *io_kiocb_ppos(struct kiocb *kiocb)
-  * For files that don't have ->read_iter() and ->write_iter(), handle them
-  * by looping over ->read() or ->write() manually.
+diff --git a/fs/splice.c b/fs/splice.c
+index 70cc52af780b..d9305af930d8 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1107,9 +1107,8 @@ static int splice_pipe_to_pipe(struct pipe_inode_info *ipipe,
+ /*
+  * Determine where to splice to/from.
   */
--static ssize_t loop_rw_iter(int rw, struct file *file, struct kiocb *kiocb,
--			   struct iov_iter *iter)
-+static ssize_t loop_rw_iter(int rw, struct io_kiocb *req, struct iov_iter *iter)
+-long do_splice(struct file *in, loff_t __user *off_in,
+-		struct file *out, loff_t __user *off_out,
+-		size_t len, unsigned int flags)
++long do_splice(struct file *in, loff_t *off_in, struct file *out,
++	       loff_t *off_out, size_t len, unsigned int flags)
  {
-+	struct kiocb *kiocb = &req->rw.kiocb;
-+	struct file *file = req->file;
- 	ssize_t ret = 0;
- 
- 	/*
-@@ -3137,11 +3138,8 @@ static ssize_t loop_rw_iter(int rw, struct file *file, struct kiocb *kiocb,
- 		if (!iov_iter_is_bvec(iter)) {
- 			iovec = iov_iter_iovec(iter);
+ 	struct pipe_inode_info *ipipe;
+ 	struct pipe_inode_info *opipe;
+@@ -1143,8 +1142,7 @@ long do_splice(struct file *in, loff_t __user *off_in,
+ 		if (off_out) {
+ 			if (!(out->f_mode & FMODE_PWRITE))
+ 				return -EINVAL;
+-			if (copy_from_user(&offset, off_out, sizeof(loff_t)))
+-				return -EFAULT;
++			offset = *off_out;
  		} else {
--			/* fixed buffers import bvec */
--			iovec.iov_base = kmap(iter->bvec->bv_page)
--						+ iter->iov_offset;
--			iovec.iov_len = min(iter->count,
--					iter->bvec->bv_len - iter->iov_offset);
-+			iovec.iov_base = (void __user *) req->rw.addr;
-+			iovec.iov_len = req->rw.len;
+ 			offset = out->f_pos;
  		}
+@@ -1165,8 +1163,8 @@ long do_splice(struct file *in, loff_t __user *off_in,
  
- 		if (rw == READ) {
-@@ -3152,9 +3150,6 @@ static ssize_t loop_rw_iter(int rw, struct file *file, struct kiocb *kiocb,
- 					       iovec.iov_len, io_kiocb_ppos(kiocb));
- 		}
+ 		if (!off_out)
+ 			out->f_pos = offset;
+-		else if (copy_to_user(off_out, &offset, sizeof(loff_t)))
+-			ret = -EFAULT;
++		else
++			*off_out = offset;
  
--		if (iov_iter_is_bvec(iter))
--			kunmap(iter->bvec->bv_page);
--
- 		if (nr < 0) {
- 			if (!ret)
- 				ret = nr;
-@@ -3163,6 +3158,8 @@ static ssize_t loop_rw_iter(int rw, struct file *file, struct kiocb *kiocb,
- 		ret += nr;
- 		if (nr != iovec.iov_len)
- 			break;
-+		req->rw.len -= nr;
-+		req->rw.addr += nr;
- 		iov_iter_advance(iter, nr);
+ 		return ret;
  	}
+@@ -1177,8 +1175,7 @@ long do_splice(struct file *in, loff_t __user *off_in,
+ 		if (off_in) {
+ 			if (!(in->f_mode & FMODE_PREAD))
+ 				return -EINVAL;
+-			if (copy_from_user(&offset, off_in, sizeof(loff_t)))
+-				return -EFAULT;
++			offset = *off_in;
+ 		} else {
+ 			offset = in->f_pos;
+ 		}
+@@ -1202,8 +1199,8 @@ long do_splice(struct file *in, loff_t __user *off_in,
+ 			wakeup_pipe_readers(opipe);
+ 		if (!off_in)
+ 			in->f_pos = offset;
+-		else if (copy_to_user(off_in, &offset, sizeof(loff_t)))
+-			ret = -EFAULT;
++		else
++			*off_in = offset;
  
-@@ -3352,7 +3349,7 @@ static int io_iter_do_read(struct io_kiocb *req, struct iov_iter *iter)
- 	if (req->file->f_op->read_iter)
- 		return call_read_iter(req->file, &req->rw.kiocb, iter);
- 	else if (req->file->f_op->read)
--		return loop_rw_iter(READ, req->file, &req->rw.kiocb, iter);
-+		return loop_rw_iter(READ, req, iter);
- 	else
- 		return -EINVAL;
+ 		return ret;
+ 	}
+@@ -1211,6 +1208,46 @@ long do_splice(struct file *in, loff_t __user *off_in,
+ 	return -EINVAL;
  }
-@@ -3543,7 +3540,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
- 	if (req->file->f_op->write_iter)
- 		ret2 = call_write_iter(req->file, kiocb, iter);
- 	else if (req->file->f_op->write)
--		ret2 = loop_rw_iter(WRITE, req->file, kiocb, iter);
-+		ret2 = loop_rw_iter(WRITE, req, iter);
- 	else
- 		ret2 = -EINVAL;
  
++static long __do_splice(struct file *in, loff_t __user *off_in,
++			struct file *out, loff_t __user *off_out,
++			size_t len, unsigned int flags)
++{
++	struct pipe_inode_info *ipipe;
++	struct pipe_inode_info *opipe;
++	loff_t offset, *__off_in = NULL, *__off_out = NULL;
++	long ret;
++
++	ipipe = get_pipe_info(in, true);
++	opipe = get_pipe_info(out, true);
++
++	if (ipipe && off_in)
++		return -ESPIPE;
++	if (opipe && off_out)
++		return -ESPIPE;
++
++	if (off_out) {
++		if (copy_from_user(&offset, off_out, sizeof(loff_t)))
++			return -EFAULT;
++		__off_out = &offset;
++	}
++	if (off_in) {
++		if (copy_from_user(&offset, off_in, sizeof(loff_t)))
++			return -EFAULT;
++		__off_in = &offset;
++	}
++
++	ret = do_splice(in, __off_in, out, __off_out, len, flags);
++	if (ret < 0)
++		return ret;
++
++	if (__off_out && copy_to_user(off_out, __off_out, sizeof(loff_t)))
++		return -EFAULT;
++	if (__off_in && copy_to_user(off_in, __off_in, sizeof(loff_t)))
++		return -EFAULT;
++
++	return ret;
++}
++
+ static int iter_to_pipe(struct iov_iter *from,
+ 			struct pipe_inode_info *pipe,
+ 			unsigned flags)
+@@ -1405,8 +1442,8 @@ SYSCALL_DEFINE6(splice, int, fd_in, loff_t __user *, off_in,
+ 	if (in.file) {
+ 		out = fdget(fd_out);
+ 		if (out.file) {
+-			error = do_splice(in.file, off_in, out.file, off_out,
+-					  len, flags);
++			error = __do_splice(in.file, off_in, out.file, off_out,
++						len, flags);
+ 			fdput(out);
+ 		}
+ 		fdput(in);
+diff --git a/include/linux/splice.h b/include/linux/splice.h
+index 5c47013f708e..a55179fd60fc 100644
+--- a/include/linux/splice.h
++++ b/include/linux/splice.h
+@@ -78,8 +78,8 @@ extern ssize_t add_to_pipe(struct pipe_inode_info *,
+ 			      struct pipe_buffer *);
+ extern ssize_t splice_direct_to_actor(struct file *, struct splice_desc *,
+ 				      splice_direct_actor *);
+-extern long do_splice(struct file *in, loff_t __user *off_in,
+-		      struct file *out, loff_t __user *off_out,
++extern long do_splice(struct file *in, loff_t *off_in,
++		      struct file *out, loff_t *off_out,
+ 		      size_t len, unsigned int flags);
+ 
+ extern long do_tee(struct file *in, struct file *out, size_t len,
 -- 
 2.29.0
 

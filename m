@@ -2,35 +2,48 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB4F3297075
-	for <lists+io-uring@lfdr.de>; Fri, 23 Oct 2020 15:29:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E4829715C
+	for <lists+io-uring@lfdr.de>; Fri, 23 Oct 2020 16:33:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S464784AbgJWN3D (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 23 Oct 2020 09:29:03 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:32356 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S464781AbgJWN3C (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Oct 2020 09:29:02 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mtapsc-1-v1vYoM8jOeGMKLhWfd8r_g-1; Fri, 23 Oct 2020 14:28:58 +0100
-X-MC-Unique: v1vYoM8jOeGMKLhWfd8r_g-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 23 Oct 2020 14:28:57 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 23 Oct 2020 14:28:57 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Arnd Bergmann' <arnd@arndb.de>
-CC:     Greg KH <gregkh@linuxfoundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        id S374727AbgJWOdZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 23 Oct 2020 10:33:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:20206 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750608AbgJWOdT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Oct 2020 10:33:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603463596;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CNcKkabSWjxdlB9if9c65y0HaLkS2aARxhdVq9CbB84=;
+        b=cKkixw9t84YvNOKcsF0x4ejhpNMxH1JME6+UoORVSUOehLribklQkhYgTJeKI1Ff8+qF5V
+        IMnNKh/Gelk0Nyni2drdcfQJnHpY9o0C3oTtTGy+k3Qaa9vYCq2DuAC5DLPN2wKPfUkIaR
+        VROVh7lzMT3Eo8IuIsbPinOGX+exLE4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-106-GwdqF8yrPV2_n9bqFnB1rQ-1; Fri, 23 Oct 2020 10:33:12 -0400
+X-MC-Unique: GwdqF8yrPV2_n9bqFnB1rQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8331C804B6A;
+        Fri, 23 Oct 2020 14:33:09 +0000 (UTC)
+Received: from [10.36.114.18] (ovpn-114-18.ams2.redhat.com [10.36.114.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 44FD05D9CC;
+        Fri, 23 Oct 2020 14:33:04 +0000 (UTC)
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+From:   David Hildenbrand <david@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Greg KH' <gregkh@linuxfoundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Christoph Hellwig <hch@lst.de>,
         "kernel-team@android.com" <kernel-team@android.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
@@ -51,13 +64,6 @@ CC:     Greg KH <gregkh@linuxfoundation.org>,
         "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>
-Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAASOeCgAF+12D///tDgIAAEbpg
-Date:   Fri, 23 Oct 2020 13:28:57 +0000
-Message-ID: <8e758668cffa4713969df33299180c64@AcuMS.aculab.com>
 References: <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
  <20201022090155.GA1483166@kroah.com>
  <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
@@ -68,39 +74,71 @@ References: <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
  <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
  <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
  <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
- <CAK8P3a1n+b8hOMhNQSDzgic03dyXbmpccfTJ3C1bGKvzsgMXbg@mail.gmail.com>
-In-Reply-To: <CAK8P3a1n+b8hOMhNQSDzgic03dyXbmpccfTJ3C1bGKvzsgMXbg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+ <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <999e2926-9a75-72fd-007a-1de0af341292@redhat.com>
+Date:   Fri, 23 Oct 2020 16:33:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+In-Reply-To: <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAyMyBPY3RvYmVyIDIwMjAgMTQ6MjMNCj4gDQo+
-IE9uIEZyaSwgT2N0IDIzLCAyMDIwIGF0IDI6NDYgUE0gRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWln
-aHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBGcm9tOiBHcmVnIEtIIDxncmVna2hAbGlu
-dXhmb3VuZGF0aW9uLm9yZz4NCj4gPiA+IFNlbnQ6IDIyIE9jdG9iZXIgMjAyMCAxNDo1MQ0KPiA+
-DQo+ID4gSSd2ZSByYW1tZWQgdGhlIGNvZGUgaW50byBnb2Rib2x0Lg0KPiA+DQo+ID4gaHR0cHM6
-Ly9nb2Rib2x0Lm9yZy96Lzl2NVBQVw0KPiA+DQo+ID4gRGVmaW5pdGVseSBhIGNsYW5nIGJ1Zy4N
-Cj4gPg0KPiA+IFNlYXJjaCBmb3IgW3d4XTI0IGluIHRoZSBjbGFuZyBvdXRwdXQuDQo+ID4gbnJf
-c2VncyBjb21lcyBpbiBhcyB3MiBhbmQgdGhlIGluaXRpYWwgYm91bmQgY2hlY2tzIGFyZSBkb25l
-IG9uIHcyLg0KPiA+IHcyNCBpcyBsb2FkZWQgZnJvbSB3MiAtIEkgZG9uJ3QgYmVsaWV2ZSB0aGlz
-IGNoYW5nZXMgdGhlIGhpZ2ggYml0cy4NCj4gDQo+IFlvdSBiZWxpZXZlIHdyb25nLCAibW92IHcy
-NCwgdzIiIGlzIGEgemVyby1leHRlbmRpbmcgb3BlcmF0aW9uLg0KDQpBaCBvaywgYnV0IGdjYyB1
-c2VzIHV0eHcgZm9yIHRoZSBzYW1lIHRhc2suDQpJIGd1ZXNzIHRoZXkgY291bGQgYmUgdGhlIHNh
-bWUgb3Bjb2RlLg0KDQpMYXN0IHRpbWUgSSB3cm90ZSBBUk0gdGh1bWIgZGlkbid0IHJlYWxseSBl
-eGlzdCAtIG5ldmVyIG1pbmQgNjRiaXQNCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVz
-cyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEg
-MVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On 23.10.20 15:09, David Hildenbrand wrote:
+> On 23.10.20 14:46, David Laight wrote:
+>> From: Greg KH <gregkh@linuxfoundation.org>
+>>> Sent: 22 October 2020 14:51
+>>
+>> I've rammed the code into godbolt.
+>>
+>> https://godbolt.org/z/9v5PPW
+>>
+>> Definitely a clang bug.
+>>
+>> Search for [wx]24 in the clang output.
+>> nr_segs comes in as w2 and the initial bound checks are done on w2.
+>> w24 is loaded from w2 - I don't believe this changes the high bits.
+>> There are no references to w24, just x24.
+>> So the kmalloc_array() is passed 'huge' and will fail.
+>> The iov_iter_init also gets the 64bit value.
+>>
+>> Note that the gcc code has a sign-extend copy of w2.
+> 
+> Do we have a result from using "unsigned long" in the base function and
+> explicitly masking of the high bits? That should definitely work.
+> 
+> Now, I am not a compiler expert, but as I already cited, at least on
+> x86-64 clang expects that the high bits were cleared by the caller - in
+> contrast to gcc. I suspect it's the same on arm64, but again, I am no
+> compiler expert.
+> 
+> If what I said and cites for x86-64 is correct, if the function expects
+> an "unsigned int", it will happily use 64bit operations without further
+> checks where valid when assuming high bits are zero. That's why even
+> converting everything to "unsigned int" as proposed by me won't work on
+> clang - it assumes high bits are zero (as indicated by Nick).
+> 
+> As I am neither a compiler experts (did I mention that already? ;) ) nor
+> an arm64 experts, I can't tell if this is a compiler BUG or not.
+> 
+
+I just checked against upstream code generated by clang 10 and it
+properly discards the upper 32bit via a mov w23 w2.
+
+So at least clang 10 indeed properly assumes we could have garbage and
+masks it off.
+
+Maybe the issue is somewhere else, unrelated to nr_pages ... or clang 11
+behaves differently.
+
+-- 
+Thanks,
+
+David / dhildenb
 

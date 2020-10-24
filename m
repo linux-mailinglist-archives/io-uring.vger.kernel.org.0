@@ -2,140 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64AC02978E2
-	for <lists+io-uring@lfdr.de>; Fri, 23 Oct 2020 23:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8281297D16
+	for <lists+io-uring@lfdr.de>; Sat, 24 Oct 2020 17:14:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756700AbgJWV3F convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Fri, 23 Oct 2020 17:29:05 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:51990 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756695AbgJWV3E (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Oct 2020 17:29:04 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-101-a0KTql5iP42OxX-i9IRDjQ-1; Fri, 23 Oct 2020 22:29:00 +0100
-X-MC-Unique: a0KTql5iP42OxX-i9IRDjQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 23 Oct 2020 22:28:59 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 23 Oct 2020 22:28:59 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Segher Boessenkool' <segher@kernel.crashing.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-CC:     David Hildenbrand <david@redhat.com>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        'Greg KH' <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAASOeCgAF+12CAAGD4RoAAL/Bg
-Date:   Fri, 23 Oct 2020 21:28:59 +0000
-Message-ID: <e9a3136ead214186877804aabde74b38@AcuMS.aculab.com>
-References: <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com>
- <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
- <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
- <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
- <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
- <20201023175857.GA3576660@ZenIV.linux.org.uk>
- <20201023182713.GG2672@gate.crashing.org>
-In-Reply-To: <20201023182713.GG2672@gate.crashing.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1760890AbgJXPNg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 24 Oct 2020 11:13:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60192 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760887AbgJXPNf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 24 Oct 2020 11:13:35 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3014DC0613CE
+        for <io-uring@vger.kernel.org>; Sat, 24 Oct 2020 08:13:35 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id o1so803763pjt.2
+        for <io-uring@vger.kernel.org>; Sat, 24 Oct 2020 08:13:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=xYdTJcIhuMX4J21lerIfFWuYJafeMxGPcZ58YQMTDXY=;
+        b=OKbqc49FjAC7C3uixgSUlnRbWODWzQ2F0tdwRVclyAPdieHu1+rjhId0Cd8eryjUMz
+         CkTAx1jOZV/9/BTxvenI6/znEKxeT3IinqPm0pKC/eOSv9VICej1cMaLOXUB/C/FjYil
+         +MRyswMEt+Yxc0+CUpKaUPfCckMAaFsaR5X9my29heSMTe5NjbdKCBW5MyboOPYlTrd6
+         L67ss+d4S3lpKBLUwM58zL4RSvAf7yipjYOQhKyo2yQgwJK+sk8x7g7aJURqpmB6BAWb
+         /aEZpVRZIuBWntk10fCoADFkWBXpgVFT95kxJh0UuRMD9vTDpQBpkiLVJ4NM4UgJjCvG
+         tyVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=xYdTJcIhuMX4J21lerIfFWuYJafeMxGPcZ58YQMTDXY=;
+        b=AGNlW6NQWoMRoFmWnaLqkVKYEMcjVntpW1kUALTwxYMDlkwXoYcntZrJ3BucEu8OOb
+         ld7c7PghebJs+PBrEUbL+7TS3v9jGLKXOiXar9NrcHZeIEXwkOY23TC7avNo6ou3ZXOY
+         taQTY1N/GK0CXTE4kulEhMoRLNDt4scbcW6DlgSZFuQXy3p3WfUrelzn8JjQ22u+gX8G
+         vMqtVwWkqR4lAWg8kzlAfYXFhfpIfH2kTrYl32QmGDF0MXSzr8SthnGCn5fCfIDSZK/L
+         w61TfYiUKH9zEKgaN4BRNWhLReHU7k458YRG6AQBlOh4jQ48l9PiHS0EQWnTRBhXonx1
+         49EQ==
+X-Gm-Message-State: AOAM530g/BxWePzlo0Ph/atO54Ic94ubryf3Kn8B9/Tuq0T5RF+B93Sd
+        RGuDq/6jWKaxtZx82h0fBBxZMKUoDgX9rg==
+X-Google-Smtp-Source: ABdhPJydcLyBumfi/Qws9T5CL09x+d3rGJkSMSJ8ZUw7JY4FNFm4YFBSbEeuDDBB1PMs7PqfBCAifQ==
+X-Received: by 2002:a17:902:8e89:b029:d5:fefd:9637 with SMTP id bg9-20020a1709028e89b02900d5fefd9637mr4812758plb.39.1603552414650;
+        Sat, 24 Oct 2020 08:13:34 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id s4sm6332119pjp.17.2020.10.24.08.13.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Oct 2020 08:13:34 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.10-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-ID: <1f4b24d8-e9f3-e74b-02be-e0483dc45b42@kernel.dk>
+Date:   Sat, 24 Oct 2020 09:13:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Segher Boessenkool
-> Sent: 23 October 2020 19:27
-> 
-> On Fri, Oct 23, 2020 at 06:58:57PM +0100, Al Viro wrote:
-> > On Fri, Oct 23, 2020 at 03:09:30PM +0200, David Hildenbrand wrote:
-> >
-> > > Now, I am not a compiler expert, but as I already cited, at least on
-> > > x86-64 clang expects that the high bits were cleared by the caller - in
-> > > contrast to gcc. I suspect it's the same on arm64, but again, I am no
-> > > compiler expert.
-> > >
-> > > If what I said and cites for x86-64 is correct, if the function expects
-> > > an "unsigned int", it will happily use 64bit operations without further
-> > > checks where valid when assuming high bits are zero. That's why even
-> > > converting everything to "unsigned int" as proposed by me won't work on
-> > > clang - it assumes high bits are zero (as indicated by Nick).
-> > >
-> > > As I am neither a compiler experts (did I mention that already? ;) ) nor
-> > > an arm64 experts, I can't tell if this is a compiler BUG or not.
-> >
-> > On arm64 when callee expects a 32bit argument, the caller is *not* responsible
-> > for clearing the upper half of 64bit register used to pass the value - it only
-> > needs to store the actual value into the lower half.  The callee must consider
-> > the contents of the upper half of that register as undefined.  See AAPCS64 (e.g.
-> > https://github.com/ARM-software/abi-aa/blob/master/aapcs64/aapcs64.rst#parameter-passing-rules
-> > ); AFAICS, the relevant bit is
-> > 	"Unlike in the 32-bit AAPCS, named integral values must be narrowed by
-> > the callee rather than the caller."
-> 
-> Or the formal rule:
-> 
-> C.9 	If the argument is an Integral or Pointer Type, the size of the
-> 	argument is less than or equal to 8 bytes and the NGRN is less
-> 	than 8, the argument is copied to the least significant bits in
-> 	x[NGRN]. The NGRN is incremented by one. The argument has now
-> 	been allocated.
+Hi Linus,
 
-So, in essence, if the value is in a 64bit register the calling
-code is independent of the actual type of the formal parameter.
-Clearly a value might need explicit widening.
+Set of fixes that should go into -rc1:
 
-I've found a copy of the 64 bit arm instruction set.
-Unfortunately it is alpha sorted and repetitive so shows none
-of the symmetry and makes things difficult to find.
-But, contrary to what someone suggested most register writes
-(eg from arithmetic) seem to zero/extend the high bits.
+- fsize was missed in previous unification of work flags
 
-	David
+- Few fixes cleaning up the flags unification creds cases (Pavel)
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+- Fix NUMA affinities for completely unplugged/replugged node for io-wq
+
+- Two fallout fixes from the set_fs changes. One local to io_uring, one
+  for the splice entry point that io_uring uses.
+
+- Linked timeout fixes (Pavel)
+
+- Removal of ->flush() ->files work-around that we don't need anymore
+  with referenced files (Pavel)
+
+- Various cleanups (Pavel)
+
+Please pull!
+
+
+The following changes since commit 9ba0d0c81284f4ec0b24529bdba2fc68b9d6a09a:
+
+  io_uring: use blk_queue_nowait() to check if NOWAIT supported (2020-10-19 07:32:36 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.10-2020-10-24
+
+for you to fetch changes up to ee6e00c868221f5f7d0b6eb4e8379a148e26bc20:
+
+  splice: change exported internal do_splice() helper to take kernel offset (2020-10-22 14:15:51 -0600)
+
+----------------------------------------------------------------
+io_uring-5.10-2020-10-24
+
+----------------------------------------------------------------
+Jens Axboe (4):
+      io_uring: unify fsize with def->work_flags
+      io-wq: re-set NUMA node affinities if CPUs come online
+      io_uring: make loop_rw_iter() use original user supplied pointers
+      splice: change exported internal do_splice() helper to take kernel offset
+
+Pavel Begunkov (10):
+      io_uring: flags-based creds init in queue
+      io_uring: kill ref get/drop in personality init
+      io_uring: inline io_fail_links()
+      io_uring: make cached_cq_overflow non atomic_t
+      io_uring: remove extra ->file check in poll prep
+      io_uring: inline io_poll_task_handler()
+      io_uring: do poll's hash_node init in common code
+      io_uring: fix racy REQ_F_LINK_TIMEOUT clearing
+      io_uring: don't reuse linked_timeout
+      io_uring: remove req cancel in ->flush()
+
+ fs/io-wq.c             |  68 +++++++++++++++++--
+ fs/io-wq.h             |   1 +
+ fs/io_uring.c          | 173 ++++++++++++++++++++++---------------------------
+ fs/splice.c            |  63 ++++++++++++++----
+ include/linux/splice.h |   4 +-
+ 5 files changed, 191 insertions(+), 118 deletions(-)
+
+-- 
+Jens Axboe
 

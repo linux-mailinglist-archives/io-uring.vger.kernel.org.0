@@ -2,83 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9038A299B3F
-	for <lists+io-uring@lfdr.de>; Tue, 27 Oct 2020 00:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E86C0299CDB
+	for <lists+io-uring@lfdr.de>; Tue, 27 Oct 2020 01:02:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408700AbgJZXt7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Oct 2020 19:49:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408786AbgJZXtm (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 26 Oct 2020 19:49:42 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 606C921741;
-        Mon, 26 Oct 2020 23:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603756182;
-        bh=6DudW/JqqtwV4WRtfvdDoaRR7NIbaoqPJeFKlaMc93I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y/gfptYP3XSBhaRyTH+N6Z5jNDtuE4YPNxTjwOP7Cyy6cmSQZ6Td3GrnjYnSeCkTm
-         hze5VwN425aCc/F7w/UwquL0j3tGiJDA+zKS81sdbig1B+JHpceJGCwDS42IQ83YJy
-         NIq//HYBLXfpcRK0XwlyOAu859Nz0O9MWkvft2xI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.9 029/147] io_uring: don't set COMP_LOCKED if won't put
-Date:   Mon, 26 Oct 2020 19:47:07 -0400
-Message-Id: <20201026234905.1022767-29-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201026234905.1022767-1-sashal@kernel.org>
-References: <20201026234905.1022767-1-sashal@kernel.org>
+        id S2437444AbgJ0ACQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Oct 2020 20:02:16 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41676 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2411075AbgJZX4Q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Oct 2020 19:56:16 -0400
+Received: by mail-pg1-f194.google.com with SMTP id g12so6177816pgm.8
+        for <io-uring@vger.kernel.org>; Mon, 26 Oct 2020 16:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wqqvkA3oKUwkO5eXRPOBy8lXyQg0CiUtokie2wwagwI=;
+        b=ZWDgA8+yUlKx2dZgiyZDe66Bv6aQYo4o4sBrgULvsJ7L1mqryuSoN/tRsTLtRNf5gl
+         QA5GzgrsJ4IIXk6KefYiWNloPp5dTgRya5PAi5H2X1Ck5liCNMZ9plZFbXAFJkRhGENX
+         zRADl3Fzwzqt5UTeMExAEl9+J6C00UJYGVeM9r+kQpMj10I4tNzbDp+KUhpG26z8ohQ5
+         u9LGW1VxEtuEY5uYo6W0qmYrYYX9WPLdyfh3K/l7hHXtbXds+UPAtJe/6QdzpKUrKNEa
+         IHnev7OPcOoKpcEMuZBXfSj3e5H/bPp0SHxbMGuGbkkGN2ORlWbNlGQCKJOUg6Ub1kcx
+         WOrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wqqvkA3oKUwkO5eXRPOBy8lXyQg0CiUtokie2wwagwI=;
+        b=DodJEvwVqVoEyDA3ty8svyQnPevQBO6W/vb13s8+h5Fc7Mq9nSMRFPeUtbHIvsidTC
+         HIYXGkbiMJdii9mW7a4q1AtyYeJZjXhK+Zy7cCAQkaz3EG7ITw7lC2qxm06mMlZgxKcb
+         96bePgf6BsxBV797bfjCAY9cvFlI46S1iTXMwAtXoAVG4dNXvO+O9n4PV/1NRJmOCBRm
+         tM8UAv9ydyy6Wa51RhNYAmzekQfLyW6RaA725NYGgmEfoDxChtR91y8tnfnil6VVsYsz
+         QKsO0PoXmGSVD0KpOB+vY3neu04lFQbAAN3FpA1ocBXxqh71vOrVUF0NYBUV5k99Y7yE
+         zTEA==
+X-Gm-Message-State: AOAM532kkN80uWGyhSxyQHGBlmL2psBsD5IJVm8TZDIHedCp872oAPZ3
+        a530HOirftbi7AGR12I2Do+OVA==
+X-Google-Smtp-Source: ABdhPJzXWytxnG400Dp//klgHvFRu6jftuSrTTs7sW7oWyETnW8LM2mlLlQ2a53Jfzf5mLG9B/rX/w==
+X-Received: by 2002:a63:5f42:: with SMTP id t63mr569296pgb.0.1603756574857;
+        Mon, 26 Oct 2020 16:56:14 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id s38sm3637009pgm.62.2020.10.26.16.56.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Oct 2020 16:56:14 -0700 (PDT)
+Subject: Re: [REGRESSION] mm: process_vm_readv testcase no longer works after
+ compat_prcoess_vm_readv removed
+To:     Kyle Huey <me@kylehuey.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Robert O'Callahan <robert@ocallahan.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <CAP045Aqrsb=CXHDHx4nS-pgg+MUDj14r-kN8_Jcbn-NAUziVag@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <70d5569e-4ad6-988a-e047-5d12d298684c@kernel.dk>
+Date:   Mon, 26 Oct 2020 17:56:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP045Aqrsb=CXHDHx4nS-pgg+MUDj14r-kN8_Jcbn-NAUziVag@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On 10/26/20 4:55 PM, Kyle Huey wrote:
+> A test program from the rr[0] test suite, vm_readv_writev[1], no
+> longer works on 5.10-rc1 when compiled as a 32 bit binary and executed
+> on a 64 bit kernel. The first process_vm_readv call (on line 35) now
+> fails with EFAULT. I have bisected this to
+> c3973b401ef2b0b8005f8074a10e96e3ea093823.
+> 
+> It should be fairly straightforward to extract the test case from our
+> repository into a standalone program.
 
-[ Upstream commit 368c5481ae7c6a9719c40984faea35480d9f4872 ]
+Can you check with this applied?
 
-__io_kill_linked_timeout() sets REQ_F_COMP_LOCKED for a linked timeout
-even if it can't cancel it, e.g. it's already running. It not only races
-with io_link_timeout_fn() for ->flags field, but also leaves the flag
-set and so io_link_timeout_fn() may find it and decide that it holds the
-lock. Hopefully, the second problem is potential.
+diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
+index fd12da80b6f2..05676722d9cd 100644
+--- a/mm/process_vm_access.c
++++ b/mm/process_vm_access.c
+@@ -273,7 +273,8 @@ static ssize_t process_vm_rw(pid_t pid,
+ 		return rc;
+ 	if (!iov_iter_count(&iter))
+ 		goto free_iov_l;
+-	iov_r = iovec_from_user(rvec, riovcnt, UIO_FASTIOV, iovstack_r, false);
++	iov_r = iovec_from_user(rvec, riovcnt, UIO_FASTIOV, iovstack_r,
++				in_compat_syscall());
+ 	if (IS_ERR(iov_r)) {
+ 		rc = PTR_ERR(iov_r);
+ 		goto free_iov_l;
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index aae0ef2ec34d2..2145cf76a0d6a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1614,6 +1614,7 @@ static bool io_link_cancel_timeout(struct io_kiocb *req)
- 
- 	ret = hrtimer_try_to_cancel(&req->io->timeout.timer);
- 	if (ret != -1) {
-+		req->flags |= REQ_F_COMP_LOCKED;
- 		io_cqring_fill_event(req, -ECANCELED);
- 		io_commit_cqring(ctx);
- 		req->flags &= ~REQ_F_LINK_HEAD;
-@@ -1636,7 +1637,6 @@ static bool __io_kill_linked_timeout(struct io_kiocb *req)
- 		return false;
- 
- 	list_del_init(&link->link_list);
--	link->flags |= REQ_F_COMP_LOCKED;
- 	wake_ev = io_link_cancel_timeout(link);
- 	req->flags &= ~REQ_F_LINK_TIMEOUT;
- 	return wake_ev;
 -- 
-2.25.1
+Jens Axboe
 

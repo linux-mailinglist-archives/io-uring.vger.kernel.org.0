@@ -2,63 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BD5829D890
-	for <lists+io-uring@lfdr.de>; Wed, 28 Oct 2020 23:33:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32DCB29DA89
+	for <lists+io-uring@lfdr.de>; Thu, 29 Oct 2020 00:24:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388332AbgJ1Wd0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 28 Oct 2020 18:33:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56306 "EHLO
+        id S1729383AbgJ1XYA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 28 Oct 2020 19:24:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387572AbgJ1WdZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Oct 2020 18:33:25 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26E8C0613CF
-        for <io-uring@vger.kernel.org>; Wed, 28 Oct 2020 15:33:25 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id z1so323600plo.12
-        for <io-uring@vger.kernel.org>; Wed, 28 Oct 2020 15:33:25 -0700 (PDT)
+        with ESMTP id S1726398AbgJ1XK5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Oct 2020 19:10:57 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1413BC0613CF
+        for <io-uring@vger.kernel.org>; Wed, 28 Oct 2020 16:10:57 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id o7so770030pgv.6
+        for <io-uring@vger.kernel.org>; Wed, 28 Oct 2020 16:10:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=iTJyMNABss5yRFu7c3CfsJi8yzykBstceqj2JHylJqU=;
-        b=faVYwEbtZkqLLaOdgytFSnIg7I1AaV8ijmLdJSy9sZVNlqDvx/Kx/eeiPfM0ctL8XH
-         vvQsB95YfdSx868O+5jnV/R6suq3QKhz5vhvYbGOWvcfpuTm1t6nyFlUMmOgjiHhKN69
-         ZlpXiip0Z3IxpnQ611YV1WvgsHinQvHes0bGKK8+DqJ9afX7s3ze6vG7bCqrOOy+HhlU
-         p2lz/J14zsHaMKFn+bItmWgOMoq/8ctf1Xd5HIWV8JRCDjWqNaw5ZDvvDdRgAzfLRJP+
-         KjVGedgV26fN2X8YVQ/rPu3Qo6Vf37w7bZzSxykl+NATd0+ngWV4taugs8k/RTvSM0o9
-         yTeg==
+        bh=wo0n03tLjMduZLH6lxTOLz88+u7QMB0bvFdgdNHYFFA=;
+        b=tPjPUUuijsoghq2QlgW+qFhgWB7StVPZap0gyRryr+EdZRrQir34Smw5nrDy/3G3vI
+         0zf9HJfzacnUvZq9pgQyDkQGqlEsOL0Brh+wZxYjrIF7iJdh3pJ+aK8cXZK62L2BL9tS
+         teeEVKh3KG6EGtnxVzLkljXao4QyAGGkNyjbhecP5CNVmtDemn/B1itfOMSl0crOGUkt
+         3Je7QHLGpgY76OeFtzU5Q2tvxkjzg6Zx7erLnMFpSAjEAC/BI94lIUZWJKma8na8SHiP
+         YeSr00qR8lRspXhKk/ZbSQ/xY7V5brPv8LRG20RxXw2E0A2VAwqFUVxjHmRbogtj+cpS
+         /h+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=iTJyMNABss5yRFu7c3CfsJi8yzykBstceqj2JHylJqU=;
-        b=Ocf5Cgpj9lO7WDXMb7jqsQ9BItUCgDyqOfNgjkvR00b1k6Mp+3EBybOnYQWEiY/pRr
-         tJzlDuXWrTGqx+/1/ZJ866UYehXjdjb+3S0zWPmpkbxFzIBH8GS4TCwkdS+yXT+RPItN
-         UWawiurxmxg7T/G/nvurIV7FIPf4weYrVu7zZoOwn7w+y8bpIjG5bQ0UcMA1AqVsSn4T
-         45huJGS7v7U+bi39SYr/IQxoLUq/UJhJraueoNCPF01I4pnS3MDYGCESDd2om4T2wlHS
-         ufN/Xj/mZvBCcM3nUn653p3khIKWy7LaKs1wmYnQojn374YgMzVBRO99M0LKQBF2Bvd+
-         t3AA==
-X-Gm-Message-State: AOAM5304/50crfZ6x0SPLdJBwF/hTfD0h1d8AYXxcdjKlj36niskZLS3
-        4Nou/A4TFZNByEZNC2k01X5llJeXvzh7xQ==
-X-Google-Smtp-Source: ABdhPJzPC8xVi28zpQDGFpGepFlOaGcXBUIxNFPldgy//O/qWt0EMKWS9B8kSRMWF7+cXQ3MWK1MFw==
-X-Received: by 2002:a17:902:8647:b029:d3:d448:98a8 with SMTP id y7-20020a1709028647b02900d3d44898a8mr1153573plt.29.1603924405279;
-        Wed, 28 Oct 2020 15:33:25 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id y8sm607411pfg.104.2020.10.28.15.33.24
+        bh=wo0n03tLjMduZLH6lxTOLz88+u7QMB0bvFdgdNHYFFA=;
+        b=fxddwLdMkqDPeLqnI18qi9bS9LlzyiBW56xphW+GPMtF5HRF4sxzy3lzlETyxbuBCX
+         BwsGU/tBxZsTC+wZM3yDYYGPo2nLpSeJ9QE5V2YB84iOrMipbd4BsuhtlyJ9SYHI3GnY
+         lW+9PCHfUjNWNbIl9jNY3v5xmc58OQwKzJKgx6uUeXkV/qcAWr0Dt7cxhdWupkUQVMWg
+         gyypKIWyMD+zA+9oyz5JjHFb9HXjhqjw1hBqx3fosp5Um80tQ6Ppbzh2kmM1FDJMrKp3
+         OVEhOr1PWVnsHb5FtVZ239t6Mbz7LS3kPI5TVPPPcxpZFya7BINuNWD2oxK6+aogmLCT
+         cpsg==
+X-Gm-Message-State: AOAM531KMZRl0kyuN2Z1qHZpYA9f72chqk+pAYD3IdP83rRfAjyRf014
+        YziEd1yN1f6mLbTEDGdlbAXnnZNpsyvsCg==
+X-Google-Smtp-Source: ABdhPJzI1N8l5oPYS2bT/KXpW/j4mPXcYhV7vs4BkM0TMk1i/fiHZ0/nHiy5se15VFOp0S/m3B9cgg==
+X-Received: by 2002:a92:5b54:: with SMTP id p81mr5967603ilb.290.1603894701671;
+        Wed, 28 Oct 2020 07:18:21 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id t16sm3147717ild.27.2020.10.28.07.18.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Oct 2020 15:33:24 -0700 (PDT)
-Subject: Re: [PATCH] examples: disable ucontext-cp if ucontext.h is not
- available
-To:     Simon Zeni <simon@bl4ckb0ne.ca>, io-uring@vger.kernel.org
-References: <20201028023120.24509-1-simon@bl4ckb0ne.ca>
+        Wed, 28 Oct 2020 07:18:20 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: split poll and poll_remove structs
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <82ba9ad37b37e28e325f7512ed15c8bda8c19986.1603805098.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <18887bed-0e96-5904-5bbd-147393e1eae5@kernel.dk>
-Date:   Wed, 28 Oct 2020 16:33:23 -0600
+Message-ID: <73feead3-4c2b-8034-a6b9-0c8c2c66b2e2@kernel.dk>
+Date:   Wed, 28 Oct 2020 08:18:20 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201028023120.24509-1-simon@bl4ckb0ne.ca>
+In-Reply-To: <82ba9ad37b37e28e325f7512ed15c8bda8c19986.1603805098.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,27 +65,11 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/27/20 8:31 PM, Simon Zeni wrote:
-> The header file `ucontext.h` is not available on musl based distros. The
-> example `ucontext-cp` is not built if `configure` fails to locate the
-> header.
+On 10/27/20 5:17 PM, Pavel Begunkov wrote:
+> Don't use a single struct for polls and poll remove requests, they have
+> totally different layout.
 
-Thanks, applied.
-
-> I also noticed that `make runtests` fails on alpinelinux (5.4.72-0-lts
-> with musl-1.2.1)
-> 
-> ```
-> Tests failed:  <accept-reuse> <across-fork> <defer> <double-poll-crash>
-> <file-register> <file-update> <io_uring_enter> <io_uring_register> <lfs-openat>
-> <lfs-openat-write> <link-timeout> <link_drain> <open-close> <openat2>
-> <pipe-eof> <poll-cancel> <poll-cancel-ton> <poll-link> <read-write>
-> <sigfd-deadlock> <sq-poll-dup> <sq-poll-share> <sq-space_left> <timeout>
-> <statx>
-
-It's been a while since I double checked 5.4-stable, I bet a lot of these
-are due to the tests not being very diligent in checking what is and what
-isn't supported. I'll take a look and rectify some of that.
+Applied for 5.11 - I renamed it to io_poll_remove instead, fwiw.
 
 -- 
 Jens Axboe

@@ -2,146 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A02B629D375
-	for <lists+io-uring@lfdr.de>; Wed, 28 Oct 2020 22:44:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5879129D4A2
+	for <lists+io-uring@lfdr.de>; Wed, 28 Oct 2020 22:53:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725913AbgJ1VoM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 28 Oct 2020 17:44:12 -0400
-Received: from out0.migadu.com ([94.23.1.103]:55878 "EHLO out0.migadu.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbgJ1VoM (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:44:12 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bl4ckb0ne.ca;
-        s=default; t=1603855688;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=YaUrnbf+QSRZ25ulaDmEnq/GiKEToTyBYilmC+d0I+Y=;
-        b=LIw3a2/Of08S2b217TWqLi5t3eQNL3a8XMGLjwXVCiml5l4J5QBdcf6I5xcFAYQGK5ESH4
-        RiBdxASRhYDv19THHiq2kLxdYQG6yjCmW/zvxPZwxSFGgYh1rKfdTiLDrml1wFRTgPePdw
-        3tqFaQcHzQ+5qhj4IbWO3HdF8WjhTtQ=
-From:   Simon Zeni <simon@bl4ckb0ne.ca>
-To:     io-uring@vger.kernel.org
-Cc:     Simon Zeni <simon@bl4ckb0ne.ca>
-Subject: [PATCH] Fix compilation with iso C standard
-Date:   Tue, 27 Oct 2020 23:18:25 -0400
-Message-Id: <20201028031824.16413-1-simon@bl4ckb0ne.ca>
+        id S1727690AbgJ1Vxk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 28 Oct 2020 17:53:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49314 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728434AbgJ1Vxi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Oct 2020 17:53:38 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA981C0613D1
+        for <io-uring@vger.kernel.org>; Wed, 28 Oct 2020 14:53:37 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id p7so1110654ioo.6
+        for <io-uring@vger.kernel.org>; Wed, 28 Oct 2020 14:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=LjzZyERfBshbfOsnhqRr8v6KHucr3e1FtfldMxWiT2A=;
+        b=K2Zzo/FKoCdCkWwwEr8WnH6tWPzDbx7ETgNfdPZJhUdOw0dE9Th1fJI5+H5kWszZiX
+         C4vkXS93UcPQQOtUHweMK+YRfwb5wjeQJTLJq3hfxJd2kYwc3bCKgi+UIQlI+9o68QyB
+         9Vqzdv+wPsX12utqa+oR1l7bLb67bmnuzpH+NDgBOSdXIjpEK9avrEW4/YlyBlq3GaLx
+         ltc9QfVkbNiQvtDszUko3CvcTFNZB1hzjxuCv8NWdEajg77DeG/XozIFYfuKD6hkg4/S
+         StvVFH99rie4AIk9Cy8VtrtXiSNMgUIXHWT5aF3YSLbhnA6rGrxwtSdfg+9iaFHMVHK+
+         ZQng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LjzZyERfBshbfOsnhqRr8v6KHucr3e1FtfldMxWiT2A=;
+        b=qVpRFKs5EWXQnV7bMybzU6RcI5Mo6Wowh5yHvCceUYlRBYfqfuznAIoSqbP8icuwmi
+         DFyhQ//D86BtpgizTIREU98ss4Ol2jFb8xfYWQOFwXOSpMd5u6MhBv5Yq7boFH2x0WPn
+         /j7fNvEKM7KOfdvKKEtCc4UaD60ZnCvR/u5Ta0e1XPmHErYjBb9st7QzvnGADYWiggGU
+         xduIWg0m0lgF1W2BIoExzQeqFzCfhrpE27vGQ6vgfidciQz+z+cLw+efA7QHo9m1hvqe
+         9K936fq5Dn9xcwD+sYJsbIIEGO/kuMF8SE1Pc0GSTd0Z6XhMNv5L5YOG8PNgQ9riPNVQ
+         TOUg==
+X-Gm-Message-State: AOAM5310CbEPhJTBubiDR0lkmgANsFWA+OtXf3d7AZbicSUgjuXFQVlp
+        YYDnWh9GKs1DtyG2ttaH+Qd0v8rQH6pMXg==
+X-Google-Smtp-Source: ABdhPJwhqu2l/zU3AhQobKJUTI8G3WDRRsd45RWfotFRsiLme9gf9Rf7lwdS+fw+gUKtIrGfimTxUg==
+X-Received: by 2002:a05:6602:2f8c:: with SMTP id u12mr1300272iow.122.1603894728089;
+        Wed, 28 Oct 2020 07:18:48 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id u18sm1547471iob.53.2020.10.28.07.18.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Oct 2020 07:18:47 -0700 (PDT)
+Subject: Re: [PATCH v2 0/4] singly linked list for chains
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1603840701.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <31af9b88-cc16-f789-767b-30489c33935f@kernel.dk>
+Date:   Wed, 28 Oct 2020 08:18:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: 0.00
+In-Reply-To: <cover.1603840701.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The whole repo can now be built with iso C standard (c89, c99 and c11)
+On 10/27/20 5:25 PM, Pavel Begunkov wrote:
+> v2: split the meat patch.
+> 
+> I did not re-benchmark it, but as stated before: 5030 vs 5160 KIOPS by a
+> naive (consistent) nop benchmark that submits 32 linked nops and then
+> submits them in a loop. Worth trying with some better hardware.
 
-Signed-off-by: Simon Zeni <simon@bl4ckb0ne.ca>
----
+Applied for 5.11 - I'll give it a spin here too and see if I find any
+improvements. But a smaller io_kiocb is always a win.
 
-References to the compiler extension `typeof` have been changed to
-`__typeof__` for portability. See [GCC's documentation][1] about
-`typeof`.
+-- 
+Jens Axboe
 
-I've added the definition `_POSIX_C_SOURCE` in the source files that are
-using functions not defined in by the POSIX standard, fixing a few
-occurences of `sigset_t` not being defined.
-
-I've also added the definition `_BSD_SOURCE` in `setup.c` and
-`syscall.c` for respectively the `madvise` function (I know that
-`posix_madvise` exists, but there is not equivalent for
-`MADV_DONTFORK`), and `syscall`.
-
-Cheers,
-
-Simon
-
-[1]: https://gcc.gnu.org/onlinedocs/gcc/Typeof.html
-
- src/include/liburing/barrier.h | 8 ++++----
- src/queue.c                    | 2 ++
- src/register.c                 | 2 ++
- src/setup.c                    | 3 +++
- src/syscall.c                  | 2 ++
- 5 files changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/src/include/liburing/barrier.h b/src/include/liburing/barrier.h
-index a4a59fb..89ac682 100644
---- a/src/include/liburing/barrier.h
-+++ b/src/include/liburing/barrier.h
-@@ -56,17 +56,17 @@ static inline T io_uring_smp_load_acquire(const T *p)
- #include <stdatomic.h>
-
- #define IO_URING_WRITE_ONCE(var, val)				\
--	atomic_store_explicit((_Atomic typeof(var) *)&(var),	\
-+	atomic_store_explicit((_Atomic __typeof__(var) *)&(var),	\
- 			      (val), memory_order_relaxed)
- #define IO_URING_READ_ONCE(var)					\
--	atomic_load_explicit((_Atomic typeof(var) *)&(var),	\
-+	atomic_load_explicit((_Atomic __typeof__(var) *)&(var),	\
- 			     memory_order_relaxed)
-
- #define io_uring_smp_store_release(p, v)			\
--	atomic_store_explicit((_Atomic typeof(*(p)) *)(p), (v), \
-+	atomic_store_explicit((_Atomic __typeof__(*(p)) *)(p), (v), \
- 			      memory_order_release)
- #define io_uring_smp_load_acquire(p)				\
--	atomic_load_explicit((_Atomic typeof(*(p)) *)(p),	\
-+	atomic_load_explicit((_Atomic __typeof__(*(p)) *)(p),	\
- 			     memory_order_acquire)
- #endif
-
-diff --git a/src/queue.c b/src/queue.c
-index 24fde2d..053d430 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -1,4 +1,6 @@
- /* SPDX-License-Identifier: MIT */
-+#define _POSIX_C_SOURCE 200112L
-+
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <sys/mman.h>
-diff --git a/src/register.c b/src/register.c
-index f3787c0..994aaff 100644
---- a/src/register.c
-+++ b/src/register.c
-@@ -1,4 +1,6 @@
- /* SPDX-License-Identifier: MIT */
-+#define _POSIX_C_SOURCE 200112L
-+
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <sys/mman.h>
-diff --git a/src/setup.c b/src/setup.c
-index 8e14085..ce2ff4f 100644
---- a/src/setup.c
-+++ b/src/setup.c
-@@ -1,4 +1,6 @@
- /* SPDX-License-Identifier: MIT */
-+#define _BSD_SOURCE
-+
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <sys/mman.h>
-@@ -6,6 +8,7 @@
- #include <errno.h>
- #include <string.h>
- #include <stdlib.h>
-+#include <signal.h>
-
- #include "liburing/compat.h"
- #include "liburing/io_uring.h"
-diff --git a/src/syscall.c b/src/syscall.c
-index 598b531..3f9aa9f 100644
---- a/src/syscall.c
-+++ b/src/syscall.c
-@@ -1,4 +1,6 @@
- /* SPDX-License-Identifier: MIT */
-+#define _BSD_SOURCE
-+
- /*
-  * Will go away once libc support is there
-  */
---
-2.29.1

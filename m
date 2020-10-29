@@ -2,75 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32DCB29DA89
-	for <lists+io-uring@lfdr.de>; Thu, 29 Oct 2020 00:24:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A92029DF48
+	for <lists+io-uring@lfdr.de>; Thu, 29 Oct 2020 02:01:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbgJ1XYA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 28 Oct 2020 19:24:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34326 "EHLO
+        id S2404017AbgJ2BAU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 28 Oct 2020 21:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726398AbgJ1XK5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Oct 2020 19:10:57 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1413BC0613CF
-        for <io-uring@vger.kernel.org>; Wed, 28 Oct 2020 16:10:57 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id o7so770030pgv.6
-        for <io-uring@vger.kernel.org>; Wed, 28 Oct 2020 16:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=wo0n03tLjMduZLH6lxTOLz88+u7QMB0bvFdgdNHYFFA=;
-        b=tPjPUUuijsoghq2QlgW+qFhgWB7StVPZap0gyRryr+EdZRrQir34Smw5nrDy/3G3vI
-         0zf9HJfzacnUvZq9pgQyDkQGqlEsOL0Brh+wZxYjrIF7iJdh3pJ+aK8cXZK62L2BL9tS
-         teeEVKh3KG6EGtnxVzLkljXao4QyAGGkNyjbhecP5CNVmtDemn/B1itfOMSl0crOGUkt
-         3Je7QHLGpgY76OeFtzU5Q2tvxkjzg6Zx7erLnMFpSAjEAC/BI94lIUZWJKma8na8SHiP
-         YeSr00qR8lRspXhKk/ZbSQ/xY7V5brPv8LRG20RxXw2E0A2VAwqFUVxjHmRbogtj+cpS
-         /h+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wo0n03tLjMduZLH6lxTOLz88+u7QMB0bvFdgdNHYFFA=;
-        b=fxddwLdMkqDPeLqnI18qi9bS9LlzyiBW56xphW+GPMtF5HRF4sxzy3lzlETyxbuBCX
-         BwsGU/tBxZsTC+wZM3yDYYGPo2nLpSeJ9QE5V2YB84iOrMipbd4BsuhtlyJ9SYHI3GnY
-         lW+9PCHfUjNWNbIl9jNY3v5xmc58OQwKzJKgx6uUeXkV/qcAWr0Dt7cxhdWupkUQVMWg
-         gyypKIWyMD+zA+9oyz5JjHFb9HXjhqjw1hBqx3fosp5Um80tQ6Ppbzh2kmM1FDJMrKp3
-         OVEhOr1PWVnsHb5FtVZ239t6Mbz7LS3kPI5TVPPPcxpZFya7BINuNWD2oxK6+aogmLCT
-         cpsg==
-X-Gm-Message-State: AOAM531KMZRl0kyuN2Z1qHZpYA9f72chqk+pAYD3IdP83rRfAjyRf014
-        YziEd1yN1f6mLbTEDGdlbAXnnZNpsyvsCg==
-X-Google-Smtp-Source: ABdhPJzI1N8l5oPYS2bT/KXpW/j4mPXcYhV7vs4BkM0TMk1i/fiHZ0/nHiy5se15VFOp0S/m3B9cgg==
-X-Received: by 2002:a92:5b54:: with SMTP id p81mr5967603ilb.290.1603894701671;
-        Wed, 28 Oct 2020 07:18:21 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t16sm3147717ild.27.2020.10.28.07.18.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Oct 2020 07:18:20 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: split poll and poll_remove structs
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <82ba9ad37b37e28e325f7512ed15c8bda8c19986.1603805098.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <73feead3-4c2b-8034-a6b9-0c8c2c66b2e2@kernel.dk>
-Date:   Wed, 28 Oct 2020 08:18:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <82ba9ad37b37e28e325f7512ed15c8bda8c19986.1603805098.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S2404016AbgJ2BAT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Oct 2020 21:00:19 -0400
+X-Greylist: delayed 11769 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 28 Oct 2020 18:00:19 PDT
+Received: from out0.migadu.com (out0.migadu.com [IPv6:2001:41d0:2:267::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43425C0613CF
+        for <io-uring@vger.kernel.org>; Wed, 28 Oct 2020 18:00:19 -0700 (PDT)
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bl4ckb0ne.ca;
+        s=default; t=1603933217;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+        bh=pOUTd6uwywzxRfrH1f09Ml1TFUxQGVvuphIKK6QBoWc=;
+        b=mdneiJZ7YnM/0bHqQRp+J4xRVIXVmfrEh5GbAl/mTJ06a5uka/RabVRNylY9e1nPuuL3FC
+        J+EqYHZFCgMoqGkfLIGjUDg+QnfsEBjYDMZQZfVdFAATmKD9gRv1ONDZjagEBHXxIRS8xw
+        D1cBbYCyEp2aGWrQ4p6Y3OSIyakV6sk=
+Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] examples: disable ucontext-cp if ucontext.h is not
+ available
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   "Simon Zeni" <simon@bl4ckb0ne.ca>
+To:     "Jens Axboe" <axboe@kernel.dk>, <io-uring@vger.kernel.org>
+Date:   Wed, 28 Oct 2020 20:53:26 -0400
+Message-Id: <C6OYQ7AU7G3Z.2XB9LZ8CPC23V@gengar>
+In-Reply-To: <18887bed-0e96-5904-5bbd-147393e1eae5@kernel.dk>
+X-Spam-Score: 2.40
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/27/20 5:17 PM, Pavel Begunkov wrote:
-> Don't use a single struct for polls and poll remove requests, they have
-> totally different layout.
+On Wed Oct 28, 2020 at 12:33 PM EDT, Jens Axboe wrote:
+> It's been a while since I double checked 5.4-stable, I bet a lot of
+> these
+> are due to the tests not being very diligent in checking what is and
+> what
+> isn't supported. I'll take a look and rectify some of that.
 
-Applied for 5.11 - I renamed it to io_poll_remove instead, fwiw.
+I tried with 5.9.1 and fewer tests failed.
 
--- 
-Jens Axboe
+```
+Tests failed:  <defer> <double-poll-crash> <file-register>
+<io_uring_enter> <io_uring_register> <iopoll> <poll-cancel-ton>
+<read-write> <rename> <sq-poll-dup> <sq-poll-share> <unlink>
+```
 
+It might be due to musl, I'll as I use the library and send the
+necessary patches if needed.
+
+Simon

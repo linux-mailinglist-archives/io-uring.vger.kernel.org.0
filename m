@@ -2,81 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 881622A07FC
-	for <lists+io-uring@lfdr.de>; Fri, 30 Oct 2020 15:35:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 467FC2A0C20
+	for <lists+io-uring@lfdr.de>; Fri, 30 Oct 2020 18:09:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726662AbgJ3Ofq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 30 Oct 2020 10:35:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35508 "EHLO
+        id S1727279AbgJ3RJS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 30 Oct 2020 13:09:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbgJ3Ofq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Oct 2020 10:35:46 -0400
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67EA1C0613D4
-        for <io-uring@vger.kernel.org>; Fri, 30 Oct 2020 07:35:46 -0700 (PDT)
-Received: by mail-vs1-xe41.google.com with SMTP id h5so3522945vsp.3
-        for <io-uring@vger.kernel.org>; Fri, 30 Oct 2020 07:35:46 -0700 (PDT)
+        with ESMTP id S1727275AbgJ3RJS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Oct 2020 13:09:18 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD341C0613CF
+        for <io-uring@vger.kernel.org>; Fri, 30 Oct 2020 10:09:16 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id t22so3240744plr.9
+        for <io-uring@vger.kernel.org>; Fri, 30 Oct 2020 10:09:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=9fkQXWnoPSypfyxvIrXWSyd1r4Ua0eeDJczOBpIf/BU=;
-        b=Z+2LEfbBadAQzP3cuT/6buEtIEEX1Fk1hiBA2F5rrrmfnew1HCiYlE8qrEJe53M4nu
-         PlHgusIWPvsYBWi3CzMOxRKosH5jwxNnfDjJ6nI1s/rkolnq/miLvsoaera8K0eSw60H
-         vQS3MrgnSthQ6tFVOh6kCFAIAr6Fvp4KVZvVYgFi2ZGo9WM5QWbU5ptjJF74KI96Xnmd
-         zzO+hqzFOoOLSp69DiwPos0XzRv8oCrTjqQ46g027BWZUdwnPntBkyYYhvt7sRGG+dxT
-         Ya6xQAtM29ZwDPwFtt77+nx4X8oOglTIpfCJfiXV6lwGjcOHBsM7VeUcZh2Zp9i3sdMT
-         DaGA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=910WvRONJI7sMb4xpMJyZRy4K33DbUTdlqxf8AIGpUw=;
+        b=EoecKjImrBskaCUS70NmrLIvyf6eVkez5Ql0jqwreVYGInDHmVdE6sbXtzVqxR9CLg
+         GUrCrWbyWbflW/PSZB7FKPGdXDtmiQP8v+pCOqrWuL1gxybNgAIEZSRPV+ir0Jko3cdS
+         jNdKGDmKSvV/sb4FLhHbaDrkVQg5LZj8Wd0eeuy72j9NuXh8BNlRrTJtShVE1ZEy/g2/
+         jrc3vvZlJ1YiIOj7lMZ9Rxmly9TMajsntOgJvTqDOyrrLbZfI2h6c3Ot8Kcjf+YoYXL3
+         RGFjmDWj5qIHRCFN0qFU3KKzvON++GMnrEiXI/8LuueHXCxuldzCTECk4s9+1AEegKOY
+         L1xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=9fkQXWnoPSypfyxvIrXWSyd1r4Ua0eeDJczOBpIf/BU=;
-        b=LyFfvbO9BuXCvv9yw6gd2+sgZE17KmVHUGjd4HhwF+1u6gyPkfBdQX0PkZ0R/nmAJy
-         IccRMuPL945gJwEK6cwMz1s9k7if4hYxHSXezE2OcJsSW/x65syaQZZI5ienaJ+uyy+2
-         RGPHWWmdn9TCU10OBrJfrZd3LCPE+L2YAIDOSEjbyYgStse2BD4I8aYZ9Ajz7Sw4cng7
-         TVDQ76e5RrLCrWn4t8pO9q6xXlOeZ/8OUm7pJkChuY4OxA+bH6tr+XLgpgTfjq9m2DLP
-         goTsnxzc+6gu53ODS0V79pYN0lsxNVK00HalMx8/iDu7waZRwQzVi3E7IF8R3Rf2o1cY
-         Lbpg==
-X-Gm-Message-State: AOAM533TnE46Yi2Ue9yPbinhqjbH9N+n1dAEiINNLquxNYKkTRfBJ7Gt
-        /wgttZFPQm/W7IzlpigPOll3KQaSpKt/R2o7DiY=
-X-Google-Smtp-Source: ABdhPJzeX8sOkZtsnaJO0tZ0nvnXwhHPAc4yFgpKY6Kr+FCQZ3ulWWYbwl00d+TkwgIZGSdHE4J8QbvtA7Mi6HqsDgs=
-X-Received: by 2002:a67:8e02:: with SMTP id q2mr7658710vsd.32.1604068541198;
- Fri, 30 Oct 2020 07:35:41 -0700 (PDT)
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=910WvRONJI7sMb4xpMJyZRy4K33DbUTdlqxf8AIGpUw=;
+        b=LosquJ0NT/FbovTGyqj/xNfSYXyBQ/zCnOYhrnPuXotiVlzaLcTa1AadvPEpxzNQMp
+         2wgIx2uSjMd//myYxkc52aCnY4OpWVZipqWxm7W81A2Xtdzy7J+Ck5XjXlpmL8stqLp+
+         NZRw9uT+Hjnp3O5mDLyy6u2Kj+T/zHRYGVoB5a8hvtVE/KUUXTKVRn8xY/FPAYa5zv/i
+         GfAN+2bSrtvV6luLEHN72p1rkSadHX8sLXCS08bydTHHcgP4eowVGsciIovySnvs8wtO
+         OVWbOxVrP/kc/2Em1Zb9+oNxbsb28/l2Ty3f8nQSjhoJlkU7DY4IgTOq4wHOpyYeO6eH
+         sNFA==
+X-Gm-Message-State: AOAM5301AAbbim54xZmpccLHCuEgMoPd1YQYqhKLnaQbg7cE9v9f/FUO
+        j7q4HjimwG4ARuipynjFhr/HuA==
+X-Google-Smtp-Source: ABdhPJylISIfTFWeh9ADTXHddUZK2hUz0oYUW6sO9TtblxDUxDWhL0rQ22r9QrXCQOUfdC83NZPKpg==
+X-Received: by 2002:a17:902:7685:b029:d6:65a6:c70b with SMTP id m5-20020a1709027685b02900d665a6c70bmr9501461pll.30.1604077754654;
+        Fri, 30 Oct 2020 10:09:14 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c085:21cf::1547? ([2620:10d:c090:400::5:15c3])
+        by smtp.gmail.com with ESMTPSA id c10sm6304825pfc.196.2020.10.30.10.09.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Oct 2020 10:09:14 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.10-rc
+Message-ID: <394acda8-6cce-3cc9-5b5e-6b6f13851ef6@kernel.dk>
+Date:   Fri, 30 Oct 2020 11:09:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Received: by 2002:ab0:246:0:0:0:0:0 with HTTP; Fri, 30 Oct 2020 07:35:40 -0700 (PDT)
-Reply-To: li.anable85@gmail.com
-From:   Liliane Abel <k.griest0@gmail.com>
-Date:   Fri, 30 Oct 2020 15:35:40 +0100
-Message-ID: <CA+XH5AtwFCyH2hHaJf4hsty3pVdWQXEYDF673Yaz+GmEAFygrg@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Dearest
+Hi Linus,
 
-Greeting my dear, I am Liliane Abel by name, The only daughter of late
-Mr.Benson Abel. My father is one of the top Politician in our country
-and my mother is a farmers and cocoa merchant when they were both
-alive. After the death of my mother, long ago, my father was
-controlling their business until he was poisoned by his business
-associates which he suffered and died.
+Fixes that should go into this release:
 
-Before the death of my father, He told me about (two million five
-hundred thousand united states dollars) which he deposited in the bank
-in Lome-Togo, It was the money he intended to transfer overseas for
-investment before he was poisoned. He also instructed me that I should
-seek for foreign partners in any country of my choice who will assist
-me transfer this money in overseas account where the money will be
-wisely invested.
-I am seeking for your kind assistance in the following ways:  (1) to
-provide a safe bank account into where the money will be transferred
-for investment. (2) To serve as a guardian of this fund since I am a
-girl of 19 years old. (3) To make arrangement for me to come over to
-your country to further my education. This is my reason for writing to
-you. Please if you are willing to assist me I will offer you 25% of
-the total money. Reply if  you are interested
-Best regards.
-Liliane Abel.
+- Fixes for linked timeouts (Pavel)
+
+- Set IO_WQ_WORK_CONCURRENT early for async offload (Pavel)
+
+- Two minor simplifications that make the code easier to read and follow
+  (Pavel)
+
+Please pull!
+
+
+The following changes since commit ee6e00c868221f5f7d0b6eb4e8379a148e26bc20:
+
+  splice: change exported internal do_splice() helper to take kernel offset (2020-10-22 14:15:51 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.10-2020-10-30
+
+for you to fetch changes up to c8b5e2600a2cfa1cdfbecf151afd67aee227381d:
+
+  io_uring: use type appropriate io_kiocb handler for double poll (2020-10-25 13:53:26 -0600)
+
+----------------------------------------------------------------
+io_uring-5.10-2020-10-30
+
+----------------------------------------------------------------
+Jens Axboe (1):
+      io_uring: use type appropriate io_kiocb handler for double poll
+
+Pavel Begunkov (7):
+      io_uring: remove opcode check on ltimeout kill
+      io_uring: don't adjust LINK_HEAD in cancel ltimeout
+      io_uring: always clear LINK_TIMEOUT after cancel
+      io_uring: don't defer put of cancelled ltimeout
+      io_uring: don't miss setting IO_WQ_WORK_CONCURRENT
+      io_uring: simplify nxt propagation in io_queue_sqe
+      io_uring: simplify __io_queue_sqe()
+
+ fs/io_uring.c | 108 +++++++++++++++++++++-------------------------------------
+ 1 file changed, 38 insertions(+), 70 deletions(-)
+-- 
+Jens Axboe
+

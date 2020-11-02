@@ -2,214 +2,135 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 959272A31BE
-	for <lists+io-uring@lfdr.de>; Mon,  2 Nov 2020 18:38:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E72FD2A32E2
+	for <lists+io-uring@lfdr.de>; Mon,  2 Nov 2020 19:23:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725836AbgKBRil (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 2 Nov 2020 12:38:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50334 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727749AbgKBRij (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Nov 2020 12:38:39 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9EC7C061A47
-        for <io-uring@vger.kernel.org>; Mon,  2 Nov 2020 09:38:38 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id s10so1466332ioe.1
-        for <io-uring@vger.kernel.org>; Mon, 02 Nov 2020 09:38:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=XgHK+n73DGSjTlF4tReOQabxZrHP7prERV8ecq6Sut4=;
-        b=zjCJWGvRvEzzaS5KGlJUC1dFqwplLVJk01FNJYHeRqNkbT9zkXeL/ae9FSPhpyp1q0
-         nFn3GVmuHBfpz93h5PAflmCKQzU9LmiD0wZuY+IWuD1p+yQV/Lpdl8T/xukIcpeOF40T
-         nb2DsGZz0ffUJliV4/uN3XSrcPRI11fm+o/2+UZsYHDzdoHlzkT7F/XchGZEmpk9mXsB
-         oMcrMfPvAUPdUJF6XuZMg3TG6Xj97zvLFDCJRZN9eNkAKnMv/jzMrGTnZD5FWjF78GO1
-         h8QUgiawSnLNGi8qLiljhEoD5G1rK+YgIlNCHbrhx6S5M1s4g+QtZXEnL4ycaqbt8eYt
-         4tog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XgHK+n73DGSjTlF4tReOQabxZrHP7prERV8ecq6Sut4=;
-        b=imdeO2Ms10/eYOKjQtixbzwORQSvQTBjYwjZyUI214oScIuacALv0b0APM+iLamxp+
-         OroXu6fprifmC4L0MrWhXUHbt5OVNvyCQcOhyP2VnLyqX6gm6u4WVaoV80SeMTMIqbZ/
-         KWiGnu4Bd0fPELz6KUyeZjv+mtXt61OIlaraLiF4gFMAOvbwVvZkzkkx10BS5uTor/zk
-         QUNuJZaUU+zlbYOI9HD+9jwn2/sXg91qxQugOEB80bh+r4Bz8IkXE3m4UTccPp3zMe0f
-         LYeT5VGtWC9W3GT4sQ0NBsUYmO9+D38ViiOihBXYbPwc7TZzIMIVu4385jVBRLdI4Ogy
-         wfbw==
-X-Gm-Message-State: AOAM5314QSsEMzUsNjlMaa37fQ6xN0PujFwZovFbWV5e1PElfKq1RJ90
-        OiE4667M2p2eRv/Ru3KyKswRNg==
-X-Google-Smtp-Source: ABdhPJzLYKP4xBEydsBHfpr2/aVGTAX5oAa8OeKplgO09s2gpfHx4JJivnwZhV4NWx5yRt0KLomPpA==
-X-Received: by 2002:a05:6602:2c41:: with SMTP id x1mr11554294iov.58.1604338717964;
-        Mon, 02 Nov 2020 09:38:37 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id f203sm10313277ioa.23.2020.11.02.09.38.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Nov 2020 09:38:37 -0800 (PST)
-Subject: Re: KASAN: null-ptr-deref Write in kthread_use_mm
-To:     syzbot <syzbot+b57abf7ee60829090495@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, mingo@redhat.com,
-        peterz@infradead.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        will@kernel.org
-References: <00000000000008604f05b31e6867@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d74a8b22-bd5e-102f-e896-79e66b09a4a4@kernel.dk>
-Date:   Mon, 2 Nov 2020 10:38:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726348AbgKBSX0 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Mon, 2 Nov 2020 13:23:26 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:53570 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726337AbgKBSXR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Nov 2020 13:23:17 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-221-3eybHYmXNVuuSrMONPCpiQ-1; Mon, 02 Nov 2020 18:23:12 +0000
+X-MC-Unique: 3eybHYmXNVuuSrMONPCpiQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 2 Nov 2020 18:23:11 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 2 Nov 2020 18:23:11 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Greg KH' <gregkh@linuxfoundation.org>
+CC:     'David Hildenbrand' <david@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAASOeCgAF+12CAAB+UKYAAAQNg///yIQCAD2i/YIAAT+MAgABLYlA=
+Date:   Mon, 2 Nov 2020 18:23:11 +0000
+Message-ID: <c751d3a7796e45a8a2640e2ded59d708@AcuMS.aculab.com>
+References: <20201022121849.GA1664412@kroah.com>
+ <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
+ <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
+ <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
+ <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
+ <999e2926-9a75-72fd-007a-1de0af341292@redhat.com>
+ <35d0ec90ef4f4a35a75b9df7d791f719@AcuMS.aculab.com>
+ <20201023144718.GA2525489@kroah.com>
+ <0ab5ac71f28d459db2f350c2e07b88ca@AcuMS.aculab.com>
+ <20201102135202.GA1016272@kroah.com>
+In-Reply-To: <20201102135202.GA1016272@kroah.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-In-Reply-To: <00000000000008604f05b31e6867@google.com>
-Content-Type: text/plain; charset=utf-8
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/2/20 4:54 AM, syzbot wrote:
-> Hello,
+From: 'Greg KH'
+> Sent: 02 November 2020 13:52
 > 
-> syzbot found the following issue on:
+> On Mon, Nov 02, 2020 at 09:06:38AM +0000, David Laight wrote:
+> > From: 'Greg KH'
+> > > Sent: 23 October 2020 15:47
+> > >
+> > > On Fri, Oct 23, 2020 at 02:39:24PM +0000, David Laight wrote:
+> > > > From: David Hildenbrand
+> > > > > Sent: 23 October 2020 15:33
+> > > > ...
+> > > > > I just checked against upstream code generated by clang 10 and it
+> > > > > properly discards the upper 32bit via a mov w23 w2.
+> > > > >
+> > > > > So at least clang 10 indeed properly assumes we could have garbage and
+> > > > > masks it off.
+> > > > >
+> > > > > Maybe the issue is somewhere else, unrelated to nr_pages ... or clang 11
+> > > > > behaves differently.
+> > > >
+> > > > We'll need the disassembly from a failing kernel image.
+> > > > It isn't that big to hand annotate.
+> > >
+> > > I've worked around the merge at the moment in the android tree, but it
+> > > is still quite reproducable, and will try to get a .o file to
+> > > disassemble on Monday or so...
+> >
+> > Did this get properly resolved?
 > 
-> HEAD commit:    4e78c578 Add linux-next specific files for 20201030
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=148969d4500000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=83318758268dc331
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b57abf7ee60829090495
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e1346c500000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1388fbca500000
+> For some reason, 5.10-rc2 fixed all of this up.  I backed out all of the
+> patches I had to revert to get 5.10-rc1 to work properly, and then did
+> the merge and all is well.
 > 
-> The issue was bisected to:
-> 
-> commit 4d004099a668c41522242aa146a38cc4eb59cb1e
-> Author: Peter Zijlstra <peterz@infradead.org>
-> Date:   Fri Oct 2 09:04:21 2020 +0000
-> 
->     lockdep: Fix lockdep recursion
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1354e614500000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10d4e614500000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1754e614500000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b57abf7ee60829090495@syzkaller.appspotmail.com
-> Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
-> 
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
-> BUG: KASAN: null-ptr-deref in atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
-> BUG: KASAN: null-ptr-deref in mmgrab include/linux/sched/mm.h:36 [inline]
-> BUG: KASAN: null-ptr-deref in kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
-> Write of size 4 at addr 0000000000000060 by task io_uring-sq/26191
-> 
-> CPU: 1 PID: 26191 Comm: io_uring-sq Not tainted 5.10.0-rc1-next-20201030-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x107/0x163 lib/dump_stack.c:118
->  __kasan_report mm/kasan/report.c:549 [inline]
->  kasan_report.cold+0x5/0x37 mm/kasan/report.c:562
->  check_memory_region_inline mm/kasan/generic.c:186 [inline]
->  check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
->  instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
->  atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
->  mmgrab include/linux/sched/mm.h:36 [inline]
->  kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
->  __io_sq_thread_acquire_mm fs/io_uring.c:1092 [inline]
->  __io_sq_thread_acquire_mm+0x1c4/0x220 fs/io_uring.c:1085
->  io_sq_thread_acquire_mm_files.isra.0+0x125/0x180 fs/io_uring.c:1104
->  io_init_req fs/io_uring.c:6661 [inline]
->  io_submit_sqes+0x89d/0x25f0 fs/io_uring.c:6757
->  __io_sq_thread fs/io_uring.c:6904 [inline]
->  io_sq_thread+0x462/0x1630 fs/io_uring.c:6971
->  kthread+0x3af/0x4a0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-> ==================================================================
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 1 PID: 26191 Comm: io_uring-sq Tainted: G    B             5.10.0-rc1-next-20201030-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x107/0x163 lib/dump_stack.c:118
->  panic+0x306/0x73d kernel/panic.c:231
->  end_report+0x58/0x5e mm/kasan/report.c:106
->  __kasan_report mm/kasan/report.c:552 [inline]
->  kasan_report.cold+0xd/0x37 mm/kasan/report.c:562
->  check_memory_region_inline mm/kasan/generic.c:186 [inline]
->  check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
->  instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
->  atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
->  mmgrab include/linux/sched/mm.h:36 [inline]
->  kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
->  __io_sq_thread_acquire_mm fs/io_uring.c:1092 [inline]
->  __io_sq_thread_acquire_mm+0x1c4/0x220 fs/io_uring.c:1085
->  io_sq_thread_acquire_mm_files.isra.0+0x125/0x180 fs/io_uring.c:1104
->  io_init_req fs/io_uring.c:6661 [inline]
->  io_submit_sqes+0x89d/0x25f0 fs/io_uring.c:6757
->  __io_sq_thread fs/io_uring.c:6904 [inline]
->  io_sq_thread+0x462/0x1630 fs/io_uring.c:6971
->  kthread+0x3af/0x4a0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
+> It must have been something to do with the compat changes in this same
+> area that went in after 5.10-rc1, and something got reorganized in the
+> files somehow.  I really do not know, and at the moment, don't have the
+> time to track it down anymore.  So for now, I'd say it's all good, sorry
+> for the noise.
 
-I think this should fix it - we could _probably_ get by with a
-READ_ONCE() of the task mm for this case, but let's play it safe and
-lock down the task for a guaranteed consistent view of the current
-state.
+Hopefully it won't appear again.
 
+Saved me spending a day off reading arm64 assembler.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index dd2ee77feec6..610332f443bd 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -995,20 +995,33 @@ static void io_sq_thread_drop_mm(void)
- 	if (mm) {
- 		kthread_unuse_mm(mm);
- 		mmput(mm);
-+		current->mm = NULL;
- 	}
- }
- 
- static int __io_sq_thread_acquire_mm(struct io_ring_ctx *ctx)
- {
--	if (!current->mm) {
--		if (unlikely(!(ctx->flags & IORING_SETUP_SQPOLL) ||
--			     !ctx->sqo_task->mm ||
--			     !mmget_not_zero(ctx->sqo_task->mm)))
--			return -EFAULT;
--		kthread_use_mm(ctx->sqo_task->mm);
-+	struct mm_struct *mm;
-+
-+	if (current->mm)
-+		return 0;
-+
-+	/* Should never happen */
-+	if (unlikely(!(ctx->flags & IORING_SETUP_SQPOLL)))
-+		return -EFAULT;
-+
-+	task_lock(ctx->sqo_task);
-+	mm = ctx->sqo_task->mm;
-+	if (unlikely(!mm || !mmget_not_zero(mm)))
-+		mm = NULL;
-+	task_unlock(ctx->sqo_task);
-+
-+	if (mm) {
-+		kthread_use_mm(mm);
-+		return 0;
- 	}
- 
--	return 0;
-+	return -EFAULT;
- }
- 
- static int io_sq_thread_acquire_mm(struct io_ring_ctx *ctx,
+	David
 
--- 
-Jens Axboe
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 

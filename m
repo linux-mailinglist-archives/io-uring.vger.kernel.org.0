@@ -2,98 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 266882A2DFA
-	for <lists+io-uring@lfdr.de>; Mon,  2 Nov 2020 16:19:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5FCA2A2FCC
+	for <lists+io-uring@lfdr.de>; Mon,  2 Nov 2020 17:28:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbgKBPTc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 2 Nov 2020 10:19:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56484 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726110AbgKBPTc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Nov 2020 10:19:32 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0187C061A04
-        for <io-uring@vger.kernel.org>; Mon,  2 Nov 2020 07:19:31 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id r12so6266344iot.4
-        for <io-uring@vger.kernel.org>; Mon, 02 Nov 2020 07:19:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=49FGBKLX9bjRkUIwwFYH04GGaHdzd9ual/GUV3gPQsU=;
-        b=Z9YjdCoMGxgXi8OKp7mMzKofIUTxG3aaghQ4KuqjZoIQ60iQ+0AYAk4pbEYrkhQcas
-         bXSwZ/8q078axG1lyreFsisJspjsS8TaRGqNXNQzwEyl2zQ0hcXbeC4QQnY2CU4Jn4SF
-         MGC76YUNUkvOpZG75zKiBAZK+WsXAlkA8TBxVoDjDHVqpX2iqoZX7JcTODvb0zWJcOfP
-         0LIWCB0MuKEE/QXc9CEMOFBc/cHAywmV5m5N3iYb0UR2TyM5uCt12h13ufNOHTaJ3IAw
-         iGYTFgGQBsQDt08aCfCpvOjMZ2QdexJOMXveQliBvzaI7dQKYNGn7CM663YM2Py0oVRc
-         IZpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=49FGBKLX9bjRkUIwwFYH04GGaHdzd9ual/GUV3gPQsU=;
-        b=rlKhVR8mMBTrht1P238NwpbOpWfSXfLDlBYbF2+zpglp8TKnunL5zDh/kLI8IWbX+m
-         r+vDVrAReqJB1533snclMuJCDzHPj5kP2nuRsb1CkahexxR5Fr6DRL83oyzalwuCiKbj
-         So7QQDUkn6nDGnfGQtE2TxF3u6WFo8vqxz1lWPDrZEqA+OYTWK5cvCT6rQvZjY13tlrj
-         tMluMcU7YiXyzbrpKp3G7m7IAbd4AftKbtej4o+VHuy5FEzHIzVG5Z9tJsiD47HNru82
-         BX11A8JdMwyG40RMabgyWAlg72lKtBp09q1+5vrnH/XVChNFjsgpZOjNL/Bm4Zdnb/WI
-         4/pw==
-X-Gm-Message-State: AOAM530LL4W9RHGEEdSq1xL9C5/vTQILWhHo6S4TctixKSxIX2zdHOQn
-        HooYX2I05l6CObL9qtaxodMtZA==
-X-Google-Smtp-Source: ABdhPJxpku+l31t6D5PSG3BnC/0CVXqaptAeWUb/56zYbW0Bbd3pGxC590t1qtuOaZ58Q1B35gotfw==
-X-Received: by 2002:a6b:6806:: with SMTP id d6mr10963958ioc.54.1604330371135;
-        Mon, 02 Nov 2020 07:19:31 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t16sm10775048ilh.76.2020.11.02.07.19.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Nov 2020 07:19:30 -0800 (PST)
-Subject: Re: KASAN: null-ptr-deref Write in kthread_use_mm
-To:     syzbot <syzbot+b57abf7ee60829090495@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, mingo@redhat.com,
-        peterz@infradead.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        will@kernel.org
-References: <00000000000008604f05b31e6867@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <298f1180-ab14-d08e-dcd2-3e4bbbc1e90a@kernel.dk>
-Date:   Mon, 2 Nov 2020 08:19:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726868AbgKBQ24 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 2 Nov 2020 11:28:56 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:53916 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726795AbgKBQ24 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Nov 2020 11:28:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1604334535;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZPIZCN+l/z1LBcTIqXH+625Dr2hdY3RdIvanAI2iRP8=;
+        b=VGMV8ZPwbvLZySmMxXbdAo5UJb0ojXDVA0pk3flNsIOXn0ujwODsaLlZIbx4JdKb3NGIAS
+        9aeWI4HgwWLlo32WS/jw+fUUlt18qQPgFtpcSWJQ2K/gqrRo4QLgL2NVOGKebXKmMID35D
+        +TQSmx3EEPxiXIibo1eTN1DNe4MJEIo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-16-8pqwr9pZPbKG7B4yFYPvVw-1; Mon, 02 Nov 2020 11:28:53 -0500
+X-MC-Unique: 8pqwr9pZPbKG7B4yFYPvVw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C6D182FD0D;
+        Mon,  2 Nov 2020 16:28:51 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8A8AA55766;
+        Mon,  2 Nov 2020 16:28:48 +0000 (UTC)
+Date:   Mon, 2 Nov 2020 10:28:23 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org, dm-devel@redhat.com,
+        joseph.qi@linux.alibaba.com, xiaoguang.wang@linux.alibaba.com,
+        haoxu@linux.alibaba.com, io-uring@vger.kernel.org
+Subject: Re: [RFC 0/3] Add support of iopoll for dm device
+Message-ID: <20201102152822.GA20466@redhat.com>
+References: <20201020065420.124885-1-jefflexu@linux.alibaba.com>
+ <20201021203906.GA10896@redhat.com>
+ <da936cfa-93a8-d6ec-bd88-c0fad6c67c8b@linux.alibaba.com>
+ <20201026185334.GA8463@redhat.com>
+ <33c32cd1-5116-9a42-7fe2-b2a383f1c7a0@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <00000000000008604f05b31e6867@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <33c32cd1-5116-9a42-7fe2-b2a383f1c7a0@linux.alibaba.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/2/20 4:54 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4e78c578 Add linux-next specific files for 20201030
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=148969d4500000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=83318758268dc331
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b57abf7ee60829090495
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e1346c500000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1388fbca500000
-> 
-> The issue was bisected to:
-> 
-> commit 4d004099a668c41522242aa146a38cc4eb59cb1e
-> Author: Peter Zijlstra <peterz@infradead.org>
-> Date:   Fri Oct 2 09:04:21 2020 +0000
-> 
->     lockdep: Fix lockdep recursion
+On Sun, Nov 01 2020 at 10:14pm -0500,
+JeffleXu <jefflexu@linux.alibaba.com> wrote:
 
-That bisection definitely isn't correct. But I'll take a look at the issue.
+> 
+> On 10/27/20 2:53 AM, Mike Snitzer wrote:
+> >What you detailed there isn't properly modeling what it needs to.
+> >A given dm_target_io could result in quite a few bios (e.g. for
+> >dm-striped we clone each bio for each of N stripes).  So the fan-out,
+> >especially if then stacked on N layers of stacked devices, to all the
+> >various hctx at the lowest layers is like herding cats.
+> >
+> >But the recursion in block core's submit_bio path makes that challenging
+> >to say the least.  So much so that any solution related to enabling
+> >proper bio-based IO polling is going to need a pretty significant
+> >investment in fixing block core (storing __submit_bio()'s cookie during
+> >recursion, possibly storing to driver provided memory location,
+> >e.g. DM initialized bio->submit_cookie pointer to a blk_qc_t within a DM
+> >clone bio's per-bio-data).
+> >
+> >SO __submit_bio_noacct would become:
+> >
+> >    retp = &ret;
+> >    if (bio->submit_cookie)
+> >           retp = bio->submit_cookie;
+> >    *retp = __submit_bio(bio);
+> 
+> Sorry for the late reply. Exactly I missed this point before. IF you
+> have not started working on this, I'd like to try to implement this as
+> an RFC.
 
--- 
-Jens Axboe
+I did start on this line of development but it needs quite a bit more
+work.  Even the pseudo code I provided above isn't useful in the context
+of DM clone bios that have their own per-bio-data to assist with this
+implementation.  Because the __submit_bio_noacct() recursive call
+drivers/md/dm.c:__split_and_process_bio() makes is supplying the
+original bio (modified to only point to remaining work).
+
+But sure, I'm not opposed to you carrying this line of work forward.  I
+can always lend a hand if you need help later or if you need to hand it
+off to me.
+
+> >I think you probably just got caught out by the recursive nature of the bio
+> >submission path -- makes creating a graph of submitted bios and their
+> >associated per-bio-data and generated cookies a mess to track (again,
+> >like herding cats).
+> >
+> >Could also be you didn't quite understand the DM code's various
+> >structures.
+> >
+> >In any case, the block core changes needed to make bio-based IO polling
+> >work is the main limiting factor right now.
+>
+> Yes the logic is kind of subtle and maybe what I'm concerned here is
+> really should be concerned at the coding phase.
+
+Definitely, lots of little details and associations.
+
+Mike
 

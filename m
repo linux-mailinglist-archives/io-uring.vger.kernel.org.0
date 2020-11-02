@@ -2,112 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ED7D2A2BFB
-	for <lists+io-uring@lfdr.de>; Mon,  2 Nov 2020 14:51:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 266882A2DFA
+	for <lists+io-uring@lfdr.de>; Mon,  2 Nov 2020 16:19:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725835AbgKBNvM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 2 Nov 2020 08:51:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbgKBNvK (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 2 Nov 2020 08:51:10 -0500
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C0442231B;
-        Mon,  2 Nov 2020 13:51:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604325067;
-        bh=9qIUbE3lwH4ZvgtTC9bbV3+9hXUEaYm6WiiqQ4WE/Co=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rpbg/1lEiVgNn9Ysvs/9LknHZYACC7zXQOCGCw264IRu8ax1gLK6WH9zSjr+uRe43
-         j5PkmmIzKYvzuR6uPdj0UxdnGNyDn2tiAsnr4m+Rc6wtDwZreVMVedmDOCqs8DpK24
-         uLH4O6s20Bi63bMTeguJmmwdpc+o+rm+otUlIokQ=
-Date:   Mon, 2 Nov 2020 14:52:02 +0100
-From:   'Greg KH' <gregkh@linuxfoundation.org>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     'David Hildenbrand' <david@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201102135202.GA1016272@kroah.com>
-References: <20201022121849.GA1664412@kroah.com>
- <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
- <20201022125759.GA1685526@kroah.com>
- <20201022135036.GA1787470@kroah.com>
- <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
- <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
- <999e2926-9a75-72fd-007a-1de0af341292@redhat.com>
- <35d0ec90ef4f4a35a75b9df7d791f719@AcuMS.aculab.com>
- <20201023144718.GA2525489@kroah.com>
- <0ab5ac71f28d459db2f350c2e07b88ca@AcuMS.aculab.com>
+        id S1726070AbgKBPTc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 2 Nov 2020 10:19:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726110AbgKBPTc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Nov 2020 10:19:32 -0500
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0187C061A04
+        for <io-uring@vger.kernel.org>; Mon,  2 Nov 2020 07:19:31 -0800 (PST)
+Received: by mail-io1-xd42.google.com with SMTP id r12so6266344iot.4
+        for <io-uring@vger.kernel.org>; Mon, 02 Nov 2020 07:19:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=49FGBKLX9bjRkUIwwFYH04GGaHdzd9ual/GUV3gPQsU=;
+        b=Z9YjdCoMGxgXi8OKp7mMzKofIUTxG3aaghQ4KuqjZoIQ60iQ+0AYAk4pbEYrkhQcas
+         bXSwZ/8q078axG1lyreFsisJspjsS8TaRGqNXNQzwEyl2zQ0hcXbeC4QQnY2CU4Jn4SF
+         MGC76YUNUkvOpZG75zKiBAZK+WsXAlkA8TBxVoDjDHVqpX2iqoZX7JcTODvb0zWJcOfP
+         0LIWCB0MuKEE/QXc9CEMOFBc/cHAywmV5m5N3iYb0UR2TyM5uCt12h13ufNOHTaJ3IAw
+         iGYTFgGQBsQDt08aCfCpvOjMZ2QdexJOMXveQliBvzaI7dQKYNGn7CM663YM2Py0oVRc
+         IZpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=49FGBKLX9bjRkUIwwFYH04GGaHdzd9ual/GUV3gPQsU=;
+        b=rlKhVR8mMBTrht1P238NwpbOpWfSXfLDlBYbF2+zpglp8TKnunL5zDh/kLI8IWbX+m
+         r+vDVrAReqJB1533snclMuJCDzHPj5kP2nuRsb1CkahexxR5Fr6DRL83oyzalwuCiKbj
+         So7QQDUkn6nDGnfGQtE2TxF3u6WFo8vqxz1lWPDrZEqA+OYTWK5cvCT6rQvZjY13tlrj
+         tMluMcU7YiXyzbrpKp3G7m7IAbd4AftKbtej4o+VHuy5FEzHIzVG5Z9tJsiD47HNru82
+         BX11A8JdMwyG40RMabgyWAlg72lKtBp09q1+5vrnH/XVChNFjsgpZOjNL/Bm4Zdnb/WI
+         4/pw==
+X-Gm-Message-State: AOAM530LL4W9RHGEEdSq1xL9C5/vTQILWhHo6S4TctixKSxIX2zdHOQn
+        HooYX2I05l6CObL9qtaxodMtZA==
+X-Google-Smtp-Source: ABdhPJxpku+l31t6D5PSG3BnC/0CVXqaptAeWUb/56zYbW0Bbd3pGxC590t1qtuOaZ58Q1B35gotfw==
+X-Received: by 2002:a6b:6806:: with SMTP id d6mr10963958ioc.54.1604330371135;
+        Mon, 02 Nov 2020 07:19:31 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id t16sm10775048ilh.76.2020.11.02.07.19.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Nov 2020 07:19:30 -0800 (PST)
+Subject: Re: KASAN: null-ptr-deref Write in kthread_use_mm
+To:     syzbot <syzbot+b57abf7ee60829090495@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, mingo@redhat.com,
+        peterz@infradead.org, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        will@kernel.org
+References: <00000000000008604f05b31e6867@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <298f1180-ab14-d08e-dcd2-3e4bbbc1e90a@kernel.dk>
+Date:   Mon, 2 Nov 2020 08:19:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0ab5ac71f28d459db2f350c2e07b88ca@AcuMS.aculab.com>
+In-Reply-To: <00000000000008604f05b31e6867@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Nov 02, 2020 at 09:06:38AM +0000, David Laight wrote:
-> From: 'Greg KH'
-> > Sent: 23 October 2020 15:47
-> > 
-> > On Fri, Oct 23, 2020 at 02:39:24PM +0000, David Laight wrote:
-> > > From: David Hildenbrand
-> > > > Sent: 23 October 2020 15:33
-> > > ...
-> > > > I just checked against upstream code generated by clang 10 and it
-> > > > properly discards the upper 32bit via a mov w23 w2.
-> > > >
-> > > > So at least clang 10 indeed properly assumes we could have garbage and
-> > > > masks it off.
-> > > >
-> > > > Maybe the issue is somewhere else, unrelated to nr_pages ... or clang 11
-> > > > behaves differently.
-> > >
-> > > We'll need the disassembly from a failing kernel image.
-> > > It isn't that big to hand annotate.
-> > 
-> > I've worked around the merge at the moment in the android tree, but it
-> > is still quite reproducable, and will try to get a .o file to
-> > disassemble on Monday or so...
+On 11/2/20 4:54 AM, syzbot wrote:
+> Hello,
 > 
-> Did this get properly resolved?
+> syzbot found the following issue on:
+> 
+> HEAD commit:    4e78c578 Add linux-next specific files for 20201030
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=148969d4500000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=83318758268dc331
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b57abf7ee60829090495
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e1346c500000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1388fbca500000
+> 
+> The issue was bisected to:
+> 
+> commit 4d004099a668c41522242aa146a38cc4eb59cb1e
+> Author: Peter Zijlstra <peterz@infradead.org>
+> Date:   Fri Oct 2 09:04:21 2020 +0000
+> 
+>     lockdep: Fix lockdep recursion
 
-For some reason, 5.10-rc2 fixed all of this up.  I backed out all of the
-patches I had to revert to get 5.10-rc1 to work properly, and then did
-the merge and all is well.
+That bisection definitely isn't correct. But I'll take a look at the issue.
 
-It must have been something to do with the compat changes in this same
-area that went in after 5.10-rc1, and something got reorganized in the
-files somehow.  I really do not know, and at the moment, don't have the
-time to track it down anymore.  So for now, I'd say it's all good, sorry
-for the noise.
+-- 
+Jens Axboe
 
-greg k-h

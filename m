@@ -2,88 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C35EA2A3986
-	for <lists+io-uring@lfdr.de>; Tue,  3 Nov 2020 02:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A127B2A3A1F
+	for <lists+io-uring@lfdr.de>; Tue,  3 Nov 2020 02:57:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbgKCB0N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 2 Nov 2020 20:26:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727839AbgKCBTk (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 2 Nov 2020 20:19:40 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E702222B9;
-        Tue,  3 Nov 2020 01:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604366380;
-        bh=tmhYmKVVWDqUgBs9mXJum1MbwD2MM8BbPYOJUHh2uR8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qpi6b5DZlDVgG/FEAq9zBtx2pKp7syodsIrNRLr+bfoU9mBA0aGz7FcP1PPPDZWw5
-         9H6OZpYaktnZDVhXmwnKZ2q/UmWFxd9Rr3jr+Mtqx5grNW2bdCmxay4R30UHgLksd9
-         jjCFtPOpGQHCrOSgAWnZvQK9ORRS8718l8Vyu39I=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 08/29] io_uring: don't miss setting IO_WQ_WORK_CONCURRENT
-Date:   Mon,  2 Nov 2020 20:19:07 -0500
-Message-Id: <20201103011928.183145-8-sashal@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201103011928.183145-1-sashal@kernel.org>
-References: <20201103011928.183145-1-sashal@kernel.org>
+        id S1726026AbgKCB5E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 2 Nov 2020 20:57:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbgKCB5E (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Nov 2020 20:57:04 -0500
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EBA0C0617A6
+        for <io-uring@vger.kernel.org>; Mon,  2 Nov 2020 17:57:04 -0800 (PST)
+Received: by mail-io1-xd32.google.com with SMTP id y20so16968840iod.5
+        for <io-uring@vger.kernel.org>; Mon, 02 Nov 2020 17:57:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=K2+w9lnacbTj3CLBvrfgcpo1ooz+4moD9HUJzV2bOe0=;
+        b=FIfyrfahLR/iB+6ZbMkoD/OIu8c+1xKUF8YOZbdrQbZwSPh/VfL0VuWa8w0p5xIkfB
+         u2PbI5Pxh4dpWlsuFscAmUpzJRHUqQsZeI+253n1sMpghwsCCgVhPYQBrdKp9HJCIzIs
+         /DAiScCbxbD96bZxgYkBLm2lPUpm5lB1mgZhVKicyQMHrCq8DSW6tBJxewR7tp+8CF+m
+         PE5lvE6B5bjHY3LwLikOOW+IvlmqYLXV4ZCFOxX6Bu8rNN4ZPohBTaVRlQz5zD0GbQoh
+         +eMeSp6qbmT/8OCDi0mYbCwwqhm/PY2H0wrZUw5Oiqj+znb8N/DVGKqKCfVz1ReA0YAr
+         0dnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=K2+w9lnacbTj3CLBvrfgcpo1ooz+4moD9HUJzV2bOe0=;
+        b=DEXQfmULBf0QeeDqNvki6MxhYitxM0gwRsqQeiMbL7s8WVUOmPkU1hj6K9UPAhPeTN
+         3an0eZMErt39Ne0bmBApxC7gvomG8kQ1xJxdAW+Ib9UfwY71xDoCyuF6CyJQkW2Q0gTK
+         KZVxeqRRr584ZTUaJMABtN51KEpvtR6y/yh8XU1u5fDouoekrN+WkUw+qGJXqobkHrYV
+         bNisMFSGKDo9C7Ev5Xodc9P+uci9fxTrHMv5OY/YNCwKqOo9OWdgQm3M6fjYzUuluFX8
+         Hw5OG8s+8TI/XFjnQOEymv0RUMBaY5oK6byylRkswWUI4Xe5qUeOcV9TQGrwMXzBsoyD
+         A0NA==
+X-Gm-Message-State: AOAM530ck9mlw4fk3eT03TpNSJw5Zvx5xLfQTBsYTrFR2JDNB4gwN6ie
+        Ls/wvPBCl/weq9f6dL5/iHgYb9gg8XE=
+X-Google-Smtp-Source: ABdhPJyqjP9fkCXKB1mEVhhKbuyQbBil+5AoecrsFZ2gVULlAPOwKZPAU0skgFY1dK59D3bG53W7uA==
+X-Received: by 2002:a02:228c:: with SMTP id o134mr13840232jao.56.1604368623593;
+        Mon, 02 Nov 2020 17:57:03 -0800 (PST)
+Received: from Davids-MacBook-Pro.local ([2601:282:803:7700:4ca9:ddcf:e3b:9c54])
+        by smtp.googlemail.com with ESMTPSA id o23sm7344026iob.47.2020.11.02.17.57.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Nov 2020 17:57:03 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+From:   David Ahern <dsahern@gmail.com>
+Subject: io-uring and tcp sockets
+Message-ID: <5324a8ca-bd5c-0599-d4d3-1e837338a7b5@gmail.com>
+Date:   Mon, 2 Nov 2020 18:56:59 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.12.1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+Hi:
 
-[ Upstream commit feaadc4fc2ebdbd53ffed1735077725855a2af53 ]
+New to io_uring but can't find this answer online, so reaching out.
 
-Set IO_WQ_WORK_CONCURRENT for all REQ_F_FORCE_ASYNC requests, do that in
-that is also looks better.
+I was trying out io_uring with netperf - tcp stream sockets - and
+noticed a submission is called complete even with a partial send
+(io_send(), ret < sr->len). Saving the offset of what succeeded (plus
+some other adjustments) and retrying the sqe again solves the problem.
+But the issue seems fundamental so wondering if is intentional?
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 8e9c58fa76362..d84eb0cc49ee4 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1089,6 +1089,9 @@ static inline void io_prep_async_work(struct io_kiocb *req,
- 
- 	io_req_init_async(req);
- 
-+	if (req->flags & REQ_F_FORCE_ASYNC)
-+		req->work.flags |= IO_WQ_WORK_CONCURRENT;
-+
- 	if (req->flags & REQ_F_ISREG) {
- 		if (def->hash_reg_file)
- 			io_wq_hash_work(&req->work, file_inode(req->file));
-@@ -5876,13 +5879,6 @@ static void io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 			if (unlikely(ret < 0))
- 				goto fail_req;
- 		}
--
--		/*
--		 * Never try inline submit of IOSQE_ASYNC is set, go straight
--		 * to async execution.
--		 */
--		io_req_init_async(req);
--		req->work.flags |= IO_WQ_WORK_CONCURRENT;
- 		io_queue_async_work(req);
- 	} else {
- 		__io_queue_sqe(req, sqe);
--- 
-2.27.0
-
+Thanks,
+David

@@ -2,25 +2,25 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DD7F2A3CB2
-	for <lists+io-uring@lfdr.de>; Tue,  3 Nov 2020 07:16:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F302A3CB1
+	for <lists+io-uring@lfdr.de>; Tue,  3 Nov 2020 07:16:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbgKCGQO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1727428AbgKCGQO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Tue, 3 Nov 2020 01:16:14 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:51730 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727308AbgKCGQO (ORCPT
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:47914 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726337AbgKCGQO (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 3 Nov 2020 01:16:14 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R571e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UE3fUMv_1604384161;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UE3fUMv_1604384161)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R461e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UE3fUN3_1604384162;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UE3fUN3_1604384162)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 03 Nov 2020 14:16:01 +0800
+          Tue, 03 Nov 2020 14:16:02 +0800
 From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 To:     io-uring@vger.kernel.org
 Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-Subject: [PATCH v2 1/2] io_uring: refactor io_sq_thread() handling
-Date:   Tue,  3 Nov 2020 14:15:59 +0800
-Message-Id: <20201103061600.11053-2-xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH v2 2/2] io_uring: support multiple rings to share same poll thread by specifying same cpu
+Date:   Tue,  3 Nov 2020 14:16:00 +0800
+Message-Id: <20201103061600.11053-3-xiaoguang.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20201103061600.11053-1-xiaoguang.wang@linux.alibaba.com>
 References: <20201103061600.11053-1-xiaoguang.wang@linux.alibaba.com>
@@ -28,314 +28,284 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There are some issues about current io_sq_thread() implementation:
-  1. The prepare_to_wait() usage in __io_sq_thread() is weird. If
-multiple ctxs share one same poll thread, one ctx will put poll thread
-in TASK_INTERRUPTIBLE, but if other ctxs have work to do, we don't
-need to change task's stat at all. I think only if all ctxs don't have
-work to do, we can do it.
-  2. We use round-robin strategy to make multiple ctxs share one same
-poll thread, but there are various condition in __io_sq_thread(), which
-seems complicated and may affect round-robin strategy.
+We have already supported multiple rings to share one same poll thread
+by passing IORING_SETUP_ATTACH_WQ, but it's not that convenient to use.
+IORING_SETUP_ATTACH_WQ needs users to ensure that a parent ring instance
+has already existed, that means it will require app to regulate the
+creation oder between uring instances.
 
-To improve above issues, I take below actions:
-  1. If multiple ctxs share one same poll thread, only if all all ctxs
-don't have work to do, we can call prepare_to_wait() and schedule() to
-make poll thread enter sleep state.
-  2. To make round-robin strategy more straight, I simplify
-__io_sq_thread() a bit, it just does io poll and sqes submit work once,
-does not check various condition.
-  3. For multiple ctxs share one same poll thread, we choose the biggest
-sq_thread_idle among these ctxs as timeout condition, and will update
-it when ctx is in or out.
-  4. Not need to check EBUSY especially, if io_submit_sqes() returns
-EBUSY, IORING_SQ_CQ_OVERFLOW should be set, helper in liburing should
-be aware of cq overflow and enters kernel to flush work.
+Currently we can make this a bit simpler, for those rings which will
+have SQPOLL enabled and are willing to be bound to one same cpu, add a
+capability that these rings can share one poll thread by specifying
+a new IORING_SETUP_SQPOLL_PERCPU flag, then we have 3 cases
+  1, IORING_SETUP_ATTACH_WQ: if user specifies this flag, we'll always
+try to attach this ring to an existing ring's corresponding poll thread,
+no matter whether IORING_SETUP_SQ_AFF or IORING_SETUP_SQPOLL_PERCPU is
+set.
+  2, IORING_SETUP_SQ_AFF and IORING_SETUP_SQPOLL_PERCPU are both enabled,
+for this case, we'll create a single poll thread to be shared by these
+rings, and this poll thread is bound to a fixed cpu.
+  3, for any other cases, we'll just create one new poll thread for the
+corresponding ring.
+
+And for case 2, don't need to regulate creation oder of multiple uring
+instances, we use a mutex to synchronize creation, for example, say five
+rings which all have IORING_SETUP_SQ_AFF & IORING_SETUP_SQPOLL_PERCPU
+enabled, and are willing to be bound same cpu, one ring that gets the
+mutex lock will create one poll thread, the other four rings will just
+attach themselves the previous created poll thread once they get lock
+successfully.
+
+To implement above function, define a percpu io_sq_data array:
+    static struct io_sq_data __percpu **percpu_sqd;
+When IORING_SETUP_SQ_AFF and IORING_SETUP_SQPOLL_PERCPU are both enabled,
+we will use struct io_uring_params' sq_thread_cpu to locate corresponding
+sqd, and use this sqd to save poll thread info.
 
 Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 ---
- fs/io_uring.c | 169 ++++++++++++++++++++------------------------------
- 1 file changed, 67 insertions(+), 102 deletions(-)
+ fs/io_uring.c                 | 123 ++++++++++++++++++++++++++++------
+ include/uapi/linux/io_uring.h |   1 +
+ 2 files changed, 102 insertions(+), 22 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index badd8e70a10e..e9cde444b34d 100644
+index e9cde444b34d..2ff8ed93a400 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -244,6 +244,8 @@ struct io_sq_data {
- 
- 	struct task_struct	*thread;
+@@ -246,8 +246,12 @@ struct io_sq_data {
  	struct wait_queue_head	wait;
-+
-+	unsigned		sq_thread_idle;
+ 
+ 	unsigned		sq_thread_idle;
++	unsigned		sq_thread_cpu;
  };
  
++static DEFINE_MUTEX(percpu_sqd_lock);
++static struct io_sq_data __percpu **percpu_sqd;
++
  struct io_ring_ctx {
-@@ -309,7 +311,6 @@ struct io_ring_ctx {
- 	struct io_sq_data	*sq_data;	/* if using sq thread polling */
- 
- 	struct wait_queue_head	sqo_sq_wait;
--	struct wait_queue_entry	sqo_wait_entry;
- 	struct list_head	sqd_list;
- 
- 	/*
-@@ -6828,111 +6829,49 @@ static inline void io_ring_clear_wakeup_flag(struct io_ring_ctx *ctx)
- 	spin_unlock_irq(&ctx->completion_lock);
+ 	struct {
+ 		struct percpu_ref	refs;
+@@ -7175,8 +7179,17 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 	return 0;
  }
  
--static int io_sq_wake_function(struct wait_queue_entry *wqe, unsigned mode,
--			       int sync, void *key)
--{
--	struct io_ring_ctx *ctx = container_of(wqe, struct io_ring_ctx, sqo_wait_entry);
--	int ret;
--
--	ret = autoremove_wake_function(wqe, mode, sync, key);
--	if (ret) {
--		unsigned long flags;
--
--		spin_lock_irqsave(&ctx->completion_lock, flags);
--		ctx->rings->sq_flags &= ~IORING_SQ_NEED_WAKEUP;
--		spin_unlock_irqrestore(&ctx->completion_lock, flags);
--	}
--	return ret;
--}
--
--enum sq_ret {
--	SQT_IDLE	= 1,
--	SQT_SPIN	= 2,
--	SQT_DID_WORK	= 4,
--};
--
--static enum sq_ret __io_sq_thread(struct io_ring_ctx *ctx,
--				  unsigned long start_jiffies, bool cap_entries)
-+static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
+-static void io_put_sq_data(struct io_sq_data *sqd)
++static void io_put_sq_data(struct io_ring_ctx *ctx, struct io_sq_data *sqd)
  {
--	unsigned long timeout = start_jiffies + ctx->sq_thread_idle;
--	struct io_sq_data *sqd = ctx->sq_data;
- 	unsigned int to_submit;
- 	int ret = 0;
++	int percpu = 0;
++
++	if ((ctx->flags & IORING_SETUP_SQ_AFF) &&
++	    (ctx->flags & IORING_SETUP_SQPOLL_PERCPU))
++		percpu = 1;
++
++	if (percpu)
++		mutex_lock(&percpu_sqd_lock);
++
+ 	if (refcount_dec_and_test(&sqd->refs)) {
+ 		/*
+ 		 * The park is a bit of a work-around, without it we get
+@@ -7188,8 +7201,13 @@ static void io_put_sq_data(struct io_sq_data *sqd)
+ 			kthread_stop(sqd->thread);
+ 		}
  
--again:
- 	if (!list_empty(&ctx->iopoll_list)) {
- 		unsigned nr_events = 0;
- 
- 		mutex_lock(&ctx->uring_lock);
--		if (!list_empty(&ctx->iopoll_list) && !need_resched())
-+		if (!list_empty(&ctx->iopoll_list))
- 			io_do_iopoll(ctx, &nr_events, 0);
- 		mutex_unlock(&ctx->uring_lock);
++		if (percpu)
++			*per_cpu_ptr(percpu_sqd, sqd->sq_thread_cpu) = NULL;
+ 		kfree(sqd);
  	}
++
++	if (percpu)
++		mutex_unlock(&percpu_sqd_lock);
+ }
  
- 	to_submit = io_sqring_entries(ctx);
--
--	/*
--	 * If submit got -EBUSY, flag us as needing the application
--	 * to enter the kernel to reap and flush events.
--	 */
--	if (!to_submit || ret == -EBUSY || need_resched()) {
--		/*
--		 * Drop cur_mm before scheduling, we can't hold it for
--		 * long periods (or over schedule()). Do this before
--		 * adding ourselves to the waitqueue, as the unuse/drop
--		 * may sleep.
--		 */
--		io_sq_thread_drop_mm_files();
--
--		/*
--		 * We're polling. If we're within the defined idle
--		 * period, then let us spin without work before going
--		 * to sleep. The exception is if we got EBUSY doing
--		 * more IO, we should wait for the application to
--		 * reap events and wake us up.
--		 */
--		if (!list_empty(&ctx->iopoll_list) || need_resched() ||
--		    (!time_after(jiffies, timeout) && ret != -EBUSY &&
--		    !percpu_ref_is_dying(&ctx->refs)))
--			return SQT_SPIN;
--
--		prepare_to_wait(&sqd->wait, &ctx->sqo_wait_entry,
--					TASK_INTERRUPTIBLE);
--
--		/*
--		 * While doing polled IO, before going to sleep, we need
--		 * to check if there are new reqs added to iopoll_list,
--		 * it is because reqs may have been punted to io worker
--		 * and will be added to iopoll_list later, hence check
--		 * the iopoll_list again.
--		 */
--		if ((ctx->flags & IORING_SETUP_IOPOLL) &&
--		    !list_empty_careful(&ctx->iopoll_list)) {
--			finish_wait(&sqd->wait, &ctx->sqo_wait_entry);
--			goto again;
--		}
--
--		to_submit = io_sqring_entries(ctx);
--		if (!to_submit || ret == -EBUSY)
--			return SQT_IDLE;
--	}
--
--	finish_wait(&sqd->wait, &ctx->sqo_wait_entry);
--	io_ring_clear_wakeup_flag(ctx);
--
- 	/* if we're handling multiple rings, cap submit size for fairness */
- 	if (cap_entries && to_submit > 8)
- 		to_submit = 8;
+ static struct io_sq_data *io_attach_sq_data(struct io_uring_params *p)
+@@ -7218,13 +7236,10 @@ static struct io_sq_data *io_attach_sq_data(struct io_uring_params *p)
+ 	return sqd;
+ }
  
--	mutex_lock(&ctx->uring_lock);
--	if (likely(!percpu_ref_is_dying(&ctx->refs)))
--		ret = io_submit_sqes(ctx, to_submit);
--	mutex_unlock(&ctx->uring_lock);
-+	if (to_submit) {
-+		mutex_lock(&ctx->uring_lock);
-+		if (likely(!percpu_ref_is_dying(&ctx->refs)))
-+			ret = io_submit_sqes(ctx, to_submit);
-+		mutex_unlock(&ctx->uring_lock);
-+	}
+-static struct io_sq_data *io_get_sq_data(struct io_uring_params *p)
++static struct io_sq_data *io_alloc_sq_data(struct io_uring_params *p)
+ {
+ 	struct io_sq_data *sqd;
  
- 	if (!io_sqring_full(ctx) && wq_has_sleeper(&ctx->sqo_sq_wait))
- 		wake_up(&ctx->sqo_sq_wait);
+-	if (p->flags & IORING_SETUP_ATTACH_WQ)
+-		return io_attach_sq_data(p);
+-
+ 	sqd = kzalloc(sizeof(*sqd), GFP_KERNEL);
+ 	if (!sqd)
+ 		return ERR_PTR(-ENOMEM);
+@@ -7256,6 +7271,49 @@ static void io_sq_thread_park(struct io_sq_data *sqd)
+ 	kthread_park(sqd->thread);
+ }
  
--	return SQT_DID_WORK;
-+	return ret;
++static void io_attach_ctx_to_sqd(struct io_sq_data *sqd, struct io_ring_ctx *ctx)
++{
++	ctx->sq_data = sqd;
++	io_sq_thread_park(sqd);
++	mutex_lock(&sqd->ctx_lock);
++	list_add(&ctx->sqd_list, &sqd->ctx_new_list);
++	mutex_unlock(&sqd->ctx_lock);
++	io_sq_thread_unpark(sqd);
 +}
 +
-+static void io_sqd_update_thread_idle(struct io_sq_data *sqd)
++static struct io_sq_data *io_find_or_create_percpu_sq_thread(struct io_ring_ctx *ctx,
++					struct io_uring_params *p)
 +{
-+	struct io_ring_ctx *ctx;
-+	unsigned sq_thread_idle = 0;
++	struct io_sq_data *sqd;
++	struct task_struct *tsk;
++	int cpu = p->sq_thread_cpu;
 +
-+	list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-+		if (sq_thread_idle < ctx->sq_thread_idle)
-+			sq_thread_idle = ctx->sq_thread_idle;
++	mutex_lock(&percpu_sqd_lock);
++	sqd = *per_cpu_ptr(percpu_sqd, cpu);
++	if (!sqd) {
++		sqd = io_alloc_sq_data(p);
++		if (IS_ERR(sqd)) {
++			mutex_unlock(&percpu_sqd_lock);
++			return sqd;
++		}
++
++		tsk = kthread_create_on_cpu(io_sq_thread, sqd, cpu, "io_uring-sq");
++		if (IS_ERR(tsk)) {
++			kfree(sqd);
++			sqd = ERR_PTR(PTR_ERR(tsk));
++			mutex_unlock(&percpu_sqd_lock);
++			return sqd;
++		}
++		sqd->sq_thread_cpu = cpu;
++		sqd->thread = tsk;
++		*per_cpu_ptr(percpu_sqd, cpu) = sqd;
++	} else {
++		refcount_inc(&sqd->refs);
 +	}
++	mutex_unlock(&percpu_sqd_lock);
++	return sqd;
++}
 +
-+	sqd->sq_thread_idle = sq_thread_idle;
- }
- 
- static void io_sqd_init_new(struct io_sq_data *sqd)
-@@ -6941,11 +6880,11 @@ static void io_sqd_init_new(struct io_sq_data *sqd)
- 
- 	while (!list_empty(&sqd->ctx_new_list)) {
- 		ctx = list_first_entry(&sqd->ctx_new_list, struct io_ring_ctx, sqd_list);
--		init_wait(&ctx->sqo_wait_entry);
--		ctx->sqo_wait_entry.func = io_sq_wake_function;
- 		list_move_tail(&ctx->sqd_list, &sqd->ctx_list);
- 		complete(&ctx->sq_thread_comp);
- 	}
-+
-+	io_sqd_update_thread_idle(sqd);
- }
- 
- static int io_sq_thread(void *data)
-@@ -6957,7 +6896,8 @@ static int io_sq_thread(void *data)
- 	const struct cred *old_cred = NULL;
- 	struct io_sq_data *sqd = data;
- 	struct io_ring_ctx *ctx;
--	unsigned long start_jiffies;
-+	unsigned long timeout;
-+	DEFINE_WAIT(wait);
- 
- 	task_lock(current);
- 	current->files = NULL;
-@@ -6965,10 +6905,9 @@ static int io_sq_thread(void *data)
- 	current->thread_pid = NULL;
- 	task_unlock(current);
- 
--	start_jiffies = jiffies;
- 	while (!kthread_should_stop()) {
--		enum sq_ret ret = 0;
--		bool cap_entries;
-+		int ret;
-+		bool cap_entries, sqt_spin, needs_sched;
- 
- 		/*
- 		 * Any changes to the sqd lists are synchronized through the
-@@ -6978,11 +6917,13 @@ static int io_sq_thread(void *data)
- 		if (kthread_should_park())
- 			kthread_parkme();
- 
--		if (unlikely(!list_empty(&sqd->ctx_new_list)))
-+		if (unlikely(!list_empty(&sqd->ctx_new_list))) {
- 			io_sqd_init_new(sqd);
-+			timeout = jiffies + sqd->sq_thread_idle;
-+		}
- 
-+		sqt_spin = false;
- 		cap_entries = !list_is_singular(&sqd->ctx_list);
--
- 		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
- 			if (current->cred != ctx->creds) {
- 				if (old_cred)
-@@ -6995,24 +6936,49 @@ static int io_sq_thread(void *data)
- 			current->sessionid = ctx->sessionid;
- #endif
- 
--			ret |= __io_sq_thread(ctx, start_jiffies, cap_entries);
-+			ret = __io_sq_thread(ctx, cap_entries);
-+			if (!sqt_spin && (ret > 0 || !list_empty(&ctx->iopoll_list)))
-+				sqt_spin = true;
- 
- 			io_sq_thread_drop_mm_files();
- 		}
- 
--		if (ret & SQT_SPIN) {
-+		if (sqt_spin || !time_after(jiffies, timeout)) {
- 			io_run_task_work();
- 			cond_resched();
--		} else if (ret == SQT_IDLE) {
--			if (kthread_should_park())
--				continue;
-+			if (sqt_spin)
-+				timeout = jiffies + sqd->sq_thread_idle;
-+			continue;
-+		}
-+
-+		if (kthread_should_park())
-+			continue;
-+
-+		needs_sched = true;
-+		prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
-+		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-+			if ((ctx->flags & IORING_SETUP_IOPOLL) &&
-+			    !list_empty_careful(&ctx->iopoll_list)) {
-+				needs_sched = false;
-+				break;
-+			}
-+			if (io_sqring_entries(ctx)) {
-+				needs_sched = false;
-+				break;
-+			}
-+		}
-+
-+		if (needs_sched) {
- 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
- 				io_ring_set_wakeup_flag(ctx);
-+
- 			schedule();
--			start_jiffies = jiffies;
- 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
- 				io_ring_clear_wakeup_flag(ctx);
- 		}
-+
-+		finish_wait(&sqd->wait, &wait);
-+		timeout = jiffies + sqd->sq_thread_idle;
- 	}
- 
- 	io_run_task_work();
-@@ -7310,12 +7276,11 @@ static void io_sq_thread_stop(struct io_ring_ctx *ctx)
- 
- 		mutex_lock(&sqd->ctx_lock);
- 		list_del(&ctx->sqd_list);
-+		io_sqd_update_thread_idle(sqd);
- 		mutex_unlock(&sqd->ctx_lock);
- 
--		if (sqd->thread) {
--			finish_wait(&sqd->wait, &ctx->sqo_wait_entry);
-+		if (sqd->thread)
+ static void io_sq_thread_stop(struct io_ring_ctx *ctx)
+ {
+ 	struct io_sq_data *sqd = ctx->sq_data;
+@@ -7282,7 +7340,7 @@ static void io_sq_thread_stop(struct io_ring_ctx *ctx)
+ 		if (sqd->thread)
  			io_sq_thread_unpark(sqd);
--		}
  
- 		io_put_sq_data(sqd);
+-		io_put_sq_data(sqd);
++		io_put_sq_data(ctx, sqd);
  		ctx->sq_data = NULL;
+ 	}
+ }
+@@ -7951,25 +8009,19 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 		if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_NICE))
+ 			goto err;
+ 
+-		sqd = io_get_sq_data(p);
+-		if (IS_ERR(sqd)) {
+-			ret = PTR_ERR(sqd);
+-			goto err;
+-		}
+-
+-		ctx->sq_data = sqd;
+-		io_sq_thread_park(sqd);
+-		mutex_lock(&sqd->ctx_lock);
+-		list_add(&ctx->sqd_list, &sqd->ctx_new_list);
+-		mutex_unlock(&sqd->ctx_lock);
+-		io_sq_thread_unpark(sqd);
+-
+ 		ctx->sq_thread_idle = msecs_to_jiffies(p->sq_thread_idle);
+ 		if (!ctx->sq_thread_idle)
+ 			ctx->sq_thread_idle = HZ;
+ 
+-		if (sqd->thread)
++		if (p->flags & IORING_SETUP_ATTACH_WQ) {
++			sqd = io_attach_sq_data(p);
++			if (IS_ERR(sqd)) {
++				ret = PTR_ERR(sqd);
++				goto err;
++			}
++			io_attach_ctx_to_sqd(sqd, ctx);
+ 			goto done;
++		}
+ 
+ 		if (p->flags & IORING_SETUP_SQ_AFF) {
+ 			int cpu = p->sq_thread_cpu;
+@@ -7980,9 +8032,27 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 			if (!cpu_online(cpu))
+ 				goto err;
+ 
+-			sqd->thread = kthread_create_on_cpu(io_sq_thread, sqd,
++			if (p->flags & IORING_SETUP_SQPOLL_PERCPU) {
++				sqd = io_find_or_create_percpu_sq_thread(ctx, p);
++				if (IS_ERR(sqd)) {
++					ret = PTR_ERR(sqd);
++					goto err;
++				}
++			} else {
++				sqd = io_alloc_sq_data(p);
++				if (IS_ERR(sqd)) {
++					ret = PTR_ERR(sqd);
++					goto err;
++				}
++				sqd->thread = kthread_create_on_cpu(io_sq_thread, sqd,
+ 							cpu, "io_uring-sq");
++			}
+ 		} else {
++			sqd = io_alloc_sq_data(p);
++			if (IS_ERR(sqd)) {
++				ret = PTR_ERR(sqd);
++				goto err;
++			}
+ 			sqd->thread = kthread_create(io_sq_thread, sqd,
+ 							"io_uring-sq");
+ 		}
+@@ -7991,6 +8061,8 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 			sqd->thread = NULL;
+ 			goto err;
+ 		}
++		io_attach_ctx_to_sqd(sqd, ctx);
++
+ 		ret = io_uring_alloc_task_context(sqd->thread);
+ 		if (ret)
+ 			goto err;
+@@ -9557,7 +9629,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
+ 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
+ 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
+-			IORING_SETUP_R_DISABLED))
++			IORING_SETUP_R_DISABLED | IORING_SETUP_SQPOLL_PERCPU))
+ 		return -EINVAL;
+ 
+ 	return  io_uring_create(entries, &p, params);
+@@ -9910,6 +9982,8 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
+ 
+ static int __init io_uring_init(void)
+ {
++	int cpu;
++
+ #define __BUILD_BUG_VERIFY_ELEMENT(stype, eoffset, etype, ename) do { \
+ 	BUILD_BUG_ON(offsetof(stype, ename) != eoffset); \
+ 	BUILD_BUG_ON(sizeof(etype) != sizeof_field(stype, ename)); \
+@@ -9950,6 +10024,11 @@ static int __init io_uring_init(void)
+ 	BUILD_BUG_ON(ARRAY_SIZE(io_op_defs) != IORING_OP_LAST);
+ 	BUILD_BUG_ON(__REQ_F_LAST_BIT >= 8 * sizeof(int));
+ 	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
++
++	percpu_sqd = alloc_percpu(struct io_sq_data *);
++	for_each_possible_cpu(cpu)
++		*per_cpu_ptr(percpu_sqd, cpu) = NULL;
++
+ 	return 0;
+ };
+ __initcall(io_uring_init);
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 557e7eae497f..5bb958359d2f 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -98,6 +98,7 @@ enum {
+ #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
+ #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
+ #define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
++#define IORING_SETUP_SQPOLL_PERCPU	(1U << 7)	/* use percpu SQ poll thread */
+ 
+ enum {
+ 	IORING_OP_NOP,
 -- 
 2.17.2
 

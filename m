@@ -2,175 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD4F2A5E48
-	for <lists+io-uring@lfdr.de>; Wed,  4 Nov 2020 07:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EB6B2A628D
+	for <lists+io-uring@lfdr.de>; Wed,  4 Nov 2020 11:52:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728818AbgKDGru (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Nov 2020 01:47:50 -0500
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:45728 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727986AbgKDGrt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 01:47:49 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R241e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UEATY5e_1604472464;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UEATY5e_1604472464)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 04 Nov 2020 14:47:44 +0800
-Subject: Re: [RFC 0/3] Add support of iopoll for dm device
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org, dm-devel@redhat.com,
-        joseph.qi@linux.alibaba.com, xiaoguang.wang@linux.alibaba.com,
-        haoxu@linux.alibaba.com, io-uring@vger.kernel.org
-References: <20201020065420.124885-1-jefflexu@linux.alibaba.com>
- <20201021203906.GA10896@redhat.com>
- <da936cfa-93a8-d6ec-bd88-c0fad6c67c8b@linux.alibaba.com>
- <20201026185334.GA8463@redhat.com>
- <33c32cd1-5116-9a42-7fe2-b2a383f1c7a0@linux.alibaba.com>
- <20201102152822.GA20466@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <f165f38a-91d1-79aa-829d-a9cc69a5eee6@linux.alibaba.com>
-Date:   Wed, 4 Nov 2020 14:47:44 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.12.1
+        id S1729243AbgKDKvp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Nov 2020 05:51:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39142 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728066AbgKDKvo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 05:51:44 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 138D7C0613D3
+        for <io-uring@vger.kernel.org>; Wed,  4 Nov 2020 02:51:44 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id 7so29140024ejm.0
+        for <io-uring@vger.kernel.org>; Wed, 04 Nov 2020 02:51:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=confluent.io; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=QtNh8OOdoOFqPyUKGun7lYeu0GcuZ8u5E0Qpqh5hkfo=;
+        b=BYOAuZWaDqi3DeVswGeCbpCsFeSlwukhV3/IsGqFsf15sgrodVoQJdFnQpZVLgf8sw
+         cddtTT1yVGNYTi4SLOYrGiQl4OcaN1t7q71rEjdGIObbtxqZgrJMCYgkQB3XftIQIoS8
+         br2YhqSL+dnj9qpfHPyoL0otbHjGZtEFb5D9gDJh3zFoqWO//tIrpbxOx46zjdiJx5ya
+         JVo2oEqko7nlllxXQ+ofarzQX87uKWJ3LYQXwKYv1Yw+SJL3UJ5SJ9YO5TUn3BkM3R8d
+         o8CWBTbmXD64loWWRHeY4KbXwbNrwGxbWt4PXEaXs3jIANsCyCMEY1oGEBNw8AclXqJJ
+         P1bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=QtNh8OOdoOFqPyUKGun7lYeu0GcuZ8u5E0Qpqh5hkfo=;
+        b=Q2x2Qvuh0AyhqgQ/dVJ5hWC4T56jkGxeDeHgdE1ynXibeN5fqmotRzv2Rcac7Vi9aS
+         gTyDtme8fwNLEpI8UGf55t+toXQ8QNhqGIPPVvuFDa5LtDGT/99vo8o5foAPyoHzflb1
+         bwHJdQ/gx8mF4LW0N/MgCdfq2kNN3ZbKVX1E+vuUv8ATl5JHLIVHl/V8RW66ASxOgGf6
+         hEJd+kxywGW69VYZhISUWW0ulePLUTknnKdPuBpaaRZS+OpAXZKYffUNkSuMyTL/x23p
+         boYW+T1zwMnVktyQGwj0wh0+fy8VxOz6dBDN46CjaLgOMRkFKZJVnpMkbZOWqi3Og7nW
+         6kZQ==
+X-Gm-Message-State: AOAM531Cby3tpCmWaKVxdkrHOYaKEKggfYrWCEgdwtcOEfTEj+470nkx
+        DBx6OMaTfom2PjFV+VQ+Id1dR4fp9uNR/riMKXxp6rSlOVOcV2Jo
+X-Google-Smtp-Source: ABdhPJxhzdfGlaNtHuRhKg2/iOGnj7hsIE5gEg+tNfjsXh9trtjzUUuweAQ1OFo/st6Rs3KtElF+P8myxqHyq5js00A=
+X-Received: by 2002:a17:906:2697:: with SMTP id t23mr413044ejc.292.1604487102460;
+ Wed, 04 Nov 2020 02:51:42 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201102152822.GA20466@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+From:   Tim Fox <tfox@confluent.io>
+Date:   Wed, 4 Nov 2020 10:51:32 +0000
+Message-ID: <CAMkGPyK=9bztK-2Ckg-2pOUhxugzXO=0-KGH4NL6+KQFnq7vBg@mail.gmail.com>
+Subject: Support for random access file reads
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hello folks,
 
-On 11/2/20 11:28 PM, Mike Snitzer wrote:
-> On Sun, Nov 01 2020 at 10:14pm -0500,
-> JeffleXu <jefflexu@linux.alibaba.com> wrote:
->
->> On 10/27/20 2:53 AM, Mike Snitzer wrote:
->>> What you detailed there isn't properly modeling what it needs to.
->>> A given dm_target_io could result in quite a few bios (e.g. for
->>> dm-striped we clone each bio for each of N stripes).  So the fan-out,
->>> especially if then stacked on N layers of stacked devices, to all the
->>> various hctx at the lowest layers is like herding cats.
->>>
->>> But the recursion in block core's submit_bio path makes that challenging
->>> to say the least.  So much so that any solution related to enabling
->>> proper bio-based IO polling is going to need a pretty significant
->>> investment in fixing block core (storing __submit_bio()'s cookie during
->>> recursion, possibly storing to driver provided memory location,
->>> e.g. DM initialized bio->submit_cookie pointer to a blk_qc_t within a DM
->>> clone bio's per-bio-data).
->>>
->>> SO __submit_bio_noacct would become:
->>>
->>>     retp = &ret;
->>>     if (bio->submit_cookie)
->>>            retp = bio->submit_cookie;
->>>     *retp = __submit_bio(bio);
->> Sorry for the late reply. Exactly I missed this point before. IF you
->> have not started working on this, I'd like to try to implement this as
->> an RFC.
-> I did start on this line of development but it needs quite a bit more
-> work.  Even the pseudo code I provided above isn't useful in the context
-> of DM clone bios that have their own per-bio-data to assist with this
-> implementation.  Because the __submit_bio_noacct() recursive call
-> drivers/md/dm.c:__split_and_process_bio() makes is supplying the
-> original bio (modified to only point to remaining work).
+I am new to io-uring and would like to read bytes from a specific
+position in a file. I was looking for some kind of pread/preadv
+functionality in io-uring but couldn't see any.
 
-Yes I noticed this recently. Since the depth-first splitting introduced 
-in commit 18a25da84354
+Perhaps the expectation that the file descriptor offset is explicitly
+set via lseek outside of io-uring, to enable random file access use
+cases like mine?
 
-("dm: ensure bio submission follows a depth-first tree walk"), one bio 
-to dm device can be
-
-split into multiple bios to this dm device.
-
-```
-
-one bio to dm device (dm0) = one dm_io (to nvme0) + one bio to this same 
-dm device (dm0)
-
-```
-
-
-In this case we need a mechanism to track all split sub-bios of the very 
-beginning original bio.
-
-I'm doubted if this should be implemented in block layer like:
-
-```
-
-struct bio {
-
-     ...
-
-     struct list_head  cookies;
-
-};
-
-```
-
-After all it's only used by bio-based queue, or more specifically only 
-dm device currently.
-
-
-Another design I can come up with is to maintain a global data structure 
-for the very beginning
-
-original bio. Currently the blocking point is that now one original bio 
-to the dm device (@bio of
-
-dm_submit()) can correspond to multiple dm_io and thus we have nowhere 
-to place the
-
-@cookies list.
-
-
-Now we have to maintain one data structure for every original bio, 
-something like
-
-```
-
-struct dm_poll_instance {
-
-     ...
-
-     struct list_head cookies;
-
-};
-
-```
-
-
-We can transfer this dm_poll_instance between split bios by 
-bio->bi_private, like
-
-```
-
-dm_submit_bio(...) {
-
-     struct dm_poll_instance *ins;
-
-     if (bio->bi_private)
-
-         ins = bio->bi_private;
-
-     else {
-
-         ins = alloc_poll_instance();
-
-         bio->bi_private = ins;
-
-     }
-
-     ...
-
-}
-
-```
-
-
-
--- 
-Jeffle
 Thanks
-

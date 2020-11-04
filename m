@@ -2,75 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E23382A6FA1
-	for <lists+io-uring@lfdr.de>; Wed,  4 Nov 2020 22:27:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F2A2A720E
+	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 00:45:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731707AbgKDV1F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Nov 2020 16:27:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54920 "EHLO
+        id S1729682AbgKDXoh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Nov 2020 18:44:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731113AbgKDV1E (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 16:27:04 -0500
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A51BBC0613D3
-        for <io-uring@vger.kernel.org>; Wed,  4 Nov 2020 13:27:04 -0800 (PST)
-Received: by mail-pg1-x542.google.com with SMTP id r10so17631878pgb.10
-        for <io-uring@vger.kernel.org>; Wed, 04 Nov 2020 13:27:04 -0800 (PST)
+        with ESMTP id S1732784AbgKDXoC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 18:44:02 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25FA0C0613CF
+        for <io-uring@vger.kernel.org>; Wed,  4 Nov 2020 15:44:01 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id 13so18670336pfy.4
+        for <io-uring@vger.kernel.org>; Wed, 04 Nov 2020 15:44:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aaj+l/3PDgrXQlxLK9i0UWxfhXRINlUyoPfshuAn5V4=;
-        b=Xyl/6Tl00jOnOWcv6anpIgD0RTY9IqwTx5TLQtCuRyUpZ2G3Z+68mQdB6DpqKSVVP1
-         1Cc07l0CtE+CfZPIiZc//0fLDXauHAb9O3XJHARrxCUE3AhPksasfv3ZYlGC4vTmmGks
-         tgF3oRwEKNscYW1F6xIcgXC7xtQimfMVtS1V/UJPbtZolvZ5IZzg8soLvqsnN8LRES3u
-         42DQ+IY/NbXzeRvCR2R3Mree2FPwpIqAnPiw2Yrr4r6R2FOMnJECZviEd6Rnrc2loUJn
-         0xBujPvsyCBUxAgjJBJWob475G09NIwuQHiymRttPHHKdxSXpN2SH9OjrcxJVhep70ch
-         rx4Q==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=17UeQdTZqUibitgRHwc6pYwOpWA34muwj5f6WQ9gi5I=;
+        b=HjIIMX3HWDqMazjsIFypwNMmjnKxUi6BoiOAXMaYkrw31yyWw79H9+Br/M0PS77heQ
+         +iCxn8bbVa221xv1VPyCPoNxweUAekWa39b4armP7RM8eSh9OhvML/QvQyAKHuWUPl4i
+         vFwN1gkKo7Dk0cZ7JQwsF4G357hBjPb/Q3XC3IvOuTjHXAmFsKss+NHSbstCZIwMqpwE
+         eVrGWaMGRExcKFZysVTYymVuFEqQ0XQWnkKf7fNTU2ED8zCrkaaaci7sH+a0N8a5wp0N
+         KZ9jQDJaBgOPvR2UJNwaaWBw8E0UiPE8kZQPO1lTLXuNyEK4VSkYw1NGnnh1HA25xKTX
+         GFmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=aaj+l/3PDgrXQlxLK9i0UWxfhXRINlUyoPfshuAn5V4=;
-        b=eP7SH9EJameYAUOWND/wUQCVzYFx94j2sPn7+t3YGIYW1M75WrLAm0b/ddSjqduiv2
-         /5j8QW/HsdMkKVusAVWey4o1qK5n/Iz3wnNPAMFQRoNTbiVONX+C1TaBx2N7LdIn4RBI
-         fThKGj2ZotPPiGmzHv4iGVss+reQIlM2UhHL0SlNmIbZO3Paew8YXlWD/coTBNjQagI/
-         oUaAdQnPcEOzzoQQtuzif4kKKYwA7Y2k1H5moryvQxGwWpKI8KmlQ3IgK0DeQbFujhJv
-         yCoECrMpjqKQb5/oBeYz9txbkvRHMSudtEMXuLLK+FDl95Yvzqx4UJXM+fPxT6TvOLAi
-         KKuA==
-X-Gm-Message-State: AOAM533OJ3ABfIf7p3x6Q+lKMbwYStkLgu1LJa431TnjeNKJ80FuJtqn
-        v0zm12FF8zyIollwm15nXHxrhZRpAMdfgg==
-X-Google-Smtp-Source: ABdhPJyQ+eM5jsPJhdwCSWThZ1+ta1wOo6hXuR+FKJU8EAKb8ADJFAiytbGjZ8jWbhAz51kxtaWUjw==
-X-Received: by 2002:a62:5542:0:b029:156:222c:a630 with SMTP id j63-20020a6255420000b0290156222ca630mr31257317pfb.50.1604525224078;
-        Wed, 04 Nov 2020 13:27:04 -0800 (PST)
+        bh=17UeQdTZqUibitgRHwc6pYwOpWA34muwj5f6WQ9gi5I=;
+        b=cj7csOaPKjQiC6R2OCgENJSSiGfalt9apYt2dZ39sVBBGUwTxeMUPRAZV5I7PpeDpK
+         8LlxALUcwKNRln2cilJBL5Ef2vfAXQJrJzLhntpRoPgFy7r0zu0ru/sxkw0g45A2zzLQ
+         k+VvcbBpryHwkXINIQ7ss82ZpNM+zDrOU5D6/HP7Kxtb7pDJF3+vLgje2bWmZjxTWHzi
+         o1d5jDichbGispkiL8mtLOEkqaacwIeCbKVKu67ZF2iz/aFhtNkGbk3oa8zKIQZ+P/yA
+         426FV1ABtRVb76tlsb3Q7KFXcLz6ugDk4d0SIdBuXmKOneOqPc1SwUoGq8EF6pvA/Tev
+         vS5A==
+X-Gm-Message-State: AOAM5319fNvMx9P9d5LigRfwgFvYAQXKm04bGxv+4NXVovjVEjxRysJs
+        QfAkosCnL0hTg/KUqABBiP19+Z0og3s8EA==
+X-Google-Smtp-Source: ABdhPJwO4lHyL2qYCzSn5m+IKxJIitGIHhBjcC9XUrmGKWcyNdY/+YgYF1JGfPYw7ShayZD/+wIfxQ==
+X-Received: by 2002:a63:ff5b:: with SMTP id s27mr338872pgk.383.1604533440406;
+        Wed, 04 Nov 2020 15:44:00 -0800 (PST)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id o70sm3443515pfg.214.2020.11.04.13.27.02
+        by smtp.gmail.com with ESMTPSA id w187sm3562212pfb.93.2020.11.04.15.43.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Nov 2020 13:27:03 -0800 (PST)
-Subject: Re: [PATCH v3 RESEND] io_uring: add timeout support for
- io_uring_enter()
+        Wed, 04 Nov 2020 15:43:59 -0800 (PST)
+Subject: Re: relative openat dirfd reference on submit
 To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, metze@samba.org,
-        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1604307047-50980-1-git-send-email-haoxu@linux.alibaba.com>
- <1604372077-179941-1-git-send-email-haoxu@linux.alibaba.com>
- <c2ae5254-d558-a48f-fca2-0759781bf3e1@kernel.dk>
- <052a2b54-017f-8617-5d1a-074408d164fd@kernel.dk>
- <fa632df8-28c8-a63f-e79a-5996344b8226@gmail.com>
- <b6db7a64-aa37-cdfc-dae3-d8d1d8fa6a7f@kernel.dk>
- <13c05478-5363-cfae-69b1-8022b9736088@gmail.com>
- <1d7cbae3-c284-e01d-7f7d-2ae2ab9cbb54@kernel.dk>
- <310a29cd-0dc2-69b0-7700-975af8025b71@gmail.com>
+        Vito Caputo <vcaputo@pengaru.com>, io-uring@vger.kernel.org
+References: <20201102205259.qsbp6yea3zfrqwuk@shells.gnugeneration.com>
+ <d57e6cb2-9a2c-86a4-7d64-05816b3eab54@kernel.dk>
+ <0532ec03-1dd2-a6ce-2a58-9e45d66435b5@gmail.com>
+ <c7130e35-6340-5e0b-f0d9-3c8465d0eaf9@kernel.dk>
+ <efe65885-6bf3-a3d1-5c67-dc7b34dd96c2@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b0068ff6-cc9e-64b2-0374-7ceed552c7d5@kernel.dk>
-Date:   Wed, 4 Nov 2020 14:27:02 -0700
+Message-ID: <c97e1b84-9c48-fe91-7c79-57de98c7fc0a@kernel.dk>
+Date:   Wed, 4 Nov 2020 16:43:59 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <310a29cd-0dc2-69b0-7700-975af8025b71@gmail.com>
+In-Reply-To: <efe65885-6bf3-a3d1-5c67-dc7b34dd96c2@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -78,84 +70,60 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/4/20 2:20 PM, Pavel Begunkov wrote:
-> On 04/11/2020 20:28, Jens Axboe wrote:
->> On 11/4/20 1:16 PM, Pavel Begunkov wrote:
->>> On 04/11/2020 19:34, Jens Axboe wrote:
->>>> On 11/4/20 12:27 PM, Pavel Begunkov wrote:
->>>>> On 04/11/2020 18:32, Jens Axboe wrote:
->>>>>> On 11/4/20 10:50 AM, Jens Axboe wrote:
->>>>>>> +struct io_uring_getevents_arg {
->>>>>>> +	sigset_t *sigmask;
->>>>>>> +	struct __kernel_timespec *ts;
->>>>>>> +};
->>>>>>> +
->>>>>>
->>>>>> I missed that this is still not right, I did bring it up in your last
->>>>>> posting though - you can't have pointers as a user API, since the size
->>>>>> of the pointer will vary depending on whether this is a 32-bit or 64-bit
->>>>>> arch (or 32-bit app running on 64-bit kernel).
+On 11/2/20 5:41 PM, Pavel Begunkov wrote:
+> On 03/11/2020 00:34, Jens Axboe wrote:
+>> On 11/2/20 5:17 PM, Pavel Begunkov wrote:
+>>> On 03/11/2020 00:05, Jens Axboe wrote:
+>>>> On 11/2/20 1:52 PM, Vito Caputo wrote:
+>>>>> Hello list,
 >>>>>
->>>>> Maybe it would be better 
+>>>>> I've been tinkering a bit with some async continuation passing style
+>>>>> IO-oriented code employing liburing.  This exposed a kind of awkward
+>>>>> behavior I suspect could be better from an ergonomics perspective.
 >>>>>
->>>>> 1) to kill this extra indirection?
+>>>>> Imagine a bunch of OPENAT SQEs have been prepared, and they're all
+>>>>> relative to a common dirfd.  Once io_uring_submit() has consumed all
+>>>>> these SQEs across the syscall boundary, logically it seems the dirfd
+>>>>> should be safe to close, since these dirfd-dependent operations have
+>>>>> all been submitted to the kernel.
 >>>>>
->>>>> struct io_uring_getevents_arg {
->>>>> -	sigset_t *sigmask;
->>>>> -	struct __kernel_timespec *ts;
->>>>> +	sigset_t sigmask;
->>>>> +	struct __kernel_timespec ts;
->>>>> };
+>>>>> But when I attempted this, the subsequent OPENAT CQE results were all
+>>>>> -EBADFD errors.  It appeared the submit didn't add any references to
+>>>>> the dependent dirfd.
 >>>>>
->>>>> then,
+>>>>> To work around this, I resorted to stowing the dirfd and maintaining a
+>>>>> shared refcount in the closures associated with these SQEs and
+>>>>> executed on their CQEs.  This effectively forced replicating the
+>>>>> batched relationship implicit in the shared parent dirfd, where I
+>>>>> otherwise had zero need to.  Just so I could defer closing the dirfd
+>>>>> until once all these closures had run on their respective CQE arrivals
+>>>>> and the refcount for the batch had reached zero.
 >>>>>
->>>>> sigset_t *sig = (...)arg;
->>>>> __kernel_timespec* ts = (...)(arg + offset);
+>>>>> It doesn't seem right.  If I ensure sufficient queue depth and
+>>>>> explicitly flush all the dependent SQEs beforehand
+>>>>> w/io_uring_submit(), it seems like I should be able to immediately
+>>>>> close(dirfd) and have the close be automagically deferred until the
+>>>>> last dependent CQE removes its reference from the kernel side.
 >>>>
->>>> But then it's kind of hard to know which, if any, of them are set... I
->>>> did think about this, and any solution seemed worse than just having the
->>>> extra indirection.
+>>>> We pass the 'dfd' straight on, and only the async part acts on it.
+>>>> Which is why it needs to be kept open. But I wonder if we can get
+>>>> around it by just pinning the fd for the duration. Since you didn't
+>>>> include a test case, can you try with this patch applied? Totally
+>>>> untested...
 >>>
->>> struct io_uring_getevents_arg {
->>> 	sigset_t sigmask;
->>> 	u32 mask;
->>> 	struct __kernel_timespec ts;
->>> };
->>>
->>> if size > sizeof(sigmask), then use mask to determine that.
->>> Though, not sure how horrid the rest of the code would be.
+>>> afaik this doesn't pin an fd in a file table, so the app closes and
+>>> dfd right after submit and then do_filp_open() tries to look up
+>>> closed dfd. Doesn't seem to work, and we need to pass that struct
+>>> file to do_filp_open().
 >>
->> I'm not saying it's not possible, just that I think the end result would
->> be worse in terms of both kernel code and how the user applications (or
->> liburing) would need to use it. I'd rather sacrifice an extra copy for
->> something that's straight forward (and logical) to use, rather than
->> needing weird setups or hoops to jump through. And this mask vs
->> sizeof(mask) thing seems pretty horrendeous to me :-)
+>> Yeah, I just double checked, and it's just referenced, but close() will
+>> still make it NULL in the file table. So won't work... We'll have to
+>> live with it for now, I'm afraid.
 > 
-> If you think so, I'll spare my time then :)
-> 
->>
->>>> Yeah, not doing the extra indirection would save a copy, but don't think
->>>> it's worth it for this path.
->>>
->>> I much more don't like branching like IORING_ENTER_GETEVENTS_TIMEOUT,
->>> from conceptual point. I may try it out to see how it looks like while
->>> it's still for-next.
->>
->> One thing I think we should change is the name,
->> IORING_ENTER_GETEVENTS_TIMEOUT will quickly be a bad name if we end up
->> adding just one more thing to the struct. Would be better to call it
->> IORING_ENTER_EXTRA_DATA or something, meaning that the sigmask pointer
->> is a pointer to the aux data instead of a sigmask. Better name
->> suggestions welcome...
-> 
-> _EXT_ARG from extended
+> Is there a problem with passing in a struct file? Apart from it
+> being used deep in open callchains?
 
-Yeah I like that, I'll update it
-
-> Also, a minor one -- s/sigsz/argsz/
-
-Yes, might as well.
+No technical problems as far as I can tell, just needs doing...
 
 -- 
 Jens Axboe

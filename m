@@ -2,192 +2,175 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B8C2A50DF
-	for <lists+io-uring@lfdr.de>; Tue,  3 Nov 2020 21:28:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DD4F2A5E48
+	for <lists+io-uring@lfdr.de>; Wed,  4 Nov 2020 07:47:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729213AbgKCU2j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 3 Nov 2020 15:28:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727688AbgKCU2j (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 3 Nov 2020 15:28:39 -0500
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7AA3C0617A6
-        for <io-uring@vger.kernel.org>; Tue,  3 Nov 2020 12:28:38 -0800 (PST)
-Received: by mail-il1-x144.google.com with SMTP id z2so17286059ilh.11
-        for <io-uring@vger.kernel.org>; Tue, 03 Nov 2020 12:28:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8ANJthhraSHiJ7O8q/9pmHZwUckFdNsf0+PdLSnpaQY=;
-        b=CNZsfAwTy4TGccTuaiO62YqQatrdryXkZtTlIwvUnkG6jsN0S3RFQvtR7/VyNJpFw2
-         3MXOfxvULH796SCxELeOa7bgV58k4QJVpS2wCBncwTm2ZsGACd+IXmBNfXpxlYZDWZ+5
-         ShV4avk9SG9LsfnsCLs6FOwj89Y1oTVduDUqDymQBP4ob0yHiTyJvLD6UpO3/PGthXYP
-         PrNhLiJCnH+DluV57c43bpL3/2M+sVeMDVG33FgqdUs1oACP+41n+kC/p0fhAckI/lio
-         AqpsYSGjVhVgq5SRbO2d1dyXQJyBi+T0luFjvhC1z/bcvP0JcCnjR8z9rTgClLjnrbol
-         7mlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8ANJthhraSHiJ7O8q/9pmHZwUckFdNsf0+PdLSnpaQY=;
-        b=IYGQUhA2AlKnkv69Cu3EE/LnUo18Y5f6V9lUywYWyTno2TXypOIWQ2hef9usSayC7b
-         eOKdNyox6Cq/32j07wylS92kvuGHF0sgzJZkemEns2GdyUtfTxG1rOrWa23BuGCHwcqg
-         Cng6OWrhd7PBVN+2xEKqtjrzQheGH/fDkJLSyLQF+wXMekBjedhrRVl5N/SxXxfpCEGA
-         of2jrkQ2m8VKrO1MH+MXPwnQZr3MMEf+ZK6jhcBn9eYz+fvW8cl8uFYINWvgYHUPCrmt
-         yyh6eE7+4iGWa4S+tz9MQlCjeLTZ79/D1FlC5CoGK32NBNDPNb91W8WQT9J72HG/KU5/
-         O7OA==
-X-Gm-Message-State: AOAM532k3riaZtyMUcrj4PGCfDT4/NC/+fwlNbeM7QZvMOelFFBI1UbX
-        VC3V3i9zG0DHyG7qKIASK8bnKsqC1XGxsA==
-X-Google-Smtp-Source: ABdhPJxFYpkqgaQCgMAuZkxX/wVhlK3tpRgt8Z3rQslnKya48LGhs3XEeyViUketDcemSvysg2+Xbw==
-X-Received: by 2002:a92:c5ce:: with SMTP id s14mr16396295ilt.40.1604435317962;
-        Tue, 03 Nov 2020 12:28:37 -0800 (PST)
-Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id d6sm13472902ilf.19.2020.11.03.12.28.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2020 12:28:37 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot+625ce3bb7835b63f7f3d@syzkaller.appspotmail.com
-Subject: [PATCH 4/4] io_uring: drop req/tctx io_identity separately
-Date:   Tue,  3 Nov 2020 13:28:32 -0700
-Message-Id: <20201103202832.923305-5-axboe@kernel.dk>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201103202832.923305-1-axboe@kernel.dk>
-References: <20201103202832.923305-1-axboe@kernel.dk>
+        id S1728818AbgKDGru (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Nov 2020 01:47:50 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:45728 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727986AbgKDGrt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 01:47:49 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R241e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UEATY5e_1604472464;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UEATY5e_1604472464)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 04 Nov 2020 14:47:44 +0800
+Subject: Re: [RFC 0/3] Add support of iopoll for dm device
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org, dm-devel@redhat.com,
+        joseph.qi@linux.alibaba.com, xiaoguang.wang@linux.alibaba.com,
+        haoxu@linux.alibaba.com, io-uring@vger.kernel.org
+References: <20201020065420.124885-1-jefflexu@linux.alibaba.com>
+ <20201021203906.GA10896@redhat.com>
+ <da936cfa-93a8-d6ec-bd88-c0fad6c67c8b@linux.alibaba.com>
+ <20201026185334.GA8463@redhat.com>
+ <33c32cd1-5116-9a42-7fe2-b2a383f1c7a0@linux.alibaba.com>
+ <20201102152822.GA20466@redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <f165f38a-91d1-79aa-829d-a9cc69a5eee6@linux.alibaba.com>
+Date:   Wed, 4 Nov 2020 14:47:44 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.12.1
 MIME-Version: 1.0
+In-Reply-To: <20201102152822.GA20466@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We can't bundle this into one operation, as the identity may not have
-originated from the tctx to begin with. Drop one ref for each of them
-separately, if they don't match the static assignment. If we don't, then
-if the identity is a lookup from registered credentials, we could be
-freeing that identity as we're dropping a reference assuming it came from
-the tctx. syzbot reports this as a use-after-free, as the identity is
-still referencable from idr lookup:
 
-==================================================================
-BUG: KASAN: use-after-free in instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
-BUG: KASAN: use-after-free in atomic_fetch_add_relaxed include/asm-generic/atomic-instrumented.h:142 [inline]
-BUG: KASAN: use-after-free in __refcount_add include/linux/refcount.h:193 [inline]
-BUG: KASAN: use-after-free in __refcount_inc include/linux/refcount.h:250 [inline]
-BUG: KASAN: use-after-free in refcount_inc include/linux/refcount.h:267 [inline]
-BUG: KASAN: use-after-free in io_init_req fs/io_uring.c:6700 [inline]
-BUG: KASAN: use-after-free in io_submit_sqes+0x15a9/0x25f0 fs/io_uring.c:6774
-Write of size 4 at addr ffff888011e08e48 by task syz-executor165/8487
+On 11/2/20 11:28 PM, Mike Snitzer wrote:
+> On Sun, Nov 01 2020 at 10:14pm -0500,
+> JeffleXu <jefflexu@linux.alibaba.com> wrote:
+>
+>> On 10/27/20 2:53 AM, Mike Snitzer wrote:
+>>> What you detailed there isn't properly modeling what it needs to.
+>>> A given dm_target_io could result in quite a few bios (e.g. for
+>>> dm-striped we clone each bio for each of N stripes).  So the fan-out,
+>>> especially if then stacked on N layers of stacked devices, to all the
+>>> various hctx at the lowest layers is like herding cats.
+>>>
+>>> But the recursion in block core's submit_bio path makes that challenging
+>>> to say the least.  So much so that any solution related to enabling
+>>> proper bio-based IO polling is going to need a pretty significant
+>>> investment in fixing block core (storing __submit_bio()'s cookie during
+>>> recursion, possibly storing to driver provided memory location,
+>>> e.g. DM initialized bio->submit_cookie pointer to a blk_qc_t within a DM
+>>> clone bio's per-bio-data).
+>>>
+>>> SO __submit_bio_noacct would become:
+>>>
+>>>     retp = &ret;
+>>>     if (bio->submit_cookie)
+>>>            retp = bio->submit_cookie;
+>>>     *retp = __submit_bio(bio);
+>> Sorry for the late reply. Exactly I missed this point before. IF you
+>> have not started working on this, I'd like to try to implement this as
+>> an RFC.
+> I did start on this line of development but it needs quite a bit more
+> work.  Even the pseudo code I provided above isn't useful in the context
+> of DM clone bios that have their own per-bio-data to assist with this
+> implementation.  Because the __submit_bio_noacct() recursive call
+> drivers/md/dm.c:__split_and_process_bio() makes is supplying the
+> original bio (modified to only point to remaining work).
 
-CPU: 1 PID: 8487 Comm: syz-executor165 Not tainted 5.10.0-rc1-next-20201102-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xae/0x4c8 mm/kasan/report.c:385
- __kasan_report mm/kasan/report.c:545 [inline]
- kasan_report.cold+0x1f/0x37 mm/kasan/report.c:562
- check_memory_region_inline mm/kasan/generic.c:186 [inline]
- check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
- instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
- atomic_fetch_add_relaxed include/asm-generic/atomic-instrumented.h:142 [inline]
- __refcount_add include/linux/refcount.h:193 [inline]
- __refcount_inc include/linux/refcount.h:250 [inline]
- refcount_inc include/linux/refcount.h:267 [inline]
- io_init_req fs/io_uring.c:6700 [inline]
- io_submit_sqes+0x15a9/0x25f0 fs/io_uring.c:6774
- __do_sys_io_uring_enter+0xc8e/0x1b50 fs/io_uring.c:9159
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x440e19
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 eb 0f fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff644ff178 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000440e19
-RDX: 0000000000000000 RSI: 000000000000450c RDI: 0000000000000003
-RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000022b4850
-R13: 0000000000000010 R14: 0000000000000000 R15: 0000000000000000
+Yes I noticed this recently. Since the depth-first splitting introduced 
+in commit 18a25da84354
 
-Allocated by task 8487:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_set_track mm/kasan/common.c:56 [inline]
- __kasan_kmalloc.constprop.0+0xc2/0xd0 mm/kasan/common.c:461
- kmalloc include/linux/slab.h:552 [inline]
- io_register_personality fs/io_uring.c:9638 [inline]
- __io_uring_register fs/io_uring.c:9874 [inline]
- __do_sys_io_uring_register+0x10f0/0x40a0 fs/io_uring.c:9924
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+("dm: ensure bio submission follows a depth-first tree walk"), one bio 
+to dm device can be
 
-Freed by task 8487:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
- kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
- __kasan_slab_free+0x102/0x140 mm/kasan/common.c:422
- slab_free_hook mm/slub.c:1544 [inline]
- slab_free_freelist_hook+0x5d/0x150 mm/slub.c:1577
- slab_free mm/slub.c:3140 [inline]
- kfree+0xdb/0x360 mm/slub.c:4122
- io_identity_cow fs/io_uring.c:1380 [inline]
- io_prep_async_work+0x903/0xbc0 fs/io_uring.c:1492
- io_prep_async_link fs/io_uring.c:1505 [inline]
- io_req_defer fs/io_uring.c:5999 [inline]
- io_queue_sqe+0x212/0xed0 fs/io_uring.c:6448
- io_submit_sqe fs/io_uring.c:6542 [inline]
- io_submit_sqes+0x14f6/0x25f0 fs/io_uring.c:6784
- __do_sys_io_uring_enter+0xc8e/0x1b50 fs/io_uring.c:9159
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+split into multiple bios to this dm device.
 
-The buggy address belongs to the object at ffff888011e08e00
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 72 bytes inside of
- 96-byte region [ffff888011e08e00, ffff888011e08e60)
-The buggy address belongs to the page:
-page:00000000a7104751 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11e08
-flags: 0xfff00000000200(slab)
-raw: 00fff00000000200 ffffea00004f8540 0000001f00000002 ffff888010041780
-raw: 0000000000000000 0000000080200020 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+```
 
-Memory state around the buggy address:
- ffff888011e08d00: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
- ffff888011e08d80: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
-> ffff888011e08e00: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                                              ^
- ffff888011e08e80: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
- ffff888011e08f00: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
-==================================================================
+one bio to dm device (dm0) = one dm_io (to nvme0) + one bio to this same 
+dm device (dm0)
 
-Reported-by: syzbot+625ce3bb7835b63f7f3d@syzkaller.appspotmail.com
-Fixes: 1e6fa5216a0e ("io_uring: COW io_identity on mismatch")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+```
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1f555e3c44cd..09369bc0317e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1287,9 +1287,12 @@ static bool io_identity_cow(struct io_kiocb *req)
- 	/* add one for this request */
- 	refcount_inc(&id->count);
- 
--	/* drop old identity, assign new one. one ref for req, one for tctx */
--	if (req->work.identity != tctx->identity &&
--	    refcount_sub_and_test(2, &req->work.identity->count))
-+	/* drop tctx and req identity references, if needed */
-+	if (tctx->identity != &tctx->__identity &&
-+	    refcount_dec_and_test(&tctx->identity->count))
-+		kfree(tctx->identity);
-+	if (req->work.identity != &tctx->__identity &&
-+	    refcount_dec_and_test(&req->work.identity->count))
- 		kfree(req->work.identity);
- 
- 	req->work.identity = id;
+
+In this case we need a mechanism to track all split sub-bios of the very 
+beginning original bio.
+
+I'm doubted if this should be implemented in block layer like:
+
+```
+
+struct bio {
+
+     ...
+
+     struct list_head  cookies;
+
+};
+
+```
+
+After all it's only used by bio-based queue, or more specifically only 
+dm device currently.
+
+
+Another design I can come up with is to maintain a global data structure 
+for the very beginning
+
+original bio. Currently the blocking point is that now one original bio 
+to the dm device (@bio of
+
+dm_submit()) can correspond to multiple dm_io and thus we have nowhere 
+to place the
+
+@cookies list.
+
+
+Now we have to maintain one data structure for every original bio, 
+something like
+
+```
+
+struct dm_poll_instance {
+
+     ...
+
+     struct list_head cookies;
+
+};
+
+```
+
+
+We can transfer this dm_poll_instance between split bios by 
+bio->bi_private, like
+
+```
+
+dm_submit_bio(...) {
+
+     struct dm_poll_instance *ins;
+
+     if (bio->bi_private)
+
+         ins = bio->bi_private;
+
+     else {
+
+         ins = alloc_poll_instance();
+
+         bio->bi_private = ins;
+
+     }
+
+     ...
+
+}
+
+```
+
+
+
 -- 
-2.29.2
+Jeffle
+Thanks
 

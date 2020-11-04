@@ -2,57 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D9982A6F2A
-	for <lists+io-uring@lfdr.de>; Wed,  4 Nov 2020 21:50:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 373EA2A6F8C
+	for <lists+io-uring@lfdr.de>; Wed,  4 Nov 2020 22:23:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730713AbgKDUuK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Nov 2020 15:50:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49070 "EHLO
+        id S1729744AbgKDVX0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Nov 2020 16:23:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728815AbgKDUuK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 15:50:10 -0500
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E3A7C0613D3
-        for <io-uring@vger.kernel.org>; Wed,  4 Nov 2020 12:50:09 -0800 (PST)
-Received: by mail-pf1-x441.google.com with SMTP id z3so2884409pfb.10
-        for <io-uring@vger.kernel.org>; Wed, 04 Nov 2020 12:50:09 -0800 (PST)
+        with ESMTP id S1728815AbgKDVX0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 16:23:26 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E6A0C0613D3
+        for <io-uring@vger.kernel.org>; Wed,  4 Nov 2020 13:23:24 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id p1so4433920wrf.12
+        for <io-uring@vger.kernel.org>; Wed, 04 Nov 2020 13:23:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=i1JFm8qOWFHllo5nT1UdXgsGfxGJEMv9j/jTFGGxVYw=;
-        b=OQJCeLRjLiBRGa8eiLO6K9ZF8lwxbb3pK0MYmodzaXuuT9fA2gs7DScT8bTwDWZo9O
-         WZqQj5mvZlK4dUXFkQp1cgHp+56iHBwRMsFXRs+LDoj05NlvUHqmvZHiBkwPK3HNbQq/
-         6X+PNCqwWztIbFtEzUBKX7lBdSSFDofP6B9ts4vSA04AkafVyQH5kaoIL4gXdc1FLwEc
-         2L8S9u0Q54dvdoJlVJRm6kCN4ZARMvn6Rb5CQRL+9MEDDDGmx43jn7wJKMh3FBAdSjPO
-         pOrMcBYvH/cLGvrfcYGtf460OwG6z95WzN5jwsv/I800Sx6rzCy8Xt59jIcn0UeAO4d4
-         nKVQ==
+        bh=qUF+YwEN8aSVYsveNlUnGwWxFzY8Gsq5GTFJWft8bck=;
+        b=b/tYceFa2OYKWRL1Cuie491KPaxIScFW8qH8Ym3oUcNnC/Z8jP/RaVZCsSFUK/3O54
+         g2kdMG9RKLUELl5NuYNLK3E5Ve6JU7N6/PnBSuBc1l+jYCibv98jrEZPk43UNZWYsn3k
+         4mxptik/xl4skVHotdwZrCuCYjc3j/wGeqC9da5AgZgNlR3nPmNn/LBts0lV28No15P/
+         Yg6AKSfvG1bY3ZPGPxP4PsLPj/bRmkXi7GtFMJ3h/2Tc0Jo9e/MVqy+lm4kqJrNm1OKL
+         sA7g0R1NLLkMNaF0ro0MeFHv9cnoo0vHlwP5UXr77bNayvKLRXT9NVGW37FuuI41PonM
+         nCsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=i1JFm8qOWFHllo5nT1UdXgsGfxGJEMv9j/jTFGGxVYw=;
-        b=K6ZQzSeRBRpupOu6VjOUPw0UblzTlHS1kxJsI0TXsr5mmyLQKpQhjZ8Da8T8YyM+4Y
-         8KUAxSkU3xSJiXElJLw6iAQor1pfBhSjftNzfsGFZKLSeNIepw15LfFNum+J5IOxXk7q
-         Mp7o50fWbW4QrMRUW+1H2jwD0pdp33U+FKeS2CTCVskf0090tsp+2SU7moL/Q+1OataM
-         RpFajazaJ3+zveQBkntTTqRsoraMAVwh4RGMolDI6LetMcATNF2QutMnJr/mfKIlO4zK
-         D+9nFxmubaWYg96dZ5Smt/ByhjA8t+6AEMrJ4lGiz/2tNOQrKaONPNptSUddfzV0/zRp
-         sZsQ==
-X-Gm-Message-State: AOAM53205z3clLogRTuWvInyBHE5gJ/8OT1Gd3LYT6LY2/oJTqFb4RWP
-        cLLmtOyXmlkWzPmyXVbTqU2yQg==
-X-Google-Smtp-Source: ABdhPJwXcIK80KUGMMHaQFm2WTCTkDx2k/4g/a5D+ymJcGZNe/ZYLhUMoIEFkVaY6SbzpcSZJU/ACQ==
-X-Received: by 2002:a63:e40b:: with SMTP id a11mr9807778pgi.26.1604523008355;
-        Wed, 04 Nov 2020 12:50:08 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id u7sm106104pjm.43.2020.11.04.12.50.07
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=qUF+YwEN8aSVYsveNlUnGwWxFzY8Gsq5GTFJWft8bck=;
+        b=SpxM/jX/hXsxggfMhcRNyQGmgRRskOfM8yRTHtHV0d/9rk3VKAkFurSgylCCioGimS
+         vIoEEk59mhX5nyYH8yFGLUhZrL3OvKRct2h5ZB5h9YOHULworDaBryCvPbxM8jhyTpPw
+         uwCel7tpG1ZH2MEJjD5mt4kSq6VfL25vhVwvw+vswtH06/JJOwYdyLdOq2+ZWTrb2g3a
+         rbvaIJjFjyhDa993LtRBEcH/L1Q/rOuWcrfp12EZaZhf8NX6xP8G9INQPR+4aTJZtXH2
+         JS2cCwyc67WktMRBokvugau3paQLYIblPUoLqI4VoDywPQCujTEHop7WThMZqQ7+xUd8
+         L6Wg==
+X-Gm-Message-State: AOAM530XIuatOJ3DJUxFDY/bVT2cdSkbajbRKeKHOqngIeYhwPuNjV3S
+        h64xr7yVpPh2T8MknlchNP+0f3p3T8M=
+X-Google-Smtp-Source: ABdhPJwnRpt53ke+iYCQl8Omp4rxBdnkMkYvfLXFWVgyd10d5HqeZHG1GvQvo7Mqk6xHTS9wYVJtMA==
+X-Received: by 2002:a5d:53d1:: with SMTP id a17mr33824152wrw.368.1604525003126;
+        Wed, 04 Nov 2020 13:23:23 -0800 (PST)
+Received: from [192.168.1.121] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
+        by smtp.gmail.com with ESMTPSA id 4sm4521744wrp.58.2020.11.04.13.23.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Nov 2020 12:50:07 -0800 (PST)
+        Wed, 04 Nov 2020 13:23:22 -0800 (PST)
 Subject: Re: [PATCH v3 RESEND] io_uring: add timeout support for
  io_uring_enter()
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Hao Xu <haoxu@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>, Hao Xu <haoxu@linux.alibaba.com>
 Cc:     io-uring@vger.kernel.org, metze@samba.org,
         Jiufei Xue <jiufei.xue@linux.alibaba.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>
@@ -64,20 +62,64 @@ References: <1604307047-50980-1-git-send-email-haoxu@linux.alibaba.com>
  <b6db7a64-aa37-cdfc-dae3-d8d1d8fa6a7f@kernel.dk>
  <13c05478-5363-cfae-69b1-8022b9736088@gmail.com>
  <1d7cbae3-c284-e01d-7f7d-2ae2ab9cbb54@kernel.dk>
-Message-ID: <c2715d7b-045b-42f3-2d83-125ef408cf33@kernel.dk>
-Date:   Wed, 4 Nov 2020 13:50:06 -0700
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <310a29cd-0dc2-69b0-7700-975af8025b71@gmail.com>
+Date:   Wed, 4 Nov 2020 21:20:22 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
 In-Reply-To: <1d7cbae3-c284-e01d-7f7d-2ae2ab9cbb54@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/4/20 1:28 PM, Jens Axboe wrote:
+On 04/11/2020 20:28, Jens Axboe wrote:
 > On 11/4/20 1:16 PM, Pavel Begunkov wrote:
 >> On 04/11/2020 19:34, Jens Axboe wrote:
 >>> On 11/4/20 12:27 PM, Pavel Begunkov wrote:
@@ -129,6 +171,9 @@ On 11/4/20 1:28 PM, Jens Axboe wrote:
 > something that's straight forward (and logical) to use, rather than
 > needing weird setups or hoops to jump through. And this mask vs
 > sizeof(mask) thing seems pretty horrendeous to me :-)
+
+If you think so, I'll spare my time then :)
+
 > 
 >>> Yeah, not doing the extra indirection would save a copy, but don't think
 >>> it's worth it for this path.
@@ -144,147 +189,9 @@ On 11/4/20 1:28 PM, Jens Axboe wrote:
 > is a pointer to the aux data instead of a sigmask. Better name
 > suggestions welcome...
 
-I'd be inclined to do something like the below:
+_EXT_ARG from extended
 
-- Rename it to IORING_ENTER_SIG_IS_DATA, which I think is more future
-  proof and explains it too. Ditto for the feature flag.
-
-- Move the checking and getting to under GETEVENTS. This removes a weird
-  case where you'd get EINVAL if IORING_ENTER_SIG_IS_DATA is set but
-  IORING_ENTER_GETEVENTS isn't. We didn't previously fail a
-  non-getevents call if eg sigmask was set, so don't think we should add
-  this case. Only downside here is that if we fail the validation, we'll
-  only submit and return the submit count. Should be fine, as we'd end
-  up with another enter and return the error there.
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 8439cda54e21..694a87807ea1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -9146,6 +9146,29 @@ static void io_sqpoll_wait_sq(struct io_ring_ctx *ctx)
- 	finish_wait(&ctx->sqo_sq_wait, &wait);
- }
- 
-+static int io_get_sig_is_data(unsigned flags, const void __user *argp,
-+			      struct __kernel_timespec __user **ts,
-+			      const sigset_t __user **sig, size_t *sigsz)
-+{
-+	struct io_uring_getevents_arg arg;
-+
-+	/* deal with IORING_ENTER_SIG_IS_DATA */
-+	if (flags & IORING_ENTER_SIG_IS_DATA) {
-+		if (*sigsz != sizeof(arg))
-+			return -EINVAL;
-+		if (copy_from_user(&arg, argp, sizeof(arg)))
-+			return -EFAULT;
-+		*sig = u64_to_user_ptr(arg.sigmask);
-+		*sigsz = arg.sigmask_sz;
-+		*ts = u64_to_user_ptr(arg.ts);
-+	} else {
-+		*sig = (const sigset_t __user *) argp;
-+		*ts = NULL;
-+	}
-+
-+	return 0;
-+}
-+
- SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		u32, min_complete, u32, flags, const void __user *, argp,
- 		size_t, sigsz)
-@@ -9154,32 +9177,13 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	long ret = -EBADF;
- 	int submitted = 0;
- 	struct fd f;
--	const sigset_t __user *sig;
--	struct __kernel_timespec __user *ts;
--	struct io_uring_getevents_arg arg;
- 
- 	io_run_task_work();
- 
- 	if (flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
--			IORING_ENTER_SQ_WAIT | IORING_ENTER_GETEVENTS_TIMEOUT))
-+			IORING_ENTER_SQ_WAIT | IORING_ENTER_SIG_IS_DATA))
- 		return -EINVAL;
- 
--	/* deal with IORING_ENTER_GETEVENTS_TIMEOUT */
--	if (flags & IORING_ENTER_GETEVENTS_TIMEOUT) {
--		if (!(flags & IORING_ENTER_GETEVENTS))
--			return -EINVAL;
--		if (sigsz != sizeof(arg))
--			return -EINVAL;
--		if (copy_from_user(&arg, argp, sizeof(arg)))
--			return -EFAULT;
--		sig = u64_to_user_ptr(arg.sigmask);
--		sigsz = arg.sigmask_sz;
--		ts = u64_to_user_ptr(arg.ts);
--	} else {
--		sig = (const sigset_t __user *)argp;
--		ts = NULL;
--	}
--
- 	f = fdget(fd);
- 	if (!f.file)
- 		return -EBADF;
-@@ -9223,6 +9227,13 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 			goto out;
- 	}
- 	if (flags & IORING_ENTER_GETEVENTS) {
-+		const sigset_t __user *sig;
-+		struct __kernel_timespec __user *ts;
-+
-+		ret = io_get_sig_is_data(flags, argp, &ts, &sig, &sigsz);
-+		if (unlikely(ret))
-+			goto out;
-+
- 		min_complete = min(min_complete, ctx->cq_entries);
- 
- 		/*
-@@ -9598,7 +9609,7 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
- 			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL |
- 			IORING_FEAT_POLL_32BITS | IORING_FEAT_SQPOLL_NONFIXED |
--			IORING_FEAT_GETEVENTS_TIMEOUT;
-+			IORING_FEAT_SIG_IS_DATA;
- 
- 	if (copy_to_user(params, p, sizeof(*p))) {
- 		ret = -EFAULT;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 37bea07c12f2..0fa095347fb6 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -317,7 +317,7 @@ asmlinkage long sys_io_uring_setup(u32 entries,
- 				struct io_uring_params __user *p);
- asmlinkage long sys_io_uring_enter(unsigned int fd, u32 to_submit,
- 				u32 min_complete, u32 flags,
--				const sigset_t __user *sig, size_t sigsz);
-+				const void __user *argp, size_t sigsz);
- asmlinkage long sys_io_uring_register(unsigned int fd, unsigned int op,
- 				void __user *arg, unsigned int nr_args);
- 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 1a92985a9ee8..4832addccfa6 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -231,7 +231,7 @@ struct io_cqring_offsets {
- #define IORING_ENTER_GETEVENTS	(1U << 0)
- #define IORING_ENTER_SQ_WAKEUP	(1U << 1)
- #define IORING_ENTER_SQ_WAIT	(1U << 2)
--#define IORING_ENTER_GETEVENTS_TIMEOUT	(1U << 3)
-+#define IORING_ENTER_SIG_IS_DATA	(1U << 3)
- 
- /*
-  * Passed in for io_uring_setup(2). Copied back with updated info on success
-@@ -260,7 +260,7 @@ struct io_uring_params {
- #define IORING_FEAT_FAST_POLL		(1U << 5)
- #define IORING_FEAT_POLL_32BITS 	(1U << 6)
- #define IORING_FEAT_SQPOLL_NONFIXED	(1U << 7)
--#define IORING_FEAT_GETEVENTS_TIMEOUT	(1U << 8)
-+#define IORING_FEAT_SIG_IS_DATA		(1U << 8)
- 
- /*
-  * io_uring_register(2) opcodes and arguments
+Also, a minor one -- s/sigsz/argsz/
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

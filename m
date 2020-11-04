@@ -2,34 +2,35 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 999A22A62EC
-	for <lists+io-uring@lfdr.de>; Wed,  4 Nov 2020 12:08:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B6B92A6333
+	for <lists+io-uring@lfdr.de>; Wed,  4 Nov 2020 12:21:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbgKDLIT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Nov 2020 06:08:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41704 "EHLO
+        id S1728969AbgKDLVl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Nov 2020 06:21:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728029AbgKDLIO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 06:08:14 -0500
+        with ESMTP id S1729089AbgKDLVg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 06:21:36 -0500
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ED6AC0613D3
-        for <io-uring@vger.kernel.org>; Wed,  4 Nov 2020 03:08:13 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8394FC0613D3
+        for <io-uring@vger.kernel.org>; Wed,  4 Nov 2020 03:21:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
          s=42; h=Date:Message-ID:From:To:CC;
-        bh=kEHApj0um3yuXvcJIlXl7iVmV1ANTsPI4ht8+sSlasg=; b=tretwoarMJtlee1eHSCmDZDsTf
-        J+3TLPU5L8FK2sv+vLS3YNKNajhpyip6cYg+H7eqKs2PlQ3zc7UqVq3jM68MZ+xt7bTg5Kawn4fVt
-        hwcRmYbA67u/+pfUPVrum8z5XyuixcQId81FFWl9PhRMF7KTrLFOagX1A3ODcujNSn3aSQo3wrM6M
-        fVAYAF+VMLCpfqah2zAGG7LvoQePaj7SlwDsvPLKhtagmI8iDjyjK8ODGfc8km2JTf0UckeKZFoLN
-        /Mg0JpmbhTzCDLNhx5xtAH9PzkoDNYhghQ3/ZPNkbNXlDpxcqYNmihIdsyaWzcOWKUQWUyRHWpiNQ
-        uMybjJijXgBpWKuS2RRo9wL8/01bhV5G7gnwav/ci6TPIAzcs1V/uiLZK20X7uxNPjcI/NalAbO8Y
-        9VVQerqyTn7gRcHWMcTKXDxuH/K+47cTTamZN+v48UPZsEH7El1s5aVAWsWnmgtEskskAieXubd3G
-        yUyqg+nml6/gHFOaWjIFfjti;
+        bh=7jHDXJ09RAgHOuf9wdvBK5JlqdxZZD7gHiIdt45FGNM=; b=QwkwUKHefFpaX6d5OGgs51dbWY
+        j5oyuvJYaqi3M3bXY7INcsKCcEZmHRlV+8PjdUg4ERAjgqMI45XOBNfyArMRFWQ5TsrJ1TizupZf3
+        1MX+EYk0NAoLG+CBBGPaz+4wM8ZmxP/2k+vhDULd7OUCQYyUPR60WXgzZOkZwlr0T0/Vud8cahMIn
+        zEvhsc6p5nRT9HWxuGipPUMrUP9DQ9ofT/9CP6FUJE+hnpAR21Wi8eDyzNvJL51Ovvc9o8GhzV7wX
+        be/xwOjb7ZQuAPYC5xei4xTtIQO/H8WP725N+lvIxz/FuZpBwiSHFtbPzWiBX2bVy3+unRFZKGNIv
+        wOFxzlociaHUkMAUzmKtbYCQL4YEZehG50djrxx5ZitFgIOCLNdk1FeV7SldRNSl9ccRgkk8GxFJl
+        r1GfQqjigShyOI6bmZxfSmZYgZRUwpFCOn5fkuJwjIqCLa0q1moM3My8rSXVrJF1CzwUwMLw7k1qK
+        num9xK/V7/KIwi63kOfs7GqV;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1kaGeB-000593-5o; Wed, 04 Nov 2020 11:08:11 +0000
-To:     Tim Fox <tfox@confluent.io>, io-uring@vger.kernel.org
-References: <CAMkGPyK=9bztK-2Ckg-2pOUhxugzXO=0-KGH4NL6+KQFnq7vBg@mail.gmail.com>
+        id 1kaGr7-0005G2-91; Wed, 04 Nov 2020 11:21:33 +0000
+To:     David Ahern <dsahern@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+References: <5324a8ca-bd5c-0599-d4d3-1e837338a7b5@gmail.com>
 From:   Stefan Metzmacher <metze@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
@@ -395,77 +396,91 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  3DQg6tCVq4kJtuPNDHY+MP02Bl9haogBSijePuphG21k2LOQa07Sg4yA/nNjoRQNmaKvElmz
  auYcwkOQPAK30K3drs2Ompu4At/lz8OT8Lo/dhOAUE7emFHIHSsHyCS1gpuoxdZRA0i7PmJt
  uAMlsTqBMFOwuvAcYAj2bwl7QQU6yhU=
-Subject: Re: Support for random access file reads
-Message-ID: <da5b15d7-7e3e-e85d-a8ff-b9fa49f79432@samba.org>
-Date:   Wed, 4 Nov 2020 12:08:03 +0100
+Subject: Re: io-uring and tcp sockets
+Message-ID: <cd729952-d639-ec71-4567-d72c361fe023@samba.org>
+Date:   Wed, 4 Nov 2020 12:21:22 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAMkGPyK=9bztK-2Ckg-2pOUhxugzXO=0-KGH4NL6+KQFnq7vBg@mail.gmail.com>
+In-Reply-To: <5324a8ca-bd5c-0599-d4d3-1e837338a7b5@gmail.com>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="cI5Kxr4KWqbGPq9YNWGfx9hJLCTSUOb2A"
+ boundary="nH2bTSY5ZMfa1dq8EvQDUlKCv86Qi4VN2"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---cI5Kxr4KWqbGPq9YNWGfx9hJLCTSUOb2A
-Content-Type: multipart/mixed; boundary="Ogp31pCkSfXdlJLYsQpXe0NzdjkvXyD37";
+--nH2bTSY5ZMfa1dq8EvQDUlKCv86Qi4VN2
+Content-Type: multipart/mixed; boundary="D1MqFpU1oh2hpp6vvZSi6BKUzek2KmIsY";
  protected-headers="v1"
 From: Stefan Metzmacher <metze@samba.org>
-To: Tim Fox <tfox@confluent.io>, io-uring@vger.kernel.org
-Message-ID: <da5b15d7-7e3e-e85d-a8ff-b9fa49f79432@samba.org>
-Subject: Re: Support for random access file reads
-References: <CAMkGPyK=9bztK-2Ckg-2pOUhxugzXO=0-KGH4NL6+KQFnq7vBg@mail.gmail.com>
-In-Reply-To: <CAMkGPyK=9bztK-2Ckg-2pOUhxugzXO=0-KGH4NL6+KQFnq7vBg@mail.gmail.com>
+To: David Ahern <dsahern@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org
+Message-ID: <cd729952-d639-ec71-4567-d72c361fe023@samba.org>
+Subject: Re: io-uring and tcp sockets
+References: <5324a8ca-bd5c-0599-d4d3-1e837338a7b5@gmail.com>
+In-Reply-To: <5324a8ca-bd5c-0599-d4d3-1e837338a7b5@gmail.com>
 
---Ogp31pCkSfXdlJLYsQpXe0NzdjkvXyD37
+--D1MqFpU1oh2hpp6vvZSi6BKUzek2KmIsY
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tim,
+Hi David,
 
-> I am new to io-uring and would like to read bytes from a specific
-> position in a file. I was looking for some kind of pread/preadv
-> functionality in io-uring but couldn't see any.
+> New to io_uring but can't find this answer online, so reaching out.
 >=20
-> Perhaps the expectation that the file descriptor offset is explicitly
-> set via lseek outside of io-uring, to enable random file access use
-> cases like mine?
+> I was trying out io_uring with netperf - tcp stream sockets - and
+> noticed a submission is called complete even with a partial send
+> (io_send(), ret < sr->len). Saving the offset of what succeeded (plus
+> some other adjustments) and retrying the sqe again solves the problem.
+> But the issue seems fundamental so wondering if is intentional?
 
-Look for IORING_OP_READ/IORING_OP_READV and io_uring_prep_read/io_uring_p=
-rep_readv() they
-all take an offset.
+I guess this is just the way it is currently.
+
+For Samba I'd also like to be sure to never get short write to a socket.
+
+There I'd like to keep the pipeline full by submitting as much sqe's as p=
+ossible
+(without waiting for completions on every single IORING_OP_SENDMSG/IORING=
+_OP_SPLICE)
+using IOSQE_IO_DRAIN or IOSQE_IO_LINK and maybe IOSQE_ASYNC or IORING_SET=
+UP_SQPOLL.
+
+But for now I just used a single sqe with IOSQE_ASYNC at a time.
+
+Jens, do you see a way to overcome that limitation?
+
+As far as I understand the situation is completely fixed now and
+it's no possible to get short reads and writes for file io anymore, is th=
+at correct?
 
 metze
 
 
+--D1MqFpU1oh2hpp6vvZSi6BKUzek2KmIsY--
 
-
---Ogp31pCkSfXdlJLYsQpXe0NzdjkvXyD37--
-
---cI5Kxr4KWqbGPq9YNWGfx9hJLCTSUOb2A
+--nH2bTSY5ZMfa1dq8EvQDUlKCv86Qi4VN2
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl+ii5MACgkQDbX1YShp
-vVaD0hAAgc/x2nrPZ8iXZmapHsJksyKarSd83tZdIGpSu8LsNFlkk8LK3EKrHnZ2
-NX36OZpPHOdTxDGPhb9DmvwB4MfsiMtxz62gMYSmygI8eoedkKYaZJpYlu9Hukt4
-m/bUdmrMOVTMIZwQQ2TIAR2c8ob/6nw+1Klx302NKo2FF5GNtChGJw2gAzLIf40f
-YkSGjE4VdP8nDlI3LJ8sNqlZfbmeuuHLZjz8PjUJpsj132n2++L69rqOWWDoxxhk
-dfXGVtVJYqjPIpg19k0/mvsiHEFIjhHU2nw0X9HHm5Hw6f7a0TmLquTRj55f0iTy
-mV6fPycsnFioWVTHoar2exlB8dwf5TH+Bz26i4jKpxez16kzyyZpEMX1T68GJ2Jf
-8CKLb7D3+1TleJRRflXX1eWTF52M6ImDNgzwU5RnQHkw3ROEz9objG5cp5lfjcAn
-PJZkEkrgy1PPvg32aVU2eafZ4Jx3N5fpSXjzQvyUIDfUVrcB1V7QjFQGMWBVM74v
-sK7ny7T6XaLETArPNqYTL472VfOgrDKOkAcRad9+rHkmypnadB887MxFOi9EmZde
-uHx2wfm3ETZQnxEbT5vOPC8PCR8JUAzGGJJAuxaTMgXbbOvEBdS4ISMQrRQSDXFU
-6OM53H5O2Skpg8sEPR/nfXY4Q3Z/URspBjdrKpIC1gXYLJ0jejI=
-=r+pv
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl+ijrIACgkQDbX1YShp
+vVbCBQ/7By2nQHrnbo8In1ipQlrFkKuPLkxOBk4GXPhbOQEEIKqMuHm742Bo/HUr
+K9rHn/jtrwzvzzUE6tqUnp+Z7RujHJLYJ+7EEfgpuan4syVe7ocn96+X5XYN52Mw
+Tigj+k/hDM28Jqm20MnCGuwGkx3GJLigdtoksMY5VJwy/8UFZkAN9G0OOA3pp5Aa
+LCqaZqJ3c6nAj/vHFL3c1NA50qOvmTKCEmkyfIqAw3UBmVS33v4yJdsJam+7o9FS
+lnoqMLjHnNNQ8jYzVch6jmO9GFk6gY+hIV/qkSC87gqNtDSw6FK5kbCIdn4KjKKh
+RqRMr7T+qgaxpmktezPNw/5HmZOefmtc7TgASJumLeMfZrgRQFhTcKVUdiO5Mbsl
+Z8gXtxCaqiqYPjD7IDgqD0XqIZEz3sorvGbwZx4mDOn5qkxI8KDtlna+1PZFLyqC
+8M5nFP8udAmSUaS4IBvM0vV9JdRyNfPIG3d2426a2VtGO9F7fGZBfs1zVfmcLvZt
+8blP6n4HjC3BsOR12Be6/IGujZCac7ObLzo3z8E0RaNOvLgM2s/ga5m8FEYvzPwA
+4H+U/Rh9Ey9t+Uoe5k8vHjHXsEGS9gg7zTTFe+W1xDVYSMOHxpWsPbuCcNdUDa82
+HoyLMIuDbdbccrS5fd3ysmVwacZACEHAB7MyfETY7CQK9+DsGRY=
+=eG4W
 -----END PGP SIGNATURE-----
 
---cI5Kxr4KWqbGPq9YNWGfx9hJLCTSUOb2A--
+--nH2bTSY5ZMfa1dq8EvQDUlKCv86Qi4VN2--

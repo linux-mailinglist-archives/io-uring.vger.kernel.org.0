@@ -2,53 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A398B2A80DD
-	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 15:29:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36BA52A81AA
+	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 15:58:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbgKEO3w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Nov 2020 09:29:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44586 "EHLO
+        id S1730854AbgKEO6Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Nov 2020 09:58:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbgKEO3v (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Nov 2020 09:29:51 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8104BC0613CF
-        for <io-uring@vger.kernel.org>; Thu,  5 Nov 2020 06:29:51 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id g12so1993370wrp.10
-        for <io-uring@vger.kernel.org>; Thu, 05 Nov 2020 06:29:51 -0800 (PST)
+        with ESMTP id S1730461AbgKEO6Y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Nov 2020 09:58:24 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F56C0613CF
+        for <io-uring@vger.kernel.org>; Thu,  5 Nov 2020 06:58:24 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id a3so1960435wrx.13
+        for <io-uring@vger.kernel.org>; Thu, 05 Nov 2020 06:58:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:references:autocrypt:message-id:date:user-agent
+        h=from:to:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=c+SIqunK3GrKxqZ/M8vuYPdIdAqO5jPyqevLWGp5gRw=;
-        b=rM4WfGHy9B2YX64jqm6Qi+5Pp3ncBNJ6WEwcRcqQzh1dx64qpaioK0cy6UshNwzTB0
-         X/xlrvAs4RsMVqHb2Mnk3oaoGKshwijgCY94F5JVTQ2aIk46G8K8t1tz2TomHg8S41W4
-         ly4Vufxm9Nbl09K8oXsXjq8KOnym6G0+0IRIm4c+lePqtc8306oOt7t0Ze6mvxSwDRIg
-         8yNyOW1f5CnJDKlave6mCQn/koV9aNdU9j3/bkXSQZXOBn6PAzyiu4dgs5SkHcwMs6Hj
-         zlCpELFxVXc71Yi8IZhYUuW8vShfERKH85MtERZNhuFGC1r75p0Y1PxMvOsI/uNmDTMh
-         hHWg==
+        bh=0dKL37EUlFqGMErChSI57ns/avHa6zgOSQi9i8D1sbU=;
+        b=k43HHRzZoW9shYPgCTWRwPn3MJN1X+n5CfafLj9dg6HaYH6H3HqS8qjvrS27vUAduC
+         d4mz56tO5gZvKjkLtey6f2pFKy/7B+XGCpVUUSnuakLEw8rntzTqBDJ3dJHPQGUbilVS
+         ePxie+3/HTFMVvMC11L9fsuzGBR742daoujBl0DwsWZwGhgLoxa+gEb9l1bFLuQKQKKa
+         SFjO/yvwdtejrLZpdsjOHQiDtb1M/VcT0HJtko7g0h2ltXYJegaFutXbwsc0MvC0vBIg
+         DNGfBo909/8JlmX9q3AN/GUxEvJlN7BUiqMqf1xpukPemlVx6cvTjtwAW4zuL2RI3jvQ
+         D8Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
+        h=x-gm-message-state:from:to:references:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=c+SIqunK3GrKxqZ/M8vuYPdIdAqO5jPyqevLWGp5gRw=;
-        b=PW0KPaKZpcCwgH6HySwgThOFiMAnSbEPuHJudhGs5JvmyjWqra+pDZsEyjoNLe8GD7
-         beO+3Lry6UoDp40c95rmxo+EddWDXWzW7uATwAvVXM7yy2xDKi46kK/m/ASbUX/GIW/d
-         0RZ6ZDMMrjiynG1d/tCu3FPdspOYXFy/XH6UeHUW2nzUZkKmXQUmkTWzWMvjGkk8aFbS
-         DQuCPosVc3Cf40fjQ/UmfrKAl1bqnL1edlIBaS6K+82qhXzyhuIiF8v08LrLkSD52fed
-         As6EEY4Ic44USXrUlZqThnNP3pbz+JiIbeyTEfXPQOf4AqZPsswL0cvCPMdIRWvLL+LE
-         22pw==
-X-Gm-Message-State: AOAM532OXU8fKyisV1nzJQvVmqHh7FQi1iyIRI1C1CBgi4BHPFhUHePL
-        RDo/XARGFMnqpGPsJw/q+/3AL5J3Z8c=
-X-Google-Smtp-Source: ABdhPJwR7Vheg7U9vWtCvUoz2exdRmDjrzZgfcOedPK5ASJJTwCaFIVe5ulpdlCHB/TztlvHckKylQ==
-X-Received: by 2002:adf:ef83:: with SMTP id d3mr3295201wro.393.1604586590115;
-        Thu, 05 Nov 2020 06:29:50 -0800 (PST)
+        bh=0dKL37EUlFqGMErChSI57ns/avHa6zgOSQi9i8D1sbU=;
+        b=Dxpj3/LupRZb3j3rMNBtdFIzvEO8VwamyjD3hdYZ2yg2vUkVBylgs4jp2RSDzcABVq
+         TPKkMj51aQOVBS47bibdW1d5eLRX6ehjm+qPw4XYpewXOWBzIYQ+YifDu3JrDX+OJugD
+         EtpaNvRSpoUcMvLXdkVxdYJs/AydPkvy93gIFGkC81Q3Ya5i+2Wjg8vPU0m1DLme1grf
+         AXXekq6xPvLXLPknIiKtcIAPX8NRlU/abTfTKopePqHqAL+1ARG4zHdJ6/DHcq9O3HWB
+         4tlgpefdEBnfIJE9dTBuF9ciAXOvgp/+fBUKR0HN5LbCb9Izj/1SBHyLioOvaevhHpFA
+         To9w==
+X-Gm-Message-State: AOAM530dbRS59TGaTNq/kJK67gGSdmBDqdFdn9SGbsigAmaykx81XkUE
+        j3TNCx0SC2/800hFbXN24Tut1lUmHqc=
+X-Google-Smtp-Source: ABdhPJztAgVKpLevc3R/CLIjPKWmSe30H859wybwv8ntYNDAZHgG/aRYJwupQia/h6nb216khDB6lQ==
+X-Received: by 2002:adf:f6cc:: with SMTP id y12mr3476834wrp.107.1604588302639;
+        Thu, 05 Nov 2020 06:58:22 -0800 (PST)
 Received: from [192.168.1.47] (host109-152-100-228.range109-152.btcentralplus.com. [109.152.100.228])
-        by smtp.gmail.com with ESMTPSA id f5sm2563827wmh.16.2020.11.05.06.29.49
+        by smtp.gmail.com with ESMTPSA id u202sm3119169wmu.23.2020.11.05.06.58.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Nov 2020 06:29:49 -0800 (PST)
-Subject: Re: Use of disowned struct filename after 3c5499fa56f5?
+        Thu, 05 Nov 2020 06:58:21 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Dmitry Kadashev <dkadashev@gmail.com>, io-uring@vger.kernel.org
 References: <CAOKbgA5ojRs0xuor9TEtBEHUfhEj5sJewDoNgsbAYruhrFmPQw@mail.gmail.com>
@@ -96,15 +95,16 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <042c50c4-0634-8001-ff90-85a9cb9632d3@gmail.com>
-Date:   Thu, 5 Nov 2020 14:26:49 +0000
+Subject: Re: Use of disowned struct filename after 3c5499fa56f5?
+Message-ID: <7db39583-8839-ac9e-6045-5f6e2f4f9f4b@gmail.com>
+Date:   Thu, 5 Nov 2020 14:55:21 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
 In-Reply-To: <1c1cd326-d99a-b15b-ab73-d5ee437db0fa@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
@@ -118,8 +118,94 @@ On 05/11/2020 14:22, Pavel Begunkov wrote:
 >> an example (kernel newbie here). But either I do not understand how it
 >> works, or on retry struct filename is used that is not owned anymore
 >> (and is probably freed).
+>>
+>> Here is the relevant part of the patch:
+>>
+>> diff --git a/fs/namei.c b/fs/namei.c
+>> index d4a6dd772303..a696f99eef5c 100644
+>> --- a/fs/namei.c
+>> +++ b/fs/namei.c
+>> @@ -4346,8 +4346,8 @@ int vfs_rename(struct inode *old_dir, struct
+>> dentry *old_dentry,
+>>  }
+>>  EXPORT_SYMBOL(vfs_rename);
+>>
+>> -static int do_renameat2(int olddfd, const char __user *oldname, int newdfd,
+>> -                       const char __user *newname, unsigned int flags)
+>> +int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
+>> +                struct filename *newname, unsigned int flags)
+>>  {
+>>         struct dentry *old_dentry, *new_dentry;
+>>         struct dentry *trap;
+>> @@ -4359,28 +4359,28 @@ static int do_renameat2(int olddfd, const char
+>> __user *oldname, int newdfd,
+>>         struct filename *to;
+>>         unsigned int lookup_flags = 0, target_flags = LOOKUP_RENAME_TARGET;
+>>         bool should_retry = false;
+>> -       int error;
+>> +       int error = -EINVAL;
+>>
+>>         if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
+>> -               return -EINVAL;
+>> +               goto put_both;
+>>
+>>         if ((flags & (RENAME_NOREPLACE | RENAME_WHITEOUT)) &&
+>>             (flags & RENAME_EXCHANGE))
+>> -               return -EINVAL;
+>> +               goto put_both;
+>>
+>>         if (flags & RENAME_EXCHANGE)
+>>                 target_flags = 0;
+>>
+>>  retry:
+>> -       from = filename_parentat(olddfd, getname(oldname), lookup_flags,
+>> -                               &old_path, &old_last, &old_type);
+> 
+> filename_parentat(getname(oldname), ...)
+> 
+> It's passing a filename directly, so filename_parentat() also takes ownership
+> of the passed filename together with responsibility to put it. Yes, it should
+> be destroying it inside.
 
-BTW, I'll double check later today internals and the patch you've mentioned.
+Hah, basically filename_parentat() returns back the passed in filename if not
+an error, so @oldname and @from are aliased, then in the end for retry path
+it does.
+
+```
+put(from);
+goto retry;
+```
+
+And continues to use oldname. The same for to/newname.
+Looks buggy to me, good catch!
+
+p.s. just noticed that you listed the original patch, not yours
+
+> 
+> struct filename {
+> 	...
+> 	int			refcnt;
+> };
+> 
+> The easiest solution is to take an additional ref. Looks like it's not atomic,
+> but double check to not add additional overhead.
+> 
+>> +       from = filename_parentat(olddfd, oldname, lookup_flags, &old_path,
+>> +                                       &old_last, &old_type);
+>>
+>> With the new code on the first run oldname ownership is released. And if
+>> we do end up on the retry path then it is used again erroneously (also
+>> `from` was already put by that time).
+>>
+>> Am I getting it wrong or is there a bug?
+>>
+>> do_unlinkat that you reference does things a bit differently, as far as
+>> I can tell the problem does not exist there.
+>>
+>> Thanks,
+>> Dmitry
+>>
+> 
 
 -- 
 Pavel Begunkov

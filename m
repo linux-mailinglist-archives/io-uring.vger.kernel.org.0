@@ -2,59 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B372A87B5
-	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 21:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5376E2A87F1
+	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 21:22:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbgKEUH4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Nov 2020 15:07:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41312 "EHLO
+        id S1732349AbgKEUV6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Nov 2020 15:21:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbgKEUH4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Nov 2020 15:07:56 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F2DC0613CF
-        for <io-uring@vger.kernel.org>; Thu,  5 Nov 2020 12:07:54 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id p1so3189164wrf.12
-        for <io-uring@vger.kernel.org>; Thu, 05 Nov 2020 12:07:54 -0800 (PST)
+        with ESMTP id S1732325AbgKEUV4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Nov 2020 15:21:56 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17C6EC0613CF
+        for <io-uring@vger.kernel.org>; Thu,  5 Nov 2020 12:21:56 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id x12so3239276wrm.8
+        for <io-uring@vger.kernel.org>; Thu, 05 Nov 2020 12:21:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=from:to:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JNOMf6JjIIwvQiD20ng13/IWOcqL0nkJ8qN0G3XQN5U=;
-        b=VVuDifpwsYuHE/DOs80YudH5RBHH0+USeWbnpBYcr3kSrIXBPDr0LHJPjixGD7Flq9
-         R5AvTbLfPC5L0FKt6kbqKiYrJ0w7J5I+O1gmvrdK4ElS9AkYRzwsmDCuXeGKAzfc55nT
-         D1stc3RZZx7oXLgDadUJUR+yV+4ZTgBC1e096+jwUe3sIdz41cIJ/PaY2k4doT3hAo0r
-         Lb5+JQhSVphGi2udIU3K65N7ymYqGA2tWTsutYoHiz2574LHpuzDF6PhGGULENYaOcEu
-         kZyQ5VjhtEvn7Jj0do0z+ap48ly94daYahMliPWnvMC1FhFfe0fT6yZRZcuM3JO6rCdX
-         GGjg==
+        bh=Cs2qwytA3lBbYxhKsa4X+TnhcU78eQcQy/sBUbLuL7E=;
+        b=lzECJV1BFDUN5+9wxT09cHREw3MXkSojxPd7pORDifYVrQwhKH08it7U3u9P1gQP5Q
+         HGmsnl2JR7zlblwm7cTlYKEu4rLObrtalK0ESVt5HH7vQb1bcFoU1+6nhSkAgkror/Pl
+         yS5C3uLRfNAdGzTQ8FDlfHzBooFLZaQUl7BVnt1LDdi1UsCP4RY28ctZTM3F9RLex9DE
+         SLWog8zIfQYIRn0dgRBhMy/wwo5RMInuk45QdWxEq3QhVhUl561TW+rBlUamSi6Q2CyQ
+         Yt+9CL8L/UuljCOQqhtTHzrmikE1E9HT8qkto4g92Qog4Kno8Ol5xGpIkT/7PCw4fhd3
+         8byg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+        h=x-gm-message-state:from:to:references:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=JNOMf6JjIIwvQiD20ng13/IWOcqL0nkJ8qN0G3XQN5U=;
-        b=XxXPail+Ef2iF8KpHUmygc5AS/OtDfr28TLOabgwVw5VPVQhbivGTEnvLsMORvnbmq
-         sFQDZS1e60frBSY5dnFYK/J5KXqp9tWZy3zs9+KO+uChYRegizWSJ6EbrXQbp2f/E5c/
-         apizb1luTD6+63eCgC0pBp1U2yXt76qecXznVYGyESaNmPQ4dU+wsdvaUZKmgBWzLLUq
-         f+uA6NIFUT+Ophrb4qnmysAxaQFT7JukL+5G+pOi/BkBPvXLOzH2CBwg8dyDgXIIazwT
-         uj8Yn48SCe/BxEVgADWvchaVjfblIUrLGMy3o0TOcJIaRY2RwkyC2HqrxfXTXPOaul6L
-         hE5Q==
-X-Gm-Message-State: AOAM531Tpz+rsWlKdIVTIQ4fvPHzH1msd7bH+tbptdv25R4sHVK1defE
-        mtNZ4i0zdRhqvfN4MXjldQIRLOQWXXk=
-X-Google-Smtp-Source: ABdhPJymXGhNTJD0MQQCo9BDKawQAJmC57zRycxYerBm6vlh4m1fWY6RbIYJqzUermKGh3mEZfDqjg==
-X-Received: by 2002:a05:6000:118c:: with SMTP id g12mr5032306wrx.246.1604606873190;
-        Thu, 05 Nov 2020 12:07:53 -0800 (PST)
-Received: from [192.168.1.47] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
-        by smtp.gmail.com with ESMTPSA id f2sm4230277wre.63.2020.11.05.12.07.52
+        bh=Cs2qwytA3lBbYxhKsa4X+TnhcU78eQcQy/sBUbLuL7E=;
+        b=gdjGANQM0GpBLBGsxmNzAVa61Wly0oVuGbrgXuLHgDouuzI2LdHGQzxpxCSWV28ASG
+         Kx9mKrUp1KLEFWHSsCK6TYqIC8ldAy8bOVMGXni9eaH75ebPlr9/4idgLJRbJhUQBMUT
+         k1SoqxO8wvLhCdrRL6dOAGIenP2m7eRoWJS97VLK3P31mm/Nw++xJ3zOflcZTdobReOZ
+         NasYMqGRdOhpCqhBLwV4jEyRYTWozDZIyo4j43uX+711W6vEmq0qy98D6XDtD16Cm3XR
+         I//H4PHD2gOaON7X7V4mbTAdql5YHHefQiu4SUG+IGFcokg2BiRe2hdx3zNYrNxXFIUG
+         PcXw==
+X-Gm-Message-State: AOAM532enCpdevU5t+RhxOBChaexc2RrLMJH22FV7EirR8iZ0WvPxblB
+        e/GT59IJelmAbvoqHj81df0ik06aH6E=
+X-Google-Smtp-Source: ABdhPJyudiD5xKXYYrvTfNDQFcjJA3sfmpWW2ax6YQX2O8DAxGMT+jPdh/4I98Bqz0V7M48IP/wlOg==
+X-Received: by 2002:adf:c388:: with SMTP id p8mr4994304wrf.307.1604607714560;
+        Thu, 05 Nov 2020 12:21:54 -0800 (PST)
+Received: from [192.168.1.47] (host109-152-100-228.range109-152.btcentralplus.com. [109.152.100.228])
+        by smtp.gmail.com with ESMTPSA id 205sm4167470wme.38.2020.11.05.12.21.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Nov 2020 12:07:52 -0800 (PST)
+        Thu, 05 Nov 2020 12:21:53 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Dmitry Kadashev <dkadashev@gmail.com>, io-uring@vger.kernel.org
 References: <CAOKbgA5ojRs0xuor9TEtBEHUfhEj5sJewDoNgsbAYruhrFmPQw@mail.gmail.com>
  <1c1cd326-d99a-b15b-ab73-d5ee437db0fa@gmail.com>
  <7db39583-8839-ac9e-6045-5f6e2f4f9f4b@gmail.com>
  <97810ccb-2f85-9547-e7c1-ce1af562924d@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <38141659-e902-73c6-a320-33b8bf2af0a5@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -99,12 +100,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: Use of disowned struct filename after 3c5499fa56f5?
-Message-ID: <38141659-e902-73c6-a320-33b8bf2af0a5@gmail.com>
-Date:   Thu, 5 Nov 2020 20:04:51 +0000
+Message-ID: <7875f7ef-4555-c374-aa33-37cc163a4f5e@gmail.com>
+Date:   Thu, 5 Nov 2020 20:18:53 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <97810ccb-2f85-9547-e7c1-ce1af562924d@kernel.dk>
+In-Reply-To: <38141659-e902-73c6-a320-33b8bf2af0a5@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -112,70 +113,79 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 05/11/2020 19:37, Jens Axboe wrote:
-> On 11/5/20 7:55 AM, Pavel Begunkov wrote:
->> On 05/11/2020 14:22, Pavel Begunkov wrote:
->>> On 05/11/2020 12:36, Dmitry Kadashev wrote:
->> Hah, basically filename_parentat() returns back the passed in filename if not
->> an error, so @oldname and @from are aliased, then in the end for retry path
->> it does.
+On 05/11/2020 20:04, Pavel Begunkov wrote:
+> On 05/11/2020 19:37, Jens Axboe wrote:
+>> On 11/5/20 7:55 AM, Pavel Begunkov wrote:
+>>> On 05/11/2020 14:22, Pavel Begunkov wrote:
+>>>> On 05/11/2020 12:36, Dmitry Kadashev wrote:
+>>> Hah, basically filename_parentat() returns back the passed in filename if not
+>>> an error, so @oldname and @from are aliased, then in the end for retry path
+>>> it does.
+>>>
+>>> ```
+>>> put(from);
+>>> goto retry;
+>>> ```
+>>>
+>>> And continues to use oldname. The same for to/newname.
+>>> Looks buggy to me, good catch!
 >>
->> ```
->> put(from);
->> goto retry;
->> ```
+>> How about we just cleanup the return path? We should only put these names
+>> when we're done, not for the retry path. Something ala the below - untested,
+>> I'll double check, test, and see if it's sane.
+> 
+> Retry should work with a comment below because it uses @oldname knowing that
+> it aliases to @from, which still have a refcount, but I don't like this
+> implicit ref passing. If someone would change filename_parentat() to return
+> a new filename, that would be a nasty bug.
+> 
+> options I see
+> 1. take a reference on old/newname in the beginning.
+> 
+> 2. don't return a filename from filename_parentat().
+> struct filename *name = ...;
+> int ret = filename_parentat(name, ...);
+> // use @name
+> 
+> 3. (also ugly)
+> retry:
+> 	oldname = from; 
+> 
 >>
->> And continues to use oldname. The same for to/newname.
->> Looks buggy to me, good catch!
+>>
+>> diff --git a/fs/namei.c b/fs/namei.c
+>> index a696f99eef5c..becb23ec07a8 100644
+>> --- a/fs/namei.c
+>> +++ b/fs/namei.c
+>> @@ -4473,16 +4473,13 @@ int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
+>>  	if (retry_estale(error, lookup_flags))
+>>  		should_retry = true;
+>>  	path_put(&new_path);
+>> -	putname(to);
+>>  exit1:
+>>  	path_put(&old_path);
+>> -	putname(from);
+>>  	if (should_retry) {	
+>>  		should_retry = false;
+>>  		lookup_flags |= LOOKUP_REVAL;
+>>  		goto retry;
+>>  	}
+>> -	return error;
+>>  put_both:
 > 
-> How about we just cleanup the return path? We should only put these names
-> when we're done, not for the retry path. Something ala the below - untested,
-> I'll double check, test, and see if it's sane.
+> I don't see oldname to be cleared after filename_parentat(),
+> so it puts both @from and @oldname, but there is only 1 ref.
 
-Retry should work with a comment below because it uses @oldname knowing that
-it aliases to @from, which still have a refcount, but I don't like this
-implicit ref passing. If someone would change filename_parentat() to return
-a new filename, that would be a nasty bug.
+I'm wrong here, you don't put @from.
 
-options I see
-1. take a reference on old/newname in the beginning.
-
-2. don't return a filename from filename_parentat().
-struct filename *name = ...;
-int ret = filename_parentat(name, ...);
-// use @name
-
-3. (also ugly)
-retry:
-	oldname = from; 
+Still filename_parentat() may fail, put oldname inside, destroy
+it and return an error, but as we don't clear oldname put_both:
+and below would do putname(oldname) again.
 
 > 
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index a696f99eef5c..becb23ec07a8 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -4473,16 +4473,13 @@ int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
->  	if (retry_estale(error, lookup_flags))
->  		should_retry = true;
->  	path_put(&new_path);
-> -	putname(to);
->  exit1:
->  	path_put(&old_path);
-> -	putname(from);
->  	if (should_retry) {	
->  		should_retry = false;
->  		lookup_flags |= LOOKUP_REVAL;
->  		goto retry;
->  	}
-> -	return error;
->  put_both:
-
-I don't see oldname to be cleared after filename_parentat(),
-so it puts both @from and @oldname, but there is only 1 ref.
-
->  	if (!IS_ERR(oldname))
->  		putname(oldname);
+>>  	if (!IS_ERR(oldname))
+>>  		putname(oldname);
+>>
 > 
 
 -- 

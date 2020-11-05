@@ -2,116 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE2A2A7EC0
-	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 13:37:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 734182A804E
+	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 15:03:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730465AbgKEMgw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Nov 2020 07:36:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54970 "EHLO
+        id S1730687AbgKEODK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Nov 2020 09:03:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729992AbgKEMgl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Nov 2020 07:36:41 -0500
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37391C0613CF
-        for <io-uring@vger.kernel.org>; Thu,  5 Nov 2020 04:36:41 -0800 (PST)
-Received: by mail-il1-x12c.google.com with SMTP id z2so1212659ilh.11
-        for <io-uring@vger.kernel.org>; Thu, 05 Nov 2020 04:36:41 -0800 (PST)
+        with ESMTP id S1730501AbgKEODK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Nov 2020 09:03:10 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE2CC0613CF
+        for <io-uring@vger.kernel.org>; Thu,  5 Nov 2020 06:03:10 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id u4so1483521pgr.9
+        for <io-uring@vger.kernel.org>; Thu, 05 Nov 2020 06:03:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=4drRpkMzk7c9vMVuCFMe6QeS6svk8sVYV6Wo0B6UTgU=;
-        b=uF7ceb4ECSXyaytY9bzjewwVtNY6cUDChRCwt2s1UyKcu7ra0izetRwHDmxX+7qFMX
-         jx9D5spGXnb8WeIONMlwYvRMq8gB2IDVFg70dBQcg8ysMzbQR76xMRqQZPGI3BeZigi1
-         rNrYLUdmz+iKHny2rrobbFKxiWxvM3QPKAtjJUAvzzPte7/G+bjqGRG53y4G7u+lpLSw
-         X2PaMe8pizjeYoYN1DDO1M3KJBEGvGYJIICuPAx/Rb5FBHR5BvnnGnpFYEXSvT/9Gc1N
-         c5+t2c5YtW2B59lV7siH3jZ8LwlHJMSQEp1YEmWUYGniJROn8DF869wygzjPjIUkNJ4w
-         6tMg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IlLitVLc0Gpfef8neL0GP8FKNziHQyytZeUORoHGQ44=;
+        b=twZPPsBJd9NeaRhe0yAovLR3vXA62FUhRJFNi2QRRtFfaG+MNcBfkYe8JDFnoCORRN
+         lvhbe6KS4I+LLHzHJ2EN2Mhjdzeb3ZsxFDSqv0qn+1LcLRxWaEaHN5DfI0S8E52j/Vsz
+         x0I4hHN53t/QfIwCnAuFOODzy5xet83S7NYFtVpikRsYFPPg7m7gjHaawPvaofPFc47J
+         tz1slXg/AAU+YI7W7F3Hl/gYHVJz5ryuha0ADYi+w30rNrUhlp6skbqNg+gwlP8mR8lt
+         PB0mGswwDA6luHKeLwPT0KGPRX7vgp/xLA/7nSyUWAcmAMzXyhVuI9U6VzVxll56J006
+         SWQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=4drRpkMzk7c9vMVuCFMe6QeS6svk8sVYV6Wo0B6UTgU=;
-        b=U87slg7v+fGPciOdr/G1NDTriC+/Cm9xmlv5rowZk22oM3+N52RCf6rl03Sw9TfoUU
-         nGWOgb38O5iPn5XZ/WYJAHQPK8xG0uX1x/RuLOpaKwV0TSodaqdsDZtmAINuNeSHgTKn
-         sNRDB9h0lxy16yzokphOs+1oXfamyVTQ60O8rFkjI5yV+DeG6ydG2Q/CsV2Ai6Jn0yCK
-         TaEeV8flFMx6G0HRsoQoWSH7rLJQC/zDqga5M48YffzT+m354XzESrc9Ijl1wXBFlpUz
-         l2yeiOilL/4tr9+NuuC3jYmCgVD2SfBHvv3OIoyXomeRrWEMgUwyAgmr8ynydywCrvUj
-         geCw==
-X-Gm-Message-State: AOAM533rL0j+A8PnQSQJ/owzn8SehbqZzyYIEgRF6dvHhVomRDlsfRx8
-        3B7NGtxvMbRNARklpPx9Kop3LRo6g/j3c86B41vtATT5HIc=
-X-Google-Smtp-Source: ABdhPJzR/KsWOrQYte8siVN4rev5TqfpO7lWZGymV/Y+Z8DGtNoIuhv1at8s3sI5N/AxMdRwTCjS+zrd2Msl6U21W94=
-X-Received: by 2002:a92:dac1:: with SMTP id o1mr1461013ilq.191.1604579799805;
- Thu, 05 Nov 2020 04:36:39 -0800 (PST)
-MIME-Version: 1.0
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Thu, 5 Nov 2020 19:36:28 +0700
-Message-ID: <CAOKbgA5ojRs0xuor9TEtBEHUfhEj5sJewDoNgsbAYruhrFmPQw@mail.gmail.com>
-Subject: Use of disowned struct filename after 3c5499fa56f5?
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IlLitVLc0Gpfef8neL0GP8FKNziHQyytZeUORoHGQ44=;
+        b=Nlp6OYbowtIorraR7qkbfCkiUOwlF6N5LQmF7ATSXvq6fRgobPP8k0mjOUCe7mY3qO
+         ODIkU0cNYe5/tgBg3RrVi+IOnfbI15RvIkeIEyaWBxFE9Lpun9FHXeeN0fAxnv6iaM+b
+         daIKjewTmNv+ywEgvktTYe5+8LUwcltZI1JLDBGO5Jka9Hqqy3M8nsffRfVttLjOhoWf
+         4ekC1JRLoElp68flUxZZcPC7D7kmhxyo7480jANH/vs6A6rLf3virJbBsM6iKMLcGPIA
+         h4b+gBTgVyHCjOo+PE7YVvMrUqxaSbuoTqs+WtjT+GIj5vKjgk7/sfOlfW/CL0z8G68Z
+         2BAA==
+X-Gm-Message-State: AOAM530tgyg6StN9TpQUu67lslxonRNRj+ZRCx40p5GMTzQtuTaWXVwh
+        i/RXuOpI7NKvjKhiR4+h+pph+lOKEUg=
+X-Google-Smtp-Source: ABdhPJz1XYuw6U9CMBgh0ecqseeBZiZfyBJGOqte3hjrVpmWn5zxqhE94REzEwggZp3K/QondtPQnw==
+X-Received: by 2002:a63:5644:: with SMTP id g4mr2651842pgm.145.1604584989385;
+        Thu, 05 Nov 2020 06:03:09 -0800 (PST)
+Received: from mita-MS-7A45.lan ([240f:34:212d:1:9ff6:8e52:79cf:ec2d])
+        by smtp.gmail.com with ESMTPSA id d18sm2420800pgg.41.2020.11.05.06.03.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2020 06:03:07 -0800 (PST)
+From:   Akinobu Mita <akinobu.mita@gmail.com>
 To:     io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>
+Subject: [PATCH] remove zero-size array in io_uring.h
+Date:   Thu,  5 Nov 2020 23:02:51 +0900
+Message-Id: <20201105140251.8035-1-akinobu.mita@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+This fixes compilation with -Werror=pedantic.
 
-I am trying to implement mkdirat support in io_uring and was using
-commit 3c5499fa56f5 ("fs: make do_renameat2() take struct filename") as
-an example (kernel newbie here). But either I do not understand how it
-works, or on retry struct filename is used that is not owned anymore
-(and is probably freed).
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+---
+ src/include/liburing/io_uring.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the relevant part of the patch:
+diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
+index e52ad2d..8555de9 100644
+--- a/src/include/liburing/io_uring.h
++++ b/src/include/liburing/io_uring.h
+@@ -308,7 +308,7 @@ struct io_uring_probe {
+ 	__u8 ops_len;	/* length of ops[] array below */
+ 	__u16 resv;
+ 	__u32 resv2[3];
+-	struct io_uring_probe_op ops[0];
++	struct io_uring_probe_op ops[];
+ };
+ 
+ struct io_uring_restriction {
+-- 
+2.25.1
 
-diff --git a/fs/namei.c b/fs/namei.c
-index d4a6dd772303..a696f99eef5c 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4346,8 +4346,8 @@ int vfs_rename(struct inode *old_dir, struct
-dentry *old_dentry,
- }
- EXPORT_SYMBOL(vfs_rename);
-
--static int do_renameat2(int olddfd, const char __user *oldname, int newdfd,
--                       const char __user *newname, unsigned int flags)
-+int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
-+                struct filename *newname, unsigned int flags)
- {
-        struct dentry *old_dentry, *new_dentry;
-        struct dentry *trap;
-@@ -4359,28 +4359,28 @@ static int do_renameat2(int olddfd, const char
-__user *oldname, int newdfd,
-        struct filename *to;
-        unsigned int lookup_flags = 0, target_flags = LOOKUP_RENAME_TARGET;
-        bool should_retry = false;
--       int error;
-+       int error = -EINVAL;
-
-        if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
--               return -EINVAL;
-+               goto put_both;
-
-        if ((flags & (RENAME_NOREPLACE | RENAME_WHITEOUT)) &&
-            (flags & RENAME_EXCHANGE))
--               return -EINVAL;
-+               goto put_both;
-
-        if (flags & RENAME_EXCHANGE)
-                target_flags = 0;
-
- retry:
--       from = filename_parentat(olddfd, getname(oldname), lookup_flags,
--                               &old_path, &old_last, &old_type);
-+       from = filename_parentat(olddfd, oldname, lookup_flags, &old_path,
-+                                       &old_last, &old_type);
-
-With the new code on the first run oldname ownership is released. And if
-we do end up on the retry path then it is used again erroneously (also
-`from` was already put by that time).
-
-Am I getting it wrong or is there a bug?
-
-do_unlinkat that you reference does things a bit differently, as far as
-I can tell the problem does not exist there.
-
-Thanks,
-Dmitry

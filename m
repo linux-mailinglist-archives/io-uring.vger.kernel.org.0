@@ -2,39 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95EE12A8334
-	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 17:14:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C117F2A832E
+	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 17:14:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731311AbgKEQO0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Nov 2020 11:14:26 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:52188 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730721AbgKEQOT (ORCPT
+        id S1731180AbgKEQOU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Nov 2020 11:14:20 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:43973 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730854AbgKEQOT (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 5 Nov 2020 11:14:19 -0500
-Received: by mail-il1-f197.google.com with SMTP id f8so1415395ilj.18
-        for <io-uring@vger.kernel.org>; Thu, 05 Nov 2020 08:14:17 -0800 (PST)
+Received: by mail-io1-f72.google.com with SMTP id o3so1445878iou.10
+        for <io-uring@vger.kernel.org>; Thu, 05 Nov 2020 08:14:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=LPep9Nteys3aoLNEl0+LmiCZ9NTgmMku4LQ+gLb0dvg=;
-        b=k/XLRVXgFsGnMVeooM7cwGFU8OYz0aRE3oUU1bwoDIV8aU3rTYukNF7Uz0y1lWxoWu
-         b+H31BzvGX3qJfX5/T5x1vG2yGv8elBMyROIQdHSBI91GOgaPRwX9BgoUvosDJcRRLbv
-         xSrDdUjJ0Y3g5/DJIIoAAIzNdxgCMThd6NbejftUMwOmeqNbBfXnP1FJ7KnvlUCNYDjL
-         1tOctXZir0qL8YzjS1Im+yRp0ybw21dgqgA6ThbxcQz094HNwdmoXcDhmbZq5uPM+4IR
-         9NtMbeByse1x9+J22+xIC1gR9wAbJFw3UDgpkhdaQ2hU86spDtmp/E2Wd8F8ijaUHIjd
-         rMXw==
-X-Gm-Message-State: AOAM530QTlN4Yb4Aiz+olg0KajUgNwXyTSufdNe2T5gYT46FnKY28JkI
-        2W2GBhXl8HMIcLf5nAfBWB+IVvyrwg9QEs7dyKt3S1VmEv2S
-X-Google-Smtp-Source: ABdhPJzlExmcllBentIAGjJ/TCmoqYKXFCdIYJPQaPu6y/AefIfEmw5OsjI+bYcPlLDGSRSw2TPR4YPm3zf/OhLWuHrRT7B/llWj
+        bh=mRJ15N3DTTcwfnKBXtFSdL2/0uB3J/4P0TWhY34qaus=;
+        b=j5xmkTFj474oJIoxgrGd5sdWvV4258aNVc7CYhqRqn5WSuYhM2aJqn+iVshNx3Murv
+         hBeCtaPBGwEsKMzjn+c8wneKSlw7xY1rQ76oPjs7VLbatrf4JmUfZ53VBlZerpjkdF2b
+         KBXTjNqWPbZBnkHw7sm9eTdf0TQQNKORRRSXd4DlkMb5QKcyv2Pu/KEkY92F6I0OFwTN
+         rUOsObDJOLKQs7c+droeYCQ7BHmMJJBVZeRvFHWNGntA1TGcjkZ2ShKxZ7dWUDowktXg
+         vO52WwU3w3GNVtm1UNM9rNUNL49QMLSt3Cz8YfoOrSAEJYRYgL3fuSkryUvdf9uTUOCi
+         dVGw==
+X-Gm-Message-State: AOAM532WpbI0lXiyiSkxCeeoO3lWVxtUrYxpNQw+i+Yq5vIY3cdNt6Pu
+        /YhhokSn3jlgqpJFMdzvd5cXVuI5gM+F7wEry4IIYdn2hJUm
+X-Google-Smtp-Source: ABdhPJwLhWGbogXRqjhwQml+B8efWoNtMrljpjzWu0QzWfV2m/Zk1JUfZIsMzGtOVuUnmpVJTSprT1FUMfjy1kbsO+UPSygQiiyx
 MIME-Version: 1.0
-X-Received: by 2002:a92:ba8b:: with SMTP id t11mr2397105ill.194.1604592856658;
+X-Received: by 2002:a92:a808:: with SMTP id o8mr2173202ilh.35.1604592856371;
  Thu, 05 Nov 2020 08:14:16 -0800 (PST)
 Date:   Thu, 05 Nov 2020 08:14:16 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003afa6905b35e6386@google.com>
-Subject: general protection fault in io_uring_show_cred
-From:   syzbot <syzbot+a6d494688cdb797bdfce@syzkaller.appspotmail.com>
+Message-ID: <0000000000003698a305b35e63fb@google.com>
+Subject: KASAN: use-after-free Read in io_uring_show_cred
+From:   syzbot <syzbot+65731228192d0cafab77@syzkaller.appspotmail.com>
 To:     axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
@@ -49,12 +49,12 @@ syzbot found the following issue on:
 
 HEAD commit:    4ef8451b Merge tag 'perf-tools-for-v5.10-2020-11-03' of gi..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12bf23a8500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10238e2a500000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=61033507391c77ff
-dashboard link: https://syzkaller.appspot.com/bug?extid=a6d494688cdb797bdfce
+dashboard link: https://syzkaller.appspot.com/bug?extid=65731228192d0cafab77
 compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11022732500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13649314500000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f42732500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=175fbb82500000
 
 The issue was bisected to:
 
@@ -64,32 +64,27 @@ Date:   Thu Oct 15 14:46:24 2020 +0000
 
     io_uring: COW io_identity on mismatch
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14295fa8500000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16295fa8500000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12295fa8500000
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13e38e2a500000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10138e2a500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e38e2a500000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a6d494688cdb797bdfce@syzkaller.appspotmail.com
+Reported-by: syzbot+65731228192d0cafab77@syzkaller.appspotmail.com
 Fixes: 1e6fa5216a0e ("io_uring: COW io_identity on mismatch")
 
-general protection fault, probably for non-canonical address 0xdffffc04422cfb38: 0000 [#1] PREEMPT SMP KASAN
-KASAN: probably user-memory-access in range [0x000000221167d9c0-0x000000221167d9c7]
-CPU: 0 PID: 8480 Comm: syz-executor292 Not tainted 5.10.0-rc2-syzkaller #0
+==================================================================
+BUG: KASAN: use-after-free in io_uring_show_cred+0x5bb/0x5f0 fs/io_uring.c:8921
+Read of size 8 at addr ffff8880132a04a0 by task syz-executor141/8511
+
+CPU: 0 PID: 8511 Comm: syz-executor141 Not tainted 5.10.0-rc2-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:io_uring_show_cred+0x32f/0x5f0 fs/io_uring.c:8922
-Code: 3c 02 00 0f 85 a8 02 00 00 49 8b ae a0 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d 4d 04 48 89 ca 48 89 4c 24 18 48 c1 ea 03 <0f> b6 14 02 48 89 c8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 e4
-RSP: 0018:ffffc900015ff9f0 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffff8880213f4c00 RCX: 000000221167d9c4
-RDX: 00000004422cfb38 RSI: ffffffff81d32adc RDI: ffff888014b101a0
-RBP: 000000221167d9c0 R08: 0000000000000001 R09: ffff8880272840ce
-R10: ffffed1004e50819 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff8880136c4cb8 R14: ffff888014b10100 R15: ffffffff8b1fe940
-FS:  0000000001182880(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000455310 CR3: 000000001b604000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x107/0x163 lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xae/0x4c8 mm/kasan/report.c:385
+ __kasan_report mm/kasan/report.c:545 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:562
+ io_uring_show_cred+0x5bb/0x5f0 fs/io_uring.c:8921
  idr_for_each+0x113/0x220 lib/idr.c:208
  __io_uring_show_fdinfo fs/io_uring.c:8974 [inline]
  io_uring_show_fdinfo+0x923/0xda0 fs/io_uring.c:8996
@@ -105,29 +100,70 @@ Call Trace:
  __x64_sys_preadv+0x231/0x310 fs/read_write.c:1058
  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x4403a9
+RIP: 0033:0x4403b9
 Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff45cb17f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004403a9
-RDX: 0000000000000333 RSI: 00000000200017c0 RDI: 0000000000000004
+RSP: 002b:00007ffedd6269c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
+RAX: ffffffffffffffda RBX: 00007ffedd6269d0 RCX: 00000000004403b9
+RDX: 0000000000000001 RSI: 0000000020001400 RDI: 0000000000000004
 RBP: 00000000006ca018 R08: 0000000000000000 R09: 65732f636f72702f
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401c10
-R13: 0000000000401ca0 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace 2f3a282977161035 ]---
-RIP: 0010:io_uring_show_cred+0x32f/0x5f0 fs/io_uring.c:8922
-Code: 3c 02 00 0f 85 a8 02 00 00 49 8b ae a0 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d 4d 04 48 89 ca 48 89 4c 24 18 48 c1 ea 03 <0f> b6 14 02 48 89 c8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 e4
-RSP: 0018:ffffc900015ff9f0 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffff8880213f4c00 RCX: 000000221167d9c4
-RDX: 00000004422cfb38 RSI: ffffffff81d32adc RDI: ffff888014b101a0
-RBP: 000000221167d9c0 R08: 0000000000000001 R09: ffff8880272840ce
-R10: ffffed1004e50819 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff8880136c4cb8 R14: ffff888014b10100 R15: ffffffff8b1fe940
-FS:  0000000001182880(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000455310 CR3: 000000001b604000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401c20
+R13: 0000000000401cb0 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 4887:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xc2/0xd0 mm/kasan/common.c:461
+ kmalloc include/linux/slab.h:557 [inline]
+ kzalloc include/linux/slab.h:664 [inline]
+ tomoyo_encode2.part.0+0xe9/0x3a0 security/tomoyo/realpath.c:45
+ tomoyo_encode2 security/tomoyo/realpath.c:31 [inline]
+ tomoyo_encode+0x28/0x50 security/tomoyo/realpath.c:80
+ tomoyo_realpath_from_path+0x186/0x620 security/tomoyo/realpath.c:288
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path_perm+0x21b/0x400 security/tomoyo/file.c:822
+ security_inode_getattr+0xcf/0x140 security/security.c:1279
+ vfs_getattr fs/stat.c:121 [inline]
+ vfs_fstat+0x43/0xb0 fs/stat.c:146
+ __do_sys_newfstat+0x81/0x100 fs/stat.c:386
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Freed by task 4887:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
+ kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0x102/0x140 mm/kasan/common.c:422
+ slab_free_hook mm/slub.c:1544 [inline]
+ slab_free_freelist_hook+0x5d/0x150 mm/slub.c:1577
+ slab_free mm/slub.c:3142 [inline]
+ kfree+0xdb/0x360 mm/slub.c:4124
+ tomoyo_path_perm+0x23d/0x400 security/tomoyo/file.c:842
+ security_inode_getattr+0xcf/0x140 security/security.c:1279
+ vfs_getattr fs/stat.c:121 [inline]
+ vfs_fstat+0x43/0xb0 fs/stat.c:146
+ __do_sys_newfstat+0x81/0x100 fs/stat.c:386
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The buggy address belongs to the object at ffff8880132a0480
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 32 bytes inside of
+ 96-byte region [ffff8880132a0480, ffff8880132a04e0)
+The buggy address belongs to the page:
+page:000000005ad008dd refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x132a0
+flags: 0xfff00000000200(slab)
+raw: 00fff00000000200 ffffea0000935fc0 0000000700000007 ffff888010041780
+raw: 0000000000000000 0000000080200020 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8880132a0380: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff8880132a0400: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+>ffff8880132a0480: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+                               ^
+ ffff8880132a0500: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff8880132a0580: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+==================================================================
 
 
 ---

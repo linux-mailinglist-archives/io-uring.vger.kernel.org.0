@@ -2,129 +2,179 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94F2A2A720E
-	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 00:45:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FDD02A7608
+	for <lists+io-uring@lfdr.de>; Thu,  5 Nov 2020 04:21:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbgKDXoh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Nov 2020 18:44:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732784AbgKDXoC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 18:44:02 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25FA0C0613CF
-        for <io-uring@vger.kernel.org>; Wed,  4 Nov 2020 15:44:01 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id 13so18670336pfy.4
-        for <io-uring@vger.kernel.org>; Wed, 04 Nov 2020 15:44:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=17UeQdTZqUibitgRHwc6pYwOpWA34muwj5f6WQ9gi5I=;
-        b=HjIIMX3HWDqMazjsIFypwNMmjnKxUi6BoiOAXMaYkrw31yyWw79H9+Br/M0PS77heQ
-         +iCxn8bbVa221xv1VPyCPoNxweUAekWa39b4armP7RM8eSh9OhvML/QvQyAKHuWUPl4i
-         vFwN1gkKo7Dk0cZ7JQwsF4G357hBjPb/Q3XC3IvOuTjHXAmFsKss+NHSbstCZIwMqpwE
-         eVrGWaMGRExcKFZysVTYymVuFEqQ0XQWnkKf7fNTU2ED8zCrkaaaci7sH+a0N8a5wp0N
-         KZ9jQDJaBgOPvR2UJNwaaWBw8E0UiPE8kZQPO1lTLXuNyEK4VSkYw1NGnnh1HA25xKTX
-         GFmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=17UeQdTZqUibitgRHwc6pYwOpWA34muwj5f6WQ9gi5I=;
-        b=cj7csOaPKjQiC6R2OCgENJSSiGfalt9apYt2dZ39sVBBGUwTxeMUPRAZV5I7PpeDpK
-         8LlxALUcwKNRln2cilJBL5Ef2vfAXQJrJzLhntpRoPgFy7r0zu0ru/sxkw0g45A2zzLQ
-         k+VvcbBpryHwkXINIQ7ss82ZpNM+zDrOU5D6/HP7Kxtb7pDJF3+vLgje2bWmZjxTWHzi
-         o1d5jDichbGispkiL8mtLOEkqaacwIeCbKVKu67ZF2iz/aFhtNkGbk3oa8zKIQZ+P/yA
-         426FV1ABtRVb76tlsb3Q7KFXcLz6ugDk4d0SIdBuXmKOneOqPc1SwUoGq8EF6pvA/Tev
-         vS5A==
-X-Gm-Message-State: AOAM5319fNvMx9P9d5LigRfwgFvYAQXKm04bGxv+4NXVovjVEjxRysJs
-        QfAkosCnL0hTg/KUqABBiP19+Z0og3s8EA==
-X-Google-Smtp-Source: ABdhPJwO4lHyL2qYCzSn5m+IKxJIitGIHhBjcC9XUrmGKWcyNdY/+YgYF1JGfPYw7ShayZD/+wIfxQ==
-X-Received: by 2002:a63:ff5b:: with SMTP id s27mr338872pgk.383.1604533440406;
-        Wed, 04 Nov 2020 15:44:00 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id w187sm3562212pfb.93.2020.11.04.15.43.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Nov 2020 15:43:59 -0800 (PST)
-Subject: Re: relative openat dirfd reference on submit
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Vito Caputo <vcaputo@pengaru.com>, io-uring@vger.kernel.org
-References: <20201102205259.qsbp6yea3zfrqwuk@shells.gnugeneration.com>
- <d57e6cb2-9a2c-86a4-7d64-05816b3eab54@kernel.dk>
- <0532ec03-1dd2-a6ce-2a58-9e45d66435b5@gmail.com>
- <c7130e35-6340-5e0b-f0d9-3c8465d0eaf9@kernel.dk>
- <efe65885-6bf3-a3d1-5c67-dc7b34dd96c2@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c97e1b84-9c48-fe91-7c79-57de98c7fc0a@kernel.dk>
-Date:   Wed, 4 Nov 2020 16:43:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1730673AbgKEDVj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Nov 2020 22:21:39 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:44258 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728511AbgKEDVj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Nov 2020 22:21:39 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UEHCIRW_1604546495;
+Received: from 30.225.32.219(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UEHCIRW_1604546495)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 05 Nov 2020 11:21:35 +0800
+Subject: Re: [PATCH] io_uring: don't take percpu_ref operations for registered
+ files in IOPOLL mode
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
+References: <20200902050538.8350-1-xiaoguang.wang@linux.alibaba.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <2eb73693-9c40-d657-b822-548ddd92b875@linux.alibaba.com>
+Date:   Thu, 5 Nov 2020 11:20:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <efe65885-6bf3-a3d1-5c67-dc7b34dd96c2@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20200902050538.8350-1-xiaoguang.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/2/20 5:41 PM, Pavel Begunkov wrote:
-> On 03/11/2020 00:34, Jens Axboe wrote:
->> On 11/2/20 5:17 PM, Pavel Begunkov wrote:
->>> On 03/11/2020 00:05, Jens Axboe wrote:
->>>> On 11/2/20 1:52 PM, Vito Caputo wrote:
->>>>> Hello list,
->>>>>
->>>>> I've been tinkering a bit with some async continuation passing style
->>>>> IO-oriented code employing liburing.  This exposed a kind of awkward
->>>>> behavior I suspect could be better from an ergonomics perspective.
->>>>>
->>>>> Imagine a bunch of OPENAT SQEs have been prepared, and they're all
->>>>> relative to a common dirfd.  Once io_uring_submit() has consumed all
->>>>> these SQEs across the syscall boundary, logically it seems the dirfd
->>>>> should be safe to close, since these dirfd-dependent operations have
->>>>> all been submitted to the kernel.
->>>>>
->>>>> But when I attempted this, the subsequent OPENAT CQE results were all
->>>>> -EBADFD errors.  It appeared the submit didn't add any references to
->>>>> the dependent dirfd.
->>>>>
->>>>> To work around this, I resorted to stowing the dirfd and maintaining a
->>>>> shared refcount in the closures associated with these SQEs and
->>>>> executed on their CQEs.  This effectively forced replicating the
->>>>> batched relationship implicit in the shared parent dirfd, where I
->>>>> otherwise had zero need to.  Just so I could defer closing the dirfd
->>>>> until once all these closures had run on their respective CQE arrivals
->>>>> and the refcount for the batch had reached zero.
->>>>>
->>>>> It doesn't seem right.  If I ensure sufficient queue depth and
->>>>> explicitly flush all the dependent SQEs beforehand
->>>>> w/io_uring_submit(), it seems like I should be able to immediately
->>>>> close(dirfd) and have the close be automagically deferred until the
->>>>> last dependent CQE removes its reference from the kernel side.
->>>>
->>>> We pass the 'dfd' straight on, and only the async part acts on it.
->>>> Which is why it needs to be kept open. But I wonder if we can get
->>>> around it by just pinning the fd for the duration. Since you didn't
->>>> include a test case, can you try with this patch applied? Totally
->>>> untested...
->>>
->>> afaik this doesn't pin an fd in a file table, so the app closes and
->>> dfd right after submit and then do_filp_open() tries to look up
->>> closed dfd. Doesn't seem to work, and we need to pass that struct
->>> file to do_filp_open().
->>
->> Yeah, I just double checked, and it's just referenced, but close() will
->> still make it NULL in the file table. So won't work... We'll have to
->> live with it for now, I'm afraid.
+hi,
+
+> In io_file_get() and io_put_file(), currently we use percpu_ref_get() and
+> percpu_ref_put() for registered files, but it's hard to say they're very
+> light-weight synchronization primitives, especially in arm platform. In one
+> our arm machine, I get below perf data(registered files enabled):
+> Samples: 98K of event 'cycles:ppp', Event count (approx.): 63789396810
+> Overhead  Command      Shared Object     Symbol
+>     ...
+>     0.78%  io_uring-sq  [kernel.vmlinux]  [k] io_file_get
+> There is an obvious overhead that can not be ignored.
 > 
-> Is there a problem with passing in a struct file? Apart from it
-> being used deep in open callchains?
+> Currently I don't find any good and generic solution for this issue, but
+> in IOPOLL mode, given that we can always ensure get/put registered files
+> under uring_lock, we can use a simple and plain u64 counter to synchronize
+> with registered files update operations in __io_sqe_files_update().
+> 
+> With this patch, perf data show shows:
+> Samples: 104K of event 'cycles:ppp', Event count (approx.): 67478249890
+> Overhead  Command      Shared Object     Symbol
+>     ...
+>     0.27%  io_uring-sq  [kernel.vmlinux]  [k] io_file_get
+The above %0.78 => %0.27 improvements are observed in arm machine with 4.19 kernel.
+In upstream mainline codes, since this patch "2b0d3d3e4fcf percpu_ref: reduce memory
+footprint of percpu_ref in fast path", I believe the io_file_get's overhead would
+be further smaller. I have same tests in same machine, in upstream codes with my patch,
+now the io_file_get's overhead is %0.44.
 
-No technical problems as far as I can tell, just needs doing...
+This patch's idea is simple, and now seems it only gives minor performance improvement,
+do you have any comments about this patch, should I continue re-send it?
 
--- 
-Jens Axboe
+Regards,
+Xiaoguang Wang
 
+> 
+> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+> ---
+>   fs/io_uring.c | 58 ++++++++++++++++++++++++++++++++++++++++++++-------
+>   1 file changed, 50 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index ce69bd9b0838..186072861af9 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -195,6 +195,11 @@ struct fixed_file_table {
+>   
+>   struct fixed_file_ref_node {
+>   	struct percpu_ref		refs;
+> +	/*
+> +	 * Track the number of reqs that reference this node, currently it's
+> +	 * only used in IOPOLL mode.
+> +	 */
+> +	u64				count;
+>   	struct list_head		node;
+>   	struct list_head		file_list;
+>   	struct fixed_file_data		*file_data;
+> @@ -651,7 +656,10 @@ struct io_kiocb {
+>   	 */
+>   	struct list_head		inflight_entry;
+>   
+> -	struct percpu_ref		*fixed_file_refs;
+> +	union {
+> +		struct percpu_ref		*fixed_file_refs;
+> +		struct fixed_file_ref_node	*fixed_file_ref_node;
+> +	};
+>   	struct callback_head		task_work;
+>   	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
+>   	struct hlist_node		hash_node;
+> @@ -1544,9 +1552,20 @@ static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx,
+>   static inline void io_put_file(struct io_kiocb *req, struct file *file,
+>   			  bool fixed)
+>   {
+> -	if (fixed)
+> -		percpu_ref_put(req->fixed_file_refs);
+> -	else
+> +	struct io_ring_ctx *ctx = req->ctx;
+> +
+> +	if (fixed) {
+> +		/* See same comments in io_sqe_files_unregister(). */
+> +		if (ctx->flags & IORING_SETUP_IOPOLL) {
+> +			struct fixed_file_ref_node *ref_node = req->fixed_file_ref_node;
+> +			struct percpu_ref *refs = &ref_node->refs;
+> +
+> +			ref_node->count--;
+> +			if ((ctx->file_data->cur_refs != refs) && !ref_node->count)
+> +				percpu_ref_kill(refs);
+> +		} else
+> +			percpu_ref_put(req->fixed_file_refs);
+> +	} else
+>   		fput(file);
+>   }
+>   
+> @@ -5967,8 +5986,21 @@ static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
+>   		fd = array_index_nospec(fd, ctx->nr_user_files);
+>   		file = io_file_from_index(ctx, fd);
+>   		if (file) {
+> -			req->fixed_file_refs = ctx->file_data->cur_refs;
+> -			percpu_ref_get(req->fixed_file_refs);
+> +			struct percpu_ref *refs = ctx->file_data->cur_refs;
+> +
+> +			/*
+> +			 * In IOPOLL mode, we can always ensure get/put registered files under
+> +			 * uring_lock, so we can use a simple and plain u64 counter to synchronize
+> +			 * with registered files update operations in __io_sqe_files_update.
+> +			 */
+> +			if (ctx->flags & IORING_SETUP_IOPOLL) {
+> +				req->fixed_file_ref_node = container_of(refs,
+> +						struct fixed_file_ref_node, refs);
+> +				req->fixed_file_ref_node->count++;
+> +			} else {
+> +				req->fixed_file_refs = refs;
+> +				percpu_ref_get(refs);
+> +			}
+>   		}
+>   	} else {
+>   		trace_io_uring_file_get(ctx, fd);
+> @@ -6781,7 +6813,12 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+>   		ref_node = list_first_entry(&data->ref_list,
+>   				struct fixed_file_ref_node, node);
+>   	spin_unlock(&data->lock);
+> -	if (ref_node)
+> +	/*
+> +	 * If count is not zero, that means we're in IOPOLL mode, and there are
+> +	 * still reqs that reference this ref_node, let the final req do the
+> +	 * percpu_ref_kill job.
+> +	 */
+> +	if (ref_node && !ref_node->count)
+>   		percpu_ref_kill(&ref_node->refs);
+>   
+>   	percpu_ref_kill(&data->refs);
+> @@ -7363,7 +7400,12 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>   	}
+>   
+>   	if (needs_switch) {
+> -		percpu_ref_kill(data->cur_refs);
+> +		struct fixed_file_ref_node *old_ref_node = container_of(data->cur_refs,
+> +				struct fixed_file_ref_node, refs);
+> +
+> +		/* See same comments in io_sqe_files_unregister(). */
+> +		if (!old_ref_node->count)
+> +			percpu_ref_kill(data->cur_refs);
+>   		spin_lock(&data->lock);
+>   		list_add(&ref_node->node, &data->ref_list);
+>   		data->cur_refs = &ref_node->refs;
+> 

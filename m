@@ -2,270 +2,153 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4513F2A8D24
-	for <lists+io-uring@lfdr.de>; Fri,  6 Nov 2020 03:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3A832A93B1
+	for <lists+io-uring@lfdr.de>; Fri,  6 Nov 2020 11:08:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725842AbgKFCvK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Nov 2020 21:51:10 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:49931 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725815AbgKFCvK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 5 Nov 2020 21:51:10 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UENreRr_1604631064;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UENreRr_1604631064)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 06 Nov 2020 10:51:05 +0800
-Subject: Re: [dm-devel] [RFC 0/3] Add support of iopoll for dm device
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     axboe@kernel.dk, xiaoguang.wang@linux.alibaba.com,
-        linux-block@vger.kernel.org, joseph.qi@linux.alibaba.com,
-        dm-devel@redhat.com, haoxu@linux.alibaba.com,
-        io-uring@vger.kernel.org
-References: <20201020065420.124885-1-jefflexu@linux.alibaba.com>
- <20201021203906.GA10896@redhat.com>
- <da936cfa-93a8-d6ec-bd88-c0fad6c67c8b@linux.alibaba.com>
- <20201026185334.GA8463@redhat.com>
- <33c32cd1-5116-9a42-7fe2-b2a383f1c7a0@linux.alibaba.com>
- <20201102152822.GA20466@redhat.com>
- <f165f38a-91d1-79aa-829d-a9cc69a5eee6@linux.alibaba.com>
- <20201104150847.GB32761@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <2c5dab21-8125-fcdf-078e-00a158c57f43@linux.alibaba.com>
-Date:   Fri, 6 Nov 2020 10:51:04 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.12.1
+        id S1726621AbgKFKIH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 Nov 2020 05:08:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbgKFKIG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Nov 2020 05:08:06 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20DD2C0613CF
+        for <io-uring@vger.kernel.org>; Fri,  6 Nov 2020 02:08:05 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id 126so1115674lfi.8
+        for <io-uring@vger.kernel.org>; Fri, 06 Nov 2020 02:08:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=GbzzshkzRr+lGPbbHp3UIh4O45Aa72enWtS1Ov7TaxY=;
+        b=toh0iMumfabIcRkjYol1OX0OJhYCs9RwgWzXr9WuG5u88hTG/avojOQezub18xs3HT
+         R7FvBOPjUIUpcKdU3ncyiDSUevaaX2cRNHHc59TTRAO789WtTdTK7O3mpC6v0lV4QNLs
+         SkjV2l9vJBnQEwBWoYAv8itCZBDXztISYAmUV4csH8eeJUIHofPKsIQbwd5dFcV8Psdg
+         5pLjGQOTZi/vPk6YVfh++9dzBqLe8XzhPH+7r3JHFJRF1jr8TjH4kZSwx3BkobKQJHq4
+         bJTJMfme3LzSzLa8xF3SuFCq/YBrFTfTeaPskpI7QR9JASecQngMKW8YxJQ372Xy3231
+         GS3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GbzzshkzRr+lGPbbHp3UIh4O45Aa72enWtS1Ov7TaxY=;
+        b=kZGXk5xhqswADdB7fDh3wZaWczRDBjKYzKxwAuR7Z9R7TAVAqg/bP4HFixRZ/3vsuy
+         7971KjGFqrVsBE//vKUV7hDO7JLFYdCcUGSql7s+xh/HKURI8aA6Hz0zhELXyfpD4EoD
+         GOY3o+jLf8/D7fRR3pCx5l+itPAx0hCzc6GARe/9G7orqNIvsq+SpF8CltlF+VgkM3/J
+         +qHQwfiqLkht2ziXzX9lMW3F00IZnvKfXgsCgDC+qGfzRhERdQdhcrGXopgDFjtKNKNm
+         JuytbWuxWYmfig9sk4irIdb3a+eJbwu/NyBj0S7KbUiBMBrKGTcIFKJtOI+EQ0ETMuct
+         j6QA==
+X-Gm-Message-State: AOAM533ny/uZlyFOpGiQ5B7rEwuEmff0yawwI/s9tJlw9KCFxgKURWwG
+        DctXgl7tGKtXNxPK+hHxlDs=
+X-Google-Smtp-Source: ABdhPJx2PVJtSJEOu/J54AjQNM7Lxjl8th6orN5VFxMxTXnycx/at2ZmTc3CR1X2EktYKrYX1YAsnw==
+X-Received: by 2002:a19:4b0a:: with SMTP id y10mr639083lfa.570.1604657283623;
+        Fri, 06 Nov 2020 02:08:03 -0800 (PST)
+Received: from carbon.v ([94.143.149.146])
+        by smtp.gmail.com with ESMTPSA id m132sm107356lfa.34.2020.11.06.02.08.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Nov 2020 02:08:02 -0800 (PST)
+Date:   Fri, 6 Nov 2020 17:08:00 +0700
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: Re: Use of disowned struct filename after 3c5499fa56f5?
+Message-ID: <20201106100800.GA3431563@carbon.v>
+References: <CAOKbgA5ojRs0xuor9TEtBEHUfhEj5sJewDoNgsbAYruhrFmPQw@mail.gmail.com>
+ <1c1cd326-d99a-b15b-ab73-d5ee437db0fa@gmail.com>
+ <7db39583-8839-ac9e-6045-5f6e2f4f9f4b@gmail.com>
+ <97810ccb-2f85-9547-e7c1-ce1af562924d@kernel.dk>
+ <38141659-e902-73c6-a320-33b8bf2af0a5@gmail.com>
+ <361ab9fb-a67b-5579-3e7b-2a09db6df924@kernel.dk>
+ <9b52b4b1-a243-4dc0-99ce-d6596ca38a58@gmail.com>
+ <266e0d85-42ed-e0f8-3f0b-84bcda0af912@kernel.dk>
+ <ae71b04d-b490-7055-900b-ebdbe389c744@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201104150847.GB32761@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae71b04d-b490-7055-900b-ebdbe389c744@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On Thu, Nov 05, 2020 at 08:57:43PM +0000, Pavel Begunkov wrote:
+> On 05/11/2020 20:49, Jens Axboe wrote:
+> > On 11/5/20 1:35 PM, Pavel Begunkov wrote:
+> >> On 05/11/2020 20:26, Jens Axboe wrote:
+> >>> On 11/5/20 1:04 PM, Pavel Begunkov wrote:
+> >>>> On 05/11/2020 19:37, Jens Axboe wrote:
+> >>>>> On 11/5/20 7:55 AM, Pavel Begunkov wrote:
+> >>>>>> On 05/11/2020 14:22, Pavel Begunkov wrote:
+> >>>>>>> On 05/11/2020 12:36, Dmitry Kadashev wrote:
+> >>>>>> Hah, basically filename_parentat() returns back the passed in filename if not
+> >>>>>> an error, so @oldname and @from are aliased, then in the end for retry path
+> >>>>>> it does.
+> >>>>>>
+> >>>>>> ```
+> >>>>>> put(from);
+> >>>>>> goto retry;
+> >>>>>> ```
+> >>>>>>
+> >>>>>> And continues to use oldname. The same for to/newname.
+> >>>>>> Looks buggy to me, good catch!
+> >>>>>
+> >>>>> How about we just cleanup the return path? We should only put these names
+> >>>>> when we're done, not for the retry path. Something ala the below - untested,
+> >>>>> I'll double check, test, and see if it's sane.
+> >>>>
+> >>>> Retry should work with a comment below because it uses @oldname
+> >>>> knowing that it aliases to @from, which still have a refcount, but I
+> >>>> don't like this implicit ref passing. If someone would change
+> >>>> filename_parentat() to return a new filename, that would be a nasty
+> >>>> bug.
+> >>>
+> >>> Not a huge fan of how that works either, but I'm not in this to rewrite
+> >>> namei.c...
+> >>
+> >> There are 6 call sites including do_renameat2(), a separate patch would
+> >> change just ~15-30 lines, doesn't seem like a big rewrite.
+> > 
+> > It just seems like an utterly pointless exercise to me, something you'd
+> > go through IFF you're changing filename_parentat() to return a _new_
+> > entry instead of just the same one. And given that this isn't the only
+> > callsite, there's precedence there for it working like that. I'd
+> > essentially just be writing useless code.
+> > 
+> > I can add a comment about it, but again, there are 6 other call sites.
+> 
+> Ok, but that's how things get broken. There is one more idea then,
+> instead of keeping both oldname and from, just have from. May make
+> the whole thing easier.
+> 
+> int do_renameat2(struct filename *from)
+> {
+> ...
+> retry:
+>     from = filename_parentat(from, ...);
+> ...
+> exit:
+>     if (!IS_ERR(from))
+>         putname(from);
+> }
 
-On 11/4/20 11:08 PM, Mike Snitzer wrote:
->> I'm doubted if this should be implemented in block layer like:
->>
->> ```
->>
->> struct bio {
->>
->>      ...
->>
->>      struct list_head  cookies;
->>
->> };
->>
->> ```
->>
->> After all it's only used by bio-based queue, or more specifically
->> only dm device currently.
-> I do think this line of work really should be handled in block core
-> because I cannot see any reason why MD or bcache or whatever bio-based
-> device wouldn't want the ability to better support io_uring (with IO
-> poll).
->
->> Another design I can come up with is to maintain a global data
->> structure for the very beginning
->> original bio. Currently the blocking point is that now one original
->> bio to the dm device (@bio of dm_submit()) can correspond to multiple
->> dm_io and thus we have nowhere to place the @cookies list.
-> Yes, and that will always be the case.  We need the design to handle an
-> arbitrary sprawl of splitting from a given bio.  The graph of bios
-> resulting from that fan-out needs to be walked at various levels -- be
-> it the top-level original bio's submit_bio() returned cookie or some
-> intermediate point in the chain of bios.
->
-> The problem is the lifetime of the data structure created for a given
-> split bio versus layering boundaries (that come from block core's
-> simplistic recursion via bio using submit_bio).
->
->> Now we have to maintain one data structure for every original bio,
->> something like
->>
->> ```
->>
->> struct dm_poll_instance {
->>
->>      ...
->>
->>      struct list_head cookies;
->>
->> };
->>
->> ```
-> I do think we need a hybrid where at the point of recursion we're able
-> to make the associated data structure available across the recursion
-> boundary so that modeling the association in a chain of split bios is
-> possible. (e.g. struct dm_poll_data or dm_poll_instance as you named it,
-> _but_ that struct definition would live in block core, but would be part
-> of per-bio-data; so 'struct blk_poll_data' is more logical name when
-> elevated to block core).
->
-> It _might_ be worthwhile to see if a new BIO_ flag could be added to
-> allow augmenting the bio_split + bio_chain pattern to also track this
-> additional case of carrying additional data per-bio while creating
-> bio-chains.  I may not be clear yet, said differently: augmenting
-> bio_chain to not only chain bios, but to _also_ thread/chain together
-> per-bio-data that lives within those chained bios.  SO you have the
-> chain of bios _and_ the chain of potentially opaque void * that happens
-> to point to a list head for a list of 'struct blk_poll_data'.
->
-> Does that make sense?
+That's pretty much what do_unlinkat() does btw. Thanks Pavel for looking
+into this!
 
+Can I pick your brain some more? do_mkdirat() case is slightly
+different:
 
-I'm doubted if it really makes sense to maintain a *complete* bio chain 
-across the recursive
+static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
+{
+	struct dentry *dentry;
+	struct path path;
+	int error;
+	unsigned int lookup_flags = LOOKUP_DIRECTORY;
 
-call boundary.
+retry:
+	dentry = user_path_create(dfd, pathname, &path, lookup_flags);
 
-
-Considering the following device stack:
-
-```
-
-                                   dm0
-
-         dm1                   dm2           dm3
-
-nvme0  nvme1          ....               ....
-
-```
-
-
-We have the following bio graph (please let me know if it's wrong or the 
-image can't display)
-
-
-For example, for dm1 there are three bios containing valid cookie in the 
-end, that is
-
-bio 9/10/11. We only need to insert the corresponding blk_poll_data 
-(containing
-
-request_queue, cookie, etc) of these three bios into the very beginning 
-original
-
-bio (that is bio0). Of course we can track all the sub-bios down through 
-the device
-
-stack, layer by layer, e.g.,
-
-- get bio 1/2/3 from bio 0
-
-- get bio 4 from bio 3
-
-- finally get bio 9 from bio 4
-
-But I'm doubted if it's overkill to just implement the iopoll.
-
-
-Another issue still unclear is that, if we should implement the iopoll 
-in a recursive way.
-
-In a recursive way, to poll dm 0, we should poll all its sub-devices, 
-that is, bio 4/5/7/8.
-
-Oppositely we can insert only the bottom bio (bio 9/10/11 which have 
-valid cookie) at
-
-the very beginning (at submit_bio() phase), and to poll dm 0, we only 
-need to poll bio
-
-9/10/11.
-
-
-To implement this non-recursive design, we can add a field in struct bio
-
-```
-
-struct bio {
-
-     ...
-
-     struct bio *orig;
-
-}
-
-```
-
-@orig points to the original bio inputted into submit_bio(), that is, bio 0.
-
-
-@orig field is transmitted through bio splitting.
-
-```
-
-bio_split()
-
-     split->orig = bio->orig ? : bio
-
-
-dm.c: __clone_and_map_data_bio
-
-     clone->orig = bio->orig ? : bio
-
-```
-
-
-Finally bio 9/10/11 can be inserted into bio 0.
-
-```
-
-blk-mq.c: blk_mq_submit_bio
-
-     if (bio->orig)
-
-         init blk_poll_data and insert it into bio->orig's @cookies list
-
-```
-
->
->> We can transfer this dm_poll_instance between split bios by
->> bio->bi_private, like
->>
->> ```
->>
->> dm_submit_bio(...) {
->>
->>      struct dm_poll_instance *ins;
->>
->>      if (bio->bi_private)
->>
->>          ins = bio->bi_private;
->>
->>      else {
->>
->>          ins = alloc_poll_instance();
->>
->>          bio->bi_private = ins;
->>
->>      }
->>
->>      ...
->>
->> }
->>
->> ```
-> Sadly, we cannot (ab)use bi_private for this given its (ab)used via the
-> bio_chain() interface.  It's almost like we need to add a new pointer in
-> the bio that isn't left for block core to hijack.
->
-> There is the well-worn pattern of saving off the original bi_private,
-> hooking a new endio method and then when that endio is called restoring
-> bi_private but we really want to avoid excessive indirect function calls
-> for this usecase.  The entire point of implementing blk_poll support is
-> for performance after all.
->
-> Mike
->
-> --
-> dm-devel mailing list
-> dm-devel@redhat.com
-> https://www.redhat.com/mailman/listinfo/dm-devel
+If we just change @pathname to struct filename, then user_path_create
+can be swapped for filename_create(). But the same problem on retry
+arises. Is there some more or less "idiomatic" way to solve this?
 
 -- 
-Thanks,
-Jeffle
-
+Dmitry

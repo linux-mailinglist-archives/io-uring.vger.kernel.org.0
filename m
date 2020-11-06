@@ -2,142 +2,260 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 203D32A97C2
-	for <lists+io-uring@lfdr.de>; Fri,  6 Nov 2020 15:37:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9AFF2A9C9F
+	for <lists+io-uring@lfdr.de>; Fri,  6 Nov 2020 19:46:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbgKFOhm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 Nov 2020 09:37:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45226 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbgKFOhm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Nov 2020 09:37:42 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D2BC0613CF
-        for <io-uring@vger.kernel.org>; Fri,  6 Nov 2020 06:37:41 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id w1so1561074wrm.4
-        for <io-uring@vger.kernel.org>; Fri, 06 Nov 2020 06:37:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=K1MmABqoP9Xgb32fJWjCAtfgcRoQtVd7JPTKNjIG2U0=;
-        b=eqg7O/1CM5sg+4+kufJX4ayGIAUk66Zm9RfYor1gSoq7MKnAQkGR2GjEcSR8Yk14AK
-         nRGlU8bBtrQtTLCFhZ0Udom9u7T8UA0jDzfHP/2b+xZs4zfMZYdID2pIbZUdVYY2LTWB
-         XkcC+g/mYqxxS0KxsD08ADwsmzW8+GoPYwHibcB2jBDTcpA2veiRv/Hl2kSNRgA1XAQI
-         3X05BQH3xZF4qD1M7aABZlwlKvGcS4In23Z1oBVujINx+kWG9yMdmBfU9auxQFmO5jsb
-         QF7Er7kJr0HznndpTgw8D12jO6NjnI/eViln2h6F5v7pExUgNh/C12viK5Bg/uho3RnQ
-         Ig+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=K1MmABqoP9Xgb32fJWjCAtfgcRoQtVd7JPTKNjIG2U0=;
-        b=TpDFQ4IbUeRc3JhhzXh74ZrvoadYIt1wjIFHN1nBNYydqF2if+veoQRGZXrCFOMCec
-         7kOBFTePoh2JR1cxqUJcLyVq7eLmwmGG/ybWUqQv94izuuHQ1VMjv+1DQW26xLAppVFu
-         SSyGuo7LRjCGKLwT2RWNpSK+1uBj8i8Y0sfLOz4poUQWAlONsz1utXqxh8EktPrtbBRP
-         9chL3nfnuFDoJ5w4L1KiAO1ivP8lzdnUr8JyZIKgqrvWUsQ4LcTzAc43Dv9X4EoGDfrY
-         MTTFnTAA4ODBPquKocxHzNKk5y/to1KU7lsc/VhI95XwdeM3traTpkcxxgWxEKCtzmFv
-         UWdw==
-X-Gm-Message-State: AOAM532DdOVrXj7QH8daiTT9TUdjkVuhcHt3w0fhNsv+E80D9guyqzDt
-        7RyyTeaPM0etkVcOwIUVfZuPJ9W8AuA=
-X-Google-Smtp-Source: ABdhPJzxBu4pjkAbNfh6ryKBoyQVZfk30OZ44hDXsm9rVoswtzRUx1Tl627INex0hTTmE8Myobl7CA==
-X-Received: by 2002:a5d:6092:: with SMTP id w18mr3098275wrt.350.1604673460583;
-        Fri, 06 Nov 2020 06:37:40 -0800 (PST)
-Received: from [192.168.1.139] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
-        by smtp.gmail.com with ESMTPSA id r10sm2622239wmg.16.2020.11.06.06.37.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Nov 2020 06:37:39 -0800 (PST)
-To:     Luis Gerhorst <linux-kernel@luisgerhorst.de>
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org, metze@samba.org,
-        carter.li@eoitek.com
-References: <m2ft5m69z4.fsf@luisgerhorst.de>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
- bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
- 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
- +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
- W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
- CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
- Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
- EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
- jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
- NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
- bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
- PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
- Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
- Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
- xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
- aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
- HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
- 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
- 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
- 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
- M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
- reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
- IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
- dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
- Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
- jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
- Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
- dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
- xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
- DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
- F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
- 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
- aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
- 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
- LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
- uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
- rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
- 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
- JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
- UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
- m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
- OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re:
-Message-ID: <9e4f1b45-97e8-076f-2d54-434d210e3c0e@gmail.com>
-Date:   Fri, 6 Nov 2020 14:34:33 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727800AbgKFSqC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 Nov 2020 13:46:02 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42762 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727069AbgKFSqC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Nov 2020 13:46:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1604688359;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KYXMgpgXis5HDOFrwXjTVkW33lbZU10WK2LjptI7g1c=;
+        b=Bcd7Yb6wjkkZOHCp+kHveyiWK8WUndSqfMOiNXlRS12tSwHVgbl+56POZU2w6rUNVahBI/
+        qmdFUWg794iUFun5XexoTV69HXc5eR+B96u97Yx7p5vJlXCMcKKPNimvUOE3sIB6+3qd3Z
+        r8nw+OiIxXVskp/10z039UwBOX7gVkM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-399-sfCphrnjMTe-EAyIPf8bSA-1; Fri, 06 Nov 2020 13:45:57 -0500
+X-MC-Unique: sfCphrnjMTe-EAyIPf8bSA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B4F8B6D249;
+        Fri,  6 Nov 2020 18:45:55 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1D5E876645;
+        Fri,  6 Nov 2020 18:45:52 +0000 (UTC)
+Date:   Fri, 6 Nov 2020 12:45:26 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     axboe@kernel.dk, xiaoguang.wang@linux.alibaba.com,
+        linux-block@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        dm-devel@redhat.com, haoxu@linux.alibaba.com,
+        io-uring@vger.kernel.org
+Subject: Re: [RFC 0/3] Add support of iopoll for dm device
+Message-ID: <20201106174526.GA13292@redhat.com>
+References: <20201020065420.124885-1-jefflexu@linux.alibaba.com>
+ <20201021203906.GA10896@redhat.com>
+ <da936cfa-93a8-d6ec-bd88-c0fad6c67c8b@linux.alibaba.com>
+ <20201026185334.GA8463@redhat.com>
+ <33c32cd1-5116-9a42-7fe2-b2a383f1c7a0@linux.alibaba.com>
+ <20201102152822.GA20466@redhat.com>
+ <f165f38a-91d1-79aa-829d-a9cc69a5eee6@linux.alibaba.com>
+ <20201104150847.GB32761@redhat.com>
+ <2c5dab21-8125-fcdf-078e-00a158c57f43@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <m2ft5m69z4.fsf@luisgerhorst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2c5dab21-8125-fcdf-078e-00a158c57f43@linux.alibaba.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 06/11/2020 10:44, Luis Gerhorst wrote:
-> Hello Pavel,
+On Thu, Nov 05 2020 at  9:51pm -0500,
+JeffleXu <jefflexu@linux.alibaba.com> wrote:
+
 > 
-> I'm from a university and am searching for a project to work on in the
-> upcoming year. I am looking into allowing userspace to run multiple
-> system calls interleaved with application-specific logic using a single
-> context switch.
+> On 11/4/20 11:08 PM, Mike Snitzer wrote:
+> >>I'm doubted if this should be implemented in block layer like:
+> >>
+> >>```
+> >>
+> >>struct bio {
+> >>
+> >>     ...
+> >>
+> >>     struct list_head  cookies;
+> >>
+> >>};
+> >>
+> >>```
+> >>
+> >>After all it's only used by bio-based queue, or more specifically
+> >>only dm device currently.
+> >I do think this line of work really should be handled in block core
+> >because I cannot see any reason why MD or bcache or whatever bio-based
+> >device wouldn't want the ability to better support io_uring (with IO
+> >poll).
+> >
+> >>Another design I can come up with is to maintain a global data
+> >>structure for the very beginning
+> >>original bio. Currently the blocking point is that now one original
+> >>bio to the dm device (@bio of dm_submit()) can correspond to multiple
+> >>dm_io and thus we have nowhere to place the @cookies list.
+> >Yes, and that will always be the case.  We need the design to handle an
+> >arbitrary sprawl of splitting from a given bio.  The graph of bios
+> >resulting from that fan-out needs to be walked at various levels -- be
+> >it the top-level original bio's submit_bio() returned cookie or some
+> >intermediate point in the chain of bios.
+> >
+> >The problem is the lifetime of the data structure created for a given
+> >split bio versus layering boundaries (that come from block core's
+> >simplistic recursion via bio using submit_bio).
+> >
+> >>Now we have to maintain one data structure for every original bio,
+> >>something like
+> >>
+> >>```
+> >>
+> >>struct dm_poll_instance {
+> >>
+> >>     ...
+> >>
+> >>     struct list_head cookies;
+> >>
+> >>};
+> >>
+> >>```
+> >I do think we need a hybrid where at the point of recursion we're able
+> >to make the associated data structure available across the recursion
+> >boundary so that modeling the association in a chain of split bios is
+> >possible. (e.g. struct dm_poll_data or dm_poll_instance as you named it,
+> >_but_ that struct definition would live in block core, but would be part
+> >of per-bio-data; so 'struct blk_poll_data' is more logical name when
+> >elevated to block core).
+> >
+> >It _might_ be worthwhile to see if a new BIO_ flag could be added to
+> >allow augmenting the bio_split + bio_chain pattern to also track this
+> >additional case of carrying additional data per-bio while creating
+> >bio-chains.  I may not be clear yet, said differently: augmenting
+> >bio_chain to not only chain bios, but to _also_ thread/chain together
+> >per-bio-data that lives within those chained bios.  SO you have the
+> >chain of bios _and_ the chain of potentially opaque void * that happens
+> >to point to a list head for a list of 'struct blk_poll_data'.
+> >
+> >Does that make sense?
 > 
-> I noticed that you, Jens Axboe, and Carter Li discussed the possibility
-> of integrating eBPF into io_uring earlier this year [1, 2, 3]. Is there
-> any WIP on this topic?
-
-To be honest, I've finally returned to it a week ago, just because got
-more free time. I was implicitly patching/refactoring some bits keeping
-this in mind but rather very lazily.
-
-> If not I am considering to implement this. Besides the fact that AOT
-> eBPF is only supported for priviledged processes, are there any issues
-> you are aware of or reasons why this was not implemented yet?
-
-All others I was anticipating are gone by now. I'd be really great to
-think something out for non-privileged processes, but as you know that
-doesn't hold us off.
-
-> [1] https://lore.kernel.org/io-uring/67b28e66-f2f8-99a1-dfd1-14f753d11f7a@gmail.com/
-> [2] https://lore.kernel.org/io-uring/8b3f182c-7c4b-da41-7ec8-bb4f22429ed1@kernel.dk/
-> [3] https://github.com/axboe/liburing/issues/58
 > 
+> I'm doubted if it really makes sense to maintain a *complete* bio
+> chain across the recursive
+> 
+> call boundary.
+> 
+> 
+> Considering the following device stack:
+> 
+> ```
+> 
+>                                   dm0
+> 
+>         dm1                   dm2           dm3
+> 
+> nvme0  nvme1          ....               ....
+> 
+> ```
+> 
+> 
+> We have the following bio graph (please let me know if it's wrong or
+> the image can't display)
+> 
+> 
+> For example, for dm1 there are three bios containing valid cookie in
+> the end, that is
+> 
+> bio 9/10/11. We only need to insert the corresponding blk_poll_data
+> (containing
+> 
+> request_queue, cookie, etc) of these three bios into the very
+> beginning original
+> 
+> bio (that is bio0). Of course we can track all the sub-bios down
+> through the device
+> 
+> stack, layer by layer, e.g.,
+> 
+> - get bio 1/2/3 from bio 0
+> 
+> - get bio 4 from bio 3
+> 
+> - finally get bio 9 from bio 4
+> 
+> But I'm doubted if it's overkill to just implement the iopoll.
+> 
+> 
+> Another issue still unclear is that, if we should implement the
+> iopoll in a recursive way.
+> 
+> In a recursive way, to poll dm 0, we should poll all its
+> sub-devices, that is, bio 4/5/7/8.
+> 
+> Oppositely we can insert only the bottom bio (bio 9/10/11 which have
+> valid cookie) at
+> 
+> the very beginning (at submit_bio() phase), and to poll dm 0, we
+> only need to poll bio 9/10/11.
 
--- 
-Pavel Begunkov
+I feel we need the ability to walk the entire graph and call down to
+next level.  The lowest level would be what you call a "valid cookie"
+that blk-mq returned.  But the preceding cookies need to be made valid
+and used when walking the graph (from highest to lowest) and calling
+down to the underlying layers.
+
+> 
+> 
+> To implement this non-recursive design, we can add a field in struct bio
+> 
+> ```
+> 
+> struct bio {
+> 
+>     ...
+> 
+>     struct bio *orig;
+> 
+> }
+> 
+> ```
+> 
+> @orig points to the original bio inputted into submit_bio(), that is, bio 0.
+> 
+> 
+> @orig field is transmitted through bio splitting.
+> 
+> ```
+> 
+> bio_split()
+> 
+>     split->orig = bio->orig ? : bio
+> 
+> 
+> dm.c: __clone_and_map_data_bio
+> 
+>     clone->orig = bio->orig ? : bio
+> 
+> ```
+> 
+> 
+> Finally bio 9/10/11 can be inserted into bio 0.
+> 
+> ```
+> 
+> blk-mq.c: blk_mq_submit_bio
+> 
+>     if (bio->orig)
+> 
+>         init blk_poll_data and insert it into bio->orig's @cookies list
+> 
+> ```
+
+If you feel that is doable: certainly give it a shot.
+
+But it is not clear to me how you intend to translate from cookie passed
+in to ->blk_poll hook (returned from submit_bio) to the saved off
+bio->orig.
+
+What is your cookie strategy in this non-recursive implementation?  What
+will you be returning?  Where will you be storing it?
+
+Mike
+

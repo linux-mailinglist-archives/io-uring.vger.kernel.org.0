@@ -2,57 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD0E2AA68F
-	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 17:05:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB3D82AA696
+	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 17:10:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbgKGQFq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 Nov 2020 11:05:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56480 "EHLO
+        id S1726297AbgKGQKc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 Nov 2020 11:10:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbgKGQFp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 11:05:45 -0500
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 729AAC0613CF
-        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 08:05:45 -0800 (PST)
-Received: by mail-wr1-x443.google.com with SMTP id x7so4381623wrl.3
-        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 08:05:45 -0800 (PST)
+        with ESMTP id S1726144AbgKGQKb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 11:10:31 -0500
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 210B3C0613CF
+        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 08:10:30 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id w1so4387159wrm.4
+        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 08:10:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R8aajLVAnoRrM6bK5KZOXXtyvh6r2cexcxjADScr5qg=;
-        b=lncZobuIyMipD1GJxzTy4l96MhD75kRs40/h5EvL4+uw2PNLix0IPqA+K/7rIXp+K2
-         u3OKZQpv9msuk3X/msnLYTY/BXUNbcmAWwUE6gJfbkVqVHGd36mNMUq3emeGUR+XuuLO
-         ES4XFsY6ODVJyEoSjTY5dg52rWEO86ylDS9O0wXjreoG5ev3eaOjqh9v2NFBrn2B5zSp
-         5xAhQHaF26DxvZwa7l6NIWLL+Ld/0lp29FIaU4yELJlCtzXAEKqdTELNM5UW7F9Hl9Jm
-         7yLgRTo5VV6d8hQXgi55EZIkLATomzkv7Pgr//v871qWjNxVJZIod+2Pom4daKxTzQ5w
-         F3og==
+        bh=DHMQzwfGB/N0COUimxQzD5tbUs4AytPbgJBqbQVJYtg=;
+        b=G0Q7m8dLidQIFHqwxU/XMjJdGScOFSCIUA8nqQYHMSlzWqCFUrICD4JHGvS9SGNHmq
+         LZ/iqBROnFICgF6rvp6+/oem7nl7a4iDIZRxxO1LR6W46omp5qsI4ChhU9/OpWlc5/vn
+         lukzrdsoxRlt+fVSxzUGWgfaoat+M0v0xE8xryD33L2WIRQn6qNpI+BTImNO0hVKJ9gy
+         M9vlaeNGdZ0Wa3Jb+Gvx+AK+IqtqN/yjWn4GxJsVgXdQ9Nw0s8XNi7HL8u4Wv3f+khwl
+         feqlqDOYdcQlOwO9VlP7RZ2XQuzwTni3MAFljB9FOMnwsc4A5jdCg4nPzCqRTq8sNgQa
+         UmkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=R8aajLVAnoRrM6bK5KZOXXtyvh6r2cexcxjADScr5qg=;
-        b=k8BOEjbe6lU3BMxQ3CkDAMVzm772sp32FfvAM1+eGO9y36gBr9DJQ4FcZYoIMloEoa
-         0Xu9eiexFzok0FBUUg+ZkDdb5BVN1+io9NJzEE01p/+y9902qVbdo9FyBNvv0pCLAHYq
-         SSsJU2G7DpgU/WLXKqNRRH6GTTlApoPnMXhx+eMeJicWXDoFQxXNmlA9FdmpLqaZvD+k
-         5G0JhYxZj8TrgMJti7UCLktmRKoUBJaoN53DfM4QBrTrlDd0p3fPkTjsdcp+Yh5zlAk6
-         pryFgJiXv6PgMi5HrHnofGgLA1vK4qe40HdDyqqwiRUvTOcs35TFWI4rA+t5mbQbyLiz
-         +jjQ==
-X-Gm-Message-State: AOAM530t+72mcmKK05+OS7aZW+0tBcvSWmiQ1i7oQ6EQrl7w2XR1Taoq
-        aQ34SBVBUKN2R3u+ePzRMY1/Uk5tbL7dOA==
-X-Google-Smtp-Source: ABdhPJyajTGGxhvKAKHy54cikEUfago11WMVf++oBYdWg+ubvqGeVx5cl/DzrUZi1HTVe4BV1Y+nQQ==
-X-Received: by 2002:adf:9b98:: with SMTP id d24mr8316410wrc.17.1604765143983;
-        Sat, 07 Nov 2020 08:05:43 -0800 (PST)
+        bh=DHMQzwfGB/N0COUimxQzD5tbUs4AytPbgJBqbQVJYtg=;
+        b=Avmd719OiCq6ICLm+NDzbslNkvZtKd5CkbfeekRPSTcJkif46tgi9lR6VZeyF2KQRi
+         O3cX/A9wDkJ8ANoE8zji4Az17Si1ddmfT/Jz9SzRigcwPGMYsg68YXXNtUIahrsU0HzJ
+         P9SNN7pG5pmQOxvufHIJZDROTFHgYV2SfySXL9PVz4XazLxzPkBh0Lhy05Vb3jDc4vB8
+         yJ7U/aF6e60V/1XveL/9KJThnEXfPXU3Dvw70n+MFYpqiEdYjLFzSJZAZSgftmzaWKU6
+         xJZOLvd4mB0s3HCNNcdzMnGrIN4+uFaYBuxoYcD0o2w2qagKsw8Lc+VrOCCVup/ZoM4Z
+         jQCA==
+X-Gm-Message-State: AOAM530NwyfLaYk4CskIF3CPEwBiDhp1jLJea45MW377eywIA5JN7SwP
+        IRcFHBc52zfygwhtWCWOFuvCoT0ApaoFvw==
+X-Google-Smtp-Source: ABdhPJxVig8DfLhovt2/usfEwXzp5sA7oo5W9ajxx5XH67J5fZnYdkfaEQxFfsQa8pwYYcLDtQuezw==
+X-Received: by 2002:a5d:44c1:: with SMTP id z1mr5046275wrr.375.1604765428618;
+        Sat, 07 Nov 2020 08:10:28 -0800 (PST)
 Received: from [192.168.1.84] (host109-152-100-228.range109-152.btcentralplus.com. [109.152.100.228])
-        by smtp.gmail.com with ESMTPSA id l16sm6592667wrr.83.2020.11.07.08.05.42
+        by smtp.gmail.com with ESMTPSA id a15sm6939501wrn.75.2020.11.07.08.10.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Nov 2020 08:05:43 -0800 (PST)
+        Sat, 07 Nov 2020 08:10:27 -0800 (PST)
+Subject: Re: [PATCH 5.11] io_uring: don't take fs for recvmsg/sendmsg
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
         io-uring@vger.kernel.org
 References: <a09e69abbe0382f5842cd0a69e51fab100aa988c.1604754488.git.asml.silence@gmail.com>
  <80e87448-4a33-99cf-28ca-25f185c83943@samba.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <578923eb-0219-ffec-7c45-e44d15372d41@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -96,42 +98,47 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 5.11] io_uring: don't take fs for recvmsg/sendmsg
-Message-ID: <578923eb-0219-ffec-7c45-e44d15372d41@gmail.com>
-Date:   Sat, 7 Nov 2020 16:02:40 +0000
+Message-ID: <0ed8c305-66b6-7176-490f-0530fa7fa2cb@gmail.com>
+Date:   Sat, 7 Nov 2020 16:07:25 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <80e87448-4a33-99cf-28ca-25f185c83943@samba.org>
+In-Reply-To: <578923eb-0219-ffec-7c45-e44d15372d41@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/11/2020 13:46, Stefan Metzmacher wrote:
-> Hi Pavel,
+On 07/11/2020 16:02, Pavel Begunkov wrote:
+> On 07/11/2020 13:46, Stefan Metzmacher wrote:
+>> Hi Pavel,
+>>
+>>> We don't even allow not plain data msg_control, which is disallowed in __sys_{send,revb}msg_sock().
+>>
+>> Can't we better remove these checks and allow msg_control?
+>> For me it's a limitation that I would like to be removed.
 > 
->> We don't even allow not plain data msg_control, which is disallowed in __sys_{send,revb}msg_sock().
-> 
-> Can't we better remove these checks and allow msg_control?
-> For me it's a limitation that I would like to be removed.
+> We can grab fs only in specific situations as you mentioned, by e.g.
+> adding a switch(opcode) in io_prep_async_work(), but that's the easy
+> part. All msg_control should be dealt one by one as they do different
+> things. And it's not the fact that they ever require fs.
 
-We can grab fs only in specific situations as you mentioned, by e.g.
-adding a switch(opcode) in io_prep_async_work(), but that's the easy
-part. All msg_control should be dealt one by one as they do different
-things. And it's not the fact that they ever require fs.
+BTW, Jens mentioned that there is a queued patch that allows plain
+data msg_control. Are those not enough?
 
 > 
-> If there's a cost using IO_WQ_WORK_FS, would it be possible to use IO_WQ_WORK_FS only it msg_control is actually use> 
->   if (msg->msg_control || msg->msg_controllen) 
->       static const struct io_op_def sendmsg_control_op_def = {
->          ...
->       };
+>>
+>> If there's a cost using IO_WQ_WORK_FS, would it be possible to use IO_WQ_WORK_FS only it msg_control is actually use> 
+>>   if (msg->msg_control || msg->msg_controllen) 
+>>       static const struct io_op_def sendmsg_control_op_def = {
+>>          ...
+>>       };
+>>
+>>       something = &sendmsg_control_op_def;
+>>   }
 > 
->       something = &sendmsg_control_op_def;
->   }
 
 -- 
 Pavel Begunkov

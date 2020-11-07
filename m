@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1DCF2AA816
-	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 22:21:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C3E62AA825
+	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 22:57:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728698AbgKGVVP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 Nov 2020 16:21:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48786 "EHLO
+        id S1726099AbgKGV5S (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 Nov 2020 16:57:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbgKGVVO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 16:21:14 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 608EAC0613CF
-        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 13:21:14 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id c9so4682151wml.5
-        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 13:21:14 -0800 (PST)
+        with ESMTP id S1725838AbgKGV5S (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 16:57:18 -0500
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4650C0613CF
+        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 13:57:17 -0800 (PST)
+Received: by mail-wm1-x344.google.com with SMTP id s13so4552707wmh.4
+        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 13:57:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:references:autocrypt:message-id:date:user-agent
+        h=from:to:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2Errq3g+FkAHX6c1FZt8qmLvS+YrpmFBvPwR0JseowY=;
-        b=f4kEjzi21jUHY/r3o77VZuWBjozhmYvuAnVhlqUJJ3dcK2LSIDkTxxyp4xxz68XmvN
-         mFyho0rh1J3EtD8996QZxcQjE3+A7Bmx4nmwELJz62Yw3Lq1hbFv21/ODdGVR2iVe/wI
-         q/9hGPwcxPaeNsAZXC8MJiyWPSDJVtdt5R7zzBinXdxE1znhRZUBHQN0IYv+3YDeGzs7
-         8n7sgGAoNJAFI1ge5Z10d05ucHs+uZZtCZu+ku6tleYXWuhk674FjsAzub9MsA3DdgFm
-         MVIUykKGqEP85HiSsLvLp+xbMGmPVdOf/HyRn9mWOXIyNvzQawmpCXp5rkMPAwTl7H/c
-         EIDA==
+        bh=Jk3iMjnRXiiqciZEHGjF1AGD/TWRTZL15ubdnvqv4iw=;
+        b=Z36cqwLB9v2P/vEGfXbjk5Uxm0sZYytUfeX8gdwTL8AQnEMRXCpaOrG4QBEwAgylXe
+         nG8InxZNtnWCs1oq+gigGwskYT4j6ke+YgeYgXwvG8QB/20oUgDghG87oOl+noa85BmP
+         5sLetHujhNUgKkLOStGEBnsdcvVo9U2ia77KNH0KGOI04eeSp6qnEIk9+wg0G3Emkitj
+         t8QFhN8Iy7sIlYlk/gxbTnBMX+yqWpdQso2N+7cV+65PcX4H4l6wJ8khWv3plys5Dsn1
+         mvWniZxmQCEml9A3O1NvH7I1+FrdVzqna4SdxZlCW7ArmZOgpP7OPDX+irSK5/gkYFkr
+         SMGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
+        h=x-gm-message-state:from:to:references:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=2Errq3g+FkAHX6c1FZt8qmLvS+YrpmFBvPwR0JseowY=;
-        b=TJ9nQR4OmuXwPO9fkJYHt/D2cU2H3SAn/+MNUbdiAkhV7RPkVolds+YUjI1URAWu3N
-         5MArpGuOBCe4fIqpqqLZVF5ZmvYvPQDbVowt9WBmKvpdLqA9IMz7qyuunaqG8LOQoBzE
-         o7XF9i/X8NgiFfoi/znxrvxaxAKbS5HXONZXkByQ1SrSfOgC68b3hy2YVN63YuAEhYIR
-         2t3njNVXPMTHibcxtL8rEm0rwp6MX8emCZXUIo+RvBwixsfBFKAPvDSbp+Q9xXkeqNLW
-         hB4mVvdwLe0KBkL3LxccBpXBZcmN7yjVzkmXoJV3I8gxZLuqJHhW2cIRogQtgm9u8OdY
-         5HQA==
-X-Gm-Message-State: AOAM532jwflbQtT5mouxtjma+wvNjSNpBoPL+uN1S5JhZgJZ9HN/fiLU
-        puE2NH+cISEA21TN9F3XEV8=
-X-Google-Smtp-Source: ABdhPJxiQCXKdM6mo1lJiyVshzVkEX6QataE0eZzPkIKXmzI+8/CWcehm6rEUjhizvOFpOrUplE2Vw==
-X-Received: by 2002:a1c:2586:: with SMTP id l128mr6124944wml.149.1604784073161;
-        Sat, 07 Nov 2020 13:21:13 -0800 (PST)
+        bh=Jk3iMjnRXiiqciZEHGjF1AGD/TWRTZL15ubdnvqv4iw=;
+        b=NeuEOa9/oD+8CHX2BC+MfbXN5MeGTDJKX+5ROSnlZbGXdVcw5vf8djj0ZYkl8LyGnv
+         CxjwVIecvT4bjaiW4jUCMSZzV8ctgmPvkP+zVOasBrgsGw2kL3B2+Z/sXHUdjFtneW7F
+         6OSUjgWfyb6a7XMYuAsCYelMSPCXJ3pvsb7pAuLMTSMTPJZ1glqceDwjU/kz/6QF8aRi
+         q1/RntwwVVOCrUGo8TAFZO6IMIFfnyyxhkRnWNfb0PQOPyGAYA/nAKEQwJW7vCWbMw5q
+         6fawZ4/T/4K0NZLkBVYzHsH4nRq3TMcfMhJgnb9xn0dGbzsqZLOVQ+kOOmRYDPmMc1Cv
+         AZKg==
+X-Gm-Message-State: AOAM533F8xWZFKT/uk49qA3VEkQC0WOlMNMkxoO0sme3uH+1ZwZ+qHgz
+        pWQBmBWnL1hGKgr0zSjnDYo=
+X-Google-Smtp-Source: ABdhPJxDMrg66CzJG85mx7C1jmBwq+xRPHlhF3pk+juJoGaPIsZmuj4mLhaSbTdHH5uga7y780DaMQ==
+X-Received: by 2002:a1c:7d12:: with SMTP id y18mr6512604wmc.103.1604786236544;
+        Sat, 07 Nov 2020 13:57:16 -0800 (PST)
 Received: from [192.168.1.96] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
-        by smtp.gmail.com with ESMTPSA id k16sm1231338wrl.65.2020.11.07.13.21.12
+        by smtp.gmail.com with ESMTPSA id o3sm7600346wru.15.2020.11.07.13.57.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Nov 2020 13:21:12 -0800 (PST)
-Subject: Re: [PATCH 5.11] io_uring: NULL files dereference by SQPOLL
+        Sat, 07 Nov 2020 13:57:15 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         Josef Grieb <josef.grieb@gmail.com>
 References: <24446f4e23e80803d3ab1a4d27a6d1a605e37b32.1604783766.git.asml.silence@gmail.com>
+ <39db5769-5aef-96f5-305c-2a3250d9ba73@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -96,115 +96,125 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <39db5769-5aef-96f5-305c-2a3250d9ba73@gmail.com>
-Date:   Sat, 7 Nov 2020 21:18:10 +0000
+Subject: Re: [PATCH 5.11] io_uring: NULL files dereference by SQPOLL
+Message-ID: <030c3ccb-8777-9c28-1835-5afbbb1c3eb1@gmail.com>
+Date:   Sat, 7 Nov 2020 21:54:13 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <24446f4e23e80803d3ab1a4d27a6d1a605e37b32.1604783766.git.asml.silence@gmail.com>
+In-Reply-To: <39db5769-5aef-96f5-305c-2a3250d9ba73@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/11/2020 21:16, Pavel Begunkov wrote:
-> SQPOLL task may find sqo_task->files == NULL, so
-> __io_sq_thread_acquire_files() would left it unset and so all the
-> following fails, e.g. attempts to submit. Fail if sqo_task doesn't have
-> files.
+On 07/11/2020 21:18, Pavel Begunkov wrote:
+> On 07/11/2020 21:16, Pavel Begunkov wrote:
+>> SQPOLL task may find sqo_task->files == NULL, so
+>> __io_sq_thread_acquire_files() would left it unset and so all the
+>> following fails, e.g. attempts to submit. Fail if sqo_task doesn't have
+>> files.
+> 
+> Josef, could you try this one?
 
-Josef, could you try this one?
+Hmm, as you said it happens often... IIUC there is a drawback with
+SQPOLL -- after the creator process/thread exits most of subsequent
+requests will start failing.
+I'd say from application correctness POV such tasks should exit
+only after their SQPOLL io_urings got killed.
 
 > 
-> [  118.962785] BUG: kernel NULL pointer dereference, address:
-> 	0000000000000020
-> [  118.963812] #PF: supervisor read access in kernel mode
-> [  118.964534] #PF: error_code(0x0000) - not-present page
-> [  118.969029] RIP: 0010:__fget_files+0xb/0x80
-> [  119.005409] Call Trace:
-> [  119.005651]  fget_many+0x2b/0x30
-> [  119.005964]  io_file_get+0xcf/0x180
-> [  119.006315]  io_submit_sqes+0x3a4/0x950
-> [  119.006678]  ? io_double_put_req+0x43/0x70
-> [  119.007054]  ? io_async_task_func+0xc2/0x180
-> [  119.007481]  io_sq_thread+0x1de/0x6a0
-> [  119.007828]  kthread+0x114/0x150
-> [  119.008135]  ? __ia32_sys_io_uring_enter+0x3c0/0x3c0
-> [  119.008623]  ? kthread_park+0x90/0x90
-> [  119.008963]  ret_from_fork+0x22/0x30
-> 
-> Reported-by: Josef Grieb <josef.grieb@gmail.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  fs/io_uring.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 8d721a652d61..9c035c5c4080 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1080,7 +1080,7 @@ static void io_sq_thread_drop_mm_files(void)
->  	}
->  }
->  
-> -static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
-> +static int __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
->  {
->  	if (!current->files) {
->  		struct files_struct *files;
-> @@ -1091,7 +1091,7 @@ static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
->  		files = ctx->sqo_task->files;
->  		if (!files) {
->  			task_unlock(ctx->sqo_task);
-> -			return;
-> +			return -EFAULT;
->  		}
->  		atomic_inc(&files->count);
->  		get_nsproxy(ctx->sqo_task->nsproxy);
-> @@ -1105,6 +1105,7 @@ static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
->  		current->thread_pid = thread_pid;
->  		task_unlock(current);
->  	}
-> +	return 0;
->  }
->  
->  static int __io_sq_thread_acquire_mm(struct io_ring_ctx *ctx)
-> @@ -1136,15 +1137,19 @@ static int io_sq_thread_acquire_mm_files(struct io_ring_ctx *ctx,
->  					 struct io_kiocb *req)
->  {
->  	const struct io_op_def *def = &io_op_defs[req->opcode];
-> +	int ret;
->  
->  	if (def->work_flags & IO_WQ_WORK_MM) {
-> -		int ret = __io_sq_thread_acquire_mm(ctx);
-> +		ret = __io_sq_thread_acquire_mm(ctx);
->  		if (unlikely(ret))
->  			return ret;
->  	}
->  
-> -	if (def->needs_file || (def->work_flags & IO_WQ_WORK_FILES))
-> -		__io_sq_thread_acquire_files(ctx);
-> +	if (def->needs_file || (def->work_flags & IO_WQ_WORK_FILES)) {
-> +		ret = __io_sq_thread_acquire_files(ctx);
-> +		if (unlikely(ret))
-> +			return ret;
-> +	}
->  
->  	return 0;
->  }
-> @@ -2117,8 +2122,8 @@ static void __io_req_task_submit(struct io_kiocb *req)
->  {
->  	struct io_ring_ctx *ctx = req->ctx;
->  
-> -	if (!__io_sq_thread_acquire_mm(ctx)) {
-> -		__io_sq_thread_acquire_files(ctx);
-> +	if (!__io_sq_thread_acquire_mm(ctx) &&
-> +	    !__io_sq_thread_acquire_files(ctx)) {
->  		mutex_lock(&ctx->uring_lock);
->  		__io_queue_sqe(req, NULL);
->  		mutex_unlock(&ctx->uring_lock);
+>>
+>> [  118.962785] BUG: kernel NULL pointer dereference, address:
+>> 	0000000000000020
+>> [  118.963812] #PF: supervisor read access in kernel mode
+>> [  118.964534] #PF: error_code(0x0000) - not-present page
+>> [  118.969029] RIP: 0010:__fget_files+0xb/0x80
+>> [  119.005409] Call Trace:
+>> [  119.005651]  fget_many+0x2b/0x30
+>> [  119.005964]  io_file_get+0xcf/0x180
+>> [  119.006315]  io_submit_sqes+0x3a4/0x950
+>> [  119.006678]  ? io_double_put_req+0x43/0x70
+>> [  119.007054]  ? io_async_task_func+0xc2/0x180
+>> [  119.007481]  io_sq_thread+0x1de/0x6a0
+>> [  119.007828]  kthread+0x114/0x150
+>> [  119.008135]  ? __ia32_sys_io_uring_enter+0x3c0/0x3c0
+>> [  119.008623]  ? kthread_park+0x90/0x90
+>> [  119.008963]  ret_from_fork+0x22/0x30
+>>
+>> Reported-by: Josef Grieb <josef.grieb@gmail.com>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>  fs/io_uring.c | 19 ++++++++++++-------
+>>  1 file changed, 12 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 8d721a652d61..9c035c5c4080 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -1080,7 +1080,7 @@ static void io_sq_thread_drop_mm_files(void)
+>>  	}
+>>  }
+>>  
+>> -static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
+>> +static int __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
+>>  {
+>>  	if (!current->files) {
+>>  		struct files_struct *files;
+>> @@ -1091,7 +1091,7 @@ static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
+>>  		files = ctx->sqo_task->files;
+>>  		if (!files) {
+>>  			task_unlock(ctx->sqo_task);
+>> -			return;
+>> +			return -EFAULT;
+>>  		}
+>>  		atomic_inc(&files->count);
+>>  		get_nsproxy(ctx->sqo_task->nsproxy);
+>> @@ -1105,6 +1105,7 @@ static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
+>>  		current->thread_pid = thread_pid;
+>>  		task_unlock(current);
+>>  	}
+>> +	return 0;
+>>  }
+>>  
+>>  static int __io_sq_thread_acquire_mm(struct io_ring_ctx *ctx)
+>> @@ -1136,15 +1137,19 @@ static int io_sq_thread_acquire_mm_files(struct io_ring_ctx *ctx,
+>>  					 struct io_kiocb *req)
+>>  {
+>>  	const struct io_op_def *def = &io_op_defs[req->opcode];
+>> +	int ret;
+>>  
+>>  	if (def->work_flags & IO_WQ_WORK_MM) {
+>> -		int ret = __io_sq_thread_acquire_mm(ctx);
+>> +		ret = __io_sq_thread_acquire_mm(ctx);
+>>  		if (unlikely(ret))
+>>  			return ret;
+>>  	}
+>>  
+>> -	if (def->needs_file || (def->work_flags & IO_WQ_WORK_FILES))
+>> -		__io_sq_thread_acquire_files(ctx);
+>> +	if (def->needs_file || (def->work_flags & IO_WQ_WORK_FILES)) {
+>> +		ret = __io_sq_thread_acquire_files(ctx);
+>> +		if (unlikely(ret))
+>> +			return ret;
+>> +	}
+>>  
+>>  	return 0;
+>>  }
+>> @@ -2117,8 +2122,8 @@ static void __io_req_task_submit(struct io_kiocb *req)
+>>  {
+>>  	struct io_ring_ctx *ctx = req->ctx;
+>>  
+>> -	if (!__io_sq_thread_acquire_mm(ctx)) {
+>> -		__io_sq_thread_acquire_files(ctx);
+>> +	if (!__io_sq_thread_acquire_mm(ctx) &&
+>> +	    !__io_sq_thread_acquire_files(ctx)) {
+>>  		mutex_lock(&ctx->uring_lock);
+>>  		__io_queue_sqe(req, NULL);
+>>  		mutex_unlock(&ctx->uring_lock);
+>>
 > 
 
 -- 

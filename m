@@ -2,78 +2,120 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D5932AA54C
-	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 14:19:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A0092AA54D
+	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 14:19:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727934AbgKGNTi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 Nov 2020 08:19:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59122 "EHLO
+        id S1727950AbgKGNTk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 Nov 2020 08:19:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbgKGNTh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 08:19:37 -0500
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B0ADC0613CF
-        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 05:19:37 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id w1so4106866wrm.4
-        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 05:19:37 -0800 (PST)
+        with ESMTP id S1727084AbgKGNTj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 08:19:39 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C72C0613CF
+        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 05:19:39 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id p8so3305979wrx.5
+        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 05:19:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wR+R6MRYvlXMMLVxlqdavUUVc30LMA78uuQfFY4zv7k=;
-        b=VaNcg1ieXOMf27Lmf2EWWzuvAVxBnoZh4yBhB1MLAOAopeAcaT6XhCH1eMa48hfT+K
-         zhql0sY+IIxRo5jUQoGLhyGHP/88ftCT89yP9uBFWZZxRJFs/c93T9ToW+GM1kn+CpFt
-         V+8mxYluWpPRvozTGSDavA/P4vd9H+uwsmHRfgxSphtdEUVVl/AzBR5GU+stkgHp8Mtl
-         pAxlhpM6GZFcdOuJa6HBzGnPeeptGcC5YR0GpkMyRpl059avq/rgXqjbgasG+iQOixYv
-         dHHSJ/HTyIoWEEV/DATngj5vKd6b8sIME1V5zqEq6BDvzkXlveCeuFUP8v2nwbUk41nE
-         DGNQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=BnfWkPrM2WCZsGtqmyL4AZX62AJtwrhXKuGMF/TuQzg=;
+        b=iDtTe+GXu7wo9EtDYoHEJYh6PVEawlspfv6Su0XfSTmWRXjBY11Sb2QDAAh2TrJwx8
+         glA8GC9Dqoeie0wKCGzDoNFFcRaS7eRli6H9e1gzRVRSBvta3zH2n01XDgPnY6FPiGaq
+         wcRyq4YlZJqUG1M2Xux9nh50O/EiV40bUrOfVLlo6pVgMIgf/0MFC8y+DdTpmm6r+E/k
+         YjIntJpHZTRwXOtKKVNAMAW4OFCJhqeVrj/p0KuySu+cCva2rvUAEGbZmpoykbDuE6bR
+         sqOiBf3WIrwARou1cvJkjWUcsnDquPLHG15MLBIciVuU6jOSGsCrpWG4qS8sjK0UuBuM
+         bhmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wR+R6MRYvlXMMLVxlqdavUUVc30LMA78uuQfFY4zv7k=;
-        b=EMhMrRJh9HZIfZ8pyi03TrG2+NgBdSuKLuHQM4UbYfb0KIpO2xYggtIoKRxcv/K+oR
-         wW8NscC6xHLP907UO98jx6149QcJjqWFzDsLxKnJ/AMn63la0TTRMZFpQ3REX8ZSK75/
-         Yk56RIXKDB5jkkOygxIr9NpnBy/4jkX/c0YM/aSAFdbxDCrCyn0VBW61TDHkTPTOlqAh
-         HUybQ3FW2jvoyrGWw0h3sNRulDFDPIfNYxh6ccbu13hTn5hGH00KddL/vA6pc3MvMS9D
-         G5SenMxYOflvCJy3Ja8BehHCOlWILmJ4/jA0UOa6AK38PdQcPGIo77brM3VLsgQ/QhfB
-         RVZQ==
-X-Gm-Message-State: AOAM531pvhdswL1glq/HkkLvpVrN7NM1SB0X8c86siar3+Ma1tudasdx
-        MrU3l+2KertHzsEwPlaP1MPiWKL9318=
-X-Google-Smtp-Source: ABdhPJxdt/k/da0LUdFOyQ3oMQLiBPRMPZhTNTtO7imTdrGkjoArRhfv/sHiHpRpMLJHlk64EpmUEA==
-X-Received: by 2002:adf:eb08:: with SMTP id s8mr8365020wrn.12.1604755176226;
-        Sat, 07 Nov 2020 05:19:36 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=BnfWkPrM2WCZsGtqmyL4AZX62AJtwrhXKuGMF/TuQzg=;
+        b=ZP2XXRaIcA2fO17McHEWki3bcptbgkuzwXZM59on+OGQfFwL+2QCYR2ZmMBngoTWAV
+         09sUnZK+TuAqGHpmpSaA0ttLQlAMph1CSDfi4KJlKA2jO9hY5zV0gY5w5yDDbRGbwJrI
+         tNxCRQL5ycDbaEqTmuP6RtjfQcOI5DnUBHiyYeqlt+oC1v0LvK8SQmpAg5woW5wFmQsy
+         srglFPPNM/YAwaUg5kc/FliaBZbKocPWiYdjllFdNqqZIjal0Ozm98sVyPVTkvQk7/p9
+         rEbNd+liywEZsbiDs/I3kB5wWxJaECm/ObtaWV1HI150TzZLEy/pIC8fwhtKKWpCUuOA
+         imMg==
+X-Gm-Message-State: AOAM530umkvkD1lmviyqVDoCb/CeW7W9d+ccLJhMpLJWjrNTuQ9C2PQC
+        3zW3g3ay9oyCocyCbDUJYnY=
+X-Google-Smtp-Source: ABdhPJyq4vIPtN9O1f6cfw9jWavkbXpMiEoaxoqVDXtJsGGLYBAkCZJsXsw/T9RKA6BGsmbvFpk5UQ==
+X-Received: by 2002:adf:9069:: with SMTP id h96mr8384186wrh.358.1604755177531;
+        Sat, 07 Nov 2020 05:19:37 -0800 (PST)
 Received: from localhost.localdomain (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
-        by smtp.gmail.com with ESMTPSA id f1sm6411810wmj.3.2020.11.07.05.19.35
+        by smtp.gmail.com with ESMTPSA id f1sm6411810wmj.3.2020.11.07.05.19.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2020 05:19:35 -0800 (PST)
+        Sat, 07 Nov 2020 05:19:36 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         David Laight <David.Laight@ACULAB.COM>
-Subject: [PATCH 5.11 0/3] rw import_iovec cleanups
-Date:   Sat,  7 Nov 2020 13:16:24 +0000
-Message-Id: <cover.1604754823.git.asml.silence@gmail.com>
+Cc:     David Laight <david.laight@aculab.com>
+Subject: [PATCH 1/3] fs/io_uring Don't use the return value from import_iovec().
+Date:   Sat,  7 Nov 2020 13:16:25 +0000
+Message-Id: <0e06794001237fc33a71c5f3349bb83937d9c8c6.1604754823.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1604754823.git.asml.silence@gmail.com>
+References: <cover.1604754823.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There are a couple of things duplicated, it's how we get
-len after import, vars in which we keep it, etc. Clean
-this up.
+From: David Laight <David.Laight@ACULAB.COM>
 
-David Laight (1):
-  fs/io_uring Don't use the return value from import_iovec().
+This is the only code that relies on import_iovec() returning
+iter.count on success.
+This allows a better interface to import_iovec().
 
-Pavel Begunkov (2):
-  io_uring: remove duplicated io_size from rw
-  io_uring: inline io_import_iovec()
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: David Laight <david.laight@aculab.com>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
- fs/io_uring.c | 58 ++++++++++++++++++++-------------------------------
- 1 file changed, 23 insertions(+), 35 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index a4146b1f50ef..e72f9a3fd8b5 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3164,7 +3164,7 @@ static ssize_t __io_import_iovec(int rw, struct io_kiocb *req,
+ 
+ 		ret = import_single_range(rw, buf, sqe_len, *iovec, iter);
+ 		*iovec = NULL;
+-		return ret < 0 ? ret : sqe_len;
++		return ret;
+ 	}
+ 
+ 	if (req->flags & REQ_F_BUFFER_SELECT) {
+@@ -3190,7 +3190,7 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+ 	if (!iorw)
+ 		return __io_import_iovec(rw, req, iovec, iter, needs_lock);
+ 	*iovec = NULL;
+-	return iov_iter_count(&iorw->iter);
++	return 0;
+ }
+ 
+ static inline loff_t *io_kiocb_ppos(struct kiocb *kiocb)
+@@ -3459,7 +3459,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+ 	if (ret < 0)
+ 		return ret;
+ 	iov_count = iov_iter_count(iter);
+-	io_size = ret;
++	io_size = iov_count;
+ 	req->result = io_size;
+ 	ret = 0;
+ 
+@@ -3587,7 +3587,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+ 	if (ret < 0)
+ 		return ret;
+ 	iov_count = iov_iter_count(iter);
+-	io_size = ret;
++	io_size = iov_count;
+ 	req->result = io_size;
+ 
+ 	/* Ensure we clear previously set non-block flag */
 -- 
 2.24.0
 

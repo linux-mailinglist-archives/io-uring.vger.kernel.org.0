@@ -2,58 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2D2C2AA850
-	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 23:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6CFF2AA852
+	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 23:52:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbgKGWuq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 Nov 2020 17:50:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34414 "EHLO
+        id S1726021AbgKGWwl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 Nov 2020 17:52:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbgKGWup (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 17:50:45 -0500
+        with ESMTP id S1725838AbgKGWwk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 17:52:40 -0500
 Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BBE2C0613CF
-        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 14:50:45 -0800 (PST)
-Received: by mail-wr1-x442.google.com with SMTP id d12so3447656wrr.13
-        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 14:50:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50D3CC0613CF
+        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 14:52:40 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id 23so4958396wrc.8
+        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 14:52:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XI9tB+ofoH4QuAUecoFk3l19sJCOmJkzijmmmlF8nzc=;
-        b=sjZ706Q5kIQP54oISlfkwB9mg3RvJNNRsI6baPA/sruepVPulrP6weK2wG5ir7Xwjr
-         IE/W+dcaUZujj7elDzSzNg2K3nqeVdl7OFQqcnXUzKDDWGUuEIDtFYydoP+8djDiUv2B
-         L/XDF0bY96knZwuKnFFlxv1zVu/RdBeLik5CwkxW9TySp6etfZXw6bjXWtioCKGM6cBL
-         H6opENnA4plFOKr99lqH6aLFvzXGUhZVA8GrpuAryi4PwtpP7WxgbqPK2sH4nzqQVCXA
-         YV05NvvvMVaLavAV1G8PBwcvvQiCAJ8lN5EckNjk/9Tvdj1KriIpZN+HR6nQlXnXPWnh
-         nJ6g==
+        bh=+Bt6UgaRsmWE6y81RrcgqxuAQ+M1s5VFlpsIX2l4o4w=;
+        b=sBr8WE3FOtpsjnwKn9kqjk15cftNGb8zvfaqmNJJ94EuOTPyUKLlq/H+HRw8nIqnPy
+         IwoRjxKTq1iIQrTjHOriGNrnShSFHiU/fRPt0DL3xC/BWtOgJ3mxfS8WmCHb0ersTrwl
+         YaFm1QGcmobCN9k8mKnKWEufH079soQspJ+nRR/fd5w8eSeVaaEJkOq1hms90MfXnfQB
+         k5TO4aexSZYtNVMN6gI4oWEdkLW24+0iqrDgqwHKckwsGGow3w9p1vaoCi6a6m1/YpNK
+         JyNXKlcVmhG+bVrMlbmFEBLVX/6uWy5cjsGqundwUJeJHVYAL43ac3MZEGybruQLnCNg
+         WNdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XI9tB+ofoH4QuAUecoFk3l19sJCOmJkzijmmmlF8nzc=;
-        b=ZzUjQpaqOaQ6l89wKB13YhikMjG3ZxEZg/MV2t09FrMBNe1GpVEIPUp9jItWX7Fmvs
-         spPXr1To3RlF5HBtyeBrIdVvvXS7WqmVCQab1TBQBlxtyRamQRVqLhk6VvYI8JWYXWx2
-         mm3Q7zjyTzsk5nx8X1v0oiNb6JQ9XbYjy+FWgKfYpGAYnHf6s5q7Tq6f100TnW0xVvVA
-         PpcYKVmDCBMa+IOVa+A7kDwf4wIKO7XRM0J5X3frcTJlrnP4b452tgK+WgHsFY//rrbT
-         iuYfQOzY2RlmAnuXe4MRzelJvDvApPvHGlJTDiyG7JB7he7/I2e2GG5nCaidOzJ24Ahw
-         m8oA==
-X-Gm-Message-State: AOAM530dAmp4ocbTvc3zgErzYGPt/oOPdnpPhTOZhf6xHn+/B0xVm8FT
-        8gnmouAoEAFV1yGTbou6yHg+TdRPyZj6mQ==
-X-Google-Smtp-Source: ABdhPJzQ2g/xPK8eo3k0B60x3+l8mnn31uLO25azse8gNJXYLGq7InxZ64b27X0uYPy8QjQOkK012g==
-X-Received: by 2002:adf:db44:: with SMTP id f4mr9957266wrj.168.1604789444333;
-        Sat, 07 Nov 2020 14:50:44 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=+Bt6UgaRsmWE6y81RrcgqxuAQ+M1s5VFlpsIX2l4o4w=;
+        b=bjJC5pbuCRcBIJe4M/WJRcrW1TvQaqyK78xdQAd4JLsre9ijgV8b5z+dvJenq++Cu9
+         9YTSBlt8io8yoCqNjLUaqEWXVsMwzMlYnXMd+0o4kYiZj49L12Zf89MsRFzcMS+o14oy
+         GeXgzlxWQrp//AgI+5nLqNQFkDVQOnhhr8yhwAJJoY4lFtpLfGuRA7bcP2+g16rHBuV6
+         nke1jrnILMoa3/x1DHmMajtWXICatD8XmdskOmenqWyZlkFUWg3977gNF/6nZcaBegeP
+         9UuFX/Zz+vfAJr/LHl6gLgJQmZ11h9KC9A+ocrmZG3PnD5SYBTdcVYAWNG1l/2OyKWf6
+         7nhg==
+X-Gm-Message-State: AOAM530tcX+qbKiv1u6Euu/PJO/dxlf+kqL4dnm0GAYJBs1WAds02id6
+        ewF8e/RmjguQA/WaQ91f5gs=
+X-Google-Smtp-Source: ABdhPJwImUrpdtOIjcivFwlNbD9agAx2vSWXxlUlLcafdrGtizpm4Rg/uIX29XMnLRyWOqnI7xRbxw==
+X-Received: by 2002:adf:cc91:: with SMTP id p17mr9838046wrj.368.1604789558986;
+        Sat, 07 Nov 2020 14:52:38 -0800 (PST)
 Received: from [192.168.1.96] (host109-152-100-228.range109-152.btcentralplus.com. [109.152.100.228])
-        by smtp.gmail.com with ESMTPSA id z15sm7806079wrq.24.2020.11.07.14.50.43
+        by smtp.gmail.com with ESMTPSA id u8sm164160wmg.6.2020.11.07.14.52.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Nov 2020 14:50:43 -0800 (PST)
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Josef Grieb <josef.grieb@gmail.com>
+        Sat, 07 Nov 2020 14:52:38 -0800 (PST)
+Subject: Re: [PATCH 5.11] io_uring: NULL files dereference by SQPOLL
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     Josef Grieb <josef.grieb@gmail.com>
 References: <24446f4e23e80803d3ab1a4d27a6d1a605e37b32.1604783766.git.asml.silence@gmail.com>
- <39db5769-5aef-96f5-305c-2a3250d9ba73@gmail.com>
- <030c3ccb-8777-9c28-1835-5afbbb1c3eb1@gmail.com>
- <97fce91e-4ace-f98b-1e7e-d41d9c15cfb8@kernel.dk>
+ <dd1253a1-e7aa-57a6-9851-7f7d4dfd9a92@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,48 +97,77 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 5.11] io_uring: NULL files dereference by SQPOLL
-Message-ID: <a8a4ac73-81f9-f703-2f91-a70ff97e5094@gmail.com>
-Date:   Sat, 7 Nov 2020 22:47:41 +0000
+Message-ID: <2b72aee7-afc5-0458-c189-df873b0914ed@gmail.com>
+Date:   Sat, 7 Nov 2020 22:49:36 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <97fce91e-4ace-f98b-1e7e-d41d9c15cfb8@kernel.dk>
+In-Reply-To: <dd1253a1-e7aa-57a6-9851-7f7d4dfd9a92@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/11/2020 22:28, Jens Axboe wrote:
-> On 11/7/20 2:54 PM, Pavel Begunkov wrote:
->> On 07/11/2020 21:18, Pavel Begunkov wrote:
->>> On 07/11/2020 21:16, Pavel Begunkov wrote:
->>>> SQPOLL task may find sqo_task->files == NULL, so
->>>> __io_sq_thread_acquire_files() would left it unset and so all the
->>>> following fails, e.g. attempts to submit. Fail if sqo_task doesn't have
->>>> files.
->>>
->>> Josef, could you try this one?
+On 07/11/2020 22:30, Jens Axboe wrote:
+> On 11/7/20 2:16 PM, Pavel Begunkov wrote:
+>> SQPOLL task may find sqo_task->files == NULL, so
+>> __io_sq_thread_acquire_files() would left it unset and so all the
+>> following fails, e.g. attempts to submit. Fail if sqo_task doesn't have
+>> files.
 >>
->> Hmm, as you said it happens often... IIUC there is a drawback with
->> SQPOLL -- after the creator process/thread exits most of subsequent
->> requests will start failing.
->> I'd say from application correctness POV such tasks should exit
->> only after their SQPOLL io_urings got killed.
+>> [  118.962785] BUG: kernel NULL pointer dereference, address:
+>> 	0000000000000020
+>> [  118.963812] #PF: supervisor read access in kernel mode
+>> [  118.964534] #PF: error_code(0x0000) - not-present page
+>> [  118.969029] RIP: 0010:__fget_files+0xb/0x80
+>> [  119.005409] Call Trace:
+>> [  119.005651]  fget_many+0x2b/0x30
+>> [  119.005964]  io_file_get+0xcf/0x180
+>> [  119.006315]  io_submit_sqes+0x3a4/0x950
+>> [  119.006678]  ? io_double_put_req+0x43/0x70
+>> [  119.007054]  ? io_async_task_func+0xc2/0x180
+>> [  119.007481]  io_sq_thread+0x1de/0x6a0
+>> [  119.007828]  kthread+0x114/0x150
+>> [  119.008135]  ? __ia32_sys_io_uring_enter+0x3c0/0x3c0
+>> [  119.008623]  ? kthread_park+0x90/0x90
+>> [  119.008963]  ret_from_fork+0x22/0x30
+>>
+>> Reported-by: Josef Grieb <josef.grieb@gmail.com>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>  fs/io_uring.c | 19 ++++++++++++-------
+>>  1 file changed, 12 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 8d721a652d61..9c035c5c4080 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -1080,7 +1080,7 @@ static void io_sq_thread_drop_mm_files(void)
+>>  	}
+>>  }
+>>  
+>> -static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
+>> +static int __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
+>>  {
+>>  	if (!current->files) {
+>>  		struct files_struct *files;
+>> @@ -1091,7 +1091,7 @@ static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
+>>  		files = ctx->sqo_task->files;
+>>  		if (!files) {
+>>  			task_unlock(ctx->sqo_task);
+>> -			return;
+>> +			return -EFAULT;
 > 
-> I don't think there's anything wrong with that - if you submit requests
-> and exit before they have completed, then you by definition are not
-> caring about the result of them.
+> I don't think we should use -EFAULT here, it's generally used for trying
+> to copy in/out of invalid regions. Probably -ECANCELED is better here,
 
-Other threads may use it as well thinking that this is fine as
-they share mm, files, etc.
+Noted, I'll resend after Josef tests this.
 
-1. task1 create io_uring
-2. clone(CLONE_FILES|CLONE_VM|...) -> task2
-3. task1 exits
-4. task2 continues to use io_uring
+> in lieu of something super appropriate. Maybe -EBADF would be fine too.
+
+Yeah, something along OWNER_TASK_DEAD would make more sense.
 
 -- 
 Pavel Begunkov

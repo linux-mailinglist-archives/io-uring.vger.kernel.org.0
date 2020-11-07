@@ -2,54 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E851E2AA6A7
-	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 17:24:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87AF32AA6B1
+	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 17:32:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbgKGQYT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 Nov 2020 11:24:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59348 "EHLO
+        id S1728250AbgKGQcF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 Nov 2020 11:32:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbgKGQYT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 11:24:19 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA36AC0613CF
-        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 08:24:18 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id r17so490643wrw.1
-        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 08:24:18 -0800 (PST)
+        with ESMTP id S1726333AbgKGQcF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 11:32:05 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69E53C0613CF
+        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 08:32:03 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id s13so4116800wmh.4
+        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 08:32:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2/15PsPacgQavyxrzh4fjwaIXtos4kpPgvH8B6ZacM0=;
-        b=uPDIfQBJpurZkWZ9denpnMkHHT+k1LAebLg310GlMePSMk51OyrYymIn41WpuY0Vpb
-         8PJ0z/sSq2p1hWkBNB9sxoBqdeZ4f3uak6GDB+jsH9pIjd9Se/5DHJVc5wEc4DkcRBUz
-         lfF36WrCUYCDzXEGW1w/TyW+MOG2X1Vz68NGGEDVR6pkmleN07YI5xapFn9e94SKcLbH
-         4rVYpd/SubsEjBhy71/YylVcvJsnraMAjmFXD8/3FyR48T91oo2IgO4OtuAzhww9mxuU
-         zICEI9suUu4P0oS+Xc3AV49PIkuKLQ3jXfGYC3A2XzF0dpnt7JNL+w8JJZ5JKiSE2zSL
-         4M+A==
+        bh=xGvBJc0Jz/sv1lny7h8vRtKj9iI7Hdt2MKDqAykLbX8=;
+        b=qIa0+IZM0KUb2QXfeJrJ12Zo1QsGwyR/CEfScRBv6DPVhG7jWVpT3stU29RN7rEspK
+         PXoRNVbihHV5VfjYn7PjSPZLnoQpUL62rXJ91q1x8dkNBcAk08NYv9iiTNmRnXIXi3Pn
+         J1dpjb9pKVh7k2cqqtPKo12X3koZrR6eK9Fw4v5y6bS/MBUUBbFXhtifQj7XJHVqGJAb
+         f9tbmkRj+A36DSWJmNVYMbbbRWFREzbYCGOca6tSMWzvtmVRDkbR6pCJzQqduy/FaExZ
+         X0quYGYR36/2YWOSB08pVAr1V0Q5Wv4vBRxrWuzCI50UrIolCE2yFD3IJBN7LsjrGlOn
+         ftrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2/15PsPacgQavyxrzh4fjwaIXtos4kpPgvH8B6ZacM0=;
-        b=ajpLwfmAAS8UvfVH/DuNXC9+6UmL1ldjNM69ISci8HKdu8FFuP7feK8pU84gR3moRZ
-         iCswjYPAZJh4wfDVra2U5EvZLE+Hd7bRebGkAV1Ru70QViiFZrLQgSSQCehnX2D7YXtK
-         +ZW6f5KW4s4FsvdSD2hxfoFxHH5ce04VG/6N4pr4mqCgNjLcTSIkevyZi8+VuPoThjLG
-         5ZvuHys8c86VZgVBOBUyQ6UwYJ0uDtbc2M0HRz8+riFmGCsuxeQbRBVwj9zAnWBqGZQJ
-         HOeDzaoaSSWrmaYwziRH0ONlMCdn6EhPWGUR41ZJTE4X4cYNETbCX7yyrvlZ4zILcnY6
-         7E0g==
-X-Gm-Message-State: AOAM531kKGz8DL8Nj4kvw8zhPLTywB1O1b8UuFkokWnU8mUv/GjKMg0u
-        WOy0d6CHU4kYur1G4n/xKBpU1Zmn9+Gz7g==
-X-Google-Smtp-Source: ABdhPJwhOJQI4l2NfttkpYGxi49VT2urZZYOWaj6RDXtNy7pFfsE5Tx+lAWxgoc973VgSQLyMYNO7w==
-X-Received: by 2002:adf:814f:: with SMTP id 73mr8516255wrm.174.1604766257377;
-        Sat, 07 Nov 2020 08:24:17 -0800 (PST)
-Received: from [192.168.1.84] (host109-152-100-228.range109-152.btcentralplus.com. [109.152.100.228])
-        by smtp.gmail.com with ESMTPSA id b14sm2520996wrs.46.2020.11.07.08.24.16
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=xGvBJc0Jz/sv1lny7h8vRtKj9iI7Hdt2MKDqAykLbX8=;
+        b=l/sBqnhiXMjUu/2YSMbmYBDRWmoMlk/GVVFKNs7D2Kk/wvqME5xQ4PvlVJEThx+uPy
+         +1tP6s8p4ww0qxa3vnxpxV0WA0zIP+iK2eraX5H9bFynCJ+9Z5D3BLMyoTiRbXJQyFbh
+         9fHGM3/okSCIipgOGF6gRGzOYBLr+UyvLOqW1Yx8ZdEBNmaLpK3ZuA9kXEBjM11oCz01
+         q2TTMAGagC7u1vbTAIWsqFYu73896K2w0tJ5E2+aQwQtJ0PC3rYh9KF2DUfTa97SnFDq
+         yrfvGZRZs/rJuKtRjrDqGNMW346JgTwK2vmgRC0EJn0xG1pzO9tr34UernPnwTpBGUpO
+         Me4A==
+X-Gm-Message-State: AOAM532B+u6C38JnPNiF5dqOyIoVz3fjI5KzOXEra7QMzJ78uKhYSKmH
+        VKhiYBB9CHilW0A2HkGok5Q=
+X-Google-Smtp-Source: ABdhPJzxaYL13S/iqIXzdayErG3PrNnq/yiiy4ZsByR7AcI/eIkdi4ir8I17F78/uexvkV7uCd64qQ==
+X-Received: by 2002:a7b:cd92:: with SMTP id y18mr5528741wmj.178.1604766722194;
+        Sat, 07 Nov 2020 08:32:02 -0800 (PST)
+Received: from [192.168.1.84] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
+        by smtp.gmail.com with ESMTPSA id l16sm6861646wrx.5.2020.11.07.08.32.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Nov 2020 08:24:16 -0800 (PST)
-To:     Victor Stewart <v@nametag.social>, io-uring@vger.kernel.org
-References: <CAM1kxwhuVfkofDXKaeW4J6Khy2Jp3UcXALQ4SdP9Okk_w7zjNg@mail.gmail.com>
+        Sat, 07 Nov 2020 08:32:01 -0800 (PST)
+Subject: Re: Using SQPOLL for-5.11/io_uring kernel NULL pointer dereference
+To:     Josef <josef.grieb@gmail.com>, io-uring <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     norman@apache.org
+References: <CAAss7+pgQN7uPFaLakd+K4yZH6TRcMHELQV0wAA2NUxPpYEL_Q@mail.gmail.com>
+ <CAAss7+rt_mkHhGY=kkduDK58jVZy73yZx8qFYEPOU9JjGaCs=g@mail.gmail.com>
+ <c5d77fb0-ea86-10a4-5314-42aed9ef5a18@gmail.com>
+ <CAAss7+pux3gjusGOsAdRr3Txr+dRRUfxnBrzd2eM2KtN+6-FVw@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -94,61 +100,51 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: allowing msg_name and msg_control
-Message-ID: <7da29ea8-47b6-a122-c16e-83a052e4d0d9@gmail.com>
-Date:   Sat, 7 Nov 2020 16:21:14 +0000
+Message-ID: <69f14eaa-b75d-8f7b-3897-1f47bb2e325b@gmail.com>
+Date:   Sat, 7 Nov 2020 16:28:59 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAM1kxwhuVfkofDXKaeW4J6Khy2Jp3UcXALQ4SdP9Okk_w7zjNg@mail.gmail.com>
+In-Reply-To: <CAAss7+pux3gjusGOsAdRr3Txr+dRRUfxnBrzd2eM2KtN+6-FVw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/11/2020 14:22, Victor Stewart wrote:
-> RE Jen's proposed patch here
-> https://lore.kernel.org/io-uring/45d7558a-d0c8-4d3f-c63a-33fd2fb073a5@kernel.dk/
-
-Hmm, I haven't seen this thread, thanks for bringing it up
-
+On 07/11/2020 14:09, Josef wrote:
+>> I haven't got the first email, is it "kernel NULL pointer dereference"
+>> as in the subject or just freeze?
 > 
-> and RE what Stefan just mentioned in the "[PATCH 5.11] io_uring: don't
-> take fs for recvmsg/sendmsg" thread a few minutes ago... "Can't we
-> better remove these checks and allow msg_control? For me it's a
-> limitation that I would like to be removed."... which I coincidentally
-> just read when coming on here to advocate the same.
-> 
-> I also require this for a few vital performance use cases:
-> 
-> 1) GSO (UDP_SEGMENT to sendmsg)
-> 2) GRO (UDP_GRO from recvmsg)
+> that's weird..probably the size of the attached log file is too big...
+> here dmesg log file
+> https://gist.github.com/1Jo1/3d0bcefc18f097265f0dc1ef054a87c0
 
-Don't know these you listed, may read about them later, but wouldn't [1]
-be enough? I was told it's queued up.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit/net/socket.c?id=583bbf0624dfd8fc45f1049be1d4980be59451ff
+That's much better with the log, thanks! I'll take a look later
 
 > 
-> GSO and GRO are super important for QUIC servers... essentially
-> bringing a 3-4x performance improvement that brings them in line with
-> TCP efficiency.
+>> - did you locate which test hangs it? If so what it uses? e.g. SQPOLL
+>> sharing, IOPOLL., etc.
 > 
-> Would also allow the usage of...
+> yes, it uses SQPOLL, without sharing, IPOLL is not enabled, and Async
+> Flag is enabled
 > 
-> 3) MSG_ZEROCOPY (to receive the sock_extended_err from recvmsg)
+>> - is it send/recvmsg, send/recv you use? any other?
 > 
-> it's only a single digit % performance gain for large sends (but a
-> minor crutch until we get registered buffer sendmsg / recvmsg, which I
-> plan on implementing).
+> no the tests which occurs the error use these operations: OP_READ,
+> OP_WRITE, OP_POLL_ADD, OP_POLL_REMOVE, OP_CLOSE, OP_ACCEPT, OP_TIMEOUT
+> (OP_READ, OP_WRITE and OP_CLOSE async flag is enabled)
 > 
-> So if there's an agreed upon plan on action I can take charge of all
-> the work and get this done ASAP.
+>> - does this happen often?
 > 
-> #Victor
+> yeah quite often
 > 
+>> - you may try `funcgraph __io_sq_thread -H` or even with `io_sq_thread`
+>> (funcgraph is from bpftools). Or catch that with some other tools.
+> 
+> I'm not quite familiar with these tools( kernel debugging in general)
+> I'll take a look tomorrow
 
 -- 
 Pavel Begunkov

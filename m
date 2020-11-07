@@ -2,111 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B14742AA7D5
-	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 21:06:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F3F62AA7DA
+	for <lists+io-uring@lfdr.de>; Sat,  7 Nov 2020 21:14:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725846AbgKGUGN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 Nov 2020 15:06:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37182 "EHLO
+        id S1728631AbgKGUOC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 Nov 2020 15:14:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbgKGUGN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 15:06:13 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E3A6C0613CF
-        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 12:06:13 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id p8so3955550wrx.5
-        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 12:06:13 -0800 (PST)
+        with ESMTP id S1725836AbgKGUOC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 15:14:02 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8452C0613CF
+        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 12:14:00 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id m17so1129533pjz.3
+        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 12:14:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WHBfg6jH7ngncxBG92qVkyIfo08y9p1DkJ6IBq47stE=;
-        b=epHyPV6G3bPbvbWGMEsZC2d+At9UYaY+M5TGPH0xZKd50R+fybmLTkuv9bAbNKSh/q
-         G1anYZ+JsWMz6HnGpFDj3llKMj7C8dMZC4BfUBhvMn9qOq8Qkvugm4FndceMNEFhDAvH
-         LXSxFwpnz9ma8bu9nbnQvd/VzuAr00RENalAiZ9cR/TlPjFGRKwFF54SUs2IxeWXya0E
-         KvEqOfavUZVn5v1e6l6JNomXYLzob4oEaoPQCB0MBHgoWWuf0LKA2ZHTvPNwV58oqI1F
-         IOynDl916EwR66yTDQm5fmL3dG4pCoy8WM6MSkuGtOK9I8bCEKVIBrRfmeaKo0Fuwi5e
-         xUCg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=4wyecbVF2pa13FIUlcfG85ZA4c+nRhh836nKpeRzuO8=;
+        b=tw1ZFWpqiQGFv2HqMVnkP0KAC0WP9ElFcNjZPVMwSERtDEAUND1Dfoqc8MijZnzv+M
+         1MAgSXPVZ0QKEVZ/0zOzGjMXAq89ccVVRc5NJtfwhTY9cBevLgD0fEZ0sbxgJn9hEzqv
+         WLHGzWDNxn4rlenG+fyDHOLo5b26RYN/pDF0YYMqkuEbD7l9bZ2O8Lla2jO4qXOYAJay
+         FpQRGo7UdjT5yJidlicaZXEAiv14cSdAwtkpOr9H86KMp3OpbC1Xb2fsA07LOLkAe6xy
+         k1UNLHb2/dBUebVytujjxVvTmxOUMefcMYWGKjPRjPEj8P/r2ytLsga9FkUxTP8sKk71
+         0rIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=WHBfg6jH7ngncxBG92qVkyIfo08y9p1DkJ6IBq47stE=;
-        b=cHzqjZmBHXqM5KHE5BnR1NpV/lWpJHZsqvS7gyDUuAHRIDXqXTNOCpT5d1xf9SexkF
-         ljL9wzWAKTaaa+8iOuMD7IJ2kkrp8nWdlH8PaGMm2209J1OLbQSbbLvwEti7EdG/cIR+
-         ncXRJpgCQf+H4RSQBnBmPXDmkc6lL3YpUiXe7MTKV3h4d/1TD/dFPlBtWcta/10/kSoe
-         idpoy5YmymlchU8GAa+nUlwfJCxor5ioUBZ7IH9KPjRQEoIe0HXblDB5BmYDgPCEVq9F
-         ZwXMegM3Rq2DAaYPVlfgWDMVBSyqCv7Ka1q8cy1mDn9LRjVkdEkx1xt/+eQmAJ+x0J9x
-         y3Gg==
-X-Gm-Message-State: AOAM530+SjClmN0lPDWlKfaS/OEc1lrIEi9W+8L0hzmu3Q1kzMCh9lF6
-        DyJe46Npe5Ydm1VOGv2nf1k=
-X-Google-Smtp-Source: ABdhPJxdhZnZ9b/HaVFE4t8+Y/udZhTDSn+fwTE2/gkiOMlvuOc0SjdI4cF6AVYRmBk32se9/LNDKw==
-X-Received: by 2002:adf:bb43:: with SMTP id x3mr9444198wrg.250.1604779571857;
-        Sat, 07 Nov 2020 12:06:11 -0800 (PST)
-Received: from [192.168.1.84] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
-        by smtp.gmail.com with ESMTPSA id r10sm7377575wmg.16.2020.11.07.12.06.10
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=4wyecbVF2pa13FIUlcfG85ZA4c+nRhh836nKpeRzuO8=;
+        b=rtEG7Ki+Alx/6uM1hA0rII+jX4G5FjNva01nushVUdUuhN3puw3OFq+d9p3r/Q/6vi
+         +u4YJKeZr1IabwvygRw1Upx0Gs6oSEhZI5RzG5TYe4dCQeyNbMwrCFR1ZZ2BPd9KX2hn
+         LYvY0qsrQY/oMYUElW4wb1wCgq4Pcx4grRCA9M5Nfg8fUHHHd6BlhKHGWzxcYG9+6XyZ
+         Ff3N7B0ScBUhbWQylq2oYqlnDKuty3gg6Die5jFQelmKoqleAiiM/czP25GRyZkQJOBI
+         JpTvS0ClBGZXE24WYyFjVFkokgST+2Bm11SklNjkN2OnaS47WES9hlF4aX4Id73tRrSn
+         XipQ==
+X-Gm-Message-State: AOAM533iff4GNGxTLC9cCzacZTs2i76dUENQxB2uKrn807fjkL8mu9NL
+        3o77Rq3kgmvhxLp9R0I0puIEcQ==
+X-Google-Smtp-Source: ABdhPJxyb0PGTiw4FXFppV6OpTw0mdRr0GT7lMRkOKzc/Oz5N2dF1OlAfD9UJttBPxr7zuL3sjSoBg==
+X-Received: by 2002:a17:902:728f:b029:d6:fcbe:99c5 with SMTP id d15-20020a170902728fb02900d6fcbe99c5mr6587248pll.20.1604780039846;
+        Sat, 07 Nov 2020 12:13:59 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id a123sm6501390pfd.218.2020.11.07.12.13.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Nov 2020 12:06:11 -0800 (PST)
-Subject: Re: Using SQPOLL for-5.11/io_uring kernel NULL pointer dereference
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Josef <josef.grieb@gmail.com>, io-uring <io-uring@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     norman@apache.org
-References: <CAAss7+pgQN7uPFaLakd+K4yZH6TRcMHELQV0wAA2NUxPpYEL_Q@mail.gmail.com>
- <CAAss7+rt_mkHhGY=kkduDK58jVZy73yZx8qFYEPOU9JjGaCs=g@mail.gmail.com>
- <c5d77fb0-ea86-10a4-5314-42aed9ef5a18@gmail.com>
- <CAAss7+pux3gjusGOsAdRr3Txr+dRRUfxnBrzd2eM2KtN+6-FVw@mail.gmail.com>
- <69f14eaa-b75d-8f7b-3897-1f47bb2e325b@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <1a4e38df-d977-abea-e6b8-b64f436c81a5@gmail.com>
-Date:   Sat, 7 Nov 2020 20:03:08 +0000
+        Sat, 07 Nov 2020 12:13:59 -0800 (PST)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.10-rc
+Message-ID: <adf29460-8af3-b326-a372-2627a9097929@kernel.dk>
+Date:   Sat, 7 Nov 2020 13:13:57 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <69f14eaa-b75d-8f7b-3897-1f47bb2e325b@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -114,44 +64,56 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/11/2020 16:28, Pavel Begunkov wrote:
-> On 07/11/2020 14:09, Josef wrote:
->>> I haven't got the first email, is it "kernel NULL pointer dereference"
->>> as in the subject or just freeze?
->>
->> that's weird..probably the size of the attached log file is too big...
->> here dmesg log file
->> https://gist.github.com/1Jo1/3d0bcefc18f097265f0dc1ef054a87c0
-> 
-> That's much better with the log, thanks! I'll take a look later
+Hi Linus,
 
-Ok, we get into fget_many() without ->files, and it's clear how it
-may happen. I'll write up a patch.
+A set of fixes for io_uring that should go into this release:
 
-> 
->>
->>> - did you locate which test hangs it? If so what it uses? e.g. SQPOLL
->>> sharing, IOPOLL., etc.
->>
->> yes, it uses SQPOLL, without sharing, IPOLL is not enabled, and Async
->> Flag is enabled
->>
->>> - is it send/recvmsg, send/recv you use? any other?
->>
->> no the tests which occurs the error use these operations: OP_READ,
->> OP_WRITE, OP_POLL_ADD, OP_POLL_REMOVE, OP_CLOSE, OP_ACCEPT, OP_TIMEOUT
->> (OP_READ, OP_WRITE and OP_CLOSE async flag is enabled)
->>
->>> - does this happen often?
->>
->> yeah quite often
->>
->>> - you may try `funcgraph __io_sq_thread -H` or even with `io_sq_thread`
->>> (funcgraph is from bpftools). Or catch that with some other tools.
->>
->> I'm not quite familiar with these tools( kernel debugging in general)
->> I'll take a look tomorrow
-> 
+- SQPOLL cancelation fixes
+
+- Two fixes for the io_identity COW
+
+- Cancelation overflow fix (Pavel)
+
+- Drain request cancelation fix (Pavel)
+
+- Link timeout race fix (Pavel)
+
+Please pull!
+
+
+The following changes since commit 3cea11cd5e3b00d91caf0b4730194039b45c5891:
+
+  Linux 5.10-rc2 (2020-11-01 14:43:51 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.10-2020-11-07
+
+for you to fetch changes up to 9a472ef7a3690ac0b77ebfb04c88fa795de2adea:
+
+  io_uring: fix link lookup racing with link timeout (2020-11-05 15:36:40 -0700)
+
+----------------------------------------------------------------
+io_uring-5.10-2020-11-07
+
+----------------------------------------------------------------
+Jens Axboe (5):
+      io-wq: cancel request if it's asking for files and we don't have them
+      io_uring: properly handle SQPOLL request cancelations
+      io_uring: ensure consistent view of original task ->mm from SQPOLL
+      io_uring: drop req/tctx io_identity separately
+      io_uring: use correct pointer for io_uring_show_cred()
+
+Pavel Begunkov (3):
+      io_uring: fix overflowed cancel w/ linked ->files
+      io_uring: don't forget to task-cancel drained reqs
+      io_uring: fix link lookup racing with link timeout
+
+ fs/io-wq.c               |   4 ++
+ fs/io_uring.c            | 183 +++++++++++++++++++++++++++++++++++------------
+ include/linux/io_uring.h |   3 +-
+ 3 files changed, 142 insertions(+), 48 deletions(-)
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

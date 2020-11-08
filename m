@@ -2,133 +2,154 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 132932AAABB
-	for <lists+io-uring@lfdr.de>; Sun,  8 Nov 2020 12:42:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BE3B2AAB08
+	for <lists+io-uring@lfdr.de>; Sun,  8 Nov 2020 13:59:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726210AbgKHLmX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 8 Nov 2020 06:42:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40342 "EHLO
+        id S1727570AbgKHM7J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 8 Nov 2020 07:59:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbgKHLmW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 8 Nov 2020 06:42:22 -0500
+        with ESMTP id S1726607AbgKHM7J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 8 Nov 2020 07:59:09 -0500
 Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FB81C0613CF
-        for <io-uring@vger.kernel.org>; Sun,  8 Nov 2020 03:42:22 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id w24so2904280wmi.0
-        for <io-uring@vger.kernel.org>; Sun, 08 Nov 2020 03:42:22 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B474C0613CF
+        for <io-uring@vger.kernel.org>; Sun,  8 Nov 2020 04:59:08 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id h2so5610227wmm.0
+        for <io-uring@vger.kernel.org>; Sun, 08 Nov 2020 04:59:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=th8rXaaePoWk5lEuxkPZlF68C1lzNq3lngvO8ZzMjLQ=;
-        b=USy3Dn6T6/BvnJR4PlyNiBX6/Z4oLFBi4cl+HvMumPnR6zqkw29WKKasM/UvbVmuG6
-         RGFIYmu6RfDF8tn25Bg1skv+8XRpV1b9VyldTpCLVqcDAKgeOXeORMJeKpEYGEKgAwjA
-         jzzL8+EWYCDDn84ZPEOqCSumTtK1ZlqWW/yBjy0QHwN94JEkd2l1asjAVriSJ9JrXfmy
-         ONebYIYE81J0H7A4/5ZHA8+Gn+qskORlvogbX5gBqUfZXo73ob40L/VlASpiytQjRPgD
-         BxPA/9aHrgTWTjaNQRU0eOsHkuRJW6z9oDWB1J2qHsBM4onExHpctTJtyFLN/adO9iqP
-         M16Q==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OHmyDtxNbKl1VmG8Yh5vXLOjz2CeO3Vk4CvISwHueps=;
+        b=QI8t0GuWBUv7wLwWz7TZ/Snj7+Sg2/Rj8Qo75EAqRKGF2UxJwfKrB+3sgnAqHfcJm3
+         TFkMevP6wgW5No9i8y5SksUrI3KARae0+oAo6K+Z6f6uE9wALK/HVwc2aQhlwLsPLR5M
+         jMYdxLKb5eBbgm/P0MuAKJiNMohKbSC/q7Aa6TFuYgL6lnGU1R7kX4VP2wnZ/atwFc3F
+         BbQUykv4bSB58SOKq/16/MPC+58SazRa2urt8LkXP091sWlNN5THzBxHANsdmYd1UHhQ
+         WuY7467WQeXcBsQgW9Lgq3PXjTWSqogry69L1FGUR8y8oqrvnvBfCd1fZV5htQjMuXvA
+         27FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=th8rXaaePoWk5lEuxkPZlF68C1lzNq3lngvO8ZzMjLQ=;
-        b=oINKTGsE/3D33yHQ1hersVtCoHhNzgkso6MW8X9O7dYAkw2RCXqYZd3pynJ+xQd8KB
-         Nf6SyMFDbyIx6yibvN8CrEIcQvfE56xQZ6FHg6RSNfXf9mWnjE0f3nrI79qGlMvqM/p3
-         UzkW6Z0KPAMucW9O6mZCQ3aowEphUjB0wreXfam4uKZ9IFzQpNLRuSmcIsiWpdrV1lpo
-         lar7Y2DKCe1KwbbbQ1bAjX2Tg+jkAw7yFupSncDHwMsAwMkPBjr4creg9I94gipbHzYx
-         gN1Rmd6tZ+wvvr6YQIe+iUra9OgNyzD20lsfRIuB40V0QLTgJ4uPMv47wJYB0r2WtPBK
-         SWsw==
-X-Gm-Message-State: AOAM531zp+FSSjKLmnNall8Pq22YRX0OHTpoMeWXgG5IOyuGT84t0qBj
-        AkqaoHHf3rZ+LFLKoRIJUJk=
-X-Google-Smtp-Source: ABdhPJxgrUXJF1BuOJsrmWZco1dsQKjeuFtEXsfbI90QjA7Rl9xW9HDdWHOF/zHPK7P6VbBmSylmVw==
-X-Received: by 2002:a1c:a7ce:: with SMTP id q197mr9226725wme.138.1604835740854;
-        Sun, 08 Nov 2020 03:42:20 -0800 (PST)
-Received: from [192.168.1.96] (host109-152-100-228.range109-152.btcentralplus.com. [109.152.100.228])
-        by smtp.gmail.com with ESMTPSA id d3sm9836537wrg.16.2020.11.08.03.42.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Nov 2020 03:42:20 -0800 (PST)
-To:     Josef <josef.grieb@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        io-uring <io-uring@vger.kernel.org>
-Cc:     norman@apache.org
-References: <24446f4e23e80803d3ab1a4d27a6d1a605e37b32.1604783766.git.asml.silence@gmail.com>
- <39db5769-5aef-96f5-305c-2a3250d9ba73@gmail.com>
- <030c3ccb-8777-9c28-1835-5afbbb1c3eb1@gmail.com>
- <97fce91e-4ace-f98b-1e7e-d41d9c15cfb8@kernel.dk>
- <a8a4ac73-81f9-f703-2f91-a70ff97e5094@gmail.com>
- <3094f974-1b67-1550-a116-a1f1fca84df2@kernel.dk>
- <CAAss7+r+DFTBcLzZhRoJ_p839nro6GKawh=te1wHPkhK9Nw4hQ@mail.gmail.com>
- <CAAss7+oBjNfFXV8O5DaLB0ih6EvcmSE=4V9bB5g2RY0R1oXftw@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OHmyDtxNbKl1VmG8Yh5vXLOjz2CeO3Vk4CvISwHueps=;
+        b=bAtMWRDMOH0sbzPRorpqxunBQ6D9ywMIqBI2hWBiF7YhLP4yMj1AwvIwzMZFDYzBuN
+         6t0CfnIQ5+wifEtbO65QDAMUvj6mDOCYLCi9/0ZJCmoM5d/WcRtp+EjzUAX1/wMiLaXM
+         U72UzSr6pjAAnVOrZJ1lFpZVmqfUd5mV/G/dwFYV1mv20Gvcb39T5HtzZS9qqg+AHaoo
+         gPKojQuvO2Hq5XJXo2k4+/iY0FUJZKBgbIjERWZNiF12jY37AKEJ8EfZNBL4eNCkP28C
+         /zXNP3Of+FgWpd05p83Z9sgmdYknv/Ofs4tToKDYFDa59ClAJCUyV9L/AV7DQ99DUWTd
+         Rh1w==
+X-Gm-Message-State: AOAM530gSDg05neFmAb/Dthx7wz6wSXEB79LF/XT5IELroWaPYPgVzSy
+        vO6WTzfCngi4KiMD35AKp4H6U4XUPthgfg==
+X-Google-Smtp-Source: ABdhPJw2u1KWrhNe/0frn0RvebeFwLrSUtn1Xd7AW39LZYLhrIq7LC7w54qDbaVhRct/ML+pgrsS7g==
+X-Received: by 2002:a1c:2583:: with SMTP id l125mr9388555wml.50.1604840347010;
+        Sun, 08 Nov 2020 04:59:07 -0800 (PST)
+Received: from localhost.localdomain (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
+        by smtp.gmail.com with ESMTPSA id h62sm9832342wrh.82.2020.11.08.04.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Nov 2020 04:59:06 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH 5.11] io_uring: NULL files dereference by SQPOLL
-Message-ID: <6313f2bb-d574-74d8-d757-cc5164112ee2@gmail.com>
-Date:   Sun, 8 Nov 2020 11:39:17 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     Josef Grieb <josef.grieb@gmail.com>
+Subject: [PATCH 5.11] io_uring: NULL files dereference by SQPOLL
+Date:   Sun,  8 Nov 2020 12:55:55 +0000
+Message-Id: <d30884b71aa3e74c53a1c1f531b957cad222b7d0.1604840129.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <CAAss7+oBjNfFXV8O5DaLB0ih6EvcmSE=4V9bB5g2RY0R1oXftw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 08/11/2020 06:50, Josef wrote:
->> Josef, could you try this one?
-> 
-> the null files dereference error no longer occurs, but after a certain
-> point in time the OP_READ operation always returns -EFAULT
+SQPOLL task may find sqo_task->files == NULL and
+__io_sq_thread_acquire_files() would leave it unset, so following
+fget_many() and others try to dereference NULL and fault. Propagate
+an error files are missing.
 
-That confirms the issue, and for efaults, as describes, I expect them to
-start falling out after the task-creator exits or do exec. Just to note
-that the patch only propagates errors and doesn't change the semantics.
+[  118.962785] BUG: kernel NULL pointer dereference, address:
+	0000000000000020
+[  118.963812] #PF: supervisor read access in kernel mode
+[  118.964534] #PF: error_code(0x0000) - not-present page
+[  118.969029] RIP: 0010:__fget_files+0xb/0x80
+[  119.005409] Call Trace:
+[  119.005651]  fget_many+0x2b/0x30
+[  119.005964]  io_file_get+0xcf/0x180
+[  119.006315]  io_submit_sqes+0x3a4/0x950
+[  119.007481]  io_sq_thread+0x1de/0x6a0
+[  119.007828]  kthread+0x114/0x150
+[  119.008963]  ret_from_fork+0x22/0x30
 
-> 
-> BTW forgot to mention that the NULL files dereference error only
-> occurs when OP_READ returns a -EFAULT
+Reported-by: Josef Grieb <josef.grieb@gmail.com>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+v2: -EFAULT -> -EOWNERDEAD (Jens Axboe)
+
+ fs/io_uring.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index b5aaa6e097f9..aa8aa4945a06 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1062,7 +1062,7 @@ static void io_sq_thread_drop_mm_files(void)
+ 	}
+ }
+ 
+-static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
++static int __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
+ {
+ 	if (!current->files) {
+ 		struct files_struct *files;
+@@ -1073,7 +1073,7 @@ static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
+ 		files = ctx->sqo_task->files;
+ 		if (!files) {
+ 			task_unlock(ctx->sqo_task);
+-			return;
++			return -EOWNERDEAD;
+ 		}
+ 		atomic_inc(&files->count);
+ 		get_nsproxy(ctx->sqo_task->nsproxy);
+@@ -1087,6 +1087,7 @@ static void __io_sq_thread_acquire_files(struct io_ring_ctx *ctx)
+ 		current->thread_pid = thread_pid;
+ 		task_unlock(current);
+ 	}
++	return 0;
+ }
+ 
+ static int __io_sq_thread_acquire_mm(struct io_ring_ctx *ctx)
+@@ -1118,15 +1119,19 @@ static int io_sq_thread_acquire_mm_files(struct io_ring_ctx *ctx,
+ 					 struct io_kiocb *req)
+ {
+ 	const struct io_op_def *def = &io_op_defs[req->opcode];
++	int ret;
+ 
+ 	if (def->work_flags & IO_WQ_WORK_MM) {
+-		int ret = __io_sq_thread_acquire_mm(ctx);
++		ret = __io_sq_thread_acquire_mm(ctx);
+ 		if (unlikely(ret))
+ 			return ret;
+ 	}
+ 
+-	if (def->needs_file || (def->work_flags & IO_WQ_WORK_FILES))
+-		__io_sq_thread_acquire_files(ctx);
++	if (def->needs_file || (def->work_flags & IO_WQ_WORK_FILES)) {
++		ret = __io_sq_thread_acquire_files(ctx);
++		if (unlikely(ret))
++			return ret;
++	}
+ 
+ 	return 0;
+ }
+@@ -2134,8 +2139,8 @@ static void __io_req_task_submit(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 
+-	if (!__io_sq_thread_acquire_mm(ctx)) {
+-		__io_sq_thread_acquire_files(ctx);
++	if (!__io_sq_thread_acquire_mm(ctx) &&
++	    !__io_sq_thread_acquire_files(ctx)) {
+ 		mutex_lock(&ctx->uring_lock);
+ 		__io_queue_sqe(req, NULL);
+ 		mutex_unlock(&ctx->uring_lock);
 -- 
-Pavel Begunkov
+2.24.0
+

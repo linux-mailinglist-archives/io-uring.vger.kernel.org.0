@@ -2,61 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5B662AAAAF
-	for <lists+io-uring@lfdr.de>; Sun,  8 Nov 2020 12:27:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91B952AAAB4
+	for <lists+io-uring@lfdr.de>; Sun,  8 Nov 2020 12:35:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726210AbgKHL1k (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 8 Nov 2020 06:27:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38068 "EHLO
+        id S1726021AbgKHLfC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 8 Nov 2020 06:35:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgKHL1j (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 8 Nov 2020 06:27:39 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8258C0613CF
-        for <io-uring@vger.kernel.org>; Sun,  8 Nov 2020 03:27:36 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id p22so5490863wmg.3
-        for <io-uring@vger.kernel.org>; Sun, 08 Nov 2020 03:27:36 -0800 (PST)
+        with ESMTP id S1726210AbgKHLfB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 8 Nov 2020 06:35:01 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BBC7C0613CF
+        for <io-uring@vger.kernel.org>; Sun,  8 Nov 2020 03:35:01 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id d142so5495396wmd.4
+        for <io-uring@vger.kernel.org>; Sun, 08 Nov 2020 03:35:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=F98xXv6vSLfe6D8YpSHe9e79Gz7xnPj35L3vglZjOJU=;
-        b=SzRs7AIqucQpId/kbQIIhcmeRkC5XiWuauM1sP9qNwliBvqh1RErD7eRf1ymS1Z+lC
-         zTznyFduo5zmWtgKxVBW0sQs17x8H1AKQppaQe9QJ8s/oViFI6dQWXClpc+vsdkuh7XQ
-         iwp1humlnCvpdwLwquxJCmKnROOt/DMKMb9MObWHiNszwRx8J1h/2DyYDvl+l4Ij8gLa
-         THCIRyv3yb/oz93rER8LYY0QQBQ5m/hkGHhVDocz1R2JHgZvSPAtiuw3ekb+YxxCVGvG
-         S9AYIZHbqcJ5imkPNS8SLVRWzflrlScQ8uE86+N7A2FnsxuQq0t7UOZR2THhcsNLeQHL
-         I3RA==
+        bh=IXxFDvFHA6G1qYBvu4uvy4QfA+WUyrdsjyEmYmiJYDQ=;
+        b=H5iS76Y7lHHIux9tbHPXb1tmtTDukpWvGlE3TcDzqvktD+RxCHXzzkUfyUWy3BVdZ8
+         fuHjDoexbds+ElNYroDSfCOXEo/sOkeR2xD6CYZmMoCln+vhb5j9Dm/gI2FO+QMEAQ/q
+         SRXtGFCEIqMQZBMt5gtCgAC53dii3g/SyZ7EnTk2++K4ZTcjXgCThFeqeDe1SD9RiR0C
+         pPr9x2E74c3OWx7DGbNm83VfdD1E9pJvG2Eyp+iOwHc8ZQRn69663/IcIgCshq5m1ZWi
+         ahifg3BwlN3XM+YYqBd8Rvdw1OBDTFSoN/HnnWm7gU7Wiy5r9lYCM8sY6d2ugxL1kaG7
+         wsOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=F98xXv6vSLfe6D8YpSHe9e79Gz7xnPj35L3vglZjOJU=;
-        b=NJGrMAfpbyc2OewFB+z/0pt1TB/GHRI2t9sKZll/uV3lbLdig6g5KKd3/LFzZGkNdL
-         FDGGQK8rG9cIEpfl+rfp7bAtEnpgb5Ojgs+VabYVTlrirzmXWaM6FYsHvdVbXbYdsoJo
-         fY7zDhUd3n0uitIweESEnfh1Gwc1m4KxfK/rcV9L3eBd5OxWsqEa/QxJd0IfepUxBhwg
-         9abfU33aqLzb4L8RoY526UYBHPUUPcy1ujMiEloMIDYC5LB+mst9moxo648ofvkArvMA
-         1JjzuqYpDqOng3A6FX1QxiSTD3uFlcePPVgn6ZCD/drn8vzzS5OxvuLKtAD6VbjEHXSn
-         F8Mg==
-X-Gm-Message-State: AOAM5334t2LGrcZiCQ/xC1BBAgEjamAuwmEj5hXQlbBryChvtRx/Pa1j
-        ox07VdR/voJcNuTQ5NYpbf0=
-X-Google-Smtp-Source: ABdhPJzRFgYlGtLOFPGXWnRlIVxK3otBzwk99uYtEhSg3lyME7SE1BDsVPY9F3IQvo1J9zsBOsm44A==
-X-Received: by 2002:a7b:c015:: with SMTP id c21mr9033952wmb.22.1604834855519;
-        Sun, 08 Nov 2020 03:27:35 -0800 (PST)
-Received: from [192.168.1.96] (host109-152-100-228.range109-152.btcentralplus.com. [109.152.100.228])
-        by smtp.gmail.com with ESMTPSA id o184sm9157388wmo.37.2020.11.08.03.27.34
+        bh=IXxFDvFHA6G1qYBvu4uvy4QfA+WUyrdsjyEmYmiJYDQ=;
+        b=OoautT7RaFbC4Xv/D9SUw/TH7Po7J1rIfl/7nWYjkWagAlJ6hqNawjEGEJwVkKtPZ4
+         JQPh3yEUZtNxo/v1LAPtfS36/apTNHju3YePtLDox9PKRxy5MpBRtFrSJGZ/dF6XNgpJ
+         gm9McmLNOxKj4TcqByHHF1fifyPWUXJgEgKPzy2dBCNppb0FJtPYaU3A1kxch1QPXlYq
+         S44eciL2hRzpoZwHVlQjpj01ZSLXEpV8CjBm1nogMiIYG/tXLNQATuDOKgKt/IrrBqif
+         Cc2Yx/pwWmZQx7d8oAP/UXy3gUx2s/q08zCqw9vzytnWFvIqyINcDRSgWwKCvMs8yp2Z
+         kBow==
+X-Gm-Message-State: AOAM531wBHNztPU2CMdMYnT0HLr2vXQGgfhqNI960VIVwQ4U2lrsX/TS
+        EuFf4Tnr6AKRtjMT2UHqk8XuB/srv1Qi6w==
+X-Google-Smtp-Source: ABdhPJzHtkNwAosc3zwVRnTH1O5vjifz0P2W9Zk2xAGiPUUniCOPvFgxsYx6BFRpXLDtrxTdMhApDw==
+X-Received: by 2002:a7b:cd92:: with SMTP id y18mr9212071wmj.178.1604835298797;
+        Sun, 08 Nov 2020 03:34:58 -0800 (PST)
+Received: from [192.168.1.96] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
+        by smtp.gmail.com with ESMTPSA id a128sm9220326wmf.5.2020.11.08.03.34.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Nov 2020 03:27:34 -0800 (PST)
+        Sun, 08 Nov 2020 03:34:58 -0800 (PST)
 Subject: Re: [PATCH 5.11] io_uring: NULL files dereference by SQPOLL
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Josef Grieb <josef.grieb@gmail.com>
+To:     Josef <josef.grieb@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring <io-uring@vger.kernel.org>
 References: <24446f4e23e80803d3ab1a4d27a6d1a605e37b32.1604783766.git.asml.silence@gmail.com>
  <39db5769-5aef-96f5-305c-2a3250d9ba73@gmail.com>
  <030c3ccb-8777-9c28-1835-5afbbb1c3eb1@gmail.com>
  <97fce91e-4ace-f98b-1e7e-d41d9c15cfb8@kernel.dk>
  <a8a4ac73-81f9-f703-2f91-a70ff97e5094@gmail.com>
  <3094f974-1b67-1550-a116-a1f1fca84df2@kernel.dk>
+ <CAAss7+r+DFTBcLzZhRoJ_p839nro6GKawh=te1wHPkhK9Nw4hQ@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -101,12 +102,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <99a2727c-e888-56fa-1314-5cc2e0ce83e2@gmail.com>
-Date:   Sun, 8 Nov 2020 11:24:31 +0000
+Message-ID: <5708a34a-7bcc-8792-9c39-a6061a1da45b@gmail.com>
+Date:   Sun, 8 Nov 2020 11:31:55 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <3094f974-1b67-1550-a116-a1f1fca84df2@kernel.dk>
+In-Reply-To: <CAAss7+r+DFTBcLzZhRoJ_p839nro6GKawh=te1wHPkhK9Nw4hQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -114,45 +115,14 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/11/2020 23:18, Jens Axboe wrote:
-> On 11/7/20 3:47 PM, Pavel Begunkov wrote:
->> On 07/11/2020 22:28, Jens Axboe wrote:
->>> On 11/7/20 2:54 PM, Pavel Begunkov wrote:
->>>> On 07/11/2020 21:18, Pavel Begunkov wrote:
->>>>> On 07/11/2020 21:16, Pavel Begunkov wrote:
->>>>>> SQPOLL task may find sqo_task->files == NULL, so
->>>>>> __io_sq_thread_acquire_files() would left it unset and so all the
->>>>>> following fails, e.g. attempts to submit. Fail if sqo_task doesn't have
->>>>>> files.
->>>>>
->>>>> Josef, could you try this one?
->>>>
->>>> Hmm, as you said it happens often... IIUC there is a drawback with
->>>> SQPOLL -- after the creator process/thread exits most of subsequent
->>>> requests will start failing.
->>>> I'd say from application correctness POV such tasks should exit
->>>> only after their SQPOLL io_urings got killed.
->>>
->>> I don't think there's anything wrong with that - if you submit requests
->>> and exit before they have completed, then you by definition are not
->>> caring about the result of them.
->>
->> Other threads may use it as well thinking that this is fine as
->> they share mm, files, etc.
->>
->> 1. task1 create io_uring
->> 2. clone(CLONE_FILES|CLONE_VM|...) -> task2
->> 3. task1 exits
->> 4. task2 continues to use io_uring
+On 08/11/2020 02:09, Josef wrote:
+>> Josef, could you try this one?
 > 
-> Sure, but I think this is getting pretty contrived. Yes, if the task
-> that created the ring (and whose credentials are being used) exits,
-> then the ring is effectively dead if you're using SQPOLL. If you're
-> using threads, the threads go away too.
+> it's weird I couldn't apply this patch..did you pull
+> for-5.11/io_uring? I'm gonna try manually
 
-Sibling threads are not necessarily go away, isn't it? And pre-5.11
-that wasn't a problem as it didn't have files and mm was taken directly. 
-
+I'm a bit ahead of it, but nothing that would hinder. Just tried git
+apply, works well. Anyway, thanks for testing by hand
 
 -- 
 Pavel Begunkov

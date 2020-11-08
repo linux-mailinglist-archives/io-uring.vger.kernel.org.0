@@ -2,302 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8F8C2AA8AF
-	for <lists+io-uring@lfdr.de>; Sun,  8 Nov 2020 02:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 674162AA8E4
+	for <lists+io-uring@lfdr.de>; Sun,  8 Nov 2020 03:09:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725838AbgKHBJ6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 7 Nov 2020 20:09:58 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:37861 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726043AbgKHBJ6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 20:09:58 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UEYXK2x_1604797793;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UEYXK2x_1604797793)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 08 Nov 2020 09:09:54 +0800
-Subject: Re: [dm-devel] [RFC 0/3] Add support of iopoll for dm device
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     axboe@kernel.dk, xiaoguang.wang@linux.alibaba.com,
-        linux-block@vger.kernel.org, joseph.qi@linux.alibaba.com,
-        dm-devel@redhat.com, haoxu@linux.alibaba.com,
-        io-uring@vger.kernel.org
-References: <20201020065420.124885-1-jefflexu@linux.alibaba.com>
- <20201021203906.GA10896@redhat.com>
- <da936cfa-93a8-d6ec-bd88-c0fad6c67c8b@linux.alibaba.com>
- <20201026185334.GA8463@redhat.com>
- <33c32cd1-5116-9a42-7fe2-b2a383f1c7a0@linux.alibaba.com>
- <20201102152822.GA20466@redhat.com>
- <f165f38a-91d1-79aa-829d-a9cc69a5eee6@linux.alibaba.com>
- <20201104150847.GB32761@redhat.com>
- <2c5dab21-8125-fcdf-078e-00a158c57f43@linux.alibaba.com>
- <20201106174526.GA13292@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <23c73ad7-23e3-3172-8f0e-3c15e0fa5a87@linux.alibaba.com>
-Date:   Sun, 8 Nov 2020 09:09:53 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.12.1
+        id S1728204AbgKHCJU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 7 Nov 2020 21:09:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36998 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727432AbgKHCJU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 7 Nov 2020 21:09:20 -0500
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02D2BC0613CF
+        for <io-uring@vger.kernel.org>; Sat,  7 Nov 2020 18:09:20 -0800 (PST)
+Received: by mail-qk1-x72a.google.com with SMTP id b18so4895350qkc.9
+        for <io-uring@vger.kernel.org>; Sat, 07 Nov 2020 18:09:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=ubw74YdP1VCn7pl58UCjikjZJXWS9rjurWgZHR7uSDI=;
+        b=gf5DvUZ2Hb3nxOz1BhEDu8xAAT1gMSdfBw5HDtzuD8HmObT5gn+/plIMlBLFZAfAr9
+         moaHor5rCdj0XyF4QdRlI9iXW2iZ23/fAAWvHKwLxdI1dtlXmWzlzZHxPA5CHBDMG0z2
+         9vXI75cb0aL8gL4lV+6qWXmuW3WVqhVkT2VvZI466s0ZVODVu0c7IVBBqbRGe6Wvidcm
+         bzwOmWUatwYXf0ctEVzHyjQpVYr5FvDfDFDU+II/4E3cwwM9tpurllZVtBQ5k4cuR/wg
+         G5yu/XvOkbgxCQMHzP3rcSZPGHmUvfZlqwrrm+Jv7lxRaGlW4uhICFBzddZ8Karr1POy
+         tTJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=ubw74YdP1VCn7pl58UCjikjZJXWS9rjurWgZHR7uSDI=;
+        b=p3WivuG0h1CF7yyZlARF+fxMbquZzqYc3p+R8uftfUgAolQQJypJTEsHmStvVa0d7k
+         aaCEaA3TtZL7/QsHs6J0K4EZrDknWXccY0KqR9PiyJgqexAbg1MS3c2ZFg51z8dZJJNF
+         M12+hoNKxwst0ZNmdQ59+OkJwE10u6OSFMvX6yniz8AMhrQX1ikhBz7nhwl5EXr0k2Cd
+         n3VvFsJN7akCz/IbF0mJLAqKaEAREne4EQstOUJF0gDlPsmfnT9AseUTtmmb1yQoaIKH
+         YR9eTlfwG4XdafYho4duS6AkcJS4FLmt21o4AlzjUWxxOXjfjhA3y/PjdRIADG1A/lfm
+         qePA==
+X-Gm-Message-State: AOAM530++v6sIEpcDrxI34I+yiB+f09dBCcoWI/TDtNPtlwivhlTizdm
+        zMOTFLHCXwcsdw57g73PldZ/bqA+2NGNBdCEE4bNZqd2KIjPoA==
+X-Google-Smtp-Source: ABdhPJwQXD9p0GdeVuvQbQFhE1xny+dCHoq9l9Lw9Lq3DaR+WcvIG2a7t1mgUw9SGwS1Qy9VuokGyTB8bgMuz8yYDDI=
+X-Received: by 2002:a05:620a:16b6:: with SMTP id s22mr7859010qkj.422.1604801359128;
+ Sat, 07 Nov 2020 18:09:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201106174526.GA13292@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <24446f4e23e80803d3ab1a4d27a6d1a605e37b32.1604783766.git.asml.silence@gmail.com>
+ <39db5769-5aef-96f5-305c-2a3250d9ba73@gmail.com> <030c3ccb-8777-9c28-1835-5afbbb1c3eb1@gmail.com>
+ <97fce91e-4ace-f98b-1e7e-d41d9c15cfb8@kernel.dk> <a8a4ac73-81f9-f703-2f91-a70ff97e5094@gmail.com>
+ <3094f974-1b67-1550-a116-a1f1fca84df2@kernel.dk>
+In-Reply-To: <3094f974-1b67-1550-a116-a1f1fca84df2@kernel.dk>
+From:   Josef <josef.grieb@gmail.com>
+Date:   Sun, 8 Nov 2020 03:09:08 +0100
+Message-ID: <CAAss7+r+DFTBcLzZhRoJ_p839nro6GKawh=te1wHPkhK9Nw4hQ@mail.gmail.com>
+Subject: Re: [PATCH 5.11] io_uring: NULL files dereference by SQPOLL
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+> Josef, could you try this one?
 
-On 11/7/20 1:45 AM, Mike Snitzer wrote:
-> On Thu, Nov 05 2020 at  9:51pm -0500,
-> JeffleXu <jefflexu@linux.alibaba.com> wrote:
->
->> On 11/4/20 11:08 PM, Mike Snitzer wrote:
->>>> I'm doubted if this should be implemented in block layer like:
->>>>
->>>> ```
->>>>
->>>> struct bio {
->>>>
->>>>      ...
->>>>
->>>>      struct list_head  cookies;
->>>>
->>>> };
->>>>
->>>> ```
->>>>
->>>> After all it's only used by bio-based queue, or more specifically
->>>> only dm device currently.
->>> I do think this line of work really should be handled in block core
->>> because I cannot see any reason why MD or bcache or whatever bio-based
->>> device wouldn't want the ability to better support io_uring (with IO
->>> poll).
->>>
->>>> Another design I can come up with is to maintain a global data
->>>> structure for the very beginning
->>>> original bio. Currently the blocking point is that now one original
->>>> bio to the dm device (@bio of dm_submit()) can correspond to multiple
->>>> dm_io and thus we have nowhere to place the @cookies list.
->>> Yes, and that will always be the case.  We need the design to handle an
->>> arbitrary sprawl of splitting from a given bio.  The graph of bios
->>> resulting from that fan-out needs to be walked at various levels -- be
->>> it the top-level original bio's submit_bio() returned cookie or some
->>> intermediate point in the chain of bios.
->>>
->>> The problem is the lifetime of the data structure created for a given
->>> split bio versus layering boundaries (that come from block core's
->>> simplistic recursion via bio using submit_bio).
->>>
->>>> Now we have to maintain one data structure for every original bio,
->>>> something like
->>>>
->>>> ```
->>>>
->>>> struct dm_poll_instance {
->>>>
->>>>      ...
->>>>
->>>>      struct list_head cookies;
->>>>
->>>> };
->>>>
->>>> ```
->>> I do think we need a hybrid where at the point of recursion we're able
->>> to make the associated data structure available across the recursion
->>> boundary so that modeling the association in a chain of split bios is
->>> possible. (e.g. struct dm_poll_data or dm_poll_instance as you named it,
->>> _but_ that struct definition would live in block core, but would be part
->>> of per-bio-data; so 'struct blk_poll_data' is more logical name when
->>> elevated to block core).
->>>
->>> It _might_ be worthwhile to see if a new BIO_ flag could be added to
->>> allow augmenting the bio_split + bio_chain pattern to also track this
->>> additional case of carrying additional data per-bio while creating
->>> bio-chains.  I may not be clear yet, said differently: augmenting
->>> bio_chain to not only chain bios, but to _also_ thread/chain together
->>> per-bio-data that lives within those chained bios.  SO you have the
->>> chain of bios _and_ the chain of potentially opaque void * that happens
->>> to point to a list head for a list of 'struct blk_poll_data'.
->>>
->>> Does that make sense?
->>
->> I'm doubted if it really makes sense to maintain a *complete* bio
->> chain across the recursive
->>
->> call boundary.
->>
->>
->> Considering the following device stack:
->>
->> ```
->>
->>                                    dm0
->>
->>          dm1                   dm2           dm3
->>
->> nvme0  nvme1          ....               ....
->>
->> ```
->>
->>
->> We have the following bio graph (please let me know if it's wrong or
->> the image can't display)
->>
->>
->> For example, for dm1 there are three bios containing valid cookie in
->> the end, that is
->>
->> bio 9/10/11. We only need to insert the corresponding blk_poll_data
->> (containing
->>
->> request_queue, cookie, etc) of these three bios into the very
->> beginning original
->>
->> bio (that is bio0). Of course we can track all the sub-bios down
->> through the device
->>
->> stack, layer by layer, e.g.,
->>
->> - get bio 1/2/3 from bio 0
->>
->> - get bio 4 from bio 3
->>
->> - finally get bio 9 from bio 4
->>
->> But I'm doubted if it's overkill to just implement the iopoll.
->>
->>
->> Another issue still unclear is that, if we should implement the
->> iopoll in a recursive way.
->>
->> In a recursive way, to poll dm 0, we should poll all its
->> sub-devices, that is, bio 4/5/7/8.
->>
->> Oppositely we can insert only the bottom bio (bio 9/10/11 which have
->> valid cookie) at
->>
->> the very beginning (at submit_bio() phase), and to poll dm 0, we
->> only need to poll bio 9/10/11.
-> I feel we need the ability to walk the entire graph and call down to
-> next level.  The lowest level would be what you call a "valid cookie"
-> that blk-mq returned.  But the preceding cookies need to be made valid
-> and used when walking the graph (from highest to lowest) and calling
-> down to the underlying layers.
->
->>
->> To implement this non-recursive design, we can add a field in struct bio
->>
->> ```
->>
->> struct bio {
->>
->>      ...
->>
->>      struct bio *orig;
->>
->> }
->>
->> ```
->>
->> @orig points to the original bio inputted into submit_bio(), that is, bio 0.
->>
->>
->> @orig field is transmitted through bio splitting.
->>
->> ```
->>
->> bio_split()
->>
->>      split->orig = bio->orig ? : bio
->>
->>
->> dm.c: __clone_and_map_data_bio
->>
->>      clone->orig = bio->orig ? : bio
->>
->> ```
->>
->>
->> Finally bio 9/10/11 can be inserted into bio 0.
->>
->> ```
->>
->> blk-mq.c: blk_mq_submit_bio
->>
->>      if (bio->orig)
->>
->>          init blk_poll_data and insert it into bio->orig's @cookies list
->>
->> ```
-> If you feel that is doable: certainly give it a shot.
+it's weird I couldn't apply this patch..did you pull
+for-5.11/io_uring? I'm gonna try manually
 
-Make sense.
-
-> But it is not clear to me how you intend to translate from cookie passed
-> in to ->blk_poll hook (returned from submit_bio) to the saved off
-> bio->orig.
->
-> What is your cookie strategy in this non-recursive implementation?  What
-> will you be returning?  Where will you be storing it?
-
-Actually I think it's a common issue to design the cookie returned by 
-submit_bio() whenever
-
-it's implemented in a recursive or non-recursive way. After all you need 
-to translate the
-
-returned cookie to the original bio even if it's implemented in a 
-recursive way as you
-
-described. Or how could you walk through the bio graph when the returned 
-cookie is
-
-only 'unsigned int' type?
-
-
-How about this:
-
-
-```
-
-typedef uintptr_t blk_qc_t;
-
-```
-
-
-or something like union
-
-```
-
-typedef union {
-
-     unsigned int cookie;
-
-     struct bio *orig; // the original bio of submit_bio()
-
-} blk_qc_t;
-
-```
-
-
-When serving for blk-mq, the integer part of blk_qc_t is used and it 
-stores the valid cookie,
-
-while it stores a pointer to the original bio when serving bio-based device.
-
-
-By the way, would you mind sharing your plan and progress on this work, 
-I mean, supporting
-
-iopoll for dm device. To be honest, I don't want to re-invent the wheel 
-as you have started on
-
-this work, but I do want to participate in somehow. Please let me know 
-if there's something
-
-I could do here.
-
-
--- 
-Thanks,
-Jeffle
-
+---
+Josef Grieb

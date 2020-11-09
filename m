@@ -2,80 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC6262ABF00
-	for <lists+io-uring@lfdr.de>; Mon,  9 Nov 2020 15:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88D052ABF03
+	for <lists+io-uring@lfdr.de>; Mon,  9 Nov 2020 15:43:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731745AbgKIOm7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Nov 2020 09:42:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36900 "EHLO
+        id S1731790AbgKIOnH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Nov 2020 09:43:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731612AbgKIOm5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Nov 2020 09:42:57 -0500
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363E3C0613CF
-        for <io-uring@vger.kernel.org>; Mon,  9 Nov 2020 06:42:57 -0800 (PST)
-Received: by mail-il1-x144.google.com with SMTP id z2so8468666ilh.11
-        for <io-uring@vger.kernel.org>; Mon, 09 Nov 2020 06:42:57 -0800 (PST)
+        with ESMTP id S1731738AbgKIOnG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Nov 2020 09:43:06 -0500
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 688D8C0613CF
+        for <io-uring@vger.kernel.org>; Mon,  9 Nov 2020 06:43:06 -0800 (PST)
+Received: by mail-io1-xd44.google.com with SMTP id s24so9959828ioj.13
+        for <io-uring@vger.kernel.org>; Mon, 09 Nov 2020 06:43:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3ehw22GU6NrQDTL+oBdXxN0niE79/e+SUzQT5o4Dv28=;
-        b=cKl8Nr/tQCjQOdgkH+HMJNGtQcsvOe4Xnz7aYKxhQUfYu8wNM9uaiNsMz5xwFQ01Ti
-         80gwmyhich63MM+Nu5KTebj41tkdUX7Qxth/QcLKTCJyTL8gUTsS6jwDIWkFwx2TLJLl
-         BJvx8A0WKTRJA5voxYIBLFgy0AG9QG/87IBrcRX/ba7JmTjq+eKY0jyj2aX08CvaqDm/
-         HK74I/cmeCjPKUsLNdb0oAwT4pW9/xMEqTTRJY4KZ9V+5DtJFgr+BWsN2MnQUyA8lDF4
-         blZwZ8xD7iLoVidAC1uB4Zb2POC+N/vyt7Vf3Q6ay96EBMbAJR5iK8AjnMz3j0BI+meQ
-         fApg==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=N+CoGjkDI3xYhjiu3pTmUbVLsubUsHmaOXvpNUwNon4=;
+        b=t2kq27v988arjtRpHTzPuKn2j/XAXuyR65/YcWFv2+6h62kNanhnmT3LzhPruSZ/RW
+         x5AuW7eIEyfamgMr8Qgt3wSKMYLCH7LUUP9XHYwNEhu+NNDXgzasLElHZF2A0iTuIgo6
+         fXU7X3/0RDRdPvhDVnwQ5TcbdXmkwhqE60O7kWMFudaa82itCGWnMKQyW0J1ky3q56ph
+         aEhOSbI96tnqsc8QwHDc095jyUyIyT19ngjsQu889C2H/+N32OuaPbmJQGd1+iixV45t
+         h5XhqmI3/nzJC3JcTv8OdpAEoHSsYq3DY9DJ8rW4oQ/jxk0XX+bClzK+hqKFZMplYwWO
+         v3dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=3ehw22GU6NrQDTL+oBdXxN0niE79/e+SUzQT5o4Dv28=;
-        b=GFkO+RYJF5/kJOyQ4jdfPLSNNJ+jtC0hckW1mRKuPHLOJEq/qknGrfPot4ql0eBLe8
-         SaC/LpJd3ZcypZMHQH7O2qeQe3ZNNnRgCY90POnQq2JVcwlpWgdikjQwyNbSTuGNIMbP
-         V/5RPS1NhUK5ktmBw4YeSKB1ooIWjm/Tnz4A/dRqVu4k6BjwFfzgdF7OJz0NZHccS4ji
-         T29UPxRCot4tbgdQy5VBtkGYcGz83jNYrF8QS8PxoqVSd+/b7f5ytZl8k/ieT1yiNGMj
-         c5MotbVXVnVE3b0E6oFbVEfXxA+CazClUL0+tWiDPuEp5MQpVx/Bbhju01+6Zut4Yc8C
-         cFVg==
-X-Gm-Message-State: AOAM533k5KRB9Z1GrZYutkxWmG77+xbhKnhkB27ZOGNX1QmHjaFRxRAO
-        bLzXusT+wxYlEI6bj9u2DofRaUlMMdi/Sg==
-X-Google-Smtp-Source: ABdhPJyrS0rM1ly4S3opodhlMfOgyobXuLtuNIDTHmrQcyzFG5xaOYxWwftU/rArBUInFkffwu7uQQ==
-X-Received: by 2002:a92:db05:: with SMTP id b5mr10068160iln.279.1604932976587;
-        Mon, 09 Nov 2020 06:42:56 -0800 (PST)
+        bh=N+CoGjkDI3xYhjiu3pTmUbVLsubUsHmaOXvpNUwNon4=;
+        b=t5dcf4wh7VstYvqlstoXCwrHAvytxJEGBILNQs/4PJFjstw+tv7g/mKSCid4C0aN1z
+         ch8eAnGJ9A4ed9YjWmHYPtbxykMoR6u0DmWkviT1GuzaVIkMDRgtPLLZFfJmhXFgZAA5
+         UQZtIPmSlgQJQtOMdiBuduhSCwZz6tSVK6WxtFQ4QSwK8ZsCXYrSfWbOEq92ePnxBJv/
+         j3GlKWlxNKQA47oeuRAdeL7IbhpaTSBSnyb+MQNU21BB7k6vLiuijSkKJjVDiuftMkIi
+         AYfoBpt9s3u+veG3SZ6qsCPpdTXLMIyqJU1IlhcP3owJSWdxREJ4Y2U1nZDj88+zHDFF
+         0pVw==
+X-Gm-Message-State: AOAM530ff9lbp3cbfLAisi8Zj0KbDNJgTPWd0feYqoPDA6beZqTlifHm
+        f+naGIzLl6Oawe3irI9jO3NEuAVMFxOQ3Q==
+X-Google-Smtp-Source: ABdhPJxHZ+7DUAGPI8nRno2eSmDIricV0kMFADeRSzLxBkEtIt7nidFr+5DuhzC93GIKEfo4AkmwBw==
+X-Received: by 2002:a6b:6001:: with SMTP id r1mr9869249iog.144.1604932985608;
+        Mon, 09 Nov 2020 06:43:05 -0800 (PST)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 192sm7546998ilc.31.2020.11.09.06.42.55
+        by smtp.gmail.com with ESMTPSA id c80sm7603711ill.20.2020.11.09.06.43.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Nov 2020 06:42:56 -0800 (PST)
-Subject: Re: [PATCH v2 0/2] improve SQPOLL handling
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20201103061600.11053-1-xiaoguang.wang@linux.alibaba.com>
- <71e21e18-69f6-fe24-2a13-1b8269d72393@linux.alibaba.com>
+        Mon, 09 Nov 2020 06:43:05 -0800 (PST)
+Subject: Re: [PATCH for-next 0/6] cleanup task/files cancel
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1604667122.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <82e42f8a-7f97-4016-ba55-1f460defef26@kernel.dk>
-Date:   Mon, 9 Nov 2020 07:42:55 -0700
+Message-ID: <944ff49c-6066-1184-5901-33dce476e0e6@kernel.dk>
+Date:   Mon, 9 Nov 2020 07:43:04 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <71e21e18-69f6-fe24-2a13-1b8269d72393@linux.alibaba.com>
-Content-Type: text/plain; charset=gbk
+In-Reply-To: <cover.1604667122.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/8/20 7:16 AM, Xiaoguang Wang wrote:
-> hi,
+On 11/6/20 6:00 AM, Pavel Begunkov wrote:
+> That unifies cancellation/matching/etc., so we can kill all that going
+> out of hand zoo of functions.
 > 
-> A gentle reminder. How does this patch set look now?
-> I think the first patch looks ok at least.
+> Jens, [3/6] changes the behaviour, but as last time it's less
+> restrictive and doesn't kill what we don't need to kill. Though, it'd
+> prefer you to check the assumption in light of the cancel changes you've
+> done.
+> 
+> Based on for-5.11/io_uring + "io_uring: fix link lookup racing with link
+> timeout", should apply ok after you merge everything.
+> 
+> Pavel Begunkov (6):
+>   io_uring: simplify io_task_match()
+>   io_uring: add a {task,files} pair matching helper
+>   io_uring: cancel only requests of current task
+>   io_uring: don't iterate io_uring_cancel_files()
+>   io_uring: pass files into kill timeouts/poll
+>   io_uring: always batch cancel in *cancel_files()
+> 
+>  fs/io-wq.c    |  10 --
+>  fs/io-wq.h    |   1 -
+>  fs/io_uring.c | 260 ++++++++++++++------------------------------------
+>  3 files changed, 69 insertions(+), 202 deletions(-)
 
-I have applied 1/2 for now, I agree that one looks fine and should get
-applied. I'll go over 2/2 soonish.
+Applied, thanks.
 
 -- 
 Jens Axboe

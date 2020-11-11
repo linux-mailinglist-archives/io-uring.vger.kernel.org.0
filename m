@@ -2,84 +2,175 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB65D2AF22F
-	for <lists+io-uring@lfdr.de>; Wed, 11 Nov 2020 14:31:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBFDD2AF308
+	for <lists+io-uring@lfdr.de>; Wed, 11 Nov 2020 15:06:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726216AbgKKNbF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Nov 2020 08:31:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53530 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbgKKNbE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Nov 2020 08:31:04 -0500
-Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ECAEC0613D4
-        for <io-uring@vger.kernel.org>; Wed, 11 Nov 2020 05:31:04 -0800 (PST)
-Received: by mail-qt1-x842.google.com with SMTP id b16so993767qtb.6
-        for <io-uring@vger.kernel.org>; Wed, 11 Nov 2020 05:31:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=bt7KK3+6FBeKnmbngl2aQPxELz+xreb5TfjkrECem4g=;
-        b=lmZfYSKk7jOB4MzdaSfM2mgwqqvFcDhTsEOerCxu1GBckK75+PpPU9f4UxcaqCuk3W
-         pQZngJ6CDTTpT5jXFKl+GB1EahkbeLRD1TLwYzF2LsKeuxc9T8Uha78Rdw9w1sIm1999
-         xaBXda5NXvjOV+intCXhHnGVF7tUPLt1AWD2xdL+YLO7REgHiiYlYh8JKSZfjzjHGIxm
-         0S2c8dUb4Oj1f9VSGwiqonO6g615ZjhlRFKgnb+ZxsNTXKRrl7T1sk4ohTaf+eJe7Mv2
-         CY7/2zL309yCXQeJXqfm3hvND7PHb53Qld8ZRPnVj3q6XpL4o4bJxPCwXroyJhyCzBnx
-         0g4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=bt7KK3+6FBeKnmbngl2aQPxELz+xreb5TfjkrECem4g=;
-        b=JWE9zaU+c2xHTx+jtLDef8Rh+O6kKwNmDY/UkMKKoHqs4pzckK7wrCaI3sseJXp2ZR
-         9PdqdzwgNDcqJnyAemyjzzNEWTnoYBYwD2LTI7DqI8T63ZhMZ/J3GAwSFbyAtUx3i1YC
-         k/7Dohx5YcLOsv8GimfmDQO4ttRuA8FG+OqxdozDb+0YarY8yBIAc3L10I0RdVvWSai9
-         yW4NmL7tnmC46r43yUckGk9uVpvdU1/nrnkHfdj73kz+HsCbaLoKtaL2KR2TnoGT7JtI
-         13L2rM2S7T6KtSmm2SrOjpgD0/FFLctNYn2jZHwhJaIm2Q9k5Jas+eIcyfo0zp+BOODe
-         dWZQ==
-X-Gm-Message-State: AOAM532hgFyeejNM7UDo6QqMHRCC+StQJ+ePM3hqQsr/LdQeYwyhlkTt
-        gkum7KFvLBQGI30H3AbH0NVaP2AVubJ7DjCqU138WYKymxFbHLno
-X-Google-Smtp-Source: ABdhPJyRCZFa3UmFUtcfYdkdGN6GURhyTgbzlysV/UeEWVPHTmgAjre92EHBLNtxk5EL33HIh93Up8R411fdGzeSRpg=
-X-Received: by 2002:ac8:37f2:: with SMTP id e47mr23137052qtc.290.1605101463414;
- Wed, 11 Nov 2020 05:31:03 -0800 (PST)
+        id S1726104AbgKKOGF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Nov 2020 09:06:05 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:55912 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726884AbgKKOF0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Nov 2020 09:05:26 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---0UF-HYpZ_1605103518;
+Received: from 30.5.241.157(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UF-HYpZ_1605103518)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 11 Nov 2020 22:05:18 +0800
+Subject: Re: [bug report] io_uring: refactor io_sq_thread() handling
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     io-uring@vger.kernel.org
+References: <20201111113810.GA1248583@mwanda>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <09eb9ff4-9680-c330-1904-5ffa391101db@linux.alibaba.com>
+Date:   Wed, 11 Nov 2020 22:04:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.1
 MIME-Version: 1.0
-References: <000000000000b09d8c059a3240be@google.com> <00000000000036d7e005b3cc1e79@google.com>
-In-Reply-To: <00000000000036d7e005b3cc1e79@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 11 Nov 2020 14:30:52 +0100
-Message-ID: <CACT4Y+YeEVViLbJXOogzer+3MqtrMuFpt9-kj+1UENJw7uyAAw@mail.gmail.com>
-Subject: Re: WARNING in percpu_ref_exit (2)
-To:     syzbot <syzbot+8c4a14856e657b43487c@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201111113810.GA1248583@mwanda>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 4:09 AM syzbot
-<syzbot+8c4a14856e657b43487c@syzkaller.appspotmail.com> wrote:
->
-> syzbot suspects this issue was fixed by commit:
->
-> commit c1e2148f8ecb26863b899d402a823dab8e26efd1
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Wed Mar 4 14:25:50 2020 +0000
->
->     io_uring: free fixed_file_data after RCU grace period
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=161ea46e500000
-> start commit:   63849c8f Merge tag 'linux-kselftest-5.6-rc5' of git://git...
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4527d1e2fb19fd5c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8c4a14856e657b43487c
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c30061e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1251b731e00000
->
-> If the result looks correct, please mark the issue as fixed by replying with:
->
-> #syz fix: io_uring: free fixed_file_data after RCU grace period
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+hi,
 
-#syz fix: io_uring: free fixed_file_data after RCU grace period
+> Hello Xiaoguang Wang,
+> 
+> The patch e0c06f5ab2c5: "io_uring: refactor io_sq_thread() handling"
+> from Nov 3, 2020, leads to the following static checker warning:
+> 
+> 	fs/io_uring.c:6939 io_sq_thread()
+> 	error: uninitialized symbol 'timeout'.
+> 
+> fs/io_uring.c
+>    6883  static int io_sq_thread(void *data)
+>    6884  {
+>    6885          struct cgroup_subsys_state *cur_css = NULL;
+>    6886          struct files_struct *old_files = current->files;
+>    6887          struct nsproxy *old_nsproxy = current->nsproxy;
+>    6888          struct pid *old_thread_pid = current->thread_pid;
+>    6889          const struct cred *old_cred = NULL;
+>    6890          struct io_sq_data *sqd = data;
+>    6891          struct io_ring_ctx *ctx;
+>    6892          unsigned long timeout;
+>                  ^^^^^^^^^^^^^^^^^^^^^^
+> 
+>    6893          DEFINE_WAIT(wait);
+>    6894
+>    6895          task_lock(current);
+>    6896          current->files = NULL;
+>    6897          current->nsproxy = NULL;
+>    6898          current->thread_pid = NULL;
+>    6899          task_unlock(current);
+>    6900
+>    6901          while (!kthread_should_stop()) {
+>    6902                  int ret;
+>    6903                  bool cap_entries, sqt_spin, needs_sched;
+>    6904
+>    6905                  /*
+>    6906                   * Any changes to the sqd lists are synchronized through the
+>    6907                   * kthread parking. This synchronizes the thread vs users,
+>    6908                   * the users are synchronized on the sqd->ctx_lock.
+>    6909                   */
+>    6910                  if (kthread_should_park())
+>    6911                          kthread_parkme();
+>    6912
+>    6913                  if (unlikely(!list_empty(&sqd->ctx_new_list))) {
+>    6914                          io_sqd_init_new(sqd);
+>    6915                          timeout = jiffies + sqd->sq_thread_idle;
+>                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> timeout not set on else path.
+Thanks for the report, but indeed I think it's not a bug. When io_sq_thread
+is created initially, it's not waken up to run, and once it's waken up to run,
+it will see that sqd->ctx_new_list is not empty, then timeout always can be
+initialized.
+
+Regards,
+Xiaoguang Wang
+
+> 
+>    6916                  }
+>    6917
+>    6918                  sqt_spin = false;
+>    6919                  cap_entries = !list_is_singular(&sqd->ctx_list);
+>    6920                  list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+>    6921                          if (current->cred != ctx->creds) {
+>    6922                                  if (old_cred)
+>    6923                                          revert_creds(old_cred);
+>    6924                                  old_cred = override_creds(ctx->creds);
+>    6925                          }
+>    6926                          io_sq_thread_associate_blkcg(ctx, &cur_css);
+>    6927  #ifdef CONFIG_AUDIT
+>    6928                          current->loginuid = ctx->loginuid;
+>    6929                          current->sessionid = ctx->sessionid;
+>    6930  #endif
+>    6931
+>    6932                          ret = __io_sq_thread(ctx, cap_entries);
+>    6933                          if (!sqt_spin && (ret > 0 || !list_empty(&ctx->iopoll_list)))
+>    6934                                  sqt_spin = true;
+>    6935
+>    6936                          io_sq_thread_drop_mm_files();
+>    6937                  }
+>    6938
+>    6939                  if (sqt_spin || !time_after(jiffies, timeout)) {
+>                                                               ^^^^^^^
+> warning
+> 
+>    6940                          io_run_task_work();
+>    6941                          cond_resched();
+>    6942                          if (sqt_spin)
+>    6943                                  timeout = jiffies + sqd->sq_thread_idle;
+>    6944                          continue;
+>    6945                  }
+>    6946
+>    6947                  if (kthread_should_park())
+>    6948                          continue;
+>    6949
+>    6950                  needs_sched = true;
+>    6951                  prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
+>    6952                  list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+>    6953                          if ((ctx->flags & IORING_SETUP_IOPOLL) &&
+>    6954                              !list_empty_careful(&ctx->iopoll_list)) {
+>    6955                                  needs_sched = false;
+>    6956                                  break;
+>    6957                          }
+>    6958                          if (io_sqring_entries(ctx)) {
+>    6959                                  needs_sched = false;
+>    6960                                  break;
+>    6961                          }
+>    6962                  }
+>    6963
+>    6964                  if (needs_sched) {
+>    6965                          list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+>    6966                                  io_ring_set_wakeup_flag(ctx);
+>    6967
+>    6968                          schedule();
+>    6969                          list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+>    6970                                  io_ring_clear_wakeup_flag(ctx);
+>    6971                  }
+>    6972
+>    6973                  finish_wait(&sqd->wait, &wait);
+>    6974                  timeout = jiffies + sqd->sq_thread_idle;
+>    6975          }
+>    6976
+>    6977          io_run_task_work();
+>    6978
+>    6979          if (cur_css)
+>    6980                  io_sq_thread_unassociate_blkcg();
+>    6981          if (old_cred)
+>    6982                  revert_creds(old_cred);
+>    6983
+>    6984          task_lock(current);
+>    6985          current->files = old_files;
+>    6986          current->nsproxy = old_nsproxy;
+>    6987          current->thread_pid = old_thread_pid;
+>    6988          task_unlock(current);
+>    6989
+>    6990          kthread_parkme();
+>    6991
+>    6992          return 0;
+>    6993  }
+> 
+> regards,
+> dan carpenter
+> 

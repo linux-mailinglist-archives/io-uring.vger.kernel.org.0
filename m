@@ -2,89 +2,195 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 243172AEF80
-	for <lists+io-uring@lfdr.de>; Wed, 11 Nov 2020 12:22:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B13322AEFC0
+	for <lists+io-uring@lfdr.de>; Wed, 11 Nov 2020 12:38:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbgKKLWA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Nov 2020 06:22:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33254 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbgKKLV5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Nov 2020 06:21:57 -0500
-Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E78D6C0613D4
-        for <io-uring@vger.kernel.org>; Wed, 11 Nov 2020 03:21:55 -0800 (PST)
-Received: by mail-qt1-x842.google.com with SMTP id n63so999993qte.4
-        for <io-uring@vger.kernel.org>; Wed, 11 Nov 2020 03:21:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9GUAQtUoQBJhLZ2XitoYjqnMMxULsnKpkMbmeOjjv3M=;
-        b=i2WztfGYNRVXSzvxNnLtoJr/4Y18F0RCxz3C2eRGM4x6rhFWD72gNezK491S3oTvZr
-         bxSKgD8twhKNJgFXAjQhP7GQJCZyj45tUrtuCfzjZlkkUszfnUjIln+yJZq7ZRls8cWZ
-         pk9/O7Z7RiwhDLpnqZ0M6vvSnTD9V9wtih6sZetU9yVGW9TlL3ObMR55SXPGgBbwcCpf
-         SSQ+G62B+3GhNRnCOfNt+QCD4K5MX8lsRIhtisfWG6JHTx78hyakgdz2JeSTnU+DKKf1
-         4ycpQPo0vlwJT7R4H8zgZyh769jlBxlGUvyY9s48vjFVL0zq2lojKyTaoIhfwhLA0OiR
-         U9CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9GUAQtUoQBJhLZ2XitoYjqnMMxULsnKpkMbmeOjjv3M=;
-        b=nhux9LcceX1OQ0e06YqDJcfoHntn0B/gIFwqJ+bmMkAZAlrA9joiZzK4iL5lw9JaDD
-         d+p8CLciexOldijdavSjhMM5cuFBl8pc2HxHFaXFBtMACNJRTmg5YCuypBCx0UcANaQK
-         jgUPiTMnSGv60X5Wi/mNRVfRjm2pV0w1J8EuivbPnGOko/4eC4KFdWQDSllQzMXjBZyQ
-         VHmpERdiBd3hIdv1LURzz4MQCGZIBwjKteX4fw6SsXWDSnsehQbU2/YSlPn85aszEiNe
-         H8FIKnOCA3cOP4GTXyd+DpqmAt9ouneJv8hhNc56gI4C/oXw3Ka077JPpH7yADjRdL3Q
-         0wAg==
-X-Gm-Message-State: AOAM531rNQ1YqPwiVYaPXXUAY3ZcIA+j0e76JHrhg3WMz0dNopqb0ajJ
-        inLIdRUpbOhIhlUEoDseUbySIAOQa4sXZMIqTB3FYQ==
-X-Google-Smtp-Source: ABdhPJyDE0v7Tdf0pPWY/loP/q6ceYIuUoWpw6aqnIRsODilkVJ8Mn0Tlsnm9C8PN7+XRTyi9OdzrG+9Zu6hrjw8270=
-X-Received: by 2002:aed:2b47:: with SMTP id p65mr21554232qtd.337.1605093714929;
- Wed, 11 Nov 2020 03:21:54 -0800 (PST)
+        id S1726339AbgKKLi0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Nov 2020 06:38:26 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:39600 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbgKKLiX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Nov 2020 06:38:23 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ABBUUxC142394;
+        Wed, 11 Nov 2020 11:38:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=WGOLGiCyIyq3hvzHJ+onl5mfmI/z071IKcpxSSAg//0=;
+ b=bOouFsUlCq5ieprv5V7RqG4boWrb2OKrCvKNdpe9zZCbSuklOTwWjmYxXsrTDzn8R1HF
+ kVLtXH0NdSDgp/CR9O6Tb12HTPXaLzvdIoqrjaRXR6HdPVks5cUB5xQdeWNoglvzVYTK
+ YvSHyxs/fOrW2g/qRRmSFBknnW1g292c43QvT5lzpcaLENDCdEIfFHHEz7Pe8qlvWb6i
+ QhtxH3mokdd/mx1V5ZN/W2d4xkr4MKB1q/usgcJRww/UUUuzB4U609Ez3VM3p5RJW54H
+ vzYZQfaEkx1bYiqFBUH4Zj27BTWVf8HfWQYJAhCYSbeFqS+QkVAeE0lyLLuSbvUmBROG yg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 34nkhm0eqp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Nov 2020 11:38:17 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ABBZFVZ062284;
+        Wed, 11 Nov 2020 11:38:17 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 34p55pv92p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Nov 2020 11:38:17 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0ABBcGvs022205;
+        Wed, 11 Nov 2020 11:38:16 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Nov 2020 03:38:16 -0800
+Date:   Wed, 11 Nov 2020 14:38:10 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     xiaoguang.wang@linux.alibaba.com
+Cc:     io-uring@vger.kernel.org
+Subject: [bug report] io_uring: refactor io_sq_thread() handling
+Message-ID: <20201111113810.GA1248583@mwanda>
 MIME-Version: 1.0
-References: <000000000000391eaf05ac87b74d@google.com> <00000000000004632a05af787ebf@google.com>
-In-Reply-To: <00000000000004632a05af787ebf@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 11 Nov 2020 12:21:43 +0100
-Message-ID: <CACT4Y+ao6Sq0T1GB8wqejLh7B8VLiDsxSmrE_40BciAmtcG51Q@mail.gmail.com>
-Subject: Re: INFO: task hung in io_uring_flush
-To:     syzbot <syzbot+6338dcebf269a590b668@syzkaller.appspotmail.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
+ mlxlogscore=999 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=3
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011110067
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 priorityscore=1501
+ mlxscore=0 suspectscore=3 mlxlogscore=999 lowpriorityscore=0 spamscore=0
+ malwarescore=0 adultscore=0 clxscore=1011 bulkscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011110066
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 3:42 AM syzbot
-<syzbot+6338dcebf269a590b668@syzkaller.appspotmail.com> wrote:
->
-> syzbot suspects this issue was fixed by commit:
->
-> commit b7ddce3cbf010edbfac6c6d8cc708560a7bcd7a4
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Sat Sep 5 21:45:14 2020 +0000
->
->     io_uring: fix cancel of deferred reqs with ->files
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=173d9b0d900000
-> start commit:   9123e3a7 Linux 5.9-rc1
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3d400a47d1416652
-> dashboard link: https://syzkaller.appspot.com/bug?extid=6338dcebf269a590b668
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1573f116900000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=144d3072900000
->
-> If the result looks correct, please mark the issue as fixed by replying with:
->
-> #syz fix: io_uring: fix cancel of deferred reqs with ->files
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Hello Xiaoguang Wang,
 
-#syz fix: io_uring: fix cancel of deferred reqs with ->files
+The patch e0c06f5ab2c5: "io_uring: refactor io_sq_thread() handling"
+from Nov 3, 2020, leads to the following static checker warning:
+
+	fs/io_uring.c:6939 io_sq_thread()
+	error: uninitialized symbol 'timeout'.
+
+fs/io_uring.c
+  6883  static int io_sq_thread(void *data)
+  6884  {
+  6885          struct cgroup_subsys_state *cur_css = NULL;
+  6886          struct files_struct *old_files = current->files;
+  6887          struct nsproxy *old_nsproxy = current->nsproxy;
+  6888          struct pid *old_thread_pid = current->thread_pid;
+  6889          const struct cred *old_cred = NULL;
+  6890          struct io_sq_data *sqd = data;
+  6891          struct io_ring_ctx *ctx;
+  6892          unsigned long timeout;
+                ^^^^^^^^^^^^^^^^^^^^^^
+
+  6893          DEFINE_WAIT(wait);
+  6894  
+  6895          task_lock(current);
+  6896          current->files = NULL;
+  6897          current->nsproxy = NULL;
+  6898          current->thread_pid = NULL;
+  6899          task_unlock(current);
+  6900  
+  6901          while (!kthread_should_stop()) {
+  6902                  int ret;
+  6903                  bool cap_entries, sqt_spin, needs_sched;
+  6904  
+  6905                  /*
+  6906                   * Any changes to the sqd lists are synchronized through the
+  6907                   * kthread parking. This synchronizes the thread vs users,
+  6908                   * the users are synchronized on the sqd->ctx_lock.
+  6909                   */
+  6910                  if (kthread_should_park())
+  6911                          kthread_parkme();
+  6912  
+  6913                  if (unlikely(!list_empty(&sqd->ctx_new_list))) {
+  6914                          io_sqd_init_new(sqd);
+  6915                          timeout = jiffies + sqd->sq_thread_idle;
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+timeout not set on else path.
+
+  6916                  }
+  6917  
+  6918                  sqt_spin = false;
+  6919                  cap_entries = !list_is_singular(&sqd->ctx_list);
+  6920                  list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+  6921                          if (current->cred != ctx->creds) {
+  6922                                  if (old_cred)
+  6923                                          revert_creds(old_cred);
+  6924                                  old_cred = override_creds(ctx->creds);
+  6925                          }
+  6926                          io_sq_thread_associate_blkcg(ctx, &cur_css);
+  6927  #ifdef CONFIG_AUDIT
+  6928                          current->loginuid = ctx->loginuid;
+  6929                          current->sessionid = ctx->sessionid;
+  6930  #endif
+  6931  
+  6932                          ret = __io_sq_thread(ctx, cap_entries);
+  6933                          if (!sqt_spin && (ret > 0 || !list_empty(&ctx->iopoll_list)))
+  6934                                  sqt_spin = true;
+  6935  
+  6936                          io_sq_thread_drop_mm_files();
+  6937                  }
+  6938  
+  6939                  if (sqt_spin || !time_after(jiffies, timeout)) {
+                                                             ^^^^^^^
+warning
+
+  6940                          io_run_task_work();
+  6941                          cond_resched();
+  6942                          if (sqt_spin)
+  6943                                  timeout = jiffies + sqd->sq_thread_idle;
+  6944                          continue;
+  6945                  }
+  6946  
+  6947                  if (kthread_should_park())
+  6948                          continue;
+  6949  
+  6950                  needs_sched = true;
+  6951                  prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
+  6952                  list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+  6953                          if ((ctx->flags & IORING_SETUP_IOPOLL) &&
+  6954                              !list_empty_careful(&ctx->iopoll_list)) {
+  6955                                  needs_sched = false;
+  6956                                  break;
+  6957                          }
+  6958                          if (io_sqring_entries(ctx)) {
+  6959                                  needs_sched = false;
+  6960                                  break;
+  6961                          }
+  6962                  }
+  6963  
+  6964                  if (needs_sched) {
+  6965                          list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+  6966                                  io_ring_set_wakeup_flag(ctx);
+  6967  
+  6968                          schedule();
+  6969                          list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+  6970                                  io_ring_clear_wakeup_flag(ctx);
+  6971                  }
+  6972  
+  6973                  finish_wait(&sqd->wait, &wait);
+  6974                  timeout = jiffies + sqd->sq_thread_idle;
+  6975          }
+  6976  
+  6977          io_run_task_work();
+  6978  
+  6979          if (cur_css)
+  6980                  io_sq_thread_unassociate_blkcg();
+  6981          if (old_cred)
+  6982                  revert_creds(old_cred);
+  6983  
+  6984          task_lock(current);
+  6985          current->files = old_files;
+  6986          current->nsproxy = old_nsproxy;
+  6987          current->thread_pid = old_thread_pid;
+  6988          task_unlock(current);
+  6989  
+  6990          kthread_parkme();
+  6991  
+  6992          return 0;
+  6993  }
+
+regards,
+dan carpenter

@@ -2,129 +2,282 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 122032AF58A
-	for <lists+io-uring@lfdr.de>; Wed, 11 Nov 2020 16:55:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E1852AF6E4
+	for <lists+io-uring@lfdr.de>; Wed, 11 Nov 2020 17:49:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbgKKPzd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Nov 2020 10:55:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47842 "EHLO
+        id S1726492AbgKKQtY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Nov 2020 11:49:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbgKKPzd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Nov 2020 10:55:33 -0500
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39099C0613D1
-        for <io-uring@vger.kernel.org>; Wed, 11 Nov 2020 07:55:33 -0800 (PST)
-Received: by mail-io1-xd32.google.com with SMTP id r12so2777497iot.4
-        for <io-uring@vger.kernel.org>; Wed, 11 Nov 2020 07:55:33 -0800 (PST)
+        with ESMTP id S1726220AbgKKQtY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Nov 2020 11:49:24 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15302C0613D1
+        for <io-uring@vger.kernel.org>; Wed, 11 Nov 2020 08:49:24 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id c66so1956292pfa.4
+        for <io-uring@vger.kernel.org>; Wed, 11 Nov 2020 08:49:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vyVaue9DKw34aslpFd5N387h5+z4grH1P6vcmgJog44=;
-        b=fdr+V95jvZKbyyyVluBRTjqDe9ZbXX5bZQovjruWmehpbRyOt6/p1CT1m0irfRH5PB
-         pBHu0p0FWuf8+zF+16O+kON4xa3VZN9Af2uWaVkJM15oSOqKiWdGZyYJoFaapC4rRy1H
-         gDIXkrrPxED+BGPDgez4nt5uiqa163fz3poPt7+HC+2HVZuwsTaljOWaihE8FOND/MU0
-         s2jiVg0m35YBUV6ubsntb+Sbk7UDHgFozsjZADU+lE3t91CHpKNCnE1HCnVd6nFAUFu4
-         z4fen8/hrhVCQC0r0vj4nMq8F7XNxZ4moXLiPBfZ8bSjEVrrhyem3kL+Y22AD+n6uqFS
-         mUUg==
+        d=nametag.social; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nv7sXkq+0EpkTF5bSnWxyvHWRRb0NyynhTMh1x21i2Y=;
+        b=ZZLFlSpk3qhHgvh0SoxdluxkRdIeMDEDwq2ckr5SV0v0/mJR8P6gYLqaivxRou2CtV
+         RJK44hyX/Q4+/q24OlkUXGK748C1MS2ZnG8QltGbMGn/HHU6xFG1keznkVNgrqclsc/2
+         lO4N7hVatxf6wosnyy9x7J4ZShIzABmnX2Ay25AeajeDaTqimNhb6ZmNejlzqKNIxYyT
+         O4/23WyKSPGR3T0CPMTntrWHlSETb273Kc64XoAwGhjftS/MFivfTBREocA0s7Yhl23J
+         xTnf9NAc3eLCqgQ9jlon9QIw8FriZb83GyxM6YFBbNoEz9+bdhnf+CUj4SNdN4TMrkGD
+         UYIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vyVaue9DKw34aslpFd5N387h5+z4grH1P6vcmgJog44=;
-        b=GzlaCmW0UaLfC6m7zagQCkTox3IdMCwMiJAQp6/E2p2g9oAIjY4ny6WixYGtLgZyaX
-         37iLt8jG+j3QWJ0BUprfKcEnoirVuue1PG1oa5haiWQzhrvh04SYzIlJnHoZ2+RtnaKV
-         9V/TONmvEegR2HUeUF7+jhMHC8kUI600NHHyt3EaPv6XiwpoxiEUzZk+D03Boura2+B4
-         VTK4EkmdsF59HmhiGks23lH0iVE5U2LJtGcrKVItduQWVB2RJJOVp9tfdv/14c5EMXkF
-         qlarIVbPwdOMcL+IVOqDVnIecDQi3D4alPAFECBUjNTilcQPjes1edKMjJnuiIkOMW1K
-         Na5g==
-X-Gm-Message-State: AOAM532LImCbaKhEnlyaWODEbiQg0ooGxvhWasF4H0hhr9vR6G90jK9l
-        pm/YTzG+SoT2XoF9zPjHeRpBNVlb3zLuDA==
-X-Google-Smtp-Source: ABdhPJwmmVZIqcvvpUaL44moToOvB4vVs5XfU1nBZ/xf2Nau3awWIzmtmCewOK9lYvYwu+L/oCgk/w==
-X-Received: by 2002:a6b:7702:: with SMTP id n2mr18252754iom.4.1605110132323;
-        Wed, 11 Nov 2020 07:55:32 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id q1sm1442590iot.48.2020.11.11.07.55.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Nov 2020 07:55:31 -0800 (PST)
-Subject: Re: [bug report] io_uring: refactor io_sq_thread() handling
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     io-uring@vger.kernel.org
-References: <20201111113810.GA1248583@mwanda>
- <09eb9ff4-9680-c330-1904-5ffa391101db@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <480d4dd1-9f7d-5820-c15e-203cd5f0c8ea@kernel.dk>
-Date:   Wed, 11 Nov 2020 08:55:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nv7sXkq+0EpkTF5bSnWxyvHWRRb0NyynhTMh1x21i2Y=;
+        b=jh0ClE6SyD0AQnjzBzd49ukGd3nNn+j7kWWFd5QT62X3+Q1tXl8p/FZ2CCFnUMClar
+         miwDMKTDUUdZJDhVys/+xApaO/dS4+wZtgEncXKdgav9TTXYL8KAGKO/3xy+CjAGZmOD
+         PS5FopYlWSGCGwC0fnOAl+OIcNmirG51O3PpUsTfhV8VZcrnFKMi74lb4j2xpbRAXdUm
+         hTR6nR9Uh8yEd0PVkSrj+XWLGPXK3vaUaXj+Q5si/VlDNGa008g+hsO6kV3TOT/+x4Hz
+         4B3iCsnaIm4oPM1zQ/1uK6gK1ngtF+NNTgI3jFvxbOVT1mDm1RpkwCjGIUKs+Za6RBu6
+         A02Q==
+X-Gm-Message-State: AOAM533KSfXmINfjL+P30qJxxDQBcROzO5MrZRZqC+FxIdc8GA3mITaW
+        F1q6hJCwiLroJJZC0C2UXOUnpYzukJ3ap4AZMjcj6w==
+X-Google-Smtp-Source: ABdhPJy5q/JR+cVE5lG7ZGWcZ2h5Asnu21LU/J5UhPSqJU+HZkCXyi04dz9fk1upniNJBfflv6gOUTegbbBmvopZJYQ=
+X-Received: by 2002:a65:4945:: with SMTP id q5mr21252875pgs.83.1605113363433;
+ Wed, 11 Nov 2020 08:49:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <09eb9ff4-9680-c330-1904-5ffa391101db@linux.alibaba.com>
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAM1kxwgKGMz9UcvpFr1239kmdvmKPuzAyBEwKi_rxDog1MshRQ@mail.gmail.com>
+ <acc66238-0d27-cd22-dac4-928777a8efbc@gmail.com> <CAM1kxwjSyLb9ijs0=RZUA06E20qjwBnAZygwM3ckh10WozExag@mail.gmail.com>
+ <3913bbb5-50ec-6ad9-13c9-d49a8b7f7e89@gmail.com>
+In-Reply-To: <3913bbb5-50ec-6ad9-13c9-d49a8b7f7e89@gmail.com>
+From:   Victor Stewart <v@nametag.social>
+Date:   Wed, 11 Nov 2020 16:49:12 +0000
+Message-ID: <CAM1kxwhdCoH7ZAmnaaDTohg3TUSWL264juamO1or_3m-JFnRyg@mail.gmail.com>
+Subject: Re: io_uring-only sendmsg + recvmsg zerocopy
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/11/20 7:04 AM, Xiaoguang Wang wrote:
-> hi,
-> 
->> Hello Xiaoguang Wang,
->>
->> The patch e0c06f5ab2c5: "io_uring: refactor io_sq_thread() handling"
->> from Nov 3, 2020, leads to the following static checker warning:
->>
->> 	fs/io_uring.c:6939 io_sq_thread()
->> 	error: uninitialized symbol 'timeout'.
->>
->> fs/io_uring.c
->>    6883  static int io_sq_thread(void *data)
->>    6884  {
->>    6885          struct cgroup_subsys_state *cur_css = NULL;
->>    6886          struct files_struct *old_files = current->files;
->>    6887          struct nsproxy *old_nsproxy = current->nsproxy;
->>    6888          struct pid *old_thread_pid = current->thread_pid;
->>    6889          const struct cred *old_cred = NULL;
->>    6890          struct io_sq_data *sqd = data;
->>    6891          struct io_ring_ctx *ctx;
->>    6892          unsigned long timeout;
->>                  ^^^^^^^^^^^^^^^^^^^^^^
->>
->>    6893          DEFINE_WAIT(wait);
->>    6894
->>    6895          task_lock(current);
->>    6896          current->files = NULL;
->>    6897          current->nsproxy = NULL;
->>    6898          current->thread_pid = NULL;
->>    6899          task_unlock(current);
->>    6900
->>    6901          while (!kthread_should_stop()) {
->>    6902                  int ret;
->>    6903                  bool cap_entries, sqt_spin, needs_sched;
->>    6904
->>    6905                  /*
->>    6906                   * Any changes to the sqd lists are synchronized through the
->>    6907                   * kthread parking. This synchronizes the thread vs users,
->>    6908                   * the users are synchronized on the sqd->ctx_lock.
->>    6909                   */
->>    6910                  if (kthread_should_park())
->>    6911                          kthread_parkme();
->>    6912
->>    6913                  if (unlikely(!list_empty(&sqd->ctx_new_list))) {
->>    6914                          io_sqd_init_new(sqd);
->>    6915                          timeout = jiffies + sqd->sq_thread_idle;
->>                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->> timeout not set on else path.
-> Thanks for the report, but indeed I think it's not a bug. When io_sq_thread
-> is created initially, it's not waken up to run, and once it's waken up to run,
-> it will see that sqd->ctx_new_list is not empty, then timeout always can be
-> initialized.
+On Wed, Nov 11, 2020 at 1:00 AM Pavel Begunkov <asml.silence@gmail.com> wro=
+te:
+>
+> On 11/11/2020 00:07, Victor Stewart wrote:
+> > On Tue, Nov 10, 2020 at 11:26 PM Pavel Begunkov <asml.silence@gmail.com=
+> wrote:
+> >>> we'd be looking at approx +100% throughput each on the send and recv
+> >>> paths (per TCP_ZEROCOPY_RECEIVE benchmarks).>
+> >>> these would be io_uring only operations given the sendmsg completion
+> >>> logic described below. want to get some conscious that this design
+> >>> could/would be acceptable for merging before I begin writing the code=
+.
+> >>>
+> >>> the problem with zerocopy send is the asynchronous ACK from the NIC
+> >>> confirming transmission. and you can=E2=80=99t just block on a syscal=
+l til
+> >>> then. MSG_ZEROCOPY tackled this by putting the ACK on the
+> >>> MSG_ERRQUEUE. but that logic is very disjointed and requires a double
+> >>> completion (once from sendmsg once the send is enqueued, and again
+> >>> once the NIC ACKs the transmission), and requires costly userspace
+> >>> bookkeeping.
+> >>>
+> >>> so what i propose instead is to exploit the asynchrony of io_uring.
+> >>>
+> >>> you=E2=80=99d submit the IORING_OP_SENDMSG_ZEROCOPY operation, and th=
+en
+> >>> sometime later receive the completion event on the ring=E2=80=99s com=
+pletion
+> >>> queue (either failure or success once ACK-ed by the NIC). 1 unified
+> >>> completion flow.
+> >>
+> >> I though about it after your other email. It makes sense for message
+> >> oriented protocols but may not for streams. That's because a user
+> >> may want to call
+> >>
+> >> send();
+> >> send();
+> >>
+> >> And expect right ordering, and that where waiting for ACK may add a lo=
+t
+> >> of latency, so returning from the call here is a notification that "it=
+'s
+> >> accounted, you may send more and order will be preserved".
+> >>
+> >> And since ACKs may came a long after, you may put a lot of code and st=
+uff
+> >> between send()s and still suffer latency (and so potentially throughpu=
+t
+> >> drop).
+> >>
+> >> As for me, for an optional feature sounds sensible, and should work we=
+ll
+> >> for some use cases. But for others it may be good to have 2 of
+> >> notifications (1. ready to next send(), 2. ready to recycle buf).
+> >> E.g. 2 CQEs, that wouldn't work without a bit of io_uring patching.
+> >>
+> >
+> > we could make it datagram only, like check the socket was created with
+>
+> no need, streams can also benefit from it.
+>
+> > SOCK_DGRAM and fail otherwise... if it requires too much io_uring
+> > changes / possible regression to accomodate a 2 cqe mode.
+>
+> May be easier to do via two requests with the second receiving
+> errors (yeah, msg_control again).
+>
+> >>> we can somehow tag the socket as registered to io_uring, then when th=
+e
+> >>
+> >> I'd rather tag a request
+> >
+> > as long as the NIC is able to find / callback the ring about
+> > transmission ACK, whatever the path of least resistance is is best.
+> >
+> >>
+> >>> NIC ACKs, instead of finding the socket's error queue and putting the
+> >>> completion there like MSG_ZEROCOPY, the kernel would find the io_urin=
+g
+> >>> instance the socket is registered to and call into an io_uring
+> >>> sendmsg_zerocopy_completion function. Then the cqe would get pushed
+> >>> onto the completion queue.>
+> >>> the "recvmsg zerocopy" is straight forward enough. mimicking
+> >>> TCP_ZEROCOPY_RECEIVE, i'll go into specifics next time.
+> >>
+> >> Receive side is inherently messed up. IIRC, TCP_ZEROCOPY_RECEIVE just
+> >> maps skbuffs into userspace, and in general unless there is a better
+> >> suited protocol (e.g. infiniband with richier src/dst tagging) or a ve=
+ry
+> >> very smart NIC, "true zerocopy" is not possible without breaking
+> >> multiplexing.
+> >>
+> >> For registered buffers you still need to copy skbuff, at least because
+> >> of security implications.
+> >
+> > we can actually just force those buffers to be mmap-ed, and then when
+> > packets arrive use vm_insert_pin or remap_pfn_range to change the
+> > physical pages backing the virtual memory pages submmited for reading
+> > via msg_iov. so it's transparent to userspace but still zerocopy.
+> > (might require the user to notify io_uring when reading is
+> > completed... but no matter).
+>
+> Yes, with io_uring zerocopy-recv may be done better than
+> TCP_ZEROCOPY_RECEIVE but
+> 1) it's still a remap. Yes, zerocopy, but not ideal
+> 2) won't work with registered buffers, which is basically a set
+> of pinned pages that have a userspace mapping. After such remap
+> that mapping wouldn't be in sync and that gets messy.
 
-We should still clean it up and avoid both the checker tripping on on this,
-and humans. It's not easy/possible to verify that it is sane.
+well unless we can alleviate all copies, then there isn=E2=80=99t any point
+because it isn=E2=80=99t zerocopy.
 
--- 
-Jens Axboe
+so in my server, i have a ceiling on the number of clients,
+preallocate them, and mmap anonymous noreserve read + write buffers
+for each.
 
+so say, 150,000 clients x (2MB * 2). which is 585GB. way more than the
+physical memory of my machine. (and have 10 instance of it per
+machine, so ~6TB lol). but at any one time probably 0.01% of that
+memory is in usage. and i just MADV_COLD the pages after consumption.
+
+this provides a persistent =E2=80=9Cvmem contiguous=E2=80=9D stream buffer =
+per client.
+which has a litany of benefits. but if we persistently pin pages, this
+ceases to work, because pin pages require persistent physical memory
+backing pages.
+
+But on the send side, if you don=E2=80=99t pin persistently, you=E2=80=99d =
+have to pin
+on demand, which costs more than it=E2=80=99s worth for sends less than ~10=
+KB.
+And I guess there=E2=80=99s no way to avoid pinning and maintain kernel
+integrity. Maybe we could erase those userspace -> physical page
+mappings, then recreate them once the operation completes, but 1) that
+would require page aligned sends so that you could keep writing and
+sending while you waited for completions and 2) beyond being
+nonstandard and possibly unsafe, who says that would even cost less
+than pinning, definitely costs something. Might cost more because
+you=E2=80=99d have to get locks to the page table?
+
+So essentially on the send side the only way to zerocopy for free is
+to persistently pin (and give up my per client stream buffers).
+
+On the receive side actually the only way to realistically do zerocopy
+is to somehow pin a NIC RX queue to a process, and then persistently
+map the queue into the process=E2=80=99s memory as read only. That=E2=80=99=
+s a
+security absurdly in the general case, but it could be root only
+usage. Then you=E2=80=99d recvmsg with a NULL msg_iov[0].iov_base, and have
+the packet buffer location and length written in. Might require driver
+buy-in, so might be impractical, but unsure.
+
+Otherwise the only option is an even worse nightmare how
+TCP_ZEROCOPY_RECEIVE works, and ridiculously impractical for general
+purpose=E2=80=A6
+
+=E2=80=9CMapping of memory into a process's address space is done on a
+per-page granularity; there is no way to map a fraction of a page. So
+inbound network data must be both page-aligned and page-sized when it
+ends up in the receive buffer, or it will not be possible to map it
+into user space. Alignment can be a bit tricky because the packets
+coming out of the interface start with the protocol headers, not the
+data the receiving process is interested in. It is the data that must
+be aligned, not the headers. Achieving this alignment is possible, but
+it requires cooperation from the network interface
+
+It is also necessary to ensure that the data arrives in chunks that
+are a multiple of the system's page size, or partial pages of data
+will result. That can be done by setting the maximum transfer unit
+(MTU) size properly on the interface. That, in turn, can require
+knowledge of exactly what the incoming packets will look like; in a
+test program posted with the patch set, Dumazet sets the MTU to
+61,512. That turns out to be space for fifteen 4096-byte pages of
+data, plus 40 bytes for the IPv6 header and 32 bytes for the TCP
+header.=E2=80=9D
+
+https://lwn.net/Articles/752188/
+
+Either receive case also makes my persistent per client stream buffer
+zerocopy impossible lol.
+
+in short, zerocopy sendmsg with persistently pinned buffers is
+definitely possible and we should do that. (I'll just make it work on
+my end).
+
+recvmsg i'll have to do more research into the practicality of what I
+proposed above.
+
+>
+> >>> the other big concern is the lifecycle of the persistent memory
+> >>> buffers in the case of nefarious actors. but since we already have
+> >>> buffer registration for O_DIRECT, I assume those mechanics already
+> >>
+> >> just buffer registration, not specifically for O_DIRECT
+> >>
+> >>> address those issues and can just be repurposed?
+> >>
+> >> Depending on how long it could stuck in the net stack, we might need
+> >> to be able to cancel those requests. That may be a problem.
+> >
+> > I spoke about this idea with Willem the other day and he mentioned...
+> >
+> > "As long as the mappings aren't unwound on process exit. But then you
+>
+> The pages won't be unpinned until all/related requests are gone, but
+> for that on exit io_uring waits for them to complete. That's one of the
+> reasons why either requests should be cancellable or short-lived and
+> somewhat predictably time-bound.
+>
+> > open up to malicious applications that purposely register ranges and
+> > then exit. The basics are straightforward to implement, but it's not
+> > that easy to arrive at something robust."
+> >
+> >>
+> >>>
+> >>> and so with those persistent memory buffers, you'd only pay the cost
+> >>> of pinning the memory into the kernel once upon registration, before
+> >>> you even start your server listening... thus "free". versus pinning
+> >>> per sendmsg like with MSG_ZEROCOPY... thus "true zerocopy".
+> --
+> Pavel Begunkov

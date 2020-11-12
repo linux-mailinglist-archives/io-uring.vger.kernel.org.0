@@ -2,82 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A022B0468
-	for <lists+io-uring@lfdr.de>; Thu, 12 Nov 2020 12:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE1902B04FB
+	for <lists+io-uring@lfdr.de>; Thu, 12 Nov 2020 13:33:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbgKLLxo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Nov 2020 06:53:44 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:49504 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726969AbgKLLxb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Nov 2020 06:53:31 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UF4n0Z._1605182008;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UF4n0Z._1605182008)
+        id S1727035AbgKLMdp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Nov 2020 07:33:45 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:34900 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726969AbgKLMdp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Nov 2020 07:33:45 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UF4wz7P_1605184422;
+Received: from 30.225.32.243(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UF4wz7P_1605184422)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 12 Nov 2020 19:53:29 +0800
+          Thu, 12 Nov 2020 20:33:43 +0800
+Subject: Re: [PATCH 5.11 1/2] io_uring: initialize 'timeout' properly in
+ io_sq_thread()
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org, axboe@kernel.dk,
+        joseph.qi@linux.alibaba.com
+References: <20201112065600.8710-1-xiaoguang.wang@linux.alibaba.com>
+ <20201112065600.8710-2-xiaoguang.wang@linux.alibaba.com>
+ <20201112111519.ydrzwsvsbipotogr@steredhat>
 From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-Subject: [PATCH] io_uring: only wake up sq thread while current task is in io worker context
-Date:   Thu, 12 Nov 2020 19:53:28 +0800
-Message-Id: <20201112115328.17185-1-xiaoguang.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.2
+Message-ID: <58c69d4a-64e5-b4f3-54e7-fae59a550cdb@linux.alibaba.com>
+Date:   Thu, 12 Nov 2020 20:32:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.1
+MIME-Version: 1.0
+In-Reply-To: <20201112111519.ydrzwsvsbipotogr@steredhat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When IORING_SETUP_SQPOLL is enabled, io_uring will always handle sqes
-in sq thread task context, so in io_iopoll_req_issued(), if we're not
-in io worker context, we don't need to check whether should wake up
-sq thread. io_iopoll_req_issued() calls wq_has_sleeper(), which has
-smp_mb() memory barrier, perf shows obvious overhead:
-  Samples: 481K of event 'cycles', Event count (approx.): 299807382878
-  Overhead  Comma  Shared Object     Symbol
-     3.69%  :9630  [kernel.vmlinux]  [k] io_issue_sqe
+hi,
 
-With this patch, perf shows:
-  Samples: 482K of event 'cycles', Event count (approx.): 299929547283
-  Overhead  Comma  Shared Object     Symbol
-     0.70%  :4015  [kernel.vmlinux]  [k] io_issue_sqe
+> On Thu, Nov 12, 2020 at 02:55:59PM +0800, Xiaoguang Wang wrote:
+>> Some static checker reports below warning:
+>>    fs/io_uring.c:6939 io_sq_thread()
+>>    error: uninitialized symbol 'timeout'.
+>>
+>> Fix it.
+> 
+> We can also add the reporter:
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Sorry, forgot to add it :)
 
-It shows some obvious improvements.
+> 
+>>
+>> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+>> ---
+>> fs/io_uring.c | 2 +-
+>> 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> LGTM:
+> 
+> Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Thanks.
 
-Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
----
- fs/io_uring.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f594c72de777..c7e035433c59 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2732,7 +2732,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
-  * find it from a io_iopoll_getevents() thread before the issuer is done
-  * accessing the kiocb cookie.
-  */
--static void io_iopoll_req_issued(struct io_kiocb *req)
-+static void io_iopoll_req_issued(struct io_kiocb *req, bool in_async)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 
-@@ -2761,7 +2761,7 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
- 	else
- 		list_add_tail(&req->inflight_entry, &ctx->iopoll_list);
- 
--	if ((ctx->flags & IORING_SETUP_SQPOLL) &&
-+	if (in_async && (ctx->flags & IORING_SETUP_SQPOLL) &&
- 	    wq_has_sleeper(&ctx->sq_data->wait))
- 		wake_up(&ctx->sq_data->wait);
- }
-@@ -6245,7 +6245,7 @@ static int io_issue_sqe(struct io_kiocb *req, bool force_nonblock,
- 		if (in_async)
- 			mutex_lock(&ctx->uring_lock);
- 
--		io_iopoll_req_issued(req);
-+		io_iopoll_req_issued(req, in_async);
- 
- 		if (in_async)
- 			mutex_unlock(&ctx->uring_lock);
--- 
-2.17.2
-
+Regards,
+Xiaoguang Wang
+> 
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index c1dcb22e2b76..c9b743be5328 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -6921,7 +6921,7 @@ static int io_sq_thread(void *data)
+>>     const struct cred *old_cred = NULL;
+>>     struct io_sq_data *sqd = data;
+>>     struct io_ring_ctx *ctx;
+>> -    unsigned long timeout;
+>> +    unsigned long timeout = 0;
+>>     DEFINE_WAIT(wait);
+>>
+>>     task_lock(current);
+>> -- 
+>> 2.17.2
+>>

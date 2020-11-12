@@ -2,75 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C59742AFFEB
-	for <lists+io-uring@lfdr.de>; Thu, 12 Nov 2020 07:56:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D62E2B00A7
+	for <lists+io-uring@lfdr.de>; Thu, 12 Nov 2020 08:58:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbgKLG4F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Nov 2020 01:56:05 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:50171 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726107AbgKLG4E (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Nov 2020 01:56:04 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R581e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UF2nc-q_1605164161;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UF2nc-q_1605164161)
+        id S1726233AbgKLH6b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Nov 2020 02:58:31 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:33507 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725884AbgKLH6b (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Nov 2020 02:58:31 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UF3B8El_1605167907;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UF3B8El_1605167907)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 12 Nov 2020 14:56:01 +0800
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-Subject: [PATCH 5.11 2/2] io_uring: don't acquire uring_lock twice
-Date:   Thu, 12 Nov 2020 14:56:00 +0800
-Message-Id: <20201112065600.8710-3-xiaoguang.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20201112065600.8710-1-xiaoguang.wang@linux.alibaba.com>
-References: <20201112065600.8710-1-xiaoguang.wang@linux.alibaba.com>
+          Thu, 12 Nov 2020 15:58:27 +0800
+Subject: Re: [dm-devel] dm: add support for DM_TARGET_NOWAIT for various
+ targets
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     joseph.qi@linux.alibaba.com, dm-devel@redhat.com, koct9i@gmail.com,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org
+References: <20201110065558.22694-1-jefflexu@linux.alibaba.com>
+ <20201111153824.GB22834@redhat.com>
+ <533a3b6b-146b-afe6-2e3e-d1bc2180a8c8@linux.alibaba.com>
+Message-ID: <8e958749-3954-a041-e6a9-ec13c328e9b6@linux.alibaba.com>
+Date:   Thu, 12 Nov 2020 15:58:27 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.12.1
+MIME-Version: 1.0
+In-Reply-To: <533a3b6b-146b-afe6-2e3e-d1bc2180a8c8@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Both IOPOLL and sqes handling need to acquire uring_lock, combine
-them together, then we just need to acquire uring_lock once.
 
-Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
----
- fs/io_uring.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+On 11/12/20 2:05 PM, JeffleXu wrote:
+>>
+>> dm-table.c:dm_table_set_restrictions() has:
+>>
+>>          if (dm_table_supports_nowait(t))
+>>                  blk_queue_flag_set(QUEUE_FLAG_NOWAIT, q);
+>>          else
+>>                  blk_queue_flag_clear(QUEUE_FLAG_NOWAIT, q);
+>>
+>>> This patch adds support for DM_TARGET_NOWAIT for those dm targets, the
+>>> .map() algorithm of which just involves sector recalculation.
+>> So you're looking to constrain which targets will properly support
+>> REQ_NOWAIT, based on whether they do a simple remapping?
+>
+> To be honest, I'm a little confused about the semantics of REQ_NOWAIT. 
+> Jens may had ever
+>
+> explained it in block or io_uring mailing list, but I can't find the 
+> specific mail.
+>
+I find it here 
+https://lore.kernel.org/linux-block/f1a6ae88-1436-e947-1124-41e10b3ea9bc@kernel.dk/
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c9b743be5328..f594c72de777 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6859,23 +6859,19 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
- 	unsigned int to_submit;
- 	int ret = 0;
- 
--	if (!list_empty(&ctx->iopoll_list)) {
--		unsigned nr_events = 0;
--
--		mutex_lock(&ctx->uring_lock);
--		if (!list_empty(&ctx->iopoll_list))
--			io_do_iopoll(ctx, &nr_events, 0);
--		mutex_unlock(&ctx->uring_lock);
--	}
--
- 	to_submit = io_sqring_entries(ctx);
- 	/* if we're handling multiple rings, cap submit size for fairness */
- 	if (cap_entries && to_submit > 8)
- 		to_submit = 8;
- 
--	if (to_submit) {
-+	if (!list_empty(&ctx->iopoll_list) || to_submit) {
-+		unsigned nr_events = 0;
-+
- 		mutex_lock(&ctx->uring_lock);
--		if (likely(!percpu_ref_is_dying(&ctx->refs)))
-+		if (!list_empty(&ctx->iopoll_list))
-+			io_do_iopoll(ctx, &nr_events, 0);
-+
-+		if (to_submit && likely(!percpu_ref_is_dying(&ctx->refs)))
- 			ret = io_submit_sqes(ctx, to_submit);
- 		mutex_unlock(&ctx->uring_lock);
- 	}
+
+So if the IO is offloaded to workqueue and the current process context 
+will not get blocked,
+
+then is this device capable of handling REQ_NOWAIT or not?
+
 -- 
-2.17.2
+Thanks,
+Jeffle
 

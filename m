@@ -2,92 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED4392B0AB4
-	for <lists+io-uring@lfdr.de>; Thu, 12 Nov 2020 17:48:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71FC32B124D
+	for <lists+io-uring@lfdr.de>; Fri, 13 Nov 2020 00:01:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbgKLQsR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Nov 2020 11:48:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728440AbgKLQsQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Nov 2020 11:48:16 -0500
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92C61C0613D1
-        for <io-uring@vger.kernel.org>; Thu, 12 Nov 2020 08:48:16 -0800 (PST)
-Received: by mail-il1-x144.google.com with SMTP id g7so5827607ilr.12
-        for <io-uring@vger.kernel.org>; Thu, 12 Nov 2020 08:48:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5byzO2Ov2RwiDddtfb09fwPWKUfB1+doqVELjtPJUG0=;
-        b=bBMjZQTDWDG6RsW4bxkzq8rq3eKta2X+AKmFTPuLsBm8dPopEShb1Lnl+eSUvdm8dK
-         u3Ve9dF0WKfOw7A6+jtGJvdgBUiEqNBa8B6xLW1vBjlWWbbpd3rcEAcIhaZAwihSQqYH
-         uGSuNTY8lhDJbZbkdg7FY9izagnLw8GEZL4Vi2NZy4MD38PG1acFgM+E4LvaDGZe3Daa
-         wwT2ol7LvNbkDV5uWOuCggypLqTJSaws1q0Z1chRguKBoEsi/wLBNKF0iUGovfDKoo15
-         Wq026R2G7F6P3xw6yYDlOdKQMukAiVuLiEyXpkqYH8dptYN6CKO7M+LenqtpvhXgJxwV
-         pShg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5byzO2Ov2RwiDddtfb09fwPWKUfB1+doqVELjtPJUG0=;
-        b=FFoMODBYxWtZOUKAnGDvuGCmfgvGXmZE9GOPl+8udICdBOzT1tLxKCyozt/jzpQ7v/
-         uM+ylmpkjfsGYipeo617JmOoxgtcctw1Jrqys63T2fvVLBeGQFsfaS+H2zwnScMeu0ny
-         FabTxUSKhHsvDJVwja+zXklfbUVzGEfXUySDZTw/NzLvEWXd7RLOr+jy8AEj1BoFl+sb
-         29RZcySAvcW0COA1ueGkGFjS/lAoB+rk7PsgJLZdpADFycOu9S6XpSvoeLhNcEtcQD0Z
-         1bmszIX6aH87D0Ur0LZ1WIRvyTV7cBTzAkrBcuSIhuYdsSlHy9hSGSduo/qsg0pR/AgZ
-         FhtQ==
-X-Gm-Message-State: AOAM532EVq2LEVmc5ILa0XM4BgZ7+bfUBbz8kcrN3AkW+NhQVcolRgQ+
-        LcusAY7AS3JRET0RR8yHMC4dLhy8w+LSOg==
-X-Google-Smtp-Source: ABdhPJyIGZ04HAsLDag8L7L6qjC5XJSoiilQtV4VIrProokBXJEUW82hDS1FixBsgsh04wyB7vXuBw==
-X-Received: by 2002:a92:6f11:: with SMTP id k17mr316924ilc.69.1605199695958;
-        Thu, 12 Nov 2020 08:48:15 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id b1sm3184224ils.41.2020.11.12.08.48.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2020 08:48:15 -0800 (PST)
-Subject: Re: [PATCH v2] io_uring: only wake up sq thread while current task is
- in io worker context
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20201112164408.18766-1-xiaoguang.wang@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <571883e1-be7c-2e09-4c88-b11695d698c6@kernel.dk>
-Date:   Thu, 12 Nov 2020 09:48:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20201112164408.18766-1-xiaoguang.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726255AbgKLXBL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Nov 2020 18:01:11 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:53188 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbgKLXBL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Nov 2020 18:01:11 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ACMtMce078843;
+        Thu, 12 Nov 2020 23:01:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=2Tsw6MZTEQGZHSoTyop5+6M9Zk0JI9qaXJ+b2eeOzeM=;
+ b=yV9dto490l/XiqJ64xVYZv2IWHiRP25+WhznKxu2a1gSjzFzyRurW+YsaqCa1eTvvWlR
+ tuEsnXdcz+o2cP1/YMJQ6e5YFuEd4jY84P8h8kG65juo18Uzq93yY0CXmWBZCmCDGRhi
+ BHeyVPGLC6+ZzGL66sef0HMmJaggQKPFL5ABoysXkAVhluOl3umaUsl6fnUWEOAxYe82
+ SMqCWapdaGB4wAWWyqsIWgFUgYRvDhTr4E3nKSdT+6G2uMjx624e7aj2iqZFqCvt3Sfu
+ MTKAMOfYEXkurfogGfcr85Hxk3Aywko6HoBcGL+zXaJZbAn24RJqPh3lNehDKORq0bhp WA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 34p72ex9ct-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Nov 2020 23:01:09 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ACMoIem021736;
+        Thu, 12 Nov 2020 23:01:08 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 34rtksjcyv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Nov 2020 23:01:08 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0ACN174N015706;
+        Thu, 12 Nov 2020 23:01:07 GMT
+Received: from ca-ldom147.us.oracle.com (/10.129.68.131)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Nov 2020 15:01:07 -0800
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+To:     axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org
+Subject: [PATCH 0/8] io_uring: buffer registration enhancements
+Date:   Thu, 12 Nov 2020 15:00:34 -0800
+Message-Id: <1605222042-44558-1-git-send-email-bijan.mottahedeh@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9803 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
+ suspectscore=1 bulkscore=0 malwarescore=0 mlxlogscore=682 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011120129
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9803 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=697 mlxscore=0
+ malwarescore=0 suspectscore=1 lowpriorityscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011120129
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/12/20 9:44 AM, Xiaoguang Wang wrote:
-> If IORING_SETUP_SQPOLL is enabled, sqes are either handled in sq thread
-> task context or in io worker task context. If current task context is sq
-> thread, we don't need to check whether should wake up sq thread.
-> 
-> io_iopoll_req_issued() calls wq_has_sleeper(), which has smp_mb() memory
-> barrier, before this patch, perf shows obvious overhead:
->   Samples: 481K of event 'cycles', Event count (approx.): 299807382878
->   Overhead  Comma  Shared Object     Symbol
->      3.69%  :9630  [kernel.vmlinux]  [k] io_issue_sqe
-> 
-> With this patch, perf shows:
->   Samples: 482K of event 'cycles', Event count (approx.): 299929547283
->   Overhead  Comma  Shared Object     Symbol
->      0.70%  :4015  [kernel.vmlinux]  [k] io_issue_sqe
-> 
-> It shows some obvious improvements.
+This patchset is the follow-on to my previous RFC which implements a
+set of enhancements to buffer registration consistent with existing file
+registration functionality:
 
-Applied, thanks.
+- buffer registration updates		IORING_REGISTER_BUFFERS_UPDATE
+					IORING_OP_BUFFERS_UPDATE
+
+- readv/writev with fixed buffers	IOSQE_FIXED_BUFFER
+
+- buffer registration sharing		IORING_SETUP_SHARE_BUF
+					IORING_SETUP_ATTACH_BUF
+
+Patches 1,2 modularize existing buffer registration code.
+
+Patch 3 generalizes fixed_file functionality to fixed_rsrc.
+
+Patch 4 applies fixed_rsrc functionality for fixed buffers support.
+
+Patch 5 generalizes files_update functionality to rsrc_update.
+
+Patch 6 implements buffer registration update, and introduces
+IORING_REGISTER_BUFFERS_UPDATE and IORING_OP_BUFFERS_UPDATE, consistent
+with file registration update.
+
+Patch 7 implements readv/writev support with fixed buffers, and introduces
+IOSQE_FIXED_BUFFER, consistent with fixed files.
+
+Patch 8 implements buffer sharing among multiple rings; it works as follows:
+
+- A new ring, A,  is setup. Since no buffers have been registered, the
+  registered buffer state is an empty set, Z. That's different from the
+  NULL state in current implementation.
+
+- Ring B is setup, attaching to Ring A. It's also attaching to it's
+  buffer registrations, now we have two references to the same empty
+  set, Z.
+
+- Ring A registers buffers into set Z, which is no longer empty.
+
+- Ring B sees this immediately, since it's already sharing that set.
+
+TBD
+
+- I think I have to add IORING_UNREGISTER_BUFFERS to
+  io_register_op_must_quiesce() but wanted to confirm.
+
+I have used liburing file-{register,update} tests as models for
+buffer-{register,update,share}, tests and they run ok.
+
+The liburing test suite fails for "self" with/without this patchset.
+
+Bijan Mottahedeh (8):
+  io_uring: modularize io_sqe_buffer_register
+  io_uring: modularize io_sqe_buffers_register
+  io_uring: generalize fixed file functionality
+  io_uring: implement fixed buffers registration similar to fixed files
+  io_uring: generalize files_update functionlity to rsrc_update
+  io_uring: support buffer registration updates
+  io_uring: support readv/writev with fixed buffers
+  io_uring: support buffer registration sharing
+
+ fs/io_uring.c                 | 1021 ++++++++++++++++++++++++++++++++---------
+ include/uapi/linux/io_uring.h |   15 +-
+ 2 files changed, 807 insertions(+), 229 deletions(-)
 
 -- 
-Jens Axboe
+1.8.3.1
 

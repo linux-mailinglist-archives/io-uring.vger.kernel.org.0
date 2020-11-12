@@ -2,250 +2,270 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C04D42AF899
-	for <lists+io-uring@lfdr.de>; Wed, 11 Nov 2020 19:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7582AFF88
+	for <lists+io-uring@lfdr.de>; Thu, 12 Nov 2020 07:05:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727475AbgKKSx5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Nov 2020 13:53:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47360 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbgKKSx5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Nov 2020 13:53:57 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12AB7C0613D1
-        for <io-uring@vger.kernel.org>; Wed, 11 Nov 2020 10:53:57 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id l1so3541132wrb.9
-        for <io-uring@vger.kernel.org>; Wed, 11 Nov 2020 10:53:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WrWPo1Dmel0ma582T2tEY6TXI1DN5hsrXHlAWrFyQLM=;
-        b=mRu0fgSJKvqv0n006Z88fd060hCQOJQH6alzaKcly3Kn/Ifo54kBxsx75Ggsk4r1lE
-         f9mu5wIh+d0VZ3LUCTqQaql5BVVPtS63vuEoTCgxjVCyOXWRX8PdVaBRL098YRZcEeEQ
-         HtVQHwWsq2AUXLRTELbhea2MAyYCt9MDECrBSorlDlcoK51op+Vr3H5Wp0d0TYqCBflS
-         yAf5VgiOsfw2MZl/KrTCzXnV/NHJAf7kmOx41uYozhPaxHLQEuBRIdfDCTMTHHtswQF7
-         mrVNHmqFKmkNvclt5cZF/R1JmR34FxGTLw98hh9UFsraNQutUZGvfzVVpSDoFVYzVT4H
-         cgHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=WrWPo1Dmel0ma582T2tEY6TXI1DN5hsrXHlAWrFyQLM=;
-        b=POl+Jrc5+11/4CI6I1gMj+uxG3XjKI5zc/JA2ZJWhhpQ2sOs7xSj+GvFPiuw0rd3m6
-         NtO0XSLwZzKXlHIuA9k+5qcaTMSbI767VAGcTOEIho1sG8V0GHZ/pggF2gEIVrEq2hw+
-         yJTeDHZXp/uWqpUME/etmcwCAnFx90NH2a4qvIioOJLmvpFXVwnFfRruAumQKL70KVVH
-         D4ESlmKyMngFA9GfyZ/M/HCWzt9wtWFLGZO3mlZYn3N2wVjdjmEWUFSU9Mtxpv61wkKq
-         HrpXhIeamoVFkprsxp7i4x6oU+KmylGgbt1Gv0xF3E6rWVIP+wltV4GcxbjnmFtxkMoh
-         mRpA==
-X-Gm-Message-State: AOAM530wag+6TpGgrkvKkXbcGeCXB0NX+JxYOTtkIt8+xD65vS3ui7wS
-        BrnB07x+6nD10FYJ0dO9dj5Vl333T8UppQ==
-X-Google-Smtp-Source: ABdhPJwxZShjpmCv1ucH8GmMZAdkryH3c16xYmxI51Wleb187qEyasdXg5ffoTMlv8Sd5yywLRKXLw==
-X-Received: by 2002:adf:fa82:: with SMTP id h2mr10633808wrr.24.1605120835332;
-        Wed, 11 Nov 2020 10:53:55 -0800 (PST)
-Received: from [192.168.1.96] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
-        by smtp.gmail.com with ESMTPSA id c8sm3392545wrv.26.2020.11.11.10.53.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Nov 2020 10:53:54 -0800 (PST)
-To:     Victor Stewart <v@nametag.social>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <CAM1kxwgKGMz9UcvpFr1239kmdvmKPuzAyBEwKi_rxDog1MshRQ@mail.gmail.com>
- <acc66238-0d27-cd22-dac4-928777a8efbc@gmail.com>
- <CAM1kxwjSyLb9ijs0=RZUA06E20qjwBnAZygwM3ckh10WozExag@mail.gmail.com>
- <3913bbb5-50ec-6ad9-13c9-d49a8b7f7e89@gmail.com>
- <CAM1kxwhdCoH7ZAmnaaDTohg3TUSWL264juamO1or_3m-JFnRyg@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: io_uring-only sendmsg + recvmsg zerocopy
-Message-ID: <7e1c3ecd-fe8c-9c1f-e344-974de9cc2b02@gmail.com>
-Date:   Wed, 11 Nov 2020 18:50:50 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1725995AbgKLGFr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Nov 2020 01:05:47 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:54317 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725966AbgKLGFq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Nov 2020 01:05:46 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UF2fvup_1605161140;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UF2fvup_1605161140)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 12 Nov 2020 14:05:41 +0800
+Subject: Re: [dm-devel] dm: add support for DM_TARGET_NOWAIT for various
+ targets
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     joseph.qi@linux.alibaba.com, dm-devel@redhat.com, koct9i@gmail.com,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org
+References: <20201110065558.22694-1-jefflexu@linux.alibaba.com>
+ <20201111153824.GB22834@redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <533a3b6b-146b-afe6-2e3e-d1bc2180a8c8@linux.alibaba.com>
+Date:   Thu, 12 Nov 2020 14:05:40 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.12.1
 MIME-Version: 1.0
-In-Reply-To: <CAM1kxwhdCoH7ZAmnaaDTohg3TUSWL264juamO1or_3m-JFnRyg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20201111153824.GB22834@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/11/2020 16:49, Victor Stewart wrote:
-> On Wed, Nov 11, 2020 at 1:00 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->> On 11/11/2020 00:07, Victor Stewart wrote:
->>> On Tue, Nov 10, 2020 at 11:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>>> NIC ACKs, instead of finding the socket's error queue and putting the
->>>>> completion there like MSG_ZEROCOPY, the kernel would find the io_uring
->>>>> instance the socket is registered to and call into an io_uring
->>>>> sendmsg_zerocopy_completion function. Then the cqe would get pushed
->>>>> onto the completion queue.>
->>>>> the "recvmsg zerocopy" is straight forward enough. mimicking
->>>>> TCP_ZEROCOPY_RECEIVE, i'll go into specifics next time.
->>>>
->>>> Receive side is inherently messed up. IIRC, TCP_ZEROCOPY_RECEIVE just
->>>> maps skbuffs into userspace, and in general unless there is a better
->>>> suited protocol (e.g. infiniband with richier src/dst tagging) or a very
->>>> very smart NIC, "true zerocopy" is not possible without breaking
->>>> multiplexing.
->>>>
->>>> For registered buffers you still need to copy skbuff, at least because
->>>> of security implications.
->>>
->>> we can actually just force those buffers to be mmap-ed, and then when
->>> packets arrive use vm_insert_pin or remap_pfn_range to change the
->>> physical pages backing the virtual memory pages submmited for reading
->>> via msg_iov. so it's transparent to userspace but still zerocopy.
->>> (might require the user to notify io_uring when reading is
->>> completed... but no matter).
+Hi Jens and guys in block/io_uring mailing list, this mail contains some 
+discussion abount
+
+RWF_NOWAIT, please see the following contents.
+
+
+
+On 11/11/20 11:38 PM, Mike Snitzer wrote:
+> On Tue, Nov 10 2020 at  1:55am -0500,
+> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+>
+>> This is one prep patch for supporting iopoll for dm device.
 >>
->> Yes, with io_uring zerocopy-recv may be done better than
->> TCP_ZEROCOPY_RECEIVE but
->> 1) it's still a remap. Yes, zerocopy, but not ideal
->> 2) won't work with registered buffers, which is basically a set
->> of pinned pages that have a userspace mapping. After such remap
->> that mapping wouldn't be in sync and that gets messy.
-> 
-> well unless we can alleviate all copies, then there isn’t any point
-> because it isn’t zerocopy.
-> 
-> so in my server, i have a ceiling on the number of clients,
-> preallocate them, and mmap anonymous noreserve read + write buffers
-> for each.
-> 
-> so say, 150,000 clients x (2MB * 2). which is 585GB. way more than the
-> physical memory of my machine. (and have 10 instance of it per
-> machine, so ~6TB lol). but at any one time probably 0.01% of that
-> memory is in usage. and i just MADV_COLD the pages after consumption.
-> 
-> this provides a persistent “vmem contiguous” stream buffer per client.
-> which has a litany of benefits. but if we persistently pin pages, this
-> ceases to work, because pin pages require persistent physical memory
-> backing pages.
-> 
-> But on the send side, if you don’t pin persistently, you’d have to pin
-> on demand, which costs more than it’s worth for sends less than ~10KB.
+>> The direct IO routine will set REQ_NOWAIT flag for REQ_HIPRI IO (that
+>> is, IO will do iopoll) in bio_set_polled(). Then in the IO submission
+>> routine, the ability of handling REQ_NOWAIT of the block device will
+>> be checked for REQ_HIPRI IO in submit_bio_checks(). -EOPNOTSUPP will
+>> be returned if the block device doesn't support REQ_NOWAIT.
+> submit_bio_checks() verifies the request_queue has QUEUE_FLAG_NOWAIT set
+> if the bio has REQ_NOWAIT.
+Yes that's the case.
+>
+>> DM lacks support for REQ_NOWAIT until commit 6abc49468eea ("dm: add
+>> support for REQ_NOWAIT and enable it for linear target"). Since then,
+>> dm targets that support REQ_NOWAIT should advertise DM_TARGET_NOWAIT
+>> feature.
+> I'm not seeing why DM_TARGET_NOWAIT is needed (since you didn't add any
+> code that consumes the flag).
 
-having it non-contiguous and do round-robin IMHO would be a better shot
+As I said, it's needed if we support iopoll for dm device.  Only if a 
+block device is capable of
 
-> And I guess there’s no way to avoid pinning and maintain kernel
-> integrity. Maybe we could erase those userspace -> physical page
-> mappings, then recreate them once the operation completes, but 1) that
-> would require page aligned sends so that you could keep writing and
-> sending while you waited for completions and 2) beyond being
-> nonstandard and possibly unsafe, who says that would even cost less
-> than pinning, definitely costs something. Might cost more because
-> you’d have to get locks to the page table?
-> 
-> So essentially on the send side the only way to zerocopy for free is
-> to persistently pin (and give up my per client stream buffers).
-> 
-> On the receive side actually the only way to realistically do zerocopy
-> is to somehow pin a NIC RX queue to a process, and then persistently
-> map the queue into the process’s memory as read only. That’s a
-> security absurdly in the general case, but it could be root only
-> usage. Then you’d recvmsg with a NULL msg_iov[0].iov_base, and have
-> the packet buffer location and length written in. Might require driver
-> buy-in, so might be impractical, but unsure.
+handling NOWAIT, then it can support iopoll.
 
-https://blogs.oracle.com/linux/zero-copy-networking-in-uek6
-scroll to AF_XDP
 
-> 
-> Otherwise the only option is an even worse nightmare how
-> TCP_ZEROCOPY_RECEIVE works, and ridiculously impractical for general
-> purpose…
+IO submitted for iopoll (marked with IOCB_HIPRI) is usually also marked 
+with REQ_NOWAIT.
 
-Well, that's not so bad, API with io_uring might be much better, but
-still would require unmap. However, depending on a use case overhead
-for small packets and/or shared b/w many thread mm can potentially be
-a deal breaker.
+There are two scenario when it could happen.
 
-> “Mapping of memory into a process's address space is done on a
-> per-page granularity; there is no way to map a fraction of a page. So
-> inbound network data must be both page-aligned and page-sized when it
-> ends up in the receive buffer, or it will not be possible to map it
-> into user space. Alignment can be a bit tricky because the packets
-> coming out of the interface start with the protocol headers, not the
-> data the receiving process is interested in. It is the data that must
-> be aligned, not the headers. Achieving this alignment is possible, but
-> it requires cooperation from the network interface
 
-should support scatter-gather in other words
+1. io_uring will set REQ_NOWAIT
 
-> 
-> It is also necessary to ensure that the data arrives in chunks that
-> are a multiple of the system's page size, or partial pages of data
-> will result. That can be done by setting the maximum transfer unit
-> (MTU) size properly on the interface. That, in turn, can require
-> knowledge of exactly what the incoming packets will look like; in a
-> test program posted with the patch set, Dumazet sets the MTU to
-> 61,512. That turns out to be space for fifteen 4096-byte pages of
-> data, plus 40 bytes for the IPv6 header and 32 bytes for the TCP
-> header.”
-> 
-> https://lwn.net/Articles/752188/
-> 
-> Either receive case also makes my persistent per client stream buffer
-> zerocopy impossible lol.
+The IO submission of io_uring can be divided into two phase. First, IO 
+will be submitted
 
-it depends
+synchronously in user process context (when sqthread feature disabled), 
+or sqthread
 
-> 
-> in short, zerocopy sendmsg with persistently pinned buffers is
-> definitely possible and we should do that. (I'll just make it work on
-> my end).
-> 
-> recvmsg i'll have to do more research into the practicality of what I
-> proposed above.
+context (when sqthread feature enabled).
 
-1. NIC is smart enough and can locate the end (userspace) buffer and
-DMA there directly. That requires parsing TCP/UDP headers, etc., or
-having a more versatile API like infiniband. + extra NIC features.
 
-2. map skbufs into the userspace as TCP_ZEROCOPY_RECEIVE does.
+```sh
+- current process context when sqthread disabled, or sqthread when it's 
+enabled
+     io_uring_enter
+         io_submit_sqes
+             io_submit_sqe
+                 io_queue_sqe
+                     __io_queue_sqe
+                         io_issue_sqe // with @force_nonblock is true
+                             io_read/io_write
+```
+
+In this case, IO should be handled in a NOWAIT way, since the user 
+process or sqthread
+
+can not be blocked for performance.
+
+```
+
+io_read/io_write
+
+     /* Ensure we clear previously set non-block flag */
+     if (!force_nonblock)
+         kiocb->ki_flags &= ~IOCB_NOWAIT;
+     else
+         kiocb->ki_flags |= IOCB_NOWAIT;
+
+```
+
+
+2. The direct IO routine will set REQ_NOWAIT for polling IO
+
+Both fs/block_dev.c: __blkdev_direct_IO and fs/iomap/direct-io.c: 
+iomap_dio_submit_bio will
+
+call bio_set_polled(), in which will set REQ_NOWAIT for polling IO.
+
+
+```sh
+__blkdev_direct_IO / iomap_dio_submit_bio:
+     if (dio->iocb->ki_flags & IOCB_HIPRI)
+         bio_set_polled
+           bio->bi_opf |= REQ_NOWAIT
+```
+
+
+Thus to support iopoll for dm device, the dm target should be capable of 
+handling NOWAIT,
+
+or submit_bio_checks() will fail with -EOPNOTSUPP when submitting bio to 
+dm device.
+
+
+>
+> dm-table.c:dm_table_set_restrictions() has:
+>
+>          if (dm_table_supports_nowait(t))
+>                  blk_queue_flag_set(QUEUE_FLAG_NOWAIT, q);
+>          else
+>                  blk_queue_flag_clear(QUEUE_FLAG_NOWAIT, q);
+>
+>> This patch adds support for DM_TARGET_NOWAIT for those dm targets, the
+>> .map() algorithm of which just involves sector recalculation.
+> So you're looking to constrain which targets will properly support
+> REQ_NOWAIT, based on whether they do a simple remapping?
+
+To be honest, I'm a little confused about the semantics of REQ_NOWAIT. 
+Jens may had ever
+
+explained it in block or io_uring mailing list, but I can't find the 
+specific mail.
+
+
+The man page explains FMODE_NOWAIT as 'File is capable of returning 
+-EAGAIN if I/O will
+
+block'.
+
+
+And RWF_NOWAIT as
+
+```
+
+               RWF_NOWAIT (since Linux 4.14)
+                      Don't wait if the I/O will block for operations 
+such as
+                      file block allocations, dirty page flush, mutex locks,
+                      or a congested block device inside the kernel.  If any
+                      of these conditions are met, the control block is re‐
+                      turned immediately with a return value of -EAGAIN in
+                      the res field of the io_event structure (see
+                      io_getevents(2)).
+
+```
+
+
+commit 6abc49468eea ("dm: add support for REQ_NOWAIT and enable it for 
+linear
+
+target") handles NOWAIT for DM core as
+
+
+```
+
+@@ -1802,7 +1802,9 @@ static blk_qc_t dm_submit_bio(struct bio *bio)
+         if (unlikely(test_bit(DMF_BLOCK_IO_FOR_SUSPEND, &md->flags))) {
++               if (bio->bi_opf & REQ_NOWAIT)
++                       bio_wouldblock_error(bio);
+
++               else if (!(bio->bi_opf & REQ_RAHEAD))
+                         queue_io(md, bio);
+
+```
+
+
+Theoretically the block device could advertise QUEUE_FLAG_NOWAIT as long 
+as it could
+
+'return -EAGAIN if I/O will block' as the man page said. However, 
+considering when the
+
+dm device detected as suspending, the submitted bios are deferred to 
+workqueue in
+
+drivers/dm/dm.c: dm_submit_bio. In this case, IO gets **deferred** while 
+the user process
+
+will not be **blocked**. Can we say IO gets **blocked** in this case?
+
+
+Actually several dm targets handle submitted bio in this deferred way, 
+such as dm-crypt/
+
+dm-delay/dm-era/dm-ebs. Can we say these targets are not capable of 
+handling NOWAIT?
+
+
+Also when system is short of memory, bio allocation in 
+bio_alloc_bioset() may trigger memory
+
+direct reclaim, as the gfp_mask is usually GFP_NOIO. While in memory 
+direct reclaim, the
+
+process may be scheduled out, but I have never seen the proper handling 
+for NOWAIT in this
+
+situation. Maybe the block or io_uring guys have more insights?
+
+
+So there's just too many possibilities that may get blocked, not to say 
+mutex locks.
+
+
+>
+>
+>> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+>> ---
+>> Hi Mike,
+>>
+>> I could split these boilerplate code that each dm target have one
+>> seperate patch if you think that would be better.
+> One patch for all these is fine.  But it should include the code that I
+> assume you'll be adding to dm_table_supports_nowait() to further verify
+> that the targets in the table are all DM_TARGET_NOWAIT.
+>
+> And why isn't dm-linear setting DM_TARGET_NOWAIT?
+These are all done in commit 6abc49468eea ("dm: add support for 
+REQ_NOWAIT and enable it for
+linear target").
+>
+> Also, other targets _could_ be made to support REQ_NOWAIT by
+> conditionally returning bio_wouldblock_error() if appropriate
+> (e.g. bio-based dm-multipath's case of queue_if_no_path).
+
+
 
 -- 
-Pavel Begunkov
+Thanks,
+Jeffle
+

@@ -2,74 +2,152 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07B372B335B
-	for <lists+io-uring@lfdr.de>; Sun, 15 Nov 2020 11:20:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81AC42B335D
+	for <lists+io-uring@lfdr.de>; Sun, 15 Nov 2020 11:20:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbgKOKUf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 15 Nov 2020 05:20:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39794 "EHLO
+        id S1726738AbgKOKUg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 15 Nov 2020 05:20:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbgKOKUe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Nov 2020 05:20:34 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B1D0C0613D1
+        with ESMTP id S1726634AbgKOKUf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Nov 2020 05:20:35 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6AC2C0613D2
         for <io-uring@vger.kernel.org>; Sun, 15 Nov 2020 02:20:34 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id c9so21041018wml.5
-        for <io-uring@vger.kernel.org>; Sun, 15 Nov 2020 02:20:33 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id l1so15432423wrb.9
+        for <io-uring@vger.kernel.org>; Sun, 15 Nov 2020 02:20:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=M14tdPTF/PZcSCjZBCdHAoRRMkRAX8u0tgQrBe+hPVA=;
-        b=bEhya+d0HSXRhHOFpq23DiOqJMOvtUViuPrGktKBqu+Cgu9MPA31bXgAe8i1/awznH
-         QdgXh4fMXs3tW2bL9/HVXHud4hvBUHniOeZYJAILk0aZoedFcAu61LGQ8XCiOLpy8TRy
-         eyriXLXjzXeOg2ZBJJ0SDhLfpnZJFiH/PTA43wcGPh93y/agvV32zlx7EFzJ+UTf/N8G
-         eJ0OJMPgb2+wqtjz9HJqtRa4ysQGmkahT1vmNAj4S7rl7rVw6pefJqNT72l71k7SMtof
-         7niyviuwb5IFa8VPxZ6gUYp9njnmWKAasK78QuUIlV8pkLK14RLPgE6Kk+h9c1kbVHTI
-         Ed7w==
+        bh=hp+hpfX8pa8xQUJpKGjJJC3r+JF9l8FIUZj1DQhjLKg=;
+        b=bP8Dl4eLFMUCH5+4z789n/SradXMrfKa1Dyfxu1NrZcXLoe3efTXsaMcs9lEXYJO5/
+         VKC2eLXv858gSVXoeRQd7NbWanBDvmaBHTeX/wIwM4BVIHSZ6M6RohmiAl7T+HDVTbAc
+         2k8BM8aGVc46OQAS63PsKk+a7+PnXGa13ARID+FZCP+3jQhCg9Cd5uEYmcUpRllBtsVc
+         Bom3l/SE3TBp/Uq3g4wv8p/0UV+mcV0NYKFZRECUOmaXd4slKDwNLBS1hHxrrnlFG3Gc
+         YTFDviRhM269TOMQnb/Z7POV7bfy9+fXhqkGNhI8qe4uppk9eJFci6I4sIBoEtKljcmf
+         Adsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=M14tdPTF/PZcSCjZBCdHAoRRMkRAX8u0tgQrBe+hPVA=;
-        b=p/GnxRmvTHZcZ6h3gwYG6MfU3u5Y4KAa1QD9KJqX3grquNplT+jxOYoL0boOMvfkV9
-         X+N2bg9F94rG4TN6hGVMkN9YLXSXtG/TCfq3fqWeV2qlOuztvrJdcpDhiTAAz9ezrSXk
-         Nix9dcDHGpYnHSXBCMLUWIpr2t9xkjrTh1JPN1CoQ4fTWO8odqSZY+dMTPsrdbH+/7e+
-         Rzj4V1P/pQi399ptF1MV5aQ3zQ/8bCcN0626po1D/FkIo0NgrAUsWz7BfycsH5CPDxl5
-         PmHgkUL1q8A1D/2At/HNKkkTQhp6EeQkmvDOLNzKFq5oC5FUUJw/O9QRq5fBit3SDonQ
-         UIXw==
-X-Gm-Message-State: AOAM530gd0HHDeukpQVY3xEo8tJ6EeuZdC1BqbaxYWaG2KOOqCl3e2qn
-        9mrT8ed1KX23Yfc9sTK7kHS3znGTZd0=
-X-Google-Smtp-Source: ABdhPJz90UEjUGfXmum+102xsesl57fggc1Ety55Fi5fi9qas1El+owSH6+/JQCiqMcpCxSAaH900g==
-X-Received: by 2002:a7b:cd99:: with SMTP id y25mr10168782wmj.128.1605435632640;
-        Sun, 15 Nov 2020 02:20:32 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hp+hpfX8pa8xQUJpKGjJJC3r+JF9l8FIUZj1DQhjLKg=;
+        b=dWdF88n6skREockBba03xrHvkxn+l0bTQghFYoKbCBou7UYqZ0nH2ujztx99KMIjSi
+         mGuXf858RKcxKiccJkjucN1M4Tz3gA/3ZJz4fo3/DPdUX6VQHcg7n6OrBW/5y40tCrK3
+         aCANZoX9Ndup3whP7sEt5qFrYDsI8OIarLaAtWZixKPmqifPTdZyMtG/0pf7P2W4el4T
+         ioIUe8toKbG3rLCplSSvaPJn45nP2gIOHtaUQgTPmrCQjKs1IMMn3t/Oay6tPh+R6aZ2
+         dZh1xxR0JaBVhqNZDk+BH9nP0C0tzza096ktI05RZMXcNiQwP57u/LhlokGDBqvklOFY
+         KXQA==
+X-Gm-Message-State: AOAM533JZKYppqr8tf8qzsHkkkIfBeKfRDoOcgswOAs9fmdRMXHSd/iN
+        4SJ7P34H4U34nWW/ex/rLBzK8/uGVFw=
+X-Google-Smtp-Source: ABdhPJxyfLDmRHCoIFWqvBVsTTlt0kMEHoEED5bYgwuI24YUxqqFjhPxSdRSKn7HCT1qk1ljPPBzrQ==
+X-Received: by 2002:a5d:4a0a:: with SMTP id m10mr14351834wrq.16.1605435633562;
+        Sun, 15 Nov 2020 02:20:33 -0800 (PST)
 Received: from localhost.localdomain (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
         by smtp.gmail.com with ESMTPSA id b14sm17746961wrs.46.2020.11.15.02.20.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Nov 2020 02:20:32 -0800 (PST)
+        Sun, 15 Nov 2020 02:20:33 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 5.11 0/2] clean up async msg setup
-Date:   Sun, 15 Nov 2020 10:17:16 +0000
-Message-Id: <cover.1605434816.git.asml.silence@gmail.com>
+Subject: [PATCH 1/2] io_uring: update msg header on copy
+Date:   Sun, 15 Nov 2020 10:17:17 +0000
+Message-Id: <9f972b6c52969ad24237f65dced2ca85ad10ebbe.1605434816.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1605434816.git.asml.silence@gmail.com>
+References: <cover.1605434816.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This refactors sendmsg() and recvmsg() msg copy, async_data setup
-and its later use. Also deduplicates a couple of things helping to keep
-it saner.
+After copying a send/recv msg header, fix up all the fields right away
+instead of delaying it. Keeping it in one place makes it easier to
+follow.
 
-Pavel Begunkov (2):
-  io_uring: update msg header on copy
-  io_uring: setup iter for recv BUFFER_SELECT once
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 32 +++++++++++++-------------------
+ 1 file changed, 13 insertions(+), 19 deletions(-)
 
- fs/io_uring.c | 83 +++++++++++++++++++++++++--------------------------
- 1 file changed, 41 insertions(+), 42 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 365a583033c5..02811c90f711 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4487,6 +4487,10 @@ static int io_setup_async_msg(struct io_kiocb *req,
+ 	async_msg = req->async_data;
+ 	req->flags |= REQ_F_NEED_CLEANUP;
+ 	memcpy(async_msg, kmsg, sizeof(*kmsg));
++	async_msg->msg.msg_name = &async_msg->addr;
++	/* if iov is not set, it uses fast_iov */
++	if (!async_msg->iov)
++		async_msg->msg.msg_iter.iov = async_msg->fast_iov;
+ 	return -EAGAIN;
+ }
+ 
+@@ -4537,14 +4541,8 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
+ 	if (unlikely(!sock))
+ 		return ret;
+ 
+-	if (req->async_data) {
+-		kmsg = req->async_data;
+-		kmsg->msg.msg_name = &kmsg->addr;
+-		/* if iov is set, it's allocated already */
+-		if (!kmsg->iov)
+-			kmsg->iov = kmsg->fast_iov;
+-		kmsg->msg.msg_iter.iov = kmsg->iov;
+-	} else {
++	kmsg = req->async_data;
++	if (!kmsg) {
+ 		ret = io_sendmsg_copy_hdr(req, &iomsg);
+ 		if (ret)
+ 			return ret;
+@@ -4563,7 +4561,8 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
+ 	if (ret == -ERESTARTSYS)
+ 		ret = -EINTR;
+ 
+-	if (kmsg->iov != kmsg->fast_iov)
++	/* it's reportedly faster to check for null here */
++	if (kmsg->iov)
+ 		kfree(kmsg->iov);
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+ 	if (ret < 0)
+@@ -4765,14 +4764,8 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
+ 	if (unlikely(!sock))
+ 		return ret;
+ 
+-	if (req->async_data) {
+-		kmsg = req->async_data;
+-		kmsg->msg.msg_name = &kmsg->addr;
+-		/* if iov is set, it's allocated already */
+-		if (!kmsg->iov)
+-			kmsg->iov = kmsg->fast_iov;
+-		kmsg->msg.msg_iter.iov = kmsg->iov;
+-	} else {
++	kmsg = req->async_data;
++	if (!kmsg) {
+ 		ret = io_recvmsg_copy_hdr(req, &iomsg);
+ 		if (ret)
+ 			return ret;
+@@ -4784,7 +4777,7 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
+ 		if (IS_ERR(kbuf))
+ 			return PTR_ERR(kbuf);
+ 		kmsg->fast_iov[0].iov_base = u64_to_user_ptr(kbuf->addr);
+-		iov_iter_init(&kmsg->msg.msg_iter, READ, kmsg->iov,
++		iov_iter_init(&kmsg->msg.msg_iter, READ, kmsg->fast_iov,
+ 				1, req->sr_msg.len);
+ 	}
+ 
+@@ -4803,7 +4796,8 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
+ 
+ 	if (req->flags & REQ_F_BUFFER_SELECTED)
+ 		cflags = io_put_recv_kbuf(req);
+-	if (kmsg->iov != kmsg->fast_iov)
++	/* it's reportedly faster to check for null here */
++	if (kmsg->iov)
+ 		kfree(kmsg->iov);
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+ 	if (ret < 0)
 -- 
 2.24.0
 

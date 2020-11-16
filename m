@@ -2,212 +2,257 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5E202B3FD2
-	for <lists+io-uring@lfdr.de>; Mon, 16 Nov 2020 10:34:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 400A22B412F
+	for <lists+io-uring@lfdr.de>; Mon, 16 Nov 2020 11:33:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbgKPJd5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 Nov 2020 04:33:57 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:45838 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726837AbgKPJd4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Nov 2020 04:33:56 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UFWvYxj_1605519230;
-Received: from 30.225.32.141(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UFWvYxj_1605519230)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 16 Nov 2020 17:33:51 +0800
-Subject: Re: INFO: task can't die in io_sq_thread_stop
-To:     syzbot <syzbot+03beeb595f074db9cfd1@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000038569805b4211287@google.com>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <39be8d01-6550-ee8a-5a8d-2707b372b711@linux.alibaba.com>
-Date:   Mon, 16 Nov 2020 17:32:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        id S1728680AbgKPKce (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 Nov 2020 05:32:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728511AbgKPKcd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Nov 2020 05:32:33 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45C05C0613CF
+        for <io-uring@vger.kernel.org>; Mon, 16 Nov 2020 02:32:33 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id l1so18076231wrb.9
+        for <io-uring@vger.kernel.org>; Mon, 16 Nov 2020 02:32:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hzkyKiqs+WTIyPESwB7vk7YhR3LMlx+eAl6eye7WjyY=;
+        b=q4cJvRdFIJ3JjJ7qqkwGS1dL3Xfl8Sq6enw/kTQRAkkRm/RVECl3fEuGV5by1yE5Vk
+         +5wUqg9rhdbP97lDjtQI5YJuDFZvT0nsgsc62DMewE7n3IrCTXsz8bu4PzUWt4CVmXQH
+         +hS3maK/eFp2bUtCTTD/IDtS+vqXdE/lP1x4HHjih8hF19nEuFnuTrti8knE07mXLGY5
+         sfo/cJptH0a+4ZE6QwbGXryfHHWjzw6bojxoy0YrnBMkngpaud1ZrpEolcXXvjSuEd80
+         Xk8K0pOyCrJAQJ0XWDX3aLJsxa0ynTcxToLjVXBPfAx+SJbY8JwF3dVAfD+oo1JMx5Ay
+         gphg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hzkyKiqs+WTIyPESwB7vk7YhR3LMlx+eAl6eye7WjyY=;
+        b=L3EA+AlKUWm5/E4kHzq9/Pxt9wJ5fd8/y6U2mFUxUE7OKkGPF7tTzWT5aiBwTs8uTo
+         dAiScE7GXmuAAh/0eI3B6kZQf3TXTfrA5dYPCbEoS+/TPT4p9JdNgbY2KVxsqYtDSBrm
+         houdgH9SEeJu0oceGYObxR4XQ6bCYpTfOJovhZiITgfgZ6aMFJiboG32uN+JbNMOQIOy
+         CKJ67rL9NXqgJBwtPy9Y8dYyC1rD17TTbNobMad2Sg05I1GK1XEW77ylYdeTmMaaKcQs
+         fS01rDUNEO9yld3mlIaqSxUAxo/lFhOS1A++mQditmP3uhTv3T+UAK+Pp9PyKMF0uXLc
+         fEHw==
+X-Gm-Message-State: AOAM533ZvJQDDrKOW+fpa2PM+GXXVytuFkVkvdU/gJgdq6hnqdAE+i5V
+        w1xLyCLZXzX7y6srlakbOjg=
+X-Google-Smtp-Source: ABdhPJxwAYvuaUCypDyapYHGEYe0Nvimk8sacHP1nHmGBABltjZmJHZP2t5g87WLcIIcZqn+3vXc7A==
+X-Received: by 2002:adf:e983:: with SMTP id h3mr17874411wrm.382.1605522752002;
+        Mon, 16 Nov 2020 02:32:32 -0800 (PST)
+Received: from localhost.localdomain (host109-152-100-189.range109-152.btcentralplus.com. [109.152.100.189])
+        by smtp.gmail.com with ESMTPSA id c6sm23930998wrh.74.2020.11.16.02.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2020 02:32:31 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing] test: long iov recvmsg()/copy
+Date:   Mon, 16 Nov 2020 10:29:13 +0000
+Message-Id: <f613395a7bf9c7a70f956d96e9d7a5a9101992c4.1605522519.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <00000000000038569805b4211287@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi jens,
+Pass in a long iov (larger than on-stack cache)  to test that it's
+allocated correctly, and copied well if inline execution failed with
+-EAGAIN.
 
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    6dd65e60 Add linux-next specific files for 20201110
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14727d42500000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4fab43daf5c54712
-> dashboard link: https://syzkaller.appspot.com/bug?extid=03beeb595f074db9cfd1
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+03beeb595f074db9cfd1@syzkaller.appspotmail.com
-> 
-> INFO: task syz-executor.2:12399 can't die for more than 143 seconds.
-> task:syz-executor.2  state:D stack:28744 pid:12399 ppid:  8504 flags:0x00004004
-> Call Trace:
->   context_switch kernel/sched/core.c:3773 [inline]
->   __schedule+0x893/0x2170 kernel/sched/core.c:4522
->   schedule+0xcf/0x270 kernel/sched/core.c:4600
->   schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1847
->   do_wait_for_common kernel/sched/completion.c:85 [inline]
->   __wait_for_common kernel/sched/completion.c:106 [inline]
->   wait_for_common kernel/sched/completion.c:117 [inline]
->   wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
->   kthread_stop+0x17a/0x720 kernel/kthread.c:596
->   io_put_sq_data fs/io_uring.c:7193 [inline]
->   io_sq_thread_stop+0x452/0x570 fs/io_uring.c:7290
->   io_finish_async fs/io_uring.c:7297 [inline]
->   io_sq_offload_create fs/io_uring.c:8015 [inline]
->   io_uring_create fs/io_uring.c:9433 [inline]
->   io_uring_setup+0x19b7/0x3730 fs/io_uring.c:9507
->   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-I also don't have a reproducer yet, but seems that there is a race
-in current codes:                  |
-=> io_put_sq_data                  |
-==> kthread_park(sqd->thread);     |
-                                    | T1: sq thread is parked now.
-==> kthread_stop(sqd->thread);     |
-===> kthread_unpark(k);            |
-                                    | T2: sq thread is now unpared, can run again
-                                    |
-                                    | T3: sq thread is now preempted out.
-                                    |
-===> wake_up_process(k);           |
-                                    |
-                                    | T4: Since sqd ctx list is empty, needs_sched will be true,
-                                    | then sq thread sets task state to TASK_INTERRUPTIBLE,
-                                    | and schedule, now sq thread will never be waken up.
-===> wait_for_completion           |
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/send_recvmsg.c | 65 ++++++++++++++++++++++++++++++---------------
+ 1 file changed, 44 insertions(+), 21 deletions(-)
 
-I have artificially used mdelay() to simulate above race, will get same stack like
-this syzbot report.
+diff --git a/test/send_recvmsg.c b/test/send_recvmsg.c
+index 50c8e94..6b513bc 100644
+--- a/test/send_recvmsg.c
++++ b/test/send_recvmsg.c
+@@ -11,6 +11,7 @@
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <pthread.h>
++#include <assert.h>
+ 
+ #include "liburing.h"
+ 
+@@ -24,7 +25,10 @@ static char str[] = "This is a test of sendmsg and recvmsg over io_uring!";
+ #define BUF_BGID	10
+ #define BUF_BID		89
+ 
+-static int recv_prep(struct io_uring *ring, struct iovec *iov, int bgid)
++#define MAX_IOV_COUNT	10
++
++static int recv_prep(struct io_uring *ring, struct iovec iov[], int iov_count,
++		     int bgid)
+ {
+ 	struct sockaddr_in saddr;
+ 	struct msghdr msg;
+@@ -53,11 +57,6 @@ static int recv_prep(struct io_uring *ring, struct iovec *iov, int bgid)
+ 		goto err;
+ 	}
+ 
+-	memset(&msg, 0, sizeof(msg));
+-        msg.msg_namelen = sizeof(struct sockaddr_in);
+-	msg.msg_iov = iov;
+-	msg.msg_iovlen = 1;
+-
+ 	sqe = io_uring_get_sqe(ring);
+ 	if (!sqe) {
+ 		fprintf(stderr, "io_uring_get_sqe failed\n");
+@@ -66,11 +65,15 @@ static int recv_prep(struct io_uring *ring, struct iovec *iov, int bgid)
+ 
+ 	io_uring_prep_recvmsg(sqe, sockfd, &msg, 0);
+ 	if (bgid) {
+-		sqe->user_data = (unsigned long) iov->iov_base;
+ 		iov->iov_base = NULL;
+ 		sqe->flags |= IOSQE_BUFFER_SELECT;
+ 		sqe->buf_group = bgid;
++		iov_count = 1;
+ 	}
++	memset(&msg, 0, sizeof(msg));
++	msg.msg_namelen = sizeof(struct sockaddr_in);
++	msg.msg_iov = iov;
++	msg.msg_iovlen = iov_count;
+ 
+ 	ret = io_uring_submit(ring);
+ 	if (ret <= 0) {
+@@ -89,9 +92,10 @@ struct recv_data {
+ 	pthread_mutex_t *mutex;
+ 	int buf_select;
+ 	int no_buf_add;
++	int iov_count;
+ };
+ 
+-static int do_recvmsg(struct io_uring *ring, struct iovec *iov,
++static int do_recvmsg(struct io_uring *ring, char buf[MAX_MSG + 1],
+ 		      struct recv_data *rd)
+ {
+ 	struct io_uring_cqe *cqe;
+@@ -112,8 +116,6 @@ static int do_recvmsg(struct io_uring *ring, struct iovec *iov,
+ 		int bid = cqe->flags >> 16;
+ 		if (bid != BUF_BID)
+ 			fprintf(stderr, "Buffer ID mismatch %d\n", bid);
+-		/* just for passing the pointer to str */
+-		iov->iov_base = (void *) (uintptr_t) cqe->user_data;
+ 	}
+ 
+ 	if (rd->no_buf_add && rd->buf_select) {
+@@ -127,7 +129,7 @@ static int do_recvmsg(struct io_uring *ring, struct iovec *iov,
+ 		goto err;
+ 	}
+ 
+-	if (strcmp(str, iov->iov_base)) {
++	if (strncmp(str, buf, MAX_MSG + 1)) {
+ 		fprintf(stderr, "string mismatch\n");
+ 		goto err;
+ 	}
+@@ -137,20 +139,34 @@ err:
+ 	return 1;
+ }
+ 
++static void init_iov(struct iovec iov[MAX_IOV_COUNT], int iov_to_use,
++		     char buf[MAX_MSG + 1])
++{
++	int i, last_idx = iov_to_use - 1;
++
++	assert(0 < iov_to_use && iov_to_use <= MAX_IOV_COUNT);
++	for (i = 0; i < last_idx; ++i) {
++		iov[i].iov_base = buf + i;
++		iov[i].iov_len = 1;
++	}
++
++	iov[last_idx].iov_base = buf + last_idx;
++	iov[last_idx].iov_len = MAX_MSG - last_idx;
++}
++
+ static void *recv_fn(void *data)
+ {
+ 	struct recv_data *rd = data;
+ 	pthread_mutex_t *mutex = rd->mutex;
+ 	char buf[MAX_MSG + 1];
+-	struct iovec iov = {
+-		.iov_base = buf,
+-		.iov_len = sizeof(buf) - 1,
+-	};
++	struct iovec iov[MAX_IOV_COUNT];
+ 	struct io_uring_sqe *sqe;
+ 	struct io_uring_cqe *cqe;
+ 	struct io_uring ring;
+ 	int ret;
+ 
++	init_iov(iov, rd->iov_count, buf);
++
+ 	ret = io_uring_queue_init(1, &ring, 0);
+ 	if (ret) {
+ 		fprintf(stderr, "queue init failed: %d\n", ret);
+@@ -184,14 +200,14 @@ static void *recv_fn(void *data)
+ 		}
+ 	}
+ 
+-	ret = recv_prep(&ring, &iov, rd->buf_select ? BUF_BGID : 0);
++	ret = recv_prep(&ring, iov, rd->iov_count, rd->buf_select ? BUF_BGID : 0);
+ 	if (ret) {
+ 		fprintf(stderr, "recv_prep failed: %d\n", ret);
+ 		goto err;
+ 	}
+ 
+ 	pthread_mutex_unlock(mutex);
+-	ret = do_recvmsg(&ring, &iov, rd);
++	ret = do_recvmsg(&ring, buf, rd);
+ 
+ 	io_uring_queue_exit(&ring);
+ 
+@@ -261,7 +277,7 @@ err:
+ 	return 1;
+ }
+ 
+-static int test(int buf_select, int no_buf_add)
++static int test(int buf_select, int no_buf_add, int iov_count)
+ {
+ 	struct recv_data rd;
+ 	pthread_mutexattr_t attr;
+@@ -278,6 +294,7 @@ static int test(int buf_select, int no_buf_add)
+ 	rd.mutex = &mutex;
+ 	rd.buf_select = buf_select;
+ 	rd.no_buf_add = no_buf_add;
++	rd.iov_count = iov_count;
+ 	ret = pthread_create(&recv_thread, NULL, recv_fn, &rd);
+ 	if (ret) {
+ 		fprintf(stderr, "Thread create failed\n");
+@@ -299,19 +316,25 @@ int main(int argc, char *argv[])
+ 	if (argc > 1)
+ 		return 0;
+ 
+-	ret = test(0, 0);
++	ret = test(0, 0, 1);
+ 	if (ret) {
+ 		fprintf(stderr, "send_recvmsg 0 failed\n");
+ 		return 1;
+ 	}
+ 
+-	ret = test(1, 0);
++	ret = test(0, 0, 10);
++	if (ret) {
++		fprintf(stderr, "send_recvmsg multi iov failed\n");
++		return 1;
++	}
++
++	ret = test(1, 0, 1);
+ 	if (ret) {
+ 		fprintf(stderr, "send_recvmsg 1 0 failed\n");
+ 		return 1;
+ 	}
+ 
+-	ret = test(1, 1);
++	ret = test(1, 1, 1);
+ 	if (ret) {
+ 		fprintf(stderr, "send_recvmsg 1 1 failed\n");
+ 		return 1;
+-- 
+2.24.0
 
--               if (kthread_should_park())
-+               if (kthread_should_park()) {
-                         kthread_parkme();
-+                       if (kthread_should_stop())
-+                               break;
-+               }
-this diff can fix this issue, and if ctx_list is empty, we don't need to call schedule().
-
-Regards,
-Xiaoguang Wang
-
-
-> RIP: 0033:0x45deb9
-> Code: Unable to access opcode bytes at RIP 0x45de8f.
-> RSP: 002b:00007f174e51ac78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> RAX: ffffffffffffffda RBX: 0000000000008640 RCX: 000000000045deb9
-> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 00000000000050e5
-> RBP: 000000000118bf58 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
-> R13: 00007ffed9ca723f R14: 00007f174e51b9c0 R15: 000000000118bf2c
-> INFO: task syz-executor.2:12399 blocked for more than 143 seconds.
->        Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor.2  state:D stack:28744 pid:12399 ppid:  8504 flags:0x00004004
-> Call Trace:
->   context_switch kernel/sched/core.c:3773 [inline]
->   __schedule+0x893/0x2170 kernel/sched/core.c:4522
->   schedule+0xcf/0x270 kernel/sched/core.c:4600
->   schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1847
->   do_wait_for_common kernel/sched/completion.c:85 [inline]
->   __wait_for_common kernel/sched/completion.c:106 [inline]
->   wait_for_common kernel/sched/completion.c:117 [inline]
->   wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
->   kthread_stop+0x17a/0x720 kernel/kthread.c:596
->   io_put_sq_data fs/io_uring.c:7193 [inline]
->   io_sq_thread_stop+0x452/0x570 fs/io_uring.c:7290
->   io_finish_async fs/io_uring.c:7297 [inline]
->   io_sq_offload_create fs/io_uring.c:8015 [inline]
->   io_uring_create fs/io_uring.c:9433 [inline]
->   io_uring_setup+0x19b7/0x3730 fs/io_uring.c:9507
->   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x45deb9
-> Code: Unable to access opcode bytes at RIP 0x45de8f.
-> RSP: 002b:00007f174e51ac78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> RAX: ffffffffffffffda RBX: 0000000000008640 RCX: 000000000045deb9
-> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 00000000000050e5
-> RBP: 000000000118bf58 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
-> R13: 00007ffed9ca723f R14: 00007f174e51b9c0 R15: 000000000118bf2c
-> 
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/1653:
->   #0: ffffffff8b3386a0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6253
-> 1 lock held by systemd-journal/4873:
-> 1 lock held by in:imklog/8167:
->   #0: ffff88801c86e0f0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:932
-> 
-> =============================================
-> 
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 1653 Comm: khungtaskd Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x107/0x163 lib/dump_stack.c:118
->   nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
->   nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
->   trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
->   check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
->   watchdog+0xd89/0xf30 kernel/hung_task.c:338
->   kthread+0x3af/0x4a0 kernel/kthread.c:292
->   ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-> Sending NMI from CPU 1 to CPUs 0:
-> NMI backtrace for cpu 0
-> CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Workqueue: events nsim_dev_trap_report_work
-> RIP: 0010:mark_lock+0x30/0x24c0 kernel/locking/lockdep.c:4371
-> Code: 41 54 41 89 d4 48 ba 00 00 00 00 00 fc ff df 55 53 48 81 ec 18 01 00 00 48 8d 5c 24 38 48 89 3c 24 48 c7 44 24 38 b3 8a b5 41 <48> c1 eb 03 48 c7 44 24 40 30 1b c6 8a 48 8d 04 13 48 c7 44 24 48
-> RSP: 0018:ffffc90000ca7988 EFLAGS: 00000096
-> RAX: 0000000000000004 RBX: ffffc90000ca79c0 RCX: ffffffff8155b947
-> RDX: dffffc0000000000 RSI: ffff888010d20918 RDI: ffff888010d20000
-> RBP: 0000000000000006 R08: 0000000000000000 R09: ffffffff8ebb477f
-> R10: fffffbfff1d768ef R11: 000000004fb6aa4b R12: 0000000000000006
-> R13: dffffc0000000000 R14: ffff888010d20918 R15: 0000000000000022
-> FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f8ffcf99000 CR3: 000000001b2e7000 CR4: 00000000001506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   mark_held_locks+0x9f/0xe0 kernel/locking/lockdep.c:4011
->   __trace_hardirqs_on_caller kernel/locking/lockdep.c:4037 [inline]
->   lockdep_hardirqs_on_prepare kernel/locking/lockdep.c:4097 [inline]
->   lockdep_hardirqs_on_prepare+0x28b/0x400 kernel/locking/lockdep.c:4049
->   trace_hardirqs_on+0x5b/0x1c0 kernel/trace/trace_preemptirq.c:49
->   __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
->   _raw_spin_unlock_irqrestore+0x42/0x50 kernel/locking/spinlock.c:191
->   extract_crng drivers/char/random.c:1026 [inline]
->   _get_random_bytes+0x229/0x670 drivers/char/random.c:1562
->   nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:538 [inline]
->   nsim_dev_trap_report drivers/net/netdevsim/dev.c:568 [inline]
->   nsim_dev_trap_report_work+0x740/0xbd0 drivers/net/netdevsim/dev.c:609
->   process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
->   worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
->   kthread+0x3af/0x4a0 kernel/kthread.c:292
->   ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 

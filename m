@@ -2,26 +2,26 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC3922B5A90
-	for <lists+io-uring@lfdr.de>; Tue, 17 Nov 2020 08:56:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64EBD2B5A91
+	for <lists+io-uring@lfdr.de>; Tue, 17 Nov 2020 08:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbgKQH43 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1726815AbgKQH43 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Tue, 17 Nov 2020 02:56:29 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:44135 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726315AbgKQH43 (ORCPT
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:46271 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726136AbgKQH43 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 02:56:29 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UFgXvU5_1605599785;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UFgXvU5_1605599785)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UFgHDzY_1605599786;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UFgHDzY_1605599786)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 17 Nov 2020 15:56:25 +0800
+          Tue, 17 Nov 2020 15:56:26 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     axboe@kernel.dk, hch@infradead.org, ming.lei@redhat.com
 Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
         joseph.qi@linux.alibaba.com
-Subject: [PATCH v4 1/2] block: disable iopoll for split bio
-Date:   Tue, 17 Nov 2020 15:56:24 +0800
-Message-Id: <20201117075625.46118-2-jefflexu@linux.alibaba.com>
+Subject: [PATCH v4 2/2] block,iomap: disable iopoll when split needed
+Date:   Tue, 17 Nov 2020 15:56:25 +0800
+Message-Id: <20201117075625.46118-3-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
 References: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
@@ -31,83 +31,87 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-iopoll is initially for small size, latency sensitive IO. It doesn't
-work well for big IO, especially when it needs to be split to multiple
-bios. In this case, the returned cookie of __submit_bio_noacct_mq() is
-indeed the cookie of the last split bio. The completion of *this* last
-split bio done by iopoll doesn't mean the whole original bio has
-completed. Callers of iopoll still need to wait for completion of other
-split bios.
+Both blkdev fs and iomap-based fs (ext4, xfs, etc.) currently support
+sync iopoll. One single bio can contain at most BIO_MAX_PAGES, i.e. 256
+bio_vec. If the input iov_iter contains more than 256 segments, then
+one dio will be split into multiple bios, which may cause potential
+deadlock for sync iopoll.
 
-Besides bio splitting may cause more trouble for iopoll which isn't
-supposed to be used in case of big IO.
+When it comes to sync iopoll, the bio is submitted without REQ_NOWAIT
+flag set and the process may hang in blk_mq_get_tag() if the dio needs
+to be split into multiple bios and thus can rapidly exhausts the queue
+depth. The process has to wait for the completion of the previously
+allocated requests, which should be reaped by the following sync
+polling, and thus causing a potential deadlock.
 
-iopoll for split bio may cause potential race if CPU migration happens
-during bio submission. Since the returned cookie is that of the last
-split bio, polling on the corresponding hardware queue doesn't help
-complete other split bios, if these split bios are enqueued into
-different hardware queues. Since interrupts are disabled for polling
-queues, the completion of these other split bios depends on timeout
-mechanism, thus causing a potential hang.
+In fact there's a subtle difference of handling of HIPRI IO between
+blkdev fs and iomap-based fs, when dio need to be split into multiple
+bios. blkdev fs will set REQ_HIPRI for only the last split bio, leaving
+the previous bios queued into normal hardware queues, and not causing
+the trouble described above. iomap-based fs will set REQ_HIPRI for all
+split bios, and thus may cause the potential deadlock described above.
 
-iopoll for split bio may also cause hang for sync polling. Currently
-both the blkdev and iomap-based fs (ext4/xfs, etc) support sync polling
-in direct IO routine. These routines will submit bio without REQ_NOWAIT
-flag set, and then start sync polling in current process context. The
-process may hang in blk_mq_get_tag() if the submitted bio has to be
-split into multiple bios and can rapidly exhaust the queue depth. The
-process are waiting for the completion of the previously allocated
-requests, which should be reaped by the following polling, and thus
-causing a deadlock.
+Noted that though the analysis described above, currently blkdev fs and
+iomap-based fs won't trigger this potential deadlock. Because only
+preadv2(2)/pwritev2(2) are capable of *sync* polling as only these two
+can set RWF_NOWAIT. Currently the maximum number of iovecs of one single
+preadv2(2)/pwritev2(2) call is UIO_MAXIOV, i.e. 1024, while the minimum
+queue depth is BLKDEV_MIN_RQ i.e. 4. That means one
+preadv2(2)/pwritev2(2) call can submit at most 4 bios, which will fill
+up the queue depth *exactly* and thus there's no deadlock in this case.
 
-To avoid these subtle trouble described above, just disable iopoll for
-split bio.
+However this constraint can be fragile. Disable iopoll when one dio need
+to be split into multiple bios.Though blkdev fs may not suffer this issue,
+still it may not make much sense to iopoll for big IO, since iopoll is
+initially for small size, latency sensitive IO.
 
-Suggested-by: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 ---
- block/blk-merge.c | 7 +++++++
- block/blk-mq.c    | 6 ++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ fs/block_dev.c       |  9 +++++++++
+ fs/iomap/direct-io.c | 10 ++++++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index bcf5e4580603..53ad781917a2 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -279,6 +279,13 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
- 	return NULL;
- split:
- 	*segs = nsegs;
-+
-+	/*
-+	 * bio splitting may cause subtle trouble such as hang when doing iopoll,
-+	 * not to mention iopoll isn't supposed to be used in case of big IO.
-+	 */
-+	bio->bi_opf &= ~REQ_HIPRI;
-+
- 	return bio_split(bio, sectors, GFP_NOIO, bs);
- }
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 9e84b1928b94..ed3f46e8fa91 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -436,6 +436,15 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
+ 			break;
+ 		}
  
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 55bcee5dc032..6d10652a7ed0 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -3853,11 +3853,13 @@ int blk_poll(struct request_queue *q, blk_qc_t cookie, bool spin)
- 	    !test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
- 		return 0;
- 
-+	hctx = q->queue_hw_ctx[blk_qc_t_to_queue_num(cookie)];
-+	if (hctx->type != HCTX_TYPE_POLL)
-+		return 0;
++		/*
++		 * The current dio needs to be split into multiple bios here.
++		 * iopoll for split bio will cause subtle trouble such as
++		 * hang when doing sync polling, while iopoll is initially
++		 * for small size, latency sensitive IO. Thus disable iopoll
++		 * if split needed.
++		 */
++		iocb->ki_flags &= ~IOCB_HIPRI;
 +
- 	if (current->plug)
- 		blk_flush_plug_list(current->plug, false);
+ 		if (!dio->multi_bio) {
+ 			/*
+ 			 * AIO needs an extra reference to ensure the dio
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 933f234d5bec..396ac0f91a43 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -309,6 +309,16 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		copied += n;
  
--	hctx = q->queue_hw_ctx[blk_qc_t_to_queue_num(cookie)];
--
- 	/*
- 	 * If we sleep, have the caller restart the poll loop to reset
- 	 * the state. Like for the other success return cases, the
+ 		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
++		/*
++		 * The current dio needs to be split into multiple bios here.
++		 * iopoll for split bio will cause subtle trouble such as
++		 * hang when doing sync polling, while iopoll is initially
++		 * for small size, latency sensitive IO. Thus disable iopoll
++		 * if split needed.
++		 */
++		if (nr_pages)
++			dio->iocb->ki_flags &= ~IOCB_HIPRI;
++
+ 		iomap_dio_submit_bio(dio, iomap, bio, pos);
+ 		pos += n;
+ 	} while (nr_pages);
 -- 
 2.27.0
 

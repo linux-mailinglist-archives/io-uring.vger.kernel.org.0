@@ -2,59 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 292862B6A8D
-	for <lists+io-uring@lfdr.de>; Tue, 17 Nov 2020 17:45:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7C5D2B6AF6
+	for <lists+io-uring@lfdr.de>; Tue, 17 Nov 2020 18:02:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbgKQQpQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Nov 2020 11:45:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34574 "EHLO
+        id S1728424AbgKQRCA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Nov 2020 12:02:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727184AbgKQQpQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 11:45:16 -0500
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAB9DC0613CF
-        for <io-uring@vger.kernel.org>; Tue, 17 Nov 2020 08:45:15 -0800 (PST)
-Received: by mail-wm1-x343.google.com with SMTP id p19so2411868wmg.0
-        for <io-uring@vger.kernel.org>; Tue, 17 Nov 2020 08:45:15 -0800 (PST)
+        with ESMTP id S1728009AbgKQRCA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 12:02:00 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68098C0613CF
+        for <io-uring@vger.kernel.org>; Tue, 17 Nov 2020 09:01:58 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id s8so23889250wrw.10
+        for <io-uring@vger.kernel.org>; Tue, 17 Nov 2020 09:01:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7/EWA3/6IEBeeqzOfjqQDaLSG9tubK6ClS8zAKPhxSg=;
-        b=UocaX8ZjR3gHZXqEKaEw3ZPZSGdW+g6nP2UWnpGygzUNFGNPZl+mVbwZoQZFWBUIdU
-         8LI/WrsMBILTnGA6Z4Q7OLpq1AqnGxRSW1sNWGEiA7eMxc867RrPn5seinI5WQUhGIe7
-         mIZ0e7rj61+9uum1ISt6aMAC1auInAbgqjBm2ifLcsU6H4SI1Al1Zh13tExTgs5VkcSs
-         MMBuGSrZ4S1rJO73MShSlM52Q8ZgoU82rJP/rteS0C/guIi9XpgNRY0nu5Mk+8FdMhjE
-         Y3173UoMlzCxFPR4Ib9Vz1dobWmd2nOjL2UVeSh3Ymj9uSSVaJjA/fhAS7Ya2dNIHzrX
-         nbUg==
+        bh=bKaJSKbXUBpY/iFOsjNa6hlbIU74a6x5JmAXVaMvl5U=;
+        b=avSeOxXlxJwhX+lqPU0CqieBkEfvKJEuNDk2pegE7dUfaRub6Vm2v9ePxocoGSfBNX
+         9aUW4saYxNo0ESa9K1TQ/EEkD0oefrZsuvOlN+axttHjjX9yiyH+Qnz7p738FY/YUUvt
+         ttbBDGH0vbtZuprGSdqcgNZaWwIO0IS6iEv5jryc+CsgbFWoOf+BA8wTQv7I95ebqFx2
+         pNIZd90GP29lp11vMP7D4nf/WSTW9uLbWR8RGLXzkt1qn0JJr8SyW5s6UZo/PVYN+qot
+         VsDD8gLG+vj2VpfwNQnoweLtnMYCGv+oXvFYxVHUpnr0W3C2XANJeqjdLVL/3d9tK1tf
+         037Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=7/EWA3/6IEBeeqzOfjqQDaLSG9tubK6ClS8zAKPhxSg=;
-        b=efywcqaRD3XbMFH+vikU6xG8PO2RjpyVsUJ5oh3NpQiOD5e4KLW3Lm6st1eVpmjnZ9
-         yO9s8afKpOzdTmmGhnbzAWRYFctBEw0jPXPNt47E4ApERgUR7biPAeeuqiezv9QZZyyg
-         fUIkC5PwtyboqbvgnNeneY7lizP6SRhqJLpDFSn1KZVbinp6QmFkb9fSYxFr+V2d8jr2
-         sbqhiTBNDAi/vBRqLvSt5dQdhUhatEwYWRpzD9keIX2XBcbG0xSV2MG6/HcHMQVYftfm
-         /zrCE1EYwxecOBoHW6E93ZH+DPRxPQOeOuEvbNZpjTGQso0nGrU9t27cTQLoFPAHKwyH
-         qyHQ==
-X-Gm-Message-State: AOAM530fPhIhCbRY7aJegl5y6l3gx4ZWkVVweDKWtNIcSjJevFns0wei
-        Y4dzEbPRwvfX1dgSASp+RyQuJQ8Eqpd7VA==
-X-Google-Smtp-Source: ABdhPJy3LOhKCrMPJCyXhjd6Y3yM50KID4UypbkmHFkg6QbH0gzVIlOlIdhqIQCTDo0pmXXgy3rr7Q==
-X-Received: by 2002:a1c:df57:: with SMTP id w84mr523329wmg.105.1605631514549;
-        Tue, 17 Nov 2020 08:45:14 -0800 (PST)
+        bh=bKaJSKbXUBpY/iFOsjNa6hlbIU74a6x5JmAXVaMvl5U=;
+        b=S9OvyHq8WJndnxIYj5ZjLM8cd+l5Xi/4JGRu132SIsntf42jG4XSbJ9VE0LQJyMZIO
+         rIpymirUL+dFCXwJF7xy0HlQFG801j6/lGzJtBBYrXcjUdi36SCZ7bDEAx9ImQYrYfN9
+         oF26+XUtW4GNQZIDLgDz6gn+9RUrHGCNhzFJhczg4OgoZHeTvQ4PqsTccAmjEJCd03pJ
+         xJ0c8pwDhdiFfNoX79T+9GbVR3Sjr5aw1MAL0xlfDdHQrVEwD0ZkN3DzyaX0D+aCjR/e
+         IcImOukk13gSR8hFP1xK6TPQ/74boijkI84Ug2mzWP1AAm+Xy9/+ruCxKoJMhuxJJTtJ
+         hewg==
+X-Gm-Message-State: AOAM533yJFgYd678XfQMYDe3LFlql/1ED7CCvqQGV6IyYH82Pa3kCuy7
+        Nzbci5P4ar2jcpZ+9X53EcipkrMV52sadQ==
+X-Google-Smtp-Source: ABdhPJyL536z6ZW/7/0qWQ6NjtSqdhabJrthz+hITeb4709qnoYWfm+3nzL+/OJJAKZ2fegaRzYDtg==
+X-Received: by 2002:a05:6000:10c9:: with SMTP id b9mr477192wrx.251.1605632517078;
+        Tue, 17 Nov 2020 09:01:57 -0800 (PST)
 Received: from [192.168.1.33] (host109-152-100-189.range109-152.btcentralplus.com. [109.152.100.189])
-        by smtp.gmail.com with ESMTPSA id t74sm4519871wmt.8.2020.11.17.08.45.13
+        by smtp.gmail.com with ESMTPSA id p10sm29074827wre.2.2020.11.17.09.01.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Nov 2020 08:45:13 -0800 (PST)
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Tue, 17 Nov 2020 09:01:56 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
+Cc:     joseph.qi@linux.alibaba.com
 References: <20201117061723.18131-1-xiaoguang.wang@linux.alibaba.com>
  <20201117061723.18131-3-xiaoguang.wang@linux.alibaba.com>
  <8e597c50-b6f4-ea08-0885-56d5a608a4ca@gmail.com>
- <36da9b39-241b-492f-62eb-3dacbbf78df3@linux.alibaba.com>
+ <9713dc32-8aea-5fd2-8195-45ceedcb74dd@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -101,12 +102,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: [PATCH 5.11 2/2] io_uring: don't take percpu_ref operations for
  registered files in IOPOLL mode
-Message-ID: <472b9e1c-228f-f464-a5f6-ec35507754bb@gmail.com>
-Date:   Tue, 17 Nov 2020 16:42:06 +0000
+Message-ID: <82116595-2e57-525b-0619-2d71e874bd88@gmail.com>
+Date:   Tue, 17 Nov 2020 16:58:48 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <36da9b39-241b-492f-62eb-3dacbbf78df3@linux.alibaba.com>
+In-Reply-To: <9713dc32-8aea-5fd2-8195-45ceedcb74dd@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -114,179 +115,34 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 17/11/2020 16:21, Xiaoguang Wang wrote:
-> hi,
-> 
+On 17/11/2020 16:30, Jens Axboe wrote:
+> On 11/17/20 3:43 AM, Pavel Begunkov wrote:
 >> On 17/11/2020 06:17, Xiaoguang Wang wrote:
 >>> In io_file_get() and io_put_file(), currently we use percpu_ref_get() and
 >>> percpu_ref_put() for registered files, but it's hard to say they're very
 >>> light-weight synchronization primitives. In one our x86 machine, I get below
 >>> perf data(registered files enabled):
 >>> Samples: 480K of event 'cycles', Event count (approx.): 298552867297
->>> Overhead  Comman  Shared Object     Symbol
->>>     0.45%  :53243  [kernel.vmlinux]  [k] io_file_get
+>>> Overhead  Comman  Shared Object     Symbol
+>>>    0.45%  :53243  [kernel.vmlinux]  [k] io_file_get
 >>
 >> Do you have throughput/latency numbers? In my experience for polling for
 >> such small overheads all CPU cycles you win earlier in the stack will be
 >> just burned on polling, because it would still wait for the same fixed*
 >> time for the next response by device. fixed* here means post-factum but
->> still mostly independent of how your host machine behaves.
->>
->> e.g. you kick io_uring at a moment K, at device responses at a moment
->> K+M. And regardless of what you do in io_uring, the event won't complete
->> earlier than after M.
-> I'm not sure this assumption is correct for real device. IO requests can be
-> completed in any time, seems that there isn't so-called fixed* time. Say
-> we're submitting sqe-2 and sqe-1 has been issued to device, the sooner we finish
-> submitting sqe-2, the sooner and better we start to poll sqe-2 and sqe-2 can be
-> completed timely.
-
-Definitely, that what I mean by "That's not the whole story". There are
-even several patterns how polling in general is used
-
-- trying to poll prior to completions to reduce latency
-- poll as a mean to coalesce, reduce overhead on IRQ, etc.
-
-that's why I asked for number to see whether you get anything from it :)
-
+>> still mostly independent of how your host machine behaves. 
 > 
->>
->> That's not the whole story, but as you penalising non-IOPOLL and complicate
->> it, I just want to confirm that you really get any extra performance from it.
->> Moreover, your drop (0.45%->0.25%) is just 0.20%, and it's comparable with
->> the rest of the function (left 0.25%), that's just a dozen of instructions.
-> I agree that this improvement is minor, and will penalise non-IOPOLL a bit, so I'm
-> very ok that we drop this patchset.
-> 
-> Here I'd like to have some explanations why I submitted such patch set.
-> I found in some our arm machine, whose computing power is not that strong,
-> io_uring(sqpoll and iopoll enabled) even couldn't achieve the capacity of
-> nvme ssd(but spdk can), so I tried to reduce extral overhead in IOPOLL mode.
-> Indeed there're are many factors which will influence io performance, not just
-> io_uring framework, such as block-layer merge operations, various io statistics, etc.
-> 
-> Sometimes I even think whether there should be a light io_uring mainly foucs
-> on iopoll mode, in which it works like in one kernel task context, then we may get
-> rid of many atomic operations, memory-barrier, etc. I wonder whether we can
-> provide a high performance io stack based on io_uring, which will stand shoulder
-> to shoulder with spdk.
-> 
-> As for the throughput/latency numbers for this patch set, I tried to have
-> some tests in a real nvme ssd, but don't get a steady resule, sometimes it
-> shows minor improvements, sometimes it does not. My nvme ssd spec says 4k
-> rand read iops is 880k, maybe needs a higher nvme ssd to test...
+> That's only true if you can max out the device with a single core.
+> Freeing any cycles directly translate into a performance win otherwise,
+> if your device isn't the bottleneck. For the high performance testing
 
-Did you tune your host machine for consistency? Pinning threads, fixing in
-place CPU clocks, set priorities, etc. How minor your improvements are?
-I don't ask to disclose actual numbers, but there is a huge difference in
-getting 0.0000001% throughput vs a visible 1%.
+Agree, that's what happens if a host can't keep up with a device, or e.g.
+in case 2. of my other reply. Why don't you mention throwing many-cores
+into a single many (poll) queue SSD?
 
+> I've done, the actual polling isn't the bottleneck, it's the rest of the
+> stack.
 > 
-> Regards,
-> Xiaoguang Wang
-> 
->>
->>>
->>> Currently I don't find any good and generic solution for this issue, but
->>> in IOPOLL mode, given that we can always ensure get/put registered files
->>> under uring_lock, we can use a simple and plain u64 counter to synchronize
->>> with registered files update operations in __io_sqe_files_update().
->>>
->>> With this patch, perf data show shows:
->>> Samples: 480K of event 'cycles', Event count (approx.): 298811248406
->>> Overhead  Comma  Shared Object     Symbol
->>>     0.25%  :4182  [kernel.vmlinux]  [k] io_file_get
->>>
->>> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
->>> ---
->>>   fs/io_uring.c | 40 ++++++++++++++++++++++++++++++++++------
->>>   1 file changed, 34 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 219609c38e48..0fa48ea50ff9 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -201,6 +201,11 @@ struct fixed_file_table {
->>>     struct fixed_file_ref_node {
->>>       struct percpu_ref        refs;
->>> +    /*
->>> +     * Track the number of reqs that reference this node, currently it's
->>> +     * only used in IOPOLL mode.
->>> +     */
->>> +    u64                count;
->>>       struct list_head        node;
->>>       struct list_head        file_list;
->>>       struct fixed_file_data        *file_data;
->>> @@ -1926,10 +1931,17 @@ static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx,
->>>   static inline void io_put_file(struct io_kiocb *req, struct file *file,
->>>                 bool fixed)
->>>   {
->>> -    if (fixed)
->>> -        percpu_ref_put(&req->ref_node->refs);
->>> -    else
->>> +    if (fixed) {
->>> +        /* See same comments in io_file_get(). */
->>> +        if (req->ctx->flags & IORING_SETUP_IOPOLL) {
->>> +            if (!--req->ref_node->count)
->>> +                percpu_ref_kill(&req->ref_node->refs);
->>> +        } else {
->>> +            percpu_ref_put(&req->ref_node->refs);
->>> +        }
->>> +    } else {
->>>           fput(file);
->>> +    }
->>>   }
->>>     static void io_dismantle_req(struct io_kiocb *req)
->>> @@ -6344,8 +6356,16 @@ static struct file *io_file_get(struct io_submit_state *state,
->>>           fd = array_index_nospec(fd, ctx->nr_user_files);
->>>           file = io_file_from_index(ctx, fd);
->>>           if (file) {
->>> +            /*
->>> +             * IOPOLL mode can always ensure get/put registered files under uring_lock,
->>> +             * so we can use a simple plain u64 counter to synchronize with registered
->>> +             * files update operations in __io_sqe_files_update.
->>> +             */
->>>               req->ref_node = ctx->file_data->node;
->>> -            percpu_ref_get(&req->ref_node->refs);
->>> +            if (ctx->flags & IORING_SETUP_IOPOLL)
->>> +                req->ref_node->count++;
->>> +            else
->>> +                percpu_ref_get(&req->ref_node->refs);
->>>           }
->>>       } else {
->>>           trace_io_uring_file_get(ctx, fd);
->>> @@ -7215,7 +7235,12 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
->>>           ref_node = list_first_entry(&data->ref_list,
->>>                   struct fixed_file_ref_node, node);
->>>       spin_unlock(&data->lock);
->>> -    if (ref_node)
->>> +    /*
->>> +     * If count is not zero, that means we're in IOPOLL mode, and there are
->>> +     * still reqs that reference this ref_node, let the final req do the
->>> +     * percpu_ref_kill job.
->>> +     */
->>> +    if (ref_node && (!--ref_node->count))
->>>           percpu_ref_kill(&ref_node->refs);
->>>         percpu_ref_kill(&data->refs);
->>> @@ -7625,6 +7650,7 @@ static struct fixed_file_ref_node *alloc_fixed_file_ref_node(
->>>       INIT_LIST_HEAD(&ref_node->node);
->>>       INIT_LIST_HEAD(&ref_node->file_list);
->>>       ref_node->file_data = ctx->file_data;
->>> +    ref_node->count = 1;
->>>       return ref_node;
->>>   }
->>>   @@ -7877,7 +7903,9 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
->>>       }
->>>         if (needs_switch) {
->>> -        percpu_ref_kill(&data->node->refs);
->>> +        /* See same comments in io_sqe_files_unregister(). */
->>> +        if (!--data->node->count)
->>> +            percpu_ref_kill(&data->node->refs);
->>>           spin_lock(&data->lock);
->>>           list_add(&ref_node->node, &data->ref_list);
->>>           data->node = ref_node;
->>>
->>
 
 -- 
 Pavel Begunkov

@@ -2,147 +2,180 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7C5D2B6AF6
-	for <lists+io-uring@lfdr.de>; Tue, 17 Nov 2020 18:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD4D02B6BE3
+	for <lists+io-uring@lfdr.de>; Tue, 17 Nov 2020 18:38:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728424AbgKQRCA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Nov 2020 12:02:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37144 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728009AbgKQRCA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 12:02:00 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68098C0613CF
-        for <io-uring@vger.kernel.org>; Tue, 17 Nov 2020 09:01:58 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id s8so23889250wrw.10
-        for <io-uring@vger.kernel.org>; Tue, 17 Nov 2020 09:01:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bKaJSKbXUBpY/iFOsjNa6hlbIU74a6x5JmAXVaMvl5U=;
-        b=avSeOxXlxJwhX+lqPU0CqieBkEfvKJEuNDk2pegE7dUfaRub6Vm2v9ePxocoGSfBNX
-         9aUW4saYxNo0ESa9K1TQ/EEkD0oefrZsuvOlN+axttHjjX9yiyH+Qnz7p738FY/YUUvt
-         ttbBDGH0vbtZuprGSdqcgNZaWwIO0IS6iEv5jryc+CsgbFWoOf+BA8wTQv7I95ebqFx2
-         pNIZd90GP29lp11vMP7D4nf/WSTW9uLbWR8RGLXzkt1qn0JJr8SyW5s6UZo/PVYN+qot
-         VsDD8gLG+vj2VpfwNQnoweLtnMYCGv+oXvFYxVHUpnr0W3C2XANJeqjdLVL/3d9tK1tf
-         037Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=bKaJSKbXUBpY/iFOsjNa6hlbIU74a6x5JmAXVaMvl5U=;
-        b=S9OvyHq8WJndnxIYj5ZjLM8cd+l5Xi/4JGRu132SIsntf42jG4XSbJ9VE0LQJyMZIO
-         rIpymirUL+dFCXwJF7xy0HlQFG801j6/lGzJtBBYrXcjUdi36SCZ7bDEAx9ImQYrYfN9
-         oF26+XUtW4GNQZIDLgDz6gn+9RUrHGCNhzFJhczg4OgoZHeTvQ4PqsTccAmjEJCd03pJ
-         xJ0c8pwDhdiFfNoX79T+9GbVR3Sjr5aw1MAL0xlfDdHQrVEwD0ZkN3DzyaX0D+aCjR/e
-         IcImOukk13gSR8hFP1xK6TPQ/74boijkI84Ug2mzWP1AAm+Xy9/+ruCxKoJMhuxJJTtJ
-         hewg==
-X-Gm-Message-State: AOAM533yJFgYd678XfQMYDe3LFlql/1ED7CCvqQGV6IyYH82Pa3kCuy7
-        Nzbci5P4ar2jcpZ+9X53EcipkrMV52sadQ==
-X-Google-Smtp-Source: ABdhPJyL536z6ZW/7/0qWQ6NjtSqdhabJrthz+hITeb4709qnoYWfm+3nzL+/OJJAKZ2fegaRzYDtg==
-X-Received: by 2002:a05:6000:10c9:: with SMTP id b9mr477192wrx.251.1605632517078;
-        Tue, 17 Nov 2020 09:01:57 -0800 (PST)
-Received: from [192.168.1.33] (host109-152-100-189.range109-152.btcentralplus.com. [109.152.100.189])
-        by smtp.gmail.com with ESMTPSA id p10sm29074827wre.2.2020.11.17.09.01.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Nov 2020 09:01:56 -0800 (PST)
-To:     Jens Axboe <axboe@kernel.dk>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20201117061723.18131-1-xiaoguang.wang@linux.alibaba.com>
- <20201117061723.18131-3-xiaoguang.wang@linux.alibaba.com>
- <8e597c50-b6f4-ea08-0885-56d5a608a4ca@gmail.com>
- <9713dc32-8aea-5fd2-8195-45ceedcb74dd@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH 5.11 2/2] io_uring: don't take percpu_ref operations for
- registered files in IOPOLL mode
-Message-ID: <82116595-2e57-525b-0619-2d71e874bd88@gmail.com>
-Date:   Tue, 17 Nov 2020 16:58:48 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1728031AbgKQRhc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Nov 2020 12:37:32 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59342 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbgKQRhb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 12:37:31 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AHHXnYG056455;
+        Tue, 17 Nov 2020 17:37:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=IY3/6KzdYHanN7Re6CdruxnqdXw5CGdA0oxwdbfzXeM=;
+ b=hxvbcotppMQ4KlaOkq9sy2shRFwCJr22LhWeLCo5Lt1SybqnlK3ma8rQwTKv6hBUm1a3
+ ZfPMy7VqfNmCSvL+xZeuFgFgTBjYpEcBNkeOtttbpIJBrwXDsa1RSk3tZRQjxPZNmAM7
+ twzofZJdOD6bCpBofoKjJ41HHtgsC8j4boNqSBl8dH0c8Jl4KZQ49OOmev+Mm2k3lVld
+ IF9SjD/tpR8zQQtTrwdW2RK8UCciWab3FH5FjuV2fYlK5f8M6P/AdeMl7zZj2u2zr7Ar
+ IqjWA34Ttw0v2/pGzYhXpp1EdFyNBoVY/u20QCVDmWDyOEL2/3vbEXeOEeDzkxbtS3rD SQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 34t7vn3ueb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Nov 2020 17:37:22 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AHHZHAI016355;
+        Tue, 17 Nov 2020 17:37:21 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 34umcygcuq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Nov 2020 17:37:21 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AHHbKuG022883;
+        Tue, 17 Nov 2020 17:37:20 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 17 Nov 2020 09:37:19 -0800
+Date:   Tue, 17 Nov 2020 09:37:18 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     axboe@kernel.dk, hch@infradead.org, ming.lei@redhat.com,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        joseph.qi@linux.alibaba.com
+Subject: Re: [PATCH v4 2/2] block,iomap: disable iopoll when split needed
+Message-ID: <20201117173718.GB9688@magnolia>
+References: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
+ <20201117075625.46118-3-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <9713dc32-8aea-5fd2-8195-45ceedcb74dd@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201117075625.46118-3-jefflexu@linux.alibaba.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9808 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 mlxscore=0 phishscore=0
+ spamscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011170127
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9808 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=2
+ malwarescore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0 spamscore=0
+ adultscore=0 mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011170127
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 17/11/2020 16:30, Jens Axboe wrote:
-> On 11/17/20 3:43 AM, Pavel Begunkov wrote:
->> On 17/11/2020 06:17, Xiaoguang Wang wrote:
->>> In io_file_get() and io_put_file(), currently we use percpu_ref_get() and
->>> percpu_ref_put() for registered files, but it's hard to say they're very
->>> light-weight synchronization primitives. In one our x86 machine, I get below
->>> perf data(registered files enabled):
->>> Samples: 480K of event 'cycles', Event count (approx.): 298552867297
->>> Overhead  Comman  Shared Object     Symbol
->>>    0.45%  :53243  [kernel.vmlinux]  [k] io_file_get
->>
->> Do you have throughput/latency numbers? In my experience for polling for
->> such small overheads all CPU cycles you win earlier in the stack will be
->> just burned on polling, because it would still wait for the same fixed*
->> time for the next response by device. fixed* here means post-factum but
->> still mostly independent of how your host machine behaves. 
+On Tue, Nov 17, 2020 at 03:56:25PM +0800, Jeffle Xu wrote:
+> Both blkdev fs and iomap-based fs (ext4, xfs, etc.) currently support
+
+$ ./scripts/get_maintainer.pl fs/iomap/direct-io.c
+Christoph Hellwig <hch@infradead.org> (supporter:IOMAP FILESYSTEM LIBRARY)
+"Darrick J. Wong" <darrick.wong@oracle.com> (supporter:IOMAP FILESYSTEM LIBRARY)
+linux-xfs@vger.kernel.org (supporter:IOMAP FILESYSTEM LIBRARY)
+linux-fsdevel@vger.kernel.org (supporter:IOMAP FILESYSTEM LIBRARY)
+linux-kernel@vger.kernel.org (open list)
+
+Please cc both iomap maintainers and the appropriate lists when you
+propose changes to fs/iomap/.  At a bare minimum cc linux-fsdevel for
+changes under fs/.
+
+> sync iopoll. One single bio can contain at most BIO_MAX_PAGES, i.e. 256
+> bio_vec. If the input iov_iter contains more than 256 segments, then
+> one dio will be split into multiple bios, which may cause potential
+> deadlock for sync iopoll.
 > 
-> That's only true if you can max out the device with a single core.
-> Freeing any cycles directly translate into a performance win otherwise,
-> if your device isn't the bottleneck. For the high performance testing
-
-Agree, that's what happens if a host can't keep up with a device, or e.g.
-in case 2. of my other reply. Why don't you mention throwing many-cores
-into a single many (poll) queue SSD?
-
-> I've done, the actual polling isn't the bottleneck, it's the rest of the
-> stack.
+> When it comes to sync iopoll, the bio is submitted without REQ_NOWAIT
+> flag set and the process may hang in blk_mq_get_tag() if the dio needs
+> to be split into multiple bios and thus can rapidly exhausts the queue
+> depth. The process has to wait for the completion of the previously
+> allocated requests, which should be reaped by the following sync
+> polling, and thus causing a potential deadlock.
 > 
+> In fact there's a subtle difference of handling of HIPRI IO between
+> blkdev fs and iomap-based fs, when dio need to be split into multiple
+> bios. blkdev fs will set REQ_HIPRI for only the last split bio, leaving
+> the previous bios queued into normal hardware queues, and not causing
+> the trouble described above. iomap-based fs will set REQ_HIPRI for all
+> split bios, and thus may cause the potential deadlock described above.
+> 
+> Noted that though the analysis described above, currently blkdev fs and
+> iomap-based fs won't trigger this potential deadlock. Because only
+> preadv2(2)/pwritev2(2) are capable of *sync* polling as only these two
+> can set RWF_NOWAIT. Currently the maximum number of iovecs of one single
+> preadv2(2)/pwritev2(2) call is UIO_MAXIOV, i.e. 1024, while the minimum
+> queue depth is BLKDEV_MIN_RQ i.e. 4. That means one
+> preadv2(2)/pwritev2(2) call can submit at most 4 bios, which will fill
+> up the queue depth *exactly* and thus there's no deadlock in this case.
+> 
+> However this constraint can be fragile. Disable iopoll when one dio need
+> to be split into multiple bios.Though blkdev fs may not suffer this issue,
+> still it may not make much sense to iopoll for big IO, since iopoll is
+> initially for small size, latency sensitive IO.
+> 
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>  fs/block_dev.c       |  9 +++++++++
+>  fs/iomap/direct-io.c | 10 ++++++++++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 9e84b1928b94..ed3f46e8fa91 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -436,6 +436,15 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
+>  			break;
+>  		}
+>  
+> +		/*
+> +		 * The current dio needs to be split into multiple bios here.
+> +		 * iopoll for split bio will cause subtle trouble such as
+> +		 * hang when doing sync polling, while iopoll is initially
+> +		 * for small size, latency sensitive IO. Thus disable iopoll
+> +		 * if split needed.
+> +		 */
+> +		iocb->ki_flags &= ~IOCB_HIPRI;
+> +
+>  		if (!dio->multi_bio) {
+>  			/*
+>  			 * AIO needs an extra reference to ensure the dio
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 933f234d5bec..396ac0f91a43 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -309,6 +309,16 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		copied += n;
+>  
+>  		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
+> +		/*
+> +		 * The current dio needs to be split into multiple bios here.
+> +		 * iopoll for split bio will cause subtle trouble such as
+> +		 * hang when doing sync polling, while iopoll is initially
+> +		 * for small size, latency sensitive IO. Thus disable iopoll
+> +		 * if split needed.
+> +		 */
+> +		if (nr_pages)
+> +			dio->iocb->ki_flags &= ~IOCB_HIPRI;
 
--- 
-Pavel Begunkov
+Hmm, I was about to ask what happens if the user's HIPRI request gets
+downgraded from polling mode, but the manpage doesn't say anything about
+the kernel having to return an error if it can't use polling mode, so I
+guess downgrading is...fine?
+
+Well, maybe it isn't, since this also results in a downgrade when I send
+a 1MB polled pwrite to my otherwise idle MegaSSD that has thousands of
+queue depth.  I think?  <shrug> I'm not the one who uses polling mode,
+fwiw.
+
+--D
+
+> +
+>  		iomap_dio_submit_bio(dio, iomap, bio, pos);
+>  		pos += n;
+>  	} while (nr_pages);
+> -- 
+> 2.27.0
+> 

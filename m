@@ -2,202 +2,220 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BA1FC2B73FA
-	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 02:56:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D943D2B74CB
+	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 04:29:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbgKRB4O (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Nov 2020 20:56:14 -0500
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:58509 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726363AbgKRB4O (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 20:56:14 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UFlUPVT_1605664568;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UFlUPVT_1605664568)
+        id S1727550AbgKRD3G (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Nov 2020 22:29:06 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:58395 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725808AbgKRD3F (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 22:29:05 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R811e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UFlQ429_1605670141;
+Received: from 30.225.32.174(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UFlQ429_1605670141)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 18 Nov 2020 09:56:09 +0800
-Subject: Re: [PATCH v4 2/2] block,iomap: disable iopoll when split needed
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     axboe@kernel.dk, hch@infradead.org, ming.lei@redhat.com,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, linux-fsdevel@vger.kernel.org
-References: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
- <20201117075625.46118-3-jefflexu@linux.alibaba.com>
- <20201117173718.GB9688@magnolia>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <5be2803d-d26b-d381-2fdf-a277e7bbbf6e@linux.alibaba.com>
-Date:   Wed, 18 Nov 2020 09:56:08 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.12.1
+          Wed, 18 Nov 2020 11:29:01 +0800
+Subject: Re: INFO: task can't die in io_sq_thread_stop
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     syzbot <syzbot+03beeb595f074db9cfd1@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <00000000000038569805b4211287@google.com>
+ <39be8d01-6550-ee8a-5a8d-2707b372b711@linux.alibaba.com>
+Message-ID: <d57f9c10-e640-08f5-4c20-2553768aff65@linux.alibaba.com>
+Date:   Wed, 18 Nov 2020 11:27:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.3
 MIME-Version: 1.0
-In-Reply-To: <20201117173718.GB9688@magnolia>
+In-Reply-To: <39be8d01-6550-ee8a-5a8d-2707b372b711@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+hi,
 
-On 11/18/20 1:37 AM, Darrick J. Wong wrote:
-> On Tue, Nov 17, 2020 at 03:56:25PM +0800, Jeffle Xu wrote:
->> Both blkdev fs and iomap-based fs (ext4, xfs, etc.) currently support
-> $ ./scripts/get_maintainer.pl fs/iomap/direct-io.c
-> Christoph Hellwig <hch@infradead.org> (supporter:IOMAP FILESYSTEM LIBRARY)
-> "Darrick J. Wong" <darrick.wong@oracle.com> (supporter:IOMAP FILESYSTEM LIBRARY)
-> linux-xfs@vger.kernel.org (supporter:IOMAP FILESYSTEM LIBRARY)
-> linux-fsdevel@vger.kernel.org (supporter:IOMAP FILESYSTEM LIBRARY)
-> linux-kernel@vger.kernel.org (open list)
->
-> Please cc both iomap maintainers and the appropriate lists when you
-> propose changes to fs/iomap/.  At a bare minimum cc linux-fsdevel for
-> changes under fs/.
-Got it.
->
->> sync iopoll. One single bio can contain at most BIO_MAX_PAGES, i.e. 256
->> bio_vec. If the input iov_iter contains more than 256 segments, then
->> one dio will be split into multiple bios, which may cause potential
->> deadlock for sync iopoll.
->>
->> When it comes to sync iopoll, the bio is submitted without REQ_NOWAIT
->> flag set and the process may hang in blk_mq_get_tag() if the dio needs
->> to be split into multiple bios and thus can rapidly exhausts the queue
->> depth. The process has to wait for the completion of the previously
->> allocated requests, which should be reaped by the following sync
->> polling, and thus causing a potential deadlock.
->>
->> In fact there's a subtle difference of handling of HIPRI IO between
->> blkdev fs and iomap-based fs, when dio need to be split into multiple
->> bios. blkdev fs will set REQ_HIPRI for only the last split bio, leaving
->> the previous bios queued into normal hardware queues, and not causing
->> the trouble described above. iomap-based fs will set REQ_HIPRI for all
->> split bios, and thus may cause the potential deadlock described above.
->>
->> Noted that though the analysis described above, currently blkdev fs and
->> iomap-based fs won't trigger this potential deadlock. Because only
->> preadv2(2)/pwritev2(2) are capable of *sync* polling as only these two
->> can set RWF_NOWAIT.
+A gentle reminder, in case you overlooked this syzbot report.
 
-s/RWF_NOWAIT/RWF_HIPRI
+Regards,
+Xiaoguang Wang
 
-
->>   Currently the maximum number of iovecs of one single
->> preadv2(2)/pwritev2(2) call is UIO_MAXIOV, i.e. 1024, while the minimum
->> queue depth is BLKDEV_MIN_RQ i.e. 4. That means one
->> preadv2(2)/pwritev2(2) call can submit at most 4 bios, which will fill
->> up the queue depth *exactly* and thus there's no deadlock in this case.
+> hi jens,
+> 
+>> Hello,
 >>
->> However this constraint can be fragile. Disable iopoll when one dio need
->> to be split into multiple bios.Though blkdev fs may not suffer this issue,
->> still it may not make much sense to iopoll for big IO, since iopoll is
->> initially for small size, latency sensitive IO.
+>> syzbot found the following issue on:
 >>
->> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+>> HEAD commit:    6dd65e60 Add linux-next specific files for 20201110
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=14727d42500000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=4fab43daf5c54712
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=03beeb595f074db9cfd1
+>> compiler:       gcc (GCC) 10.1.0-syz 20200507
+>>
+>> Unfortunately, I don't have any reproducer for this issue yet.
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+03beeb595f074db9cfd1@syzkaller.appspotmail.com
+>>
+>> INFO: task syz-executor.2:12399 can't die for more than 143 seconds.
+>> task:syz-executor.2  state:D stack:28744 pid:12399 ppid:  8504 flags:0x00004004
+>> Call Trace:
+>>   context_switch kernel/sched/core.c:3773 [inline]
+>>   __schedule+0x893/0x2170 kernel/sched/core.c:4522
+>>   schedule+0xcf/0x270 kernel/sched/core.c:4600
+>>   schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1847
+>>   do_wait_for_common kernel/sched/completion.c:85 [inline]
+>>   __wait_for_common kernel/sched/completion.c:106 [inline]
+>>   wait_for_common kernel/sched/completion.c:117 [inline]
+>>   wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
+>>   kthread_stop+0x17a/0x720 kernel/kthread.c:596
+>>   io_put_sq_data fs/io_uring.c:7193 [inline]
+>>   io_sq_thread_stop+0x452/0x570 fs/io_uring.c:7290
+>>   io_finish_async fs/io_uring.c:7297 [inline]
+>>   io_sq_offload_create fs/io_uring.c:8015 [inline]
+>>   io_uring_create fs/io_uring.c:9433 [inline]
+>>   io_uring_setup+0x19b7/0x3730 fs/io_uring.c:9507
+>>   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> I also don't have a reproducer yet, but seems that there is a race
+> in current codes:                  |
+> => io_put_sq_data                  |
+> ==> kthread_park(sqd->thread);     |
+>                                     | T1: sq thread is parked now.
+> ==> kthread_stop(sqd->thread);     |
+> ===> kthread_unpark(k);            |
+>                                     | T2: sq thread is now unpared, can run again
+>                                     |
+>                                     | T3: sq thread is now preempted out.
+>                                     |
+> ===> wake_up_process(k);           |
+>                                     |
+>                                     | T4: Since sqd ctx list is empty, needs_sched will be true,
+>                                     | then sq thread sets task state to TASK_INTERRUPTIBLE,
+>                                     | and schedule, now sq thread will never be waken up.
+> ===> wait_for_completion           |
+> 
+> I have artificially used mdelay() to simulate above race, will get same stack like
+> this syzbot report.
+> 
+> -               if (kthread_should_park())
+> +               if (kthread_should_park()) {
+>                          kthread_parkme();
+> +                       if (kthread_should_stop())
+> +                               break;
+> +               }
+> this diff can fix this issue, and if ctx_list is empty, we don't need to call schedule().
+> 
+> Regards,
+> Xiaoguang Wang
+> 
+> 
+>> RIP: 0033:0x45deb9
+>> Code: Unable to access opcode bytes at RIP 0x45de8f.
+>> RSP: 002b:00007f174e51ac78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+>> RAX: ffffffffffffffda RBX: 0000000000008640 RCX: 000000000045deb9
+>> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 00000000000050e5
+>> RBP: 000000000118bf58 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
+>> R13: 00007ffed9ca723f R14: 00007f174e51b9c0 R15: 000000000118bf2c
+>> INFO: task syz-executor.2:12399 blocked for more than 143 seconds.
+>>        Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> task:syz-executor.2  state:D stack:28744 pid:12399 ppid:  8504 flags:0x00004004
+>> Call Trace:
+>>   context_switch kernel/sched/core.c:3773 [inline]
+>>   __schedule+0x893/0x2170 kernel/sched/core.c:4522
+>>   schedule+0xcf/0x270 kernel/sched/core.c:4600
+>>   schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1847
+>>   do_wait_for_common kernel/sched/completion.c:85 [inline]
+>>   __wait_for_common kernel/sched/completion.c:106 [inline]
+>>   wait_for_common kernel/sched/completion.c:117 [inline]
+>>   wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
+>>   kthread_stop+0x17a/0x720 kernel/kthread.c:596
+>>   io_put_sq_data fs/io_uring.c:7193 [inline]
+>>   io_sq_thread_stop+0x452/0x570 fs/io_uring.c:7290
+>>   io_finish_async fs/io_uring.c:7297 [inline]
+>>   io_sq_offload_create fs/io_uring.c:8015 [inline]
+>>   io_uring_create fs/io_uring.c:9433 [inline]
+>>   io_uring_setup+0x19b7/0x3730 fs/io_uring.c:9507
+>>   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> RIP: 0033:0x45deb9
+>> Code: Unable to access opcode bytes at RIP 0x45de8f.
+>> RSP: 002b:00007f174e51ac78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+>> RAX: ffffffffffffffda RBX: 0000000000008640 RCX: 000000000045deb9
+>> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 00000000000050e5
+>> RBP: 000000000118bf58 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
+>> R13: 00007ffed9ca723f R14: 00007f174e51b9c0 R15: 000000000118bf2c
+>>
+>> Showing all locks held in the system:
+>> 1 lock held by khungtaskd/1653:
+>>   #0: ffffffff8b3386a0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6253
+>> 1 lock held by systemd-journal/4873:
+>> 1 lock held by in:imklog/8167:
+>>   #0: ffff88801c86e0f0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:932
+>>
+>> =============================================
+>>
+>> NMI backtrace for cpu 1
+>> CPU: 1 PID: 1653 Comm: khungtaskd Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>> Call Trace:
+>>   __dump_stack lib/dump_stack.c:77 [inline]
+>>   dump_stack+0x107/0x163 lib/dump_stack.c:118
+>>   nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
+>>   nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+>>   trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
+>>   check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
+>>   watchdog+0xd89/0xf30 kernel/hung_task.c:338
+>>   kthread+0x3af/0x4a0 kernel/kthread.c:292
+>>   ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+>> Sending NMI from CPU 1 to CPUs 0:
+>> NMI backtrace for cpu 0
+>> CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>> Workqueue: events nsim_dev_trap_report_work
+>> RIP: 0010:mark_lock+0x30/0x24c0 kernel/locking/lockdep.c:4371
+>> Code: 41 54 41 89 d4 48 ba 00 00 00 00 00 fc ff df 55 53 48 81 ec 18 01 00 00 48 8d 5c 24 38 48 89 3c 24 48 c7 44 24 38 b3 8a b5 41 <48> c1 eb 03 48 c7 44 24 40 30 1b c6 8a 48 8d 04 13 48 c7 44 24 48
+>> RSP: 0018:ffffc90000ca7988 EFLAGS: 00000096
+>> RAX: 0000000000000004 RBX: ffffc90000ca79c0 RCX: ffffffff8155b947
+>> RDX: dffffc0000000000 RSI: ffff888010d20918 RDI: ffff888010d20000
+>> RBP: 0000000000000006 R08: 0000000000000000 R09: ffffffff8ebb477f
+>> R10: fffffbfff1d768ef R11: 000000004fb6aa4b R12: 0000000000000006
+>> R13: dffffc0000000000 R14: ffff888010d20918 R15: 0000000000000022
+>> FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 00007f8ffcf99000 CR3: 000000001b2e7000 CR4: 00000000001506f0
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> Call Trace:
+>>   mark_held_locks+0x9f/0xe0 kernel/locking/lockdep.c:4011
+>>   __trace_hardirqs_on_caller kernel/locking/lockdep.c:4037 [inline]
+>>   lockdep_hardirqs_on_prepare kernel/locking/lockdep.c:4097 [inline]
+>>   lockdep_hardirqs_on_prepare+0x28b/0x400 kernel/locking/lockdep.c:4049
+>>   trace_hardirqs_on+0x5b/0x1c0 kernel/trace/trace_preemptirq.c:49
+>>   __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
+>>   _raw_spin_unlock_irqrestore+0x42/0x50 kernel/locking/spinlock.c:191
+>>   extract_crng drivers/char/random.c:1026 [inline]
+>>   _get_random_bytes+0x229/0x670 drivers/char/random.c:1562
+>>   nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:538 [inline]
+>>   nsim_dev_trap_report drivers/net/netdevsim/dev.c:568 [inline]
+>>   nsim_dev_trap_report_work+0x740/0xbd0 drivers/net/netdevsim/dev.c:609
+>>   process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
+>>   worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
+>>   kthread+0x3af/0x4a0 kernel/kthread.c:292
+>>   ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+>>
+>>
 >> ---
->>   fs/block_dev.c       |  9 +++++++++
->>   fs/iomap/direct-io.c | 10 ++++++++++
->>   2 files changed, 19 insertions(+)
+>> This report is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
 >>
->> diff --git a/fs/block_dev.c b/fs/block_dev.c
->> index 9e84b1928b94..ed3f46e8fa91 100644
->> --- a/fs/block_dev.c
->> +++ b/fs/block_dev.c
->> @@ -436,6 +436,15 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   			break;
->>   		}
->>   
->> +		/*
->> +		 * The current dio needs to be split into multiple bios here.
->> +		 * iopoll for split bio will cause subtle trouble such as
->> +		 * hang when doing sync polling, while iopoll is initially
->> +		 * for small size, latency sensitive IO. Thus disable iopoll
->> +		 * if split needed.
->> +		 */
->> +		iocb->ki_flags &= ~IOCB_HIPRI;
->> +
->>   		if (!dio->multi_bio) {
->>   			/*
->>   			 * AIO needs an extra reference to ensure the dio
->> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
->> index 933f234d5bec..396ac0f91a43 100644
->> --- a/fs/iomap/direct-io.c
->> +++ b/fs/iomap/direct-io.c
->> @@ -309,6 +309,16 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->>   		copied += n;
->>   
->>   		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
->> +		/*
->> +		 * The current dio needs to be split into multiple bios here.
->> +		 * iopoll for split bio will cause subtle trouble such as
->> +		 * hang when doing sync polling, while iopoll is initially
->> +		 * for small size, latency sensitive IO. Thus disable iopoll
->> +		 * if split needed.
->> +		 */
->> +		if (nr_pages)
->> +			dio->iocb->ki_flags &= ~IOCB_HIPRI;
-> Hmm, I was about to ask what happens if the user's HIPRI request gets
-> downgraded from polling mode, but the manpage doesn't say anything about
-> the kernel having to return an error if it can't use polling mode, so I
-> guess downgrading is...fine?
-
-Yes if the block device doesn't support iopoll, then HIPRI pread/pwrite 
-will automatically
-
-gets downgraded from polling mode.
-
-
-> Well, maybe it isn't, since this also results in a downgrade when I send
-> a 1MB polled pwrite to my otherwise idle MegaSSD that has thousands of
-> queue depth.  I think?  <shrug> I'm not the one who uses polling mode,
-> fwiw.
-
-Indeed that's true. iopoll gets disabled once the dio gets split,
-even though the block device has thousands of queue depth. This
-design is chose just because it is the simplest one..., though
-this one should have no big problem.
-
-As I described in the comment, iopoll is initially for small size
-IO. We have ever tested the latency of Optane SSD
-
-bs | latency (us)
-
----- | ----
-
-read 4k | 14
-
-read 128k | 68
-
-write 4k | 17
-
-write 128k | 75
-
-
-The overhead of interrupt is about several (under 10) microseconds. The 
-overhead of
-
-interrupt when doing 128k IO may not be as important as that of small 
-size IO, thus
-
-the performance gain of iopoll will decreased a lot at least for 128k IO.
-
-
-In my computer, @max_sectors of one nvme SSD is 128k, so the split bio 
-is much
-
-likely larger than 128k, in which case the performance loss should be 
-acceptable
-
-(though I have not test it).
-
-
->
->> +
->>   		iomap_dio_submit_bio(dio, iomap, bio, pos);
->>   		pos += n;
->>   	} while (nr_pages);
->> -- 
->> 2.27.0
+>> syzbot will keep track of this issue. See:
+>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 >>
--- 
-Thanks,
-Jeffle
-

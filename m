@@ -2,213 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 122392B71ED
-	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 00:00:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0F152B73D6
+	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 02:43:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbgKQXAB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Nov 2020 18:00:01 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:58056 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727327AbgKQXAB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 18:00:01 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AHMsSFO013757;
-        Tue, 17 Nov 2020 22:59:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=0yPIDotgO/tufiYlPJpXSy2QBzJ+p1Ut62esGc+Aohc=;
- b=Vye0X4iZ+ak8bYOL4ZQLgF2Oi67NCBEoUL7yvwW4xZCb+psyHOM0XUHTigk5rE0uHnzS
- 6sCRTUabj7vqxwlkaQKsKvrGGkoarjLx4TDlM4+B4IVu2rbJVHh8AvKXfUzXGwDoKpog
- zcq5MW5sokwN9PiUEFfmNWt89EdPp6OEHiiALMOCAm94EMBanTQFUo3HOlCkfQE09RG0
- qfyAbqW7xgK42LmUm+WNaTd9DLk/BhdZCn1x0/a0AV3494wLIAJw95xS54t9XiPjvh1u
- N8JSDS98jIKgVB/a+ZviLSEwcKvxlJEal9G4fTk60lCKzBKNX/5r3pIUv5LwFdml/5Bx qA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2130.oracle.com with ESMTP id 34t4rawe7a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Nov 2020 22:59:58 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AHMuXDL158545;
-        Tue, 17 Nov 2020 22:59:57 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 34ts5wr2r3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Nov 2020 22:59:57 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AHMxtBb011971;
-        Tue, 17 Nov 2020 22:59:55 GMT
-Received: from [10.154.123.147] (/10.154.123.147)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Nov 2020 14:59:55 -0800
-Subject: Re: [PATCH 7/8] io_uring: support readv/writev with fixed buffers
-To:     Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org
-References: <1605222042-44558-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1605222042-44558-8-git-send-email-bijan.mottahedeh@oracle.com>
- <d8c1c348-7806-ce54-c683-0c08e44d4590@gmail.com>
-From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Message-ID: <0bf865dc-14d3-9521-26d9-c91873535146@oracle.com>
-Date:   Tue, 17 Nov 2020 14:59:53 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.3
+        id S1727239AbgKRBnC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Nov 2020 20:43:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33780 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbgKRBnB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 20:43:01 -0500
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E315C061A48
+        for <io-uring@vger.kernel.org>; Tue, 17 Nov 2020 17:43:01 -0800 (PST)
+Received: by mail-pl1-x641.google.com with SMTP id l11so130237plt.1
+        for <io-uring@vger.kernel.org>; Tue, 17 Nov 2020 17:43:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=c9Nn4KAPLTZSFDSsWUpcxg2E22usnYQB7t6Fs663lCw=;
+        b=t7CTo0gdB7vXExrGI8NBBGdUc+np7s4/nCX8AETq2aLfUOgL0BdeDLCKCpch5j75pY
+         laHBrETFKUTJyr6zm7di7/YHsZk3viQlNcBNW6ig36xVxwgIyTw42jLw2PU0+vQ97gOv
+         N2yZNw0e2KEJYbtTMe+5M95iBHo7yCRGVQ9N7Pd8zOAu25jIamBa0dr5w+4p5k5pP/QY
+         u++w3QKQ2CIFrp12fIL0sF9U/1XYBlWZHT5+IUsZjvkfROFGBjr4f46zIaYMI8BtsQVl
+         3Op8gsm3oh/QhYDnm+0jqvmfjXeylvcI13ZhLTefzy68fCmrnC/OtXBzRMq3tKhCi292
+         Pmng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=c9Nn4KAPLTZSFDSsWUpcxg2E22usnYQB7t6Fs663lCw=;
+        b=AuilXq0ExdxE2kjl/RdPM+3kiZix4wXgul3NdPYb83Yzndp9euErxNgnSo5eYBhf7b
+         Oito+Q7w33Bt80dYu/VOh2CPsuTbsb+snPsSRKXeSiS+19mxU/sWMk2N7eFC8H8NqUgR
+         hD5dS8nRIkVCYkCDz1W/BMh/Ks5RBOWjvqcwHU93DQBUHS1Nj0vCuZ7Fh+Za740JNKZf
+         yRkq/SVumtNkFM2Fe3Tr5Mfm4uXvfFNXxJmgBZvuJcz+RMY9OY8Uhr5VxUaGRijY5XgO
+         fDYw9nRZjx5UHkgyBoQCTKrgoguD3AkirXy6Npf8aIGqI8MXevL4m62Oi5zUeXTtBDFp
+         7WwA==
+X-Gm-Message-State: AOAM532uMFzdQdzwGVIFUDznN12ZfcGcz9f991cFUCw11n+DI1/ZWDIp
+        BFX5m1sMXylrHeVVraiaSSUCGdvswoNuUw==
+X-Google-Smtp-Source: ABdhPJx8n/NyNx4Y4hTXl/QmoZb7VmuHfrWFJVWnC2+XgtNqxfT/04WsPknK+F3CN/eV7f0Mtrz+xA==
+X-Received: by 2002:a17:90b:1258:: with SMTP id gx24mr1797199pjb.194.1605663780900;
+        Tue, 17 Nov 2020 17:43:00 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id y16sm23687372pfl.144.2020.11.17.17.42.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Nov 2020 17:43:00 -0800 (PST)
+Subject: Re: [PATCH 5.11 2/2] io_uring: don't take percpu_ref operations for
+ registered files in IOPOLL mode
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     joseph.qi@linux.alibaba.com
+References: <20201117061723.18131-1-xiaoguang.wang@linux.alibaba.com>
+ <20201117061723.18131-3-xiaoguang.wang@linux.alibaba.com>
+ <8e597c50-b6f4-ea08-0885-56d5a608a4ca@gmail.com>
+ <9713dc32-8aea-5fd2-8195-45ceedcb74dd@kernel.dk>
+ <82116595-2e57-525b-0619-2d71e874bd88@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <148a36f1-ff60-4af6-7683-8849c9973010@kernel.dk>
+Date:   Tue, 17 Nov 2020 18:42:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <d8c1c348-7806-ce54-c683-0c08e44d4590@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <82116595-2e57-525b-0619-2d71e874bd88@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Antivirus: Avast (VPS 201006-2, 10/06/2020), Outbound message
-X-Antivirus-Status: Clean
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9808 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
- suspectscore=0 mlxscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011170170
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9808 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=999 adultscore=0 phishscore=0 suspectscore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2011170170
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
->> Support readv/writev with fixed buffers, and introduce IOSQE_FIXED_BUFFER,
->> consistent with fixed files.
+On 11/17/20 9:58 AM, Pavel Begunkov wrote:
+> On 17/11/2020 16:30, Jens Axboe wrote:
+>> On 11/17/20 3:43 AM, Pavel Begunkov wrote:
+>>> On 17/11/2020 06:17, Xiaoguang Wang wrote:
+>>>> In io_file_get() and io_put_file(), currently we use percpu_ref_get() and
+>>>> percpu_ref_put() for registered files, but it's hard to say they're very
+>>>> light-weight synchronization primitives. In one our x86 machine, I get below
+>>>> perf data(registered files enabled):
+>>>> Samples: 480K of event 'cycles', Event count (approx.): 298552867297
+>>>> Overhead  Comman  Shared Object     Symbol
+>>>>    0.45%  :53243  [kernel.vmlinux]  [k] io_file_get
+>>>
+>>> Do you have throughput/latency numbers? In my experience for polling for
+>>> such small overheads all CPU cycles you win earlier in the stack will be
+>>> just burned on polling, because it would still wait for the same fixed*
+>>> time for the next response by device. fixed* here means post-factum but
+>>> still mostly independent of how your host machine behaves. 
+>>
+>> That's only true if you can max out the device with a single core.
+>> Freeing any cycles directly translate into a performance win otherwise,
+>> if your device isn't the bottleneck. For the high performance testing
 > 
-> I don't like it at all, see issues below. The actual implementation would
-> be much uglier.
-> 
-> I propose you to split the series and push separately. Your first 6 patches
-> first, I don't have conceptual objections to them. Then registration sharing
-> (I still need to look it up). And then we can return to this, if you're not
-> yet convinced.
+> Agree, that's what happens if a host can't keep up with a device, or e.g.
 
-Ok.  The sharing patch is actually the highest priority for us so it'd 
-be great to know if you think it's in the right direction.
+Right, and it's a direct measure of the efficiency. Moving cycles _to_
+polling is a good thing! It means that the rest of the stack got more
+efficient. And if the device is fast enough, then that'll directly
+result in higher peak IOPS and lower latencies.
 
-Should I submit them as they are or address your fixed_file_ref comments 
-in Patch 4/8 as well?  Would I need your prep patch beforehand?
+> in case 2. of my other reply. Why don't you mention throwing many-cores
+> into a single many (poll) queue SSD?
 
->> +static ssize_t io_import_iovec_fixed(int rw, struct io_kiocb *req, void *buf,
->> +				     unsigned segs, unsigned fast_segs,
->> +				     struct iovec **iovec,
->> +				     struct iov_iter *iter)
->> +{
->> +	struct io_ring_ctx *ctx = req->ctx;
->> +	struct io_mapped_ubuf *imu;
->> +	struct iovec *iov;
->> +	u16 index, buf_index;
->> +	ssize_t ret;
->> +	unsigned long seg;
->> +
->> +	if (unlikely(!ctx->buf_data))
->> +		return -EFAULT;
->> +
->> +	ret = import_iovec(rw, buf, segs, fast_segs, iovec, iter);
-> 
-> Did you test it? import_iovec() does access_ok() against each iov_base,
-> which in your case are an index.
+Not really relevant imho, you can obviously always increase performance
+if you are core limited by utilizing multiple cores. 
 
-I used liburing:test/file-{register,update} as models for the equivalent 
-buffer tests and they seem to work.  I can send out the tests and the 
-liburing changes if you want.
+I haven't tested these patches yet, will try and see if I get some time
+to do so tomorrow.
 
-The fixed io test registers an empty iov table first:
+-- 
+Jens Axboe
 
-	ret = io_uring_register_buffers(ring, iovs, UIO_MAXIOV);
-
-It next updates the table with two actual buffers at offset 768:
-
-         ret = io_uring_register_buffers_update(ring, 768, ups, 2);
-
-It later uses the buffer at index 768 for writev similar to the 
-file-register test (IOSQE_FIXED_BUFFER instead of IOSQE_FIXED_FILE):
-
-         iovs[768].iov_base = (void *)768;
-         iovs[768].iov_len = pagesize;
-
-
-         io_uring_prep_writev(sqe, fd, iovs, 1, 0);
-         sqe->flags |= IOSQE_FIXED_BUFFER;
-
-         ret = io_uring_submit(ring);
-
-Below is the iovec returned from
-
-io_import_iovec_fixed()
--> io_import_vec()
-
-{iov_base = 0x300 <dm_early_create+412>, iov_len = 4096}
-
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	iov = (struct iovec *)iter->iov;
->> +
->> +	for (seg = 0; seg < iter->nr_segs; seg++) {
->> +		buf_index = *(u16 *)(&iov[seg].iov_base);
-> 
-> That's ugly, and also not consistent with rw_fixed, because iov_base is
-> used to calculate offset.
-
-Would offset be applicable when using readv/writev?
-
-My thinkig was that for those cases, each iovec should be used exactly 
-as registered.
-
-> 
->> +		if (unlikely(buf_index < 0 || buf_index >= ctx->nr_user_bufs))
->> +			return -EFAULT;
->> +
->> +		index = array_index_nospec(buf_index, ctx->nr_user_bufs);
->> +		imu = io_buf_from_index(ctx, index);
->> +		if (!imu->ubuf || !imu->len)
->> +			return -EFAULT;
->> +		if (iov[seg].iov_len > imu->len)
->> +			return -EFAULT;
->> +
->> +		iov[seg].iov_base = (void *)imu->ubuf;
-> 
-> Nope, that's not different from non registered version.
-> What import_fixed actually do is setting up the iter argument to point
-> to a bvec (a vector of struct page *).
-
-So in fact, the buffers end up being pinned again because they are not 
-being as bvecs?
-
-> 
-> So it either would need to keep a vector of bvecs, that's a vector of vectors,
-> that's not supported by iter, etc., so you'll also need to iterate over them
-> in io_read/write and so on. Or flat 2D structure into 1D, but that's still ugly.
-
-So you're saying there's no clean way to create a readv/writev + fixed 
-buffers API?  It would've been nice to have a consistent API between 
-files and buffers.
-
-
->> @@ -5692,7 +5743,7 @@ static int io_timeout_remove_prep(struct io_kiocb *req,
->>   {
->>   	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
->>   		return -EINVAL;
->> -	if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
->> +	if (unlikely(req->flags & (REQ_F_FIXED_RSRC | REQ_F_BUFFER_SELECT)))
-> 
-> Why it's here?
-> 
-> #define REQ_F_FIXED_RSRC	(REQ_F_FIXED_FILE | REQ_F_FIXED_BUFFER)
-> So, why do you | with REQ_F_BUFFER_SELECT again here?
-
-I thought to group fixed files/buffers but distinguish them from 
-selected buffers.
-
->> @@ -87,6 +88,8 @@ enum {
->>   #define IOSQE_ASYNC		(1U << IOSQE_ASYNC_BIT)
->>   /* select buffer from sqe->buf_group */
->>   #define IOSQE_BUFFER_SELECT	(1U << IOSQE_BUFFER_SELECT_BIT)
->> +/* use fixed buffer set */
->> +#define IOSQE_FIXED_BUFFER	(1U << IOSQE_FIXED_BUFFER_BIT)
-> 
-> Unfortenatuly, we're almost out of flags bits -- it's a 1 byte
-> field and 6 bits are already taken. Let's not use it.

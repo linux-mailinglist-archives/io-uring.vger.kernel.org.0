@@ -2,115 +2,202 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0F152B73D6
-	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 02:43:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1FC2B73FA
+	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 02:56:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbgKRBnC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Nov 2020 20:43:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33780 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbgKRBnB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 20:43:01 -0500
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E315C061A48
-        for <io-uring@vger.kernel.org>; Tue, 17 Nov 2020 17:43:01 -0800 (PST)
-Received: by mail-pl1-x641.google.com with SMTP id l11so130237plt.1
-        for <io-uring@vger.kernel.org>; Tue, 17 Nov 2020 17:43:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=c9Nn4KAPLTZSFDSsWUpcxg2E22usnYQB7t6Fs663lCw=;
-        b=t7CTo0gdB7vXExrGI8NBBGdUc+np7s4/nCX8AETq2aLfUOgL0BdeDLCKCpch5j75pY
-         laHBrETFKUTJyr6zm7di7/YHsZk3viQlNcBNW6ig36xVxwgIyTw42jLw2PU0+vQ97gOv
-         N2yZNw0e2KEJYbtTMe+5M95iBHo7yCRGVQ9N7Pd8zOAu25jIamBa0dr5w+4p5k5pP/QY
-         u++w3QKQ2CIFrp12fIL0sF9U/1XYBlWZHT5+IUsZjvkfROFGBjr4f46zIaYMI8BtsQVl
-         3Op8gsm3oh/QhYDnm+0jqvmfjXeylvcI13ZhLTefzy68fCmrnC/OtXBzRMq3tKhCi292
-         Pmng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=c9Nn4KAPLTZSFDSsWUpcxg2E22usnYQB7t6Fs663lCw=;
-        b=AuilXq0ExdxE2kjl/RdPM+3kiZix4wXgul3NdPYb83Yzndp9euErxNgnSo5eYBhf7b
-         Oito+Q7w33Bt80dYu/VOh2CPsuTbsb+snPsSRKXeSiS+19mxU/sWMk2N7eFC8H8NqUgR
-         hD5dS8nRIkVCYkCDz1W/BMh/Ks5RBOWjvqcwHU93DQBUHS1Nj0vCuZ7Fh+Za740JNKZf
-         yRkq/SVumtNkFM2Fe3Tr5Mfm4uXvfFNXxJmgBZvuJcz+RMY9OY8Uhr5VxUaGRijY5XgO
-         fDYw9nRZjx5UHkgyBoQCTKrgoguD3AkirXy6Npf8aIGqI8MXevL4m62Oi5zUeXTtBDFp
-         7WwA==
-X-Gm-Message-State: AOAM532uMFzdQdzwGVIFUDznN12ZfcGcz9f991cFUCw11n+DI1/ZWDIp
-        BFX5m1sMXylrHeVVraiaSSUCGdvswoNuUw==
-X-Google-Smtp-Source: ABdhPJx8n/NyNx4Y4hTXl/QmoZb7VmuHfrWFJVWnC2+XgtNqxfT/04WsPknK+F3CN/eV7f0Mtrz+xA==
-X-Received: by 2002:a17:90b:1258:: with SMTP id gx24mr1797199pjb.194.1605663780900;
-        Tue, 17 Nov 2020 17:43:00 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id y16sm23687372pfl.144.2020.11.17.17.42.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Nov 2020 17:43:00 -0800 (PST)
-Subject: Re: [PATCH 5.11 2/2] io_uring: don't take percpu_ref operations for
- registered files in IOPOLL mode
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20201117061723.18131-1-xiaoguang.wang@linux.alibaba.com>
- <20201117061723.18131-3-xiaoguang.wang@linux.alibaba.com>
- <8e597c50-b6f4-ea08-0885-56d5a608a4ca@gmail.com>
- <9713dc32-8aea-5fd2-8195-45ceedcb74dd@kernel.dk>
- <82116595-2e57-525b-0619-2d71e874bd88@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <148a36f1-ff60-4af6-7683-8849c9973010@kernel.dk>
-Date:   Tue, 17 Nov 2020 18:42:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727031AbgKRB4O (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Nov 2020 20:56:14 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:58509 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726363AbgKRB4O (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Nov 2020 20:56:14 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UFlUPVT_1605664568;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UFlUPVT_1605664568)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 18 Nov 2020 09:56:09 +0800
+Subject: Re: [PATCH v4 2/2] block,iomap: disable iopoll when split needed
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     axboe@kernel.dk, hch@infradead.org, ming.lei@redhat.com,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, linux-fsdevel@vger.kernel.org
+References: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
+ <20201117075625.46118-3-jefflexu@linux.alibaba.com>
+ <20201117173718.GB9688@magnolia>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <5be2803d-d26b-d381-2fdf-a277e7bbbf6e@linux.alibaba.com>
+Date:   Wed, 18 Nov 2020 09:56:08 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.12.1
 MIME-Version: 1.0
-In-Reply-To: <82116595-2e57-525b-0619-2d71e874bd88@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20201117173718.GB9688@magnolia>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/17/20 9:58 AM, Pavel Begunkov wrote:
-> On 17/11/2020 16:30, Jens Axboe wrote:
->> On 11/17/20 3:43 AM, Pavel Begunkov wrote:
->>> On 17/11/2020 06:17, Xiaoguang Wang wrote:
->>>> In io_file_get() and io_put_file(), currently we use percpu_ref_get() and
->>>> percpu_ref_put() for registered files, but it's hard to say they're very
->>>> light-weight synchronization primitives. In one our x86 machine, I get below
->>>> perf data(registered files enabled):
->>>> Samples: 480K of event 'cycles', Event count (approx.): 298552867297
->>>> Overhead  Comman  Shared Object     Symbol
->>>>    0.45%  :53243  [kernel.vmlinux]  [k] io_file_get
->>>
->>> Do you have throughput/latency numbers? In my experience for polling for
->>> such small overheads all CPU cycles you win earlier in the stack will be
->>> just burned on polling, because it would still wait for the same fixed*
->>> time for the next response by device. fixed* here means post-factum but
->>> still mostly independent of how your host machine behaves. 
+
+On 11/18/20 1:37 AM, Darrick J. Wong wrote:
+> On Tue, Nov 17, 2020 at 03:56:25PM +0800, Jeffle Xu wrote:
+>> Both blkdev fs and iomap-based fs (ext4, xfs, etc.) currently support
+> $ ./scripts/get_maintainer.pl fs/iomap/direct-io.c
+> Christoph Hellwig <hch@infradead.org> (supporter:IOMAP FILESYSTEM LIBRARY)
+> "Darrick J. Wong" <darrick.wong@oracle.com> (supporter:IOMAP FILESYSTEM LIBRARY)
+> linux-xfs@vger.kernel.org (supporter:IOMAP FILESYSTEM LIBRARY)
+> linux-fsdevel@vger.kernel.org (supporter:IOMAP FILESYSTEM LIBRARY)
+> linux-kernel@vger.kernel.org (open list)
+>
+> Please cc both iomap maintainers and the appropriate lists when you
+> propose changes to fs/iomap/.  At a bare minimum cc linux-fsdevel for
+> changes under fs/.
+Got it.
+>
+>> sync iopoll. One single bio can contain at most BIO_MAX_PAGES, i.e. 256
+>> bio_vec. If the input iov_iter contains more than 256 segments, then
+>> one dio will be split into multiple bios, which may cause potential
+>> deadlock for sync iopoll.
 >>
->> That's only true if you can max out the device with a single core.
->> Freeing any cycles directly translate into a performance win otherwise,
->> if your device isn't the bottleneck. For the high performance testing
-> 
-> Agree, that's what happens if a host can't keep up with a device, or e.g.
+>> When it comes to sync iopoll, the bio is submitted without REQ_NOWAIT
+>> flag set and the process may hang in blk_mq_get_tag() if the dio needs
+>> to be split into multiple bios and thus can rapidly exhausts the queue
+>> depth. The process has to wait for the completion of the previously
+>> allocated requests, which should be reaped by the following sync
+>> polling, and thus causing a potential deadlock.
+>>
+>> In fact there's a subtle difference of handling of HIPRI IO between
+>> blkdev fs and iomap-based fs, when dio need to be split into multiple
+>> bios. blkdev fs will set REQ_HIPRI for only the last split bio, leaving
+>> the previous bios queued into normal hardware queues, and not causing
+>> the trouble described above. iomap-based fs will set REQ_HIPRI for all
+>> split bios, and thus may cause the potential deadlock described above.
+>>
+>> Noted that though the analysis described above, currently blkdev fs and
+>> iomap-based fs won't trigger this potential deadlock. Because only
+>> preadv2(2)/pwritev2(2) are capable of *sync* polling as only these two
+>> can set RWF_NOWAIT.
 
-Right, and it's a direct measure of the efficiency. Moving cycles _to_
-polling is a good thing! It means that the rest of the stack got more
-efficient. And if the device is fast enough, then that'll directly
-result in higher peak IOPS and lower latencies.
+s/RWF_NOWAIT/RWF_HIPRI
 
-> in case 2. of my other reply. Why don't you mention throwing many-cores
-> into a single many (poll) queue SSD?
 
-Not really relevant imho, you can obviously always increase performance
-if you are core limited by utilizing multiple cores. 
+>>   Currently the maximum number of iovecs of one single
+>> preadv2(2)/pwritev2(2) call is UIO_MAXIOV, i.e. 1024, while the minimum
+>> queue depth is BLKDEV_MIN_RQ i.e. 4. That means one
+>> preadv2(2)/pwritev2(2) call can submit at most 4 bios, which will fill
+>> up the queue depth *exactly* and thus there's no deadlock in this case.
+>>
+>> However this constraint can be fragile. Disable iopoll when one dio need
+>> to be split into multiple bios.Though blkdev fs may not suffer this issue,
+>> still it may not make much sense to iopoll for big IO, since iopoll is
+>> initially for small size, latency sensitive IO.
+>>
+>> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+>> ---
+>>   fs/block_dev.c       |  9 +++++++++
+>>   fs/iomap/direct-io.c | 10 ++++++++++
+>>   2 files changed, 19 insertions(+)
+>>
+>> diff --git a/fs/block_dev.c b/fs/block_dev.c
+>> index 9e84b1928b94..ed3f46e8fa91 100644
+>> --- a/fs/block_dev.c
+>> +++ b/fs/block_dev.c
+>> @@ -436,6 +436,15 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
+>>   			break;
+>>   		}
+>>   
+>> +		/*
+>> +		 * The current dio needs to be split into multiple bios here.
+>> +		 * iopoll for split bio will cause subtle trouble such as
+>> +		 * hang when doing sync polling, while iopoll is initially
+>> +		 * for small size, latency sensitive IO. Thus disable iopoll
+>> +		 * if split needed.
+>> +		 */
+>> +		iocb->ki_flags &= ~IOCB_HIPRI;
+>> +
+>>   		if (!dio->multi_bio) {
+>>   			/*
+>>   			 * AIO needs an extra reference to ensure the dio
+>> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+>> index 933f234d5bec..396ac0f91a43 100644
+>> --- a/fs/iomap/direct-io.c
+>> +++ b/fs/iomap/direct-io.c
+>> @@ -309,6 +309,16 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+>>   		copied += n;
+>>   
+>>   		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
+>> +		/*
+>> +		 * The current dio needs to be split into multiple bios here.
+>> +		 * iopoll for split bio will cause subtle trouble such as
+>> +		 * hang when doing sync polling, while iopoll is initially
+>> +		 * for small size, latency sensitive IO. Thus disable iopoll
+>> +		 * if split needed.
+>> +		 */
+>> +		if (nr_pages)
+>> +			dio->iocb->ki_flags &= ~IOCB_HIPRI;
+> Hmm, I was about to ask what happens if the user's HIPRI request gets
+> downgraded from polling mode, but the manpage doesn't say anything about
+> the kernel having to return an error if it can't use polling mode, so I
+> guess downgrading is...fine?
 
-I haven't tested these patches yet, will try and see if I get some time
-to do so tomorrow.
+Yes if the block device doesn't support iopoll, then HIPRI pread/pwrite 
+will automatically
 
+gets downgraded from polling mode.
+
+
+> Well, maybe it isn't, since this also results in a downgrade when I send
+> a 1MB polled pwrite to my otherwise idle MegaSSD that has thousands of
+> queue depth.  I think?  <shrug> I'm not the one who uses polling mode,
+> fwiw.
+
+Indeed that's true. iopoll gets disabled once the dio gets split,
+even though the block device has thousands of queue depth. This
+design is chose just because it is the simplest one..., though
+this one should have no big problem.
+
+As I described in the comment, iopoll is initially for small size
+IO. We have ever tested the latency of Optane SSD
+
+bs | latency (us)
+
+---- | ----
+
+read 4k | 14
+
+read 128k | 68
+
+write 4k | 17
+
+write 128k | 75
+
+
+The overhead of interrupt is about several (under 10) microseconds. The 
+overhead of
+
+interrupt when doing 128k IO may not be as important as that of small 
+size IO, thus
+
+the performance gain of iopoll will decreased a lot at least for 128k IO.
+
+
+In my computer, @max_sectors of one nvme SSD is 128k, so the split bio 
+is much
+
+likely larger than 128k, in which case the performance loss should be 
+acceptable
+
+(though I have not test it).
+
+
+>
+>> +
+>>   		iomap_dio_submit_bio(dio, iomap, bio, pos);
+>>   		pos += n;
+>>   	} while (nr_pages);
+>> -- 
+>> 2.27.0
+>>
 -- 
-Jens Axboe
+Thanks,
+Jeffle
 

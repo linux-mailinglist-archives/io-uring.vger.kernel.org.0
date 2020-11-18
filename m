@@ -2,39 +2,40 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00FBE2B81E3
-	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 17:31:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA8D2B8273
+	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 17:59:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbgKRQ1m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 Nov 2020 11:27:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57434 "EHLO
+        id S1727287AbgKRQ5t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 Nov 2020 11:57:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbgKRQ1k (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Nov 2020 11:27:40 -0500
+        with ESMTP id S1726666AbgKRQ5s (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Nov 2020 11:57:48 -0500
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B09E5C0613D4
-        for <io-uring@vger.kernel.org>; Wed, 18 Nov 2020 08:27:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAD2FC0613D4
+        for <io-uring@vger.kernel.org>; Wed, 18 Nov 2020 08:57:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:To:CC;
-        bh=uCFsijG1oO/RKZEN6diZlDDcZSrghJ8YpfHQSZawC8o=; b=cLUp4Zp/M4SdnVEYP2Iurri3sM
-        8w0seaotTCHagDaaDyrY7yzWyOSQXwL4luyIcHraJAn4oL115VL7Og5Uxb75EhlQflxA4dfKN+PN8
-        DkT+FqXfD0vXuInhfiXwwdq0svc6/SnZHk+YzEElW3KdYmv10k8DW3BznNf82VzeBQkFwQdQ1lvfr
-        TV4RznokkGL/2EHXqQsRrO86nbmKT/IiSlEWP5rDXtO/oi43pkjC+KnzLaNM4svRKUyuP2XIKvvSL
-        5uzNyFS38r6XXNm0dWeeiNEiu//k7PiHCnRZd6mrHCwN26pTL0VIPwdGgb5TrIZ/rTKDQeshSGx+r
-        DQKvbmSRDJ6H8W4yNmzlD3Uqjy4ef6GpypYGOTyR/2Gm4zx1R1BWj+WWf5gexpsFhei1RrfPVvUWX
-        u8HBtiyIkvTJ3CKAf4SDLeb55hvDqUfjV6NDd2bgcklHzbxe4R4aGxvb+CUEEUwQX6XQ6kGrWJmrW
-        fuszuGLFhi7gEIszSYtlQjhM;
+         s=42; h=Date:Message-ID:To:From:CC;
+        bh=etPbIqiNo+xqZvVW4bbDXL7CezQku+nYyon2RKTAysA=; b=gRbaSwfAgt2TjT2sdab6QztfzA
+        2Z0q3SwK3QrG5zSE0eghxeu7o/2NJD5tQYUBByQh2MXomwa3FlZdMskT/HPYH1qKo6TfjQ0/q2zbS
+        sd3rE4Xb10dsbtwsU+Cr/tj3kPS1DlMUC+4sMosDlqfvxrGfPUdDKqGTEnS+asIbYiefDj4pd3QZo
+        eOymPzX//hw7KQC0JbAhVYicQM5QUBCm0Uuiru+8SJYV++a1xiuc96cOw/uc+mbnCYePLjaSAQlfp
+        uf8CRXDpljghkpQVmBDrhh/ZCKpbE/QW2kVfaskEoQv2qqvl/91tGpDBrIdHWInVqeAKo4axzozhP
+        qXBD94NIGneJX4SO0lmNIZ16MDBYsC4BvDonmJyW36D2Dwe+1cDMiPzAsIcv707UKBUPCGaVmsWej
+        xUF2KvOBD51dv0gueGATqF1wVeGjIr4wcWm18vsoip1eicOnY4O+Np7EMGF6RROru3CEBoLe11lQ0
+        l5C6ZlG9QBQpAI4hvzaDscH8;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1kfQIx-0007f5-Ft; Wed, 18 Nov 2020 16:27:35 +0000
+        id 1kfQm9-0007qk-Gr; Wed, 18 Nov 2020 16:57:45 +0000
+From:   Stefan Metzmacher <metze@samba.org>
 To:     Pavel Begunkov <asml.silence@gmail.com>,
         Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <a09e69abbe0382f5842cd0a69e51fab100aa988c.1604754488.git.asml.silence@gmail.com>
  <80e87448-4a33-99cf-28ca-25f185c83943@samba.org>
  <578923eb-0219-ffec-7c45-e44d15372d41@gmail.com>
  <0ed8c305-66b6-7176-490f-0530fa7fa2cb@gmail.com>
-From:   Stefan Metzmacher <metze@samba.org>
+ <085ba259-0910-bd3e-9136-c2efb69c5971@samba.org>
 Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  xsNNBFYI3MgBIACtBo6mgqbCv5vkv8GSjJH607nvXIT65moPUe6qAm2lYPP6oZUI5SNLhbO3
  rMYfMxBFfWS/0WF8840mDvhqPI+lJGfvJ1Y2r8a9JPuqsk6vwLedv62TQe5J3qMCR2y4TTK1
@@ -400,96 +401,114 @@ Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
  auYcwkOQPAK30K3drs2Ompu4At/lz8OT8Lo/dhOAUE7emFHIHSsHyCS1gpuoxdZRA0i7PmJt
  uAMlsTqBMFOwuvAcYAj2bwl7QQU6yhU=
 Subject: Re: [PATCH 5.11] io_uring: don't take fs for recvmsg/sendmsg
-Message-ID: <085ba259-0910-bd3e-9136-c2efb69c5971@samba.org>
-Date:   Wed, 18 Nov 2020 17:27:18 +0100
+Message-ID: <2ce56c6d-8d0b-7ab5-1b39-05956b6a2008@samba.org>
+Date:   Wed, 18 Nov 2020 17:57:36 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <0ed8c305-66b6-7176-490f-0530fa7fa2cb@gmail.com>
+In-Reply-To: <085ba259-0910-bd3e-9136-c2efb69c5971@samba.org>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="dZHhkwFPQPeQAL70qhwZxMjnFgv85vgZd"
+ boundary="aHbeV7DVxZCj7QA2ljRPBvnSdKWJeYcPr"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---dZHhkwFPQPeQAL70qhwZxMjnFgv85vgZd
-Content-Type: multipart/mixed; boundary="0t6ZpS7Ay4Xltfh3GU4AF8eXC7RUiOzpN";
+--aHbeV7DVxZCj7QA2ljRPBvnSdKWJeYcPr
+Content-Type: multipart/mixed; boundary="bTfUBJ9Mh0IdIZ4qpSA9AMkmSh3yl9ELT";
  protected-headers="v1"
 From: Stefan Metzmacher <metze@samba.org>
 To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>,
  io-uring@vger.kernel.org
-Message-ID: <085ba259-0910-bd3e-9136-c2efb69c5971@samba.org>
+Message-ID: <2ce56c6d-8d0b-7ab5-1b39-05956b6a2008@samba.org>
 Subject: Re: [PATCH 5.11] io_uring: don't take fs for recvmsg/sendmsg
 References: <a09e69abbe0382f5842cd0a69e51fab100aa988c.1604754488.git.asml.silence@gmail.com>
  <80e87448-4a33-99cf-28ca-25f185c83943@samba.org>
  <578923eb-0219-ffec-7c45-e44d15372d41@gmail.com>
  <0ed8c305-66b6-7176-490f-0530fa7fa2cb@gmail.com>
-In-Reply-To: <0ed8c305-66b6-7176-490f-0530fa7fa2cb@gmail.com>
+ <085ba259-0910-bd3e-9136-c2efb69c5971@samba.org>
+In-Reply-To: <085ba259-0910-bd3e-9136-c2efb69c5971@samba.org>
 
---0t6ZpS7Ay4Xltfh3GU4AF8eXC7RUiOzpN
+--bTfUBJ9Mh0IdIZ4qpSA9AMkmSh3yl9ELT
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Am 07.11.20 um 17:07 schrieb Pavel Begunkov:
-> On 07/11/2020 16:02, Pavel Begunkov wrote:
->> On 07/11/2020 13:46, Stefan Metzmacher wrote:
->>> Hi Pavel,
+Am 18.11.20 um 17:27 schrieb Stefan Metzmacher:
+> Am 07.11.20 um 17:07 schrieb Pavel Begunkov:
+>> On 07/11/2020 16:02, Pavel Begunkov wrote:
+>>> On 07/11/2020 13:46, Stefan Metzmacher wrote:
+>>>> Hi Pavel,
+>>>>
+>>>>> We don't even allow not plain data msg_control, which is disallowed=
+ in __sys_{send,revb}msg_sock().
+>>>>
+>>>> Can't we better remove these checks and allow msg_control?
+>>>> For me it's a limitation that I would like to be removed.
 >>>
->>>> We don't even allow not plain data msg_control, which is disallowed =
-in __sys_{send,revb}msg_sock().
->>>
->>> Can't we better remove these checks and allow msg_control?
->>> For me it's a limitation that I would like to be removed.
+>>> We can grab fs only in specific situations as you mentioned, by e.g.
+>>> adding a switch(opcode) in io_prep_async_work(), but that's the easy
+>>> part. All msg_control should be dealt one by one as they do different=
+
+>>> things. And it's not the fact that they ever require fs.
 >>
->> We can grab fs only in specific situations as you mentioned, by e.g.
->> adding a switch(opcode) in io_prep_async_work(), but that's the easy
->> part. All msg_control should be dealt one by one as they do different
->> things. And it's not the fact that they ever require fs.
+>> BTW, Jens mentioned that there is a queued patch that allows plain
+>> data msg_control. Are those not enough?
 >=20
-> BTW, Jens mentioned that there is a queued patch that allows plain
-> data msg_control. Are those not enough?
+> You mean the PROTO_CMSG_DATA_ONLY check?
+>=20
+> It's not perfect, but better than nothing for a start.
 
-You mean the PROTO_CMSG_DATA_ONLY check?
+What actually have in mind for my smbdirect socket driver [1]:
 
-It's not perfect, but better than nothing for a start.
+- I have a pipe that got filled by IORING_OP_SPLICE
+- The data in the pipe need to be "spliced" into a remote RDMA buffers,
+  but I can't use IORING_OP_SPLICE again, because the RDMA buffer descrip=
+tor [2]
+  array needs to be passed too.
+- I'd like to use IORING_OP_SENDMSG with MSG_OOB and msg_control.
+  msg_control would get the RDMA buffer descriptor array and the pipe fd.=
 
-But as far as I can see this is only in the recvmsg path, I'd need it
-for sendmsg. Can this be fixed? It would also be great to have a way to
-detect support for this from userspace.
 
-It would also be great to somehow fill in .msg_iocb and handle
--EIOCBQUEUED from a socket and let a iocb->ki_complete() function to be c=
-alled
-in order to handle completions.
+The reverse operation (splicing data from remote RDMA buffers into a pipe=
+)
+would be implemented with IORING_OP_RECVMSG with MSG_OOB and msg_control.=
+
+
+I guess my smbdirect socket driver would not qualify to be marked as PROT=
+O_CMSG_DATA_ONLY, correct?
+
+[1] https://git.samba.org/?p=3Dmetze/linux/smbdirect.git;a=3Dblob;f=3Dsmb=
+direct_socket.c;h=3Da738854462b198e#l2076
+[2] https://docs.microsoft.com/ru-ru/openspecs/windows_protocols/ms-smbd/=
+bee890cb-48f0-42a3-ba62-f1a3a19b0edc
 
 metze
 
 
---0t6ZpS7Ay4Xltfh3GU4AF8eXC7RUiOzpN--
+--bTfUBJ9Mh0IdIZ4qpSA9AMkmSh3yl9ELT--
 
---dZHhkwFPQPeQAL70qhwZxMjnFgv85vgZd
+--aHbeV7DVxZCj7QA2ljRPBvnSdKWJeYcPr
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl+1S2YACgkQDbX1YShp
-vVYjpg/9Gs1Rb188zTWnFYypznWo9bMKzZaclV0AaJhN/X+8t2enGSj1dzl6AkZ5
-36HcGZIWolrZ6d0wrl2ETQRd8V7bDZFUituNuFn4bSxUJE/NCNY0JAr0R4WDUFSI
-v1NyPw+twTMTP5my8h0KB1CEt0kCjWFgB836uZ/Sut/wU0wEAII+fuaRdPRM4vmv
-CE4l57tBYtdvkCqUovskJffZ7VNEoez7cWhE3bv6BJCZdnrpumJUZOWeFnY+hRW3
-rtBwDIrv9SDyUTe1LxUDNmqrzh+x996WDR8jeSvRZk1FK/Fou/U7FKhR/GDgqw0w
-rkVpHbbqRYckip5VeOHwwS+NrQsL8qdka9u2vwAicogNzN3FHMHJB4yzw7VxyuJJ
-ZgxM5FTfmMxV+OIhqtL5y6GAJCOcvJqhNJRGl/6299XJIqkNzGlMnKqhK2OIerqb
-cMtNs9Y4fP/1M/Hj6ECtkEiZIshRLNAcLClCdArJxaPLjTBSveoyj4Vpq6V5xLuG
-oFADOF2BEUjkgj77BinLuVE5KdFTZ+6TUKB1AWB2Jp5GK+7YXeDmkEKDBcRYDdos
-5eb4T5F1C2+DSGfZvzug9FK3QwwOynvrgDL2aDE1NQoSAeXPk7r2aCfCujGNYutb
-uCdJNOWf9dbAlMoTbg3l++bA2/xZajl+GvLGr7UBRDaQzLr/n4Y=
-=MEav
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAl+1UoAACgkQDbX1YShp
+vVYsMA/6A45F88Rac7lKV0DmYc6gi9GA/5mnmOy6c7kmpqpE4PuDFCYXYipMI03g
+VgL++cDq8/+Oty3ON7QtPRNdZ2japoysvJnohObFeclSanga4fBQfaEuWkSXn4Z/
+ZJJ0bOWniZthT1N2oob9/7V7WYPotGqtKNbCOYexnjjxWCENPMhfh3+7Bqb/x3hE
+VFtDn7Tkcf5UY0nrCCx4HqMiega3DTWqUjypyzF3RxsdBkXPSjs4CCyJyws0c/IA
+7YyEeO04StboVlJ6mb6CGkTj9E5enEylOePNP0y2u8fjqvBX1/80pRvB7HMIeth9
+uOZ5cJzr116cYGHvUM2id2KqkVT7SAwpRG1IQPb9RgyJ23wUrKTGd+ksrWGSGW54
+nsuNZcHvIgrUlrLTUstY4TrDqzqgHoBKGenyvTtxBZ168EZfo8XVcPxbh3oFk1Rv
+88p5s7/XX9AdPMWnDl5+p7Yl3TP9N/SmqtHAEud0Hg/401owLTcqrQm5LzbOPP5+
+SRA/bO57YVanXyLFj/Dcx4lElZ+wpt+q9i3XVxtldcdVVjK3Ss7dJ5QETsKcrh7t
+gmpRAydXg1KUT4Jr/EroJpX7tXAdoiH8FD4o26zIklgn9iS8rWRiQpp8a19ttHwP
+KndsKB5GHju5wArfGfm3TlDheIb47yMRuK0e8SZAvZmvx2KNv+w=
+=jZkS
 -----END PGP SIGNATURE-----
 
---dZHhkwFPQPeQAL70qhwZxMjnFgv85vgZd--
+--aHbeV7DVxZCj7QA2ljRPBvnSdKWJeYcPr--

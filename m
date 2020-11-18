@@ -2,58 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76AFF2B8568
-	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 21:15:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EDB62B8571
+	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 21:21:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725710AbgKRUPd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 Nov 2020 15:15:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36384 "EHLO
+        id S1726141AbgKRUUi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 Nov 2020 15:20:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgKRUPc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Nov 2020 15:15:32 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F7EC0613D4
-        for <io-uring@vger.kernel.org>; Wed, 18 Nov 2020 12:15:31 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id e18so3391811edy.6
-        for <io-uring@vger.kernel.org>; Wed, 18 Nov 2020 12:15:31 -0800 (PST)
+        with ESMTP id S1726136AbgKRUUi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Nov 2020 15:20:38 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03ED0C0613D4
+        for <io-uring@vger.kernel.org>; Wed, 18 Nov 2020 12:20:38 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id 10so4285121wml.2
+        for <io-uring@vger.kernel.org>; Wed, 18 Nov 2020 12:20:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=16HEw7lCvZ9A6Utrs2g57VEb82EL0RDkjqxQkvv+TsI=;
-        b=gJTU6g0W8sZEkeHegQGGs+u/4OQgBLBsPnFkyMoGy4Hk7TN1hcim/ER8fcFp0P2rGJ
-         WqfTO4eG05Q4T2y5xZEDbubu2ndmvHcVx9QnAnHCY7+/0lYd9OQs38JIwq+H0j+dplVn
-         QNE0rgMyWQ7iwI3GbvEhjBLpOwLemqIcB0tJBHiNrECr3qwECq7p8FG8UIRRxFa2F9Pu
-         9BG6uebI20daUwUvaEL/iuM0zIuI9Do+g3YiRLTj/4LIQv6z8HonSjaym5g+sdXe427j
-         i5Uc2bcKPC07me+onhI6j2UxSMKbbO2ESg3E+umzc11cg8DhQZpOCoRa1pZfkLgfjkq7
-         7DTg==
+        bh=PlhF07bA5giHbkB1sOwALjrL/WQzdEmpoAbbCL0l3/c=;
+        b=R5nqDW6tpdYUjJdBlI9m1RNXT1tMKWzR2JbBdTCQhL5jDmSigpYPs5gXI1hqAdxiAW
+         VX9RmG9ZMfYIT36TXNu78OW1OT0K4PN2qBuQF8DgyHf19i9rPmZP43gBkG+wiR95vQmh
+         zf/YjwW5D23IKhS0LTH7/TE6liQij0QGOjCCCi84PVFeifjWY99Et6wbKsPmcSifWzRn
+         900JetDWI7SLN9m2hcGZ7PtS5lQ7vDRbxwWmRqUbMmul+BOcI2xIs6Z510n1EnujADHG
+         wahNybwvn3og0BVqV8n2mFvACZkmLD+66eYnuDJfiopYaMhDWG5DSM+9A/y1l/Wln1Mh
+         I4eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=16HEw7lCvZ9A6Utrs2g57VEb82EL0RDkjqxQkvv+TsI=;
-        b=JvvVKonSAqySTUKO7Na+PI9MMXbQVR14/Ou3IoeBSzXHeCePA/y4Xj0raD7y0MEbfr
-         PEAJtgPAswBwMx2qz+7lM9Z1HgI0JzuXoo+EfxMTc4CMyUxBdiwWDnaX8qEo6NZsOC33
-         e7gnS+WgiqjcIAGv9dGRVvVYjjpF10BEtYT1vNANrohuVkYmQWE5+VQ0EvTfGqcVCPLl
-         F/Qk0lLpwzRI2mZaalX0SpiDS/2ydCsNSOMAs7zIbp9mqRkk9mJdl10RL45tzLSe5LPS
-         Kw9yZXaOibKoAIbpcVjsP2v3F5WbhYE9l9VWhFDtUgL9DgL0xZVF0kv01z3QA/WJyf6Y
-         Yngw==
-X-Gm-Message-State: AOAM532eaAAcOj/vX2aBqZmgHUxJ3mfR8LKj82xdrIl7LZfQ1EGKIE99
-        PhL+q5rrD/NZbwJdGtOktJeBnnwHv/vBXA==
-X-Google-Smtp-Source: ABdhPJzujFVVpj4KIb5QXodQwmIAyn6MFFtctzObmGM5914IZ2Vjoy1/srVI2cMhfbHddzMEi+K77w==
-X-Received: by 2002:aa7:cdd9:: with SMTP id h25mr27858885edw.294.1605730530211;
-        Wed, 18 Nov 2020 12:15:30 -0800 (PST)
-Received: from [192.168.1.144] (host109-152-100-189.range109-152.btcentralplus.com. [109.152.100.189])
-        by smtp.gmail.com with ESMTPSA id g13sm2888907edy.7.2020.11.18.12.15.29
+        bh=PlhF07bA5giHbkB1sOwALjrL/WQzdEmpoAbbCL0l3/c=;
+        b=IZhTwiGd05L5qkShHs4WuMCfLrIkUdPHLnTBdov4nHEoGLYZMLJzvrGFw85AD9jeAP
+         An37d9mPdqsEE6R4VuQN9+j3jrZRaGNuu+4gev2y1ZmEgfmNRi1w67DFfUn51LaD0t7t
+         76VKlSo/T5dslBSy0hKvAI7l1YM2HumOU8Bbkeln18e4V3sncmA9IZVJcBb95IsJAYZ8
+         6xZ7DQGWLglf+Z5R4Wr7/rNW0qz9y96lIlMFWws4rTQ/TJAPnAx70OqyIhY117wEtSCB
+         /91PJ1H4fsm1Xk9Y4lKjc8LtAo2FAVnbeVRc9SS84g8hTI5FHgpoZaI60nY2jcZNZh5H
+         oMqQ==
+X-Gm-Message-State: AOAM5339r86o4z6dgGHt3s7ngRYJJILgL68i2UJX/gp4bEMCN4KjoeYZ
+        GD9yZ+xN5V9VuyCJuRADCjHhfPAXV0xhNg==
+X-Google-Smtp-Source: ABdhPJx4RrAwTLrje3A+BBFHGIiPKNaYH16PGPS/0MWZdB2pOX8p3AYnJJJMrRVux02xDrh9NZ1d0A==
+X-Received: by 2002:a1c:a548:: with SMTP id o69mr819511wme.23.1605730836376;
+        Wed, 18 Nov 2020 12:20:36 -0800 (PST)
+Received: from [192.168.1.144] (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
+        by smtp.gmail.com with ESMTPSA id t15sm5159382wmn.19.2020.11.18.12.20.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2020 12:15:29 -0800 (PST)
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org
+        Wed, 18 Nov 2020 12:20:35 -0800 (PST)
+Subject: Re: [PATCH 6/8] io_uring: support buffer registration updates
+To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org
 References: <1605222042-44558-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1605222042-44558-8-git-send-email-bijan.mottahedeh@oracle.com>
- <d8c1c348-7806-ce54-c683-0c08e44d4590@gmail.com>
- <0bf865dc-14d3-9521-26d9-c91873535146@oracle.com>
+ <1605222042-44558-7-git-send-email-bijan.mottahedeh@oracle.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,162 +97,294 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 7/8] io_uring: support readv/writev with fixed buffers
-Message-ID: <4525dea0-e92b-4dd5-44d6-14687f30b674@gmail.com>
-Date:   Wed, 18 Nov 2020 20:12:22 +0000
+Message-ID: <7d9e5065-0cad-2ef1-be6b-0067116c67bf@gmail.com>
+Date:   Wed, 18 Nov 2020 20:17:28 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <0bf865dc-14d3-9521-26d9-c91873535146@oracle.com>
+In-Reply-To: <1605222042-44558-7-git-send-email-bijan.mottahedeh@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 17/11/2020 22:59, Bijan Mottahedeh wrote:
-> 
->>> Support readv/writev with fixed buffers, and introduce IOSQE_FIXED_BUFFER,
->>> consistent with fixed files.
->>
->> I don't like it at all, see issues below. The actual implementation would
->> be much uglier.
->>
->> I propose you to split the series and push separately. Your first 6 patches
->> first, I don't have conceptual objections to them. Then registration sharing
->> (I still need to look it up). And then we can return to this, if you're not
->> yet convinced.
-> 
-> Ok.  The sharing patch is actually the highest priority for us so it'd be great to know if you think it's in the right direction.
-> 
-> Should I submit them as they are or address your fixed_file_ref comments in Patch 4/8 as well?  Would I need your prep patch beforehand?
+On 12/11/2020 23:00, Bijan Mottahedeh wrote:
+> Introduce IORING_REGISTER_BUFFERS_UPDATE and IORING_OP_BUFFERS_UPDATE,
+> consistent with file registration update.
 
-Ok, there are 2 new patches in 5.10, you may wait for Jens to propagate it to
-5.11 or just cherry-pick (no conflicts expected) them. On top apply ("io_uring:
-share fixed_file_refs b/w multiple rsrcs") to which I CC'ed you. It's
-simple enough so shouldn't be much problems with it.
+I'd prefer to not add a new opcode for each new resource. Can we have
+only IORING_OP_RESOURCE_UPDATE and multiplex inside? Even better if you
+could fit all into IORING_OP_FILES_UPDATE and then
 
-With that you need to call io_set_resource_node() every time you take
-a resource. That's it, _no_ extra ref_put for you to add in puts/free/etc.
+#define IORING_OP_RESOURCE_UPDATE IORING_OP_FILES_UPDATE
 
-Also, consider that all ref_nodes of all types should be hooked into a
-single ->ref_list (e.g. file_data->ref_list).
+Jens, what do you think?
 
 > 
->>> +static ssize_t io_import_iovec_fixed(int rw, struct io_kiocb *req, void *buf,
->>> +                     unsigned segs, unsigned fast_segs,
->>> +                     struct iovec **iovec,
->>> +                     struct iov_iter *iter)
->>> +{
->>> +    struct io_ring_ctx *ctx = req->ctx;
->>> +    struct io_mapped_ubuf *imu;
->>> +    struct iovec *iov;
->>> +    u16 index, buf_index;
->>> +    ssize_t ret;
->>> +    unsigned long seg;
->>> +
->>> +    if (unlikely(!ctx->buf_data))
->>> +        return -EFAULT;
->>> +
->>> +    ret = import_iovec(rw, buf, segs, fast_segs, iovec, iter);
->>
->> Did you test it? import_iovec() does access_ok() against each iov_base,
->> which in your case are an index.
+> Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+> ---
+>  fs/io_uring.c                 | 139 +++++++++++++++++++++++++++++++++++++++++-
+>  include/uapi/linux/io_uring.h |   8 +--
+>  2 files changed, 140 insertions(+), 7 deletions(-)
 > 
-> I used liburing:test/file-{register,update} as models for the equivalent buffer tests and they seem to work.  I can send out the tests and the liburing changes if you want.
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 71f6d5c..6020fd2 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1006,6 +1006,9 @@ struct io_op_def {
+>  		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
+>  						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
+>  	},
+> +	[IORING_OP_BUFFERS_UPDATE] = {
+> +		.work_flags		= IO_WQ_WORK_MM,
+> +	},
+>  };
+>  
+>  enum io_mem_account {
+> @@ -1025,6 +1028,9 @@ static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
+>  static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  				 struct io_uring_rsrc_update *ip,
+>  				 unsigned nr_args);
+> +static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
+> +				   struct io_uring_rsrc_update *up,
+> +				   unsigned nr_args);
+>  static void __io_clean_op(struct io_kiocb *req);
+>  static struct file *io_file_get(struct io_submit_state *state,
+>  				struct io_kiocb *req, int fd, bool fixed);
+> @@ -5939,6 +5945,19 @@ static void destroy_fixed_rsrc_ref_node(struct fixed_rsrc_ref_node *ref_node)
+>  	percpu_ref_exit(&ref_node->refs);
+>  	kfree(ref_node);
+>  }
+> +
+> +static int io_buffers_update_prep(struct io_kiocb *req,
+> +				  const struct io_uring_sqe *sqe)
+> +{
+> +	return io_rsrc_update_prep(req, sqe);
+> +}
+> +
+> +static int io_buffers_update(struct io_kiocb *req, bool force_nonblock,
+> +			     struct io_comp_state *cs)
+> +{
+> +	return io_rsrc_update(req, force_nonblock, cs, __io_sqe_buffers_update);
+> +}
+> +
+>  static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  {
+>  	switch (req->opcode) {
+> @@ -6010,11 +6029,13 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  		return io_renameat_prep(req, sqe);
+>  	case IORING_OP_UNLINKAT:
+>  		return io_unlinkat_prep(req, sqe);
+> +	case IORING_OP_BUFFERS_UPDATE:
+> +		return io_buffers_update_prep(req, sqe);
+>  	}
+>  
+>  	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+>  			req->opcode);
+> -	return-EINVAL;
+> +	return -EINVAL;
+>  }
+>  
+>  static int io_req_defer_prep(struct io_kiocb *req,
+> @@ -6268,6 +6289,9 @@ static int io_issue_sqe(struct io_kiocb *req, bool force_nonblock,
+>  	case IORING_OP_UNLINKAT:
+>  		ret = io_unlinkat(req, force_nonblock);
+>  		break;
+> +	case IORING_OP_BUFFERS_UPDATE:
+> +		ret = io_buffers_update(req, force_nonblock, cs);
+> +		break;
+>  	default:
+>  		ret = -EINVAL;
+>  		break;
+> @@ -8224,6 +8248,7 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf *imu)
+>  	if (imu->acct_pages)
+>  		io_unaccount_mem(ctx, imu->nr_bvecs, ACCT_PINNED);
+>  	kvfree(imu->bvec);
+> +	imu->bvec = NULL;
+>  	imu->nr_bvecs = 0;
+>  }
+>  
+> @@ -8441,6 +8466,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+>  		if (pret > 0)
+>  			unpin_user_pages(pages, pret);
+>  		kvfree(imu->bvec);
+> +		imu->bvec = NULL;
+>  		goto done;
+>  	}
+>  
+> @@ -8602,6 +8628,8 @@ static void io_buf_data_ref_zero(struct percpu_ref *ref)
+>  static void io_ring_buf_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc)
+>  {
+>  	io_buffer_unmap(ctx, prsrc->buf);
+> +	kvfree(prsrc->buf);
+> +	prsrc->buf = NULL;
+>  }
+>  
+>  static struct fixed_rsrc_ref_node *alloc_fixed_buf_ref_node(
+> @@ -8684,6 +8712,111 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+>  	return 0;
+>  }
+>  
+> +static inline int io_queue_buffer_removal(struct fixed_rsrc_data *data,
+> +					  struct io_mapped_ubuf *imu)
+> +{
+> +	return io_queue_rsrc_removal(data, (void *)imu);
+> +}
+> +
+> +static void destroy_fixed_buf_ref_node(struct fixed_rsrc_ref_node *ref_node)
+> +{
+> +	destroy_fixed_rsrc_ref_node(ref_node);
+> +}
+> +
+> +static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
+> +				   struct io_uring_rsrc_update *up,
+> +				   unsigned nr_args)
+> +{
+> +	struct fixed_rsrc_data *data = ctx->buf_data;
+> +	struct fixed_rsrc_ref_node *ref_node;
+> +	struct io_mapped_ubuf *imu;
+> +	struct iovec iov;
+> +	struct iovec __user *iovs;
+> +	struct page *last_hpage = NULL;
+> +	__u32 done;
+> +	int i, err;
+> +	bool needs_switch = false;
+> +
+> +	if (check_add_overflow(up->offset, nr_args, &done))
+> +		return -EOVERFLOW;
+> +	if (done > ctx->nr_user_bufs)
+> +		return -EINVAL;
+> +
+> +	ref_node = alloc_fixed_buf_ref_node(ctx);
+> +	if (IS_ERR(ref_node))
+> +		return PTR_ERR(ref_node);
+> +
+> +	done = 0;
+> +	iovs = u64_to_user_ptr(up->iovs);
+> +	while (nr_args) {
+> +		struct fixed_rsrc_table *table;
+> +		unsigned index;
+> +
+> +		err = 0;
+> +		if (copy_from_user(&iov, &iovs[done], sizeof(iov))) {
+> +			err = -EFAULT;
+> +			break;
+> +		}
+> +		i = array_index_nospec(up->offset, ctx->nr_user_bufs);
+> +		table = &ctx->buf_data->table[i >> IORING_BUF_TABLE_SHIFT];
+> +		index = i & IORING_BUF_TABLE_MASK;
+> +		imu = &table->bufs[index];
+> +		if (table->bufs[index].ubuf) {
+> +			struct io_mapped_ubuf *dup;
+> +			dup = kmemdup(imu, sizeof(*imu), GFP_KERNEL);
+> +			if (!dup) {
+> +				err = -ENOMEM;
+> +				break;
+> +			}
+> +			err = io_queue_buffer_removal(data, dup);
+> +			if (err)
+> +				break;
+> +			memset(imu, 0, sizeof(*imu));
+> +			needs_switch = true;
+> +		}
+> +		if (!io_buffer_validate(&iov)) {
+> +			err = io_sqe_buffer_register(ctx, &iov, imu,
+> +						     &last_hpage);
+> +			if (err) {
+> +				memset(imu, 0, sizeof(*imu));
+> +				break;
+> +			}
+> +		}
+> +		nr_args--;
+> +		done++;
+> +		up->offset++;
+> +	}
+> +
+> +	if (needs_switch) {
+> +		percpu_ref_kill(&data->node->refs);
+> +		spin_lock(&data->lock);
+> +		list_add(&ref_node->node, &data->ref_list);
+> +		data->node = ref_node;
+> +		spin_unlock(&data->lock);
+> +		percpu_ref_get(&ctx->buf_data->refs);
+> +	} else
+> +		destroy_fixed_buf_ref_node(ref_node);
+> +
+> +	return done ? done : err;
+> +}
+> +
+> +static int io_sqe_buffers_update(struct io_ring_ctx *ctx, void __user *arg,
+> +				 unsigned nr_args)
+> +{
+> +	struct io_uring_rsrc_update up;
+> +
+> +	if (!ctx->buf_data)
+> +		return -ENXIO;
+> +	if (!nr_args)
+> +		return -EINVAL;
+> +	if (copy_from_user(&up, arg, sizeof(up)))
+> +		return -EFAULT;
+> +	if (up.resv)
+> +		return -EINVAL;
+> +
+> +	return __io_sqe_buffers_update(ctx, &up, nr_args);
+> +}
+> +
+>  static int io_eventfd_register(struct io_ring_ctx *ctx, void __user *arg)
+>  {
+>  	__s32 __user *fds = arg;
+> @@ -9961,6 +10094,7 @@ static bool io_register_op_must_quiesce(int op)
+>  	switch (op) {
+>  	case IORING_UNREGISTER_FILES:
+>  	case IORING_REGISTER_FILES_UPDATE:
+> +	case IORING_REGISTER_BUFFERS_UPDATE:
+>  	case IORING_REGISTER_PROBE:
+>  	case IORING_REGISTER_PERSONALITY:
+>  	case IORING_UNREGISTER_PERSONALITY:
+> @@ -10036,6 +10170,9 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+>  			break;
+>  		ret = io_sqe_buffers_unregister(ctx);
+>  		break;
+> +	case IORING_REGISTER_BUFFERS_UPDATE:
+> +		ret = io_sqe_buffers_update(ctx, arg, nr_args);
+> +		break;
+>  	case IORING_REGISTER_FILES:
+>  		ret = io_sqe_files_register(ctx, arg, nr_args);
+>  		break;
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 87f0f56..17682b5 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -137,6 +137,7 @@ enum {
+>  	IORING_OP_SHUTDOWN,
+>  	IORING_OP_RENAMEAT,
+>  	IORING_OP_UNLINKAT,
+> +	IORING_OP_BUFFERS_UPDATE,
+>  
+>  	/* this goes last, obviously */
+>  	IORING_OP_LAST,
+> @@ -279,17 +280,12 @@ enum {
+>  	IORING_UNREGISTER_PERSONALITY		= 10,
+>  	IORING_REGISTER_RESTRICTIONS		= 11,
+>  	IORING_REGISTER_ENABLE_RINGS		= 12,
+> +	IORING_REGISTER_BUFFERS_UPDATE		= 13,
+>  
+>  	/* this goes last */
+>  	IORING_REGISTER_LAST
+>  };
+>  
+> -struct io_uring_files_update {
+> -	__u32 offset;
+> -	__u32 resv;
+> -	__aligned_u64 /* __s32 * */ fds;
+> -};
+> -
+>  struct io_uring_rsrc_update {
+>  	__u32 offset;
+>  	__u32 resv;
 > 
-> The fixed io test registers an empty iov table first:
-> 
->     ret = io_uring_register_buffers(ring, iovs, UIO_MAXIOV);
-> 
-> It next updates the table with two actual buffers at offset 768:
-> 
->         ret = io_uring_register_buffers_update(ring, 768, ups, 2);
-> 
-> It later uses the buffer at index 768 for writev similar to the file-register test (IOSQE_FIXED_BUFFER instead of IOSQE_FIXED_FILE):
-> 
->         iovs[768].iov_base = (void *)768;
->         iovs[768].iov_len = pagesize;
-> 
-> 
->         io_uring_prep_writev(sqe, fd, iovs, 1, 0);
->         sqe->flags |= IOSQE_FIXED_BUFFER;
-> 
->         ret = io_uring_submit(ring);
-> 
-> Below is the iovec returned from
-> 
-> io_import_iovec_fixed()
-> -> io_import_vec()
-> 
-> {iov_base = 0x300 <dm_early_create+412>, iov_len = 4096}
-> 
->>> +    if (ret < 0)
->>> +        return ret;
->>> +
->>> +    iov = (struct iovec *)iter->iov;
->>> +
->>> +    for (seg = 0; seg < iter->nr_segs; seg++) {
->>> +        buf_index = *(u16 *)(&iov[seg].iov_base);
->>
->> That's ugly, and also not consistent with rw_fixed, because iov_base is
->> used to calculate offset.
-> 
-> Would offset be applicable when using readv/writev?
-> 
-> My thinkig was that for those cases, each iovec should be used exactly as registered.
-> 
->>
->>> +        if (unlikely(buf_index < 0 || buf_index >= ctx->nr_user_bufs))
->>> +            return -EFAULT;
->>> +
->>> +        index = array_index_nospec(buf_index, ctx->nr_user_bufs);
->>> +        imu = io_buf_from_index(ctx, index);
->>> +        if (!imu->ubuf || !imu->len)
->>> +            return -EFAULT;
->>> +        if (iov[seg].iov_len > imu->len)
->>> +            return -EFAULT;
->>> +
->>> +        iov[seg].iov_base = (void *)imu->ubuf;
->>
->> Nope, that's not different from non registered version.
->> What import_fixed actually do is setting up the iter argument to point
->> to a bvec (a vector of struct page *).
-> 
-> So in fact, the buffers end up being pinned again because they are not being as bvecs?
-> 
->>
->> So it either would need to keep a vector of bvecs, that's a vector of vectors,
->> that's not supported by iter, etc., so you'll also need to iterate over them
->> in io_read/write and so on. Or flat 2D structure into 1D, but that's still ugly.
-> 
-> So you're saying there's no clean way to create a readv/writev + fixed buffers API?  It would've been nice to have a consistent API between files and buffers.
-> 
-> 
->>> @@ -5692,7 +5743,7 @@ static int io_timeout_remove_prep(struct io_kiocb *req,
->>>   {
->>>       if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
->>>           return -EINVAL;
->>> -    if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
->>> +    if (unlikely(req->flags & (REQ_F_FIXED_RSRC | REQ_F_BUFFER_SELECT)))
->>
->> Why it's here?
->>
->> #define REQ_F_FIXED_RSRC    (REQ_F_FIXED_FILE | REQ_F_FIXED_BUFFER)
->> So, why do you | with REQ_F_BUFFER_SELECT again here?
-> 
-> I thought to group fixed files/buffers but distinguish them from selected buffers.
-> 
->>> @@ -87,6 +88,8 @@ enum {
->>>   #define IOSQE_ASYNC        (1U << IOSQE_ASYNC_BIT)
->>>   /* select buffer from sqe->buf_group */
->>>   #define IOSQE_BUFFER_SELECT    (1U << IOSQE_BUFFER_SELECT_BIT)
->>> +/* use fixed buffer set */
->>> +#define IOSQE_FIXED_BUFFER    (1U << IOSQE_FIXED_BUFFER_BIT)
->>
->> Unfortenatuly, we're almost out of flags bits -- it's a 1 byte
->> field and 6 bits are already taken. Let's not use it.
 
 -- 
 Pavel Begunkov

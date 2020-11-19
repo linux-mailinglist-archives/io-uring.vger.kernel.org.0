@@ -2,86 +2,174 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BA7C42B864F
-	for <lists+io-uring@lfdr.de>; Wed, 18 Nov 2020 22:11:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD2652B8A4C
+	for <lists+io-uring@lfdr.de>; Thu, 19 Nov 2020 04:07:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgKRVLV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 Nov 2020 16:11:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44966 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbgKRVLV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Nov 2020 16:11:21 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD6CAC0613D4
-        for <io-uring@vger.kernel.org>; Wed, 18 Nov 2020 13:11:19 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id d17so3621460ion.4
-        for <io-uring@vger.kernel.org>; Wed, 18 Nov 2020 13:11:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=UIRRERGYEFW1YuTYDXiJXGPhOeUxKqCH1iLMoXDyh60=;
-        b=bg/QFXmwM76CeN8/JtyPC3b1uDe/a85+YGEmHh4fCyCb1/2fP/ReEP+pqwPFaCHfcn
-         xI686V22audU3bnVuwieOWm6fiZC6GUB20ZcsOxmksB1k0AGL3ku4/EuCWgVe/ku4g9o
-         zSINcE/eqqoGxvy1cxjMlh++KbouXyTY8BUgy/FmqpO615x132iqkxTaYhnHdM430qv3
-         ERMRoNqCFqD465OgqFxlwNrCirc2EYaJJEIqHb0Je3AmX7vbaW7Ijx3T4rIdbhgOmd+r
-         /hFuEKB2O1QXoj0gsJpQpGMOCOhrLrlf3c5p0ojy9f1r4Weo6qDbm7aaiTNONLXO4f3F
-         jvkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UIRRERGYEFW1YuTYDXiJXGPhOeUxKqCH1iLMoXDyh60=;
-        b=bhcKoLNu2KGw654YcQzKHlIQ8yqA8nByQsVpwbMAE1vLKmkZy/YRQH+8GyVCZAtGOu
-         1VLGOrkWrviLOM0lBgld9KwWaSrzGIusK2sYmUSDkiwja6AyklK2ffoNOAf8gskcT9k8
-         wHEwFAjRnoCUn9w8cWDUPizOeqcV5yNZoXJJFSBWfc80KHwdvgSAIXdStRzgvmNw26s3
-         tpILm3KOTSIJKolHkFj/KoVjwCGko8qTuSyMiuDzpeEh5vSNCS5GVKX4iGhPs7tLCdSS
-         RIqcDPLbrJgMprnVfT+WTlZ+R5CBggU9dtRpeK3TQDRrB3EOIer7Q6pI6RFzil+4O3YE
-         fjdg==
-X-Gm-Message-State: AOAM532Io2tnCgVgIsCwMd37u+74/oq6caWL0BnNjLqD4VWK2EhhX3bs
-        AnIDzmKLW+m+abyrywT3C+Y1b0K2bjXQmw==
-X-Google-Smtp-Source: ABdhPJyD5FwUsEi5E4ANWY/4DSHLySyE32BdGZNR5u2bklzogRMhsUs8lghUE2xLOa1ACbbMnHwSEg==
-X-Received: by 2002:a6b:d801:: with SMTP id y1mr17482240iob.61.1605733879022;
-        Wed, 18 Nov 2020 13:11:19 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k20sm16017842ilr.28.2020.11.18.13.11.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2020 13:11:18 -0800 (PST)
-Subject: Re: [PATCH 5.11] io_uring: share fixed_file_refs b/w multiple rsrcs
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        bijan.mottahedeh@oracle.com
-References: <cover.1605729389.git.asml.silence@gmail.com>
- <b5c57cd24e98a4fae8d9fd186983e053d9e52f37.1605729389.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f4e72558-56d4-8036-a6fc-65b46201ed89@kernel.dk>
-Date:   Wed, 18 Nov 2020 14:11:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726227AbgKSDGQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 Nov 2020 22:06:16 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:46061 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726200AbgKSDGQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Nov 2020 22:06:16 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R751e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UFqsT0m_1605755169;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UFqsT0m_1605755169)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 19 Nov 2020 11:06:09 +0800
+Subject: Re: [PATCH v4 1/2] block: disable iopoll for split bio
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+To:     axboe@kernel.dk, hch@infradead.org, ming.lei@redhat.com
+Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        joseph.qi@linux.alibaba.com
+References: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
+ <20201117075625.46118-2-jefflexu@linux.alibaba.com>
+Message-ID: <e0d59ea2-3c30-9edb-4cbb-f63703fdf0f1@linux.alibaba.com>
+Date:   Thu, 19 Nov 2020 11:06:08 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.12.1
 MIME-Version: 1.0
-In-Reply-To: <b5c57cd24e98a4fae8d9fd186983e053d9e52f37.1605729389.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20201117075625.46118-2-jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/18/20 12:57 PM, Pavel Begunkov wrote:
-> Double fixed files for splice/tee are done in a nasty way, it takes 2
-> ref_node refs, and during the second time it blindly overrides
-> req->fixed_file_refs hoping that it haven't changed. That works because
-> all that is done under iouring_lock in a single go but is error-prone.
-> 
-> Bind everything explicitly to a single ref_node and take only one ref,
-> with current ref_node ordering it's guaranteed to keep all files valid
-> awhile the request is inflight.
-> 
-> That's mainly a cleanup + preparation for generic resource handling,
-> but also saves pcpu_ref get/put for splice/tee with 2 fixed files.
+Hi Jens,
 
-LGTM, applied, thanks.
+Would you mind giving a glance at this, at least patch 1?
+
+
+Patch 1 could fix the potential deadlock may be triggered by sync io polling
+
+in direct IO routine.
+
+
+Actually this patch could alleviate another potential hang in io_uring. The
+
+returned cookie of submit_bio() is actually the cookie of the last split bio
+
+if splitting happened. If the returned cookie is BLK_QC_T_NONE ( the
+
+last split bio get merged into another request, or queue depth exhausted
+
+and REQ_NOWAIT set by io_uring), then iocb->ki_cookie is BLK_QC_T_NONE.
+
+
+If there's only this one IO (though split to several bios) in the 
+polling hw queue,
+
+then io_do_iopoll() will get stuck in indefinite calling of blk_poll(), 
+while blk_poll()
+
+will return 0 immediately because of BLK_QC_T_NONE, without reaping any
+
+former completed requests.
+
+
+This hang rarly happened, maybe because as long as there's other IO, polling
+
+of these other IOs will help reap completed requests of the stuck IO 
+described
+
+above.
+
+
+Of course we could refactor the problematic logic of returning cookie in 
+submit_bio(),
+
+But this patch 1 could also fix this issue. Besides this patch 1 is also 
+needed to fix
+
+the potential deadlock triggered by sync io polling described above.
+
+
+Thanks,
+
+Jeffle
+
+
+
+On 11/17/20 3:56 PM, Jeffle Xu wrote:
+> iopoll is initially for small size, latency sensitive IO. It doesn't
+> work well for big IO, especially when it needs to be split to multiple
+> bios. In this case, the returned cookie of __submit_bio_noacct_mq() is
+> indeed the cookie of the last split bio. The completion of *this* last
+> split bio done by iopoll doesn't mean the whole original bio has
+> completed. Callers of iopoll still need to wait for completion of other
+> split bios.
+>
+> Besides bio splitting may cause more trouble for iopoll which isn't
+> supposed to be used in case of big IO.
+>
+> iopoll for split bio may cause potential race if CPU migration happens
+> during bio submission. Since the returned cookie is that of the last
+> split bio, polling on the corresponding hardware queue doesn't help
+> complete other split bios, if these split bios are enqueued into
+> different hardware queues. Since interrupts are disabled for polling
+> queues, the completion of these other split bios depends on timeout
+> mechanism, thus causing a potential hang.
+>
+> iopoll for split bio may also cause hang for sync polling. Currently
+> both the blkdev and iomap-based fs (ext4/xfs, etc) support sync polling
+> in direct IO routine. These routines will submit bio without REQ_NOWAIT
+> flag set, and then start sync polling in current process context. The
+> process may hang in blk_mq_get_tag() if the submitted bio has to be
+> split into multiple bios and can rapidly exhaust the queue depth. The
+> process are waiting for the completion of the previously allocated
+> requests, which should be reaped by the following polling, and thus
+> causing a deadlock.
+>
+> To avoid these subtle trouble described above, just disable iopoll for
+> split bio.
+>
+> Suggested-by: Ming Lei <ming.lei@redhat.com>
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>   block/blk-merge.c | 7 +++++++
+>   block/blk-mq.c    | 6 ++++--
+>   2 files changed, 11 insertions(+), 2 deletions(-)
+>
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index bcf5e4580603..53ad781917a2 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -279,6 +279,13 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
+>   	return NULL;
+>   split:
+>   	*segs = nsegs;
+> +
+> +	/*
+> +	 * bio splitting may cause subtle trouble such as hang when doing iopoll,
+> +	 * not to mention iopoll isn't supposed to be used in case of big IO.
+> +	 */
+> +	bio->bi_opf &= ~REQ_HIPRI;
+> +
+>   	return bio_split(bio, sectors, GFP_NOIO, bs);
+>   }
+>   
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 55bcee5dc032..6d10652a7ed0 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -3853,11 +3853,13 @@ int blk_poll(struct request_queue *q, blk_qc_t cookie, bool spin)
+>   	    !test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
+>   		return 0;
+>   
+> +	hctx = q->queue_hw_ctx[blk_qc_t_to_queue_num(cookie)];
+> +	if (hctx->type != HCTX_TYPE_POLL)
+> +		return 0;
+> +
+>   	if (current->plug)
+>   		blk_flush_plug_list(current->plug, false);
+>   
+> -	hctx = q->queue_hw_ctx[blk_qc_t_to_queue_num(cookie)];
+> -
+>   	/*
+>   	 * If we sleep, have the caller restart the poll loop to reset
+>   	 * the state. Like for the other success return cases, the
 
 -- 
-Jens Axboe
+Thanks,
+Jeffle
 

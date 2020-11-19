@@ -2,74 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C2692B97CE
-	for <lists+io-uring@lfdr.de>; Thu, 19 Nov 2020 17:27:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EA6B2B9A10
+	for <lists+io-uring@lfdr.de>; Thu, 19 Nov 2020 18:56:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbgKSQYu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 19 Nov 2020 11:24:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53584 "EHLO
+        id S1727182AbgKSRwu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 Nov 2020 12:52:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728013AbgKSQYt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Nov 2020 11:24:49 -0500
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66AA4C0613CF
-        for <io-uring@vger.kernel.org>; Thu, 19 Nov 2020 08:24:49 -0800 (PST)
-Received: by mail-il1-x12f.google.com with SMTP id w8so5830324ilg.12
-        for <io-uring@vger.kernel.org>; Thu, 19 Nov 2020 08:24:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Lw00I39tMMHoHHOPSgKttYErvt005RuGUQAb9q20a8A=;
-        b=sPr0LY4KxEIoN0Vw3DRUl9w82MvOs1MVjNykNCppm5S2E1Gh/HSzfiAOIP7Lqv84Xz
-         bj1UdQ/J8Lf67TZm48avaObJLzH5eb/2N8G2JL2zuLnll58ewjpWsmAacKFmp2NBfqhn
-         7rM7qJZq5vSqDUOdx7HZAkJLv43smWK+IWVOTPs4l0VTuSrXr3pq0CYqK/uxRJFwcpTQ
-         c1EB8W3Tv8vOtFo/ycRUCVdfRLsvDmMTtB60ILJfRK5snEzU72zE9UwtJ4TuLt8NCzOy
-         4ErPOGUVd85aMtvouf7EoCceuV8N3SHP1xqaIEe2VxjWD94BF2l+GjkjB08wZ8wH+e+P
-         KbxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Lw00I39tMMHoHHOPSgKttYErvt005RuGUQAb9q20a8A=;
-        b=M7vnLa+qhG8ZSSbT0ZoMwDEIVQsVzjIqF85TsS3L4xbJq8PFaFQGF5VPzEkxQaj5Z5
-         ZiGlhgQ8ZpC2Ir/9JOVptWDM9w/LTvCGL4mXMJbbbCQtj5r86ha5QBXwCD9ERwv8wKyN
-         VTLnmWTSwm0RZ4Mjit0FuiyAm+ysmIGC0upHD3sS8wRIJxQhTM6O/Cbs+f0AVPGa5SFw
-         s3iGLYF7wF1RtfeFO3QUeubbSSh6G7gMFUAv2q6AEiLCgFA1NYj/pUqwHhwLMjeYbGSq
-         kGCg7tnIbylCpuxDWfitkZh5B/MDvKX6xvGTdyvzF47BeBJ3HUCwLZcjWbrGp+1ZK+8P
-         i+mg==
-X-Gm-Message-State: AOAM532zvQrbgqcBb208iWysxmjHH/op12Rp1ooM0qnWaV24uILI/a6s
-        2t+8r6EjJljDWNfC9K2QNpQvutpCq4WtQw==
-X-Google-Smtp-Source: ABdhPJx1fgRbwmH7ZCCcgrDSusGAn+IYu1dDCmGW122oYAHvjGWWikohsUozpPnXlBnUOLD44TqGXA==
-X-Received: by 2002:a92:cc52:: with SMTP id t18mr5758168ilq.124.1605803088544;
-        Thu, 19 Nov 2020 08:24:48 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id e18sm157692ilc.52.2020.11.19.08.24.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Nov 2020 08:24:47 -0800 (PST)
-Subject: Re: [PATCH] io_uring: check kthread stopped flag when sq thread is
- unparked
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     joseph.qi@linux.alibaba.com
-References: <20201119094446.10658-1-xiaoguang.wang@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8fb13591-b23d-ba97-228e-69d8c0e5412f@kernel.dk>
-Date:   Thu, 19 Nov 2020 09:24:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        with ESMTP id S1727171AbgKSRwu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Nov 2020 12:52:50 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1777DC0613CF;
+        Thu, 19 Nov 2020 09:52:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=cQkJ8oOJbey+jhde6R1GtaMp6RE8pauahlmMPFtXjZs=; b=hEO4IqYNoc19Blikcdoe2QXwBn
+        ybNPIxxCWJWZXd6iQlUNxZUHh79QDprUSf7QQ/mHJLvv1JWsY693pbYp/Pl4ddsj0vuaxUe4OzZFz
+        vVXAV0aGpsPDxlRBTDE9GhOSRz9xs6wi3qFy4uLXgUe68l0rfPEkK8CKo2kLMBeEw6ds0Dv7CkXDU
+        L5MOnJLTkC/YhEVHADMZKcaMsFfu89FCcPOedkE5dru2/soU3sp4CCVTCfer4o9BK6GiJ6CMhVa/V
+        UzZ5x7zdlP1/5DaV3ZyRIr0ZneuehElgdb6dL0clD482W9RfVwxn1j3nt+N7wiGHJRpJmJ8AAylLF
+        LrnX29Bw==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kfo6k-0005fU-SJ; Thu, 19 Nov 2020 17:52:34 +0000
+Date:   Thu, 19 Nov 2020 17:52:34 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     axboe@kernel.dk, hch@infradead.org, ming.lei@redhat.com,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        joseph.qi@linux.alibaba.com
+Subject: Re: [PATCH v4 1/2] block: disable iopoll for split bio
+Message-ID: <20201119175234.GA20944@infradead.org>
+References: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
+ <20201117075625.46118-2-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <20201119094446.10658-1-xiaoguang.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201117075625.46118-2-jefflexu@linux.alibaba.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Applied, thanks.
+On Tue, Nov 17, 2020 at 03:56:24PM +0800, Jeffle Xu wrote:
+> iopoll is initially for small size, latency sensitive IO. It doesn't
+> work well for big IO, especially when it needs to be split to multiple
+> bios. In this case, the returned cookie of __submit_bio_noacct_mq() is
+> indeed the cookie of the last split bio. The completion of *this* last
+> split bio done by iopoll doesn't mean the whole original bio has
+> completed. Callers of iopoll still need to wait for completion of other
+> split bios.
+> 
+> Besides bio splitting may cause more trouble for iopoll which isn't
+> supposed to be used in case of big IO.
+> 
+> iopoll for split bio may cause potential race if CPU migration happens
+> during bio submission. Since the returned cookie is that of the last
+> split bio, polling on the corresponding hardware queue doesn't help
+> complete other split bios, if these split bios are enqueued into
+> different hardware queues. Since interrupts are disabled for polling
+> queues, the completion of these other split bios depends on timeout
+> mechanism, thus causing a potential hang.
+> 
+> iopoll for split bio may also cause hang for sync polling. Currently
+> both the blkdev and iomap-based fs (ext4/xfs, etc) support sync polling
+> in direct IO routine. These routines will submit bio without REQ_NOWAIT
+> flag set, and then start sync polling in current process context. The
+> process may hang in blk_mq_get_tag() if the submitted bio has to be
+> split into multiple bios and can rapidly exhaust the queue depth. The
+> process are waiting for the completion of the previously allocated
+> requests, which should be reaped by the following polling, and thus
+> causing a deadlock.
+> 
+> To avoid these subtle trouble described above, just disable iopoll for
+> split bio.
+> 
+> Suggested-by: Ming Lei <ming.lei@redhat.com>
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>  block/blk-merge.c | 7 +++++++
+>  block/blk-mq.c    | 6 ++++--
+>  2 files changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index bcf5e4580603..53ad781917a2 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -279,6 +279,13 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
+>  	return NULL;
+>  split:
+>  	*segs = nsegs;
+> +
+> +	/*
+> +	 * bio splitting may cause subtle trouble such as hang when doing iopoll,
 
--- 
-Jens Axboe
+Please capitalize the first character of a multi-line comments.  Also
+this adds an overly long line.
 
+> +	hctx = q->queue_hw_ctx[blk_qc_t_to_queue_num(cookie)];
+> +	if (hctx->type != HCTX_TYPE_POLL)
+> +		return 0;
+
+I think this is good as a sanity check, but shouldn't we be able to
+avoid even hitting this patch if we ensure that BLK_QC_T_NONE is
+returned after a bio is split?

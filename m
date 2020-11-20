@@ -2,33 +2,33 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E66B2BA5FD
-	for <lists+io-uring@lfdr.de>; Fri, 20 Nov 2020 10:24:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFD582BA709
+	for <lists+io-uring@lfdr.de>; Fri, 20 Nov 2020 11:07:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbgKTJXA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 20 Nov 2020 04:23:00 -0500
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:46319 "EHLO
+        id S1727446AbgKTKHA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 20 Nov 2020 05:07:00 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:55124 "EHLO
         out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726618AbgKTJXA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Nov 2020 04:23:00 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UFz0ukx_1605864175;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UFz0ukx_1605864175)
+        by vger.kernel.org with ESMTP id S1727835AbgKTKG7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Nov 2020 05:06:59 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R251e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UFzBCOo_1605866815;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UFzBCOo_1605866815)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 20 Nov 2020 17:22:56 +0800
-Subject: Re: [PATCH v4 1/2] block: disable iopoll for split bio
+          Fri, 20 Nov 2020 18:06:55 +0800
+Subject: Re: [PATCH v4 2/2] block,iomap: disable iopoll when split needed
 To:     Christoph Hellwig <hch@infradead.org>
 Cc:     axboe@kernel.dk, ming.lei@redhat.com, linux-block@vger.kernel.org,
         io-uring@vger.kernel.org, joseph.qi@linux.alibaba.com
 References: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
- <20201117075625.46118-2-jefflexu@linux.alibaba.com>
- <20201119175234.GA20944@infradead.org>
+ <20201117075625.46118-3-jefflexu@linux.alibaba.com>
+ <20201119175516.GB20944@infradead.org>
 From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <c080d087-84c1-a019-1398-5358025e090f@linux.alibaba.com>
-Date:   Fri, 20 Nov 2020 17:22:55 +0800
+Message-ID: <ed355fc8-6fc8-5ffd-f1e9-6ba19f761a09@linux.alibaba.com>
+Date:   Fri, 20 Nov 2020 18:06:54 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.12.1
 MIME-Version: 1.0
-In-Reply-To: <20201119175234.GA20944@infradead.org>
+In-Reply-To: <20201119175516.GB20944@infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
@@ -37,143 +37,146 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 
-On 11/20/20 1:52 AM, Christoph Hellwig wrote:
-> On Tue, Nov 17, 2020 at 03:56:24PM +0800, Jeffle Xu wrote:
->> iopoll is initially for small size, latency sensitive IO. It doesn't
->> work well for big IO, especially when it needs to be split to multiple
->> bios. In this case, the returned cookie of __submit_bio_noacct_mq() is
->> indeed the cookie of the last split bio. The completion of *this* last
->> split bio done by iopoll doesn't mean the whole original bio has
->> completed. Callers of iopoll still need to wait for completion of other
->> split bios.
->>
->> Besides bio splitting may cause more trouble for iopoll which isn't
->> supposed to be used in case of big IO.
->>
->> iopoll for split bio may cause potential race if CPU migration happens
->> during bio submission. Since the returned cookie is that of the last
->> split bio, polling on the corresponding hardware queue doesn't help
->> complete other split bios, if these split bios are enqueued into
->> different hardware queues. Since interrupts are disabled for polling
->> queues, the completion of these other split bios depends on timeout
->> mechanism, thus causing a potential hang.
->>
->> iopoll for split bio may also cause hang for sync polling. Currently
->> both the blkdev and iomap-based fs (ext4/xfs, etc) support sync polling
->> in direct IO routine. These routines will submit bio without REQ_NOWAIT
->> flag set, and then start sync polling in current process context. The
->> process may hang in blk_mq_get_tag() if the submitted bio has to be
->> split into multiple bios and can rapidly exhaust the queue depth. The
->> process are waiting for the completion of the previously allocated
->> requests, which should be reaped by the following polling, and thus
->> causing a deadlock.
->>
->> To avoid these subtle trouble described above, just disable iopoll for
->> split bio.
->>
->> Suggested-by: Ming Lei <ming.lei@redhat.com>
->> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
->> ---
->>   block/blk-merge.c | 7 +++++++
->>   block/blk-mq.c    | 6 ++++--
->>   2 files changed, 11 insertions(+), 2 deletions(-)
->>
->> diff --git a/block/blk-merge.c b/block/blk-merge.c
->> index bcf5e4580603..53ad781917a2 100644
->> --- a/block/blk-merge.c
->> +++ b/block/blk-merge.c
->> @@ -279,6 +279,13 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
->>   	return NULL;
->>   split:
->>   	*segs = nsegs;
->> +
->> +	/*
->> +	 * bio splitting may cause subtle trouble such as hang when doing iopoll,
-> Please capitalize the first character of a multi-line comments.  Also
-> this adds an overly long line.
+On 11/20/20 1:55 AM, Christoph Hellwig wrote:
+>> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+>> index 933f234d5bec..396ac0f91a43 100644
+>> --- a/fs/iomap/direct-io.c
+>> +++ b/fs/iomap/direct-io.c
+>> @@ -309,6 +309,16 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+>>   		copied += n;
+>>   
+>>   		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
+>> +		/*
+>> +		 * The current dio needs to be split into multiple bios here.
+>> +		 * iopoll for split bio will cause subtle trouble such as
+>> +		 * hang when doing sync polling, while iopoll is initially
+>> +		 * for small size, latency sensitive IO. Thus disable iopoll
+>> +		 * if split needed.
+>> +		 */
+>> +		if (nr_pages)
+>> +			dio->iocb->ki_flags &= ~IOCB_HIPRI;
+> I think this is confusing two things.
 
-Regards.
+Indeed there's two level of split concerning this issue when doing sync 
+iopoll.
 
 
->
->> +	hctx = q->queue_hw_ctx[blk_qc_t_to_queue_num(cookie)];
->> +	if (hctx->type != HCTX_TYPE_POLL)
->> +		return 0;
-> I think this is good as a sanity check, but shouldn't we be able to
-> avoid even hitting this patch if we ensure that BLK_QC_T_NONE is
-> returned after a bio is split?
-
-Actually I had thought about returning  BLK_QC_T_NONE for split bio, but 
-got blocked.
+The first is that one bio got split in block-core, and patch 1 of this 
+patch set just fixes this.
 
 
-At the beginning, I want to identify split bio by checking if @split is 
-NULL in __blk_queue_split().
-
-```
-
-                 split = blk_bio_segment_split(q, *bio, &q->bio_split, 
-nr_segs);
-                 break;
-         }
-
-         if (split) {
-
-             /* bio got split */
-
-```
-
-But it's not the case. Even if @split is NULL, the input @bio may be the 
-*last* split bio.
+Second is that one dio got split into multiple bios in fs layer, and 
+patch 2 fixes this.
 
 
-Then I want to identify split bio by checking loop times in 
-__submit_bio_noacct_mq().
+>   One is that we don't handle
+> polling well when there are multiple bios.  For this I think we should
+> only call bio_set_polled when we know there is a single bio.
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1008,12 +1008,15 @@ static blk_qc_t __submit_bio_noacct_mq(struct 
-bio *bio)
+
+How about the following patch:
+
+
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -60,12 +60,12 @@ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin)
+  EXPORT_SYMBOL_GPL(iomap_dio_iopoll);
+
+  static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap 
+*iomap,
+-               struct bio *bio, loff_t pos)
++               struct bio *bio, loff_t pos, bool split)
   {
-         struct bio_list bio_list[2] = { };
-         blk_qc_t ret = BLK_QC_T_NONE;
-+       int split = -1;
+         atomic_inc(&dio->ref);
 
-         current->bio_list = bio_list;
+         if (dio->iocb->ki_flags & IOCB_HIPRI)
+-               bio_set_polled(bio, dio->iocb);
++               bio_set_polled(bio, dio->iocb, split);
 
-         do {
-                 struct gendisk *disk = bio->bi_disk;
+         dio->submit.last_queue = bdev_get_queue(iomap->bdev);
+         if (dio->dops && dio->dops->submit_io)
+@@ -214,6 +214,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, 
+loff_t length,
+         int nr_pages, ret = 0;
+         size_t copied = 0;
+         size_t orig_count;
++       bool split = false;
 
-+               split = min(split + 1, 1)
+         if ((pos | length | align) & ((1 << blkbits) - 1))
+                 return -EINVAL;
+@@ -309,7 +310,17 @@ iomap_dio_bio_actor(struct inode *inode, loff_t 
+pos, loff_t length,
+                 copied += n;
+
+                 nr_pages = iov_iter_npages(dio->submit.iter, 
+BIO_MAX_PAGES);
+-               iomap_dio_submit_bio(dio, iomap, bio, pos);
++               /*
++                * The current dio needs to be split into multiple bios 
+here.
++                * iopoll for split bio will cause subtle trouble such as
++                * hang when doing sync polling, while iopoll is initially
++                * for small size, latency sensitive IO. Thus disable iopoll
++                * if split needed.
++                */
++               if (nr_pages)
++                       split = true;
 +
-                 if (unlikely(bio_queue_enter(bio) != 0))
-                         continue;
++               iomap_dio_submit_bio(dio, iomap, bio, pos, split);
+                 pos += n;
+         } while (nr_pages);
 
-@@ -1027,7 +1030,7 @@ static blk_qc_t __submit_bio_noacct_mq(struct bio 
-*bio)
-         } while ((bio = bio_list_pop(&bio_list[0])));
-
-         current->bio_list = NULL;
--       return ret;
-+       return split ? BLK_QC_T_NONE : ret;
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index c6d765382926..21f772f98878 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -806,9 +806,11 @@ static inline int bio_integrity_add_page(struct bio 
+*bio, struct page *page,
+   * must be found by the caller. This is different than IRQ driven IO, 
+where
+   * it's safe to wait for IO to complete.
+   */
+-static inline void bio_set_polled(struct bio *bio, struct kiocb *kiocb)
++static inline void bio_set_polled(struct bio *bio, struct kiocb *kiocb, 
+bool split)
+  {
+-       bio->bi_opf |= REQ_HIPRI;
++       if (!split)
++               bio->bi_opf |= REQ_HIPRI;
++
+         if (!is_sync_kiocb(kiocb))
+                 bio->bi_opf |= REQ_NOWAIT;
   }
 
-But the bio-based routine will call blk_mq_submit_bio() directly, bypassing
 
-__submit_bio_noacct_mq().
+After this patch, bio will be polled only one dio maps to one single bio.
+
+Noted that this change applies to both sync and async IO, though async 
+routine doesn't
+
+suffer the hang described in this patch set. Since the performance gain 
+of iopoll may be
+
+trivial when one dio got split, also disable iopoll for async routine.
 
 
-It seems that we have to add one specific flag to identify split bio.
+We need keep REQ_NOWAIT for async routine even when the dio split happened,
+
+because io_uring doesn't expect blocking. Though the original REQ_NOWAIT
+
+should gets from iocb->ki_flags & IOCB_NOWAIT. Currently iomap doesn't 
+inherit
+
+bio->bi_opf's REQ_NOWAIT from iocb->ki_flags's IOCB_NOWAI. This bug should
+
+be fixed by 
+https://lore.kernel.org/linux-fsdevel/1605685931-207023-1-git-send-email-haoxu@linux.alibaba.com/T/#t
 
 
-Or we could use BIO_CHAIN to identify the *last* split bio from normal 
-bio, since the
+Maybe we could include this fix (of missing inheritance of IOCB_NOWAI) 
+into this patch
 
-last split bio is always marked with BIO_CHAIN. Then we can identify the 
-last split
-
-bio by BIO_CHAIN, and the others by checking if @split is NULL in 
-__blk_queue_split().
+set and then refactor the fix I mentioned in this patch?
 
 
 -- 

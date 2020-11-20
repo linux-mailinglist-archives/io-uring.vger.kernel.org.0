@@ -2,115 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AEBDB2BAF5C
-	for <lists+io-uring@lfdr.de>; Fri, 20 Nov 2020 16:54:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B81732BB43F
+	for <lists+io-uring@lfdr.de>; Fri, 20 Nov 2020 19:59:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbgKTPyK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 20 Nov 2020 10:54:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45422 "EHLO
+        id S1731198AbgKTSpf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 20 Nov 2020 13:45:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728404AbgKTPyK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Nov 2020 10:54:10 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD0FCC0613CF
-        for <io-uring@vger.kernel.org>; Fri, 20 Nov 2020 07:54:09 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id m16so10039273edr.3
-        for <io-uring@vger.kernel.org>; Fri, 20 Nov 2020 07:54:09 -0800 (PST)
+        with ESMTP id S1728578AbgKTSpf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Nov 2020 13:45:35 -0500
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB8B3C0613CF
+        for <io-uring@vger.kernel.org>; Fri, 20 Nov 2020 10:45:33 -0800 (PST)
+Received: by mail-io1-xd44.google.com with SMTP id i18so10977228ioa.3
+        for <io-uring@vger.kernel.org>; Fri, 20 Nov 2020 10:45:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=OILOfqlLNv9tp6SMGqAt+v+Eax8o/Z7/Ud7bw2UXgbk=;
-        b=nQjv62oMf37mNQ1ChDR0UFhK7RCZIqjy4KwIcHXW9pP12C9dqmChQ7NU88yNubyB6A
-         w1CHY9sRH0P0cPZTgUz/U11gCqwpfHfIwBcgaFQzJR7On1MSVRR1xxbXVJ4DYQIjzpPv
-         riOY4dhjQl/NA9cmsGPtnGvoSkog3Fv2CFwbtYTYbjLLwNG12+uPOxvKUaYypDRX/+wT
-         0qpRaYi6sYQw3EczOHRZAbrCvDnYoojUi8jM3uIhQKaSrpUPmFZDTP3WSoPuF5Wt0pNy
-         w3W58vqtbOS257rjkFi2xvyWkZV0m9hguFi61nhQHz/DC+YsQCJ1adB2c8Ps/HOX3jIP
-         htOw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=9p6HVvTWyMaxmoezpfttIAofpYXRqeK+9qf/+06wmto=;
+        b=ZQqGLnEa7hjw4nR1wm65a+144RSbuyKUPwO7mJsCNe9BQTrxiufHI4og/JdpSYdjI1
+         kX/CXhyURpVjT97d7WGHCAudhRvMVg74NGKNEaa/sOF7LAc24Y6Qt37BajlDsSMYymHS
+         ZLgHch0yGTU5q5J4bzAdVNxY7a2RiSVfEd1ZT++u56/tQqtsdTx59pXGV4ifIKj1uPXV
+         HCn35VsnBPt9DZS6zR23snI0pRiBlP5ANRSfaFdjHedkny0W7qxdbQ3i+2/KAEdFZEa9
+         5krjD7SY3fhX/67rgtrlmJQ9tzB589gaAc1cO2i81xv/ao9wfMlOnf+qKid5F9fGjVqu
+         ZfDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OILOfqlLNv9tp6SMGqAt+v+Eax8o/Z7/Ud7bw2UXgbk=;
-        b=o3bN9LkdRhw5lVHd8SPvDcEguWn+yH+pyb5I/f/b2297BNNx3nNkyDdGvBnSSsuuIv
-         2gTX0a9AhKDbewxewgrH4iWtEyGq3j3DyHq8IhY1LBzYSCym6mnaCbmx9ZYSSPGR7si5
-         uPIeVW5bw9rl13n+EAh3SOmzOBIBjH4BxwP9w0D5281PioYpgVerI89j/t9CEbIKFVY8
-         GTkCJmpJd7S/1svF3iCmJ2O1G90Mxq7AB92SnrfuWFKGinyl6QHHoIpGhIQpEKXfnQql
-         AMdgZA3NdUNLaH5ePkDVIyz8B6B+Wh06pbEZfhjdxNdaiOF0T73GEH6Zmu3SxuimVqvJ
-         22rQ==
-X-Gm-Message-State: AOAM53352MZ9tiwu9/owVOWBxPbNaXMiZCrFeaQXZ/EP7gh4wRLvYW7s
-        p6O/FOTey1XIZfVGR2L8eyY=
-X-Google-Smtp-Source: ABdhPJwEzOotZGvqQbVG/Zbf3LtGfzHX0j5qrem9ab1wMrMEEWrdpRPI2Q7kf6sNKE1GbVlTIXmeFw==
-X-Received: by 2002:aa7:c2c3:: with SMTP id m3mr35877256edp.361.1605887648470;
-        Fri, 20 Nov 2020 07:54:08 -0800 (PST)
-Received: from localhost.localdomain (host109-152-100-189.range109-152.btcentralplus.com. [109.152.100.189])
-        by smtp.gmail.com with ESMTPSA id y24sm1253956edt.15.2020.11.20.07.54.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2020 07:54:07 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 2/2] io_uring: fix miscounting ios_left
-Date:   Fri, 20 Nov 2020 15:50:51 +0000
-Message-Id: <bac793cf9a7b4d0bd12d860214e109567d2fc943.1605886827.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1605886827.git.asml.silence@gmail.com>
-References: <cover.1605886827.git.asml.silence@gmail.com>
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=9p6HVvTWyMaxmoezpfttIAofpYXRqeK+9qf/+06wmto=;
+        b=jFXcK/9vKjFCYHeexDbTk68gSQGgewW0reSBU9NN+mKwZb6US2c7jNtwba8jP7eWvM
+         70Ri49V5JJ2oOlsw7KRpIWihbFvOpR253uGxD7v+3FWolCMCFRy8MxnCU3FpZrYn0h6x
+         fCeKmpr6gFE+3FOlmM9y+pfSt8AtP4zNMznnxB8DiP7lAcoBqJntIxhJQW+aL/cJVGiR
+         bUYAmHHrFghVOqOc5Fou2pS5HGWZma7y0EdQNIEmZTF9gBInYlnK4/QqJREKCB4LdC6G
+         4+MJ9gEAtwJ0w0ILIzY+tHV/rp7VplTPLXGtw5a7I+5yZm5BZbRY46dOkkpPS4o7S1aF
+         TBMA==
+X-Gm-Message-State: AOAM533BLCbW18FZ2ow8jO+O9x4TR+Q1fMSNC54zZW3F3JuNaHd1MvqC
+        iWE0oYiDY9j5fygROxE2Qtjh8w==
+X-Google-Smtp-Source: ABdhPJw1cl1IXDp1ajW4jbHHFNzDI3Cw5IX6pUJg6cJNPmgcEAaY516seWCBiyzjiInau09n42lxQA==
+X-Received: by 2002:a6b:7947:: with SMTP id j7mr26726951iop.143.1605897933008;
+        Fri, 20 Nov 2020 10:45:33 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id p24sm2524598ill.59.2020.11.20.10.45.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Nov 2020 10:45:32 -0800 (PST)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.10-rc
+Message-ID: <6535286b-2532-dc86-3c6e-1b1e9bce358f@kernel.dk>
+Date:   Fri, 20 Nov 2020 11:45:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_req_init() doesn't decrement state->ios_left if a request doesn't
-need ->file, it just returns before that on if(!needs_file). That's
-not really a problem but may cause overhead for an additional fput().
-Also inline and kill io_req_set_file() as it's of no use anymore.
+Hi Linus,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+Mostly regression or stable fodder:
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 62c87561560b..72fd80f96fde 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6361,15 +6361,6 @@ static struct file *io_file_get(struct io_submit_state *state,
- 	return file;
- }
- 
--static int io_req_set_file(struct io_submit_state *state, struct io_kiocb *req,
--			   int fd)
--{
--	req->file = io_file_get(state, req, fd, req->flags & REQ_F_FIXED_FILE);
--	if (req->file || io_op_defs[req->opcode].needs_file_no_error)
--		return 0;
--	return -EBADF;
--}
--
- static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
- {
- 	struct io_timeout_data *data = container_of(timer,
-@@ -6782,10 +6773,16 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		state->plug_started = true;
- 	}
- 
--	if (!io_op_defs[req->opcode].needs_file)
--		return 0;
-+	ret = 0;
-+	if (io_op_defs[req->opcode].needs_file) {
-+		bool fixed = req->flags & REQ_F_FIXED_FILE;
-+
-+		req->file = io_file_get(state, req, READ_ONCE(sqe->fd), fixed);
-+		if (unlikely(!req->file &&
-+		    !io_op_defs[req->opcode].needs_file_no_error))
-+			ret = -EBADF;
-+	}
- 
--	ret = io_req_set_file(state, req, READ_ONCE(sqe->fd));
- 	state->ios_left--;
- 	return ret;
- }
+- Disallow async path resolution of /proc/self
+
+- Tighten constraints for segmented async buffered reads
+
+- Fix double completion for a retry error case
+
+- Fix for fixed file life times (Pavel)
+
+Please pull!
+
+
+The following changes since commit 88ec3211e46344a7d10cf6cb5045f839f7785f8e:
+
+  io_uring: round-up cq size before comparing with rounded sq size (2020-11-11 10:42:41 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.10-2020-11-20
+
+for you to fetch changes up to e297822b20e7fe683e107aea46e6402adcf99c70:
+
+  io_uring: order refnode recycling (2020-11-18 08:02:10 -0700)
+
+----------------------------------------------------------------
+io_uring-5.10-2020-11-20
+
+----------------------------------------------------------------
+Jens Axboe (4):
+      proc: don't allow async path resolution of /proc/self components
+      io_uring: handle -EOPNOTSUPP on path resolution
+      mm: never attempt async page lock if we've transferred data already
+      io_uring: don't double complete failed reissue request
+
+Pavel Begunkov (2):
+      io_uring: get an active ref_node from files_data
+      io_uring: order refnode recycling
+
+ fs/io_uring.c  | 57 ++++++++++++++++++++++++++++++++++++++++++---------------
+ fs/proc/self.c |  7 +++++++
+ mm/filemap.c   | 18 ++++++++++++++----
+ 3 files changed, 63 insertions(+), 19 deletions(-)
+
 -- 
-2.24.0
+Jens Axboe
 

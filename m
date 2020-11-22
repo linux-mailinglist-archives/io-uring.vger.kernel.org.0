@@ -2,60 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3743B2BC36C
-	for <lists+io-uring@lfdr.de>; Sun, 22 Nov 2020 04:36:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE97A2BC69F
+	for <lists+io-uring@lfdr.de>; Sun, 22 Nov 2020 17:01:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbgKVDfM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 21 Nov 2020 22:35:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35322 "EHLO
+        id S1727860AbgKVQAZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 22 Nov 2020 11:00:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbgKVDfL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 21 Nov 2020 22:35:11 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E94C0613CF;
-        Sat, 21 Nov 2020 19:35:11 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id r17so15041604wrw.1;
-        Sat, 21 Nov 2020 19:35:11 -0800 (PST)
+        with ESMTP id S1727728AbgKVQAX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Nov 2020 11:00:23 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80151C0613CF;
+        Sun, 22 Nov 2020 08:00:23 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id 1so14996475wme.3;
+        Sun, 22 Nov 2020 08:00:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w0Ir48uXUbn/Bi4Gho+hGv8wN8dsN9/6Q1HYxJFr3xw=;
-        b=VBJIw6I648qXEaHdWXmirJcyQtJzrSMQvYFu4Jf4NGDA8eLnyYtNGb7Obqxblkeafq
-         D9kIpRnw17ISa6ymqBy2GcdCPYYnLPPSAF5qi5pP4PVCQQLgIkIaNwriyQDKETtpDMzj
-         PSdUcJRvP+/mqNb6MNOhdqNiOd/5RJRoCiKQ2fZ/2E80wNl7yKAewiu8LmjODVzyQjOD
-         nI+0ih7ehm46rYfU7MykclO+xt0GuiKsiB2O6LZ6zEIBRG6xcvXYG+ogiENExwWZnJoM
-         kl6xcyPkVdG2xKTHiYAT+3juWT0xCWgUUpCZ6IvlReHrMz2aT+RN6u6hbOIKlhLAZy3R
-         2i0Q==
+        bh=YhgMZ1gW8n+ppTBOSSiSj13dNRCLzcIfKh3zHOsAmD4=;
+        b=YaxS57GK3xepkiT+DcePuH6b/ioHU1Aa2zabX9srvXvlTcSqip+ryJ40pTWzoMC8Mp
+         DSuRI+9Gqg/Ue+AS3mA+qoIpt3Ir2sdGcVwbYCQe72lHlb4hfAPtClNRwZub3kSFjD0g
+         6HgxodWphiYp2w8bVXpdgUywYxJ95zgDgG+oSisOejikFcRFCJ/TKdXVlNhfwN6BxuWU
+         3jLf+Z66CAit618i60F45ArdrR2vN5PKu9M+zgnDA1n873JQZtmpGBlp5LYsyVed/vsB
+         zIIJOzT9roJZSKvMCADA2zflb1Eq3+FAYTwpn+oQgMoPh0dC5lrE2qxRWHISW9ARRBir
+         BMhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=w0Ir48uXUbn/Bi4Gho+hGv8wN8dsN9/6Q1HYxJFr3xw=;
-        b=tmLFm44EWJBK4V1dZH78SJiObVvrYT79kN76/MQE8UwR6wkDRNrwMdZDPJxEOQVxpG
-         P/SV9yyFfDyCHBVbd/2csAT8KwCy7aakFBNyCDmBE8IqOrbudA/BT7cYF3+pggCVPJO7
-         +sHGcvlkvvrKwYgCzi4RXL+e1AORWtUQGxKO6ix2XXTdmzYnfp2qSXo+ciXpidjd5uv9
-         P40KK5LpckwdxpWW01G0AXW0Prmt8VI19iNAgobX+WhUJ5X6UrWzyZ7y/wuSZrKRfh/P
-         4Rqbo399hBuWGovNWzhR8kY3IbagmuOIhea+JAnfWnmn+2LYG09zoSdgDfWrIyjJs49Z
-         0Kjw==
-X-Gm-Message-State: AOAM530hKoxDlowD0qmmE4OULXppKMj3eS+OIYqJ/SQmM4Toueh4NRdM
-        BOPt9c02zi8qnE4ZmdbHbFR4FRRvxReG2A==
-X-Google-Smtp-Source: ABdhPJw4KrbZQ2CoH5IWQyxqSSJ5P2QQWWYsGSajfT3a4SZQ6OVGKjlF9jzcII0CJcC+Ylup0AyX/w==
-X-Received: by 2002:a5d:6250:: with SMTP id m16mr24113282wrv.400.1606016109986;
-        Sat, 21 Nov 2020 19:35:09 -0800 (PST)
+        bh=YhgMZ1gW8n+ppTBOSSiSj13dNRCLzcIfKh3zHOsAmD4=;
+        b=UNYvFUczEBdCjFZh/EOmaAkfjqp1fQRJw4M+vUbwnr6koyIiG4LATOUmsRmV3SI9IC
+         1f6u282nPppkAs4Wo3JHmOzXNqNHdr0ad6VGUBrpWIomWtVHKSPB4bNz6pFN/PY8+kjq
+         wK/72s3gGViaTdeyfXWxzPndlHJv/NihyA/cZaPt6sUzF5t8dDLkdo44iAWC0SWrmWGe
+         J+ZGuzGna3nj0rPWLBnC0X83ay3+xnUPwNqNtf0VFwS140iW6zzZvGQXA3lttiV+La3D
+         3RKEtfNFVTru7xnonzffXuf5w7HzVCW13whCjY2up1m2hECfYtpTONmmfIaP02/A87XE
+         vWYA==
+X-Gm-Message-State: AOAM5304wnMd5C0Xo+qxI4OEKb8st9w5Hrrg13KkKNJCqPIZaDPaioG1
+        dJtJ7fCfUaLAWbHrkKnVCjg=
+X-Google-Smtp-Source: ABdhPJxbtQQ665YYaTB3b+5OvUiIrWTXg/BrTSvMTF+7IpT/uEClvyhqcTtAWOsGUH8eh/HbYtfxSA==
+X-Received: by 2002:a7b:cbd1:: with SMTP id n17mr11581585wmi.186.1606060822132;
+        Sun, 22 Nov 2020 08:00:22 -0800 (PST)
 Received: from [192.168.1.118] (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
-        by smtp.gmail.com with ESMTPSA id c62sm8922375wme.22.2020.11.21.19.35.09
+        by smtp.gmail.com with ESMTPSA id 35sm13807181wro.71.2020.11.22.08.00.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Nov 2020 19:35:09 -0800 (PST)
-To:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+c0d52d0b3c0c3ffb9525@syzkaller.appspotmail.com>
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        Sun, 22 Nov 2020 08:00:21 -0800 (PST)
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+c0d52d0b3c0c3ffb9525@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         peterz@infradead.org, syzkaller-bugs@googlegroups.com,
         viro@zeniv.linux.org.uk, will@kernel.org
 References: <0000000000002bea4605b4a5931d@google.com>
  <20201122030421.2088-1-hdanton@sina.com>
+ <20201122092003.7724-1-hdanton@sina.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -101,12 +102,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: INFO: task hung in __io_uring_files_cancel
-Message-ID: <0142d9e7-14ea-06b5-7983-a295a1883e2f@gmail.com>
-Date:   Sun, 22 Nov 2020 03:32:01 +0000
+Message-ID: <03db9ac8-f077-ab84-04e6-b83ad6763fe7@gmail.com>
+Date:   Sun, 22 Nov 2020 15:57:12 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201122030421.2088-1-hdanton@sina.com>
+In-Reply-To: <20201122092003.7724-1-hdanton@sina.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -114,74 +115,92 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 22/11/2020 03:04, Hillf Danton wrote:
-> On Sat, 21 Nov 2020 14:35:15 -0800
->> syzbot found the following issue on:
+On 22/11/2020 09:20, Hillf Danton wrote:
+> On Sun, 22 Nov 2020 03:32:01 +0000 Pavel Begunkov wrote:
+>> On 22/11/2020 03:04, Hillf Danton wrote:
+>>> On Sat, 21 Nov 2020 14:35:15 -0800
+>>>> syzbot found the following issue on:
+>>>>
+>>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10401726500000
+>>>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=12401726500000
+>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=14401726500000
+>>>>
+>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>>> Reported-by: syzbot+c0d52d0b3c0c3ffb9525@syzkaller.appspotmail.com
+>>>> Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
+>>>>
+>>>> INFO: task syz-executor.0:9557 blocked for more than 143 seconds.
+>>>>       Not tainted 5.10.0-rc4-next-20201117-syzkaller #0
+>>>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>>>> task:syz-executor.0  state:D stack:28584 pid: 9557 ppid:  8485 flags:0x00004002
+>>>> Call Trace:
+>>>>  context_switch kernel/sched/core.c:4269 [inline]
+>>>>  __schedule+0x890/0x2030 kernel/sched/core.c:5019
+>>>>  schedule+0xcf/0x270 kernel/sched/core.c:5098
+>>>>  io_uring_cancel_files fs/io_uring.c:8720 [inline]
+>>>>  io_uring_cancel_task_requests fs/io_uring.c:8772 [inline]
+>>>>  __io_uring_files_cancel+0xc4d/0x14b0 fs/io_uring.c:8868
+>>>>  io_uring_files_cancel include/linux/io_uring.h:51 [inline]
+>>>>  exit_files+0xe4/0x170 fs/file.c:456
+>>>>  do_exit+0xb61/0x29f0 kernel/exit.c:818
+>>>>  do_group_exit+0x125/0x310 kernel/exit.c:920
+>>>>  get_signal+0x3ea/0x1f70 kernel/signal.c:2750
+>>>>  arch_do_signal_or_restart+0x2a6/0x1ea0 arch/x86/kernel/signal.c:811
+>>>>  handle_signal_work kernel/entry/common.c:145 [inline]
+>>>>  exit_to_user_mode_loop kernel/entry/common.c:169 [inline]
+>>>>  exit_to_user_mode_prepare+0x124/0x200 kernel/entry/common.c:199
+>>>>  syscall_exit_to_user_mode+0x38/0x260 kernel/entry/common.c:274
+>>>>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>> RIP: 0033:0x45deb9
+>>>> Code: Unable to access opcode bytes at RIP 0x45de8f.
+>>>> RSP: 002b:00007fa68397ccf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+>>>> RAX: fffffffffffffe00 RBX: 000000000118bf28 RCX: 000000000045deb9
+>>>> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000118bf28
+>>>> RBP: 000000000118bf20 R08: 0000000000000000 R09: 0000000000000000
+>>>> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
+>>>> R13: 00007fff50acc9af R14: 00007fa68397d9c0 R15: 000000000118bf2c
+>>>>
+>> ...
+>>>
+>>> Fix 311daef8013a ("io_uring: replace inflight_wait with tctx->wait")
+>>> by cutting the pre-condition to wakeup because waitqueue_active()
+>>> speaks the language in the East End while atomic_read() may speak
+>>> the language in Paris.
 >>
->> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10401726500000
->> final oops:     https://syzkaller.appspot.com/x/report.txt?x=12401726500000
->> console output: https://syzkaller.appspot.com/x/log.txt?x=14401726500000
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+c0d52d0b3c0c3ffb9525@syzkaller.appspotmail.com
->> Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
->>
->> INFO: task syz-executor.0:9557 blocked for more than 143 seconds.
->>       Not tainted 5.10.0-rc4-next-20201117-syzkaller #0
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:syz-executor.0  state:D stack:28584 pid: 9557 ppid:  8485 flags:0x00004002
->> Call Trace:
->>  context_switch kernel/sched/core.c:4269 [inline]
->>  __schedule+0x890/0x2030 kernel/sched/core.c:5019
->>  schedule+0xcf/0x270 kernel/sched/core.c:5098
->>  io_uring_cancel_files fs/io_uring.c:8720 [inline]
->>  io_uring_cancel_task_requests fs/io_uring.c:8772 [inline]
->>  __io_uring_files_cancel+0xc4d/0x14b0 fs/io_uring.c:8868
->>  io_uring_files_cancel include/linux/io_uring.h:51 [inline]
->>  exit_files+0xe4/0x170 fs/file.c:456
->>  do_exit+0xb61/0x29f0 kernel/exit.c:818
->>  do_group_exit+0x125/0x310 kernel/exit.c:920
->>  get_signal+0x3ea/0x1f70 kernel/signal.c:2750
->>  arch_do_signal_or_restart+0x2a6/0x1ea0 arch/x86/kernel/signal.c:811
->>  handle_signal_work kernel/entry/common.c:145 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:169 [inline]
->>  exit_to_user_mode_prepare+0x124/0x200 kernel/entry/common.c:199
->>  syscall_exit_to_user_mode+0x38/0x260 kernel/entry/common.c:274
->>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->> RIP: 0033:0x45deb9
->> Code: Unable to access opcode bytes at RIP 0x45de8f.
->> RSP: 002b:00007fa68397ccf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
->> RAX: fffffffffffffe00 RBX: 000000000118bf28 RCX: 000000000045deb9
->> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000118bf28
->> RBP: 000000000118bf20 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
->> R13: 00007fff50acc9af R14: 00007fa68397d9c0 R15: 000000000118bf2c
->>
-...
+>> Your description doesn't help,
 > 
-> Fix 311daef8013a ("io_uring: replace inflight_wait with tctx->wait")
-> by cutting the pre-condition to wakeup because waitqueue_active()
-> speaks the language in the East End while atomic_read() may speak
-> the language in Paris.
+> That is what I could find to describe the changs added in
+> 311daef8013a, given that waitqueue_active() and atomic_read() IMO are
+> primary bricks without natural links prebuilt. I dont think either
+> of them could be replaced with another even in 311daef8013a.
 
-Your description doesn't help, why do you think this is the problem?
-->in_idle is always set when io_uring_cancel_files() sleeps on it,
-and ->inflight_lock should guarantee ordering.
+There are not linked, but that doesn't make it automatically wrong.
+I still don't understand how it fixes the problem, and it's better
+to find the root cause because there are similar places that might
+still be similarly flawed.
 
+>> why do you think this is the problem?
 > 
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6082,8 +6082,7 @@ static void io_req_drop_files(struct io_
->  
->  	spin_lock_irqsave(&ctx->inflight_lock, flags);
->  	list_del(&req->inflight_entry);
-> -	if (atomic_read(&tctx->in_idle))
-> -		wake_up(&tctx->wait);
-> +	wake_up(&tctx->wait);
->  	spin_unlock_irqrestore(&ctx->inflight_lock, flags);
->  	req->flags &= ~REQ_F_INFLIGHT;
->  	put_files_struct(req->work.identity->files);
+> This is not a tough question, thanks to the reproducer.
 > 
+>> ->in_idle is always set when io_uring_cancel_files() sleeps on it,
+>> and ->inflight_lock should guarantee ordering.
+> 
+> The syzbot report makes sense, right?
+> 
+>>>
+>>> --- a/fs/io_uring.c
+>>> +++ b/fs/io_uring.c
+>>> @@ -6082,8 +6082,7 @@ static void io_req_drop_files(struct io_
+>>>  
+>>>  	spin_lock_irqsave(&ctx->inflight_lock, flags);
+>>>  	list_del(&req->inflight_entry);
+>>> -	if (atomic_read(&tctx->in_idle))
+>>> -		wake_up(&tctx->wait);
+>>> +	wake_up(&tctx->wait);
+>>>  	spin_unlock_irqrestore(&ctx->inflight_lock, flags);
+>>>  	req->flags &= ~REQ_F_INFLIGHT;
+>>>  	put_files_struct(req->work.identity->files);
 
 -- 
 Pavel Begunkov

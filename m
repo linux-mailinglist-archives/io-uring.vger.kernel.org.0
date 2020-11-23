@@ -2,156 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 839FC2C17A5
-	for <lists+io-uring@lfdr.de>; Mon, 23 Nov 2020 22:27:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B362A2C1964
+	for <lists+io-uring@lfdr.de>; Tue, 24 Nov 2020 00:29:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729765AbgKWVYJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Nov 2020 16:24:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54028 "EHLO
+        id S1726186AbgKWXXr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Nov 2020 18:23:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729747AbgKWVYJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Nov 2020 16:24:09 -0500
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0692DC0613CF
-        for <io-uring@vger.kernel.org>; Mon, 23 Nov 2020 13:24:09 -0800 (PST)
-Received: by mail-ed1-x543.google.com with SMTP id l5so18613391edq.11
-        for <io-uring@vger.kernel.org>; Mon, 23 Nov 2020 13:24:08 -0800 (PST)
+        with ESMTP id S1725797AbgKWXXr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Nov 2020 18:23:47 -0500
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD365C0613CF;
+        Mon, 23 Nov 2020 15:23:46 -0800 (PST)
+Received: by mail-wm1-x342.google.com with SMTP id 1so1097124wme.3;
+        Mon, 23 Nov 2020 15:23:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nametag.social; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/Et4fHNGjBXo9uqpsLTzTTKFLfRmQxJK2FeHZE24s8Y=;
-        b=NSnRBScAecrJNyEXtk2XbFJzgxf4LBxDc9S0wXuhghis88rKOIaXQPmYPMAUa+JMlJ
-         MSx7WHjozx9chvAnLoOTj8SouzPTpdTzl3CZja7cpvcL/Styv0BWqW9yZce06biASovS
-         Dw3UVfikThJ/Qzk5zjVSKn3NplBi3jalKrA9WAEDv4VkhrdZYlJCVpcqPfKTmfrqI/Y5
-         5RoHujDq6xIeyWgjWjlKiCr49EzeENcercM7eogm2NfYJXoJQAka9JlyeRgOAppdcUUj
-         RWtHaWy3V8YbroxfrwvIc0Hprsa3yOq4B+AGVHndA49UDRlsu5/AIhXDT4aadTQUr8/H
-         ES9Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iPVFgmYNRnVYuGgxhzMYRvkwTnKqVhuuvHWyw9sWSss=;
+        b=fqExvHo38WlMppex8bVVj68brBt56MspN2SZjKOYuOXVHxYJr/azwg8rJe1jw4uu3b
+         UhY/L870IGIyC7KV3T+Fycb5V1T14rXoK5vVmMU9W6poEbcrptkQq7VP0eWKH97W+eqV
+         HZ8JybRuIFio4EFA1FlKg4yHfJ/GF//fri08gpp1qsXur0BXk9ZLLWrqnxY+dxum2OKA
+         ENWu8DEE51le2659MsXJf0Jr3rlDz86VBvfIzG/YKHZrOAfSbOETNXbL5ZpYlJQDOg5N
+         Zv66jQYAvIzFhQbtZZd68+oqkMeVQhbNIvKzn+npaAt61whtC/kyxXAXwJdTycsgUrzo
+         lJ0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/Et4fHNGjBXo9uqpsLTzTTKFLfRmQxJK2FeHZE24s8Y=;
-        b=JbvU+g4HNOl0ywX9m/LGxvtVobghv6bQK1rsVe8DCR8B6hRGIyBBqBiTU5o/bvIMcf
-         naVs66wBaajl1Vl/l3JOTLe6TEKvXr9ZX7+K5eYxXgWrLD2vfy/6OKEu520EYyz4e9Fa
-         0O0GV14tOoMAQtM5y1YmHdn3DSXjVtp1ZBdE2er7NaAjbV/HHkKH0jvcOAQkVe75lLjE
-         W55+qyCQszAH995ruXmPD4SZvZQ8lL2kM63KCha3VA8rS/28qY0izvmYM3HFjfgbGgFj
-         OLsnxdQUxh5YIHmWClTs8GsXMIZ+Yagvvt77iMOAmmdg9lw+xgJn8hjQCSOfoKCAHpyh
-         typA==
-X-Gm-Message-State: AOAM533wJBZZpmjCxANLu19HtleuPHoT/xVjYS9DoVDgs1A3xvRkm/I1
-        KzF6XFA13BCLjjNMi9pbr62oRZwVebINr0k/FhrEKXcVNjuDSQ==
-X-Google-Smtp-Source: ABdhPJyPIUwawGKRiUfvm0U5fmH8YEwDqplYmLqUqi1Ft77GkpGPCjtJV22xsPD/BfAaFFLqmNTn1HEWeFD5JVCgNyo=
-X-Received: by 2002:a50:f157:: with SMTP id z23mr1089718edl.303.1606166647721;
- Mon, 23 Nov 2020 13:24:07 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iPVFgmYNRnVYuGgxhzMYRvkwTnKqVhuuvHWyw9sWSss=;
+        b=KcnTkRlOY4oHcsB6675+QZIa1CtW4PMPEaPQREPYrq4MmszoZm2PynggjDALVJE2wv
+         73Q6a4a2j2sZX0TuxqTORgfWYkY3fRiI6AscRUmrHD59JBM23yH1BOaUasj91IvtIuIc
+         kPphy0zRvbz2thNy4blGyFwxUtk5/XqW7MlcyhfenpiueG1X9wFQgcSkweS4OIt+0Sc9
+         vvZCTU+hayWYun+nxffxLgE0XSyYnkPRPRJZed5tckj4LB9k/ywHcXppscxhRRd1UM5Q
+         XQhQMNlUlUTfzzIQ1qMXUqYbg7A08uk++UtxUltJQkKkvyDZGjsX9hkxx5VyFqxkU/Ox
+         sKUQ==
+X-Gm-Message-State: AOAM530Ar9Kn6B1jRAZxV4WXe85rhbEtafY57+4HVMVtUAYRB2v4RiSU
+        szbs/EeaY7Yx7Yen5gm5uPc=
+X-Google-Smtp-Source: ABdhPJwNTSIfijVW3uSRi/z/Q5Vvm9kQAEypadvKn8zFauSOyIjbV0k6RsqgHvi+7v13adGPi7QJ9g==
+X-Received: by 2002:a05:600c:2:: with SMTP id g2mr1189099wmc.156.1606173825474;
+        Mon, 23 Nov 2020 15:23:45 -0800 (PST)
+Received: from localhost.localdomain (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
+        by smtp.gmail.com with ESMTPSA id s8sm22918689wrn.33.2020.11.23.15.23.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2020 15:23:45 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     stable@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH 5.10] io_uring: fix ITER_BVEC check
+Date:   Mon, 23 Nov 2020 23:20:27 +0000
+Message-Id: <26e5446cb6252589a7edc4c3bbe4d8a503919bd8.1606172908.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <CAM1kxwjmGd8=992NjY6TjgsbMoxFS5j2_71bgaYUOUT0vG-19A@mail.gmail.com>
- <142638c1-8334-e45b-d1d7-b1feb060ff85@gmail.com>
-In-Reply-To: <142638c1-8334-e45b-d1d7-b1feb060ff85@gmail.com>
-From:   Victor Stewart <v@nametag.social>
-Date:   Mon, 23 Nov 2020 21:23:57 +0000
-Message-ID: <CAM1kxwjFVutTb8jd+fRwvm_1QN=EmgRAbF+sY-pnGCMABry3hw@mail.gmail.com>
-Subject: Re: [RFC 1/1] whitelisting UDP GSO and GRO cmsgs
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Nov 23, 2020 at 8:37 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->
-> On 23/11/2020 15:35, Victor Stewart wrote:
-> > add __sys_whitelisted_cmsghdrs() and configure __sys_recvmsg_sock and
-> > __sys_sendmsg_sock to use it.
->
-> They haven't been disabled without a reason, and that's not only
-> because of creds. Did you verify that it's safe to allow those?
+iov_iter::type is a bitmask that also keeps direction etc., so it
+shouldn't be directly compared against ITER_*. Use proper helper.
 
-conceptually i don't see how it would not be safe? but maybe someone
-who knows better can make such an argument.
+Cc: <stable@vger.kernel.org> # 5.9
+Reported-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> >
-> > Signed-off by: Victor Stewart <v@nametag.social>
-> > ---
-> >  net/socket.c | 15 ++++++++++++---
-> >  1 file changed, 12 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/net/socket.c b/net/socket.c
-> > index 6e6cccc2104f..44e28bb08bbe 100644
-> > --- a/net/socket.c
-> > +++ b/net/socket.c
-> > @@ -2416,9 +2416,9 @@ static int ___sys_sendmsg(struct socket *sock,
-> > struct user_msghdr __user *msg,
-> >  long __sys_sendmsg_sock(struct socket *sock, struct msghdr *msg,
-> >                         unsigned int flags)
-> >  {
-> > -       /* disallow ancillary data requests from this path */
-> >         if (msg->msg_control || msg->msg_controllen)
-> > -               return -EINVAL;
-> > +               if (!__sys_whitelisted_cmsghdrs(msr))
->
-> Its definition below and I don't see a forward declaration anywhere.
-> Did you even compile this?
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 593dfef32b17..7c1f255807f5 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3278,7 +3278,7 @@ static void io_req_map_rw(struct io_kiocb *req, const struct iovec *iovec,
+ 	rw->free_iovec = iovec;
+ 	rw->bytes_done = 0;
+ 	/* can only be fixed buffers, no need to do anything */
+-	if (iter->type == ITER_BVEC)
++	if (iov_iter_is_bvec(iter))
+ 		return;
+ 	if (!iovec) {
+ 		unsigned iov_off = 0;
+-- 
+2.24.0
 
-i knew it would be a hotly contested topic, so no i did not compile
-it, that's why i put RFC not patch. Just to broach a potential
-solution for discussion.
-
->
-> > +                       return -EINVAL;
-> >
-> >         return ____sys_sendmsg(sock, msg, flags, NULL, 0);
-> >  }
-> > @@ -2620,6 +2620,15 @@ static int ___sys_recvmsg(struct socket *sock,
-> > struct user_msghdr __user *msg,
-> >         return err;
-> >  }
-> >
-> > +static bool __sys_whitelisted_cmsghdrs(struct msghdr *msg)
->
-> Don't call it __sys*
-
-kk
-
->
-> > +{
-> > +       for (struct cmsghdr *cmsg = CMSG_FIRSTHDR(msg); cmsg != NULL;
-> > cmsg = CMSG_NXTHDR(message, cmsg))
->
-> no var declarations in for, run checkpatch.pl first
-
-kk
-
->
-> > +               if (cmsg->cmsg_level != SOL_UDP || (cmsg->cmsg_type !=
-> > UDP_GRO && cmsg->cmsg_type != UDP_SEGMENT))
-> > +                       return false;
-> > +
-> > +       return true;
-> > +}
-> > +
-> >  /*
-> >   *     BSD recvmsg interface
-> >   */
-> > @@ -2630,7 +2639,7 @@ long __sys_recvmsg_sock(struct socket *sock,
-> > struct msghdr *msg,
-> >  {
-> >         if (msg->msg_control || msg->msg_controllen) {
-> >                 /* disallow ancillary data reqs unless cmsg is plain data */
-> > -               if (!(sock->ops->flags & PROTO_CMSG_DATA_ONLY))
-> > +               if (!( sock->ops->flags & PROTO_CMSG_DATA_ONLY ||
->
-> extra space after "("
->
-> don't forget about brackets when mixing bitwise and logical and/or
->
-> It would look better if you'd get rid of outer brackets and propagate !
->
-> > __sys_whitelisted_cmsghdrs(msr) ))
-> >                         return -EINVAL;
-> >         }
-> >
->
-> --
-> Pavel Begunkov

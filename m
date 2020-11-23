@@ -2,73 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 969632C0ED9
-	for <lists+io-uring@lfdr.de>; Mon, 23 Nov 2020 16:33:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51E922C0EF4
+	for <lists+io-uring@lfdr.de>; Mon, 23 Nov 2020 16:40:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732037AbgKWP3W (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Nov 2020 10:29:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55400 "EHLO
+        id S1731420AbgKWPfn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Nov 2020 10:35:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbgKWP3W (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Nov 2020 10:29:22 -0500
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D325CC0613CF
-        for <io-uring@vger.kernel.org>; Mon, 23 Nov 2020 07:29:21 -0800 (PST)
-Received: by mail-ej1-x643.google.com with SMTP id o21so23843481ejb.3
-        for <io-uring@vger.kernel.org>; Mon, 23 Nov 2020 07:29:21 -0800 (PST)
+        with ESMTP id S1727444AbgKWPfn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Nov 2020 10:35:43 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8E1DC0613CF
+        for <io-uring@vger.kernel.org>; Mon, 23 Nov 2020 07:35:41 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id k1so4605108eds.13
+        for <io-uring@vger.kernel.org>; Mon, 23 Nov 2020 07:35:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=nametag.social; s=google;
         h=mime-version:from:date:message-id:subject:to;
-        bh=tlSZHhBEU9+4NRbdMZQRiRMCi9ZBf218EK+Z/G0F10g=;
-        b=y48mn3l3NI+Wwf1vUavZIVnpOid1VURK0zL7MgInuuaJzJRZLG/t/kYlIqZtMzd3SF
-         E5HH2F7j3Txm+mLJ/405brikIWMXPs2GjQwF7XLhJP6qOpBulxGsq1v2/YKdzFN0ba8b
-         XKIgNlhg3I03jVgdWecnBShxYl5XIriDejFBu6cxY1+Y+A45sXJrlAvkUHahL/8Mwbnf
-         9bR2XLW/bvSxHQFAqprgHxDZPEwIgWGwT+6J3RjdcDncCVAKhgSuSSRCfeMgoMhXl+6F
-         uU6Q0brnnT9i6C8lk1QvK8rbFEUpRo9aAnsfQyN/xZvXq+EBIQYzFlsTlT1giM0knXe4
-         s50A==
+        bh=OUai5nsHuWU8oSzWTOqMoLn2cLr9hydsuASWL4vzSA0=;
+        b=spMf9gBbKG9RX8rMbACINXpl0mlxHKIupMt2RULHrvw/qSYxzr7BON8ZBqUnBjCpqn
+         CXhPAaJ5fEQdFHmwYJOLKxbiuar1X1qfcvEVJsBhBnok1/5PHLCfsuULsdZ68sgAH26e
+         rjWCJc+IvAJaCQpJXLqd+pK5wxKrdNLro1XHvIFeEpN0iGHbSwC7EyIzW5coMU2Yt/4A
+         r4NtDPQMNqgqbKN03ha+cEr12FGxArdrWwEbEPfPGvKya/DX7d4eBPalt274rOf+ipFD
+         /c2IIK1Z8qWoUQiS2t56ljeTDvaZ29P+a9ounzKFAV/Kn5aAN31RbdHC0OdCE1unvw02
+         ZuWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=tlSZHhBEU9+4NRbdMZQRiRMCi9ZBf218EK+Z/G0F10g=;
-        b=GK36JXOKWeIpGom8NM3tcN7dHbqDf8w5/TbOa9NQ8sNdWqu0LxD7fDMg6LgNBMKIfX
-         fBDhQTWhsPUDmvLpu8RqrVuHr1JKBDi8El0Giee9iahgEDCRTLKba68bT1QC4FUgOlju
-         chGl0DQ0LOUYWTdfZ+9Wwxm31qJN0JA/Ybq9S+LEB50o6iciG5Zgv1UJ8AE+71f8dbhr
-         smqkJPUchdUZ/aswXUbqBpTSxbNS27L5CupNF6fZIDaJdDtB02QFNV4k6mAmb6j8K+3A
-         odE5/GUZ0GelT55TDYBTculYQpxLX75+w0TCW2C4lXMaqrXn+xPSnvcGkzZPWQF1hiRC
-         CzVA==
-X-Gm-Message-State: AOAM531UhRIIq7+NvntlTwtHW7EjYqf64xLduTFO8B6oHy+sckNwvWqZ
-        xNQyYqqefCF5YV+wFOZIZlyOdJOpbAeP+wmpu1/lEHYJmaPjMeFR
-X-Google-Smtp-Source: ABdhPJy09RaVHdWFmoel7qFFR6c/2FdxQ8DpXsx6tKacFdbxdVmRIw+Vh2gGgOGLbqncR1aNJBHuBZF2HuunJfNUCoo=
-X-Received: by 2002:a17:906:f14c:: with SMTP id gw12mr110904ejb.261.1606145360188;
- Mon, 23 Nov 2020 07:29:20 -0800 (PST)
+        bh=OUai5nsHuWU8oSzWTOqMoLn2cLr9hydsuASWL4vzSA0=;
+        b=KlXTF144Aw19UwHjUJF/qlPOACKfUjalUV0XiX5kk8TWVkQoLVyHHDZLoUR9CQgcek
+         JqCrf/ANQ/82/PojiTOOWJ942UweIuhZIvKeL3rbqI4dKXc/lyWSYA+UqjEdmTEEB67/
+         DHXqwrNh61VcwStqvKejhDWpd4dGg3RLHS2cLEM+gWYsD7m3V2YHX2oHHZDgaBdbPG5F
+         9MpJCVT1NtsaMVkT79gdtpXbLquveCyV3hW3Xonzo2G/86cnWWluPfh6ujclsiHEp/1H
+         k3/qgO742AmXBt7UGQ/pn5Qt6Zbmda+fu2gegL2WMbfrx/OJu3r9AXz04Q3tVF8uFw0N
+         sHFw==
+X-Gm-Message-State: AOAM533dB28fy4woKDCgP37bMe5V09o0JmlCLfWz3KQNrzBicjIeFU1d
+        1HGf6Rl+P3tCAWpCYuEseZf5wIwnrCrUnXFRkexuURx324vGpU7/
+X-Google-Smtp-Source: ABdhPJzf4HiyMbyhlSggN+96I3WDvzvwjHbKNTu3/WrPBx7i2u/3v74dyI+nuk2SedeO/lQjAMWFzx80H0zVzGijyYQ=
+X-Received: by 2002:aa7:c049:: with SMTP id k9mr5698311edo.49.1606145739422;
+ Mon, 23 Nov 2020 07:35:39 -0800 (PST)
 MIME-Version: 1.0
 From:   Victor Stewart <v@nametag.social>
-Date:   Mon, 23 Nov 2020 15:29:09 +0000
-Message-ID: <CAM1kxwi5m6i8hrtkw7nZYoziPTD-Wp03+fcsUwh3CuSc=81kUQ@mail.gmail.com>
-Subject: [RFC 0/1] whitelisting UDP GSO and GRO cmsgs
+Date:   Mon, 23 Nov 2020 15:35:28 +0000
+Message-ID: <CAM1kxwjmGd8=992NjY6TjgsbMoxFS5j2_71bgaYUOUT0vG-19A@mail.gmail.com>
+Subject: [RFC 1/1] whitelisting UDP GSO and GRO cmsgs
 To:     io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-so currently all cmsg headers are disabled through sendmsg and recvmsg
-operations through io_uring because of
-https://www.exploit-db.com/exploits/47779
+add __sys_whitelisted_cmsghdrs() and configure __sys_recvmsg_sock and
+__sys_sendmsg_sock to use it.
 
-i think it's time we start whitelisting the good guys though? GSO and
-GRO are hugely important for QUIC servers, and together offer a higher
-throughput gain than io_uring alone (rate of data transit
-considering), thus io_uring is the lesser performance choice for QUIC
-servers at the moment.
+Signed-off by: Victor Stewart <v@nametag.social>
+---
+ net/socket.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-RE http://vger.kernel.org/lpc_net2018_talks/willemdebruijn-lpc2018-udpgso-paper-DRAFT-1.pdf,
-GSO is about +~63% and GRO +~82%.
+diff --git a/net/socket.c b/net/socket.c
+index 6e6cccc2104f..44e28bb08bbe 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2416,9 +2416,9 @@ static int ___sys_sendmsg(struct socket *sock,
+struct user_msghdr __user *msg,
+ long __sys_sendmsg_sock(struct socket *sock, struct msghdr *msg,
+                        unsigned int flags)
+ {
+-       /* disallow ancillary data requests from this path */
+        if (msg->msg_control || msg->msg_controllen)
+-               return -EINVAL;
++               if (!__sys_whitelisted_cmsghdrs(msr))
++                       return -EINVAL;
 
-this patch closes that loophole.
+        return ____sys_sendmsg(sock, msg, flags, NULL, 0);
+ }
+@@ -2620,6 +2620,15 @@ static int ___sys_recvmsg(struct socket *sock,
+struct user_msghdr __user *msg,
+        return err;
+ }
 
-Victor Stewart (1);
-   net/socket.c: add __sys_whitelisted_cmsghdrs()
-
-   net/socket.c | 15 ++++++++++++---
-   1 file changed, 12 insertions(+), 3 deletions(-)
++static bool __sys_whitelisted_cmsghdrs(struct msghdr *msg)
++{
++       for (struct cmsghdr *cmsg = CMSG_FIRSTHDR(msg); cmsg != NULL;
+cmsg = CMSG_NXTHDR(message, cmsg))
++               if (cmsg->cmsg_level != SOL_UDP || (cmsg->cmsg_type !=
+UDP_GRO && cmsg->cmsg_type != UDP_SEGMENT))
++                       return false;
++
++       return true;
++}
++
+ /*
+  *     BSD recvmsg interface
+  */
+@@ -2630,7 +2639,7 @@ long __sys_recvmsg_sock(struct socket *sock,
+struct msghdr *msg,
+ {
+        if (msg->msg_control || msg->msg_controllen) {
+                /* disallow ancillary data reqs unless cmsg is plain data */
+-               if (!(sock->ops->flags & PROTO_CMSG_DATA_ONLY))
++               if (!( sock->ops->flags & PROTO_CMSG_DATA_ONLY ||
+__sys_whitelisted_cmsghdrs(msr) ))
+                        return -EINVAL;
+        }

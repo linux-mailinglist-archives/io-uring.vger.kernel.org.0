@@ -2,101 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C91E12C240D
-	for <lists+io-uring@lfdr.de>; Tue, 24 Nov 2020 12:28:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 852EA2C29FD
+	for <lists+io-uring@lfdr.de>; Tue, 24 Nov 2020 15:46:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbgKXLZw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 24 Nov 2020 06:25:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728346AbgKXLZw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Nov 2020 06:25:52 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5879EC0613D6;
-        Tue, 24 Nov 2020 03:25:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1Dpp35VNzzVY1mp0WA/1Cvo1UHAnm1YWWDrLG3ha8rE=; b=MFZotgzjDln27OPQ2DNNT42slG
-        6vQ5a/ewh8C1T8ij73qDW+8f9nfl/3jWUnhcflW4k8GnUn6HINjYaQUMUqT2LAruEJj9+VhaBwSan
-        P7aHYs+TIVXrKl/H505uH3yUZmlOmn1TvUCeLnRal+jspF5EbSzJXihplXNSlsl2bpNKKnGzBfXN3
-        w1w9hLNVdVlb6rVAH1CKu34Yy9eULOSK6q27s4+w85kaNRttS3kaRaMILPvi70rGK6Do7h8eyZeCi
-        QI/QHq2YCKdD+Hah/GPLIZYdApXrUrRKlYz/Ygz0se8V/BjWhgr6vUswjI4oZVZ4wTuJ/Z1qzHEaL
-        XR8dtOSQ==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1khWSB-0007Cm-Vv; Tue, 24 Nov 2020 11:25:48 +0000
-Date:   Tue, 24 Nov 2020 11:25:47 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
-        ming.lei@redhat.com, linux-block@vger.kernel.org,
-        io-uring@vger.kernel.org, joseph.qi@linux.alibaba.com
-Subject: Re: [PATCH v4 2/2] block,iomap: disable iopoll when split needed
-Message-ID: <20201124112547.GA26805@infradead.org>
-References: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
- <20201117075625.46118-3-jefflexu@linux.alibaba.com>
- <20201119175516.GB20944@infradead.org>
- <ed355fc8-6fc8-5ffd-f1e9-6ba19f761a09@linux.alibaba.com>
+        id S2388319AbgKXOp1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 24 Nov 2020 09:45:27 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:57294 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388162AbgKXOp1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Nov 2020 09:45:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606229126;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Pz513mSJDNIdupfQR9PNXZ8uSX6HJ6vNuuU0z0gMigg=;
+        b=YRrl7FmXEYRQDiyLHfgg9vb4X+rvLEtQi2MqsxRV9oFNXcd6OEtASUMuteCtbOyChIZKRb
+        M4BWnDU+rX++xS1s/E/Qx2Za/qxBjQssYrAe4rMP0SgQhQeI1m6fOguAD15BLTboJmvcco
+        29fHfla87Fc3snQjDdtMPyUyFMO06NM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-580-AaP1Fq4oOh-Sueqrb2jkQg-1; Tue, 24 Nov 2020 09:45:23 -0500
+X-MC-Unique: AaP1Fq4oOh-Sueqrb2jkQg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5C390195D573;
+        Tue, 24 Nov 2020 14:45:03 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A505F722D1;
+        Tue, 24 Nov 2020 14:45:02 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH 5.10] io_uring: fix ITER_BVEC check
+References: <26e5446cb6252589a7edc4c3bbe4d8a503919bd8.1606172908.git.asml.silence@gmail.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Tue, 24 Nov 2020 09:45:06 -0500
+In-Reply-To: <26e5446cb6252589a7edc4c3bbe4d8a503919bd8.1606172908.git.asml.silence@gmail.com>
+        (Pavel Begunkov's message of "Mon, 23 Nov 2020 23:20:27 +0000")
+Message-ID: <x49mtz6izkd.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed355fc8-6fc8-5ffd-f1e9-6ba19f761a09@linux.alibaba.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 06:06:54PM +0800, JeffleXu wrote:
-> 
-> On 11/20/20 1:55 AM, Christoph Hellwig wrote:
-> > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > > index 933f234d5bec..396ac0f91a43 100644
-> > > --- a/fs/iomap/direct-io.c
-> > > +++ b/fs/iomap/direct-io.c
-> > > @@ -309,6 +309,16 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
-> > >   		copied += n;
-> > >   		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
-> > > +		/*
-> > > +		 * The current dio needs to be split into multiple bios here.
-> > > +		 * iopoll for split bio will cause subtle trouble such as
-> > > +		 * hang when doing sync polling, while iopoll is initially
-> > > +		 * for small size, latency sensitive IO. Thus disable iopoll
-> > > +		 * if split needed.
-> > > +		 */
-> > > +		if (nr_pages)
-> > > +			dio->iocb->ki_flags &= ~IOCB_HIPRI;
-> > I think this is confusing two things.
-> 
-> Indeed there's two level of split concerning this issue when doing sync
-> iopoll.
-> 
-> 
-> The first is that one bio got split in block-core, and patch 1 of this patch
-> set just fixes this.
-> 
-> 
-> Second is that one dio got split into multiple bios in fs layer, and patch 2
-> fixes this.
-> 
-> 
-> >   One is that we don't handle
-> > polling well when there are multiple bios.  For this I think we should
-> > only call bio_set_polled when we know there is a single bio.
-> 
-> 
-> How about the following patch:
-> 
-> 
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -60,12 +60,12 @@ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin)
-> ??EXPORT_SYMBOL_GPL(iomap_dio_iopoll);
-> 
-> ??static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap
-> *iomap,
-> -???????????????????????????? struct bio *bio, loff_t pos)
-> +???????????????????????????? struct bio *bio, loff_t pos, bool split)
+Pavel Begunkov <asml.silence@gmail.com> writes:
 
-This seems pretty messed up by your mailer and I have a hard time
-reading it.  Can you resend it?
+> iov_iter::type is a bitmask that also keeps direction etc., so it
+> shouldn't be directly compared against ITER_*. Use proper helper.
+>
+> Cc: <stable@vger.kernel.org> # 5.9
+> Reported-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+
+Fixes: ff6165b2d7f6 ("io_uring: retain iov_iter state over io_read/io_write calls")
+
+> ---
+>  fs/io_uring.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 593dfef32b17..7c1f255807f5 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -3278,7 +3278,7 @@ static void io_req_map_rw(struct io_kiocb *req, const struct iovec *iovec,
+>  	rw->free_iovec = iovec;
+>  	rw->bytes_done = 0;
+>  	/* can only be fixed buffers, no need to do anything */
+> -	if (iter->type == ITER_BVEC)
+> +	if (iov_iter_is_bvec(iter))
+>  		return;
+>  	if (!iovec) {
+>  		unsigned iov_off = 0;
+

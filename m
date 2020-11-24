@@ -2,87 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B362A2C1964
-	for <lists+io-uring@lfdr.de>; Tue, 24 Nov 2020 00:29:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7F342C1E9C
+	for <lists+io-uring@lfdr.de>; Tue, 24 Nov 2020 08:03:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbgKWXXr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Nov 2020 18:23:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44284 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbgKWXXr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Nov 2020 18:23:47 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD365C0613CF;
-        Mon, 23 Nov 2020 15:23:46 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id 1so1097124wme.3;
-        Mon, 23 Nov 2020 15:23:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iPVFgmYNRnVYuGgxhzMYRvkwTnKqVhuuvHWyw9sWSss=;
-        b=fqExvHo38WlMppex8bVVj68brBt56MspN2SZjKOYuOXVHxYJr/azwg8rJe1jw4uu3b
-         UhY/L870IGIyC7KV3T+Fycb5V1T14rXoK5vVmMU9W6poEbcrptkQq7VP0eWKH97W+eqV
-         HZ8JybRuIFio4EFA1FlKg4yHfJ/GF//fri08gpp1qsXur0BXk9ZLLWrqnxY+dxum2OKA
-         ENWu8DEE51le2659MsXJf0Jr3rlDz86VBvfIzG/YKHZrOAfSbOETNXbL5ZpYlJQDOg5N
-         Zv66jQYAvIzFhQbtZZd68+oqkMeVQhbNIvKzn+npaAt61whtC/kyxXAXwJdTycsgUrzo
-         lJ0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iPVFgmYNRnVYuGgxhzMYRvkwTnKqVhuuvHWyw9sWSss=;
-        b=KcnTkRlOY4oHcsB6675+QZIa1CtW4PMPEaPQREPYrq4MmszoZm2PynggjDALVJE2wv
-         73Q6a4a2j2sZX0TuxqTORgfWYkY3fRiI6AscRUmrHD59JBM23yH1BOaUasj91IvtIuIc
-         kPphy0zRvbz2thNy4blGyFwxUtk5/XqW7MlcyhfenpiueG1X9wFQgcSkweS4OIt+0Sc9
-         vvZCTU+hayWYun+nxffxLgE0XSyYnkPRPRJZed5tckj4LB9k/ywHcXppscxhRRd1UM5Q
-         XQhQMNlUlUTfzzIQ1qMXUqYbg7A08uk++UtxUltJQkKkvyDZGjsX9hkxx5VyFqxkU/Ox
-         sKUQ==
-X-Gm-Message-State: AOAM530Ar9Kn6B1jRAZxV4WXe85rhbEtafY57+4HVMVtUAYRB2v4RiSU
-        szbs/EeaY7Yx7Yen5gm5uPc=
-X-Google-Smtp-Source: ABdhPJwNTSIfijVW3uSRi/z/Q5Vvm9kQAEypadvKn8zFauSOyIjbV0k6RsqgHvi+7v13adGPi7QJ9g==
-X-Received: by 2002:a05:600c:2:: with SMTP id g2mr1189099wmc.156.1606173825474;
-        Mon, 23 Nov 2020 15:23:45 -0800 (PST)
-Received: from localhost.localdomain (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
-        by smtp.gmail.com with ESMTPSA id s8sm22918689wrn.33.2020.11.23.15.23.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2020 15:23:45 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     stable@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: [PATCH 5.10] io_uring: fix ITER_BVEC check
-Date:   Mon, 23 Nov 2020 23:20:27 +0000
-Message-Id: <26e5446cb6252589a7edc4c3bbe4d8a503919bd8.1606172908.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729245AbgKXHDJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 24 Nov 2020 02:03:09 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:57226 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725786AbgKXHDJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Nov 2020 02:03:09 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UGOgQVw_1606201383;
+Received: from localhost(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UGOgQVw_1606201383)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 24 Nov 2020 15:03:03 +0800
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Subject: [PATCH] io_uring: fix shift-out-of-bounds when round up cq size
+Date:   Tue, 24 Nov 2020 15:03:03 +0800
+Message-Id: <1606201383-62294-1-git-send-email-joseph.qi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-iov_iter::type is a bitmask that also keeps direction etc., so it
-shouldn't be directly compared against ITER_*. Use proper helper.
+Abaci Fuzz reported a shift-out-of-bounds BUG in io_uring_create():
 
-Cc: <stable@vger.kernel.org> # 5.9
-Reported-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+[ 59.598207] UBSAN: shift-out-of-bounds in ./include/linux/log2.h:57:13
+[ 59.599665] shift exponent 64 is too large for 64-bit type 'long unsigned int'
+[ 59.601230] CPU: 0 PID: 963 Comm: a.out Not tainted 5.10.0-rc4+ #3
+[ 59.602502] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+[ 59.603673] Call Trace:
+[ 59.604286] dump_stack+0x107/0x163
+[ 59.605237] ubsan_epilogue+0xb/0x5a
+[ 59.606094] __ubsan_handle_shift_out_of_bounds.cold+0xb2/0x20e
+[ 59.607335] ? lock_downgrade+0x6c0/0x6c0
+[ 59.608182] ? rcu_read_lock_sched_held+0xaf/0xe0
+[ 59.609166] io_uring_create.cold+0x99/0x149
+[ 59.610114] io_uring_setup+0xd6/0x140
+[ 59.610975] ? io_uring_create+0x2510/0x2510
+[ 59.611945] ? lockdep_hardirqs_on_prepare+0x286/0x400
+[ 59.613007] ? syscall_enter_from_user_mode+0x27/0x80
+[ 59.614038] ? trace_hardirqs_on+0x5b/0x180
+[ 59.615056] do_syscall_64+0x2d/0x40
+[ 59.615940] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 59.617007] RIP: 0033:0x7f2bb8a0b239
+
+This is caused by roundup_pow_of_two() if the input entries larger
+enough, e.g. 2^32-1. For sq_entries, it will check first and we allow
+at most IORING_MAX_ENTRIES, so it is okay. But for cq_entries, we do
+round up first, that may overflow and truncate it to 0, which is not
+the expected behavior. So check the cq size first and then do round up.
+
+Fixes: 88ec3211e463 ("io_uring: round-up cq size before comparing with rounded sq size")
+Reported-by: Abaci Fuzz <abaci@linux.alibaba.com>
+Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 ---
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/io_uring.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 593dfef32b17..7c1f255807f5 100644
+index a8c136a..f971589 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -3278,7 +3278,7 @@ static void io_req_map_rw(struct io_kiocb *req, const struct iovec *iovec,
- 	rw->free_iovec = iovec;
- 	rw->bytes_done = 0;
- 	/* can only be fixed buffers, no need to do anything */
--	if (iter->type == ITER_BVEC)
-+	if (iov_iter_is_bvec(iter))
- 		return;
- 	if (!iovec) {
- 		unsigned iov_off = 0;
+@@ -9252,14 +9252,16 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 		 * to a power-of-two, if it isn't already. We do NOT impose
+ 		 * any cq vs sq ring sizing.
+ 		 */
+-		p->cq_entries = roundup_pow_of_two(p->cq_entries);
+-		if (p->cq_entries < p->sq_entries)
++		if (!p->cq_entries)
+ 			return -EINVAL;
+ 		if (p->cq_entries > IORING_MAX_CQ_ENTRIES) {
+ 			if (!(p->flags & IORING_SETUP_CLAMP))
+ 				return -EINVAL;
+ 			p->cq_entries = IORING_MAX_CQ_ENTRIES;
+ 		}
++		p->cq_entries = roundup_pow_of_two(p->cq_entries);
++		if (p->cq_entries < p->sq_entries)
++			return -EINVAL;
+ 	} else {
+ 		p->cq_entries = 2 * p->sq_entries;
+ 	}
 -- 
-2.24.0
+1.8.3.1
 

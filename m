@@ -2,100 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1C882C3991
-	for <lists+io-uring@lfdr.de>; Wed, 25 Nov 2020 08:04:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42B3D2C4445
+	for <lists+io-uring@lfdr.de>; Wed, 25 Nov 2020 16:45:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgKYHEB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 25 Nov 2020 02:04:01 -0500
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:38023 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726059AbgKYHEB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Nov 2020 02:04:01 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R661e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UGULzvk_1606287837;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UGULzvk_1606287837)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 25 Nov 2020 15:03:57 +0800
-Subject: Re: [PATCH v4 2/2] block,iomap: disable iopoll when split needed
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     axboe@kernel.dk, ming.lei@redhat.com, linux-block@vger.kernel.org,
-        io-uring@vger.kernel.org, joseph.qi@linux.alibaba.com
-References: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
- <20201117075625.46118-3-jefflexu@linux.alibaba.com>
- <20201119175516.GB20944@infradead.org>
- <ed355fc8-6fc8-5ffd-f1e9-6ba19f761a09@linux.alibaba.com>
- <20201124112547.GA26805@infradead.org>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <4de531ca-e9bc-9ddb-e6b7-3c153a8a4658@linux.alibaba.com>
-Date:   Wed, 25 Nov 2020 15:03:56 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.5.0
+        id S1731777AbgKYPml (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 25 Nov 2020 10:42:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730448AbgKYPgM (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 25 Nov 2020 10:36:12 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB81520B1F;
+        Wed, 25 Nov 2020 15:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606318571;
+        bh=zLdUa7DqXAtVf2HBtkkB2urCKJUPTXFbXahkOAQ5eUk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jHR+XvV3uUTvdhFJ2AqieotIyCBMtHCWm8pDfrnaootyOsmSzA7rWKZaytlX2KHQ2
+         ooGMm9DQ8ibhsXRstCQ1IQqJRw/Bc7Zdr7CxdF0jiQWITXb/naPFYl/tXVeop+3M3s
+         q6Xqvp9KV7foRaCHDEOWepUsFriarnLeFIx5IibE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.9 16/33] io_uring: handle -EOPNOTSUPP on path resolution
+Date:   Wed, 25 Nov 2020 10:35:33 -0500
+Message-Id: <20201125153550.810101-16-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201125153550.810101-1-sashal@kernel.org>
+References: <20201125153550.810101-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20201124112547.GA26805@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Sorry for that, I will send a new version later.
+From: Jens Axboe <axboe@kernel.dk>
 
-On 11/24/20 7:25 PM, Christoph Hellwig wrote:
-> On Fri, Nov 20, 2020 at 06:06:54PM +0800, JeffleXu wrote:
->>
->> On 11/20/20 1:55 AM, Christoph Hellwig wrote:
->>>> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
->>>> index 933f234d5bec..396ac0f91a43 100644
->>>> --- a/fs/iomap/direct-io.c
->>>> +++ b/fs/iomap/direct-io.c
->>>> @@ -309,6 +309,16 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->>>>   		copied += n;
->>>>   		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
->>>> +		/*
->>>> +		 * The current dio needs to be split into multiple bios here.
->>>> +		 * iopoll for split bio will cause subtle trouble such as
->>>> +		 * hang when doing sync polling, while iopoll is initially
->>>> +		 * for small size, latency sensitive IO. Thus disable iopoll
->>>> +		 * if split needed.
->>>> +		 */
->>>> +		if (nr_pages)
->>>> +			dio->iocb->ki_flags &= ~IOCB_HIPRI;
->>> I think this is confusing two things.
->>
->> Indeed there's two level of split concerning this issue when doing sync
->> iopoll.
->>
->>
->> The first is that one bio got split in block-core, and patch 1 of this patch
->> set just fixes this.
->>
->>
->> Second is that one dio got split into multiple bios in fs layer, and patch 2
->> fixes this.
->>
->>
->>>   One is that we don't handle
->>> polling well when there are multiple bios.  For this I think we should
->>> only call bio_set_polled when we know there is a single bio.
->>
->>
->> How about the following patch:
->>
->>
->> --- a/fs/iomap/direct-io.c
->> +++ b/fs/iomap/direct-io.c
->> @@ -60,12 +60,12 @@ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin)
->> ??EXPORT_SYMBOL_GPL(iomap_dio_iopoll);
->>
->> ??static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap
->> *iomap,
->> -???????????????????????????? struct bio *bio, loff_t pos)
->> +???????????????????????????? struct bio *bio, loff_t pos, bool split)
-> 
-> This seems pretty messed up by your mailer and I have a hard time
-> reading it.  Can you resend it?
-> 
+[ Upstream commit 944d1444d53f5a213457e5096db370cfd06923d4 ]
 
+Any attempt to do path resolution on /proc/self from an async worker will
+yield -EOPNOTSUPP. We can safely do that resolution from the task itself,
+and without blocking, so retry it from there.
+
+Ideally io_uring would know this upfront and not have to go through the
+worker thread to find out, but that doesn't currently seem feasible.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io_uring.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index e74a56f6915c0..46a68a8439895 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -435,6 +435,7 @@ struct io_sr_msg {
+ struct io_open {
+ 	struct file			*file;
+ 	int				dfd;
++	bool				ignore_nonblock;
+ 	struct filename			*filename;
+ 	struct open_how			how;
+ 	unsigned long			nofile;
+@@ -3590,6 +3591,7 @@ static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 		return ret;
+ 	}
+ 	req->open.nofile = rlimit(RLIMIT_NOFILE);
++	req->open.ignore_nonblock = false;
+ 	req->flags |= REQ_F_NEED_CLEANUP;
+ 	return 0;
+ }
+@@ -3637,7 +3639,7 @@ static int io_openat2(struct io_kiocb *req, bool force_nonblock)
+ 	struct file *file;
+ 	int ret;
+ 
+-	if (force_nonblock)
++	if (force_nonblock && !req->open.ignore_nonblock)
+ 		return -EAGAIN;
+ 
+ 	ret = build_open_flags(&req->open.how, &op);
+@@ -3652,6 +3654,21 @@ static int io_openat2(struct io_kiocb *req, bool force_nonblock)
+ 	if (IS_ERR(file)) {
+ 		put_unused_fd(ret);
+ 		ret = PTR_ERR(file);
++		/*
++		 * A work-around to ensure that /proc/self works that way
++		 * that it should - if we get -EOPNOTSUPP back, then assume
++		 * that proc_self_get_link() failed us because we're in async
++		 * context. We should be safe to retry this from the task
++		 * itself with force_nonblock == false set, as it should not
++		 * block on lookup. Would be nice to know this upfront and
++		 * avoid the async dance, but doesn't seem feasible.
++		 */
++		if (ret == -EOPNOTSUPP && io_wq_current_is_worker()) {
++			req->open.ignore_nonblock = true;
++			refcount_inc(&req->refs);
++			io_req_task_queue(req);
++			return 0;
++		}
+ 	} else {
+ 		fsnotify_open(file);
+ 		fd_install(ret, file);
 -- 
-Thanks,
-Jeffle
+2.27.0
+

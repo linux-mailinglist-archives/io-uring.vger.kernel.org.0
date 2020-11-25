@@ -2,76 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D51392C2A77
-	for <lists+io-uring@lfdr.de>; Tue, 24 Nov 2020 15:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F45F2C36BB
+	for <lists+io-uring@lfdr.de>; Wed, 25 Nov 2020 03:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389309AbgKXOxi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 24 Nov 2020 09:53:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46902 "EHLO
+        id S1726654AbgKYCWo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 24 Nov 2020 21:22:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388166AbgKXOxh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Nov 2020 09:53:37 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADB10C0617A6
-        for <io-uring@vger.kernel.org>; Tue, 24 Nov 2020 06:53:37 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id t21so17697627pgl.3
-        for <io-uring@vger.kernel.org>; Tue, 24 Nov 2020 06:53:37 -0800 (PST)
+        with ESMTP id S1726408AbgKYCWn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Nov 2020 21:22:43 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A14AFC0613D4
+        for <io-uring@vger.kernel.org>; Tue, 24 Nov 2020 18:22:43 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id 64so355353wra.11
+        for <io-uring@vger.kernel.org>; Tue, 24 Nov 2020 18:22:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=woDq3Idd77JT8bUgO/7z+pbsn29k605P65KY3W0bDLw=;
-        b=m+fHAbRXPX3B24JmOeqgROjKJU7sN2nSfF1m7Whk6xqMJmODIEqkjQr8BpUg1LGSr9
-         vb2UoOn5abU6oyg6XJ4sCYP4ZlBkv+4oanZYJiwkqBvQcjmvkZ2f+zxZH7AjC6vxtkrC
-         JFJgrwAOreM8jm9kUKEBYmaNdh0IOOLsukeALtC9C940XuFN1LP1LcOJxBPOsmHnxQX5
-         gYFWlOHT7DhMUFvH5rTWbuTY+I6jf4i885cMsS6g/pYYFVfoysRZJiSE5lygXMlW5YpG
-         FtiEZT9yndzfl42PutmKDMi12/ybYlsdQpGZiUXNI/qf5sHEhFKT9Hq+I0CEmfEHje8g
-         U2ow==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/64Ryqc4MZUFtYOlpAUcq5/xKenaNZyR3LHqLnz8aIQ=;
+        b=XXnQp3pf9nhtL4FdCBirWTPRdrfqkQ1LTPy7pot3eeFT/ncrbnfFCJGk3XmaZh+B/R
+         NrsnFks4bCYWAyneSHijPqP7tWfuP5CBC42iyufmwN0KTqrG1siUlK0K9gO4iIkld8+R
+         KSfk0Kn2BOpyF0myTbvevUmHAlvdavIdsOM2snS+c5rS9ki3a0nM+pzPabUsixBVhgXK
+         3+r8sYeQ4s5Kzz9ok5Dfn7Evcp+dQwGnj1SphkldhlUMOzNcshWVyfkskd2/7TTshXra
+         sbYoZMdkn2sR0y8RDgRo0ss1616iK8QwOWsMq6OvCXCHP4W9N+NkXRMw41qCQ5Flgsjw
+         8b0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=woDq3Idd77JT8bUgO/7z+pbsn29k605P65KY3W0bDLw=;
-        b=VI6e3mApPhDgVN0Ngxi0tW3BT9oMN2x/H9jgSrY8D5+ated11I26VGynmVzZR1soZv
-         Q34d1M6i19Mzl4OnwbqPy1BAKfXgRtbaiCjtAmrI07hkC00V+gX02bBgNo9MtBOt5hAM
-         Jjokb82R6sSrJ9S620CE8d4uilESgWFJYelp3JeDy/TAvOFrr2F/Rn20Xv3tqNiBFRI/
-         YmFKKbfLfElb8evaMnNm3XQ8t1XJqH3GeOZHDnKosTy7dy92IOJDXMa5pvPFS8FflYWO
-         WsuW0gtPguROlqQkDG6LiTzj9IDvS2hei2kr4UhSI+TT10aFUYYCLYa3eyqguJHUmm3A
-         +H8w==
-X-Gm-Message-State: AOAM532/l2x02YU0eoVdI4MUKNS9pRDz1Cmk3VO4S/LKHo8AuzFWYAIs
-        3hWn3yWDjsnNuCO9jMvCsBar47d2jJg48w==
-X-Google-Smtp-Source: ABdhPJz11qnukyjV3uaiIZNHAHkAKJQXYCr7OCY6IwFY8VyZVKEnR6ZQx2+qnStHaLnkpCSaj7AjiA==
-X-Received: by 2002:a63:389:: with SMTP id 131mr4080904pgd.128.1606229617169;
-        Tue, 24 Nov 2020 06:53:37 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id y81sm15808065pfc.25.2020.11.24.06.53.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Nov 2020 06:53:36 -0800 (PST)
-Subject: Re: [PATCH 5.10] io_uring: fix ITER_BVEC check
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     stable@vger.kernel.org, David Howells <dhowells@redhat.com>
-References: <26e5446cb6252589a7edc4c3bbe4d8a503919bd8.1606172908.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ee68dd26-b90e-e2fb-7fb6-28771920aba0@kernel.dk>
-Date:   Tue, 24 Nov 2020 07:53:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=/64Ryqc4MZUFtYOlpAUcq5/xKenaNZyR3LHqLnz8aIQ=;
+        b=NOaMB8JjDG125me84majidHy5QL+ejX3S+GDy0LfJ4zlv4TYyubufefyv5G4/BU9nR
+         oYykrQ9BrWZzsBUXUEpN/6mqIP0lvSc4Ngb2ovrUapbKU4HK1cRCuXesJ5hvhuSTDcHs
+         SJwgTu2ag/cq/pYBHMWQpyWj/yUY4nTWuYXjoT9ZlOeFAAn5zYUyLLRTsuZuZF+EOX6M
+         p27U07i7eT5gIV8wcabgbL2fCDHEyvPbTP8UU/5Shcc0EECDCRXF1nNUqIwqpnfLv/OF
+         tnQzLkJXjhHn1ePpcsU0dnTJuM7K+X1teMbpPJ7AMnnyqFFgIjNDXZIjQET4mmlocWA/
+         o3Mg==
+X-Gm-Message-State: AOAM533A9QaVh0N/JSHmKjwbNC2wvdwjBPaEju9aYNYlKrHfQ1kyko1u
+        5qIV8/Qd8Cy6z2ndkAJeKsi/bzTfzdSEEw==
+X-Google-Smtp-Source: ABdhPJyQt8BIns4WTjtpG0skCr07zMVnqC5zBwfhgnow0Ag6tJTZHKhkClBZOgl0UqRUu7RSM31y5Q==
+X-Received: by 2002:a5d:504f:: with SMTP id h15mr1380477wrt.402.1606270962355;
+        Tue, 24 Nov 2020 18:22:42 -0800 (PST)
+Received: from localhost.localdomain (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
+        by smtp.gmail.com with ESMTPSA id h2sm1538943wrv.76.2020.11.24.18.22.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2020 18:22:41 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     syzbot+c0d52d0b3c0c3ffb9525@syzkaller.appspotmail.com
+Subject: [PATCH 5.11] io_uring: fix files cancellation
+Date:   Wed, 25 Nov 2020 02:19:23 +0000
+Message-Id: <5c8308053ac64d0fc7df3610b4b05ac4ba1c6d2b.1606270482.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <26e5446cb6252589a7edc4c3bbe4d8a503919bd8.1606172908.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/23/20 4:20 PM, Pavel Begunkov wrote:
-> iov_iter::type is a bitmask that also keeps direction etc., so it
-> shouldn't be directly compared against ITER_*. Use proper helper.
+io_uring_cancel_files()'s task check condition mistakenly got flipped.
 
-Applied (with fixes added), thanks.
+1. There can't be a request in the inflight list without
+IO_WQ_WORK_FILES, kill this check to keep the whole condition simpler.
+2. Also, don't call the function for files==NULL to not do such a check,
+all that staff is already handled well by its counter part,
+__io_uring_cancel_task_requests().
 
+With that just flip the task check.
+
+Also, it iowq-cancels all request of current task there, don't forget to
+set right ->files into struct io_task_cancel.
+
+Reported-by: syzbot+c0d52d0b3c0c3ffb9525@syzkaller.appspotmail.com
+Fixes: c1973b38bf639 ("io_uring: cancel only requests of current task")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 7c1f255807f5..f11dc25d975c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8725,15 +8725,14 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+ 				  struct files_struct *files)
+ {
+ 	while (!list_empty_careful(&ctx->inflight_list)) {
+-		struct io_task_cancel cancel = { .task = task, .files = NULL, };
++		struct io_task_cancel cancel = { .task = task, .files = files };
+ 		struct io_kiocb *req;
+ 		DEFINE_WAIT(wait);
+ 		bool found = false;
+ 
+ 		spin_lock_irq(&ctx->inflight_lock);
+ 		list_for_each_entry(req, &ctx->inflight_list, inflight_entry) {
+-			if (req->task == task &&
+-			    (req->work.flags & IO_WQ_WORK_FILES) &&
++			if (req->task != task ||
+ 			    req->work.identity->files != files)
+ 				continue;
+ 			found = true;
+@@ -8805,10 +8804,11 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
+ 
+ 	io_cancel_defer_files(ctx, task, files);
+ 	io_cqring_overflow_flush(ctx, true, task, files);
+-	io_uring_cancel_files(ctx, task, files);
+ 
+ 	if (!files)
+ 		__io_uring_cancel_task_requests(ctx, task);
++	else
++		io_uring_cancel_files(ctx, task, files);
+ 
+ 	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sq_data) {
+ 		atomic_dec(&task->io_uring->in_idle);
 -- 
-Jens Axboe
+2.24.0
 

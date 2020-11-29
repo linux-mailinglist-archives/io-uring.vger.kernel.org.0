@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A23432C76F4
-	for <lists+io-uring@lfdr.de>; Sun, 29 Nov 2020 01:52:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C8922C76FC
+	for <lists+io-uring@lfdr.de>; Sun, 29 Nov 2020 01:52:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729708AbgK2Au3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 28 Nov 2020 19:50:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40684 "EHLO
+        id S1729819AbgK2Auq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 28 Nov 2020 19:50:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbgK2Au0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 28 Nov 2020 19:50:26 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34BB3C0617A7;
-        Sat, 28 Nov 2020 16:50:01 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id t21so7391894pgl.3;
-        Sat, 28 Nov 2020 16:50:01 -0800 (PST)
+        with ESMTP id S1727183AbgK2Aup (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 28 Nov 2020 19:50:45 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97081C061A04;
+        Sat, 28 Nov 2020 16:50:02 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id 131so7732415pfb.9;
+        Sat, 28 Nov 2020 16:50:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=pLO/Dm5aFg8h/isH2BDIjhNLAvIImEOy4o6l0iht6RI=;
-        b=Uq3Na5959zjHT7zlMKGk03UxrU8zJxP7eRY742Q33BmNMujMif/ZsQnVVaWeZE8I0B
-         TUUMUVhsGOUUj1IGJAY+A/VqbT330oGghAQqZbr8EQMFzkYwpGBecRM4VkBfAKEVNY/D
-         50xUF4uQxyWN0SG+snoLEuPHMi/X9IEthoWmsLGlC4stOdIh+Z+natl07aqHeaDinAsE
-         K5nkqAOIB+SPkEIpZgkC1B7573INdvewtxEmAsrPOEmqxtjD22S9S1X1VnL67PFle+ei
-         CY8lCbvTZ223ZsuxSU/4XsGE3qjZZY30qHZ/yg9AscOe6JQQjzdjjhKOIgFBj2fR17cM
-         gjEQ==
+        bh=gF437dYZ7jdLwMEZ7tinhd91PTaHOyGZ1bS4Ys+9sbE=;
+        b=lsz3W7Eo6rNaH9lJHydIzJMFNyroHGWOYBcGBrThiveADagHW1sODxWZKkeaSi1VC7
+         zLQZB+Ua3lMMfGNhgBXE4MzHHfya8W0dlJgtLfLZa0WZZDqH7VSucoOi7I3mktfr1TVk
+         V1IbKNnHF5YIZtjZM0NFkJ4iYvTZ1W17FJZ1z89/Q4E17kk3XyPI2hW3dh9Ekuv8VlFV
+         xNjcWGBA3WiziRHvYQu275NQjRrlQAnRRFD/qQ11Vl9/L59G+sp+i3WgSMLiTuU1Yn1X
+         zWljhsVdOMGwRMqTk+DbE5nMO7w004wAWe6dZs/QSEmC1uKuT0Mdy5htd4XQ9D4odrjk
+         HTow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pLO/Dm5aFg8h/isH2BDIjhNLAvIImEOy4o6l0iht6RI=;
-        b=iNVMfBowZOLhi/Dt+snrtAPPa8gYmYUhVB3UyJ1yRSaXzgUiImIniVA8D40s9RqInF
-         om1rsPfNlZk6DEfThioc68h1vx/255faGVF9syUwZL0ZpZ30ZA6jCEjKm9w8RM9XvqLL
-         doe9IC38s6xipeUX0Kg7lJN2nHoTHmuQ3w9/U8BdVHAWYARp3+ldkgcS/hfn7Y8hvaK4
-         9TcEid6nLO06Yrw/0/Xt+FsEOtNjzEtAM/XQhDHg60WPuLvqGIYHBmzKWXIITqwjD1f/
-         Te4qATtRPCLSoNkRZkyd9MpKWHRCjJrn5x07d/Whl9o5mdOkRXUeQ5YT6SfOu8dXCN+J
-         GgwA==
-X-Gm-Message-State: AOAM532DJZ5ewagMJrY0ujV24+YDNuGXCQtJZeC61A1Lf4y5PsSR8s4c
-        Bi0kw3VZiHKSaqCEP0+/otMdPcwU26gSNQ==
-X-Google-Smtp-Source: ABdhPJxaY9DxLDKGnkGFs9A9oqkbO/fjTGIBVHcLBTu9hXYx/XXtNjBNR1mCzr6//0a7w+5LsYbWMw==
-X-Received: by 2002:a63:eb4b:: with SMTP id b11mr12181060pgk.351.1606611000280;
-        Sat, 28 Nov 2020 16:50:00 -0800 (PST)
+        bh=gF437dYZ7jdLwMEZ7tinhd91PTaHOyGZ1bS4Ys+9sbE=;
+        b=dkt6YZq6BOv7qmbBSGmSzWqCDS5iWpU82TFkpGBDCYdcxtdfxkKoIdwBQXVBGzVDQw
+         eknzGc2oYBqAezlvFVnNhpHTeTi9lKujiR8798+DiHD6k4+u4PQ4jgJXocWnvce1S4uw
+         hQ9J2y94yJl6PJlsddiCw0loUeppj3qjB4M2DQ+njMYKAXarYUkpHvnBMNbTa3Z7/kxH
+         7lwrA3CX2ouw/ClGa7m+nmy3vv7yAlVAw+IvYbEq1KkIlhDnj+i9oB+IKwbdekV9A0az
+         i59xb2/OXUGb+gauMJf96rBGtzYQejaqiWlUPro848dgsoc3H3Gh4AYC++hC5OAniwbe
+         5SdQ==
+X-Gm-Message-State: AOAM533kxGUz8NiMFfNLoWhkpiwa32Tnsp7odUZJia0Iesis5Y34Aej7
+        76K8nFkMDI/NCysnspGg8HMe3W1H7E7/2Q==
+X-Google-Smtp-Source: ABdhPJyVHHI5kxSoiEdetWfo5TY0LHVXJyWXpUXKSK5uyIxAkcnig+Tzt6Rc0pwKm2cocbCFg6qDig==
+X-Received: by 2002:a63:68f:: with SMTP id 137mr923738pgg.361.1606611001687;
+        Sat, 28 Nov 2020 16:50:01 -0800 (PST)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id gg19sm16444871pjb.21.2020.11.28.16.49.58
+        by smtp.gmail.com with ESMTPSA id gg19sm16444871pjb.21.2020.11.28.16.50.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Nov 2020 16:49:59 -0800 (PST)
+        Sat, 28 Nov 2020 16:50:01 -0800 (PST)
 From:   Nadav Amit <nadav.amit@gmail.com>
 X-Google-Original-From: Nadav Amit
 To:     linux-fsdevel@vger.kernel.org
@@ -56,9 +56,9 @@ Cc:     Nadav Amit <namit@vmware.com>, Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [RFC PATCH 04/13] fs/userfaultfd: simplify locks in userfaultfd_ctx_read
-Date:   Sat, 28 Nov 2020 16:45:39 -0800
-Message-Id: <20201129004548.1619714-5-namit@vmware.com>
+Subject: [RFC PATCH 05/13] fs/userfaultfd: introduce UFFD_FEATURE_POLL
+Date:   Sat, 28 Nov 2020 16:45:40 -0800
+Message-Id: <20201129004548.1619714-6-namit@vmware.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201129004548.1619714-1-namit@vmware.com>
 References: <20201129004548.1619714-1-namit@vmware.com>
@@ -70,11 +70,17 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Nadav Amit <namit@vmware.com>
 
-Small refactoring to reduce the number of locations in which locks are
-released in userfaultfd_ctx_read(), as this makes the understanding of
-the code and its changes harder.
+Add a feature UFFD_FEATURE_POLL that makes the faulting thread spin
+while waiting for the page-fault to be handled.
 
-No functional change intended.
+Users of this feature should be wise by setting the page-fault handling
+thread on another physical CPU and to potentially ensure that there are
+available cores to run the handler, as otherwise they will see
+performance degradation.
+
+We can later enhance it by setting one or two timeouts: one timeout
+until the page-fault is handled and another until the handler was
+woken.
 
 Cc: Jens Axboe <axboe@kernel.dk>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
@@ -86,57 +92,109 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- fs/userfaultfd.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ fs/userfaultfd.c                 | 24 ++++++++++++++++++++----
+ include/uapi/linux/userfaultfd.h |  9 ++++++++-
+ 2 files changed, 28 insertions(+), 5 deletions(-)
 
 diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 4fe07c1a44c6..fedf7c1615d5 100644
+index fedf7c1615d5..b6a04e526025 100644
 --- a/fs/userfaultfd.c
 +++ b/fs/userfaultfd.c
-@@ -1039,6 +1039,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		spin_lock(&ctx->fault_pending_wqh.lock);
- 		uwq = find_userfault(ctx);
-+		ret = -EAGAIN;
- 		if (uwq) {
- 			/*
- 			 * Use a seqcount to repeat the lockless check
-@@ -1077,11 +1078,11 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
+@@ -122,7 +122,9 @@ static int userfaultfd_wake_function(wait_queue_entry_t *wq, unsigned mode,
+ 	if (len && (start > uwq->msg.arg.pagefault.address ||
+ 		    start + len <= uwq->msg.arg.pagefault.address))
+ 		goto out;
+-	WRITE_ONCE(uwq->waken, true);
++
++	smp_store_mb(uwq->waken, true);
++
+ 	/*
+ 	 * The Program-Order guarantees provided by the scheduler
+ 	 * ensure uwq->waken is visible before the task is woken.
+@@ -377,6 +379,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	vm_fault_t ret = VM_FAULT_SIGBUS;
+ 	bool must_wait;
+ 	long blocking_state;
++	bool poll;
  
- 			/* careful to always initialize msg if ret == 0 */
- 			*msg = uwq->msg;
--			spin_unlock(&ctx->fault_pending_wqh.lock);
- 			ret = 0;
--			break;
- 		}
- 		spin_unlock(&ctx->fault_pending_wqh.lock);
-+		if (!ret)
-+			break;
+ 	/*
+ 	 * We don't do userfault handling for the final child pid update.
+@@ -410,6 +413,8 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	if (ctx->features & UFFD_FEATURE_SIGBUS)
+ 		goto out;
  
- 		spin_lock(&ctx->event_wqh.lock);
- 		uwq = find_userfault_evt(ctx);
-@@ -1099,17 +1100,14 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
- 				 * reference on it.
- 				 */
- 				userfaultfd_ctx_get(fork_nctx);
--				spin_unlock(&ctx->event_wqh.lock);
--				ret = 0;
--				break;
-+			} else {
-+				userfaultfd_event_complete(ctx, uwq);
- 			}
--
--			userfaultfd_event_complete(ctx, uwq);
--			spin_unlock(&ctx->event_wqh.lock);
- 			ret = 0;
--			break;
- 		}
- 		spin_unlock(&ctx->event_wqh.lock);
-+		if (!ret)
-+			break;
++	poll = ctx->features & UFFD_FEATURE_POLL;
++
+ 	/*
+ 	 * If it's already released don't get it. This avoids to loop
+ 	 * in __get_user_pages if userfaultfd_release waits on the
+@@ -495,7 +500,10 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	 * following the spin_unlock to happen before the list_add in
+ 	 * __add_wait_queue.
+ 	 */
+-	set_current_state(blocking_state);
++
++	if (!poll)
++		set_current_state(blocking_state);
++
+ 	spin_unlock_irq(&ctx->fault_pending_wqh.lock);
  
- 		if (signal_pending(current)) {
- 			ret = -ERESTARTSYS;
+ 	if (!is_vm_hugetlb_page(vmf->vma))
+@@ -509,10 +517,18 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 
+ 	if (likely(must_wait && !READ_ONCE(ctx->released))) {
+ 		wake_up_poll(&ctx->fd_wqh, EPOLLIN);
+-		schedule();
++		if (poll) {
++			while (!READ_ONCE(uwq.waken) && !READ_ONCE(ctx->released) &&
++			       !signal_pending(current)) {
++				cpu_relax();
++				cond_resched();
++			}
++		} else
++			schedule();
+ 	}
+ 
+-	__set_current_state(TASK_RUNNING);
++	if (!poll)
++		__set_current_state(TASK_RUNNING);
+ 
+ 	/*
+ 	 * Here we race with the list_del; list_add in
+diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
+index e7e98bde221f..4eeba4235afe 100644
+--- a/include/uapi/linux/userfaultfd.h
++++ b/include/uapi/linux/userfaultfd.h
+@@ -27,7 +27,9 @@
+ 			   UFFD_FEATURE_MISSING_HUGETLBFS |	\
+ 			   UFFD_FEATURE_MISSING_SHMEM |		\
+ 			   UFFD_FEATURE_SIGBUS |		\
+-			   UFFD_FEATURE_THREAD_ID)
++			   UFFD_FEATURE_THREAD_ID |		\
++			   UFFD_FEATURE_POLL)
++
+ #define UFFD_API_IOCTLS				\
+ 	((__u64)1 << _UFFDIO_REGISTER |		\
+ 	 (__u64)1 << _UFFDIO_UNREGISTER |	\
+@@ -171,6 +173,10 @@ struct uffdio_api {
+ 	 *
+ 	 * UFFD_FEATURE_THREAD_ID pid of the page faulted task_struct will
+ 	 * be returned, if feature is not requested 0 will be returned.
++	 *
++	 * UFFD_FEATURE_POLL polls upon page-fault if the feature is requested
++	 * instead of descheduling. This feature should only be enabled for
++	 * low-latency handlers and when CPUs are not overcomitted.
+ 	 */
+ #define UFFD_FEATURE_PAGEFAULT_FLAG_WP		(1<<0)
+ #define UFFD_FEATURE_EVENT_FORK			(1<<1)
+@@ -181,6 +187,7 @@ struct uffdio_api {
+ #define UFFD_FEATURE_EVENT_UNMAP		(1<<6)
+ #define UFFD_FEATURE_SIGBUS			(1<<7)
+ #define UFFD_FEATURE_THREAD_ID			(1<<8)
++#define UFFD_FEATURE_POLL			(1<<9)
+ 	__u64 features;
+ 
+ 	__u64 ioctls;
 -- 
 2.25.1
 

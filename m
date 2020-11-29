@@ -2,350 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5A4E2C7A43
-	for <lists+io-uring@lfdr.de>; Sun, 29 Nov 2020 18:33:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42FD32C7AB2
+	for <lists+io-uring@lfdr.de>; Sun, 29 Nov 2020 19:38:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726470AbgK2RdK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 29 Nov 2020 12:33:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52280 "EHLO
+        id S1728098AbgK2Shf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 29 Nov 2020 13:37:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbgK2RdJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 29 Nov 2020 12:33:09 -0500
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49ECAC0613D3
-        for <io-uring@vger.kernel.org>; Sun, 29 Nov 2020 09:32:29 -0800 (PST)
-Received: by mail-wr1-x443.google.com with SMTP id 23so12030548wrc.8
-        for <io-uring@vger.kernel.org>; Sun, 29 Nov 2020 09:32:29 -0800 (PST)
+        with ESMTP id S1726470AbgK2Shf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 29 Nov 2020 13:37:35 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF86C0613CF;
+        Sun, 29 Nov 2020 10:36:54 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id w24so18227289wmi.0;
+        Sun, 29 Nov 2020 10:36:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=BS3AU4jA4AKy8rLrtCOqBThrRDffP+aSLp9m0+UWRyM=;
-        b=fIybVSurTP0fyRP+0lBCreH+x/rb1gkShCkT+r2MvRRj+pAMHl//eQIaqLbWctB9N7
-         sRfkSnnuy/ZGKjZNIGq63gP/OdlSPVVQjtbTm/PFCmb9NegVmW9t7OvN2KEaCf2dploR
-         pGRvd9cez5uXimZ8AYxsxvDc2i29j61+Gmr8L/p2ybsKWZklXN9NOkO0qrqnc3GPTsdw
-         KIH9csbfZbsIU6bNiUyyFhaJ3yQ8bye0Ri8/eQ+zSP4AiIE6Vq/G0dYuCEaQuHXqvqWc
-         M51oeR5O1/Dowxh+N7IwlFLySnlZWvPmuGCgc+dKqPInH1cSfSFcsY0Aawz/87W11mvk
-         f2gQ==
+        bh=9kXsDXNxleufXRhATKpjraGLjJabF9PaHKMZ+hMzp4k=;
+        b=GaoeYku0/UJ5zNxFBdjLC+o2qRqgOJenb9RuRS2lNA2WBNTWEBM4gc/paDwov6yN5z
+         7MSUq6KmwBltYdFnxTgcYGXj6oYKXmT2uwnK0wygfhMuneE9NPvKTEo6TJMikZr05nxx
+         RMvA5M44qDu0FNGyBYoVL5Ub32rr+3MfwbTj/IOLemC5bgmt0CtYwzPdtPE+jcqRbd71
+         TR2JbSR0iKFVoUEarRpLWGNeMLAmOYaz7ricdx+PpwgTvh21tZ6sN5/7aa4y07jHBLQH
+         RtSdwmNWcy/1f8a746YHZ2xr3KEvlcz816Sl1RXOTJpmVkmySk7ADW6HvKXU8lBneexe
+         WjzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BS3AU4jA4AKy8rLrtCOqBThrRDffP+aSLp9m0+UWRyM=;
-        b=k4nR+++jbNXy9U4kpMvG1UHOoIVYr1ANZDc2Tkwq3skdW2yfthEc+RsEtxtw2jQ8Eu
-         b93fMHhibVAj1Krd6wNVvtQXJP0rWyCZ0QmjRjohEjQqF9GdbCJYB8xGCL5/TmpqnnPy
-         fRBPdtgLoROnVyAhsfG9yZe434muNzChB3R06uljCdn9ypY+BwjW7LmvKMXrPhqUc4gk
-         M/OdaBZ0eVAlz+XQ9APzKUUPOUZWLbEOl9drUnEhVt6ip2DtmAIRoI+BV7Bpwnzt1Hst
-         b9Ov5wag6rdOd40fToo0KzqlC5QBMLcAtJ7s6Epkl/aCWek4VuJHlsjXj8LnFH31XtYc
-         2MRA==
-X-Gm-Message-State: AOAM533hh7Pij684VlCRT0GrNAad7+fgYI3oIhrUyhv3bbkdvt9LSuQc
-        Tz9xpTMqjky3PoMUr7n09jqlKJqtw3w=
-X-Google-Smtp-Source: ABdhPJw2GLF3eGP7aze8MLgCBA87ERWz27NyjfnBHuz5HdM4Oc7aE+bgdTAPmcI/qhUA+nPubtnJ9w==
-X-Received: by 2002:a5d:504f:: with SMTP id h15mr23142095wrt.402.1606671148063;
-        Sun, 29 Nov 2020 09:32:28 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9kXsDXNxleufXRhATKpjraGLjJabF9PaHKMZ+hMzp4k=;
+        b=JWyu3DVayDWvVs8lVNbjJ238PVx3mbtldoADh1MU/0LJwvrlQJ4fEGxoEt6i7VYJlj
+         ouPjIEwqGHB6/jhxjJabq/T4vO8cAf8RYkq3GbesV//qwuDUrhup3x19lhnbiirkMgKP
+         k2m+WLYReBDZLvo1VK8y+3Fabe0zezYjTZCFbjYqRlSUeM8vnY18yA8NtVZPzLfdG0DL
+         vfIDPAT/SWljKzpRuPdnQy1opmIV4wmmGhcvFjgGHq1tE4uzATay5VApEqUBvQ9lzE1J
+         l+EQcNc0Vs37tVYwbSO81T+C7iALtvJILvhFUfeg6Gg/gEy3NyHiEur5yNW+M37Cgzki
+         gpSw==
+X-Gm-Message-State: AOAM533wgVRQXeBwSuSjCttpJHxuVRX84L5JEbZeovS7Hr4e5s0mq6xF
+        eD+v+O+wOl/hqiaCQkWZF98=
+X-Google-Smtp-Source: ABdhPJwqqw5XxYuWrveePQ/bId6rJ729hPkSZFVzw6vJex2ol6ba9GY9+cjodfyWt1+C2pG7c3Sxrg==
+X-Received: by 2002:a1c:9c53:: with SMTP id f80mr19371063wme.19.1606675013769;
+        Sun, 29 Nov 2020 10:36:53 -0800 (PST)
 Received: from localhost.localdomain (host109-152-100-189.range109-152.btcentralplus.com. [109.152.100.189])
-        by smtp.gmail.com with ESMTPSA id l24sm25306377wrb.28.2020.11.29.09.32.27
+        by smtp.gmail.com with ESMTPSA id a18sm18003443wrr.20.2020.11.29.10.36.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Nov 2020 09:32:27 -0800 (PST)
+        Sun, 29 Nov 2020 10:36:53 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing 2/2] test/timeout: test timeout updates
-Date:   Sun, 29 Nov 2020 17:29:07 +0000
-Message-Id: <05a3c04e9298f8c9f14cc92956a7b708f359e4d8.1606670836.git.asml.silence@gmail.com>
+Cc:     stable@vger.kernel.org
+Subject: [PATCH 5.10] io_uring: fix recvmsg setup with compat buf-select
+Date:   Sun, 29 Nov 2020 18:33:32 +0000
+Message-Id: <70a236ff44cc9361ed03ebcd9c361864efdf8dc3.1606674793.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1606670836.git.asml.silence@gmail.com>
-References: <cover.1606670836.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Test timeout updates if supported. Fuzzy checks that it sustains
-specified timings. Tests async/linked update, short and longer delays.
+__io_compat_recvmsg_copy_hdr() with REQ_F_BUFFER_SELECT reads out iov
+len but never assigns it to iov/fast_iov, leaving sr->len with garbage.
+Hopefully, following io_buffer_select() truncates it to the selected
+buffer size, but the value is still may be under what was specified.
 
+Cc: <stable@vger.kernel.org> # 5.7
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/timeout.c | 255 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 255 insertions(+)
+ fs/io_uring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/test/timeout.c b/test/timeout.c
-index 7e9f11d..9db7661 100644
---- a/test/timeout.c
-+++ b/test/timeout.c
-@@ -965,10 +965,213 @@ err:
- 	return 1;
- }
- 
-+static int test_update_timeout(struct io_uring *ring, unsigned long ms,
-+				bool abs, bool async, bool linked)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct __kernel_timespec ts, ts_upd;
-+	unsigned long long exp_ms, base_ms = 10000;
-+	struct timeval tv;
-+	int ret, i, nr = 2;
-+	__u32 mode = abs ? IORING_TIMEOUT_ABS : 0;
-+
-+	msec_to_ts(&ts_upd, ms);
-+	gettimeofday(&tv, NULL);
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+		goto err;
-+	}
-+	msec_to_ts(&ts, base_ms);
-+	io_uring_prep_timeout(sqe, &ts, 0, 0);
-+	sqe->user_data = 1;
-+
-+	if (linked) {
-+		sqe = io_uring_get_sqe(ring);
-+		if (!sqe) {
-+			fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+			goto err;
-+		}
-+		io_uring_prep_nop(sqe);
-+		sqe->user_data = 3;
-+		sqe->flags = IOSQE_IO_LINK;
-+		if (async)
-+			sqe->flags |= IOSQE_ASYNC;
-+		nr++;
-+	}
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+		goto err;
-+	}
-+	io_uring_prep_timeout_update(sqe, &ts_upd, 1, mode);
-+	sqe->user_data = 2;
-+	if (async)
-+		sqe->flags |= IOSQE_ASYNC;
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != nr) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	for (i = 0; i < nr; i++) {
-+		ret = io_uring_wait_cqe(ring, &cqe);
-+		if (ret < 0) {
-+			fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+			goto err;
-+		}
-+
-+		switch (cqe->user_data) {
-+		case 1:
-+			if (cqe->res != -ETIME) {
-+				fprintf(stderr, "%s: got %d, wanted %d\n",
-+						__FUNCTION__, cqe->res, -ETIME);
-+				goto err;
-+			}
-+			break;
-+		case 2:
-+			if (cqe->res != 0) {
-+				fprintf(stderr, "%s: got %d, wanted %d\n",
-+						__FUNCTION__, cqe->res,
-+						0);
-+				goto err;
-+			}
-+			break;
-+		case 3:
-+			if (cqe->res != 0) {
-+				fprintf(stderr, "nop failed\n");
-+				goto err;
-+			}
-+			break;
-+		default:
-+			goto err;
-+		}
-+		io_uring_cqe_seen(ring, cqe);
-+	}
-+
-+	exp_ms = mtime_since_now(&tv);
-+	if (exp_ms >= base_ms / 2) {
-+		fprintf(stderr, "too long, timeout wasn't updated\n");
-+		goto err;
-+	}
-+	if (ms >= 1000 && !abs && exp_ms < ms / 2) {
-+		fprintf(stderr, "fired too early, potentially updated to 0 ms"
-+					"instead of %lu\n", ms);
-+		goto err;
-+	}
-+	return 0;
-+err:
-+	return 1;
-+}
-+
-+static int test_update_nonexistent_timeout(struct io_uring *ring)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct __kernel_timespec ts;
-+	int ret;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+		goto err;
-+	}
-+	msec_to_ts(&ts, 0);
-+	io_uring_prep_timeout_update(sqe, &ts, 42, 0);
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != 1) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret = io_uring_wait_cqe(ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret = cqe->res;
-+	if (ret == -ENOENT)
-+		ret = 0;
-+	io_uring_cqe_seen(ring, cqe);
-+	return ret;
-+err:
-+	return 1;
-+}
-+
-+static int test_update_invalid_flags(struct io_uring *ring)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct __kernel_timespec ts;
-+	int ret;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+		goto err;
-+	}
-+	io_uring_prep_timeout_remove(sqe, 0, IORING_TIMEOUT_ABS);
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != 1) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret = io_uring_wait_cqe(ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+	if (cqe->res != -EINVAL) {
-+		fprintf(stderr, "%s: got %d, wanted %d\n",
-+				__FUNCTION__, cqe->res, -EINVAL);
-+		goto err;
-+	}
-+	io_uring_cqe_seen(ring, cqe);
-+
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+		goto err;
-+	}
-+	msec_to_ts(&ts, 0);
-+	io_uring_prep_timeout_update(sqe, &ts, 0, -1);
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != 1) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret = io_uring_wait_cqe(ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+	if (cqe->res != -EINVAL) {
-+		fprintf(stderr, "%s: got %d, wanted %d\n",
-+				__FUNCTION__, cqe->res, -EINVAL);
-+		goto err;
-+	}
-+	io_uring_cqe_seen(ring, cqe);
-+
-+	return 0;
-+err:
-+	return 1;
-+}
- 
- int main(int argc, char *argv[])
- {
- 	struct io_uring ring;
-+	bool has_timeout_update;
- 	int ret;
- 
- 	if (argc > 1)
-@@ -1054,6 +1257,58 @@ int main(int argc, char *argv[])
- 		return ret;
- 	}
- 
-+	ret = test_update_nonexistent_timeout(&ring);
-+	has_timeout_update = (ret != -EINVAL);
-+	if (has_timeout_update) {
-+		if (ret) {
-+			fprintf(stderr, "test_update_nonexistent_timeout failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_invalid_flags(&ring);
-+		if (ret) {
-+			fprintf(stderr, "test_update_invalid_flags failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_timeout(&ring, 0, false, false, false);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_timeout(&ring, 1, false, false, false);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout 1ms failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_timeout(&ring, 1000, false, false, false);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout 1s failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_timeout(&ring, 0, true, true, false);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout abs failed\n");
-+			return ret;
-+		}
-+
-+
-+		ret = test_update_timeout(&ring, 0, false, true, false);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout async failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_timeout(&ring, 0, false, false, true);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout linked failed\n");
-+			return ret;
-+		}
-+	}
-+
- 	/*
- 	 * this test must go last, it kills the ring
- 	 */
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 1023f7b44cea..a2a7c65a77aa 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4499,7 +4499,8 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+ 			return -EFAULT;
+ 		if (clen < 0)
+ 			return -EINVAL;
+-		sr->len = iomsg->iov[0].iov_len;
++		sr->len = clen;
++		iomsg->iov[0].iov_len = clen;
+ 		iomsg->iov = NULL;
+ 	} else {
+ 		ret = __import_iovec(READ, (struct iovec __user *)uiov, len,
 -- 
 2.24.0
 

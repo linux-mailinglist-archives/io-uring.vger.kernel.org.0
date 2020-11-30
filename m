@@ -2,99 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27DB02C8C84
-	for <lists+io-uring@lfdr.de>; Mon, 30 Nov 2020 19:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C6CD2C8C9A
+	for <lists+io-uring@lfdr.de>; Mon, 30 Nov 2020 19:22:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388079AbgK3SRx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 30 Nov 2020 13:17:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55138 "EHLO
+        id S1729677AbgK3SVK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 30 Nov 2020 13:21:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388072AbgK3SRw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Nov 2020 13:17:52 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4AD5C061A04
-        for <io-uring@vger.kernel.org>; Mon, 30 Nov 2020 10:16:50 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id w187so10950156pfd.5
-        for <io-uring@vger.kernel.org>; Mon, 30 Nov 2020 10:16:50 -0800 (PST)
+        with ESMTP id S1729446AbgK3SVK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Nov 2020 13:21:10 -0500
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08E62C0613D4
+        for <io-uring@vger.kernel.org>; Mon, 30 Nov 2020 10:20:30 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id q10so10974024pfn.0
+        for <io-uring@vger.kernel.org>; Mon, 30 Nov 2020 10:20:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zNPV/E/GVDzH5U+Ow7xgO0eNGeZXdhdQWf1tOSwgd2w=;
-        b=LXkCbQiHy9b9FLU75B9bwVbtlkgp70lmRg7LgcZjq1q3HONk2XsBEHtwpj6x0UbVSd
-         tOQt3L5Ms24SfzhJUD2Hh4Hq8ZVbM9tanve70zbm+CZX89/m/wIX2yVJiA9+BucUpm3C
-         9RqSEvRyygmwChyFeIbDQGSN7ns3wCXqSMeXzr0gR+VrIdMp25r2rvN2Pbi+L+JW+0ia
-         2T5/3SerPn+Ol9W1YrVzOF/kYhFsALcob+aZki6V2Td6e9//wdMdwnOr9vlhPVlqprNq
-         1TYugjyeSyrA7YMKffm8wWkrnBUPF4HyAAQJKJPP6qTMzOvWBvXDn9OBBz7U/zwGswxs
-         XQwA==
+        bh=W1NrjPFaGFEB9QOlsuahkMCoJvGNm1r5tLMGb5uM/tY=;
+        b=JSVCK1kkpb3XMVNYwDnLlRRXW1WX0e9sx3G0lBIFfmz5cor9lo5lfqrU2pk46ttHeg
+         V4DDn3Wixk200//QTmR9OnAM/L3ocNiO/M/kGj7DXKPjTT9O1YJfPQnmj23Q7XuyIh4Y
+         aeCv+ctYCDl+TdZ+1rJsbBN7a+fOkCU3Lt/NE/pehDKYh0GOTPWZO9rUisWBcbk1tFhm
+         O9mwG+9AALXvbxnAb7aKDWqGFHyIvScoWStdnmOIE2DXTJs7X8GYq8CVKMu6Re/YN/V1
+         CkBxHQRkHs06xKHQID5TPCVSWZBy9ep2bZ1kiDZz4Pw7Kgg4xviLbYc8vYxuZPgEOGld
+         02RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=zNPV/E/GVDzH5U+Ow7xgO0eNGeZXdhdQWf1tOSwgd2w=;
-        b=UlS6lu3hC9nt8KRq6vtYYtlr6gpt9WrVGiyaZntHSozlEV6Bsripved+7duaXUYIjQ
-         r2asXFGEVhaQqHReLzagSsPNwA13ZsgQISkvfV+mIQzTi/2wsbm5b3KziT5iF3etW5P5
-         1MDbHm9GgBldKa2r96vq6Lxgr5ANb1c5imeHMPjrza2KIVsUXL+u8uvNJdJBNlsifXE3
-         xfDjXOF3DBjCr9uSoQnpRyTpR6/OqUmnMY7lJff7uCZy8OrQJfnhlRG5A3OnqAQUKDwg
-         r+xLuRdPKfS4VYWP7zThzuvkqzaiNBXIKG20z+okp4SEIvE8eGmJSbuRLKbHPsHdb4a4
-         T4Zw==
-X-Gm-Message-State: AOAM5335Zq1xJ6uc/BvQUC72Dg1NgVRs2+a0r5mvSqdcIWk/oS4yGxkC
-        iBnK8+HJCywWnvnY24umLPnP+fkiVLb9Pg==
-X-Google-Smtp-Source: ABdhPJymUTrvQI6L+Ma2LDfsq54/WMjLfYOrzgM5E18qNr+D1vYk+BsvKUiYgu+E0KDWsE3N5Yun0Q==
-X-Received: by 2002:aa7:91c7:0:b029:197:e389:fb26 with SMTP id z7-20020aa791c70000b0290197e389fb26mr20235917pfa.20.1606760210294;
-        Mon, 30 Nov 2020 10:16:50 -0800 (PST)
+        bh=W1NrjPFaGFEB9QOlsuahkMCoJvGNm1r5tLMGb5uM/tY=;
+        b=NTdtcS4ntNwf8P3Qs1muxxrBu7i779NVbu7jqM6yVj6F9FMUGh3jHguKZdbO5UlbXw
+         PJP9+mFTbehoBIVXami9cJXIlA4qGvExnMXmpcxs862khC2ZYtfGRPgm4wzbIRwemvZq
+         bftQqjXfT85RBrQUlkF6R/83XrRkhxN25LAeQf0DU/E2KQWTPM2eMwOFbpzE/WYUGIcb
+         WorNChSQ3vlZXq/dw1RMiu3sU5211nwvzdD306By6m+abCeegApzx8lv3q6xeAf321nf
+         u2R2ufjmBZGLh8pE6xHb7itxmFgC4lFHpxrRCVm5/VD0Y6o2lj1Jmb2Gy0HDrjl+QD50
+         n1aw==
+X-Gm-Message-State: AOAM530CwfRg19dvMsZrpV21UQhUMmN+ILwahX6FQHYF9hEn5ch9MQ+m
+        64GLDRDEh3PccrudfBIqKKFsVg==
+X-Google-Smtp-Source: ABdhPJyw/KmiB8O8DdPqPJhGR2d+CI1RIMY5qRiED/DN0E/ABDEt0l37qdAo2zFTmjB5KfwW6WnYBw==
+X-Received: by 2002:a63:c26:: with SMTP id b38mr19083311pgl.333.1606760429534;
+        Mon, 30 Nov 2020 10:20:29 -0800 (PST)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id a23sm81119pju.31.2020.11.30.10.16.49
+        by smtp.gmail.com with ESMTPSA id g14sm83722pji.32.2020.11.30.10.20.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Nov 2020 10:16:49 -0800 (PST)
-Subject: Re: Lockdep warning on io_file_data_ref_zero() with 5.10-rc5
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Nadav Amit <nadav.amit@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <C3012989-5B09-4A88-B271-542C1ED91ABE@gmail.com>
- <c16232dd-5841-6e87-bbd0-0c18f0fc982b@gmail.com>
+        Mon, 30 Nov 2020 10:20:28 -0800 (PST)
+Subject: Re: [RFC PATCH 07/13] fs/userfaultfd: support read_iter to use
+ io_uring
+To:     Nadav Amit <nadav.amit@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc:     Nadav Amit <namit@vmware.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20201129004548.1619714-1-namit@vmware.com>
+ <20201129004548.1619714-8-namit@vmware.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <13baf2c4-a403-41fc-87ca-6f5cb7999692@kernel.dk>
-Date:   Mon, 30 Nov 2020 11:16:48 -0700
+Message-ID: <dcf0ca71-c3e3-a813-b04f-d3e86bcddd48@kernel.dk>
+Date:   Mon, 30 Nov 2020 11:20:27 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <c16232dd-5841-6e87-bbd0-0c18f0fc982b@gmail.com>
+In-Reply-To: <20201129004548.1619714-8-namit@vmware.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/28/20 5:13 PM, Pavel Begunkov wrote:
-> On 28/11/2020 23:59, Nadav Amit wrote:
->> Hello Pavel,
->>
->> I got the following lockdep splat while rebasing my work on 5.10-rc5 on the
->> kernel (based on 5.10-rc5+).
->>
->> I did not actually confirm that the problem is triggered without my changes,
->> as my iouring workload requires some kernel changes (not iouring changes),
->> yet IMHO it seems pretty clear that this is a result of your commit
->> e297822b20e7f ("io_uring: order refnode recycling”), that acquires a lock in
->> io_file_data_ref_zero() inside a softirq context.
+On 11/28/20 5:45 PM, Nadav Amit wrote:
+> From: Nadav Amit <namit@vmware.com>
 > 
-> Yeah, that's true. It was already reported by syzkaller and fixed by Jens, but
-> queued for 5.11. Thanks for letting know anyway!
+> iouring with userfaultfd cannot currently be used fixed buffers since
+> userfaultfd does not provide read_iter(). This is required to allow
+> asynchronous (queued) reads from userfaultfd.
 > 
-> https://lore.kernel.org/io-uring/948d2d3b-5f36-034d-28e6-7490343a5b59@kernel.dk/T/#t
+> To support async-reads of userfaultfd provide read_iter() instead of
+> read().
 > 
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: io-uring@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  fs/userfaultfd.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
 > 
-> Jens, I think it's for the best to add it for 5.10, at least so that lockdep
-> doesn't complain.
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index b6a04e526025..6333b4632742 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -1195,9 +1195,9 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
+>  	return ret;
+>  }
+>  
+> -static ssize_t userfaultfd_read(struct file *file, char __user *buf,
+> -				size_t count, loff_t *ppos)
+> +static ssize_t userfaultfd_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  {
+> +	struct file *file = iocb->ki_filp;
+>  	struct userfaultfd_ctx *ctx = file->private_data;
+>  	ssize_t _ret, ret = 0;
+>  	struct uffd_msg msg;
+> @@ -1207,16 +1207,18 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
+>  		return -EINVAL;
+>  
+>  	for (;;) {
+> -		if (count < sizeof(msg))
+> +		if (iov_iter_count(to) < sizeof(msg))
+>  			return ret ? ret : -EINVAL;
+>  		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg);
 
-Yeah maybe, though it's "just" a lockdep issue, it can't trigger any
-deadlocks. I'd rather just keep it in 5.11 and ensure it goes to stable.
-This isn't new in this series.
+'no_wait' should be changed to factor in iocb->ki_flags & IOCB_NOWAIT as well,
+not just f_flags & O_NONBLOCK.
+
+I didn't check your write_iter, but if appropriate, that should do that
+too.
 
 -- 
 Jens Axboe

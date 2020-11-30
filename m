@@ -2,242 +2,204 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 905962C7C8B
-	for <lists+io-uring@lfdr.de>; Mon, 30 Nov 2020 02:51:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4AF72C7CAB
+	for <lists+io-uring@lfdr.de>; Mon, 30 Nov 2020 03:10:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbgK3BvC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 29 Nov 2020 20:51:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43662 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbgK3BvC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 29 Nov 2020 20:51:02 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2236C0613CF
-        for <io-uring@vger.kernel.org>; Sun, 29 Nov 2020 17:50:21 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id 64so13529964wra.11
-        for <io-uring@vger.kernel.org>; Sun, 29 Nov 2020 17:50:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ofcBDpJ0b0+vxzirZAXF2LRp3pt9TQnBwkk4e9Ty2II=;
-        b=MrrG589euu+4d+NJ0HOG+A+FkIop3h/iHGO9sI73KiKILvYqLqeCWN3SWBu1OV3pU+
-         yJFWSULTZKo4sYTuBBimsllNKAuqTXY0SeU7SVRY5HTh4NzW9n8wK0Nom6vjcrb7qqzQ
-         F/cX/kzpAfh53YzYgRQ928JQr2dFVlzbTx0kaJ7mKSxg8MGDGQ+Qe6qLVgMC55sY9uov
-         M2yP/pPiadYf2YzqlMmMWLwWXgDSmGm/mAnXiYHitJY9tvmkYAO4+Zl0AlaY2OPayDo7
-         wLo42aaR+FmpqDMgcrZg8yXKWZqg1tzYFnQ+zrLJcjiq4BnyG1PfqVn01ChA3ueyAJUf
-         i4bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ofcBDpJ0b0+vxzirZAXF2LRp3pt9TQnBwkk4e9Ty2II=;
-        b=clWQjZub4A8At3mToDrdLeuvLhsOvKCIXL+ChnWWS8Tx6xgGRySnZoYaZeFDnzYQMt
-         RBof/aneDM04ww2KJ8R6sqbafBsXa1FMSc7WaPEBnSUtMskqDEjaY/MDfFxuOZ1dxwez
-         uP4v2bcZpeQdsN1RcKDG0Q42YNdzIGD45zBGg296uMfPHgkgGVO4Dq+miEIdvChssUAC
-         xTMPbmxGX3Gliq/dMoY/SHuI9SzU2r/fV218AEwR2q/Ks7sPeYtOHXwvx48uURrR7fp0
-         YFjYMvxJawB5Dd79JBSJVv5MgsEM63Qn5pemZjDpzc7ssAWMk8ph4j6rgdaebNMkdvM3
-         a5hA==
-X-Gm-Message-State: AOAM530GSx+Bf46JVi7s8/KXvk9/TYYwsxEkFHa6wbrzQZ2dP/I/lnL9
-        NUgpe640mS36gt2QHDGWTOU=
-X-Google-Smtp-Source: ABdhPJwGjzGkfusCud2bkFoc8lDRUQ6YxtjLfg44RsJ2n8CGcyPU0jZVnfRwzv/NAhweUzHl1xL+iQ==
-X-Received: by 2002:adf:dc83:: with SMTP id r3mr24373142wrj.223.1606701020590;
-        Sun, 29 Nov 2020 17:50:20 -0800 (PST)
-Received: from localhost.localdomain (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
-        by smtp.gmail.com with ESMTPSA id d2sm25198062wrn.43.2020.11.29.17.50.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Nov 2020 17:50:20 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 5.11] io_uring: refactor send/recv msg and iov managing
-Date:   Mon, 30 Nov 2020 01:47:00 +0000
-Message-Id: <136e474beffa8c70e1fc67b10a0c76db3096c67d.1606700781.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726637AbgK3CIr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 29 Nov 2020 21:08:47 -0500
+Received: from ozlabs.ru ([107.174.27.60]:33628 "EHLO ozlabs.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726520AbgK3CIr (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Sun, 29 Nov 2020 21:08:47 -0500
+X-Greylist: delayed 443 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Nov 2020 21:08:46 EST
+Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
+        by ozlabs.ru (Postfix) with ESMTP id 8324FAE80047;
+        Sun, 29 Nov 2020 21:00:34 -0500 (EST)
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+To:     io-uring@vger.kernel.org
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        lexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH kernel] fs/io_ring: Fix lockdep warnings
+Date:   Mon, 30 Nov 2020 13:00:28 +1100
+Message-Id: <20201130020028.106198-1-aik@ozlabs.ru>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-After copying a send/recv msg header, fix up all the fields right away
-instead of delaying it. Keeping it in one place makes it easier. Also
-replace msg->iov with free_iov, that either keeps NULL or an iov to be
-freed, and kmsg->msg.msg_iter holding the right iov. That's more aligned
-with how rw handles it and easier to follow.
+There are a few potential deadlocks reported by lockdep and triggered by
+syzkaller (a syscall fuzzer). These are reported as timer interrupts can
+execute softirq handlers and if we were executing certain bits of io_ring,
+a deadlock can occur. This fixes those bits by disabling soft interrupts.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 ---
- fs/io_uring.c | 68 +++++++++++++++++++++++----------------------------
- 1 file changed, 31 insertions(+), 37 deletions(-)
+
+There are 2 reports.
+
+Warning#1:
+
+================================
+WARNING: inconsistent lock state
+5.10.0-rc5_irqs_a+fstn1 #5 Not tainted
+--------------------------------
+inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+swapper/14/0 [HC0[0]:SC1[1]:HE0:SE0] takes:
+c00000000b76f4a8 (&file_data->lock){+.?.}-{2:2}, at: io_file_data_ref_zero+0x58/0x300
+{SOFTIRQ-ON-W} state was registered at:
+  lock_acquire+0x2c4/0x5c0
+  _raw_spin_lock+0x54/0x80
+  sys_io_uring_register+0x1de0/0x2100
+  system_call_exception+0x160/0x240
+  system_call_common+0xf0/0x27c
+irq event stamp: 4011767
+hardirqs last  enabled at (4011766): [<c00000000167a7d4>] _raw_spin_unlock_irqrestore+0x54/0x90
+hardirqs last disabled at (4011767): [<c00000000167a358>] _raw_spin_lock_irqsave+0x48/0xb0
+softirqs last  enabled at (4011754): [<c00000000020b69c>] irq_enter_rcu+0xbc/0xc0
+softirqs last disabled at (4011755): [<c00000000020ba84>] irq_exit+0x1d4/0x1e0
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&file_data->lock);
+  <Interrupt>
+    lock(&file_data->lock);
+
+ *** DEADLOCK ***
+
+2 locks held by swapper/14/0:
+ #0: c0000000021cc3e8 (rcu_callback){....}-{0:0}, at: rcu_core+0x2b0/0xfe0
+ #1: c0000000021cc358 (rcu_read_lock){....}-{1:2}, at: percpu_ref_switch_to_atomic_rcu+0x148/0x400
+
+stack backtrace:
+CPU: 14 PID: 0 Comm: swapper/14 Not tainted 5.10.0-rc5_irqs_a+fstn1 #5
+Call Trace:
+[c0000000097672c0] [c0000000002b0268] print_usage_bug+0x3e8/0x3f0
+[c000000009767360] [c0000000002b0e88] mark_lock.part.48+0xc18/0xee0
+[c000000009767480] [c0000000002b1fb8] __lock_acquire+0xac8/0x21e0
+[c0000000097675d0] [c0000000002b4454] lock_acquire+0x2c4/0x5c0
+[c0000000097676c0] [c00000000167a38c] _raw_spin_lock_irqsave+0x7c/0xb0
+[c000000009767700] [c0000000007321b8] io_file_data_ref_zero+0x58/0x300
+[c000000009767770] [c000000000be93e4] percpu_ref_switch_to_atomic_rcu+0x3f4/0x400
+[c000000009767800] [c0000000002fe0d4] rcu_core+0x314/0xfe0
+[c0000000097678b0] [c00000000167b5b8] __do_softirq+0x198/0x6c0
+[c0000000097679d0] [c00000000020ba84] irq_exit+0x1d4/0x1e0
+[c000000009767a00] [c0000000000301c8] timer_interrupt+0x1e8/0x600
+[c000000009767a70] [c000000000009d84] decrementer_common_virt+0x1e4/0x1f0
+--- interrupt: 900 at snooze_loop+0xf4/0x300
+    LR = snooze_loop+0xe4/0x300
+[c000000009767dc0] [c00000000111b010] cpuidle_enter_state+0x520/0x910
+[c000000009767e30] [c00000000111b4c8] cpuidle_enter+0x58/0x80
+[c000000009767e70] [c00000000026da0c] call_cpuidle+0x4c/0x90
+[c000000009767e90] [c00000000026de80] do_idle+0x320/0x3d0
+[c000000009767f10] [c00000000026e308] cpu_startup_entry+0x38/0x50
+[c000000009767f40] [c00000000006f624] start_secondary+0x304/0x320
+[c000000009767f90] [c00000000000cc54] start_secondary_prolog+0x10/0x14
+systemd[1]: systemd-udevd.service: Got notification message from PID 195 (WATCHDOG=1)
+systemd-journald[175]: Sent WATCHDOG=1 notification.
+
+
+
+Warning#2:
+================================
+WARNING: inconsistent lock state
+5.10.0-rc5_irqs_a+fstn1 #7 Not tainted
+--------------------------------
+inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+swapper/7/0 [HC0[0]:SC1[1]:HE1:SE0] takes:
+c00000000c64b7a8 (&file_data->lock){+.?.}-{2:2}, at: io_file_data_ref_zero+0x54/0x2d0
+{SOFTIRQ-ON-W} state was registered at:
+  lock_acquire+0x2c4/0x5c0
+  _raw_spin_lock+0x54/0x80
+  io_sqe_files_unregister+0x5c/0x200
+  io_ring_exit_work+0x230/0x640
+  process_one_work+0x428/0xab0
+  worker_thread+0x94/0x770
+  kthread+0x204/0x210
+  ret_from_kernel_thread+0x5c/0x6c
+irq event stamp: 3250736
+hardirqs last  enabled at (3250736): [<c00000000167a794>] _raw_spin_unlock_irqrestore+0x54/0x90
+hardirqs last disabled at (3250735): [<c00000000167a318>] _raw_spin_lock_irqsave+0x48/0xb0
+softirqs last  enabled at (3250722): [<c00000000020b69c>] irq_enter_rcu+0xbc/0xc0
+softirqs last disabled at (3250723): [<c00000000020ba84>] irq_exit+0x1d4/0x1e0
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&file_data->lock);
+  <Interrupt>
+    lock(&file_data->lock);
+
+ *** DEADLOCK ***
+
+2 locks held by swapper/7/0:
+ #0: c0000000021cc3e8 (rcu_callback){....}-{0:0}, at: rcu_core+0x2b0/0xfe0
+ #1: c0000000021cc358 (rcu_read_lock){....}-{1:2}, at: percpu_ref_switch_to_atomic_rcu+0x148/0x400
+
+stack backtrace:
+CPU: 7 PID: 0 Comm: swapper/7 Not tainted 5.10.0-rc5_irqs_a+fstn1 #7
+Call Trace:
+[c00000000974b280] [c0000000002b0268] print_usage_bug+0x3e8/0x3f0
+[c00000000974b320] [c0000000002b0e88] mark_lock.part.48+0xc18/0xee0
+[c00000000974b440] [c0000000002b1fb8] __lock_acquire+0xac8/0x21e0
+[c00000000974b590] [c0000000002b4454] lock_acquire+0x2c4/0x5c0
+[c00000000974b680] [c00000000167a074] _raw_spin_lock+0x54/0x80
+[c00000000974b6b0] [c0000000007321b4] io_file_data_ref_zero+0x54/0x2d0
+[c00000000974b720] [c000000000be93a4] percpu_ref_switch_to_atomic_rcu+0x3f4/0x400
+[c00000000974b7b0] [c0000000002fe0d4] rcu_core+0x314/0xfe0
+[c00000000974b860] [c00000000167b578] __do_softirq+0x198/0x6c0
+[c00000000974b980] [c00000000020ba84] irq_exit+0x1d4/0x1e0
+[c00000000974b9b0] [c0000000000301c8] timer_interrupt+0x1e8/0x600
+[c00000000974ba20] [c000000000009d84] decrementer_common_virt+0x1e4/0x1f0
+--- interrupt: 900 at plpar_hcall_norets+0x1c/0x28
+    LR = check_and_cede_processor.part.2+0x2c/0x90
+[c00000000974bd80] [c00000000111f75c] shared_cede_loop+0x18c/0x230
+[c00000000974bdc0] [c00000000111afd0] cpuidle_enter_state+0x520/0x910
+[c00000000974be30] [c00000000111b488] cpuidle_enter+0x58/0x80
+[c00000000974be70] [c00000000026da0c] call_cpuidle+0x4c/0x90
+[c00000000974be90] [c00000000026de80] do_idle+0x320/0x3d0
+[c00000000974bf10] [c00000000026e30c] cpu_startup_entry+0x3c/0x50
+[c00000000974bf40] [c00000000006f624] start_secondary+0x304/0x320
+[c00000000974bf90] [c00000000000cc54] start_secondary_prolog+0x10/0x14
+
+---
+ fs/io_uring.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index bb46e8543c39..a86bd986456b 100644
+index a8c136a1cf4e..b922ac95dfc4 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -578,7 +578,7 @@ struct io_async_connect {
+@@ -6973,9 +6973,9 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 	if (!data)
+ 		return -ENXIO;
  
- struct io_async_msghdr {
- 	struct iovec			fast_iov[UIO_FASTIOV];
--	struct iovec			*iov;
-+	struct iovec			*free_iov;
- 	struct sockaddr __user		*uaddr;
- 	struct msghdr			msg;
- 	struct sockaddr_storage		addr;
-@@ -4506,23 +4506,26 @@ static int io_setup_async_msg(struct io_kiocb *req,
- 	if (async_msg)
- 		return -EAGAIN;
- 	if (io_alloc_async_data(req)) {
--		if (kmsg->iov != kmsg->fast_iov)
--			kfree(kmsg->iov);
-+		kfree(kmsg->free_iov);
- 		return -ENOMEM;
- 	}
- 	async_msg = req->async_data;
- 	req->flags |= REQ_F_NEED_CLEANUP;
- 	memcpy(async_msg, kmsg, sizeof(*kmsg));
-+	async_msg->msg.msg_name = &async_msg->addr;
-+	/* if free_iov is not set, it uses fast_iov */
-+	if (!async_msg->free_iov)
-+		async_msg->msg.msg_iter.iov = async_msg->fast_iov;
- 	return -EAGAIN;
- }
+-	spin_lock(&data->lock);
++	spin_lock_bh(&data->lock);
+ 	ref_node = data->node;
+-	spin_unlock(&data->lock);
++	spin_unlock_bh(&data->lock);
+ 	if (ref_node)
+ 		percpu_ref_kill(&ref_node->refs);
  
- static int io_sendmsg_copy_hdr(struct io_kiocb *req,
- 			       struct io_async_msghdr *iomsg)
- {
--	iomsg->iov = iomsg->fast_iov;
-+	iomsg->free_iov = iomsg->fast_iov;
- 	iomsg->msg.msg_name = &iomsg->addr;
- 	return sendmsg_copy_msghdr(&iomsg->msg, req->sr_msg.umsg,
--				   req->sr_msg.msg_flags, &iomsg->iov);
-+				   req->sr_msg.msg_flags, &iomsg->free_iov);
- }
- 
- static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-@@ -4563,14 +4566,8 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (unlikely(!sock))
- 		return ret;
- 
--	if (req->async_data) {
--		kmsg = req->async_data;
--		kmsg->msg.msg_name = &kmsg->addr;
--		/* if iov is set, it's allocated already */
--		if (!kmsg->iov)
--			kmsg->iov = kmsg->fast_iov;
--		kmsg->msg.msg_iter.iov = kmsg->iov;
--	} else {
-+	kmsg = req->async_data;
-+	if (!kmsg) {
- 		ret = io_sendmsg_copy_hdr(req, &iomsg);
- 		if (ret)
- 			return ret;
-@@ -4589,8 +4586,9 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (ret == -ERESTARTSYS)
- 		ret = -EINTR;
- 
--	if (kmsg->iov != kmsg->fast_iov)
--		kfree(kmsg->iov);
-+	/* it's reportedly faster to check for null here */
-+	if (kmsg->free_iov)
-+		kfree(kmsg->free_iov);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
- 	if (ret < 0)
- 		req_set_fail_links(req);
-@@ -4656,15 +4654,16 @@ static int __io_recvmsg_copy_hdr(struct io_kiocb *req,
- 	if (req->flags & REQ_F_BUFFER_SELECT) {
- 		if (iov_len > 1)
- 			return -EINVAL;
--		if (copy_from_user(iomsg->iov, uiov, sizeof(*uiov)))
-+		if (copy_from_user(iomsg->fast_iov, uiov, sizeof(*uiov)))
- 			return -EFAULT;
--		sr->len = iomsg->iov[0].iov_len;
--		iov_iter_init(&iomsg->msg.msg_iter, READ, iomsg->iov, 1,
-+		sr->len = iomsg->fast_iov[0].iov_len;
-+		iov_iter_init(&iomsg->msg.msg_iter, READ, iomsg->fast_iov, 1,
- 				sr->len);
--		iomsg->iov = NULL;
-+		iomsg->free_iov = NULL;
- 	} else {
-+		iomsg->free_iov = iomsg->fast_iov;
- 		ret = __import_iovec(READ, uiov, iov_len, UIO_FASTIOV,
--				     &iomsg->iov, &iomsg->msg.msg_iter,
-+				     &iomsg->free_iov, &iomsg->msg.msg_iter,
- 				     false);
- 		if (ret > 0)
- 			ret = 0;
-@@ -4703,11 +4702,12 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
- 		if (clen < 0)
- 			return -EINVAL;
- 		sr->len = clen;
--		iomsg->iov[0].iov_len = clen;
--		iomsg->iov = NULL;
-+		iomsg->fast_iov[0].iov_len = clen;
-+		iomsg->free_iov = NULL;
- 	} else {
-+		iomsg->free_iov = iomsg->fast_iov;
- 		ret = __import_iovec(READ, (struct iovec __user *)uiov, len,
--				   UIO_FASTIOV, &iomsg->iov,
-+				   UIO_FASTIOV, &iomsg->free_iov,
- 				   &iomsg->msg.msg_iter, true);
- 		if (ret < 0)
- 			return ret;
-@@ -4721,7 +4721,6 @@ static int io_recvmsg_copy_hdr(struct io_kiocb *req,
- 			       struct io_async_msghdr *iomsg)
- {
- 	iomsg->msg.msg_name = &iomsg->addr;
--	iomsg->iov = iomsg->fast_iov;
- 
- #ifdef CONFIG_COMPAT
- 	if (req->ctx->compat)
-@@ -4792,14 +4791,8 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (unlikely(!sock))
- 		return ret;
- 
--	if (req->async_data) {
--		kmsg = req->async_data;
--		kmsg->msg.msg_name = &kmsg->addr;
--		/* if iov is set, it's allocated already */
--		if (!kmsg->iov)
--			kmsg->iov = kmsg->fast_iov;
--		kmsg->msg.msg_iter.iov = kmsg->iov;
--	} else {
-+	kmsg = req->async_data;
-+	if (!kmsg) {
- 		ret = io_recvmsg_copy_hdr(req, &iomsg);
- 		if (ret)
- 			return ret;
-@@ -4811,7 +4804,7 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 		if (IS_ERR(kbuf))
- 			return PTR_ERR(kbuf);
- 		kmsg->fast_iov[0].iov_base = u64_to_user_ptr(kbuf->addr);
--		iov_iter_init(&kmsg->msg.msg_iter, READ, kmsg->iov,
-+		iov_iter_init(&kmsg->msg.msg_iter, READ, kmsg->fast_iov,
- 				1, req->sr_msg.len);
+@@ -7493,9 +7493,9 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
  	}
  
-@@ -4830,8 +4823,9 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
- 		cflags = io_put_recv_kbuf(req);
--	if (kmsg->iov != kmsg->fast_iov)
--		kfree(kmsg->iov);
-+	/* it's reportedly faster to check for null here */
-+	if (kmsg->free_iov)
-+		kfree(kmsg->free_iov);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
- 	if (ret < 0)
- 		req_set_fail_links(req);
-@@ -6106,8 +6100,8 @@ static void __io_clean_op(struct io_kiocb *req)
- 		case IORING_OP_RECVMSG:
- 		case IORING_OP_SENDMSG: {
- 			struct io_async_msghdr *io = req->async_data;
--			if (io->iov != io->fast_iov)
--				kfree(io->iov);
-+
-+			kfree(io->free_iov);
- 			break;
- 			}
- 		case IORING_OP_SPLICE:
+ 	file_data->node = ref_node;
+-	spin_lock(&file_data->lock);
++	spin_lock_bh(&file_data->lock);
+ 	list_add_tail(&ref_node->node, &file_data->ref_list);
+-	spin_unlock(&file_data->lock);
++	spin_unlock_bh(&file_data->lock);
+ 	percpu_ref_get(&file_data->refs);
+ 	return ret;
+ out_fput:
 -- 
-2.24.0
+2.17.1
 

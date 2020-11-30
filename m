@@ -2,380 +2,175 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBBB62C8DF6
-	for <lists+io-uring@lfdr.de>; Mon, 30 Nov 2020 20:23:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C27612C8E01
+	for <lists+io-uring@lfdr.de>; Mon, 30 Nov 2020 20:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbgK3TVt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 30 Nov 2020 14:21:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729923AbgK3TVr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Nov 2020 14:21:47 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4031CC0617A6
-        for <io-uring@vger.kernel.org>; Mon, 30 Nov 2020 11:20:29 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id e25so640194wme.0
-        for <io-uring@vger.kernel.org>; Mon, 30 Nov 2020 11:20:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=Pw/lc/FluL4dSMsXNCCON76r9NHYEL2t2Cav3gD08rc=;
-        b=orMmp+RYIhQ2das8EZzo+BaUMsy/3fFm1fqPeyMagmHpkjqi+cjxY7KJ8D6QPNztMG
-         8/plkuO5NoAlrhy1Czr/ZzP5MgwsZF66g1o7nPbNP1UldN2TwEHIP1za0vxnUgp4FwGI
-         UyRSmF8ZmXoRpga6os7AkZhq5vMje3FcMpc8OoqZ+on6jLwQXCGo7drxY6PGyMJrDJWV
-         nHmbyp2ybgfoPyHpfmcO4ywS1eukXoMFl/PeeraiJV2jduPoZZljlRspDd+fRNFRmMWN
-         4UBh50BERQmI5bm1Wy7ST0jmPaQ0L8sSf6PHCUskTCFEsCBDNZkjC9E/RQFZjbDqEbl1
-         iDCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Pw/lc/FluL4dSMsXNCCON76r9NHYEL2t2Cav3gD08rc=;
-        b=bX6OKCeV4LZ1KH45FoaeHxzK+jUXp7GVV33sRgcUxuE4qdiEHd6l3KV8bphbzjbWpL
-         UOW8t17TQJCnNg5nbl+uoo0DsR9fxC4QQ2OHYiqTk97kGTMffyG//D8SCGbyHCRHi0Wr
-         m0D354nkwtpdZNoI1P5Msz5pja0axupfUYB8Ars6T7qNUIKQm4amBtwpeuaMinJ9N+RR
-         Ih6ewtBRIBS86oQKgqsRZpMVygiL3nN2a+QsKAKM2xpp9FP9+ogrfN9CAm41Ybv5J9rd
-         H6DYsOsQolXn8pBOATrsHfXeWgCJUSgzhu2CL8k+7CQ6kvs2bpW9KoNOqIAqBAqJdP9G
-         Ahqg==
-X-Gm-Message-State: AOAM532cIBHaAX3NA/x6mI4YHP0hrq8MdVkuUO3xFDKBSzrrgWg4wfv8
-        FSdhT/6j8agwaQpeVAN/glIiqoh5l4B37Q==
-X-Google-Smtp-Source: ABdhPJwFDoFqMWJ2dEjnh04kzVkdPMLj2G+SQLhLYXJriBQbYSi2TcPABegwdhEcPlaQaTlhDfq6Hg==
-X-Received: by 2002:a7b:c406:: with SMTP id k6mr372194wmi.90.1606764028001;
-        Mon, 30 Nov 2020 11:20:28 -0800 (PST)
-Received: from localhost.localdomain (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
-        by smtp.gmail.com with ESMTPSA id i11sm29886775wrm.1.2020.11.30.11.20.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Nov 2020 11:20:27 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing v2 2/2] test/timeout: test timeout updates
-Date:   Mon, 30 Nov 2020 19:17:02 +0000
-Message-Id: <31844b0f1ca30ec431520e87acb21fe71aed5d33.1606763705.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1606763704.git.asml.silence@gmail.com>
-References: <cover.1606763704.git.asml.silence@gmail.com>
+        id S2388334AbgK3TYK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 30 Nov 2020 14:24:10 -0500
+Received: from mail-bn8nam12on2088.outbound.protection.outlook.com ([40.107.237.88]:64609
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388323AbgK3TYE (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 30 Nov 2020 14:24:04 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ptvz8o41XDPGUGLBkt05lC2FAf3/MIZr0jI1WQgOWZXDNWIwETjo8SBWhhubm/kSBQQnZB5bEKP065tX7bg7TGWzUMZ0FKlbi6PH2+JNfwR/l0Gh2d28yviRVPMhmLbHEe8iI2W9VzwrFYPSO17aG6jVZQPWaiOxDsXMJHJUFURx+pJVqSpzkUL156dSr6G2ePm0bt76037OeMnD27geSuXy8caTh4t2oHRPNg5OK67wF10OoEA2Xr7kJtfycbP1YJENdCFcRi3gMSnm+iTaazTsL1bMrKwPh9BMcNpVuMqfqdCl1U0Rcr7LTlbb8wrFAsrpE9uYASRM4L+QQh+VHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ip6xsBvrbVD3lidOCeGff53tUNmM/bcLvaSMYZmPzZk=;
+ b=EF2vEfHO8AHcY78C5uEbtHbk1sO5ysa/7XWsuhYKX6j+eRLGLrsRL34aHb5n0ybt9lU8PlVDxjvdMY4LzFjursY1m2J4TK8Bg8WA6oVD465BQ/y33KqjYxY0Tcupx/ry715EzNvHZ8d/ytXi2PA4hLlhcP8RoxxPgVRBrf3M7W4w1boT2fE4pvIpg7ASdbsuRa92kcuzR2ys5eBUEvOktRbL8feFlv3jl88o4ZKaisRZG0tuFG6HrMbuV8HIRdtvjSQnE90soexG3HKDliQ7gDCTtlWaIbd25Gq14yFDW9dG/u5bBhJYsVF+cCXmmJ5Jl+2PUVBmtDV0geAYQw1UvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
+ dkim=pass header.d=vmware.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ip6xsBvrbVD3lidOCeGff53tUNmM/bcLvaSMYZmPzZk=;
+ b=N5VWmdBjQTcLAIQ5LwNPXd8gvdJbc3HblBddefVmNnvu9n4+aTmPjNr0NiXQkSWPLpAPtxB+Ufu27c5acP4VPuCVubPOEEVFX990oDcOLrnZM0pdOwNMk9HVWWaAxSZ2Li5IAzSfhk9N/GSXukDOcbMBgF4ONwvfDuloKciTqEA=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (2603:10b6:a03:4a::18)
+ by BY5PR05MB6996.namprd05.prod.outlook.com (2603:10b6:a03:1bf::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.9; Mon, 30 Nov
+ 2020 19:23:08 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::d421:f99:8921:1ee7]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::d421:f99:8921:1ee7%6]) with mapi id 15.20.3632.006; Mon, 30 Nov 2020
+ 19:23:08 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Jens Axboe <axboe@kernel.dk>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [RFC PATCH 07/13] fs/userfaultfd: support read_iter to use
+ io_uring
+Thread-Topic: [RFC PATCH 07/13] fs/userfaultfd: support read_iter to use
+ io_uring
+Thread-Index: AQHWx0V+iaqy58g/+UWI/jFzvM4pnanhDeuA
+Date:   Mon, 30 Nov 2020 19:23:07 +0000
+Message-ID: <3634A0BA-888F-445B-84A2-D7F7C957FFA8@vmware.com>
+References: <20201129004548.1619714-1-namit@vmware.com>
+ <20201129004548.1619714-8-namit@vmware.com>
+ <dcf0ca71-c3e3-a813-b04f-d3e86bcddd48@kernel.dk>
+In-Reply-To: <dcf0ca71-c3e3-a813-b04f-d3e86bcddd48@kernel.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.dk; dkim=none (message not signed)
+ header.d=none;kernel.dk; dmarc=none action=none header.from=vmware.com;
+x-originating-ip: [2601:647:4700:9b2:b484:b377:b015:2fad]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 89af1875-c15e-44d3-cba5-08d895655e68
+x-ms-traffictypediagnostic: BY5PR05MB6996:
+x-microsoft-antispam-prvs: <BY5PR05MB6996EB414BC29FB6B5DAC669D0F50@BY5PR05MB6996.namprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 8P3PpfDwaYHDwou+iNGLG7BXY5G4OFTlUroFWmbiaHlzdbPtTvv0GU1Gio8x20fgoPHRsMJPO58HgLwBFpRo/azsthUbRGHxaaKUOCLADROYu/ev8LJoEKpBdQy0JviqSVwdCd9aIeEci9lFPoHkJ+hwpJYiQUZOWZfQqeIciWyKVD6F6avW471dz7XCsREdWEgfrLj/KM5cJLUGZ448SKe5IXYJmV0llfG6KtlfB4OKhqjIe6j3sJoJy++gzyxvNpztB4LEhBF2Nb/8G3jSY905I1LxZFvP0RRe/8/KTICATDnduWlK0HoTkggYAZWe
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR05MB4776.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(396003)(136003)(376002)(346002)(39860400002)(6916009)(6506007)(8676002)(6486002)(54906003)(316002)(2906002)(4326008)(33656002)(53546011)(8936002)(6512007)(186003)(36756003)(66446008)(5660300002)(86362001)(478600001)(2616005)(66556008)(64756008)(71200400001)(83380400001)(66946007)(76116006)(66476007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?5REbMPAn+zK01kf4YTjdyL4Q+zCVSYU+r8ahn9/mUNQt7a/vft3QLMRjdiwc?=
+ =?us-ascii?Q?fku2D2wgTMEZlmB+z9a/UJ1Hn08qyrOen1fn0gUpNniwBiVKdatYXuvtkkig?=
+ =?us-ascii?Q?nTEfkXwfUelEEkL+aecZC6bWsBYYK6I+PaGbdajy26YkrmIuJAibYQ6kuKc/?=
+ =?us-ascii?Q?vF/xW2cw/V/ULW66wtVGreghA+cbsjsag2XN8elq1WdkvyggqfxzcaEYGWc3?=
+ =?us-ascii?Q?C3M18L4R8lGSQ5cntPpthjgr6V8CgN+I9TKKONwl6mcuFhQypm1oKkCshRpE?=
+ =?us-ascii?Q?CLVA89J29krnm9bRvXEP40KRxBCqMjidJCjodBDIkkYO4ZXVNDVzLmgUHNHH?=
+ =?us-ascii?Q?thIfHk8yUeJgqF6DNXUDfHqs6t1cxevZjmsYz521gqpiC26TIFr1V3qMRSyi?=
+ =?us-ascii?Q?eB5ZUoqrANlFSQxjVFstPMqBhXHvQh7sGtAE0SS0CoUSaGI7Kf0I+P8wtGLb?=
+ =?us-ascii?Q?sEQhPUS/q6Gc91A4UtwLOFDjYXAATPMlnnbksnI+9D9h7L3eD6yxA6En/70r?=
+ =?us-ascii?Q?PmpJwwMUfb4HIg+FPOtpiaexP6qvwAHI/gX9m7JSNXcR2GpUiqiPzATTcVv2?=
+ =?us-ascii?Q?9uapiGvml+KWfzCDrkwbzQJ+RfIPwIKihPS0U74z/PWSSrVGU0JuDsOlwYg7?=
+ =?us-ascii?Q?RhcwlHuBUxRMVPy+agwNwFJTasMX9E0BM3OJV9mFHWIGLEUGgKIdqy6zgqBo?=
+ =?us-ascii?Q?ORvQ4T614sY+2eWqfZrIq1IIXEe6DHQjeZEvfRLpZcX2d6cqW4iI9SCKgk69?=
+ =?us-ascii?Q?9gcvsXuzumN0rg0HJ35qlgxcNUdg1HmAUfwXBkzsZfu058jHxFssJT/DLdll?=
+ =?us-ascii?Q?MOLemWl/iChCmQTRKZpTv8CBKAKbstVLWFtgPiYYrZi/pOZs8WrA9vNNJMbv?=
+ =?us-ascii?Q?L8R0QcANN61agLK5YNPMTYLpRZYdYwF/a6uHh+1RIXbFQRp0L6e7Weckuxlv?=
+ =?us-ascii?Q?jxRdOmOaCf9CpuDa4kFB3H07VnDu1U449NsvSKljZXKlfS7UCyf5w12gHPGv?=
+ =?us-ascii?Q?LKt2GrQVEN7IzQ2B0XYBYw2eMAeeEdQr2CFf60XL7QfCj2keHFHlfOI65N2h?=
+ =?us-ascii?Q?/N3wEIqa?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <32C21D8337B41F498DAD794931CE541A@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR05MB4776.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89af1875-c15e-44d3-cba5-08d895655e68
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2020 19:23:07.9627
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2LxzhfolBxpxjQYB/mB5uSLbwf/FxWHoQNWjTbqzPO5plJYS9gj5YmabTsnd0g55Rn2CcaG4Wbsochv3rXERKA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR05MB6996
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Test timeout updates if supported. Fuzzy checks that it sustains
-specified timings. Tests async/linked update, rel/abs, short and longer
-delays.
+> On Nov 30, 2020, at 10:20 AM, Jens Axboe <axboe@kernel.dk> wrote:
+>=20
+> On 11/28/20 5:45 PM, Nadav Amit wrote:
+>> From: Nadav Amit <namit@vmware.com>
+>>=20
+>> iouring with userfaultfd cannot currently be used fixed buffers since
+>> userfaultfd does not provide read_iter(). This is required to allow
+>> asynchronous (queued) reads from userfaultfd.
+>>=20
+>> To support async-reads of userfaultfd provide read_iter() instead of
+>> read().
+>>=20
+>> Cc: Jens Axboe <axboe@kernel.dk>
+>> Cc: Andrea Arcangeli <aarcange@redhat.com>
+>> Cc: Peter Xu <peterx@redhat.com>
+>> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+>> Cc: io-uring@vger.kernel.org
+>> Cc: linux-fsdevel@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linux-mm@kvack.org
+>> Signed-off-by: Nadav Amit <namit@vmware.com>
+>> ---
+>> fs/userfaultfd.c | 18 ++++++++++--------
+>> 1 file changed, 10 insertions(+), 8 deletions(-)
+>>=20
+>> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+>> index b6a04e526025..6333b4632742 100644
+>> --- a/fs/userfaultfd.c
+>> +++ b/fs/userfaultfd.c
+>> @@ -1195,9 +1195,9 @@ static ssize_t userfaultfd_ctx_read(struct userfau=
+ltfd_ctx *ctx, int no_wait,
+>> 	return ret;
+>> }
+>>=20
+>> -static ssize_t userfaultfd_read(struct file *file, char __user *buf,
+>> -				size_t count, loff_t *ppos)
+>> +static ssize_t userfaultfd_read_iter(struct kiocb *iocb, struct iov_ite=
+r *to)
+>> {
+>> +	struct file *file =3D iocb->ki_filp;
+>> 	struct userfaultfd_ctx *ctx =3D file->private_data;
+>> 	ssize_t _ret, ret =3D 0;
+>> 	struct uffd_msg msg;
+>> @@ -1207,16 +1207,18 @@ static ssize_t userfaultfd_read(struct file *fil=
+e, char __user *buf,
+>> 		return -EINVAL;
+>>=20
+>> 	for (;;) {
+>> -		if (count < sizeof(msg))
+>> +		if (iov_iter_count(to) < sizeof(msg))
+>> 			return ret ? ret : -EINVAL;
+>> 		_ret =3D userfaultfd_ctx_read(ctx, no_wait, &msg);
+>=20
+> 'no_wait' should be changed to factor in iocb->ki_flags & IOCB_NOWAIT as =
+well,
+> not just f_flags & O_NONBLOCK.
+>=20
+> I didn't check your write_iter, but if appropriate, that should do that
+> too.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/timeout.c | 272 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 271 insertions(+), 1 deletion(-)
-
-diff --git a/test/timeout.c b/test/timeout.c
-index 7e9f11d..b80fc36 100644
---- a/test/timeout.c
-+++ b/test/timeout.c
-@@ -965,10 +965,213 @@ err:
- 	return 1;
- }
- 
-+static int test_update_timeout(struct io_uring *ring, unsigned long ms,
-+				bool abs, bool async, bool linked)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct __kernel_timespec ts, ts_upd;
-+	unsigned long long exp_ms, base_ms = 10000;
-+	struct timeval tv;
-+	int ret, i, nr = 2;
-+	__u32 mode = abs ? IORING_TIMEOUT_ABS : 0;
-+
-+	msec_to_ts(&ts_upd, ms);
-+	gettimeofday(&tv, NULL);
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+		goto err;
-+	}
-+	msec_to_ts(&ts, base_ms);
-+	io_uring_prep_timeout(sqe, &ts, 0, 0);
-+	sqe->user_data = 1;
-+
-+	if (linked) {
-+		sqe = io_uring_get_sqe(ring);
-+		if (!sqe) {
-+			fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+			goto err;
-+		}
-+		io_uring_prep_nop(sqe);
-+		sqe->user_data = 3;
-+		sqe->flags = IOSQE_IO_LINK;
-+		if (async)
-+			sqe->flags |= IOSQE_ASYNC;
-+		nr++;
-+	}
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+		goto err;
-+	}
-+	io_uring_prep_timeout_update(sqe, &ts_upd, 1, mode);
-+	sqe->user_data = 2;
-+	if (async)
-+		sqe->flags |= IOSQE_ASYNC;
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != nr) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	for (i = 0; i < nr; i++) {
-+		ret = io_uring_wait_cqe(ring, &cqe);
-+		if (ret < 0) {
-+			fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+			goto err;
-+		}
-+
-+		switch (cqe->user_data) {
-+		case 1:
-+			if (cqe->res != -ETIME) {
-+				fprintf(stderr, "%s: got %d, wanted %d\n",
-+						__FUNCTION__, cqe->res, -ETIME);
-+				goto err;
-+			}
-+			break;
-+		case 2:
-+			if (cqe->res != 0) {
-+				fprintf(stderr, "%s: got %d, wanted %d\n",
-+						__FUNCTION__, cqe->res,
-+						0);
-+				goto err;
-+			}
-+			break;
-+		case 3:
-+			if (cqe->res != 0) {
-+				fprintf(stderr, "nop failed\n");
-+				goto err;
-+			}
-+			break;
-+		default:
-+			goto err;
-+		}
-+		io_uring_cqe_seen(ring, cqe);
-+	}
-+
-+	exp_ms = mtime_since_now(&tv);
-+	if (exp_ms >= base_ms / 2) {
-+		fprintf(stderr, "too long, timeout wasn't updated\n");
-+		goto err;
-+	}
-+	if (ms >= 1000 && !abs && exp_ms < ms / 2) {
-+		fprintf(stderr, "fired too early, potentially updated to 0 ms"
-+					"instead of %lu\n", ms);
-+		goto err;
-+	}
-+	return 0;
-+err:
-+	return 1;
-+}
-+
-+static int test_update_nonexistent_timeout(struct io_uring *ring)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct __kernel_timespec ts;
-+	int ret;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+		goto err;
-+	}
-+	msec_to_ts(&ts, 0);
-+	io_uring_prep_timeout_update(sqe, &ts, 42, 0);
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != 1) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret = io_uring_wait_cqe(ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret = cqe->res;
-+	if (ret == -ENOENT)
-+		ret = 0;
-+	io_uring_cqe_seen(ring, cqe);
-+	return ret;
-+err:
-+	return 1;
-+}
-+
-+static int test_update_invalid_flags(struct io_uring *ring)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct __kernel_timespec ts;
-+	int ret;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+		goto err;
-+	}
-+	io_uring_prep_timeout_remove(sqe, 0, IORING_TIMEOUT_ABS);
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != 1) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret = io_uring_wait_cqe(ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+	if (cqe->res != -EINVAL) {
-+		fprintf(stderr, "%s: got %d, wanted %d\n",
-+				__FUNCTION__, cqe->res, -EINVAL);
-+		goto err;
-+	}
-+	io_uring_cqe_seen(ring, cqe);
-+
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+		goto err;
-+	}
-+	msec_to_ts(&ts, 0);
-+	io_uring_prep_timeout_update(sqe, &ts, 0, -1);
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != 1) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret = io_uring_wait_cqe(ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+	if (cqe->res != -EINVAL) {
-+		fprintf(stderr, "%s: got %d, wanted %d\n",
-+				__FUNCTION__, cqe->res, -EINVAL);
-+		goto err;
-+	}
-+	io_uring_cqe_seen(ring, cqe);
-+
-+	return 0;
-+err:
-+	return 1;
-+}
- 
- int main(int argc, char *argv[])
- {
--	struct io_uring ring;
-+	struct io_uring ring, sqpoll_ring;
-+	bool has_timeout_update, sqpoll;
- 	int ret;
- 
- 	if (argc > 1)
-@@ -980,6 +1183,9 @@ int main(int argc, char *argv[])
- 		return 1;
- 	}
- 
-+	ret = io_uring_queue_init(8, &sqpoll_ring, IORING_SETUP_SQPOLL);
-+	sqpoll = !ret;
-+
- 	ret = test_single_timeout(&ring);
- 	if (ret) {
- 		fprintf(stderr, "test_single_timeout failed\n");
-@@ -1054,6 +1260,68 @@ int main(int argc, char *argv[])
- 		return ret;
- 	}
- 
-+	ret = test_update_nonexistent_timeout(&ring);
-+	has_timeout_update = (ret != -EINVAL);
-+	if (has_timeout_update) {
-+		if (ret) {
-+			fprintf(stderr, "test_update_nonexistent_timeout failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_invalid_flags(&ring);
-+		if (ret) {
-+			fprintf(stderr, "test_update_invalid_flags failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_timeout(&ring, 0, false, false, false);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_timeout(&ring, 1, false, false, false);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout 1ms failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_timeout(&ring, 1000, false, false, false);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout 1s failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_timeout(&ring, 0, true, true, false);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout abs failed\n");
-+			return ret;
-+		}
-+
-+
-+		ret = test_update_timeout(&ring, 0, false, true, false);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout async failed\n");
-+			return ret;
-+		}
-+
-+		ret = test_update_timeout(&ring, 0, false, false, true);
-+		if (ret) {
-+			fprintf(stderr, "test_update_timeout linked failed\n");
-+			return ret;
-+		}
-+
-+		if (sqpoll) {
-+			ret = test_update_timeout(&sqpoll_ring, 0, false, false,
-+						  false);
-+			if (ret) {
-+				fprintf(stderr, "test_update_timeout sqpoll"
-+						"failed\n");
-+				return ret;
-+			}
-+		}
-+	}
-+
- 	/*
- 	 * this test must go last, it kills the ring
- 	 */
-@@ -1063,5 +1331,7 @@ int main(int argc, char *argv[])
- 		return ret;
- 	}
- 
-+	if (sqpoll)
-+		io_uring_queue_exit(&sqpoll_ring);
- 	return 0;
- }
--- 
-2.24.0
+Thanks, I completely missed this point and will fix it in v1 (if I get
+a positive feedback on the rest from the userfaultfd people).
 

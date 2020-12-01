@@ -2,95 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E1A52C98BB
-	for <lists+io-uring@lfdr.de>; Tue,  1 Dec 2020 08:57:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 808572CAE50
+	for <lists+io-uring@lfdr.de>; Tue,  1 Dec 2020 22:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbgLAH4e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 1 Dec 2020 02:56:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40942 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbgLAH4e (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Dec 2020 02:56:34 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44C59C0613CF
-        for <io-uring@vger.kernel.org>; Mon, 30 Nov 2020 23:55:48 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id e13so534015pfj.3
-        for <io-uring@vger.kernel.org>; Mon, 30 Nov 2020 23:55:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uNMNU/yR47TiwpyMtUifHOozYUyNgo1UzfGJEzhmW9k=;
-        b=CB0jODU0/X56pw2oJsFUt6jJV5fiwsbihQXNLTqYoqKK9zsQquow9XiEwae75fqk//
-         thkjRXp/wnG8a7e4M4fioFixA8ST4OCZHY2e4MinYLe8PB+TQT1Z0V3I1XgBn9dLGjm0
-         o43IvAkFtUDo1ukszYVYq7Tbka4BOXSgvgO+et5FXNwsLAW2DuWH7A0dCwEsEL2KFh3N
-         Wi990yB2rUTPEFZVqtipgYgWHAuG24f+t7hbzTkGQ3ftgnrLtWWtCqyfNl4/4Ta+732N
-         e10h3nRmwLtBIYFJ9JWtAWTtxjvTCx7SnlcBSGwFd159CUNA+hPnI46J/eekWALVeDx5
-         +8jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uNMNU/yR47TiwpyMtUifHOozYUyNgo1UzfGJEzhmW9k=;
-        b=DK+kPPRfGea6Z93ngtxgW35Gk4atIgmss9tU2pW6h+r4vK6mI7TVTPEKHQ8lDZmu+s
-         vogOPkDpggG2ULQNQrIFFXsiCX+VkfDqBZsfeuzxaAnXeGQ/HP67yh59j7gmVAV3P03t
-         s+gw7E98geabw6nELJ+YcRM3FbrkiTKZAbgeaXuQe73F9mytsoBlPgnLlFyQ0YA8EBPL
-         yg52zOyVT6T4/mm7IeKI7yXVBUcdwsQFTG3hIW7qWM9Ge8Tsl3p/zRro75aAGjk0ql3f
-         Jkdve7XTipwmLnCL8G4MzR9A9O5qyo2KTjg1Ld/bK2RBaY/KvkQPva/8ucJlL1nYJQNt
-         C3Dg==
-X-Gm-Message-State: AOAM532H4hss7kpaQ7GbZgWTuUD7pTpu1any1ReLnW33NTPdGWmMFTTi
-        J1iFXAl6lpZ7ITp3VagDX70I2A==
-X-Google-Smtp-Source: ABdhPJxFZAztcjICfuRIAOH2zs0IVmkfSNykMdby3x8eXSQoK1c456I3KsGjVYeHj6L6KdXDIS/oUg==
-X-Received: by 2002:a63:4648:: with SMTP id v8mr1291868pgk.248.1606809347720;
-        Mon, 30 Nov 2020 23:55:47 -0800 (PST)
-Received: from [192.168.10.23] (124-171-134-245.dyn.iinet.net.au. [124.171.134.245])
-        by smtp.gmail.com with UTF8SMTPSA id y21sm1330257pfr.90.2020.11.30.23.55.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Nov 2020 23:55:47 -0800 (PST)
-Subject: Re: [PATCH kernel] fs/io_ring: Fix lockdep warnings
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     lexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20201130020028.106198-1-aik@ozlabs.ru>
- <44057e4a-9dd0-ddfa-70fd-8f6287de4e2d@gmail.com>
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
-Message-ID: <8616fff3-8a89-8316-3920-b33fb7db235c@ozlabs.ru>
-Date:   Tue, 1 Dec 2020 18:55:41 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:84.0) Gecko/20100101
- Thunderbird/84.0
+        id S1728372AbgLAVXZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 1 Dec 2020 16:23:25 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:34664 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727908AbgLAVXY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Dec 2020 16:23:24 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B1L8vne083804;
+        Tue, 1 Dec 2020 21:22:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=TIFf7NKiuU3OZjiAan48G8yrjlMulOwktkWk+2AccTQ=;
+ b=Rny8YjzFKeVSAn70XhcdP2BTbf1+QZZaSwX8Z9kgwIcuhXwzMixxnq2eGfuDipRGW8le
+ cs/e2VabfipoYEZrYLjXedgJMrY5WmzG7ZekKsavwn+zlV47SKcqFW2khq7VbeJiwJcK
+ NtyFsCujzu89ANMa53PI7lwTqyIfyuGOMRi7JrburKEh46NFQ93LvmWSxNx/HwtAhWry
+ /f4vJWNAT8T6xNsRCbK0V1Pcd93yJJnwsBA/pBPvwWtTyvn+JaXjD6BGb8I9AdYjARUN
+ FGs8vVYsi+N8ikyjNnwDhanFGdTgoUYgPXxhEz/kvILl9+PKIkCvj74RLJom+GJhrLXg eg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2130.oracle.com with ESMTP id 353c2aw1qp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 01 Dec 2020 21:22:37 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B1LBKsq163826;
+        Tue, 1 Dec 2020 21:22:36 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 3540fxknej-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Dec 2020 21:22:36 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0B1LMYVl018071;
+        Tue, 1 Dec 2020 21:22:35 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 01 Dec 2020 13:22:34 -0800
+Subject: Re: [RFC PATCH 01/13] fs/userfaultfd: fix wrong error code on WP &
+ !VM_MAYWRITE
+To:     Nadav Amit <nadav.amit@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc:     Nadav Amit <namit@vmware.com>, Jens Axboe <axboe@kernel.dk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20201129004548.1619714-1-namit@vmware.com>
+ <20201129004548.1619714-2-namit@vmware.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <3af643ec-b392-617c-cd4e-77db0cba24bd@oracle.com>
+Date:   Tue, 1 Dec 2020 13:22:32 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <44057e4a-9dd0-ddfa-70fd-8f6287de4e2d@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20201129004548.1619714-2-namit@vmware.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9822 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 adultscore=0 mlxscore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012010129
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9822 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 lowpriorityscore=0
+ clxscore=1011 bulkscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012010129
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-
-On 01/12/2020 03:34, Pavel Begunkov wrote:
-> On 30/11/2020 02:00, Alexey Kardashevskiy wrote:
->> There are a few potential deadlocks reported by lockdep and triggered by
->> syzkaller (a syscall fuzzer). These are reported as timer interrupts can
->> execute softirq handlers and if we were executing certain bits of io_ring,
->> a deadlock can occur. This fixes those bits by disabling soft interrupts.
+On 11/28/20 4:45 PM, Nadav Amit wrote:
+> From: Nadav Amit <namit@vmware.com>
 > 
-> Jens already fixed that, thanks
+> It is possible to get an EINVAL error instead of EPERM if the following
+> test vm_flags have VM_UFFD_WP but do not have VM_MAYWRITE, as "ret" is
+> overwritten since commit cab350afcbc9 ("userfaultfd: hugetlbfs: allow
+> registration of ranges containing huge pages").
 > 
-> https://lore.kernel.org/io-uring/948d2d3b-5f36-034d-28e6-7490343a5b59@kernel.dk/T/#t
+> Fix it.
+> 
+> Cc: Mike Kravetz <mike.kravetz@oracle.com>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: io-uring@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Fixes: cab350afcbc9 ("userfaultfd: hugetlbfs: allow registration of ranges containing huge pages")
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  fs/userfaultfd.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 000b457ad087..c8ed4320370e 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -1364,6 +1364,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+>  			if (end & (vma_hpagesize - 1))
+>  				goto out_unlock;
+>  		}
+> +		ret = -EPERM;
+>  		if ((vm_flags & VM_UFFD_WP) && !(cur->vm_flags & VM_MAYWRITE))
+>  			goto out_unlock;
+>  
 
-Oh good! I assumed it must be fixed somewhere but could not find it 
-quickly in the lists.
+Thanks!  We should return EPERM in that case.
 
-> FYI, your email got into spam.
+However, the check for VM_UFFD_WP && !VM_MAYWRITE went in after commit
+cab350afcbc9.  I think it is more accurate to say that the issue was
+introduced with commit 63b2d4174c4a ("Introduce the new uffd-wp APIs
+for userspace.").  The convention in userfaultfd_register() is that the
+return code is set before testing condition which could cause return.
+Therefore, when 63b2d4174c4a added the VM_UFFD_WP && !VM_MAYWRITE check,
+it should have also added the 'ret = -EPERM;' statement.
 
-Not good :-/ Wonder why... Can you please forward my mail in attachment 
-for debugging (there should be nothing private, I guess)? spf should be 
-alright, not sure what else I can do. Thanks,
+With changes to commit message and Fixes tag,
 
-
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 -- 
-Alexey
+Mike Kravetz

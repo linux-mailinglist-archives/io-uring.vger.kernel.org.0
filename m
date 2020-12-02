@@ -2,94 +2,124 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6778F2CC8F3
-	for <lists+io-uring@lfdr.de>; Wed,  2 Dec 2020 22:32:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C844E2CC956
+	for <lists+io-uring@lfdr.de>; Wed,  2 Dec 2020 23:09:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387492AbgLBVcE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 2 Dec 2020 16:32:04 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:46827 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729451AbgLBVcE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Dec 2020 16:32:04 -0500
-Received: by mail-io1-f71.google.com with SMTP id a2so2542302iod.13
-        for <io-uring@vger.kernel.org>; Wed, 02 Dec 2020 13:31:48 -0800 (PST)
+        id S1726788AbgLBWII (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 2 Dec 2020 17:08:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57632 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbgLBWIH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Dec 2020 17:08:07 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34364C0613D6;
+        Wed,  2 Dec 2020 14:07:27 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id t4so5666010wrr.12;
+        Wed, 02 Dec 2020 14:07:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DV2oh+15cqDAG6Hclxjt3Fwn697vk9QImzZzOuIJMRA=;
+        b=bDJKSA6Com67L5iXlOLWZGzD/QkQ0Li83GIeHQg4rZ81YU4doNvZbjv61QJSfQ7DgW
+         tsXC8vQmiBURDU//jz/oY/J9AfbKAHlkuFWuy8fFdRHcNGYp98Qz3WAHbvvQbMt+3qt1
+         hVpd6rOvOVwzMaqWYqiEGUG19MzwRHgdQzGQTljMBTWjmU0sR5Q1aYPpOn9w7qyuiQbC
+         u7gz2BevzL+34raqGQkNku7TBbmMzxD8Dy7d6ZopjrJgw4Nrzrdz6+DnsiQ9FMOouThy
+         X1pOnGAtv3+B6poiYrRFaaPwhTJb43qw4L6Cabz4igwY8d/SqzIkvwzLwYwhvXP24JXF
+         /flA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Ff9eT4IKjr/d9+CBTJN/vpEU1i32CgUXCqFZBYyDY8s=;
-        b=GBMpTXRW98Y9vbFPBugqTAIcm04Cn5B90z9I0LdScRR+IDuCsMmiW1/BYRx+KwrLnz
-         FKAu5Sp2vfWJovAkdeAVN5NOFkKdvHKv1MlwBdmqjPuHYA8znewf9S9Wk90QiyPG8a6r
-         UbTaPrZhSTHXY9cMComDDbEFoe9U8eLt1ELPsk9D6NOYo4zbYRLCtcSyKMV/IA9xRE64
-         l9wDB05Yx2kOYqCVNiIdcjyAoHYZ/THwnqfCl7f4K4UTY5dr9PGOJjBEoA/Qs8S1XjOb
-         /6iFJso0fwe0wEY9zkUFn4FJ9/QBWxg7q8GBM7qlHL4wUMMRRybkCcOv5/urC0ir5poc
-         8Xjg==
-X-Gm-Message-State: AOAM533Q4aZ4IFl7Y/6+fZI/tLZ4SrkHdJKMPdIB87Racm9i5f21tlHK
-        O2iNt0F92GMvLQ7dJmX3/Q65Tc4EB2r4fZZ7//WGcx/CXFnD
-X-Google-Smtp-Source: ABdhPJzLPKCTXPDvGdMkc1xtq05W2K1aWKZ9XhR7Fl/yf6dEmfPi+8unQRDokx5O/cfB2niOhhm2ZsC2f43gkNfS/TE+DPEjFzeM
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=DV2oh+15cqDAG6Hclxjt3Fwn697vk9QImzZzOuIJMRA=;
+        b=eLr40M7Zd6DnUlOEO80CqCpMCEMGZuA2EiKYD0OWZIv4/wBgFAznNkqDfrmE3vn0U6
+         1qiDqa84taWJx266rPAnvvG1vwHljLm0TBq8ZJEwg2fhoSBqzTlLtqSK6dmr8Y6PF1iZ
+         lsGjVL2l0ITYt+jghN1XsdJ98KdVoV0w80DQGH/rMWir6yhTSDiM9La+cX3Owr3oFeXA
+         r/8PuUYeY0Oy0k5GUJBialCg0LuCZ2bFYNdxV6QuMRiZ77B0+zqTaPJAk3hwSxw4ri8C
+         QOhlPFxWzmS0kKQ22V7iXdCbfmRLPqq02kAraQy28jZeABnJlKviuYyhp4NeQmevasLz
+         xWdw==
+X-Gm-Message-State: AOAM530Am0CdgB0LeH1A6lwrwzmYAv3JWZkN7V8Hy8Z7TLakNvsGucsv
+        5PJKYjPF4rC9+oGsYv7FKnBJaVAKya9aXQ==
+X-Google-Smtp-Source: ABdhPJyofIaIXAxofAkKyNqhQ81XUSipoHq2oEXDkKbDPiD4DiDpISv1WpTMvwrTsNlZfqaJvJ7iMg==
+X-Received: by 2002:a5d:504f:: with SMTP id h15mr183820wrt.402.1606946845680;
+        Wed, 02 Dec 2020 14:07:25 -0800 (PST)
+Received: from [192.168.1.213] (host109-152-100-189.range109-152.btcentralplus.com. [109.152.100.189])
+        by smtp.gmail.com with ESMTPSA id c17sm37985wro.19.2020.12.02.14.07.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Dec 2020 14:07:25 -0800 (PST)
+Subject: Re: [PATCH 5.10] io_uring: fix recvmsg setup with compat buf-select
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     stable@vger.kernel.org
+References: <70a236ff44cc9361ed03ebcd9c361864efdf8dc3.1606674793.git.asml.silence@gmail.com>
+ <ee19d846-6f58-5ff0-7928-48c00fcbce3a@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <14be454c-46cc-310a-1a43-6065f3b3020b@gmail.com>
+Date:   Wed, 2 Dec 2020 22:04:11 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:b681:: with SMTP id i1mr153616jam.10.1606944683171;
- Wed, 02 Dec 2020 13:31:23 -0800 (PST)
-Date:   Wed, 02 Dec 2020 13:31:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000003a2e105b581f7b9@google.com>
-Subject: WARNING in create_io_worker
-From:   syzbot <syzbot+fa13b30255540662f825@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ee19d846-6f58-5ff0-7928-48c00fcbce3a@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 30/11/2020 18:12, Jens Axboe wrote:
+> On 11/29/20 11:33 AM, Pavel Begunkov wrote:
+>> __io_compat_recvmsg_copy_hdr() with REQ_F_BUFFER_SELECT reads out iov
+>> len but never assigns it to iov/fast_iov, leaving sr->len with garbage.
+>> Hopefully, following io_buffer_select() truncates it to the selected
+>> buffer size, but the value is still may be under what was specified.
+> 
+> Applied, thanks.
 
-syzbot found the following issue on:
+Jens, apologies but where did it go? Can't find at git.kernel.dk
 
-HEAD commit:    c84e1efa Merge tag 'asm-generic-fixes-5.10-2' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a43395500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d1e98d0b97781e4
-dashboard link: https://syzkaller.appspot.com/bug?extid=fa13b30255540662f825
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fa13b30255540662f825@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 3 PID: 10595 at include/linux/cpumask.h:137 rcu_read_unlock include/linux/rcupdate.h:696 [inline]
-WARNING: CPU: 3 PID: 10595 at include/linux/cpumask.h:137 ttwu_stat kernel/sched/core.c:2441 [inline]
-WARNING: CPU: 3 PID: 10595 at include/linux/cpumask.h:137 try_to_wake_up+0xef6/0x1330 kernel/sched/core.c:2984
-Modules linked in:
-CPU: 3 PID: 10595 Comm: io_wq_manager Not tainted 5.10.0-rc5-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-RIP: 0010:tryqemu-system-x86_64: warning: guest updated active QH
-Code: 80 3d 93 2a 8c 0b 00 0f 84 f1 00 00 00 e8 82 80 10 00 48 c7 c6 d9 6d 4c 81 48 c7 c7 e0 77 33 8b e8 0f b7 09 00 e9 15 f9 ff ff <0f> 0b e9 65 f4 ff ff 4c 89 ff 48 89 4c 24 08 e8 b6 51 ff ff 48 8b
-RSP: 0018:ffffc90004b4fd50 EFLAGS: 00010002
-RAX: dffffc0000000000 RBX: 1ffff92000969faf RCX: ffff88806dc24778
-RDX: 1ffff1100db848ee RSI: ffffffff83b63fcb RDI: 0000000000000006
-RBP: ffff88806dc24400 R08: ffff88806dc24410 R09: ffffffff8cecc98f
-R10: 0000000000000040 R11: 0000000000000000 R12: 0000000000000202
-R13: ffff88806dc24c38 R14: 0000000000000008 R15: ffff88806dc24770
-FS:  0000000000000000(0000) GS:ffff88802cd00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000339da98 CR3: 0000000020a7e000 CR4: 0000000000350ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- create_io_worker+0x590/0x8d0 fs/io-wq.c:720
- io_wq_manager+0x16b/0xb80 fs/io-wq.c:785
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Pavel Begunkov

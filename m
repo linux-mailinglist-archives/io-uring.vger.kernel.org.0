@@ -2,57 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B77D72CC2F5
-	for <lists+io-uring@lfdr.de>; Wed,  2 Dec 2020 18:05:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B3572CC329
+	for <lists+io-uring@lfdr.de>; Wed,  2 Dec 2020 18:14:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbgLBRD5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 2 Dec 2020 12:03:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38330 "EHLO
+        id S2388984AbgLBRNA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 2 Dec 2020 12:13:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbgLBRD4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Dec 2020 12:03:56 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ABA7C0613CF
-        for <io-uring@vger.kernel.org>; Wed,  2 Dec 2020 09:03:16 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id f190so10249806wme.1
-        for <io-uring@vger.kernel.org>; Wed, 02 Dec 2020 09:03:15 -0800 (PST)
+        with ESMTP id S2387504AbgLBRNA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Dec 2020 12:13:00 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADECDC0613D4
+        for <io-uring@vger.kernel.org>; Wed,  2 Dec 2020 09:12:19 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id u12so4883439wrt.0
+        for <io-uring@vger.kernel.org>; Wed, 02 Dec 2020 09:12:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=37vl3klPnMntPdphVK2O1uUZXgJ6myLCL71WF3TgZkg=;
-        b=PbQ6GLh0EpcB5WCtmHnpo5wOstpTRJ3xjecNzciYGSQAA+TATMlJHEEcrt3nGSsrbY
-         LPbRPETspOBUfOEze654+ZVB2turMvJxZPHmaMfrUYbAQLI47PcVkk00Myhgxm5MBPf7
-         BziHtoDQubcCpov4FNTbNjKwJWI0iPfZPgjkStJlNi61DQ1JwMBP1iqRoDhy9gSR0sKG
-         JreDVfmg3SmvkfH8zjWTXmcHIJ/YeYZ7FeNpYCE1+y4uP0iM95LzT2zPagnWR+S2nl/o
-         nLcSNPhvHnxx1Wgf+vzxE0M5C7BVQKU72eYX/wSYgMu1iOYLc9rt/DPDidwfRE4Cxqnc
-         sYww==
+        bh=Al62jP4cx4FosUkkE4XdpIVy5PxF0i9fgKbUoM1CLrk=;
+        b=Y2dr6o+v+OQYtYWu4AOP+VyhRixxfouV6LX3qGE2nSGkFYkaXGJc6QwoDTn2Pghehq
+         zNNHvJl3eRifSy+VatXvHTISvOqkth4JiYem2P/d0bxT8pAAp0KeZh7HZ07ba+jJj2R/
+         61Tvk0L12hJkiu1NOSXmSyGF3K+b5a2bI/BA8lZ5+LAvlLZ6RHRWQ7dMUZo+Ze7OB+1K
+         9fswvZPKxSgk17zpIYCV9OPIlmL/7zKhNJePlJ5h3tEnfCNWGw8Hdk1AHtIjWDfy4auN
+         FQ6ZPyJAE/jnfX6iqNzFCxwQJ+PAUUbxi13CS8vFNQFi9IVgycjyrNTgF+ak2rgT3FdB
+         ipEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=37vl3klPnMntPdphVK2O1uUZXgJ6myLCL71WF3TgZkg=;
-        b=iBQicRVX6BpX33uU5Y5fUM8PCMC9FSbJBaAj0BeIeUHWoKpCNzAmhQe4bgQiEbpY35
-         Htz5r6NtFS8Qk1vEgM1TVaH4VWs+JPDQCxplXYUxTB6m6GrwzCIKgkTohaZ9lABwh6ak
-         80xh63s1WnOUJYYtCFW7eE45a8qMUGfD78hmpcDOK+pdYD7N1aeX0oNRyoQVFIi15Ng7
-         zZlr5OlPi5Ssl2H91r09GVlkze4oseK9KUODN1TWonD4BYE4oot+YzL6E3HNImSzy9RM
-         j/rPwMmV630jJt0Z9kp3BzYoaEWz1lgcFQ3/JULHqRYsWYTob+OrHys13g9V5XEPgj3P
-         6pVg==
-X-Gm-Message-State: AOAM531dz5tdBLv3fK1muUpStnqvXNk6DXjb3R1GuSYwhJpCNp+1cN4Q
-        tgFrwwjBHwvUKX3jD5za/iRnr43X233u5Q==
-X-Google-Smtp-Source: ABdhPJy0EoiChXQGSYBPHVzGoJIW6/0rrZCdAt2hFiDAIzJOv4AYglYN7CTOihi/E5dkBb8g+aRFVg==
-X-Received: by 2002:a7b:ce17:: with SMTP id m23mr4154450wmc.117.1606928594737;
-        Wed, 02 Dec 2020 09:03:14 -0800 (PST)
-Received: from [192.168.1.144] (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
-        by smtp.gmail.com with ESMTPSA id r13sm2819239wrm.25.2020.12.02.09.03.13
+        bh=Al62jP4cx4FosUkkE4XdpIVy5PxF0i9fgKbUoM1CLrk=;
+        b=fgz6pH6T8qaBe47qKX9988C1SOZKtcU5SzqKD9fhKbeobop3FI/tYS9qAHu3jvh2hZ
+         6US3eLMZRVW7ecNkiIJfWAmcYR96WdDV2Kk/kB+x2Z1YduB0pkbzvOX78UetjiscO9Qe
+         awkVYn8tcEJhuJVg5MaSu3AacWdf6nGKuRUaWFTkVkpUj+9HDCTrppWKrz6GR1UYWRSO
+         OkJ/6UZ3zFQWPFp8UToCHNQr6KKbZKzCSx1ucKmjgMK8bm+wNZqM8+opMGTlXm8qnv3V
+         rPjs2ds2JVelSpNkbyyJU1KjhDG0+TOgPOGCVCAUZ01E8Oj4egrGCtJ9oRbYuaX/L7YT
+         DIbg==
+X-Gm-Message-State: AOAM533CAEFE+/JjvtHt99nHgnuJayKDwbWyAApqhprb9Rf3dOf9JYeC
+        OUFj9ggaK4JAVLgZjVdLsgj1m8eXz8kJuA==
+X-Google-Smtp-Source: ABdhPJzCN3m50JK3K0UGgbvAMcfuudXQFgpFpEeBhMuUWUPNObx0BxS358erwNKQFbEXOTlkPMmiZg==
+X-Received: by 2002:a5d:4388:: with SMTP id i8mr4788614wrq.262.1606929138374;
+        Wed, 02 Dec 2020 09:12:18 -0800 (PST)
+Received: from [192.168.1.213] (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
+        by smtp.gmail.com with ESMTPSA id r1sm2881644wra.97.2020.12.02.09.12.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Dec 2020 09:03:14 -0800 (PST)
+        Wed, 02 Dec 2020 09:12:17 -0800 (PST)
+Subject: Re: [PATCH] io_uring: always let io_iopoll_complete() complete polled
+ io.
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring@vger.kernel.org
 Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
 References: <20201202113151.1680-1-xiaoguang.wang@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <c715cea0-7917-91bf-f8d6-67c412d0cc97@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -96,130 +99,134 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH] io_uring: always let io_iopoll_complete() complete polled
- io.
-Message-ID: <c715cea0-7917-91bf-f8d6-67c412d0cc97@gmail.com>
-Date:   Wed, 2 Dec 2020 17:00:00 +0000
+Message-ID: <a6a55655-2939-529a-0eae-b37e59096b4b@gmail.com>
+Date:   Wed, 2 Dec 2020 17:09:04 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201202113151.1680-1-xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <c715cea0-7917-91bf-f8d6-67c412d0cc97@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 02/12/2020 11:31, Xiaoguang Wang wrote:
-> Abaci Fuzz reported a double-free or invalid-free BUG in io_commit_cqring():
-> [   95.504842] BUG: KASAN: double-free or invalid-free in io_commit_cqring+0x3ec/0x8e0
-> [   95.505921]
-> [   95.506225] CPU: 0 PID: 4037 Comm: io_wqe_worker-0 Tainted: G    B
-> W         5.10.0-rc5+ #1
-> [   95.507434] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
-> [   95.508248] Call Trace:
-> [   95.508683]  dump_stack+0x107/0x163
-> [   95.509323]  ? io_commit_cqring+0x3ec/0x8e0
-> [   95.509982]  print_address_description.constprop.0+0x3e/0x60
-> [   95.510814]  ? vprintk_func+0x98/0x140
-> [   95.511399]  ? io_commit_cqring+0x3ec/0x8e0
-> [   95.512036]  ? io_commit_cqring+0x3ec/0x8e0
-> [   95.512733]  kasan_report_invalid_free+0x51/0x80
-> [   95.513431]  ? io_commit_cqring+0x3ec/0x8e0
-> [   95.514047]  __kasan_slab_free+0x141/0x160
-> [   95.514699]  kfree+0xd1/0x390
-> [   95.515182]  io_commit_cqring+0x3ec/0x8e0
-> [   95.515799]  __io_req_complete.part.0+0x64/0x90
-> [   95.516483]  io_wq_submit_work+0x1fa/0x260
-> [   95.517117]  io_worker_handle_work+0xeac/0x1c00
-> [   95.517828]  io_wqe_worker+0xc94/0x11a0
-> [   95.518438]  ? io_worker_handle_work+0x1c00/0x1c00
-> [   95.519151]  ? __kthread_parkme+0x11d/0x1d0
-> [   95.519806]  ? io_worker_handle_work+0x1c00/0x1c00
-> [   95.520512]  ? io_worker_handle_work+0x1c00/0x1c00
-> [   95.521211]  kthread+0x396/0x470
-> [   95.521727]  ? _raw_spin_unlock_irq+0x24/0x30
-> [   95.522380]  ? kthread_mod_delayed_work+0x180/0x180
-> [   95.523108]  ret_from_fork+0x22/0x30
-> [   95.523684]
-> [   95.523985] Allocated by task 4035:
-> [   95.524543]  kasan_save_stack+0x1b/0x40
-> [   95.525136]  __kasan_kmalloc.constprop.0+0xc2/0xd0
-> [   95.525882]  kmem_cache_alloc_trace+0x17b/0x310
-> [   95.533930]  io_queue_sqe+0x225/0xcb0
-> [   95.534505]  io_submit_sqes+0x1768/0x25f0
-> [   95.535164]  __x64_sys_io_uring_enter+0x89e/0xd10
-> [   95.535900]  do_syscall_64+0x33/0x40
-> [   95.536465]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   95.537199]
-> [   95.537505] Freed by task 4035:
-> [   95.538003]  kasan_save_stack+0x1b/0x40
-> [   95.538599]  kasan_set_track+0x1c/0x30
-> [   95.539177]  kasan_set_free_info+0x1b/0x30
-> [   95.539798]  __kasan_slab_free+0x112/0x160
-> [   95.540427]  kfree+0xd1/0x390
-> [   95.540910]  io_commit_cqring+0x3ec/0x8e0
-> [   95.541516]  io_iopoll_complete+0x914/0x1390
-> [   95.542150]  io_do_iopoll+0x580/0x700
-> [   95.542724]  io_iopoll_try_reap_events.part.0+0x108/0x200
-> [   95.543512]  io_ring_ctx_wait_and_kill+0x118/0x340
-> [   95.544206]  io_uring_release+0x43/0x50
-> [   95.544791]  __fput+0x28d/0x940
-> [   95.545291]  task_work_run+0xea/0x1b0
-> [   95.545873]  do_exit+0xb6a/0x2c60
-> [   95.546400]  do_group_exit+0x12a/0x320
-> [   95.546967]  __x64_sys_exit_group+0x3f/0x50
-> [   95.547605]  do_syscall_64+0x33/0x40
-> [   95.548155]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> The reason is that once we got a non EAGAIN error in io_wq_submit_work(),
-> we'll complete req by calling io_req_complete(), which will hold completion_lock
-> to call io_commit_cqring(), but for polled io, io_iopoll_complete() won't
-> hold completion_lock to call io_commit_cqring(), then there maybe concurrent
-> access to ctx->defer_list, double free may happen.
-> 
-> To fix this bug, we always let io_iopoll_complete() complete polled io.
+On 02/12/2020 17:00, Pavel Begunkov wrote:
+> On 02/12/2020 11:31, Xiaoguang Wang wrote:
+>> Abaci Fuzz reported a double-free or invalid-free BUG in io_commit_cqring():
+>> [   95.504842] BUG: KASAN: double-free or invalid-free in io_commit_cqring+0x3ec/0x8e0
+>> [   95.505921]
+>> [   95.506225] CPU: 0 PID: 4037 Comm: io_wqe_worker-0 Tainted: G    B
+>> W         5.10.0-rc5+ #1
+>> [   95.507434] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+>> [   95.508248] Call Trace:
+>> [   95.508683]  dump_stack+0x107/0x163
+>> [   95.509323]  ? io_commit_cqring+0x3ec/0x8e0
+>> [   95.509982]  print_address_description.constprop.0+0x3e/0x60
+>> [   95.510814]  ? vprintk_func+0x98/0x140
+>> [   95.511399]  ? io_commit_cqring+0x3ec/0x8e0
+>> [   95.512036]  ? io_commit_cqring+0x3ec/0x8e0
+>> [   95.512733]  kasan_report_invalid_free+0x51/0x80
+>> [   95.513431]  ? io_commit_cqring+0x3ec/0x8e0
+>> [   95.514047]  __kasan_slab_free+0x141/0x160
+>> [   95.514699]  kfree+0xd1/0x390
+>> [   95.515182]  io_commit_cqring+0x3ec/0x8e0
+>> [   95.515799]  __io_req_complete.part.0+0x64/0x90
+>> [   95.516483]  io_wq_submit_work+0x1fa/0x260
+>> [   95.517117]  io_worker_handle_work+0xeac/0x1c00
+>> [   95.517828]  io_wqe_worker+0xc94/0x11a0
+>> [   95.518438]  ? io_worker_handle_work+0x1c00/0x1c00
+>> [   95.519151]  ? __kthread_parkme+0x11d/0x1d0
+>> [   95.519806]  ? io_worker_handle_work+0x1c00/0x1c00
+>> [   95.520512]  ? io_worker_handle_work+0x1c00/0x1c00
+>> [   95.521211]  kthread+0x396/0x470
+>> [   95.521727]  ? _raw_spin_unlock_irq+0x24/0x30
+>> [   95.522380]  ? kthread_mod_delayed_work+0x180/0x180
+>> [   95.523108]  ret_from_fork+0x22/0x30
+>> [   95.523684]
+>> [   95.523985] Allocated by task 4035:
+>> [   95.524543]  kasan_save_stack+0x1b/0x40
+>> [   95.525136]  __kasan_kmalloc.constprop.0+0xc2/0xd0
+>> [   95.525882]  kmem_cache_alloc_trace+0x17b/0x310
+>> [   95.533930]  io_queue_sqe+0x225/0xcb0
+>> [   95.534505]  io_submit_sqes+0x1768/0x25f0
+>> [   95.535164]  __x64_sys_io_uring_enter+0x89e/0xd10
+>> [   95.535900]  do_syscall_64+0x33/0x40
+>> [   95.536465]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [   95.537199]
+>> [   95.537505] Freed by task 4035:
+>> [   95.538003]  kasan_save_stack+0x1b/0x40
+>> [   95.538599]  kasan_set_track+0x1c/0x30
+>> [   95.539177]  kasan_set_free_info+0x1b/0x30
+>> [   95.539798]  __kasan_slab_free+0x112/0x160
+>> [   95.540427]  kfree+0xd1/0x390
+>> [   95.540910]  io_commit_cqring+0x3ec/0x8e0
+>> [   95.541516]  io_iopoll_complete+0x914/0x1390
+>> [   95.542150]  io_do_iopoll+0x580/0x700
+>> [   95.542724]  io_iopoll_try_reap_events.part.0+0x108/0x200
+>> [   95.543512]  io_ring_ctx_wait_and_kill+0x118/0x340
+>> [   95.544206]  io_uring_release+0x43/0x50
+>> [   95.544791]  __fput+0x28d/0x940
+>> [   95.545291]  task_work_run+0xea/0x1b0
+>> [   95.545873]  do_exit+0xb6a/0x2c60
+>> [   95.546400]  do_group_exit+0x12a/0x320
+>> [   95.546967]  __x64_sys_exit_group+0x3f/0x50
+>> [   95.547605]  do_syscall_64+0x33/0x40
+>> [   95.548155]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>
+>> The reason is that once we got a non EAGAIN error in io_wq_submit_work(),
+>> we'll complete req by calling io_req_complete(), which will hold completion_lock
+>> to call io_commit_cqring(), but for polled io, io_iopoll_complete() won't
+>> hold completion_lock to call io_commit_cqring(), then there maybe concurrent
+>> access to ctx->defer_list, double free may happen.
+>>
+>> To fix this bug, we always let io_iopoll_complete() complete polled io.
 
-It makes sense if it got there though means of REQ_F_FORCE_ASYNC or as a linked,
-but a thing I'm afraid of is going twice through the end section of io_issue_sqe()
-(i.e. io_iopoll_req_issued). Shouldn't happen though.
-
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+This one can use a test by the way. E.g. sending a bunch of iopoll requests,
+both generic and REQ_F_FORCE_ASYNC, and expect it not to fail. 
 
 > 
-> Reported-by: Abaci Fuzz <abaci@linux.alibaba.com>
-> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
+> It makes sense if it got there though means of REQ_F_FORCE_ASYNC or as a linked,
+> but a thing I'm afraid of is going twice through the end section of io_issue_sqe()
+> (i.e. io_iopoll_req_issued). Shouldn't happen though.
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index a8c136a..901ca67 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6074,8 +6074,19 @@ static struct io_wq_work *io_wq_submit_work(struct io_wq_work *work)
->  	}
->  
->  	if (ret) {
-> -		req_set_fail_links(req);
-> -		io_req_complete(req, ret);
-> +		/*
-> +		 * io_iopoll_complete() does not hold completion_lock to complete
-> +		 * polled io, so here for polled io, just mark it done and still let
-> +		 * io_iopoll_complete() complete it.
-> +		 */
-> +		if (req->ctx->flags & IORING_SETUP_IOPOLL) {
-> +			struct kiocb *kiocb = &req->rw.kiocb;
-> +
-> +			kiocb_done(kiocb, ret, NULL);
-> +		} else {
-> +			req_set_fail_links(req);
-> +			io_req_complete(req, ret);
-> +		}
->  	}
->  
->  	return io_steal_work(req);
+> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+> 
+>>
+>> Reported-by: Abaci Fuzz <abaci@linux.alibaba.com>
+>> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+>> ---
+>>  fs/io_uring.c | 15 +++++++++++++--
+>>  1 file changed, 13 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index a8c136a..901ca67 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -6074,8 +6074,19 @@ static struct io_wq_work *io_wq_submit_work(struct io_wq_work *work)
+>>  	}
+>>  
+>>  	if (ret) {
+>> -		req_set_fail_links(req);
+>> -		io_req_complete(req, ret);
+>> +		/*
+>> +		 * io_iopoll_complete() does not hold completion_lock to complete
+>> +		 * polled io, so here for polled io, just mark it done and still let
+>> +		 * io_iopoll_complete() complete it.
+>> +		 */
+>> +		if (req->ctx->flags & IORING_SETUP_IOPOLL) {
+>> +			struct kiocb *kiocb = &req->rw.kiocb;
+>> +
+>> +			kiocb_done(kiocb, ret, NULL);
+>> +		} else {
+>> +			req_set_fail_links(req);
+>> +			io_req_complete(req, ret);
+>> +		}
+>>  	}
+>>  
+>>  	return io_steal_work(req);
+>>
 > 
 
 -- 

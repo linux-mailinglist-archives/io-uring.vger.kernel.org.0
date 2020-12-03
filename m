@@ -2,110 +2,152 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 106412CDA1F
-	for <lists+io-uring@lfdr.de>; Thu,  3 Dec 2020 16:28:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12CC22CDAD6
+	for <lists+io-uring@lfdr.de>; Thu,  3 Dec 2020 17:09:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbgLCP1g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Dec 2020 10:27:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49052 "EHLO
+        id S1731171AbgLCQIM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Dec 2020 11:08:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbgLCP1f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Dec 2020 10:27:35 -0500
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B754C061A4E
-        for <io-uring@vger.kernel.org>; Thu,  3 Dec 2020 07:26:55 -0800 (PST)
-Received: by mail-il1-x131.google.com with SMTP id t13so2280428ilp.2
-        for <io-uring@vger.kernel.org>; Thu, 03 Dec 2020 07:26:55 -0800 (PST)
+        with ESMTP id S1727973AbgLCQIL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Dec 2020 11:08:11 -0500
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737F0C061A4E
+        for <io-uring@vger.kernel.org>; Thu,  3 Dec 2020 08:07:25 -0800 (PST)
+Received: by mail-qt1-x844.google.com with SMTP id l7so1678213qtp.8
+        for <io-uring@vger.kernel.org>; Thu, 03 Dec 2020 08:07:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=NNA6HfrLGF10EpoGlrrukBhBPZDiacjzJg25BIbjVRY=;
-        b=Z7LoECd9VWdnWz09aNeo9JsSeT4L8sq1rDRjND/BDwiiMjGDwOlwcKCtyG2xI9fUmy
-         g/gmK7SsXLuyzOPx37bhIZqu914l8B3L36QRlN6yO5qi4WCx17JsIOih9S1UMKK2k7yw
-         XXJa9sVbW+a3nWvYd9chEj6S3or+q2epkLwvM=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tJw7/E0VTnK1zaCjwCyjq8Pp3tfknLt1cpPvyuMD/xc=;
+        b=eMg69kVzn5GJOq6lGSZBMvlvxR/SS5LkjfYW3F4lxTn6uc8VpR1CJE968HM+kxDNsf
+         M9ZrmZHBOoB6wrMp1KIs64vSSNIM3lcLSwFxsOyQ9jKRUCBsTL4+gxiY4qcgNVHNlgVv
+         oMo5VLYpAO0I7GQgwHJa5atep3Nfzu31BU7rYsk9ygihXLcMiKvaDKY/tuqcb366bfcp
+         j0qngtDcuz3mA+45B75pR/6dPmktdcKovXOk2jUI9PfqLVP8V/yv5B6rbVKbFCLHcxpV
+         oBroMBsvMNmxRwlUMrdRuxEv11PZXAkwkPOM+O0NiHMi6bV+7IVEA/Q+2T3AmOkBnKL0
+         9VHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=NNA6HfrLGF10EpoGlrrukBhBPZDiacjzJg25BIbjVRY=;
-        b=F1gGAP4OHpMB005seHOEiP783Tj4na+AGCdJ6hchwKgyoR/IUwrznlMKZrIlFQoowU
-         2GLNxvv7V27UTCUQ1Kr/WJuu5JeekojZBIxSU1IbXzWxBOifo0oLhMcpIfwCmbCQpadS
-         Yv1KqonrHeT48dJiQBDDX6dTa8Edrtj7kwWd76ZRvk/Xn3p23N/g3vE4eK5hty77WwLG
-         yHkzsx8NZFyCDVXk4nwbiSmzN6J74FOJ2MKakRrxbh4lgLa3d0YTF7qxMwzeGYrvJGPW
-         +2Mp9W7Mw4JzPml6dgjbYU68/vfza5B7TmZ8nzA/ubTu9IKvi7xvIE0HQIa0ff8iWDtA
-         Dm3g==
-X-Gm-Message-State: AOAM533RSNw3ldvCyO3xZICTS2dqZMMfTdOXqpq5QtNtdcKIERry/308
-        kEJZonbGH5RZ4tClhamgfQwqRI/pjDc6uw==
-X-Google-Smtp-Source: ABdhPJxXnFj5wFFfE2ajBm4qjvZZrW2fYw6o9XRU0wR25R7LS+xdQVeU4eqn6hm7vH/usAuwE8f2AQ==
-X-Received: by 2002:a05:6e02:1311:: with SMTP id g17mr3265080ilr.223.1607009214623;
-        Thu, 03 Dec 2020 07:26:54 -0800 (PST)
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com. [209.85.166.51])
-        by smtp.gmail.com with ESMTPSA id u16sm1003177ilj.6.2020.12.03.07.26.53
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Dec 2020 07:26:53 -0800 (PST)
-Received: by mail-io1-f51.google.com with SMTP id n4so2407066iow.12
-        for <io-uring@vger.kernel.org>; Thu, 03 Dec 2020 07:26:53 -0800 (PST)
-X-Received: by 2002:a05:6638:3012:: with SMTP id r18mr3781246jak.13.1607009212622;
- Thu, 03 Dec 2020 07:26:52 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tJw7/E0VTnK1zaCjwCyjq8Pp3tfknLt1cpPvyuMD/xc=;
+        b=cgH9f5L/8PAGC41mh5JStAruAod1vRvsj85Zy+we/KGntuygyfoU+RSc+R/Use++kY
+         SUDUg4aegCToXbWuEDJk0Atd0IZmve3RE8iTiauENHOdqgc258Ip6sAp2BBdYlWW9I+O
+         smRv7xIqXiF+RVcB+zsJRqesrvwrpYKCMcBrnYNAp+R3kLu4mnJUCBcHbL4sUpcEUqtH
+         i7m2YLWa2W7zfY5JHyqjhGSTEnha30h0jtqDHuEqsO6261Cf72drjpKnChCxLxzAvv/c
+         N8B1SUDKLb8mjt4RlwJ0KVi+/oLr8FhVkk+Q4tZ8se3lKZfVWR6eAYS2seHZKHUcf/qg
+         nlHg==
+X-Gm-Message-State: AOAM531gO7PdgoSy7NYtywptAcRfbdX3gZa/iQwctJMHxcGSsVUKq3de
+        L1yVxisQ9GfFUjv6/HoO2oOKtS7EprkKuA==
+X-Google-Smtp-Source: ABdhPJy2AYgLNAa5vYlifaC1CrVXjqtxRCx2Omj4WH3BbXgn5MqpT3xI2MXwGeaRrY9oGLKYzd9plg==
+X-Received: by 2002:ac8:7651:: with SMTP id i17mr4037153qtr.248.1607011644729;
+        Thu, 03 Dec 2020 08:07:24 -0800 (PST)
+Received: from marcelo-debian.domain (cpe-184-152-69-119.nyc.res.rr.com. [184.152.69.119])
+        by smtp.gmail.com with ESMTPSA id l46sm1732538qta.44.2020.12.03.08.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Dec 2020 08:07:23 -0800 (PST)
+From:   Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+To:     axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org,
+        Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+Subject: [PATCH liburing] Don't enter the kernel to wait on cqes if they are already available.
+Date:   Thu,  3 Dec 2020 11:07:06 -0500
+Message-Id: <20201203160706.4841-1-marcelo827@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-From:   Ricardo Ribalda <ribalda@chromium.org>
-Date:   Thu, 3 Dec 2020 16:26:41 +0100
-X-Gmail-Original-Message-ID: <CANiDSCsXd1BLUJwgdET5XBF8wQEpbape6BoCPpG9cTGAkUJOBA@mail.gmail.com>
-Message-ID: <CANiDSCsXd1BLUJwgdET5XBF8wQEpbape6BoCPpG9cTGAkUJOBA@mail.gmail.com>
-Subject: Zero-copy irq-driven data
-To:     io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello
+In _io_uring_get_cqe(), if we can see from userspace that there are
+already wait_nr cqes available, then there is no need to call
+__sys_io_uring_enter2 (unless we have to submit IO or flush overflow),
+since the kernel will just end up returning immediately after
+performing the same check, anyway.
 
-I have just started using io_uring so please bear with me.
+Signed-off-by: Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+---
+ src/queue.c | 39 +++++++++++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
 
-I have a device that produces data at random time and I want to read
-it with the lowest latency possible and hopefully zero copy.
-
-In userspace:
-
-I have a sqe with a bunch of io_uring_prep_read_fixed and when they
-are ready I process them and push them again to the sqe, so it always
-has operations.
-
-In kernelspace:
-
-I have implemented the read() file operation in my driver. The data
-handling follows this loop:
-
-loop():
- 1) read() gets called by io_uring
- 2) save the userpointer and the length into a structure
- 3) go to sleep
- 4) get an IRQ from the device, with new data
- 5) dma/copy the data to the user
- 6) wake up read() and return
-
-I guess at this point you see my problem.... What happens if I get an
-IRQ between 6 and 1?
-Even if there are plenty of read_operations waiting in the sqe, that
-data will be lost. :(
-
-
-So I guess what I am asking is:
-
-A) Am I doing something stupid?
-
-B) Is there a way for a driver to call a callback when it receives
-data and push it to a read operation on the cqe?
-
-C) Can I ask the io_uring to call read() more than once if there are
-more read_operations in the sqe?
-
-D) Can the driver inspect what is in the sqe, to make an educated
-decision of delaying the irq handling for some cycles if there are
-more reads pending?
-
-
-Thanks!
+diff --git a/src/queue.c b/src/queue.c
+index 53ca588..df388f6 100644
+--- a/src/queue.c
++++ b/src/queue.c
+@@ -39,29 +39,38 @@ static inline bool cq_ring_needs_flush(struct io_uring *ring)
+ }
+ 
+ static int __io_uring_peek_cqe(struct io_uring *ring,
+-			       struct io_uring_cqe **cqe_ptr)
++			       struct io_uring_cqe **cqe_ptr,
++			       unsigned *nr_available)
+ {
+ 	struct io_uring_cqe *cqe;
+-	unsigned head;
+ 	int err = 0;
++	unsigned available;
++	unsigned mask = *ring->cq.kring_mask;
+ 
+ 	do {
+-		io_uring_for_each_cqe(ring, head, cqe)
++		unsigned tail = io_uring_smp_load_acquire(ring->cq.ktail);
++		unsigned head = *ring->cq.khead;
++
++		cqe = NULL;
++		available = tail - head;
++		if (!available)
+ 			break;
+-		if (cqe) {
+-			if (cqe->user_data == LIBURING_UDATA_TIMEOUT) {
+-				if (cqe->res < 0)
+-					err = cqe->res;
+-				io_uring_cq_advance(ring, 1);
+-				if (!err)
+-					continue;
+-				cqe = NULL;
+-			}
++
++		cqe = &ring->cq.cqes[head & mask];
++		if (cqe->user_data == LIBURING_UDATA_TIMEOUT) {
++			if (cqe->res < 0)
++				err = cqe->res;
++			io_uring_cq_advance(ring, 1);
++			if (!err)
++				continue;
++			cqe = NULL;
+ 		}
++
+ 		break;
+ 	} while (1);
+ 
+ 	*cqe_ptr = cqe;
++	*nr_available = available;
+ 	return err;
+ }
+ 
+@@ -83,8 +92,9 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
+ 	do {
+ 		bool cq_overflow_flush = false;
+ 		unsigned flags = 0;
++		unsigned nr_available;
+ 
+-		err = __io_uring_peek_cqe(ring, &cqe);
++		err = __io_uring_peek_cqe(ring, &cqe, &nr_available);
+ 		if (err)
+ 			break;
+ 		if (!cqe && !to_wait && !data->submit) {
+@@ -100,7 +110,8 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
+ 			flags = IORING_ENTER_GETEVENTS | data->get_flags;
+ 		if (data->submit)
+ 			sq_ring_needs_enter(ring, &flags);
+-		if (data->wait_nr || data->submit || cq_overflow_flush)
++		if (data->wait_nr > nr_available || data->submit ||
++		    cq_overflow_flush)
+ 			ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
+ 					data->wait_nr, flags, data->arg,
+ 					data->sz);
 -- 
-Ricardo Ribalda
+2.20.1
+

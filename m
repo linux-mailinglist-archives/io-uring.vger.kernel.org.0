@@ -2,54 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E17712CF19C
-	for <lists+io-uring@lfdr.de>; Fri,  4 Dec 2020 17:11:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 551372CF5B1
+	for <lists+io-uring@lfdr.de>; Fri,  4 Dec 2020 21:35:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725923AbgLDQKY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 4 Dec 2020 11:10:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53042 "EHLO
+        id S1726392AbgLDUfk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 4 Dec 2020 15:35:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbgLDQKX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Dec 2020 11:10:23 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35CD8C0613D1
-        for <io-uring@vger.kernel.org>; Fri,  4 Dec 2020 08:09:43 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id g14so5809629wrm.13
-        for <io-uring@vger.kernel.org>; Fri, 04 Dec 2020 08:09:43 -0800 (PST)
+        with ESMTP id S1726021AbgLDUfk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Dec 2020 15:35:40 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8042C0613D1
+        for <io-uring@vger.kernel.org>; Fri,  4 Dec 2020 12:34:59 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id 23so6546572wrc.8
+        for <io-uring@vger.kernel.org>; Fri, 04 Dec 2020 12:34:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:cc:subject:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FPZYdf7u3BbeuownBe460HeNCirzUuFNJeU8+KeItlI=;
-        b=YT3w9SW9CZFdL0zg4or8kPk7aBCJ8ahXPoKgeeeMEN96xoAGtgEv19eCmIx9x32I8K
-         K7UE8FNXvK6GRevmyTBOgwmfjYup7LY+SAhmbArm7Yjcp/Mru2ZVB/xkorAJz9Aw1Idz
-         RuJFJvj+IHpBNVYXxhQ9C60VqfZ3My4tsCVVhMrk7mOtDbcZZqaDbtC2iv4yaISJmTRW
-         5V+EC6i5fayGikF6TXicvg1ijf3DriNRR5gr5nUZoO/e7uXlUpP8Wixh1PstuTl9BzI9
-         IpkUBDagrsh+1ptf8BPhIElm0nJ9BBaYDM6WoFd59RJHK5I/hZhFEx3ejHV7/IA3jLY5
-         V+tQ==
+        bh=zuyUKisFuR+cw/f1CS3QvQ7XfZIOI2kcg/LV+ImsMVc=;
+        b=Rdk6otBwP900OYucI92HQm1gt5igpLVWvIkGd9Npp5RWmPYiKDGVIPA44XJ33qcBYD
+         DkZRZREVlWexU2tehpcF/WHiOnOFtyi9dW8gwsHSXyXMODS4Kh+XrsV69//jVAVw877A
+         Av/k3/B1EQnXcFrleLQJlpN1/FppWYFgaTNVIy4D6ZhSMddwJnSbffRxlNZ6h7yDetx6
+         ky7fkf8pyxgnglpNc1opQgg2gLqqLb8G2UDNuoyqghSKPNRqFrLhtGktpyPBk3goCr4a
+         MK4VwyVVQzEjPDnIMP2Y+KTLWrJrf1kDdAbDXzAA1COa/SU33FLqCrRZkd+uu5fRocrH
+         wHhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:cc:subject
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=FPZYdf7u3BbeuownBe460HeNCirzUuFNJeU8+KeItlI=;
-        b=tQMoZpY/f/sFmseeQvLYJeTQpCTsz2l7ujIhXAodoGYzeV3EeaRDdjsdsr1kmV4BWD
-         NHd35HF7W5PdENZHjYSRKf/5CphgAeylKOtf56nl7aJdr9jOK1j+sGkRYRFsDUuV0lr5
-         cu9LXRuU8OflkGEk/KsEUUGmMWf+Uq7xYJkwmY9I9LpglxGN5RTlYFq1u58oKVzHhVmG
-         s4JNLGXy/tSVIU2uakXKxLQjmx+HGa56glhgu7veCfJsoo5LCmbi65QNHZWJmzVZ/KQn
-         6dns7VKlpwds6+51EC84S3hB2W9AtZaECE5IFEoCwTu5XRpFhwh6EjDpIHSvr7cekSmQ
-         vd4A==
-X-Gm-Message-State: AOAM533qDRTLyRJv7PGz7a4PlcaycLI6YuMb3V0WFJFsbe6Gpkiwa2QV
-        CeVeDeDefl4rGgjK94B3/LDtnKcGG8twiw==
-X-Google-Smtp-Source: ABdhPJzBMcBdeGDUc+9i03IPMLRW2D/hwaGPtTLfXwZZzO80uCfFLmdToZ4ZX6pTQGCS0mP4fyW9ew==
-X-Received: by 2002:adf:e801:: with SMTP id o1mr5772908wrm.3.1607098180163;
-        Fri, 04 Dec 2020 08:09:40 -0800 (PST)
+        bh=zuyUKisFuR+cw/f1CS3QvQ7XfZIOI2kcg/LV+ImsMVc=;
+        b=lvx+9cypka4DZj6h3JS4U3kBxtU+P9CHS2X4hBjfNyMSJHF4imdHmR1rL7HMHrDfDd
+         Ok4bjnEJ92ZNrleay4GfYG+HjlI1tWmrv7njiMLTDneoGZwyWmQcopNZU26rY5ll9rVH
+         vLxn4XHnKkyH5uubgBESprFJT1lyZcNnT0dIYrBQjdYIZF9dX09CvXVu8MoeFUm1JyXt
+         cGJouj4a6IFpVc7WzJYhNw1wqsbtiVMhchNcK1gZReuMYMFHZSBZ2zycKL1s4Gj3N8wk
+         7HTYkpZrbVRrNTHAWb7B6gOZnEHD+Ui490+Uthy9B5RBotU3vvT021FaAO0khCirsy4d
+         LU3g==
+X-Gm-Message-State: AOAM530E1w/4AWedX4AUhM+T9IPn15xt5ruZYvYhLSUH4r9Zu8J5M2IT
+        NsweDyRlWDIX1UgZQNobwJGjvChYSe24AA==
+X-Google-Smtp-Source: ABdhPJyoAq+VYYU5iggrGQc+VFLGl0JKJ+tK7dKcz0V7cf3lHeSzQEXeZdipio/wAzlX8iOAryN9Cw==
+X-Received: by 2002:a5d:6046:: with SMTP id j6mr6782380wrt.317.1607114098589;
+        Fri, 04 Dec 2020 12:34:58 -0800 (PST)
 Received: from [192.168.8.100] ([185.69.145.93])
-        by smtp.gmail.com with ESMTPSA id 90sm4107026wrl.60.2020.12.04.08.09.39
+        by smtp.gmail.com with ESMTPSA id v125sm4286367wme.42.2020.12.04.12.34.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Dec 2020 08:09:39 -0800 (PST)
-To:     Ricardo Ribalda <ribalda@chromium.org>
-References: <CANiDSCsXd1BLUJwgdET5XBF8wQEpbape6BoCPpG9cTGAkUJOBA@mail.gmail.com>
+        Fri, 04 Dec 2020 12:34:58 -0800 (PST)
+To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk
+References: <20201202113151.1680-1-xiaoguang.wang@linux.alibaba.com>
+ <32e75a1d-4e53-e096-7368-9614174db1e5@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -94,14 +98,14 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Cc:     io-uring@vger.kernel.org
-Subject: Re: Zero-copy irq-driven data
-Message-ID: <f0490f07-c59b-1dab-067f-f17dcfbb61da@gmail.com>
-Date:   Fri, 4 Dec 2020 16:06:24 +0000
+Subject: Re: [PATCH] io_uring: always let io_iopoll_complete() complete polled
+ io.
+Message-ID: <c29edc14-01f1-08a8-6b7a-fbf87a43b866@gmail.com>
+Date:   Fri, 4 Dec 2020 20:31:43 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <CANiDSCsXd1BLUJwgdET5XBF8wQEpbape6BoCPpG9cTGAkUJOBA@mail.gmail.com>
+In-Reply-To: <32e75a1d-4e53-e096-7368-9614174db1e5@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -109,90 +113,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 03/12/2020 15:26, Ricardo Ribalda wrote:
-> Hello
+On 03/12/2020 02:30, Joseph Qi wrote:
+> This patch can also fix another BUG I'm looking at:
 > 
-> I have just started using io_uring so please bear with me.
+> [   61.359713] BUG: KASAN: double-free or invalid-free in io_dismantle_req+0x938/0xf40
+> ...
+> [   61.409315] refcount_t: underflow; use-after-free.
+> [   61.410261] WARNING: CPU: 1 PID: 1022 at lib/refcount.c:28 refcount_warn_saturate+0x266/0x2a0
+> ...
 > 
-> I have a device that produces data at random time and I want to read
-> it with the lowest latency possible and hopefully zero copy.
-> 
-> In userspace:
-> 
-> I have a sqe with a bunch of io_uring_prep_read_fixed and when they
-> are ready I process them and push them again to the sqe, so it always
-> has operations.
+> It blames io_put_identity() has been called more than once and then
+> identity->count is underflow.
 
-SQ - submission queue, SQE - SQ entry.
-To clarify misunderstanding I guess you wanted to say that you have
-an SQ filled with fixed read requests (i.e. SQEs prep'ed with
-io_uring_prep_read_fixed()), and so on.
+Joseph, regarding your double-free
+1. did you figure out how exactly this happens?
+2. is it appears consistently so you can be sure that it's fixed
+3. do you have a reproducer?
+4. can you paste a full log of this BUG? (not cutting the stacktrace)
 
-> 
-> In kernelspace:
-> 
-> I have implemented the read() file operation in my driver. The data
-
-I'd advise you to implement read_iter() instead, otherwise io_uring
-won't be able to get all performance out of it, especially for fixed
-reqs.
-
-> handling follows this loop:
-> 
-> loop():
->  1) read() gets called by io_uring
->  2) save the userpointer and the length into a structure
->  3) go to sleep
->  4) get an IRQ from the device, with new data
->  5) dma/copy the data to the user
->  6) wake up read() and return
-> 
-> I guess at this point you see my problem.... What happens if I get an
-> IRQ between 6 and 1?
-> Even if there are plenty of read_operations waiting in the sqe, that
-> data will be lost. :(
-
-Frankly, that's not related to io_uring and more rather a device driver
-writing question. That's not the right list to ask these questions.
-Though I don't know which would suit your case...
-
-> So I guess what I am asking is:
-> 
-> A) Am I doing something stupid?
-
-In essence, since you're writing up your own driver from scratch
-(not on top of some framework), all that stuff is to you to handle.
-E.g. you may create a list and adding a short entry with an address
-to dma on each IRQ. And then dma and serve them only when you've got
-a request. Or any other design. But for sure there will be enough
-of pitfalls on your way.
-
-Also, I'd recommend first to make it work with old good read(2) first.
-
-> 
-> B) Is there a way for a driver to call a callback when it receives
-> data and push it to a read operation on the cqe?
-
-In short: No
-
-After you fill an SQE (which is also just a chunk of memory), io_uring
-gets it and creates a request, which in your case will call ->read*().
-So you'd get a driver-visible read request (not necessarily issued by
-io_uring)
-
-> 
-> C) Can I ask the io_uring to call read() more than once if there are
-> more read_operations in the sqe?
-
-"read_operations in the sqe" what it means?
-
-> 
-> D) Can the driver inspect what is in the sqe, to make an educated
-
-No, and shouldn't be needed.
-
-> decision of delaying the irq handling for some cycles if there are
-> more reads pending?
+There are problems left even with this patch applied, but I need to
+confirm which bug you saw.
 
 -- 
 Pavel Begunkov

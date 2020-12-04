@@ -2,63 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0979E2CED71
-	for <lists+io-uring@lfdr.de>; Fri,  4 Dec 2020 12:49:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E17712CF19C
+	for <lists+io-uring@lfdr.de>; Fri,  4 Dec 2020 17:11:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730016AbgLDLsI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 4 Dec 2020 06:48:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40666 "EHLO
+        id S1725923AbgLDQKY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 4 Dec 2020 11:10:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728300AbgLDLsI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Dec 2020 06:48:08 -0500
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFB9EC0613D1;
-        Fri,  4 Dec 2020 03:47:27 -0800 (PST)
-Received: by mail-wr1-x443.google.com with SMTP id g14so4999505wrm.13;
-        Fri, 04 Dec 2020 03:47:27 -0800 (PST)
+        with ESMTP id S1727008AbgLDQKX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Dec 2020 11:10:23 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35CD8C0613D1
+        for <io-uring@vger.kernel.org>; Fri,  4 Dec 2020 08:09:43 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id g14so5809629wrm.13
+        for <io-uring@vger.kernel.org>; Fri, 04 Dec 2020 08:09:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=to:references:from:autocrypt:cc:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UclILjREAUdtSCUnNunr1tBo79Qe+ptgrQIOw+TFsoM=;
-        b=IZJp/928EbYWlLCdaAxmvn43bZP4sYw40tYOrIOI3CdMqabuLncFThj9ZskC2xlqTw
-         /h93HBKSWW7KGlwkf6DYp2F2ykACszeUDxs3PKy2AvcoZGJZHddxeEhDjWUlSKs1wski
-         fvNf/3c8IkhFUjNZHYQ9rRNC7+PaySvoNusa5+LfGsc7Lyxd3oL6vXRnirHJUmGwAh+6
-         3mMnqm7NRHbI39/5+z+sfO9dYuqQsPf/gV3mDCaOR/jo/iVdVkZaASOtTITixwFTNVpP
-         qyFGNTL2qQIRHtRyxOEHDYYBs2IyKN7oFBbEmJdwBfdEAXCNi5agy1lMaIoJLr4o+JOX
-         oY6w==
+        bh=FPZYdf7u3BbeuownBe460HeNCirzUuFNJeU8+KeItlI=;
+        b=YT3w9SW9CZFdL0zg4or8kPk7aBCJ8ahXPoKgeeeMEN96xoAGtgEv19eCmIx9x32I8K
+         K7UE8FNXvK6GRevmyTBOgwmfjYup7LY+SAhmbArm7Yjcp/Mru2ZVB/xkorAJz9Aw1Idz
+         RuJFJvj+IHpBNVYXxhQ9C60VqfZ3My4tsCVVhMrk7mOtDbcZZqaDbtC2iv4yaISJmTRW
+         5V+EC6i5fayGikF6TXicvg1ijf3DriNRR5gr5nUZoO/e7uXlUpP8Wixh1PstuTl9BzI9
+         IpkUBDagrsh+1ptf8BPhIElm0nJ9BBaYDM6WoFd59RJHK5I/hZhFEx3ejHV7/IA3jLY5
+         V+tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:to:references:from:autocrypt:cc:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=UclILjREAUdtSCUnNunr1tBo79Qe+ptgrQIOw+TFsoM=;
-        b=kW+szsF0qfBE7TB9mlicZV4OLn4epWFXdeW0dRA+X2sbsAdTxmEg6qtZ1BOcD5DBqy
-         Ik5kFHmPwld0l/6ww5I7B/UfpuTbni4mZBDkG5IFznmEcKj2d6xNbtBl55/XG8DTRi1W
-         /JFY/xFqRzEsQWNPO6wYPkIBNh6xJIWNjcNKxM99u9GeFdXC/goxRipL/NAxqiWB0SxM
-         VQgmB5Pw+c1j3PA+4Gjc/lTeYs825s/r7xJpYpUaKwhp/v62ZuUAJQvZFmpGuhnQJhTM
-         IcAJddTYJXEEeuVeDet/FEojNbIqijvrOOESrdX2eaQxK5RrmJMd9BTu0tzfYm0L/qEl
-         LrCg==
-X-Gm-Message-State: AOAM532e3jg2KpnszCiYndnpnJ5XWfFPBiBkaKKJGOV2c3wfqBwqbFa1
-        SF6hrz4HrqmwZMPpJjH/etvZ+cLqKNZUreI/
-X-Google-Smtp-Source: ABdhPJw+zzAIT76+0aIQMwoRW4rYVeC9sXvMQvmUnFTeVJ7Z6HxCwbu3zAQSqY3c9tPaFvyRoRFv1w==
-X-Received: by 2002:a5d:5146:: with SMTP id u6mr4762003wrt.66.1607082446373;
-        Fri, 04 Dec 2020 03:47:26 -0800 (PST)
-Received: from [192.168.1.118] (host109-152-100-189.range109-152.btcentralplus.com. [109.152.100.189])
-        by smtp.gmail.com with ESMTPSA id h20sm2742058wmb.29.2020.12.04.03.47.24
+        bh=FPZYdf7u3BbeuownBe460HeNCirzUuFNJeU8+KeItlI=;
+        b=tQMoZpY/f/sFmseeQvLYJeTQpCTsz2l7ujIhXAodoGYzeV3EeaRDdjsdsr1kmV4BWD
+         NHd35HF7W5PdENZHjYSRKf/5CphgAeylKOtf56nl7aJdr9jOK1j+sGkRYRFsDUuV0lr5
+         cu9LXRuU8OflkGEk/KsEUUGmMWf+Uq7xYJkwmY9I9LpglxGN5RTlYFq1u58oKVzHhVmG
+         s4JNLGXy/tSVIU2uakXKxLQjmx+HGa56glhgu7veCfJsoo5LCmbi65QNHZWJmzVZ/KQn
+         6dns7VKlpwds6+51EC84S3hB2W9AtZaECE5IFEoCwTu5XRpFhwh6EjDpIHSvr7cekSmQ
+         vd4A==
+X-Gm-Message-State: AOAM533qDRTLyRJv7PGz7a4PlcaycLI6YuMb3V0WFJFsbe6Gpkiwa2QV
+        CeVeDeDefl4rGgjK94B3/LDtnKcGG8twiw==
+X-Google-Smtp-Source: ABdhPJzBMcBdeGDUc+9i03IPMLRW2D/hwaGPtTLfXwZZzO80uCfFLmdToZ4ZX6pTQGCS0mP4fyW9ew==
+X-Received: by 2002:adf:e801:: with SMTP id o1mr5772908wrm.3.1607098180163;
+        Fri, 04 Dec 2020 08:09:40 -0800 (PST)
+Received: from [192.168.8.100] ([185.69.145.93])
+        by smtp.gmail.com with ESMTPSA id 90sm4107026wrl.60.2020.12.04.08.09.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Dec 2020 03:47:25 -0800 (PST)
-To:     Hao Xu <haoxu@linux.alibaba.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        linux-block@vger.kernel.org
-References: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
+        Fri, 04 Dec 2020 08:09:39 -0800 (PST)
+To:     Ricardo Ribalda <ribalda@chromium.org>
+References: <CANiDSCsXd1BLUJwgdET5XBF8wQEpbape6BoCPpG9cTGAkUJOBA@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -103,14 +94,14 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT
- in Direct IO
-Message-ID: <e1faa714-7cb5-977f-1a87-5244adebe90d@gmail.com>
-Date:   Fri, 4 Dec 2020 11:44:10 +0000
+Cc:     io-uring@vger.kernel.org
+Subject: Re: Zero-copy irq-driven data
+Message-ID: <f0490f07-c59b-1dab-067f-f17dcfbb61da@gmail.com>
+Date:   Fri, 4 Dec 2020 16:06:24 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
+In-Reply-To: <CANiDSCsXd1BLUJwgdET5XBF8wQEpbape6BoCPpG9cTGAkUJOBA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -118,108 +109,90 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 04/12/2020 09:44, Hao Xu wrote:
-> Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
-> when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
-> IOCB_NOWAIT is set.
+On 03/12/2020 15:26, Ricardo Ribalda wrote:
+> Hello
+> 
+> I have just started using io_uring so please bear with me.
+> 
+> I have a device that produces data at random time and I want to read
+> it with the lowest latency possible and hopefully zero copy.
+> 
+> In userspace:
+> 
+> I have a sqe with a bunch of io_uring_prep_read_fixed and when they
+> are ready I process them and push them again to the sqe, so it always
+> has operations.
 
-I believe Jens took my patch fixing that for blkdev_direct_IO*()
-(but not iomap) a while ago.
+SQ - submission queue, SQE - SQ entry.
+To clarify misunderstanding I guess you wanted to say that you have
+an SQ filled with fixed read requests (i.e. SQEs prep'ed with
+io_uring_prep_read_fixed()), and so on.
 
-BTW, even though get_maintainer.pl doesn't think so, AFAIK
-fs/block_dev.c is managed by linux-block@vger.kernel.org. Please CC it
-next time.
+> 
+> In kernelspace:
+> 
+> I have implemented the read() file operation in my driver. The data
 
-> Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
+I'd advise you to implement read_iter() instead, otherwise io_uring
+won't be able to get all performance out of it, especially for fixed
+reqs.
+
+> handling follows this loop:
 > 
-> Hi all,
-> I tested fio io_uring direct read for a file on ext4 filesystem on a
-> nvme ssd. I found that IOCB_NOWAIT is ignored in iomap layer, which
-> means REQ_NOWAIT is not set in bio->bi_opf. This makes nowait IO a
-> normal IO. Since I'm new to iomap and block layer, I sincerely ask
-> yours opinions in case I misunderstand the code which is very likely
-> to happen.:)
-> The example I use: io_uring direct randread, the first try is with
-> IOCB_NOWAIT but not IOCB_HIPRI, the IOCB_NOWAIT is ignored in block
-> layer which I think is not the designed behaviour.
+> loop():
+>  1) read() gets called by io_uring
+>  2) save the userpointer and the length into a structure
+>  3) go to sleep
+>  4) get an IRQ from the device, with new data
+>  5) dma/copy the data to the user
+>  6) wake up read() and return
 > 
-> I found that Konstantin found this issue before in May
-> 2020 (https://www.spinics.net/lists/linux-block/msg53275.html), here add
-> his signature, add Jeffle's as well since he gave me some help.
+> I guess at this point you see my problem.... What happens if I get an
+> IRQ between 6 and 1?
+> Even if there are plenty of read_operations waiting in the sqe, that
+> data will be lost. :(
+
+Frankly, that's not related to io_uring and more rather a device driver
+writing question. That's not the right list to ask these questions.
+Though I don't know which would suit your case...
+
+> So I guess what I am asking is:
 > 
-> v1->v2:
-> * add same logic in __blkdev_direct_IO_simple()
-> v2->v3:
-> * add same logic in do_blockdev_direct_IO()
+> A) Am I doing something stupid?
+
+In essence, since you're writing up your own driver from scratch
+(not on top of some framework), all that stuff is to you to handle.
+E.g. you may create a list and adding a short entry with an address
+to dma on each IRQ. And then dma and serve them only when you've got
+a request. Or any other design. But for sure there will be enough
+of pitfalls on your way.
+
+Also, I'd recommend first to make it work with old good read(2) first.
+
 > 
->  fs/block_dev.c       | 7 +++++++
->  fs/direct-io.c       | 6 ++++--
->  fs/iomap/direct-io.c | 3 +++
->  3 files changed, 14 insertions(+), 2 deletions(-)
+> B) Is there a way for a driver to call a callback when it receives
+> data and push it to a read operation on the cqe?
+
+In short: No
+
+After you fill an SQE (which is also just a chunk of memory), io_uring
+gets it and creates a request, which in your case will call ->read*().
+So you'd get a driver-visible read request (not necessarily issued by
+io_uring)
+
 > 
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index 9e84b1928b94..ca6f365c2f14 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -263,6 +263,10 @@ static void blkdev_bio_end_io_simple(struct bio *bio)
->  		bio.bi_opf = dio_bio_write_op(iocb);
->  		task_io_account_write(ret);
->  	}
-> +
-> +	if (iocb->ki_flags & IOCB_NOWAIT)
-> +		bio.bi_opf |= REQ_NOWAIT;
-> +
->  	if (iocb->ki_flags & IOCB_HIPRI)
->  		bio_set_polled(&bio, iocb);
->  
-> @@ -417,6 +421,9 @@ static void blkdev_bio_end_io(struct bio *bio)
->  			task_io_account_write(bio->bi_iter.bi_size);
->  		}
->  
-> +		if (iocb->ki_flags & IOCB_NOWAIT)
-> +			bio->bi_opf |= REQ_NOWAIT;
-> +
->  		dio->size += bio->bi_iter.bi_size;
->  		pos += bio->bi_iter.bi_size;
->  
-> diff --git a/fs/direct-io.c b/fs/direct-io.c
-> index d53fa92a1ab6..b221ed351c1c 100644
-> --- a/fs/direct-io.c
-> +++ b/fs/direct-io.c
-> @@ -1206,11 +1206,13 @@ static inline int drop_refcount(struct dio *dio)
->  	if (iov_iter_rw(iter) == WRITE) {
->  		dio->op = REQ_OP_WRITE;
->  		dio->op_flags = REQ_SYNC | REQ_IDLE;
-> -		if (iocb->ki_flags & IOCB_NOWAIT)
-> -			dio->op_flags |= REQ_NOWAIT;
->  	} else {
->  		dio->op = REQ_OP_READ;
->  	}
-> +
-> +	if (iocb->ki_flags & IOCB_NOWAIT)
-> +		dio->op_flags |= REQ_NOWAIT;
-> +
->  	if (iocb->ki_flags & IOCB_HIPRI)
->  		dio->op_flags |= REQ_HIPRI;
->  
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 933f234d5bec..2e897688ed6d 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -64,6 +64,9 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
->  {
->  	atomic_inc(&dio->ref);
->  
-> +	if (dio->iocb->ki_flags & IOCB_NOWAIT)
-> +		bio->bi_opf |= REQ_NOWAIT;
-> +
->  	if (dio->iocb->ki_flags & IOCB_HIPRI)
->  		bio_set_polled(bio, dio->iocb);
->  
+> C) Can I ask the io_uring to call read() more than once if there are
+> more read_operations in the sqe?
+
+"read_operations in the sqe" what it means?
+
 > 
+> D) Can the driver inspect what is in the sqe, to make an educated
+
+No, and shouldn't be needed.
+
+> decision of delaying the irq handling for some cycles if there are
+> more reads pending?
 
 -- 
 Pavel Begunkov

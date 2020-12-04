@@ -2,96 +2,224 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 724C22CEC9C
-	for <lists+io-uring@lfdr.de>; Fri,  4 Dec 2020 11:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0979E2CED71
+	for <lists+io-uring@lfdr.de>; Fri,  4 Dec 2020 12:49:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388063AbgLDK6S (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 4 Dec 2020 05:58:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32976 "EHLO
+        id S1730016AbgLDLsI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 4 Dec 2020 06:48:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387968AbgLDK6S (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Dec 2020 05:58:18 -0500
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0F1C061A55;
-        Fri,  4 Dec 2020 02:57:26 -0800 (PST)
-Received: by mail-lj1-x243.google.com with SMTP id r18so6131375ljc.2;
-        Fri, 04 Dec 2020 02:57:26 -0800 (PST)
+        with ESMTP id S1728300AbgLDLsI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Dec 2020 06:48:08 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFB9EC0613D1;
+        Fri,  4 Dec 2020 03:47:27 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id g14so4999505wrm.13;
+        Fri, 04 Dec 2020 03:47:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zBTOHmaCBscT7mrJGFAgJvf0v3izkjFUmu5nF/K81/w=;
-        b=cmgVdetadJqwumpGP80Kpyqqo4l3Yla1L5ejU82mENwtxN6jVs82QI4A24GwinHw4g
-         Syl2v4nnV6M4ztXfB1Ymezkis7AcO9l1zRhEzvXzadg6MiolYOFjKoxvmSy12W3pzF8j
-         eND0lATuJzrrFMwyE7QQ9P3K/TYKWJljhvbnvML6UuTOlJ3AGJ10sdF8Igp0oDUVSH9n
-         Ls4Rm7uREhKrzdOipdH+i4+5pT8s/Q3VXJthUmARWoaOMpKogAfVoaMTDwCSqbqeGWRs
-         kP931DHCIOtpmXKgvbN9tq/wYWfs1iXyIr7q3ryg9jnFNbYt4AN92nv2fy4g4YisWpYY
-         5gYg==
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UclILjREAUdtSCUnNunr1tBo79Qe+ptgrQIOw+TFsoM=;
+        b=IZJp/928EbYWlLCdaAxmvn43bZP4sYw40tYOrIOI3CdMqabuLncFThj9ZskC2xlqTw
+         /h93HBKSWW7KGlwkf6DYp2F2ykACszeUDxs3PKy2AvcoZGJZHddxeEhDjWUlSKs1wski
+         fvNf/3c8IkhFUjNZHYQ9rRNC7+PaySvoNusa5+LfGsc7Lyxd3oL6vXRnirHJUmGwAh+6
+         3mMnqm7NRHbI39/5+z+sfO9dYuqQsPf/gV3mDCaOR/jo/iVdVkZaASOtTITixwFTNVpP
+         qyFGNTL2qQIRHtRyxOEHDYYBs2IyKN7oFBbEmJdwBfdEAXCNi5agy1lMaIoJLr4o+JOX
+         oY6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zBTOHmaCBscT7mrJGFAgJvf0v3izkjFUmu5nF/K81/w=;
-        b=rOQwlusdvTgwsGDLrDYR3F/7AOdMnyGOPusQjQ7oxNNNZ1LSc/ftpEB0nyZN8uCFj6
-         gyg7vP1+WEHeoCUBYtb79fMx9LKsAgGioyhwt8cXzb54g9IIWJwJS/4g6JzFDTklEOkS
-         C/QiZwOgUUH8AF7SrMibRU70Fq908r97EEKJeyciTM4uQsRsiPr0VU3tbK90K7vy+zs4
-         wOnqiRxC+nG3s/6/WLPP226IrZ57C91Svc2ISSeKVb9NJ5JAOYQZl60wQGGqUj1scbip
-         D9NsI6/z8X2I+drA8+Yr1j1nFSQ4oVygLfw7iHJniXI1hoTeXy6EogLWE9kFifCtdx43
-         IYXA==
-X-Gm-Message-State: AOAM532mWyNLKt9k5etEyoPXLekDH71yuucDuod0KozQLJhPcu/ozWkw
-        kncnE96YvlEAZu7ba4PlVKP4Ra0JjxIZNw==
-X-Google-Smtp-Source: ABdhPJwHksCf9h1Un6+FjHAqLRY1rPwzyzVDSZbz4NO+qkblF9SAQbRvWcCK1IGFIPVVSFRWzitMEQ==
-X-Received: by 2002:a2e:b013:: with SMTP id y19mr3199222ljk.50.1607079445116;
-        Fri, 04 Dec 2020 02:57:25 -0800 (PST)
-Received: from carbon.v ([94.143.149.146])
-        by smtp.gmail.com with ESMTPSA id l6sm1531818lfk.150.2020.12.04.02.57.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Dec 2020 02:57:24 -0800 (PST)
-Date:   Fri, 4 Dec 2020 17:57:22 +0700
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/2] io_uring: add mkdirat support
-Message-ID: <X8oWEkb1Cb9ssxnx@carbon.v>
-References: <20201116044529.1028783-1-dkadashev@gmail.com>
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=UclILjREAUdtSCUnNunr1tBo79Qe+ptgrQIOw+TFsoM=;
+        b=kW+szsF0qfBE7TB9mlicZV4OLn4epWFXdeW0dRA+X2sbsAdTxmEg6qtZ1BOcD5DBqy
+         Ik5kFHmPwld0l/6ww5I7B/UfpuTbni4mZBDkG5IFznmEcKj2d6xNbtBl55/XG8DTRi1W
+         /JFY/xFqRzEsQWNPO6wYPkIBNh6xJIWNjcNKxM99u9GeFdXC/goxRipL/NAxqiWB0SxM
+         VQgmB5Pw+c1j3PA+4Gjc/lTeYs825s/r7xJpYpUaKwhp/v62ZuUAJQvZFmpGuhnQJhTM
+         IcAJddTYJXEEeuVeDet/FEojNbIqijvrOOESrdX2eaQxK5RrmJMd9BTu0tzfYm0L/qEl
+         LrCg==
+X-Gm-Message-State: AOAM532e3jg2KpnszCiYndnpnJ5XWfFPBiBkaKKJGOV2c3wfqBwqbFa1
+        SF6hrz4HrqmwZMPpJjH/etvZ+cLqKNZUreI/
+X-Google-Smtp-Source: ABdhPJw+zzAIT76+0aIQMwoRW4rYVeC9sXvMQvmUnFTeVJ7Z6HxCwbu3zAQSqY3c9tPaFvyRoRFv1w==
+X-Received: by 2002:a5d:5146:: with SMTP id u6mr4762003wrt.66.1607082446373;
+        Fri, 04 Dec 2020 03:47:26 -0800 (PST)
+Received: from [192.168.1.118] (host109-152-100-189.range109-152.btcentralplus.com. [109.152.100.189])
+        by smtp.gmail.com with ESMTPSA id h20sm2742058wmb.29.2020.12.04.03.47.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Dec 2020 03:47:25 -0800 (PST)
+To:     Hao Xu <haoxu@linux.alibaba.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        linux-block@vger.kernel.org
+References: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT
+ in Direct IO
+Message-ID: <e1faa714-7cb5-977f-1a87-5244adebe90d@gmail.com>
+Date:   Fri, 4 Dec 2020 11:44:10 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201116044529.1028783-1-dkadashev@gmail.com>
+In-Reply-To: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Nov 16, 2020 at 11:45:27AM +0700, Dmitry Kadashev wrote:
-> This adds mkdirat support to io_uring and is heavily based on recently
-> added renameat() / unlinkat() support.
+On 04/12/2020 09:44, Hao Xu wrote:
+> Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
+> when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
+> IOCB_NOWAIT is set.
+
+I believe Jens took my patch fixing that for blkdev_direct_IO*()
+(but not iomap) a while ago.
+
+BTW, even though get_maintainer.pl doesn't think so, AFAIK
+fs/block_dev.c is managed by linux-block@vger.kernel.org. Please CC it
+next time.
+
+> Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+> ---
 > 
-> The first patch is preparation with no functional changes, makes
-> do_mkdirat accept struct filename pointer rather than the user string.
+> Hi all,
+> I tested fio io_uring direct read for a file on ext4 filesystem on a
+> nvme ssd. I found that IOCB_NOWAIT is ignored in iomap layer, which
+> means REQ_NOWAIT is not set in bio->bi_opf. This makes nowait IO a
+> normal IO. Since I'm new to iomap and block layer, I sincerely ask
+> yours opinions in case I misunderstand the code which is very likely
+> to happen.:)
+> The example I use: io_uring direct randread, the first try is with
+> IOCB_NOWAIT but not IOCB_HIPRI, the IOCB_NOWAIT is ignored in block
+> layer which I think is not the designed behaviour.
 > 
-> The second one leverages that to implement mkdirat in io_uring.
+> I found that Konstantin found this issue before in May
+> 2020 (https://www.spinics.net/lists/linux-block/msg53275.html), here add
+> his signature, add Jeffle's as well since he gave me some help.
 > 
-> Based on for-5.11/io_uring.
+> v1->v2:
+> * add same logic in __blkdev_direct_IO_simple()
+> v2->v3:
+> * add same logic in do_blockdev_direct_IO()
 > 
-> Dmitry Kadashev (2):
->   fs: make do_mkdirat() take struct filename
->   io_uring: add support for IORING_OP_MKDIRAT
+>  fs/block_dev.c       | 7 +++++++
+>  fs/direct-io.c       | 6 ++++--
+>  fs/iomap/direct-io.c | 3 +++
+>  3 files changed, 14 insertions(+), 2 deletions(-)
 > 
->  fs/internal.h                 |  1 +
->  fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
->  fs/namei.c                    | 20 ++++++++----
->  include/uapi/linux/io_uring.h |  1 +
->  4 files changed, 74 insertions(+), 6 deletions(-)
-> 
-> -- 
-> 2.28.0
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 9e84b1928b94..ca6f365c2f14 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -263,6 +263,10 @@ static void blkdev_bio_end_io_simple(struct bio *bio)
+>  		bio.bi_opf = dio_bio_write_op(iocb);
+>  		task_io_account_write(ret);
+>  	}
+> +
+> +	if (iocb->ki_flags & IOCB_NOWAIT)
+> +		bio.bi_opf |= REQ_NOWAIT;
+> +
+>  	if (iocb->ki_flags & IOCB_HIPRI)
+>  		bio_set_polled(&bio, iocb);
+>  
+> @@ -417,6 +421,9 @@ static void blkdev_bio_end_io(struct bio *bio)
+>  			task_io_account_write(bio->bi_iter.bi_size);
+>  		}
+>  
+> +		if (iocb->ki_flags & IOCB_NOWAIT)
+> +			bio->bi_opf |= REQ_NOWAIT;
+> +
+>  		dio->size += bio->bi_iter.bi_size;
+>  		pos += bio->bi_iter.bi_size;
+>  
+> diff --git a/fs/direct-io.c b/fs/direct-io.c
+> index d53fa92a1ab6..b221ed351c1c 100644
+> --- a/fs/direct-io.c
+> +++ b/fs/direct-io.c
+> @@ -1206,11 +1206,13 @@ static inline int drop_refcount(struct dio *dio)
+>  	if (iov_iter_rw(iter) == WRITE) {
+>  		dio->op = REQ_OP_WRITE;
+>  		dio->op_flags = REQ_SYNC | REQ_IDLE;
+> -		if (iocb->ki_flags & IOCB_NOWAIT)
+> -			dio->op_flags |= REQ_NOWAIT;
+>  	} else {
+>  		dio->op = REQ_OP_READ;
+>  	}
+> +
+> +	if (iocb->ki_flags & IOCB_NOWAIT)
+> +		dio->op_flags |= REQ_NOWAIT;
+> +
+>  	if (iocb->ki_flags & IOCB_HIPRI)
+>  		dio->op_flags |= REQ_HIPRI;
+>  
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 933f234d5bec..2e897688ed6d 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -64,6 +64,9 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+>  {
+>  	atomic_inc(&dio->ref);
+>  
+> +	if (dio->iocb->ki_flags & IOCB_NOWAIT)
+> +		bio->bi_opf |= REQ_NOWAIT;
+> +
+>  	if (dio->iocb->ki_flags & IOCB_HIPRI)
+>  		bio_set_polled(bio, dio->iocb);
+>  
 > 
 
-Hi Al Viro,
-
-Ping. Jens mentioned before that this looks fine by him, but you or
-someone from fsdevel should approve the namei.c part first.
-
-Thanks,
-Dmitry
+-- 
+Pavel Begunkov

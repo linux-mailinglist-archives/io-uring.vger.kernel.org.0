@@ -2,129 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71B772CEB46
-	for <lists+io-uring@lfdr.de>; Fri,  4 Dec 2020 10:47:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 724C22CEC9C
+	for <lists+io-uring@lfdr.de>; Fri,  4 Dec 2020 11:58:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387556AbgLDJpu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 4 Dec 2020 04:45:50 -0500
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:32983 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387553AbgLDJpu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Dec 2020 04:45:50 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UHV5WIO_1607075096;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UHV5WIO_1607075096)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 04 Dec 2020 17:45:06 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT in Direct IO
-Date:   Fri,  4 Dec 2020 17:44:56 +0800
-Message-Id: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S2388063AbgLDK6S (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 4 Dec 2020 05:58:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32976 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387968AbgLDK6S (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Dec 2020 05:58:18 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0F1C061A55;
+        Fri,  4 Dec 2020 02:57:26 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id r18so6131375ljc.2;
+        Fri, 04 Dec 2020 02:57:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zBTOHmaCBscT7mrJGFAgJvf0v3izkjFUmu5nF/K81/w=;
+        b=cmgVdetadJqwumpGP80Kpyqqo4l3Yla1L5ejU82mENwtxN6jVs82QI4A24GwinHw4g
+         Syl2v4nnV6M4ztXfB1Ymezkis7AcO9l1zRhEzvXzadg6MiolYOFjKoxvmSy12W3pzF8j
+         eND0lATuJzrrFMwyE7QQ9P3K/TYKWJljhvbnvML6UuTOlJ3AGJ10sdF8Igp0oDUVSH9n
+         Ls4Rm7uREhKrzdOipdH+i4+5pT8s/Q3VXJthUmARWoaOMpKogAfVoaMTDwCSqbqeGWRs
+         kP931DHCIOtpmXKgvbN9tq/wYWfs1iXyIr7q3ryg9jnFNbYt4AN92nv2fy4g4YisWpYY
+         5gYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zBTOHmaCBscT7mrJGFAgJvf0v3izkjFUmu5nF/K81/w=;
+        b=rOQwlusdvTgwsGDLrDYR3F/7AOdMnyGOPusQjQ7oxNNNZ1LSc/ftpEB0nyZN8uCFj6
+         gyg7vP1+WEHeoCUBYtb79fMx9LKsAgGioyhwt8cXzb54g9IIWJwJS/4g6JzFDTklEOkS
+         C/QiZwOgUUH8AF7SrMibRU70Fq908r97EEKJeyciTM4uQsRsiPr0VU3tbK90K7vy+zs4
+         wOnqiRxC+nG3s/6/WLPP226IrZ57C91Svc2ISSeKVb9NJ5JAOYQZl60wQGGqUj1scbip
+         D9NsI6/z8X2I+drA8+Yr1j1nFSQ4oVygLfw7iHJniXI1hoTeXy6EogLWE9kFifCtdx43
+         IYXA==
+X-Gm-Message-State: AOAM532mWyNLKt9k5etEyoPXLekDH71yuucDuod0KozQLJhPcu/ozWkw
+        kncnE96YvlEAZu7ba4PlVKP4Ra0JjxIZNw==
+X-Google-Smtp-Source: ABdhPJwHksCf9h1Un6+FjHAqLRY1rPwzyzVDSZbz4NO+qkblF9SAQbRvWcCK1IGFIPVVSFRWzitMEQ==
+X-Received: by 2002:a2e:b013:: with SMTP id y19mr3199222ljk.50.1607079445116;
+        Fri, 04 Dec 2020 02:57:25 -0800 (PST)
+Received: from carbon.v ([94.143.149.146])
+        by smtp.gmail.com with ESMTPSA id l6sm1531818lfk.150.2020.12.04.02.57.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Dec 2020 02:57:24 -0800 (PST)
+Date:   Fri, 4 Dec 2020 17:57:22 +0700
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/2] io_uring: add mkdirat support
+Message-ID: <X8oWEkb1Cb9ssxnx@carbon.v>
+References: <20201116044529.1028783-1-dkadashev@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201116044529.1028783-1-dkadashev@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
-when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
-IOCB_NOWAIT is set.
+On Mon, Nov 16, 2020 at 11:45:27AM +0700, Dmitry Kadashev wrote:
+> This adds mkdirat support to io_uring and is heavily based on recently
+> added renameat() / unlinkat() support.
+> 
+> The first patch is preparation with no functional changes, makes
+> do_mkdirat accept struct filename pointer rather than the user string.
+> 
+> The second one leverages that to implement mkdirat in io_uring.
+> 
+> Based on for-5.11/io_uring.
+> 
+> Dmitry Kadashev (2):
+>   fs: make do_mkdirat() take struct filename
+>   io_uring: add support for IORING_OP_MKDIRAT
+> 
+>  fs/internal.h                 |  1 +
+>  fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
+>  fs/namei.c                    | 20 ++++++++----
+>  include/uapi/linux/io_uring.h |  1 +
+>  4 files changed, 74 insertions(+), 6 deletions(-)
+> 
+> -- 
+> 2.28.0
+> 
 
-Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
+Hi Al Viro,
 
-Hi all,
-I tested fio io_uring direct read for a file on ext4 filesystem on a
-nvme ssd. I found that IOCB_NOWAIT is ignored in iomap layer, which
-means REQ_NOWAIT is not set in bio->bi_opf. This makes nowait IO a
-normal IO. Since I'm new to iomap and block layer, I sincerely ask
-yours opinions in case I misunderstand the code which is very likely
-to happen.:)
-The example I use: io_uring direct randread, the first try is with
-IOCB_NOWAIT but not IOCB_HIPRI, the IOCB_NOWAIT is ignored in block
-layer which I think is not the designed behaviour.
+Ping. Jens mentioned before that this looks fine by him, but you or
+someone from fsdevel should approve the namei.c part first.
 
-I found that Konstantin found this issue before in May
-2020 (https://www.spinics.net/lists/linux-block/msg53275.html), here add
-his signature, add Jeffle's as well since he gave me some help.
-
-v1->v2:
-* add same logic in __blkdev_direct_IO_simple()
-v2->v3:
-* add same logic in do_blockdev_direct_IO()
-
- fs/block_dev.c       | 7 +++++++
- fs/direct-io.c       | 6 ++++--
- fs/iomap/direct-io.c | 3 +++
- 3 files changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 9e84b1928b94..ca6f365c2f14 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -263,6 +263,10 @@ static void blkdev_bio_end_io_simple(struct bio *bio)
- 		bio.bi_opf = dio_bio_write_op(iocb);
- 		task_io_account_write(ret);
- 	}
-+
-+	if (iocb->ki_flags & IOCB_NOWAIT)
-+		bio.bi_opf |= REQ_NOWAIT;
-+
- 	if (iocb->ki_flags & IOCB_HIPRI)
- 		bio_set_polled(&bio, iocb);
- 
-@@ -417,6 +421,9 @@ static void blkdev_bio_end_io(struct bio *bio)
- 			task_io_account_write(bio->bi_iter.bi_size);
- 		}
- 
-+		if (iocb->ki_flags & IOCB_NOWAIT)
-+			bio->bi_opf |= REQ_NOWAIT;
-+
- 		dio->size += bio->bi_iter.bi_size;
- 		pos += bio->bi_iter.bi_size;
- 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index d53fa92a1ab6..b221ed351c1c 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1206,11 +1206,13 @@ static inline int drop_refcount(struct dio *dio)
- 	if (iov_iter_rw(iter) == WRITE) {
- 		dio->op = REQ_OP_WRITE;
- 		dio->op_flags = REQ_SYNC | REQ_IDLE;
--		if (iocb->ki_flags & IOCB_NOWAIT)
--			dio->op_flags |= REQ_NOWAIT;
- 	} else {
- 		dio->op = REQ_OP_READ;
- 	}
-+
-+	if (iocb->ki_flags & IOCB_NOWAIT)
-+		dio->op_flags |= REQ_NOWAIT;
-+
- 	if (iocb->ki_flags & IOCB_HIPRI)
- 		dio->op_flags |= REQ_HIPRI;
- 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 933f234d5bec..2e897688ed6d 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -64,6 +64,9 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
- {
- 	atomic_inc(&dio->ref);
- 
-+	if (dio->iocb->ki_flags & IOCB_NOWAIT)
-+		bio->bi_opf |= REQ_NOWAIT;
-+
- 	if (dio->iocb->ki_flags & IOCB_HIPRI)
- 		bio_set_polled(bio, dio->iocb);
- 
--- 
-1.8.3.1
-
+Thanks,
+Dmitry

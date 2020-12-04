@@ -2,152 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12CC22CDAD6
-	for <lists+io-uring@lfdr.de>; Thu,  3 Dec 2020 17:09:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71B772CEB46
+	for <lists+io-uring@lfdr.de>; Fri,  4 Dec 2020 10:47:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731171AbgLCQIM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Dec 2020 11:08:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727973AbgLCQIL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Dec 2020 11:08:11 -0500
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737F0C061A4E
-        for <io-uring@vger.kernel.org>; Thu,  3 Dec 2020 08:07:25 -0800 (PST)
-Received: by mail-qt1-x844.google.com with SMTP id l7so1678213qtp.8
-        for <io-uring@vger.kernel.org>; Thu, 03 Dec 2020 08:07:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tJw7/E0VTnK1zaCjwCyjq8Pp3tfknLt1cpPvyuMD/xc=;
-        b=eMg69kVzn5GJOq6lGSZBMvlvxR/SS5LkjfYW3F4lxTn6uc8VpR1CJE968HM+kxDNsf
-         M9ZrmZHBOoB6wrMp1KIs64vSSNIM3lcLSwFxsOyQ9jKRUCBsTL4+gxiY4qcgNVHNlgVv
-         oMo5VLYpAO0I7GQgwHJa5atep3Nfzu31BU7rYsk9ygihXLcMiKvaDKY/tuqcb366bfcp
-         j0qngtDcuz3mA+45B75pR/6dPmktdcKovXOk2jUI9PfqLVP8V/yv5B6rbVKbFCLHcxpV
-         oBroMBsvMNmxRwlUMrdRuxEv11PZXAkwkPOM+O0NiHMi6bV+7IVEA/Q+2T3AmOkBnKL0
-         9VHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tJw7/E0VTnK1zaCjwCyjq8Pp3tfknLt1cpPvyuMD/xc=;
-        b=cgH9f5L/8PAGC41mh5JStAruAod1vRvsj85Zy+we/KGntuygyfoU+RSc+R/Use++kY
-         SUDUg4aegCToXbWuEDJk0Atd0IZmve3RE8iTiauENHOdqgc258Ip6sAp2BBdYlWW9I+O
-         smRv7xIqXiF+RVcB+zsJRqesrvwrpYKCMcBrnYNAp+R3kLu4mnJUCBcHbL4sUpcEUqtH
-         i7m2YLWa2W7zfY5JHyqjhGSTEnha30h0jtqDHuEqsO6261Cf72drjpKnChCxLxzAvv/c
-         N8B1SUDKLb8mjt4RlwJ0KVi+/oLr8FhVkk+Q4tZ8se3lKZfVWR6eAYS2seHZKHUcf/qg
-         nlHg==
-X-Gm-Message-State: AOAM531gO7PdgoSy7NYtywptAcRfbdX3gZa/iQwctJMHxcGSsVUKq3de
-        L1yVxisQ9GfFUjv6/HoO2oOKtS7EprkKuA==
-X-Google-Smtp-Source: ABdhPJy2AYgLNAa5vYlifaC1CrVXjqtxRCx2Omj4WH3BbXgn5MqpT3xI2MXwGeaRrY9oGLKYzd9plg==
-X-Received: by 2002:ac8:7651:: with SMTP id i17mr4037153qtr.248.1607011644729;
-        Thu, 03 Dec 2020 08:07:24 -0800 (PST)
-Received: from marcelo-debian.domain (cpe-184-152-69-119.nyc.res.rr.com. [184.152.69.119])
-        by smtp.gmail.com with ESMTPSA id l46sm1732538qta.44.2020.12.03.08.07.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Dec 2020 08:07:23 -0800 (PST)
-From:   Marcelo Diop-Gonzalez <marcelo827@gmail.com>
-To:     axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org,
-        Marcelo Diop-Gonzalez <marcelo827@gmail.com>
-Subject: [PATCH liburing] Don't enter the kernel to wait on cqes if they are already available.
-Date:   Thu,  3 Dec 2020 11:07:06 -0500
-Message-Id: <20201203160706.4841-1-marcelo827@gmail.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2387556AbgLDJpu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 4 Dec 2020 04:45:50 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:32983 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387553AbgLDJpu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Dec 2020 04:45:50 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UHV5WIO_1607075096;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UHV5WIO_1607075096)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 04 Dec 2020 17:45:06 +0800
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT in Direct IO
+Date:   Fri,  4 Dec 2020 17:44:56 +0800
+Message-Id: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In _io_uring_get_cqe(), if we can see from userspace that there are
-already wait_nr cqes available, then there is no need to call
-__sys_io_uring_enter2 (unless we have to submit IO or flush overflow),
-since the kernel will just end up returning immediately after
-performing the same check, anyway.
+Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
+when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
+IOCB_NOWAIT is set.
 
-Signed-off-by: Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 ---
- src/queue.c | 39 +++++++++++++++++++++++++--------------
- 1 file changed, 25 insertions(+), 14 deletions(-)
 
-diff --git a/src/queue.c b/src/queue.c
-index 53ca588..df388f6 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -39,29 +39,38 @@ static inline bool cq_ring_needs_flush(struct io_uring *ring)
- }
- 
- static int __io_uring_peek_cqe(struct io_uring *ring,
--			       struct io_uring_cqe **cqe_ptr)
-+			       struct io_uring_cqe **cqe_ptr,
-+			       unsigned *nr_available)
- {
- 	struct io_uring_cqe *cqe;
--	unsigned head;
- 	int err = 0;
-+	unsigned available;
-+	unsigned mask = *ring->cq.kring_mask;
- 
- 	do {
--		io_uring_for_each_cqe(ring, head, cqe)
-+		unsigned tail = io_uring_smp_load_acquire(ring->cq.ktail);
-+		unsigned head = *ring->cq.khead;
+Hi all,
+I tested fio io_uring direct read for a file on ext4 filesystem on a
+nvme ssd. I found that IOCB_NOWAIT is ignored in iomap layer, which
+means REQ_NOWAIT is not set in bio->bi_opf. This makes nowait IO a
+normal IO. Since I'm new to iomap and block layer, I sincerely ask
+yours opinions in case I misunderstand the code which is very likely
+to happen.:)
+The example I use: io_uring direct randread, the first try is with
+IOCB_NOWAIT but not IOCB_HIPRI, the IOCB_NOWAIT is ignored in block
+layer which I think is not the designed behaviour.
+
+I found that Konstantin found this issue before in May
+2020 (https://www.spinics.net/lists/linux-block/msg53275.html), here add
+his signature, add Jeffle's as well since he gave me some help.
+
+v1->v2:
+* add same logic in __blkdev_direct_IO_simple()
+v2->v3:
+* add same logic in do_blockdev_direct_IO()
+
+ fs/block_dev.c       | 7 +++++++
+ fs/direct-io.c       | 6 ++++--
+ fs/iomap/direct-io.c | 3 +++
+ 3 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 9e84b1928b94..ca6f365c2f14 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -263,6 +263,10 @@ static void blkdev_bio_end_io_simple(struct bio *bio)
+ 		bio.bi_opf = dio_bio_write_op(iocb);
+ 		task_io_account_write(ret);
+ 	}
 +
-+		cqe = NULL;
-+		available = tail - head;
-+		if (!available)
- 			break;
--		if (cqe) {
--			if (cqe->user_data == LIBURING_UDATA_TIMEOUT) {
--				if (cqe->res < 0)
--					err = cqe->res;
--				io_uring_cq_advance(ring, 1);
--				if (!err)
--					continue;
--				cqe = NULL;
--			}
++	if (iocb->ki_flags & IOCB_NOWAIT)
++		bio.bi_opf |= REQ_NOWAIT;
 +
-+		cqe = &ring->cq.cqes[head & mask];
-+		if (cqe->user_data == LIBURING_UDATA_TIMEOUT) {
-+			if (cqe->res < 0)
-+				err = cqe->res;
-+			io_uring_cq_advance(ring, 1);
-+			if (!err)
-+				continue;
-+			cqe = NULL;
+ 	if (iocb->ki_flags & IOCB_HIPRI)
+ 		bio_set_polled(&bio, iocb);
+ 
+@@ -417,6 +421,9 @@ static void blkdev_bio_end_io(struct bio *bio)
+ 			task_io_account_write(bio->bi_iter.bi_size);
  		}
+ 
++		if (iocb->ki_flags & IOCB_NOWAIT)
++			bio->bi_opf |= REQ_NOWAIT;
 +
- 		break;
- 	} while (1);
+ 		dio->size += bio->bi_iter.bi_size;
+ 		pos += bio->bi_iter.bi_size;
  
- 	*cqe_ptr = cqe;
-+	*nr_available = available;
- 	return err;
- }
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index d53fa92a1ab6..b221ed351c1c 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -1206,11 +1206,13 @@ static inline int drop_refcount(struct dio *dio)
+ 	if (iov_iter_rw(iter) == WRITE) {
+ 		dio->op = REQ_OP_WRITE;
+ 		dio->op_flags = REQ_SYNC | REQ_IDLE;
+-		if (iocb->ki_flags & IOCB_NOWAIT)
+-			dio->op_flags |= REQ_NOWAIT;
+ 	} else {
+ 		dio->op = REQ_OP_READ;
+ 	}
++
++	if (iocb->ki_flags & IOCB_NOWAIT)
++		dio->op_flags |= REQ_NOWAIT;
++
+ 	if (iocb->ki_flags & IOCB_HIPRI)
+ 		dio->op_flags |= REQ_HIPRI;
  
-@@ -83,8 +92,9 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
- 	do {
- 		bool cq_overflow_flush = false;
- 		unsigned flags = 0;
-+		unsigned nr_available;
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 933f234d5bec..2e897688ed6d 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -64,6 +64,9 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+ {
+ 	atomic_inc(&dio->ref);
  
--		err = __io_uring_peek_cqe(ring, &cqe);
-+		err = __io_uring_peek_cqe(ring, &cqe, &nr_available);
- 		if (err)
- 			break;
- 		if (!cqe && !to_wait && !data->submit) {
-@@ -100,7 +110,8 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
- 			flags = IORING_ENTER_GETEVENTS | data->get_flags;
- 		if (data->submit)
- 			sq_ring_needs_enter(ring, &flags);
--		if (data->wait_nr || data->submit || cq_overflow_flush)
-+		if (data->wait_nr > nr_available || data->submit ||
-+		    cq_overflow_flush)
- 			ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
- 					data->wait_nr, flags, data->arg,
- 					data->sz);
++	if (dio->iocb->ki_flags & IOCB_NOWAIT)
++		bio->bi_opf |= REQ_NOWAIT;
++
+ 	if (dio->iocb->ki_flags & IOCB_HIPRI)
+ 		bio_set_polled(bio, dio->iocb);
+ 
 -- 
-2.20.1
+1.8.3.1
 

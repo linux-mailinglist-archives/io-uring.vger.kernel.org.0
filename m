@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BA0F12D04F4
-	for <lists+io-uring@lfdr.de>; Sun,  6 Dec 2020 13:55:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 369292D04F5
+	for <lists+io-uring@lfdr.de>; Sun,  6 Dec 2020 13:55:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727913AbgLFMzb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 6 Dec 2020 07:55:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58840 "EHLO
+        id S1727918AbgLFMzc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 6 Dec 2020 07:55:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727842AbgLFMzb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 6 Dec 2020 07:55:31 -0500
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF94C0613D2
-        for <io-uring@vger.kernel.org>; Sun,  6 Dec 2020 04:54:50 -0800 (PST)
-Received: by mail-wm1-x343.google.com with SMTP id v14so9187791wml.1
-        for <io-uring@vger.kernel.org>; Sun, 06 Dec 2020 04:54:50 -0800 (PST)
+        with ESMTP id S1727842AbgLFMzc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 6 Dec 2020 07:55:32 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3809C0613D3
+        for <io-uring@vger.kernel.org>; Sun,  6 Dec 2020 04:54:51 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id f190so11170464wme.1
+        for <io-uring@vger.kernel.org>; Sun, 06 Dec 2020 04:54:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=9Dn9fInW1VQlGPkDB3M7Gdu/+WCYhOZgBg2jBP8ezws=;
-        b=eDUK0ziwHFpaet4XyaYHT8iAwewxgpv8iafqE54jQy8VBo78WRtNTrHh3IdmKEMJGH
-         I38HlPHPY0naTOKFE8mwKXeziBKZSciwXnZPx+YV0b6SNuIF/nZ7emPHPFj6d8Ckce1N
-         esR3gDbOo2cQD3CyabCzU1oQ1jA1BGrKoD1XwjWskHUSRoIRc+yZuUW79u6lmZ9ms+ok
-         Oyo5rVha07LXBILM0YQOwb+WjqfGjjKKnmQB0iQwrS/qrPq2tRl6MUJiLxwVEzUNv7FU
-         WUhDpLcHN6wyV5MijUm+ZeA6qhGu0Imf8plXd/2cSZ35MZ9MjMD2rsBoJ2be+0Jez8GR
-         julQ==
+        bh=25AL+BHbbCH+Nz3jtE7beBNzqs4Zi2nRZ2QgNxVz4wc=;
+        b=NbRTPcbjuiTrKOLkY2CNkbmhbsw1J30TAhVdrrwsP43K5sdPp78JPKvP0z9LrbZZJo
+         4nrEXuCIuzvxEvnKgh4Cvkq3sAIEjfq0ODpUj9OJsD34ffiZBATK9b2uI4EJQyF+gRc4
+         pLToVvFWPqorKxQkwM932Cu2ulCD7e9wpL0GCs5WfYoPrOeyqqONs4vbXVyK8gGT+NYY
+         h6+ZUOvW9lNH2UxCvAJNrXc7Pl/kunQwIXSuYMBlxUEQb7ljw0mGtlu0MXYcBCOwa+pa
+         1DHe85YxwibAhNSmf+RcG5FGPX1A96drczaqfyg9AS/SG99a9agPh2yjGlyaFKFrnTPw
+         vV6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9Dn9fInW1VQlGPkDB3M7Gdu/+WCYhOZgBg2jBP8ezws=;
-        b=aNCS4Jn7DtBLKMVCbzG3ae5N+rM+qT2b8B/FVWomHPvjHj+eMMBDoSX5X0NBd+9XBW
-         pHoKQMn/kgTPXnXxfh5W1fcddUt+Pc8UFbgNwoCT1wpZW3ZLV2K/KFf7VETbrp1kCFm4
-         wo43aigH6Mxq9XITaI6nligI5jvNkM+f6HfZbLxHQxWPF328iyLM2NNDLynWCGrMGh86
-         wRIposig1TV62XPwaf9JORRWc1PK4WB192Gu83w6Pp3snF5GtLFPrywdjh59Uco+T+P6
-         9PbnuwBPuV+4iKojSGPhfpl51jtXj7y+Rpdx6eO8HFqb9IeyCoXphYTIjUJiNx/tsOAs
-         gB7A==
-X-Gm-Message-State: AOAM5317IdWN9DrkIFs1mtdeSAZKuh12+1CYKcexfqnuLS/wHKKfC16A
-        JLR8tzHhrL7hwq2XF/tx2jw=
-X-Google-Smtp-Source: ABdhPJxED3Ad5nn1CueB76HR4cbCbJavdVt96DpE0f1o5cPkkzC2Yd2FSzCHQUbmEdGr/WnA8+5aog==
-X-Received: by 2002:a1c:e084:: with SMTP id x126mr13558604wmg.109.1607259289554;
-        Sun, 06 Dec 2020 04:54:49 -0800 (PST)
+        bh=25AL+BHbbCH+Nz3jtE7beBNzqs4Zi2nRZ2QgNxVz4wc=;
+        b=I6clGiQzdVSMhFoB2h+RPgiTxPyoGGYKZ+Wv6IN+Sr3Lx8OQas6EQNj6wcMqltKdEK
+         o1c8/eF5hwWXvarpmchcc4PrbbVT7zqmc53uox8q2NhLlvjiQmtXgvoU0Z0Nus+gg7Ez
+         p8KPf+0u8Ih7fbFmPHBkw59e/+QhaAkwsIFVAYMqBYrCqEKdvIFlIm5ZByTghGsWLYMo
+         lzdZib6+pjOGzac9HflA+j1VLFajQPPXXHDNT/BPdiSJRMp7MdFQHRZFxXqfjHSODy0h
+         B5osBvu3+aqU8MHhzSrtCyxuH3jqrDIljzKL+HoLT6WCto4t5A3UtCWellBRpl35z5B1
+         W9ng==
+X-Gm-Message-State: AOAM533ucBfpqlDaKB4EjG6sT/K/SiSECbxO6AfCiMP5+FHqyTIdHpDu
+        XFtHwHSFlU59vZ1+GnifdPR76N/gNuGvHw==
+X-Google-Smtp-Source: ABdhPJz7zoK9JnZhbg+Pb283LOgohKJpk7uFUMmNohRJZbHK46tP5WnOwQh13glD+el9JsBEgqxRwA==
+X-Received: by 2002:a1c:3b85:: with SMTP id i127mr13982809wma.150.1607259290516;
+        Sun, 06 Dec 2020 04:54:50 -0800 (PST)
 Received: from localhost.localdomain ([185.69.145.45])
-        by smtp.gmail.com with ESMTPSA id j14sm10590632wrs.49.2020.12.06.04.54.48
+        by smtp.gmail.com with ESMTPSA id j14sm10590632wrs.49.2020.12.06.04.54.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Dec 2020 04:54:49 -0800 (PST)
+        Sun, 06 Dec 2020 04:54:50 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing 2/3] test/rw: remove not used mixed_fixed flag
-Date:   Sun,  6 Dec 2020 12:51:22 +0000
-Message-Id: <6b50a177a1c89d1917a0dd857210cf28a441c1a2.1607258973.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 3/3] test/rw: test reg bufs with non-align sizes/offset
+Date:   Sun,  6 Dec 2020 12:51:23 +0000
+Message-Id: <a3d2736e27a0762fbbdf64b46a296670e4b7c6bf.1607258973.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1607258973.git.asml.silence@gmail.com>
 References: <cover.1607258973.git.asml.silence@gmail.com>
@@ -61,119 +61,170 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-mixed_fixed is not used, kill it
+Broaden registered buffers coverage with registering buffers with
+non-aligned random offsets and sizes. That in particular test how we're
+setting and advancing in-kernel bvecs.
+
+Pass exp_len==-1 for that, so it compares against iov_len with which it
+was initialised. Also, direct IO requires alignment, so do it in
+buffered mode.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/read-write.c | 37 +++++++++++++++----------------------
- 1 file changed, 15 insertions(+), 22 deletions(-)
+ test/read-write.c | 71 +++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 65 insertions(+), 6 deletions(-)
 
 diff --git a/test/read-write.c b/test/read-write.c
-index d47bebb..2399c32 100644
+index 2399c32..84ea3a2 100644
 --- a/test/read-write.c
 +++ b/test/read-write.c
-@@ -56,8 +56,8 @@ static int create_file(const char *file)
- 	return ret != FILE_SIZE;
+@@ -37,6 +37,23 @@ static int create_buffers(void)
+ 	return 0;
  }
  
--static int __test_io(const char *file, struct io_uring *ring, int write, int buffered,
--		     int sqthread, int fixed, int mixed_fixed, int nonvec,
-+static int __test_io(const char *file, struct io_uring *ring, int write,
-+		     int buffered, int sqthread, int fixed, int nonvec,
- 		     int buf_select, int seq, int exp_len)
++static int create_nonaligned_buffers(void)
++{
++	int i;
++
++	vecs = malloc(BUFFERS * sizeof(struct iovec));
++	for (i = 0; i < BUFFERS; i++) {
++		char *p = malloc(3 * BS);
++
++		if (!p)
++			return 1;
++		vecs[i].iov_base = p + (rand() % BS);
++		vecs[i].iov_len = 1 + (rand() % BS);
++	}
++
++	return 0;
++}
++
+ static int create_file(const char *file)
  {
- 	struct io_uring_sqe *sqe;
-@@ -67,10 +67,9 @@ static int __test_io(const char *file, struct io_uring *ring, int write, int buf
- 	off_t offset;
+ 	ssize_t ret;
+@@ -155,6 +172,7 @@ static int __test_io(const char *file, struct io_uring *ring, int write,
+ 			}
  
- #ifdef VERBOSE
--	fprintf(stdout, "%s: start %d/%d/%d/%d/%d/%d: ", __FUNCTION__, write,
-+	fprintf(stdout, "%s: start %d/%d/%d/%d/%d: ", __FUNCTION__, write,
- 							buffered, sqthread,
--							fixed, mixed_fixed,
--							nonvec);
-+							fixed, nonvec);
- #endif
- 	if (sqthread && geteuid()) {
- #ifdef VERBOSE
-@@ -239,7 +238,7 @@ err:
+ 		}
++		sqe->user_data = i;
+ 		if (sqthread)
+ 			sqe->flags |= IOSQE_FIXED_FILE;
+ 		if (buf_select) {
+@@ -162,7 +180,6 @@ static int __test_io(const char *file, struct io_uring *ring, int write,
+ 				sqe->addr = 0;
+ 			sqe->flags |= IOSQE_BUFFER_SELECT;
+ 			sqe->buf_group = buf_select;
+-			sqe->user_data = i;
+ 		}
+ 		if (seq)
+ 			offset += BS;
+@@ -187,6 +204,14 @@ static int __test_io(const char *file, struct io_uring *ring, int write,
+ 				warned = 1;
+ 				no_read = 1;
+ 			}
++		} else if (exp_len == -1) {
++			int iov_len = vecs[cqe->user_data].iov_len;
++
++			if (cqe->res != iov_len) {
++				fprintf(stderr, "cqe res %d, wanted %d\n",
++					cqe->res, iov_len);
++				goto err;
++			}
+ 		} else if (cqe->res != exp_len) {
+ 			fprintf(stderr, "cqe res %d, wanted %d\n", cqe->res, exp_len);
+ 			goto err;
+@@ -238,7 +263,7 @@ err:
  	return 1;
  }
  static int test_io(const char *file, int write, int buffered, int sqthread,
--		   int fixed, int mixed_fixed, int nonvec)
-+		   int fixed, int nonvec)
+-		   int fixed, int nonvec)
++		   int fixed, int nonvec, int exp_len)
  {
  	struct io_uring ring;
  	int ret, ring_flags;
-@@ -263,8 +262,8 @@ static int test_io(const char *file, int write, int buffered, int sqthread,
+@@ -263,7 +288,7 @@ static int test_io(const char *file, int write, int buffered, int sqthread,
+ 	}
+ 
+ 	ret = __test_io(file, &ring, write, buffered, sqthread, fixed, nonvec,
+-			0, 0, BS);
++			0, 0, exp_len);
+ 
+ 	io_uring_queue_exit(&ring);
+ 	return ret;
+@@ -593,14 +618,15 @@ static int test_write_efbig(void)
+ 	struct io_uring_sqe *sqe;
+ 	struct io_uring_cqe *cqe;
+ 	struct io_uring ring;
+-	struct rlimit rlim;
++	struct rlimit rlim, old_rlim;
+ 	int i, fd, ret;
+ 	loff_t off;
+ 
+-	if (getrlimit(RLIMIT_FSIZE, &rlim) < 0) {
++	if (getrlimit(RLIMIT_FSIZE, &old_rlim) < 0) {
+ 		perror("getrlimit");
  		return 1;
  	}
- 
--	ret = __test_io(file, &ring, write, buffered, sqthread, fixed,
--			mixed_fixed, nonvec, 0, 0, BS);
-+	ret = __test_io(file, &ring, write, buffered, sqthread, fixed, nonvec,
-+			0, 0, BS);
- 
++	rlim = old_rlim;
+ 	rlim.rlim_cur = 64 * 1024;
+ 	rlim.rlim_max = 64 * 1024;
+ 	if (setrlimit(RLIMIT_FSIZE, &rlim) < 0) {
+@@ -660,6 +686,11 @@ static int test_write_efbig(void)
  	io_uring_queue_exit(&ring);
- 	return ret;
-@@ -442,7 +441,7 @@ static int test_buf_select_short(const char *filename, int nonvec)
- 		io_uring_cqe_seen(&ring, cqe);
- 	}
- 
--	ret = __test_io(filename, &ring, 0, 0, 0, 0, 0, nonvec, 1, 1, exp_len);
-+	ret = __test_io(filename, &ring, 0, 0, 0, 0, nonvec, 1, 1, exp_len);
- 
- 	io_uring_queue_exit(&ring);
- 	return ret;
-@@ -476,7 +475,7 @@ static int test_buf_select(const char *filename, int nonvec)
- 	for (i = 0; i < BUFFERS; i++)
- 		memset(vecs[i].iov_base, i, vecs[i].iov_len);
- 
--	ret = __test_io(filename, &ring, 1, 0, 0, 0, 0, 0, 0, 1, BS);
-+	ret = __test_io(filename, &ring, 1, 0, 0, 0, 0, 0, 1, BS);
- 	if (ret) {
- 		fprintf(stderr, "failed writing data\n");
- 		return 1;
-@@ -506,7 +505,7 @@ static int test_buf_select(const char *filename, int nonvec)
- 		io_uring_cqe_seen(&ring, cqe);
- 	}
- 
--	ret = __test_io(filename, &ring, 0, 0, 0, 0, 0, nonvec, 1, 1, BS);
-+	ret = __test_io(filename, &ring, 0, 0, 0, 0, nonvec, 1, 1, BS);
- 
- 	io_uring_queue_exit(&ring);
- 	return ret;
-@@ -690,25 +689,19 @@ int main(int argc, char *argv[])
- 	}
- 
- 	/* if we don't have nonvec read, skip testing that */
--	if (has_nonvec_read())
--		nr = 64;
--	else
--		nr = 32;
-+	nr = has_nonvec_read() ? 32 : 16;
- 
- 	for (i = 0; i < nr; i++) {
- 		int write = (i & 1) != 0;
- 		int buffered = (i & 2) != 0;
- 		int sqthread = (i & 4) != 0;
+ 	close(fd);
+ 	unlink(".efbig");
++
++	if (setrlimit(RLIMIT_FSIZE, &old_rlim) < 0) {
++		perror("setrlimit");
++		return 1;
++	}
+ 	return 0;
+ err:
+ 	if (fd != -1)
+@@ -698,7 +729,8 @@ int main(int argc, char *argv[])
  		int fixed = (i & 8) != 0;
--		int mixed_fixed = (i & 16) != 0;
--		int nonvec = (i & 32) != 0;
-+		int nonvec = (i & 16) != 0;
+ 		int nonvec = (i & 16) != 0;
  
--		ret = test_io(fname, write, buffered, sqthread, fixed,
--			      mixed_fixed, nonvec);
-+		ret = test_io(fname, write, buffered, sqthread, fixed, nonvec);
+-		ret = test_io(fname, write, buffered, sqthread, fixed, nonvec);
++		ret = test_io(fname, write, buffered, sqthread, fixed, nonvec,
++			      BS);
  		if (ret) {
--			fprintf(stderr, "test_io failed %d/%d/%d/%d/%d/%d\n",
--					write, buffered, sqthread, fixed,
--					mixed_fixed, nonvec);
+ 			fprintf(stderr, "test_io failed %d/%d/%d/%d/%d\n",
+ 				write, buffered, sqthread, fixed, nonvec);
+@@ -754,6 +786,33 @@ int main(int argc, char *argv[])
+ 		goto err;
+ 	}
+ 
++	srand((unsigned)time(NULL));
++	if (create_nonaligned_buffers()) {
++		fprintf(stderr, "file creation failed\n");
++		goto err;
++	}
++
++	/* test fixed bufs with non-aligned len/offset */
++	for (i = 0; i < nr; i++) {
++		int write = (i & 1) != 0;
++		int buffered = (i & 2) != 0;
++		int sqthread = (i & 4) != 0;
++		int fixed = (i & 8) != 0;
++		int nonvec = (i & 16) != 0;
++
++		/* direct IO requires alignment, skip it */
++		if (!buffered || !fixed || nonvec)
++			continue;
++
++		ret = test_io(fname, write, buffered, sqthread, fixed, nonvec,
++			      -1);
++		if (ret) {
 +			fprintf(stderr, "test_io failed %d/%d/%d/%d/%d\n",
 +				write, buffered, sqthread, fixed, nonvec);
- 			goto err;
- 		}
- 	}
++			goto err;
++		}
++	}
++
+ 	if (fname != argv[1])
+ 		unlink(fname);
+ 	return 0;
 -- 
 2.24.0
 

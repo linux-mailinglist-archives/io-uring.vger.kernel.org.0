@@ -2,229 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 369292D04F5
-	for <lists+io-uring@lfdr.de>; Sun,  6 Dec 2020 13:55:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CBB12D0515
+	for <lists+io-uring@lfdr.de>; Sun,  6 Dec 2020 14:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbgLFMzc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 6 Dec 2020 07:55:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58842 "EHLO
+        id S1727974AbgLFNUM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 6 Dec 2020 08:20:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727842AbgLFMzc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 6 Dec 2020 07:55:32 -0500
+        with ESMTP id S1727395AbgLFNUM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 6 Dec 2020 08:20:12 -0500
 Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3809C0613D3
-        for <io-uring@vger.kernel.org>; Sun,  6 Dec 2020 04:54:51 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id f190so11170464wme.1
-        for <io-uring@vger.kernel.org>; Sun, 06 Dec 2020 04:54:51 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15584C0613D0
+        for <io-uring@vger.kernel.org>; Sun,  6 Dec 2020 05:19:32 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id g185so11168800wmf.3
+        for <io-uring@vger.kernel.org>; Sun, 06 Dec 2020 05:19:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+        h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=25AL+BHbbCH+Nz3jtE7beBNzqs4Zi2nRZ2QgNxVz4wc=;
-        b=NbRTPcbjuiTrKOLkY2CNkbmhbsw1J30TAhVdrrwsP43K5sdPp78JPKvP0z9LrbZZJo
-         4nrEXuCIuzvxEvnKgh4Cvkq3sAIEjfq0ODpUj9OJsD34ffiZBATK9b2uI4EJQyF+gRc4
-         pLToVvFWPqorKxQkwM932Cu2ulCD7e9wpL0GCs5WfYoPrOeyqqONs4vbXVyK8gGT+NYY
-         h6+ZUOvW9lNH2UxCvAJNrXc7Pl/kunQwIXSuYMBlxUEQb7ljw0mGtlu0MXYcBCOwa+pa
-         1DHe85YxwibAhNSmf+RcG5FGPX1A96drczaqfyg9AS/SG99a9agPh2yjGlyaFKFrnTPw
-         vV6g==
+        bh=AVXCcgTQ/cE/NuXRJIHNNIFdstou+ZYQXeYlg/l1kGE=;
+        b=imguuz1BupFwtSNNcqH1S8ZnRNDtoK5sqN3JcSppeQ52qWL4s6LdMIncpdU7YXgtfb
+         /LE/Si7wV/Gc1o1uyKlSEvKSbtACXoHgutyGbG7LNOPZE05kfIJLLLVE6AkAimiXgFpR
+         qDc3vQJUqEfEAVIDcnVm66wVRQj7B+1BS7UUBRIGo44jEWUHbPVntcwvml80moYbYPLY
+         WBeejTy09+nogxI+Oq7eyw+i8zGGGQc8valQf+PoZZzI1qd0X3vUeUneHxlA/QNM7ALz
+         VCa6XTcEFGBxm3yL2UERz7kUynDMf7y9GSb4khaXgFgzhiuviwcvoP+/JJ1S184+LKP/
+         j0Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=25AL+BHbbCH+Nz3jtE7beBNzqs4Zi2nRZ2QgNxVz4wc=;
-        b=I6clGiQzdVSMhFoB2h+RPgiTxPyoGGYKZ+Wv6IN+Sr3Lx8OQas6EQNj6wcMqltKdEK
-         o1c8/eF5hwWXvarpmchcc4PrbbVT7zqmc53uox8q2NhLlvjiQmtXgvoU0Z0Nus+gg7Ez
-         p8KPf+0u8Ih7fbFmPHBkw59e/+QhaAkwsIFVAYMqBYrCqEKdvIFlIm5ZByTghGsWLYMo
-         lzdZib6+pjOGzac9HflA+j1VLFajQPPXXHDNT/BPdiSJRMp7MdFQHRZFxXqfjHSODy0h
-         B5osBvu3+aqU8MHhzSrtCyxuH3jqrDIljzKL+HoLT6WCto4t5A3UtCWellBRpl35z5B1
-         W9ng==
-X-Gm-Message-State: AOAM533ucBfpqlDaKB4EjG6sT/K/SiSECbxO6AfCiMP5+FHqyTIdHpDu
-        XFtHwHSFlU59vZ1+GnifdPR76N/gNuGvHw==
-X-Google-Smtp-Source: ABdhPJz7zoK9JnZhbg+Pb283LOgohKJpk7uFUMmNohRJZbHK46tP5WnOwQh13glD+el9JsBEgqxRwA==
-X-Received: by 2002:a1c:3b85:: with SMTP id i127mr13982809wma.150.1607259290516;
-        Sun, 06 Dec 2020 04:54:50 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AVXCcgTQ/cE/NuXRJIHNNIFdstou+ZYQXeYlg/l1kGE=;
+        b=allg3tXkUGKvxd/zsqfL4G4Vky62haM7HimhJ5UvVHfW+jTT+/tIuZ0Y1FLuvh52a3
+         eAI5/bNw2ki8ns0eGC6zRaiq/XwuQAOiMWmHz6+cscOxSeFnG9bn7uUgGbifrwC54QY7
+         RMI7Rd08M5LTEHQyxwO9C0/+5QM43rGUClvKtUDOqv9j5we/dc1woxDiplLGDxAdnCxa
+         vj7X6Fg7N4BEFUIpL0SpqB6NEjPy05YPD9a9SVVqeGYpGbicsJP5qsMWNnIG4o1zPuuK
+         s9l+qBDKJh0+jAe3djr1aOu8hTOtu9keRzUnryFeMhMUsTCCS1DZb5feIklKvly83u8D
+         WdbQ==
+X-Gm-Message-State: AOAM530eqU4aPP2YwrHRAcKpqdLvVJGUtvSCaAvgGebll5REf0Rpp+w/
+        LZf09wrVW8S7aauIuok+ABOg511e+LdifQ==
+X-Google-Smtp-Source: ABdhPJzAqKzkS5zpwtSBPcxQVEsGO5joMPcK4S29YX2163RThW9bZ8Da9/5zYYtsCyvExTghhO96iw==
+X-Received: by 2002:a1c:bc88:: with SMTP id m130mr13985858wmf.82.1607260770728;
+        Sun, 06 Dec 2020 05:19:30 -0800 (PST)
 Received: from localhost.localdomain ([185.69.145.45])
-        by smtp.gmail.com with ESMTPSA id j14sm10590632wrs.49.2020.12.06.04.54.49
+        by smtp.gmail.com with ESMTPSA id l8sm11182086wro.46.2020.12.06.05.19.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Dec 2020 04:54:50 -0800 (PST)
+        Sun, 06 Dec 2020 05:19:30 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing 3/3] test/rw: test reg bufs with non-align sizes/offset
-Date:   Sun,  6 Dec 2020 12:51:23 +0000
-Message-Id: <a3d2736e27a0762fbbdf64b46a296670e4b7c6bf.1607258973.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 5.11] man/io_uring_enter.2: describe timeout updates
+Date:   Sun,  6 Dec 2020 13:16:07 +0000
+Message-Id: <24c4f1133eb4dd3ff2e979a6a744ac0032fb7a2d.1607260546.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1607258973.git.asml.silence@gmail.com>
-References: <cover.1607258973.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Broaden registered buffers coverage with registering buffers with
-non-aligned random offsets and sizes. That in particular test how we're
-setting and advancing in-kernel bvecs.
-
-Pass exp_len==-1 for that, so it compares against iov_len with which it
-was initialised. Also, direct IO requires alignment, so do it in
-buffered mode.
-
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/read-write.c | 71 +++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 65 insertions(+), 6 deletions(-)
+ man/io_uring_enter.2 | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/test/read-write.c b/test/read-write.c
-index 2399c32..84ea3a2 100644
---- a/test/read-write.c
-+++ b/test/read-write.c
-@@ -37,6 +37,23 @@ static int create_buffers(void)
- 	return 0;
- }
+diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+index ae7e687..a1e486a 100644
+--- a/man/io_uring_enter.2
++++ b/man/io_uring_enter.2
+@@ -325,7 +325,9 @@ Available since 5.4.
  
-+static int create_nonaligned_buffers(void)
-+{
-+	int i;
-+
-+	vecs = malloc(BUFFERS * sizeof(struct iovec));
-+	for (i = 0; i < BUFFERS; i++) {
-+		char *p = malloc(3 * BS);
-+
-+		if (!p)
-+			return 1;
-+		vecs[i].iov_base = p + (rand() % BS);
-+		vecs[i].iov_len = 1 + (rand() % BS);
-+	}
-+
-+	return 0;
-+}
-+
- static int create_file(const char *file)
- {
- 	ssize_t ret;
-@@ -155,6 +172,7 @@ static int __test_io(const char *file, struct io_uring *ring, int write,
- 			}
+ .TP
+ .B IORING_OP_TIMEOUT_REMOVE
+-Attempt to remove an existing timeout operation.
++If
++.I timeout_flags are zero, then it attempts to remove an existing timeout
++operation.
+ .I addr
+ must contain the
+ .I user_data
+@@ -341,6 +343,19 @@ value of
+ .I -ENOENT
+ Available since 5.5.
  
- 		}
-+		sqe->user_data = i;
- 		if (sqthread)
- 			sqe->flags |= IOSQE_FIXED_FILE;
- 		if (buf_select) {
-@@ -162,7 +180,6 @@ static int __test_io(const char *file, struct io_uring *ring, int write,
- 				sqe->addr = 0;
- 			sqe->flags |= IOSQE_BUFFER_SELECT;
- 			sqe->buf_group = buf_select;
--			sqe->user_data = i;
- 		}
- 		if (seq)
- 			offset += BS;
-@@ -187,6 +204,14 @@ static int __test_io(const char *file, struct io_uring *ring, int write,
- 				warned = 1;
- 				no_read = 1;
- 			}
-+		} else if (exp_len == -1) {
-+			int iov_len = vecs[cqe->user_data].iov_len;
++If
++.I timeout_flags
++contain
++.I IORING_TIMEOUT_UPDATE,
++instead of removing an existing operation it updates it.
++.I addr
++and return values are same as before.
++.I addr2
++field must contain a pointer to a struct timespec64 structure.
++.I timeout_flags
++may also contain IORING_TIMEOUT_ABS.
++Available since 5.11.
 +
-+			if (cqe->res != iov_len) {
-+				fprintf(stderr, "cqe res %d, wanted %d\n",
-+					cqe->res, iov_len);
-+				goto err;
-+			}
- 		} else if (cqe->res != exp_len) {
- 			fprintf(stderr, "cqe res %d, wanted %d\n", cqe->res, exp_len);
- 			goto err;
-@@ -238,7 +263,7 @@ err:
- 	return 1;
- }
- static int test_io(const char *file, int write, int buffered, int sqthread,
--		   int fixed, int nonvec)
-+		   int fixed, int nonvec, int exp_len)
- {
- 	struct io_uring ring;
- 	int ret, ring_flags;
-@@ -263,7 +288,7 @@ static int test_io(const char *file, int write, int buffered, int sqthread,
- 	}
- 
- 	ret = __test_io(file, &ring, write, buffered, sqthread, fixed, nonvec,
--			0, 0, BS);
-+			0, 0, exp_len);
- 
- 	io_uring_queue_exit(&ring);
- 	return ret;
-@@ -593,14 +618,15 @@ static int test_write_efbig(void)
- 	struct io_uring_sqe *sqe;
- 	struct io_uring_cqe *cqe;
- 	struct io_uring ring;
--	struct rlimit rlim;
-+	struct rlimit rlim, old_rlim;
- 	int i, fd, ret;
- 	loff_t off;
- 
--	if (getrlimit(RLIMIT_FSIZE, &rlim) < 0) {
-+	if (getrlimit(RLIMIT_FSIZE, &old_rlim) < 0) {
- 		perror("getrlimit");
- 		return 1;
- 	}
-+	rlim = old_rlim;
- 	rlim.rlim_cur = 64 * 1024;
- 	rlim.rlim_max = 64 * 1024;
- 	if (setrlimit(RLIMIT_FSIZE, &rlim) < 0) {
-@@ -660,6 +686,11 @@ static int test_write_efbig(void)
- 	io_uring_queue_exit(&ring);
- 	close(fd);
- 	unlink(".efbig");
-+
-+	if (setrlimit(RLIMIT_FSIZE, &old_rlim) < 0) {
-+		perror("setrlimit");
-+		return 1;
-+	}
- 	return 0;
- err:
- 	if (fd != -1)
-@@ -698,7 +729,8 @@ int main(int argc, char *argv[])
- 		int fixed = (i & 8) != 0;
- 		int nonvec = (i & 16) != 0;
- 
--		ret = test_io(fname, write, buffered, sqthread, fixed, nonvec);
-+		ret = test_io(fname, write, buffered, sqthread, fixed, nonvec,
-+			      BS);
- 		if (ret) {
- 			fprintf(stderr, "test_io failed %d/%d/%d/%d/%d\n",
- 				write, buffered, sqthread, fixed, nonvec);
-@@ -754,6 +786,33 @@ int main(int argc, char *argv[])
- 		goto err;
- 	}
- 
-+	srand((unsigned)time(NULL));
-+	if (create_nonaligned_buffers()) {
-+		fprintf(stderr, "file creation failed\n");
-+		goto err;
-+	}
-+
-+	/* test fixed bufs with non-aligned len/offset */
-+	for (i = 0; i < nr; i++) {
-+		int write = (i & 1) != 0;
-+		int buffered = (i & 2) != 0;
-+		int sqthread = (i & 4) != 0;
-+		int fixed = (i & 8) != 0;
-+		int nonvec = (i & 16) != 0;
-+
-+		/* direct IO requires alignment, skip it */
-+		if (!buffered || !fixed || nonvec)
-+			continue;
-+
-+		ret = test_io(fname, write, buffered, sqthread, fixed, nonvec,
-+			      -1);
-+		if (ret) {
-+			fprintf(stderr, "test_io failed %d/%d/%d/%d/%d\n",
-+				write, buffered, sqthread, fixed, nonvec);
-+			goto err;
-+		}
-+	}
-+
- 	if (fname != argv[1])
- 		unlink(fname);
- 	return 0;
+ .TP
+ .B IORING_OP_ACCEPT
+ Issue the equivalent of an
 -- 
 2.24.0
 

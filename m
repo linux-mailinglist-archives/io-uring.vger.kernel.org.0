@@ -2,90 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B3B32D0929
-	for <lists+io-uring@lfdr.de>; Mon,  7 Dec 2020 03:22:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A45F02D145D
+	for <lists+io-uring@lfdr.de>; Mon,  7 Dec 2020 16:06:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbgLGCWS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 6 Dec 2020 21:22:18 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:56600 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726400AbgLGCWR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 6 Dec 2020 21:22:17 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id F17033C27C7;
-        Mon,  7 Dec 2020 13:21:31 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1km69a-001IYe-K5; Mon, 07 Dec 2020 13:21:30 +1100
-Date:   Mon, 7 Dec 2020 13:21:30 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: Re: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT
- in Direct IO
-Message-ID: <20201207022130.GC4170059@dread.disaster.area>
-References: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
+        id S1726359AbgLGPF1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 7 Dec 2020 10:05:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45728 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725803AbgLGPF1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Dec 2020 10:05:27 -0500
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25380C061749
+        for <io-uring@vger.kernel.org>; Mon,  7 Dec 2020 07:04:41 -0800 (PST)
+Received: by mail-io1-xd42.google.com with SMTP id r9so13619947ioo.7
+        for <io-uring@vger.kernel.org>; Mon, 07 Dec 2020 07:04:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wZXGgbnZ8cr/0Rdgsg8K6lYkELQtNZTW++ELghaI2sA=;
+        b=nFRzR+gbLLYeXQW0Ah+9hwRhhbtRxhRC1Z+B71h5O3N88OlwY/9DsiwpvsO8u1hsPL
+         UjeyktuhRCxR/CytnMiDmBtDLpzFKfdl74vr/XBK2GIIGUuXwYla/uUQLniWlySGZOMg
+         UN8CuOVwThl2MUypIH9Dok/GCcwnymSYi4Jsa2xIDrkGFk050WVX79nIkvFckZu3eBX9
+         LZM8F3ModQEeS5FT6Yex7JJI4P4qDjPkAZXvUj022+CZG4LB0YUjBqgUsE4t5vGxJIZx
+         d//d70FjqUa7hKcmNcqQNljnzHkaM9IK+vYrf+TnqeNnn+HG4P3WFgUN2NHodcSHC9AI
+         HkXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wZXGgbnZ8cr/0Rdgsg8K6lYkELQtNZTW++ELghaI2sA=;
+        b=NMQdeoeu4H+OxXDAJj9zlf3XUJ8wrgRg7jovGxogE2v3CMZc31bw+6RDu5df7tEYqi
+         gltWYpQYUWJ/6ElDxHmw0+rXqnRShgeK/10zuwy/xUSJL8KHGaqS54MyEZLkx0N1cd78
+         QTaQ+kkt44iKkEUxULFv48O3lp80MGgwq32z+sdj/5kwO4E7LbbW3wag6Tc7LlMHvzHF
+         o1MzDOdtUbAfKXXeSb4cD7Dj2arGA3ntcMV/wjVFhaGahzZQzqANkciuahekBH2fKejU
+         xaHtb+OROkzqcyFehyQ+ffk5YBXyq1FD3z/BfZYIWVuFzPxoWYPGYl+t6REbK+eXJ/OO
+         4Jsg==
+X-Gm-Message-State: AOAM531FcyMwMw8rPydao1+fc/ksXIAsQc9iteA0+RS89bYIFVhQeNB8
+        jU9Y3qIH+D4dGcRhdWKK1nlx6w==
+X-Google-Smtp-Source: ABdhPJwVc+ApxMZ5Dz5ik7ifV1t7aLoJlEZO+JWLeP7ZNiFTeQZzBCNHB5hhoKQCGQqL0ZpZ+Ul15Q==
+X-Received: by 2002:a5e:8344:: with SMTP id y4mr20562092iom.116.1607353480454;
+        Mon, 07 Dec 2020 07:04:40 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id c2sm7562579iln.70.2020.12.07.07.04.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Dec 2020 07:04:39 -0800 (PST)
+Subject: Re: [PATCH] io_uring: fix file leak on creating io ctx
+To:     Hillf Danton <hdanton@sina.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     io-uring@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        syzbot+71c4697e27c99fddcf17@syzkaller.appspotmail.com,
+        Pavel Begunkov <asml.silence@gmail.com>
+References: <20201207081558.2361-1-hdanton@sina.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <13bd991a-be45-6521-655d-74b8d810b714@kernel.dk>
+Date:   Mon, 7 Dec 2020 08:04:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=SRrdq9N9AAAA:8 a=6R7veym_AAAA:8
-        a=7-415B0cAAAA:8 a=sZL_5JkcuqqlGEs8XqMA:9 a=CjuIK1q_8ugA:10
-        a=ILCOIF4F_8SzUMnO7jNM:22 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20201207081558.2361-1-hdanton@sina.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Dec 04, 2020 at 05:44:56PM +0800, Hao Xu wrote:
-> Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
-> when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
-> IOCB_NOWAIT is set.
+On 12/7/20 1:15 AM, Hillf Danton wrote:
+> Put file as part of error handling when setting up io ctx to fix
+> memory leak like the following one.
 > 
-> Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> ---
-> 
-> Hi all,
-> I tested fio io_uring direct read for a file on ext4 filesystem on a
-> nvme ssd. I found that IOCB_NOWAIT is ignored in iomap layer, which
-> means REQ_NOWAIT is not set in bio->bi_opf.
+>    BUG: memory leak
+>    unreferenced object 0xffff888101ea2200 (size 256):
+>      comm "syz-executor355", pid 8470, jiffies 4294953658 (age 32.400s)
+>      hex dump (first 32 bytes):
+>        00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>        20 59 03 01 81 88 ff ff 80 87 a8 10 81 88 ff ff   Y..............
+>      backtrace:
+>        [<000000002e0a7c5f>] kmem_cache_zalloc include/linux/slab.h:654 [inline]
+>        [<000000002e0a7c5f>] __alloc_file+0x1f/0x130 fs/file_table.c:101
+>        [<000000001a55b73a>] alloc_empty_file+0x69/0x120 fs/file_table.c:151
+>        [<00000000fb22349e>] alloc_file+0x33/0x1b0 fs/file_table.c:193
+>        [<000000006e1465bb>] alloc_file_pseudo+0xb2/0x140 fs/file_table.c:233
+>        [<000000007118092a>] anon_inode_getfile fs/anon_inodes.c:91 [inline]
+>        [<000000007118092a>] anon_inode_getfile+0xaa/0x120 fs/anon_inodes.c:74
+>        [<000000002ae99012>] io_uring_get_fd fs/io_uring.c:9198 [inline]
+>        [<000000002ae99012>] io_uring_create fs/io_uring.c:9377 [inline]
+>        [<000000002ae99012>] io_uring_setup+0x1125/0x1630 fs/io_uring.c:9411
+>        [<000000008280baad>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>        [<00000000685d8cf0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-What iomap is doing is correct behaviour. IOCB_NOWAIT applies to the
-filesystem behaviour, not the block device.
+Applied for 5.10, thanks.
 
-REQ_NOWAIT can result in partial IO failures because the error is
-only reported to the iomap layer via IO completions. Hence we can
-split a DIO into multiple bios and have random bios in that IO fail
-with EAGAIN because REQ_NOWAIT is set. This error will
-get reported to the submitter via completion, and it will override
-any of the partial IOs that actually completed.
-
-Hence, like the recently reported multi-mapping IOCB_NOWAIT bug
-reported by Jens and fixed in commit 883a790a8440 ("xfs: don't allow
-NOWAIT DIO across extent boundaries") we'll get silent partial
-writes occurring because the second submitted bio in an IO can
-trigger EAGAIN errors with partial IO completion having already
-occurred.
-
-Further, we don't allow partial IO completion for DIO on XFS at all.
-DIO must be completely submitted and completed or return an error
-without having issued any IO at all.  Hence using REQ_NOWAIT for
-DIO bios is incorrect and not desirable.
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Jens Axboe
+

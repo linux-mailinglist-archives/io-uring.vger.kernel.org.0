@@ -2,232 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D94F2D35BB
-	for <lists+io-uring@lfdr.de>; Tue,  8 Dec 2020 23:04:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90FAE2D3669
+	for <lists+io-uring@lfdr.de>; Tue,  8 Dec 2020 23:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727737AbgLHWBd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Dec 2020 17:01:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53586 "EHLO
+        id S1730144AbgLHWna (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Dec 2020 17:43:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbgLHWBd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Dec 2020 17:01:33 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13CA0C061794
-        for <io-uring@vger.kernel.org>; Tue,  8 Dec 2020 14:00:53 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id g185so3686862wmf.3
-        for <io-uring@vger.kernel.org>; Tue, 08 Dec 2020 14:00:52 -0800 (PST)
+        with ESMTP id S1729455AbgLHWna (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Dec 2020 17:43:30 -0500
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72F5FC0613CF
+        for <io-uring@vger.kernel.org>; Tue,  8 Dec 2020 14:42:44 -0800 (PST)
+Received: by mail-pg1-x544.google.com with SMTP id v29so473473pgk.12
+        for <io-uring@vger.kernel.org>; Tue, 08 Dec 2020 14:42:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=p5XKfZCNrH/MnfJMtf/ExT9itSmHIG+mloI7j+0fZu8=;
-        b=W+4VTTOPB0RO28pj39YMQqCiBJIUPeyRgOclcl4eWZG73RYEAvTdSjMVTTbkVQ1CrS
-         rnWAOnWZzgH3/1kiwDafPyn55p1oTwc0TN12J5gP270Zl0YBD03hk9YxPHElK84wFgXw
-         FzXqSrfS0yUhuA3pkL+Lggr7NcfGA9oy/on+BvZcf0QtpSAczXBOh12mtaZXYVEwnNd+
-         S/yvOEcnJ0qEvkqqX4MhpT16ngffkcViC31XTZtB6RgCQ75PZkZiL2iScfrBpWvdBtbC
-         RZAFkycywMchni/GPZmy3ap6BwB3zEmh4An8Hkf2ufWbB4iZmB68YgVhXe96yxjh0XVP
-         cONA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=1JfGLJ6mvOw51UjtiQiEid0QRM4ecB02tmMkfq6nfgs=;
+        b=wCFV9J45QvQ6VLBqNfaZFGSVz7aOzY4e/fJvXuH5Qg2eoUq/yaD13S6WVqCtswczcL
+         1bTPM9ZSSJO6VxWAFEIwA9Wph9rG8I4wazgpegRm0X3GVDMoMZTDH2VxwgzTmvo8ePlP
+         Jkz+W5i/SbrvLg0IgLHt56ze4lmC2nOw4Vn+5nOnpf9NLJGwObaFNuDjS8jQFhXs6HoT
+         9fCayLCtsFDl1X1pudqGN4+CYWw4Iz0Q7aqZSm9vx/5GYuPYopkpkPlR47z56m+8n0fW
+         EQUlihowsTsnEF/+Or+Hrgp40qOy8AcvdvAeQTXVsxWez19Y+HADVXeFqpWao0lw9JGq
+         adTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=p5XKfZCNrH/MnfJMtf/ExT9itSmHIG+mloI7j+0fZu8=;
-        b=r+us8nZs1PM2wZMSfQJBGDIPJRXAc3ZUEMa7rUuZTSACRUsNWacOrn+pJN4JHNYUaX
-         QYj9T4PwrPO4q0DLFiPjineHs17hYCcA8apE91gQ6ow2+E3dxMFe6oeiGScFHkBJwdQo
-         YaMt4feQiJcF/VPQRNMux2/qnicgiUDmJ0VWT95RKiXaI5V/rKQ/0zeDjoZOYUjOkoS6
-         q96BS/w7IYH3JhXyOmii72ijtmky9FU/bFnXoQJ+gH0FENe0rNXeGDgKswIq2vLTeuin
-         s8zlwU8Var/9CuIp84TO/RVLBgOMZ3f92SVZlUsunCgeGTIA4xYGORwbaVr+5KEuauvL
-         +5TQ==
-X-Gm-Message-State: AOAM531zesnxYAc1UMSheT+ivAgio2vPMPpL6dUxjtC8FJO7czCm+Jjj
-        q0vdHCJqWpe89/aJBdg5fzs=
-X-Google-Smtp-Source: ABdhPJyjJj3LjLSrrWppImuWWVusLodFl+7bYI+13g+xBRj9aLa9EUqsDgpLNafhPTfNa3aFzx8ZGg==
-X-Received: by 2002:a7b:c055:: with SMTP id u21mr5695037wmc.130.1607464851787;
-        Tue, 08 Dec 2020 14:00:51 -0800 (PST)
-Received: from localhost.localdomain ([85.255.233.156])
-        by smtp.gmail.com with ESMTPSA id h5sm344192wrp.56.2020.12.08.14.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Dec 2020 14:00:51 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing] rem_buf/test: inital testing for OP_REMOVE_BUFFERS
-Date:   Tue,  8 Dec 2020 21:57:29 +0000
-Message-Id: <0de486be33eba2da333ac83efb33a7349344551e.1607464425.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=1JfGLJ6mvOw51UjtiQiEid0QRM4ecB02tmMkfq6nfgs=;
+        b=Ner1UawJ8CCC/Ul3+DicmhAkSlKMHKo7E7ER9+SSENAmYEmp2zO7DC1Jy0YIsKUkuK
+         b4qcHf0LIdU4Riabc7UfZl1SJB2i3fzZYVnBezZH8I4+L7bqSHSdJsyTbo2UNyQeQM6w
+         psLsN3AbeO8Tr0fESl1A1AMOvx8NrOxIrLSL6ErRAOHDmMcqqAi5Prp/ZKCja+qOiPbS
+         YXCCx5KfznTqhwibQ76cIwwwanZOHjJe3Dupg95MCTsPO+l2j+tEnXJvmJdSejB8x1k8
+         qrvNl8T/eFnVYnSGXlaRJ/16thDVkQeJlFnmDqwfdnBp/OEfygMVXUQXcvEbOpDpchva
+         G2gw==
+X-Gm-Message-State: AOAM532jnnIvbcZBUd4eHLO+3OrXkoRWkZLO6A76KR9TWzAH6hJtV6yG
+        34nZdfhfZICEVlzai2Ey881mevu5joa8Tg==
+X-Google-Smtp-Source: ABdhPJycJoQ22ZUHKp4SFC01NBv6COKwNqcwBFSSklb2a+g9mxL/dERv4s0qJgI8iE2CIqgplqeTgQ==
+X-Received: by 2002:a63:40e:: with SMTP id 14mr237953pge.420.1607467362861;
+        Tue, 08 Dec 2020 14:42:42 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id t9sm179036pjq.46.2020.12.08.14.42.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Dec 2020 14:42:42 -0800 (PST)
+Subject: Re: [PATCH liburing] rem_buf/test: inital testing for
+ OP_REMOVE_BUFFERS
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <0de486be33eba2da333ac83efb33a7349344551e.1607464425.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <08387f60-d2fe-1396-aa15-ae9b759efa57@kernel.dk>
+Date:   Tue, 8 Dec 2020 15:42:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <0de486be33eba2da333ac83efb33a7349344551e.1607464425.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Basic testing for IORING_OP_REMOVE_BUFFERS. test_rem_buf(IOSQE_ASYNC)
-should check that it's doing locking right when punted async.
+On 12/8/20 2:57 PM, Pavel Begunkov wrote:
+> Basic testing for IORING_OP_REMOVE_BUFFERS. test_rem_buf(IOSQE_ASYNC)
+> should check that it's doing locking right when punted async.
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+> 
+> NOTICE:
+> test_rem_buf(IOSQE_ASYNC) hangs with 5.10
+> because of double io_ring_submit_lock(). One of the iopoll patches
+> for 5.11 fixes that.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+Let's get just that into 5.10, and then we can fix up 5.11 around that.
 
-NOTICE:
-test_rem_buf(IOSQE_ASYNC) hangs with 5.10
-because of double io_ring_submit_lock(). One of the iopoll patches
-for 5.11 fixes that.
-
- test/read-write.c | 112 ++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 103 insertions(+), 9 deletions(-)
-
-diff --git a/test/read-write.c b/test/read-write.c
-index 84ea3a2..7f33ad4 100644
---- a/test/read-write.c
-+++ b/test/read-write.c
-@@ -472,10 +472,42 @@ static int test_buf_select_short(const char *filename, int nonvec)
- 	return ret;
- }
- 
--static int test_buf_select(const char *filename, int nonvec)
-+static int provide_buffers_iovec(struct io_uring *ring, int bgid)
- {
- 	struct io_uring_sqe *sqe;
- 	struct io_uring_cqe *cqe;
-+	int i, ret;
-+
-+	for (i = 0; i < BUFFERS; i++) {
-+		sqe = io_uring_get_sqe(ring);
-+		io_uring_prep_provide_buffers(sqe, vecs[i].iov_base,
-+						vecs[i].iov_len, 1, bgid, i);
-+	}
-+
-+	ret = io_uring_submit(ring);
-+	if (ret != BUFFERS) {
-+		fprintf(stderr, "submit: %d\n", ret);
-+		return -1;
-+	}
-+
-+	for (i = 0; i < BUFFERS; i++) {
-+		ret = io_uring_wait_cqe(ring, &cqe);
-+		if (ret) {
-+			fprintf(stderr, "wait_cqe=%d\n", ret);
-+			return 1;
-+		}
-+		if (cqe->res < 0) {
-+			fprintf(stderr, "cqe->res=%d\n", cqe->res);
-+			return 1;
-+		}
-+		io_uring_cqe_seen(ring, cqe);
-+	}
-+
-+	return 0;
-+}
-+
-+static int test_buf_select(const char *filename, int nonvec)
-+{
- 	struct io_uring_probe *p;
- 	struct io_uring ring;
- 	int ret, i;
-@@ -509,29 +541,67 @@ static int test_buf_select(const char *filename, int nonvec)
- 	for (i = 0; i < BUFFERS; i++)
- 		memset(vecs[i].iov_base, 0x55, vecs[i].iov_len);
- 
--	for (i = 0; i < BUFFERS; i++) {
-+	ret = provide_buffers_iovec(&ring, 1);
-+	if (ret)
-+		return ret;
-+
-+	ret = __test_io(filename, &ring, 0, 0, 0, 0, nonvec, 1, 1, BS);
-+	io_uring_queue_exit(&ring);
-+	return ret;
-+}
-+
-+static int test_rem_buf(int batch, int sqe_flags)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct io_uring ring;
-+	int left, ret, nr = 0;
-+	int bgid = 1;
-+
-+	if (no_buf_select)
-+		return 0;
-+
-+	ret = io_uring_queue_init(64, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "ring create failed: %d\n", ret);
-+		return 1;
-+	}
-+
-+	ret = provide_buffers_iovec(&ring, bgid);
-+	if (ret)
-+		return ret;
-+
-+	left = BUFFERS;
-+	while (left) {
-+		int to_rem = (left < batch) ? left : batch;
-+
-+		left -= to_rem;
- 		sqe = io_uring_get_sqe(&ring);
--		io_uring_prep_provide_buffers(sqe, vecs[i].iov_base,
--						vecs[i].iov_len, 1, 1, i);
-+		io_uring_prep_remove_buffers(sqe, to_rem, bgid);
-+		sqe->user_data = to_rem;
-+		sqe->flags |= sqe_flags;
-+		++nr;
- 	}
- 
- 	ret = io_uring_submit(&ring);
--	if (ret != BUFFERS) {
-+	if (ret != nr) {
- 		fprintf(stderr, "submit: %d\n", ret);
- 		return -1;
- 	}
- 
--	for (i = 0; i < BUFFERS; i++) {
-+	for (; nr > 0; nr--) {
- 		ret = io_uring_wait_cqe(&ring, &cqe);
--		if (cqe->res < 0) {
-+		if (ret) {
-+			fprintf(stderr, "wait_cqe=%d\n", ret);
-+			return 1;
-+		}
-+		if (cqe->res != cqe->user_data) {
- 			fprintf(stderr, "cqe->res=%d\n", cqe->res);
- 			return 1;
- 		}
- 		io_uring_cqe_seen(&ring, cqe);
- 	}
- 
--	ret = __test_io(filename, &ring, 0, 0, 0, 0, nonvec, 1, 1, BS);
--
- 	io_uring_queue_exit(&ring);
- 	return ret;
- }
-@@ -786,6 +856,30 @@ int main(int argc, char *argv[])
- 		goto err;
- 	}
- 
-+	ret = test_rem_buf(1, 0);
-+	if (ret) {
-+		fprintf(stderr, "test_rem_buf by 1 failed\n");
-+		goto err;
-+	}
-+
-+	ret = test_rem_buf(10, 0);
-+	if (ret) {
-+		fprintf(stderr, "test_rem_buf by 10 failed\n");
-+		goto err;
-+	}
-+
-+	ret = test_rem_buf(2, IOSQE_IO_LINK);
-+	if (ret) {
-+		fprintf(stderr, "test_rem_buf link failed\n");
-+		goto err;
-+	}
-+
-+	ret = test_rem_buf(2, IOSQE_ASYNC);
-+	if (ret) {
-+		fprintf(stderr, "test_rem_buf async failed\n");
-+		goto err;
-+	}
-+
- 	srand((unsigned)time(NULL));
- 	if (create_nonaligned_buffers()) {
- 		fprintf(stderr, "file creation failed\n");
 -- 
-2.24.0
+Jens Axboe
 

@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C25952D3459
-	for <lists+io-uring@lfdr.de>; Tue,  8 Dec 2020 21:52:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3345B2D346C
+	for <lists+io-uring@lfdr.de>; Tue,  8 Dec 2020 21:52:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbgLHUh2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Dec 2020 15:37:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40494 "EHLO
+        id S1729572AbgLHUkz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Dec 2020 15:40:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbgLHUh0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Dec 2020 15:37:26 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DE93C0613CF
-        for <io-uring@vger.kernel.org>; Tue,  8 Dec 2020 12:36:46 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id dk8so16104366edb.1
-        for <io-uring@vger.kernel.org>; Tue, 08 Dec 2020 12:36:46 -0800 (PST)
+        with ESMTP id S1729571AbgLHUky (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Dec 2020 15:40:54 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 358E1C0613D6
+        for <io-uring@vger.kernel.org>; Tue,  8 Dec 2020 12:40:14 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id 3so3503676wmg.4
+        for <io-uring@vger.kernel.org>; Tue, 08 Dec 2020 12:40:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cPpWN8Xk7Vzve0W1xmYH/WyATA1LO+aqD4n4ah1IqbI=;
-        b=YKrAs5KsRW2hRNUo/fp74IpFIjBP3aGTcLhok0/PTaJUTTr3yFA6e8wmL1ypaYi0n6
-         Eh6EBzdc11wYLaod9Jkj6PHmMU9SgGV2stSqATozJtZsCGGB9RMeMGUpepdZhL3FDeaS
-         +WtW2h6poifBODcNUL/ml4AWdq+nmDG8Xi2McTWWjkAaM/6HdHwa0u4JGyT1zkd75AYL
-         ibnZtYQn3oAdE+m7sqbl2g4w8w7jZ47MmqYpWP/vh+KgU4R4vaz1YTBUHapImVv0wpBy
-         f9TKnIMpJTPXiA6uYUGjQIFhlBxb3hTA77ree9fAD2RfNoJoCpKhqjYDGCXl9C383jpg
-         xEXg==
+        bh=wgR6HmUWsqSh5iPS6e9irir1Uz5eGFpBK+sCJcu0rXc=;
+        b=uf3OZUHNOglIIHClQxdCR7QylgDLxmlX6PfQngxPSjceMzBMXTAhFIpS2CPf3JftHM
+         b3wzAt1ld9lJiwdlALmXtd4iKulDQEnVCpFNyps2eB8bNMF3qejKPJKLmXQHXjOBzblU
+         rWRKs7fFcECpRVirsp4Xzd10WfI7aug0t2LYJ/wig9lgjdil3Ug4g6yEqsBkFOhMdS1d
+         oTTVNZXvY4zNzARI+0M+W9PVsva45gE5cKxQfIN8J7/gfjCG785CF15xf43t2seMzWfk
+         dq3BXngZ/38kT4fwhXVN/AortTyArvDvAnU3D95JaVRPvGCiOsKT/io2VpLI9AWbFkoF
+         tM2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=cPpWN8Xk7Vzve0W1xmYH/WyATA1LO+aqD4n4ah1IqbI=;
-        b=hbosYZuCifn0PNs0Y4DL/LGK8NR14nTwfZOsHUztI8IihLNuI62cweQtpLGh0Rt+pO
-         OE6hPTdG14T52uRtnTF6vJiLfp4ddw8dtXcaBdD7gy6u8F3PUMlprvTg5gH9sl8rmmzO
-         jNJ5WkXUGZLWgbjeJXLCfcKK1XuYxB2FNE8AL0nZYsot0c87Tb1CtgupQDcA9Il1Pl+p
-         Q4sKQ/PKjXAHTLAvDEvK+LYLtJiFUZre/RixlSiTGtX3fvjeeLFLTh4HMzb67fqCfTQc
-         VgyaCP0KWV9n6SASi6gHQqoDhejzxoonYfMyqfbcir4ZGH9JUC2Vj59KwHgOZtfY0l5e
-         tH6Q==
-X-Gm-Message-State: AOAM531GONTHEio9KShJ9GyIka1k29vaOkMIGcgRDd/n52bVkUw82MQ/
-        RBcX2d7yOR+kwb70WdkM8j7faMIcp5xfIw==
-X-Google-Smtp-Source: ABdhPJzKhCH504R83j5Ih3bIFmQFSzDsOue+5gKbTwK3kJDWZSEW5hcGFfYX0JryjDN9tAFL/CetsA==
-X-Received: by 2002:adf:ebd2:: with SMTP id v18mr23077898wrn.322.1607454932678;
-        Tue, 08 Dec 2020 11:15:32 -0800 (PST)
+        bh=wgR6HmUWsqSh5iPS6e9irir1Uz5eGFpBK+sCJcu0rXc=;
+        b=p3ZvOm7ONTnmMVmu7wehQ+MaEReQdkS0Ou2S58UFR02RTSKpMQ8iPotjzvB0tvpb8Q
+         0z+nUXTt93CiILGLDemftPikfTquk5dzKwsrW6gsSkSpHbG9KkEtoAHeCaqJtlNkTWsO
+         kX+TveB+DLqYxIUQ9G7m0C7xb/aZGTDTgVgyDjMnOwFzeXEYEFF+qpcEoHerCrIQ72js
+         1ktyICWi7aEx7gkrawtb1ZDhV+vLlUCOju+pk/CBZ4PIgMZDb0S8jhA8u0Dn83YkoRaD
+         U411nlGKNspJ1CwV6ghrXk6cbg+bnAvg0VYpLZOBXYtLga65sJP3pmBu4HzXx2Pv7n9L
+         fJXA==
+X-Gm-Message-State: AOAM530BhpwC3F8bmhTrsjFf4xbXEBDgQSkFKg7+YT1LlYaxdZ6DXAAO
+        SiKihfVUx1TZ6Pp2ZNSYq4OMtqvLLbaYOQ==
+X-Google-Smtp-Source: ABdhPJwP4uOvja47XynvA9YIr9ZhaGwcge0o3z0lIoaXMK1y4A+Auo9qtjV75/hgdNydWefI+96sNw==
+X-Received: by 2002:a1c:80c3:: with SMTP id b186mr5121575wmd.20.1607455657475;
+        Tue, 08 Dec 2020 11:27:37 -0800 (PST)
 Received: from [192.168.8.116] ([85.255.233.156])
-        by smtp.gmail.com with ESMTPSA id u6sm1278866wrm.90.2020.12.08.11.15.31
+        by smtp.gmail.com with ESMTPSA id z140sm5782511wmc.30.2020.12.08.11.27.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Dec 2020 11:15:32 -0800 (PST)
-Subject: Re: [PATCH 5.10 1/5] io_uring: always let io_iopoll_complete()
- complete polled io.
+        Tue, 08 Dec 2020 11:27:36 -0800 (PST)
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     xiaoguang.wang@linux.alibaba.com,
         io-uring <io-uring@vger.kernel.org>
 References: <cover.1607293068.git.asml.silence@gmail.com>
  <cf556b9b870c640690a1705c073fe955c01dab47.1607293068.git.asml.silence@gmail.com>
  <10e20bd3-b08f-98b8-f857-8b9a75a511dd@kernel.dk>
+ <d9f677a4-1ac0-0e64-5c2a-497cac9dc8e5@gmail.com>
+ <33b5783d-c238-b0da-38cf-974736c36056@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -100,44 +100,47 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <d9f677a4-1ac0-0e64-5c2a-497cac9dc8e5@gmail.com>
-Date:   Tue, 8 Dec 2020 19:12:15 +0000
+Subject: Re: [PATCH 5.10 1/5] io_uring: always let io_iopoll_complete()
+ complete polled io.
+Message-ID: <89d04d6b-2f84-82af-9ee7-edeb69f2a5bb@gmail.com>
+Date:   Tue, 8 Dec 2020 19:24:20 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <10e20bd3-b08f-98b8-f857-8b9a75a511dd@kernel.dk>
+In-Reply-To: <33b5783d-c238-b0da-38cf-974736c36056@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/12/2020 16:28, Jens Axboe wrote:
-> On Sun, Dec 6, 2020 at 3:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->> From: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+On 08/12/2020 19:17, Jens Axboe wrote:
+> On 12/8/20 12:12 PM, Pavel Begunkov wrote:
+>> On 07/12/2020 16:28, Jens Axboe wrote:
+>>> On Sun, Dec 6, 2020 at 3:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>> From: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+>>>>
+>>>> The reason is that once we got a non EAGAIN error in io_wq_submit_work(),
+>>>> we'll complete req by calling io_req_complete(), which will hold completion_lock
+>>>> to call io_commit_cqring(), but for polled io, io_iopoll_complete() won't
+>>>> hold completion_lock to call io_commit_cqring(), then there maybe concurrent
+>>>> access to ctx->defer_list, double free may happen.
+>>>>
+>>>> To fix this bug, we always let io_iopoll_complete() complete polled io.
+>>>
+>>> This patch is causing hangs with iopoll testing, if you end up getting
+>>> -EAGAIN on request submission. I've dropped it.
 >>
->> The reason is that once we got a non EAGAIN error in io_wq_submit_work(),
->> we'll complete req by calling io_req_complete(), which will hold completion_lock
->> to call io_commit_cqring(), but for polled io, io_iopoll_complete() won't
->> hold completion_lock to call io_commit_cqring(), then there maybe concurrent
->> access to ctx->defer_list, double free may happen.
->>
->> To fix this bug, we always let io_iopoll_complete() complete polled io.
+>> I fail to understand without debugging how does it happen, especially since
+>> it shouldn't even get out of the while in io_wq_submit_work(). Is that
+>> something obvious I've missed?
 > 
-> This patch is causing hangs with iopoll testing, if you end up getting
-> -EAGAIN on request submission. I've dropped it.
+> I didn't have time to look into it, and haven't yet, just reporting that
+> it very reliably fails (and under what conditions).
 
-I fail to understand without debugging how does it happen, especially since
-it shouldn't even get out of the while in io_wq_submit_work(). Is that
-something obvious I've missed?
-
-> 
-> Reproducible with test/iopoll /dev/somedevice
-> 
-> where somedevice has a low queue depth and hits request starvation
-> during the test.
-> 
+Yeah, I get it, asked just in case.
+I'll see what's going on if Xiaoguang wouldn't handle it before.
 
 -- 
 Pavel Begunkov

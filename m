@@ -2,111 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6929A2D38C2
-	for <lists+io-uring@lfdr.de>; Wed,  9 Dec 2020 03:24:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E24C2D38C5
+	for <lists+io-uring@lfdr.de>; Wed,  9 Dec 2020 03:26:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725789AbgLICYO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Dec 2020 21:24:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37842 "EHLO
+        id S1725877AbgLICYF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Dec 2020 21:24:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726715AbgLICYJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Dec 2020 21:24:09 -0500
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EE2AC0613CF;
-        Tue,  8 Dec 2020 18:23:23 -0800 (PST)
-Received: by mail-wm1-x343.google.com with SMTP id d3so126230wmb.4;
-        Tue, 08 Dec 2020 18:23:23 -0800 (PST)
+        with ESMTP id S1725789AbgLICYE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Dec 2020 21:24:04 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 591BFC0613D6;
+        Tue,  8 Dec 2020 18:23:24 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id t16so61105wra.3;
+        Tue, 08 Dec 2020 18:23:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2oioyFLR2bFNpjjk5al2TpT+eS54q+WK5/M1bDWQq8Y=;
-        b=oDJccotZxIU1EHGzNTq4hfh5WcKNEFZmeQ3MaKAzRhp3LvOg33xVS5Zts/JLvl79bc
-         2chccfsoBYt8t4MpQJAs85iFB/9O7NAEX1IDyovACFDFoVOzZHk+GL7pWapo7oTjCVTk
-         mvBhGOBGqIAG066p4hVZcsRiD7WGBxTmTwygzPu1Q9tcNejuRfoKvsFiDlQDDyxPPLfF
-         HTycdtH0HWmnHe5nrXjGKoYySBQAoo/r69ZvKZ9lOf3hQCVrA81/Cx3sKHt5JQprbmdX
-         y34y4++GXIP9gSitcNePRN3/htCNhRuSeovkaVJSkiUHXYudshBP8lnjjElY4oKMBBKd
-         mOew==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kEk2mz5l7WecWhgbMMZZSjIALYbOuSd6wBX0z9f5zlg=;
+        b=el+Ia+dPnlOkLmTSpK7fA3ZFd71Z12DD7TXIqNy9i3WkLpb1bqXOxd7Nm/nwbIO2YG
+         k8Yuy3f91BWVy4rlXD3vyZq8hJd3IR01DjOpNWqFsqtIYPTfAAB2tDeGDiM0sWffWlS2
+         LdqcSjuPDXENlRU130Yz+/1mjILgYKH3QUEOmMondSWpNHbIVk2wrVxdaqqCRIIVdNAl
+         o7ExEYoBCfMkS3QRWy8fazz7zsHuYdxogYyXecZ98eLiJhImVR9/E8pKrmch6sqWoyVT
+         XutPu4MuiCQspHh+puGzFHOGg9avtQg8aoyCu/wzPXqQvUkSZ7Q3mq8a3qeggIjIyM4s
+         CHJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2oioyFLR2bFNpjjk5al2TpT+eS54q+WK5/M1bDWQq8Y=;
-        b=lFopdHnT+kBA95phFPK6k4Ua95CXHVpBzHnNdrG1iaLeCKGZJyWhmEOaR4TfFbb+Xr
-         ageeeYyiqr9WEzQgWoi5k6QbGj5NJ5FKaRVm34CkrXDXyXVDDThSChOVQ2onu3a0RN4G
-         mQFk6PKs5kuhLrQHaks1hKWrOlOsgkvKANin2a6MTp475aE6qft5dF/y9PpA0jlSWWHg
-         k35GTwXjtT/sSC9CKy5Wrydr2OQhll4BgKQ96xnq1lmBHa1gUj2MDta7wl8O7SBKxtDt
-         It9ZFWHmW04t6SFsZAFXJxn6OvZDaKuHu5lQU3eBg+heULq4qMc9YrE3NYCfl3nyRoHT
-         H5PA==
-X-Gm-Message-State: AOAM533EtuqduvlShegIjLaPNnb624c61eIRYJUvxAhHtuGIFDrytgGJ
-        xt8dbJKETQz9Y7DGUpALVPI=
-X-Google-Smtp-Source: ABdhPJzWr26qXVlQbn+WLoaf5ahxMb42KDZknutFM27XXfuv6U6vlI0gMQaN4rhryPfgRX53lc84dA==
-X-Received: by 2002:a1c:309:: with SMTP id 9mr303633wmd.80.1607480602202;
-        Tue, 08 Dec 2020 18:23:22 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kEk2mz5l7WecWhgbMMZZSjIALYbOuSd6wBX0z9f5zlg=;
+        b=fns6Bm98+Oi1sGiZ8qHnX/onYHLV4bjoNPXvYBGvXSspZoxo+SmwTdkjZ9M+CRaZLp
+         blF3PlfqgEGLcWd9Niz9HX/8Mh9Vv1v7u7SXBrDFYvxVNQ8QKBE7PcF4+/yPIQeeDjN/
+         N9mHhpPqZcRyTErg7t4T+lzZVScEIJVZlO6q3lrxocULq3IuFD8aqbF3Q415NQ8Qz6za
+         /vmH3qEaO33rGbfh2XNVBG5/qPPIcrOB4IoYH4I/T9+dORWb1GeiT8DPCp9Q3A1a3jfQ
+         GRssZ4Z2C5WxnMs5kvy4F0o9khxTWGuOcoYDCjkYUos7FbR7u2tG6BQyV2gbjWgu7ya8
+         3bSA==
+X-Gm-Message-State: AOAM531vRRAAAaz2KVJC+mwACK4pBrOlP70oD8GkGJCDT4+8lxgHYBCK
+        At13GSaMskMF8AB12iirRhY=
+X-Google-Smtp-Source: ABdhPJxWrrjCcSS+xhUK643SB6maMOz8JksdzmJmtBzLyHa0WrLlvDru8TaL0VthNeK+uog0GMINug==
+X-Received: by 2002:a5d:5710:: with SMTP id a16mr46975wrv.229.1607480603120;
+        Tue, 08 Dec 2020 18:23:23 -0800 (PST)
 Received: from localhost.localdomain ([85.255.233.156])
-        by smtp.gmail.com with ESMTPSA id k64sm330606wmb.11.2020.12.08.18.23.21
+        by smtp.gmail.com with ESMTPSA id k64sm330606wmb.11.2020.12.08.18.23.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Dec 2020 18:23:21 -0800 (PST)
+        Tue, 08 Dec 2020 18:23:22 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: [RFC 0/2] nocopy bvec for direct IO
-Date:   Wed,  9 Dec 2020 02:19:50 +0000
-Message-Id: <cover.1607477897.git.asml.silence@gmail.com>
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] iov: introduce ITER_BVEC_FLAG_FIXED
+Date:   Wed,  9 Dec 2020 02:19:51 +0000
+Message-Id: <de27dbca08f8005a303e5efd81612c9a5cdcf196.1607477897.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1607477897.git.asml.silence@gmail.com>
+References: <cover.1607477897.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The idea is to avoid copying, merging, etc. bvec from iterator to bio
-in direct I/O and use the one we've already got. Hook it up for io_uring.
-Had an eye on it for a long, and it also was brought up by Matthew
-just recently. Let me know if I forgot or misplaced some tags.
+Add ITER_BVEC_FLAG_FIXED iov iter flag, which will allow us to reuse
+passed in bvec instead of copying it. In particular it means that
+iter->bvec won't be freed and page references are taken remain so
+until callees don't need them, including asynchronous execution.
 
-A benchmark got me 430KIOPS vs 540KIOPS, or +25% on bare metal. And perf
-shows that bio_iov_iter_get_pages() was taking ~20%. The test is pretty
-silly, but still imposing. I'll redo it closer to reality for next
-iteration, anyway need to double check some cases.
-
-If same applied to iomap, common chunck can be moved from block_dev
-into bio_iov_iter_get_pages(), but if there any benefit for filesystems,
-they should explicitly opt in with ITER_BVEC_FLAG_FIXED.
-
-# how to apply
-based on Jens' for-11/block
-+ Ming's nr_vec patch,
-+ io_uring fix, 9c3a205c5ffa36e96903c2 ("io_uring: fix ITER_BVEC check")
-
-or there:
-https://github.com/isilence/linux/commits/bvec_nocopy
-
-# how to reproduce
-null_blk queue_mode=2 completion_nsec=0 submit_queues=NUM_CPU
-fio/t/io_uring with null blk, no iopoll, BS=16*4096
-
-
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Ming Lei <ming.lei@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-
-Pavel Begunkov (2):
-  iov: introduce ITER_BVEC_FLAG_FIXED
-  block: no-copy bvec for direct IO
-
- fs/block_dev.c      | 30 +++++++++++++++++++++++++++++-
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
  fs/io_uring.c       |  1 +
  include/linux/uio.h | 14 +++++++++++---
- 3 files changed, 41 insertions(+), 4 deletions(-)
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index c536462920a3..9ff2805d0075 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2920,6 +2920,7 @@ static ssize_t io_import_fixed(struct io_kiocb *req, int rw,
+ 		}
+ 	}
+ 
++	iter->type |= ITER_BVEC_FLAG_FIXED;
+ 	return len;
+ }
+ 
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 72d88566694e..af626eb970cf 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -18,6 +18,8 @@ struct kvec {
+ };
+ 
+ enum iter_type {
++	ITER_BVEC_FLAG_FIXED = 2,
++
+ 	/* iter types */
+ 	ITER_IOVEC = 4,
+ 	ITER_KVEC = 8,
+@@ -29,8 +31,9 @@ enum iter_type {
+ struct iov_iter {
+ 	/*
+ 	 * Bit 0 is the read/write bit, set if we're writing.
+-	 * Bit 1 is the BVEC_FLAG_NO_REF bit, set if type is a bvec and
+-	 * the caller isn't expecting to drop a page reference when done.
++	 * Bit 1 is the BVEC_FLAG_FIXED bit, set if type is a bvec and the
++	 * caller ensures that page references and memory baking bvec won't
++	 * go away until callees finish with them.
+ 	 */
+ 	unsigned int type;
+ 	size_t iov_offset;
+@@ -52,7 +55,7 @@ struct iov_iter {
+ 
+ static inline enum iter_type iov_iter_type(const struct iov_iter *i)
+ {
+-	return i->type & ~(READ | WRITE);
++	return i->type & ~(READ | WRITE | ITER_BVEC_FLAG_FIXED);
+ }
+ 
+ static inline bool iter_is_iovec(const struct iov_iter *i)
+@@ -85,6 +88,11 @@ static inline unsigned char iov_iter_rw(const struct iov_iter *i)
+ 	return i->type & (READ | WRITE);
+ }
+ 
++static inline unsigned char iov_iter_bvec_fixed(const struct iov_iter *i)
++{
++	return i->type & ITER_BVEC_FLAG_FIXED;
++}
++
+ /*
+  * Total number of bytes covered by an iovec.
+  *
 -- 
 2.24.0
 

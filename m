@@ -2,138 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 980182D3E32
-	for <lists+io-uring@lfdr.de>; Wed,  9 Dec 2020 10:09:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D5642D4183
+	for <lists+io-uring@lfdr.de>; Wed,  9 Dec 2020 12:58:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbgLIJH3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Dec 2020 04:07:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43078 "EHLO
+        id S1730987AbgLIL6B (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Dec 2020 06:58:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727339AbgLIJH3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Dec 2020 04:07:29 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5465C0613D6;
-        Wed,  9 Dec 2020 01:06:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MNMpVWDVu1xKs8I0T0Bns+VkPimcOASCojWukxDS8ng=; b=IpPbZN2f78dxphMHqQpYHqe58S
-        vw4NwnQ+Xz59+sElzQ/B5L3eRJkdnRh6BnNVuFZ5y34CD+z1GqrWUYj06V+i7uo3q/XpaDl+cG884
-        drRT2Fl5JdUamqqF/e3c5FVm4cZdv6ufagIWq3l2FmDBRTe88w+7D76jqPZ+a/1/2aZbc/Kq3RR8b
-        AW1FVBy6gWIDlGSu1r/dQhnWUKxtmBmSBD63N8Y1uTWHiW0k+fHm0hzv4digf/kQigNWvUXpNwcCN
-        p7YE1vjhW3f9nlvBiwMKeZthCUjMehbPAaFYLfvK5cVKrRzzP+XOPQDrNS+A5UhEbrU/2s3/fcJsv
-        mt+CWOYQ==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kmvQs-00089J-7s; Wed, 09 Dec 2020 09:06:46 +0000
-Date:   Wed, 9 Dec 2020 09:06:46 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Pavel Begunkov <asml.silence@gmail.com>
+        with ESMTP id S1730957AbgLIL6A (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Dec 2020 06:58:00 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DF3EC0613CF;
+        Wed,  9 Dec 2020 03:57:20 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id 91so1431379wrj.7;
+        Wed, 09 Dec 2020 03:57:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YvDAWwj69k6a9eK0XoyY33zezqQ0SaM2Q0F8FhGihTQ=;
+        b=fjMj/t/qMSj77PTsV+gj/luqytnACm7XsGx5VFmY9BdWvHMpvbtoA4H7Di9P++Tclm
+         VHlyZz82WIG8UVGKbPgAsnV0BfdBOQBrg/l73o0kxBeki5C8JdrFudTVdbwti5fkc3h2
+         FemwdGxA4PyWz5hAyeVONdELLFHtVesQxnWvfQOOLTCatD5y4wAhvInWpmk79WcMqfN1
+         LHIbg1hJ+7/FAqluhe3eMmmrZTZfCMZKix2DnyWLAUxYztIIGKyE9g8bu87Pdg1pJYed
+         +PE0D4jw4hsN3bhG/huRDbzjUeCPTYfge/vEdWHlflmjN2uuAvPMnef2iR7wyN25OTlz
+         O3Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=YvDAWwj69k6a9eK0XoyY33zezqQ0SaM2Q0F8FhGihTQ=;
+        b=QLZzrk3iZ2p85UcQJ2ATPqQYTFFVzMoLZmxQX8XVeeutd6hWD5vim7+nUefPj/6zsc
+         1M6hnt4Ayqz9kJVlTqnvP+A618wzE4IU6VoK/6nfexfEWhGAy6nIly4KrTjteRzu0J6n
+         fP9rIVhKGeUZX0ow9O6BPntc4/wP0NZYqTm41NMSqpGa3qsZMhHmwduShNgRwuv9hn5V
+         7x8ykUi8KdPmgn+uWi80aoNi7e8K3BqHa2cerL7SvDufzJUajDRtfN+Zna+m3DchekZO
+         uLD9QXPtpD3b13vjwE6OGawPR/vAvE1BtykPXZh//IavO7XSvfRFrcjKRWmSe+TgbcnH
+         wDPQ==
+X-Gm-Message-State: AOAM531iBGMyNHG8LI8WbiT0Kaxb4Ck0M/BLWM+QRGw31uCFf5/5kvF4
+        BgCXQSGYNJTzka0/INt5Kk4ahAQ5R1bnbQ==
+X-Google-Smtp-Source: ABdhPJwgsSEW+Npf6fxD8xIqm4oTqL4TwDAI47zzPB75XyyZz7S9plQCMuEmJZLhCigKD7UJtfMxvg==
+X-Received: by 2002:a5d:6682:: with SMTP id l2mr2286262wru.213.1607515038928;
+        Wed, 09 Dec 2020 03:57:18 -0800 (PST)
+Received: from [192.168.8.121] ([85.255.233.156])
+        by smtp.gmail.com with ESMTPSA id d8sm2812564wrp.44.2020.12.09.03.57.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Dec 2020 03:57:18 -0800 (PST)
+To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] iov: introduce ITER_BVEC_FLAG_FIXED
-Message-ID: <20201209090646.GA28832@infradead.org>
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
 References: <cover.1607477897.git.asml.silence@gmail.com>
- <de27dbca08f8005a303e5efd81612c9a5cdcf196.1607477897.git.asml.silence@gmail.com>
- <20201209083645.GB21968@infradead.org>
+ <20201209065040.GA27959@infradead.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
+ bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
+ 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
+ +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
+ W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
+ CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
+ Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
+ EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
+ jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
+ NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
+ bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
+ PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
+ Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
+ Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
+ xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
+ aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
+ HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
+ 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
+ 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
+ 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
+ M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
+ reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
+ IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
+ dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
+ Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
+ jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
+ Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
+ dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
+ xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
+ DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
+ F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
+ 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
+ aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
+ 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
+ LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
+ uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
+ rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
+ 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
+ JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
+ UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
+ m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
+ OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
+Subject: Re: [RFC 0/2] nocopy bvec for direct IO
+Message-ID: <8521bb81-ce0b-356f-ea75-bb069688715f@gmail.com>
+Date:   Wed, 9 Dec 2020 11:54:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201209083645.GB21968@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20201209065040.GA27959@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Dec 09, 2020 at 08:36:45AM +0000, Christoph Hellwig wrote:
-> This is making the iter type even more of a mess than it already is.
-> I think we at least need placeholders for 0/1 here and an explicit
-> flags namespace, preferably after the types.
+On 09/12/2020 06:50, Christoph Hellwig wrote:
+> On Wed, Dec 09, 2020 at 02:19:50AM +0000, Pavel Begunkov wrote:
+>> A benchmark got me 430KIOPS vs 540KIOPS, or +25% on bare metal. And perf
+>> shows that bio_iov_iter_get_pages() was taking ~20%. The test is pretty
+>> silly, but still imposing. I'll redo it closer to reality for next
+>> iteration, anyway need to double check some cases.
 > 
-> Then again I'd much prefer if we didn't even add the flag or at best
-> just add it for a short-term transition and move everyone over to the
-> new scheme.  Otherwise the amount of different interfaces and supporting
-> code keeps exploding.
+> That is pretty impressive.  
 
-Note that the only other callers that use iov_iter_bvec and asynchronous
-read/write are loop, target and nvme-target, so this should actually
-be pretty simple.  Out of these only target needs something like this
-trivial change to keep the bvec available over the duration of the I/O,
-the other two should be fine already:
+The difference will go down with BS=~1-2 pages, just need to to find a
+moment to test properly.
 
----
-From 581a8eabbb1759e3dcfee4b1d2e419f814a8cb80 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Wed, 9 Dec 2020 10:05:04 +0100
-Subject: target/file: allocate the bvec array as part of struct target_core_file_cmd
+> But I only got this cover letter, not the
+> actual patches..
 
-This saves one memory allocation, and ensures the bvecs aren't freed
-before the AIO completion.  This will allow the lower level code to be
-optimized so that it can avoid allocating another bvec array.
+Apologies, that goes for everyone as lost CCs in the patches.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/target/target_core_file.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/target/target_core_file.c b/drivers/target/target_core_file.c
-index 7143d03f0e027e..ed0c39a1f7c649 100644
---- a/drivers/target/target_core_file.c
-+++ b/drivers/target/target_core_file.c
-@@ -241,6 +241,7 @@ struct target_core_file_cmd {
- 	unsigned long	len;
- 	struct se_cmd	*cmd;
- 	struct kiocb	iocb;
-+	struct bio_vec	bvecs[];
- };
- 
- static void cmd_rw_aio_complete(struct kiocb *iocb, long ret, long ret2)
-@@ -268,29 +269,22 @@ fd_execute_rw_aio(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
- 	struct target_core_file_cmd *aio_cmd;
- 	struct iov_iter iter = {};
- 	struct scatterlist *sg;
--	struct bio_vec *bvec;
- 	ssize_t len = 0;
- 	int ret = 0, i;
- 
--	aio_cmd = kmalloc(sizeof(struct target_core_file_cmd), GFP_KERNEL);
-+	aio_cmd = kmalloc(struct_size(aio_cmd, bvecs, sgl_nents), GFP_KERNEL);
- 	if (!aio_cmd)
- 		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
- 
--	bvec = kcalloc(sgl_nents, sizeof(struct bio_vec), GFP_KERNEL);
--	if (!bvec) {
--		kfree(aio_cmd);
--		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
--	}
--
- 	for_each_sg(sgl, sg, sgl_nents, i) {
--		bvec[i].bv_page = sg_page(sg);
--		bvec[i].bv_len = sg->length;
--		bvec[i].bv_offset = sg->offset;
-+		aio_cmd->bvecs[i].bv_page = sg_page(sg);
-+		aio_cmd->bvecs[i].bv_len = sg->length;
-+		aio_cmd->bvecs[i].bv_offset = sg->offset;
- 
- 		len += sg->length;
- 	}
- 
--	iov_iter_bvec(&iter, is_write, bvec, sgl_nents, len);
-+	iov_iter_bvec(&iter, is_write, aio_cmd->bvecs, sgl_nents, len);
- 
- 	aio_cmd->cmd = cmd;
- 	aio_cmd->len = len;
-@@ -307,8 +301,6 @@ fd_execute_rw_aio(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
- 	else
- 		ret = call_read_iter(file, &aio_cmd->iocb, &iter);
- 
--	kfree(bvec);
--
- 	if (ret != -EIOCBQUEUED)
- 		cmd_rw_aio_complete(&aio_cmd->iocb, ret, 0);
- 
 -- 
-2.29.2
-
+Pavel Begunkov

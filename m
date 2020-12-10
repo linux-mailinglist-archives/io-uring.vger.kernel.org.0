@@ -2,322 +2,203 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9ABC2D63A0
-	for <lists+io-uring@lfdr.de>; Thu, 10 Dec 2020 18:34:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 482682D63DB
+	for <lists+io-uring@lfdr.de>; Thu, 10 Dec 2020 18:44:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392743AbgLJRc6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Dec 2020 12:32:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32802 "EHLO
+        id S2392701AbgLJRm7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Dec 2020 12:42:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392727AbgLJRcx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Dec 2020 12:32:53 -0500
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3FF3C061793
-        for <io-uring@vger.kernel.org>; Thu, 10 Dec 2020 09:32:12 -0800 (PST)
-Received: by mail-io1-xd43.google.com with SMTP id t8so6354155iov.8
-        for <io-uring@vger.kernel.org>; Thu, 10 Dec 2020 09:32:12 -0800 (PST)
+        with ESMTP id S2392879AbgLJRmu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Dec 2020 12:42:50 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6368C0613D6
+        for <io-uring@vger.kernel.org>; Thu, 10 Dec 2020 09:42:09 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id t16so6362157wra.3
+        for <io-uring@vger.kernel.org>; Thu, 10 Dec 2020 09:42:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        d=gmail.com; s=20161025;
+        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=25q6zpipedQCVIYwyHkHiyB2heybX2dq15I5qG0YlVU=;
-        b=HTOqOxtZZ/tfgWCCGjsa+q0Ok+1fCKGLfjH/9H1uyvhIXJ3/4WTqbFR1ShfwhwFxZM
-         fAW1cAfVCA2/FtvGvGFl1m4PbmZXPsZOXLKxnd2ClD6frDTAZo6wjQNIm4BtDC1eLCqS
-         mEWWjERdMDhLzW6L0t0ZuphjO0T2mh2Yb2+4v9lMy5w6MV9HjyPM/dkQ4Uki1vDFDvcu
-         myOwk1EzCOmwj8gCC3H4H3wSNknc+sjFUVYL/CxbErbXun3qaTdPQJ2uVBRXl8//7kZv
-         JsUgMpx2xQXyv43ZFKIbfLiV4HiTwfUza4fDHRlxcfh7aNL6aEnC9lvftRV6jP1mGiUr
-         NpCA==
+        bh=5iGtu25a5aaKPulln//7UFA3FLkS8CABfcPsugbtM3Y=;
+        b=OM36dx63sYo0nho4abFwr5jLTcW/IrzYE5Ti1ETaDp/FrHBQ+FI5VTAMOD5oIQuAWJ
+         88A8zpFwxYHr/7VXiMAJy9yKn208fYV7GSCjf8uSN7erFf8HHGJRnNabkvCRrIUAMtfv
+         RUv+uAztG+4SecahKp2T5CxxY1qjG8sAgFgJdzUgEchTbzRBklTes26bBlWCdPnCLJoo
+         HhvAJSi95dqXypNqWzAi32LB8US0b1IWNul0POY0kK6s99ZmwGyxv/72dIPYPGBTAB8S
+         izGZlTw6SgFG+1Sd6eBKr6KiPS+x7f46DA0umA1NyEsSV//cjKxviVG/LfFahZvkpLVc
+         43ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=25q6zpipedQCVIYwyHkHiyB2heybX2dq15I5qG0YlVU=;
-        b=Fxi+3iufjPWPn+ESaoOdoXQ33OIQQwxsNA/rgzcvwOW3yUKWLPlKeHRAi6P+P+EKGF
-         Pxbc7Z8acWjJfMy7kUbUBr05UNbSGox3/EMt2aGg1EjRMIPsqbXAzbKEzJedY3IH3zR1
-         pUEI6m5qcQ3ipU3kqwf+CAg99rBlNc/6pv55WSDKFYoo/CqFCQEjbNyzPfUsuE3ND7uh
-         gKeH6kKbx+Gsj7zwWutRHoj/L+bD+LbPbnkFqaZV+XA6I+xFgdOq6wJmB+/wPPsSQwuX
-         EZnSTKkmjoYhfYx4vAVJWDq6nafuo/Chmsv4nNBUuZumm3WV7I5l+PkxBvRzqxOmEPWt
-         Ki/w==
-X-Gm-Message-State: AOAM5301VLpDSkdKEmZ2rmUbFwJ4f3g0xZB24iG3xgtNwDYl1ISImayA
-        aFmMWi1pFIw37v9jMdbr3ZzY6ZJo9CrIlA==
-X-Google-Smtp-Source: ABdhPJxEyLEleHR+eaE3z5uxVwNKUGCka8AWtL/B6y2Hkfjc7NiIr6EzhJjl4e5a6ZqB7RzXd3FKvA==
-X-Received: by 2002:a05:6638:f89:: with SMTP id h9mr9881310jal.89.1607621531866;
-        Thu, 10 Dec 2020 09:32:11 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t2sm3694477ili.31.2020.12.10.09.32.10
+        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=5iGtu25a5aaKPulln//7UFA3FLkS8CABfcPsugbtM3Y=;
+        b=NB9HoxXUy5Y6jKvPktQ8i/wqHeVs8qd22AgP8EQg/6zGDd0jp4HDVHs20Mpex9eAfR
+         Lwb9XXW+rtKQeebIP094aA+l/3OWCPihGrmFnBHY7QGI4RJkxxNTxh1ODcEw1U5NujYE
+         OLTXcjHesfSuBBa52RgwZJmt9pd6MEhaYTciEUf2OGwTXNk3/eEbZcw5sN6W8vGPBhNh
+         dvBU3v8y5WeCwotIG/Iyo/wWKf0cKoteF09UyTo4riz24VU2HuU/j4NL0OPyMyi34G68
+         y+U7t9oQUzOkPtOxnhk7Y42Z+mvMN7TAq2qp6F96F3oola6T7dKMveHUtS4JNsEBN3n7
+         ojSA==
+X-Gm-Message-State: AOAM530/W+LARHgIZoGIzAEG0I8bFNmFpwXZ3kY4BZ9j4TzAYaUPM+3c
+        rVWtDzFVgseYBKVpo/e+FqSrfJbg+g4A4Q==
+X-Google-Smtp-Source: ABdhPJwnJBzz9A2VA4XfSZiW9ekh/UxmGBPsCUiF6Eru5JKGl4we/rfh9ozBYnDtGuTqTGSezRx/lw==
+X-Received: by 2002:a05:6000:ce:: with SMTP id q14mr9348378wrx.277.1607622128209;
+        Thu, 10 Dec 2020 09:42:08 -0800 (PST)
+Received: from [192.168.8.122] ([185.69.144.17])
+        by smtp.gmail.com with ESMTPSA id q12sm11493517wmc.45.2020.12.10.09.42.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Dec 2020 09:32:11 -0800 (PST)
-Subject: namei.c LOOKUP_NONBLOCK (was "Re: [GIT PULL] io_uring fixes for
- 5.10-rc")
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <6535286b-2532-dc86-3c6e-1b1e9bce358f@kernel.dk>
- <CAHk-=wjrayP=rOB+v+2eTP8micykkM76t=6vp-hyy+vWYkL8=A@mail.gmail.com>
- <4bcf3012-a4ad-ac2d-e70b-17f17441eea9@kernel.dk>
- <CAHk-=wimYoUtY4ygMNknkKZHqgYBZbkU4Koo5cE6ar8XjHkzGg@mail.gmail.com>
- <ad8db5d0-2fac-90b6-b9e4-746a52b8ac57@kernel.dk>
- <d7095e1d-0363-0aad-5c13-6d9bb189b2c8@kernel.dk>
- <CAHk-=wgyRpBW_NOCKpJ1rZGD9jVOX80EWqKwwZxFeief2Khotg@mail.gmail.com>
- <87f88614-3045-89bb-8051-b545f5b1180a@kernel.dk>
-Message-ID: <a522a422-92e3-6171-8a2e-76a5c7e21cfc@kernel.dk>
-Date:   Thu, 10 Dec 2020 10:32:10 -0700
+        Thu, 10 Dec 2020 09:42:07 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     xiaoguang.wang@linux.alibaba.com,
+        io-uring <io-uring@vger.kernel.org>
+References: <cover.1607293068.git.asml.silence@gmail.com>
+ <cf556b9b870c640690a1705c073fe955c01dab47.1607293068.git.asml.silence@gmail.com>
+ <10e20bd3-b08f-98b8-f857-8b9a75a511dd@kernel.dk>
+ <d9f677a4-1ac0-0e64-5c2a-497cac9dc8e5@gmail.com>
+ <33b5783d-c238-b0da-38cf-974736c36056@kernel.dk>
+ <89d04d6b-2f84-82af-9ee7-edeb69f2a5bb@gmail.com>
+ <7514e884-ce01-380c-5c06-f2331a4906bf@kernel.dk>
+ <c99691ef-6b0c-faf8-ea41-459806672e26@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH 5.10 1/5] io_uring: always let io_iopoll_complete()
+ complete polled io.
+Message-ID: <471ba4c7-2fcb-d42f-c40d-18bb916aef1f@gmail.com>
+Date:   Thu, 10 Dec 2020 17:38:50 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <87f88614-3045-89bb-8051-b545f5b1180a@kernel.dk>
+In-Reply-To: <c99691ef-6b0c-faf8-ea41-459806672e26@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/21/20 3:58 PM, Jens Axboe wrote:
-> On 11/21/20 11:07 AM, Linus Torvalds wrote:
->> On Fri, Nov 20, 2020 at 7:00 PM Jens Axboe <axboe@kernel.dk> wrote:
+On 09/12/2020 20:17, Pavel Begunkov wrote:
+> On 08/12/2020 21:10, Jens Axboe wrote:
+>> On 12/8/20 12:24 PM, Pavel Begunkov wrote:
+>>> On 08/12/2020 19:17, Jens Axboe wrote:
+>>>> On 12/8/20 12:12 PM, Pavel Begunkov wrote:
+>>>>> On 07/12/2020 16:28, Jens Axboe wrote:
+>>>>>> On Sun, Dec 6, 2020 at 3:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>>>> From: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+>>>>>>>
+>>>>>>> The reason is that once we got a non EAGAIN error in io_wq_submit_work(),
+>>>>>>> we'll complete req by calling io_req_complete(), which will hold completion_lock
+>>>>>>> to call io_commit_cqring(), but for polled io, io_iopoll_complete() won't
+>>>>>>> hold completion_lock to call io_commit_cqring(), then there maybe concurrent
+>>>>>>> access to ctx->defer_list, double free may happen.
+>>>>>>>
+>>>>>>> To fix this bug, we always let io_iopoll_complete() complete polled io.
+>>>>>>
+>>>>>> This patch is causing hangs with iopoll testing, if you end up getting
+>>>>>> -EAGAIN on request submission. I've dropped it.
+>>>>>
+>>>>> I fail to understand without debugging how does it happen, especially since
+>>>>> it shouldn't even get out of the while in io_wq_submit_work(). Is that
+>>>>> something obvious I've missed?
+>>>>
+>>>> I didn't have time to look into it, and haven't yet, just reporting thation.
+>>>> it very reliably fails (and under what conditions).
 >>>
->>> Actually, I think we can do even better. How about just having
->>> do_filp_open() exit after LOOKUP_RCU fails, if LOOKUP_RCU was already
->>> set in the lookup flags? Then we don't need to change much else, and
->>> most of it falls out naturally.
+>>> Yeah, I get it, asked just in case.
+>>> I'll see what's going on if Xiaoguang wouldn't handle it before.
 >>
->> So I was thinking doing the RCU lookup unconditionally, and then doing
->> the nn-RCU lookup if that fails afterwards.
+>> Should be trivial to reproduce on eg nvme by doing:
 >>
->> But your patch looks good to me.
+>> echo mq-deadline > /sys/block/nvme0n1/queue/scheduler
+>> echo 2 > /sys/block/nvme0n1/queue/nr_requests
 >>
->> Except for the issue you noticed.
+>> and then run test/iopoll on that device. I'll try and take a look
+>> tomorrow unless someone beats me to it.
 > 
-> After having taken a closer look, I think the saner approach is
-> LOOKUP_NONBLOCK instead of using LOOKUP_RCU which is used more as
-> a state than lookup flag. I'll try and hack something up that looks
-> passable.
+> Tried out with iopoll-enabled null_blk. test/iopoll fails with
+> "test_io_uring_submit_enters failed", but if remove iteration limit
+> from the test, it completes... eventually.
 > 
->>> Except it seems that should work, except LOOKUP_RCU does not guarantee
->>> that we're not going to do IO:
->>
->> Well, almost nothing guarantees lack of IO, since allocations etc can
->> still block, but..
+> premise: io_complete_rw_iopoll() gets -EAGAIN but returns 0 to
+> io_wq_submit_work().
+> The old version happily completes IO with that 0, but the patch delays
+> it to do_iopoll(), which retries and so all that repeats. And, I believe,
+> that the behaviour that io_wq_submit_work()'s -EGAIN check was trying to
+> achieve...
 > 
-> Sure, and we can't always avoid that - but blatant block on waiting
-> for IO should be avoided.
-> 
->>> [   20.463195]  schedule+0x5f/0xd0
->>> [   20.463444]  io_schedule+0x45/0x70
->>> [   20.463712]  bit_wait_io+0x11/0x50
->>> [   20.463981]  __wait_on_bit+0x2c/0x90
->>> [   20.464264]  out_of_line_wait_on_bit+0x86/0x90
->>> [   20.464611]  ? var_wake_function+0x30/0x30
->>> [   20.464932]  __ext4_find_entry+0x2b5/0x410
->>> [   20.465254]  ? d_alloc_parallel+0x241/0x4e0
->>> [   20.465581]  ext4_lookup+0x51/0x1b0
->>> [   20.465855]  ? __d_lookup+0x77/0x120
->>> [   20.466136]  path_openat+0x4e8/0xe40
->>> [   20.466417]  do_filp_open+0x79/0x100
->>
->> Hmm. Is this perhaps an O_CREAT case? I think we only do the dcache
->> lookups under RCU, not the final path component creation.
-> 
-> It's just a basic test that opens all files under a directory. So
-> no O_CREAT, it's all existing files. I think this is just a case of not
-> aborting early enough for LOOKUP_NONBLOCK, and we've obviously already
-> dropped LOOKUP_RCU (and done rcu_read_unlock() again) at this point.
-> 
->> And there are probably lots of other situations where we finish with
->> LOOKUP_RCU (with unlazy_walk()), and then continue.> 
->> Example: look at "may_lookup()" - if inode_permission() says "I can't
->> do this without blocking" the logic actually just tries to validate
->> the current state (that "unlazy_walk()" thing), and then continue
->> without RCU.
->>
->> It obviously hasn't been about lockless semantics, it's been about
->> really being lockless. So LOOKUP_RCU has been a "try to do this
->> locklessly" rather than "you cannot take any locks".
->>
->> I guess we would have to add a LOOKUP_NOBLOCK thing to actually then
->> say "if the RCU lookup fails, return -EAGAIN".
->>
->> That's probably not a huge undertaking, but yeah, I didn't think of
->> it. I think this is a "we need to have Al tell us if it's reasonable".
-> 
-> Definitely. I did have a weak attempt at LOOKUP_NONBLOCK earlier, I'll
-> try and resurrect it and see what that leads to. Outside of just pure
-> lookup, the d_revalidate() was a bit interesting as it may block for
-> certain cases, but those should be (hopefully) detectable upfront.
+> The question left is why no one progresses. May even be something in block.
+> Need to trace further.
 
-Here's a potentially better attempt - basically we allow LOOKUP_NONBLOCK
-with LOOKUP_RCU, and if we end up dropping LOOKUP_RCU, then we generally
-return -EAGAIN if LOOKUP_NONBLOCK is set as we can no longer guarantee
-that we won't block.
+test_io_uring_submit_enters()'s io_uring_submit never goes into the kernel,
+IMHO it's saner to not expect to get any CQE, that's also implied in a comment
+above the function. I guess before we were getting blk-mq/etc. them back
+because of timers in blk-mq/etc.
 
-Al, what do you think? I didn't include the io_uring part here, as
-that's just dropping the existing hack and setting LOOKUP_NONBLOCK if
-we're in task context. I can send it out as a separate patch, of course.
+So I guess it should have been be more like the diff below, which still
+doesn't match the comment though.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 03d0e11e4f36..303874f1b9f1 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -679,7 +679,7 @@ static bool legitimize_root(struct nameidata *nd)
-  * Nothing should touch nameidata between unlazy_walk() failure and
-  * terminate_walk().
-  */
--static int unlazy_walk(struct nameidata *nd)
-+static int __unlazy_walk(struct nameidata *nd)
- {
- 	struct dentry *parent = nd->path.dentry;
+diff --git a/test/iopoll.c b/test/iopoll.c
+index d70ae56..d6f2f3e 100644
+--- a/test/iopoll.c
++++ b/test/iopoll.c
+@@ -269,13 +269,13 @@ static int test_io_uring_submit_enters(const char *file)
+ 	/* submit manually to avoid adding IORING_ENTER_GETEVENTS */
+ 	ret = __sys_io_uring_enter(ring.ring_fd, __io_uring_flush_sq(&ring), 0,
+ 						0, NULL);
+-	if (ret < 0)
++	if (ret != BUFFERS)
+ 		goto err;
  
-@@ -704,6 +704,18 @@ static int unlazy_walk(struct nameidata *nd)
- 	return -ECHILD;
- }
- 
-+static int unlazy_walk(struct nameidata *nd)
-+{
-+	int ret;
-+
-+	ret = __unlazy_walk(nd);
-+	/* If caller is asking for NONBLOCK lookup, assume we can't satisfy it */
-+	if (!ret && (nd->flags & LOOKUP_NONBLOCK))
-+		ret = -EAGAIN;
-+
-+	return ret;
-+}
-+
- /**
-  * unlazy_child - try to switch to ref-walk mode.
-  * @nd: nameidata pathwalk data
-@@ -764,10 +776,13 @@ static int unlazy_child(struct nameidata *nd, struct dentry *dentry, unsigned se
- 
- static inline int d_revalidate(struct dentry *dentry, unsigned int flags)
- {
--	if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE))
-+	if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE)) {
-+		if ((flags & (LOOKUP_RCU | LOOKUP_NONBLOCK)) == LOOKUP_NONBLOCK)
-+			return -EAGAIN;
- 		return dentry->d_op->d_revalidate(dentry, flags);
--	else
--		return 1;
-+	}
-+
-+	return 1;
- }
- 
- /**
-@@ -792,7 +807,7 @@ static int complete_walk(struct nameidata *nd)
- 		 */
- 		if (!(nd->flags & (LOOKUP_ROOT | LOOKUP_IS_SCOPED)))
- 			nd->root.mnt = NULL;
--		if (unlikely(unlazy_walk(nd)))
-+		if (unlikely(__unlazy_walk(nd)))
- 			return -ECHILD;
- 	}
- 
-@@ -1466,8 +1481,9 @@ static struct dentry *lookup_fast(struct nameidata *nd,
- 		unsigned seq;
- 		dentry = __d_lookup_rcu(parent, &nd->last, &seq);
- 		if (unlikely(!dentry)) {
--			if (unlazy_walk(nd))
--				return ERR_PTR(-ECHILD);
-+			int ret = unlazy_walk(nd);
-+			if (ret)
-+				return ERR_PTR(ret);
- 			return NULL;
+ 	for (i = 0; i < 500; i++) {
+-		ret = io_uring_submit(&ring);
+-		if (ret != 0) {
+-			fprintf(stderr, "still had %d sqes to submit, this is unexpected", ret);
++		ret = io_uring_wait_cqe(&ring, &cqe);
++		if (ret < 0) {
++			fprintf(stderr, "wait cqe failed %i\n", ret);
+ 			goto err;
  		}
- 
-@@ -1569,8 +1585,9 @@ static inline int may_lookup(struct nameidata *nd)
- 		int err = inode_permission(nd->inode, MAY_EXEC|MAY_NOT_BLOCK);
- 		if (err != -ECHILD)
- 			return err;
--		if (unlazy_walk(nd))
--			return -ECHILD;
-+		err = unlazy_walk(nd);
-+		if (err)
-+			return err;
- 	}
- 	return inode_permission(nd->inode, MAY_EXEC);
- }
-@@ -1591,9 +1608,11 @@ static int reserve_stack(struct nameidata *nd, struct path *link, unsigned seq)
- 		// we need to grab link before we do unlazy.  And we can't skip
- 		// unlazy even if we fail to grab the link - cleanup needs it
- 		bool grabbed_link = legitimize_path(nd, link, seq);
-+		int ret;
- 
--		if (unlazy_walk(nd) != 0 || !grabbed_link)
--			return -ECHILD;
-+		ret = unlazy_walk(nd);
-+		if (ret && !grabbed_link)
-+			return ret;
- 
- 		if (nd_alloc_stack(nd))
- 			return 0;
-@@ -1634,8 +1653,9 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
- 		touch_atime(&last->link);
- 		cond_resched();
- 	} else if (atime_needs_update(&last->link, inode)) {
--		if (unlikely(unlazy_walk(nd)))
--			return ERR_PTR(-ECHILD);
-+		error = unlazy_walk(nd);
-+		if (unlikely(error))
-+			return ERR_PTR(error);
- 		touch_atime(&last->link);
- 	}
- 
-@@ -1652,8 +1672,9 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
- 		if (nd->flags & LOOKUP_RCU) {
- 			res = get(NULL, inode, &last->done);
- 			if (res == ERR_PTR(-ECHILD)) {
--				if (unlikely(unlazy_walk(nd)))
--					return ERR_PTR(-ECHILD);
-+				error = unlazy_walk(nd);
-+				if (unlikely(error))
-+					return ERR_PTR(error);
- 				res = get(link->dentry, inode, &last->done);
- 			}
- 		} else {
-@@ -2193,8 +2214,9 @@ static int link_path_walk(const char *name, struct nameidata *nd)
- 		}
- 		if (unlikely(!d_can_lookup(nd->path.dentry))) {
- 			if (nd->flags & LOOKUP_RCU) {
--				if (unlazy_walk(nd))
--					return -ECHILD;
-+				err = unlazy_walk(nd);
-+				if (err)
-+					return err;
- 			}
- 			return -ENOTDIR;
- 		}
-@@ -3394,10 +3416,14 @@ struct file *do_filp_open(int dfd, struct filename *pathname,
- 
- 	set_nameidata(&nd, dfd, pathname);
- 	filp = path_openat(&nd, op, flags | LOOKUP_RCU);
-+	/* If we fail RCU lookup, assume NONBLOCK cannot be honored */
-+	if (flags & LOOKUP_NONBLOCK)
-+		goto out;
- 	if (unlikely(filp == ERR_PTR(-ECHILD)))
- 		filp = path_openat(&nd, op, flags);
- 	if (unlikely(filp == ERR_PTR(-ESTALE)))
- 		filp = path_openat(&nd, op, flags | LOOKUP_REVAL);
-+out:
- 	restore_nameidata();
- 	return filp;
- }
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index a4bb992623c4..c36c4e0805fc 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -46,6 +46,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
- #define LOOKUP_NO_XDEV		0x040000 /* No mountpoint crossing. */
- #define LOOKUP_BENEATH		0x080000 /* No escaping from starting point. */
- #define LOOKUP_IN_ROOT		0x100000 /* Treat dirfd as fs root. */
-+#define LOOKUP_NONBLOCK		0x200000 /* don't block for lookup */
- /* LOOKUP_* flags which do scope-related checks based on the dirfd. */
- #define LOOKUP_IS_SCOPED (LOOKUP_BENEATH | LOOKUP_IN_ROOT)
- 
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

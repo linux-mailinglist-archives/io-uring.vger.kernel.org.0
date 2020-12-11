@@ -2,111 +2,206 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91AA72D664E
-	for <lists+io-uring@lfdr.de>; Thu, 10 Dec 2020 20:23:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 548C22D6E1F
+	for <lists+io-uring@lfdr.de>; Fri, 11 Dec 2020 03:28:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389053AbgLJTWT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Dec 2020 14:22:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49914 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390474AbgLJTWK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Dec 2020 14:22:10 -0500
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5024FC0613CF
-        for <io-uring@vger.kernel.org>; Thu, 10 Dec 2020 11:21:30 -0800 (PST)
-Received: by mail-il1-x142.google.com with SMTP id q1so6389614ilt.6
-        for <io-uring@vger.kernel.org>; Thu, 10 Dec 2020 11:21:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NkJcDJp+JWTsWeBLXa3bcvnsV2pdxmFxdpPlYLoMu8U=;
-        b=allGgmdfpdQyUkp9kJoIWela3l0YLQWg1i5zE0W42HOlI9zIq0ydO24/5s63WdbGnc
-         oDtbdh7zVxO38mIVbNP5S6JovCiec9aZdiAOJAJfi8Y7ohBXfDuxglTLug6BvidYlQXp
-         23+T5EeFPo7227M8xAitGzcDlkNZmAyBp+Fw72rrSKEIkNl1pNVvtCS+RO7DWiAMkyiT
-         g6qEtsIkt1hkkPz0di9kSbj9+WbKajgWmRb7lqe6k2R9YbSjeCyYGbwdsn1CVq1XAaMF
-         dOlVisEYI8t1pHtyps0XJRpjUSteYyEz548kgNux5JfM2zO+3fEcBC+Y9tCrWgOT3aM4
-         GSBg==
+        id S2390769AbgLKC0K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Dec 2020 21:26:10 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:39639 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390236AbgLKCZx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Dec 2020 21:25:53 -0500
+Received: by mail-io1-f72.google.com with SMTP id n9so5445533iog.6
+        for <io-uring@vger.kernel.org>; Thu, 10 Dec 2020 18:25:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NkJcDJp+JWTsWeBLXa3bcvnsV2pdxmFxdpPlYLoMu8U=;
-        b=oGnkr28sp6AS1Q0IVi7vVYTu8SCKKRPGhfMCoO6pUNNvePIV24wCdciWdHrrEShjaI
-         4uP4Fa9khIwMKUf9z1142+hsVd8nJnsbDhtV/p4SVC93QCw3mfLo2IbVsH69mN1iqAJt
-         y6g/MOlDvdjVdDkIKimmpsSUJ7cYTqRGpnAqOUBSozMq70zzkUiQ3qGa0kOjovYMXQJo
-         awznL3s/x7AIiQBpi+p6Gm6v1JZZ8F9MA7I3f9XpClCcS7wm/1k/cbhLINmjlLhlJT43
-         qz18QsWyV7EbxIZ2JcIK37muL7gxmHR6HjUhxahvlodGIb7o35UAPEu5Hg7We8DZp8ck
-         3MQg==
-X-Gm-Message-State: AOAM532X650VFvjyBvGfTJTHuvpgnf7FbAoPAWmxOuHraGvi1FV4yNeS
-        IzbVshZHpshUDtal5kvsNS0nOqEgNX1R2A==
-X-Google-Smtp-Source: ABdhPJy0rxemf9twqLiD7Vj3SWdE25NQLaFt5KmvP8boROykqirC6dmBZOQYkb5POUvo5LQDOpqUHw==
-X-Received: by 2002:a92:15c6:: with SMTP id 67mr10218677ilv.283.1607628089690;
-        Thu, 10 Dec 2020 11:21:29 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id w9sm3676174ilq.43.2020.12.10.11.21.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Dec 2020 11:21:29 -0800 (PST)
-Subject: Re: namei.c LOOKUP_NONBLOCK (was "Re: [GIT PULL] io_uring fixes for
- 5.10-rc")
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <6535286b-2532-dc86-3c6e-1b1e9bce358f@kernel.dk>
- <CAHk-=wjrayP=rOB+v+2eTP8micykkM76t=6vp-hyy+vWYkL8=A@mail.gmail.com>
- <4bcf3012-a4ad-ac2d-e70b-17f17441eea9@kernel.dk>
- <CAHk-=wimYoUtY4ygMNknkKZHqgYBZbkU4Koo5cE6ar8XjHkzGg@mail.gmail.com>
- <ad8db5d0-2fac-90b6-b9e4-746a52b8ac57@kernel.dk>
- <d7095e1d-0363-0aad-5c13-6d9bb189b2c8@kernel.dk>
- <CAHk-=wgyRpBW_NOCKpJ1rZGD9jVOX80EWqKwwZxFeief2Khotg@mail.gmail.com>
- <87f88614-3045-89bb-8051-b545f5b1180a@kernel.dk>
- <a522a422-92e3-6171-8a2e-76a5c7e21cfc@kernel.dk>
- <CAHk-=wicKF87YsiQpdK0B26Mk3UhRNrBEcOv7h=ohFKLjRM4DQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <4790c746-0911-0bde-06fb-c987d6b0c3af@kernel.dk>
-Date:   Thu, 10 Dec 2020 12:21:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=ss5rnVicPosSBdYzSy+UMj22SrH9QgFUN/iCK5u2C0s=;
+        b=CFPlKuQU41zv9DxcUfTpXdVZf5K0tMzwojvBdebJZgLJEz1ZyU1hW5b40POytPVGcR
+         q5vPVeeIsUMFKPbD1nyXh4jIe3+0GK40CBXp+lUjyUlrj8B5fVZ4SqltVACJ5TaGcKsu
+         U6p2qkWZPe/rbI2PBjJI+Mw1AUfnmlf6KN12HkrPNyrOWiaq7oOO07AAD0ueK0egvyc3
+         vSYRGHjM6BZlY5wHJBO95KqjTn2dNVrNGICUvnhemMhUTJm4jLz8DV/RwGkz1B8oGnWa
+         8e38t/UTGJ21cwt76PUcLydb3vYuEToqfNga/FywTh7SMsrVnnJuolUageehFJfN+qyP
+         6ekA==
+X-Gm-Message-State: AOAM533DAKrqaaK1Q7OPSLMqglSUMjhyrADZmUZW0Ec/GcX3HMOpm0fI
+        husRjFH0nWZ74OVIp/g1YkoLQFe7+NKehpCR3wMB+84mr5KH
+X-Google-Smtp-Source: ABdhPJyoM4NXcBUADfRqaRwmtaqAdriQJrYdwsszXSuOCYC9wjE/Wv3OGgRMh23YriJgyw59FTOf7iTj/vDAJj/WjcChZPwxsW2D
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wicKF87YsiQpdK0B26Mk3UhRNrBEcOv7h=ohFKLjRM4DQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a5e:9612:: with SMTP id a18mr12033491ioq.13.1607653511707;
+ Thu, 10 Dec 2020 18:25:11 -0800 (PST)
+Date:   Thu, 10 Dec 2020 18:25:11 -0800
+In-Reply-To: <0000000000001779fd05a46b001f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007cc08305b62700a3@google.com>
+Subject: Re: INFO: task hung in linkwatch_event (2)
+From:   syzbot <syzbot+96ff6cfc4551fcc29342@syzkaller.appspotmail.com>
+To:     allison@lohutok.net, andrew@lunn.ch, aviad.krawczyk@huawei.com,
+        axboe@kernel.dk, davem@davemloft.net, gregkh@linuxfoundation.org,
+        hdanton@sina.com, io-uring@vger.kernel.org, kuba@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linyunsheng@huawei.com, luobin9@huawei.com, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        viro@zeniv.linux.org.uk, xiaoguang.wang@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/10/20 11:55 AM, Linus Torvalds wrote:
-> On Thu, Dec 10, 2020 at 9:32 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> Here's a potentially better attempt - basically we allow LOOKUP_NONBLOCK
->> with LOOKUP_RCU, and if we end up dropping LOOKUP_RCU, then we generally
->> return -EAGAIN if LOOKUP_NONBLOCK is set as we can no longer guarantee
->> that we won't block.
-> 
-> Looks sane to me.
-> 
-> I don't love the "__unlazy_walk vs unlazy_walk" naming - I think it
-> needs to be more clear about what the difference is, but I think the
-> basic patch looks sane, and looks about as big as I would have
-> expected it to be.
+syzbot has found a reproducer for the following issue on:
 
-Agree, would probably make more sense as __unlazy_walk ->
-complete_walk_rcu(), which then also falls out naturally from
-complete_walk() being the sole caller of that.
+HEAD commit:    a7105e34 Merge branch 'hns3-next'
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=155af80f500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2ac2dabe250b3a58
+dashboard link: https://syzkaller.appspot.com/bug?extid=96ff6cfc4551fcc29342
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11bc7b13500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1674046b500000
 
-> But yes, I'll leave it to Al.
-> 
-> And if we do this - and I think we should - I'd also love to see a new
-> flag in 'struct open_how' to openat2(), even if it's only to enable
-> tests. RESOLVE_NONBLOCK?
+The issue was bisected to:
 
-Sure, enabling cached opens from userspace through regular openat2().
-Let's wrap up this one first though, that needs to be a separate patch
-anyway. I'll follow up with that once this is in.
+commit 386d4716fd91869e07c731657f2cde5a33086516
+Author: Luo bin <luobin9@huawei.com>
+Date:   Thu Feb 27 06:34:44 2020 +0000
 
--- 
-Jens Axboe
+    hinic: fix a bug of rss configuration
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16626fcfe00000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15626fcfe00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11626fcfe00000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+96ff6cfc4551fcc29342@syzkaller.appspotmail.com
+Fixes: 386d4716fd91 ("hinic: fix a bug of rss configuration")
+
+INFO: task kworker/0:2:3004 blocked for more than 143 seconds.
+      Not tainted 5.10.0-rc6-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:2     state:D stack:28448 pid: 3004 ppid:     2 flags:0x00004000
+Workqueue: events linkwatch_event
+Call Trace:
+ context_switch kernel/sched/core.c:3779 [inline]
+ __schedule+0x893/0x2130 kernel/sched/core.c:4528
+ schedule+0xcf/0x270 kernel/sched/core.c:4606
+ schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4665
+ __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
+ __mutex_lock+0x3e2/0x10e0 kernel/locking/mutex.c:1103
+ linkwatch_event+0xb/0x60 net/core/link_watch.c:250
+ process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+INFO: task kworker/0:0:8837 blocked for more than 143 seconds.
+      Not tainted 5.10.0-rc6-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:0     state:D stack:29768 pid: 8837 ppid:     2 flags:0x00004000
+Workqueue: ipv6_addrconf addrconf_verify_work
+Call Trace:
+ context_switch kernel/sched/core.c:3779 [inline]
+ __schedule+0x893/0x2130 kernel/sched/core.c:4528
+ schedule+0xcf/0x270 kernel/sched/core.c:4606
+ schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4665
+ __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
+ __mutex_lock+0x3e2/0x10e0 kernel/locking/mutex.c:1103
+ addrconf_verify_work+0xa/0x20 net/ipv6/addrconf.c:4569
+ process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/1655:
+ #0: ffffffff8b337a20 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6254
+3 locks held by kworker/0:2/3004:
+ #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
+ #1: ffffc90001dafda8 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
+ #2: ffffffff8c92d448 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xb/0x60 net/core/link_watch.c:250
+1 lock held by in:imklog/8186:
+ #0: ffff888017c900f0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:932
+2 locks held by syz-executor047/8830:
+3 locks held by kworker/0:0/8837:
+ #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
+ #1: ffffc90001aefda8 ((addr_chk_work).work){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
+ #2: ffffffff8c92d448 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_verify_work+0xa/0x20 net/ipv6/addrconf.c:4569
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 1655 Comm: khungtaskd Not tainted 5.10.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x107/0x163 lib/dump_stack.c:118
+ nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
+ nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
+ watchdog+0xd43/0xfa0 kernel/hung_task.c:294
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 8830 Comm: syz-executor047 Not tainted 5.10.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__this_cpu_preempt_check+0x0/0x20 lib/smp_processor_id.c:64
+Code: 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 c7 c6 00 ae 9d 89 48 c7 c7 40 ae 9d 89 e9 b8 fe ff ff 0f 1f 84 00 00 00 00 00 <55> 48 89 fd 0f 1f 44 00 00 48 89 ee 5d 48 c7 c7 80 ae 9d 89 e9 97
+RSP: 0018:ffffc90001a2eb50 EFLAGS: 00000082
+RAX: 0000000000000001 RBX: 1ffff92000345d6d RCX: 0000000000000001
+RDX: 1ffff11002f507b2 RSI: 0000000000000008 RDI: ffffffff894b60c0
+RBP: 0000000000000001 R08: 0000000000000000 R09: ffffffff8ebb6727
+R10: fffffbfff1d76ce4 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff88801433fa68 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007fc7c7ab9700(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc7c7a97e78 CR3: 000000001292b000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ lockdep_recursion_finish kernel/locking/lockdep.c:437 [inline]
+ lock_acquire kernel/locking/lockdep.c:5439 [inline]
+ lock_acquire+0x2ad/0x740 kernel/locking/lockdep.c:5402
+ __mutex_lock_common kernel/locking/mutex.c:956 [inline]
+ __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
+ tcf_idr_check_alloc+0x78/0x3b0 net/sched/act_api.c:549
+ tcf_police_init+0x347/0x13a0 net/sched/act_police.c:81
+ tcf_action_init_1+0x1a3/0x990 net/sched/act_api.c:1013
+ tcf_exts_validate+0x138/0x420 net/sched/cls_api.c:3046
+ cls_bpf_set_parms net/sched/cls_bpf.c:422 [inline]
+ cls_bpf_change+0x60b/0x1b80 net/sched/cls_bpf.c:506
+ tc_new_tfilter+0x1394/0x2120 net/sched/cls_api.c:2127
+ rtnetlink_rcv_msg+0x80e/0xad0 net/core/rtnetlink.c:5553
+ netlink_rcv_skb+0x153/0x420 net/netlink/af_netlink.c:2494
+ netlink_unicast_kernel net/netlink/af_netlink.c:1304 [inline]
+ netlink_unicast+0x533/0x7d0 net/netlink/af_netlink.c:1330
+ netlink_sendmsg+0x856/0xd90 net/netlink/af_netlink.c:1919
+ sock_sendmsg_nosec net/socket.c:651 [inline]
+ sock_sendmsg+0xcf/0x120 net/socket.c:671
+ ____sys_sendmsg+0x331/0x810 net/socket.c:2331
+ ___sys_sendmsg+0xf3/0x170 net/socket.c:2385
+ __sys_sendmmsg+0x195/0x470 net/socket.c:2475
+ __do_sys_sendmmsg net/socket.c:2504 [inline]
+ __se_sys_sendmmsg net/socket.c:2501 [inline]
+ __x64_sys_sendmmsg+0x99/0x100 net/socket.c:2501
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x447219
+Code: e8 bc b4 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fc7c7ab8d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 00000000006dcc88 RCX: 0000000000447219
+RDX: 010efe10675dec16 RSI: 0000000020000200 RDI: 0000000000000004
+RBP: 00000000006dcc80 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc8c
+R13: 0000000000000000 R14: 0000000000000000 R15: 0507002400000074
 

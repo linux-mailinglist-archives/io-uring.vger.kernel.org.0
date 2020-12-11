@@ -2,206 +2,234 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 548C22D6E1F
-	for <lists+io-uring@lfdr.de>; Fri, 11 Dec 2020 03:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3014C2D6E3D
+	for <lists+io-uring@lfdr.de>; Fri, 11 Dec 2020 03:52:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390769AbgLKC0K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Dec 2020 21:26:10 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:39639 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390236AbgLKCZx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Dec 2020 21:25:53 -0500
-Received: by mail-io1-f72.google.com with SMTP id n9so5445533iog.6
-        for <io-uring@vger.kernel.org>; Thu, 10 Dec 2020 18:25:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=ss5rnVicPosSBdYzSy+UMj22SrH9QgFUN/iCK5u2C0s=;
-        b=CFPlKuQU41zv9DxcUfTpXdVZf5K0tMzwojvBdebJZgLJEz1ZyU1hW5b40POytPVGcR
-         q5vPVeeIsUMFKPbD1nyXh4jIe3+0GK40CBXp+lUjyUlrj8B5fVZ4SqltVACJ5TaGcKsu
-         U6p2qkWZPe/rbI2PBjJI+Mw1AUfnmlf6KN12HkrPNyrOWiaq7oOO07AAD0ueK0egvyc3
-         vSYRGHjM6BZlY5wHJBO95KqjTn2dNVrNGICUvnhemMhUTJm4jLz8DV/RwGkz1B8oGnWa
-         8e38t/UTGJ21cwt76PUcLydb3vYuEToqfNga/FywTh7SMsrVnnJuolUageehFJfN+qyP
-         6ekA==
-X-Gm-Message-State: AOAM533DAKrqaaK1Q7OPSLMqglSUMjhyrADZmUZW0Ec/GcX3HMOpm0fI
-        husRjFH0nWZ74OVIp/g1YkoLQFe7+NKehpCR3wMB+84mr5KH
-X-Google-Smtp-Source: ABdhPJyoM4NXcBUADfRqaRwmtaqAdriQJrYdwsszXSuOCYC9wjE/Wv3OGgRMh23YriJgyw59FTOf7iTj/vDAJj/WjcChZPwxsW2D
+        id S2389813AbgLKCvu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Dec 2020 21:51:50 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:48377 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389750AbgLKCv3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Dec 2020 21:51:29 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0UICEwW5_1607655044;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UICEwW5_1607655044)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 11 Dec 2020 10:50:44 +0800
+Subject: Re: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT
+ in Direct IO
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Hao Xu <haoxu@linux.alibaba.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
+ <20201207022130.GC4170059@dread.disaster.area>
+ <9bbfafcf-688c-bad9-c288-6478a88c6097@linux.alibaba.com>
+ <20201209212358.GE4170059@dread.disaster.area>
+ <adf32418-dede-0b58-13da-40093e1e4e2d@linux.alibaba.com>
+ <20201210051808.GF4170059@dread.disaster.area>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <fdb6e01a-a662-90fa-3844-410b2107e850@linux.alibaba.com>
+Date:   Fri, 11 Dec 2020 10:50:44 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.5.1
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9612:: with SMTP id a18mr12033491ioq.13.1607653511707;
- Thu, 10 Dec 2020 18:25:11 -0800 (PST)
-Date:   Thu, 10 Dec 2020 18:25:11 -0800
-In-Reply-To: <0000000000001779fd05a46b001f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007cc08305b62700a3@google.com>
-Subject: Re: INFO: task hung in linkwatch_event (2)
-From:   syzbot <syzbot+96ff6cfc4551fcc29342@syzkaller.appspotmail.com>
-To:     allison@lohutok.net, andrew@lunn.ch, aviad.krawczyk@huawei.com,
-        axboe@kernel.dk, davem@davemloft.net, gregkh@linuxfoundation.org,
-        hdanton@sina.com, io-uring@vger.kernel.org, kuba@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linyunsheng@huawei.com, luobin9@huawei.com, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        viro@zeniv.linux.org.uk, xiaoguang.wang@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201210051808.GF4170059@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+Excellent explanation! Thanks a lot.
 
-HEAD commit:    a7105e34 Merge branch 'hns3-next'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=155af80f500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2ac2dabe250b3a58
-dashboard link: https://syzkaller.appspot.com/bug?extid=96ff6cfc4551fcc29342
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11bc7b13500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1674046b500000
+Still some questions below.
 
-The issue was bisected to:
+On 12/10/20 1:18 PM, Dave Chinner wrote:
+> On Thu, Dec 10, 2020 at 09:55:32AM +0800, JeffleXu wrote:
+>> Sorry I'm still a little confused.
+>>
+>>
+>> On 12/10/20 5:23 AM, Dave Chinner wrote:
+>>> On Tue, Dec 08, 2020 at 01:46:47PM +0800, JeffleXu wrote:
+>>>>
+>>>>
+>>>> On 12/7/20 10:21 AM, Dave Chinner wrote:
+>>>>> On Fri, Dec 04, 2020 at 05:44:56PM +0800, Hao Xu wrote:
+>>>>>> Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
+>>>>>> when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
+>>>>>> IOCB_NOWAIT is set.
+>>>>>>
+>>>>>> Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+>>>>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>>>>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>>>>>> ---
+>>>>>>
+>>>>>> Hi all,
+>>>>>> I tested fio io_uring direct read for a file on ext4 filesystem on a
+>>>>>> nvme ssd. I found that IOCB_NOWAIT is ignored in iomap layer, which
+>>>>>> means REQ_NOWAIT is not set in bio->bi_opf.
+>>>>>
+>>>>> What iomap is doing is correct behaviour. IOCB_NOWAIT applies to the
+>>>>> filesystem behaviour, not the block device.
+>>>>>
+>>>>> REQ_NOWAIT can result in partial IO failures because the error is
+>>>>> only reported to the iomap layer via IO completions. Hence we can
+>>>>> split a DIO into multiple bios and have random bios in that IO fail
+>>>>> with EAGAIN because REQ_NOWAIT is set. This error will
+>>>>> get reported to the submitter via completion, and it will override
+>>>>> any of the partial IOs that actually completed.
+>>>>>
+>>>>> Hence, like the recently reported multi-mapping IOCB_NOWAIT bug
+>>>>> reported by Jens and fixed in commit 883a790a8440 ("xfs: don't allow
+>>>>> NOWAIT DIO across extent boundaries") we'll get silent partial
+>>>>> writes occurring because the second submitted bio in an IO can
+>>>>> trigger EAGAIN errors with partial IO completion having already
+>>>>> occurred.
+>>>>>
+>>
+>>>>> Further, we don't allow partial IO completion for DIO on XFS at all.
+>>>>> DIO must be completely submitted and completed or return an error
+>>>>> without having issued any IO at all.  Hence using REQ_NOWAIT for
+>>>>> DIO bios is incorrect and not desirable.
+>>
+>>
+>> The current block layer implementation causes that, as long as one split
+>> bio fails, then the whole DIO fails, in which case several split bios
+>> maybe have succeeded and the content has been written to the disk. This
+>> is obviously what you called "partial IO completion".
+>>
+>> I'm just concerned on how do you achieve that "DIO must return an error
+>> without having issued any IO at all". Do you have some method of
+>> reverting the content has already been written into the disk when a
+>> partial error happened?
+> 
+> I think you've misunderstood what I was saying. I did not say
+> "DIO must return an error without having issued any IO at all".
+> There are two parts to my statement, and you just smashed part of
+> the first statement into part of the second statement and came up
+> something I didn't actually say.
+> 
+> The first statement is:
+> 
+> 	1. "DIO must be fully submitted and completed ...."
+> 
+> That is, if we need to break an IO up into multiple parts, the
+> entire IO must be submitted and completed as a whole. We do not
+> allow partial submission or completion of the IO at all because we
+> cannot accurately report what parts of a multi-bio DIO that failed
+> through the completion interface. IOWs, if any of the IOs after the
+> first one fail submission, then we must complete all the IOs that
+> have already been submitted before we can report the failure that
+> occurred during the IO.
+> 
 
-commit 386d4716fd91869e07c731657f2cde5a33086516
-Author: Luo bin <luobin9@huawei.com>
-Date:   Thu Feb 27 06:34:44 2020 +0000
+1. Actually I'm quite not clear on what you called "partial submission
+or completion". Even when REQ_NOWAIT is set for all split bios of one
+DIO, then all these split bios are **submitted** to block layer through
+submit_bio(). Even when one split bio after the first one failed
+**inside** submit_bio() because of REQ_NOWAIT, submit_bio() only returns
+BLK_QC_T_NONE, and the DIO layer (such as __blkdev_direct_IO()) will
+still call submit_bio() for the remaining split bios. And then only when
+all split bios complete, will the whole kiocb complete.
 
-    hinic: fix a bug of rss configuration
+So if you define "submission" as submitting to hardware disk (such as
+nvme device driver), then it is indeed **partial submission** when
+REQ_NOWAIT set. But if the definition of "submission" is actually
+"submitting to block layer by calling submit_bio()", then all split bios
+of one DIO are indeed submitted to block layer, even when one split bio
+gets BLK_STS_AGAIN because of REQ_NOWIAT.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16626fcfe00000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15626fcfe00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11626fcfe00000
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+96ff6cfc4551fcc29342@syzkaller.appspotmail.com
-Fixes: 386d4716fd91 ("hinic: fix a bug of rss configuration")
+2. One DIO could be split into multiple bios in DIO layer. Similarly one
+big bio could be split into multiple bios in block layer. In the
+situation when all split bios have already been submitted to block
+layer, since the IO completion interface could return only one error
+code, the whole DIO could fail as long as one split bio fails, while
+several other split bios could have already succeeded and the
+corresponding disk sectors have already been overwritten. I'm not sure
+if this is what you called "silent partial writes", and if this is the
+core reason for commit 883a790a8440 ("xfs: don't allow NOWAIT DIO across
+extent boundaries") you mentioned in previous mail.
 
-INFO: task kworker/0:2:3004 blocked for more than 143 seconds.
-      Not tainted 5.10.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:2     state:D stack:28448 pid: 3004 ppid:     2 flags:0x00004000
-Workqueue: events linkwatch_event
-Call Trace:
- context_switch kernel/sched/core.c:3779 [inline]
- __schedule+0x893/0x2130 kernel/sched/core.c:4528
- schedule+0xcf/0x270 kernel/sched/core.c:4606
- schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4665
- __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
- __mutex_lock+0x3e2/0x10e0 kernel/locking/mutex.c:1103
- linkwatch_event+0xb/0x60 net/core/link_watch.c:250
- process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-INFO: task kworker/0:0:8837 blocked for more than 143 seconds.
-      Not tainted 5.10.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:0     state:D stack:29768 pid: 8837 ppid:     2 flags:0x00004000
-Workqueue: ipv6_addrconf addrconf_verify_work
-Call Trace:
- context_switch kernel/sched/core.c:3779 [inline]
- __schedule+0x893/0x2130 kernel/sched/core.c:4528
- schedule+0xcf/0x270 kernel/sched/core.c:4606
- schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4665
- __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
- __mutex_lock+0x3e2/0x10e0 kernel/locking/mutex.c:1103
- addrconf_verify_work+0xa/0x20 net/ipv6/addrconf.c:4569
- process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+If this is the case, then it seems that the IO completion interface
+should be blamed for this issue. Besides REQ_NOWIAT, there may be more
+situations that will cause "silent partial writes".
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/1655:
- #0: ffffffff8b337a20 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6254
-3 locks held by kworker/0:2/3004:
- #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010064d38 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc90001dafda8 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
- #2: ffffffff8c92d448 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xb/0x60 net/core/link_watch.c:250
-1 lock held by in:imklog/8186:
- #0: ffff888017c900f0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:932
-2 locks held by syz-executor047/8830:
-3 locks held by kworker/0:0/8837:
- #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888147499138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc90001aefda8 ((addr_chk_work).work){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
- #2: ffffffff8c92d448 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_verify_work+0xa/0x20 net/ipv6/addrconf.c:4569
+As long as one split bios could fail (besides EAGAIN, maybe EOPNOTSUPP,
+if possible), while other split bios may still succeeds, then the error
+of one split bio will still override the completion status of the whole
+DIO. In this case "silent partial writes" is still possible? In my
+understanding, passing REQ_NOWAIT flags from IOCB_NOWAIT in DIO layer
+only makes the problem more likely to happen, but it's not the only
+source of this problem?
 
-=============================================
 
-NMI backtrace for cpu 1
-CPU: 1 PID: 1655 Comm: khungtaskd Not tainted 5.10.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
- nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
- watchdog+0xd43/0xfa0 kernel/hung_task.c:294
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 8830 Comm: syz-executor047 Not tainted 5.10.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__this_cpu_preempt_check+0x0/0x20 lib/smp_processor_id.c:64
-Code: 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 c7 c6 00 ae 9d 89 48 c7 c7 40 ae 9d 89 e9 b8 fe ff ff 0f 1f 84 00 00 00 00 00 <55> 48 89 fd 0f 1f 44 00 00 48 89 ee 5d 48 c7 c7 80 ae 9d 89 e9 97
-RSP: 0018:ffffc90001a2eb50 EFLAGS: 00000082
-RAX: 0000000000000001 RBX: 1ffff92000345d6d RCX: 0000000000000001
-RDX: 1ffff11002f507b2 RSI: 0000000000000008 RDI: ffffffff894b60c0
-RBP: 0000000000000001 R08: 0000000000000000 R09: ffffffff8ebb6727
-R10: fffffbfff1d76ce4 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff88801433fa68 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007fc7c7ab9700(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc7c7a97e78 CR3: 000000001292b000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- lockdep_recursion_finish kernel/locking/lockdep.c:437 [inline]
- lock_acquire kernel/locking/lockdep.c:5439 [inline]
- lock_acquire+0x2ad/0x740 kernel/locking/lockdep.c:5402
- __mutex_lock_common kernel/locking/mutex.c:956 [inline]
- __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
- tcf_idr_check_alloc+0x78/0x3b0 net/sched/act_api.c:549
- tcf_police_init+0x347/0x13a0 net/sched/act_police.c:81
- tcf_action_init_1+0x1a3/0x990 net/sched/act_api.c:1013
- tcf_exts_validate+0x138/0x420 net/sched/cls_api.c:3046
- cls_bpf_set_parms net/sched/cls_bpf.c:422 [inline]
- cls_bpf_change+0x60b/0x1b80 net/sched/cls_bpf.c:506
- tc_new_tfilter+0x1394/0x2120 net/sched/cls_api.c:2127
- rtnetlink_rcv_msg+0x80e/0xad0 net/core/rtnetlink.c:5553
- netlink_rcv_skb+0x153/0x420 net/netlink/af_netlink.c:2494
- netlink_unicast_kernel net/netlink/af_netlink.c:1304 [inline]
- netlink_unicast+0x533/0x7d0 net/netlink/af_netlink.c:1330
- netlink_sendmsg+0x856/0xd90 net/netlink/af_netlink.c:1919
- sock_sendmsg_nosec net/socket.c:651 [inline]
- sock_sendmsg+0xcf/0x120 net/socket.c:671
- ____sys_sendmsg+0x331/0x810 net/socket.c:2331
- ___sys_sendmsg+0xf3/0x170 net/socket.c:2385
- __sys_sendmmsg+0x195/0x470 net/socket.c:2475
- __do_sys_sendmmsg net/socket.c:2504 [inline]
- __se_sys_sendmmsg net/socket.c:2501 [inline]
- __x64_sys_sendmmsg+0x99/0x100 net/socket.c:2501
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x447219
-Code: e8 bc b4 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fc7c7ab8d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 00000000006dcc88 RCX: 0000000000447219
-RDX: 010efe10675dec16 RSI: 0000000020000200 RDI: 0000000000000004
-RBP: 00000000006dcc80 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc8c
-R13: 0000000000000000 R14: 0000000000000000 R15: 0507002400000074
 
+> The second statement is:
+> 
+> 	2. "... or return an error without having issued any IO at
+> 	   all."
+> 
+> IO submission errors are only reported by the DIO layer through IO
+> completion, in which case #1 is applied. #2 only applies to errors
+> that occur before IO submission is started, and these errors are
+> directly reported to the caller. IOCB_NOWAIT is a check done before
+> we start submission, hence can return -EAGAIN directly to the
+> caller.
+> 
+> IOWs, if an error is returned to the caller, we have either not
+> submitted any IO at all, or we have fully submitted and completed
+> the IO and there was some error reported by the IO completions.
+> There is no scope for "partial IO" here - it either completed fully
+> or we got an error.
+> 
+> This is necessary for correct AIO semantics. We aren't waiting for
+> completions to be able to report submission errors to submitters.
+> Hence for async IO, the only way for an error in the DIO layer to be
+> reported to the submitter is if the error occurs before the first IO
+> is submitted.(*)
+> 
+> RWF_NOWAIT was explicitly intended to enable applications using
+> AIO+DIO to avoid long latencies that occur as a result of blocking
+> on filesystem locks and resources. Blocking in the request queue is
+> minimal latency compared to waiting for (tens of) thousands of IOs
+> to complete ((tens of) seconds!) so the filesystem iomap path can run a
+> transaction to allocate disk spacei for the DIO.
+> 
+> IOWS, IOCB_NOWAIT was pretty` much intended to only be seen at the
+> filesystem layers to avoid the extremely high latencies that
+> filesystem layers might cause.  Blocking for a few milliseconds or
+> even tens of milliseconds in the request queue is not a problem
+> IOCB_NOWAIT was ever intended to solve.
+
+Don't know the initial intention and history of IOCB_NOWAIT. Learned a
+lot. Thanks.
+
+> 
+> Really, if io_uring needs DIO to avoid blocking in the request
+> queues below the filesystem, it should be providing that guidance
+> directly. IOCB_NOWAIT is -part- of the semantics being asked for,
+> but it does not provide them all and we can't change them to provide
+> exactly what io_uring wants because IOCB_NOWAIT == RWF_NOWAIT
+> semantics.
+> 
+> Cheers,
+> 
+> Dave.
+> 
+> (*) Yes, yes, I know that if you have a really fast storage the IO
+> might complete before submission has finished, but that's just the
+> final completion is done by the submitter and so #1 is actually
+> being followed in this case. i.e. IO is fully submitted and
+> completed.
+> 
+
+-- 
+Thanks,
+Jeffle

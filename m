@@ -2,118 +2,133 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D51F2D8897
-	for <lists+io-uring@lfdr.de>; Sat, 12 Dec 2020 18:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78DE52D88B6
+	for <lists+io-uring@lfdr.de>; Sat, 12 Dec 2020 18:43:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405955AbgLLR0I (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 12 Dec 2020 12:26:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54572 "EHLO
+        id S2404003AbgLLRky (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 12 Dec 2020 12:40:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbgLLR0D (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 12 Dec 2020 12:26:03 -0500
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB3C9C0613CF
-        for <io-uring@vger.kernel.org>; Sat, 12 Dec 2020 09:25:22 -0800 (PST)
-Received: by mail-ej1-x641.google.com with SMTP id f23so16795369ejk.2
-        for <io-uring@vger.kernel.org>; Sat, 12 Dec 2020 09:25:22 -0800 (PST)
+        with ESMTP id S2391958AbgLLRky (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 12 Dec 2020 12:40:54 -0500
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D4AC0613CF
+        for <io-uring@vger.kernel.org>; Sat, 12 Dec 2020 09:40:14 -0800 (PST)
+Received: by mail-pg1-x543.google.com with SMTP id w16so9515012pga.9
+        for <io-uring@vger.kernel.org>; Sat, 12 Dec 2020 09:40:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nametag.social; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SAldZ74f52N8LRAOY/OkuOIkIq54RAnc0rfu0esyOak=;
-        b=KtLAYTAumTAAiIVaIXhMvc8ulaUr5px3LY/u/JfMH8L7rsXy2sNKQz1Eura21RPM6w
-         hcvJ+94f6w/sI+jqIjF67pGEZEazW4aBUJpjt2hSpnGrIOd6LqpJZ6G6xUJWT1ZOejcn
-         Ju7wmr4eQhq8+ozOrGMSkAOb1U3v6rXiAzN98WWcRxk1EdfY2og9eTleyFqaAy3RKIb6
-         1z3kgb3dH//Q700fVVP0qyTTuxtveppMZrPJGTV/53szwg+o67ThhSglCdjwV/ULNiJA
-         5fZyqCZ0zMVRzDg+CC0AiIf31pNtiaNMQRjLPv2tI/CNEDCBjGzq0ecoi4drfcjA67Ur
-         /PAA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WWML1PSJLcf6MkRp0X+stinBaJ09ip4IkyLqML27Uwo=;
+        b=bDFO1IPjxtgw5y04lv/TvngC/Uipv6qikte6f3u7yLK92lZJWfCg/1Aze9CsUlGqpk
+         LuvXsl5PSrG5mwUbcje+/a5OgAtcGjMmcURHCk0HC7NiglcQqq4BgaF0TWwZ2lTUKLdc
+         yeCvnbetGY32B6LU1HlAlqfvUsquYpmvPaPUmR3EAzv1FOoDb/B82mWkrOY82UqEdk7C
+         81PinXu/XfonzHp2AIQSC4F2y2WRFEJvKcFXHgmVa6Z7vpdZtgStzTDqzWXfWIkeQQHg
+         7oGqOFk0725FTeIleryCmXr3j1For3/PyH+OthH2QNDNlI3g37fpHNhfEeNJaLMJJSxl
+         glKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SAldZ74f52N8LRAOY/OkuOIkIq54RAnc0rfu0esyOak=;
-        b=JFfqN9p9CLBI80pOwoGL5wq7ukymRBmIA9Do/2x2dBzl2dmAE8TAE/ANRHc1YfPmQU
-         OsO5j01cmY6dpiotJXPVMvt4eDQEovhmJ9C8PD+KvZngY94CD92O5b5IkC94E8eO0PqP
-         jl746NziJen9ekka6zZhEWR/XfcAsLInIycSk6aiVwOrgOlYHS0HFUh4vgSVQecVDrXo
-         PHdXjKFmdQF2zkv7zB/ZvyhgFRGIwMeGywP8QgaAdn86cQmrmcr+R5UXemBdsOkFcRcr
-         eC0M5mpECYqNnSxnVE9V3JWyyq+TZBXMpzqwCIM7Xu6Mn7f5+S9CcGsMfLsMTyIcOfAS
-         vNtQ==
-X-Gm-Message-State: AOAM5329XNCwJrzV6W6dVRIrJMCJXcK4f5gioxCBYzfeiTtZ/kasWR9g
-        ywVDQyk84LRvP8wdj8FoiyG0mANH2044+osSxIpItA==
-X-Google-Smtp-Source: ABdhPJyOcbrN+3OO1JVaS0DnmPSza1uvHn4A4HpY6XtcyuBaJei0tsFDd2JKEjmNWKDqPrwzp0CNZPu9eB/0na/pbDY=
-X-Received: by 2002:a17:906:5912:: with SMTP id h18mr15661572ejq.261.1607793921384;
- Sat, 12 Dec 2020 09:25:21 -0800 (PST)
-MIME-Version: 1.0
-References: <CAM1kxwgjCJwSvOtESxWwTC_qcXZEjbOSreXUQrG+bOOrPWdbqA@mail.gmail.com>
- <750bc4e7-c2ce-e33d-dc98-483af96ff330@kernel.dk>
-In-Reply-To: <750bc4e7-c2ce-e33d-dc98-483af96ff330@kernel.dk>
-From:   Victor Stewart <v@nametag.social>
-Date:   Sat, 12 Dec 2020 17:25:10 +0000
-Message-ID: <CAM1kxwjm9YFJCvqt4Bm0DKQuKz2Qg975YWSnx6RO_Jam=gkQyg@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WWML1PSJLcf6MkRp0X+stinBaJ09ip4IkyLqML27Uwo=;
+        b=PEmnbysT1SdnllRnoNFs7ojjzZ4x3CK6OED8sxk1h5Qu/8FdsJS+PRrrFt4EMtFiNG
+         rmeY3nQuOdqvwNhUnLnhKl1L5SpTGIHRIFiUnrbFwcbQxVk5RX09FZE48pcp3v1rP/pY
+         GvaoJcE7NGxbR3HCxqMYL1ZkJmf3qheiTTmhXiaEAzeMdwtHjdc5EcDEIuPZYT4rCeiO
+         hguTRoni+2c4j4ruNuJ3r8WEjzq6bZSePHedcCJ2Hk5DJ/7hhD0Nw/P/tIf8SD7bT/sT
+         +6BNElvv9hnwTMCBu5LYaiTcYFzVe3eTTYM5+Vd0UUFXVhISF74nKFvuRfzEK4guEU5R
+         DU/A==
+X-Gm-Message-State: AOAM531bkwVumi4inmNR7S+iBJxlLKB9W3Qw0q2heikdixCqhfqJ4rr3
+        IIDv1qo+m2TgKGZ3EfYdFJSLvw==
+X-Google-Smtp-Source: ABdhPJx4gVsRtcLF4m5lMN3DWJ4DPIVmN7LCQ6lN3arQtljVvo6hY/5nM9ZNOGDTFjKOHkjPPMdLyw==
+X-Received: by 2002:a63:494f:: with SMTP id y15mr17080646pgk.364.1607794813595;
+        Sat, 12 Dec 2020 09:40:13 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id y3sm14988472pjb.18.2020.12.12.09.40.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Dec 2020 09:40:12 -0800 (PST)
 Subject: Re: [PATCH 0/3] PROTO_CMSG_DATA_ONLY for Datagram (UDP)
-To:     Jens Axboe <axboe@kernel.dk>
+To:     Victor Stewart <v@nametag.social>
 Cc:     io-uring <io-uring@vger.kernel.org>,
         Soheil Hassas Yeganeh <soheil@google.com>,
         netdev <netdev@vger.kernel.org>,
         Stefan Metzmacher <metze@samba.org>,
         Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <CAM1kxwgjCJwSvOtESxWwTC_qcXZEjbOSreXUQrG+bOOrPWdbqA@mail.gmail.com>
+ <750bc4e7-c2ce-e33d-dc98-483af96ff330@kernel.dk>
+ <CAM1kxwjm9YFJCvqt4Bm0DKQuKz2Qg975YWSnx6RO_Jam=gkQyg@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e618d93a-e3c6-8fb6-c559-32c0b854e321@kernel.dk>
+Date:   Sat, 12 Dec 2020 10:40:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAM1kxwjm9YFJCvqt4Bm0DKQuKz2Qg975YWSnx6RO_Jam=gkQyg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Dec 12, 2020 at 5:07 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 12/12/20 8:31 AM, Victor Stewart wrote:
-> > RE our conversation on the "[RFC 0/1] whitelisting UDP GSO and GRO
-> > cmsgs" thread...
-> >
-> > https://lore.kernel.org/io-uring/CAM1kxwi5m6i8hrtkw7nZYoziPTD-Wp03+fcsUwh3CuSc=81kUQ@mail.gmail.com/
-> >
-> > here are the patches we discussed.
-> >
-> > Victor Stewart (3):
-> >    net/socket.c: add PROTO_CMSG_DATA_ONLY to __sys_sendmsg_sock
-> >    net/ipv4/af_inet.c: add PROTO_CMSG_DATA_ONLY to inet_dgram_ops
-> >    net/ipv6/af_inet6.c: add PROTO_CMSG_DATA_ONLY to inet6_dgram_ops
-> >
-> >    net/ipv4/af_inet.c
-> >      |   1 +
-> >    net/ipv6/af_inet6.c
-> >     |   1 +
-> >    net/socket.c
-> >        |   8 +-
-> >    3 files changed, 7 insertions(+), 3 deletions(-)
->
-> Changes look fine to me, but a few comments:
->
-> - I'd order 1/3 as 3/3, that ordering makes more sense as at that point it
->   could actually be used.
+On 12/12/20 10:25 AM, Victor Stewart wrote:
+> On Sat, Dec 12, 2020 at 5:07 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 12/12/20 8:31 AM, Victor Stewart wrote:
+>>> RE our conversation on the "[RFC 0/1] whitelisting UDP GSO and GRO
+>>> cmsgs" thread...
+>>>
+>>> https://lore.kernel.org/io-uring/CAM1kxwi5m6i8hrtkw7nZYoziPTD-Wp03+fcsUwh3CuSc=81kUQ@mail.gmail.com/
+>>>
+>>> here are the patches we discussed.
+>>>
+>>> Victor Stewart (3):
+>>>    net/socket.c: add PROTO_CMSG_DATA_ONLY to __sys_sendmsg_sock
+>>>    net/ipv4/af_inet.c: add PROTO_CMSG_DATA_ONLY to inet_dgram_ops
+>>>    net/ipv6/af_inet6.c: add PROTO_CMSG_DATA_ONLY to inet6_dgram_ops
+>>>
+>>>    net/ipv4/af_inet.c
+>>>      |   1 +
+>>>    net/ipv6/af_inet6.c
+>>>     |   1 +
+>>>    net/socket.c
+>>>        |   8 +-
+>>>    3 files changed, 7 insertions(+), 3 deletions(-)
+>>
+>> Changes look fine to me, but a few comments:
+>>
+>> - I'd order 1/3 as 3/3, that ordering makes more sense as at that point it
+>>   could actually be used.
+> 
+> right that makes sense.
+> 
+>>
+>> - For adding it to af_inet/af_inet6, you should write a better commit message
+>>   on the reasoning for the change. Right now it just describes what the
+>>   patch does (which is obvious from the change), not WHY it's done. Really
+>>   goes for current 1/3 as well, commit messages need to be better in
+>>   general.
+>>
+> 
+> okay thanks Jens. i would have reiterated the intention but assumed it
+> were implicit given I linked the initial conversation about enabling
+> UDP_SEGMENT (GSO) and UDP_GRO through io_uring.
+> 
+>> I'd also CC Jann Horn on the series, he's the one that found an issue there
+>> in the past and also acked the previous change on doing PROTO_CMSG_DATA_ONLY.
+> 
+> I CCed him on this reply. Soheil at the end of the first exchange
+> thread said he audited the UDP paths and believed this to be safe.
+> 
+> how/should I resubmit the patch with a proper intention explanation in
+> the meta and reorder the patches? my first patch and all lol.
 
-right that makes sense.
+Just post is as a v2 with the change noted in the cover letter. I'd also
+ensure that it threads properly, right now it's just coming through as 4
+separate emails at my end. If you're using git send-email, make sure you
+add --thread to the arguments.
 
->
-> - For adding it to af_inet/af_inet6, you should write a better commit message
->   on the reasoning for the change. Right now it just describes what the
->   patch does (which is obvious from the change), not WHY it's done. Really
->   goes for current 1/3 as well, commit messages need to be better in
->   general.
->
+-- 
+Jens Axboe
 
-okay thanks Jens. i would have reiterated the intention but assumed it
-were implicit given I linked the initial conversation about enabling
-UDP_SEGMENT (GSO) and UDP_GRO through io_uring.
-
-> I'd also CC Jann Horn on the series, he's the one that found an issue there
-> in the past and also acked the previous change on doing PROTO_CMSG_DATA_ONLY.
-
-I CCed him on this reply. Soheil at the end of the first exchange
-thread said he audited the UDP paths and believed this to be safe.
-
-how/should I resubmit the patch with a proper intention explanation in
-the meta and reorder the patches? my first patch and all lol.
-
->
-> --
-> Jens Axboe
->

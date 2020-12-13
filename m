@@ -2,180 +2,177 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F9DF2D8A32
-	for <lists+io-uring@lfdr.de>; Sat, 12 Dec 2020 22:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E48962D904E
+	for <lists+io-uring@lfdr.de>; Sun, 13 Dec 2020 21:00:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391714AbgLLVor (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 12 Dec 2020 16:44:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38774 "EHLO
+        id S2391223AbgLMUAP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 13 Dec 2020 15:00:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbgLLVor (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 12 Dec 2020 16:44:47 -0500
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9789DC0613CF
-        for <io-uring@vger.kernel.org>; Sat, 12 Dec 2020 13:44:06 -0800 (PST)
-Received: by mail-pj1-x1043.google.com with SMTP id z12so4137318pjn.1
-        for <io-uring@vger.kernel.org>; Sat, 12 Dec 2020 13:44:06 -0800 (PST)
+        with ESMTP id S1725308AbgLMUAP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Dec 2020 15:00:15 -0500
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F34EEC0613CF
+        for <io-uring@vger.kernel.org>; Sun, 13 Dec 2020 11:59:34 -0800 (PST)
+Received: by mail-ej1-x644.google.com with SMTP id d17so19679372ejy.9
+        for <io-uring@vger.kernel.org>; Sun, 13 Dec 2020 11:59:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KVcXZU7ZwVfc4FqSutE2u2K/Z0c65rWjg1GbHG1SB7M=;
-        b=CON5Nm11G8MC/3/OXa+4sSM+CX14Tzk3Yop/OuGX6Rt4Rx5GgYlvAQvRijWKP0Xw8e
-         OYvi7MJoQ2Ndh1d9jHLxBUH6pJP2nF9VpoQTrYvj7W+SyVtpoSrh5T6bFu9nfxAYVEcu
-         lrBdyoV3jmWV6elT1pma/7jGDOu7rpHqq8sBuhnqLWEVsU11u2UndeZqoGBP7c+C+BVy
-         fB2hA+66NwaA2O6v+a7N3zI0kfBdfLFMAXA8hz7tA+g6Uq4MdrZfQj1kRe4RcsSNIRcJ
-         OFde/LiNccySwceIVTN5rd/UiZu9xNkuurvryTaEtHuKX7hmwTdANa6YY0Z8V+SmqC4r
-         Uwgg==
+        d=nametag.social; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bxL9fgO1ep+UUIAhuCCQKbMzHDFAMCdJgRo0ODasuBs=;
+        b=l/2Nh9Lsxwi3XVddgVzE9+UMtRe29Ar/p9sB9KxeGMiXUT/bVILq8jBD1JWiYC2uU9
+         3mIR5MKubw+4NJKTQHdUrdx6x9HapMPOANmdS/ciUvmJ4BCGhlOogkL7wApqWzrIuny6
+         e1oTh0AGXoq0VZg5F8gWdIc4JH+JS6N59x1msY906Azee83IPD6uMaPxvRrFN0iP6Yan
+         +iPhx+p3USPcQPAqBgL6WVkDHqm2MJrIrjlwKtzmTOwpHqcsQTQgRBO0SpEauHGwcNyy
+         c71SbcakmdyCxCRYEPQ8nwEumTIoqyvbCOL4FBwhFUbMB175l0y0VuCYrMoXBvMuLWlc
+         mi3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KVcXZU7ZwVfc4FqSutE2u2K/Z0c65rWjg1GbHG1SB7M=;
-        b=gQNBs+xsGkmd62j2Oi/HhbfmSR71IS8n56SZTktAG9t63MMAzfY62R2A/s1MQxMEjw
-         IUy+BdV2D2Df1FsDFWD0GAdEScFf0L+ZufND3usybc1CKZWX31uSKl6jbawdJEjtSAr+
-         TzmhpcK0HTarWNWNtFjt/H4+eyqWf0a/a29Se2+SNOFUc9vcAH0EjNIKSSJi3PLlO/3E
-         wvLEzmK9lnnw1BoLybdId+z94r2zkt+UqaIxnsy83gp238OEHBaWRzNxGLWo5USNdOIU
-         S183NBTQSDyP1EMpGeSpsHiQJ21M4Wd6rIvnXdyBTc2zH/oO9HttfKdDhUTVJMi54Ccs
-         qDlQ==
-X-Gm-Message-State: AOAM530sDUHLuKlCNxb9Q4Ifa0t5mJHQ8XzFZC1LCVRLxKMsGy5eu+cZ
-        clQtDV+PU3qbHRuzLAH7cUZ+tQ==
-X-Google-Smtp-Source: ABdhPJwCG07PGrGRSAu5lE0IYuMFHq844P7X+pE6pqwJUf/KaH5FhCEHyCNsque+g+YeotW/AEBu8Q==
-X-Received: by 2002:a17:902:a9c7:b029:d6:da66:253c with SMTP id b7-20020a170902a9c7b02900d6da66253cmr16635521plr.19.1607809446053;
-        Sat, 12 Dec 2020 13:44:06 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id na6sm13218454pjb.12.2020.12.12.13.44.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Dec 2020 13:44:05 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bxL9fgO1ep+UUIAhuCCQKbMzHDFAMCdJgRo0ODasuBs=;
+        b=tl7WwHIsZ2zSjZs4qZlJ4un70xJR9Xulc3GIJvpi4I0Fwn2UMkoMN8j2EuQwwS0+O/
+         sIPYCQe1o7np9RIOq4yhfkl94wZWUHN5/LJrLioURw1wPWwIHR4+BNrLqLxL6iRA9VO5
+         r3IbnsV/M0BIs8OAr4vvAtJodBewCIeXHyd/r4r7UrpkwfmImks3qN+M6Orgp6HFFrso
+         s6smrElxToVnXxrtK/+4XTz+1clW5jo1oFb9O3gLdshlCQTbcfWXDmg+kvBlZeNZOylJ
+         +4YwnCZs5UxGi/5y80yjOpq0LiIEc3NHfEMwTg7fjj7JTnhhAGc7YVnHJoa0C4glWspt
+         WUrA==
+X-Gm-Message-State: AOAM532MpvnCumT+kQ6uWTuvlepTJWiA0Ln92sL47qOZ3lEzppVnp8Ta
+        ETMcyuWRmeHslA3fjo+gAMjLsrfHt9YiAEa/NXcZ6A==
+X-Google-Smtp-Source: ABdhPJx6uY+NKR2ZMWCuqqVZQcdG+tobTGZ0wLgG2UzeC4NAvQswCHSV4g3DWfNuA02BEzECOuJvWnAAMJjLc5k+b/k=
+X-Received: by 2002:a17:906:1e0c:: with SMTP id g12mr20262848ejj.214.1607889573574;
+ Sun, 13 Dec 2020 11:59:33 -0800 (PST)
+MIME-Version: 1.0
+References: <CAM1kxwgjCJwSvOtESxWwTC_qcXZEjbOSreXUQrG+bOOrPWdbqA@mail.gmail.com>
+ <750bc4e7-c2ce-e33d-dc98-483af96ff330@kernel.dk> <CAM1kxwjm9YFJCvqt4Bm0DKQuKz2Qg975YWSnx6RO_Jam=gkQyg@mail.gmail.com>
+ <e618d93a-e3c6-8fb6-c559-32c0b854e321@kernel.dk> <CAM1kxwgX5MsOoJfnCFMnkAqCJr8m34XC2Pw1bpGmrdnUFPhY9Q@mail.gmail.com>
+ <bfc41aef-d09b-7e94-ed50-34ec3de6163d@kernel.dk> <CAM1kxwi-P1aVrO9PKj87osvsS4a9PH=hSM+ZJ2mLKJckNeHOWQ@mail.gmail.com>
+ <37ccec74-8a7c-b5c6-c11f-aaa9e7113461@kernel.dk>
+In-Reply-To: <37ccec74-8a7c-b5c6-c11f-aaa9e7113461@kernel.dk>
+From:   Victor Stewart <v@nametag.social>
+Date:   Sun, 13 Dec 2020 19:59:22 +0000
+Message-ID: <CAM1kxwikq=D5xwckq5Gwb9hgwQER6NQA9JooDkbgf=QRZVbNJw@mail.gmail.com>
 Subject: Re: [PATCH 0/3] PROTO_CMSG_DATA_ONLY for Datagram (UDP)
-To:     Victor Stewart <v@nametag.social>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring <io-uring@vger.kernel.org>,
         Soheil Hassas Yeganeh <soheil@google.com>,
         netdev <netdev@vger.kernel.org>,
         Stefan Metzmacher <metze@samba.org>,
         Jann Horn <jannh@google.com>
-References: <CAM1kxwgjCJwSvOtESxWwTC_qcXZEjbOSreXUQrG+bOOrPWdbqA@mail.gmail.com>
- <750bc4e7-c2ce-e33d-dc98-483af96ff330@kernel.dk>
- <CAM1kxwjm9YFJCvqt4Bm0DKQuKz2Qg975YWSnx6RO_Jam=gkQyg@mail.gmail.com>
- <e618d93a-e3c6-8fb6-c559-32c0b854e321@kernel.dk>
- <CAM1kxwgX5MsOoJfnCFMnkAqCJr8m34XC2Pw1bpGmrdnUFPhY9Q@mail.gmail.com>
- <bfc41aef-d09b-7e94-ed50-34ec3de6163d@kernel.dk>
- <CAM1kxwi-P1aVrO9PKj87osvsS4a9PH=hSM+ZJ2mLKJckNeHOWQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <37ccec74-8a7c-b5c6-c11f-aaa9e7113461@kernel.dk>
-Date:   Sat, 12 Dec 2020 14:44:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <CAM1kxwi-P1aVrO9PKj87osvsS4a9PH=hSM+ZJ2mLKJckNeHOWQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/12/20 2:42 PM, Victor Stewart wrote:
-> On Sat, Dec 12, 2020 at 6:02 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 12/12/20 10:58 AM, Victor Stewart wrote:
->>> On Sat, Dec 12, 2020 at 5:40 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> On 12/12/20 10:25 AM, Victor Stewart wrote:
->>>>> On Sat, Dec 12, 2020 at 5:07 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>
->>>>>> On 12/12/20 8:31 AM, Victor Stewart wrote:
->>>>>>> RE our conversation on the "[RFC 0/1] whitelisting UDP GSO and GRO
->>>>>>> cmsgs" thread...
->>>>>>>
->>>>>>> https://lore.kernel.org/io-uring/CAM1kxwi5m6i8hrtkw7nZYoziPTD-Wp03+fcsUwh3CuSc=81kUQ@mail.gmail.com/
->>>>>>>
->>>>>>> here are the patches we discussed.
->>>>>>>
->>>>>>> Victor Stewart (3):
->>>>>>>    net/socket.c: add PROTO_CMSG_DATA_ONLY to __sys_sendmsg_sock
->>>>>>>    net/ipv4/af_inet.c: add PROTO_CMSG_DATA_ONLY to inet_dgram_ops
->>>>>>>    net/ipv6/af_inet6.c: add PROTO_CMSG_DATA_ONLY to inet6_dgram_ops
->>>>>>>
->>>>>>>    net/ipv4/af_inet.c
->>>>>>>      |   1 +
->>>>>>>    net/ipv6/af_inet6.c
->>>>>>>     |   1 +
->>>>>>>    net/socket.c
->>>>>>>        |   8 +-
->>>>>>>    3 files changed, 7 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> Changes look fine to me, but a few comments:
->>>>>>
->>>>>> - I'd order 1/3 as 3/3, that ordering makes more sense as at that point it
->>>>>>   could actually be used.
->>>>>
->>>>> right that makes sense.
->>>>>
->>>>>>
->>>>>> - For adding it to af_inet/af_inet6, you should write a better commit message
->>>>>>   on the reasoning for the change. Right now it just describes what the
->>>>>>   patch does (which is obvious from the change), not WHY it's done. Really
->>>>>>   goes for current 1/3 as well, commit messages need to be better in
->>>>>>   general.
->>>>>>
->>>>>
->>>>> okay thanks Jens. i would have reiterated the intention but assumed it
->>>>> were implicit given I linked the initial conversation about enabling
->>>>> UDP_SEGMENT (GSO) and UDP_GRO through io_uring.
->>>>>
->>>>>> I'd also CC Jann Horn on the series, he's the one that found an issue there
->>>>>> in the past and also acked the previous change on doing PROTO_CMSG_DATA_ONLY.
->>>>>
->>>>> I CCed him on this reply. Soheil at the end of the first exchange
->>>>> thread said he audited the UDP paths and believed this to be safe.
->>>>>
->>>>> how/should I resubmit the patch with a proper intention explanation in
->>>>> the meta and reorder the patches? my first patch and all lol.
->>>>
->>>> Just post is as a v2 with the change noted in the cover letter. I'd also
->>>> ensure that it threads properly, right now it's just coming through as 4
->>>> separate emails at my end. If you're using git send-email, make sure you
->>>> add --thread to the arguments.
->>>
->>> oh i didn't know about git send-email. i was manually constructing /
->>> sending them lol. thanks!
->>
->> I'd recommend it, makes sure your mailer doesn't mangle anything either. FWIW,
->> this is what I do:
->>
->> git format-patch sha1..sha2
->> mv 00*.patch /tmp/x
->>
->> git send-email --no-signed-off-by-cc --thread --compose  --to linux-fsdevel@vger.kernel.org --cc torvalds@linux-foundation.org --cc viro@zeniv.linux.org.uk /tmp/x
->>
->> (from a series I just sent out). And then I have the following section in
->> ~/.gitconfig:
->>
->> [sendemail]
->> from = Jens Axboe <axboe@kernel.dk>
->> smtpserver = smtp.gmail.com
->> smtpuser = axboe@kernel.dk
->> smtpencryption = tls
->> smtppass = hunter2
->> smtpserverport = 587
->>
->> for using gmail to send them out.
->>
->> --compose will fire up your editor to construct the cover letter, and
->> when you're happy with it, save+exit and git send-email will ask whether
->> to proceed or abort.
->>
->> That's about all there is to it, and provides a consistent way to send out
->> patch series.
-> 
-> awesome thanks! i'll be using this workflow from now on.
-> 
-> P.S. hope thats not your real password LOL
+FYI for anyone who happens upon this...
 
-Haha it's not, google hunter2 and password and you'll see :-)
+for gmail you have to first turn on 2-factor authentication then
+generate a custom app password for this to work. then use that
+password, all the rest the same.
 
--- 
-Jens Axboe
-
+On Sat, Dec 12, 2020 at 9:44 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 12/12/20 2:42 PM, Victor Stewart wrote:
+> > On Sat, Dec 12, 2020 at 6:02 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 12/12/20 10:58 AM, Victor Stewart wrote:
+> >>> On Sat, Dec 12, 2020 at 5:40 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>>>
+> >>>> On 12/12/20 10:25 AM, Victor Stewart wrote:
+> >>>>> On Sat, Dec 12, 2020 at 5:07 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>>>>>
+> >>>>>> On 12/12/20 8:31 AM, Victor Stewart wrote:
+> >>>>>>> RE our conversation on the "[RFC 0/1] whitelisting UDP GSO and GRO
+> >>>>>>> cmsgs" thread...
+> >>>>>>>
+> >>>>>>> https://lore.kernel.org/io-uring/CAM1kxwi5m6i8hrtkw7nZYoziPTD-Wp03+fcsUwh3CuSc=81kUQ@mail.gmail.com/
+> >>>>>>>
+> >>>>>>> here are the patches we discussed.
+> >>>>>>>
+> >>>>>>> Victor Stewart (3):
+> >>>>>>>    net/socket.c: add PROTO_CMSG_DATA_ONLY to __sys_sendmsg_sock
+> >>>>>>>    net/ipv4/af_inet.c: add PROTO_CMSG_DATA_ONLY to inet_dgram_ops
+> >>>>>>>    net/ipv6/af_inet6.c: add PROTO_CMSG_DATA_ONLY to inet6_dgram_ops
+> >>>>>>>
+> >>>>>>>    net/ipv4/af_inet.c
+> >>>>>>>      |   1 +
+> >>>>>>>    net/ipv6/af_inet6.c
+> >>>>>>>     |   1 +
+> >>>>>>>    net/socket.c
+> >>>>>>>        |   8 +-
+> >>>>>>>    3 files changed, 7 insertions(+), 3 deletions(-)
+> >>>>>>
+> >>>>>> Changes look fine to me, but a few comments:
+> >>>>>>
+> >>>>>> - I'd order 1/3 as 3/3, that ordering makes more sense as at that point it
+> >>>>>>   could actually be used.
+> >>>>>
+> >>>>> right that makes sense.
+> >>>>>
+> >>>>>>
+> >>>>>> - For adding it to af_inet/af_inet6, you should write a better commit message
+> >>>>>>   on the reasoning for the change. Right now it just describes what the
+> >>>>>>   patch does (which is obvious from the change), not WHY it's done. Really
+> >>>>>>   goes for current 1/3 as well, commit messages need to be better in
+> >>>>>>   general.
+> >>>>>>
+> >>>>>
+> >>>>> okay thanks Jens. i would have reiterated the intention but assumed it
+> >>>>> were implicit given I linked the initial conversation about enabling
+> >>>>> UDP_SEGMENT (GSO) and UDP_GRO through io_uring.
+> >>>>>
+> >>>>>> I'd also CC Jann Horn on the series, he's the one that found an issue there
+> >>>>>> in the past and also acked the previous change on doing PROTO_CMSG_DATA_ONLY.
+> >>>>>
+> >>>>> I CCed him on this reply. Soheil at the end of the first exchange
+> >>>>> thread said he audited the UDP paths and believed this to be safe.
+> >>>>>
+> >>>>> how/should I resubmit the patch with a proper intention explanation in
+> >>>>> the meta and reorder the patches? my first patch and all lol.
+> >>>>
+> >>>> Just post is as a v2 with the change noted in the cover letter. I'd also
+> >>>> ensure that it threads properly, right now it's just coming through as 4
+> >>>> separate emails at my end. If you're using git send-email, make sure you
+> >>>> add --thread to the arguments.
+> >>>
+> >>> oh i didn't know about git send-email. i was manually constructing /
+> >>> sending them lol. thanks!
+> >>
+> >> I'd recommend it, makes sure your mailer doesn't mangle anything either. FWIW,
+> >> this is what I do:
+> >>
+> >> git format-patch sha1..sha2
+> >> mv 00*.patch /tmp/x
+> >>
+> >> git send-email --no-signed-off-by-cc --thread --compose  --to linux-fsdevel@vger.kernel.org --cc torvalds@linux-foundation.org --cc viro@zeniv.linux.org.uk /tmp/x
+> >>
+> >> (from a series I just sent out). And then I have the following section in
+> >> ~/.gitconfig:
+> >>
+> >> [sendemail]
+> >> from = Jens Axboe <axboe@kernel.dk>
+> >> smtpserver = smtp.gmail.com
+> >> smtpuser = axboe@kernel.dk
+> >> smtpencryption = tls
+> >> smtppass = hunter2
+> >> smtpserverport = 587
+> >>
+> >> for using gmail to send them out.
+> >>
+> >> --compose will fire up your editor to construct the cover letter, and
+> >> when you're happy with it, save+exit and git send-email will ask whether
+> >> to proceed or abort.
+> >>
+> >> That's about all there is to it, and provides a consistent way to send out
+> >> patch series.
+> >
+> > awesome thanks! i'll be using this workflow from now on.
+> >
+> > P.S. hope thats not your real password LOL
+>
+> Haha it's not, google hunter2 and password and you'll see :-)
+>
+> --
+> Jens Axboe
+>

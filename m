@@ -2,63 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 156CD2D90D5
-	for <lists+io-uring@lfdr.de>; Sun, 13 Dec 2020 23:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D3502D90DB
+	for <lists+io-uring@lfdr.de>; Sun, 13 Dec 2020 23:13:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbgLMWHy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 13 Dec 2020 17:07:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35798 "EHLO
+        id S1729925AbgLMWNI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 13 Dec 2020 17:13:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728262AbgLMWHo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Dec 2020 17:07:44 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D32D7C0613CF;
-        Sun, 13 Dec 2020 14:07:03 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id y17so14534850wrr.10;
-        Sun, 13 Dec 2020 14:07:03 -0800 (PST)
+        with ESMTP id S1731431AbgLMWNB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Dec 2020 17:13:01 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94385C0613CF;
+        Sun, 13 Dec 2020 14:12:20 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id 91so14551787wrj.7;
+        Sun, 13 Dec 2020 14:12:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lBXMEqxPoCArGe/I6OnwcDSg9d8UKL6dxdEKdckdY0Y=;
-        b=E7D8ziH4GIdg/RQqlVCBYAdfLR5JpW8Yb+gt70vfqcnAE46RLL2iyxoLKXIR3t46L+
-         4o7+53Lj0C6M9agbXSJ5vaVn71vemMTJXyG6jZn5hNutQmRLicyzLVvp5XmBetD4lSJt
-         KZcYDcCMe1WRnrBCSc4A8uNVflgBNSo+LfpH4XaYQGOjsmwKnwwAU8wo874qIRwnvccK
-         CXmPrWgW4kcdw0B75B/GJkAPzX9H2mloI/7V34yWBxdSHmmCxLSjqGZeBOfHEd5F6hiV
-         6thdcfktAc2IACDtaDoVgm4eICL/suNKXVTa2VO2g3+bCAybeQ6opItptM5D5hgoucDj
-         RXzg==
+        bh=9nxrWqcqD+NfL/E6pdVeNrVlJmdS2gvVv7D8xgbY/eQ=;
+        b=dF086oKY/H0yy2SCYekpY3t0HtfeVwzk1D52EsK+0RLf/3jUCSsARG9ZujjcHMv/XR
+         IksFhDEai7bxAT180ne63PVGVMJ2IxPZllBnCOvZ6TT/UFY6RVpeJ4GqJPpvRWHoO1i2
+         Ne74Xp7a6VZkZ4FkC1ynQ3pTGGM+QriCt56G65RpMPl23xrivoMP7p53OQwubf35J2my
+         SEl9h+/qIWB+FKzywtT4aPCqWhxHSuS+nmB5aXn1gqPzoIXneMy1w82SajjjMxBLT0mF
+         5nGDMbNqdP+QlAeb46T9zBlCxOGrjPK26O4xSmujxTPIBzOfc7CRO9NEI3BNHiMhpLl9
+         maeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=lBXMEqxPoCArGe/I6OnwcDSg9d8UKL6dxdEKdckdY0Y=;
-        b=q+s/Hn25Zlf4rNvC+/98fbhRi3hjABhqpkXaUlqcG09Re/vliFWRwi14mJw1EcdSwo
-         rCiUT3ss45L3bfPNeq75Cfmb0gTeQaOD4P4BvvCz3328qJjfRCjd1SSKb/5Qii7smgY4
-         lGYUqtv0/CNBdcINSEExA21mKzeVifOu3AC3TTm3d7POchml/oQxi4T2O5rS7/juAumb
-         WrejYWfQJ9H77rBF/PbezR38LlbaM398KLp59G9r1TjLIB6ez7LklN9avvEJ1NijR0Kt
-         L2wsImCc8DOhutissa4wxCCrfMNTuU8bC869E9zHTDpJn9/zdyxW8MCRvYsvrRtKqmQw
-         srYg==
-X-Gm-Message-State: AOAM530QRMzfGD3HaWZo0AoLmxaAqJDIoMXg78yjLwHjJialdboARqe0
-        IsPahQ9XUGf7TEBLjZn4zYAGTaNDMJXHgml4
-X-Google-Smtp-Source: ABdhPJxiG+V19Qk5Ilz69c1NzPDdXzK7qamS3a85K7gKkoRtZqjt8nZ86u7UhIeFGeBQ+0hig7k99w==
-X-Received: by 2002:adf:e84c:: with SMTP id d12mr26697597wrn.382.1607897222442;
-        Sun, 13 Dec 2020 14:07:02 -0800 (PST)
+        bh=9nxrWqcqD+NfL/E6pdVeNrVlJmdS2gvVv7D8xgbY/eQ=;
+        b=mJX1MrHUoHxlJ4DKFxo3JCyvNYRRzLKGC5kbN9P6O1BzCZY4gpQBkxm2h9lLuK+qyM
+         cGTdanw4vdTSDzIWsRwaYhc+puDs27V243tjFHL8qN+H/gI7jP3iXLW+a8P9mEySHcrZ
+         TRf4hXzBswDNBbuQ7bPIEepGlp5LvesmwwcedVEMi2qIiwmC6Jy7h8dY7l8LabcXApsK
+         pRprG9zMo81i4B27zhLMho5MpZoIm43/IclMcKPTm9oAS7EBHECSpOXbJie4KYkt02zz
+         VlBhvNZRWfXbN0XfTS9Cjx+fL7WHYm+0c7PdgOBL0521mzSlvgeKd11tBKrPOhO8WQKs
+         wxUw==
+X-Gm-Message-State: AOAM531ZMW9IuFjbclvwbJXLdV/f3ftD6piWsl33x60DF73F4FrWzIDh
+        Qk3t6ZACX7Kc2KtO0yhld+1Fg6EAJ6Ju3ZjQ
+X-Google-Smtp-Source: ABdhPJyUDq/ElypTFjQP41ePoMgoMoW+nE653MComyet2+mKcZ6hmkEjnDKHEfu2VyKKSi5WyODxdw==
+X-Received: by 2002:a5d:56c3:: with SMTP id m3mr8832166wrw.419.1607897539098;
+        Sun, 13 Dec 2020 14:12:19 -0800 (PST)
 Received: from [192.168.8.124] ([85.255.232.163])
-        by smtp.gmail.com with ESMTPSA id a144sm27679946wmd.47.2020.12.13.14.07.01
+        by smtp.gmail.com with ESMTPSA id h9sm27378431wre.24.2020.12.13.14.12.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Dec 2020 14:07:01 -0800 (PST)
-Subject: Re: [RFC 0/2] nocopy bvec for direct IO
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Sun, 13 Dec 2020 14:12:18 -0800 (PST)
+Subject: Re: [PATCH 1/2] iov: introduce ITER_BVEC_FLAG_FIXED
+To:     Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <cover.1607477897.git.asml.silence@gmail.com>
- <b165cd42-be79-69ed-ae06-a3f3ff633c62@kernel.dk>
+ <de27dbca08f8005a303e5efd81612c9a5cdcf196.1607477897.git.asml.silence@gmail.com>
+ <20201209083645.GB21968@infradead.org>
+ <20201209130723.GL3579531@ZenIV.linux.org.uk>
+ <b6cd4108-dbfe-5753-768f-92f55f38d6cd@gmail.com>
+ <20201209175553.GA26252@infradead.org>
+ <20201209182456.GR7338@casper.infradead.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -103,12 +105,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <b3edacbf-8501-8fcf-b492-2e4cc25c34d6@gmail.com>
-Date:   Sun, 13 Dec 2020 22:03:44 +0000
+Message-ID: <ef3ddc2c-75ea-59aa-f27e-f974b003802e@gmail.com>
+Date:   Sun, 13 Dec 2020 22:09:00 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <b165cd42-be79-69ed-ae06-a3f3ff633c62@kernel.dk>
+In-Reply-To: <20201209182456.GR7338@casper.infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -116,27 +118,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 09/12/2020 16:53, Jens Axboe wrote:
-> On 12/8/20 7:19 PM, Pavel Begunkov wrote:
->> The idea is to avoid copying, merging, etc. bvec from iterator to bio
->> in direct I/O and use the one we've already got. Hook it up for io_uring.
->> Had an eye on it for a long, and it also was brought up by Matthew
->> just recently. Let me know if I forgot or misplaced some tags.
+On 09/12/2020 18:24, Matthew Wilcox wrote:
+> On Wed, Dec 09, 2020 at 05:55:53PM +0000, Christoph Hellwig wrote:
+>> On Wed, Dec 09, 2020 at 01:37:05PM +0000, Pavel Begunkov wrote:
+>>> Yeah, I had troubles to put comments around, and it's still open.
+>>>
+>>> For current cases it can be bound to kiocb, e.g. "if an bvec iter passed
+>>> "together" with kiocb then the vector should stay intact up to 
+>>> ->ki_complete()". But that "together" is rather full of holes.
 >>
->> A benchmark got me 430KIOPS vs 540KIOPS, or +25% on bare metal. And perf
->> shows that bio_iov_iter_get_pages() was taking ~20%. The test is pretty
->> silly, but still imposing. I'll redo it closer to reality for next
->> iteration, anyway need to double check some cases.
->>
->> If same applied to iomap, common chunck can be moved from block_dev
->> into bio_iov_iter_get_pages(), but if there any benefit for filesystems,
->> they should explicitly opt in with ITER_BVEC_FLAG_FIXED.
+>> What about: "For bvec based iters the bvec must not be freed until the
+>> I/O has completed.  For asynchronous I/O that means it must be freed
+>> no earlier than from ->ki_complete."
 > 
-> Ran this on a real device, and I get a 10% bump in performance with it.
-> That's pretty amazing! So please do pursue this one and pull it to
-> completion.
+> Perhaps for the second sentence "If the I/O is completed asynchronously,
+> the bvec must not be freed before ->ki_complete() has been called"?
 
-I'm curious, what block size did you use?
+Sounds good, I'll use it. Thanks!
 
 -- 
 Pavel Begunkov

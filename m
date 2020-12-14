@@ -2,182 +2,153 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 564862D9E3A
-	for <lists+io-uring@lfdr.de>; Mon, 14 Dec 2020 18:53:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C77222D9FFF
+	for <lists+io-uring@lfdr.de>; Mon, 14 Dec 2020 20:13:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408735AbgLNRwH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Dec 2020 12:52:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405812AbgLNRwE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Dec 2020 12:52:04 -0500
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A528C0613D3
-        for <io-uring@vger.kernel.org>; Mon, 14 Dec 2020 09:51:24 -0800 (PST)
-Received: by mail-wr1-x442.google.com with SMTP id 91so17302019wrj.7
-        for <io-uring@vger.kernel.org>; Mon, 14 Dec 2020 09:51:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NUxCcPefukTxqUhkLs8pyFA45MJnkMkQsBmKnb00gP8=;
-        b=OzMf3XpnZY3ZzywguwkzKdSVonOKYV4pE6xqrH/iisa6xp3EG7qkZ5hGn9dtzC+1tV
-         ihK36mUCw602M3aBcPGO7PSCB/g6IXvva8fDDgNAE3w27hzRm8QSLBFneOF/P5ASSYkr
-         97bOCad7wGlRTXnFNCGMPMsBQeXoXRoG3R5SrM4x+IjHimguGdSLXFiax+mB7w4GJuCm
-         EQTyf8MdJZNhTV6OSzOSU8X/iyFN8je3itkndOKfvmPrSBPshYvqwd9GyrgARJ0aVcnk
-         3p70zEmXf6YY2hjaNITCZw5YrQu18lwgT66gYYAHYxrLLr0wAOjxkPdwPidHoSzgzb/8
-         wLlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=NUxCcPefukTxqUhkLs8pyFA45MJnkMkQsBmKnb00gP8=;
-        b=s6CW7KFlq0FhvRthTh4+pvXZy3+TpowBnaDQ0TijpxctmNTQE7NuMtz5JzMz9hUbEA
-         f69oeaCAa0rmcyZj8/ZWvMWDGgjtk1oIYJ6/FgbW8+cjpeG96Ep/V612ktrJJU69mDA7
-         IvAKqlVvZ4d5onsl7FAGQ0J8Q0UQFuvN8WIJNaKiVOmIc26JintIOsp1eCuGCp3giqmF
-         nGkqcad3ed1a8skRv8daqmlCs97wqnbTgtglwhCqqsjHBwTkapE3g207XNOUw+GEXVeU
-         Bj/9QYWVMdwG1adSHRBrPJIsOuydudnzrRz2uKAx+GVygoxwVN3GyWt+jSOrF2msYNxT
-         tUoQ==
-X-Gm-Message-State: AOAM532PtxvXwzSfdN1nR1yNyobVDo14oJwajjgLo5PU1KOV16l5dPWm
-        zfGuclVAAORI7kTSRNpxM37q22uGpBeS+w==
-X-Google-Smtp-Source: ABdhPJwWDOZEew4OS1COeuymjS+a8LcNYYTSs6SJDqAbGyn/nEbHzY1zOB/K4SGpCsV7qkXn6ODK4g==
-X-Received: by 2002:adf:92a4:: with SMTP id 33mr29859716wrn.347.1607968282785;
-        Mon, 14 Dec 2020 09:51:22 -0800 (PST)
-Received: from [192.168.8.128] ([85.255.232.163])
-        by smtp.gmail.com with ESMTPSA id n17sm30489416wmc.33.2020.12.14.09.51.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Dec 2020 09:51:22 -0800 (PST)
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-References: <20201214154941.10907-1-xiaoguang.wang@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH] io_uring: hold uring_lock to complete faild polled io in
- io_wq_submit_work()
-Message-ID: <23ec9427-e904-f87f-2345-d040d9b10673@gmail.com>
-Date:   Mon, 14 Dec 2020 17:48:04 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S2440779AbgLNTKX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Dec 2020 14:10:23 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:60948 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2440745AbgLNTKL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Dec 2020 14:10:11 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BEJ4DPC139195;
+        Mon, 14 Dec 2020 19:09:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ references : message-id : date : mime-version : in-reply-to : content-type
+ : content-transfer-encoding; s=corp-2020-01-29;
+ bh=+xhuVCZ6nZCJS5B75dJS87WsLaSPUGqd60kxHumxH1Q=;
+ b=mY09Ms/kPXyytpRf0tnNO2DkQ4XGYjLb7b8/vAJyXSW/OmRls+RhwoCnpfiyi/QP6hqw
+ hNGh/6M6RCnA+MOc875u5NG9T6FTJod8Kb2FZ1xPBGNSf3146AYetRDmR+B4KD4KJuB0
+ wYgrz5Zbzg2DYQMGxdsTnwD1j/0omBKmp9Nx1vpuBA6n0Qtgm+nEsHWp42SDAqvRqXfR
+ knb66a57PXP08sG+R2zhMucjfqrPYKHrtkcz3p6b5tHrPjCXlOuNq8bhOEl8k3krolX9
+ Vmc3LvgHOu5eq1jAjoyiuH7Y7ZCVXRAzePa5nrorAZMwokahebeb7n9vVk0j4era2XHY XQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 35cn9r6yw4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Dec 2020 19:09:24 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BEJ65nu043115;
+        Mon, 14 Dec 2020 19:09:24 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 35d7suyr0k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Dec 2020 19:09:24 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0BEJ9M2r026403;
+        Mon, 14 Dec 2020 19:09:22 GMT
+Received: from [10.154.105.161] (/10.154.105.161)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Dec 2020 11:09:22 -0800
+Subject: Re: [PATCH v2 00/13] io_uring: buffer registration enhancements
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
+References: <1607379352-68109-1-git-send-email-bijan.mottahedeh@oracle.com>
+Message-ID: <e8afcd4c-37b8-f02e-c648-4cd14f12636a@oracle.com>
+Date:   Mon, 14 Dec 2020 11:09:20 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 MIME-Version: 1.0
-In-Reply-To: <20201214154941.10907-1-xiaoguang.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1607379352-68109-1-git-send-email-bijan.mottahedeh@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Antivirus: Avast (VPS 201006-2, 10/06/2020), Outbound message
+X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9834 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012140125
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9834 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0
+ malwarescore=0 priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012140125
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 14/12/2020 15:49, Xiaoguang Wang wrote:
-> io_iopoll_complete() does not hold completion_lock to complete polled
-> io, so in io_wq_submit_work(), we can not call io_req_complete() directly,
-> to complete polled io, otherwise there maybe concurrent access to cqring,
-> defer_list, etc, which is not safe. Commit dad1b1242fd5 ("io_uring: always
-> let io_iopoll_complete() complete polled io") has fixed this issue, but
-> Pavel reported that IOPOLL apart from rw can do buf reg/unreg requests(
-> IORING_OP_PROVIDE_BUFFERS or IORING_OP_REMOVE_BUFFERS), so the fix is
-> not good.
-> 
-> Given that io_iopoll_complete() is always called under uring_lock, so here
-> for polled io, we can also get uring_lock to fix this issue.
+Just a ping.  Anything I can do to facilitate the review, please let me 
+know.
 
-One thing I don't like is that io_wq_submit_work() won't be able to
-publish an event while someone polling io_uring_enter(ENTER_GETEVENTS),
-that's because both take the lock. The problem is when the poller waits
-for an event that is currently in io-wq (i.e. io_wq_submit_work()).
-The polling loop will eventually exit, so that's not a deadlock, but
-latency,etc. would be huge.
 
+> v2:
 > 
-> Fixes: dad1b1242fd5 ("io_uring: always let io_iopoll_complete() complete polled io")
-> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 25 +++++++++++++++----------
->  1 file changed, 15 insertions(+), 10 deletions(-)
+> - drop readv/writev with fixed buffers patch
+> - handle ref_nodes both both files/buffers with a single ref_list
+> - make file/buffer handling more unified
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index f53356ced5ab..eab3d2b7d232 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6354,19 +6354,24 @@ static struct io_wq_work *io_wq_submit_work(struct io_wq_work *work)
->  	}
->  
->  	if (ret) {
-> +		bool iopoll_enabled = req->ctx->flags & IORING_SETUP_IOPOLL;
-> +
->  		/*
-> -		 * io_iopoll_complete() does not hold completion_lock to complete
-> -		 * polled io, so here for polled io, just mark it done and still let
-> -		 * io_iopoll_complete() complete it.
-> +		 * io_iopoll_complete() does not hold completion_lock to complete polled
-> +		 * io, so here for polled io, we can not call io_req_complete() directly,
-> +		 * otherwise there maybe concurrent access to cqring, defer_list, etc,
-> +		 * which is not safe. Given that io_iopoll_complete() is always called
-> +		 * under uring_lock, so here for polled io, we also get uring_lock to
-> +		 * complete it.
->  		 */
-> -		if (req->ctx->flags & IORING_SETUP_IOPOLL) {
-> -			struct kiocb *kiocb = &req->rw.kiocb;
-> +		if (iopoll_enabled)
-> +			mutex_lock(&req->ctx->uring_lock);
->  
-> -			kiocb_done(kiocb, ret, NULL);
-> -		} else {
-> -			req_set_fail_links(req);
-> -			io_req_complete(req, ret);
-> -		}
-> +		req_set_fail_links(req);
-> +		io_req_complete(req, ret);
-> +
-> +		if (iopoll_enabled)
-> +			mutex_unlock(&req->ctx->uring_lock);
->  	}
->  
->  	return io_steal_work(req);
+> This patchset implements a set of enhancements to buffer registration
+> consistent with existing file registration functionality:
+> 
+> - buffer registration updates		IORING_REGISTER_BUFFERS_UPDATE
+> 					IORING_OP_BUFFERS_UPDATE
+> 
+> - buffer registration sharing		IORING_SETUP_SHARE_BUF
+> 					IORING_SETUP_ATTACH_BUF
+> 
+> I have kept the original patchset unchanged for the most part to
+> facilitate reviewing and so this set adds a number of additional patches
+> mostly making file/buffer handling more unified.
+> 
+> Patch 1-2 modularize existing buffer registration code.
+> 
+> Patch 3-7 generalize fixed_file functionality to fixed_rsrc.
+> 
+> Patch 8 applies fixed_rsrc functionality for fixed buffers support.
+> 
+> Patch 9-10 generalize files_update functionality to rsrc_update.
+> 
+> Patch 11 implements buffer registration update, and introduces
+> IORING_REGISTER_BUFFERS_UPDATE and IORING_OP_BUFFERS_UPDATE, consistent
+> with file registration update.
+> 
+> Patch 12 generalizes fixed resource allocation
+> 
+> Patch 13 implements buffer sharing among multiple rings; it works as follows:
+> 
+> - A new ring, A,  is setup. Since no buffers have been registered, the
+>    registered buffer state is an empty set, Z. That's different from the
+>    NULL state in current implementation.
+> 
+> - Ring B is setup, attaching to Ring A. It's also attaching to it's
+>    buffer registrations, now we have two references to the same empty
+>    set, Z.
+> 
+> - Ring A registers buffers into set Z, which is no longer empty.
+> 
+> - Ring B sees this immediately, since it's already sharing that set.
+> 
+> Testing
+> 
+> I have used liburing file-{register,update} tests as models for
+> buffer-{register,update,share}, tests and they run ok.
+> 
+> TBD
+> 
+> - Haven't addressed Pavel's comment yet on using a single opcode for
+> files/buffers update, pending Jen's opinion.  Could we encode the resource
+> type into the sqe (e.g. rw_flags)?
+> 
+> Bijan Mottahedeh (13):
+>    io_uring: modularize io_sqe_buffer_register
+>    io_uring: modularize io_sqe_buffers_register
+>    io_uring: generalize fixed file functionality
+>    io_uring: rename fixed_file variables to fixed_rsrc
+>    io_uring: separate ref_list from fixed_rsrc_data
+>    io_uring: generalize fixed_file_ref_node functionality
+>    io_uring: add rsrc_ref locking routines
+>    io_uring: implement fixed buffers registration similar to fixed files
+>    io_uring: create common fixed_rsrc_ref_node handling routines
+>    io_uring: generalize files_update functionlity to rsrc_update
+>    io_uring: support buffer registration updates
+>    io_uring: create common fixed_rsrc_data allocation routines.
+>    io_uring: support buffer registration sharing
+> 
+>   fs/io_uring.c                 | 1004 +++++++++++++++++++++++++++++------------
+>   include/uapi/linux/io_uring.h |   12 +-
+>   2 files changed, 732 insertions(+), 284 deletions(-)
 > 
 
--- 
-Pavel Begunkov

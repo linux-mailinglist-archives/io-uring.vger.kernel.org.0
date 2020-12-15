@@ -2,55 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E112DAC05
-	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 12:29:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE4FF2DAC4A
+	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 12:48:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729070AbgLOL1i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Dec 2020 06:27:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42348 "EHLO
+        id S1728656AbgLOLpu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Dec 2020 06:45:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729063AbgLOL1f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Dec 2020 06:27:35 -0500
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93034C06179C;
-        Tue, 15 Dec 2020 03:26:55 -0800 (PST)
-Received: by mail-wr1-x442.google.com with SMTP id d26so6261533wrb.12;
-        Tue, 15 Dec 2020 03:26:55 -0800 (PST)
+        with ESMTP id S1726951AbgLOLpM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Dec 2020 06:45:12 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF48C06179C;
+        Tue, 15 Dec 2020 03:44:31 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id y23so18218419wmi.1;
+        Tue, 15 Dec 2020 03:44:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cZpu9JVXhyiWelTl46Pe/xlISF8M49kKFY6TqjVIyqw=;
-        b=aXVK4L4avY9bV+Cz/0bzjSeCqzCJaFN0YJu7Etbnuszao4fnxJjx1/XTBjU4wVOd18
-         jT1L407QtX3yRZ9cQKwyOaH67FpaP+ZOFhSl1qIWeXvK/Fwk/9nTz27z+4EkvwZncAyL
-         TWMmELiBQ5L6VybGZmcESTEZnNdI1dXkbblqyFgyTUspMCKD04dGNy+E82u7lQ0ERuSy
-         ezaUwc4KbTbWA2lDEpJzmlM1MATNCPs2fbqbucnS6/+xHCcsMKzH5fdKwyRSuBCbXr87
-         ZTrz/n3pet5nUoi+snIqMiulRftnOZ2VW4zNxRFMTvfYgySlgnjNwsMfE+bi3e6OAd+R
-         xYdw==
+        bh=OWwRZGVysOGW0Xc4n3DjuAEe5aIQZl9wIJ+AWET/hOI=;
+        b=AMTXx6TTD352jGB3PrcCaEUiWdJOssWhewuqsduGuOThnSCQisHMFsZyAmf9shugqg
+         7f+Fn+gtQt6d9DzpHbl4i125FZLTs+IFwStWEmYnOWee7YEHGIZzH8e1fTeSln0M/Z3r
+         RAgikd05DcfIGb8X6fo0tFoVQGB9amDOkHABBfO4vafld96bwNPGQkbscaPJWwu9d3WQ
+         etev0b7CCnBCptzleYf/IGvGcnP/Zb3mst6FzLAYlqBoauUdpk1FAeNQqH3GoFcNAmZm
+         QRRwsh9PmutkLvBJuK5bXstcxKpB3+8nJbVWdZ94ZQVMGbhRdh4iDe2Zw7gb1ljUXdY9
+         X9HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=cZpu9JVXhyiWelTl46Pe/xlISF8M49kKFY6TqjVIyqw=;
-        b=Mn7zzjR2wi+O8WSzt8KYIzOaKpP2i09AzhI1FunGDEpCubSEDm1VvRh7ns6px6AJDR
-         G12jdqBdz4soLRzH/oDsAlGH/AtAyHeWTtECbMOYdxGEon3VrOAyxIntZ1QrY3FpSDvM
-         EHslFJYGkJDlS3wn/onV0ewPwNPkAbl9BP9RBtW8oIMZVxxfmcha4yXzrUbOhg26FxJz
-         irJsuea086DeqHo4HRGCZWd3mWZB71x7SW0lDRfVIXQ7rbfamf7/MhdWEjouBtEAOdhd
-         7U6bw0eb5dkfxBu8VBHxIqF8qdCfR1X0RNhCpXlqwQOInLCDotQyNreBYpJkNlwMCvLp
-         +UqA==
-X-Gm-Message-State: AOAM532c1GrvzI/rOYIlmN5l9IEGB2Oa6QtfAmbDsF0dwCnO6w8g9KuD
-        9WcnTewS+w7m2EkHBIH7YiGgTtNszGSg3Drk
-X-Google-Smtp-Source: ABdhPJxEug64Og3Z6dTRv7LWKBBzRMmfwovjQ+k+KkNwe51YTNZYqdU/TPzDt3NqBpn2gs92QGbMLw==
-X-Received: by 2002:a5d:4d02:: with SMTP id z2mr34466243wrt.109.1608031614170;
-        Tue, 15 Dec 2020 03:26:54 -0800 (PST)
+        bh=OWwRZGVysOGW0Xc4n3DjuAEe5aIQZl9wIJ+AWET/hOI=;
+        b=ap5bVjbqshVJCRXTSzHA1M+PphySxMD4SWjNZw+6KDYONjdwtkyCSgOid4B0gbHEy2
+         q9xTIxUAqzcd8iuiZjEi2Bq2gWgXZpZm7MPdO4XrfEhbDCcXe7q4EIR5B3fGDyjd3hny
+         DO5LVEoR6RB05ISi1e3HlRRq5SOoXPE2VJbFN3bSQD5KNT115eRC43kBzj+86mQ/eZuZ
+         snvqURGK0psw2RFvw1/V7AGVTy4dSZm7trTD4/hM+9wk/t5zud1NB/CGZgAl1w/DRGK4
+         yyDrOPe80/yj123XHT5pQq5mktmO6NrqycbOzbXwY2dHoFYhoGRN6CSOW3rr8iRNgFIw
+         xVrQ==
+X-Gm-Message-State: AOAM531iiSY0NUq6DpET1fto2ns0c7YAK+fdDuv/5olxfOfPBANf/yjT
+        7Os+CiiCsQe6c0cd0/noQTgMgQQDiDT5bRaq
+X-Google-Smtp-Source: ABdhPJxZhWNo4K56HmDD6LuDz+9jky+iOr3Bue398Aop8a3uegKgJUFzW4i5BXY8aVFtVsIW94CryA==
+X-Received: by 2002:a7b:c145:: with SMTP id z5mr32397755wmi.164.1608032670438;
+        Tue, 15 Dec 2020 03:44:30 -0800 (PST)
 Received: from [192.168.8.128] ([185.69.145.6])
-        by smtp.gmail.com with ESMTPSA id l7sm35838949wme.4.2020.12.15.03.26.52
+        by smtp.gmail.com with ESMTPSA id b14sm36954767wrx.77.2020.12.15.03.44.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Dec 2020 03:26:53 -0800 (PST)
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+        Tue, 15 Dec 2020 03:44:29 -0800 (PST)
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Ming Lei <ming.lei@redhat.com>,
@@ -58,17 +57,15 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
 References: <cover.1607976425.git.asml.silence@gmail.com>
- <5c9c22dbeecad883ca29b31896c262a8d2a77132.1607976425.git.asml.silence@gmail.com>
- <262132648a8f4e7a9d1c79003ea74b3f@AcuMS.aculab.com>
+ <1d3cf86668e44b3a3d35b5dbe759a086a157e434.1607976425.git.asml.silence@gmail.com>
+ <20201215005659.GF632069@dread.disaster.area>
+ <e8adf941-9901-b54c-d7a0-b785923558fb@gmail.com>
+ <20201215013312.GK632069@dread.disaster.area>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -113,13 +110,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v1 2/6] iov_iter: optimise bvec iov_iter_advance()
-Message-ID: <d151f81e-ec56-59c0-d2a0-ffd4a269fec1@gmail.com>
-Date:   Tue, 15 Dec 2020 11:23:34 +0000
+Subject: Re: [PATCH v1 4/6] block/psi: remove PSI annotations from direct IO
+Message-ID: <d5c1203c-c4b0-2f3b-5dd8-56743b88a834@gmail.com>
+Date:   Tue, 15 Dec 2020 11:41:11 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <262132648a8f4e7a9d1c79003ea74b3f@AcuMS.aculab.com>
+In-Reply-To: <20201215013312.GK632069@dread.disaster.area>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -127,51 +124,83 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 15/12/2020 09:37, David Laight wrote:
-> From: Pavel Begunkov
->> Sent: 15 December 2020 00:20
+
+
+On 15/12/2020 01:33, Dave Chinner wrote:
+> On Tue, Dec 15, 2020 at 01:03:45AM +0000, Pavel Begunkov wrote:
+>> On 15/12/2020 00:56, Dave Chinner wrote:
+>>> On Tue, Dec 15, 2020 at 12:20:23AM +0000, Pavel Begunkov wrote:
+>>>> As reported, we must not do pressure stall information accounting for
+>>>> direct IO, because otherwise it tells that it's thrashing a page when
+>>>> actually doing IO on hot data.
+>>>>
+>>>> Apparently, bio_iov_iter_get_pages() is used only by paths doing direct
+>>>> IO, so just make it avoid setting BIO_WORKINGSET, it also saves us CPU
+>>>> cycles on doing that. For fs/direct-io.c just clear the flag before
+>>>> submit_bio(), it's not of much concern performance-wise.
+>>>>
+>>>> Reported-by: Christoph Hellwig <hch@infradead.org>
+>>>> Suggested-by: Christoph Hellwig <hch@infradead.org>
+>>>> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+>>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>>>> ---
+>>>>  block/bio.c    | 25 ++++++++++++++++---------
+>>>>  fs/direct-io.c |  2 ++
+>>>>  2 files changed, 18 insertions(+), 9 deletions(-)
+>>> .....
+>>>> @@ -1099,6 +1103,9 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
+>>>>   * fit into the bio, or are requested in @iter, whatever is smaller. If
+>>>>   * MM encounters an error pinning the requested pages, it stops. Error
+>>>>   * is returned only if 0 pages could be pinned.
+>>>> + *
+>>>> + * It also doesn't set BIO_WORKINGSET, so is intended for direct IO. If used
+>>>> + * otherwise the caller is responsible to do that to keep PSI happy.
+>>>>   */
+>>>>  int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+>>>>  {
+>>>> diff --git a/fs/direct-io.c b/fs/direct-io.c
+>>>> index d53fa92a1ab6..914a7f600ecd 100644
+>>>> --- a/fs/direct-io.c
+>>>> +++ b/fs/direct-io.c
+>>>> @@ -426,6 +426,8 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
+>>>>  	unsigned long flags;
+>>>>  
+>>>>  	bio->bi_private = dio;
+>>>> +	/* PSI is only for paging IO */
+>>>> +	bio_clear_flag(bio, BIO_WORKINGSET);
+>>>
+>>> Why only do this for the old direct IO path? Why isn't this
+>>> necessary for the iomap DIO path?
 >>
->> iov_iter_advance() is heavily used, but implemented through generic
->> iteration. As bvecs have a specifically crafted advance() function, i.e.
->> bvec_iter_advance(), which is faster and slimmer, use it instead.
->>
->>  lib/iov_iter.c | 19 +++++++++++++++++++
-[...]
->>  void iov_iter_advance(struct iov_iter *i, size_t size)
->>  {
->>  	if (unlikely(iov_iter_is_pipe(i))) {
->> @@ -1077,6 +1092,10 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
->>  		i->count -= size;
->>  		return;
->>  	}
->> +	if (iov_iter_is_bvec(i)) {
->> +		iov_iter_bvec_advance(i, size);
->> +		return;
->> +	}
->>  	iterate_and_advance(i, size, v, 0, 0, 0)
->>  }
+>> It's in the description. In short, block and iomap dio use
+>> bio_iov_iter_get_pages(), which with this patch doesn't use
+>> [__]bio_add_page() and so doesn't set the flag. 
 > 
-> This seems to add yet another comparison before what is probably
-> the common case on an IOVEC (ie normal userspace buffer).
+> That is not obvious to someone not intimately familiar with the
+> patchset you are working on. You described -what- the code is doing,
+> not -why- the flag needs to be cleared here.
 
-If Al finally takes the patch for iov_iter_is_*() helpers it would
-be completely optimised out. 
+It's missing the link between BIO_WORKINGSET and PSI, but otherwise
+it describe both, what it does and how. I'll reword it for you next
+iteration.
 
 > 
-> Can't the call to bver_iter_advance be dropped into the 'advance'
-> path for BVEC's inside iterate_and_advance?
-
-It iterates by page/segment/etc., why would you want to do
-bver_iter_advance(i->count) there?
-
+> "Direct IO does not operate on the current working set of pages
+> managed by the kernel, so it should not be accounted as IO to the
+> pressure stall tracking infrastructure. Only direct IO paths use
+> bio_iov_iter_get_pages() to build bios, so to avoid PSI tracking of
+> direct IO don't flag the bio with BIO_WORKINGSET in this function.
 > 
-> iterate_and_advance itself has three 'unlikely' conditional tests
-> that may be mis-predicted taken before the 'likely' path.
-> One is for DISCARD which is checked twice on the object I just
-> looked at - the test in iov_iter_advance() is pointless.
-
-And again, both second checks, including for discards, would be
-optimised out by the iov_iter_is_* patch.
+> fs/direct-io.c uses <some other function> to build the bio we
+> are going to submit and so still flags the bio with BIO_WORKINGSET.
+> Rather than convert it to use bio_iov_iter_get_pages() to avoid
+> flagging the bio, we simply clear the BIO_WORKINGSET flag before
+> submitting the bio."
+> 
+> Cheers,
+> 
+> Dave.
+> 
 
 -- 
 Pavel Begunkov

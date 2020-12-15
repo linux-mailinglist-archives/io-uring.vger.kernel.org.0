@@ -2,66 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DDC312DABC2
-	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 12:19:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48E112DAC05
+	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 12:29:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbgLOLS2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Dec 2020 06:18:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40924 "EHLO
+        id S1729070AbgLOL1i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Dec 2020 06:27:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728609AbgLOLSV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Dec 2020 06:18:21 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C36ACC0617A6;
-        Tue, 15 Dec 2020 03:17:40 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id g25so10804695wmh.1;
-        Tue, 15 Dec 2020 03:17:40 -0800 (PST)
+        with ESMTP id S1729063AbgLOL1f (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Dec 2020 06:27:35 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93034C06179C;
+        Tue, 15 Dec 2020 03:26:55 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id d26so6261533wrb.12;
+        Tue, 15 Dec 2020 03:26:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NXdRZfQTFz8GJLGwd4lZ+RpQBFd7WkHYcttMRSgrBPQ=;
-        b=G1VcW1G1wT8O9omEXaax0jhFqKQpTrPsMlhnekh5H1ux21lONk30oVuyOADeELZon5
-         gtQBlPeSyXEtjcIq5xVh6oy7oazPWCu39/3VxDmRiN+TeCegXvCvm5MM7rC+vN7kErk4
-         FZUY/3ZyC19rAZSDIt430nhQza9bIB1x1iAh1wWxl9gZUGkFfkjIwZKenUuR5H0HzCXu
-         LlKYMYlx6U0vt0FvyLcumYBTBDg3AzzKiSANlp6wmyibx3DvwqMQReeldVav/OFewSx0
-         1vVk09ok7iQnbIuj2YPsZ1rlCVQJYbhyViaY3aP6dUaMUPpTdjXJPQ/kwKR0nVUAiiAG
-         ksBQ==
+        bh=cZpu9JVXhyiWelTl46Pe/xlISF8M49kKFY6TqjVIyqw=;
+        b=aXVK4L4avY9bV+Cz/0bzjSeCqzCJaFN0YJu7Etbnuszao4fnxJjx1/XTBjU4wVOd18
+         jT1L407QtX3yRZ9cQKwyOaH67FpaP+ZOFhSl1qIWeXvK/Fwk/9nTz27z+4EkvwZncAyL
+         TWMmELiBQ5L6VybGZmcESTEZnNdI1dXkbblqyFgyTUspMCKD04dGNy+E82u7lQ0ERuSy
+         ezaUwc4KbTbWA2lDEpJzmlM1MATNCPs2fbqbucnS6/+xHCcsMKzH5fdKwyRSuBCbXr87
+         ZTrz/n3pet5nUoi+snIqMiulRftnOZ2VW4zNxRFMTvfYgySlgnjNwsMfE+bi3e6OAd+R
+         xYdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=NXdRZfQTFz8GJLGwd4lZ+RpQBFd7WkHYcttMRSgrBPQ=;
-        b=bu3aX5s6+2Eu0z8ZHhgicowhmcr80d8ftkaob9NF9NV50NDOrmTYOptTLSEU5eZDkW
-         eGAZZHa1xH7OPbjPKxYmUK6WnfSmr57c5Kt3RFo+JuwVpAQaxnVm4qPDK9U6a+zURsNW
-         8ofKWgLa0IHUb5gchfdt0Gd2mAy/NTcnAx1EvdpT7QAxhSWDh9WQcYDY9beGrKniQZcU
-         Piw4NfdxLoDBr/P9Q8RUoWHqZ8ZUg5LbzOSPi8z127iIGWFKDb51m97fbK48PCbe3cz9
-         5IogFRMe8cUI+sULj+Ypw3OSrvZ5h+a+sDv39WneVFkwj197cSF2fwWWBmGXwq2sQkYX
-         5/UA==
-X-Gm-Message-State: AOAM533Lr07ujv3l28O5MlhEqHrfTj48nQiW4kAE+jjqQq0u3lf27CbO
-        G1ZCFVzbPqnv+OFjvomzYiIdgcJQw4e5OcJE
-X-Google-Smtp-Source: ABdhPJx/8GaFJx3wgSis9m2GfVpkehqsGkV90VmiK9UU8M4C6LWEDQV4f5dIS7ee5xiJqgimLEauLg==
-X-Received: by 2002:a05:600c:40ca:: with SMTP id m10mr32057301wmh.54.1608031059314;
-        Tue, 15 Dec 2020 03:17:39 -0800 (PST)
+        bh=cZpu9JVXhyiWelTl46Pe/xlISF8M49kKFY6TqjVIyqw=;
+        b=Mn7zzjR2wi+O8WSzt8KYIzOaKpP2i09AzhI1FunGDEpCubSEDm1VvRh7ns6px6AJDR
+         G12jdqBdz4soLRzH/oDsAlGH/AtAyHeWTtECbMOYdxGEon3VrOAyxIntZ1QrY3FpSDvM
+         EHslFJYGkJDlS3wn/onV0ewPwNPkAbl9BP9RBtW8oIMZVxxfmcha4yXzrUbOhg26FxJz
+         irJsuea086DeqHo4HRGCZWd3mWZB71x7SW0lDRfVIXQ7rbfamf7/MhdWEjouBtEAOdhd
+         7U6bw0eb5dkfxBu8VBHxIqF8qdCfR1X0RNhCpXlqwQOInLCDotQyNreBYpJkNlwMCvLp
+         +UqA==
+X-Gm-Message-State: AOAM532c1GrvzI/rOYIlmN5l9IEGB2Oa6QtfAmbDsF0dwCnO6w8g9KuD
+        9WcnTewS+w7m2EkHBIH7YiGgTtNszGSg3Drk
+X-Google-Smtp-Source: ABdhPJxEug64Og3Z6dTRv7LWKBBzRMmfwovjQ+k+KkNwe51YTNZYqdU/TPzDt3NqBpn2gs92QGbMLw==
+X-Received: by 2002:a5d:4d02:: with SMTP id z2mr34466243wrt.109.1608031614170;
+        Tue, 15 Dec 2020 03:26:54 -0800 (PST)
 Received: from [192.168.8.128] ([185.69.145.6])
-        by smtp.gmail.com with ESMTPSA id z64sm35195661wme.10.2020.12.15.03.17.37
+        by smtp.gmail.com with ESMTPSA id l7sm35838949wme.4.2020.12.15.03.26.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Dec 2020 03:17:38 -0800 (PST)
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Tue, 15 Dec 2020 03:26:53 -0800 (PST)
+To:     David Laight <David.Laight@ACULAB.COM>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 References: <cover.1607976425.git.asml.silence@gmail.com>
- <20201215014114.GA1777020@T590>
+ <5c9c22dbeecad883ca29b31896c262a8d2a77132.1607976425.git.asml.silence@gmail.com>
+ <262132648a8f4e7a9d1c79003ea74b3f@AcuMS.aculab.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -106,13 +113,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v1 0/6] no-copy bvec
-Message-ID: <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
-Date:   Tue, 15 Dec 2020 11:14:20 +0000
+Subject: Re: [PATCH v1 2/6] iov_iter: optimise bvec iov_iter_advance()
+Message-ID: <d151f81e-ec56-59c0-d2a0-ffd4a269fec1@gmail.com>
+Date:   Tue, 15 Dec 2020 11:23:34 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201215014114.GA1777020@T590>
+In-Reply-To: <262132648a8f4e7a9d1c79003ea74b3f@AcuMS.aculab.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -120,24 +127,51 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 15/12/2020 01:41, Ming Lei wrote:
-> On Tue, Dec 15, 2020 at 12:20:19AM +0000, Pavel Begunkov wrote:
->> Instead of creating a full copy of iter->bvec into bio in direct I/O,
->> the patchset makes use of the one provided. It changes semantics and
->> obliges users of asynchronous kiocb to track bvec lifetime, and [1/6]
->> converts the only place that doesn't.
+On 15/12/2020 09:37, David Laight wrote:
+> From: Pavel Begunkov
+>> Sent: 15 December 2020 00:20
+>>
+>> iov_iter_advance() is heavily used, but implemented through generic
+>> iteration. As bvecs have a specifically crafted advance() function, i.e.
+>> bvec_iter_advance(), which is faster and slimmer, use it instead.
+>>
+>>  lib/iov_iter.c | 19 +++++++++++++++++++
+[...]
+>>  void iov_iter_advance(struct iov_iter *i, size_t size)
+>>  {
+>>  	if (unlikely(iov_iter_is_pipe(i))) {
+>> @@ -1077,6 +1092,10 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
+>>  		i->count -= size;
+>>  		return;
+>>  	}
+>> +	if (iov_iter_is_bvec(i)) {
+>> +		iov_iter_bvec_advance(i, size);
+>> +		return;
+>> +	}
+>>  	iterate_and_advance(i, size, v, 0, 0, 0)
+>>  }
 > 
-> Just think of one corner case: iov_iter(BVEC) may pass bvec table with zero
-> length bvec, which may not be supported by block layer or driver, so
-> this patchset has to address this case first.
+> This seems to add yet another comparison before what is probably
+> the common case on an IOVEC (ie normal userspace buffer).
 
-The easiest for me would be to fallback to copy if there are zero bvecs,
-e.g. finding such during iov_iter_alignment(), but do we know from where
-zero bvecs can came? As it's internals we may want to forbid them if
-there is not too much hassle.
+If Al finally takes the patch for iov_iter_is_*() helpers it would
+be completely optimised out. 
 
 > 
-> Please see 7e24969022cb ("block: allow for_each_bvec to support zero len bvec").
+> Can't the call to bver_iter_advance be dropped into the 'advance'
+> path for BVEC's inside iterate_and_advance?
+
+It iterates by page/segment/etc., why would you want to do
+bver_iter_advance(i->count) there?
+
+> 
+> iterate_and_advance itself has three 'unlikely' conditional tests
+> that may be mis-predicted taken before the 'likely' path.
+> One is for DISCARD which is checked twice on the object I just
+> looked at - the test in iov_iter_advance() is pointless.
+
+And again, both second checks, including for discards, would be
+optimised out by the iov_iter_is_* patch.
 
 -- 
 Pavel Begunkov

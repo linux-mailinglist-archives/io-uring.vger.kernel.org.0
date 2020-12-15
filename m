@@ -2,76 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F40E52DAE71
-	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 15:00:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29B422DAEA4
+	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 15:12:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbgLOOAh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Dec 2020 09:00:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37820 "EHLO
+        id S1728283AbgLOOKW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Dec 2020 09:10:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727200AbgLOOA1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Dec 2020 09:00:27 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D33FC0617A6;
-        Tue, 15 Dec 2020 05:59:47 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id e25so18588491wme.0;
-        Tue, 15 Dec 2020 05:59:47 -0800 (PST)
+        with ESMTP id S1729275AbgLOOJn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Dec 2020 09:09:43 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9339AC061282;
+        Tue, 15 Dec 2020 06:08:57 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id a3so18612052wmb.5;
+        Tue, 15 Dec 2020 06:08:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xzFQ3fAAmyTrUxg6AtOBJwbOPrlweQwSN+UmczMjICw=;
-        b=enJXGu6bN1ze2eKV1slYMB62l6gxp4DbOYF2ruxOTHRHRY+0PXa5OJLd5bPstfCZSA
-         zyLBauA9dq7SgXfTH/wBwv/1HvkzxVx7bVmirWkQoZ+Fdq5u/dL3Kvy7Go09T5sbtWVV
-         58MZy3owhyRxJ89VRTjachdprvecnW+w8zSsC7vphjEY/Pvw1Ff8mvUDfjvvquqSbNlF
-         dVgAg3WCUdM5IJ9zC82N1T89U4MKuwlh5rc06WgJI7hcCU6c7y3S5X40k+a6qtH0M0iG
-         wP3KlhkXivgMMi7MZXY+3Cvu/Q+0+aZexEr7AqZi7tl2i4HJ/AkmL7UgQ7Fjodh39mqY
-         kzkQ==
+        bh=IJwMYXZybCxJT0UHVVdIgfuOq3K54a+9Y/EpPWFpv/0=;
+        b=eVXRaLFMJRqh7EtstSBOKNO6tJ4yUKa28N9ZGhkpLq+N+ciYCyvZRvn3XxjguI/U2M
+         EzZt0wjil3zjy86ENb0suvcWF41egiXxNos6lkx4QCtSIzo4fphc7B6cLdGqoEURVrFf
+         za8HjMp2ciqnBrlmRd8gaykyftQGs+vMA8Go7vb4SUIVu4sOI7GcY3QytCh5l9PbMxu4
+         IXiF1MbLfbZhMwd2CHQotw/NPedTmw+K35iWgewi5jT0ADKzvqeVB6WrbcrN/vsEOE/9
+         do9dykgLxRCJZEqKIYfezOahnF4eskXBTycj9Zja5KX+tsonMWdpgg1tL3kDBFiHWsl+
+         GPKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=xzFQ3fAAmyTrUxg6AtOBJwbOPrlweQwSN+UmczMjICw=;
-        b=W9fUXsfU07qRbLYcFyIJ1KMrLQ3trH10IKdGLYe/HxV0b22YVoYZI5Ovga4zn3i9ly
-         buqWc1d8FxRRdzcf2qSHbMrBgI+C5EKXMFQ/uqJvHQiNEnQZR1C0CXanVY0sEBejuQeY
-         pXaVcgNgAilT136YD0OFGyV1/cOe6hfJ6ut2DwTYQyWY4NItp9GjepP8k6DHZYpSX2CA
-         XgTTtMkmUQvCNogedVcMUycEHbcYc1gSLWceZ1ehFvWaT/mZ2EZ/1s52yfQ9IHtZZ4Ub
-         XalNuy21R6Ax+M1WDYraZMFgz0n6Ma2JtWnDcCW1KQOH6Nm18OlX/mvIMxRETgJK83r9
-         qYRw==
-X-Gm-Message-State: AOAM533tR9LJNzXEbsimRDgaFVpiVqWd73tZiDwa550R+bzfDD+Zp77G
-        VeqjgzS9aICk9oA6oUYEikLUe/0KjWPrFajG
-X-Google-Smtp-Source: ABdhPJw09wd7odQNp6dejR+hFMlJ9y4tAGzkhuSzXXzbmuLWuxdwCJaNqV8exIq1nWVIqPRrGFsJFQ==
-X-Received: by 2002:a1c:e084:: with SMTP id x126mr32733413wmg.109.1608040785708;
-        Tue, 15 Dec 2020 05:59:45 -0800 (PST)
+        bh=IJwMYXZybCxJT0UHVVdIgfuOq3K54a+9Y/EpPWFpv/0=;
+        b=cBBDxdIABrugYb1DlhDNFaVB+/WhUE+ifPlSO2SDdFwTCKdwBZerYlrvWo3Sb42zrX
+         CaUPWZXnWfAyyOTM/kEXr5IwpVlNn1vZSOGvDKCxfX+A+DL99RfyBYkfExkkclUh5PWO
+         /pPggCxE34x0DohPJCWC4hXa1aD4WDg0PEtndC+alYWAOSK1w/sMhFZF59AgtI2sT7xf
+         emqyzUmwrtzqtxKi/aqHUKcsuOGftKxnPbQB5a87Yv5yQ0lkNGk1e+0Q/n4HAeoWd56+
+         w8NPb3ZXIODzuGURZFVLIy2AVdGhBG9ytBalyDK/9QMualCr2oNXknpUYoh75kRlLgu8
+         +LvA==
+X-Gm-Message-State: AOAM531LPd61frw+jnHwDUON5F+JUd7MmWIHcFmAls7jU9h0qlbLMeSI
+        usXgg3NbqzU9KSRDNfrhnIrvzA4BAJ3/4J7Y
+X-Google-Smtp-Source: ABdhPJyWDj2cYrF/oujgWz5P30oSEMUlwkpU/DSaAHrYgy/IZqHJpoXuaMOofStO5CgxkDkwCZ5VpQ==
+X-Received: by 2002:a1c:220a:: with SMTP id i10mr32886712wmi.93.1608041336013;
+        Tue, 15 Dec 2020 06:08:56 -0800 (PST)
 Received: from [192.168.8.128] ([185.69.144.228])
-        by smtp.gmail.com with ESMTPSA id a12sm11925845wrh.71.2020.12.15.05.59.43
+        by smtp.gmail.com with ESMTPSA id z8sm37038733wmg.17.2020.12.15.06.08.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Dec 2020 05:59:44 -0800 (PST)
-Subject: Re: [PATCH v1 2/6] iov_iter: optimise bvec iov_iter_advance()
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+        Tue, 15 Dec 2020 06:08:54 -0800 (PST)
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
 References: <cover.1607976425.git.asml.silence@gmail.com>
- <5c9c22dbeecad883ca29b31896c262a8d2a77132.1607976425.git.asml.silence@gmail.com>
- <262132648a8f4e7a9d1c79003ea74b3f@AcuMS.aculab.com>
- <d151f81e-ec56-59c0-d2a0-ffd4a269fec1@gmail.com>
- <c5f54cb816564f2b96f5d7a0f85fdc4a@AcuMS.aculab.com>
+ <20201215014114.GA1777020@T590>
+ <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
+ <20201215120357.GA1798021@T590>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -116,72 +108,48 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <2d45795e-c077-2ea0-c38d-f9a4736bccd7@gmail.com>
-Date:   Tue, 15 Dec 2020 13:56:25 +0000
+Subject: Re: [PATCH v1 0/6] no-copy bvec
+Message-ID: <e755fec3-4181-1414-0603-02e1a1f4e9eb@gmail.com>
+Date:   Tue, 15 Dec 2020 14:05:35 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <c5f54cb816564f2b96f5d7a0f85fdc4a@AcuMS.aculab.com>
+In-Reply-To: <20201215120357.GA1798021@T590>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 15/12/2020 13:54, David Laight wrote:
-> From: Pavel Begunkov
->> Sent: 15 December 2020 11:24
->>
->> On 15/12/2020 09:37, David Laight wrote:
->>> From: Pavel Begunkov
->>>> Sent: 15 December 2020 00:20
->>>>
->>>> iov_iter_advance() is heavily used, but implemented through generic
->>>> iteration. As bvecs have a specifically crafted advance() function, i.e.
->>>> bvec_iter_advance(), which is faster and slimmer, use it instead.
->>>>
->>>>  lib/iov_iter.c | 19 +++++++++++++++++++
->> [...]
->>>>  void iov_iter_advance(struct iov_iter *i, size_t size)
->>>>  {
->>>>  	if (unlikely(iov_iter_is_pipe(i))) {
->>>> @@ -1077,6 +1092,10 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
->>>>  		i->count -= size;
->>>>  		return;
->>>>  	}
->>>> +	if (iov_iter_is_bvec(i)) {
->>>> +		iov_iter_bvec_advance(i, size);
->>>> +		return;
->>>> +	}
->>>>  	iterate_and_advance(i, size, v, 0, 0, 0)
->>>>  }
+On 15/12/2020 12:03, Ming Lei wrote:
+> On Tue, Dec 15, 2020 at 11:14:20AM +0000, Pavel Begunkov wrote:
+>> On 15/12/2020 01:41, Ming Lei wrote:
+>>> On Tue, Dec 15, 2020 at 12:20:19AM +0000, Pavel Begunkov wrote:
+>>>> Instead of creating a full copy of iter->bvec into bio in direct I/O,
+>>>> the patchset makes use of the one provided. It changes semantics and
+>>>> obliges users of asynchronous kiocb to track bvec lifetime, and [1/6]
+>>>> converts the only place that doesn't.
 >>>
->>> This seems to add yet another comparison before what is probably
->>> the common case on an IOVEC (ie normal userspace buffer).
+>>> Just think of one corner case: iov_iter(BVEC) may pass bvec table with zero
+>>> length bvec, which may not be supported by block layer or driver, so
+>>> this patchset has to address this case first.
 >>
->> If Al finally takes the patch for iov_iter_is_*() helpers it would
->> be completely optimised out.
+>> The easiest for me would be to fallback to copy if there are zero bvecs,
+>> e.g. finding such during iov_iter_alignment(), but do we know from where
+>> zero bvecs can came? As it's internals we may want to forbid them if
+>> there is not too much hassle.
 > 
-> I knew I didn't have that path - the sources I looked at aren't that new.
-> Didn't know its state.
+> You may find clue from the following link:
 > 
-> In any case that just stops the same test being done twice.
-> In still changes the order of the tests.
-> 
-> The three 'unlikely' cases should really be inside a single
-> 'unlikely' test for all three bits.
-> Then there is only one mis-predictable jump prior to the usual path.
-> 
-> By adding the test before iterate_and_advance() you are (effectively)
-> optimising for the bvec (and discard) cases.
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2262077.html
 
-Take a closer look, bvec check is already first in iterate_and_advance().
-Anyway, that all is an unrelated story.
+Thanks for the link!
 
-> Adding 'unlikely()' won't make any difference on some architectures.
-> IIRC recent intel x86 don't have a 'static prediction' for unknown
-> branches - they just use whatever in is the branch predictor tables.
+Al, you mentioned "Zero-length segments are not disallowed", do you have
+a strong opinion on that? Apart from already diverged behaviour from the
+block layer and getting in the way of this series, without it we'd also be
+able to remove some extra ifs, e.g. in iterate_bvec()
 
 -- 
 Pavel Begunkov

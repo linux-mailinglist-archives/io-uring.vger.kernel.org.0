@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B0AD2DA4BB
-	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 01:29:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3295E2DA4C3
+	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 01:29:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbgLOAY5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Dec 2020 19:24:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53450 "EHLO
+        id S1728545AbgLOAZQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Dec 2020 19:25:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbgLOAYs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Dec 2020 19:24:48 -0500
+        with ESMTP id S1728437AbgLOAZI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Dec 2020 19:25:08 -0500
 Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07F1DC0617A7;
-        Mon, 14 Dec 2020 16:24:08 -0800 (PST)
-Received: by mail-wr1-x443.google.com with SMTP id a12so18140478wrv.8;
-        Mon, 14 Dec 2020 16:24:07 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B6BFC0617B0;
+        Mon, 14 Dec 2020 16:24:09 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id r7so18152809wrc.5;
+        Mon, 14 Dec 2020 16:24:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jQVTvgGa1LjUWqvTxBIf73PGX5t0yWv/7jb/FOyHpnQ=;
-        b=MNxOq+/uE7DIwyNRUYewGw+cHYV3pClHNKkFNyBIVdI3EmUW/iPsPfP7yyzvq8u6HW
-         y+G5urnHOa4dHakH8fNwlven+K4tiRfbWXhhmxGgEeMzIgON/V/3KPvIIE1STFr4wlIj
-         SgeoTLBn1XPnx5Gw54WO9Ail0Pbu+qn1ntWpDgf7sX2nl46zzOUPoASz3AKqbQTRe5C8
-         qjhO3fZhfFlR+QPZhkUFrJzZojsifXm8XUJO1MGsQth6ATu4tYHY/Ma1viQrwsp2EP4o
-         7pb0PcP510viQINAxb0x6SwFrTsMMbzg0xzT5YV55QJkl2tVrPkM8FYFuof/4cC/EixF
-         gDtA==
+        bh=KwoEZ6JyxQmbBCmxLJQ+KWQFWoJwlaOL+90wK7NFOco=;
+        b=CCqnIhGkYp5ddpdcS1UPTb39Ra4D+5WscVMtb6oidexSCYeRHWEJdco70zMnNXbweP
+         Pn9+E/zWBZSVxQulIBksAPt2eJsrV+hcX5QXQ5e/rNpsVTCUypnB4O6PqOB1cPyrdig5
+         Z2W2sZoDSXpf3t6IsKdOTrqvZNe7gphiU7OKr3DzkP3ai/bVVx+ROIKjzGv/MjUZreFw
+         UJYaTjClZtkxL3Qk4unb4sOP/qIqrNNTCyOMK+oyZy/vMPEVYMwnvSidQGP0uwVdVXKT
+         RUMiYdgenV+xw4kpOcRJAQoq5G7ku8XOkHkg7hXSJdQunmwauFc9IIpAaXUTAN1K0Asq
+         asiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jQVTvgGa1LjUWqvTxBIf73PGX5t0yWv/7jb/FOyHpnQ=;
-        b=J7JY5rXW+LgkCyM9vmy8ceYE1Ie5zjb1QzLInwkdkQ+4mDT1CaZvWxLwroq6RuI+a4
-         0fKrMddE6xUScoIbOKsAi/tPVR9D+R5n9gRNSavJCKmr0pXJ6Ui1d1Zx3bn5PEd0zx7A
-         BVlcoB7J/vPV9VJaDBK4rB6hbY3++rFzlD3iXlBekc/LZBMMd8YrAAJSFf6KDxF83L7w
-         VEFOzsOS6QhT2/VJCtRXU/YZH78GPViVz+axdSWlYey6S2hsZfHIsDb+Iogeuo1dwpKI
-         ddzzZ8tlQXp4O9j3eFJlG0WXyiit/4PHCYGmVjpzHBJuazbvVuOVcKaliluycZTkCLkZ
-         sv5A==
-X-Gm-Message-State: AOAM5315zvBDRXh8mizkM+XJoT+Go0B8je2Qh7SnW8L9wzO1FOgzGUR1
-        eP08cRZFgrI2xnY1e7gA+7jghzjQQ6OB0/ZV
-X-Google-Smtp-Source: ABdhPJzkeBXbuB0e70wPSfv0YNEY+IY3u+FsW+X1sRWABcHyKLngnn7Dx2/0Lsq9Kl4ceWUMiJY3iQ==
-X-Received: by 2002:adf:f590:: with SMTP id f16mr194470wro.40.1607991846606;
-        Mon, 14 Dec 2020 16:24:06 -0800 (PST)
+        bh=KwoEZ6JyxQmbBCmxLJQ+KWQFWoJwlaOL+90wK7NFOco=;
+        b=C8fnFApzFssakdswfeTqlZYEDLAwW0mE3Cf7u83WCfUK6eyspdxWPpSaTNRo3UoGkX
+         FeX1xUJSCQpDmh8LpaS1FU4VQ59cwXfamSZy1KiXVoOBeJJyVHwfaiT1qIeUC0PjVxxl
+         QzpMzww5uSYPblj9pMsZJKTWsfk0uGE/yyqrnsgVt4tm3+ldHH7zV+1VCpNSJT2GiTTI
+         Io937H2qY53E8qXBKNQ3GjG/alxwtF5gsMok9xxeZLQo5sFWMeR+v85jKfHfs+GNJlaw
+         kDOGaKMTT2deo9XTDFk4MRfypSPovgPm4WYyilNdAr5nwpNeNm0HusbVLMNt9vj1zxor
+         hu0w==
+X-Gm-Message-State: AOAM531GiGUTbCY6fXyoB7aV6Gz1gY5LCKVEp+5A45yMbeS7EsVlWLl0
+        3aRIoihqCycesAxeOgqY/C+JyHDYx+fXZGcR
+X-Google-Smtp-Source: ABdhPJy2l/O+oho3Jx+i8vPBRwZoxDCJHPX4ZJfTmMVoBuUmrUSRDXK9gRQP/XvrS0UN33z/eOUSAg==
+X-Received: by 2002:a5d:6708:: with SMTP id o8mr190459wru.64.1607991847796;
+        Mon, 14 Dec 2020 16:24:07 -0800 (PST)
 Received: from localhost.localdomain ([85.255.232.163])
-        by smtp.gmail.com with ESMTPSA id b19sm5362012wmj.37.2020.12.14.16.24.05
+        by smtp.gmail.com with ESMTPSA id b19sm5362012wmj.37.2020.12.14.16.24.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Dec 2020 16:24:06 -0800 (PST)
+        Mon, 14 Dec 2020 16:24:07 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     linux-block@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -61,9 +61,9 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH v1 3/6] bio: deduplicate adding a page into bio
-Date:   Tue, 15 Dec 2020 00:20:22 +0000
-Message-Id: <189cae47946fa49318f85678def738d358e8298b.1607976425.git.asml.silence@gmail.com>
+Subject: [PATCH v1 4/6] block/psi: remove PSI annotations from direct IO
+Date:   Tue, 15 Dec 2020 00:20:23 +0000
+Message-Id: <1d3cf86668e44b3a3d35b5dbe759a086a157e434.1607976425.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1607976425.git.asml.silence@gmail.com>
 References: <cover.1607976425.git.asml.silence@gmail.com>
@@ -73,75 +73,92 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Both bio_add_hw_page() mimics bio_add_page() and has a hand-coded
-version of appending a page into bio's bvec. DRY
+As reported, we must not do pressure stall information accounting for
+direct IO, because otherwise it tells that it's thrashing a page when
+actually doing IO on hot data.
 
+Apparently, bio_iov_iter_get_pages() is used only by paths doing direct
+IO, so just make it avoid setting BIO_WORKINGSET, it also saves us CPU
+cycles on doing that. For fs/direct-io.c just clear the flag before
+submit_bio(), it's not of much concern performance-wise.
+
+Reported-by: Christoph Hellwig <hch@infradead.org>
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- block/bio.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ block/bio.c    | 25 ++++++++++++++++---------
+ fs/direct-io.c |  2 ++
+ 2 files changed, 18 insertions(+), 9 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index 1f2cc1fbe283..4a8f77bb3956 100644
+index 4a8f77bb3956..3192358c411f 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -734,6 +734,22 @@ const char *bio_devname(struct bio *bio, char *buf)
- }
- EXPORT_SYMBOL(bio_devname);
- 
-+static void bio_add_page_noaccount(struct bio *bio, struct page *page,
-+				   unsigned int len, unsigned int off)
-+{
-+	struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt];
-+
-+	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
-+	WARN_ON_ONCE(bio_full(bio, len));
-+
-+	bv->bv_page = page;
-+	bv->bv_offset = off;
-+	bv->bv_len = len;
-+
-+	bio->bi_iter.bi_size += len;
-+	bio->bi_vcnt++;
-+}
-+
- static inline bool page_is_mergeable(const struct bio_vec *bv,
- 		struct page *page, unsigned int len, unsigned int off,
- 		bool *same_page)
-@@ -818,12 +834,7 @@ int bio_add_hw_page(struct request_queue *q, struct bio *bio,
- 	if (bio->bi_vcnt >= queue_max_segments(q))
- 		return 0;
- 
--	bvec = &bio->bi_io_vec[bio->bi_vcnt];
--	bvec->bv_page = page;
--	bvec->bv_len = len;
--	bvec->bv_offset = offset;
--	bio->bi_vcnt++;
--	bio->bi_iter.bi_size += len;
-+	bio_add_page_noaccount(bio, page, len, offset);
- 	return len;
- }
- 
-@@ -903,18 +914,7 @@ EXPORT_SYMBOL_GPL(__bio_try_merge_page);
- void __bio_add_page(struct bio *bio, struct page *page,
- 		unsigned int len, unsigned int off)
+@@ -963,18 +963,22 @@ EXPORT_SYMBOL_GPL(bio_release_pages);
+ static int __bio_iov_bvec_add_pages(struct bio *bio, struct iov_iter *iter)
  {
--	struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt];
--
--	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
--	WARN_ON_ONCE(bio_full(bio, len));
--
--	bv->bv_page = page;
--	bv->bv_offset = off;
--	bv->bv_len = len;
--
--	bio->bi_iter.bi_size += len;
--	bio->bi_vcnt++;
--
-+	bio_add_page_noaccount(bio, page, len, off);
- 	if (!bio_flagged(bio, BIO_WORKINGSET) && unlikely(PageWorkingset(page)))
- 		bio_set_flag(bio, BIO_WORKINGSET);
+ 	const struct bio_vec *bv = iter->bvec;
+-	unsigned int len;
+-	size_t size;
++	struct page *page = bv->bv_page;
++	bool same_page = false;
++	unsigned int off, len;
+ 
+ 	if (WARN_ON_ONCE(iter->iov_offset > bv->bv_len))
+ 		return -EINVAL;
+ 
+ 	len = min_t(size_t, bv->bv_len - iter->iov_offset, iter->count);
+-	size = bio_add_page(bio, bv->bv_page, len,
+-				bv->bv_offset + iter->iov_offset);
+-	if (unlikely(size != len))
+-		return -EINVAL;
+-	iov_iter_advance(iter, size);
++	off = bv->bv_offset + iter->iov_offset;
++
++	if (!__bio_try_merge_page(bio, page, len, off, &same_page)) {
++		if (bio_full(bio, len))
++			return -EINVAL;
++		bio_add_page_noaccount(bio, page, len, off);
++	}
++	iov_iter_advance(iter, len);
+ 	return 0;
  }
+ 
+@@ -1023,8 +1027,8 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 				put_page(page);
+ 		} else {
+ 			if (WARN_ON_ONCE(bio_full(bio, len)))
+-                                return -EINVAL;
+-			__bio_add_page(bio, page, len, offset);
++				return -EINVAL;
++			bio_add_page_noaccount(bio, page, len, offset);
+ 		}
+ 		offset = 0;
+ 	}
+@@ -1099,6 +1103,9 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
+  * fit into the bio, or are requested in @iter, whatever is smaller. If
+  * MM encounters an error pinning the requested pages, it stops. Error
+  * is returned only if 0 pages could be pinned.
++ *
++ * It also doesn't set BIO_WORKINGSET, so is intended for direct IO. If used
++ * otherwise the caller is responsible to do that to keep PSI happy.
+  */
+ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ {
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index d53fa92a1ab6..914a7f600ecd 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -426,6 +426,8 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
+ 	unsigned long flags;
+ 
+ 	bio->bi_private = dio;
++	/* PSI is only for paging IO */
++	bio_clear_flag(bio, BIO_WORKINGSET);
+ 
+ 	spin_lock_irqsave(&dio->bio_lock, flags);
+ 	dio->refcount++;
 -- 
 2.24.0
 

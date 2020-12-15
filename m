@@ -2,52 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 102992DA54E
-	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 02:09:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E9222DA570
+	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 02:13:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727964AbgLOBHy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Dec 2020 20:07:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60112 "EHLO
+        id S1728441AbgLOBLg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Dec 2020 20:11:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726662AbgLOBHr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Dec 2020 20:07:47 -0500
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AD80C061793;
-        Mon, 14 Dec 2020 17:07:07 -0800 (PST)
-Received: by mail-wr1-x443.google.com with SMTP id q18so10685544wrn.1;
-        Mon, 14 Dec 2020 17:07:07 -0800 (PST)
+        with ESMTP id S1727983AbgLOBL2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Dec 2020 20:11:28 -0500
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A75DAC061793;
+        Mon, 14 Dec 2020 17:10:45 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id w5so14479590wrm.11;
+        Mon, 14 Dec 2020 17:10:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k+K/DZUEOzK/FQdjk7VqHxa5bhLpoT0KZ6XUenKr/m4=;
-        b=nuP+UqiRHhLGz4gGtD2Vo5H7UxvUsullWHNiG0+Kgvw1dG6LKHf+qha3LGG6jOtBDI
-         4U9aD7comb9UXrFPzF6lAJX5elYArM3OsMiTFHc86CaRljL9RrCSWwIGghcXTwtvs5Gt
-         gyOyoTMZypF/zeH2AOpJ/wxGyxTM9wxMpel3S34IEFkeG6zQOfg7RuLYtxZNs0jPaHJS
-         bjveKb9dn7K4EBEVqDqod0Ov6mVUQIwYZ4/0s1kwImyfEHya+SKmsYXobZzta/SJgB7c
-         Dl1kHsLdcsvCznY9YSt8GnEUJDCm6mv6r3o7TYkcAf+Wep55ktjJ/QZG181UDIS8vWdk
-         PwJw==
+        bh=5dl+QQGuFMPwCAEkeQ/pQ2cm3zYEi+6yA9bzapiXqUM=;
+        b=jMM1wigZgQUPjyZCGE7YR/lGPPrI2tH/Mqfa1Bb0PKP3Ixe8VW2Sp43sMFAq5kVEYG
+         /9xaCWwi4KriI1fRcSBrxWYQok5IKktH9NVoRlN517nymYPGXAqJ96McVfKBoh/H3crQ
+         93HPsNHOBcXmcBNATzp3rGvNL4rSRFy05kU/HnhHBKBFjUszkIGSKAkMu7H3g+UhDqoy
+         eB22qn79+xPlZKOjfSpjaT0guzOpoDa8UNDybaZCpuBuEFvUibRP2ZDaE6CPVTkwvk33
+         1hrNQXVE9jt2Ua1gpqaCJbKWluWRBd6j/TGvowNTj33S4AkrS72eZPMRkX+O7JtwFj7v
+         aQNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=k+K/DZUEOzK/FQdjk7VqHxa5bhLpoT0KZ6XUenKr/m4=;
-        b=r2CCORBu6HjmQ6yJUT/3DLo0jQ/rVTzXcGGylfUJHj4KaXnZpEGb+M5J+NMq1RI6t3
-         hB1HrDHu/zX9rj5oPL9YsYxDWNPPd1m3WuXCT8J19GVOQsJy66+7F1r3lwjz80EszVZt
-         Xe2DN2WBI58hPua2OcvEKbwTCche2zd9ZncNmDDUQ0uMjAaXNy8A+ypdI0bfqaE3nIIQ
-         I07vOgWdL+i6v+o/iknYJoU5YslBZnoWXXiRE8ZrmlqoQVoQfCwjJYgUOQC9vBpmTLUV
-         NEVs49RmeLypTlTqefHirgr6ePXFBEaHVcnfciArlX21e87I6Bt5GbIHBADN/jpsLH2b
-         Fd7Q==
-X-Gm-Message-State: AOAM531mPY/hq/JEZdyQ6x+P24ee4DPtncVRQbSUoe+p7+YRuIeYNTJO
-        Ym0yFwEXiorJJbRvtMNLSwr90VmOfVer3/Oi
-X-Google-Smtp-Source: ABdhPJzNAJ69SYxc2+3AnYnnzUZLzrBdhFYCN0Eo2OWt0+vefWkjttQl02GVRddyR0PVFYsl+4G9ng==
-X-Received: by 2002:adf:f684:: with SMTP id v4mr32245705wrp.387.1607994425766;
-        Mon, 14 Dec 2020 17:07:05 -0800 (PST)
+        bh=5dl+QQGuFMPwCAEkeQ/pQ2cm3zYEi+6yA9bzapiXqUM=;
+        b=EXCJW8CJhl4coC6HxXcd5HtfKj0+6TbFBh24mAc5qjIM/DtMZb8hHlaCf+vE6HlI3o
+         OXjdnVhBJey9/BdwF5pDZ1ioQUr/jhDZrhnzgMPtAOTvZ+NgAbPlGYXbiYteyxGdqvbm
+         nRF7rOicTQFvIeTqkqCARDwV807I35qFk6ESo0K8LH58ltSo3NdKqxW07AawS4LdGj3Q
+         9+5GfR97PuX8z+Sz90xcsA8E09dWKuBaMQcJ72M3ZVsH1tRzg+26Kg7aMDBSb32k97kY
+         HwE2LBI/+lGpQs8fWsHyJPGS5yssK55zJMl8Ac92ifFhWkPNUdBY1GvgCmh82KoybWjo
+         Oo2Q==
+X-Gm-Message-State: AOAM532QMzbCJpPf03dppClExjICyH3mCnuXBGXDW0lwpyA9wztE7AWb
+        NYomZYS1bVPtKllGJZ6oNkLza5YwgEonIE4P
+X-Google-Smtp-Source: ABdhPJzGRNQOKQgxAudt8ek+ZAKqgxQuZpnQMwc2uypbXRMhA3fB6e1YR9U8KwWUhgz/orVcUdsukg==
+X-Received: by 2002:a5d:4cd1:: with SMTP id c17mr31507053wrt.49.1607994644240;
+        Mon, 14 Dec 2020 17:10:44 -0800 (PST)
 Received: from [192.168.8.128] ([85.255.232.163])
-        by smtp.gmail.com with ESMTPSA id k10sm31006061wrq.38.2020.12.14.17.07.04
+        by smtp.gmail.com with ESMTPSA id n12sm37275948wrg.76.2020.12.14.17.10.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Dec 2020 17:07:04 -0800 (PST)
+        Mon, 14 Dec 2020 17:10:43 -0800 (PST)
+Subject: Re: [PATCH v1 5/6] bio: add a helper calculating nr segments to alloc
 To:     Dave Chinner <david@fromorbit.com>
 Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -62,8 +63,8 @@ Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
 References: <cover.1607976425.git.asml.silence@gmail.com>
- <1d3cf86668e44b3a3d35b5dbe759a086a157e434.1607976425.git.asml.silence@gmail.com>
- <20201215005659.GF632069@dread.disaster.area>
+ <94b6f76d2d47569742ee47caede1504926f9807a.1607976425.git.asml.silence@gmail.com>
+ <20201215010023.GG632069@dread.disaster.area>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -108,67 +109,31 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v1 4/6] block/psi: remove PSI annotations from direct IO
-Message-ID: <e8adf941-9901-b54c-d7a0-b785923558fb@gmail.com>
-Date:   Tue, 15 Dec 2020 01:03:45 +0000
+Message-ID: <02f4fc6e-56e9-c4ab-a68c-e4371f6e7c74@gmail.com>
+Date:   Tue, 15 Dec 2020 01:07:24 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201215005659.GF632069@dread.disaster.area>
+In-Reply-To: <20201215010023.GG632069@dread.disaster.area>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 15/12/2020 00:56, Dave Chinner wrote:
-> On Tue, Dec 15, 2020 at 12:20:23AM +0000, Pavel Begunkov wrote:
->> As reported, we must not do pressure stall information accounting for
->> direct IO, because otherwise it tells that it's thrashing a page when
->> actually doing IO on hot data.
->>
->> Apparently, bio_iov_iter_get_pages() is used only by paths doing direct
->> IO, so just make it avoid setting BIO_WORKINGSET, it also saves us CPU
->> cycles on doing that. For fs/direct-io.c just clear the flag before
->> submit_bio(), it's not of much concern performance-wise.
->>
->> Reported-by: Christoph Hellwig <hch@infradead.org>
->> Suggested-by: Christoph Hellwig <hch@infradead.org>
->> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>  block/bio.c    | 25 ++++++++++++++++---------
->>  fs/direct-io.c |  2 ++
->>  2 files changed, 18 insertions(+), 9 deletions(-)
-> .....
->> @@ -1099,6 +1103,9 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
->>   * fit into the bio, or are requested in @iter, whatever is smaller. If
->>   * MM encounters an error pinning the requested pages, it stops. Error
->>   * is returned only if 0 pages could be pinned.
->> + *
->> + * It also doesn't set BIO_WORKINGSET, so is intended for direct IO. If used
->> + * otherwise the caller is responsible to do that to keep PSI happy.
->>   */
->>  int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
->>  {
->> diff --git a/fs/direct-io.c b/fs/direct-io.c
->> index d53fa92a1ab6..914a7f600ecd 100644
->> --- a/fs/direct-io.c
->> +++ b/fs/direct-io.c
->> @@ -426,6 +426,8 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
->>  	unsigned long flags;
->>  
->>  	bio->bi_private = dio;
->> +	/* PSI is only for paging IO */
->> +	bio_clear_flag(bio, BIO_WORKINGSET);
+On 15/12/2020 01:00, Dave Chinner wrote:
+> On Tue, Dec 15, 2020 at 12:20:24AM +0000, Pavel Begunkov wrote:
+>> A preparation patch. It adds a simple helper which abstracts out number
+>> of segments we're allocating for a bio from iov_iter_npages().
 > 
-> Why only do this for the old direct IO path? Why isn't this
-> necessary for the iomap DIO path?
+> Preparation for what? bio_iov_vecs_to_alloc() doesn't seem to be
+> used outside this specific patch, so it's not clear what it's
+> actually needed for...
 
-It's in the description. In short, block and iomap dio use
-bio_iov_iter_get_pages(), which with this patch doesn't use
-[__]bio_add_page() and so doesn't set the flag. 
+Yes, it's not used, but modified in [6/6]. It's here to generilise
+these bits of iomap and block dio, so we can change the behaviour in
+one place.
 
 -- 
 Pavel Begunkov

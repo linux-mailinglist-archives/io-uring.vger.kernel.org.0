@@ -2,75 +2,117 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FCA82DA5B8
-	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 02:44:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF6E2DA641
+	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 03:32:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730759AbgLOBnQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Dec 2020 20:43:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43150 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729950AbgLOBnH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Dec 2020 20:43:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607996496;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PChAzdtbpi+PB7J87DcIhi+vl5NjETLfLM7SecPuwcY=;
-        b=D4nl2gL4la6+D2+IqWeSUygjBs0qRcl9nktwhpcKZuoLUcg+o1VcfHmjPFlcsTERBcJPc+
-        SbHNSXL+fG1ZXnVFSEFM1+kf8ar0jwNhIn02WSmpsc7PLcD4k83jclGwPazOWQEul2V37L
-        vfige2R1arLMU8nHd3DPIuIAK9R//UY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-335-VMEMQTasPqiCfO3btqz3Kw-1; Mon, 14 Dec 2020 20:41:34 -0500
-X-MC-Unique: VMEMQTasPqiCfO3btqz3Kw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A3829180A086;
-        Tue, 15 Dec 2020 01:41:31 +0000 (UTC)
-Received: from T590 (ovpn-13-7.pek2.redhat.com [10.72.13.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 29ED213470;
-        Tue, 15 Dec 2020 01:41:18 +0000 (UTC)
-Date:   Tue, 15 Dec 2020 09:41:14 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v1 0/6] no-copy bvec
-Message-ID: <20201215014114.GA1777020@T590>
-References: <cover.1607976425.git.asml.silence@gmail.com>
+        id S1727558AbgLOCbW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Dec 2020 21:31:22 -0500
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:50218 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727531AbgLOCbR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Dec 2020 21:31:17 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R231e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UIgKCiK_1607999433;
+Received: from 30.225.32.197(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UIgKCiK_1607999433)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 15 Dec 2020 10:30:33 +0800
+Subject: Re: [PATCH] io_uring: hold uring_lock to complete faild polled io in
+ io_wq_submit_work()
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
+References: <20201214154941.10907-1-xiaoguang.wang@linux.alibaba.com>
+ <23ec9427-e904-f87f-2345-d040d9b10673@gmail.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <39f3c4a2-a81d-b4cd-c01f-d4bf59d708d8@linux.alibaba.com>
+Date:   Tue, 15 Dec 2020 10:28:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1607976425.git.asml.silence@gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <23ec9427-e904-f87f-2345-d040d9b10673@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Dec 15, 2020 at 12:20:19AM +0000, Pavel Begunkov wrote:
-> Instead of creating a full copy of iter->bvec into bio in direct I/O,
-> the patchset makes use of the one provided. It changes semantics and
-> obliges users of asynchronous kiocb to track bvec lifetime, and [1/6]
-> converts the only place that doesn't.
+hi,
 
-Just think of one corner case: iov_iter(BVEC) may pass bvec table with zero
-length bvec, which may not be supported by block layer or driver, so
-this patchset has to address this case first.
+> On 14/12/2020 15:49, Xiaoguang Wang wrote:
+>> io_iopoll_complete() does not hold completion_lock to complete polled
+>> io, so in io_wq_submit_work(), we can not call io_req_complete() directly,
+>> to complete polled io, otherwise there maybe concurrent access to cqring,
+>> defer_list, etc, which is not safe. Commit dad1b1242fd5 ("io_uring: always
+>> let io_iopoll_complete() complete polled io") has fixed this issue, but
+>> Pavel reported that IOPOLL apart from rw can do buf reg/unreg requests(
+>> IORING_OP_PROVIDE_BUFFERS or IORING_OP_REMOVE_BUFFERS), so the fix is
+>> not good.
+>>
+>> Given that io_iopoll_complete() is always called under uring_lock, so here
+>> for polled io, we can also get uring_lock to fix this issue.
+> 
+> One thing I don't like is that io_wq_submit_work() won't be able to
+> publish an event while someone polling io_uring_enter(ENTER_GETEVENTS),
+> that's because both take the lock. The problem is when the poller waits
+> for an event that is currently in io-wq (i.e. io_wq_submit_work()).
+> The polling loop will eventually exit, so that's not a deadlock, but
+> latency,etc. would be huge.
+In this patch, we just hold uring_lock for polled io in error path, so I think
+normally it maybe not an issue, and seems that the critical section is not
+that big, so it also may not result in huge latecy.
+I also noticed that current codes also hold uring_lock in io_wq_submit_work()
+call chain:
+==> io_wq_submit_work()
+====> io_issue_sqe()
+======> io_provide_buffers()
+========> io_ring_submit_lock(ctx, !force_nonblock);
 
-Please see 7e24969022cb ("block: allow for_each_bvec to support zero len bvec").
-
-
-thanks,
-Ming
-
+Regards,
+Xiaoguang Wang
+> 
+>>
+>> Fixes: dad1b1242fd5 ("io_uring: always let io_iopoll_complete() complete polled io")
+>> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+>> ---
+>>   fs/io_uring.c | 25 +++++++++++++++----------
+>>   1 file changed, 15 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index f53356ced5ab..eab3d2b7d232 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -6354,19 +6354,24 @@ static struct io_wq_work *io_wq_submit_work(struct io_wq_work *work)
+>>   	}
+>>   
+>>   	if (ret) {
+>> +		bool iopoll_enabled = req->ctx->flags & IORING_SETUP_IOPOLL;
+>> +
+>>   		/*
+>> -		 * io_iopoll_complete() does not hold completion_lock to complete
+>> -		 * polled io, so here for polled io, just mark it done and still let
+>> -		 * io_iopoll_complete() complete it.
+>> +		 * io_iopoll_complete() does not hold completion_lock to complete polled
+>> +		 * io, so here for polled io, we can not call io_req_complete() directly,
+>> +		 * otherwise there maybe concurrent access to cqring, defer_list, etc,
+>> +		 * which is not safe. Given that io_iopoll_complete() is always called
+>> +		 * under uring_lock, so here for polled io, we also get uring_lock to
+>> +		 * complete it.
+>>   		 */
+>> -		if (req->ctx->flags & IORING_SETUP_IOPOLL) {
+>> -			struct kiocb *kiocb = &req->rw.kiocb;
+>> +		if (iopoll_enabled)
+>> +			mutex_lock(&req->ctx->uring_lock);
+>>   
+>> -			kiocb_done(kiocb, ret, NULL);
+>> -		} else {
+>> -			req_set_fail_links(req);
+>> -			io_req_complete(req, ret);
+>> -		}
+>> +		req_set_fail_links(req);
+>> +		io_req_complete(req, ret);
+>> +
+>> +		if (iopoll_enabled)
+>> +			mutex_unlock(&req->ctx->uring_lock);
+>>   	}
+>>   
+>>   	return io_steal_work(req);
+>>
+> 

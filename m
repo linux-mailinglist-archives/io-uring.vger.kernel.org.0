@@ -2,86 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2573E2DACB3
-	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 13:06:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADE1C2DAE60
+	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 14:57:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbgLOMFx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Dec 2020 07:05:53 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:53546 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729045AbgLOMFr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Dec 2020 07:05:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1608033860;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BMM7E9TuXF5eeNr/08yqebR2Dt2ctyis2zH1H/npDvk=;
-        b=K7+s+KnfBo4v9RnmU7i3mMOiTvTMfyQizYKVn1tFt2R5mY2j+JKP9zUoVK9P+yvR2ViePZ
-        9U1c8BKx7wHGYu+a0aaetZUJL36W3LafwkNVp7y/1AbR8BjDyTjNgG4MSnlwg/49QTNXCD
-        HWJyaAOCWKmA3rBs0nCvjDoZ+AYOZ4w=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-282-YS-IJu5KMfS3eRNExERwJw-1; Tue, 15 Dec 2020 07:04:16 -0500
-X-MC-Unique: YS-IJu5KMfS3eRNExERwJw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 551CF180A096;
-        Tue, 15 Dec 2020 12:04:14 +0000 (UTC)
-Received: from T590 (ovpn-12-182.pek2.redhat.com [10.72.12.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 40F5019C44;
-        Tue, 15 Dec 2020 12:04:01 +0000 (UTC)
-Date:   Tue, 15 Dec 2020 20:03:57 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        id S1728831AbgLON4Y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Dec 2020 08:56:24 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:49266 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728772AbgLON4D (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Dec 2020 08:56:03 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-256-kyP4j1eZN0iEOkzo-w1qBQ-1; Tue, 15 Dec 2020 13:54:22 +0000
+X-MC-Unique: kyP4j1eZN0iEOkzo-w1qBQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 15 Dec 2020 13:54:17 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 15 Dec 2020 13:54:17 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Pavel Begunkov' <asml.silence@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+CC:     Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v1 0/6] no-copy bvec
-Message-ID: <20201215120357.GA1798021@T590>
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: RE: [PATCH v1 2/6] iov_iter: optimise bvec iov_iter_advance()
+Thread-Topic: [PATCH v1 2/6] iov_iter: optimise bvec iov_iter_advance()
+Thread-Index: AQHW0njgRO60UNrAz0qHNwIRx20dYqn35EKAgAAgPwCAACb+4A==
+Date:   Tue, 15 Dec 2020 13:54:16 +0000
+Message-ID: <c5f54cb816564f2b96f5d7a0f85fdc4a@AcuMS.aculab.com>
 References: <cover.1607976425.git.asml.silence@gmail.com>
- <20201215014114.GA1777020@T590>
- <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
+ <5c9c22dbeecad883ca29b31896c262a8d2a77132.1607976425.git.asml.silence@gmail.com>
+ <262132648a8f4e7a9d1c79003ea74b3f@AcuMS.aculab.com>
+ <d151f81e-ec56-59c0-d2a0-ffd4a269fec1@gmail.com>
+In-Reply-To: <d151f81e-ec56-59c0-d2a0-ffd4a269fec1@gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Dec 15, 2020 at 11:14:20AM +0000, Pavel Begunkov wrote:
-> On 15/12/2020 01:41, Ming Lei wrote:
-> > On Tue, Dec 15, 2020 at 12:20:19AM +0000, Pavel Begunkov wrote:
-> >> Instead of creating a full copy of iter->bvec into bio in direct I/O,
-> >> the patchset makes use of the one provided. It changes semantics and
-> >> obliges users of asynchronous kiocb to track bvec lifetime, and [1/6]
-> >> converts the only place that doesn't.
-> > 
-> > Just think of one corner case: iov_iter(BVEC) may pass bvec table with zero
-> > length bvec, which may not be supported by block layer or driver, so
-> > this patchset has to address this case first.
-> 
-> The easiest for me would be to fallback to copy if there are zero bvecs,
-> e.g. finding such during iov_iter_alignment(), but do we know from where
-> zero bvecs can came? As it's internals we may want to forbid them if
-> there is not too much hassle.
-
-You may find clue from the following link:
-
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2262077.html
-
-
-Thanks,
-Ming
+RnJvbTogUGF2ZWwgQmVndW5rb3YNCj4gU2VudDogMTUgRGVjZW1iZXIgMjAyMCAxMToyNA0KPiAN
+Cj4gT24gMTUvMTIvMjAyMCAwOTozNywgRGF2aWQgTGFpZ2h0IHdyb3RlOg0KPiA+IEZyb206IFBh
+dmVsIEJlZ3Vua292DQo+ID4+IFNlbnQ6IDE1IERlY2VtYmVyIDIwMjAgMDA6MjANCj4gPj4NCj4g
+Pj4gaW92X2l0ZXJfYWR2YW5jZSgpIGlzIGhlYXZpbHkgdXNlZCwgYnV0IGltcGxlbWVudGVkIHRo
+cm91Z2ggZ2VuZXJpYw0KPiA+PiBpdGVyYXRpb24uIEFzIGJ2ZWNzIGhhdmUgYSBzcGVjaWZpY2Fs
+bHkgY3JhZnRlZCBhZHZhbmNlKCkgZnVuY3Rpb24sIGkuZS4NCj4gPj4gYnZlY19pdGVyX2FkdmFu
+Y2UoKSwgd2hpY2ggaXMgZmFzdGVyIGFuZCBzbGltbWVyLCB1c2UgaXQgaW5zdGVhZC4NCj4gPj4N
+Cj4gPj4gIGxpYi9pb3ZfaXRlci5jIHwgMTkgKysrKysrKysrKysrKysrKysrKw0KPiBbLi4uXQ0K
+PiA+PiAgdm9pZCBpb3ZfaXRlcl9hZHZhbmNlKHN0cnVjdCBpb3ZfaXRlciAqaSwgc2l6ZV90IHNp
+emUpDQo+ID4+ICB7DQo+ID4+ICAJaWYgKHVubGlrZWx5KGlvdl9pdGVyX2lzX3BpcGUoaSkpKSB7
+DQo+ID4+IEBAIC0xMDc3LDYgKzEwOTIsMTAgQEAgdm9pZCBpb3ZfaXRlcl9hZHZhbmNlKHN0cnVj
+dCBpb3ZfaXRlciAqaSwgc2l6ZV90IHNpemUpDQo+ID4+ICAJCWktPmNvdW50IC09IHNpemU7DQo+
+ID4+ICAJCXJldHVybjsNCj4gPj4gIAl9DQo+ID4+ICsJaWYgKGlvdl9pdGVyX2lzX2J2ZWMoaSkp
+IHsNCj4gPj4gKwkJaW92X2l0ZXJfYnZlY19hZHZhbmNlKGksIHNpemUpOw0KPiA+PiArCQlyZXR1
+cm47DQo+ID4+ICsJfQ0KPiA+PiAgCWl0ZXJhdGVfYW5kX2FkdmFuY2UoaSwgc2l6ZSwgdiwgMCwg
+MCwgMCkNCj4gPj4gIH0NCj4gPg0KPiA+IFRoaXMgc2VlbXMgdG8gYWRkIHlldCBhbm90aGVyIGNv
+bXBhcmlzb24gYmVmb3JlIHdoYXQgaXMgcHJvYmFibHkNCj4gPiB0aGUgY29tbW9uIGNhc2Ugb24g
+YW4gSU9WRUMgKGllIG5vcm1hbCB1c2Vyc3BhY2UgYnVmZmVyKS4NCj4gDQo+IElmIEFsIGZpbmFs
+bHkgdGFrZXMgdGhlIHBhdGNoIGZvciBpb3ZfaXRlcl9pc18qKCkgaGVscGVycyBpdCB3b3VsZA0K
+PiBiZSBjb21wbGV0ZWx5IG9wdGltaXNlZCBvdXQuDQoNCkkga25ldyBJIGRpZG4ndCBoYXZlIHRo
+YXQgcGF0aCAtIHRoZSBzb3VyY2VzIEkgbG9va2VkIGF0IGFyZW4ndCB0aGF0IG5ldy4NCkRpZG4n
+dCBrbm93IGl0cyBzdGF0ZS4NCg0KSW4gYW55IGNhc2UgdGhhdCBqdXN0IHN0b3BzIHRoZSBzYW1l
+IHRlc3QgYmVpbmcgZG9uZSB0d2ljZS4NCkluIHN0aWxsIGNoYW5nZXMgdGhlIG9yZGVyIG9mIHRo
+ZSB0ZXN0cy4NCg0KVGhlIHRocmVlICd1bmxpa2VseScgY2FzZXMgc2hvdWxkIHJlYWxseSBiZSBp
+bnNpZGUgYSBzaW5nbGUNCid1bmxpa2VseScgdGVzdCBmb3IgYWxsIHRocmVlIGJpdHMuDQpUaGVu
+IHRoZXJlIGlzIG9ubHkgb25lIG1pcy1wcmVkaWN0YWJsZSBqdW1wIHByaW9yIHRvIHRoZSB1c3Vh
+bCBwYXRoLg0KDQpCeSBhZGRpbmcgdGhlIHRlc3QgYmVmb3JlIGl0ZXJhdGVfYW5kX2FkdmFuY2Uo
+KSB5b3UgYXJlIChlZmZlY3RpdmVseSkNCm9wdGltaXNpbmcgZm9yIHRoZSBidmVjIChhbmQgZGlz
+Y2FyZCkgY2FzZXMuDQpBZGRpbmcgJ3VubGlrZWx5KCknIHdvbid0IG1ha2UgYW55IGRpZmZlcmVu
+Y2Ugb24gc29tZSBhcmNoaXRlY3R1cmVzLg0KSUlSQyByZWNlbnQgaW50ZWwgeDg2IGRvbid0IGhh
+dmUgYSAnc3RhdGljIHByZWRpY3Rpb24nIGZvciB1bmtub3duDQpicmFuY2hlcyAtIHRoZXkganVz
+dCB1c2Ugd2hhdGV2ZXIgaW4gaXMgdGhlIGJyYW5jaCBwcmVkaWN0b3IgdGFibGVzLg0KDQoJRGF2
+aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50
+IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTcz
+ODYgKFdhbGVzKQ0K
 

@@ -2,96 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 693032DAC3F
-	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 12:48:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2573E2DACB3
+	for <lists+io-uring@lfdr.de>; Tue, 15 Dec 2020 13:06:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbgLOLo3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Dec 2020 06:44:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44920 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728540AbgLOLoY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Dec 2020 06:44:24 -0500
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115A4C0617A7;
-        Tue, 15 Dec 2020 03:43:38 -0800 (PST)
-Received: by mail-io1-xd41.google.com with SMTP id t8so20160973iov.8;
-        Tue, 15 Dec 2020 03:43:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DMo9XuSTjILRHHigARWnLV+jQvujRXgJrJYMA0vFnik=;
-        b=N/gq/xV3EECJ07lIB0nomSFcD+FV3xDjikTXQLZzVRC95W38jLTltsk92Ov3U1lreP
-         dy7bgDTbRZQhzgBBEBcaOX14y1DmYa3TBI5l6YWDaFvMUIg7diLjNkSTKIHzR6AGXVa9
-         yqEBM35tvQZ3U6OmQ/HL2MhUcGMv8+dZqzYHhoE4iwOD/TtRIsErG6m5e+Hhyq+YVDOP
-         /D+1ocZPZArVfuh4LnLM4HGw18AX8/G3Qlon+r2YGAuIXcCSxzuYUEc7/aQFHTx0ua0b
-         MuM8xYDg5zPndCsIPBXOH70q9LuwzO5NN9LMv4MylSaWitymlB0WXp9IOrtDl0uSjIah
-         TMYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DMo9XuSTjILRHHigARWnLV+jQvujRXgJrJYMA0vFnik=;
-        b=hZFv3tN4oRXSO7FGthEbzjAJKyQHGx5dvH6DU7UlD8qwd7BM4MK0/dsK6xZK1E4Dli
-         aHH51LCbBlaU7v0xB0GaLGwtTBYzN3lZeRb6qjggKgPwiuQyE00TMSmBuzhvQkTk42mF
-         8OGHftRhpmItzYhyNiJkSGE7C1fm0pgCjgQxU16D6c2AkuaA9EcZZOEABudgOsm9/4+e
-         rHr7bQiALlmX2BwDL0FoPfNcork0lcDnX2cX6at7LsI5LznMvZmybRX0fzSI8xvWHmMX
-         TWN9luyhj5DMMlR3LqTBdtQXqt+/Qt827E7VrzohuJA8okSuPt1wVWpIExu09vVih3Pz
-         mRfQ==
-X-Gm-Message-State: AOAM533Kg/y8ZnhnhmWUENfZ9hvWZRN6n0ZklTlBef0N0dePrhEy+AeF
-        P2dsgdITJw3PduXg6qvYpaM/o5MiSTxNAXW2g0Q=
-X-Google-Smtp-Source: ABdhPJzuAfiHLGn2wHe3f3FxC222TCAUjTW69SKlyt69AeDpPA981mvB5Fxg/+6jnmsKfQ04595czBEzHcpxkv+qyso=
-X-Received: by 2002:a05:6602:387:: with SMTP id f7mr14071104iov.209.1608032617498;
- Tue, 15 Dec 2020 03:43:37 -0800 (PST)
+        id S1728912AbgLOMFx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Dec 2020 07:05:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:53546 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729045AbgLOMFr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Dec 2020 07:05:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608033860;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=BMM7E9TuXF5eeNr/08yqebR2Dt2ctyis2zH1H/npDvk=;
+        b=K7+s+KnfBo4v9RnmU7i3mMOiTvTMfyQizYKVn1tFt2R5mY2j+JKP9zUoVK9P+yvR2ViePZ
+        9U1c8BKx7wHGYu+a0aaetZUJL36W3LafwkNVp7y/1AbR8BjDyTjNgG4MSnlwg/49QTNXCD
+        HWJyaAOCWKmA3rBs0nCvjDoZ+AYOZ4w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-282-YS-IJu5KMfS3eRNExERwJw-1; Tue, 15 Dec 2020 07:04:16 -0500
+X-MC-Unique: YS-IJu5KMfS3eRNExERwJw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 551CF180A096;
+        Tue, 15 Dec 2020 12:04:14 +0000 (UTC)
+Received: from T590 (ovpn-12-182.pek2.redhat.com [10.72.12.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 40F5019C44;
+        Tue, 15 Dec 2020 12:04:01 +0000 (UTC)
+Date:   Tue, 15 Dec 2020 20:03:57 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v1 0/6] no-copy bvec
+Message-ID: <20201215120357.GA1798021@T590>
+References: <cover.1607976425.git.asml.silence@gmail.com>
+ <20201215014114.GA1777020@T590>
+ <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
 MIME-Version: 1.0
-References: <20201116044529.1028783-1-dkadashev@gmail.com> <X8oWEkb1Cb9ssxnx@carbon.v>
-In-Reply-To: <X8oWEkb1Cb9ssxnx@carbon.v>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Tue, 15 Dec 2020 18:43:26 +0700
-Message-ID: <CAOKbgA7MdAF1+MQePoZHALxNC5ye207ET=4JCqvdNcrGTcrkpw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] io_uring: add mkdirat support
-To:     viro@zeniv.linux.org.uk
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Dec 4, 2020 at 5:57 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
->
-> On Mon, Nov 16, 2020 at 11:45:27AM +0700, Dmitry Kadashev wrote:
-> > This adds mkdirat support to io_uring and is heavily based on recently
-> > added renameat() / unlinkat() support.
-> >
-> > The first patch is preparation with no functional changes, makes
-> > do_mkdirat accept struct filename pointer rather than the user string.
-> >
-> > The second one leverages that to implement mkdirat in io_uring.
-> >
-> > Based on for-5.11/io_uring.
-> >
-> > Dmitry Kadashev (2):
-> >   fs: make do_mkdirat() take struct filename
-> >   io_uring: add support for IORING_OP_MKDIRAT
-> >
-> >  fs/internal.h                 |  1 +
-> >  fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
-> >  fs/namei.c                    | 20 ++++++++----
-> >  include/uapi/linux/io_uring.h |  1 +
-> >  4 files changed, 74 insertions(+), 6 deletions(-)
-> >
-> > --
-> > 2.28.0
-> >
->
-> Hi Al Viro,
->
-> Ping. Jens mentioned before that this looks fine by him, but you or
-> someone from fsdevel should approve the namei.c part first.
+On Tue, Dec 15, 2020 at 11:14:20AM +0000, Pavel Begunkov wrote:
+> On 15/12/2020 01:41, Ming Lei wrote:
+> > On Tue, Dec 15, 2020 at 12:20:19AM +0000, Pavel Begunkov wrote:
+> >> Instead of creating a full copy of iter->bvec into bio in direct I/O,
+> >> the patchset makes use of the one provided. It changes semantics and
+> >> obliges users of asynchronous kiocb to track bvec lifetime, and [1/6]
+> >> converts the only place that doesn't.
+> > 
+> > Just think of one corner case: iov_iter(BVEC) may pass bvec table with zero
+> > length bvec, which may not be supported by block layer or driver, so
+> > this patchset has to address this case first.
+> 
+> The easiest for me would be to fallback to copy if there are zero bvecs,
+> e.g. finding such during iov_iter_alignment(), but do we know from where
+> zero bvecs can came? As it's internals we may want to forbid them if
+> there is not too much hassle.
 
-Another ping.
+You may find clue from the following link:
 
-Jens, you've mentioned the patch looks good to you, and with quite similar
-changes (unlinkat, renameat) being sent for 5.11 is there anything that I can do
-to help this to be accepted (not necessarily for 5.11 at this point)?
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2262077.html
+
+
+Thanks,
+Ming
+

@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44C392DC32A
-	for <lists+io-uring@lfdr.de>; Wed, 16 Dec 2020 16:34:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD2E92DC339
+	for <lists+io-uring@lfdr.de>; Wed, 16 Dec 2020 16:38:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726502AbgLPPd6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Dec 2020 10:33:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50114 "EHLO
+        id S1726507AbgLPPiT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Dec 2020 10:38:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbgLPPd6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Dec 2020 10:33:58 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C7A5C061794
-        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 07:33:17 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id d26so10367430wrb.12
-        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 07:33:17 -0800 (PST)
+        with ESMTP id S1726502AbgLPPiT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Dec 2020 10:38:19 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9675C061794
+        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 07:37:38 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id q75so2878936wme.2
+        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 07:37:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mdsB10UHCVb5/z+fyBCsUFtPvub1mtdWzfgz5sz6fBg=;
-        b=JEo6EXywg14vaY1P/DryFB03xp+/iN0MvxA0zU9iLPPJxfW3puwqlgPM8Sn3yvXTnr
-         EZYzl2CeNQ0ojyEBJgoSslGIljxEAj+cH/VJiEXQiX5NsR1r6Lxr5V4Q/nWlRvvgvrfF
-         e3qjpP30nmM1xINFoTZcbz+W8x0lLgkZmchTYCLKBWCk0he8lMGi286rymNZns5T9eUu
-         m6YAsfMs+4StWKRdBgLB01Oq8DTSGLCTuef1oKYw28dyY7qtgSVuNmHEjHjsGVt8Zs9D
-         q1lqEzkiIksRhQrrkJAcWOQn1xpJWoWUTQD70jV0A7y1BKCA+uDeZu9hO/sBC3U9rH9p
-         Cf1w==
+        bh=cZS1D0QMfT9kHjuOSa9WhzH3VIIKr9rJoHbg6y3U6xI=;
+        b=o4Zier808e3R2tjusCzGDHWcawJi5FKKMAoovoM8hTZzGzP+df3vyKwbFQUWWqUEnj
+         sGmIi7rTrEfYuDby8dhrFFYyXkSYuRVSlSeN1kWQ5LqNOig/1LXsuU92PZisvTI89mKs
+         2kf9/Lz8kVu+u9iQUTJuiY0zwD+HgDl77eOkbLlkvkf5plJNnJCR5JXmA9f7oD6lazoQ
+         R0MWERATk857kk8D536DCibSt2kqErI2d1xP9PyoDdpQ/o9Cp9S2+RlRt8QJ2+XajaXZ
+         A8EwWNDnm3pLx6Hd8ZDxgHX0c/VayhTjDaCY/QrfXEmp4rt+IGJ6ljLwvqvKOiQy0NeA
+         jYtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=mdsB10UHCVb5/z+fyBCsUFtPvub1mtdWzfgz5sz6fBg=;
-        b=eEalrEsDO7+9YWD1Fm0r/3rYBK/2AKtAn+nNmtxqQOZvGjXPQqMHUy9FdwGdVyBRwt
-         TPFhJimP4y9aBl9TjZ0jHsWTvkOBsRHUgD/AxqAm1jdNTRDSZJF4QYDwd8yLA7jSqwAC
-         ctt5W2avCVkHzGUxGn1RoiMFFzXXgWtKIWMhybkUWSsXodD3A8Lm9LppZ2loV2vjGdEp
-         BNljj33HJ31WfNWAi5yxURHDiifIYExqOwj0GHKOXXgcU6qrFQ7wL7cj1IfrehgxFc00
-         Tx0RAJxjeTBo9r6vHyI5WDSGnM5eFpiQQrO093HZmS7ig/BiRo47z1zqSbC9qVrj3tAi
-         f2mA==
-X-Gm-Message-State: AOAM5333aK0/iZ1tikMqwZc+NYBATGddEqLabNRnF/r9DlKig5MRxIMg
-        8TobVIG5O5qnBCkHxrXxyG/C9PxnTV0rew==
-X-Google-Smtp-Source: ABdhPJxGsC4J+0Gl2sXn11URNLx2lttN3PmCt0xYmsZXI61l3ZmFg8sLEh09+coVCQQ2aXI5qQNwow==
-X-Received: by 2002:a5d:4683:: with SMTP id u3mr39341046wrq.19.1608132795899;
-        Wed, 16 Dec 2020 07:33:15 -0800 (PST)
+        bh=cZS1D0QMfT9kHjuOSa9WhzH3VIIKr9rJoHbg6y3U6xI=;
+        b=FWbv+hCAGkt92Xh6IurPY8uZyLgKtJSkCo71TGBxi0NtUVgkFQrIlfO4KtTTHiu/l8
+         Tu8P8ibk+437TWEsq53yuYNHYui+wtKM0Pb7vEK7UDTRjzwaEDArBIVFIZ/TgpmVqCUW
+         SR6xI5MPmeModMxwEBRyPv/WU7CeLShcgOphQ8om7gi141e/x8hED7zpdYmD8TQPO1nr
+         VG9AyTQPEtzx8ODOlBQiifRm+Hy1uAVwxkhGt3Kkd1TbjEQf2o0WcLbB2+d8EV3qIk6v
+         rJf+o+eei0NrqVd7/d+bjl/4bUFN91RDsHOjSEga9Jy5/0YZrqoi4A3oKbE9NV8H22nL
+         ukAg==
+X-Gm-Message-State: AOAM530YwT8NzuA1Me4ntiq7w9OOjGcXJCjWk7lX4WlkAQk2Mu8cTP21
+        FDNVhZvIaD/mNn//JbiDbWj64kVW2besJw==
+X-Google-Smtp-Source: ABdhPJzFZGxw06B/18BAfvTigsgwpaOMtB+4Tvgm8ZrDkXAHFTSH0Qs/X+YBmcUi6+aDzyuA9d2pxA==
+X-Received: by 2002:a1c:b3c3:: with SMTP id c186mr4011309wmf.169.1608133057069;
+        Wed, 16 Dec 2020 07:37:37 -0800 (PST)
 Received: from [192.168.8.128] ([185.69.144.225])
-        by smtp.gmail.com with ESMTPSA id r1sm3686104wrl.95.2020.12.16.07.33.14
+        by smtp.gmail.com with ESMTPSA id h4sm3670158wrt.65.2020.12.16.07.37.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Dec 2020 07:33:15 -0800 (PST)
+        Wed, 16 Dec 2020 07:37:36 -0800 (PST)
+Subject: Re: [PATCH v2 00/13] io_uring: buffer registration enhancements
 To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
         io-uring@vger.kernel.org
 References: <1607379352-68109-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1607379352-68109-14-git-send-email-bijan.mottahedeh@oracle.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -96,236 +96,102 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v2 13/13] io_uring: support buffer registration sharing
-Message-ID: <ff17d576-27eb-9008-d858-e1ebb7c93dad@gmail.com>
-Date:   Wed, 16 Dec 2020 15:29:55 +0000
+Message-ID: <c1f6faa1-63a4-777c-fe46-2ee7952baa2f@gmail.com>
+Date:   Wed, 16 Dec 2020 15:34:16 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1607379352-68109-14-git-send-email-bijan.mottahedeh@oracle.com>
+In-Reply-To: <1607379352-68109-1-git-send-email-bijan.mottahedeh@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 07/12/2020 22:15, Bijan Mottahedeh wrote:
-> Implement buffer sharing among multiple rings.
+> v2:
 > 
-> A ring shares its (future) buffer registrations at setup time with
-> IORING_SETUP_SHARE_BUF. A ring attaches to another ring's buffer
-> registration at setup time with IORING_SETUP_ATTACH_BUF, after
-> authenticating with the buffer registration owner's fd. Any updates to
-> the owner's buffer registrations become immediately available to the
-> attached rings.
+> - drop readv/writev with fixed buffers patch
+> - handle ref_nodes both both files/buffers with a single ref_list
+> - make file/buffer handling more unified
 > 
-> Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-> ---
->  fs/io_uring.c                 | 85 +++++++++++++++++++++++++++++++++++++++++--
->  include/uapi/linux/io_uring.h |  2 +
->  2 files changed, 83 insertions(+), 4 deletions(-)
+> This patchset implements a set of enhancements to buffer registration
+> consistent with existing file registration functionality:
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 479a6b9..b75cbd7 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -8408,6 +8408,12 @@ static void io_buffers_map_free(struct io_ring_ctx *ctx)
->  	ctx->nr_user_bufs = 0;
->  }
->  
-> +static void io_detach_buf_data(struct io_ring_ctx *ctx)
-> +{
-> +	percpu_ref_put(&ctx->buf_data->refs);
-> +	ctx->buf_data = NULL;
-> +}
-> +
->  static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
->  {
->  	struct fixed_rsrc_data *data = ctx->buf_data;
-> @@ -8415,6 +8421,12 @@ static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
->  	if (!data)
->  		return -ENXIO;
->  
-> +	if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
-> +		io_detach_buf_data(ctx);
-> +		ctx->nr_user_bufs = 0;
+> - buffer registration updates		IORING_REGISTER_BUFFERS_UPDATE
+> 					IORING_OP_BUFFERS_UPDATE
+> 
+> - buffer registration sharing		IORING_SETUP_SHARE_BUF
+> 					IORING_SETUP_ATTACH_BUF
+> 
+> I have kept the original patchset unchanged for the most part to
+> facilitate reviewing and so this set adds a number of additional patches
+> mostly making file/buffer handling more unified.
 
-nr_user_bufs is a part of invariant and should stay together with
-stuff in io_detach_buf_data().
+Thanks for the patches! I'd _really_ prefer for all s/files/rsrc/
+renaming being in a single prep patch instead of spilling it all around.
+I found one bug, but to be honest it's hard to get through when functional
+changes and other cleanups are buried under tons of such renaming.
 
-> +		return 0;
-> +	}
-> +
->  	io_rsrc_ref_quiesce(data, ctx);
->  	io_buffers_unmap(ctx);
->  	io_buffers_map_free(ctx);
-> @@ -8660,9 +8672,13 @@ static struct fixed_rsrc_data *io_buffers_map_alloc(struct io_ring_ctx *ctx,
->  	if (!nr_args || nr_args > IORING_MAX_FIXED_BUFS)
->  		return ERR_PTR(-EINVAL);
->  
-> -	buf_data = alloc_fixed_rsrc_data(ctx);
-> -	if (IS_ERR(buf_data))
-> -		return buf_data;
-> +	if (ctx->buf_data) {
-> +		buf_data = ctx->buf_data;
-> +	} else {
-> +		buf_data = alloc_fixed_rsrc_data(ctx);
-> +		if (IS_ERR(buf_data))
-> +			return buf_data;
-> +	}
->  
->  	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_BUFS_TABLE);
->  	buf_data->table = kcalloc(nr_tables, sizeof(*buf_data->table),
-> @@ -8724,9 +8740,17 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
->  	struct fixed_rsrc_ref_node *ref_node;
->  	struct fixed_rsrc_data *buf_data;
->  
-> +	if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
-> +		if (!ctx->buf_data)
-> +			return -EFAULT;
-> +		ctx->nr_user_bufs = ctx->buf_data->ctx->nr_user_bufs;
-
-Why? Once a table is initialised it shouldn't change its size, would
-be racy otherwise.
-
-> +		return 0;
-> +	}
-> +
->  	buf_data = io_buffers_map_alloc(ctx, nr_args);
->  	if (IS_ERR(buf_data))
->  		return PTR_ERR(buf_data);
-> +	ctx->buf_data = buf_data;
-
-Wanted to write that there is missing
-`if (ctx->user_bufs) return -EBUSY`
-
-but apparently it was moved into io_buffers_map_alloc().
-I'd really prefer to have it here.
-
->  
->  	for (i = 0; i < nr_args; i++, ctx->nr_user_bufs++) {
->  		struct fixed_rsrc_table *table;
-> @@ -8754,7 +8778,6 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
->  			break;
->  	}
->  
-> -	ctx->buf_data = buf_data;
->  	if (ret) {
->  		io_sqe_buffers_unregister(ctx);
->  		return ret;
-> @@ -9783,6 +9806,55 @@ static int io_uring_get_fd(struct io_ring_ctx *ctx)
->  	return ret;
->  }
->  
-> +static int io_attach_buf_data(struct io_ring_ctx *ctx,
-> +			      struct io_uring_params *p)
-> +{
-> +	struct io_ring_ctx *ctx_attach;
-> +	struct fd f;
-> +
-> +	f = fdget(p->wq_fd);
-> +	if (!f.file)
-> +		return -EBADF;
-> +	if (f.file->f_op != &io_uring_fops) {
-> +		fdput(f);
-> +		return -EINVAL;
-> +	}
-> +
-> +	ctx_attach = f.file->private_data;
-> +	if (!ctx_attach->buf_data) {
-
-It looks racy. What prevents it from being deleted while we're
-working on it, e.g. by io_sqe_buffers_unregister?
-
-> +		fdput(f);
-> +		return -EINVAL;
-> +	}
-> +	ctx->buf_data = ctx_attach->buf_data;
-
-Before updates, etc. (e.g. __io_sqe_buffers_update()) were synchronised
-by uring_lock, now it's modified concurrently, that looks to be really
-racy.
-
-> +
-> +	percpu_ref_get(&ctx->buf_data->refs);
-
-Ok, now the original io_uring instance will wait until the attached
-once get rid of their references. That's a versatile ground to have
-in kernel deadlocks.
-
-task1: uring1 = create()
-task2: uring2 = create()
-task1: uring3 = create(share=uring2);
-task2: uring4 = create(share=uring1);
-
-task1: io_sqe_buffers_unregister(uring1)
-task2: io_sqe_buffers_unregister(uring2)
-
-If I skimmed through the code right, that should hang unkillably.
-
-> +	fdput(f);
-> +	return 0;
-> +}
-> +
-> +static int io_init_buf_data(struct io_ring_ctx *ctx, struct io_uring_params *p)
-> +{
-> +	if ((p->flags & (IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF)) ==
-> +	    (IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF))
-> +		return -EINVAL;
-> +
-> +	if (p->flags & IORING_SETUP_SHARE_BUF) {
-> +		struct fixed_rsrc_data *buf_data;
-> +
-> +		buf_data = alloc_fixed_rsrc_data(ctx);
-> +		if (IS_ERR(buf_data))
-> +			return PTR_ERR(buf_data);
-> +
-> +		ctx->buf_data = buf_data;
-> +		return 0;
-> +	}
-> +
-> +	if (p->flags & IORING_SETUP_ATTACH_BUF)
-> +		return io_attach_buf_data(ctx, p);
-> +
-> +	return 0;
-> +}
-> +
->  static int io_uring_create(unsigned entries, struct io_uring_params *p,
->  			   struct io_uring_params __user *params)
->  {
-> @@ -9897,6 +9969,10 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
->  	if (ret)
->  		goto err;
->  
-> +	ret = io_init_buf_data(ctx, p);
-> +	if (ret)
-> +		goto err;
-> +
->  	ret = io_sq_offload_create(ctx, p);
->  	if (ret)
->  		goto err;
-> @@ -9968,6 +10044,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
->  	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
->  			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
->  			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
-> +			IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF |
->  			IORING_SETUP_R_DISABLED))
->  		return -EINVAL;
->  
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 0d9ac12..2366126 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -98,6 +98,8 @@ enum {
->  #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
->  #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
->  #define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
-> +#define IORING_SETUP_SHARE_BUF	(1U << 7)	/* share buffer registration */
-> +#define IORING_SETUP_ATTACH_BUF	(1U << 8)	/* attach buffer registration */
->  
->  enum {
->  	IORING_OP_NOP,
+> 
+> Patch 1-2 modularize existing buffer registration code.
+> 
+> Patch 3-7 generalize fixed_file functionality to fixed_rsrc.
+> 
+> Patch 8 applies fixed_rsrc functionality for fixed buffers support.
+> 
+> Patch 9-10 generalize files_update functionality to rsrc_update.
+> 
+> Patch 11 implements buffer registration update, and introduces
+> IORING_REGISTER_BUFFERS_UPDATE and IORING_OP_BUFFERS_UPDATE, consistent
+> with file registration update.
+> 
+> Patch 12 generalizes fixed resource allocation 
+> 
+> Patch 13 implements buffer sharing among multiple rings; it works as follows:
+> 
+> - A new ring, A,  is setup. Since no buffers have been registered, the
+>   registered buffer state is an empty set, Z. That's different from the
+>   NULL state in current implementation.
+> 
+> - Ring B is setup, attaching to Ring A. It's also attaching to it's
+>   buffer registrations, now we have two references to the same empty
+>   set, Z.
+> 
+> - Ring A registers buffers into set Z, which is no longer empty.
+> 
+> - Ring B sees this immediately, since it's already sharing that set.
+> 
+> Testing
+> 
+> I have used liburing file-{register,update} tests as models for
+> buffer-{register,update,share}, tests and they run ok.
+> 
+> TBD
+> 
+> - Haven't addressed Pavel's comment yet on using a single opcode for
+> files/buffers update, pending Jen's opinion.  Could we encode the resource
+> type into the sqe (e.g. rw_flags)?
+> 
+> Bijan Mottahedeh (13):
+>   io_uring: modularize io_sqe_buffer_register
+>   io_uring: modularize io_sqe_buffers_register
+>   io_uring: generalize fixed file functionality
+>   io_uring: rename fixed_file variables to fixed_rsrc
+>   io_uring: separate ref_list from fixed_rsrc_data
+>   io_uring: generalize fixed_file_ref_node functionality
+>   io_uring: add rsrc_ref locking routines
+>   io_uring: implement fixed buffers registration similar to fixed files
+>   io_uring: create common fixed_rsrc_ref_node handling routines
+>   io_uring: generalize files_update functionlity to rsrc_update
+>   io_uring: support buffer registration updates
+>   io_uring: create common fixed_rsrc_data allocation routines.
+>   io_uring: support buffer registration sharing
+> 
+>  fs/io_uring.c                 | 1004 +++++++++++++++++++++++++++++------------
+>  include/uapi/linux/io_uring.h |   12 +-
+>  2 files changed, 732 insertions(+), 284 deletions(-)
 > 
 
 -- 

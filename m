@@ -2,110 +2,125 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1F632DBB00
-	for <lists+io-uring@lfdr.de>; Wed, 16 Dec 2020 07:06:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A152DC1E3
+	for <lists+io-uring@lfdr.de>; Wed, 16 Dec 2020 15:12:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725902AbgLPGGd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Dec 2020 01:06:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47280 "EHLO
+        id S1726332AbgLPOLb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Dec 2020 09:11:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725274AbgLPGGc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Dec 2020 01:06:32 -0500
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2E1C0613D6;
-        Tue, 15 Dec 2020 22:05:52 -0800 (PST)
-Received: by mail-il1-x12d.google.com with SMTP id q5so941703ilc.10;
-        Tue, 15 Dec 2020 22:05:52 -0800 (PST)
+        with ESMTP id S1726137AbgLPOL3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Dec 2020 09:11:29 -0500
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B422EC061794
+        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 06:10:49 -0800 (PST)
+Received: by mail-il1-x133.google.com with SMTP id k8so22665433ilr.4
+        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 06:10:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P6Sg59zP5ptq5x2K8by0U8XXwiQHFOoVbiJ3Fi37iXw=;
-        b=S67YoxV9n23ZqrrblS/5Nup+FG7AyOTKzOim1I60JAAfBqrXAiDI1Z2Nbo2UtU/Hl4
-         hNB8LNLiBciaj5lQ3EuaLuia4g5D0M+Vu/12VIkGmM2TffzVi7a/Vi+8mit7yduMv90X
-         Iqg5INRAAUosZtjf7tC9SKWhZqb1+6jKuhmbcfVoJahp9K+naipFvqzU29HUJNKK20gd
-         zGD0IiWx6snzfqN/dN/wVnJDZ7Q5bKCVvPBpnr1VAIkYtdgfhQV0oKmP9tzi8Qa7pPDI
-         HlDZJ53G/ZI/cGpbaraS759rnSy1v+RfRryagK2FqelP8EMsmMyY/fwlIbvx1mN7KpB4
-         5GVQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=I38FiREs2MvYUAmATLCdXlSOqnxZGiYMvZvKTznXIDw=;
+        b=px3cE5e8qeMPLb6rB/WREm8Mpq14Uql/XoHl0P9ZFVEjHa5fbfl2+qOxL7Vpa5SJyw
+         SC+gaoGq/WsUrw3aoIMx3vIOUlwbEE7hFw6bpV/Ec8q/mRZLOCkpwhcNiyAqw5Ir01O/
+         EHpyYX7q6TlEnJOWShOITJTGPsOtJlBNZV5W1DwsmMeQATFuGXKbb/R2P+CxDBui1tRp
+         05HO2M7J/Vfg7yU2r0pbTLo9VZdfWkEHy4L/0IrVFw1Q8JwN40IZ6Vm2+zHr2UGc0pmF
+         3KefYchxedv1PGMVPqXKaYUV/iLp+/10IgOnOOchJL4Xsm5T4pdIYLFCaVnwhhIKRp0C
+         ugSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P6Sg59zP5ptq5x2K8by0U8XXwiQHFOoVbiJ3Fi37iXw=;
-        b=tbdNcEd6/YDPawA0cwtceJUvOwU2PNCM1Ec21WmWLKW9TdinxB+yOj0gCUoGshOBZl
-         jPPH0iHuKYgsrcSKo0NoZtgO8pYBQsBM6F1Ayf3BhGvBQT6sJZfuXp+PgJgLwjZ+daJu
-         InLxcFoRQpfMLRLdsPuEjB27vWtxIex3SIw5jYwZECqL6p1CJDrb5JcCHxeR2yTzEPZS
-         pMW7Gl3TwV64DRAS6/OEMSILugicfvGtj8QfBY0gbX2TaEa0IVp8I7k7J413th6fx3lo
-         bYWa4RBnR06g+UrQJiNN6g8npz55DQ4M5IFO9cv8by76hthKKKLfQ8xrmZujom++N5DL
-         Jw6A==
-X-Gm-Message-State: AOAM530csCZ6zfaIsyYLtsVqvsLYzRKEZAXX3/E/vbogZ+1iFjb42vNY
-        7OyhjJLsAzvZk67dsF+Iz24c989rQiwP1TplphQ=
-X-Google-Smtp-Source: ABdhPJxkFEjPMeTtp8jY66KaeuBieLp+BWoFhm36itUGcJKrrFpceUCJoG9X2suKji0F8TrrsXuxiHC5hnDdcR6SWC8=
-X-Received: by 2002:a92:2912:: with SMTP id l18mr33420710ilg.173.1608098752016;
- Tue, 15 Dec 2020 22:05:52 -0800 (PST)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=I38FiREs2MvYUAmATLCdXlSOqnxZGiYMvZvKTznXIDw=;
+        b=SQPzEE5MVT9g8oSZbX8BKvA8Py4eGyHOut2CEB6cegjk1NgghhMyQfnhfnvfRFy6ng
+         AyQCMvSxe8+7fNbE13yRMczGnFRz2n++HVZtIUxS0dZ+JlbsLxtCtwXb1dWR73dGLgBP
+         sQ2HsipGFbI5ZfmCeRYjWf65Q71kIsGNR0WqIc/XjvOmmv2I75Cysuop07begGbKtqMw
+         yBxZjneCsbrFY46014QnOVbrlFO2vqnq/YuniC5fpJ/vb3WEseLCbb98AYkahgpsiqqz
+         YIijXCJBwro2/3s213NNWJHfavm7UT4w0wYnv4xH6lza1Nd3VsYpZXZn5uSGQ/gobAey
+         i1fw==
+X-Gm-Message-State: AOAM530Tb4LsDXAhLR8lnXtm6bnGJXQHOwXBRGPywftdHd2r45zxhVlq
+        gg8w0qARawcmqYyL7SINcK4VfwzZzQODTg==
+X-Google-Smtp-Source: ABdhPJz/stV65lO/OtEHo/TZpdfBsXcrQDucIddLRRZHHuKqo8m4Mi/P62K0eVdbYbfW9ObHe2vLvw==
+X-Received: by 2002:a92:c682:: with SMTP id o2mr46162499ilg.97.1608127848832;
+        Wed, 16 Dec 2020 06:10:48 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id f2sm11961057iow.4.2020.12.16.06.10.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Dec 2020 06:10:48 -0800 (PST)
+Subject: Re: [GIT PULL] io_uring changes for 5.11-rc
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+References: <917fc381-ae7d-bd35-1b4e-fc65f338b84c@kernel.dk>
+Message-ID: <6e60fb23-4fd4-dc8b-e3ca-1673f1fd63bf@kernel.dk>
+Date:   Wed, 16 Dec 2020 07:10:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201116044529.1028783-1-dkadashev@gmail.com> <X8oWEkb1Cb9ssxnx@carbon.v>
- <CAOKbgA7MdAF1+MQePoZHALxNC5ye207ET=4JCqvdNcrGTcrkpw@mail.gmail.com> <faf1a897-3acf-dd82-474d-dadd9fa9a752@kernel.dk>
-In-Reply-To: <faf1a897-3acf-dd82-474d-dadd9fa9a752@kernel.dk>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Wed, 16 Dec 2020 13:05:41 +0700
-Message-ID: <CAOKbgA46PHvVW6h1s6U-kgVt2jdq0t+UXSiy7nn=JTonpXYAPQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] io_uring: add mkdirat support
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <917fc381-ae7d-bd35-1b4e-fc65f338b84c@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Dec 15, 2020 at 11:20 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 12/15/20 4:43 AM, Dmitry Kadashev wrote:
-> > On Fri, Dec 4, 2020 at 5:57 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
-> >>
-> >> On Mon, Nov 16, 2020 at 11:45:27AM +0700, Dmitry Kadashev wrote:
-> >>> This adds mkdirat support to io_uring and is heavily based on recently
-> >>> added renameat() / unlinkat() support.
-> >>>
-> >>> The first patch is preparation with no functional changes, makes
-> >>> do_mkdirat accept struct filename pointer rather than the user string.
-> >>>
-> >>> The second one leverages that to implement mkdirat in io_uring.
-> >>>
-> >>> Based on for-5.11/io_uring.
-> >>>
-> >>> Dmitry Kadashev (2):
-> >>>   fs: make do_mkdirat() take struct filename
-> >>>   io_uring: add support for IORING_OP_MKDIRAT
-> >>>
-> >>>  fs/internal.h                 |  1 +
-> >>>  fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
-> >>>  fs/namei.c                    | 20 ++++++++----
-> >>>  include/uapi/linux/io_uring.h |  1 +
-> >>>  4 files changed, 74 insertions(+), 6 deletions(-)
-> >>>
-> >>> --
-> >>> 2.28.0
-> >>>
-> >>
-> >> Hi Al Viro,
-> >>
-> >> Ping. Jens mentioned before that this looks fine by him, but you or
-> >> someone from fsdevel should approve the namei.c part first.
-> >
-> > Another ping.
-> >
-> > Jens, you've mentioned the patch looks good to you, and with quite
-> > similar changes (unlinkat, renameat) being sent for 5.11 is there
-> > anything that I can do to help this to be accepted (not necessarily
-> > for 5.11 at this point)?
->
-> Since we're aiming for 5.12 at this point, let's just hold off a bit and
-> see if Al gets time to ack/review the VFS side of things. There's no
-> immediate rush.
+On 12/14/20 7:41 AM, Jens Axboe wrote:
+> Hi Linus,
+> 
+> Fairly light set of changes this time around, and mostly some bits that
+> were pushed out to 5.11 instead of 5.10, fixes/cleanups, and a few
+> features. In particular:
+> 
+> - Cleanups around iovec import (David Laight, Pavel)
+> 
+> - Add timeout support for io_uring_enter(2), which enables us to clean
+>   up liburing and avoid a timeout sqe submission in the completion path.
+>   The big win here is that it allows setups that split SQ and CQ
+>   handling into separate threads to avoid locking, as the CQ side will
+>   no longer submit when timeouts are needed when waiting for events.
+>   (Hao Xu)
+> 
+> - Add support for socket shutdown, and renameat/unlinkat.
+> 
+> - SQPOLL cleanups and improvements (Xiaoguang Wang)
+> 
+> - Allow SQPOLL setups for CAP_SYS_NICE, and enable regular (non-fixed)
+>   files to be used.
+> 
+> - Cancelation improvements (Pavel)
+> 
+> - Fixed file reference improvements (Pavel)
+> 
+> - IOPOLL related race fixes (Pavel)
+> 
+> - Lots of other little fixes and cleanups (mostly Pavel)
+> 
+> Please pull!
 
-OK, sounds good, thanks.
+With the net branch pulled, this will now fail due to the changing
+of sock_from_file. It'll merge cleanly, but you need to fix that
+one up.
+
+fs/io_uring.c: In function ‘io_shutdown’:
+fs/io_uring.c:3784:9: error: too many arguments to function ‘sock_from_file’
+ 3784 |  sock = sock_from_file(req->file, &ret);
+      |         ^~~~~~~~~~~~~~
+In file included from fs/io_uring.c:63:
+./include/linux/net.h:243:16: note: declared here
+  243 | struct socket *sock_from_file(struct file *file);
+      |                ^~~~~~~~~~~~~~
+make[1]: *** [scripts/Makefile.build:279: fs/io_uring.o] Error 1
+
+Like so:
+
+ -	sock = sock_from_file(req->file, &ret);
+++	sock = sock_from_file(req->file);
++ 	if (unlikely(!sock))
+ -		return ret;
+++		return -ENOTSOCK;
 
 -- 
-Dmitry Kadashev
+Jens Axboe
+

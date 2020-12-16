@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF8E2DC2A2
-	for <lists+io-uring@lfdr.de>; Wed, 16 Dec 2020 16:02:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CE702DC2A8
+	for <lists+io-uring@lfdr.de>; Wed, 16 Dec 2020 16:03:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725957AbgLPPCJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Dec 2020 10:02:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
+        id S1725960AbgLPPDY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Dec 2020 10:03:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbgLPPCI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Dec 2020 10:02:08 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7A0C061794
-        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 07:01:28 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id r7so23492492wrc.5
-        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 07:01:28 -0800 (PST)
+        with ESMTP id S1725951AbgLPPDY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Dec 2020 10:03:24 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A872BC06179C
+        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 07:02:43 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id a12so23458571wrv.8
+        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 07:02:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:cc:from:autocrypt:message-id:date:user-agent
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=D0eEl+a+D9e95U0oflIdI5U4FU0jtziIxO+olAP1LVw=;
-        b=ZzWYL/I7N33WZMZFjaWUBfug94pjm8eurxRHADEmtWOZMccTZRV749vLW2CFT2eKOE
-         nGoOa+BiJ5ziWD25p7hzxHIav4YWMbvPEICQJcZIIBzesYt1fV625fPRqtwY1QlSnQlk
-         JzSCPoiMqYFA/VQDSKC/gT7JUFc+lOuQI3ilsvDlcO5J5s8Jd3M2Jsj53nAcV+wLiZLX
-         kSni5f2J2SPdnf8IWwCK+r3dHfoirk3UpiNPcbGB7dWEbGEGmucZ6JsRNhuHnjWk2pc5
-         VYY9XGIduIE8a19AX/6kshEk/GVHnVgxgQ+NrFO/jZBEnMzHOIUD9lMUlY/j1iTi3t9U
-         xlPQ==
+        bh=dfyHNqyrg4a5bL71u0X10qClMyJis6/imzl9ualstgs=;
+        b=gBnW8HOs6noT1/IAfBYO9e5PHKsZaZNM8DowYf6tSzLbE1nB2sHTygm8VJ8HHy8WWP
+         1klmMnFz2H5RIC/xkN3t57JO2lx7LGbM1uvD25SdDt1d3EGmPR0MsSmguDhLLYtfViw6
+         5gLFyZZPIuYj2IKjJ4dGf4WTd8jq0AbqpExWps1FJ8+ADpL72bFLzAIKYaApIJgl6uT/
+         l7WQJxnaeTamtqkzlvQ6P5ohLkaFcOfPxge8XCMKYmuK283kk0tEq8OMZh77YcyVbup/
+         ERokPfDcIZCaWZVSeodW+0ZnKsdjhdJubLCKg1+48M5ZDnk8k0AFdH9OgXaQz9ymca14
+         S7ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=D0eEl+a+D9e95U0oflIdI5U4FU0jtziIxO+olAP1LVw=;
-        b=VnjEEIDxkmjnA/EGEurla7eDZAZj2x7edCyUZQRvJoilrWG5dbyOgvn8WC1SFFfF2a
-         OREqFxDmVIegAsWJFj629pYFm8gxIOEoSo2QTJpKBb/OWeelqyvm6ghQM53RrKviBbmW
-         KQ5ji6fWK4rwJJaRaLBgXKrxS1p2+qIEZejaHxIR0/TO/jmAtp7d9wAUEZZ5rTDxGVZG
-         avlFFw5LPbS7r3Aquxb5V6yQc2YKZVEg05dJpERx71dbXg3E90DhpeN3RxgkVrKXdMX3
-         bixpJdFJEtOFcdJH0JoA64T+3IoPPqk7dXYbZfHn1uNLtZqVCbGat7fxAaGU3tV6otlr
-         +k8Q==
-X-Gm-Message-State: AOAM531aWisiq/nb35EFwpn6MLp0TQKMDkEqltPyQa6jXDwda1q+Bm/Z
-        9TahC/wNjurrJik+B+FW0zQ13ZPLglCwlQ==
-X-Google-Smtp-Source: ABdhPJz0uJB1Y65y7+5HRL1GXNu9/7XKzrvntvZm60PlugtD+t26KbKmSKc1ycAASnDoedtT/Avc+w==
-X-Received: by 2002:a5d:4cd1:: with SMTP id c17mr38732304wrt.49.1608130886669;
-        Wed, 16 Dec 2020 07:01:26 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dfyHNqyrg4a5bL71u0X10qClMyJis6/imzl9ualstgs=;
+        b=JY22xpyiREvZPUUCopiPEf1RfBO79928NsimLI1EZ351+hO4Ks96uI1iHSiQkWlXy+
+         jug5L6BEff6LSi3rWAj0uiN6CpkLxFbLRrhKE70QkDzgpzHw+n2EZuzclU+UJuEIbKwO
+         D46nbmG+7ikJCPAk707bR21IJ0OGPSV7wKeCDl6JmAF6aa7rSQlMM9zNBqRuL3z5yA1X
+         f5x51foZ/zyz1okb3CGe3obAOyLZQUEL1dYsUnIPAxkWCFjbHyUgFu45BzrDuRyRGSGQ
+         GdYo6rPQ7amoQT8LcazjmYf/+Kpac49fDqqtyRyXqVcSCtWv+WJPHgx7mQXdhuDUma20
+         kiHg==
+X-Gm-Message-State: AOAM5322+KA5tqMFy27QK2ngh2wUacZzWwU5gAoZZBpWyoiCPIpRJtFe
+        vfJpKmRwlvrWbz4ee5PPZ4qQ8fjQu938eA==
+X-Google-Smtp-Source: ABdhPJxZmGDtW2/BRwIIx5046FoT9QeXCenZ9cSL5SFY02W5GCnuijxvSlZtjRaOh96KAB4eUaNPfw==
+X-Received: by 2002:adf:84c1:: with SMTP id 59mr23631816wrg.409.1608130962180;
+        Wed, 16 Dec 2020 07:02:42 -0800 (PST)
 Received: from [192.168.8.128] ([185.69.144.225])
-        by smtp.gmail.com with ESMTPSA id p124sm3184530wmp.5.2020.12.16.07.01.25
+        by smtp.gmail.com with ESMTPSA id q143sm3224556wme.28.2020.12.16.07.02.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Dec 2020 07:01:26 -0800 (PST)
+        Wed, 16 Dec 2020 07:02:41 -0800 (PST)
 Subject: Re: [PATCH v2 08/13] io_uring: implement fixed buffers registration
  similar to fixed files
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
+        io-uring@vger.kernel.org
 References: <1607379352-68109-1-git-send-email-bijan.mottahedeh@oracle.com>
  <1607379352-68109-9-git-send-email-bijan.mottahedeh@oracle.com>
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,8 +98,8 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <d9b4abb9-61e2-4751-9350-99fc58b02aae@gmail.com>
-Date:   Wed, 16 Dec 2020 14:58:06 +0000
+Message-ID: <1156b074-076c-a780-9144-e91cf61505a1@gmail.com>
+Date:   Wed, 16 Dec 2020 14:59:21 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
@@ -116,20 +116,18 @@ On 07/12/2020 22:15, Bijan Mottahedeh wrote:
 > 
 > Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 > ---
->  fs/io_uring.c | 240 +++++++++++++++++++++++++++++++++++++++++++++++++---------
->  1 file changed, 204 insertions(+), 36 deletions(-)
-> 
 [...]
->  	/* overflow */
-> @@ -8296,28 +8313,71 @@ static unsigned long ring_pages(unsigned sq_entries, unsigned cq_entries)
->  	return pages;
->  }
->  
-> -static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
-> +static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf *imu)
+> +static int io_alloc_buf_tables(struct fixed_rsrc_data *buf_data,
+> +			       unsigned nr_tables, unsigned nr_bufs)
+> +{
+> +	int i;
+> +		
 
-I think this and some others from here can go into a separate patch, would
-be cleaner.
+trailing tabs, btw
+
+> +	for (i = 0; i < nr_tables; i++) {
+> +		struct fixed_rsrc_table *table = &buf_data->table[i];
+> +		unsigned this_bufs;
 
 -- 
 Pavel Begunkov

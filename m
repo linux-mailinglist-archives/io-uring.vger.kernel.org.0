@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EFAD2DC28F
-	for <lists+io-uring@lfdr.de>; Wed, 16 Dec 2020 15:57:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFF8E2DC2A2
+	for <lists+io-uring@lfdr.de>; Wed, 16 Dec 2020 16:02:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725813AbgLPO5j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Dec 2020 09:57:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44494 "EHLO
+        id S1725957AbgLPPCJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Dec 2020 10:02:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbgLPO5j (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Dec 2020 09:57:39 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AA7EC06179C
-        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 06:56:57 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id 3so2726842wmg.4
-        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 06:56:57 -0800 (PST)
+        with ESMTP id S1725905AbgLPPCI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Dec 2020 10:02:08 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7A0C061794
+        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 07:01:28 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id r7so23492492wrc.5
+        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 07:01:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:cc:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Hpq2NwMWPf2E4TIE+LHUMuHeWD1kX1Iotyq5C1/b65Q=;
-        b=ClJyhjiBhel3kBFRYSBeXujbqhStRibgc2VTeXyrvHi4ggGGxLYi99F+U5cW54Xedr
-         0Rfd/hXn0n3uToyPIcePZZjHxT2QMwlLJFvhN78/J8KR5kQe4Uo4WpSVvWMhcoEvI8Wj
-         mBAm7fOSu+0Jl426w/FnWGnBOByq6wP2YoMXbgUlL2fwZDAUeo0Q3yas/Pd89QP0NTZ1
-         VKymCFTf2LF5m1/vujOMKRuBMassUAjQnX7zor0J2RuuKQ1empnodH3F9hvkOcRCQ4GU
-         FDf9+VIYfeMoBB28Qkribd7QAwgyZ/GvUX4ZX6tGxXca9eD4z+yXfIO94Ir9jCNbNcp1
-         Z3Mw==
+        bh=D0eEl+a+D9e95U0oflIdI5U4FU0jtziIxO+olAP1LVw=;
+        b=ZzWYL/I7N33WZMZFjaWUBfug94pjm8eurxRHADEmtWOZMccTZRV749vLW2CFT2eKOE
+         nGoOa+BiJ5ziWD25p7hzxHIav4YWMbvPEICQJcZIIBzesYt1fV625fPRqtwY1QlSnQlk
+         JzSCPoiMqYFA/VQDSKC/gT7JUFc+lOuQI3ilsvDlcO5J5s8Jd3M2Jsj53nAcV+wLiZLX
+         kSni5f2J2SPdnf8IWwCK+r3dHfoirk3UpiNPcbGB7dWEbGEGmucZ6JsRNhuHnjWk2pc5
+         VYY9XGIduIE8a19AX/6kshEk/GVHnVgxgQ+NrFO/jZBEnMzHOIUD9lMUlY/j1iTi3t9U
+         xlPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:cc:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=Hpq2NwMWPf2E4TIE+LHUMuHeWD1kX1Iotyq5C1/b65Q=;
-        b=p9RZwA1tnvafhRQ7hB8dOq7PtQwVxE9AOfotjxm092oHzamdLy6lp+5baSg+y22oVX
-         Nsc5ZSOtPMS8Tisbwla86RzgpcjZLDGMtojSUOpHxa57lf8326kdczWOuAl9t70ABtP3
-         /6nbNZzBfqAg2ax0nqkw+3mSZluAqBAw1zM4x6ANGoZ5PlwNsPavr9iIyFNFkXVKxwjU
-         flgLN4e/Wb80pngUU81vyTIfTRCpVvNmDC7jldDdmX81oFn5Utr+Rb1h7joACFo3B6CY
-         O0DZIaVTO44aVuZYHDk5N/xfp6VuFfqBWYHHIeown6Aaet8J1w6h4p/EuclRSerQF68F
-         Kl0w==
-X-Gm-Message-State: AOAM530oSmn7lxgI8SVC1Vfwb3bUBYqxL4gA3eKSTp63dfetO6F8DSts
-        0zfpXJBOdOS3YwPckg2uMBMgq7FvqwNaWg==
-X-Google-Smtp-Source: ABdhPJxU6FcUE+cPC3hrDeHgPJtHiCzP8vMlgUtLQfe617+PLjIbfulla553t4tWgJouuJm+uv5tKA==
-X-Received: by 2002:a1c:e3c4:: with SMTP id a187mr3756615wmh.58.1608130615922;
-        Wed, 16 Dec 2020 06:56:55 -0800 (PST)
+        bh=D0eEl+a+D9e95U0oflIdI5U4FU0jtziIxO+olAP1LVw=;
+        b=VnjEEIDxkmjnA/EGEurla7eDZAZj2x7edCyUZQRvJoilrWG5dbyOgvn8WC1SFFfF2a
+         OREqFxDmVIegAsWJFj629pYFm8gxIOEoSo2QTJpKBb/OWeelqyvm6ghQM53RrKviBbmW
+         KQ5ji6fWK4rwJJaRaLBgXKrxS1p2+qIEZejaHxIR0/TO/jmAtp7d9wAUEZZ5rTDxGVZG
+         avlFFw5LPbS7r3Aquxb5V6yQc2YKZVEg05dJpERx71dbXg3E90DhpeN3RxgkVrKXdMX3
+         bixpJdFJEtOFcdJH0JoA64T+3IoPPqk7dXYbZfHn1uNLtZqVCbGat7fxAaGU3tV6otlr
+         +k8Q==
+X-Gm-Message-State: AOAM531aWisiq/nb35EFwpn6MLp0TQKMDkEqltPyQa6jXDwda1q+Bm/Z
+        9TahC/wNjurrJik+B+FW0zQ13ZPLglCwlQ==
+X-Google-Smtp-Source: ABdhPJz0uJB1Y65y7+5HRL1GXNu9/7XKzrvntvZm60PlugtD+t26KbKmSKc1ycAASnDoedtT/Avc+w==
+X-Received: by 2002:a5d:4cd1:: with SMTP id c17mr38732304wrt.49.1608130886669;
+        Wed, 16 Dec 2020 07:01:26 -0800 (PST)
 Received: from [192.168.8.128] ([185.69.144.225])
-        by smtp.gmail.com with ESMTPSA id u7sm1798586wmu.47.2020.12.16.06.56.54
+        by smtp.gmail.com with ESMTPSA id p124sm3184530wmp.5.2020.12.16.07.01.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Dec 2020 06:56:55 -0800 (PST)
-Subject: Re: [PATCH v2 06/13] io_uring: generalize fixed_file_ref_node
- functionality
+        Wed, 16 Dec 2020 07:01:26 -0800 (PST)
+Subject: Re: [PATCH v2 08/13] io_uring: implement fixed buffers registration
+ similar to fixed files
 To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 References: <1607379352-68109-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1607379352-68109-7-git-send-email-bijan.mottahedeh@oracle.com>
+ <1607379352-68109-9-git-send-email-bijan.mottahedeh@oracle.com>
 Cc:     axboe@kernel.dk, io-uring@vger.kernel.org
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
@@ -98,12 +98,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <99458b93-b1b1-76f7-c190-953a01fa45dc@gmail.com>
-Date:   Wed, 16 Dec 2020 14:53:35 +0000
+Message-ID: <d9b4abb9-61e2-4751-9350-99fc58b02aae@gmail.com>
+Date:   Wed, 16 Dec 2020 14:58:06 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1607379352-68109-7-git-send-email-bijan.mottahedeh@oracle.com>
+In-Reply-To: <1607379352-68109-9-git-send-email-bijan.mottahedeh@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -112,93 +112,24 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 07/12/2020 22:15, Bijan Mottahedeh wrote:
-> Split alloc_fixed_file_ref_node into resource generic/specific parts,
-> rename destroy_fixed_file_ref_node, and factor out fixed_file_ref_node
-> switching, to be be leveraged by fixed buffers.
+> Apply fixed_rsrc functionality for fixed buffers support.
 > 
 > Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 > ---
->  fs/io_uring.c | 34 +++++++++++++++++++++++++---------
->  1 file changed, 25 insertions(+), 9 deletions(-)
+>  fs/io_uring.c | 240 +++++++++++++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 204 insertions(+), 36 deletions(-)
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 1ed63bc..126237e 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -7672,7 +7672,7 @@ static void io_rsrc_data_ref_zero(struct percpu_ref *ref)
->  		queue_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
+[...]
+>  	/* overflow */
+> @@ -8296,28 +8313,71 @@ static unsigned long ring_pages(unsigned sq_entries, unsigned cq_entries)
+>  	return pages;
 >  }
 >  
-> -static struct fixed_rsrc_ref_node *alloc_fixed_file_ref_node(
-> +static struct fixed_rsrc_ref_node *alloc_fixed_rsrc_ref_node(
->  			struct io_ring_ctx *ctx)
->  {
->  	struct fixed_rsrc_ref_node *ref_node;
-> @@ -7688,13 +7688,22 @@ static struct fixed_rsrc_ref_node *alloc_fixed_file_ref_node(
->  	}
->  	INIT_LIST_HEAD(&ref_node->node);
->  	INIT_LIST_HEAD(&ref_node->rsrc_list);
-> +	ref_node->done = false;
-> +	return ref_node;
-> +}
-> +
-> +static struct fixed_rsrc_ref_node *alloc_fixed_file_ref_node(
-> +			struct io_ring_ctx *ctx)
-> +{
-> +	struct fixed_rsrc_ref_node *ref_node;
-> +
-> +	ref_node = alloc_fixed_rsrc_ref_node(ctx);
+> -static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
+> +static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf *imu)
 
-if (!ref_node)
-	return NULL;
-
->  	ref_node->rsrc_data = ctx->file_data;
->  	ref_node->rsrc_put = io_ring_file_put;
-> -	ref_node->done = false;
->  	return ref_node;
->  }
->  
-> -static void destroy_fixed_file_ref_node(struct fixed_rsrc_ref_node *ref_node)
-> +static void destroy_fixed_rsrc_ref_node(struct fixed_rsrc_ref_node *ref_node)
->  {
->  	percpu_ref_exit(&ref_node->refs);
->  	kfree(ref_node);
-> @@ -7870,6 +7879,17 @@ static inline int io_queue_file_removal(struct fixed_rsrc_data *data,
->  	return io_queue_rsrc_removal(data, (void *)file);
->  }
->  
-> +static void switch_fixed_rsrc_ref_node(struct fixed_rsrc_ref_node *ref_node,
-> +				       struct fixed_rsrc_data *data,
-> +				       struct io_ring_ctx *ctx)
-> +{
-> +	percpu_ref_kill(&data->node->refs);
-> +	spin_lock_bh(&ctx->rsrc_ref_lock);
-> +	list_add_tail(&ref_node->node, &ctx->rsrc_ref_list);
-> +	data->node = ref_node;
-> +	spin_unlock_bh(&ctx->rsrc_ref_lock);
-> +}
-> +
->  static int __io_sqe_files_update(struct io_ring_ctx *ctx,
->  				 struct io_uring_files_update *up,
->  				 unsigned nr_args)
-> @@ -7946,14 +7966,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
->  	}
->  
->  	if (needs_switch) {
-> -		percpu_ref_kill(&data->node->refs);
-> -		spin_lock_bh(&ctx->rsrc_ref_lock);
-> -		list_add_tail(&ref_node->node, &ctx->rsrc_ref_list);
-> -		data->node = ref_node;
-> -		spin_unlock_bh(&ctx->rsrc_ref_lock);
-> +		switch_fixed_rsrc_ref_node(ref_node, data, ctx);
->  		percpu_ref_get(&ctx->file_data->refs);
->  	} else
-> -		destroy_fixed_file_ref_node(ref_node);
-> +		destroy_fixed_rsrc_ref_node(ref_node);
->  
->  	return done ? done : err;
->  }
-> 
+I think this and some others from here can go into a separate patch, would
+be cleaner.
 
 -- 
 Pavel Begunkov

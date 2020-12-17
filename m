@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FAF02DD406
+	by mail.lfdr.de (Postfix) with ESMTP id 95FCC2DD407
 	for <lists+io-uring@lfdr.de>; Thu, 17 Dec 2020 16:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbgLQPVt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Dec 2020 10:21:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44396 "EHLO
+        id S1727253AbgLQPVu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Dec 2020 10:21:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S1725871AbgLQPVt (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 17 Dec 2020 10:21:49 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC1AFC0617A7
-        for <io-uring@vger.kernel.org>; Thu, 17 Dec 2020 07:21:08 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id y5so27817552iow.5
-        for <io-uring@vger.kernel.org>; Thu, 17 Dec 2020 07:21:08 -0800 (PST)
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EB0BC0617B0
+        for <io-uring@vger.kernel.org>; Thu, 17 Dec 2020 07:21:09 -0800 (PST)
+Received: by mail-io1-xd2e.google.com with SMTP id y5so27817603iow.5
+        for <io-uring@vger.kernel.org>; Thu, 17 Dec 2020 07:21:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=H/UT3sBLb8t/BqsRQfslxhHw28TrTlyUgKP8sgwvxLo=;
-        b=Ipg6HzF7fLfze5wN82fn3rot42wpnmGwcSSKE5yLJ1rxQHt2KKum7XUfAVWioum1eN
-         LVuij/9r35t/Ram/VC5w3jJdje250GQ7xx/WKXrlMDuX2h4Qojw4j12wS/HFdLfaq0tb
-         Mq/x6+EERQAviPhXQZDfapFmLUfHJNI+dWjx0rQPHOLjJJ9BSoWXDelN1dtcSEdmD69/
-         1FkSlGhDN43w9pSf5qw6OQ9zpBG7sY4xHZy0oepBrKEnEaOPsC7b8tZes/Gr2ASnHwdK
-         uWX0d+E77Y54rfFDE6mnR6pplUt5d96k/Jp205esJkwi3GeFGuLMOnjht0IQNJ9OHRrg
-         /sIA==
+        bh=cs6bkt1kFG1/9er9WT09SLBBaLaQZeoTVJunyWgBesQ=;
+        b=aGltlA8Z4kB8jiVesQp5J5R87dTkLKP0+7EGiE+4RqHX8Hy635cn9duA61F7dAWsNc
+         ydAugIfBlbRWEG+7QUKXa/qp3WJhEq+kdaF1+AGnMLA8AB71GXlC1dovFUEVHEX1wyeo
+         BbNUpH+ztY++zB185bff+0EwQrvXyQ58mb5DX/YGxj1quBDXVXFZm5sPii6v8BROohrn
+         fTeSAzEf935DY4ZKhYwNrnbp2ZH1uyV1hDLD5axPEAcOBPZgFODflvBJyaRDwMqg39Vr
+         0svLoglPt6+QJLLrih+BSyJGj9sKxxoEUNajwN3EqGtDmbbWU8ZJoRxDT+Kky/MOwjSI
+         NfrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=H/UT3sBLb8t/BqsRQfslxhHw28TrTlyUgKP8sgwvxLo=;
-        b=tqpG8HBHXT6dxUN54Oqc+XULTw91caxQ18lFVH1xdqCV2GqyNXE+69q/bP9pe0nrWO
-         9jrdWRORvFE/mL7WelEQ6VMw7IYOPL1H6qC9ul7GcQx1sxf1e7JGnYEUJU6OjUCsAJNV
-         d+DfpBG+otdJFsg3HqoX9n+p7/lbxu9J+KCo6aMMHFnq0FPx7u2Ed/ZvFuRzpqR/JMjh
-         suPpRTh7JZdbmpE8D5BKLQ75t4s1sArS4/TiGPKn2jg6HZ8mdYYep/Px9yqc810F9UR1
-         nLXQUvp2t84dFEdYW9t89gHvI9k23FwgooXXG9x/OX6PG4QrRJrgkZ7AVPszdOQf+WSo
-         u5aQ==
-X-Gm-Message-State: AOAM531vCqcv0tOuYPD7RJ8oo77AkXpXFpEUZpRb6TZlZpryKuqUJC8y
-        BGlhU1gLD1Y2PbnqYrHHByzSvpEYlKVxpQ==
-X-Google-Smtp-Source: ABdhPJyUk9l6RzJHAsaCWD9aBEF+/3d0K7Kjz4+lNv/bGmVITKdYXkOtNU6z5wnauruVsf2ZMzYOXg==
-X-Received: by 2002:a6b:cd02:: with SMTP id d2mr11563717iog.4.1608218468027;
+        bh=cs6bkt1kFG1/9er9WT09SLBBaLaQZeoTVJunyWgBesQ=;
+        b=csPbOoDvvcYjMEV69X/BEKQhUkF2P5/M0H4OI4iFnvi/diDo8DGBcEO1iowRWM44n9
+         74CcgQqguro5wSomBrDzJBxrOtQ2vQ+eJYQp2U7J1t6F0Ksp1IPrApWUCaJo4vQyNaJC
+         VqB7swV2tzKRHLsscq/Dz9GEhw1Nvr7kSTqHJtXla7Qc8n1HMUj6fKC3JVBh0/B2ABPt
+         I7f+d753lsvF8tlOK+mV63VcfMMDoK4RGU232glFSsV93bytIq8l+a2G33zaTdBDwpN7
+         Q+e/GF3ad/2XxtjKjeh5x7ZwiT55ovAsI0GG8o30iRaBjR4yhMYNA17/lpmo4A//gco3
+         CIOA==
+X-Gm-Message-State: AOAM531ZWiWbIQ7wmuqh53jOfVN1lF10coU4RO+qeK+YBDqmpbfDjqT/
+        lCGnTJi3pSEJHkEoTx6mBr2Ee3yzqVdx6A==
+X-Google-Smtp-Source: ABdhPJwlZAzxskm4QqpUOdM10vTZV5RzUnFv5HInrCBs9a+iR4VaWUY+WGJPGk4NJybGClyxgpuCdA==
+X-Received: by 2002:a02:856d:: with SMTP id g100mr48426886jai.10.1608218468869;
         Thu, 17 Dec 2020 07:21:08 -0800 (PST)
 Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l78sm3611793ild.30.2020.12.17.07.21.07
+        by smtp.gmail.com with ESMTPSA id l78sm3611793ild.30.2020.12.17.07.21.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 07:21:07 -0800 (PST)
+        Thu, 17 Dec 2020 07:21:08 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/2] io_uring: break links on shutdown failure
-Date:   Thu, 17 Dec 2020 08:21:04 -0700
-Message-Id: <20201217152105.693264-2-axboe@kernel.dk>
+Subject: [PATCH 2/2] io_uring: hold mmap_sem for mm->locked_vm manipulation
+Date:   Thu, 17 Dec 2020 08:21:05 -0700
+Message-Id: <20201217152105.693264-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217152105.693264-1-axboe@kernel.dk>
 References: <20201217152105.693264-1-axboe@kernel.dk>
@@ -62,28 +62,52 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Ensure that the return value of __sys_shutdown_sock() is used to
-potentially break links to the request, if we fail.
+The kernel doesn't seem to have clear rules around this, but various
+spots are using the mmap_sem to serialize access to modifying the
+locked_vm count. Play it safe and lock the mm for write when accounting
+or unaccounting locked memory.
 
-Fixes: 36f4fa6886a8 ("io_uring: add support for shutdown(2)")
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/io_uring.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6f9392c35eef..6a4560c9ed9a 100644
+index 6a4560c9ed9a..2d07d35e7262 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -3784,6 +3784,8 @@ static int io_shutdown(struct io_kiocb *req, bool force_nonblock)
- 		return -ENOTSOCK;
+@@ -8157,10 +8157,13 @@ static void io_unaccount_mem(struct io_ring_ctx *ctx, unsigned long nr_pages,
+ 		__io_unaccount_mem(ctx->user, nr_pages);
  
- 	ret = __sys_shutdown_sock(sock, req->shutdown.how);
-+	if (ret < 0)
-+		req_set_fail_links(req);
- 	io_req_complete(req, ret);
+ 	if (ctx->mm_account) {
+-		if (acct == ACCT_LOCKED)
++		if (acct == ACCT_LOCKED) {
++			mmap_write_lock(ctx->mm_account);
+ 			ctx->mm_account->locked_vm -= nr_pages;
+-		else if (acct == ACCT_PINNED)
++			mmap_write_unlock(ctx->mm_account);
++		}else if (acct == ACCT_PINNED) {
+ 			atomic64_sub(nr_pages, &ctx->mm_account->pinned_vm);
++		}
+ 	}
+ }
+ 
+@@ -8176,10 +8179,13 @@ static int io_account_mem(struct io_ring_ctx *ctx, unsigned long nr_pages,
+ 	}
+ 
+ 	if (ctx->mm_account) {
+-		if (acct == ACCT_LOCKED)
++		if (acct == ACCT_LOCKED) {
++			mmap_write_lock(ctx->mm_account);
+ 			ctx->mm_account->locked_vm += nr_pages;
+-		else if (acct == ACCT_PINNED)
++			mmap_write_unlock(ctx->mm_account);
++		} else if (acct == ACCT_PINNED) {
+ 			atomic64_add(nr_pages, &ctx->mm_account->pinned_vm);
++		}
+ 	}
+ 
  	return 0;
- #else
 -- 
 2.29.2
 

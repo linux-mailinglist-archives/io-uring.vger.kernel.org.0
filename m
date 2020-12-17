@@ -2,64 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC962DD40C
-	for <lists+io-uring@lfdr.de>; Thu, 17 Dec 2020 16:22:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 350CA2DD491
+	for <lists+io-uring@lfdr.de>; Thu, 17 Dec 2020 16:51:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728684AbgLQPWI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Dec 2020 10:22:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44446 "EHLO
+        id S1727303AbgLQPuF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Dec 2020 10:50:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727303AbgLQPWH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Dec 2020 10:22:07 -0500
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799E5C06138C
-        for <io-uring@vger.kernel.org>; Thu, 17 Dec 2020 07:21:27 -0800 (PST)
-Received: by mail-il1-x12e.google.com with SMTP id q1so26166639ilt.6
-        for <io-uring@vger.kernel.org>; Thu, 17 Dec 2020 07:21:27 -0800 (PST)
+        with ESMTP id S1726983AbgLQPuF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Dec 2020 10:50:05 -0500
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DFB8C061794
+        for <io-uring@vger.kernel.org>; Thu, 17 Dec 2020 07:49:25 -0800 (PST)
+Received: by mail-io1-xd29.google.com with SMTP id n4so27961718iow.12
+        for <io-uring@vger.kernel.org>; Thu, 17 Dec 2020 07:49:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=mAyDDrN3FAEbbyTKcPSOTcQfHKZCWuJ5iGwODR3U7cU=;
-        b=dssQyFKWbUMc2J5tVItiDkP34tOXcqPzfL4nzAiQKtcyOA0FOa/wnsmSg62hWSYRMk
-         T55FWcHZjpM8fAoLSUcvj/rhbZBXNgzEKCXaq+2K11rrospy6BJpYjVcLoR9uJqUEECS
-         ox4cI80pkesSLa4ETKci2sJkY2jeWFFUoDGDqzAlKCXD6dcYTwyX6yLTMVnwmiONI/cV
-         QQn2e7UYDuwnfPZwhfYnlRsuHHP/W6k7xmGVuMW+VMqKNvW6ec3pAy9YGnu1zJBmnZsg
-         NjI5nTjlTaaNJ+hl4NSgOqjl+qrEcjOlHiKqz9P5gBC8rMnhzCvOPrg8VLtqSzEZLOaC
-         1ejQ==
+        bh=MzPJV88kpSUySx/CDbF5BZmR6GyuUW21vK+T3WPoR+4=;
+        b=zEyffiL/855Vs4kn1cIopUfKGTxYBypFKJkoyqVsqoXt745MhdGVjA8VHtbP7OxukQ
+         2GhIOj9Y877FuozhSevGH1r4kMixt4xm1q7LBdFOyLPotgC0LNoe3oiPh7BXzFq7MQHE
+         pgdW5bhhPo//RFyht8u+RkYxqJfvsku8BFbvDjTIEScN8bYH3azGpUtq2ODU/KgAYIP9
+         XkzM0VbP6WlG4jrIPxEbLtpBgxp7HnAi7k+1apZb4t7bGOJ+hWp1NJdexMDjNAtKfqTx
+         JvXeWkO1e7TxgEAkx84kBymKVGj+qRlUdwNWZJltIJONqzkVG2lxhsQmBv2LdLyyjkKX
+         ug/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=mAyDDrN3FAEbbyTKcPSOTcQfHKZCWuJ5iGwODR3U7cU=;
-        b=mvV+PiRRB+vTYYISrrkVIs8nDnAnow4D8Aa9gqz2CAzzY9Di20Tnd5CGsqeFteBGHt
-         MZoz58rEu4x4Gik8v1gZmR+HasQAgzw6q5f4lkj4h7kqUmQW80ceThr1+RYUS5C7S4Bz
-         CagyK5T4rcfvD0ERlhBNNHW6cWQmADXmqg4rh+ShJVI7PmFYR7BS5DvWdD0F8Du4fC2i
-         hZ8rjdCsi4KX3TFdWwDjQus4M8g5l92X4kAxMj/9C99NVNw7HvL0WAbdqKO0KAK9oGZn
-         5o2k4oIDTq4sSrB508AOUO56h7dY6/dRvRbXdesrjMuz37q0LXC3spuEe/YI7TiFONiR
-         cAHA==
-X-Gm-Message-State: AOAM533ZrnxMwK7SgmL3wAkdsTSJvgpXXqKXH26P2MpHT0TlyKSH+QFx
-        +f14U2WEhghtlQw4nw+vxYiDp4Dug/7MIw==
-X-Google-Smtp-Source: ABdhPJzohoXmjDIYwvAYrMey7BUsXhYNbdXTEke+Bqf2oNkO5vcuGv9s5DmK8vbi28lolyoD5bfDfg==
-X-Received: by 2002:a92:cb0d:: with SMTP id s13mr51519417ilo.73.1608218486594;
-        Thu, 17 Dec 2020 07:21:26 -0800 (PST)
+        bh=MzPJV88kpSUySx/CDbF5BZmR6GyuUW21vK+T3WPoR+4=;
+        b=iv6JP/B107JrV9fWNl0dnhYUMdvPS/+HCWN0Ax9ogepY5rW9A59Sn/8vNFPB5kymGS
+         CYbrofnGjaVJilm9xRZc+3RRV613adb9p3WEwd/ZpoGUXcYdLYc3W34QID3kiruglX/l
+         g+96R6bfBN6RtszUZbd5oZI9hY+Q10G9OmqLWKxsTt28ToWxnTBKWdGBCvpwQxTKrNqc
+         U/JHiX7zMRnSlWLMdE0QuZOLmg8s5T0ly92IiYj+8PqM9cKl/RzHsSwg2gnwxkh8xPFJ
+         no9Wm4GE3Z4jQqRN/HLRkuvqH3ZLPSOhzYoGK40WW1PcmA0poNlsC2MI6xFp6RbqCtbf
+         wjFA==
+X-Gm-Message-State: AOAM530LQMTt4oA1KIGbOMifaeB9W1TUEJCl1AtrHpQR0MNVQ16b0hN9
+        ZJS1n3xbEsR5cvNH6RcpWbl9tg==
+X-Google-Smtp-Source: ABdhPJxe0ELaZvo1Sdk8WjF3yWpCgaC3yHsZWb5BNaLUIsWPpohvpdhCg+6ZX1p9wljUXXTFVWh6XQ==
+X-Received: by 2002:a05:6638:19c:: with SMTP id a28mr5790234jaq.76.1608220164502;
+        Thu, 17 Dec 2020 07:49:24 -0800 (PST)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l78sm3612287ild.30.2020.12.17.07.21.25
+        by smtp.gmail.com with ESMTPSA id r10sm3385454ilo.34.2020.12.17.07.49.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Dec 2020 07:21:26 -0800 (PST)
-Subject: Re: [PATCH 0/5] fixes around request overflows
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1608164394.git.asml.silence@gmail.com>
- <f0f7de4e-1aab-e28b-87a5-88c4c5cfd517@kernel.dk>
- <04da3460-dba8-00ed-3f94-0c09a3276145@gmail.com>
+        Thu, 17 Dec 2020 07:49:23 -0800 (PST)
+Subject: Re: [PATCH net-next v5] udp:allow UDP cmsghdrs through io_uring
+To:     Victor Stewart <v@nametag.social>, io-uring@vger.kernel.org,
+        soheil@google.com, netdev@vger.kernel.org
+References: <20201216225648.48037-1-v@nametag.social>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <63bd2886-88b7-4759-c4a2-ee9aa22d1e53@kernel.dk>
-Date:   Thu, 17 Dec 2020 08:21:25 -0700
+Message-ID: <5869aae1-400c-94a4-523e-e015f386f986@kernel.dk>
+Date:   Thu, 17 Dec 2020 08:49:23 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <04da3460-dba8-00ed-3f94-0c09a3276145@gmail.com>
+In-Reply-To: <20201216225648.48037-1-v@nametag.social>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,20 +66,21 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/16/20 7:38 PM, Pavel Begunkov wrote:
-> On 17/12/2020 02:26, Jens Axboe wrote:
->> On 12/16/20 5:24 PM, Pavel Begunkov wrote:
->>> [1/5] is a recent regression, should be pretty easily discoverable
->>> (backport?). 3-5 are just a regular easy cleaning.
->>
->> If 1/5 is a recent regression, why doesn't it have a Fixes line?
+On 12/16/20 3:56 PM, Victor Stewart wrote:
+> This patch adds PROTO_CMSG_DATA_ONLY to inet_dgram_ops and inet6_dgram_ops so that UDP_SEGMENT (GSO) and UDP_GRO can be used through io_uring.
 > 
-> I was lazy enough to just ask before actually looking for it.
+> GSO and GRO are vital to bring QUIC servers on par with TCP throughputs, and together offer a higher
+> throughput gain than io_uring alone (rate of data transit
+> considering), thus io_uring is presently the lesser performance choice.
 > 
-> Fixes: 0f2122045b946 ("io_uring: don't rely on weak ->files references")
-> Which is backported to v5.5+
+> RE http://vger.kernel.org/lpc_net2018_talks/willemdebruijn-lpc2018-udpgso-paper-DRAFT-1.pdf,
+> GSO is about +~63% and GRO +~82%.
+> 
+> this patch closes that loophole.
 
-Thanks added, and applied the rest.
+LGTM
+
+Acked-by: Jens Axboe <axboe@kernel.dk>
 
 -- 
 Jens Axboe

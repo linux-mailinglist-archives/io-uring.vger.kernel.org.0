@@ -2,100 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F3F2DC995
-	for <lists+io-uring@lfdr.de>; Thu, 17 Dec 2020 00:30:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D810C2DC9EC
+	for <lists+io-uring@lfdr.de>; Thu, 17 Dec 2020 01:29:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730789AbgLPXaO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Dec 2020 18:30:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39204 "EHLO
+        id S1727024AbgLQA2q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Dec 2020 19:28:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730518AbgLPXaN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Dec 2020 18:30:13 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E364C06179C
-        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 15:29:33 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id q16so26696785edv.10
-        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 15:29:33 -0800 (PST)
+        with ESMTP id S1726908AbgLQA2p (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Dec 2020 19:28:45 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A64BC061794
+        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 16:28:05 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id x22so3956940wmc.5
+        for <io-uring@vger.kernel.org>; Wed, 16 Dec 2020 16:28:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nametag.social; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=oHW20Y04wvGVk9UmyRRlDNomzN5I2m9VJ+tYDy3fSD0=;
-        b=uahCANzXwA5aCIUV6du8D8u6wNGaEy7y9ykhpmdKEcXYF11CilccpIgDGEdpo3gDev
-         1N/k435DAd3SBeFjdznGM3iO3j4rMGhaRkTTRuWHb7Kw82JlJDOFzQ87kn4OrrUb3el4
-         LgqZ7KhFPoAvKDRZf6L72NIua03MMQeIut7Vtb2MRck0p+eKvMLUFoG5aTudi825ssJm
-         OvVulup8uximjKksGN9xl2bXbmdmiP6gwV7G3s/sOzcAGU3jSGcEbw375s+gnFle4UOO
-         zE+rJthMK9IW0RuFoelWkbyzBORcgLQXB3JxbEcZR6j42R/CpKp/qYx7/yHPRU2WKfHn
-         X7ow==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9T/zaOUlj8Lg+4sqdWZpH1H/q6wXRVNtGYRUug5poUE=;
+        b=M+qul0kjVyF1/zo7AtGZm3NzYVxhrn1z87JkE4y6NiZZGivn1Tx5fKIJrK9xsQsvQy
+         5JVUcMfZl/+ES6aSb79Ys4Mt8qmBhaIrJ35vC3Bv5AYYBTFk5Nux1yIV6DTSlprn175l
+         OE1nJfKISjq9TIw0nRV23huTIjJ7gNNXKgKjG/SmgePhuA82tNMd8Zb8fIGeuHYWT+q5
+         5OdTkBN6KTZKFBgsrMLpcCVJgaCrMN+fYNdzx0kA+q7WSGhLfzrRI3byp1p3MosDiMZd
+         yTFx6kpKswQd54XW0S1xUc3W+BS+6jBtf5mUwrkmrT31E0x6uwUs3PxuhYbgIX3ZIzx0
+         GRuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=oHW20Y04wvGVk9UmyRRlDNomzN5I2m9VJ+tYDy3fSD0=;
-        b=ESMansAly0m30SmT6dIoK2ErNv/G8Mj3aKahYK3O7ppmWPV3gnENead+/IrSug0fHH
-         kCZo/keZ/s2eOxiHfTThCE1q7Y/hqs2mA3iMUY2utRtxFOGrBHdapCjFSY5XvIgztMMr
-         /6Ya4sihRul7RJ+QOpb1DtIUfGLkCfkWjlNeBHjK3zBdKlZFdbkVj/7zfYDApkPwAOjF
-         O8K2e11E4AKZKRXqpV67ZsiXNn4igwd48tjfO/Pa/3+9/BWPZSbxbn1NAHsM6a3X9pII
-         OuwO9o9qo1B29p5yGx7ulHvw5O0vRn4Z1/0b2w6GRKIjJwVvJzQJOFV23pDZWMJBCsAK
-         DeQA==
-X-Gm-Message-State: AOAM533VTQwss+ubV+ehXk0WTeGliC9OfCv9qFwndvT+ZelE+jCuShCq
-        70N2yegDJdIvOIowpWXEPJr+4z9EIqyaQnBr1XfuFU2XmsHKNOvSWd8=
-X-Google-Smtp-Source: ABdhPJx0xf/MWmTSvAGM/6rUZqnEOQ282USilJvvQmN0mTdbfyXnWaE8k+maUbAKIG/VOIzjhVa1YVkAW7Xxsw41rc8=
-X-Received: by 2002:a05:6402:1592:: with SMTP id c18mr35556563edv.181.1608161371798;
- Wed, 16 Dec 2020 15:29:31 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9T/zaOUlj8Lg+4sqdWZpH1H/q6wXRVNtGYRUug5poUE=;
+        b=oNu7iXmU1I8V4GqyM6jOoMQy5k3DuwzbhJisqyptAkVjBgiuBZ6Wna/PKM2cXRxq6+
+         gFpoDtL4/G/pxoHogjlvNSss4P/2NeMbc1UV8yEEwgR86DJq0HCVf4kgRVobJpVw8r7j
+         +GEG6kmaAZewWzKBShaxhBZ3ivbIw6pwL/fsLlSKf+UADuZlkNeUHnOG/viuVNR6kxTp
+         2Q/Y3JLx10V8Fdie5WvQHHc+qxtQRJx/MrXxC/EdM56RyKHrjAEqjJOU/7pHLuNeZUDC
+         HGkgXNoaBeLTy6mamx1vfUKLSrmFmV4EZgxTX06leugV+LUsXRYfgZnBPt4Ob9RagAIK
+         y/PA==
+X-Gm-Message-State: AOAM533ZmuH2eFsa6tLyD84mIUnTSTUZrySJIuplc4LGumr6l0JwpPvI
+        FgxYByiWXlFA+zRsd/5MMLV368RdPh30/A==
+X-Google-Smtp-Source: ABdhPJzLkzhns/VMCJTFoe7vrMu9sxdpj4GhWJuOYSvFo+VeTw6dfhEjXvH8x1DI68OoIUN1eZSTGg==
+X-Received: by 2002:a1c:4d12:: with SMTP id o18mr5845376wmh.114.1608164884111;
+        Wed, 16 Dec 2020 16:28:04 -0800 (PST)
+Received: from localhost.localdomain ([185.69.144.225])
+        by smtp.gmail.com with ESMTPSA id h29sm5711161wrc.68.2020.12.16.16.28.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Dec 2020 16:28:03 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 0/5] fixes around request overflows
+Date:   Thu, 17 Dec 2020 00:24:34 +0000
+Message-Id: <cover.1608164394.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20201216180313.46610-2-v@nametag.social> <202012170740.EgQPKuIj-lkp@intel.com>
-In-Reply-To: <202012170740.EgQPKuIj-lkp@intel.com>
-From:   Victor Stewart <v@nametag.social>
-Date:   Wed, 16 Dec 2020 23:29:20 +0000
-Message-ID: <CAM1kxwiL4dD=X18_Crd813nyt_UWpPP8XmwUf10JZhzV7221Yw@mail.gmail.com>
-Subject: Re: [PATCH net-next v4] udp:allow UDP cmsghdrs through io_uring
-To:     io-uring <io-uring@vger.kernel.org>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        netdev <netdev@vger.kernel.org>, Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-what's to be done about this kernel test robot output, if anything?
+[1/5] is a recent regression, should be pretty easily discoverable
+(backport?). 3-5 are just a regular easy cleaning.
 
-On Wed, Dec 16, 2020 at 11:12 PM kernel test robot <lkp@intel.com> wrote:
->
-> Hi Victor,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on net-next/master]
->
-> url:    https://github.com/0day-ci/linux/commits/Victor-Stewart/udp-allow-UDP-cmsghdrs-through-io_uring/20201217-020451
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git 3db1a3fa98808aa90f95ec3e0fa2fc7abf28f5c9
-> config: riscv-randconfig-r031-20201216 (attached as .config)
-> compiler: clang version 12.0.0 (https://github.com/llvm/llvm-project 71601d2ac9954cb59c443cb3ae442cb106df35d4)
-> reproduce (this is a W=1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # install riscv cross compiling tool for clang build
->         # apt-get install binutils-riscv64-linux-gnu
->         # https://github.com/0day-ci/linux/commit/6cce2a0155c3ee2a1550cb3d5e434cc85f055a60
->         git remote add linux-review https://github.com/0day-ci/linux
->         git fetch --no-tags linux-review Victor-Stewart/udp-allow-UDP-cmsghdrs-through-io_uring/20201217-020451
->         git checkout 6cce2a0155c3ee2a1550cb3d5e434cc85f055a60
->         # save the attached .config to linux build tree
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross ARCH=riscv
->
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>):
->
->    /tmp/leds-blinkm-655475.s: Assembler messages:
-> >> /tmp/leds-blinkm-655475.s:590: Error: unrecognized opcode `zext.b s7,a0'
-> >> /tmp/leds-blinkm-655475.s:614: Error: unrecognized opcode `zext.b a0,a0'
-> >> /tmp/leds-blinkm-655475.s:667: Error: unrecognized opcode `zext.b a2,s2'
->    /tmp/leds-blinkm-655475.s:750: Error: unrecognized opcode `zext.b a2,s2'
->    /tmp/leds-blinkm-655475.s:833: Error: unrecognized opcode `zext.b a2,s2'
->    clang-12: error: assembler command failed with exit code 1 (use -v to see invocation)
->
-> ---
-> 0-DAY CI Kernel Test Service, Intel Corporation
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Pavel Begunkov (5):
+  io_uring: cancel reqs shouldn't kill overflow list
+  io_uring: remove racy overflow list fast checks
+  io_uring: consolidate CQ nr events calculation
+  io_uring: inline io_cqring_mark_overflow()
+  io_uring: limit {io|sq}poll submit locking scope
+
+ fs/io_uring.c | 59 +++++++++++++++++++++++----------------------------
+ 1 file changed, 26 insertions(+), 33 deletions(-)
+
+-- 
+2.24.0
+

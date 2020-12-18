@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C29732DE8C2
-	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 19:08:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4BFF2DE8CB
+	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 19:08:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbgLRSIV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Dec 2020 13:08:21 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:41086 "EHLO
+        id S1727866AbgLRSI0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Dec 2020 13:08:26 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:41152 "EHLO
         aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbgLRSIV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 13:08:21 -0500
+        with ESMTP id S1727058AbgLRSI0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 13:08:26 -0500
 Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BII3nFB110443;
-        Fri, 18 Dec 2020 18:07:38 GMT
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BII3ne4110438;
+        Fri, 18 Dec 2020 18:07:40 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=yZOVPm9cSbiGhz3RH3kcGlVB+YA5rxc8cns5/m2yWRA=;
- b=PKlvqO0ndQT8B7pf8Xvl1PSK+cW3BCU/pvvU7/LYmNPf2TD5GkTGxFsO+hxL9xa+yCFp
- eQ9NOp5m9IWmqVszkuxWY4C5HqeQ9B3d1J+lRTLQ0K25waPFbWoKAYavP/FObzYgAlCf
- C1tlqFS3k+gNSeV/yf9J+EGfacgOpQZIECWK/8Fc7MyNw7h/+e/3R6AQILl44w3W7uaS
- arHvflwrgsLfX7ZsqtoPMbnKhPs+uLrhX7qKHVinW+hoIApY4O3ReKZ57nrIEzh2rZfq
- reGOpz1VO1GcFy+JWJtDzTkXM7aYYq5d8I4WV/hAOvyj93QmOh39+1DnKm7wQlhrGZ8d Xg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 35ckcbuq89-1
+ bh=8EfUGq38GuR+G13XSR6c/YV2H4onqO7PyiT/ygaSRoc=;
+ b=LTZYI7motYx6WQimbTWLBCMJ80m+XoZ+MPslG3ZIG5HhvQQSkCm5GHoFCV+8ZIeYZJQX
+ lWZn+3IEAKkFjc7bOpuQ8bnDxoVEVj9tXnZx5jqCwvm94HR+2zO4Q/Ak+SQR/HtzUNTq
+ OBVqHFzdihmoYgWrTV/Bxw5oE8+9AjTD59r8BEVaSMj3erJimV5bJWgeuFT4zP+TXgBZ
+ /CDOGY5D2WTmRaGUKtvqeUSeb7wlDoywyUUAj+jt+MnnkKok89XErKC/ay0ydmjN4lil
+ jDWesYHPaj2Z2cJ4a3RRMCnTD/OGxRaZeah5WezI+iXziBjPiVTR1uxdgEPcacIKZj3w ag== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2130.oracle.com with ESMTP id 35ckcbuq8c-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Dec 2020 18:07:38 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BII5QWS095708;
-        Fri, 18 Dec 2020 18:07:38 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 35e6ev0xng-1
+        Fri, 18 Dec 2020 18:07:39 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BII6Khh047847;
+        Fri, 18 Dec 2020 18:07:39 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 35d7t26pta-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Dec 2020 18:07:38 +0000
+        Fri, 18 Dec 2020 18:07:39 +0000
 Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BII7cIc015965;
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0BII7ciS008659;
         Fri, 18 Dec 2020 18:07:38 GMT
 Received: from ca-ldom147.us.oracle.com (/10.129.68.131)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 18 Dec 2020 10:07:37 -0800
+        with ESMTP ; Fri, 18 Dec 2020 10:07:38 -0800
 From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
-Subject: [PATCH v3 02/13] io_uring: modularize io_sqe_buffers_register
-Date:   Fri, 18 Dec 2020 10:07:17 -0800
-Message-Id: <1608314848-67329-3-git-send-email-bijan.mottahedeh@oracle.com>
+Subject: [PATCH v3 03/13] io_uring: rename file related variables to rsrc
+Date:   Fri, 18 Dec 2020 10:07:18 -0800
+Message-Id: <1608314848-67329-4-git-send-email-bijan.mottahedeh@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
 References: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012180124
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012180124
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
  priorityscore=1501 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
@@ -62,91 +62,544 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Move allocation of buffer management structures, and validation of
-buffers into separate routines.
+This is a prep rename patch for subsequent patches to generalize file
+registration.
 
 Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 ---
- fs/io_uring.c | 51 ++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 34 insertions(+), 17 deletions(-)
+ fs/io_uring.c                 | 200 ++++++++++++++++++++++--------------------
+ include/uapi/linux/io_uring.h |   2 +-
+ 2 files changed, 104 insertions(+), 98 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7d6718a..d8505e2 100644
+index d8505e2..a14f1ba 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -8461,13 +8461,8 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- 	return ret;
+@@ -195,24 +195,29 @@ struct io_mapped_ubuf {
+ 	unsigned long	acct_pages;
+ };
+ 
+-struct fixed_file_table {
++struct io_rsrc_put {
++	struct list_head list;
++	struct file *file;
++};
++
++struct fixed_rsrc_table {
+ 	struct file		**files;
+ };
+ 
+-struct fixed_file_ref_node {
++struct fixed_rsrc_ref_node {
+ 	struct percpu_ref		refs;
+ 	struct list_head		node;
+-	struct list_head		file_list;
+-	struct fixed_file_data		*file_data;
++	struct list_head		rsrc_list;
++	struct fixed_rsrc_data		*rsrc_data;
+ 	struct llist_node		llist;
+ 	bool				done;
+ };
+ 
+-struct fixed_file_data {
+-	struct fixed_file_table		*table;
++struct fixed_rsrc_data {
++	struct fixed_rsrc_table		*table;
+ 	struct io_ring_ctx		*ctx;
+ 
+-	struct fixed_file_ref_node	*node;
++	struct fixed_rsrc_ref_node	*node;
+ 	struct percpu_ref		refs;
+ 	struct completion		done;
+ 	struct list_head		ref_list;
+@@ -318,7 +323,7 @@ struct io_ring_ctx {
+ 	 * readers must ensure that ->refs is alive as long as the file* is
+ 	 * used. Only updated through io_uring_register(2).
+ 	 */
+-	struct fixed_file_data	*file_data;
++	struct fixed_rsrc_data	*file_data;
+ 	unsigned		nr_user_files;
+ 
+ 	/* if used, fixed mapped user buffers */
+@@ -382,8 +387,8 @@ struct io_ring_ctx {
+ 		struct list_head	inflight_list;
+ 	} ____cacheline_aligned_in_smp;
+ 
+-	struct delayed_work		file_put_work;
+-	struct llist_head		file_put_llist;
++	struct delayed_work		rsrc_put_work;
++	struct llist_head		rsrc_put_llist;
+ 
+ 	struct work_struct		exit_work;
+ 	struct io_restriction		restrictions;
+@@ -493,7 +498,7 @@ struct io_open {
+ 	unsigned long			nofile;
+ };
+ 
+-struct io_files_update {
++struct io_rsrc_update {
+ 	struct file			*file;
+ 	u64				arg;
+ 	u32				nr_args;
+@@ -687,7 +692,7 @@ struct io_kiocb {
+ 		struct io_sr_msg	sr_msg;
+ 		struct io_open		open;
+ 		struct io_close		close;
+-		struct io_files_update	files_update;
++		struct io_rsrc_update	rsrc_update;
+ 		struct io_fadvise	fadvise;
+ 		struct io_madvise	madvise;
+ 		struct io_epoll		epoll;
+@@ -717,7 +722,7 @@ struct io_kiocb {
+ 	u64				user_data;
+ 
+ 	struct io_kiocb			*link;
+-	struct percpu_ref		*fixed_file_refs;
++	struct percpu_ref		*fixed_rsrc_refs;
+ 
+ 	/*
+ 	 * 1. used with ctx->iopoll_list with reads/writes
+@@ -1002,13 +1007,13 @@ static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
+ static void __io_queue_linked_timeout(struct io_kiocb *req);
+ static void io_queue_linked_timeout(struct io_kiocb *req);
+ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+-				 struct io_uring_files_update *ip,
++				 struct io_uring_rsrc_update *ip,
+ 				 unsigned nr_args);
+ static void __io_clean_op(struct io_kiocb *req);
+ static struct file *io_file_get(struct io_submit_state *state,
+ 				struct io_kiocb *req, int fd, bool fixed);
+ static void __io_queue_sqe(struct io_kiocb *req, struct io_comp_state *cs);
+-static void io_file_put_work(struct work_struct *work);
++static void io_rsrc_put_work(struct work_struct *work);
+ 
+ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+ 			       struct iovec **iovec, struct iov_iter *iter,
+@@ -1048,9 +1053,9 @@ static inline void io_set_resource_node(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 
+-	if (!req->fixed_file_refs) {
+-		req->fixed_file_refs = &ctx->file_data->node->refs;
+-		percpu_ref_get(req->fixed_file_refs);
++	if (!req->fixed_rsrc_refs) {
++		req->fixed_rsrc_refs = &ctx->file_data->node->refs;
++		percpu_ref_get(req->fixed_rsrc_refs);
+ 	}
  }
  
--static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
--				   unsigned int nr_args)
-+static int io_buffers_map_alloc(struct io_ring_ctx *ctx, unsigned int nr_args)
+@@ -1309,8 +1314,8 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	INIT_LIST_HEAD(&ctx->timeout_list);
+ 	spin_lock_init(&ctx->inflight_lock);
+ 	INIT_LIST_HEAD(&ctx->inflight_list);
+-	INIT_DELAYED_WORK(&ctx->file_put_work, io_file_put_work);
+-	init_llist_head(&ctx->file_put_llist);
++	INIT_DELAYED_WORK(&ctx->rsrc_put_work, io_rsrc_put_work);
++	init_llist_head(&ctx->rsrc_put_llist);
+ 	return ctx;
+ err:
+ 	if (ctx->fallback_req)
+@@ -1948,8 +1953,8 @@ static void io_dismantle_req(struct io_kiocb *req)
+ 		kfree(req->async_data);
+ 	if (req->file)
+ 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
+-	if (req->fixed_file_refs)
+-		percpu_ref_put(req->fixed_file_refs);
++	if (req->fixed_rsrc_refs)
++		percpu_ref_put(req->fixed_rsrc_refs);
+ 	io_req_clean_work(req);
+ }
+ 
+@@ -5927,7 +5932,7 @@ static int io_async_cancel(struct io_kiocb *req)
+ 	return 0;
+ }
+ 
+-static int io_files_update_prep(struct io_kiocb *req,
++static int io_rsrc_update_prep(struct io_kiocb *req,
+ 				const struct io_uring_sqe *sqe)
  {
--	int i, ret;
--	struct iovec iov;
--	struct page *last_hpage = NULL;
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_SQPOLL))
+@@ -5937,11 +5942,11 @@ static int io_files_update_prep(struct io_kiocb *req,
+ 	if (sqe->ioprio || sqe->rw_flags)
+ 		return -EINVAL;
+ 
+-	req->files_update.offset = READ_ONCE(sqe->off);
+-	req->files_update.nr_args = READ_ONCE(sqe->len);
+-	if (!req->files_update.nr_args)
++	req->rsrc_update.offset = READ_ONCE(sqe->off);
++	req->rsrc_update.nr_args = READ_ONCE(sqe->len);
++	if (!req->rsrc_update.nr_args)
+ 		return -EINVAL;
+-	req->files_update.arg = READ_ONCE(sqe->addr);
++	req->rsrc_update.arg = READ_ONCE(sqe->addr);
+ 	return 0;
+ }
+ 
+@@ -5949,17 +5954,17 @@ static int io_files_update(struct io_kiocb *req, bool force_nonblock,
+ 			   struct io_comp_state *cs)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	struct io_uring_files_update up;
++	struct io_uring_rsrc_update up;
+ 	int ret;
+ 
+ 	if (force_nonblock)
+ 		return -EAGAIN;
+ 
+-	up.offset = req->files_update.offset;
+-	up.fds = req->files_update.arg;
++	up.offset = req->rsrc_update.offset;
++	up.fds = req->rsrc_update.arg;
+ 
+ 	mutex_lock(&ctx->uring_lock);
+-	ret = __io_sqe_files_update(ctx, &up, req->files_update.nr_args);
++	ret = __io_sqe_files_update(ctx, &up, req->rsrc_update.nr_args);
+ 	mutex_unlock(&ctx->uring_lock);
+ 
+ 	if (ret < 0)
+@@ -6014,7 +6019,7 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	case IORING_OP_CLOSE:
+ 		return io_close_prep(req, sqe);
+ 	case IORING_OP_FILES_UPDATE:
+-		return io_files_update_prep(req, sqe);
++		return io_rsrc_update_prep(req, sqe);
+ 	case IORING_OP_STATX:
+ 		return io_statx_prep(req, sqe);
+ 	case IORING_OP_FADVISE:
+@@ -6364,7 +6369,7 @@ static struct io_wq_work *io_wq_submit_work(struct io_wq_work *work)
+ static inline struct file *io_file_from_index(struct io_ring_ctx *ctx,
+ 					      int index)
+ {
+-	struct fixed_file_table *table;
++	struct fixed_rsrc_table *table;
+ 
+ 	table = &ctx->file_data->table[index >> IORING_FILE_TABLE_SHIFT];
+ 	return table->files[index & IORING_FILE_TABLE_MASK];
+@@ -6750,7 +6755,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	req->ctx = ctx;
+ 	req->flags = 0;
+ 	req->link = NULL;
+-	req->fixed_file_refs = NULL;
++	req->fixed_rsrc_refs = NULL;
+ 	/* one is dropped after submission, the other at completion */
+ 	refcount_set(&req->refs, 2);
+ 	req->task = current;
+@@ -7234,18 +7239,18 @@ static void __io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ #endif
+ }
+ 
+-static void io_file_ref_kill(struct percpu_ref *ref)
++static void io_rsrc_ref_kill(struct percpu_ref *ref)
+ {
+-	struct fixed_file_data *data;
++	struct fixed_rsrc_data *data;
+ 
+-	data = container_of(ref, struct fixed_file_data, refs);
++	data = container_of(ref, struct fixed_rsrc_data, refs);
+ 	complete(&data->done);
+ }
+ 
+ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ {
+-	struct fixed_file_data *data = ctx->file_data;
+-	struct fixed_file_ref_node *ref_node = NULL;
++	struct fixed_rsrc_data *data = ctx->file_data;
++	struct fixed_rsrc_ref_node *ref_node = NULL;
+ 	unsigned nr_tables, i;
+ 
+ 	if (!data)
+@@ -7260,7 +7265,7 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 	percpu_ref_kill(&data->refs);
+ 
+ 	/* wait for all refs nodes to complete */
+-	flush_delayed_work(&ctx->file_put_work);
++	flush_delayed_work(&ctx->rsrc_put_work);
+ 	wait_for_completion(&data->done);
+ 
+ 	__io_sqe_files_unregister(ctx);
+@@ -7494,13 +7499,13 @@ static int io_sqe_files_scm(struct io_ring_ctx *ctx)
+ }
+ #endif
+ 
+-static int io_sqe_alloc_file_tables(struct fixed_file_data *file_data,
++static int io_sqe_alloc_file_tables(struct fixed_rsrc_data *file_data,
+ 				    unsigned nr_tables, unsigned nr_files)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < nr_tables; i++) {
+-		struct fixed_file_table *table = &file_data->table[i];
++		struct fixed_rsrc_table *table = &file_data->table[i];
+ 		unsigned this_files;
+ 
+ 		this_files = min(nr_files, IORING_MAX_FILES_TABLE);
+@@ -7515,7 +7520,7 @@ static int io_sqe_alloc_file_tables(struct fixed_file_data *file_data,
+ 		return 0;
+ 
+ 	for (i = 0; i < nr_tables; i++) {
+-		struct fixed_file_table *table = &file_data->table[i];
++		struct fixed_rsrc_table *table = &file_data->table[i];
+ 		kfree(table->files);
+ 	}
+ 	return 1;
+@@ -7583,56 +7588,51 @@ static void io_ring_file_put(struct io_ring_ctx *ctx, struct file *file)
+ #endif
+ }
+ 
+-struct io_file_put {
+-	struct list_head list;
+-	struct file *file;
+-};
 -
- 	if (ctx->user_bufs)
+-static void __io_file_put_work(struct fixed_file_ref_node *ref_node)
++static void __io_rsrc_put_work(struct fixed_rsrc_ref_node *ref_node)
+ {
+-	struct fixed_file_data *file_data = ref_node->file_data;
+-	struct io_ring_ctx *ctx = file_data->ctx;
+-	struct io_file_put *pfile, *tmp;
++	struct fixed_rsrc_data *rsrc_data = ref_node->rsrc_data;
++	struct io_ring_ctx *ctx = rsrc_data->ctx;
++	struct io_rsrc_put *prsrc, *tmp;
+ 
+-	list_for_each_entry_safe(pfile, tmp, &ref_node->file_list, list) {
+-		list_del(&pfile->list);
+-		io_ring_file_put(ctx, pfile->file);
+-		kfree(pfile);
++	list_for_each_entry_safe(prsrc, tmp, &ref_node->rsrc_list, list) {
++		list_del(&prsrc->list);
++		io_ring_file_put(ctx, prsrc->file);
++		kfree(prsrc);
+ 	}
+ 
+ 	percpu_ref_exit(&ref_node->refs);
+ 	kfree(ref_node);
+-	percpu_ref_put(&file_data->refs);
++	percpu_ref_put(&rsrc_data->refs);
+ }
+ 
+-static void io_file_put_work(struct work_struct *work)
++static void io_rsrc_put_work(struct work_struct *work)
+ {
+ 	struct io_ring_ctx *ctx;
+ 	struct llist_node *node;
+ 
+-	ctx = container_of(work, struct io_ring_ctx, file_put_work.work);
+-	node = llist_del_all(&ctx->file_put_llist);
++	ctx = container_of(work, struct io_ring_ctx, rsrc_put_work.work);
++	node = llist_del_all(&ctx->rsrc_put_llist);
+ 
+ 	while (node) {
+-		struct fixed_file_ref_node *ref_node;
++		struct fixed_rsrc_ref_node *ref_node;
+ 		struct llist_node *next = node->next;
+ 
+-		ref_node = llist_entry(node, struct fixed_file_ref_node, llist);
+-		__io_file_put_work(ref_node);
++		ref_node = llist_entry(node, struct fixed_rsrc_ref_node, llist);
++		__io_rsrc_put_work(ref_node);
+ 		node = next;
+ 	}
+ }
+ 
+-static void io_file_data_ref_zero(struct percpu_ref *ref)
++static void io_rsrc_data_ref_zero(struct percpu_ref *ref)
+ {
+-	struct fixed_file_ref_node *ref_node;
+-	struct fixed_file_data *data;
++	struct fixed_rsrc_ref_node *ref_node;
++	struct fixed_rsrc_data *data;
+ 	struct io_ring_ctx *ctx;
+ 	bool first_add = false;
+ 	int delay = HZ;
+ 
+-	ref_node = container_of(ref, struct fixed_file_ref_node, refs);
+-	data = ref_node->file_data;
++	ref_node = container_of(ref, struct fixed_rsrc_ref_node, refs);
++	data = ref_node->rsrc_data;
+ 	ctx = data->ctx;
+ 
+ 	spin_lock_bh(&data->lock);
+@@ -7640,12 +7640,12 @@ static void io_file_data_ref_zero(struct percpu_ref *ref)
+ 
+ 	while (!list_empty(&data->ref_list)) {
+ 		ref_node = list_first_entry(&data->ref_list,
+-					struct fixed_file_ref_node, node);
++					struct fixed_rsrc_ref_node, node);
+ 		/* recycle ref nodes in order */
+ 		if (!ref_node->done)
+ 			break;
+ 		list_del(&ref_node->node);
+-		first_add |= llist_add(&ref_node->llist, &ctx->file_put_llist);
++		first_add |= llist_add(&ref_node->llist, &ctx->rsrc_put_llist);
+ 	}
+ 	spin_unlock_bh(&data->lock);
+ 
+@@ -7653,33 +7653,33 @@ static void io_file_data_ref_zero(struct percpu_ref *ref)
+ 		delay = 0;
+ 
+ 	if (!delay)
+-		mod_delayed_work(system_wq, &ctx->file_put_work, 0);
++		mod_delayed_work(system_wq, &ctx->rsrc_put_work, 0);
+ 	else if (first_add)
+-		queue_delayed_work(system_wq, &ctx->file_put_work, delay);
++		queue_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
+ }
+ 
+-static struct fixed_file_ref_node *alloc_fixed_file_ref_node(
++static struct fixed_rsrc_ref_node *alloc_fixed_file_ref_node(
+ 			struct io_ring_ctx *ctx)
+ {
+-	struct fixed_file_ref_node *ref_node;
++	struct fixed_rsrc_ref_node *ref_node;
+ 
+ 	ref_node = kzalloc(sizeof(*ref_node), GFP_KERNEL);
+ 	if (!ref_node)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	if (percpu_ref_init(&ref_node->refs, io_file_data_ref_zero,
++	if (percpu_ref_init(&ref_node->refs, io_rsrc_data_ref_zero,
+ 			    0, GFP_KERNEL)) {
+ 		kfree(ref_node);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 	INIT_LIST_HEAD(&ref_node->node);
+-	INIT_LIST_HEAD(&ref_node->file_list);
+-	ref_node->file_data = ctx->file_data;
++	INIT_LIST_HEAD(&ref_node->rsrc_list);
++	ref_node->rsrc_data = ctx->file_data;
+ 	ref_node->done = false;
+ 	return ref_node;
+ }
+ 
+-static void destroy_fixed_file_ref_node(struct fixed_file_ref_node *ref_node)
++static void destroy_fixed_rsrc_ref_node(struct fixed_rsrc_ref_node *ref_node)
+ {
+ 	percpu_ref_exit(&ref_node->refs);
+ 	kfree(ref_node);
+@@ -7692,8 +7692,8 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	unsigned nr_tables, i;
+ 	struct file *file;
+ 	int fd, ret = -ENOMEM;
+-	struct fixed_file_ref_node *ref_node;
+-	struct fixed_file_data *file_data;
++	struct fixed_rsrc_ref_node *ref_node;
++	struct fixed_rsrc_data *file_data;
+ 
+ 	if (ctx->file_data)
  		return -EBUSY;
- 	if (!nr_args || nr_args > UIO_MAXIOV)
-@@ -8478,6 +8473,37 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
- 	if (!ctx->user_bufs)
+@@ -7716,7 +7716,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	if (!file_data->table)
+ 		goto out_free;
+ 
+-	if (percpu_ref_init(&file_data->refs, io_file_ref_kill,
++	if (percpu_ref_init(&file_data->refs, io_rsrc_ref_kill,
+ 				PERCPU_REF_ALLOW_REINIT, GFP_KERNEL))
+ 		goto out_free;
+ 
+@@ -7725,7 +7725,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	ctx->file_data = file_data;
+ 
+ 	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
+-		struct fixed_file_table *table;
++		struct fixed_rsrc_table *table;
+ 		unsigned index;
+ 
+ 		if (copy_from_user(&fd, &fds[i], sizeof(fd))) {
+@@ -7836,28 +7836,34 @@ static int io_sqe_file_register(struct io_ring_ctx *ctx, struct file *file,
+ #endif
+ }
+ 
+-static int io_queue_file_removal(struct fixed_file_data *data,
+-				 struct file *file)
++static int io_queue_rsrc_removal(struct fixed_rsrc_data *data,
++				 struct file *rsrc)
+ {
+-	struct io_file_put *pfile;
+-	struct fixed_file_ref_node *ref_node = data->node;
++	struct io_rsrc_put *prsrc;
++	struct fixed_rsrc_ref_node *ref_node = data->node;
+ 
+-	pfile = kzalloc(sizeof(*pfile), GFP_KERNEL);
+-	if (!pfile)
++	prsrc = kzalloc(sizeof(*prsrc), GFP_KERNEL);
++	if (!prsrc)
  		return -ENOMEM;
  
-+	return 0;
+-	pfile->file = file;
+-	list_add(&pfile->list, &ref_node->file_list);
++	prsrc->file = rsrc;
++	list_add(&prsrc->list, &ref_node->rsrc_list);
+ 
+ 	return 0;
+ }
+ 
++static inline int io_queue_file_removal(struct fixed_rsrc_data *data,
++					struct file *file)
++{
++	return io_queue_rsrc_removal(data, file);
 +}
 +
-+static int io_buffer_validate(struct iovec *iov)
-+{
-+	/*
-+	 * Don't impose further limits on the size and buffer
-+	 * constraints here, we'll -EINVAL later when IO is
-+	 * submitted if they are wrong.
-+	 */
-+	if (!iov->iov_base || !iov->iov_len)
-+		return -EFAULT;
-+
-+	/* arbitrary limit, but we need something */
-+	if (iov->iov_len > SZ_1G)
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
-+				   unsigned int nr_args)
-+{
-+	int i, ret;
-+	struct iovec iov;
-+	struct page *last_hpage = NULL;
-+
-+	ret = io_buffers_map_alloc(ctx, nr_args);
-+	if (ret)
-+		return ret;
-+
- 	for (i = 0; i < nr_args; i++) {
- 		struct io_mapped_ubuf *imu = &ctx->user_bufs[i];
+ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+-				 struct io_uring_files_update *up,
++				 struct io_uring_rsrc_update *up,
+ 				 unsigned nr_args)
+ {
+-	struct fixed_file_data *data = ctx->file_data;
+-	struct fixed_file_ref_node *ref_node;
++	struct fixed_rsrc_data *data = ctx->file_data;
++	struct fixed_rsrc_ref_node *ref_node;
+ 	struct file *file;
+ 	__s32 __user *fds;
+ 	int fd, i, err;
+@@ -7876,7 +7882,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 	done = 0;
+ 	fds = u64_to_user_ptr(up->fds);
+ 	while (nr_args) {
+-		struct fixed_file_table *table;
++		struct fixed_rsrc_table *table;
+ 		unsigned index;
  
-@@ -8485,17 +8511,8 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
- 		if (ret)
- 			break;
+ 		err = 0;
+@@ -7935,7 +7941,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 		spin_unlock_bh(&data->lock);
+ 		percpu_ref_get(&ctx->file_data->refs);
+ 	} else
+-		destroy_fixed_file_ref_node(ref_node);
++		destroy_fixed_rsrc_ref_node(ref_node);
  
--		/*
--		 * Don't impose further limits on the size and buffer
--		 * constraints here, we'll -EINVAL later when IO is
--		 * submitted if they are wrong.
--		 */
--		ret = -EFAULT;
--		if (!iov.iov_base || !iov.iov_len)
--			break;
--
--		/* arbitrary limit, but we need something */
--		if (iov.iov_len > SZ_1G)
-+		ret = io_buffer_validate(&iov);
-+		if (ret)
- 			break;
+ 	return done ? done : err;
+ }
+@@ -7943,7 +7949,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ static int io_sqe_files_update(struct io_ring_ctx *ctx, void __user *arg,
+ 			       unsigned nr_args)
+ {
+-	struct io_uring_files_update up;
++	struct io_uring_rsrc_update up;
  
- 		ret = io_sqe_buffer_register(ctx, &iov, imu, &last_hpage);
+ 	if (!ctx->file_data)
+ 		return -ENXIO;
+@@ -9292,7 +9298,7 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 	seq_printf(m, "SqThreadCpu:\t%d\n", sq ? task_cpu(sq->thread) : -1);
+ 	seq_printf(m, "UserFiles:\t%u\n", ctx->nr_user_files);
+ 	for (i = 0; has_lock && i < ctx->nr_user_files; i++) {
+-		struct fixed_file_table *table;
++		struct fixed_rsrc_table *table;
+ 		struct file *f;
+ 
+ 		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index d31a2a1..d421f70 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -285,7 +285,7 @@ enum {
+ 	IORING_REGISTER_LAST
+ };
+ 
+-struct io_uring_files_update {
++struct io_uring_rsrc_update {
+ 	__u32 offset;
+ 	__u32 resv;
+ 	__aligned_u64 /* __s32 * */ fds;
 -- 
 1.8.3.1
 

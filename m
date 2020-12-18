@@ -2,106 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFC6A2DE680
-	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 16:27:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4849D2DE681
+	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 16:27:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbgLRP0q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Dec 2020 10:26:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40550 "EHLO
+        id S1726752AbgLRP07 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Dec 2020 10:26:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbgLRP0p (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 10:26:45 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46F2AC0617A7
-        for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 07:26:05 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id y17so2573442wrr.10
-        for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 07:26:05 -0800 (PST)
+        with ESMTP id S1725776AbgLRP07 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 10:26:59 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 152F0C0617B0
+        for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 07:26:19 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id j13so1515848pjz.3
+        for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 07:26:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LLwvtd8/fiStk247VT8HegTzZLorovSVA7h422L8Ahk=;
-        b=bJkbeB8AErEMDJx7srbdc02TOH78C8HGVPADuWxEoZwUnCMQYbP2AwEdVU1oi4haf7
-         gq214Pde+dHnreIUCIfIKIZo7BODj/VFEdMPPXZm0Z9jQnSoaYpLkqdPyfml8gLgrkbD
-         OLDpU5SMTDNTdWvjFZTafDGGznhr4mmbrCM1pIUVuEGhDJ2IuLdfOSwA6rHsnKf1quKO
-         0hXXuIgTRU63j4f2lPRG6Uzhvv4OjsacoGpr5Mb69CDJPHgPcitoOp18NqmXmFh9FBLd
-         a0Ig1YiX0yI1y0Ktr9dmKp8onBILbomgeWSZ2OXPLR6QIA1tG++jxrbGGx9l+mGr58mZ
-         O2dA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=b0p60nF8YJWtHh9jlicjnxo1H7nkSGM+YaRE4uyWpzc=;
+        b=ulw/NJZ8mvpfQI7X9H+fA+EdDNWNTgAielSdklIGhC585HrRXitMr2EstmNlKjaEPq
+         msYdbBNpr3M5Jsqvk4LqAxrTsf1U+t8XZZNB+FxyzKciH7QAf6sSzawF4f1Xvu5Maos6
+         NHm/9Wlo8iMEKPqrGAZyMmOL2ITWmUfC212XC+GxfCZFA43L2gV4kEWD8vYl41x/2swf
+         KpG5JJ/xizHESH/2v0BkO7G8g/GZ2WQrZcGSNTi4qw7mrznNvcmew0pAuitJBBO4g2X7
+         t7r6e3ifBRoHnqprXjWXYp5VrHdNvKgay/2vCXbwGhlyEAW2YkF6LMTls0pBdWCGtLg4
+         AYcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=LLwvtd8/fiStk247VT8HegTzZLorovSVA7h422L8Ahk=;
-        b=acZ/2RLc6a690dcSTxVhYM860S2S3O/vZzb2MUsUvub+rUchx2Z/TJatNDe7QWFefU
-         fa1C+yg/Yy0bbXHHuFDgmIsAHsmcxulFdNjs3QjbEBmnEs8pQnFJbovx5/J96Gjy4wjc
-         f8e4ByF7UitAPYcnFu/Qn/T/e5zLoMtgb26lKfys91BUNBvcgjBXwTdQmHZGThYubomk
-         vLn5xnvU6qas/2gRxmnjtdlv1w6f/vUfbllkrOCVLf8lP26E1tY6j66IcAgtMepcXCKT
-         al9ixZFh5pqvfRm8mWiNeaVlWVyUA6Ms37D5RnoX89Rt5uveK0QJ04B34iAuQWzsVQq3
-         5F3w==
-X-Gm-Message-State: AOAM530XdxL1DAo4N/ILdepXm6es6WwzScIpX8Dm5q814aPt/YzO3lA6
-        H82BobJUaojxXNdrjT/DwpzN/6D4MkNw2A==
-X-Google-Smtp-Source: ABdhPJzoCgW8KSPwqKAqDhIPDMERFZ+xDVklhxMvyo99m0Xg0kBfcTyPWTIwBItWyHKe11AHu1L0OA==
-X-Received: by 2002:adf:f18a:: with SMTP id h10mr5331470wro.244.1608305163683;
-        Fri, 18 Dec 2020 07:26:03 -0800 (PST)
-Received: from [192.168.8.132] ([85.255.234.120])
-        by smtp.gmail.com with ESMTPSA id t188sm11751595wmf.9.2020.12.18.07.26.02
+        bh=b0p60nF8YJWtHh9jlicjnxo1H7nkSGM+YaRE4uyWpzc=;
+        b=bd4fwSm7KgzRf/926mdtEW5lxWd3c/VeAQfULNI+EbiK/LU+MyjmmXLL3+e1Kexbfr
+         4WeoRlG502J6RXawVEGoMXaTWEsyOgI5f+B883/l6zP5DYvpT2wmyyMTO+E7Fgw0IBoJ
+         MwSkw5hQIvdUk6md7ZcOgCMRrWSD5iSj5Zs8Gy6jAMgF8bC5DGTDaBsYi0VKOIPuXxLG
+         tzJO+c2UDLrYNk4jFgCNfRWTgjNRcm8wnit0Pq26xidtDkLlsW5fuDiZ7ukEKYdNYi0Z
+         7nys9zt8CRgrmjlVY/X32no75Uc2YdpV+Yg9nY2aY7PPg7Dxa/OKJhMLzPQpnRf05mGL
+         Ly+Q==
+X-Gm-Message-State: AOAM531GHyYP7hgy25tk/Y12Qame27OIDk3iPynqHGYZIwr7PpzGS6h4
+        JUgSnjQvLBVM//DGe65AoPh+ubMGf4nKSQ==
+X-Google-Smtp-Source: ABdhPJzWJogGhNFc0YMgINLwZdI0kNfW7C+tM0mRePoVpHy5Mf4KmMHtxpnuTfv03NXXzc2e29jOYA==
+X-Received: by 2002:a17:902:d351:b029:db:d63d:d0e with SMTP id l17-20020a170902d351b02900dbd63d0d0emr4722442plk.75.1608305177938;
+        Fri, 18 Dec 2020 07:26:17 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id r67sm9032823pfc.82.2020.12.18.07.26.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Dec 2020 07:26:03 -0800 (PST)
-Subject: Re: [PATCH 0/8] a fix + cancellation unification
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1608296656.git.asml.silence@gmail.com>
- <17d4ffd5-9d11-1ffe-cdee-cc114dedec4b@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <dcd63c20-d85a-7aef-d48d-03d2978803cd@gmail.com>
-Date:   Fri, 18 Dec 2020 15:22:44 +0000
+        Fri, 18 Dec 2020 07:26:17 -0800 (PST)
+Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
+To:     Dmitry Kadashev <dkadashev@gmail.com>, io-uring@vger.kernel.org
+References: <CAOKbgA66u15F+_LArHZFRuXU9KAiq_K0Ky2EnFSh6vRv23UzSw@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7d263751-e656-8df7-c9eb-09822799ab14@kernel.dk>
+Date:   Fri, 18 Dec 2020 08:26:16 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <17d4ffd5-9d11-1ffe-cdee-cc114dedec4b@kernel.dk>
+In-Reply-To: <CAOKbgA66u15F+_LArHZFRuXU9KAiq_K0Ky2EnFSh6vRv23UzSw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -109,17 +65,54 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 18/12/2020 15:16, Jens Axboe wrote:
-> On 12/18/20 6:12 AM, Pavel Begunkov wrote:
->> I suggest for 1/8 to go for current, and the rest are for next.
->> Patches 2-8 finally unify how we do task and files cancellation removing
->> boilerplate and making it easier to understand overall. As a bonus to it
->> ->inflight_entry is now used only for iopoll, probably can be put into a
->> union with something and save 16B of io_kiocb if that would be needed.
+On 12/17/20 1:19 AM, Dmitry Kadashev wrote:
+> Hi,
 > 
-> I've added 1/8 to the 5.11 mix for now, I'll get back to the other ones.
+> We've ran into something that looks like a memory accounting problem
+> in the kernel / io_uring code. We use multiple rings per process, and
+> generally it works fine. Until it does not - new ring creation just
+> fails with ENOMEM. And at that point it fails consistently until the
+> box is rebooted.
+> 
+> More details: we use multiple rings per process, typically they are
+> initialized on the process start (not necessarily, but that is not
+> important here, let's just assume all are initialized on the process
+> start). On a freshly booted box everything works fine. But after a
+> while - and some process restarts - io_uring_queue_init() starts to
+> fail with ENOMEM. Sometimes we see it fail, but then subsequent ones
+> succeed (in the same process), but over time it gets worse, and
+> eventually no ring can be initialized. And once that happens the only
+> way to fix the problem is to restart the box.  Most of the mentioned
+> restarts are graceful: a new process is started and then the old one
+> is killed, possibly with the KILL signal if it does not shut down in
+> time.  Things work fine for some time, but eventually we start getting
+> those errors.
+> 
+> Originally we've used 5.6.6 kernel, but given the fact quite a few
+> accounting issues were fixed in io_uring in 5.8, we've tried 5.9.5 as
+> well, but the issue is not gone.
+> 
+> Just in case, everything else seems to be working fine, it just falls
+> back to the thread pool instead of io_uring, and then everything
+> continues to work just fine.
+> 
+> I was not able to spot anything suspicious in the /proc/meminfo. We
+> have RLIMIT_MEMLOCK set to infinity. And on a box that currently
+> experiences the problem /proc/meminfo shows just 24MB as locked.
+> 
+> Any pointers to how can we debug this?
 
-Sure, I'll keep track of the rest. Thanks
+I've read through this thread, but haven't had time to really debug it
+yet. I did try a few test cases, and wasn't able to trigger anything.
+The signal part is interesting, as it would cause parallel teardowns
+potentially. And I did post a patch for that yesterday, where I did spot
+a race in the user mm accounting. I don't think this is related to this
+one, but would still be useful if you could test with this applied:
+
+https://lore.kernel.org/io-uring/20201217152105.693264-3-axboe@kernel.dk/T/#u
+
+just in case...
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

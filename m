@@ -2,65 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 571DC2DE8BF
-	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 19:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 454D22DE8C3
+	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 19:08:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728160AbgLRSHK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Dec 2020 13:07:10 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:39850 "EHLO
+        id S1727090AbgLRSIW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Dec 2020 13:08:22 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:41134 "EHLO
         aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728066AbgLRSHK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 13:07:10 -0500
+        with ESMTP id S1725932AbgLRSIW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 13:08:22 -0500
 Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BII3nvL110792;
-        Fri, 18 Dec 2020 18:06:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=GSIJurSzoqgP8Fow7wrya31zWmf8HM6KMr9J5580lPw=;
- b=RgyBhbI58il15+Ph6hFmOLkQk82bMOlnRh7ph5drIETfl3zJlTjqlUCKxyf3gcvZsJv2
- 0MIYrF6If7KlnXxbk+e8IwHz8N1fMaIzaxRl8dSOn3sFWg+1hFDh8u1SN4cB2IaZmGNj
- lEY0oNfHz76obip/xYhH/wmAGqxj5CshZ0ygdGGMP+J1ZSu0BmR85rxKlXGNvVh98C07
- 1Ykng0ciYgq70iGipHoSLT7vBhgvDfjcTJz4ziLmKM+QKkt351W8OVCqbHb0ewELKyql
- /41qw31FDdSb2XpG/RykO52G6WHFySTzDsYGgJF0RRdkab1T4cbn3JpbB4D41xApqLVk 6w== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 35ckcbuq3h-1
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BII3nCB111102;
+        Fri, 18 Dec 2020 18:07:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id; s=corp-2020-01-29;
+ bh=pXrd5Z+UOITUfTTxTRplLfB7O2/7IjyUiPB4BrWzBks=;
+ b=TwDUX839XA8BA3YkD6RBIbd2uNYZZbReFmf4zczS+h0sRYrnZJTW1vYcrNmURouCTeTN
+ NQmm1bm7a9egdLCCkkfHxY3Ufedk1mWMrURMIehq8/NYWlnl7iSbW04t33MbHbwP1aC+
+ A8V+0i1wvTYf2rJ/+bb3z3qtqMvT2+BqaxIrWsN7jhbAKuyexHLm5m/fBAQp6fS6Cist
+ TS/U5LrePx09v+Sfw0hFG4Ncro0EuR+v7j95GNSufDDDt1E6+1Iw22SQgybgt1cy3sYR
+ AVEuXHO3NyJJVyjhwLIH0id58lngLiBVjSxMyqzbLLljKvtlret+FvSgdxFKdAvR4AnK Kw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 35ckcbuq8a-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Dec 2020 18:06:27 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BII5R4u095832;
-        Fri, 18 Dec 2020 18:06:26 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 35e6ev0wm6-1
+        Fri, 18 Dec 2020 18:07:39 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BII5Ol7117414;
+        Fri, 18 Dec 2020 18:07:38 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 35g3rgfawy-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Dec 2020 18:06:26 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0BII6Qd8015957;
-        Fri, 18 Dec 2020 18:06:26 GMT
-Received: from [10.154.184.112] (/10.154.184.112)
+        Fri, 18 Dec 2020 18:07:38 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BII7b1Y015962;
+        Fri, 18 Dec 2020 18:07:37 GMT
+Received: from ca-ldom147.us.oracle.com (/10.129.68.131)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 18 Dec 2020 10:06:26 -0800
-Subject: Re: [PATCH v2 13/13] io_uring: support buffer registration sharing
-To:     Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk,
-        io-uring@vger.kernel.org
-References: <1607379352-68109-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1607379352-68109-14-git-send-email-bijan.mottahedeh@oracle.com>
- <ff17d576-27eb-9008-d858-e1ebb7c93dad@gmail.com>
+        with ESMTP ; Fri, 18 Dec 2020 10:07:37 -0800
 From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Message-ID: <2070b1b5-2931-7782-305f-c578b3b24567@oracle.com>
-Date:   Fri, 18 Dec 2020 10:06:24 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
-MIME-Version: 1.0
-In-Reply-To: <ff17d576-27eb-9008-d858-e1ebb7c93dad@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Antivirus: Avast (VPS 201217-2, 12/17/2020), Outbound message
-X-Antivirus-Status: Clean
+To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
+Subject: [PATCH v3 00/13] io_uring: buffer registration enhancements
+Date:   Fri, 18 Dec 2020 10:07:15 -0800
+Message-Id: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 spamscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
  definitions=main-2012180124
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
@@ -73,109 +60,95 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+v3:
 
->> @@ -8415,6 +8421,12 @@ static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
->>   	if (!data)
->>   		return -ENXIO;
->>   
->> +	if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
->> +		io_detach_buf_data(ctx);
->> +		ctx->nr_user_bufs = 0;
-> 
-> nr_user_bufs is a part of invariant and should stay together with
-> stuff in io_detach_buf_data().
+- batch file->rsrc renames into a signle patch when possible
+- fix other review changes from v2
+- fix checkpatch warnings
 
-Moved to io_detach_buf_data.
+v2:
 
+- drop readv/writev with fixed buffers patch
+- handle ref_nodes both both files/buffers with a single ref_list
+- make file/buffer handling more unified
 
->> @@ -8724,9 +8740,17 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
->>   	struct fixed_rsrc_ref_node *ref_node;
->>   	struct fixed_rsrc_data *buf_data;
->>   
->> +	if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
->> +		if (!ctx->buf_data)
->> +			return -EFAULT;
->> +		ctx->nr_user_bufs = ctx->buf_data->ctx->nr_user_bufs;
-> 
-> Why? Once a table is initialised it shouldn't change its size, would
-> be racy otherwise.
+This patchset implements a set of enhancements to buffer registration
+consistent with existing file registration functionality:
 
-ctx->buf_data is set at ring setup time but the sharing process 
-(SETUP_SHARE) may do the actual buffer registration at an arbitrary time 
-later, so the attaching process must ensure to get the updated value of 
-nr_user_bufs if available.
+- buffer registration updates		IORING_REGISTER_BUFFERS_UPDATE
+					IORING_OP_BUFFERS_UPDATE
 
->>   	buf_data = io_buffers_map_alloc(ctx, nr_args);
->>   	if (IS_ERR(buf_data))
->>   		return PTR_ERR(buf_data);
->> +	ctx->buf_data = buf_data;
-> 
-> Wanted to write that there is missing
-> `if (ctx->user_bufs) return -EBUSY`
-> 
-> but apparently it was moved into io_buffers_map_alloc().
-> I'd really prefer to have it here.
+- buffer registration sharing		IORING_SETUP_SHARE_BUF
+					IORING_SETUP_ATTACH_BUF
 
-Moved it back.
+I have kept the original patchset unchanged for the most part to
+facilitate reviewing and so this set adds a number of additional patches
+mostly making file/buffer handling more unified.
 
->> +static int io_attach_buf_data(struct io_ring_ctx *ctx,
->> +			      struct io_uring_params *p)
->> +{
->> +	struct io_ring_ctx *ctx_attach;
->> +	struct fd f;
->> +
->> +	f = fdget(p->wq_fd);
->> +	if (!f.file)
->> +		return -EBADF;
->> +	if (f.file->f_op != &io_uring_fops) {
->> +		fdput(f);
->> +		return -EINVAL;
->> +	}
->> +
->> +	ctx_attach = f.file->private_data;
->> +	if (!ctx_attach->buf_data) {
-> 
-> It looks racy. What prevents it from being deleted while we're
-> working on it, e.g. by io_sqe_buffers_unregister?
+Patch 1-2 modularize existing buffer registration code.
 
-I think the premise here is that buffer sharing happens between trusted 
-and coordinated processes.  If I understand your concern correctly, then 
-if the sharing process unregisters its buffers after having shared them, 
-than that process is acting improperly.  The race could lead to a failed 
-attach but that would be expected and reasonable I would think?  What do 
-you think should happen in this case?
+Patch 3-7 generalize fixed_file functionality to fixed_rsrc.
 
-> 
->> +		fdput(f);
->> +		return -EINVAL;
->> +	}
->> +	ctx->buf_data = ctx_attach->buf_data;
-> 
-> Before updates, etc. (e.g. __io_sqe_buffers_update()) were synchronised
-> by uring_lock, now it's modified concurrently, that looks to be really
-> racy.
+Patch 8 applies fixed_rsrc functionality for fixed buffers support.
 
-Racy from the attaching process perspective you mean?
+Patch 9-10 generalize files_update functionality to rsrc_update.
 
-> 
->> +
->> +	percpu_ref_get(&ctx->buf_data->refs);
-> 
-> Ok, now the original io_uring instance will wait until the attached
-> once get rid of their references. That's a versatile ground to have
-> in kernel deadlocks.
-> 
-> task1: uring1 = create()
-> task2: uring2 = create()
-> task1: uring3 = create(share=uring2);
-> task2: uring4 = create(share=uring1);
-> 
-> task1: io_sqe_buffers_unregister(uring1)
-> task2: io_sqe_buffers_unregister(uring2)
-> 
-> If I skimmed through the code right, that should hang unkillably.
+Patch 11 implements buffer registration update, and introduces
+IORING_REGISTER_BUFFERS_UPDATE and IORING_OP_BUFFERS_UPDATE, consistent
+with file registration update.
 
-So we need a way to enforce that a process can only have one role, 
-sharing or attaching? But I'm not what the best way to do that.  Is this 
-an issue for other resource sharing, work queues or polling thread?
+Patch 12 generalizes fixed resource allocation 
+
+Patch 13 implements buffer sharing among multiple rings; it works as follows:
+
+- A new ring, A,  is setup. Since no buffers have been registered, the
+  registered buffer state is an empty set, Z. That's different from the
+  NULL state in current implementation.
+
+- Ring B is setup, attaching to Ring A. It's also attaching to it's
+  buffer registrations, now we have two references to the same empty
+  set, Z.
+
+- Ring A registers buffers into set Z, which is no longer empty.
+
+- Ring B sees this immediately, since it's already sharing that set.
+
+Testing
+
+I have used liburing file-{register,update} tests as models for
+buffer-{register,update,share}, tests and they run ok.
+
+TBD
+
+- I tried to use a single opcode for files/buffers but ran into an
+issue since work_flags is different for files/buffers.  This should
+be ok for the most part since req->work.flags is ultimately examined;
+however, there are place where io_op_defs[opcode].work_flags is examined
+directly, and I wasn't sure what would the best way to handle that.
+
+- Need to still address Pavel's comments about deadlocks. I figure
+to send out the set anyway since this is a last patch and may even be
+handled separately.
+
+Bijan Mottahedeh (13):
+  io_uring: modularize io_sqe_buffer_register
+  io_uring: modularize io_sqe_buffers_register
+  io_uring: rename file related variables to rsrc
+  io_uring: generalize io_queue_rsrc_removal
+  io_uring: separate ref_list from fixed_rsrc_data
+  io_uring: generalize fixed_file_ref_node functionality
+  io_uring: add rsrc_ref locking routines
+  io_uring: implement fixed buffers registration similar to fixed files
+  io_uring: create common fixed_rsrc_ref_node handling routines
+  io_uring: generalize files_update functionlity to rsrc_update
+  io_uring: support buffer registration updates
+  io_uring: create common fixed_rsrc_data allocation routines.
+  io_uring: support buffer registration sharing
+
+ fs/io_uring.c                 | 1004 +++++++++++++++++++++++++++++------------
+ include/uapi/linux/io_uring.h |   12 +-
+ 2 files changed, 735 insertions(+), 281 deletions(-)
+
+-- 
+1.8.3.1
 

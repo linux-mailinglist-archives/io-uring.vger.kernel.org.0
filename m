@@ -2,91 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 396EC2DE7FF
-	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 18:24:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85E542DE8BB
+	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 19:08:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731531AbgLRRYX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Dec 2020 12:24:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58630 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbgLRRYX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 12:24:23 -0500
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3BC2C0617A7
-        for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 09:23:42 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id i7so1728630pgc.8
-        for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 09:23:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=p6ITp9FwboEryXh6kB8xGxO/WjR1xPYuaMLDaq4LVQg=;
-        b=YD+JZE4LxNG6kt87FZEdy+jLoAoKC2tWjPBEzqRUw9kg7yaINmD/76ZW7N7PfE2dH1
-         2ZdWLeQaJ/+b3yWeh3F/pCUwmtBP6sjGhLWQ6lM+fmha/SSVVnIcczICYyTAqBVfQ8aY
-         lQqlbJGGPFqYfXdslrfVGAnqEJaH0u8FHNKoe4zlVfgTChWwVd6H0YnTe5WRLEyQy3UD
-         ZBeEFkS20uyqvPa7XI6ZLZR/GhBXfULgQemYTlPMJabaqrMpHLwOLgeCdZ5sz4UBIs6Q
-         JHreajD6R12Jkbx+FRN0mwMziUkPLvRMVqsjwO/5oTajb36Ts6OqPEzCyA5bAl9mG2Xm
-         mA/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=p6ITp9FwboEryXh6kB8xGxO/WjR1xPYuaMLDaq4LVQg=;
-        b=lAMqHt0Gr4WFh7oRvLOt3LnS4TchOH0kQb8DtQpwPxWkVixCX1ik/NIW9Bavbyl/8q
-         Ac1bsT8JJ1qxzg20vw6RsUGunfmNiQl0VaUb7BqPt2JGY0H9VqBvSA7k70Limz7zlnNC
-         6Jyv3Ypem0rO7dxtISUAChNHrDQHqP5GG85ZHIhikJfA1Y5sF6ySRv/UZDPc9PY/E8Vg
-         aj1I5RiErSzn6bazNvuUnkTSTUxdw64Nn4OC/oIn58ig4vavH8BiDwAleUnmlz1n3ail
-         +RtUUs6ceuwxQt82U82CZSOMH9m748aUwwLmLvOOTR02hrtsyFX5i0/t8KHnUXdG/JZN
-         NZNQ==
-X-Gm-Message-State: AOAM531iSDxyvYxILpIGYoqqMI4lhu1/iEaYt5E7X/dIdgPUWDXU21q2
-        YXuNhmpZLDK7RPY3xiI4CCxB5A==
-X-Google-Smtp-Source: ABdhPJz9o0tl6XpIJfVh05OO8iIbTCJSjoxer76EwHp+UdYk9l4Rv14nWrpaP/sarH2QJwi3e8EMxw==
-X-Received: by 2002:a63:6442:: with SMTP id y63mr5101122pgb.35.1608312222279;
-        Fri, 18 Dec 2020 09:23:42 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id e24sm8147977pjt.16.2020.12.18.09.23.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Dec 2020 09:23:41 -0800 (PST)
-Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
-To:     Josef <josef.grieb@gmail.com>
-Cc:     Dmitry Kadashev <dkadashev@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>,
-        Norman Maurer <norman.maurer@googlemail.com>
-References: <CAOKbgA66u15F+_LArHZFRuXU9KAiq_K0Ky2EnFSh6vRv23UzSw@mail.gmail.com>
- <7d263751-e656-8df7-c9eb-09822799ab14@kernel.dk>
- <CAAss7+oi9LFaPpXfdCkEEzFFgcTcvq=Z9Pg7dXwg5i=0cu-5Ug@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <caca825c-e88c-50a6-09a8-c4ba9d174251@kernel.dk>
-Date:   Fri, 18 Dec 2020 10:23:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727053AbgLRSGx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Dec 2020 13:06:53 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:39574 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbgLRSGx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 13:06:53 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BII3nur111173;
+        Fri, 18 Dec 2020 18:06:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=oXzgMN4IU8PN6WoU7e9QYB3Wn9Ef5yDJzFrKbE2S4mY=;
+ b=FjXc8JniXtJBI3edFK5Qvh0zCHBt9rLAhZ4lxCLrqqHfuhoJ7oBtqbxg6V9NkoooArDH
+ NEsRphDq7RYZN+W0R1zbtZGAfwFrEM8fUkQeJNeZi/1X56JkvJINpvK1o8dTDY7JAaiT
+ GYoLV1Sa9iSw+gCCDmAMiI/3YFTLAurVFQDouLYDbbjaHSBn0CicYFphywLdvogd++lm
+ UAYxfFiePZcH6S+T3TWS4MSky0OfezdtbI5S/kd5BI+CnXAz3n/VVkIoPp7fVGqE042w
+ acwcfc+qQj3fvq8vNKGdkIr+4ysf0uw/80NTR1C1mujhQIjnhH2efi6a0Ar+qN/xRCnQ fA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 35ckcbuq2n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Dec 2020 18:06:09 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BII5Ncc028414;
+        Fri, 18 Dec 2020 18:06:09 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 35d7eskhes-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Dec 2020 18:06:09 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BII68IN013870;
+        Fri, 18 Dec 2020 18:06:08 GMT
+Received: from [10.154.184.112] (/10.154.184.112)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 18 Dec 2020 10:06:08 -0800
+Subject: Re: [PATCH v2 00/13] io_uring: buffer registration enhancements
+To:     Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk,
+        io-uring@vger.kernel.org
+References: <1607379352-68109-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <c1f6faa1-63a4-777c-fe46-2ee7952baa2f@gmail.com>
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Message-ID: <d90ec8a1-6661-dd66-ed1d-916b7b8a8475@oracle.com>
+Date:   Fri, 18 Dec 2020 10:06:06 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 MIME-Version: 1.0
-In-Reply-To: <CAAss7+oi9LFaPpXfdCkEEzFFgcTcvq=Z9Pg7dXwg5i=0cu-5Ug@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <c1f6faa1-63a4-777c-fe46-2ee7952baa2f@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Antivirus: Avast (VPS 201217-2, 12/17/2020), Outbound message
+X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012180124
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
+ priorityscore=1501 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012180124
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/18/20 10:21 AM, Josef wrote:
->> I've read through this thread, but haven't had time to really debug it
->> yet. I did try a few test cases, and wasn't able to trigger anything.
->> The signal part is interesting, as it would cause parallel teardowns
->> potentially. And I did post a patch for that yesterday, where I did spot
->> a race in the user mm accounting. I don't think this is related to this
->> one, but would still be useful if you could test with this applied:
->>
->> https://lore.kernel.org/io-uring/20201217152105.693264-3-axboe@kernel.dk/T/#u
-> 
-> as you expected it didn't work, unfortunately I couldn't reproduce
-> that in C..I'll try to debug in netty/kernel
 
-I'm happy to run _any_ reproducer, so please do let us know if you
-manage to find something that I can run with netty. As long as it
-includes instructions for exactly how to run it :-)
+> Thanks for the patches! I'd _really_ prefer for all s/files/rsrc/
+> renaming being in a single prep patch instead of spilling it all around.
+> I found one bug, but to be honest it's hard to get through when functional
+> changes and other cleanups are buried under tons of such renaming.
 
--- 
-Jens Axboe
-
+I've tried to gather as much of the renames that can be grouped together 
+in the next version I'm about to send.  It is hard however to put all 
+renames in one place since they often go hand in hand with a 
+corresponding functionality change.  I appreciate though that the 
+renames get in the way, sorry for that :-)  If you think more can be 
+done after the next version, I'll look into more.

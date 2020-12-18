@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 192FF2DE331
+	by mail.lfdr.de (Postfix) with ESMTP id F1AEF2DE333
 	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 14:18:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbgLRNRW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1726279AbgLRNRW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Fri, 18 Dec 2020 08:17:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48886 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbgLRNRV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 08:17:21 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31467C061248
+        with ESMTP id S1727645AbgLRNRW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 08:17:22 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8819FC0611C5
         for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 05:16:07 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id g185so2517325wmf.3
+Received: by mail-wm1-x32c.google.com with SMTP id r4so2510396wmh.5
         for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 05:16:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=7KvH11eCgjbAuPmRn/6GAVbXsD/rdwuQdebZEAB4z5A=;
-        b=uhpnyBwsqDB7T4JWp3Oz10maVyJOL8jJHQnZEzZtGidIzv0V0rvjdKQEU84dw3qDz1
-         NiEkMdAaVLFWRayIg3pfZVDeHM6Mj+gt7sC+pBRcOD1W+b+rs/Oerb+KQXNfl0YfkZeZ
-         enFs5LbbzfJHRQvvq7g9A4Jcw7M5U449TQM/CnC0fbJOKGTsOZbx5Dey4pnHfipX2tLx
-         b3byXHhh6JS9fvtDHIXj+lk8p0+SAE2GA7gl1SGoB9HzP3Wdt4lruBQP7X9XYQ6q246f
-         lryXjW4jlGB5QI/tLbevMDyM21yh3R1XgEXIEKWdrGFTcJQhc5gNB02fFGMJOlMvqf7f
-         WvoA==
+        bh=qn2CQ12XFIPIYy+WknqbKRR5JZfrb7fJeTILyI1yCv0=;
+        b=DXKB3B0HQ9cYpeMBxtjBQOedgx3OeDPRTyF3zZu2f9lRMD2eFlh8/q9HEzaCcaUO7G
+         m0ZlqcGJRvO+X4WdPSb8mQvcBUDNzvEMuHE0mp+zvTQfpgxk7sztuzDyqSsGmxJ1sS7+
+         GRBziAHAsPYRRQ19Nm3V9qSM0D2b3sqpFuvTf6CTa7JWoE1q/Fra64AekF3GSInOVINI
+         1GKV8/H6nMwgOs6OtVMrsvqRtid8TRiyt2Qt4BojEvqWF0xEByQlRZyH/hm7yapq+7TJ
+         a8DCW2Po+MxOcM6rYCyIqE2Te7KGI11tfd0OLAvfjOdG91Qw/Zzsgk4evxvQ4C0aQzdT
+         yv0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7KvH11eCgjbAuPmRn/6GAVbXsD/rdwuQdebZEAB4z5A=;
-        b=d/lW+eUyF9JX2C/5KNdu0/M1G2RKySGEEjy7HMDnxRP+ZOimNmETMzR1CGiH7LlRlq
-         hDHCisljz8HxeSlm4zpFODbvVN5zYQvuk3bI4Da8k0juV56ypWcn2iupJw3HwZUhpsZt
-         cu4HEE972mjw6LGOD5c/HTJ1PuFcANYaCbqlhlRNYehGDWtYugITGFwwmpNuVNeKQIQc
-         sRjUebUBvWYmqSjhG4EtXMmQ+EIp2MBcHSJNBJt+kouWKve87uXfu9VrHqXYpe9tvmET
-         GsaXKFiagAR9JkrZgSnkWX0HhKfyeiY8t96l1yUwuCurOI5YVp0tiD03WWA7YizXYVtW
-         jjsQ==
-X-Gm-Message-State: AOAM5317vujvsazJ/bizAVSDQuolRUrcrSdsrevOCRlBd6s6LjT0X0yc
-        kbK9Ozg7qbg2hzgQn/u7jtI=
-X-Google-Smtp-Source: ABdhPJyYU/Tr1B1Ur0lCxq1DZOgjoB1TMDw0+ZpLiNpxAefyJ4z8cH+mfhMUzQ771u8O1TbYBIjk9w==
-X-Received: by 2002:a1c:5fd4:: with SMTP id t203mr4092844wmb.15.1608297365267;
-        Fri, 18 Dec 2020 05:16:05 -0800 (PST)
+        bh=qn2CQ12XFIPIYy+WknqbKRR5JZfrb7fJeTILyI1yCv0=;
+        b=qIlA0jKpGer1u0HgVkBYVVJPtIEzQF3+1ty4EOuXSF7bGy4m0fv6eFWRV6xpCgBRFh
+         7GpcXHZLBsgnQDbcN7fVxKz8XlXR5bRwls+Z+gHxmePw4LgVFsN7c30vH4LCAxQyC9Re
+         euDUWkaW6tWNtD016BfWeuwOAY/M7RpkHN0MMPvguriEYM9B48lIkaR3jhLkiOcwh8is
+         aiYADFQ838IK6ALcUz7ZsD+zrcbPTJ/MtQsCIhUGi08lDRYJ3a5KgQ7l1XPcffFbxzyX
+         h8/mqB+l7A70dk9O+bCNMUULQ8wO+OAH6muNVGMNv1W0D+4SNj5PPTTtv7cuch+Hs3vO
+         7NCA==
+X-Gm-Message-State: AOAM533Aw4U4QCF+TAagthIy2llEs4G6nt58hn1pFRUhTqZobkl1ybpV
+        TB6mmlC4gXkwiOpNEJ9Uogo=
+X-Google-Smtp-Source: ABdhPJxPfrIHnfYmObWAn56zpxt+otySsAIAXaq4aLqOi0YSlEBQyQloU+7z6uwmwEYc0rLBsyw+NQ==
+X-Received: by 2002:a1c:2203:: with SMTP id i3mr4200537wmi.6.1608297366301;
+        Fri, 18 Dec 2020 05:16:06 -0800 (PST)
 Received: from localhost.localdomain ([85.255.234.120])
-        by smtp.gmail.com with ESMTPSA id b9sm12778595wmd.32.2020.12.18.05.16.04
+        by smtp.gmail.com with ESMTPSA id b9sm12778595wmd.32.2020.12.18.05.16.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Dec 2020 05:16:04 -0800 (PST)
+        Fri, 18 Dec 2020 05:16:05 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 6/8] io_uring: remove old files cancel mechanism
-Date:   Fri, 18 Dec 2020 13:12:26 +0000
-Message-Id: <0cf6c5d55ae30a75d877f3dd3b53e162eeb6a950.1608296656.git.asml.silence@gmail.com>
+Subject: [PATCH 7/8] io_uring: cleanup task cancel
+Date:   Fri, 18 Dec 2020 13:12:27 +0000
+Message-Id: <9a2eadf262a9e119461d21a2761537436614f88e.1608296656.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1608296656.git.asml.silence@gmail.com>
 References: <cover.1608296656.git.asml.silence@gmail.com>
@@ -61,150 +61,79 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-files cancellation is now based on counters, remove the old way we were
-doing that with keeping a list of such requests.
+There is no use of io_uring_try_task_cancel(), inline it, kill extra
+in_idle inc/dec as it's already done by __io_uring_task_cancel(), and do
+a bit of renaming.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 65 +++++++--------------------------------------------
- 1 file changed, 9 insertions(+), 56 deletions(-)
+ fs/io_uring.c | 25 ++++++-------------------
+ 1 file changed, 6 insertions(+), 19 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d20a2a96c3f8..4bf709d9db32 100644
+index 4bf709d9db32..134ea0e3373d 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -379,7 +379,6 @@ struct io_ring_ctx {
- 		bool			poll_multi_file;
+@@ -8767,8 +8767,8 @@ static void __io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
+  * hard links. These persist even for failure of cancelations, hence keep
+  * looping until none are found.
+  */
+-static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
+-					  struct files_struct *files)
++static void io_uring_try_task_cancel(struct io_ring_ctx *ctx,
++				     struct files_struct *files)
+ {
+ 	struct task_struct *task = current;
  
- 		spinlock_t		inflight_lock;
--		struct list_head	inflight_list;
- 	} ____cacheline_aligned_in_smp;
- 
- 	struct delayed_work		file_put_work;
-@@ -719,10 +718,7 @@ struct io_kiocb {
- 	struct io_kiocb			*link;
- 	struct percpu_ref		*fixed_file_refs;
- 
--	/*
--	 * 1. used with ctx->iopoll_list with reads/writes
--	 * 2. to track reqs with ->files (see io_op_def::file_table)
--	 */
-+	/* ctx->iopoll_list, tracks rw requests for iopoll_list */
- 	struct list_head		inflight_entry;
- 	struct callback_head		task_work;
- 	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
-@@ -1308,7 +1304,6 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_LIST_HEAD(&ctx->defer_list);
- 	INIT_LIST_HEAD(&ctx->timeout_list);
- 	spin_lock_init(&ctx->inflight_lock);
--	INIT_LIST_HEAD(&ctx->inflight_list);
- 	INIT_DELAYED_WORK(&ctx->file_put_work, io_file_put_work);
- 	init_llist_head(&ctx->file_put_llist);
- 	return ctx;
-@@ -1498,7 +1493,6 @@ static bool io_grab_identity(struct io_kiocb *req)
- 
- 		spin_lock_irq(&ctx->inflight_lock);
- 		atomic_inc(&current->io_uring->inflight_files);
--		list_add(&req->inflight_entry, &ctx->inflight_list);
- 		spin_unlock_irq(&ctx->inflight_lock);
- 		req->work.flags |= IO_WQ_WORK_FILES;
- 	}
-@@ -6101,7 +6095,6 @@ static void io_req_drop_files(struct io_kiocb *req)
- 	put_files_struct(req->work.identity->files);
- 	put_nsproxy(req->work.identity->nsproxy);
- 	spin_lock_irqsave(&ctx->inflight_lock, flags);
--	list_del(&req->inflight_entry);
- 	atomic_dec(&tctx->inflight_files);
- 	spin_unlock_irqrestore(&ctx->inflight_lock, flags);
- 	req->flags &= ~REQ_F_INFLIGHT;
-@@ -8739,48 +8732,12 @@ static void io_cancel_defer_files(struct io_ring_ctx *ctx,
- 	}
+@@ -8862,19 +8862,6 @@ static void io_uring_attempt_task_drop(struct file *file)
+ 		io_uring_del_task_file(current->io_uring, file);
  }
  
--static void io_uring_cancel_files(struct io_ring_ctx *ctx,
--				  struct task_struct *task,
--				  struct files_struct *files)
+-static void io_uring_try_task_cancel(struct files_struct *files)
 -{
--	while (!list_empty_careful(&ctx->inflight_list)) {
--		struct io_task_cancel cancel = { .task = task, .files = files };
--		struct io_kiocb *req;
--		DEFINE_WAIT(wait);
--		bool found = false;
+-	struct io_uring_task *tctx = current->io_uring;
+-	struct file *file;
+-	unsigned long index;
 -
--		spin_lock_irq(&ctx->inflight_lock);
--		list_for_each_entry(req, &ctx->inflight_list, inflight_entry) {
--			if (req->task != task ||
--			    req->work.identity->files != files)
--				continue;
--			found = true;
--			break;
--		}
--		if (found)
--			prepare_to_wait(&task->io_uring->wait, &wait,
--					TASK_UNINTERRUPTIBLE);
--		spin_unlock_irq(&ctx->inflight_lock);
--
--		/* We need to keep going until we don't find a matching req */
--		if (!found)
--			break;
--
--		io_wq_cancel_cb(ctx->io_wq, io_cancel_task_cb, &cancel, true);
--		io_poll_remove_all(ctx, task, files);
--		io_kill_timeouts(ctx, task, files);
--		/* cancellations _may_ trigger task work */
--		io_run_task_work();
--		schedule();
--		finish_wait(&task->io_uring->wait, &wait);
--	}
+-	/* make sure overflow events are dropped */
+-	atomic_inc(&tctx->in_idle);
+-	xa_for_each(&tctx->xa, index, file)
+-		io_uring_cancel_task_requests(file->private_data, files);
+-	atomic_dec(&tctx->in_idle);
 -}
 -
- static void __io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
--					    struct task_struct *task)
-+					    struct task_struct *task,
-+					    struct files_struct *files)
+ static s64 tctx_inflight(struct io_uring_task *tctx, bool files)
  {
- 	while (1) {
--		struct io_task_cancel cancel = { .task = task, .files = NULL, };
-+		struct io_task_cancel cancel = { .task = task, .files = files };
- 		enum io_wq_cancel cret;
- 		bool ret = false;
+ 	unsigned long index;
+@@ -8917,6 +8904,8 @@ static s64 tctx_inflight(struct io_uring_task *tctx, bool files)
+ void __io_uring_task_cancel(struct files_struct *files)
+ {
+ 	struct io_uring_task *tctx = current->io_uring;
++	unsigned long index;
++	struct file *file;
+ 	DEFINE_WAIT(wait);
+ 	s64 inflight;
  
-@@ -8789,18 +8746,18 @@ static void __io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
- 			ret = true;
- 
- 		/* SQPOLL thread does its own polling */
--		if (!(ctx->flags & IORING_SETUP_SQPOLL)) {
-+		if (!(ctx->flags & IORING_SETUP_SQPOLL) && !files) {
- 			while (!list_empty_careful(&ctx->iopoll_list)) {
- 				io_iopoll_try_reap_events(ctx);
- 				ret = true;
- 			}
- 		}
- 
--		ret |= io_poll_remove_all(ctx, task, NULL);
--		ret |= io_kill_timeouts(ctx, task, NULL);
-+		ret |= io_poll_remove_all(ctx, task, files);
-+		ret |= io_kill_timeouts(ctx, task, files);
-+		io_run_task_work();
- 		if (!ret)
+@@ -8928,7 +8917,8 @@ void __io_uring_task_cancel(struct files_struct *files)
+ 		inflight = tctx_inflight(tctx, !!files);
+ 		if (!inflight)
  			break;
--		io_run_task_work();
- 		cond_resched();
- 	}
- }
-@@ -8825,11 +8782,7 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
- 	io_ring_submit_lock(ctx, (ctx->flags & IORING_SETUP_IOPOLL));
- 	io_cqring_overflow_flush(ctx, true, task, files);
- 	io_ring_submit_unlock(ctx, (ctx->flags & IORING_SETUP_IOPOLL));
--
--	if (!files)
--		__io_uring_cancel_task_requests(ctx, task);
--	else
--		io_uring_cancel_files(ctx, task, files);
-+	__io_uring_cancel_task_requests(ctx, task, files);
+-		io_uring_try_task_cancel(files);
++		xa_for_each(&tctx->xa, index, file)
++			io_uring_try_task_cancel(file->private_data, files);
  
- 	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sq_data) {
- 		atomic_dec(&task->io_uring->in_idle);
+ 		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
+ 
+@@ -8945,9 +8935,6 @@ void __io_uring_task_cancel(struct files_struct *files)
+ 	atomic_dec(&tctx->in_idle);
+ 
+ 	if (files) {
+-		struct file *file;
+-		unsigned long index;
+-
+ 		xa_for_each(&tctx->xa, index, file)
+ 			io_uring_del_task_file(tctx, file);
+ 	}
 -- 
 2.24.0
 

@@ -2,64 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AFB52DE652
-	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 16:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6113C2DE658
+	for <lists+io-uring@lfdr.de>; Fri, 18 Dec 2020 16:17:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbgLRPQN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Dec 2020 10:16:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38954 "EHLO
+        id S1728265AbgLRPRO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Dec 2020 10:17:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbgLRPQM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 10:16:12 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B03E6C0617A7
-        for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 07:15:32 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id lj6so1462718pjb.0
-        for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 07:15:32 -0800 (PST)
+        with ESMTP id S1728264AbgLRPRO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Dec 2020 10:17:14 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D28C0617A7
+        for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 07:16:34 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id b5so1511333pjl.0
+        for <io-uring@vger.kernel.org>; Fri, 18 Dec 2020 07:16:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YZ1IcxiNKpaLMxQN9FlOWEaqjiPRkOVSz79JzXYKRd4=;
-        b=PUPjLsp7lH8tp/GWquQw+hS37V+9sTmIYcHWEp2pN+fxCIqjy8I0I+5wQRVaku+PQm
-         0FjNKCMaxXmOjSwER5DW7MeXLZxDkG0yjKgrKZV2hiS5QtP6osXc6M/04JD82Mb0VbRf
-         ++OqsT+liyw7tDLFx/Vl8Sm12Kz1qrUgxn2QknhjdOyDlR4i9JSI6uH1Wgh1CP7OCfcj
-         xC/Y76Ck/w7MH+bKZtJJfenqqEMzPzoku3WYvoWqadqbqiJUmvUg1qKP63x9dar1EiEo
-         9GR38CJF45f6b5yk7VT++3OK8eVGYxZBDQd7l0C1iTvY6zvixU+Vb+xQ3V9Sle+23Alt
-         4CSg==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=ib+66mEnNwN6+xrO+uveYlB20hQBFr3QJtH9NQsL3vc=;
+        b=b81xZVakJ7t3oNOe2E2Q3FPcMvtl1GVhe6R6//0j0N/3T7/AIlhuzefJPWytbQi3Eb
+         R42ojTLg2u9O46nfInhSHVfcQ7Aymwgt+OZ3D7D5m0gOGWPHBoqNVpmxEOSgOwk5jdKo
+         WnBK1+kq+aB1jo71aCNdnBj2rC5NQqk/qag98P6ENvIW96nbcTxFHZZB6feWB+kr0Ck6
+         UtxdUWgLWZ39RnYFl3Ti4tcFFw9xyG37YRfgvw+caLNsCraNUgSalHlmUxnbUIKdljdE
+         tUDilZMazOa0iPRbecFhcrcwmvLAC4iKim8OJCt+mQCwbDdKnufZqauixuEgjkj6jo89
+         Urkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=YZ1IcxiNKpaLMxQN9FlOWEaqjiPRkOVSz79JzXYKRd4=;
-        b=XOYFp/6Z9Y4jctrb3kUY1Cuht+VP4gQiZyfNvIqbSZUtE6iJOTX+nyo17HmKoH7WJL
-         RTdBwsAT6svtp+VPrphdAqR5ULXyVyUqT3IBdMdyCvhkASyDB7HN08qRmJTGzhd3q8OP
-         Azif0nM/eD8K/HawKoeYouqzuzMnJH+AjJUUV804SeDB4dZE9KM7g6uAh/9sa+Wfb4rt
-         /8pVJ8jXfmB1MdXtLeyZY+xJgl7JrlH31duMvvanqHcckPZybr2fotsrLXlZImVSbC9+
-         RIhXezP9eafyBbYWLsOIKHelYgsKwjKAHycIl/oRKzCVsPj3ixg9JZ1A4OeQ8MH+1pQW
-         r8bg==
-X-Gm-Message-State: AOAM532+QI+CNdE5h+fsTziNknCd7TaDa++du7LLLDNL5vdpibSZLhRq
-        lTyU0vO9mj/kIK5OWT5BNkizBg==
-X-Google-Smtp-Source: ABdhPJy7CbTcXsAh9WYlpj+sSzXmBfa3OHwXBBk8F2a2+66dd7suxEoQ2cXH3i7vCBS97orNDDjaEg==
-X-Received: by 2002:a17:90b:4acc:: with SMTP id mh12mr4886209pjb.54.1608304532136;
-        Fri, 18 Dec 2020 07:15:32 -0800 (PST)
+        bh=ib+66mEnNwN6+xrO+uveYlB20hQBFr3QJtH9NQsL3vc=;
+        b=eqW9V6HuaYa124DS77QKhcnncky7oBnhpuGJ7DfMx845/FOA0SG+ZioktishVYsAtn
+         dGWr1/BwAD3aHG/beont7mD6R5njhIka/m7sFsstVjmZPUMK9QdEFF2CIrPp73h3RHiS
+         MZPb3FPVhsLa3MlsYi6Q74oQSYY7CIkp55fTRVJdZwP/1m0e7f5/UyWkEbOVnWcmzDsu
+         R8WO9NRsNqNXfKjrMlsJg31rKerL50c9gERzp1j4yu8SV6Ak+K6UMX86ht3MPhvj5YgV
+         P9897slVHGxdg6bkbdUORROUO9J2g2dZ4ty5Oe04ANkbZbqAeDfj8KDAAef1+J8M/a9o
+         iFPQ==
+X-Gm-Message-State: AOAM5300JnHC+cDPBFQL/0prKAlt2atZS4IRMmo5eS0VjzhYItBdAqqN
+        IX1ogK7s5DUFdBOZxNc4QVWe4y0HjftuwA==
+X-Google-Smtp-Source: ABdhPJzCgDFmLtTYSOiZy2x+twxaVNThjYWjxphOuML+H81L1n0NLW3fU8tn+60fqV+ixXAScR+Qnw==
+X-Received: by 2002:a17:90b:1894:: with SMTP id mn20mr4812072pjb.100.1608304593725;
+        Fri, 18 Dec 2020 07:16:33 -0800 (PST)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id 197sm9462156pgg.43.2020.12.18.07.15.31
+        by smtp.gmail.com with ESMTPSA id s29sm9765766pgn.65.2020.12.18.07.16.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Dec 2020 07:15:31 -0800 (PST)
-Subject: Re: [PATCH] io_uring: fix io_wqe->work_list corruption
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, joseph.qi@linux.alibaba.com
-References: <20201218072648.9649-1-xiaoguang.wang@linux.alibaba.com>
+        Fri, 18 Dec 2020 07:16:33 -0800 (PST)
+Subject: Re: [PATCH 0/8] a fix + cancellation unification
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1608296656.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e7e54052-73ea-4f57-7c13-5bcc65008041@kernel.dk>
-Date:   Fri, 18 Dec 2020 08:15:30 -0700
+Message-ID: <17d4ffd5-9d11-1ffe-cdee-cc114dedec4b@kernel.dk>
+Date:   Fri, 18 Dec 2020 08:16:32 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201218072648.9649-1-xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <cover.1608296656.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,46 +65,14 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/18/20 12:26 AM, Xiaoguang Wang wrote:
-> For the first time a req punted to io-wq, we'll initialize io_wq_work's
-> list to be NULL, then insert req to io_wqe->work_list. If this req is not
-> inserted into tail of io_wqe->work_list, this req's io_wq_work list will
-> point to another req's io_wq_work. For splitted bio case, this req maybe
-> inserted to io_wqe->work_list repeatedly, once we insert it to tail of
-> io_wqe->work_list for the second time, now io_wq_work->list->next will be
-> invalid pointer, which then result in many strang error, panic, kernel
-> soft-lockup, rcu stall, etc.
-> 
-> In my vm, kernel doest not have commit cc29e1bf0d63f7 ("block: disable
-> iopoll for split bio"), below fio job can reproduce this bug steadily:
-> [global]
-> name=iouring-sqpoll-iopoll-1
-> ioengine=io_uring
-> iodepth=128
-> numjobs=1
-> thread
-> rw=randread
-> direct=1
-> registerfiles=1
-> hipri=1
-> bs=4m
-> size=100M
-> runtime=120
-> time_based
-> group_reporting
-> randrepeat=0
-> 
-> [device]
-> directory=/home/feiman.wxg/mntpoint/  # an ext4 mount point
-> 
-> If we have commit cc29e1bf0d63f7 ("block: disable iopoll for split bio"),
-> there will no splitted bio case for polled io, but I think we still to need
-> to fix this list corruption, it also should maybe go to stable branchs.
-> 
-> To fix this corruption, if a req is inserted into tail of io_wqe->work_list,
-> initialize req->io_wq_work->list->next to bu NULL.
+On 12/18/20 6:12 AM, Pavel Begunkov wrote:
+> I suggest for 1/8 to go for current, and the rest are for next.
+> Patches 2-8 finally unify how we do task and files cancellation removing
+> boilerplate and making it easier to understand overall. As a bonus to it
+> ->inflight_entry is now used only for iopoll, probably can be put into a
+> union with something and save 16B of io_kiocb if that would be needed.
 
-Applied, and marked for stable.
+I've added 1/8 to the 5.11 mix for now, I'll get back to the other ones.
 
 -- 
 Jens Axboe

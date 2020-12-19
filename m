@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68CEA2DF143
+	by mail.lfdr.de (Postfix) with ESMTP id D556F2DF144
 	for <lists+io-uring@lfdr.de>; Sat, 19 Dec 2020 20:17:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbgLSTQU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 19 Dec 2020 14:16:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41568 "EHLO
+        id S1727475AbgLSTQe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 19 Dec 2020 14:16:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbgLSTQU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 19 Dec 2020 14:16:20 -0500
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE159C061248
-        for <io-uring@vger.kernel.org>; Sat, 19 Dec 2020 11:15:39 -0800 (PST)
-Received: by mail-qv1-xf2d.google.com with SMTP id h16so2609307qvu.8
-        for <io-uring@vger.kernel.org>; Sat, 19 Dec 2020 11:15:39 -0800 (PST)
+        with ESMTP id S1727454AbgLSTQe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 19 Dec 2020 14:16:34 -0500
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C380C061257
+        for <io-uring@vger.kernel.org>; Sat, 19 Dec 2020 11:15:41 -0800 (PST)
+Received: by mail-qt1-x829.google.com with SMTP id g24so3856122qtq.12
+        for <io-uring@vger.kernel.org>; Sat, 19 Dec 2020 11:15:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SyeU/FRM6L9MHmR1iZ4auH4KHuwiXuCIvSiBiR9Y8t0=;
-        b=ZzJ7GqgFZfmw+24OF7sU5FL+Sawpm5EmAIqJBUXQGUU0qgKNmIPW43wrfKoP3Mm10l
-         aOFHNr1GG1VqgEvPg+kLjxyBDSw/djiCaW6iefYhtEqczQoG9nM7G1fasCOyQJPVErU5
-         KvOjINIdfCjtWVxo9hZCacqRW2K/IJ6Ot+TlA1nu88+5ovzw/6S60GLKKiER9YdWBwkq
-         z9ZJyTNF998PDie28l53Mz1wKaCU9LQSdax84ry9+sH1c8olVaaLA9AeYmWcof/CyDZu
-         1cfifkKAp5ece7/7idJTaPjhktzhefo56f6+vv4y5O0WPhUhq56gevym6IizFW5Z0tFw
-         OxMw==
+        bh=Pqu5QCNzl6YIsLPOFU12NOO1EQ9/G0hw/eavrFeoMJo=;
+        b=qYYSU4lgkqOJ897stn0IELNwRor9QmuAuhGK5oeEaiJv0qoA42z/9hk1Jo0WwTD1/k
+         HurDwBmtU3f/PiSW0KatpnLJCZgzlhw8Xb2JFEF4oWmkb7qM7Wy3/zqrw+ICko+raC2K
+         8DFRJxQvsDDLUfe4oh/VwFDzUv6odvAQMI4W2rGCWeFw5yWZ5vlalf+GW2H63tS9IPfb
+         xa5u+vF22rsVprkO3R8WyoLJ12ld04q3CBOmuR57i+bPhU/GeVEgfsX7tj/IUD9c+XxR
+         oLpeSovud/SYOhEO6CAOTd+z6rmOyopjWNuTM7MO3zi5NQvYk6UF5kNRH4u8kgP+lMYS
+         8LQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SyeU/FRM6L9MHmR1iZ4auH4KHuwiXuCIvSiBiR9Y8t0=;
-        b=Sbu0mcEPvXCSnCeeyiFtqlHwAqFHuAq+RznFt1UobnO1fKNnjSMCUA3OYKmqzmslKB
-         3S9jC8DbYP1Xts84VgVzsmVKh+bxU5zK82GbtUk852qVwjqFtM9YfhFJwyXE5lCjB0bh
-         ZFVd+bGp1Ts6TVoSHOsnTQuj8DNw2UFna46uzzLqcjJM6e5zL3OdoOQ+sQ72H2eBXuFd
-         ZzXSEZ1jASdxT10b/MePYBLPLg0yPODB84MEHIMaXk6byEYYKJvtOGqqidfcUkDE0Kud
-         w8PCtvmon/JZjYE76snDemQ+AVz+3zBUCQhJ/ZV+g8+gxHu9HEOJUJ2hPAhIGpnRyyKu
-         QyyA==
-X-Gm-Message-State: AOAM530dYngaU2Si7MMogmKt/MZwJ/B7qUObEnVRyHgK2GgE/2O5Fc49
-        O36updZr8eQihQDZDvXcetx5mj49nfNaRPOL
-X-Google-Smtp-Source: ABdhPJyqP84gFcQJSAgId7VD8y0HA8cBERewEWVfO8brSYe0X5hhiThzfByxHQqvcc+YEDrgJcA0ZQ==
-X-Received: by 2002:ad4:4e31:: with SMTP id dm17mr10907318qvb.27.1608405339022;
-        Sat, 19 Dec 2020 11:15:39 -0800 (PST)
+        bh=Pqu5QCNzl6YIsLPOFU12NOO1EQ9/G0hw/eavrFeoMJo=;
+        b=LmkkdZqDL5VfBTJhJp/XlzZ/FGuAZ36UMInroln1I+uDlzGe62XlpbbdrCpxptkCzp
+         Ji/uc1/PVmeGZ/hnMgnxJenfm4tD91OmFVaekY4wKDB8156dqf973AFd6p65NM9+PUKW
+         PGh8s1LJDHiTTIthLqJuwm8JkULBKGxhfNNS2fCrX9T6jVnO+ivKr/tsp/qrO4qvIrV8
+         GBUdI7opOtjWEjPNNYM0LIQSXpj5+aB5JAK+Xde0xDQA2E3VKnhLi3cqwyGFxwXxsFlU
+         jXyynTOHM509H1Mm69e41Uwm3flmw5VPkON+6jV1Xu80h6+jLWuRgS6ZYQO4I2jGjkv5
+         RVnQ==
+X-Gm-Message-State: AOAM531YYezGyufaFOfqCpzCNV+7R0Q53rNMzWyBJFsSc/mx6UI04osg
+        4LraqH3TpipMAmz4UELcJRo=
+X-Google-Smtp-Source: ABdhPJzCC5AEoF4AeAXrwJZUeCR7O1QW5YEpQQQu77iG3NAySeaX8Brrto1LN6Cl/eR/oZNCs0mFzg==
+X-Received: by 2002:aed:3668:: with SMTP id e95mr10163126qtb.69.1608405340469;
+        Sat, 19 Dec 2020 11:15:40 -0800 (PST)
 Received: from marcelo-debian.domain (cpe-184-152-69-119.nyc.res.rr.com. [184.152.69.119])
-        by smtp.gmail.com with ESMTPSA id 17sm7335488qtb.17.2020.12.19.11.15.37
+        by smtp.gmail.com with ESMTPSA id 17sm7335488qtb.17.2020.12.19.11.15.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Dec 2020 11:15:38 -0800 (PST)
+        Sat, 19 Dec 2020 11:15:39 -0800 (PST)
 From:   Marcelo Diop-Gonzalez <marcelo827@gmail.com>
 To:     axboe@kernel.dk, asml.silence@gmail.com
 Cc:     io-uring@vger.kernel.org,
         Marcelo Diop-Gonzalez <marcelo827@gmail.com>
-Subject: [PATCH v2 1/2] io_uring: only increment ->cq_timeouts along with ->cached_cq_tail
-Date:   Sat, 19 Dec 2020 14:15:20 -0500
-Message-Id: <20201219191521.82029-2-marcelo827@gmail.com>
+Subject: [PATCH v2 2/2] io_uring: flush timeouts that should already have expired
+Date:   Sat, 19 Dec 2020 14:15:21 -0500
+Message-Id: <20201219191521.82029-3-marcelo827@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201219191521.82029-1-marcelo827@gmail.com>
 References: <20201219191521.82029-1-marcelo827@gmail.com>
@@ -63,79 +63,96 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The quantity ->cached_cq_tail - ->cq_timeouts is used to tell how many
-non-timeout events have happened, but this subtraction could overflow
-if ->cq_timeouts is incremented more times than ->cached_cq_tail.
-It's maybe unlikely, but currently this can happen if a timeout event
-overflows the cqring, since in that case io_get_cqring() doesn't
-increment ->cached_cq_tail, but ->cq_timeouts is incremented by the
-caller. Fix it by incrementing ->cq_timeouts inside io_get_cqring().
+Right now io_flush_timeouts() checks if the current number of events
+is equal to ->timeout.target_seq, but this will miss some timeouts if
+there have been more than 1 event added since the last time they were
+flushed (possible in io_submit_flush_completions(), for example). Fix
+it by recording the starting value of ->cached_cq_overflow -
+->cq_timeouts instead of the target value, so that we can safely
+(without overflow problems) compare the number of events that have
+happened with the number of events needed to trigger the timeout.
 
 Signed-off-by: Marcelo Diop-Gonzalez <marcelo827@gmail.com>
 ---
- fs/io_uring.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/io_uring.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f3690dfdd564..f394bf358022 100644
+index f394bf358022..f62de0cb5fc4 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1582,8 +1582,6 @@ static void io_kill_timeout(struct io_kiocb *req)
- 
- 	ret = hrtimer_try_to_cancel(&io->timer);
- 	if (ret != -1) {
--		atomic_set(&req->ctx->cq_timeouts,
--			atomic_read(&req->ctx->cq_timeouts) + 1);
- 		list_del_init(&req->timeout.list);
- 		io_cqring_fill_event(req, 0);
- 		io_put_req_deferred(req, 1);
-@@ -1664,7 +1662,7 @@ static inline bool io_sqring_full(struct io_ring_ctx *ctx)
- 	return READ_ONCE(r->sq.tail) - ctx->cached_sq_head == r->sq_ring_entries;
+@@ -444,7 +444,7 @@ struct io_cancel {
+ struct io_timeout {
+ 	struct file			*file;
+ 	u32				off;
+-	u32				target_seq;
++	u32				start_seq;
+ 	struct list_head		list;
+ 	/* head of the link, used by linked timeouts only */
+ 	struct io_kiocb			*head;
+@@ -1629,6 +1629,24 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
+ 	} while (!list_empty(&ctx->defer_list));
  }
  
--static struct io_uring_cqe *io_get_cqring(struct io_ring_ctx *ctx)
-+static struct io_uring_cqe *io_get_cqring(struct io_ring_ctx *ctx, u8 opcode)
- {
- 	struct io_rings *rings = ctx->rings;
- 	unsigned tail;
-@@ -1679,6 +1677,10 @@ static struct io_uring_cqe *io_get_cqring(struct io_ring_ctx *ctx)
- 		return NULL;
- 
- 	ctx->cached_cq_tail++;
-+	if (opcode == IORING_OP_TIMEOUT)
-+		atomic_set(&ctx->cq_timeouts,
-+			   atomic_read(&ctx->cq_timeouts) + 1);
++static inline u32 io_timeout_events_left(struct io_kiocb *req)
++{
++	struct io_ring_ctx *ctx = req->ctx;
++	u32 events;
 +
- 	return &rings->cqes[tail & ctx->cq_mask];
- }
++	/*
++	 * events -= req->timeout.start_seq and the comparison between
++	 * ->timeout.off and events will not overflow because each time
++	 * ->cq_timeouts is incremented, ->cached_cq_tail is incremented too.
++	 */
++
++	events = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
++	events -= req->timeout.start_seq;
++	if (req->timeout.off > events)
++		return req->timeout.off - events;
++	return 0;
++}
++
+ static void io_flush_timeouts(struct io_ring_ctx *ctx)
+ {
+ 	while (!list_empty(&ctx->timeout_list)) {
+@@ -1637,8 +1655,7 @@ static void io_flush_timeouts(struct io_ring_ctx *ctx)
  
-@@ -1728,7 +1730,7 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
- 		if (!io_match_task(req, tsk, files))
- 			continue;
- 
--		cqe = io_get_cqring(ctx);
-+		cqe = io_get_cqring(ctx, req->opcode);
- 		if (!cqe && !force)
+ 		if (io_is_timeout_noseq(req))
+ 			break;
+-		if (req->timeout.target_seq != ctx->cached_cq_tail
+-					- atomic_read(&ctx->cq_timeouts))
++		if (io_timeout_events_left(req) > 0)
  			break;
  
-@@ -1776,7 +1778,7 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
- 	 * submission (by quite a lot). Increment the overflow count in
- 	 * the ring.
- 	 */
--	cqe = io_get_cqring(ctx);
-+	cqe = io_get_cqring(ctx, req->opcode);
- 	if (likely(cqe)) {
- 		WRITE_ONCE(cqe->user_data, req->user_data);
- 		WRITE_ONCE(cqe->res, res);
-@@ -5618,8 +5620,6 @@ static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
+ 		list_del_init(&req->timeout.list);
+@@ -5785,7 +5802,6 @@ static int io_timeout(struct io_kiocb *req)
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_timeout_data *data = req->async_data;
+ 	struct list_head *entry;
+-	u32 tail, off = req->timeout.off;
  
- 	spin_lock_irqsave(&ctx->completion_lock, flags);
- 	list_del_init(&req->timeout.list);
--	atomic_set(&req->ctx->cq_timeouts,
--		atomic_read(&req->ctx->cq_timeouts) + 1);
+ 	spin_lock_irq(&ctx->completion_lock);
  
- 	io_cqring_fill_event(req, -ETIME);
- 	io_commit_cqring(ctx);
+@@ -5799,8 +5815,8 @@ static int io_timeout(struct io_kiocb *req)
+ 		goto add;
+ 	}
+ 
+-	tail = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
+-	req->timeout.target_seq = tail + off;
++	req->timeout.start_seq = ctx->cached_cq_tail -
++		atomic_read(&ctx->cq_timeouts);
+ 
+ 	/*
+ 	 * Insertion sort, ensuring the first entry in the list is always
+@@ -5813,7 +5829,7 @@ static int io_timeout(struct io_kiocb *req)
+ 		if (io_is_timeout_noseq(nxt))
+ 			continue;
+ 		/* nxt.seq is behind @tail, otherwise would've been completed */
+-		if (off >= nxt->timeout.target_seq - tail)
++		if (req->timeout.off >= io_timeout_events_left(nxt))
+ 			break;
+ 	}
+ add:
 -- 
 2.20.1
 

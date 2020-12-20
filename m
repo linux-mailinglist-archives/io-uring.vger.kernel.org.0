@@ -2,84 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CADC32DF665
-	for <lists+io-uring@lfdr.de>; Sun, 20 Dec 2020 19:06:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0A32DF673
+	for <lists+io-uring@lfdr.de>; Sun, 20 Dec 2020 19:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbgLTSGK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Dec 2020 13:06:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52818 "EHLO
+        id S1727302AbgLTSX4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Dec 2020 13:23:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbgLTSGJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Dec 2020 13:06:09 -0500
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2A30C061248
-        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 10:05:13 -0800 (PST)
-Received: by mail-pf1-x434.google.com with SMTP id x126so5132683pfc.7
-        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 10:05:13 -0800 (PST)
+        with ESMTP id S1726470AbgLTSXz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Dec 2020 13:23:55 -0500
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB50C061285
+        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 10:23:15 -0800 (PST)
+Received: by mail-qk1-x734.google.com with SMTP id p14so7049766qke.6
+        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 10:23:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=UcLembSIIjWuHTj1SUyZFz6EkqWHGF1NM1kkxn3IcEQ=;
-        b=D2yKl4q3m19+tusNqAewuFQNekXd9qQseRkKPlkNLu/Zn1h3ShhVlpIHHlnZpFGS/r
-         +Pr+DANE0BQa3pANperwaBNSXpO6896XqA31DiMqEYLQlhE2qe0sfjAWD8sNdnOd2Mrb
-         4jzzBap7wtSHO0NI/U/OFMuEtw7BFJoXQdfHUZjPE54Ya65xnfeJCY+RTVxlNca3VNSS
-         f7PnUV1+S3zLxpNrXy+KHVHBh2/NqkfT0nPf/SWJQ8272axCaOhiTMVieV4rifDrUTJw
-         O43BXk7JQnxab1OAGBcch6eZJBTjThwmM1gI/z1qvojTWfgt6+kbI4qirc7/SbqGqsIl
-         c2Rw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g+uM/0ILziYZQFaNnKo/HP6n8BOlUwrOzNhu1B0tbR4=;
+        b=R7IX+4PyUGBb7uCkf/SN1bVdNGoi7aSf7N9T+QALIZWRQSZjlPWW+gZqhlEPGOVv7t
+         ilz7If055CWye10Rt/npAfTTiG+ue536V0l5yFvu6HDV9imn0gItEQHEojDlNhF1fRZC
+         JEp4pFB0sfsGbqhTSliSCmibuEe/jPpEjqsFk3qBA4+mHRCrFDb3iWDNruT3f6smdihN
+         NjXF/b/JJfj7etbRNb2M0+rl2IdezhTGmdQ6/2i3ChVoclbO0KBYH7pulvyd/ap/j1+6
+         5oRm4SCaQhFi6kEEuWhXzlbVhd/B0gdLaaWOTysM0bYJIqEnpMkAp3ACtvfZ1MaBw+l2
+         q2rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UcLembSIIjWuHTj1SUyZFz6EkqWHGF1NM1kkxn3IcEQ=;
-        b=ZM8pqPYWLIvTMrRIsdYcpm1c04Sj2++MeYkI9ET/+5FHor2Vm9HmSTshg+BgVlD6cL
-         zIb/tf+2Ijde4lhV48WlLQajk/lnyOtpmvkHah0klZeHbfVu3buXqAjlvNFZ+qk70smd
-         JTy4GtFb4N5bC9dMbAXGj8ecehEY3hf7aLatORd9ec7HSnEdw0WkZUx8R0KI2p0l6/xS
-         RXbk0w3jJt0uWupNXGa7oYce8hmFVBNWLWuQILkbHu/zVeiZj0gyvonPs26k7pqOK0oN
-         YyshuSTzmkXwSU43vZ0bvq2Ilav7hQdVPjJ04MvpIr6SLKN9LqMUuyCSe9Lz7Yu+R6Gb
-         u79w==
-X-Gm-Message-State: AOAM531xSAwaOJSOYdQYBJvcej5D79hC+lQ7ioAy9l695KamwGgSGa+4
-        qOAHbMolrYmLc9W/ztpPw6/YssvI5UV3Qg==
-X-Google-Smtp-Source: ABdhPJzsel5gkf/YKJtpbMeCcoum0ef79OecoGi5cPw2JnU0C1dy8pAwCwqigYacEwwaRia7fzF88A==
-X-Received: by 2002:a62:2cc:0:b029:1a8:4d9b:8e8d with SMTP id 195-20020a6202cc0000b02901a84d9b8e8dmr12508306pfc.8.1608487512922;
-        Sun, 20 Dec 2020 10:05:12 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id t1sm13235102pfg.212.2020.12.20.10.05.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Dec 2020 10:05:12 -0800 (PST)
-Subject: Re: [PATCH 0/3] task/files cancellation fixes
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1608469706.git.asml.silence@gmail.com>
- <b6795a97-9384-e105-7f64-7af821aed641@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <24fd5a4a-e5fa-0806-ec52-f8ffc0245a78@kernel.dk>
-Date:   Sun, 20 Dec 2020 11:05:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g+uM/0ILziYZQFaNnKo/HP6n8BOlUwrOzNhu1B0tbR4=;
+        b=omLIU7jzZ3+xtyqDvoh9vnmyM3PQrInbTF6fUGVgnrlX19pFuGEeZpG0sOmlgznF+d
+         Mn5xRJB7GVMqEYjlgmVPXsdKkl8yEjo+EOywt9WreafegsCCKdMsA+FaKM9vIad6mj8J
+         nQAShZoTQr8CeeFMppNQoPjNm902MEvBHOMyrz3MJdlTyud5vAX4jIO/HsguBLLtHptK
+         lgY8m2aAGAD6uDM7DsFR1zhbmxEWqJsSy3Xth9n+igDHzG3WgYqXc/I4FN/FUR6D+Kzf
+         z8etsJYaN69v6xHUtlrsg1X3ycTOBUBei4XkibxfAVJdHTIlZud1U0mlQchj0QFa7bt7
+         uMBA==
+X-Gm-Message-State: AOAM531NrPv7IiLmnppMrj5PAD/QiwguWyCmlB2ZdT9OoUQ7PFa2mx6Q
+        IPRvx360z4XKhrmUGV0iy+Hzy3EEuvjDgccnh50=
+X-Google-Smtp-Source: ABdhPJw6/GnGhiYsSR+VSU9nhzUulfWC0d/v8Gcc5BeDjack9hJoDfSYaDP8Ju52/LVkz7VuOooUGOOK6N6NYODaha0=
+X-Received: by 2002:ae9:eb8b:: with SMTP id b133mr14249390qkg.399.1608488594869;
+ Sun, 20 Dec 2020 10:23:14 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <b6795a97-9384-e105-7f64-7af821aed641@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
+ <2B352D6C-4CA2-4B09-8751-D7BB8159072D@googlemail.com> <d9205a43-ebd7-9412-afc6-71fdcf517a32@kernel.dk>
+ <CAAss7+ps4xC785yMjXC6u8NiH9PCCQQoPiH+AhZT7nMX7Q_uEw@mail.gmail.com>
+ <0fe708e2-086b-94a8-def4-e4ebd6e0b709@kernel.dk> <614f8422-3e0e-25b9-4cc2-4f1c07705ab0@kernel.dk>
+ <986c85af-bb77-60d4-8739-49b662554157@gmail.com> <e88403ad-e272-2028-4d7a-789086e12d8b@kernel.dk>
+ <df79018a-0926-093f-b112-3ed3756f6363@gmail.com> <CAAss7+peDoeEf8PL_REiU6s_wZ+Z=ZPMcWNdYt0i-C8jUwtc4Q@mail.gmail.com>
+ <0fb27d06-af82-2e1b-f8c5-3a6712162178@gmail.com> <ff816e37-ce0e-79c7-f9bf-9fa94d62484d@kernel.dk>
+ <CAAss7+o7_FZtBFs5c2UOS6KSXuDBkDwi=okffh4JRmYieTF3LA@mail.gmail.com>
+In-Reply-To: <CAAss7+o7_FZtBFs5c2UOS6KSXuDBkDwi=okffh4JRmYieTF3LA@mail.gmail.com>
+From:   Josef <josef.grieb@gmail.com>
+Date:   Sun, 20 Dec 2020 19:23:03 +0100
+Message-ID: <CAAss7+raikmW4jGMYk8vLTqm4Y4X-im6zzWiVZY3ikQ7DifKQA@mail.gmail.com>
+Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Norman Maurer <norman.maurer@googlemail.com>,
+        Dmitry Kadashev <dkadashev@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/20/20 11:01 AM, Pavel Begunkov wrote:
-> On 20/12/2020 13:21, Pavel Begunkov wrote:
->> First two are only for task cancellation, the last one for both.
->>
->> Jens, do you remember the exact reason why you added the check
->> removed in [3/3]? I have a clue, but that stuff doesn't look
->> right regardless. See "exit: do exit_task_work() before shooting
->> off mm" thread.
-> 
-> The question is answered, the bug is still here, but that's too
-> early for 3/3. Please consider first 2 patches.
+> It's io_uring-5.11 but I had some patches on top.
+> I regenerated it below for up to date Jens' io_uring-5.11
 
-Yep, first two look good to me, thanks!
+Pavel I just tested your patch, it works :)
+
+On Sun, 20 Dec 2020 at 17:59, Josef <josef.grieb@gmail.com> wrote:
+>
+> > Just a guess - Josef, is the eventfd for the ring fd itself?
+>
+> yes via eventfd_write we want to wake up/unblock
+> io_uring_enter(IORING_ENTER_GETEVENTS), and the read eventfd event is
+> submitted every time
+> each ring fd in netty has one eventfd
+>
+> On Sun, 20 Dec 2020 at 17:14, Jens Axboe <axboe@kernel.dk> wrote:
+> >
+> > On 12/20/20 6:00 AM, Pavel Begunkov wrote:
+> > > On 20/12/2020 07:13, Josef wrote:
+> > >>> Guys, do you share rings between processes? Explicitly like sending
+> > >>> io_uring fd over a socket, or implicitly e.g. sharing fd tables
+> > >>> (threads), or cloning with copying fd tables (and so taking a ref
+> > >>> to a ring).
+> > >>
+> > >> no in netty we don't share ring between processes
+> > >>
+> > >>> In other words, if you kill all your io_uring applications, does it
+> > >>> go back to normal?
+> > >>
+> > >> no at all, the io-wq worker thread is still running, I literally have
+> > >> to restart the vm to go back to normal(as far as I know is not
+> > >> possible to kill kernel threads right?)
+> > >>
+> > >>> Josef, can you test the patch below instead? Following Jens' idea it
+> > >>> cancels more aggressively when a task is killed or exits. It's based
+> > >>> on [1] but would probably apply fine to for-next.
+> > >>
+> > >> it works, I run several tests with eventfd read op async flag enabled,
+> > >> thanks a lot :) you are awesome guys :)
+> > >
+> > > Thanks for testing and confirming! Either we forgot something in
+> > > io_ring_ctx_wait_and_kill() and it just can't cancel some requests,
+> > > or we have a dependency that prevents release from happening.
+> >
+> > Just a guess - Josef, is the eventfd for the ring fd itself?
+> >
+> > BTW, the io_wq_cancel_all() in io_ring_ctx_wait_and_kill() needs to go.
+> > We should just use targeted cancelation - that's cleaner, and the
+> > cancel all will impact ATTACH_WQ as well. Separate thing to fix, though.
+> >
+> > --
+> > Jens Axboe
+> >
+>
+>
+> --
+> Josef
+
+
 
 -- 
-Jens Axboe
-
+Josef

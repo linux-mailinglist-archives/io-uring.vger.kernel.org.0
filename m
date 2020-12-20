@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57AC22DF606
-	for <lists+io-uring@lfdr.de>; Sun, 20 Dec 2020 17:02:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 600BF2DF60D
+	for <lists+io-uring@lfdr.de>; Sun, 20 Dec 2020 17:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbgLTQCk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Dec 2020 11:02:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33910 "EHLO
+        id S1726896AbgLTQOz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Dec 2020 11:14:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbgLTQCk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Dec 2020 11:02:40 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79443C0613CF
-        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 08:01:59 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id q75so8295947wme.2
-        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 08:01:59 -0800 (PST)
+        with ESMTP id S1726772AbgLTQOz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Dec 2020 11:14:55 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66391C0613CF
+        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 08:14:09 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id q4so4329915plr.7
+        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 08:14:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=G6K2o2aGb/YZM0Qy0wU6beV3DadQaRbxK5xkVKdrbTA=;
-        b=TEmViDPc1XxlE+GUuh7VGI0j9ZJztw920f6+17sMU/xcHcjxMxBxqup49eTSRSfFZ+
-         l2NALOuT2eEHOqaN6a4qybVaN6mmHDuLnjaku5YdatXDg2amvS+AuVYILVqvI8yb6nmh
-         qz5pjbbZOhtjsKaBimbrmOlxLALps6daS46L2XjdR2ERXZsug3jlfV85gM74OSqj9IQl
-         Bd3GT74CTjCxE2x6OgUpZEZoui9KPi0Yl+edFxjOwkmUNN2uc3O9cYReBFeMxx4h3/An
-         C2dnRy4EV2Z9jtJXFwufgok6EBPcbN/NLGmPD5GQG+FiWFxuNwybWzXmAZmiRP7lsRs8
-         R8eg==
+        bh=KuLV0/ZY673SHw3vEGicCEpu4HJPYivMzPMitS0rsyA=;
+        b=Vq5HRW+dxfu48bj24L0Kvc9ailjZwrIg2dHmPth2SOSoLkQJY+YqpilNvKdzVfj0dh
+         FPiMyKDbQTXLPuSaoG0rx2pkJWcEuM9FBhoZ+F9oWmaI6vIUHjMTRsE6HQqDe5n0SntT
+         08s40+tKYXcV25iy628gqQ8uV/VxrNA7AKDGy8ZdXeXXz/WIAau7fqsHPiBvtKO+mO1g
+         3cw8Xi9/adTgIXyeFWqcOtXbXyNwmAnV3ZD4xog8rdEyEpDPjuIc0HqQAy43KAm/fgg7
+         V91EvINb8eRE8Dueu1+inwxfcX2LYAl7hBuD/GU4nsx0eKG38WKU4n5DaPXADmnBLN/h
+         tYFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=G6K2o2aGb/YZM0Qy0wU6beV3DadQaRbxK5xkVKdrbTA=;
-        b=VA8VOQmStJrKAVXWukZMl79zrXZZuF642cLc6JqfU1snL3ob8sHkuO2z7KCRplbwRO
-         3/Zyb9Dk1nRxDqNcil7o8pkvwbS54zc3AhRSHa19sqo1Hr5m7dOSaWFqSj1yNeCGbFct
-         Qa5VU7/FzZZl488oFGrCbQciovJamk7INginn9FfL1nL2UhIdCT7fPvu6SC+aVuLkK20
-         y5r8ZAgFQhRdqUEmA0Ly5EOAXRQsenv0CzjVATjiH8VtfUOZcxopdXdgfJQFYNdDlQnA
-         mNChemljyYZHWeJo4+4Whf0wKxzgp/hY0lY8CVVF57xZ4WlQATkHRCdTu2/wY+ASppc9
-         MTZw==
-X-Gm-Message-State: AOAM533v3GXqyTSCQk9Gn150IqIQ2JKVTkZLuP9FcMXenA/WbFLg5Kc4
-        +PkwEfNVexsrtJUdtvklzB2+4NSRNreaLg==
-X-Google-Smtp-Source: ABdhPJwir/IpkBczPUX82fS/eA3hJTzSkVfMV62UGzaRHNW0lVMz38dxc/iFuR2woTEPu8/qvhVuiw==
-X-Received: by 2002:a1c:2483:: with SMTP id k125mr12659285wmk.67.1608480117907;
-        Sun, 20 Dec 2020 08:01:57 -0800 (PST)
-Received: from [192.168.8.141] ([85.255.237.164])
-        by smtp.gmail.com with ESMTPSA id x66sm19006044wmg.26.2020.12.20.08.01.56
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KuLV0/ZY673SHw3vEGicCEpu4HJPYivMzPMitS0rsyA=;
+        b=Zn95kzSAJOARPBP8/6WyaVWt23g/rfhLCx9tZ5c2N+vWtJPz2wpI+LvcpOLjN7fzgE
+         hCj47orRB9lmj45iwpaPz83YN8SKQMlwiZhxz8Q+2/FT1SIso992gO6upxXXIwqw2X9W
+         jZQkVOWL7nRf5LFgbMWZ9KfRMcPvXglLSzrEYpZFbhh7yFeiIPm9V52Z1pZOJgspy32X
+         FQFVm6Gl56FFrweapYHU5pPCEfNCzLc4ws0Bs0a/NVmT+lt+76nTn7B/ac88NiY0ChVb
+         zz/BLoe/tRHC77Hyvhi34rNzcqkmNdkuxgcERxALeFi3n0rqHBf4NKZ5PMO1ePTHsSW3
+         nqpg==
+X-Gm-Message-State: AOAM533nhXGgW/GprTuIUuFoaEplXTKHLXzhlOMjP0FdOHiJyt/evF/h
+        bJap42QMeO+YkyScX4WuI3pkDihSMh/mCA==
+X-Google-Smtp-Source: ABdhPJzQXMWExCYz/IJcbPr75nRNeXvVVSh5ChNPcPwVD1Hes0dwnKF+1Ubtkp4FmVKgo28pOLb8rg==
+X-Received: by 2002:a17:902:ac90:b029:da:fd0c:53ba with SMTP id h16-20020a170902ac90b02900dafd0c53bamr12726544plr.23.1608480848149;
+        Sun, 20 Dec 2020 08:14:08 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id fw12sm13148487pjb.43.2020.12.20.08.14.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Dec 2020 08:01:57 -0800 (PST)
+        Sun, 20 Dec 2020 08:14:07 -0800 (PST)
 Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
-To:     Josef <josef.grieb@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Norman Maurer <norman.maurer@googlemail.com>,
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Josef <josef.grieb@gmail.com>
+Cc:     Norman Maurer <norman.maurer@googlemail.com>,
         Dmitry Kadashev <dkadashev@gmail.com>,
         io-uring <io-uring@vger.kernel.org>
 References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
@@ -65,58 +65,13 @@ References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
  <df79018a-0926-093f-b112-3ed3756f6363@gmail.com>
  <CAAss7+peDoeEf8PL_REiU6s_wZ+Z=ZPMcWNdYt0i-C8jUwtc4Q@mail.gmail.com>
  <0fb27d06-af82-2e1b-f8c5-3a6712162178@gmail.com>
- <6361f713-2c90-0828-6a8f-72d277320591@gmail.com>
- <CAAss7+oFAS9rs-6Wkz3=FQX4x0TpFY1WiMZpK66MofFgMhTaqw@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
- bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
- 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
- +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
- W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
- CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
- Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
- EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
- jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
- NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
- bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
- PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
- Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
- Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
- xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
- aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
- HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
- 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
- 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
- 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
- M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
- reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
- IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
- dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
- Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
- jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
- Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
- dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
- xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
- DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
- F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
- 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
- aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
- 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
- LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
- uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
- rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
- 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
- JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
- UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
- m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
- OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <ffe413a0-d188-b225-c977-36372f4e9b4b@gmail.com>
-Date:   Sun, 20 Dec 2020 15:58:34 +0000
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ff816e37-ce0e-79c7-f9bf-9fa94d62484d@kernel.dk>
+Date:   Sun, 20 Dec 2020 09:14:07 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAAss7+oFAS9rs-6Wkz3=FQX4x0TpFY1WiMZpK66MofFgMhTaqw@mail.gmail.com>
+In-Reply-To: <0fb27d06-af82-2e1b-f8c5-3a6712162178@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -124,48 +79,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 20/12/2020 15:56, Josef wrote:
->> I'd really appreciate if you can try one more. I want to know why
->> the final cleanup doesn't cope  with it.
+On 12/20/20 6:00 AM, Pavel Begunkov wrote:
+> On 20/12/2020 07:13, Josef wrote:
+>>> Guys, do you share rings between processes? Explicitly like sending
+>>> io_uring fd over a socket, or implicitly e.g. sharing fd tables
+>>> (threads), or cloning with copying fd tables (and so taking a ref
+>>> to a ring).
+>>
+>> no in netty we don't share ring between processes
+>>
+>>> In other words, if you kill all your io_uring applications, does it
+>>> go back to normal?
+>>
+>> no at all, the io-wq worker thread is still running, I literally have
+>> to restart the vm to go back to normal(as far as I know is not
+>> possible to kill kernel threads right?)
+>>
+>>> Josef, can you test the patch below instead? Following Jens' idea it
+>>> cancels more aggressively when a task is killed or exits. It's based
+>>> on [1] but would probably apply fine to for-next.
+>>
+>> it works, I run several tests with eventfd read op async flag enabled,
+>> thanks a lot :) you are awesome guys :)
 > 
-> yeah sure, which kernel version? it seems to be that this patch
-> doesn't match io_uring-5.11 and io_uring-5.10
+> Thanks for testing and confirming! Either we forgot something in
+> io_ring_ctx_wait_and_kill() and it just can't cancel some requests,
+> or we have a dependency that prevents release from happening.
 
-It's io_uring-5.11 but I had some patches on top.
-I regenerated it below for up to date Jens' io_uring-5.11
+Just a guess - Josef, is the eventfd for the ring fd itself?
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index f3690dfdd564..4e1fb4054516 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8620,6 +8620,10 @@ static int io_remove_personalities(int id, void *p, void *data)
- 	return 0;
- }
- 
-+static void io_cancel_defer_files(struct io_ring_ctx *ctx,
-+				  struct task_struct *task,
-+				  struct files_struct *files);
-+
- static void io_ring_exit_work(struct work_struct *work)
- {
- 	struct io_ring_ctx *ctx = container_of(work, struct io_ring_ctx,
-@@ -8633,6 +8637,8 @@ static void io_ring_exit_work(struct work_struct *work)
- 	 */
- 	do {
- 		io_iopoll_try_reap_events(ctx);
-+		io_poll_remove_all(ctx, NULL, NULL);
-+		io_kill_timeouts(ctx, NULL, NULL);
- 	} while (!wait_for_completion_timeout(&ctx->ref_comp, HZ/20));
- 	io_ring_ctx_free(ctx);
- }
-@@ -8647,6 +8653,7 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 		io_cqring_overflow_flush(ctx, true, NULL, NULL);
- 	mutex_unlock(&ctx->uring_lock);
- 
-+	io_cancel_defer_files(ctx, NULL, NULL);
- 	io_kill_timeouts(ctx, NULL, NULL);
- 	io_poll_remove_all(ctx, NULL, NULL);
- 
+BTW, the io_wq_cancel_all() in io_ring_ctx_wait_and_kill() needs to go.
+We should just use targeted cancelation - that's cleaner, and the
+cancel all will impact ATTACH_WQ as well. Separate thing to fix, though.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

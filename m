@@ -2,70 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA8A2DF5A3
-	for <lists+io-uring@lfdr.de>; Sun, 20 Dec 2020 15:23:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 559882DF5D5
+	for <lists+io-uring@lfdr.de>; Sun, 20 Dec 2020 16:22:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbgLTOXU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Dec 2020 09:23:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46910 "EHLO
+        id S1727647AbgLTPWP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Dec 2020 10:22:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727489AbgLTOXU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Dec 2020 09:23:20 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17E5C0613CF
-        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 06:22:39 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id y23so8145297wmi.1
-        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 06:22:39 -0800 (PST)
+        with ESMTP id S1727590AbgLTPWO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Dec 2020 10:22:14 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C7B4C0613CF;
+        Sun, 20 Dec 2020 07:21:30 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id v14so7360873wml.1;
+        Sun, 20 Dec 2020 07:21:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZmGgSLAoeeyRU4gKzj+KQBa3cFwxmjRfik+PkViMDTg=;
-        b=vf1ChVl/wJ3KJSKgXlsCH4T5Nw9Kc4j5YhfF7TXJDwhZnUqnLBa1k1jjwdiEbqJZoT
-         +KfCZtB0P31nS31V/79aiSbCRFfNIG5crwoLNTlfRr3cwBYJVYglqzKK8uuUJOlWfYtl
-         8iB2DVrrUsDefouzAt2A4Ls0wdfhy33n03s7woAH2nVJpgqEa2Rx+qhEJFMSUdiB0L52
-         rmzwlgfotku4RqFhr675iE3HkX1yB8A/1QfmNkM0wZIx2JNnPF3v2Xa8qqSY5FIgBqcr
-         87iMpRO8NH2kLYDU04HJij6dkhvbiw6rkpy0xAmzyQlm7ecV3e22Z8AsXx5sTZ8B2wQr
-         VxGw==
+        bh=32aS/dCbdzGagOOEuVlX+6Iwp2t3wDVr+LYntNFXMk8=;
+        b=gPBFqkjjFVuDFLykWu/81sJJumfUJvR7I446OKMkY7QV4N1P/vOF5EeqIocJHy63Xo
+         0xuSvX3j/tgA4/nX8rm3kmN4HinljqlxrvlbaIRJ9Gc/nMfvF63DkzIzKWOmohvqaFBa
+         tWaL1yo4aUbgrEnz3rljqBmrELqEz5EIa2TMpproVjuIJ0SuugO3XPn9PnrS03Cy/HTz
+         z+iRuxfqdbGuMrXAz1MkJVftr/+qhxTrSqZtfAqyWI1SMowexHkXZCLdJH3r2BfugZUk
+         6Ni9lVgSTD8FZB4ipelj1ICijjEq91z2N2qKqkR1wQolVA16CnrAHLMcjJXTuzx4d0Mv
+         6rOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=ZmGgSLAoeeyRU4gKzj+KQBa3cFwxmjRfik+PkViMDTg=;
-        b=HCGJzzFUix1YquPJCuOKna3G4x+YgW2Lt6j1bv7dtnxsslEOvrhsEnmusQorVjrSq9
-         fNnUaFEGiGVj9owJTtbQSXxVzVIAlDIdCCtRFFgzn5VEctdXgg20Xl93QSQrR3apVT0v
-         x4ebJFKMpYqltbM5F61oLg8T4mO/AYOnEgq9ypR/WbF1hhRuXKZKGRpUYVTmX04VCR1q
-         +eqJx+POngiCEtkhYjPYTnE9CYYYXyt1ku+fP03J2DT8URSlKEqphdg1ZZe6Sg6p9Wy8
-         p21/t4W5StVqbf5p1mG4tSsvvOozu7/3UPvdoWZx2xIvYKDlXZ35MLFwrT04fOVLRsfi
-         7Lfw==
-X-Gm-Message-State: AOAM530ZpjJZo8YLrQXo1J9z3WcWfIEs2jOyCkAQTDtbOmomZmMT+4fC
-        fD1axiKF0C1mbykhK2vYiQNGIV+TlQWvoQ==
-X-Google-Smtp-Source: ABdhPJyQYVFgZP8DXtdln0XFpt3dfvwNsPd/08xLwCjfl2jm4c1vG+mc9EHUl4+snBUYQVUPusuCFQ==
-X-Received: by 2002:a1c:9692:: with SMTP id y140mr5858607wmd.128.1608474158158;
-        Sun, 20 Dec 2020 06:22:38 -0800 (PST)
-Received: from [192.168.8.139] ([85.255.237.164])
-        by smtp.gmail.com with ESMTPSA id y63sm19933378wmd.21.2020.12.20.06.22.36
+        bh=32aS/dCbdzGagOOEuVlX+6Iwp2t3wDVr+LYntNFXMk8=;
+        b=NqntjO1zgUI+s1FN3/GCgv6cZQM+YQuDtUHIFaQV+gqHBPow2jyrvmCuAE2RQEvyuT
+         X0Z7Ne6I7ZEBZnCgkDlVZGt+DYtzkKi5WDvzTSk7g5ItqxwBqFHLel2OjHyYPCs/RjHC
+         JooW+Q0dMojeUIHUta+8r254YCDmcJDqjTsLsnQlvwOUVrGLxKA2VlOP/GOJUSdeQVRj
+         W9VNbZf01vzocRD13egRnW4XclSUZ2CPVLhqLWSlyZAVvTCYorY+oMrXDB/4HspPm7U+
+         d2cHLWygdq6LT6HqmcsK+U19VOLs+rrOhjFFetT/v/iiJhNQ9wpUrj9LQ+xlcK3pkF3e
+         5Hjg==
+X-Gm-Message-State: AOAM530CJ1nnEJ+fWCnjLgArmOxTt24cEznysXKeVAT5qNjaL5Ybtx1O
+        VbKJFQbrH8RmsMmhCJqJwEeZgZDwpTG80g==
+X-Google-Smtp-Source: ABdhPJy3SMuKXHFDijTTA4YMsvrVXosbgXqsA7G0mX97Sy8DUwehfMuroDkCNQb04AC7Rj2Oa3leWw==
+X-Received: by 2002:a1c:4184:: with SMTP id o126mr12105459wma.107.1608477687337;
+        Sun, 20 Dec 2020 07:21:27 -0800 (PST)
+Received: from [192.168.8.141] ([85.255.237.164])
+        by smtp.gmail.com with ESMTPSA id m81sm19714573wmf.29.2020.12.20.07.21.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Dec 2020 06:22:37 -0800 (PST)
-Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
+        Sun, 20 Dec 2020 07:21:26 -0800 (PST)
+Subject: Re: [PATCH] fs: io_uring.c: Add skip option for __io_sqe_files_update
+To:     noah <goldstein.w.n@gmail.com>
+Cc:     noah <goldstein.n@wustl.edu>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20201220065025.116516-1-goldstein.w.n@gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Josef <josef.grieb@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Norman Maurer <norman.maurer@googlemail.com>,
-        Dmitry Kadashev <dkadashev@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
- <2B352D6C-4CA2-4B09-8751-D7BB8159072D@googlemail.com>
- <d9205a43-ebd7-9412-afc6-71fdcf517a32@kernel.dk>
- <CAAss7+ps4xC785yMjXC6u8NiH9PCCQQoPiH+AhZT7nMX7Q_uEw@mail.gmail.com>
- <0fe708e2-086b-94a8-def4-e4ebd6e0b709@kernel.dk>
- <614f8422-3e0e-25b9-4cc2-4f1c07705ab0@kernel.dk>
- <986c85af-bb77-60d4-8739-49b662554157@gmail.com>
- <e88403ad-e272-2028-4d7a-789086e12d8b@kernel.dk>
- <df79018a-0926-093f-b112-3ed3756f6363@gmail.com>
- <CAAss7+peDoeEf8PL_REiU6s_wZ+Z=ZPMcWNdYt0i-C8jUwtc4Q@mail.gmail.com>
- <0fb27d06-af82-2e1b-f8c5-3a6712162178@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -109,12 +99,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <6361f713-2c90-0828-6a8f-72d277320591@gmail.com>
-Date:   Sun, 20 Dec 2020 14:19:17 +0000
+Message-ID: <0cdf2aac-6364-742d-debb-cfd58b4c6f2b@gmail.com>
+Date:   Sun, 20 Dec 2020 15:18:05 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <0fb27d06-af82-2e1b-f8c5-3a6712162178@gmail.com>
+In-Reply-To: <20201220065025.116516-1-goldstein.w.n@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -122,70 +112,57 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 20/12/2020 13:00, Pavel Begunkov wrote:
-> On 20/12/2020 07:13, Josef wrote:
->>> Guys, do you share rings between processes? Explicitly like sending
->>> io_uring fd over a socket, or implicitly e.g. sharing fd tables
->>> (threads), or cloning with copying fd tables (and so taking a ref
->>> to a ring).
->>
->> no in netty we don't share ring between processes
->>
->>> In other words, if you kill all your io_uring applications, does it
->>> go back to normal?
->>
->> no at all, the io-wq worker thread is still running, I literally have
->> to restart the vm to go back to normal(as far as I know is not
->> possible to kill kernel threads right?)
->>
->>> Josef, can you test the patch below instead? Following Jens' idea it
->>> cancels more aggressively when a task is killed or exits. It's based
->>> on [1] but would probably apply fine to for-next.
->>
->> it works, I run several tests with eventfd read op async flag enabled,
->> thanks a lot :) you are awesome guys :)
+On 20/12/2020 06:50, noah wrote:> From: noah <goldstein.n@wustl.edu>
 > 
-> Thanks for testing and confirming! Either we forgot something in
-> io_ring_ctx_wait_and_kill() and it just can't cancel some requests,
-> or we have a dependency that prevents release from happening.
+> This patch makes it so that specify a file descriptor value of -2 will
+> skip updating the corresponding fixed file index.
 > 
-> BTW, apparently that patch causes hangs for unrelated but known
-> reasons, so better to not use it, we'll merge something more stable.
+> This will allow for users to reduce the number of syscalls necessary
+> to update a sparse file range when using the fixed file option.
 
-I'd really appreciate if you can try one more. I want to know why
-the final cleanup doesn't cope  with it.
+Answering the github thread -- it's indeed a simple change, I had it the
+same day you posted the issue. See below it's a bit cleaner. However, I
+want to first review "io_uring: buffer registration enhancements", and
+if it's good, for easier merging/etc I'd rather prefer to let it go
+first (even if partially).
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 941fe9b64fd9..d38fc819648e 100644
+index 941fe9b64fd9..b3ae9d5da17e 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -8614,6 +8614,10 @@ static int io_remove_personalities(int id, void *p, void *data)
- 	return 0;
- }
+@@ -7847,9 +7847,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 	if (IS_ERR(ref_node))
+ 		return PTR_ERR(ref_node);
  
-+static void io_cancel_defer_files(struct io_ring_ctx *ctx,
-+				  struct task_struct *task,
-+				  struct files_struct *files);
+-	done = 0;
+ 	fds = u64_to_user_ptr(up->fds);
+-	while (nr_args) {
++	for (done = 0; done < nr_args; done++) {
+ 		struct fixed_file_table *table;
+ 		unsigned index;
+ 
+@@ -7858,7 +7857,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 			err = -EFAULT;
+ 			break;
+ 		}
+-		i = array_index_nospec(up->offset, ctx->nr_user_files);
++		if (fd == IORING_REGISTER_FILES_SKIP)
++			continue;
 +
- static void io_ring_exit_work(struct work_struct *work)
- {
- 	struct io_ring_ctx *ctx = container_of(work, struct io_ring_ctx,
-@@ -8627,6 +8631,8 @@ static void io_ring_exit_work(struct work_struct *work)
- 	 */
- 	do {
- 		io_iopoll_try_reap_events(ctx);
-+		io_poll_remove_all(ctx, NULL, NULL);
-+		io_kill_timeouts(ctx, NULL, NULL);
- 	} while (!wait_for_completion_timeout(&ctx->ref_comp, HZ/20));
- 	io_ring_ctx_free(ctx);
- }
-@@ -8641,6 +8647,7 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 		io_cqring_overflow_flush(ctx, true, NULL, NULL);
- 	mutex_unlock(&ctx->uring_lock);
++		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
+ 		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
+ 		index = i & IORING_FILE_TABLE_MASK;
+ 		if (table->files[index]) {
+@@ -7896,9 +7898,6 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 				break;
+ 			}
+ 		}
+-		nr_args--;
+-		done++;
+-		up->offset++;
+ 	}
  
-+	io_cancel_defer_files(ctx, NULL, NULL);
- 	io_kill_timeouts(ctx, NULL, NULL);
- 	io_poll_remove_all(ctx, NULL, NULL);
- 
+ 	if (needs_switch) {
+
 -- 
 Pavel Begunkov

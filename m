@@ -2,180 +2,165 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C16842DF28D
-	for <lists+io-uring@lfdr.de>; Sun, 20 Dec 2020 02:00:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6E062DF295
+	for <lists+io-uring@lfdr.de>; Sun, 20 Dec 2020 02:25:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbgLTBAG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 19 Dec 2020 20:00:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37496 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbgLTBAG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 19 Dec 2020 20:00:06 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53E23C0613CF
-        for <io-uring@vger.kernel.org>; Sat, 19 Dec 2020 16:59:21 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id e25so7139139wme.0
-        for <io-uring@vger.kernel.org>; Sat, 19 Dec 2020 16:59:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sRLdyC4Q25NFzY6pW6772mSGdtCD1oZhQdtCtqWKoyA=;
-        b=QovfEtcqsNHBcIkj1h+0AUpoB1P451rdpiyLQjNkpIHjIHruzRxhwisz/y5YCtXOEk
-         Y7Oh2ugNL+0L23Pxg2Zf0O/GeuQQ5qGuq9T03W/FpUIrDVuWoPQ9weOK/qMO5n/NR/z7
-         8mNPXzBo2d0y9IYgcYfxy1XhRDwfhjsKgR8ajEQvO8Y22c6hOP3b+0ECicJtqO3I9s20
-         yKaultfwDiZf1fLHE6Y75mQQv5T4O0W+1/Rl+nvObvegxO0K4GdyvMtCcRzZ9M6PFrI9
-         D83jC3hZ3fA/e+FXY7yfS2HBRxH/Xa2SXG3ne7zXrobrR95RUG3a0uD7l80EzJ8x0MEY
-         2NuA==
+        id S1726915AbgLTBY5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 19 Dec 2020 20:24:57 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:45830 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbgLTBYv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 19 Dec 2020 20:24:51 -0500
+Received: by mail-il1-f199.google.com with SMTP id x10so6031133ilq.12
+        for <io-uring@vger.kernel.org>; Sat, 19 Dec 2020 17:24:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=sRLdyC4Q25NFzY6pW6772mSGdtCD1oZhQdtCtqWKoyA=;
-        b=aDSD4tjhltfIG8KoMHmjh2C9mn9LQtuT9qse1kRX8X2Yg67RWtskBeeqjdRZFOA8ZT
-         Vmu/YxszJs48VO2LMnoatqQ93A5Bi+w3+epKdoeRn4gckOQ3S2fUqnBR0/40zhUEhXdt
-         kzviCSMYRH8mZFo/xlzprVlYLtOm1kEBPA4mfT+9v2NrUnL87d4xEgM7tQb3uP+z6LYq
-         4AesL7Z0qmoirUeeaJA8Tz3PMiGRHAVgHqycRl3zxwGvbyySRbzxrQYSWW7aFHgZg+Pm
-         mt9ZbNpmIgxVEQrw7RXu4U2nd8Wx3GgHmlKN/hp/D07+ev3IDGVoKd7mGdiqVLcVNIN6
-         eeOg==
-X-Gm-Message-State: AOAM530qMJiZztK72HNMq6dpQM2eX6ZzszinioEaZ0KkiZozhCFH24Xs
-        lxDCYYIM80Id2Kybmo4vyCNrAG2gUf+0uw==
-X-Google-Smtp-Source: ABdhPJxA02vjUNtkf/LHJa707uDOq/QTmcrsVUp/X+CALBpuomAhQO3WRaixO1ZxJh8pRlEtnTnr+g==
-X-Received: by 2002:a05:600c:2652:: with SMTP id 18mr9787914wmy.54.1608425958497;
-        Sat, 19 Dec 2020 16:59:18 -0800 (PST)
-Received: from [192.168.8.133] ([85.255.237.164])
-        by smtp.gmail.com with ESMTPSA id n17sm16807590wmc.33.2020.12.19.16.59.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Dec 2020 16:59:17 -0800 (PST)
-To:     Jens Axboe <axboe@kernel.dk>, Josef <josef.grieb@gmail.com>
-Cc:     Norman Maurer <norman.maurer@googlemail.com>,
-        Dmitry Kadashev <dkadashev@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
- <2B352D6C-4CA2-4B09-8751-D7BB8159072D@googlemail.com>
- <d9205a43-ebd7-9412-afc6-71fdcf517a32@kernel.dk>
- <CAAss7+ps4xC785yMjXC6u8NiH9PCCQQoPiH+AhZT7nMX7Q_uEw@mail.gmail.com>
- <0fe708e2-086b-94a8-def4-e4ebd6e0b709@kernel.dk>
- <614f8422-3e0e-25b9-4cc2-4f1c07705ab0@kernel.dk>
- <986c85af-bb77-60d4-8739-49b662554157@gmail.com>
- <e88403ad-e272-2028-4d7a-789086e12d8b@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
-Message-ID: <2e968c77-912d-6ae1-7000-5e34eb978ab5@gmail.com>
-Date:   Sun, 20 Dec 2020 00:55:57 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=b6Rz9SpGo3gliA4WwCwaVIirtj/lEHbQR0C+NTE/jEA=;
+        b=DpL//UyEPyzM/t3weXhnF4moSb5x25QauSVoxhYfGKyo/m8G/DylC3tbyfYHjwprTJ
+         Nx2ABgzGEx9mA35hpsYkvjkkpg7OouzrB9bVlBmf+BbiPUqnlwyVyhkZ6NCpMiPwcJ5y
+         whjmuax5LZMGMMu1/stEYpz959FEloQpkd7g/JBmaXRJsv7qaDsJTexcdWzg3J6oSuCE
+         ciADPNID4rgoc/UK/GS1U7Km0IOInGR3S0Dsf0jFNW8I+MKkHL/iIV7bPNvS9PifB9rw
+         XJ5NqvuIED2bGTDWrnun+QllfpCDtc4hXuXos24WkQS7f5ICxI1vfjPvN6BiFGwVvYE6
+         nutw==
+X-Gm-Message-State: AOAM531lxzZ8puesm8Z2bWXx6wXCTCh7z8FlqxA0eBFvScbFUdqRolJb
+        jJDP8/ZCjpe67+5ICfAg5IREOsaEUNPLya6ilCX/1b1SjOyU
+X-Google-Smtp-Source: ABdhPJyYIH5BZbXS9Ocrm8a2yKvqz7SLhEnZk2w6B36KaofKtaBuEh2ejG51w68RPzj8wMrEXXsRmSi9PSo4hFSq0FqrFnlWFH0G
 MIME-Version: 1.0
-In-Reply-To: <e88403ad-e272-2028-4d7a-789086e12d8b@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a5e:db4d:: with SMTP id r13mr9693729iop.65.1608427450297;
+ Sat, 19 Dec 2020 17:24:10 -0800 (PST)
+Date:   Sat, 19 Dec 2020 17:24:10 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d26fda05b6db3298@google.com>
+Subject: KASAN: use-after-free Read in io_ring_ctx_wait_and_kill
+From:   syzbot <syzbot+fef004c4db2d363bacd3@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 20/12/2020 00:25, Jens Axboe wrote:
-> On 12/19/20 4:42 PM, Pavel Begunkov wrote:
->> On 19/12/2020 23:13, Jens Axboe wrote:
->>> On 12/19/20 2:54 PM, Jens Axboe wrote:
->>>> On 12/19/20 1:51 PM, Josef wrote:
->>>>>> And even more so, it's IOSQE_ASYNC on the IORING_OP_READ on an eventfd
->>>>>> file descriptor. You probably don't want/mean to do that as it's
->>>>>> pollable, I guess it's done because you just set it on all reads for the
->>>>>> test?
->>>>>
->>>>> yes exactly, eventfd fd is blocking, so it actually makes no sense to
->>>>> use IOSQE_ASYNC
->>>>
->>>> Right, and it's pollable too.
->>>>
->>>>> I just tested eventfd without the IOSQE_ASYNC flag, it seems to work
->>>>> in my tests, thanks a lot :)
->>>>>
->>>>>> In any case, it should of course work. This is the leftover trace when
->>>>>> we should be exiting, but an io-wq worker is still trying to get data
->>>>>> from the eventfd:
->>>>>
->>>>> interesting, btw what kind of tool do you use for kernel debugging?
->>>>
->>>> Just poking at it and thinking about it, no hidden magic I'm afraid...
->>>
->>> Josef, can you try with this added? Looks bigger than it is, most of it
->>> is just moving one function below another.
->>
->> Hmm, which kernel revision are you poking? Seems it doesn't match
->> io_uring-5.10, and for 5.11 io_uring_cancel_files() is never called with
->> NULL files.
->>
->> if (!files)
->> 	__io_uring_cancel_task_requests(ctx, task);
->> else
->> 	io_uring_cancel_files(ctx, task, files);
-> 
-> Yeah, I think I messed up. If files == NULL, then the task is going away.
-> So we should cancel all requests that match 'task', not just ones that
-> match task && files.
-> 
-> Not sure I have much more time to look into this before next week, but
-> something like that.
-> 
-> The problem case is the async worker being queued, long before the task
-> is killed and the contexts go away. But from exit_files(), we're only
-> concerned with canceling if we have inflight. Doesn't look right to me.
+Hello,
 
-In theory all that should be killed in io_ring_ctx_wait_and_kill(),
-of course that's if the ring itself is closed.
+syzbot found the following issue on:
 
-Guys, do you share rings between processes? Explicitly like sending 
-io_uring fd over a socket, or implicitly e.g. sharing fd tables
-(threads), or cloning with copying fd tables (and so taking a ref
-to a ring).
-In other words, if you kill all your io_uring applications, does it
-go back to normal?
+HEAD commit:    a409ed15 Merge tag 'gpio-v5.11-1' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1425527b500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f7c39e7211134bc0
+dashboard link: https://syzkaller.appspot.com/bug?extid=fef004c4db2d363bacd3
+compiler:       gcc (GCC) 10.1.0-syz 20200507
 
--- 
-Pavel Begunkov
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fef004c4db2d363bacd3@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in __mutex_lock_common kernel/locking/mutex.c:938 [inline]
+BUG: KASAN: use-after-free in __mutex_lock+0x102f/0x1110 kernel/locking/mutex.c:1103
+Read of size 8 at addr ffff888073de33e0 by task syz-executor.1/13101
+
+CPU: 1 PID: 13101 Comm: syz-executor.1 Not tainted 5.10.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0x107/0x163 lib/dump_stack.c:120
+ print_address_description.constprop.0.cold+0xae/0x4c8 mm/kasan/report.c:385
+ __kasan_report mm/kasan/report.c:545 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:562
+ __mutex_lock_common kernel/locking/mutex.c:938 [inline]
+ __mutex_lock+0x102f/0x1110 kernel/locking/mutex.c:1103
+ io_ring_ctx_wait_and_kill+0x21/0x450 fs/io_uring.c:8648
+ io_uring_release+0x3e/0x50 fs/io_uring.c:8687
+ __fput+0x283/0x920 fs/file_table.c:280
+ task_work_run+0xdd/0x190 kernel/task_work.c:140
+ exit_task_work include/linux/task_work.h:30 [inline]
+ do_exit+0xb89/0x2a00 kernel/exit.c:823
+ do_group_exit+0x125/0x310 kernel/exit.c:920
+ get_signal+0x3e9/0x2160 kernel/signal.c:2770
+ arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:811
+ handle_signal_work kernel/entry/common.c:147 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
+ exit_to_user_mode_prepare+0x124/0x200 kernel/entry/common.c:201
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+ syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:302
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45e149
+Code: Unable to access opcode bytes at RIP 0x45e11f.
+RSP: 002b:00007f2290236be8 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
+RAX: fffffffffffffff4 RBX: 0000000020000080 RCX: 000000000045e149
+RDX: 00000000200b0000 RSI: 0000000020000080 RDI: 0000000000000001
+RBP: 000000000119c080 R08: 0000000020000000 R09: 0000000020000000
+R10: 0000000020000100 R11: 0000000000000206 R12: 00000000200b0000
+R13: 00000000200a0000 R14: 0000000020000000 R15: 0000000020000100
+
+Allocated by task 13101:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xc2/0xd0 mm/kasan/common.c:461
+ kmalloc include/linux/slab.h:552 [inline]
+ kzalloc include/linux/slab.h:682 [inline]
+ io_ring_ctx_alloc fs/io_uring.c:1268 [inline]
+ io_uring_create fs/io_uring.c:9480 [inline]
+ io_uring_setup+0x1d5b/0x38b0 fs/io_uring.c:9613
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Freed by task 37:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
+ kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:352
+ __kasan_slab_free+0x102/0x140 mm/kasan/common.c:422
+ slab_free_hook mm/slub.c:1544 [inline]
+ slab_free_freelist_hook+0x5d/0x150 mm/slub.c:1577
+ slab_free mm/slub.c:3140 [inline]
+ kfree+0xdb/0x3c0 mm/slub.c:4122
+ process_one_work+0x98d/0x1630 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+
+Last potentially related work creation:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_record_aux_stack+0xc0/0xf0 mm/kasan/generic.c:343
+ insert_work+0x48/0x370 kernel/workqueue.c:1331
+ __queue_work+0x5c1/0xfb0 kernel/workqueue.c:1497
+ queue_work_on+0xc7/0xd0 kernel/workqueue.c:1524
+ io_uring_create fs/io_uring.c:9586 [inline]
+ io_uring_setup+0x1358/0x38b0 fs/io_uring.c:9613
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The buggy address belongs to the object at ffff888073de3000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 992 bytes inside of
+ 2048-byte region [ffff888073de3000, ffff888073de3800)
+The buggy address belongs to the page:
+page:000000002686ff6f refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x73de0
+head:000000002686ff6f order:3 compound_mapcount:0 compound_pincount:0
+flags: 0xfff00000010200(slab|head)
+raw: 00fff00000010200 dead000000000100 dead000000000122 ffff888010842000
+raw: 0000000000000000 0000000000080008 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888073de3280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888073de3300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888073de3380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                       ^
+ ffff888073de3400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888073de3480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.

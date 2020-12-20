@@ -2,165 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CEC12DF440
-	for <lists+io-uring@lfdr.de>; Sun, 20 Dec 2020 07:51:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BB112DF449
+	for <lists+io-uring@lfdr.de>; Sun, 20 Dec 2020 08:14:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbgLTGv2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Dec 2020 01:51:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34452 "EHLO
+        id S1727221AbgLTHOo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Dec 2020 02:14:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbgLTGv2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Dec 2020 01:51:28 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C096C0613CF;
-        Sat, 19 Dec 2020 22:50:48 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id v2so4521305pfm.9;
-        Sat, 19 Dec 2020 22:50:48 -0800 (PST)
+        with ESMTP id S1726996AbgLTHOo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Dec 2020 02:14:44 -0500
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DBE2C0613CF
+        for <io-uring@vger.kernel.org>; Sat, 19 Dec 2020 23:14:04 -0800 (PST)
+Received: by mail-qt1-x833.google.com with SMTP id 2so4598878qtt.10
+        for <io-uring@vger.kernel.org>; Sat, 19 Dec 2020 23:14:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GxxzTBDSRDHyuhWRw4W2qqZlaU5pdzFe8fEwTaUs9WE=;
-        b=gzqoY1gK/EQtK1qgxt9rkz7xbvNxdeH/QWq71v7oqV2qklg/yCCdyGLEwdsYDaGMZt
-         lsYsodqKyEWk2MMVKW1qf+SzlRRNgcFsgaNvvy1UJtdiR9IoKJQ2o7F5SlFLWKB63u6+
-         3EFpst5/1I2QNV+tuCO74oNJk+dDWRA/vD2gUAanvIIXYvJCm0xsLZwTrTHT71gPEp72
-         j3/qtQHKtB5ZIkIivBeWpKgmHoXcy1SI/weHLS+4WXUptBS+RdiFh8omC9FScHUVtnlg
-         e4hAvYyfq0Uv+jdgYAV4s2OzmlUkMabN6afVI5MuRQBLlAWMMSbSaz9V2Dw8+B2IlBCL
-         aH3Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9A+gmyw763bP7OgyIjglaoixMHn184NLSU84ISVBVJ8=;
+        b=ep9F0Xyffu9QhG4pkRzWUZukwTMrdUERpVI715ZgD6ZN0YuwnX1uJbwyIf2VhFVVGk
+         G/i8WdaOao3uw4jm1g6Y9bGjeuxpxRlat1EmxraHYgCo50RULAah6MpoqOK/VfeF1bH7
+         lM8fYorSIggonj7P4VA5e1qjJ6jmTEKoyrsIP7R7Fv+wzbOOahcut+7IIHRhd8Zju/2z
+         IBpqOiyRHrJmGU5yqdBSZY8t4FLTnIE+qSaQ30CS3lZh6S1rgDm8SyFwqXxE1mI/AWvo
+         cCp5Ez9qH6GvAamfGW3p1FScF1jW6ZmTbNAHrCL9TZEm13m/5aCXvyWnaf94eCs2hWOc
+         pABw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GxxzTBDSRDHyuhWRw4W2qqZlaU5pdzFe8fEwTaUs9WE=;
-        b=ATp0dvvg2UBBccwMzqtJ11L1f6sgN5/c9u4WhkdpyDwlAYSp92NU6wfhaI1KNYF88a
-         p5QbpLG2C7orwj6ts//zYohP5vY6yA5VtmgJxgQWX6TpuMxzHlJ2mQUCYtS1KxiTzQRV
-         gXULmhCrZotjxJpd9UTKffX54g7HNgXu+rbna4UykfzYZYn1BZGeLkF2TKlO5MOuMdZ1
-         zifCi4OhwSq7vyBEsEW7Ij944zRiz6249e+qH0svTfnaiNIut/xTtxbA98/oBVeYTEbN
-         g+TMxgq68sD3YWlF5uswBtEImcHh+6J0afw4ccRld7w2nxDGM9VbUzFVvFLalP4tlDP4
-         i0yQ==
-X-Gm-Message-State: AOAM530jXJkIuRB7SilCYinjfouBl2aRvea/NDNeKOMFT1vG791a+vc/
-        PPmys8DSEpCIQJr27yvtxvg=
-X-Google-Smtp-Source: ABdhPJxMe09hsE9jwnlOmDLbZhHlSE4vk3ID1ryYwiMBtx05aKRzON/oHJrTPtebB0lZsHsufi9b1g==
-X-Received: by 2002:a62:ea17:0:b029:1ad:4788:7815 with SMTP id t23-20020a62ea170000b02901ad47887815mr3057594pfh.1.1608447047524;
-        Sat, 19 Dec 2020 22:50:47 -0800 (PST)
-Received: from noah.hsd1.ca.comcast.net ([2601:642:c300:6ca0:1800:e2b9:9586:956b])
-        by smtp.googlemail.com with ESMTPSA id p15sm12579758pgl.19.2020.12.19.22.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Dec 2020 22:50:47 -0800 (PST)
-From:   noah <goldstein.w.n@gmail.com>
-Cc:     goldstein.w.n@gmail.com, noah <goldstein.n@wustl.edu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: io_uring.c: Add skip option for __io_sqe_files_update
-Date:   Sun, 20 Dec 2020 01:50:25 -0500
-Message-Id: <20201220065025.116516-1-goldstein.w.n@gmail.com>
-X-Mailer: git-send-email 2.29.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9A+gmyw763bP7OgyIjglaoixMHn184NLSU84ISVBVJ8=;
+        b=D0wNMhhjZXLIG4nts55WB6+uoucrj3V/nh/o+hmuPZyngCD21J/cVpZcxNrT+3VHvp
+         28z94TwPOWkw1ItkT7JaP3afLZZKn4Mhap6DsQoK92j/dWseaEPQqMJRV6oZZLE8VN3I
+         CbBilknHs5CgJBDlmeA90dJv60mYkJIqwqBZQZu1Q96Y9zMLr2pGFFKWk2PIFWxxDIHx
+         DdTMhTJMI/+tv9Jd65Y1zgKzIw3IqsnpYHcC0PnpA4Pk+lyIqncPuTg+k5aqsBEl+Dhz
+         e+ijkgxZ/BRLSBoHMbksDkwrHLWhrNsWR5genmUNKEj6o6C9gSyRoI5FcXF3zs54Ae2F
+         Cu1w==
+X-Gm-Message-State: AOAM531uNv1inlTy7NgZ6lHtVA8xpLIeQOA4SyCN/MKDsINe6nYirVEq
+        J2PsgqOkFy4rfyS5dtFCr+2gPcK3hzV1PgHA9RI=
+X-Google-Smtp-Source: ABdhPJwDIAomFgFB3rCwSiAlmhXGWxJtB+1GExgRuga4yGt+ncPzkuvR27RJkrjZlM2GHiWVYtMQFyhNBhiRnhvCEMc=
+X-Received: by 2002:ac8:729a:: with SMTP id v26mr11707899qto.53.1608448443308;
+ Sat, 19 Dec 2020 23:14:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
+ <2B352D6C-4CA2-4B09-8751-D7BB8159072D@googlemail.com> <d9205a43-ebd7-9412-afc6-71fdcf517a32@kernel.dk>
+ <CAAss7+ps4xC785yMjXC6u8NiH9PCCQQoPiH+AhZT7nMX7Q_uEw@mail.gmail.com>
+ <0fe708e2-086b-94a8-def4-e4ebd6e0b709@kernel.dk> <614f8422-3e0e-25b9-4cc2-4f1c07705ab0@kernel.dk>
+ <986c85af-bb77-60d4-8739-49b662554157@gmail.com> <e88403ad-e272-2028-4d7a-789086e12d8b@kernel.dk>
+ <df79018a-0926-093f-b112-3ed3756f6363@gmail.com>
+In-Reply-To: <df79018a-0926-093f-b112-3ed3756f6363@gmail.com>
+From:   Josef <josef.grieb@gmail.com>
+Date:   Sun, 20 Dec 2020 08:13:52 +0100
+Message-ID: <CAAss7+peDoeEf8PL_REiU6s_wZ+Z=ZPMcWNdYt0i-C8jUwtc4Q@mail.gmail.com>
+Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Norman Maurer <norman.maurer@googlemail.com>,
+        Dmitry Kadashev <dkadashev@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: noah <goldstein.n@wustl.edu>
+> Guys, do you share rings between processes? Explicitly like sending
+> io_uring fd over a socket, or implicitly e.g. sharing fd tables
+> (threads), or cloning with copying fd tables (and so taking a ref
+> to a ring).
 
-This patch makes it so that specify a file descriptor value of -2 will
-skip updating the corresponding fixed file index.
+no in netty we don't share ring between processes
 
-This will allow for users to reduce the number of syscalls necessary
-to update a sparse file range when using the fixed file option.
+> In other words, if you kill all your io_uring applications, does it
+> go back to normal?
 
-Signed-off-by: noah <goldstein.w.n@gmail.com>
----
- fs/io_uring.c | 72 ++++++++++++++++++++++++++-------------------------
- 1 file changed, 37 insertions(+), 35 deletions(-)
+no at all, the io-wq worker thread is still running, I literally have
+to restart the vm to go back to normal(as far as I know is not
+possible to kill kernel threads right?)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6f9392c35eef..43ab2b7a87d4 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7876,42 +7876,44 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 			err = -EFAULT;
- 			break;
- 		}
--		i = array_index_nospec(up->offset, ctx->nr_user_files);
--		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
--		index = i & IORING_FILE_TABLE_MASK;
--		if (table->files[index]) {
--			file = table->files[index];
--			err = io_queue_file_removal(data, file);
--			if (err)
--				break;
--			table->files[index] = NULL;
--			needs_switch = true;
--		}
--		if (fd != -1) {
--			file = fget(fd);
--			if (!file) {
--				err = -EBADF;
--				break;
--			}
--			/*
--			 * Don't allow io_uring instances to be registered. If
--			 * UNIX isn't enabled, then this causes a reference
--			 * cycle and this instance can never get freed. If UNIX
--			 * is enabled we'll handle it just fine, but there's
--			 * still no point in allowing a ring fd as it doesn't
--			 * support regular read/write anyway.
--			 */
--			if (file->f_op == &io_uring_fops) {
--				fput(file);
--				err = -EBADF;
--				break;
--			}
--			table->files[index] = file;
--			err = io_sqe_file_register(ctx, file, i);
--			if (err) {
-+		if (fd != -2) {
-+			i = array_index_nospec(up->offset, ctx->nr_user_files);
-+			table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
-+			index = i & IORING_FILE_TABLE_MASK;
-+			if (table->files[index]) {
-+				file = table->files[index];
-+				err = io_queue_file_removal(data, file);
-+				if (err)
-+					break;
- 				table->files[index] = NULL;
--				fput(file);
--				break;
-+				needs_switch = true;
-+			}
-+			if (fd != -1) {
-+				file = fget(fd);
-+				if (!file) {
-+					err = -EBADF;
-+					break;
-+				}
-+				/*
-+				 * Don't allow io_uring instances to be registered. If
-+				 * UNIX isn't enabled, then this causes a reference
-+				 * cycle and this instance can never get freed. If UNIX
-+				 * is enabled we'll handle it just fine, but there's
-+				 * still no point in allowing a ring fd as it doesn't
-+				 * support regular read/write anyway.
-+				 */
-+				if (file->f_op == &io_uring_fops) {
-+					fput(file);
-+					err = -EBADF;
-+					break;
-+				}
-+				table->files[index] = file;
-+				err = io_sqe_file_register(ctx, file, i);
-+				if (err) {
-+					table->files[index] = NULL;
-+					fput(file);
-+					break;
-+				}
- 			}
- 		}
- 		nr_args--;
+> Josef, can you test the patch below instead? Following Jens' idea it
+> cancels more aggressively when a task is killed or exits. It's based
+> on [1] but would probably apply fine to for-next.
+
+it works, I run several tests with eventfd read op async flag enabled,
+thanks a lot :) you are awesome guys :)
+
 -- 
-2.29.2
-
+Josef

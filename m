@@ -2,59 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E1CA2DF93D
-	for <lists+io-uring@lfdr.de>; Mon, 21 Dec 2020 07:27:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 811082DF863
+	for <lists+io-uring@lfdr.de>; Mon, 21 Dec 2020 05:51:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726140AbgLUGZx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Dec 2020 01:25:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52864 "EHLO
+        id S1726918AbgLUEuL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Dec 2020 23:50:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725984AbgLUGZx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Dec 2020 01:25:53 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83825C0613D3
-        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 22:25:12 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id c133so8831928wme.4
-        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 22:25:12 -0800 (PST)
+        with ESMTP id S1726160AbgLUEuL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Dec 2020 23:50:11 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38F6C061285
+        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 20:49:30 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id h22so11065790lfu.2
+        for <io-uring@vger.kernel.org>; Sun, 20 Dec 2020 20:49:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WEeuYhMCaIIOIbjfsBQL+aqEDW7JGDO+LbWvG7yl6uU=;
-        b=C0I3DnOA/Wh14dzU6i4o1kH+4Qj3rW2mh+Y6/H2RrD7bCVG/+eGD9Qq+NkCIdjA219
-         06Wu1Oz13itsh2lOfKiFOA3a/ngWz46kIPhjJdNFiYvv54tnPyUEbdKha/G5NAaBd5jX
-         kuTcwwHYJ0eJ9ePr2j/dWUiGH4gekFG1BXzhfD0C4sCXnpk+K3EBWXDiAljY+9xb49bs
-         9H5g5D79QBN5BCDFZeUa+wgHT7UsvT7EGudvx+Nw0D52l0c/a4FG4HfQst6ilo4Ty+9k
-         Iv6U+VOucZ25xRtwEFY/4yhDAgMcc1He3arZG37W1Jh4NAGL9fJffW83mUeQrx490kZt
-         mzaw==
+        bh=qS4JhjJK9b+6anRRtSXLaYqy9t7MN14PqtaTJja8PDM=;
+        b=huBX6qhH5HUTdZ81+XuQkOuGX+AmGTOEukd/TStzlQDwxxe/OL9kbvVeuDFHKwXGnW
+         k9a+sQ5P1goaj+Uq3iA7Df4Q5JKdJ7+ywL92kMcjJjRdZ0knUxrxTPx6z5JpJbGXWPW9
+         aL7eiVL7HGwzUpA+D4HJMBZD8lx/jmt+MhVMlSVaO272EmKhXnycq+lXEDstrA8ccVgh
+         hukzzLlBkganNst8bOLNtenuXvGIm26U1qxoofAYh3dfQzwR4rwnVe7hqaCYAT+Z+vbi
+         Tc/YODKY/wyfQ6YBfVL1DzfVfCrR2/DOgPCrLZdueMLfuyEzWGpT6rg737AiT37sTiPJ
+         Cuxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=WEeuYhMCaIIOIbjfsBQL+aqEDW7JGDO+LbWvG7yl6uU=;
-        b=jakBz1ezRDcJEDLVycTW1ngrPilMUVzEvbSUu7mOu5VguacIg6FpHxriobTm6u201Q
-         HgbDiGbds1NMjcFszNZ1uCk7SNuB3C62wdntWgieT8smLxYLoHUujPAX4LR4GHVqJ8k9
-         qz1Q+ET539+2V47b1hLUSsulZ68uGKXPlcvEX4b3Z9IgO0LdVHRAeiVKTPxlPNbqfGLI
-         whnOviccx6iVzwr2+vdfpC1opGosURt1FVmEHzMIBupbYXJBD1vR3WoV9rDhSOf3I0Q4
-         55/3SmJX9q8WXBpkkBSrBvAyc5LRIQma5iICTeWKygoPu+ZkibxllFDBGAJsgMveJ73+
-         eZAg==
-X-Gm-Message-State: AOAM530Z/1q4/2HD1hM5ai+4tNlWqDjgZlh+oKGH3N03F8rkr7DbiHR9
-        WwEP0xFqJTiPjVHqe0mf2+QsXTtKGiYB2g==
-X-Google-Smtp-Source: ABdhPJzjyVx4VSkLqwKFPlPWJ9THKQ/73P0kWhbrl/zzsKsVPdxgFa4hjzCxaruGDz/xNRG+NCHvPg==
-X-Received: by 2002:a1c:bb06:: with SMTP id l6mr13781045wmf.112.1608493083183;
-        Sun, 20 Dec 2020 11:38:03 -0800 (PST)
+        bh=qS4JhjJK9b+6anRRtSXLaYqy9t7MN14PqtaTJja8PDM=;
+        b=RV4Slsmun+dov0PfpIqaVJnO/fLquVD9FRrnBFP+RKycZtyq+dzE2JyQRdXJvm+m29
+         xvEk6wY0huAstEHZb2tk3becjlOWgzXnV57OWk5lNLWAVs9Y5at+9cQOoQE/ejIjmEpI
+         SkbSxs+lU3DUHcOYxqzXpc1QenWPxBKBDRQMX+qYNnMZBqVXa+9x39jnqRnfjZZukt5d
+         V4kfJnP/SuIcP8YmfC74se2eNgMa/JTjHaGecY2m958slJHyTCnpnKWRMYvyGCb94IEE
+         kC7JQAPtv+T7eIa8/+4Ap9sTDk0W2vVThjNo0XxCtC9jsgxKlWrGTAGULkgL6ybUngtE
+         xybA==
+X-Gm-Message-State: AOAM533Q9NMVcTh31jkDanLsLtwOxLeydwehdz02gdalnqaaGh09T0WQ
+        f/qgRphvg3X2CDZ6mrSA1b8q0v1W48SHkQ==
+X-Google-Smtp-Source: ABdhPJxy7kHqIcU54oG6VhtTfN0jQ3rg4EUoXL/PJjTM2tKmRgT73XBy5RWp4nSBa2O6r7uncYKJbA==
+X-Received: by 2002:a5d:488b:: with SMTP id g11mr15419689wrq.210.1608493166799;
+        Sun, 20 Dec 2020 11:39:26 -0800 (PST)
 Received: from [192.168.8.143] ([85.255.237.164])
-        by smtp.gmail.com with ESMTPSA id v1sm16146623wmj.31.2020.12.20.11.38.02
+        by smtp.gmail.com with ESMTPSA id u66sm20489057wmg.30.2020.12.20.11.39.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Dec 2020 11:38:02 -0800 (PST)
+        Sun, 20 Dec 2020 11:39:26 -0800 (PST)
 Subject: Re: [PATCH] io_uring: hold uring_lock to complete faild polled io in
  io_wq_submit_work()
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring@vger.kernel.org
 Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
 References: <20201214154941.10907-1-xiaoguang.wang@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <b82a6652-4895-4669-fb8f-167e5150e9e8@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -98,12 +99,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <b82a6652-4895-4669-fb8f-167e5150e9e8@gmail.com>
-Date:   Sun, 20 Dec 2020 19:34:41 +0000
+Message-ID: <27952c41-111c-b505-e7f1-78b299f4b786@gmail.com>
+Date:   Sun, 20 Dec 2020 19:36:06 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201214154941.10907-1-xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <b82a6652-4895-4669-fb8f-167e5150e9e8@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -111,71 +112,76 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 14/12/2020 15:49, Xiaoguang Wang wrote:
-> io_iopoll_complete() does not hold completion_lock to complete polled
-> io, so in io_wq_submit_work(), we can not call io_req_complete() directly,
-> to complete polled io, otherwise there maybe concurrent access to cqring,
-> defer_list, etc, which is not safe. Commit dad1b1242fd5 ("io_uring: always
-> let io_iopoll_complete() complete polled io") has fixed this issue, but
-> Pavel reported that IOPOLL apart from rw can do buf reg/unreg requests(
-> IORING_OP_PROVIDE_BUFFERS or IORING_OP_REMOVE_BUFFERS), so the fix is
-> not good.
+On 20/12/2020 19:34, Pavel Begunkov wrote:
+> On 14/12/2020 15:49, Xiaoguang Wang wrote:
+>> io_iopoll_complete() does not hold completion_lock to complete polled
+>> io, so in io_wq_submit_work(), we can not call io_req_complete() directly,
+>> to complete polled io, otherwise there maybe concurrent access to cqring,
+>> defer_list, etc, which is not safe. Commit dad1b1242fd5 ("io_uring: always
+>> let io_iopoll_complete() complete polled io") has fixed this issue, but
+>> Pavel reported that IOPOLL apart from rw can do buf reg/unreg requests(
+>> IORING_OP_PROVIDE_BUFFERS or IORING_OP_REMOVE_BUFFERS), so the fix is
+>> not good.
+>>
+>> Given that io_iopoll_complete() is always called under uring_lock, so here
+>> for polled io, we can also get uring_lock to fix this issue.
 > 
-> Given that io_iopoll_complete() is always called under uring_lock, so here
-> for polled io, we can also get uring_lock to fix this issue.
+> This returns it to the state it was before fixing + mutex locking for
+> IOPOLL, and it's much better than having it half-broken as it is now.
 
-This returns it to the state it was before fixing + mutex locking for
-IOPOLL, and it's much better than having it half-broken as it is now.
-
-Cc: <stable@vger.kernel.org> # 5.5+
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+btw, comments are over 80, but that's minor.
 
 > 
-> Fixes: dad1b1242fd5 ("io_uring: always let io_iopoll_complete() complete polled io")
-> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-> ---
->  fs/io_uring.c | 25 +++++++++++++++----------
->  1 file changed, 15 insertions(+), 10 deletions(-)
+> Cc: <stable@vger.kernel.org> # 5.5+
+> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 > 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index f53356ced5ab..eab3d2b7d232 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6354,19 +6354,24 @@ static struct io_wq_work *io_wq_submit_work(struct io_wq_work *work)
->  	}
->  
->  	if (ret) {
-> +		bool iopoll_enabled = req->ctx->flags & IORING_SETUP_IOPOLL;
-> +
->  		/*
-> -		 * io_iopoll_complete() does not hold completion_lock to complete
-> -		 * polled io, so here for polled io, just mark it done and still let
-> -		 * io_iopoll_complete() complete it.
-> +		 * io_iopoll_complete() does not hold completion_lock to complete polled
-> +		 * io, so here for polled io, we can not call io_req_complete() directly,
-> +		 * otherwise there maybe concurrent access to cqring, defer_list, etc,
-> +		 * which is not safe. Given that io_iopoll_complete() is always called
-> +		 * under uring_lock, so here for polled io, we also get uring_lock to
-> +		 * complete it.
->  		 */
-> -		if (req->ctx->flags & IORING_SETUP_IOPOLL) {
-> -			struct kiocb *kiocb = &req->rw.kiocb;
-> +		if (iopoll_enabled)
-> +			mutex_lock(&req->ctx->uring_lock);
->  
-> -			kiocb_done(kiocb, ret, NULL);
-> -		} else {
-> -			req_set_fail_links(req);
-> -			io_req_complete(req, ret);
-> -		}
-> +		req_set_fail_links(req);
-> +		io_req_complete(req, ret);
-> +
-> +		if (iopoll_enabled)
-> +			mutex_unlock(&req->ctx->uring_lock);
->  	}
->  
->  	return io_steal_work(req);
+>>
+>> Fixes: dad1b1242fd5 ("io_uring: always let io_iopoll_complete() complete polled io")
+>> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+>> ---
+>>  fs/io_uring.c | 25 +++++++++++++++----------
+>>  1 file changed, 15 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index f53356ced5ab..eab3d2b7d232 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -6354,19 +6354,24 @@ static struct io_wq_work *io_wq_submit_work(struct io_wq_work *work)
+>>  	}
+>>  
+>>  	if (ret) {
+>> +		bool iopoll_enabled = req->ctx->flags & IORING_SETUP_IOPOLL;
+>> +
+>>  		/*
+>> -		 * io_iopoll_complete() does not hold completion_lock to complete
+>> -		 * polled io, so here for polled io, just mark it done and still let
+>> -		 * io_iopoll_complete() complete it.
+>> +		 * io_iopoll_complete() does not hold completion_lock to complete polled
+>> +		 * io, so here for polled io, we can not call io_req_complete() directly,
+>> +		 * otherwise there maybe concurrent access to cqring, defer_list, etc,
+>> +		 * which is not safe. Given that io_iopoll_complete() is always called
+>> +		 * under uring_lock, so here for polled io, we also get uring_lock to
+>> +		 * complete it.
+>>  		 */
+>> -		if (req->ctx->flags & IORING_SETUP_IOPOLL) {
+>> -			struct kiocb *kiocb = &req->rw.kiocb;
+>> +		if (iopoll_enabled)
+>> +			mutex_lock(&req->ctx->uring_lock);
+>>  
+>> -			kiocb_done(kiocb, ret, NULL);
+>> -		} else {
+>> -			req_set_fail_links(req);
+>> -			io_req_complete(req, ret);
+>> -		}
+>> +		req_set_fail_links(req);
+>> +		io_req_complete(req, ret);
+>> +
+>> +		if (iopoll_enabled)
+>> +			mutex_unlock(&req->ctx->uring_lock);
+>>  	}
+>>  
+>>  	return io_steal_work(req);
+>>
 > 
 
 -- 

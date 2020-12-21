@@ -2,47 +2,47 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A21962DFB2C
-	for <lists+io-uring@lfdr.de>; Mon, 21 Dec 2020 11:51:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BC052DFB4A
+	for <lists+io-uring@lfdr.de>; Mon, 21 Dec 2020 12:01:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725802AbgLUKux (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Dec 2020 05:50:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36614 "EHLO
+        id S1725898AbgLULBG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Dec 2020 06:01:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbgLUKux (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Dec 2020 05:50:53 -0500
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D39C0613D6
-        for <io-uring@vger.kernel.org>; Mon, 21 Dec 2020 02:49:58 -0800 (PST)
-Received: by mail-il1-x135.google.com with SMTP id n9so8500874ili.0
-        for <io-uring@vger.kernel.org>; Mon, 21 Dec 2020 02:49:58 -0800 (PST)
+        with ESMTP id S1725811AbgLULBG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Dec 2020 06:01:06 -0500
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7108C0613D3
+        for <io-uring@vger.kernel.org>; Mon, 21 Dec 2020 03:00:25 -0800 (PST)
+Received: by mail-il1-x129.google.com with SMTP id q5so8466495ilc.10
+        for <io-uring@vger.kernel.org>; Mon, 21 Dec 2020 03:00:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kGOJMd5x/n9/ltNxQzvq2lCLBkuywn9El+1Yg/iP7Ac=;
-        b=lCHhNZZVIciIKchJnof8atJlUv10BQMXb9T6elfaeRGqCKgMGS3cj7N3WwIssbX7XF
-         QRHcgbD9zF+Bx8MeQHr5qZxZIt4xUs9q+5RQMQBycGKd0+NbsxmApDhp0BNrsL+GWLzv
-         0yQBKoCegKJyWoIlUdnFR8ix+WTjcSqdYLu696afFPRT7dUMK/zHzTYej78hMr6ZugvG
-         Owanqp/fJb4nLjJwF4dIEkfiIOL6B2NMXAxsY72Sx0BOm28UsX47voKvUosElVyUiTVK
-         P2V3afgmJ1nAQw/aIz3/WAvdUkkCswc1LaR4s5S7BDtjv3Dn+vBpoKoM+hOb5Ny1887w
-         Z0VQ==
+        bh=MzciD2bLHH65SXb1PYkUX+gCwpRg5mT3Ug5iG15yiNM=;
+        b=Be5VjV2oeGOl4EfPWuVr++SJ6c7Xs/+suZyfRywcm/wujEACtbBjlYsmRee4u2f3UV
+         BSx8bgkVjxSyKNAhfgpBQd/HuTf8+84uSkFhH8EKY3+ckFujODlnt1Is4RX/eMVpeptT
+         tfh5K9HYuqqRg5CNi834EUdP+8sf8lV41HpZlFqVNjCFbDY5Sx4gu4I9qF+VcUeqGCVa
+         8xjBJ+aCE23sgzmPqhI7ANcsu1LgV0i2KirT876ACZiL7CgAy+7q+6/js6a2xyDAH1k0
+         LnoL/15HeXZxGHOyBja9u+SdCWnJz57OuFMZjFo2oCa5nGZ34uC9HqPdH+t6cficQXuk
+         e5VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kGOJMd5x/n9/ltNxQzvq2lCLBkuywn9El+1Yg/iP7Ac=;
-        b=XGTMp6bK2b+VhenhiaZBdstgjAGVLrXTf6uHrsMZ1zWf0UsE5eYLVJdoAdHaqM8/cR
-         vOprU6I9eZJEUm6HXD1s2QG1Ex3waemHAc3O2PKohXX9M+xIW+3rY5L5fDzdL43risZ0
-         mx9ES/ED2bMpl8l+ZCWbPJwNlFs3CfdKlggKI58Xqt2fbolNZOCUL2TtRnx7AcZ4ql4z
-         FhDzmGtiADC+RhQC4td/acJv5k33Y1CA09CbcuWyIPjSS64SQd+g9HflJIJbsOCIFGmi
-         oVnF7qq6scxvy/gVnLWi+S7VbBt1nJLeBc/9u8u0XAIJlkJmT7X6K2KLAQW5DYfggAKf
-         atsQ==
-X-Gm-Message-State: AOAM530pV9bMCw5//QXZGuR1cKiUKJDwsVJ5/EY0/tUBh6Zb3LMyaZIX
-        qpQ9NcrR5nxXDg9afEEqMxJkMZ/VLRmfy2CQWxY=
-X-Google-Smtp-Source: ABdhPJybqTe9NlseTA+vPRmwMDLDlp8sN48OC5U2KCIJ7C8biYMXXuw7/9Qk9M1ePCPHutufV9KakM3Qn2md4r3zdOs=
-X-Received: by 2002:a05:6e02:c2a:: with SMTP id q10mr15541202ilg.92.1608547798067;
- Mon, 21 Dec 2020 02:49:58 -0800 (PST)
+        bh=MzciD2bLHH65SXb1PYkUX+gCwpRg5mT3Ug5iG15yiNM=;
+        b=ApaMHPPal7TDYQUbZU4Uu5H9uEc4kTeWRSnNjRrmf7eOrGDTJcx0N+iUFofI6oriB+
+         pcfDuZGEHYhE/vuosy5LSXp3tkA26uUidq40mO7df9QFHAiGAaWb08VE3uuEWe5eIwSI
+         97cxiXcxD/x/pct+hL+iUmnB0WxP89rFANGJMpIhlSssVcFlrguKjwu/Q5Z7jzQ0l4uy
+         /Ws3VFMam+NqdOsXgwJIBYlxsNTBroR/8EXBNOunuf961mwwz37ypuQ6ozShPSfc4MI7
+         xsjIc+icBBNF3NtxcTNTc6qdqZusMlPg7n14U7eU/7MK74SbDnPY74nUONt/oCuE2w2v
+         3pSw==
+X-Gm-Message-State: AOAM530JjhosEQ0guVGjDDoRxLfBTz3nrJFNBesmZdqVn3fNOdz8Q2Gy
+        PUY915DHASR3Q9u2UcgcCUKWIUp8F/DcCHJ8U77v99aj5wGEYw==
+X-Google-Smtp-Source: ABdhPJxEfo7DwWdjstFcBO4WdzMiNUfeUowCpxRqJAFHLl9TOZbWlXwumAsYbJ5T5OHWtIz4WIVCQ88jROGOSrkP81w=
+X-Received: by 2002:a92:9881:: with SMTP id a1mr16097893ill.238.1608548425071;
+ Mon, 21 Dec 2020 03:00:25 -0800 (PST)
 MIME-Version: 1.0
 References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
  <2B352D6C-4CA2-4B09-8751-D7BB8159072D@googlemail.com> <d9205a43-ebd7-9412-afc6-71fdcf517a32@kernel.dk>
@@ -52,8 +52,8 @@ References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
  <2e968c77-912d-6ae1-7000-5e34eb978ab5@gmail.com> <CAOKbgA5YD_MxY-RqJzP7eqdkqrnQCgjRin7w29QtszHaCJqwrg@mail.gmail.com>
 In-Reply-To: <CAOKbgA5YD_MxY-RqJzP7eqdkqrnQCgjRin7w29QtszHaCJqwrg@mail.gmail.com>
 From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Mon, 21 Dec 2020 17:49:47 +0700
-Message-ID: <CAOKbgA4jEKPh7tiqJRdVB6VD=PN=A7m7rPiCp=hgA4xd_X_mGw@mail.gmail.com>
+Date:   Mon, 21 Dec 2020 18:00:14 +0700
+Message-ID: <CAOKbgA7TyscndB7nn409NsFfoJriipHG80fgh=7SRESbiguNAg@mail.gmail.com>
 Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
 To:     Pavel Begunkov <asml.silence@gmail.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, Josef <josef.grieb@gmail.com>,
@@ -127,15 +127,26 @@ On Mon, Dec 21, 2020 at 5:35 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
 >
 > We do not share rings between processes. Our rings are accessible from different
 > threads (under locks), but nothing fancy.
+>
+> > In other words, if you kill all your io_uring applications, does it
+> > go back to normal?
+>
+> I'm pretty sure it does not, the only fix is to reboot the box. But I'll find an
+> affected box and double check just in case.
 
-Actually, I'm wrong about the locks part, forgot how it works. In our case it
-works like this: a parent thread creates a ring, and passes it to a worker
-thread, which does all of the work with it, no locks are involved. On
-(clean) termination the parent notifies the worker, waits for it to exit and
-then calls io_uring_queue_exit. Not sure if that counts as sharing rings between
-the threads or not.
+So, I've just tried stopping everything that uses io-uring. No io_wq* processes
+remained:
 
-As I've mentioned in some other email, I'll try (again) to make a reproducer.
+$ ps ax | grep wq
+    9 ?        I<     0:00 [mm_percpu_wq]
+  243 ?        I<     0:00 [tpm_dev_wq]
+  246 ?        I<     0:00 [devfreq_wq]
+27922 pts/4    S+     0:00 grep --colour=auto wq
+$
+
+But not a single ring (with size 1024) can be created afterwards anyway.
+
+Apparently the problem netty hit and this one are different?
 
 -- 
 Dmitry Kadashev

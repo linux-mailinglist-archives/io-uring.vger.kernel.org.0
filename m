@@ -2,57 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A8C72DFF6E
-	for <lists+io-uring@lfdr.de>; Mon, 21 Dec 2020 19:14:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA5E22DFFA2
+	for <lists+io-uring@lfdr.de>; Mon, 21 Dec 2020 19:24:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725881AbgLUSNn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Dec 2020 13:13:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50178 "EHLO
+        id S1726048AbgLUSXl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Dec 2020 13:23:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbgLUSNm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Dec 2020 13:13:42 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DA27C061285
-        for <io-uring@vger.kernel.org>; Mon, 21 Dec 2020 10:13:02 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id e25so11851272wme.0
-        for <io-uring@vger.kernel.org>; Mon, 21 Dec 2020 10:13:02 -0800 (PST)
+        with ESMTP id S1726044AbgLUSXl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Dec 2020 13:23:41 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B3EFC061793
+        for <io-uring@vger.kernel.org>; Mon, 21 Dec 2020 10:23:00 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id c5so12019465wrp.6
+        for <io-uring@vger.kernel.org>; Mon, 21 Dec 2020 10:23:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=n92suEeiN5vNQyISgLlUp4D1DGteOzsgkUUl9UfHY70=;
-        b=DmbZnqlYOJ9kEESuG+hSeVlO0lsXx3TVyAiB9CoiE2c5RvCJwqCrWFAqNIPTgRyOZT
-         fZtSS9XH5YqyIS0mrj9y3QECJutPE7Sm/DCHf/p0ZaNeISKbSgQcq7vNavst/yBCh+RV
-         JiJzAXoKYwHDo/w/YVDthBMfwDkwgGPxnNQd/jRXWdRPUIzGqFGzFWeTCvhL40oJ7IFB
-         WQC6/W774cNR9UwF+Y8LJjiFIiWFqtdwryvCkZAkbPJPYuGSsb13CVoKTmXXkpcPaN5W
-         VxYiq0wnlIwFz4wgetIBGQVgC4hvXt/wmbXYEbwUB/guul6Q0ka5w8+v3p+Z1jbkkNkf
-         eWIA==
+        bh=UoTtNM8/T4jxQCKLECL/0byaKcTeqv0gDxLPrh9pNoM=;
+        b=ob4WR/OfsybsCmmoKtjwC2YiPlqUIseCyugB7dJAcAHtxRWe9i8ToWQarwp73w4QUS
+         H0S2lmr4ZHOH2LDnrxWb24azA20SRbowcivW3Th105BJwXAH3OlfCZdrQG1qXpfl1f9S
+         r03PXyz+RZWLebe0gojZazCzNbUD2QGpGoPMNeSnMkcFioy9NAGZRnAoL3+AyH5nfYQq
+         vh/D7yJmiDprxuzG50CjyWLuz9vyuYRrFFf6SpqWplYbG9idZrGUzXNsoEN4LXHNX7iN
+         MLcuWl6HZAWTdt3bOKZhy9pTFqW9GVP+e8w+TsSkB6F9dSOBguhcTPcP5KGVsHnZGNYl
+         dSyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=n92suEeiN5vNQyISgLlUp4D1DGteOzsgkUUl9UfHY70=;
-        b=QOzvU4C8T/1n5WcJy3+ztzsYnLjdORW0EJtD6gT9FFRaod/JkK6ofvQyJTuRXK2gKv
-         JblA68FQ39Y7/crQQOjwP0IiFXHlfgB/81IshoHupxq05olZp7B6/0/1hOzV8/vu9ndD
-         PtwHRiXdQq2fV7l43hVKeKSGKrBSBwZA57WkatM4I4IELyXiJoMZJbEEZC5mdBiAs/9k
-         wh+Gytdx/tvWwYiSbFcBOA9oiFIcVjTqFFIKsuDT/n4O/O3igXtoH8WRtnEiSW2CJRUH
-         gPSghRgZugDVHedEtCyUv4BoPjs8TBgB+dAJ+Qyc+skZTEfPx18l1V+bvFg3soTcsbSU
-         0AHg==
-X-Gm-Message-State: AOAM530pl1FAizbOgCMiUwZyZomlXnZb+8SmecvbM8GuwuQtjuAfQTaS
-        apmVCoU8enYL2xioVridIhS4lyrXzegFTw==
-X-Google-Smtp-Source: ABdhPJzKfYhnRB1dQBgOdLc8Sr1QsZI2/JbRkkQW7oBqfXrDkibB4/MlAFb4rY1QORfD1QJ3dVuxjA==
-X-Received: by 2002:a1c:e306:: with SMTP id a6mr17339403wmh.66.1608564842490;
-        Mon, 21 Dec 2020 07:34:02 -0800 (PST)
+        bh=UoTtNM8/T4jxQCKLECL/0byaKcTeqv0gDxLPrh9pNoM=;
+        b=eRkyJnq17/hn7do+Zl0Qio+psALIvxjQ6Onem4lX/TMENBvehiCSglfwZQct2MAm0V
+         XpJbzc2IzzR139MHyLvY2ImZtctYW6ERDCT8fGJF7Vn/Abiqj7Wxi1nE925XtOP+RYPe
+         f7iDmFE5J2NblqXcuVTM8F3tl3MsAjoWugKiAQMSZuo2Udy6OB2FC0Ks7RUxvzlyNAyH
+         /MbgALjKIZrznFlxSUwpxgPc6nY9myuhQLjyGvyAeT477UOH0rFYkhxPAa3fz2pGIfH6
+         BL3HU2lzU7Xmb/e1ewEXyBWWy/YjH+DDJAh2F3taDsnbedfQedDGPjYuDpkSD7JeInAm
+         FbQw==
+X-Gm-Message-State: AOAM532oxHOiVWNgeMll910KyeHNJ0cp1/DREqaBIaozod7upImFgc7N
+        99PvyweRmRMIlAmcj7o/XEDvja6PXY/j+w==
+X-Google-Smtp-Source: ABdhPJy0+nMBBR1KSuasordBl8YxktsxwQWLXlp1puKgF7l6b1qn5brq6zbzpvz2PoyiuTkuNt3Mkg==
+X-Received: by 2002:adf:fb49:: with SMTP id c9mr19353140wrs.72.1608565184509;
+        Mon, 21 Dec 2020 07:39:44 -0800 (PST)
 Received: from [192.168.8.143] ([185.69.145.158])
-        by smtp.gmail.com with ESMTPSA id m8sm23601427wmc.27.2020.12.21.07.34.01
+        by smtp.gmail.com with ESMTPSA id v189sm24269275wmg.14.2020.12.21.07.39.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Dec 2020 07:34:01 -0800 (PST)
+        Mon, 21 Dec 2020 07:39:44 -0800 (PST)
 Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
-To:     Josef <josef.grieb@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Josef <josef.grieb@gmail.com>,
         Norman Maurer <norman.maurer@googlemail.com>,
-        Dmitry Kadashev <dkadashev@gmail.com>,
         io-uring <io-uring@vger.kernel.org>
 References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
  <2B352D6C-4CA2-4B09-8751-D7BB8159072D@googlemail.com>
@@ -62,14 +61,9 @@ References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
  <614f8422-3e0e-25b9-4cc2-4f1c07705ab0@kernel.dk>
  <986c85af-bb77-60d4-8739-49b662554157@gmail.com>
  <e88403ad-e272-2028-4d7a-789086e12d8b@kernel.dk>
- <df79018a-0926-093f-b112-3ed3756f6363@gmail.com>
- <CAAss7+peDoeEf8PL_REiU6s_wZ+Z=ZPMcWNdYt0i-C8jUwtc4Q@mail.gmail.com>
- <0fb27d06-af82-2e1b-f8c5-3a6712162178@gmail.com>
- <ff816e37-ce0e-79c7-f9bf-9fa94d62484d@kernel.dk>
- <CAAss7+o7_FZtBFs5c2UOS6KSXuDBkDwi=okffh4JRmYieTF3LA@mail.gmail.com>
- <CAAss7+raikmW4jGMYk8vLTqm4Y4X-im6zzWiVZY3ikQ7DifKQA@mail.gmail.com>
- <31cf2c96-82a5-3c21-e413-3eccc772495c@gmail.com>
- <CAAss7+pyB8m1b8=oqG4c7MwxCCc+Kirgbxy1U8Xs4VidZxSZkw@mail.gmail.com>
+ <2e968c77-912d-6ae1-7000-5e34eb978ab5@gmail.com>
+ <CAOKbgA5YD_MxY-RqJzP7eqdkqrnQCgjRin7w29QtszHaCJqwrg@mail.gmail.com>
+ <CAOKbgA7TyscndB7nn409NsFfoJriipHG80fgh=7SRESbiguNAg@mail.gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -114,12 +108,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <6826c528-de6e-c2d6-0766-7d6963fb200a@gmail.com>
-Date:   Mon, 21 Dec 2020 15:30:40 +0000
+Message-ID: <91f7f69c-266d-5d02-85c4-31cd1b82c753@gmail.com>
+Date:   Mon, 21 Dec 2020 15:36:23 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAAss7+pyB8m1b8=oqG4c7MwxCCc+Kirgbxy1U8Xs4VidZxSZkw@mail.gmail.com>
+In-Reply-To: <CAOKbgA7TyscndB7nn409NsFfoJriipHG80fgh=7SRESbiguNAg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -127,15 +121,92 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 21/12/2020 08:22, Josef wrote:
-> Pavel I'm sorry...my kernel build process was wrong...the same kernel
-> patch(the first one) was used...I run different load tests on all 3
-> patches several times
+On 21/12/2020 11:00, Dmitry Kadashev wrote:
+> On Mon, Dec 21, 2020 at 5:35 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+>>
+>> On Sun, Dec 20, 2020 at 7:59 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>
+>>> On 20/12/2020 00:25, Jens Axboe wrote:
+>>>> On 12/19/20 4:42 PM, Pavel Begunkov wrote:
+>>>>> On 19/12/2020 23:13, Jens Axboe wrote:
+>>>>>> On 12/19/20 2:54 PM, Jens Axboe wrote:
+>>>>>>> On 12/19/20 1:51 PM, Josef wrote:
+>>>>>>>>> And even more so, it's IOSQE_ASYNC on the IORING_OP_READ on an eventfd
+>>>>>>>>> file descriptor. You probably don't want/mean to do that as it's
+>>>>>>>>> pollable, I guess it's done because you just set it on all reads for the
+>>>>>>>>> test?
+>>>>>>>>
+>>>>>>>> yes exactly, eventfd fd is blocking, so it actually makes no sense to
+>>>>>>>> use IOSQE_ASYNC
+>>>>>>>
+>>>>>>> Right, and it's pollable too.
+>>>>>>>
+>>>>>>>> I just tested eventfd without the IOSQE_ASYNC flag, it seems to work
+>>>>>>>> in my tests, thanks a lot :)
+>>>>>>>>
+>>>>>>>>> In any case, it should of course work. This is the leftover trace when
+>>>>>>>>> we should be exiting, but an io-wq worker is still trying to get data
+>>>>>>>>> from the eventfd:
+>>>>>>>>
+>>>>>>>> interesting, btw what kind of tool do you use for kernel debugging?
+>>>>>>>
+>>>>>>> Just poking at it and thinking about it, no hidden magic I'm afraid...
+>>>>>>
+>>>>>> Josef, can you try with this added? Looks bigger than it is, most of it
+>>>>>> is just moving one function below another.
+>>>>>
+>>>>> Hmm, which kernel revision are you poking? Seems it doesn't match
+>>>>> io_uring-5.10, and for 5.11 io_uring_cancel_files() is never called with
+>>>>> NULL files.
+>>>>>
+>>>>> if (!files)
+>>>>>      __io_uring_cancel_task_requests(ctx, task);
+>>>>> else
+>>>>>      io_uring_cancel_files(ctx, task, files);
+>>>>
+>>>> Yeah, I think I messed up. If files == NULL, then the task is going away.
+>>>> So we should cancel all requests that match 'task', not just ones that
+>>>> match task && files.
+>>>>
+>>>> Not sure I have much more time to look into this before next week, but
+>>>> something like that.
+>>>>
+>>>> The problem case is the async worker being queued, long before the task
+>>>> is killed and the contexts go away. But from exit_files(), we're only
+>>>> concerned with canceling if we have inflight. Doesn't look right to me.
+>>>
+>>> In theory all that should be killed in io_ring_ctx_wait_and_kill(),
+>>> of course that's if the ring itself is closed.
+>>>
+>>> Guys, do you share rings between processes? Explicitly like sending
+>>> io_uring fd over a socket, or implicitly e.g. sharing fd tables
+>>> (threads), or cloning with copying fd tables (and so taking a ref
+>>> to a ring).
+>>
+>> We do not share rings between processes. Our rings are accessible from different
+>> threads (under locks), but nothing fancy.
+>>
+>>> In other words, if you kill all your io_uring applications, does it
+>>> go back to normal?
+>>
+>> I'm pretty sure it does not, the only fix is to reboot the box. But I'll find an
+>> affected box and double check just in case.
+> 
+> So, I've just tried stopping everything that uses io-uring. No io_wq* processes
+> remained:
+> 
+> $ ps ax | grep wq
+>     9 ?        I<     0:00 [mm_percpu_wq]
+>   243 ?        I<     0:00 [tpm_dev_wq]
+>   246 ?        I<     0:00 [devfreq_wq]
+> 27922 pts/4    S+     0:00 grep --colour=auto wq
+> $
+> 
+> But not a single ring (with size 1024) can be created afterwards anyway.
+> 
+> Apparently the problem netty hit and this one are different?
 
-No worries, thanks for letting know. At least clears up contradiction
-of this patch with that it's eventfd related.
+Yep, looks like it
 
-> your first patch works great and unfortunately second and third patch
-> doesn't work
 -- 
 Pavel Begunkov

@@ -2,144 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6B212E02E9
-	for <lists+io-uring@lfdr.de>; Tue, 22 Dec 2020 00:29:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80C072E0442
+	for <lists+io-uring@lfdr.de>; Tue, 22 Dec 2020 03:12:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725782AbgLUX2w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Dec 2020 18:28:52 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:35735 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbgLUX2v (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Dec 2020 18:28:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1608593331; x=1640129331;
-  h=from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=3c0m+8LTeyI3ocV3w6MVX1TmoSbqKMYsJ2fcTtTDjUY=;
-  b=ljdR1LO4yvH2DtFXe36Xw7sBfM/sM8eaCKaosRNU8FsT8CXT/FizOyuJ
-   AW7Anc9nj5i1uswfEp2H338nZWrBcspGpeoQJ2nLg4g1qQRrKlkUXLD/M
-   z0xrNoQPnyzUyXb1o4AXelTcae6u67I6RuhC2ZUfej69oUuqwY0HHHqDN
-   7qWKToWiYCulxpjHQOOlwqZcFO85grnJ4fJNnEpn8KUIIu5tWhrEtlEQk
-   xWkYVk2N2YvpxoLyzKB6wTxOakAFNPDwjevBZhP25wCtY0Rd9tLWR/crB
-   jVxE9BZhiLx/2bLpKnOqSl7nHNMwmMy7Tvi6YZ6lO9sR58jlilFpyyhq4
-   w==;
-IronPort-SDR: GbPQBRDss9eUhwFdIOab2lI2gSfq7dEWGNDYHHPnQpeu/WvWpKhyc/QOS3KY0vnQl7HMDyWjmM
- JY3CWN57LE6k6AuIV8GleTNsCaLdEVWLQO4bufvbqVKK8o1Yg/W82EBVO2+qg2F4uW9Sh7BccL
- yH+2haG3ccxBYBF8EJ7Ae9vCgzs/bg2koLwI9vkpwbX6HtR5nzjyZyEE1YwxoAyTQx8irQKeFY
- qaem/VXswLbCjDeOyYzHqCZ1axPxo5ZgpFFvRkk6IMkp9jw1L45Yka3v7oF/JLM68RHCk+++A9
- kRE=
-X-IronPort-AV: E=Sophos;i="5.78,437,1599494400"; 
-   d="scan'208";a="265944630"
-Received: from mail-bn8nam12lp2171.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.171])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Dec 2020 07:27:45 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jNYt8wrikg7YlAco7Xgr5pAiqB24G9TeoxI3+DCbicX7At45noe4iMqSYGzJXWO4O+s2F0fkqVmn9OYCJggDGL/YcA0z8fjj99bMjnsKEi82oLfhz3WpXBlCdrQQAP2zcSZ8LzcOIf4bVEAd9Kdi6WwXMQ/Fj8pvaJNjMGBZ6MZzAuGw62upTLPEYbcRFiEkwUrTHMtVyP84C9zn4a3W0JhvDGp+4CEW0GvHCeJUTcxIV77jHwyrJKz6vf+uu0QrspctdbXU/ndbnULL6XK+WZcFbbTBkhV5XjmBJclsBIbClfozT1yRCwAVPpUxvpmlccIK+dgBT4BSbyaJOOtc0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=znFBL1GAPH68+9spfvzgBaB/vD8j1G7vQXxEMF/TvQE=;
- b=MUpqQM5XgNBef6hl93x1z+JD56aicPydrV2aLRFW4H4R7Dhscp4yy1LczsUg7V3D62aRfkGSgy59G7ll8pAqxMSLvyt1B3bRmdOXVCYHY2rGsD3auDWFSUMoxPcOXk/p1Tx+VHeEqwI+/o/7ZjRTmaHBzd1y8gHZ+K2I2DRSlv2VuKR7mEXwDu5qGuxxHhWu5TDjFp41/6nbJAq3BtxjVYIewm5eCpewZBNzngpfEtFAfeiG9atccI4YW5x9OKCWcu37YTl3UzaXoMnTXlnMJrlofAB9O9iKnwfy2LzpwmJ/5DOzQ1SeV8/Y2UIsRD26EiECW6U5x9YnK+X5X/zE0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        id S1726010AbgLVCLj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Dec 2020 21:11:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39326 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbgLVCLj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Dec 2020 21:11:39 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B0AC0613D3;
+        Mon, 21 Dec 2020 18:10:59 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id q4so6621257plr.7;
+        Mon, 21 Dec 2020 18:10:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=znFBL1GAPH68+9spfvzgBaB/vD8j1G7vQXxEMF/TvQE=;
- b=axXds0zDQepFPIQQX2xJu2o+NtYScacQVgXxL8jtpu++6jFhwTOorUNqPpc3RFZRIWWeEzRMDuRq20F6zaZ/625tBbKJAsivmh9A4pfxVYHlHYzCNN7tj5KLHdMzG+cU9TLxsqbvFro9fkyB4BWtC+EHzyxQmkA8vKsH5g3MFCo=
-Received: from BYAPR04MB4965.namprd04.prod.outlook.com (2603:10b6:a03:4d::25)
- by SJ0PR04MB7567.namprd04.prod.outlook.com (2603:10b6:a03:32d::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3676.29; Mon, 21 Dec
- 2020 23:27:43 +0000
-Received: from BYAPR04MB4965.namprd04.prod.outlook.com
- ([fe80::716c:4e0c:c6d1:298a]) by BYAPR04MB4965.namprd04.prod.outlook.com
- ([fe80::716c:4e0c:c6d1:298a%7]) with mapi id 15.20.3676.033; Mon, 21 Dec 2020
- 23:27:43 +0000
-From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Subject: Re: [PATCH 1/2] io_uring: fix ignoring xa_store errors
-Thread-Topic: [PATCH 1/2] io_uring: fix ignoring xa_store errors
-Thread-Index: AQHW18i/RyX8piVwoEqmwmgD81wjdg==
-Date:   Mon, 21 Dec 2020 23:27:43 +0000
-Message-ID: <BYAPR04MB49652ED4F50AE907F923583486C00@BYAPR04MB4965.namprd04.prod.outlook.com>
-References: <cover.1608575562.git.asml.silence@gmail.com>
- <7ba58ef02c309cc19bca4f5832686fe6a049d868.1608575562.git.asml.silence@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [199.255.45.62]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f1697204-10d9-4233-23ff-08d8a6080450
-x-ms-traffictypediagnostic: SJ0PR04MB7567:
-x-microsoft-antispam-prvs: <SJ0PR04MB75678E99FC8B602391EEE4A586C00@SJ0PR04MB7567.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:2150;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: crIsUqcpdCO/9yp9Yj3s3idY1YkS/HTBfOkME2iNVc2Az2lbjDm+Sgz+1qyX8NMryWe2nvK2IHNX7k1Anj9OuaB2+bheq3hDy+WynJvB6IwEZYUiZfTTUH7JwMukxKvFlCUFaInTFDzMTwCs/bqZqxYpdp7wYCKInYUwCkPO+UrHGnjAJhoBYpPKTieg5DPtJ0QHTmH64vArpyVXLZT+1xKle8E/8/bMze5eXJgJd6dFb1JKqSTnk3D+CILtS3D1hXdv0ViKHDwmlHUnKSkQTmWvoP12Xw1B3f7pI0HpJjCs1txC8pHytlXmpRk8Kzx0jWMZ9NcW8AT/t0JsWKWhGmxqVgTOqFTDaw90dDQa80/nmBtstP2qsOoycye7DxRpsqk6P6pv7JvdD9bjRwMIpg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR04MB4965.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(376002)(396003)(136003)(39860400002)(366004)(66946007)(9686003)(66556008)(55016002)(76116006)(64756008)(7696005)(66446008)(33656002)(2906002)(66476007)(110136005)(316002)(71200400001)(4744005)(53546011)(478600001)(186003)(52536014)(26005)(5660300002)(8936002)(86362001)(6506007)(8676002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?5iZ7XX/GQnMjxpFfRPYDqSM2CMrK8l0Z9qeM9psP3Unk6mTPDv52I7NhIc7l?=
- =?us-ascii?Q?M5NcTAL3irBFkgpFmJo0CChVFwsYLVF5fwBeRvIaxrbwHHeN8soskm5t2X9J?=
- =?us-ascii?Q?Yemqzsm4sUQnFsVI8HM6WC3jwE3zz3OBvvQJiJnPpaSSVn3OWpumP49QaIcW?=
- =?us-ascii?Q?0WW8qiHOjdA5qdIXbB1mXZPJvDHciIQ0uNvagY782liqNjCLjgz5BvXw98F0?=
- =?us-ascii?Q?ikPdvlsnT3mxK3/3Yz0PAwN3McE3ys/1pSc+bSifi76gqaudDzJRdTuh67Kk?=
- =?us-ascii?Q?m43dFfpnyVsrykytjj/Q6JW8Bk6DSMcd3SQE2QzsG4XxbQLe+KtgQgdL8uH7?=
- =?us-ascii?Q?15CFkF3zZrowYdOgP3aKgJ5ROsjrk4hy0gvzkR+BdQJQP26QFuUR1BDSA4CP?=
- =?us-ascii?Q?iKmNBt9JpzQXW/2qldParGz6C/vLQolq8vrYkWs1NIXs3JlSafWZP1mat4R5?=
- =?us-ascii?Q?nkry8mAdcTEBHHku8g6JYclXKaOouGKLtMWnP/U1kh63Y3bmu4kcSsd2VB/0?=
- =?us-ascii?Q?pMDQWmjcQCkUsm8HwM35MefjoYGdzirpC/+Ko8kFk1iPEt5ePH65nQRP/zam?=
- =?us-ascii?Q?dAOI+RWxmgy7eoIRwc/rGcn9Vz+C3feKldAtaE4YYFKaUYH+Ah9FOaiRl8XJ?=
- =?us-ascii?Q?RDQu0c3FTgGDjm6YAE/8j027RKgcUHKKp/Dr2ndS25rzBVy32S4ZD4Jmr6iw?=
- =?us-ascii?Q?75EPzrzIFFirjFXYX3DHOu0wJMspYfwmF3i6DkHij5bKf/qnEi83MMMHJNOh?=
- =?us-ascii?Q?8j1l2KC6jShX5Y7GpWIVtmj2Xg3KzPMmnXZPdqgH7H07rsOf63/UUQ0WJ51Y?=
- =?us-ascii?Q?MZOyLt6FFfBeyCqcAo7ocAShvEzn0j6tlGf6QzVBW5yDARMMQoH9bCQtBcnv?=
- =?us-ascii?Q?+IY2UdPst8QXtyiQTWzz9Fg2fXe5hmbzhW77G4h45wdRHp5VdTqXzZl1CEqL?=
- =?us-ascii?Q?G5WdMJ43TmuaAi9mgYcWzEnSvAvW/vKgyefYFh0aETH1fgIIDlMQWmNFxmi1?=
- =?us-ascii?Q?90Al?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=FnuJh32XFVzCBtjJsd69Wal/1kF9mCCotS7zGoIN7ok=;
+        b=N9ghEEVKHllFEe1CMmaby1iettrwekp0TafKAcgMhCEwU//30jJq/WXdDU1fkb+v4u
+         Sm03GJzhSZgsr/7oqXdhVa7XOtP3cddsDuiVa33XbhvLc2xORCNFLQYR2m8A2cj9m++G
+         Ipku3OFeNrhBwfl/H91UeXmTxY5GfRI8O2EldtrrdhzYqVvilDnNsnyuI055IZM/BodE
+         EQ2U/tSpn5S9i5eo5pdzf5NeTgzB/HNS6guypjy7yDylpIOh8dYNWtKM7bliuVVFVGJt
+         HvpgiEdwQHb2s09CZhK6lQgbNRpIGqLBm5/iBF+UCSbG4gLtg/s7GZjOa8JsXLcyuTLb
+         t7Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FnuJh32XFVzCBtjJsd69Wal/1kF9mCCotS7zGoIN7ok=;
+        b=ugkb/f/BDHXACkQmyySP8a3t40pIF1ypitDHekQEvA7KnyYoRVtRr+aDV1capArXuH
+         aC+9W5pauHctJS5p+Zs8wGiD2wGCYsGQBiET2HwN9Gz6vh+u02A5gPdZxN/TBEq3Hyol
+         6tuTprmdz0Pv1yCjReJ6yWFrcW+kcLExQ1Bo6tpoG3efN9y1FgeyewZv6PZbvTgzogj7
+         sHOXz8AkCkCPWHKrlPfPhezWUy0dbSP5abJ4gBd1RMjxbvSrJbgxa/e3IaWaBGvKRldE
+         /MCvYkQtAbKCUFyB9V++FvJUXt8IcbiOBW0Qbjkp0QAw/Zfi7pyrtQTESpnWVOE48rQR
+         pnOw==
+X-Gm-Message-State: AOAM532Mp+KWjTS2NolIJV87smivhuTUUIR5zwIOe7J634UmkBPXqmmu
+        MSxL2HMrUpJPdmXRre8h3/t4RC/MLxeeiry7
+X-Google-Smtp-Source: ABdhPJwVZ7qyxc6Fy+VsDmXTzyQkrA98vbthOxfIYjkAC7ijO0mw8AbpFH9MMnBoJOoTIPmAalCvcQ==
+X-Received: by 2002:a17:902:8503:b029:dc:44f:62d8 with SMTP id bj3-20020a1709028503b02900dc044f62d8mr18757093plb.34.1608603058647;
+        Mon, 21 Dec 2020 18:10:58 -0800 (PST)
+Received: from gmail.com (c-73-241-149-213.hsd1.ca.comcast.net. [73.241.149.213])
+        by smtp.gmail.com with ESMTPSA id u1sm16660566pjr.51.2020.12.21.18.10.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Dec 2020 18:10:58 -0800 (PST)
+Date:   Mon, 21 Dec 2020 21:10:43 -0500
+From:   Noah Goldstein <goldstein.w.n@gmail.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     noah <goldstein.n@wustl.edu>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: io_uring.c: Add skip option for __io_sqe_files_update
+Message-ID: <20201222021043.GA139782@gmail.com>
+References: <20201220065025.116516-1-goldstein.w.n@gmail.com>
+ <0cdf2aac-6364-742d-debb-cfd58b4c6f2b@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR04MB4965.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1697204-10d9-4233-23ff-08d8a6080450
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Dec 2020 23:27:43.3576
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WNM+WH0k13HPw2nXhZn84OvDkavdfRoTZfuwRmYGLLL373XzVd2Mx3RMwZfOHXZ1QinNJ2npScNkuF3HOrHQyYj+7r6A0QdbTXtW2qeFFH8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR04MB7567
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0cdf2aac-6364-742d-debb-cfd58b4c6f2b@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/21/20 10:40, Pavel Begunkov wrote:=0A=
-> @@ -8866,7 +8865,12 @@ static int io_uring_add_task_file(struct io_ring_c=
-tx *ctx, struct file *file)=0A=
->  =0A=
->  		if (!old) {=0A=
->  			get_file(file);=0A=
-> -			xa_store(&tctx->xa, (unsigned long)file, file, GFP_KERNEL);=0A=
-> +			ret =3D xa_err(xa_store(&tctx->xa, (unsigned long)file,=0A=
-> +						file, GFP_KERNEL));=0A=
-> +			if (ret) {=0A=
-> +				fput(file);=0A=
-> +				return ret;=0A=
-> +			}=0A=
->  		}=0A=
->  		tctx->last =3D file;=0A=
->  	}=0A=
-Looks good.=0A=
-=0A=
-Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>=0A=
-=0A=
+On Sun, Dec 20, 2020 at 03:18:05PM +0000, Pavel Begunkov wrote:
+> On 20/12/2020 06:50, noah wrote:> From: noah <goldstein.n@wustl.edu>
+> > 
+> > This patch makes it so that specify a file descriptor value of -2 will
+> > skip updating the corresponding fixed file index.
+> > 
+> > This will allow for users to reduce the number of syscalls necessary
+> > to update a sparse file range when using the fixed file option.
+> 
+> Answering the github thread -- it's indeed a simple change, I had it the
+> same day you posted the issue. See below it's a bit cleaner. However, I
+> want to first review "io_uring: buffer registration enhancements", and
+> if it's good, for easier merging/etc I'd rather prefer to let it go
+> first (even if partially).
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 941fe9b64fd9..b3ae9d5da17e 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -7847,9 +7847,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  	if (IS_ERR(ref_node))
+>  		return PTR_ERR(ref_node);
+>  
+> -	done = 0;
+>  	fds = u64_to_user_ptr(up->fds);
+> -	while (nr_args) {
+> +	for (done = 0; done < nr_args; done++) {
+>  		struct fixed_file_table *table;
+>  		unsigned index;
+>  
+> @@ -7858,7 +7857,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  			err = -EFAULT;
+>  			break;
+>  		}
+> -		i = array_index_nospec(up->offset, ctx->nr_user_files);
+> +		if (fd == IORING_REGISTER_FILES_SKIP)
+> +			continue;
+> +
+> +		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
+>  		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
+>  		index = i & IORING_FILE_TABLE_MASK;
+>  		if (table->files[index]) {
+> @@ -7896,9 +7898,6 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  				break;
+>  			}
+>  		}
+> -		nr_args--;
+> -		done++;
+> -		up->offset++;
+>  	}
+>  
+>  	if (needs_switch) {
+> 
+> -- 
+> Pavel Begunkov
+Ah. Got it.

@@ -2,59 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 08DAD2E1C5A
-	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 13:45:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6018E2E1C6A
+	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 13:57:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbgLWMpp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Dec 2020 07:45:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47234 "EHLO
+        id S1728625AbgLWM5H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Dec 2020 07:57:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728614AbgLWMpo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Dec 2020 07:45:44 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 269BDC0613D3;
-        Wed, 23 Dec 2020 04:45:04 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id i9so18521094wrc.4;
-        Wed, 23 Dec 2020 04:45:04 -0800 (PST)
+        with ESMTP id S1728516AbgLWM5F (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Dec 2020 07:57:05 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50784C061793;
+        Wed, 23 Dec 2020 04:56:25 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id d26so18506505wrb.12;
+        Wed, 23 Dec 2020 04:56:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Jaj4wwk2cpL92Bf2RNDnuKHKMQpm0P2e//A2PU6Aln4=;
-        b=DZGO6f8CnWZp0wO2SxfQADNUfYOnsJuBODJIi91TPBipb/+B6TUdzRr07a93Cc1Wnw
-         JrB3AXy6z+tOT3B5MyGuKNVbBJiZCNLr8V5sK/HjKoOaJlVmZ772fDMEtqrypfX1uOi1
-         OvryNewuk3sImUSI2lsYWKklb/F/Lfqse8crSQz0ePd9VcsevVXHqrvMryl13LXapCkx
-         vkxvxe0r8f2iQgaPcx3TNGAlSGQFTPHlXBh8bPPqQ7OLZ9SHy9ICgE6zEMY6EohGayip
-         cPUR5v0nl+hZYzyo3Kr70RAi/qcXlAIVYyxpVraEmN8AkHVcO4V5dLQyK+AMCr9QSATB
-         mTJw==
+        bh=V8yuZe/XKO2JAJAcMHgWSJTvwfutI16LmYdfxTFjPYU=;
+        b=CT2PWH6HL+1/JNMbdoDfgZQu4hleqhfQEH/3Koaq2aoU7FkUWXNDL/iMJ/QAnFlDG6
+         k7ol75IPDjndCuqNk9cJiqnVenXR4/cdFbhXWcQM2bwzhGRDKqOFCzYN8sKVChecNW2/
+         8SIPMgATznDFVBuD9TNGevdiobiauf5OmxRXJw0ilUhqe9xJjkXNGF3yVcv3qHKGfgtv
+         vx9KQiOQ/KrfwjcZTkcd5+phk8JDekky/cxpyiUm6H6Fb0bkFUWzOtGQCnBuLWvxjiDo
+         vB2HCpOKEEIRsfMs2bGpDMLZahEl2tlun1qm2BWQ9BKlNXwuR7rfpFyNtELV2UiONlz9
+         i+Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=Jaj4wwk2cpL92Bf2RNDnuKHKMQpm0P2e//A2PU6Aln4=;
-        b=B4K9AVHiN2xyaFoy7bfPViphoRtK2Y6CQTbq2ipwl3jUGNmZOUAlgqnKZyg+Q3a1SN
-         yCAMHU/oSsVN8Pw+L8hf3MHFs3cc/d9V2fn/XKzgjxfS0Q/FzxAgO0YIqv7FiKxkUZz0
-         ScY6DQmxMaI8rbwwCSUu1SIzoDYUfo6Iu5wKz6wrPoQPvkTDXCx/aReUvky7Qf94AJFY
-         cUjlP5OUuFojoEgSRSpXJPk13f3Tus+BW/TSDB2VaBCFskjhLqv8sjOXuLns6lBuHRBd
-         lQlY5yPAIiDPE12vwPF8vI0NkqIOHeFO7Lmz7Rt4TgPFeLgDHlETgkPJoE+07da4HW29
-         aOUg==
-X-Gm-Message-State: AOAM532E6wxjySEg+hZpcTdrYhrRYCmKNIn1Rm2enqCNNFI/CcZepO/l
-        GJ5k4rJ5yTp3oNTqaTLWbVWuAr/xC9/YkQ==
-X-Google-Smtp-Source: ABdhPJz+dUWP/lnmFE+K6X7F/q71LIP3Z0GshDGOiHrUrjkBJs8CXJvqChBijrMxD9YEaSuNTBsVeQ==
-X-Received: by 2002:a5d:6503:: with SMTP id x3mr29155876wru.151.1608727502693;
-        Wed, 23 Dec 2020 04:45:02 -0800 (PST)
+        bh=V8yuZe/XKO2JAJAcMHgWSJTvwfutI16LmYdfxTFjPYU=;
+        b=cwGnE6zMqgJ0uPpYoULr9WIHsJU3Dawa4r6fIz7cFhnJ76+4GHxk797frOs7GtJBGs
+         YgCbwhVg261KKJZ2ozcdpP8UK+FGFaCoYyyaW5msSWdFOu6IP4dAzxWaHuzLAakYd0o4
+         CzQ3lSQr75IIxU0s/zI0t35mhRDrclhew/7bE0XDk5vy7shdXmNoKWtH6XQBcUAV4MR/
+         /wgD7kPYkwtYtKf6KJgWVK8Zacm5mzORDUys8bW6EEN5ckZ3F6DGGGbNVC9ptlGj+7hR
+         YtSVuZ4NR32kOIjrXsuAUFa3SzV7nrFRql9jsanZX9CVp7x9ckqJxTwT0P37SEnJgxsq
+         sRHA==
+X-Gm-Message-State: AOAM531dcV3UUxfEDczxeOnnhDf7ag14GaxZeLI6FwWwC0JkgulVytYl
+        bUdAHKMb6O++iVFdvPKvlCm5z2CwSW1t6+F9
+X-Google-Smtp-Source: ABdhPJxWN+ccQniO8c/aQCmYGhKmAtpIj8N5tDRJBhD62JqXgH3Ykk1ZsTy87LQFlHRm4SqDhTtiBw==
+X-Received: by 2002:adf:9506:: with SMTP id 6mr29080023wrs.172.1608728182837;
+        Wed, 23 Dec 2020 04:56:22 -0800 (PST)
 Received: from [192.168.8.148] ([85.255.233.85])
-        by smtp.gmail.com with ESMTPSA id 94sm38080771wrq.22.2020.12.23.04.45.01
+        by smtp.gmail.com with ESMTPSA id x17sm34973694wro.40.2020.12.23.04.56.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Dec 2020 04:45:02 -0800 (PST)
-To:     Stefano Garzarella <sgarzare@redhat.com>,
-        Yejune Deng <yejune.deng@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        Wed, 23 Dec 2020 04:56:22 -0800 (PST)
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1608694025-121050-1-git-send-email-yejune.deng@gmail.com>
- <20201223103623.mxjsmitdmqsx6ftd@steredhat>
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
+References: <cover.1607976425.git.asml.silence@gmail.com>
+ <20201215014114.GA1777020@T590>
+ <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
+ <20201215120357.GA1798021@T590>
+ <e755fec3-4181-1414-0603-02e1a1f4e9eb@gmail.com>
+ <20201222141112.GE13079@infradead.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -99,13 +110,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH] io_uring: remove io_remove_personalities()
-Message-ID: <3c013151-37de-1ef0-e989-9f871665d650@gmail.com>
-Date:   Wed, 23 Dec 2020 12:41:39 +0000
+Subject: Re: [PATCH v1 0/6] no-copy bvec
+Message-ID: <933030f0-e428-18fd-4668-68db4f14b976@gmail.com>
+Date:   Wed, 23 Dec 2020 12:52:59 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201223103623.mxjsmitdmqsx6ftd@steredhat>
+In-Reply-To: <20201222141112.GE13079@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -113,40 +124,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 23/12/2020 10:36, Stefano Garzarella wrote:
-> On Wed, Dec 23, 2020 at 11:27:05AM +0800, Yejune Deng wrote:
->> The function io_remove_personalities() is very similar to
->> io_unregister_personality(),but the latter has a more reasonable
->> return value.
+On 22/12/2020 14:11, Christoph Hellwig wrote:
+> On Tue, Dec 15, 2020 at 02:05:35PM +0000, Pavel Begunkov wrote:
+>>> You may find clue from the following link:
+>>>
+>>> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2262077.html
 >>
->> Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
->> ---
->> fs/io_uring.c | 25 ++++++-------------------
->> 1 file changed, 6 insertions(+), 19 deletions(-)
+>> Thanks for the link!
+>>
+>> Al, you mentioned "Zero-length segments are not disallowed", do you have
+>> a strong opinion on that? Apart from already diverged behaviour from the
+>> block layer and getting in the way of this series, without it we'd also be
+>> able to remove some extra ifs, e.g. in iterate_bvec()
 > 
-> The patch LGTM, maybe as an alternative you can leave io_remove_personality() with the interface needed by idr_for_each() and implement io_unregister_personality() calling io_remove_personality() with the right parameters.
+> I'd prefer not to support zero-length ITER_BVEC and catching them
+> early, as the block layer can't deal with them either.  From a quick
+> look at iter_file_splice_write it should be pretty trivial to fix there,
+> although we'll need to audit other callers as well (even if I don't
+> expect them to submit this degenerate case).
 
-Right, don't replace sane types with void * just because.
-Leave well-typed io_unregister_personality() and call it from
-io_remove_personalities().
+Can scatterlist have 0-len entries? Those are directly translated into
+bvecs, e.g. in nvme/target/io-cmd-file.c and target/target_core_file.c.
+I've audited most of others by this moment, they're fine.
 
-
-Also
- * idr_for_each() - Iterate through all stored pointers.
- ...
- * If @fn returns anything other than %0, the iteration stops and that
- * value is returned from this function.
-
-For io_remove_personality() iod==NULL should not happen because
-it's under for_each and synchronised, but leave the return value be 
-
-io_remove_personality(void *, ...)
-{
-	struct io_ring_ctx *ctx = data;
-
-	io_unregister_personality(ctx, id);
-	return 0;
-}
+Thanks for other nits, they will go into next version.
 
 -- 
 Pavel Begunkov

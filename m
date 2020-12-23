@@ -2,135 +2,157 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBE322E17BE
-	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 04:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B60C72E1A19
+	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 09:40:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726207AbgLWD14 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Dec 2020 22:27:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46392 "EHLO
+        id S1727744AbgLWIk1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Dec 2020 03:40:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbgLWD1z (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Dec 2020 22:27:55 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C340C0613D3;
-        Tue, 22 Dec 2020 19:27:15 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id w5so9744980pgj.3;
-        Tue, 22 Dec 2020 19:27:15 -0800 (PST)
+        with ESMTP id S1727670AbgLWIk1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Dec 2020 03:40:27 -0500
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FFF3C0613D3
+        for <io-uring@vger.kernel.org>; Wed, 23 Dec 2020 00:39:47 -0800 (PST)
+Received: by mail-io1-xd2e.google.com with SMTP id q137so14406276iod.9
+        for <io-uring@vger.kernel.org>; Wed, 23 Dec 2020 00:39:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=H8go/+X2Vcs98+iki2Z8ohftpJpMUDcNkNw9l89t5vU=;
-        b=IPSlb0CJNRuU2Z0oTyjF3f8ujTtTF2TnQQJv5kNitqjETttqxOuxfFZRmja9kR0Eu1
-         AcoKkHM9+On8cwyy9gk6cvFGM1mFgVmBiIcPsGIoZgZ9n77by/weeVCQpltp3KWBYNeS
-         jtADoDxkM+TgrqZ7Zx3vhvHHfie35QrA5n9rq3wMbQdaGSGa2rGqnSB3WU+dTmn2xjrK
-         g3H+ZGdLOo4HXXA7kirE2wlVf0JLBInAUOzXnrZlaDuU13MtlDD5lryhLRS4u9NsV4Fx
-         EpnrJMjfkjWaJl5EStz5hoaaKXQWwl6a71DUAjsYNHtotjka9wfehAsNTzk0fEFjgS+4
-         mYug==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G6mcDcRfB2nadWbs1w6tWAZrpnQrFec1P/BxszJMgWM=;
+        b=pxTJCpmrNR2cD6WCvkFcBzMY2NmE+JC7ThynDagfcVO2WMssF3gzikuyhm8uWvelP8
+         XFj7yyVhLUrCnME5T0bHJBDVdrWdDb1i91Nd/mUxXM0o/jInnUGvo2aPn5bgAwTJL1vT
+         /Waj287n26oS0ECvkoatkZsaFTgkwulpHAVgVqNVta1Hh3Vu4Qc/NX/5CaKO3GM/KyYC
+         9r7ohNqKeNaK/P49tsPfjjo7BTJq0YNGYXOIvY2LHqyLfJNTkwQ9UeZKlNBvxOSkDUyf
+         chTYLZqOoe2AJYtaP2x+sObDYtWPzULWaZNGL2EAW6Zce4AZHq5Iw/PFq/znS0b03yAU
+         yARg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=H8go/+X2Vcs98+iki2Z8ohftpJpMUDcNkNw9l89t5vU=;
-        b=bAWdtHYmqgp9UWQ7SSdozVP3dZHxIboFDJ78tBWaUlRNEPSttkFol2a1rLevviPzLN
-         fr/e0LwRlMchlykV0Ae2ZXE4c6jWMuz4I1yYp0YqfsdAAIQd/nGcuekdeD5lGR5cBRYB
-         A9TrGhKy4G+ppwr87NrlJO/E+sbNR5eZSZQ+FuKMwUOLeYWV4UmG3QkMTmF/oop4cZAX
-         r03d4YlyPqtGrtdKW+lr/JnD7gVXMk4lhX6H0h5jFQTTjtOANeVsq89w7MYOFsGqgQCD
-         BnsV47b+rrcsvYY3s9GUxNkbkpzbbEK/9bX5OEzxwWgltGms8E07BMPDPLnQMcoi83fy
-         XKPA==
-X-Gm-Message-State: AOAM530HFtz4VhxbHwmSs0MNcSlbme1ROjknC+fo672pt9Dug9km3ryY
-        1pW73ZMX3GD4GNO0Wi8By28=
-X-Google-Smtp-Source: ABdhPJyYhZUATDbhC2Yt6IPIF6lHyrgNCyQ47E/gPAVgdoDwMC0xnj/TuVVJUJLeWKJZI5K8xDFA6g==
-X-Received: by 2002:a63:66c3:: with SMTP id a186mr22826436pgc.198.1608694035129;
-        Tue, 22 Dec 2020 19:27:15 -0800 (PST)
-Received: from localhost.localdomain ([122.10.161.207])
-        by smtp.gmail.com with ESMTPSA id b6sm20535189pfd.43.2020.12.22.19.27.12
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Dec 2020 19:27:14 -0800 (PST)
-From:   Yejune Deng <yejune.deng@gmail.com>
-To:     viro@zeniv.linux.org.uk, axboe@kernel.dk
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yejune.deng@gmail.com
-Subject: [PATCH] io_uring: remove io_remove_personalities()
-Date:   Wed, 23 Dec 2020 11:27:05 +0800
-Message-Id: <1608694025-121050-1-git-send-email-yejune.deng@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G6mcDcRfB2nadWbs1w6tWAZrpnQrFec1P/BxszJMgWM=;
+        b=hg2H9fqZDN4Ei4k+JiBLpqxJSeS2u44HROL63RHVlxlZ5ahVOVH1up7aobD0sfFVan
+         tdN2XM5YJ/5VBGRmcifPfKMkQyqjVfsIsrdl9diu7OruhflwTNYBvWDDAF0Rg3lEBPwa
+         75d6BrFrAinsILJfb1kue1rht8YXVTr4p7zU9jRdsyBXrhEr4esu9DIfJg0ST4Fi75K5
+         xZGHrxy9jiPlBzkjAXd5mrig/UcsrYreJ/uIff7u1I2yatccllV7I0wufV9w79XWyJa4
+         auaoVlqQ7cpoY7atcsw9k1YlBbNafqpYzhnMfnV67rXmUF5VeRFsNVRdR+VHfdcc7yhe
+         E7tw==
+X-Gm-Message-State: AOAM5321s7mQK9fWseqQGKnojdqcqseKd/psnrr+NVG3u2hl69RMdo6M
+        Rpzg4Bk4XVfQGBMKvBNf5XImfBKadfDlar20s8k=
+X-Google-Smtp-Source: ABdhPJytlFQufQym1pFxUCXNloWmJXbM30rJc2eVj+oe6/ij/d4TSLQwLBO8TZVds+N67Zs/Te2vN6dqlzysXCzojEI=
+X-Received: by 2002:a6b:8ec9:: with SMTP id q192mr21596365iod.28.1608712786716;
+ Wed, 23 Dec 2020 00:39:46 -0800 (PST)
+MIME-Version: 1.0
+References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
+ <2B352D6C-4CA2-4B09-8751-D7BB8159072D@googlemail.com> <d9205a43-ebd7-9412-afc6-71fdcf517a32@kernel.dk>
+ <CAAss7+ps4xC785yMjXC6u8NiH9PCCQQoPiH+AhZT7nMX7Q_uEw@mail.gmail.com>
+ <0fe708e2-086b-94a8-def4-e4ebd6e0b709@kernel.dk> <614f8422-3e0e-25b9-4cc2-4f1c07705ab0@kernel.dk>
+ <986c85af-bb77-60d4-8739-49b662554157@gmail.com> <e88403ad-e272-2028-4d7a-789086e12d8b@kernel.dk>
+ <2e968c77-912d-6ae1-7000-5e34eb978ab5@gmail.com> <CAOKbgA5YD_MxY-RqJzP7eqdkqrnQCgjRin7w29QtszHaCJqwrg@mail.gmail.com>
+ <CAOKbgA7TyscndB7nn409NsFfoJriipHG80fgh=7SRESbiguNAg@mail.gmail.com>
+ <58bd0583-5135-56a1-23e2-971df835824c@gmail.com> <da4f2ac2-e9e0-b0c2-1f0a-be650f68b173@gmail.com>
+ <CAOKbgA7shBKAnVKXQxd6PadiZi0O7UZZBZ6rHnr3HnuDdtx3ng@mail.gmail.com> <c4837bd0-5f19-a94d-5ffb-e59ae17fd095@gmail.com>
+In-Reply-To: <c4837bd0-5f19-a94d-5ffb-e59ae17fd095@gmail.com>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Wed, 23 Dec 2020 15:39:35 +0700
+Message-ID: <CAOKbgA5=Z+6Z-GqrYFBV5T_uqkVU0oSqKhf6C37MkruBCKTcow@mail.gmail.com>
+Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Josef <josef.grieb@gmail.com>,
+        Norman Maurer <norman.maurer@googlemail.com>,
+        io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The function io_remove_personalities() is very similar to
-io_unregister_personality(),but the latter has a more reasonable
-return value.
+On Tue, Dec 22, 2020 at 11:37 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>
+> On 22/12/2020 11:04, Dmitry Kadashev wrote:
+> > On Tue, Dec 22, 2020 at 11:11 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> [...]
+> >>> What about smaller rings? Can you check io_uring of what SQ size it can allocate?
+> >>> That can be a different program, e.g. modify a bit liburing/test/nop.
+> > Unfortunately I've rebooted the box I've used for tests yesterday, so I can't
+> > try this there. Also I was not able to come up with an isolated reproducer for
+> > this yet.
+> >
+> > The good news is I've found a relatively easy way to provoke this on a test VM
+> > using our software. Our app runs with "admin" user perms (plus some
+> > capabilities), it bumps RLIMIT_MEMLOCK to infinity on start. I've also created
+> > an user called 'ioutest' to run the check for ring sizes using a different user.
+> >
+> > I've modified the test program slightly, to show the number of rings
+> > successfully
+> > created on each iteration and the actual error message (to debug a problem I was
+> > having with it, but I've kept this after that). Here is the output:
+> >
+> > # sudo -u admin bash -c 'ulimit -a' | grep locked
+> > max locked memory       (kbytes, -l) 1024
+> >
+> > # sudo -u ioutest bash -c 'ulimit -a' | grep locked
+> > max locked memory       (kbytes, -l) 1024
+> >
+> > # sudo -u admin ./iou-test1
+> > Failed after 0 rings with 1024 size: Cannot allocate memory
+> > Failed after 0 rings with 512 size: Cannot allocate memory
+> > Failed after 0 rings with 256 size: Cannot allocate memory
+> > Failed after 0 rings with 128 size: Cannot allocate memory
+> > Failed after 0 rings with 64 size: Cannot allocate memory
+> > Failed after 0 rings with 32 size: Cannot allocate memory
+> > Failed after 0 rings with 16 size: Cannot allocate memory
+> > Failed after 0 rings with 8 size: Cannot allocate memory
+> > Failed after 0 rings with 4 size: Cannot allocate memory
+> > Failed after 0 rings with 2 size: Cannot allocate memory
+> > can't allocate 1
+> >
+> > # sudo -u ioutest ./iou-test1
+> > max size 1024
+>
+> Then we screw that specific user. Interestingly, if it has CAP_IPC_LOCK
+> capability we don't even account locked memory.
 
-Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
----
- fs/io_uring.c | 25 ++++++-------------------
- 1 file changed, 6 insertions(+), 19 deletions(-)
+We do have some capabilities, but not CAP_IPC_LOCK. Ours are:
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b749578..000ea9a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8608,7 +8608,7 @@ static int io_uring_fasync(int fd, struct file *file, int on)
- 	return fasync_helper(fd, file, on, &ctx->cq_fasync);
- }
- 
--static int io_remove_personalities(int id, void *p, void *data)
-+static int io_unregister_personality(int id, void *p, void *data)
- {
- 	struct io_ring_ctx *ctx = data;
- 	struct io_identity *iod;
-@@ -8618,8 +8618,10 @@ static int io_remove_personalities(int id, void *p, void *data)
- 		put_cred(iod->creds);
- 		if (refcount_dec_and_test(&iod->count))
- 			kfree(iod);
-+		return 0;
- 	}
--	return 0;
-+
-+	return -EINVAL;
- }
- 
- static void io_ring_exit_work(struct work_struct *work)
-@@ -8657,7 +8659,7 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 
- 	/* if we failed setting up the ctx, we might not have any rings */
- 	io_iopoll_try_reap_events(ctx);
--	idr_for_each(&ctx->personality_idr, io_remove_personalities, ctx);
-+	idr_for_each(&ctx->personality_idr, io_unregister_personality, ctx);
- 
- 	/*
- 	 * Do this upfront, so we won't have a grace period where the ring
-@@ -9679,21 +9681,6 @@ static int io_register_personality(struct io_ring_ctx *ctx)
- 	return ret;
- }
- 
--static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
--{
--	struct io_identity *iod;
--
--	iod = idr_remove(&ctx->personality_idr, id);
--	if (iod) {
--		put_cred(iod->creds);
--		if (refcount_dec_and_test(&iod->count))
--			kfree(iod);
--		return 0;
--	}
--
--	return -EINVAL;
--}
--
- static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
- 				    unsigned int nr_args)
- {
-@@ -9906,7 +9893,7 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 		ret = -EINVAL;
- 		if (arg)
- 			break;
--		ret = io_unregister_personality(ctx, nr_args);
-+		ret = io_unregister_personality(nr_args, NULL, ctx);
- 		break;
- 	case IORING_REGISTER_ENABLE_RINGS:
- 		ret = -EINVAL;
+CAP_NET_ADMIN, CAP_NET_BIND_SERVICE, CAP_SYS_RESOURCE, CAP_KILL,
+CAP_DAC_READ_SEARCH.
+
+The latter was necessary for integration with some third-party thing that we do
+not really use anymore, so we can try building without it, but it'd require some
+time, mostly because I'm not sure how quickly I'd be able to provoke the issue.
+
+> btw, do you use registered buffers?
+
+No, we do not use neither registered buffers nor registered files (nor anything
+else).
+
+Also, I just tried the test program on a real box (this time one instance of our
+program is still running - can repeat the check with it dead, but I expect the
+results to be pretty much the same, at least after a few more restarts). This
+box runs 5.9.5.
+
+# sudo -u admin bash -c 'ulimit -l'
+1024
+
+# sudo -u admin ./iou-test1
+Failed after 0 rings with 1024 size: Cannot allocate memory
+Failed after 0 rings with 512 size: Cannot allocate memory
+Failed after 0 rings with 256 size: Cannot allocate memory
+Failed after 0 rings with 128 size: Cannot allocate memory
+Failed after 0 rings with 64 size: Cannot allocate memory
+Failed after 0 rings with 32 size: Cannot allocate memory
+Failed after 0 rings with 16 size: Cannot allocate memory
+Failed after 0 rings with 8 size: Cannot allocate memory
+Failed after 0 rings with 4 size: Cannot allocate memory
+Failed after 0 rings with 2 size: Cannot allocate memory
+can't allocate 1
+
+# sudo -u dmitry bash -c 'ulimit -l'
+1024
+
+# sudo -u dmitry ./iou-test1
+max size 1024
+
 -- 
-1.9.1
-
+Dmitry Kadashev

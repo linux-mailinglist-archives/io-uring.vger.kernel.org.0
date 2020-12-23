@@ -2,73 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBBE52E1C47
-	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 13:33:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08DAD2E1C5A
+	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 13:45:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbgLWMbU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Dec 2020 07:31:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45032 "EHLO
+        id S1728618AbgLWMpp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Dec 2020 07:45:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbgLWMbT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Dec 2020 07:31:19 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D01B7C0613D3
-        for <io-uring@vger.kernel.org>; Wed, 23 Dec 2020 04:30:38 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id m5so18435889wrx.9
-        for <io-uring@vger.kernel.org>; Wed, 23 Dec 2020 04:30:38 -0800 (PST)
+        with ESMTP id S1728614AbgLWMpo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Dec 2020 07:45:44 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 269BDC0613D3;
+        Wed, 23 Dec 2020 04:45:04 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id i9so18521094wrc.4;
+        Wed, 23 Dec 2020 04:45:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SoZ1M6GGK5EUH79Grf/btUIlupW2SP+Yqp5btHtyiAo=;
-        b=IDBzKHOP7hqH8vl8ViAhLkco8AQnVQRQ93i5TlCjUxSNJ23Zuv8TS/IgISq5tm+ZlB
-         4H9NoqqXGFLNOO67BytA16kn1+WY5len3erNso0vGgmzFV/hgFqHztri6iL1gF9M+XWf
-         Ne+Yw5QqWaDipk6kh50bitcCI0utQqSqu9kjN5OZWmJ8WJ+YDjjK6rf7D9QA40ZZOmRg
-         RmTYOrCPWzapAj/SrrCAiVaKLgHi8ckYLdit3gUw6oMD0CYBJB4gJ3uzE9D7BIChavKL
-         iDdK4pUHWAix4IUFKqg+4pcB+N6JFQEy2zORqTPN5BzDBDe/uC/8Zg0foGW2km8KuNhW
-         RUrQ==
+        bh=Jaj4wwk2cpL92Bf2RNDnuKHKMQpm0P2e//A2PU6Aln4=;
+        b=DZGO6f8CnWZp0wO2SxfQADNUfYOnsJuBODJIi91TPBipb/+B6TUdzRr07a93Cc1Wnw
+         JrB3AXy6z+tOT3B5MyGuKNVbBJiZCNLr8V5sK/HjKoOaJlVmZ772fDMEtqrypfX1uOi1
+         OvryNewuk3sImUSI2lsYWKklb/F/Lfqse8crSQz0ePd9VcsevVXHqrvMryl13LXapCkx
+         vkxvxe0r8f2iQgaPcx3TNGAlSGQFTPHlXBh8bPPqQ7OLZ9SHy9ICgE6zEMY6EohGayip
+         cPUR5v0nl+hZYzyo3Kr70RAi/qcXlAIVYyxpVraEmN8AkHVcO4V5dLQyK+AMCr9QSATB
+         mTJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=SoZ1M6GGK5EUH79Grf/btUIlupW2SP+Yqp5btHtyiAo=;
-        b=jJttWdPc6lV0iyH6LbEq09q4a0yPIzZ8xXISEZo8GJwuSc+bxZTY+PMXzLUneSjx4x
-         ozRcTmF2tK+d89TFiO6I0IbJzX0iyfXfWEKmuEUi3DMAeq77m6dRjp0lfJvI92jXRojX
-         EZhfe/1MfAlbdluj9p1Lpo7glExQSuJd991gg3LzK+6Kogj2xkZ7T9x2WuSHFjqPvIjg
-         qdazgBL+2UTsNQyIuaoWLnG4+9q+Fq7Zgfpr1oxlCqkKTrls5LfbuaPrTzctDOBl/oJt
-         l62XVSiAMeAlHRpYU2bcdCeqHKcd82fNNUwYZs52cbGJ/Z19IYZUxyjl+vPlT4weIzkO
-         ISAg==
-X-Gm-Message-State: AOAM531vBPzNdMjifhj5huY24oLkdrrn9uDIF1zQHG/zwc3OjLZfwIeF
-        vbNqnqN1J13Ix3gkBFAlj9i5WSmEXSL5rA==
-X-Google-Smtp-Source: ABdhPJw7GffjfsDLTFL+507OJ84+fFbP8ZIlXD7E6FznSfRtVU6/k5fnYfLHmM2h9uJm+jLeWkrSHw==
-X-Received: by 2002:adf:e452:: with SMTP id t18mr28005798wrm.177.1608726637358;
-        Wed, 23 Dec 2020 04:30:37 -0800 (PST)
+        bh=Jaj4wwk2cpL92Bf2RNDnuKHKMQpm0P2e//A2PU6Aln4=;
+        b=B4K9AVHiN2xyaFoy7bfPViphoRtK2Y6CQTbq2ipwl3jUGNmZOUAlgqnKZyg+Q3a1SN
+         yCAMHU/oSsVN8Pw+L8hf3MHFs3cc/d9V2fn/XKzgjxfS0Q/FzxAgO0YIqv7FiKxkUZz0
+         ScY6DQmxMaI8rbwwCSUu1SIzoDYUfo6Iu5wKz6wrPoQPvkTDXCx/aReUvky7Qf94AJFY
+         cUjlP5OUuFojoEgSRSpXJPk13f3Tus+BW/TSDB2VaBCFskjhLqv8sjOXuLns6lBuHRBd
+         lQlY5yPAIiDPE12vwPF8vI0NkqIOHeFO7Lmz7Rt4TgPFeLgDHlETgkPJoE+07da4HW29
+         aOUg==
+X-Gm-Message-State: AOAM532E6wxjySEg+hZpcTdrYhrRYCmKNIn1Rm2enqCNNFI/CcZepO/l
+        GJ5k4rJ5yTp3oNTqaTLWbVWuAr/xC9/YkQ==
+X-Google-Smtp-Source: ABdhPJz+dUWP/lnmFE+K6X7F/q71LIP3Z0GshDGOiHrUrjkBJs8CXJvqChBijrMxD9YEaSuNTBsVeQ==
+X-Received: by 2002:a5d:6503:: with SMTP id x3mr29155876wru.151.1608727502693;
+        Wed, 23 Dec 2020 04:45:02 -0800 (PST)
 Received: from [192.168.8.148] ([85.255.233.85])
-        by smtp.gmail.com with ESMTPSA id m8sm30918025wmc.27.2020.12.23.04.30.36
+        by smtp.gmail.com with ESMTPSA id 94sm38080771wrq.22.2020.12.23.04.45.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Dec 2020 04:30:36 -0800 (PST)
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Josef <josef.grieb@gmail.com>,
-        Norman Maurer <norman.maurer@googlemail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <4dc9c74b-249d-117c-debf-4bb9e0df2988@kernel.dk>
- <d9205a43-ebd7-9412-afc6-71fdcf517a32@kernel.dk>
- <CAAss7+ps4xC785yMjXC6u8NiH9PCCQQoPiH+AhZT7nMX7Q_uEw@mail.gmail.com>
- <0fe708e2-086b-94a8-def4-e4ebd6e0b709@kernel.dk>
- <614f8422-3e0e-25b9-4cc2-4f1c07705ab0@kernel.dk>
- <986c85af-bb77-60d4-8739-49b662554157@gmail.com>
- <e88403ad-e272-2028-4d7a-789086e12d8b@kernel.dk>
- <2e968c77-912d-6ae1-7000-5e34eb978ab5@gmail.com>
- <CAOKbgA5YD_MxY-RqJzP7eqdkqrnQCgjRin7w29QtszHaCJqwrg@mail.gmail.com>
- <CAOKbgA7TyscndB7nn409NsFfoJriipHG80fgh=7SRESbiguNAg@mail.gmail.com>
- <58bd0583-5135-56a1-23e2-971df835824c@gmail.com>
- <da4f2ac2-e9e0-b0c2-1f0a-be650f68b173@gmail.com>
- <CAOKbgA7shBKAnVKXQxd6PadiZi0O7UZZBZ6rHnr3HnuDdtx3ng@mail.gmail.com>
- <c4837bd0-5f19-a94d-5ffb-e59ae17fd095@gmail.com>
- <CAOKbgA5=Z+6Z-GqrYFBV5T_uqkVU0oSqKhf6C37MkruBCKTcow@mail.gmail.com>
- <CAOKbgA70CtfmM7-yFRcGTzJdgoF41MQt7mLC7L_s8jcnrtkB=Q@mail.gmail.com>
- <CAOKbgA4eihm=MyiVZSG03cxjks6=yw5eTr-dCBXmhQWmkK4YEg@mail.gmail.com>
+        Wed, 23 Dec 2020 04:45:02 -0800 (PST)
+To:     Stefano Garzarella <sgarzare@redhat.com>,
+        Yejune Deng <yejune.deng@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1608694025-121050-1-git-send-email-yejune.deng@gmail.com>
+ <20201223103623.mxjsmitdmqsx6ftd@steredhat>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -113,13 +99,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: "Cannot allocate memory" on ring creation (not RLIMIT_MEMLOCK)
-Message-ID: <bd038e98-df86-ce76-554e-17e039963a76@gmail.com>
-Date:   Wed, 23 Dec 2020 12:27:14 +0000
+Subject: Re: [PATCH] io_uring: remove io_remove_personalities()
+Message-ID: <3c013151-37de-1ef0-e989-9f871665d650@gmail.com>
+Date:   Wed, 23 Dec 2020 12:41:39 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAOKbgA4eihm=MyiVZSG03cxjks6=yw5eTr-dCBXmhQWmkK4YEg@mail.gmail.com>
+In-Reply-To: <20201223103623.mxjsmitdmqsx6ftd@steredhat>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -127,28 +113,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 23/12/2020 11:48, Dmitry Kadashev wrote:
-> On Wed, Dec 23, 2020 at 4:38 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
->> Please ignore the results from the real box above (5.9.5). The memlock limit
->> interfered with this, since our app was running in the background and it had a
->> few rings running (most failed to be created, but not all). I'll try to make it
->> fully stuck and repeat the test with the app dead.
+On 23/12/2020 10:36, Stefano Garzarella wrote:
+> On Wed, Dec 23, 2020 at 11:27:05AM +0800, Yejune Deng wrote:
+>> The function io_remove_personalities() is very similar to
+>> io_unregister_personality(),but the latter has a more reasonable
+>> return value.
+>>
+>> Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
+>> ---
+>> fs/io_uring.c | 25 ++++++-------------------
+>> 1 file changed, 6 insertions(+), 19 deletions(-)
 > 
-> I've experimented with the 5.9 live boxes that were showing signs of the problem
-> a bit more, and I'm not entirely sure they get stuck until reboot anymore.
-> 
-> I'm pretty sure it is the case with 5.6, but probably a bug was fixed since
-> then - the fact that 5.8 in particular had quite a few fixes that seemed
-> relevant is the reason we've tried 5.9 in the first place.
-> 
-> And on 5.9 we might be seeing fragmentation issues indeed. I shouldn't have been
-> mixing my kernel versions :) Also, I did not realize a ring of size=1024
-> requires 16 contiguous pages. We will experiment and observe a bit more, and
-> meanwhile let's consider the case closed. If the issue surfaces again I'll
-> update this thread.
+> The patch LGTM, maybe as an alternative you can leave io_remove_personality() with the interface needed by idr_for_each() and implement io_unregister_personality() calling io_remove_personality() with the right parameters.
 
-If fragmentation is to blame, it's still a problem. Let us know if you find out
-anything. And thanks for keeping debugging
+Right, don't replace sane types with void * just because.
+Leave well-typed io_unregister_personality() and call it from
+io_remove_personalities().
+
+
+Also
+ * idr_for_each() - Iterate through all stored pointers.
+ ...
+ * If @fn returns anything other than %0, the iteration stops and that
+ * value is returned from this function.
+
+For io_remove_personality() iod==NULL should not happen because
+it's under for_each and synchronised, but leave the return value be 
+
+io_remove_personality(void *, ...)
+{
+	struct io_ring_ctx *ctx = data;
+
+	io_unregister_personality(ctx, id);
+	return 0;
+}
 
 -- 
 Pavel Begunkov

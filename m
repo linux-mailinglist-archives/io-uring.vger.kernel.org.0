@@ -2,26 +2,26 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 423C22E1BDD
-	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 12:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70BE62E1BE4
+	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 12:28:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbgLWL1J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Dec 2020 06:27:09 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:39417 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728435AbgLWL1I (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Dec 2020 06:27:08 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R431e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UJWwKPG_1608722785;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UJWwKPG_1608722785)
+        id S1728356AbgLWL1L (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Dec 2020 06:27:11 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:38159 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728455AbgLWL1L (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Dec 2020 06:27:11 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UJXS7XL_1608722785;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UJXS7XL_1608722785)
           by smtp.aliyun-inc.com(127.0.0.1);
           Wed, 23 Dec 2020 19:26:25 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     snitzer@redhat.com
 Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
         io-uring@vger.kernel.org
-Subject: [PATCH RFC 2/7] block: add helper function fetching gendisk from queue
-Date:   Wed, 23 Dec 2020 19:26:19 +0800
-Message-Id: <20201223112624.78955-3-jefflexu@linux.alibaba.com>
+Subject: [PATCH RFC 3/7] block: add iopoll method for non-mq device
+Date:   Wed, 23 Dec 2020 19:26:20 +0800
+Message-Id: <20201223112624.78955-4-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
 References: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
@@ -31,65 +31,236 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Sometimes we need to get the corresponding gendisk from request_queue.
+->poll_fn is introduced in commit ea435e1b9392 ("block: add a poll_fn
+callback to struct request_queue") for supporting non-mq queues such as
+nvme multipath, but removed in commit 529262d56dbe ("block: remove
+->poll_fn").
 
-One such use case is that, the block device driver had ever stored the
-same private data both in queue->queuedata and gendisk->private_data,
-while nowadays gendisk->private_data is more preferable in such case,
-e.g. commit c4a59c4e5db3 ("dm: stop using ->queuedata"). So if only
-request_queue given, we need to get the corresponding gendisk from
-queue, to get the private data stored in gendisk.
+To add support of IO polling for non-mq device, this method need to be
+back. Since commit c62b37d96b6e ("block: move ->make_request_fn to
+struct block_device_operations") has moved all callbacks into struct
+block_device_operations in gendisk, we also add the new method named
+->iopoll in block_device_operations.
 
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 ---
- include/linux/blkdev.h       | 2 ++
- include/trace/events/kyber.h | 6 +++---
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ block/blk-core.c       | 79 ++++++++++++++++++++++++++++++++++++++++++
+ block/blk-mq.c         | 70 +++++--------------------------------
+ include/linux/blk-mq.h |  3 ++
+ include/linux/blkdev.h |  1 +
+ 4 files changed, 92 insertions(+), 61 deletions(-)
 
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 96e5fcd7f071..2f5c51ce32e3 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -1131,6 +1131,85 @@ blk_qc_t submit_bio(struct bio *bio)
+ }
+ EXPORT_SYMBOL(submit_bio);
+ 
++static bool blk_poll_hybrid(struct request_queue *q, blk_qc_t cookie)
++{
++	struct blk_mq_hw_ctx *hctx;
++
++	/* TODO: bio-based device doesn't support hybrid poll. */
++	if (!queue_is_mq(q))
++		return false;
++
++	hctx = q->queue_hw_ctx[blk_qc_t_to_queue_num(cookie)];
++	if (blk_mq_poll_hybrid(q, hctx, cookie))
++		return true;
++
++	hctx->poll_considered++;
++	return false;
++}
++
++/**
++ * blk_poll - poll for IO completions
++ * @q:  the queue
++ * @cookie: cookie passed back at IO submission time
++ * @spin: whether to spin for completions
++ *
++ * Description:
++ *    Poll for completions on the passed in queue. Returns number of
++ *    completed entries found. If @spin is true, then blk_poll will continue
++ *    looping until at least one completion is found, unless the task is
++ *    otherwise marked running (or we need to reschedule).
++ */
++int blk_poll(struct request_queue *q, blk_qc_t cookie, bool spin)
++{
++	long state;
++
++	if (!blk_qc_t_valid(cookie) ||
++	    !test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
++		return 0;
++
++	if (current->plug)
++		blk_flush_plug_list(current->plug, false);
++
++	/*
++	 * If we sleep, have the caller restart the poll loop to reset
++	 * the state. Like for the other success return cases, the
++	 * caller is responsible for checking if the IO completed. If
++	 * the IO isn't complete, we'll get called again and will go
++	 * straight to the busy poll loop. If specified not to spin,
++	 * we also should not sleep.
++	 */
++	if (spin && blk_poll_hybrid(q, cookie))
++		return 1;
++
++	state = current->state;
++	do {
++		int ret;
++		struct gendisk *disk = queue_to_disk(q);
++
++		if (disk->fops->iopoll)
++			ret = disk->fops->iopoll(q, cookie);
++		else
++			ret = blk_mq_poll(q, cookie);
++		if (ret > 0) {
++			__set_current_state(TASK_RUNNING);
++			return ret;
++		}
++
++		if (signal_pending_state(state, current))
++			__set_current_state(TASK_RUNNING);
++
++		if (current->state == TASK_RUNNING)
++			return 1;
++		if (ret < 0 || !spin)
++			break;
++		cpu_relax();
++	} while (!need_resched());
++
++	__set_current_state(TASK_RUNNING);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(blk_poll);
++
+ /**
+  * blk_cloned_rq_check_limits - Helper function to check a cloned request
+  *                              for the new queue limits
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index b09ce00cc6af..85258958e9f1 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -3818,8 +3818,8 @@ static bool blk_mq_poll_hybrid_sleep(struct request_queue *q,
+ 	return true;
+ }
+ 
+-static bool blk_mq_poll_hybrid(struct request_queue *q,
+-			       struct blk_mq_hw_ctx *hctx, blk_qc_t cookie)
++bool blk_mq_poll_hybrid(struct request_queue *q,
++			struct blk_mq_hw_ctx *hctx, blk_qc_t cookie)
+ {
+ 	struct request *rq;
+ 
+@@ -3843,72 +3843,20 @@ static bool blk_mq_poll_hybrid(struct request_queue *q,
+ 	return blk_mq_poll_hybrid_sleep(q, rq);
+ }
+ 
+-/**
+- * blk_poll - poll for IO completions
+- * @q:  the queue
+- * @cookie: cookie passed back at IO submission time
+- * @spin: whether to spin for completions
+- *
+- * Description:
+- *    Poll for completions on the passed in queue. Returns number of
+- *    completed entries found. If @spin is true, then blk_poll will continue
+- *    looping until at least one completion is found, unless the task is
+- *    otherwise marked running (or we need to reschedule).
+- */
+-int blk_poll(struct request_queue *q, blk_qc_t cookie, bool spin)
++int blk_mq_poll(struct request_queue *q, blk_qc_t cookie)
+ {
++	int ret;
+ 	struct blk_mq_hw_ctx *hctx;
+-	long state;
+-
+-	if (!blk_qc_t_valid(cookie) ||
+-	    !test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
+-		return 0;
+-
+-	if (current->plug)
+-		blk_flush_plug_list(current->plug, false);
+ 
+ 	hctx = q->queue_hw_ctx[blk_qc_t_to_queue_num(cookie)];
+ 
+-	/*
+-	 * If we sleep, have the caller restart the poll loop to reset
+-	 * the state. Like for the other success return cases, the
+-	 * caller is responsible for checking if the IO completed. If
+-	 * the IO isn't complete, we'll get called again and will go
+-	 * straight to the busy poll loop. If specified not to spin,
+-	 * we also should not sleep.
+-	 */
+-	if (spin && blk_mq_poll_hybrid(q, hctx, cookie))
+-		return 1;
+-
+-	hctx->poll_considered++;
++	hctx->poll_invoked++;
++	ret = q->mq_ops->poll(hctx);
++	if (ret > 0)
++		hctx->poll_success++;
+ 
+-	state = current->state;
+-	do {
+-		int ret;
+-
+-		hctx->poll_invoked++;
+-
+-		ret = q->mq_ops->poll(hctx);
+-		if (ret > 0) {
+-			hctx->poll_success++;
+-			__set_current_state(TASK_RUNNING);
+-			return ret;
+-		}
+-
+-		if (signal_pending_state(state, current))
+-			__set_current_state(TASK_RUNNING);
+-
+-		if (current->state == TASK_RUNNING)
+-			return 1;
+-		if (ret < 0 || !spin)
+-			break;
+-		cpu_relax();
+-	} while (!need_resched());
+-
+-	__set_current_state(TASK_RUNNING);
+-	return 0;
++	return ret;
+ }
+-EXPORT_SYMBOL_GPL(blk_poll);
+ 
+ unsigned int blk_mq_rq_cpu(struct request *rq)
+ {
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index 47b021952ac7..032e08ecd42e 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -607,6 +607,9 @@ static inline void blk_rq_bio_prep(struct request *rq, struct bio *bio,
+ }
+ 
+ blk_qc_t blk_mq_submit_bio(struct bio *bio);
++int blk_mq_poll(struct request_queue *q, blk_qc_t cookie);
++bool blk_mq_poll_hybrid(struct request_queue *q,
++		struct blk_mq_hw_ctx *hctx, blk_qc_t cookie);
+ void blk_mq_hctx_set_fq_lock_class(struct blk_mq_hw_ctx *hctx,
+ 		struct lock_class_key *key);
+ 
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 070de09425ad..2303d06a5a82 100644
+index 2303d06a5a82..e8965879eb90 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -691,6 +691,8 @@ static inline bool blk_account_rq(struct request *rq)
- 	dma_map_page_attrs(dev, (bv)->bv_page, (bv)->bv_offset, (bv)->bv_len, \
- 	(dir), (attrs))
+@@ -1845,6 +1845,7 @@ static inline void blk_ksm_unregister(struct request_queue *q) { }
  
-+#define queue_to_disk(q)	(dev_to_disk(kobj_to_dev((q)->kobj.parent)))
-+
- static inline bool queue_is_mq(struct request_queue *q)
- {
- 	return q->mq_ops;
-diff --git a/include/trace/events/kyber.h b/include/trace/events/kyber.h
-index c0e7d24ca256..f9802562edf6 100644
---- a/include/trace/events/kyber.h
-+++ b/include/trace/events/kyber.h
-@@ -30,7 +30,7 @@ TRACE_EVENT(kyber_latency,
- 	),
- 
- 	TP_fast_assign(
--		__entry->dev		= disk_devt(dev_to_disk(kobj_to_dev(q->kobj.parent)));
-+		__entry->dev		= disk_devt(queue_to_disk(q));
- 		strlcpy(__entry->domain, domain, sizeof(__entry->domain));
- 		strlcpy(__entry->type, type, sizeof(__entry->type));
- 		__entry->percentile	= percentile;
-@@ -59,7 +59,7 @@ TRACE_EVENT(kyber_adjust,
- 	),
- 
- 	TP_fast_assign(
--		__entry->dev		= disk_devt(dev_to_disk(kobj_to_dev(q->kobj.parent)));
-+		__entry->dev		= disk_devt(queue_to_disk(q));
- 		strlcpy(__entry->domain, domain, sizeof(__entry->domain));
- 		__entry->depth		= depth;
- 	),
-@@ -81,7 +81,7 @@ TRACE_EVENT(kyber_throttled,
- 	),
- 
- 	TP_fast_assign(
--		__entry->dev		= disk_devt(dev_to_disk(kobj_to_dev(q->kobj.parent)));
-+		__entry->dev		= disk_devt(queue_to_disk(q));
- 		strlcpy(__entry->domain, domain, sizeof(__entry->domain));
- 	),
- 
+ struct block_device_operations {
+ 	blk_qc_t (*submit_bio) (struct bio *bio);
++	int (*iopoll)(struct request_queue *q, blk_qc_t cookie);
+ 	int (*open) (struct block_device *, fmode_t);
+ 	void (*release) (struct gendisk *, fmode_t);
+ 	int (*rw_page)(struct block_device *, sector_t, struct page *, unsigned int);
 -- 
 2.27.0
 

@@ -2,26 +2,26 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 308B22E1BDF
-	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 12:28:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 871052E1BE2
+	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 12:28:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728534AbgLWL1K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S1728518AbgLWL1K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Wed, 23 Dec 2020 06:27:10 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:44203 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728356AbgLWL1K (ORCPT
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:33741 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728362AbgLWL1K (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 23 Dec 2020 06:27:10 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R221e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UJXS7XR_1608722786;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UJXS7XR_1608722786)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UJXV94N_1608722786;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UJXV94N_1608722786)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 23 Dec 2020 19:26:26 +0800
+          Wed, 23 Dec 2020 19:26:27 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     snitzer@redhat.com
 Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
         io-uring@vger.kernel.org
-Subject: [PATCH RFC 5/7] dm: always return BLK_QC_T_NONE for bio-based device
-Date:   Wed, 23 Dec 2020 19:26:22 +0800
-Message-Id: <20201223112624.78955-6-jefflexu@linux.alibaba.com>
+Subject: [PATCH RFC 6/7] block: track cookies of split bios for bio-based device
+Date:   Wed, 23 Dec 2020 19:26:23 +0800
+Message-Id: <20201223112624.78955-7-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
 References: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
@@ -31,139 +31,239 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Currently the returned cookie of bio-based device is not used at all.
+This is actuaaly the core when supporting iopoll for bio-based device.
 
-In the following patches, bio-based device will actually return a
-pointer to a specific object as the returned cookie.
+A list is maintained in the top bio (the original bio submitted to dm
+device), which is used to maintain all valid cookies of split bios. The
+IO polling routine will actually iterate this list and poll on
+corresponding hardware queues of the underlying mq devices.
 
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 ---
- drivers/md/dm.c | 26 ++++++++++----------------
- 1 file changed, 10 insertions(+), 16 deletions(-)
+ block/bio.c               |  8 ++++
+ block/blk-core.c          | 84 ++++++++++++++++++++++++++++++++++++++-
+ include/linux/blk_types.h | 39 ++++++++++++++++++
+ 3 files changed, 129 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 5b2f371ec4bb..03c2b867acaa 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1252,14 +1252,13 @@ void dm_accept_partial_bio(struct bio *bio, unsigned n_sectors)
+diff --git a/block/bio.c b/block/bio.c
+index 1f2cc1fbe283..ca6d1a7ee196 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -284,6 +284,10 @@ void bio_init(struct bio *bio, struct bio_vec *table,
+ 
+ 	bio->bi_io_vec = table;
+ 	bio->bi_max_vecs = max_vecs;
++
++	INIT_LIST_HEAD(&bio->bi_plist);
++	INIT_LIST_HEAD(&bio->bi_pnode);
++	spin_lock_init(&bio->bi_plock);
  }
- EXPORT_SYMBOL_GPL(dm_accept_partial_bio);
+ EXPORT_SYMBOL(bio_init);
  
--static blk_qc_t __map_bio(struct dm_target_io *tio)
-+static void __map_bio(struct dm_target_io *tio)
+@@ -689,6 +693,7 @@ void __bio_clone_fast(struct bio *bio, struct bio *bio_src)
+ 	bio->bi_write_hint = bio_src->bi_write_hint;
+ 	bio->bi_iter = bio_src->bi_iter;
+ 	bio->bi_io_vec = bio_src->bi_io_vec;
++	bio->bi_root = bio_src->bi_root;
+ 
+ 	bio_clone_blkg_association(bio, bio_src);
+ 	blkcg_bio_issue_init(bio);
+@@ -1425,6 +1430,8 @@ void bio_endio(struct bio *bio)
+ 	if (bio->bi_disk)
+ 		rq_qos_done_bio(bio->bi_disk->queue, bio);
+ 
++	bio_del_poll_list(bio);
++
+ 	/*
+ 	 * Need to have a real endio function for chained bios, otherwise
+ 	 * various corner cases will break (like stacking block devices that
+@@ -1446,6 +1453,7 @@ void bio_endio(struct bio *bio)
+ 	blk_throtl_bio_endio(bio);
+ 	/* release cgroup info */
+ 	bio_uninit(bio);
++
+ 	if (bio->bi_end_io)
+ 		bio->bi_end_io(bio);
+ }
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 2f5c51ce32e3..5a332af01939 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -960,12 +960,31 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
  {
- 	int r;
- 	sector_t sector;
- 	struct bio *clone = &tio->clone;
- 	struct dm_io *io = tio->io;
- 	struct dm_target *ti = tio->ti;
--	blk_qc_t ret = BLK_QC_T_NONE;
+ 	struct bio_list bio_list_on_stack[2];
+ 	blk_qc_t ret = BLK_QC_T_NONE;
++	bool iopoll;
++	struct bio *root;
  
- 	clone->bi_end_io = clone_endio;
+ 	BUG_ON(bio->bi_next);
  
-@@ -1278,7 +1277,7 @@ static blk_qc_t __map_bio(struct dm_target_io *tio)
- 	case DM_MAPIO_REMAPPED:
- 		/* the bio has been remapped so dispatch it */
- 		trace_block_bio_remap(clone, bio_dev(io->orig_bio), sector);
--		ret = submit_bio_noacct(clone);
-+		submit_bio_noacct(clone);
- 		break;
- 	case DM_MAPIO_KILL:
- 		free_tio(tio);
-@@ -1292,8 +1291,6 @@ static blk_qc_t __map_bio(struct dm_target_io *tio)
- 		DMWARN("unimplemented target map return value: %d", r);
- 		BUG();
- 	}
--
+ 	bio_list_init(&bio_list_on_stack[0]);
+ 	current->bio_list = bio_list_on_stack;
+ 
++	iopoll = test_bit(QUEUE_FLAG_POLL, &bio->bi_disk->queue->queue_flags);
++	iopoll = iopoll && (bio->bi_opf & REQ_HIPRI);
++
++	if (iopoll) {
++		bio->bi_root = root = bio;
++		/*
++		 * We need to pin root bio here since there's a reference from
++		 * the returned cookie. bio_get() is not enough since the whole
++		 * bio and the corresponding kiocb/dio may have already
++		 * completed and thus won't call blk_poll() at all, in which
++		 * case the pairing bio_put() in blk_bio_poll() won't be called.
++		 * The side effect of bio_inc_remaining() is that, the whole bio
++		 * won't complete until blk_poll() called.
++		 */
++		bio_inc_remaining(root);
++	}
++
+ 	do {
+ 		struct request_queue *q = bio->bi_disk->queue;
+ 		struct bio_list lower, same;
+@@ -979,7 +998,18 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+ 		bio_list_on_stack[1] = bio_list_on_stack[0];
+ 		bio_list_init(&bio_list_on_stack[0]);
+ 
+-		ret = __submit_bio(bio);
++		if (iopoll) {
++			/* See the comments of above bio_inc_remaining(). */
++			bio_inc_remaining(bio);
++			bio->bi_cookie = __submit_bio(bio);
++
++			if (blk_qc_t_valid(bio->bi_cookie))
++				bio_add_poll_list(bio);
++
++			bio_endio(bio);
++		} else {
++			ret = __submit_bio(bio);
++		}
+ 
+ 		/*
+ 		 * Sort new bios into those for a lower level and those for the
+@@ -1002,7 +1032,11 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+ 	} while ((bio = bio_list_pop(&bio_list_on_stack[0])));
+ 
+ 	current->bio_list = NULL;
 -	return ret;
- }
- 
- static void bio_setup_sector(struct bio *bio, sector_t sector, unsigned len)
-@@ -1380,7 +1377,7 @@ static void alloc_multiple_bios(struct bio_list *blist, struct clone_info *ci,
- 	}
- }
- 
--static blk_qc_t __clone_and_map_simple_bio(struct clone_info *ci,
-+static void __clone_and_map_simple_bio(struct clone_info *ci,
- 					   struct dm_target_io *tio, unsigned *len)
- {
- 	struct bio *clone = &tio->clone;
-@@ -1391,7 +1388,7 @@ static blk_qc_t __clone_and_map_simple_bio(struct clone_info *ci,
- 	if (len)
- 		bio_setup_sector(clone, ci->sector, *len);
- 
--	return __map_bio(tio);
-+	__map_bio(tio);
- }
- 
- static void __send_duplicate_bios(struct clone_info *ci, struct dm_target *ti,
-@@ -1405,7 +1402,7 @@ static void __send_duplicate_bios(struct clone_info *ci, struct dm_target *ti,
- 
- 	while ((bio = bio_list_pop(&blist))) {
- 		tio = container_of(bio, struct dm_target_io, clone);
--		(void) __clone_and_map_simple_bio(ci, tio, len);
-+		__clone_and_map_simple_bio(ci, tio, len);
- 	}
- }
- 
-@@ -1450,7 +1447,7 @@ static int __clone_and_map_data_bio(struct clone_info *ci, struct dm_target *ti,
- 		free_tio(tio);
- 		return r;
- 	}
--	(void) __map_bio(tio);
-+	__map_bio(tio);
- 
- 	return 0;
- }
-@@ -1565,11 +1562,10 @@ static void init_clone_info(struct clone_info *ci, struct mapped_device *md,
- /*
-  * Entry point to split a bio into clones and submit them to the targets.
-  */
--static blk_qc_t __split_and_process_bio(struct mapped_device *md,
-+static void __split_and_process_bio(struct mapped_device *md,
- 					struct dm_table *map, struct bio *bio)
- {
- 	struct clone_info ci;
--	blk_qc_t ret = BLK_QC_T_NONE;
- 	int error = 0;
- 
- 	init_clone_info(&ci, md, map, bio);
-@@ -1613,7 +1609,7 @@ static blk_qc_t __split_and_process_bio(struct mapped_device *md,
- 
- 				bio_chain(b, bio);
- 				trace_block_split(b, bio->bi_iter.bi_sector);
--				ret = submit_bio_noacct(bio);
-+				submit_bio_noacct(bio);
- 				break;
- 			}
- 		}
-@@ -1621,13 +1617,11 @@ static blk_qc_t __split_and_process_bio(struct mapped_device *md,
- 
- 	/* drop the extra reference count */
- 	dec_pending(ci.io, errno_to_blk_status(error));
--	return ret;
- }
- 
- static blk_qc_t dm_submit_bio(struct bio *bio)
- {
- 	struct mapped_device *md = bio->bi_disk->private_data;
--	blk_qc_t ret = BLK_QC_T_NONE;
- 	int srcu_idx;
- 	struct dm_table *map;
- 
-@@ -1657,10 +1651,10 @@ static blk_qc_t dm_submit_bio(struct bio *bio)
- 	if (is_abnormal_io(bio))
- 		blk_queue_split(&bio);
- 
--	ret = __split_and_process_bio(md, map, bio);
-+	__split_and_process_bio(md, map, bio);
- out:
- 	dm_put_live_table(md, srcu_idx);
--	return ret;
++
++	if (iopoll)
++		return (blk_qc_t)root;
++
 +	return BLK_QC_T_NONE;
  }
  
- /*-----------------------------------------------------------------
+ static blk_qc_t __submit_bio_noacct_mq(struct bio *bio)
+@@ -1131,6 +1165,52 @@ blk_qc_t submit_bio(struct bio *bio)
+ }
+ EXPORT_SYMBOL(submit_bio);
+ 
++int blk_bio_poll(struct request_queue *q, blk_qc_t cookie)
++{
++	int ret = 0;
++	struct bio *bio, *root = (struct bio*)cookie;
++
++	if (list_empty(&root->bi_plist)) {
++		bio_endio(root);
++		return 1;
++	}
++
++	spin_lock(&root->bi_plock);
++	bio = list_first_entry_or_null(&root->bi_plist, struct bio, bi_pnode);
++
++	while (bio) {
++		struct request_queue *q = bio->bi_disk->queue;
++		blk_qc_t cookie = bio->bi_cookie;
++
++		spin_unlock(&root->bi_plock);
++		BUG_ON(!blk_qc_t_valid(cookie));
++
++		ret += blk_mq_poll(q, cookie);
++
++		spin_lock(&root->bi_plock);
++		/*
++		 * One blk_mq_poll() call could complete multiple bios, and
++		 * thus multiple bios could be removed from root->bi_plock
++		 * list.
++		 */
++		bio = list_first_entry_or_null(&root->bi_plist, struct bio, bi_pnode);
++	}
++
++	spin_unlock(&root->bi_plock);
++
++	if (list_empty(&root->bi_plist)) {
++		bio_endio(root);
++		/*
++		 * 'ret' may be 0 here. root->bi_plist may be empty once we
++		 * acquire the list spinlock.
++		 */
++		ret = max(ret, 1);
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL(blk_bio_poll);
++
+ static bool blk_poll_hybrid(struct request_queue *q, blk_qc_t cookie)
+ {
+ 	struct blk_mq_hw_ctx *hctx;
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 2e05244fc16d..2cf5d8f0ea34 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -277,6 +277,12 @@ struct bio {
+ 
+ 	struct bio_set		*bi_pool;
+ 
++	struct bio		*bi_root;	/* original bio of submit_bio() */
++	struct list_head        bi_plist;
++	struct list_head        bi_pnode;
++	struct spinlock         bi_plock;
++	blk_qc_t		bi_cookie;
++
+ 	/*
+ 	 * We can inline a number of vecs at the end of the bio, to avoid
+ 	 * double allocations for a small number of bio_vecs. This member
+@@ -557,6 +563,39 @@ static inline bool blk_qc_t_is_internal(blk_qc_t cookie)
+ 	return (cookie & BLK_QC_T_INTERNAL) != 0;
+ }
+ 
++static inline void bio_add_poll_list(struct bio *bio)
++{
++	struct bio *root = bio->bi_root;
++
++	/*
++	 * The spin_lock() variant is enough since bios in root->bi_plist are
++	 * all enqueued into polling mode hardware queue, thus the list_del()
++	 * operation is handled only in process context.
++	 */
++	spin_lock(&root->bi_plock);
++	list_add_tail(&bio->bi_pnode, &root->bi_plist);
++	spin_unlock(&root->bi_plock);
++}
++
++static inline void bio_del_poll_list(struct bio *bio)
++{
++	struct bio *root = bio->bi_root;
++
++	/*
++	 * bios in mq routine: @bi_root is NULL, @bi_cookie is 0;
++	 * bios in bio-based routine: @bi_root is non-NULL, @bi_cookie is valid
++	 * (including 0) for those in root->bi_plist, invalid for the
++	 * remaining.
++	 */
++	if (bio->bi_root && blk_qc_t_valid(bio->bi_cookie)) {
++		spin_lock(&root->bi_plock);
++		list_del(&bio->bi_pnode);
++		spin_unlock(&root->bi_plock);
++	}
++}
++
++int blk_bio_poll(struct request_queue *q, blk_qc_t cookie);
++
+ struct blk_rq_stat {
+ 	u64 mean;
+ 	u64 min;
 -- 
 2.27.0
 

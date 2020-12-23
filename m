@@ -2,77 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BEDAD2E2181
-	for <lists+io-uring@lfdr.de>; Wed, 23 Dec 2020 21:38:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5A82E22A6
+	for <lists+io-uring@lfdr.de>; Thu, 24 Dec 2020 00:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbgLWUgw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Dec 2020 15:36:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34670 "EHLO
+        id S1727151AbgLWXQJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 23 Dec 2020 18:16:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbgLWUgv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Dec 2020 15:36:51 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ADCBC06179C;
-        Wed, 23 Dec 2020 12:36:11 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id d13so345851wrc.13;
-        Wed, 23 Dec 2020 12:36:11 -0800 (PST)
+        with ESMTP id S1727144AbgLWXQI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Dec 2020 18:16:08 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C832C061794;
+        Wed, 23 Dec 2020 15:15:28 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id m5so652764wrx.9;
+        Wed, 23 Dec 2020 15:15:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a0rpAb93KEzfxlmUoYJd4BCt58+pD6nzkkuli/XS38E=;
-        b=GL9+LliYfL8/uuo3thjXfhFVPCDzOYuzbT/YTw/gXSU+e8byMr6IWG4JRI9A8JE1Rn
-         J9F+Ir8ph1gDvr7NIwbitZrbdOvoFkdCskpdPUe0+u+xQkaaZt1QjU+jmYdbcxRaLdSH
-         uyzsd+GuiBVEMIh8kdtKqtCyww+Q/F2QGVjMQfLw/YdsaOdwrZPPB1jZXqCg0eW9pMce
-         /temjc8dJPt94GBmENn8B/W+ZvU8MQv6D+CtSbHI4OCSEpVViXkVmOlRHPaEUhoYibtM
-         mJZ/zLY5P4eiA5GmYsPXYOEs3WT9tS0nn9n1wYh3Gl1ORDTb0hYgjidc1+25qIGnkAJ8
-         wCeA==
+        bh=aHHrIZnh0qpR2FxD+LAXphB6YizF39MC4a+bxRPwlQY=;
+        b=bMhOMBwlaXVX2gnnBPQTlp7rxjV3awVQtPYJGYMp04R11lYTMERjeERxLEKTqF5I+1
+         E3bLCTW7gEuMEryBhbn++T1w7RD96QY6o1JZVQG0GWwnb7t5ey3P639SKQpmlUcdmp0P
+         BElOeRyMaoH7DsMG2VWaH55SCYuAFh/pVMVChg9aoa2gykiQM0huFV2kj6z2AhTsOCG6
+         hIJFKK6TCguyrQOPo8r3Bln9NDeVNDwWYvmrnJKFN00gjt4/DO3Y8TKwhBIXha0WX+Mz
+         c8zGbVmOG61kSpn3GZuH9DA24am2Qpov9ooiRgA2jUUD4yAp3JTamGpdzUaTyoIWZ1Ob
+         A2gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=a0rpAb93KEzfxlmUoYJd4BCt58+pD6nzkkuli/XS38E=;
-        b=oY8+TdHU8TM74A2oRhkyR0SVWc0mWjBhP60BzAYU2z04w5CRg3Rdd17PfokXC1AgJZ
-         RXYYnmPgYz7LcPkfiF8cGO7E1S4yZ6zM6nPgX7QF1vq3h1oRcHhuwdZy86xSdHCIZERA
-         4g4SSoCUS1HzNcy3oZOcQdwddq07035NVwujouMwMj5hTHJOW724Bgn+qbEGiGouAIXC
-         Ov49LspcYQzqGr//MTkK/VmLDaEs6A4X6wWkCkx+C1YLyZ3sRA0LKl1IGUbBywjZUp/m
-         oGEJ/e/t2RjWFcacQB4oGg0G9dgGhwitJzTbMZj7CqYD2MC7j81LC8D6IAxmNdz4OH/V
-         fRpw==
-X-Gm-Message-State: AOAM532fysX1+lJ3THoG4xbdi1GDTSgcq7sz5cjjmTVZOR3WpQXUJhXl
-        Y81pWBwdiALG/CBeziD5cCSHg771b7GcRA==
-X-Google-Smtp-Source: ABdhPJyfdcpevW4c5rLF9fw3eGxFPW+d0c0i5c8SoYyvopbDxArb44ULVgyephWBuR+3XrCfl6GgOA==
-X-Received: by 2002:adf:9d82:: with SMTP id p2mr19030926wre.330.1608755769486;
-        Wed, 23 Dec 2020 12:36:09 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aHHrIZnh0qpR2FxD+LAXphB6YizF39MC4a+bxRPwlQY=;
+        b=uSLzPAaxM2E5bRyxQHtuAjUD1PwqkZOET1jY0Dbxwbvw0YVaoHAYTHZaT8TBse4BlZ
+         07a0k2jetJ4zUX1yKJ5yWXzoxhZduelkaEV5UHxsn+4f17wUfALHnwu7LGrUssp7IP3s
+         1ruTfr1/OLEinfcKmPIsfFzsTefR5bbUl/wpQC8iOkBbd4lGIiWKYA07o6JDxcClwniv
+         sMB38VxiUf0P47G00XzfR8Op61Pc8sO034zYJbfXy6cKdSXLbXmd8zfcmd/QdNZUNrVq
+         8Lghz6vXKqeEW2nfhT9QPHksFduMOM1QPMXKdvYOBnVg17lbG9EvineP7delMBULlakj
+         21QA==
+X-Gm-Message-State: AOAM533aHj6NDCa6+JmlgNoKzaGyiuiyKj+kbKslm4vSBDfnd/+VYXG0
+        9d0u08dk8IEGp1XMDUq6FGs=
+X-Google-Smtp-Source: ABdhPJyGqMCEVrqaOLcKx4vkH+6QGq0SLCgL7bzLzkOgnTRQ8gbFHCJk0u3zXTBMd216EsWsrnpjBA==
+X-Received: by 2002:a5d:4587:: with SMTP id p7mr30387664wrq.178.1608765327037;
+        Wed, 23 Dec 2020 15:15:27 -0800 (PST)
 Received: from [192.168.8.148] ([85.255.233.85])
-        by smtp.gmail.com with ESMTPSA id n9sm36389523wrq.41.2020.12.23.12.36.08
+        by smtp.gmail.com with ESMTPSA id 125sm1253634wmc.27.2020.12.23.15.15.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Dec 2020 12:36:09 -0800 (PST)
-Subject: Re: [PATCH v1 0/6] no-copy bvec
-To:     dgilbert@interlog.com,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-References: <cover.1607976425.git.asml.silence@gmail.com>
- <20201215014114.GA1777020@T590>
- <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
- <20201215120357.GA1798021@T590>
- <e755fec3-4181-1414-0603-02e1a1f4e9eb@gmail.com>
- <20201222141112.GE13079@infradead.org>
- <933030f0-e428-18fd-4668-68db4f14b976@gmail.com>
- <20201223155145.GA5902@infradead.org>
- <f06ece44a86eb9c8ef07bbd9f6f53342366b7751.camel@HansenPartnership.com>
- <8abc56c2-4db8-5ee3-ab2d-8960d0eeeb0d@interlog.com>
+        Wed, 23 Dec 2020 15:15:26 -0800 (PST)
+Subject: Re: WARNING in __percpu_ref_exit
+To:     syzbot <syzbot+482debb49aa7d7fa0b09@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <000000000000f9f31005b57ad69d@google.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -117,48 +98,76 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <f5cb6ac2-1c59-33be-de8f-e86c8528fbec@gmail.com>
-Date:   Wed, 23 Dec 2020 20:32:45 +0000
+Message-ID: <5fb133b1-18ed-1439-6d33-5a8c05632467@gmail.com>
+Date:   Wed, 23 Dec 2020 23:12:03 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <8abc56c2-4db8-5ee3-ab2d-8960d0eeeb0d@interlog.com>
+In-Reply-To: <000000000000f9f31005b57ad69d@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 23/12/2020 20:23, Douglas Gilbert wrote:
-> On 2020-12-23 11:04 a.m., James Bottomley wrote:
->> On Wed, 2020-12-23 at 15:51 +0000, Christoph Hellwig wrote:
->>> On Wed, Dec 23, 2020 at 12:52:59PM +0000, Pavel Begunkov wrote:
->>>> Can scatterlist have 0-len entries? Those are directly translated
->>>> into bvecs, e.g. in nvme/target/io-cmd-file.c and
->>>> target/target_core_file.c. I've audited most of others by this
->>>> moment, they're fine.
->>>
->>> For block layer SGLs we should never see them, and for nvme neither.
->>> I think the same is true for the SCSI target code, but please double
->>> check.
->>
->> Right, no-one ever wants to see a 0-len scatter list entry.  The reason
->> is that every driver uses the sgl to program the device DMA engine in
->> the way NVME does.  a 0 length sgl would be a dangerous corner case:
->> some DMA engines would ignore it and others would go haywire, so if we
->> ever let a 0 length list down into the driver, they'd have to
->> understand the corner case behaviour of their DMA engine and filter it
->> accordingly, which is why we disallow them in the upper levels, since
->> they're effective nops anyway.
+On 02/12/2020 13:01, syzbot wrote:
+> Hello,
 > 
-> When using scatter gather lists at the far end (i.e. on the storage device)
-> the T10 examples (WRITE SCATTERED and POPULATE TOKEN in SBC-4) explicitly
-> allow the "number of logical blocks" in their sgl_s to be zero and state
-> that it is _not_ to be considered an error.
+> syzbot found the following issue on:
+> 
+> HEAD commit:    0eedceaf Add linux-next specific files for 20201201
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1649b753500000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=55aec7153b7827ea
+> dashboard link: https://syzkaller.appspot.com/bug?extid=482debb49aa7d7fa0b09
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-It's fine for my case unless it leaks them out of device driver to the
-net/block layer/etc. Is it?
+#syz dup: WARNING in percpu_ref_kill_and_confirm (2)
+
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+482debb49aa7d7fa0b09@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 28 at lib/percpu-refcount.c:112 __percpu_ref_exit+0x98/0x100 lib/percpu-refcount.c:112
+> Modules linked in:
+> CPU: 0 PID: 28 Comm: kworker/u4:2 Not tainted 5.10.0-rc6-next-20201201-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Workqueue: events_unbound io_ring_exit_work
+> RIP: 0010:__percpu_ref_exit+0x98/0x100 lib/percpu-refcount.c:112
+> Code: fd 49 8d 7c 24 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 61 49 83 7c 24 10 00 74 07 e8 d8 63 b7 fd <0f> 0b e8 d1 63 b7 fd 48 89 ef e8 a9 a0 e5 fd 48 89 da 48 b8 00 00
+> RSP: 0018:ffffc90000e2fc88 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffff88807373f000 RCX: 0000000000000000
+> RDX: ffff888010f51ac0 RSI: ffffffff83b95d78 RDI: ffff88801b826810
+> RBP: 0000607f45e7fde8 R08: 0000000000000000 R09: ffffffff8ebd389f
+> R10: ffffffff83b95d18 R11: 0000000000000000 R12: ffff88801b826800
+> R13: 0000000000000000 R14: ffff88801b826800 R15: ffff88805c6135a8
+> FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055c9d3e62ebc CR3: 00000000728e6000 CR4: 00000000001506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  percpu_ref_exit+0x3b/0x140 lib/percpu-refcount.c:133
+>  io_ring_ctx_free fs/io_uring.c:8517 [inline]
+>  io_ring_exit_work+0x4fa/0x7a0 fs/io_uring.c:8581
+>  process_one_work+0x98d/0x15f0 kernel/workqueue.c:2272
+>  worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
+>  kthread+0x3b1/0x4a0 kernel/kthread.c:292
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
 
 -- 
 Pavel Begunkov

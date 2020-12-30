@@ -2,113 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 305362E768E
-	for <lists+io-uring@lfdr.de>; Wed, 30 Dec 2020 07:33:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 598CE2E795D
+	for <lists+io-uring@lfdr.de>; Wed, 30 Dec 2020 14:14:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726198AbgL3G3y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Dec 2020 01:29:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36108 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbgL3G3y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Dec 2020 01:29:54 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1248C061799;
-        Tue, 29 Dec 2020 22:29:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=SfTFgLP6wfqdV3POETz9tGdMTER4p/HPo53xEwUv884=; b=dcxUcAlZaUg6/xLLgmP2V7b3AT
-        OrjzzTQiEMt+yBXhVSd017ynS1Ey+DdQP64HMK2sUGmPi+a0uEpZM+6fhZ8lcWnpHYZ/iUcT1kkB/
-        zcC5bWFI3050e/zvK2M3fR/F5CGKNCVt3F/jZqA9ffWVOiZq0MsR/w8f4KdQrdwMmb46g54ZDYAqX
-        mUJTXqUYflT4Kl9F0NagIEbke1kpvkwNCWGD3IOOiM6ic/CSaKtLhNz+OupyW8iZiwIwf5+moApdH
-        aXuWL6yPGO2BvSxx2eZ7QYTYzWUy4s61rEFMlkoC2dECi6rcwWbA3mv9uxSF8iwm6ndsWo5oZRGuJ
-        fseZO6Bg==;
-Received: from [2601:1c0:6280:3f0::2c43]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kuUys-0002PI-4F; Wed, 30 Dec 2020 06:29:10 +0000
-Subject: Re: [PATCH] io_uring: style: redundant NULL check.
-To:     YANG LI <abaci-bugfix@linux.alibaba.com>, axboe@kernel.dk
-Cc:     viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1609309375-65129-1-git-send-email-abaci-bugfix@linux.alibaba.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <bb01e932-9b93-c672-2e76-d8a2918d5bd6@infradead.org>
-Date:   Tue, 29 Dec 2020 22:29:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S1727284AbgL3NIL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Dec 2020 08:08:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727412AbgL3NFU (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 30 Dec 2020 08:05:20 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C892A224D4;
+        Wed, 30 Dec 2020 13:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609333429;
+        bh=mk8PmzHz1goX0mwz67HLEPYdnwCimSAxUXWHQi5z6lM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VTCgamtr/6+S6qYx4UBZazWVI0DYkz8nNm8coRUbzkKz6VJNwMlBo/Xyc53PGtSpq
+         a9unnZVBG4ZO0B4mr052vg2rR+GyYHhrF3l3KsLcKKzwiBuCwzSmDoAIaEz6DN6v/K
+         xnve1JKO3eJqKH1JynHgzN5btndY1lecfZovakJe5UHb0QVzVfVZ0htynrIlSEqH8y
+         yoVOP/OJIWJk1cB18Zou8KI6beSbbRwyyN0RUo7PTuTU9yFNLelnFYSVh8jKEhMXgc
+         kv0iYhoLP/1VITjlnZUXvEjxy/TQ6cbBzMBdHzUtHf4JCjWyNjyJhmsqQomSVbF64j
+         9pakI8k85EX6Q==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 26/31] io_uring: remove racy overflow list fast checks
+Date:   Wed, 30 Dec 2020 08:03:08 -0500
+Message-Id: <20201230130314.3636961-26-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201230130314.3636961-1-sashal@kernel.org>
+References: <20201230130314.3636961-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1609309375-65129-1-git-send-email-abaci-bugfix@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/29/20 10:22 PM, YANG LI wrote:
-> If the pointer in kfree is empty, the function does nothing,
-> so remove the redundant NULL check.
-> 
-> Signed-off-by: YANG LI <abaci-bugfix@linux.alibaba.com>
-> Reported-by: Abaci <abaci@linux.alibaba.com>
-> ---
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-Looks like you should do something with these 2 comments:
+[ Upstream commit 9cd2be519d05ee78876d55e8e902b7125f78b74f ]
 
- 	/* it's reportedly faster than delegating the null check to kfree() */
+list_empty_careful() is not racy only if some conditions are met, i.e.
+no re-adds after del_init. io_cqring_overflow_flush() does list_move(),
+so it's actually racy.
 
->  fs/io_uring.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 7e35283..105e188 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1934,8 +1934,8 @@ static void io_dismantle_req(struct io_kiocb *req)
->  {
->  	io_clean_op(req);
->  
-> -	if (req->async_data)
-> -		kfree(req->async_data);
-> +	kfree(req->async_data);
-> +
->  	if (req->file)
->  		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
->  	if (req->fixed_file_refs)
-> @@ -3537,8 +3537,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
->  	ret = 0;
->  out_free:
->  	/* it's reportedly faster than delegating the null check to kfree() */
-> -	if (iovec)
-> -		kfree(iovec);
-> +	kfree(iovec);
->  	return ret;
->  }
->  
-> @@ -3644,8 +3643,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
->  	}
->  out_free:
->  	/* it's reportedly faster than delegating the null check to kfree() */
-> -	if (iovec)
-> -		kfree(iovec);
-> +	kfree(iovec);
->  	return ret;
->  }
->  
-> @@ -6133,8 +6131,7 @@ static void __io_clean_op(struct io_kiocb *req)
->  		case IORING_OP_WRITE_FIXED:
->  		case IORING_OP_WRITE: {
->  			struct io_async_rw *io = req->async_data;
-> -			if (io->free_iovec)
-> -				kfree(io->free_iovec);
-> +			kfree(io->free_iovec);
->  			break;
->  			}
->  		case IORING_OP_RECVMSG:
-> 
+Remove those checks, we have ->cq_check_overflow for the fast path.
 
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io_uring.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 86dac2b2e2763..4b3dbe588d111 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1632,8 +1632,6 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
+ 	LIST_HEAD(list);
+ 
+ 	if (!force) {
+-		if (list_empty_careful(&ctx->cq_overflow_list))
+-			return true;
+ 		if ((ctx->cached_cq_tail - READ_ONCE(rings->cq.head) ==
+ 		    rings->cq_ring_entries))
+ 			return false;
+@@ -6548,8 +6546,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
+ 
+ 	/* if we have a backlog and couldn't flush it all, return BUSY */
+ 	if (test_bit(0, &ctx->sq_check_overflow)) {
+-		if (!list_empty(&ctx->cq_overflow_list) &&
+-		    !io_cqring_overflow_flush(ctx, false, NULL, NULL))
++		if (!io_cqring_overflow_flush(ctx, false, NULL, NULL))
+ 			return -EBUSY;
+ 	}
+ 
 -- 
-~Randy
+2.27.0
 

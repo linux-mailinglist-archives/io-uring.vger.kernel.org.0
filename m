@@ -2,86 +2,47 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 598CE2E795D
-	for <lists+io-uring@lfdr.de>; Wed, 30 Dec 2020 14:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1E3B2E79EB
+	for <lists+io-uring@lfdr.de>; Wed, 30 Dec 2020 15:18:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbgL3NIL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Dec 2020 08:08:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727412AbgL3NFU (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 30 Dec 2020 08:05:20 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C892A224D4;
-        Wed, 30 Dec 2020 13:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609333429;
-        bh=mk8PmzHz1goX0mwz67HLEPYdnwCimSAxUXWHQi5z6lM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VTCgamtr/6+S6qYx4UBZazWVI0DYkz8nNm8coRUbzkKz6VJNwMlBo/Xyc53PGtSpq
-         a9unnZVBG4ZO0B4mr052vg2rR+GyYHhrF3l3KsLcKKzwiBuCwzSmDoAIaEz6DN6v/K
-         xnve1JKO3eJqKH1JynHgzN5btndY1lecfZovakJe5UHb0QVzVfVZ0htynrIlSEqH8y
-         yoVOP/OJIWJk1cB18Zou8KI6beSbbRwyyN0RUo7PTuTU9yFNLelnFYSVh8jKEhMXgc
-         kv0iYhoLP/1VITjlnZUXvEjxy/TQ6cbBzMBdHzUtHf4JCjWyNjyJhmsqQomSVbF64j
-         9pakI8k85EX6Q==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 26/31] io_uring: remove racy overflow list fast checks
-Date:   Wed, 30 Dec 2020 08:03:08 -0500
-Message-Id: <20201230130314.3636961-26-sashal@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201230130314.3636961-1-sashal@kernel.org>
-References: <20201230130314.3636961-1-sashal@kernel.org>
+        id S1726276AbgL3OSh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Dec 2020 09:18:37 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35877 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbgL3OSg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Dec 2020 09:18:36 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1kucIV-0001NV-5u; Wed, 30 Dec 2020 14:17:55 +0000
+Date:   Wed, 30 Dec 2020 15:17:53 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH] io_uring: don't assume mm is constant across submits
+Message-ID: <20201230141753.hakwbf6c6xw2ohts@wittgenstein>
+References: <7224e4df-50e9-ffd1-5453-391802fcded7@kernel.dk>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7224e4df-50e9-ffd1-5453-391802fcded7@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Tue, Dec 29, 2020 at 10:53:21AM -0700, Jens Axboe wrote:
+> If we COW the identity, we assume that ->mm never changes. But this
+> isn't true of multiple processes end up sharing the ring. Hence treat
+> id->mm like like any other process compontent when it comes to the
+> identity mapping.
+> 
+> Reported-by: Christian Brauner <christian.brauner@ubuntu.com>:
+> Tested-by: Christian Brauner <christian.brauner@ubuntu.com>:
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> ---
 
-[ Upstream commit 9cd2be519d05ee78876d55e8e902b7125f78b74f ]
+Thanks for fixing this! Fwiw, tested again just now.
 
-list_empty_careful() is not racy only if some conditions are met, i.e.
-no re-adds after del_init. io_cqring_overflow_flush() does list_move(),
-so it's actually racy.
-
-Remove those checks, we have ->cq_check_overflow for the fast path.
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 86dac2b2e2763..4b3dbe588d111 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1632,8 +1632,6 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
- 	LIST_HEAD(list);
- 
- 	if (!force) {
--		if (list_empty_careful(&ctx->cq_overflow_list))
--			return true;
- 		if ((ctx->cached_cq_tail - READ_ONCE(rings->cq.head) ==
- 		    rings->cq_ring_entries))
- 			return false;
-@@ -6548,8 +6546,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 
- 	/* if we have a backlog and couldn't flush it all, return BUSY */
- 	if (test_bit(0, &ctx->sq_check_overflow)) {
--		if (!list_empty(&ctx->cq_overflow_list) &&
--		    !io_cqring_overflow_flush(ctx, false, NULL, NULL))
-+		if (!io_cqring_overflow_flush(ctx, false, NULL, NULL))
- 			return -EBUSY;
- 	}
- 
--- 
-2.27.0
-
+Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>

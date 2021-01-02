@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 555122E87C4
-	for <lists+io-uring@lfdr.de>; Sat,  2 Jan 2021 16:25:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E44472E87AF
+	for <lists+io-uring@lfdr.de>; Sat,  2 Jan 2021 16:22:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbhABPWE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 2 Jan 2021 10:22:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47478 "EHLO
+        id S1726699AbhABPWH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 2 Jan 2021 10:22:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbhABPWD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 2 Jan 2021 10:22:03 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5E5C061573;
-        Sat,  2 Jan 2021 07:21:23 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id 3so13738288wmg.4;
-        Sat, 02 Jan 2021 07:21:23 -0800 (PST)
+        with ESMTP id S1726599AbhABPWF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 2 Jan 2021 10:22:05 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B08DFC0613C1;
+        Sat,  2 Jan 2021 07:21:24 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id 3so13738330wmg.4;
+        Sat, 02 Jan 2021 07:21:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OJBITHaQqc5xps2gqOqR24Tyr4hGdZImALfk9kxilUw=;
-        b=NvGUGxltRkygnkWt8il2VY/VOJmppE+yq+zgwo8hmdFcFZfjYtKFZ/rhfCOQnBc+Zk
-         8xThlikKe45cXimJXDIexKr7ayg3lOvYuqlm7LgZ+jrDz+Caf5N0QJE0y2dlCjD+xd5b
-         sZMQP1sfAQPp+AM5Lig7wFNbxAechxk7ODSAJUgidqhfDVnAMOEFrXTIBGx+mFecPof/
-         RDRBMGsxVZmpKew2I0jLuZP/b9FqovcagcOCF3EuI1HhVpskaO+cUtenCizeHbbVp9KI
-         51z/mVU+s2eorqGFff/E7J47uV8DTSNJnYfBx8YnDhAPSiT9kSXtkQj0iJkYru2Hw4Zk
-         VRAQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rf6BUzrBX0nFEremfE+E6aI01/qO5RAbaAeeEZzdEU8=;
+        b=b+W6Gio8PokvEN1p7hK+vmrtFsYuUXj5E1Pcurgm37QcJbo+IA1ctH7QYYoo7/bbAh
+         CN1Ig8NDcGJCRgskTeuCehCCc3ApampAkhSMSg2g/2YalrbDFo/CHnPDKFyTmy/+JAGB
+         WTZaFIVAU3/+edur0jyHbznCOvvLQgMzn3ycRPlQMd4vU60LafrpHS/ipZaf+XXm4IEX
+         tlsU6fQjwRt3P8URGU8LEebx6TQBAIvGZsZGQNF/fgCj0JpB0HUSXNMuJkKfSKZurWme
+         +ogJW22uQPLiT7k4Wy03Qa4DsVt11BbsmMtb4LQtIZN+IhFNvNGpiUgToKDkYZsoZrtD
+         h/wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OJBITHaQqc5xps2gqOqR24Tyr4hGdZImALfk9kxilUw=;
-        b=rpMIAIeirbUfTJ56EvS5BvodnXqMozM4plCagANpQ4XaDpxq1XmqmOMZwWUokqr4JN
-         4QRg/sHIzrrJ9O5gFDQ0eh1zdho+r7ttOrZb8dA2dMK9MpK5/VAKj9bZpCOsIfzZPY83
-         JlwuvtkhjnaVne7VbXG/7GDDDxwrmNQgECFHKafgevYVLUhxfSmhGbCiKqmFx9sp11Dl
-         9RN4S5m3cv5pTjh9iF7RNtgKFUjKpBG/BH7DnbAAx/w/8kU8t6v7DcfxuAFWzPcFMueP
-         eXCGLsBUVeb2jAWQSCgUSieprF8FiD1GyOW/6jAdEKTMxj0hZ+VNrvZMoL8b3RP2Mkc1
-         oyvA==
-X-Gm-Message-State: AOAM533oIgF18UiNDvLB0e7NC2RavlPdNakp5Ahbe1BlgAT03rXnc+fA
-        VIsyaJ97NNnf1NMBFO/yK2our1I/8s55QQ==
-X-Google-Smtp-Source: ABdhPJz1HKKwKxVCoTsKOjB/MYoTeJtGzrGeOEkTWLP+7WGm6nET026PZQx1ZUd9bCXYV2kgxNirfg==
-X-Received: by 2002:a1c:87:: with SMTP id 129mr19523015wma.183.1609600881470;
-        Sat, 02 Jan 2021 07:21:21 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rf6BUzrBX0nFEremfE+E6aI01/qO5RAbaAeeEZzdEU8=;
+        b=o9436OLd5iMQhXloxcW6OV5rTksWhfRDHs/57xqYcRN9PkZkzelgrVevr5DE0uSmFm
+         pZmQuA1YcjwbAz0JnU8YdgEuEJ9baQB73y5qbZyOzAYX1zfodX4xFVjSBPjUhO46cKNE
+         qPckybt7iqGRyqWiLxXSFnp7LlsZkvOxTGvwD16cxgVNonY5TlftG0FciKIfofW4oXFZ
+         Qqdgj98A2DgsTcr2MNaA5457OKmYffmB6toGKGZSKYtGFT0NDNVBDkorR4O9hOZk7D4J
+         7yWfPkJnBeMqzZ6f78wq7bWWXGIsxQA3cPq4JLnGQUZxF1OxL7fG02JPjN2F5H7TMl5w
+         waAA==
+X-Gm-Message-State: AOAM531FZTEFHN1OjV5hB0O+YNQjAfOH1YPncLb7GM5xtia2nE+NK2zX
+        9pxX0MtOoL0MOGBcH9wdq7QUV9f/ootjyw==
+X-Google-Smtp-Source: ABdhPJx/WYak/g3xVcVBFTivN/j7PYb09nrxUAu6QP88WHUxu/G0S/WDG8I7eQUPvioar/5dabMjRQ==
+X-Received: by 2002:a1c:ba44:: with SMTP id k65mr19751159wmf.188.1609600883202;
+        Sat, 02 Jan 2021 07:21:23 -0800 (PST)
 Received: from localhost.localdomain ([85.255.236.0])
-        by smtp.gmail.com with ESMTPSA id h13sm78671243wrm.28.2021.01.02.07.21.19
+        by smtp.gmail.com with ESMTPSA id h13sm78671243wrm.28.2021.01.02.07.21.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jan 2021 07:21:20 -0800 (PST)
+        Sat, 02 Jan 2021 07:21:22 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     linux-block@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -61,77 +61,63 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH v2 0/7] no-copy bvec
-Date:   Sat,  2 Jan 2021 15:17:32 +0000
-Message-Id: <cover.1609461359.git.asml.silence@gmail.com>
+Subject: [PATCH v2 1/7] splice: don't generate zero-len segement bvecs
+Date:   Sat,  2 Jan 2021 15:17:33 +0000
+Message-Id: <ca14f80bf5156d83b38f543be2b9434a571474c9.1609461359.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1609461359.git.asml.silence@gmail.com>
+References: <cover.1609461359.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Currently, when iomap and block direct IO gets a bvec based iterator
-the bvec will be copied, with all other accounting that takes much
-CPU time and causes additional allocation for larger bvecs. The
-patchset makes it to reuse the passed in iter bvec.
+iter_file_splice_write() may spawn bvec segments with zero-length. In
+preparation for prohibiting them, filter out by hand at splice level.
 
-[1,2] are forbidding zero-length bvec segments to not pile special
-cases, [3] skip/fix PSI tracking to not iterate over bvecs extra
-time.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/splice.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-
-nullblk completion_nsec=0 submit_queues=NR_CORES, no merges, no stats
-fio/t/io_uring /dev/nullb0 -d 128 -s 32 -c 32 -p 0 -B 1 -F 1 -b BLOCK_SIZE
-
-BLOCK_SIZE             512     4K      8K      16K     32K     64K
-===================================================================
-old (KIOPS)            1208    1208    1131    1039    863     699
-new (KIOPS)            1222    1222    1170    1137    1083    982
-
-Previously, Jens got before 10% difference for polling real HW and small
-block sizes, but that was for an older version that had one
-iov_iter_advance() less
-
-
-since RFC:
-- add target_core_file patch by Christoph
-- make no-copy default behaviour, remove iter flag
-- iter_advance() instead of hacks to revert to work
-- add bvec iter_advance() optimisation patch
-- remove PSI annotations from direct IO (iomap, block and fs/direct)
-- note in d/f/porting
-
-since v1:
-- don't allow zero-length bvec segments (Ming)
-- don't add a BIO_WORKINGSET-less version of bio_add_page(), just clear
-  the flag at the end and leave it for further cleanups (Christoph)
-- commit message and comments rewording (Dave)
-- other nits by Christoph
-
-Christoph Hellwig (1):
-  target/file: allocate the bvec array as part of struct
-    target_core_file_cmd
-
-Pavel Begunkov (6):
-  splice: don't generate zero-len segement bvecs
-  bvec/iter: disallow zero-length segment bvecs
-  block/psi: remove PSI annotations from direct IO
-  iov_iter: optimise bvec iov_iter_advance()
-  bio: add a helper calculating nr segments to alloc
-  bio: don't copy bvec for direct IO
-
- Documentation/filesystems/porting.rst | 16 ++++++
- block/bio.c                           | 71 +++++++++++++--------------
- drivers/target/target_core_file.c     | 20 +++-----
- fs/block_dev.c                        |  7 +--
- fs/direct-io.c                        |  2 +
- fs/iomap/direct-io.c                  |  9 ++--
- fs/splice.c                           |  9 ++--
- include/linux/bio.h                   | 13 +++++
- lib/iov_iter.c                        | 21 +++++++-
- 9 files changed, 103 insertions(+), 65 deletions(-)
-
+diff --git a/fs/splice.c b/fs/splice.c
+index 866d5c2367b2..7299330c3270 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -644,7 +644,6 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 		ret = splice_from_pipe_next(pipe, &sd);
+ 		if (ret <= 0)
+ 			break;
+-
+ 		if (unlikely(nbufs < pipe->max_usage)) {
+ 			kfree(array);
+ 			nbufs = pipe->max_usage;
+@@ -662,12 +661,13 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 
+ 		/* build the vector */
+ 		left = sd.total_len;
+-		for (n = 0; !pipe_empty(head, tail) && left && n < nbufs; tail++, n++) {
++		for (n = 0; !pipe_empty(head, tail) && left && n < nbufs; tail++) {
+ 			struct pipe_buffer *buf = &pipe->bufs[tail & mask];
+ 			size_t this_len = buf->len;
+ 
+-			if (this_len > left)
+-				this_len = left;
++			if (!this_len)
++				continue;
++			this_len = min(this_len, left);
+ 
+ 			ret = pipe_buf_confirm(pipe, buf);
+ 			if (unlikely(ret)) {
+@@ -680,6 +680,7 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 			array[n].bv_len = this_len;
+ 			array[n].bv_offset = buf->offset;
+ 			left -= this_len;
++			n++;
+ 		}
+ 
+ 		iov_iter_bvec(&from, WRITE, array, n, sd.total_len - left);
 -- 
 2.24.0
 

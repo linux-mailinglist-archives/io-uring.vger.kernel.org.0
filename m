@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E44472E87AF
-	for <lists+io-uring@lfdr.de>; Sat,  2 Jan 2021 16:22:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC2C32E87D4
+	for <lists+io-uring@lfdr.de>; Sat,  2 Jan 2021 16:25:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbhABPWH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 2 Jan 2021 10:22:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47486 "EHLO
+        id S1726934AbhABPWb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 2 Jan 2021 10:22:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbhABPWF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 2 Jan 2021 10:22:05 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B08DFC0613C1;
-        Sat,  2 Jan 2021 07:21:24 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id 3so13738330wmg.4;
-        Sat, 02 Jan 2021 07:21:24 -0800 (PST)
+        with ESMTP id S1726692AbhABPWH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 2 Jan 2021 10:22:07 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53661C0613CF;
+        Sat,  2 Jan 2021 07:21:26 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id e25so13776093wme.0;
+        Sat, 02 Jan 2021 07:21:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rf6BUzrBX0nFEremfE+E6aI01/qO5RAbaAeeEZzdEU8=;
-        b=b+W6Gio8PokvEN1p7hK+vmrtFsYuUXj5E1Pcurgm37QcJbo+IA1ctH7QYYoo7/bbAh
-         CN1Ig8NDcGJCRgskTeuCehCCc3ApampAkhSMSg2g/2YalrbDFo/CHnPDKFyTmy/+JAGB
-         WTZaFIVAU3/+edur0jyHbznCOvvLQgMzn3ycRPlQMd4vU60LafrpHS/ipZaf+XXm4IEX
-         tlsU6fQjwRt3P8URGU8LEebx6TQBAIvGZsZGQNF/fgCj0JpB0HUSXNMuJkKfSKZurWme
-         +ogJW22uQPLiT7k4Wy03Qa4DsVt11BbsmMtb4LQtIZN+IhFNvNGpiUgToKDkYZsoZrtD
-         h/wA==
+        bh=XV9zM74CTwn4+eOGP/R29Owp4dxby4wP3b3oxVzvafI=;
+        b=SFOgPJzQdnQe9hMNyQxyQbgPlbohVEDn3pDwGhwgxKOSsT8dm8/2bAbej1/rjSTtri
+         ukGLApzLogZWfv11VeVtgIPhW6awxqXpE7QP3IlLTnYIPyP+iFk5IGsXXgmVvQOPQxZJ
+         TCphjgqog4CNIRgdfbE+pXjdH5B5VbGFy1aYwjG6mm7JM1Oh8PCoE4aQ4Y2EzwoFbFjI
+         E/6LmzLKTkRVgnRsa5HlcvVzmcRJ4wXrxPM54VS/zG84Nv8uYfyIOnG5YqTrIUPT+4+Q
+         x1zwgtU8+DEwQchxEcFpE1ikA3Qg3TbyJ0cGMNrqU3UEuyi35sfE5gXzZ3rw3LPWBlKi
+         a/+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rf6BUzrBX0nFEremfE+E6aI01/qO5RAbaAeeEZzdEU8=;
-        b=o9436OLd5iMQhXloxcW6OV5rTksWhfRDHs/57xqYcRN9PkZkzelgrVevr5DE0uSmFm
-         pZmQuA1YcjwbAz0JnU8YdgEuEJ9baQB73y5qbZyOzAYX1zfodX4xFVjSBPjUhO46cKNE
-         qPckybt7iqGRyqWiLxXSFnp7LlsZkvOxTGvwD16cxgVNonY5TlftG0FciKIfofW4oXFZ
-         Qqdgj98A2DgsTcr2MNaA5457OKmYffmB6toGKGZSKYtGFT0NDNVBDkorR4O9hOZk7D4J
-         7yWfPkJnBeMqzZ6f78wq7bWWXGIsxQA3cPq4JLnGQUZxF1OxL7fG02JPjN2F5H7TMl5w
-         waAA==
-X-Gm-Message-State: AOAM531FZTEFHN1OjV5hB0O+YNQjAfOH1YPncLb7GM5xtia2nE+NK2zX
-        9pxX0MtOoL0MOGBcH9wdq7QUV9f/ootjyw==
-X-Google-Smtp-Source: ABdhPJx/WYak/g3xVcVBFTivN/j7PYb09nrxUAu6QP88WHUxu/G0S/WDG8I7eQUPvioar/5dabMjRQ==
-X-Received: by 2002:a1c:ba44:: with SMTP id k65mr19751159wmf.188.1609600883202;
-        Sat, 02 Jan 2021 07:21:23 -0800 (PST)
+        bh=XV9zM74CTwn4+eOGP/R29Owp4dxby4wP3b3oxVzvafI=;
+        b=JHPvl42CtZQ+9ghptE4CRi99VwVCUQK5I/Wfua7wZuE+/AUhxngjFUsS7AklCo7Yix
+         kfnUUrJLCLvwQHbMkjGNfVOjIDrfEIB/p1wpNwWoShAl8nhp8OD/UgD+NxLbDWX9v1is
+         vsyxaPJhY0RdGDbVkj6p5IZ1ZclwP5U9+HuYRtw2rCpsPRG/HTuXAQL/jeLVwTqGqi14
+         bVOL6zVHnXvFHsimBYZZYO3W1gp+YR2oCZpEXT5KOXP+RNs2biIvaC1gJ2lgwxR85KBx
+         7qg4W75H2SQO0KcBRKEMJXzyaLYntN3Zky6I4q+2EA8CBFPB3eU5z9nJQwqXUsn5BcoH
+         6DqQ==
+X-Gm-Message-State: AOAM531OU0U/YorZBuev68TnwtEiny8QRgwVV0SrgUfWnWF8hKTWD48p
+        U05jOzAhiWfnz6xn8Vj7p7vUAr1NY2Ewfg==
+X-Google-Smtp-Source: ABdhPJxwu7FOcxfliyqioKGivmZLgq8xfpPKYLmREFyeGepQEsU4cSXXuM6gY2U1D8AB/l/odvpL3Q==
+X-Received: by 2002:a7b:c04c:: with SMTP id u12mr20318416wmc.185.1609600884854;
+        Sat, 02 Jan 2021 07:21:24 -0800 (PST)
 Received: from localhost.localdomain ([85.255.236.0])
-        by smtp.gmail.com with ESMTPSA id h13sm78671243wrm.28.2021.01.02.07.21.21
+        by smtp.gmail.com with ESMTPSA id h13sm78671243wrm.28.2021.01.02.07.21.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jan 2021 07:21:22 -0800 (PST)
+        Sat, 02 Jan 2021 07:21:24 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     linux-block@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -61,9 +61,9 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH v2 1/7] splice: don't generate zero-len segement bvecs
-Date:   Sat,  2 Jan 2021 15:17:33 +0000
-Message-Id: <ca14f80bf5156d83b38f543be2b9434a571474c9.1609461359.git.asml.silence@gmail.com>
+Subject: [PATCH v2 2/7] bvec/iter: disallow zero-length segment bvecs
+Date:   Sat,  2 Jan 2021 15:17:34 +0000
+Message-Id: <b46b8c1943bbefcb90ea5c4dd9beaad8bbc15448.1609461359.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1609461359.git.asml.silence@gmail.com>
 References: <cover.1609461359.git.asml.silence@gmail.com>
@@ -73,51 +73,46 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-iter_file_splice_write() may spawn bvec segments with zero-length. In
-preparation for prohibiting them, filter out by hand at splice level.
+zero-length bvec segments are allowed in general, but not handled by bio
+and down the block layer so filtered out. This inconsistency may be
+confusing and prevent from optimisations. As zero-length segments are
+useless and places that were generating them are patched, declare them
+not allowed.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/splice.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ Documentation/filesystems/porting.rst | 7 +++++++
+ lib/iov_iter.c                        | 2 --
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 866d5c2367b2..7299330c3270 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -644,7 +644,6 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 		ret = splice_from_pipe_next(pipe, &sd);
- 		if (ret <= 0)
- 			break;
--
- 		if (unlikely(nbufs < pipe->max_usage)) {
- 			kfree(array);
- 			nbufs = pipe->max_usage;
-@@ -662,12 +661,13 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index 867036aa90b8..c722d94f29ea 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -865,3 +865,10 @@ no matter what.  Everything is handled by the caller.
  
- 		/* build the vector */
- 		left = sd.total_len;
--		for (n = 0; !pipe_empty(head, tail) && left && n < nbufs; tail++, n++) {
-+		for (n = 0; !pipe_empty(head, tail) && left && n < nbufs; tail++) {
- 			struct pipe_buffer *buf = &pipe->bufs[tail & mask];
- 			size_t this_len = buf->len;
- 
--			if (this_len > left)
--				this_len = left;
-+			if (!this_len)
-+				continue;
-+			this_len = min(this_len, left);
- 
- 			ret = pipe_buf_confirm(pipe, buf);
- 			if (unlikely(ret)) {
-@@ -680,6 +680,7 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 			array[n].bv_len = this_len;
- 			array[n].bv_offset = buf->offset;
- 			left -= this_len;
-+			n++;
- 		}
- 
- 		iov_iter_bvec(&from, WRITE, array, n, sd.total_len - left);
+ clone_private_mount() returns a longterm mount now, so the proper destructor of
+ its result is kern_unmount() or kern_unmount_array().
++
++---
++
++**mandatory**
++
++zero-length bvec segments are disallowed, they must be filtered out before
++passed on to an iterator.
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 1635111c5bd2..7de304269641 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -72,8 +72,6 @@
+ 	__start.bi_bvec_done = skip;			\
+ 	__start.bi_idx = 0;				\
+ 	for_each_bvec(__v, i->bvec, __bi, __start) {	\
+-		if (!__v.bv_len)			\
+-			continue;			\
+ 		(void)(STEP);				\
+ 	}						\
+ }
 -- 
 2.24.0
 

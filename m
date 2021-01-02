@@ -2,58 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBB0F2E884B
-	for <lists+io-uring@lfdr.de>; Sat,  2 Jan 2021 20:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F0042E885B
+	for <lists+io-uring@lfdr.de>; Sat,  2 Jan 2021 21:00:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbhABTaC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 2 Jan 2021 14:30:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59462 "EHLO
+        id S1726739AbhABT6a (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 2 Jan 2021 14:58:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbhABT36 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 2 Jan 2021 14:29:58 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FC2C061573;
-        Sat,  2 Jan 2021 11:29:17 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id d26so26927909wrb.12;
-        Sat, 02 Jan 2021 11:29:17 -0800 (PST)
+        with ESMTP id S1726659AbhABT63 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 2 Jan 2021 14:58:29 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD49C061573
+        for <io-uring@vger.kernel.org>; Sat,  2 Jan 2021 11:57:49 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id r3so27036394wrt.2
+        for <io-uring@vger.kernel.org>; Sat, 02 Jan 2021 11:57:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GnlwVWvkpbQ8SE3Dyv9Mq0E/QzLOYrHMEiAwrZu78NU=;
-        b=M/Oa2EKLq4X+hUWWwnVHA6PBYTUFkGejI8UOCRLKXi/CcPzPPF3hdQzxJ2t/Y7wYRe
-         UqpGj7LSv9KUNnNaGIt/CGrefwW8RiiPR5hD2fL4LGFHNABEKG3xvP8zrYJx5z1eGWYw
-         gafP8IpA8Em0ndh/y9gLReIIyhdHKRCYJQ3DdX/HVDcGYgGy/qKGWHpAP0Odvio5k2qB
-         znf4nWv6zPFtiw0rv5Iup7zBm6pftJqh3E9sNZl73tF5PzkyqDhYzpy2eYfeA5qN0C8n
-         kDMCM42gkpsrhvnej00Ry8Rl/TprTh9fE8eG9uR/A/ocfn7nf0N9HRX0Xy73q8vnsgJs
-         AeCw==
+        bh=KUpH4HqLjuEumGM0AaxW/rqmeQZPztuJCblcYhhXA1U=;
+        b=kvilIuesDzfvoHnCOcCLUjvMSz5R768ObV8LbA32Pi3KwokI1FZcneR6MluAkO8AIv
+         9ARNQCRmJaO+BU4kUv81bdluvPAdnZaHtG4iBJXGRv2rfvDc9wA3YaGdxoC3tlJn1mgS
+         3AG3Fa9mcP71YAoyyEo/Dpx6QOKMl6ek0BlKYOZWothhVOe1Gn/wMejuw+ap09UJ3iUb
+         8HWRKP3d3VI4fjqDWO0m7m5bJSx+Va0RKXH7dMxHOI7WwmInmwQdJaWfqZYhuvr2YdXP
+         AXKEm0igbSaGbLuuiwL06WNoEznFFWdXEceN7Wgv1YXLdCX/DmzjrGRWncGnicGzCACP
+         H4aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=GnlwVWvkpbQ8SE3Dyv9Mq0E/QzLOYrHMEiAwrZu78NU=;
-        b=fWdq4yluxLlZcsUvfMdxVPzLoyCTmj9D7jBzB0PqvvEVC7W3jYUKVBDbKdZ5Ly4/nZ
-         5Ct4NdIytk8kKctgd2kSHlcKMaGU4y1p+PJyjX+xRtiFvIhbWAq6iyZ3N5W/K4VkaQzl
-         qkWvWEaXAJ1Ai0pjpcP7xhASI4y3qieKKbNoK+WkjEBPx0bEJILf4GCTnZQ+sRMvYPqa
-         dnZVfeulwNi/rO/Hg6uE6RAiNqRnE5kkhbcKzjDV+6vfUDX1tg1C5/LpPt4ypAn7s2u3
-         Q54fWXKRJniRiFlQvW5YSUXLd7MkGNEDCMoJfxHZOzjkjjHXL9GYmZT+IxS0z2gPAroj
-         GIXg==
-X-Gm-Message-State: AOAM530D/s0G7p2p0ybzMerS9XaM6zoRD20/RtlVPy8loE5fwhcLUh1S
-        QmOlSmRH0+GfjZ+c345yRpEPKDVifDg=
-X-Google-Smtp-Source: ABdhPJzhyNz4p3AvpO/1cVw6mvO9BZQLfF44Lh3zpV4yZH3Q4NFCDUoSEPfIhki6DcGPiuTzX5qnzw==
-X-Received: by 2002:a5d:5442:: with SMTP id w2mr73199180wrv.418.1609615756230;
-        Sat, 02 Jan 2021 11:29:16 -0800 (PST)
+        bh=KUpH4HqLjuEumGM0AaxW/rqmeQZPztuJCblcYhhXA1U=;
+        b=nMyJshtMdDLLZG1HgAhViEt7J7sT/a5iFxlMq8fWR5LtN65GlrEVqO0OMw/x8vB0JI
+         zbUJixhOOZpYm+0cY0rebGj8ReyCyUj+UJMisQQPMXkHMQlrNYKo6w1nwpmYCqKuDAn+
+         d0H8IDgTdGDaiozmbtfqsGRIcqSVHtj54JarcJv/3KmW0ltUAsM5erFQkcsMx+8HkYFe
+         iMRscf4YMeafCeP4DmsEn3oYCXoJTux3hTkWeJxFOekjU5X5SOk+Z8f6AScJ5zL9smYV
+         zaeokgcJs8/VOYN9B5lZwsUmAzkP03ZHKXZlOqCEeQ80My6elrL5sqHyvauOuuiQbazL
+         BI8Q==
+X-Gm-Message-State: AOAM5300AK+DXbdXhFA9uciPK2HSPg+QQf0qatSn6stqmsacJoEQK3yC
+        F7NmdwYOMtkK3vc+fh27BSm5LTectEk=
+X-Google-Smtp-Source: ABdhPJxghZ3thikHiz07BiyenVbFBvnlYJyQOnSCza0fnjBq8iQHffxwDtBj5HP6fDMESFino73lfQ==
+X-Received: by 2002:adf:bb0e:: with SMTP id r14mr74686811wrg.159.1609617467841;
+        Sat, 02 Jan 2021 11:57:47 -0800 (PST)
 Received: from [192.168.8.179] ([85.255.236.0])
-        by smtp.gmail.com with ESMTPSA id j2sm80516668wrt.35.2021.01.02.11.29.14
+        by smtp.gmail.com with ESMTPSA id y7sm24080865wmb.37.2021.01.02.11.57.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Jan 2021 11:29:15 -0800 (PST)
-Subject: Re: [PATCH] io_uring: simplify io_remove_personalities()
-To:     Yejune Deng <yejune.deng@gmail.com>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1608778940-16049-1-git-send-email-yejune.deng@gmail.com>
+        Sat, 02 Jan 2021 11:57:47 -0800 (PST)
+To:     Marcelo Diop-Gonzalez <marcelo827@gmail.com>, axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org
+References: <20201219191521.82029-1-marcelo827@gmail.com>
+ <20201219191521.82029-3-marcelo827@gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,92 +96,128 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <2c9df437-b5e9-51a8-1ccb-a16f5ed4fae6@gmail.com>
-Date:   Sat, 2 Jan 2021 19:25:47 +0000
+Subject: Re: [PATCH v2 2/2] io_uring: flush timeouts that should already have
+ expired
+Message-ID: <d3feb2bc-b456-d057-e553-af024b234d31@gmail.com>
+Date:   Sat, 2 Jan 2021 19:54:19 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1608778940-16049-1-git-send-email-yejune.deng@gmail.com>
+In-Reply-To: <20201219191521.82029-3-marcelo827@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 24/12/2020 03:02, Yejune Deng wrote:
-> The function io_remove_personalities() is very similar to
-> io_unregister_personality(),so implement io_remove_personalities()
-> calling io_unregister_personality().
-
-Please, don't forget to specify a version in the subject, e.g.
-[PATCH v2], add a changelog after "---" and add tags from previous
-threads if any.
-
-Looks good
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-
+On 19/12/2020 19:15, Marcelo Diop-Gonzalez wrote:
+> Right now io_flush_timeouts() checks if the current number of events
+> is equal to ->timeout.target_seq, but this will miss some timeouts if
+> there have been more than 1 event added since the last time they were
+> flushed (possible in io_submit_flush_completions(), for example). Fix
+> it by recording the starting value of ->cached_cq_overflow -
+> ->cq_timeouts instead of the target value, so that we can safely
+> (without overflow problems) compare the number of events that have
+> happened with the number of events needed to trigger the timeout.
 > 
-> Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
+> Signed-off-by: Marcelo Diop-Gonzalez <marcelo827@gmail.com>
 > ---
->  fs/io_uring.c | 28 +++++++++++-----------------
->  1 file changed, 11 insertions(+), 17 deletions(-)
+>  fs/io_uring.c | 30 +++++++++++++++++++++++-------
+>  1 file changed, 23 insertions(+), 7 deletions(-)
 > 
 > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index b749578..dc913fa 100644
+> index f394bf358022..f62de0cb5fc4 100644
 > --- a/fs/io_uring.c
 > +++ b/fs/io_uring.c
-> @@ -8608,9 +8608,8 @@ static int io_uring_fasync(int fd, struct file *file, int on)
->  	return fasync_helper(fd, file, on, &ctx->cq_fasync);
+> @@ -444,7 +444,7 @@ struct io_cancel {
+>  struct io_timeout {
+>  	struct file			*file;
+>  	u32				off;
+> -	u32				target_seq;
+> +	u32				start_seq;
+>  	struct list_head		list;
+>  	/* head of the link, used by linked timeouts only */
+>  	struct io_kiocb			*head;
+> @@ -1629,6 +1629,24 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
+>  	} while (!list_empty(&ctx->defer_list));
 >  }
 >  
-> -static int io_remove_personalities(int id, void *p, void *data)
-> +static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
->  {
-> -	struct io_ring_ctx *ctx = data;
->  	struct io_identity *iod;
->  
->  	iod = idr_remove(&ctx->personality_idr, id);
-> @@ -8618,7 +8617,17 @@ static int io_remove_personalities(int id, void *p, void *data)
->  		put_cred(iod->creds);
->  		if (refcount_dec_and_test(&iod->count))
->  			kfree(iod);
-> +		return 0;
->  	}
+> +static inline u32 io_timeout_events_left(struct io_kiocb *req)
+> +{
+> +	struct io_ring_ctx *ctx = req->ctx;
+> +	u32 events;
 > +
-> +	return -EINVAL;
+> +	/*
+> +	 * events -= req->timeout.start_seq and the comparison between
+> +	 * ->timeout.off and events will not overflow because each time
+> +	 * ->cq_timeouts is incremented, ->cached_cq_tail is incremented too.
+> +	 */
+> +
+> +	events = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
+> +	events -= req->timeout.start_seq;
+
+It looks to me that events before the start_seq subtraction can have got wrapped
+around start_seq.
+
+e.g.
+1) you submit a timeout with off=0xff...ff (start_seq=0 for convenience)
+
+2) some time has passed, let @events = 0xff..ff - 1
+so the timeout still waits
+
+3) we commit 5 requests at once and call io_commit_cqring() only once for
+them, so we get @events == 0xff..ff - 1 + 5, i.e. 4
+
+@events == 4 < off == 0xff...ff,
+so we didn't trigger out timeout even though should have
+
+> +	if (req->timeout.off > events)
+> +		return req->timeout.off - events;
+> +	return 0;
 > +}
 > +
-> +static int io_remove_personalities(int id, void *p, void *data)
-> +{
-> +	struct io_ring_ctx *ctx = data;
-> +
-> +	io_unregister_personality(ctx, id);
->  	return 0;
->  }
->  
-> @@ -9679,21 +9688,6 @@ static int io_register_personality(struct io_ring_ctx *ctx)
->  	return ret;
->  }
->  
-> -static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
-> -{
-> -	struct io_identity *iod;
-> -
-> -	iod = idr_remove(&ctx->personality_idr, id);
-> -	if (iod) {
-> -		put_cred(iod->creds);
-> -		if (refcount_dec_and_test(&iod->count))
-> -			kfree(iod);
-> -		return 0;
-> -	}
-> -
-> -	return -EINVAL;
-> -}
-> -
->  static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
->  				    unsigned int nr_args)
+>  static void io_flush_timeouts(struct io_ring_ctx *ctx)
 >  {
+>  	while (!list_empty(&ctx->timeout_list)) {
+> @@ -1637,8 +1655,7 @@ static void io_flush_timeouts(struct io_ring_ctx *ctx)
+>  
+>  		if (io_is_timeout_noseq(req))
+>  			break;
+> -		if (req->timeout.target_seq != ctx->cached_cq_tail
+> -					- atomic_read(&ctx->cq_timeouts))
+> +		if (io_timeout_events_left(req) > 0)
+>  			break;
+>  
+>  		list_del_init(&req->timeout.list);
+> @@ -5785,7 +5802,6 @@ static int io_timeout(struct io_kiocb *req)
+>  	struct io_ring_ctx *ctx = req->ctx;
+>  	struct io_timeout_data *data = req->async_data;
+>  	struct list_head *entry;
+> -	u32 tail, off = req->timeout.off;
+>  
+>  	spin_lock_irq(&ctx->completion_lock);
+>  
+> @@ -5799,8 +5815,8 @@ static int io_timeout(struct io_kiocb *req)
+>  		goto add;
+>  	}
+>  
+> -	tail = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
+> -	req->timeout.target_seq = tail + off;
+> +	req->timeout.start_seq = ctx->cached_cq_tail -
+> +		atomic_read(&ctx->cq_timeouts);
+>  
+>  	/*
+>  	 * Insertion sort, ensuring the first entry in the list is always
+> @@ -5813,7 +5829,7 @@ static int io_timeout(struct io_kiocb *req)
+>  		if (io_is_timeout_noseq(nxt))
+>  			continue;
+>  		/* nxt.seq is behind @tail, otherwise would've been completed */
+> -		if (off >= nxt->timeout.target_seq - tail)
+> +		if (req->timeout.off >= io_timeout_events_left(nxt))
+>  			break;
+>  	}
+>  add:
 > 
 
 -- 

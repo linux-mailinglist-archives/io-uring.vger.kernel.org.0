@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2127E2E87BA
-	for <lists+io-uring@lfdr.de>; Sat,  2 Jan 2021 16:22:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2F572E87C0
+	for <lists+io-uring@lfdr.de>; Sat,  2 Jan 2021 16:22:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbhABPWL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 2 Jan 2021 10:22:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
+        id S1726864AbhABPWV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 2 Jan 2021 10:22:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbhABPWK (ORCPT
+        with ESMTP id S1726599AbhABPWK (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sat, 2 Jan 2021 10:22:10 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C29F1C0613ED;
-        Sat,  2 Jan 2021 07:21:27 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id 91so26566410wrj.7;
-        Sat, 02 Jan 2021 07:21:27 -0800 (PST)
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B46DC06179E;
+        Sat,  2 Jan 2021 07:21:29 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id c133so13165857wme.4;
+        Sat, 02 Jan 2021 07:21:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7FOerU/+uiaLOx8IjnYNL5LXRoiyAnmqji55A4AV5Zs=;
-        b=LBsSYTbjwdI3QmQu4IbgQ7olNGDMBAqElqxAyPsojxLe7NcTh8El+Pke0BmUM22eYb
-         AuZq9SBpNP53WKEFTQdHVDQPCC/8PDYsWLnhkSG7Q2av8EAE8APyACuUnwA3w3t7JqWh
-         R4mCXlk4y9W+n2bx+NU4V6SqSobRuYDWexgtwJuMlhnrLQQMDddC3lR9NTJlDYGo4U1G
-         Yntmje7tslRu50v12yeP/tlquNu8wXFd0g77n+FLG0DNgXfWPtBPtB8SMzz/3+rhpWhR
-         Epwmsr+CSoG9EWj2xUflykAOxhsPhi2ABMO72oHO7eo5cj09XjFAKrK+DFY/UA4J8N0y
-         OWaQ==
+        bh=LOsfOtb4JF9iqyizeOjm4tVRPPo2GoTdvRn37AEB3XM=;
+        b=OLiALIisaOX66Ofzuml3kC66wCIP9u2t1hFkBs0dEBL0aE8EBdga0VD5prANc6xETp
+         TY9aUheJWJU6uSTxBN1daNkHXTUP8NPrlmGmVJdVYe26hS8drmoIrX5bVt+YOFOK7NS0
+         06iG4NlowbWLhJVZAv+YLXnsI8CN9SlFibCIW1Nsqv3OfI1Ox8k/kWFmOAfT8uxCMkSG
+         CjagviERoypCMSqVlCZv2T+vPztbjieZK6tfDQXtVy8OUNP6Nfux0P87TYecslC5aXw2
+         uHkgUOKe4hizjipjPcmVFUCvtLfvEZTcgKXJkIGHO4xWKdCj6r0iQb+tUxmLTZSFwh+q
+         WSEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7FOerU/+uiaLOx8IjnYNL5LXRoiyAnmqji55A4AV5Zs=;
-        b=H54ehalIm4pDyQ20WUtcI4FW9hSb/7osqZR9HBk+rzMD32OM0cWqAMMMZMfZA57Cf3
-         vQi8Sj5yv6SHhQS95nr2OUK1mjnpOtKZUG8PVsCw6PAvEy4fiUmny0scjRb6fl4SZsZy
-         o4b40qV+ruSi90OC0jZjPHrZI6g1T/dgX2Ugeb1HBzf4S7IUbhnmDMNmF/PFl5yVX7xm
-         4IclwqlzPwjK8Jg3lMyiNZjYTz12SBI0ZyCg2AAfZz7YYJAWa6rkZfXxuPDihImJn4Nu
-         Gq7GXbvd2PkE5TkzKNekGWANcuToq2oH/VBogzBNfn+XvvXfUT84qfH/bendRWDaRiUF
-         /zew==
-X-Gm-Message-State: AOAM532vVaNBSbbz8b10LLhrk1DTnnHmFPlkojsPahgQLncNsDl1DcF0
-        +NvOfaLIqM84eM+Qv+AfvBJCAsRBSy/3UQ==
-X-Google-Smtp-Source: ABdhPJzvzXyfPCTdTGrqpyWR+n7zH7gi0rGiGb6+ilO2BRa7Nk9Cv57P3HckjnOAEWjCCb1q8AjWLg==
-X-Received: by 2002:a5d:6789:: with SMTP id v9mr71303602wru.86.1609600886321;
-        Sat, 02 Jan 2021 07:21:26 -0800 (PST)
+        bh=LOsfOtb4JF9iqyizeOjm4tVRPPo2GoTdvRn37AEB3XM=;
+        b=gahcAZUpuy5xzI3niP5Bm+Tnnz0xCTtmvKttLE+HUEZQnwsxRcZqVTCHmpwbt46ysu
+         w+2khoW6X7V8/SeX5qT8GQl28c4PAEn8OlU3OQAAclMxOFLtmJqXD2211ePCCz5LoPla
+         qY/F51ZYaD5IeTXMZnQWijJKjjTXZIwDl0D0GCPKCEAOIrB5PMFwr1QaZTAQt17jXw25
+         iwwq7JqU4zuG/OzpWgxFpC9MqEbbWgn5FmoYWq8lqZcABdqw8/ElI3i1jJtb4wxxGCLn
+         JLsnqK3V49pRNpXj/AlpmxskFTEvO8vK8LU774GAVUKDp5mH6Q2wMja2+w353epGd4CB
+         6SEQ==
+X-Gm-Message-State: AOAM532wPq4MQkWEJ6wIOw0krZkGZaOg7dqYCZlbVS18WOsRh+lBlsk3
+        Fgu3h5iOsFTJadr6As7nyjNVJUlfOxxsTw==
+X-Google-Smtp-Source: ABdhPJwLJ+vihedFjGQ3PU8Cex40WtPYz+zy0eYCghrDXR8HINdOVHJnDEzOjzgkOrGDOmWYk/f8TQ==
+X-Received: by 2002:a1c:6055:: with SMTP id u82mr20245480wmb.61.1609600887976;
+        Sat, 02 Jan 2021 07:21:27 -0800 (PST)
 Received: from localhost.localdomain ([85.255.236.0])
-        by smtp.gmail.com with ESMTPSA id h13sm78671243wrm.28.2021.01.02.07.21.24
+        by smtp.gmail.com with ESMTPSA id h13sm78671243wrm.28.2021.01.02.07.21.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jan 2021 07:21:25 -0800 (PST)
+        Sat, 02 Jan 2021 07:21:27 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     linux-block@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -60,10 +60,11 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH v2 3/7] block/psi: remove PSI annotations from direct IO
-Date:   Sat,  2 Jan 2021 15:17:35 +0000
-Message-Id: <c77839347f1f3fdf917ac2bc251310f1c1f26044.1609461359.git.asml.silence@gmail.com>
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v2 4/7] target/file: allocate the bvec array as part of struct target_core_file_cmd
+Date:   Sat,  2 Jan 2021 15:17:36 +0000
+Message-Id: <20d31d34eb6fb8a10ac001e5e6c3812eddd24aa3.1609461359.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1609461359.git.asml.silence@gmail.com>
 References: <cover.1609461359.git.asml.silence@gmail.com>
@@ -73,62 +74,74 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Direct IO does not operate on the current working set of pages managed
-by the kernel, so it should not be accounted as memory stall to PSI
-infrastructure.
+From: Christoph Hellwig <hch@lst.de>
 
-The block layer and iomap direct IO use bio_iov_iter_get_pages()
-to build bios, and they are the only users of it, so to avoid PSI
-tracking for them clear out BIO_WORKINGSET flag. Do same for
-dio_bio_submit() because fs/direct_io constructs bios by hand directly
-calling bio_add_page().
+This saves one memory allocation, and ensures the bvecs aren't freed
+before the AIO completion.  This will allow the lower level code to be
+optimized so that it can avoid allocating another bvec array.
 
-Reported-by: Christoph Hellwig <hch@infradead.org>
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- block/bio.c    | 6 ++++++
- fs/direct-io.c | 2 ++
- 2 files changed, 8 insertions(+)
+ drivers/target/target_core_file.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 1f2cc1fbe283..9f26984af643 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1099,6 +1099,9 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
-  * fit into the bio, or are requested in @iter, whatever is smaller. If
-  * MM encounters an error pinning the requested pages, it stops. Error
-  * is returned only if 0 pages could be pinned.
-+ *
-+ * It's intended for direct IO, so doesn't do PSI tracking, the caller is
-+ * responsible for setting BIO_WORKINGSET if necessary.
-  */
- int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- {
-@@ -1123,6 +1126,9 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+diff --git a/drivers/target/target_core_file.c b/drivers/target/target_core_file.c
+index b0cb5b95e892..cce455929778 100644
+--- a/drivers/target/target_core_file.c
++++ b/drivers/target/target_core_file.c
+@@ -241,6 +241,7 @@ struct target_core_file_cmd {
+ 	unsigned long	len;
+ 	struct se_cmd	*cmd;
+ 	struct kiocb	iocb;
++	struct bio_vec	bvecs[];
+ };
  
- 	if (is_bvec)
- 		bio_set_flag(bio, BIO_NO_PAGE_REF);
-+
-+	/* don't account direct I/O as memory stall */
-+	bio_clear_flag(bio, BIO_WORKINGSET);
- 	return bio->bi_vcnt ? 0 : ret;
- }
- EXPORT_SYMBOL_GPL(bio_iov_iter_get_pages);
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index d53fa92a1ab6..0e689233f2c7 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -426,6 +426,8 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
- 	unsigned long flags;
+ static void cmd_rw_aio_complete(struct kiocb *iocb, long ret, long ret2)
+@@ -268,29 +269,22 @@ fd_execute_rw_aio(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+ 	struct target_core_file_cmd *aio_cmd;
+ 	struct iov_iter iter = {};
+ 	struct scatterlist *sg;
+-	struct bio_vec *bvec;
+ 	ssize_t len = 0;
+ 	int ret = 0, i;
  
- 	bio->bi_private = dio;
-+	/* don't account direct I/O as memory stall */
-+	bio_clear_flag(bio, BIO_WORKINGSET);
+-	aio_cmd = kmalloc(sizeof(struct target_core_file_cmd), GFP_KERNEL);
++	aio_cmd = kmalloc(struct_size(aio_cmd, bvecs, sgl_nents), GFP_KERNEL);
+ 	if (!aio_cmd)
+ 		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
  
- 	spin_lock_irqsave(&dio->bio_lock, flags);
- 	dio->refcount++;
+-	bvec = kcalloc(sgl_nents, sizeof(struct bio_vec), GFP_KERNEL);
+-	if (!bvec) {
+-		kfree(aio_cmd);
+-		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
+-	}
+-
+ 	for_each_sg(sgl, sg, sgl_nents, i) {
+-		bvec[i].bv_page = sg_page(sg);
+-		bvec[i].bv_len = sg->length;
+-		bvec[i].bv_offset = sg->offset;
++		aio_cmd->bvecs[i].bv_page = sg_page(sg);
++		aio_cmd->bvecs[i].bv_len = sg->length;
++		aio_cmd->bvecs[i].bv_offset = sg->offset;
+ 
+ 		len += sg->length;
+ 	}
+ 
+-	iov_iter_bvec(&iter, is_write, bvec, sgl_nents, len);
++	iov_iter_bvec(&iter, is_write, aio_cmd->bvecs, sgl_nents, len);
+ 
+ 	aio_cmd->cmd = cmd;
+ 	aio_cmd->len = len;
+@@ -307,8 +301,6 @@ fd_execute_rw_aio(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+ 	else
+ 		ret = call_read_iter(file, &aio_cmd->iocb, &iter);
+ 
+-	kfree(bvec);
+-
+ 	if (ret != -EIOCBQUEUED)
+ 		cmd_rw_aio_complete(&aio_cmd->iocb, ret, 0);
+ 
 -- 
 2.24.0
 

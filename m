@@ -2,270 +2,125 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B244D2EA0D4
-	for <lists+io-uring@lfdr.de>; Tue,  5 Jan 2021 00:32:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8E772EA11A
+	for <lists+io-uring@lfdr.de>; Tue,  5 Jan 2021 00:51:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbhADXbP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Jan 2021 18:31:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58708 "EHLO
+        id S1726256AbhADXtv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Jan 2021 18:49:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbhADXbO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 18:31:14 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E52DC061793;
-        Mon,  4 Jan 2021 15:30:34 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id a6so738602wmc.2;
-        Mon, 04 Jan 2021 15:30:34 -0800 (PST)
+        with ESMTP id S1726163AbhADXtv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 18:49:51 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C620EC061574
+        for <io-uring@vger.kernel.org>; Mon,  4 Jan 2021 15:49:09 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id y19so68347571lfa.13
+        for <io-uring@vger.kernel.org>; Mon, 04 Jan 2021 15:49:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AT0KaanAHQpX/yi7u0zSE1SQN69yvyDd46YRWgQ6kQs=;
-        b=gsd0c/UlNljEANw7TjEIu4gwDWDenqLgI1VUVGfaDuJf5c2CW2TIJIlZAJy+1Hgzhg
-         h+ttPqZY8WdsZI2Iz9R3lA4AE7oytyLRXZF5t0lsb8j2UbXUMrWxt4nuq3gJtcdNohZc
-         lXI6mJ4wd7uxPkfoKXSYBODV9vuSgR+yAhLrTAjIdVnpKTEIkoHMW9YEWA7KHKoqAiEo
-         O+sAfPN/pu5UR1MctNSniPcu+0PWvQ7tcbjarCbC8btiWvahMCamiNz6IRX53VB5kR+D
-         4JvFl8C4hOhLJgQigeP0TSFWWvEmdFu/b6o0YUhEKjFJu4rq4TibaUyxjQMNUHBGXb/G
-         bEBA==
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=Syu+xxRAPCF7ZDfxf+eNrKawbMbaHC21ZzbVNHvmoNU=;
+        b=VZWU+ypQBnwUwzS9fgjVQ2+C6+9e52vs6hGohsnOaNXWkNffQey4B8MgBLXBH4rThN
+         ZCp9WN6A8tMJ60bBv7xSeBM42HrwvTbWSduheR9lvToHcheY8Cr2EFm9gq40MK0tHBKo
+         9eKdncGRARlTH+fTk2iDyFd4R7/IM5k2kQG5JwXQ7tIXds6GdJB5O+TXQ8xHlQph7H9r
+         R7/KEFkXVXJgEMx2dFDKqSTsSFF3NwHVoK1XdDE6iRCzjePHlXQT0Zxqf5O15TiYQjq2
+         2exmx6qcM9wJXVxETBmCF47RpWXEWcIR2MZowcbjDwDR8hg3RXbKc0UJupcayNakyxOa
+         GzxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AT0KaanAHQpX/yi7u0zSE1SQN69yvyDd46YRWgQ6kQs=;
-        b=ggAVzX59LFG0+HuHY6hWqOLfisAev1nBHleFZjJ0sVF2WGiBy2DRUJPPaBOyQ/Hjdh
-         bU9Flg/xaZ3aHqewVV2lKf3q6SdoSSaYeobmFuNXwE1y1gBcT449Ces21WFfoNb19ZQI
-         aUJypx5SbwLaSrKyJhLvBKhupoy9Pf+vU9U8BPTR7U0scI7QqKIOwZb6UrcdO7PX5/E2
-         6Z6olxtbqMiDQtaF1+ktMDqB5qFY16du46LrL1H9cy+/sJRs1zM/hLbOP6iW0eqmo9fT
-         7YNtuuK7BWdk8Av9OmJ7W86Dl3QwwkKv0GfongqMqnGiSyBF1d5bjLnqRB/5cI+od0dF
-         icYA==
-X-Gm-Message-State: AOAM531xuro02XtWQMDhmzFHKCsM3/abULQAXGJKvs2HDtra1BmvusFT
-        nqMybBJHFsn7r7kcsSxV6WwxfSvn0kGFKQ==
-X-Google-Smtp-Source: ABdhPJw0Md6WprYfcBGMCMVJ86M0wOizibVI8Ao//VpdFaKAwgfDqvcqBbAkb6gMdqEPyo4fNq8m5g==
-X-Received: by 2002:a1c:5406:: with SMTP id i6mr527234wmb.137.1609792814179;
-        Mon, 04 Jan 2021 12:40:14 -0800 (PST)
+        bh=Syu+xxRAPCF7ZDfxf+eNrKawbMbaHC21ZzbVNHvmoNU=;
+        b=YefUTOaDuN15W3NlamEb2f07MVfSU8Pm6+iMpocLK4WBWBLKCbMvH8iXvmTehCIhrj
+         lOiOXHey2tXuRWmUfU2qn/H+8NatLPk50kZ9IaddClAa6YCjucfXAKBC5CZq6+rrKn34
+         quw2cN4kCWwBF017ZGUoeFQyJM2IqyZbuNse1f/OYD8wLV0nJOicHXEV/c8vq2CEhDNt
+         2wUaJzFoeJ6Rntc5/Qchsoi9BS5XhM6pYzfy3T9M6MYsq6r9KH0ere629gM4Yq9/mOpx
+         Fpr8Ewg2Pdawazsq8akvlHs10rTTTeb2Qp8Y3P9a8Kus2jkTulmHdJxyRDtW1+Tnf/Mu
+         v3hA==
+X-Gm-Message-State: AOAM530oVDOdC5lIxN9TrDp8/QvjWZv49y1neRxiXh2HDrzjVwdGQv2d
+        DpkwWrB+xfJY12BB08UY+0k8AS8RSi5kVg==
+X-Google-Smtp-Source: ABdhPJxglpsJSOsi0kuWofTnvEnaIHB3jhOnZfUIRX+M5eYNczr97NoeFm1zLgutbYOx2MX198dS8Q==
+X-Received: by 2002:a5d:604a:: with SMTP id j10mr82516747wrt.290.1609792965202;
+        Mon, 04 Jan 2021 12:42:45 -0800 (PST)
 Received: from localhost.localdomain ([85.255.233.205])
-        by smtp.gmail.com with ESMTPSA id w21sm734483wmi.45.2021.01.04.12.40.13
+        by smtp.gmail.com with ESMTPSA id o13sm73525006wrh.88.2021.01.04.12.42.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jan 2021 12:40:13 -0800 (PST)
+        Mon, 04 Jan 2021 12:42:44 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: [PATCH v3 2/2] io_uring: patch up IOPOLL overflow_flush sync
-Date:   Mon,  4 Jan 2021 20:36:36 +0000
-Message-Id: <b11b0ab3920e4da79ce54e565cfb2b7f4ebbc0d3.1609789890.git.asml.silence@gmail.com>
+Subject: [PATCH v2 1/2] io_uring: drop file refs after task cancel
+Date:   Mon,  4 Jan 2021 20:39:07 +0000
+Message-Id: <a4bfd86170f8a4b69fc477276e583465c6bcaa6e.1609792653.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1609789890.git.asml.silence@gmail.com>
-References: <cover.1609789890.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1609792653.git.asml.silence@gmail.com>
+References: <cover.1609792653.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-IOPOLL skips completion locking but keeps it under uring_lock, thus
-io_cqring_overflow_flush() and so io_cqring_events() need additional
-locking with uring_lock in some cases for IOPOLL.
+io_uring fds marked O_CLOEXEC and we explicitly cancel all requests
+before going through exec, so we don't want to leave task's file
+references to not our anymore io_uring instances.
 
-Remove __io_cqring_overflow_flush() from io_cqring_events(), introduce a
-wrapper around flush doing needed synchronisation and call it by hand.
-
-Cc: stable@vger.kernel.org # 5.5+
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 78 +++++++++++++++++++++++++++------------------------
- 1 file changed, 41 insertions(+), 37 deletions(-)
+ fs/io_uring.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5be33fd8b6bc..445035b24a50 100644
+index 445035b24a50..85de42c42433 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1713,9 +1713,9 @@ static void io_cqring_ev_posted(struct io_ring_ctx *ctx)
+@@ -8958,6 +8958,15 @@ static void io_uring_attempt_task_drop(struct file *file)
+ 		io_uring_del_task_file(file);
  }
  
- /* Returns true if there are no backlogged entries after the flush */
--static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
--				     struct task_struct *tsk,
--				     struct files_struct *files)
-+static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
-+				       struct task_struct *tsk,
-+				       struct files_struct *files)
- {
- 	struct io_rings *rings = ctx->rings;
- 	struct io_kiocb *req, *tmp;
-@@ -1768,6 +1768,20 @@ static bool io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
- 	return all_flushed;
- }
- 
-+static void io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
-+				     struct task_struct *tsk,
-+				     struct files_struct *files)
++static void io_uring_remove_task_files(struct io_uring_task *tctx)
 +{
-+	if (test_bit(0, &ctx->cq_check_overflow)) {
-+		/* iopoll syncs against uring_lock, not completion_lock */
-+		if (ctx->flags & IORING_SETUP_IOPOLL)
-+			mutex_lock(&ctx->uring_lock);
-+		__io_cqring_overflow_flush(ctx, force, tsk, files);
-+		if (ctx->flags & IORING_SETUP_IOPOLL)
-+			mutex_unlock(&ctx->uring_lock);
-+	}
++	struct file *file;
++	unsigned long index;
++
++	xa_for_each(&tctx->xa, index, file)
++		io_uring_del_task_file(file);
 +}
 +
- static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
+ void __io_uring_files_cancel(struct files_struct *files)
  {
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -2314,20 +2328,8 @@ static void io_double_put_req(struct io_kiocb *req)
- 		io_free_req(req);
- }
+ 	struct io_uring_task *tctx = current->io_uring;
+@@ -8966,16 +8975,12 @@ void __io_uring_files_cancel(struct files_struct *files)
  
--static unsigned io_cqring_events(struct io_ring_ctx *ctx, bool noflush)
-+static unsigned io_cqring_events(struct io_ring_ctx *ctx)
- {
--	if (test_bit(0, &ctx->cq_check_overflow)) {
--		/*
--		 * noflush == true is from the waitqueue handler, just ensure
--		 * we wake up the task, and the next invocation will flush the
--		 * entries. We cannot safely to it from here.
--		 */
--		if (noflush)
--			return -1U;
+ 	/* make sure overflow events are dropped */
+ 	atomic_inc(&tctx->in_idle);
 -
--		io_cqring_overflow_flush(ctx, false, NULL, NULL);
+-	xa_for_each(&tctx->xa, index, file) {
+-		struct io_ring_ctx *ctx = file->private_data;
+-
+-		io_uring_cancel_task_requests(ctx, files);
+-		if (files)
+-			io_uring_del_task_file(file);
 -	}
 -
- 	/* See comment at the top of this file */
- 	smp_rmb();
- 	return __io_cqring_events(ctx);
-@@ -2552,7 +2554,9 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
- 		 * If we do, we can potentially be spinning for commands that
- 		 * already triggered a CQE (eg in error).
- 		 */
--		if (io_cqring_events(ctx, false))
-+		if (test_bit(0, &ctx->cq_check_overflow))
-+			__io_cqring_overflow_flush(ctx, false, NULL, NULL);
-+		if (io_cqring_events(ctx))
- 			break;
- 
- 		/*
-@@ -6827,7 +6831,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 
- 	/* if we have a backlog and couldn't flush it all, return BUSY */
- 	if (test_bit(0, &ctx->sq_check_overflow)) {
--		if (!io_cqring_overflow_flush(ctx, false, NULL, NULL))
-+		if (!__io_cqring_overflow_flush(ctx, false, NULL, NULL))
- 			return -EBUSY;
- 	}
- 
-@@ -7090,7 +7094,7 @@ struct io_wait_queue {
- 	unsigned nr_timeouts;
- };
- 
--static inline bool io_should_wake(struct io_wait_queue *iowq, bool noflush)
-+static inline bool io_should_wake(struct io_wait_queue *iowq)
- {
- 	struct io_ring_ctx *ctx = iowq->ctx;
- 
-@@ -7099,7 +7103,7 @@ static inline bool io_should_wake(struct io_wait_queue *iowq, bool noflush)
- 	 * started waiting. For timeouts, we always want to return to userspace,
- 	 * regardless of event count.
- 	 */
--	return io_cqring_events(ctx, noflush) >= iowq->to_wait ||
-+	return io_cqring_events(ctx) >= iowq->to_wait ||
- 			atomic_read(&ctx->cq_timeouts) != iowq->nr_timeouts;
++	xa_for_each(&tctx->xa, index, file)
++		io_uring_cancel_task_requests(file->private_data, files);
+ 	atomic_dec(&tctx->in_idle);
++
++	if (files)
++		io_uring_remove_task_files(tctx);
  }
  
-@@ -7109,11 +7113,13 @@ static int io_wake_function(struct wait_queue_entry *curr, unsigned int mode,
- 	struct io_wait_queue *iowq = container_of(curr, struct io_wait_queue,
- 							wq);
+ static s64 tctx_inflight(struct io_uring_task *tctx)
+@@ -9038,6 +9043,8 @@ void __io_uring_task_cancel(void)
+ 	} while (1);
  
--	/* use noflush == true, as we can't safely rely on locking context */
--	if (!io_should_wake(iowq, true))
--		return -1;
--
--	return autoremove_wake_function(curr, mode, wake_flags, key);
-+	/*
-+	 * Cannot safely flush overflowed CQEs from here, ensure we wake up
-+	 * the task, and the next invocation will do it.
-+	 */
-+	if (io_should_wake(iowq) || test_bit(0, &iowq->ctx->cq_check_overflow))
-+		return autoremove_wake_function(curr, mode, wake_flags, key);
-+	return -1;
+ 	atomic_dec(&tctx->in_idle);
++
++	io_uring_remove_task_files(tctx);
  }
  
- static int io_run_task_work_sig(void)
-@@ -7150,7 +7156,8 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	int ret = 0;
- 
- 	do {
--		if (io_cqring_events(ctx, false) >= min_events)
-+		io_cqring_overflow_flush(ctx, false, NULL, NULL);
-+		if (io_cqring_events(ctx) >= min_events)
- 			return 0;
- 		if (!io_run_task_work())
- 			break;
-@@ -7178,6 +7185,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
- 	trace_io_uring_cqring_wait(ctx, min_events);
- 	do {
-+		io_cqring_overflow_flush(ctx, false, NULL, NULL);
- 		prepare_to_wait_exclusive(&ctx->wait, &iowq.wq,
- 						TASK_INTERRUPTIBLE);
- 		/* make sure we run task_work before checking for signals */
-@@ -7186,8 +7194,10 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 			continue;
- 		else if (ret < 0)
- 			break;
--		if (io_should_wake(&iowq, false))
-+		if (io_should_wake(&iowq))
- 			break;
-+		if (test_bit(0, &ctx->cq_check_overflow))
-+			continue;
- 		if (uts) {
- 			timeout = schedule_timeout(timeout);
- 			if (timeout == 0) {
-@@ -8625,7 +8635,8 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
- 	smp_rmb();
- 	if (!io_sqring_full(ctx))
- 		mask |= EPOLLOUT | EPOLLWRNORM;
--	if (io_cqring_events(ctx, false))
-+	io_cqring_overflow_flush(ctx, false, NULL, NULL);
-+	if (io_cqring_events(ctx))
- 		mask |= EPOLLIN | EPOLLRDNORM;
- 
- 	return mask;
-@@ -8683,7 +8694,7 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 	/* if force is set, the ring is going away. always drop after that */
- 	ctx->cq_overflow_flushed = 1;
- 	if (ctx->rings)
--		io_cqring_overflow_flush(ctx, true, NULL, NULL);
-+		__io_cqring_overflow_flush(ctx, true, NULL, NULL);
- 	mutex_unlock(&ctx->uring_lock);
- 
- 	io_kill_timeouts(ctx, NULL, NULL);
-@@ -8857,9 +8868,7 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
- 	}
- 
- 	io_cancel_defer_files(ctx, task, files);
--	io_ring_submit_lock(ctx, (ctx->flags & IORING_SETUP_IOPOLL));
- 	io_cqring_overflow_flush(ctx, true, task, files);
--	io_ring_submit_unlock(ctx, (ctx->flags & IORING_SETUP_IOPOLL));
- 
- 	if (!files)
- 		__io_uring_cancel_task_requests(ctx, task);
-@@ -9195,13 +9204,8 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	 */
- 	ret = 0;
- 	if (ctx->flags & IORING_SETUP_SQPOLL) {
--		if (!list_empty_careful(&ctx->cq_overflow_list)) {
--			bool needs_lock = ctx->flags & IORING_SETUP_IOPOLL;
-+		io_cqring_overflow_flush(ctx, false, NULL, NULL);
- 
--			io_ring_submit_lock(ctx, needs_lock);
--			io_cqring_overflow_flush(ctx, false, NULL, NULL);
--			io_ring_submit_unlock(ctx, needs_lock);
--		}
- 		if (flags & IORING_ENTER_SQ_WAKEUP)
- 			wake_up(&ctx->sq_data->wait);
- 		if (flags & IORING_ENTER_SQ_WAIT)
+ static int io_uring_flush(struct file *file, void *data)
 -- 
 2.24.0
 

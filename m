@@ -2,159 +2,163 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94EC32E9B7F
-	for <lists+io-uring@lfdr.de>; Mon,  4 Jan 2021 17:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E5D92E9BBE
+	for <lists+io-uring@lfdr.de>; Mon,  4 Jan 2021 18:12:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbhADQ65 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Jan 2021 11:58:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54874 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbhADQ6y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 11:58:54 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9862C061795;
-        Mon,  4 Jan 2021 08:58:13 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id c133so19102333wme.4;
-        Mon, 04 Jan 2021 08:58:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UJYMdZ73nO/ztE6W7LiWsUeFEuTaj0uyXsQLPX54cic=;
-        b=LGckwdlLnk1vvXgMKkoeIFeHw6BydohIF8BGeWROtoKqo80UoLuKUz4fLZOASoW+S2
-         011dlsg2R8tCKFSnd/JrRCa/0OLdUSm/psjj8o+Jx9pqOrGIHXAiDa+gO5MRpEkb4UBw
-         GlPnN+umnbBEJCF26g4m8WHPHsyCGg4M2O8d98cHNqOUNVpvIRS97T4gy67EOhQEf4yB
-         12OQ53d6TfAmfbY/n5Ld963+N2VCOT3ZeRT60GBgBGdKhkmLUZ0RZkAT0rDtlj4o/l0E
-         gBatvBXaR7fiI8wKt4Th4qp/eY806mFaW4J0Yvh/pD+bnznE0xCeEn2sYVBceQbwEG2Z
-         v2ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=UJYMdZ73nO/ztE6W7LiWsUeFEuTaj0uyXsQLPX54cic=;
-        b=G7G6+QXyVRDye8mVQchaRo8WBmQ1OaOXMz48fhyY2+27fXJ+luagSkDK5tMBegGHPJ
-         M7e0shVhF8/R39z/rmaKxigjFl7kvv8hRluq/4+pBMsJdSkq4Ku4bjl9gYx/RwXcpQ4s
-         hUV0KfPjv/J8M4kKufxTorAyh0mtlxqW8+wEW0KUoY41NCdDAT/gQTkFYmlWQrPZEMwQ
-         bF5OM2ZH/cu9YV/M/aDfpxyhcEseB53a1Le+o9MG9fjfjbzd8InaVODSLDbO8sNwTJyN
-         vVRuyKkqFoyyK/C0VKwrWewaZy7peTP444cGT0cGbyDNDqDrG3aF3jW4+oXKW3UWh3sd
-         IXOg==
-X-Gm-Message-State: AOAM530KW7sWtzGl07T06KRxc0Kup2jTzbTB46LNAmP/IlEqp+8su4MC
-        RNbiOmgNVuVjRsP+QKVLlCbUwa7oxUDpDmJF
-X-Google-Smtp-Source: ABdhPJzyyKOPG4henaerjY6JRXo5/vhdCWl8sAVm0Z/yV/Jc8CrOa5pAL9LJpHaOQ/SVprxyGBSZ/Q==
-X-Received: by 2002:a1c:2ed2:: with SMTP id u201mr27463445wmu.79.1609779492430;
-        Mon, 04 Jan 2021 08:58:12 -0800 (PST)
-Received: from [192.168.8.190] ([85.255.233.205])
-        by smtp.gmail.com with ESMTPSA id c6sm71218419wrh.7.2021.01.04.08.58.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Jan 2021 08:58:11 -0800 (PST)
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-References: <cover.1609461359.git.asml.silence@gmail.com>
- <ca14f80bf5156d83b38f543be2b9434a571474c9.1609461359.git.asml.silence@gmail.com>
- <20210104161716.GA68600@infradead.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH v2 1/7] splice: don't generate zero-len segement bvecs
-Message-ID: <333a7628-904b-c02a-b871-298b4833974a@gmail.com>
-Date:   Mon, 4 Jan 2021 16:54:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1726253AbhADRLu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Jan 2021 12:11:50 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:43784 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbhADRLu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 12:11:50 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104H4qCm140722;
+        Mon, 4 Jan 2021 17:11:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ references : message-id : date : mime-version : in-reply-to : content-type
+ : content-transfer-encoding; s=corp-2020-01-29;
+ bh=43Wmz+OFzg1p1oUYkF89dMoksP9NuUyFa0kji3q4UOg=;
+ b=yI85ZUNqlPgpMflscd0FsUjci6IzkK/PbJ4ZNX424V0T/XRrFx9pf5dEnapKx1leb/XK
+ kyVK97hEJyHtPZGXOsqJiETAF6YKbkDAzcpw4J/GXKK+U+r4U79/pPPlCu4jPOB+s5Yy
+ mn3v35EpxpVmPHxdRKwBKcA6FTwjp8bzN7yqNWiJ3/CxafM4p1M8JrUWtI05utl3Z2Ye
+ HZEMSphqGipdLaLgQlKPl45TACPFEvO8pncyyBDq8Zu0PsOz78Oxiay5bkLupy7wG0Pf
+ ibIbnCdtJpYIhiAbwoOGml+lCF+hTtZkvaMvUTEGz2QehJZpAsM2E0esbb4tGmcjcQDk Vg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 35tgskn8hm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 04 Jan 2021 17:11:07 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104H6Iwd058096;
+        Mon, 4 Jan 2021 17:09:06 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 35uxnren08-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Jan 2021 17:09:06 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 104H945h016288;
+        Mon, 4 Jan 2021 17:09:04 GMT
+Received: from [10.154.188.254] (/10.154.188.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 04 Jan 2021 17:09:04 +0000
+Subject: Re: [PATCH v3 00/13] io_uring: buffer registration enhancements
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
+References: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
+Message-ID: <d1d0d364-cd9b-9ded-aa0b-992e33569156@oracle.com>
+Date:   Mon, 4 Jan 2021 09:09:04 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <20210104161716.GA68600@infradead.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Antivirus: Avast (VPS 210101-4, 01/01/2021), Outbound message
+X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 spamscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101040111
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 malwarescore=0
+ phishscore=0 impostorscore=0 bulkscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101040111
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 04/01/2021 16:17, Christoph Hellwig wrote:
-> On Sat, Jan 02, 2021 at 03:17:33PM +0000, Pavel Begunkov wrote:
->> iter_file_splice_write() may spawn bvec segments with zero-length. In
->> preparation for prohibiting them, filter out by hand at splice level.
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>  fs/splice.c | 9 +++++----
->>  1 file changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/splice.c b/fs/splice.c
->> index 866d5c2367b2..7299330c3270 100644
->> --- a/fs/splice.c
->> +++ b/fs/splice.c
->> @@ -644,7 +644,6 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
->>  		ret = splice_from_pipe_next(pipe, &sd);
->>  		if (ret <= 0)
->>  			break;
->> -
-> 
-> Spurious empty line removal..
-> 
->> +			if (!this_len)
->> +				continue;
-> 
-> Maybe throw in a comment on why we skip empty segments here?
+A reminder to please review this version.
 
-Definitely won't hurt. Thanks for taking a look
+> v3:
+> 
+> - batch file->rsrc renames into a signle patch when possible
+> - fix other review changes from v2
+> - fix checkpatch warnings
+> 
+> v2:
+> 
+> - drop readv/writev with fixed buffers patch
+> - handle ref_nodes both both files/buffers with a single ref_list
+> - make file/buffer handling more unified
+> 
+> This patchset implements a set of enhancements to buffer registration
+> consistent with existing file registration functionality:
+> 
+> - buffer registration updates		IORING_REGISTER_BUFFERS_UPDATE
+> 					IORING_OP_BUFFERS_UPDATE
+> 
+> - buffer registration sharing		IORING_SETUP_SHARE_BUF
+> 					IORING_SETUP_ATTACH_BUF
+> 
+> I have kept the original patchset unchanged for the most part to
+> facilitate reviewing and so this set adds a number of additional patches
+> mostly making file/buffer handling more unified.
+> 
+> Patch 1-2 modularize existing buffer registration code.
+> 
+> Patch 3-7 generalize fixed_file functionality to fixed_rsrc.
+> 
+> Patch 8 applies fixed_rsrc functionality for fixed buffers support.
+> 
+> Patch 9-10 generalize files_update functionality to rsrc_update.
+> 
+> Patch 11 implements buffer registration update, and introduces
+> IORING_REGISTER_BUFFERS_UPDATE and IORING_OP_BUFFERS_UPDATE, consistent
+> with file registration update.
+> 
+> Patch 12 generalizes fixed resource allocation
+> 
+> Patch 13 implements buffer sharing among multiple rings; it works as follows:
+> 
+> - A new ring, A,  is setup. Since no buffers have been registered, the
+>    registered buffer state is an empty set, Z. That's different from the
+>    NULL state in current implementation.
+> 
+> - Ring B is setup, attaching to Ring A. It's also attaching to it's
+>    buffer registrations, now we have two references to the same empty
+>    set, Z.
+> 
+> - Ring A registers buffers into set Z, which is no longer empty.
+> 
+> - Ring B sees this immediately, since it's already sharing that set.
+> 
+> Testing
+> 
+> I have used liburing file-{register,update} tests as models for
+> buffer-{register,update,share}, tests and they run ok.
+> 
+> TBD
+> 
+> - I tried to use a single opcode for files/buffers but ran into an
+> issue since work_flags is different for files/buffers.  This should
+> be ok for the most part since req->work.flags is ultimately examined;
+> however, there are place where io_op_defs[opcode].work_flags is examined
+> directly, and I wasn't sure what would the best way to handle that.
+> 
+> - Need to still address Pavel's comments about deadlocks. I figure
+> to send out the set anyway since this is a last patch and may even be
+> handled separately.
+> 
+> Bijan Mottahedeh (13):
+>    io_uring: modularize io_sqe_buffer_register
+>    io_uring: modularize io_sqe_buffers_register
+>    io_uring: rename file related variables to rsrc
+>    io_uring: generalize io_queue_rsrc_removal
+>    io_uring: separate ref_list from fixed_rsrc_data
+>    io_uring: generalize fixed_file_ref_node functionality
+>    io_uring: add rsrc_ref locking routines
+>    io_uring: implement fixed buffers registration similar to fixed files
+>    io_uring: create common fixed_rsrc_ref_node handling routines
+>    io_uring: generalize files_update functionlity to rsrc_update
+>    io_uring: support buffer registration updates
+>    io_uring: create common fixed_rsrc_data allocation routines.
+>    io_uring: support buffer registration sharing
+> 
+>   fs/io_uring.c                 | 1004 +++++++++++++++++++++++++++++------------
+>   include/uapi/linux/io_uring.h |   12 +-
+>   2 files changed, 735 insertions(+), 281 deletions(-)
+> 
 
-> 
-> Otherwise looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-
--- 
-Pavel Begunkov

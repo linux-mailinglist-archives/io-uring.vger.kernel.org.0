@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B96AD2E8F57
-	for <lists+io-uring@lfdr.de>; Mon,  4 Jan 2021 03:04:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6991B2E8F55
+	for <lists+io-uring@lfdr.de>; Mon,  4 Jan 2021 03:03:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbhADCDj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 3 Jan 2021 21:03:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57160 "EHLO
+        id S1727810AbhADCDo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 3 Jan 2021 21:03:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbhADCDi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Jan 2021 21:03:38 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7261AC061793
-        for <io-uring@vger.kernel.org>; Sun,  3 Jan 2021 18:02:58 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id t16so30711921wra.3
-        for <io-uring@vger.kernel.org>; Sun, 03 Jan 2021 18:02:58 -0800 (PST)
+        with ESMTP id S1727709AbhADCDk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Jan 2021 21:03:40 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6594CC061794
+        for <io-uring@vger.kernel.org>; Sun,  3 Jan 2021 18:02:59 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id q75so17939402wme.2
+        for <io-uring@vger.kernel.org>; Sun, 03 Jan 2021 18:02:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=K2rcJ8n6pGAZCg4TmSNTLqt1Zo8w+vtt0tSV58Fl2Dc=;
-        b=rlRJOIe0bbK7AuP561FVehsdHT+liECUNhqG/UKHgeoxLWclIUfH04Mjy4mt/59KO5
-         iDjMQXuuOZEylnPoTwK1fFAxKPhAnLsj/8hzz7kqlaJBMLjg4Pm09HaLZ9ngh+n68+5a
-         Fkw3zTtENFxzwpUZalelY9GZlIEyw4n7oWEPasEBwNy4OF21ssopj0gX6RZYkopx8Opy
-         eOlnYZpkdgLvZJI0DUq2Ygu1Om3KGoE0IT4nDUruhNx2ReWrXVRC06GruVEU8tE8ggqf
-         pRETt13W9PreCX6tSaKjC7V4dDUg5unpcSxzEFy8TiBVK1kmAwbQ5PRylAf1PAe2isWr
-         4Q1w==
+        bh=YpRnfTlMNEuKQfmQ5l5ez6viG/jsyZ67SweETcrPyfI=;
+        b=j4TdB4WvT6S6TFuEBWeh/mWVvC4q30DqFfpPO/QcZIBaYkadDA8yGyI17xt2+JVEIg
+         Sr+/J1giu/7JFYUGBMiGHKwGIAZv80tfu79Ju2OnDt3ptRMxsAe00dYcsU5aNUaOZTwk
+         tIDdcXRLVHpdslfUON+CwzlzEWkBYyvOg+QMT6N6CUeG3fk3qOOMxmn0r4yaCWm1rWlP
+         EBHgE66stZre5Xq4beVswefhMtkR9yXW/ZYjz1xXy3t+SAwCH8qn4qzohvc9F54zLZlG
+         A+uKIbW39uvq5NO3DH/P3yQ/T4Tah7tDq7kMby9pMHa+orbFjyNh1o17+wdHXFPkasnN
+         vlLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=K2rcJ8n6pGAZCg4TmSNTLqt1Zo8w+vtt0tSV58Fl2Dc=;
-        b=jaVkbSd6F8TklnicjLyP9Mh6LSG798gAo8XYVbuuj547RYg5Po7ovzosqXS8pHTQ7B
-         jI0zrefvSOD90pbuqX7J9uiQTBN8ISnNJ/EUA//Etb8yTCAtPtR5k6EoMFQhTNh2Q8Bh
-         MDbtEaq/qkhS3qFFr1ipb0kX4KE/OepUtMVQxwRAHsmi9La5dXjVXMXJqCSeNXL9kwg7
-         rX5RAGnlkldE0FWm+JY6fWGRCY5vzOjygdw//lcQSC2rbK46SclpFjU6d55+c9PgTgHn
-         QYDycESXM9yYbYxfyLGzk4sbeN4amL9+RuDFiqM4Ec40NbOqSAklgAHbTNTIBdF9NLCh
-         7AGg==
-X-Gm-Message-State: AOAM533f2R+k+gk1HWwoIsE0i7x8lritzsjJaSh5OUm4FecUnLrZHvZv
-        eaU0sKZIihEwkW1YD1CD6zJlo42pSlpzZQ==
-X-Google-Smtp-Source: ABdhPJx2q8F4I9aKjgNq2uHX/6eRuKbEvL0z8vQN1yzGteSzT087e8eJEDUGsMSEfGg6riTXWu3nGQ==
-X-Received: by 2002:adf:e547:: with SMTP id z7mr75704886wrm.283.1609725777227;
-        Sun, 03 Jan 2021 18:02:57 -0800 (PST)
+        bh=YpRnfTlMNEuKQfmQ5l5ez6viG/jsyZ67SweETcrPyfI=;
+        b=AoAhjJTzxyr9AYmIiIsw/H5Saj6dALXYrwyn4t3d66MlwJfMhJuxjXaKnbVmUertZt
+         ny8zImylZWtbK7Ap1LTR4VXIT/Y6sV0kC/U3H1n2J0qshLFssSV+ncq5iLTl3VpZZ44U
+         FDucNDksuPUSKbeh9ObO4T5r81iJFWD826v49pHEywWFSJqf0fRuWYIWV82VRpnMnuLY
+         bCkjMIhnMFnHHOJ7fFSetyUPA5eES9rVRlQjNs7ECEX468Cfm8cqSRax/mwthTR7RrXF
+         s8idBK+H7XZdEAPFm0w+qkApQ6C+ESxFw2Isv+qP1QT9aZ2UvupLfzzjPZ+YiIcMAHIE
+         3QOA==
+X-Gm-Message-State: AOAM5336UE2jriw/rnBePkw1LVNB1MP2vSaoSNX9MOXLnxq/o+5Wavmm
+        7QZP8T1tm2IYuWsBDWFPN5mbv9p47zAy2A==
+X-Google-Smtp-Source: ABdhPJziYwlMW8thXmVRbKDbN4wvdsAJ+v9qwPhmoGTttaCUek5FYqiHT/epbXkim++vlFa8bkQArA==
+X-Received: by 2002:a1c:a1c1:: with SMTP id k184mr24682490wme.101.1609725778120;
+        Sun, 03 Jan 2021 18:02:58 -0800 (PST)
 Received: from localhost.localdomain ([85.255.233.205])
-        by smtp.gmail.com with ESMTPSA id c4sm96632893wrw.72.2021.01.03.18.02.56
+        by smtp.gmail.com with ESMTPSA id c4sm96632893wrw.72.2021.01.03.18.02.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Jan 2021 18:02:56 -0800 (PST)
+        Sun, 03 Jan 2021 18:02:57 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2 1/6] io_uring: drop file refs after task cancel
-Date:   Mon,  4 Jan 2021 01:59:14 +0000
-Message-Id: <1857205031b0ad011bd32f27b1438c60315e10c5.1609725418.git.asml.silence@gmail.com>
+Subject: [PATCH v2 2/6] io_uring: cancel more aggressively in exit_work
+Date:   Mon,  4 Jan 2021 01:59:15 +0000
+Message-Id: <ab26f494b29ad7df90bbee5595179bd4cb7b5f1b.1609725418.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1609725418.git.asml.silence@gmail.com>
 References: <cover.1609725418.git.asml.silence@gmail.com>
@@ -61,66 +61,53 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_uring fds marked O_CLOEXEC and we explicitly cancel all requests
-before going through exec, so we don't want to leave task's file
-references to not our anymore io_uring instances.
+While io_ring_exit_work() is running new requests of all sorts may be
+issued, so it should do a bit more to cancel them, otherwise they may
+just get stuck. e.g. in io-wq, in poll lists, etc.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ fs/io_uring.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ca46f314640b..ee1beec7a04d 100644
+index ee1beec7a04d..cacb14246dbb 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -8948,6 +8948,15 @@ static void io_uring_attempt_task_drop(struct file *file)
- 		io_uring_del_task_file(file);
+@@ -992,6 +992,9 @@ enum io_mem_account {
+ 	ACCT_PINNED,
+ };
+ 
++static void __io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
++					    struct task_struct *task);
++
+ static void destroy_fixed_file_ref_node(struct fixed_file_ref_node *ref_node);
+ static struct fixed_file_ref_node *alloc_fixed_file_ref_node(
+ 			struct io_ring_ctx *ctx);
+@@ -8663,7 +8666,7 @@ static void io_ring_exit_work(struct work_struct *work)
+ 	 * as nobody else will be looking for them.
+ 	 */
+ 	do {
+-		io_iopoll_try_reap_events(ctx);
++		__io_uring_cancel_task_requests(ctx, NULL);
+ 	} while (!wait_for_completion_timeout(&ctx->ref_comp, HZ/20));
+ 	io_ring_ctx_free(ctx);
  }
+@@ -8818,9 +8821,11 @@ static void __io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
+ 		enum io_wq_cancel cret;
+ 		bool ret = false;
  
-+static void io_uring_remove_task_files(struct io_uring_task *tctx)
-+{
-+	struct file *file;
-+	unsigned long index;
-+
-+	xa_for_each(&tctx->xa, index, file)
-+		io_uring_del_task_file(file);
-+}
-+
- void __io_uring_files_cancel(struct files_struct *files)
- {
- 	struct io_uring_task *tctx = current->io_uring;
-@@ -8956,16 +8965,12 @@ void __io_uring_files_cancel(struct files_struct *files)
+-		cret = io_wq_cancel_cb(ctx->io_wq, io_cancel_task_cb, &cancel, true);
+-		if (cret != IO_WQ_CANCEL_NOTFOUND)
+-			ret = true;
++		if (ctx->io_wq) {
++			cret = io_wq_cancel_cb(ctx->io_wq, io_cancel_task_cb,
++					       &cancel, true);
++			ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
++		}
  
- 	/* make sure overflow events are dropped */
- 	atomic_inc(&tctx->in_idle);
--
--	xa_for_each(&tctx->xa, index, file) {
--		struct io_ring_ctx *ctx = file->private_data;
--
--		io_uring_cancel_task_requests(ctx, files);
--		if (files)
--			io_uring_del_task_file(file);
--	}
--
-+	xa_for_each(&tctx->xa, index, file)
-+		io_uring_cancel_task_requests(file->private_data, files);
- 	atomic_dec(&tctx->in_idle);
-+
-+	if (files)
-+		io_uring_remove_task_files(tctx);
- }
- 
- static s64 tctx_inflight(struct io_uring_task *tctx)
-@@ -9028,6 +9033,8 @@ void __io_uring_task_cancel(void)
- 	} while (1);
- 
- 	atomic_dec(&tctx->in_idle);
-+
-+	io_uring_remove_task_files(tctx);
- }
- 
- static int io_uring_flush(struct file *file, void *data)
+ 		/* SQPOLL thread does its own polling */
+ 		if (!(ctx->flags & IORING_SETUP_SQPOLL)) {
 -- 
 2.24.0
 

@@ -2,163 +2,155 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E5D92E9BBE
-	for <lists+io-uring@lfdr.de>; Mon,  4 Jan 2021 18:12:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A85E2E9BF7
+	for <lists+io-uring@lfdr.de>; Mon,  4 Jan 2021 18:27:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbhADRLu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Jan 2021 12:11:50 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:43784 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbhADRLu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 12:11:50 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104H4qCm140722;
-        Mon, 4 Jan 2021 17:11:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- references : message-id : date : mime-version : in-reply-to : content-type
- : content-transfer-encoding; s=corp-2020-01-29;
- bh=43Wmz+OFzg1p1oUYkF89dMoksP9NuUyFa0kji3q4UOg=;
- b=yI85ZUNqlPgpMflscd0FsUjci6IzkK/PbJ4ZNX424V0T/XRrFx9pf5dEnapKx1leb/XK
- kyVK97hEJyHtPZGXOsqJiETAF6YKbkDAzcpw4J/GXKK+U+r4U79/pPPlCu4jPOB+s5Yy
- mn3v35EpxpVmPHxdRKwBKcA6FTwjp8bzN7yqNWiJ3/CxafM4p1M8JrUWtI05utl3Z2Ye
- HZEMSphqGipdLaLgQlKPl45TACPFEvO8pncyyBDq8Zu0PsOz78Oxiay5bkLupy7wG0Pf
- ibIbnCdtJpYIhiAbwoOGml+lCF+hTtZkvaMvUTEGz2QehJZpAsM2E0esbb4tGmcjcQDk Vg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 35tgskn8hm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 04 Jan 2021 17:11:07 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104H6Iwd058096;
-        Mon, 4 Jan 2021 17:09:06 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 35uxnren08-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 Jan 2021 17:09:06 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 104H945h016288;
-        Mon, 4 Jan 2021 17:09:04 GMT
-Received: from [10.154.188.254] (/10.154.188.254)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 04 Jan 2021 17:09:04 +0000
-Subject: Re: [PATCH v3 00/13] io_uring: buffer registration enhancements
-From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
-References: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
-Message-ID: <d1d0d364-cd9b-9ded-aa0b-992e33569156@oracle.com>
-Date:   Mon, 4 Jan 2021 09:09:04 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        id S1726418AbhADR1g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Jan 2021 12:27:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59296 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbhADR1g (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 12:27:36 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E257BC061574;
+        Mon,  4 Jan 2021 09:26:55 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id c133so19190460wme.4;
+        Mon, 04 Jan 2021 09:26:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vhZcYxw85hQr217njjB88qNCX1pBfOIpilSgl/Wkqsk=;
+        b=lIvmXiWTK3tUPBqWNrMOzheIsKhz7ZK+Gj2aSDsVfam72rOuxAWCFOkzIuJi0UsLxv
+         xkwkBKgOZrfHKM85yWWIlww4h1ZvB7yUwzfOAux3kdtbgfSf7h8ivjwrcNh0p7y4HdNn
+         8itAJ2XuJmi6vDeWNuCqW8VYRh4gv8hdJgmnQoEqKbIWb+Z4KEXZAwuMyoNLr4IZR8jI
+         aTmi9sZmmEOpaM0ggqRxS6kazZP8OR3uyS96Lq6tPI2PfijJtUEAo1vQIINoegC9aWFy
+         S6BEMFntgGhUvDevrkxH3KYGt7t5GANVjxTQL/cE9qrO2Ya1x8yU1lytKf1xWEgbON8c
+         rbyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=vhZcYxw85hQr217njjB88qNCX1pBfOIpilSgl/Wkqsk=;
+        b=R89yQVPBe9zPNaNQl9mzlOv6HbF/VlmlsMsVggmBS7xVQH/bKDC1G+tB1m6bRG/5Ro
+         1aMbVgv/mIHDR2qyfroYXiu/G4Ehe1xSoFe8KTs1JZ28phRzLYTBgyDdjiu91HtSjSa4
+         0H5SnLu62t91zlRxs0sq+R6vPhu6eWwSYWS34zjQ98Ag28bNLZsfLmE7F5F1RSNhtdrR
+         6XggWy2CI+dZLI3DwbGgNXhhKWnVquN9wXcL9SNrdXTQ89GIdOPfOPDoEWuXWNr3bTVs
+         BB+Ot7Q6/LESowPwk/25+6swQLHIh4mrRsikx3dRngz195xeUHVTAEDxlUhdyPYc0Q4Q
+         qTdw==
+X-Gm-Message-State: AOAM530gbRC2rybgYFCurWYF3oyFzyJSEi67AzJLEgxT/KrsgegYR3gA
+        ZkSguTF79uIQd183DS4EAV0eSW+uqZSQr7w0
+X-Google-Smtp-Source: ABdhPJwKi+A2PZ7gJsqOn5Ymq1PeYPvYx8txZ71YhsB/T4YTc39zWcuXj3Vp193rQV2REjlyyPEgXQ==
+X-Received: by 2002:a7b:cf30:: with SMTP id m16mr27225859wmg.145.1609781214488;
+        Mon, 04 Jan 2021 09:26:54 -0800 (PST)
+Received: from [192.168.8.190] ([85.255.233.205])
+        by smtp.gmail.com with ESMTPSA id n14sm5213wmi.1.2021.01.04.09.26.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Jan 2021 09:26:54 -0800 (PST)
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
+References: <cover.1609461359.git.asml.silence@gmail.com>
+ <b46b8c1943bbefcb90ea5c4dd9beaad8bbc15448.1609461359.git.asml.silence@gmail.com>
+ <20210104163755.GA22407@casper.infradead.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH v2 2/7] bvec/iter: disallow zero-length segment bvecs
+Message-ID: <c535efd4-7c3d-22ab-9519-8bb34a10ae78@gmail.com>
+Date:   Mon, 4 Jan 2021 17:23:24 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20210104163755.GA22407@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Antivirus: Avast (VPS 210101-4, 01/01/2021), Outbound message
-X-Antivirus-Status: Clean
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 spamscore=0
- malwarescore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101040111
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 malwarescore=0
- phishscore=0 impostorscore=0 bulkscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 adultscore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101040111
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-A reminder to please review this version.
+On 04/01/2021 16:37, Matthew Wilcox wrote:
+> On Sat, Jan 02, 2021 at 03:17:34PM +0000, Pavel Begunkov wrote:
+>> --- a/Documentation/filesystems/porting.rst
+>> +++ b/Documentation/filesystems/porting.rst
+>> @@ -865,3 +865,10 @@ no matter what.  Everything is handled by the caller.
+>>  
+>>  clone_private_mount() returns a longterm mount now, so the proper destructor of
+>>  its result is kern_unmount() or kern_unmount_array().
+>> +
+>> +---
+>> +
+>> +**mandatory**
+>> +
+>> +zero-length bvec segments are disallowed, they must be filtered out before
+>> +passed on to an iterator.
+> 
+> Why are you putting this in filesystems/porting?  Filesystems don't usually
 
-> v3:
-> 
-> - batch file->rsrc renames into a signle patch when possible
-> - fix other review changes from v2
-> - fix checkpatch warnings
-> 
-> v2:
-> 
-> - drop readv/writev with fixed buffers patch
-> - handle ref_nodes both both files/buffers with a single ref_list
-> - make file/buffer handling more unified
-> 
-> This patchset implements a set of enhancements to buffer registration
-> consistent with existing file registration functionality:
-> 
-> - buffer registration updates		IORING_REGISTER_BUFFERS_UPDATE
-> 					IORING_OP_BUFFERS_UPDATE
-> 
-> - buffer registration sharing		IORING_SETUP_SHARE_BUF
-> 					IORING_SETUP_ATTACH_BUF
-> 
-> I have kept the original patchset unchanged for the most part to
-> facilitate reviewing and so this set adds a number of additional patches
-> mostly making file/buffer handling more unified.
-> 
-> Patch 1-2 modularize existing buffer registration code.
-> 
-> Patch 3-7 generalize fixed_file functionality to fixed_rsrc.
-> 
-> Patch 8 applies fixed_rsrc functionality for fixed buffers support.
-> 
-> Patch 9-10 generalize files_update functionality to rsrc_update.
-> 
-> Patch 11 implements buffer registration update, and introduces
-> IORING_REGISTER_BUFFERS_UPDATE and IORING_OP_BUFFERS_UPDATE, consistent
-> with file registration update.
-> 
-> Patch 12 generalizes fixed resource allocation
-> 
-> Patch 13 implements buffer sharing among multiple rings; it works as follows:
-> 
-> - A new ring, A,  is setup. Since no buffers have been registered, the
->    registered buffer state is an empty set, Z. That's different from the
->    NULL state in current implementation.
-> 
-> - Ring B is setup, attaching to Ring A. It's also attaching to it's
->    buffer registrations, now we have two references to the same empty
->    set, Z.
-> 
-> - Ring A registers buffers into set Z, which is no longer empty.
-> 
-> - Ring B sees this immediately, since it's already sharing that set.
-> 
-> Testing
-> 
-> I have used liburing file-{register,update} tests as models for
-> buffer-{register,update,share}, tests and they run ok.
-> 
-> TBD
-> 
-> - I tried to use a single opcode for files/buffers but ran into an
-> issue since work_flags is different for files/buffers.  This should
-> be ok for the most part since req->work.flags is ultimately examined;
-> however, there are place where io_op_defs[opcode].work_flags is examined
-> directly, and I wasn't sure what would the best way to handle that.
-> 
-> - Need to still address Pavel's comments about deadlocks. I figure
-> to send out the set anyway since this is a last patch and may even be
-> handled separately.
-> 
-> Bijan Mottahedeh (13):
->    io_uring: modularize io_sqe_buffer_register
->    io_uring: modularize io_sqe_buffers_register
->    io_uring: rename file related variables to rsrc
->    io_uring: generalize io_queue_rsrc_removal
->    io_uring: separate ref_list from fixed_rsrc_data
->    io_uring: generalize fixed_file_ref_node functionality
->    io_uring: add rsrc_ref locking routines
->    io_uring: implement fixed buffers registration similar to fixed files
->    io_uring: create common fixed_rsrc_ref_node handling routines
->    io_uring: generalize files_update functionlity to rsrc_update
->    io_uring: support buffer registration updates
->    io_uring: create common fixed_rsrc_data allocation routines.
->    io_uring: support buffer registration sharing
-> 
->   fs/io_uring.c                 | 1004 +++++++++++++++++++++++++++++------------
->   include/uapi/linux/io_uring.h |   12 +-
->   2 files changed, 735 insertions(+), 281 deletions(-)
-> 
+At least splice and a dozen of others do. As block apriori doesn't have them,
+it's mainly addressed to fs + net. 
 
+> generate bvecs ... there's nothing in this current series that stops them.
+
+Yes, just mixing it with splice changes, which did all the work, looks
+awkward to me. Would you suggest another segregation for the patches?
+
+> I'd suggest Documentation/block/biovecs.rst or biodoc.rst (and frankly,
+> biodoc.rst needs a good cleanup)
+
+I'll add a note to biovecs.rst
+
+-- 
+Pavel Begunkov

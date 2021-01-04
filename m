@@ -2,84 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A55622EA0AB
-	for <lists+io-uring@lfdr.de>; Tue,  5 Jan 2021 00:23:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CB392EA115
+	for <lists+io-uring@lfdr.de>; Tue,  5 Jan 2021 00:49:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbhADXVu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Jan 2021 18:21:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57218 "EHLO
+        id S1726289AbhADXrx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Jan 2021 18:47:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbhADXVu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 18:21:50 -0500
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5623CC061574
-        for <io-uring@vger.kernel.org>; Mon,  4 Jan 2021 15:21:07 -0800 (PST)
-Received: by mail-oi1-x232.google.com with SMTP id s75so34058332oih.1
-        for <io-uring@vger.kernel.org>; Mon, 04 Jan 2021 15:21:07 -0800 (PST)
+        with ESMTP id S1727646AbhADXrx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 18:47:53 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C851FC061793
+        for <io-uring@vger.kernel.org>; Mon,  4 Jan 2021 15:47:12 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id g25so669092wmh.1
+        for <io-uring@vger.kernel.org>; Mon, 04 Jan 2021 15:47:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=TkrMLbLDFGypq+h4KNZfRAORWJTivperluYy6Ma94uA=;
-        b=T/ODGii43w1CA9PyrChzuJ0fAxINIff5eikbJ9NUssjXyuORNlhnwLEny218FrxTHf
-         4KoP+gcgUV6kVGjs2H6Wei6jWB/PmoSX3GW2zHHDe+NcqpjI0/eMei+6cEU3oDZ4rGj4
-         lOBA+bWDZ5mxGVFUAZzaUoYyFxinrJ3/9oPUOVVclbV5dG626jAQsvn+ZnOAMT5pjxwp
-         L2hzKyyRApIXsp9kYOfIIeYt8eH7ipa6zj36p9JlXEtNA6/KWsujbhx5PdrEd28YPALl
-         KZGLOeBNLVLV/cQt8aLT1EP7D5bEzLXM/KXh4y9yYPGV8fXvQnSkrUD1HAex2ogn3sWY
-         VyJw==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oh7D8D8tsbT2mtYO8coEmWQNiSDVkeAoddrrEeZ3uoo=;
+        b=F3s7dUo3CeBOkX3BFh9lYddjFClonh9a3hkMkP3G7kfvTqCc6ihimE4y+vqTtcgZxM
+         k3Y3PLQRV7wJB7wpB0ZW0FI2x2xKihZCRsqn1L3iAa3dfSwtUAa8xDqqjon/70ybBC64
+         R3SXSaYOC7RA7e8B+MunL1In251YI3O7pQiHzlneerrvZUj5WKx1OsJiFzs2ZFyFjBX4
+         2TwRq3XMY/Edu5zwdalj+TRZO3Glx5rGIUyOTD6HzBM4xVhXWWS3h0lZicqoZnFELOp1
+         CZPuJunVvUSMZmWZ2MHuTWGNYtjskevIfzxOFkTubJbIwH1+rlMRAH4+N/+V+u5Dh7UC
+         AFMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=TkrMLbLDFGypq+h4KNZfRAORWJTivperluYy6Ma94uA=;
-        b=QxKkO+D1iWMPkKn7ZTTIMdN0UDnqXL1MOGFOaJh6Ch+HIIgI1Xi/8oCRWAJdRLgbCz
-         OK07pB7pS7Kb8Qp+DNsxidbaaYbpf4KNdhQZH+yJvMb9i1j4NWJp+hWhwVoc92bNENKB
-         poIUualaZ+TPIJU6e10ufDqgreiXn2JrJyrRABYOaLmKjFFWd4GSxgzZPyIsv7J1TYj6
-         EZZ1qEEEwm+oZTX5Vd5mhji7wmqwrpRYh2Pb8d0TT9+SanKvetqfQYyOMT8f2K4C7HRM
-         CcV54KPm/GbJmpUa1qNW4KJMlrgkkjOUuqQkzouNHLAVCFtJxA5mtVMBdlasLiMtUNL0
-         YySg==
-X-Gm-Message-State: AOAM530Uobiv0P4yOnGl9njyUmvksEKuS/8SVUy7TezeSpraUfD67Zdq
-        qz2TUE8rMRhU4sEBnYKEMku5mcG8whzYQA==
-X-Google-Smtp-Source: ABdhPJzPTbHazTrY76yoqdNWcTHzR4Ash6p8ckE3DF0oeRuyny79Y3HHBIgvNJz8/ASBsz1eTkumlQ==
-X-Received: by 2002:a17:90b:8d3:: with SMTP id ds19mr987008pjb.186.1609799004713;
-        Mon, 04 Jan 2021 14:23:24 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id h24sm57331747pfq.13.2021.01.04.14.23.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Jan 2021 14:23:24 -0800 (PST)
-Subject: Re: [PATCH 0/2] iopoll sync fixes
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1609789890.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <204e78e5-17bb-bbcb-341f-4046fdf0b3b9@kernel.dk>
-Date:   Mon, 4 Jan 2021 15:23:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=oh7D8D8tsbT2mtYO8coEmWQNiSDVkeAoddrrEeZ3uoo=;
+        b=DnkmxQdPeqnWuj6y3LIgls2J4lmDE4M84l3dJgSxkv6bn+u4WfY5qMOG2kSk54h/x2
+         fXXnbf5vHIN8y+qMlm443a0RpZ6xfFxYTluu9n2QfT8OeYD+Rkgg6WRnwYc9G1FprXUI
+         MZsuOc5cnXZhI8AraX9UYD6KV9bxMjiExr3Oh09z7Henjqp5UryxvTq3hGJlGvCEAwt1
+         O02LT1nVE3Zgy5SnjEvIFbcdwt4awmWR7xORFitpiMIrZ7R5U6hLakkjtDVFiVL0PRyQ
+         IxBb0VePeFiDPhQBf9ResQicowan5Xi8+JE2/zelF800/AMq5/0jGePg64GrZRpFlRgJ
+         ECfA==
+X-Gm-Message-State: AOAM533LGDW6TBdOnsahqYHnApT6gXXzsC5YQhouGMqdDjcWG6X+CWFG
+        N9ZV7KLg3WQZCIAhpa311XANkl1dvlGSBA==
+X-Google-Smtp-Source: ABdhPJynVicQEBnS7PbNrzqaM70ox8oZLzX9EC/jOUNj0seRvXprySgsLlvslV1AJhKpukHZuD9iWw==
+X-Received: by 2002:a05:600c:3549:: with SMTP id i9mr506504wmq.89.1609792710170;
+        Mon, 04 Jan 2021 12:38:30 -0800 (PST)
+Received: from localhost.localdomain ([85.255.233.205])
+        by smtp.gmail.com with ESMTPSA id z6sm97140749wrw.58.2021.01.04.12.38.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jan 2021 12:38:29 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing] tests: identify timed out tests correctly
+Date:   Mon,  4 Jan 2021 20:34:54 +0000
+Message-Id: <324adc3c4d04f890932cb7b2fd8a0ff183f9ff48.1609792468.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1609789890.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/4/21 1:36 PM, Pavel Begunkov wrote:
-> [previously a part of "bunch of random fixes"]
-> since then:
-> - 1/2, don't set mm/files under uring_lock
-> - 2/2, return an overflow fast check to io_iopoll_check()
-> 
-> Pavel Begunkov (2):
->   io_uring: synchronise IOPOLL on task_submit fail
->   io_uring: patch up IOPOLL overflow_flush sync
-> 
->  fs/io_uring.c | 91 +++++++++++++++++++++++++++------------------------
->  1 file changed, 48 insertions(+), 43 deletions(-)
+We want to get a stable status (i.e. -124) when a test has timed out,
+but --preserve-status makes it to return whatever the process got.
+Remove the flag, it behaves same but if timed out passes back -124.
 
-Applied, thanks.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/runtests.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/test/runtests.sh b/test/runtests.sh
+index fa240f2..7ed8852 100755
+--- a/test/runtests.sh
++++ b/test/runtests.sh
+@@ -84,7 +84,7 @@ run_test()
+ 	fi
+ 
+ 	# Run the test
+-	timeout --preserve-status -s INT -k $TIMEOUT $TIMEOUT ./$test_name $dev
++	timeout -s INT -k $TIMEOUT $TIMEOUT ./$test_name $dev
+ 	local status=$?
+ 
+ 	# Check test status
 -- 
-Jens Axboe
+2.24.0
 

@@ -2,155 +2,179 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A85E2E9BF7
-	for <lists+io-uring@lfdr.de>; Mon,  4 Jan 2021 18:27:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA7A32E9C6D
+	for <lists+io-uring@lfdr.de>; Mon,  4 Jan 2021 18:57:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbhADR1g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Jan 2021 12:27:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59296 "EHLO
+        id S1725889AbhADR5C (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Jan 2021 12:57:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbhADR1g (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 12:27:36 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E257BC061574;
-        Mon,  4 Jan 2021 09:26:55 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id c133so19190460wme.4;
-        Mon, 04 Jan 2021 09:26:55 -0800 (PST)
+        with ESMTP id S1725840AbhADR5B (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 12:57:01 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C270C061574
+        for <io-uring@vger.kernel.org>; Mon,  4 Jan 2021 09:56:21 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id h22so66475851lfu.2
+        for <io-uring@vger.kernel.org>; Mon, 04 Jan 2021 09:56:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vhZcYxw85hQr217njjB88qNCX1pBfOIpilSgl/Wkqsk=;
-        b=lIvmXiWTK3tUPBqWNrMOzheIsKhz7ZK+Gj2aSDsVfam72rOuxAWCFOkzIuJi0UsLxv
-         xkwkBKgOZrfHKM85yWWIlww4h1ZvB7yUwzfOAux3kdtbgfSf7h8ivjwrcNh0p7y4HdNn
-         8itAJ2XuJmi6vDeWNuCqW8VYRh4gv8hdJgmnQoEqKbIWb+Z4KEXZAwuMyoNLr4IZR8jI
-         aTmi9sZmmEOpaM0ggqRxS6kazZP8OR3uyS96Lq6tPI2PfijJtUEAo1vQIINoegC9aWFy
-         S6BEMFntgGhUvDevrkxH3KYGt7t5GANVjxTQL/cE9qrO2Ya1x8yU1lytKf1xWEgbON8c
-         rbyA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R4oo/nPrySz9lzliitt4wvXS3MHaIYIQ7oIYoE7E4E8=;
+        b=clE6Zd2z2Hd8Pw+EyUJ2aXezXcgm9CDwCNHHLsYbBn6UrVNr0ZCHEjIAzQKgenzgyK
+         tFTiAggtaUnpbugm+WSgsC9+lHJENQaG6O51icG6PJsttrtZMp7RkxPnt1bc7LaFLGzS
+         v7B45yyn3rkZrMvm6XW7dWOBdvN7WadkiAVh2QBloLvxyEhrKFI4dwpAEX7AnpYb4Tsx
+         +qZbzMKVa3maxyjuFegq3ncEPQHDPvAnaa3CFWc/wJ0s7P1FMPcJtyEADWeNMg16yrQ/
+         9DHVzBLpGmjERoaGUEBpq1v9I5CC/yrSvblsGYAvG4ZAzOX45WCT9DUbk+HxmVs9zyMy
+         r7ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=vhZcYxw85hQr217njjB88qNCX1pBfOIpilSgl/Wkqsk=;
-        b=R89yQVPBe9zPNaNQl9mzlOv6HbF/VlmlsMsVggmBS7xVQH/bKDC1G+tB1m6bRG/5Ro
-         1aMbVgv/mIHDR2qyfroYXiu/G4Ehe1xSoFe8KTs1JZ28phRzLYTBgyDdjiu91HtSjSa4
-         0H5SnLu62t91zlRxs0sq+R6vPhu6eWwSYWS34zjQ98Ag28bNLZsfLmE7F5F1RSNhtdrR
-         6XggWy2CI+dZLI3DwbGgNXhhKWnVquN9wXcL9SNrdXTQ89GIdOPfOPDoEWuXWNr3bTVs
-         BB+Ot7Q6/LESowPwk/25+6swQLHIh4mrRsikx3dRngz195xeUHVTAEDxlUhdyPYc0Q4Q
-         qTdw==
-X-Gm-Message-State: AOAM530gbRC2rybgYFCurWYF3oyFzyJSEi67AzJLEgxT/KrsgegYR3gA
-        ZkSguTF79uIQd183DS4EAV0eSW+uqZSQr7w0
-X-Google-Smtp-Source: ABdhPJwKi+A2PZ7gJsqOn5Ymq1PeYPvYx8txZ71YhsB/T4YTc39zWcuXj3Vp193rQV2REjlyyPEgXQ==
-X-Received: by 2002:a7b:cf30:: with SMTP id m16mr27225859wmg.145.1609781214488;
-        Mon, 04 Jan 2021 09:26:54 -0800 (PST)
-Received: from [192.168.8.190] ([85.255.233.205])
-        by smtp.gmail.com with ESMTPSA id n14sm5213wmi.1.2021.01.04.09.26.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Jan 2021 09:26:54 -0800 (PST)
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-References: <cover.1609461359.git.asml.silence@gmail.com>
- <b46b8c1943bbefcb90ea5c4dd9beaad8bbc15448.1609461359.git.asml.silence@gmail.com>
- <20210104163755.GA22407@casper.infradead.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH v2 2/7] bvec/iter: disallow zero-length segment bvecs
-Message-ID: <c535efd4-7c3d-22ab-9519-8bb34a10ae78@gmail.com>
-Date:   Mon, 4 Jan 2021 17:23:24 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R4oo/nPrySz9lzliitt4wvXS3MHaIYIQ7oIYoE7E4E8=;
+        b=T0YLbgy6YY63Nini0yfblqepVzTYxDi0wD5kBKrJiiNUEtOLSr4Wd6rF8VhveIKkZw
+         lKrwBglslvXs/5gAoD0VF2wiCYKsKW+QazB9eDluipIXroqPna3qoPsieYI1PJ41h6j5
+         sVzMzo6DXXFoNV2FpRRlH81QxCofyQeWNzx4zK/LUMFcEhRPY/UdOuu4FZFPEU3QBHmz
+         3hzfMYtH1OilNYh7ofJ3uqwwXYWDcx0wnzVONHauDQhPv8KBjCSMhIAfVVo9MjR3XhRe
+         o3B85iVzM/1kYKaX8F5CZKFsLPvZzTt4qys7VWCjBqHlpa/ZHI6e/GyjmnXnzrFprOtt
+         kICg==
+X-Gm-Message-State: AOAM533jPLEDa5eqPPCl0oOAa6rMySFejxE9A/7DEYLWduskQQ9IZkaR
+        UeSt2cKd/ZxH2clQPiOC9I+PaAsMDZAl4/BNWiM=
+X-Google-Smtp-Source: ABdhPJyPWlXUX9Pk/IoSju3WyVxfNHLre899DRcM8+oHMEUhDkj7u9ARMqfdrviwpScQyORJ67x1pHVizJKsx+dE4aY=
+X-Received: by 2002:a2e:390d:: with SMTP id g13mr19176160lja.23.1609782979912;
+ Mon, 04 Jan 2021 09:56:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210104163755.GA22407@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20201219191521.82029-1-marcelo827@gmail.com> <20201219191521.82029-3-marcelo827@gmail.com>
+ <d3feb2bc-b456-d057-e553-af024b234d31@gmail.com>
+In-Reply-To: <d3feb2bc-b456-d057-e553-af024b234d31@gmail.com>
+From:   Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+Date:   Mon, 4 Jan 2021 12:56:08 -0500
+Message-ID: <CA+saATUJ=CYpN59PiivA95i4U=Dia8fZ4n1YLObZbkVi+bjy7Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] io_uring: flush timeouts that should already have expired
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     axboe@kernel.dk, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 04/01/2021 16:37, Matthew Wilcox wrote:
-> On Sat, Jan 02, 2021 at 03:17:34PM +0000, Pavel Begunkov wrote:
->> --- a/Documentation/filesystems/porting.rst
->> +++ b/Documentation/filesystems/porting.rst
->> @@ -865,3 +865,10 @@ no matter what.  Everything is handled by the caller.
->>  
->>  clone_private_mount() returns a longterm mount now, so the proper destructor of
->>  its result is kern_unmount() or kern_unmount_array().
->> +
->> +---
->> +
->> +**mandatory**
->> +
->> +zero-length bvec segments are disallowed, they must be filtered out before
->> +passed on to an iterator.
-> 
-> Why are you putting this in filesystems/porting?  Filesystems don't usually
+On Sat, Jan 2, 2021 at 2:57 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>
+> On 19/12/2020 19:15, Marcelo Diop-Gonzalez wrote:
+> > Right now io_flush_timeouts() checks if the current number of events
+> > is equal to ->timeout.target_seq, but this will miss some timeouts if
+> > there have been more than 1 event added since the last time they were
+> > flushed (possible in io_submit_flush_completions(), for example). Fix
+> > it by recording the starting value of ->cached_cq_overflow -
+> > ->cq_timeouts instead of the target value, so that we can safely
+> > (without overflow problems) compare the number of events that have
+> > happened with the number of events needed to trigger the timeout.
+> >
+> > Signed-off-by: Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+> > ---
+> >  fs/io_uring.c | 30 +++++++++++++++++++++++-------
+> >  1 file changed, 23 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/fs/io_uring.c b/fs/io_uring.c
+> > index f394bf358022..f62de0cb5fc4 100644
+> > --- a/fs/io_uring.c
+> > +++ b/fs/io_uring.c
+> > @@ -444,7 +444,7 @@ struct io_cancel {
+> >  struct io_timeout {
+> >       struct file                     *file;
+> >       u32                             off;
+> > -     u32                             target_seq;
+> > +     u32                             start_seq;
+> >       struct list_head                list;
+> >       /* head of the link, used by linked timeouts only */
+> >       struct io_kiocb                 *head;
+> > @@ -1629,6 +1629,24 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
+> >       } while (!list_empty(&ctx->defer_list));
+> >  }
+> >
+> > +static inline u32 io_timeout_events_left(struct io_kiocb *req)
+> > +{
+> > +     struct io_ring_ctx *ctx = req->ctx;
+> > +     u32 events;
+> > +
+> > +     /*
+> > +      * events -= req->timeout.start_seq and the comparison between
+> > +      * ->timeout.off and events will not overflow because each time
+> > +      * ->cq_timeouts is incremented, ->cached_cq_tail is incremented too.
+> > +      */
+> > +
+> > +     events = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
+> > +     events -= req->timeout.start_seq;
+>
+> It looks to me that events before the start_seq subtraction can have got wrapped
+> around start_seq.
+>
+> e.g.
+> 1) you submit a timeout with off=0xff...ff (start_seq=0 for convenience)
+>
+> 2) some time has passed, let @events = 0xff..ff - 1
+> so the timeout still waits
+>
+> 3) we commit 5 requests at once and call io_commit_cqring() only once for
+> them, so we get @events == 0xff..ff - 1 + 5, i.e. 4
+>
+> @events == 4 < off == 0xff...ff,
 
-At least splice and a dozen of others do. As block apriori doesn't have them,
-it's mainly addressed to fs + net. 
+Oof, good catch... I'll try to think about it some more. Feels like
+there ought to
+be a nice way to do it but maybe it's quite tricky :/
 
-> generate bvecs ... there's nothing in this current series that stops them.
+-Marcelo
 
-Yes, just mixing it with splice changes, which did all the work, looks
-awkward to me. Would you suggest another segregation for the patches?
-
-> I'd suggest Documentation/block/biovecs.rst or biodoc.rst (and frankly,
-> biodoc.rst needs a good cleanup)
-
-I'll add a note to biovecs.rst
-
--- 
-Pavel Begunkov
+> so we didn't trigger out timeout even though should have
+>
+> > +     if (req->timeout.off > events)
+> > +             return req->timeout.off - events;
+> > +     return 0;
+> > +}
+> > +
+> >  static void io_flush_timeouts(struct io_ring_ctx *ctx)
+> >  {
+> >       while (!list_empty(&ctx->timeout_list)) {
+> > @@ -1637,8 +1655,7 @@ static void io_flush_timeouts(struct io_ring_ctx *ctx)
+> >
+> >               if (io_is_timeout_noseq(req))
+> >                       break;
+> > -             if (req->timeout.target_seq != ctx->cached_cq_tail
+> > -                                     - atomic_read(&ctx->cq_timeouts))
+> > +             if (io_timeout_events_left(req) > 0)
+> >                       break;
+> >
+> >               list_del_init(&req->timeout.list);
+> > @@ -5785,7 +5802,6 @@ static int io_timeout(struct io_kiocb *req)
+> >       struct io_ring_ctx *ctx = req->ctx;
+> >       struct io_timeout_data *data = req->async_data;
+> >       struct list_head *entry;
+> > -     u32 tail, off = req->timeout.off;
+> >
+> >       spin_lock_irq(&ctx->completion_lock);
+> >
+> > @@ -5799,8 +5815,8 @@ static int io_timeout(struct io_kiocb *req)
+> >               goto add;
+> >       }
+> >
+> > -     tail = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
+> > -     req->timeout.target_seq = tail + off;
+> > +     req->timeout.start_seq = ctx->cached_cq_tail -
+> > +             atomic_read(&ctx->cq_timeouts);
+> >
+> >       /*
+> >        * Insertion sort, ensuring the first entry in the list is always
+> > @@ -5813,7 +5829,7 @@ static int io_timeout(struct io_kiocb *req)
+> >               if (io_is_timeout_noseq(nxt))
+> >                       continue;
+> >               /* nxt.seq is behind @tail, otherwise would've been completed */
+> > -             if (off >= nxt->timeout.target_seq - tail)
+> > +             if (req->timeout.off >= io_timeout_events_left(nxt))
+> >                       break;
+> >       }
+> >  add:
+> >
+>
+> --
+> Pavel Begunkov

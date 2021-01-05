@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 150ED2EA14A
-	for <lists+io-uring@lfdr.de>; Tue,  5 Jan 2021 01:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A41062EA31F
+	for <lists+io-uring@lfdr.de>; Tue,  5 Jan 2021 03:02:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbhAEAGR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Jan 2021 19:06:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36008 "EHLO
+        id S1726300AbhAEB6F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Jan 2021 20:58:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbhAEAGR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 19:06:17 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EBA5C061574
-        for <io-uring@vger.kernel.org>; Mon,  4 Jan 2021 16:05:36 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id r4so804677wmh.5
-        for <io-uring@vger.kernel.org>; Mon, 04 Jan 2021 16:05:36 -0800 (PST)
+        with ESMTP id S1725921AbhAEB6F (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jan 2021 20:58:05 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B357C061793
+        for <io-uring@vger.kernel.org>; Mon,  4 Jan 2021 17:57:24 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id 190so931422wmz.0
+        for <io-uring@vger.kernel.org>; Mon, 04 Jan 2021 17:57:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XjM6Mswr81AzLxko2MvQOavjYx1AkRRl0f2Xnow0ivw=;
-        b=b/9LxtFE+seuvld17zY7eVCbio/epzpKnvXB+wu/HYpBQm0YjW6f0WAJ46Pb39NPjn
-         cARVKX+H6yRddFYebQihhaAdpOORZa7sT3eQ9wx7Od84g36G8ipxLmw4RIbtlDD2hzB1
-         JXZxfKgd5cqMkNoX4CYI73SGAocPA/wWQ0uLeUJgrW0dGLNzD2ibSkKkAadFCMI0Hyrg
-         9VDMSDT4RGQGQP5s+fQpYGqOR/hZVYFiHhipV/P4OCYrtFb4bYAAGX2EI+cBRsk9F9lc
-         jv8OMGL624WsyI97NKIGw0by2hjVIT8BdwC4ufVg58iezu1stdWUTYKXCbuBRHdhXjgq
-         R0Tw==
+        bh=gOUN9nwL4fdSmAQbsvIuerTBMyqMjRcQYcrWPqJmW5E=;
+        b=HI7HeC8yjUJzd1ovbDnrlSu7Pe9iNXQjf7CkbOFZETrObHB5lbSo1vo8UyiK7gtB0i
+         C/l2T7C3m+BL4GOxZiFIb51nedTlOfAvbRelgv79stjOWdmV/vnQsc9Mun9ACJ3BDA00
+         QyKvU8S9YnJQqifMHtWWg6fAw1QhEFwdo2VieGQF2bd1t2Om48XcJ4Wn8MFFAA0Zzbfp
+         Uz9I9SL5reSrQ0fXS2geuYiLrCemRuKxBSJ6fghLdL0Grl2GkgahbeWE14iK9pwfBdFU
+         +j4ZuDw5f/Dj71WW54N9ihWeTzDbr1cWBYpvfY/jwRLZAXoIc545oXp9DFF9C+ZmNsao
+         sdKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=XjM6Mswr81AzLxko2MvQOavjYx1AkRRl0f2Xnow0ivw=;
-        b=YYM6D3rGuHifST9yL1MrwY3GESsl5tbwtnlePp+pdjXG+wRYcfuse61ZgEAhe4igXH
-         TVq79xUi2eHLyWntkKoMJeG8Ibrm0UVjm58lvB5w8an1YrNmXeCZnQHixTOZac8w4Xrw
-         o3+bVJdAFdTxUUrHok69mTZPVOgOKOfNSK3Y3pjajsxwedEposF3FopAwMiHcolX5hQa
-         zOUElPgHbahbYBpVlUbQPBDz8X9+5QgWfCh4EAfZHlDIMGZ8AeOxMhRnFLSrGlxaRoCs
-         Oh4O09cJOX/eUW0gYjDZwlA9MQ5hdBthBARRWuuHAZflntWzAsqxcd/niyfifIX9v5Na
-         ITng==
-X-Gm-Message-State: AOAM533nC9yQtWmeSbgJlDzBdPquEfgnrtihSRaGcAYTh1n1uqf65yzr
-        0poW89j8zZBBBEsFVf5qgDDu/9Phm8HK3w==
-X-Google-Smtp-Source: ABdhPJxR7+65a65Selc8wgX+fwIixKQ8/dNcELo9sMJIMugfkUdu1fjHaQEuv3x2vlXR5qHUEQx30w==
-X-Received: by 2002:a1c:e142:: with SMTP id y63mr804555wmg.28.1609797501314;
-        Mon, 04 Jan 2021 13:58:21 -0800 (PST)
+        bh=gOUN9nwL4fdSmAQbsvIuerTBMyqMjRcQYcrWPqJmW5E=;
+        b=BW/o55fATsC/lX2QH6j34ajjK5AxOWiQd50rF4qUq1OI7XGFk+ty8HeU7WoVWVxcs8
+         nm0ZTCL+BDhu/Q0dNJiKFLm4ErJyMxWvKKGZNRRSNuzysh2Rp2zkNJQaD6SVjx66CdIx
+         NLtgfIyezv0X3Kj4wnt8rpgawGJYmWVRPnTRT2stEUtpXlxVIlnWqE10ZD2uW1YVkvtv
+         +0GMbn4+AaAwbdOfTsTkxopTA1V7rdJtshb0jDGXRqGi4t+bkyGMzOsxPUx+uX1JeFyo
+         MVQqK/TP1X9587jk7/8fV/AwuPT4CsRbbYa/szXlY3gDueW6cPTUxTzz3oATZpz6DbyL
+         R1QQ==
+X-Gm-Message-State: AOAM532XQ3O2Wsa2d53ERQHurkInCx+zwz3Yfzr+EpQbkxX3h8v4w7Fs
+        lweTlB3ejA6E0keKHckp3UqFZFBYYVcOcw==
+X-Google-Smtp-Source: ABdhPJwInRSBcoXsH2L1O+XMN66e6ZoLeL/tdU07xZmBwOH9aY961kYT150I9785NanW7TrFOJ7/qQ==
+X-Received: by 2002:a7b:cb93:: with SMTP id m19mr1358476wmi.45.1609811843133;
+        Mon, 04 Jan 2021 17:57:23 -0800 (PST)
 Received: from [192.168.8.195] ([85.255.233.205])
-        by smtp.gmail.com with ESMTPSA id n11sm80772902wra.9.2021.01.04.13.58.20
+        by smtp.gmail.com with ESMTPSA id e16sm104728572wra.94.2021.01.04.17.57.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Jan 2021 13:58:20 -0800 (PST)
+        Mon, 04 Jan 2021 17:57:22 -0800 (PST)
 To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
         io-uring@vger.kernel.org
 References: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1608314848-67329-2-git-send-email-bijan.mottahedeh@oracle.com>
+ <1608314848-67329-4-git-send-email-bijan.mottahedeh@oracle.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -96,13 +96,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v3 01/13] io_uring: modularize io_sqe_buffer_register
-Message-ID: <9abd2dbd-94b3-bb50-5160-d565ed2f1e98@gmail.com>
-Date:   Mon, 4 Jan 2021 21:54:52 +0000
+Subject: Re: [PATCH v3 03/13] io_uring: rename file related variables to rsrc
+Message-ID: <4299b6c0-5ab8-ba8c-c763-7bdf8b569347@gmail.com>
+Date:   Tue, 5 Jan 2021 01:53:53 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1608314848-67329-2-git-send-email-bijan.mottahedeh@oracle.com>
+In-Reply-To: <1608314848-67329-4-git-send-email-bijan.mottahedeh@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -111,18 +111,27 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 18/12/2020 18:07, Bijan Mottahedeh wrote:
-> Split io_sqe_buffer_register into two routines:
+> This is a prep rename patch for subsequent patches to generalize file
+> registration.
+[...]
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index d31a2a1..d421f70 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -285,7 +285,7 @@ enum {
+>  	IORING_REGISTER_LAST
+>  };
+>  
+> -struct io_uring_files_update {
+> +struct io_uring_rsrc_update {
+
+It's a user API, i.e. the header used by userspace programs, so can't
+be changed or would break them.
+
+>  	__u32 offset;
+>  	__u32 resv;
+>  	__aligned_u64 /* __s32 * */ fds;
 > 
-> - io_sqe_buffer_register() registers a single buffer
-> - io_sqe_buffers_register iterates over all user specified buffers
 
-It's a bit worse in terms of extra allocations, but not so hot to be
-be a problem, and looks simpler.
-
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-
-Jens, I suggest to take 1,2 while they still apply (3/13 does not).
-I'll review others in a meanwhile.
- 
 -- 
 Pavel Begunkov

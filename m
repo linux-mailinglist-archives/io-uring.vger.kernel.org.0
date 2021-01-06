@@ -2,242 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93BB02EC534
-	for <lists+io-uring@lfdr.de>; Wed,  6 Jan 2021 21:40:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0AD22EC634
+	for <lists+io-uring@lfdr.de>; Wed,  6 Jan 2021 23:27:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbhAFUkU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 Jan 2021 15:40:20 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:55974 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727362AbhAFUkT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jan 2021 15:40:19 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 106KYmnd037719;
-        Wed, 6 Jan 2021 20:39:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=YLBOrTQu6qneB3Nq8zUj+3l5Ola5H4hVynLNmuMcXQo=;
- b=DDKzcF8XA/tlx54cKNXZ9GeLYNzQCpODs1IKeoyIxUTch1PXS43lBcCyYQph+eOCwWUA
- x6vC4shfGZjLtgOlqLTyZ4a2pQwhFlKJ2+tArz7H7uRYr/OCOG8E83kItmv338sXlh9Y
- /Hg+99NVk+DyX39dg9albMEAur+N3Lk937nkWkkgXaas8oCzgPjFZXX2fTavA670AJBU
- cijjyGETGojiO+3VbQvYwc0rizxKrsCC7YQPshUFQsNUH20+C1i7giYLUKhr4erwtkMv
- lYFF391FNKSAyAyJYAdQ4seTxwo+CaPvld7yeWMzlakgPdLZeuvs2/AuOyYeVSOXxefv DA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2130.oracle.com with ESMTP id 35wcuxt595-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 06 Jan 2021 20:39:35 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 106KZbQA145512;
-        Wed, 6 Jan 2021 20:39:35 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 35w3g1jf2a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Jan 2021 20:39:35 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 106KdYPh021660;
-        Wed, 6 Jan 2021 20:39:34 GMT
-Received: from ca-ldom147.us.oracle.com (/10.129.68.131)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Jan 2021 20:39:34 +0000
-From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
-Subject: [PATCH v4 13/13] io_uring: support buffer registration sharing
-Date:   Wed,  6 Jan 2021 12:39:22 -0800
-Message-Id: <1609965562-13569-14-git-send-email-bijan.mottahedeh@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1609965562-13569-1-git-send-email-bijan.mottahedeh@oracle.com>
-References: <1609965562-13569-1-git-send-email-bijan.mottahedeh@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9856 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
- phishscore=0 spamscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101060117
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9856 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0
- clxscore=1015 spamscore=0 impostorscore=0 priorityscore=1501 mlxscore=0
- adultscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101060117
+        id S1727028AbhAFW1K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Jan 2021 17:27:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47054 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbhAFW1J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jan 2021 17:27:09 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 889ADC061757
+        for <io-uring@vger.kernel.org>; Wed,  6 Jan 2021 14:26:29 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id 3so3905113wmg.4
+        for <io-uring@vger.kernel.org>; Wed, 06 Jan 2021 14:26:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rzc66fRl6hW54Pz+r8f5pIdm4IRkpDJkxPXVKiqABjo=;
+        b=VICU+DyVLPu+EqP64NdDBYMExWy77K6Ze6vtKIPwXg+16gU6iZbJXaV9s8nBdPjPT9
+         3EpvyK63OPh3SD0RwWt8UIHQlOVtFaaRBltvS1LmbiEX7AZe92I/wDRifPXpVGCIU/ey
+         IG56y4nh0Gk1a2ORNutc8v1H2vg7JY9DSdiVzqubRPObkpbAG9LTbRLovq/qv7TDaXOC
+         Zmc+5UDO1sb5LsqT9hyl9ZttNY5AZpV1x0Dkw7y9pcnlnv9d3YVPvncBnn4+4KzrWWJf
+         Zeup2nRecEvNrjLsRl5IpnHZxQnzh2gsJjijA0uNvoeUXgbtdF6J9rJskDgtXJ3O7JUk
+         Le1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rzc66fRl6hW54Pz+r8f5pIdm4IRkpDJkxPXVKiqABjo=;
+        b=k/YmVjx3s/QhbQfY0nr23cdKL2GCHNdMueyAkIWC8jtQwX3uxoPaDiOFJkziW7HiHT
+         FFxy5ueBj9TNdhTC+RrBlnXhCCfiOMguOIcTyWnoJFLE1GB5CtX2YF7nj9I2WHBIoa2G
+         ifFNWF+DdWHYE4OylBTxRBsYW7TBMypYy+8f+cDpJJAevjXkt9uoJFilZRYJGNJAxu8G
+         yKXCoAcgjSSuxKJuXtd58RrzlyNKX7qiOTBmt/enhI0/RFuLkvUCSKsbC2lUwuTuNAtv
+         7z5WOAe3KTmKMdgpHnauixMxt1HEPF1KwDw24sQX8S5APcATcNgKQQtWbbqZ3DoGvwX0
+         SRRg==
+X-Gm-Message-State: AOAM530htJMqz0Tq/7qB1zTkNrrTLP4b52IW0i49pIPaSBtqnndDosgi
+        Q+WA+HBSVI5ZpPxvkL30nmK7s9FXoCUuoQ==
+X-Google-Smtp-Source: ABdhPJyTXFk2sRgyewA9Q3xu8AY2Cbb70C4sqqLbG7dycsH3Alo3Vyp8TP0ZpQIxzkEeNsneqSb/XQ==
+X-Received: by 2002:a1c:a9c4:: with SMTP id s187mr5557214wme.116.1609971988104;
+        Wed, 06 Jan 2021 14:26:28 -0800 (PST)
+Received: from [192.168.8.102] ([185.69.144.125])
+        by smtp.gmail.com with ESMTPSA id z21sm4494401wmk.20.2021.01.06.14.26.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Jan 2021 14:26:27 -0800 (PST)
+To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
+        io-uring@vger.kernel.org
+References: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1608314848-67329-9-git-send-email-bijan.mottahedeh@oracle.com>
+ <f0bff3b0-f27e-80fe-9a58-dfeb347a7e61@gmail.com>
+ <c982a4ea-e39f-d8e0-1fc7-27086395ea9a@oracle.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH v3 08/13] io_uring: implement fixed buffers registration
+ similar to fixed files
+Message-ID: <2be9eefb-4353-9951-f6b6-fbd1d9735ae8@gmail.com>
+Date:   Wed, 6 Jan 2021 22:22:57 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <c982a4ea-e39f-d8e0-1fc7-27086395ea9a@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Implement buffer sharing among multiple rings.
+On 06/01/2021 19:46, Bijan Mottahedeh wrote:
+> On 1/4/2021 6:43 PM, Pavel Begunkov wrote:
+>> On 18/12/2020 18:07, Bijan Mottahedeh wrote:
+>>> Apply fixed_rsrc functionality for fixed buffers support.
+>>
+>> git generated a pretty messy diff...
+> 
+> I had tried to break this up a few ways but it didn't work well because I think most of the code changes depend on the io_uring structure changes.  I can look again or if you some idea of how you want to split it, I can do that.
 
-A ring shares its (future) buffer registrations at setup time with
-IORING_SETUP_SHARE_BUF. A ring attaches to another ring's buffer
-registration at setup time with IORING_SETUP_ATTACH_BUF, after
-authenticating with the buffer registration owner's fd. Any updates to
-the owner's buffer registrations become immediately available to the
-attached rings.
+Nah, that's fine, I just may have missed something
+without applying it.
 
-Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
----
- fs/io_uring.c                 | 85 +++++++++++++++++++++++++++++++++++++++++--
- include/uapi/linux/io_uring.h |  2 +
- 2 files changed, 83 insertions(+), 4 deletions(-)
+> 
+>> Because it's do quiesce, fixed read/write access buffers from asynchronous
+>> contexts without synchronisation. That won't work anymore, so
+>>
+>> 1. either we save it in advance, that would require extra req_async
+>> allocation for linked fixed rw
+>>
+>> 2. or synchronise whenever async. But that would mean that a request
+>> may get and do IO on two different buffers, that's rotten.
+>>
+>> 3. do mixed -- lazy, but if do IO then alloc.
+>>
+>> 3.5 also "synchronise" there would mean uring_lock, that's not welcome,
+>> but we can probably do rcu.
+> 
+> Are you referring to a case where a fixed buffer request can be submitted from async context while those buffers are being unregistered, or something like that?
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ea708ec..08ca435e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8438,6 +8438,13 @@ static void io_buffers_map_free(struct io_ring_ctx *ctx)
- 	ctx->nr_user_bufs = 0;
- }
- 
-+static void io_detach_buf_data(struct io_ring_ctx *ctx)
-+{
-+	percpu_ref_put(&ctx->buf_data->refs);
-+	ctx->buf_data = NULL;
-+	ctx->nr_user_bufs = 0;
-+}
-+
- static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
- {
- 	struct fixed_rsrc_data *data = ctx->buf_data;
-@@ -8446,6 +8453,11 @@ static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
- 	if (!data)
- 		return -ENXIO;
- 
-+	if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
-+		io_detach_buf_data(ctx);
-+		return 0;
-+	}
-+
- 	ret = io_rsrc_ref_quiesce(data, ctx);
- 	if (ret)
- 		return ret;
-@@ -8689,9 +8701,13 @@ static struct fixed_rsrc_data *io_buffers_map_alloc(struct io_ring_ctx *ctx,
- 	if (!nr_args || nr_args > IORING_MAX_FIXED_BUFS)
- 		return ERR_PTR(-EINVAL);
- 
--	buf_data = alloc_fixed_rsrc_data(ctx);
--	if (IS_ERR(buf_data))
--		return buf_data;
-+	if (ctx->buf_data) {
-+		buf_data = ctx->buf_data;
-+	} else {
-+		buf_data = alloc_fixed_rsrc_data(ctx);
-+		if (IS_ERR(buf_data))
-+			return buf_data;
-+	}
- 
- 	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_BUFS_TABLE);
- 	buf_data->table = kcalloc(nr_tables, sizeof(*buf_data->table),
-@@ -8756,9 +8772,17 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
- 	if (ctx->nr_user_bufs)
- 		return -EBUSY;
- 
-+	if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
-+		if (!ctx->buf_data)
-+			return -EFAULT;
-+		ctx->nr_user_bufs = ctx->buf_data->ctx->nr_user_bufs;
-+		return 0;
-+	}
-+
- 	buf_data = io_buffers_map_alloc(ctx, nr_args);
- 	if (IS_ERR(buf_data))
- 		return PTR_ERR(buf_data);
-+	ctx->buf_data = buf_data;
- 
- 	for (i = 0; i < nr_args; i++, ctx->nr_user_bufs++) {
- 		struct io_mapped_ubuf *imu;
-@@ -8782,7 +8806,6 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
- 			break;
- 	}
- 
--	ctx->buf_data = buf_data;
- 	if (ret) {
- 		io_sqe_buffers_unregister(ctx);
- 		return ret;
-@@ -9833,6 +9856,55 @@ static struct file *io_uring_get_file(struct io_ring_ctx *ctx)
- 	return file;
- }
- 
-+static int io_attach_buf_data(struct io_ring_ctx *ctx,
-+			      struct io_uring_params *p)
-+{
-+	struct io_ring_ctx *ctx_attach;
-+	struct fd f;
-+
-+	f = fdget(p->wq_fd);
-+	if (!f.file)
-+		return -EBADF;
-+	if (f.file->f_op != &io_uring_fops) {
-+		fdput(f);
-+		return -EINVAL;
-+	}
-+
-+	ctx_attach = f.file->private_data;
-+	if (!ctx_attach->buf_data) {
-+		fdput(f);
-+		return -EINVAL;
-+	}
-+	ctx->buf_data = ctx_attach->buf_data;
-+
-+	percpu_ref_get(&ctx->buf_data->refs);
-+	fdput(f);
-+	return 0;
-+}
-+
-+static int io_init_buf_data(struct io_ring_ctx *ctx, struct io_uring_params *p)
-+{
-+	if ((p->flags & (IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF)) ==
-+	    (IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF))
-+		return -EINVAL;
-+
-+	if (p->flags & IORING_SETUP_SHARE_BUF) {
-+		struct fixed_rsrc_data *buf_data;
-+
-+		buf_data = alloc_fixed_rsrc_data(ctx);
-+		if (IS_ERR(buf_data))
-+			return PTR_ERR(buf_data);
-+
-+		ctx->buf_data = buf_data;
-+		return 0;
-+	}
-+
-+	if (p->flags & IORING_SETUP_ATTACH_BUF)
-+		return io_attach_buf_data(ctx, p);
-+
-+	return 0;
-+}
-+
- static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 			   struct io_uring_params __user *params)
- {
-@@ -9950,6 +10022,10 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	if (ret)
- 		goto err;
- 
-+	ret = io_init_buf_data(ctx, p);
-+	if (ret)
-+		goto err;
-+
- 	ret = io_sq_offload_create(ctx, p);
- 	if (ret)
- 		goto err;
-@@ -10030,6 +10106,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
- 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
- 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
-+			IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF |
- 			IORING_SETUP_R_DISABLED))
- 		return -EINVAL;
- 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index b289ef8..3ad786a 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -98,6 +98,8 @@ enum {
- #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
- #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
- #define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
-+#define IORING_SETUP_SHARE_BUF	(1U << 7)	/* share buffer registration */
-+#define IORING_SETUP_ATTACH_BUF	(1U << 8)	/* attach buffer registration */
- 
- enum {
- 	IORING_OP_NOP,
+Yes, io_import_fixed() called from io-wq, and in parallel with
+unregister/etc. That may happen in many cases, e.g. linked reqs
+or IOSQE_ASYNC.
+
+
 -- 
-1.8.3.1
-
+Pavel Begunkov

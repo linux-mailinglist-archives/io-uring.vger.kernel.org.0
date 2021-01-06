@@ -2,87 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E93A82EBFFD
-	for <lists+io-uring@lfdr.de>; Wed,  6 Jan 2021 16:00:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C20902EC0EF
+	for <lists+io-uring@lfdr.de>; Wed,  6 Jan 2021 17:17:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbhAFPAR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 Jan 2021 10:00:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33610 "EHLO
+        id S1727428AbhAFQRN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Jan 2021 11:17:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbhAFPAR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jan 2021 10:00:17 -0500
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99EABC06134D
-        for <io-uring@vger.kernel.org>; Wed,  6 Jan 2021 06:59:36 -0800 (PST)
-Received: by mail-il1-x136.google.com with SMTP id 2so3427133ilg.9
-        for <io-uring@vger.kernel.org>; Wed, 06 Jan 2021 06:59:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7xF84lcqYmAAeGxt+k7XGd8Gw2sYr7n9FyENDhOQeBw=;
-        b=sAnegShUdfKFxiA32+4xESBnuY/EPkZaZb6wLwtKllDrHMQhanQMGXUyeUqCt9xJSY
-         51EgOriwv4gMaUbQEFuYQiUREGGxR9YNULwoTT0G6eD76v1RRA7YP9CZ4NTTdDlxKIqI
-         FoBiv35xOk/GD9/BTctPcerulP5RCslMdt3wuzTF6DgDTWv5oJeokBi03CBsp1H+clNk
-         6mBE/NdzWvgMjE6S0aXDd+Evb4C3U/Ne1UfyJGHRdt8S+twol2AyTMDQoFJTAZCCR2wC
-         7c6m5D+g53/p3U1TCGGSZKDoRS35zgCIUIvowR55YWL8TSeLXAJumxrguOdMcEUaLi0J
-         I3Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7xF84lcqYmAAeGxt+k7XGd8Gw2sYr7n9FyENDhOQeBw=;
-        b=qGXvRazlwMD8VBBUdNkYAjfPhUjQmYpHrjjL9LBPuQYQMp3GLAYRD7sCXFUN01iuAA
-         VuD8z2SG6QQ+GlByUE2eyF+MSmLIeN8LaFTkpk5jsw6BD4Bieo5fBbTvz1fnul11Kn+5
-         IvS05kf8XFhpwsO2nuXGCw8di+H4FpL0z8QQ3f+iS67eQGPQtIVqQjfPot3ap6buH7yG
-         iDXixuknL2UXtTwHdZyT+U948hyg+QwjM40d/NkjL8kpCNMtcYnHL0kLMOXfIziQiVek
-         FR5GAIcqmrTGOYNo9q46AIQ7RczyL23fAgoatwLhjHZxjxKxMjqRwqTdvK3DVZuBBZnh
-         GfMA==
-X-Gm-Message-State: AOAM533TFWLDG9w+eX3h5OnkJeMEdw3PFpgtHYccVEWTA/MjJbz09GOJ
-        abytaYFaEvlRRj0wDXUWR3+l0w==
-X-Google-Smtp-Source: ABdhPJz5/o2xLu7ZN4Ac/qoFB2INGnPTWbbUk52VQp+HkSUMCJ4zqImKuS2wfqiv8/Y8aMytmRhkIw==
-X-Received: by 2002:a92:6512:: with SMTP id z18mr4510745ilb.220.1609945175933;
-        Wed, 06 Jan 2021 06:59:35 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id f2sm1527141iow.4.2021.01.06.06.59.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Jan 2021 06:59:35 -0800 (PST)
-Subject: Re: [PATCH] io_uring: fix an IS_ERR() vs NULL check
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <X/WCTxIRT4SHLemV@mwanda>
- <c88d8500-681d-7503-77ca-ae10d230a11b@gmail.com>
- <20210106143401.GD175893@casper.infradead.org> <20210106145610.GC2831@kadam>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <4ba258d5-6097-ca9f-4467-6392404030cb@kernel.dk>
-Date:   Wed, 6 Jan 2021 07:59:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        with ESMTP id S1727334AbhAFQRN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jan 2021 11:17:13 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1163C06134D;
+        Wed,  6 Jan 2021 08:16:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=ns/8b6WrIA7MMHf4WsPJu0vdjDlHmaHEsY/klE9k97c=; b=FtulGt/Y++hPqKpKQfw990eNW6
+        +1fHIgtdIQwFQc+e8/vemTj6Xnzz7cSu6GfFxDfG0RmYcxKKP8nYVqTvjxximQ48CUR/gdkBZsPI1
+        K88nN6R3RC3i3VI+3q1cqMC45KubY/8pR0Xp6uhPoDsOqPpRCzSh+P8tPFQTtWsSSG1Uf5p/wYY3T
+        NrbXTq0EtOYflTr1SGl4ew7UOf+edfE59XQvnu89tRFZKWGWk94AGLFGuchscqF/RukT6RPjZkDXp
+        IMkco9OOiDj5AicdtjJuDPU1iRvRRoLBLHhZZ5vmA6kqTsiB5bc5ARsIyLGB+eco0+8MSAjwxsKe7
+        Opf9BHuw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1kxBNK-002UTp-0X; Wed, 06 Jan 2021 16:10:50 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH] io_uring: Fix return value from alloc_fixed_file_ref_node
+Date:   Wed,  6 Jan 2021 16:09:26 +0000
+Message-Id: <20210106160926.593770-1-willy@infradead.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <20210106145610.GC2831@kadam>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/6/21 7:56 AM, Dan Carpenter wrote:
-> Jens just applied my patch right before you sent this.  I don't have
-> strong feeling either way about this.  I guess I sort of agree with
-> you.  If Jens can drop my patch then it should be pretty trivial for
-> you to add a commit message to your patch and give me a Reported-by
-> tag?
+alloc_fixed_file_ref_node() currently returns an ERR_PTR on failure.
+io_sqe_files_unregister() expects it to return NULL and since it can only
+return -ENOMEM, it makes more sense to change alloc_fixed_file_ref_node()
+to behave that way.
 
-I can just drop it, don't feel too strongly but would tend to agree
-that we might as well just make it NULL/pointer as it's a single
-error value. Willy, are you sending a patch?
+Fixes: 1ffc54220c44 ("io_uring: fix io_sqe_files_unregister() hangs")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/io_uring.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index ca46f314640b..d4d3e30331e4 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7684,12 +7684,12 @@ static struct fixed_file_ref_node *alloc_fixed_file_ref_node(
+ 
+ 	ref_node = kzalloc(sizeof(*ref_node), GFP_KERNEL);
+ 	if (!ref_node)
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 
+ 	if (percpu_ref_init(&ref_node->refs, io_file_data_ref_zero,
+ 			    0, GFP_KERNEL)) {
+ 		kfree(ref_node);
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 	}
+ 	INIT_LIST_HEAD(&ref_node->node);
+ 	INIT_LIST_HEAD(&ref_node->file_list);
+@@ -7783,9 +7783,9 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	}
+ 
+ 	ref_node = alloc_fixed_file_ref_node(ctx);
+-	if (IS_ERR(ref_node)) {
++	if (!ref_node) {
+ 		io_sqe_files_unregister(ctx);
+-		return PTR_ERR(ref_node);
++		return -ENOMEM;
+ 	}
+ 
+ 	io_sqe_files_set_node(file_data, ref_node);
+@@ -7885,8 +7885,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 		return -EINVAL;
+ 
+ 	ref_node = alloc_fixed_file_ref_node(ctx);
+-	if (IS_ERR(ref_node))
+-		return PTR_ERR(ref_node);
++	if (!ref_node)
++		return -ENOMEM;
+ 
+ 	done = 0;
+ 	fds = u64_to_user_ptr(up->fds);
 -- 
-Jens Axboe
+2.29.2
 

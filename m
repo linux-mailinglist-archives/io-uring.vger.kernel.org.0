@@ -2,221 +2,329 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0453A2EE840
-	for <lists+io-uring@lfdr.de>; Thu,  7 Jan 2021 23:17:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DF5B2EE847
+	for <lists+io-uring@lfdr.de>; Thu,  7 Jan 2021 23:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbhAGWR1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 7 Jan 2021 17:17:27 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:43676 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbhAGWR0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 7 Jan 2021 17:17:26 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 107MFUJA108510;
-        Thu, 7 Jan 2021 22:16:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=JTxszQHoCQmVavBY1GBAoUTQStbtFX2IU59qWBzFv+o=;
- b=rD21bSlulPe92ehWba2Z8NP8D2psood1ijC1fnrMz8doK/igIP9D0Ne2B2SjN6ojxXu7
- XTvwZ14cb1HVfgn6k6Bwl+8ZwL9C/HOhhlu9VP4j4Lk/EuFeixwYTVAVENLjG3A+nxIk
- NbdTDchh6Ln1ZeA+aEBWNAff0KLt9TzAs4dkbM5GwrGzKAfTiRHwhKwDuEoa8B3BzQC7
- ItT/FzEHagTBqN4PX7SaK+1UpipKI+f5WnkLOJ26GBLUs7RLs67eb9tzwi0ZOCG7z9j2
- /e5QC+RynjWFsTvPRKUgm4vcwUY/EXM4dbARyo76pdi3y4IvQtRiM7euJTJ1j3Kcelrh EA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 35wepmen27-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 07 Jan 2021 22:16:43 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 107Lt9Yk126787;
-        Thu, 7 Jan 2021 22:14:43 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 35v1fbse8d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Jan 2021 22:14:43 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 107MEglE007317;
-        Thu, 7 Jan 2021 22:14:42 GMT
-Received: from [10.154.113.215] (/10.154.113.215)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 07 Jan 2021 22:14:42 +0000
-Subject: Re: [PATCH v3 08/13] io_uring: implement fixed buffers registration
- similar to fixed files
-To:     Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk,
+        id S1727944AbhAGWUB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 7 Jan 2021 17:20:01 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44686 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726720AbhAGWUB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 7 Jan 2021 17:20:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1610057913;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=T2ooHRJ7strp274aIY3xth7LbN3f9tIb9RMjgg0uXdU=;
+        b=CmKHAsd757QSAMpFQ1LqIO/uvsdjw0WcneJ2iN2rNgu6oCo8LNYcnEd3h3YDuyKlRgC40R
+        9DZVWx02476y+cWuJpOkVW37usXkUyMsLhKWh7/u59TtxY3LbjDsVT/ZMH+2HFqzJY96Rb
+        m9g7+LqWGm3TmU1lLyA4g0PhskpiwpI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-283-HfcM4XcxOHWBhkVEKfH_Jg-1; Thu, 07 Jan 2021 17:18:31 -0500
+X-MC-Unique: HfcM4XcxOHWBhkVEKfH_Jg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0D8028143EB;
+        Thu,  7 Jan 2021 22:18:30 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4006D1001B2C;
+        Thu,  7 Jan 2021 22:18:25 +0000 (UTC)
+Date:   Thu, 7 Jan 2021 17:18:25 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
         io-uring@vger.kernel.org
-References: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1608314848-67329-9-git-send-email-bijan.mottahedeh@oracle.com>
- <f0bff3b0-f27e-80fe-9a58-dfeb347a7e61@gmail.com>
- <c982a4ea-e39f-d8e0-1fc7-27086395ea9a@oracle.com>
- <66fd0092-2d03-02c0-fe1c-941c761a24f8@gmail.com>
- <20b6a902-4193-22fe-2cd7-569024648a26@oracle.com>
- <5d14a511-34d2-1aa7-e902-ed4f0e6ded82@gmail.com>
-From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Message-ID: <554b54ec-f7b4-a8ed-6b74-8d209b0a0f5f@oracle.com>
-Date:   Thu, 7 Jan 2021 14:14:42 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+Subject: Re: [PATCH RFC 6/7] block: track cookies of split bios for bio-based
+ device
+Message-ID: <20210107221825.GF21239@redhat.com>
+References: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
+ <20201223112624.78955-7-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <5d14a511-34d2-1aa7-e902-ed4f0e6ded82@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Avast (VPS 210101-4, 01/01/2021), Outbound message
-X-Antivirus-Status: Clean
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9857 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- suspectscore=0 spamscore=0 bulkscore=0 adultscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101070125
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9857 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 spamscore=0
- impostorscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 clxscore=1015 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101070126
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201223112624.78955-7-jefflexu@linux.alibaba.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/7/2021 1:37 PM, Pavel Begunkov wrote:
-> On 07/01/2021 21:21, Bijan Mottahedeh wrote:
->>
->>>>> Because it's do quiesce, fixed read/write access buffers from asynchronous
->>>>> contexts without synchronisation. That won't work anymore, so
->>>>>
->>>>> 1. either we save it in advance, that would require extra req_async
->>>>> allocation for linked fixed rw
->>>>>
->>>>> 2. or synchronise whenever async. But that would mean that a request
->>>>> may get and do IO on two different buffers, that's rotten.
->>>>>
->>>>> 3. do mixed -- lazy, but if do IO then alloc.
->>>>>
->>>>> 3.5 also "synchronise" there would mean uring_lock, that's not welcome,
->>>>> but we can probably do rcu.
->>>>
->>>> Are you referring to a case where a fixed buffer request can be submitted from async context while those buffers are being unregistered, or something like that?
->>>>
->>>>> Let me think of a patch...
->>>
->>> The most convenient API would be [1], it selects a buffer during
->>> submission, but allocates if needs to go async or for all linked
->>> requests.
->>>
->>> [2] should be correct from the kernel perspective (no races), it
->>> also solves doing IO on 2 different buffers, that's nasty (BTW,
->>> [1] solves this problem naturally). However, a buffer might be
->>> selected async, but the following can happen, and user should
->>> wait for request completion before removing a buffer.
->>>
->>> 1. register buf id=0
->>> 2. syscall io_uring_enter(submit=RW_FIXED,buf_id=0,IOSQE_ASYNC)
->>> 3. unregister buffers
->>> 4. the request may not find the buffer and fail.
->>>
->>> Not very convenient + can actually add overhead on the userspace
->>> side, can be even some heavy synchronisation.
->>>
->>> uring_lock in [2] is not nice, but I think I can replace it
->>> with rcu, probably can even help with sharing, but I need to
->>> try to implement to be sure.
->>>
->>> So that's an open question what API to have.
->>> Neither of diffs is tested.
->>>
->>> [1]
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 7e35283fc0b1..2171836a9ce3 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -826,6 +826,7 @@ static const struct io_op_def io_op_defs[] = {
->>>            .needs_file        = 1,
->>>            .unbound_nonreg_file    = 1,
->>>            .pollin            = 1,
->>> +        .needs_async_data    = 1,
->>>            .plug            = 1,
->>>            .async_size        = sizeof(struct io_async_rw),
->>>            .work_flags        = IO_WQ_WORK_BLKCG | IO_WQ_WORK_MM,
->>> @@ -835,6 +836,7 @@ static const struct io_op_def io_op_defs[] = {
->>>            .hash_reg_file        = 1,
->>>            .unbound_nonreg_file    = 1,
->>>            .pollout        = 1,
->>> +        .needs_async_data    = 1,
->>>            .plug            = 1,
->>>            .async_size        = sizeof(struct io_async_rw),
->>>            .work_flags        = IO_WQ_WORK_BLKCG | IO_WQ_WORK_FSIZE |
->>>
->>>
->>>
->>> [2]
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 7e35283fc0b1..31560b879fb3 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -3148,7 +3148,12 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
->>>        opcode = req->opcode;
->>>        if (opcode == IORING_OP_READ_FIXED || opcode == IORING_OP_WRITE_FIXED) {
->>>            *iovec = NULL;
->>> -        return io_import_fixed(req, rw, iter);
->>> +
->>> +        io_ring_submit_lock(req->ctx, needs_lock);
->>> +        lockdep_assert_held(&req->ctx->uring_lock);
->>> +        ret = io_import_fixed(req, rw, iter);
->>> +        io_ring_submit_unlock(req->ctx, needs_lock);
->>> +        return ret;
->>>        }
->>>          /* buffer index only valid with fixed read/write, or buffer select  */
->>> @@ -3638,7 +3643,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
->>>    copy_iov:
->>>            /* some cases will consume bytes even on error returns */
->>>            iov_iter_revert(iter, io_size - iov_iter_count(iter));
->>> -        ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
->>> +        ret = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
->>>            if (!ret)
->>>                return -EAGAIN;
->>>        }
->>>
->>>
->>
->> For my understanding, is [1] essentially about stashing the iovec for the fixed IO in an io_async_rw struct and referencing it in async context?
-> 
-> Yes, like that. It actually doesn't use iov but employs bvec, which
-> it gets from struct io_mapped_ubuf, and stores it inside iter.
-> 
->> I don't understand how this prevents unregistering the buffer (described by the iovec) while the IO takes place.
-> 
-> The bvec itself is guaranteed to be alive during the whole lifetime
-> of the request, that's because of all that percpu_ref in nodes.
-> However, the table storing buffers (i.e. ctx->user_bufs) may be
-> overwritten.
-> 
-> reg/unreg/update happens with uring_lock held, as well as submission.
-> Hence if we always grab a buffer during submission it will be fine.
+On Wed, Dec 23 2020 at  6:26am -0500,
+Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
 
-So because of the uring_lock being held, if we implement [1], then once 
-we grab a fixed buffer during submission, we are guaranteed that the IO 
-successfully completes, even if the buffer table is overwritten?
-
-Would the bvec persistence help us with buffer sharing and the deadlock 
-scenario you brought up as well?  If the sharing task wouldn't have to 
-block for the attached tasks to get rid of their references, it seems 
-that any outstanding IO would complete successfully.
-
-My concern however is what would happen if the sharing task actually 
-*frees* its buffers after returning from unregister, since those buffers 
-would still live in the buf_data, right?
-
-
->> Taking a step back, what is the cost of keeping the quiesce for buffer registration operations?  It should not be a frequent operation even a heavy handed quiesce should not be a big issue?
+> This is actuaaly the core when supporting iopoll for bio-based device.
 > 
-> It waits for __all__ inflight requests to complete and doesn't allow
-> submissions in the meantime (basically all io_uring_enter() attempts
-> will fail). +grace period.
+> A list is maintained in the top bio (the original bio submitted to dm
+> device), which is used to maintain all valid cookies of split bios. The
+> IO polling routine will actually iterate this list and poll on
+> corresponding hardware queues of the underlying mq devices.
 > 
-> It's pretty heavy, but worse is that it shuts down everything while
-> waiting. However, if an application is prepared for that and it's
-> really rare or done once, that should be ok.
-> 
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 
-Jens, what do you think?
+Like I said in response to patch 4 in this series: please fold patch 4
+into this patch and _really_ improve this patch header.
+
+In particular, the (ab)use of bio_inc_remaining() needs be documented in
+this patch header very well.
+
+But its use could easily be why you're seeing a performance hit (coupled
+with the extra spinlock locking and list management used).  Just added
+latency and contention across CPUs.
+
+> ---
+>  block/bio.c               |  8 ++++
+>  block/blk-core.c          | 84 ++++++++++++++++++++++++++++++++++++++-
+>  include/linux/blk_types.h | 39 ++++++++++++++++++
+>  3 files changed, 129 insertions(+), 2 deletions(-)
+> 
+> diff --git a/block/bio.c b/block/bio.c
+> index 1f2cc1fbe283..ca6d1a7ee196 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -284,6 +284,10 @@ void bio_init(struct bio *bio, struct bio_vec *table,
+>  
+>  	bio->bi_io_vec = table;
+>  	bio->bi_max_vecs = max_vecs;
+> +
+> +	INIT_LIST_HEAD(&bio->bi_plist);
+> +	INIT_LIST_HEAD(&bio->bi_pnode);
+> +	spin_lock_init(&bio->bi_plock);
+>  }
+>  EXPORT_SYMBOL(bio_init);
+>  
+> @@ -689,6 +693,7 @@ void __bio_clone_fast(struct bio *bio, struct bio *bio_src)
+>  	bio->bi_write_hint = bio_src->bi_write_hint;
+>  	bio->bi_iter = bio_src->bi_iter;
+>  	bio->bi_io_vec = bio_src->bi_io_vec;
+> +	bio->bi_root = bio_src->bi_root;
+>  
+>  	bio_clone_blkg_association(bio, bio_src);
+>  	blkcg_bio_issue_init(bio);
+> @@ -1425,6 +1430,8 @@ void bio_endio(struct bio *bio)
+>  	if (bio->bi_disk)
+>  		rq_qos_done_bio(bio->bi_disk->queue, bio);
+>  
+> +	bio_del_poll_list(bio);
+> +
+>  	/*
+>  	 * Need to have a real endio function for chained bios, otherwise
+>  	 * various corner cases will break (like stacking block devices that
+> @@ -1446,6 +1453,7 @@ void bio_endio(struct bio *bio)
+>  	blk_throtl_bio_endio(bio);
+>  	/* release cgroup info */
+>  	bio_uninit(bio);
+> +
+>  	if (bio->bi_end_io)
+>  		bio->bi_end_io(bio);
+>  }
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 2f5c51ce32e3..5a332af01939 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -960,12 +960,31 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+>  {
+>  	struct bio_list bio_list_on_stack[2];
+>  	blk_qc_t ret = BLK_QC_T_NONE;
+> +	bool iopoll;
+> +	struct bio *root;
+>  
+>  	BUG_ON(bio->bi_next);
+>  
+>  	bio_list_init(&bio_list_on_stack[0]);
+>  	current->bio_list = bio_list_on_stack;
+>  
+> +	iopoll = test_bit(QUEUE_FLAG_POLL, &bio->bi_disk->queue->queue_flags);
+> +	iopoll = iopoll && (bio->bi_opf & REQ_HIPRI);
+> +
+> +	if (iopoll) {
+> +		bio->bi_root = root = bio;
+> +		/*
+> +		 * We need to pin root bio here since there's a reference from
+> +		 * the returned cookie. bio_get() is not enough since the whole
+> +		 * bio and the corresponding kiocb/dio may have already
+> +		 * completed and thus won't call blk_poll() at all, in which
+> +		 * case the pairing bio_put() in blk_bio_poll() won't be called.
+> +		 * The side effect of bio_inc_remaining() is that, the whole bio
+> +		 * won't complete until blk_poll() called.
+> +		 */
+> +		bio_inc_remaining(root);
+> +	}
+> +
+>  	do {
+>  		struct request_queue *q = bio->bi_disk->queue;
+>  		struct bio_list lower, same;
+> @@ -979,7 +998,18 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+>  		bio_list_on_stack[1] = bio_list_on_stack[0];
+>  		bio_list_init(&bio_list_on_stack[0]);
+>  
+> -		ret = __submit_bio(bio);
+> +		if (iopoll) {
+> +			/* See the comments of above bio_inc_remaining(). */
+> +			bio_inc_remaining(bio);
+> +			bio->bi_cookie = __submit_bio(bio);
+> +
+> +			if (blk_qc_t_valid(bio->bi_cookie))
+> +				bio_add_poll_list(bio);
+> +
+> +			bio_endio(bio);
+> +		} else {
+> +			ret = __submit_bio(bio);
+> +		}
+>  
+>  		/*
+>  		 * Sort new bios into those for a lower level and those for the
+> @@ -1002,7 +1032,11 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+>  	} while ((bio = bio_list_pop(&bio_list_on_stack[0])));
+>  
+>  	current->bio_list = NULL;
+> -	return ret;
+> +
+> +	if (iopoll)
+> +		return (blk_qc_t)root;
+> +
+> +	return BLK_QC_T_NONE;
+>  }
+>  
+>  static blk_qc_t __submit_bio_noacct_mq(struct bio *bio)
+> @@ -1131,6 +1165,52 @@ blk_qc_t submit_bio(struct bio *bio)
+>  }
+>  EXPORT_SYMBOL(submit_bio);
+>  
+> +int blk_bio_poll(struct request_queue *q, blk_qc_t cookie)
+> +{
+> +	int ret = 0;
+> +	struct bio *bio, *root = (struct bio*)cookie;
+> +
+> +	if (list_empty(&root->bi_plist)) {
+> +		bio_endio(root);
+> +		return 1;
+> +	}
+> +
+> +	spin_lock(&root->bi_plock);
+> +	bio = list_first_entry_or_null(&root->bi_plist, struct bio, bi_pnode);
+> +
+> +	while (bio) {
+> +		struct request_queue *q = bio->bi_disk->queue;
+> +		blk_qc_t cookie = bio->bi_cookie;
+> +
+> +		spin_unlock(&root->bi_plock);
+> +		BUG_ON(!blk_qc_t_valid(cookie));
+> +
+> +		ret += blk_mq_poll(q, cookie);
+
+Not yet clear to me how you _know_ this q is blk-mq...
+What about a deep stack of bio-based DM devices?
+
+Or are you confining bio-based DM IO polling support to bio-based
+stacked directly on blk-mq? (patch 7 likely shows that to be the case).
+
+If so, I'm not liking that at all.  So if your implementation doesn't
+support arbitrary bio-based IO stacks then this bio-based IO polling
+support really has limited utility still.
+
+Helps explin how you got away with having bio-based DM always returning
+BLK_QC_T_NONE in patch 5 though... feels far too simplistic.  Patch 5+6
+together are implicitly ignoring the complexity that results from
+arbitrary bio-based DM stacking.
+
+Or am I missing something?
+
+Mike
+
+
+> +
+> +		spin_lock(&root->bi_plock);
+> +		/*
+> +		 * One blk_mq_poll() call could complete multiple bios, and
+> +		 * thus multiple bios could be removed from root->bi_plock
+> +		 * list.
+> +		 */
+> +		bio = list_first_entry_or_null(&root->bi_plist, struct bio, bi_pnode);
+> +	}
+> +
+> +	spin_unlock(&root->bi_plock);
+> +
+> +	if (list_empty(&root->bi_plist)) {
+> +		bio_endio(root);
+> +		/*
+> +		 * 'ret' may be 0 here. root->bi_plist may be empty once we
+> +		 * acquire the list spinlock.
+> +		 */
+> +		ret = max(ret, 1);
+> +	}
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(blk_bio_poll);
+> +
+>  static bool blk_poll_hybrid(struct request_queue *q, blk_qc_t cookie)
+>  {
+>  	struct blk_mq_hw_ctx *hctx;
+> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> index 2e05244fc16d..2cf5d8f0ea34 100644
+> --- a/include/linux/blk_types.h
+> +++ b/include/linux/blk_types.h
+> @@ -277,6 +277,12 @@ struct bio {
+>  
+>  	struct bio_set		*bi_pool;
+>  
+> +	struct bio		*bi_root;	/* original bio of submit_bio() */
+> +	struct list_head        bi_plist;
+> +	struct list_head        bi_pnode;
+> +	struct spinlock         bi_plock;
+> +	blk_qc_t		bi_cookie;
+> +
+>  	/*
+>  	 * We can inline a number of vecs at the end of the bio, to avoid
+>  	 * double allocations for a small number of bio_vecs. This member
+> @@ -557,6 +563,39 @@ static inline bool blk_qc_t_is_internal(blk_qc_t cookie)
+>  	return (cookie & BLK_QC_T_INTERNAL) != 0;
+>  }
+>  
+> +static inline void bio_add_poll_list(struct bio *bio)
+> +{
+> +	struct bio *root = bio->bi_root;
+> +
+> +	/*
+> +	 * The spin_lock() variant is enough since bios in root->bi_plist are
+> +	 * all enqueued into polling mode hardware queue, thus the list_del()
+> +	 * operation is handled only in process context.
+> +	 */
+> +	spin_lock(&root->bi_plock);
+> +	list_add_tail(&bio->bi_pnode, &root->bi_plist);
+> +	spin_unlock(&root->bi_plock);
+> +}
+> +
+> +static inline void bio_del_poll_list(struct bio *bio)
+> +{
+> +	struct bio *root = bio->bi_root;
+> +
+> +	/*
+> +	 * bios in mq routine: @bi_root is NULL, @bi_cookie is 0;
+> +	 * bios in bio-based routine: @bi_root is non-NULL, @bi_cookie is valid
+> +	 * (including 0) for those in root->bi_plist, invalid for the
+> +	 * remaining.
+> +	 */
+> +	if (bio->bi_root && blk_qc_t_valid(bio->bi_cookie)) {
+> +		spin_lock(&root->bi_plock);
+> +		list_del(&bio->bi_pnode);
+> +		spin_unlock(&root->bi_plock);
+> +	}
+> +}
+> +
+> +int blk_bio_poll(struct request_queue *q, blk_qc_t cookie);
+> +
+>  struct blk_rq_stat {
+>  	u64 mean;
+>  	u64 min;
+> -- 
+> 2.27.0
+> 
+> --
+> dm-devel mailing list
+> dm-devel@redhat.com
+> https://www.redhat.com/mailman/listinfo/dm-devel
 

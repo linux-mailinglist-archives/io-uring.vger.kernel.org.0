@@ -2,200 +2,166 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64E5E2EC78C
-	for <lists+io-uring@lfdr.de>; Thu,  7 Jan 2021 01:54:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D28D2EC79A
+	for <lists+io-uring@lfdr.de>; Thu,  7 Jan 2021 02:15:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbhAGAxg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 Jan 2021 19:53:36 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:40666 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbhAGAxg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jan 2021 19:53:36 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1070ZSkM042360;
-        Thu, 7 Jan 2021 00:52:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- references : message-id : date : mime-version : in-reply-to : content-type
- : content-transfer-encoding; s=corp-2020-01-29;
- bh=Qucdc9VxSExF4+tGkfR9D/Cn3nkDekAmsNwbgQxjJBs=;
- b=M7pFs+72l+wFZFzMMC7sdYP3Ha6c7hml9sjO31Ivupv2YH4tw9e0RHPe1zboQbn5FxFx
- rvriCDR9YB60OeUPiIcrrjw2cj/uu23woiWUd4TeoMOMSwsYEPQUHXZ6PAj1YL4AjFWj
- rD6kgHoItZDqlb3iQ6joaTLZ0Z3OoGp742iFa9D7mQaxDhj4CiOuUdH3ikXCU1aO6l7c
- jLbKzsM9jpGStfuQ33XcnqGbt5gbVt6BTKP/ORx660bdoMLT85q0THk7yV24s4novCwT
- GpoTn4qc7YUxBpHJYFCzdk87tCoy3yxYeUZnTO8UMxc+/xfI6tnqT2N14wdQUcJHhe7U mA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 35wftxa1hy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 07 Jan 2021 00:52:53 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1070ZRl8101288;
-        Thu, 7 Jan 2021 00:50:53 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 35w3g1spsq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Jan 2021 00:50:52 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 1070opja014376;
-        Thu, 7 Jan 2021 00:50:51 GMT
-Received: from [10.154.148.218] (/10.154.148.218)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Jan 2021 16:50:51 -0800
-Subject: Re: [PATCH v2 13/13] io_uring: support buffer registration sharing
-From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>, axboe@kernel.dk,
+        id S1725860AbhAGBPj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Jan 2021 20:15:39 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:55981 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725789AbhAGBPi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jan 2021 20:15:38 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UKxLUP3_1609982093;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UKxLUP3_1609982093)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 07 Jan 2021 09:14:54 +0800
+Subject: Re: [dm-devel] [PATCH RFC 0/7] dm: add support of iopoll
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+To:     snitzer@redhat.com
+Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
         io-uring@vger.kernel.org
-References: <1607379352-68109-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1607379352-68109-14-git-send-email-bijan.mottahedeh@oracle.com>
- <ff17d576-27eb-9008-d858-e1ebb7c93dad@gmail.com>
- <2070b1b5-2931-7782-305f-c578b3b24567@oracle.com>
-Message-ID: <074644d5-f299-3b70-9d86-bf4ed59d9674@oracle.com>
-Date:   Wed, 6 Jan 2021 16:50:50 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+References: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
+Message-ID: <568720e6-b574-eba4-cdf6-6c41c8901772@linux.alibaba.com>
+Date:   Thu, 7 Jan 2021 09:14:53 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <2070b1b5-2931-7782-305f-c578b3b24567@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Avast (VPS 210101-4, 01/01/2021), Outbound message
-X-Antivirus-Status: Clean
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9856 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
- phishscore=0 spamscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101070000
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9856 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 mlxscore=0
- bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101070000
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/18/2020 10:06 AM, Bijan Mottahedeh wrote:
-> 
->>> @@ -8415,6 +8421,12 @@ static int io_sqe_buffers_unregister(struct 
->>> io_ring_ctx *ctx)
->>>       if (!data)
->>>           return -ENXIO;
->>> +    if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
->>> +        io_detach_buf_data(ctx);
->>> +        ctx->nr_user_bufs = 0;
->>
->> nr_user_bufs is a part of invariant and should stay together with
->> stuff in io_detach_buf_data().
-> 
-> Moved to io_detach_buf_data.
-> 
-> 
->>> @@ -8724,9 +8740,17 @@ static int io_sqe_buffers_register(struct 
->>> io_ring_ctx *ctx, void __user *arg,
->>>       struct fixed_rsrc_ref_node *ref_node;
->>>       struct fixed_rsrc_data *buf_data;
->>> +    if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
->>> +        if (!ctx->buf_data)
->>> +            return -EFAULT;
->>> +        ctx->nr_user_bufs = ctx->buf_data->ctx->nr_user_bufs;
->>
->> Why? Once a table is initialised it shouldn't change its size, would
->> be racy otherwise.
-> 
-> ctx->buf_data is set at ring setup time but the sharing process 
-> (SETUP_SHARE) may do the actual buffer registration at an arbitrary time 
-> later, so the attaching process must ensure to get the updated value of 
-> nr_user_bufs if available.
-> 
->>>       buf_data = io_buffers_map_alloc(ctx, nr_args);
->>>       if (IS_ERR(buf_data))
->>>           return PTR_ERR(buf_data);
->>> +    ctx->buf_data = buf_data;
->>
->> Wanted to write that there is missing
->> `if (ctx->user_bufs) return -EBUSY`
->>
->> but apparently it was moved into io_buffers_map_alloc().
->> I'd really prefer to have it here.
-> 
-> Moved it back.
-> 
->>> +static int io_attach_buf_data(struct io_ring_ctx *ctx,
->>> +                  struct io_uring_params *p)
->>> +{
->>> +    struct io_ring_ctx *ctx_attach;
->>> +    struct fd f;
->>> +
->>> +    f = fdget(p->wq_fd);
->>> +    if (!f.file)
->>> +        return -EBADF;
->>> +    if (f.file->f_op != &io_uring_fops) {
->>> +        fdput(f);
->>> +        return -EINVAL;
->>> +    }
->>> +
->>> +    ctx_attach = f.file->private_data;
->>> +    if (!ctx_attach->buf_data) {
->>
->> It looks racy. What prevents it from being deleted while we're
->> working on it, e.g. by io_sqe_buffers_unregister?
-> 
-> I think the premise here is that buffer sharing happens between trusted 
-> and coordinated processes.  If I understand your concern correctly, then 
-> if the sharing process unregisters its buffers after having shared them, 
-> than that process is acting improperly.  The race could lead to a failed 
-> attach but that would be expected and reasonable I would think?  What do 
-> you think should happen in this case?
-> 
->>
->>> +        fdput(f);
->>> +        return -EINVAL;
->>> +    }
->>> +    ctx->buf_data = ctx_attach->buf_data;
->>
->> Before updates, etc. (e.g. __io_sqe_buffers_update()) were synchronised
->> by uring_lock, now it's modified concurrently, that looks to be really
->> racy.
-> 
-> Racy from the attaching process perspective you mean?
-> 
->>
->>> +
->>> +    percpu_ref_get(&ctx->buf_data->refs);
->>
->> Ok, now the original io_uring instance will wait until the attached
->> once get rid of their references. That's a versatile ground to have
->> in kernel deadlocks.
->>
->> task1: uring1 = create()
->> task2: uring2 = create()
->> task1: uring3 = create(share=uring2);
->> task2: uring4 = create(share=uring1);
->>
->> task1: io_sqe_buffers_unregister(uring1)
->> task2: io_sqe_buffers_unregister(uring2)
->>
->> If I skimmed through the code right, that should hang unkillably.
-> 
-> So we need a way to enforce that a process can only have one role, 
-> sharing or attaching? But I'm not what the best way to do that.  Is this 
-> an issue for other resource sharing, work queues or polling thread?
-> 
+Hi Mike,
 
-The intended use case for buffer registration is:
-
-- a group of processes attach a shmem segment
-- one process registers the buffers in the shmem segment and shares it
-- other processes attach that registration
-
-For this case, it seems that there is really no need to wait for the 
-attached processes to get rid of the their references since the shmem 
-segment (and thus the registered buffers) will persist anyway until the 
-last attached process goes away.  So the last unregister could quiesce 
-all references and get rid of the shared buf_data.
-
-I'm not sure how useful the non-shmem use case would be anyway.
-
-Would it makes sense to restrict the scope of this feature?
+Would you please give some suggestions on this series?
 
 
+Thanks,
+Jeffle
+
+On 12/23/20 7:26 PM, Jeffle Xu wrote:
+> This patch set adds support of iopoll for dm devices.
+> 
+> Several months ago, I also sent a patch set adding support of iopoll
+> for dm devices [1]. The old patch set implement this by polling all
+> polling mode hardware queues of all underlying target devices
+> unconditionally, no matter which hardware queue the bio is enqueued
+> into.
+> 
+> Ming Lei pointed out that this implementation may have performance
+> issue. Mike Snitzer also discussed and helpt a lot on the design
+> issue. At that time, we agreed that this feature should be
+> implemented on the basis of split-bio tracking, since the bio to the
+> dm device could be split into multiple split bios to the underlying
+> target devices.
+> 
+> This patch set actually implement the split-bio tracking part.
+> Regrettably this implementation is quite coarse and original. Quite
+> code refactoring is introduced to the block core, since device mapper
+> also calls methods provided by block core to split bios. The new
+> fields are directly added into 'struct bio' structure. So this is
+> just an RFC version and there may be quite a lot design issues be
+> fronted on. I just implement a version quickly and would like to share
+> with you my thoughts and problems at hand.
+> 
+> This implementation works but has poor performance. Awkwardly the
+> performance of direct 8k randread decreases ~20% on a 8k-striped
+> dm-stripe device.
+> 
+> The first 5 patches prepare the introduction of iopoll for dm device.
+> Patch 6 is the core part and implements a mechanism of tracking split
+> bios for bio-based device. Patch 7 just enables this feature.
+> 
+> [1] https://patchwork.kernel.org/project/linux-block/cover/20201020065420.124885-1-jefflexu@linux.alibaba.com/
+> 
+> 
+> [Design Notes]
+> 
+> - recursive way or non-recursive way?
+> 
+> The core of the split-bio tracking mechanism is that, a list is
+> maintained in the top bio (the original bio submitted to the dm
+> device), which is actually used to maintain all valid cookies of all
+> split bios.
+> 
+> This is actually a non-recursive way to implement the tracking
+> mechanism. On the contrary, the recursive way is that, maintain the
+> split bios at each dm layer. DM device can be build into a device
+> stack. For example, considering the following device stack,
+> 
+> ```
+>             dm0(bio 0)
+> dm1(bio 1)             dm2(bio 2)
+> nvme0(bio 3)           nvme1(bio 4)
+> 
+> ```
+> 
+> The non-recursive way is that bio 3/4 are directly maintained as a
+> list beneath bio 0. The recursive way is that, bio 3 is maintained
+> as a list beneath bio 1 and bio 4 is maintained as a list beneath
+> bio 2, while bio 1/2 are maintained as a list beneath bio 0.
+> 
+> The reason why I choose the non-recursive way is that, we need call
+> blk_bio_poll() or something recursively if it's implemented in the
+> recursive way, and I worry this would consume up the stack space if
+> the device stack is too deep. After all bio_list is used to prevent
+> the dm device using up stack space when submitting bio. 
+> 
+> 
+> - why embed new fields into struct bio directly?
+> 
+> Mike Snitzer had ever suggested that the newly added fields could be
+> integrated into the clone bio allocated by dm subsystem through
+> bio_set. There're 3 reasons why I directly embed these fields into
+> struct bio:
+> 
+> 1. The implementation difference of DM and MD
+> DM subsystem indeed allocate clone bio itself, in which case we could
+> allocate extra per-bio space for specific usage. However MD subsystem
+> doesn't allocate extra clone bio, and just uses the bio structure
+> originally submitted to MD device as the bio structure submitted to
+> the underlying target device. (At least raid0 works in this way.)
+> 
+> 2. In the previously mentioned non-recursive way of iopoll, a list
+> containing all valid cookies should be maintained. For convenience, I
+> just put this list in the top bio (the original bio structure
+> submitted to the dm device). This original bio structure is allocated
+> by the upper layer, e.g. filesystem, and is out of control of DM
+> subsystem. (Of course we could resolve this problem technically, e.g.,
+> put these newlly added fields into the corresponding dm_io structure
+> of the top bio.)
+> 
+> 3. As a quick implementation, I just put these fields into struct bio
+> directly. Obviously more design issues need to be considered when it
+> comes into the formal version.
+> 
+> 
+> Jeffle Xu (7):
+>   block: move definition of blk_qc_t to types.h
+>   block: add helper function fetching gendisk from queue
+>   block: add iopoll method for non-mq device
+>   block: define blk_qc_t as uintptr_t
+>   dm: always return BLK_QC_T_NONE for bio-based device
+>   block: track cookies of split bios for bio-based device
+>   dm: add support for IO polling
+> 
+>  block/bio.c                  |   8 ++
+>  block/blk-core.c             | 163 ++++++++++++++++++++++++++++++++++-
+>  block/blk-mq.c               |  70 ++-------------
+>  drivers/md/dm-table.c        |  28 ++++++
+>  drivers/md/dm.c              |  27 +++---
+>  include/linux/blk-mq.h       |   3 +
+>  include/linux/blk_types.h    |  41 ++++++++-
+>  include/linux/blkdev.h       |   3 +
+>  include/linux/fs.h           |   2 +-
+>  include/linux/types.h        |   3 +
+>  include/trace/events/kyber.h |   6 +-
+>  11 files changed, 270 insertions(+), 84 deletions(-)
+> 
+
+-- 
+Thanks,
+Jeffle

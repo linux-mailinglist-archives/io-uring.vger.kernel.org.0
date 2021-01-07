@@ -2,166 +2,222 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D28D2EC79A
-	for <lists+io-uring@lfdr.de>; Thu,  7 Jan 2021 02:15:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AB6E2EC82D
+	for <lists+io-uring@lfdr.de>; Thu,  7 Jan 2021 03:42:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725860AbhAGBPj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 Jan 2021 20:15:39 -0500
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:55981 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725789AbhAGBPi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jan 2021 20:15:38 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UKxLUP3_1609982093;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UKxLUP3_1609982093)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 07 Jan 2021 09:14:54 +0800
-Subject: Re: [dm-devel] [PATCH RFC 0/7] dm: add support of iopoll
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-To:     snitzer@redhat.com
-Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
+        id S1726735AbhAGCl6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Jan 2021 21:41:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58778 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726723AbhAGCl6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jan 2021 21:41:58 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B4FAC0612EF
+        for <io-uring@vger.kernel.org>; Wed,  6 Jan 2021 18:41:17 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id d26so4132240wrb.12
+        for <io-uring@vger.kernel.org>; Wed, 06 Jan 2021 18:41:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XGGjSdYvDgo6NvyOlsMkqh9/6c5UTngv0PS3Osjtsno=;
+        b=BUbayqRFChs/0a2ZSK8y2N/FAzQUym4+5Q8bYe1icWgPMQDghUTryHdpff3rNR9BiF
+         Nr7475XU7YgQFvpuAwnZiTLhJ+20ySadEf+ROU7H9EJre0jHJLpg9OCmA0UOgIg+xzUA
+         XqydwYNzvE8QIEbnMfi89erkNEXsqNvDjIexA0hJm2z1YwHelK/H73ETDa2KflHC716w
+         sfxAlZOkL/0jAPQ7uRGsF32J7NPym1w6UEAtNub4V0yf3dVQZ5oac3shvrH+wAr3o+cl
+         psWcH+TwMkOkVsTbuiud7wvaxYZiwJr44Yi7BPzacWJ/9qNGogJ+4vwDVDfqW0q64PYf
+         zONg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XGGjSdYvDgo6NvyOlsMkqh9/6c5UTngv0PS3Osjtsno=;
+        b=gWflgcgRIzszY4cPlbV8EAjiam2lm3TnuWaYDCDxUM5tYw1N70DWVRs9Rr5ya2mlF6
+         m91ldm5F6L0sRWqMwtz+/2sUuNDVhfzI7WPG8l4EVNB1WIuZ+4oHYr7Xx0WIHeMwqYkz
+         QS43qe/yzy2eMcKhAu/40x4M91fDLDusrxT9s6f+5neY49EUaLnJixgE5yRqcjS7U7rf
+         8g2jDphxQnv5HgEfSv+sxuN2UW/YdpU1ej7X0eIiUf+hxIC0YlFGsREwgsjBsyKooBQr
+         koYat5TPY3Oef+pRLAz7OoHdMr7gFpUF6/keIB0xc9XNGe7X633cPBDksffckUoHhz39
+         pMVg==
+X-Gm-Message-State: AOAM530PpWho9V1YiHirzOb1gYNksZqZJvlCZpolF2n1p4NX2tWpxlMY
+        FE8GqC1NznFH5Avy7bb9Jg+IXWmQNjvKpg==
+X-Google-Smtp-Source: ABdhPJy7sCFdshb0s4UotCq3HV84+XND+EWKV0sd0uwGkGECAWKkDfCmCHizKsD3Gwgwxyt2F3OnFg==
+X-Received: by 2002:a5d:53c9:: with SMTP id a9mr6565718wrw.188.1609987276057;
+        Wed, 06 Jan 2021 18:41:16 -0800 (PST)
+Received: from [192.168.8.102] ([185.69.144.125])
+        by smtp.gmail.com with ESMTPSA id a65sm5342964wmc.35.2021.01.06.18.41.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Jan 2021 18:41:15 -0800 (PST)
+To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
         io-uring@vger.kernel.org
-References: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
-Message-ID: <568720e6-b574-eba4-cdf6-6c41c8901772@linux.alibaba.com>
-Date:   Thu, 7 Jan 2021 09:14:53 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.6.0
+References: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1608314848-67329-9-git-send-email-bijan.mottahedeh@oracle.com>
+ <f0bff3b0-f27e-80fe-9a58-dfeb347a7e61@gmail.com>
+ <c982a4ea-e39f-d8e0-1fc7-27086395ea9a@oracle.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH v3 08/13] io_uring: implement fixed buffers registration
+ similar to fixed files
+Message-ID: <66fd0092-2d03-02c0-fe1c-941c761a24f8@gmail.com>
+Date:   Thu, 7 Jan 2021 02:37:45 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
+In-Reply-To: <c982a4ea-e39f-d8e0-1fc7-27086395ea9a@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Mike,
+On 06/01/2021 19:46, Bijan Mottahedeh wrote:
+> On 1/4/2021 6:43 PM, Pavel Begunkov wrote:
+>> On 18/12/2020 18:07, Bijan Mottahedeh wrote:
+>>> Apply fixed_rsrc functionality for fixed buffers support.
+>>
+>> git generated a pretty messy diff...
+> 
+> I had tried to break this up a few ways but it didn't work well because I think most of the code changes depend on the io_uring structure changes.  I can look again or if you some idea of how you want to split it, I can do that.
+> 
+>> Because it's do quiesce, fixed read/write access buffers from asynchronous
+>> contexts without synchronisation. That won't work anymore, so
+>>
+>> 1. either we save it in advance, that would require extra req_async
+>> allocation for linked fixed rw
+>>
+>> 2. or synchronise whenever async. But that would mean that a request
+>> may get and do IO on two different buffers, that's rotten.
+>>
+>> 3. do mixed -- lazy, but if do IO then alloc.
+>>
+>> 3.5 also "synchronise" there would mean uring_lock, that's not welcome,
+>> but we can probably do rcu.
+> 
+> Are you referring to a case where a fixed buffer request can be submitted from async context while those buffers are being unregistered, or something like that?
+> 
+>> Let me think of a patch...
 
-Would you please give some suggestions on this series?
+The most convenient API would be [1], it selects a buffer during
+submission, but allocates if needs to go async or for all linked
+requests.
+
+[2] should be correct from the kernel perspective (no races), it
+also solves doing IO on 2 different buffers, that's nasty (BTW,
+[1] solves this problem naturally). However, a buffer might be
+selected async, but the following can happen, and user should
+wait for request completion before removing a buffer.
+
+1. register buf id=0
+2. syscall io_uring_enter(submit=RW_FIXED,buf_id=0,IOSQE_ASYNC)
+3. unregister buffers
+4. the request may not find the buffer and fail.
+
+Not very convenient + can actually add overhead on the userspace
+side, can be even some heavy synchronisation.
+
+uring_lock in [2] is not nice, but I think I can replace it
+with rcu, probably can even help with sharing, but I need to
+try to implement to be sure.
+
+So that's an open question what API to have.
+Neither of diffs is tested.
+
+[1]
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 7e35283fc0b1..2171836a9ce3 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -826,6 +826,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.needs_file		= 1,
+ 		.unbound_nonreg_file	= 1,
+ 		.pollin			= 1,
++		.needs_async_data	= 1,
+ 		.plug			= 1,
+ 		.async_size		= sizeof(struct io_async_rw),
+ 		.work_flags		= IO_WQ_WORK_BLKCG | IO_WQ_WORK_MM,
+@@ -835,6 +836,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.hash_reg_file		= 1,
+ 		.unbound_nonreg_file	= 1,
+ 		.pollout		= 1,
++		.needs_async_data	= 1,
+ 		.plug			= 1,
+ 		.async_size		= sizeof(struct io_async_rw),
+ 		.work_flags		= IO_WQ_WORK_BLKCG | IO_WQ_WORK_FSIZE |
 
 
-Thanks,
-Jeffle
 
-On 12/23/20 7:26 PM, Jeffle Xu wrote:
-> This patch set adds support of iopoll for dm devices.
-> 
-> Several months ago, I also sent a patch set adding support of iopoll
-> for dm devices [1]. The old patch set implement this by polling all
-> polling mode hardware queues of all underlying target devices
-> unconditionally, no matter which hardware queue the bio is enqueued
-> into.
-> 
-> Ming Lei pointed out that this implementation may have performance
-> issue. Mike Snitzer also discussed and helpt a lot on the design
-> issue. At that time, we agreed that this feature should be
-> implemented on the basis of split-bio tracking, since the bio to the
-> dm device could be split into multiple split bios to the underlying
-> target devices.
-> 
-> This patch set actually implement the split-bio tracking part.
-> Regrettably this implementation is quite coarse and original. Quite
-> code refactoring is introduced to the block core, since device mapper
-> also calls methods provided by block core to split bios. The new
-> fields are directly added into 'struct bio' structure. So this is
-> just an RFC version and there may be quite a lot design issues be
-> fronted on. I just implement a version quickly and would like to share
-> with you my thoughts and problems at hand.
-> 
-> This implementation works but has poor performance. Awkwardly the
-> performance of direct 8k randread decreases ~20% on a 8k-striped
-> dm-stripe device.
-> 
-> The first 5 patches prepare the introduction of iopoll for dm device.
-> Patch 6 is the core part and implements a mechanism of tracking split
-> bios for bio-based device. Patch 7 just enables this feature.
-> 
-> [1] https://patchwork.kernel.org/project/linux-block/cover/20201020065420.124885-1-jefflexu@linux.alibaba.com/
-> 
-> 
-> [Design Notes]
-> 
-> - recursive way or non-recursive way?
-> 
-> The core of the split-bio tracking mechanism is that, a list is
-> maintained in the top bio (the original bio submitted to the dm
-> device), which is actually used to maintain all valid cookies of all
-> split bios.
-> 
-> This is actually a non-recursive way to implement the tracking
-> mechanism. On the contrary, the recursive way is that, maintain the
-> split bios at each dm layer. DM device can be build into a device
-> stack. For example, considering the following device stack,
-> 
-> ```
->             dm0(bio 0)
-> dm1(bio 1)             dm2(bio 2)
-> nvme0(bio 3)           nvme1(bio 4)
-> 
-> ```
-> 
-> The non-recursive way is that bio 3/4 are directly maintained as a
-> list beneath bio 0. The recursive way is that, bio 3 is maintained
-> as a list beneath bio 1 and bio 4 is maintained as a list beneath
-> bio 2, while bio 1/2 are maintained as a list beneath bio 0.
-> 
-> The reason why I choose the non-recursive way is that, we need call
-> blk_bio_poll() or something recursively if it's implemented in the
-> recursive way, and I worry this would consume up the stack space if
-> the device stack is too deep. After all bio_list is used to prevent
-> the dm device using up stack space when submitting bio. 
-> 
-> 
-> - why embed new fields into struct bio directly?
-> 
-> Mike Snitzer had ever suggested that the newly added fields could be
-> integrated into the clone bio allocated by dm subsystem through
-> bio_set. There're 3 reasons why I directly embed these fields into
-> struct bio:
-> 
-> 1. The implementation difference of DM and MD
-> DM subsystem indeed allocate clone bio itself, in which case we could
-> allocate extra per-bio space for specific usage. However MD subsystem
-> doesn't allocate extra clone bio, and just uses the bio structure
-> originally submitted to MD device as the bio structure submitted to
-> the underlying target device. (At least raid0 works in this way.)
-> 
-> 2. In the previously mentioned non-recursive way of iopoll, a list
-> containing all valid cookies should be maintained. For convenience, I
-> just put this list in the top bio (the original bio structure
-> submitted to the dm device). This original bio structure is allocated
-> by the upper layer, e.g. filesystem, and is out of control of DM
-> subsystem. (Of course we could resolve this problem technically, e.g.,
-> put these newlly added fields into the corresponding dm_io structure
-> of the top bio.)
-> 
-> 3. As a quick implementation, I just put these fields into struct bio
-> directly. Obviously more design issues need to be considered when it
-> comes into the formal version.
-> 
-> 
-> Jeffle Xu (7):
->   block: move definition of blk_qc_t to types.h
->   block: add helper function fetching gendisk from queue
->   block: add iopoll method for non-mq device
->   block: define blk_qc_t as uintptr_t
->   dm: always return BLK_QC_T_NONE for bio-based device
->   block: track cookies of split bios for bio-based device
->   dm: add support for IO polling
-> 
->  block/bio.c                  |   8 ++
->  block/blk-core.c             | 163 ++++++++++++++++++++++++++++++++++-
->  block/blk-mq.c               |  70 ++-------------
->  drivers/md/dm-table.c        |  28 ++++++
->  drivers/md/dm.c              |  27 +++---
->  include/linux/blk-mq.h       |   3 +
->  include/linux/blk_types.h    |  41 ++++++++-
->  include/linux/blkdev.h       |   3 +
->  include/linux/fs.h           |   2 +-
->  include/linux/types.h        |   3 +
->  include/trace/events/kyber.h |   6 +-
->  11 files changed, 270 insertions(+), 84 deletions(-)
-> 
+[2]
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 7e35283fc0b1..31560b879fb3 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3148,7 +3148,12 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
+ 	opcode = req->opcode;
+ 	if (opcode == IORING_OP_READ_FIXED || opcode == IORING_OP_WRITE_FIXED) {
+ 		*iovec = NULL;
+-		return io_import_fixed(req, rw, iter);
++
++		io_ring_submit_lock(req->ctx, needs_lock);
++		lockdep_assert_held(&req->ctx->uring_lock);
++		ret = io_import_fixed(req, rw, iter);
++		io_ring_submit_unlock(req->ctx, needs_lock);
++		return ret;
+ 	}
+ 
+ 	/* buffer index only valid with fixed read/write, or buffer select  */
+@@ -3638,7 +3643,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+ copy_iov:
+ 		/* some cases will consume bytes even on error returns */
+ 		iov_iter_revert(iter, io_size - iov_iter_count(iter));
+-		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
++		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
+ 		if (!ret)
+ 			return -EAGAIN;
+ 	}
+
 
 -- 
-Thanks,
-Jeffle
+Pavel Begunkov

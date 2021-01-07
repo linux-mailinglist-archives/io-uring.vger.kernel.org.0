@@ -2,222 +2,177 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AB6E2EC82D
-	for <lists+io-uring@lfdr.de>; Thu,  7 Jan 2021 03:42:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93B942EC854
+	for <lists+io-uring@lfdr.de>; Thu,  7 Jan 2021 03:52:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbhAGCl6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 Jan 2021 21:41:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58778 "EHLO
+        id S1726482AbhAGCvR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Jan 2021 21:51:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbhAGCl6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jan 2021 21:41:58 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B4FAC0612EF
-        for <io-uring@vger.kernel.org>; Wed,  6 Jan 2021 18:41:17 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id d26so4132240wrb.12
-        for <io-uring@vger.kernel.org>; Wed, 06 Jan 2021 18:41:17 -0800 (PST)
+        with ESMTP id S1726507AbhAGCvR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jan 2021 21:51:17 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB368C0612F0
+        for <io-uring@vger.kernel.org>; Wed,  6 Jan 2021 18:50:36 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id r3so4200046wrt.2
+        for <io-uring@vger.kernel.org>; Wed, 06 Jan 2021 18:50:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XGGjSdYvDgo6NvyOlsMkqh9/6c5UTngv0PS3Osjtsno=;
-        b=BUbayqRFChs/0a2ZSK8y2N/FAzQUym4+5Q8bYe1icWgPMQDghUTryHdpff3rNR9BiF
-         Nr7475XU7YgQFvpuAwnZiTLhJ+20ySadEf+ROU7H9EJre0jHJLpg9OCmA0UOgIg+xzUA
-         XqydwYNzvE8QIEbnMfi89erkNEXsqNvDjIexA0hJm2z1YwHelK/H73ETDa2KflHC716w
-         sfxAlZOkL/0jAPQ7uRGsF32J7NPym1w6UEAtNub4V0yf3dVQZ5oac3shvrH+wAr3o+cl
-         psWcH+TwMkOkVsTbuiud7wvaxYZiwJr44Yi7BPzacWJ/9qNGogJ+4vwDVDfqW0q64PYf
-         zONg==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1sSNwm6ikHynsh6/0P0YGUhYKKE/TWoJkElIB0hkNxQ=;
+        b=pEdcEOlk0FPFvX51vjlQ7n0aOT1vETEcH51l/1z3Az3ZAhpb59hystsF3lkwWo0bAo
+         J6ARykoqA2Y2uQT/GNSuFjZIudjcWIsBf106OeYE8KzvObHqn7zsYdz8c5/4HSzNxgq7
+         A1ocZoVjXm+VUbFgCwswS2qEwO0Bdd4OU0PucdOJA41ze26hU7ZKZ1bBrgDQyU3xK5VG
+         ejOsGjflDPrtwVWACWWyGbJj4oE+uv1V0Dkry4SHuALCaTVn9Dfzzl7JQBmLrMujU1AK
+         mxcRE9GHDCUZnz33qHkV5xDNqarTh/G2lZbuSS0kJ6xzpQdzlX292RI+X9JfMbJmstq3
+         UvzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=XGGjSdYvDgo6NvyOlsMkqh9/6c5UTngv0PS3Osjtsno=;
-        b=gWflgcgRIzszY4cPlbV8EAjiam2lm3TnuWaYDCDxUM5tYw1N70DWVRs9Rr5ya2mlF6
-         m91ldm5F6L0sRWqMwtz+/2sUuNDVhfzI7WPG8l4EVNB1WIuZ+4oHYr7Xx0WIHeMwqYkz
-         QS43qe/yzy2eMcKhAu/40x4M91fDLDusrxT9s6f+5neY49EUaLnJixgE5yRqcjS7U7rf
-         8g2jDphxQnv5HgEfSv+sxuN2UW/YdpU1ej7X0eIiUf+hxIC0YlFGsREwgsjBsyKooBQr
-         koYat5TPY3Oef+pRLAz7OoHdMr7gFpUF6/keIB0xc9XNGe7X633cPBDksffckUoHhz39
-         pMVg==
-X-Gm-Message-State: AOAM530PpWho9V1YiHirzOb1gYNksZqZJvlCZpolF2n1p4NX2tWpxlMY
-        FE8GqC1NznFH5Avy7bb9Jg+IXWmQNjvKpg==
-X-Google-Smtp-Source: ABdhPJy7sCFdshb0s4UotCq3HV84+XND+EWKV0sd0uwGkGECAWKkDfCmCHizKsD3Gwgwxyt2F3OnFg==
-X-Received: by 2002:a5d:53c9:: with SMTP id a9mr6565718wrw.188.1609987276057;
-        Wed, 06 Jan 2021 18:41:16 -0800 (PST)
-Received: from [192.168.8.102] ([185.69.144.125])
-        by smtp.gmail.com with ESMTPSA id a65sm5342964wmc.35.2021.01.06.18.41.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Jan 2021 18:41:15 -0800 (PST)
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
-        io-uring@vger.kernel.org
-References: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1608314848-67329-9-git-send-email-bijan.mottahedeh@oracle.com>
- <f0bff3b0-f27e-80fe-9a58-dfeb347a7e61@gmail.com>
- <c982a4ea-e39f-d8e0-1fc7-27086395ea9a@oracle.com>
+        bh=1sSNwm6ikHynsh6/0P0YGUhYKKE/TWoJkElIB0hkNxQ=;
+        b=TOkNjglVwxN5BOyz8NrgEItI3AT9EzOtet441Iy2UN5qdWBjKELxWzzZ2pIfamzDvZ
+         zUByhTZr1aVicefqYy8Hmj/z9yOP61OJESNwCcNYQrxeQQhPebecWLh3N1UfT5N8i2pF
+         +vNcMqfSJWMJPt4Z3PUkdOaqtC1E9EBKEUqOp78JY9pDUqZQhQUWtlsnG7YmsvGAYJYO
+         RpPQpC2xF0OryIA1vf+PreVI2I1sDXxAAm0dAm4b7VUAXzRZ2Z1mC5ypfwDcXr0VqA5l
+         XWQT7gDIz60AzL0478NqINaKTE7XKmxvYiKQ6zbZ1l1zcMbeezCfQRKWSLPMFCgxwVfs
+         HkBQ==
+X-Gm-Message-State: AOAM532J1RjhnI2Eisq6fKVZ4TWb6CbpcfCO38P4SSzbfXirSLoDkrJ0
+        Q8/wPj7r5gD1Ij1uQz9wfA6WCVk/hme3qA==
+X-Google-Smtp-Source: ABdhPJxfKItAiNpPM330+oOMis2riw8+xu5ZXIHa2mqUiuZcr6hR4s83aSJmYhnTci2jcaBkm291AQ==
+X-Received: by 2002:a5d:51d2:: with SMTP id n18mr6919966wrv.92.1609987835583;
+        Wed, 06 Jan 2021 18:50:35 -0800 (PST)
+Received: from localhost.localdomain ([185.69.144.125])
+        by smtp.gmail.com with ESMTPSA id o83sm5319628wme.21.2021.01.06.18.50.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Jan 2021 18:50:35 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH v3 08/13] io_uring: implement fixed buffers registration
- similar to fixed files
-Message-ID: <66fd0092-2d03-02c0-fe1c-941c761a24f8@gmail.com>
-Date:   Thu, 7 Jan 2021 02:37:45 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing] tests: test fixed file removal order
+Date:   Thu,  7 Jan 2021 02:46:58 +0000
+Message-Id: <31d6fcb0f328966c5f68c7629d123a5b0f783331.1609966277.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <c982a4ea-e39f-d8e0-1fc7-27086395ea9a@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 06/01/2021 19:46, Bijan Mottahedeh wrote:
-> On 1/4/2021 6:43 PM, Pavel Begunkov wrote:
->> On 18/12/2020 18:07, Bijan Mottahedeh wrote:
->>> Apply fixed_rsrc functionality for fixed buffers support.
->>
->> git generated a pretty messy diff...
-> 
-> I had tried to break this up a few ways but it didn't work well because I think most of the code changes depend on the io_uring structure changes.  I can look again or if you some idea of how you want to split it, I can do that.
-> 
->> Because it's do quiesce, fixed read/write access buffers from asynchronous
->> contexts without synchronisation. That won't work anymore, so
->>
->> 1. either we save it in advance, that would require extra req_async
->> allocation for linked fixed rw
->>
->> 2. or synchronise whenever async. But that would mean that a request
->> may get and do IO on two different buffers, that's rotten.
->>
->> 3. do mixed -- lazy, but if do IO then alloc.
->>
->> 3.5 also "synchronise" there would mean uring_lock, that's not welcome,
->> but we can probably do rcu.
-> 
-> Are you referring to a case where a fixed buffer request can be submitted from async context while those buffers are being unregistered, or something like that?
-> 
->> Let me think of a patch...
+Do two file removals on a fixed file that used by an inflight request
+and make sure it goes well.
 
-The most convenient API would be [1], it selects a buffer during
-submission, but allocates if needs to go async or for all linked
-requests.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/file-register.c | 89 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-[2] should be correct from the kernel perspective (no races), it
-also solves doing IO on 2 different buffers, that's nasty (BTW,
-[1] solves this problem naturally). However, a buffer might be
-selected async, but the following can happen, and user should
-wait for request completion before removing a buffer.
-
-1. register buf id=0
-2. syscall io_uring_enter(submit=RW_FIXED,buf_id=0,IOSQE_ASYNC)
-3. unregister buffers
-4. the request may not find the buffer and fail.
-
-Not very convenient + can actually add overhead on the userspace
-side, can be even some heavy synchronisation.
-
-uring_lock in [2] is not nice, but I think I can replace it
-with rcu, probably can even help with sharing, but I need to
-try to implement to be sure.
-
-So that's an open question what API to have.
-Neither of diffs is tested.
-
-[1]
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7e35283fc0b1..2171836a9ce3 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -826,6 +826,7 @@ static const struct io_op_def io_op_defs[] = {
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollin			= 1,
-+		.needs_async_data	= 1,
- 		.plug			= 1,
- 		.async_size		= sizeof(struct io_async_rw),
- 		.work_flags		= IO_WQ_WORK_BLKCG | IO_WQ_WORK_MM,
-@@ -835,6 +836,7 @@ static const struct io_op_def io_op_defs[] = {
- 		.hash_reg_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
-+		.needs_async_data	= 1,
- 		.plug			= 1,
- 		.async_size		= sizeof(struct io_async_rw),
- 		.work_flags		= IO_WQ_WORK_BLKCG | IO_WQ_WORK_FSIZE |
-
-
-
-[2]
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7e35283fc0b1..31560b879fb3 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3148,7 +3148,12 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
- 	opcode = req->opcode;
- 	if (opcode == IORING_OP_READ_FIXED || opcode == IORING_OP_WRITE_FIXED) {
- 		*iovec = NULL;
--		return io_import_fixed(req, rw, iter);
+diff --git a/test/file-register.c b/test/file-register.c
+index 55af9dc..fc8b887 100644
+--- a/test/file-register.c
++++ b/test/file-register.c
+@@ -604,6 +604,89 @@ static int test_sparse_updates(void)
+ 	return 0;
+ }
+ 
++static int test_fixed_removal_ordering(void)
++{
++	char buffer[128];
++	struct io_uring ring;
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	struct __kernel_timespec ts;
++	int ret, fd, i, fds[2];
 +
-+		io_ring_submit_lock(req->ctx, needs_lock);
-+		lockdep_assert_held(&req->ctx->uring_lock);
-+		ret = io_import_fixed(req, rw, iter);
-+		io_ring_submit_unlock(req->ctx, needs_lock);
++	ret = io_uring_queue_init(8, &ring, 0);
++	if (ret < 0) {
++		fprintf(stderr, "failed to init io_uring: %s\n", strerror(-ret));
 +		return ret;
++	}
++	if (pipe(fds)) {
++		perror("pipe");
++		return -1;
++	}
++	ret = io_uring_register_files(&ring, fds, 2);
++	if (ret) {
++		fprintf(stderr, "file_register: %d\n", ret);
++		return ret;
++	}
++	/* ring should have fds referenced, can close them */
++	close(fds[0]);
++	close(fds[1]);
++
++	sqe = io_uring_get_sqe(&ring);
++	if (!sqe) {
++		fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
++		return 1;
++	}
++	/* outwait file recycling delay */
++	ts.tv_sec = 3;
++	ts.tv_nsec = 0;
++	io_uring_prep_timeout(sqe, &ts, 0, 0);
++	sqe->flags |= IOSQE_IO_LINK | IOSQE_IO_HARDLINK;
++	sqe->user_data = 1;
++
++	sqe = io_uring_get_sqe(&ring);
++	if (!sqe) {
++		printf("get sqe failed\n");
++		return -1;
++	}
++	io_uring_prep_write(sqe, 1, buffer, sizeof(buffer), 0);
++	sqe->flags |= IOSQE_FIXED_FILE;
++	sqe->user_data = 2;
++
++	ret = io_uring_submit(&ring);
++	if (ret != 2) {
++		fprintf(stderr, "%s: got %d, wanted 2\n", __FUNCTION__, ret);
++		return -1;
++	}
++
++	/* remove unused pipe end */
++	fd = -1;
++	ret = io_uring_register_files_update(&ring, 0, &fd, 1);
++	if (ret != 1) {
++		fprintf(stderr, "update off=0 failed\n");
++		return -1;
++	}
++
++	/* remove used pipe end */
++	fd = -1;
++	ret = io_uring_register_files_update(&ring, 1, &fd, 1);
++	if (ret != 1) {
++		fprintf(stderr, "update off=1 failed\n");
++		return -1;
++	}
++
++	for (i = 0; i < 2; ++i) {
++		ret = io_uring_wait_cqe(&ring, &cqe);
++		if (ret < 0) {
++			fprintf(stderr, "%s: io_uring_wait_cqe=%d\n", __FUNCTION__, ret);
++			return 1;
++		}
++		io_uring_cqe_seen(&ring, cqe);
++	}
++
++	io_uring_queue_exit(&ring);
++	return 0;
++}
++
+ int main(int argc, char *argv[])
+ {
+ 	struct io_uring ring;
+@@ -699,5 +782,11 @@ int main(int argc, char *argv[])
+ 		return ret;
  	}
  
- 	/* buffer index only valid with fixed read/write, or buffer select  */
-@@ -3638,7 +3643,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
- copy_iov:
- 		/* some cases will consume bytes even on error returns */
- 		iov_iter_revert(iter, io_size - iov_iter_count(iter));
--		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
-+		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
- 		if (!ret)
- 			return -EAGAIN;
- 	}
-
-
++	ret = test_fixed_removal_ordering();
++	if (ret) {
++		printf("test_fixed_removal_ordering failed\n");
++		return 1;
++	}
++
+ 	return 0;
+ }
 -- 
-Pavel Begunkov
+2.24.0
+

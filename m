@@ -2,85 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D49EB2EF9D4
-	for <lists+io-uring@lfdr.de>; Fri,  8 Jan 2021 22:05:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54AAA2EF9D5
+	for <lists+io-uring@lfdr.de>; Fri,  8 Jan 2021 22:05:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbhAHVBp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 Jan 2021 16:01:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59616 "EHLO
+        id S1729048AbhAHVBr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 Jan 2021 16:01:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbhAHVBp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Jan 2021 16:01:45 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CCFDC061574
-        for <io-uring@vger.kernel.org>; Fri,  8 Jan 2021 13:01:05 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id i9so10254738wrc.4
-        for <io-uring@vger.kernel.org>; Fri, 08 Jan 2021 13:01:05 -0800 (PST)
+        with ESMTP id S1726227AbhAHVBq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Jan 2021 16:01:46 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37E6CC061757
+        for <io-uring@vger.kernel.org>; Fri,  8 Jan 2021 13:01:06 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id d26so10196860wrb.12
+        for <io-uring@vger.kernel.org>; Fri, 08 Jan 2021 13:01:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=PoXYfRLPnvZkeiyjzD3+h2Vxmzsd349sD6Vh94+wpAg=;
-        b=GplZRafIiCdTYp4rYeQrJmqw27SQJvLcSxbHuvTmEVUgGAV/4AoM6XvC01GjpLdfBK
-         P/8zIqwvYEd9vU14e7TSF2Ll7f6YZRFdlef11Qkyx3FuVJ6DY8mk5IAnoEOy4gqOKjdH
-         ilPhFEm7Z3OMNMDzPOop7odsU5ERvF7osvXVjlMWtJ5d1aqKpWjKyLsUHxxMzYx57hAk
-         szyaIv9g8qz6BFDiHoIM14gyowQrqHN7VJBPCMg+9XAJR+HUqdtEKKgyYkrpUtgqclPj
-         Iagxp1c8FyB3TYwhgPI/A6St6jUVKF1mscuBCkJzUr2UCeTTbZEY/xeMZnxpEo42w9la
-         YSwg==
+        bh=hVP2Q6N4gw9SRGBWCj3bw1ALP1bznheOyZYxj7n83oA=;
+        b=V9/MF9wXEgSvHW/eXQLauTGAG3AI8XYl4ue0HuNsnqqg/uxkj9rzbODT2XlxYwTKzy
+         QO3CIN1EGuXBAypxbgzNWWxiObTpk5BMVgzfK1CiJKbZhGFykRjclvVfKVGm7hVQpPmV
+         6MttIxhzTC1sbrm9SWyVNE3eDz23gGXasuatN69cj8lOgkRaMuAY9Nxp9LtHX3T0Adyl
+         QZfAH8c4mSQNMMW9xwRE5E87nk6vMBOAqcGYyKJIwOWzJzF0xeBgB2IL2dmjTKDNueSC
+         OnWU8m9kC1LRrLmR9JSp5XCNT8OFJoNxDViGAKnoq+a2l8OdgWkFOWq7xgpLQXonev2b
+         k8IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PoXYfRLPnvZkeiyjzD3+h2Vxmzsd349sD6Vh94+wpAg=;
-        b=dPC2z53f0QBzEyZvBGBITgBjHP/nh5miKQeG1PwsX8J1k61zcsa5Ei4Wiero+I/Af4
-         2GdyhWGuxkK/3pfZGJnIh9q6pame8VLrOaNKDryapy8INzxgU/Mv5TsKAVlzydZCY1wl
-         V2fZ9VIxufkLkvo7QCLu/woeTGEQpCWMkHULbSRrPqboqGxqtx1dqlTStOuwR5JeNEEQ
-         aJeu/f9tX6RAiD96sdc/IV6JADS1627t7IzqggdPjAWOfwe0dB05StTrhP8+lkzcyjxK
-         wtK2SF8yKTw6rNvtszZx5vi5Unav54vsmQ4idX2YGdNJ9cH9N0pdLNn76PeJJjIrrFHF
-         ASKg==
-X-Gm-Message-State: AOAM532qRsPQhmq+WCpP9+l9LLoEk9DhHwL5CXH/WrKXcTS83rkF7Vg+
-        niVMpYiQzzG9O6AResZAcRGw1KvIoRzJxw==
-X-Google-Smtp-Source: ABdhPJwdQ3Tt5aU/nUDKRokX0Frcn5H4OZ2ww1HGezWo/7cq3jiqSmULU3QFBq3ew24zZr5agfk2Yw==
-X-Received: by 2002:a5d:4641:: with SMTP id j1mr5445074wrs.94.1610139663991;
-        Fri, 08 Jan 2021 13:01:03 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hVP2Q6N4gw9SRGBWCj3bw1ALP1bznheOyZYxj7n83oA=;
+        b=ZrZIBq4Dy/8TE/KxpfS+aaQNs5aukd+Ni3oRUXe4Un50QjGsP7XaOljOda4tsjL6Os
+         msDv8MtbSThIHhtN1Js/ikllo/WEC3gRS9ubmRMZ23pZKUiLGVeObhgoZa05Fn8gbbd6
+         lHoLQVXaw8qdaSVvrohrNdTIrfIfVzjmamEkSvfLUe5oIYageKpGStwNLgYFZQsUp7b4
+         RXESOd+MNnfeo2iUa0Qfzf3yKRV3Y7epImKBSDCKGULY84QONKmZba8Q0NcQvzqTFTsh
+         MlwwJTbUaKJ63we5GBLVXtIwds9VreTdwg1XX5AgkS99yi9NHwdh5F68l1R36TIsLfjs
+         2gpg==
+X-Gm-Message-State: AOAM531Aj9yloaJfjzP+5c72aIswYZhDLUvXiwUt/OhYwYWMiKiUGj7B
+        YxvWeOstr0CU+nVpYWd/ex0W/fWyj5Un5Q==
+X-Google-Smtp-Source: ABdhPJzuBDLY2UZIN4NKuHQA6hzuhyNVxshjTmFd959vFyyBvTUG1eMBcuBXejNjO2q3xn9jS40R0g==
+X-Received: by 2002:a5d:674c:: with SMTP id l12mr5279940wrw.399.1610139664998;
+        Fri, 08 Jan 2021 13:01:04 -0800 (PST)
 Received: from localhost.localdomain ([185.69.144.125])
-        by smtp.gmail.com with ESMTPSA id r2sm14919211wrn.83.2021.01.08.13.01.03
+        by smtp.gmail.com with ESMTPSA id r2sm14919211wrn.83.2021.01.08.13.01.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jan 2021 13:01:03 -0800 (PST)
+        Fri, 08 Jan 2021 13:01:04 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 0/4] fix SQPOLL and exit races
-Date:   Fri,  8 Jan 2021 20:57:21 +0000
-Message-Id: <cover.1610139268.git.asml.silence@gmail.com>
+Subject: [PATCH 1/4] io_uring: io_rw_reissue lockdep annotations
+Date:   Fri,  8 Jan 2021 20:57:22 +0000
+Message-Id: <0122ce2e04ee78a5cc3f17469d5292a7a987413a.1610139268.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1610139268.git.asml.silence@gmail.com>
+References: <cover.1610139268.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The series prevents submissions from SQPOLL thread when sqo_task is
-getting killed (or exec()ed). That should solve races introduced by a
-patch that allowed task_works during cancellation.
+We expect io_rw_reissue() to take place only during submission with
+uring_lock held. Add a lockdep annotation to check that invariant.
 
-Jens, IIRC you said that io_rw_reissue() is called only during
-submission, right? 4/4 depends on that, so 1/4 should help to catch any
-misbehaviour. I reduced nr_requests but wasn't able to trigger
-io_resubmit_prep() for iopoll or not. What was the trick again?
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-4/4 is actually fairly simple, but safety measures and comments make it
-to bloat. The overhead is pretty negligible, and it allows to kill more,
-but that's for-next.
-
-Pavel Begunkov (4):
-  io_uring: io_rw_reissue lockdep annotations
-  io_uring: inline io_uring_attempt_task_drop()
-  io_uring: add warn_once for io_uring_flush()
-  io_uring: stop SQPOLL submit on creator's death
-
- fs/io_uring.c | 97 +++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 71 insertions(+), 26 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index cb57e0360fcb..55ba1922a349 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2692,6 +2692,8 @@ static bool io_rw_reissue(struct io_kiocb *req, long res)
+ 	if ((res != -EAGAIN && res != -EOPNOTSUPP) || io_wq_current_is_worker())
+ 		return false;
+ 
++	lockdep_assert_held(&req->ctx->uring_lock);
++
+ 	ret = io_sq_thread_acquire_mm_files(req->ctx, req);
+ 
+ 	if (io_resubmit_prep(req, ret)) {
 -- 
 2.24.0
 

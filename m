@@ -2,86 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F472F01F3
-	for <lists+io-uring@lfdr.de>; Sat,  9 Jan 2021 18:00:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3542F01F6
+	for <lists+io-uring@lfdr.de>; Sat,  9 Jan 2021 18:03:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbhAIQ7l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 9 Jan 2021 11:59:41 -0500
-Received: from a4-6.smtp-out.eu-west-1.amazonses.com ([54.240.4.6]:52401 "EHLO
-        a4-6.smtp-out.eu-west-1.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726059AbhAIQ7l (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jan 2021 11:59:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=pqvuhxtqt36lwjpmqkszlz7wxaih4qwj; d=urbackup.org; t=1610211500;
-        h=Subject:To:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=788XJq1L89TdeddCiu/mPVXHzEbRSFKC9eF/JXwOR3Q=;
-        b=OLfDYfnIBNtg5SjUJ9bpV2bHqKTRLgGftq4GhoOwUEx1H9SyKR+vx6MlFZjo6LjG
-        JS76KT3KZwNlOi/sl4XUWlDNjM5mNjC96wB3exVRt2J/w6IKkmUffp5cVzRdKck9+57
-        qLJIDGhBMYlDohXGXhr45yx7hfrYwk6shq0Gr3kU=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=shh3fegwg5fppqsuzphvschd53n6ihuv; d=amazonses.com; t=1610211500;
-        h=Subject:To:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-        bh=788XJq1L89TdeddCiu/mPVXHzEbRSFKC9eF/JXwOR3Q=;
-        b=ajYLiP05hnpAabdHdQQNooI+ZB8N5Wir04GQbVGsJtGjP1/rawcr9ZeFBOtao/p3
-        xzbBtrssuIrd8GqpKTU96rSanHCplH+SpNVdzq9CDEARTxTIZ4JLwhbLr7aKsSDnPNF
-        lJ+5ldDeJfG5xhtBweSyTaw3RVtjrMTKCRkR88Ww=
-Subject: Re: Fixed buffer have out-dated content
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <01020176e45e6c4d-c15dc1e2-6a6a-407c-a32d-24be51a1b3f8-000000@eu-west-1.amazonses.com>
- <8ba549a0-7724-a42f-bd11-3605ef0bd034@kernel.dk>
-From:   Martin Raiber <martin@urbackup.org>
-Message-ID: <01020176e8159fa5-3f556133-fda7-451b-af78-94c712df611e-000000@eu-west-1.amazonses.com>
-Date:   Sat, 9 Jan 2021 16:58:20 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        id S1725966AbhAIRBs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 9 Jan 2021 12:01:48 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:40921 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbhAIRBp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jan 2021 12:01:45 -0500
+Received: by mail-il1-f197.google.com with SMTP id g1so13318414ilq.7
+        for <io-uring@vger.kernel.org>; Sat, 09 Jan 2021 09:01:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=TKUoXu927qEWQVV5Epbyzc7Ss7cy0HmJolu4+tIMmUI=;
+        b=BzwEfjJz28zvCNVzkdmgIUVycWt/Wsy8cMjNvfe77mGLKU3V+9w/oEJr+0P3ggSMoX
+         pbJlFGIWKPjVM9qBxP+AtbOArD3C+ZBCqK5NooA21Da+v5IqkkanS5S7smWF7deGc5To
+         DhkKH1nqxJDcgn85ZoD/UlqSR/T7t/U7h9I4TYk4wA5GLXKb2+3Aunnw/S4S8GrlsDzE
+         NHaOfRgxUq0/vYvdb2AzXm1mJQms9+7goSD9qZe4kmuuLUX+4rOJBfrzW6GCeiUDBLac
+         mVLSC6kC6TK+mZs/0JeGnoF5FdD/WRv8ssa2pl+nxt2Y32wjOyDSgUW1aKuDqpDs1oFq
+         PGLw==
+X-Gm-Message-State: AOAM530rP+ai7jAzJhTMo6n/xp0HUCtt+pvsvDI99PHs6NyyM5/Aqbe/
+        t4p0B08ZXr44PX+RM5eocYnFlPg6pO61NgOS7E6/BIks4/Tr
+X-Google-Smtp-Source: ABdhPJwpCDQCauEE8T5RinO+sglwtX2Wf03+cIUORnl4QvxsgoLfN20TgVTsEVpOZ5X7+qwp6ZSWudIC7bxQVULggumWU5sdTQq8
 MIME-Version: 1.0
-In-Reply-To: <8ba549a0-7724-a42f-bd11-3605ef0bd034@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SES-Outgoing: 2021.01.09-54.240.4.6
-Feedback-ID: 1.eu-west-1.zKMZH6MF2g3oUhhjaE2f3oQ8IBjABPbvixQzV8APwT0=:AmazonSES
+X-Received: by 2002:a02:63cd:: with SMTP id j196mr8221257jac.61.1610211664742;
+ Sat, 09 Jan 2021 09:01:04 -0800 (PST)
+Date:   Sat, 09 Jan 2021 09:01:04 -0800
+In-Reply-To: <06c3d80d-eb09-5cda-e0bf-862400d02433@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004a4ef105b87a9e10@google.com>
+Subject: Re: BUG: unable to handle kernel paging request in percpu_ref_exit
+From:   syzbot <syzbot+99ed55100402022a6276@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        rostedt@goodmis.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 09.01.2021 17:23 Jens Axboe wrote:
-> On 1/8/21 4:39 PM, Martin Raiber wrote:
->> Hi,
->>
->> I have a gnarly issue with io_uring and fixed buffers (fixed
->> read/write). It seems the contents of those buffers contain old data in
->> some rare cases under memory pressure after a read/during a write.
->>
->> Specifically I use io_uring with fuse and to confirm this is not some
->> user space issue let fuse print the unique id it adds to each request.
->> Fuse adds this request data to a pipe, and when the pipe buffer is later
->> copied to the io_uring fixed buffer it has the id of a fuse request
->> returned earlier using the same buffer while returning the size of the
->> new request. Or I set the unique id in the buffer, write it to fuse (via
->> writing to a pipe, then splicing) and then fuse returns with e.g.
->> ENOENT, because the unique id is not correct because in kernel it reads
->> the id of the previous, already completed, request using this buffer.
->>
->> To make reproducing this faster running memtester (which mlocks a
->> configurable amount of memory) with a large amount of user memory every
->> 30s helps. So it has something to do with swapping? It seems to not
->> occur if no swap space is active. Problem occurs without warning when
->> the kernel is build with KASAN and slab debugging.
->>
->> If I don't use the _FIXED opcodes (which is easy to do), the problem
->> does not occur.
->>
->> Problem occurs with 5.9.16 and 5.10.5.
-> Can you mention more about what kind of IO you are doing, I'm assuming
-> it's O_DIRECT? I'll see if I can reproduce this.
+Hello,
 
-It's writing to/reading from pipes (nonblocking, no O_DIRECT).
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I can reproduce it with https://github.com/uroni/fuseuring on e.g. a 2GB 
-VPS. Modify bench.sh so that fio loops. Add swap, then run 1400M 
-memtester while it runs (so it swaps, I guess). I can try further 
-reducing the reproducer, but I wanted to avoid that work in case it is 
-something obvious. The next step would be to remove fuse from the 
-equation -- it does try to move the pages from the pipe when splicing to 
-it, for example.
+Reported-and-tested-by: syzbot+99ed55100402022a6276@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         d9d05217 io_uring: stop SQPOLL submit on creator's death
+git tree:       git://git.kernel.dk/linux-block
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2455d075a1c4afa8
+dashboard link: https://syzkaller.appspot.com/bug?extid=99ed55100402022a6276
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+Note: testing is done by a robot and is best-effort only.

@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43C862F012B
-	for <lists+io-uring@lfdr.de>; Sat,  9 Jan 2021 17:07:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D0DF2F0141
+	for <lists+io-uring@lfdr.de>; Sat,  9 Jan 2021 17:09:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbhAIQHc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 9 Jan 2021 11:07:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37926 "EHLO
+        id S1726961AbhAIQIK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 9 Jan 2021 11:08:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbhAIQHb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jan 2021 11:07:31 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57198C0617A4;
-        Sat,  9 Jan 2021 08:06:51 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id 190so10216049wmz.0;
-        Sat, 09 Jan 2021 08:06:51 -0800 (PST)
+        with ESMTP id S1726527AbhAIQII (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jan 2021 11:08:08 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A73C0617A5;
+        Sat,  9 Jan 2021 08:06:52 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id k10so10197014wmi.3;
+        Sat, 09 Jan 2021 08:06:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LOsfOtb4JF9iqyizeOjm4tVRPPo2GoTdvRn37AEB3XM=;
-        b=Naupq7MH/QGjgYPNZ6nDh8HfOkE4n+5H8WjdQV22O4U+GN5oR8Ixv+Gl0qgQdk/j5c
-         ror5a9etqnkRwbLZtFecJMcJzPkfKyMpprD4UzKGG7SSMj0Wi+vldVDQD03UCr6cRo7n
-         XslEbcpU4b29/jvNvkfRRV425pGdOV5ri/XWO0dOpB0xSe9yp0uF+JUkgxBHlG0EVsSJ
-         vh6OV5OVGJxasK4c8MsZ0f0UaF7d5DdwAcf3iB4vuMr/Bo932nWihR9VgM3blH1dJpvR
-         guhwKvbCGPS3CqatmW254sYwWbBHH7dCEoXtGD9igJm7GWNOpYe5oppH34AB0Kbgxc3c
-         vGbw==
+        bh=BfcAWicfY3ps8Cp/gsA4qs7Avo53ajYGpXmNYv+JbSY=;
+        b=AeQssdOPinNt7VEfPxpzOS0PFW0o40Y9EV+3MG63+Dd8wEjtQhPls6aUI/zqMC4gsv
+         IW3I6GjVy1dOi5SnlEp+YRA1/gtBdhH5asZs1Vc8BwgkTu/OQL9SiwZQeTeh6MEK9Ytx
+         oKJWgI/oCxvRIUq3vpAnYYeXiwoUDBD2DaSwvxqPoCeBCIOxe63PTPOjy+qnYmafOzLt
+         pOInVokeOb4fjqx5nf6WKgyOT4BJn7nKX37LNZAUETQywherYZWmn6EShmOq2aNMEzsS
+         +u1A8+eL2dHUF/rHQOXJTo6YWxB4tASlksAkwh8nvZUnfMoL5BQpSeLSg0/B3npBgBaE
+         OwzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LOsfOtb4JF9iqyizeOjm4tVRPPo2GoTdvRn37AEB3XM=;
-        b=j8MFP6gGghrGEaOUgrKW1uX0oott1K/p4BNb2FJJ0065VQQx3j5jkUZQi7w/wbrQP/
-         FUtKUfIYToAM0F9cuUW7AJ6hiKlRyILiXMNouEkq+wHiF5LVZSjWBwDH8knhgzBRU+8E
-         5pMrsTasAqD6HQXWrfwlVIzGSDwl1DJy+tk2zubp3Bs2JJCIUjmyv9tr1+7e8nEiaoj3
-         5EILJK82RIuvQLAp6oXrlP7q84pJklWplG5InfkScdHKV+HgTBnxGvxfiJDajG54QnlO
-         Ufewxd+ilTy77L5vUYyMuRQE2Mq0AbF90ROlokFfSpa0s4soiOHe7lyvAJ/Tlfa/RmB0
-         VPcg==
-X-Gm-Message-State: AOAM531ziyyhi+zFizpCjKv3M6qZGMRFl3fAdT1FnoLFHusc9eCmmq6S
-        q4xEnuX6u127MMxxRxodSeBhp6cvq3bI2GGx
-X-Google-Smtp-Source: ABdhPJwTh8SgrJgP2KLlExaCfgCAEBrNfjWruyuIlYMsHFTOuOfOCftaIufrH3TPb7KFf9qH55pOLg==
-X-Received: by 2002:a1c:7d94:: with SMTP id y142mr7810148wmc.105.1610208409857;
-        Sat, 09 Jan 2021 08:06:49 -0800 (PST)
+        bh=BfcAWicfY3ps8Cp/gsA4qs7Avo53ajYGpXmNYv+JbSY=;
+        b=BHGQA2UIqbpfCASUyFgEzop2pJwTum3A7MttmuA/MrYk2Y3Fziq9Bxy0/lqLKHk8zc
+         rmTsFH9Vfb8m96q1zpOJCLRfsPkZthPsR6OAgXBay6d/22KO0DS0yhZEb+Q4SI6RFFZH
+         G+pEqVuPrPfrrFloNkvEB8DItyqJbwtX/jL4sphIZwoEPXDZl9P6Tg7nXmOERVZgiliM
+         BpbYZEdabwzwe1QfRoKpDrbyVV6nkpslp4HXbWZriYkGIgeFk84UXfclgF1cSV1b8N6U
+         2BoSt0luBZm/j/zdFs1MkZA065atDw4ledBsvR2A6An6s9RYWPw4DVeyc+q1PrW+BDPP
+         Y2uQ==
+X-Gm-Message-State: AOAM531nrSjIY+5yn6vWpErUL/Le9z/2dp1MNepGCXcwuMNQQIwKYPUt
+        HVseCUtTEabpC7s8yQRqJaR90G0HzrRuyCZC
+X-Google-Smtp-Source: ABdhPJx4y4lbIa9CtCF5CrCkTJk2J7iIX4ikX7/zFLt/oXjOr5IOUBU+qaI+PSRkIWiQi2yqw+zLjA==
+X-Received: by 2002:a1c:4384:: with SMTP id q126mr7875358wma.84.1610208411272;
+        Sat, 09 Jan 2021 08:06:51 -0800 (PST)
 Received: from localhost.localdomain ([185.69.144.125])
-        by smtp.gmail.com with ESMTPSA id j9sm17403866wrm.14.2021.01.09.08.06.48
+        by smtp.gmail.com with ESMTPSA id j9sm17403866wrm.14.2021.01.09.08.06.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Jan 2021 08:06:49 -0800 (PST)
+        Sat, 09 Jan 2021 08:06:50 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     linux-block@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -62,9 +62,9 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 4/7] target/file: allocate the bvec array as part of struct target_core_file_cmd
-Date:   Sat,  9 Jan 2021 16:03:00 +0000
-Message-Id: <2650722037cd756690f2e398468420bbaa26ed7f.1610170479.git.asml.silence@gmail.com>
+Subject: [PATCH v3 5/7] iov_iter: optimise bvec iov_iter_advance()
+Date:   Sat,  9 Jan 2021 16:03:01 +0000
+Message-Id: <58552e3ba333650ccd425823cb9dc0b949350959.1610170479.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1610170479.git.asml.silence@gmail.com>
 References: <cover.1610170479.git.asml.silence@gmail.com>
@@ -74,74 +74,53 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+iov_iter_advance() is heavily used, but implemented through generic
+means. For bvecs there is a specifically crafted function for that, so
+use bvec_iter_advance() instead, it's faster and slimmer.
 
-This saves one memory allocation, and ensures the bvecs aren't freed
-before the AIO completion.  This will allow the lower level code to be
-optimized so that it can avoid allocating another bvec array.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- drivers/target/target_core_file.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+ lib/iov_iter.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/target/target_core_file.c b/drivers/target/target_core_file.c
-index b0cb5b95e892..cce455929778 100644
---- a/drivers/target/target_core_file.c
-+++ b/drivers/target/target_core_file.c
-@@ -241,6 +241,7 @@ struct target_core_file_cmd {
- 	unsigned long	len;
- 	struct se_cmd	*cmd;
- 	struct kiocb	iocb;
-+	struct bio_vec	bvecs[];
- };
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 7de304269641..9b1c109dc8a9 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1065,6 +1065,21 @@ static void pipe_advance(struct iov_iter *i, size_t size)
+ 	pipe_truncate(i);
+ }
  
- static void cmd_rw_aio_complete(struct kiocb *iocb, long ret, long ret2)
-@@ -268,29 +269,22 @@ fd_execute_rw_aio(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
- 	struct target_core_file_cmd *aio_cmd;
- 	struct iov_iter iter = {};
- 	struct scatterlist *sg;
--	struct bio_vec *bvec;
- 	ssize_t len = 0;
- 	int ret = 0, i;
- 
--	aio_cmd = kmalloc(sizeof(struct target_core_file_cmd), GFP_KERNEL);
-+	aio_cmd = kmalloc(struct_size(aio_cmd, bvecs, sgl_nents), GFP_KERNEL);
- 	if (!aio_cmd)
- 		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
- 
--	bvec = kcalloc(sgl_nents, sizeof(struct bio_vec), GFP_KERNEL);
--	if (!bvec) {
--		kfree(aio_cmd);
--		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
--	}
--
- 	for_each_sg(sgl, sg, sgl_nents, i) {
--		bvec[i].bv_page = sg_page(sg);
--		bvec[i].bv_len = sg->length;
--		bvec[i].bv_offset = sg->offset;
-+		aio_cmd->bvecs[i].bv_page = sg_page(sg);
-+		aio_cmd->bvecs[i].bv_len = sg->length;
-+		aio_cmd->bvecs[i].bv_offset = sg->offset;
- 
- 		len += sg->length;
++static void iov_iter_bvec_advance(struct iov_iter *i, size_t size)
++{
++	struct bvec_iter bi;
++
++	bi.bi_size = i->count;
++	bi.bi_bvec_done = i->iov_offset;
++	bi.bi_idx = 0;
++	bvec_iter_advance(i->bvec, &bi, size);
++
++	i->bvec += bi.bi_idx;
++	i->nr_segs -= bi.bi_idx;
++	i->count = bi.bi_size;
++	i->iov_offset = bi.bi_bvec_done;
++}
++
+ void iov_iter_advance(struct iov_iter *i, size_t size)
+ {
+ 	if (unlikely(iov_iter_is_pipe(i))) {
+@@ -1075,6 +1090,10 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
+ 		i->count -= size;
+ 		return;
  	}
- 
--	iov_iter_bvec(&iter, is_write, bvec, sgl_nents, len);
-+	iov_iter_bvec(&iter, is_write, aio_cmd->bvecs, sgl_nents, len);
- 
- 	aio_cmd->cmd = cmd;
- 	aio_cmd->len = len;
-@@ -307,8 +301,6 @@ fd_execute_rw_aio(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
- 	else
- 		ret = call_read_iter(file, &aio_cmd->iocb, &iter);
- 
--	kfree(bvec);
--
- 	if (ret != -EIOCBQUEUED)
- 		cmd_rw_aio_complete(&aio_cmd->iocb, ret, 0);
- 
++	if (iov_iter_is_bvec(i)) {
++		iov_iter_bvec_advance(i, size);
++		return;
++	}
+ 	iterate_and_advance(i, size, v, 0, 0, 0)
+ }
+ EXPORT_SYMBOL(iov_iter_advance);
 -- 
 2.24.0
 

@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A5B82F013F
-	for <lists+io-uring@lfdr.de>; Sat,  9 Jan 2021 17:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EC382F0122
+	for <lists+io-uring@lfdr.de>; Sat,  9 Jan 2021 17:07:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbhAIQHt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 9 Jan 2021 11:07:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37916 "EHLO
+        id S1726666AbhAIQHc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 9 Jan 2021 11:07:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbhAIQH3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jan 2021 11:07:29 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92BF5C0617A2;
-        Sat,  9 Jan 2021 08:06:48 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id g185so11020610wmf.3;
-        Sat, 09 Jan 2021 08:06:48 -0800 (PST)
+        with ESMTP id S1726642AbhAIQHa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jan 2021 11:07:30 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A348C0617A3;
+        Sat,  9 Jan 2021 08:06:50 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id 190so10216019wmz.0;
+        Sat, 09 Jan 2021 08:06:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=q8d8dG9UCf5e8vbipZsYPEj7r5MDYaj3bnreiQQXGps=;
-        b=flzNBu2Q3t3/ImhTptnUpWZq2eOx/8D444lV2HOdKskJiBvPeDRYD15kOiU4YWJuig
-         a2s3X5nS7c5Gu0oZ6799cSPGNNhYVL/DNuj6K8u45rZ2OSMGtpibL7htfny+gBGn1Ir7
-         2ChwG/1/1TCbzPQMHL+TfEpG3iCnbxF6sZ8AsQ/02eXp20D6QL3CKQRqDDmBkSVfC0SV
-         f6IuYJToioYrFrS8j23EyvK/Odm1iOgFzB2J7lVZzbO4RXL0oEFMFsAlNXU2n+23bBVy
-         YEfcRNr25KYQJTnYxjfV0xLx+bWyP/gAF04dZSua4crVLyAEMveSQ92gBaEVPLnZzdfo
-         HAFA==
+        bh=ouhtlCdJ/DY280urrHIcZiPcXncXrhPOyIjDJZKeP64=;
+        b=qy5YzKqSVfj/n61inmw754WS9TPAvCacovuEf3ll3twxCUwvazuZ1XoReQ9iWnKikI
+         LIBWzWQu1z7SOxwi++WGQbPTnkcjlVXSg4idyU2Ael20Dmj6WscsKo4BjDK+k+cOCgOK
+         AgfVg6ARPHkkdURVSbRB2cyeIG87ftyMhN6S30APxSo/ZGFubuF9E5plaXWQr0TFgm2D
+         VsA8KwTn+D9JUhJaSNS3Mw5LO3TAbxBMcYZQXlGHMUhB8w7TPdNwk3Ey4bBoG+lGeFur
+         D+r+jIEFATqrHDTKCAaQGzJYt+gXNh++yGeJvODQVW4uyj2JRglkfeBakz1FKdtZN7vP
+         y9Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=q8d8dG9UCf5e8vbipZsYPEj7r5MDYaj3bnreiQQXGps=;
-        b=fDhjNFVvismg2ilzciurJ1os2toxyyXDUDRyQrj3lhiDS6Mgc4yyuvotJ+H4tD9X2C
-         jg8TKJpfXXn/71+xqK5nY/ln//3Vws5Thbp7kxNw5cFt+VmBatb7iSNbbemAOWU86Hdm
-         XK4PtK8l3aSZ/uDYN4dQLNOTjUGMEfArn8WztcdwGVFnKe/vjU8cdqMkSsza4g1Op3PK
-         ojIfXcyFxs3yFwsVwT/yJEsIH0lDd4xXJcdbazOqn50Azzu7qKKD/i/HZodQ53I2DE0i
-         fMdynDTe3vFWXQziO8s4hAEPuRMe9PsA1Ud2pHtWpQa7SkoAWyE/bLF4VJZftYLry7XQ
-         CNvA==
-X-Gm-Message-State: AOAM533KEY5/uj+7F2C7l29RxQWtx+UIvDMu/PIMUZ8PUcinUtd/f9y8
-        GofKHMdX0rZGATXdSH8ntCCb1OjZHfgL47pS
-X-Google-Smtp-Source: ABdhPJzXFJcFemHVSsCyCdF3SY1fQfhQCrpun0BXv+Pm10PNgRweNCoNTn+FNvIFpVE+sVQIwpzbuQ==
-X-Received: by 2002:a05:600c:cc:: with SMTP id u12mr7982009wmm.42.1610208407039;
-        Sat, 09 Jan 2021 08:06:47 -0800 (PST)
+        bh=ouhtlCdJ/DY280urrHIcZiPcXncXrhPOyIjDJZKeP64=;
+        b=C1AIrKH+g2WH1MzdATOmKtXNmbXvLspjVSSyqaBcNX+jKHQkHA5yVRrWhXY2djjFyx
+         Sjn9Rna0PmaDNZL2QXuoLMnkIS/Ep1VsxA/51ApOkH+IAOfCHL5iSt8twYC8s8N8x4lf
+         QAvufHD525y9T9U35mbu6GaEpLsCWh92JbpGgxKBkzw7WX4m7aylF+Thu8Ms9CdGpviy
+         hO+kbm/wQiVAI7rS79I1F3XamUW6qojr0MJIkjRDBzJd6FrhKI3Kc+4ECqIXzGzvNYry
+         ScO+LYO/wmmsbRjQPM5d1l2qTqCHrCyWYZFYmr0Q6sB5aYPuOup2XfGOMMLLu5jxPEtP
+         iGiw==
+X-Gm-Message-State: AOAM530QFRSCf/Ym/npTfsaeFMRQixOab8mGdHlzGeb94pH12SDpYyQd
+        ukyK7K/dQDsj5gAnbq2bpfhKSuKcpG4L+8zq
+X-Google-Smtp-Source: ABdhPJw4gnrLCSdkD/iV43iWJWvb3fyCSRNNfo8n4OuJ5w224968euoNuQ/4NpxpqxQQbSZa0wIJ1A==
+X-Received: by 2002:a05:600c:2042:: with SMTP id p2mr7943949wmg.152.1610208408536;
+        Sat, 09 Jan 2021 08:06:48 -0800 (PST)
 Received: from localhost.localdomain ([185.69.144.125])
-        by smtp.gmail.com with ESMTPSA id j9sm17403866wrm.14.2021.01.09.08.06.45
+        by smtp.gmail.com with ESMTPSA id j9sm17403866wrm.14.2021.01.09.08.06.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Jan 2021 08:06:46 -0800 (PST)
+        Sat, 09 Jan 2021 08:06:47 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     linux-block@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -62,9 +62,9 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 2/7] bvec/iter: disallow zero-length segment bvecs
-Date:   Sat,  9 Jan 2021 16:02:58 +0000
-Message-Id: <4570836cc62137a9ee788d9c820f58ed8efe9b37.1610170479.git.asml.silence@gmail.com>
+Subject: [PATCH v3 3/7] block/psi: remove PSI annotations from direct IO
+Date:   Sat,  9 Jan 2021 16:02:59 +0000
+Message-Id: <faad7d7f58ff45285eaac9af7fae9a5fcca98977.1610170479.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1610170479.git.asml.silence@gmail.com>
 References: <cover.1610170479.git.asml.silence@gmail.com>
@@ -74,61 +74,63 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-zero-length bvec segments are allowed in general, but not handled by bio
-and down the block layer so filtered out. This inconsistency may be
-confusing and prevent from optimisations. As zero-length segments are
-useless and places that were generating them are patched, declare them
-not allowed.
+Direct IO does not operate on the current working set of pages managed
+by the kernel, so it should not be accounted as memory stall to PSI
+infrastructure.
 
+The block layer and iomap direct IO use bio_iov_iter_get_pages()
+to build bios, and they are the only users of it, so to avoid PSI
+tracking for them clear out BIO_WORKINGSET flag. Do same for
+dio_bio_submit() because fs/direct_io constructs bios by hand directly
+calling bio_add_page().
+
+Reported-by: Christoph Hellwig <hch@infradead.org>
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- Documentation/block/biovecs.rst       | 2 ++
- Documentation/filesystems/porting.rst | 7 +++++++
- lib/iov_iter.c                        | 2 --
- 3 files changed, 9 insertions(+), 2 deletions(-)
+ block/bio.c    | 6 ++++++
+ fs/direct-io.c | 2 ++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/Documentation/block/biovecs.rst b/Documentation/block/biovecs.rst
-index 36771a131b56..ddb867e0185b 100644
---- a/Documentation/block/biovecs.rst
-+++ b/Documentation/block/biovecs.rst
-@@ -40,6 +40,8 @@ normal code doesn't have to deal with bi_bvec_done.
-    There is a lower level advance function - bvec_iter_advance() - which takes
-    a pointer to a biovec, not a bio; this is used by the bio integrity code.
+diff --git a/block/bio.c b/block/bio.c
+index 1f2cc1fbe283..9f26984af643 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1099,6 +1099,9 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
+  * fit into the bio, or are requested in @iter, whatever is smaller. If
+  * MM encounters an error pinning the requested pages, it stops. Error
+  * is returned only if 0 pages could be pinned.
++ *
++ * It's intended for direct IO, so doesn't do PSI tracking, the caller is
++ * responsible for setting BIO_WORKINGSET if necessary.
+  */
+ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ {
+@@ -1123,6 +1126,9 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
  
-+As of 5.12 bvec segments with zero bv_len are not supported.
+ 	if (is_bvec)
+ 		bio_set_flag(bio, BIO_NO_PAGE_REF);
 +
- What's all this get us?
- =======================
- 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index 867036aa90b8..c722d94f29ea 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -865,3 +865,10 @@ no matter what.  Everything is handled by the caller.
- 
- clone_private_mount() returns a longterm mount now, so the proper destructor of
- its result is kern_unmount() or kern_unmount_array().
-+
-+---
-+
-+**mandatory**
-+
-+zero-length bvec segments are disallowed, they must be filtered out before
-+passed on to an iterator.
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 1635111c5bd2..7de304269641 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -72,8 +72,6 @@
- 	__start.bi_bvec_done = skip;			\
- 	__start.bi_idx = 0;				\
- 	for_each_bvec(__v, i->bvec, __bi, __start) {	\
--		if (!__v.bv_len)			\
--			continue;			\
- 		(void)(STEP);				\
- 	}						\
++	/* don't account direct I/O as memory stall */
++	bio_clear_flag(bio, BIO_WORKINGSET);
+ 	return bio->bi_vcnt ? 0 : ret;
  }
+ EXPORT_SYMBOL_GPL(bio_iov_iter_get_pages);
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index d53fa92a1ab6..0e689233f2c7 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -426,6 +426,8 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
+ 	unsigned long flags;
+ 
+ 	bio->bi_private = dio;
++	/* don't account direct I/O as memory stall */
++	bio_clear_flag(bio, BIO_WORKINGSET);
+ 
+ 	spin_lock_irqsave(&dio->bio_lock, flags);
+ 	dio->refcount++;
 -- 
 2.24.0
 

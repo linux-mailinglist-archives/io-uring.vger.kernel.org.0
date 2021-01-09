@@ -2,60 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD8E72F0212
-	for <lists+io-uring@lfdr.de>; Sat,  9 Jan 2021 18:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68C6A2F037E
+	for <lists+io-uring@lfdr.de>; Sat,  9 Jan 2021 21:37:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbhAIRIm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 9 Jan 2021 12:08:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51000 "EHLO
+        id S1726006AbhAIUgw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 9 Jan 2021 15:36:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbhAIRIl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jan 2021 12:08:41 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5801CC061786;
-        Sat,  9 Jan 2021 09:08:01 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id r7so11991128wrc.5;
-        Sat, 09 Jan 2021 09:08:01 -0800 (PST)
+        with ESMTP id S1726005AbhAIUgw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jan 2021 15:36:52 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88FBCC061786
+        for <io-uring@vger.kernel.org>; Sat,  9 Jan 2021 12:36:11 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id i9so12323903wrc.4
+        for <io-uring@vger.kernel.org>; Sat, 09 Jan 2021 12:36:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A6MuFJGcZ3M3rR49HIHQ9ON1Bmxy7xDkd+sCZ6K/NdY=;
-        b=jrBkVAaMK7uDQiIB72GyZNfpALvrrp7W14aHz+i1fd95P4vTnLDC5s2yTJQE8rbvBs
-         JQpE0ifScinBVi5GgRxzDsLYaT4IjRZqGe5AYjXsrjQaLjXnQIcCxVL3PrgP5QykPBXS
-         kbXtZff/LeIF50k5/BGnciQrG5ilfbtl8nbggPcNXJ+aXJsl5cFgQv8hTA++Qz9A2sfT
-         1kAxJ4uRON4Oi9Nwe88+fRrW6YVb2B8WFuZdrPXiGBa8yimZkdhCqp/RdPzCCc5FIAgV
-         iXal5+V/9rc7gp/aLmBAQoZ2i6KcCcl2CBP3LlfhP/jOjXB5Ecdw5c1So5YrTONtERVe
-         12Eg==
+        bh=bYHgq1Xevy37+omyLYqazcE+5PyTQiE2p4YRxzHJnpM=;
+        b=Dbj0AkMyGNVKiIbwM819xAGTCYMP7+t7j8w2X49It9wThT7ORqVsmFK85adoWPDvFz
+         DxshZLcWzlQGhXRIvVmiCmLJdliYw1EuffkJd7yh/akyGDCsM1abBiZ/d8pH0wkCEw0X
+         +dHhUVHbuIYkdSVY6sBWjD4WQgl+oqxC0gYjniFkyhUNKYkz/G6HrQFJLfrwi/JcF+he
+         mBC3CfExOkPw+USR4lKSqkbJnGBM7OKCHdRPpucCgf2bkvDy42uyvYNCdGrXlTDr3J4+
+         w9IwLQmCiXhSOt9cVLOBNHuj8QKCUExUqKdW3ArO8apj+TrdOiqnLXdUOFab6IlHZaFi
+         nptw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=A6MuFJGcZ3M3rR49HIHQ9ON1Bmxy7xDkd+sCZ6K/NdY=;
-        b=k/+0lRTqFXdWp3SgfDQhkb+yGrLr13cDnunrqdfC9AFlXokGQhDjm874X0CeQpEJjK
-         QXpZ8ip2Kmq8+IsTwVTjcK3GcCz29rNwSwHZezgVUCQcmaIBG9BxTwgPbZHlMPK+qe84
-         VUaxhL9qnByiHQc/CwEZtbb03ymdTDRP3UAkJnxOC9jS4rbuOwrw9mzTTndSVdWCx3Ln
-         uYkggf3qvI1ikzCfbcf7QAImVqqsNrOoBmNxI44eHu0Zabe6Emo6VjwH0h77wNApt3Yv
-         z4vYJzIgC1UngdZ4nFoVnsJDA/rmrvl68G+Zp/ckQhYX0ALh95w1S16ga5NOK3QoxEX0
-         sYTg==
-X-Gm-Message-State: AOAM5330wqTA2A0prmZK27g/tcOgcpn5eDhVLUA7HSLWNM989WDPSm+1
-        Mbad2p2Q+r5k93j4SUCz3AgbAVAfcmdg9g==
-X-Google-Smtp-Source: ABdhPJxSEB0T7oh7hgCWiphFsWWTw0HZCtesfztmG2jwfg69h5gSfXcNrhCXNMyJrwZIIqUl7n1Q9Q==
-X-Received: by 2002:a5d:678d:: with SMTP id v13mr8839106wru.71.1610212080102;
-        Sat, 09 Jan 2021 09:08:00 -0800 (PST)
-Received: from [192.168.8.114] ([185.69.144.125])
-        by smtp.gmail.com with ESMTPSA id 189sm16756927wma.22.2021.01.09.09.07.58
+        bh=bYHgq1Xevy37+omyLYqazcE+5PyTQiE2p4YRxzHJnpM=;
+        b=hVOxi0s0eAki39Bfey+LTB78qsuxR6UHrXqe7JYvkbCxRL3dUHIPS/drlVTKho78y+
+         wQouw2UQS17OO1QyjfYoo7T/9OFt0aYBgnOCyMPCkvouVCb3eEbcg/DsoXvQiF48PDa/
+         dZVnP7LfmKBDNcPt75dknRQpiSRVNKjgy6Ig0JJv3txe8l+jD2VFRquAtWzggrTIsAq7
+         z3ou5iI7ks0c4E8F/ofANSBOXzy8MPw00Mck6JVawhyGuxCTfoUR9tGvJTPefHUvSn6M
+         0mzpP2PiCm93/pHAs+wttD8hvsokuP5wYd9MMZtwGwPCypo8AjOvPO/4eQ31VxjcLmli
+         h0PQ==
+X-Gm-Message-State: AOAM533X+Z1pCACo8dlaqad2szSv0P4xP0QDfDlpiAYJLRXkvnjlGtE1
+        RDKeJG20zCqZA3Wb/Lfk1zX/3PNwHO4lk1sJ
+X-Google-Smtp-Source: ABdhPJy/BUloCTbaiWXZcXlCaMeYtQw/CCfZqIrZPPiU7iXjCH8iSo+BQzmF/QwxmbdEy/TzqVAEoQ==
+X-Received: by 2002:a5d:60cb:: with SMTP id x11mr9586882wrt.0.1610224570063;
+        Sat, 09 Jan 2021 12:36:10 -0800 (PST)
+Received: from [192.168.8.114] ([85.255.237.6])
+        by smtp.gmail.com with ESMTPSA id h20sm19425570wrb.21.2021.01.09.12.36.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Jan 2021 09:07:59 -0800 (PST)
-Subject: Re: BUG: unable to handle kernel paging request in percpu_ref_exit
-To:     syzbot <syzbot+99ed55100402022a6276@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        rostedt@goodmis.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, will@kernel.org
-References: <0000000000004a4ef105b87a9e10@google.com>
+        Sat, 09 Jan 2021 12:36:09 -0800 (PST)
+To:     Martin Raiber <martin@urbackup.org>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+References: <01020176e45e6c4d-c15dc1e2-6a6a-407c-a32d-24be51a1b3f8-000000@eu-west-1.amazonses.com>
+ <8ba549a0-7724-a42f-bd11-3605ef0bd034@kernel.dk>
+ <01020176e8159fa5-3f556133-fda7-451b-af78-94c712df611e-000000@eu-west-1.amazonses.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -100,39 +97,60 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <b73690bf-a7af-4bb3-ae91-6ef2ea7f22ff@gmail.com>
-Date:   Sat, 9 Jan 2021 17:04:27 +0000
+Subject: Re: Fixed buffer have out-dated content
+Message-ID: <b56ed553-096c-b51a-49e3-da4e8eda8d43@gmail.com>
+Date:   Sat, 9 Jan 2021 20:32:37 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <0000000000004a4ef105b87a9e10@google.com>
+In-Reply-To: <01020176e8159fa5-3f556133-fda7-451b-af78-94c712df611e-000000@eu-west-1.amazonses.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 09/01/2021 17:01, syzbot wrote:
-> Hello,
+On 09/01/2021 16:58, Martin Raiber wrote:
+> On 09.01.2021 17:23 Jens Axboe wrote:
+>> On 1/8/21 4:39 PM, Martin Raiber wrote:
+>>> Hi,
+>>>
+>>> I have a gnarly issue with io_uring and fixed buffers (fixed
+>>> read/write). It seems the contents of those buffers contain old data in
+>>> some rare cases under memory pressure after a read/during a write.
+>>>
+>>> Specifically I use io_uring with fuse and to confirm this is not some
+>>> user space issue let fuse print the unique id it adds to each request.
+>>> Fuse adds this request data to a pipe, and when the pipe buffer is later
+>>> copied to the io_uring fixed buffer it has the id of a fuse request
+>>> returned earlier using the same buffer while returning the size of the
+>>> new request. Or I set the unique id in the buffer, write it to fuse (via
+>>> writing to a pipe, then splicing) and then fuse returns with e.g.
+>>> ENOENT, because the unique id is not correct because in kernel it reads
+>>> the id of the previous, already completed, request using this buffer.
+>>>
+>>> To make reproducing this faster running memtester (which mlocks a
+>>> configurable amount of memory) with a large amount of user memory every
+>>> 30s helps. So it has something to do with swapping? It seems to not
+>>> occur if no swap space is active. Problem occurs without warning when
+>>> the kernel is build with KASAN and slab debugging.
+>>>
+>>> If I don't use the _FIXED opcodes (which is easy to do), the problem
+>>> does not occur.
+>>>
+>>> Problem occurs with 5.9.16 and 5.10.5.
+>> Can you mention more about what kind of IO you are doing, I'm assuming
+>> it's O_DIRECT? I'll see if I can reproduce this.
 > 
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> It's writing to/reading from pipes (nonblocking, no O_DIRECT).
 
-#syz fix: io_uring: Fix return value from alloc_fixed_file_ref_node
+A blind guess, does it handle short reads and writes? If not, can you
+check whether they happen or not?
 
 > 
-> Reported-and-tested-by: syzbot+99ed55100402022a6276@syzkaller.appspotmail.com
-> 
-> Tested on:
-> 
-> commit:         d9d05217 io_uring: stop SQPOLL submit on creator's death
-> git tree:       git://git.kernel.dk/linux-block
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=2455d075a1c4afa8
-> dashboard link: https://syzkaller.appspot.com/bug?extid=99ed55100402022a6276
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> 
-> Note: testing is done by a robot and is best-effort only.
-> 
+> I can reproduce it with https://github.com/uroni/fuseuring on e.g. a 2GB VPS. Modify bench.sh so that fio loops. Add swap, then run 1400M memtester while it runs (so it swaps, I guess). I can try further reducing the reproducer, but I wanted to avoid that work in case it is something obvious. The next step would be to remove fuse from the equation -- it does try to move the pages from the pipe when splicing to it, for example.
+
 
 -- 
 Pavel Begunkov

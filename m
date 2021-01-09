@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5C402F0140
-	for <lists+io-uring@lfdr.de>; Sat,  9 Jan 2021 17:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A8E2F0150
+	for <lists+io-uring@lfdr.de>; Sat,  9 Jan 2021 17:10:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbhAIQIK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 9 Jan 2021 11:08:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38056 "EHLO
+        id S1726982AbhAIQIL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 9 Jan 2021 11:08:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726058AbhAIQII (ORCPT
+        with ESMTP id S1726913AbhAIQII (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jan 2021 11:08:08 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C274C0617A6;
-        Sat,  9 Jan 2021 08:06:54 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id i9so11920379wrc.4;
-        Sat, 09 Jan 2021 08:06:54 -0800 (PST)
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1482C0617A7;
+        Sat,  9 Jan 2021 08:06:55 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id e25so11051015wme.0;
+        Sat, 09 Jan 2021 08:06:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RwZZxMhI82qZ1NGjjWs3i9PNzY6l2vY31jXhvq/2jzI=;
-        b=Ttko+RVGU3n5aJcKu+1ljJRmO0ZoHSASRWTCu9NUBLQwvAMVtJm4xDctv0HVgar+fN
-         j1+FVNn31Se10pLKpcqpfLj8k/U/bCPpLxmbmyG9XhOQyBjS0P2EzY+bpgmi+CuQUrhJ
-         WIGEIL+T1d4wzj8RPH1EjE4HYVpzd83UevIJJNOzJAvvhyRCV9gTTPu/DFakNUBhjPUE
-         6YAc1X5PQF2GEWeLQfCtAjB499ILo9qLgoWgjQm1uq5kYEoxQ6UI0jSz1HOqcEDSpjJd
-         uY01F6EMQsqPI6ykkfpm8TNw/LNJIbIiD1vvLsZRCX6bzgxA5GWTjxPV4bsYNY4Ny2/9
-         EEYg==
+        bh=yD8zYkali7maLviDx2WTi8i72ihDIWnJKSJbAu6xfJ0=;
+        b=Ts4OoM5bqISNbtmG5sPDsmpk3BTHhh/QjboJ9FjJbTRW6os44a6JWrPaQeIq9a4gzB
+         ytPoZ/GW+c8ZRLyy3+gy3UFzrpFfiklRK34zsaVHar6VPLoh+t6didLQ79On2YaXPI61
+         pJYMvy+biZXWpv873DXVw0VcAA4BWzd8gzcFFTJKXfdRrqQ5DS5I/WBs9CIv7jzQeFMI
+         Hq3iECPsMcVtJgXRMv4wn1o2Hlj3wnnkuWosFYpHehQe35KojPpv+ALObFOb9wY8RLyx
+         lHcnE4uGyPIaA5yYJvbSruf6mQkaPTFCw8BRrqy91Lzpf7zZilpiDzluyMd0xwOv21xY
+         uFYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RwZZxMhI82qZ1NGjjWs3i9PNzY6l2vY31jXhvq/2jzI=;
-        b=fLFT8G3T/77dDHC+cFDrKkF1EG+/9I/IJ4lTztV4/r5D1H+7Y3jRtoajbsurVSWJ2f
-         W5raIE9/GDGDeWVZYd47sTHa9dqKRY1qp/YaGFLoZqbwKNSfAJSzKKpGa1GUSIV0x9ai
-         mPn0YWOAfysDskRRoFeMNTEzjTddoeJTgR2V0tieJSAyycH/i/eYS0k3h+jH0c4R4fEw
-         U8V3yXSKZoPtmI1+rvyqhtO9++QHbYfTZtm03wWaBFvTgPeJcB5ydet/mTSu0GWAA6GO
-         KjKjeOnns01Nv9mYsN2qx15vo7qALiV3rq3OyVa1l2PQXgd8CcY2gYzBL+zz9quzgVlW
-         zn8w==
-X-Gm-Message-State: AOAM530ZIUsnWvTA29TU4Qn5NUjtMO5Dtzut524QEOGriHtEIbkBRe8T
-        ZUJaU5l0PP1zV0spzizLFiB3n9DUC9Fa1sxM
-X-Google-Smtp-Source: ABdhPJzoUjsfyBMMnqeq2r+2TVEKl5UD3aKgPfvVrdJFCjILudq2jNC955I3gsW4LTeZMtylLSyYdw==
-X-Received: by 2002:a5d:4a44:: with SMTP id v4mr8956687wrs.106.1610208412908;
-        Sat, 09 Jan 2021 08:06:52 -0800 (PST)
+        bh=yD8zYkali7maLviDx2WTi8i72ihDIWnJKSJbAu6xfJ0=;
+        b=oeBGYqW+EAhOqFqgxPFX6WJCGqHZ+JDX1EsheS3j67f4MhBWYTIiiTY9KB5CDWa/QG
+         X+tXP0vw+Jncwg8KrXpIyQnb4lt5YS+30VHVVA883M0jTkIx1ylyXFndEK92PXxam2mq
+         sCQazQVcFUsJ9XgJ0vNrCpwmdleYMqeMHpiR1PAYODWze1ntqKMj8qGR8DnRuDBvmueD
+         h+1WEhQUDR/P0eYGfBRM/7rMEMAwPgvy77c/dnRVcR/3RSuMOAv+efWW3nuxMJABSosr
+         Jo9i+rJIFBmAbkkGea5ZPEDIjrkHS3mQQRyyHOhdCFY6PxTDvlsK4cR7sao3APTZcicS
+         hjSQ==
+X-Gm-Message-State: AOAM53204fXKCtpTwPObRcJPb2FH/gWzxkmLYwDz8CGiVqwcdkYXJbfX
+        P8dhy1JfCBMUi8UkTmutV+aBbiqLyusg13AY
+X-Google-Smtp-Source: ABdhPJyDJ7ivMuFntSJFW5N+/HuavTp+fJKVSfLb/Mv/WA3X5yhkivHrCndukCuTwkfjMzb7+EAADg==
+X-Received: by 2002:a1c:1d1:: with SMTP id 200mr7900279wmb.98.1610208414381;
+        Sat, 09 Jan 2021 08:06:54 -0800 (PST)
 Received: from localhost.localdomain ([185.69.144.125])
-        by smtp.gmail.com with ESMTPSA id j9sm17403866wrm.14.2021.01.09.08.06.51
+        by smtp.gmail.com with ESMTPSA id j9sm17403866wrm.14.2021.01.09.08.06.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Jan 2021 08:06:52 -0800 (PST)
+        Sat, 09 Jan 2021 08:06:53 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     linux-block@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -62,9 +62,9 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 6/7] bio: add a helper calculating nr segments to alloc
-Date:   Sat,  9 Jan 2021 16:03:02 +0000
-Message-Id: <cde94f6cc32bd8a899129575678c4195f7cb187b.1610170479.git.asml.silence@gmail.com>
+Subject: [PATCH v3 7/7] bio: don't copy bvec for direct IO
+Date:   Sat,  9 Jan 2021 16:03:03 +0000
+Message-Id: <69fef253b37fc44dd28c43398715e27cee5e0fe0.1610170479.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1610170479.git.asml.silence@gmail.com>
 References: <cover.1610170479.git.asml.silence@gmail.com>
@@ -74,107 +74,153 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add a helper function calculating the number of bvec segments we need to
-allocate to construct a bio. It doesn't change anything functionally,
-but will be used to not duplicate special cases in the future.
+The block layer spends quite a while in blkdev_direct_IO() to copy and
+initialise bio's bvec. However, if we've already got a bvec in the input
+iterator it might be reused in some cases, i.e. when new
+ITER_BVEC_FLAG_FIXED flag is set. Simple tests show considerable
+performance boost, and it also reduces memory footprint.
 
+Suggested-by: Matthew Wilcox <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/block_dev.c       |  7 ++++---
- fs/iomap/direct-io.c |  9 ++++-----
- include/linux/bio.h  | 10 ++++++++++
- 3 files changed, 18 insertions(+), 8 deletions(-)
+ Documentation/filesystems/porting.rst |  9 ++++
+ block/bio.c                           | 67 ++++++++++++---------------
+ include/linux/bio.h                   |  5 +-
+ 3 files changed, 42 insertions(+), 39 deletions(-)
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 3b8963e228a1..6f5bd9950baf 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -416,7 +416,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 		dio->size += bio->bi_iter.bi_size;
- 		pos += bio->bi_iter.bi_size;
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index c722d94f29ea..1f8cf8e10b34 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -872,3 +872,12 @@ its result is kern_unmount() or kern_unmount_array().
  
--		nr_pages = iov_iter_npages(iter, BIO_MAX_PAGES);
-+		nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_PAGES);
- 		if (!nr_pages) {
- 			bool polled = false;
- 
-@@ -481,9 +481,10 @@ blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- {
- 	int nr_pages;
- 
--	nr_pages = iov_iter_npages(iter, BIO_MAX_PAGES + 1);
--	if (!nr_pages)
-+	if (!iov_iter_count(iter))
- 		return 0;
+ zero-length bvec segments are disallowed, they must be filtered out before
+ passed on to an iterator.
 +
-+	nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_PAGES + 1);
- 	if (is_sync_kiocb(iocb) && nr_pages <= BIO_MAX_PAGES)
- 		return __blkdev_direct_IO_simple(iocb, iter, nr_pages);
++---
++
++**mandatory**
++
++For bvec based itererators bio_iov_iter_get_pages() now doesn't copy bvecs but
++uses the one provided. Anyone issuing kiocb-I/O should ensure that the bvec and
++page references stay until I/O has completed, i.e. until ->ki_complete() has
++been called or returned with non -EIOCBQUEUED code.
+diff --git a/block/bio.c b/block/bio.c
+index 9f26984af643..6f031a04b59a 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -960,21 +960,17 @@ void bio_release_pages(struct bio *bio, bool mark_dirty)
+ }
+ EXPORT_SYMBOL_GPL(bio_release_pages);
  
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 933f234d5bec..ea1e8f696076 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -250,11 +250,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 	orig_count = iov_iter_count(dio->submit.iter);
- 	iov_iter_truncate(dio->submit.iter, length);
- 
--	nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
--	if (nr_pages <= 0) {
--		ret = nr_pages;
-+	if (!iov_iter_count(dio->submit.iter))
- 		goto out;
--	}
- 
- 	if (need_zeroout) {
- 		/* zero out from the start of the block to the write offset */
-@@ -263,6 +260,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 			iomap_dio_zero(dio, iomap, pos - pad, pad);
- 	}
- 
-+	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_PAGES);
- 	do {
- 		size_t n;
- 		if (dio->error) {
-@@ -308,7 +306,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 		dio->size += n;
- 		copied += n;
- 
--		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
-+		nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter,
-+						 BIO_MAX_PAGES);
- 		iomap_dio_submit_bio(dio, iomap, bio, pos);
- 		pos += n;
- 	} while (nr_pages);
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 1edda614f7ce..d8f9077c43ef 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -10,6 +10,7 @@
- #include <linux/ioprio.h>
- /* struct bio, bio_vec and BIO_* flags are defined in blk_types.h */
- #include <linux/blk_types.h>
-+#include <linux/uio.h>
- 
- #define BIO_DEBUG
- 
-@@ -441,6 +442,15 @@ static inline void bio_wouldblock_error(struct bio *bio)
- 	bio_endio(bio);
+-static int __bio_iov_bvec_add_pages(struct bio *bio, struct iov_iter *iter)
++static int bio_iov_bvec_set(struct bio *bio, struct iov_iter *iter)
+ {
+-	const struct bio_vec *bv = iter->bvec;
+-	unsigned int len;
+-	size_t size;
+-
+-	if (WARN_ON_ONCE(iter->iov_offset > bv->bv_len))
+-		return -EINVAL;
+-
+-	len = min_t(size_t, bv->bv_len - iter->iov_offset, iter->count);
+-	size = bio_add_page(bio, bv->bv_page, len,
+-				bv->bv_offset + iter->iov_offset);
+-	if (unlikely(size != len))
+-		return -EINVAL;
+-	iov_iter_advance(iter, size);
++	WARN_ON_ONCE(BVEC_POOL_IDX(bio) != 0);
++
++	bio->bi_vcnt = iter->nr_segs;
++	bio->bi_max_vecs = iter->nr_segs;
++	bio->bi_io_vec = (struct bio_vec *)iter->bvec;
++	bio->bi_iter.bi_bvec_done = iter->iov_offset;
++	bio->bi_iter.bi_size = iter->count;
++
++	iov_iter_advance(iter, iter->count);
+ 	return 0;
  }
  
-+/*
-+ * Calculate number of bvec segments that should be allocated to fit data
-+ * pointed by @iter.
-+ */
-+static inline int bio_iov_vecs_to_alloc(struct iov_iter *iter, int max_segs)
-+{
-+	return iov_iter_npages(iter, max_segs);
-+}
-+
- struct request_queue;
+@@ -1088,12 +1084,12 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
+  * This takes either an iterator pointing to user memory, or one pointing to
+  * kernel pages (BVEC iterator). If we're adding user pages, we pin them and
+  * map them into the kernel. On IO completion, the caller should put those
+- * pages. If we're adding kernel pages, and the caller told us it's safe to
+- * do so, we just have to add the pages to the bio directly. We don't grab an
+- * extra reference to those pages (the user should already have that), and we
+- * don't put the page on IO completion. The caller needs to check if the bio is
+- * flagged BIO_NO_PAGE_REF on IO completion. If it isn't, then pages should be
+- * released.
++ * pages. For bvec based iterators bio_iov_iter_get_pages() uses the provided
++ * bvecs rather than copying them. Hence anyone issuing kiocb based IO needs
++ * to ensure the bvecs and pages stay referenced until the submitted I/O is
++ * completed by a call to ->ki_complete() or returns with an error other than
++ * -EIOCBQUEUED. The caller needs to check if the bio is flagged BIO_NO_PAGE_REF
++ * on IO completion. If it isn't, then pages should be released.
+  *
+  * The function tries, but does not guarantee, to pin as many pages as
+  * fit into the bio, or are requested in @iter, whatever is smaller. If
+@@ -1105,27 +1101,22 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
+  */
+ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ {
+-	const bool is_bvec = iov_iter_is_bvec(iter);
+-	int ret;
+-
+-	if (WARN_ON_ONCE(bio->bi_vcnt))
+-		return -EINVAL;
++	int ret = 0;
  
- extern int submit_bio_wait(struct bio *bio);
+-	do {
+-		if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
+-			if (WARN_ON_ONCE(is_bvec))
+-				return -EINVAL;
+-			ret = __bio_iov_append_get_pages(bio, iter);
+-		} else {
+-			if (is_bvec)
+-				ret = __bio_iov_bvec_add_pages(bio, iter);
++	if (iov_iter_is_bvec(iter)) {
++		if (WARN_ON_ONCE(bio_op(bio) == REQ_OP_ZONE_APPEND))
++			return -EINVAL;
++		bio_iov_bvec_set(bio, iter);
++		bio_set_flag(bio, BIO_NO_PAGE_REF);
++		return 0;
++	} else {
++		do {
++			if (bio_op(bio) == REQ_OP_ZONE_APPEND)
++				ret = __bio_iov_append_get_pages(bio, iter);
+ 			else
+ 				ret = __bio_iov_iter_get_pages(bio, iter);
+-		}
+-	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
+-
+-	if (is_bvec)
+-		bio_set_flag(bio, BIO_NO_PAGE_REF);
++		} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
++	}
+ 
+ 	/* don't account direct I/O as memory stall */
+ 	bio_clear_flag(bio, BIO_WORKINGSET);
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index d8f9077c43ef..1d30572a8c53 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -444,10 +444,13 @@ static inline void bio_wouldblock_error(struct bio *bio)
+ 
+ /*
+  * Calculate number of bvec segments that should be allocated to fit data
+- * pointed by @iter.
++ * pointed by @iter. If @iter is backed by bvec it's going to be reused
++ * instead of allocating a new one.
+  */
+ static inline int bio_iov_vecs_to_alloc(struct iov_iter *iter, int max_segs)
+ {
++	if (iov_iter_is_bvec(iter))
++		return 0;
+ 	return iov_iter_npages(iter, max_segs);
+ }
+ 
 -- 
 2.24.0
 

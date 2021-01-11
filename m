@@ -2,37 +2,37 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B00132F0B2B
-	for <lists+io-uring@lfdr.de>; Mon, 11 Jan 2021 03:55:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6701E2F0B3C
+	for <lists+io-uring@lfdr.de>; Mon, 11 Jan 2021 03:55:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726472AbhAKCxz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 10 Jan 2021 21:53:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:44294 "EHLO
+        id S1727014AbhAKCzC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 10 Jan 2021 21:55:02 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24132 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726110AbhAKCxy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 10 Jan 2021 21:53:54 -0500
+        by vger.kernel.org with ESMTP id S1726608AbhAKCzB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 10 Jan 2021 21:55:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610333548;
+        s=mimecast20190719; t=1610333615;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=NmxIKId+VX6+cTF2RHQgxXMT+Y+5Xys40++ViI5AjPc=;
-        b=QSQnnjERghwcTtto6QV0IuRif+m6Dj/XXeUCh0jpoh8HY4bVSFhpIAmjoIsmKhFdbiScA2
-        uY6YhzedwpIPu1Yp/1uX7ZVHe5HiI07teKDVQ7E2mjO74gVWXwoQIsQofLdtmM15YPg8FD
-        TTx60bySagMkHiMIdocPEd9E6tdhSRo=
+        bh=VSn3PEjXx479346tX4pdLVVMo3Psn+BWkG3vnTamrKs=;
+        b=T8/TViHEHwT1t1aEQIB3PphTSdAWVOdPhAomMmscmV7Ts1lIXzeLnbJT18wLuSxqAV/Rx1
+        WPyzBPvHnTRJhSZtag57vDtGLGN8ps2d0NrbMcQsyOZm7vtQHxGmMigqNjYWdZQ/22sroM
+        XOe+x01cpQY2jmUFnWBvgg7q8PWFgQQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-498-PYIOgBh0OiqZjtWVS1Btig-1; Sun, 10 Jan 2021 21:52:22 -0500
-X-MC-Unique: PYIOgBh0OiqZjtWVS1Btig-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-235-bbZB2EVONAW1M4aFghKepw-1; Sun, 10 Jan 2021 21:53:31 -0500
+X-MC-Unique: bbZB2EVONAW1M4aFghKepw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3ED78801817;
-        Mon, 11 Jan 2021 02:52:20 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 77137107ACE4;
+        Mon, 11 Jan 2021 02:53:28 +0000 (UTC)
 Received: from T590 (ovpn-12-180.pek2.redhat.com [10.72.12.180])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B5C561002391;
-        Mon, 11 Jan 2021 02:52:09 +0000 (UTC)
-Date:   Mon, 11 Jan 2021 10:52:05 +0800
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 260EA5D9CC;
+        Mon, 11 Jan 2021 02:53:16 +0000 (UTC)
+Date:   Mon, 11 Jan 2021 10:53:12 +0800
 From:   Ming Lei <ming.lei@redhat.com>
 To:     Pavel Begunkov <asml.silence@gmail.com>
 Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
@@ -47,77 +47,89 @@ Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 3/7] block/psi: remove PSI annotations from direct IO
-Message-ID: <20210111025205.GD4147870@T590>
+Subject: Re: [PATCH v3 4/7] target/file: allocate the bvec array as part of
+ struct target_core_file_cmd
+Message-ID: <20210111025312.GE4147870@T590>
 References: <cover.1610170479.git.asml.silence@gmail.com>
- <faad7d7f58ff45285eaac9af7fae9a5fcca98977.1610170479.git.asml.silence@gmail.com>
+ <2650722037cd756690f2e398468420bbaa26ed7f.1610170479.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <faad7d7f58ff45285eaac9af7fae9a5fcca98977.1610170479.git.asml.silence@gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <2650722037cd756690f2e398468420bbaa26ed7f.1610170479.git.asml.silence@gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Jan 09, 2021 at 04:02:59PM +0000, Pavel Begunkov wrote:
-> Direct IO does not operate on the current working set of pages managed
-> by the kernel, so it should not be accounted as memory stall to PSI
-> infrastructure.
+On Sat, Jan 09, 2021 at 04:03:00PM +0000, Pavel Begunkov wrote:
+> From: Christoph Hellwig <hch@lst.de>
 > 
-> The block layer and iomap direct IO use bio_iov_iter_get_pages()
-> to build bios, and they are the only users of it, so to avoid PSI
-> tracking for them clear out BIO_WORKINGSET flag. Do same for
-> dio_bio_submit() because fs/direct_io constructs bios by hand directly
-> calling bio_add_page().
+> This saves one memory allocation, and ensures the bvecs aren't freed
+> before the AIO completion.  This will allow the lower level code to be
+> optimized so that it can avoid allocating another bvec array.
 > 
-> Reported-by: Christoph Hellwig <hch@infradead.org>
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 > ---
->  block/bio.c    | 6 ++++++
->  fs/direct-io.c | 2 ++
->  2 files changed, 8 insertions(+)
+>  drivers/target/target_core_file.c | 20 ++++++--------------
+>  1 file changed, 6 insertions(+), 14 deletions(-)
 > 
-> diff --git a/block/bio.c b/block/bio.c
-> index 1f2cc1fbe283..9f26984af643 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1099,6 +1099,9 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
->   * fit into the bio, or are requested in @iter, whatever is smaller. If
->   * MM encounters an error pinning the requested pages, it stops. Error
->   * is returned only if 0 pages could be pinned.
-> + *
-> + * It's intended for direct IO, so doesn't do PSI tracking, the caller is
-> + * responsible for setting BIO_WORKINGSET if necessary.
->   */
->  int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
->  {
-> @@ -1123,6 +1126,9 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+> diff --git a/drivers/target/target_core_file.c b/drivers/target/target_core_file.c
+> index b0cb5b95e892..cce455929778 100644
+> --- a/drivers/target/target_core_file.c
+> +++ b/drivers/target/target_core_file.c
+> @@ -241,6 +241,7 @@ struct target_core_file_cmd {
+>  	unsigned long	len;
+>  	struct se_cmd	*cmd;
+>  	struct kiocb	iocb;
+> +	struct bio_vec	bvecs[];
+>  };
 >  
->  	if (is_bvec)
->  		bio_set_flag(bio, BIO_NO_PAGE_REF);
-> +
-> +	/* don't account direct I/O as memory stall */
-> +	bio_clear_flag(bio, BIO_WORKINGSET);
->  	return bio->bi_vcnt ? 0 : ret;
->  }
->  EXPORT_SYMBOL_GPL(bio_iov_iter_get_pages);
-> diff --git a/fs/direct-io.c b/fs/direct-io.c
-> index d53fa92a1ab6..0e689233f2c7 100644
-> --- a/fs/direct-io.c
-> +++ b/fs/direct-io.c
-> @@ -426,6 +426,8 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
->  	unsigned long flags;
+>  static void cmd_rw_aio_complete(struct kiocb *iocb, long ret, long ret2)
+> @@ -268,29 +269,22 @@ fd_execute_rw_aio(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+>  	struct target_core_file_cmd *aio_cmd;
+>  	struct iov_iter iter = {};
+>  	struct scatterlist *sg;
+> -	struct bio_vec *bvec;
+>  	ssize_t len = 0;
+>  	int ret = 0, i;
 >  
->  	bio->bi_private = dio;
-> +	/* don't account direct I/O as memory stall */
-> +	bio_clear_flag(bio, BIO_WORKINGSET);
+> -	aio_cmd = kmalloc(sizeof(struct target_core_file_cmd), GFP_KERNEL);
+> +	aio_cmd = kmalloc(struct_size(aio_cmd, bvecs, sgl_nents), GFP_KERNEL);
+>  	if (!aio_cmd)
+>  		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
 >  
->  	spin_lock_irqsave(&dio->bio_lock, flags);
->  	dio->refcount++;
+> -	bvec = kcalloc(sgl_nents, sizeof(struct bio_vec), GFP_KERNEL);
+> -	if (!bvec) {
+> -		kfree(aio_cmd);
+> -		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
+> -	}
+> -
+>  	for_each_sg(sgl, sg, sgl_nents, i) {
+> -		bvec[i].bv_page = sg_page(sg);
+> -		bvec[i].bv_len = sg->length;
+> -		bvec[i].bv_offset = sg->offset;
+> +		aio_cmd->bvecs[i].bv_page = sg_page(sg);
+> +		aio_cmd->bvecs[i].bv_len = sg->length;
+> +		aio_cmd->bvecs[i].bv_offset = sg->offset;
+>  
+>  		len += sg->length;
+>  	}
+>  
+> -	iov_iter_bvec(&iter, is_write, bvec, sgl_nents, len);
+> +	iov_iter_bvec(&iter, is_write, aio_cmd->bvecs, sgl_nents, len);
+>  
+>  	aio_cmd->cmd = cmd;
+>  	aio_cmd->len = len;
+> @@ -307,8 +301,6 @@ fd_execute_rw_aio(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+>  	else
+>  		ret = call_read_iter(file, &aio_cmd->iocb, &iter);
+>  
+> -	kfree(bvec);
+> -
+>  	if (ret != -EIOCBQUEUED)
+>  		cmd_rw_aio_complete(&aio_cmd->iocb, ret, 0);
+>  
 > -- 
 > 2.24.0
 > 

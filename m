@@ -2,67 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 727F02F0C33
-	for <lists+io-uring@lfdr.de>; Mon, 11 Jan 2021 06:17:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30AD92F0C3F
+	for <lists+io-uring@lfdr.de>; Mon, 11 Jan 2021 06:24:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbhAKFRD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 11 Jan 2021 00:17:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60352 "EHLO
+        id S1725536AbhAKFYL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 11 Jan 2021 00:24:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbhAKFRD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Jan 2021 00:17:03 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C249C061795
-        for <io-uring@vger.kernel.org>; Sun, 10 Jan 2021 21:16:22 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id v14so12761891wml.1
-        for <io-uring@vger.kernel.org>; Sun, 10 Jan 2021 21:16:22 -0800 (PST)
+        with ESMTP id S1725379AbhAKFYK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Jan 2021 00:24:10 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BF84C061786
+        for <io-uring@vger.kernel.org>; Sun, 10 Jan 2021 21:23:30 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id t30so15052599wrb.0
+        for <io-uring@vger.kernel.org>; Sun, 10 Jan 2021 21:23:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=thgThFjPlfSSMqINwK9VxQ5BaqxSpxmt4UNvIx1uQNE=;
-        b=RKHeHEropCLonTk0uVQvSljngPTKNVn8dxi96EuziSCTXX5aEgXIhayGuGP3rYkfBg
-         XVM/f6KmI/OB9TO34O8x9ghzgbAROeETk5/OJLq4oeXujkEhxdbnMixvZ8N45pmQwdTp
-         5wCnPADkgcSV3QViQUCMEOt0+NNKhnSG02smdKPl86Oc52v9Wd+3S8CMvtfjKDOdLI9f
-         o3D23fzsM/ExfYVRTfJUh8BuWxtGn2LvrOEVi6+/9csvrh7Pjz4qpRXYSkSt8htcD9m8
-         babD9Kvczzb0bRtC/wSrerMKCsXbUOy4epOjOtWjb3nJ/pguGZ2VEMfjtJXnn9qCUTqk
-         IdYw==
+        bh=WfKvOqoIQHIS9+tDlH8Ku/AZv1yv6HKg3EV+OPk+uO0=;
+        b=XaQmi1129H2hBXf66nnkS7AwOBMS0gPrvy3gzZy/GMnWGaWg2NbFmCONre95JWuMND
+         s6wuG/jCIW93PJDS7/zkhVb9v20v4fpowTtRAtLmybcBvVv6vIiYOeAPNyqC6wDIJt3X
+         klFAYkaNv0Ps0nbFbPazATEgBq25nlHqayuTxIiFEpvel5N9ehnWP9fsAn5bWHOxG9X3
+         K2MMsHfbxfsnm/j27sh6TJDtW2VBm0/hYiRTeVvaXph99p7e2Imm66BpFZiNAWOgU9OS
+         zeAbA3o5qCefKESKTukvFM2D6fjlbdgGXa+kL+jWdTbV7yLYgnPiIcltMDXDLJP9ghf+
+         eYNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=thgThFjPlfSSMqINwK9VxQ5BaqxSpxmt4UNvIx1uQNE=;
-        b=jrZUFkE55FPH1f/s9c9cJYZNPL+SscP51zQwlzTeDEp8wfAI8q8iJxIy1brkjAd1oD
-         G57xkbLSk4HEuuqIHUS747CksZcVQbLaSeJsruK53Se602jsThEXDNDOgTlNmqOWJyxC
-         afvHmF2JqrbW9jnvzY901PybsFG6q/KkqG5JzCf+X4Dalgb8af1dK/lL+8ARNAOvNiZX
-         peaZj+gSGcBzxywHWgrVYx8Xb6ByMJ3oR/hCmF3CftzvH65VOM0Xd1wDVK8sCSdTZ2Gq
-         8cJDmCBmF/fZgLHE2ddCOaVruMh0P36VEeDNEhzfM6kvmd04MhXUrkAqpJbcI/YaolSm
-         NPtw==
-X-Gm-Message-State: AOAM531nJvmTZ3v8csT4MtK86rS2Kfds2uk6N0efs3meETAiWS1jCLFj
-        ZoHjK5lJlUhK2rUQoLNohna53pBwj5E=
-X-Google-Smtp-Source: ABdhPJyGurkAjEo5QC5d4m3ncu5PTc9beBaro8Yu6QodDUS0W1poOn3wCcSqb988u01GVlVxWyQnJg==
-X-Received: by 2002:a1c:4489:: with SMTP id r131mr13226132wma.24.1610342181078;
-        Sun, 10 Jan 2021 21:16:21 -0800 (PST)
+        bh=WfKvOqoIQHIS9+tDlH8Ku/AZv1yv6HKg3EV+OPk+uO0=;
+        b=emc56JWNWIa8EbUWJI3B+j1o1rE0WCsVY0yZwqZgkSrQFol5pr1sIJL6QcoDur0tAY
+         ZLVUEt3hOcmQeL6yBbg8l3pg1OvF2dazFnDZVURx3KiOpD3njyQP0ghkEB8+0jfQmOl6
+         u5Ez41ymof4dTmFW6NQOLGpfVndrLg6iUZrAtCsejepdgcYQWefAhM2k7FW9uA/FtLrO
+         /bhipVH7ryweGpquwMHkqpQQ8Hs6WoBKkLVpherpLL69ErE6CLJH9Xnh4ydm8lbBAGz2
+         Entws5cbDjtJglC1ZQ94Kb6yY9sHLMgURVu9FBPMB9XWQAN/NlAcGtTZRGsFlqaWEXeg
+         BHfw==
+X-Gm-Message-State: AOAM533aDg7GQytS4/FNiR7ftshDp9kKlCROJAX+qKEvDI0RJgn6Diiu
+        ZLMQOjHBHt0n5erm07UA4tb2UnOXYOY=
+X-Google-Smtp-Source: ABdhPJz8FWBnpoWKold9or/lW6w6xQYv9NFmzcNgh1oqgmncb98wUwHEXPpxaQGtNSNwp6IlsqHPKw==
+X-Received: by 2002:adf:9cca:: with SMTP id h10mr14480553wre.77.1610342608988;
+        Sun, 10 Jan 2021 21:23:28 -0800 (PST)
 Received: from [192.168.8.119] ([85.255.237.6])
-        by smtp.gmail.com with ESMTPSA id n9sm22547008wrq.41.2021.01.10.21.16.19
+        by smtp.gmail.com with ESMTPSA id z15sm23177353wrv.67.2021.01.10.21.23.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Jan 2021 21:16:20 -0800 (PST)
-Subject: Re: [PATCH v3 08/13] io_uring: implement fixed buffers registration
- similar to fixed files
+        Sun, 10 Jan 2021 21:23:28 -0800 (PST)
 To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
         io-uring@vger.kernel.org
-References: <1608314848-67329-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1608314848-67329-9-git-send-email-bijan.mottahedeh@oracle.com>
- <f0bff3b0-f27e-80fe-9a58-dfeb347a7e61@gmail.com>
- <c982a4ea-e39f-d8e0-1fc7-27086395ea9a@oracle.com>
- <66fd0092-2d03-02c0-fe1c-941c761a24f8@gmail.com>
- <20b6a902-4193-22fe-2cd7-569024648a26@oracle.com>
- <5d14a511-34d2-1aa7-e902-ed4f0e6ded82@gmail.com>
- <554b54ec-f7b4-a8ed-6b74-8d209b0a0f5f@oracle.com>
- <d673405c-79bb-d326-13cf-c54ad3f36b4b@gmail.com>
- <e7e1365b-5392-5d58-959f-0cbfc0c74fef@gmail.com>
- <f1288c74-fbab-b02e-f3b4-f96953a7572d@oracle.com>
+References: <1607379352-68109-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1607379352-68109-14-git-send-email-bijan.mottahedeh@oracle.com>
+ <ff17d576-27eb-9008-d858-e1ebb7c93dad@gmail.com>
+ <2070b1b5-2931-7782-305f-c578b3b24567@oracle.com>
+ <074644d5-f299-3b70-9d86-bf4ed59d9674@oracle.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -107,12 +99,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <e658c397-31c4-d0bf-dad2-7e32d16a4575@gmail.com>
-Date:   Mon, 11 Jan 2021 05:12:47 +0000
+Subject: Re: [PATCH v2 13/13] io_uring: support buffer registration sharing
+Message-ID: <4c9d62d8-efc5-1cd6-e73c-9efd3b694950@gmail.com>
+Date:   Mon, 11 Jan 2021 05:19:55 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <f1288c74-fbab-b02e-f3b4-f96953a7572d@oracle.com>
+In-Reply-To: <074644d5-f299-3b70-9d86-bf4ed59d9674@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -120,58 +113,25 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 08/01/2021 01:53, Bijan Mottahedeh wrote:
+> The intended use case for buffer registration is:
 > 
->> Forgot to mention, I failed to find where you do
->> io_set_resource_node() in v4 for fixed reads/writes.
->> Also, it should be done during submission, io_prep_rw()
->> is the right place for that.
+> - a group of processes attach a shmem segment
+> - one process registers the buffers in the shmem segment and shares it
+> - other processes attach that registration
 > 
-> Would something like below be ok?  I renamed io_set_resource_node() to io_get_fixed_rsrc_ref() to make its function more clear and also distinguish it from io_sqe_rsrc_set_node().
+> For this case, it seems that there is really no need to wait for the attached processes to get rid of the their references since the shmem segment (and thus the registered buffers) will persist anyway until the last attached process goes away.  So the last unregister could quiesce all references and get rid of the shared buf_data.
+> 
+> I'm not sure how useful the non-shmem use case would be anyway.
+> 
+> Would it makes sense to restrict the scope of this feature?
 
-looks good
+I have to say I like that generic resources thing, makes it easier to
+extend in the future. e.g. pre-allocating dma mappings, structs like
+bios, etc.
 
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index bd55d11..a9b9881 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -1083,12 +1083,11 @@ static inline void io_clean_op(struct io_kiocb *req)
->                 __io_clean_op(req);
->  }
-> 
-> -static inline void io_set_resource_node(struct io_kiocb *req)
-> +static inline void io_get_fixed_rsrc_ref(struct io_kiocb *req,
-> +                                        struct fixed_rsrc_data *rsrc_data)
->  {
-> -       struct io_ring_ctx *ctx = req->ctx;
-> -
->         if (!req->fixed_rsrc_refs) {
-> -               req->fixed_rsrc_refs = &ctx->file_data->node->refs;
-> +               req->fixed_rsrc_refs = &rsrc_data->node->refs;
->                 percpu_ref_get(req->fixed_rsrc_refs);
->         }
->  }
-> @@ -2928,6 +2927,9 @@ static int io_prep_rw(struct io_kiocb *req, const struct i
->         req->rw.addr = READ_ONCE(sqe->addr);
->         req->rw.len = READ_ONCE(sqe->len);
->         req->buf_index = READ_ONCE(sqe->buf_index);
-> +       if (req->opcode == IORING_OP_READ_FIXED ||
-> +           req->opcode == IORING_OP_WRITE_FIXED)
-> +               io_get_fixed_rsrc_ref(req, ctx->buf_data);
->         return 0;
->  }
-> 
-> @@ -6452,7 +6454,7 @@ static struct file *io_file_get(struct io_submit_state *st
->                         return NULL;
->                 fd = array_index_nospec(fd, ctx->nr_user_files);
->                 file = io_file_from_index(ctx, fd);
-> -               io_set_resource_node(req);
-> +               io_get_fixed_rsrc_ref(req, ctx->file_data);
->         } else {
->                 trace_io_uring_file_get(ctx, fd);
->                 file = __io_file_get(state, fd);
-> 
+I didn't think it through properly but it also looks that with refnodes
+it would be much easier to do sharing in the end, if not possible
+vs impossible.
 
 -- 
 Pavel Begunkov

@@ -2,54 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC3F42F3DE2
-	for <lists+io-uring@lfdr.de>; Wed, 13 Jan 2021 01:44:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EF8E2F3E0D
+	for <lists+io-uring@lfdr.de>; Wed, 13 Jan 2021 01:44:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729881AbhALVs4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Jan 2021 16:48:56 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:40582 "EHLO
+        id S1726840AbhALWB1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Jan 2021 17:01:27 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:39086 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393293AbhALVgN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Jan 2021 16:36:13 -0500
+        with ESMTP id S2406921AbhALVeN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Jan 2021 16:34:13 -0500
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10CLYGsI005824;
-        Tue, 12 Jan 2021 21:35:31 GMT
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10CLEu2U169979;
+        Tue, 12 Jan 2021 21:33:30 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=ayhtN4eIkM8i/9wjY0V2fReyPM4t/0xsE6t1l25FzkY=;
- b=0ZHYDC1ym85CGYQrRGBHzeHXR0GzMUGgKcsubFIOCIzO47L9am40fMpy2pxGE+90yhNg
- jScox+yWzCUb8sZnTXNEgT+nUF8JyMTn4WOeisz30ZyvbYkrA8iTiPgsvDr9nfXyVxo6
- uTrROVHJCHwwl+gOmVzTeqjkN23rejeBuDEYeiVJx0qiCpHOTr5zohKlrF4LRYOiAZ09
- +lDyUi2bdrp1en54+PH76SYpHM1WoU4PE+hx8l/O72KG6QbeiF9mCbDDu0UReRSJ2LSV
- g9h+QJpvwZx+klNFcwGsR4vyfYOjV0Rrjqa4fJniVOQIQJW+CLBBbkjcbvX7KTwyAaBO bQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 360kcyrkn7-1
+ bh=ya1XrmtEGOUZK23I6HVRMG9io1VVR92ySlDqdIdknbk=;
+ b=KPPvmluCoe+hueI0EDlSRviUdUadSL0W4khBqbgGZyTOh/ytmV60CM+goiumHZO5UZQG
+ 7r7rdYzWTsMEc5OCI/EhXI/YAaZ5Zip7qTE75NjFDWiUvOhwYF6uHU0kJcbLnAhkZpwB
+ AzjMKrLwyeq6qKFcMCVPZ1stcdu70zT3ECIJFvJcfSc8Elapoo0z7wVuRtRKn9IY0A64
+ bqwF6yYShZB+SL4UTQFnthCntQbPvPFpINkLSX2j2oQVf+wiNPiXN9mfeMt2G4NyCJxY
+ 5j4lIzazlkHs9aGquuMO0XLo+o+StIEwkS3hrvIxLNE+6mtoZ/y2rX7BHb+RcTmXCL3v qQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 360kcyrkef-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jan 2021 21:35:31 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10CLEbdj105232;
+        Tue, 12 Jan 2021 21:33:30 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10CLFcrQ131818;
         Tue, 12 Jan 2021 21:33:30 GMT
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 360kehsfy9-1
+        by aserp3020.oracle.com with ESMTP id 360ke76qte-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Tue, 12 Jan 2021 21:33:30 +0000
 Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 10CLXTJb031646;
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 10CLXTJH031649;
         Tue, 12 Jan 2021 21:33:29 GMT
 Received: from ca-ldom147.us.oracle.com (/10.129.68.131)
         by default (Oracle Beehive Gateway v4.0)
         with ESMTP ; Tue, 12 Jan 2021 13:33:29 -0800
 From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
-Subject: [PATCH v5 12/13] io_uring: call io_get_fixed_rsrc_ref for buffers
-Date:   Tue, 12 Jan 2021 13:33:12 -0800
-Message-Id: <1610487193-21374-13-git-send-email-bijan.mottahedeh@oracle.com>
+Subject: [PATCH v5 13/13] io_uring: support buffer registration sharing
+Date:   Tue, 12 Jan 2021 13:33:13 -0800
+Message-Id: <1610487193-21374-14-git-send-email-bijan.mottahedeh@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1610487193-21374-1-git-send-email-bijan.mottahedeh@oracle.com>
 References: <1610487193-21374-1-git-send-email-bijan.mottahedeh@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9862 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 spamscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=999 adultscore=0 bulkscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
  definitions=main-2101120127
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9862 signatures=668683
@@ -57,57 +57,190 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phish
  impostorscore=0 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
  lowpriorityscore=0 clxscore=1015 mlxlogscore=999 mlxscore=0
  priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101120128
+ engine=8.12.0-2009150000 definitions=main-2101120127
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_get_fixed_rsrc_ref() must be called for both buffers and files.
+Implement buffer sharing among multiple rings.
+
+A ring shares its (future) buffer registrations at setup time with
+IORING_SETUP_SHARE_BUF. A ring attaches to another ring's buffer
+registration at setup time with IORING_SETUP_ATTACH_BUF, after
+authenticating with the buffer registration owner's fd. Any updates to
+the owner's buffer registrations become immediately available to the
+attached rings.
 
 Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+
+Conflicts:
+	fs/io_uring.c
 ---
- fs/io_uring.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ fs/io_uring.c                 | 85 +++++++++++++++++++++++++++++++++++++++++--
+ include/uapi/linux/io_uring.h |  2 +
+ 2 files changed, 83 insertions(+), 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5ab0ff1..37639b9 100644
+index 37639b9..856a570b 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1079,12 +1079,11 @@ static inline void io_clean_op(struct io_kiocb *req)
- 		__io_clean_op(req);
+@@ -8439,6 +8439,13 @@ static void io_buffers_map_free(struct io_ring_ctx *ctx)
+ 	ctx->nr_user_bufs = 0;
  }
  
--static inline void io_set_resource_node(struct io_kiocb *req)
-+static inline void io_get_fixed_rsrc_ref(struct io_kiocb *req,
-+					 struct fixed_rsrc_data *rsrc_data)
++static void io_detach_buf_data(struct io_ring_ctx *ctx)
++{
++	percpu_ref_put(&ctx->buf_data->refs);
++	ctx->buf_data = NULL;
++	ctx->nr_user_bufs = 0;
++}
++
+ static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
  {
--	struct io_ring_ctx *ctx = req->ctx;
--
- 	if (!req->fixed_rsrc_refs) {
--		req->fixed_rsrc_refs = &ctx->file_data->node->refs;
-+		req->fixed_rsrc_refs = &rsrc_data->node->refs;
- 		percpu_ref_get(req->fixed_rsrc_refs);
+ 	struct fixed_rsrc_data *data = ctx->buf_data;
+@@ -8447,6 +8454,11 @@ static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
+ 	if (!data)
+ 		return -ENXIO;
+ 
++	if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
++		io_detach_buf_data(ctx);
++		return 0;
++	}
++
+ 	ret = io_rsrc_ref_quiesce(data, ctx, alloc_fixed_buf_ref_node);
+ 	if (ret)
+ 		return ret;
+@@ -8690,9 +8702,13 @@ static struct fixed_rsrc_data *io_buffers_map_alloc(struct io_ring_ctx *ctx,
+ 	if (!nr_args || nr_args > IORING_MAX_FIXED_BUFS)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	buf_data = alloc_fixed_rsrc_data(ctx);
+-	if (IS_ERR(buf_data))
+-		return buf_data;
++	if (ctx->buf_data) {
++		buf_data = ctx->buf_data;
++	} else {
++		buf_data = alloc_fixed_rsrc_data(ctx);
++		if (IS_ERR(buf_data))
++			return buf_data;
++	}
+ 
+ 	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_BUFS_TABLE);
+ 	buf_data->table = kcalloc(nr_tables, sizeof(*buf_data->table),
+@@ -8757,9 +8773,17 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	if (ctx->nr_user_bufs)
+ 		return -EBUSY;
+ 
++	if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
++		if (!ctx->buf_data)
++			return -EFAULT;
++		ctx->nr_user_bufs = ctx->buf_data->ctx->nr_user_bufs;
++		return 0;
++	}
++
+ 	buf_data = io_buffers_map_alloc(ctx, nr_args);
+ 	if (IS_ERR(buf_data))
+ 		return PTR_ERR(buf_data);
++	ctx->buf_data = buf_data;
+ 
+ 	for (i = 0; i < nr_args; i++, ctx->nr_user_bufs++) {
+ 		struct io_mapped_ubuf *imu;
+@@ -8783,7 +8807,6 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+ 			break;
  	}
- }
-@@ -2921,6 +2920,9 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	req->rw.addr = READ_ONCE(sqe->addr);
- 	req->rw.len = READ_ONCE(sqe->len);
- 	req->buf_index = READ_ONCE(sqe->buf_index);
-+	if (req->opcode == IORING_OP_READ_FIXED ||
-+	    req->opcode == IORING_OP_WRITE_FIXED)
-+		io_get_fixed_rsrc_ref(req, ctx->buf_data);
- 	return 0;
+ 
+-	ctx->buf_data = buf_data;
+ 	if (ret) {
+ 		io_sqe_buffers_unregister(ctx);
+ 		return ret;
+@@ -9831,6 +9854,55 @@ static struct file *io_uring_get_file(struct io_ring_ctx *ctx)
+ 	return file;
  }
  
-@@ -6453,7 +6455,7 @@ static struct file *io_file_get(struct io_submit_state *state,
- 			return NULL;
- 		fd = array_index_nospec(fd, ctx->nr_user_files);
- 		file = io_file_from_index(ctx, fd);
--		io_set_resource_node(req);
-+		io_get_fixed_rsrc_ref(req, ctx->file_data);
- 	} else {
- 		trace_io_uring_file_get(ctx, fd);
- 		file = __io_file_get(state, fd);
++static int io_attach_buf_data(struct io_ring_ctx *ctx,
++			      struct io_uring_params *p)
++{
++	struct io_ring_ctx *ctx_attach;
++	struct fd f;
++
++	f = fdget(p->wq_fd);
++	if (!f.file)
++		return -EBADF;
++	if (f.file->f_op != &io_uring_fops) {
++		fdput(f);
++		return -EINVAL;
++	}
++
++	ctx_attach = f.file->private_data;
++	if (!ctx_attach->buf_data) {
++		fdput(f);
++		return -EINVAL;
++	}
++	ctx->buf_data = ctx_attach->buf_data;
++
++	percpu_ref_get(&ctx->buf_data->refs);
++	fdput(f);
++	return 0;
++}
++
++static int io_init_buf_data(struct io_ring_ctx *ctx, struct io_uring_params *p)
++{
++	if ((p->flags & (IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF)) ==
++	    (IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF))
++		return -EINVAL;
++
++	if (p->flags & IORING_SETUP_SHARE_BUF) {
++		struct fixed_rsrc_data *buf_data;
++
++		buf_data = alloc_fixed_rsrc_data(ctx);
++		if (IS_ERR(buf_data))
++			return PTR_ERR(buf_data);
++
++		ctx->buf_data = buf_data;
++		return 0;
++	}
++
++	if (p->flags & IORING_SETUP_ATTACH_BUF)
++		return io_attach_buf_data(ctx, p);
++
++	return 0;
++}
++
+ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 			   struct io_uring_params __user *params)
+ {
+@@ -9948,6 +10020,10 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	if (ret)
+ 		goto err;
+ 
++	ret = io_init_buf_data(ctx, p);
++	if (ret)
++		goto err;
++
+ 	ret = io_sq_offload_create(ctx, p);
+ 	if (ret)
+ 		goto err;
+@@ -10028,6 +10104,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
+ 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
+ 			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
++			IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF |
+ 			IORING_SETUP_R_DISABLED))
+ 		return -EINVAL;
+ 
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index b289ef8..3ad786a 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -98,6 +98,8 @@ enum {
+ #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
+ #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
+ #define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
++#define IORING_SETUP_SHARE_BUF	(1U << 7)	/* share buffer registration */
++#define IORING_SETUP_ATTACH_BUF	(1U << 8)	/* attach buffer registration */
+ 
+ enum {
+ 	IORING_OP_NOP,
 -- 
 1.8.3.1
 

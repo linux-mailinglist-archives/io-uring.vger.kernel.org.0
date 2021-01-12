@@ -2,162 +2,218 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2A5C2F19A2
-	for <lists+io-uring@lfdr.de>; Mon, 11 Jan 2021 16:28:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB6A82F2808
+	for <lists+io-uring@lfdr.de>; Tue, 12 Jan 2021 06:55:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbhAKP2o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 11 Jan 2021 10:28:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50284 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbhAKP2n (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Jan 2021 10:28:43 -0500
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E6F9C061786
-        for <io-uring@vger.kernel.org>; Mon, 11 Jan 2021 07:28:03 -0800 (PST)
-Received: by mail-qt1-x836.google.com with SMTP id c14so11451567qtn.0
-        for <io-uring@vger.kernel.org>; Mon, 11 Jan 2021 07:28:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vVvSSMRNW6dkLSIBB6sdcemTpoyKQFJyEllSoC482VU=;
-        b=JtVN6n+8heXJn/Gcl4trgPCugM78yquKz3cDk1Eg92NcGk6YLzzBDo5pbaUO+r5Uy3
-         blObGCt7Rh9npXDDcp42IpmAl8Q/CK9CPG/rtATx+2N57KB1URHaJmtNNoQ6diKkM0Gv
-         ZPzv/nqEgxywvIGqXTrV5aSiNnFWOw4QwFrtmXiACJ/XxOi+v3KV8VCF7kie4C8IQzCa
-         wtiOO8pp6iDKDFxf/GUS2dxiA+6nnB8mxWg5VLMv05yGFFU+JHb2oiy1wOlE5CaDZfws
-         Ss/lTIqqq/mrJlgNVOrSIFg9df7Kc6vqRhanLiukiZ8S49tUOza/TAe6FuMV70M5v/9Q
-         oELA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vVvSSMRNW6dkLSIBB6sdcemTpoyKQFJyEllSoC482VU=;
-        b=QZAkuOUcg+rT01J11fgILOK76L2PuuG1Xyo46fme9Kt4SOAym1tM4KDg7LtrC8heoL
-         o3CVJbkcToAjBMeMTsDmLgQ1Edz1SnpP2ZZAfjBk2nGaNgOzoTZLV/HfNzas52vlYCe/
-         sDr296WHoZg1Fz7OX6xNeuMKGYJ0Sjck9FNP35r5QhakFP619hME0YyPsAkO3kluIgm4
-         RoNPTayZlqEG/dnG/vgyM5Sh1Fv1Q6ktD7/CByLXCj420G+7o5u2b5a+CtP6BbLw1MfY
-         mqAKoPuyx6ym0PvAJ+xXkt8aIQ0+C4M57eT3uMLsbDzm1gKBmxhtEGSQNcT6Djxb/JyD
-         Gzig==
-X-Gm-Message-State: AOAM533DWS6PkZLhRu5nJSS091cMs7/YOIMK4bOS+2S0OEVf4FXP98OT
-        qque4gSVoUQvk6omUFmRQIGFK/g+CeuOpA==
-X-Google-Smtp-Source: ABdhPJytlTpkbp2ClL7NUC7zCvUnh4sw5QJYN78fokEt3224AHfdkCxoP9PuMODr9dYGUy2ugsj/Vw==
-X-Received: by 2002:ac8:4553:: with SMTP id z19mr128856qtn.278.1610378882840;
-        Mon, 11 Jan 2021 07:28:02 -0800 (PST)
-Received: from marcelo-debian.domain (cpe-184-152-69-119.nyc.res.rr.com. [184.152.69.119])
-        by smtp.gmail.com with ESMTPSA id k42sm6339652qtk.17.2021.01.11.07.28.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jan 2021 07:28:02 -0800 (PST)
-Date:   Mon, 11 Jan 2021 10:28:00 -0500
-From:   Marcelo Diop-Gonzalez <marcelo827@gmail.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] io_uring: flush timeouts that should already have
- expired
-Message-ID: <20210111152800.GB2998@marcelo-debian.domain>
-References: <20201219191521.82029-1-marcelo827@gmail.com>
- <20201219191521.82029-3-marcelo827@gmail.com>
- <d3feb2bc-b456-d057-e553-af024b234d31@gmail.com>
- <c0cde7df-f19f-92fd-e0f6-855396d126ab@gmail.com>
- <20210108155726.GA8655@marcelo-debian.domain>
- <2fc9e651-d786-7c2d-0d2c-47ed454f06be@gmail.com>
+        id S1731367AbhALFwq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Jan 2021 00:52:46 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:59105 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727374AbhALFwq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Jan 2021 00:52:46 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0ULUehui_1610430419;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0ULUehui_1610430419)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 12 Jan 2021 13:46:59 +0800
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Subject: Re: [dm-devel] [PATCH RFC 6/7] block: track cookies of split bios for
+ bio-based device
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
+        io-uring@vger.kernel.org
+References: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
+ <20201223112624.78955-7-jefflexu@linux.alibaba.com>
+ <20210107221825.GF21239@redhat.com>
+ <97ec2025-4937-b476-4f15-446cc304e799@linux.alibaba.com>
+ <20210108172635.GA29915@redhat.com>
+Message-ID: <16ba3a63-86f5-1acd-c129-767540186689@linux.alibaba.com>
+Date:   Tue, 12 Jan 2021 13:46:59 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2fc9e651-d786-7c2d-0d2c-47ed454f06be@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210108172635.GA29915@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jan 11, 2021 at 04:57:21AM +0000, Pavel Begunkov wrote:
-> On 08/01/2021 15:57, Marcelo Diop-Gonzalez wrote:
-> > On Sat, Jan 02, 2021 at 08:26:26PM +0000, Pavel Begunkov wrote:
-> >> On 02/01/2021 19:54, Pavel Begunkov wrote:
-> >>> On 19/12/2020 19:15, Marcelo Diop-Gonzalez wrote:
-> >>>> Right now io_flush_timeouts() checks if the current number of events
-> >>>> is equal to ->timeout.target_seq, but this will miss some timeouts if
-> >>>> there have been more than 1 event added since the last time they were
-> >>>> flushed (possible in io_submit_flush_completions(), for example). Fix
-> >>>> it by recording the starting value of ->cached_cq_overflow -
-> >>>> ->cq_timeouts instead of the target value, so that we can safely
-> >>>> (without overflow problems) compare the number of events that have
-> >>>> happened with the number of events needed to trigger the timeout.
-> >>
-> >> https://www.spinics.net/lists/kernel/msg3475160.html
-> >>
-> >> The idea was to replace u32 cached_cq_tail with u64 while keeping
-> >> timeout offsets u32. Assuming that we won't ever hit ~2^62 inflight
-> >> requests, complete all requests falling into some large enough window
-> >> behind that u64 cached_cq_tail.
-> >>
-> >> simplifying:
-> >>
-> >> i64 d = target_off - ctx->u64_cq_tail
-> >> if (d <= 0 && d > -2^32)
-> >> 	complete_it()
-> >>
-> >> Not fond  of it, but at least worked at that time. You can try out
-> >> this approach if you want, but would be perfect if you would find
-> >> something more elegant :)
-> >>
-> > 
-> > What do you think about something like this? I think it's not totally
-> > correct because it relies on having ->completion_lock in io_timeout() so
-> > that ->cq_last_tm_flushed is updated, but in case of IORING_SETUP_IOPOLL,
-> > io_iopoll_complete() doesn't take that lock, and ->uring_lock will not
-> > be held if io_timeout() is called from io_wq_submit_work(), but maybe
-> > could still be worth it since that was already possibly a problem?
-> 
-> I'll take a look later, but IOPOLL doesn't support timeouts, see
-> the first if in io_timeout_prep(), so that's not a problem, but would
-> better to leave a comment.
->
 
-Ah right! Nevermind about that then.
 
-> > 
-> > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> > index cb57e0360fcb..50984709879c 100644
-> > --- a/fs/io_uring.c
-> > +++ b/fs/io_uring.c
-> > @@ -353,6 +353,7 @@ struct io_ring_ctx {
-> >  		unsigned		cq_entries;
-> >  		unsigned		cq_mask;
-> >  		atomic_t		cq_timeouts;
-> > +		unsigned		cq_last_tm_flush;
-> >  		unsigned long		cq_check_overflow;
-> >  		struct wait_queue_head	cq_wait;
-> >  		struct fasync_struct	*cq_fasync;
-> > @@ -1633,19 +1634,26 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
-> >  
-> >  static void io_flush_timeouts(struct io_ring_ctx *ctx)
-> >  {
-> > +	u32 seq = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
-> > +
-> >  	while (!list_empty(&ctx->timeout_list)) {
-> > +		u32 events_needed, events_got;
-> >  		struct io_kiocb *req = list_first_entry(&ctx->timeout_list,
-> >  						struct io_kiocb, timeout.list);
-> >  
-> >  		if (io_is_timeout_noseq(req))
-> >  			break;
-> > -		if (req->timeout.target_seq != ctx->cached_cq_tail
-> > -					- atomic_read(&ctx->cq_timeouts))
-> > +
-> > +		events_needed = req->timeout.target_seq - ctx->cq_last_tm_flush;
-> > +		events_got = seq - ctx->cq_last_tm_flush;
-> > +		if (events_got < events_needed)
-> >  			break;
-> >  
-> >  		list_del_init(&req->timeout.list);
-> >  		io_kill_timeout(req);
-> >  	}
-> > +
-> > +	ctx->cq_last_tm_flush = seq;
-> >  }
-> >  
-> >  static void io_commit_cqring(struct io_ring_ctx *ctx)
-> > 
+On 1/9/21 1:26 AM, Mike Snitzer wrote:
+> On Thu, Jan 07 2021 at 10:08pm -0500,
+> JeffleXu <jefflexu@linux.alibaba.com> wrote:
 > 
-> -- 
-> Pavel Begunkov
+>> Thanks for reviewing.
+>>
+>>
+>> On 1/8/21 6:18 AM, Mike Snitzer wrote:
+>>> On Wed, Dec 23 2020 at  6:26am -0500,
+>>> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+>>>
+>>>> This is actuaaly the core when supporting iopoll for bio-based device.
+>>>>
+>>>> A list is maintained in the top bio (the original bio submitted to dm
+>>>> device), which is used to maintain all valid cookies of split bios. The
+>>>> IO polling routine will actually iterate this list and poll on
+>>>> corresponding hardware queues of the underlying mq devices.
+>>>>
+>>>> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+>>>
+>>> Like I said in response to patch 4 in this series: please fold patch 4
+>>> into this patch and _really_ improve this patch header.
+>>>
+>>> In particular, the (ab)use of bio_inc_remaining() needs be documented in
+>>> this patch header very well.
+>>>
+>>> But its use could easily be why you're seeing a performance hit (coupled
+>>> with the extra spinlock locking and list management used).  Just added
+>>> latency and contention across CPUs.
+>>
+>> Indeed bio_inc_remaining() is abused here and the code seems quite hacky
+>> here.
+>>
+>> Actually I'm regarding implementing the split bio tracking mechanism in
+>> a recursive way you had ever suggested. That is, the split bios could be
+>> maintained in an array, which is allocated with 'struct dm_io'. This way
+>> the overhead of spinlock protecting the &root->bi_plist may be omitted
+>> here. Also the lifetime management may be simplified somehow. But the
+>> block core needs to fetch the per-bio private data now, just like what
+>> you had ever suggested before.
+>>
+>> How do you think, Mike?
+> 
+> Yes, using per-bio-data is a requirement (we cannot bloat 'struct bio').
+
+Agreed. Then MD will need some refactor to support IO polling, if
+possible, since just like I mentioned in patch 0 before, MD doesn't
+allocate extra clone bio, and just re-uses the original bio structure.
+
+
+> 
+> As for using an array, how would you index the array?  
+
+The 'array' here is not an array of 'struct blk_mq_hw_ctx *' maintained
+in struct dm_table as you mentioned. Actually what I mean is to maintain
+an array of struct dm_poll_data (or something like that, e.g. just
+struct blk_mq_hw_ctx *) in per-bio private data. The size of the array
+just equals the number of the target devices.
+
+For example, for the following device stack,
+
+>>
+>> Suppose we have the following device stack hierarchy, that is, dm0 is
+>> stacked on dm1, while dm1 is stacked on nvme0 and nvme1.
+>>
+>>     dm0
+>>     dm1
+>> nvme0  nvme1
+>>
+>>
+>> Then the bio graph is like:
+>>
+>>
+>>                                    +------------+
+>>                                    |bio0(to dm0)|
+>>                                    +------------+
+>>                                          ^
+>>                                          | orig_bio
+>>                                    +--------------------+
+>>                                    |struct dm_io A      |
+>> +--------------------+ bi_private  ----------------------
+>> |bio3(to dm1)        |------------>|bio1(to dm1)        |
+>> +--------------------+             +--------------------+
+>>         ^                                ^
+>>         | ->orig_bio                     | ->orig_bio
+>> +--------------------+             +--------------------+
+>> |struct dm_io        |             |struct dm_io B      |
+>> ----------------------             ----------------------
+>> |bio2(to nvme0)      |             |bio4(to nvme1)      |
+>> +--------------------+             +--------------------+
+>>
+
+An array of struct blk_mq_hw_ctx * is maintained in struct dm_io B.
+
+
+struct blk_mq_hw_ctx * hctxs[2];
+
+The array size is two since dm1 maps to two target devices (i.e. nvme0
+and nvme1). Then hctxs[0] points to the hw queue of nvme0, while
+hctxs[1] points to the hw queue of nvme1.
+
+
+This mechanism supports arbitrary device stacking. Similarly, an array
+of struct blk_mq_hw_ctx * is maintained in struct dm_io A. The array
+size is one since dm0 only maps to one target device (i.e. dm1). In this
+case, hctx[0] points to the struct dm_io of the next level, i.e. struct
+dm_io B.
+
+
+But I'm afraid the implementation of this style may be more complex.
+
+
+>> struct node {
+>>     struct blk_mq_hw_ctx *hctx;
+>>     blk_qc_t cookie;
+>> };
+> 
+> Needs a better name, think I had 'struct dm_poll_data'
+
+Sure, the name here is just for example.
+
+
+>  
+>> Actually currently the tracking objects are all allocated with 'struct
+>> bio', then the lifetime management of the tracking objects is actually
+>> equivalent to lifetime management of bio. Since the returned cookie is
+>> actually a pointer to the bio, the refcount of this bio must be
+>> incremented, since we release a reference to this bio through the
+>> returned cookie, in which case the abuse of the refcount trick seems
+>> unavoidable? Unless we allocate the tracking object individually, then
+>> the returned cookie is actually pointing to the tracking object, and the
+>> refcount is individually maintained for the tracking object.
+> 
+> The refcounting and lifetime of the per-bio-data should all work as is.
+> Would hope you can avoid extra bio_inc_remaining().. that infratsructure
+> is way too tightly coupled to bio_chain()'ing, etc.
+> 
+> The challenge you have is the array that would point at these various
+> per-bio-data needs to be rooted somewhere (you put it in the topmost
+> original bio with the current patchset).  But why not manage that as
+> part of 'struct mapped_device'?  It'd need proper management at DM table
+> reload boundaries and such but it seems like the most logical place to
+> put the array.  But again, this array needs to be dynamic.. so thinking
+> further, maybe a better model would be to have a fixed array in 'struct
+> dm_table' for each hctx associated with a blk_mq _data_ device directly
+> used/managed by that dm_table?
+
+It seems that you are referring 'array' here as an array of 'struct
+blk_mq_hw_ctx *'? Such as
+
+struct dm_table {
+    ...
+    struct blk_mq_hw_ctx *hctxs[];
+};
+
+Certainly with this we can replace the original 'struct blk_mq_hw_ctx *'
+pointer in 'struct dm_poll_data' with the index into this array, such as
+
+struct dm_poll_data {
+     int hctx_index; /* index into dm_table->hctxs[] */
+     blk_qc_t cookie;
+};
+
+
+But I'm doubted if this makes much sense. The core difficulty here is
+maintaining a list (or dynamic sized array) to track all split bios.
+With the array of 'struct blk_mq_hw_ctx *' maintained in struct
+dm_table, we still need some **per-bio** structure (e.g., &bio->bi_plist
+in current patch set) to track these split bios.
+
+
+
+
+-- 
+Thanks,
+Jeffle

@@ -2,55 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F262F6D28
-	for <lists+io-uring@lfdr.de>; Thu, 14 Jan 2021 22:26:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B277E2F6D66
+	for <lists+io-uring@lfdr.de>; Thu, 14 Jan 2021 22:46:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbhANVY6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Jan 2021 16:24:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41826 "EHLO
+        id S1729345AbhANVoW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Jan 2021 16:44:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbhANVY6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 16:24:58 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B0AFC0613C1
-        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 13:24:17 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id d26so7245238wrb.12
-        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 13:24:17 -0800 (PST)
+        with ESMTP id S1726239AbhANVoR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 16:44:17 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BCAEC061575
+        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 13:43:37 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id h17so5542399wmq.1
+        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 13:43:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6sze08ZHhUNsh3nD9JZwK6TKwJ0W1cTPzYaIZSK4ix0=;
-        b=pZ67woARk1svEY9Shnf7vKHf5xwbvG42UtZ48bWxTd/MxI2/vsCVqw9VvEfV6C/iPM
-         bfgivIZhburaCU2Fr2Xm0fy2ozaF52VCNczisKKV+HeOo+gTGbZ3fh1JXtsG6TdfSOyr
-         oQuf/dwq47OVzmzQgg6DpKmSIKHcwWowKqB1XlOt40eDK4cRAQI5CwZ12vZBzhY7xdeq
-         gDnRuG83AssaWpGbYsrfZh/9AZURngtF05UdnHzHJKYsTotJ+uJFQ41qz60bfkSuvCqP
-         oi9rulTnsdYaNedEKMJEy8xD7PedKy8ETURnCMWxp56BrXDfHojLX5LFZ/rnsztUmuRy
-         CSkw==
+        bh=mn/S1HK48x7e6WvwCHHLATty3ZRrS2DLne+dERNox0Q=;
+        b=uzhX3XmX+gu49OefqY/h37VhGgBwogI/t0XhtcpAN7upzDTp/RmlnoiMFcYpGVC2xI
+         7NTFLM2gwmiiFJvnSKvieHT50/1WeCQoRFxk1dUEwve9tK2ASCrOD8T4ndUeV+VdUR7Y
+         d31AyAYXR/UMVkRoQCb3aUByx+cQIz822FqHO2khIbT3gxVcFUQrdzhgG/GiM6Vo/Pt7
+         zqZU/wr9YTiDPPQ2C9YW3NeHES50yzaDvbpwlwj8F53zz8kmD+g4eKChOhYnnOSsUbZX
+         22Bv9bBwk8SiGMIFgtBa0FWeyxh7KSCod3ay6qv0YTBGVGfQH8h1VbBsZyEnRqCaAmQj
+         Nsag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6sze08ZHhUNsh3nD9JZwK6TKwJ0W1cTPzYaIZSK4ix0=;
-        b=J7D5raVP3PvB9cXP/udCqoA+0i4lVm2UV1Oic0B1o8fvwVM9iu2rM6d+wqg2yxjzCt
-         ExlM+gHB6s3KFz0HNv2xAStnvABHnauW/0U2tlvAoFQSPAKszu19NUhlawg7rsxD3cIi
-         9wO9qaAp9tm7zgDpMy+ro5wDohZsSgwH5wSS5d0FilCByj7Hr419JUsXYB5GjlMyx8zV
-         ldJjLc432V+OHnS9EBTdI+k6hI2sodhtIeX/cOTQsdrCcNv4HGsaOe+M/lvvBn8vwcEf
-         8QTAwfqCg3dpEywuEx7FieMsHR9gC+Nm7Vm7yThxCVRCRA06shNki3VVhdnmJI7zOgr/
-         VWOA==
-X-Gm-Message-State: AOAM532KdOK851yUAx4tJzR+dRDE+LPU1RJ8lUMvLRYbA07chfOfxv79
-        oeIwsNLnumJOFlnAjx3AuCHuOKRBSgr96A==
-X-Google-Smtp-Source: ABdhPJwQikeqw7u65EZXY/klHT9FDYhMuhmnZoTQDPuu54bOQZ+9p0KMH+D3lJJiz7QP33Iirw7QVQ==
-X-Received: by 2002:a5d:55c6:: with SMTP id i6mr9853060wrw.137.1610659456087;
-        Thu, 14 Jan 2021 13:24:16 -0800 (PST)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=mn/S1HK48x7e6WvwCHHLATty3ZRrS2DLne+dERNox0Q=;
+        b=RMRi5OnziVKKFEHdz4IFSXVks1jLPr16XkX8/47X8/bPi1CG+Xz32cy1bTqxSkdUD5
+         J7i0WspZ4BKi7LwepL2mid3XHlOkL3h+LdSRH8jHFYEsLwHPopiBgciUzSP2dToWsmj6
+         gJ8IW63qdQfTUkDpgCFqaoRvsvzeNwJs2c1Aix7fVLkxE30ymU096FMMnwZlpXvfgvHs
+         m6er7doCd8EvhAg8FhRBZ+ICD/JgHekm34sYithWJJy+yXBMIylor1nncwMLH0hzwpa+
+         z82Tkj3wL2DQR9W3qfqpeyuvn4iMXjB+0NZIsRchGBDlyWLOBJ9mg2+XVq3qqil5lFpr
+         aGmw==
+X-Gm-Message-State: AOAM532gzIP/b5bCsXCp0t32yrLd4cxPa9gInhkJq8UduJb/J7P7mGBX
+        KcqViFYIhktA644IzCEuIjQ2cw9DzCpsiw==
+X-Google-Smtp-Source: ABdhPJxwn5YUqg/dNfua2a/gdDlSWoe34thJ+fwwWzBiLyFHY/7hHXlwFrmxkLZb4DwbbDMKrkb4Bw==
+X-Received: by 2002:a1c:96d7:: with SMTP id y206mr5810802wmd.9.1610660615935;
+        Thu, 14 Jan 2021 13:43:35 -0800 (PST)
 Received: from [192.168.8.122] ([85.255.233.192])
-        by smtp.gmail.com with ESMTPSA id v1sm10093571wmj.31.2021.01.14.13.24.15
+        by smtp.gmail.com with ESMTPSA id h14sm11940464wrx.37.2021.01.14.13.43.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jan 2021 13:24:15 -0800 (PST)
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
-        io-uring@vger.kernel.org
-References: <1610487193-21374-1-git-send-email-bijan.mottahedeh@oracle.com>
+        Thu, 14 Jan 2021 13:43:35 -0800 (PST)
+To:     Marcelo Diop-Gonzalez <marcelo827@gmail.com>, axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org
+References: <20210114155007.13330-1-marcelo827@gmail.com>
+ <20210114155007.13330-2-marcelo827@gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -95,13 +96,14 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v5 00/13] io_uring: buffer registration enhancements
-Message-ID: <86a8ae2e-78b4-6d8c-1aea-5f169de5aabc@gmail.com>
-Date:   Thu, 14 Jan 2021 21:20:41 +0000
+Subject: Re: [PATCH v3 1/1] io_uring: flush timeouts that should already have
+ expired
+Message-ID: <72e12671-c148-e24a-c055-713922d5bfe9@gmail.com>
+Date:   Thu, 14 Jan 2021 21:40:01 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1610487193-21374-1-git-send-email-bijan.mottahedeh@oracle.com>
+In-Reply-To: <20210114155007.13330-2-marcelo827@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -109,117 +111,64 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/01/2021 21:33, Bijan Mottahedeh wrote:
-> v5:
-> 
-> - call io_get_fixed_rsrc_ref for buffers
-> - make percpu_ref_release names consistent
-> - rebase on for-5.12/io_uring
+On 14/01/2021 15:50, Marcelo Diop-Gonzalez wrote:
+> Right now io_flush_timeouts() checks if the current number of events
+> is equal to ->timeout.target_seq, but this will miss some timeouts if
+> there have been more than 1 event added since the last time they were
+> flushed (possible in io_submit_flush_completions(), for example). Fix
+> it by recording the last sequence at which timeouts were flushed so
+> that the number of events seen can be compared to the number of events
+> needed without overflow.
 
-To reduce the burden I'll take the generalisation patches from that,
-review and resend to Jens with small changes leaving your "from:".
-I hope you don't mind, that should be faster.
-
-I'll remove your signed-off and will need it back by you replying
-on this coming resend.
+Looks good, but there is a little change I'll ask you to make (see
+below). In a meanwhile I'll test it, so the patch on the fast track.
 
 > 
-> v4:
+> Signed-off-by: Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+> ---
+>  fs/io_uring.c | 29 +++++++++++++++++++++++++----
+>  1 file changed, 25 insertions(+), 4 deletions(-)
 > 
-> - address v3 comments (TBD REGISTER_BUFFERS)
-> - rebase
-> 
-> v3:
-> 
-> - batch file->rsrc renames into a signle patch when possible
-> - fix other review changes from v2
-> - fix checkpatch warnings
-> 
-> v2:
-> 
-> - drop readv/writev with fixed buffers patch
-> - handle ref_nodes both both files/buffers with a single ref_list
-> - make file/buffer handling more unified
-> 
-> This patchset implements a set of enhancements to buffer registration
-> consistent with existing file registration functionality:
-> 
-> - buffer registration updates		IORING_REGISTER_BUFFERS_UPDATE
-> 					IORING_OP_BUFFERS_UPDATE
-> 
-> - buffer registration sharing		IORING_SETUP_SHARE_BUF
-> 					IORING_SETUP_ATTACH_BUF
-> 
-> Patch 1-5 generalize fixed_file functionality to fixed_rsrc.
-> 
-> Patch 6 applies fixed_rsrc functionality for fixed buffers support.
-> 
-> Patch 7-8 generalize files_update functionality to rsrc_update.
-> 
-> Patch 9 implements buffer registration update, and introduces
-> IORING_REGISTER_BUFFERS_UPDATE and IORING_OP_BUFFERS_UPDATE, consistent
-> with file registration update.
-> 
-> Patch 10 generalizes fixed resource allocation 
-> 
-> Patch 11 renames percpu release routines for consistency
-> 
-> Patch 12 calls io_get_fixed_rsrc_ref() for buffers as well as files
-> 
-> Patch 13 implements buffer sharing among multiple rings; it works as follows:
-> 
-> - A new ring, A,  is setup. Since no buffers have been registered, the
->   registered buffer state is an empty set, Z. That's different from the
->   NULL state in current implementation.
-> 
-> - Ring B is setup, attaching to Ring A. It's also attaching to it's
->   buffer registrations, now we have two references to the same empty
->   set, Z.
-> 
-> - Ring A registers buffers into set Z, which is no longer empty.
-> 
-> - Ring B sees this immediately, since it's already sharing that set.
-> 
-> Testing
-> 
-> I have used liburing file-{register,update} tests as models for
-> buffer-{register,update,share}, tests and they run ok.
-> 
-> TBD
-> 
-> - Need a patch from Pavel to address a race between fixed IO from async
-> context and buffer unregister, or force buffer registration ops to do
-> full quiesce.
-> 
-> - Need to still address Pavel's comments about unkillable deadlocks. It
-> seems that we should no long hange unkillably in io_rsrc_ref_quiesce()
-> because of Pavel's changes.
-> 
-> - I tried to use a single opcode for files/buffers but ran into an
-> issue since work_flags is different for files/buffers.  This should
-> be ok for the most part since req->work.flags is ultimately examined;
-> however, there are place where io_op_defs[opcode].work_flags is examined
-> directly, and I wasn't sure what would the best way to handle that.
-> 
-> Bijan Mottahedeh (13):
->   io_uring: rename file related variables to rsrc
->   io_uring: generalize io_queue_rsrc_removal
->   io_uring: separate ref_list from fixed_rsrc_data
->   io_uring: split alloc_fixed_file_ref_node
->   io_uring: add rsrc_ref locking routines
->   io_uring: implement fixed buffers registration similar to fixed files
->   io_uring: create common fixed_rsrc_ref_node handling routines
->   io_uring: generalize files_update functionlity to rsrc_update
->   io_uring: support buffer registration updates
->   io_uring: create common fixed_rsrc_data allocation routines
->   io_uring: make percpu_ref_release names consistent
->   io_uring: call io_get_fixed_rsrc_ref for buffers
->   io_uring: support buffer registration sharing
-> 
->  fs/io_uring.c                 | 803 ++++++++++++++++++++++++++++++++----------
->  include/uapi/linux/io_uring.h |  13 +-
->  2 files changed, 626 insertions(+), 190 deletions(-)
-> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 372be9caf340..71d8fa0733ad 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -354,6 +354,7 @@ struct io_ring_ctx {
+>  		unsigned		cq_entries;
+>  		unsigned		cq_mask;
+>  		atomic_t		cq_timeouts;
+> +		unsigned		cq_last_tm_flush;
+>  		unsigned long		cq_check_overflow;
+>  		struct wait_queue_head	cq_wait;
+>  		struct fasync_struct	*cq_fasync;
+> @@ -1639,19 +1640,36 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
+>  
+>  static void io_flush_timeouts(struct io_ring_ctx *ctx)
+>  {
+> -	while (!list_empty(&ctx->timeout_list)) {
+> +	u32 seq = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
+
+This assignment should go after list_empty() -- because of the atomic part
+my compiler can't reshuffle them itself.
+
+> +
+> +	if (list_empty(&ctx->timeout_list))
+> +		return;
+[...]
+>  static void io_commit_cqring(struct io_ring_ctx *ctx)
+> @@ -5837,6 +5855,9 @@ static int io_timeout(struct io_kiocb *req)
+>  	tail = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
+>  	req->timeout.target_seq = tail + off;
+>  
+> +	/* Update the last seq here in case io_flush_timeouts() hasn't */
+> +	ctx->cq_last_tm_flush = tail;
+
+Have to note that it's ok to do because we don't mix submissions and
+completions, so io_timeout should never fall under same completion_lock
+section as cq commit,
+
+but otherwise some future locked version of io_timeout would be cutting
+off a part of the current flush window (i.e. this [last, cur] thing).
 
 -- 
 Pavel Begunkov

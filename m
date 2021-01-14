@@ -2,126 +2,367 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5FA12F6CFE
-	for <lists+io-uring@lfdr.de>; Thu, 14 Jan 2021 22:18:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40C412F6CFF
+	for <lists+io-uring@lfdr.de>; Thu, 14 Jan 2021 22:18:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726334AbhANVQW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Jan 2021 16:16:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39950 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbhANVQW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 16:16:22 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C51D6C061757
-        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 13:15:41 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id h17so5495698wmq.1
-        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 13:15:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:references:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GBJ2NPJ50F/oKVQ4J3GOPkuqSdFGhVmeLbyp7/mBUE0=;
-        b=Md3T0yh9dP2SteQr2Ykoi+LjjSjK22tEakdrjInCzRqQChye4gHulAEW8KJ8GL2s4T
-         jXwMcGk50uYRhlYWUl00yy+wRKgkm/mOL2sWFRwZwGeG6/EBOllIJCC2RR8VgiOSgHRq
-         Xy68xBL1Ri89PWYJ8C5FRUVGz06wNqlntbk3RvcKwFMKqLPJz/AfPTLCdEq1q5hjy8mR
-         0lAAxeEbdXIq48t4yTa7fNxUvDEnOsE+xT4YgHtDrh6ZpqbZNX4XwSms3dJcxCkg+oPb
-         vMq5ZMJiLzWe+mmEr16iD2u0UdeuMIFRrO/khUA1JoGqNC8d9rE8Rh2ajpZRl/bj/SSi
-         GWOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GBJ2NPJ50F/oKVQ4J3GOPkuqSdFGhVmeLbyp7/mBUE0=;
-        b=QQYtIZ9Fj2V34ZtxvpoCq6dolyZv5H5l45pG0BVWMp1WkwPne0/d164T0/jGTkqZRq
-         fnYkdFUs9xb7kOHlI1W3QmD8DOQnDdbul5Jampk79gDnO6dXMMQMg0hjOAiVFNt+j/VG
-         chlg+s3GbjdRkAeZwwVIfsCLLf5gHVMEK/MzmvuQb/b+hl/DINzfjY9pDTyP4Osk6ddx
-         LEas94/AkpOuAP0MYZSGIZAS5NvyJ24Lg6hIJnIYW/soGVV0Q65Dh2laI+fc24a8GjEa
-         mqrn/ebrbEZYGedztbMI8VjDk1Nv9xWme5VAE6EiiPXdkXvJD8ydpFRc+8jIsqEJ29qE
-         yuvQ==
-X-Gm-Message-State: AOAM532Ru9qPuyOo5ZY/HEOzx1UuvQdzG/vN4oF8I7f5azVeHgWuTNaS
-        PBKw05bAbRJaB9AE1nvDEox7z3K/ALtM1Q==
-X-Google-Smtp-Source: ABdhPJyrfHtFtnbh+A0KYNO241rHn++k9dS2Q/AE5FalhIt7egsIq2S7lrDdVuD5666MEcY7q25rog==
-X-Received: by 2002:a1c:bd8b:: with SMTP id n133mr5736365wmf.9.1610658940351;
-        Thu, 14 Jan 2021 13:15:40 -0800 (PST)
-Received: from [192.168.8.122] ([85.255.233.192])
-        by smtp.gmail.com with ESMTPSA id x13sm11646364wrp.80.2021.01.14.13.15.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jan 2021 13:15:39 -0800 (PST)
-Subject: Re: [PATCH for-current 0/2] sqo files/mm fixes
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1610337318.git.asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <1c14686f-2dec-7544-5fa6-51e5a2977beb@gmail.com>
-Date:   Thu, 14 Jan 2021 21:12:05 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727685AbhANVSM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Jan 2021 16:18:12 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:52206 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727680AbhANVSM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 16:18:12 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10EL9F7M109750;
+        Thu, 14 Jan 2021 21:17:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ references : message-id : date : mime-version : in-reply-to : content-type
+ : content-transfer-encoding; s=corp-2020-01-29;
+ bh=m+KCOLCvhAFM0WTasJLBsHDXP3YFF1lidDFrnj35bxE=;
+ b=W0CxSN+VffjzdZsabZ5vFnKNxxIJIziHkniTIqQ2FM0NjyVX22sxX8HFEVg5YRP1mG9P
+ 5dX57Q0GbZFIVHSfc5nNOxu4Nis3eo9yKtFBVp54p3HxsCutG9PAdffNXYGpg4xr0f9l
+ w5KOWCyCeTSeUFrI/djWrZXiejwQ3vC3SQoxJrtcm9kjGfiZxT0zL9ySZTjUXamvZd70
+ 0Qd08dzClSPcoCkJYwfWDSfZ0rRk9r6EcC6+LJRgF88bmijWbWMnM7n35HCWIvgM8uHE
+ BRdplTLFwgOht5AZpgOAgJQm9BvNOzgOVlBMUpbhH9eFjkzyoQrfWYKBFBST+rdNUdr7 9A== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 360kvka7j2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jan 2021 21:17:26 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10ELAtHI058784;
+        Thu, 14 Jan 2021 21:17:26 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 360kentybk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jan 2021 21:17:26 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 10ELHNTN029573;
+        Thu, 14 Jan 2021 21:17:23 GMT
+Received: from [10.154.113.143] (/10.154.113.143)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Jan 2021 13:17:23 -0800
+Subject: Re: [PATCH v5 13/13] io_uring: support buffer registration sharing
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
+References: <1610487193-21374-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <1610487193-21374-14-git-send-email-bijan.mottahedeh@oracle.com>
+ <f902d7fa-bce6-7cc6-6e99-4acd76aa45f7@oracle.com>
+Message-ID: <5ff5ebc2-7b38-9899-06e9-8747e6562b70@oracle.com>
+Date:   Thu, 14 Jan 2021 13:17:23 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-In-Reply-To: <cover.1610337318.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <f902d7fa-bce6-7cc6-6e99-4acd76aa45f7@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Avast (VPS 210113-0, 01/12/2021), Outbound message
+X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9864 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 mlxlogscore=999 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101140123
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9864 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 impostorscore=0 spamscore=0 mlxscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101140123
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/01/2021 04:00, Pavel Begunkov wrote:
-> Neither of issues is confirmed, but should be a good hardening in any
-> case. Inefficiencies will be removed for-next.
-
-A reminder just in case it was lost
-
+On 1/13/2021 6:01 PM, Bijan Mottahedeh wrote:
+> On 1/12/2021 1:33 PM, Bijan Mottahedeh wrote:
+>> Implement buffer sharing among multiple rings.
+>>
+>> A ring shares its (future) buffer registrations at setup time with
+>> IORING_SETUP_SHARE_BUF. A ring attaches to another ring's buffer
+>> registration at setup time with IORING_SETUP_ATTACH_BUF, after
+>> authenticating with the buffer registration owner's fd. Any updates to
+>> the owner's buffer registrations become immediately available to the
+>> attached rings.
+>>
+>> Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+>>
+>> Conflicts:
+>>     fs/io_uring.c
+>> ---
+>>   fs/io_uring.c                 | 85 
+>> +++++++++++++++++++++++++++++++++++++++++--
+>>   include/uapi/linux/io_uring.h |  2 +
+>>   2 files changed, 83 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 37639b9..856a570b 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -8439,6 +8439,13 @@ static void io_buffers_map_free(struct 
+>> io_ring_ctx *ctx)
+>>       ctx->nr_user_bufs = 0;
+>>   }
+>> +static void io_detach_buf_data(struct io_ring_ctx *ctx)
+>> +{
+>> +    percpu_ref_put(&ctx->buf_data->refs);
+>> +    ctx->buf_data = NULL;
+>> +    ctx->nr_user_bufs = 0;
+>> +}
+>> +
+>>   static int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
+>>   {
+>>       struct fixed_rsrc_data *data = ctx->buf_data;
+>> @@ -8447,6 +8454,11 @@ static int io_sqe_buffers_unregister(struct 
+>> io_ring_ctx *ctx)
+>>       if (!data)
+>>           return -ENXIO;
+>> +    if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
+>> +        io_detach_buf_data(ctx);
+>> +        return 0;
+>> +    }
+>> +
+>>       ret = io_rsrc_ref_quiesce(data, ctx, alloc_fixed_buf_ref_node);
+>>       if (ret)
+>>           return ret;
+>> @@ -8690,9 +8702,13 @@ static struct fixed_rsrc_data 
+>> *io_buffers_map_alloc(struct io_ring_ctx *ctx,
+>>       if (!nr_args || nr_args > IORING_MAX_FIXED_BUFS)
+>>           return ERR_PTR(-EINVAL);
+>> -    buf_data = alloc_fixed_rsrc_data(ctx);
+>> -    if (IS_ERR(buf_data))
+>> -        return buf_data;
+>> +    if (ctx->buf_data) {
+>> +        buf_data = ctx->buf_data;
+>> +    } else {
+>> +        buf_data = alloc_fixed_rsrc_data(ctx);
+>> +        if (IS_ERR(buf_data))
+>> +            return buf_data;
+>> +    }
+>>       nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_BUFS_TABLE);
+>>       buf_data->table = kcalloc(nr_tables, sizeof(*buf_data->table),
+>> @@ -8757,9 +8773,17 @@ static int io_sqe_buffers_register(struct 
+>> io_ring_ctx *ctx, void __user *arg,
+>>       if (ctx->nr_user_bufs)
+>>           return -EBUSY;
+>> +    if (ctx->flags & IORING_SETUP_ATTACH_BUF) {
+>> +        if (!ctx->buf_data)
+>> +            return -EFAULT;
+>> +        ctx->nr_user_bufs = ctx->buf_data->ctx->nr_user_bufs;
+>> +        return 0;
+>> +    }
+>> +
+>>       buf_data = io_buffers_map_alloc(ctx, nr_args);
+>>       if (IS_ERR(buf_data))
+>>           return PTR_ERR(buf_data);
+>> +    ctx->buf_data = buf_data;
+>>       for (i = 0; i < nr_args; i++, ctx->nr_user_bufs++) {
+>>           struct io_mapped_ubuf *imu;
+>> @@ -8783,7 +8807,6 @@ static int io_sqe_buffers_register(struct 
+>> io_ring_ctx *ctx, void __user *arg,
+>>               break;
+>>       }
+>> -    ctx->buf_data = buf_data;
+>>       if (ret) {
+>>           io_sqe_buffers_unregister(ctx);
+>>           return ret;
+>> @@ -9831,6 +9854,55 @@ static struct file *io_uring_get_file(struct 
+>> io_ring_ctx *ctx)
+>>       return file;
+>>   }
+>> +static int io_attach_buf_data(struct io_ring_ctx *ctx,
+>> +                  struct io_uring_params *p)
+>> +{
+>> +    struct io_ring_ctx *ctx_attach;
+>> +    struct fd f;
+>> +
+>> +    f = fdget(p->wq_fd);
+>> +    if (!f.file)
+>> +        return -EBADF;
+>> +    if (f.file->f_op != &io_uring_fops) {
+>> +        fdput(f);
+>> +        return -EINVAL;
+>> +    }
+>> +
+>> +    ctx_attach = f.file->private_data;
+>> +    if (!ctx_attach->buf_data) {
+>> +        fdput(f);
+>> +        return -EINVAL;
+>> +    }
+>> +    ctx->buf_data = ctx_attach->buf_data;
+>> +
+>> +    percpu_ref_get(&ctx->buf_data->refs);
+>> +    fdput(f);
+>> +    return 0;
+>> +}
+>> +
+>> +static int io_init_buf_data(struct io_ring_ctx *ctx, struct 
+>> io_uring_params *p)
+>> +{
+>> +    if ((p->flags & (IORING_SETUP_SHARE_BUF | 
+>> IORING_SETUP_ATTACH_BUF)) ==
+>> +        (IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF))
+>> +        return -EINVAL;
+>> +
+>> +    if (p->flags & IORING_SETUP_SHARE_BUF) {
+>> +        struct fixed_rsrc_data *buf_data;
+>> +
+>> +        buf_data = alloc_fixed_rsrc_data(ctx);
+>> +        if (IS_ERR(buf_data))
+>> +            return PTR_ERR(buf_data);
+>> +
+>> +        ctx->buf_data = buf_data;
+>> +        return 0;
+>> +    }
+>> +
+>> +    if (p->flags & IORING_SETUP_ATTACH_BUF)
+>> +        return io_attach_buf_data(ctx, p);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>>   static int io_uring_create(unsigned entries, struct io_uring_params *p,
+>>                  struct io_uring_params __user *params)
+>>   {
+>> @@ -9948,6 +10020,10 @@ static int io_uring_create(unsigned entries, 
+>> struct io_uring_params *p,
+>>       if (ret)
+>>           goto err;
+>> +    ret = io_init_buf_data(ctx, p);
+>> +    if (ret)
+>> +        goto err;
+>> +
+>>       ret = io_sq_offload_create(ctx, p);
+>>       if (ret)
+>>           goto err;
+>> @@ -10028,6 +10104,7 @@ static long io_uring_setup(u32 entries, struct 
+>> io_uring_params __user *params)
+>>       if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
+>>               IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
+>>               IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
+>> +            IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF |
+>>               IORING_SETUP_R_DISABLED))
+>>           return -EINVAL;
+>> diff --git a/include/uapi/linux/io_uring.h 
+>> b/include/uapi/linux/io_uring.h
+>> index b289ef8..3ad786a 100644
+>> --- a/include/uapi/linux/io_uring.h
+>> +++ b/include/uapi/linux/io_uring.h
+>> @@ -98,6 +98,8 @@ enum {
+>>   #define IORING_SETUP_CLAMP    (1U << 4)    /* clamp SQ/CQ ring sizes */
+>>   #define IORING_SETUP_ATTACH_WQ    (1U << 5)    /* attach to existing 
+>> wq */
+>>   #define IORING_SETUP_R_DISABLED    (1U << 6)    /* start with ring 
+>> disabled */
+>> +#define IORING_SETUP_SHARE_BUF    (1U << 7)    /* share buffer 
+>> registration */
+>> +#define IORING_SETUP_ATTACH_BUF    (1U << 8)    /* attach buffer 
+>> registration */
+>>   enum {
+>>       IORING_OP_NOP,
+>>
 > 
-> Pavel Begunkov (2):
->   io_uring: drop mm and files after task_work_run
->   io_uring: don't take files/mm for a dead task
+> I recreated the deadlock scenario you had raised:
 > 
->  fs/io_uring.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  > Ok, now the original io_uring instance will wait until the attached
+>  > once get rid of their references. That's a versatile ground to have
+>  > in kernel deadlocks.
+>  >
+>  > task1: uring1 = create()
+>  > task2: uring2 = create()
+>  > task1: uring3 = create(share=uring2);
+>  > task2: uring4 = create(share=uring1);
+>  >
+>  > task1: io_sqe_buffers_unregister(uring1)
+>  > task2: io_sqe_buffers_unregister(uring2)
+>  >
+>  > If I skimmed through the code right, that should hang unkillably.
 > 
+> with the following test:
+> 
+> +static int test_deadlock(void)
+> +{
+> +       int i, pid, ret;
+> +       struct io_uring rings[4];
+> +       struct io_uring_params p = {};
+> +
+> +       p.flags = IORING_SETUP_SHARE_BUF;
+> +
+> +       for (i = 0; i < 2; i++) {
+> +               ret = io_uring_queue_init_params(1, &rings[i], &p);
+> +               if (ret) {
+> +                       verror("queue_init share");
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       p.flags = IORING_SETUP_ATTACH_BUF;
+> +
+> +       pid = fork();
+> +       if (pid) {
+> +               p.wq_fd = rings[1].ring_fd;
+> +               ret = io_uring_queue_init_params(1, &rings[3], &p);
+                                                             ^^^
+                                                             2
+> +       } else {
+> +               p.wq_fd = rings[0].ring_fd;
+> +               ret = io_uring_queue_init_params(1, &rings[4], &p);
+                                                             ^^^
+                                                             3
+> +       }
+> +
+> +       if (ret) {
+> +               verror("queue_init attach");
+> +               return ret;
+> +       }
+> +
+> +
+> +       vinfo(V1, "unregister\n");
+> +
+> +       if (pid) {
+> +               close(rings[1].ring_fd);
+> +               ret = io_uring_unregister_buffers(&rings[0]);
+> +       } else {
+> +               close(rings[0].ring_fd);
+> +               ret = io_uring_unregister_buffers(&rings[1]);
+> +       }
+> +
+> +       vinfo(V1, "unregister done\n");
+> +
+> +       if (ret)
+> +               verror("unregister");
+> +
+> +       return ret;
+> +}
+> 
+> 
+> The two processe in the test hang but can be interrupted.
+> 
+> I checked that
+> 
+> ret = wait_for_completion_interruptible(&data->done);
+> 
+> in io_rsrc_ref_quiesce() returns -ERESTARTSYS (-512) after hitting ^C 
+> and that
+> 
+> ret = io_run_task_work_sig();
+> 
+> returns -EINTR (-4)
+> 
+> Finally in
+> 
+> io_ring_ctx_free()
+> -> io_sqe_buffers_unregister()
+>     -> io_rsrc_ref_quiesce()
+> 
+> ret = wait_for_completion_interruptible(&data->done);
+> 
+> returns 0.
+> 
+> So it looks like the unkillable hang is not there.
+> 
+> However, when I take out the io_uring_unregister_buffers() calls from 
+> the test, one of the processes gets a segfault with the following trace 
+> and I'm not sure what the cause is.
 
--- 
-Pavel Begunkov
+Bug in test  itself.  Wrong index passed to io_uring_queue_init_params() 
+above.
+

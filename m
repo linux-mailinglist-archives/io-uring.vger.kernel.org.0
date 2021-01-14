@@ -2,145 +2,315 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A69B2F5B47
-	for <lists+io-uring@lfdr.de>; Thu, 14 Jan 2021 08:28:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2A192F5D20
+	for <lists+io-uring@lfdr.de>; Thu, 14 Jan 2021 10:17:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbhANH16 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Jan 2021 02:27:58 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:45571 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbhANH15 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 02:27:57 -0500
-Received: by mail-io1-f70.google.com with SMTP id x7so6971233ion.12
-        for <io-uring@vger.kernel.org>; Wed, 13 Jan 2021 23:27:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=YzeP38Whzabl2SILmCDC2he+feFF6GbC3cI7SHBtcxc=;
-        b=hAo/fwmi9gELzk+6eE2cm5OzV1BIp0YhF2nXfTgpJmWRsCJhCAOJSjKZGjYACE7Bdj
-         jq4z4fqfTsCNAh/VgUOjY5y7q3NWrkMOy0wzeV2e2xS3yruS6qZoAjWXUBw7bKO5AV3y
-         C16JuFX3YkH7JCLQ1EY4PlaUiqmZQfum7SHHyXEDloBTFfRqJhDl4MZZ9zleWLafQvSS
-         LSHZ8rbMEs1BQn8D0FP7YkC40XWpJ3rfWqehHascrkL2KMhbB9H/ONdd+kujNq4Ki6Gm
-         Wh3aVTVJ5574T3buqkQbKXCps3Hgwigf7DaRcInA3TJsoLWYKUMBPxyF3rzVh3+HW77I
-         79eA==
-X-Gm-Message-State: AOAM533agMuxtASxu8SZt4m5fabBAm0K1vptW0n5vg8YOOaw22rvtDI2
-        fTcJ2Zlix28WD/DYnJOVDMBRauZS72QtyITU9IExrZEOIfRE
-X-Google-Smtp-Source: ABdhPJzTRwoQlONJjqJAj6alLo1oAepHaGIrbhEWMdEM+dzxy6wUGkTTZZ7uhH7HRbHegYY8oWGClnCnL/+huEnxGdfSOE055dM4
+        id S1727437AbhANJRP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Jan 2021 04:17:15 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:51902 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726478AbhANJRN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 04:17:13 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0ULhhF75_1610615776;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0ULhhF75_1610615776)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 14 Jan 2021 17:16:17 +0800
+Subject: Re: [dm-devel] [PATCH RFC 6/7] block: track cookies of split bios for
+ bio-based device
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
+        io-uring@vger.kernel.org
+References: <20201223112624.78955-1-jefflexu@linux.alibaba.com>
+ <20201223112624.78955-7-jefflexu@linux.alibaba.com>
+ <20210107221825.GF21239@redhat.com>
+ <97ec2025-4937-b476-4f15-446cc304e799@linux.alibaba.com>
+ <20210108172635.GA29915@redhat.com>
+ <16ba3a63-86f5-1acd-c129-767540186689@linux.alibaba.com>
+ <20210112161320.GA13931@redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <56e1f2a2-9300-e3c8-4013-9d371385a082@linux.alibaba.com>
+Date:   Thu, 14 Jan 2021 17:16:16 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:cf9a:: with SMTP id w26mr5401177jar.25.1610609236357;
- Wed, 13 Jan 2021 23:27:16 -0800 (PST)
-Date:   Wed, 13 Jan 2021 23:27:16 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000067b86b05b8d72ff6@google.com>
-Subject: general protection fault in io_uring_setup
-From:   syzbot <syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210112161320.GA13931@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    65f0d241 Merge tag 'sound-5.11-rc4' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16bbcd98d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ee2266946ed36986
-dashboard link: https://syzkaller.appspot.com/bug?extid=06b7d55a62acca161485
-compiler:       clang version 11.0.0 (https://github.com/llvm/llvm-project.git ca2dcbd030eadbf0aa9b660efe864ff08af6e18b)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ef17fb500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1045ef67500000
-
-The issue was bisected to:
-
-commit d9d05217cb6990b9a56e13b56e7a1b71e2551f6c
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Fri Jan 8 20:57:25 2021 +0000
-
-    io_uring: stop SQPOLL submit on creator's death
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=148ba0cf500000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=168ba0cf500000
-console output: https://syzkaller.appspot.com/x/log.txt?x=128ba0cf500000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com
-Fixes: d9d05217cb69 ("io_uring: stop SQPOLL submit on creator's death")
-
-Code: e8 cc ac 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc6a96c958 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 0000000000441889
-RDX: 0000000020ffd000 RSI: 0000000020000200 RDI: 0000000000003040
-RBP: 000000000000d8dd R08: 0000000000000001 R09: 0000000020ffd000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020ffd000
-R13: 0000000020ffb000 R14: 0000000000000000 R15: 0000000000000000
-general protection fault, probably for non-canonical address 0xdffffc0000000022: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000110-0x0000000000000117]
-CPU: 0 PID: 8444 Comm: syz-executor770 Not tainted 5.11.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:io_ring_set_wakeup_flag fs/io_uring.c:6929 [inline]
-RIP: 0010:io_disable_sqo_submit fs/io_uring.c:8891 [inline]
-RIP: 0010:io_uring_create fs/io_uring.c:9711 [inline]
-RIP: 0010:io_uring_setup fs/io_uring.c:9739 [inline]
-RIP: 0010:__do_sys_io_uring_setup fs/io_uring.c:9745 [inline]
-RIP: 0010:__se_sys_io_uring_setup+0x2abb/0x37b0 fs/io_uring.c:9742
-Code: c0 00 00 00 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 c5 31 de ff 41 be 14 01 00 00 4c 03 33 4c 89 f0 48 c1 e8 03 <42> 8a 04 28 84 c0 0f 85 46 06 00 00 41 80 0e 01 48 8b 7c 24 30 e8
-RSP: 0018:ffffc90000edfca0 EFLAGS: 00010007
-RAX: 0000000000000022 RBX: ffff888021fe50c0 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffffc90000edfb80
-RBP: ffffc90000edff38 R08: dffffc0000000000 R09: 0000000000000003
-R10: fffff520001dbf71 R11: 0000000000000004 R12: 0000000000000001
-R13: dffffc0000000000 R14: 0000000000000114 R15: 00000000fffffff4
-FS:  0000000000975940(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000204 CR3: 00000000222d6000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x441889
-Code: e8 cc ac 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc6a96c958 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 0000000000441889
-RDX: 0000000020ffd000 RSI: 0000000020000200 RDI: 0000000000003040
-RBP: 000000000000d8dd R08: 0000000000000001 R09: 0000000020ffd000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020ffd000
-R13: 0000000020ffb000 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace d873293344bf9303 ]---
-RIP: 0010:io_ring_set_wakeup_flag fs/io_uring.c:6929 [inline]
-RIP: 0010:io_disable_sqo_submit fs/io_uring.c:8891 [inline]
-RIP: 0010:io_uring_create fs/io_uring.c:9711 [inline]
-RIP: 0010:io_uring_setup fs/io_uring.c:9739 [inline]
-RIP: 0010:__do_sys_io_uring_setup fs/io_uring.c:9745 [inline]
-RIP: 0010:__se_sys_io_uring_setup+0x2abb/0x37b0 fs/io_uring.c:9742
-Code: c0 00 00 00 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 c5 31 de ff 41 be 14 01 00 00 4c 03 33 4c 89 f0 48 c1 e8 03 <42> 8a 04 28 84 c0 0f 85 46 06 00 00 41 80 0e 01 48 8b 7c 24 30 e8
-RSP: 0018:ffffc90000edfca0 EFLAGS: 00010007
-RAX: 0000000000000022 RBX: ffff888021fe50c0 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffffc90000edfb80
-RBP: ffffc90000edff38 R08: dffffc0000000000 R09: 0000000000000003
-R10: fffff520001dbf71 R11: 0000000000000004 R12: 0000000000000001
-R13: dffffc0000000000 R14: 0000000000000114 R15: 00000000fffffff4
-FS:  0000000000975940(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000204 CR3: 00000000222d6000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 1/13/21 12:13 AM, Mike Snitzer wrote:
+> On Tue, Jan 12 2021 at 12:46am -0500,
+> JeffleXu <jefflexu@linux.alibaba.com> wrote:
+> 
+>>
+>>
+>> On 1/9/21 1:26 AM, Mike Snitzer wrote:
+>>> On Thu, Jan 07 2021 at 10:08pm -0500,
+>>> JeffleXu <jefflexu@linux.alibaba.com> wrote:
+>>>
+>>>> Thanks for reviewing.
+>>>>
+>>>>
+>>>> On 1/8/21 6:18 AM, Mike Snitzer wrote:
+>>>>> On Wed, Dec 23 2020 at  6:26am -0500,
+>>>>> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+>>>>>
+>>>>>> This is actuaaly the core when supporting iopoll for bio-based device.
+>>>>>>
+>>>>>> A list is maintained in the top bio (the original bio submitted to dm
+>>>>>> device), which is used to maintain all valid cookies of split bios. The
+>>>>>> IO polling routine will actually iterate this list and poll on
+>>>>>> corresponding hardware queues of the underlying mq devices.
+>>>>>>
+>>>>>> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+>>>>>
+>>>>> Like I said in response to patch 4 in this series: please fold patch 4
+>>>>> into this patch and _really_ improve this patch header.
+>>>>>
+>>>>> In particular, the (ab)use of bio_inc_remaining() needs be documented in
+>>>>> this patch header very well.
+>>>>>
+>>>>> But its use could easily be why you're seeing a performance hit (coupled
+>>>>> with the extra spinlock locking and list management used).  Just added
+>>>>> latency and contention across CPUs.
+>>>>
+>>>> Indeed bio_inc_remaining() is abused here and the code seems quite hacky
+>>>> here.
+>>>>
+>>>> Actually I'm regarding implementing the split bio tracking mechanism in
+>>>> a recursive way you had ever suggested. That is, the split bios could be
+>>>> maintained in an array, which is allocated with 'struct dm_io'. This way
+>>>> the overhead of spinlock protecting the &root->bi_plist may be omitted
+>>>> here. Also the lifetime management may be simplified somehow. But the
+>>>> block core needs to fetch the per-bio private data now, just like what
+>>>> you had ever suggested before.
+>>>>
+>>>> How do you think, Mike?
+>>>
+>>> Yes, using per-bio-data is a requirement (we cannot bloat 'struct bio').
+>>
+>> Agreed. Then MD will need some refactor to support IO polling, if
+>> possible, since just like I mentioned in patch 0 before, MD doesn't
+>> allocate extra clone bio, and just re-uses the original bio structure.
+>>
+>>
+>>>
+>>> As for using an array, how would you index the array?  
+>>
+>> The 'array' here is not an array of 'struct blk_mq_hw_ctx *' maintained
+>> in struct dm_table as you mentioned. Actually what I mean is to maintain
+>> an array of struct dm_poll_data (or something like that, e.g. just
+>> struct blk_mq_hw_ctx *) in per-bio private data. The size of the array
+>> just equals the number of the target devices.
+>>
+>> For example, for the following device stack,
+>>
+>>>>
+>>>> Suppose we have the following device stack hierarchy, that is, dm0 is
+>>>> stacked on dm1, while dm1 is stacked on nvme0 and nvme1.
+>>>>
+>>>>     dm0
+>>>>     dm1
+>>>> nvme0  nvme1
+>>>>
+>>>>
+>>>> Then the bio graph is like:
+>>>>
+>>>>
+>>>>                                    +------------+
+>>>>                                    |bio0(to dm0)|
+>>>>                                    +------------+
+>>>>                                          ^
+>>>>                                          | orig_bio
+>>>>                                    +--------------------+
+>>>>                                    |struct dm_io A      |
+>>>> +--------------------+ bi_private  ----------------------
+>>>> |bio3(to dm1)        |------------>|bio1(to dm1)        |
+>>>> +--------------------+             +--------------------+
+>>>>         ^                                ^
+>>>>         | ->orig_bio                     | ->orig_bio
+>>>> +--------------------+             +--------------------+
+>>>> |struct dm_io        |             |struct dm_io B      |
+>>>> ----------------------             ----------------------
+>>>> |bio2(to nvme0)      |             |bio4(to nvme1)      |
+>>>> +--------------------+             +--------------------+
+>>>>
+>>
+>> An array of struct blk_mq_hw_ctx * is maintained in struct dm_io B.
+>>
+>>
+>> struct blk_mq_hw_ctx * hctxs[2];
+>>
+>> The array size is two since dm1 maps to two target devices (i.e. nvme0
+>> and nvme1). Then hctxs[0] points to the hw queue of nvme0, while
+>> hctxs[1] points to the hw queue of nvme1.
+> 
+> Both nvme0 and nvme1 may have multiple hctxs.  Not sure why you're
+> thinking there is just one per device?
+> 
+>>
+>>
+>> This mechanism supports arbitrary device stacking. Similarly, an array
+>> of struct blk_mq_hw_ctx * is maintained in struct dm_io A. The array
+>> size is one since dm0 only maps to one target device (i.e. dm1). In this
+>> case, hctx[0] points to the struct dm_io of the next level, i.e. struct
+>> dm_io B.
+>>
+>>
+>> But I'm afraid the implementation of this style may be more complex.
+> 
+> We are running the risk of talking in circles about this design...
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Sorry for the inconvenience. I have started working on the next version,
+but I do want to clarify some design issues first.
+
+> 
+> 
+>>>> struct node {
+>>>>     struct blk_mq_hw_ctx *hctx;
+>>>>     blk_qc_t cookie;
+>>>> };
+>>>
+>>> Needs a better name, think I had 'struct dm_poll_data'
+>>
+>> Sure, the name here is just for example.
+>>
+>>
+>>>  
+>>>> Actually currently the tracking objects are all allocated with 'struct
+>>>> bio', then the lifetime management of the tracking objects is actually
+>>>> equivalent to lifetime management of bio. Since the returned cookie is
+>>>> actually a pointer to the bio, the refcount of this bio must be
+>>>> incremented, since we release a reference to this bio through the
+>>>> returned cookie, in which case the abuse of the refcount trick seems
+>>>> unavoidable? Unless we allocate the tracking object individually, then
+>>>> the returned cookie is actually pointing to the tracking object, and the
+>>>> refcount is individually maintained for the tracking object.
+>>>
+>>> The refcounting and lifetime of the per-bio-data should all work as is.
+>>> Would hope you can avoid extra bio_inc_remaining().. that infratsructure
+>>> is way too tightly coupled to bio_chain()'ing, etc.
+>>>
+>>> The challenge you have is the array that would point at these various
+>>> per-bio-data needs to be rooted somewhere (you put it in the topmost
+>>> original bio with the current patchset).  But why not manage that as
+>>> part of 'struct mapped_device'?  It'd need proper management at DM table
+>>> reload boundaries and such but it seems like the most logical place to
+>>> put the array.  But again, this array needs to be dynamic.. so thinking
+>>> further, maybe a better model would be to have a fixed array in 'struct
+>>> dm_table' for each hctx associated with a blk_mq _data_ device directly
+>>> used/managed by that dm_table?
+>>
+
+Confusion also stated in the following comment. How 'struct
+dm_poll_data' could be involved with 'struct dm_table' or 'struct
+mapped_device'. In the current patchset, every bio need to maintain one
+list to track all its 'struct dm_poll_data' structures. Then how to
+maintain this per-bio information in one single 'struct dm_table' or
+'struct mapped_device'?
+
+
+>> It seems that you are referring 'array' here as an array of 'struct
+>> blk_mq_hw_ctx *'? Such as
+>>
+>> struct dm_table {
+>>     ...
+>>     struct blk_mq_hw_ctx *hctxs[];
+>> };
+>>
+>> Certainly with this we can replace the original 'struct blk_mq_hw_ctx *'
+>> pointer in 'struct dm_poll_data' with the index into this array, such as
+>>
+>> struct dm_poll_data {
+>>      int hctx_index; /* index into dm_table->hctxs[] */
+>>      blk_qc_t cookie;
+>> };
+> 
+> You seized on my mentioning blk-mq's array of hctx too literally.  I was
+> illustrating that blk-mq's cookie is converted to an index into that
+> array.
+> 
+> But for this DM bio-polling application we'd need to map the blk-mq
+> returned cookie to a request_queue.  Hence the original 2 members of
+> dm_poll_data needing to be 'struct request_queue *' and blk_qc_t.
+> 
+>> But I'm doubted if this makes much sense. The core difficulty here is
+>> maintaining a list (or dynamic sized array) to track all split bios.
+>> With the array of 'struct blk_mq_hw_ctx *' maintained in struct
+>> dm_table, we still need some **per-bio** structure (e.g., &bio->bi_plist
+>> in current patch set) to track these split bios.
+> 
+> One primary goal of all of this design is to achieve bio-polling cleanly
+> (without extra locking, without block core data structure bloat, etc).
+> I know you share that goal.  But we need to nail down the core data
+> structures and what needs tracking at scale and then associate them with
+> DM's associated objects with consideration for object lifetime.
+> 
+> My suggestion was to anchor your core data structures (e.g. 'struct
+> dm_poll_data' array, etc) to 'struct dm_table'.  I suggested that
+> because the dm_table is what dm_get_device()s each underlying _data_
+> device (a subset of all devices in a dm_table, as iterated through
+> .iterate_devices).  But a DM 'struct mapped_device' has 2 potential
+> dm_tables, active and inactive slots, that would imply some complexity
+> in handing off any outstanding bio's associated 'struct dm_poll_data'
+> array on DM table reload.
+
+1) If 'struct dm_poll_data' resides in per-bio-data, then how do you
+**link** or **associate** all the 'struct dm_poll_data' structures from
+one original bio? Do we link them by the internal relationship between
+bio/dm_io/dm_target_io, or some other auxiliary data structure?
+
+2) I get confused how 'struct dm_poll_data' could be involved with
+'struct dm_table'. Is there an array of 'struct dm_poll_data' or 'struct
+dm_poll_data *' maintained in 'struct dm_table'? If this is the case,
+then the size of the array may be incredible large, or expanded/shrank
+frequently, since one dm_table could correspond to millions bios.
+
+
+
+> 
+> Anyway, you seem to be gravitating to a more simplistic approach of a
+> single array of 'struct dm_poll_data' for each DM device (regardless of
+> how arbitrarily deep that DM device stack is, the topmost DM device
+> would accumulate the list of 'struct dm_poll_data'?).
+
+I'm open to this. At least you don't need to care the lifetime of other
+disparate 'struct dm_poll_data's, if all 'struct dm_poll_data's are
+accumulated in one (e.g., the topmost) place.
+
+
+> 
+> I'm now questioning the need for any high-level data structure to track
+> all N of the 'struct dm_poll_data' that may result from a given bio (as
+> it is split to multiple blk-mq hctxs across multiple blk-mq devices).
+> Each 'struct dm_poll_data', that will be returned to block core and
+> stored in struct kiocb's ki_cookie, would have an object lifetime that
+> matches the original DM bio clone's per-bio-data that the 'struct
+> dm_poll_data' was part of; then we just need to cast that ki_cookie's
+> blk_qc_t as 'struct dm_poll_data' and call blk_poll().
+> 
+> The hardest part is to ensure that all the disparate 'struct
+> dm_poll_data' (and associated clone bios) aren't free'd until the
+> _original_ bio completes.  That would create quite some back-pressure
+> with more potential to exhaust system resources -- because then the
+> cataylst for dropping reference counts on these clone bios would then
+> need to be tied to the blk_bio_poll() interface... which feels "wrong"
+> (e.g. it ushers in the (ab)use of bio_inc_remaining you had in your most
+> recent patchset).
+> 
+> All said, maybe post a v2 that takes the incremental steps of:
+> 1) using DM per-bio-data for 'struct dm_poll_data'
+> 2) simplify blk_bio_poll() to call into DM to translate provided
+>    blk_qc_t (from struct kiocb's ki_cookie) to request_queue and
+>    blk_qc_t.
+>    - this eliminates any need for extra list processing
+> 3) keep your (ab)use of bio_inc_remaining() to allow for exploring this 
+
+-- 
+Thanks,
+Jeffle

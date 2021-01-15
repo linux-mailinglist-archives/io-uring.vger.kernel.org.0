@@ -2,153 +2,139 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2950B2F8497
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 19:39:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB1FA2F84C4
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 19:53:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731525AbhAOSj1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jan 2021 13:39:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33672 "EHLO
+        id S1729147AbhAOSxQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jan 2021 13:53:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729507AbhAOSj1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 13:39:27 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8A4C061757
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 10:38:46 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id e22so19997173iom.5
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 10:38:46 -0800 (PST)
+        with ESMTP id S1732973AbhAOSxP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 13:53:15 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76E3DC061757
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 10:52:35 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id y17so10293904wrr.10
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 10:52:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dOrwP/h5wYmEPWUt1Yol5cZe4Xf1qntkwxtO50gj+Zs=;
-        b=ZZYXeKo0vqFzQlcKB0Am7YEU+Nj02yu4NUB2Yi7439bAtcDNIaqiN9ZiZaoaJW+SIP
-         HCpMeRg0zG0YDKor4iEZ+Yiw29o0eF64JTwbiopC1ddFy1t8+0tOmgTd5zUfQSvS+GUS
-         2atyuQJQOW3OCQUq/zY1uphWpteTEJ0HBsa3Q+IvWBu/UwlE77rzPmU5X+1L02wT0whD
-         jFjpFGV9WFmpZYff8ar+C2v1CdbAsJD4TdKYET4SjarVTm3eFWamXYRPBCG3dMTGW0Ln
-         +0lXjrKIzCCCPhBWz5x3NynS1y+jCrpHoHe1FA9P/ePzDMMfNE3Q6+lpt0GwKVafU8L7
-         OCnA==
+        bh=2ZUEH2jHrzcgjCbqTCQBi54thAuQsPzWAvESD10amyI=;
+        b=UPkvQPiEPOH5bHHoB1b663Roq7PmJxUD8I0D+/NA/u41YiX+PlT8Ne3+JsSgcG8ogy
+         bE7FOLf+b9S5qjqw4Ziz42rWl/aARII/Rlx8f322RPGbAGbMxhuIGjtVFtX83nH+wgTu
+         0slVVVPUNB97XvwJ9Kgc6VuUg51l1OJrDDaeXBjDNqpdRrn4WyrEsUFzhfSNwEaiYEHe
+         4TfAg9e3h/YqCLAWfDZH59aUn57wM0AwBCTGZNB3Q25UyI2mNGqC5fQdprNJDyaHXiUL
+         rmzv9INteQXUdl/rJ6pqkOAtdJCSaaAyKpDmyXyMs51u9aO2+wcTjZyUJ5Erp/yf53r0
+         eqGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dOrwP/h5wYmEPWUt1Yol5cZe4Xf1qntkwxtO50gj+Zs=;
-        b=gwOW59EUUdPCBnaBQ5jl4/vVpIM1zFsov9PDQ4yFJFfOGmHx69c6yO0nCjXR3kWoMP
-         clg0jhlt4vjoujcEcWe2qVjmnMtA87WfmS5x6758iFLOJYaEfcawgjq0Qwa+HBPJmmAl
-         jfcCKOAUUi2MVh6KasSBlkA+LJ8JLLPuZnX5VHF7g96ikRJrvws4JZniHhSuiZuoYxaB
-         SHXkvzyPIXNWnmMN6KAd4GQ64CzjJtuEzsSL+rerldcHUkhgRF6Ga9J438h1m4Taahk2
-         STv9nVxYmqgC0oeEgyZaNROkdhEy+ql7jy1mXczTcuHmeqa/eB0VtHAXdoPgbUrSR3i7
-         NQFw==
-X-Gm-Message-State: AOAM533zD1tQ763H1RcbdTxltOULz7MWr8sDPOez8NltRmTXU8kFgLap
-        IbxuuAaZq+L885wJuyhqTJLCVlIADMqNcg==
-X-Google-Smtp-Source: ABdhPJx1GJAKcsVbvzmCwzrAy6Cz1rBYyyP9OfcAe/9ZGNPpGlAejAk5d4gvq3h+ZOeB3zCCyyUxxQ==
-X-Received: by 2002:a6b:b5d2:: with SMTP id e201mr9319995iof.111.1610735925983;
-        Fri, 15 Jan 2021 10:38:45 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id b22sm4264305ioa.10.2021.01.15.10.38.45
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=2ZUEH2jHrzcgjCbqTCQBi54thAuQsPzWAvESD10amyI=;
+        b=EkHR0k1lxPttb1qENhT5F6DWUoEDqOI0JAyszNTIY+umvpgSEXGkfLqWXG4bV4soSQ
+         uoPvQygOQOwEIVj09YGuHUipJPD0po3V2wkdM5DYRddPxPxKHalxpEc8smEjl/uuIL7E
+         jme5Vxd2bkjbwHHs4PzFhw6lCV6wUJ5JIflYrZXmyKQeH2Cow8UCTJBMLB+Vu14LKq/W
+         fCykIexYL9OZgvvlcY4/k5I7i/rxS3RK+LTZvlXq6g6f83xirZsFt4mv9BzNRvAxw3tK
+         kYIr9DKkOvFL9j+Uyv0ZgYxwUN9DLX+UEbKz7MeLLT/lZi75SaIVtlOvJgpDrlQdbLcS
+         3gow==
+X-Gm-Message-State: AOAM5318iWuOd6UxBxXWtI+in8C4Nr0ax6odKv2dvKQLm8iJiOZgbEYS
+        byITdtY+ZXRPOYZ3XonVmwhz0a1hVqE=
+X-Google-Smtp-Source: ABdhPJxJ//BNBoVlK2TWkc2fjB0fNSo/zxbbNZ0txu8D8diydrahMlv45caMvsgFy9IPOKyLD7/SyA==
+X-Received: by 2002:adf:e84c:: with SMTP id d12mr15215231wrn.382.1610736754083;
+        Fri, 15 Jan 2021 10:52:34 -0800 (PST)
+Received: from [192.168.8.125] ([85.255.234.150])
+        by smtp.gmail.com with ESMTPSA id v126sm2436147wma.22.2021.01.15.10.52.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jan 2021 10:38:45 -0800 (PST)
-Subject: Re: [PATCH v4 0/1] io_uring: fix skipping of old timeout events
-To:     Marcelo Diop-Gonzalez <marcelo827@gmail.com>
-Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org
+        Fri, 15 Jan 2021 10:52:33 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>,
+        Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+Cc:     io-uring@vger.kernel.org
 References: <20210115165440.12170-1-marcelo827@gmail.com>
  <7b70938a-3726-ccc0-049d-4a617c9d2298@kernel.dk>
  <20210115183148.GA14438@marcelo-debian.domain>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3da76f2e-4941-206d-8881-9452bfce5980@kernel.dk>
-Date:   Fri, 15 Jan 2021 11:38:44 -0700
+ <3da76f2e-4941-206d-8881-9452bfce5980@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH v4 0/1] io_uring: fix skipping of old timeout events
+Message-ID: <4cb8b3aa-9759-35f6-863f-99ecf2ec9b32@gmail.com>
+Date:   Fri, 15 Jan 2021 18:48:58 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20210115183148.GA14438@marcelo-debian.domain>
+In-Reply-To: <3da76f2e-4941-206d-8881-9452bfce5980@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/15/21 11:31 AM, Marcelo Diop-Gonzalez wrote:
-> On Fri, Jan 15, 2021 at 10:02:12AM -0700, Jens Axboe wrote:
->> On 1/15/21 9:54 AM, Marcelo Diop-Gonzalez wrote:
->>> This patch tries to fix a problem with IORING_OP_TIMEOUT events
->>> not being flushed if they should already have expired. The test below
->>> hangs before this change (unless you run with $ ./a.out ~/somefile 1):
+On 15/01/2021 18:38, Jens Axboe wrote:
+> On 1/15/21 11:31 AM, Marcelo Diop-Gonzalez wrote:
+>> On Fri, Jan 15, 2021 at 10:02:12AM -0700, Jens Axboe wrote:
+>>> On 1/15/21 9:54 AM, Marcelo Diop-Gonzalez wrote:
+>>>> This patch tries to fix a problem with IORING_OP_TIMEOUT events
+>>>> not being flushed if they should already have expired. The test below
+>>>> hangs before this change (unless you run with $ ./a.out ~/somefile 1):
 >>>
->>> #include <fcntl.h>
->>> #include <stdio.h>
->>> #include <stdlib.h>
->>> #include <string.h>
->>> #include <unistd.h>
->>>
->>> #include <liburing.h>
->>>
->>> int main(int argc, char **argv) {
->>> 	if (argc < 2)
->>> 		return 1;
->>>
->>> 	int fd = open(argv[1], O_RDONLY);
->>> 	if (fd < 0) {
->>> 		perror("open");
->>> 		return 1;
->>> 	}
->>>
->>> 	struct io_uring ring;
->>> 	io_uring_queue_init(4, &ring, 0);
->>>
->>> 	struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
->>>
->>> 	struct __kernel_timespec ts = { .tv_sec = 9999999 };
->>> 	io_uring_prep_timeout(sqe, &ts, 1, 0);
->>> 	sqe->user_data = 123;
->>> 	int ret = io_uring_submit(&ring);
->>> 	if (ret < 0) {
->>> 		fprintf(stderr, "submit(timeout_sqe): %d\n", ret);
->>> 		return 1;
->>> 	}
->>>
->>> 	int n = 2;
->>> 	if (argc > 2)
->>> 		n = atoi(argv[2]);
->>>
->>> 	char buf;
->>> 	for (int i = 0; i < n; i++) {
->>> 		sqe = io_uring_get_sqe(&ring);
->>> 		if (!sqe) {
->>> 			fprintf(stderr, "too many\n");
->>> 			exit(1);
->>> 		}
->>> 		io_uring_prep_read(sqe, fd, &buf, 1, 0);
->>> 	}
->>> 	ret = io_uring_submit(&ring);
->>> 	if (ret < 0) {
->>> 		fprintf(stderr, "submit(read_sqe): %d\n", ret);
->>> 		exit(1);
->>> 	}
->>>
->>> 	struct io_uring_cqe *cqe;
->>> 	for (int i = 0; i < n+1; i++) {
->>> 		struct io_uring_cqe *cqe;
->>> 		int ret = io_uring_wait_cqe(&ring, &cqe);
->>> 		if (ret < 0) {
->>> 			fprintf(stderr, "wait_cqe(): %d\n", ret);
->>> 			return 1;
->>> 		}
->>> 		if (cqe->user_data == 123)
->>> 			printf("timeout found\n");
->>> 		io_uring_cqe_seen(&ring, cqe);
->>> 	}
->>> }
+>>> Can you turn this into a test case for liburing? I'll apply the
+>>> associated patch, thanks (and to Pavel for review as well).
 >>
->> Can you turn this into a test case for liburing? I'll apply the
->> associated patch, thanks (and to Pavel for review as well).
+>> Yup, can do. I'll try to clean it up some first (especially so it
+>> doesn't just hang when it fails :/)
 > 
-> Yup, can do. I'll try to clean it up some first (especially so it
-> doesn't just hang when it fails :/)
+> That'd of course be nice, but not a hard requirement. A lot of the
+> regressions tests will crash a broken kernel, so...
 
-That'd of course be nice, but not a hard requirement. A lot of the
-regressions tests will crash a broken kernel, so...
+Ha, they definitely will. 
+
+Marcelo, replacing reads with nop requests should trigger it as well,
+it's probably easier and even more reliable as we always complete
+them inline (if not linked or IOSQE_ASYNC).
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

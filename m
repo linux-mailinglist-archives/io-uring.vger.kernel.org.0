@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BCB362F82B2
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 18:43:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36B8D2F82B3
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 18:43:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729403AbhAORmS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jan 2021 12:42:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49504 "EHLO
+        id S1729435AbhAORmT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jan 2021 12:42:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728176AbhAORmS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 12:42:18 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92E3DC061793
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:41:37 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id c124so8117635wma.5
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:41:37 -0800 (PST)
+        with ESMTP id S1728176AbhAORmT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 12:42:19 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77F0C061794
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:41:38 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id r4so8290983wmh.5
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:41:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=RXmBz5ODd7DL0wFR6SAUmZbIGDnf5Y70w7ecWnf4Fc0=;
-        b=NFLipTdx9S6asg3zztu65J9rcI9G5SfKw8c2F/JFccFqC44N1aetiRiEScjQ0h6FUu
-         RV/mNSObX+f5bfpWxfRNxPpy3giQftZ3JUz9ImZRhpXZDpb/sLq8IklB3xNspJ3YTBYt
-         BNLPvIqVHodILoFO1tqFpTpUHfX752ctYDEOxc5/SjemmlMUyaBoSD42uNpcRoyiSYOq
-         a95IPU+saAFVAPU6748Egh5zg7J+uisQ6CdzY55R+/GMOLMiJJ80/fOtCuV14PuFpwpi
-         7ijA8HLlDwkAVPN5MiHQAeITHUmWlS2p46TtAd113bmKvQLyzDGhiBCULiTvFlCIf3/T
-         ZbDQ==
+        bh=CxKgbvv1FQoZNwPFJj7WbYTILYig6gN7xjICp/UyWjA=;
+        b=hrC/OSPvo/lWAZMLSR0fVshn0pd9qbtDjQlWtY+OeesuRyxDh2M+wE68XXSzuMZEGT
+         1cDcL8LifT8DL5f0Ra/pCLhZqiAmAYZXTes/zRar4OvsxXQOAgQUIldJybuwvIk5vaAZ
+         j5H3GbgecWXVbWrH9zNoz1ED4GPGI0a7sZqBDJH2AomIT/avQSpJvotexD0vTpHpDtQq
+         sww2TPT3wjxt9YRJ0EbViqvLruLbzoM35vHV4cpGcdopY6AerZCAtae5KC+HvoN3WCam
+         owsVf1bP3mpzfsPOu4MrBn5obCvNa6o5ziA+ZK70otT7KIwVzPRNhEAwR30P32BPkumx
+         sFng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RXmBz5ODd7DL0wFR6SAUmZbIGDnf5Y70w7ecWnf4Fc0=;
-        b=bDkp7r7zc1uGw7d9w68h5yN3eGNca5IbGrWLtv640cLc67J7UxhX1bJXF4cNQPzDSj
-         9pUV6GAnkWA3lXeSdFdvfvyHEBP753gSmHfu8uBi2tUHMLR8e2m2gH0vQuKnnQbxjeTW
-         yjR0VMcshhfhOLXGGLt0P4iWtYtUH5QNN/UyeRAoHIyJn64yK58nIiKSsCk+aQqWjKCc
-         m/9yajyMRc7c1J5rDBh6z1/OBMkWkmdyRCUQdm2183kyMqjtdYAaktzhRdJ2qI2Us5ej
-         UtgG2MWcl1EdtNoz0qjgz318czFyt084qxQyIg78tfyyGVFFG2FQs2d1PPr9sXVEFSAA
-         AbdQ==
-X-Gm-Message-State: AOAM531ywc2tHVJu7uNOM9e9jao2fZM7Ghx6XYXb5hEJ69IH8ct7sSZp
-        HEd3DRxpfaNuygDe3MsxHjY=
-X-Google-Smtp-Source: ABdhPJxzV221Be9IgraORANFFcrkjhgyyl1BDj47K0dzcRr+KYIPVWqB7JFXgCPgxrKaUL5j1ijtFw==
-X-Received: by 2002:a1c:3c0b:: with SMTP id j11mr9797636wma.90.1610732496409;
-        Fri, 15 Jan 2021 09:41:36 -0800 (PST)
+        bh=CxKgbvv1FQoZNwPFJj7WbYTILYig6gN7xjICp/UyWjA=;
+        b=MwsUacZytaAd40FLJ7cx6kwcFc7q9MYE+1yj5008/tZ6gcOWjyoNeNEYFFtAPlnSsk
+         SmB7QETb/bbqEEyUvrY6MHYCRLn2T0KhKN6baIOM5U9o7aARBk2uM02W+Iel05BUitfA
+         v7MFW7OMzR19SUgIoO9jU6VYhOGs5nZdoiChlSVbFAAJxqFF5qUfS4Tq3IAh8meCqKnT
+         aX3BzEGQhXpHmEqVR5RHgiy7mapxMH1frJritjvmM+MlpCktN9YLALgLZ2xFduNlplIz
+         BP/Gf6N6RjTzcRSpt0ja+O/WL1n7ntN/n5bxoA/UuGbwPvESzccF18UjdQgLG1X/LFvB
+         tWvA==
+X-Gm-Message-State: AOAM533Ly+QG0++daHMam4N2/RbJaEsFBX57HA8d2bvV1RJ2bGGwAX+Y
+        sG8Dlqct2gvKkuCwatDY+eYNH6eb9XE=
+X-Google-Smtp-Source: ABdhPJzizW9R0AxBp1vhbTnVCK8+Hf9eyyK/V6aWP4SYGNZHphabvjxn6/AEcjCwjvB6lVQM2379SQ==
+X-Received: by 2002:a7b:c018:: with SMTP id c24mr8656339wmb.41.1610732497549;
+        Fri, 15 Jan 2021 09:41:37 -0800 (PST)
 Received: from localhost.localdomain ([85.255.233.192])
-        by smtp.gmail.com with ESMTPSA id f7sm2060426wmg.43.2021.01.15.09.41.35
+        by smtp.gmail.com with ESMTPSA id f7sm2060426wmg.43.2021.01.15.09.41.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jan 2021 09:41:35 -0800 (PST)
+        Fri, 15 Jan 2021 09:41:36 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Subject: [PATCH 2/9] io_uring: generalize io_queue_rsrc_removal
-Date:   Fri, 15 Jan 2021 17:37:45 +0000
-Message-Id: <9ae39f72238058ae3e7bcce1ae2d7bba7523484b.1610729503.git.asml.silence@gmail.com>
+Subject: [PATCH 3/9] io_uring: separate ref_list from fixed_rsrc_data
+Date:   Fri, 15 Jan 2021 17:37:46 +0000
+Message-Id: <9eccb46dee6c4f3e24d0790389f216856edf8763.1610729503.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1610729502.git.asml.silence@gmail.com>
 References: <cover.1610729502.git.asml.silence@gmail.com>
@@ -64,100 +64,139 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 
-Generalize io_queue_rsrc_removal to handle both files and buffers.
+Uplevel ref_list and make it common to all resources.  This is to
+allow one common ref_list to be used for both files, and buffers
+in upcoming patches.
 
+Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-[remove io_mapped_ubuf from rsrc tables/etc. for now]
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ fs/io_uring.c | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 183a761fd9ae..35b4440ca7f0 100644
+index 35b4440ca7f0..b46710e88c35 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -195,9 +195,14 @@ struct io_mapped_ubuf {
- 	unsigned long	acct_pages;
+@@ -227,8 +227,6 @@ struct fixed_rsrc_data {
+ 	struct fixed_rsrc_ref_node	*node;
+ 	struct percpu_ref		refs;
+ 	struct completion		done;
+-	struct list_head		ref_list;
+-	spinlock_t			lock;
  };
  
-+struct io_ring_ctx;
-+
- struct io_rsrc_put {
- 	struct list_head list;
--	struct file *file;
-+	union {
-+		void *rsrc;
-+		struct file *file;
-+	};
- };
+ struct io_buffer {
+@@ -396,6 +394,8 @@ struct io_ring_ctx {
  
- struct fixed_rsrc_table {
-@@ -209,6 +214,8 @@ struct fixed_rsrc_ref_node {
- 	struct list_head		node;
- 	struct list_head		rsrc_list;
- 	struct fixed_rsrc_data		*rsrc_data;
-+	void				(*rsrc_put)(struct io_ring_ctx *ctx,
-+						    struct io_rsrc_put *prsrc);
- 	struct llist_node		llist;
- 	bool				done;
- };
-@@ -7570,8 +7577,9 @@ static int io_sqe_alloc_file_tables(struct fixed_rsrc_data *file_data,
- 	return 1;
+ 	struct delayed_work		rsrc_put_work;
+ 	struct llist_head		rsrc_put_llist;
++	struct list_head		rsrc_ref_list;
++	spinlock_t			rsrc_ref_lock;
+ 
+ 	struct work_struct		exit_work;
+ 	struct io_restriction		restrictions;
+@@ -1324,6 +1324,8 @@ static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	INIT_LIST_HEAD(&ctx->timeout_list);
+ 	spin_lock_init(&ctx->inflight_lock);
+ 	INIT_LIST_HEAD(&ctx->inflight_list);
++	spin_lock_init(&ctx->rsrc_ref_lock);
++	INIT_LIST_HEAD(&ctx->rsrc_ref_list);
+ 	INIT_DELAYED_WORK(&ctx->rsrc_put_work, io_rsrc_put_work);
+ 	init_llist_head(&ctx->rsrc_put_llist);
+ 	return ctx;
+@@ -7272,13 +7274,14 @@ static void io_rsrc_ref_kill(struct percpu_ref *ref)
+ 	complete(&data->done);
  }
  
--static void io_ring_file_put(struct io_ring_ctx *ctx, struct file *file)
-+static void io_ring_file_put(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc)
+-static void io_sqe_rsrc_set_node(struct fixed_rsrc_data *rsrc_data,
++static void io_sqe_rsrc_set_node(struct io_ring_ctx *ctx,
++				 struct fixed_rsrc_data *rsrc_data,
+ 				 struct fixed_rsrc_ref_node *ref_node)
  {
-+	struct file *file = prsrc->file;
- #if defined(CONFIG_UNIX)
- 	struct sock *sock = ctx->ring_sock->sk;
- 	struct sk_buff_head list, *head = &sock->sk_receive_queue;
-@@ -7640,7 +7648,7 @@ static void __io_rsrc_put_work(struct fixed_rsrc_ref_node *ref_node)
- 
- 	list_for_each_entry_safe(prsrc, tmp, &ref_node->rsrc_list, list) {
- 		list_del(&prsrc->list);
--		io_ring_file_put(ctx, prsrc->file);
-+		ref_node->rsrc_put(ctx, prsrc);
- 		kfree(prsrc);
- 	}
- 
-@@ -7719,6 +7727,7 @@ static struct fixed_rsrc_ref_node *alloc_fixed_file_ref_node(
- 	INIT_LIST_HEAD(&ref_node->node);
- 	INIT_LIST_HEAD(&ref_node->rsrc_list);
- 	ref_node->rsrc_data = ctx->file_data;
-+	ref_node->rsrc_put = io_ring_file_put;
- 	ref_node->done = false;
- 	return ref_node;
- }
-@@ -7876,8 +7885,7 @@ static int io_sqe_file_register(struct io_ring_ctx *ctx, struct file *file,
- #endif
+-	spin_lock_bh(&rsrc_data->lock);
++	spin_lock_bh(&ctx->rsrc_ref_lock);
+ 	rsrc_data->node = ref_node;
+-	list_add_tail(&ref_node->node, &rsrc_data->ref_list);
+-	spin_unlock_bh(&rsrc_data->lock);
++	list_add_tail(&ref_node->node, &ctx->rsrc_ref_list);
++	spin_unlock_bh(&ctx->rsrc_ref_lock);
+ 	percpu_ref_get(&rsrc_data->refs);
  }
  
--static int io_queue_rsrc_removal(struct fixed_rsrc_data *data,
--				 struct file *rsrc)
-+static int io_queue_rsrc_removal(struct fixed_rsrc_data *data, void *rsrc)
- {
- 	struct io_rsrc_put *prsrc;
- 	struct fixed_rsrc_ref_node *ref_node = data->node;
-@@ -7886,7 +7894,7 @@ static int io_queue_rsrc_removal(struct fixed_rsrc_data *data,
- 	if (!prsrc)
+@@ -7295,9 +7298,9 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 	if (!backup_node)
  		return -ENOMEM;
  
--	prsrc->file = rsrc;
-+	prsrc->rsrc = rsrc;
- 	list_add(&prsrc->list, &ref_node->rsrc_list);
+-	spin_lock_bh(&data->lock);
++	spin_lock_bh(&ctx->rsrc_ref_lock);
+ 	ref_node = data->node;
+-	spin_unlock_bh(&data->lock);
++	spin_unlock_bh(&ctx->rsrc_ref_lock);
+ 	if (ref_node)
+ 		percpu_ref_kill(&ref_node->refs);
  
- 	return 0;
-@@ -7895,7 +7903,7 @@ static int io_queue_rsrc_removal(struct fixed_rsrc_data *data,
- static inline int io_queue_file_removal(struct fixed_rsrc_data *data,
- 					struct file *file)
- {
--	return io_queue_rsrc_removal(data, file);
-+	return io_queue_rsrc_removal(data, (void *)file);
- }
+@@ -7313,7 +7316,7 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 		if (ret < 0) {
+ 			percpu_ref_resurrect(&data->refs);
+ 			reinit_completion(&data->done);
+-			io_sqe_rsrc_set_node(data, backup_node);
++			io_sqe_rsrc_set_node(ctx, data, backup_node);
+ 			return ret;
+ 		}
+ 	} while (1);
+@@ -7687,11 +7690,11 @@ static void io_rsrc_data_ref_zero(struct percpu_ref *ref)
+ 	data = ref_node->rsrc_data;
+ 	ctx = data->ctx;
  
- static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+-	spin_lock_bh(&data->lock);
++	spin_lock_bh(&ctx->rsrc_ref_lock);
+ 	ref_node->done = true;
+ 
+-	while (!list_empty(&data->ref_list)) {
+-		ref_node = list_first_entry(&data->ref_list,
++	while (!list_empty(&ctx->rsrc_ref_list)) {
++		ref_node = list_first_entry(&ctx->rsrc_ref_list,
+ 					struct fixed_rsrc_ref_node, node);
+ 		/* recycle ref nodes in order */
+ 		if (!ref_node->done)
+@@ -7699,7 +7702,7 @@ static void io_rsrc_data_ref_zero(struct percpu_ref *ref)
+ 		list_del(&ref_node->node);
+ 		first_add |= llist_add(&ref_node->llist, &ctx->rsrc_put_llist);
+ 	}
+-	spin_unlock_bh(&data->lock);
++	spin_unlock_bh(&ctx->rsrc_ref_lock);
+ 
+ 	if (percpu_ref_is_dying(&data->refs))
+ 		delay = 0;
+@@ -7760,8 +7763,6 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		return -ENOMEM;
+ 	file_data->ctx = ctx;
+ 	init_completion(&file_data->done);
+-	INIT_LIST_HEAD(&file_data->ref_list);
+-	spin_lock_init(&file_data->lock);
+ 
+ 	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_FILES_TABLE);
+ 	file_data->table = kcalloc(nr_tables, sizeof(*file_data->table),
+@@ -7822,7 +7823,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		return -ENOMEM;
+ 	}
+ 
+-	io_sqe_rsrc_set_node(file_data, ref_node);
++	io_sqe_rsrc_set_node(ctx, file_data, ref_node);
+ 	return ret;
+ out_fput:
+ 	for (i = 0; i < ctx->nr_user_files; i++) {
+@@ -7983,7 +7984,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 
+ 	if (needs_switch) {
+ 		percpu_ref_kill(&data->node->refs);
+-		io_sqe_rsrc_set_node(data, ref_node);
++		io_sqe_rsrc_set_node(ctx, data, ref_node);
+ 	} else
+ 		destroy_fixed_rsrc_ref_node(ref_node);
+ 
 -- 
 2.24.0
 

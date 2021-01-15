@@ -2,122 +2,120 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F8332F82EA
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 18:50:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 555762F847C
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 19:33:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbhAORtH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jan 2021 12:49:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbhAORtG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 12:49:06 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F13B6C061757
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:48:25 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id e15so1933452wme.0
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:48:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JPk6XaSHLQzcq/I958LcfE8VCUPdIGjptBqBwj0601U=;
-        b=UqVPL2SMPk6J1wsdaSJqqAhojneIlSpL/T1dMDzoPmuh+FOvBUDD1PWJOZQsauJ7v8
-         yB0n8GqNOYunYEgJ2o5fA37wpq95uRKQ2+ps7mR842XJUMPYE89eGGxEgtg+y+jDm2ob
-         Y5wHs3xmzDTV75E+h4Bt+sU++6ZYh2rOtzxd4cLDOCT/1wl91FPWM6rEq8fFvZiLF+9l
-         xgjDvs+HURA6WN6leIicY3NbV3OLO48KhrK8VafejHD3nU/mpwnMwILRbURqnl/hNZ6/
-         6Qc71c8DJ7lC2A4VZXnuX1Yf9MuBfkaEg2GThGK+hWyzkKS0UVTFpdMpYYQaTX5w7pGl
-         YvbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JPk6XaSHLQzcq/I958LcfE8VCUPdIGjptBqBwj0601U=;
-        b=UZjRNu0diIC/IScQX6SH8lBxu+Ld6NMIjChDcqrp2G3NTJCl1xtRlZ87cRZyhYV7gd
-         zlks4z2F4mpgDVenu1lVFq9v3aX6joIRYPsgjZLCPEsywk+ZBE8n3n8tvzSQgIDeKYGN
-         lJpGYlmiMl8ZJlpZEH0NRFm4s95WZzqgjOdH4B8YH7Zw4j+hM9ar9Gh0KbxyICE/uMKL
-         zLMoFpquDTL/0zA+dtb2Vq9YbE8v/h4WQOdX5KGldcwIggQqGweMTbweQwFCste1Y0iK
-         Fb3m5nSBThUaew+4Wgj2qzLtYcFeBEHYSgvMdlKqnUhJMawioReJM/98rdrkoTNCAVtG
-         rrqQ==
-X-Gm-Message-State: AOAM532QuKNUs90fhbDowKCvCYt8zcf3XncFLnz8HfDV2Ji0dvWJrObZ
-        ixhJO+5f7PB88NUmki8ZrPIVSEVBI+Q=
-X-Google-Smtp-Source: ABdhPJyDRZHavywVsIu7nhpVig7A/6hMtium4colaLETYVXA4VV1h4GcVH8Kn+6CbGksgRvPOxsW3w==
-X-Received: by 2002:a7b:c7d8:: with SMTP id z24mr9833143wmk.1.1610732904508;
-        Fri, 15 Jan 2021 09:48:24 -0800 (PST)
-Received: from [192.168.8.124] ([85.255.233.192])
-        by smtp.gmail.com with ESMTPSA id u205sm13123912wme.42.2021.01.15.09.48.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jan 2021 09:48:23 -0800 (PST)
-Subject: Re: [PATCH v5 12/13] io_uring: call io_get_fixed_rsrc_ref for buffers
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
-        io-uring@vger.kernel.org
-References: <1610487193-21374-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1610487193-21374-13-git-send-email-bijan.mottahedeh@oracle.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <94f305d4-2630-85c9-9e10-3952d27355a5@gmail.com>
-Date:   Fri, 15 Jan 2021 17:44:49 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1733214AbhAOSch (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jan 2021 13:32:37 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:54542 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729507AbhAOSch (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 13:32:37 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10FITNIq018553;
+        Fri, 15 Jan 2021 18:31:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=JJOfHmyCgEPBhvsQQ8JdXKpwKCjKP1apDIw9+Y+Ls7E=;
+ b=rO6LhkYEgIff6b+p2y5JZFxNkumzqoF+tndJ6JwiGKjIGTmrka4Wdj3eL0C5wMetmPAf
+ GmbDTIotTnBaDPp0QqNaYNmhb7w2XKTfOLlfAUOvsbWDVJDkSQXgLqVAGMOlBwubgQF2
+ PKL0X8IHkXw61qKNTHlQmEFAF3M6bb7OQ7Drzp7LGXI1tk119uMbY4EiCk2LXtbC7EYC
+ +DhZAHCw9J22d4keurQ0n6UCRjFokXRZuLkPbuXDXg9Hfbm+W8QwkAaXlPBh9xmPC4nh
+ 6n+r1aC5Zcer8asfZ9WysLe++tasjUzJDiW0TE+3bD+IDqSyp6wB9XiwAqlJ0m3+DQy4 zg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 360kvke5kn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Jan 2021 18:31:53 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10FIVoRA079291;
+        Fri, 15 Jan 2021 18:31:52 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 360kebeupq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Jan 2021 18:31:52 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 10FIOC1n029026;
+        Fri, 15 Jan 2021 18:24:12 GMT
+Received: from [10.154.100.45] (/10.154.100.45)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 Jan 2021 10:24:12 -0800
+Subject: Re: [PATCH 0/9] Bijan's rsrc generalisation + prep parts
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1610729502.git.asml.silence@gmail.com>
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Message-ID: <4da98b8b-88cb-0d4a-4248-8e593926db2f@oracle.com>
+Date:   Fri, 15 Jan 2021 10:24:11 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-In-Reply-To: <1610487193-21374-13-git-send-email-bijan.mottahedeh@oracle.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <cover.1610729502.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Antivirus: Avast (VPS 210113-0, 01/12/2021), Outbound message
+X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9865 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101150111
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9865 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 impostorscore=0 spamscore=0 mlxscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101150111
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/01/2021 21:33, Bijan Mottahedeh wrote:
-> io_get_fixed_rsrc_ref() must be called for both buffers and files.
+On 1/15/2021 9:37 AM, Pavel Begunkov wrote:
+> I guess we can agree that generic rsrc handling is a good thing to have,
+> even if we have only files at the moment. This consists of related
+> patches from the Bijan's longer series, doesn't include sharing and
+> buffer bits. I suggest to merge it first. It's approx half of the all
+> changes.
+> 
+> Based on 5.12 with a few pathes from 5.11 cherry-pick to reduce merge
+> conflicts, because of merging/etc. may wait for a week or so for the
+> next rc before potentially being merged. This also addressed tricky
+> merge conflicts where it was applying and compiling well but still
+> buggy.
+> 
+> Bijan, for the changed patches I also dropped your signed-off, so
+> please reply if you're happy with the new versions so we can
+> add it back. There are change logs (e.g. [did so]) in commit messages
+> of those.
 
-This should go before you wire up ref_node'ed buffers stuff, or
-merged into it. You know, the intention is for each patch to be
-bug-free, it's cleaner and easier to debug/bisect.
+Looks good, thanks.  I'll wait for your review of the buffer sharing 
+patch, and once this series is picked up, I'll resend the buffers 
+patches set.
 
-[again, no need to resend yet]
+> 
+> Mapping to the original v5 series:
+> 1-5/9 (1-5/13 originally), mostly unchanged
+> 6/9 -- my own prep
+> 7/9 (7/13 originally), only file part
+> 8/9 (10/13 originally), only file part
+> 9/9 (11/13 before), unchanged
+> 
+> Bijan Mottahedeh (8):
+>    io_uring: rename file related variables to rsrc
+>    io_uring: generalize io_queue_rsrc_removal
+>    io_uring: separate ref_list from fixed_rsrc_data
+>    io_uring: add rsrc_ref locking routines
+>    io_uring: split alloc_fixed_file_ref_node
+>    io_uring: create common fixed_rsrc_ref_node handling routines
+>    io_uring: create common fixed_rsrc_data allocation routines
+>    io_uring: make percpu_ref_release names consistent
+> 
+> Pavel Begunkov (1):
+>    io_uring: split ref_node alloc and init
+> 
+>   fs/io_uring.c                 | 355 ++++++++++++++++++++--------------
+>   include/uapi/linux/io_uring.h |   7 +
+>   2 files changed, 216 insertions(+), 146 deletions(-)
+> 
 
--- 
-Pavel Begunkov

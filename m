@@ -2,59 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25F802F71B1
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 05:47:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0A7B2F7A3E
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 13:47:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728000AbhAOEq3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Jan 2021 23:46:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51776 "EHLO
+        id S1732140AbhAOMrk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jan 2021 07:47:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbhAOEq2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 23:46:28 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC03CC061575
-        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 20:45:47 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id w5so7931683wrm.11
-        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 20:45:47 -0800 (PST)
+        with ESMTP id S1733056AbhAOMha (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 07:37:30 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D2C2C061757
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 04:36:50 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id 6so1820752wri.3
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 04:36:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GcOw3u1r/FUZoHK/B7jeC1xQaZi7DaC/UohQm/HomZs=;
-        b=Roc9W6efOMgQfmilPFqs/D1KsxVJa4jYDUEZsMxywSb3dMhWeSLwYPjPwRMqqivrwV
-         pg8RuHUvkGu8lRQYyiIj6vUbaU+LJDHAb2mHEAeLd5f8OiNyt09kw5NNA6N+Hn5cbNAE
-         SWB8RmeFw9iainRotfbd464acxyBo0cFwIczkp+H1qrkTAiFl5OCsSL0H6Kyn4hxGHM1
-         dvIbwCCFZddCPQ+qSVCWpurjmtvQlLOsFResQEUseZOSufk/vKM+ZNZWrwZUW72k5M1l
-         ezI3rdB3aYoPMS57lstK2SYDU4MRS7d3XnOwZrhnaRWowV2jSLBxtlG8dcB8/XND6hCF
-         oR1w==
+        bh=G0F3vXbyzXwCRTptElERVE9356V7sp58CbQseYBEVJ4=;
+        b=tCQ1RsN8ifs2bk19+Euv3X7pcjslgXbqcblxMUidKO/WMqemgJKbds7yBZ9mqaIEIY
+         7LrxmztyHjSbjysKmgWJ3vYNwFGPP5V+jZf6E88XqNe66VWlD2M5YaIQeNQ+626UwUhu
+         mrLCDW61QUEEj++e7xgEkswY7p4qraEoelb2xbucQY8fmEbDlXKzE3G13+VJ0+PxA2Tj
+         NAqB2aF+15H+F/D1L4UD7SnFL9tJh8P30Hkeg3KsnsYx8WSCL2O5eTQ2BvNberNbkTJh
+         D7wCv45kj7/rjWFq1d7gRoGjVW3UXguwNt6cbkteRXVjTSWqWZptidDVMT8iQE4Fn0rf
+         s4oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=GcOw3u1r/FUZoHK/B7jeC1xQaZi7DaC/UohQm/HomZs=;
-        b=sJ+U0hU4IhDqXQh0KqSmqCfg9MMIoVMcHg8JMr79LCLhpSJZ2XX6fUYKve1iM6TfDX
-         b30FhXHgIOewS+jLM/ZwYLc6+FK8hbXiqux1LoBPw2JNSbWxZk4Z7tIyjJ8snvikYucF
-         5/s7D++wvYe3U8FjbGsUI6QGcZn7D2jEGBncqWF0Xv1id+tqAkB2xEvKoDG/bwIkeJoY
-         ydZn1JXh76MxfGs3yk0za7gka20WxuBgpbw00S8dmVBYbmu2/fnCE9fK1gR3xXizH4Ad
-         okuFeGCVHBakht7g0TwOI6EgnjDM0QcOAm/GXnjiiEbeCvQwbsvK/F7gdC/FnqzvbisZ
-         tltw==
-X-Gm-Message-State: AOAM53230MZqxeHzqUqxy35+uh486g4JwuRiX+7cEQYicd9GB8bpFZUB
-        l45bw7FRG4HJDlSAlN850NLvXlxUVTyslQ==
-X-Google-Smtp-Source: ABdhPJyo8Jkm2fEy2L/izDN84e45ZfkAl6Ld8yI/9O39CKFS3e195VIe5rYFxxhtJxy0ap/5QONkrQ==
-X-Received: by 2002:adf:fdd1:: with SMTP id i17mr10924719wrs.173.1610685946284;
-        Thu, 14 Jan 2021 20:45:46 -0800 (PST)
+        bh=G0F3vXbyzXwCRTptElERVE9356V7sp58CbQseYBEVJ4=;
+        b=W2+q0t7vDP9bnTFfF6bdMW3IygtJfRCHfV3fTFioHc+6e6yuvNP63+Rkp0sqPKAygn
+         242sv/Dmir5kCphvayATCMEZK2RpcWkTcBfBFYdvpHRS65dOCQA2GokJIY3eHeun5EWH
+         4CVBFHkNhPWAWRCCFDGtWpdGy7sZJbPgtsXecJmL3nFyweao3IiHaXagQQKlstwctHqv
+         ZI804KnIziNs4mP757gmyTXddVC4Dc0O0lC7BYRLww3NAngsjM5AruOzHOVxeIGj0q3Z
+         DPMquV5ytCTPxwlyxZgLqkz3/9GWe7nqttM/rr0fLaUDX2X+qXoZpNvXapNdxS2Q5JpN
+         7lsw==
+X-Gm-Message-State: AOAM533Ywn6Gs6myZ4svJ1+Yw++8PKlCS9zR7D67zNCFFKm2Xyo8HtAU
+        VA8bTXcbiF1YVoqfMADPPwImbxEJZWRAmg==
+X-Google-Smtp-Source: ABdhPJyMfz4JDEJJ6fsNirxXtF4/kVINk4KuMdeJKA3sn4sOK8JIfL+rgrHJCF5ROZPDAQpIq3mE3A==
+X-Received: by 2002:adf:d218:: with SMTP id j24mr13471324wrh.361.1610714209030;
+        Fri, 15 Jan 2021 04:36:49 -0800 (PST)
 Received: from [192.168.8.122] ([85.255.233.192])
-        by smtp.gmail.com with ESMTPSA id q7sm12711361wrx.62.2021.01.14.20.45.45
+        by smtp.gmail.com with ESMTPSA id t188sm12331840wmf.9.2021.01.15.04.36.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jan 2021 20:45:45 -0800 (PST)
-Subject: Re: [PATCH v5 00/13] io_uring: buffer registration enhancements
-To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
-        io-uring@vger.kernel.org
-References: <1610487193-21374-1-git-send-email-bijan.mottahedeh@oracle.com>
- <86a8ae2e-78b4-6d8c-1aea-5f169de5aabc@gmail.com>
- <e071e7e5-207b-9595-1de7-82f702864198@oracle.com>
- <50be90bb-1ccf-0266-ff32-f6b72958fdb9@oracle.com>
+        Fri, 15 Jan 2021 04:36:48 -0800 (PST)
+Subject: Re: [PATCH for-current 0/2] sqo files/mm fixes
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1610337318.git.asml.silence@gmail.com>
+ <1c14686f-2dec-7544-5fa6-51e5a2977beb@gmail.com>
+ <013686d9-2692-9154-d9f0-fc54f1cbb63d@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -99,12 +97,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <edaf32c5-c73c-3eb2-3c65-ac8a2fc0309b@gmail.com>
-Date:   Fri, 15 Jan 2021 04:42:11 +0000
+Message-ID: <910e7d51-0790-9f74-9014-e2752f9e801c@gmail.com>
+Date:   Fri, 15 Jan 2021 12:33:14 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <50be90bb-1ccf-0266-ff32-f6b72958fdb9@oracle.com>
+In-Reply-To: <013686d9-2692-9154-d9f0-fc54f1cbb63d@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -112,28 +110,18 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 14/01/2021 22:54, Bijan Mottahedeh wrote:
-> On 1/14/2021 2:44 PM, Bijan Mottahedeh wrote:
->> On 1/14/2021 1:20 PM, Pavel Begunkov wrote:
->>> On 12/01/2021 21:33, Bijan Mottahedeh wrote:
->>>> v5:
->>>>
->>>> - call io_get_fixed_rsrc_ref for buffers
->>>> - make percpu_ref_release names consistent
->>>> - rebase on for-5.12/io_uring
->>>
->>> To reduce the burden I'll take the generalisation patches from that,
->>> review and resend to Jens with small changes leaving your "from:".
->>> I hope you don't mind, that should be faster.
->>>
->>> I'll remove your signed-off and will need it back by you replying
->>> on this coming resend.
+On 14/01/2021 23:28, Jens Axboe wrote:
+> On 1/14/21 2:12 PM, Pavel Begunkov wrote:
+>> On 11/01/2021 04:00, Pavel Begunkov wrote:
+>>> Neither of issues is confirmed, but should be a good hardening in any
+>>> case. Inefficiencies will be removed for-next.
 >>
->> Sure, thanks.
+>> A reminder just in case it was lost
 > 
-> Do you have any other concerns about the buffer sharing patch itself that I can address?
+> Maybe I forgot to send out a reply, but they are in the io_uring-5.11
+> branch.
 
-Not yet, I'll go over it this week
+Missed it in the tree. Thanks!
 
 -- 
 Pavel Begunkov

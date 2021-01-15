@@ -2,149 +2,144 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E4AA2F814D
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 17:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1A332F8170
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 18:03:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbhAOQzw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jan 2021 11:55:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39442 "EHLO
+        id S1725946AbhAORCy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jan 2021 12:02:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbhAOQzw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 11:55:52 -0500
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A246BC0613C1
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 08:55:11 -0800 (PST)
-Received: by mail-qk1-x729.google.com with SMTP id v126so12243876qkd.11
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 08:55:11 -0800 (PST)
+        with ESMTP id S1725923AbhAORCy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 12:02:54 -0500
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED62C061757
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:02:14 -0800 (PST)
+Received: by mail-io1-xd32.google.com with SMTP id w18so19461236iot.0
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:02:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OaaS5T1O14aKTkeXu45xGwsiTvPMovYdhHXlgYjVikI=;
-        b=Tt/ofVaCD4BhIHsqrVXgZxRqFCVTd5DLZvkqTB6KTZS1HGxWeJjeQGLDrLtHEIsBnu
-         +/Tl2u5TbM+IPOxYtldlhym3/GRhXVLuztKXr12kyt9MWLAVzyZ8f+po8COferMm6lfd
-         VD4YW4mBefl+g1kJ6L2NdadFngLLE0Jzzt97xOiL3QH+e8cU5LpjR00qS3DANRUN63xd
-         /5HRQftypx8EYzBXZq7ijCnhDgKKI4IKShiSIFrET2TPRKfViieIwf6/xOsqcitRE5op
-         JPc2s+Xq3H0y4u20lsr4aVWtSMgRjt3ch1xqO5NfOyBxgCwV3GzNtdCenz0dk3HI0+YL
-         /GXQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8LOlWUeLUBDB6RiKlP5UStWt6QlHYiEMhjVHGsbCwps=;
+        b=PWz9kJ32pY4sLSCA9FUpl/Kcqf2I1Z6zgBVPgl9Q3nd4+jwy2FuhsSAEK58/U4EBjX
+         oSgj/aF0pT7vxsTe6Jw+ioRAqoKAF2yKJp8NdSt6PF/wiQW11IYHKVpxpB8D69Tx1b+2
+         R8MToSUJCX8hnGeS9rQf8AbBo/UNh6KxHcHV0eq1lOag6Fru/2VFpwmMdgFOmKChw6UA
+         js7T2boosO3ZsbOKG9KNZCL9itGvOZrm10WAmt2khfY14WDQy/bztzmNuM48npvIv8PX
+         TQPFys24lkOD0/Z950doTN28+UZrmnYexucy77UR1M4qx9MJ2OnVxgXHceImqXzK/luY
+         pwEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OaaS5T1O14aKTkeXu45xGwsiTvPMovYdhHXlgYjVikI=;
-        b=hF+cfCFu3JNMrnDHtexCXu2gonXaDnz2BzmO8rhl2NEJ161txc56/AxbJXODuIkX1F
-         bkGqGYwFdsCSv/j0Ale1Il9OV8W9vpWh0Q+4O+KCmWmRMAIFT8X7d/9234PmZtl4CGgU
-         +Xk3zgbrtSTFh1tL6/Pyu7zHIVbQsTlTMQF49C3+PiEO3SJqzmrvU/GcAtF03h3uOA8/
-         uBPQE9h3KuKHXCRGulCQBRmOEIzWoNr2Tkzk8XOzIpQheuREqPhkMt8uEurEK+sqb6Zb
-         jvSPxJLHLRkq8kl47o/hGXxlceabwskfRXpWzYln6BS30fJGSQx/l33S0q06A5mhiI2p
-         xQ/g==
-X-Gm-Message-State: AOAM531vot6C+jbp8jwcF2IvX66I/LB5xDNZsqNOo9tZ8i789eUvplDW
-        A16Ais7k+5QMTIM+9gpbWp0=
-X-Google-Smtp-Source: ABdhPJwLveL2cI02BsYeLk4FM8sG49u1XYG1KgcktI7ueepdcwZDYmfBhrtRUHAL88YLZZu/CON0bw==
-X-Received: by 2002:a37:b87:: with SMTP id 129mr13255566qkl.2.1610729710964;
-        Fri, 15 Jan 2021 08:55:10 -0800 (PST)
-Received: from marcelo-debian.domain (cpe-184-152-69-119.nyc.res.rr.com. [184.152.69.119])
-        by smtp.gmail.com with ESMTPSA id n7sm5276366qkg.19.2021.01.15.08.55.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jan 2021 08:55:10 -0800 (PST)
-From:   Marcelo Diop-Gonzalez <marcelo827@gmail.com>
-To:     axboe@kernel.dk, asml.silence@gmail.com
-Cc:     io-uring@vger.kernel.org,
-        Marcelo Diop-Gonzalez <marcelo827@gmail.com>
-Subject: [PATCH v4 1/1] io_uring: flush timeouts that should already have expired
-Date:   Fri, 15 Jan 2021 11:54:40 -0500
-Message-Id: <20210115165440.12170-2-marcelo827@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210115165440.12170-1-marcelo827@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8LOlWUeLUBDB6RiKlP5UStWt6QlHYiEMhjVHGsbCwps=;
+        b=NGeGc+I+oahnti/s2UNcJq2crUDYY9tKpIkFmBzvPBZsLzmRAcqbV5i4JtqK1dUP13
+         HYMHeTvH3MFn/GSamQPgZGbvJ/9ZJZPIBkGO/LmgNGTKoc16RPN/RWurDR/Ugtfx1Dn2
+         5ShLlqz7BCbXLqVrIGySbVd+BUY5HkK20j9Q+oFAxtK8P0LRtS9N3c0b0PNfKGL2tGUQ
+         i2F4ZjrJKwR8KS1xtV6WTfNBbkd6x5GIFgsFGetkiqbkwuBEjJzY2kqNZesOYu80VRQV
+         fiwSRMOFBOJ/a+7EeN7j2yP5HOJPoxeTgwuvCcGw02O19ozcEPl5cxU/8GlStzZUp4aZ
+         f/tg==
+X-Gm-Message-State: AOAM533K16GPA9edsqIGKsZKcMiL3rXgHl4oAG1BJ+RgKrGLonnFr9VE
+        X1wZoI9kdACPmUykdwLSpIXSKAJfMce/EQ==
+X-Google-Smtp-Source: ABdhPJyHXtUgDquTA3CH0kE0+2fk/slXO1dCSCKjop2fTeQbWww8kgzCt2KzDpfnFhkTaiMPdOFVOQ==
+X-Received: by 2002:a05:6e02:11a6:: with SMTP id 6mr9852672ilj.87.1610730133199;
+        Fri, 15 Jan 2021 09:02:13 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id v4sm1743457ilh.23.2021.01.15.09.02.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Jan 2021 09:02:12 -0800 (PST)
+Subject: Re: [PATCH v4 0/1] io_uring: fix skipping of old timeout events
+To:     Marcelo Diop-Gonzalez <marcelo827@gmail.com>,
+        asml.silence@gmail.com
+Cc:     io-uring@vger.kernel.org
 References: <20210115165440.12170-1-marcelo827@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7b70938a-3726-ccc0-049d-4a617c9d2298@kernel.dk>
+Date:   Fri, 15 Jan 2021 10:02:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210115165440.12170-1-marcelo827@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Right now io_flush_timeouts() checks if the current number of events
-is equal to ->timeout.target_seq, but this will miss some timeouts if
-there have been more than 1 event added since the last time they were
-flushed (possible in io_submit_flush_completions(), for example). Fix
-it by recording the last sequence at which timeouts were flushed so
-that the number of events seen can be compared to the number of events
-needed without overflow.
+On 1/15/21 9:54 AM, Marcelo Diop-Gonzalez wrote:
+> This patch tries to fix a problem with IORING_OP_TIMEOUT events
+> not being flushed if they should already have expired. The test below
+> hangs before this change (unless you run with $ ./a.out ~/somefile 1):
+> 
+> #include <fcntl.h>
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <string.h>
+> #include <unistd.h>
+> 
+> #include <liburing.h>
+> 
+> int main(int argc, char **argv) {
+> 	if (argc < 2)
+> 		return 1;
+> 
+> 	int fd = open(argv[1], O_RDONLY);
+> 	if (fd < 0) {
+> 		perror("open");
+> 		return 1;
+> 	}
+> 
+> 	struct io_uring ring;
+> 	io_uring_queue_init(4, &ring, 0);
+> 
+> 	struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
+> 
+> 	struct __kernel_timespec ts = { .tv_sec = 9999999 };
+> 	io_uring_prep_timeout(sqe, &ts, 1, 0);
+> 	sqe->user_data = 123;
+> 	int ret = io_uring_submit(&ring);
+> 	if (ret < 0) {
+> 		fprintf(stderr, "submit(timeout_sqe): %d\n", ret);
+> 		return 1;
+> 	}
+> 
+> 	int n = 2;
+> 	if (argc > 2)
+> 		n = atoi(argv[2]);
+> 
+> 	char buf;
+> 	for (int i = 0; i < n; i++) {
+> 		sqe = io_uring_get_sqe(&ring);
+> 		if (!sqe) {
+> 			fprintf(stderr, "too many\n");
+> 			exit(1);
+> 		}
+> 		io_uring_prep_read(sqe, fd, &buf, 1, 0);
+> 	}
+> 	ret = io_uring_submit(&ring);
+> 	if (ret < 0) {
+> 		fprintf(stderr, "submit(read_sqe): %d\n", ret);
+> 		exit(1);
+> 	}
+> 
+> 	struct io_uring_cqe *cqe;
+> 	for (int i = 0; i < n+1; i++) {
+> 		struct io_uring_cqe *cqe;
+> 		int ret = io_uring_wait_cqe(&ring, &cqe);
+> 		if (ret < 0) {
+> 			fprintf(stderr, "wait_cqe(): %d\n", ret);
+> 			return 1;
+> 		}
+> 		if (cqe->user_data == 123)
+> 			printf("timeout found\n");
+> 		io_uring_cqe_seen(&ring, cqe);
+> 	}
+> }
 
-Signed-off-by: Marcelo Diop-Gonzalez <marcelo827@gmail.com>
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 34 ++++++++++++++++++++++++++++++----
- 1 file changed, 30 insertions(+), 4 deletions(-)
+Can you turn this into a test case for liburing? I'll apply the
+associated patch, thanks (and to Pavel for review as well).
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 372be9caf340..06cc79d39586 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -354,6 +354,7 @@ struct io_ring_ctx {
- 		unsigned		cq_entries;
- 		unsigned		cq_mask;
- 		atomic_t		cq_timeouts;
-+		unsigned		cq_last_tm_flush;
- 		unsigned long		cq_check_overflow;
- 		struct wait_queue_head	cq_wait;
- 		struct fasync_struct	*cq_fasync;
-@@ -1639,19 +1640,38 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
- 
- static void io_flush_timeouts(struct io_ring_ctx *ctx)
- {
--	while (!list_empty(&ctx->timeout_list)) {
-+	u32 seq;
-+
-+	if (list_empty(&ctx->timeout_list))
-+		return;
-+
-+	seq = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
-+
-+	do {
-+		u32 events_needed, events_got;
- 		struct io_kiocb *req = list_first_entry(&ctx->timeout_list,
- 						struct io_kiocb, timeout.list);
- 
- 		if (io_is_timeout_noseq(req))
- 			break;
--		if (req->timeout.target_seq != ctx->cached_cq_tail
--					- atomic_read(&ctx->cq_timeouts))
-+
-+		/*
-+		 * Since seq can easily wrap around over time, subtract
-+		 * the last seq at which timeouts were flushed before comparing.
-+		 * Assuming not more than 2^31-1 events have happened since,
-+		 * these subtractions won't have wrapped, so we can check if
-+		 * target is in [last_seq, current_seq] by comparing the two.
-+		 */
-+		events_needed = req->timeout.target_seq - ctx->cq_last_tm_flush;
-+		events_got = seq - ctx->cq_last_tm_flush;
-+		if (events_got < events_needed)
- 			break;
- 
- 		list_del_init(&req->timeout.list);
- 		io_kill_timeout(req);
--	}
-+	} while (!list_empty(&ctx->timeout_list));
-+
-+	ctx->cq_last_tm_flush = seq;
- }
- 
- static void io_commit_cqring(struct io_ring_ctx *ctx)
-@@ -5837,6 +5857,12 @@ static int io_timeout(struct io_kiocb *req)
- 	tail = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
- 	req->timeout.target_seq = tail + off;
- 
-+	/* Update the last seq here in case io_flush_timeouts() hasn't.
-+	 * This is safe because ->completion_lock is held, and submissions
-+	 * and completions are never mixed in the same ->completion_lock section.
-+	 */
-+	ctx->cq_last_tm_flush = tail;
-+
- 	/*
- 	 * Insertion sort, ensuring the first entry in the list is always
- 	 * the one we need first.
 -- 
-2.20.1
+Jens Axboe
 

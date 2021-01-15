@@ -2,58 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA132F71AD
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 05:46:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F802F71B1
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 05:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728981AbhAOEpL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Jan 2021 23:45:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51498 "EHLO
+        id S1728000AbhAOEq3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Jan 2021 23:46:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728668AbhAOEpJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 23:45:09 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 663C4C061575;
-        Thu, 14 Jan 2021 20:44:28 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id k10so6244975wmi.3;
-        Thu, 14 Jan 2021 20:44:28 -0800 (PST)
+        with ESMTP id S1726019AbhAOEq2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 23:46:28 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC03CC061575
+        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 20:45:47 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id w5so7931683wrm.11
+        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 20:45:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oMMv5S4CfKPC/nDBxjQsaxRQfrFMKm4a2sZxLMk7C9o=;
-        b=EywqEU1iMi2yxP4kRHfmspXPBsyQ0TM/o3SaAdkqbaioj9rwj73YUIRLQxSuvYBhoK
-         9F6U5GIhIN0Exa7+rNXNGgmjFH6CievRGcnRgwOLffze+XMJbyEKPdb0yB+SJD2NEk6Y
-         oSzPDj4tPOYFrmJiBMbwISpUSilQxIZYzIBm3pwF6E/5TRm9pAjjf+N1X4qO+50Qoi8I
-         aK37n2bzLGtah1FhQpYZzwSOJzqPivJ7djVNA5lcKK8p4Nqi+c3RmJaaOI7paW0SzKU4
-         nrABk2JcyfpB3F62x0JXnhFomilbfh5UTXsvR0VMJ/Ue+HltK6YLVrz+VO7NIeKLgvEt
-         +ncw==
+        bh=GcOw3u1r/FUZoHK/B7jeC1xQaZi7DaC/UohQm/HomZs=;
+        b=Roc9W6efOMgQfmilPFqs/D1KsxVJa4jYDUEZsMxywSb3dMhWeSLwYPjPwRMqqivrwV
+         pg8RuHUvkGu8lRQYyiIj6vUbaU+LJDHAb2mHEAeLd5f8OiNyt09kw5NNA6N+Hn5cbNAE
+         SWB8RmeFw9iainRotfbd464acxyBo0cFwIczkp+H1qrkTAiFl5OCsSL0H6Kyn4hxGHM1
+         dvIbwCCFZddCPQ+qSVCWpurjmtvQlLOsFResQEUseZOSufk/vKM+ZNZWrwZUW72k5M1l
+         ezI3rdB3aYoPMS57lstK2SYDU4MRS7d3XnOwZrhnaRWowV2jSLBxtlG8dcB8/XND6hCF
+         oR1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=oMMv5S4CfKPC/nDBxjQsaxRQfrFMKm4a2sZxLMk7C9o=;
-        b=ulexB0BzUsw9IAqfhT9KTsKgeQEy3trAmlzVoMypZCto8JlzrAYV7fhZ/kMUAdvI9Q
-         B3UOmaB6rcxyVvlcnxKZ0KAs2wnoab74713XvY+Rl2nWNE04xYM7jcdZ4iCiJJI41iwE
-         nanfheWqgE8tik/gLBtoNTP4QgavlNxYqvXApf6gLc3awN0SyJtSCdOHGzF8q15s0tTw
-         EtrxUPETYEUXnK6IJ+mu16QI9qbkzrRbApBBp0gYMDfaicRWbskVaELVa3pYFI5GtxMr
-         8aFWBeqnROyJdvYhkAVXBtremgc76rIIi3xZ9YlBMswyApDfTsVMc3YJw5BD48C6hJiN
-         s+Dg==
-X-Gm-Message-State: AOAM530bfxkb5qkCQEjjmWKOOu61V7sC7qK84ikyGNPxdukkiYWyTQxU
-        6o8mJR0cSU5HiBCqMnipItpXiIdhpqltyg==
-X-Google-Smtp-Source: ABdhPJyI1P1vuu2kiSih/uXZQHIdK005QyG0oHSE8nQWm3t9UH3T13bJfLhIFREr9LWptcyTPBotTg==
-X-Received: by 2002:a1c:984a:: with SMTP id a71mr167078wme.175.1610685867181;
-        Thu, 14 Jan 2021 20:44:27 -0800 (PST)
+        bh=GcOw3u1r/FUZoHK/B7jeC1xQaZi7DaC/UohQm/HomZs=;
+        b=sJ+U0hU4IhDqXQh0KqSmqCfg9MMIoVMcHg8JMr79LCLhpSJZ2XX6fUYKve1iM6TfDX
+         b30FhXHgIOewS+jLM/ZwYLc6+FK8hbXiqux1LoBPw2JNSbWxZk4Z7tIyjJ8snvikYucF
+         5/s7D++wvYe3U8FjbGsUI6QGcZn7D2jEGBncqWF0Xv1id+tqAkB2xEvKoDG/bwIkeJoY
+         ydZn1JXh76MxfGs3yk0za7gka20WxuBgpbw00S8dmVBYbmu2/fnCE9fK1gR3xXizH4Ad
+         okuFeGCVHBakht7g0TwOI6EgnjDM0QcOAm/GXnjiiEbeCvQwbsvK/F7gdC/FnqzvbisZ
+         tltw==
+X-Gm-Message-State: AOAM53230MZqxeHzqUqxy35+uh486g4JwuRiX+7cEQYicd9GB8bpFZUB
+        l45bw7FRG4HJDlSAlN850NLvXlxUVTyslQ==
+X-Google-Smtp-Source: ABdhPJyo8Jkm2fEy2L/izDN84e45ZfkAl6Ld8yI/9O39CKFS3e195VIe5rYFxxhtJxy0ap/5QONkrQ==
+X-Received: by 2002:adf:fdd1:: with SMTP id i17mr10924719wrs.173.1610685946284;
+        Thu, 14 Jan 2021 20:45:46 -0800 (PST)
 Received: from [192.168.8.122] ([85.255.233.192])
-        by smtp.gmail.com with ESMTPSA id b132sm11748668wmh.21.2021.01.14.20.44.25
+        by smtp.gmail.com with ESMTPSA id q7sm12711361wrx.62.2021.01.14.20.45.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jan 2021 20:44:26 -0800 (PST)
-Subject: Re: general protection fault in io_uring_setup
-To:     syzbot <syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <0000000000000a65ee05b8e6adc1@google.com>
+        Thu, 14 Jan 2021 20:45:45 -0800 (PST)
+Subject: Re: [PATCH v5 00/13] io_uring: buffer registration enhancements
+To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
+        io-uring@vger.kernel.org
+References: <1610487193-21374-1-git-send-email-bijan.mottahedeh@oracle.com>
+ <86a8ae2e-78b4-6d8c-1aea-5f169de5aabc@gmail.com>
+ <e071e7e5-207b-9595-1de7-82f702864198@oracle.com>
+ <50be90bb-1ccf-0266-ff32-f6b72958fdb9@oracle.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,12 +99,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <221d0220-1b12-ba5f-af0e-b4563d122ef4@gmail.com>
-Date:   Fri, 15 Jan 2021 04:40:51 +0000
+Message-ID: <edaf32c5-c73c-3eb2-3c65-ac8a2fc0309b@gmail.com>
+Date:   Fri, 15 Jan 2021 04:42:11 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <0000000000000a65ee05b8e6adc1@google.com>
+In-Reply-To: <50be90bb-1ccf-0266-ff32-f6b72958fdb9@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -111,26 +112,28 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 15/01/2021 01:56, syzbot wrote:
-> Hello,
+On 14/01/2021 22:54, Bijan Mottahedeh wrote:
+> On 1/14/2021 2:44 PM, Bijan Mottahedeh wrote:
+>> On 1/14/2021 1:20 PM, Pavel Begunkov wrote:
+>>> On 12/01/2021 21:33, Bijan Mottahedeh wrote:
+>>>> v5:
+>>>>
+>>>> - call io_get_fixed_rsrc_ref for buffers
+>>>> - make percpu_ref_release names consistent
+>>>> - rebase on for-5.12/io_uring
+>>>
+>>> To reduce the burden I'll take the generalisation patches from that,
+>>> review and resend to Jens with small changes leaving your "from:".
+>>> I hope you don't mind, that should be faster.
+>>>
+>>> I'll remove your signed-off and will need it back by you replying
+>>> on this coming resend.
+>>
+>> Sure, thanks.
 > 
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-> 
-> Reported-and-tested-by: syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com
+> Do you have any other concerns about the buffer sharing patch itself that I can address?
 
-#syz dup: general protection fault in io_disable_sqo_submit
-
-> 
-> Tested on:
-> 
-> commit:         06585c49 io_uring: do sqo disable on install_fd error
-> git tree:       git://git.kernel.dk/linux-block
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=54595eacbd613c0d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=06b7d55a62acca161485
-> compiler:       clang version 11.0.1
-> 
-> Note: testing is done by a robot and is best-effort only.
-> 
+Not yet, I'll go over it this week
 
 -- 
 Pavel Begunkov

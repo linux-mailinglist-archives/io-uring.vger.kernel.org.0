@@ -2,80 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3A342F6EF0
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 00:30:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 675D72F7045
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 02:58:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbhANX2v (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Jan 2021 18:28:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40214 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbhANX2v (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 18:28:51 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F999C061575
-        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 15:28:10 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id b5so4125506pjl.0
-        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 15:28:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=9UH65BnMUS+bh/GGiSIoPZK7j3GyrWdHmAKQGGKZ+PY=;
-        b=g8prDejS4ZlMjvTEGM8149dyt0L/PsFkQp5I6oZWCISVCHQ2QIbg+nbg62IlLTPe+S
-         KS4sotD/XR2mcrs3GWa2ML/Zw+kBb37wHh3CWb3WAlg/58CjEnazDC8EHy9FO7HDNPoj
-         Kejgd/wG97CGhDOAIhAQcEtFaE3x/j5Ad3LeuTWb94AQuZyCmlJmsezNYLHitxBxpGLQ
-         USdqKjh1HGsdAGxmXJTZiE6Wew7vjbiSHn+my8BiHhIby9zVzAncNVnfgO7oZcjgb5S6
-         j+c7bWhZVDXY5+/xDgIXKKYvCw+RrZ3xMYLj9mSrgGVewUXJdRAADCGiiT8UJPjoHnni
-         JrSw==
+        id S1731738AbhAOB4u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Jan 2021 20:56:50 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:45891 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731674AbhAOB4t (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jan 2021 20:56:49 -0500
+Received: by mail-io1-f70.google.com with SMTP id x7so11693341ion.12
+        for <io-uring@vger.kernel.org>; Thu, 14 Jan 2021 17:56:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9UH65BnMUS+bh/GGiSIoPZK7j3GyrWdHmAKQGGKZ+PY=;
-        b=TVwNOFxWrc06IykQbKP/qY01n8sW1HsI0aJCONhqH8IwNxy5TUrt1q+oScl24Sikjy
-         CJapQOD49HmDMxpCDmOwwuK1jTO7yUok3Nt2ipuIb/NgysuARqyNVJ2itQjtkNVj3VfM
-         DQUIQta8IDz9Nz3YgQ8hBf+fBUhL4F6knCvD2xdixDBcrnL4h93bGxzLbS3+FKp7fS6y
-         BvIq1HV2j1Kv30Tp4BUr/FQC6rBjLi5d/NuREkpBmmNeEglmCgyNoKIJXsFcAYVXDwid
-         EhdJ7Bj+eLyNUWPO9RjtqH0trtRKLWC9Pdo2apngLdi3CEJqaznLhE3GPvBypUfRiDMR
-         tX2A==
-X-Gm-Message-State: AOAM532tPnUVBF6B/aSk7dLFoe3D88fcZdzUGCmSGxcL7qwdQMXRksgZ
-        +f7RHPqTX+8687NdQQicjWlQ3TPVjA14QQ==
-X-Google-Smtp-Source: ABdhPJxnIfcAP/AQUsa4QW6CJ16wkOE/TbWpnV5Q6PkoIp+LzjmVS7MN5IHF/rZjMHqlSCZxUU+dkg==
-X-Received: by 2002:a17:90b:46d2:: with SMTP id jx18mr7461607pjb.106.1610666889368;
-        Thu, 14 Jan 2021 15:28:09 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id k125sm7021365pga.57.2021.01.14.15.28.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jan 2021 15:28:08 -0800 (PST)
-Subject: Re: [PATCH for-current 0/2] sqo files/mm fixes
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1610337318.git.asml.silence@gmail.com>
- <1c14686f-2dec-7544-5fa6-51e5a2977beb@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <013686d9-2692-9154-d9f0-fc54f1cbb63d@kernel.dk>
-Date:   Thu, 14 Jan 2021 16:28:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=ncZ/WzJQUIaZu3+7m5TtE1ri5ZOaqLZKDq6RjJFvj+w=;
+        b=h4eEQoVrdDJ5fKugSzKwEzA/AMsLqjLGLVBuqHr2xMXNUZ22/Sj/7f+u5VWKXrSMuo
+         9yOwya8eLgODQFTlq7Gq+TxlUCnTmZkBzh/ETfXdPD2KvDtgbhh2Db4NKDL7VeckKns7
+         ohqW/MIIaGaHIJn4Vr5VgOB6xT2aV4+hsrYehG21rDkFayW81CqjAtVQsgHey7g2Eq+9
+         rbr/EF2SUT5wozC+jgicoc0p5pVR30YYbpBJCWS0G9XB8pQi+aGlgdSmWxIDk+MRP2iP
+         NRMCH2B+UOiPtpN8mZrW3sPVMmkyLOoIJ7Am/qWYiCOOmvw9AYOgGjhIEDAvzWPKnjOX
+         Nv/Q==
+X-Gm-Message-State: AOAM532zzV+s35c+UJh4DltkwCSm2Lz/u+1ivBZa3D65K4yL2QrOlVsZ
+        chExBEz9WJa/BaOojwY8i8fECHgCAkdFTAE+R1We0E90sM4m
+X-Google-Smtp-Source: ABdhPJzcQ8wyRdLc8a7inJRiioJ0+IrT14u7jjxP9VGFzlE0bTFYJ0MvV9pxct46dDj7tGP4U7c/A90KqTlPUY7sdjqxkbRGNE+f
 MIME-Version: 1.0
-In-Reply-To: <1c14686f-2dec-7544-5fa6-51e5a2977beb@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:1589:: with SMTP id 9mr8729309ilv.39.1610675768680;
+ Thu, 14 Jan 2021 17:56:08 -0800 (PST)
+Date:   Thu, 14 Jan 2021 17:56:08 -0800
+In-Reply-To: <f45bb2df-5ef0-bc36-8afb-2c03257cc2c1@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000a65ee05b8e6adc1@google.com>
+Subject: Re: general protection fault in io_uring_setup
+From:   syzbot <syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/14/21 2:12 PM, Pavel Begunkov wrote:
-> On 11/01/2021 04:00, Pavel Begunkov wrote:
->> Neither of issues is confirmed, but should be a good hardening in any
->> case. Inefficiencies will be removed for-next.
-> 
-> A reminder just in case it was lost
+Hello,
 
-Maybe I forgot to send out a reply, but they are in the io_uring-5.11
-branch.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
--- 
-Jens Axboe
+Reported-and-tested-by: syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         06585c49 io_uring: do sqo disable on install_fd error
+git tree:       git://git.kernel.dk/linux-block
+kernel config:  https://syzkaller.appspot.com/x/.config?x=54595eacbd613c0d
+dashboard link: https://syzkaller.appspot.com/bug?extid=06b7d55a62acca161485
+compiler:       clang version 11.0.1
+
+Note: testing is done by a robot and is best-effort only.

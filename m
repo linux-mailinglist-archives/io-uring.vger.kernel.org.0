@@ -2,58 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C35B2F82CD
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 18:46:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F8332F82EA
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 18:50:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbhAORpz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jan 2021 12:45:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50298 "EHLO
+        id S1727975AbhAORtH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jan 2021 12:49:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726669AbhAORpz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 12:45:55 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E63DC061757
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:45:14 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id v15so6459424wrx.4
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:45:14 -0800 (PST)
+        with ESMTP id S1726309AbhAORtG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 12:49:06 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F13B6C061757
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:48:25 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id e15so1933452wme.0
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 09:48:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CKWhfO2ycgZzA2raBogr2qJDphc0Bf9jNqFehpweXMo=;
-        b=Zv6ypujLoDMeVEDW7irmeccK9oTeg7aT4MXcLSOmYuvnzm3YywHFGA8MDE+Tah4+GW
-         5mFleWODR7tYkq1JKkgrYhAdlyQLstma7c0dGMtcWZiQgd/17Y7ewAycoDoA0R7/9jAI
-         hijv1VnjHdsatDvLMPeqV91I7bFCnVSgaISdA0BQdHpkJ7vYnLZRj5kuUb5Np9UKiisM
-         EMXADiL6vF0o+qCMNV37IsmmZCA+xLwzpnDXKSrS98pX+SqfcDKLqMLYoJcg45WMEOsM
-         tIgeOUl695ZbszgvaUkFGO7cCt0/m/JMlX4JErJ6D6oyu1FGNrU6YqBVQVdAXFq0XYOf
-         Oaog==
+        bh=JPk6XaSHLQzcq/I958LcfE8VCUPdIGjptBqBwj0601U=;
+        b=UqVPL2SMPk6J1wsdaSJqqAhojneIlSpL/T1dMDzoPmuh+FOvBUDD1PWJOZQsauJ7v8
+         yB0n8GqNOYunYEgJ2o5fA37wpq95uRKQ2+ps7mR842XJUMPYE89eGGxEgtg+y+jDm2ob
+         Y5wHs3xmzDTV75E+h4Bt+sU++6ZYh2rOtzxd4cLDOCT/1wl91FPWM6rEq8fFvZiLF+9l
+         xgjDvs+HURA6WN6leIicY3NbV3OLO48KhrK8VafejHD3nU/mpwnMwILRbURqnl/hNZ6/
+         6Qc71c8DJ7lC2A4VZXnuX1Yf9MuBfkaEg2GThGK+hWyzkKS0UVTFpdMpYYQaTX5w7pGl
+         YvbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=CKWhfO2ycgZzA2raBogr2qJDphc0Bf9jNqFehpweXMo=;
-        b=B/MBEvYOt23bIyNaPTIEvDPZucghLuj49b8uHRISpiTs+08evNTN6cRwF3f1JIDzHs
-         3fvgYgTrc2pQHPyhyZGICLax8KgT1/k0NoOn6JAJMvXuAq2LG8e1bsOVYku0/denPiy/
-         lYnH29OjeSvUW0r8jqN1GNLeBI+G8oKSobiUxafNwmb9h9RBP2dHeanb79n1jZgqtgmH
-         e9kE361vdBaS9RlhBx0R03iSL5py0e2cVDurrBz4TUPjw9x9WWFfUyZD8qZOFyauFT4P
-         eXgB0s0rq6rmNQy97CrF2JXgY67zWvaG9mrN73lfuYxjtNI+CvFwHi9FUolyN4Z1iYot
-         //vA==
-X-Gm-Message-State: AOAM532QGDervEniQa76nqoWSqt71BzzBseCl0cs9AAjv8rtrRm+9/ma
-        8tJAgf2/2uIGoqxg+Wg+moEAoiM4JNo=
-X-Google-Smtp-Source: ABdhPJwwq9mt2pvcXmmcBb2wstKDuzYWtql+7ynqH8dpldgKmwB4ZRNlFB2dfyhbY99RvNJzV2ow0w==
-X-Received: by 2002:adf:e452:: with SMTP id t18mr13804501wrm.177.1610732713153;
-        Fri, 15 Jan 2021 09:45:13 -0800 (PST)
+        bh=JPk6XaSHLQzcq/I958LcfE8VCUPdIGjptBqBwj0601U=;
+        b=UZjRNu0diIC/IScQX6SH8lBxu+Ld6NMIjChDcqrp2G3NTJCl1xtRlZ87cRZyhYV7gd
+         zlks4z2F4mpgDVenu1lVFq9v3aX6joIRYPsgjZLCPEsywk+ZBE8n3n8tvzSQgIDeKYGN
+         lJpGYlmiMl8ZJlpZEH0NRFm4s95WZzqgjOdH4B8YH7Zw4j+hM9ar9Gh0KbxyICE/uMKL
+         zLMoFpquDTL/0zA+dtb2Vq9YbE8v/h4WQOdX5KGldcwIggQqGweMTbweQwFCste1Y0iK
+         Fb3m5nSBThUaew+4Wgj2qzLtYcFeBEHYSgvMdlKqnUhJMawioReJM/98rdrkoTNCAVtG
+         rrqQ==
+X-Gm-Message-State: AOAM532QuKNUs90fhbDowKCvCYt8zcf3XncFLnz8HfDV2Ji0dvWJrObZ
+        ixhJO+5f7PB88NUmki8ZrPIVSEVBI+Q=
+X-Google-Smtp-Source: ABdhPJyDRZHavywVsIu7nhpVig7A/6hMtium4colaLETYVXA4VV1h4GcVH8Kn+6CbGksgRvPOxsW3w==
+X-Received: by 2002:a7b:c7d8:: with SMTP id z24mr9833143wmk.1.1610732904508;
+        Fri, 15 Jan 2021 09:48:24 -0800 (PST)
 Received: from [192.168.8.124] ([85.255.233.192])
-        by smtp.gmail.com with ESMTPSA id f9sm17479460wrw.81.2021.01.15.09.45.12
+        by smtp.gmail.com with ESMTPSA id u205sm13123912wme.42.2021.01.15.09.48.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jan 2021 09:45:12 -0800 (PST)
-Subject: Re: [PATCH v5 06/13] io_uring: implement fixed buffers registration
- similar to fixed files
+        Fri, 15 Jan 2021 09:48:23 -0800 (PST)
+Subject: Re: [PATCH v5 12/13] io_uring: call io_get_fixed_rsrc_ref for buffers
 To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
         io-uring@vger.kernel.org
 References: <1610487193-21374-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1610487193-21374-7-git-send-email-bijan.mottahedeh@oracle.com>
+ <1610487193-21374-13-git-send-email-bijan.mottahedeh@oracle.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,12 +97,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <8719c4b1-0f3d-b627-0fa7-d06b918ad317@gmail.com>
-Date:   Fri, 15 Jan 2021 17:41:37 +0000
+Message-ID: <94f305d4-2630-85c9-9e10-3952d27355a5@gmail.com>
+Date:   Fri, 15 Jan 2021 17:44:49 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1610487193-21374-7-git-send-email-bijan.mottahedeh@oracle.com>
+In-Reply-To: <1610487193-21374-13-git-send-email-bijan.mottahedeh@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -112,31 +111,13 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 12/01/2021 21:33, Bijan Mottahedeh wrote:
-> Apply fixed_rsrc functionality for fixed buffers support.
-> 
-> Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-> ---
->  fs/io_uring.c | 234 +++++++++++++++++++++++++++++++++++++++++++++++++---------
->  1 file changed, 198 insertions(+), 36 deletions(-)
-[...]
-> +static struct fixed_rsrc_ref_node *alloc_fixed_buf_ref_node(
-> +			struct io_ring_ctx *ctx)
-> +{
-> +	struct fixed_rsrc_ref_node *ref_node;
-> +
-> +	ref_node = alloc_fixed_rsrc_ref_node(ctx);
+> io_get_fixed_rsrc_ref() must be called for both buffers and files.
 
-if (!ref_node)
-    return NULL;
+This should go before you wire up ref_node'ed buffers stuff, or
+merged into it. You know, the intention is for each patch to be
+bug-free, it's cleaner and easier to debug/bisect.
 
-No need to resend yet, just we need to keep an eye on it.
-
-
-> +	ref_node->rsrc_data = ctx->buf_data;
-> +	ref_node->rsrc_put = io_ring_buf_put;
-> +	return ref_node;
-> +}
-
+[again, no need to resend yet]
 
 -- 
 Pavel Begunkov

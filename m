@@ -2,91 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BEE62F8522
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 20:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8C852F883B
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 23:16:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729312AbhAOTJN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jan 2021 14:09:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40110 "EHLO
+        id S1726661AbhAOWQF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jan 2021 17:16:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728818AbhAOTJN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 14:09:13 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA47CC061757
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 11:08:32 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id n2so3027057iom.7
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 11:08:32 -0800 (PST)
+        with ESMTP id S1725863AbhAOWQF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 17:16:05 -0500
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1CC0C0613D3
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 14:15:24 -0800 (PST)
+Received: by mail-qk1-x72c.google.com with SMTP id 22so13263861qkf.9
+        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 14:15:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=1+Ziv14g0JJYERomYNbosTJBQniZoL1nqQ2JhYv6bpY=;
-        b=wn4oDOK8RKRTyDCnH8D4Ya8TiPPFpD3B3gdC5q2y5rjjOgDlpZqELJoYmgRXH2vTxD
-         II864sRlvVjSa7y7uGvU/p971qf/PGhjy4ca4WKXitRwpIwXkdPQ+kEOEqtirwaVSqyX
-         Wx379sXh+zoJWLqwtair80kCFvS+2aBqdVUzKEjAGP0/1oJ1jG1aT5upo/zMowOx4K/Z
-         OoA/tF4FdiKaVW/zwuUsF+6sMDwZgMrayE/jPVtI4dw8JlAo398PanMSIYaYm5Q+kQIj
-         Gv76lNY95t/Cdl++F10BwB1h/kUl9BgFq5OaXAjd1d24NejZJ3iA+YEfSsoOvitd2wf/
-         2s0Q==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pKl6FjvGj9H225+WOwUkpj4FU5eGrAp3ZziPiBP9G2M=;
+        b=PBW003QCtw2a0XLKCcwx820aT3y3KtruvpUrjM+B2nZ16CLAU6wlKeabigopSKfyAm
+         MFI6CxOXnrS0EWawAKiwsGUcr9IXfEz0Zj8KagGl79nJBh13plHFOsaZKir7YI1iJsPS
+         lKmUVijKV6B184ODxY8d6sy83vkK0cRU2hVdkQ4mVdYR4kXCxL3eU0tXUWk+HZuvMAyf
+         VrLfZ9Vz1Sczrnf97dYJUzVTw7z0slQSFU+iO2KBpghqShUBFfN0VHlqXs8b2cWD5pbU
+         GSmPBQAYK+6zEJf1DMB8KiSl2jpRPnyAQs4290Oq1nq4bJ7FQ3ClvsYXpCMKplExFhUt
+         qutA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1+Ziv14g0JJYERomYNbosTJBQniZoL1nqQ2JhYv6bpY=;
-        b=W8kZ3VtPAQkqc0alYBAEv2dwy5zFw3BUPfi35cJwB2WmzyKVxGcs8/qI/JCWmwsg0Z
-         hrNdI3FGLPpry1ZnzdyWqdf5XRai0Qy45rVz0NU7GpGBcT+/N9FL4tinaAWIagrlR3Uu
-         TSqpithG0sMWce1pSaxwBZNVnNyZVM423WQOUJ0p6Y6W78vYSfx0HBcLMVBM7a4JBwdQ
-         HEGCUzoAhCXKqZDU7zhjkYvOJiTtzLZcezLFs2rn+euSs6lfoOl3JLNIwzHHoCvndL0R
-         JQRnYK8gWGh7PckqLH5H+PMcJzIor8MfYjm4brYWd2Mw3JPtHeYZaePh6z92ggV6n2Q5
-         w3qg==
-X-Gm-Message-State: AOAM533fvSqn9zVZXqEtTQVAT88FWmci9p3wrfrvAugvAXCw1cw6Z3v5
-        /p15dahgaC4tPujjxvqGPAr6mw==
-X-Google-Smtp-Source: ABdhPJw7Te7fCr7+uQa0sUCJWC1sqssxylsLdSANmvYjf/Y4UR1gxtxpQC6Qios19NI8YSrCvE7fqQ==
-X-Received: by 2002:a5d:9641:: with SMTP id d1mr9530521ios.123.1610737712323;
-        Fri, 15 Jan 2021 11:08:32 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l13sm2931520ilm.79.2021.01.15.11.08.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jan 2021 11:08:31 -0800 (PST)
-Subject: Re: [PATCH 0/9] Bijan's rsrc generalisation + prep parts
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-References: <cover.1610729502.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3d80407a-003b-f35a-1f58-d944aafe59e2@kernel.dk>
-Date:   Fri, 15 Jan 2021 12:08:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pKl6FjvGj9H225+WOwUkpj4FU5eGrAp3ZziPiBP9G2M=;
+        b=aE+Wn6w4Wt+xtPTGnus2JEqsdnC+fzBl1Pspy9tJTLxliVxMJ4lkYuCTyLLRYtwmff
+         ZKXRqBIB9inzkJsOm0Oo4Owup/ruq2s5KqgfsE39NiXUZXaSkvI5+16od0goO+8ubBlK
+         M9o/rZ29coHofb1oTGrRAG8xYazSpSkI/qcbYvjkgCA6xJwQec6wOJmjj49YJsdpLPqc
+         U2Eblzh2nsGZgAN5d7PoNtX2yD5FozzHaqTJWhkmBchmb8B3vVHIrXpT9LVnYOnMBzw3
+         8spSpDY7DDZtD5Ryd2T6oa3UzVFUs3WYiCisdtfkex7v8rqwS9kYSsMy845IHP8eNR6x
+         2k9A==
+X-Gm-Message-State: AOAM533NZ3pb6Sb1Mvx23yNdQU+0N3YjNg42ap9AMj8Nt+z6an0F0xTo
+        FUAF+ks789IoqjLOShdbRu4=
+X-Google-Smtp-Source: ABdhPJzY3CCmKdacQNl3I3Lc3/bTJO1VHvVAcZRh4/8LBnP+ws/WCxTYXnt1bKKOHb6Jvt0mgadVZg==
+X-Received: by 2002:a37:b404:: with SMTP id d4mr14345272qkf.183.1610748924240;
+        Fri, 15 Jan 2021 14:15:24 -0800 (PST)
+Received: from marcelo-debian.domain (cpe-184-152-69-119.nyc.res.rr.com. [184.152.69.119])
+        by smtp.gmail.com with ESMTPSA id k64sm6016981qkc.110.2021.01.15.14.15.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Jan 2021 14:15:23 -0800 (PST)
+Date:   Fri, 15 Jan 2021 17:15:21 -0500
+From:   Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: Re: [PATCH v4 0/1] io_uring: fix skipping of old timeout events
+Message-ID: <20210115221521.GA21646@marcelo-debian.domain>
+References: <20210115165440.12170-1-marcelo827@gmail.com>
+ <7b70938a-3726-ccc0-049d-4a617c9d2298@kernel.dk>
+ <20210115183148.GA14438@marcelo-debian.domain>
+ <3da76f2e-4941-206d-8881-9452bfce5980@kernel.dk>
+ <4cb8b3aa-9759-35f6-863f-99ecf2ec9b32@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <cover.1610729502.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4cb8b3aa-9759-35f6-863f-99ecf2ec9b32@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/15/21 10:37 AM, Pavel Begunkov wrote:
-> I guess we can agree that generic rsrc handling is a good thing to have,
-> even if we have only files at the moment. This consists of related
-> patches from the Bijan's longer series, doesn't include sharing and
-> buffer bits. I suggest to merge it first. It's approx half of the all
-> changes.
+On Fri, Jan 15, 2021 at 06:48:58PM +0000, Pavel Begunkov wrote:
+> On 15/01/2021 18:38, Jens Axboe wrote:
+> > On 1/15/21 11:31 AM, Marcelo Diop-Gonzalez wrote:
+> >> On Fri, Jan 15, 2021 at 10:02:12AM -0700, Jens Axboe wrote:
+> >>> On 1/15/21 9:54 AM, Marcelo Diop-Gonzalez wrote:
+> >>>> This patch tries to fix a problem with IORING_OP_TIMEOUT events
+> >>>> not being flushed if they should already have expired. The test below
+> >>>> hangs before this change (unless you run with $ ./a.out ~/somefile 1):
+> >>>
+> >>> Can you turn this into a test case for liburing? I'll apply the
+> >>> associated patch, thanks (and to Pavel for review as well).
+> >>
+> >> Yup, can do. I'll try to clean it up some first (especially so it
+> >> doesn't just hang when it fails :/)
+> > 
+> > That'd of course be nice, but not a hard requirement. A lot of the
+> > regressions tests will crash a broken kernel, so...
 > 
-> Based on 5.12 with a few pathes from 5.11 cherry-pick to reduce merge
-> conflicts, because of merging/etc. may wait for a week or so for the
-> next rc before potentially being merged. This also addressed tricky
-> merge conflicts where it was applying and compiling well but still
-> buggy.
+> Ha, they definitely will. 
 > 
-> Bijan, for the changed patches I also dropped your signed-off, so
-> please reply if you're happy with the new versions so we can
-> add it back. There are change logs (e.g. [did so]) in commit messages
-> of those.
+> Marcelo, replacing reads with nop requests should trigger it as well,
+> it's probably easier and even more reliable as we always complete
+> them inline (if not linked or IOSQE_ASYNC).
 
-Thanks - I plan on merging this once -rc4 is cut, so we don't have
-any unnecessary merge conflicts.
+Oh good idea, yeah that's better for sure. Didn't even know that existed :D
 
--- 
-Jens Axboe
-
+> 
+> -- 
+> Pavel Begunkov

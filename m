@@ -2,57 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A7B2F7A3E
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 13:47:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92EDF2F7A76
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jan 2021 13:50:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732140AbhAOMrk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jan 2021 07:47:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39904 "EHLO
+        id S2387975AbhAOMty (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jan 2021 07:49:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733056AbhAOMha (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 07:37:30 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D2C2C061757
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 04:36:50 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id 6so1820752wri.3
-        for <io-uring@vger.kernel.org>; Fri, 15 Jan 2021 04:36:50 -0800 (PST)
+        with ESMTP id S1731676AbhAOMtr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jan 2021 07:49:47 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 968C5C0613C1;
+        Fri, 15 Jan 2021 04:49:06 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id q18so9179551wrn.1;
+        Fri, 15 Jan 2021 04:49:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=G0F3vXbyzXwCRTptElERVE9356V7sp58CbQseYBEVJ4=;
-        b=tCQ1RsN8ifs2bk19+Euv3X7pcjslgXbqcblxMUidKO/WMqemgJKbds7yBZ9mqaIEIY
-         7LrxmztyHjSbjysKmgWJ3vYNwFGPP5V+jZf6E88XqNe66VWlD2M5YaIQeNQ+626UwUhu
-         mrLCDW61QUEEj++e7xgEkswY7p4qraEoelb2xbucQY8fmEbDlXKzE3G13+VJ0+PxA2Tj
-         NAqB2aF+15H+F/D1L4UD7SnFL9tJh8P30Hkeg3KsnsYx8WSCL2O5eTQ2BvNberNbkTJh
-         D7wCv45kj7/rjWFq1d7gRoGjVW3UXguwNt6cbkteRXVjTSWqWZptidDVMT8iQE4Fn0rf
-         s4oA==
+        bh=BZmP1N8NHiWo0hMS7ibtEyx/S5S9oAI6P5STenSLxNc=;
+        b=LRN60KTGuZVnKBXm/GlsReHZIrHL2iVu1AdTOThCfB9UZomLUZ7ZfM016HntNPtxLX
+         IQJ3gda1A+xeHGY6n5AzmpMBikB4LlqFbtZuyYnFuhdiDrT+Rqw9l9Crh5wfi/VVVHQu
+         Db/am016psjgGkBns4axCwMjv21N15cpDUmWwboAqMir9HzIbR5+pYhL6jccKa4jdJNh
+         rLZ/Sq9z1NW/SItPNKV3LLLMaQmUBFB3JSU2ZpFSqpBJT4e16LkRWekhiBLp/PnTEqC5
+         ZfEkf8QkFmXwW8FdBHzOUuyra7VzDKsPbcVoUaGwcgDlfTYrhSDM4ROsh7YXaANRgLpQ
+         7OGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=G0F3vXbyzXwCRTptElERVE9356V7sp58CbQseYBEVJ4=;
-        b=W2+q0t7vDP9bnTFfF6bdMW3IygtJfRCHfV3fTFioHc+6e6yuvNP63+Rkp0sqPKAygn
-         242sv/Dmir5kCphvayATCMEZK2RpcWkTcBfBFYdvpHRS65dOCQA2GokJIY3eHeun5EWH
-         4CVBFHkNhPWAWRCCFDGtWpdGy7sZJbPgtsXecJmL3nFyweao3IiHaXagQQKlstwctHqv
-         ZI804KnIziNs4mP757gmyTXddVC4Dc0O0lC7BYRLww3NAngsjM5AruOzHOVxeIGj0q3Z
-         DPMquV5ytCTPxwlyxZgLqkz3/9GWe7nqttM/rr0fLaUDX2X+qXoZpNvXapNdxS2Q5JpN
-         7lsw==
-X-Gm-Message-State: AOAM533Ywn6Gs6myZ4svJ1+Yw++8PKlCS9zR7D67zNCFFKm2Xyo8HtAU
-        VA8bTXcbiF1YVoqfMADPPwImbxEJZWRAmg==
-X-Google-Smtp-Source: ABdhPJyMfz4JDEJJ6fsNirxXtF4/kVINk4KuMdeJKA3sn4sOK8JIfL+rgrHJCF5ROZPDAQpIq3mE3A==
-X-Received: by 2002:adf:d218:: with SMTP id j24mr13471324wrh.361.1610714209030;
-        Fri, 15 Jan 2021 04:36:49 -0800 (PST)
-Received: from [192.168.8.122] ([85.255.233.192])
-        by smtp.gmail.com with ESMTPSA id t188sm12331840wmf.9.2021.01.15.04.36.48
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=BZmP1N8NHiWo0hMS7ibtEyx/S5S9oAI6P5STenSLxNc=;
+        b=nc/2kNxojBphrRdFgr9Ne2RIpuqcjVvKnDsFzzXduFSa603ohVXfRKuH8w8+SNPeqV
+         iG+5nenvqjMoTpV/kqU1pSWc0dCtlmHAAnHCfBapaWp916vRvZ40SQESlVTH8rA0jBHE
+         E038g6CC46UOhPg61dFDfVZJlPUVNqD/RMWYOqJ/xC5VYghrCnObtlr7XVS6puYXYKuL
+         4Mcl69Fb+ku10Vp0f+d9731Nl6S6+WueeRm5iybHg3mmyy802aUF3eAO+xIwvgjr8Hq+
+         yG9GDBuMTbjcacFfAKaA7m+PtSKuzA1sbwMHux4E9OENY2AOK/RljAEC6sl8CQBWpVC9
+         ihKQ==
+X-Gm-Message-State: AOAM533izzHialTtKHOtKpw+WwYy3SE00I0MyScacEpJZA3s+vf547lO
+        MO+UEaZm0D20tMkZSnG1+EiACBY3gEwehg==
+X-Google-Smtp-Source: ABdhPJwBC2zkxcKMTi9n7gLDlixHm09B2RCCiM51uCvIyXc69vjIovoEKWSaZYHIzUmurFLswSLbMw==
+X-Received: by 2002:adf:c444:: with SMTP id a4mr9509258wrg.164.1610714945428;
+        Fri, 15 Jan 2021 04:49:05 -0800 (PST)
+Received: from [192.168.8.123] ([85.255.233.192])
+        by smtp.gmail.com with ESMTPSA id z6sm15061897wrw.58.2021.01.15.04.49.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jan 2021 04:36:48 -0800 (PST)
-Subject: Re: [PATCH for-current 0/2] sqo files/mm fixes
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1610337318.git.asml.silence@gmail.com>
- <1c14686f-2dec-7544-5fa6-51e5a2977beb@gmail.com>
- <013686d9-2692-9154-d9f0-fc54f1cbb63d@kernel.dk>
+        Fri, 15 Jan 2021 04:49:04 -0800 (PST)
+Subject: Re: general protection fault in io_disable_sqo_submit
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+ab412638aeb652ded540@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000006c2105b8c5b9b9@google.com>
+ <20210114074017.1753-1-hdanton@sina.com>
+ <20210115093331.209-1-hdanton@sina.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -97,12 +100,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <910e7d51-0790-9f74-9014-e2752f9e801c@gmail.com>
-Date:   Fri, 15 Jan 2021 12:33:14 +0000
+Message-ID: <a32cf443-3261-53ce-aeba-b49e93e6f9d8@gmail.com>
+Date:   Fri, 15 Jan 2021 12:45:29 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <013686d9-2692-9154-d9f0-fc54f1cbb63d@kernel.dk>
+In-Reply-To: <20210115093331.209-1-hdanton@sina.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -110,18 +113,25 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 14/01/2021 23:28, Jens Axboe wrote:
-> On 1/14/21 2:12 PM, Pavel Begunkov wrote:
->> On 11/01/2021 04:00, Pavel Begunkov wrote:
->>> Neither of issues is confirmed, but should be a good hardening in any
->>> case. Inefficiencies will be removed for-next.
+On 15/01/2021 09:33, Hillf Danton wrote:
+>> Thanks, but it was fixed the day before
 >>
->> A reminder just in case it was lost
-> 
-> Maybe I forgot to send out a reply, but they are in the io_uring-5.11
-> branch.
+> It helps much if you can add a link to the fix next time.
 
-Missed it in the tree. Thanks!
+https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.11&id=b4411616c26f26c4017b8fa4d3538b1a02028733
+https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.11&id=06585c497b55045ec21aa8128e340f6a6587351c
+
+sure, for this report and the other report 
+
+> 
+> Apart from that, I do not think it is a complete fix yet - it only
+> fixes what Reported-by: syzbot+9c9c35374c0ecac06516@syzkaller.appspotmail.com
+> though correct, but the one-line fix is unable to cover this report,
+> as per the Call Trace in both reports.
+> 
+> Feel free to double check if what you trimmed fixes both reports.
+
+I believe they do (when considered together).
 
 -- 
 Pavel Begunkov

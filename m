@@ -2,58 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A2BA2F8EAE
-	for <lists+io-uring@lfdr.de>; Sat, 16 Jan 2021 19:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC9AB2F8EAF
+	for <lists+io-uring@lfdr.de>; Sat, 16 Jan 2021 19:34:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbhAPSa0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 16 Jan 2021 13:30:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56238 "EHLO
+        id S1726608AbhAPSe2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 16 Jan 2021 13:34:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbhAPSaW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 16 Jan 2021 13:30:22 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59186C061573
-        for <io-uring@vger.kernel.org>; Sat, 16 Jan 2021 10:29:42 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id 91so12523376wrj.7
-        for <io-uring@vger.kernel.org>; Sat, 16 Jan 2021 10:29:42 -0800 (PST)
+        with ESMTP id S1725964AbhAPSe1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 16 Jan 2021 13:34:27 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57614C061573
+        for <io-uring@vger.kernel.org>; Sat, 16 Jan 2021 10:33:47 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id h17so9912183wmq.1
+        for <io-uring@vger.kernel.org>; Sat, 16 Jan 2021 10:33:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g7XQJceQORn7EMNkq2/6sh4uF7ORG3ypJCLTycL7Yow=;
-        b=dEHtOzQ0ZU81MBRW7TclE5vK90dGQhO22auVxtTcsfNTd+cXLOYluKFQhxv6Vytmjw
-         EM1+y9m0IBU8IgUyqdQ7NQBgoUSA/L3VSkN995GFgXzExcJUWmKOmiQNrlnxVJSX6iWd
-         KAzZWA4DY4+Wq9b008zhTPIXQVjkWnWEjIzL/LWnpFsK/dUi3fxCAOP55QmyGh+3R4SY
-         60zJyLusOvMXYs6fYJoV2BqRMGmpHaoQFV46leOGP9giEwGcN1aW3PeRDaYiTKN4Cb1Z
-         DORoJrWAB9tffoHPfM181nCJkd2edsgQJnDOWLoAHQ5UMlYIDoxOB/qsBCxdTa6+bKMx
-         JHNA==
+        bh=BG6mFVgbia+Yvuhl4qv4pda1nLFncVy/hgcCFwy71sE=;
+        b=VT5hmRF3Wx1zN6BQ91uLkmJfP7sjvYuKMmnQR5VwPFdRoGcRgqVxS5BA01lrDhOYll
+         KD+JpcG/+ATR/ootgwTM2Qwz6PFWqacmgEoj3XswTc8vC4ZVrDzCCwLUn/27X1YwYEAe
+         EB+OX5dQDufsmXuePMtTtA5+vUz0NvBh8HSxCaQAQKd2wlFpPl1rbZxU4UhUNno+3K6s
+         gCEIOR7SzfAyHg8ylBUJYhhVIasxAHlDToatMrE21LgFlxfsMLbp8bCqmNO0BNLpocFu
+         mjITLRtZuEJTrLCFwVfvkrVSQNn+v3Eh7yIgcCXmO+zLS9zOVcU2LEiWu3vxYk9dXXEw
+         TxnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=g7XQJceQORn7EMNkq2/6sh4uF7ORG3ypJCLTycL7Yow=;
-        b=gieh3d+kpic7TlPfASlNnBnTKGrpR40J4+YJXl1wN/9nLpNsj/qI0XKP38Fh8WvX1n
-         qmu+iJSxJeKZQD32tCWsikqDLgnsIebFl6xiKzn2sTXGfYb1aFEpPKg9/rvmRLwA26Vy
-         eGtmtEZnWZEz8/+7ope47LE49n+MdNYxOsimhisWz63lyuczQvgO1AGKsE+J/tJzBbC5
-         7ePlYg5b3PDKIXzeHBStilnCEd33mKZqqjOB6Wc/ols5H2UTxYs9osgtqRV4NIj3GJPi
-         2PyyNZIG74kIWF1TkB7mYV43rBe21akOAMuNFwByyGfkUWbdTEXJ/HeZs1UnqsPqX07b
-         38pw==
-X-Gm-Message-State: AOAM530t+0yaKA6IZf22yCxasWQpq5I1ExciU3MbLRJIO1qTSLU2xqjU
-        a2SH1WKg/EOjOMdTTzARR6hXNuA0fPw=
-X-Google-Smtp-Source: ABdhPJxZOTv53c6Cru9KkvFpKmKx411oCC793EHTPKDcf+O+jNVYpFj8uQnlf50Q9wjUf3DC99YE2A==
-X-Received: by 2002:adf:9467:: with SMTP id 94mr19348412wrq.235.1610821780578;
-        Sat, 16 Jan 2021 10:29:40 -0800 (PST)
+        bh=BG6mFVgbia+Yvuhl4qv4pda1nLFncVy/hgcCFwy71sE=;
+        b=Ocgrb1XBK2sKUM1sGUY5AjGFo3puYxYgpBPBnQoli11wwFIujkn3xbYgnCXhVTImB3
+         4hBmq0Hq78sfLHo4RHF0P/7owZhwZiQH3S8DZgqp1B5HSyY39ioSvYjj1XQyQnopz7Cx
+         KjfkxnizaULElvTZ+/SMX4jviqPlpU+spRZWFFTOYj2xVEaUZzsleN5Ks9kDc5MT+10Y
+         qLef5z9qThTSTsivoR8opgMs/AxQuD+RRZMzMXtZJ3D5P4sZdYTZ9liHxmpxiD847Aig
+         FDrfgFl4KmxBQOFYvbRXK9bfWRtR1DbGFPsy6KvBt56Q1iDuWLaHusLCntuEqjZsT5u2
+         2mtg==
+X-Gm-Message-State: AOAM530xUQr18uckp0QIFV7o1Hd/WuUZxi5GyOTpM2JjlM1ZMTbtxCgI
+        KIDg5OSieMp5DYFKLHhctLF8N5DpnMI=
+X-Google-Smtp-Source: ABdhPJzNLwyEg+9tyq99RrPy5wCQkzcRLPLQ3lIz9gy22FN55WX3pOp/aEaJ98d22itb7LJPDItFFg==
+X-Received: by 2002:a1c:398a:: with SMTP id g132mr11676386wma.38.1610822025705;
+        Sat, 16 Jan 2021 10:33:45 -0800 (PST)
 Received: from [192.168.8.126] ([85.255.234.150])
-        by smtp.gmail.com with ESMTPSA id l1sm20495894wrq.64.2021.01.16.10.29.39
+        by smtp.gmail.com with ESMTPSA id t16sm17364739wmi.3.2021.01.16.10.33.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Jan 2021 10:29:39 -0800 (PST)
-Subject: Re: [PATCH v5 10/13] io_uring: create common fixed_rsrc_data
- allocation routines
+        Sat, 16 Jan 2021 10:33:45 -0800 (PST)
+Subject: Re: [PATCH v5 13/13] io_uring: support buffer registration sharing
 To:     Bijan Mottahedeh <bijan.mottahedeh@oracle.com>, axboe@kernel.dk,
         io-uring@vger.kernel.org
 References: <1610487193-21374-1-git-send-email-bijan.mottahedeh@oracle.com>
- <1610487193-21374-11-git-send-email-bijan.mottahedeh@oracle.com>
+ <1610487193-21374-14-git-send-email-bijan.mottahedeh@oracle.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,12 +97,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <afd36c50-ec17-f420-7deb-1e4239019c43@gmail.com>
-Date:   Sat, 16 Jan 2021 18:26:03 +0000
+Message-ID: <d692a97c-6a3c-233a-b303-990613ade5e9@gmail.com>
+Date:   Sat, 16 Jan 2021 18:30:09 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1610487193-21374-11-git-send-email-bijan.mottahedeh@oracle.com>
+In-Reply-To: <1610487193-21374-14-git-send-email-bijan.mottahedeh@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -112,62 +111,58 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 12/01/2021 21:33, Bijan Mottahedeh wrote:
-> Create common alloc/free fixed_rsrc_data routines for both files and
-> buffers.
+> Implement buffer sharing among multiple rings.
+> 
+> A ring shares its (future) buffer registrations at setup time with
+> IORING_SETUP_SHARE_BUF. A ring attaches to another ring's buffer
+> registration at setup time with IORING_SETUP_ATTACH_BUF, after
+> authenticating with the buffer registration owner's fd. Any updates to
+> the owner's buffer registrations become immediately available to the
+> attached rings.
+
+I'm thinking it through, but there is an easy to miss potential bug,
+so see below a comment to not forget.
+
 > 
 > Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+> 
+> Conflicts:
+> 	fs/io_uring.c
 > ---
->  fs/io_uring.c | 75 ++++++++++++++++++++++++++++++++---------------------------
->  1 file changed, 41 insertions(+), 34 deletions(-)
-> 
+>  fs/io_uring.c                 | 85 +++++++++++++++++++++++++++++++++++++++++--
+>  include/uapi/linux/io_uring.h |  2 +
+>  2 files changed, 83 insertions(+), 4 deletions(-)
 [...]
-> @@ -8672,32 +8688,23 @@ static struct fixed_rsrc_data *io_buffers_map_alloc(struct io_ring_ctx *ctx,
->  	if (!nr_args || nr_args > IORING_MAX_FIXED_BUFS)
->  		return ERR_PTR(-EINVAL);
->  
-> -	buf_data = kzalloc(sizeof(*ctx->buf_data), GFP_KERNEL);
-> -	if (!buf_data)
-> -		return ERR_PTR(-ENOMEM);
-> -	buf_data->ctx = ctx;
-> -	init_completion(&buf_data->done);
-> +	buf_data = alloc_fixed_rsrc_data(ctx);
-> +	if (IS_ERR(buf_data))
-> +		return buf_data;
+> +
+> +static int io_init_buf_data(struct io_ring_ctx *ctx, struct io_uring_params *p)
+> +{
+> +	if ((p->flags & (IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF)) ==
+> +	    (IORING_SETUP_SHARE_BUF | IORING_SETUP_ATTACH_BUF))
+> +		return -EINVAL;
+> +
+> +	if (p->flags & IORING_SETUP_SHARE_BUF) {
+> +		struct fixed_rsrc_data *buf_data;
+> +
+> +		buf_data = alloc_fixed_rsrc_data(ctx);
+> +		if (IS_ERR(buf_data))
+> +			return PTR_ERR(buf_data);
 
-As you remember it's planned to be partially merged first, so when
-you'll be rebasing, please use all these helpers from the beginning
-(i.e. in 8/13 or so). Just a nit
+Because of sneaked through 5.11 fixes it'll be
 
->  
->  	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_BUFS_TABLE);
->  	buf_data->table = kcalloc(nr_tables, sizeof(*buf_data->table),
->  				  GFP_KERNEL);
->  	if (!buf_data->table)
-> -		goto out_free;
-> -
-> -	if (percpu_ref_init(&buf_data->refs, io_rsrc_ref_kill,
-> -			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL))
-> -		goto out_free;
-> +		goto out;
->  
->  	if (io_alloc_buf_tables(buf_data, nr_tables, nr_args))
-> -		goto out_ref;
-> +		goto out;
->  
->  	return buf_data;
-> -
-> -out_ref:
-> -	percpu_ref_exit(&buf_data->refs);
-> -out_free:
-> -	kfree(buf_data->table);
-> -	kfree(buf_data);
-> +out:
-> +	free_fixed_rsrc_data(ctx->buf_data);
-> +	ctx->buf_data = NULL;
->  	return ERR_PTR(ret);
->  }
->  
-> 
+if (!buf_data) return -ENOMEM
+
+> +
+> +		ctx->buf_data = buf_data;
+> +		return 0;
+> +	}
+> +
+> +	if (p->flags & IORING_SETUP_ATTACH_BUF)
+> +		return io_attach_buf_data(ctx, p);
+> +
+> +	return 0;
+> +}
+> +
+
 
 -- 
 Pavel Begunkov

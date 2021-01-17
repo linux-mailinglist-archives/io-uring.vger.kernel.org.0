@@ -2,56 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 832012F903A
-	for <lists+io-uring@lfdr.de>; Sun, 17 Jan 2021 03:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 032292F903B
+	for <lists+io-uring@lfdr.de>; Sun, 17 Jan 2021 03:45:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbhAQCgW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 16 Jan 2021 21:36:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46420 "EHLO
+        id S1727867AbhAQCop (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 16 Jan 2021 21:44:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727629AbhAQCgV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 16 Jan 2021 21:36:21 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59EABC061573
-        for <io-uring@vger.kernel.org>; Sat, 16 Jan 2021 18:35:41 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id c124so10571729wma.5
-        for <io-uring@vger.kernel.org>; Sat, 16 Jan 2021 18:35:41 -0800 (PST)
+        with ESMTP id S1727629AbhAQCom (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 16 Jan 2021 21:44:42 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96AFCC061574;
+        Sat, 16 Jan 2021 18:44:01 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id w5so13107824wrm.11;
+        Sat, 16 Jan 2021 18:44:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HIHYRFRkJ2jdQOgHOFXatxF0sr/LFm/PK4t6o3avkOI=;
-        b=rB/xRJIYwOA8z5B9s+f3mH6BDUWdCQSS+ZK8XrvSoou2ff02v4DnY/e6n31QNpgEgI
-         vie23I4quPC4DPikLNPomL3hk3eo4jCJhXWUqb9Eg9tjnWkRQpW3WfOCMr+S87owpUWC
-         FrvwiG0QNohH3NZXsPNMXQWN7DqsqhZVEEvkxAG3vCP+GEwx0CqZ+cijk6Jlw/Cj8PcN
-         hxQBD2pbBRHASQmE/K5wVyo0mp4QZ+oYnz9qVzsqMm9s3d0q36NPTxh/PHR5nQw2dHve
-         AcICwW65AJNuC+Hd4GVwi2uYVWYTtsbZKKDnP+mE5/JyTqVYb45CHY/1YEsr+a7yCvX9
-         zUaw==
+        bh=g1QKw7DXIHG+0vLmIynk0BbRd5eLjY9wmjeLShYE7II=;
+        b=pgGEZRPwYZPv0OJr0uZF0+rtJk1rArVq87vytL0vDZLdGSwAfe0ibY4R22uA08RjXq
+         JqyveLv/b3B+kR67JXhGKpeLfd1124DFNTDeGtz4SO/he4uR+3LiOM4xUnCK4degraDl
+         v1/3nT4GKagvUEMmgBa1Du5ckg5u2Hpy5LE9ZE3XXmJMgIu/vgtfIE8RIbtIivP8ujGu
+         AdWOKYyBbso/zOVqbYE3AtNhWzJBi4T6t8U4l9Z6ksZOMyicxOa7iPr3mE05YQS8+ai/
+         PNM2dh/F4PQnPPMb2xCKnVfQsMnTXFL1m1TJrD/L/Clm4InHfC0eVswIvAsn4MRGPUyj
+         vZxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HIHYRFRkJ2jdQOgHOFXatxF0sr/LFm/PK4t6o3avkOI=;
-        b=B9guTzM1Fx3hMsMun4yaE6Q9qKOSbXuVQQZj7rEXCHPxRozJQF2iI5EQUEE/B/YVxN
-         OfVrKAQ8BfPS+YCujnQufY40X8ca6E7nyi/kWQHUJP6Js9AhLmWLiwr23tUKzDEF0T0G
-         9vVhByb6Jc++5AgPr//lDL7mqJqm2xDgl+7pe5DCP9exaPUkIgikdLIRdGebqcJTlmnX
-         BuOB6T80XiXTM4WG20pC4ootG6aGIbJ3QLtIz9o4TMGMfpEaCc7S2p4yA5BHMRQU1WJl
-         Zqgcr2dYEMxAEiv9Md6WpPV8VCnlu0v7YL1OhIcIoMiA8Wma8eBDfNSCZ/djo+sGPgdG
-         YBUA==
-X-Gm-Message-State: AOAM5338a88dENBedVaO6JQfJzyF80WV80Km9IuEJOzoB+5mfaaZDk8g
-        9esW+6KZE1TrpJ0K+aPokcAOF+EM0Lc=
-X-Google-Smtp-Source: ABdhPJxpSXLBc/cZSEs2Tz4lzNlbTWNVFE12BlccjREB+c2yTJhxwV4C1juviQJycs1J4CZxMR+xKQ==
-X-Received: by 2002:a1c:2945:: with SMTP id p66mr8821728wmp.110.1610850939751;
-        Sat, 16 Jan 2021 18:35:39 -0800 (PST)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=g1QKw7DXIHG+0vLmIynk0BbRd5eLjY9wmjeLShYE7II=;
+        b=byBttcdcuCh/5qd4Waz/DkM5F/c5tC9xIKbyW1ZEk7zH6lMmNAeyK6fwX8Z3NkuLBy
+         rxOLz+PDtDvm4GnRdpkjaMliec97YquIBF8wbFd2V3QqSxlC7s65PcegQFb2Ffb3/+1E
+         EahgSGRVOD92T9U4tZlm3rxyb4NuoXGlaAewNyY0WdCnUgY/eeMg1apCAeShmrJhv3s/
+         hXoteqhKrkU6wwuUBJ0UkmVSXrftrS6KndH2Cc1ZZmhQ1nJTHYHJ7lV2qfGYYJBu18Gs
+         VAhUEV572owfGr48ajeXCvMVic1jkwd6sQQp6SSiqYNe7fxQn5Pu9jXGNOaRqCiC9dUx
+         9G9Q==
+X-Gm-Message-State: AOAM533B+Kg+Oc+iIDTnCvLHYFDkobjRDQIZTjwRHxpkayQ0mMtioJ2H
+        TIcgSRpvf3uGlZOJ8OvKUJE=
+X-Google-Smtp-Source: ABdhPJyU2JuYGPYkfSzm8bsMWgfiK8grR08tfaY+z60lC1tn74hShT9vkS6gnbNeaiEkgO3f6m/elA==
+X-Received: by 2002:a5d:5105:: with SMTP id s5mr13919570wrt.252.1610851438997;
+        Sat, 16 Jan 2021 18:43:58 -0800 (PST)
 Received: from [192.168.8.130] ([85.255.234.150])
-        by smtp.gmail.com with ESMTPSA id f7sm6495993wmg.43.2021.01.16.18.35.39
+        by smtp.gmail.com with ESMTPSA id g10sm11716515wmq.3.2021.01.16.18.43.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Jan 2021 18:35:39 -0800 (PST)
-Subject: Re: [PATCH] io_uring: fix skipping disabling sqo on exec
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <3148c408259dd9f2e12a1877cbe8ca9c29325c5a.1610840103.git.asml.silence@gmail.com>
- <90886010-75ca-4468-0fff-61d330ed795a@kernel.dk>
+        Sat, 16 Jan 2021 18:43:58 -0800 (PST)
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org,
+        syzbot+a32b546d58dde07875a1@syzkaller.appspotmail.com
+References: <cover.1610774936.git.asml.silence@gmail.com>
+ <20210117023108.3748-1-hdanton@sina.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -96,74 +98,44 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <fc6a712b-2b2d-75d3-b505-d9bb0edc276b@gmail.com>
-Date:   Sun, 17 Jan 2021 02:32:03 +0000
+Subject: Re: [PATCH 2/2] io_uring: fix uring_flush in exit_files() warning
+Message-ID: <4a938355-94f4-4b90-f10e-270df7c2a0d9@gmail.com>
+Date:   Sun, 17 Jan 2021 02:40:22 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <90886010-75ca-4468-0fff-61d330ed795a@kernel.dk>
+In-Reply-To: <20210117023108.3748-1-hdanton@sina.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 17/01/2021 02:13, Jens Axboe wrote:
-> On 1/16/21 4:37 PM, Pavel Begunkov wrote:
->> If there are no requests at the time __io_uring_task_cancel() is called,
->> tctx_inflight() returns zero and and it terminates not getting a chance
->> to go through __io_uring_files_cancel() and do
->> io_disable_sqo_submit(). And we absolutely want them disabled by the
->> time cancellation ends.
+On 17/01/2021 02:31, Hillf Danton wrote:
+> On Sat, 16 Jan 2021 05:32:30 +0000 Pavel Begunkov wrote:
 >>
->> Also a fix potential false positive warning because of ctx->sq_data
->> check before io_disable_sqo_submit().
->>
->> Reported-by: Jens Axboe <axboe@kernel.dk>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>
->> To not grow diffstat now will be cleaned for-next
->>
->>  fs/io_uring.c | 8 +++++++-
->>  1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index d494c4269fc5..0d50845f1f3f 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -8937,10 +8937,12 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
->>  {
->>  	struct task_struct *task = current;
+>> @@ -9126,7 +9126,10 @@ static int io_uring_flush(struct file *file, void *data)
 >>  
->> -	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sq_data) {
->> +	if (ctx->flags & IORING_SETUP_SQPOLL) {
->>  		/* for SQPOLL only sqo_task has task notes */
->>  		WARN_ON_ONCE(ctx->sqo_task != current);
+>>  	if (ctx->flags & IORING_SETUP_SQPOLL) {
+>>  		/* there is only one file note, which is owned by sqo_task */
+>> -		WARN_ON_ONCE((ctx->sqo_task == current) ==
+>> +		WARN_ON_ONCE(ctx->sqo_task != current &&
+>> +			     xa_load(&tctx->xa, (unsigned long)file));
+>> +		/* sqo_dead check is for when this happens after cancellation */
+>> +		WARN_ON_ONCE(ctx->sqo_task == current && !ctx->sqo_dead &&
+>>  			     !xa_load(&tctx->xa, (unsigned long)file));
+>>  
 >>  		io_disable_sqo_submit(ctx);
->> +	}
->> +	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sq_data) {
->>  		task = ctx->sq_data->thread;
->>  		atomic_inc(&task->io_uring->in_idle);
->>  		io_sq_thread_park(ctx->sq_data);
 > 
-> Maybe just nest that inside?
-> 
-> 	if (ctx->flags & IORING_SETUP_SQPOLL) {
->   		/* for SQPOLL only sqo_task has task notes */
->   		WARN_ON_ONCE(ctx->sqo_task != current);
->   		io_disable_sqo_submit(ctx);
-> 		if (ctx->sq_data) {
-> 			...
-> 		}
-> 	}
-> 
-> That'd look a bit cleaner imho.
+> The added sqo_dead flag can not only quiesce a warning but save a
+> disabling dryrun.
 
-second thought, it can't even happen because if not set we failed
-during creation, and it has its own disable hooks.
-sent v2 without that part
+Don't think I get the sentence. Do you see any issue?
+
+sqo_dead has a practical meaning, it prevents SQPOLL task from poking
+into the creator task when it's racy. But yes, also in some cases makes
+draining and killing rings nicer. 
 
 -- 
 Pavel Begunkov

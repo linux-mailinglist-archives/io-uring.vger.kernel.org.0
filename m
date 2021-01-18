@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 679BB2FA26D
-	for <lists+io-uring@lfdr.de>; Mon, 18 Jan 2021 15:03:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 757792FA6C3
+	for <lists+io-uring@lfdr.de>; Mon, 18 Jan 2021 17:54:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391541AbhARODI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Jan 2021 09:03:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56524 "EHLO
+        id S2405905AbhARQww (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Jan 2021 11:52:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391506AbhARMal (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Jan 2021 07:30:41 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0340C061573;
-        Mon, 18 Jan 2021 04:30:00 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id h17so13243685wmq.1;
-        Mon, 18 Jan 2021 04:30:00 -0800 (PST)
+        with ESMTP id S2405492AbhARPMf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Jan 2021 10:12:35 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36E39C061573
+        for <io-uring@vger.kernel.org>; Mon, 18 Jan 2021 07:11:54 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id j18so2911775wmi.3
+        for <io-uring@vger.kernel.org>; Mon, 18 Jan 2021 07:11:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FzGV10dI6ZpCA2nzpn5G+6o7uEH+RKuRyEulvqsPDU4=;
-        b=hy/V2TiCpAJ7z7YjhEPWYKcx/gU9FQkGAA8OtyaIlQIJIvYF7CMtzIy9K5mo6IhR/D
-         b+myXUK7kh6b3H9Va+O286n3sgbzYF8qak27rCm61GAuFMOpFFF9dmq/T2xx5rOspCCe
-         6ELJuoMA9gmVNuop8B1Zxk9/ZclehfSRer93OXEWdb9egwxBhouvOhQwOqbVlBETXu0c
-         WTu5jcvBqo+140REppGtOL1dkP4qLFZFXNp2oG4ysG47XPxuCVjY4AcyDdOxHAoSJ5oh
-         A6BLjuzpzwTpn7L5EVqyyZHgrQNeAuX8h7UEHYIBzLabiAmrga+WZGDXmAxbGmWcX3Wq
-         jtjw==
+        bh=GOmbV8+L6/e88bzFo5oJ8ttOHkwh41s7X8e8VSWJaNA=;
+        b=bS7OG9W4Fa0iE4N6A9KohTCjauW5cG839K0+A2NHAWhOCp0JVPaEHnGx0RwE9RdnB8
+         n+o5wdRSaOrKz7EDrGG4WXMDtwHiZcMMbUJFseMzBC6X9BCEqcIUsCDX81/emduac8DP
+         URDQhI+8D4toIOiql+6aAms7USQbPZbasZJ4wJGC4tlFc/kZTyD6jx69DAyUeL9AoALr
+         3SWWdImextabr8hOYbQtyGxc4Dti/G9yN9i0PTRT2E+l2OShwJ7OLjv/fct5pAt89uDh
+         O8OkDa6q30SIZRqA3HK/3ytSQgiUI0BxrxqgvueHCMtKodLZe8n5sqsuGFuuWl3Ogumt
+         wOQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FzGV10dI6ZpCA2nzpn5G+6o7uEH+RKuRyEulvqsPDU4=;
-        b=SuCH812THrSQ+fSFCbCquN7VJVTBlBANF62Tq+9DK13fsjZpGQDEOUSzmo4SITdDu1
-         axQYkIgD38hg7JzqNtq3S1a7L8ob2/ZFVmLexTAXX8D2nrAR7kiZIeKPUNzJl6Hq8Hgz
-         HxFkSbc7L2grIeHU317LLl+kFXyQutX+FfhpOHxZ4D0LZRT8vD5mbcCHO55u1unLibdT
-         zu4sjUENuyqcdCgXgGICwJQzP3YIr1zSx7AqCgxxajdPHXBN9Zjn6UIxowlmLLIlc/4o
-         1DN7yzMPV2KzEr1ilrLO6cH8mRbo5R9DmJITxNqVd7R5i8LU8NF3vYe0PD7a2ZjT0A6N
-         UjrA==
-X-Gm-Message-State: AOAM530JjMW0x24/gnTTmv/3pzWLLD2L3sD/KQzguQfiT4cThffuweAL
-        wSv/SPwSrOCjG8rg3QCANQ8=
-X-Google-Smtp-Source: ABdhPJwxQxNCtvGlqGznn2AdXtcobkjDpAbRbMwujkdc/FtV9D6ONVzOIgDt4qsSel8AXEevNXIGwA==
-X-Received: by 2002:a1c:808d:: with SMTP id b135mr20212219wmd.157.1610972999713;
-        Mon, 18 Jan 2021 04:29:59 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=GOmbV8+L6/e88bzFo5oJ8ttOHkwh41s7X8e8VSWJaNA=;
+        b=HnHc3gW58ZkN9iApwLoE+CApW7kc+5YvZWOprUJyK6uib5nDyVhU3IH8uPtdNpKrql
+         lsoOt45LS8fvsl/fB8Pwzs5yXHBL9fcjwER0eAJ3hmz+nz4FclqFEP6LoTWnPHvGBjUC
+         DI0amaRS4KvtYx65a1hTh+1xvBWB3q5W1zbOSbiFgQNDYstEYWXEZfvSB2Osi4N9J2xf
+         jNA47vnToMEvsc+Swaw+8wVzc63FhMzWgFOoJxqtzZC+isCgao77yXHVT2+9wQrJEj7b
+         0x7WveTq3mq49t7qvPhIPFT/A5AvTkdiDr3xT4EMQaNnmDDik8gBbin3Fh/llq6SXkx9
+         3vSw==
+X-Gm-Message-State: AOAM5307PjJGqmQIRqWSjLktaWq1A+GH76yreROlsJYYTdJHfVBvZlWi
+        KUwWrWUmHOUUrfQrTa/6u4H5tBsjmWBW/Q==
+X-Google-Smtp-Source: ABdhPJwWE7iUmoErSD7SxMFO6fSaxUxpiTdG7vyP5wE1S1MomoG1sSh1UnrNNSRDjDzYys35+/CWkA==
+X-Received: by 2002:a1c:7f8c:: with SMTP id a134mr21366086wmd.184.1610982712965;
+        Mon, 18 Jan 2021 07:11:52 -0800 (PST)
 Received: from [192.168.8.130] ([85.255.234.152])
-        by smtp.gmail.com with ESMTPSA id a6sm9979264wmj.27.2021.01.18.04.29.58
+        by smtp.gmail.com with ESMTPSA id l7sm22584463wmg.41.2021.01.18.07.11.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Jan 2021 04:29:59 -0800 (PST)
-Subject: Re: WARNING in io_disable_sqo_submit
-To:     syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, hdanton@sina.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <000000000000219cec05b9252334@google.com>
+        Mon, 18 Jan 2021 07:11:52 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+References: <1610963424-27129-1-git-send-email-joseph.qi@linux.alibaba.com>
+ <4f1a8b42-8440-0e9a-ca01-497ccd438b56@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -98,69 +98,124 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <1e51be0f-98a1-6dd2-63da-02e92e79a4ef@gmail.com>
-Date:   Mon, 18 Jan 2021 12:26:22 +0000
+Subject: Re: [PATCH] io_uring: fix NULL pointer dereference for async cancel
+ close
+Message-ID: <ae6fa12a-155b-cf43-7702-b8bb5849a858@gmail.com>
+Date:   Mon, 18 Jan 2021 15:08:15 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <000000000000219cec05b9252334@google.com>
+In-Reply-To: <4f1a8b42-8440-0e9a-ca01-497ccd438b56@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 18/01/2021 04:27, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
+On 18/01/2021 12:23, Pavel Begunkov wrote:
+> On 18/01/2021 09:50, Joseph Qi wrote:
+>> Abaci reported the following crash:
+>>
+>> [   31.252589] BUG: kernel NULL pointer dereference, address: 00000000000000d8
+>> [   31.253942] #PF: supervisor read access in kernel mode
+>> [   31.254945] #PF: error_code(0x0000) - not-present page
+>> [   31.255964] PGD 800000010b76f067 P4D 800000010b76f067 PUD 10b462067 PMD 0
+>> [   31.257221] Oops: 0000 [#1] SMP PTI
+>> [   31.257923] CPU: 1 PID: 1788 Comm: io_uring-sq Not tainted 5.11.0-rc4 #1
+>> [   31.259175] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+>> [   31.260232] RIP: 0010:__lock_acquire+0x19d/0x18c0
+>> [   31.261144] Code: 00 00 8b 1d fd 56 dd 08 85 db 0f 85 43 05 00 00 48 c7 c6 98 7b 95 82 48 c7 c7 57 96 93 82 e8 9a bc f5 ff 0f 0b e9 2b 05 00 00 <48> 81 3f c0 ca 67 8a b8 00 00 00 00 41 0f 45 c0 89 04 24 e9 81 fe
+>> [   31.264297] RSP: 0018:ffffc90001933828 EFLAGS: 00010002
+>> [   31.265320] RAX: 0000000000000001 RBX: 0000000000000001 RCX: 0000000000000000
+>> [   31.266594] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000d8
+>> [   31.267922] RBP: 0000000000000246 R08: 0000000000000001 R09: 0000000000000000
+>> [   31.269262] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+>> [   31.270550] R13: 0000000000000000 R14: ffff888106e8a140 R15: 00000000000000d8
+>> [   31.271760] FS:  0000000000000000(0000) GS:ffff88813bd00000(0000) knlGS:0000000000000000
+>> [   31.273269] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [   31.274330] CR2: 00000000000000d8 CR3: 0000000106efa004 CR4: 00000000003706e0
+>> [   31.275613] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> [   31.276855] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> [   31.278065] Call Trace:
+>> [   31.278649]  lock_acquire+0x31a/0x440
+>> [   31.279404]  ? close_fd_get_file+0x39/0x160
+>> [   31.280276]  ? __lock_acquire+0x647/0x18c0
+>> [   31.281112]  _raw_spin_lock+0x2c/0x40
+>> [   31.281821]  ? close_fd_get_file+0x39/0x160
+>> [   31.282586]  close_fd_get_file+0x39/0x160
+>> [   31.283338]  io_issue_sqe+0x1334/0x14e0
+>> [   31.284053]  ? lock_acquire+0x31a/0x440
+>> [   31.284763]  ? __io_free_req+0xcf/0x2e0
+>> [   31.285504]  ? __io_free_req+0x175/0x2e0
+>> [   31.286247]  ? find_held_lock+0x28/0xb0
+>> [   31.286968]  ? io_wq_submit_work+0x7f/0x240
+>> [   31.287733]  io_wq_submit_work+0x7f/0x240
+>> [   31.288486]  io_wq_cancel_cb+0x161/0x580
+>> [   31.289230]  ? io_wqe_wake_worker+0x114/0x360
+>> [   31.290020]  ? io_uring_get_socket+0x40/0x40
+>> [   31.290832]  io_async_find_and_cancel+0x3b/0x140
+>> [   31.291676]  io_issue_sqe+0xbe1/0x14e0
+>> [   31.292405]  ? __lock_acquire+0x647/0x18c0
+>> [   31.293207]  ? __io_queue_sqe+0x10b/0x5f0
+>> [   31.293986]  __io_queue_sqe+0x10b/0x5f0
+>> [   31.294747]  ? io_req_prep+0xdb/0x1150
+>> [   31.295485]  ? mark_held_locks+0x6d/0xb0
+>> [   31.296252]  ? mark_held_locks+0x6d/0xb0
+>> [   31.297019]  ? io_queue_sqe+0x235/0x4b0
+>> [   31.297774]  io_queue_sqe+0x235/0x4b0
+>> [   31.298496]  io_submit_sqes+0xd7e/0x12a0
+>> [   31.299275]  ? _raw_spin_unlock_irq+0x24/0x30
+>> [   31.300121]  ? io_sq_thread+0x3ae/0x940
+>> [   31.300873]  io_sq_thread+0x207/0x940
+>> [   31.301606]  ? do_wait_intr_irq+0xc0/0xc0
+>> [   31.302396]  ? __ia32_sys_io_uring_enter+0x650/0x650
+>> [   31.303321]  kthread+0x134/0x180
+>> [   31.303982]  ? kthread_create_worker_on_cpu+0x90/0x90
+>> [   31.304886]  ret_from_fork+0x1f/0x30
+>>
+>> This is caused by NULL files when async cancel close, which has
+>> IO_WQ_WORK_NO_CANCEL set and continue to do work. Fix it by also setting
+>> needs_files for IORING_OP_ASYNC_CANCEL.
 > 
-> HEAD commit:    a1339d63 Merge tag 'powerpc-5.11-4' of git://git.kernel.or..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17532a58d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c60c9ff9cc916cbc
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f207c7500000
-> 
+> Looks good enough for a quick late-rc fix,
+> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
-#syz test: git://git.kernel.dk/linux-block io_uring-5.11
+Hmm, I hastened, for files we need IO_WQ_WORK_FILES,
++IO_WQ_WORK_BLKCG for same reasons. needs_file would make 
+it to grab a struct file, that is wrong.
+Probably worked out because it just grabbed fd=0/stdin.
 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com
 > 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 9113 at fs/io_uring.c:8917 io_disable_sqo_submit+0x13d/0x180 fs/io_uring.c:8917
-> Modules linked in:
-> CPU: 1 PID: 9113 Comm: syz-executor.0 Not tainted 5.11.0-rc3-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:io_disable_sqo_submit+0x13d/0x180 fs/io_uring.c:8917
-> Code: e0 07 83 c0 03 38 d0 7c 04 84 d2 75 2e 83 8b 14 01 00 00 01 4c 89 e7 e8 31 0a 24 07 5b 5d 41 5c e9 98 e1 9a ff e8 93 e1 9a ff <0f> 0b e9 00 ff ff ff e8 a7 a1 dd ff e9 37 ff ff ff e8 6d a1 dd ff
-> RSP: 0018:ffffc9000311fe98 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff888024b43000 RCX: 0000000000000000
-> RDX: ffff888147071bc0 RSI: ffffffff81d7e82d RDI: ffff888024b430d0
-> RBP: ffff8880115d1900 R08: 0000000000000000 R09: 0000000014555c01
-> R10: ffffffff81d7eae5 R11: 0000000000000001 R12: ffff888024b43000
-> R13: ffff888014555c01 R14: ffff888024b43040 R15: ffff888024b430d0
-> FS:  00007f85abf55700(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fd3adeb5000 CR3: 00000000115d2000 CR4: 0000000000350ef0
-> Call Trace:
->  io_uring_flush+0x28b/0x3a0 fs/io_uring.c:9134
->  filp_close+0xb4/0x170 fs/open.c:1280
->  close_fd+0x5c/0x80 fs/file.c:626
->  __do_sys_close fs/open.c:1299 [inline]
->  __se_sys_close fs/open.c:1297 [inline]
->  __x64_sys_close+0x2f/0xa0 fs/open.c:1297
->  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x45e219
-> Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f85abf54c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-> RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 000000000045e219
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-> RBP: 000000000119bfb0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000119bf8c
-> R13: 00007ffe5217973f R14: 00007f85abf559c0 R15: 000000000119bf8c
+> But we need need to rework this NO_CANCEL case for the future. A
+> reproducer would help much, do you have one? Or even better a liburing
+> test?
+> 
+>>
+>> Reported-by: Abaci <abaci@linux.alibaba.com>
+>> Cc: stable@vger.kernel.org # 5.6+
+>> Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+>> ---
+>>  fs/io_uring.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 985a9e3..8eb1349 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -883,7 +883,10 @@ struct io_op_def {
+>>  		.pollin			= 1,
+>>  		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES,
+>>  	},
+>> -	[IORING_OP_ASYNC_CANCEL] = {},
+>> +	[IORING_OP_ASYNC_CANCEL] = {
+>> +		/* for async cancel close */
+>> +		.needs_file		= 1,
+>> +	},
+>>  	[IORING_OP_LINK_TIMEOUT] = {
+>>  		.needs_async_data	= 1,
+>>  		.async_size		= sizeof(struct io_timeout_data),
+>>
 > 
 
 -- 

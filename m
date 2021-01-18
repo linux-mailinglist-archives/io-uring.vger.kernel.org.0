@@ -2,284 +2,117 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2F12F9B50
-	for <lists+io-uring@lfdr.de>; Mon, 18 Jan 2021 09:33:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7A352F9D1F
+	for <lists+io-uring@lfdr.de>; Mon, 18 Jan 2021 11:48:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733226AbhARIcS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Jan 2021 03:32:18 -0500
-Received: from raptor.unsafe.ru ([5.9.43.93]:32828 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726488AbhARIcQ (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 18 Jan 2021 03:32:16 -0500
-Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-103-122-167.net.upcbroadband.cz [89.103.122.167])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 5C3EC20479;
-        Mon, 18 Jan 2021 08:31:18 +0000 (UTC)
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-mm@kvack.org
-Cc:     Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v4 2/8] Add a reference to ucounts for each cred
-Date:   Mon, 18 Jan 2021 09:31:08 +0100
-Message-Id: <9b26dda8be0dc55fc2b030cd53e59c56787050a1.1610958162.git.gladkov.alexey@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <bea844285b19c8caf2e656c7ea329a7b2e812c42.1610722474.git.gladkov.alexey@gmail.com>
-References: <bea844285b19c8caf2e656c7ea329a7b2e812c42.1610722474.git.gladkov.alexey@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Mon, 18 Jan 2021 08:31:29 +0000 (UTC)
+        id S2389043AbhARKrl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Jan 2021 05:47:41 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:41086 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389307AbhARJvN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Jan 2021 04:51:13 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UM4iQQA_1610963424;
+Received: from localhost(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UM4iQQA_1610963424)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 18 Jan 2021 17:50:25 +0800
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Subject: [PATCH] io_uring: fix NULL pointer dereference for async cancel close
+Date:   Mon, 18 Jan 2021 17:50:24 +0800
+Message-Id: <1610963424-27129-1-git-send-email-joseph.qi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-For RLIMIT_NPROC and some other rlimits the user_struct that holds the
-global limit is kept alive for the lifetime of a process by keeping it
-in struct cred.  Add a ucounts reference to struct cred, so that
-RLIMIT_NPROC can switch from using a per user limit to using a per user
-per user namespace limit.
+Abaci reported the following crash:
 
-Changelog
----------
-v4:
-* Fixed typo in the kernel/cred.c
+[   31.252589] BUG: kernel NULL pointer dereference, address: 00000000000000d8
+[   31.253942] #PF: supervisor read access in kernel mode
+[   31.254945] #PF: error_code(0x0000) - not-present page
+[   31.255964] PGD 800000010b76f067 P4D 800000010b76f067 PUD 10b462067 PMD 0
+[   31.257221] Oops: 0000 [#1] SMP PTI
+[   31.257923] CPU: 1 PID: 1788 Comm: io_uring-sq Not tainted 5.11.0-rc4 #1
+[   31.259175] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+[   31.260232] RIP: 0010:__lock_acquire+0x19d/0x18c0
+[   31.261144] Code: 00 00 8b 1d fd 56 dd 08 85 db 0f 85 43 05 00 00 48 c7 c6 98 7b 95 82 48 c7 c7 57 96 93 82 e8 9a bc f5 ff 0f 0b e9 2b 05 00 00 <48> 81 3f c0 ca 67 8a b8 00 00 00 00 41 0f 45 c0 89 04 24 e9 81 fe
+[   31.264297] RSP: 0018:ffffc90001933828 EFLAGS: 00010002
+[   31.265320] RAX: 0000000000000001 RBX: 0000000000000001 RCX: 0000000000000000
+[   31.266594] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000d8
+[   31.267922] RBP: 0000000000000246 R08: 0000000000000001 R09: 0000000000000000
+[   31.269262] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[   31.270550] R13: 0000000000000000 R14: ffff888106e8a140 R15: 00000000000000d8
+[   31.271760] FS:  0000000000000000(0000) GS:ffff88813bd00000(0000) knlGS:0000000000000000
+[   31.273269] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   31.274330] CR2: 00000000000000d8 CR3: 0000000106efa004 CR4: 00000000003706e0
+[   31.275613] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   31.276855] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   31.278065] Call Trace:
+[   31.278649]  lock_acquire+0x31a/0x440
+[   31.279404]  ? close_fd_get_file+0x39/0x160
+[   31.280276]  ? __lock_acquire+0x647/0x18c0
+[   31.281112]  _raw_spin_lock+0x2c/0x40
+[   31.281821]  ? close_fd_get_file+0x39/0x160
+[   31.282586]  close_fd_get_file+0x39/0x160
+[   31.283338]  io_issue_sqe+0x1334/0x14e0
+[   31.284053]  ? lock_acquire+0x31a/0x440
+[   31.284763]  ? __io_free_req+0xcf/0x2e0
+[   31.285504]  ? __io_free_req+0x175/0x2e0
+[   31.286247]  ? find_held_lock+0x28/0xb0
+[   31.286968]  ? io_wq_submit_work+0x7f/0x240
+[   31.287733]  io_wq_submit_work+0x7f/0x240
+[   31.288486]  io_wq_cancel_cb+0x161/0x580
+[   31.289230]  ? io_wqe_wake_worker+0x114/0x360
+[   31.290020]  ? io_uring_get_socket+0x40/0x40
+[   31.290832]  io_async_find_and_cancel+0x3b/0x140
+[   31.291676]  io_issue_sqe+0xbe1/0x14e0
+[   31.292405]  ? __lock_acquire+0x647/0x18c0
+[   31.293207]  ? __io_queue_sqe+0x10b/0x5f0
+[   31.293986]  __io_queue_sqe+0x10b/0x5f0
+[   31.294747]  ? io_req_prep+0xdb/0x1150
+[   31.295485]  ? mark_held_locks+0x6d/0xb0
+[   31.296252]  ? mark_held_locks+0x6d/0xb0
+[   31.297019]  ? io_queue_sqe+0x235/0x4b0
+[   31.297774]  io_queue_sqe+0x235/0x4b0
+[   31.298496]  io_submit_sqes+0xd7e/0x12a0
+[   31.299275]  ? _raw_spin_unlock_irq+0x24/0x30
+[   31.300121]  ? io_sq_thread+0x3ae/0x940
+[   31.300873]  io_sq_thread+0x207/0x940
+[   31.301606]  ? do_wait_intr_irq+0xc0/0xc0
+[   31.302396]  ? __ia32_sys_io_uring_enter+0x650/0x650
+[   31.303321]  kthread+0x134/0x180
+[   31.303982]  ? kthread_create_worker_on_cpu+0x90/0x90
+[   31.304886]  ret_from_fork+0x1f/0x30
 
-Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+This is caused by NULL files when async cancel close, which has
+IO_WQ_WORK_NO_CANCEL set and continue to do work. Fix it by also setting
+needs_files for IORING_OP_ASYNC_CANCEL.
+
+Reported-by: Abaci <abaci@linux.alibaba.com>
+Cc: stable@vger.kernel.org # 5.6+
+Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 ---
- include/linux/cred.h           |  1 +
- include/linux/user_namespace.h | 13 +++++++++++--
- kernel/cred.c                  | 20 ++++++++++++++++++--
- kernel/ucount.c                | 30 ++++++++++++++++++++----------
- kernel/user_namespace.c        |  1 +
- 5 files changed, 51 insertions(+), 14 deletions(-)
+ fs/io_uring.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 18639c069263..307744fcc387 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -144,6 +144,7 @@ struct cred {
- #endif
- 	struct user_struct *user;	/* real user ID subscription */
- 	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
-+	struct ucounts *ucounts;
- 	struct group_info *group_info;	/* supplementary groups for euid/fsgid */
- 	/* RCU deletion */
- 	union {
-diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index f84fc2d9ce20..9a3ba69e9223 100644
---- a/include/linux/user_namespace.h
-+++ b/include/linux/user_namespace.h
-@@ -85,7 +85,7 @@ struct user_namespace {
- 	struct ctl_table_header *sysctls;
- #endif
- 	struct ucounts		*ucounts;
--	int ucount_max[UCOUNT_COUNTS];
-+	long ucount_max[UCOUNT_COUNTS];
- } __randomize_layout;
- 
- struct ucounts {
-@@ -93,7 +93,7 @@ struct ucounts {
- 	struct user_namespace *ns;
- 	kuid_t uid;
- 	refcount_t count;
--	atomic_t ucount[UCOUNT_COUNTS];
-+	atomic_long_t ucount[UCOUNT_COUNTS];
- };
- 
- extern struct user_namespace init_user_ns;
-@@ -102,6 +102,15 @@ bool setup_userns_sysctls(struct user_namespace *ns);
- void retire_userns_sysctls(struct user_namespace *ns);
- struct ucounts *inc_ucount(struct user_namespace *ns, kuid_t uid, enum ucount_type type);
- void dec_ucount(struct ucounts *ucounts, enum ucount_type type);
-+void put_ucounts(struct ucounts *ucounts);
-+void set_cred_ucounts(struct cred *cred, struct user_namespace *ns, kuid_t uid);
-+
-+static inline struct ucounts *get_ucounts(struct ucounts *ucounts)
-+{
-+	if (ucounts)
-+		refcount_inc(&ucounts->count);
-+	return ucounts;
-+}
- 
- #ifdef CONFIG_USER_NS
- 
-diff --git a/kernel/cred.c b/kernel/cred.c
-index 421b1149c651..9473e71e784c 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -119,6 +119,8 @@ static void put_cred_rcu(struct rcu_head *rcu)
- 	if (cred->group_info)
- 		put_group_info(cred->group_info);
- 	free_uid(cred->user);
-+	if (cred->ucounts)
-+		put_ucounts(cred->ucounts);
- 	put_user_ns(cred->user_ns);
- 	kmem_cache_free(cred_jar, cred);
- }
-@@ -144,6 +146,9 @@ void __put_cred(struct cred *cred)
- 	BUG_ON(cred == current->cred);
- 	BUG_ON(cred == current->real_cred);
- 
-+	if (cred->ucounts)
-+		BUG_ON(cred->ucounts->ns != cred->user_ns);
-+
- 	if (cred->non_rcu)
- 		put_cred_rcu(&cred->rcu);
- 	else
-@@ -270,6 +275,7 @@ struct cred *prepare_creds(void)
- 	get_group_info(new->group_info);
- 	get_uid(new->user);
- 	get_user_ns(new->user_ns);
-+	get_ucounts(new->ucounts);
- 
- #ifdef CONFIG_KEYS
- 	key_get(new->session_keyring);
-@@ -363,6 +369,7 @@ int copy_creds(struct task_struct *p, unsigned long clone_flags)
- 		ret = create_user_ns(new);
- 		if (ret < 0)
- 			goto error_put;
-+		set_cred_ucounts(new, new->user_ns, new->euid);
- 	}
- 
- #ifdef CONFIG_KEYS
-@@ -485,8 +492,11 @@ int commit_creds(struct cred *new)
- 	 * in set_user().
- 	 */
- 	alter_cred_subscribers(new, 2);
--	if (new->user != old->user)
--		atomic_inc(&new->user->processes);
-+	if (new->user != old->user || new->user_ns != old->user_ns) {
-+		if (new->user != old->user)
-+			atomic_inc(&new->user->processes);
-+		set_cred_ucounts(new, new->user_ns, new->euid);
-+	}
- 	rcu_assign_pointer(task->real_cred, new);
- 	rcu_assign_pointer(task->cred, new);
- 	if (new->user != old->user)
-@@ -661,6 +671,11 @@ void __init cred_init(void)
- 	/* allocate a slab in which we can store credentials */
- 	cred_jar = kmem_cache_create("cred_jar", sizeof(struct cred), 0,
- 			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT, NULL);
-+	/*
-+	 * This is needed here because this is the first cred and there is no
-+	 * ucount reference to copy.
-+	 */
-+	set_cred_ucounts(&init_cred, &init_user_ns, GLOBAL_ROOT_UID);
- }
- 
- /**
-@@ -704,6 +719,7 @@ struct cred *prepare_kernel_cred(struct task_struct *daemon)
- 	get_uid(new->user);
- 	get_user_ns(new->user_ns);
- 	get_group_info(new->group_info);
-+	get_ucounts(new->ucounts);
- 
- #ifdef CONFIG_KEYS
- 	new->session_keyring = NULL;
-diff --git a/kernel/ucount.c b/kernel/ucount.c
-index 82acd2226460..0b4e956d87bb 100644
---- a/kernel/ucount.c
-+++ b/kernel/ucount.c
-@@ -125,7 +125,7 @@ static struct ucounts *find_ucounts(struct user_namespace *ns, kuid_t uid, struc
- 	return NULL;
- }
- 
--static struct ucounts *get_ucounts(struct user_namespace *ns, kuid_t uid)
-+static struct ucounts *__get_ucounts(struct user_namespace *ns, kuid_t uid)
- {
- 	struct hlist_head *hashent = ucounts_hashentry(ns, uid);
- 	struct ucounts *ucounts, *new;
-@@ -158,7 +158,7 @@ static struct ucounts *get_ucounts(struct user_namespace *ns, kuid_t uid)
- 	return ucounts;
- }
- 
--static void put_ucounts(struct ucounts *ucounts)
-+void put_ucounts(struct ucounts *ucounts)
- {
- 	unsigned long flags;
- 
-@@ -169,14 +169,24 @@ static void put_ucounts(struct ucounts *ucounts)
- 	}
- }
- 
--static inline bool atomic_inc_below(atomic_t *v, int u)
-+void set_cred_ucounts(struct cred *cred, struct user_namespace *ns, kuid_t uid)
- {
--	int c, old;
--	c = atomic_read(v);
-+	struct ucounts *old = cred->ucounts;
-+	if (old && old->ns == ns && uid_eq(old->uid, uid))
-+		return;
-+	cred->ucounts = __get_ucounts(ns, uid);
-+	if (old)
-+		put_ucounts(old);
-+}
-+
-+static inline bool atomic_long_inc_below(atomic_long_t *v, int u)
-+{
-+	long c, old;
-+	c = atomic_long_read(v);
- 	for (;;) {
- 		if (unlikely(c >= u))
- 			return false;
--		old = atomic_cmpxchg(v, c, c+1);
-+		old = atomic_long_cmpxchg(v, c, c+1);
- 		if (likely(old == c))
- 			return true;
- 		c = old;
-@@ -188,19 +198,19 @@ struct ucounts *inc_ucount(struct user_namespace *ns, kuid_t uid,
- {
- 	struct ucounts *ucounts, *iter, *bad;
- 	struct user_namespace *tns;
--	ucounts = get_ucounts(ns, uid);
-+	ucounts = __get_ucounts(ns, uid);
- 	for (iter = ucounts; iter; iter = tns->ucounts) {
- 		int max;
- 		tns = iter->ns;
- 		max = READ_ONCE(tns->ucount_max[type]);
--		if (!atomic_inc_below(&iter->ucount[type], max))
-+		if (!atomic_long_inc_below(&iter->ucount[type], max))
- 			goto fail;
- 	}
- 	return ucounts;
- fail:
- 	bad = iter;
- 	for (iter = ucounts; iter != bad; iter = iter->ns->ucounts)
--		atomic_dec(&iter->ucount[type]);
-+		atomic_long_dec(&iter->ucount[type]);
- 
- 	put_ucounts(ucounts);
- 	return NULL;
-@@ -210,7 +220,7 @@ void dec_ucount(struct ucounts *ucounts, enum ucount_type type)
- {
- 	struct ucounts *iter;
- 	for (iter = ucounts; iter; iter = iter->ns->ucounts) {
--		int dec = atomic_dec_if_positive(&iter->ucount[type]);
-+		int dec = atomic_long_dec_if_positive(&iter->ucount[type]);
- 		WARN_ON_ONCE(dec < 0);
- 	}
- 	put_ucounts(ucounts);
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index af612945a4d0..4b8a4468d391 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -1280,6 +1280,7 @@ static int userns_install(struct nsset *nsset, struct ns_common *ns)
- 
- 	put_user_ns(cred->user_ns);
- 	set_cred_user_ns(cred, get_user_ns(user_ns));
-+	set_cred_ucounts(cred, user_ns, cred->euid);
- 
- 	return 0;
- }
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 985a9e3..8eb1349 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -883,7 +883,10 @@ struct io_op_def {
+ 		.pollin			= 1,
+ 		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES,
+ 	},
+-	[IORING_OP_ASYNC_CANCEL] = {},
++	[IORING_OP_ASYNC_CANCEL] = {
++		/* for async cancel close */
++		.needs_file		= 1,
++	},
+ 	[IORING_OP_LINK_TIMEOUT] = {
+ 		.needs_async_data	= 1,
+ 		.async_size		= sizeof(struct io_timeout_data),
 -- 
-2.29.2
+1.8.3.1
 

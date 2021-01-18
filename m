@@ -2,104 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 602502F9511
-	for <lists+io-uring@lfdr.de>; Sun, 17 Jan 2021 21:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE3352F989E
+	for <lists+io-uring@lfdr.de>; Mon, 18 Jan 2021 05:28:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729936AbhAQUP2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 17 Jan 2021 15:15:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45484 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728732AbhAQUPW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Jan 2021 15:15:22 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D02C061573
-        for <io-uring@vger.kernel.org>; Sun, 17 Jan 2021 12:14:41 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id m13so16058234ljo.11
-        for <io-uring@vger.kernel.org>; Sun, 17 Jan 2021 12:14:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FrMVxfeB3+KKIBV6QBSYXo4T1vI48P4RMLKoRIf1OUc=;
-        b=Gf36Q8ai78kVx9Z3/GXZ67OKv5MBTb+tGROqoFacgXbbIlaG8TvPDg0d+RXn/fc4/Q
-         O2jr4S1owdj4WB59GlYsn6A4TYRyJ6J6r57aobiLqISJSe5DSFpdr2HgMHvU3vEGruzH
-         9jMYwg0+1DpWroaJ91eWTRYwtKVSCtyrBAhCc=
+        id S1730434AbhARE2H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 17 Jan 2021 23:28:07 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:37056 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728690AbhARE17 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 17 Jan 2021 23:27:59 -0500
+Received: by mail-io1-f70.google.com with SMTP id l22so27198413iom.4
+        for <io-uring@vger.kernel.org>; Sun, 17 Jan 2021 20:27:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FrMVxfeB3+KKIBV6QBSYXo4T1vI48P4RMLKoRIf1OUc=;
-        b=KBNfNr5WLczTudoHAZl0leA+oEtBBIVs4kRVg5IQA9oMM3BNh3+QEgmW18OCgq+8rf
-         G/JqYDshvUUYhoXz0Dl7XnpYpamH3LOTF4djEKujL2JQcqsP117Y6NnyMPmXB7s4Josm
-         FpAI5ufGYS04DjFTMihfODfGztbvhxCmH9yMC+sr4kor0MTp2PzJc6Hnlc4YBrWYknVP
-         QAdUnpL6zhnbUA6by3mFKeC1kphIkX4fWpA99+UnRSuHcqOeJ3ywCJz3Ly0qkHcb8Iug
-         tjez1T968KmWeZx2+ad3FOlEI7Xr210wOCzJJcJJFoe8Yxd4QZ6EALaBZOm6hiG1rsRF
-         /zvA==
-X-Gm-Message-State: AOAM532V5a/2JN2UX1W6bpsOtwQv1DXtecZdlJYQkVe8SZUXxZ3T23c4
-        0CnvpaFG7O17ll6vcPydZKReW7Za1yAvVQ==
-X-Google-Smtp-Source: ABdhPJzyBdNA+/o4eQbAk/T6p19Zc9xiozi/kj0KufDn6fMDoaAmUUZ/TzBlHi0En8BdafEJ867gdQ==
-X-Received: by 2002:a2e:740d:: with SMTP id p13mr9545738ljc.288.1610914479959;
-        Sun, 17 Jan 2021 12:14:39 -0800 (PST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id q19sm1710852lfa.80.2021.01.17.12.14.38
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Jan 2021 12:14:38 -0800 (PST)
-Received: by mail-lj1-f182.google.com with SMTP id p13so16143140ljg.2
-        for <io-uring@vger.kernel.org>; Sun, 17 Jan 2021 12:14:38 -0800 (PST)
-X-Received: by 2002:a2e:6f17:: with SMTP id k23mr9059477ljc.411.1610914477750;
- Sun, 17 Jan 2021 12:14:37 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=qC8G0IPXg9beaQej+tLqh5V/dMR/FwgnyQdMvOOVq98=;
+        b=Cf9krTz9/2pkymzR+nWwRTwLzV6ye8D9edbjHrtT4bevSkHHOQBktKGUctCeihtp+D
+         RFMPopAccQc/8wgFkrJ1GeLU8MkCyei30gMSDgVkaKY9gC5TheA1/DhWJk25G+Hy/6aa
+         Hr2DHOI8c+r36/Hb9qfxSeB/C3H3/0sS6oVE5ASqmPmXQfTjRRCoha/6MpikbYMWm/Qc
+         8qI+Q5kEELbb6+kRWkrQoAjqOCDWQtKo0m5JTBTTIO5JnQoYimeas1xtOYVnL+Zf01tC
+         v7gAGKOuuZ/LvP+D59vgy+oEaOL2gHOuqQkSZIby7QveqIHGP+Fw4VlV1i6Qn3l20N8l
+         HODQ==
+X-Gm-Message-State: AOAM530EorDK2bKyBvfX2AYG7zgqf8HtzJwgc47sj6dlI8buvE3klxUe
+        GU75QGwdt9mudPPv6H16VX7lXql5VFE89HLTOHBc0TtTtrRu
+X-Google-Smtp-Source: ABdhPJxcjLG96jCODEMWVyf7lnLaM1Jx6ebp8DYdB5L4tSPIAZywJDtkn0sLJ8ywd+/kXYFXE0aYokKBeNSDkSIQtgcdfKIXwUoS
 MIME-Version: 1.0
-References: <01020176e45e6c4d-c15dc1e2-6a6a-407c-a32d-24be51a1b3f8-000000@eu-west-1.amazonses.com>
- <8ba549a0-7724-a42f-bd11-3605ef0bd034@kernel.dk> <01020176e8159fa5-3f556133-fda7-451b-af78-94c712df611e-000000@eu-west-1.amazonses.com>
- <b56ed553-096c-b51a-49e3-da4e8eda8d43@gmail.com> <01020176ed350725-cc3c8fa7-7771-46c9-8fa9-af433acb2453-000000@eu-west-1.amazonses.com>
- <0102017702e086ca-cdb34993-86ad-4ec6-bea5-b6a5ad055a62-000000@eu-west-1.amazonses.com>
- <61566b44-fe88-03b0-fd94-70acfc82c093@kernel.dk> <CAHk-=wh3Agdy3h+rsx5HTOWt6dS-jN9THBqNhk=mWG4KnCK0tw@mail.gmail.com>
- <CAHk-=wiGEFZf-+YXcUVDj_mutwG6qWZzKUKZ-5yQ5UWgLGrBNQ@mail.gmail.com> <0102017711f5dc95-8153416f-4641-4495-9103-82c2744e0d69-000000@eu-west-1.amazonses.com>
-In-Reply-To: <0102017711f5dc95-8153416f-4641-4495-9103-82c2744e0d69-000000@eu-west-1.amazonses.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 17 Jan 2021 12:14:21 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjZ_z9radV3bCC5HH7gDJ9-CZNwqE1JYksUpX6GqPRj+w@mail.gmail.com>
-Message-ID: <CAHk-=wjZ_z9radV3bCC5HH7gDJ9-CZNwqE1JYksUpX6GqPRj+w@mail.gmail.com>
-Subject: Re: Fixed buffers have out-dated content
-To:     Martin Raiber <martin@urbackup.org>, Peter Xu <peterx@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
+X-Received: by 2002:a6b:9346:: with SMTP id v67mr15981999iod.108.1610944037885;
+ Sun, 17 Jan 2021 20:27:17 -0800 (PST)
+Date:   Sun, 17 Jan 2021 20:27:17 -0800
+In-Reply-To: <000000000000f054d005b8f87274@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000219cec05b9252334@google.com>
+Subject: Re: WARNING in io_disable_sqo_submit
+From:   syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, hdanton@sina.com,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Jan 17, 2021 at 12:07 PM Martin Raiber <martin@urbackup.org> wrote:
->
-> Thanks! With the patch (skip swapping pinned pages) the problem doesn't
-> occur anymore, so it seems to fix it.
+syzbot has found a reproducer for the following issue on:
 
-Heh, this email came in just as I had committed it to my tree and was
-actively writing an email about how you likely wouldn't test it before
-I did rc4 because it's a weekend ;)
+HEAD commit:    a1339d63 Merge tag 'powerpc-5.11-4' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17532a58d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c60c9ff9cc916cbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f207c7500000
 
-But since I hadn't pushed it out yet (or done some of the pulls I have
-pending), I amended the commit message with your tested-by as well.
-Thanks.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com
 
-It's commit feb889fb40fa ("mm: don't put pinned pages into the swap cache").
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9113 at fs/io_uring.c:8917 io_disable_sqo_submit+0x13d/0x180 fs/io_uring.c:8917
+Modules linked in:
+CPU: 1 PID: 9113 Comm: syz-executor.0 Not tainted 5.11.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_disable_sqo_submit+0x13d/0x180 fs/io_uring.c:8917
+Code: e0 07 83 c0 03 38 d0 7c 04 84 d2 75 2e 83 8b 14 01 00 00 01 4c 89 e7 e8 31 0a 24 07 5b 5d 41 5c e9 98 e1 9a ff e8 93 e1 9a ff <0f> 0b e9 00 ff ff ff e8 a7 a1 dd ff e9 37 ff ff ff e8 6d a1 dd ff
+RSP: 0018:ffffc9000311fe98 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888024b43000 RCX: 0000000000000000
+RDX: ffff888147071bc0 RSI: ffffffff81d7e82d RDI: ffff888024b430d0
+RBP: ffff8880115d1900 R08: 0000000000000000 R09: 0000000014555c01
+R10: ffffffff81d7eae5 R11: 0000000000000001 R12: ffff888024b43000
+R13: ffff888014555c01 R14: ffff888024b43040 R15: ffff888024b430d0
+FS:  00007f85abf55700(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd3adeb5000 CR3: 00000000115d2000 CR4: 0000000000350ef0
+Call Trace:
+ io_uring_flush+0x28b/0x3a0 fs/io_uring.c:9134
+ filp_close+0xb4/0x170 fs/open.c:1280
+ close_fd+0x5c/0x80 fs/file.c:626
+ __do_sys_close fs/open.c:1299 [inline]
+ __se_sys_close fs/open.c:1297 [inline]
+ __x64_sys_close+0x2f/0xa0 fs/open.c:1297
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45e219
+Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f85abf54c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 000000000045e219
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 000000000119bfb0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000119bf8c
+R13: 00007ffe5217973f R14: 00007f85abf559c0 R15: 000000000119bf8c
 
-I was pretty sure that was the cause from the symptoms you saw, and
-the commit explains the whole chain (and explains why the "simple and
-stupid" two-liner is actually the right thing to do).
-
-I was very tempted to make the condition for "don't put it into the
-swap cache" be much more aggressive, to handle the "GUP with write"
-case too, something like
-
-        /* Single mapper, more references than us and the map? */
-        if (page_mapcount(page) == 1 && page_count(page) > 2)
-                goto keep_locked;
-
-but just using page_maybe_dma_pinned() is the more targeted one for now.
-
-(Added Peter to the cc so that he sees this).
-
-                     Linus

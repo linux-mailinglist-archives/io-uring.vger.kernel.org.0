@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4BC32FBA85
-	for <lists+io-uring@lfdr.de>; Tue, 19 Jan 2021 15:57:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 915172FBA7D
+	for <lists+io-uring@lfdr.de>; Tue, 19 Jan 2021 15:57:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391762AbhASOzo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Jan 2021 09:55:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41506 "EHLO
+        id S2391775AbhASOzp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Jan 2021 09:55:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394463AbhASNiF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jan 2021 08:38:05 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72B96C061795
-        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:36:43 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id c124so16483805wma.5
-        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:36:43 -0800 (PST)
+        with ESMTP id S2389132AbhASNiI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jan 2021 08:38:08 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC42C061796
+        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:36:44 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id m2so1311218wmm.1
+        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:36:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=Y+CUjGduMtmbcDyNvW6X2Kezn910c3L4r1bKCai2S4A=;
-        b=cItWf7mHhUuoarKT5Rplj22xdGqdP7Zke0a68ZfErhIER7Ar3zAucQNJeDIUOlkYFR
-         vkUx5CU9eHmPCYbR1qZgjiG+wDlVegmjz9im6LC82NeurL6FD6BUyoFZGU3gZwAhge0G
-         /l8xZJzzfOk3O5f/sOqP51RxURpCfS8g1Vi3zkpR9ASPevGqYoClpYWUxiAu3l8TjjE7
-         jfHV5ItD9Oaa9X2pIMnN0b4LbApM7zfpbt4Oaqce09+W3Da/T4ltZibqel7OH9RfC8mU
-         4c1oKbsKsHUdjJLIjT9i1qV25gp1BkP8u28JGGNv6oSV0D3G8LDlIC9Pjor4mv8FwYhT
-         er4Q==
+        bh=yY7Jn/nzZmg1R639vLwU26xQwu2dSAHo1SUMsrr0+bU=;
+        b=uJd+6zdJoC2zMtAkQliH0IeMa0gCWwZiKftOL6CJDghYcThmbqHgp6YCBobjEW8tJc
+         hOjN4p4YWGEkStmVkwD63Wnmu6SiuT+g9X3snK84Z/0fbfF1y4IsxsTLPxZzriPITcxW
+         wdbVdCxCGkjCN2TQ1wBRjgmS6RKE/YeoIHx7OggVuptt+VKewFQ2p85T5IPSERAIIBW9
+         RCnE6QPGVF86XF8vkIA+q8L8z0Tc6Toga/isHMmeA0oQci8um4C0plF1rNkwcurnt8S1
+         uL671+pWVlZVQNR9ML4GBilgigbonSFciDdRlgeEkO9U1EJ29y7Dvo7ypj51aHoCa+bZ
+         aNWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Y+CUjGduMtmbcDyNvW6X2Kezn910c3L4r1bKCai2S4A=;
-        b=LNLQQyUmOmOs+/shtohNlTMZy7Ybz+ywzsTd7XWsw5AJhmo3GpKohhe3wDarJu+xB/
-         yqVhWcm4KrXBQ3BDbLrU1akfVpSprI/NrG7l8RLsutoznj3QduSq9AHLdLQPCrfq9AqE
-         XDPpkSRlz8MIx6lTlPu5PRwG1swiLzmxPab7OcTBL/VBNPROvCuHnRXz3c/TRIPDtvZv
-         W7s/iSyfb1IKo5Y69RzZ+nSUR7o0jpmg2saMYJza0lbDJolUYEh6TfBZzlsUJ8CGcXit
-         3ckVi2E/n7SCUOg0H1BovBcO8E/enbUSkFqJpuYUWP5H1hAQ7fRz64fMxABqGj82T5H5
-         YBVw==
-X-Gm-Message-State: AOAM532BDchEUn33f2LBQBPI+AFP4Gb5fdCcoe36QNzfCHmhXIHXzOCA
-        E1apOh7LHkZL2pnoeeV/bDfOTup3glQzkw==
-X-Google-Smtp-Source: ABdhPJz7t2ZtcdGRgvDNl6RznEIXzw6c9qsl+1SJpOGv/G8m1jYdCzkGIWC92SLeDBd11r3dqRxR5Q==
-X-Received: by 2002:a05:600c:20c6:: with SMTP id y6mr4076575wmm.97.1611063402306;
-        Tue, 19 Jan 2021 05:36:42 -0800 (PST)
+        bh=yY7Jn/nzZmg1R639vLwU26xQwu2dSAHo1SUMsrr0+bU=;
+        b=V/3kknp4vYtybyOEfKpgVCSyyJcaO+YY2twdCc9v7bnu0uzpW9HkQYQZhpGsrFtgme
+         UVGjb84Ped0BQ5tvYq7W/D0Km8+sBZV1YU/FL4tZ5k5WFlO+3oJbAfIFYCTkJA19ThEH
+         n182vPILJyN3S6kbW93KmizEdFZVKZQmviHpQmqcxnSZuwNgW1rgMqmY+IYc6sUemcxM
+         TIz+dPm0qh0xlJ0sRMeaDrZlFlOMRDt0YPAYDk4/re+TYco2rqXUDDAOnaDMWfN3uUNs
+         KrL5eEENsouldO+WJxgg3dmiZdFhrd0vz9pM4dg3i8GpNvXxY0motX0YR3BPbTgSqe/y
+         7SBg==
+X-Gm-Message-State: AOAM532Hz/AZvKVEiyUbuBx/xnvDYNwK3gW6wf1Ie0XEVDBe/F/OAK0f
+        JPn0MD0716wZgdtAT1oUZePcCgRwm7fRYQ==
+X-Google-Smtp-Source: ABdhPJyF+z6+2/U1BKNS2GXSeoA0Vk4N1g9A6xbH9OiK6TGVhyLv5JQMwqF8UitTmDmvjJ/OE1vAdg==
+X-Received: by 2002:a05:600c:190c:: with SMTP id j12mr4072518wmq.63.1611063403151;
+        Tue, 19 Jan 2021 05:36:43 -0800 (PST)
 Received: from localhost.localdomain ([85.255.234.152])
-        by smtp.gmail.com with ESMTPSA id f68sm4988443wmf.6.2021.01.19.05.36.41
+        by smtp.gmail.com with ESMTPSA id f68sm4988443wmf.6.2021.01.19.05.36.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 05:36:41 -0800 (PST)
+        Tue, 19 Jan 2021 05:36:42 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 11/14] io_uring: add a helper timeout mode calculation
-Date:   Tue, 19 Jan 2021 13:32:44 +0000
-Message-Id: <94cb8adc214f838b69175cbe678cdd9994c47f59.1611062505.git.asml.silence@gmail.com>
+Subject: [PATCH 12/14] io_uring: help inlining of io_req_complete()
+Date:   Tue, 19 Jan 2021 13:32:45 +0000
+Message-Id: <4ca07fa0795c558ca59f8e053bcb4cff996607c9.1611062505.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1611062505.git.asml.silence@gmail.com>
 References: <cover.1611062505.git.asml.silence@gmail.com>
@@ -61,61 +61,79 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Deduplicates translation of timeout flags into hrtimer_mode.
+__io_req_complete() inlining is a bit weird, some compilers don't
+optimise out the non-NULL branch of it even when called as
+io_req_complete(). Help it a bit by extracting state and stateless
+helpers out of __io_req_complete().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ fs/io_uring.c | 36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9720e38b5b97..a004102fbbde 100644
+index a004102fbbde..b0f54f4495c7 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -5744,6 +5744,12 @@ static int io_timeout_remove_prep(struct io_kiocb *req,
- 	return 0;
+@@ -1868,7 +1868,8 @@ static void io_cqring_fill_event(struct io_kiocb *req, long res)
+ 	__io_cqring_fill_event(req, res, 0);
  }
  
-+static inline enum hrtimer_mode io_translate_timeout_mode(unsigned int flags)
-+{
-+	return (flags & IORING_TIMEOUT_ABS) ? HRTIMER_MODE_ABS
-+					    : HRTIMER_MODE_REL;
+-static void io_cqring_add_event(struct io_kiocb *req, long res, long cflags)
++static void io_req_complete_nostate(struct io_kiocb *req, long res,
++				    unsigned int cflags)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	unsigned long flags;
+@@ -1879,6 +1880,7 @@ static void io_cqring_add_event(struct io_kiocb *req, long res, long cflags)
+ 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
+ 
+ 	io_cqring_ev_posted(ctx);
++	io_put_req(req);
+ }
+ 
+ static void io_submit_flush_completions(struct io_comp_state *cs)
+@@ -1914,23 +1916,27 @@ static void io_submit_flush_completions(struct io_comp_state *cs)
+ 	cs->nr = 0;
+ }
+ 
+-static void __io_req_complete(struct io_kiocb *req, long res, unsigned cflags,
+-			      struct io_comp_state *cs)
++static void io_req_complete_state(struct io_kiocb *req, long res,
++				  unsigned int cflags, struct io_comp_state *cs)
+ {
+-	if (!cs) {
+-		io_cqring_add_event(req, res, cflags);
+-		io_put_req(req);
+-	} else {
+-		io_clean_op(req);
+-		req->result = res;
+-		req->compl.cflags = cflags;
+-		list_add_tail(&req->compl.list, &cs->list);
+-		if (++cs->nr >= 32)
+-			io_submit_flush_completions(cs);
+-	}
++	io_clean_op(req);
++	req->result = res;
++	req->compl.cflags = cflags;
++	list_add_tail(&req->compl.list, &cs->list);
++	if (++cs->nr >= 32)
++		io_submit_flush_completions(cs);
 +}
 +
- /*
-  * Remove or update an existing timeout command
-  */
-@@ -5754,14 +5760,11 @@ static int io_timeout_remove(struct io_kiocb *req)
- 	int ret;
- 
- 	spin_lock_irq(&ctx->completion_lock);
--	if (req->timeout_rem.flags & IORING_TIMEOUT_UPDATE) {
--		enum hrtimer_mode mode = (tr->flags & IORING_TIMEOUT_ABS)
--					? HRTIMER_MODE_ABS : HRTIMER_MODE_REL;
--
--		ret = io_timeout_update(ctx, tr->addr, &tr->ts, mode);
--	} else {
-+	if (!(req->timeout_rem.flags & IORING_TIMEOUT_UPDATE))
- 		ret = io_timeout_cancel(ctx, tr->addr);
--	}
++static inline void __io_req_complete(struct io_kiocb *req, long res,
++				     unsigned cflags, struct io_comp_state *cs)
++{
++	if (!cs)
++		io_req_complete_nostate(req, res, cflags);
 +	else
-+		ret = io_timeout_update(ctx, tr->addr, &tr->ts,
-+					io_translate_timeout_mode(tr->flags));
++		io_req_complete_state(req, res, cflags, cs);
+ }
  
- 	io_cqring_fill_event(req, ret);
- 	io_commit_cqring(ctx);
-@@ -5801,11 +5804,7 @@ static int io_timeout_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 	if (get_timespec64(&data->ts, u64_to_user_ptr(sqe->addr)))
- 		return -EFAULT;
- 
--	if (flags & IORING_TIMEOUT_ABS)
--		data->mode = HRTIMER_MODE_ABS;
--	else
--		data->mode = HRTIMER_MODE_REL;
--
-+	data->mode = io_translate_timeout_mode(flags);
- 	hrtimer_init(&data->timer, CLOCK_MONOTONIC, data->mode);
- 	return 0;
+-static void io_req_complete(struct io_kiocb *req, long res)
++static inline void io_req_complete(struct io_kiocb *req, long res)
+ {
+ 	__io_req_complete(req, res, 0, NULL);
  }
 -- 
 2.24.0

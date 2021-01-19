@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 742F12FBA89
-	for <lists+io-uring@lfdr.de>; Tue, 19 Jan 2021 15:57:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1695D2FBA6B
+	for <lists+io-uring@lfdr.de>; Tue, 19 Jan 2021 15:57:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391639AbhASOyq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Jan 2021 09:54:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41310 "EHLO
+        id S2391668AbhASOyt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Jan 2021 09:54:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394334AbhASNhP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jan 2021 08:37:15 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6911FC061575
-        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:36:34 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id d13so19718989wrc.13
-        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:36:34 -0800 (PST)
+        with ESMTP id S2394347AbhASNhT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jan 2021 08:37:19 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5939EC061757
+        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:36:35 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id c12so1231299wrc.7
+        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:36:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=kmSr8vLdDCfJBmwTzc0q2+OiG+xkTEsTnRhNlFR8m7k=;
-        b=sh26S7CwjdmEALgTj2OsEs7NCkgoJUC4wJI4MjLFjTWbHN9m2dMCw9EJJcZml5+9MK
-         mNgzkObrlj3GulgU5AXzXSBwtDN0uqa5Wa20HwmKGPlJph/i35EPZVtMV7/xdSUtXzFu
-         T4v/Pyy6xf67tlnY9yc2lYxLd5hLij/OgEr7nvSPZIgYvYMAbkiwguHJ20Lq/A6x1y2d
-         LEm4oDpv5ZPVfWbVAJSbjMuT7G3f4yxfruwSclgkxkGGim5WW/u3fiFkIxsCSlXcuBF7
-         uiim2O7Ue1CLWeDI4PgAjWra89h9efLUCLMyyKJ7CMQ3uSV+N3Ssa5w5++Lc2MHg/Z/U
-         Cs8w==
+        bh=dJ05tp8vgoP1wxNPmYpulk1zJOkqd6m1mhJVqI3tIM8=;
+        b=iV99LzuD+zjSxAhej/ZQrFHiKUcUbDFcHcmlZ8x/TerVxxgDvrjAtg439pzTrge4kG
+         sYb2ewscjlOzZZXHHQZq2wo230xboGxQRf4fBwOBDfKQBY6ZaaWCVEkDE4TODpJfVIZs
+         7TEfuysxuDlxMquYGb+Kdkxq9UwA5f4GSrhd25XR2AjrKwPa6WOudYMI5bcyAC0p017r
+         YUgEsk4nj93nG7zvBW14B/1wbal/4HfhEdmrgO+VqrEoX3o3hyl7i3Nj2B/sneFcBC7k
+         3fNqBW1BjPlJP4tDQDkPc7bvu9KRMhn1vaLztzkJOzcuELovR+eRxqyllPEaOmWhwytt
+         eGNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kmSr8vLdDCfJBmwTzc0q2+OiG+xkTEsTnRhNlFR8m7k=;
-        b=WLaguRcwrHj5UxMdxiD7erqagEORkdoTUc71Ari4e003v6LwX3mqjrPx+BnxAkdBPk
-         fzgPYq15jWtAyUYFk85XxLlgkk2k7K3dQc5HrADQZXdHVvPAQHUm9IB5yUJBdKtKZJbk
-         mFgJbM6NGaqs/kVWzftyd0wmqkc0udFyPRKSqCDyNL1Fo6SuD++kdP/zJidnZwNHEJfY
-         J2AgoVG9kFNZjPAbpTdNK2QFewzZOF6rj5+qAMPb3mTJWZiJ/+U4MQV6vI0UDz7h7hSO
-         MH3z5zJY0fLXm0mQbNcqMDfSe69rykJ+ANB9lxsM5kstbwVLU5GQDwHMUVRyC3fPzhFY
-         HUbg==
-X-Gm-Message-State: AOAM531DfYUiV7iRvXAdpbLcxyv2gj2kYohj4tzEoisvtXKjPv54xqfZ
-        fvEz9k44HWXwhKPgDXmCQNU=
-X-Google-Smtp-Source: ABdhPJwLLt0hCCLvJkr0F9uiIu2hwRAKYsnq1u3gZEKrR1B8dJNduUsLL3LD1BfOFhGq5gPtEwVylw==
-X-Received: by 2002:adf:f5c5:: with SMTP id k5mr4605336wrp.286.1611063393044;
-        Tue, 19 Jan 2021 05:36:33 -0800 (PST)
+        bh=dJ05tp8vgoP1wxNPmYpulk1zJOkqd6m1mhJVqI3tIM8=;
+        b=O88GshnmtdBsAiORg7ckY8RUO1OdgsxvuLHNjBaQOATlbNMmtn0KCODmaOYC0HIDor
+         3oX3bO4+OUd1kC0Mel1IuZHOvY0rti0vcIN1P4FexlX81HLWt7+XKGK4JPV212lMXE4t
+         QMQtP82tnREEGsHLupOpPRhRiQb8OEKqyYpnqMtD/DmzrljuzPR39ML04wNZI8jksEXM
+         5rMpUtWOQ2rHtyITlDBzfM6LhL3CXLolNcgBsdij/E85mxKEEpB2I9n/BsKOmZ7IIHHq
+         pGFGWWA52HdGYkfgpg1TdacT2VOgEm0vHjXKl+p8QRNqcCqOYzt3jgMXqdayq/dOH255
+         aeTw==
+X-Gm-Message-State: AOAM530xokwzrhSJ39xIkUJzKq9ThDcS4bBH9ndRcGT0Ea2AVv/EGtNO
+        DQatKKVEqX2jpsDV19Oc1HDbawpOCfVWqg==
+X-Google-Smtp-Source: ABdhPJx15AqDg3t3dvlnDNGtG+06ehAepWFJu8Cn8yEKpmNDf/M21KuBtyggVz+ZXfbdtwkeccIQmA==
+X-Received: by 2002:adf:db51:: with SMTP id f17mr4577577wrj.83.1611063394209;
+        Tue, 19 Jan 2021 05:36:34 -0800 (PST)
 Received: from localhost.localdomain ([85.255.234.152])
-        by smtp.gmail.com with ESMTPSA id f68sm4988443wmf.6.2021.01.19.05.36.32
+        by smtp.gmail.com with ESMTPSA id f68sm4988443wmf.6.2021.01.19.05.36.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 05:36:32 -0800 (PST)
+        Tue, 19 Jan 2021 05:36:33 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 01/14] io_uring: optimise io_rw_reissue()
-Date:   Tue, 19 Jan 2021 13:32:34 +0000
-Message-Id: <c0da843b0707e793e6a8a9ffc52e8d7eb8a2d37f.1611062505.git.asml.silence@gmail.com>
+Subject: [PATCH 02/14] io_uring: refactor io_resubmit_prep()
+Date:   Tue, 19 Jan 2021 13:32:35 +0000
+Message-Id: <9b6b370cbbde34b467079c42aedca0a6e884a199.1611062505.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1611062505.git.asml.silence@gmail.com>
 References: <cover.1611062505.git.asml.silence@gmail.com>
@@ -61,35 +61,85 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The hot path is IO completing on the first try. Reshuffle io_rw_reissue() so
-it's checked first.
+It's awkward to pass return a value into a function for it to return it
+back. Check it at the caller site and clean up io_resubmit_prep() a bit.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/io_uring.c | 33 +++++++++++++--------------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4bcabc51fc5a..7f4bc5092b5c 100644
+index 7f4bc5092b5c..eb8bee704374 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2713,12 +2713,13 @@ static bool io_resubmit_prep(struct io_kiocb *req, int error)
- static bool io_rw_reissue(struct io_kiocb *req, long res)
- {
+@@ -2664,17 +2664,16 @@ static void io_complete_rw_common(struct kiocb *kiocb, long res,
+ }
+ 
  #ifdef CONFIG_BLOCK
--	umode_t mode = file_inode(req->file)->i_mode;
-+	umode_t mode;
- 	int ret;
+-static bool io_resubmit_prep(struct io_kiocb *req, int error)
++static bool io_resubmit_prep(struct io_kiocb *req)
+ {
+ 	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
+ 	ssize_t ret = -ECANCELED;
+ 	struct iov_iter iter;
+ 	int rw;
  
--	if (!S_ISBLK(mode) && !S_ISREG(mode))
-+	if (res != -EAGAIN && res != -EOPNOTSUPP)
- 		return false;
--	if ((res != -EAGAIN && res != -EOPNOTSUPP) || io_wq_current_is_worker())
-+	mode = file_inode(req->file)->i_mode;
-+	if ((!S_ISBLK(mode) && !S_ISREG(mode)) || io_wq_current_is_worker())
- 		return false;
+-	if (error) {
+-		ret = error;
+-		goto end_req;
+-	}
++	/* already prepared */
++	if (req->async_data)
++		return true;
  
- 	lockdep_assert_held(&req->ctx->uring_lock);
+ 	switch (req->opcode) {
+ 	case IORING_OP_READV:
+@@ -2690,22 +2689,16 @@ static bool io_resubmit_prep(struct io_kiocb *req, int error)
+ 	default:
+ 		printk_once(KERN_WARNING "io_uring: bad opcode in resubmit %d\n",
+ 				req->opcode);
+-		goto end_req;
++		return false;
+ 	}
+ 
+-	if (!req->async_data) {
+-		ret = io_import_iovec(rw, req, &iovec, &iter, false);
+-		if (ret < 0)
+-			goto end_req;
+-		ret = io_setup_async_rw(req, iovec, inline_vecs, &iter, false);
+-		if (!ret)
+-			return true;
+-		kfree(iovec);
+-	} else {
++	ret = io_import_iovec(rw, req, &iovec, &iter, false);
++	if (ret < 0)
++		return false;
++	ret = io_setup_async_rw(req, iovec, inline_vecs, &iter, false);
++	if (!ret)
+ 		return true;
+-	}
+-end_req:
+-	req_set_fail_links(req);
++	kfree(iovec);
+ 	return false;
+ }
+ #endif
+@@ -2726,12 +2719,12 @@ static bool io_rw_reissue(struct io_kiocb *req, long res)
+ 
+ 	ret = io_sq_thread_acquire_mm_files(req->ctx, req);
+ 
+-	if (io_resubmit_prep(req, ret)) {
++	if (!ret && io_resubmit_prep(req)) {
+ 		refcount_inc(&req->refs);
+ 		io_queue_async_work(req);
+ 		return true;
+ 	}
+-
++	req_set_fail_links(req);
+ #endif
+ 	return false;
+ }
 -- 
 2.24.0
 

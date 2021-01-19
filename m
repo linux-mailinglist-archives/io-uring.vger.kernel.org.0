@@ -2,141 +2,174 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56A642FBA81
-	for <lists+io-uring@lfdr.de>; Tue, 19 Jan 2021 15:57:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA22E2FBCB8
+	for <lists+io-uring@lfdr.de>; Tue, 19 Jan 2021 17:42:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391863AbhASOzs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Jan 2021 09:55:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41546 "EHLO
+        id S2387837AbhASQmJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Jan 2021 11:42:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389412AbhASNik (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jan 2021 08:38:40 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0979EC061799
-        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:36:46 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id m187so10241019wme.2
-        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:36:45 -0800 (PST)
+        with ESMTP id S2389514AbhASQlz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jan 2021 11:41:55 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 042D2C061573
+        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 08:41:15 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id 7so13129672wrz.0
+        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 08:41:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=S9BbKmM1G1kDOSSNGFqpsD26mfeCSV1FG6c7uGUAYko=;
-        b=fZhmDyI+WqvfM0u71mBuTmifh+akpVCZwTFHeKXqdlD4u+vz33VfEv+odLG86ktLxd
-         Kn8M3tbwab+Y0WR815tZMaYtZ99WUPOhoiOZIXJB7Af0mFawLRaUPmGM+4FJzeEsg5kT
-         bhSAYhKMxFMOi2pmclZPW1lv5Jbt4VYQ7B0XenJxPzv1Uf4PLNQDolK5ulIj6ZXZ/qQZ
-         nQRXsx7r06JLOkHntvHvBOTDn9V4TeXI2uQ9/h63DCs5nJCuLCyp2QocTPhjD5VK7Yh5
-         C/EmRo1Ob6+VfdrpgnG1GjyTOXjUGzCpf4sw5ZsHtfz202lIkTjSbB3htNShAhk/bs0y
-         1+Vg==
+        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CKri++C4UjXs+unMYHYP2FjWaBWBkHf8HgaTs0Vlb2o=;
+        b=qw8Ha9s27JQtnp64CmFbFsQtXRQK9h8OxhX3aD3XnUT7TYbe31PRmS8xNQcNN7C+yp
+         OOiO9DTF9d627G/Yu8ryXwxvMzbAHNLrMS6qfPkJV5JzoIT2U7tiBW9rg6LYkuGlM9jh
+         vPinAyy1imm8txV3yFsfI8EyI7Of5KkujeY3KvOkMrqYY1oFOo9hMsU17ZpyVt2UIjpI
+         3UUCYH41qCi8Q/SygjcZxqgOd5JYTPgDposcGY4t28yqM2ENc77kWnJZAJHXv6qBLb5B
+         UeXsQgJwXhUv6Qgo24kHegkYrIYMa/KE5cml0O68GOUZAKiMqZo1rH17AhU7nkJRbTMs
+         c8Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=S9BbKmM1G1kDOSSNGFqpsD26mfeCSV1FG6c7uGUAYko=;
-        b=qF5VuWSBugyW0GYmFdqXm2b6T5SvMXGFmCp6Wzu/QA0VxfuNbo6g+j4jQaEaMZNmP6
-         b8jmiQv8bRvukeK3bsKWsM7kZPsfBkeczkCQg6HUKJ5+stFeCCYe1mRKe2iz3614NR/V
-         FsV/0p7h3HwAxy7ud8bNrF5fc0HOf2oUC1wINkmNxtuVIwVNGhQsckv3NuAc9wGvmud8
-         5qWdduCupJeCp/s1kmSZAZPbcArDAIQHur/3KRv2Q4K9kz+FhOrZfce/Z8dEwesCkboG
-         7G0wYXZ0XGoFVXVG5wc/wY5eBEOoQz/OnyA/RiFNjj3/7/qY8uowbMDY7YDi2IqNyvCE
-         DFeQ==
-X-Gm-Message-State: AOAM53356tRRdXKzyBgwpk8DtnDG8hIHqcf1GboBrFnpj+140rZweWDG
-        GJUgnUp807BSyR+q2vvKEds=
-X-Google-Smtp-Source: ABdhPJw9AGpvUrNVFn2qHZVOP7gOeSqmT+tD3arZQN+dnTcJclrg6GRapuhpKJrkd7enuSXVGoTK4g==
-X-Received: by 2002:a1c:f619:: with SMTP id w25mr4113785wmc.179.1611063404807;
-        Tue, 19 Jan 2021 05:36:44 -0800 (PST)
-Received: from localhost.localdomain ([85.255.234.152])
-        by smtp.gmail.com with ESMTPSA id f68sm4988443wmf.6.2021.01.19.05.36.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 05:36:44 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=CKri++C4UjXs+unMYHYP2FjWaBWBkHf8HgaTs0Vlb2o=;
+        b=aPuSLGbN+iKmqnV7YWnPCvlHi5XM7+stbPrsZeM9Fp75ovMS4JjlMZMVdCwF14I/la
+         kgAj6N+vTh5Ndiid+MTzBR+Uyzb/4i7GjWf79+trepVD/wsLnqovPfb4Uc7PNAMMoBYg
+         qER0iNtwq+uZvqAtefYLzwY2qB0vt2RhxTxbPUUHupKSLq/tghOik6xB3avtI04ZwmGR
+         oO7EGCtV2zo6wGEztEXgwtFnkTwgc/p5VTJVISf+YzYzKagLY/Jb4CBsNDNFRAYMh3+N
+         TVv9W99GaRl0sA/PomyE/gqXHDECRvgCdNvSagRY1rShO//jsPp66IA3uIsoKGW0hIcE
+         W6PA==
+X-Gm-Message-State: AOAM532Cn08B2axVQWtivDh7+naZcJfY+3EK76E467o49ThQtIbADEm0
+        uezDbQXajFSXBdaLeQdVFGU=
+X-Google-Smtp-Source: ABdhPJxay72aL+Tzp48svVFSXhUo9sf2Gg7XJmA+iLYsQZis5qtoWBEiU/Vf3GHfKDkb+X6CRBUP8w==
+X-Received: by 2002:adf:d238:: with SMTP id k24mr5154425wrh.414.1611074473766;
+        Tue, 19 Jan 2021 08:41:13 -0800 (PST)
+Received: from [192.168.8.135] ([85.255.234.152])
+        by smtp.gmail.com with ESMTPSA id t1sm37920837wro.27.2021.01.19.08.41.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Jan 2021 08:41:13 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 14/14] io_uring: save atomic dec for inline executed reqs
-Date:   Tue, 19 Jan 2021 13:32:47 +0000
-Message-Id: <300674e8a1a53566f4ed10b0cafb44faf595d1be.1611062505.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1611062505.git.asml.silence@gmail.com>
-References: <cover.1611062505.git.asml.silence@gmail.com>
+To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joseph Qi <jiangqi903@gmail.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+References: <1610963424-27129-1-git-send-email-joseph.qi@linux.alibaba.com>
+ <4f1a8b42-8440-0e9a-ca01-497ccd438b56@gmail.com>
+ <ae6fa12a-155b-cf43-7702-b8bb5849a858@gmail.com>
+ <58b25063-7047-e656-18df-c1240fab3f8d@linux.alibaba.com>
+ <164dff2a-7f23-4baf-bcb5-975b1f5edf9b@gmail.com>
+ <17125fd3-1d0e-1c71-374a-9a7a7382c8fc@gmail.com>
+ <3572b340-ce74-765f-c6bd-0179b3756a1b@gmail.com>
+ <f202d3da-0b84-9d35-5da6-d0b7f31d740d@linux.alibaba.com>
+ <e5e7ecd5-102d-dee5-857e-24d77d7075fc@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH] io_uring: fix NULL pointer dereference for async cancel
+ close
+Message-ID: <2e486931-812b-0407-de12-f914fe8f6d4f@gmail.com>
+Date:   Tue, 19 Jan 2021 16:37:35 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <e5e7ecd5-102d-dee5-857e-24d77d7075fc@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When a request is completed with comp_state, its completion reference
-put is deferred to io_submit_flush_completions(), but the submission
-is put not far from there, so do it together to save one atomic dec per
-request. That targets requests that complete inline, e.g. buffered rw,
-send/recv.
+On 19/01/2021 13:39, Pavel Begunkov wrote:
+> On 19/01/2021 13:12, Joseph Qi wrote:
+>> On 1/19/21 7:45 PM, Pavel Begunkov wrote:
+>>> On 19/01/2021 08:00, Joseph Qi wrote:
+>>>> On 1/19/21 10:38 AM, Pavel Begunkov wrote:
+>>>>> On 19/01/2021 01:58, Joseph Qi wrote:
+>>>>>>> Hmm, I hastened, for files we need IO_WQ_WORK_FILES,
+>>>>>>> +IO_WQ_WORK_BLKCG for same reasons. needs_file would make 
+>>>>>>> it to grab a struct file, that is wrong.
+>>>>>>> Probably worked out because it just grabbed fd=0/stdin.
+>>>>>>>
+>>>>>>
+>>>>>> I think IO_WQ_WORK_FILES can work since it will acquire
+>>>>>> files when initialize async cancel request.
+>>>>>
+>>>>> That the one controlling files in the first place, need_file
+>>>>> just happened to grab them submission.
+>>>>>
+>>>>>> Don't quite understand why we should have IO_WQ_WORK_BLKCG.
+>>>>>
+>>>>> Because it's set for IORING_OP_CLOSE, and similar situation
+>>>>> may happen but with async_cancel from io-wq.
+>>>>>
+>>>> So how about do switch and restore in io_run_cancel(), seems it can
+>>>> take care of direct request, sqthread and io-wq cases.
+>>>
+>>> It will get ugly pretty quickly, + this nesting of io-wq handlers
+>>> async_handler() -> io_close() is not great...
+>>>
+>>> I'm more inclined to skip them in io_wqe_cancel_pending_work()
+>>> to not execute inline. That may need to do some waiting on the
+>>> async_cancel side though to not change the semantics. Can you
+>>> try out this direction?
+>>>
+>> Sure, I'll try this way and send v2.
+> 
+> There may be a much better way, that's to remove IO_WQ_WORK_NO_CANCEL
+> and move -EAGAIN section of io_close() before close_fd_get_file(),
+> so not splitting it in 2 and not keeping it half-done.
 
-Proper benchmarking haven't been conducted but for nops(batch=32) it was
-around 7901 vs 8117 KIOPS (~2.7%), or ~4% per perf profiling.
+I believe it is the right way, but there are tricks to that. I hope
+you don't mind me and Jens hijacking taking care of it. Enough of
+non-technical hassle expected...
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+Thanks for reporting it!
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1e46d471aa76..fb4e2a97e4f3 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -618,6 +618,7 @@ enum {
- 	REQ_F_NO_FILE_TABLE_BIT,
- 	REQ_F_WORK_INITIALIZED_BIT,
- 	REQ_F_LTIMEOUT_ACTIVE_BIT,
-+	REQ_F_COMPLETE_INLINE_BIT,
- 
- 	/* not a real bit, just to check we're not overflowing the space */
- 	__REQ_F_LAST_BIT,
-@@ -661,6 +662,8 @@ enum {
- 	REQ_F_WORK_INITIALIZED	= BIT(REQ_F_WORK_INITIALIZED_BIT),
- 	/* linked timeout is active, i.e. prepared by link's head */
- 	REQ_F_LTIMEOUT_ACTIVE	= BIT(REQ_F_LTIMEOUT_ACTIVE_BIT),
-+	/* completion is deferred through io_comp_state */
-+	REQ_F_COMPLETE_INLINE	= BIT(REQ_F_COMPLETE_INLINE_BIT),
- };
- 
- struct async_poll {
-@@ -1899,14 +1902,15 @@ static void io_submit_flush_completions(struct io_comp_state *cs)
- 		 * io_free_req() doesn't care about completion_lock unless one
- 		 * of these flags is set. REQ_F_WORK_INITIALIZED is in the list
- 		 * because of a potential deadlock with req->work.fs->lock
-+		 * We defer both, completion and submission refs.
- 		 */
- 		if (req->flags & (REQ_F_FAIL_LINK|REQ_F_LINK_TIMEOUT
- 				 |REQ_F_WORK_INITIALIZED)) {
- 			spin_unlock_irq(&ctx->completion_lock);
--			io_put_req(req);
-+			io_double_put_req(req);
- 			spin_lock_irq(&ctx->completion_lock);
- 		} else {
--			io_put_req(req);
-+			io_double_put_req(req);
- 		}
- 	}
- 	io_commit_cqring(ctx);
-@@ -1922,8 +1926,7 @@ static void io_req_complete_state(struct io_kiocb *req, long res,
- 	io_clean_op(req);
- 	req->result = res;
- 	req->compl.cflags = cflags;
--	list_add_tail(&req->compl.list, &cs->list);
--	cs->nr++;
-+	req->flags |= REQ_F_COMPLETE_INLINE;
- }
- 
- static inline void __io_req_complete(struct io_kiocb *req, long res,
-@@ -6537,9 +6540,9 @@ static void __io_queue_sqe(struct io_kiocb *req, struct io_comp_state *cs)
- 			io_queue_linked_timeout(linked_timeout);
- 	} else if (likely(!ret)) {
- 		/* drop submission reference */
--		if (cs) {
--			io_put_req(req);
--			if (cs->nr >= 32)
-+		if (req->flags & REQ_F_COMPLETE_INLINE) {
-+			list_add_tail(&req->compl.list, &cs->list);
-+			if (++cs->nr >= 32)
- 				io_submit_flush_completions(cs);
- 			req = NULL;
- 		} else {
+> 
+> IIRC, it was done this way because of historical reasons when we
+> didn't put more stuff around files, but may be wrong.
+> Jens, do you remember what it was?
+
 -- 
-2.24.0
-
+Pavel Begunkov

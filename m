@@ -2,165 +2,142 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BA9232FC5BB
-	for <lists+io-uring@lfdr.de>; Wed, 20 Jan 2021 01:24:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8BFC2FC751
+	for <lists+io-uring@lfdr.de>; Wed, 20 Jan 2021 03:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbhATAXg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Jan 2021 19:23:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42730 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405893AbhASNns (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jan 2021 08:43:48 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C150BC061573
-        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:43:05 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id m4so19763835wrx.9
-        for <io-uring@vger.kernel.org>; Tue, 19 Jan 2021 05:43:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Uchd353HHZlfs3qUxdFR/+VmIoW3EwZnXdbeEj9Twcg=;
-        b=Yzk2I6yU3aL8RKJAdU+tk7t+xQXA6oPqr25U4zEj5XmS4D4aQMKw7qUdof+jJYYgB2
-         xSqkf2qo4pKQI/G+WxiXIn2OxOwEcKiWtcJOSy/EkvMszQsKG08x5nLboU+yy2P3xq4T
-         wQD5kIoKbecblybkmN5dVi/fxBXSWmB2HnRz8QYJFXqU5fuLQyvlAAl0m8PJiQA77Y1W
-         8N9vCLCluAFKH0DTfcQ8titwombuxwsVqqXlZ+SvN/FmanVM2hQuBHDRNhKFarq3Bo1M
-         RR0teyekYAJNcNYdqCjYBlQbJFdNK3iiUoRySRHcbnTomlVQe53IUZBm8CB7fb8KOwPB
-         4l+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Uchd353HHZlfs3qUxdFR/+VmIoW3EwZnXdbeEj9Twcg=;
-        b=VK/eTHvmSmenPLDEptZUVlZb/eZWXKBy52Fn5Gas63qve/IQlL9sXMOeYWHSMCQWm+
-         MvWFEPOCI4dj87xZCHiqt37aL+nRNLcs6Dk7RuUFY6xv7uch8gNjRwlSvSFYS55tXkhv
-         Wqqd1TqJh93bNhMQbJM8FVPH1x/kogKqs+umawJWHUR64zrv3kfCKXaoiNRnPNlIdJch
-         vp8azDuJyOh3taiGLInpEhmxBMNk4iQ4dWDk5fcm+Nx286WNfGXLeKnsqhDeniPE5jx5
-         FAK+LKPIJ2mUF8+xiwU/Yhg4IqbmszokoZJPoYLuNjdqJjUDlar/b/DDwmc5QNAW3Frd
-         THTA==
-X-Gm-Message-State: AOAM532fAjLmUbd07S5oK8DYeCc+0Ts1WFL9uj2buvCmXb+30qQEGVWx
-        6WZkjgK0WfZ7ODsCthYEnv/HRVJpLopd7w==
-X-Google-Smtp-Source: ABdhPJwJs1V9fq9O5eabfKN5h6vunRnWUjENDqETvkylNIRE+D6E0pGZU+W6RK3hw16tAw6r67N5hA==
-X-Received: by 2002:a5d:6204:: with SMTP id y4mr4487222wru.48.1611063784197;
-        Tue, 19 Jan 2021 05:43:04 -0800 (PST)
-Received: from [192.168.8.134] ([85.255.234.152])
-        by smtp.gmail.com with ESMTPSA id x128sm4873625wmb.29.2021.01.19.05.43.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Jan 2021 05:43:03 -0800 (PST)
-Subject: Re: [PATCH] io_uring: fix NULL pointer dereference for async cancel
- close
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Joseph Qi <jiangqi903@gmail.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-References: <1610963424-27129-1-git-send-email-joseph.qi@linux.alibaba.com>
- <4f1a8b42-8440-0e9a-ca01-497ccd438b56@gmail.com>
- <ae6fa12a-155b-cf43-7702-b8bb5849a858@gmail.com>
- <58b25063-7047-e656-18df-c1240fab3f8d@linux.alibaba.com>
- <164dff2a-7f23-4baf-bcb5-975b1f5edf9b@gmail.com>
- <17125fd3-1d0e-1c71-374a-9a7a7382c8fc@gmail.com>
- <3572b340-ce74-765f-c6bd-0179b3756a1b@gmail.com>
- <f202d3da-0b84-9d35-5da6-d0b7f31d740d@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <e5e7ecd5-102d-dee5-857e-24d77d7075fc@gmail.com>
-Date:   Tue, 19 Jan 2021 13:39:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1731214AbhATB7o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Jan 2021 20:59:44 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:38804 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731136AbhATB7a (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jan 2021 20:59:30 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l22lj-000tTV-AH; Tue, 19 Jan 2021 18:58:47 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l22li-00B0cw-Bf; Tue, 19 Jan 2021 18:58:46 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>
+References: <cover.1610722473.git.gladkov.alexey@gmail.com>
+        <116c7669744404364651e3b380db2d82bb23f983.1610722473.git.gladkov.alexey@gmail.com>
+        <CAHk-=wjsg0Lgf1Mh2UiJE4sqBDDo0VhFVBUbhed47ot2CQQwfQ@mail.gmail.com>
+        <20210118194551.h2hrwof7b3q5vgoi@example.org>
+        <CAHk-=wiNpc5BS2BfZhdDqofJx1G=uasBa2Q1eY4cr8O59Rev2A@mail.gmail.com>
+        <20210118205629.zro2qkd3ut42bpyq@example.org>
+Date:   Tue, 19 Jan 2021 19:57:36 -0600
+In-Reply-To: <20210118205629.zro2qkd3ut42bpyq@example.org> (Alexey Gladkov's
+        message of "Mon, 18 Jan 2021 21:56:29 +0100")
+Message-ID: <87eeig74kv.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <f202d3da-0b84-9d35-5da6-d0b7f31d740d@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1l22li-00B0cw-Bf;;;mid=<87eeig74kv.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/ggaLsmakqXtb9Zqya1vF2O+oxa+qmtw0=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong,
+        XM_B_SpammyWords autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4904]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Alexey Gladkov <gladkov.alexey@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 401 ms - load_scoreonly_sql: 0.11 (0.0%),
+        signal_user_changed: 14 (3.4%), b_tie_ro: 12 (2.9%), parse: 1.79
+        (0.4%), extract_message_metadata: 6 (1.5%), get_uri_detail_list: 2.5
+        (0.6%), tests_pri_-1000: 7 (1.6%), tests_pri_-950: 1.90 (0.5%),
+        tests_pri_-900: 1.53 (0.4%), tests_pri_-90: 59 (14.7%), check_bayes:
+        57 (14.2%), b_tokenize: 11 (2.7%), b_tok_get_all: 9 (2.3%),
+        b_comp_prob: 3.5 (0.9%), b_tok_touch_all: 30 (7.5%), b_finish: 0.95
+        (0.2%), tests_pri_0: 282 (70.2%), check_dkim_signature: 0.78 (0.2%),
+        check_dkim_adsp: 3.0 (0.8%), poll_dns_idle: 0.61 (0.2%), tests_pri_10:
+        4.0 (1.0%), tests_pri_500: 12 (3.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC PATCH v3 1/8] Use refcount_t for ucounts reference counting
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 19/01/2021 13:12, Joseph Qi wrote:
-> On 1/19/21 7:45 PM, Pavel Begunkov wrote:
->> On 19/01/2021 08:00, Joseph Qi wrote:
->>> On 1/19/21 10:38 AM, Pavel Begunkov wrote:
->>>> On 19/01/2021 01:58, Joseph Qi wrote:
->>>>>> Hmm, I hastened, for files we need IO_WQ_WORK_FILES,
->>>>>> +IO_WQ_WORK_BLKCG for same reasons. needs_file would make 
->>>>>> it to grab a struct file, that is wrong.
->>>>>> Probably worked out because it just grabbed fd=0/stdin.
->>>>>>
->>>>>
->>>>> I think IO_WQ_WORK_FILES can work since it will acquire
->>>>> files when initialize async cancel request.
->>>>
->>>> That the one controlling files in the first place, need_file
->>>> just happened to grab them submission.
->>>>
->>>>> Don't quite understand why we should have IO_WQ_WORK_BLKCG.
->>>>
->>>> Because it's set for IORING_OP_CLOSE, and similar situation
->>>> may happen but with async_cancel from io-wq.
->>>>
->>> So how about do switch and restore in io_run_cancel(), seems it can
->>> take care of direct request, sqthread and io-wq cases.
->>
->> It will get ugly pretty quickly, + this nesting of io-wq handlers
->> async_handler() -> io_close() is not great...
->>
->> I'm more inclined to skip them in io_wqe_cancel_pending_work()
->> to not execute inline. That may need to do some waiting on the
->> async_cancel side though to not change the semantics. Can you
->> try out this direction?
->>
-> Sure, I'll try this way and send v2.
+Alexey Gladkov <gladkov.alexey@gmail.com> writes:
 
-There may be a much better way, that's to remove IO_WQ_WORK_NO_CANCEL
-and move -EAGAIN section of io_close() before close_fd_get_file(),
-so not splitting it in 2 and not keeping it half-done.
+> On Mon, Jan 18, 2021 at 12:34:29PM -0800, Linus Torvalds wrote:
+>> On Mon, Jan 18, 2021 at 11:46 AM Alexey Gladkov
+>> <gladkov.alexey@gmail.com> wrote:
+>> >
+>> > Sorry about that. I thought that this code is not needed when switching
+>> > from int to refcount_t. I was wrong.
+>> 
+>> Well, you _may_ be right. I personally didn't check how the return
+>> value is used.
+>> 
+>> I only reacted to "it certainly _may_ be used, and there is absolutely
+>> no comment anywhere about why it wouldn't matter".
+>
+> I have not found examples where checked the overflow after calling
+> refcount_inc/refcount_add.
+>
+> For example in kernel/fork.c:2298 :
+>
+>    current->signal->nr_threads++;                           
+>    atomic_inc(&current->signal->live);                      
+>    refcount_inc(&current->signal->sigcnt);  
+>
+> $ semind search signal_struct.sigcnt
+> def include/linux/sched/signal.h:83  		refcount_t		sigcnt;
+> m-- kernel/fork.c:723 put_signal_struct 		if (refcount_dec_and_test(&sig->sigcnt))
+> m-- kernel/fork.c:1571 copy_signal 		refcount_set(&sig->sigcnt, 1);
+> m-- kernel/fork.c:2298 copy_process 				refcount_inc(&current->signal->sigcnt);
+>
+> It seems to me that the only way is to use __refcount_inc and then compare
+> the old value with REFCOUNT_MAX
+>
+> Since I have not seen examples of such checks, I thought that this is
+> acceptable. Sorry once again. I have not tried to hide these changes.
 
-IIRC, it was done this way because of historical reasons when we
-didn't put more stuff around files, but may be wrong.
-Jens, do you remember what it was?
+The current ucount code does check for overflow and fails the increment
+in every case.
 
--- 
-Pavel Begunkov
+So arguably it will be a regression and inferior error handling behavior
+if the code switches to the ``better'' refcount_t data structure.
+
+I originally didn't use refcount_t because silently saturating and not
+bothering to handle the error makes me uncomfortable.
+
+Not having to acquire the ucounts_lock every time seems nice.  Perhaps
+the path forward would be to start with stupid/correct code that always
+takes the ucounts_lock for every increment of ucounts->count, that is
+later replaced with something more optimal.
+
+Not impacting performance in the non-namespace cases and having good
+performance in the other cases is a fundamental requirement of merging
+code like this.
+
+Eric
+

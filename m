@@ -2,148 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BCB92FC759
-	for <lists+io-uring@lfdr.de>; Wed, 20 Jan 2021 03:02:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7DE32FC783
+	for <lists+io-uring@lfdr.de>; Wed, 20 Jan 2021 03:11:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbhATCAp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 19 Jan 2021 21:00:45 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:41066 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbhATCAk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jan 2021 21:00:40 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1l22mp-0092wV-9L; Tue, 19 Jan 2021 18:59:55 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1l22mo-00B0pL-8x; Tue, 19 Jan 2021 18:59:54 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>
-References: <cover.1610722473.git.gladkov.alexey@gmail.com>
-        <116c7669744404364651e3b380db2d82bb23f983.1610722473.git.gladkov.alexey@gmail.com>
-        <CAHk-=wjsg0Lgf1Mh2UiJE4sqBDDo0VhFVBUbhed47ot2CQQwfQ@mail.gmail.com>
-        <20210118194551.h2hrwof7b3q5vgoi@example.org>
-        <CAHk-=wiNpc5BS2BfZhdDqofJx1G=uasBa2Q1eY4cr8O59Rev2A@mail.gmail.com>
-        <20210118205629.zro2qkd3ut42bpyq@example.org>
-        <87eeig74kv.fsf@x220.int.ebiederm.org>
-Date:   Tue, 19 Jan 2021 19:58:44 -0600
-In-Reply-To: <87eeig74kv.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Tue, 19 Jan 2021 19:57:36 -0600")
-Message-ID: <878s8o74iz.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1727566AbhATCJo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Jan 2021 21:09:44 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:39676 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728071AbhATCJN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jan 2021 21:09:13 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UMHI8.M_1611108454;
+Received: from B-D1K7ML85-0059.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UMHI8.M_1611108454)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 20 Jan 2021 10:07:34 +0800
+Subject: Re: [PATCH] io_uring: fix SQPOLL IORING_OP_CLOSE cancelation state
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+Cc:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+References: <e1617bdf-3b4f-f598-a0ad-13ad68bb1e42@kernel.dk>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <7c176c50-0f62-6753-eeef-bbb7a803febf@linux.alibaba.com>
+Date:   Wed, 20 Jan 2021 10:07:34 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1l22mo-00B0pL-8x;;;mid=<878s8o74iz.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/T2B95TMqxtikO/3YyPpBrhK2ILrwugMw=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong,
-        XM_B_SpammyWords autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4896]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Alexey Gladkov <gladkov.alexey@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 484 ms - load_scoreonly_sql: 0.11 (0.0%),
-        signal_user_changed: 11 (2.3%), b_tie_ro: 9 (1.9%), parse: 1.06 (0.2%),
-         extract_message_metadata: 13 (2.7%), get_uri_detail_list: 1.79 (0.4%),
-         tests_pri_-1000: 14 (2.9%), tests_pri_-950: 1.29 (0.3%),
-        tests_pri_-900: 1.10 (0.2%), tests_pri_-90: 150 (30.9%), check_bayes:
-        148 (30.5%), b_tokenize: 9 (1.8%), b_tok_get_all: 9 (1.9%),
-        b_comp_prob: 3.1 (0.6%), b_tok_touch_all: 123 (25.4%), b_finish: 0.92
-        (0.2%), tests_pri_0: 281 (58.0%), check_dkim_signature: 0.78 (0.2%),
-        check_dkim_adsp: 2.8 (0.6%), poll_dns_idle: 0.75 (0.2%), tests_pri_10:
-        2.2 (0.5%), tests_pri_500: 7 (1.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC PATCH v3 1/8] Use refcount_t for ucounts reference counting
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <e1617bdf-3b4f-f598-a0ad-13ad68bb1e42@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
 
-> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
->
->> On Mon, Jan 18, 2021 at 12:34:29PM -0800, Linus Torvalds wrote:
->>> On Mon, Jan 18, 2021 at 11:46 AM Alexey Gladkov
->>> <gladkov.alexey@gmail.com> wrote:
->>> >
->>> > Sorry about that. I thought that this code is not needed when switching
->>> > from int to refcount_t. I was wrong.
->>> 
->>> Well, you _may_ be right. I personally didn't check how the return
->>> value is used.
->>> 
->>> I only reacted to "it certainly _may_ be used, and there is absolutely
->>> no comment anywhere about why it wouldn't matter".
->>
->> I have not found examples where checked the overflow after calling
->> refcount_inc/refcount_add.
->>
->> For example in kernel/fork.c:2298 :
->>
->>    current->signal->nr_threads++;                           
->>    atomic_inc(&current->signal->live);                      
->>    refcount_inc(&current->signal->sigcnt);  
->>
->> $ semind search signal_struct.sigcnt
->> def include/linux/sched/signal.h:83  		refcount_t		sigcnt;
->> m-- kernel/fork.c:723 put_signal_struct 		if (refcount_dec_and_test(&sig->sigcnt))
->> m-- kernel/fork.c:1571 copy_signal 		refcount_set(&sig->sigcnt, 1);
->> m-- kernel/fork.c:2298 copy_process 				refcount_inc(&current->signal->sigcnt);
->>
->> It seems to me that the only way is to use __refcount_inc and then compare
->> the old value with REFCOUNT_MAX
->>
->> Since I have not seen examples of such checks, I thought that this is
->> acceptable. Sorry once again. I have not tried to hide these changes.
->
-> The current ucount code does check for overflow and fails the increment
-> in every case.
->
-> So arguably it will be a regression and inferior error handling behavior
-> if the code switches to the ``better'' refcount_t data structure.
->
-> I originally didn't use refcount_t because silently saturating and not
-> bothering to handle the error makes me uncomfortable.
->
-> Not having to acquire the ucounts_lock every time seems nice.  Perhaps
-> the path forward would be to start with stupid/correct code that always
-> takes the ucounts_lock for every increment of ucounts->count, that is
-> later replaced with something more optimal.
->
-> Not impacting performance in the non-namespace cases and having good
-> performance in the other cases is a fundamental requirement of merging
-> code like this.
 
-So starting with something easy to comprehend and simple, may make it
-easier to figure out how to optimize the code.
+On 1/20/21 1:18 AM, Jens Axboe wrote:
+> IORING_OP_CLOSE is special in terms of cancelation, since it has an
+> intermediate state where we've removed the file descriptor but hasn't
+> closed the file yet. For that reason, it's currently marked with
+> IO_WQ_WORK_NO_CANCEL to prevent cancelation. This ensures that the op
+> is always run even if canceled, to prevent leaving us with a live file
+> but an fd that is gone. However, with SQPOLL, since a cancel request
+> doesn't carry any resources on behalf of the request being canceled, if
+> we cancel before any of the close op has been run, we can end up with
+> io-wq not having the ->files assigned. This can result in the following
+> oops reported by Joseph:
+> 
+> BUG: kernel NULL pointer dereference, address: 00000000000000d8
+> PGD 800000010b76f067 P4D 800000010b76f067 PUD 10b462067 PMD 0
+> Oops: 0000 [#1] SMP PTI
+> CPU: 1 PID: 1788 Comm: io_uring-sq Not tainted 5.11.0-rc4 #1
+> Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+> RIP: 0010:__lock_acquire+0x19d/0x18c0
+> Code: 00 00 8b 1d fd 56 dd 08 85 db 0f 85 43 05 00 00 48 c7 c6 98 7b 95 82 48 c7 c7 57 96 93 82 e8 9a bc f5 ff 0f 0b e9 2b 05 00 00 <48> 81 3f c0 ca 67 8a b8 00 00 00 00 41 0f 45 c0 89 04 24 e9 81 fe
+> RSP: 0018:ffffc90001933828 EFLAGS: 00010002
+> RAX: 0000000000000001 RBX: 0000000000000001 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000d8
+> RBP: 0000000000000246 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> R13: 0000000000000000 R14: ffff888106e8a140 R15: 00000000000000d8
+> FS:  0000000000000000(0000) GS:ffff88813bd00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000000000d8 CR3: 0000000106efa004 CR4: 00000000003706e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  lock_acquire+0x31a/0x440
+>  ? close_fd_get_file+0x39/0x160
+>  ? __lock_acquire+0x647/0x18c0
+>  _raw_spin_lock+0x2c/0x40
+>  ? close_fd_get_file+0x39/0x160
+>  close_fd_get_file+0x39/0x160
+>  io_issue_sqe+0x1334/0x14e0
+>  ? lock_acquire+0x31a/0x440
+>  ? __io_free_req+0xcf/0x2e0
+>  ? __io_free_req+0x175/0x2e0
+>  ? find_held_lock+0x28/0xb0
+>  ? io_wq_submit_work+0x7f/0x240
+>  io_wq_submit_work+0x7f/0x240
+>  io_wq_cancel_cb+0x161/0x580
+>  ? io_wqe_wake_worker+0x114/0x360
+>  ? io_uring_get_socket+0x40/0x40
+>  io_async_find_and_cancel+0x3b/0x140
+>  io_issue_sqe+0xbe1/0x14e0
+>  ? __lock_acquire+0x647/0x18c0
+>  ? __io_queue_sqe+0x10b/0x5f0
+>  __io_queue_sqe+0x10b/0x5f0
+>  ? io_req_prep+0xdb/0x1150
+>  ? mark_held_locks+0x6d/0xb0
+>  ? mark_held_locks+0x6d/0xb0
+>  ? io_queue_sqe+0x235/0x4b0
+>  io_queue_sqe+0x235/0x4b0
+>  io_submit_sqes+0xd7e/0x12a0
+>  ? _raw_spin_unlock_irq+0x24/0x30
+>  ? io_sq_thread+0x3ae/0x940
+>  io_sq_thread+0x207/0x940
+>  ? do_wait_intr_irq+0xc0/0xc0
+>  ? __ia32_sys_io_uring_enter+0x650/0x650
+>  kthread+0x134/0x180
+>  ? kthread_create_worker_on_cpu+0x90/0x90
+>  ret_from_fork+0x1f/0x30
+> 
+> Fix this by moving the IO_WQ_WORK_NO_CANCEL until _after_ we've modified
+> the fdtable. Canceling before this point is totally fine, and running
+> it in the io-wq context _after_ that point is also fine.
+> 
+> For 5.12, we'll handle this internally and get rid of the no-cancel
+> flag, as IORING_OP_CLOSE is the only user of it.
+> 
+> Fixes: 14587a46646d ("io_uring: enable file table usage for SQPOLL rings")
 
-Eric
+As discussed with Pavel, this can not only happen in case sqpoll, but
+also in case async cancel is from io-wq.
 
+> Reported-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+
+In fact, it is reported by "Abaci <abaci@linux.alibaba.com>"
+
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+Reviewed-and-tested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> 
+> ---
+> 
+> Joseph, can you test this patch and see if this fixes it for you?
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index b76bb50f18c7..5f6f1e48954e 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -4472,7 +4472,6 @@ static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  	 * io_wq_work.flags, so initialize io_wq_work firstly.
+>  	 */
+>  	io_req_init_async(req);
+> -	req->work.flags |= IO_WQ_WORK_NO_CANCEL;
+>  
+>  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+>  		return -EINVAL;
+> @@ -4505,6 +4504,8 @@ static int io_close(struct io_kiocb *req, bool force_nonblock,
+>  
+>  	/* if the file has a flush method, be safe and punt to async */
+>  	if (close->put_file->f_op->flush && force_nonblock) {
+> +		/* not safe to cancel at this point */
+> +		req->work.flags |= IO_WQ_WORK_NO_CANCEL;
+>  		/* was never set, but play safe */
+>  		req->flags &= ~REQ_F_NOWAIT;
+>  		/* avoid grabbing files - we don't need the files */
+> 

@@ -2,112 +2,160 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EBB12FEFE9
-	for <lists+io-uring@lfdr.de>; Thu, 21 Jan 2021 17:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 069A52FF34F
+	for <lists+io-uring@lfdr.de>; Thu, 21 Jan 2021 19:39:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732019AbhAUQOS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Jan 2021 11:14:18 -0500
-Received: from raptor.unsafe.ru ([5.9.43.93]:52832 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732178AbhAUQIq (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 21 Jan 2021 11:08:46 -0500
-Received: from example.org (ip-94-112-41-137.net.upcbroadband.cz [94.112.41.137])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id D51E2209D4;
-        Thu, 21 Jan 2021 16:07:46 +0000 (UTC)
-Date:   Thu, 21 Jan 2021 17:07:42 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [RFC PATCH v3 1/8] Use refcount_t for ucounts reference counting
-Message-ID: <20210121160742.evd3632lepfytlxb@example.org>
-References: <cover.1610722473.git.gladkov.alexey@gmail.com>
- <116c7669744404364651e3b380db2d82bb23f983.1610722473.git.gladkov.alexey@gmail.com>
- <CAHk-=wjsg0Lgf1Mh2UiJE4sqBDDo0VhFVBUbhed47ot2CQQwfQ@mail.gmail.com>
- <20210118194551.h2hrwof7b3q5vgoi@example.org>
- <CAHk-=wiNpc5BS2BfZhdDqofJx1G=uasBa2Q1eY4cr8O59Rev2A@mail.gmail.com>
- <20210118205629.zro2qkd3ut42bpyq@example.org>
- <87eeig74kv.fsf@x220.int.ebiederm.org>
- <20210121120427.iiggfmw3tpsmyzeb@example.org>
- <87ft2u2ss5.fsf@x220.int.ebiederm.org>
+        id S1728164AbhAUS0j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Jan 2021 13:26:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45248 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389586AbhAUSQo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Jan 2021 13:16:44 -0500
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74E28C061756
+        for <io-uring@vger.kernel.org>; Thu, 21 Jan 2021 10:16:00 -0800 (PST)
+Received: by mail-qk1-x736.google.com with SMTP id h22so2591240qkk.4
+        for <io-uring@vger.kernel.org>; Thu, 21 Jan 2021 10:16:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pbcd4r/7X/qpoEr8CdX/LKjS0/5sGCMvQ7pmg1qlCs8=;
+        b=TStbAP7E9cZyMzJhxhuJSfsQb2Di5a7UNzG23uLxjDhNDXD13DodcQZRtQd6cs4dtD
+         h7UrteVI810IvTfI3cqp8ofSyPLJKzUdXzRQUGAUFrx9uJcJBMRHNc7Csi8xOUHIwvCw
+         e6ZM4Gd1g+N7Q83hxPTOKi9PqTlE+HXJDTK4o/RmwCwAbje4HYspvBoDegqrpUvijMLP
+         cH7iLIYLI9hOx1vJpBG05Lk2SqCfX46uE8senjXzYrfqVzGIbx+ExaxNn6u9KkIwTYr+
+         9oarE1CjCrLiJCsuDJJ3hePyORTcS+AYND6c0dICu0dmphJ6H03G8U797PIweacwAB2+
+         99LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pbcd4r/7X/qpoEr8CdX/LKjS0/5sGCMvQ7pmg1qlCs8=;
+        b=eNKzOFgk8yrcs4zFi+aCPeVzMahG4GBP/mT+8uz4U9DoMQKbJHZp7J0skE/oeuEWlL
+         QWPLLcFx6zy953DPGtJZDdmfY3rLbndEAC5DEME55D8ShXabVmneDec/4yr/xpPndsbX
+         3+zPclTZGxlbOwyCK5G98nfw3VIvP3oN6Svu6XZZo/7pY/hxNQIlhEXMKdWDCnEA/1Qu
+         s5r6OyV7TpU+yP6Dw3apQMT3NACGEMCaGAljZyr3oVwaYN63rsS52C9V9URPUfC2aYx4
+         Dclf5K5qFQNGv/7zNQmCwsOvgcFHrGKIyipGHseIfLM6Gag0YQi0i3CV46zmMkuDfwdp
+         8cGQ==
+X-Gm-Message-State: AOAM532c+9REox2PBTvx7/BTSCkSp1EKQs1zkUg2BVUXrUvq6fg7sy0p
+        EQEWfG9C3tqqSnqmJjTPdPc=
+X-Google-Smtp-Source: ABdhPJwtz6hfFWGj5m5JKKegpMHhj0IIXlcnXF99wXq8hUh71sl9cs9xk6IxlqENOx41Whz7U8y1gQ==
+X-Received: by 2002:a05:620a:783:: with SMTP id 3mr1025782qka.368.1611252959796;
+        Thu, 21 Jan 2021 10:15:59 -0800 (PST)
+Received: from marcelo-debian.domain (cpe-184-152-69-119.nyc.res.rr.com. [184.152.69.119])
+        by smtp.gmail.com with ESMTPSA id x25sm4210325qkx.88.2021.01.21.10.15.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Jan 2021 10:15:58 -0800 (PST)
+From:   Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+To:     axboe@kernel.dk
+Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org,
+        Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+Subject: [PATCH liburing v2] tests: add another timeout sequence test case
+Date:   Thu, 21 Jan 2021 13:15:55 -0500
+Message-Id: <20210121181555.110707-1-marcelo827@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ft2u2ss5.fsf@x220.int.ebiederm.org>
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Thu, 21 Jan 2021 16:08:00 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 09:50:34AM -0600, Eric W. Biederman wrote:
-> >> The current ucount code does check for overflow and fails the increment
-> >> in every case.
-> >> 
-> >> So arguably it will be a regression and inferior error handling behavior
-> >> if the code switches to the ``better'' refcount_t data structure.
-> >> 
-> >> I originally didn't use refcount_t because silently saturating and not
-> >> bothering to handle the error makes me uncomfortable.
-> >> 
-> >> Not having to acquire the ucounts_lock every time seems nice.  Perhaps
-> >> the path forward would be to start with stupid/correct code that always
-> >> takes the ucounts_lock for every increment of ucounts->count, that is
-> >> later replaced with something more optimal.
-> >> 
-> >> Not impacting performance in the non-namespace cases and having good
-> >> performance in the other cases is a fundamental requirement of merging
-> >> code like this.
-> >
-> > Did I understand your suggestion correctly that you suggest to use
-> > spin_lock for atomic_read and atomic_inc ?
-> >
-> > If so, then we are already incrementing the counter under ucounts_lock.
-> >
-> > 	...
-> > 	if (atomic_read(&ucounts->count) == INT_MAX)
-> > 		ucounts = NULL;
-> > 	else
-> > 		atomic_inc(&ucounts->count);
-> > 	spin_unlock_irq(&ucounts_lock);
-> > 	return ucounts;
-> >
-> > something like this ?
-> 
-> Yes.  But without atomics.  Something a bit more like:
-> > 	...
-> > 	if (ucounts->count == INT_MAX)
-> > 		ucounts = NULL;
-> > 	else
-> > 		ucounts->count++;
-> > 	spin_unlock_irq(&ucounts_lock);
-> > 	return ucounts;
+This test case catches an issue where timeouts may not be flushed
+if the number of new events is greater (not equal) to the number
+of events requested in the timeout.
 
-This is the original code.
+Signed-off-by: Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+---
 
-> I do believe at some point we will want to say using the spin_lock for
-> ucounts->count is cumbersome, and suboptimal and we want to change it to
-> get a better performing implementation.
-> 
-> Just for getting the semantics correct we should be able to use just
-> ucounts_lock for locking.  Then when everything is working we can
-> profile and optimize the code.
-> 
-> I just don't want figuring out what is needed to get hung up over little
-> details that we can change later.
+v2: Don't assume the timeout should be last when nr < 2.
 
-OK. So I will drop this my change for now.
+ test/timeout.c | 40 +++++++++++++++++++---------------------
+ 1 file changed, 19 insertions(+), 21 deletions(-)
 
+diff --git a/test/timeout.c b/test/timeout.c
+index 9c8211c..a28d599 100644
+--- a/test/timeout.c
++++ b/test/timeout.c
+@@ -112,7 +112,7 @@ err:
+ /*
+  * Test numbered trigger of timeout
+  */
+-static int test_single_timeout_nr(struct io_uring *ring)
++static int test_single_timeout_nr(struct io_uring *ring, int nr)
+ {
+ 	struct io_uring_cqe *cqe;
+ 	struct io_uring_sqe *sqe;
+@@ -126,7 +126,7 @@ static int test_single_timeout_nr(struct io_uring *ring)
+ 	}
+ 
+ 	msec_to_ts(&ts, TIMEOUT_MSEC);
+-	io_uring_prep_timeout(sqe, &ts, 2, 0);
++	io_uring_prep_timeout(sqe, &ts, nr, 0);
+ 
+ 	sqe = io_uring_get_sqe(ring);
+ 	io_uring_prep_nop(sqe);
+@@ -149,33 +149,26 @@ static int test_single_timeout_nr(struct io_uring *ring)
+ 			goto err;
+ 		}
+ 
++		ret = cqe->res;
++
+ 		/*
+ 		 * NOP commands have user_data as 1. Check that we get the
+-		 * two NOPs first, then the successfully removed timout as
+-		 * the last one.
++		 * at least 'nr' NOPs first, then the successfully removed timout.
+ 		 */
+-		switch (i) {
+-		case 0:
+-		case 1:
+-			if (io_uring_cqe_get_data(cqe) != (void *) 1) {
+-				fprintf(stderr, "%s: nop not seen as 1 or 2\n", __FUNCTION__);
++		if (io_uring_cqe_get_data(cqe) == NULL) {
++			if (i < nr) {
++				fprintf(stderr, "%s: timeout received too early\n", __FUNCTION__);
+ 				goto err;
+ 			}
+-			break;
+-		case 2:
+-			if (io_uring_cqe_get_data(cqe) != NULL) {
+-				fprintf(stderr, "%s: timeout not last\n", __FUNCTION__);
++			if (ret) {
++				fprintf(stderr, "%s: timeout triggered by passage of"
++					" time, not by events completed\n", __FUNCTION__);
+ 				goto err;
+ 			}
+-			break;
+ 		}
+ 
+-		ret = cqe->res;
+ 		io_uring_cqe_seen(ring, cqe);
+-		if (ret < 0) {
+-			fprintf(stderr, "Timeout: %s\n", strerror(-ret));
+-			goto err;
+-		} else if (ret) {
++		if (ret) {
+ 			fprintf(stderr, "res: %d\n", ret);
+ 			goto err;
+ 		}
+@@ -1224,9 +1217,14 @@ int main(int argc, char *argv[])
+ 		return ret;
+ 	}
+ 
+-	ret = test_single_timeout_nr(&ring);
++	ret = test_single_timeout_nr(&ring, 1);
++	if (ret) {
++		fprintf(stderr, "test_single_timeout_nr(1) failed\n");
++		return ret;
++	}
++	ret = test_single_timeout_nr(&ring, 2);
+ 	if (ret) {
+-		fprintf(stderr, "test_single_timeout_nr failed\n");
++		fprintf(stderr, "test_single_timeout_nr(2) failed\n");
+ 		return ret;
+ 	}
+ 
 -- 
-Rgrds, legion
+2.20.1
 

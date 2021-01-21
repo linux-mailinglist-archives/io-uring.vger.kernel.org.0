@@ -2,60 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BB8E2FE019
+	by mail.lfdr.de (Postfix) with ESMTP id A8AA32FE01A
 	for <lists+io-uring@lfdr.de>; Thu, 21 Jan 2021 04:45:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbhAUDkt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Jan 2021 22:40:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33392 "EHLO
+        id S1727889AbhAUDkz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Jan 2021 22:40:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728735AbhAUCFU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Jan 2021 21:05:20 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FB1BC061757
-        for <io-uring@vger.kernel.org>; Wed, 20 Jan 2021 18:04:35 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id c124so168862wma.5
-        for <io-uring@vger.kernel.org>; Wed, 20 Jan 2021 18:04:35 -0800 (PST)
+        with ESMTP id S2393140AbhAUCQE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Jan 2021 21:16:04 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81179C061575
+        for <io-uring@vger.kernel.org>; Wed, 20 Jan 2021 18:15:23 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id m2so190960wmm.1
+        for <io-uring@vger.kernel.org>; Wed, 20 Jan 2021 18:15:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Vx2A5e3jUNPeegDaybjpiQRfkGl2uFKyG0BNvUS7vpQ=;
-        b=uO7mngCzmhtnF1m9fztNTMr+g5yaHgF6kcaPL67NfjRWnreDwKVJTcSsELRML8xy3a
-         SeVsrHlIDGa8IIirYk4LNW+hNpaAbwnToo3El8mIApCFSjYWjxrmycfVD59iOW6QwVMw
-         so4Lhm0qQMjT1zGrettoZ1CXQUXmawQ7VkXp1DeR6OqHMuOiavhobGWgS7eqqUIzalWM
-         dza9VWtvPD3KpNzW8lP/Rj4s8VGGqYWIwq/VmckzXzB019LXTUYfWhZqSCtsanJ+9Aqt
-         0/sMxuxUgia5GjMai1R/mVwzk7yKgUseaCQrQUP/O2EoDxFBQT9dzzv5Si5+lUq7ThvS
-         W37Q==
+        bh=NkpY+p7pfiKyxp2n6gkWgpMDCVuPxGgFarZ4eB6FWa4=;
+        b=mJE/pgtJiMrPHM9RzMX6aZswx49I3oxjBuuEJzBL7tHBXNc1gvpwRwM2QMC72PIsCK
+         dNbRnfBn2Nodc3lIyzRpWbiGHXhM7zt3/bAcNgAx+/lVcGl+COnI1ey4xFxe7X2Zt24i
+         BHqtATEG6HewyQUPoeL64oqJC9750XRVnrI71JPs1ZTCmvQsFgyPDvT6YAheSFtFMWtn
+         8tTI51xHGrCkocvV8QxIe3EeOcKw80HAuH4ZeW11hTq4SK5c/xepEgz3fcLpT5OsIQvh
+         Au7zoyDhWWHLcjOCU6mHktjjGc9CERVI/9Bge1obdy0K1w7E/OlfyWiECOM+VZ6TsfWD
+         LCNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Vx2A5e3jUNPeegDaybjpiQRfkGl2uFKyG0BNvUS7vpQ=;
-        b=qiD8vao/+le4z/VXxwBWTNMXql3P4Y+ZKzWzqylU0u/mG49NL1BAIP8oZJL0Qn5ELY
-         EnbUzaokqbMSN1JGj+N6Xxthe7H+uxxye1Xg2sA0o6vwD3AyKXcDlOX8U88dlqxsK7Xz
-         uZigOWfDkd5ygJG4ftcbFxCX4QKzRkfu9fYPVjAEC6FKTrPsFZCZ48689RoRiy47k1a/
-         uyOs/Vom46p9x8tGY0LN0NbfCg1HNJ0nKRFD4jPi++iNe/jNMafERgFAwhDVu3v9YwuZ
-         67Cyaht+I9yqcO2YbSXWUQM0D2qWAx+suo5WUWBAIaXKLaVZOByZibqaituup86EF1h0
-         ER7g==
-X-Gm-Message-State: AOAM533Q/h1ZyYiUUe4Vyu0qujztrgaJJ5UsbUrz1RXspA3pbq0Ru5Xd
-        h+2sQRq3Xc4QUHFDZYnXIfVUI5v+kR0=
-X-Google-Smtp-Source: ABdhPJwsSYZ7oV0vSsdVL2WQoaQoDWwTLC7e9LcIT5gBJ4TPn9Y9FibvijaU8CeSkYMnWO9U+EZqhg==
-X-Received: by 2002:a1c:a7c5:: with SMTP id q188mr6657588wme.108.1611194673981;
-        Wed, 20 Jan 2021 18:04:33 -0800 (PST)
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NkpY+p7pfiKyxp2n6gkWgpMDCVuPxGgFarZ4eB6FWa4=;
+        b=CxaYUdNIMAI6Hb0sqmCZmZR4hBKi36z+maSBUrYaXqyG3WNwINj5Ys0VOw1GC1P3Er
+         Z6hOpUlky1emBXk5F8cfOC9Dm9l11Ju4zbvuxHJOh8baNJrKZWT3p6njuKWjzM9gTF0m
+         /RKQHEO72EJLcn9HKOuAtI+JYLsd9WCrmL5CTArcD8GCcTB8BuAEr6BMUcnyblL55tZG
+         vDRuV6muCygJO9wTiN6vc4zbJ3mpbhGjA8BOe7X6iyAnfi+aLxicm7kOtkhxZXYdeLdp
+         15mHj4De3q+WlCgIcNw23Vmp3VL6IG16ZAQlUiuyLMusr6IYPCpyKdYe6pUN538fgeaC
+         PwaQ==
+X-Gm-Message-State: AOAM5332P2y2DU/Hk8nNzZuT47EGRZu3avPiIZPeGfDsRc964lyjejrE
+        +pjftU/tQY95ytuNHKxqhwLdQfHKTGk=
+X-Google-Smtp-Source: ABdhPJw91j0kWmYF2KERax7Jwmgp1qfLbJk4H2S3+7HKJUNMHMkwS1IPEn+0qWCHezIrfM4qXriYxA==
+X-Received: by 2002:a1c:9844:: with SMTP id a65mr6793725wme.113.1611195321920;
+        Wed, 20 Jan 2021 18:15:21 -0800 (PST)
 Received: from [192.168.8.143] ([148.252.129.228])
-        by smtp.gmail.com with ESMTPSA id k16sm6391208wmj.45.2021.01.20.18.04.33
+        by smtp.gmail.com with ESMTPSA id k1sm6793597wrn.46.2021.01.20.18.15.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Jan 2021 18:04:33 -0800 (PST)
-Subject: Re: [PATCH] io_uring: leave clean req to be done in flush overflow
-To:     Joseph Qi <jiangqi903@gmail.com>,
+        Wed, 20 Jan 2021 18:15:21 -0800 (PST)
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>,
         Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 References: <1611130310-108105-1-git-send-email-joseph.qi@linux.alibaba.com>
  <62fdcc48-ccb2-2a51-a69f-9ead1ff1ea59@gmail.com>
- <0de4ca7e-fd6b-2821-00cd-6c69deb1d9e0@gmail.com>
+ <0e640650-4288-2dc4-b761-f48423131462@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -100,60 +98,60 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <f20150ed-b201-7653-1295-7c78e6c1d763@gmail.com>
-Date:   Thu, 21 Jan 2021 02:00:56 +0000
+Subject: Re: [PATCH] io_uring: leave clean req to be done in flush overflow
+Message-ID: <da4f9dbe-b230-684e-0658-956590ef7cfb@gmail.com>
+Date:   Thu, 21 Jan 2021 02:11:44 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <0de4ca7e-fd6b-2821-00cd-6c69deb1d9e0@gmail.com>
+In-Reply-To: <0e640650-4288-2dc4-b761-f48423131462@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 21/01/2021 01:37, Joseph Qi wrote:
+On 21/01/2021 01:54, Xiaoguang Wang wrote:
+> hi Pavel,
 > 
-> 
-> On 1/20/21 8:35 PM, Pavel Begunkov wrote:
 >> On 20/01/2021 08:11, Joseph Qi wrote:
 >>> Abaci reported the following BUG:
 >>>
->>> [   27.629441] BUG: sleeping function called from invalid context at fs/file.c:402
->>> [   27.631317] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 1012, name: io_wqe_worker-0
->>> [   27.633220] 1 lock held by io_wqe_worker-0/1012:
->>> [   27.634286]  #0: ffff888105e26c98 (&ctx->completion_lock){....}-{2:2}, at: __io_req_complete.part.102+0x30/0x70
->>> [   27.636487] irq event stamp: 66658
->>> [   27.637302] hardirqs last  enabled at (66657): [<ffffffff8144ba02>] kmem_cache_free+0x1f2/0x3b0
->>> [   27.639211] hardirqs last disabled at (66658): [<ffffffff82003a77>] _raw_spin_lock_irqsave+0x17/0x50
->>> [   27.641196] softirqs last  enabled at (64686): [<ffffffff824003c5>] __do_softirq+0x3c5/0x5aa
->>> [   27.643062] softirqs last disabled at (64681): [<ffffffff8220108f>] asm_call_irq_on_stack+0xf/0x20
->>> [   27.645029] CPU: 1 PID: 1012 Comm: io_wqe_worker-0 Not tainted 5.11.0-rc4+ #68
->>> [   27.646651] Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
->>> [   27.649249] Call Trace:
->>> [   27.649874]  dump_stack+0xac/0xe3
->>> [   27.650666]  ___might_sleep+0x284/0x2c0
->>> [   27.651566]  put_files_struct+0xb8/0x120
->>> [   27.652481]  __io_clean_op+0x10c/0x2a0
->>> [   27.653362]  __io_cqring_fill_event+0x2c1/0x350
->>> [   27.654399]  __io_req_complete.part.102+0x41/0x70
->>> [   27.655464]  io_openat2+0x151/0x300
->>> [   27.656297]  io_issue_sqe+0x6c/0x14e0
->>> [   27.657170]  ? lock_acquire+0x31a/0x440
->>> [   27.658068]  ? io_worker_handle_work+0x24e/0x8a0
->>> [   27.659119]  ? find_held_lock+0x28/0xb0
->>> [   27.660026]  ? io_wq_submit_work+0x7f/0x240
->>> [   27.660991]  io_wq_submit_work+0x7f/0x240
->>> [   27.661915]  ? trace_hardirqs_on+0x46/0x110
->>> [   27.662890]  io_worker_handle_work+0x501/0x8a0
->>> [   27.663917]  ? io_wqe_worker+0x135/0x520
->>> [   27.664836]  io_wqe_worker+0x158/0x520
->>> [   27.665719]  ? __kthread_parkme+0x96/0xc0
->>> [   27.666663]  ? io_worker_handle_work+0x8a0/0x8a0
->>> [   27.667726]  kthread+0x134/0x180
->>> [   27.668506]  ? kthread_create_worker_on_cpu+0x90/0x90
->>> [   27.669641]  ret_from_fork+0x1f/0x30
+>>> [   27.629441] BUG: sleeping function called from invalid context at fs/file.c:402
+>>> [   27.631317] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 1012, name: io_wqe_worker-0
+>>> [   27.633220] 1 lock held by io_wqe_worker-0/1012:
+>>> [   27.634286]  #0: ffff888105e26c98 (&ctx->completion_lock){....}-{2:2}, at: __io_req_complete.part.102+0x30/0x70
+>>> [   27.636487] irq event stamp: 66658
+>>> [   27.637302] hardirqs last  enabled at (66657): [<ffffffff8144ba02>] kmem_cache_free+0x1f2/0x3b0
+>>> [   27.639211] hardirqs last disabled at (66658): [<ffffffff82003a77>] _raw_spin_lock_irqsave+0x17/0x50
+>>> [   27.641196] softirqs last  enabled at (64686): [<ffffffff824003c5>] __do_softirq+0x3c5/0x5aa
+>>> [   27.643062] softirqs last disabled at (64681): [<ffffffff8220108f>] asm_call_irq_on_stack+0xf/0x20
+>>> [   27.645029] CPU: 1 PID: 1012 Comm: io_wqe_worker-0 Not tainted 5.11.0-rc4+ #68
+>>> [   27.646651] Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+>>> [   27.649249] Call Trace:
+>>> [   27.649874]  dump_stack+0xac/0xe3
+>>> [   27.650666]  ___might_sleep+0x284/0x2c0
+>>> [   27.651566]  put_files_struct+0xb8/0x120
+>>> [   27.652481]  __io_clean_op+0x10c/0x2a0
+>>> [   27.653362]  __io_cqring_fill_event+0x2c1/0x350
+>>> [   27.654399]  __io_req_complete.part.102+0x41/0x70
+>>> [   27.655464]  io_openat2+0x151/0x300
+>>> [   27.656297]  io_issue_sqe+0x6c/0x14e0
+>>> [   27.657170]  ? lock_acquire+0x31a/0x440
+>>> [   27.658068]  ? io_worker_handle_work+0x24e/0x8a0
+>>> [   27.659119]  ? find_held_lock+0x28/0xb0
+>>> [   27.660026]  ? io_wq_submit_work+0x7f/0x240
+>>> [   27.660991]  io_wq_submit_work+0x7f/0x240
+>>> [   27.661915]  ? trace_hardirqs_on+0x46/0x110
+>>> [   27.662890]  io_worker_handle_work+0x501/0x8a0
+>>> [   27.663917]  ? io_wqe_worker+0x135/0x520
+>>> [   27.664836]  io_wqe_worker+0x158/0x520
+>>> [   27.665719]  ? __kthread_parkme+0x96/0xc0
+>>> [   27.666663]  ? io_worker_handle_work+0x8a0/0x8a0
+>>> [   27.667726]  kthread+0x134/0x180
+>>> [   27.668506]  ? kthread_create_worker_on_cpu+0x90/0x90
+>>> [   27.669641]  ret_from_fork+0x1f/0x30
 >>>
 >>> It blames we call cond_resched() with completion_lock when clean
 >>> request. In fact we will do it during flush overflow and it seems we
@@ -164,30 +162,44 @@ On 21/01/2021 01:37, Joseph Qi wrote:
 >> that is dynamically allocated, and the function makes sure all
 >> those are deleted and freed. Most probably there will be problems
 >> on flush side as well.
->>
->> Looks like the problem is that we do spin_lock_irqsave() in
->> __io_req_complete() and then just spin_lock() for put_files_struct().
->> Jens, is it a real problem?
->>
-> From the code, it is because it might sleep in close_files():
+> Could you please explain more why this is a problem?
+> io_clean_op justs does some clean work, free allocated memory, put file, etc,
+> and these jobs should can be done in __io_cqring_overflow_flush():
 
-Makes sense. The diff should handle it, but let's see if
-it would ever be applicable after some other bug fixes.
+struct io_kiocb {
+	union {
+		struct file		*file;
+		struct io_rw		rw;
+		...
+		/* use only after cleaning per-op data, see io_clean_op() */
+		struct io_completion	compl;
+	};
+};
 
-> 
-> ...
-> if (file) {
-> 	filp_close(file, files);
-> 	cond_resched();
-> }
-> 
-> 
-> Thanks,
-> Joseph
-> 
->> At least for 5.12 there is a cleanup as below, moving drop_files()
->> into io_req_clean_work/io_free_req(), which is out of locks. Depends
->> on that don't-cancel-by-files patch, but I guess can be for 5.11
+io_clean_op() cleans everything in first 64B (not only), and that space
+is used for overflow lists, etc.
+
+io_clean_op(req);
+req->compl.cflags = cflags;
+     -----
+list_add_tail(&req->compl.list, &ctx->cq_overflow_list);
+                    -----
+
+That's the reason why we need to call it. A bit different story is why
+it does drop_files(). One time it was in io_req_clean_work(), which is
+called without locks held, but there were nasty races with cancellations
+of overflowed reqs, so it was much easier to move into io_clean_op(),
+so we just don't ever have requests with ->files in overflowed lists.
+
+As we just changed that cancellation scheme, those races are not
+existent anymore, and it could be moved back as in the diff. 
+
+
+>     while (!list_empty(&list)) {
+>         req = list_first_entry(&list, struct io_kiocb, compl.list);
+>         list_del(&req->compl.list);
+>         io_put_req(req); // will call io_clean_op
+>     }
 
 -- 
 Pavel Begunkov

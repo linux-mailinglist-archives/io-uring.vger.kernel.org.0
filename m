@@ -2,76 +2,40 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55BD92FE017
+	by mail.lfdr.de (Postfix) with ESMTP id C2CC52FE018
 	for <lists+io-uring@lfdr.de>; Thu, 21 Jan 2021 04:45:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726499AbhAUDk1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Jan 2021 22:40:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55858 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391630AbhAUBiZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Jan 2021 20:38:25 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79834C061575
-        for <io-uring@vger.kernel.org>; Wed, 20 Jan 2021 17:37:45 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id 30so265846pgr.6
-        for <io-uring@vger.kernel.org>; Wed, 20 Jan 2021 17:37:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=M4zx81qy1YTuIE5AZRew/GPoQyMNGInnSA+Of1bHKws=;
-        b=ZFdcv0z74umuFPxvnurxzbYu8rYtRnt76zeUlNBqiQKmHJlAuyw8gcPZJ57KuuKCsF
-         zM5BLwOo5xFPSKjEUoCrXpTlUyFG+2D0o244Qg9B1jxYKBQRZanPA0OewdkA5cnwvDIY
-         17TDXsqMckA1hs3DxK5Rn85lIMrXNjvXf7NqexyG2dmURLRHrdEvNpl23KdJS216u+dc
-         8otnc3DKe3JC/dsLMYe3OeQhouGSu/Ean2yEhEqmsu/ilCtG2njihc9Ymm2eXdiP1x23
-         /rtbikVk1pV3e1360Xf2xqeMzhRMKY2nq5CtPkmHKJpH0CLIHYyDP5o82u54ao1KCb6w
-         dvig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=M4zx81qy1YTuIE5AZRew/GPoQyMNGInnSA+Of1bHKws=;
-        b=GtbDfI+27857ximhMa3J3nmHLeIR80meP89caVIQ7T0QWPa2Vs51atFLGEj0MZVKPt
-         Gik3EH4OH3Ch7hFa2ij2Fe37fOjCiI5A2hH7mp2olzdCBaFYQjJVWL7X+lvdf8wwcSVn
-         ORob4L6T494XgiFeMJhJ4cAClC6FkFRFLNizJ/wcbyZEKXk3F1n7Go50mS9X5/y5RN3J
-         Sfxvy1jE7wGO2z1wxnLz0/WwMgOreCZGwBH7moATPeLiQo+rxXZmSxTezOuAX5q7lp/a
-         CeJK3dcEHOdRmuJCLCf764OdMd6M+THIpUaW5I8ehwzLCxJM95L9ciozmA/nR7xFmE8Y
-         2Omw==
-X-Gm-Message-State: AOAM5339Dz8ogMh8jRoPggYQ3Kbp/m6Pk3/cLspmDGKKaZC14UFn6dVn
-        5kL94vd/6IRojzReFkkjPXPXWeciMzQ=
-X-Google-Smtp-Source: ABdhPJyieJb/fAvxzvPf7snhjBfFMckNVq7ABvtMd1U6yjZiZHIfq+CPVxQe1yFxxo/d1ekHDm2Hsg==
-X-Received: by 2002:a63:d149:: with SMTP id c9mr12173517pgj.351.1611193064072;
-        Wed, 20 Jan 2021 17:37:44 -0800 (PST)
-Received: from B-D1K7ML85-0059.local ([47.89.83.81])
-        by smtp.gmail.com with ESMTPSA id s23sm3455211pgj.29.2021.01.20.17.37.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Jan 2021 17:37:43 -0800 (PST)
+        id S1726438AbhAUDke (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Jan 2021 22:40:34 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:35081 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727650AbhAUB5l (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Jan 2021 20:57:41 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R421e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UMNH62b_1611194209;
+Received: from 30.225.32.87(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UMNH62b_1611194209)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 21 Jan 2021 09:56:49 +0800
 Subject: Re: [PATCH] io_uring: leave clean req to be done in flush overflow
 To:     Pavel Begunkov <asml.silence@gmail.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>,
         Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 References: <1611130310-108105-1-git-send-email-joseph.qi@linux.alibaba.com>
  <62fdcc48-ccb2-2a51-a69f-9ead1ff1ea59@gmail.com>
-From:   Joseph Qi <jiangqi903@gmail.com>
-Message-ID: <0de4ca7e-fd6b-2821-00cd-6c69deb1d9e0@gmail.com>
-Date:   Thu, 21 Jan 2021 09:37:39 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.6.1
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <0e640650-4288-2dc4-b761-f48423131462@linux.alibaba.com>
+Date:   Thu, 21 Jan 2021 09:54:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
 In-Reply-To: <62fdcc48-ccb2-2a51-a69f-9ead1ff1ea59@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+hi Pavel,
 
-
-On 1/20/21 8:35 PM, Pavel Begunkov wrote:
 > On 20/01/2021 08:11, Joseph Qi wrote:
 >> Abaci reported the following BUG:
 >>
@@ -119,23 +83,109 @@ On 1/20/21 8:35 PM, Pavel Begunkov wrote:
 > that is dynamically allocated, and the function makes sure all
 > those are deleted and freed. Most probably there will be problems
 > on flush side as well.
+Could you please explain more why this is a problem?
+io_clean_op justs does some clean work, free allocated memory, put file, etc,
+and these jobs should can be done in __io_cqring_overflow_flush():
+	while (!list_empty(&list)) {
+		req = list_first_entry(&list, struct io_kiocb, compl.list);
+		list_del(&req->compl.list);
+		io_put_req(req); // will call io_clean_op
+	}
+
+And calling a single io_clean_op in __io_cqring_fill_event() looks weird.
+
+Regards,
+Xiaoguang Wang
+
 > 
 > Looks like the problem is that we do spin_lock_irqsave() in
 > __io_req_complete() and then just spin_lock() for put_files_struct().
 > Jens, is it a real problem?
 > 
-From the code, it is because it might sleep in close_files():
-
-...
-if (file) {
-	filp_close(file, files);
-	cond_resched();
-}
-
-
-Thanks,
-Joseph
-
 > At least for 5.12 there is a cleanup as below, moving drop_files()
 > into io_req_clean_work/io_free_req(), which is out of locks. Depends
 > on that don't-cancel-by-files patch, but I guess can be for 5.11
+> 
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 4f702d03d375..3d3087851fed 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -614,7 +614,6 @@ enum {
+>   	REQ_F_BUFFER_SELECT_BIT	= IOSQE_BUFFER_SELECT_BIT,
+>   
+>   	REQ_F_FAIL_LINK_BIT,
+> -	REQ_F_INFLIGHT_BIT,
+>   	REQ_F_CUR_POS_BIT,
+>   	REQ_F_NOWAIT_BIT,
+>   	REQ_F_LINK_TIMEOUT_BIT,
+> @@ -647,8 +646,6 @@ enum {
+>   
+>   	/* fail rest of links */
+>   	REQ_F_FAIL_LINK		= BIT(REQ_F_FAIL_LINK_BIT),
+> -	/* on inflight list */
+> -	REQ_F_INFLIGHT		= BIT(REQ_F_INFLIGHT_BIT),
+>   	/* read/write uses file position */
+>   	REQ_F_CUR_POS		= BIT(REQ_F_CUR_POS_BIT),
+>   	/* must not punt to workers */
+> @@ -1057,8 +1054,7 @@ EXPORT_SYMBOL(io_uring_get_socket);
+>   
+>   static inline void io_clean_op(struct io_kiocb *req)
+>   {
+> -	if (req->flags & (REQ_F_NEED_CLEANUP | REQ_F_BUFFER_SELECTED |
+> -			  REQ_F_INFLIGHT))
+> +	if (req->flags & (REQ_F_NEED_CLEANUP | REQ_F_BUFFER_SELECTED))
+>   		__io_clean_op(req);
+>   }
+>   
+> @@ -1375,6 +1371,11 @@ static void io_req_clean_work(struct io_kiocb *req)
+>   			free_fs_struct(fs);
+>   		req->work.flags &= ~IO_WQ_WORK_FS;
+>   	}
+> +	if (req->work.flags & IO_WQ_WORK_FILES) {
+> +		put_files_struct(req->work.identity->files);
+> +		put_nsproxy(req->work.identity->nsproxy);
+> +		req->work.flags &= ~IO_WQ_WORK_FILES;
+> +	}
+>   
+>   	io_put_identity(req->task->io_uring, req);
+>   }
+> @@ -1483,7 +1484,6 @@ static bool io_grab_identity(struct io_kiocb *req)
+>   			return false;
+>   		atomic_inc(&id->files->count);
+>   		get_nsproxy(id->nsproxy);
+> -		req->flags |= REQ_F_INFLIGHT;
+>   		req->work.flags |= IO_WQ_WORK_FILES;
+>   	}
+>   	if (!(req->work.flags & IO_WQ_WORK_MM) &&
+> @@ -6128,18 +6128,6 @@ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>   	return -EIOCBQUEUED;
+>   }
+>   
+> -static void io_req_drop_files(struct io_kiocb *req)
+> -{
+> -	struct io_uring_task *tctx = req->task->io_uring;
+> -
+> -	put_files_struct(req->work.identity->files);
+> -	put_nsproxy(req->work.identity->nsproxy);
+> -	req->flags &= ~REQ_F_INFLIGHT;
+> -	req->work.flags &= ~IO_WQ_WORK_FILES;
+> -	if (atomic_read(&tctx->in_idle))
+> -		wake_up(&tctx->wait);
+> -}
+> -
+>   static void __io_clean_op(struct io_kiocb *req)
+>   {
+>   	if (req->flags & REQ_F_BUFFER_SELECTED) {
+> @@ -6197,9 +6185,6 @@ static void __io_clean_op(struct io_kiocb *req)
+>   		}
+>   		req->flags &= ~REQ_F_NEED_CLEANUP;
+>   	}
+> -
+> -	if (req->flags & REQ_F_INFLIGHT)
+> -		io_req_drop_files(req);
+>   }
+>   
+>   static int io_issue_sqe(struct io_kiocb *req, bool force_nonblock,
+> 
+> 

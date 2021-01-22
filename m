@@ -2,155 +2,173 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C4080300F6E
-	for <lists+io-uring@lfdr.de>; Fri, 22 Jan 2021 22:59:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0013430106C
+	for <lists+io-uring@lfdr.de>; Fri, 22 Jan 2021 23:57:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730766AbhAVVyb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Jan 2021 16:54:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35100 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730312AbhAVVyE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Jan 2021 16:54:04 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54735C061788
-        for <io-uring@vger.kernel.org>; Fri, 22 Jan 2021 13:53:19 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id c124so5496565wma.5
-        for <io-uring@vger.kernel.org>; Fri, 22 Jan 2021 13:53:19 -0800 (PST)
+        id S1728435AbhAVW5W (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Jan 2021 17:57:22 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:40952 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728438AbhAVWzv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Jan 2021 17:55:51 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10MMrogh154515;
+        Fri, 22 Jan 2021 22:55:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : content-type : mime-version; s=corp-2020-01-29;
+ bh=duIYV8b4T0NmmXMotSNNKBsNvT7+z9NmzlALYNbqLrQ=;
+ b=ZBLvZblvhbWqFSUPFwpxNl2CvvDg9inufg9oYz/V7SMMFRBEW1EHbVX8VXbK6t8H4cqK
+ gGgjNcjgh92tfKEvN4ZgkDwFwZwPWrmW410WoQEGS0yRBmVu2ZmbOSwigTsufEAA/k0F
+ TPg26pY0u2CgZwbMHK6/jp727uMQf7VSgQr4eKddC8U7lpKGUj4vzOG5ZpHkOi8+Tih4
+ h1+bGAzRuSf1bXTDZcGChoxowOPkCv51Tt1YsOWL87QwthD1iv1vnyRZv87G27aobJbS
+ UuzUUJsKgWms9ZdrXF9DOBH+d7swDir+AXQYcGbRk5NsPq7TjGCnxzQQwhOcCV7/S//G yQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 3668qaphp7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Jan 2021 22:55:05 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10MMjsII062865;
+        Fri, 22 Jan 2021 22:55:05 GMT
+Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2059.outbound.protection.outlook.com [104.47.45.59])
+        by userp3030.oracle.com with ESMTP id 3668rhjqpt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Jan 2021 22:55:04 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fFAKFU07pIr29jmDx++LzIEE060mBKJYOG5AD0JklnOHC3mmpURO8nestgxY3gzHDpYyCaVjfcT3k3a+LBYTx/HeGmZFIDJTeTcWiDB43q3z2TBb9sxuL9kcPtblRMzbTnMYitmNGag56zJuhAEs432swPABMat3aHu4N4cNwEibemrw4MjFdvSArw7VLedHkGA65X7K+hmrdTWdkNzbMLgS6HsyHLcl4ZAqc9bR+lgbOQnk9/kAO+x1BCVS9VpZQwxIb+EoH+ZfzkrzpsglmXnAX8puYkEhRoaazzOmCZLMd+W/e+HRm4ylR68OIQhV3JrK6eMx7QuHEXJ5cupFxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=duIYV8b4T0NmmXMotSNNKBsNvT7+z9NmzlALYNbqLrQ=;
+ b=iTyOuH6RzYbY6L5CnV15wRGtnnZVotcOQ9rjWKIIDpfCx8/s+Xvaiy/RjfKaqsy+aPK7oeukpx7Tpi5FsVIV2hhqJ8BHcUA/LPK1HRik1XYeAtOi6sJ0+vH7IWP058a/2qPD3yEoXivUFVAOqrak57BVRshSSGtuwEoAKxmTZPKsfwxh0e8JtgJyTHQFOOzPrXYnEGEP4KQ4d67oNnWCCVPgBQFpqJwrahO04JX09MAO0NRw7KrBiDstpNZXPWL4qVjBIoSRX5gCiI3UTDWips82If5aU1MIgSyXiFK9h7la+zlRiEjBLhtSZv51lULKDFlSkgMUwavxWLyebz5ujg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XaiUwt4A7duLglVqeT69osARwibSCGNrycdsZHIFFwA=;
-        b=HweZIH0zodBTH8fO6Ic/dE4VcO3uQfOt/bz8wMEQpNynS1RP25/JHjVRPWzJmAge98
-         BRp/BjeuyD1N0awZ3osCXz+PO1tuKm5z5oH9RDELolNuqiCR/1lH/Blzjogztxtqfnte
-         NeXP/W1qRGLe5iaVH/i6NZlK3ZQlNeTSCujrLrfCmoVgQlWg/ki9/nzz3Ye8o1BP4Zbw
-         PUEfoC8fhEt3oElLsMqbMckPnjlMF203zz5snJ/PZ9nljsfKGWygne810qAYNH7IrKLL
-         CkDk2KWwuRSUnUU7BXCO8Gx63LNd8yje4cy0EtgTAjTDfEmAG2MRGNhUHp+FnVAP94Ht
-         JzCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XaiUwt4A7duLglVqeT69osARwibSCGNrycdsZHIFFwA=;
-        b=pKkXKS2NA5HXf5YTC9VZWASaNAm+Si/cHB57e7xVHVo8RUc/71SAN9KP+VIUqMZaxy
-         y5E6VRssQUrqZ0kIERoZM1Ql0bMeJSD3DFZx+C9f77X9OiPTlOfs4lVXXTN0OcAnr/z9
-         6tZwlRa3dqVTvPlrXtPthrVT3bUJe4X4ZviO3Cz/7x8xWeS6ZLm9gfeB8RBX8ZEWrSbC
-         6bXMEWZpRvDuwVswg7YECLZerHFaqUkkr/6PNnTpoeNU8tp1sFR35NQ9dxxh69szk3o3
-         A6ZXAVj8EnC/nOGZuLcN3FMDWKS1KbGVeFc0bzhQ0Fd4rli7jcAL1RXuxSHXsqwAs3gr
-         wOtg==
-X-Gm-Message-State: AOAM531dqVqy7oBwtAsGbfQgoNEBwuHlKs5EO6Qc+2hv3NhMRAjfCR0w
-        f3umop6S3E3V+kJxTGe4zG1SFXfGtP1VEQ==
-X-Google-Smtp-Source: ABdhPJw/JwFztFM3cjzDfAs30MudP/sW1WbVRav+D7u2Jhv663MlVDilAybvGgM/jC6K5QQyv60dqw==
-X-Received: by 2002:a7b:c04c:: with SMTP id u12mr5871472wmc.185.1611352397703;
-        Fri, 22 Jan 2021 13:53:17 -0800 (PST)
-Received: from [192.168.8.147] ([85.255.236.175])
-        by smtp.gmail.com with ESMTPSA id l1sm6357464wrp.40.2021.01.22.13.53.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Jan 2021 13:53:17 -0800 (PST)
-Subject: Re: [PATCH 0/3] files cancellation cleanup
-To:     Joseph Qi <jiangqi903@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org
-References: <cover.1611109718.git.asml.silence@gmail.com>
- <246d838d-0fce-d3c3-dcfc-9cbf9fa72de1@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <55e5491c-73c3-8d13-e3d1-056a2506f285@gmail.com>
-Date:   Fri, 22 Jan 2021 21:49:36 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=duIYV8b4T0NmmXMotSNNKBsNvT7+z9NmzlALYNbqLrQ=;
+ b=z+FK96QaQc7xRBvKhtIkjyLivagwJU8dtA+QJDCHKwKOL3ffmAOV31HY+ioC/20G89EzbYSCaoHSv8LMYz+rgJnueHV/PHaC+lbByVyjj73ljR2Qewwhu6yWEQWjtNTmUKkyVCEEA/R0fYSjn60SKnoMJhT7lNcGDa7OB/MrPFs=
+Authentication-Results: kernel.dk; dkim=none (message not signed)
+ header.d=none;kernel.dk; dmarc=none action=none header.from=oracle.com;
+Received: from BYAPR10MB3606.namprd10.prod.outlook.com (2603:10b6:a03:11b::27)
+ by BY5PR10MB3827.namprd10.prod.outlook.com (2603:10b6:a03:1b4::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.15; Fri, 22 Jan
+ 2021 22:55:02 +0000
+Received: from BYAPR10MB3606.namprd10.prod.outlook.com
+ ([fe80::359f:18a0:4d25:9978]) by BYAPR10MB3606.namprd10.prod.outlook.com
+ ([fe80::359f:18a0:4d25:9978%6]) with mapi id 15.20.3784.013; Fri, 22 Jan 2021
+ 22:55:02 +0000
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org
+Subject: [PATCH v2 00/10] liburing: buffer registration enhancements
+Date:   Fri, 22 Jan 2021 14:54:49 -0800
+Message-Id: <1611356099-60732-1-git-send-email-bijan.mottahedeh@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain
+X-Originating-IP: [138.3.200.3]
+X-ClientProxiedBy: CH0PR04CA0047.namprd04.prod.outlook.com
+ (2603:10b6:610:77::22) To BYAPR10MB3606.namprd10.prod.outlook.com
+ (2603:10b6:a03:11b::27)
 MIME-Version: 1.0
-In-Reply-To: <246d838d-0fce-d3c3-dcfc-9cbf9fa72de1@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from ca-ldom147.us.oracle.com (138.3.200.3) by CH0PR04CA0047.namprd04.prod.outlook.com (2603:10b6:610:77::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.11 via Frontend Transport; Fri, 22 Jan 2021 22:55:01 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6c0431d5-6573-49de-e47c-08d8bf28c08c
+X-MS-TrafficTypeDiagnostic: BY5PR10MB3827:
+X-Microsoft-Antispam-PRVS: <BY5PR10MB3827BDEDEFE6DBD3567417CEE4A09@BY5PR10MB3827.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: balozwHK1K0CG7uvqKzoIZx9Z+7JrkJjkY9T5JjwE4qLwCIE6HHJCQSjuZOccfKZQznQTAg2ToG4Vj+pqfL+ZoIu6tT0jMoaxm29661pDiC6DE4CiHr9RVRNdVr8AbxjqHReY6a/gBde09IXpTmFtGH3c/xdmvkjh8PDzj7UawqmewlD2BwyRRhrkymx4ML81gHrw22Ouwnb532ZKHiQAH8aggFwBu85sOQ4TfmSugBUG9SzVIg11SFYFDJ6IzlA0TUZ6ZNeV+YamJmd3estp8EXKl2uf3ne5955YA8S+iCqKOQlynvgEG4iVSrHbCwfuBbj2tqmRpLJj1jHakxYNnzreQU9STmmlk5XlFw6ocqWkMDuIjhj3ZZx1iwaIRPl7k7qr3fyGgkEnVWvIMlXIQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3606.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(396003)(366004)(39860400002)(376002)(346002)(83380400001)(44832011)(316002)(52116002)(36756003)(7696005)(2616005)(956004)(6666004)(66556008)(66946007)(66476007)(2906002)(478600001)(26005)(86362001)(5660300002)(8936002)(8676002)(16526019)(6486002)(186003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?V0C3HH9ZTRVzuXb7PyXnCIj3E7ues1P2WcNHe+bG6wDsRYgqPP/10Ytu+Nt6?=
+ =?us-ascii?Q?xstg3v/O4bJUgyrTwpPbKYBjDtIiFs/Tzk2l8MYZIi6bWd1ZN2VFRsN2r1FQ?=
+ =?us-ascii?Q?RSvymdBRnWqYQlHdG7DpLHvYHP8+2cWkSn1a3Jh+XyzHC1WPkyR3oxmaGYFz?=
+ =?us-ascii?Q?yQ26xCViF5yjHdHDDaz2jvKRKEWIkSB308sz8CUqMks7ZH3qPWgpY3Ya/hwH?=
+ =?us-ascii?Q?YzLzadXed2UZS+AieVtcCJOpYLRTpppyxx4P3KZ/fGQSojT0dsGR/duH34Wl?=
+ =?us-ascii?Q?d77JCIX7Udf32vraInXwJyRw4aZdaEzdmdahaPvCWCT1QW3B5vubm2TGjzsn?=
+ =?us-ascii?Q?MCwOYqSsFtpWyEExY1wZPKDvu2xJzeZw5iUilmGf0xJosgA77jgzT/Tc4Xco?=
+ =?us-ascii?Q?mdlyWuC7d65LOl3hQFpJaLOOkpZvjzC8epUqV0hdduM4arrUJIhNSLbQADI/?=
+ =?us-ascii?Q?QC+G1fuxa2/QSOUH5/DqbKc410i/q3UUyf3TksQPLHoTPZkf17RPddCtonGQ?=
+ =?us-ascii?Q?X2COj4L9ZgnOhD6fhm2bkUCyZ06TTrDchJWVcz8JiLs1nALBQljH3M8oNPhb?=
+ =?us-ascii?Q?hRgo2uzzy8shuSO37KrBWQ6LGgvu/m4Zhs6sMessIzjl9+qBlOS/W1bsGDHf?=
+ =?us-ascii?Q?l4UxF/J1UffPHzhM7l/zlNukck8HfYfz/12Crp6Zf6DUmqzBNt6+C+oyImPj?=
+ =?us-ascii?Q?/hhnc+MZNWQ5UvkchLZydftuSK6rTEf8p5sSafWud5C+HtAxi2TvMw7OnTne?=
+ =?us-ascii?Q?3KDFo0whLiuMuS/s2ouJLlOaICzl8T4rn+q2bz78gk+Ai/iru7ECEgJAX0sk?=
+ =?us-ascii?Q?ijuX9U7xnOoMBqOiRekHH4Ef5XZmIKxmMDJWu2U3zKluhJlg5Cmlkqt7Dr7c?=
+ =?us-ascii?Q?T596IpSZjXNnW4yZih5YooGNqI8rXN/fg1mE2hL+iqPSCINt8F9IJ8GpxLAw?=
+ =?us-ascii?Q?p3XAxxRrK7veCQziCIRSSHfVjNS6Qhkvs/eDa/d4t2Y=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c0431d5-6573-49de-e47c-08d8bf28c08c
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3606.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2021 22:55:02.5249
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DOy2hpQg1O4iJVSMBFfwZ6HhBxRVS797LIUjhhyQrAblSR9UznKPkROZ0iQlljShrSBo3NOuA2UfhllByhAK78kPQrhw6Pz7SEQ/esDkjW0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB3827
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9872 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 spamscore=0
+ suspectscore=0 phishscore=0 adultscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101220117
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9872 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101220118
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 22/01/2021 09:45, Joseph Qi wrote:
-> Seems this series can also resolve a possible deadlock case I'm looking
-> into.
+v2:
 
-It removes dead code, I believe your issue is solved by
-("io_uring: get rid of intermediate IORING_OP_CLOSE stage")
-https://git.kernel.dk/cgit/linux-block/commit/?h=for-5.12/io_uring&id=7be8ba3b656cb4e0158b2c859b949f34a96aa94f
+- manpage updates
+- additional sharing test cases
 
-Did you try this series in particular, or tested for-5.12/io_uring
-and see that the issue is gone there?
+This patchset is the liburing changes for buffer registration enhancements.
 
-> CPU0:
-> ...
-> io_kill_linked_timeout  // &ctx->completion_lock
-> io_commit_cqring
-> __io_queue_deferred
-> __io_queue_async_work
-> io_wq_enqueue
-> io_wqe_enqueue  // &wqe->lock
-> 
-> CPU1:
-> ...
-> __io_uring_files_cancel
-> io_wq_cancel_cb
-> io_wqe_cancel_pending_work  // &wqe->lock
-> io_cancel_task_cb  // &ctx->completion_lock
-> 
-> Thanks,
-> Joseph
-> 
-> On 1/20/21 10:32 AM, Pavel Begunkov wrote:
->> Carefully remove leftovers from removing cancellations by files
->>
->> Pavel Begunkov (3):
->>   io_uring: remove cancel_files and inflight tracking
->>   io_uring: cleanup iowq cancellation files matching
->>   io_uring: don't pass files for cancellation
->>
->>  fs/io_uring.c | 168 ++++++++++----------------------------------------
->>  1 file changed, 32 insertions(+), 136 deletions(-)
->>
+Patch 1-2 implement the actual liburing changes
+
+Patch 3-4 are the buffer-registration/update tests, copied from
+          corresponding file tests and adapted for buffers
+
+Patch 5-7 are the buffer-sharing tests.
+
+Patch 8-10 are the man page changes.
+
+Bijan Mottahedeh (10):
+  liburing: support buffer registration updates
+  liburing: support buffer registration sharing
+  test/buffer-register: add buffer registration test
+  test/buffer-update: add buffer registration update test
+  test/buffer-share: add buffer registration sharing test
+  test/buffer-share: add private memory option
+  test/buffer-share: add interruptible deadlock test
+  man/io_uring_setup.2: document buffer registration sharing
+  man/io_uring_register.2: document buffer registration updates
+  man/io_uring_enter.2: document IORING_OP_BUFFERS_UPDATE
+
+ .gitignore                      |    3 +
+ man/io_uring_enter.2            |   16 +
+ man/io_uring_register.2         |   29 +-
+ man/io_uring_setup.2            |   12 +
+ src/include/liburing.h          |   12 +
+ src/include/liburing/io_uring.h |   11 +
+ src/register.c                  |   29 +-
+ test/Makefile                   |    7 +
+ test/buffer-register.c          |  701 +++++++++++++++++++++
+ test/buffer-share.c             | 1282 +++++++++++++++++++++++++++++++++++++++
+ test/buffer-update.c            |  165 +++++
+ 11 files changed, 2260 insertions(+), 7 deletions(-)
+ create mode 100644 test/buffer-register.c
+ create mode 100644 test/buffer-share.c
+ create mode 100644 test/buffer-update.c
 
 -- 
-Pavel Begunkov
+1.8.3.1
+

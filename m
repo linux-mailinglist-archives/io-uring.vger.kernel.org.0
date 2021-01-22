@@ -2,268 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68AED3003B7
-	for <lists+io-uring@lfdr.de>; Fri, 22 Jan 2021 14:04:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EF743005C4
+	for <lists+io-uring@lfdr.de>; Fri, 22 Jan 2021 15:45:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbhAVNDp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Jan 2021 08:03:45 -0500
-Received: from raptor.unsafe.ru ([5.9.43.93]:53198 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727825AbhAVNDN (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Fri, 22 Jan 2021 08:03:13 -0500
-Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-94-112-41-137.net.upcbroadband.cz [94.112.41.137])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id B16AC20A1E;
-        Fri, 22 Jan 2021 13:00:54 +0000 (UTC)
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-mm@kvack.org
-Cc:     Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v4 7/7] kselftests: Add test to check for rlimit changes in different user namespaces
-Date:   Fri, 22 Jan 2021 14:00:16 +0100
-Message-Id: <50be4be55c030a02ac5244a07d6ef3ea8f1cd15a.1611320161.git.gladkov.alexey@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <cover.1611320161.git.gladkov.alexey@gmail.com>
-References: <cover.1611320161.git.gladkov.alexey@gmail.com>
+        id S1728807AbhAVOng (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Jan 2021 09:43:36 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:57270 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728812AbhAVOnH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Jan 2021 09:43:07 -0500
+Received: by mail-io1-f72.google.com with SMTP id m2so8985296iow.23
+        for <io-uring@vger.kernel.org>; Fri, 22 Jan 2021 06:42:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=fE5kJzZFX6LHuXma+wdOzaWCPrGgoY6ccmowLSXJbw8=;
+        b=Zr74D7/oLIuUQOCcXilcPoq7c5ZK3bzQZDQXHF6vSW2tV3CK3hMb1xUdq2pCr8dE8j
+         duDlLruc8v/eEhNLutJmxcE5qD5N0cLrcW6sBVNvlLZyRsn9GieFEPMswT8EJOjsLNHX
+         G87oKGiidYN5yhPFJm1G3SXzUYxZaql89N2ntQe8QLM36+LYIMgE/BxMCvq2d+eGWqOt
+         T+9If3rFxUtXYNsRQjwRsrH4CYCYc5qYPtrE+DrMySzE5wAA9O2lkWDHGJiJOxcEf5gj
+         Zen7Mi7EHm53Vzjy3HXazn80K7Aq5Sdhs4ffOwydb5R2Wj6siS9e3RYNe1dGYeXQqCzs
+         FLHA==
+X-Gm-Message-State: AOAM530vA71xTI8br99CibSaql/UXLCik7GJlc+jDtvdNXI7Ozy67RBt
+        az9LqpYKpVfb+8wL/68O1vTA0a4vU9XE4o1EJB1VcVGf2j0J
+X-Google-Smtp-Source: ABdhPJy7sTfsf/GJiCetI3voox1xPReGN1JRyYVuh7bfA3ZkebO6Ez0+j85tSElA8UsaBeIl2Xmle4DRPKaQBnwwcqRpdfQTkxhZ
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 22 Jan 2021 13:00:55 +0000 (UTC)
+X-Received: by 2002:a5d:944a:: with SMTP id x10mr3644441ior.30.1611326546207;
+ Fri, 22 Jan 2021 06:42:26 -0800 (PST)
+Date:   Fri, 22 Jan 2021 06:42:26 -0800
+In-Reply-To: <000000000000f054d005b8f87274@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000676bd105b97e329a@google.com>
+Subject: Re: WARNING in io_disable_sqo_submit
+From:   syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, davem@davemloft.net,
+        hdanton@sina.com, io-uring@vger.kernel.org,
+        johannes.berg@intel.com, johannes@sipsolutions.net,
+        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The testcase runs few instances of the program with RLIMIT_NPROC=1 from
-user uid=60000, in different user namespaces.
+syzbot has found a reproducer for the following issue on:
 
-Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
----
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/rlimits/.gitignore    |   2 +
- tools/testing/selftests/rlimits/Makefile      |   6 +
- tools/testing/selftests/rlimits/config        |   1 +
- .../selftests/rlimits/rlimits-per-userns.c    | 161 ++++++++++++++++++
- 5 files changed, 171 insertions(+)
- create mode 100644 tools/testing/selftests/rlimits/.gitignore
- create mode 100644 tools/testing/selftests/rlimits/Makefile
- create mode 100644 tools/testing/selftests/rlimits/config
- create mode 100644 tools/testing/selftests/rlimits/rlimits-per-userns.c
+HEAD commit:    9f29bd8b Merge tag 'fs_for_v5.11-rc5' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=169f4e9f500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=39701af622f054a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1156bd20d00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ce819f500000
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index afbab4aeef3c..4dbeb5686f7b 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -46,6 +46,7 @@ TARGETS += proc
- TARGETS += pstore
- TARGETS += ptrace
- TARGETS += openat2
-+TARGETS += rlimits
- TARGETS += rseq
- TARGETS += rtc
- TARGETS += seccomp
-diff --git a/tools/testing/selftests/rlimits/.gitignore b/tools/testing/selftests/rlimits/.gitignore
-new file mode 100644
-index 000000000000..091021f255b3
---- /dev/null
-+++ b/tools/testing/selftests/rlimits/.gitignore
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+rlimits-per-userns
-diff --git a/tools/testing/selftests/rlimits/Makefile b/tools/testing/selftests/rlimits/Makefile
-new file mode 100644
-index 000000000000..03aadb406212
---- /dev/null
-+++ b/tools/testing/selftests/rlimits/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+
-+CFLAGS += -Wall -O2 -g
-+TEST_GEN_PROGS := rlimits-per-userns
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/rlimits/config b/tools/testing/selftests/rlimits/config
-new file mode 100644
-index 000000000000..416bd53ce982
---- /dev/null
-+++ b/tools/testing/selftests/rlimits/config
-@@ -0,0 +1 @@
-+CONFIG_USER_NS=y
-diff --git a/tools/testing/selftests/rlimits/rlimits-per-userns.c b/tools/testing/selftests/rlimits/rlimits-per-userns.c
-new file mode 100644
-index 000000000000..26dc949e93ea
---- /dev/null
-+++ b/tools/testing/selftests/rlimits/rlimits-per-userns.c
-@@ -0,0 +1,161 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Author: Alexey Gladkov <gladkov.alexey@gmail.com>
-+ */
-+#define _GNU_SOURCE
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <sys/time.h>
-+#include <sys/resource.h>
-+#include <sys/prctl.h>
-+#include <sys/stat.h>
-+
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <limits.h>
-+#include <fcntl.h>
-+#include <errno.h>
-+#include <err.h>
-+
-+#define NR_CHILDS 2
-+
-+static char *service_prog;
-+static uid_t user   = 60000;
-+static uid_t group  = 60000;
-+
-+static void setrlimit_nproc(rlim_t n)
-+{
-+	pid_t pid = getpid();
-+	struct rlimit limit = {
-+		.rlim_cur = n,
-+		.rlim_max = n
-+	};
-+
-+	warnx("(pid=%d): Setting RLIMIT_NPROC=%ld", pid, n);
-+
-+	if (setrlimit(RLIMIT_NPROC, &limit) < 0)
-+		err(EXIT_FAILURE, "(pid=%d): setrlimit(RLIMIT_NPROC)", pid);
-+}
-+
-+static pid_t fork_child(void)
-+{
-+	pid_t pid = fork();
-+
-+	if (pid < 0)
-+		err(EXIT_FAILURE, "fork");
-+
-+	if (pid > 0)
-+		return pid;
-+
-+	pid = getpid();
-+
-+	warnx("(pid=%d): New process starting ...", pid);
-+
-+	if (prctl(PR_SET_PDEATHSIG, SIGKILL) < 0)
-+		err(EXIT_FAILURE, "(pid=%d): prctl(PR_SET_PDEATHSIG)", pid);
-+
-+	signal(SIGUSR1, SIG_DFL);
-+
-+	warnx("(pid=%d): Changing to uid=%d, gid=%d", pid, user, group);
-+
-+	if (setgid(group) < 0)
-+		err(EXIT_FAILURE, "(pid=%d): setgid(%d)", pid, group);
-+	if (setuid(user) < 0)
-+		err(EXIT_FAILURE, "(pid=%d): setuid(%d)", pid, user);
-+
-+	warnx("(pid=%d): Service running ...", pid);
-+
-+	warnx("(pid=%d): Unshare user namespace", pid);
-+	if (unshare(CLONE_NEWUSER) < 0)
-+		err(EXIT_FAILURE, "unshare(CLONE_NEWUSER)");
-+
-+	char *const argv[] = { "service", NULL };
-+	char *const envp[] = { "I_AM_SERVICE=1", NULL };
-+
-+	warnx("(pid=%d): Executing real service ...", pid);
-+
-+	execve(service_prog, argv, envp);
-+	err(EXIT_FAILURE, "(pid=%d): execve", pid);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	size_t i;
-+	pid_t child[NR_CHILDS];
-+	int wstatus[NR_CHILDS];
-+	int childs = NR_CHILDS;
-+	pid_t pid;
-+
-+	if (getenv("I_AM_SERVICE")) {
-+		pause();
-+		exit(EXIT_SUCCESS);
-+	}
-+
-+	service_prog = argv[0];
-+	pid = getpid();
-+
-+	warnx("(pid=%d) Starting testcase", pid);
-+
-+	/*
-+	 * This rlimit is not a problem for root because it can be exceeded.
-+	 */
-+	setrlimit_nproc(1);
-+
-+	for (i = 0; i < NR_CHILDS; i++) {
-+		child[i] = fork_child();
-+		wstatus[i] = 0;
-+		usleep(250000);
-+	}
-+
-+	while (1) {
-+		for (i = 0; i < NR_CHILDS; i++) {
-+			if (child[i] <= 0)
-+				continue;
-+
-+			errno = 0;
-+			pid_t ret = waitpid(child[i], &wstatus[i], WNOHANG);
-+
-+			if (!ret || (!WIFEXITED(wstatus[i]) && !WIFSIGNALED(wstatus[i])))
-+				continue;
-+
-+			if (ret < 0 && errno != ECHILD)
-+				warn("(pid=%d): waitpid(%d)", pid, child[i]);
-+
-+			child[i] *= -1;
-+			childs -= 1;
-+		}
-+
-+		if (!childs)
-+			break;
-+
-+		usleep(250000);
-+
-+		for (i = 0; i < NR_CHILDS; i++) {
-+			if (child[i] <= 0)
-+				continue;
-+			kill(child[i], SIGUSR1);
-+		}
-+	}
-+
-+	for (i = 0; i < NR_CHILDS; i++) {
-+		if (WIFEXITED(wstatus[i]))
-+			warnx("(pid=%d): pid %d exited, status=%d",
-+				pid, -child[i], WEXITSTATUS(wstatus[i]));
-+		else if (WIFSIGNALED(wstatus[i]))
-+			warnx("(pid=%d): pid %d killed by signal %d",
-+				pid, -child[i], WTERMSIG(wstatus[i]));
-+
-+		if (WIFSIGNALED(wstatus[i]) && WTERMSIG(wstatus[i]) == SIGUSR1)
-+			continue;
-+
-+		warnx("(pid=%d): Test failed", pid);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	warnx("(pid=%d): Test passed", pid);
-+	exit(EXIT_SUCCESS);
-+}
--- 
-2.29.2
+The issue was bisected to:
+
+commit dcd479e10a0510522a5d88b29b8f79ea3467d501
+Author: Johannes Berg <johannes.berg@intel.com>
+Date:   Fri Oct 9 12:17:11 2020 +0000
+
+    mac80211: always wind down STA state
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13b8b83b500000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1078b83b500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b8b83b500000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com
+Fixes: dcd479e10a05 ("mac80211: always wind down STA state")
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 8572 at fs/io_uring.c:8917 io_disable_sqo_submit+0x13d/0x180 fs/io_uring.c:8917
+Modules linked in:
+CPU: 1 PID: 8572 Comm: syz-executor518 Not tainted 5.11.0-rc4-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_disable_sqo_submit+0x13d/0x180 fs/io_uring.c:8917
+Code: e0 07 83 c0 03 38 d0 7c 04 84 d2 75 2e 83 8b 14 01 00 00 01 4c 89 e7 e8 d1 6d 25 07 5b 5d 41 5c e9 48 22 9b ff e8 43 22 9b ff <0f> 0b e9 00 ff ff ff e8 87 a1 dd ff e9 37 ff ff ff e8 4d a1 dd ff
+RSP: 0018:ffffc90001c17df0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88801c409000 RCX: 0000000000000000
+RDX: ffff8880287e8040 RSI: ffffffff81d7aa8d RDI: ffff88801c4090d0
+RBP: ffff8880198a1780 R08: 0000000000000000 R09: 0000000012c8a801
+R10: ffffffff81d7ad45 R11: 0000000000000001 R12: ffff88801c409000
+R13: ffff888012c8a801 R14: ffff88801c409040 R15: ffff88801c4090d0
+FS:  00007f60e950b700(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f60e950adb8 CR3: 0000000015b41000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ io_uring_flush+0x28b/0x3a0 fs/io_uring.c:9134
+ filp_close+0xb4/0x170 fs/open.c:1280
+ do_dup2+0x294/0x520 fs/file.c:1024
+ ksys_dup3+0x22f/0x360 fs/file.c:1136
+ __do_sys_dup2 fs/file.c:1162 [inline]
+ __se_sys_dup2 fs/file.c:1150 [inline]
+ __x64_sys_dup2+0x71/0x3a0 fs/file.c:1150
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x447019
+Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db 06 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f60e950ace8 EFLAGS: 00000246 ORIG_RAX: 0000000000000021
+RAX: ffffffffffffffda RBX: 00000000006dbc38 RCX: 0000000000447019
+RDX: 0000000000447019 RSI: 0000000000000003 RDI: 0000000000000005
+RBP: 00000000006dbc30 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc3c
+R13: 00007ffc5b18d21f R14: 00007f60e950b9c0 R15: 00000000006dbc30
 

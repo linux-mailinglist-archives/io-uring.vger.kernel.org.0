@@ -2,69 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B1B230106A
-	for <lists+io-uring@lfdr.de>; Fri, 22 Jan 2021 23:57:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23833301066
+	for <lists+io-uring@lfdr.de>; Fri, 22 Jan 2021 23:57:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728359AbhAVW5U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Jan 2021 17:57:20 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:52978 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729051AbhAVW4D (ORCPT
+        id S1728385AbhAVW45 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Jan 2021 17:56:57 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:41076 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729061AbhAVW4D (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 22 Jan 2021 17:56:03 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10MMt8hg154623;
-        Fri, 22 Jan 2021 22:55:13 GMT
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10MMre8P154344;
+        Fri, 22 Jan 2021 22:55:15 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2020-01-29;
- bh=/z3pNIbNuu/BvkvKvm4iiliNM/70vJzWZBMIOG8h5WQ=;
- b=iwZtiblHma/FLeK7Kl/8lXZeerD/4pioU+o4FD5etSEGVC4nilcsYfIWkG+nwmcSZHvM
- gZvZZsLH99Wql6qakd47Gxplm81YM+ZS3CrtUlXqPW6Adz8Xct+iRmi+V0TZHvEORIMm
- F15SQHV9JB9vHu8/B4qWmSm4X4Z4V8eWfdno7TYzrVQeuOowgtrqnPdUT7OOiWUrhvix
- BjO7HQ381SkIwOoT3qPA5A4WMIFoK/LoYSKn8drgEKrridSZnAnYxk+WoD2/jfOHH/lw
- k7xgVeLV222ZVFRcfjpcrpyFZ9NKldbZdlQMweviWo0XgyYuzzZKhReDa8V4/6PTCjcD Sg== 
+ bh=GSemzUfGuMpC3VVD97pLR7aLV+qjjo2J4lAMkayU7gA=;
+ b=PdqLh/kDPclzGD1eK5a5+rLBt9mTi4OwVQFxFh0ROb0mFGrC78gcj8bti4i+pU47s+Ve
+ C7mGCPmIoNty4AsDuKoxxD3bpcUhDOwhYX1jNsFT6yB2T+M0HgaUpMoXozd9vfltDUcf
+ s30eT1BHX8yqvbb1nt/C1J7gilUTKKmapIBV7j1TgBBw+m4jsN/6iVb1YxwjPxdm8FdL
+ 2ZDq1mZA/w6DD4gpoSi1RmmsVKN2JSko5Nx4UF84p1O78RrgwFBvLu0DKfS36MLCKNte
+ 8Atr+pIN7Mw6NbXHTFAQgkQ6x07UX/kMsQvlBjeBQ0c1Ka4FrcFX/1pxY12H8OA0caJA ag== 
 Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 3668qrpj7j-1
+        by userp2130.oracle.com with ESMTP id 3668qaphps-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 22 Jan 2021 22:55:13 +0000
+        Fri, 22 Jan 2021 22:55:14 +0000
 Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10MMt0Ot162490;
-        Fri, 22 Jan 2021 22:55:12 GMT
-Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2054.outbound.protection.outlook.com [104.47.45.54])
-        by userp3020.oracle.com with ESMTP id 3668r1pqjp-6
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10MMt0on162479;
+        Fri, 22 Jan 2021 22:55:14 GMT
+Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2051.outbound.protection.outlook.com [104.47.45.51])
+        by userp3020.oracle.com with ESMTP id 3668r1pqms-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 22 Jan 2021 22:55:12 +0000
+        Fri, 22 Jan 2021 22:55:14 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mcrTCK3vHhZorz18S2sExT6r40Kgv8TIqBtICg1BD5tpmGs48rO8umNNQFyU3o6Qw9TI1dGkyQ4GojDw/MkjJLQG/DpBX8xJR/hxGQ+dr1p7TNW7hOKDPhDguflVyANZDpzLB2+4mLxo9OM0rxkVGkj5UBreBXrI0P2jH+Y7iIhg2UPxsUCQF5ZCHKxNNxsGU0W7W6Ofdk8amJFmZnh/e0MKcUcvZpf1cj+096a0cAVlbp7pCJXmi3D/bmePi4uIXJJsyHBMbQQlwd1yEpRIYbzs7HyNxrdN/+ok1q3JZbxMyTMRcHf5L2HAkGXr8ZHA2vi5Q6xZIbLY3zJyccpEAw==
+ b=CegBly7CEnNLezmdQzuk1wPdd6rUQRbEHRFfZVuu77yAhmDPdmwN9W2pK5TWYkruf6s+NlYw/NHbciNISRD49Q3Toz4iQkX6vciIW674Eiq3Ta1RNKUIeKwfbRCh+ZCfTWSRAmam5mwWwKaAyllcQskkgxI/Isn89j6QtLEy1ToE16yswSWmBDPPC1e84Lkx7M9tVsQKB/c3HKorh8+WjplZkyyvkIm7tocu50uJECfWnak38NkIHOom37QA15dwT1MA7uUdkSKGgaEAXhxufCBXYRUcGKTfHmqmJ/KEaoNTH+wteiwtzhpB+OCjuddpEO+HSUba0OosAGz0lyFDfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/z3pNIbNuu/BvkvKvm4iiliNM/70vJzWZBMIOG8h5WQ=;
- b=ltYE7K/QRnmozX/hRrYbXF7Sy2zLv+ZKaTn6hbS+s+CYPJtD2QDv1qzZ7X04X8kVTC418KCiCc5HgadBRWLK/oPhSnyZstv9oO/DNkabpU+MUY7Cm2Phh+VR+cTXvhPgW5YKvd5sTcVCo0QWdzLkFQB6DCUS0Iy9FZjb/A32F/mZ202Sz/IzI7KBGg4IfO7GGoF+U7PHqy7tZe6H8TzDljbjDtshehVWS8DHf/0SNYR70mQyNAKATBCOVT0VNUxkxYFlyr6cfWe/TI+F/xXrTMKIKK9DvVTa5PVTISrSrdRhdgJPS5odlR3s6HXTGUO1ppDMiju8HfKmTP9zu5OFGA==
+ bh=GSemzUfGuMpC3VVD97pLR7aLV+qjjo2J4lAMkayU7gA=;
+ b=O7f1q5GGnyTTl0JvhsvthByd4ACWqnxBKVdXt52rtMC282CMT1fV/PsxJQ+hTMQYQ0vDWF6pMna5IHlDrYzZK7lZAXBHJhvdr8m5iw2LRHaJ9VuzRjIZuEjgB2E9NVAsyF++avR2OjJhu1hRcktIKJT0JPLPP1TwSypGVNCptRUJT9xeV9kak/GCEBbxba8xA+tKMd3fxvonEzYZzeZbGp2J7yXSXwOf+eMRK7aiMDL6C6Ezd0NJMRUT/d8LE7jHa6CnOsPvk1A35wnu80Ffv42IaXUp18GaWli4iVyHNBWc0dOvwoJ+uqyeL21TZa7V2uj/s9wo1epxdWVzj3MiDg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/z3pNIbNuu/BvkvKvm4iiliNM/70vJzWZBMIOG8h5WQ=;
- b=EjKOkhZyE1UjMbEjgFoTfu2oLIJ+YOhz9VrVcRJoabVTB4v00y8uwa8DRJHHvwUwXLdogoJkJwvJwhCUXlatthXltArd+Cb675mRS6QULuG7YdtE4wLJrBRk6/TAk9JBe8uprcWav3ZqFpqbkSq9R1XmXXMfQ9rU1Cw1oj9qytY=
+ bh=GSemzUfGuMpC3VVD97pLR7aLV+qjjo2J4lAMkayU7gA=;
+ b=C9U70j+3jAkMXLGzDrbeLYNHe439nHUM3p63BGzgcSq3op3mi4ju56BP+ZbZyC9OqZJS0MeD1XfVS59jYDQGI4XTE2xnRXarhyrfJTaKtWdV6IluwjTzUbILvK2EAebfhMeNOQ2+wycXREAbvHRuOSW6qbaBWe4b6QXxL/mg7GU=
 Authentication-Results: kernel.dk; dkim=none (message not signed)
  header.d=none;kernel.dk; dmarc=none action=none header.from=oracle.com;
 Received: from BYAPR10MB3606.namprd10.prod.outlook.com (2603:10b6:a03:11b::27)
  by BY5PR10MB3827.namprd10.prod.outlook.com (2603:10b6:a03:1b4::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.15; Fri, 22 Jan
- 2021 22:55:11 +0000
+ 2021 22:55:12 +0000
 Received: from BYAPR10MB3606.namprd10.prod.outlook.com
  ([fe80::359f:18a0:4d25:9978]) by BYAPR10MB3606.namprd10.prod.outlook.com
  ([fe80::359f:18a0:4d25:9978%6]) with mapi id 15.20.3784.013; Fri, 22 Jan 2021
- 22:55:11 +0000
+ 22:55:12 +0000
 From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 To:     axboe@kernel.dk, io-uring@vger.kernel.org
-Subject: [PATCH v2 09/10] man/io_uring_register.2: document buffer registration updates
-Date:   Fri, 22 Jan 2021 14:54:58 -0800
-Message-Id: <1611356099-60732-10-git-send-email-bijan.mottahedeh@oracle.com>
+Subject: [PATCH v2 10/10] man/io_uring_enter.2: document IORING_OP_BUFFERS_UPDATE
+Date:   Fri, 22 Jan 2021 14:54:59 -0800
+Message-Id: <1611356099-60732-11-git-send-email-bijan.mottahedeh@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1611356099-60732-1-git-send-email-bijan.mottahedeh@oracle.com>
 References: <1611356099-60732-1-git-send-email-bijan.mottahedeh@oracle.com>
@@ -75,43 +75,43 @@ X-ClientProxiedBy: CH0PR04CA0047.namprd04.prod.outlook.com
  (2603:10b6:a03:11b::27)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from ca-ldom147.us.oracle.com (138.3.200.3) by CH0PR04CA0047.namprd04.prod.outlook.com (2603:10b6:610:77::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.11 via Frontend Transport; Fri, 22 Jan 2021 22:55:10 +0000
+Received: from ca-ldom147.us.oracle.com (138.3.200.3) by CH0PR04CA0047.namprd04.prod.outlook.com (2603:10b6:610:77::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.11 via Frontend Transport; Fri, 22 Jan 2021 22:55:11 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7356d44d-af5c-4ed0-c02e-08d8bf28c594
+X-MS-Office365-Filtering-Correlation-Id: 27909918-baa3-4fef-085e-08d8bf28c623
 X-MS-TrafficTypeDiagnostic: BY5PR10MB3827:
-X-Microsoft-Antispam-PRVS: <BY5PR10MB3827255F0DCFB1C76B810B42E4A09@BY5PR10MB3827.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-Microsoft-Antispam-PRVS: <BY5PR10MB3827BD41088C171DB75F9DA7E4A09@BY5PR10MB3827.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 86a4XhJ29Z+V0ZOF8K4V7UOYH2gT5N6CYdfpNTv95OW/dPOqSKaLeAmJ2u/g23ykgPr2srSURJy98xvbpMdRyoywZrT2xry7gD5pTEkprkI5bvLPrpdznJ9c1wgb36EiJbgLcrHs13H6GhuVGwc27lVB4Jq+y82rnz9iGSwRXgeO0mGLzwtKQmOpljJeRwctJFNTT4m6847mVtxWBvKSb2mAIxZxredOcpdSdLKrHVbpZ/6I/wPAzaqWpy72Dgykfqht2vw9fKztlwmf5NwKAtsQyH+MtqLGd46zLf1x/gdWh+HUDRGF7m7lTi6iNNYekRLavQ5yDVsrrbG+Uwv2lBhHbNEvqyp0HKFRmztYVcMflTnXYc/MTyf0goG9IM1ltLKBXZ8KPgkHWQOFPNNPcA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3606.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(396003)(366004)(39860400002)(376002)(346002)(83380400001)(44832011)(316002)(52116002)(36756003)(7696005)(2616005)(956004)(15650500001)(6666004)(66556008)(66946007)(66476007)(2906002)(478600001)(26005)(86362001)(5660300002)(8936002)(8676002)(16526019)(6486002)(186003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?ioOXfUC9uvc3NzAijRwg+HxcTBb9xRot0mjhJDLGVjmC0Eyj6YaT1Ge9u+e4?=
- =?us-ascii?Q?lD95XnqhoOf8sUxvAOj5IbTgeislpBV5SC1Hkrfy+FSjCww2alS+HcQJFfeb?=
- =?us-ascii?Q?6TgVm0omCRYMbny3v9yyu1xnAXJJd4Rnk98Rm1L6jQ3G6BE6VI+fjnzEFmjY?=
- =?us-ascii?Q?5d7UqjftRDlx7BrfOP9aRDovqeT1aGdTLdD44kNrVhxUkNYRXBA+VGlnaWaS?=
- =?us-ascii?Q?uS9KKPqm8p9JHP+FpbSYdgmdTAhV7TAHoHPTCorM2uxZA72Fm6TqMs0abNbI?=
- =?us-ascii?Q?ZRXg1lcpKuT+HkNdLpcijKgr8cnyhDFxuHZGgS4c0Sxy9czQ3XDHVBzuRxti?=
- =?us-ascii?Q?7JzAFR7yt7cMSq2/bJ90BsbMlPunoYjQS5NN3K4MQ69egmv18FlY+Ayvlnyy?=
- =?us-ascii?Q?o4OW8Xllo6Bmjt50pKm6XuDbtUEprhiBhCbkScP/sQIZch0L08I/O3N9gFzz?=
- =?us-ascii?Q?fourg5sfyou4dZqWdDL36AQ6uBJiiQoCcE+380t1KGOUtAqgaH+hOQldXmE9?=
- =?us-ascii?Q?NrvQr+b2ExALLol48JtDIFOwuEWVM/hBEEsSDhKxRmrubW6rR8m/UtzjEn0G?=
- =?us-ascii?Q?X43i3hKk4V0PLTiLh5ubD1NLjAbs0FoiI9Dzong4SiHyT4KMZ9S8BMNRswGR?=
- =?us-ascii?Q?mWH6pguk7gTF39YQyLVDmS81PtXz/0qHyr7ZwRbUp+nU2RjVSMrlFXpMzYAd?=
- =?us-ascii?Q?Gi73Ef7UJS3X5ug0sagdufTNXnidWlcu20rOTlo6LuQeMUz25J0FF4uC3xQ3?=
- =?us-ascii?Q?J8yr7OVfEYLVcBn6zNlaZk998QIMGw4ra34hUo12Bj/QVUvNVuwH/dpUT3aB?=
- =?us-ascii?Q?pTG/odTYKhihmBbg0+JSlbUzHRvPrQIaY275N2IZRM/01zn6CqjVzLoUm7an?=
- =?us-ascii?Q?u6J884C+Ok2N6WRQV2xGnOyin0Hx4L9iXqn3bqYKrrwOmBulNTmcOtZTMuAB?=
- =?us-ascii?Q?juRIcaxwBiwWu2k9IMogfycZvr9D8nlxDZuV++Tb3rs=3D?=
+X-Microsoft-Antispam-Message-Info: wzGROEwx6jcIY3n52bvTm4MEq1SUvfdwmBKaQJU9XrhUU7UqMgrwdJKpkSLVNrQQ2+Of5B3iIMFZj7OShTU/QweyEMf4lGgblGyyXp4OcPjUngrfiichJmAdqXis7bHi4wDAbVrbJnMPoB2wNUWuUDLNwYuZYE8OP8Z+jR2kzGJbhd5LqkwmXZn1Z59163qstHLiJQxffgAD73weBoItVXoDL7a/jTt6iIv1qeut/Iho3WOHG6J7ev/Pofvw+kHEwy2s1MmCOmCcDiN1dQ8QgqAuCEctsMtknMDBrtiKjJO9NRQuZOW+RLOM89aj0Y436eAWbKku+7ykeCoR5gq7Xy7kykqogrYjW1WkEfDrzSJTvwDDkdiaTaI/caKuIsjtdWVxcBIWvmncjyz4JDXQiw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3606.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(396003)(366004)(39860400002)(376002)(346002)(83380400001)(44832011)(316002)(52116002)(36756003)(7696005)(2616005)(956004)(6666004)(66556008)(66946007)(66476007)(2906002)(478600001)(26005)(86362001)(5660300002)(8936002)(8676002)(16526019)(6486002)(186003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?/pi1qMIYzEv88NGNuSkykcNmyUO8z/4qB5qLHjooe73vw9i0adhrfWizBEso?=
+ =?us-ascii?Q?phk4vyPgbqpf9fbj9M4YdEFND5JSRNiOOkY59luLc2Xjnyncq0JlP3xbSEiO?=
+ =?us-ascii?Q?Ax3tSwnU6CEtTTr7YCChQBcOgeGeurxhzuafREIw++1NEVBZvY78gz1EnPuh?=
+ =?us-ascii?Q?7+XND8i11+J6Y7T4T8NswW4AHb5rmWohZS73TCJr6b+UFRkHe7zdHTC9YFzY?=
+ =?us-ascii?Q?cPQP64hh0pR9Cspq3aCwo+bjf+STNgNJDMYMHltZTue2bFztPZG/V5GmSbKF?=
+ =?us-ascii?Q?2s7QeK9PJtiAgk9QIDs2Ri7K1IJw+w0EgygUNLjk6tiSAUI45pjd19M3/Ehp?=
+ =?us-ascii?Q?OlAud1SHrNf1qMM3YKPew+BCSo7pmUKyv2dPAb7Y4DjkLw1KGleu4GqT2Yh0?=
+ =?us-ascii?Q?tr/iDTLl3pC098NNioVjJJYiNLIjm2KqXnjRA8vnyq7IFwkfHDnq1X58YMpU?=
+ =?us-ascii?Q?o5iSvF9wlxhiO+zsTgKD+y1UwNm12iVNzQhE+Vvhn+Yipf1YmcoXtLoSb9A1?=
+ =?us-ascii?Q?jX2gT/A04jLzEP/agBaAxZbgDPwfXV626ODXeORLMr0Qf0ZM8DTztYn1rZq5?=
+ =?us-ascii?Q?ehtbmSVuyKON/9rOPu2ywKg+Xpo0wyclPPiJWdA0XFqCRb0MSVhzllyxqpz7?=
+ =?us-ascii?Q?aIUlYwk8bT4aQqzaQG5ZKEhXYjUoqd7Q+pCZQhaIn6LJR5s4PxNGhwVvb0Y/?=
+ =?us-ascii?Q?uyDfhWymgrmyDG+Zmkn8rJ3bv6FOhVgIXRCmQqP3GSthhcrqqPnxrbpJyMjF?=
+ =?us-ascii?Q?2isMPkKSHmfE4SkDjXrQb8+8NSLNZMgKfNciyiTVCYdX2+AHE6nWZbSGlPMd?=
+ =?us-ascii?Q?XmzgLE3JJDT9w1EjXGh/GupBeCQkFTlYzbwLj3V7hrysnAEVMadgz/DUmERx?=
+ =?us-ascii?Q?kslMvqWM1+Z8KyK+JOJVeA+iKLnc1KwWFl9cjX2F28yBinKF1k2GkCtj7o//?=
+ =?us-ascii?Q?3m5h/8V0IjcburEI2GcjTM8fIAOeYF34eDiteoNq/A0=3D?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7356d44d-af5c-4ed0-c02e-08d8bf28c594
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27909918-baa3-4fef-085e-08d8bf28c623
 X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3606.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2021 22:55:10.9810
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2021 22:55:11.8935
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EjF+YNw9ggoxrCpkJmHE/V8kVhh+dFyxVXJVfTrv2Ud4iAUtwQp4ODuyEmRrOnbd6yDlfdhELOQUMDk35AZMaKDo/E1hDZzZ0odMVFUuYdM=
+X-MS-Exchange-CrossTenant-UserPrincipalName: wf2MFyKP6qCIX9zoht5UR/HtUk7XmMtwnERWVwcgoKg1OpfE1fA7v//2G3GskY7g1mkJQL3ffgGSQ6OXQmWF+hsIopTwurKQ0WAl2YuTfG4=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB3827
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9872 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 adultscore=0
@@ -119,76 +119,47 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phish
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
  definitions=main-2101220118
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9872 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0
- phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101220118
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101220118
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Document sparse buffer registrations and IORING_REGISER_BUFFER_UPDATE.
-
 Signed-off-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
 ---
- man/io_uring_register.2 | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ man/io_uring_enter.2 | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/man/io_uring_register.2 b/man/io_uring_register.2
-index 225e461..5c7a39e 100644
---- a/man/io_uring_register.2
-+++ b/man/io_uring_register.2
-@@ -82,11 +82,13 @@ It is perfectly valid to setup a large buffer and then only use part
- of it for an I/O, as long as the range is within the originally mapped
- region.
- 
--An application can increase or decrease the size or number of
--registered buffers by first unregistering the existing buffers, and
--then issuing a new call to
--.BR io_uring_register ()
--with the new buffers.
-+The buffer set may be sparse, meaning that the
-+.B iovec
-+address and size fields in the array may be set to
-+.B 0.
-+See
-+.B IORING_REGISTER_BUFFERS_UPDATE
-+for how to update buffers in place.
- 
- Note that registering buffers will wait for the ring to idle. If the application
- currently has requests in-flight, the registration will wait for those to
-@@ -103,6 +105,20 @@ must be passed as NULL.  All previously registered buffers associated
- with the io_uring instance will be released. Available since 5.1.
+diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+index da20451..99f6756 100644
+--- a/man/io_uring_enter.2
++++ b/man/io_uring_enter.2
+@@ -636,6 +636,22 @@ See also
+ for the general description of the related system call. Available since 5.8.
  
  .TP
++.B IORING_OP_BUFFERS_UPDATE
++This command is an alternative to using
 +.B IORING_REGISTER_BUFFERS_UPDATE
-+This operation replaces existing iovecs in the registered buffer set with
-+new ones, either turning a sparse entry (one where iovec base and len
-+are equal to 0) into a real one, removing an existing entry (new one is
-+set to 0), or replacing an existing entry with a new existing entry.
-+.I arg
-+must contain a pointer to a struct io_uring_rsrc_update, which contains
-+an offset on which to start the update, and an array of iovecs to
-+use for the update.
-+.I nr_args
-+must contain the number of iovecs in the passed in array. Available
-+since 5.12.
++which then works in an async fashion, like the rest of the io_uring commands.
++The arguments passed in are the same.
++.I addr
++must contain a pointer to the array of iovecs,
++.I len
++must contain the length of the array, and
++.I off
++must contain the offset at which to operate. Note that the array of iovecs
++pointed to in
++.I addr
++must remain valid until this operation has completed. Available since 5.12.
 +
 +.TP
- .B IORING_REGISTER_FILES
- Register files for I/O.
- .I arg
-@@ -152,6 +168,9 @@ use for the update.
- must contain the number of descriptors in the passed in array. Available
- since 5.5.
- 
-+Note that struct io_uring_files_update is deprecated since 5.12 and that
-+io_uring_rsrc_update must be used instead.
-+
- .TP
- .B IORING_UNREGISTER_FILES
- This operation requires no argument, and
+ .B IORING_OP_FILES_UPDATE
+ This command is an alternative to using
+ .B IORING_REGISTER_FILES_UPDATE
 -- 
 1.8.3.1
 

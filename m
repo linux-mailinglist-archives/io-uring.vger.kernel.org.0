@@ -2,140 +2,289 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F8BC30144F
-	for <lists+io-uring@lfdr.de>; Sat, 23 Jan 2021 10:43:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B7683014E7
+	for <lists+io-uring@lfdr.de>; Sat, 23 Jan 2021 12:52:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726032AbhAWJlX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 23 Jan 2021 04:41:23 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:58091 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726883AbhAWJlV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 23 Jan 2021 04:41:21 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UMbbXwC_1611394824;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UMbbXwC_1611394824)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 23 Jan 2021 17:40:32 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
+        id S1726571AbhAWLwW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 23 Jan 2021 06:52:22 -0500
+Received: from hmm.wantstofly.org ([213.239.204.108]:40402 "EHLO
+        mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726309AbhAWLwW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 23 Jan 2021 06:52:22 -0500
+X-Greylist: delayed 585 seconds by postgrey-1.27 at vger.kernel.org; Sat, 23 Jan 2021 06:52:20 EST
+Received: by mail.wantstofly.org (Postfix, from userid 1000)
+        id 9010F7F43D; Sat, 23 Jan 2021 13:41:52 +0200 (EET)
+Date:   Sat, 23 Jan 2021 13:41:52 +0200
+From:   Lennert Buytenhek <buytenh@wantstofly.org>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH] io_uring: don't recursively hold ctx->uring_lock in io_wq_submit_work()
-Date:   Sat, 23 Jan 2021 17:40:24 +0800
-Message-Id: <1611394824-73078-1-git-send-email-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
+Message-ID: <20210123114152.GA120281@wantstofly.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Abaci reported the following warning:
+IORING_OP_GETDENTS64 behaves like getdents64(2) and takes the same
+arguments.
 
-[   97.862205] ============================================
-[   97.863400] WARNING: possible recursive locking detected
-[   97.864640] 5.11.0-rc4+ #12 Not tainted
-[   97.865537] --------------------------------------------
-[   97.866748] a.out/2890 is trying to acquire lock:
-[   97.867829] ffff8881046763e8 (&ctx->uring_lock){+.+.}-{3:3}, at:
-io_wq_submit_work+0x155/0x240
-[   97.869735]
-[   97.869735] but task is already holding lock:
-[   97.871033] ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
-__x64_sys_io_uring_enter+0x3f0/0x5b0
-[   97.873074]
-[   97.873074] other info that might help us debug this:
-[   97.874520]  Possible unsafe locking scenario:
-[   97.874520]
-[   97.875845]        CPU0
-[   97.876440]        ----
-[   97.877048]   lock(&ctx->uring_lock);
-[   97.877961]   lock(&ctx->uring_lock);
-[   97.878881]
-[   97.878881]  *** DEADLOCK ***
-[   97.878881]
-[   97.880341]  May be due to missing lock nesting notation
-[   97.880341]
-[   97.881952] 1 lock held by a.out/2890:
-[   97.882873]  #0: ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
-__x64_sys_io_uring_enter+0x3f0/0x5b0
-[   97.885108]
-[   97.885108] stack backtrace:
-[   97.886209] CPU: 0 PID: 2890 Comm: a.out Not tainted 5.11.0-rc4+ #12
-[   97.887683] Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS
-rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
-[   97.890457] Call Trace:
-[   97.891121]  dump_stack+0xac/0xe3
-[   97.891972]  __lock_acquire+0xab6/0x13a0
-[   97.892940]  lock_acquire+0x2c3/0x390
-[   97.893853]  ? io_wq_submit_work+0x155/0x240
-[   97.894894]  __mutex_lock+0xae/0x9f0
-[   97.895785]  ? io_wq_submit_work+0x155/0x240
-[   97.896816]  ? __lock_acquire+0x782/0x13a0
-[   97.897817]  ? io_wq_submit_work+0x155/0x240
-[   97.898867]  ? io_wq_submit_work+0x155/0x240
-[   97.899916]  ? _raw_spin_unlock_irqrestore+0x2d/0x40
-[   97.901101]  io_wq_submit_work+0x155/0x240
-[   97.902112]  io_wq_cancel_cb+0x162/0x490
-[   97.903084]  ? io_uring_get_socket+0x40/0x40
-[   97.904126]  io_async_find_and_cancel+0x3b/0x140
-[   97.905247]  io_issue_sqe+0x86d/0x13e0
-[   97.906186]  ? __lock_acquire+0x782/0x13a0
-[   97.907195]  ? __io_queue_sqe+0x10b/0x550
-[   97.908175]  ? lock_acquire+0x2c3/0x390
-[   97.909122]  __io_queue_sqe+0x10b/0x550
-[   97.910080]  ? io_req_prep+0xd8/0x1090
-[   97.911044]  ? mark_held_locks+0x5a/0x80
-[   97.912042]  ? mark_held_locks+0x5a/0x80
-[   97.913014]  ? io_queue_sqe+0x235/0x470
-[   97.913971]  io_queue_sqe+0x235/0x470
-[   97.914894]  io_submit_sqes+0xcce/0xf10
-[   97.915842]  ? xa_store+0x3b/0x50
-[   97.916683]  ? __x64_sys_io_uring_enter+0x3f0/0x5b0
-[   97.917872]  __x64_sys_io_uring_enter+0x3fb/0x5b0
-[   97.918995]  ? lockdep_hardirqs_on_prepare+0xde/0x180
-[   97.920204]  ? syscall_enter_from_user_mode+0x26/0x70
-[   97.921424]  do_syscall_64+0x2d/0x40
-[   97.922329]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   97.923538] RIP: 0033:0x7f0b62601239
-[   97.924437] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00
-48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f
-   05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 ec 2c 00 f7 d8 64 89 01
-      48
-[   97.928628] RSP: 002b:00007f0b62cc4d28 EFLAGS: 00000246 ORIG_RAX:
-00000000000001aa
-[   97.930422] RAX: ffffffffffffffda RBX: 0000000000000000 RCX:
-00007f0b62601239
-[   97.932073] RDX: 0000000000000000 RSI: 0000000000006cf6 RDI:
-0000000000000005
-[   97.933710] RBP: 00007f0b62cc4e20 R08: 0000000000000000 R09:
-0000000000000000
-[   97.935369] R10: 0000000000000000 R11: 0000000000000246 R12:
-0000000000000000
-[   97.937008] R13: 0000000000021000 R14: 0000000000000000 R15:
-00007f0b62cc5700
-
-This is caused by try to hold uring_lock in io_wq_submit_work() without
-checking if we are in io-wq thread context or not. It can be in original
-context when io_wq_submit_work() is called from IORING_OP_ASYNC_CANCEL
-code path, where we already held uring_lock.
-
-Fixes: c07e6719511e ("io_uring: hold uring_lock while completing failed polled io in io_wq_submit_work()")
-Reported-by: Abaci <abaci@linux.alibaba.com>
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+Signed-off-by: Lennert Buytenhek <buytenh@wantstofly.org>
 ---
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This seems to work OK, but I'd appreciate a review from someone more
+familiar with io_uring internals than I am, as I'm not entirely sure
+I did everything quite right.
+
+A dumb test program for IORING_OP_GETDENTS64 is available here:
+
+	https://krautbox.wantstofly.org/~buytenh/uringfind.c
+
+This does more or less what find(1) does: it scans recursively through
+a directory tree and prints the names of all directories and files it
+encounters along the way -- but then using io_uring.  (The uring version
+prints the names of encountered files and directories in an order that's
+determined by SQE completion order, which is somewhat nondeterministic
+and likely to differ between runs.)
+
+On a directory tree with 14-odd million files in it that's on a
+six-drive (spinning disk) btrfs raid, find(1) takes:
+
+	# echo 3 > /proc/sys/vm/drop_caches 
+	# time find /mnt/repo > /dev/null
+
+	real    24m7.815s
+	user    0m15.015s
+	sys     0m48.340s
+	#
+
+And the io_uring version takes:
+
+	# echo 3 > /proc/sys/vm/drop_caches 
+	# time ./uringfind /mnt/repo > /dev/null
+
+	real    10m29.064s
+	user    0m4.347s
+	sys     0m1.677s
+	#
+
+These timings are repeatable and consistent to within a few seconds.
+
+(btrfs seems to be sending most metadata reads to the same drive in the
+array during this test, even though this filesystem is using the raid1c4
+profile for metadata, so I suspect that more drive-level parallelism can
+be extracted with some btrfs tweaks.)
+
+The fully cached case also shows some speedup for the io_uring version:
+
+	# time find /mnt/repo > /dev/null
+
+	real    0m5.223s
+	user    0m1.926s
+	sys     0m3.268s
+	#
+
+vs:
+
+	# time ./uringfind /mnt/repo > /dev/null
+
+	real    0m3.604s
+	user    0m2.417s
+	sys     0m0.793s
+	#
+
+That said, the point of this patch isn't primarily to enable
+lightning-fast find(1) or du(1), but more to complete the set of
+filesystem I/O primitives available via io_uring, so that applications
+can do all of their filesystem I/O using the same mechanism, without
+having to manually punt some of their work out to worker threads -- and
+indeed, an object storage backend server that I wrote a while ago can
+run with a pure io_uring based event loop with this patch.
+
+One open question is whether IORING_OP_GETDENTS64 should be more like
+pread(2) and allow passing in a starting offset to read from the
+directory from.  (This would require some more surgery in fs/readdir.c.)
+
+ fs/io_uring.c                 |   51 ++++++++++++++++++++++++++++++++++++++++++
+ fs/readdir.c                  |   25 ++++++++++++++------
+ include/linux/fs.h            |    4 +++
+ include/uapi/linux/io_uring.h |    1 
+ 4 files changed, 73 insertions(+), 8 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 985a9e3f976d..15d0a96ec487 100644
+index 985a9e3f976d..5d79b9668ee0 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6395,7 +6395,7 @@ static struct io_wq_work *io_wq_submit_work(struct io_wq_work *work)
- 	if (ret) {
- 		struct io_ring_ctx *lock_ctx = NULL;
+@@ -572,6 +572,12 @@ struct io_unlink {
+ 	struct filename			*filename;
+ };
  
--		if (req->ctx->flags & IORING_SETUP_IOPOLL)
-+		if ((req->ctx->flags & IORING_SETUP_IOPOLL) && io_wq_current_is_worker())
- 			lock_ctx = req->ctx;
++struct io_getdents64 {
++	struct file			*file;
++	struct linux_dirent64 __user	*dirent;
++	unsigned int			count;
++};
++
+ struct io_completion {
+ 	struct file			*file;
+ 	struct list_head		list;
+@@ -699,6 +705,7 @@ struct io_kiocb {
+ 		struct io_shutdown	shutdown;
+ 		struct io_rename	rename;
+ 		struct io_unlink	unlink;
++		struct io_getdents64	getdents64;
+ 		/* use only after cleaning per-op data, see io_clean_op() */
+ 		struct io_completion	compl;
+ 	};
+@@ -987,6 +994,11 @@ static const struct io_op_def io_op_defs[] = {
+ 		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
+ 						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
+ 	},
++	[IORING_OP_GETDENTS64] = {
++		.needs_file		= 1,
++		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
++						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
++	},
+ };
  
- 		/*
--- 
-1.8.3.1
-
+ enum io_mem_account {
+@@ -4552,6 +4564,40 @@ static int io_sync_file_range(struct io_kiocb *req, bool force_nonblock)
+ 	return 0;
+ }
+ 
++static int io_getdents64_prep(struct io_kiocb *req,
++			      const struct io_uring_sqe *sqe)
++{
++	struct io_getdents64 *getdents64 = &req->getdents64;
++
++	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
++		return -EINVAL;
++	if (sqe->ioprio || sqe->off || sqe->rw_flags || sqe->buf_index)
++		return -EINVAL;
++
++	getdents64->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
++	getdents64->count = READ_ONCE(sqe->len);
++	return 0;
++}
++
++static int io_getdents64(struct io_kiocb *req, bool force_nonblock)
++{
++	struct io_getdents64 *getdents64 = &req->getdents64;
++	int ret;
++
++	/* getdents64 always requires a blocking context */
++	if (force_nonblock)
++		return -EAGAIN;
++
++	ret = vfs_getdents64(req->file, getdents64->dirent, getdents64->count);
++	if (ret < 0) {
++		if (ret == -ERESTARTSYS)
++			ret = -EINTR;
++		req_set_fail_links(req);
++	}
++	io_req_complete(req, ret);
++	return 0;
++}
++
+ #if defined(CONFIG_NET)
+ static int io_setup_async_msg(struct io_kiocb *req,
+ 			      struct io_async_msghdr *kmsg)
+@@ -6078,6 +6124,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return io_renameat_prep(req, sqe);
+ 	case IORING_OP_UNLINKAT:
+ 		return io_unlinkat_prep(req, sqe);
++	case IORING_OP_GETDENTS64:
++		return io_getdents64_prep(req, sqe);
+ 	}
+ 
+ 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+@@ -6337,6 +6385,9 @@ static int io_issue_sqe(struct io_kiocb *req, bool force_nonblock,
+ 	case IORING_OP_UNLINKAT:
+ 		ret = io_unlinkat(req, force_nonblock);
+ 		break;
++	case IORING_OP_GETDENTS64:
++		ret = io_getdents64(req, force_nonblock);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+diff --git a/fs/readdir.c b/fs/readdir.c
+index 19434b3c982c..5310677d5d36 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -348,10 +348,9 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+ 	return -EFAULT;
+ }
+ 
+-SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+-		struct linux_dirent64 __user *, dirent, unsigned int, count)
++int vfs_getdents64(struct file *file, struct linux_dirent64 __user *dirent,
++		   unsigned int count)
+ {
+-	struct fd f;
+ 	struct getdents_callback64 buf = {
+ 		.ctx.actor = filldir64,
+ 		.count = count,
+@@ -359,11 +358,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+ 	};
+ 	int error;
+ 
+-	f = fdget_pos(fd);
+-	if (!f.file)
+-		return -EBADF;
+-
+-	error = iterate_dir(f.file, &buf.ctx);
++	error = iterate_dir(file, &buf.ctx);
+ 	if (error >= 0)
+ 		error = buf.error;
+ 	if (buf.prev_reclen) {
+@@ -376,6 +371,20 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+ 		else
+ 			error = count - buf.count;
+ 	}
++	return error;
++}
++
++SYSCALL_DEFINE3(getdents64, unsigned int, fd,
++		struct linux_dirent64 __user *, dirent, unsigned int, count)
++{
++	struct fd f;
++	int error;
++
++	f = fdget_pos(fd);
++	if (!f.file)
++		return -EBADF;
++
++	error = vfs_getdents64(f.file, dirent, count);
+ 	fdput_pos(f);
+ 	return error;
+ }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index fd47deea7c17..602202a8fc1f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3109,6 +3109,10 @@ extern const struct inode_operations simple_symlink_inode_operations;
+ 
+ extern int iterate_dir(struct file *, struct dir_context *);
+ 
++struct linux_dirent64;
++int vfs_getdents64(struct file *file, struct linux_dirent64 __user *dirent,
++		   unsigned int count);
++
+ int vfs_fstatat(int dfd, const char __user *filename, struct kstat *stat,
+ 		int flags);
+ int vfs_fstat(int fd, struct kstat *stat);
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index d31a2a1e8ef9..5602414735f7 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -137,6 +137,7 @@ enum {
+ 	IORING_OP_SHUTDOWN,
+ 	IORING_OP_RENAMEAT,
+ 	IORING_OP_UNLINKAT,
++	IORING_OP_GETDENTS64,
+ 
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,

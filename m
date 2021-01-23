@@ -2,50 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 398063018E1
-	for <lists+io-uring@lfdr.de>; Sun, 24 Jan 2021 00:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC87D3018E6
+	for <lists+io-uring@lfdr.de>; Sun, 24 Jan 2021 00:34:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726288AbhAWX3k (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 23 Jan 2021 18:29:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53232 "EHLO
+        id S1726375AbhAWXeY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 23 Jan 2021 18:34:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbhAWX3i (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 23 Jan 2021 18:29:38 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B196DC0613D6;
-        Sat, 23 Jan 2021 15:28:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3yZG/MXVqlbwoylF6Mu7eqGVO8ZMyTpVlbCjsWzD+LE=; b=dFtFpDpo9JGJHPyarlu931wkH2
-        fF2+P6HNqUkd/fQWYg0ZRCWZc6D4UEcw2FBIQXfmqmdHw5lsuNQlqsgyBxAyWVo9GiinypEFBu6se
-        +9X7xkfHZGndCvRfQAc+01VlYtWoGPB1mtxh/xn26CvSD98mDQCNItjoLZjMN7b7W3kqETQDyd7re
-        xSUwcNzxAahiQrMDg9LVj/FANADeyNV7nG+sjqA2LN1y76xnzfVeFOBJCiyTxo3TGTSZ4DwCECHHJ
-        yUHCOXmEskWRRDgCRpUE90fiFnVc98gMXOtTYfF17QT4NH6yDDjnoCchSIAsToaTj9kmAQwHoIR3a
-        jX+g4Zgg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l3SJu-002QFn-CG; Sat, 23 Jan 2021 23:28:03 +0000
-Date:   Sat, 23 Jan 2021 23:27:54 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Lennert Buytenhek <buytenh@wantstofly.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
+        with ESMTP id S1726204AbhAWXeS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 23 Jan 2021 18:34:18 -0500
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63930C0613D6
+        for <io-uring@vger.kernel.org>; Sat, 23 Jan 2021 15:33:38 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id h15so2903608pli.8
+        for <io-uring@vger.kernel.org>; Sat, 23 Jan 2021 15:33:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cZSjZ1gWlL041uFW/1i9ltjoZrL1VhC51p2h42FCoWs=;
+        b=wqjRxvWDXSOXa4u0cPIKuxpGfZnfoQofsTeIqY3GBU3H20Ouu06BeGsM/cUKieNeg+
+         LmxH2PDFQ0RMulHva9w0puXRGhqdfiQbPMxDcAJcwT8xI4hn/LuKbj3nGY1OyBrT/och
+         H5vyKm1MOOKlNMexECHrbIyP8UwWKyR3Qd8gc9+4SRx3pWsajahJfFtCudvpdGbuOgAn
+         5VM7Amj/PB0dYZdOeq3YMz4sXMC4EGAVl5j3sU0NNHYS8VTW7nDBn1POObze1A2CYn5b
+         sHvOuOsslvu7UM4VQUJIIJIza2CHijCDSYZcpLwNtiQNapmf9898J/hcIGJ/iVvkNLAl
+         rtdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cZSjZ1gWlL041uFW/1i9ltjoZrL1VhC51p2h42FCoWs=;
+        b=Slf2yacm9nfXApgcZWu9YM/Vt00WMTFv01KM85Mj41Tv1hyHEGwOK8+HXxSU/SyS5D
+         wty4b3jYnOtCzRSYuKmplkEIDorrNDeNQ0/kdgYCTOGiBlSn+59i2T3gxZEiyu8JGRsS
+         dhRclPk9g0rdwyoCjABfPtzXA9fYE2tc5KDAETx+d02r5CRr05KAPw3gsnElZr9QBTj2
+         ZRHeAHFz1p+FNSPycxdeib2NXSZQRbm+GQ+2vZqUNgbNn6FPZMf5yyClPu1EYCOtQhHk
+         OOL7DoJcMyTgHA2UDx80isKjsSYEsx8SMtXTpNooHAOIhsjy02KF/wA7Pzm6uoEWVOhQ
+         J68Q==
+X-Gm-Message-State: AOAM531dnNFFuIE7kOLZwpyWj23ldauKrNnJHNKJEluwgqbF1e3gP+xS
+        IfKxjhFUmR2GeY+8R5Sq4EoNOQ==
+X-Google-Smtp-Source: ABdhPJwCuduVl6ChCtvQUWbdWIg0nuNpqd3VITA6h3x1iChRUwtmEe3RTcsP2YLvfEf1S86o06nw3A==
+X-Received: by 2002:a17:90a:5911:: with SMTP id k17mr13620918pji.152.1611444817711;
+        Sat, 23 Jan 2021 15:33:37 -0800 (PST)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id g22sm9010746pfu.200.2021.01.23.15.33.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Jan 2021 15:33:37 -0800 (PST)
 Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
-Message-ID: <20210123232754.GA308988@casper.infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Lennert Buytenhek <buytenh@wantstofly.org>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
 References: <20210123114152.GA120281@wantstofly.org>
+ <20210123232754.GA308988@casper.infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <39a9b1da-bbcc-daa0-12e9-3eb776658564@kernel.dk>
+Date:   Sat, 23 Jan 2021 16:33:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210123114152.GA120281@wantstofly.org>
+In-Reply-To: <20210123232754.GA308988@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Jan 23, 2021 at 01:41:52PM +0200, Lennert Buytenhek wrote:
-> IORING_OP_GETDENTS64 behaves like getdents64(2) and takes the same
+On 1/23/21 4:27 PM, Matthew Wilcox wrote:
+> On Sat, Jan 23, 2021 at 01:41:52PM +0200, Lennert Buytenhek wrote:
+>> IORING_OP_GETDENTS64 behaves like getdents64(2) and takes the same
+> 
+> Could we drop the '64'?  We don't, for example, have IOURING_OP_FADVISE64
+> even though that's the name of the syscall.
 
-Could we drop the '64'?  We don't, for example, have IOURING_OP_FADVISE64
-even though that's the name of the syscall.
+Agreed, only case we do mimic the names are for things like
+IORING_OP_OPENAT2 where it does carry meaning. For this one, it should
+just be IORING_OP_GETDENTS.
+
+-- 
+Jens Axboe
 

@@ -2,58 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6577730284F
-	for <lists+io-uring@lfdr.de>; Mon, 25 Jan 2021 17:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F6A1302869
+	for <lists+io-uring@lfdr.de>; Mon, 25 Jan 2021 18:07:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729505AbhAYQ5O (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 25 Jan 2021 11:57:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48568 "EHLO
+        id S1729157AbhAYRFS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 25 Jan 2021 12:05:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729369AbhAYQ5D (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jan 2021 11:57:03 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 519F6C0613D6
-        for <io-uring@vger.kernel.org>; Mon, 25 Jan 2021 08:56:20 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id j18so11688825wmi.3
-        for <io-uring@vger.kernel.org>; Mon, 25 Jan 2021 08:56:20 -0800 (PST)
+        with ESMTP id S1729891AbhAYRBc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jan 2021 12:01:32 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5211C061786
+        for <io-uring@vger.kernel.org>; Mon, 25 Jan 2021 09:00:22 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id q7so13566270wre.13
+        for <io-uring@vger.kernel.org>; Mon, 25 Jan 2021 09:00:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kOHOtM0pF7SjSUWGWK5iiNH6RGf2GWgJgztqqPClEFs=;
-        b=ALqkqKIgAcOa2oE1KrIOKny3esZ8v6M5rOOU/9aTDri2MqRGY2fDUxq3OMTG1hMSLD
-         pgBKq5Mp1dnSKqIVZCyrFHLc1kJ1LBUV7YXRm8GSd3qfblk3RQmRi4dO93832R5kBacE
-         OrYSE2JRtrDG44Iqtc67TuIO/AAaUKeNadjbAfYIn3y26dRfmHtyMxS47mw7VasggInc
-         kScb2Im6jeK/pUro3cLVoaVilWV14Fck3L3zhmolrLZ6hmjf3V0GJphR0nKMG79WptsM
-         v/ep2pOoWGOxElDXA1mgeLi6WjJ4Y3YbE6Hc9/AazEjbKswDcA4h6z4XRkOluXCBWKiV
-         46dQ==
+        bh=is52ncoUt00/0LlJ8Kgi3mx4aEE0Sg4AqOE7Mcu6Y2I=;
+        b=a0uXgRJiAjIgBe3cDJnpWBAn8foCGWiKRH3eQi1kjwnTdsyCQ49D0vuk2jo2Xzd5j+
+         yg06wQ+CSrEP19dypan34+uEmMhR0pABux0cj5twbW0ZjnfI0jZvZOHy2zqxWKHqwrlA
+         Xcc05ROZvVC6XggCb3Q5VwNmy0p3xTjVnch7+AkxrI7IKTq1k8QBitoeQpAFpF5T0OB4
+         nTY/BtevUlY7HP+h9/8XMjw0oEYz+/1kGT3rWijXDFUANpCqPtU8NSh0+jZI0hrVHFup
+         TVph61U8aleqlvZsB5LZFzDxRbLohB3Elq6oj+eeUJP29sWqKnoyNVWKSVzt4PRDE5Wz
+         K7vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=kOHOtM0pF7SjSUWGWK5iiNH6RGf2GWgJgztqqPClEFs=;
-        b=Br7EFd7kQZar3i0I631N6OO+co0fXMW2Ym83Ul7opCcAzqdALcUQlSF17RAH7+kzVr
-         IF/wIlTZQaWDLZLEdj3cf1oviJYlFuBGdXXKWXsU4OMQ3dtIcJzgc0EaujVxF3AG1hnv
-         gLkfXIrGM6SI61osJXgq+vJeiNStiGr1m0oN2kUGk1LbwxI7G2L1lbjwA3wVsBf1K4IY
-         BIyfnyPDE5W+V/VQmpbYFJNirYk9cmc1lwNFPwy5mM1MtdwHCIOA47CYGXRr5ElTMplX
-         2V90ftaq3jkQ4xRUSUEuGnBGqQmfzSuAu/gN9fDtg55Olvbco96znkPPh6qehcBDWjYp
-         Z8og==
-X-Gm-Message-State: AOAM5329i99KsP82fHlT5j2+np4WPx4FLqemx+tSJl4XILUFIgDhvFWM
-        H0DtJf8D2Pd29Lw/CyTajyO/UVRpHKyD+g==
-X-Google-Smtp-Source: ABdhPJxIU5Sl3eQcgOP+YxXumpoIlpWWnvZG2AUtRft9t96d5WAQ7P5ZZGqR1Z27V19nK2lkqboKog==
-X-Received: by 2002:a1c:7d0c:: with SMTP id y12mr993398wmc.184.1611593778883;
-        Mon, 25 Jan 2021 08:56:18 -0800 (PST)
+        bh=is52ncoUt00/0LlJ8Kgi3mx4aEE0Sg4AqOE7Mcu6Y2I=;
+        b=kEjutvHFlT4h5GPu2SeiHEDcBQdAYQsofzNubvIM3dRn5pJx1C4cWEck3RaX8X4t4r
+         bleZ3NNq0vjHEmEam0AKcKv10/Ps+XDNIhxnA/48PI90JN8VymPighCJMofXEWyKub19
+         usuXKLirPLUp2M3ba8/wVRNvFsRodb53WqCLcAXJh7Os994MRPZoOUdUGtqgm9vO5naZ
+         gYZVBrKoVSpwMl0dH5zqIbSDs5A1Wq2/wIdJcb82sxcxmihvsS224GGiUY3rs40wYZHr
+         tIO5ni1Xi6CrDFBjKnsKjDXcCDP0VmyJMcBWVU79XRwlp1p0EI7LIcI8cUrDZMqJCCUG
+         Db2A==
+X-Gm-Message-State: AOAM530mANdiuioLm/BiWFab4sxXmP0iSTThQhl/ijaRRVN955fbFTWV
+        mZqliR+D1LmEE8dOuHBsgfP99W7IZd77vg==
+X-Google-Smtp-Source: ABdhPJzrxtWPPIKfKZTlkR+OUsjq0PiymRt1Q0dsidKMX2Zf6hHSbvPMQdWYFWG6eFDseISwioq+5g==
+X-Received: by 2002:a5d:4b50:: with SMTP id w16mr2007669wrs.391.1611594021381;
+        Mon, 25 Jan 2021 09:00:21 -0800 (PST)
 Received: from [192.168.8.154] ([85.255.234.28])
-        by smtp.gmail.com with ESMTPSA id b7sm23260707wru.33.2021.01.25.08.56.17
+        by smtp.gmail.com with ESMTPSA id b18sm23803897wrm.57.2021.01.25.09.00.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 08:56:18 -0800 (PST)
+        Mon, 25 Jan 2021 09:00:20 -0800 (PST)
+Subject: Re: [PATCH 0/8] second part of 5.12 patches
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <cover.1611573970.git.asml.silence@gmail.com>
- <dc52b7b5761ad78f0883ec7ca433c0a8d7089285.1611573970.git.asml.silence@gmail.com>
- <d802eb6f-f491-d35c-f556-c7d0285c6974@kernel.dk>
- <86406a3b-7d8e-5521-f6b5-f3a940a0565d@gmail.com>
- <db57bed7-40ad-0251-941c-60ab6c872baa@kernel.dk>
+ <f10dc4a5-9b2c-da65-bb62-00352aff3926@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,57 +96,28 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 3/8] io_uring: don't keep submit_state on stack
-Message-ID: <8d4db99a-9086-ef20-ba94-11ae0cdaafb0@gmail.com>
-Date:   Mon, 25 Jan 2021 16:52:38 +0000
+Message-ID: <5b3cfdda-b16c-5dca-da9a-1c034571f91f@gmail.com>
+Date:   Mon, 25 Jan 2021 16:56:41 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <db57bed7-40ad-0251-941c-60ab6c872baa@kernel.dk>
+In-Reply-To: <f10dc4a5-9b2c-da65-bb62-00352aff3926@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 25/01/2021 16:31, Jens Axboe wrote:
-> On 1/25/21 9:25 AM, Pavel Begunkov wrote:
->> On 25/01/2021 16:00, Jens Axboe wrote:
->>> On 1/25/21 4:42 AM, Pavel Begunkov wrote:
->>>> struct io_submit_state is quite big (168 bytes) and going to grow. It's
->>>> better to not keep it on stack as it is now. Move it to context, it's
->>>> always protected by uring_lock, so it's fine to have only one instance
->>>> of it.
->>>
->>> I don't like this one. Unless you have plans to make it much bigger,
->>> I think it should stay on the stack. On the stack, the ownership is
->>> clear.
->>
->> Thinking of it, it's not needed for this series, just traversing a list
->> twice is not nice but bearable.
->>
->> For experiments I was using its persistency across syscalls + grew it
->> to 32 to match up completion flush (allocating still by 8) to add req
->> memory reuse, but that's out of scope of these patches.
->> I haven't got a strong opinion on that one yet, even though
->> alloc/dealloc are pretty heavy, this approach may loose allocation
->> locality. 
+On 25/01/2021 16:08, Jens Axboe wrote:
+> On 1/25/21 4:42 AM, Pavel Begunkov wrote:
 > 
-> Agree on all of that. Locality is important, but reuse usually gets
-> pretty useful as long as the total number (and life time) can be
-> managed.
+> Applied 1-2 for now. Maybe the context state is workable for the
+> state, if the numbers are looking this good. I'll try and run
+> it here too and see what I find.
 
-That all was about reqs completed inline, and for those it is pretty
-easy and without any extra synchronisation. Depending on QD/etc.
-it slashes 5-25% of overhead (~5-33% t-put boost), from what's left
-with this series.
-
-There are also other tricks extending it to async reqs, but that's
-rather for hi QD with plugging off and ultra-fast devices.
-
-Let's forget about these patches for now and I'll wrap experiments
-into a patchset sometime later.
+I believe I've seen it jumping from ~9.5M to 14M with turbo boost
+and not so strict environment, but this claim is not very reliable.
 
 -- 
 Pavel Begunkov

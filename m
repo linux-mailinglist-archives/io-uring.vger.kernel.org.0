@@ -2,93 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 427A2304A3C
-	for <lists+io-uring@lfdr.de>; Tue, 26 Jan 2021 21:39:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EF7D304A2B
+	for <lists+io-uring@lfdr.de>; Tue, 26 Jan 2021 21:37:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725961AbhAZFKO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Jan 2021 00:10:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727775AbhAYMKU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jan 2021 07:10:20 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 729A0C0611BD
-        for <io-uring@vger.kernel.org>; Mon, 25 Jan 2021 03:46:22 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id d16so11362958wro.11
-        for <io-uring@vger.kernel.org>; Mon, 25 Jan 2021 03:46:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=s9/qaY/Nb9LsSoZDXsPlKfu77GSe2ww9TcdetCVUIVU=;
-        b=MthzNxeOxJPbhkhgd2P/3tRUltfH7YktGqSFn1PocDCiSQKchO0/iwiAJiz45GRkEc
-         D5FFFhKio5RtwuWzqu+F53N7pRrzXM8I6vKj6MvhzqP9hK7573WL42Q4qJEwh40kVbUB
-         UGJ0yGmDMH+29guohWDQGIMHlFE3jtudfVY2cqqaKtk8mLOfVMTtEC1fI+2DhvZkmkI/
-         ksIgrxjvrMi1C3Obu+/UpVeOzziLQg8kqn1J5JijAjLOq5I6f1Iqqx/IaP57oWfq8ruv
-         xcERRSS9VNuI3m/uDeTJ4K8cJcdoXpRLMU3WDUXYs/AejRKJTeJpFj5d1RCTBxbVUzyO
-         019g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=s9/qaY/Nb9LsSoZDXsPlKfu77GSe2ww9TcdetCVUIVU=;
-        b=qR6mgEQmjYVl8H6+2Cmnnysdl2ruIz9jHC+gZZ3nXTS1rvj7ZEB8xWkr+YpIeILMSL
-         c2LRGhS16zuDReKQ96Tj2BFekorggCCUjNvUxbtv1SUfMRi59Nf/tA7a7zy9u8xtTp80
-         OScTXHS5m5xTvdhKbOzRscM7w+nujohXUPOYyo7FOf4o/N2krQHTDMUj9Tu8FfzcONLM
-         +oyhsfa8+yr34Aaw8rlRHpAQDbc9V0tdW37/uZwj6ZC1VMvYMfwSyeXs1lbajhVGoVI9
-         K1I+8cK9OPXgfYP1UnNZ/I56dJyI14mHq/3q93OUHDmrw50h1rBWwzO8APHuXiru4Ygm
-         4Yjw==
-X-Gm-Message-State: AOAM531kwxPAs0H84NkQ/zYYO7Z2S5lYZ28pfp58TyVeuiNUQ/K7nazc
-        GEVE6ZruB7UxaFOkUoc2Y/Y=
-X-Google-Smtp-Source: ABdhPJwhS3PPBqb01t7eT5LnG5X1CL00hcPor6Vxysv1kLfPnSz8okl6WWRlQDKowQqWgix57WGVwg==
-X-Received: by 2002:adf:ee0d:: with SMTP id y13mr512463wrn.228.1611575181249;
-        Mon, 25 Jan 2021 03:46:21 -0800 (PST)
-Received: from localhost.localdomain ([85.255.234.11])
-        by smtp.gmail.com with ESMTPSA id a6sm12571433wru.66.2021.01.25.03.46.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jan 2021 03:46:20 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 8/8] io_uring: keep interrupts on on submit completion
-Date:   Mon, 25 Jan 2021 11:42:27 +0000
-Message-Id: <1645f7f935aa833231ebaad974bc37890ad9a2e3.1611573970.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1611573970.git.asml.silence@gmail.com>
-References: <cover.1611573970.git.asml.silence@gmail.com>
+        id S1727156AbhAZFKZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Jan 2021 00:10:25 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:40002 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727870AbhAYMPk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jan 2021 07:15:40 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R711e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UMpeZ6G_1611576820;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UMpeZ6G_1611576820)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 25 Jan 2021 20:13:41 +0800
+From:   Jeffle Xu <jefflexu@linux.alibaba.com>
+To:     snitzer@redhat.com
+Cc:     joseph.qi@linux.alibaba.com, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org
+Subject: [PATCH v2 0/6] dm: support IO polling for bio-based dm device
+Date:   Mon, 25 Jan 2021 20:13:34 +0800
+Message-Id: <20210125121340.70459-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We don't call io_submit_flush_completions() in interrupt context, no
-need to use irq* versions of spinlock.
+Since currently we have no simple but efficient way to implement the
+bio-based IO polling in the split-bio tracking style, this patch set
+turns to the original implementation mechanism that iterates and
+polls all underlying hw queues in polling mode. One optimization is
+introduced to mitigate the race of one hw queue among multiple polling
+instances.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'm still open to the split bio tracking mechanism, if there's
+reasonable way to implement it.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7a720995e24f..d5baf7a0d4e7 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2291,13 +2291,13 @@ static void io_submit_flush_completions(struct io_comp_state *cs,
- 	struct req_batch rb;
- 
- 	io_init_req_batch(&rb);
--	spin_lock_irq(&ctx->completion_lock);
-+	spin_lock(&ctx->completion_lock);
- 	for (i = 0; i < nr; i++) {
- 		req = cs->reqs[i];
- 		__io_cqring_fill_event(req, req->result, req->compl.cflags);
- 	}
- 	io_commit_cqring(ctx);
--	spin_unlock_irq(&ctx->completion_lock);
-+	spin_unlock(&ctx->completion_lock);
- 
- 	io_cqring_ev_posted(ctx);
- 	for (i = 0; i < nr; i++) {
+
+[Performance Test]
+The performance is tested by fio (engine=io_uring) 4k randread on
+dm-linear device. The dm-linear device is built upon nvme devices,
+and every nvme device has one polling hw queue (nvme.poll_queues=1).
+
+Test Case		    | IOPS in IRQ mode | IOPS in polling mode | Diff
+			    | (hipri=0)	       | (hipri=1)	      |
+--------------------------- | ---------------- | -------------------- | ----
+3 target nvme, num_jobs = 1 | 198k 	       | 276k		      | ~40%
+3 target nvme, num_jobs = 3 | 608k 	       | 705k		      | ~16%
+6 target nvme, num_jobs = 6 | 1197k 	       | 1347k		      | ~13%
+3 target nvme, num_jobs = 6 | 1285k 	       | 1293k		      | ~0%
+
+As the number of polling instances (num_jobs) increases, the
+performance improvement decreases, though it's still positive
+compared to the IRQ mode.
+
+[Optimization]
+To mitigate the race when iterating all the underlying hw queues, one
+flag is maintained on a per-hw-queue basis. This flag is used to
+indicate whether this polling hw queue currently being polled on or
+not. Every polling hw queue is exclusive to one polling instance, i.e.,
+the polling instance will skip this polling hw queue if this hw queue
+currently is being polled by another polling instance, and start
+polling on the next hw queue.
+
+This per-hw-queue flag map is currently maintained in dm layer. In
+the table load phase, a table describing all underlying polling hw
+queues is built and stored in 'struct dm_table'. It is safe when
+reloading the mapping table.
+
+
+changes since v1:
+- patch 1,2,4 is the same as v1 and have already been reviewed
+- patch 3 is refactored a bit on the basis of suggestions from
+Mike Snitzer.
+- patch 5 is newly added and introduces one new queue flag
+representing if the queue is capable of IO polling. This mainly
+simplifies the logic in queue_poll_store().
+- patch 6 implements the core mechanism supporting IO polling.
+The sanity check checking if the dm device supports IO polling is
+also folded into this patch, and the queue flag will be cleared if
+it doesn't support, in case of table reloading.
+
+
+Jeffle Xu (6):
+  block: move definition of blk_qc_t to types.h
+  block: add queue_to_disk() to get gendisk from request_queue
+  block: add iopoll method to support bio-based IO polling
+  dm: always return BLK_QC_T_NONE for bio-based device
+  block: add QUEUE_FLAG_POLL_CAP flag
+  dm: support IO polling for bio-based dm device
+
+ block/blk-core.c             |  76 +++++++++++++++++++++
+ block/blk-mq.c               |  76 +++------------------
+ block/blk-sysfs.c            |   3 +-
+ drivers/md/dm-core.h         |  21 ++++++
+ drivers/md/dm-table.c        | 127 +++++++++++++++++++++++++++++++++++
+ drivers/md/dm.c              |  61 ++++++++++++-----
+ include/linux/blk-mq.h       |   3 +
+ include/linux/blk_types.h    |   2 +-
+ include/linux/blkdev.h       |   9 +++
+ include/linux/fs.h           |   2 +-
+ include/linux/types.h        |   3 +
+ include/trace/events/kyber.h |   6 +-
+ 12 files changed, 302 insertions(+), 87 deletions(-)
+
 -- 
-2.24.0
+2.27.0
 

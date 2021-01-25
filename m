@@ -2,87 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C26C6302867
-	for <lists+io-uring@lfdr.de>; Mon, 25 Jan 2021 18:05:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5456302E53
+	for <lists+io-uring@lfdr.de>; Mon, 25 Jan 2021 22:49:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbhAYRFB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 25 Jan 2021 12:05:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50286 "EHLO
+        id S1732831AbhAYVs6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 25 Jan 2021 16:48:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728589AbhAYRE4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jan 2021 12:04:56 -0500
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF92C06174A
-        for <io-uring@vger.kernel.org>; Mon, 25 Jan 2021 09:04:13 -0800 (PST)
-Received: by mail-pl1-x634.google.com with SMTP id q2so5257315plk.4
-        for <io-uring@vger.kernel.org>; Mon, 25 Jan 2021 09:04:13 -0800 (PST)
+        with ESMTP id S1732829AbhAYVia (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jan 2021 16:38:30 -0500
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E013C061788
+        for <io-uring@vger.kernel.org>; Mon, 25 Jan 2021 13:36:22 -0800 (PST)
+Received: by mail-pf1-x435.google.com with SMTP id q131so9153595pfq.10
+        for <io-uring@vger.kernel.org>; Mon, 25 Jan 2021 13:36:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=mPdMkRBLb/5dfEsFw461WVjsm7UMMnTc9u26CZ29Kjk=;
-        b=zatq4+uhFxhCg6jPKZ1FSpjrvv715beXtpmcSLom3j1szec3bFk8g2j4P1sWe8uw1e
-         mVljjUnloBgwo8rUgANXSy9MR/PUiZenoggEL3ScVKakNug0raRTJKgUHGiLn782EHkZ
-         ZEuMwQFcWEbJuDsf8PAQvtNfaF6PjJf9hE5sq5NBrPdZuGjItWHXH5wu9eYsVKGGkJ0O
-         VwFXHZkX7q/zh+F77aGAQ9x5CB2SXrhbjd/yRHEM3q74KqMKL7blsw6tDts/0Pgx8fda
-         tJ9OKpq1DzXScMu85iqG4khuj0ehgDllXj2w7w9bJ0aJkfJCWXR6bV6Jr+lexw2aGFEj
-         z1Hw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vbflCwsTzdwckYq+nt69B7PshniTZLSQZH2EgtCpbjY=;
+        b=MisYfjeV1+yJJ3EyNZVbYKhxvcL1wdfp1GqYzgg9aS0kBU94oBe/N6zUSbMWDLG830
+         YkS4v+Hst0dNPffxnmExEbjnK45EgbnlofP9DWgU9FUMyW7mg7h8fvOUG7UPxTS7Wgbt
+         gTyEQcQLXFphymi9GsX8nBAPRJ5l1X40+e5JdBLk7YkXcbswQjYIckZtHxkDbKKnEtNZ
+         ynMGBjJtS2gGBxzv7q7q2G4T8oTW0b5iadd7f77fpVH9Xgyrzo0SciZMPTIwdKPhETJ5
+         xjJ4T2hW2j/jbGFHJGfWlsK3nguhKrfxqsgWC7zzs4RiYUHpy67GR/d4cdpgkewwejQA
+         +nMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=mPdMkRBLb/5dfEsFw461WVjsm7UMMnTc9u26CZ29Kjk=;
-        b=ZH493M5f7O22Sd2YpoIEKIpBSVaI9VGPgfVl4QrucHhedAhSfmX20bDXCTP2Qayb/Q
-         /t9icRg1Wz/cnpvNlGM2H2Gp7HazWT2dUzKXX6vvcdfk6E4enDNJ5riw0QwKOEdi7LPe
-         uZofb7k79D5a4etsgkaaTbVSgWi5ZVWpmHh35BkeultUl3Ma0Hl7rd2SG/Kvh+KbBhhn
-         AjKGl7UinvDDMjGbGuutOzp+m6759LPBlfeytuIOZjBD8cpejzSpJh56cSfOiNXcmmND
-         wWMctTxD2Sr7NRZ9bsMBCtn1hDfwv9lQ9oFM06miUjZO3ZKJvHoGQlfQQjy7KMgNeKlT
-         QJsw==
-X-Gm-Message-State: AOAM531vF4RtoZ9AyqbKeRxzQsizjaNjjGYW4ZlTTeNWP3ZcKAfHyLrH
-        xdoNRP78SvnHrXva7aSgH24vMEY+fQPiWQ==
-X-Google-Smtp-Source: ABdhPJx6i1m7nMpgtCXpzgoWXOlQaER1bh0HQty5EUwj5tqRrfuf1MgR0SHXqEyl9k5DUuFRHgY/EA==
-X-Received: by 2002:a17:90a:ae12:: with SMTP id t18mr1225396pjq.92.1611594252707;
-        Mon, 25 Jan 2021 09:04:12 -0800 (PST)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id gl6sm19386787pjb.3.2021.01.25.09.04.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 09:04:11 -0800 (PST)
-Subject: Re: [PATCH 0/8] second part of 5.12 patches
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1611573970.git.asml.silence@gmail.com>
- <f10dc4a5-9b2c-da65-bb62-00352aff3926@kernel.dk>
- <5b3cfdda-b16c-5dca-da9a-1c034571f91f@gmail.com>
+        bh=vbflCwsTzdwckYq+nt69B7PshniTZLSQZH2EgtCpbjY=;
+        b=G9WrIZzChqbTcjiYqJ+NcYPLYZuYILg7l8IH3VjH8dZmN4JarjS3BA9qq9oi4xg89q
+         XfL5N23Ogu3xEJm485J5JdThKc0f8+peCRQlIWKqnXdUT4GZ2wKkjU3Hvn7PlqwJghZr
+         GVmttuwvKFOFCas73FnGeQWQ2A78eyUgoGklaQN7up4eh+HhkPUtSH5mBmLzyiVZUY71
+         rZ2tvJ5ORNkuh24Alaxq1pIHjN6or/drk6I/QpeQqnLCTz7L7Tv582pOjGYuaOphBnr1
+         tvsuQ3r07/auey0F3cecek4DkotMoSJbSG6MC0wuuIysxQRVv9B+Z50khM1RV3iHrcAw
+         qYYg==
+X-Gm-Message-State: AOAM5307pQEVz9vmeMsIqXFU8oSfFwHCKmd7KI1S6FoyCPp4Zb4rFGZn
+        JB+1ieHjERvVQXThusTvllvNow==
+X-Google-Smtp-Source: ABdhPJyi3f44AaldZMWwmJEJwDD7SHMh1XbqHzmCX87Sv4/Q9ziBfSw/HSo3aH7WyjHYY/jwk5ojGw==
+X-Received: by 2002:a62:7e46:0:b029:19e:786b:9615 with SMTP id z67-20020a627e460000b029019e786b9615mr2274628pfc.37.1611610581555;
+        Mon, 25 Jan 2021 13:36:21 -0800 (PST)
+Received: from localhost.localdomain (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id i3sm9638913pfq.194.2021.01.25.13.36.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Jan 2021 13:36:21 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <add73cdc-34f2-b5cb-2e64-ad48808e170b@kernel.dk>
-Date:   Mon, 25 Jan 2021 10:04:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Subject: [PATCHSET RFC] support RESOLVE_CACHED for statx
+Date:   Mon, 25 Jan 2021 14:36:11 -0700
+Message-Id: <20210125213614.24001-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-In-Reply-To: <5b3cfdda-b16c-5dca-da9a-1c034571f91f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/25/21 9:56 AM, Pavel Begunkov wrote:
-> On 25/01/2021 16:08, Jens Axboe wrote:
->> On 1/25/21 4:42 AM, Pavel Begunkov wrote:
->>
->> Applied 1-2 for now. Maybe the context state is workable for the
->> state, if the numbers are looking this good. I'll try and run
->> it here too and see what I find.
-> 
-> I believe I've seen it jumping from ~9.5M to 14M with turbo boost
-> and not so strict environment, but this claim is not very reliable.
+Hi,
 
-Would be nice to see some numbers using eg a network echo bench,
-or storage that actually does IO. Even null_blk is better than just
-a nop benchmark, even if that one is nice to use as well. But better
-as a complement than the main thing.
+This is a followup to the RESOLVE_CACHED addition that allows us to
+speedup the io_uring open side (and enable RESOLVE_CACHED through
+openat2). Mostly straight forward, as you can see from patch 1, this
+just adds AT_STATX_CACHED that sits on top of that. Patch 2 is the
+mostly ugly part, but not sure how we can do this any better - we need
+to ensure that any sort of revalidation or sync in ->getattr() honors
+it too. Patch 3 is just adapting to this in io_uring.
+
+ fs/9p/vfs_inode.c          |  2 ++
+ fs/afs/inode.c             |  3 +++
+ fs/ceph/inode.c            |  2 ++
+ fs/cifs/inode.c            |  3 +++
+ fs/coda/inode.c            |  7 ++++++-
+ fs/ecryptfs/inode.c        |  3 +++
+ fs/fuse/dir.c              |  2 ++
+ fs/gfs2/inode.c            |  2 ++
+ fs/io_uring.c              | 21 ++++++++++++++-------
+ fs/kernfs/inode.c          |  8 +++++++-
+ fs/nfs/inode.c             |  3 +++
+ fs/ocfs2/file.c            |  3 +++
+ fs/orangefs/inode.c        |  3 +++
+ fs/stat.c                  |  4 +++-
+ fs/ubifs/dir.c             |  7 ++++++-
+ fs/udf/symlink.c           |  3 +++
+ fs/vboxsf/utils.c          |  4 ++++
+ include/uapi/linux/fcntl.h |  2 ++
+ 18 files changed, 71 insertions(+), 11 deletions(-)
 
 -- 
 Jens Axboe
+
 

@@ -2,123 +2,167 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15831302160
-	for <lists+io-uring@lfdr.de>; Mon, 25 Jan 2021 05:50:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C611302275
+	for <lists+io-uring@lfdr.de>; Mon, 25 Jan 2021 08:36:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbhAYEu4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 24 Jan 2021 23:50:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33364 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbhAYEuz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 24 Jan 2021 23:50:55 -0500
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D22F2C061573
-        for <io-uring@vger.kernel.org>; Sun, 24 Jan 2021 20:50:14 -0800 (PST)
-Received: by mail-pg1-x52b.google.com with SMTP id i5so8120883pgo.1
-        for <io-uring@vger.kernel.org>; Sun, 24 Jan 2021 20:50:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=u+ozg2KNyU2Bm32ky51PUNf99PBhAFafw9fJm016lpQ=;
-        b=w7JFHynqUEYwILbOXyZ1g7pFzqM34cqMEEz1jR3z2HDMfmhs7+bJC/I5Ag/oGdpcTx
-         Elu3l9XhMxbt7p9thl2IFTl5iZDEMXk266d1suTaFbYNOroGpYs1mNYHQEAEzMrdODOJ
-         LWs8lK8qjO6PtsFLyzuxViLw7ZPp/t8qloDo5WRbmiZOk3ivIrbwvc75FFJPuzmxP6cE
-         FWbkn1U/3DZEHehd7pbWEt3eSQ8UvKuskIBKS475ew5SKHxNq1shrlZhl07LjnAHmV2Z
-         24XH9XKxPPZoWE6sR1gQX4vT1DRRSID34sUVGpKsezvhd657KL8X5X5qzY6rDJrZM6xc
-         K9pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=u+ozg2KNyU2Bm32ky51PUNf99PBhAFafw9fJm016lpQ=;
-        b=b8LVikjavevhyJj1VuiHGH7xoLhTJUhXCLikGeo73hoZLnY0lfSC3evNGMRGcxReU4
-         ZXnyzmHLOp52NOB2utXGcKr4hF7NH4wXrUEWmAT4KO2kYzjyyXfbCRA3GMXoWOw1utiY
-         6PVDK80rNdHMpLVSibfuc53QmuWAklrergFDJIaXr9pU0DF6N75uBS/3DmwgreMAuIaH
-         ruMBLWvtDqAGpyqqQcPy37SpFfgiaHVFNw1xKapibHg3UnswMBojkzQRMUBV2v20LY6I
-         m2o06Ctp0BeG2mm11PjgfjINiVlRCein5MdVYg3Dl3/UFULZx2/Gh1CfPgXfjin2mO+/
-         Q4dQ==
-X-Gm-Message-State: AOAM5302sNgg4pvaWSaQuhIUq+GKHXOGqLcJE4XwWOPWytKIW/SeOO0h
-        Di7rRf27rwtVgN9cqtzV8ULOv2RxgaCG5Q==
-X-Google-Smtp-Source: ABdhPJyz6uJnLtKZqgsJFQxBldTHQGQrfaErNGiNjqgmzMwVjp/OkRgJdkRgfgZlLj1f/XQtHGtfLA==
-X-Received: by 2002:a63:a12:: with SMTP id 18mr34793pgk.140.1611550214067;
-        Sun, 24 Jan 2021 20:50:14 -0800 (PST)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id d10sm14823647pfn.218.2021.01.24.20.50.07
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Jan 2021 20:50:13 -0800 (PST)
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: only call io_cqring_ev_posted() if events were
- posted
-Message-ID: <84f8db0a-0e90-9ca8-1834-e3c805ebb98c@kernel.dk>
-Date:   Sun, 24 Jan 2021 21:50:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727120AbhAYHfJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 25 Jan 2021 02:35:09 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:41129 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727185AbhAYHac (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jan 2021 02:30:32 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R521e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UMmqIr4_1611559732;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UMmqIr4_1611559732)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 25 Jan 2021 15:28:52 +0800
+Subject: Re: [PATCH] io_uring: don't recursively hold ctx->uring_lock in
+ io_wq_submit_work()
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1611394824-73078-1-git-send-email-haoxu@linux.alibaba.com>
+ <45a0221a-bd2b-7183-e35d-2d2550f687b5@kernel.dk>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <edf11ce1-9523-8993-3caf-27b321477037@linux.alibaba.com>
+Date:   Mon, 25 Jan 2021 15:28:52 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <45a0221a-bd2b-7183-e35d-2d2550f687b5@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This normally doesn't cause any extra harm, but it does mean that we'll
-increment the eventfd notification count, if one has been registered
-with the ring. This can confuse applications, when they see more
-notifications on the eventfd side than are available in the ring.
+在 2021/1/25 下午12:31, Jens Axboe 写道:
+> On 1/23/21 2:40 AM, Hao Xu wrote:
+>> Abaci reported the following warning:
+>>
+>> [   97.862205] ============================================
+>> [   97.863400] WARNING: possible recursive locking detected
+>> [   97.864640] 5.11.0-rc4+ #12 Not tainted
+>> [   97.865537] --------------------------------------------
+>> [   97.866748] a.out/2890 is trying to acquire lock:
+>> [   97.867829] ffff8881046763e8 (&ctx->uring_lock){+.+.}-{3:3}, at:
+>> io_wq_submit_work+0x155/0x240
+>> [   97.869735]
+>> [   97.869735] but task is already holding lock:
+>> [   97.871033] ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
+>> __x64_sys_io_uring_enter+0x3f0/0x5b0
+>> [   97.873074]
+>> [   97.873074] other info that might help us debug this:
+>> [   97.874520]  Possible unsafe locking scenario:
+>> [   97.874520]
+>> [   97.875845]        CPU0
+>> [   97.876440]        ----
+>> [   97.877048]   lock(&ctx->uring_lock);
+>> [   97.877961]   lock(&ctx->uring_lock);
+>> [   97.878881]
+>> [   97.878881]  *** DEADLOCK ***
+>> [   97.878881]
+>> [   97.880341]  May be due to missing lock nesting notation
+>> [   97.880341]
+>> [   97.881952] 1 lock held by a.out/2890:
+>> [   97.882873]  #0: ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
+>> __x64_sys_io_uring_enter+0x3f0/0x5b0
+>> [   97.885108]
+>> [   97.885108] stack backtrace:
+>> [   97.886209] CPU: 0 PID: 2890 Comm: a.out Not tainted 5.11.0-rc4+ #12
+>> [   97.887683] Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS
+>> rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+>> [   97.890457] Call Trace:
+>> [   97.891121]  dump_stack+0xac/0xe3
+>> [   97.891972]  __lock_acquire+0xab6/0x13a0
+>> [   97.892940]  lock_acquire+0x2c3/0x390
+>> [   97.893853]  ? io_wq_submit_work+0x155/0x240
+>> [   97.894894]  __mutex_lock+0xae/0x9f0
+>> [   97.895785]  ? io_wq_submit_work+0x155/0x240
+>> [   97.896816]  ? __lock_acquire+0x782/0x13a0
+>> [   97.897817]  ? io_wq_submit_work+0x155/0x240
+>> [   97.898867]  ? io_wq_submit_work+0x155/0x240
+>> [   97.899916]  ? _raw_spin_unlock_irqrestore+0x2d/0x40
+>> [   97.901101]  io_wq_submit_work+0x155/0x240
+>> [   97.902112]  io_wq_cancel_cb+0x162/0x490
+>> [   97.903084]  ? io_uring_get_socket+0x40/0x40
+>> [   97.904126]  io_async_find_and_cancel+0x3b/0x140
+>> [   97.905247]  io_issue_sqe+0x86d/0x13e0
+>> [   97.906186]  ? __lock_acquire+0x782/0x13a0
+>> [   97.907195]  ? __io_queue_sqe+0x10b/0x550
+>> [   97.908175]  ? lock_acquire+0x2c3/0x390
+>> [   97.909122]  __io_queue_sqe+0x10b/0x550
+>> [   97.910080]  ? io_req_prep+0xd8/0x1090
+>> [   97.911044]  ? mark_held_locks+0x5a/0x80
+>> [   97.912042]  ? mark_held_locks+0x5a/0x80
+>> [   97.913014]  ? io_queue_sqe+0x235/0x470
+>> [   97.913971]  io_queue_sqe+0x235/0x470
+>> [   97.914894]  io_submit_sqes+0xcce/0xf10
+>> [   97.915842]  ? xa_store+0x3b/0x50
+>> [   97.916683]  ? __x64_sys_io_uring_enter+0x3f0/0x5b0
+>> [   97.917872]  __x64_sys_io_uring_enter+0x3fb/0x5b0
+>> [   97.918995]  ? lockdep_hardirqs_on_prepare+0xde/0x180
+>> [   97.920204]  ? syscall_enter_from_user_mode+0x26/0x70
+>> [   97.921424]  do_syscall_64+0x2d/0x40
+>> [   97.922329]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [   97.923538] RIP: 0033:0x7f0b62601239
+>> [   97.924437] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00
+>> 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f
+>>     05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 ec 2c 00 f7 d8 64 89 01
+>>        48
+>> [   97.928628] RSP: 002b:00007f0b62cc4d28 EFLAGS: 00000246 ORIG_RAX:
+>> 00000000000001aa
+>> [   97.930422] RAX: ffffffffffffffda RBX: 0000000000000000 RCX:
+>> 00007f0b62601239
+>> [   97.932073] RDX: 0000000000000000 RSI: 0000000000006cf6 RDI:
+>> 0000000000000005
+>> [   97.933710] RBP: 00007f0b62cc4e20 R08: 0000000000000000 R09:
+>> 0000000000000000
+>> [   97.935369] R10: 0000000000000000 R11: 0000000000000246 R12:
+>> 0000000000000000
+>> [   97.937008] R13: 0000000000021000 R14: 0000000000000000 R15:
+>> 00007f0b62cc5700
+>>
+>> This is caused by try to hold uring_lock in io_wq_submit_work() without
+>> checking if we are in io-wq thread context or not. It can be in original
+>> context when io_wq_submit_work() is called from IORING_OP_ASYNC_CANCEL
+>> code path, where we already held uring_lock.
+> 
+> Looks like another fallout of the split CLOSE handling. I've got the
+> right fixes pending for 5.12:
+> 
+> https://git.kernel.dk/cgit/linux-block/commit/?h=for-5.12/io_uring&id=6bb0079ef3420041886afe1bcd8e7a87e08992e1
+> 
+> (and the prep patch before that in the tree). But that won't really
+> help us for 5.11 and earlier, though we probably should just queue
+> those two patches for 5.11 and get them into stable. I really don't
+> like the below patch, though it should fix it. But the root cause
+> is really the weird open cancelation...
+> 
+Hi Jens,
+Thank you for the reference, I've got it. Allow me to ask one
+question, I doubt this warning may be triggered as well by:
 
-Do the nice thing and only increment this count, if we actually posted
-(or even overflowed) events.
+   static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
+   {
+           struct io_wqe_acct *acct = io_work_get_acct(wqe, work);
+           int work_flags;
+           unsigned long flags;
 
-Reported-and-tested-by: Dan Melnic <dmm@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+           /*
+           ¦* Do early check to see if we need a new unbound worker, and 
+if we do,
+           ¦* if we're allowed to do so. This isn't 100% accurate as 
+there's a
+           ¦* gap between this check and incrementing the value, but 
+that's OK.
+           ¦* It's close enough to not be an issue, fork() has the same 
+delay.
+           ¦*/
+           if (unlikely(!io_wq_can_queue(wqe, acct, work))) {
+                   io_run_cancel(work, wqe); // here
+                   return;
+           }
 
----
+But I'm not sure.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 695fe00bafdc..2166c469789d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1779,12 +1779,13 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
- 	struct io_kiocb *req, *tmp;
- 	struct io_uring_cqe *cqe;
- 	unsigned long flags;
--	bool all_flushed;
-+	bool all_flushed, posted;
- 	LIST_HEAD(list);
- 
- 	if (!force && __io_cqring_events(ctx) == rings->cq_ring_entries)
- 		return false;
- 
-+	posted = false;
- 	spin_lock_irqsave(&ctx->completion_lock, flags);
- 	list_for_each_entry_safe(req, tmp, &ctx->cq_overflow_list, compl.list) {
- 		if (!io_match_task(req, tsk, files))
-@@ -1804,6 +1805,7 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
- 			WRITE_ONCE(ctx->rings->cq_overflow,
- 				   ctx->cached_cq_overflow);
- 		}
-+		posted = true;
- 	}
- 
- 	all_flushed = list_empty(&ctx->cq_overflow_list);
-@@ -1813,9 +1815,11 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
- 		ctx->rings->sq_flags &= ~IORING_SQ_CQ_OVERFLOW;
- 	}
- 
--	io_commit_cqring(ctx);
-+	if (posted)
-+		io_commit_cqring(ctx);
- 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
--	io_cqring_ev_posted(ctx);
-+	if (posted)
-+		io_cqring_ev_posted(ctx);
- 
- 	while (!list_empty(&list)) {
- 		req = list_first_entry(&list, struct io_kiocb, compl.list);
-
--- 
-Jens Axboe
-
+Thanks,
+Hao

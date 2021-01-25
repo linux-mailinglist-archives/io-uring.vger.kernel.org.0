@@ -2,69 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8957301F35
-	for <lists+io-uring@lfdr.de>; Sun, 24 Jan 2021 23:24:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2AED302038
+	for <lists+io-uring@lfdr.de>; Mon, 25 Jan 2021 03:17:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbhAXWXS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Sun, 24 Jan 2021 17:23:18 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:42571 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726103AbhAXWXR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 24 Jan 2021 17:23:17 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-221-V_JHwXlIPZiqhlLQqW69Yw-1; Sun, 24 Jan 2021 22:21:37 +0000
-X-MC-Unique: V_JHwXlIPZiqhlLQqW69Yw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Sun, 24 Jan 2021 22:21:38 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Sun, 24 Jan 2021 22:21:38 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Lennert Buytenhek' <buytenh@wantstofly.org>,
-        Jens Axboe <axboe@kernel.dk>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: RE: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
-Thread-Topic: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
-Thread-Index: AQHW8X6IGyYpVbXZsUSWaK/6c3T86ao3WrlQ
-Date:   Sun, 24 Jan 2021 22:21:38 +0000
-Message-ID: <a99467bab6d64a7f9057181d979ec563@AcuMS.aculab.com>
-References: <20210123114152.GA120281@wantstofly.org>
-In-Reply-To: <20210123114152.GA120281@wantstofly.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1726997AbhAYCQ7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 24 Jan 2021 21:16:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56716 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726705AbhAYCP2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 24 Jan 2021 21:15:28 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56923C061573
+        for <io-uring@vger.kernel.org>; Sun, 24 Jan 2021 18:14:47 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id kx7so7425328pjb.2
+        for <io-uring@vger.kernel.org>; Sun, 24 Jan 2021 18:14:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=3GdZzw46kNdjktXMP42s3j55+/TA3B0c+2ZwbJSawas=;
+        b=JyVYmSSPN0cZDY5AylWrIvQSPCCUmhWXtxunZxQGRqr/523/qlsxRdkPmw6sitfO3R
+         8NkM7gCzgT7EBenXgB3N9UKG1EfgcuqtOCCpCKrX0BmAOUe6ENEmlHgRbebfSMqcaEz9
+         5i5ETIDv3Cq1xYLpX1eAh9i0kDqOts38BdVQkZo7PHGjFQFA2vD5ck9tr+dUlF4QAQt1
+         VCR61LTZmwSAt6fZy+dPQTpW36bn3NWeWoU4BkGBQLPypI0WdXOnIIcW1jaCYsC0UIiX
+         Hr6oUKCLt4zCWDgN39dDJ3yKIEzNzePN6cj/X5Rc4yFlgHsFY/GnEq/lIzD7PjMO/X0F
+         BI2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3GdZzw46kNdjktXMP42s3j55+/TA3B0c+2ZwbJSawas=;
+        b=ppWgIjGeeTjiVft6EqjrG/1keOGyOkerBcoq3H0NAtOzqYJWAt/oFTTyckpAiTwe6W
+         MAL14FUUN+dFW1011qIvQoob0SDYA/GbeO4ZYM1JUJ5yJ0H6rsFh/RTcMXgmmo7MAjB/
+         BETYMK55sEKqjMPeBwDXcPCT55OrldOrwZiXZ5fXJ/T2RJzzjGGaTjaAm+OIq6zW5ijI
+         ujBiMI8IowiFXj+2oi6j3EQ3Qxy7RfKj7jNPsnig+AZPUi4N8cGc80RJMSXQz4R3YRo/
+         0nGT8pePZs0t4FD8cEgpzlEXFv3qYIaq06xmzvFON2dVb3+obdxN7cNNuRzgBE1BCQQc
+         97pg==
+X-Gm-Message-State: AOAM530grg1cnjL6kTl+7Fjycx/Uhv1Bzdn0fCpRcCbshmJHxkIwr3uI
+        ILtZki7JNbeMf8/AZQ796oej6qid6oo=
+X-Google-Smtp-Source: ABdhPJzvy8LOduUZPVQL2cyMCdWQtYGPJNC7lwofLLm8u1+hHD6btRyzw3PIJq2jUdqvWjpc2kw8sA==
+X-Received: by 2002:a17:902:854b:b029:db:c725:edcd with SMTP id d11-20020a170902854bb02900dbc725edcdmr17585937plo.64.1611540886522;
+        Sun, 24 Jan 2021 18:14:46 -0800 (PST)
+Received: from B-D1K7ML85-0059.local ([47.89.83.84])
+        by smtp.gmail.com with ESMTPSA id bj18sm16210774pjb.40.2021.01.24.18.14.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Jan 2021 18:14:45 -0800 (PST)
+Subject: Re: [PATCH 0/3] files cancellation cleanup
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1611109718.git.asml.silence@gmail.com>
+ <246d838d-0fce-d3c3-dcfc-9cbf9fa72de1@gmail.com>
+ <55e5491c-73c3-8d13-e3d1-056a2506f285@gmail.com>
+From:   Joseph Qi <jiangqi903@gmail.com>
+Message-ID: <4ddd9aa4-bbdd-9730-f1b9-7a26ccaaf842@gmail.com>
+Date:   Mon, 25 Jan 2021 10:14:42 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+In-Reply-To: <55e5491c-73c3-8d13-e3d1-056a2506f285@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> One open question is whether IORING_OP_GETDENTS64 should be more like
-> pread(2) and allow passing in a starting offset to read from the
-> directory from.  (This would require some more surgery in fs/readdir.c.)
 
-Since directories are seekable this ought to work.
-Modulo horrid issues with 32bit file offsets.
 
-You'd need to return the final offset to allow another
-read to continue from the end position.
+On 1/23/21 5:49 AM, Pavel Begunkov wrote:
+> On 22/01/2021 09:45, Joseph Qi wrote:
+>> Seems this series can also resolve a possible deadlock case I'm looking
+>> into.
+> 
+> It removes dead code, I believe your issue is solved by
+> ("io_uring: get rid of intermediate IORING_OP_CLOSE stage")
+> https://git.kernel.dk/cgit/linux-block/commit/?h=for-5.12/io_uring&id=7be8ba3b656cb4e0158b2c859b949f34a96aa94f
+> 
+I've tested the above commit and the mentioned possible deadlock still
+exists.
 
-	David
+> Did you try this series in particular, or tested for-5.12/io_uring
+> and see that the issue is gone there?
+> 
+I don't have this tree locally and it takes too long to clone it down.
+Will check once it is ready.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Thanks,
+Joseph
 
+>> CPU0:
+>> ...
+>> io_kill_linked_timeout  // &ctx->completion_lock
+>> io_commit_cqring
+>> __io_queue_deferred
+>> __io_queue_async_work
+>> io_wq_enqueue
+>> io_wqe_enqueue  // &wqe->lock
+>>
+>> CPU1:
+>> ...
+>> __io_uring_files_cancel
+>> io_wq_cancel_cb
+>> io_wqe_cancel_pending_work  // &wqe->lock
+>> io_cancel_task_cb  // &ctx->completion_lock
+>>

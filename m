@@ -2,119 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E71303680
-	for <lists+io-uring@lfdr.de>; Tue, 26 Jan 2021 07:27:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9433E303CC4
+	for <lists+io-uring@lfdr.de>; Tue, 26 Jan 2021 13:19:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbhAZGZy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Jan 2021 01:25:54 -0500
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:34607 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730212AbhAZGTK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 01:19:10 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UMxNT9z_1611641905;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UMxNT9z_1611641905)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 26 Jan 2021 14:18:25 +0800
-Subject: Re: [PATCH liburing] test: use a map to define test files / devices
- we need
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1607430489-10020-1-git-send-email-haoxu@linux.alibaba.com>
- <12018281-f8d4-7a67-3ffc-49d6a1c721b8@linux.alibaba.com>
- <87b3001f-0984-3890-269b-1a069704e374@linux.alibaba.com>
-Message-ID: <81cf9b02-a6e6-6b9e-3053-a5a34d3cffb6@linux.alibaba.com>
-Date:   Tue, 26 Jan 2021 14:18:25 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.6.1
+        id S2392152AbhAZMSj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Jan 2021 07:18:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44812 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392027AbhAZMS3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 07:18:29 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D8D0C0617A7
+        for <io-uring@vger.kernel.org>; Tue, 26 Jan 2021 04:17:49 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id kg20so22169228ejc.4
+        for <io-uring@vger.kernel.org>; Tue, 26 Jan 2021 04:17:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vdA+f4Vi7nnzXSSuSNNSQOjZQoPh/oDpnlyLCKUQZpg=;
+        b=t63x+JASnuuakMHFJ0UM6OJ+pejScGL9MJFYFKp33Qp3wKt3FsSjrEOVnsIW0tHa9O
+         s6wNuEpguaRsKRdvmw0YUG46YW4JkUd6No2GtUt+QRuvvvhjfcFzw/1i+9gISF86s6+I
+         fFv6xZfRMV8a+5lgI/7S8wK6BS1CXxX1hdArTRwb7I7U0uaA2gf4Sih6YjNzeEs9NPX8
+         Is+b8Qs2RCtA1sHmoeAEcFF738TVp6eUxs8OF3qWqtJd2GbrKQo/kiERHRFrffgUYkl5
+         PlGdk2chCq8MgcLG9YZqQxGpD9WRqGjizosFsArTIJKPaM6EYvrmvQKxAJsRosXoeBgu
+         fG/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vdA+f4Vi7nnzXSSuSNNSQOjZQoPh/oDpnlyLCKUQZpg=;
+        b=n7DdVBHFIxp1pWRnR4kvzSeE5SG8gESTkhhbAUqMehRwo7YNgGZVCcDnxYpLnNu86m
+         pITB0QunN9ipzmsjkh4qXhX0e+rljjRyGMZ1N0h7R7gVAaEK0FFmtMtT3cBO20HV32iO
+         8QEqfwpWSEBcG8+z2RQerWRjYb3p6RgixU8FJQIALWaNh2VIcKKHHyeo5faywEUXq/xL
+         v26LHgeXEJuF369zB4KZpB9LGlOaaTyIhvwA4Fe3qZh7N6SqeeV9/eS3VWCKqv5//pVo
+         zcOZtF+GAmSlimXJ7ZWahb7WG8QxPJ5B1tQ8IP1xJqj8O4LRtg+skqcP5v4r7kM/IOug
+         X73Q==
+X-Gm-Message-State: AOAM532CTjcPO2fvCD0RXWfeAs30rGc6aQPR7VaAObelR1sLifUsWdB4
+        G157oRzVm2DlsIlOJkGLhTzjg+NAU2E3jw==
+X-Google-Smtp-Source: ABdhPJzKrsRm5/GfpiEtWJJgzrWEZSJ53suveZ2RQ9Yf6186lsu5Q0pmylomrvJbBWgystPrBs2WPg==
+X-Received: by 2002:a17:906:3b4a:: with SMTP id h10mr3241663ejf.423.1611663468022;
+        Tue, 26 Jan 2021 04:17:48 -0800 (PST)
+Received: from localhost.localdomain ([148.252.129.161])
+        by smtp.gmail.com with ESMTPSA id o17sm12258203edr.17.2021.01.26.04.17.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jan 2021 04:17:47 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 1/1] io_uring: cleanup files_update looping
+Date:   Tue, 26 Jan 2021 12:14:01 +0000
+Message-Id: <36db2a597f591671257ef4c1f59b74c0b4c6bd6d.1611663156.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <87b3001f-0984-3890-269b-1a069704e374@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2020/12/22 上午11:03, Hao Xu 写道:
-> 在 2020/12/15 上午10:44, Hao Xu 写道:
->> 在 2020/12/8 下午8:28, Hao Xu 写道:
->> ping...
-> Hi Jens,
-> I'm currently develop a test which need a device arg, so I
-> leverage TEST_FILES, I found it may be better to form
-> TEST_FILES as a key-value structure.
-> Thanks && Regards,
-> Hao
-ping again..
->>> Different tests need different files / devices, use a map to indicate
->>> what each test need.
->>>
->>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->>> ---
->>>
->>> the former implementation use a array for the global list TEST_FILES,
->>> which may causes this:
->>>     TEST_FILES="dev0 dev1"
->>>     dev0 required by test0
->>>     dev1 required by test1
->>> In the <for tst in $TESTS> loop, we run the test for each $dev, which
->>> makes <test0 dev1> and <test1 dev0> run, these are not expected.
->>> Currently I see that statx.c accept argv[1] as a file_name, if someone
->>> writes another test which defines a device(say nvme0n1) in TEST_FILES,
->>> it may cause issues.
->>>
->>>   test/config      |  2 +-
->>>   test/runtests.sh | 13 ++++++-------
->>>   2 files changed, 7 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/test/config b/test/config
->>> index cab270359155..1bd9b40207bb 100644
->>> --- a/test/config
->>> +++ b/test/config
->>> @@ -4,4 +4,4 @@
->>>   # TEST_EXCLUDE=""
->>>   #
->>>   # Define raw test devices (or files) for test cases, if any
->>> -# TEST_FILES="/dev/nvme0n1p2 /data/file"
->>> +# declare -A TEST_FILES=()
->>> diff --git a/test/runtests.sh b/test/runtests.sh
->>> index fa240f205542..1a6905b42768 100755
->>> --- a/test/runtests.sh
->>> +++ b/test/runtests.sh
->>> @@ -5,10 +5,10 @@ RET=0
->>>   TIMEOUT=60
->>>   DMESG_FILTER="cat"
->>>   TEST_DIR=$(dirname $0)
->>> -TEST_FILES=""
->>>   FAILED=""
->>>   SKIPPED=""
->>>   MAYBE_FAILED=""
->>> +declare -A TEST_FILES
->>>   # Only use /dev/kmsg if running as root
->>>   DO_KMSG="1"
->>> @@ -17,7 +17,7 @@ DO_KMSG="1"
->>>   # Include config.local if exists and check TEST_FILES for valid 
->>> devices
->>>   if [ -f "$TEST_DIR/config.local" ]; then
->>>       . $TEST_DIR/config.local
->>> -    for dev in $TEST_FILES; do
->>> +    for dev in ${TEST_FILES[@]}; do
->>>           if [ ! -e "$dev" ]; then
->>>               echo "Test file $dev not valid"
->>>               exit 1
->>> @@ -109,11 +109,10 @@ run_test()
->>>   # Run all specified tests
->>>   for tst in $TESTS; do
->>> -    run_test $tst
->>> -    if [ ! -z "$TEST_FILES" ]; then
->>> -        for dev in $TEST_FILES; do
->>> -            run_test $tst $dev
->>> -        done
->>> +    if [ ! -n "${TEST_FILES[$tst]}" ]; then
->>> +        run_test $tst
->>> +    else
->>> +        run_test $tst ${TEST_FILES[$tst]}
->>>       fi
->>>   done
->>>
+Replace a while with a simple for loop, that looks way more natural, and
+enables us to use "contiune" as indexes are no more updated by hand in
+the end of the loop.
+
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index f77821626a92..36e4dd55e98b 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7666,9 +7666,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 	if (!ref_node)
+ 		return -ENOMEM;
+ 
+-	done = 0;
+ 	fds = u64_to_user_ptr(up->fds);
+-	while (nr_args) {
++	for (done = 0; done < nr_args; done++) {
+ 		struct fixed_file_table *table;
+ 		unsigned index;
+ 
+@@ -7677,7 +7676,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 			err = -EFAULT;
+ 			break;
+ 		}
+-		i = array_index_nospec(up->offset, ctx->nr_user_files);
++		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
+ 		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
+ 		index = i & IORING_FILE_TABLE_MASK;
+ 		if (table->files[index]) {
+@@ -7715,9 +7714,6 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 				break;
+ 			}
+ 		}
+-		nr_args--;
+-		done++;
+-		up->offset++;
+ 	}
+ 
+ 	if (needs_switch) {
+-- 
+2.24.0
 

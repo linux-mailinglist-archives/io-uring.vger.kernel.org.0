@@ -2,89 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C7AF304D20
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 00:03:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D15E304D22
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 00:03:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731617AbhAZXC4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Jan 2021 18:02:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34352 "EHLO
+        id S1731625AbhAZXDO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Jan 2021 18:03:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393903AbhAZSBO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 13:01:14 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8267C061573
-        for <io-uring@vger.kernel.org>; Tue, 26 Jan 2021 09:59:30 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id cq1so2443639pjb.4
-        for <io-uring@vger.kernel.org>; Tue, 26 Jan 2021 09:59:30 -0800 (PST)
+        with ESMTP id S2405545AbhAZUZ3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 15:25:29 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26276C061786;
+        Tue, 26 Jan 2021 12:24:49 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id d4so10416762plh.5;
+        Tue, 26 Jan 2021 12:24:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Uuq4cBYCEVzA2iYkfUNGUOW9ea4xCO0RmrPc6dG3Bv8=;
-        b=oHuH8WXrjo0usPpGtU+R0DrGAP078vYNgHUk/TM6HTMl+Z+j2SlxdCrq30Sirb6qsv
-         +vYFKhbmDuIvfhnh7xcFHstGIZLIXUQhqyUXPMYnD8DHmzVXx6fyKlUoP1nRgC7ehdxs
-         +Y4ytPJZl7uB8Y/oXixFkcFfyZ8g1UhftYZw27f1NDVU2OQ/EvDk3gyklzoVRtYDGRa0
-         yiSitW2NHoRbBYeqEPYKqAj4pA0trLo+WRtspVuFttW62OSC/fvS386i+QFiWrjeXSOy
-         mxwGLfCrYBZ2g0b4whjtHSg5fr4arkjQQWFx3GJUoczMNJibOhqMgFRQ/bKo9ubLLG9w
-         AwrA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1cudNhAMfB/FNnO4Nfbnzqpu5VBUIwtW0BBCCWOr4ao=;
+        b=okEnGG//pva3FMm7+RQuqg3HjT6TuPB9G/HWJYN4D7a69egyS0VYX+j2NcX0rtqfMx
+         1wZ66PW1Lp/QBlFLsjTh6++IQ/YzkyKnsqgZK5oPJU4DLZbZJK8ICOq9t3lZDdpkB1pO
+         fajg2mPDaxDO8So+orz5lAgMXf6vEeSwW8KgrA+vmH4gNw33RVKwMG2y4uQzH/R7g2Ym
+         /0fOM4XSuQz9a8/FSx39lySghSLAwNhk90EgWrpfB+c5OmrKqEfKhqxs/XXnCC4azjTL
+         p8t61CcwzLqdmMv+Ke8sFeYU6PPsetdA1QzuB0X9TFIsLKUHFXEphvYwtjyPldGJ3oPu
+         JWlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Uuq4cBYCEVzA2iYkfUNGUOW9ea4xCO0RmrPc6dG3Bv8=;
-        b=tXPmCXRPguEYYqNh1EAYDvoQeL/R8Ie3rF86G7kpczOTNFcb5YIZBSovB1P2OcHR5/
-         z0j8eteU6CaCUOlQfkRZckkYXuR2XANFwoZZ6jxXqR1dIr67/W9MmgoWEhLX9Ck85gqR
-         0JPrbWsgrCgwYgJfx1TiK5dTq+ZKvoLFAQe6kN0WmpWuXMKrTLvXKlucGYI0ffaRQ/my
-         c8Xxu2f9WazdDZRpoEMPeBGqSw724R5y2PT6ob5FIRPCJYeHgx4pADvFdKNEPXIsLG17
-         0B9J6+LmJzJLxVGbes4n0xscPP2TtY1UHUJRjuEriDL/LrR009J728ptOuMDY+w7JUdo
-         36Qg==
-X-Gm-Message-State: AOAM532MJIvpBG/nEp4UrQ6xhTIcIE4bKdDqXRstf7CmeKEtNZPIYEXN
-        e4bgmxp7waO2oxw0835SjbWwxl12YwM6DQ==
-X-Google-Smtp-Source: ABdhPJzVr1hwMfvoSTmo14Na0mEaLBS9VWNOnIbr/VOlFX62drWyZqzoT+4nCxgu8oVTTD3sQKwXEw==
-X-Received: by 2002:a17:902:7b98:b029:db:fab3:e74b with SMTP id w24-20020a1709027b98b02900dbfab3e74bmr7282925pll.27.1611683970377;
-        Tue, 26 Jan 2021 09:59:30 -0800 (PST)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id v6sm2832028pjc.57.2021.01.26.09.59.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Jan 2021 09:59:29 -0800 (PST)
-Subject: Re: [PATCH liburing] test: use a map to define test files / devices
- we need
-To:     Hao Xu <haoxu@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1607430489-10020-1-git-send-email-haoxu@linux.alibaba.com>
- <12018281-f8d4-7a67-3ffc-49d6a1c721b8@linux.alibaba.com>
- <87b3001f-0984-3890-269b-1a069704e374@linux.alibaba.com>
- <81cf9b02-a6e6-6b9e-3053-a5a34d3cffb6@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fecb3d93-1dba-8c81-f835-1fa9a98042f0@kernel.dk>
-Date:   Tue, 26 Jan 2021 10:59:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=1cudNhAMfB/FNnO4Nfbnzqpu5VBUIwtW0BBCCWOr4ao=;
+        b=ncJQtqGe/OMI2ZpeBBOxFePTmsBh+xZCJQ2C5xxAxzUmdAw7gxYgBzw7ZjHuOgtJNh
+         /j7qJh9NDAbuA797tRi5pe6pIuHPrMHYw0SJWe2eY7xgxYzuDfNMl/01mzp3Si5iIrab
+         B9/Yq/TYHv19ibaYtu4hz10x/Jzl5ixgYVPgMdhssO1R7fMU4Ip9xsb5KxVcBWfUF+93
+         EacgkNs6+DNNkZdBwye8lSRl103B4RugCuPC9Pw+CwQNVp7NIXR+xGZzYw9Hx82LXZbd
+         /Ux99yFlDImGh6t0kVcc5kYBIb9ZI8cDnDqOTtfRbpCIF5UysF8ldwhfJGuqyP6nxQkV
+         JDLQ==
+X-Gm-Message-State: AOAM5335IAExN276ILR55mKIVe3aHVIdbCjsHbMXdWMm2y98a/2CfMd1
+        mMuTC22b+gjA6xYz1j7Uen8=
+X-Google-Smtp-Source: ABdhPJzK7Kn4mm8q2nP95CoOy5hXdg0H+PpAN9AJ0CABoyuge53sptw7H1bXl1bPLLzeM8G/GYhKsw==
+X-Received: by 2002:a17:902:778e:b029:de:b475:c430 with SMTP id o14-20020a170902778eb02900deb475c430mr7872809pll.53.1611692688717;
+        Tue, 26 Jan 2021 12:24:48 -0800 (PST)
+Received: from localhost.localdomain (c-73-241-149-213.hsd1.ca.comcast.net. [73.241.149.213])
+        by smtp.googlemail.com with ESMTPSA id u12sm18697124pgi.91.2021.01.26.12.24.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jan 2021 12:24:48 -0800 (PST)
+From:   noah <goldstein.w.n@gmail.com>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        goldstein.w.n@gmail.com
+Subject: [PATCH] io_uring: Add skip option for __io_sqe_files_update
+Date:   Tue, 26 Jan 2021 15:23:28 -0500
+Message-Id: <20210126202326.3143037-1-goldstein.w.n@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <81cf9b02-a6e6-6b9e-3053-a5a34d3cffb6@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/25/21 11:18 PM, Hao Xu wrote:
-> 在 2020/12/22 上午11:03, Hao Xu 写道:
->> 在 2020/12/15 上午10:44, Hao Xu 写道:
->>> 在 2020/12/8 下午8:28, Hao Xu 写道:
->>> ping...
->> Hi Jens,
->> I'm currently develop a test which need a device arg, so I
->> leverage TEST_FILES, I found it may be better to form
->> TEST_FILES as a key-value structure.
->> Thanks && Regards,
->> Hao
-> ping again..
+This patch adds support for skipping a file descriptor when using
+IORING_REGISTER_FILES_UPDATE.  __io_sqe_files_update will skip fds set
+to IORING_REGISTER_FILES_SKIP. IORING_REGISTER_FILES_SKIP is inturn
+added as a #define in io_uring.h
 
-Sorry about the delay - I have applied it, thanks.
+Signed-off-by: noah <goldstein.w.n@gmail.com>
+---
+Supporting documentation and tests in liburing can be added in PR284
+(https://github.com/axboe/liburing/pull/284) if this patch is applied.
+    
+ fs/io_uring.c                 | 3 +++
+ include/uapi/linux/io_uring.h | 7 +++++++
+ 2 files changed, 10 insertions(+)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 2c307dea162b..03748faa5295 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8039,6 +8039,9 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if (fd == IORING_REGISTER_FILES_SKIP)
++			continue;
++
+ 		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
+ 		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
+ 		index = i & IORING_FILE_TABLE_MASK;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index f9f106c54d90..e8b481040fb3 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -298,6 +298,13 @@ struct io_uring_rsrc_update {
+ 	__aligned_u64 data;
+ };
+ 
++/*
++ * fd value in *((__s32 *)io_uring_rsrc_update->data)
++ */
++
++/* Skip updating fd indexes set to this value */
++#define IORING_REGISTER_FILES_SKIP  (-2)
++
+ #define IO_URING_OP_SUPPORTED	(1U << 0)
+ 
+ struct io_uring_probe_op {
 -- 
-Jens Axboe
+2.29.2
 

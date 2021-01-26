@@ -2,160 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD0C6304D1E
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 00:03:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C7AF304D20
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 00:03:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731600AbhAZXCp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Jan 2021 18:02:45 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:53360 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730253AbhAZFcE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 00:32:04 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10Q5VD8A099735;
-        Tue, 26 Jan 2021 05:31:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- references : message-id : date : mime-version : in-reply-to : content-type
- : content-transfer-encoding; s=corp-2020-01-29;
- bh=U6S0BEfLyRX9mbZv9vZ7WTP9bSA8SofsjlQKO1MQKqQ=;
- b=lXjfxJOIsWHyYfjxQwwZw0y/oTSsbiO8fgYSPLhnoaFzujwmQLru7pUQwPLpddHAZeSK
- Jx5+JvRZoSVcPrF/DWhcxzKaxWIGbx1rqp8R7WjPjy5tHO6FKKY74V3QxY3uzIm3Os9H
- 4RQt1lViWVpl2N4hT+ZgbVdTm0+qvFMQY2Zk6Mp4t4JqCiJ7IMqheD0HM1bvanKBtISD
- a0FLa2/Q10FO84xrrlpDZDn0Ev1HZzuFsU0QctpllV/OcS8chApm5lp6EALz/5kj7P6x
- kja8C1e6QR+oxUhh49eOi861NHTAsdVzUaMxhi4/AaUFol9PaDhD/LzHAbDKZwhm7R/I vg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 368brkgdrw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jan 2021 05:31:13 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10Q5UV90010238;
-        Tue, 26 Jan 2021 05:31:12 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 368wpxh6xt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jan 2021 05:31:12 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 10Q5VBTD032234;
-        Tue, 26 Jan 2021 05:31:11 GMT
-Received: from [10.154.187.70] (/10.154.187.70)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 25 Jan 2021 21:31:11 -0800
-Subject: Re: [PATCH v6 0/5] io_uring: buffer registration enhancements
-From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
-References: <1611274976-44074-1-git-send-email-bijan.mottahedeh@oracle.com>
-Message-ID: <88cb72b0-5b3c-cea3-a72a-23ddf00ef3f1@oracle.com>
-Date:   Mon, 25 Jan 2021 21:31:10 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        id S1731617AbhAZXC4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Jan 2021 18:02:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34352 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393903AbhAZSBO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 13:01:14 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8267C061573
+        for <io-uring@vger.kernel.org>; Tue, 26 Jan 2021 09:59:30 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id cq1so2443639pjb.4
+        for <io-uring@vger.kernel.org>; Tue, 26 Jan 2021 09:59:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Uuq4cBYCEVzA2iYkfUNGUOW9ea4xCO0RmrPc6dG3Bv8=;
+        b=oHuH8WXrjo0usPpGtU+R0DrGAP078vYNgHUk/TM6HTMl+Z+j2SlxdCrq30Sirb6qsv
+         +vYFKhbmDuIvfhnh7xcFHstGIZLIXUQhqyUXPMYnD8DHmzVXx6fyKlUoP1nRgC7ehdxs
+         +Y4ytPJZl7uB8Y/oXixFkcFfyZ8g1UhftYZw27f1NDVU2OQ/EvDk3gyklzoVRtYDGRa0
+         yiSitW2NHoRbBYeqEPYKqAj4pA0trLo+WRtspVuFttW62OSC/fvS386i+QFiWrjeXSOy
+         mxwGLfCrYBZ2g0b4whjtHSg5fr4arkjQQWFx3GJUoczMNJibOhqMgFRQ/bKo9ubLLG9w
+         AwrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Uuq4cBYCEVzA2iYkfUNGUOW9ea4xCO0RmrPc6dG3Bv8=;
+        b=tXPmCXRPguEYYqNh1EAYDvoQeL/R8Ie3rF86G7kpczOTNFcb5YIZBSovB1P2OcHR5/
+         z0j8eteU6CaCUOlQfkRZckkYXuR2XANFwoZZ6jxXqR1dIr67/W9MmgoWEhLX9Ck85gqR
+         0JPrbWsgrCgwYgJfx1TiK5dTq+ZKvoLFAQe6kN0WmpWuXMKrTLvXKlucGYI0ffaRQ/my
+         c8Xxu2f9WazdDZRpoEMPeBGqSw724R5y2PT6ob5FIRPCJYeHgx4pADvFdKNEPXIsLG17
+         0B9J6+LmJzJLxVGbes4n0xscPP2TtY1UHUJRjuEriDL/LrR009J728ptOuMDY+w7JUdo
+         36Qg==
+X-Gm-Message-State: AOAM532MJIvpBG/nEp4UrQ6xhTIcIE4bKdDqXRstf7CmeKEtNZPIYEXN
+        e4bgmxp7waO2oxw0835SjbWwxl12YwM6DQ==
+X-Google-Smtp-Source: ABdhPJzVr1hwMfvoSTmo14Na0mEaLBS9VWNOnIbr/VOlFX62drWyZqzoT+4nCxgu8oVTTD3sQKwXEw==
+X-Received: by 2002:a17:902:7b98:b029:db:fab3:e74b with SMTP id w24-20020a1709027b98b02900dbfab3e74bmr7282925pll.27.1611683970377;
+        Tue, 26 Jan 2021 09:59:30 -0800 (PST)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id v6sm2832028pjc.57.2021.01.26.09.59.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Jan 2021 09:59:29 -0800 (PST)
+Subject: Re: [PATCH liburing] test: use a map to define test files / devices
+ we need
+To:     Hao Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1607430489-10020-1-git-send-email-haoxu@linux.alibaba.com>
+ <12018281-f8d4-7a67-3ffc-49d6a1c721b8@linux.alibaba.com>
+ <87b3001f-0984-3890-269b-1a069704e374@linux.alibaba.com>
+ <81cf9b02-a6e6-6b9e-3053-a5a34d3cffb6@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fecb3d93-1dba-8c81-f835-1fa9a98042f0@kernel.dk>
+Date:   Tue, 26 Jan 2021 10:59:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <1611274976-44074-1-git-send-email-bijan.mottahedeh@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <81cf9b02-a6e6-6b9e-3053-a5a34d3cffb6@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Antivirus: Avast (VPS 210113-0, 01/12/2021), Outbound message
-X-Antivirus-Status: Clean
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9875 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 spamscore=0
- adultscore=0 bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101260028
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9875 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 impostorscore=0
- phishscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
- lowpriorityscore=0 spamscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101260028
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Gentle reminder to please review this next version.
+On 1/25/21 11:18 PM, Hao Xu wrote:
+> 在 2020/12/22 上午11:03, Hao Xu 写道:
+>> 在 2020/12/15 上午10:44, Hao Xu 写道:
+>>> 在 2020/12/8 下午8:28, Hao Xu 写道:
+>>> ping...
+>> Hi Jens,
+>> I'm currently develop a test which need a device arg, so I
+>> leverage TEST_FILES, I found it may be better to form
+>> TEST_FILES as a key-value structure.
+>> Thanks && Regards,
+>> Hao
+> ping again..
 
-> v6:
-> 
-> - address v5 comments
-> - rebase on Pavel's rsrc generalization changes
-> - see also TBD section below
-> 
-> v5:
-> 
-> - call io_get_fixed_rsrc_ref for buffers
-> - make percpu_ref_release names consistent
-> - rebase on for-5.12/io_uring
-> - see also TBD section below
-> 
-> v4:
-> 
-> - address v3 comments (TBD REGISTER_BUFFERS)
-> - rebase
-> 
-> v3:
-> 
-> - batch file->rsrc renames into a signle patch when possible
-> - fix other review changes from v2
-> - fix checkpatch warnings
-> 
-> v2:
-> 
-> - drop readv/writev with fixed buffers patch
-> - handle ref_nodes both both files/buffers with a single ref_list
-> - make file/buffer handling more unified
-> 
-> This patchset implements a set of enhancements to buffer registration
-> consistent with existing file registration functionality:
-> 
-> - buffer registration updates		IORING_REGISTER_BUFFERS_UPDATE
-> 					IORING_OP_BUFFERS_UPDATE
-> 
-> - buffer registration sharing		IORING_SETUP_SHARE_BUF
-> 					IORING_SETUP_ATTACH_BUF
-> 
-> Patch 1 calls io_get_fixed_rsrc_ref() for buffers as well as files.
-> 
-> Patch 2 applies fixed_rsrc functionality for fixed buffers support.
-> 
-> Patch 3 generalize files_update functionality to rsrc_update.
-> 
-> Patch 4 implements buffer registration update, and introduces
-> IORING_REGISTER_BUFFERS_UPDATE and IORING_OP_BUFFERS_UPDATE, consistent
-> with file registration update.
-> 
-> Patch 5 implements buffer sharing among multiple rings; it works as follows:
-> 
-> - A new ring, A,  is setup. Since no buffers have been registered, the
->    registered buffer state is an empty set, Z. That's different from the
->    NULL state in current implementation.
-> 
-> - Ring B is setup, attaching to Ring A. It's also attaching to it's
->    buffer registrations, now we have two references to the same empty
->    set, Z.
-> 
-> - Ring A registers buffers into set Z, which is no longer empty.
-> 
-> - Ring B sees this immediately, since it's already sharing that set.
-> 
-> Testing
-> 
-> I have used liburing file-{register,update} tests as models for
-> buffer-{register,update,share}, tests and they run ok. Liburing test/self
-> fails but seems unrelated to these changes.
-> 
-> TBD
-> 
-> - Need a patch from Pavel to address a race between fixed IO from async
-> context and buffer unregister, or force buffer registration ops to do
-> full quiesce.
-> 
-> Bijan Mottahedeh (5):
->    io_uring: call io_get_fixed_rsrc_ref for buffers
->    io_uring: implement fixed buffers registration similar to fixed files
->    io_uring: generalize files_update functionlity to rsrc_update
->    io_uring: support buffer registration updates
->    io_uring: support buffer registration sharing
-> 
->   fs/io_uring.c                 | 448 +++++++++++++++++++++++++++++++++++++-----
->   include/uapi/linux/io_uring.h |   4 +
->   2 files changed, 403 insertions(+), 49 deletions(-)
-> 
+Sorry about the delay - I have applied it, thanks.
+
+-- 
+Jens Axboe
 

@@ -2,61 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E31303D05
-	for <lists+io-uring@lfdr.de>; Tue, 26 Jan 2021 13:30:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3D08303EE7
+	for <lists+io-uring@lfdr.de>; Tue, 26 Jan 2021 14:40:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390778AbhAZMab (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Jan 2021 07:30:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47432 "EHLO
+        id S2392134AbhAZNjl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Jan 2021 08:39:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404336AbhAZMaZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 07:30:25 -0500
+        with ESMTP id S2392688AbhAZNjU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 08:39:20 -0500
 Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF50AC0611C2;
-        Tue, 26 Jan 2021 04:29:44 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id g3so22683225ejb.6;
-        Tue, 26 Jan 2021 04:29:44 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647A3C0611BD
+        for <io-uring@vger.kernel.org>; Tue, 26 Jan 2021 05:38:40 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id gx5so22956924ejb.7
+        for <io-uring@vger.kernel.org>; Tue, 26 Jan 2021 05:38:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=59cFXkwJWPJ9ngel/GaPYAwLL/Yt3i4uFuJVUmWJiBU=;
-        b=eYKRW0ofXu/TXhGWrYJhDPR0vwCuh/Ctcl75nycp/j5GJkVP+yeVid4f54KD3EGypM
-         Q0VXiXk+N0OcigXhej4mxyiKFfXp5M+5q8gWHmVbVqfsd6UgkFSUXnmufGkBSwWqN0gj
-         toSL/Ztt1tvXCHOXo2jdwLD4XS5VEKkbapnygfQ/VoEfaxqMKAMUx27/vQt5M5F+INXc
-         pt7Dr2fjKt9j5djAe4z6WvbBlYG7vth+Fdhj/UoyqMWsX1kE8eTpDetcIyGVU+w22YD5
-         iujVYdwRSA+htC6Z4wC5fAic7Z7w6p1ifHNwfl77KbuhDQcrAz3OVYj4jai0g//YRLY/
-         cLBQ==
+        bh=Gj5F/0a91yUz2jG08+A1Uzb4XKqJyYxQ+Lo6jAW+23U=;
+        b=nc/9Cz5XO1WFdNK+w2NKnE7igsUfMQVQo68Z1yPvgTwMTmI34Sf8vuM6LwvU8kR5wL
+         29dzBF+uYRrF8D3q5jwpoNxT9lOOARsrM7n+WpfdmIM4nQlRhV6aBRuE5m/e4Ud93vAD
+         g8kdPcnwCsjc81Fj71HzHVHqwOVaQelARKG/i36A12Y05hJ4yvSsJYmZ0rFGljeC01va
+         PnsgTGsobmVB3vq6NAJYn7ETBX35LboCbOadOokunXAc47BgDq+s2QFRuFi5D1ZbZZLK
+         I2TC+4MnnKG9oD5VOIM6Q7Uo3XHP4DsHrj5RIn8Jttwx07EoLzHutitm86fSTpTkSgAa
+         m1wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=59cFXkwJWPJ9ngel/GaPYAwLL/Yt3i4uFuJVUmWJiBU=;
-        b=iZuNjFSOCMYSMbxTJpaHY0M0mZKN+CukGLj34mVO49gylRfhcVrNnnLqhdCBFOr/W8
-         fWIci/r5Kx5mpFS7PYLPuPjh+b0ZmLXxJmVnkhAzuSuJiolEq4Coy9Gw+shYLSxOnD6y
-         s0Sdx6caG2TOJ33hgi+vbtKwdy0Hmrh78QAioj96xfI0BejulpgbrDkrU8qEknRRdozj
-         yiV9EGQBs8TPDiB2YhMqvL6DLL9HDmBZEpbJjgNXpMkU7ICmWOF4uBFuy6PGduMkvBUo
-         cir8D3JAnHvacE8v+oa2zxM3QeOPAQP8nLiKWEbXXswNdI8CKYq7yEodcG/WeHvZNkt/
-         EWsg==
-X-Gm-Message-State: AOAM533HauaPdwybzd8B4Ux/Tg8bRNL+626wRRgRKNAQqHOX2KQkvBQ8
-        sICLxDD6HFrjF0n33t5KIc8Y3o2kPq6dKg==
-X-Google-Smtp-Source: ABdhPJytcU2baOqtTSXldY3lyoYk04HfdBN6EqAzpXbNLwdVOLfcj+RII6QyHLNKHxXZUqDA3RE1MQ==
-X-Received: by 2002:a17:906:1c42:: with SMTP id l2mr3368734ejg.390.1611664183294;
-        Tue, 26 Jan 2021 04:29:43 -0800 (PST)
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Gj5F/0a91yUz2jG08+A1Uzb4XKqJyYxQ+Lo6jAW+23U=;
+        b=ITL+xwoh8qdk0d20gm63JNCF6ifgDAUZQmbSZBrEP5/N3xR3hrNAATatu0Fs5TKhGX
+         TmcD1jJ2nfZwVpiUwzWrD7UuJLEx8NppwP1zLvAGKjXsav0ybPJZ/WEheF8pZq5uDTNy
+         qKkJA63x/W3nAQ+F6GDFGdWHIa6xbFgjSDOXWDoGsOPI0byBzVdhC7cBI3O3nv0QY7i3
+         34Nfrl+n0JcSPbnvZpXjR5Ue8Qv699ivrgJ/dn629P/EjEsLQl5M8weBA675IIg0eMEV
+         CxiEiRXai1dEIzxVnBPTm8otbxHCWiQV8pomOP1C8ZIx6hzIquNvH+3V/lFjIFOOvzPz
+         7T9w==
+X-Gm-Message-State: AOAM533AmvWfPJHrjjYQa5UNLCMfMo5NVhMDTcVyYIbmekGI2GHIdX4h
+        hJHlYTl5Yku6g5W2KtEcOADHO/sRsCWdlg==
+X-Google-Smtp-Source: ABdhPJy2IUOjmftB4KGq5mLCdCYwfC0MElN+SQjNiLnbRrfkL1Ct7F/IWRQZPlW81nb2Rq4cnsaiXw==
+X-Received: by 2002:a17:906:f246:: with SMTP id gy6mr3361372ejb.264.1611668318905;
+        Tue, 26 Jan 2021 05:38:38 -0800 (PST)
 Received: from [192.168.8.156] ([148.252.129.161])
-        by smtp.gmail.com with ESMTPSA id ah12sm4387531ejc.70.2021.01.26.04.29.42
+        by smtp.gmail.com with ESMTPSA id o11sm12537501eds.19.2021.01.26.05.38.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Jan 2021 04:29:42 -0800 (PST)
-To:     Noah Goldstein <goldstein.w.n@gmail.com>
-Cc:     noah <goldstein.n@wustl.edu>, Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20201220065025.116516-1-goldstein.w.n@gmail.com>
- <0cdf2aac-6364-742d-debb-cfd58b4c6f2b@gmail.com>
- <20201222021043.GA139782@gmail.com>
+        Tue, 26 Jan 2021 05:38:38 -0800 (PST)
+Subject: Re: [PATCH 1/1] io_uring: cleanup files_update looping
 From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <36db2a597f591671257ef4c1f59b74c0b4c6bd6d.1611663156.git.asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -100,77 +95,67 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH] fs: io_uring.c: Add skip option for __io_sqe_files_update
-Message-ID: <32c9ce7e-569d-3f94-535e-00e072de772e@gmail.com>
-Date:   Tue, 26 Jan 2021 12:26:02 +0000
+Message-ID: <8bbfc340-d234-983c-db42-af1055e8da79@gmail.com>
+Date:   Tue, 26 Jan 2021 13:34:58 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201222021043.GA139782@gmail.com>
+In-Reply-To: <36db2a597f591671257ef4c1f59b74c0b4c6bd6d.1611663156.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 22/12/2020 02:10, Noah Goldstein wrote:
-> On Sun, Dec 20, 2020 at 03:18:05PM +0000, Pavel Begunkov wrote:
->> On 20/12/2020 06:50, noah wrote:> From: noah <goldstein.n@wustl.edu>
->>>
->>> This patch makes it so that specify a file descriptor value of -2 will
->>> skip updating the corresponding fixed file index.
->>>
->>> This will allow for users to reduce the number of syscalls necessary
->>> to update a sparse file range when using the fixed file option.
->>
->> Answering the github thread -- it's indeed a simple change, I had it the
->> same day you posted the issue. See below it's a bit cleaner. However, I
->> want to first review "io_uring: buffer registration enhancements", and
->> if it's good, for easier merging/etc I'd rather prefer to let it go
->> first (even if partially).
+On 26/01/2021 12:14, Pavel Begunkov wrote:
+> Replace a while with a simple for loop, that looks way more natural, and
+> enables us to use "contiune" as indexes are no more updated by hand in
+> the end of the loop.
 
-Noah, want to give it a try? I've just sent a prep patch, with it you
-can implement it cleaner with one continue.
+needs a rebase, I'll resend
 
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 941fe9b64fd9..b3ae9d5da17e 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -7847,9 +7847,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
->>  	if (IS_ERR(ref_node))
->>  		return PTR_ERR(ref_node);
->>  
->> -	done = 0;
->>  	fds = u64_to_user_ptr(up->fds);
->> -	while (nr_args) {
->> +	for (done = 0; done < nr_args; done++) {
->>  		struct fixed_file_table *table;
->>  		unsigned index;
->>  
->> @@ -7858,7 +7857,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
->>  			err = -EFAULT;
->>  			break;
->>  		}
->> -		i = array_index_nospec(up->offset, ctx->nr_user_files);
->> +		if (fd == IORING_REGISTER_FILES_SKIP)
->> +			continue;
->> +
->> +		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
->>  		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
->>  		index = i & IORING_FILE_TABLE_MASK;
->>  		if (table->files[index]) {
->> @@ -7896,9 +7898,6 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
->>  				break;
->>  			}
->>  		}
->> -		nr_args--;
->> -		done++;
->> -		up->offset++;
->>  	}
->>  
->>  	if (needs_switch) {
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index f77821626a92..36e4dd55e98b 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -7666,9 +7666,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  	if (!ref_node)
+>  		return -ENOMEM;
+>  
+> -	done = 0;
+>  	fds = u64_to_user_ptr(up->fds);
+> -	while (nr_args) {
+> +	for (done = 0; done < nr_args; done++) {
+>  		struct fixed_file_table *table;
+>  		unsigned index;
+>  
+> @@ -7677,7 +7676,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  			err = -EFAULT;
+>  			break;
+>  		}
+> -		i = array_index_nospec(up->offset, ctx->nr_user_files);
+> +		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
+>  		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
+>  		index = i & IORING_FILE_TABLE_MASK;
+>  		if (table->files[index]) {
+> @@ -7715,9 +7714,6 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  				break;
+>  			}
+>  		}
+> -		nr_args--;
+> -		done++;
+> -		up->offset++;
+>  	}
+>  
+>  	if (needs_switch) {
+> 
 
 -- 
 Pavel Begunkov

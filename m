@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF98E305702
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 10:31:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD4530577C
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 10:55:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235244AbhA0JbA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jan 2021 04:31:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35466 "EHLO
+        id S235705AbhA0JzI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jan 2021 04:55:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235319AbhA0J1J (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 04:27:09 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A98BC061574
-        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 01:25:13 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id f1so1529593edr.12
-        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 01:25:13 -0800 (PST)
+        with ESMTP id S235125AbhA0Jwq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 04:52:46 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C77BEC061786
+        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 01:52:04 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id d22so1679674edy.1
+        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 01:52:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SuFETdFWx5QajphBdSNfdkbidsDd9Mqmte5jL7d8G0c=;
-        b=kJG3FcrBPLOnV18c0qcFRO9W7up5yo9/Cq/5BDUE1+DvHcVRhZQom6uJmyNtesGGoo
-         FaKSgvYQyzQ5r1LhtBzyiVD2FX4pEapbweWvhEpkQZRsCezqnorGIcxG/fnQuEIBTJqF
-         xwjqbFMD/d76myV0QjTRE/3Nr2UCFGVOLpOESo6T1hvqoYQ4tHmFrHW73/8Zc6QM5tsx
-         RI7me3a73bwblkRSLk9iTZrBiaBrokJ7JnBGcTVFR2SN6Ojzlr3OardGmLzki8A0bn4e
-         u4uJ0sc1DvPk7GCWLwDmFJUXtB9ef9n8VooDtiXUNrXXs8CjWxP66uhMvJBmbTwR58JQ
-         2txw==
+        bh=J1sqKthrtDk9qvMNTWpQIA8zgJ7f72N82ypS6x6glnE=;
+        b=ck0dZpM3wUkMebJtM7qtUIBk66xtZ025rvZTG9Ls66lCU05Rjs4bC3CV21YhMeNqBq
+         lgiCyxnR7aD1pkIV2DR1Wrqf0VHIVoEMOMsiYgRITW1i/nYuYgouoMQkY8zOLaEMcjZr
+         l3c5XoXPbSGOJc5Y2So9Nk++L6zK5K23tTKgHetoGJQniEj40hNO5OIPCbIIcimNGlB9
+         moRTQrNIg3QVxZUz4fln1YRjx5/Nz1hlf9CXDPz2LEtsP/0pMJGfZyUcc+Eoar1UIDhV
+         8IlZw4XTB6XwPcLVPdtnfJvNyTLxk7emMq3lIaBo8aKYyyLiplWL4GNeNuxqTamxbWwE
+         Dkcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=SuFETdFWx5QajphBdSNfdkbidsDd9Mqmte5jL7d8G0c=;
-        b=M/r4fFcwhePjDZln3549hz2UjtYMrIymFPdRDmXbCS9rbBu7QoyW6GmHiuSTmDe4EZ
-         tQw1SuV1uoqoBuaFKF82uEikBsRpadb5OLcRUV5uIBMFwqhgYpVKKUbJzzUwMerteYOE
-         +3vfM5CmUVT+f6LMbGzbhn5uv1v/WgGYpOXrFttTt41nPR9PHHBfAaBOmsvO9qHSKwct
-         0sEEEDsAdKxPCFcY6ucrniiH69oTPl1IMEk4TbTKpVqg8lSR8DDZTLlBrWzFzhVD5zDP
-         FiIJZhyCYymop/PTrIBj17fkxzelPw0jvKgUYwxDMvTtytMYbPkmSI57cfgSCGqGU0JI
-         FDdw==
-X-Gm-Message-State: AOAM531Gnt7WyXqRQIdUipFdLBhx6bxI+sH8jaU+7xGKkcuX5JWgr4FC
-        VmYaoEWIGOJAqCjt1rp+bd2cBOTi6Y0=
-X-Google-Smtp-Source: ABdhPJxiwTjVeYfIaUC49ViXHqmMpZLD3XJyJDiSMdjL1vB4/CaV1Stsdvo1qmyM5eF+GaAF3mgbwA==
-X-Received: by 2002:aa7:dc0d:: with SMTP id b13mr8221237edu.170.1611739511887;
-        Wed, 27 Jan 2021 01:25:11 -0800 (PST)
+        bh=J1sqKthrtDk9qvMNTWpQIA8zgJ7f72N82ypS6x6glnE=;
+        b=myXiP29iUul+nDn9/wV0Xk/VPHU3QapKNnYNGeMXWWMJCAz0XPW/Bqf8cfIdqKUhJg
+         /1m8bBNdBircJdWIQ/i1l/h86+EloLT2bcvI8I7C7FveccYFrvySbCxqbBornu5gP6nF
+         pI1Uoe44Q4ZyCUivizeVfaXME6f50NQVuM4SsdIX4r/cBGGv0rpfX3ys/twY69yjMDk3
+         7cylRII/7nVKHq3D2nJL+KsjRQip+7AzUDhAi8CWgIZ3IlKHYoLVCiJLdmIU6aMyAVWM
+         2f2MSiPf2bdz69vsWWxq+rgoXn2fRAJ7E4Js9Z2sdBGxrskrbIHxiPB7JpEjx87yY1HK
+         VOCg==
+X-Gm-Message-State: AOAM532XObS7vKa9m79CCHb4LXxcDQ2RFaF7n2XdL4+i1ej+KbMOLbWt
+        HnCGBo6D74+bur/raTseIZ31jA28f+g=
+X-Google-Smtp-Source: ABdhPJxxr7pvHUaQKx0HyaSEx05yEFguzggKE0Lp1FyrnPJN92a7X7iwyOvF2xHfIDZmkOdX9D0fAw==
+X-Received: by 2002:a05:6402:1341:: with SMTP id y1mr8152718edw.273.1611741123368;
+        Wed, 27 Jan 2021 01:52:03 -0800 (PST)
 Received: from [192.168.8.159] ([148.252.129.161])
-        by smtp.gmail.com with ESMTPSA id p16sm878181edw.44.2021.01.27.01.25.10
+        by smtp.gmail.com with ESMTPSA id u3sm552582eje.63.2021.01.27.01.52.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jan 2021 01:25:11 -0800 (PST)
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <9c4f7eb623ae774f3f17afbc1702749480ee19be.1611703952.git.asml.silence@gmail.com>
- <9c4e03b0-b506-efb6-7ecf-cf290780de6d@linux.alibaba.com>
+        Wed, 27 Jan 2021 01:52:02 -0800 (PST)
+Subject: Re: [PATCH v2] MAINTAINERS: update io_uring section
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <4a6a96702bfef97cb5e6c8e7b5f05074d001a484.1611710680.git.asml.silence@gmail.com>
+ <37700cc3-88ef-4b57-2ad4-004c136dc68f@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -96,45 +96,30 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 5.11] io_uring: fix wqe->lock/completion_lock deadlock
-Message-ID: <843fb27e-faf2-5a2d-94f5-b0d45d127bc6@gmail.com>
-Date:   Wed, 27 Jan 2021 09:21:30 +0000
+Message-ID: <20cd91a7-f72f-2bac-4e6d-12e0e0163fb7@gmail.com>
+Date:   Wed, 27 Jan 2021 09:48:22 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <9c4e03b0-b506-efb6-7ecf-cf290780de6d@linux.alibaba.com>
+In-Reply-To: <37700cc3-88ef-4b57-2ad4-004c136dc68f@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 27/01/2021 01:52, Joseph Qi wrote:>> Only __io_queue_deferred() calls queue_async_work() while holding
->> ctx->completion_lock, enqueue drained requests via io_req_task_queue()
->> instead.
->>
-> We should follow &wqe->lock > &ctx->completion_lock from now on, right?
-> I was thinking getting completion_lock first before:(
+On 27/01/2021 04:08, Jens Axboe wrote:
+> On 1/26/21 6:25 PM, Pavel Begunkov wrote:
+>> - add a missing file
+>> - add a reviewer
+>> - don't spam fsdevel
 > 
-> Moreover, there are so many locks and no suggested locking order in
-> comments, so that it is hard for us to participate in the work.
+> Applied, with an actual commit message :-)
 
-It's rc5, so that was rather of a "make it fast" kind... I don't like
-this ordering, but hopefully the patch doesn't enforce it, and I'd leave
-it for 5.11 and prefer to see something else for next releases.
-
-Would be glad to review if take on it. I think it's no good taking a
-lock before io_wq_cancel_cb(), but there should be other options. E.g.
-split wqe->lock in two.
-
-> 
->> Cc: stable@vger.kernel.org # 5.9+
->> Reported-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> 
-> Tested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-
-Thanks!
+I admit, my message was terrible. But now we have a funny
+commit where I talk about myself in a third-person way.
 
 -- 
 Pavel Begunkov
+

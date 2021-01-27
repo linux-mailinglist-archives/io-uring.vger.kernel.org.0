@@ -2,53 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB93930602C
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 16:49:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FE7030606C
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 17:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235091AbhA0Ptg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jan 2021 10:49:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33082 "EHLO
+        id S1343782AbhA0QAL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jan 2021 11:00:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236396AbhA0Prg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 10:47:36 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 114B8C061574;
-        Wed, 27 Jan 2021 07:46:30 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id by1so3342132ejc.0;
-        Wed, 27 Jan 2021 07:46:29 -0800 (PST)
+        with ESMTP id S235418AbhA0P70 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 10:59:26 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A81FC0613ED;
+        Wed, 27 Jan 2021 07:57:02 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id ox12so3371098ejb.2;
+        Wed, 27 Jan 2021 07:57:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R6ZtaEsn6Sf5kkQW+eu8pA6vL+665kl4n5FmAL3X834=;
-        b=qc1n+BUSQE/jRJWgJTsugV3ZKoeDqi6vXjTgRGQTTvxmixuE4nNxGdSng2g/nOwJK6
-         x6lrwbQEntwyqkYr4GZHkdpguGIXT8gF+b33DgJbHvbgLen+ax4hHCatHjS101kMG7yE
-         b85Eq7FQonWY/DTLYf7mHYpkutnS/1SICpeDddCllvBrrKgYnQjMQXodz2KLTc3MJpfM
-         SOJkb9Xs0GB5TM6Lm23shPDLZIK5A/xMN10E8lkIz4dc1NFTRZqxp3o7DyGm5rDL+GKP
-         phArhTh/55ZzXeeZx9DCo7nRsHJ7xiwPw/q5arDYddVjv2NDQXW0iG1LPJyu+hFiNVwR
-         d/vw==
+        bh=Q2p2QwmNvxsR5WOldk4Lt5CbmprpruMx2Yv37mDF/Hg=;
+        b=r9qGFO0uevTwxwzsH/GVgj7uCbjtMdSe242TdS9wPRc6d0PDLbEiukFGpTKzJnxgLT
+         UXKC7vflszJmY+6pGQVEbYYvW92+FjapUVhTDee+XuLvVSs3uu2NH3p524jMXELjm95y
+         QtzP1aZ5bxojPTs2sNQX/IxUG7JQ22e3v658e76GnxOXekuUladY9LcG3qG73QHPUOyL
+         koc7HQAznXmll1bTkluKQNQ83j3aM+R9eGQ2mBlZBSLFJkUcYFeOorXnl4YrhzPibl+2
+         OLWUFqU8oTC2QcnHSnLzrQyV3XrYE3KVDv3e9c1PhHn9lfTsmgXzDamQOqtaWX6pPu1a
+         GRQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=R6ZtaEsn6Sf5kkQW+eu8pA6vL+665kl4n5FmAL3X834=;
-        b=smuY9qgXAciAZq14nfAsWG900Blmv6afAw6Gj802qwRyD5XRzxYeonaTGPVL2/oQBZ
-         //T3BW/QamZA2k2juce7Slt9X+OejNGY9GlYq9phcwbraYiHv65QVXZnIFbpE/Mk52Q6
-         rfUiswhlEVEG3uK29u2Uf6cEAfA0xduIMzfbqvtrUxfkdKf8Wnk1YUZgTTGGUkhTGlHZ
-         f6SW9AHYtEKQCgVy2gXuh1hSEnVrr45pKlryZYgq/jZCEC+h158GZygJMwZ2nO211Hvt
-         D1JTwRzpVhXTKShfAQsd7TszCrTGkJH6l4twFxVMbBSWs9Vrq0VaFhY+nkTrJRE5hdU2
-         btdg==
-X-Gm-Message-State: AOAM532c0xvV+IDQCAtK3+5d9WcSS2MHm+PJi3YIXWWwDiB9DmMvYuLu
-        4r3n4AOjvoS1xRq/l2YgQrI=
-X-Google-Smtp-Source: ABdhPJz7cdpvTQKpJpMQS9aa2CgqNKsN+IY4UfJZS5pk04mER3fbg7VqI2ouR0mJ/O949IBOxqI4qQ==
-X-Received: by 2002:a17:906:90c3:: with SMTP id v3mr7493267ejw.461.1611762388705;
-        Wed, 27 Jan 2021 07:46:28 -0800 (PST)
+        bh=Q2p2QwmNvxsR5WOldk4Lt5CbmprpruMx2Yv37mDF/Hg=;
+        b=SlA+a6DXPJ1Op2+x6LfjGQyG5dSBXsc/BjXrlaDY1bYLOqeTGvJl5oItyujJx6mZWD
+         mgEIpq+jn+Pu1a+EWKd58j460A7qSHMUsenRTuNBVj7hAjAS5ZtU66aWdG5biGAbrJ4r
+         qH6Cgsj5ENriKBpw3bekRwlYHUapkCKOSYO989oX4wSrgcHuIlWUvZJ90FtXjAQOqDCZ
+         siht+Oz9f9Cw0+xhbUP7wNVHj8XKN/DJm5OLjsdtt1Ef1JNdSkOXIhs1kAwWG69iVV1k
+         u8/t9jZVpSSFXX8+NelBMBHA5M/z8zdamnllw7hFWbR6cX/kApAP2Aq6Q5jQytQmBDe0
+         X0nw==
+X-Gm-Message-State: AOAM533a9ARnuZCM+01k73RY4NR2W+yZMFgI4VC7MD8Azf85Qypezf7y
+        8+r8Gw13loMrk+ywMSV4eUs=
+X-Google-Smtp-Source: ABdhPJw6bmGMfhnFAKhL4o126TbWoRdnKkMCfrT/5rrExzpfncWtNJUjEUT92ko3VtWT+YvxBGf+Bg==
+X-Received: by 2002:a17:906:7f8e:: with SMTP id f14mr7068479ejr.198.1611763020817;
+        Wed, 27 Jan 2021 07:57:00 -0800 (PST)
 Received: from [192.168.8.160] ([148.252.129.161])
-        by smtp.gmail.com with ESMTPSA id ke7sm1019020ejc.7.2021.01.27.07.46.27
+        by smtp.gmail.com with ESMTPSA id g10sm1013214ejp.37.2021.01.27.07.56.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jan 2021 07:46:28 -0800 (PST)
+        Wed, 27 Jan 2021 07:57:00 -0800 (PST)
 Subject: Re: [RFC PATCH 0/4] Asynchronous passthrough ioctl
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
         kbusch@kernel.org, hch@lst.de, sagi@grimberg.me
 Cc:     linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
@@ -57,7 +58,7 @@ Cc:     linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
         selvakuma.s1@samsung.com
 References: <CGME20210127150134epcas5p251fc1de3ff3581dd4c68b3fbe0b9dd91@epcas5p2.samsung.com>
  <20210127150029.13766-1-joshi.k@samsung.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <489691ce-3b1e-30ce-9f72-d32389e33901@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -101,12 +102,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <489691ce-3b1e-30ce-9f72-d32389e33901@gmail.com>
-Date:   Wed, 27 Jan 2021 15:42:46 +0000
+Message-ID: <a287bd9e-3474-83a4-e5c2-98df17214dc7@gmail.com>
+Date:   Wed, 27 Jan 2021 15:53:19 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20210127150029.13766-1-joshi.k@samsung.com>
+In-Reply-To: <489691ce-3b1e-30ce-9f72-d32389e33901@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -114,86 +115,44 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 27/01/2021 15:00, Kanchan Joshi wrote:
-> This RFC patchset adds asynchronous ioctl capability for NVMe devices.
-> Purpose of RFC is to get the feedback and optimize the path.
+On 27/01/2021 15:42, Pavel Begunkov wrote:
+> On 27/01/2021 15:00, Kanchan Joshi wrote:
+>> This RFC patchset adds asynchronous ioctl capability for NVMe devices.
+>> Purpose of RFC is to get the feedback and optimize the path.
+>>
+>> At the uppermost io-uring layer, a new opcode IORING_OP_IOCTL_PT is
+>> presented to user-space applications. Like regular-ioctl, it takes
+>> ioctl opcode and an optional argument (ioctl-specific input/output
+>> parameter). Unlike regular-ioctl, it is made to skip the block-layer
+>> and reach directly to the underlying driver (nvme in the case of this
+>> patchset). This path between io-uring and nvme is via a newly
+>> introduced block-device operation "async_ioctl". This operation
+>> expects io-uring to supply a callback function which can be used to
+>> report completion at later stage.
+>>
+>> For a regular ioctl, NVMe driver submits the command to the device and
+>> the submitter (task) is made to wait until completion arrives. For
+>> async-ioctl, completion is decoupled from submission. Submitter goes
+>> back to its business without waiting for nvme-completion. When
+>> nvme-completion arrives, it informs io-uring via the registered
+>> completion-handler. But some ioctls may require updating certain
+>> ioctl-specific fields which can be accessed only in context of the
+>> submitter task. For that reason, NVMe driver uses task-work infra for
+>> that ioctl-specific update. Since task-work is not exported, it cannot
+>> be referenced when nvme is compiled as a module. Therefore, one of the
+>> patch exports task-work API.
+>>
+>> Here goes example of usage (pseudo-code).
+>> Actual nvme-cli source, modified to issue all ioctls via this opcode
+>> is present at-
+>> https://github.com/joshkan/nvme-cli/commit/a008a733f24ab5593e7874cfbc69ee04e88068c5
 > 
-> At the uppermost io-uring layer, a new opcode IORING_OP_IOCTL_PT is
-> presented to user-space applications. Like regular-ioctl, it takes
-> ioctl opcode and an optional argument (ioctl-specific input/output
-> parameter). Unlike regular-ioctl, it is made to skip the block-layer
-> and reach directly to the underlying driver (nvme in the case of this
-> patchset). This path between io-uring and nvme is via a newly
-> introduced block-device operation "async_ioctl". This operation
-> expects io-uring to supply a callback function which can be used to
-> report completion at later stage.
+> see https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops
 > 
-> For a regular ioctl, NVMe driver submits the command to the device and
-> the submitter (task) is made to wait until completion arrives. For
-> async-ioctl, completion is decoupled from submission. Submitter goes
-> back to its business without waiting for nvme-completion. When
-> nvme-completion arrives, it informs io-uring via the registered
-> completion-handler. But some ioctls may require updating certain
-> ioctl-specific fields which can be accessed only in context of the
-> submitter task. For that reason, NVMe driver uses task-work infra for
-> that ioctl-specific update. Since task-work is not exported, it cannot
-> be referenced when nvme is compiled as a module. Therefore, one of the
-> patch exports task-work API.
-> 
-> Here goes example of usage (pseudo-code).
-> Actual nvme-cli source, modified to issue all ioctls via this opcode
-> is present at-
-> https://github.com/joshkan/nvme-cli/commit/a008a733f24ab5593e7874cfbc69ee04e88068c5
+> Looks like good time to bring that branch/discussion back
 
-see https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops
-
-Looks like good time to bring that branch/discussion back
-
-> 
-> With regular ioctl-
-> int nvme_submit_passthru(int fd, unsigned long ioctl_cmd,
->                          struct nvme_passthru_cmd *cmd)
-> {
-> 	return ioctl(fd, ioctl_cmd, cmd);
-> }
-> 
-> With uring passthru ioctl-
-> int nvme_submit_passthru(int fd, unsigned long ioctl_cmd,
->                          struct nvme_passthru_cmd *cmd)
-> {
-> 	return uring_ioctl(fd, ioctl_cmd, cmd);
-> }
-> int uring_ioctl(int fd, unsinged long cmd, u64 arg)
-> {
-> 	sqe = io_uring_get_sqe(ring);
-> 
-> 	/* prepare sqe */
-> 	sqe->fd = fd;
-> 	sqe->opcode = IORING_OP_IOCTL_PT;
-> 	sqe->ioctl_cmd = cmd;
-> 	sqe->ioctl_arg = arg;
-> 
-> 	/* submit sqe */
-> 	io_uring_submit(ring);
-> 
-> 	/* reap completion and obtain result */
-> 	io_uring_wait_cqe(ring, &cqe);
-> 	printf("ioctl result =%d\n", cqe->res)
-> }
-> 
-> Kanchan Joshi (4):
->   block: introduce async ioctl operation
->   kernel: export task_work_add
->   nvme: add async ioctl support
->   io_uring: add async passthrough ioctl support
-> 
->  drivers/nvme/host/core.c      | 347 +++++++++++++++++++++++++++-------
->  fs/io_uring.c                 |  77 ++++++++
->  include/linux/blkdev.h        |  12 ++
->  include/uapi/linux/io_uring.h |   7 +-
->  kernel/task_work.c            |   2 +-
->  5 files changed, 376 insertions(+), 69 deletions(-)
-> 
+a bit more context:
+https://github.com/axboe/liburing/issues/270
 
 -- 
 Pavel Begunkov

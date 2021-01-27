@@ -2,72 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 038E93061E0
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 18:23:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D07AD3065F4
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 22:26:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234243AbhA0RXO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jan 2021 12:23:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53731 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235772AbhA0RW3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 12:22:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611768063;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1k42yrzynoJdW/mIgJS2LBkAIc5NZ4zN2WGACxfV04M=;
-        b=Ac/kRAtJGqL+C6fXX5zYaIWd5Qqj+lO/6noc/mhLeyggD4tlAQUcMVUsJqUf2b6slE97si
-        p4kojMv1K9Vg5UVsD3/9ZavUJ8xY9pglf1GgIF+BDrja+3uszSLLa/8a7pwQVd4JhFMYv5
-        /Sqy03xrynUpEq5gNqMjlf22ecyFuuI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-93-Yn7D8UwXPWu_3Es00bVwag-1; Wed, 27 Jan 2021 12:21:01 -0500
-X-MC-Unique: Yn7D8UwXPWu_3Es00bVwag-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D0F641800D42;
-        Wed, 27 Jan 2021 17:20:59 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B5C351F0;
-        Wed, 27 Jan 2021 17:20:56 +0000 (UTC)
-Date:   Wed, 27 Jan 2021 12:20:56 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Jeffle Xu <jefflexu@linux.alibaba.com>
-Cc:     joseph.qi@linux.alibaba.com, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] block: add queue_to_disk() to get gendisk from
- request_queue
-Message-ID: <20210127172055.GB11530@redhat.com>
-References: <20210125121340.70459-1-jefflexu@linux.alibaba.com>
- <20210125121340.70459-3-jefflexu@linux.alibaba.com>
+        id S234481AbhA0V0j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jan 2021 16:26:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49530 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233052AbhA0V00 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 16:26:26 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04588C061573
+        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 13:25:45 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id e19so2154147pfh.6
+        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 13:25:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vv994uv9DDeh8M5nXTMtpljk0eLKwZ6faW4D3T6Gc+I=;
+        b=oHfUw+AGfUUeItet2VfpG8yyaLsWvzGsI21LsNPHCVH8BOd27P+cg6X8vydX+7zA80
+         +Rqhd8MhDB1uQXG0sDPqjU4llq8UGEwb1nSMzO65/D5AuPHiwDFPK2Y0AU2aStAMMgsh
+         s0DiG+UQA47jfU7LS81FQp+ie/PpvGg5SEilVbOaGU9f60T6WxCP9SJv7rDeuttTQJ4O
+         WKL1qAdcq+99fVb9oLp3KyeKCOinPQv2uRzpyYP6ndmVMWv9mwhtFXOygHK7idYTipIc
+         qs6LNcYyP6Qx5tlFpBvgD+G6RwFcmq4xChlwzJhYyb6l4z6C8A27xwGDXo8mXJNiWWGM
+         BUSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vv994uv9DDeh8M5nXTMtpljk0eLKwZ6faW4D3T6Gc+I=;
+        b=YdSYAjvyDQD+P/qzmuCwIU75EW3Ufm1XsL78Ubh/5OMHeCrtjz+tz1kaLgIhqac3Le
+         AjW25HTozyfJMaERRw5W+1vImbMMsNNPLLyGGlcQpzHLfFVotEnB4YZUbNBkBKKvickV
+         IJMDc54SXdr9f2pbRds8UEVXBFbTj3VLRy7v6SjS9Ta8wM20qJG0hSZZaBdwdyCbWdfT
+         FBFxfqZwOAnaAGp1Ok72xp0i7DkQ6iaqEzD0OQKSAfNjWWH/1xlGO/8Rkcv92pCVmfFo
+         S4Kt2ocwW1cYaxuybCaSqGxVdKmqoWpAzlLTQ+S7gfCCl1mkZs+VOt3+aATUelPdLD4z
+         mfAQ==
+X-Gm-Message-State: AOAM533m+9L9CWUnQ4F0w6v/KMrg2dgJCtl2RcTSRcsvNeATdvavzKpD
+        CmOMNCmB3flS6VbnyeYYbsxKmy8SVcb58Q==
+X-Google-Smtp-Source: ABdhPJxfLKFqXMV47Y75VjzgYdzFoy54EEwOKZ8ubuP+ellaVxRbtsLLHwsO2XoLYMJkF7bZCtbgvg==
+X-Received: by 2002:a63:1707:: with SMTP id x7mr12949067pgl.266.1611782745238;
+        Wed, 27 Jan 2021 13:25:45 -0800 (PST)
+Received: from localhost.localdomain (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id mm4sm2794349pjb.1.2021.01.27.13.25.43
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Jan 2021 13:25:44 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Subject: [PATCHSET RFC 0/5] file_operations based io_uring commands
+Date:   Wed, 27 Jan 2021 14:25:36 -0700
+Message-Id: <20210127212541.88944-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210125121340.70459-3-jefflexu@linux.alibaba.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jan 25 2021 at  7:13am -0500,
-Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+Hi,
 
-> Sometimes we need to get the corresponding gendisk from request_queue.
-> 
-> It is preferred that block drivers store private data in
-> gendisk->private_data rather than request_queue->queuedata, e.g. see:
-> commit c4a59c4e5db3 ("dm: stop using ->queuedata").
-> 
-> So if only request_queue is given, we need to get its corresponding
-> gendisk to get the private data stored in that gendisk.
-> 
-> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> Review-by: Mike Snitzer <snitzer@redhat.com>
+This is a concept I've been toying with, some (including myself) have
+referred to it as a way to do ioctls over io_uring. And indeed it has
+many similarities with that. The purpose of the patchset is to have
+a file private command type. io_uring doesn't know or care what is in
+it, only the end target would be able to do that. In that sense it's
+similar to ioctls which share the same trait. io_uring just provides
+all the infrastructure to pass them back and forth, etc.
 
-^typo
+At the core of it, we overlay a struct type on top of io_uring_sqe.
+That's basically like other commands, except this one is a bit more
+brutal. That leaves us with 32 bytes that we can use, 8 bytes that
+we can't (as they overlap with ->user_data), and then 8 bytes that are
+usable again. Hence there's 40 bytes available for a command, anything
+more than that should be allocated as per usual for request types.
 
-Reviewed-by: Mike Snitzer <snitzer@redhat.com>
+The file_operations structure is augmented to add a ->uring_cmd()
+handler. A file type must support this operation to support these
+kinds of commands, otherwise they get errored. This handler can
+either queue this operation async and signal completion when done,
+or it can complete it inline (either successfully, or in error).
+
+Proof of concept added for raw block and network commands, just to
+show how it could work. Nothing exciting/interesting yet, just a
+way to test it out.
+
+This is very much sent out for comments/review of the concept itself.
+There are a host of things that could be implemented with this, like
+raw device access, new APIs (network zero copy additions), etc.
+
+I'm not a huge fan of the command overlay, but I do like the fact that
+we can do alloc less commands as long as we stay at <= 40 bytes. So
+maybe it's just a pill that we have to swallow. Or maybe there are
+other great ideas for how to do this. It does mean that we overlay
+much of the sqe, but most of that won't make sense for private commands.
+
+Anyways, comments welcome. This is kept on io_uring for now until
+details have been hashed out.
+
+-- 
+Jens Axboe
+
+
 

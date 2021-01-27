@@ -2,73 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF396305B50
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 13:28:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01368305ADB
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 13:08:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236112AbhA0M02 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jan 2021 07:26:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42530 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S314050AbhAZW4A (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 17:56:00 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39BCFC061574;
-        Tue, 26 Jan 2021 14:55:19 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l4XEm-006QPT-Jk; Tue, 26 Jan 2021 22:55:04 +0000
-Date:   Tue, 26 Jan 2021 22:55:04 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
+        id S237516AbhA0MHY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jan 2021 07:07:24 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:46356 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237617AbhA0MFD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 07:05:03 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UN2JKHS_1611749047;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UN2JKHS_1611749047)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 27 Jan 2021 20:04:08 +0800
+Subject: Re: [PATCH liburing] test: use a map to define test files / devices
+ we need
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Dmitry Kadashev <dkadashev@gmail.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs: make do_mkdirat() take struct filename
-Message-ID: <20210126225504.GM740243@zeniv-ca>
-References: <20201116044529.1028783-1-dkadashev@gmail.com>
- <20201116044529.1028783-2-dkadashev@gmail.com>
- <027e8488-2654-12cd-d525-37f249954b4d@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1607430489-10020-1-git-send-email-haoxu@linux.alibaba.com>
+ <12018281-f8d4-7a67-3ffc-49d6a1c721b8@linux.alibaba.com>
+ <87b3001f-0984-3890-269b-1a069704e374@linux.alibaba.com>
+ <81cf9b02-a6e6-6b9e-3053-a5a34d3cffb6@linux.alibaba.com>
+ <fecb3d93-1dba-8c81-f835-1fa9a98042f0@kernel.dk>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <f0c21066-0b99-d477-3f0b-4307233d9cae@linux.alibaba.com>
+Date:   Wed, 27 Jan 2021 20:04:07 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <027e8488-2654-12cd-d525-37f249954b4d@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <fecb3d93-1dba-8c81-f835-1fa9a98042f0@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Jan 24, 2021 at 09:38:19PM -0700, Jens Axboe wrote:
-> On 11/15/20 9:45 PM, Dmitry Kadashev wrote:
-> > Pass in the struct filename pointers instead of the user string, and
-> > update the three callers to do the same. This is heavily based on
-> > commit dbea8d345177 ("fs: make do_renameat2() take struct filename").
-> > 
-> > This behaves like do_unlinkat() and do_renameat2().
+在 2021/1/27 上午1:59, Jens Axboe 写道:
+> On 1/25/21 11:18 PM, Hao Xu wrote:
+>> 在 2020/12/22 上午11:03, Hao Xu 写道:
+>>> 在 2020/12/15 上午10:44, Hao Xu 写道:
+>>>> 在 2020/12/8 下午8:28, Hao Xu 写道:
+>>>> ping...
+>>> Hi Jens,
+>>> I'm currently develop a test which need a device arg, so I
+>>> leverage TEST_FILES, I found it may be better to form
+>>> TEST_FILES as a key-value structure.
+>>> Thanks && Regards,
+>>> Hao
+>> ping again..
 > 
-> Al, are you OK with this patch? Leaving it quoted, though you should
-> have the original too.
-
-> > -static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
-> > +long do_mkdirat(int dfd, struct filename *name, umode_t mode)
-> >  {
-> >  	struct dentry *dentry;
-> >  	struct path path;
-> >  	int error;
-> >  	unsigned int lookup_flags = LOOKUP_DIRECTORY;
-> >  
-> > +	if (IS_ERR(name))
-> > +		return PTR_ERR(name);
-> > +
-> >  retry:
-> > -	dentry = user_path_create(dfd, pathname, &path, lookup_flags);
-> > -	if (IS_ERR(dentry))
-> > -		return PTR_ERR(dentry);
-> > +	name->refcnt++; /* filename_create() drops our ref */
-> > +	dentry = filename_create(dfd, name, &path, lookup_flags);
-> > +	if (IS_ERR(dentry)) {
-> > +		error = PTR_ERR(dentry);
-> > +		goto out;
-> > +	}
-
-No.  This is going to be a source of confusion from hell.  If anything,
-you want a variant of filename_create() that does not drop name on
-success.  With filename_create() itself being an inlined wrapper
-for it.
+> Sorry about the delay - I have applied it, thanks.
+> 
+No worries. Thanks, Jens.

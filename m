@@ -2,129 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B033E305161
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 05:49:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E483305162
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 05:49:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239533AbhA0Ep0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Jan 2021 23:45:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50882 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405384AbhA0BqB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 20:46:01 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F1CC061788
-        for <io-uring@vger.kernel.org>; Tue, 26 Jan 2021 17:45:00 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id kg20so423084ejc.4
-        for <io-uring@vger.kernel.org>; Tue, 26 Jan 2021 17:45:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2ATq6aIljGA0KItlm6hgolHqO3IbhZnBIOX1SZqRjII=;
-        b=UjVjqVoXAfERM7HQ2IoJbIQBrqYfiIHcXjHblfZKxNb31nlvo1Uq6Lw70ESi7f9fFC
-         EE7kt0J7sok7LvVVO8ia9d/jPFmmyU0Hx23nPW2346cJ9wjaFGvcY19FEmp3Qpd/a8BQ
-         OkKrOI78ao3zasPe7RTZ1wX+xyDDuL2WRYeSq2MXoojAdH9RHrCcYSnJqMswn6RQee2b
-         /imfcmpTJZGITeIWzlRkg/GLWG6LMj+k2uhSfl4toCw6c7Q4sTzxh6jwxB8fDKU6T0YR
-         wShqhdfONWJGkMmi820bsRE6RIX0O1rYWAM17DzJa6sKP5ghRW9bLiYFmBMKNhGC+S9G
-         JyoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2ATq6aIljGA0KItlm6hgolHqO3IbhZnBIOX1SZqRjII=;
-        b=okcXsCoHN10kzBRbhYeieA/HyAknUl1A4HKnYON2gX7KyPNaclqgmaaoHVoato9h1r
-         dMowmUWfIl7kNxyu13KHw8fWU7g2gi3JHLiqsVrnUAI0GYZM4+jCfvFuab/VsKRJH3XQ
-         8ivhFUj/6uU9fQhr8XlCq8XdmEhfG+6t4OUyTScBgyQc+pswtEGZincRQgZaSiRT3qvi
-         tYRYlSf5yTQut4XwIQ1Bu2Iin6IaTfkhDofr06UBuHCA/pt5JDtcOTScIHnkJR6JJBe1
-         ifrQiozDb0XmFiOgKuQjUE/1XwjRWhTbp6Iv17KRygd3F2NG0B3QlpIaDVUgktoG1bN8
-         NYFg==
-X-Gm-Message-State: AOAM531KCMCBv0RnhlfuUyfqexzAZeQKsk2R2+gVZT9YfMt5HlVSJi8E
-        6njTEDA7xp+v7KD81jWU1Uk=
-X-Google-Smtp-Source: ABdhPJzVnH/FZ+RhDQpLulxhL1/nFbmdlfc0J8MjG/PHIOPpLVzPPAWvZzRCQRElHoTRpgLxLAz6sA==
-X-Received: by 2002:a17:906:259a:: with SMTP id m26mr5222630ejb.399.1611711899663;
-        Tue, 26 Jan 2021 17:44:59 -0800 (PST)
-Received: from localhost.localdomain ([148.252.129.161])
-        by smtp.gmail.com with ESMTPSA id u2sm139235ejb.65.2021.01.26.17.44.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 17:44:59 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2] test/drain: test draining linked timeouts
-Date:   Wed, 27 Jan 2021 01:41:11 +0000
-Message-Id: <bea8a84405fa2b68a4c18ecae7b80cc2c983002f.1611711577.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S234693AbhA0Ep1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Jan 2021 23:45:27 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:56499 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728942AbhA0Bxl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jan 2021 20:53:41 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R421e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UN.xDoX_1611712346;
+Received: from B-D1K7ML85-0059.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UN.xDoX_1611712346)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 27 Jan 2021 09:52:26 +0800
+Subject: Re: [PATCH 5.11] io_uring: fix wqe->lock/completion_lock deadlock
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <9c4f7eb623ae774f3f17afbc1702749480ee19be.1611703952.git.asml.silence@gmail.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <9c4e03b0-b506-efb6-7ecf-cf290780de6d@linux.alibaba.com>
+Date:   Wed, 27 Jan 2021 09:52:26 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <9c4f7eb623ae774f3f17afbc1702749480ee19be.1611703952.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Make sure references are accounted well when we defer reqs with linked
-timeouts.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
 
-v2: mark with IOSQE_IO_DRAIN all
+On 1/27/21 7:35 AM, Pavel Begunkov wrote:
+> Joseph reports following deadlock:
+> 
+> CPU0:
+> ...
+> io_kill_linked_timeout  // &ctx->completion_lock
+> io_commit_cqring
+> __io_queue_deferred
+> __io_queue_async_work
+> io_wq_enqueue
+> io_wqe_enqueue  // &wqe->lock
+> 
+> CPU1:
+> ...
+> __io_uring_files_cancel
+> io_wq_cancel_cb
+> io_wqe_cancel_pending_work  // &wqe->lock
+> io_cancel_task_cb  // &ctx->completion_lock
+> 
+> Only __io_queue_deferred() calls queue_async_work() while holding
+> ctx->completion_lock, enqueue drained requests via io_req_task_queue()
+> instead.
+> 
+We should follow &wqe->lock > &ctx->completion_lock from now on, right?
+I was thinking getting completion_lock first before:(
 
- test/defer.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Moreover, there are so many locks and no suggested locking order in
+comments, so that it is hard for us to participate in the work.
 
-diff --git a/test/defer.c b/test/defer.c
-index 05833d4..98abfba 100644
---- a/test/defer.c
-+++ b/test/defer.c
-@@ -148,6 +148,38 @@ err:
- 	return 1;
- }
- 
-+static int test_drain_with_linked_timeout(struct io_uring *ring)
-+{
-+	const int nr = 3;
-+	struct __kernel_timespec ts = { .tv_sec = 1, .tv_nsec = 0, };
-+	struct test_context ctx;
-+	int ret, i;
-+
-+	if (init_context(&ctx, ring, nr * 2))
-+		return 1;
-+
-+	for (i = 0; i < nr; i++) {
-+		io_uring_prep_timeout(ctx.sqes[2 * i], &ts, 0, 0);
-+		ctx.sqes[2 * i]->flags |= IOSQE_IO_LINK | IOSQE_IO_DRAIN;
-+		io_uring_prep_link_timeout(ctx.sqes[2 * i + 1], &ts, 0);
-+	}
-+
-+	ret = io_uring_submit(ring);
-+	if (ret <= 0) {
-+		printf("sqe submit failed: %d\n", ret);
-+		goto err;
-+	}
-+
-+	if (wait_cqes(&ctx))
-+		goto err;
-+
-+	free_context(&ctx);
-+	return 0;
-+err:
-+	free_context(&ctx);
-+	return 1;
-+}
-+
- static int run_drained(struct io_uring *ring, int nr)
- {
- 	struct test_context ctx;
-@@ -269,5 +301,11 @@ int main(int argc, char *argv[])
- 		return ret;
- 	}
- 
-+	ret = test_drain_with_linked_timeout(&ring);
-+	if (ret) {
-+		printf("test_drain_with_linked_timeout failed\n");
-+		return ret;
-+	}
-+
- 	return 0;
- }
--- 
-2.24.0
+> Cc: stable@vger.kernel.org # 5.9+
+> Reported-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
+Tested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index bb0270eeb8cb..c218deaf73a9 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1026,6 +1026,7 @@ static int io_setup_async_rw(struct io_kiocb *req, const struct iovec *iovec,
+>  			     const struct iovec *fast_iov,
+>  			     struct iov_iter *iter, bool force);
+>  static void io_req_drop_files(struct io_kiocb *req);
+> +static void io_req_task_queue(struct io_kiocb *req);
+>  
+>  static struct kmem_cache *req_cachep;
+>  
+> @@ -1634,18 +1635,11 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
+>  	do {
+>  		struct io_defer_entry *de = list_first_entry(&ctx->defer_list,
+>  						struct io_defer_entry, list);
+> -		struct io_kiocb *link;
+>  
+>  		if (req_need_defer(de->req, de->seq))
+>  			break;
+>  		list_del_init(&de->list);
+> -		/* punt-init is done before queueing for defer */
+> -		link = __io_queue_async_work(de->req);
+> -		if (link) {
+> -			__io_queue_linked_timeout(link);
+> -			/* drop submission reference */
+> -			io_put_req_deferred(link, 1);
+> -		}
+> +		io_req_task_queue(de->req);
+>  		kfree(de);
+>  	} while (!list_empty(&ctx->defer_list));
+>  }
+> 

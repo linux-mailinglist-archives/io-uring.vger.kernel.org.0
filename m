@@ -2,142 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B7293060A1
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 17:10:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BDE3060E5
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jan 2021 17:21:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235923AbhA0QJA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jan 2021 11:09:00 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:49287 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235399AbhA0PCg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 10:02:36 -0500
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210127150142epoutp043194e2ed07c9df00a3f4dd2dd6c887e3~eHuje3EwL2079320793epoutp04P
-        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 15:01:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210127150142epoutp043194e2ed07c9df00a3f4dd2dd6c887e3~eHuje3EwL2079320793epoutp04P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1611759702;
-        bh=GV3ACHLLXyiQg4BzUblRVcIeExfz/GyxJRRnouQFv4w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ktm8h4jkbBhjzpvZ78rTvZHtuNS4SH4Vttl1nT417HJelDlB1YNXO3l/lUzcXKZi0
-         dPJC3Q4mKPhad+8G/Kz65P0t3BKigSJcGgAV/6M9SEZXs0FUUH3eZP5R9zb11wwqFp
-         d8L+Bd8ebuXWRi0QGSMAe6xtPCnkoQhyqUDj9BkM=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20210127150141epcas5p303b95d3003294829d0ed9257258ac418~eHuiqXRnB0898508985epcas5p3R;
-        Wed, 27 Jan 2021 15:01:41 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6E.23.15682.55081106; Thu, 28 Jan 2021 00:01:41 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20210127150140epcas5p32832cc0c0db953db199eb9dd326f2d4c~eHuhmDGHu0202502025epcas5p38;
-        Wed, 27 Jan 2021 15:01:40 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210127150140epsmtrp10851bb7716b9e70ca56d17cee799a874~eHuhlGxLa0033500335epsmtrp1g;
-        Wed, 27 Jan 2021 15:01:40 +0000 (GMT)
-X-AuditID: b6c32a49-8bfff70000013d42-c3-60118055eebc
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1C.05.13470.35081106; Thu, 28 Jan 2021 00:01:40 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.110.206.5]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210127150138epsmtip2911ba1cea583786e803f14fb2ba17c0f~eHufq2ViP2133921339epsmtip2_;
-        Wed, 27 Jan 2021 15:01:37 +0000 (GMT)
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me
-Cc:     linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        javier.gonz@samsung.com, nj.shetty@samsung.com,
-        selvakuma.s1@samsung.com, Kanchan Joshi <joshi.k@samsung.com>
-Subject: [RFC PATCH 1/4] block: introduce async ioctl operation
-Date:   Wed, 27 Jan 2021 20:30:26 +0530
-Message-Id: <20210127150029.13766-2-joshi.k@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210127150029.13766-1-joshi.k@samsung.com>
+        id S234341AbhA0QVI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jan 2021 11:21:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40322 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343565AbhA0QU7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 11:20:59 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 658A6C061756
+        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 08:20:19 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id b8so1293120plh.12
+        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 08:20:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xaNiYk1/yGAXMU0WN8pVITYX4Nn8mwCLDYhGUeUc5ak=;
+        b=xkWcdvb3JwZJpk0GUgYFIJtdokUCoH50PemJOiXB3He68Nh2pBPoYMczsX6L2qSDaM
+         JNozUDVAyIEf+2ryomVoXhFBeCrayU6AhvZNCHEIiYq+cteZmiYbzeRRgHwGCTUH+nUb
+         I+pBYT6WENZtUh6sSrAxOGNhIndSX4T4dstRy2joeU6mRrnujFTm0l8a9KylSReU+tDv
+         Gaqn4eYchPblszu8PGAUfKc7iSwS0y138DDdiEvR+mxSpZ3QCfB1vr54iP7P0LaNm6OJ
+         w1bbvzT7nTw8z63WIThcwz2afp3hfxA6BvXnkhaZIXTK183LuBWURW7EegEA0BKBb7Ao
+         MI0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xaNiYk1/yGAXMU0WN8pVITYX4Nn8mwCLDYhGUeUc5ak=;
+        b=Ubps75lQbBEnXeRC33bFyIfb7FnU2Yj0pzJsqXz8uWgRgMaZ2mMlu7tpmToqZmf0YS
+         TSXJyoF0Wg7t9w5Ylt2z/riO9K4sMyb2+Za5PVt1wle1jUSEIkX3KYW7uPSLX7RVKKZJ
+         jc4WjihuBpMZ3n8VtoxpcCTlk/33pNKefW9r5tKoXsxjynttWK5lXCRcgH7FN+8FG5zM
+         HthRRbrDfq/SV1EhNLtYjEKiMtTPq07yVDimOnkHXAi4aPmScoc8HUh2NOxpnh/ucVzA
+         bqlRRJSXQ+u6oANwCNPwMqUXi/oZ+oqF+SXrfpvKpyJco9FAD1wkwYj6oOFwYg/ViS4Z
+         eUbQ==
+X-Gm-Message-State: AOAM533gYoa8ABPIHZghdAXRhFXou3FIb0lHsPA8/m8LeKaQ32rikJkx
+        0wE88i5TlyYFHLh6h7L21IrILxldAtapig==
+X-Google-Smtp-Source: ABdhPJyQMQvPctiVVwV5qx1m1+TYD7O1AbsY0L7YGXhR/FAV0Oemibv4K0uFa/B48jsf9Exw8J4NLQ==
+X-Received: by 2002:a17:902:ea8d:b029:e1:c81:3d23 with SMTP id x13-20020a170902ea8db02900e10c813d23mr1320416plb.47.1611764418911;
+        Wed, 27 Jan 2021 08:20:18 -0800 (PST)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id j17sm2858701pfh.183.2021.01.27.08.20.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Jan 2021 08:20:18 -0800 (PST)
+Subject: Re: [PATCH RESEND RESEND] io_uring: fix flush cqring overflow list
+ while TASK_INTERRUPTIBLE
+To:     Hao Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1611731204-171460-1-git-send-email-haoxu@linux.alibaba.com>
+ <1611731649-174664-1-git-send-email-haoxu@linux.alibaba.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f50094da-e987-e3dc-c7de-84a0544a607c@kernel.dk>
+Date:   Wed, 27 Jan 2021 09:20:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfVCLcRz32/Ps2bMx9zTSz7iNHe4KJZfzcyScOw+uK+fcyR31xHOJmtma
-        8r6jusrMSyXlJUeh6UqzJi1vYzKO6MV0Z5VLdxSFOSJK27OO/z7f7+f7+X5+n+/9SExSzZeS
-        icoUVq1kkhSECLc8CAycvU7nFzen9vFoNFCQx0fXXMcIVHbNzkO9Gc9x1PnGLUD2oU8EOml7
-        BVDdbQeOmmrPEqj4cpcAWQaKMdScdxFDFT19OOrpdxBLxtINbVU43fRMS5uM2QR9o+QgbW3V
-        EbTBbAS02ySLFmwQLdrCJiXuYtUhi+NEW1ur9HzV29FptwoqMR1oF+YAIQmpMGg1/uHnABEp
-        oawA1t9/BLjiK4AfCsoxrvgOYHquHoxI3K/zBRxxG8BvFjuPK9wAPrt3eJghSYIKhC9ytR7B
-        eGo5fDFwzyvAqF4AG9rM3k3jqAhoe5qLeTBOTYftP3R8DxZTCJ7vsPA4NzksbPwh8GAhtQA2
-        W0y+GT/oKHyHezA2PHO4+oz3qZAqJeGTbrOAEy+HzowW36JxsLt+pC+FH45l+rAG/npj94mz
-        AHTqCnGOiIAv6/7wPGmw4TSVtSGc2Vh4dOCdtw0pMczKlHDTU2HbyS4+hwPg29MlPkzDtv77
-        vmvphw9UX0QcB/Ki/zIU/Zeh6J/bBYAZwURWpUlOYDXzVKFKNjVYwyRrtMqE4M07kk3A+7OC
-        VtYAV8fnYBvgkcAGIIkpxosXT/GLk4i3MLv3sOodsWptEquxgUkkrggQ18zpiJVQCUwKu51l
-        Vax6hOWRQqmOd0XEyCrvnOiPPGV31X0XSuRrTQ3mmajDuKJ5gb/rY0Vm2TYiypDu7zBmj3JO
-        qMIHa1Z3Dxbf4P1eu/onZlVnGltCc+ILtWzf8WZ9i73vuiGtotg23aCS9fPJ6PQhs7RrLu18
-        ZJqljAq56YqZnx9RidobD1RPXeYeU6pLKY+JNaTaW7NS6iMdcH1i0sySSzmdJ46iwYdlF8NF
-        p6J2le7sfS8YOvdlXbRTEfPrvbTHuq9sz4yw1I3YhMkZg1ZG+nHV3ij8kIzedGTN0uyFk9Nc
-        4aumhQjGxHfqGLneuki+Uh7pHJXXeumuJSAxfBlz9ZU7fn+Lv7FuomxWgjRMrlfgmq1MaBCm
-        1jB/AROfUpjIAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSvG5Ig2CCwaypTBa/p09htVh9t5/N
-        YuXqo0wW71rPsVg8vvOZ3eLo/7dsFpMOXWO02LP3JIvF5V1z2CzmL3vKbrHt93xmiytTFjFb
-        rHv9nsXi9Y+TbA58HufvbWTxuHy21GPTqk42j81L6j1232xg8+jbsorR4/MmuQD2KC6blNSc
-        zLLUIn27BK6Mmxt7WAseclfsnL6euYHxPmcXIyeHhICJxOcbU9m7GLk4hAR2M0o8+vKbBSIh
-        LtF87Qc7hC0ssfLfc6iij4wSt5d1M3YxcnCwCWhKXJhcCmKKCHhJbFtqCFLCLPCNUWLN2lOs
-        IL3CAvYSh05PZgaxWQRUJe5/bwCL8wpYSMx7sI0JYr68xMxL38F2cQpYSlzZtgmsRgio5v2E
-        h2wQ9YISJ2c+AbuNGai+eets5gmMArOQpGYhSS1gZFrFKJlaUJybnltsWGCYl1quV5yYW1ya
-        l66XnJ+7iREcK1qaOxi3r/qgd4iRiYPxEKMEB7OSCK+dgmCCEG9KYmVValF+fFFpTmrxIUZp
-        DhYlcd4LXSfjhQTSE0tSs1NTC1KLYLJMHJxSDUxFCQm1MyKmRS60uN6z+xm/xrTm33/3hj59
-        t8ZkVdsXh3KlbZusrPM6PcM7kjvXOW7cx5QjtWgZnyBLXnRr+vcd7AEH9Zl7F+/ifb1cTsn1
-        LtNzoXtsNiFKHFt+LbgqrTTjyfV82zUdz+2aVNINu/qXlvfFyDcs/cP4NdY+SjzEYssCxzls
-        j0Sk4mTkRGbPVJ9dcsY5YqLjg+or4aeZDBOfGt5oP3K690IZp52H5nJP/9asjAzhqycSLYMW
-        Kjp55trn1ioXnX1612dVu6TP9NVrp74NStFsXb6AO+vkRN380EWNrh4hepK36j0lhbalZxk0
-        9y3JUY07qFX/OeBq9dJ1EhavbUoPpB9SEQ5VYinOSDTUYi4qTgQAj1Uq1gQDAAA=
-X-CMS-MailID: 20210127150140epcas5p32832cc0c0db953db199eb9dd326f2d4c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20210127150140epcas5p32832cc0c0db953db199eb9dd326f2d4c
-References: <20210127150029.13766-1-joshi.k@samsung.com>
-        <CGME20210127150140epcas5p32832cc0c0db953db199eb9dd326f2d4c@epcas5p3.samsung.com>
+In-Reply-To: <1611731649-174664-1-git-send-email-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add a new block-dev operation for async-ioctl.
-Driver managing the block-dev can choose to implement it.
+On 1/27/21 12:14 AM, Hao Xu wrote:
+> Abaci reported the follow warning:
+> 
+> [   27.073425] do not call blocking ops when !TASK_RUNNING; state=1 set at [] prepare_to_wait_exclusive+0x3a/0xc0
+> [   27.075805] WARNING: CPU: 0 PID: 951 at kernel/sched/core.c:7853 __might_sleep+0x80/0xa0
+> [   27.077604] Modules linked in:
+> [   27.078379] CPU: 0 PID: 951 Comm: a.out Not tainted 5.11.0-rc3+ #1
+> [   27.079637] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+> [   27.080852] RIP: 0010:__might_sleep+0x80/0xa0
+> [   27.081835] Code: 65 48 8b 04 25 80 71 01 00 48 8b 90 c0 15 00 00 48 8b 70 18 48 c7 c7 08 39 95 82 c6 05 f9 5f de 08 01 48 89 d1 e8 00 c6 fa ff  0b eb bf 41 0f b6 f5 48 c7 c7 40 23 c9 82 e8 f3 48 ec 00 eb a7
+> [   27.084521] RSP: 0018:ffffc90000fe3ce8 EFLAGS: 00010286
+> [   27.085350] RAX: 0000000000000000 RBX: ffffffff82956083 RCX: 0000000000000000
+> [   27.086348] RDX: ffff8881057a0000 RSI: ffffffff8118cc9e RDI: ffff88813bc28570
+> [   27.087598] RBP: 00000000000003a7 R08: 0000000000000001 R09: 0000000000000001
+> [   27.088819] R10: ffffc90000fe3e00 R11: 00000000fffef9f0 R12: 0000000000000000
+> [   27.089819] R13: 0000000000000000 R14: ffff88810576eb80 R15: ffff88810576e800
+> [   27.091058] FS:  00007f7b144cf740(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
+> [   27.092775] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   27.093796] CR2: 00000000022da7b8 CR3: 000000010b928002 CR4: 00000000003706f0
+> [   27.094778] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   27.095780] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   27.097011] Call Trace:
+> [   27.097685]  __mutex_lock+0x5d/0xa30
+> [   27.098565]  ? prepare_to_wait_exclusive+0x71/0xc0
+> [   27.099412]  ? io_cqring_overflow_flush.part.101+0x6d/0x70
+> [   27.100441]  ? lockdep_hardirqs_on_prepare+0xe9/0x1c0
+> [   27.101537]  ? _raw_spin_unlock_irqrestore+0x2d/0x40
+> [   27.102656]  ? trace_hardirqs_on+0x46/0x110
+> [   27.103459]  ? io_cqring_overflow_flush.part.101+0x6d/0x70
+> [   27.104317]  io_cqring_overflow_flush.part.101+0x6d/0x70
+> [   27.105113]  io_cqring_wait+0x36e/0x4d0
+> [   27.105770]  ? find_held_lock+0x28/0xb0
+> [   27.106370]  ? io_uring_remove_task_files+0xa0/0xa0
+> [   27.107076]  __x64_sys_io_uring_enter+0x4fb/0x640
+> [   27.107801]  ? rcu_read_lock_sched_held+0x59/0xa0
+> [   27.108562]  ? lockdep_hardirqs_on_prepare+0xe9/0x1c0
+> [   27.109684]  ? syscall_enter_from_user_mode+0x26/0x70
+> [   27.110731]  do_syscall_64+0x2d/0x40
+> [   27.111296]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [   27.112056] RIP: 0033:0x7f7b13dc8239
+> [   27.112663] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05  3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 ec 2c 00 f7 d8 64 89 01 48
+> [   27.115113] RSP: 002b:00007ffd6d7f5c88 EFLAGS: 00000286 ORIG_RAX: 00000000000001aa
+> [   27.116562] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7b13dc8239
+> [   27.117961] RDX: 000000000000478e RSI: 0000000000000000 RDI: 0000000000000003
+> [   27.118925] RBP: 00007ffd6d7f5cb0 R08: 0000000020000040 R09: 0000000000000008
+> [   27.119773] R10: 0000000000000001 R11: 0000000000000286 R12: 0000000000400480
+> [   27.120614] R13: 00007ffd6d7f5d90 R14: 0000000000000000 R15: 0000000000000000
+> [   27.121490] irq event stamp: 5635
+> [   27.121946] hardirqs last  enabled at (5643): [] console_unlock+0x5c4/0x740
+> [   27.123476] hardirqs last disabled at (5652): [] console_unlock+0x4e7/0x740
+> [   27.125192] softirqs last  enabled at (5272): [] __do_softirq+0x3c5/0x5aa
+> [   27.126430] softirqs last disabled at (5267): [] asm_call_irq_on_stack+0xf/0x20
+> [   27.127634] ---[ end trace 289d7e28fa60f928 ]---
 
-Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
----
- include/linux/blkdev.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Applied, thanks.
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index f94ee3089e01..c9f6cc26d675 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1848,6 +1848,16 @@ static inline void blk_ksm_unregister(struct request_queue *q) { }
- 
- #endif /* CONFIG_BLK_INLINE_ENCRYPTION */
- 
-+struct pt_ioctl_ctx {
-+	/* submitter task context */
-+	struct task_struct *task;
-+	/* callback supplied by upper layer */
-+	void (*pt_complete)(struct pt_ioctl_ctx *ptioc, long ret);
-+	/* driver-allocated data */
-+	void *ioc_data;
-+	/* to schedule task-work */
-+	struct callback_head pt_work;
-+};
- 
- struct block_device_operations {
- 	blk_qc_t (*submit_bio) (struct bio *bio);
-@@ -1856,6 +1866,8 @@ struct block_device_operations {
- 	int (*rw_page)(struct block_device *, sector_t, struct page *, unsigned int);
- 	int (*ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
- 	int (*compat_ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
-+	int (*async_ioctl) (struct block_device *, fmode_t, unsigned, unsigned long,
-+				struct pt_ioctl_ctx *);
- 	unsigned int (*check_events) (struct gendisk *disk,
- 				      unsigned int clearing);
- 	void (*unlock_native_capacity) (struct gendisk *);
 -- 
-2.25.1
+Jens Axboe
 

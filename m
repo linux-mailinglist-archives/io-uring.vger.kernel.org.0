@@ -2,65 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 716A7306B01
-	for <lists+io-uring@lfdr.de>; Thu, 28 Jan 2021 03:21:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 352FE306B62
+	for <lists+io-uring@lfdr.de>; Thu, 28 Jan 2021 04:08:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229578AbhA1CUN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jan 2021 21:20:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56116 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231137AbhA1CUH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 21:20:07 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5147C061573
-        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 18:19:27 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id y205so2997800pfc.5
-        for <io-uring@vger.kernel.org>; Wed, 27 Jan 2021 18:19:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ey0CrgepuNX4oLvc3t2TaJSKdPIskmfV9uksdEQcplM=;
-        b=YDqCzJIpYuuUUgO+VzpsNPXawNyKG8gZpVhdQDwX3ei/OSlqcq3Tka2k2J5UlA54yf
-         /nWpdSuoTg0C1jXN+YZNp8Uupa0QrLc+RSvnV9zdjHuHVSeCDZcoXzLMgZDuBjzCVQYX
-         /ra5lkcwLMkWBOpg2Tnto4plkHR1kuZGTlSJxHyjbghtJlCnrfqgZzTeejTZDJHdhphj
-         68VYv15rLRd1lefQyxLhZXLJABiEnibambEzXXXORDoCUdOdJ6qvZANh8ng69PAJmnhf
-         ELHc8I7fj/pd8KmN7ErSWfewBB5FGmsH3nOV7qi9kh+3XaBIQBNs4DjHKiW8g+ohvj7o
-         ln8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ey0CrgepuNX4oLvc3t2TaJSKdPIskmfV9uksdEQcplM=;
-        b=UZXXAssC6o2pUKVdgDvANZqH4lqfDyJ4yvf8ls7qFlHlWMJPi06I8WK4n8v4vOYS71
-         nP4vloHk6G29T2K7E/gsVtszoOtCk/cs8Ox85XXhjtI76UNBYDMbtiNQMN+AioDnsC/B
-         d9HyhgEa5Om5WP39QCyx8PR9Ccv/Zpr3wMMasoKGspSYF2026SPS5rWchzqwIMhVKM3k
-         nOhgieeZRgr4xpLk2fHMwsPQxdicDmaCHTGmkFNsQNyqBaCbXF89GgaktpxvTfMUFAmB
-         xKuEu/rtISeFAYYrZLak3CeVsJjuB2p6rkPeQnFQN926iVz+U2vnLxXOeKTYtmFpNvD0
-         n4kw==
-X-Gm-Message-State: AOAM533h+Op9BOhmV5YglmZytHbVf4k/BbD6muyHCHvP8eBjk39uertA
-        dnCEy14nl/tPeSaam4RD99Zd0ScyV09piA==
-X-Google-Smtp-Source: ABdhPJwtrqu31t0zI2F6CzQNkBO+LpN1goufuCGDlu48lD0cRni+2D1+jmTVhuy119GXYRs6f0ROmQ==
-X-Received: by 2002:a63:f905:: with SMTP id h5mr5134615pgi.187.1611800367191;
-        Wed, 27 Jan 2021 18:19:27 -0800 (PST)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id b17sm3193602pju.15.2021.01.27.18.19.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jan 2021 18:19:26 -0800 (PST)
-Subject: Re: [PATCH 2/5] io_uring: add support for IORING_OP_URING_CMD
-From:   Jens Axboe <axboe@kernel.dk>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     io-uring@vger.kernel.org
-References: <20210127212541.88944-1-axboe@kernel.dk>
- <20210127212541.88944-3-axboe@kernel.dk> <20210128003831.GE7695@magnolia>
- <67627096-6d30-af3a-9545-1446909a38c4@kernel.dk>
-Message-ID: <f8576940-5441-1355-c09e-db60ad0ac889@kernel.dk>
-Date:   Wed, 27 Jan 2021 19:19:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S229578AbhA1DHd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jan 2021 22:07:33 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:50661 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229545AbhA1DHc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 22:07:32 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UN61yfy_1611803201;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UN61yfy_1611803201)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 28 Jan 2021 11:06:41 +0800
+Subject: Re: [PATCH v2 0/6] dm: support IO polling for bio-based dm device
+To:     Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     joseph.qi@linux.alibaba.com, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org
+References: <20210125121340.70459-1-jefflexu@linux.alibaba.com>
+ <20210127171941.GA11530@redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <2ed9966f-b390-085a-1a51-5bf65038d533@linux.alibaba.com>
+Date:   Thu, 28 Jan 2021 11:06:40 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-In-Reply-To: <67627096-6d30-af3a-9545-1446909a38c4@kernel.dk>
+In-Reply-To: <20210127171941.GA11530@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,25 +35,96 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
->> Assuming that I got that right, that means that the pdu information
->> doesn't actually go all the way to the end of the sqe, which currently
->> is just a bunch of padding.  Was that intentional, or does this mean
->> that io_uring_pdu could actually be 8 bytes longer?
+
+
+On 1/28/21 1:19 AM, Mike Snitzer wrote:
+> On Mon, Jan 25 2021 at  7:13am -0500,
+> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
 > 
-> Also correct. The reason is actually kind of stupid, and I think we
-> should just fix that up. struct io_uring_cmd should fit within the first
-> cacheline of io_kiocb, to avoid bloating that one. But with the members
-> in there, it ends up being 8 bytes too big, if we grab those 8 bytes.
-> What I think we should do is get rid of ->done, and just have drivers
-> call io_uring_cmd_done() instead. We can provide an empty hook for that.
-> Then we can reclaim the 8 bytes, and grow the io_uring_cmd to 56 bytes.
+>> Since currently we have no simple but efficient way to implement the
+>> bio-based IO polling in the split-bio tracking style, this patch set
+>> turns to the original implementation mechanism that iterates and
+>> polls all underlying hw queues in polling mode. One optimization is
+>> introduced to mitigate the race of one hw queue among multiple polling
+>> instances.
+>>
+>> I'm still open to the split bio tracking mechanism, if there's
+>> reasonable way to implement it.
+>>
+>>
+>> [Performance Test]
+>> The performance is tested by fio (engine=io_uring) 4k randread on
+>> dm-linear device. The dm-linear device is built upon nvme devices,
+>> and every nvme device has one polling hw queue (nvme.poll_queues=1).
+>>
+>> Test Case		    | IOPS in IRQ mode | IOPS in polling mode | Diff
+>> 			    | (hipri=0)	       | (hipri=1)	      |
+>> --------------------------- | ---------------- | -------------------- | ----
+>> 3 target nvme, num_jobs = 1 | 198k 	       | 276k		      | ~40%
+>> 3 target nvme, num_jobs = 3 | 608k 	       | 705k		      | ~16%
+>> 6 target nvme, num_jobs = 6 | 1197k 	       | 1347k		      | ~13%
+>> 3 target nvme, num_jobs = 6 | 1285k 	       | 1293k		      | ~0%
+>>
+>> As the number of polling instances (num_jobs) increases, the
+>> performance improvement decreases, though it's still positive
+>> compared to the IRQ mode.
+> 
+> I think there is serious room for improvement for DM's implementation;
+> but the block changes for this are all we'd need for DM in the longrun
+> anyway (famous last words).
 
-Pushed out that version:
+Agreed.
 
-https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops.v2
 
-which gives you the full 56 bytes for the payload command.
+> So on a block interface level I'm OK with
+> block patches 1-3.
+> 
+> I don't see why patch 5 is needed (said the same in reply to it; but I
+> just saw your reason below..).
+> 
+> Anyway, I can pick up DM patches 4 and 6 via linux-dm.git if Jens picks
+> up patches 1-3. Jens, what do you think?
+
+cc Jens.
+
+Also I will send a new version later, maybe some refactor on patch5 and
+some typo modifications.
+
+> 
+>> [Optimization]
+>> To mitigate the race when iterating all the underlying hw queues, one
+>> flag is maintained on a per-hw-queue basis. This flag is used to
+>> indicate whether this polling hw queue currently being polled on or
+>> not. Every polling hw queue is exclusive to one polling instance, i.e.,
+>> the polling instance will skip this polling hw queue if this hw queue
+>> currently is being polled by another polling instance, and start
+>> polling on the next hw queue.
+>>
+>> This per-hw-queue flag map is currently maintained in dm layer. In
+>> the table load phase, a table describing all underlying polling hw
+>> queues is built and stored in 'struct dm_table'. It is safe when
+>> reloading the mapping table.
+>>
+>>
+>> changes since v1:
+>> - patch 1,2,4 is the same as v1 and have already been reviewed
+>> - patch 3 is refactored a bit on the basis of suggestions from
+>> Mike Snitzer.
+>> - patch 5 is newly added and introduces one new queue flag
+>> representing if the queue is capable of IO polling. This mainly
+>> simplifies the logic in queue_poll_store().
+> 
+> Ah OK, don't see why we want to eat a queue flag for that though!
+> 
+>> - patch 6 implements the core mechanism supporting IO polling.
+>> The sanity check checking if the dm device supports IO polling is
+>> also folded into this patch, and the queue flag will be cleared if
+>> it doesn't support, in case of table reloading.
+> 
+> Thanks,
+> Mike
+> 
 
 -- 
-Jens Axboe
-
+Thanks,
+Jeffle

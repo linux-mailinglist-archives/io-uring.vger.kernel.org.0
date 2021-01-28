@@ -2,165 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84A35307E38
-	for <lists+io-uring@lfdr.de>; Thu, 28 Jan 2021 19:39:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFAFC307E58
+	for <lists+io-uring@lfdr.de>; Thu, 28 Jan 2021 19:46:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231956AbhA1SjK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 28 Jan 2021 13:39:10 -0500
-Received: from mail-pj1-f47.google.com ([209.85.216.47]:33104 "EHLO
-        mail-pj1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231531AbhA1Sh0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Jan 2021 13:37:26 -0500
-Received: by mail-pj1-f47.google.com with SMTP id lw17so5174959pjb.0
-        for <io-uring@vger.kernel.org>; Thu, 28 Jan 2021 10:37:11 -0800 (PST)
+        id S232095AbhA1Spy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 Jan 2021 13:45:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41308 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232229AbhA1Snz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Jan 2021 13:43:55 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111F5C061574
+        for <io-uring@vger.kernel.org>; Thu, 28 Jan 2021 10:43:15 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id z6so6403603wrq.10
+        for <io-uring@vger.kernel.org>; Thu, 28 Jan 2021 10:43:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UeFVTCDJ3Ta2Yp4qVDUhE2CcARPr3visx2OeFXrrTtQ=;
+        b=SuyepYb2Muhal+IRwibrxGbmFFDGSVuHwEO7WnYoCJ/CPWNYHOkWZ9w4sXqpS3dkYi
+         AcXxuGtpkVk1CbJOywkSSmbW+YOQEkB6WsJEJeqwChVN7Rv7bDepi1sr1TyP1ZA5gx7l
+         /usIO9t9CrfnuxoCEuHNaDqMGvk3smDM+q7o3M+eQ/kH2KjnWiNyxD4540RgCCALqlkh
+         nuyxFBF4e3klBcTI7xFlAHW3GhVJ0Q+lXSxnBzEeAjyUivB5iMfQLtvQAK6RmtskkNO5
+         Xt+mlKXD+GiS4BwoxgIXoZFjBf1Y4hKk3J+cZS0uSU+UDtcTpdXrybzbukBVIm5UsIUf
+         YExQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=g5YFZge2ATjblIIwSQhf82b4H7N6/Rm5PzpjONcfd7w=;
-        b=EywVP6dg11oHXKjMgXajX3/2YgNBdoRC7r/E4Lk3EnFcoC4xUFFg3kh+r83JpzVh9Y
-         yYeHVQNTDy0S08HD1lliLEW/UCi2f7xgrzmN1hgCjY4gt5HVPKoeLreIyaahfivKLx21
-         YsHHfbMd9RFMKCSVoTFQtJQRiaTHWikDLplHeLtvUurf497WD3Cg8bIFxEZNRpu85XQZ
-         Kd7WuKCTtv1VkfV8s+RAL2dP9eU/AW4qRmXrM4fzSyO26+dPTErz6QMHTiA1jBLBFdsg
-         J4Rbu3D6Zaa+pkEI6fakl64pqH022DQNyCwIieyy2BZsJzsHkkEh3ruH1DE4rKk8cpyg
-         2Y5g==
-X-Gm-Message-State: AOAM533i3LiGbEMzgtdtzTvvmSu+VLHPeLSyY6lA/3Y7AMvQBrgJqXq7
-        1jMxWrnG8IBcdjQnqqhTbSb8Tu6T8fk=
-X-Google-Smtp-Source: ABdhPJwgj8i8NXOljLaGzp7ayB/K/oaIN3mKrYCuqgANYMOQifM7A2VoLWs/uQl8asuCaGrUiIH7xw==
-X-Received: by 2002:a17:90a:9302:: with SMTP id p2mr649884pjo.213.1611859005426;
-        Thu, 28 Jan 2021 10:36:45 -0800 (PST)
-Received: from asus.hsd1.ca.comcast.net ([2601:647:4000:d7:7c24:d56f:a477:c88a])
-        by smtp.gmail.com with ESMTPSA id a20sm6441954pfo.104.2021.01.28.10.36.43
+        bh=UeFVTCDJ3Ta2Yp4qVDUhE2CcARPr3visx2OeFXrrTtQ=;
+        b=D8zR2B6Edh+Iv4ajPf0mPFMQDWrQRcSMh705NNqhpUqgORjHPHpEG1OV0jehLYGwxY
+         AUfP3D+iBu89odsB9/H9jzyzpGKmggLvIXHfK8R+4wHGkc/KXC8L7jz8bHs5z79zPpnP
+         4xhavPxL/EuJijBhYPqSZ41Kmwy0tSp5xQT4tbt8BnqX37yeyq+T6I8oetnqBUmGxolA
+         thythL+vikWDuFdK1TYqpAHK4Bq8hdJ6LEX8bHRufunCqzxxAnRTPbgByhIA0eTv5mdd
+         4D4VPKxVcwyKCgMbXdzzxBPqyeDhPywTrK1ydehL4C317D+P3L2YrPyzqdRuBR9Apep6
+         /Jjg==
+X-Gm-Message-State: AOAM530JdzcxrOsZ4ATNsovuCCPzCKFrqdunE9VcjoWTBkQcZ9VhzwAL
+        sqi39QdJ8hvmfs+lhSQJZ1w=
+X-Google-Smtp-Source: ABdhPJytdkpUN5iciXOzSwqXULk4OJPhdi9VA7MWGklCEIRMwow1/1k/BxznwvBm9lEZNhVpJ0GlLQ==
+X-Received: by 2002:a05:6000:1105:: with SMTP id z5mr482863wrw.15.1611859393842;
+        Thu, 28 Jan 2021 10:43:13 -0800 (PST)
+Received: from localhost.localdomain ([148.252.132.131])
+        by smtp.gmail.com with ESMTPSA id y18sm7916386wrt.19.2021.01.28.10.43.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jan 2021 10:36:44 -0800 (PST)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH] io_uring: Optimize and improve the hot path
-Date:   Thu, 28 Jan 2021 10:36:37 -0800
-Message-Id: <20210128183637.7188-1-bvanassche@acm.org>
-X-Mailer: git-send-email 2.30.0
+        Thu, 28 Jan 2021 10:43:13 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 0/2] io_uring-file req cancel syzbot reports
+Date:   Thu, 28 Jan 2021 18:39:23 +0000
+Message-Id: <cover.1611859042.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The improvements in this patch are as follows:
-- Change several memory barriers into load acquire / store release
-  instructions since the latter are faster.
-- Ensure that the completion has been reaped from use space by
-  using smp_load_acquire() in __io_cqring_events(). Preceding
-  __io_cqring_events() with smp_rmb() is not sufficient because the CPU
-  may reorder READ_ONCE() in __io_cqring_events() with later memory
-  accesses.
-- Fix a race between the WRITE_ONCE(req->iopoll_completed, 1) in
-  io_complete_rw_iopoll() and req->iopoll_completed = 0 in
-  io_sqring_entries() by reading req->iopoll_completed before comparing
-  req->result with -EAGAIN.
+Fixes for two latest syzbot reports
 
-This patch has been tested by running the liburing test suite.
+Pavel Begunkov (2):
+  io_uring: fix list corruption for splice file_get
+  io_uring: fix sqo ownership false positive warning
 
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- fs/io_uring.c | 32 +++++++++++---------------------
- 1 file changed, 11 insertions(+), 21 deletions(-)
+ fs/io_uring.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c07913ec0cca..2fff7250f0b1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1727,9 +1727,9 @@ static inline bool io_should_trigger_evfd(struct io_ring_ctx *ctx)
- 	return io_wq_current_is_worker();
- }
- 
--static inline unsigned __io_cqring_events(struct io_ring_ctx *ctx)
-+static inline unsigned io_cqring_events(struct io_ring_ctx *ctx)
- {
--	return ctx->cached_cq_tail - READ_ONCE(ctx->rings->cq.head);
-+	return ctx->cached_cq_tail - smp_load_acquire(&ctx->rings->cq.head);
- }
- 
- static void io_cqring_ev_posted(struct io_ring_ctx *ctx)
-@@ -1778,7 +1778,7 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
- 	bool all_flushed;
- 	LIST_HEAD(list);
- 
--	if (!force && __io_cqring_events(ctx) == rings->cq_ring_entries)
-+	if (!force && io_cqring_events(ctx) == rings->cq_ring_entries)
- 		return false;
- 
- 	spin_lock_irqsave(&ctx->completion_lock, flags);
-@@ -2385,13 +2385,6 @@ static void io_double_put_req(struct io_kiocb *req)
- 		io_free_req(req);
- }
- 
--static unsigned io_cqring_events(struct io_ring_ctx *ctx)
--{
--	/* See comment at the top of this file */
--	smp_rmb();
--	return __io_cqring_events(ctx);
--}
--
- static inline unsigned int io_sqring_entries(struct io_ring_ctx *ctx)
- {
- 	struct io_rings *rings = ctx->rings;
-@@ -2457,15 +2450,13 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 	struct io_kiocb *req;
- 	LIST_HEAD(again);
- 
--	/* order with ->result store in io_complete_rw_iopoll() */
--	smp_rmb();
--
- 	io_init_req_batch(&rb);
- 	while (!list_empty(done)) {
- 		int cflags = 0;
- 
- 		req = list_first_entry(done, struct io_kiocb, inflight_entry);
--		if (READ_ONCE(req->result) == -EAGAIN) {
-+		if (smp_load_acquire(&req->iopoll_completed) &&
-+		    req->result == -EAGAIN) {
- 			req->result = 0;
- 			req->iopoll_completed = 0;
- 			list_move_tail(&req->inflight_entry, &again);
-@@ -2514,7 +2505,7 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 		 * If we find a request that requires polling, break out
- 		 * and complete those lists first, if we have entries there.
- 		 */
--		if (READ_ONCE(req->iopoll_completed)) {
-+		if (smp_load_acquire(&req->iopoll_completed)) {
- 			list_move_tail(&req->inflight_entry, &done);
- 			continue;
- 		}
-@@ -2526,7 +2517,7 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 			break;
- 
- 		/* iopoll may have completed current req */
--		if (READ_ONCE(req->iopoll_completed))
-+		if (smp_load_acquire(&req->iopoll_completed))
- 			list_move_tail(&req->inflight_entry, &done);
- 
- 		if (ret && spin)
-@@ -2767,10 +2758,9 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
- 	if (res != -EAGAIN && res != req->result)
- 		req_set_fail_links(req);
- 
--	WRITE_ONCE(req->result, res);
--	/* order with io_poll_complete() checking ->result */
--	smp_wmb();
--	WRITE_ONCE(req->iopoll_completed, 1);
-+	req->result = res;
-+	/* order with io_poll_complete() checking ->iopoll_completed */
-+	smp_store_release(&req->iopoll_completed, 1);
- }
- 
- /*
-@@ -2803,7 +2793,7 @@ static void io_iopoll_req_issued(struct io_kiocb *req, bool in_async)
- 	 * For fast devices, IO may have already completed. If it has, add
- 	 * it to the front so we find it first.
- 	 */
--	if (READ_ONCE(req->iopoll_completed))
-+	if (smp_load_acquire(&req->iopoll_completed))
- 		list_add(&req->inflight_entry, &ctx->iopoll_list);
- 	else
- 		list_add_tail(&req->inflight_entry, &ctx->iopoll_list);
+-- 
+2.24.0
+

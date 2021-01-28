@@ -2,129 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 352FE306B62
-	for <lists+io-uring@lfdr.de>; Thu, 28 Jan 2021 04:08:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 243DB3071D4
+	for <lists+io-uring@lfdr.de>; Thu, 28 Jan 2021 09:43:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229578AbhA1DHd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jan 2021 22:07:33 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:50661 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229545AbhA1DHc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jan 2021 22:07:32 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UN61yfy_1611803201;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UN61yfy_1611803201)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 28 Jan 2021 11:06:41 +0800
-Subject: Re: [PATCH v2 0/6] dm: support IO polling for bio-based dm device
-To:     Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     joseph.qi@linux.alibaba.com, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org
+        id S232163AbhA1ImC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 Jan 2021 03:42:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53118 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232042AbhA1Ilk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Jan 2021 03:41:40 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86356C061573;
+        Thu, 28 Jan 2021 00:40:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=mgoB+i+Auh++1htuEFoAkzFwUIwzArtUbMqdLzdMRFA=; b=XD2Ymn9xzss6bgJBjakru6YpEv
+        +aQKprD1jaNuWqi0E0lBJL+lFxRGXpjVkCH7RyT0saCj6GulNNAoWxvrINgBa7EdIIj9sIi0tyDnP
+        4P9nkVFfVUPjyGMfsSkFVJJ12PxH96irOGCLdpI9K42Mb3yk+lSiBUoVBC66JNws7LDeUDQrjdu7b
+        7+bR0tss4MDb+ybdVvFlUVX9MvopZvp96VUcb1QKPsM+OA/Gyzdr5+CYlURVaaqFplj2SSUrqjXfG
+        vxXrBvJ7l7lFb0pE13O85pIl08NldGvOXAl69MaEOJGNdOTt5uKdm7D1t617ZTVNAzHxgqZEWUbTW
+        mmSvOEVA==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l52qe-008CXK-O3; Thu, 28 Jan 2021 08:40:17 +0000
+Date:   Thu, 28 Jan 2021 08:40:16 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     snitzer@redhat.com, joseph.qi@linux.alibaba.com,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] block: add iopoll method to support bio-based IO
+ polling
+Message-ID: <20210128084016.GA1951639@infradead.org>
 References: <20210125121340.70459-1-jefflexu@linux.alibaba.com>
- <20210127171941.GA11530@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <2ed9966f-b390-085a-1a51-5bf65038d533@linux.alibaba.com>
-Date:   Thu, 28 Jan 2021 11:06:40 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.6.1
+ <20210125121340.70459-4-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <20210127171941.GA11530@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210125121340.70459-4-jefflexu@linux.alibaba.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On Mon, Jan 25, 2021 at 08:13:37PM +0800, Jeffle Xu wrote:
+> +int blk_poll(struct request_queue *q, blk_qc_t cookie, bool spin)
 
-
-On 1/28/21 1:19 AM, Mike Snitzer wrote:
-> On Mon, Jan 25 2021 at  7:13am -0500,
-> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
-> 
->> Since currently we have no simple but efficient way to implement the
->> bio-based IO polling in the split-bio tracking style, this patch set
->> turns to the original implementation mechanism that iterates and
->> polls all underlying hw queues in polling mode. One optimization is
->> introduced to mitigate the race of one hw queue among multiple polling
->> instances.
->>
->> I'm still open to the split bio tracking mechanism, if there's
->> reasonable way to implement it.
->>
->>
->> [Performance Test]
->> The performance is tested by fio (engine=io_uring) 4k randread on
->> dm-linear device. The dm-linear device is built upon nvme devices,
->> and every nvme device has one polling hw queue (nvme.poll_queues=1).
->>
->> Test Case		    | IOPS in IRQ mode | IOPS in polling mode | Diff
->> 			    | (hipri=0)	       | (hipri=1)	      |
->> --------------------------- | ---------------- | -------------------- | ----
->> 3 target nvme, num_jobs = 1 | 198k 	       | 276k		      | ~40%
->> 3 target nvme, num_jobs = 3 | 608k 	       | 705k		      | ~16%
->> 6 target nvme, num_jobs = 6 | 1197k 	       | 1347k		      | ~13%
->> 3 target nvme, num_jobs = 6 | 1285k 	       | 1293k		      | ~0%
->>
->> As the number of polling instances (num_jobs) increases, the
->> performance improvement decreases, though it's still positive
->> compared to the IRQ mode.
-> 
-> I think there is serious room for improvement for DM's implementation;
-> but the block changes for this are all we'd need for DM in the longrun
-> anyway (famous last words).
-
-Agreed.
-
-
-> So on a block interface level I'm OK with
-> block patches 1-3.
-> 
-> I don't see why patch 5 is needed (said the same in reply to it; but I
-> just saw your reason below..).
-> 
-> Anyway, I can pick up DM patches 4 and 6 via linux-dm.git if Jens picks
-> up patches 1-3. Jens, what do you think?
-
-cc Jens.
-
-Also I will send a new version later, maybe some refactor on patch5 and
-some typo modifications.
-
-> 
->> [Optimization]
->> To mitigate the race when iterating all the underlying hw queues, one
->> flag is maintained on a per-hw-queue basis. This flag is used to
->> indicate whether this polling hw queue currently being polled on or
->> not. Every polling hw queue is exclusive to one polling instance, i.e.,
->> the polling instance will skip this polling hw queue if this hw queue
->> currently is being polled by another polling instance, and start
->> polling on the next hw queue.
->>
->> This per-hw-queue flag map is currently maintained in dm layer. In
->> the table load phase, a table describing all underlying polling hw
->> queues is built and stored in 'struct dm_table'. It is safe when
->> reloading the mapping table.
->>
->>
->> changes since v1:
->> - patch 1,2,4 is the same as v1 and have already been reviewed
->> - patch 3 is refactored a bit on the basis of suggestions from
->> Mike Snitzer.
->> - patch 5 is newly added and introduces one new queue flag
->> representing if the queue is capable of IO polling. This mainly
->> simplifies the logic in queue_poll_store().
-> 
-> Ah OK, don't see why we want to eat a queue flag for that though!
-> 
->> - patch 6 implements the core mechanism supporting IO polling.
->> The sanity check checking if the dm device supports IO polling is
->> also folded into this patch, and the queue flag will be cleared if
->> it doesn't support, in case of table reloading.
-> 
-> Thanks,
-> Mike
-> 
-
--- 
-Thanks,
-Jeffle
+Can you split the guts of this function into two separate helpers
+for the mq vs non-mq case?  As is is is a little hard to read and
+introduced extra branches in the fast path.

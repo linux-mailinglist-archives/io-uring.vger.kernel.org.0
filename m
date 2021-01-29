@@ -2,118 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D181D308D2C
-	for <lists+io-uring@lfdr.de>; Fri, 29 Jan 2021 20:16:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2041E308FE4
+	for <lists+io-uring@lfdr.de>; Fri, 29 Jan 2021 23:15:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232864AbhA2TLj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Jan 2021 14:11:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44828 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233039AbhA2TLB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Jan 2021 14:11:01 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAE86C061573
-        for <io-uring@vger.kernel.org>; Fri, 29 Jan 2021 11:10:21 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id 16so10449436ioz.5
-        for <io-uring@vger.kernel.org>; Fri, 29 Jan 2021 11:10:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=BuQposic9hvASHqkGLin2WsC9ekOb+BLeVLVz7LwmzA=;
-        b=Yr9pM76QAPvM7wVewOrvJzeSWhge1y5aRZ9i90qx3CMIrQjSWt1SWFxLzeNj66abwf
-         9EHWZbS8QFDHWX3U0LHTBfnyWPxECcVTrGec5yrKZcXS1r9UfLKB1fnxFIaCzfX4P9VX
-         DPTc3z7P0J0YyRWqlprrFe4r//R+ENxSsZidaRb52Jvt3CcqDEC4P+4o5EeCJyyoJ+pk
-         WNpApvJ/vP5uzrTRL0/x1UStBfvmh1rrXrxhzzSF2LO+WRIKWDjmjNKFGcBZmCBJlUOr
-         1l89PFx8w6ColZlOlBJc24LbYY0ByKE5tFOs1gjHMVGMmPn0evz9rnD5DQk7EX+8OHg2
-         mUAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=BuQposic9hvASHqkGLin2WsC9ekOb+BLeVLVz7LwmzA=;
-        b=hDViBn6FdEPqwNsBepWSO/l3zU4AdnxL+OCe2m0Sf7LMMTUtnwNpigxY6wHBA5YUW8
-         t2LipjQcveXE47G5Eg8K2j1SRaFDp5tYLpClUxli1cvh8J4sB7jh60xCo3AubrMXdmAe
-         HakHN7Z4bNiLPH/UCio8+NFt/3Y/SSpOtJjUfOgPzwnDORlApmtrwP7Zxv5p1dSrnTxL
-         9Uuze9Z/8WWzvsthpeSsFrl2lLtmSzaEXD3jTheE+9HzjuNDINJz9wB/f/U/sDrcDa1E
-         NQ35Znke3GrwG9awwNjT0/OdxDNXCFyNfx84MluZcy5p8RvmYfCdeb1Za9VqRN9XHNJw
-         ZEIQ==
-X-Gm-Message-State: AOAM533Oj67bYlthdBaqULOE8uaB0KXZYLLA4YxkWtcmOB4qacn/DZMX
-        TI2pxbN/gEQP8IC/6S+aS+mm+LIxp7aZwOi4
-X-Google-Smtp-Source: ABdhPJzI2t5ji2y5XqcR0WSTwPMO+hw++ERYtFwVHakB+WNBPSXQHohL/xWxe+vz/wCaICgPHyXFRQ==
-X-Received: by 2002:a02:5148:: with SMTP id s69mr4945631jaa.8.1611947420882;
-        Fri, 29 Jan 2021 11:10:20 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id m19sm4813685ila.81.2021.01.29.11.10.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Jan 2021 11:10:20 -0800 (PST)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.11-rc6
-Message-ID: <f708dbad-9147-8a9e-2a9a-c0037a99eb60@kernel.dk>
-Date:   Fri, 29 Jan 2021 12:10:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S233558AbhA2WNS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Jan 2021 17:13:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233545AbhA2WM7 (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Fri, 29 Jan 2021 17:12:59 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 10DA164DF1;
+        Fri, 29 Jan 2021 22:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611958339;
+        bh=nEOc671lFxHrdO/urEnYSOIJ2QU4oSkl5D9ZiKEKrrM=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=lhBDnaGZxaZPxW2qNMRPpIlC5KTbSVHQn1HyaOy0xx0XSba6dOmAcI+jDVoKI88oI
+         PmQvSYf86rGlRco9u4Sa5dFG+y5BSvlZEydqNR/Jae4B8aHO2Kw8v20j5X3C0wfwHU
+         /Dp7Exy69VLWFpA8BVL2xHeDa+ecaLt2Q/utKg8qC6xp86b/MHVlzVtyzlZ/2nvmwR
+         vPmHPh1pdhsX0J+HWWxmz14HmPGNoyP5cb66eZwhYOM4oNdMJHxLbFbyQr8s4xN/S3
+         IN8QOc19l1cwHkaeZ6mFYWAs5OBBkM85VgI2hT5ojmAmpVuRav3ZobOFUs8FbCALr+
+         Q8/Ge8T/OWhvg==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 1B70F60953;
+        Fri, 29 Jan 2021 22:12:19 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fixes for 5.11-rc6
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <f708dbad-9147-8a9e-2a9a-c0037a99eb60@kernel.dk>
+References: <f708dbad-9147-8a9e-2a9a-c0037a99eb60@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <f708dbad-9147-8a9e-2a9a-c0037a99eb60@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.11-2021-01-29
+X-PR-Tracked-Commit-Id: 3a7efd1ad269ccaf9c1423364d97c9661ba6dafa
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c0ec4ffc40939e9a5a5844ce455f2b5b66a005fd
+Message-Id: <161195833910.1476.10538227342349466968.pr-tracker-bot@kernel.org>
+Date:   Fri, 29 Jan 2021 22:12:19 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Fri, 29 Jan 2021 12:10:19 -0700:
 
-We got the cancelation story sorted now, so for all intents and
-purposes, this should be it for 5.11 outside of any potential little
-fixes that may come in. This pull request contains:
+> git://git.kernel.dk/linux-block.git tags/io_uring-5.11-2021-01-29
 
-- task_work task state fixes (Hao, Pavel)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c0ec4ffc40939e9a5a5844ce455f2b5b66a005fd
 
-- Cancelation fixes (me, Pavel)
-
-- Fix for an inflight req patch in this release (Pavel)
-
-- Fix for a lock deadlock issue (Pavel)
-
-Please pull!
-
-
-The following changes since commit 6ee1d745b7c9fd573fba142a2efdad76a9f1cb04:
-
-  Linux 5.11-rc5 (2021-01-24 16:47:14 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.11-2021-01-29
-
-for you to fetch changes up to 3a7efd1ad269ccaf9c1423364d97c9661ba6dafa:
-
-  io_uring: reinforce cancel on flush during exit (2021-01-28 17:04:24 -0700)
-
-----------------------------------------------------------------
-io_uring-5.11-2021-01-29
-
-----------------------------------------------------------------
-Hao Xu (1):
-      io_uring: fix flush cqring overflow list while TASK_INTERRUPTIBLE
-
-Jens Axboe (2):
-      io_uring: if we see flush on exit, cancel related tasks
-      io_uring: only call io_cqring_ev_posted() if events were posted
-
-Pavel Begunkov (6):
-      io_uring: fix __io_uring_files_cancel() with TASK_UNINTERRUPTIBLE
-      io_uring: fix cancellation taking mutex while TASK_UNINTERRUPTIBLE
-      io_uring: fix wqe->lock/completion_lock deadlock
-      io_uring: fix list corruption for splice file_get
-      io_uring: fix sqo ownership false positive warning
-      io_uring: reinforce cancel on flush during exit
-
- fs/io_uring.c | 95 +++++++++++++++++++++++++++++++++--------------------------
- 1 file changed, 53 insertions(+), 42 deletions(-)
+Thank you!
 
 -- 
-Jens Axboe
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html

@@ -2,269 +2,367 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99706308545
-	for <lists+io-uring@lfdr.de>; Fri, 29 Jan 2021 06:38:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7EEE30869A
+	for <lists+io-uring@lfdr.de>; Fri, 29 Jan 2021 08:43:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229786AbhA2FiC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Jan 2021 00:38:02 -0500
-Received: from hmm.wantstofly.org ([213.239.204.108]:51156 "EHLO
-        mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbhA2FiB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Jan 2021 00:38:01 -0500
-Received: by mail.wantstofly.org (Postfix, from userid 1000)
-        id 603BC7F45D; Fri, 29 Jan 2021 07:37:03 +0200 (EET)
-Date:   Fri, 29 Jan 2021 07:37:03 +0200
-From:   Lennert Buytenhek <buytenh@wantstofly.org>
-To:     David Laight <David.Laight@aculab.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
-Message-ID: <20210129053703.GB190469@wantstofly.org>
-References: <20210123114152.GA120281@wantstofly.org>
- <a99467bab6d64a7f9057181d979ec563@AcuMS.aculab.com>
- <20210128230710.GA190469@wantstofly.org>
+        id S232310AbhA2Hiu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Jan 2021 02:38:50 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:47752 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232344AbhA2HiD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Jan 2021 02:38:03 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UNCgIG9_1611905828;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UNCgIG9_1611905828)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 29 Jan 2021 15:37:08 +0800
+Subject: Re: [PATCH v2 6/6] dm: support IO polling for bio-based dm device
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+To:     snitzer@redhat.com
+Cc:     joseph.qi@linux.alibaba.com, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org
+References: <20210125121340.70459-1-jefflexu@linux.alibaba.com>
+ <20210125121340.70459-7-jefflexu@linux.alibaba.com>
+Message-ID: <e075bfe1-6991-bbfa-4d92-040a123f0a2b@linux.alibaba.com>
+Date:   Fri, 29 Jan 2021 15:37:08 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210128230710.GA190469@wantstofly.org>
+In-Reply-To: <20210125121340.70459-7-jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jan 29, 2021 at 01:07:10AM +0200, Lennert Buytenhek wrote:
-
-> > > One open question is whether IORING_OP_GETDENTS64 should be more like
-> > > pread(2) and allow passing in a starting offset to read from the
-> > > directory from.  (This would require some more surgery in fs/readdir.c.)
-> > 
-> > Since directories are seekable this ought to work.
-> > Modulo horrid issues with 32bit file offsets.
-> 
-> The incremental patch below does this.  (It doesn't apply cleanly on
-> top of v1 of the IORING_OP_GETDENTS patch as I have other changes in
-> my tree -- I'm including it just to illustrate the changes that would
-> make this work.)
-> 
-> This change seems to work, and makes IORING_OP_GETDENTS take an
-> explicitly specified directory offset (instead of using the file's
-> ->f_pos), making it more like pread(2) [...]
-
-...but the fact that this patch avoids taking file->f_pos_lock (as this
-proposed version of IORING_OP_GETDENTS avoids using file->f_pos) means
-that ->iterate_shared() can then be called concurrently on the same
-struct file, which breaks the mutual exclusion guarantees provided here.
-
-If possible, I'd like to keep the ability to explicitly pass in a
-directory offset to start reading from into IORING_OP_GETDENTS, so
-perhaps we can simply satisfy the mutual exclusion requirement by
-taking ->f_pos_lock by hand -- but then I do need to check that it's OK
-for ->iterate{,_shared}() to be called successively with discontinuous
-offsets without ->llseek() being called in between.
-
-(If that's not OK, then we can either have IORING_OP_GETDENTS just
-always start reading at ->f_pos like before (which might then require
-adding a IORING_OP_GETDENTS2 at some point in the future if we'll
-ever want to change that), or we could have IORING_OP_GETDENTS itself
-call ->llseek() for now whenever necessary.)
 
 
-> , and I like the change from
-> a conceptual point of view, but it's a bit ugly around
-> iterate_dir_use_ctx_pos().  Any thoughts on how to do this more
-> cleanly (without breaking iterate_dir() semantics)?
+On 1/25/21 8:13 PM, Jeffle Xu wrote:
+> DM will iterate and poll all polling hardware queues of all target mq
+> devices when polling IO for dm device. To mitigate the race introduced
+> by iterating all target hw queues, a per-hw-queue flag is maintained
+> to indicate whether this polling hw queue currently being polled on or
+> not. Every polling hw queue is exclusive to one polling instance, i.e.,
+> the polling instance will skip this polling hw queue if this hw queue
+> currently is being polled by another polling instance, and start
+> polling on the next hw queue.
 > 
+> IO polling is enabled when all underlying target devices are capable
+> of IO polling. The sanity check supports the stacked device model, in
+> which one dm device may be build upon another dm device. In this case,
+> the mapped device will check if the underlying dm target device
+> supports IO polling.
 > 
-> > You'd need to return the final offset to allow another
-> > read to continue from the end position.
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>  block/blk-core.c      |   8 ++-
+>  drivers/md/dm-core.h  |  21 +++++++
+>  drivers/md/dm-table.c | 127 ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/md/dm.c       |  37 ++++++++++++
+>  4 files changed, 192 insertions(+), 1 deletion(-)
 > 
-> We can use the ->d_off value as returned in the last struct
-> linux_dirent64 as the directory offset to continue reading from
-> with the next IORING_OP_GETDENTS call, illustrated by the patch
-> to uringfind.c at the bottom.
-> 
-> 
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 13dd29f8ebb3..0f9707ed9294 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -576,6 +576,7 @@ struct io_getdents {
->  	struct file			*file;
->  	struct linux_dirent64 __user	*dirent;
->  	unsigned int			count;
-> +	loff_t				pos;
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 3d93aaa9a49b..d81a5f0faa1d 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -1150,7 +1150,13 @@ int blk_poll(struct request_queue *q, blk_qc_t cookie, bool spin)
+>  	struct blk_mq_hw_ctx *hctx = NULL;
+>  	struct gendisk *disk = NULL;
+>  
+> -	if (!blk_qc_t_valid(cookie) ||
+> +	/*
+> +	 * In case of bio-base polling, the returned cookie is actually that of
+> +	 * the last split bio. Thus the returned cookie may be BLK_QC_T_NONE,
+> +	 * while the previous split bios have already been submitted and queued
+> +	 * into the polling hw queue.
+> +	 */
+> +	if ((queue_is_mq(q) && !blk_qc_t_valid(cookie)) ||
+>  	    !test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
+>  		return 0;
+>  
+> diff --git a/drivers/md/dm-core.h b/drivers/md/dm-core.h
+> index 086d293c2b03..5a0391aa5cc7 100644
+> --- a/drivers/md/dm-core.h
+> +++ b/drivers/md/dm-core.h
+> @@ -127,6 +127,24 @@ static inline struct dm_stats *dm_get_stats(struct mapped_device *md)
+>  
+>  #define DM_TABLE_MAX_DEPTH 16
+>  
+> +enum target_ctx_type {
+> +	TARGET_TYPE_MQ,
+> +	TARGET_TYPE_DM,
+> +};
+> +
+> +struct target_ctx {
+> +	union {
+> +		struct {
+> +			struct blk_mq_hw_ctx *hctx;
+> +			struct request_queue *q;
+> +			atomic_t busy;
+> +		};
+> +		struct mapped_device *md;
+> +	};
+> +
+> +	int type;
+> +};
+> +
+
+I suddenly realize that this implementation is somehow problematic. This
+implementation actually buffers hctx of underlying mq device. This can
+be problematic when the hctx of uderlying mq device can be dynamiclly
+changed at runtime.
+
+For example, nvme RESET command can trigger this issue. Users can send
+nvme RESET command while there's already one dm device built upon this
+nvme device. In this case, the hctx map of nvme device will be
+reallocated when there's one dm device built upon this nvme device. And
+the original old 'struct blk_mq_hw_ctx *hctx' buffered in the dm layer
+can be out-of-date.
+
+Maybe we could embed 'atomic_t busy' in 'struct blk_mq_hw_ctx', and
+block layer needs to export one interface iterating all hw queues of
+given device, just like what I did in the very first RFC version patch:
+
+
++#define queue_for_each_poll_hw_ctx(q, hctx, i)			\
++for ((i) = 0; ((q)->tag_set->nr_maps > HCTX_TYPE_POLL) &&	\
++     (i) < (q)->tag_set->map[HCTX_TYPE_POLL].nr_queues &&	\
++({ hctx =
+(q)->queue_hw_ctx[((q)->tag_set->map[HCTX_TYPE_POLL].queue_offset +
+(i))]; 1; }); \
++(i)++)
+
+
+
+>  struct dm_table {
+>  	struct mapped_device *md;
+>  	enum dm_queue_mode type;
+> @@ -162,6 +180,9 @@ struct dm_table {
+>  	void *event_context;
+>  
+>  	struct dm_md_mempools *mempools;
+> +
+> +	int num_ctx;
+> +	struct target_ctx *ctxs;
 >  };
 >  
->  struct io_completion {
-> @@ -4584,9 +4585,10 @@ static int io_getdents_prep(struct io_kiocb *req,
+>  static inline struct completion *dm_get_completion_from_kobject(struct kobject *kobj)
+> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+> index 188f41287f18..397bb5f57626 100644
+> --- a/drivers/md/dm-table.c
+> +++ b/drivers/md/dm-table.c
+> @@ -215,6 +215,8 @@ void dm_table_destroy(struct dm_table *t)
 >  
->  	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
->  		return -EINVAL;
-> -	if (sqe->ioprio || sqe->off || sqe->rw_flags || sqe->buf_index)
-> +	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
->  		return -EINVAL;
+>  	dm_free_md_mempools(t->mempools);
 >  
-> +	getdents->pos = READ_ONCE(sqe->off);
->  	getdents->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
->  	getdents->count = READ_ONCE(sqe->len);
+> +	kfree(t->ctxs);
+> +
+>  	kfree(t);
+>  }
+>  
+> @@ -1194,6 +1196,114 @@ static int dm_table_register_integrity(struct dm_table *t)
 >  	return 0;
-> @@ -4601,7 +4603,8 @@ static int io_getdents(struct io_kiocb *req, bool force_nonblock)
->  	if (force_nonblock)
->  		return -EAGAIN;
->  
-> -	ret = vfs_getdents(req->file, getdents->dirent, getdents->count);
-> +	ret = vfs_getdents(req->file, getdents->dirent, getdents->count,
-> +			   &getdents->pos);
->  	if (ret < 0) {
->  		if (ret == -ERESTARTSYS)
->  			ret = -EINTR;
-> diff --git a/fs/readdir.c b/fs/readdir.c
-> index f52167c1eb61..d6bd78f6350a 100644
-> --- a/fs/readdir.c
-> +++ b/fs/readdir.c
-> @@ -37,7 +37,7 @@
->  } while (0)
->  
->  
-> -int iterate_dir(struct file *file, struct dir_context *ctx)
-> +int iterate_dir_use_ctx_pos(struct file *file, struct dir_context *ctx)
->  {
->  	struct inode *inode = file_inode(file);
->  	bool shared = false;
-> @@ -60,12 +60,10 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
->  
->  	res = -ENOENT;
->  	if (!IS_DEADDIR(inode)) {
-> -		ctx->pos = file->f_pos;
->  		if (shared)
->  			res = file->f_op->iterate_shared(file, ctx);
->  		else
->  			res = file->f_op->iterate(file, ctx);
-> -		file->f_pos = ctx->pos;
->  		fsnotify_access(file);
->  		file_accessed(file);
->  	}
-> @@ -76,6 +74,17 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
->  out:
->  	return res;
 >  }
-> +
-> +int iterate_dir(struct file *file, struct dir_context *ctx)
+>  
+> +static int device_supports_poll(struct dm_target *ti, struct dm_dev *dev,
+> +				sector_t start, sector_t len, void *data)
 > +{
-> +	int res;
+> +	struct request_queue *q = bdev_get_queue(dev->bdev);
 > +
-> +	ctx->pos = file->f_pos;
-> +	res = iterate_dir_use_ctx_pos(file, ctx);
-> +	file->f_pos = ctx->pos;
-> +
-> +	return res;
+> +	return q && test_bit(QUEUE_FLAG_POLL, &q->queue_flags);
 > +}
->  EXPORT_SYMBOL(iterate_dir);
->  
+> +
+> +static bool dm_table_supports_poll(struct dm_table *t)
+> +{
+> +	struct dm_target *ti;
+> +	unsigned int i;
+> +
+> +	/* Ensure that all targets support iopoll. */
+> +	for (i = 0; i < dm_table_get_num_targets(t); i++) {
+> +		ti = dm_table_get_target(t, i);
+> +
+> +		if (!ti->type->iterate_devices ||
+> +		    !ti->type->iterate_devices(ti, device_supports_poll, NULL))
+> +			return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static int dm_table_calc_target_ctxs(struct dm_target *ti,
+> +		struct dm_dev *dev,
+> +		sector_t start, sector_t len,
+> +		void *data)
+> +{
+> +	int *num = data;
+> +	struct request_queue *q = dev->bdev->bd_disk->queue;
+> +
+> +	if (queue_is_mq(q))
+> +		*num += q->tag_set->map[HCTX_TYPE_POLL].nr_queues;
+> +	else
+> +		*num += 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static int dm_table_fill_target_ctxs(struct dm_target *ti,
+> +		struct dm_dev *dev,
+> +		sector_t start, sector_t len,
+> +		void *data)
+> +{
+> +	int *index = data;
+> +	struct target_ctx *ctx;
+> +	struct request_queue *q = dev->bdev->bd_disk->queue;
+> +
+> +	if (queue_is_mq(q)) {
+> +		int i;
+> +		int num = q->tag_set->map[HCTX_TYPE_POLL].nr_queues;
+> +		int offset = q->tag_set->map[HCTX_TYPE_POLL].queue_offset;
+> +
+> +		for (i = 0; i < num; i++) {
+> +			ctx = &ti->table->ctxs[(*index)++];
+> +			ctx->q = q;
+> +			ctx->hctx = q->queue_hw_ctx[offset + i];
+> +			ctx->type = TARGET_TYPE_MQ;
+> +			/* ctx->busy has been initialized to zero */
+> +		}
+> +	} else {
+> +		struct mapped_device *md = dev->bdev->bd_disk->private_data;
+> +
+> +		ctx = &ti->table->ctxs[(*index)++];
+> +		ctx->md = md;
+> +		ctx->type = TARGET_TYPE_DM;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int dm_table_build_target_ctxs(struct dm_table *t)
+> +{
+> +	int i, num = 0, index = 0;
+> +
+> +	if (!__table_type_bio_based(t->type) || !dm_table_supports_poll(t))
+> +		return 0;
+> +
+> +	for (i = 0; i < t->num_targets; i++) {
+> +		struct dm_target *ti = dm_table_get_target(t, i);
+> +
+> +		if (ti->type->iterate_devices)
+> +			ti->type->iterate_devices(ti, dm_table_calc_target_ctxs,
+> +					&num);
+> +	}
+> +
+> +	if (WARN_ON(!num))
+> +		return 0;
+> +
+> +	t->num_ctx = num;
+> +
+> +	t->ctxs = kcalloc(num, sizeof(struct target_ctx), GFP_KERNEL);
+> +	if (!t->ctxs)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < t->num_targets; i++) {
+> +		struct dm_target *ti = dm_table_get_target(t, i);
+> +
+> +		if (ti->type->iterate_devices)
+> +			ti->type->iterate_devices(ti, dm_table_fill_target_ctxs,
+> +					&index);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
 >  /*
-> @@ -349,16 +358,18 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+>   * Prepares the table for use by building the indices,
+>   * setting the type, and allocating mempools.
+> @@ -1224,6 +1334,10 @@ int dm_table_complete(struct dm_table *t)
+>  	if (r)
+>  		DMERR("unable to allocate mempools");
+>  
+> +	r = dm_table_build_target_ctxs(t);
+> +	if (r)
+> +		DMERR("unable to build target hctxs");
+> +
+>  	return r;
 >  }
 >  
->  int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
-> -		 unsigned int count)
-> +		 unsigned int count, loff_t *pos)
->  {
->  	struct getdents_callback64 buf = {
->  		.ctx.actor = filldir64,
-> +		.ctx.pos = *pos,
->  		.count = count,
->  		.current_dir = dirent
->  	};
->  	int error;
+> @@ -1883,6 +1997,19 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+>  #endif
 >  
-> -	error = iterate_dir(file, &buf.ctx);
-> +	error = iterate_dir_use_ctx_pos(file, &buf.ctx);
-> +	*pos = buf.ctx.pos;
->  	if (error >= 0)
->  		error = buf.error;
->  	if (buf.prev_reclen) {
-> @@ -384,7 +395,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
->  	if (!f.file)
->  		return -EBADF;
->  
-> -	error = vfs_getdents(f.file, dirent, count);
-> +	error = vfs_getdents(f.file, dirent, count, &f.file->f_pos);
->  	fdput_pos(f);
->  	return error;
+>  	blk_queue_update_readahead(q);
+> +
+> +	/*
+> +	 * Check for request-based device is remained to
+> +	 * dm_mq_init_request_queue()->blk_mq_init_allocated_queue().
+> +	 * Also clear previously set QUEUE_FLAG_POLL* if the new table doesn't
+> +	 * support iopoll while reloading table.
+> +	 */
+> +	if (__table_type_bio_based(t->type)) {
+> +		if (t->ctxs)
+> +			q->queue_flags |= QUEUE_FLAG_POLL_MASK;
+> +		else
+> +			q->queue_flags &= ~QUEUE_FLAG_POLL_MASK;
+> +	}
 >  }
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 114885d3f6c4..4d9d96163f92 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3107,11 +3107,12 @@ const char *simple_get_link(struct dentry *, struct inode *,
->  			    struct delayed_call *);
->  extern const struct inode_operations simple_symlink_inode_operations;
 >  
-> +extern int iterate_dir_use_ctx_pos(struct file *, struct dir_context *);
->  extern int iterate_dir(struct file *, struct dir_context *);
+>  unsigned int dm_table_get_num_targets(struct dm_table *t)
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index 46ca3b739396..e2be1caa086a 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -1657,6 +1657,42 @@ static blk_qc_t dm_submit_bio(struct bio *bio)
+>  	return BLK_QC_T_NONE;
+>  }
 >  
->  struct linux_dirent64;
->  int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
-> -		 unsigned int count);
-> +		 unsigned int count, loff_t *pos);
->  
->  int vfs_fstatat(int dfd, const char __user *filename, struct kstat *stat,
->  		int flags);
-> 
-> 
-> 
-> Corresponding uringfind.c change:
-> 
-> diff --git a/uringfind.c b/uringfind.c
-> index 4282296..e140388 100644
-> --- a/uringfind.c
-> +++ b/uringfind.c
-> @@ -22,9 +22,10 @@ struct linux_dirent64 {
+> +
+> +static int dm_poll_one_md(struct mapped_device *md)
+> +{
+> +	int i, num_ctx, srcu_idx, ret = 0;
+> +	struct dm_table *t;
+> +	struct target_ctx *ctxs;
+> +
+> +	t = dm_get_live_table(md, &srcu_idx);
+> +	num_ctx = t->num_ctx;
+> +	ctxs = t->ctxs;
+> +
+> +	for (i = 0; i < num_ctx; i++) {
+> +		struct target_ctx *ctx = &ctxs[i];
+> +
+> +		if (ctx->type == TARGET_TYPE_MQ) {
+> +			if (!atomic_cmpxchg(&ctx->busy, 0, 1)) {
+> +				ret += blk_mq_poll(ctx->q, ctx->hctx);
+> +				atomic_set(&ctx->busy, 0);
+> +			}
+> +		} else
+> +			ret += dm_poll_one_md(ctx->md);
+> +	}
+> +
+> +	dm_put_live_table(md, srcu_idx);
+> +
+> +	return ret;
+> +}
+> +
+> +static int dm_bio_poll(struct request_queue *q, blk_qc_t cookie)
+> +{
+> +	struct gendisk *disk = queue_to_disk(q);
+> +	struct mapped_device *md= disk->private_data;
+> +
+> +	return dm_poll_one_md(md);
+> +}
+> +
+>  /*-----------------------------------------------------------------
+>   * An IDR is used to keep track of allocated minor numbers.
+>   *---------------------------------------------------------------*/
+> @@ -3049,6 +3085,7 @@ static const struct pr_ops dm_pr_ops = {
 >  };
 >  
->  static inline void io_uring_prep_getdents(struct io_uring_sqe *sqe, int fd,
-> -					  void *buf, unsigned int count)
-> +					  void *buf, unsigned int count,
-> +					  uint64_t off)
->  {
-> -	io_uring_prep_rw(IORING_OP_GETDENTS, sqe, fd, buf, count, 0);
-> +	io_uring_prep_rw(IORING_OP_GETDENTS, sqe, fd, buf, count, off);
->  }
->  
->  
-> @@ -38,6 +39,7 @@ struct dir {
->  
->  	struct dir	*parent;
->  	int		fd;
-> +	uint64_t	off;
->  	uint8_t		buf[16384];
->  	char		name[0];
->  };
-> @@ -131,7 +133,8 @@ static void schedule_readdir(struct dir *dir)
->  	struct io_uring_sqe *sqe;
->  
->  	sqe = get_sqe();
-> -	io_uring_prep_getdents(sqe, dir->fd, dir->buf, sizeof(dir->buf));
-> +	io_uring_prep_getdents(sqe, dir->fd, dir->buf, sizeof(dir->buf),
-> +			       dir->off);
->  	io_uring_sqe_set_data(sqe, dir);
->  }
->  
-> @@ -145,6 +148,7 @@ static void opendir_completion(struct dir *dir, int ret)
->  	}
->  
->  	dir->fd = ret;
-> +	dir->off = 0;
->  	schedule_readdir(dir);
->  }
->  
-> @@ -179,6 +183,7 @@ static void readdir_completion(struct dir *dir, int ret)
->  				schedule_opendir(dir, dent->d_name);
->  		}
->  
-> +		dir->off = dent->d_off;
->  		bufp += dent->d_reclen;
->  	}
->  
+>  static const struct block_device_operations dm_blk_dops = {
+> +	.iopoll = dm_bio_poll,
+>  	.submit_bio = dm_submit_bio,
+>  	.open = dm_blk_open,
+>  	.release = dm_blk_close,
+> 
+
+-- 
+Thanks,
+Jeffle

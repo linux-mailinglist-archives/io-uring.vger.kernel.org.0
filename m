@@ -2,38 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 19402308BE2
-	for <lists+io-uring@lfdr.de>; Fri, 29 Jan 2021 18:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 872F3308BFF
+	for <lists+io-uring@lfdr.de>; Fri, 29 Jan 2021 18:59:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232020AbhA2RqW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Jan 2021 12:46:22 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:57377 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232539AbhA2Rny (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Jan 2021 12:43:54 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R281e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UNFjSnD_1611942122;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UNFjSnD_1611942122)
+        id S230525AbhA2Ryb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Jan 2021 12:54:31 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:34357 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229676AbhA2Ry3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Jan 2021 12:54:29 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UNFqeDp_1611942813;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UNFqeDp_1611942813)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 30 Jan 2021 01:42:10 +0800
+          Sat, 30 Jan 2021 01:53:40 +0800
 From:   Hao Xu <haoxu@linux.alibaba.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH] io_uring: check kthread parked flag before sqthread goes to sleep
-Date:   Sat, 30 Jan 2021 01:42:02 +0800
-Message-Id: <1611942122-83391-1-git-send-email-haoxu@linux.alibaba.com>
+Subject: [PATCH v2] io_uring: check kthread parked flag before sqthread goes to sleep
+Date:   Sat, 30 Jan 2021 01:53:33 +0800
+Message-Id: <1611942813-89187-1-git-send-email-haoxu@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1611942122-83391-1-git-send-email-haoxu@linux.alibaba.com>
+References: <1611942122-83391-1-git-send-email-haoxu@linux.alibaba.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 Abaci reported this issue:
 
-seconds.
+#[  605.170872] INFO: task kworker/u4:1:53 blocked for more than 143 seconds.
 [  605.172123]       Not tainted 5.10.0+ #1
-[  605.172811] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-disables this message.
-[  605.173915] task:kworker/u4:1    state:D stack:    0 pid:   53 ppid:
-2 flags:0x00004000
+[  605.172811] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  605.173915] task:kworker/u4:1    state:D stack:    0 pid:   53 ppid:     2 flags:0x00004000
 [  605.175130] Workqueue: events_unbound io_ring_exit_work
 [  605.175931] Call Trace:
 [  605.176334]  __schedule+0xe0e/0x25a0
@@ -67,33 +67,21 @@ disables this message.
 [  605.196605]
 [  605.196605] Showing all locks held in the system:
 [  605.197598] 1 lock held by khungtaskd/25:
-[  605.198301]  #0: ffffffff8b5f76a0 (rcu_read_lock){....}-{1:2}, at:
-rcu_lock_acquire.constprop.0+0x0/0x30
+[  605.198301]  #0: ffffffff8b5f76a0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire.constprop.0+0x0/0x30
 [  605.199914] 3 locks held by kworker/u4:1/53:
-[  605.200609]  #0: ffff888100109938
-((wq_completion)events_unbound){+.+.}-{0:0}, at:
-process_one_work+0x82a/0x1510
-[  605.202108]  #1: ffff888100e47dc0
-((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at:
-process_one_work+0x85e/0x1510
-[  605.203681]  #2: ffff888116931870 (&sqd->lock){+.+.}-{3:3}, at:
-io_sq_thread_park.part.0+0x19/0x50
+[  605.200609]  #0: ffff888100109938 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x82a/0x1510
+[  605.202108]  #1: ffff888100e47dc0 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x85e/0x1510
+[  605.203681]  #2: ffff888116931870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park.part.0+0x19/0x50
 [  605.205183] 3 locks held by systemd-journal/161:
 [  605.206037] 1 lock held by syslog-ng/254:
 [  605.206674] 2 locks held by agetty/311:
-[  605.207292]  #0: ffff888101097098 (&tty->ldisc_sem){++++}-{0:0}, at:
-tty_ldisc_ref_wait+0x27/0x80
-[  605.208715]  #1: ffffc900000332e8
-(&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x222/0x1bb0
+[  605.207292]  #0: ffff888101097098 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x27/0x80
+[  605.208715]  #1: ffffc900000332e8 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x222/0x1bb0
 [  605.210131] 2 locks held by bash/677:
-[  605.210723]  #0: ffff88810419a098 (&tty->ldisc_sem){++++}-{0:0}, at:
-tty_ldisc_ref_wait+0x27/0x80
-[  605.212105]  #1: ffffc900000512e8
-(&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x222/0x1bb0
+[  605.210723]  #0: ffff88810419a098 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x27/0x80
+[  605.212105]  #1: ffffc900000512e8 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x222/0x1bb0
 [  605.213777]
 [  605.214151] =============================================
-[  605.214151]
-
 I believe this is caused by the follow race:
 
 (ctx_list is empty now)

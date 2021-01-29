@@ -2,98 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 982033081D2
-	for <lists+io-uring@lfdr.de>; Fri, 29 Jan 2021 00:29:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEE65308353
+	for <lists+io-uring@lfdr.de>; Fri, 29 Jan 2021 02:39:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231764AbhA1X2Y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 28 Jan 2021 18:28:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45642 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231645AbhA1X2W (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Jan 2021 18:28:22 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D11EC061574;
-        Thu, 28 Jan 2021 15:27:42 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id p15so7064807wrq.8;
-        Thu, 28 Jan 2021 15:27:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0SUklcioMbX2XxFdr8rP2Sid7xI1SGXR5dl7dQ9jye8=;
-        b=h2GJ1OpVB32u0K5TG+ANKqO/bdMJSYy9w6/0rIf+U3VHdx+5IHiFjQc2JxqQwALjqM
-         O8kbClkugMsjgdkFaAweBFbmYnfPySbMxTKx9s26UKWoL67UUdE2JA9CYwrDMQI/Dd0d
-         4lGsY706T1HlCZiijmG/3CfOQaYmZqMkA3gZ4kUH00QkTA3w/NsnPRl2CiRRGCg7Pgs5
-         ml5jvXd0N7HnUQ2pCE0RM2tXxhsBWckvfkutfVi4YT+GwQmKcVDH6XI2fpGKNOj13wk0
-         eHCL0KZVwEM07mydgiUGoK9WNQ5BtVmE71P6k+wHpNV1EatX0MAO/uZkalNHDZsq8vjr
-         8AJg==
+        id S231237AbhA2Biw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 Jan 2021 20:38:52 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:56333 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231547AbhA2Bir (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Jan 2021 20:38:47 -0500
+Received: by mail-il1-f198.google.com with SMTP id s4so6370981ilv.23
+        for <io-uring@vger.kernel.org>; Thu, 28 Jan 2021 17:38:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0SUklcioMbX2XxFdr8rP2Sid7xI1SGXR5dl7dQ9jye8=;
-        b=PCZOecLVSZhMJDJZC+saYiMDYwvZ+5TYIX1F3kIVBuJFNw6g3kr8jgWlJA5SW6Lp/M
-         P03oDwtEoq2qOStpq4k+pR5ptN9WGD1YQ3+1yyb48T7ZlTW5qk8aBVItmtR9149vn0Jv
-         ZFISuSi+AwVBMTAJqsWMad/KAlcd7yN1yJ+7MNopmHplhMIQpOc0PmCquEkR7Rqzt1x5
-         RkZIHKw69L+oaCKnFkORF2WK43ZNpYAm3CGPZ8NsjhTnwZCFdxrvSBnTaWBZHvUYO2pE
-         k41UlSz4f86ne6KsZw11cs4Ia7zreU9N1IhE7gbdMNyDd0//h+GvE8J/hdw977anQols
-         AjIw==
-X-Gm-Message-State: AOAM533sxr1ioFGlIKicfddafVuY6l6au2LH7aJaHkETe/hIdxtZ/trR
-        xpJuQRyl1kqVxs9aOkH8iuY=
-X-Google-Smtp-Source: ABdhPJw3zsJFRnDypYz7P4YcOs0KGTNiNLrSolWUM5zvF0H65w7dU+ybPGRSwTdjxi1HjVfN+qTZaA==
-X-Received: by 2002:a5d:4e92:: with SMTP id e18mr1539820wru.66.1611876461024;
-        Thu, 28 Jan 2021 15:27:41 -0800 (PST)
-Received: from localhost.localdomain ([148.252.132.131])
-        by smtp.gmail.com with ESMTPSA id v6sm8919587wrx.32.2021.01.28.15.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jan 2021 15:27:40 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: [PATCH] io_uring: reinforce cancel on flush during exit
-Date:   Thu, 28 Jan 2021 23:23:42 +0000
-Message-Id: <c2a824f91bae5c5ea9ca2117fb22a2db55965782.1611876031.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=lm16eCirJMAjlWtITfJJw0jmgaMJxdBabVfxLijbAp0=;
+        b=Ls8I/9xuMBLHdVoF3I8ONAN1EmhBtU6/fnDNVeOTZVNza7aabRf647dDtzyfYcz2Dm
+         6OAy+HlWooZ0afOwFwnEnncBrZ854+JVxbefHM0zOA4QerPeQlqi2gKy47QeQau5pJK9
+         NabBJ+B7c7M4L07smUEcupyq3epsot7zDK09Yip9U2Ui9AasqTo8BpAsxCVXMp3YKmcT
+         EKvXRUvCPL08F7+4bSQP8Kwz2tq8kjU0LpRxBgQ9MEqSultknlfKIAUd/enniYu0VzNH
+         QxF7ZCekPzTTdC7tb+48vez8hx8vO0SZlVX96J+LSUmQB9PQj+B95T6S/xo/pkKU7Bgr
+         u0YQ==
+X-Gm-Message-State: AOAM532YIjo66YWCJsMFqgbHJ4w1PhOQetuLDDpBU67Z73d6/wZCl61W
+        sLLnRZMxELQ4KpEI/MvO4FxCy4nYXv6m4hBR5BZMYfl7b/kh
+X-Google-Smtp-Source: ABdhPJzaeeto+90vKfwCqIzrB5cp8eqdHC8gCKgD33zO40cOrw2abKT9qoVAFdgqqOolzOUWECqyCPq1B3LE/EP9Hzwa53UUwB8D
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:f714:: with SMTP id k20mr2029676iog.70.1611884286518;
+ Thu, 28 Jan 2021 17:38:06 -0800 (PST)
+Date:   Thu, 28 Jan 2021 17:38:06 -0800
+In-Reply-To: <000000000000619ae405b9f8cf6e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000512a7f05ba000ead@google.com>
+Subject: Re: WARNING in io_uring_cancel_task_requests
+From:   syzbot <syzbot+3e3d9bd0c6ce9efbc3ef@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, mingo@redhat.com,
+        peterz@infradead.org, rostedt@goodmis.org, stable@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-What 84965ff8a84f0 ("io_uring: if we see flush on exit, cancel related tasks")
-really wants is to cancel all relevant REQ_F_INFLIGHT requests reliably.
-That can be achieved by io_uring_cancel_files(), but we'll miss it
-calling io_uring_cancel_task_requests(files=NULL) from io_uring_flush(),
-because it will go through __io_uring_cancel_task_requests().
+syzbot has bisected this issue to:
 
-Just always call io_uring_cancel_files() during cancel, it's good enough
-for now.
+commit 4d004099a668c41522242aa146a38cc4eb59cb1e
+Author: Peter Zijlstra <peterz@infradead.org>
+Date:   Fri Oct 2 09:04:21 2020 +0000
 
-Cc: stable@vger.kernel.org # 5.9+
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+    lockdep: Fix lockdep recursion
 
-p.s. fold in, maybe?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=133f3090d00000
+start commit:   d03154e8 Add linux-next specific files for 20210128
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10bf3090d00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=173f3090d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6953ffb584722a1
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e3d9bd0c6ce9efbc3ef
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a924c4d00000
 
- fs/io_uring.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Reported-by: syzbot+3e3d9bd0c6ce9efbc3ef@syzkaller.appspotmail.com
+Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 12bf7180c0f1..38c6cbe1ab38 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8976,10 +8976,9 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
- 	io_cancel_defer_files(ctx, task, files);
- 	io_cqring_overflow_flush(ctx, true, task, files);
- 
-+	io_uring_cancel_files(ctx, task, files);
- 	if (!files)
- 		__io_uring_cancel_task_requests(ctx, task);
--	else
--		io_uring_cancel_files(ctx, task, files);
- 
- 	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sq_data) {
- 		atomic_dec(&task->io_uring->in_idle);
--- 
-2.24.0
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection

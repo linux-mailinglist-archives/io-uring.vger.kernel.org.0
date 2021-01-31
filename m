@@ -2,56 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15FDA309DA8
-	for <lists+io-uring@lfdr.de>; Sun, 31 Jan 2021 16:38:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AD91309DC0
+	for <lists+io-uring@lfdr.de>; Sun, 31 Jan 2021 16:51:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231920AbhAaPhQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 31 Jan 2021 10:37:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41958 "EHLO
+        id S231149AbhAaPud (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 31 Jan 2021 10:50:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232249AbhAaM6H (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 31 Jan 2021 07:58:07 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58843C061573
-        for <io-uring@vger.kernel.org>; Sun, 31 Jan 2021 04:54:49 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id u14so10318754wml.4
-        for <io-uring@vger.kernel.org>; Sun, 31 Jan 2021 04:54:49 -0800 (PST)
+        with ESMTP id S230419AbhAaPuV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 31 Jan 2021 10:50:21 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EEECC061573
+        for <io-uring@vger.kernel.org>; Sun, 31 Jan 2021 07:49:37 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id g10so13920108wrx.1
+        for <io-uring@vger.kernel.org>; Sun, 31 Jan 2021 07:49:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xrqc79MULhInEi8i5xGGNHFuIF7xLOhZNQ9HcylQbT4=;
-        b=WIh1MF0LaFjL5FLR3rZir3/9YYjzZ/b1Y/goRilw0ULYcTjUhuTil8e+ZFCZgn79Lg
-         G8RooHp+LkYc2epfOAsTTeZaXndrZediOgXfmzqtxOhNfwpKVlGw2MaF6HVLrxnsqeTP
-         kmHBbziuz8t3H8hjSk360DgV+K8V5jIySnfEwXzDJ3JCUWly/g2fM7gLZONXso8zVybq
-         eqEk1Hls9Gd59YFBwDd+9+uMrra+cstGu9LVtxMSpfHcsonBlUFKJMKQzH6xBpfH7Zxc
-         YXnzAAujGAnj7XJVBS5UL0+BfNSTY6i/f4eaqbDqapUh71vNgIh2BeKrhCgqtCY19pmQ
-         e6bw==
+        bh=ddG8EPmRqboQlmuVLMgbQxlihaEE837rnlA2gmkI9C0=;
+        b=RUkaNUaTfdQflJ7kL1llQRZaRtgG8aqTJQsK3JOAxl+1RTpm6tjUpSbnNf8LlffZkt
+         +M5xex5epm5nc2oV3izPAariFOQGDXgbDORtFMRnqvAiwFjB5DEUzoT/78pLsa0kiYxz
+         RGraN4IugfASS3/xUNqM8i+pmj3JViRA8q/Y0lT3qDqlgDsQgCZXA1y/zzp88B8JoFeT
+         bXECpCd3T9n84cHcQ7gCqlx/Z64hijZ+um1tVXjkKekwfmXcIV3tWNOIob0jbULT5VGu
+         ktdCuDu3JcYKQ+K5w7hozJCjklZClW+KYDcmh2Q4id23YBIqUuoNkAkrPchOSkTbApSS
+         I2Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=xrqc79MULhInEi8i5xGGNHFuIF7xLOhZNQ9HcylQbT4=;
-        b=p9SYXiJDYfsUtaQTOTgWi9dZqOqDhjNO4sN1JwWa2oEIfR5YjsY+kvv930bHpgjq09
-         Cu5VAwyyqpUoys7eRvt/OFEVhoJrgQbJs5D77bK09+m4dTZ525kxpz4rWYzBDWx0d1oE
-         q/EIx4X09v0R/VzSjnTBSspH105XrIjHvMmfDyWpTOvqJc/TQrqmhZHgszevgxzNwJ7w
-         mgQCsdq/gROGBmd/pKF/+nPOxIHwx9zwvkUrzib7x/pKurtTDn56Xt8/qwPg9W/nBXwI
-         sM8dlThvc/oPhLerZ/Dusl6u8qskfRu6wyf3JzjIUkuWwyvZhw6Xip/aQ2YH59WXbune
-         N5Zg==
-X-Gm-Message-State: AOAM532uvZ/Z/9utnVbKBlNlYXMKDNAXalPihdFcnXOSE7tqXtELVhG9
-        CYWVxZxex70rVlzoOKLK1zdwKJRzvgBA+g==
-X-Google-Smtp-Source: ABdhPJzlNNLLu5+ZIauYvaBvx0OpT9CAi3ZhClElSHywVAmiFrprMS+nTCuQUVGa0dcAZbc303zlnA==
-X-Received: by 2002:a05:600c:28b:: with SMTP id 11mr11076636wmk.69.1612097687922;
-        Sun, 31 Jan 2021 04:54:47 -0800 (PST)
-Received: from [192.168.8.164] ([148.252.128.5])
-        by smtp.gmail.com with ESMTPSA id z1sm17879369wrp.62.2021.01.31.04.54.46
+        bh=ddG8EPmRqboQlmuVLMgbQxlihaEE837rnlA2gmkI9C0=;
+        b=T1IyuNvrsCH7idbiSm38fsR0Nnfo9TRcIhYVJ9pFkpWiuLq5ZGG2NkI0jMwKMK4xjg
+         5ywxalHsSLcF+YeG1CqzMcWen3wryIPS6W3purc7OOriB9Fyv6LRBE8tH4zmO+I5JFVo
+         d60KXX+y2obbi2jSYVlvvg6yRTebL38Zww4pf7wYnE01B2rcSrt845Z1hroCSC0yd6Ki
+         0BUn/FTuS5WaM0x0f/bAZ8qg01AtYaKGQE9c1RImNG4MPfuyXYDpVOcMs9pkHJ9TGVNg
+         kZh9EoLU4xuVvd5BjDMwMbe7RJJcbRPngOUpuxkaJh9FhQg63loB0+G6nANmyPf310fN
+         kLPA==
+X-Gm-Message-State: AOAM531G4/X8dfc8Ov8+wAA8fpPbRjtqbYx63DoHmSq4y0pClETFdoyC
+        bG85oCpKJ+Y24Iwia12vRU2ckIHu1MY=
+X-Google-Smtp-Source: ABdhPJxBYJpRKSyE3q0QPpod310f3M6MH43TW7CSQ0Ab5jqISLAJU4gDtN3qgbSRhaKmv6R1kJNo7g==
+X-Received: by 2002:a5d:58c2:: with SMTP id o2mr14030805wrf.31.1612108176233;
+        Sun, 31 Jan 2021 07:49:36 -0800 (PST)
+Received: from [192.168.8.165] ([148.252.128.5])
+        by smtp.gmail.com with ESMTPSA id z185sm19921015wmb.0.2021.01.31.07.49.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 Jan 2021 04:54:47 -0800 (PST)
+        Sun, 31 Jan 2021 07:49:35 -0800 (PST)
+Subject: Re: [PATCH v3] io_uring: check kthread parked flag before sqthread
+ goes to sleep
 To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1611942122-83391-1-git-send-email-haoxu@linux.alibaba.com>
- <1611942813-89187-1-git-send-email-haoxu@linux.alibaba.com>
+References: <1612103944-208132-1-git-send-email-haoxu@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -96,63 +97,69 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v2] io_uring: check kthread parked flag before sqthread
- goes to sleep
-Message-ID: <69b64dc4-7201-ba05-748c-901a9a1069f7@gmail.com>
-Date:   Sun, 31 Jan 2021 12:51:05 +0000
+Message-ID: <686e4de3-83b7-e75b-f39d-43df2d7380d4@gmail.com>
+Date:   Sun, 31 Jan 2021 15:45:53 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1611942813-89187-1-git-send-email-haoxu@linux.alibaba.com>
+In-Reply-To: <1612103944-208132-1-git-send-email-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 29/01/2021 17:53, Hao Xu wrote:
-> 
+On 31/01/2021 14:39, Hao Xu wrote:
+[...] 
 > So check if sqthread gets park flag right before schedule().
 > since ctx_list is always empty when this problem happens, here I put
 > kthread_should_park() before setting the wakeup flag(ctx_list is empty
 > so this for loop is fast), where is close enough to schedule(). The
 > problem doesn't show again in my repro testing after this fix.
-
-Looks good, and I believe I saw syzbot reporting similar thing before.
-Two nits below
-
 > 
+
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+
 > Reported-by: Abaci <abaci@linux.alibaba.com>
 > Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 > ---
->  fs/io_uring.c | 3 +++
->  1 file changed, 3 insertions(+)
+> 
+> v1-->v2
+> - tweak the commit message
+> 
+> v2-->v3
+> - remove duplicate kthread_should_park() since thread parking is rare
+> operation
+> - put kthread_should_park() in if (needs_sched)
+> 
+> 
+>  fs/io_uring.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
 > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index c07913ec0cca..444dc993157e 100644
+> index c07913ec0cca..d9019ce2bda0 100644
 > --- a/fs/io_uring.c
 > +++ b/fs/io_uring.c
-> @@ -7132,6 +7132,9 @@ static int io_sq_thread(void *data)
+> @@ -7115,9 +7115,6 @@ static int io_sq_thread(void *data)
+>  			continue;
+>  		}
+>  
+> -		if (kthread_should_park())
+> -			continue;
+> -
+>  		needs_sched = true;
+>  		prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
+>  		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+> @@ -7132,7 +7129,7 @@ static int io_sq_thread(void *data)
 >  			}
 >  		}
-
-How about killing btw a kthread_should_park() check few lines
-above before prepare_to_wait? Parking is fairly rare, so we
-don't need fast path for it.
-
 >  
-> +		if (kthread_should_park())
-> +			needs_sched = false;
-> +
->  		if (needs_sched) {
-
-if (needs_sched && !kthread_should_park())
-
-Looks cleaner to me
-
+> -		if (needs_sched) {
+> +		if (needs_sched && !kthread_should_park()) {
 >  			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
 >  				io_ring_set_wakeup_flag(ctx);
+>  
 > 
 
 -- 

@@ -2,58 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9344330AB90
-	for <lists+io-uring@lfdr.de>; Mon,  1 Feb 2021 16:38:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C62430AF8F
+	for <lists+io-uring@lfdr.de>; Mon,  1 Feb 2021 19:39:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbhBAPhN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 1 Feb 2021 10:37:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43202 "EHLO
+        id S232967AbhBASin (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 1 Feb 2021 13:38:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231259AbhBAPhL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 1 Feb 2021 10:37:11 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B399EC061573;
-        Mon,  1 Feb 2021 07:36:30 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id g10so17066915wrx.1;
-        Mon, 01 Feb 2021 07:36:30 -0800 (PST)
+        with ESMTP id S232710AbhBASia (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 1 Feb 2021 13:38:30 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79576C061756;
+        Mon,  1 Feb 2021 10:37:49 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id 190so210507wmz.0;
+        Mon, 01 Feb 2021 10:37:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Io1hDqqBt5odDujW2OOi0bpS8IsMUxoXmDL819C2qRE=;
-        b=S2WzmItpZ0kiP+co5licM5qC9sKFxoxEODotFJ7x3OAFLopB7VX0P9aFEVZn3IPi+x
-         l+bD1dbuQWL9RxFsOWpZY10XVM0q5zQntVUSaycC9bmer4cn16K/V6yz3w6dPRIibwXX
-         jALlphG/gEwXdLLN9/iZjQeeyE1c5+6e31zCKWQxmy4nCkVXYT+CC0p8DlJblm/WaB/h
-         PF5n+YCpk6cNMpVYMbGB7aos1iLvPVjI1r1aXRJSQVT38TEjUzcV9GzQiSd1SjWASeGF
-         YQBWYmZ+O2GwLbXnIK/8zouwuXYdqIO6OkRE4NMzyaB+lUJp79/Q7e3OO8M0Yqdi+3kw
-         457Q==
+        bh=AaOtEeHuaSFZ2GkBHVMVepHP95DL8NVdazqKLO7HNr4=;
+        b=HfcsYPUB0n4AyFeX1kubvaQqLsElYwTM/1O0irEPJaGaC4UWxvNp0nh9pJcipSryu6
+         DKH/RpKFrs15ILcu8FrYqRc8kZr/5Gns3Y+vNZ6xqslUA0LVeZM5Ne3WXA2a/N0kTGRh
+         +IZuCm9KFX892IETdVJYgE/V+WtVHmt6yq89WvyNOoX1ddbKM4ayHrjBwkFaAo/lt1AT
+         l/38XEmle4ZjLVrGYQAsBtXyLQg/mSUWJqZJMshhALov4RE827JwbTvUC1P8Y5ui0yC+
+         NuCJRww3npoH/8TGCLW+ORJZhovi0QOTRlbQr7Yx9LiwPIBQhAm+3loamyJi6mrR5Qxb
+         627g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Io1hDqqBt5odDujW2OOi0bpS8IsMUxoXmDL819C2qRE=;
-        b=T+sODJ+/4kEK8h65HJtnmV04zouDxPPT8y4GakXBZ87DWUR4ISA+xKQHWghwGQvA2t
-         dyni5t6L7OViVand3XyTNXaFLNKog0NiD/rfEkUsU3nzgc3SvVYenEdpSHhXnuHqcakC
-         c7wNjgOUL+aH69R0r2Gq3/Bkcub2wsUag5bJiguU6U6ajl+k8QqAFw0RwJGSsWo2NUhH
-         WvbScJHxNc8nz8RWl6+XioFQn/63i+ddVPz0WYspakkdF407MJgXuWyYWeikMR3DkERO
-         SuBpC5x9BtoNrpBxHPSwQSJYracIWA7ucX/j14q+Sgo6meYTKIxJJqRlDn6Tu4bpXGsw
-         aXWA==
-X-Gm-Message-State: AOAM531HlPi0HdZbpFaasQuIZHbp1RG16KzlerIyPOSqJaHlyb8pLI2E
-        9jPVXm/bTTf2icxBH6v95DY=
-X-Google-Smtp-Source: ABdhPJxnT3n1o6bFCgrV69f1cb558uzCSiZJGnuwsnE9dkzfIMIxpXr5WvUEQOjoAelWX7OTAC94Ug==
-X-Received: by 2002:adf:9523:: with SMTP id 32mr19439442wrs.361.1612193789489;
-        Mon, 01 Feb 2021 07:36:29 -0800 (PST)
-Received: from [192.168.8.166] ([185.69.145.241])
-        by smtp.gmail.com with ESMTPSA id a16sm26817032wrr.89.2021.02.01.07.36.28
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=AaOtEeHuaSFZ2GkBHVMVepHP95DL8NVdazqKLO7HNr4=;
+        b=Qgf7LTYLwgR7wL142pbeIlcC0ze2s53D8uhCmcQcsoVThvx9Ckm5IFc5yxW4E8kptf
+         9PDVxF66BZOnqG5+3wPFCxupWrGqBEiISm/t2UTUrj5CU7G0FmtqmxzQvQ+oWez4Nx5c
+         5tPEUn6w8b5AXy+X+v8bjifdcpjf5Te7ccUq2svRklMEww6bzCouxS4ptaeBmVXinpfR
+         rkAjwR4+s9VCt9oElGR7ON0JN+Q6yMbTGJUow8yBGNFjhnx1lMY+egdlyjQqD5yjcf81
+         2IMos0Zia76gEdzg9xqloqm/76aRCN9v22w4TtowW5xEQ4XwKD0peavH5yO/vadhGQOK
+         meOw==
+X-Gm-Message-State: AOAM532QJFrJ3bH/NPd6CdSwC8NOQsgCif7XqW1P+dxEcaae75QNZhuW
+        77hVjLjMR5K3N8z9GgkVEWId5YK/YK4=
+X-Google-Smtp-Source: ABdhPJwG8erx72RdncYg1nep9BYyexNWGUpyK23jD8ohfmckaxbgKIHQxElkrH2+EGOXqXpSv7LSzA==
+X-Received: by 2002:a05:600c:1457:: with SMTP id h23mr236546wmi.30.1612204667510;
+        Mon, 01 Feb 2021 10:37:47 -0800 (PST)
+Received: from [192.168.8.167] ([185.69.145.241])
+        by smtp.gmail.com with ESMTPSA id h23sm149653wmi.26.2021.02.01.10.37.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Feb 2021 07:36:28 -0800 (PST)
-Subject: Re: WARNING in io_disable_sqo_submit
-To:     syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, hdanton@sina.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000052e4f305ba4807ca@google.com>
+        Mon, 01 Feb 2021 10:37:46 -0800 (PST)
+Subject: Re: [PATCH] io_uring: Fix NULL dereference in error in
+ io_sqe_files_register()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Cc:     io-uring@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <YBfyzmcP1N6jpDjo@mwanda>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,12 +99,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <06380635-4410-477f-6b92-468ab5d289c2@gmail.com>
-Date:   Mon, 1 Feb 2021 15:32:46 +0000
+Message-ID: <71e8a8a4-5189-4ac1-b885-1b1a60403452@gmail.com>
+Date:   Mon, 1 Feb 2021 18:34:04 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <00000000000052e4f305ba4807ca@google.com>
+In-Reply-To: <YBfyzmcP1N6jpDjo@mwanda>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -111,68 +112,45 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 01/02/2021 15:30, syzbot wrote:
-> Hello,
+On 01/02/2021 12:23, Dan Carpenter wrote:
+> If we hit a "goto out_free;" before the "ctx->file_data" pointer has
+> been assigned then it leads to a NULL derefence when we call:
 > 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> WARNING in io_uring_cancel_task_requests
+> 	free_fixed_rsrc_data(ctx->file_data);
+> 
+> We can fix this by moving the assignment earlier.
 
-#syz fix: io_uring: fix sqo ownership false positive warning
+looks good, thanks
+
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
 > 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 10843 at fs/io_uring.c:9039 io_uring_cancel_task_requests+0xe55/0x10c0 fs/io_uring.c:9039
-> Modules linked in:
-> CPU: 1 PID: 10843 Comm: syz-executor.3 Not tainted 5.11.0-rc5-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:io_uring_cancel_task_requests+0xe55/0x10c0 fs/io_uring.c:9039
-> Code: 00 00 e9 1c fe ff ff 48 8b 7c 24 18 e8 14 21 db ff e9 f2 fc ff ff 48 8b 7c 24 18 e8 05 21 db ff e9 64 f2 ff ff e8 9b a0 98 ff <0f> 0b e9 ed f2 ff ff e8 ff 20 db ff e9 c8 f5 ff ff 4c 89 ef e8 72
-> RSP: 0018:ffffc9000cc37950 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff888027fcc000 RCX: 0000000000000000
-> RDX: ffff888045a1a040 RSI: ffffffff81da2255 RDI: ffff888027fcc0d0
-> RBP: ffff888027fcc0e8 R08: 0000000000000000 R09: ffff888045a1a047
-> R10: ffffffff81da14cf R11: 0000000000000000 R12: ffff888027fcc000
-> R13: ffff888045a1a040 R14: ffff88802e748000 R15: ffff88803ca86018
-> FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f09d5e60d40 CR3: 0000000028319000 CR4: 00000000001506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  io_uring_flush+0x47b/0x6e0 fs/io_uring.c:9224
->  filp_close+0xb4/0x170 fs/open.c:1286
->  close_files fs/file.c:403 [inline]
->  put_files_struct fs/file.c:418 [inline]
->  put_files_struct+0x1cc/0x350 fs/file.c:415
->  exit_files+0x7e/0xa0 fs/file.c:435
->  do_exit+0xc22/0x2ae0 kernel/exit.c:820
->  do_group_exit+0x125/0x310 kernel/exit.c:922
->  get_signal+0x427/0x20f0 kernel/signal.c:2773
->  arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:811
->  handle_signal_work kernel/entry/common.c:147 [inline]
->  exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
->  exit_to_user_mode_prepare+0x148/0x250 kernel/entry/common.c:201
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
->  syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:302
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x465b09
-> Code: Unable to access opcode bytes at RIP 0x465adf.
-> RSP: 002b:00007f21a56f2108 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
-> RAX: 0000000000000004 RBX: 000000000056c0b0 RCX: 0000000000465b09
-> RDX: 00000000206d4000 RSI: 00000000200002c0 RDI: 0000000000000187
-> RBP: 00000000200002c0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-> R13: 00000000206d4000 R14: 0000000000000000 R15: 0000000020ee7000
+> Fixes: 3cfb739c561e ("io_uring: create common fixed_rsrc_data allocation routines")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  fs/io_uring.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> 
-> Tested on:
-> 
-> commit:         1d538571 io_uring: check kthread parked flag before sqthre..
-> git tree:       git://git.kernel.dk/linux-block for-5.12/io_uring
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14532690d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fe3e1032f57d6d25
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
-> compiler:       
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 03748faa5295..8e8b74dd7d9b 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -7869,6 +7869,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+>  	file_data = alloc_fixed_rsrc_data(ctx);
+>  	if (!file_data)
+>  		return -ENOMEM;
+> +	ctx->file_data = file_data;
+>  
+>  	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_FILES_TABLE);
+>  	file_data->table = kcalloc(nr_tables, sizeof(*file_data->table),
+> @@ -7878,7 +7879,6 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+>  
+>  	if (io_sqe_alloc_file_tables(file_data, nr_tables, nr_args))
+>  		goto out_free;
+> -	ctx->file_data = file_data;
+>  
+>  	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
+>  		struct fixed_rsrc_table *table;
 > 
 
 -- 

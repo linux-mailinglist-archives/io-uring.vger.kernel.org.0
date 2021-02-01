@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7516730B000
-	for <lists+io-uring@lfdr.de>; Mon,  1 Feb 2021 20:05:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FB6D30B002
+	for <lists+io-uring@lfdr.de>; Mon,  1 Feb 2021 20:05:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231750AbhBATE6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 1 Feb 2021 14:04:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59744 "EHLO
+        id S229680AbhBATFT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 1 Feb 2021 14:05:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231995AbhBATEh (ORCPT
+        with ESMTP id S232021AbhBATEh (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Mon, 1 Feb 2021 14:04:37 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AAFEC0613D6
-        for <io-uring@vger.kernel.org>; Mon,  1 Feb 2021 11:03:50 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id i9so240952wmq.1
-        for <io-uring@vger.kernel.org>; Mon, 01 Feb 2021 11:03:50 -0800 (PST)
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFCC5C0613ED
+        for <io-uring@vger.kernel.org>; Mon,  1 Feb 2021 11:03:51 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id a1so17840745wrq.6
+        for <io-uring@vger.kernel.org>; Mon, 01 Feb 2021 11:03:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=QOhRvNMYNuHWI3X6bh9LvJRZWWUYVpitHbzQEsD5Gj8=;
-        b=RWrQNH/0UmlOn2E8CwfiFy+k9CMlMjNp7X5SJYwrGJUU36qFA5Ka3ltmTXQ6A/d5MX
-         h4o/3MqoQ3cgslDyTg0pgpArz7T1L6VyErSsU7+u4oAmRWnIYjBjsFjx7Oq88b825oOr
-         4+PEWfg6dny2QJ5c1MjBqoAxe1oxg1bBzQeFBvWi3p42yiW+aagvRAPuJG9TN8kNIfQi
-         enV1de/RseQfJuKphqBKUyA3usK3J+T1jz2lcPCB2BDM0nIVWkl3xmlw2OIwFYqdny5a
-         GYnCKlA6zL0pniGtrBHTlhC99/OdBkPs6+lgPmVECOXb7ZqVYmEHEMr5s5PDzG2fwWI9
-         Vyaw==
+        bh=PlAFb8pBDeyKJxfU87K3+CbzhuYhkWzNkKfESAXpbaw=;
+        b=DhVPgBAQ7x+ND0oJGmxAevcKgen2++4Nb5FownEca0K7bT027hv0gp5iuQ/rtBCBVC
+         rA3+wvX+q216y2lE2xj0Ltc8h/jScbgJbJrEiPoFR+WjxEJSnMBDrkAt9H/fcEby2NWc
+         80521serQhB8ySFOAWDFH5vyDgY1E+Zu/Y1c5BOlx9if0hcvHa2cflUwHuoDAqIeMhZ5
+         3Ey4VvPxXnzol3R+b2SHD4kZ5eDCt0aZ1ffx6xRlDf1qZMKTCWqHFtNNsj1nFPMn9vpw
+         GjCt2yFwAO/DIHFOGGw2gsTIk3wLMpHFvI79/V39v8BIl8G/LohTz2zv/po5VqPcMJTQ
+         RpLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QOhRvNMYNuHWI3X6bh9LvJRZWWUYVpitHbzQEsD5Gj8=;
-        b=c3sVJDk8AXYk9BON1OS3F3xhU97/BWySpyDtLnrqWkSAGg0JAZ+6Z0E2UC/9FSVQrF
-         0tjA13+7C0eef5OjxoqC4TfyCACuQaLg0hlxYfwY6lElzWFguFaQgaT8XSjdMLGD/P6m
-         JRqPTiWvCx+TjRsT6BnObe9THHEplfc08sW8s5UTCsJ1p1aSlmFJgM1VGL5OMdGnDBxA
-         UBEctezR68p1EpUp7/ERTTujQ3Jo8P9Nz42tfTSVT81p7vBP6vBEhkwhIW1lsB7+lECc
-         PjfjCXDgSdVYa0hAL+FXG3Q6XgEEl8fSqUggd+8bfM9a2tbCE2CHui8DTHV2eV4A6X5Q
-         lKLA==
-X-Gm-Message-State: AOAM530lsrm66d3+E5BxGKVrNYg4WWI2jdOmRz8uhNpaXwSzbf42LteS
-        BYcBrA7Ly1biM555Mw3vGTk=
-X-Google-Smtp-Source: ABdhPJzHmf/zCHsP25g3g/p74o7zxB5L89t4Rh2vV0TDCb8rr3VF6uf7QCcnB/XKjt3gYRqjVzACOA==
-X-Received: by 2002:a1c:5454:: with SMTP id p20mr289394wmi.128.1612206229136;
-        Mon, 01 Feb 2021 11:03:49 -0800 (PST)
+        bh=PlAFb8pBDeyKJxfU87K3+CbzhuYhkWzNkKfESAXpbaw=;
+        b=nnT6pR4pDLE+YykSBUn84fxhyLJWUnCq6ol9KWHS2jrqKJryA3Ik3+wFfXIPjX9mtQ
+         vxmkHvnH2kl0bFOdcag3CnvpEkuo9QKdHqBBKEWYXuiY2dkWSz1TGe79wy4IgbIr2a7H
+         DnSsbonIpj0CR0D7r9L6osDgaOukg74Op6SjGKZxIekBkIYGzu9yc4I1cc44JYvotLuC
+         eKbb1BomtA1tB7WHSsHSy2h40+wCKolMr3hgYSivXlhwR6dxOtjL8rH851HAzdiJUbB2
+         uqP/L4SgYrBlkzDdJ3df0XHx/HOFQcMjT2nfmbgWtsHRCfuhcMTh02oXJZo5HLO8Ab9F
+         R9og==
+X-Gm-Message-State: AOAM531N/7RACDWfHJfme354nmPnGF1S9pCsioxtOuDKPtf89vTlA0U8
+        uc8XGpEYgbSdEnbDjD4koD8=
+X-Google-Smtp-Source: ABdhPJxRo6yuAi/DQ0ju+48DcVyIOLik8v6R5135Zo5WJP8/htvkdGMJ0U4DXMLwnR2q1ZrsFUbdzQ==
+X-Received: by 2002:a05:6000:1374:: with SMTP id q20mr19064695wrz.44.1612206230548;
+        Mon, 01 Feb 2021 11:03:50 -0800 (PST)
 Received: from localhost.localdomain ([185.69.145.241])
-        by smtp.gmail.com with ESMTPSA id h14sm182728wmq.45.2021.02.01.11.03.48
+        by smtp.gmail.com with ESMTPSA id h14sm182728wmq.45.2021.02.01.11.03.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Feb 2021 11:03:48 -0800 (PST)
+        Mon, 01 Feb 2021 11:03:49 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/6] io_uring: inline io_req_drop_files()
-Date:   Mon,  1 Feb 2021 18:59:53 +0000
-Message-Id: <4dc556e9c33cb5804a818132986bc68cd3a35302.1612205712.git.asml.silence@gmail.com>
+Subject: [PATCH 4/6] io_uring: remove work flags after cleanup
+Date:   Mon,  1 Feb 2021 18:59:54 +0000
+Message-Id: <9329c4fd29793aeb05910f92625d8c62dd7d3312.1612205712.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1612205712.git.asml.silence@gmail.com>
 References: <cover.1612205712.git.asml.silence@gmail.com>
@@ -61,80 +61,68 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-req->files now have same lifetime as all other iowq-work resources,
-inline io_req_drop_files() for consistency. Moreover, since
-REQ_F_INFLIGHT is no more files specific, the function name became
-very confusing.
+Shouldn't be a problem now, but it's better to clean
+REQ_F_WORK_INITIALIZED and work->flags only after relevant resources are
+killed, so cancellation see them.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 39 +++++++++++++++++----------------------
- 1 file changed, 17 insertions(+), 22 deletions(-)
+ fs/io_uring.c | 19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index bcd623512d17..0ee452d43817 100644
+index 0ee452d43817..7dc3d4260158 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1036,7 +1036,6 @@ static ssize_t io_import_iovec(int rw, struct io_kiocb *req,
- static int io_setup_async_rw(struct io_kiocb *req, const struct iovec *iovec,
- 			     const struct iovec *fast_iov,
- 			     struct iov_iter *iter, bool force);
--static void io_req_drop_files(struct io_kiocb *req);
- static void io_req_task_queue(struct io_kiocb *req);
+@@ -1374,22 +1374,14 @@ static void io_req_clean_work(struct io_kiocb *req)
+ 	if (!(req->flags & REQ_F_WORK_INITIALIZED))
+ 		return;
  
- static struct kmem_cache *req_cachep;
-@@ -1402,8 +1401,23 @@ static void io_req_clean_work(struct io_kiocb *req)
+-	req->flags &= ~REQ_F_WORK_INITIALIZED;
+-
+-	if (req->work.flags & IO_WQ_WORK_MM) {
++	if (req->work.flags & IO_WQ_WORK_MM)
+ 		mmdrop(req->work.identity->mm);
+-		req->work.flags &= ~IO_WQ_WORK_MM;
+-	}
+ #ifdef CONFIG_BLK_CGROUP
+-	if (req->work.flags & IO_WQ_WORK_BLKCG) {
++	if (req->work.flags & IO_WQ_WORK_BLKCG)
+ 		css_put(req->work.identity->blkcg_css);
+-		req->work.flags &= ~IO_WQ_WORK_BLKCG;
+-	}
+ #endif
+-	if (req->work.flags & IO_WQ_WORK_CREDS) {
++	if (req->work.flags & IO_WQ_WORK_CREDS)
+ 		put_cred(req->work.identity->creds);
+-		req->work.flags &= ~IO_WQ_WORK_CREDS;
+-	}
+ 	if (req->work.flags & IO_WQ_WORK_FS) {
+ 		struct fs_struct *fs = req->work.identity->fs;
+ 
+@@ -1399,12 +1391,10 @@ static void io_req_clean_work(struct io_kiocb *req)
+ 		spin_unlock(&req->work.identity->fs->lock);
+ 		if (fs)
  			free_fs_struct(fs);
- 		req->work.flags &= ~IO_WQ_WORK_FS;
+-		req->work.flags &= ~IO_WQ_WORK_FS;
  	}
--	if (req->flags & REQ_F_INFLIGHT)
--		io_req_drop_files(req);
-+	if (req->work.flags & IO_WQ_WORK_FILES) {
-+		put_files_struct(req->work.identity->files);
-+		put_nsproxy(req->work.identity->nsproxy);
-+		req->work.flags &= ~IO_WQ_WORK_FILES;
-+	}
-+	if (req->flags & REQ_F_INFLIGHT) {
-+		struct io_ring_ctx *ctx = req->ctx;
-+		struct io_uring_task *tctx = req->task->io_uring;
-+		unsigned long flags;
-+
-+		spin_lock_irqsave(&ctx->inflight_lock, flags);
-+		list_del(&req->inflight_entry);
-+		spin_unlock_irqrestore(&ctx->inflight_lock, flags);
-+		req->flags &= ~REQ_F_INFLIGHT;
-+		if (atomic_read(&tctx->in_idle))
-+			wake_up(&tctx->wait);
-+	}
+ 	if (req->work.flags & IO_WQ_WORK_FILES) {
+ 		put_files_struct(req->work.identity->files);
+ 		put_nsproxy(req->work.identity->nsproxy);
+-		req->work.flags &= ~IO_WQ_WORK_FILES;
+ 	}
+ 	if (req->flags & REQ_F_INFLIGHT) {
+ 		struct io_ring_ctx *ctx = req->ctx;
+@@ -1419,6 +1409,9 @@ static void io_req_clean_work(struct io_kiocb *req)
+ 			wake_up(&tctx->wait);
+ 	}
  
++	req->flags &= ~REQ_F_WORK_INITIALIZED;
++	req->work.flags &= ~(IO_WQ_WORK_MM | IO_WQ_WORK_BLKCG | IO_WQ_WORK_FS |
++			     IO_WQ_WORK_CREDS | IO_WQ_WORK_FILES);
  	io_put_identity(req->task->io_uring, req);
  }
-@@ -6164,25 +6178,6 @@ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return -EIOCBQUEUED;
- }
  
--static void io_req_drop_files(struct io_kiocb *req)
--{
--	struct io_ring_ctx *ctx = req->ctx;
--	struct io_uring_task *tctx = req->task->io_uring;
--	unsigned long flags;
--
--	if (req->work.flags & IO_WQ_WORK_FILES) {
--		put_files_struct(req->work.identity->files);
--		put_nsproxy(req->work.identity->nsproxy);
--	}
--	spin_lock_irqsave(&ctx->inflight_lock, flags);
--	list_del(&req->inflight_entry);
--	spin_unlock_irqrestore(&ctx->inflight_lock, flags);
--	req->flags &= ~REQ_F_INFLIGHT;
--	req->work.flags &= ~IO_WQ_WORK_FILES;
--	if (atomic_read(&tctx->in_idle))
--		wake_up(&tctx->wait);
--}
--
- static void __io_clean_op(struct io_kiocb *req)
- {
- 	if (req->flags & REQ_F_BUFFER_SELECTED) {
 -- 
 2.24.0
 

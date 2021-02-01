@@ -2,55 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B09EF30A612
-	for <lists+io-uring@lfdr.de>; Mon,  1 Feb 2021 12:01:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 042A030A635
+	for <lists+io-uring@lfdr.de>; Mon,  1 Feb 2021 12:09:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232901AbhBALBM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 1 Feb 2021 06:01:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40294 "EHLO
+        id S233301AbhBALIc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 1 Feb 2021 06:08:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232946AbhBALBH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 1 Feb 2021 06:01:07 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B4E6C061756
-        for <io-uring@vger.kernel.org>; Mon,  1 Feb 2021 03:00:22 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id u14so12769644wmq.4
-        for <io-uring@vger.kernel.org>; Mon, 01 Feb 2021 03:00:22 -0800 (PST)
+        with ESMTP id S233013AbhBALI3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 1 Feb 2021 06:08:29 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618CAC061573;
+        Mon,  1 Feb 2021 03:07:48 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id 6so16093243wri.3;
+        Mon, 01 Feb 2021 03:07:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BGBR3ebFY2flu6GN3JVVtocVQDlAb812qllUf95BsSE=;
-        b=WYdzUkbCuLQtwWExi5/cPBqemV2Jr8cJZArMOoxAGlNRnNa53tMMbaCypOoT9xIjCm
-         HA+aYUkuASMx55OUSKqY5YcE7yn5pZ+ALFtYFWOC+l96ybXOIGj1fk15Y6pal2Q0IQ6W
-         Iken/FFpWsdge+/kP0GZa2EAfKgkJg1ckEf6IYhfsD9N25dWZ1rsHrysq5Bi78VK5JnG
-         BnQVuiEIceb3P22sm7/1Zomv0Q85oELDe9WsE+mA195jCbFsnyiNg2gtJJXxH/Jjpo+9
-         XGL6E3TmKtXuimbOpkTlikHJNV1yi1Suv6kqbenuEaAco+cszKSJW0pcxpVbyn72/4dS
-         r7lA==
+        bh=LcOqa57+wDWNXngr1Vsho/uylvVvhlNXId8LmNBtEKY=;
+        b=r+pgbrgIosJZzK1av8jh3I3H8mkjmc5/J+/SFoTDBksYii4iXOy+cDs9yJt3Vhp++e
+         k58naFBNReRaNuhNGsCUok9POzyt+AW/q0MV6eEJn9dYJOxAWoI2l4PlU/+WPWC8Kp5Z
+         P5Nze/hcYNb/eXx3oH4bAK73EIeq4sUweT9Y8LyFWsp9QJ7eRGYrfiicI8rp7EbVZUW2
+         VZC6r6jEBq9iIO5B7D3mcGX5D/akIIkGRBmyHaAZmJ6Kd95A52Apn2q1dOUsBrzFa5+D
+         7RFQWUIfOU4TpVRA9qhj8hn9TLEK5TvrX3yHTOTk6qfAveHBk4pJFDBG0zp/Y60q8kM2
+         dVcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=BGBR3ebFY2flu6GN3JVVtocVQDlAb812qllUf95BsSE=;
-        b=TTTYgunRB4Lyoa2yDcWcZRR5dFVmH8zkHI6CzY8CXfnBV61AEYxUtutPxF6v34GJpv
-         sHM4OARzReCQtBGqLgDQUg3A3BBvlqMK/Y+kydVQ4qT4/PDUwm4tyC5OohdKaPrubhrj
-         vnM3RLRYxAvw0nGTP2Q6ajziLZNwLRbIhD5+3JgmkTILRYi/jXLdSbF/ajmovVlvomU1
-         a4djuIdHCaW77boLNmpScu/SkSyZ6aZrT4pDihxaPQOL8MxD9k3PizRNkz9bqrU13GFq
-         0aZr/ER1+2N9pBuIgmrgGA+BpvaJ4wLeALcIYZbM2ju5MF/jKmLNXAs39oZmgZOEY3Mc
-         bdUA==
-X-Gm-Message-State: AOAM533baasq2brLpHqccVPi4X7uHKaDtejCpZDf4eVC8LcgLnIRfM83
-        GqR86itdkb6yWUkSdciln3BGxYMLNnQ=
-X-Google-Smtp-Source: ABdhPJw22V8+inHzY+SAxoPexmiI0sP0qyGqyO0WUh7H56xI07BJMOSwK+PD9+TtarlrIN+X01jScw==
-X-Received: by 2002:a7b:c77a:: with SMTP id x26mr5650455wmk.143.1612177220631;
-        Mon, 01 Feb 2021 03:00:20 -0800 (PST)
+        bh=LcOqa57+wDWNXngr1Vsho/uylvVvhlNXId8LmNBtEKY=;
+        b=Pu92E9vPXecCOolMCqUDPuzo561w7SMEm+ykWD+fS8Ry9tcdy7CxRgtVKyu9p5Ggqs
+         MSG9iqUhm23pW2gsSbZIkZsblFQjEdZcsyPyUf91shzBWX3n5Hus0NmmXiYPi2tq+OXs
+         LfcpZ9h1yp2GHIecdWh+uynaKkYyogYXL7VVB2gMsOm7nKIqP5CzneTPaLXLXH+Ghrwk
+         lbkrKTVe1R0t010GNM3CcqJ0XkWsPNJ9V6zag70zLsdj3tgmKrZA97myLMxPA/MhQc/p
+         iUi06zDGCeRmSfSDfHlxLjF1K7gfQ5m1FlYL+w+YN5bSj7d5zFGxfegEAmdyufHuss+Q
+         lRGQ==
+X-Gm-Message-State: AOAM531NNhXr3OZpomeulKyNSKoE7ToldEZbJyC1SOBcs8QPiV9FMoD4
+        5ii2hQhUrIVg27TS4YvwmrI=
+X-Google-Smtp-Source: ABdhPJxBoDXxVVioQkDc8o6hCNsXGI2LrfOAXF0qzKWo0r/johOUVMC9FvyxKGHwem0+IroBQMAm4Q==
+X-Received: by 2002:a5d:4d4c:: with SMTP id a12mr2906503wru.154.1612177666912;
+        Mon, 01 Feb 2021 03:07:46 -0800 (PST)
 Received: from [192.168.8.166] ([185.69.145.241])
-        by smtp.gmail.com with ESMTPSA id m22sm27059409wrh.66.2021.02.01.03.00.19
+        by smtp.gmail.com with ESMTPSA id a27sm26243131wrc.94.2021.02.01.03.07.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Feb 2021 03:00:20 -0800 (PST)
-Subject: Re: tcp short writes / write ordering / etc
-To:     dormando <dormando@rydia.net>, io-uring <io-uring@vger.kernel.org>
-References: <855d3bc1-f694-e42e-283e-f8ee8f9c8e6e@rydia.net>
+        Mon, 01 Feb 2021 03:07:46 -0800 (PST)
+Subject: Re: WARNING in io_disable_sqo_submit
+To:     syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, hdanton@sina.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <00000000000042c22b05b92c1b44@google.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -95,12 +98,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <1334b5e5-5286-6c4e-3125-fa99eaadfba2@gmail.com>
-Date:   Mon, 1 Feb 2021 10:56:38 +0000
+Message-ID: <39ebb181-6760-cdfd-88f8-5578ad4d7c85@gmail.com>
+Date:   Mon, 1 Feb 2021 11:04:04 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <855d3bc1-f694-e42e-283e-f8ee8f9c8e6e@rydia.net>
+In-Reply-To: <00000000000042c22b05b92c1b44@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -108,90 +111,138 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 31/01/2021 09:10, dormando wrote:
-> Hey,
+On 18/01/2021 12:46, syzbot wrote:
+> Hello,
 > 
-> I'm trying to puzzle out an architecture on top of io_uring for a tcp
-> proxy I'm working on. I have a high level question, then I'll explain what
-> I'm doing for context:
-> 
-> - How (is?) order maintained for write()'s to the same FD from different
-> SQE's to a network socket? ie; I get request A and queue a write(), later
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> INFO: task hung in io_sq_thread_stop
 
-Without IOSQE_LINK or anything -- no ordering guarantees. Even if CQEs came
-in some order actual I/O may have been executed in reverse.
+#syz test: git://git.kernel.dk/linux-block for-5.12/io_uring
 
-> request B comes in and gets queued, A finishes short. There was no chance
-> to IOSQE_LINK A to B. Does B cancel? This makes sense for disk IO but I
-> can't wrap my head around it for network sockets.
+> INFO: task kworker/u4:0:8 blocked for more than 143 seconds.
+>       Not tainted 5.11.0-rc1-syzkaller #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/u4:0    state:D stack:24056 pid:    8 ppid:     2 flags:0x00004000
+> Workqueue: events_unbound io_ring_exit_work
+> Call Trace:
+>  context_switch kernel/sched/core.c:4313 [inline]
+>  __schedule+0x90c/0x21a0 kernel/sched/core.c:5064
+>  schedule+0xcf/0x270 kernel/sched/core.c:5143
+>  schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1854
+>  do_wait_for_common kernel/sched/completion.c:85 [inline]
+>  __wait_for_common kernel/sched/completion.c:106 [inline]
+>  wait_for_common kernel/sched/completion.c:117 [inline]
+>  wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
+>  kthread_park+0x122/0x1b0 kernel/kthread.c:557
+>  io_sq_thread_park fs/io_uring.c:7445 [inline]
+>  io_sq_thread_park fs/io_uring.c:7439 [inline]
+>  io_sq_thread_stop+0xfe/0x570 fs/io_uring.c:7463
+>  io_finish_async fs/io_uring.c:7481 [inline]
+>  io_ring_ctx_free fs/io_uring.c:8646 [inline]
+>  io_ring_exit_work+0x62/0x6d0 fs/io_uring.c:8739
+>  process_one_work+0x98d/0x15f0 kernel/workqueue.c:2275
+>  worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+>  kthread+0x3b1/0x4a0 kernel/kthread.c:292
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
 > 
-> The setup:
+> Showing all locks held in the system:
+> 3 locks held by kworker/u4:0/8:
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x15f0 kernel/workqueue.c:2246
+>  #1: ffffc90000cd7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x15f0 kernel/workqueue.c:2250
+>  #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7444 [inline]
+>  #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7439 [inline]
+>  #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_stop+0xd6/0x570 fs/io_uring.c:7463
+> 1 lock held by khungtaskd/1647:
+>  #0: ffffffff8b373aa0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6254
+> 1 lock held by in:imklog/8164:
+>  #0: ffff8880151b8870 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:947
+> 2 locks held by kworker/u4:6/8415:
+> 2 locks held by kworker/0:4/8690:
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: process_one_work+0x871/0x15f0 kernel/workqueue.c:2246
+>  #1: ffffc9000288fda8 ((work_completion)(&rew.rew_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x15f0 kernel/workqueue.c:2250
+> 1 lock held by syz-executor.3/8865:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+> 1 lock held by syz-executor.2/8867:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+> 2 locks held by syz-executor.5/8869:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+>  #1: ffffffff8b37c368 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:290 [inline]
+>  #1: ffffffff8b37c368 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x4f2/0x610 kernel/rcu/tree_exp.h:836
+> 1 lock held by syz-executor.4/8870:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+> 1 lock held by syz-executor.0/8872:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+> 1 lock held by syz-executor.1/8873:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
 > 
-> - N per-core worker threads. Each thread handles X client sockets.
-> - Y backend sockets in a global shared pool. These point to storage
-> servers (or other proxyes/anything).
+> =============================================
 > 
-> - client sockets wake up with requests for an arbitrary number of keys (1
-> to 100 or so).
->   - each key is mapped to a backend (like keyhash % Y).
->   - new requests are dispatched for each key to each backend socket.
->   - the results are put back into order and returned to the client.
+> NMI backtrace for cpu 1
+> CPU: 1 PID: 1647 Comm: khungtaskd Not tainted 5.11.0-rc1-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:79 [inline]
+>  dump_stack+0x107/0x163 lib/dump_stack.c:120
+>  nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
+>  nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+>  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+>  check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
+>  watchdog+0xd43/0xfa0 kernel/hung_task.c:294
+>  kthread+0x3b1/0x4a0 kernel/kthread.c:292
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+> Sending NMI from CPU 1 to CPUs 0:
+> NMI backtrace for cpu 0
+> CPU: 0 PID: 8415 Comm: kworker/u4:6 Not tainted 5.11.0-rc1-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Workqueue: bat_events batadv_nc_worker
+> RIP: 0010:__this_cpu_preempt_check+0xd/0x20 lib/smp_processor_id.c:70
+> Code: 00 00 48 c7 c6 00 d9 9e 89 48 c7 c7 40 d9 9e 89 e9 98 fe ff ff 0f 1f 84 00 00 00 00 00 55 48 89 fd 0f 1f 44 00 00 48 89 ee 5d <48> c7 c7 80 d9 9e 89 e9 77 fe ff ff cc cc cc cc cc cc cc 0f 1f 44
+> RSP: 0018:ffffc9000c507af0 EFLAGS: 00000046
+> RAX: 0000000000000001 RBX: 0000000000000000 RCX: 1ffffffff1a077ab
+> RDX: 0000000000000000 RSI: ffffffff894bac40 RDI: ffffffff894bac40
+> RBP: ffffffff8b3739e0 R08: 0000000000000000 R09: ffffffff8d038b8f
+> R10: fffffbfff1a07171 R11: 0000000000000000 R12: 0000000000000001
+> R13: ffff88802f858bc0 R14: 00000000ffffffff R15: ffffffff889a5430
+> FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fbcc03ca000 CR3: 0000000011523000 CR4: 0000000000350ef0
+> Call Trace:
+>  lockdep_recursion_inc kernel/locking/lockdep.c:432 [inline]
+>  lock_is_held_type+0x34/0x100 kernel/locking/lockdep.c:5475
+>  lock_is_held include/linux/lockdep.h:271 [inline]
+>  rcu_read_lock_sched_held+0x3a/0x70 kernel/rcu/update.c:123
+>  trace_lock_release include/trace/events/lock.h:58 [inline]
+>  lock_release+0x5b7/0x710 kernel/locking/lockdep.c:5448
+>  __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:174 [inline]
+>  _raw_spin_unlock_bh+0x12/0x30 kernel/locking/spinlock.c:207
+>  spin_unlock_bh include/linux/spinlock.h:399 [inline]
+>  batadv_nc_purge_paths+0x2a5/0x3a0 net/batman-adv/network-coding.c:467
+>  batadv_nc_worker+0x831/0xe50 net/batman-adv/network-coding.c:716
+>  process_one_work+0x98d/0x15f0 kernel/workqueue.c:2275
+>  worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+>  kthread+0x3b1/0x4a0 kernel/kthread.c:292
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
 > 
-> The workers are designed such that they should not have to wait for a
-> large request set before processing the next ready client socket. ie;
-> thread N1 gets a request for 100 keys; it queues that work off, and then
-> starts on a request for a single key. it picks up the results of the
-> original request later and returns it. Else we get poor long tail latency.
 > 
-> I've been working out a test program to mock this new backend. I have mock
-> worker threads that submit batches of work from fake connections, and then
-> have libevent or io_uring handle things.
+> Tested on:
 > 
-> In libevent/epoll mode:
->  - workers can directly call write() to backend sockets while holding a
-> lock around a descriptive structure. this ensures order.
->  - OR workers submit stacks to one or more threads which the backends
-> sockets are striped across. These threads lock and write(). this mode
-> helps with latency pileup.
->  - a dedicated thread sits in epoll_wait() on EPOLLIN for each backend
-> socket. This avoids repeated calls to epoll_add()/mod/etc. As responses
-> are parsed, completed sets of requests are shipped back to the worker
-> threads.
+> commit:         a1235e44 io_uring: cancel all requests on task exit
+> git tree:       git://git.kernel.dk/linux-block io_uring-5.11
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10c53584d00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c6b6b5cccb0f38f2
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
 > 
-> In uring mode:
->  - workers should submit to a single (or few) threads which have a private
-> ring. sqe's are stacked and submit()'ed in a batch. Ideally saving all of
-> the overhead of write()'ing to a bunch of sockets. (not working yet)
->  - a dedicated thread with its own ring is sitting on recv() for each
-> backend socket. It handles the same as epoll mode, except after each read
-> I have to re-submit a new SQE for the next read.
-> 
-> (I have everything sharing the same WQ, for what it's worth)
-> 
-> I'm trying to figure out uring mode's single submission thread, but
-> figuring out the IO ordering issues is blanking my mind. Requests can come
-> in interleaved as the backends are shared, and waiting for a batch to
-> complete before submitting the next one defeats the purpose (I think).
-> 
-> What would be super nice but I'm pretty sure is impossible:
-> 
-> - M (possibly 1) thread(s) sitting on recv() in its own ring
-> - N client handling worker threads with independent rings on the same WQ
->  - SQE's with writes to the same backend FD are serialized by a magical
-> unicorn.
-> 
-> Then:
-> - worker with a request for 100 keys makes and submits the SQE's itself,
->   then moves on to the next client connection.
-> - recv() thread gathers responses and signals worker when the batch is
-> complete.
-> 
-> If I can avoid issues with short/colliding writes I can still make this
-> work as my protocol can allow for out of order responses, but it's not the
-> default mode so I need both to work anyway.
-> 
-> Apologies if this isn't clear or was answered recently; I did try to read
-> archives/code/etc.
 
 -- 
 Pavel Begunkov

@@ -2,54 +2,174 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 063ED30A911
-	for <lists+io-uring@lfdr.de>; Mon,  1 Feb 2021 14:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7974630A98A
+	for <lists+io-uring@lfdr.de>; Mon,  1 Feb 2021 15:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232190AbhBANuH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Mon, 1 Feb 2021 08:50:07 -0500
-Received: from yourcmc.ru ([195.209.40.11]:39290 "EHLO yourcmc.ru"
+        id S232392AbhBAOVk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 1 Feb 2021 09:21:40 -0500
+Received: from raptor.unsafe.ru ([5.9.43.93]:49532 "EHLO raptor.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231587AbhBANuG (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 1 Feb 2021 08:50:06 -0500
-X-Greylist: delayed 626 seconds by postgrey-1.27 at vger.kernel.org; Mon, 01 Feb 2021 08:50:05 EST
-Received: from yourcmc.ru (localhost [127.0.0.1])
-        by yourcmc.ru (Postfix) with ESMTP id C363AFE0656
-        for <io-uring@vger.kernel.org>; Mon,  1 Feb 2021 16:38:57 +0300 (MSK)
-Received: from rainloop.yourcmc.ru (yourcmc.ru [195.209.40.11])
-        by yourcmc.ru (Postfix) with ESMTPSA id 80F2FFE00CB
-        for <io-uring@vger.kernel.org>; Mon,  1 Feb 2021 16:38:57 +0300 (MSK)
+        id S231201AbhBAOVj (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 1 Feb 2021 09:21:39 -0500
+Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-94-112-41-137.net.upcbroadband.cz [94.112.41.137])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 5D65D20A0F;
+        Mon,  1 Feb 2021 14:20:38 +0000 (UTC)
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-mm@kvack.org
+Cc:     Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH v5 0/7] Count rlimits in each user namespace
+Date:   Mon,  1 Feb 2021 15:18:28 +0100
+Message-Id: <cover.1612188590.git.gladkov.alexey@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Date:   Mon, 01 Feb 2021 13:38:57 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: RainLoop/1.14.0
-From:   vitalif@yourcmc.ru
-Message-ID: <93c582ba132c8fd9bf230c91d9b316b7@yourcmc.ru>
-Subject: Multiple io_uring issues with sendmsg/recvmsg on loopback
- interfaces
-To:     io-uring@vger.kernel.org
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: 8bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Mon, 01 Feb 2021 14:20:56 +0000 (UTC)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi
+Preface
+-------
+These patches are for binding the rlimit counters to a user in user namespace.
+This patch set can be applied on top of:
 
-I'm having problems with io_uring when several applications communicate within localhost using sockets and io_uring.
+git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v5.11-rc2
 
-I don't have a complete testcase yet, but the problem is apparently the following:
-- on kernels 5.4 and 5.5 messages sent via io_uring sendmsg() and received via io_uring recvmsg() are SOMETIMES duplicated. 1 process sends 512 bytes and the second one receives the same message twice.
-- in addition to that, on kernel 5.10 I often get garbage from io_uring recvmsg().
+Problem
+-------
+The RLIMIT_NPROC, RLIMIT_MEMLOCK, RLIMIT_SIGPENDING, RLIMIT_MSGQUEUE rlimits
+implementation places the counters in user_struct [1]. These limits are global
+between processes and persists for the lifetime of the process, even if
+processes are in different user namespaces.
 
-I discovered it when running a Vitastor (https://vitastor.io/) testcase, so it's not too easy to extract a minimal example for reproduction, and I can't be 100% sure that it's not my bug, however I know for sure that:
-- on kernels 5.4 and 5.5 everything is fine when I disable io_uring sendmsg OR io_uring recvmsg and replace it with a classic synchronous version
-- on kernel 5.10 everything is fine when I disable BOTH io_uring sendmsg and recvmsg
-- everything was fine when I was testing my project in a setup with real networking instead of loopback
+To illustrate the impact of rlimits, let's say there is a program that does not
+fork. Some service-A wants to run this program as user X in multiple containers.
+Since the program never fork the service wants to set RLIMIT_NPROC=1.
 
-If you're really curious you can try to reproduce it yourself, you need to build Vitastor for it and then run ./run_tests.sh. The first issue manifests itself as a hang during `fio` run with 'command out of sync' message in one of ./testdata/osd*.log and the second one manifests as multiple failure messages during `fio` run with 'Received garbage: ' messages on one of ./testdata/osd*.log. Both issues reproduce almost every run.
+service-A
+ \- program (uid=1000, container1, rlimit_nproc=1)
+ \- program (uid=1000, container2, rlimit_nproc=1)
 
-I'll try to come back with a real test-case for reproduction, but maybe even this information can be sufficient for you to look at io_uring+sendmsg+recvmsg+loopback problems?
+The service-A sets RLIMIT_NPROC=1 and runs the program in container1. When the
+service-A tries to run a program with RLIMIT_NPROC=1 in container2 it fails
+since user X already has one running process.
+
+The problem is not that the limit from container1 affects container2. The
+problem is that limit is verified against the global counter that reflects
+the number of processes in all containers.
+
+This problem can be worked around by using different users for each container
+but in this case we face a different problem of uid mapping when transferring
+files from one container to another.
+
+Eric W. Biederman mentioned this issue [2][3].
+
+Introduced changes
+------------------
+To address the problem, we bind rlimit counters to user namespace. Each counter
+reflects the number of processes in a given uid in a given user namespace. The
+result is a tree of rlimit counters with the biggest value at the root (aka
+init_user_ns). The limit is considered exceeded if it's exceeded up in the tree.
+
+[1] https://lore.kernel.org/containers/87imd2incs.fsf@x220.int.ebiederm.org/
+[2] https://lists.linuxfoundation.org/pipermail/containers/2020-August/042096.html
+[3] https://lists.linuxfoundation.org/pipermail/containers/2020-October/042524.html
+
+Changelog
+---------
+v5:
+* Split the first commit into two commits: change ucounts.count type to atomic_long_t
+  and add ucounts to cred. These commits were merged by mistake during the rebase.
+* The __get_ucounts() renamed to alloc_ucounts().
+* The cred.ucounts update has been moved from commit_creds() as it did not allow
+  to handle errors.
+* Added error handling of set_cred_ucounts().
+
+v4:
+* Reverted the type change of ucounts.count to refcount_t.
+* Fixed typo in the kernel/cred.c
+
+v3:
+* Added get_ucounts() function to increase the reference count. The existing
+  get_counts() function renamed to __get_ucounts().
+* The type of ucounts.count changed from atomic_t to refcount_t.
+* Dropped 'const' from set_cred_ucounts() arguments.
+* Fixed a bug with freeing the cred structure after calling cred_alloc_blank().
+* Commit messages have been updated.
+* Added selftest.
+
+v2:
+* RLIMIT_MEMLOCK, RLIMIT_SIGPENDING and RLIMIT_MSGQUEUE are migrated to ucounts.
+* Added ucounts for pair uid and user namespace into cred.
+* Added the ability to increase ucount by more than 1.
+
+v1:
+* After discussion with Eric W. Biederman, I increased the size of ucounts to
+  atomic_long_t.
+* Added ucount_max to avoid the fork bomb.
+
+--
+
+Alexey Gladkov (7):
+  Increase size of ucounts to atomic_long_t
+  Add a reference to ucounts for each cred
+  Reimplement RLIMIT_NPROC on top of ucounts
+  Reimplement RLIMIT_MSGQUEUE on top of ucounts
+  Reimplement RLIMIT_SIGPENDING on top of ucounts
+  Reimplement RLIMIT_MEMLOCK on top of ucounts
+  kselftests: Add test to check for rlimit changes in different user
+    namespaces
+
+ fs/exec.c                                     |   6 +-
+ fs/hugetlbfs/inode.c                          |  17 +-
+ fs/io-wq.c                                    |  22 ++-
+ fs/io-wq.h                                    |   2 +-
+ fs/io_uring.c                                 |   2 +-
+ fs/proc/array.c                               |   2 +-
+ include/linux/cred.h                          |   4 +
+ include/linux/hugetlb.h                       |   3 +-
+ include/linux/mm.h                            |   4 +-
+ include/linux/sched/user.h                    |   7 -
+ include/linux/shmem_fs.h                      |   2 +-
+ include/linux/signal_types.h                  |   4 +-
+ include/linux/user_namespace.h                |  23 ++-
+ ipc/mqueue.c                                  |  29 ++--
+ ipc/shm.c                                     |  31 ++--
+ kernel/cred.c                                 |  56 +++++-
+ kernel/exit.c                                 |   2 +-
+ kernel/fork.c                                 |  18 +-
+ kernel/signal.c                               |  53 +++---
+ kernel/sys.c                                  |  14 +-
+ kernel/ucount.c                               | 105 ++++++++++--
+ kernel/user.c                                 |   3 -
+ kernel/user_namespace.c                       |   9 +-
+ mm/memfd.c                                    |   4 +-
+ mm/mlock.c                                    |  35 ++--
+ mm/mmap.c                                     |   3 +-
+ mm/shmem.c                                    |   8 +-
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/rlimits/.gitignore    |   2 +
+ tools/testing/selftests/rlimits/Makefile      |   6 +
+ tools/testing/selftests/rlimits/config        |   1 +
+ .../selftests/rlimits/rlimits-per-userns.c    | 161 ++++++++++++++++++
+ 32 files changed, 483 insertions(+), 156 deletions(-)
+ create mode 100644 tools/testing/selftests/rlimits/.gitignore
+ create mode 100644 tools/testing/selftests/rlimits/Makefile
+ create mode 100644 tools/testing/selftests/rlimits/config
+ create mode 100644 tools/testing/selftests/rlimits/rlimits-per-userns.c
 
 -- 
-With best regards,
-  Vitaliy Filippov
+2.29.2
+

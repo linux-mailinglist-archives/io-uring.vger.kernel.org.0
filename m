@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7267F30B415
+	by mail.lfdr.de (Postfix) with ESMTP id E2CF630B416
 	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 01:28:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231259AbhBBA0T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 1 Feb 2021 19:26:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        id S231262AbhBBA0V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 1 Feb 2021 19:26:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230122AbhBBA0T (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 1 Feb 2021 19:26:19 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38333C0613ED
-        for <io-uring@vger.kernel.org>; Mon,  1 Feb 2021 16:25:39 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id m2so859568wmm.1
-        for <io-uring@vger.kernel.org>; Mon, 01 Feb 2021 16:25:39 -0800 (PST)
+        with ESMTP id S230122AbhBBA0U (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 1 Feb 2021 19:26:20 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B4FAC061573
+        for <io-uring@vger.kernel.org>; Mon,  1 Feb 2021 16:25:40 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id v15so18596692wrx.4
+        for <io-uring@vger.kernel.org>; Mon, 01 Feb 2021 16:25:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=/jsxEFi3mexEE8IxhV1JI/eXfgYmjPJFqnHdB5iAOnM=;
-        b=pLK3ebdficViLE/f5YIVQBTIK0/h/H11nO6G8RDXwTb9G1v0VecpOmCNLGBujZEecm
-         MgzJWUXfTGx+sSQq8kO391Po6VIi/iK3Vu3OEOboYK17f0HI+vBkYMhzUXt+mQhZYpGZ
-         ncMaS49xhdnaAGIzo1AWqRLP95THuFlMmCsOI/gwZ11efsrtWzAPJs13WVu3yXN0PyRx
-         mNDT3aqG9rYexGlc9W6zqzaCoCUJ1+NrzhhzxjggiIB59LGdVIESGk7EhLq4CthJ7jfq
-         YjjshrsFj1UtYw/wWyCVrtsXJg3h5PySWJBi7mZEgwm37yvN3PTFcMJ3hutcTwPye0Av
-         vMIA==
+        bh=89HK5/jlI+y6ZuAAaTISzxZLDIPIT1N+s0fBQAaJATs=;
+        b=q942/AOXMueHPbJBDWipBXkXCY/v9FgoVxX05jXnfOlZTZeiFgLEsvqTHpl3kSYn99
+         y/CcnEfRc3fE0PgCZA8nx6A3eEi7tWzsx7Aw0pW2/joA3TP/aGTEAK5otphIegdnRSjF
+         X3W/gXMNJhbSAwKaXdGNENskI4BxNdB2Dovai8CYxiTu51sJ7fNQZZp4FVu3Rkc7g+3d
+         t6PH5tHdorpmpbQ2XoxSg56lvNcJB3PxXFN5HOM3UfFAcic2vCm4RQRfKJrLb8pbo8T3
+         RCu8D+6/b6HbLB+9un2ZuIKdz/5fCeuyBLQDr5f1miIa1LoRZMW/gVBsV5eu2s/iaA+y
+         xU8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/jsxEFi3mexEE8IxhV1JI/eXfgYmjPJFqnHdB5iAOnM=;
-        b=O7iY8btmLcufzsKLPu/gsmhnAN4DVnUwwXuyX7Gs5Dn14yquNWGqf5M/3ovZA/KkBl
-         K5rkSHLRUM3jOQBKp951Ch8oHtZ3dtv+hpCKLVQ4TyIyL23mdp43ftNbpohJ9OSsxgS7
-         IAlvDB0K6VRwhLH+WVYlzv019tQjNLH0wPGzxN8ezBcFxrgSUkSEnvdIE4YyqVq9QxgR
-         csdmNLsG1iajHC6Pcp+/I7rTBCMxE9WFx/Egn1sGzSxNwCaOUf4l7iTfjtgVGwaLDXKn
-         vqV7UhQ/n6uzz2A0LXf+bRjSC3Qu0acB38IlKpjNxURP6Nz7gB+gkqQIUEdtFI1koSyB
-         uGMA==
-X-Gm-Message-State: AOAM532/zgGLR0gF3ZMWZWtup1/ScunCEdtGXHCAOo03nXcaF0K4GboD
-        fv8ddEcyvl2G4knqkSQmVSkTPjl0P/8=
-X-Google-Smtp-Source: ABdhPJw3B/ut3ER7kA6ZYtloiSqGy0GjX8aeYn0qaXcyusJdX+V6ZAkDqSxy2cYgrWDiUeeWCYk6Yw==
-X-Received: by 2002:a7b:c196:: with SMTP id y22mr1133712wmi.91.1612225538015;
-        Mon, 01 Feb 2021 16:25:38 -0800 (PST)
+        bh=89HK5/jlI+y6ZuAAaTISzxZLDIPIT1N+s0fBQAaJATs=;
+        b=jLv5aAx3vXsBCLRtz6q2KCL5WeRPSZcxgfzvYeYJQkS9N84oFARSUx2dMJM+rUxQfL
+         j1e3fQ29fFb0seS2JehfCYkQASZkFxw8OvRQJ4TtMxyoXo7uQRtVTCtN7sszMMmCiUWb
+         x2XDVsChKwqxSUIqIwMwdYlvzo9nxqs8ubNYStW6uxHGAl/XPDiZKlvZtMuSdRz8fmtM
+         dxrnTX/dIUSchlbIldhUOxzS9vtDbKacJ8FA1W4NhNi/xFdNVn1MQxf1KupCykOKShq2
+         UErEHYg8qBmI52E21As3t2AJsvgRGY4yG6W891uqv3Adapss/Q/O0jRu99XinQOA7fBP
+         KpmQ==
+X-Gm-Message-State: AOAM530xBvBpjhxoHrbJ8Kxl0MYdpAVwHcZgMbW/nqYo80Mwbmfafa4+
+        74dKGIW4GPHGVL5rxHJqFmA=
+X-Google-Smtp-Source: ABdhPJxEFZ+zp71730lRtq4SSEymu5z4z6OgegK5LZ1K1cw/acO2y50sAgvWCFteZZ3I3PyrHUp3AQ==
+X-Received: by 2002:a5d:4a50:: with SMTP id v16mr20854636wrs.241.1612225539010;
+        Mon, 01 Feb 2021 16:25:39 -0800 (PST)
 Received: from localhost.localdomain ([185.69.145.241])
-        by smtp.gmail.com with ESMTPSA id n187sm851740wmf.29.2021.02.01.16.25.37
+        by smtp.gmail.com with ESMTPSA id n187sm851740wmf.29.2021.02.01.16.25.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Feb 2021 16:25:37 -0800 (PST)
+        Mon, 01 Feb 2021 16:25:38 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/8] io_uring: refactor io_cqring_wait
-Date:   Tue,  2 Feb 2021 00:21:41 +0000
-Message-Id: <0eafe25b2ab578b81a754d1650c60ddd4224cddf.1612223953.git.asml.silence@gmail.com>
+Subject: [PATCH 4/8] io_uring: refactor io_read for unsupported nowait
+Date:   Tue,  2 Feb 2021 00:21:42 +0000
+Message-Id: <144560906a019b5239947f64fd9f0f9848e46edb.1612223954.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1612223953.git.asml.silence@gmail.com>
 References: <cover.1612223953.git.asml.silence@gmail.com>
@@ -61,78 +61,53 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It's easy to make a mistake in io_cqring_wait() because for all
-break/continue clauses we need to watch for prepare/finish_wait to be
-used correctly. Extract all those into a new helper
-io_cqring_wait_schedule(), and transforming the loop into simple series
-of func calls: prepare(); check_and_schedule(); finish();
+!io_file_supports_async() case of io_read() is hard to read, it jumps
+somewhere in the middle of the function just to do async setup and fail
+on a similar check. Call io_setup_async_rw() directly for this case,
+it's much easier to follow.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 43 ++++++++++++++++++++++---------------------
- 1 file changed, 22 insertions(+), 21 deletions(-)
+ fs/io_uring.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5b735635b8f0..dcb9e937daa3 100644
+index dcb9e937daa3..866e0ea83dbe 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7195,6 +7195,25 @@ static int io_run_task_work_sig(void)
- 	return -EINTR;
- }
+@@ -3506,7 +3506,6 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+ 	struct iov_iter __iter, *iter = &__iter;
+ 	struct io_async_rw *rw = req->async_data;
+ 	ssize_t io_size, ret, ret2;
+-	bool no_async;
  
-+/* when returns >0, the caller should retry */
-+static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
-+					  struct io_wait_queue *iowq,
-+					  signed long *timeout)
-+{
-+	int ret;
-+
-+	/* make sure we run task_work before checking for signals */
-+	ret = io_run_task_work_sig();
-+	if (ret || io_should_wake(iowq))
-+		return ret;
-+	/* let the caller flush overflows, retry */
-+	if (test_bit(0, &ctx->cq_check_overflow))
-+		return 1;
-+
-+	*timeout = schedule_timeout(*timeout);
-+	return !*timeout ? -ETIME : 1;
-+}
-+
- /*
-  * Wait until events become available, if we don't already have some. The
-  * application must reap them itself, as they reside on the shared cq ring.
-@@ -7251,27 +7270,9 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 		io_cqring_overflow_flush(ctx, false, NULL, NULL);
- 		prepare_to_wait_exclusive(&ctx->wait, &iowq.wq,
- 						TASK_INTERRUPTIBLE);
--		/* make sure we run task_work before checking for signals */
--		ret = io_run_task_work_sig();
--		if (ret > 0) {
--			finish_wait(&ctx->wait, &iowq.wq);
--			continue;
--		}
--		else if (ret < 0)
--			break;
--		if (io_should_wake(&iowq))
--			break;
--		if (test_bit(0, &ctx->cq_check_overflow)) {
--			finish_wait(&ctx->wait, &iowq.wq);
--			continue;
--		}
--		timeout = schedule_timeout(timeout);
--		if (timeout == 0) {
--			ret = -ETIME;
--			break;
--		}
--	} while (1);
--	finish_wait(&ctx->wait, &iowq.wq);
-+		ret = io_cqring_wait_schedule(ctx, &iowq, &timeout);
-+		finish_wait(&ctx->wait, &iowq.wq);
-+	} while (ret > 0);
+ 	if (rw) {
+ 		iter = &rw->iter;
+@@ -3527,9 +3526,12 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+ 		kiocb->ki_flags |= IOCB_NOWAIT;
  
- 	restore_saved_sigmask_unless(ret == -EINTR);
+ 	/* If the file doesn't support async, just async punt */
+-	no_async = force_nonblock && !io_file_supports_async(req->file, READ);
+-	if (no_async)
+-		goto copy_iov;
++	if (force_nonblock && !io_file_supports_async(req->file, READ)) {
++		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
++		if (!ret)
++			return -EAGAIN;
++		goto out_free;
++	}
  
+ 	ret = rw_verify_area(READ, req->file, io_kiocb_ppos(kiocb), io_size);
+ 	if (unlikely(ret))
+@@ -3568,8 +3570,6 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+ 		ret = ret2;
+ 		goto out_free;
+ 	}
+-	if (no_async)
+-		return -EAGAIN;
+ 	rw = req->async_data;
+ 	/* it's copied and will be cleaned with ->io */
+ 	iovec = NULL;
 -- 
 2.24.0
 

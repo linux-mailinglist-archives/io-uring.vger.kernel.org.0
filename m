@@ -2,68 +2,91 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8026030B730
-	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 06:38:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6DB130B9D4
+	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 09:28:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231292AbhBBFiI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 2 Feb 2021 00:38:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54522 "EHLO
+        id S232227AbhBBI0v (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 2 Feb 2021 03:26:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbhBBFiH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Feb 2021 00:38:07 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2682C061794
-        for <io-uring@vger.kernel.org>; Mon,  1 Feb 2021 21:37:07 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id c2so21486691edr.11
-        for <io-uring@vger.kernel.org>; Mon, 01 Feb 2021 21:37:07 -0800 (PST)
+        with ESMTP id S232563AbhBBIZd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Feb 2021 03:25:33 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14D82C061573;
+        Tue,  2 Feb 2021 00:24:53 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id p21so26698810lfu.11;
+        Tue, 02 Feb 2021 00:24:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nametag.social; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=jx5w0a1LBef0Tcg+q5ejYdIu/avv96ApVQo2ehYae7w=;
-        b=fGp4+WdRJs1J2nsJoiF3BfX3RcYikGPetqYBrdfP4aArGe/q4wVVqxgErk17ava0s4
-         vZMBBSRKSNtgWLPt7y7i4HFbvO3ksoBh2cQtlBI2URTStJwjN1McyEORj6VLRrr7DT0R
-         QIpmsyfkRNzzi5cKo/fy70TXWkJARqg7XVlMDAscCSOOmFy25Us88TlIc2FNmepuIq9q
-         ivbTCQbtQQqiHXmL/9JbWXAViUPvBifvkhC6IbmxJXWJSyBwX9jhAyJldEsSUKZsrrX8
-         B7PPahF7QNW31bWBH7clA+kOyC+AFdOOtn0achzL+RuGf8ouzTcETPqSDvaaPZZNEsiB
-         GisQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PzOpO4TkH1IxCCsjjxQXmloCyUxjPg7qiXOZoiHDquw=;
+        b=a2tY6VnzrcL3n0O+uRi0hlhDurWyHPToUVdtVcXvBfVtUnAbu9jJTwzVtiU+gl2KA6
+         3lpZ2YQ0Vn6WWQqu3EcVJWkGNYu2m84V9vGzPTc9INATpV3dWPPLufZeracWhNojOvmD
+         GI4+i8GMjhiGvnTA3tYFlSvtD7uKDVV4o9iaMRItg0aUV4KWXyYtISCIgBk32/LExvhV
+         WDDeX62zVo3qK4LZyU5nYIKZxxThFMuqKnRNRLm6l+Eskz+Ve5gvf9ZF1FUiwaSwyvsM
+         oxm1jUUiNDH/IskNT0stiPicsv+XNLD2zSn1uDZa3wXola36NK2SgpRisuqErVmU5zt4
+         w8jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=jx5w0a1LBef0Tcg+q5ejYdIu/avv96ApVQo2ehYae7w=;
-        b=AcDo0I8Sva5A8AU12hGSvf7qqrzI/Bwg/4vVMMHV2h1lQbPouKNOSQjGhKNg6kT2M0
-         xjQgBrEqN6LzT4FBuqo63QpQxviChCoIvr5dDfsiakFzTVtj+ax0/E5G+g3tDAN86AIm
-         EVz1au+kR4Ec0f8CMLkkf3GF6J2VIt8NS2Rcnl3cHWP6OePdhkTnpG9eCxkSTg9QgaBN
-         3256+IRtebJWduYxUt8a73o+eFoVG37i0WI0eXUQDfV1p12bfSH5n0CfjVRT0YofpBsO
-         J06oAvD2cq7HcbLihNZsYgiLxoczscgzyYHFITO/vo363+D4eLa+0hl++BKSERsXNSON
-         eXQg==
-X-Gm-Message-State: AOAM5318qYeE8Y7g4sjyT3DiNTwamU9KgfdZnOkgxxdwh//gAWO3hxWT
-        +b0Wpr0xmqcJ6JQEgqRrD8G+FPQmy2fT0BUdqR6JDxzaOZdiPg==
-X-Google-Smtp-Source: ABdhPJxKdPu83h7j1o87/c+NtAOBuC2MNZvR231xmYitqymVkzvrkcSHjXWBMRaAPus3fSyGp+IoHJaOen/xqj6dnwQ=
-X-Received: by 2002:a05:6402:50ca:: with SMTP id h10mr21951477edb.181.1612244226292;
- Mon, 01 Feb 2021 21:37:06 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PzOpO4TkH1IxCCsjjxQXmloCyUxjPg7qiXOZoiHDquw=;
+        b=C/Fq1IpeuanDtF9Qn3LgWLcJH+j0qY6dsaXc701r7bjoxjs77o5FcrRI6gIVUlRsqt
+         P5sO68grExKuaAOYKT/r2bZbrvmKHXjHk+fq5DmgeM3DCytgqW1L0zfXWhaq+OzF5O7d
+         na22Fpj3bPjSEuOdfxCTVg3yjdFFNBZCIaz0OLGljcYvQT4x/x+FuHellP10QfDnznHd
+         7MRN0CoI7nqValuOvOR9wVoUcnmiBbNH1HuS64p28aPvxs/2LPKLj4CB9uaYc3n/RrEY
+         vefS0/uXlnmt6dFTSQC96yReAvg9fX7iON7RVgsCQrJKrHJSUf68GRgr3l+bOru+cZKd
+         LLWw==
+X-Gm-Message-State: AOAM532k+TeKj3BEllNxuIMrGyKH3tzuttiqfdPlwdp2xbFDCwDMG3Mm
+        II0AIuas+SP4sooma501KI4=
+X-Google-Smtp-Source: ABdhPJwV/k03wSKkT3g1HIM2KZluiSLz9T8zLo65YiDlP0KN1e1sbEOKI1OYJUxcPARYNpp5/puTbw==
+X-Received: by 2002:a19:ad47:: with SMTP id s7mr10435255lfd.72.1612254291634;
+        Tue, 02 Feb 2021 00:24:51 -0800 (PST)
+Received: from carbon.v ([94.143.149.146])
+        by smtp.googlemail.com with ESMTPSA id t6sm4195857ljd.112.2021.02.02.00.24.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Feb 2021 00:24:51 -0800 (PST)
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Dmitry Kadashev <dkadashev@gmail.com>
+Subject: [PATCH v2 0/2] io_uring: add mkdirat support
+Date:   Tue,  2 Feb 2021 15:23:51 +0700
+Message-Id: <20210202082353.2152271-1-dkadashev@gmail.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-From:   Victor Stewart <v@nametag.social>
-Date:   Tue, 2 Feb 2021 00:36:57 -0500
-Message-ID: <CAM1kxwhCXpTCRjZ5tc_TPADTK3EFeWHD369wr8WV4nH8+M_thg@mail.gmail.com>
-Subject: bug with fastpoll accept and sqpoll + IOSQE_FIXED_FILE
-To:     io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-started experimenting with sqpoll and my fastpoll accepts started
-failing. was banging my head against the wall for a few hours... wrote
-this test case below....
+This adds mkdirat support to io_uring and is heavily based on recently
+added renameat() / unlinkat() support.
 
-basically fastpoll accept only works without sqpoll, and without
-adding IOSQE_FIXED_FILE to the sqe. fails with both, fails with
-either. these must be bugs?
+The first patch is preparation with no functional changes, makes
+do_mkdirat accept struct filename pointer rather than the user string.
 
-I'm running Clear Linux 5.10.10-1017.native.
+The second one leverages that to implement mkdirat in io_uring.
 
-i hope no one here is allergic to C++, haha. compilation command
-commented in the gist, just replace the two paths. and I can fold
-these checks if needed into a liburing PR later.
+Based on for-5.11/io_uring.
 
-https://gist.github.com/victorstewart/98814b65ed702c33480487c05b40eb56
+Changes since v1:
+- do not mess with struct filename's refcount in do_mkdirat, instead add
+  and use __filename_create() that does not drop the name on success;
+
+Dmitry Kadashev (2):
+  fs: make do_mkdirat() take struct filename
+  io_uring: add support for IORING_OP_MKDIRAT
+
+ fs/internal.h                 |  1 +
+ fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
+ fs/namei.c                    | 25 +++++++++++----
+ include/uapi/linux/io_uring.h |  1 +
+ 4 files changed, 79 insertions(+), 6 deletions(-)
+
+-- 
+2.30.0
+

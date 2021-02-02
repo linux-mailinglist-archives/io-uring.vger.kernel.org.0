@@ -2,150 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDB6130C7B3
-	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 18:29:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4804530C7B9
+	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 18:29:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236892AbhBBR2s (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 2 Feb 2021 12:28:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37278 "EHLO
+        id S237419AbhBBR32 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 2 Feb 2021 12:29:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237537AbhBBR0P (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Feb 2021 12:26:15 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 985C7C061573
-        for <io-uring@vger.kernel.org>; Tue,  2 Feb 2021 09:25:36 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id y187so2997820wmd.3
-        for <io-uring@vger.kernel.org>; Tue, 02 Feb 2021 09:25:36 -0800 (PST)
+        with ESMTP id S236690AbhBBRZ3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Feb 2021 12:25:29 -0500
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82E1CC061352
+        for <io-uring@vger.kernel.org>; Tue,  2 Feb 2021 09:24:42 -0800 (PST)
+Received: by mail-io1-xd2f.google.com with SMTP id e133so11316767iof.8
+        for <io-uring@vger.kernel.org>; Tue, 02 Feb 2021 09:24:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0XR8V3GPBdMTnYoV1LA/5NdTsOikkvAl2toNSYUsPIM=;
-        b=m2o8NnRc7S8jFiSUECCQZUISQsIFP8eSHUGc0rLiPJH7WVekTbRP6KP610pYjTUWaR
-         Aabr+iwrh2dIOc9Z0N9hVyBYsw9EQsHHKQ+mDrC70XSXUTi4QcOHpFZxj3ALJ1q4Ihra
-         LYo2NAoXbA3PDxaPjs2vxb2wHvAiZhrK+s1RE98sc++6DQSvxKgdM1aAdsNIjpJMz8Kz
-         Lc7QuJF4u+vmIdWLnCuXupPlvm//4dX1+WbbQUPggm2jISY5ewgcy6H2eWTlh3q8Kc0T
-         mc6OOCiL9Zgr9sSgn9FtTGck0qiuiQnfueWPa9mDPrKbD3RQklTdn8mw/nKJUeVSbU3H
-         ZFJQ==
+        bh=FtRvtpb6cLkvUQpthiNu23iT/6oh6MEYboY8olYjOls=;
+        b=PbJIA178U6f5r8mK+dbxWDQ/rxgT4JIDRNXRD3tlYbx8tNPY8mTrHVeRfNfNIEh/C2
+         +oSY1tqsns/eom628X0WJfGaG5HRyuYOtlUwter/xyI4dmCIjo0PXqrJ5xfcdBSoQJ4L
+         fVsRqeMwHbbYB/5cGql6VSsTyBYg9mAdoHK/WyzB0AJYDL9ndsEh9j5q0Pgi5lbZCiyl
+         WSEf66A/W822y/O5xMcSaKG4jMRkYbVhhSzk4I4EqgF6mJnRImRbzH/PrDBX5e3Kiwkq
+         mHy26gyVHJc6kdjqwFK+QEj6WCOIZfQg9/eJmEnOu0UrlsdUUK5UiHeELKBAn2Oh0nxZ
+         KPeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=0XR8V3GPBdMTnYoV1LA/5NdTsOikkvAl2toNSYUsPIM=;
-        b=R1QIKNLgdV2UBl2RZbQV2QnofCd9BWBLbM+8OsM7zf8yfGZrCUuX2QZtCrTnnoC250
-         2LpcS5ENnZsU321RXSHQ98jSscgf4hIp9oM6xn1+lU7sufoi00CdjxbTtXR4SE/tIVM2
-         601QzLxLIr6ldgtDqTtFgg004BllVMu2+ybi4aqxHUknvmybkHL9V9ZRbph4Fo2HeRW/
-         Y8ltjlq8w+/iMvDy+voCDGlm2vf0sl7/mE0ffTdO9fB/39TH7fgBQ4QoBmJcpY2TGhKP
-         PA4L9BJjs7mADg9tUC+XUjimhZz0A8uuGAyTSPLP3zi5S0PngwXM2GlYTVkUGrTmemOB
-         A+rw==
-X-Gm-Message-State: AOAM533HUkwE927m0rmbXne9m5IotdWgNBOxYl/Q1LASjljzvdRk5GQu
-        gZItU8uZqSnyZWfwj6frTJipojYjDvUbyw==
-X-Google-Smtp-Source: ABdhPJyuLP5BsBYnNWuES96hziUOKjRYFfb9hxFUghuUYBb98EWLl6a/7uVCqr42Q8urxr1mxOusyg==
-X-Received: by 2002:a05:600c:ce:: with SMTP id u14mr4672821wmm.10.1612286735057;
-        Tue, 02 Feb 2021 09:25:35 -0800 (PST)
-Received: from [192.168.8.171] ([185.69.145.241])
-        by smtp.gmail.com with ESMTPSA id a132sm4144624wmf.42.2021.02.02.09.25.34
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FtRvtpb6cLkvUQpthiNu23iT/6oh6MEYboY8olYjOls=;
+        b=o4UKWfiCMwaS9YUghjxhw7RKpgPcYRsIbg2mJOH8cZWx9c8L+y53F3zL8vEi5hsGGJ
+         eJBp6EP0JH5bnBaZNFmBda4xgEEVuhKHnuUd1ANB3qsri89R5F9Mvn0NHrD7rHpiu6Gm
+         0hZUHMrSSMP1hwBnFvR3ai4fvVfpKucbXDwtyHHpqwl5kc69GYg30O8XKTn7gqSuoBxd
+         2GvM/Ej7GpPFvF3F+3PsGb9bAgKK+RPuTpRzSlrZHLzQIKma1TTFl8t41+Gp7R4EYhEh
+         a0NSf9kXP8tmBGJfz9/tCnS0oAVYpMSY4/3arpm8I9SGlHMpanG+RJc4rWeePxHtmlnC
+         LlJA==
+X-Gm-Message-State: AOAM533wIBSxo5ucwj7ToH96lkPKUwoD+5M6DBXTiK8P/MjAphkGy6Zp
+        NwBUuL4tGSWcLisOPkQqCgv6/Z1l/92tItso
+X-Google-Smtp-Source: ABdhPJzMO6p0TNpHmFMKGCs9hpL7EITHM5XAn2plqUJ2bcFGPZ+Tvt3BhrzSj+K4gfBQGJh52ZFHFA==
+X-Received: by 2002:a02:2a83:: with SMTP id w125mr22070858jaw.48.1612286681582;
+        Tue, 02 Feb 2021 09:24:41 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id h19sm11170039ilo.21.2021.02.02.09.24.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Feb 2021 09:25:34 -0800 (PST)
+        Tue, 02 Feb 2021 09:24:41 -0800 (PST)
+Subject: Re: bug with fastpoll accept and sqpoll + IOSQE_FIXED_FILE
 To:     Victor Stewart <v@nametag.social>
-Cc:     io-uring <io-uring@vger.kernel.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>
 References: <CAM1kxwhCXpTCRjZ5tc_TPADTK3EFeWHD369wr8WV4nH8+M_thg@mail.gmail.com>
  <49743b61-3777-f152-e1d5-128a53803bcd@gmail.com>
  <c41e9907-d530-5d2a-7e1f-cf262d86568c@gmail.com>
  <CAM1kxwj6Cdqi0hJFNtGFvK=g=KoNRPMmLVoxtahFKZsjOkcTKQ@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: bug with fastpoll accept and sqpoll + IOSQE_FIXED_FILE
-Message-ID: <8a3ba4fc-6e60-a3e7-69f4-0394799e7fd7@gmail.com>
-Date:   Tue, 2 Feb 2021 17:21:52 +0000
+ <CAM1kxwg7wkB7Sj8CDi9RkssM5DwFXEFWeUcakUkpKtKVCOUSJQ@mail.gmail.com>
+ <4b44f4e1-c039-a6b6-711f-22952ce1abfb@kernel.dk>
+ <CAM1kxwgPW5Up-YqQWdh_cG4jvc5RWsD4UYNWN-jRRbWq5ide5g@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <06ceae30-7221-80e9-13e3-148cdf5e3c9f@kernel.dk>
+Date:   Tue, 2 Feb 2021 10:24:39 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAM1kxwj6Cdqi0hJFNtGFvK=g=KoNRPMmLVoxtahFKZsjOkcTKQ@mail.gmail.com>
+In-Reply-To: <CAM1kxwgPW5Up-YqQWdh_cG4jvc5RWsD4UYNWN-jRRbWq5ide5g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 02/02/2021 16:18, Victor Stewart wrote:
->>> Please don't forget about checking error codes. At least fixed
->>> files don't work for you because of
->>>
->>> int fds[10];
->>> memset(fds, -1, 10); // 10 bytes, not 10 ints
->>>
->>> So io_uring_register_files() silently fails.
+On 2/2/21 10:10 AM, Victor Stewart wrote:
+>> Can you send the updated test app?
 > 
-> well i'm glad this one was my own careless error. fresh eyes are
-> everything. you're right, bad habit of ignoring return values lol.
+> https://gist.github.com/victorstewart/98814b65ed702c33480487c05b40eb56
 > 
->> Also you forget to submit, all works with these 2 changes.
->>
->> When you don't do io_uring_submit(), apparently it gets live-locked
->> in liburing's _io_uring_get_cqe(), that's a bug.
-> 
-> in the comments above io_uring_wait_cqe_timeout it says it submits for
-> you, that's why i didn't submit here. but i guess great if that
+> same link i just updated the same gist
 
-There is a change of behaviour, if IORING_FEAT_EXT_ARG is set it
-won't submit (IIRC, since 5.12) -- it's pretty important for some
-multi-threaded cases.
-
-So... where in particular does it say that? In case your liburing
-is up to date and we forgot to remove such a comment.
-
-> exposed the _io_uring_get_cqe bug.
-
-It's great for sure!
-
-> 
-> thanks so much for taking a look at this Pavel
-> 
+And how are you running it?
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

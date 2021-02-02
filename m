@@ -2,56 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B32E830BCAF
-	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 12:11:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F40330BD10
+	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 12:30:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229677AbhBBLLO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 2 Feb 2021 06:11:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41126 "EHLO
+        id S231480AbhBBL2w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 2 Feb 2021 06:28:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229808AbhBBLKL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Feb 2021 06:10:11 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F37DEC061573
-        for <io-uring@vger.kernel.org>; Tue,  2 Feb 2021 03:09:30 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id l12so19992939wry.2
-        for <io-uring@vger.kernel.org>; Tue, 02 Feb 2021 03:09:30 -0800 (PST)
+        with ESMTP id S231381AbhBBL14 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Feb 2021 06:27:56 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42634C0613D6
+        for <io-uring@vger.kernel.org>; Tue,  2 Feb 2021 03:27:16 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id p15so19989518wrq.8
+        for <io-uring@vger.kernel.org>; Tue, 02 Feb 2021 03:27:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=from:to:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sb5Z97r1r1HKTGc7ZoDxc6n4L4O934Q4DWPN2mmxtHg=;
-        b=OP+yBrRT/9EVaor0E3EZoXDsPthi4+iUifywtyGA6AS8zyWMdtBnF/FqQt4uZvuRQL
-         yIjgAxe2JVXzQpDcIdPVo2ihVz4pEdESAcWjhxlxNJyfoMa2tnu7lyzRUNA1b3TjiPr3
-         n5rk5fX8ZchGLBjkanRz+8wGBeW1RazmYp01cQkpXSghuUst03S4uYDbZyqkbBh7F1kq
-         jypKk3JYDjYMZCBPq4A8wHftAEtSRwt/S5UxQHCYp5A7k/h1JXBOOD71XUGDRmLD5B8b
-         HMSQxU8VklJwMcTVJ/qmo/Apj3nC9jjzp8K/GwD0BGgOuvuGLOzsFz43YATLPw+y6u0v
-         2bWQ==
+        bh=prebuj2ppGnHy8ru4p8guRUJlv9BPxIpGOVjPCEorPs=;
+        b=inKcfDkSiVumlxar5mqqrR46ibWYB8xkFsbM7sCYXqoaIujpakxlnqtfbqEkjMzqOk
+         fb+GZuz7K7t+Qq43GmMXiYlNkY2Uv5bbdA3spkHcS/Zx0jsi5OrYzJFQhNxIv1/+cSWa
+         NleiBTZkTI0As8THRE1FTK3QvCUPjp6TvNsOtcVjHmAbnplHG2K/KydipHITmNGOWpzz
+         cvxr3T9N/1kHNsEHz0O3bz+ugi8CB6HKthUT0r8/s+3wC8Ew2tu+dcvtWHCzWeK6d/H8
+         Sd8xQl6iEnJMLEch3E9HL/hx3gCzuUMeICSY9X7Th1PJqQy58BTg5U4pb+B4uQpxhRNA
+         33Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+        h=x-gm-message-state:from:to:references:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=sb5Z97r1r1HKTGc7ZoDxc6n4L4O934Q4DWPN2mmxtHg=;
-        b=jMLCuTSfM1tT2DRscOe+w36VbzJpp8BNpjMWIJ1SPs0LbevCrLdxACkoAoklo2ctZE
-         xzE/QOn/+j7g5lXRviWHyXPr5NuLSRkXdtgTC3FnhTvGhu+PSMVer8kHWPTTtJ1OC2iL
-         NT6mxT9PbozmTbAis7hgokQqo1e3Jv8ouJ/y9nutelsFsOk7LqARek0B+x+TuH7xh8l3
-         0H7STjruwhCGg29GnxzNSzA/E2/T4rVW5EhJLQa8KGZtHr5vxbH7hJTKiqQqH2FY16WN
-         s62LOMIU4KwHNfRsKJ3qifkD5iUe27/69gv8Gv09rQoyiXmzNCtt2sn6bxruhq8tyCk0
-         zDPQ==
-X-Gm-Message-State: AOAM532BxKrn30F4Mi0XNlt/YC39QH3mE/xZMlzgi25kdy7tcY86exii
-        CTJrUjjs0SCiwLgWEZuuGwrd1MLrLwESUw==
-X-Google-Smtp-Source: ABdhPJyGazh04CpdtJDuAjs3UXKi3HeTtSHSU9F1R3WDRx5t94khCdEVjz9wfbp4drV5/hMSiqOThA==
-X-Received: by 2002:a05:6000:1105:: with SMTP id z5mr22926850wrw.15.1612264168332;
-        Tue, 02 Feb 2021 03:09:28 -0800 (PST)
-Received: from [192.168.8.169] ([185.69.145.241])
-        by smtp.gmail.com with ESMTPSA id w4sm11170131wrt.69.2021.02.02.03.09.27
+        bh=prebuj2ppGnHy8ru4p8guRUJlv9BPxIpGOVjPCEorPs=;
+        b=r8CS/ztWsxoTP5accd4zs3Vnl0Xvr+rpPXVmr+jiwon0b4oTHILGNX284GqlQ+x79f
+         iNMrr0DaxLVvE2cVEEjNyQ7Xm5ZKTXcnTiiJ3bvhcc2GvGbHQUZ5cJKDT5dhEudk88+/
+         R7RK0jFGIC5ydhGxoqt9a84Im1Ad3PpVNpEG3g4n0IuoElyUGg5Jetnf+MR2LZ75G4nL
+         UtWSCTF/fg3HGoijs8btL2TkJGN3p/aIcGIAdE9dU0CviAb0aactRhNLNbv6WHocGJHb
+         gsEghYshHhtE7oh1Yv25m2HDcXqTENt0HjvSPUx+2VYD9lcxgNN6uuV9LW1ozT7igh8w
+         S9eQ==
+X-Gm-Message-State: AOAM532oOa21bRbRySO71eO9VbuRNb91vuiJp5sAlbdPqqVlD/JyeEuS
+        RFS5x0SCDNq93/VjRxRXGYBYvEDHMASSew==
+X-Google-Smtp-Source: ABdhPJx6fHcHy6Wy2JKEA0xB55IOtHC2wthnWlotR6aQ6Cb0tbdkVWCsq8L52BKTSE8XSc5Uc7RLgA==
+X-Received: by 2002:adf:d20c:: with SMTP id j12mr23088910wrh.407.1612265234847;
+        Tue, 02 Feb 2021 03:27:14 -0800 (PST)
+Received: from [192.168.8.170] ([185.69.145.241])
+        by smtp.gmail.com with ESMTPSA id n6sm2464084wmi.23.2021.02.02.03.27.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Feb 2021 03:09:27 -0800 (PST)
+        Tue, 02 Feb 2021 03:27:14 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Victor Stewart <v@nametag.social>,
         io-uring <io-uring@vger.kernel.org>
 References: <CAM1kxwhCXpTCRjZ5tc_TPADTK3EFeWHD369wr8WV4nH8+M_thg@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <49743b61-3777-f152-e1d5-128a53803bcd@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -96,12 +97,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: bug with fastpoll accept and sqpoll + IOSQE_FIXED_FILE
-Message-ID: <49743b61-3777-f152-e1d5-128a53803bcd@gmail.com>
-Date:   Tue, 2 Feb 2021 11:05:45 +0000
+Message-ID: <c41e9907-d530-5d2a-7e1f-cf262d86568c@gmail.com>
+Date:   Tue, 2 Feb 2021 11:23:32 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAM1kxwhCXpTCRjZ5tc_TPADTK3EFeWHD369wr8WV4nH8+M_thg@mail.gmail.com>
+In-Reply-To: <49743b61-3777-f152-e1d5-128a53803bcd@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -109,34 +110,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 02/02/2021 05:36, Victor Stewart wrote:
-> started experimenting with sqpoll and my fastpoll accepts started
-> failing. was banging my head against the wall for a few hours... wrote
-> this test case below....
+On 02/02/2021 11:05, Pavel Begunkov wrote:
+> On 02/02/2021 05:36, Victor Stewart wrote:
+>> started experimenting with sqpoll and my fastpoll accepts started
+>> failing. was banging my head against the wall for a few hours... wrote
+>> this test case below....
+>>
+>> basically fastpoll accept only works without sqpoll, and without
+>> adding IOSQE_FIXED_FILE to the sqe. fails with both, fails with
+>> either. these must be bugs?
+>>
+>> I'm running Clear Linux 5.10.10-1017.native.
+>>
+>> i hope no one here is allergic to C++, haha. compilation command
+>> commented in the gist, just replace the two paths. and I can fold
+>> these checks if needed into a liburing PR later.
+>>
+>> https://gist.github.com/victorstewart/98814b65ed702c33480487c05b40eb56
 > 
-> basically fastpoll accept only works without sqpoll, and without
-> adding IOSQE_FIXED_FILE to the sqe. fails with both, fails with
-> either. these must be bugs?
+> Please don't forget about checking error codes. At least fixed
+> files don't work for you because of
 > 
-> I'm running Clear Linux 5.10.10-1017.native.
+> int fds[10];
+> memset(fds, -1, 10); // 10 bytes, not 10 ints
 > 
-> i hope no one here is allergic to C++, haha. compilation command
-> commented in the gist, just replace the two paths. and I can fold
-> these checks if needed into a liburing PR later.
+> So io_uring_register_files() silently fails.
 > 
-> https://gist.github.com/victorstewart/98814b65ed702c33480487c05b40eb56
+> 
+> For me, all two "with SQPOLL" tests spit SUCCESS, then it hangs.
+> But need to test it with upstream to be sure.
 
-Please don't forget about checking error codes. At least fixed
-files don't work for you because of
+Also you forget to submit, all works with these 2 changes.
 
-int fds[10];
-memset(fds, -1, 10); // 10 bytes, not 10 ints
-
-So io_uring_register_files() silently fails.
-
-
-For me, all two "with SQPOLL" tests spit SUCCESS, then it hangs.
-But need to test it with upstream to be sure.
+When you don't do io_uring_submit(), apparently it gets live-locked
+in liburing's _io_uring_get_cqe(), that's a bug.
 
 -- 
 Pavel Begunkov

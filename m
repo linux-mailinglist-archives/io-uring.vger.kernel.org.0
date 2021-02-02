@@ -2,93 +2,198 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68CA230C8D1
-	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 19:03:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C5230CC60
+	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 20:55:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237963AbhBBSBM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 2 Feb 2021 13:01:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44240 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237741AbhBBR6R (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Feb 2021 12:58:17 -0500
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63805C0613ED
-        for <io-uring@vger.kernel.org>; Tue,  2 Feb 2021 09:57:36 -0800 (PST)
-Received: by mail-il1-x132.google.com with SMTP id a16so2234852ilq.5
-        for <io-uring@vger.kernel.org>; Tue, 02 Feb 2021 09:57:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5XgwxBrAJIjk+5iQVHO0i9EqTXWLKd9+7mFE48VNE1Q=;
-        b=i7jhIBzGg7XBFlALk7RhSxBRysSgO1R19xvpNKX0//N0IfT3RYm8wdNGDDigQdaEcP
-         nzcw01FK/GrLEbydT1kVPaXsWJbK6fpqQLm29KqLAPm/7bcnJo/0eV5Q8+vKtlYKtu9N
-         6dV23L0FiTpV6kdUQNCAb2i3bhK8gI1unPFHlHyuceEt2peZIQ2DOx9NTMi+62Yx7AFf
-         2LI1p4Muv8FWRY5HG1/yAgNObYixR79H7OohNEvJZ4apoIwsyWw5T4HLPZpULELk/8XI
-         g14dSGqGOeoRoXS1uJgqRx5ENOHechavsTxiBrJfY14jpUqB1/AKGg0XT4UkLM9fysC3
-         9Vbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5XgwxBrAJIjk+5iQVHO0i9EqTXWLKd9+7mFE48VNE1Q=;
-        b=iR5HTeNSEgGTWq4+5j4J6COeQeWI/brhUc99eNkB9nmL/C4QXOkhj/AC3KLzNi0OCk
-         6ltHnUh8qd6RTuDam6I2Nfn8a5W88GqGMWxHeLDRwAk8dtu4SusVYoweVvk8RrH7UvrJ
-         tOsdFbIUKvYGNqo9XDmuakK+pX8HD4eMleASRXrhVn5zwnkqMhqbk3pXCn/fhxMbeRyR
-         rSVb0Wav25LHvgGppky+65mJtKHXeNogp3sXaY57V/+SBNvwhM6avTYn3RZACdRIpiWR
-         boqdB64ZNhJVxSVUOAPZLMtWcR3TLDyXeRPFMj2U8Igv7c6H/3MVLNtEZ6wwMCv3sJ0T
-         Jo+w==
-X-Gm-Message-State: AOAM533Ytya3BHXNyvEzkdXdmKa1c0jLKckxzuxvhxjUs5iPkkgcJywW
-        qjbRFCrTyGxP4bFfNBnDtE1dzKb/E4kpCt+y
-X-Google-Smtp-Source: ABdhPJwsCbFiq6MXmH2On5B1i7vqYfxJNT9VmT+5y/AxCwnMEl2n4OVyaNk/RhPgXnaD5EZrhiIesQ==
-X-Received: by 2002:a05:6e02:144d:: with SMTP id p13mr19448799ilo.41.1612288655562;
-        Tue, 02 Feb 2021 09:57:35 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id z16sm11257369ilp.67.2021.02.02.09.57.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Feb 2021 09:57:35 -0800 (PST)
-Subject: Re: bug with fastpoll accept and sqpoll + IOSQE_FIXED_FILE
-To:     Victor Stewart <v@nametag.social>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>
-References: <CAM1kxwhCXpTCRjZ5tc_TPADTK3EFeWHD369wr8WV4nH8+M_thg@mail.gmail.com>
- <49743b61-3777-f152-e1d5-128a53803bcd@gmail.com>
- <c41e9907-d530-5d2a-7e1f-cf262d86568c@gmail.com>
- <CAM1kxwj6Cdqi0hJFNtGFvK=g=KoNRPMmLVoxtahFKZsjOkcTKQ@mail.gmail.com>
- <CAM1kxwg7wkB7Sj8CDi9RkssM5DwFXEFWeUcakUkpKtKVCOUSJQ@mail.gmail.com>
- <4b44f4e1-c039-a6b6-711f-22952ce1abfb@kernel.dk>
- <CAM1kxwgPW5Up-YqQWdh_cG4jvc5RWsD4UYNWN-jRRbWq5ide5g@mail.gmail.com>
- <06ceae30-7221-80e9-13e3-148cdf5e3c9f@kernel.dk>
- <1baf259f-5a78-3044-c061-2c08c37f7d58@kernel.dk>
- <CAM1kxwg7X=MzAiKs44Wx+5J2__rO7Er6892MyENRN0mwxOP_xA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5fa56543-5b4a-f6f8-158b-786334492d0f@kernel.dk>
-Date:   Tue, 2 Feb 2021 10:57:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <CAM1kxwg7X=MzAiKs44Wx+5J2__rO7Er6892MyENRN0mwxOP_xA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S240200AbhBBTyO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 2 Feb 2021 14:54:14 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:6896 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240197AbhBBTxx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Feb 2021 14:53:53 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UNi9.Ix_1612295573;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UNi9.Ix_1612295573)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 03 Feb 2021 03:53:00 +0800
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: [PATCH] io_uring: fix possible deadlock in io_uring_poll
+Date:   Wed,  3 Feb 2021 03:52:53 +0800
+Message-Id: <1612295573-221587-1-git-send-email-haoxu@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/2/21 10:50 AM, Victor Stewart wrote:
->> Alright, so you're doing ACCEPT with 5.10 and you cannot do ACCEPT
->> with SQPOLL as it needs access to the file table. That works in 5.11
->> and newer, NOT in 5.10. Same goes or eg open/close and those kinds
->> of requests.
-> 
-> okay i must have missed that point somewhere. perfect i'll just avoid
-> sqpoll until using 5.11. at least this exercise exposed some other
-> issue pavel wanted to look into!
+Abaci reported follow issue:
 
-Yep, there's an issue with the newer timeouts and not breaking out of
-the loop as it should.
+[   30.615891] ======================================================
+[   30.616648] WARNING: possible circular locking dependency detected
+[   30.617423] 5.11.0-rc3-next-20210115 #1 Not tainted
+[   30.618035] ------------------------------------------------------
+[   30.618914] a.out/1128 is trying to acquire lock:
+[   30.619520] ffff88810b063868 (&ep->mtx){+.+.}-{3:3}, at: __ep_eventpoll_poll+0x9f/0x220
+[   30.620505]
+[   30.620505] but task is already holding lock:
+[   30.621218] ffff88810e952be8 (&ctx->uring_lock){+.+.}-{3:3}, at: __x64_sys_io_uring_enter+0x3f0/0x5b0
+[   30.622349]
+[   30.622349] which lock already depends on the new lock.
+[   30.622349]
+[   30.623289]
+[   30.623289] the existing dependency chain (in reverse order) is:
+[   30.624243]
+[   30.624243] -> #1 (&ctx->uring_lock){+.+.}-{3:3}:
+[   30.625263]        lock_acquire+0x2c7/0x390
+[   30.625868]        __mutex_lock+0xae/0x9f0
+[   30.626451]        io_cqring_overflow_flush.part.95+0x6d/0x70
+[   30.627278]        io_uring_poll+0xcb/0xd0
+[   30.627890]        ep_item_poll.isra.14+0x4e/0x90
+[   30.628531]        do_epoll_ctl+0xb7e/0x1120
+[   30.629122]        __x64_sys_epoll_ctl+0x70/0xb0
+[   30.629770]        do_syscall_64+0x2d/0x40
+[   30.630332]        entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   30.631187]
+[   30.631187] -> #0 (&ep->mtx){+.+.}-{3:3}:
+[   30.631985]        check_prevs_add+0x226/0xb00
+[   30.632584]        __lock_acquire+0x1237/0x13a0
+[   30.633207]        lock_acquire+0x2c7/0x390
+[   30.633740]        __mutex_lock+0xae/0x9f0
+[   30.634258]        __ep_eventpoll_poll+0x9f/0x220
+[   30.634879]        __io_arm_poll_handler+0xbf/0x220
+[   30.635462]        io_issue_sqe+0xa6b/0x13e0
+[   30.635982]        __io_queue_sqe+0x10b/0x550
+[   30.636648]        io_queue_sqe+0x235/0x470
+[   30.637281]        io_submit_sqes+0xcce/0xf10
+[   30.637839]        __x64_sys_io_uring_enter+0x3fb/0x5b0
+[   30.638465]        do_syscall_64+0x2d/0x40
+[   30.638999]        entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   30.639643]
+[   30.639643] other info that might help us debug this:
+[   30.639643]
+[   30.640618]  Possible unsafe locking scenario:
+[   30.640618]
+[   30.641402]        CPU0                    CPU1
+[   30.641938]        ----                    ----
+[   30.642664]   lock(&ctx->uring_lock);
+[   30.643425]                                lock(&ep->mtx);
+[   30.644498]                                lock(&ctx->uring_lock);
+[   30.645668]   lock(&ep->mtx);
+[   30.646321]
+[   30.646321]  *** DEADLOCK ***
+[   30.646321]
+[   30.647642] 1 lock held by a.out/1128:
+[   30.648424]  #0: ffff88810e952be8 (&ctx->uring_lock){+.+.}-{3:3}, at: __x64_sys_io_uring_enter+0x3f0/0x5b0
+[   30.649954]
+[   30.649954] stack backtrace:
+[   30.650592] CPU: 1 PID: 1128 Comm: a.out Not tainted 5.11.0-rc3-next-20210115 #1
+[   30.651554] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+[   30.652290] Call Trace:
+[   30.652688]  dump_stack+0xac/0xe3
+[   30.653164]  check_noncircular+0x11e/0x130
+[   30.653747]  ? check_prevs_add+0x226/0xb00
+[   30.654303]  check_prevs_add+0x226/0xb00
+[   30.654845]  ? add_lock_to_list.constprop.49+0xac/0x1d0
+[   30.655564]  __lock_acquire+0x1237/0x13a0
+[   30.656262]  lock_acquire+0x2c7/0x390
+[   30.656788]  ? __ep_eventpoll_poll+0x9f/0x220
+[   30.657379]  ? __io_queue_proc.isra.88+0x180/0x180
+[   30.658014]  __mutex_lock+0xae/0x9f0
+[   30.658524]  ? __ep_eventpoll_poll+0x9f/0x220
+[   30.659112]  ? mark_held_locks+0x5a/0x80
+[   30.659648]  ? __ep_eventpoll_poll+0x9f/0x220
+[   30.660229]  ? _raw_spin_unlock_irqrestore+0x2d/0x40
+[   30.660885]  ? trace_hardirqs_on+0x46/0x110
+[   30.661471]  ? __io_queue_proc.isra.88+0x180/0x180
+[   30.662102]  ? __ep_eventpoll_poll+0x9f/0x220
+[   30.662696]  __ep_eventpoll_poll+0x9f/0x220
+[   30.663273]  ? __ep_eventpoll_poll+0x220/0x220
+[   30.663875]  __io_arm_poll_handler+0xbf/0x220
+[   30.664463]  io_issue_sqe+0xa6b/0x13e0
+[   30.664984]  ? __lock_acquire+0x782/0x13a0
+[   30.665544]  ? __io_queue_proc.isra.88+0x180/0x180
+[   30.666170]  ? __io_queue_sqe+0x10b/0x550
+[   30.666725]  __io_queue_sqe+0x10b/0x550
+[   30.667252]  ? __fget_files+0x131/0x260
+[   30.667791]  ? io_req_prep+0xd8/0x1090
+[   30.668316]  ? io_queue_sqe+0x235/0x470
+[   30.668868]  io_queue_sqe+0x235/0x470
+[   30.669398]  io_submit_sqes+0xcce/0xf10
+[   30.669931]  ? xa_load+0xe4/0x1c0
+[   30.670425]  __x64_sys_io_uring_enter+0x3fb/0x5b0
+[   30.671051]  ? lockdep_hardirqs_on_prepare+0xde/0x180
+[   30.671719]  ? syscall_enter_from_user_mode+0x2b/0x80
+[   30.672380]  do_syscall_64+0x2d/0x40
+[   30.672901]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   30.673503] RIP: 0033:0x7fd89c813239
+[   30.673962] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05  3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 ec 2c 00 f7 d8 64 89 01 48
+[   30.675920] RSP: 002b:00007ffc65a7c628 EFLAGS: 00000217 ORIG_RAX: 00000000000001aa
+[   30.676791] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fd89c813239
+[   30.677594] RDX: 0000000000000000 RSI: 0000000000000014 RDI: 0000000000000003
+[   30.678678] RBP: 00007ffc65a7c720 R08: 0000000000000000 R09: 0000000003000000
+[   30.679492] R10: 0000000000000000 R11: 0000000000000217 R12: 0000000000400ff0
+[   30.680282] R13: 00007ffc65a7c840 R14: 0000000000000000 R15: 0000000000000000
 
+This might happen if we do epoll_wait on a uring fd while reading/writing
+the former epoll fd in a sqe in the former uring instance.
+So let's don't flush cqring overflow list when we fail to get the uring
+lock. This leads to less accuracy, but is still ok.
+
+Reported-by: Abaci <abaci@linux.alibaba.com>
+Fixes: 6c503150ae33 ("io_uring: patch up IOPOLL overflow_flush sync")
+Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+---
+
+Here I use mutex_trylock() to fix this issue, but this causes loss of
+accuracy. I think doing cqring overflow flush in a task work maybe a
+better solution. I'm think of this. Any thoughts?
+
+ fs/io_uring.c | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 38c6cbe1ab38..866e45d42ac7 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8718,7 +8718,36 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
+ 	smp_rmb();
+ 	if (!io_sqring_full(ctx))
+ 		mask |= EPOLLOUT | EPOLLWRNORM;
+-	io_cqring_overflow_flush(ctx, false, NULL, NULL);
++
++	if (test_bit(0, &ctx->cq_check_overflow)) {
++		bool should_flush = true;
++		/* iopoll syncs against uring_lock, not completion_lock */
++		if (ctx->flags & IORING_SETUP_IOPOLL) {
++			/*
++			 * avoid ABBA deadlock.
++			 * there could be contention like below:
++			 *      CPU0                    CPU1
++			 *      ----                    ----
++			 * lock(&ctx->uring_lock);
++			 *                              lock(&ep->mtx);
++			 *                              lock(&ctx->uring_lock);
++			 * lock(&ep->mtx);
++			 *
++			 * this might happen if we do epoll_wait on a uring fd while
++			 * read/write the former epoll fd in a sqe in the former uring
++			 * instance.
++			 * We don't flush cqring overflow list when we fail to get the
++			 * uring lock. This leads to less accuracy, but is still ok.
++			 */
++			should_flush = mutex_trylock(&ctx->uring_lock);
++		}
++		if (should_flush) {
++			__io_cqring_overflow_flush(ctx, false, NULL, NULL);
++			if (ctx->flags & IORING_SETUP_IOPOLL)
++				mutex_unlock(&ctx->uring_lock);
++		}
++	}
++
+ 	if (io_cqring_events(ctx))
+ 		mask |= EPOLLIN | EPOLLRDNORM;
+ 
 -- 
-Jens Axboe
+1.8.3.1
 

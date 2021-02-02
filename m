@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E27430B9D1
-	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 09:28:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B66630B9D3
+	for <lists+io-uring@lfdr.de>; Tue,  2 Feb 2021 09:28:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232676AbhBBI0F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 2 Feb 2021 03:26:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33938 "EHLO
+        id S231499AbhBBI0u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 2 Feb 2021 03:26:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232649AbhBBIZs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Feb 2021 03:25:48 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14471C06174A;
-        Tue,  2 Feb 2021 00:25:07 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id p21so26699670lfu.11;
-        Tue, 02 Feb 2021 00:25:06 -0800 (PST)
+        with ESMTP id S232655AbhBBIZw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Feb 2021 03:25:52 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C0E0C061756;
+        Tue,  2 Feb 2021 00:25:11 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id e15so6536736lft.13;
+        Tue, 02 Feb 2021 00:25:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lFdu/ZokN33D/jhCZc3HT0HiT7qadN9okxjTgLv9qVs=;
-        b=UVO5ZEkSSMEwsZ11MPl3c4coTIc4PhkWh4f+9Dyqccii8EuII2qfX295s2V7tzkEco
-         0QYRo2GONAspiiM6WPGdcTPVUjX+CAassy66vuk/TeTUBafQSZJGF04vzmpKcwZ1nn2N
-         3aTIaxsymzXx0fA3CgMUTP1mUwXhQZwDlQPcieXfmfkaghZ7y14NEJSkNoUJUwXAu5bW
-         CEGZY4D8OqzC3sYJWnGqAavg3Z+Kj5SMAamK88BtDc9UWy+Z/6U92z2B9FElkRkbHY6+
-         SjvLhmFMmr51LSGT31tOWAvuj/NRboMNBIuYGfPlZIpnnfkR8CxeiQzZCwpL69kAmBjH
-         P4FQ==
+        bh=lUIoGP9jLQt3z5mlIPKkW70jR6dtNyFuNILhEt6IBME=;
+        b=px+50jpSNabGYTenirBJjgo6ApX3mwYvM0Zxs1BxBlK9CCklgURyKo+wXTbpRMvg29
+         oC83En//fSqGNI4adq6GBS3bGnnm3erSVx3RC0SrOxKuoZRWnbF+lSAIN5C87Xhjefnp
+         KbEYRLlKcQMvwMjxAsiSoC4yrVnTupp6X+DLN3NpVLGZLayDNHbXDG3VWc2EwiLI1rDY
+         1nIKaEmDqFweUjRm0U9rq6tLk1VL+KqRJBcywiNd5vf0gcMbJORHJ9CIeSH5/Qy7+Gv7
+         Er+FwdBj3DeOeJFHrhUEAL3ArLBGHfKL6HS8+vbCuptriE/bccJZoPpjP/+3VzhVrnbw
+         D4Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lFdu/ZokN33D/jhCZc3HT0HiT7qadN9okxjTgLv9qVs=;
-        b=e86OWLLVNgGuEhnzyxj++6fjV6+xrZtKEq2J7YyxzHyyM9POU7qatj6BOXYuYc+2rQ
-         21pjAqqqAFX3/u/d6dEo/LAW8mGQaWDsBMlTAhFksKBciIIkJbpA6ObIaa+PA7ui9Yrg
-         1jJsbhhOS5QDETvsIyXzB3LGw8WediM/DO5ewSxsZlDuD7Z2436eWffo+sWLp9fr40E/
-         yJulRnX0G2nEjAY1RGVASJaVyIzXGfuuGNq8IgV+eBRVtAsZ/gR3gqR7fXiKc5S0K/+U
-         siYp7YCiPZaLw2hhvSgbwpOkHxbuxIJCFNixfzN+5IY9aGOMgLRZeJbNRlQT9TKAdRz9
-         DLvw==
-X-Gm-Message-State: AOAM531WjryXFtufK/S3Ub/Rlr5630MPmBxDDqXXho/aJlMuw5aFHkO2
-        JaOca3QMrdE44iuz0lwdKyo=
-X-Google-Smtp-Source: ABdhPJz6Hk3zVrX0A4kRRBBZUQEkAGPe+te2e7VMrfjcDmq55GTh75XYDT+9bG98oOR24wNiIjZk9Q==
-X-Received: by 2002:ac2:550c:: with SMTP id j12mr9900000lfk.619.1612254305619;
-        Tue, 02 Feb 2021 00:25:05 -0800 (PST)
+        bh=lUIoGP9jLQt3z5mlIPKkW70jR6dtNyFuNILhEt6IBME=;
+        b=n4edmlEb7qSXkJevOFPrs91H4+kTtqDTCe3qdQmgnCTuKIOkS4hPj0hgDHcfbrOdOW
+         p/B2A4yrCQBm4HShNbfvzJ6RYIOXOJ5HTB9Q5DiEiPz+V6x5HPhVMRmuh6Y70fD9UKx1
+         C+CyWfF+sY/xeAHKPGTNoaV4aoff3cnxUUmCyEPMA9lUeUdP25dCQG1q8gefXO1ICGQB
+         H/Q44iHX4Cuug4gFsudfRIgNVVfkkDYrW9xel9W19kS2IFn5XNRlLnmMKczJPwp1wsRt
+         hgSudbqeh7x7qCNtrqw44Appa30uCc72oYPy1qKzveUWfsYl2dqisAcRKil1fFH9+ZD6
+         gnTA==
+X-Gm-Message-State: AOAM531DnNUgX2OZAN5mBTwnNIjxeq3ddVeR23KueNQ7uWiFY48O+el6
+        R+W71LcqfFwhQvpGid2REVo=
+X-Google-Smtp-Source: ABdhPJzms4LUpbOZ+qN7ZAaMBArII0vwX54EWvj4jPGaa94C0/jOL4S5K47+bSoJKMoITNU3pai4aA==
+X-Received: by 2002:a05:6512:b18:: with SMTP id w24mr9807267lfu.131.1612254310172;
+        Tue, 02 Feb 2021 00:25:10 -0800 (PST)
 Received: from carbon.v ([94.143.149.146])
-        by smtp.googlemail.com with ESMTPSA id t6sm4195857ljd.112.2021.02.02.00.25.04
+        by smtp.googlemail.com with ESMTPSA id t6sm4195857ljd.112.2021.02.02.00.25.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Feb 2021 00:25:05 -0800 (PST)
+        Tue, 02 Feb 2021 00:25:09 -0800 (PST)
 From:   Dmitry Kadashev <dkadashev@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v2 1/2] fs: make do_mkdirat() take struct filename
-Date:   Tue,  2 Feb 2021 15:23:52 +0700
-Message-Id: <20210202082353.2152271-2-dkadashev@gmail.com>
+Subject: [PATCH v2 2/2] io_uring: add support for IORING_OP_MKDIRAT
+Date:   Tue,  2 Feb 2021 15:23:53 +0700
+Message-Id: <20210202082353.2152271-3-dkadashev@gmail.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210202082353.2152271-1-dkadashev@gmail.com>
 References: <20210202082353.2152271-1-dkadashev@gmail.com>
@@ -65,111 +65,138 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Pass in the struct filename pointers instead of the user string, and
-update the three callers to do the same. This is heavily based on
-commit dbea8d345177 ("fs: make do_renameat2() take struct filename").
+IORING_OP_MKDIRAT behaves like mkdirat(2) and takes the same flags
+and arguments.
 
-This behaves like do_unlinkat() and do_renameat2().
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
 ---
- fs/internal.h |  1 +
- fs/namei.c    | 25 +++++++++++++++++++------
- 2 files changed, 20 insertions(+), 6 deletions(-)
+ fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
+ include/uapi/linux/io_uring.h |  1 +
+ 2 files changed, 59 insertions(+)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index c6c85f6ad598..b10005dfaa48 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -76,6 +76,7 @@ long do_unlinkat(int dfd, struct filename *name);
- int may_linkat(struct path *link);
- int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
- 		 struct filename *newname, unsigned int flags);
-+long do_mkdirat(int dfd, struct filename *name, umode_t mode);
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 24ad36d71289..000d7dce5902 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -582,6 +582,13 @@ struct io_unlink {
+ 	struct filename			*filename;
+ };
  
- /*
-  * namespace.c
-diff --git a/fs/namei.c b/fs/namei.c
-index 4cae88733a5c..3657bdf1aafc 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3431,7 +3431,7 @@ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
- 	return file;
- }
- 
--static struct dentry *filename_create(int dfd, struct filename *name,
-+static struct dentry *__filename_create(int dfd, struct filename *name,
- 				struct path *path, unsigned int lookup_flags)
- {
- 	struct dentry *dentry = ERR_PTR(-EEXIST);
-@@ -3487,7 +3487,6 @@ static struct dentry *filename_create(int dfd, struct filename *name,
- 		error = err2;
- 		goto fail;
- 	}
--	putname(name);
- 	return dentry;
- fail:
- 	dput(dentry);
-@@ -3502,6 +3501,16 @@ static struct dentry *filename_create(int dfd, struct filename *name,
- 	return dentry;
- }
- 
-+static inline struct dentry *filename_create(int dfd, struct filename *name,
-+				struct path *path, unsigned int lookup_flags)
-+{
-+	struct dentry *res = __filename_create(dfd, name, path, lookup_flags);
++struct io_mkdir {
++	struct file			*file;
++	int				dfd;
++	umode_t				mode;
++	struct filename			*filename;
++};
 +
-+	if (!IS_ERR(res))
-+		putname(name);
-+	return res;
+ struct io_completion {
+ 	struct file			*file;
+ 	struct list_head		list;
+@@ -712,6 +719,7 @@ struct io_kiocb {
+ 		struct io_shutdown	shutdown;
+ 		struct io_rename	rename;
+ 		struct io_unlink	unlink;
++		struct io_mkdir		mkdir;
+ 		/* use only after cleaning per-op data, see io_clean_op() */
+ 		struct io_completion	compl;
+ 	};
+@@ -996,6 +1004,10 @@ static const struct io_op_def io_op_defs[] = {
+ 		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
+ 						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
+ 	},
++	[IORING_OP_MKDIRAT] = {
++		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
++						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
++	},
+ };
+ 
+ enum io_mem_account {
+@@ -3805,6 +3817,44 @@ static int io_unlinkat(struct io_kiocb *req, bool force_nonblock)
+ 	return 0;
+ }
+ 
++static int io_mkdirat_prep(struct io_kiocb *req,
++			    const struct io_uring_sqe *sqe)
++{
++	struct io_mkdir *mkd = &req->mkdir;
++	const char __user *fname;
++
++	if (unlikely(req->flags & REQ_F_FIXED_FILE))
++		return -EBADF;
++
++	mkd->dfd = READ_ONCE(sqe->fd);
++	mkd->mode = READ_ONCE(sqe->len);
++
++	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
++	mkd->filename = getname(fname);
++	if (IS_ERR(mkd->filename))
++		return PTR_ERR(mkd->filename);
++
++	req->flags |= REQ_F_NEED_CLEANUP;
++	return 0;
 +}
 +
- struct dentry *kern_path_create(int dfd, const char *pathname,
- 				struct path *path, unsigned int lookup_flags)
- {
-@@ -3654,15 +3663,18 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- }
- EXPORT_SYMBOL(vfs_mkdir);
- 
--static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
-+long do_mkdirat(int dfd, struct filename *name, umode_t mode)
- {
- 	struct dentry *dentry;
- 	struct path path;
- 	int error;
- 	unsigned int lookup_flags = LOOKUP_DIRECTORY;
- 
-+	if (IS_ERR(name))
-+		return PTR_ERR(name);
++static int io_mkdirat(struct io_kiocb *req, bool force_nonblock)
++{
++	struct io_mkdir *mkd = &req->mkdir;
++	int ret;
 +
- retry:
--	dentry = user_path_create(dfd, pathname, &path, lookup_flags);
-+	dentry = __filename_create(dfd, name, &path, lookup_flags);
- 	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
- 
-@@ -3676,17 +3688,18 @@ static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
- 		lookup_flags |= LOOKUP_REVAL;
- 		goto retry;
++	if (force_nonblock)
++		return -EAGAIN;
++
++	ret = do_mkdirat(mkd->dfd, mkd->filename, mkd->mode);
++
++	req->flags &= ~REQ_F_NEED_CLEANUP;
++	if (ret < 0)
++		req_set_fail_links(req);
++	io_req_complete(req, ret);
++	return 0;
++}
++
+ static int io_shutdown_prep(struct io_kiocb *req,
+ 			    const struct io_uring_sqe *sqe)
+ {
+@@ -6101,6 +6151,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return io_renameat_prep(req, sqe);
+ 	case IORING_OP_UNLINKAT:
+ 		return io_unlinkat_prep(req, sqe);
++	case IORING_OP_MKDIRAT:
++		return io_mkdirat_prep(req, sqe);
  	}
-+	putname(name);
- 	return error;
- }
  
- SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
- {
--	return do_mkdirat(dfd, pathname, mode);
-+	return do_mkdirat(dfd, getname(pathname), mode);
- }
+ 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+@@ -6228,6 +6280,9 @@ static void __io_clean_op(struct io_kiocb *req)
+ 		case IORING_OP_UNLINKAT:
+ 			putname(req->unlink.filename);
+ 			break;
++		case IORING_OP_MKDIRAT:
++			putname(req->mkdir.filename);
++			break;
+ 		}
+ 		req->flags &= ~REQ_F_NEED_CLEANUP;
+ 	}
+@@ -6340,6 +6395,9 @@ static int io_issue_sqe(struct io_kiocb *req, bool force_nonblock,
+ 	case IORING_OP_UNLINKAT:
+ 		ret = io_unlinkat(req, force_nonblock);
+ 		break;
++	case IORING_OP_MKDIRAT:
++		ret = io_mkdirat(req, force_nonblock);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index ac4e1738a9af..890edd850a9e 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -137,6 +137,7 @@ enum {
+ 	IORING_OP_SHUTDOWN,
+ 	IORING_OP_RENAMEAT,
+ 	IORING_OP_UNLINKAT,
++	IORING_OP_MKDIRAT,
  
- SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
- {
--	return do_mkdirat(AT_FDCWD, pathname, mode);
-+	return do_mkdirat(AT_FDCWD, getname(pathname), mode);
- }
- 
- int vfs_rmdir(struct inode *dir, struct dentry *dentry)
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
 -- 
 2.30.0
 

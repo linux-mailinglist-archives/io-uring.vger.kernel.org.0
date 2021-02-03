@@ -2,113 +2,41 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0685630DA8B
-	for <lists+io-uring@lfdr.de>; Wed,  3 Feb 2021 14:04:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EEF130DD67
+	for <lists+io-uring@lfdr.de>; Wed,  3 Feb 2021 16:00:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231189AbhBCND4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Feb 2021 08:03:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229500AbhBCNDy (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 3 Feb 2021 08:03:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BEB8064E30;
-        Wed,  3 Feb 2021 13:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1612357392;
-        bh=y1R4H32diHXkqOg91sW0kNhHSJoL/Qo6+iEJD0IpDVg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oFTFXR1t8wx8adik09QcoaRU8MgPFF4dPPPBwpHxoVx6ytv1p8qC2FYdK81H5Ywie
-         L2j8MSNrdRtkq6P5ZvJ0V2rIErbiYSYAWP8xL0wzesQrQLm61LbyHNF4Gif+x+zjmI
-         K6RNnKjt1ZDP2IF6QFl2+/k1XO9ZXVb3dLPBtwCo=
-Date:   Wed, 3 Feb 2021 14:03:09 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andres Freund <andres@anarazel.de>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 5.4 103/142] Revert "block: end bio with BLK_STS_AGAIN in
- case of non-mq devs and REQ_NOWAIT"
-Message-ID: <YBqfDdVaPurYzZM2@kroah.com>
-References: <20200601174037.904070960@linuxfoundation.org>
- <20200601174048.647302799@linuxfoundation.org>
- <20210203123729.3pfsakawrkoh6qpu@alap3.anarazel.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210203123729.3pfsakawrkoh6qpu@alap3.anarazel.de>
+        id S231629AbhBCO7Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Feb 2021 09:59:25 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:33617 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232322AbhBCO67 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Feb 2021 09:58:59 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UNmPdAz_1612364276;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UNmPdAz_1612364276)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 03 Feb 2021 22:58:04 +0800
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: [PATCH 0/2] fix deadlock in __io_req_task_submit()
+Date:   Wed,  3 Feb 2021 22:57:54 +0800
+Message-Id: <1612364276-26847-1-git-send-email-haoxu@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Feb 03, 2021 at 04:37:29AM -0800, Andres Freund wrote:
-> Hi,
-> 
-> On 2020-06-01 19:54:21 +0200, Greg Kroah-Hartman wrote:
-> > From: Jens Axboe <axboe@kernel.dk>
-> >
-> > [ Upstream commit b0beb28097fa04177b3769f4bb7a0d0d9c4ae76e ]
-> >
-> > This reverts commit c58c1f83436b501d45d4050fd1296d71a9760bcb.
-> >
-> > io_uring does do the right thing for this case, and we're still returning
-> > -EAGAIN to userspace for the cases we don't support. Revert this change
-> > to avoid doing endless spins of resubmits.
-> >
-> > Cc: stable@vger.kernel.org # v5.6
-> > Reported-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-> > Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > ---
-> >  block/blk-core.c | 11 ++++-------
-> >  1 file changed, 4 insertions(+), 7 deletions(-)
-> >
-> 
-> This broke io_uring direct-io on ext4 over md.
-> 
-> fallocate -l $((1024*1024*1024)) /srv/part1
-> fallocate -l $((1024*1024*1024)) /srv/part2
-> losetup -f /srv/part1
-> losetup -f /srv/part2
-> losetup -a # assuming these were loop0/1
-> mdadm --create -n2 -l stripe  -N fast-striped /dev/md/fast-striped /dev/loop0 /dev/loop1
-> mkfs.ext4 /dev/md/fast-striped
-> mount /dev/md/fast-striped /mnt/t2
-> fio --directory=/mnt/t2 --ioengine io_uring --rw write --filesize 1MB --overwrite=1 --name=test --direct=1 --bs=4k
-> 
-> On v5.4.43-101-gbba91cdba612 this fails with
-> fio: io_u error on file /mnt/t2/test.0.0: Input/output error: write offset=0, buflen=4096
-> fio: pid=734, err=5/file:io_u.c:1834, func=io_u error, error=Input/output error
-> 
-> whereas previously it worked. libaio still works...
-> 
-> I haven't checked which major kernel version fixed this again, but I did
-> verify that it's still broken in 5.4.94 and that 5.10.9 works.
-> 
-> I would suspect it's
-> 
-> commit 4503b7676a2e0abe69c2f2c0d8b03aec53f2f048
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   2020-06-01 10:00:27 -0600
-> 
->     io_uring: catch -EIO from buffered issue request failure
-> 
->     -EIO bubbles up like -EAGAIN if we fail to allocate a request at the
->     lower level. Play it safe and treat it like -EAGAIN in terms of sync
->     retry, to avoid passing back an errant -EIO.
-> 
->     Catch some of these early for block based file, as non-mq devices
->     generally do not support NOWAIT. That saves us some overhead by
->     not first trying, then retrying from async context. We can go straight
->     to async punt instead.
-> 
->     Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> 
-> which isn't in stable/linux-5.4.y
+This patchset is to fix a deadlock issue in __io_req_task_submit(), the
+first patch is a prep one and the second patch does the work.
 
-Can you test that if the above commit is added, all works well again?
+Hao Xu (2):
+  io_uring: add uring_lock as an argument to io_sqe_files_unregister()
+  io_uring: don't hold uring_lock when calling io_run_task_work*
 
-thanks,
+ fs/io_uring.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
-greg k-h
+-- 
+1.8.3.1
+

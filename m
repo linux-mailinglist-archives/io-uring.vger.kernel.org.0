@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 446F730DFDD
-	for <lists+io-uring@lfdr.de>; Wed,  3 Feb 2021 17:38:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90CE330DFE3
+	for <lists+io-uring@lfdr.de>; Wed,  3 Feb 2021 17:40:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231286AbhBCQiI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Feb 2021 11:38:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54774 "EHLO
+        id S229702AbhBCQkQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Feb 2021 11:40:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234618AbhBCQhy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Feb 2021 11:37:54 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0A6DC0613D6
-        for <io-uring@vger.kernel.org>; Wed,  3 Feb 2021 08:37:13 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id m1so266691wml.2
-        for <io-uring@vger.kernel.org>; Wed, 03 Feb 2021 08:37:13 -0800 (PST)
+        with ESMTP id S229579AbhBCQkC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Feb 2021 11:40:02 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E519C061573
+        for <io-uring@vger.kernel.org>; Wed,  3 Feb 2021 08:39:22 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id u14so262217wmq.4
+        for <io-uring@vger.kernel.org>; Wed, 03 Feb 2021 08:39:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rA0GtVwEBhm4H2CtZCd4kxNnMWAmxoYUwF/BjUjgNi4=;
-        b=ta3ahFFquA9R7f7n/Q9EKQtAADYG05ozVDh2J7eiJNw+Y3X7m3np+BeIGJcxHjC7Y0
-         Hq1smOORwLbPXUE5FqqjYUpLhXyfNZGdF8TWeUytBDmoFHieJOFCxUfUBGaiOmNty9Ay
-         GNjqlshufIeUaGeosgmte1UaLiD2DWaTDa+EVqMzh14cnFhpW50gcV6oolSBXiuPehYb
-         isqhkHoFpBqxJ+xBYdY7hSvtnL5TPSinCGHgjpp5S9zvTGORZeaxYXTUHLIRThDZNPyx
-         tDv4fOFZ6vrhxHoWZbB26NQnBhFvOnznnJfM6YZO74myDE/jfxVz0/UnGo2llp6AkJEu
-         ULuw==
+        bh=jRL2H8ZutcVky/K2ZMax7tjBC21r54h3XmcfYmEi7iE=;
+        b=ZDsYHK4Mg009kh0yTk59wmzoCBRsfurn8zSD3zgMk5JKT/IuyKapZ0SlZSHV3ebtqS
+         11Kr5JVe1u+MLaQjog1a91znSa64Ncoi2e/fKWtA+gVszujLMiqbdydTNN6sO8oM8iPO
+         L+B1DI1bWhyGQkClMFapHi5tsFTCi5UEUxOu4TBTLZzSo6/q5A0lwHW8GQhzBV+7Mwf/
+         OT+IhQkKYfXLRZV1qfye5quwe01iL8/0kAtG3nNfFfEFVHnivZK8j69CWIN1or3ZWUgJ
+         VyksfaTtjbj+o6Z8bAVGGmcWwCERwDnGXTOT8pntjc1CmqG2VAwNKwRivpquexwIWz9E
+         FszQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=rA0GtVwEBhm4H2CtZCd4kxNnMWAmxoYUwF/BjUjgNi4=;
-        b=ItEVn6pbLN8ZMiFW+dI0ACloV34xCvj0e38xgUJgcCP4KjvDnzQ0yh8V2b0yRJkrqu
-         mETpxZBvHqZhhPUwHzshsdAPOVUUDWSV+myDPXMXLXk9ULc8fX4DigQE/YQNnIeIX0WA
-         IJ+C0EUnmTjurYRwG0pE/7zuhHc1JxqgHL32b04tnLHO1ILk/cHVYLxCvimWiGQj/dHl
-         s6jxuS2RV3ly1T2AtPR/ayuxwg8m0g1bdTe9RjHvu4y3HTiG86Li7+B28G/WCOrA56av
-         SwAOorpdDfzHKNVaFxz6Gf5e3I/0UPgIIdXQAH30pxxJBhfk/TfGKPqzNxzy915hcXqp
-         vPbw==
-X-Gm-Message-State: AOAM533yunvU0Ps62LlFMBvKBKUoc7pyXHZ8NUQLD7U+C5it5J1HmbCV
-        FE+dn88d4a6x6ocXHMEXFLL/0R4EfUY=
-X-Google-Smtp-Source: ABdhPJx+Xf8uzTCRhl7OnDTu5nIYNNUAQchjc3F2D7XmMKglFAYLz8o5hJ6pD6kEf/5pNNW+jmwlnw==
-X-Received: by 2002:a1c:c904:: with SMTP id f4mr3719013wmb.14.1612370232795;
-        Wed, 03 Feb 2021 08:37:12 -0800 (PST)
+        bh=jRL2H8ZutcVky/K2ZMax7tjBC21r54h3XmcfYmEi7iE=;
+        b=ie/jHkwIkROLGfQ+OmQ2crYKifaACYvG/S5c4GBwsEzdShyzbdlc2MF7+TnMfWVFy3
+         2vu6j+a3CZwQFiy8amex83Fj32/FJNiuiKEZhdDR9ke4M3zleYsCCeut6JO9LKR/LAV7
+         mJvhaED1VnCC454bJ1EEASBEc5J1hrHZ5DY9fIKqFsfVh9vlqlOn3r+A+2/G5CeoZs8p
+         oTupuD+TgTMT5VWmsq5ZM0wUA48VtLsUeOqVCptXhw3b83NsPxIw+v2PxtckyRvQCgnx
+         076l00c7xKpOx7Iio9IUgcqmYdtzxTg2AFerEQZMmJGioQBG2GcQIFzOAGzvritdvz9e
+         vWRA==
+X-Gm-Message-State: AOAM532MPGVs/ypTK40KErvv4S3z5Ai+11EgzfaQQyjhwgjNSotcz5+S
+        DlEldZMcp/c3WusMLnqM1NM=
+X-Google-Smtp-Source: ABdhPJz/IdOBjlVrWbTCer7qkoNTOmvrPFyMS4MSNNXG922/w2Frh9xlX43wnM/XMAVaiLrMwivu2g==
+X-Received: by 2002:a7b:c76e:: with SMTP id x14mr3461248wmk.17.1612370360989;
+        Wed, 03 Feb 2021 08:39:20 -0800 (PST)
 Received: from [192.168.8.171] ([148.252.133.145])
-        by smtp.gmail.com with ESMTPSA id b18sm4590563wrm.57.2021.02.03.08.37.11
+        by smtp.gmail.com with ESMTPSA id o17sm4396874wrm.52.2021.02.03.08.39.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Feb 2021 08:37:12 -0800 (PST)
-Subject: Re: [PATCH 1/2] io_uring: add uring_lock as an argument to
- io_sqe_files_unregister()
+        Wed, 03 Feb 2021 08:39:20 -0800 (PST)
+Subject: Re: [PATCH 2/2] io_uring: don't hold uring_lock when calling
+ io_run_task_work*
 To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
 References: <1612364276-26847-1-git-send-email-haoxu@linux.alibaba.com>
- <1612364276-26847-2-git-send-email-haoxu@linux.alibaba.com>
+ <1612364276-26847-3-git-send-email-haoxu@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,12 +98,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <976179ed-6013-3cd7-46a0-aa3201444ac4@gmail.com>
-Date:   Wed, 3 Feb 2021 16:33:27 +0000
+Message-ID: <c97beeca-f401-3a21-5d8d-aa53a4292c03@gmail.com>
+Date:   Wed, 3 Feb 2021 16:35:36 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1612364276-26847-2-git-send-email-haoxu@linux.alibaba.com>
+In-Reply-To: <1612364276-26847-3-git-send-email-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -112,70 +112,63 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 03/02/2021 14:57, Hao Xu wrote:
-> io_sqe_files_unregister is currently called from several places:
->     - syscall io_uring_register (with uring_lock)
->     - io_ring_ctx_wait_and_kill() (without uring_lock)
-> 
-> There is a AA type deadlock in io_sqe_files_unregister(), thus we need
-> to know if we hold uring_lock in io_sqe_files_unregister() to fix the
-> issue.
+> This is caused by calling io_run_task_work_sig() to do work under
+> uring_lock while the caller io_sqe_files_unregister() already held
+> uring_lock.
+> we need to check if uring_lock is held by us when doing unlock around
+> io_run_task_work_sig() since there are code paths down to that place
+> without uring_lock held.
 
-It's ugly, just take the lock and kill the patch. There can't be any
-contention during io_ring_ctx_free anyway. 
+1. we don't want to allow parallel io_sqe_files_unregister()s
+happening, it's synchronised by uring_lock atm. Otherwise it's
+buggy.
+
+2. probably same with unregister and submit.
 
 > 
+> Reported-by: Abaci <abaci@linux.alibaba.com>
+> Fixes: 1ffc54220c44 ("io_uring: fix io_sqe_files_unregister() hangs")
 > Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 > ---
->  fs/io_uring.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>  fs/io_uring.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
 > 
 > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 38c6cbe1ab38..efb6d02fea6f 100644
+> index efb6d02fea6f..b093977713ee 100644
 > --- a/fs/io_uring.c
 > +++ b/fs/io_uring.c
-> @@ -7339,7 +7339,7 @@ static void io_sqe_files_set_node(struct fixed_file_data *file_data,
->  	percpu_ref_get(&file_data->refs);
->  }
+> @@ -7362,18 +7362,25 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx, bool locked)
 >  
-> -static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
-> +static int io_sqe_files_unregister(struct io_ring_ctx *ctx, bool locked)
->  {
->  	struct fixed_file_data *data = ctx->file_data;
->  	struct fixed_file_ref_node *backup_node, *ref_node = NULL;
-> @@ -7872,13 +7872,13 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
->  
->  	ret = io_sqe_files_scm(ctx);
->  	if (ret) {
-> -		io_sqe_files_unregister(ctx);
-> +		io_sqe_files_unregister(ctx, true);
->  		return ret;
->  	}
->  
->  	ref_node = alloc_fixed_file_ref_node(ctx);
->  	if (!ref_node) {
-> -		io_sqe_files_unregister(ctx);
-> +		io_sqe_files_unregister(ctx, true);
->  		return -ENOMEM;
->  	}
->  
-> @@ -8682,7 +8682,7 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
->  		css_put(ctx->sqo_blkcg_css);
->  #endif
->  
-> -	io_sqe_files_unregister(ctx);
-> +	io_sqe_files_unregister(ctx, false);
->  	io_eventfd_unregister(ctx);
->  	io_destroy_buffers(ctx);
->  	idr_destroy(&ctx->personality_idr);
-> @@ -10065,7 +10065,7 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
->  		ret = -EINVAL;
->  		if (arg || nr_args)
+>  	/* wait for all refs nodes to complete */
+>  	flush_delayed_work(&ctx->file_put_work);
+> +	if (locked)
+> +		mutex_unlock(&ctx->uring_lock);
+>  	do {
+>  		ret = wait_for_completion_interruptible(&data->done);
+>  		if (!ret)
 >  			break;
-> -		ret = io_sqe_files_unregister(ctx);
-> +		ret = io_sqe_files_unregister(ctx, true);
->  		break;
->  	case IORING_REGISTER_FILES_UPDATE:
->  		ret = io_sqe_files_update(ctx, arg, nr_args);
+>  		ret = io_run_task_work_sig();
+> -		if (ret < 0) {
+> -			percpu_ref_resurrect(&data->refs);
+> -			reinit_completion(&data->done);
+> -			io_sqe_files_set_node(data, backup_node);
+> -			return ret;
+> -		}
+> +		if (ret < 0)
+> +			break;
+>  	} while (1);
+> +	if (locked)
+> +		mutex_lock(&ctx->uring_lock);
+> +
+> +	if (ret < 0) {
+> +		percpu_ref_resurrect(&data->refs);
+> +		reinit_completion(&data->done);
+> +		io_sqe_files_set_node(data, backup_node);
+> +		return ret;
+> +	}
+>  
+>  	__io_sqe_files_unregister(ctx);
+>  	nr_tables = DIV_ROUND_UP(ctx->nr_user_files, IORING_MAX_FILES_TABLE);
 > 
 
 -- 

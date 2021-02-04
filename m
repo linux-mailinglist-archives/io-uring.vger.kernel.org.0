@@ -2,132 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 949CE30F7B1
-	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 17:26:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4ECC30F7AF
+	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 17:26:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237904AbhBDQY6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Feb 2021 11:24:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237088AbhBDPE6 (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 4 Feb 2021 10:04:58 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3DD3864DBA;
-        Thu,  4 Feb 2021 15:04:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1612451056;
-        bh=5wbQA0pqKCxKwBrohdwsCXvH4TBTm/K0JPHr/Ue0Dlk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HO8/QAA9f3Fm69AZVQG5mrGLn/ebSPvv2XEssxdlcNXkzp9y3ptZknB219gMREw/v
-         Bu7vHyvQfjEY1bpWXrpIFny2Ii9sSMgdzKEf6wG/g4/A3W1vIoF37UYilj8auz5XTL
-         Wqo1JM5rMZo06v+Tfu6+yacEKPqYnq7a5oJG3IKI=
-Date:   Thu, 4 Feb 2021 16:04:14 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Andres Freund <andres@anarazel.de>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 5.4 103/142] Revert "block: end bio with BLK_STS_AGAIN in
- case of non-mq devs and REQ_NOWAIT"
-Message-ID: <YBwM7mN4TNXWHpi/@kroah.com>
-References: <20200601174037.904070960@linuxfoundation.org>
- <20200601174048.647302799@linuxfoundation.org>
- <20210203123729.3pfsakawrkoh6qpu@alap3.anarazel.de>
- <YBqfDdVaPurYzZM2@kroah.com>
- <20210203212826.6esa5orgnworwel6@alap3.anarazel.de>
- <YBsedX0/kLwMsgTy@kroah.com>
- <14351e91-5a5f-d742-b087-dc9ec733bbfd@kernel.dk>
- <20210203235941.2ibyrc5z3desyd2q@alap3.anarazel.de>
- <207c4fb1-a3cb-9210-e2b6-8e5490872df6@kernel.dk>
+        id S237577AbhBDQYj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Feb 2021 11:24:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33720 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237071AbhBDPGK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 10:06:10 -0500
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99D59C0613D6
+        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 07:05:30 -0800 (PST)
+Received: by mail-il1-x132.google.com with SMTP id e7so2829840ile.7
+        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 07:05:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=zOEQZJF3BJyfAO2CPf1OESFlh8gCHMospiBHuhW+nPo=;
+        b=XNawOCpPhrUhyK8W4gp6n/ljKPB15Vd21fBL04WRzWMoQYojKMbcJkJO3Ub7zbrU5R
+         lK0wtkWkkbmtx6qCEbWn61uDX+ch/z21NI33AjTaTxaAdGpjubxuq+AQfkrVlzoZhfid
+         ljzqXIb3ePbMrkKa0u8eG4zXbY6KATba7hQQusEnrxdFKMaKr9zznoD+X65U1aXeo/qv
+         tqs1VNUHHLn0M0FzYMhvIeYmkzq/VVjemRRMKSJ6mvDCyCMqZA1ZPydwM/5R8df7pW5K
+         MsmWTS+fRqXRo6z11MObH6bLQLbFsvgZv7BOw7T6gyz9lwhjw8Gz7slPzH38nF1oM8KL
+         8Fuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zOEQZJF3BJyfAO2CPf1OESFlh8gCHMospiBHuhW+nPo=;
+        b=lnyDLwh0RpxJv7bvZbOKDYSxpWGR4PInLZOY3QTBdXWfzdqT0fkzWSqXxEoMGqNAfA
+         p0u1RfwoKLbRiQoDrzo8iZMgWE9ekMSZguA2HMYNvMOnZQXn82I3uynxLyx8k1/AcoYJ
+         9JOYi8haHeQYQPne4BJGWUfKi1T/qzReOWaJ94I3Hej+f8/GDrBjpHqRdPQPbx0OUyMg
+         2J97/x89FAhvSNoOkXk4Nb/t+Lu7Qf4JjCY0z6hvSD9jJ2/aqnscZajycCpCzWowt6UU
+         0ZuF4QaEJPlqjMPwJSqy7oBqnCd7r0p+qA2UK5Nd4P0/GX/M1IgMZZRVBlfaEAmr1ClU
+         sP1A==
+X-Gm-Message-State: AOAM530WGFggfAEP7A6ll/MMLioLhbFCzG2JWEzJT6iENy2tEHhYksMb
+        w35ufCgePNBh8sgatZA22HXDIFb5TBqCGwCQ
+X-Google-Smtp-Source: ABdhPJw+NVc6xcwNjXkTJoBa6/bvlkc8xItinYOUuzcK/29M88zJUSS5C8onwjKWY3mhvRxS8LWcZw==
+X-Received: by 2002:a92:dc8d:: with SMTP id c13mr7313042iln.284.1612451129753;
+        Thu, 04 Feb 2021 07:05:29 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id k11sm2625775ilo.8.2021.02.04.07.05.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Feb 2021 07:05:29 -0800 (PST)
+Subject: Re: [PATCH v2 13/13] io_uring/io-wq: return 2-step work swap scheme
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1612446019.git.asml.silence@gmail.com>
+ <014eff28b71c8e5da5edaa4ad9d142916317c839.1612446019.git.asml.silence@gmail.com>
+ <8acbd513-531c-0a12-ea3f-ecf0cd94c9e2@kernel.dk>
+ <cdce2630-ddc8-a912-4937-147395a6ff54@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5e765c87-f676-82cf-232c-a54e05dfe6e8@kernel.dk>
+Date:   Thu, 4 Feb 2021 08:05:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <207c4fb1-a3cb-9210-e2b6-8e5490872df6@kernel.dk>
+In-Reply-To: <cdce2630-ddc8-a912-4937-147395a6ff54@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Feb 04, 2021 at 07:36:18AM -0700, Jens Axboe wrote:
-> On 2/3/21 4:59 PM, Andres Freund wrote:
-> > Hi,
-> > 
-> > On 2021-02-03 15:58:33 -0700, Jens Axboe wrote:
-> >> On 2/3/21 3:06 PM, Greg Kroah-Hartman wrote:
-> >>> On Wed, Feb 03, 2021 at 01:28:26PM -0800, Andres Freund wrote:
-> >>>> On 2021-02-03 14:03:09 +0100, Greg Kroah-Hartman wrote:
-> >>>>>> On v5.4.43-101-gbba91cdba612 this fails with
-> >>>>>> fio: io_u error on file /mnt/t2/test.0.0: Input/output error: write offset=0, buflen=4096
-> >>>>>> fio: pid=734, err=5/file:io_u.c:1834, func=io_u error, error=Input/output error
-> >>>>>>
-> >>>>>> whereas previously it worked. libaio still works...
-> >>>>>>
-> >>>>>> I haven't checked which major kernel version fixed this again, but I did
-> >>>>>> verify that it's still broken in 5.4.94 and that 5.10.9 works.
-> >>>>>>
-> >>>>>> I would suspect it's
-> >>>>>>
-> >>>>>> commit 4503b7676a2e0abe69c2f2c0d8b03aec53f2f048
-> >>>>>> Author: Jens Axboe <axboe@kernel.dk>
-> >>>>>> Date:   2020-06-01 10:00:27 -0600
-> >>>>>>
-> >>>>>>     io_uring: catch -EIO from buffered issue request failure
-> >>>>>>
-> >>>>>>     -EIO bubbles up like -EAGAIN if we fail to allocate a request at the
-> >>>>>>     lower level. Play it safe and treat it like -EAGAIN in terms of sync
-> >>>>>>     retry, to avoid passing back an errant -EIO.
-> >>>>>>
-> >>>>>>     Catch some of these early for block based file, as non-mq devices
-> >>>>>>     generally do not support NOWAIT. That saves us some overhead by
-> >>>>>>     not first trying, then retrying from async context. We can go straight
-> >>>>>>     to async punt instead.
-> >>>>>>
-> >>>>>>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> >>>>>>
-> >>>>>>
-> >>>>>> which isn't in stable/linux-5.4.y
-> >>>>>
-> >>>>> Can you test that if the above commit is added, all works well again?
-> >>>>
-> >>>> It doesn't apply cleanly, I'll try to resolve the conflict. However, I
-> >>>> assume that the revert was for a concrete reason - but I can't quite
-> >>>> figure out what b0beb28097fa04177b3769f4bb7a0d0d9c4ae76e was concretely
-> >>>> solving, and whether reverting the revert in 5.4 would re-introduce a
-> >>>> different problem.
-> >>>>
-> >>>> commit b0beb28097fa04177b3769f4bb7a0d0d9c4ae76e (tag: block-5.7-2020-05-29, linux-block/block-5.7)
-> >>>> Author: Jens Axboe <axboe@kernel.dk>
-> >>>> Date:   2020-05-28 13:19:29 -0600
-> >>>>
-> >>>>     Revert "block: end bio with BLK_STS_AGAIN in case of non-mq devs and REQ_NOWAIT"
-> >>>>
-> >>>>     This reverts commit c58c1f83436b501d45d4050fd1296d71a9760bcb.
-> >>>>
-> >>>>     io_uring does do the right thing for this case, and we're still returning
-> >>>>     -EAGAIN to userspace for the cases we don't support. Revert this change
-> >>>>     to avoid doing endless spins of resubmits.
-> >>>>
-> >>>>     Cc: stable@vger.kernel.org # v5.6
-> >>>>     Reported-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-> >>>>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> >>>>
-> >>>> I suspect it just wasn't aimed at 5.4, and that's that, but I'm not
-> >>>> sure. In which case presumably reverting
-> >>>> bba91cdba612fbce4f8575c5d94d2b146fb83ea3 would be the right fix, not
-> >>>> backporting 4503b7676a2e0abe69c2f2c0d8b03aec53f2f048 et al.
-> > 
-> > Having looked a bit more through the history, I suspect that the reason
-> > 5.6 doesn't need c58c1f83436b501d45d4050fd1296d71a9760bcb - which I have
-> > confirmed - is that ext4 was converted to the iomap infrastructure in
-> > 5.5, but not in 5.4.
-> > 
-> > I've confirmed that the repro I shared upthread triggers in
-> > 378f32bab3714f04c4e0c3aee4129f6703805550^ but not in
-> > 378f32bab3714f04c4e0c3aee4129f6703805550.
+On 2/4/21 7:56 AM, Pavel Begunkov wrote:
+> On 04/02/2021 14:52, Jens Axboe wrote:
+>> On 2/4/21 6:52 AM, Pavel Begunkov wrote:
+>>> Saving one lock/unlock for io-wq is not super important, but adds some
+>>> ugliness in the code. More important, atomic decs not turning it to zero
+>>> for some archs won't give the right ordering/barriers so the
+>>> io_steal_work() may pretty easily get subtly and completely broken.
+>>>
+>>> Return back 2-step io-wq work exchange and clean it up.
+>>
+>> IIRC, this wasn't done to skip the lock/unlock exchange, which I agree
+>> doesn't matter, but to ensure that a link would not need another io-wq
+>> punt. And that is a big deal, it's much faster to run it from that
+>> same thread, rather than needing a new async queue and new thread grab
+>> to get there.
 > 
-> I checked up on this, and I do see the issue as well. As far as
-> io_uring is concerned, we don't need that revert in 5.4. So I think
-> the right solution here would be to... revert the revert :-)
+> Right, we just refer to different patches and moments. This one is fine
+> in that regard, it just moves returning link from ->do_work() to
+> ->free_work().
 
-Thanks for looking at this, I'll go revert the revert now.
+Got it, looks good then.
 
-greg k-h
+-- 
+Jens Axboe
+

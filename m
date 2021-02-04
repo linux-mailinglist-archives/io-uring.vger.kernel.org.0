@@ -2,121 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7844530F54C
-	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 15:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8417F30F562
+	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 15:51:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236841AbhBDOpN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Feb 2021 09:45:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57314 "EHLO
+        id S236863AbhBDOu6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Feb 2021 09:50:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236828AbhBDOoj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 09:44:39 -0500
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5385FC061573
-        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 06:43:58 -0800 (PST)
-Received: by mail-il1-x12d.google.com with SMTP id m20so2739337ilj.13
-        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 06:43:58 -0800 (PST)
+        with ESMTP id S236820AbhBDOuD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 09:50:03 -0500
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B7F5C061573
+        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 06:49:21 -0800 (PST)
+Received: by mail-il1-x134.google.com with SMTP id q9so2818589ilo.1
+        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 06:49:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pL1ZMdFnfRd7ScmesCztto+dRpVEvKbEEQzO9hCKmPk=;
-        b=jePEdVxXMeYtA/WF00zVOgpIPNR50R9CmsRW90HqxcWUBch0tdOYFYC+FNrZeBiq6L
-         1qGEHeoyoW6zGPktKtnfiqAiu37ALu6CpCQra/68BspB+82npEqAMvCh8KavhhC1e4Si
-         Vqv5EmBP635tkPKQRVUAwRtCBChCjEa1A4jjFK5AseXxq7/v+MsbLytsmiK7VKE3LNTf
-         fCZ2+qO5c9yAaCN6BPQX7+x7fCwjFOe3rNlLChFrTnCXw8JTXfrtuhULI1k6v3M91QAH
-         UbDZGQ1FhxuPdI2JIS1qth7SwNIJ6Gm392zCi4NA4elSyD2bfWFDYzpwRb6GRyJX62K0
-         OAaw==
+        bh=aBYjUxLr0F7kODE1s9iOfl2P536CgMiPacyTkR0loyU=;
+        b=N3dYk1cqFSJI5XafD1RW61n/5ZJS0KaO7cUuZXELXAomSzvAbAJNQ2AgMwv9w8OZN7
+         vO4RFJgxvdOqkjwr4r4FSYsQ8fxrRHKDQ1fQjPESNMva7wE4waw3iBoET5/xZsVEF80b
+         ybpaCKeHuIFumhePZX6CXJ0N45Epdrptv0FwRg5LJum7cEmz3I3ZLQthyvgI/msUIE/D
+         fU/lw3pyFKaINDI4KiIyt8pFfZipMU3/AfbpDJ9k2/j2ICyNCVqmWuvHiSN5KyM16Gg8
+         J7IOFAYK6bgtdcnYjz6t7LX4L11dsbcFANBxbiNoBWTvSrrM8Yqf40gxZhCHEik2iKAb
+         4P3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=pL1ZMdFnfRd7ScmesCztto+dRpVEvKbEEQzO9hCKmPk=;
-        b=jiC3Djdh+2R/uBDoiTJbfVrh8dAbgLUw/udO8lNWcNuDyPZdxV1sT2ohngKZp3rzas
-         GWTpOJhbn+SDTMnQPcRvRLxzoS8+UQ1JWhjiz/1RtV+d7BWYBsycLudaVMA2GfG4Nmbi
-         6VbvV99ZeNQqM2OX2ZmFt2Wbrt3hBJNbGm87g5ABxfeh+vmujxuXMf7Sx3hrydjYYh/V
-         mCDckIr12HfPg/umIHf+ELCa+n3KBe/KsUevqY9eMV1rLCf7fXRdyMQV2YLC7k8p9/Gu
-         OpNact7Cv1cA3/Bt15bnuKqLB7u69qhFuc9T1rqmZM3FR1LjT+MVBYqFY0zQ2CZ/GAyq
-         IDWA==
-X-Gm-Message-State: AOAM532sngOZclfzW2tw7QXc0lrKW168752bssLhDpjCdFez1yVrbrbJ
-        HrVWV/k3j5cSXqjUsofiNbIz7KwzXXHjgFer
-X-Google-Smtp-Source: ABdhPJyaYRhk36hadfaVNIr94CxU5Uq10UdPNhjQQQq9cw1XTsV6vq91vKPJIj7b9oKH6FYXNZzwMQ==
-X-Received: by 2002:a92:444e:: with SMTP id a14mr7268009ilm.215.1612449837798;
-        Thu, 04 Feb 2021 06:43:57 -0800 (PST)
+        bh=aBYjUxLr0F7kODE1s9iOfl2P536CgMiPacyTkR0loyU=;
+        b=Uh2PesPaV38LTOGzKwPxD8ld352OYC9c7IPNm4yElDrO4g19O27fEIInZqVPxZP1ha
+         OcFxkJmSzxCnMIIhIqcpgJSkmVMem+X1cnZCxEX1VFO1WB5OSCMRjZEDTJQPbDMuVnPT
+         cCZqljIPDKzqMwj4FLJbZnh6679FSGeDNQtyk6KqQe5YtGF0VxBlOLw2dsXBc6wTcHLo
+         L/F8HvGu3SuTGB4wtpKx+7Gl+p3UK+5hHpsFE7szICGVMfTwI6oyqo4Sgvk8iczBIxtI
+         5e7r0iFCs4ov6YMpyi+2POK4teqIU1V2TR+Pk2cCcP7/sugCi/5X31sVrzBGXD4b5EhU
+         qRtQ==
+X-Gm-Message-State: AOAM531LUhiVFevCr9qZWGgGJkvDWkx5pMpxCxJJogzy03oChCw+9QAt
+        D/3vzzS48+bO8nY5ofr9vw5vLw==
+X-Google-Smtp-Source: ABdhPJzId/jyjt4HS62R05ih06vWg9N6/BobG8XVVpuO9TNrlys66mX/0eqNYM0Fjx0ywaG07YEReA==
+X-Received: by 2002:a05:6e02:1544:: with SMTP id j4mr7065110ilu.67.1612450161091;
+        Thu, 04 Feb 2021 06:49:21 -0800 (PST)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l14sm2596342ilh.58.2021.02.04.06.43.57
+        by smtp.gmail.com with ESMTPSA id t7sm2697167ilg.9.2021.02.04.06.49.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Feb 2021 06:43:57 -0800 (PST)
-Subject: Re: [PATCH] io_uring: don't modify identity's files uncess identity
- is cowed
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, joseph.qi@linux.alibaba.com
-References: <20210204092056.12797-1-xiaoguang.wang@linux.alibaba.com>
+        Thu, 04 Feb 2021 06:49:20 -0800 (PST)
+Subject: Re: [PATCH 1/2] io_uring: add uring_lock as an argument to
+ io_sqe_files_unregister()
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Hao Xu <haoxu@linux.alibaba.com>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1612364276-26847-1-git-send-email-haoxu@linux.alibaba.com>
+ <1612364276-26847-2-git-send-email-haoxu@linux.alibaba.com>
+ <976179ed-6013-3cd7-46a0-aa3201444ac4@gmail.com>
+ <a6827c98-c4f6-a0fd-6453-1351c654c3a5@linux.alibaba.com>
+ <9792fbbb-fa88-a276-9a4a-42fed4426424@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1aef6f8e-5425-d826-b1d2-6b6695c4cd93@kernel.dk>
-Date:   Thu, 4 Feb 2021 07:43:57 -0700
+Message-ID: <5694f44b-767f-4d42-962a-0953af98b6c3@kernel.dk>
+Date:   Thu, 4 Feb 2021 07:49:21 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210204092056.12797-1-xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <9792fbbb-fa88-a276-9a4a-42fed4426424@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/4/21 2:20 AM, Xiaoguang Wang wrote:
-> Abaci Robot reported following panic:
-> BUG: kernel NULL pointer dereference, address: 0000000000000000
-> PGD 800000010ef3f067 P4D 800000010ef3f067 PUD 10d9df067 PMD 0
-> Oops: 0002 [#1] SMP PTI
-> CPU: 0 PID: 1869 Comm: io_wqe_worker-0 Not tainted 5.11.0-rc3+ #1
-> Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
-> RIP: 0010:put_files_struct+0x1b/0x120
-> Code: 24 18 c7 00 f4 ff ff ff e9 4d fd ff ff 66 90 0f 1f 44 00 00 41 57 41 56 49 89 fe 41 55 41 54 55 53 48 83 ec 08 e8 b5 6b db ff  41 ff 0e 74 13 48 83 c4 08 5b 5d 41 5c 41 5d 41 5e 41 5f e9 9c
-> RSP: 0000:ffffc90002147d48 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff88810d9a5300 RCX: 0000000000000000
-> RDX: ffff88810d87c280 RSI: ffffffff8144ba6b RDI: 0000000000000000
-> RBP: 0000000000000080 R08: 0000000000000001 R09: ffffffff81431500
-> R10: ffff8881001be000 R11: 0000000000000000 R12: ffff88810ac2f800
-> R13: ffff88810af38a00 R14: 0000000000000000 R15: ffff8881057130c0
-> FS:  0000000000000000(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000010dbaa002 CR4: 00000000003706f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  __io_clean_op+0x10c/0x2a0
->  io_dismantle_req+0x3c7/0x600
->  __io_free_req+0x34/0x280
->  io_put_req+0x63/0xb0
->  io_worker_handle_work+0x60e/0x830
->  ? io_wqe_worker+0x135/0x520
->  io_wqe_worker+0x158/0x520
->  ? __kthread_parkme+0x96/0xc0
->  ? io_worker_handle_work+0x830/0x830
->  kthread+0x134/0x180
->  ? kthread_create_worker_on_cpu+0x90/0x90
->  ret_from_fork+0x1f/0x30
-> Modules linked in:
-> CR2: 0000000000000000
-> ---[ end trace c358ca86af95b1e7 ]---
+On 2/4/21 4:11 AM, Pavel Begunkov wrote:
+> On 04/02/2021 03:34, Hao Xu wrote:
+>> 在 2021/2/4 上午12:33, Pavel Begunkov 写道:
+>>> On 03/02/2021 14:57, Hao Xu wrote:
+>>>> io_sqe_files_unregister is currently called from several places:
+>>>>      - syscall io_uring_register (with uring_lock)
+>>>>      - io_ring_ctx_wait_and_kill() (without uring_lock)
+>>>>
+>>>> There is a AA type deadlock in io_sqe_files_unregister(), thus we need
+>>>> to know if we hold uring_lock in io_sqe_files_unregister() to fix the
+>>>> issue.
+>>>
+>>> It's ugly, just take the lock and kill the patch. There can't be any
+>>> contention during io_ring_ctx_free anyway.
+>> Hi Pavel, I don't get it, do you mean this patch isn't needed, and we can just unlock(&uring_lock) before io_run_task_work_sig() and lock(&uring_lock) after it? I knew there won't be contention during io_ring_ctx_free that's why there is no uring_lock in it.
+>> I tried to just do unlock(&uring_lock) before io_run_task_sig() without if(locked) check, it reports something like "there are unpaired mutex lock/unlock" since we cannot just unlock if it's from io_ring_ctx_free.
 > 
-> I guess case below can trigger above panic: there're two threads which
-> operates different io_uring ctxs and share same sqthread identity, and
-> later one thread exits, io_uring_cancel_task_requests() will clear
-> task->io_uring->identity->files to be NULL in sqpoll mode, then another
-> ctx that uses same identity will panic.
 > 
-> Indeed we don't need to clear task->io_uring->identity->files here,
-> io_grab_identity() should handle identity->files changes well, if
-> task->io_uring->identity->files is not equal to current->files,
-> io_cow_identity() should handle this changes well.
+> The ugly part is @locked. I know that there is already similar stuff
+> around, but I may go long why and how much I don't like it.
+> 
+> io_ring_ctx_free()
+> {
+>     ...
+>     lock(uring_lock);
+>     files_unregister();
+>     unlock(uring_lock);
+>     ...
+> }
+> 
+> With this you'll always have the mutex locked in unregister, so
+> can drop it unconditionally (if that will ever be needed). It's
+> also cleaner from the synchronisation perspective.
 
-Applied, thanks.
+Yes that's a much better approach - passing around a 'locked' flag
+is not very pretty, and the fewer we have of those the better.
 
 -- 
 Jens Axboe

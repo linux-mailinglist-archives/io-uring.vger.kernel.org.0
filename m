@@ -2,139 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FE0E30F289
-	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 12:39:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF65630F466
+	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 15:00:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235578AbhBDLir (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Feb 2021 06:38:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45564 "EHLO
+        id S236516AbhBDN6i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Feb 2021 08:58:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236081AbhBDLhp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 06:37:45 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C260FC061573
-        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 03:37:04 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id o10so5752098wmc.1
-        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 03:37:04 -0800 (PST)
+        with ESMTP id S236461AbhBDN4q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 08:56:46 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 889D4C0613D6
+        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 05:55:59 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id c12so3576198wrc.7
+        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 05:55:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PfzyFMO8TXtfK9xaAcE7Fdad3AIBUoiEQMrg6/yVfi4=;
-        b=GHGxJkUxpi2Ek3IYEPXYIm3qwYA0zNsa4TU0Hu95hw53iGOJcAQ2LS2wj0KtzVvPEz
-         07vtLJBTawx23osMjPwVgBITVf5eWkx2mYLHhMVagWhzk51psHq2HgepFN6ecfpS/SrG
-         VBkjE2PgLIQxnW0HKWpDMRLh3TD0UWa+ysEEcoHIAUWdanXCGZ1Pa6FhHmULeaNuRHc/
-         /uQsm1yrDSn3iao88zCNoZ/uS7/lVYFZSRXil83yPpGWKijAkcqygs59I4RsubfvQFDh
-         R2yYRHTfSiaYexd8gCFEJTjW3m/lHC6A34Nz5mJYq1feonslVHANS4uf1wBp13600b01
-         5zMw==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Qki3CnTEpkNyMdIhcAvX5K5YrpNaRHZ/PzBv6u+9W0A=;
+        b=pxWNvI9yNVdLd4x7iRbhm30MsXo69/2k/dnjbOgAAFQA6vLr9G1p1DltPg7sniXjZh
+         AAqn0I5TbLUCvryqFxoz7vzFGTYpnnPpBnHQvGr6eW1+kEJXv4u8BuARsqt1BuyLCFJW
+         XgQcqmR4Gdsyt2LtjtISh36VmB9dof9Ta1DaRJSLoY9kYPBte13Wnr9j+Yzz62C5jZwG
+         /emp44XKqDMQI4i2ZPECqQtOmU8g2uNdrYDqJrsx79Ka5Y/RNlQEnMAAya3l1jQY4hKn
+         ZVRPMmIi+lez8As/ejLd6mHLATQsOxVP8HC1SPNRMYqHX+qTRPgfRfItf3R4Ios18AJa
+         5QMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=PfzyFMO8TXtfK9xaAcE7Fdad3AIBUoiEQMrg6/yVfi4=;
-        b=qYkSJAmc7T+ZFwPJaxt7wvn96Q7Kw2MZonGDMrTbeIGGLe8L6O+7OCPB8kN9Qfq/ec
-         B35u31mqYi6QoaU/X6AklKUkK8HLtbYGF2Rv35pcOLAhu0hVDXxIbk+J3haJ0ylByiIC
-         TsatsJcymH1N4+y11QizF+0Sk2/ncbvYHhhra0mI77K41ahtCbZdolhhRVCaUfvHN6Sg
-         Gvv9yey1FAwfBcCZxp7zkvkIL6o6o8APJSlqhoE0/QHKJwUNhGO1xJ/0VaKuc38TTlIj
-         XWxD61xC7izv2JuTpNAm9wnsEYaKF65H7DMaW9cRlX3OX8YmTw22PEhq7VaN/hrdeNlV
-         N2Kg==
-X-Gm-Message-State: AOAM532Bc+741joS/8UsYtc0CZUA4GKhOzQ6VTik98cIVeELtpA2z2D8
-        1ehQya2DHOGjNHZJirQ+uhOr0aolszEBng==
-X-Google-Smtp-Source: ABdhPJyyDscrjFmhEJ+m+tKj8XQfGGyGtC1SFmxAjJcYjHZDEOZY6vFReE6beAuHOFv37kl8ZB7X/w==
-X-Received: by 2002:a1c:7e4e:: with SMTP id z75mr7167178wmc.168.1612438623620;
-        Thu, 04 Feb 2021 03:37:03 -0800 (PST)
-Received: from [192.168.8.171] ([148.252.133.145])
-        by smtp.gmail.com with ESMTPSA id v6sm7958706wrx.32.2021.02.04.03.37.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Feb 2021 03:37:03 -0800 (PST)
-Subject: Re: [PATCH 2/2] io_uring: don't hold uring_lock when calling
- io_run_task_work*
-To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1612364276-26847-1-git-send-email-haoxu@linux.alibaba.com>
- <1612364276-26847-3-git-send-email-haoxu@linux.alibaba.com>
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Qki3CnTEpkNyMdIhcAvX5K5YrpNaRHZ/PzBv6u+9W0A=;
+        b=tiq94Sz09aFNY5Hk5nWlJU8tpFVmQnkeyeA/0Xw6WhMQ3z3QYID6eX5+ByFgI73+bx
+         57p9uKXBOEgxxdF6bAAXzRS9avLqk4aMBemZouflmxUjnWPHc2pVcRSNrsTBSXwor3zB
+         QwfqTHY1VfOi7zppiAv2EgnlWD8nemchzcz0uBPGKHcuShm0uLqhsV5yZOiO4ZusNDoY
+         PNmRLHe6Er/GDkElpav6LgXK+bVOInboK5ETn/vjfLrpb92AsaA3ia0hB6BIxjUVV5nT
+         GGhkdOdKr2fc6+QWlKI6TRQbvfL9FJVqysm/IAAPfyN1QTxgM3Bu3GK/wUp8stkVWQbD
+         vkRw==
+X-Gm-Message-State: AOAM531tOORM5dq4fMH3OWpoEKJzCVQed1aMQey3K6B6M9gql2ZhK0yx
+        G4Es/AJdjxkKtI8gsTHJVmPtdVl77CKmCw==
+X-Google-Smtp-Source: ABdhPJzOPavUIPfn60haxwSktT369BCQ8R7XHdot2Z9ucP36WlIhBA34AxQm124iohmQywedpXKv3Q==
+X-Received: by 2002:a5d:6b0a:: with SMTP id v10mr3133935wrw.183.1612446958357;
+        Thu, 04 Feb 2021 05:55:58 -0800 (PST)
+Received: from localhost.localdomain ([148.252.133.145])
+        by smtp.gmail.com with ESMTPSA id k4sm8910561wrm.53.2021.02.04.05.55.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Feb 2021 05:55:57 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <4f03b07c-1be8-1e05-1e5e-8be490fce2b3@gmail.com>
-Date:   Thu, 4 Feb 2021 11:33:19 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH v2 5.12 00/13] a second pack of 5.12 cleanups
+Date:   Thu,  4 Feb 2021 13:51:55 +0000
+Message-Id: <cover.1612446019.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <1612364276-26847-3-git-send-email-haoxu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 03/02/2021 14:57, Hao Xu wrote:
-> This is caused by calling io_run_task_work_sig() to do work under
-> uring_lock while the caller io_sqe_files_unregister() already held
-> uring_lock.
-> we need to check if uring_lock is held by us when doing unlock around
-> io_run_task_work_sig() since there are code paths down to that place
-> without uring_lock held.
+Bunch of random cleanups, noticeable part of which (4-9/13) refactor
+io_read(), which is currently not in the best shape and is hard to
+understand.
 
-btw, better to prepare it for-5.12, seems it won't apply
+7/13 may actually fix a problem.
+10/13 should make NOWAIT and NONBLOCK to work right
 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index efb6d02fea6f..b093977713ee 100644
-[...]
-> -		if (ret < 0) {
-> -			percpu_ref_resurrect(&data->refs);
-> -			reinit_completion(&data->done);
-> -			io_sqe_files_set_node(data, backup_node);
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			break;
->  	} while (1);
+v2: add 9-13/13
 
-while (ret >= 0) ?
+Pavel Begunkov (13):
+  io_uring: deduplicate core cancellations sequence
+  io_uring: refactor scheduling in io_cqring_wait
+  io_uring: refactor io_cqring_wait
+  io_uring: refactor io_read for unsupported nowait
+  io_uring: further simplify do_read error parsing
+  io_uring: let io_setup_async_rw take care of iovec
+  io_uring: don't forget to adjust io_size
+  io_uring: inline io_read()'s iovec freeing
+  io_uring: highlight read-retry loop
+  io_uring: treat NONBLOCK and RWF_NOWAIT similarly
+  io_uring: io_import_iovec return type cleanup
+  io_uring: deduplicate file table slot calculation
+  io_uring/io-wq: return 2-step work swap scheme
+
+ fs/io-wq.c    |  16 +--
+ fs/io-wq.h    |   4 +-
+ fs/io_uring.c | 366 ++++++++++++++++++++++----------------------------
+ 3 files changed, 166 insertions(+), 220 deletions(-)
 
 -- 
-Pavel Begunkov
+2.24.0
+

@@ -2,61 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A368730F8B0
-	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 17:56:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4099930FCC4
+	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 20:31:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236932AbhBDQzx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Feb 2021 11:55:53 -0500
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:53559 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238172AbhBDQzQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 11:55:16 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UNto3f6_1612457667;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UNto3f6_1612457667)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 05 Feb 2021 00:54:27 +0800
-Subject: Re: [PATCH] io_uring: fix possible deadlock in io_uring_poll
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1612295573-221587-1-git-send-email-haoxu@linux.alibaba.com>
- <9d60270f-993b-ba83-29a0-ce6582c383e0@gmail.com>
- <5f0db9bc-700a-e0f5-a77c-9acfe4e56783@kernel.dk>
- <0c7cfa8b-5c32-7b00-e312-936df68553a2@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <8a4ff8ae-8c92-b4fc-7f95-6724be1f92e9@linux.alibaba.com>
-Date:   Fri, 5 Feb 2021 00:54:27 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.0
+        id S239391AbhBDT2S (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Feb 2021 14:28:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33684 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238268AbhBDT1U (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 14:27:20 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1A2FC061786;
+        Thu,  4 Feb 2021 11:26:39 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id v15so4916485wrx.4;
+        Thu, 04 Feb 2021 11:26:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cx8Y4404roqqwEi7dq7r+CFsuSQ5L0MERlxrc4PpSAA=;
+        b=sj8BdzQeB3oe91efyDV7V4O3vqfmDsmd5TbdcPUhUCYC5FaKe6IWXfniSgaWDxlL24
+         PU8ppoCX8yR5ArJMbu6oUhg3trpSVnCJjikodrgKSPmeWinLpJweNd7Yy5t9FEJu+CQH
+         SeWn+RJFmTxyR28PO0xbjGMqFZIGvA46p+W23OypluW4v7tnphMxdhDC84vkR8E+Nbd5
+         1zI2ETnx9pRk4tSZnJaAxT9gzLlq1PB35R9JQSpjEL1uJej09Tv4kbggcXS/Jdd9dfUH
+         Uw21U5zCUSYi3Wre2UuVZDsoL/y980F0tqURpZsni68wJvYPQgow1oE4PNRK7g3AGhDw
+         MXXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cx8Y4404roqqwEi7dq7r+CFsuSQ5L0MERlxrc4PpSAA=;
+        b=RUoXWCmSCVdp174HPvNRtMjWtg5bDIJ2eKgR8c4VKa99DLqx4whqeewMxVevpw6DxG
+         209EYYYSsLu4VGEWw6wc2uRZaRWBgId/i5ZDO9JA5EW+Klm0VZX2Jo98Ig35ket21kUC
+         2KGKGAcG4wGDMh0ZOGLFL8XnX2Dvq8TKgx4RcUVGfARxWO8Bo4DO7yBxep0tRXJoW9pM
+         Xyf79K/Dxsv6gASKyAkL/GxPKoVHuzHMMYQNVYHhuwdLZGY8IgdmPgW8n6SO2jWX3oxW
+         Jf7NBU6CpErzWMFHrpT7OxQSJZBA8TCYekZTL1BkWLUUBPusRijFCXyneBh878TVupAI
+         BfwA==
+X-Gm-Message-State: AOAM530aQpEjGzRB4If3WjX8UKy8HX9UhT5Sq5tKVOGpuieKnoiDkwSm
+        OsagKjBQUZ6cfAhR9tZG6kY=
+X-Google-Smtp-Source: ABdhPJyj5Rfttx/XuqmhSV37Qj3ARSb8HEM23yKbZNxwvyhv9YeE7Ab8Z1vjkv769t9d2ajb/BxtoA==
+X-Received: by 2002:adf:d085:: with SMTP id y5mr991575wrh.41.1612466798258;
+        Thu, 04 Feb 2021 11:26:38 -0800 (PST)
+Received: from localhost.localdomain ([148.252.133.145])
+        by smtp.gmail.com with ESMTPSA id r15sm9547175wrj.61.2021.02.04.11.26.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Feb 2021 11:26:37 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Subject: [PATCH] io_uring: drop mm/files between task_work_submit
+Date:   Thu,  4 Feb 2021 19:22:46 +0000
+Message-Id: <741fe19ee895393f54d01b8f7d25242e7fa27120.1612466514.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <0c7cfa8b-5c32-7b00-e312-936df68553a2@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/2/5 上午12:48, Pavel Begunkov 写道:
-> On 03/02/2021 01:48, Jens Axboe wrote:
->> On 2/2/21 5:04 PM, Pavel Begunkov wrote:
->>> On 02/02/2021 19:52, Hao Xu wrote:
->>>> This might happen if we do epoll_wait on a uring fd while reading/writing
->>>> the former epoll fd in a sqe in the former uring instance.
->>>> So let's don't flush cqring overflow list when we fail to get the uring
->>>> lock. This leads to less accuracy, but is still ok.
->>>
->>> if (io_cqring_events(ctx) || test_bit(0, &ctx->cq_check_overflow))
->>>          mask |= EPOLLIN | EPOLLRDNORM;
->>>
->>> Instead of flushing. It'd make sense if we define poll as "there might
->>> be something, go do your peek/wait with overflow checks". Jens, is that
->>> documented anywhere?
->>
->> Nope - I actually think that the approach chosen here is pretty good,
->> it'll force the app to actually check and hence do what it needs to do.
-> 
-> Ok, seems we agree on that.
-> 
-> Hao, can you send an updated patch?
-> 
-Sure, will send v2 soon.
+Since SQPOLL task can be shared and so task_work entries can be a mix of
+them, we need to drop mm and files before trying to issue next request.
+
+Cc: stable@vger.kernel.org # 5.10+
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5d3348d66f06..1f68105a41ed 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2205,6 +2205,9 @@ static void __io_req_task_submit(struct io_kiocb *req)
+ 	else
+ 		__io_req_task_cancel(req, -EFAULT);
+ 	mutex_unlock(&ctx->uring_lock);
++
++	if (ctx->flags & IORING_SETUP_SQPOLL)
++		io_sq_thread_drop_mm_files();
+ }
+ 
+ static void io_req_task_submit(struct callback_head *cb)
+-- 
+2.24.0
+

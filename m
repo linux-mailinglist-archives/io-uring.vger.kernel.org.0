@@ -2,63 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DED330F56C
-	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 15:54:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADF4430F5DC
+	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 16:11:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236919AbhBDOxS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Feb 2021 09:53:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59032 "EHLO
+        id S237168AbhBDPJ3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Feb 2021 10:09:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236909AbhBDOwp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 09:52:45 -0500
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4DB2C061786
-        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 06:52:02 -0800 (PST)
-Received: by mail-io1-xd2e.google.com with SMTP id x21so3429024iog.10
-        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 06:52:02 -0800 (PST)
+        with ESMTP id S237157AbhBDPIW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 10:08:22 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2F4EC0613D6
+        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 07:07:21 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id u20so3491167iot.9
+        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 07:07:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=Vdn1QxNou0rEVrcVjweJbYkJP6uzLTwvcUNMZDSkXvw=;
-        b=bZ17kGMTAA4EmU/R1O2ocExNr4Q7DX+/odIqh30t/B/c5r8ty/9t5SNMZo6oVuViNz
-         oC806gtpTP2ZQMhM8ag6khUuRdspQ16GwkjqXrRGJuJp5VaoAa5S5R2MVlwT7M+XRzp/
-         sBqgZ37L5TNAXkZKK2tneNfXN6xEyOhw4nnrt/WOWZKFyLesdvtLk0ZxJNuhhrgh5EDI
-         /h+wv+Ka7JoACm8t7NI++JsKXucS6FZfL+8B9xyhi4c5XxdPmbsTbuH1ITdeqT4KE9bC
-         MSSowJLuM37QxcIle8UziUJwFDy8C9oJ9cDbOT2/mq5+fFB3ImqvnCeUbiQ8NziAx6cn
-         ZB0w==
+        bh=c6OYH4Eyk2ia7X0UZIv7UzNa5sP9Pjr3T8Tl/CHiXjY=;
+        b=dQf+DFeGxxN86KPPHrq7fj+hlRpjsDNu6Zli1H3ycRXVsD1ylm6UTWLL9DU5mIp2oP
+         XtqTd2F6TJeYLy+Tf//CurGxV0ofCjQAfS7IYMyDasuil8kZYQ6yQzqgd9LhjxiBoBnT
+         nY5hqmykdF3/+nAuYbWT0ABxS4gYp+bVG6QW/HnCuNtN1b5ePBFTk010I/LicTnuwVt0
+         1di6aFaziEqYaP2sfNvvmnNcYqxMh6k/A2ynhSw2kBpqUjiGBw4O8U9qCen8G4UsBwJX
+         +sLcBP2JYZIdvhB8oTK69V4zLRyjJlwtGot9cxdKdNFYHBO/CUExJk9fL1ZJGpY3JnHU
+         djcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Vdn1QxNou0rEVrcVjweJbYkJP6uzLTwvcUNMZDSkXvw=;
-        b=QSies/6iWkB8fM+dyhfJiqDFkcGHiyDxGVvgOzk0TXi4spidPZ0Ixvue7rIOJiQar1
-         GM8qAeTmXnns1T1B6CaerOJHmIwL5KR08PFaaK3LnqBlM89ih9YNWJxivQqj7utY64oZ
-         czq4aE3iKuRSdD2n31DYSDBvunGIlSfAM6c2KuHO/wlggbV4sq7Ei+ErKbUfSAHZ2yKU
-         lhuN4W667Iki/Txg7cse6O9jsP+SUxBHQxk2NJx4c+3EK8i4urLhpFdue9tLKJO6Vfx9
-         u1YQzQ/lKKMZxR5wa87EdxyJtcA3pYWBht52WtthT6hw9976yJr3cjpGwjc9jPSs6ZcU
-         ht/Q==
-X-Gm-Message-State: AOAM531SKrm6g1xH8SAnkT2aVX4/7r4DASMe0h80q4bMGvYcRGHIqbsM
-        JauVXhEu7Mr+Akvja1wL7TNmFQMPXIrtu8ew
-X-Google-Smtp-Source: ABdhPJwSkrbygnxvWLG3WIHOF2A+hQ0bCkQMQUsf62ujFG1OIaWNTWkOu9NDdktXiao+EtNQ1TKDqg==
-X-Received: by 2002:a6b:6a1a:: with SMTP id x26mr6990323iog.207.1612450322112;
-        Thu, 04 Feb 2021 06:52:02 -0800 (PST)
+        bh=c6OYH4Eyk2ia7X0UZIv7UzNa5sP9Pjr3T8Tl/CHiXjY=;
+        b=MFVXwtgUkXMHxv6ZbStBd+OURoUi85TV9bgAaAbmHMG7GeS4rr53Yh2awZU3rbprX1
+         qQCyPCvk5F75xIZEFgcHN40+DoW+fN9S0XFREn7W4w8zL2hz31eVbMPSEeD9bF/xUnGm
+         ACS1aBNtWlS1sZ++38lBzhF8vn+MPG5fxZPmrHYHjO5N8zWm0Wo1x+d3shZ//3bZCSVY
+         bD18kLKpsIoDJsaqMYtTey7yhqf3e3OTzuPz+m0Yz4E9pn1iqBbySyJG1O8cTNIoNT8M
+         gq/gBpLDOeDmzLj/Zq2ZPy2CrDUs+NBgU4T99j+pOE3G0biRutpiRwtGluAIQmLW11/c
+         Pilg==
+X-Gm-Message-State: AOAM533PHxpZ/XRghs5GWvpJKWOID8yxOVBjfuA8ELkL/lXNTWi20qar
+        QM+DqbPR/h5LTmueEHoHyx13nSyknQX+vbcu
+X-Google-Smtp-Source: ABdhPJxfzNGOpdwogm6cVHX+p+p4i8A7uVS19YrA6agfN/bpikR10I8iiVkIxqKDYvWTbAftZzITNw==
+X-Received: by 2002:a02:3b6c:: with SMTP id i44mr8234665jaf.91.1612451240946;
+        Thu, 04 Feb 2021 07:07:20 -0800 (PST)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k125sm2915848iof.14.2021.02.04.06.52.01
+        by smtp.gmail.com with ESMTPSA id 4sm2786173ilj.22.2021.02.04.07.07.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Feb 2021 06:52:01 -0800 (PST)
-Subject: Re: [PATCH v2 13/13] io_uring/io-wq: return 2-step work swap scheme
+        Thu, 04 Feb 2021 07:07:20 -0800 (PST)
+Subject: Re: [PATCH v2 5.12 00/13] a second pack of 5.12 cleanups
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <cover.1612446019.git.asml.silence@gmail.com>
- <014eff28b71c8e5da5edaa4ad9d142916317c839.1612446019.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8acbd513-531c-0a12-ea3f-ecf0cd94c9e2@kernel.dk>
-Date:   Thu, 4 Feb 2021 07:52:02 -0700
+Message-ID: <a5c1cf3b-2a8a-4f86-403b-d14ab9bd6275@kernel.dk>
+Date:   Thu, 4 Feb 2021 08:07:20 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <014eff28b71c8e5da5edaa4ad9d142916317c839.1612446019.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1612446019.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,22 +65,37 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/4/21 6:52 AM, Pavel Begunkov wrote:
-> Saving one lock/unlock for io-wq is not super important, but adds some
-> ugliness in the code. More important, atomic decs not turning it to zero
-> for some archs won't give the right ordering/barriers so the
-> io_steal_work() may pretty easily get subtly and completely broken.
+On 2/4/21 6:51 AM, Pavel Begunkov wrote:
+> Bunch of random cleanups, noticeable part of which (4-9/13) refactor
+> io_read(), which is currently not in the best shape and is hard to
+> understand.
 > 
-> Return back 2-step io-wq work exchange and clean it up.
+> 7/13 may actually fix a problem.
+> 10/13 should make NOWAIT and NONBLOCK to work right
+> 
+> v2: add 9-13/13
+> 
+> Pavel Begunkov (13):
+>   io_uring: deduplicate core cancellations sequence
+>   io_uring: refactor scheduling in io_cqring_wait
+>   io_uring: refactor io_cqring_wait
+>   io_uring: refactor io_read for unsupported nowait
+>   io_uring: further simplify do_read error parsing
+>   io_uring: let io_setup_async_rw take care of iovec
+>   io_uring: don't forget to adjust io_size
+>   io_uring: inline io_read()'s iovec freeing
+>   io_uring: highlight read-retry loop
+>   io_uring: treat NONBLOCK and RWF_NOWAIT similarly
+>   io_uring: io_import_iovec return type cleanup
+>   io_uring: deduplicate file table slot calculation
+>   io_uring/io-wq: return 2-step work swap scheme
+> 
+>  fs/io-wq.c    |  16 +--
+>  fs/io-wq.h    |   4 +-
+>  fs/io_uring.c | 366 ++++++++++++++++++++++----------------------------
+>  3 files changed, 166 insertions(+), 220 deletions(-)
 
-IIRC, this wasn't done to skip the lock/unlock exchange, which I agree
-doesn't matter, but to ensure that a link would not need another io-wq
-punt. And that is a big deal, it's much faster to run it from that
-same thread, rather than needing a new async queue and new thread grab
-to get there.
-
-Just want to make sure that's on your mind... Maybe it's still fine
-as-is, didn't look too closely yet or test it.
+Applied, thanks Pavel!
 
 -- 
 Jens Axboe

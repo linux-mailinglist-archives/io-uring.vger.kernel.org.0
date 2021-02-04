@@ -2,201 +2,161 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1A8430F474
-	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 15:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F2730F524
+	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 15:38:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236522AbhBDOAl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Feb 2021 09:00:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47550 "EHLO
+        id S236748AbhBDOht (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Feb 2021 09:37:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236487AbhBDN7F (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 08:59:05 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD8C3C061573
-        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 05:58:22 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id g10so3645561wrx.1
-        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 05:58:22 -0800 (PST)
+        with ESMTP id S236791AbhBDOhA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 09:37:00 -0500
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC9DCC0613ED
+        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 06:36:19 -0800 (PST)
+Received: by mail-io1-xd35.google.com with SMTP id f67so1604632ioa.1
+        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 06:36:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jI6A+CQaaJCgeut4Zy1iJEl8xhlMk4pDakoYt2dF2ns=;
-        b=NGvX6GjaEnV2RGcKusZcGXF8B4wZ1xXIIykQbq9Gg9WEDCQT/f3pABF7jpcGfKJNOg
-         etjQGZdTPPlzfFiTVPcyiYtrGKNAU3fqmteC4QZVD8+UshpBSx9yRe6CcEtn/M0GU/wl
-         fcWCvVPxrj3FJQzeWw1CU0/+3WqXw8EKYFrQH4TQXG+PLrpHOT2edrgEQVwvT4fYon/C
-         mdsHjahl1MfKoNW2u/AeotRU76a+Oveee1TJnNv2RHcRmStRkFVGfnP5PBz5T4BHKWpO
-         1gkRVPK9vYxpL1rjFBNNRQSvQzXuHVgi4f6krpxNeFvGepGNSNcFT4pYLIkg/lgp5thz
-         BJVw==
+        bh=4b6g4Ixc+28bqJmLbqvgP9hQfDNHN5yB7hwfEVlSifU=;
+        b=DoDUzF1FugVu39+pUjXZWuLuaHXDph+UhmdKadXCiWqSUmC1sJhnXcmmp4Eof4jQ8P
+         n0AnSpOF/hTGapO/LwzkZHzuSCpF/dPQHD2XA4yXTwSxIuzq2JIi6Ziv9awcN6cBccih
+         5Y3JOLQ9T2pp8qhNcx+U/65i454AmopgdlxTbkPF6eVAPep/AbT/KmIu23CqU8rCrzYg
+         TLdgtYTqKwPnIozcZaDmIwaypdKVPdcGJv7tJI40nduW/Oe3pOJw/9sfbALoAdqHSfaU
+         HE3293si0bclf3cih/YEV9cowsZyuoQ7mbRCbYp6C7IYGtB/sWkp2vIf7OfqizIsY35j
+         ZjFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=jI6A+CQaaJCgeut4Zy1iJEl8xhlMk4pDakoYt2dF2ns=;
-        b=h96oTk/BoyW4GVY6i9NtklaSybfNMlI0DgaZ1KYsItBwzmrwXqG1Fri4LFC/10FO/W
-         0Er7DkaDmahLjwlw4J9rCvq7FDO1/DO8+GjIi1GdyCQA0cLWs1ltcJg+RLtx5o4NqcOT
-         rwaoL/dLYINM3ecrvnO4RYJK6TuRTzUfA00tk6g3LA3P0thVBRc5MB+2WSmESY64w44Z
-         K5iFWeVyG7J5pBiia1JRRyf7He6ogLwnH9fUXz+uZhXO1IZh99BJ3geedAtl1vb8BM39
-         p/EWZmIGoSx0tHYaj9MVSMkRnMoWuetbtaEWUeoO82gb8e3DSju52HUgl7zW3/goo6OW
-         IN7w==
-X-Gm-Message-State: AOAM533AlpeBUZh4PedOQObGRcbPmQsxAAmomvO3k93SRYTcdfA7m1tO
-        XZETuhZQxoDxTpedIthgL+5IquOC8kSzpg==
-X-Google-Smtp-Source: ABdhPJyHCdQr1U9PuAiTQyMpJT4Lzia6c7q1zdX4cPt/g3lWn7Qvwi+KL/GkfFPX7g3B1GAx+S7jPg==
-X-Received: by 2002:a5d:4c4f:: with SMTP id n15mr9632299wrt.124.1612447101671;
-        Thu, 04 Feb 2021 05:58:21 -0800 (PST)
-Received: from [192.168.8.175] ([148.252.133.145])
-        by smtp.gmail.com with ESMTPSA id c3sm2919729wrr.6.2021.02.04.05.58.16
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4b6g4Ixc+28bqJmLbqvgP9hQfDNHN5yB7hwfEVlSifU=;
+        b=GYLxVlKRtgrTvzQxwPYzNdgJuUyCuM4L5fz6H4oCOOprfVEC+HKRWpZwdcP3Yw/xF8
+         5nkZka8fXRR885Fld/mB+alNwYceF2fEVw9FfAJCyOOYkl6ZXOpss5LEYabwSuf+Qj9B
+         xm2/4luLVJFnOfU/DbhWhOmg9faZSMmyjeudrHjmOPz+oi5EwRwogaZVg9XzgNgyt/Mf
+         u1rMnj7db0WyPvKA1tOV1YtWDuwqldypTFWbcmK23PTRTQzxF56eXRN2SobuXWv5ipZ0
+         LACs78+ynX4CKGN85Rm1vBgS+EsRC/i6DAuzJhet7nbEODMrf4az1gXhktagYTvJbi3L
+         tiaw==
+X-Gm-Message-State: AOAM533VOL03D6uAO18/PSWM7sBv5JL+ox213CQjF5AY70rK7wyBWmcg
+        hf0R+Zxv/noD4+rcDaC+anDwQw==
+X-Google-Smtp-Source: ABdhPJy348+wqNXc1ktODm1LM5/rugrEEhJsFY6OzCngNLONMVPkJQZ5wqUkewmB6iOPBWblLt6Oeg==
+X-Received: by 2002:a6b:d010:: with SMTP id x16mr7164658ioa.107.1612449378915;
+        Thu, 04 Feb 2021 06:36:18 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id o8sm2594214ilu.55.2021.02.04.06.36.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Feb 2021 05:58:17 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-References: <20210204092056.12797-1-xiaoguang.wang@linux.alibaba.com>
- <150e4e33-5c12-3ae3-9db3-2d85edb94c5f@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH] io_uring: don't modify identity's files uncess identity
- is cowed
-Message-ID: <07c0ffc8-ee68-6298-47a3-b1686e3cd0ba@gmail.com>
-Date:   Thu, 4 Feb 2021 13:54:34 +0000
+        Thu, 04 Feb 2021 06:36:18 -0800 (PST)
+Subject: Re: [PATCH 5.4 103/142] Revert "block: end bio with BLK_STS_AGAIN in
+ case of non-mq devs and REQ_NOWAIT"
+To:     Andres Freund <andres@anarazel.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org,
+        Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+References: <20200601174037.904070960@linuxfoundation.org>
+ <20200601174048.647302799@linuxfoundation.org>
+ <20210203123729.3pfsakawrkoh6qpu@alap3.anarazel.de>
+ <YBqfDdVaPurYzZM2@kroah.com>
+ <20210203212826.6esa5orgnworwel6@alap3.anarazel.de>
+ <YBsedX0/kLwMsgTy@kroah.com> <14351e91-5a5f-d742-b087-dc9ec733bbfd@kernel.dk>
+ <20210203235941.2ibyrc5z3desyd2q@alap3.anarazel.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <207c4fb1-a3cb-9210-e2b6-8e5490872df6@kernel.dk>
+Date:   Thu, 4 Feb 2021 07:36:18 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <150e4e33-5c12-3ae3-9db3-2d85edb94c5f@gmail.com>
+In-Reply-To: <20210203235941.2ibyrc5z3desyd2q@alap3.anarazel.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 04/02/2021 11:05, Pavel Begunkov wrote:
-> On 04/02/2021 09:20, Xiaoguang Wang wrote:
->> Abaci Robot reported following panic:
->> BUG: kernel NULL pointer dereference, address: 0000000000000000
->> PGD 800000010ef3f067 P4D 800000010ef3f067 PUD 10d9df067 PMD 0
->> Oops: 0002 [#1] SMP PTI
->> CPU: 0 PID: 1869 Comm: io_wqe_worker-0 Not tainted 5.11.0-rc3+ #1
->> Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
->> RIP: 0010:put_files_struct+0x1b/0x120
->> Code: 24 18 c7 00 f4 ff ff ff e9 4d fd ff ff 66 90 0f 1f 44 00 00 41 57 41 56 49 89 fe 41 55 41 54 55 53 48 83 ec 08 e8 b5 6b db ff  41 ff 0e 74 13 48 83 c4 08 5b 5d 41 5c 41 5d 41 5e 41 5f e9 9c
->> RSP: 0000:ffffc90002147d48 EFLAGS: 00010293
->> RAX: 0000000000000000 RBX: ffff88810d9a5300 RCX: 0000000000000000
->> RDX: ffff88810d87c280 RSI: ffffffff8144ba6b RDI: 0000000000000000
->> RBP: 0000000000000080 R08: 0000000000000001 R09: ffffffff81431500
->> R10: ffff8881001be000 R11: 0000000000000000 R12: ffff88810ac2f800
->> R13: ffff88810af38a00 R14: 0000000000000000 R15: ffff8881057130c0
->> FS:  0000000000000000(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000000000000000 CR3: 000000010dbaa002 CR4: 00000000003706f0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>  __io_clean_op+0x10c/0x2a0
->>  io_dismantle_req+0x3c7/0x600
->>  __io_free_req+0x34/0x280
->>  io_put_req+0x63/0xb0
->>  io_worker_handle_work+0x60e/0x830
->>  ? io_wqe_worker+0x135/0x520
->>  io_wqe_worker+0x158/0x520
->>  ? __kthread_parkme+0x96/0xc0
->>  ? io_worker_handle_work+0x830/0x830
->>  kthread+0x134/0x180
->>  ? kthread_create_worker_on_cpu+0x90/0x90
->>  ret_from_fork+0x1f/0x30
->> Modules linked in:
->> CR2: 0000000000000000
->> ---[ end trace c358ca86af95b1e7 ]---
->>
->> I guess case below can trigger above panic: there're two threads which
->> operates different io_uring ctxs and share same sqthread identity, and
->> later one thread exits, io_uring_cancel_task_requests() will clear
->> task->io_uring->identity->files to be NULL in sqpoll mode, then another
->> ctx that uses same identity will panic.
->>
->> Indeed we don't need to clear task->io_uring->identity->files here,
->> io_grab_identity() should handle identity->files changes well, if
->> task->io_uring->identity->files is not equal to current->files,
->> io_cow_identity() should handle this changes well.
+On 2/3/21 4:59 PM, Andres Freund wrote:
+> Hi,
 > 
-> Didn't look in the trace above, but the change looks good. I even did
-> it myself a couple of weeks ago, but it got dropped because of unrelated
-> hassle.
+> On 2021-02-03 15:58:33 -0700, Jens Axboe wrote:
+>> On 2/3/21 3:06 PM, Greg Kroah-Hartman wrote:
+>>> On Wed, Feb 03, 2021 at 01:28:26PM -0800, Andres Freund wrote:
+>>>> On 2021-02-03 14:03:09 +0100, Greg Kroah-Hartman wrote:
+>>>>>> On v5.4.43-101-gbba91cdba612 this fails with
+>>>>>> fio: io_u error on file /mnt/t2/test.0.0: Input/output error: write offset=0, buflen=4096
+>>>>>> fio: pid=734, err=5/file:io_u.c:1834, func=io_u error, error=Input/output error
+>>>>>>
+>>>>>> whereas previously it worked. libaio still works...
+>>>>>>
+>>>>>> I haven't checked which major kernel version fixed this again, but I did
+>>>>>> verify that it's still broken in 5.4.94 and that 5.10.9 works.
+>>>>>>
+>>>>>> I would suspect it's
+>>>>>>
+>>>>>> commit 4503b7676a2e0abe69c2f2c0d8b03aec53f2f048
+>>>>>> Author: Jens Axboe <axboe@kernel.dk>
+>>>>>> Date:   2020-06-01 10:00:27 -0600
+>>>>>>
+>>>>>>     io_uring: catch -EIO from buffered issue request failure
+>>>>>>
+>>>>>>     -EIO bubbles up like -EAGAIN if we fail to allocate a request at the
+>>>>>>     lower level. Play it safe and treat it like -EAGAIN in terms of sync
+>>>>>>     retry, to avoid passing back an errant -EIO.
+>>>>>>
+>>>>>>     Catch some of these early for block based file, as non-mq devices
+>>>>>>     generally do not support NOWAIT. That saves us some overhead by
+>>>>>>     not first trying, then retrying from async context. We can go straight
+>>>>>>     to async punt instead.
+>>>>>>
+>>>>>>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>>>>
+>>>>>>
+>>>>>> which isn't in stable/linux-5.4.y
+>>>>>
+>>>>> Can you test that if the above commit is added, all works well again?
+>>>>
+>>>> It doesn't apply cleanly, I'll try to resolve the conflict. However, I
+>>>> assume that the revert was for a concrete reason - but I can't quite
+>>>> figure out what b0beb28097fa04177b3769f4bb7a0d0d9c4ae76e was concretely
+>>>> solving, and whether reverting the revert in 5.4 would re-introduce a
+>>>> different problem.
+>>>>
+>>>> commit b0beb28097fa04177b3769f4bb7a0d0d9c4ae76e (tag: block-5.7-2020-05-29, linux-block/block-5.7)
+>>>> Author: Jens Axboe <axboe@kernel.dk>
+>>>> Date:   2020-05-28 13:19:29 -0600
+>>>>
+>>>>     Revert "block: end bio with BLK_STS_AGAIN in case of non-mq devs and REQ_NOWAIT"
+>>>>
+>>>>     This reverts commit c58c1f83436b501d45d4050fd1296d71a9760bcb.
+>>>>
+>>>>     io_uring does do the right thing for this case, and we're still returning
+>>>>     -EAGAIN to userspace for the cases we don't support. Revert this change
+>>>>     to avoid doing endless spins of resubmits.
+>>>>
+>>>>     Cc: stable@vger.kernel.org # v5.6
+>>>>     Reported-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+>>>>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>>
+>>>> I suspect it just wasn't aimed at 5.4, and that's that, but I'm not
+>>>> sure. In which case presumably reverting
+>>>> bba91cdba612fbce4f8575c5d94d2b146fb83ea3 would be the right fix, not
+>>>> backporting 4503b7676a2e0abe69c2f2c0d8b03aec53f2f048 et al.
 > 
-> I'll test/review a bit later.
+> Having looked a bit more through the history, I suspect that the reason
+> 5.6 doesn't need c58c1f83436b501d45d4050fd1296d71a9760bcb - which I have
+> confirmed - is that ext4 was converted to the iomap infrastructure in
+> 5.5, but not in 5.4.
+> 
+> I've confirmed that the repro I shared upthread triggers in
+> 378f32bab3714f04c4e0c3aee4129f6703805550^ but not in
+> 378f32bab3714f04c4e0c3aee4129f6703805550.
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-Cc: stable@vger.kernel.org # 5.5+
-
-> 
->>
->> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
->> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
->> ---
->>  fs/io_uring.c | 6 ------
->>  1 file changed, 6 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 38c6cbe1ab38..5d3348d66f06 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -8982,12 +8982,6 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
->>  
->>  	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sq_data) {
->>  		atomic_dec(&task->io_uring->in_idle);
->> -		/*
->> -		 * If the files that are going away are the ones in the thread
->> -		 * identity, clear them out.
->> -		 */
->> -		if (task->io_uring->identity->files == files)
->> -			task->io_uring->identity->files = NULL;
->>  		io_sq_thread_unpark(ctx->sq_data);
->>  	}
->>  }
->>
-> 
+I checked up on this, and I do see the issue as well. As far as
+io_uring is concerned, we don't need that revert in 5.4. So I think
+the right solution here would be to... revert the revert :-)
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

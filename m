@@ -2,76 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDF4C30FD2B
-	for <lists+io-uring@lfdr.de>; Thu,  4 Feb 2021 20:45:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62893310202
+	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 02:03:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236970AbhBDToC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Feb 2021 14:44:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37260 "EHLO
+        id S232439AbhBEBCi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Feb 2021 20:02:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231686AbhBDTn6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 14:43:58 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F3ACC061786
-        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 11:43:18 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id a16so2310942plh.8
-        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 11:43:18 -0800 (PST)
+        with ESMTP id S232466AbhBEBCd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 20:02:33 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28266C0613D6
+        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 17:01:53 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id z6so5703058wrq.10
+        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 17:01:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sVKAr/j8S5Ltd/Il4EoLWzEKNd8BaZbQXC4m28X/HXk=;
-        b=hx+ZExhKzSJtpAXqe5GcJ37a6OjGDL75tpXq6TzDUBxNzhaWe7g5+tVltwuCvsSc4+
-         A8OGVJxmCK0zoLhsR5aYOn5v4Ai3iD/yMGg8Bf4Jh9KkJVbA33SGNfHx3SB+MN+xgRPr
-         SQKmb5AWP1WhuhpnYne24ha6ijmXeDdFpHJe5qFyuRidRrTL3s4efdvuZigSjn3m1PCm
-         qD8NbymMtKH8PPhn47H0i5hpBSn1CV5ov/vbO3DTHY2Kg1YGqMkLOysjOctEGO+QFobY
-         Zs/OdMFs5J5J9OdSpy5PU0YwUHFlT7PfTst+KZ39oIaQUEfUvrr9BBhAzwXiFmkVHBt3
-         XLJA==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HtffqKsebUbk0XJjMOXbTRXjI2CzFlr7I1M4mWzQYzs=;
+        b=Ba2fxFy1Q3bpSfKqWdcnrrpyY0e+IPio39O8E7zBydkV1BQKVPpr9BNy1x4rhWAKz/
+         61JUc3EiC1SLHgVRqVX3uu4VXSHgCMGRqHzWxj9SXyrLuD90zskuEXgpqzE+PoZvHApz
+         JPfegmpv23ttWT0KmRuzd266NvoA18HHYgofEKgon0L7DWWDNOm3KelmBmbjKgNCnjFk
+         OAouUrFpodeArr1sqhJb1hrh3dM9BzkYrUqcZ9QUIwYhphBjpZFUGkD8PT+RbMNoc0gg
+         GQUDyww927rcpAdoyQkAS1yvNmPH+nbCCD5nI2X95MfvKRUWLPSLq3uz497bU4pYUkhf
+         ELSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=sVKAr/j8S5Ltd/Il4EoLWzEKNd8BaZbQXC4m28X/HXk=;
-        b=HrSzfVv65qYx/wNjcd9YjgV0HRm2nLOwx+3GNcOHtaTpAFJxsv5MyQxZqM37KUSI3+
-         gl+JYwLHIEfA8MpIO4hySIn4irSPNu6IkDD9KwY95NY4WGrS3squbvPmqFpAszL3g2v8
-         o2vfepDQPtZV0vKOwPmfW/94exLPrMTX0YayglWe59bKMflwx+Izyz1bQwsU9+A+Ns+0
-         NwwSFMSYSnncaNLei9eote3y+krwkYvrP4sD205oXgiz3lwM5c1HYUifopBTJfNrHCNw
-         a2eVxuxmV8eH41YfBJz3n1+PX2d+iqXsOfxLqojV5k10oaGXFkM9Wpc6S3myW21yAdzW
-         HwIw==
-X-Gm-Message-State: AOAM530vxOXs5x9RBROgOLUDwqN96LeSdUjQc5k2q0TSbXZ+v0zLkr0v
-        QizinsNkHP01Z3f0tKxRupMpYQ==
-X-Google-Smtp-Source: ABdhPJxAIthc348Xn/1lEWIvzFJQz37QRk9t4bRp1IRyXZxYHYk9QDJY7lAh85Wh6lvxGi4RidutjQ==
-X-Received: by 2002:a17:902:d202:b029:e1:8936:cf31 with SMTP id t2-20020a170902d202b02900e18936cf31mr787910ply.51.1612467797559;
-        Thu, 04 Feb 2021 11:43:17 -0800 (PST)
-Received: from ?IPv6:2600:380:762f:84cb:60e5:b29f:59f2:990b? ([2600:380:762f:84cb:60e5:b29f:59f2:990b])
-        by smtp.gmail.com with ESMTPSA id 194sm4632924pfu.165.2021.02.04.11.43.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Feb 2021 11:43:17 -0800 (PST)
-Subject: Re: [PATCH] io_uring: drop mm/files between task_work_submit
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     stable@vger.kernel.org
-References: <741fe19ee895393f54d01b8f7d25242e7fa27120.1612466514.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <53e3b065-182c-2f05-bb1d-57198a2212ad@kernel.dk>
-Date:   Thu, 4 Feb 2021 12:43:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=HtffqKsebUbk0XJjMOXbTRXjI2CzFlr7I1M4mWzQYzs=;
+        b=WD+bf8XgsuiKrT+65Vlj0qce2CknXIqLTYOqdFeQWgREqp095ADGvWoojEabPo93Nd
+         +4hee4KeJpTUMhSafFNW/YyKEdXl3mZy0zHSiiIB0vF6SC2zt2P6om/ASyr6HO+Xq0Af
+         hU4fkbCBgtmh1KfJZOL8hqbrVnNX1kTs0fuSNZKQSEr2AF3Hzl/5ahsKadNG6e4CHcfD
+         yiTujYWelkV5gEeJA7ogYRRLxAENHsrf002D3xKVxS8s+exsLYwNNaqU7AkQoore6vpv
+         lLykMSuZe4DJPKMyidzbWPhNnNeIMuA5IJtOnZkHPNzvsN+l3qYRig6M/JvfdHwveUoJ
+         V4lw==
+X-Gm-Message-State: AOAM531ZQLNe23d2Ez7ovpMXjhkucW3+ODZjhmToH8WXP1Ja530ZiJ7V
+        feYAENtrvM2Za3SsNxpNl563CMyqAfNQhg==
+X-Google-Smtp-Source: ABdhPJxalbDds1Dpowq88pU3wrLTUGzyP5zPtbdKNGKOitPlX2vuHGbKN8xqt5nI8SUuEyBrKSsH1Q==
+X-Received: by 2002:a05:6000:1082:: with SMTP id y2mr1965370wrw.27.1612486911909;
+        Thu, 04 Feb 2021 17:01:51 -0800 (PST)
+Received: from localhost.localdomain ([148.252.133.145])
+        by smtp.gmail.com with ESMTPSA id i18sm10853199wrn.29.2021.02.04.17.01.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Feb 2021 17:01:51 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH for-next 0/3] sendmsg/recvmsg cleanup
+Date:   Fri,  5 Feb 2021 00:57:57 +0000
+Message-Id: <cover.1612486458.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <741fe19ee895393f54d01b8f7d25242e7fa27120.1612466514.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/4/21 12:22 PM, Pavel Begunkov wrote:
-> Since SQPOLL task can be shared and so task_work entries can be a mix of
-> them, we need to drop mm and files before trying to issue next request.
+Reincarnated cleanups of sendmsg/recvmsg managing and copying of iov.
 
-Thanks, applied.
+Pavel Begunkov (3):
+  io_uring: set msg_name on msg fixup
+  io_uring: clean iov usage for recvmsg buf select
+  io_uring: refactor sendmsg/recvmsg iov managing
+
+ fs/io_uring.c | 68 +++++++++++++++++++++++----------------------------
+ 1 file changed, 30 insertions(+), 38 deletions(-)
 
 -- 
-Jens Axboe
+2.24.0
 

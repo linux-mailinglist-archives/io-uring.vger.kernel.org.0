@@ -2,27 +2,29 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05FCD31060E
-	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 08:51:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03BE43106D7
+	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 09:38:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230448AbhBEHvT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Feb 2021 02:51:19 -0500
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:56096 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231167AbhBEHvS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 02:51:18 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R281e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UNwO9BW_1612511389;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UNwO9BW_1612511389)
+        id S229864AbhBEIg1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Feb 2021 03:36:27 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:58413 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229702AbhBEIfm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 03:35:42 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UNwu4F0_1612514061;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UNwu4F0_1612514061)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 05 Feb 2021 15:49:55 +0800
+          Fri, 05 Feb 2021 16:34:28 +0800
 From:   Hao Xu <haoxu@linux.alibaba.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH v2] io_uring: fix possible deadlock in io_uring_poll
-Date:   Fri,  5 Feb 2021 15:49:48 +0800
-Message-Id: <1612511388-153658-1-git-send-email-haoxu@linux.alibaba.com>
+Subject: [PATCH v3] io_uring: fix possible deadlock in io_uring_poll
+Date:   Fri,  5 Feb 2021 16:34:21 +0800
+Message-Id: <1612514061-177495-1-git-send-email-haoxu@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1612511388-153658-1-git-send-email-haoxu@linux.alibaba.com>
+References: <1612511388-153658-1-git-send-email-haoxu@linux.alibaba.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
@@ -143,20 +145,14 @@ Reported-by: Abaci <abaci@linux.alibaba.com>
 Fixes: 6c503150ae33 ("io_uring: patch up IOPOLL overflow_flush sync")
 Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 ---
-
-I think we should put a note somewhere, otherwise users may think there
-is nothing when they didn't get EPOLLIN | EPOLLRDNORM, they may
-consider this as "there is definitely nothing" and aren't aware of
-doing overflow flush then.
-
- fs/io_uring.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 38c6cbe1ab38..fd7ea089a4c0 100644
+index 38c6cbe1ab38..5f42ad6f2155 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -8718,8 +8718,15 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
+@@ -8718,8 +8718,21 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
  	smp_rmb();
  	if (!io_sqring_full(ctx))
  		mask |= EPOLLOUT | EPOLLWRNORM;
@@ -165,15 +161,21 @@ index 38c6cbe1ab38..fd7ea089a4c0 100644
 +
 +	/*
 +	 * Don't flush cqring overflow list here, just do a simple check.
-+	 * Otherwise there could possible be ABBA deadlock.
++	 * Otherwise there could possible be ABBA deadlock:
++	 *      CPU0                    CPU1
++	 *      ----                    ----
++	 * lock(&ctx->uring_lock);
++	 *                              lock(&ep->mtx);
++	 *                              lock(&ctx->uring_lock);
++	 * lock(&ep->mtx);
++	 *
 +	 * Users may get EPOLLIN meanwhile seeing nothing in cqring, this
 +	 * pushs them to do the flush.
-+	 * More info in commit log.
 +	 */
 +	if (io_cqring_events(ctx) || test_bit(0, &ctx->cq_check_overflow))
  		mask |= EPOLLIN | EPOLLRDNORM;
  
- 	return mask; 
+ 	return mask;
 -- 
 1.8.3.1
 

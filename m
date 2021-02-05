@@ -2,62 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F081D310900
-	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 11:26:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDDDF310B89
+	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 14:07:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231183AbhBEKZg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Feb 2021 05:25:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56746 "EHLO
+        id S232020AbhBENGG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Feb 2021 08:06:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230088AbhBEKXU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 05:23:20 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C25FCC06178A
-        for <io-uring@vger.kernel.org>; Fri,  5 Feb 2021 02:22:38 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id c4so7013434wru.9
-        for <io-uring@vger.kernel.org>; Fri, 05 Feb 2021 02:22:38 -0800 (PST)
+        with ESMTP id S232160AbhBENDL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 08:03:11 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D953C06178B
+        for <io-uring@vger.kernel.org>; Fri,  5 Feb 2021 05:02:21 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id i9so5850723wmq.1
+        for <io-uring@vger.kernel.org>; Fri, 05 Feb 2021 05:02:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=awwkxigNGV+VLvxvWzeK+XwUBETZhyf5T8C7f0uVcCY=;
-        b=PG1lw/KesWrkzTriC6CAvvh8HcwiTBkMZ4Ofsj064DQ+pErjQ9K5smsS3f0HDCKdNR
-         rGsAHmASHOC2BxXgcSkO/qYYsn0Dddy6Indj2aVn6u1GU3hhLK/Dj3+cO44IFZbRgBPS
-         Aylyz7dqlo6AL8nmARJEMmc5fvnqLCd88frsWhxnL1FTGwCASYcrxVLKT5TxYu8xuwnx
-         /Mjk0YXkEMJyeg6BtxLCZ6ED9pr3H4egQYyHrKSgz+9JLUbP0PToqpuu3Mm4wF6WUYYB
-         lnZBcC/IyGpBXkkP+tdQeqoSmLTFhYLwF4wxXuK36hLW2UspPMcr+ZmiQbsZP2tF07a1
-         iO6Q==
+        bh=iM8cMWgWJLnDGB+HK0k+/fxmAWD2PejSb5/ewrdwP7Q=;
+        b=C8Pm+l2lb66mU9RgzP86wIfTy9lIgz1RPNTAmV0vaGnj1Y4+J46+WNhZro3yxvo1Iu
+         ygmTNizEliHq7WNp7F2J8/d/x13JklOSBzbY09fTF5K0sQ90LOp7azSqCGjjjIQ8xNfl
+         bH9OI4c8zWvFS9HpFqhjPFkltPY81f9+FxZgjMI/DeF18CgWbGjOqrYHpnr+KqEWDQVe
+         vBNQR7SPwcwKUQeTWM5Z1Mt76DwRRXDVTg0g8n2oiddDJjRLWhNVQhOniYhVp4YGIg02
+         S4MCC31wXJyVbOqu4dRXsmTEBPk+8FRUzAIgIt0NCrOfg+D1pkfn1vBUoFOaeDt6tIMC
+         X7+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=awwkxigNGV+VLvxvWzeK+XwUBETZhyf5T8C7f0uVcCY=;
-        b=FSHR+VrjvKt10AM0MSLpIKQ0YehwWDLkLhd4mjXueFDIuL2jiVN0V3UEth4C+oH38g
-         IIv2zoqNhR8YkqU6AS2kF+u09NsU+IaKq4w1hDrbdHJpevvh2k0AKlLw+vCaAYN5ymGl
-         7mQCdN5BlwqgC71+e7FBuZ9vcq4g9egwgKIaexkpEXvaTz0yGBDvnSLtnr7Sdp7XzKFa
-         9jGGK3uKrvnMWiyYATzfG6lSAPUC30q8JyzXwtXEAt3J+W9uh/yrI70GiRfkRiERrHNk
-         T3Y1HHbxT6EmsoeY4XCTKykEZbiwgOh8bEBm9P9dqIhzw+mRW89yoZN3aFxz1RnYS48p
-         6cow==
-X-Gm-Message-State: AOAM530I08S0XCKcwUo/A8hYTMIA9RX1dhCBosbaZZ7kUHQDH9Ei0ocv
-        TO1wWzX9O8UgevYgeLV6dIw=
-X-Google-Smtp-Source: ABdhPJwGgye66zSe1fxDoT7FWgcstEA3fU0mr1+uPiH/LEJNRPqTzx0M9CyVUdTeXq7/3W4WmdslDw==
-X-Received: by 2002:adf:b611:: with SMTP id f17mr4125628wre.8.1612520557521;
-        Fri, 05 Feb 2021 02:22:37 -0800 (PST)
+        bh=iM8cMWgWJLnDGB+HK0k+/fxmAWD2PejSb5/ewrdwP7Q=;
+        b=sO+CXQxpO+b5TkkdUaBgIOZ0SccaWcnRGPMVB0bnqHszlUNXRAPeJb4RqUoQRnVy8G
+         imV9TcG/bknZs2r/jWNNmPX9gcO3IjXcggU74Q7ayCZH09wprypt8ExaRbyrsF2WPaAp
+         SOVfopL4NdYvylxkeueY6+hVArSY4IHwRrOGS1+TJMRrma+555I4XbE5AFSYlqrhOjfh
+         taPSq8GPuYwrNyOoVNjij1sh5m13DnQJeZWIK1RBe4JaUq2A88by83Qht8Rp8W+nTZRN
+         x1dKyFwX+vI0yF4KzFafr5lwg7hPEp9Tc/75gC6EnIZz7vCuASLXVT5H3kFr/NR39qmL
+         T1Bw==
+X-Gm-Message-State: AOAM5309k767DadlTqmI8kBdsA44/qN29LtKHdAIBcaAx423VmHryp2q
+        j+iAnSteaIxOSkHbCrHbDRf7pykYOdTB/g==
+X-Google-Smtp-Source: ABdhPJwyJoKjOtxqJwL6c0T2V/ietBuuUjhHrWG2TryApLtfbOR4W4SXiLz2Zidk77ko/dKfQ2w5Ew==
+X-Received: by 2002:a7b:c21a:: with SMTP id x26mr3571706wmi.50.1612530140350;
+        Fri, 05 Feb 2021 05:02:20 -0800 (PST)
 Received: from [192.168.8.177] ([85.255.234.187])
-        by smtp.gmail.com with ESMTPSA id c62sm8530955wmd.43.2021.02.05.02.22.36
+        by smtp.gmail.com with ESMTPSA id i8sm13050980wry.90.2021.02.05.05.02.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Feb 2021 02:22:36 -0800 (PST)
+        Fri, 05 Feb 2021 05:02:19 -0800 (PST)
+Subject: Re: [PATCH v3] io_uring: fix possible deadlock in io_uring_poll
 To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1612364276-26847-1-git-send-email-haoxu@linux.alibaba.com>
- <1612364276-26847-3-git-send-email-haoxu@linux.alibaba.com>
- <c97beeca-f401-3a21-5d8d-aa53a4292c03@gmail.com>
- <9b1d9e51-1b92-a651-304d-919693f9fb6f@gmail.com>
- <3668106c-5e80-50c8-6221-bdfa246c98ae@linux.alibaba.com>
- <f1a0bb32-6357-45e7-d4e4-c65c134f2229@gmail.com>
- <343f70ec-4c41-ed73-564e-494fca895e90@gmail.com>
- <150de65e-0f6a-315a-376e-8e3fcf07ce1a@linux.alibaba.com>
+References: <1612511388-153658-1-git-send-email-haoxu@linux.alibaba.com>
+ <1612514061-177495-1-git-send-email-haoxu@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -102,113 +97,66 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 2/2] io_uring: don't hold uring_lock when calling
- io_run_task_work*
-Message-ID: <570f215e-7292-380a-1213-fe6e84881386@gmail.com>
-Date:   Fri, 5 Feb 2021 10:18:52 +0000
+Message-ID: <acbd48f8-9535-ff47-9337-008588d8eb8c@gmail.com>
+Date:   Fri, 5 Feb 2021 12:58:10 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <150de65e-0f6a-315a-376e-8e3fcf07ce1a@linux.alibaba.com>
+In-Reply-To: <1612514061-177495-1-git-send-email-haoxu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 05/02/2021 09:57, Hao Xu wrote:
-> 在 2021/2/4 下午11:26, Pavel Begunkov 写道:
->> On 04/02/2021 11:17, Pavel Begunkov wrote:
->>> On 04/02/2021 03:25, Hao Xu wrote:
->>>> 在 2021/2/4 上午12:45, Pavel Begunkov 写道:
->>>>> On 03/02/2021 16:35, Pavel Begunkov wrote:
->>>>>> On 03/02/2021 14:57, Hao Xu wrote:
->>>>>>> This is caused by calling io_run_task_work_sig() to do work under
->>>>>>> uring_lock while the caller io_sqe_files_unregister() already held
->>>>>>> uring_lock.
->>>>>>> we need to check if uring_lock is held by us when doing unlock around
->>>>>>> io_run_task_work_sig() since there are code paths down to that place
->>>>>>> without uring_lock held.
->>>>>>
->>>>>> 1. we don't want to allow parallel io_sqe_files_unregister()s
->>>>>> happening, it's synchronised by uring_lock atm. Otherwise it's
->>>>>> buggy.
->>>> Here "since there are code paths down to that place without uring_lock held" I mean code path of io_ring_ctx_free().
->>>
->>> I guess it's to the 1/2, but let me outline the problem again:
->>> if you have two tasks userspace threads sharing a ring, then they
->>> can both and in parallel call syscall:files_unregeister. That's
->>> a potential double percpu_ref_kill(&data->refs), or even worse.
->>>
->>> Same for 2, but racing for the table and refs.
->>
->> There is a couple of thoughts for this:
->>
->> 1. I don't like waiting without holding the lock in general, because
->> someone can submit more reqs in-between and so indefinitely postponing
->> the files_unregister.
-> Thanks, Pavel.
-> I thought this issue before, until I saw this in __io_uring_register:
-> 
->   if (io_register_op_must_quiesce(opcode)) {
->           percpu_ref_kill(&ctx->refs);
+On 05/02/2021 08:34, Hao Xu wrote:
+> This might happen if we do epoll_wait on a uring fd while reading/writing
+> the former epoll fd in a sqe in the former uring instance.
+> So let's don't flush cqring overflow list, just do a simple check.
 
-It is different because of this kill, it will prevent submissions.
+I haven't tested it but tried out identical before.
+
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+Cc: stable@vger.kernel.org # 5.5+
 
 > 
->           /*
->           ¦* Drop uring mutex before waiting for references to exit. If
->           ¦* another thread is currently inside io_uring_enter() it might
->           ¦* need to grab the uring_lock to make progress. If we hold it
->           ¦* here across the drain wait, then we can deadlock. It's safe
->           ¦* to drop the mutex here, since no new references will come in
->           ¦* after we've killed the percpu ref.
->           ¦*/
->           mutex_unlock(&ctx->uring_lock);
->           do {
->                   ret = wait_for_completion_interruptible(&ctx->ref_comp);
->                   if (!ret)
->                           break;
->                   ret = io_run_task_work_sig();
->                   if (ret < 0)
->                           break;
->           } while (1);
+> Reported-by: Abaci <abaci@linux.alibaba.com>
+> Fixes: 6c503150ae33 ("io_uring: patch up IOPOLL overflow_flush sync")
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+> ---
+>  fs/io_uring.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
 > 
->           mutex_lock(&ctx->uring_lock);
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 38c6cbe1ab38..5f42ad6f2155 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -8718,8 +8718,21 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
+>  	smp_rmb();
+>  	if (!io_sqring_full(ctx))
+>  		mask |= EPOLLOUT | EPOLLWRNORM;
+> -	io_cqring_overflow_flush(ctx, false, NULL, NULL);
+> -	if (io_cqring_events(ctx))
+> +
+> +	/*
+> +	 * Don't flush cqring overflow list here, just do a simple check.
+> +	 * Otherwise there could possible be ABBA deadlock:
+> +	 *      CPU0                    CPU1
+> +	 *      ----                    ----
+> +	 * lock(&ctx->uring_lock);
+> +	 *                              lock(&ep->mtx);
+> +	 *                              lock(&ctx->uring_lock);
+> +	 * lock(&ep->mtx);
+> +	 *
+> +	 * Users may get EPOLLIN meanwhile seeing nothing in cqring, this
+> +	 * pushs them to do the flush.
+> +	 */
+> +	if (io_cqring_events(ctx) || test_bit(0, &ctx->cq_check_overflow))
+>  		mask |= EPOLLIN | EPOLLRDNORM;
+>  
+>  	return mask;
 > 
->           if (ret) {
->                   percpu_ref_resurrect(&ctx->refs);
->                   goto out_quiesce;
->           }
->   }
-> 
-> So now I guess the postponement issue also exits in the above code since
-> there could be another thread submiting reqs to the shared ctx(or we can say uring fd).
-> 
->> 2. I wouldn't want to add checks for that in submission path.
->>
->> So, a solution I think about is to wait under the lock, If we need to
->> run task_works -- briefly drop the lock, run task_works and then do
->> all unregister all over again. Keep an eye on refs, e.g. probably
->> need to resurrect it.
->>
->> Because we current task is busy nobody submits new requests on
->> its behalf, and so there can't be infinite number of in-task_work
->> reqs, and eventually it will just go wait/sleep forever (if not
->> signalled) under the mutex, so we can a kind of upper bound on
->> time.
->>
-> Do you mean sleeping with timeout rather than just sleeping? I think this works, I'll work on this and think about the detail.
-
-Without timeout -- it will be awaken when new task_works are coming in,
-but Jens knows better.
-
-> But before addressing this issue, Should I first send a patch to just fix the deadlock issue?
-
-Do you mean the deadlock 2/2 was trying to fix? Or some else? The thread
-is all about fixing it, but doing it right. Not sure there is a need for
-faster but incomplete solution, if that's what you meant.
 
 -- 
 Pavel Begunkov

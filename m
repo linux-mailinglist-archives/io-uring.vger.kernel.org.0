@@ -2,227 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2DFD310207
-	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 02:03:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE5331024B
+	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 02:36:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232542AbhBEBDE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Feb 2021 20:03:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49578 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232476AbhBEBCh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 20:02:37 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0662C06178B
-        for <io-uring@vger.kernel.org>; Thu,  4 Feb 2021 17:01:56 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id b3so5746448wrj.5
-        for <io-uring@vger.kernel.org>; Thu, 04 Feb 2021 17:01:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=nWcudyxv8U5GRdnkcYuoMSglXMJdmtLweUXevTHSpoc=;
-        b=ADyorhdbqomzB4Di0eer0yo217CuVsnuabWLtnkZlkRADlh5zBLvByGoY4A0zvteMb
-         OhIS3diuvXpaDSoQ+r2+FRKU6f5ogaKePx5OSZ97bWLXIGg7pwItUAQBoGCwJOD51URA
-         kXvXN90h2AzVKMPLjybbPqrJp3tFuzMMiCpbZlectAAwmkil+RO4bn+Z9M/5WZ00DDoj
-         z1hmJ9eBXfQv/qJGWvFS79bru7KKoyVoOkO/tlZTpxUvBtQGV2rtAFRIF/450ExZFEiJ
-         oXf4Cads5qeeQivUARzcn2B+ejtdZZNK/WdF4Z4MX4PN/n18GAwgfUkT4H/36i/GjBLq
-         Wq2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nWcudyxv8U5GRdnkcYuoMSglXMJdmtLweUXevTHSpoc=;
-        b=kCO21kXRYGMwRdAJL0x7xTzAqHwidaCDECgSAmjrAzaM9e9fsFNpzz4vhD37qM4PeX
-         MDUK4pOxk/ePrwAqZfvVWJFUGDr4+gbhE3NELuhfhbiDenxV4gKbRKCIJoWE5X5giBJy
-         GnQSqRXqgviBe2C/EVL3KC78OYIGZlLqrqR+x8fRYzaAD+tvATGqHpozdx5aIRGL3grn
-         ST0oHUZ6+er4amf2Hhw67YCkZnlR8PteO4KGPQP605SIB1zo6QGKJy2ot0u/fAV1mviw
-         4hYZ/sJ6apftv1qqyv9mV9tHgFLbSHQifxkcB1ojBj/AFG5C4QjPHkKViBQQeXHbLrlR
-         hSIw==
-X-Gm-Message-State: AOAM532ctPjfLLdU6dTEqI8RyHUFgOXrkgoxYgHsCovBI1kOzZg7PV/Y
-        w24ddi8FslqXk7Sm6IcnuJ8=
-X-Google-Smtp-Source: ABdhPJz9h5i6drKneoFPD168fBHcmvzLUYpcqPaveAeUyoJOaVgWlaIpRbGIi8sGgEPJsLZPNwaxxg==
-X-Received: by 2002:a05:6000:108b:: with SMTP id y11mr1979975wrw.379.1612486915540;
-        Thu, 04 Feb 2021 17:01:55 -0800 (PST)
-Received: from localhost.localdomain ([148.252.133.145])
-        by smtp.gmail.com with ESMTPSA id i18sm10853199wrn.29.2021.02.04.17.01.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Feb 2021 17:01:55 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/3] io_uring: refactor sendmsg/recvmsg iov managing
-Date:   Fri,  5 Feb 2021 00:58:00 +0000
-Message-Id: <ac7dc756e811000751c9cc8fba5d03cc73da314a.1612486458.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1612486458.git.asml.silence@gmail.com>
-References: <cover.1612486458.git.asml.silence@gmail.com>
+        id S232727AbhBEBfD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Feb 2021 20:35:03 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:56805 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232726AbhBEBfC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Feb 2021 20:35:02 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UNvCpgG_1612488858;
+Received: from B-D1K7ML85-0059.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UNvCpgG_1612488858)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 05 Feb 2021 09:34:19 +0800
+Subject: Re: [PATCH] io_uring: don't modify identity's files uncess identity
+ is cowed
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, asml.silence@gmail.com
+References: <20210204092056.12797-1-xiaoguang.wang@linux.alibaba.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <7297b50d-0fe8-3424-1664-a3a74c92879d@linux.alibaba.com>
+Date:   Fri, 5 Feb 2021 09:34:18 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210204092056.12797-1-xiaoguang.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Current iov handling with recvmsg/sendmsg may be confusing. First make a
-rule for msg->iov: either it points to an allocated iov that have to be
-kfree()'d later, or it's NULL and we use fast_iov. That's much better
-than current 3-state (also can point to fast_iov). And rename it into
-free_iov for uniformity with read/write.
+A typo in subject, 'uncess' -> 'unless'?
 
-Also, instead of after struct io_async_msghdr copy fixing up of
-msg.msg_iter.iov has been happening in io_recvmsg()/io_sendmsg(). Move
-it into io_setup_async_msg(), that's the right place.
+Thanks,
+Joseph
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 55 +++++++++++++++++++++++----------------------------
- 1 file changed, 25 insertions(+), 30 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e07a7fa15cfa..7008e0c7e05d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -594,7 +594,8 @@ struct io_async_connect {
- 
- struct io_async_msghdr {
- 	struct iovec			fast_iov[UIO_FASTIOV];
--	struct iovec			*iov;
-+	/* points to an allocated iov, if NULL we use fast_iov instead */
-+	struct iovec			*free_iov;
- 	struct sockaddr __user		*uaddr;
- 	struct msghdr			msg;
- 	struct sockaddr_storage		addr;
-@@ -4551,24 +4552,27 @@ static int io_setup_async_msg(struct io_kiocb *req,
- 	if (async_msg)
- 		return -EAGAIN;
- 	if (io_alloc_async_data(req)) {
--		if (kmsg->iov != kmsg->fast_iov)
--			kfree(kmsg->iov);
-+		kfree(kmsg->free_iov);
- 		return -ENOMEM;
- 	}
- 	async_msg = req->async_data;
- 	req->flags |= REQ_F_NEED_CLEANUP;
- 	memcpy(async_msg, kmsg, sizeof(*kmsg));
- 	async_msg->msg.msg_name = &async_msg->addr;
-+	/* if were using fast_iov, set it to the new one */
-+	if (!async_msg->free_iov)
-+		async_msg->msg.msg_iter.iov = async_msg->fast_iov;
-+
- 	return -EAGAIN;
- }
- 
- static int io_sendmsg_copy_hdr(struct io_kiocb *req,
- 			       struct io_async_msghdr *iomsg)
- {
--	iomsg->iov = iomsg->fast_iov;
- 	iomsg->msg.msg_name = &iomsg->addr;
-+	iomsg->free_iov = iomsg->fast_iov;
- 	return sendmsg_copy_msghdr(&iomsg->msg, req->sr_msg.umsg,
--				   req->sr_msg.msg_flags, &iomsg->iov);
-+				   req->sr_msg.msg_flags, &iomsg->free_iov);
- }
- 
- static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-@@ -4609,13 +4613,8 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
- 
--	if (req->async_data) {
--		kmsg = req->async_data;
--		/* if iov is set, it's allocated already */
--		if (!kmsg->iov)
--			kmsg->iov = kmsg->fast_iov;
--		kmsg->msg.msg_iter.iov = kmsg->iov;
--	} else {
-+	kmsg = req->async_data;
-+	if (!kmsg) {
- 		ret = io_sendmsg_copy_hdr(req, &iomsg);
- 		if (ret)
- 			return ret;
-@@ -4634,8 +4633,8 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (ret == -ERESTARTSYS)
- 		ret = -EINTR;
- 
--	if (kmsg->iov != kmsg->fast_iov)
--		kfree(kmsg->iov);
-+	if (kmsg->free_iov)
-+		kfree(kmsg->free_iov);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
- 	if (ret < 0)
- 		req_set_fail_links(req);
-@@ -4704,10 +4703,11 @@ static int __io_recvmsg_copy_hdr(struct io_kiocb *req,
- 		if (copy_from_user(iomsg->fast_iov, uiov, sizeof(*uiov)))
- 			return -EFAULT;
- 		sr->len = iomsg->fast_iov[0].iov_len;
--		iomsg->iov = NULL;
-+		iomsg->free_iov = NULL;
- 	} else {
-+		iomsg->free_iov = iomsg->fast_iov;
- 		ret = __import_iovec(READ, uiov, iov_len, UIO_FASTIOV,
--				     &iomsg->iov, &iomsg->msg.msg_iter,
-+				     &iomsg->free_iov, &iomsg->msg.msg_iter,
- 				     false);
- 		if (ret > 0)
- 			ret = 0;
-@@ -4746,10 +4746,11 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
- 		if (clen < 0)
- 			return -EINVAL;
- 		sr->len = clen;
--		iomsg->iov = NULL;
-+		iomsg->free_iov = NULL;
- 	} else {
-+		iomsg->free_iov = iomsg->fast_iov;
- 		ret = __import_iovec(READ, (struct iovec __user *)uiov, len,
--				   UIO_FASTIOV, &iomsg->iov,
-+				   UIO_FASTIOV, &iomsg->free_iov,
- 				   &iomsg->msg.msg_iter, true);
- 		if (ret < 0)
- 			return ret;
-@@ -4763,7 +4764,6 @@ static int io_recvmsg_copy_hdr(struct io_kiocb *req,
- 			       struct io_async_msghdr *iomsg)
- {
- 	iomsg->msg.msg_name = &iomsg->addr;
--	iomsg->iov = iomsg->fast_iov;
- 
- #ifdef CONFIG_COMPAT
- 	if (req->ctx->compat)
-@@ -4834,13 +4834,8 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
- 
--	if (req->async_data) {
--		kmsg = req->async_data;
--		/* if iov is set, it's allocated already */
--		if (!kmsg->iov)
--			kmsg->iov = kmsg->fast_iov;
--		kmsg->msg.msg_iter.iov = kmsg->iov;
--	} else {
-+	kmsg = req->async_data;
-+	if (!kmsg) {
- 		ret = io_recvmsg_copy_hdr(req, &iomsg);
- 		if (ret)
- 			return ret;
-@@ -4872,8 +4867,8 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
- 		cflags = io_put_recv_kbuf(req);
--	if (kmsg->iov != kmsg->fast_iov)
--		kfree(kmsg->iov);
-+	if (kmsg->free_iov)
-+		kfree(kmsg->free_iov);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
- 	if (ret < 0)
- 		req_set_fail_links(req);
-@@ -6166,8 +6161,8 @@ static void __io_clean_op(struct io_kiocb *req)
- 		case IORING_OP_RECVMSG:
- 		case IORING_OP_SENDMSG: {
- 			struct io_async_msghdr *io = req->async_data;
--			if (io->iov != io->fast_iov)
--				kfree(io->iov);
-+
-+			kfree(io->free_iov);
- 			break;
- 			}
- 		case IORING_OP_SPLICE:
--- 
-2.24.0
-
+On 2/4/21 5:20 PM, Xiaoguang Wang wrote:
+> Abaci Robot reported following panic:
+> BUG: kernel NULL pointer dereference, address: 0000000000000000
+> PGD 800000010ef3f067 P4D 800000010ef3f067 PUD 10d9df067 PMD 0
+> Oops: 0002 [#1] SMP PTI
+> CPU: 0 PID: 1869 Comm: io_wqe_worker-0 Not tainted 5.11.0-rc3+ #1
+> Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+> RIP: 0010:put_files_struct+0x1b/0x120
+> Code: 24 18 c7 00 f4 ff ff ff e9 4d fd ff ff 66 90 0f 1f 44 00 00 41 57 41 56 49 89 fe 41 55 41 54 55 53 48 83 ec 08 e8 b5 6b db ff  41 ff 0e 74 13 48 83 c4 08 5b 5d 41 5c 41 5d 41 5e 41 5f e9 9c
+> RSP: 0000:ffffc90002147d48 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffff88810d9a5300 RCX: 0000000000000000
+> RDX: ffff88810d87c280 RSI: ffffffff8144ba6b RDI: 0000000000000000
+> RBP: 0000000000000080 R08: 0000000000000001 R09: ffffffff81431500
+> R10: ffff8881001be000 R11: 0000000000000000 R12: ffff88810ac2f800
+> R13: ffff88810af38a00 R14: 0000000000000000 R15: ffff8881057130c0
+> FS:  0000000000000000(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000000 CR3: 000000010dbaa002 CR4: 00000000003706f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  __io_clean_op+0x10c/0x2a0
+>  io_dismantle_req+0x3c7/0x600
+>  __io_free_req+0x34/0x280
+>  io_put_req+0x63/0xb0
+>  io_worker_handle_work+0x60e/0x830
+>  ? io_wqe_worker+0x135/0x520
+>  io_wqe_worker+0x158/0x520
+>  ? __kthread_parkme+0x96/0xc0
+>  ? io_worker_handle_work+0x830/0x830
+>  kthread+0x134/0x180
+>  ? kthread_create_worker_on_cpu+0x90/0x90
+>  ret_from_fork+0x1f/0x30
+> Modules linked in:
+> CR2: 0000000000000000
+> ---[ end trace c358ca86af95b1e7 ]---
+> 
+> I guess case below can trigger above panic: there're two threads which
+> operates different io_uring ctxs and share same sqthread identity, and
+> later one thread exits, io_uring_cancel_task_requests() will clear
+> task->io_uring->identity->files to be NULL in sqpoll mode, then another
+> ctx that uses same identity will panic.
+> 
+> Indeed we don't need to clear task->io_uring->identity->files here,
+> io_grab_identity() should handle identity->files changes well, if
+> task->io_uring->identity->files is not equal to current->files,
+> io_cow_identity() should handle this changes well.
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+> ---
+>  fs/io_uring.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 38c6cbe1ab38..5d3348d66f06 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -8982,12 +8982,6 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
+>  
+>  	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sq_data) {
+>  		atomic_dec(&task->io_uring->in_idle);
+> -		/*
+> -		 * If the files that are going away are the ones in the thread
+> -		 * identity, clear them out.
+> -		 */
+> -		if (task->io_uring->identity->files == files)
+> -			task->io_uring->identity->files = NULL;
+>  		io_sq_thread_unpark(ctx->sq_data);
+>  	}
+>  }
+> 

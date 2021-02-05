@@ -2,55 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15691311430
-	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 23:06:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE498311633
+	for <lists+io-uring@lfdr.de>; Sat,  6 Feb 2021 00:00:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbhBEWBZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Feb 2021 17:01:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49192 "EHLO
+        id S231788AbhBEW41 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Feb 2021 17:56:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232967AbhBEO5n (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 09:57:43 -0500
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD12C06178B
-        for <io-uring@vger.kernel.org>; Fri,  5 Feb 2021 08:25:16 -0800 (PST)
-Received: by mail-il1-x129.google.com with SMTP id e1so6352734ilu.0
-        for <io-uring@vger.kernel.org>; Fri, 05 Feb 2021 08:25:16 -0800 (PST)
+        with ESMTP id S231921AbhBEMul (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 07:50:41 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31B0C061786
+        for <io-uring@vger.kernel.org>; Fri,  5 Feb 2021 04:49:57 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id v15so7569355wrx.4
+        for <io-uring@vger.kernel.org>; Fri, 05 Feb 2021 04:49:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mFkrczzU90D8CHDmfKDunabJBrNNdE+35qHQjQ9oaGk=;
-        b=BXW0C4MPo4SQFxwCf+PPgJeOxKMM5tjN/kngoi+15tsiK+Iipzg7HyOzihp7KYWLlM
-         3B9oMdPM8ggSIXjaiaqQYysa56ri3A799ZO5HcuyK0qM+BEM5/M7Afoi8fcT42m8Cd0u
-         oE5+MwFVWeQPASy8CkMaxJ9qot7gtVaA58cGnKd20+wCT1cCSw94f1KxG2Au/Kff9JyA
-         USMWfPCaqelts0Zoh4gyeUZRc3KZvmedbBcP4kkIZXtMQETDWq/BfioFkqbEcrf61W+c
-         2nPnxkLr5Co/B1jXbgLzD1pmVsGFCUi/8q8KaHLzjKsKzTCTa8wc162D60wR1WWQ4qiz
-         Md+g==
+        bh=3DJdX6bRVV97dMnba7dy5xmVdJfTEwvUkprfGzXoEhQ=;
+        b=uMRWm0o6PhPUGcNzAbYsC1P6GxPicDLmxGPH8xmAHuayGi7WdAXwvqfmhqJdT6/QIg
+         GqJD2AZ8VMKm+7HfiGK1f1pt6fb204AktgpQwlr7+SA1wG85vPPjFzDqlQ+Z1SY/dbFH
+         OLj95F/sAw4QS516YstK2B9UOcmx7Cur2g6CMebpU91wvlI+4hCNBts/ikuZleC0MS/v
+         Oax/UHf47g+6LTi7+IlVV6pfeo8cg6qEBwCyZh2C4gDQibp1Q/FHjiTMF/hwTUHvhXtA
+         163JOeGTM1gkSe3DAFH2zSxArsK52/7jkae55ybnIAwzVu22D21yDu4q+RT5odgif0tI
+         +mfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mFkrczzU90D8CHDmfKDunabJBrNNdE+35qHQjQ9oaGk=;
-        b=c+EQa/JBASvebztncC2fmZik/S/kK7UimysrGXZUH3u63JY045DPYMLO1d2lT7YCit
-         uzBoAjKE5p2t8HkCXRUA7i7Frv8ARV0auqwt5T7huBJ2RImsvADBwdvVDhvn5ll6ujKZ
-         4OkbfAvhEUfhTr7TT3QZfSjAIpzOBKx3q+gcWceuh7tQuRdnQgohwrsqeOxxmOM2+JmH
-         4uTYAIkbrQ8g5AL7KeukSvPZ7+Na6L+aiIgli5xoOAclmEextgZgx29HZ3OR/fPXuS4s
-         d9V59DeZYOiPrEmxMI+gLVrsXPkAg4xU9+3VqUHLKhyQOO68nzu5zEHgZMAb51bz4jzC
-         jFJA==
-X-Gm-Message-State: AOAM533z4uDhX/qQbrSj1eTT/le+J5uqgn/RguU3vkLw3QVAXpc3pWO7
-        1hRYEU62uEjHtQCc3cymHCfSZhZoEJz3k1iA
-X-Google-Smtp-Source: ABdhPJyuIj+sxQeoECcieIK5ss/mdDXAVrZteFO5JJ1xLDgQwCoWupan9kP8Lh0q03TKsH1zAp+XdQ==
-X-Received: by 2002:a92:c90b:: with SMTP id t11mr4238691ilp.275.1612536140728;
-        Fri, 05 Feb 2021 06:42:20 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r6sm4155323ilt.56.2021.02.05.06.42.19
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=3DJdX6bRVV97dMnba7dy5xmVdJfTEwvUkprfGzXoEhQ=;
+        b=smzg4c7NTtknXWlXTZSSE6AVITjGk3cV32LYcIaiU2WOJFy9Mwdv5FVujreNkvKQis
+         BGSzKix3j+n79AYz+/vuJoJ0Sb6lLNyBPrnI66YPFS6r4z6kkhxv4cU5w/gHOjBVIhdC
+         YUPx31Q1BowB5BuBmw65iXVEKNzRM2SlnkbUvONEvohccbko3QHzTVuVA2mTPnEwzTNe
+         4cp1xa7brKqnV/+Qyot6xwzPLbizyeNaBhmUfW6k3NXLMLGg36M77/eCMi/SWr7HgcgA
+         HIR6qfsdKHMtdo9g+1zsZxU5ZC93+OPHu8DRy4yZ0G9oelIRhC7tSA7srXojzueCkBxq
+         WhrQ==
+X-Gm-Message-State: AOAM533caAa5Nez6jsOOgxj7P8HMJ5+6oIF1vYGpOg2JOsMiSZseQW3Q
+        OgOdlG2wT1Vmr96brkSQOj61oMBFJqqVcQ==
+X-Google-Smtp-Source: ABdhPJzg0i6SjDP/BSYjKy3fTOPoF3Pk+I/95S1Eoj3f1MLVRMfkw05Gk6AvsuOd9ZY+oLjDuLtwiw==
+X-Received: by 2002:a05:6000:2aa:: with SMTP id l10mr4873649wry.368.1612529396392;
+        Fri, 05 Feb 2021 04:49:56 -0800 (PST)
+Received: from [192.168.8.177] ([85.255.234.187])
+        by smtp.gmail.com with ESMTPSA id r16sm11881509wrt.68.2021.02.05.04.49.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Feb 2021 06:42:19 -0800 (PST)
-Subject: Re: bug with fastpoll accept and sqpoll + IOSQE_FIXED_FILE
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Victor Stewart <v@nametag.social>
+        Fri, 05 Feb 2021 04:49:55 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, Victor Stewart <v@nametag.social>
 Cc:     io-uring <io-uring@vger.kernel.org>
 References: <CAM1kxwhCXpTCRjZ5tc_TPADTK3EFeWHD369wr8WV4nH8+M_thg@mail.gmail.com>
  <49743b61-3777-f152-e1d5-128a53803bcd@gmail.com>
@@ -66,195 +64,227 @@ References: <CAM1kxwhCXpTCRjZ5tc_TPADTK3EFeWHD369wr8WV4nH8+M_thg@mail.gmail.com>
  <5c3d084f-88e4-3e86-3560-95d90bb9ffcd@gmail.com>
  <39bc0ff3-db02-8fc7-da5c-b2f5f0fc715e@gmail.com>
  <ab870cb5-513d-420e-6438-b918f9f6c453@kernel.dk>
- <c9550dcf-ce53-c214-8c4b-6165ad6605a9@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8349a07b-6975-dc55-dc0a-a4228f913af3@kernel.dk>
-Date:   Fri, 5 Feb 2021 07:42:20 -0700
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: bug with fastpoll accept and sqpoll + IOSQE_FIXED_FILE
+Message-ID: <c9550dcf-ce53-c214-8c4b-6165ad6605a9@gmail.com>
+Date:   Fri, 5 Feb 2021 12:46:11 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <c9550dcf-ce53-c214-8c4b-6165ad6605a9@gmail.com>
+In-Reply-To: <ab870cb5-513d-420e-6438-b918f9f6c453@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/5/21 5:46 AM, Pavel Begunkov wrote:
-> On 04/02/2021 16:50, Jens Axboe wrote:
->> On 2/3/21 4:49 AM, Pavel Begunkov wrote:
->>> On 02/02/2021 20:56, Pavel Begunkov wrote:
->>>> On 02/02/2021 20:48, Jens Axboe wrote:
->>>>> On 2/2/21 1:34 PM, Pavel Begunkov wrote:
->>>>>> On 02/02/2021 17:41, Pavel Begunkov wrote:
->>>>>>> On 02/02/2021 17:24, Jens Axboe wrote:
->>>>>>>> On 2/2/21 10:10 AM, Victor Stewart wrote:
->>>>>>>>>> Can you send the updated test app?
->>>>>>>>>
->>>>>>>>> https://gist.github.com/victorstewart/98814b65ed702c33480487c05b40eb56
->>>>>>>>>
->>>>>>>>> same link i just updated the same gist
+On 04/02/2021 16:50, Jens Axboe wrote:
+> On 2/3/21 4:49 AM, Pavel Begunkov wrote:
+>> On 02/02/2021 20:56, Pavel Begunkov wrote:
+>>> On 02/02/2021 20:48, Jens Axboe wrote:
+>>>> On 2/2/21 1:34 PM, Pavel Begunkov wrote:
+>>>>> On 02/02/2021 17:41, Pavel Begunkov wrote:
+>>>>>> On 02/02/2021 17:24, Jens Axboe wrote:
+>>>>>>> On 2/2/21 10:10 AM, Victor Stewart wrote:
+>>>>>>>>> Can you send the updated test app?
 >>>>>>>>
->>>>>>>> And how are you running it?
+>>>>>>>> https://gist.github.com/victorstewart/98814b65ed702c33480487c05b40eb56
+>>>>>>>>
+>>>>>>>> same link i just updated the same gist
 >>>>>>>
->>>>>>> with SQPOLL    with    FIXED FLAG -> FAILURE: failed with error = ???
->>>>>>> 	-> io_uring_wait_cqe_timeout() strangely returns -1, (-EPERM??)
+>>>>>>> And how are you running it?
 >>>>>>
->>>>>> Ok, _io_uring_get_cqe() is just screwed twice
->>>>>>
->>>>>> TL;DR
->>>>>> we enter into it with submit=0, do an iteration, which decrements it,
->>>>>> then a second iteration passes submit=-1, which is returned back by
->>>>>> the kernel as a result and propagated back from liburing...
+>>>>>> with SQPOLL    with    FIXED FLAG -> FAILURE: failed with error = ???
+>>>>>> 	-> io_uring_wait_cqe_timeout() strangely returns -1, (-EPERM??)
 >>>>>
->>>>> Yep, that's what I came up with too. We really just need a clear way
->>>>> of knowing when to break out, and when to keep going. Eg if we've
->>>>> done a loop and don't end up calling the system call, then there's
->>>>> no point in continuing.
+>>>>> Ok, _io_uring_get_cqe() is just screwed twice
+>>>>>
+>>>>> TL;DR
+>>>>> we enter into it with submit=0, do an iteration, which decrements it,
+>>>>> then a second iteration passes submit=-1, which is returned back by
+>>>>> the kernel as a result and propagated back from liburing...
 >>>>
->>>> We can bodge something up (and forget about it), and do much cleaner
->>>> for IORING_FEAT_EXT_ARG, because we don't have LIBURING_UDATA_TIMEOUT
->>>> reqs for it and so can remove peek and so on.
+>>>> Yep, that's what I came up with too. We really just need a clear way
+>>>> of knowing when to break out, and when to keep going. Eg if we've
+>>>> done a loop and don't end up calling the system call, then there's
+>>>> no point in continuing.
 >>>
->>> This version looks reasonably simple, and even passes tests and all
->>> issues found by Victor's test. Didn't test it yet, but should behave
->>> similarly in regard of internal timeouts (pre IORING_FEAT_EXT_ARG).
->>>
->>> static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_ptr,
->>> 			     struct get_data *data)
->>> {
->>> 	struct io_uring_cqe *cqe = NULL;
->>> 	int ret = 0, err;
->>>
->>> 	do {
->>> 		unsigned flags = 0;
->>> 		unsigned nr_available;
->>> 		bool enter = false;
->>>
->>> 		err = __io_uring_peek_cqe(ring, &cqe, &nr_available);
->>> 		if (err)
->>> 			break;
->>>
->>> 		/* IOPOLL won't proceed when there're not reaped CQEs */
->>> 		if (cqe && (ring->flags & IORING_SETUP_IOPOLL))
->>> 			data->wait_nr = 0;
->>>
->>> 		if (data->wait_nr > nr_available || cq_ring_needs_flush(ring)) {
->>> 			flags = IORING_ENTER_GETEVENTS | data->get_flags;
->>> 			enter = true;
->>> 		}
->>> 		if (data->submit) {
->>> 			sq_ring_needs_enter(ring, &flags);
->>> 			enter = true;
->>> 		}
->>> 		if (!enter)
->>> 			break;
->>>
->>> 		ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
->>> 					    data->wait_nr, flags, data->arg,
->>> 					    data->sz);
->>> 		if (ret < 0) {
->>> 			err = -errno;
->>> 			break;
->>> 		}
->>> 		data->submit -= ret;
->>> 	} while (1);
->>>
->>> 	*cqe_ptr = cqe;
->>> 	return err;
->>> }
+>>> We can bodge something up (and forget about it), and do much cleaner
+>>> for IORING_FEAT_EXT_ARG, because we don't have LIBURING_UDATA_TIMEOUT
+>>> reqs for it and so can remove peek and so on.
 >>
->> So here's my take on this - any rewrite of _io_uring_get_cqe() is going
->> to end up adding special cases, that's unfortunately just the nature of
->> the game. And since we're going to be doing a new liburing release very
->> shortly, this isn't a great time to add a rewrite of it. It'll certainly
->> introduce more bugs than it solves, and hence regressions, no matter how
->> careful we are.
+>> This version looks reasonably simple, and even passes tests and all
+>> issues found by Victor's test. Didn't test it yet, but should behave
+>> similarly in regard of internal timeouts (pre IORING_FEAT_EXT_ARG).
 >>
->> Hence my suggestion is to just patch this in a trivial kind of fashion,
->> even if it doesn't really make the function any prettier. But it'll be
->> safer for a release, and then we can rework the function after.
+>> static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_ptr,
+>> 			     struct get_data *data)
+>> {
+>> 	struct io_uring_cqe *cqe = NULL;
+>> 	int ret = 0, err;
 >>
->> With that in mind, here's my suggestion. The premise is if we go through
->> the loop and don't do io_uring_enter(), then there's no point in
->> continuing. That's the trivial fix.
-> 
-> Your idea but imho cleaner below.
-> +1 comment inline
-
-Shouldn't be hard, it was just a quick hack :-)
-
->> diff --git a/src/queue.c b/src/queue.c
->> index 94f791e..4161aa7 100644
->> --- a/src/queue.c
->> +++ b/src/queue.c
->> @@ -89,12 +89,13 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
->>  {
->>  	struct io_uring_cqe *cqe = NULL;
->>  	const int to_wait = data->wait_nr;
->> -	int ret = 0, err;
->> +	int err;
->>  
->>  	do {
->>  		bool cq_overflow_flush = false;
->>  		unsigned flags = 0;
->>  		unsigned nr_available;
->> +		int ret = -2;
->>  
->>  		err = __io_uring_peek_cqe(ring, &cqe, &nr_available);
->>  		if (err)
->> @@ -117,7 +118,9 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
->>  			ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
->>  					data->wait_nr, flags, data->arg,
->>  					data->sz);
->> -		if (ret < 0) {
->> +		if (ret == -2) {
->> +			break;
-> 
-> peek/wait_cqe expect that cqe_ptr is filled on return=0. Looks we need
-> to return an error or hack up those functions.
-
-Right good point, we'd need -EAGAIN.
-
->> +		} else if (ret < 0) {
->>  			err = -errno;
->>  		} else if (ret == (int)data->submit) {
->>  			data->submit = 0;
+>> 	do {
+>> 		unsigned flags = 0;
+>> 		unsigned nr_available;
+>> 		bool enter = false;
 >>
+>> 		err = __io_uring_peek_cqe(ring, &cqe, &nr_available);
+>> 		if (err)
+>> 			break;
+>>
+>> 		/* IOPOLL won't proceed when there're not reaped CQEs */
+>> 		if (cqe && (ring->flags & IORING_SETUP_IOPOLL))
+>> 			data->wait_nr = 0;
+>>
+>> 		if (data->wait_nr > nr_available || cq_ring_needs_flush(ring)) {
+>> 			flags = IORING_ENTER_GETEVENTS | data->get_flags;
+>> 			enter = true;
+>> 		}
+>> 		if (data->submit) {
+>> 			sq_ring_needs_enter(ring, &flags);
+>> 			enter = true;
+>> 		}
+>> 		if (!enter)
+>> 			break;
+>>
+>> 		ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
+>> 					    data->wait_nr, flags, data->arg,
+>> 					    data->sz);
+>> 		if (ret < 0) {
+>> 			err = -errno;
+>> 			break;
+>> 		}
+>> 		data->submit -= ret;
+>> 	} while (1);
+>>
+>> 	*cqe_ptr = cqe;
+>> 	return err;
+>> }
 > 
+> So here's my take on this - any rewrite of _io_uring_get_cqe() is going
+> to end up adding special cases, that's unfortunately just the nature of
+> the game. And since we're going to be doing a new liburing release very
+> shortly, this isn't a great time to add a rewrite of it. It'll certainly
+> introduce more bugs than it solves, and hence regressions, no matter how
+> careful we are.
 > 
+> Hence my suggestion is to just patch this in a trivial kind of fashion,
+> even if it doesn't really make the function any prettier. But it'll be
+> safer for a release, and then we can rework the function after.
+> 
+> With that in mind, here's my suggestion. The premise is if we go through
+> the loop and don't do io_uring_enter(), then there's no point in
+> continuing. That's the trivial fix.
+
+Your idea but imho cleaner below.
++1 comment inline
+
 > diff --git a/src/queue.c b/src/queue.c
-> index 94f791e..7d6f31d 100644
+> index 94f791e..4161aa7 100644
 > --- a/src/queue.c
 > +++ b/src/queue.c
-> @@ -112,11 +112,15 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
->  			flags = IORING_ENTER_GETEVENTS | data->get_flags;
->  		if (data->submit)
->  			sq_ring_needs_enter(ring, &flags);
-> -		if (data->wait_nr > nr_available || data->submit ||
-> -		    cq_overflow_flush)
-> -			ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
-> -					data->wait_nr, flags, data->arg,
-> -					data->sz);
-> +
-> +		if (data->wait_nr <= nr_available && !data->submit &&
-> +		    !cq_overflow_flush) {
-> +			err = ?;
-
-which I guess is the actual error missing from here?
-
+> @@ -89,12 +89,13 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
+>  {
+>  	struct io_uring_cqe *cqe = NULL;
+>  	const int to_wait = data->wait_nr;
+> -	int ret = 0, err;
+> +	int err;
+>  
+>  	do {
+>  		bool cq_overflow_flush = false;
+>  		unsigned flags = 0;
+>  		unsigned nr_available;
+> +		int ret = -2;
+>  
+>  		err = __io_uring_peek_cqe(ring, &cqe, &nr_available);
+>  		if (err)
+> @@ -117,7 +118,9 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
+>  			ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
+>  					data->wait_nr, flags, data->arg,
+>  					data->sz);
+> -		if (ret < 0) {
+> +		if (ret == -2) {
 > +			break;
-> +		}
-> +		ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
-> +				data->wait_nr, flags, data->arg,
-> +				data->sz);
->  		if (ret < 0) {
+
+peek/wait_cqe expect that cqe_ptr is filled on return=0. Looks we need
+to return an error or hack up those functions.
+
+> +		} else if (ret < 0) {
 >  			err = -errno;
 >  		} else if (ret == (int)data->submit) {
+>  			data->submit = 0;
 > 
 
 
--- 
-Jens Axboe
+diff --git a/src/queue.c b/src/queue.c
+index 94f791e..7d6f31d 100644
+--- a/src/queue.c
++++ b/src/queue.c
+@@ -112,11 +112,15 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
+ 			flags = IORING_ENTER_GETEVENTS | data->get_flags;
+ 		if (data->submit)
+ 			sq_ring_needs_enter(ring, &flags);
+-		if (data->wait_nr > nr_available || data->submit ||
+-		    cq_overflow_flush)
+-			ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
+-					data->wait_nr, flags, data->arg,
+-					data->sz);
++
++		if (data->wait_nr <= nr_available && !data->submit &&
++		    !cq_overflow_flush) {
++			err = ?;
++			break;
++		}
++		ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
++				data->wait_nr, flags, data->arg,
++				data->sz);
+ 		if (ret < 0) {
+ 			err = -errno;
+ 		} else if (ret == (int)data->submit) {
 
+-- 
+Pavel Begunkov

@@ -2,188 +2,252 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D74311708
+	by mail.lfdr.de (Postfix) with ESMTP id A2A5A311709
 	for <lists+io-uring@lfdr.de>; Sat,  6 Feb 2021 00:30:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230087AbhBEXW7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Feb 2021 18:22:59 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:42452 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230493AbhBEJ6O (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 04:58:14 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UNxEx-m_1612519048;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UNxEx-m_1612519048)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 05 Feb 2021 17:57:28 +0800
-Subject: Re: [PATCH 2/2] io_uring: don't hold uring_lock when calling
- io_run_task_work*
+        id S229751AbhBEXXQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Feb 2021 18:23:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51468 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230355AbhBEJ7D (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 04:59:03 -0500
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A74C0613D6
+        for <io-uring@vger.kernel.org>; Fri,  5 Feb 2021 01:58:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:From:To:CC;
+        bh=YRO6NFJkwwaBsMcfOTjrZj78NAmiG/R9d12G4x2q9ck=; b=worSeGdOMEBK5joug9sXRZIWaQ
+        G5Kvl3d04cY/x6kCpqKfRWZo9jmG9a6EKwbzAnfOYj2rmaeEDjtBspiGJ+uBObAtm3n9ETCyB4Fei
+        /eDltmJwUU10/e68MdcYSNnkoThx1z4KgvYUiq8yRcZ2u8MjFOox5Rw3kvxDSqSKsCEXP6DD5pZE9
+        Pk6i8G/ds5j4/svoqfRtUZ9SdKkrVJiHeDzBQBUwGVG08lZ28VtjuvW68vkSsUkU3XsWgLdjM+dqF
+        y5bO7l8OaT63QQzLC7LhdI/W7eweLSGaK0iYdyOJIgbymc9SxgS9SK2NmIUfG7idnRsmYIAiLcKMB
+        sKy0NgSBLuBzGcz10MTPmgR0F0tjdXE3lIOOFciEwCc4lbyrZiWTnCyzSxX6W8lx1dRchNVjbU5+S
+        fH3LMngS8bTQBSfusZ6iPV/tIFEBIn52TTjfidkxp4M95A1wB7VFl8xcFHjvxrJ30/hgd7cP/1p44
+        U1tClwupkeke7ZNo4YUR79n1;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1l7xsa-00037o-RX; Fri, 05 Feb 2021 09:58:20 +0000
 To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1612364276-26847-1-git-send-email-haoxu@linux.alibaba.com>
- <1612364276-26847-3-git-send-email-haoxu@linux.alibaba.com>
- <c97beeca-f401-3a21-5d8d-aa53a4292c03@gmail.com>
- <9b1d9e51-1b92-a651-304d-919693f9fb6f@gmail.com>
- <3668106c-5e80-50c8-6221-bdfa246c98ae@linux.alibaba.com>
- <f1a0bb32-6357-45e7-d4e4-c65c134f2229@gmail.com>
- <343f70ec-4c41-ed73-564e-494fca895e90@gmail.com>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <150de65e-0f6a-315a-376e-8e3fcf07ce1a@linux.alibaba.com>
-Date:   Fri, 5 Feb 2021 17:57:28 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.0
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1612486458.git.asml.silence@gmail.com>
+ <ac7dc756e811000751c9cc8fba5d03cc73da314a.1612486458.git.asml.silence@gmail.com>
+ <e8bb9ad9-d4ad-8215-fdef-2fb136ae5a41@samba.org>
+ <3aae2e7d-0405-7f5b-9062-5eca9df13e74@gmail.com>
+From:   Stefan Metzmacher <metze@samba.org>
+Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
+ 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
+ uAMlsTqBMFOwuvAcYAj2bwl7QQU6yhU=
+Subject: Re: [PATCH 3/3] io_uring: refactor sendmsg/recvmsg iov managing
+Message-ID: <526757c3-49e4-33e6-5295-378a6b8c8df7@samba.org>
+Date:   Fri, 5 Feb 2021 10:58:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <343f70ec-4c41-ed73-564e-494fca895e90@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3aae2e7d-0405-7f5b-9062-5eca9df13e74@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="BIV9l2DE3fCy6pstd9JXBywUR5CRrZcwJ"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-在 2021/2/4 下午11:26, Pavel Begunkov 写道:
-> 
-> 
-> On 04/02/2021 11:17, Pavel Begunkov wrote:
->> On 04/02/2021 03:25, Hao Xu wrote:
->>> 在 2021/2/4 上午12:45, Pavel Begunkov 写道:
->>>> On 03/02/2021 16:35, Pavel Begunkov wrote:
->>>>> On 03/02/2021 14:57, Hao Xu wrote:
->>>>>> This is caused by calling io_run_task_work_sig() to do work under
->>>>>> uring_lock while the caller io_sqe_files_unregister() already held
->>>>>> uring_lock.
->>>>>> we need to check if uring_lock is held by us when doing unlock around
->>>>>> io_run_task_work_sig() since there are code paths down to that place
->>>>>> without uring_lock held.
->>>>>
->>>>> 1. we don't want to allow parallel io_sqe_files_unregister()s
->>>>> happening, it's synchronised by uring_lock atm. Otherwise it's
->>>>> buggy.
->>> Here "since there are code paths down to that place without uring_lock held" I mean code path of io_ring_ctx_free().
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--BIV9l2DE3fCy6pstd9JXBywUR5CRrZcwJ
+Content-Type: multipart/mixed; boundary="XHgriQxcmczX18s7Kxc5H8FxGZZ1OATNP";
+ protected-headers="v1"
+From: Stefan Metzmacher <metze@samba.org>
+To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org
+Message-ID: <526757c3-49e4-33e6-5295-378a6b8c8df7@samba.org>
+Subject: Re: [PATCH 3/3] io_uring: refactor sendmsg/recvmsg iov managing
+References: <cover.1612486458.git.asml.silence@gmail.com>
+ <ac7dc756e811000751c9cc8fba5d03cc73da314a.1612486458.git.asml.silence@gmail.com>
+ <e8bb9ad9-d4ad-8215-fdef-2fb136ae5a41@samba.org>
+ <3aae2e7d-0405-7f5b-9062-5eca9df13e74@gmail.com>
+In-Reply-To: <3aae2e7d-0405-7f5b-9062-5eca9df13e74@gmail.com>
+
+--XHgriQxcmczX18s7Kxc5H8FxGZZ1OATNP
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Hi Pavel,
+
+>>>  static int io_sendmsg_copy_hdr(struct io_kiocb *req,
+>>>  			       struct io_async_msghdr *iomsg)
+>>>  {
+>>> -	iomsg->iov =3D iomsg->fast_iov;
+>>>  	iomsg->msg.msg_name =3D &iomsg->addr;
+>>> +	iomsg->free_iov =3D iomsg->fast_iov;
 >>
->> I guess it's to the 1/2, but let me outline the problem again:
->> if you have two tasks userspace threads sharing a ring, then they
->> can both and in parallel call syscall:files_unregeister. That's
->> a potential double percpu_ref_kill(&data->refs), or even worse.
+>> Why this? Isn't the idea of this patch that free_iov is never =3D=3D f=
+ast_iov?
+>=20
+> That's a part of __import_iovec() and sendmsg_copy_msghdr() API, you pa=
+ss
+> fast_iov as such and get back NULL or a newly allocated one in it.
+I think that should at least get a comment to make this clear and
+maybe a temporary variable like this:
+
+tmp_iov =3D iomsg->fast_iov;
+__import_iovec(..., &tmp_iov, ...);
+iomsg->free_iov =3D tmp_iov;
+
+>>> @@ -4872,8 +4867,8 @@ static int io_recvmsg(struct io_kiocb *req, boo=
+l force_nonblock,
+>>> =20
+>>>  	if (req->flags & REQ_F_BUFFER_SELECTED)
+>>>  		cflags =3D io_put_recv_kbuf(req);
+>>> -	if (kmsg->iov !=3D kmsg->fast_iov)
+>>> -		kfree(kmsg->iov);
+>>> +	if (kmsg->free_iov)
+>>> +		kfree(kmsg->free_iov);
 >>
->> Same for 2, but racing for the table and refs.
-> 
-> There is a couple of thoughts for this:
-> 
-> 1. I don't like waiting without holding the lock in general, because
-> someone can submit more reqs in-between and so indefinitely postponing
-> the files_unregister.
-Thanks, Pavel.
-I thought this issue before, until I saw this in __io_uring_register:
+>> kfree() handles NULL, or is this a hot path and we want to avoid a fun=
+ction call?
+>=20
+> Yes, the hot path here is not having iov allocated, and Jens told befor=
+e
+> that he had observed overhead for a similar place in io_[read,write].
 
-   if (io_register_op_must_quiesce(opcode)) {
-           percpu_ref_kill(&ctx->refs);
+Ok, a comment would also help here...
 
-           /*
-           ¦* Drop uring mutex before waiting for references to exit. If
-           ¦* another thread is currently inside io_uring_enter() it might
-           ¦* need to grab the uring_lock to make progress. If we hold it
-           ¦* here across the drain wait, then we can deadlock. It's safe
-           ¦* to drop the mutex here, since no new references will come in
-           ¦* after we've killed the percpu ref.
-           ¦*/
-           mutex_unlock(&ctx->uring_lock);
-           do {
-                   ret = wait_for_completion_interruptible(&ctx->ref_comp);
-                   if (!ret)
-                           break;
-                   ret = io_run_task_work_sig();
-                   if (ret < 0)
-                           break;
-           } while (1);
+metze
 
-           mutex_lock(&ctx->uring_lock);
 
-           if (ret) {
-                   percpu_ref_resurrect(&ctx->refs);
-                   goto out_quiesce;
-           }
-   }
 
-So now I guess the postponement issue also exits in the above code since
-there could be another thread submiting reqs to the shared ctx(or we can 
-say uring fd).
+--XHgriQxcmczX18s7Kxc5H8FxGZZ1OATNP--
 
-> 2. I wouldn't want to add checks for that in submission path.
-> 
-> So, a solution I think about is to wait under the lock, If we need to
-> run task_works -- briefly drop the lock, run task_works and then do
-> all unregister all over again. Keep an eye on refs, e.g. probably
-> need to resurrect it.
-> 
-> Because we current task is busy nobody submits new requests on
-> its behalf, and so there can't be infinite number of in-task_work
-> reqs, and eventually it will just go wait/sleep forever (if not
-> signalled) under the mutex, so we can a kind of upper bound on
-> time.
-> 
-Do you mean sleeping with timeout rather than just sleeping? I think 
-this works, I'll work on this and think about the detail.
-But before addressing this issue, Should I first send a patch to just 
-fix the deadlock issue?
+--BIV9l2DE3fCy6pstd9JXBywUR5CRrZcwJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Thanks,
-Hao
->>
->>>>
->>>> This one should be simple, alike to
->>>>
->>>> if (percpu_refs_is_dying())
->>>>      return error; // fail *files_unregister();
->>>>
->>>>>
->>>>> 2. probably same with unregister and submit.
->>>>>
->>>>>>
->>>>>> Reported-by: Abaci <abaci@linux.alibaba.com>
->>>>>> Fixes: 1ffc54220c44 ("io_uring: fix io_sqe_files_unregister() hangs")
->>>>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->>>>>> ---
->>>>>>    fs/io_uring.c | 19 +++++++++++++------
->>>>>>    1 file changed, 13 insertions(+), 6 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>>>> index efb6d02fea6f..b093977713ee 100644
->>>>>> --- a/fs/io_uring.c
->>>>>> +++ b/fs/io_uring.c
->>>>>> @@ -7362,18 +7362,25 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx, bool locked)
->>>>>>          /* wait for all refs nodes to complete */
->>>>>>        flush_delayed_work(&ctx->file_put_work);
->>>>>> +    if (locked)
->>>>>> +        mutex_unlock(&ctx->uring_lock);
->>>>>>        do {
->>>>>>            ret = wait_for_completion_interruptible(&data->done);
->>>>>>            if (!ret)
->>>>>>                break;
->>>>>>            ret = io_run_task_work_sig();
->>>>>> -        if (ret < 0) {
->>>>>> -            percpu_ref_resurrect(&data->refs);
->>>>>> -            reinit_completion(&data->done);
->>>>>> -            io_sqe_files_set_node(data, backup_node);
->>>>>> -            return ret;
->>>>>> -        }
->>>>>> +        if (ret < 0)
->>>>>> +            break;
->>>>>>        } while (1);
->>>>>> +    if (locked)
->>>>>> +        mutex_lock(&ctx->uring_lock);
->>>>>> +
->>>>>> +    if (ret < 0) {
->>>>>> +        percpu_ref_resurrect(&data->refs);
->>>>>> +        reinit_completion(&data->done);
->>>>>> +        io_sqe_files_set_node(data, backup_node);
->>>>>> +        return ret;
->>>>>> +    }
->>>>>>          __io_sqe_files_unregister(ctx);
->>>>>>        nr_tables = DIV_ROUND_UP(ctx->nr_user_files, IORING_MAX_FILES_TABLE);
->>>>>>
->>>>>
->>>>
->>>
->>
-> 
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAmAdFrgACgkQDbX1YShp
+vVZxoQ/8CEOhUvaO3JRGQd5ZqAKtJrOfDUbxsvWzhfNztaydYolKqqLwZokaPwk5
+DQlJpitWFPzc+ig9J2HzW6N0y9ja7uhrWbfOeKijHiCohHIU0ArEyO2CDps6+THy
+577ovwnviXz9ph3TdxT8icYc/4QRA+DMrCXJDNP8EY0dZyuDieoDBwqQ2FoIPZiF
+BDt07VskKmvjV40S6V/GTSV68UM8+afgwDgioFIBl8YzP/GyMmWhUkLHvCrffl3D
+PB7MOTrnHym5hGH5LrGu+sCpe0IHOHESeRtzQvB+7RFANcOej8RaKAJGlSgkfM80
+r0Ulfwj6hh5pAqYK0PwCXBqLVs9/741yokO2L4Spf3jrsWKQgCqJjyLpo1fYaqHP
+wZB1LQieV7YqyA2tMiEpRf3gV2DWmRdSb/iVBVGg7ofua80DUuy4jTkDJ3LUY9zl
+1S9GoAzy/WwvWKO92SOSHOUmLMLmI8t55Okk5h0eaVbNP3T0/yhc0yKXHIiqom9P
+OYJOyExh5bo3BthIenBrZJKAFElda9iePeNSG6jKARK+lx5W0gOUAUV5M9Nm/cKi
+PnnuaKWfna8EZ0ie4IdZCrNUSlM2WHU1cfwwdInBnFwA+BiA9SsL3UNcsB+2erJQ
+FfhIwYPR7hVfiY8rJsT8dbwmKwFhQNtku5JdQvmI7rOVHdZ0Jrw=
+=tGRh
+-----END PGP SIGNATURE-----
+
+--BIV9l2DE3fCy6pstd9JXBywUR5CRrZcwJ--

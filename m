@@ -2,57 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDD663108A8
-	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 11:06:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 213883108C9
+	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 11:17:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbhBEKFP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Feb 2021 05:05:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51868 "EHLO
+        id S229972AbhBEKNm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Feb 2021 05:13:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231131AbhBEKBA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 05:01:00 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EE5AC0617A9
-        for <io-uring@vger.kernel.org>; Fri,  5 Feb 2021 02:00:10 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id 190so5504931wmz.0
-        for <io-uring@vger.kernel.org>; Fri, 05 Feb 2021 02:00:10 -0800 (PST)
+        with ESMTP id S229742AbhBEKLQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 05:11:16 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 230BBC0613D6
+        for <io-uring@vger.kernel.org>; Fri,  5 Feb 2021 02:10:34 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id z6so6968158wrq.10
+        for <io-uring@vger.kernel.org>; Fri, 05 Feb 2021 02:10:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Q/jeWIHYxNomZkVIjt0Qkz9RTcqvYRnfPJdRuby+oxg=;
-        b=OgNaNBy7UAx/N/XUp2MwkQVgk/DgRT8eAi+8ymGDNABQJnDCxiKuzN7fEYQozJw1OW
-         GhS+OKUo45f1Q5j7egLVhDPLbID2aE1h5lcay/GWskGhfCORRXlefz4BDaQGU3uMhbtB
-         ML+OkyXOMZmEja/kZFbtALT3NNBfaYPZw9E3QFrxVtrES6YvN8eLjckFVHH84fDkwZeA
-         KuMUzjfTyzsBGkceC8aX+EKhoeDO/7vnEh8NyXkZRhD9ZmnAJt8sTCzZL2NX9YpqAkNJ
-         UnbQCqNoGPc3/h4kXH1OsZjmy6odfy9GpP+0u217A6bk0KKmUbdO0lGYuULg3ZQ9LPiB
-         f0Jw==
+        bh=s/p9OTUvc7EmwRy9TDJVCq1wsnd3VWA+4V6n/Zf9HBQ=;
+        b=XUvMb4CnfzqEuPnlBsN3cjRKsqB0s1h4PHxmrtOWwPZY9m95fthUPHz2qH9ls2u9Zv
+         zMlS7/fy6ogZVaO2twxuLrM+8pC4U15SwL/h+/43ll1s7YdjVCW4CLizLdY5q8Wp4GKy
+         KPC4Owz8u5cQr0ur0MPiOCegapk8tTaQgiyUeDEOjPwlaz3huVvDQtjJg08EWypgtbDH
+         h4ccu5C0S5bF7hHPaUuxWSHmf+3lkomXgOY4Tl/wPNs6oJpPQYtf3H6J6oCpL4q3N8ib
+         LkZB5GzbqH0MpdkvKV5Aj+YMA+c/eGnP/XvsqW4Cjbk4Md6gABuwf7PHDzPuSV0Ztf9S
+         /tnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Q/jeWIHYxNomZkVIjt0Qkz9RTcqvYRnfPJdRuby+oxg=;
-        b=Qrp1aqxxcfwcyM5iwZYYwmXFHgPj8DChJKX0Z6g5Daj0Uw27F9TZUnZDLZoBQnakLq
-         U6o64g6p/0W/vk/YzCXFZD0UQDhE31blZxziZ4eX2MM6rRbGE+BLu0pampzbmpq0Avrd
-         gaUAI2OnTYb4zqOD+WZaYB9bbPvHRy8l9lwGNdpnqZwhNHyTi6Hi+6g/wQMP3UizOeGa
-         q0i2Zh1mzT0XqhMVGCURJ0Oh3SpMz3mzj067cMW+vxYW7LPE/KXbAL1rivPAbXC3f2b7
-         e41jUYR4QC9nd+mO4+DGfdYwZXbx9ZLKzGIZGsfhznnuYr6LVO/YTlDZTyfcwlh8HGXY
-         p7Bw==
-X-Gm-Message-State: AOAM5311p7/Ha+H6kWK6DoNeG6pBum+n531zBkVZ0zumL7JQwjWViLdg
-        fsuS8Zek3bKAkg7Tlo6bm1RCVW1sIsQkRg==
-X-Google-Smtp-Source: ABdhPJwtAqlVas5zCQGK7nUTbV7Yhu4qr+czHwl0oh4o3ado7Apbhmcs77OZ6O8cIMDaFYizzBkIog==
-X-Received: by 2002:a05:600c:3510:: with SMTP id h16mr2833790wmq.156.1612519209326;
-        Fri, 05 Feb 2021 02:00:09 -0800 (PST)
+        bh=s/p9OTUvc7EmwRy9TDJVCq1wsnd3VWA+4V6n/Zf9HBQ=;
+        b=txxvY4lNiwkSrAK6LxmEhJHBbXc66jfl1HEletA3FGpOYPppUJa+pvvgxbIQ8bXWf+
+         V2in2JRdQcUs7TnsiXITA/L2yJpr8s8XWJ6OYT2KhEo25mko6Gtm8N2HEDdQMXupnLw9
+         ssqgoESFH8ZLJcpLSaYKxmnVmW48zwzHpf4lw9wzlJJFDDxYp88+h/B761OyTaN74KIT
+         HkqPloUZAr0tL8RZ6N4DdkpYdn56lMj6ldSP8sm4DwhfPdxVQ6CDMtrWrLh+UbB3Ck7+
+         BLgLJUwbdRuWF1QKBgbfq8Uox2Qn9lJIXUVmgeISrEn5nq5zuKAjoPnGjnw/k7taWgbl
+         Jwkg==
+X-Gm-Message-State: AOAM5332OGlOeFQe/VjjhfHNYjQZoXMrLoTwfzTZYAx1h5c0A87h1rVm
+        hfzEz3QV8dwuzn/kBV+HAEQpUpSsnRqJ2g==
+X-Google-Smtp-Source: ABdhPJzF+qXBUwxYicJZvIQo2nOcgSCn/TTN3U/e1ThejwJrSAV6dZk1SBY1ys6exjVQBbO71zuUBA==
+X-Received: by 2002:adf:e4c4:: with SMTP id v4mr3943202wrm.376.1612519832762;
+        Fri, 05 Feb 2021 02:10:32 -0800 (PST)
 Received: from [192.168.8.177] ([148.252.133.145])
-        by smtp.gmail.com with ESMTPSA id l2sm8506754wmf.15.2021.02.05.02.00.08
+        by smtp.gmail.com with ESMTPSA id v6sm11831476wrx.32.2021.02.05.02.10.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Feb 2021 02:00:08 -0800 (PST)
-To:     Hao Xu <haoxu@linux.alibaba.com>,
-        io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
-References: <63d16aae-1ca7-8939-1c8a-89c600be8462@linux.alibaba.com>
- <51499dcc-5991-e177-98c4-8cc8a909da70@gmail.com>
- <21456ca2-f5e6-9c93-b42b-697aba82cce7@linux.alibaba.com>
+        Fri, 05 Feb 2021 02:10:32 -0800 (PST)
+To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+References: <cover.1612486458.git.asml.silence@gmail.com>
+ <ac7dc756e811000751c9cc8fba5d03cc73da314a.1612486458.git.asml.silence@gmail.com>
+ <e8bb9ad9-d4ad-8215-fdef-2fb136ae5a41@samba.org>
+ <3aae2e7d-0405-7f5b-9062-5eca9df13e74@gmail.com>
+ <526757c3-49e4-33e6-5295-378a6b8c8df7@samba.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -97,13 +99,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: Queston about io_uring_flush
-Message-ID: <abe56cfd-4844-1373-f810-301d923f67b7@gmail.com>
-Date:   Fri, 5 Feb 2021 09:56:23 +0000
+Subject: Re: [PATCH 3/3] io_uring: refactor sendmsg/recvmsg iov managing
+Message-ID: <0cecc53b-aea5-354b-3aff-9bc01b784b04@gmail.com>
+Date:   Fri, 5 Feb 2021 10:06:47 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <21456ca2-f5e6-9c93-b42b-697aba82cce7@linux.alibaba.com>
+In-Reply-To: <526757c3-49e4-33e6-5295-378a6b8c8df7@samba.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -111,76 +113,53 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 05/02/2021 07:21, Hao Xu wrote:
-> 在 2021/2/4 下午7:00, Pavel Begunkov 写道:
->> On 04/02/2021 09:31, Hao Xu wrote:
->>> Hi all,
->>> Sorry for disturb all of you. Here comes my question.
->>> When we close a uring file, we go into io_uring_flush(),
->>> there is codes at the end:
+On 05/02/2021 09:58, Stefan Metzmacher wrote:
+> Hi Pavel,
+> 
+>>>>  static int io_sendmsg_copy_hdr(struct io_kiocb *req,
+>>>>  			       struct io_async_msghdr *iomsg)
+>>>>  {
+>>>> -	iomsg->iov = iomsg->fast_iov;
+>>>>  	iomsg->msg.msg_name = &iomsg->addr;
+>>>> +	iomsg->free_iov = iomsg->fast_iov;
 >>>
->>> if (!(ctx->flags & IORING_SETUP_SQPOLL) || ctx->sqo_task == current)
->>>     io_uring_del_task_file(file);
+>>> Why this? Isn't the idea of this patch that free_iov is never == fast_iov?
+>>
+>> That's a part of __import_iovec() and sendmsg_copy_msghdr() API, you pass
+>> fast_iov as such and get back NULL or a newly allocated one in it.
+> I think that should at least get a comment to make this clear and
+> maybe a temporary variable like this:
+> 
+> tmp_iov = iomsg->fast_iov;
+> __import_iovec(..., &tmp_iov, ...);
+> iomsg->free_iov = tmp_iov;
+
+I'd rather disagree. It's a well known (ish) API, and I deliberately
+placed such assignments right before import_iovec/etc.
+
+We have been using the same pattern has been used for reads/writes and
+io_import_iovec() for ages, but seems it haven't got its attention.
+
+> 
+>>>> @@ -4872,8 +4867,8 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
+>>>>  
+>>>>  	if (req->flags & REQ_F_BUFFER_SELECTED)
+>>>>  		cflags = io_put_recv_kbuf(req);
+>>>> -	if (kmsg->iov != kmsg->fast_iov)
+>>>> -		kfree(kmsg->iov);
+>>>> +	if (kmsg->free_iov)
+>>>> +		kfree(kmsg->free_iov);
 >>>
->>> My understanding, this is to delete the ctx(associated with the uring
->>> file) from current->io_uring->xa.
->>> I'm thinking of this scenario: the task to close uring file is not the
->>> one which created the uring file.
->>> Then it doesn't make sense to delete the uring file from current->io_uring->xa. It should be "delete uring file from
->>> ctx->sqo_task->io_uring->xa" instead.
+>>> kfree() handles NULL, or is this a hot path and we want to avoid a function call?
 >>
->> 1. It's not only about created or not, look for
->> io_uring_add_task_file() call sites.
->>
->> 2. io_uring->xa is basically a map from task to used by it urings.
->> Every user task should clean only its own context (SQPOLL task is
->> a bit different), it'll be hell bunch of races otherwise.
->>
->> 3. If happens that it's closed by a task that has nothing to do
->> with this ctx, then it won't find anything in its
->> task->io_uring->xa, and so won't delete anything, and that's ok.
->> io_uring->xa of sqo_task will be cleaned by sqo_task, either
->> on another close() or on exit() (see io_uring_files_cancel).
->>
->> 4. There is a bunch of cases where that scheme doesn't behave
->> nice, but at least should not leak/fault when all related tasks
->> are killed.
->>
-> Thank you Pavel for the detail explanation. I got it, basically
-> just delay the clean work to sqo_task.
-> I have this question since I'm looking into the tctx->inflight, it puzzles me a little bit. When a task exit(), it finally calls
->  __io_uring_task_cancel(), where we wait until tctx->inflight is 0.
-> What does tctx->inflight actually mean? I thought it stands for all
-> the inflight reqs of ctxs of this task. But in tctx_inflight():
+>> Yes, the hot path here is not having iov allocated, and Jens told before
+>> that he had observed overhead for a similar place in io_[read,write].
 > 
->   /*
->    * If we have SQPOLL rings, then we need to iterate and find them, and
->    * add the pending count for those.
->    */
->   xa_for_each(&tctx->xa, index, file) {
->           struct io_ring_ctx *ctx = file->private_data;
+> Ok, a comment would also help here...
 > 
->           if (ctx->flags & IORING_SETUP_SQPOLL) {
->                   struct io_uring_task *__tctx = ctx->sqo_task->io_uring;
+> metze
 > 
->                   inflight += percpu_counter_sum(&__tctx->inflight);
->           }
->   }
 > 
-> Why it adds ctx->sqo_task->io_uring->inflight.
-> In a scenario like this:
->     taskA->tctx:    ctx0    ctx1
->              sqpoll     normal
-> 
-> Since ctx0->sqo_task is taskA, so isn't taskA->io_uring->inflight calculated twice?
-> In another hand, count of requests submited by sqthread will be added to sqthread->io_uring, do we ommit this part？with that being said, should taskA wait for sqes/reqs created by taskA but handled by sqthread?
-
-Hah, yes it's known and tctx_inflight() always returns 0 in this
-case :) I'm patching it for 5.12 because it's rather bulky, and
-with some of recent 5.11 fixes for now the whole thing should do
-what we want in terms of cancellations.
-
-But good catch
 
 -- 
 Pavel Begunkov

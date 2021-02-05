@@ -2,70 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8593A31156C
-	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 23:32:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C07731153F
+	for <lists+io-uring@lfdr.de>; Fri,  5 Feb 2021 23:32:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232163AbhBEWb1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Feb 2021 17:31:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40380 "EHLO
+        id S232606AbhBEW0W (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Feb 2021 17:26:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232490AbhBEORn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 09:17:43 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF38BC06121C
-        for <io-uring@vger.kernel.org>; Fri,  5 Feb 2021 07:46:57 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id j11so6385151wmi.3
-        for <io-uring@vger.kernel.org>; Fri, 05 Feb 2021 07:46:57 -0800 (PST)
+        with ESMTP id S232532AbhBEOUK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Feb 2021 09:20:10 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91951C061D7D
+        for <io-uring@vger.kernel.org>; Fri,  5 Feb 2021 07:57:15 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id w4so6410853wmi.4
+        for <io-uring@vger.kernel.org>; Fri, 05 Feb 2021 07:57:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XxnI7IbvrX6SA3yfl9clubZcoBGS4fmVLBKRx3Yy6uQ=;
-        b=RKacj99q9NG1gtPIRQUEsyIA35+h2ARMefoERrd5n0MGz0P39p0hzd8VYGm0D4VFEx
-         ApixphqkOlBd7px9SrMI63PZp/hPGjIk0DJfVkuGBLZmtqnpjwcNTxAj2PetFl/gTCUk
-         bRYmyfrpC1EFmh3WcnaleHyxQoGfBs7cc8ZrBx4ssJo+7zxSoAH91DayF4JDR1RnUMWv
-         ruOO3xVoocx8krSl7rErl7hhVaHUJLoC6OqnH4WUIX0p4MXV8dgfXa6Ti58j9cdBJPL0
-         cXAm8aPV6Qzjf4oW8u4la78zyhPIYlkDfXq1sx1m5hUdlwEMfuMZNFEAlsNZORlrNL3p
-         HNoQ==
+        bh=oDjZPYc43U73nfnjxd4Jnrd4c0tAGWjK3ynRT9F7PQg=;
+        b=B9OFUHmzL2y0a0MOtWqHxwm9Mrc0fD6s6K2EihtqTUdBugwKVBrzcrdTD4o3b/vAb/
+         y8vHc8RH+v1ZOEHC2LiDHTCrmRW7y21AZSgZ33XtxvOwh/CwjN9H+ZpkCGL/6WHl8/Be
+         MiRoJkHt4u31HnuanvYR0REiLep7es3qzuEfC562YVOeTBkFb9Lf9L49PPgxYfGwUqoz
+         rGbDFDyWNz33klXaqVaPqv18apmtCVQqMiRCgiEk7kYnxPT4uzhfW4chmZrwasSz3UeH
+         UKHHc7nWTLGVt2hAy7RvRYfPfDGJrPUKjIvvcVWkLQG151t0jlk1jP9FAAOEmpw6npqE
+         GCTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=XxnI7IbvrX6SA3yfl9clubZcoBGS4fmVLBKRx3Yy6uQ=;
-        b=JPO1yq1BBbyRF4Bp+GdHTy5YAuZZy1UBhimhnLHpQ5rHPjqXGa83o6xeRI+0cYxj9X
-         Hppty5kmitf6ilSVKfx8ey1YNsdNqNb3MmZAmavxxq/vYGNXBQ3394QzC2F1Zr62MC70
-         n0SgPE2Kyxw7D8AafN+hc06/KLl4+miMdo/fraUTg4Bnf9VSHKetjt8sdgZLPTDHEJha
-         9vJmcPnYufDUb6HpXVIJfzdlCE2c8yOHvz4tibT/eidOJ/ex37pmI4/PpooGJU9I+Yj1
-         O+pI0+zanJvH3KnrQyoW6nMAngMc4z01QbaRQmCROGIaQ4DqvXKgDGKVCalfqJucpGMv
-         QYhg==
-X-Gm-Message-State: AOAM531ED8D4GY9ubPrEYVOg/OS+1JWrpemedV9cLzEaKslJTUPtLsSA
-        BJjWv+Xbrkly8KzrcnXehAvfSjTSuFzHZg==
-X-Google-Smtp-Source: ABdhPJwfz4e/2LbhW/dWpua+R3CGHFvXDKj0+hhfPxVie51Qhr4N2RR5GRqzjvuXkSSlkNB0upTRaQ==
-X-Received: by 2002:a1c:b782:: with SMTP id h124mr3964965wmf.67.1612536815247;
-        Fri, 05 Feb 2021 06:53:35 -0800 (PST)
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oDjZPYc43U73nfnjxd4Jnrd4c0tAGWjK3ynRT9F7PQg=;
+        b=Bcp5colCqpzBoikpW4LRDF13r+TWdFkxoDrETJwWYTJInZKoVSk03MGGxwriullRB2
+         4Swf8qKQy+2rUQtZ+UrEsQA6lYqVy/kTeLiYIu/m7sSeWV95oN0hreVFRmeuzuv8zidc
+         6wFbfJiYoaAYZnJdtlGO+ahxmYGjLisCODRf+hOwHgkxvQ4NLA6awXnAG2OYIagWC2XU
+         ZQ2Yvi3SEw62udrWq5mjmopVvZ6nFWglN2svotAQde5ZkWIedfCqBJQpeKwA1kOS2I+W
+         PGfIkdj9R6OtXf56u08oqvwi40zCT2MCNk7APPbeD+uHV4DdObqXNTpC9r5IdkOPDQY1
+         GFrQ==
+X-Gm-Message-State: AOAM530gQDHqmDvp6myDapPDVpOsI6Rlb3n2wkWEIH2ospN6EvA+FgAh
+        Yd8B47dckpJdmY0boQiDwMvI17TFBtytAg==
+X-Google-Smtp-Source: ABdhPJzd62H/oi2VbcmGUI0DYN0v+2vVvXjmMioK7AW/3gvjzBGUNxjcVeEZTuDxjD7ee46vgFR+pw==
+X-Received: by 2002:a1c:ab88:: with SMTP id u130mr3993038wme.185.1612537285711;
+        Fri, 05 Feb 2021 07:01:25 -0800 (PST)
 Received: from [192.168.8.177] ([85.255.234.168])
-        by smtp.gmail.com with ESMTPSA id i15sm8238425wmq.26.2021.02.05.06.53.34
+        by smtp.gmail.com with ESMTPSA id g1sm12028657wrq.30.2021.02.05.07.01.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Feb 2021 06:53:34 -0800 (PST)
-To:     Jens Axboe <axboe@kernel.dk>, Victor Stewart <v@nametag.social>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <CAM1kxwhCXpTCRjZ5tc_TPADTK3EFeWHD369wr8WV4nH8+M_thg@mail.gmail.com>
- <49743b61-3777-f152-e1d5-128a53803bcd@gmail.com>
- <c41e9907-d530-5d2a-7e1f-cf262d86568c@gmail.com>
- <CAM1kxwj6Cdqi0hJFNtGFvK=g=KoNRPMmLVoxtahFKZsjOkcTKQ@mail.gmail.com>
- <CAM1kxwg7wkB7Sj8CDi9RkssM5DwFXEFWeUcakUkpKtKVCOUSJQ@mail.gmail.com>
- <4b44f4e1-c039-a6b6-711f-22952ce1abfb@kernel.dk>
- <CAM1kxwgPW5Up-YqQWdh_cG4jvc5RWsD4UYNWN-jRRbWq5ide5g@mail.gmail.com>
- <06ceae30-7221-80e9-13e3-148cdf5e3c9f@kernel.dk>
- <8d75bf78-7361-0649-e5a3-1288fea1197f@gmail.com>
- <bb75dec2-2700-58ed-065e-a533994d3df7@gmail.com>
- <725fa06a-da7e-9918-49b4-7489672ff0b4@kernel.dk>
- <5c3d084f-88e4-3e86-3560-95d90bb9ffcd@gmail.com>
- <39bc0ff3-db02-8fc7-da5c-b2f5f0fc715e@gmail.com>
- <ab870cb5-513d-420e-6438-b918f9f6c453@kernel.dk>
- <c9550dcf-ce53-c214-8c4b-6165ad6605a9@gmail.com>
- <8349a07b-6975-dc55-dc0a-a4228f913af3@kernel.dk>
+        Fri, 05 Feb 2021 07:01:25 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, Stefan Metzmacher <metze@samba.org>,
+        io-uring@vger.kernel.org
+References: <cover.1612486458.git.asml.silence@gmail.com>
+ <ac7dc756e811000751c9cc8fba5d03cc73da314a.1612486458.git.asml.silence@gmail.com>
+ <e8bb9ad9-d4ad-8215-fdef-2fb136ae5a41@samba.org>
+ <3aae2e7d-0405-7f5b-9062-5eca9df13e74@gmail.com>
+ <526757c3-49e4-33e6-5295-378a6b8c8df7@samba.org>
+ <0cecc53b-aea5-354b-3aff-9bc01b784b04@gmail.com>
+ <4330b1c1-4f6b-cd8a-5d1d-63199b27c14e@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -110,13 +101,13 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: bug with fastpoll accept and sqpoll + IOSQE_FIXED_FILE
-Message-ID: <3ec34352-5f75-85cd-6b9c-52b45f534263@gmail.com>
-Date:   Fri, 5 Feb 2021 14:49:50 +0000
+Subject: Re: [PATCH 3/3] io_uring: refactor sendmsg/recvmsg iov managing
+Message-ID: <8dcb62d6-fe6b-9d5b-9d76-5dd3214c1e3b@gmail.com>
+Date:   Fri, 5 Feb 2021 14:57:41 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <8349a07b-6975-dc55-dc0a-a4228f913af3@kernel.dk>
+In-Reply-To: <4330b1c1-4f6b-cd8a-5d1d-63199b27c14e@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -124,69 +115,52 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 05/02/2021 14:42, Jens Axboe wrote:
-> On 2/5/21 5:46 AM, Pavel Begunkov wrote:
->> On 04/02/2021 16:50, Jens Axboe wrote:
-[...]
->>> Hence my suggestion is to just patch this in a trivial kind of fashion,
->>> even if it doesn't really make the function any prettier. But it'll be
->>> safer for a release, and then we can rework the function after.
->>>	
->>> With that in mind, here's my suggestion. The premise is if we go through
->>> the loop and don't do io_uring_enter(), then there's no point in
->>> continuing. That's the trivial fix.
+On 05/02/2021 14:45, Jens Axboe wrote:
+> On 2/5/21 3:06 AM, Pavel Begunkov wrote:
+>> On 05/02/2021 09:58, Stefan Metzmacher wrote:
+>>> Hi Pavel,
+>>>
+>>>>>>  static int io_sendmsg_copy_hdr(struct io_kiocb *req,
+>>>>>>  			       struct io_async_msghdr *iomsg)
+>>>>>>  {
+>>>>>> -	iomsg->iov = iomsg->fast_iov;
+>>>>>>  	iomsg->msg.msg_name = &iomsg->addr;
+>>>>>> +	iomsg->free_iov = iomsg->fast_iov;
+>>>>>
+>>>>> Why this? Isn't the idea of this patch that free_iov is never == fast_iov?
+>>>>
+>>>> That's a part of __import_iovec() and sendmsg_copy_msghdr() API, you pass
+>>>> fast_iov as such and get back NULL or a newly allocated one in it.
+>>> I think that should at least get a comment to make this clear and
+>>> maybe a temporary variable like this:
+>>>
+>>> tmp_iov = iomsg->fast_iov;
+>>> __import_iovec(..., &tmp_iov, ...);
+>>> iomsg->free_iov = tmp_iov;
 >>
->> Your idea but imho cleaner below.
->> +1 comment inline
+>> I'd rather disagree. It's a well known (ish) API, and I deliberately
+>> placed such assignments right before import_iovec/etc.
 > 
-> Shouldn't be hard, it was just a quick hack :-)
+> Agree on that, it's kind of a weird idiom, but it's used throughout the
+> kernel. However:
 
-Yes, hopefully. That comment came straight from my ever failing
-attempts to clean it up :) We will need to test well the final
-version -- with and without IORING_FEAT_EXT_ARG.
-
-[...]
->> diff --git a/src/queue.c b/src/queue.c
->> index 94f791e..7d6f31d 100644
->> --- a/src/queue.c
->> +++ b/src/queue.c
->> @@ -112,11 +112,15 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
->>  			flags = IORING_ENTER_GETEVENTS | data->get_flags;
->>  		if (data->submit)
->>  			sq_ring_needs_enter(ring, &flags);
->> -		if (data->wait_nr > nr_available || data->submit ||
->> -		    cq_overflow_flush)
->> -			ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
->> -					data->wait_nr, flags, data->arg,
->> -					data->sz);
->> +
->> +		if (data->wait_nr <= nr_available && !data->submit &&
->> +		    !cq_overflow_flush) {
->> +			err = ?;
-> 
-> which I guess is the actual error missing from here?
-
-As a way to say "not tested at all". I just believe it's not all to that.
-
-e.g. user calls wait/peek(nr=1, cqe);
-__io_uring_peek_cqe() well succeeds, then
-
-if (data->wait_nr && cqe)
-	data->wait_nr--;
-
-That might make us to skip enter, and we return -EAGAIN. 
-
+Maybe someday someone will refactor it and make it accepting inline_vecs
+directly...
 
 > 
->> +			break;
->> +		}
->> +		ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
->> +				data->wait_nr, flags, data->arg,
->> +				data->sz);
->>  		if (ret < 0) {
->>  			err = -errno;
->>  		} else if (ret == (int)data->submit) {
->>
+>>>>> kfree() handles NULL, or is this a hot path and we want to avoid a function call?
+>>>>
+>>>> Yes, the hot path here is not having iov allocated, and Jens told before
+>>>> that he had observed overhead for a similar place in io_[read,write].
+>>>
+>>> Ok, a comment would also help here...
+> 
+> I do agree on that one, since otherwise we get patches for it as has
+> been proven by the few other spots... I'll add then when queueing this
+> up.
+
+I didn't disagree with that, just forgot to throw one to protect ourselves
+from static analysis tools. Thanks for fixing up
 
 -- 
 Pavel Begunkov

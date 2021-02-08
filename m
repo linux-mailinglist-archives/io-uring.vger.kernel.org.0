@@ -2,62 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42BCD3137B8
-	for <lists+io-uring@lfdr.de>; Mon,  8 Feb 2021 16:31:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E486D3137C7
+	for <lists+io-uring@lfdr.de>; Mon,  8 Feb 2021 16:32:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233606AbhBHP3m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Feb 2021 10:29:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55104 "EHLO
+        id S233831AbhBHPbB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Feb 2021 10:31:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232778AbhBHP0y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Feb 2021 10:26:54 -0500
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBA51C061786
-        for <io-uring@vger.kernel.org>; Mon,  8 Feb 2021 07:26:13 -0800 (PST)
-Received: by mail-io1-xd2e.google.com with SMTP id q7so15386968iob.0
-        for <io-uring@vger.kernel.org>; Mon, 08 Feb 2021 07:26:13 -0800 (PST)
+        with ESMTP id S233840AbhBHP2G (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Feb 2021 10:28:06 -0500
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD70AC06178C
+        for <io-uring@vger.kernel.org>; Mon,  8 Feb 2021 07:27:18 -0800 (PST)
+Received: by mail-il1-x132.google.com with SMTP id y5so13081607ilg.4
+        for <io-uring@vger.kernel.org>; Mon, 08 Feb 2021 07:27:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=AbxJsuEu2qc+tTf3f/WFDiFgtDzDNZuB5efHjrxq3lk=;
-        b=tboWuYVPH6tRHIgYW2Z6EH6lxQ+73hHzDyPWaqN8TaNzx8pKudgCywAKakH7TkA8ws
-         rAZfasNCFJXnL+owM1o45igRXkIH+JHrA+Ij+71ZONHbA58Nle6+VinU0V4cSBxxwAa1
-         VLSku+kMLr6PSq4o6CzQHBmEbAtHyhPmLhuTa+9sfPMOVO09CEK9WoE5cZQQlwhrmkH4
-         kbPm+DgHIVbrp9z7cHGa5EIZm988SkOiFqdKrbkN0+TnvveAD2Vi7RygKu4+eB5KZL15
-         RKgGCxwuyc5vdVJT9gu3pesDiIztIZqbu2p8EDDJcMSWQ7E2klX/f53Lg/R5WU9jYeN3
-         4ASA==
+        bh=rWA5lYRxu9f9oKL/yyhzl2icZOvsnq36zU7+Pmn24pg=;
+        b=bUTr6ilYhEP3pfY0dyIPzsVeflcdho76BNi9RWa0djdO3aBkfdqcP8c+ZNNN8uwa24
+         N/rq/BlvJ72WQDeeYvvUybx27RiCo9UKfk0SSv0CtJj9qoujX1eDYntRwdpSl8c9+Wjm
+         zRvCNT9n2M/TG7vOqiRUV3Z+X078GugEwBNQrCHEX3a4mTamreAe2qeFNszKIijY9kUV
+         RZOrqTChs5fR95P7STs7p4GjPeguxQsEbqGbSG3XA3OoaPWfxszMC9sUboz4dWznxu4x
+         iJy9me0ppwUYiATqNDXewMtt+p3Ip/qMwVba/7+S2q31OfWkzIzlgga7A7Suwk2T8lg6
+         Y0Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AbxJsuEu2qc+tTf3f/WFDiFgtDzDNZuB5efHjrxq3lk=;
-        b=QzZ9NHz6jot8gnCIkdv32wYKQ2NS1x+JtGU4rubckKHG9e+410Ruzg/EEWs9QIcFWP
-         JpH1Dzjdiw0WEPqTWIo6NWlskSc7haS1plxo5vnC6WY0Tzf3kmvSC+gnq1+gLiwbJbBz
-         9nD7lOhUg2GAqYm3I3wstz+vwXm0aZBB0t+sbW2STZLpscR5zOTRd5NTTpxNwQuQOyR0
-         32eXb0nOVbWeCnYTwicd7c4bUj5GG+QhuInAPzmypUplcfrR6p11lEPO8lOI3d1e69vZ
-         NTZiH8onFUBIZWS8NdDT07nuRWoe5yz52xxxJrjSWkm2eSsjZ6fscX7qztA7xQdPolFt
-         vtrg==
-X-Gm-Message-State: AOAM5335X3aDMNsCLfBgXuWXHpvfQahCMiFTz8Ky9FyMh0gGsqwqyB2I
-        iPrXoqbzw4tiGpcUKeYKNNTXdFOHLzy88/SY
-X-Google-Smtp-Source: ABdhPJyFGvHGaS/8Jc3FsUfM8Neatn+ttRp8e6mZy9wQHxVf4S/sTQoPicpGjrdQNEEXOBqIsOwbPA==
-X-Received: by 2002:a5d:9710:: with SMTP id h16mr16070462iol.192.1612797972883;
-        Mon, 08 Feb 2021 07:26:12 -0800 (PST)
+        bh=rWA5lYRxu9f9oKL/yyhzl2icZOvsnq36zU7+Pmn24pg=;
+        b=OFFpezVEBJlUZ0euU+O3r+S4znE1W9KxcPHiZKk7eblIHI8TP4PAG59oaTlyxnbjk8
+         Ycyb6ZT05pe83wKQiz38wzYMlRi+wlQtiNs6knkgQbZJUSoc4baFB/msVhefvrHxK7f/
+         VIA23Au8E5HUZYr4/QM/80GluSmee6bnXb+77c4nh6a3kXWDInUS533TfTVTCPh85o5B
+         Hk5q0QDwTd7fajmiTOnF+t/o6rypNH8x0X8Z7h3toyJgr2Ibs9D4iCSwBtENFOAWIBND
+         gdIwt1DiVuzOANBhOiuPZ38F0uDxFmsFTppZUmMmRTN0J5Q9CjisnNtF5kp6yjzYVOio
+         iNGw==
+X-Gm-Message-State: AOAM531vch5gQ/4nxWtLRkmWvW/9cYy7+AwQsvCtTtiMLJkMBMPhmSsM
+        XYAqx1A+hNFEypF47TJIbkmGBS9buB7uqIc2
+X-Google-Smtp-Source: ABdhPJw01aAcVZLmPAUBCC56/LHLPNwYeXOCTQxMCkxLyOpF5+zPjKrbNESb/5Y6E2WiB4v8engcRg==
+X-Received: by 2002:a92:c269:: with SMTP id h9mr15515138ild.239.1612798037830;
+        Mon, 08 Feb 2021 07:27:17 -0800 (PST)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r7sm9090814ilo.31.2021.02.08.07.26.12
+        by smtp.gmail.com with ESMTPSA id r9sm9063968ill.72.2021.02.08.07.27.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Feb 2021 07:26:12 -0800 (PST)
-Subject: Re: [PATCH liburing 0/3] fix _io_uring_get_cqe()
+        Mon, 08 Feb 2021 07:27:17 -0800 (PST)
+Subject: Re: [PATCH 5.12] io_uring: cancel SQPOLL reqs acress exec
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1612740655.git.asml.silence@gmail.com>
+References: <a50e2df51707fc1de3708fe087e08b3aa16f492a.1612737169.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a726117c-9d75-8ad3-e8bd-302a40f26adf@kernel.dk>
-Date:   Mon, 8 Feb 2021 08:26:12 -0700
+Message-ID: <fb823f26-3257-bc7c-4b2c-7837e4b7e3c6@kernel.dk>
+Date:   Mon, 8 Feb 2021 08:27:16 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1612740655.git.asml.silence@gmail.com>
+In-Reply-To: <a50e2df51707fc1de3708fe087e08b3aa16f492a.1612737169.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,19 +65,15 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/7/21 4:32 PM, Pavel Begunkov wrote:
-> address live-locking of _io_uring_get_cqe() reported
-> by Victor.
+On 2/7/21 3:34 PM, Pavel Begunkov wrote:
+> For SQPOLL rings tctx_inflight() always returns zero, so it might skip
+> doing full cancellion. It's fine because we jam all sqpoll submissions
+> in any case and do go through files cancel for them, but not nice.
 > 
-> Pavel Begunkov (3):
->   src/queue: don't wait for less than expected
->   src/queue: clean _io_uring_get_cqe() err handling
->   src/queue: don't loop when don't enter
-> 
->  src/queue.c | 28 +++++++++++++++-------------
->  1 file changed, 15 insertions(+), 13 deletions(-)
+> Do the intended full cancellation, by mimicing __io_uring_task_cancel()
+> waiting but impersonating SQPOLL task.
 
-Nice, thanks Pavel! Applied.
+LGTM, applied.
 
 -- 
 Jens Axboe

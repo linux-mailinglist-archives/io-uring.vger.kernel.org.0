@@ -2,114 +2,133 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13A41312864
-	for <lists+io-uring@lfdr.de>; Mon,  8 Feb 2021 00:37:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73C4E312915
+	for <lists+io-uring@lfdr.de>; Mon,  8 Feb 2021 03:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbhBGXgx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 7 Feb 2021 18:36:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49338 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbhBGXgv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Feb 2021 18:36:51 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 852B8C06178A
-        for <io-uring@vger.kernel.org>; Sun,  7 Feb 2021 15:36:11 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id a16so11212523wmm.0
-        for <io-uring@vger.kernel.org>; Sun, 07 Feb 2021 15:36:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pJuC1ZDeL8m4ieq9PzDYGXq1hHvSdJdK+FmO18tqrQI=;
-        b=dKcqeNXKAaNv+R+e2yPard7xUUBRCJju0VmvxT3EW4McyUmk1pj5FivHcbgVstu5ON
-         HsWfkSMA5juxR8gwfwuDobxctVMe3HB69g0nHXLEKHCZRmTP0tuWFGMKgPSJaUPk/a86
-         kbGP3Dr50L9AvdABqEa9MtZVbri6G8f+4Gp6/uX0k2K4YPmm67+ciUHs87teNAndUUBZ
-         IzjBj3j3TZCvDxHpNi12FL8aGdw1nplfhYCCim311QeMfaHEgINBCiU2mPWBD2khaBWa
-         R/37nsCE3e7yOKrfuTioIgnfMFP1f/EhqeWqxBrawGh4v3fCkjSoMh4R8PMzXJGQ6nE5
-         4WUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pJuC1ZDeL8m4ieq9PzDYGXq1hHvSdJdK+FmO18tqrQI=;
-        b=Gm3+o/gojs6ZctjEZMhqyVXvLZ3CF3NK27wlHV5GIwqqpBEwR3zyxPnyq4EoiXdFdU
-         JTMpWni9S25dHo7ea6PY+bvfo4LHBjMYhuJOk9KdmIyCQHTr8iXpffl4xCwDDxG3b8lv
-         OgJgc0jH3VWzeBilmHT6rasaGuOpL0Z/4na79tezx3D8P2iVZ9Lz230kufgBnRfDd2lC
-         bX9sOvjWgPgkiLxLwbvia1NT8rVhdOGnIDzPFKtgUg2mY528xOKg3Kyk2y0LSuKxakT8
-         pblTIPvUtEBjLUsWHPm60BQe4K5lY8Mvs92/U7FAPJrZL3ZK/tgliUunhkdFjl9dxSNP
-         gFJw==
-X-Gm-Message-State: AOAM531F8Wc9xNKhmvVcwSGfpzFVQo6SrTP9xOsXpE6yt8CocK3ZvVad
-        mzdt5AFwumWm6ven38aMKl0=
-X-Google-Smtp-Source: ABdhPJztpVF+2UKUC6tngTOlVj2O3Z6Eg9hRihwehhUD9NRw0VJCinBMmDcE9CIwIiAkSDCUBkYWjg==
-X-Received: by 2002:a1c:c904:: with SMTP id f4mr12672698wmb.14.1612740970376;
-        Sun, 07 Feb 2021 15:36:10 -0800 (PST)
-Received: from localhost.localdomain ([148.252.128.244])
-        by smtp.gmail.com with ESMTPSA id l10sm25453380wro.4.2021.02.07.15.36.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Feb 2021 15:36:09 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Victor Stewart <v@nametag.social>
-Subject: [PATCH liburing 3/3] src/queue: don't loop when don't enter
-Date:   Sun,  7 Feb 2021 23:32:17 +0000
-Message-Id: <39bc4096ded4d4d0e8f8059bff52a51d16617213.1612740655.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1612740655.git.asml.silence@gmail.com>
-References: <cover.1612740655.git.asml.silence@gmail.com>
+        id S229565AbhBHCyN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 7 Feb 2021 21:54:13 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:57176 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229537AbhBHCyM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Feb 2021 21:54:12 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UO6SIG5_1612752779;
+Received: from 30.89.237.89(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UO6SIG5_1612752779)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 08 Feb 2021 10:53:00 +0800
+Subject: Re: [PATCH] io_uring: don't issue reqs in iopoll mode when ctx is
+ dying
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
+References: <20210206150006.1945-1-xiaoguang.wang@linux.alibaba.com>
+ <e4220bf0-2d60-cdd8-c738-cf48236073fa@gmail.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <3e3cb8da-d925-7ebd-11a0-f9e145861962@linux.alibaba.com>
+Date:   Mon, 8 Feb 2021 10:50:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e4220bf0-2d60-cdd8-c738-cf48236073fa@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-_io_uring_get_cqe() can live-lock in some cases, always return if we're
-not going to do __sys_io_uring_enter().
+hi,
 
-Reported-by: Victor Stewart <v@nametag.social>
-Suggested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- src/queue.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+> On 06/02/2021 15:00, Xiaoguang Wang wrote:
+>> Abaci Robot reported following panic:
+>> ------------[ cut here ]------------
+>> refcount_t: underflow; use-after-free.
+>> WARNING: CPU: 1 PID: 195 at lib/refcount.c:28 refcount_warn_saturate+0x137/0x140
+>> Modules linked in:
+>> CPU: 1 PID: 195 Comm: kworker/u4:2 Not tainted 5.11.0-rc3+ #70
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.1-0-g0551a4be2c-prebuilt.qemu-project.or4
+>> Workqueue: events_unbound io_ring_exit_work
+>> RIP: 0010:refcount_warn_saturate+0x137/0x140
+>> Code: 05 ad 63 49 08 01 e8 45 0f 6f 00 0f 0b e9 16 ff ff ff e8 4c ba ae ff 48 c7 c7 28 2e 7c 82 c6 05 90 63 40
+>> RSP: 0018:ffffc900002e3cc8 EFLAGS: 00010282
+>> RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
+>> RDX: ffff888102918000 RSI: ffffffff81150a34 RDI: ffff88813bd28570
+>> RBP: ffff8881075cd348 R08: 0000000000000001 R09: 0000000000000001
+>> R10: 0000000000000001 R11: 0000000000080000 R12: ffff8881075cd308
+>> R13: ffff8881075cd348 R14: ffff888122d33ab8 R15: ffff888104780300
+>> FS:  0000000000000000(0000) GS:ffff88813bd00000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000000000000108 CR3: 0000000107636005 CR4: 0000000000060ee0
+>> Call Trace:
+>>   io_dismantle_req+0x3f3/0x5b0
+>>   __io_free_req+0x2c/0x270
+>>   io_put_req+0x4c/0x70
+>>   io_wq_cancel_cb+0x171/0x470
+>>   ? io_match_task.part.0+0x80/0x80
+>>   __io_uring_cancel_task_requests+0xa0/0x190
+>>   io_ring_exit_work+0x32/0x3e0
+>>   process_one_work+0x2f3/0x720
+>>   worker_thread+0x5a/0x4b0
+>>   ? process_one_work+0x720/0x720
+>>   kthread+0x138/0x180
+>>   ? kthread_park+0xd0/0xd0
+>>   ret_from_fork+0x1f/0x30
+>>
+>> Later system will panic for some memory corruption.
+>>
+>> The io_identity's count is underflowed. It's because in io_put_identity,
+>> first argument tctx comes from req->task->io_uring, the second argument
+>> comes from the task context that calls io_req_init_async, so the compare
+>> in io_put_identity maybe meaningless. See below case:
+>>      task context A issue one polled req, then req->task = A.
+>>      task context B do iopoll, above req returns with EAGAIN error.
+>>      task context B re-issue req, call io_queue_async_work for req.
+>>      req->task->io_uring will set to task context B's identity, or cow new one.
+>> then for above case, in io_put_identity(), the compare is meaningless.
+>>
+>> IIUC, req->task should indicates the initial task context that issues req,
+>> then if it gets EAGAIN error, we'll call io_prep_async_work() in req->task
+>> context, but iopoll reqs seems special, they maybe issued successfully and
+>> got re-issued in other task context because of EAGAIN error.
+> 
+> Looks as you say, but the patch doesn't solve the issue completely.
+> 1. We must not do io_queue_async_work() under a different task context,
+> because of it potentially uses a different set of resources. So, I just
+> thought that it would be better to punt it to the right task context
+> via task_work. But...
+> 
+> 2. ...iovec import from io_resubmit_prep() might happen after submit ends,
+> i.e. when iovec was freed in userspace. And that's not great at all.
+Yes, agree, that's why I say we neeed to re-consider the io identity codes
+more in commit message :) I'll have a try to prepare a better one.
 
-diff --git a/src/queue.c b/src/queue.c
-index be461c6..8c394dd 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -89,12 +89,13 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
- {
- 	struct io_uring_cqe *cqe = NULL;
- 	const int to_wait = data->wait_nr;
--	int ret = 0, err;
-+	int err;
- 
- 	do {
- 		bool cq_overflow_flush = false;
- 		unsigned flags = 0;
- 		unsigned nr_available;
-+		int ret;
- 
- 		err = __io_uring_peek_cqe(ring, &cqe, &nr_available);
- 		if (err)
-@@ -110,11 +111,13 @@ static int _io_uring_get_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_pt
- 			flags = IORING_ENTER_GETEVENTS | data->get_flags;
- 		if (data->submit)
- 			sq_ring_needs_enter(ring, &flags);
--		if (data->wait_nr > nr_available || data->submit ||
--		    cq_overflow_flush)
--			ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
--					data->wait_nr, flags, data->arg,
--					data->sz);
-+		if (data->wait_nr <= nr_available && !data->submit &&
-+		    !cq_overflow_flush)
-+			break;
-+
-+		ret = __sys_io_uring_enter2(ring->ring_fd, data->submit,
-+				data->wait_nr, flags, data->arg,
-+				data->sz);
- 		if (ret < 0) {
- 			err = -errno;
- 			break;
--- 
-2.24.0
-
+Regards,
+Xiaoguang Wang
+> 
+>> Currently for this panic, we can disable issuing reqs that are returned
+>> with EAGAIN error in iopoll mode when ctx is dying, but we may need to
+>> re-consider the io identity codes more.
+>>
+>> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+>> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+>> ---
+>>   fs/io_uring.c | 7 ++++++-
+>>   1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 9db05171a774..e3b90426d72b 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -2467,7 +2467,12 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+>>   		int cflags = 0;
+>>   
+>>   		req = list_first_entry(done, struct io_kiocb, inflight_entry);
+>> -		if (READ_ONCE(req->result) == -EAGAIN) {
+>> +		/*
+>> +		 * If ctx is dying, don't need to issue reqs that are returned
+>> +		 * with EAGAIN error, since there maybe no users to reap them.
+>> +		 */
+>> +		if ((READ_ONCE(req->result) == -EAGAIN) &&
+>> +		    !percpu_ref_is_dying(&ctx->refs)) {
+>>   			req->result = 0;
+>>   			req->iopoll_completed = 0;
+>>   			list_move_tail(&req->inflight_entry, &again);
+>>
+> 

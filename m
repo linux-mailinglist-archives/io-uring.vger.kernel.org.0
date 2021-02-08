@@ -2,133 +2,260 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73C4E312915
-	for <lists+io-uring@lfdr.de>; Mon,  8 Feb 2021 03:54:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7AD3312C83
+	for <lists+io-uring@lfdr.de>; Mon,  8 Feb 2021 09:56:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229565AbhBHCyN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 7 Feb 2021 21:54:13 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:57176 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229537AbhBHCyM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Feb 2021 21:54:12 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UO6SIG5_1612752779;
-Received: from 30.89.237.89(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UO6SIG5_1612752779)
+        id S230272AbhBHIzm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Feb 2021 03:55:42 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:60620 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230305AbhBHIxb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Feb 2021 03:53:31 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R291e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UO9kQhr_1612774363;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UO9kQhr_1612774363)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 08 Feb 2021 10:53:00 +0800
-Subject: Re: [PATCH] io_uring: don't issue reqs in iopoll mode when ctx is
- dying
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, joseph.qi@linux.alibaba.com
-References: <20210206150006.1945-1-xiaoguang.wang@linux.alibaba.com>
- <e4220bf0-2d60-cdd8-c738-cf48236073fa@gmail.com>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Message-ID: <3e3cb8da-d925-7ebd-11a0-f9e145861962@linux.alibaba.com>
-Date:   Mon, 8 Feb 2021 10:50:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+          Mon, 08 Feb 2021 16:52:44 +0800
+From:   Jeffle Xu <jefflexu@linux.alibaba.com>
+To:     snitzer@redhat.com, axboe@kernel.dk
+Cc:     joseph.qi@linux.alibaba.com, caspar@linux.alibaba.com, hch@lst.de,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        io-uring@vger.kernel.org
+Subject: [PATCH v3 00/11] dm: support IO polling
+Date:   Mon,  8 Feb 2021 16:52:32 +0800
+Message-Id: <20210208085243.82367-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <e4220bf0-2d60-cdd8-c738-cf48236073fa@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
 
-> On 06/02/2021 15:00, Xiaoguang Wang wrote:
->> Abaci Robot reported following panic:
->> ------------[ cut here ]------------
->> refcount_t: underflow; use-after-free.
->> WARNING: CPU: 1 PID: 195 at lib/refcount.c:28 refcount_warn_saturate+0x137/0x140
->> Modules linked in:
->> CPU: 1 PID: 195 Comm: kworker/u4:2 Not tainted 5.11.0-rc3+ #70
->> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.1-0-g0551a4be2c-prebuilt.qemu-project.or4
->> Workqueue: events_unbound io_ring_exit_work
->> RIP: 0010:refcount_warn_saturate+0x137/0x140
->> Code: 05 ad 63 49 08 01 e8 45 0f 6f 00 0f 0b e9 16 ff ff ff e8 4c ba ae ff 48 c7 c7 28 2e 7c 82 c6 05 90 63 40
->> RSP: 0018:ffffc900002e3cc8 EFLAGS: 00010282
->> RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
->> RDX: ffff888102918000 RSI: ffffffff81150a34 RDI: ffff88813bd28570
->> RBP: ffff8881075cd348 R08: 0000000000000001 R09: 0000000000000001
->> R10: 0000000000000001 R11: 0000000000080000 R12: ffff8881075cd308
->> R13: ffff8881075cd348 R14: ffff888122d33ab8 R15: ffff888104780300
->> FS:  0000000000000000(0000) GS:ffff88813bd00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000000000000108 CR3: 0000000107636005 CR4: 0000000000060ee0
->> Call Trace:
->>   io_dismantle_req+0x3f3/0x5b0
->>   __io_free_req+0x2c/0x270
->>   io_put_req+0x4c/0x70
->>   io_wq_cancel_cb+0x171/0x470
->>   ? io_match_task.part.0+0x80/0x80
->>   __io_uring_cancel_task_requests+0xa0/0x190
->>   io_ring_exit_work+0x32/0x3e0
->>   process_one_work+0x2f3/0x720
->>   worker_thread+0x5a/0x4b0
->>   ? process_one_work+0x720/0x720
->>   kthread+0x138/0x180
->>   ? kthread_park+0xd0/0xd0
->>   ret_from_fork+0x1f/0x30
->>
->> Later system will panic for some memory corruption.
->>
->> The io_identity's count is underflowed. It's because in io_put_identity,
->> first argument tctx comes from req->task->io_uring, the second argument
->> comes from the task context that calls io_req_init_async, so the compare
->> in io_put_identity maybe meaningless. See below case:
->>      task context A issue one polled req, then req->task = A.
->>      task context B do iopoll, above req returns with EAGAIN error.
->>      task context B re-issue req, call io_queue_async_work for req.
->>      req->task->io_uring will set to task context B's identity, or cow new one.
->> then for above case, in io_put_identity(), the compare is meaningless.
->>
->> IIUC, req->task should indicates the initial task context that issues req,
->> then if it gets EAGAIN error, we'll call io_prep_async_work() in req->task
->> context, but iopoll reqs seems special, they maybe issued successfully and
->> got re-issued in other task context because of EAGAIN error.
-> 
-> Looks as you say, but the patch doesn't solve the issue completely.
-> 1. We must not do io_queue_async_work() under a different task context,
-> because of it potentially uses a different set of resources. So, I just
-> thought that it would be better to punt it to the right task context
-> via task_work. But...
-> 
-> 2. ...iovec import from io_resubmit_prep() might happen after submit ends,
-> i.e. when iovec was freed in userspace. And that's not great at all.
-Yes, agree, that's why I say we neeed to re-consider the io identity codes
-more in commit message :) I'll have a try to prepare a better one.
+[Performance]
+1. One thread (numjobs=1) randread (bs=4k, direct=1) one dm-linear
+device, which is built upon 3 nvme devices, with one polling hw
+queue per nvme device.
 
-Regards,
-Xiaoguang Wang
-> 
->> Currently for this panic, we can disable issuing reqs that are returned
->> with EAGAIN error in iopoll mode when ctx is dying, but we may need to
->> re-consider the io identity codes more.
->>
->> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
->> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
->> ---
->>   fs/io_uring.c | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 9db05171a774..e3b90426d72b 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -2467,7 +2467,12 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
->>   		int cflags = 0;
->>   
->>   		req = list_first_entry(done, struct io_kiocb, inflight_entry);
->> -		if (READ_ONCE(req->result) == -EAGAIN) {
->> +		/*
->> +		 * If ctx is dying, don't need to issue reqs that are returned
->> +		 * with EAGAIN error, since there maybe no users to reap them.
->> +		 */
->> +		if ((READ_ONCE(req->result) == -EAGAIN) &&
->> +		    !percpu_ref_is_dying(&ctx->refs)) {
->>   			req->result = 0;
->>   			req->iopoll_completed = 0;
->>   			list_move_tail(&req->inflight_entry, &again);
->>
-> 
+     | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+---- | --------------- | -------------------- | ----
+  dm | 		  208k |		 279k | ~34%
+
+
+2. Three threads (numjobs=3) randread (bs=4k, direct=1) one dm-linear
+device, which is built upon 3 nvme devices, with one polling hw
+queue per nvme device.
+
+It's compared to 3 threads directly randread 3 nvme devices, with one
+polling hw queue per nvme device. No CPU affinity set for these 3
+threads. Thus every thread can access every nvme device
+(filename=/dev/nvme0n1:/dev/nvme1n1:/dev/nvme2n1), i.e., every thread
+need to competing for every polling hw queue.
+
+     | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+---- | --------------- | -------------------- | ----
+  dm | 		  615k |		 728k | ~18%
+nvme | 		  728k |		 873k | ~20%
+
+The result shows that the performance gain of bio-based polling is
+comparable as that of mq polling in the same test case.
+
+
+3. Three threads (numjobs=3) randread (bs=12k, direct=1) one
+**dm-stripe** device, which is built upon 3 nvme devices, with one
+polling hw queue per nvme device.
+
+It's compared to 3 threads directly randread 3 nvme devices, with one
+polling hw queue per nvme device. No CPU affinity set for these 3
+threads. Thus every thread can access every nvme device
+(filename=/dev/nvme0n1:/dev/nvme1n1:/dev/nvme2n1), i.e., every thread
+need to competing for every polling hw queue.
+
+     | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+---- | --------------- | -------------------- | ----
+  dm | 		  314k |		 354k | ~13%
+nvme | 		  728k |		 873k | ~20%
+
+
+4. This patchset shall do no harm to the performance of the original mq
+polling. Following is the test results of one thread (numjobs=1)
+randread (bs=4k, direct=1) one nvme device.
+
+	    	 | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+---------------- | --------------- | -------------------- | ----
+without patchset | 	      242k |		     332k | ~39%
+with patchset    |	      236k |		     332k | ~39%
+
+
+
+[Changes since v2]
+
+Patchset v2 caches all hw queues (in polling mode) of underlying mq
+devices in dm layer. The polling routine actually iterates through all
+these cached hw queues.
+
+However, mq may change the queue mapping at runtime (e.g., NVMe RESET
+command), thus the cached hw queues in dm layer may be out-of-date. Thus
+patchset v3 falls back to the implementation of the very first RFC
+version, in which the mq layer needs to export one interface iterating
+all polling hw queues (patch 5), and the bio-based polling routine just
+calls this interface to iterate all polling hw queues.
+
+Besides, several new optimization is proposed.
+
+
+- patch 1,2,7
+same as v2, untouched
+
+- patch 3
+Considering advice from Christoph Hellwig, while refactoring blk_poll(),
+split mq and bio-based polling routine from the very beginning. Now
+blk_poll() is just a simple entry. blk_bio_poll() is simply copied from
+blk_mq_poll(), while the loop structure is some sort of duplication
+though.
+
+- patch 4
+This patch is newly added to support turning on/off polling through
+'/sys/block/<dev>/queue/io_poll' dynamiclly for bio-based devices.
+Patchset v2 implemented this functionality by added one new queue flag,
+which is not preferred since the queue flag resource is quite short of
+nowadays.
+
+- patch 5
+This patch is newly added, preparing for the following bio-based
+polling. The following bio-based polling will call this helper function,
+accounting on the corresponding hw queue.
+
+- patch 6
+It's from the very first RFC version, preparing for the following
+bio-based polling.
+
+- patch 8
+One fixing patch needed by the following bio-based polling. It's
+actually a v2 of [1]. I had sent the v2 singly in-reply-to [1], though
+it has not been visible on the mailing list maybe due to the delay.
+
+- patch 9
+It's from the very first RFC version.
+
+- patch 10
+This patch is newly added. Patchset v2 had ever proposed one
+optimization that, skipping the **busy** hw queues during the iteration
+phase. Back upon that time, one flag of 'atomic_t' is specifically
+maintained in dm layer, representing if the corresponding hw queue is
+busy or not. The idea is inherited, while the implementation changes.
+Now @nvmeq->cq_poll_lock is used directly here, no need for extra flag
+anymore.
+
+This optimization can significantly reduce the competition for one hw
+queue between multiple polling instances. Following statistics is the
+test result when 3 threads concurrently randread (bs=4k, direct=1) one
+dm-linear device, which is built upon 3 nvme devices, with one polling
+hw queue per nvme device.
+
+	    | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+----------- | --------------- | -------------------- | ----
+without opt | 		 318k |		 	256k | ~-20%
+with opt    |		 314k |		 	354k | ~13%
+							
+
+- patch 11
+This is another newly added optimizatin for bio-based polling.
+
+One intuitive insight is that, when the original bio submitted to dm
+device doesn't get split, then the bio gets enqueued into only one hw
+queue of one of the underlying mq devices. In this case, we no longer
+need to track all split bios, and one cookie (for the only split bio)
+is enough. It is implemented by returning the pointer to the
+corresponding hw queue in this case.
+
+It should be safe by directly returning the pointer to the hw queue,
+since 'struct blk_mq_hw_ctx' won't be freed during the whole lifetime of
+'struct request_queue'. Even when the number of hw queues may decrease
+when NVMe RESET happens, the 'struct request_queue' structure of decreased
+hw queues won't be freed, instead it's buffered into
+&q->unused_hctx_list list.
+
+Though this optimization seems quite intuitive, the performance test
+shows that it does no benefit nor harm to the performance, while 3
+threads concurrently randreading (bs=4k, direct=1) one dm-linear
+device, which is built upon 3 nvme devices, with one polling hw queue
+per nvme device.
+
+I'm not sure why it doesn't work, maybe because the number of devices,
+or the depth of the devcice stack is to low in my test case?
+
+
+[Remained Issue]
+It has been mentioned in patch 4 that, users could change the state of
+the underlying devices through '/sys/block/<dev>/io_poll', bypassing
+the dm device above. Thus it can cause a situation where QUEUE_FLAG_POLL
+is still set for the request_queue of dm device, while one of the
+underlying mq device may has cleared this flag.
+
+In this case, it will pass the 'test_bit(QUEUE_FLAG_POLL, &q->queue_flags)'
+check in blk_poll(), while the input cookie may actually points to a hw
+queue in IRQ mode since patch 11. Thus for this hw queue (in IRQ mode),
+the bio-based polling routine will handle this hw queue acquiring
+'spin_lock(&nvmeq->cq_poll_lock)' (refer
+drivers/nvme/host/pci.c:nvme_poll), which is not adequate since this hw
+queue may also be accessed in IRQ context. In other words,
+spin_lock_irq() should be used here.
+
+I have not come up one simple way to fix it. I don't want to do sanity
+check (e.g., the type of the hw queue is HCTX_TYPE_POLL or not) in the
+IO path (submit_bio()/blk_poll()), i.e., fast path.
+
+We'd better fix it in the control path, i.e., dm could be aware of the
+change when attribute (e.g., support io_poll or not) of one of the
+underlying devices changed at runtime.
+
+[1] https://listman.redhat.com/archives/dm-devel/2021-February/msg00028.html
+
+
+changes since v1:
+- patch 1,2,4 is the same as v1 and have already been reviewed
+- patch 3 is refactored a bit on the basis of suggestions from
+Mike Snitzer.
+- patch 5 is newly added and introduces one new queue flag
+representing if the queue is capable of IO polling. This mainly
+simplifies the logic in queue_poll_store().
+- patch 6 implements the core mechanism supporting IO polling.
+The sanity check checking if the dm device supports IO polling is
+also folded into this patch, and the queue flag will be cleared if
+it doesn't support, in case of table reloading.
+
+
+
+
+Jeffle Xu (11):
+  block: move definition of blk_qc_t to types.h
+  block: add queue_to_disk() to get gendisk from request_queue
+  block: add poll method to support bio-based IO polling
+  block: add poll_capable method to support bio-based IO polling
+  block/mq: extract one helper function polling hw queue
+  block/mq: add iterator for polling hw queues
+  dm: always return BLK_QC_T_NONE for bio-based device
+  dm: fix iterate_device sanity check
+  dm: support IO polling for bio-based dm device
+  nvme/pci: don't wait for locked polling queue
+  dm: fastpath of bio-based polling
+
+ block/blk-core.c              |  89 +++++++++++++-
+ block/blk-mq.c                |  27 +----
+ block/blk-sysfs.c             |  14 ++-
+ drivers/md/dm-table.c         | 215 ++++++++++++++++++----------------
+ drivers/md/dm.c               |  90 +++++++++++---
+ drivers/md/dm.h               |   2 +-
+ drivers/nvme/host/pci.c       |   4 +-
+ include/linux/blk-mq.h        |  21 ++++
+ include/linux/blk_types.h     |  10 +-
+ include/linux/blkdev.h        |   4 +
+ include/linux/device-mapper.h |   1 +
+ include/linux/fs.h            |   2 +-
+ include/linux/types.h         |   3 +
+ include/trace/events/kyber.h  |   6 +-
+ 14 files changed, 333 insertions(+), 155 deletions(-)
+
+-- 
+2.27.0
+

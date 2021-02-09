@@ -2,147 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E212B315DC7
-	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 04:24:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88E773160AE
+	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 09:13:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229901AbhBJDYH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 Feb 2021 22:24:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbhBJDYG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Feb 2021 22:24:06 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADDDDC061574
-        for <io-uring@vger.kernel.org>; Tue,  9 Feb 2021 19:23:26 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id 8so428794plc.10
-        for <io-uring@vger.kernel.org>; Tue, 09 Feb 2021 19:23:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=nhzfzSXnq+pTyKaxGqY1TjPbEkxOgv9+TA6074H41uk=;
-        b=vj51oq33njk7Vk8VhJCLnRXaVqw9TJsxQ54ph1/3FsmmfNwXmbXx/SN4JAeKp3bEYK
-         8+X0Nhe9emD9aGFadE68ITu5+yJHFUiNWSZG40C7w1dDT6/Xj2bnDxWMGCoFEmi1AtbX
-         49pFK07CG7pJ6C6zEvWfJPYs9SrmclVr2V6e0X09yBLU3lK+kAfC7R74mW+KA+Zq0tAt
-         40+BWh8U3rSjyXrx8grBnerHydabrPpYJgA5jWD+r8YB3ZYEGzrQhC5BN3TtIT8pHrPS
-         K6XVaufty0RefCq/OXfpsnOlyCqhi6RhHZ5f1ToNZPR3N2r1YlGScL3T6zRTX1tdoq/t
-         Pckw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nhzfzSXnq+pTyKaxGqY1TjPbEkxOgv9+TA6074H41uk=;
-        b=rgZ+iZuqfD5saPEKjFk764TfQDOiPM+UPSlaR1bpUF89xBXnJzGi+Fv5MKLb9Iakfb
-         PngB7aA6Nsi0+G8d3CF7Oj/rrD75GXjvOr1LAH2VrYRzf2uLaVt7nWI6QuCk2/3CiO94
-         RsHUzmHfu6wKQ6hUy6k/iy0b52RtH4BEHQ8ljDWOrYOSI5UU/pDv6cJA+M2a0l8PQfrp
-         Dnxerr/0fcfg53k4epAkSn1+xY2Pg3M3AbTjuogO714lV4bFX5gN84YvkcRkjNTuN0QN
-         lWjTkh0BI7ghuzwm8Lucj7GSzh7tEEA1owXck3jMTeNkQRG/Srr32FfEnBXRS9wpM2iq
-         4Y4g==
-X-Gm-Message-State: AOAM530IZA71RbMy2hEfIuymAchkbJNHCrdTqdzOXRECm4jsZuBIHau+
-        3viFYsJrdNtrKGzOnqMahwo4RxqwbbWxkw==
-X-Google-Smtp-Source: ABdhPJwjOWQKBuluAKH3PQn4nhk+71FMhdTOZVPIJt2rsS/2J8ZhVswzTxXmFoOPN9h5sDXhePCw1g==
-X-Received: by 2002:a17:90a:1f41:: with SMTP id y1mr1103177pjy.90.1612927405755;
-        Tue, 09 Feb 2021 19:23:25 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id 74sm309945pfw.53.2021.02.09.19.23.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Feb 2021 19:23:25 -0800 (PST)
-Subject: Re: [PATCH RFC 00/17] playing around req alloc
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1612915326.git.asml.silence@gmail.com>
- <ffaf0640-7747-553d-9baf-4d41777a4d4d@kernel.dk>
- <dcc61d65-d6e0-14e0-7368-352501fc21ea@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a9a0d663-f6ac-1086-8cd7-ad4583b1cb7c@kernel.dk>
-Date:   Tue, 9 Feb 2021 20:23:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S233742AbhBJIM2 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Wed, 10 Feb 2021 03:12:28 -0500
+Received: from spam.auroraoh.com ([24.56.89.101]:55020 "EHLO
+        barracuda.auroraoh.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S233739AbhBJIMT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Feb 2021 03:12:19 -0500
+X-ASG-Debug-ID: 1612944670-112c0d6a799cb90001-k4Lu3k
+Received: from COASRV-MAIL2.auroraoh.loc (coasrv-mail2.auroraoh.loc [10.3.1.15]) by barracuda.auroraoh.com with ESMTP id jJ81a9DkExpcgPkc; Wed, 10 Feb 2021 03:11:10 -0500 (EST)
+X-Barracuda-Envelope-From: JanuskaD@auroraoh.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.3.1.15
+Received: from [172.20.10.5] (197.210.29.8) by COASRV-MAIL2.auroraoh.loc
+ (10.3.1.15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 9 Feb 2021
+ 02:45:33 -0500
+Content-Type: text/plain; charset="iso-8859-1"
+X-Barracuda-RBL-Trusted-Forwarder: 172.20.10.5
 MIME-Version: 1.0
-In-Reply-To: <dcc61d65-d6e0-14e0-7368-352501fc21ea@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: We are a registered Private Loan Investment Company in the United Kingdom,
+ we also registered with the Turkish British Chamber of Commerce and Industry
+ (TBCCI) we have operations in Europe and Asia.
+To:     Recipients <januskad@auroraoh.com>
+X-ASG-Orig-Subj: We are a registered Private Loan Investment Company in the United Kingdom,
+ we also registered with the Turkish British Chamber of Commerce and Industry
+ (TBCCI) we have operations in Europe and Asia.
+From:   <januskad@auroraoh.com>
+Date:   Tue, 9 Feb 2021 15:44:47 +0800
+Reply-To: <cfolimiited@gmail.com>
+X-Priority: 1 (High)
+X-Antivirus: Avast (VPS 210207-2, 02/07/2021), Outbound message
+X-Antivirus-Status: Clean
+Message-ID: <04dad0e2-2f3b-46a3-bb30-cab23ca007d4@COASRV-MAIL2.auroraoh.loc>
+X-Originating-IP: [197.210.29.8]
+X-ClientProxiedBy: COASRV-MAIL3.auroraoh.loc (10.3.1.13) To
+ COASRV-MAIL2.auroraoh.loc (10.3.1.15)
+X-Barracuda-Connect: coasrv-mail2.auroraoh.loc[10.3.1.15]
+X-Barracuda-Start-Time: 1612944670
+X-Barracuda-URL: https://10.3.1.12:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at auroraoh.com
+X-Barracuda-Scan-Msg-Size: 755
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Spam-Score: 1.61
+X-Barracuda-Spam-Status: No, SCORE=1.61 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=5.0 tests=BSF_SC0_SA609_NRN, BSF_SC0_SA912_RP_FR, BSF_SC0_SA_TO_FROM_ADDR_MATCH, NO_REAL_NAME
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.87880
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        0.00 NO_REAL_NAME           From: does not include a real name
+        0.01 BSF_SC0_SA912_RP_FR    Custom Rule BSF_SC0_SA912_RP_FR
+        0.50 BSF_SC0_SA_TO_FROM_ADDR_MATCH Sender Address Matches Recipient
+                                   Address
+        1.10 BSF_SC0_SA609_NRN      Custom Rule SA609_NRN
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/9/21 8:14 PM, Pavel Begunkov wrote:
-> On 10/02/2021 02:08, Jens Axboe wrote:
->> On 2/9/21 5:03 PM, Pavel Begunkov wrote:
->>> Unfolding previous ideas on persistent req caches. 4-7 including
->>> slashed ~20% of overhead for nops benchmark, haven't done benchmarking
->>> personally for this yet, but according to perf should be ~30-40% in
->>> total. That's for IOPOLL + inline completion cases, obviously w/o
->>> async/IRQ completions.
->>
->> And task_work, which is sort-of inline.
->>
->>> Jens,
->>> 1. 11/17 removes deallocations on end of submit_sqes. Looks you
->>> forgot or just didn't do that.
-> 
-> And without the patches I added, it wasn't even necessary, so
-> nevermind
+We are seeking for beneficiaries who source for fund to expand/relocating their business interest abroad. We are ready to fund projects outside Turkey and United Kingdom in the form of Soft Loan. We grant loans to both corporate and private entities at a low interest rate of 2% R.O.I per annul.
 
-OK good, I was a bit confused about that one...
+We like to grant loan in the following sectors: oil/Gas, banking, real estate, stock speculation and mining, transportation, health sector and tobacco, Communication Services, Agriculture Forestry & Fishing, thus any sector. The terms are very flexible and interesting.
 
->>> 2. lists are slow and not great cache-wise, that why at I want at least
->>> a combined approach from 12/17.
->>
->> This is only true if you're browsing a full list. If you do add-to-front
->> for a cache, and remove-from-front, then cache footprint of lists are
->> good.
-> 
-> Ok, good point, but still don't think it's great. E.g. 7/17 did improve
-> performance a bit for me, as I mentioned in the related RFC. And that
-> was for inline-completed nops, and going over the list/array and
-> always touching all reqs.
+Please contact us for more details;
 
-Agree, array is always a bit better. Just saying that it's not a huge
-deal unless you're traversing the list, in which case lists are indeed
-horrible. But for popping off the first entry (or adding one), it's not
-bad at all.
 
->>> 3. Instead of lists in "use persistent request cache" I had in mind a
->>> slightly different way: to grow the req alloc cache to 32-128 (or hint
->>> from the userspace), batch-alloc by 8 as before, and recycle _all_ reqs
->>> right into it. If  overflows, do kfree().
->>> It should give probabilistically high hit rate, amortising out most of
->>> allocations. Pros: it doesn't grow ~infinitely as lists can. Cons: there
->>> are always counter examples. But as I don't have numbers to back it, I
->>> took your implementation. Maybe, we'll reconsider later.
->>
->> It shouldn't grow bigger than what was used, but the downside is that
->> it will grow as big as the biggest usage ever. We could prune, if need
->> be, of course.
-> 
-> Yeah, that was the point. But not a deal-breaker in either case.
+Kind regards,
 
-Agree
-
->> As far as I'm concerned, the hint from user space is the submit count.
-> 
-> I mean hint on setup, like max QD, then we can allocate req cache
-> accordingly. Not like it matters
-
-I'd rather grow it dynamically, only the first few iterations will hit
-the alloc. Which is fine, and better than pre-populating. Assuming I
-understood you correctly here...
-
->>
->>> I'll revise tomorrow on a fresh head + do some performance testing,
->>> and is leaving it RFC until then.
->>
->> I'll look too and test this, thanks!
-
-Tests out good for me with the suggested edits I made. nops are
-massively improved, as suspected. But also realistic workloads benefit
-nicely.
-
-I'll send out a few patches I have on top tomorrow. Not fixes, but just
-further improvements/features/accounting.
+Paul McCann
 
 -- 
-Jens Axboe
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
 

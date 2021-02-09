@@ -2,36 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46A53314ABE
-	for <lists+io-uring@lfdr.de>; Tue,  9 Feb 2021 09:51:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CABED3151CD
+	for <lists+io-uring@lfdr.de>; Tue,  9 Feb 2021 15:39:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229991AbhBIIsn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 Feb 2021 03:48:43 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:55181 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230139AbhBIIqq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Feb 2021 03:46:46 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UOHsEzl_1612860361;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UOHsEzl_1612860361)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 09 Feb 2021 16:46:02 +0800
-Subject: Re: [PATCH v3 09/11] dm: support IO polling for bio-based dm device
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     snitzer@redhat.com, axboe@kernel.dk, joseph.qi@linux.alibaba.com,
-        caspar@linux.alibaba.com, hch@lst.de, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, io-uring@vger.kernel.org
-References: <20210208085243.82367-1-jefflexu@linux.alibaba.com>
- <20210208085243.82367-10-jefflexu@linux.alibaba.com>
- <20210209031122.GA63798@T590>
- <a499a33f-da2e-b5aa-5266-9e7c76a34b48@linux.alibaba.com>
- <20210209080739.GB94287@T590>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <4ac63594-7764-dc13-a217-50a96cd9a93c@linux.alibaba.com>
-Date:   Tue, 9 Feb 2021 16:46:01 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.0
+        id S231625AbhBIOiI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 Feb 2021 09:38:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232169AbhBIOhh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Feb 2021 09:37:37 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F244C061786
+        for <io-uring@vger.kernel.org>; Tue,  9 Feb 2021 06:36:57 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id f2so7045931ioq.2
+        for <io-uring@vger.kernel.org>; Tue, 09 Feb 2021 06:36:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sssg8KmxqU8VRCtUYxA1o0jiJ/Ogsm8bVP7G94M7KA0=;
+        b=UIHkK2HX+tLzNxL/ptPBHZMx3SYQKMFY8aCJoIddkhUF+01JXmbyRIAm9Cj7z7EFOt
+         zVlxYCfeJoKJsGHbu5qgASUHnp8OucPDl6pmn0biWRmIxvKS+eVcs2Afd3XNE1HQ8baH
+         aXINBYnNDwMK7ecaeErOQI6tqLZ4ZLPfsjr6gI8xt+Ox+xI//batqG8ntnmYqOLYbNrQ
+         +wYh/8+CTsMaEpiNLRAxJEbW2suGZZnfQ81XAWh95eGe7QTHXSKuEF9PkxFI+ml3Vm3l
+         r4SDOkyFqJ6cvyGPKm5j1akkXa74YxMLgLxv9DEk3OgWe6NlGN+O5LXFEyFj78njoPFW
+         N3JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sssg8KmxqU8VRCtUYxA1o0jiJ/Ogsm8bVP7G94M7KA0=;
+        b=b9YNVL1XP1ILd3QaGhn6bSNMlVharYDrEd6ivX3kEKhluWx/obxBTWbc1X4Y2Ao+tY
+         6INScxwEF36VCwhc3iuy1dGX62uH65h8wPwG6lWgJlTHK+x1DqDqiVXB+ydcLlVjXjiA
+         WbZrrjJmiYrL/tXbCRPTBRyhG3B6wyy527polDlaVIGVPNE+JpztXshuX5WRs4UwKShG
+         VC0qwZ1hJqSijbWUq6bQoclSSFWRhetKsgplNTWR1Fi5bbAFtayptRDzjddcmDYRJojj
+         sNWecnS1TYa4ygS3ArXTsth/X0qY6PFROsJ8Rrr3If4U5uJqs5I1dJK8UroQpAlc9FiP
+         CSJg==
+X-Gm-Message-State: AOAM531hnMu+de2x7qsFboaYhMlqHTS4tIYYorOU/kkRYqvhpUxZKPAy
+        URkjym3CY1QtbQ4aOZdb+EgpTEV/vCNTI9aZ
+X-Google-Smtp-Source: ABdhPJxxTqGhtJcMSiPJCMIu1CELREH8sJLFd1lS8Ok90jVMZpbOZMwdhLOq+c8W6+hvFo+i4hylZw==
+X-Received: by 2002:a05:6638:12d3:: with SMTP id v19mr23275574jas.42.1612881416549;
+        Tue, 09 Feb 2021 06:36:56 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id 14sm10659330ioe.3.2021.02.09.06.36.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Feb 2021 06:36:56 -0800 (PST)
+Subject: Re: [PATCH] fs/io_uring.c: fix typo in comment
+To:     zangchunxin@bytedance.com, viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210209024224.84122-1-zangchunxin@bytedance.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <04e4ac54-c38a-2160-d152-000c0147a274@kernel.dk>
+Date:   Tue, 9 Feb 2021 07:36:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210209080739.GB94287@T590>
+In-Reply-To: <20210209024224.84122-1-zangchunxin@bytedance.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -39,121 +67,13 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-
-On 2/9/21 4:07 PM, Ming Lei wrote:
-> On Tue, Feb 09, 2021 at 02:13:38PM +0800, JeffleXu wrote:
->>
->>
->> On 2/9/21 11:11 AM, Ming Lei wrote:
->>> On Mon, Feb 08, 2021 at 04:52:41PM +0800, Jeffle Xu wrote:
->>>> DM will iterate and poll all polling hardware queues of all target mq
->>>> devices when polling IO for dm device. To mitigate the race introduced
->>>> by iterating all target hw queues, a per-hw-queue flag is maintained
->>>
->>> What is the per-hw-queue flag?
->>
->> Sorry I forgot to update the commit message as the implementation
->> changed. Actually this mechanism is implemented by patch 10 of this
->> patch set.
+On 2/8/21 7:42 PM, zangchunxin@bytedance.com wrote:
+> From: Chunxin Zang <zangchunxin@bytedance.com>
 > 
-> It is hard to associate patch 10's spin_trylock() with per-hw-queue
-> flag. 
+> Change "sane" to "same" in a comment in io_uring.c
 
-You're right, the commit message here is totally a mistake. Actually I
-had ever implemented a per-hw-queue flag, such as
-
-```
-struct blk_mq_hw_ctx {
-	atomic_t busy;
-	...
-};
-```
-
-In this case, the skipping mechanism is implemented in block layer.
-
-
-But later I refactor the code and move the implementation to the device
-driver layer as described by patch 10, while forgetting to update the
-commit message. The reason why I implement it in device driver layer is
-that, the competition actually stems from the underlying device driver
-(e.g., nvme driver), as described in the following snippet.
-
-```
-nvme_poll
-	spin_lock(&nvmeq->cq_poll_lock);
-	found = nvme_process_cq(nvmeq);
-	spin_unlock(&nvmeq->cq_poll_lock);
-```
-
-It is @nvmeq->cq_poll_lock, i.e., the implementation of the underlying
-device driver that has caused the competition. Thus maybe it is
-reasonable to handle the competition issue in the device driver layer?
-
-
-> Also scsi's poll implementation is in-progress, and scsi's poll may
-> not be implemented in this way.
-
-Yes. The defect of leaving the competition issue to the device driver
-layer is that, every device driver supporting polling need to be somehow
-optimized individually. Actually I have not taken a close look at the
-other two types of nvme driver (drivers/nvme/host/tcp.c and
-drivers/nvme/host/rdma.c), which also support polling.
-
-
-
->>
->>>
->>>> to indicate whether this polling hw queue currently being polled on or
->>>> not. Every polling hw queue is exclusive to one polling instance, i.e.,
->>>> the polling instance will skip this polling hw queue if this hw queue
->>>> currently is being polled by another polling instance, and start
->>>> polling on the next hw queue.
->>>
->>> Not see such skip in dm_poll_one_dev() in which
->>> queue_for_each_poll_hw_ctx() is called directly for polling all POLL
->>> hctxs of the request queue, so can you explain it a bit more about this
->>> skip mechanism?
->>>
->>
->> It is implemented as patch 10 of this patch set. When spin_trylock()
->> fails, the polling instance will return immediately, instead of busy
->> waiting.
->>
->>
->>> Even though such skipping is implemented, not sure if good performance
->>> can be reached because hctx poll may be done in ping-pong style
->>> among several CPUs. But blk-mq hctx is supposed to have its cpu affinities.
->>>
->>
->> Yes, the mechanism of iterating all hw queues can make the competition
->> worse.
->>
->> If every underlying data device has **only** one polling hw queue, then
->> this ping-pong style polling still exist, even when we implement split
->> bio tracking mechanism, i.e., acquiring the specific hw queue the bio
->> enqueued into. Because multiple polling instance has to compete for the
->> only polling hw queue.
->>
->> But if multiple polling hw queues per device are reserved for multiple
->> polling instances, (e.g., every underlying data device has 3 polling hw
->> queues when there are 3 polling instances), just as what we practice on
->> mq polling, then the current implementation of iterating all hw queues
->> will indeed works in a ping-pong style, while this issue shall not exist
->> when accurate split bio tracking mechanism could be implemented.
-> 
-> In reality it could be possible to have one hw queue for each numa node.
-> 
-> And you may re-use blk_mq_map_queue() for getting the proper hw queue for poll.
-
-Thanks. But the optimization I proposed in [1] may not works well when
-the IO submitting process migrates to another CPU halfway. I mean, the
-process has submitted several split bios, and then it migrates to
-another CPU and moves on submitting the left split bios.
-
-[1]
-https://lore.kernel.org/io-uring/20210208085243.82367-1-jefflexu@linux.alibaba.com/T/#m0d9a0e55e11874a70c6a3491f191289df72a84f8
+It's supposed to say 'sane'.
 
 -- 
-Thanks,
-Jeffle
+Jens Axboe
+

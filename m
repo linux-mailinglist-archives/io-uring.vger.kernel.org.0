@@ -2,88 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E608314694
-	for <lists+io-uring@lfdr.de>; Tue,  9 Feb 2021 03:43:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D0063146DE
+	for <lists+io-uring@lfdr.de>; Tue,  9 Feb 2021 04:15:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229891AbhBICnN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Feb 2021 21:43:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59274 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbhBICnN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Feb 2021 21:43:13 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7CEBC06178A
-        for <io-uring@vger.kernel.org>; Mon,  8 Feb 2021 18:42:32 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id fa16so733395pjb.1
-        for <io-uring@vger.kernel.org>; Mon, 08 Feb 2021 18:42:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tA3NkU7/ZdOeyh4OgJY88cyaW+ePcQQoqdXxwUHc2g0=;
-        b=i9PJSBwzTbDZuxA3G0oFraxAmIc9Q+OcH/i6djntpmLkrbYz3Mn9W5HaRFXt/4dtMf
-         nZUeJH2F7jrAOxBq+LfjexEH9E7rQ1drsuPKlBaHY6tT2rTCTPExvHQh4joi7SBi9eJT
-         RbC46xObuPO4+p/ZLsLWFLhoecrWyWoUkSXV2e+zG1e4ttL1XPIjjY0f42yvCpnK3pD5
-         Q4v9l3IfdyZpuxnUwMCWqc/zS58+JqEvPh3WrcEH3MEEUzcrCI2FIX3yliUAWdbQsB7k
-         P7w9IzYEpHP/KPHXgZVGLYAsSIe/69YGd55ELeTJOgQhnv1v+c+LJerN75YWVR3jXtBG
-         Akdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tA3NkU7/ZdOeyh4OgJY88cyaW+ePcQQoqdXxwUHc2g0=;
-        b=bqNVuGqdcEJzDvLauOZeJF8FeczzzYhzzNCF+eJX8jVg9yohb/too1mEWpNM/eUIoi
-         N4gfwH+3p7/QjnHSSQhZX/GmNXN2/EFqzAQTUMbg6k485Xaf9xl51IoCYtnelyn+NHZy
-         KUoI2PPy+86hiJoqABeF/6+4/C0lrLmfQkhOrf1PTuhgL15T8/Wuck9V9W7v538q0UPi
-         r/HXln9F7doIWarAnW4aU2bf2EY+cDXzxFVOOYaolsB0liWwud/nbA3UtQkd5N8GiRAU
-         YdMmGqqWALDXWHP8u2VX5IZa5gjBzFm/oREI6oVYeGEatHPNUQ6Tjch7EkCKLJA8HzhR
-         gYpA==
-X-Gm-Message-State: AOAM530tR4ftXR7WoboImb2Cxke/F3sUbE4/fo36SXH9DirGTBxPKucj
-        JRQiErWGg+NVTc/4YToyX2WE+A==
-X-Google-Smtp-Source: ABdhPJxtPXnBWIRRunn95nq37MIc/77qYGEHxQk2gdMt3spElLIQtBpYtk8yKNRD8RhX2T6sm9QBEA==
-X-Received: by 2002:a17:90b:1c0d:: with SMTP id oc13mr1853885pjb.156.1612838552301;
-        Mon, 08 Feb 2021 18:42:32 -0800 (PST)
-Received: from localhost.localdomain ([139.177.225.224])
-        by smtp.gmail.com with ESMTPSA id m4sm19428755pgu.4.2021.02.08.18.42.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Feb 2021 18:42:31 -0800 (PST)
-From:   zangchunxin@bytedance.com
-To:     viro@zeniv.linux.org.uk, axboe@kernel.dk
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chunxin Zang <zangchunxin@bytedance.com>
-Subject: [PATCH] fs/io_uring.c: fix typo in comment
-Date:   Tue,  9 Feb 2021 10:42:24 +0800
-Message-Id: <20210209024224.84122-1-zangchunxin@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+        id S229693AbhBIDOl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Feb 2021 22:14:41 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31267 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229793AbhBIDNU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Feb 2021 22:13:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612840306;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HLiqMW2n7YYtMYQAHHLQv7F6f639zWMgh5L7ZVOjcXI=;
+        b=b+uDaNbJqRnTZmzsibutPX3WqgpEe4KDv8ImCUUc1Z1qTdE5qheQIjLo2EkQ/9/8J/aqNg
+        7P6BNOTvxtb7g5SrXwyuPg0Ev5M+CtCZfppValDA0gxb1SpHF7+XNNluBnzUQy5W7TkNLd
+        IcViWixD17dK5u2EDZ6Sv0LbESoEVdA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-219-8_ei_ySOMzu40yLQ1nxtkQ-1; Mon, 08 Feb 2021 22:11:42 -0500
+X-MC-Unique: 8_ei_ySOMzu40yLQ1nxtkQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9DC1A107ACE4;
+        Tue,  9 Feb 2021 03:11:40 +0000 (UTC)
+Received: from T590 (ovpn-13-86.pek2.redhat.com [10.72.13.86])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 45B205D6A8;
+        Tue,  9 Feb 2021 03:11:26 +0000 (UTC)
+Date:   Tue, 9 Feb 2021 11:11:22 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     snitzer@redhat.com, axboe@kernel.dk, joseph.qi@linux.alibaba.com,
+        caspar@linux.alibaba.com, hch@lst.de, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, io-uring@vger.kernel.org
+Subject: Re: [PATCH v3 09/11] dm: support IO polling for bio-based dm device
+Message-ID: <20210209031122.GA63798@T590>
+References: <20210208085243.82367-1-jefflexu@linux.alibaba.com>
+ <20210208085243.82367-10-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210208085243.82367-10-jefflexu@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Chunxin Zang <zangchunxin@bytedance.com>
+On Mon, Feb 08, 2021 at 04:52:41PM +0800, Jeffle Xu wrote:
+> DM will iterate and poll all polling hardware queues of all target mq
+> devices when polling IO for dm device. To mitigate the race introduced
+> by iterating all target hw queues, a per-hw-queue flag is maintained
 
-Change "sane" to "same" in a comment in io_uring.c
+What is the per-hw-queue flag?
 
-Signed-off-by: Chunxin Zang <zangchunxin@bytedance.com>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> to indicate whether this polling hw queue currently being polled on or
+> not. Every polling hw queue is exclusive to one polling instance, i.e.,
+> the polling instance will skip this polling hw queue if this hw queue
+> currently is being polled by another polling instance, and start
+> polling on the next hw queue.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1f68105a41ed..da86440130f9 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -9519,7 +9519,7 @@ static int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 	struct io_rings *rings;
- 	size_t size, sq_array_offset;
- 
--	/* make sure these are sane, as we already accounted them */
-+	/* make sure these are same, as we already accounted them */
- 	ctx->sq_entries = p->sq_entries;
- 	ctx->cq_entries = p->cq_entries;
- 
+Not see such skip in dm_poll_one_dev() in which
+queue_for_each_poll_hw_ctx() is called directly for polling all POLL
+hctxs of the request queue, so can you explain it a bit more about this
+skip mechanism?
+
+Even though such skipping is implemented, not sure if good performance
+can be reached because hctx poll may be done in ping-pong style
+among several CPUs. But blk-mq hctx is supposed to have its cpu affinities.
+
 -- 
-2.11.0
+Ming
 

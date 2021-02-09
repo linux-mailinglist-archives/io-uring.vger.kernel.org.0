@@ -2,79 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E486D3137C7
-	for <lists+io-uring@lfdr.de>; Mon,  8 Feb 2021 16:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E608314694
+	for <lists+io-uring@lfdr.de>; Tue,  9 Feb 2021 03:43:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233831AbhBHPbB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Feb 2021 10:31:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55340 "EHLO
+        id S229891AbhBICnN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Feb 2021 21:43:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233840AbhBHP2G (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Feb 2021 10:28:06 -0500
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD70AC06178C
-        for <io-uring@vger.kernel.org>; Mon,  8 Feb 2021 07:27:18 -0800 (PST)
-Received: by mail-il1-x132.google.com with SMTP id y5so13081607ilg.4
-        for <io-uring@vger.kernel.org>; Mon, 08 Feb 2021 07:27:18 -0800 (PST)
+        with ESMTP id S229704AbhBICnN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Feb 2021 21:43:13 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7CEBC06178A
+        for <io-uring@vger.kernel.org>; Mon,  8 Feb 2021 18:42:32 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id fa16so733395pjb.1
+        for <io-uring@vger.kernel.org>; Mon, 08 Feb 2021 18:42:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=rWA5lYRxu9f9oKL/yyhzl2icZOvsnq36zU7+Pmn24pg=;
-        b=bUTr6ilYhEP3pfY0dyIPzsVeflcdho76BNi9RWa0djdO3aBkfdqcP8c+ZNNN8uwa24
-         N/rq/BlvJ72WQDeeYvvUybx27RiCo9UKfk0SSv0CtJj9qoujX1eDYntRwdpSl8c9+Wjm
-         zRvCNT9n2M/TG7vOqiRUV3Z+X078GugEwBNQrCHEX3a4mTamreAe2qeFNszKIijY9kUV
-         RZOrqTChs5fR95P7STs7p4GjPeguxQsEbqGbSG3XA3OoaPWfxszMC9sUboz4dWznxu4x
-         iJy9me0ppwUYiATqNDXewMtt+p3Ip/qMwVba/7+S2q31OfWkzIzlgga7A7Suwk2T8lg6
-         Y0Jg==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tA3NkU7/ZdOeyh4OgJY88cyaW+ePcQQoqdXxwUHc2g0=;
+        b=i9PJSBwzTbDZuxA3G0oFraxAmIc9Q+OcH/i6djntpmLkrbYz3Mn9W5HaRFXt/4dtMf
+         nZUeJH2F7jrAOxBq+LfjexEH9E7rQ1drsuPKlBaHY6tT2rTCTPExvHQh4joi7SBi9eJT
+         RbC46xObuPO4+p/ZLsLWFLhoecrWyWoUkSXV2e+zG1e4ttL1XPIjjY0f42yvCpnK3pD5
+         Q4v9l3IfdyZpuxnUwMCWqc/zS58+JqEvPh3WrcEH3MEEUzcrCI2FIX3yliUAWdbQsB7k
+         P7w9IzYEpHP/KPHXgZVGLYAsSIe/69YGd55ELeTJOgQhnv1v+c+LJerN75YWVR3jXtBG
+         Akdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=rWA5lYRxu9f9oKL/yyhzl2icZOvsnq36zU7+Pmn24pg=;
-        b=OFFpezVEBJlUZ0euU+O3r+S4znE1W9KxcPHiZKk7eblIHI8TP4PAG59oaTlyxnbjk8
-         Ycyb6ZT05pe83wKQiz38wzYMlRi+wlQtiNs6knkgQbZJUSoc4baFB/msVhefvrHxK7f/
-         VIA23Au8E5HUZYr4/QM/80GluSmee6bnXb+77c4nh6a3kXWDInUS533TfTVTCPh85o5B
-         Hk5q0QDwTd7fajmiTOnF+t/o6rypNH8x0X8Z7h3toyJgr2Ibs9D4iCSwBtENFOAWIBND
-         gdIwt1DiVuzOANBhOiuPZ38F0uDxFmsFTppZUmMmRTN0J5Q9CjisnNtF5kp6yjzYVOio
-         iNGw==
-X-Gm-Message-State: AOAM531vch5gQ/4nxWtLRkmWvW/9cYy7+AwQsvCtTtiMLJkMBMPhmSsM
-        XYAqx1A+hNFEypF47TJIbkmGBS9buB7uqIc2
-X-Google-Smtp-Source: ABdhPJw01aAcVZLmPAUBCC56/LHLPNwYeXOCTQxMCkxLyOpF5+zPjKrbNESb/5Y6E2WiB4v8engcRg==
-X-Received: by 2002:a92:c269:: with SMTP id h9mr15515138ild.239.1612798037830;
-        Mon, 08 Feb 2021 07:27:17 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id r9sm9063968ill.72.2021.02.08.07.27.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Feb 2021 07:27:17 -0800 (PST)
-Subject: Re: [PATCH 5.12] io_uring: cancel SQPOLL reqs acress exec
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <a50e2df51707fc1de3708fe087e08b3aa16f492a.1612737169.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fb823f26-3257-bc7c-4b2c-7837e4b7e3c6@kernel.dk>
-Date:   Mon, 8 Feb 2021 08:27:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=tA3NkU7/ZdOeyh4OgJY88cyaW+ePcQQoqdXxwUHc2g0=;
+        b=bqNVuGqdcEJzDvLauOZeJF8FeczzzYhzzNCF+eJX8jVg9yohb/too1mEWpNM/eUIoi
+         N4gfwH+3p7/QjnHSSQhZX/GmNXN2/EFqzAQTUMbg6k485Xaf9xl51IoCYtnelyn+NHZy
+         KUoI2PPy+86hiJoqABeF/6+4/C0lrLmfQkhOrf1PTuhgL15T8/Wuck9V9W7v538q0UPi
+         r/HXln9F7doIWarAnW4aU2bf2EY+cDXzxFVOOYaolsB0liWwud/nbA3UtQkd5N8GiRAU
+         YdMmGqqWALDXWHP8u2VX5IZa5gjBzFm/oREI6oVYeGEatHPNUQ6Tjch7EkCKLJA8HzhR
+         gYpA==
+X-Gm-Message-State: AOAM530tR4ftXR7WoboImb2Cxke/F3sUbE4/fo36SXH9DirGTBxPKucj
+        JRQiErWGg+NVTc/4YToyX2WE+A==
+X-Google-Smtp-Source: ABdhPJxtPXnBWIRRunn95nq37MIc/77qYGEHxQk2gdMt3spElLIQtBpYtk8yKNRD8RhX2T6sm9QBEA==
+X-Received: by 2002:a17:90b:1c0d:: with SMTP id oc13mr1853885pjb.156.1612838552301;
+        Mon, 08 Feb 2021 18:42:32 -0800 (PST)
+Received: from localhost.localdomain ([139.177.225.224])
+        by smtp.gmail.com with ESMTPSA id m4sm19428755pgu.4.2021.02.08.18.42.29
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Feb 2021 18:42:31 -0800 (PST)
+From:   zangchunxin@bytedance.com
+To:     viro@zeniv.linux.org.uk, axboe@kernel.dk
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chunxin Zang <zangchunxin@bytedance.com>
+Subject: [PATCH] fs/io_uring.c: fix typo in comment
+Date:   Tue,  9 Feb 2021 10:42:24 +0800
+Message-Id: <20210209024224.84122-1-zangchunxin@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 MIME-Version: 1.0
-In-Reply-To: <a50e2df51707fc1de3708fe087e08b3aa16f492a.1612737169.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/7/21 3:34 PM, Pavel Begunkov wrote:
-> For SQPOLL rings tctx_inflight() always returns zero, so it might skip
-> doing full cancellion. It's fine because we jam all sqpoll submissions
-> in any case and do go through files cancel for them, but not nice.
-> 
-> Do the intended full cancellation, by mimicing __io_uring_task_cancel()
-> waiting but impersonating SQPOLL task.
+From: Chunxin Zang <zangchunxin@bytedance.com>
 
-LGTM, applied.
+Change "sane" to "same" in a comment in io_uring.c
 
+Signed-off-by: Chunxin Zang <zangchunxin@bytedance.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 1f68105a41ed..da86440130f9 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -9519,7 +9519,7 @@ static int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+ 	struct io_rings *rings;
+ 	size_t size, sq_array_offset;
+ 
+-	/* make sure these are sane, as we already accounted them */
++	/* make sure these are same, as we already accounted them */
+ 	ctx->sq_entries = p->sq_entries;
+ 	ctx->cq_entries = p->cq_entries;
+ 
 -- 
-Jens Axboe
+2.11.0
 

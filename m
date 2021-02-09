@@ -2,140 +2,167 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A82603156D2
-	for <lists+io-uring@lfdr.de>; Tue,  9 Feb 2021 20:33:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F8C1315AE4
+	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 01:20:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233277AbhBIT3z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 Feb 2021 14:29:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44454 "EHLO
+        id S233483AbhBJASb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 Feb 2021 19:18:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233339AbhBITFc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Feb 2021 14:05:32 -0500
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A57C0617AA
-        for <io-uring@vger.kernel.org>; Tue,  9 Feb 2021 11:04:26 -0800 (PST)
-Received: by mail-il1-x12a.google.com with SMTP id p15so17089589ilq.8
-        for <io-uring@vger.kernel.org>; Tue, 09 Feb 2021 11:04:26 -0800 (PST)
+        with ESMTP id S234031AbhBIXeb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Feb 2021 18:34:31 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28B73C061786
+        for <io-uring@vger.kernel.org>; Tue,  9 Feb 2021 15:33:51 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id u14so274274wmq.4
+        for <io-uring@vger.kernel.org>; Tue, 09 Feb 2021 15:33:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4is+6ssySpmLGISzZtnmAfAvCwXgrYHoPNYRixYda8U=;
-        b=Y05S4pJeI8n8kbtBVnWERhyfcOBi3B5MIznFTVuL3A9WDWiuWFj2PRe+An2rSvwnRn
-         f5gwBa08rARiSrlGUBoA2Fa1ZAZVjD/bue3JtKmJezQWZimAXCWb5yvNqilT6y+bP5EV
-         dx/OnvzHFNmjhjgLBclONo8r2qc68QQz9xWJDjVgGlltUL3ZAwZ1viJaX1ct4g4hrNpP
-         Ii9cACGBiFJCc36j7K5EOPPnAkivG74Nk3tK2dRDg1butSh4qfumGdYmoJ0Cp/q+c7sd
-         76RVD6b75dPQrqq9X/WigasTx3TRN++2eh1jbsmTIk24qHSs9j0PYDm/MmDQi7Lvjz66
-         /t/A==
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TpjA1LdN80Of8mHFvL3Hut9KzERd5EL5+j6pQRaj614=;
+        b=AlMhopdOFSRA7iRkVTfJVXcNyy7OLQXYDVljIPCWpJ5KCwb2iRypdsQhNZhDIog9x/
+         5KawF8/LdpLFbTQHYyib6MLtIFpj+l/5gIzuAMnNORaXBf0emr52z9MyTV2PKnzKpf33
+         zJgr0fGPpp0oyB9Sanxite0GPBexY6wPSmwSLzCwAP+klILn129LhmDrdBDzUDCElJu6
+         GQ93c+Fuk4YMcmG5bPJ7vr2OHNbwht0Ut4zuSYqehcy0uZPeDV2ls1XelYMWHJIsjq6J
+         qAD6Wx0nce/4310KqUfakhP8B/dRIceFwAFKt2WkqZi9i2FSx+EnvWGoa/Pl+qDjNHur
+         s2Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4is+6ssySpmLGISzZtnmAfAvCwXgrYHoPNYRixYda8U=;
-        b=p1P1UPKIM04jbnqYEs1PO9uNTC9p/KVW7Ypim06TqGu9pJW5zT8ZfGkTtDhLn3hvHJ
-         G7/TobVIRzGUmaATW+O192eyRwHUJATenmo7nQ3s6jtUb2JcggeVhFlgSXGW1Sw5K85h
-         MhXOn6B7krfLQlPf6OAIFIJ3/aCxzbWAUUmNwWUpDUj79G6Bm0skutpAPLqmPiI7HqX5
-         vf9cwyCtwKnHp3/7dm5tIJfcLu9R9VrWUwg5bwjn1ON/8DjWdavxyYavkOaU9O/brDfA
-         oKY1aZuJKwc8hMey37AQkwWsN2+8TwvM8WC/WSmnlW4C0JvnxxuHRw5vXMlmtPhxRSrX
-         t2rQ==
-X-Gm-Message-State: AOAM532Y8UoG0qozKrhL7ZSjlc9+P8CKJZchxVtWcI1UadMnDGHkY04u
-        Z/6d3GP1ZXVecTCPd8ew59UGHAfP5OPgFlsN
-X-Google-Smtp-Source: ABdhPJxeY5HurjN33n7IrNXbIgAoxi0ssbwPLxIergdtPrbqZj/7f2dB4/WD11hzR/yCq7u4i5WcSg==
-X-Received: by 2002:a92:b008:: with SMTP id x8mr21533262ilh.297.1612897466226;
-        Tue, 09 Feb 2021 11:04:26 -0800 (PST)
-Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id i8sm10645554ilv.57.2021.02.09.11.04.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Feb 2021 11:04:25 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] io_uring: enable req cache for task_work items
-Date:   Tue,  9 Feb 2021 12:04:18 -0700
-Message-Id: <20210209190418.208827-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210209190418.208827-1-axboe@kernel.dk>
-References: <20210209190418.208827-1-axboe@kernel.dk>
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=TpjA1LdN80Of8mHFvL3Hut9KzERd5EL5+j6pQRaj614=;
+        b=gA6tkS5BbwaXDGmkXmlUdikMl6rgiXpp01PLeFukW+mtnNjrEkrHSIV9bQjd1Bji0v
+         uBeLgB7Pyld9ZvA9yy9ICpb/gxE1ECzKuLxor2nQX9C18SF9no3PP76VPzl4XfCugM4b
+         OE1/pgInlvRsAdajww21RHZx0dWSWtwwRH+I2A8JUD6kiN3PDxZuN5cNBR/NGp2Qp8X5
+         Vt9L1eA20mq8ZTWpkEJmFhnIa4ufjgYBQ1i9IbXqX4KF5NaoASGOUMjLJ4K+vh+ygiU/
+         Jt17q91y+Pw/0P/POqWR8j4+9wVHKABm8mOYbUdHLMNroGx1yAykpnSQEPWComJtBQBr
+         nbYQ==
+X-Gm-Message-State: AOAM530f08fTaKOogj0Id4f2s0lpYEnnL3pSm1V6sWDKvqW0DdYUhePw
+        kaS//7haVMY3fJylLQ3AFfudMe7H57LU8g==
+X-Google-Smtp-Source: ABdhPJyirz+1F1WBsUfjJIz+T80eOBCgURo1f8ERldJRfhsM4x9KOP2FNkdnfjpxsp6PWJ8jZsqfzg==
+X-Received: by 2002:a05:600c:2ca:: with SMTP id 10mr366721wmn.151.1612913629959;
+        Tue, 09 Feb 2021 15:33:49 -0800 (PST)
+Received: from [192.168.8.189] ([148.252.132.126])
+        by smtp.gmail.com with ESMTPSA id s6sm406039wmh.2.2021.02.09.15.33.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Feb 2021 15:33:49 -0800 (PST)
+Subject: Re: [PATCH v3] io_uring: fix possible deadlock in io_uring_poll
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1612511388-153658-1-git-send-email-haoxu@linux.alibaba.com>
+ <1612514061-177495-1-git-send-email-haoxu@linux.alibaba.com>
+ <acbd48f8-9535-ff47-9337-008588d8eb8c@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <7fe4f425-bb5a-c04e-6c49-d4890508f560@gmail.com>
+Date:   Tue, 9 Feb 2021 23:30:04 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <acbd48f8-9535-ff47-9337-008588d8eb8c@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-task_work is run without utilizing the req alloc cache, so any deferred
-items don't get to take advantage of either the alloc or free side of it.
-With task_work now being wrapped by io_uring, we can use the ctx
-completion state to both use the req cache and the completion flush
-batching.
+On 05/02/2021 12:58, Pavel Begunkov wrote:
+> On 05/02/2021 08:34, Hao Xu wrote:
+>> This might happen if we do epoll_wait on a uring fd while reading/writing
+>> the former epoll fd in a sqe in the former uring instance.
+>> So let's don't flush cqring overflow list, just do a simple check.
+> 
+> I haven't tested it but tried out identical before.
+> 
+> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+> Cc: stable@vger.kernel.org # 5.5+
 
-With this, the only request type that cannot take advantage of the req
-cache is IRQ driven IO for regular files / block devices. Anything else,
-including IOPOLL polled IO to those same tyes, will take advantage of it.
+Don't see it queued, so up, in case it was forgotten
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+> 
+>>
+>> Reported-by: Abaci <abaci@linux.alibaba.com>
+>> Fixes: 6c503150ae33 ("io_uring: patch up IOPOLL overflow_flush sync")
+>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>> ---
+>>  fs/io_uring.c | 17 +++++++++++++++--
+>>  1 file changed, 15 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 38c6cbe1ab38..5f42ad6f2155 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -8718,8 +8718,21 @@ static __poll_t io_uring_poll(struct file *file, poll_table *wait)
+>>  	smp_rmb();
+>>  	if (!io_sqring_full(ctx))
+>>  		mask |= EPOLLOUT | EPOLLWRNORM;
+>> -	io_cqring_overflow_flush(ctx, false, NULL, NULL);
+>> -	if (io_cqring_events(ctx))
+>> +
+>> +	/*
+>> +	 * Don't flush cqring overflow list here, just do a simple check.
+>> +	 * Otherwise there could possible be ABBA deadlock:
+>> +	 *      CPU0                    CPU1
+>> +	 *      ----                    ----
+>> +	 * lock(&ctx->uring_lock);
+>> +	 *                              lock(&ep->mtx);
+>> +	 *                              lock(&ctx->uring_lock);
+>> +	 * lock(&ep->mtx);
+>> +	 *
+>> +	 * Users may get EPOLLIN meanwhile seeing nothing in cqring, this
+>> +	 * pushs them to do the flush.
+>> +	 */
+>> +	if (io_cqring_events(ctx) || test_bit(0, &ctx->cq_check_overflow))
+>>  		mask |= EPOLLIN | EPOLLRDNORM;
+>>  
+>>  	return mask;
+>>
+> 
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5700b2f75364..8e9a492f548f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1047,6 +1047,8 @@ static int io_setup_async_rw(struct io_kiocb *req, const struct iovec *iovec,
- 			     const struct iovec *fast_iov,
- 			     struct iov_iter *iter, bool force);
- static void io_req_task_queue(struct io_kiocb *req);
-+static void io_submit_flush_completions(struct io_comp_state *cs,
-+					struct io_ring_ctx *ctx);
- 
- static struct kmem_cache *req_cachep;
- 
-@@ -2160,6 +2162,7 @@ static inline struct io_kiocb *io_req_find_next(struct io_kiocb *req)
- 
- static bool __tctx_task_work(struct io_uring_task *tctx)
- {
-+	struct io_ring_ctx *ctx = NULL;
- 	struct io_wq_work_list list;
- 	struct io_wq_work_node *node;
- 
-@@ -2174,11 +2177,28 @@ static bool __tctx_task_work(struct io_uring_task *tctx)
- 	node = list.first;
- 	while (node) {
- 		struct io_wq_work_node *next = node->next;
-+		struct io_ring_ctx *this_ctx;
- 		struct io_kiocb *req;
- 
- 		req = container_of(node, struct io_kiocb, io_task_work.node);
-+		this_ctx = req->ctx;
- 		req->task_work.func(&req->task_work);
- 		node = next;
-+
-+		if (!ctx) {
-+			ctx = this_ctx;
-+		} else if (ctx != this_ctx) {
-+			mutex_lock(&ctx->uring_lock);
-+			io_submit_flush_completions(&ctx->submit_state.comp, ctx);
-+			mutex_unlock(&ctx->uring_lock);
-+			ctx = this_ctx;
-+		}
-+	}
-+
-+	if (ctx && ctx->submit_state.comp.nr) {
-+		mutex_lock(&ctx->uring_lock);
-+		io_submit_flush_completions(&ctx->submit_state.comp, ctx);
-+		mutex_unlock(&ctx->uring_lock);
- 	}
- 
- 	return list.first != NULL;
-@@ -2301,7 +2321,7 @@ static void __io_req_task_submit(struct io_kiocb *req)
- 	if (!ctx->sqo_dead &&
- 	    !__io_sq_thread_acquire_mm(ctx) &&
- 	    !__io_sq_thread_acquire_files(ctx))
--		__io_queue_sqe(req, NULL);
-+		__io_queue_sqe(req, &ctx->submit_state.comp);
- 	else
- 		__io_req_task_cancel(req, -EFAULT);
- 	mutex_unlock(&ctx->uring_lock);
 -- 
-2.30.0
-
+Pavel Begunkov

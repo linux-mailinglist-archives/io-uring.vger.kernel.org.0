@@ -2,82 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D5B931716D
-	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 21:32:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 000B7317281
+	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 22:40:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232804AbhBJUbk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Feb 2021 15:31:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34840 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232667AbhBJUba (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Feb 2021 15:31:30 -0500
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC15C061786
-        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 12:30:49 -0800 (PST)
-Received: by mail-pf1-x42c.google.com with SMTP id m6so2061385pfk.1
-        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 12:30:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=/lRGGIajraTc6NfibNVU0/W7E6hXpE6eI6sQ2gu4U6o=;
-        b=i22b7dpySVNtkZp9FncVx3Dq9bsI17cBjPBU+cxpoT6oQIZO1K84B7USO0vUh8ffX8
-         pjMDef7QLzopIWi8fZBr7WBMLAzVE5D2VV2JKkWVAJhVeRKdMXyemtk8ITGRAjI1WbgB
-         e6lmdUjzqCRec0WWYMpUkmc02qt8N1DRwG7F7q3aK6Tgf+IAhnWTehhYQ4HpbnWB8qee
-         TAQpS0e7zjZT0hOVK4QJ3eOo5WWLeP4UKjeDb2Y53ZeWXm66DdoocFsKsPhf9uy6XzxI
-         Kh/uGsDx8LNkJnqD0vvLe3j3ef43bs/+rplukrVPwrGfMnphAEahnDXyeoIZku1MjwYK
-         OujQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/lRGGIajraTc6NfibNVU0/W7E6hXpE6eI6sQ2gu4U6o=;
-        b=XS1F5awoLCJwlU/ddAzlINy3zE3V4AOEyj4iWg+ds8+vlZly4I6kZ7as/e4PKtsdSv
-         9RVG8CdoL2mer8F5mNBn3KUPiJn0YkJ7rEh+v5fMAeUGRl2gyDz9RtKBF4Sc5Jtb84b5
-         dEp4lBz7hGkDoGDpqliS4NsS79nlO+giOc4nGNWFvpqrdGorD8viyBvh4Xf8teyF0Yrx
-         TvKpRuBhHG1YJLMM2x+jzAZDR7yDERIajkONjosAX1qiWrbMUKIRNuqMaezgR7mAAIfN
-         mjjk+V9wcYYHfmCcsK2pC/CwQOvkPogUpI+xn2xKaAFLseuKu87ksF2DzPjLrW8rRuZz
-         J4FA==
-X-Gm-Message-State: AOAM531xTD1Ft5nRcdv8lK/fZl5YrEbSFSpWyNN37XabzHV4WUCwqZc0
-        Mh9nCQmrOWA/CMT+ALbp/JFpB2hcwyepnA==
-X-Google-Smtp-Source: ABdhPJz0HYu1TnfjHM0F2jnLa1z9x4q5aGLCJpd/kEOEMknObNPISTQH80KOwPbvbZvaGtdZA/iPuQ==
-X-Received: by 2002:a62:1995:0:b029:1c0:c4d8:adcb with SMTP id 143-20020a6219950000b02901c0c4d8adcbmr4721403pfz.60.1612989048593;
-        Wed, 10 Feb 2021 12:30:48 -0800 (PST)
-Received: from ?IPv6:2620:10d:c085:21c1::194c? ([2620:10d:c090:400::5:a5c1])
-        by smtp.gmail.com with ESMTPSA id h15sm3199352pfo.193.2021.02.10.12.30.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Feb 2021 12:30:48 -0800 (PST)
-Subject: Re: [PATCH 0/2] SQPOLL cancel files fix
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1612957420.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5d8e20d9-ddf8-a327-1d5e-3cc9b00e8113@kernel.dk>
-Date:   Wed, 10 Feb 2021 13:30:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S232903AbhBJVkJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Feb 2021 16:40:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58914 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232585AbhBJVkI (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 10 Feb 2021 16:40:08 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5D429AC88;
+        Wed, 10 Feb 2021 21:39:27 +0000 (UTC)
+Date:   Wed, 10 Feb 2021 22:39:25 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        Nicolai Stange <nstange@suse.de>,
+        Martin Doucha <mdoucha@suse.cz>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        ltp@lists.linux.it
+Subject: Re: CVE-2020-29373 reproducer fails on v5.11
+Message-ID: <YCRSjQal+HFnzHs6@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <YCQvL8/DMNVLLuuf@pevik>
+ <b74d54ed-85ba-df4c-c114-fe11d50a3bce@gmail.com>
+ <270c474f-476a-65d2-1f5b-57d3330efb04@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <cover.1612957420.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <270c474f-476a-65d2-1f5b-57d3330efb04@kernel.dk>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/10/21 4:45 AM, Pavel Begunkov wrote:
-> 2/2 is for the recent syzbot report. Quick and dirty, but easy to
-> backport. I plan to restructure (and clean) task vs files cancel later.
-> 
-> Pavel Begunkov (2):
->   io_uring: cancel files inflight counting
->   io_uring; fix files cancel hangs
-> 
->  fs/io_uring.c | 21 ++++++++++++++++-----
->  1 file changed, 16 insertions(+), 5 deletions(-)
+Hi Jens, Pavel,
 
-Applied 2/2 for now, thanks.
+> On 2/10/21 12:32 PM, Pavel Begunkov wrote:
+> > On 10/02/2021 19:08, Petr Vorel wrote:
+> >> Hi all,
 
--- 
-Jens Axboe
+> >> I found that the reproducer for CVE-2020-29373 from Nicolai Stange (source attached),
+> >> which was backported to LTP as io_uring02 by Martin Doucha [1] is failing since
+> >> 10cad2c40dcb ("io_uring: don't take fs for recvmsg/sendmsg") from v5.11-rc1.
 
+> > Thanks for letting us know, we need to revert it
+
+> I'll queue up a revert. Would also be nice to turn that into
+> a liburing regression test.
+Thanks a lot for a quick feedback and fix!
+
+Kind regards,
+Petr

@@ -2,106 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC84A3168A9
-	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 15:05:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DA1F31691E
+	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 15:28:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbhBJOF2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Feb 2021 09:05:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36328 "EHLO
+        id S231352AbhBJO2H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Feb 2021 09:28:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229465AbhBJOFZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Feb 2021 09:05:25 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737ADC061756
-        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 06:04:44 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id o24so1934191wmh.5
-        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 06:04:44 -0800 (PST)
+        with ESMTP id S229609AbhBJO2F (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Feb 2021 09:28:05 -0500
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F3AC061574
+        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 06:27:24 -0800 (PST)
+Received: by mail-il1-x12c.google.com with SMTP id o15so992278ilt.6
+        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 06:27:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:references:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LI98HBATDD9tQu7cNPl8tSULT7KPrtqHTNHlPgiu0Jk=;
-        b=sOOw38OwztXxZhBnj6GGfr/8npU/dic5qW0cJWazXweBMHKy53vNQpbyiXzY/u1AQx
-         M5AnZHnpJ/cGGyPVRW74xlHixnfssr7Yk319zqkqsZYWIXzUd0PHV40yqxa3GBmr1HkK
-         6Mp+FNoQuwzgGVIuX9B6uQ2GQn6pXjfxIar5T5uNXIzN3FYlo/y0NWhg/pI2541Lbsov
-         XscMSKRvwQnd4mCv5V01r1htX8/TwjSi2RPiPl7C9MO1WPOVNtwXC4pN5HfCzQQUILqi
-         +0t1xffxZomsbn7xcBdTkZc3amEOqUK4JHEJL9J347PC5QCSioqTQyvIMUlK1AA3e7o+
-         Zg5A==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=r35bJ24M7EKbRfNRfGvpSel3Q7Ah/3uTrXqPC5CT0xU=;
+        b=G0ffB6PEDfDxbk4/w87ZurplzyWzFaYhu5IPxij9Oih5o+7OP63JiHzPOFVxw6Iiup
+         yvZ4ZXjmw/vHns2S7m6eXzUyB8VWR+wLF9um7T94fk9PTkzN+4h3fRjaUKn4WoW0afBJ
+         8kb05QGvt0lGTt6g0Mv25k+9V+OSCJttiPu3scQhBrn1XOGjM0WyCBLmUPuaBvQeNbT1
+         KWyogEmU46QdMpvEhGH72HqaeV7VN5VzDrki/IketEcOK8qKgD9JLGlOwr0B6pJ40VRF
+         76ZBNkmnWhPBuPdp4tlCFo68ZEZrYEGpSLY/J40DCZoIDQs/rkNbno1QiO/0KJgThvCd
+         X0tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=LI98HBATDD9tQu7cNPl8tSULT7KPrtqHTNHlPgiu0Jk=;
-        b=DMcht4ysnDN4CZg5tpx72dtXBIBoZ74XrgyOEeIv0Mag/zKUDXvTsNIJmb2UjJXg1s
-         fEDB+1SfoS1qz0bh9aNhObA/TEndv8MBq307dTm+wy9wQ1JfqqG2rYXGRAb7xWbcYqWy
-         Jo+T2pHiQCt7axxV3nJWgI9xTKCXCql2fecd+iVJ3pJqVzTG65NyKPdJIW2ye3VCf0A9
-         ZdI++MTjObGgS9LdY8uyAYad87umEfqxzoleNJ0+hyA30M+1RriJ7kJdKkn2iUVi6Auo
-         UJvoQvBWgwxcCCyyJT1Xl046NbwXdawEIbsOj4QV22NSSBlidhclBco7gWK7ZozCoyOI
-         8Gkw==
-X-Gm-Message-State: AOAM5329evNTeYow8CuoNxkrmZptckpUayFPSuSuJCw39uQ/94XPbBbo
-        wm/RR3qtWP4ydm4KHHm5Z/I8KHCBwNBV9w==
-X-Google-Smtp-Source: ABdhPJztoS3pywMPcQNg3t5WhC82dIdz2VV1ALvx4NTACxkNHaYP4A4eIzY5FCDOY2yl/9lZfrcylQ==
-X-Received: by 2002:a1c:2c05:: with SMTP id s5mr374240wms.70.1612965882943;
-        Wed, 10 Feb 2021 06:04:42 -0800 (PST)
-Received: from [192.168.8.194] ([148.252.132.126])
-        by smtp.gmail.com with ESMTPSA id h14sm2330628wmq.39.2021.02.10.06.04.41
+        bh=r35bJ24M7EKbRfNRfGvpSel3Q7Ah/3uTrXqPC5CT0xU=;
+        b=oL6Zu1332gRJFqt/X9+MsYGCgEYmuhQ6cICyZhIuXW41Tjlx9kBd2bApvFWHUHAW+9
+         WEFvgX7Z3DaUKZ+7tzV5Tkwf/QyaPXATbq0izIOFdMfT6fANof4jPTmSOENt9MzUr7d7
+         qu9l1ocXAfWqmEjrQGnGIt0S7gD+askVQ2Xrws0PfUn99CW5+EVPflv1YGVmXtiOP6Pn
+         yYu+U4hnbkZdTDsV86MNaWsb08g9v/Dgo7For7Sn5aC0xFmu1siIWBe3FbDt+8MyKOuH
+         IUaSsKtVoyHMnfhoyOXH+mQrram7jQDQV52uGayRhk2LoFJnQRdZGiFaQOJXPqHfM1AC
+         BcsA==
+X-Gm-Message-State: AOAM531VmUo6aAfNtH0JJKtamxrfDfN52DKBQtaH+e1X+cOdKy+XHyM+
+        RvdSGVK/mrfxnDf4IXTfd6iWsDu0mX0VM6A5
+X-Google-Smtp-Source: ABdhPJxTsjxUqIxYhmmUYNrrMCxctLj08G6ZgdKUsV6Yac47Pe1B9+UWxd/+rTLYGE9NBvSMqEvyXQ==
+X-Received: by 2002:a92:db12:: with SMTP id b18mr1338879iln.261.1612967243439;
+        Wed, 10 Feb 2021 06:27:23 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id d2sm1085938ilr.66.2021.02.10.06.27.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Feb 2021 06:04:42 -0800 (PST)
-Subject: Re: [PATCH 03/17] io_uring: don't propagate io_comp_state
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+        Wed, 10 Feb 2021 06:27:23 -0800 (PST)
+Subject: Re: [PATCH RFC 00/17] playing around req alloc
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <cover.1612915326.git.asml.silence@gmail.com>
- <275f9bbb7d9a74b1912a51acb1f90c1f1a47594e.1612915326.git.asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <240e3851-0f37-72c4-7b32-2cfa567cab79@gmail.com>
-Date:   Wed, 10 Feb 2021 14:00:56 +0000
+ <ffaf0640-7747-553d-9baf-4d41777a4d4d@kernel.dk>
+ <dcc61d65-d6e0-14e0-7368-352501fc21ea@gmail.com>
+ <a9a0d663-f6ac-1086-8cd7-ad4583b1cb7c@kernel.dk>
+ <f9001a4a-6cc4-2346-e7b0-402a076783eb@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f952b11d-514b-bb0d-ef2a-98ca669867e6@kernel.dk>
+Date:   Wed, 10 Feb 2021 07:27:24 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <275f9bbb7d9a74b1912a51acb1f90c1f1a47594e.1612915326.git.asml.silence@gmail.com>
+In-Reply-To: <f9001a4a-6cc4-2346-e7b0-402a076783eb@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -109,73 +69,104 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/02/2021 00:03, Pavel Begunkov wrote:
-> There is no reason to drag io_comp_state into opcode handlers, we just
-> need a flag and the actual work will be done in __io_queue_sqe().
+On 2/10/21 4:53 AM, Pavel Begunkov wrote:
+> On 10/02/2021 03:23, Jens Axboe wrote:
+>> On 2/9/21 8:14 PM, Pavel Begunkov wrote:
+>>> On 10/02/2021 02:08, Jens Axboe wrote:
+>>>> On 2/9/21 5:03 PM, Pavel Begunkov wrote:
+>>>>> Unfolding previous ideas on persistent req caches. 4-7 including
+>>>>> slashed ~20% of overhead for nops benchmark, haven't done benchmarking
+>>>>> personally for this yet, but according to perf should be ~30-40% in
+>>>>> total. That's for IOPOLL + inline completion cases, obviously w/o
+>>>>> async/IRQ completions.
+>>>>
+>>>> And task_work, which is sort-of inline.
+>>>>
+>>>>> Jens,
+>>>>> 1. 11/17 removes deallocations on end of submit_sqes. Looks you
+>>>>> forgot or just didn't do that.
+>>>
+>>> And without the patches I added, it wasn't even necessary, so
+>>> nevermind
+>>
+>> OK good, I was a bit confused about that one...
+>>
+>>>>> 2. lists are slow and not great cache-wise, that why at I want at least
+>>>>> a combined approach from 12/17.
+>>>>
+>>>> This is only true if you're browsing a full list. If you do add-to-front
+>>>> for a cache, and remove-from-front, then cache footprint of lists are
+>>>> good.
+>>>
+>>> Ok, good point, but still don't think it's great. E.g. 7/17 did improve
+>>> performance a bit for me, as I mentioned in the related RFC. And that
+>>> was for inline-completed nops, and going over the list/array and
+>>> always touching all reqs.
+>>
+>> Agree, array is always a bit better. Just saying that it's not a huge
+>> deal unless you're traversing the list, in which case lists are indeed
+>> horrible. But for popping off the first entry (or adding one), it's not
+>> bad at all.
 > 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> btw, looks can be replaced with a singly-linked list (stack).
 
-Jens, can you fold it in? Doesn't build currently for !CONFIG_NET
+It could, yes.
 
+>>>>> 3. Instead of lists in "use persistent request cache" I had in mind a
+>>>>> slightly different way: to grow the req alloc cache to 32-128 (or hint
+>>>>> from the userspace), batch-alloc by 8 as before, and recycle _all_ reqs
+>>>>> right into it. If  overflows, do kfree().
+>>>>> It should give probabilistically high hit rate, amortising out most of
+>>>>> allocations. Pros: it doesn't grow ~infinitely as lists can. Cons: there
+>>>>> are always counter examples. But as I don't have numbers to back it, I
+>>>>> took your implementation. Maybe, we'll reconsider later.
+>>>>
+>>>> It shouldn't grow bigger than what was used, but the downside is that
+>>>> it will grow as big as the biggest usage ever. We could prune, if need
+>>>> be, of course.
+>>>
+>>> Yeah, that was the point. But not a deal-breaker in either case.
+>>
+>> Agree
+>>
+>>>> As far as I'm concerned, the hint from user space is the submit count.
+>>>
+>>> I mean hint on setup, like max QD, then we can allocate req cache
+>>> accordingly. Not like it matters
+>>
+>> I'd rather grow it dynamically, only the first few iterations will hit
+>> the alloc. Which is fine, and better than pre-populating. Assuming I
+>> understood you correctly here...
+> 
+> I guess not, it's not about number of requests perse, but space in
+> alloc cache. Like that
+> 
+> struct io_submit_state {
+> 	...
+> 	void			*reqs[userspace_hint];
+> };
+> 
+>>
+>>>>
+>>>>> I'll revise tomorrow on a fresh head + do some performance testing,
+>>>>> and is leaving it RFC until then.
+>>>>
+>>>> I'll look too and test this, thanks!
+>>
+>> Tests out good for me with the suggested edits I made. nops are
+>> massively improved, as suspected. But also realistic workloads benefit
+>> nicely.
+>>
+>> I'll send out a few patches I have on top tomorrow. Not fixes, but just
+>> further improvements/features/accounting.
+> 
+> Sounds great!
+> btw, "lock_free_list" which is not a "lock-free" list can be
+> confusing, I'd suggest to rename it to free_list_lock.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e5f9f04e2e2d..8fb1c845fa5b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5145,14 +5145,12 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return -EOPNOTSUPP;
- }
- 
--static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags,
--		      struct io_comp_state *cs)
-+static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	return -EOPNOTSUPP;
- }
- 
--static int io_send(struct io_kiocb *req, unsigned int issue_flags,
--		   struct io_comp_state *cs)
-+static int io_send(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	return -EOPNOTSUPP;
- }
-@@ -5163,14 +5161,12 @@ static int io_recvmsg_prep(struct io_kiocb *req,
- 	return -EOPNOTSUPP;
- }
- 
--static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags,
--		      struct io_comp_state *cs)
-+static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	return -EOPNOTSUPP;
- }
- 
--static int io_recv(struct io_kiocb *req, unsigned int issue_flags,
--		   struct io_comp_state *cs)
-+static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	return -EOPNOTSUPP;
- }
-@@ -5180,8 +5176,7 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return -EOPNOTSUPP;
- }
- 
--static int io_accept(struct io_kiocb *req, unsigned int issue_flags,
--		     struct io_comp_state *cs)
-+static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	return -EOPNOTSUPP;
- }
-@@ -5191,8 +5186,7 @@ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return -EOPNOTSUPP;
- }
- 
--static int io_connect(struct io_kiocb *req, unsigned int issue_flags,
--		      struct io_comp_state *cs)
-+static int io_connect(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	return -EOPNOTSUPP;
- }
+Or maybe just locked_free_list would make it more understandable. The
+current name is misleading.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

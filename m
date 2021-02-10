@@ -2,62 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E878315CF2
-	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 03:12:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04CCE315D00
+	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 03:14:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235311AbhBJCKp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 Feb 2021 21:10:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52090 "EHLO
+        id S234349AbhBJCNX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 Feb 2021 21:13:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235246AbhBJCJA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Feb 2021 21:09:00 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8617C061574
-        for <io-uring@vger.kernel.org>; Tue,  9 Feb 2021 18:08:18 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id j5so201891pgb.11
-        for <io-uring@vger.kernel.org>; Tue, 09 Feb 2021 18:08:18 -0800 (PST)
+        with ESMTP id S235324AbhBJCLp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 Feb 2021 21:11:45 -0500
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7E8FC061574
+        for <io-uring@vger.kernel.org>; Tue,  9 Feb 2021 18:10:59 -0800 (PST)
+Received: by mail-pg1-x52b.google.com with SMTP id n10so207626pgl.10
+        for <io-uring@vger.kernel.org>; Tue, 09 Feb 2021 18:10:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=cG6hVlJXRMql8jAyoIzxnGJBPepPoNmh5vVV97P6qkg=;
-        b=JMpUMQwNxissFekQfJIoyW01vtQlLrBGQj95gC6VkrZlsvl8VFSY9V/Fwq6+ug2xnw
-         Rn8d+DTG0Yy+Qj9Azi6pJIw6dMxsWb29tMS1QbSb0FIMEoTJEqGzB544AdAC8b8XcRJU
-         XKe3edHqrsRzlqWElH9SgMJ9Cc5fAY6ki20TxxSKlo4lSnUIohghqjnFxrZmULZUIghY
-         RkTCXtGe5UvfVpys3ufC+VofKGCTBRYb0DHXj4sL1mN2XHQngFJYCg2ibKSQgnTx0gzY
-         PqfRlrtlhFDu3IHaIhriDKdliNuejR6M3bkYBLEXT786soZtBK3a6Rbkk0ObrdGPPnkE
-         OJEg==
+        bh=6B2uUC+fh8Iv7Nm6r+ous1Q/3kUu8DTfoMNZRWLzeuA=;
+        b=knbNtD7anaslUvAHKHpAJZeWCBZnVYAamPqyaXISXwJe5uGNmccSkrlk/lb9s5qFls
+         5acE+rD25/U3g+MmL9lxUFDXCl5w1vRdTSq8tFikMnuHHQUkMSNpfRYTeNGkEVm7Bhay
+         I70KZk9YD94Hdt/jvZ5iTTOIWFYeZ2/XN9nVyifMn25RmH+8np5eQFjQuZ5MKGZVAxDC
+         qAJLIVWlJ6JPxnM/i4gTHzkSxFggtMtMzTTpjs5/fmq0MMm33L8TyU2sBcy/fd8oNoc9
+         cnrvAv7r1AGwmAyQfdwoWxVBoHblmIkB5vC9f0YqNaYDxLJW7e4oIQCQFZUjDNRsUkcQ
+         tXOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=cG6hVlJXRMql8jAyoIzxnGJBPepPoNmh5vVV97P6qkg=;
-        b=jCeXxdUF0oPtMe+zPgewa6vl4c8LQ8v5c78pKbWL/mIQxGBFLzJOlNQqTe94SU1a6B
-         9EtKbjH7TwUMxJO9P2DXSf5J2uz9EbjXnyNmIzC/8MHcmMq6C3Ceow4PM3ZVyNiMkgON
-         gXVJOWXHdU8hDyGcOLjoeNpBgVrvRvSpsa6lxqSROmOZa/PKnrHnO6PRO9/hUm4JDSOA
-         0nCaNxXxmkOqC44s75U9OBzeM+eILKvgCZLio8bulFOD6aF6CsV1p3e6iMKmEiLXCkKl
-         ZC7PHo6hNIxnpVsLlsh7La7p2lu1qRR+A0I7YHmFcHrY8ToNyBBhKRyfq+pHvcHHtq2m
-         ZuJA==
-X-Gm-Message-State: AOAM5301yJauQ5TifTmtKTeqy+ctJnf3RYGfWDQhfwp7p8nrOML1ed8e
-        SJiTGuyDsXrjot4icdJG0+Az33de6fpJZQ==
-X-Google-Smtp-Source: ABdhPJwl1hST3U75+P38lnuWMipx0LPdWlAn5Jy0qWb1ntUw3XMqp1tMkZ18SIwfPlXG0SEF0NlQtA==
-X-Received: by 2002:a62:b515:0:b029:1d6:aba1:e22 with SMTP id y21-20020a62b5150000b02901d6aba10e22mr1010262pfe.47.1612922897886;
-        Tue, 09 Feb 2021 18:08:17 -0800 (PST)
+        bh=6B2uUC+fh8Iv7Nm6r+ous1Q/3kUu8DTfoMNZRWLzeuA=;
+        b=kQ+1KdBlL2GbhpYAO3SkRhwml75qNKcAM/k0nW4Z898O4LDL2nYqyfEiVQHcM0EoFB
+         nflHtsQEjaNupAN92ow+SakTfZGRlw9zMNK+eVFPtSt9MuG2kwQB6QrPj6fCKjJ1dGK8
+         ERG5FWTZr1JZB7MwuGUvoG6Mv/MJf75Y4A/b6VA4WjDcfekA+tUNl5LLBo61KrYeiXyu
+         adbDszIoFPv08ln2d+yAHPIZ7+lyOh4C4GAegDyeKINEXYE/aG2nbaRSQShZkZsuTSLz
+         P5cWpRLY/XzfY/dwI8zT5/fU4NwwWxSKhmNp+ZxHVUiirYTfaETrciBy5gfhzhmbie+c
+         eQhg==
+X-Gm-Message-State: AOAM533TUBqSFj3fBOn444XsDiWN77ysKJZr/woF3jJB20iL8mbrH9rI
+        FMNlj7n4vejsGmK/km0NX3W+/8d+Z/TWIw==
+X-Google-Smtp-Source: ABdhPJxqKz4JqP+dacN+ONOqJGQQtxi00wuxQU84CUZS8SbOZXgL4+Rr6r6+pTuFSHoW3xdJVIwIBA==
+X-Received: by 2002:a05:6a00:16cd:b029:1c9:6f5b:3d8c with SMTP id l13-20020a056a0016cdb02901c96f5b3d8cmr1042111pfc.1.1612923058985;
+        Tue, 09 Feb 2021 18:10:58 -0800 (PST)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id o14sm222837pgr.44.2021.02.09.18.08.17
+        by smtp.gmail.com with ESMTPSA id p19sm292780pjo.7.2021.02.09.18.10.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Feb 2021 18:08:17 -0800 (PST)
-Subject: Re: [PATCH RFC 00/17] playing around req alloc
+        Tue, 09 Feb 2021 18:10:58 -0800 (PST)
+Subject: Re: [PATCH 17/17] io_uring: defer flushing cached reqs
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <cover.1612915326.git.asml.silence@gmail.com>
+ <e9ba205c3894e88cfbca879b386bbce19c34d150.1612915326.git.asml.silence@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ffaf0640-7747-553d-9baf-4d41777a4d4d@kernel.dk>
-Date:   Tue, 9 Feb 2021 19:08:16 -0700
+Message-ID: <0cb0e80a-2997-b5d9-3bd3-74f7f3745993@kernel.dk>
+Date:   Tue, 9 Feb 2021 19:10:58 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1612915326.git.asml.silence@gmail.com>
+In-Reply-To: <e9ba205c3894e88cfbca879b386bbce19c34d150.1612915326.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,44 +67,67 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 2/9/21 5:03 PM, Pavel Begunkov wrote:
-> Unfolding previous ideas on persistent req caches. 4-7 including
-> slashed ~20% of overhead for nops benchmark, haven't done benchmarking
-> personally for this yet, but according to perf should be ~30-40% in
-> total. That's for IOPOLL + inline completion cases, obviously w/o
-> async/IRQ completions.
-
-And task_work, which is sort-of inline.
-
-> Jens,
-> 1. 11/17 removes deallocations on end of submit_sqes. Looks you
-> forgot or just didn't do that.
+> Awhile there are requests in the allocation cache -- use them, only if
+> those ended go for the stashed memory in comp.free_list. As list
+> manipulation are generally heavy and are not good for caches, flush them
+> all or as much as can in one go.
 > 
-> 2. lists are slow and not great cache-wise, that why at I want at least
-> a combined approach from 12/17.
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c | 29 +++++++++++++++++++----------
+>  1 file changed, 19 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 64d3f3e2e93d..17194e0d62ff 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1953,25 +1953,34 @@ static inline void io_req_complete(struct io_kiocb *req, long res)
+>  	__io_req_complete(req, 0, res, 0);
+>  }
+>  
+> +static void io_flush_cached_reqs(struct io_submit_state *state)
+> +{
+> +	do {
+> +		struct io_kiocb *req = list_first_entry(&state->comp.free_list,
+> +						struct io_kiocb, compl.list);
+> +
+> +		list_del(&req->compl.list);
+> +		state->reqs[state->free_reqs++] = req;
+> +		if (state->free_reqs == ARRAY_SIZE(state->reqs))
+> +			break;
+> +	} while (!list_empty(&state->comp.free_list));
+> +}
+> +
+>  static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx)
+>  {
+>  	struct io_submit_state *state = &ctx->submit_state;
+>  
+>  	BUILD_BUG_ON(IO_REQ_ALLOC_BATCH > ARRAY_SIZE(state->reqs));
+>  
+> -	if (!list_empty(&state->comp.free_list)) {
+> -		struct io_kiocb *req;
+> -
+> -		req = list_first_entry(&state->comp.free_list, struct io_kiocb,
+> -					compl.list);
+> -		list_del(&req->compl.list);
+> -		return req;
+> -	}
+> -
+>  	if (!state->free_reqs) {
+>  		gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
+>  		int ret;
+>  
+> +		if (!list_empty(&state->comp.free_list)) {
+> +			io_flush_cached_reqs(state);
+> +			goto out;
+> +		}
 
-This is only true if you're browsing a full list. If you do add-to-front
-for a cache, and remove-from-front, then cache footprint of lists are
-good.
+I think that'd be cleaner as:
 
-> 3. Instead of lists in "use persistent request cache" I had in mind a
-> slightly different way: to grow the req alloc cache to 32-128 (or hint
-> from the userspace), batch-alloc by 8 as before, and recycle _all_ reqs
-> right into it. If  overflows, do kfree().
-> It should give probabilistically high hit rate, amortising out most of
-> allocations. Pros: it doesn't grow ~infinitely as lists can. Cons: there
-> are always counter examples. But as I don't have numbers to back it, I
-> took your implementation. Maybe, we'll reconsider later.
+	if (io_flush_cached_reqs(state))
+		goto got_req;
 
-It shouldn't grow bigger than what was used, but the downside is that
-it will grow as big as the biggest usage ever. We could prune, if need
-be, of course.
-
-As far as I'm concerned, the hint from user space is the submit count.
-
-> I'll revise tomorrow on a fresh head + do some performance testing,
-> and is leaving it RFC until then.
-
-I'll look too and test this, thanks!
+and have io_flush_cached_reqs() return true/false depending on what it did.
 
 -- 
 Jens Axboe

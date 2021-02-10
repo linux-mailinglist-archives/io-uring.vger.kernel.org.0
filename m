@@ -2,58 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AA723165E0
-	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 13:01:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC84A3168A9
+	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 15:05:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230259AbhBJL7x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Feb 2021 06:59:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37014 "EHLO
+        id S230184AbhBJOF2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Feb 2021 09:05:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231373AbhBJL5p (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Feb 2021 06:57:45 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFB58C061574
-        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 03:56:48 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id h12so2171906wrw.6
-        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 03:56:48 -0800 (PST)
+        with ESMTP id S229465AbhBJOFZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Feb 2021 09:05:25 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737ADC061756
+        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 06:04:44 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id o24so1934191wmh.5
+        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 06:04:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nrnsvo+6Dnt9COqtrkNWblqJLKZDhKJ3teO87Ft0pn8=;
-        b=PyZtn/my1Q4ZawijAIDHGenciLHpBuygSfheeihPlBo87Q7sRjO/9+xYBHP5TzLlu/
-         PVK4xH/015JWR7o0+WOfugvl299j47/5aSw54zI22U7CVgCaLi/cBOBH72R7tjI39jFy
-         QgJlCc6vpDrcxxoeloRhgzFzeGRH2I07ELr9bRotXzak4OXljBMBdVBHA/9Y/ieIw7mz
-         3Q4NAdvGV+Pzo3SeD6xPC2EbMDQnQ0OtJAVzgTt9/gNtjJBr2jTMh1CdhGFIvd7Aj7va
-         yZbfZ0W3SVuAcqVYgCKlzIelzqQST9WWUSI6exrRre6Bq6OpT7CSvK3XIgDpUkD3Y5L7
-         09Qw==
+        bh=LI98HBATDD9tQu7cNPl8tSULT7KPrtqHTNHlPgiu0Jk=;
+        b=sOOw38OwztXxZhBnj6GGfr/8npU/dic5qW0cJWazXweBMHKy53vNQpbyiXzY/u1AQx
+         M5AnZHnpJ/cGGyPVRW74xlHixnfssr7Yk319zqkqsZYWIXzUd0PHV40yqxa3GBmr1HkK
+         6Mp+FNoQuwzgGVIuX9B6uQ2GQn6pXjfxIar5T5uNXIzN3FYlo/y0NWhg/pI2541Lbsov
+         XscMSKRvwQnd4mCv5V01r1htX8/TwjSi2RPiPl7C9MO1WPOVNtwXC4pN5HfCzQQUILqi
+         +0t1xffxZomsbn7xcBdTkZc3amEOqUK4JHEJL9J347PC5QCSioqTQyvIMUlK1AA3e7o+
+         Zg5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=nrnsvo+6Dnt9COqtrkNWblqJLKZDhKJ3teO87Ft0pn8=;
-        b=NqVKLCtlPXWryiZ4ZAqb/mUx3TIqUhJQlI5UA1cqv9BXI5NlpgwJau7/TMM+ACtGB6
-         whNUiJQDVRSPuhLG9hcxzzXmv9+DO/3Bd1pyTpeg1Hu7neydkxfsMNh6kq5PkXppIGrD
-         2nXCA8HjUxo6bOlEqgEmkla7qVhIqcBXlrIJBXgkiCBUEWuJ6zSuTipr6a9W0coiSR8n
-         rvpI+txBC5r+4Sm7MN3utK3fTbR4xdv1dri8/Sb/Xza8LrR9Y0brbcT8bMoFSf2o+HeL
-         3FTyXECUC3X1Q8PSUmxRJNoNzSsFmrcYGVNSF9VUv7WfS0uTGtySVLMbNshC6sakDTDf
-         DGgg==
-X-Gm-Message-State: AOAM533XNRAfvGAqE01ChKoKLzBcZ5Bf+pmKXx64Bprdq0NuMZaTe8hf
-        vyPiqcu1uo1jAOW5Mk/dNvZqBXUwaxOyGg==
-X-Google-Smtp-Source: ABdhPJwLO5zBCKOcMcNfY/fP8z9YsHbh8IfzTelkakTePZgCnma79OsvdnlfSxHT9mLm54nUTCIPkQ==
-X-Received: by 2002:a05:6000:1815:: with SMTP id m21mr3211743wrh.350.1612958207447;
-        Wed, 10 Feb 2021 03:56:47 -0800 (PST)
+        bh=LI98HBATDD9tQu7cNPl8tSULT7KPrtqHTNHlPgiu0Jk=;
+        b=DMcht4ysnDN4CZg5tpx72dtXBIBoZ74XrgyOEeIv0Mag/zKUDXvTsNIJmb2UjJXg1s
+         fEDB+1SfoS1qz0bh9aNhObA/TEndv8MBq307dTm+wy9wQ1JfqqG2rYXGRAb7xWbcYqWy
+         Jo+T2pHiQCt7axxV3nJWgI9xTKCXCql2fecd+iVJ3pJqVzTG65NyKPdJIW2ye3VCf0A9
+         ZdI++MTjObGgS9LdY8uyAYad87umEfqxzoleNJ0+hyA30M+1RriJ7kJdKkn2iUVi6Auo
+         UJvoQvBWgwxcCCyyJT1Xl046NbwXdawEIbsOj4QV22NSSBlidhclBco7gWK7ZozCoyOI
+         8Gkw==
+X-Gm-Message-State: AOAM5329evNTeYow8CuoNxkrmZptckpUayFPSuSuJCw39uQ/94XPbBbo
+        wm/RR3qtWP4ydm4KHHm5Z/I8KHCBwNBV9w==
+X-Google-Smtp-Source: ABdhPJztoS3pywMPcQNg3t5WhC82dIdz2VV1ALvx4NTACxkNHaYP4A4eIzY5FCDOY2yl/9lZfrcylQ==
+X-Received: by 2002:a1c:2c05:: with SMTP id s5mr374240wms.70.1612965882943;
+        Wed, 10 Feb 2021 06:04:42 -0800 (PST)
 Received: from [192.168.8.194] ([148.252.132.126])
-        by smtp.gmail.com with ESMTPSA id i20sm2027707wmq.7.2021.02.10.03.56.46
+        by smtp.gmail.com with ESMTPSA id h14sm2330628wmq.39.2021.02.10.06.04.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Feb 2021 03:56:47 -0800 (PST)
+        Wed, 10 Feb 2021 06:04:42 -0800 (PST)
+Subject: Re: [PATCH 03/17] io_uring: don't propagate io_comp_state
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <cover.1612915326.git.asml.silence@gmail.com>
- <ffaf0640-7747-553d-9baf-4d41777a4d4d@kernel.dk>
- <dcc61d65-d6e0-14e0-7368-352501fc21ea@gmail.com>
- <a9a0d663-f6ac-1086-8cd7-ad4583b1cb7c@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <275f9bbb7d9a74b1912a51acb1f90c1f1a47594e.1612915326.git.asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -97,112 +96,86 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH RFC 00/17] playing around req alloc
-Message-ID: <f9001a4a-6cc4-2346-e7b0-402a076783eb@gmail.com>
-Date:   Wed, 10 Feb 2021 11:53:01 +0000
+Message-ID: <240e3851-0f37-72c4-7b32-2cfa567cab79@gmail.com>
+Date:   Wed, 10 Feb 2021 14:00:56 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <a9a0d663-f6ac-1086-8cd7-ad4583b1cb7c@kernel.dk>
+In-Reply-To: <275f9bbb7d9a74b1912a51acb1f90c1f1a47594e.1612915326.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/02/2021 03:23, Jens Axboe wrote:
-> On 2/9/21 8:14 PM, Pavel Begunkov wrote:
->> On 10/02/2021 02:08, Jens Axboe wrote:
->>> On 2/9/21 5:03 PM, Pavel Begunkov wrote:
->>>> Unfolding previous ideas on persistent req caches. 4-7 including
->>>> slashed ~20% of overhead for nops benchmark, haven't done benchmarking
->>>> personally for this yet, but according to perf should be ~30-40% in
->>>> total. That's for IOPOLL + inline completion cases, obviously w/o
->>>> async/IRQ completions.
->>>
->>> And task_work, which is sort-of inline.
->>>
->>>> Jens,
->>>> 1. 11/17 removes deallocations on end of submit_sqes. Looks you
->>>> forgot or just didn't do that.
->>
->> And without the patches I added, it wasn't even necessary, so
->> nevermind
+On 10/02/2021 00:03, Pavel Begunkov wrote:
+> There is no reason to drag io_comp_state into opcode handlers, we just
+> need a flag and the actual work will be done in __io_queue_sqe().
 > 
-> OK good, I was a bit confused about that one...
-> 
->>>> 2. lists are slow and not great cache-wise, that why at I want at least
->>>> a combined approach from 12/17.
->>>
->>> This is only true if you're browsing a full list. If you do add-to-front
->>> for a cache, and remove-from-front, then cache footprint of lists are
->>> good.
->>
->> Ok, good point, but still don't think it's great. E.g. 7/17 did improve
->> performance a bit for me, as I mentioned in the related RFC. And that
->> was for inline-completed nops, and going over the list/array and
->> always touching all reqs.
-> 
-> Agree, array is always a bit better. Just saying that it's not a huge
-> deal unless you're traversing the list, in which case lists are indeed
-> horrible. But for popping off the first entry (or adding one), it's not
-> bad at all.
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-btw, looks can be replaced with a singly-linked list (stack).
+Jens, can you fold it in? Doesn't build currently for !CONFIG_NET
 
-> 
->>>> 3. Instead of lists in "use persistent request cache" I had in mind a
->>>> slightly different way: to grow the req alloc cache to 32-128 (or hint
->>>> from the userspace), batch-alloc by 8 as before, and recycle _all_ reqs
->>>> right into it. If  overflows, do kfree().
->>>> It should give probabilistically high hit rate, amortising out most of
->>>> allocations. Pros: it doesn't grow ~infinitely as lists can. Cons: there
->>>> are always counter examples. But as I don't have numbers to back it, I
->>>> took your implementation. Maybe, we'll reconsider later.
->>>
->>> It shouldn't grow bigger than what was used, but the downside is that
->>> it will grow as big as the biggest usage ever. We could prune, if need
->>> be, of course.
->>
->> Yeah, that was the point. But not a deal-breaker in either case.
-> 
-> Agree
-> 
->>> As far as I'm concerned, the hint from user space is the submit count.
->>
->> I mean hint on setup, like max QD, then we can allocate req cache
->> accordingly. Not like it matters
-> 
-> I'd rather grow it dynamically, only the first few iterations will hit
-> the alloc. Which is fine, and better than pre-populating. Assuming I
-> understood you correctly here...
 
-I guess not, it's not about number of requests perse, but space in
-alloc cache. Like that
-
-struct io_submit_state {
-	...
-	void			*reqs[userspace_hint];
-};
-
-> 
->>>
->>>> I'll revise tomorrow on a fresh head + do some performance testing,
->>>> and is leaving it RFC until then.
->>>
->>> I'll look too and test this, thanks!
-> 
-> Tests out good for me with the suggested edits I made. nops are
-> massively improved, as suspected. But also realistic workloads benefit
-> nicely.
-> 
-> I'll send out a few patches I have on top tomorrow. Not fixes, but just
-> further improvements/features/accounting.
-
-Sounds great!
-btw, "lock_free_list" which is not a "lock-free" list can be
-confusing, I'd suggest to rename it to free_list_lock.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index e5f9f04e2e2d..8fb1c845fa5b 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5145,14 +5145,12 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags,
+-		      struct io_comp_state *cs)
++static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_send(struct io_kiocb *req, unsigned int issue_flags,
+-		   struct io_comp_state *cs)
++static int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+@@ -5163,14 +5161,12 @@ static int io_recvmsg_prep(struct io_kiocb *req,
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags,
+-		      struct io_comp_state *cs)
++static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_recv(struct io_kiocb *req, unsigned int issue_flags,
+-		   struct io_comp_state *cs)
++static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+@@ -5180,8 +5176,7 @@ static int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_accept(struct io_kiocb *req, unsigned int issue_flags,
+-		     struct io_comp_state *cs)
++static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+@@ -5191,8 +5186,7 @@ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_connect(struct io_kiocb *req, unsigned int issue_flags,
+-		      struct io_comp_state *cs)
++static int io_connect(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
 
 -- 
 Pavel Begunkov

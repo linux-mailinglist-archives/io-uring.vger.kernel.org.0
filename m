@@ -2,78 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88E773160AE
-	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 09:13:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3D613165B4
+	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 12:54:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233742AbhBJIM2 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Wed, 10 Feb 2021 03:12:28 -0500
-Received: from spam.auroraoh.com ([24.56.89.101]:55020 "EHLO
-        barracuda.auroraoh.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233739AbhBJIMT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Feb 2021 03:12:19 -0500
-X-ASG-Debug-ID: 1612944670-112c0d6a799cb90001-k4Lu3k
-Received: from COASRV-MAIL2.auroraoh.loc (coasrv-mail2.auroraoh.loc [10.3.1.15]) by barracuda.auroraoh.com with ESMTP id jJ81a9DkExpcgPkc; Wed, 10 Feb 2021 03:11:10 -0500 (EST)
-X-Barracuda-Envelope-From: JanuskaD@auroraoh.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.3.1.15
-Received: from [172.20.10.5] (197.210.29.8) by COASRV-MAIL2.auroraoh.loc
- (10.3.1.15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 9 Feb 2021
- 02:45:33 -0500
-Content-Type: text/plain; charset="iso-8859-1"
-X-Barracuda-RBL-Trusted-Forwarder: 172.20.10.5
+        id S230479AbhBJLwT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Feb 2021 06:52:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35476 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230331AbhBJLuQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Feb 2021 06:50:16 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B3FC06174A
+        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 03:49:35 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id r21so2126006wrr.9
+        for <io-uring@vger.kernel.org>; Wed, 10 Feb 2021 03:49:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r59g7EsorrB06WZwLElM2btubAlGnat8xE6V8V/7BHg=;
+        b=YenI2VUgDnN7bZLavVnLHGpgU9Nyzsq/BvCua2nsr7xc+gcZxf/Qiy4pvMelZqQGcD
+         x2823EX7shL1KrTc3o+T16kNPXZEt5psGWjrIqB0P5f9nHBQ8pyivPuEilRWrMI9EZHF
+         nwVox4vlPb+GBP/LgUPunHks4au4pU9+tmPylVgQY+GnCeldWCnOjZLLLI6mjqHC/Pd5
+         aRimaMvGFMmALXUhaYV5EzIQbVBCaWLCf/jEkbsW5NgZdx7+SRYrKUPMQsL8Y1GFiil/
+         GLNoKDbNlzDVbUpUN8gPlAPHh8UcG2d7SiuD/67STbnuD4jApwCbeFVOchKuu9dvBzlb
+         vGwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r59g7EsorrB06WZwLElM2btubAlGnat8xE6V8V/7BHg=;
+        b=BUy5T3XWjTTAdDyZdrweW4CxHB90Jl3k06HTRBmvELwGU87qo6A5Lmch6gn7eD2MwE
+         GYx3fZkZQWHX9O+N3DvmSGWOSBcOpwglN9yLwFSYe8ZOiv0b0qLTPjnV3vsrJ9ENT60y
+         WLre7dG9RK4YyeZw6ljQMZvJE4GaySd8nW0OLtOsEh8R30+dLcfkS4A8gK4TSSTA0yik
+         DHtw5IDwIPAB4T71A2DLfHtzFffTtaTW2uIGKwKdxW7MchV3346HceOD4b3xFftTc7tE
+         sloox202Uc963+rG+zWUnYZBRhPK50OtnNXaBzPbD9MdJNxuPv5jfZd0qJGdJYd0ylhH
+         ro8Q==
+X-Gm-Message-State: AOAM532rJepdmY+rwx1ylnOm94v9+frqNt+VViVuP9NuNQefW2vW3GsF
+        /GtJyY77mx1f9GNYNVYXQklGIjYDaMEwew==
+X-Google-Smtp-Source: ABdhPJw+QWbKl+h8d/ZkRYkfmPT3CwwtyFJYYrKIFPUF84jvJHwdX1zR6nBTX8PEk9aEImChwnlF1g==
+X-Received: by 2002:a5d:4651:: with SMTP id j17mr3196234wrs.64.1612957774662;
+        Wed, 10 Feb 2021 03:49:34 -0800 (PST)
+Received: from localhost.localdomain ([148.252.132.126])
+        by smtp.gmail.com with ESMTPSA id j11sm2811145wrt.26.2021.02.10.03.49.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Feb 2021 03:49:34 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 0/2] SQPOLL cancel files fix
+Date:   Wed, 10 Feb 2021 11:45:40 +0000
+Message-Id: <cover.1612957420.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: We are a registered Private Loan Investment Company in the United Kingdom,
- we also registered with the Turkish British Chamber of Commerce and Industry
- (TBCCI) we have operations in Europe and Asia.
-To:     Recipients <januskad@auroraoh.com>
-X-ASG-Orig-Subj: We are a registered Private Loan Investment Company in the United Kingdom,
- we also registered with the Turkish British Chamber of Commerce and Industry
- (TBCCI) we have operations in Europe and Asia.
-From:   <januskad@auroraoh.com>
-Date:   Tue, 9 Feb 2021 15:44:47 +0800
-Reply-To: <cfolimiited@gmail.com>
-X-Priority: 1 (High)
-X-Antivirus: Avast (VPS 210207-2, 02/07/2021), Outbound message
-X-Antivirus-Status: Clean
-Message-ID: <04dad0e2-2f3b-46a3-bb30-cab23ca007d4@COASRV-MAIL2.auroraoh.loc>
-X-Originating-IP: [197.210.29.8]
-X-ClientProxiedBy: COASRV-MAIL3.auroraoh.loc (10.3.1.13) To
- COASRV-MAIL2.auroraoh.loc (10.3.1.15)
-X-Barracuda-Connect: coasrv-mail2.auroraoh.loc[10.3.1.15]
-X-Barracuda-Start-Time: 1612944670
-X-Barracuda-URL: https://10.3.1.12:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at auroraoh.com
-X-Barracuda-Scan-Msg-Size: 755
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Spam-Score: 1.61
-X-Barracuda-Spam-Status: No, SCORE=1.61 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=5.0 tests=BSF_SC0_SA609_NRN, BSF_SC0_SA912_RP_FR, BSF_SC0_SA_TO_FROM_ADDR_MATCH, NO_REAL_NAME
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.87880
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
-        0.00 NO_REAL_NAME           From: does not include a real name
-        0.01 BSF_SC0_SA912_RP_FR    Custom Rule BSF_SC0_SA912_RP_FR
-        0.50 BSF_SC0_SA_TO_FROM_ADDR_MATCH Sender Address Matches Recipient
-                                   Address
-        1.10 BSF_SC0_SA609_NRN      Custom Rule SA609_NRN
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We are seeking for beneficiaries who source for fund to expand/relocating their business interest abroad. We are ready to fund projects outside Turkey and United Kingdom in the form of Soft Loan. We grant loans to both corporate and private entities at a low interest rate of 2% R.O.I per annul.
+2/2 is for the recent syzbot report. Quick and dirty, but easy to
+backport. I plan to restructure (and clean) task vs files cancel later.
 
-We like to grant loan in the following sectors: oil/Gas, banking, real estate, stock speculation and mining, transportation, health sector and tobacco, Communication Services, Agriculture Forestry & Fishing, thus any sector. The terms are very flexible and interesting.
+Pavel Begunkov (2):
+  io_uring: cancel files inflight counting
+  io_uring; fix files cancel hangs
 
-Please contact us for more details;
-
-
-Kind regards,
-
-Paul McCann
+ fs/io_uring.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
 -- 
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+2.24.0
 

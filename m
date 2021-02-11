@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6000A319259
+	by mail.lfdr.de (Postfix) with ESMTP id DBDD731925A
 	for <lists+io-uring@lfdr.de>; Thu, 11 Feb 2021 19:35:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbhBKSfC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 11 Feb 2021 13:35:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35828 "EHLO
+        id S230019AbhBKSfM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 Feb 2021 13:35:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232836AbhBKSc5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Feb 2021 13:32:57 -0500
+        with ESMTP id S232837AbhBKSdF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Feb 2021 13:33:05 -0500
 Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E779C061786
-        for <io-uring@vger.kernel.org>; Thu, 11 Feb 2021 10:32:17 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id r21so5141698wrr.9
-        for <io-uring@vger.kernel.org>; Thu, 11 Feb 2021 10:32:17 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D6EC061788
+        for <io-uring@vger.kernel.org>; Thu, 11 Feb 2021 10:32:18 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id g10so5203711wrx.1
+        for <io-uring@vger.kernel.org>; Thu, 11 Feb 2021 10:32:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=BveZzhGcr5BXOZHmHIbS7OiQjQ4/3APtxtTDxrAHvDk=;
-        b=DDX5R1EJIB8MBBn4XCLtnMU48ayZ4VpnRZlenbeXCSBuNN8XxZftX5wIrK4KjeYOuZ
-         00TaGLdIvRUfbrAeeO5MSqR1ljZ+FpxrgTaFSIdOddkhw79fibGv1ZSiOgx7eeJFi6iK
-         n8fmrjQF3XPfsa0nAEVqNL3eIPKUxna35chuHK1BSSmgNyPZY34RIPZaAY0rwoWSNguv
-         XWgheMnMTC/O8mQbTMsKCk4x8UEcpvfQRmCMYOOfVLKZUyWaLXPAU2Iom5GTgSKbTeSg
-         WFS6NUYroV/uVJ3kqlhwdeX12gCWdSJJ9edyJMS+lSPOf/bCauO8XFXUuc8Ld6wq2Y1I
-         lepg==
+        bh=6hsOFnxYgfPDDHA16zwINWueucEfzi/rZSmopAdE1sU=;
+        b=NJICZ/whDpv19bpB+qwkviREhClOUATtZSiGNA639Y7Y42tXldEF1CQUoH1gOErLHO
+         aOBBQJZEI9Vo5Q1IzMd11mljQ56heB8XymtmPrDG2wwfYw7/Zqnb8k0aoOG2mPPbDb4S
+         7j+8xfi021YJnyncbRyeAyuN/Fuelz9WWuKgJvQDzr0/BYEVQhRtrsfofv7o8ngjPBP8
+         RVPtUP23OXAlptIKhSbfDPP4JwnlelK7CSjyBGxHFGxNY832G7qdNW+Lgrvq0GAtAJRb
+         dtyP27XcLsDEoRptJ42YTRKq02hu7XL8hWx5cITqav+kghyoH5J+wPSEmHGmCwRyZYdT
+         Dxqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BveZzhGcr5BXOZHmHIbS7OiQjQ4/3APtxtTDxrAHvDk=;
-        b=i4Ntyj+AntGHy1/xvGMeTBDEwsbLE2h8Ryq0zOK+V+1ty6aIaaGR53Knuno+Oic7P7
-         8N6GVOgcxp7YevPWNn+5fyLZay3sgrLBLW8qlXKRJVqJln8Kq6wcQDUkoYt+0iqDOtr2
-         qKldTpzOwFeN4wVIidssMXFDYG1MyYx2B+p7GTJw5TfaZ9GgHzaMs2RfxNO+JtWjTgaK
-         f+E00zOiEmikJvhRkjHXdmnnJNpPEu/qXAU8gD3t5+Bx4cgLvT0Ptu2U3f+z8+jVd3Fo
-         qgETFZEBZl/FNn2pYnlZgllp9qw8Gr+KBYHyErJIFB3+7ntmFWoAPCtFBs3OBMQlnxC2
-         5BWg==
-X-Gm-Message-State: AOAM530kGPCx9337WklWcrROeAtsY4mhXg69jtRaUEJH3uRvd5VSCS3t
-        9GG26Ueu1xFgk32aw6W/ELQ=
-X-Google-Smtp-Source: ABdhPJxj6f1RSprn6unKzwdlHUMXr92lrTSpoYRuHnL/TJPBD1M3bcaPK5XcGhlyzdxgjitMz3D4VQ==
-X-Received: by 2002:adf:ee84:: with SMTP id b4mr6857925wro.339.1613068336193;
-        Thu, 11 Feb 2021 10:32:16 -0800 (PST)
+        bh=6hsOFnxYgfPDDHA16zwINWueucEfzi/rZSmopAdE1sU=;
+        b=tHsuyulEq4nhSsMTnSbDoUlnmylEas2UgAIl7ud4NI9iHWHcfQkks27qKK5cvpNi1I
+         8VR/OkdHGant3R1ttDMIDN8EsNxoghXg0JgJdm8T4MEJzwes2NoWjrReu1D1AqT+4fqL
+         yJN9ibAomKkBbyPSXDWRvGnaLHS7frGF0Dn7ggZMBDKjltY4jdSd8+wsl21/ohzD7DFR
+         Sbrm9V1OC/ro05icHcexy6Q37J2+tcFDLW/v6R1JO0mjapwirP3KXfy8erqDt5pDGDlr
+         /PbKtck2lfOJ7BGgP0L+fubCF5WItqqT+GVChyvzXdLrpgDOvgC0KDRXCns/2QZAs+W/
+         ox6w==
+X-Gm-Message-State: AOAM5307/ztA74MG8W218ZHAirvpzd5dkPbahmbh+uL2+P5Eds1DtUmG
+        XisuertqwJpBtjR5ZsBMn7E=
+X-Google-Smtp-Source: ABdhPJwfe1Hg1zfn0xvVOFaDkfmZ5GQJOYI30pLrrvwfjJiW3teF2iw+ngxoNtKII21i//eu4SBbFg==
+X-Received: by 2002:adf:c6c1:: with SMTP id c1mr7011349wrh.326.1613068337131;
+        Thu, 11 Feb 2021 10:32:17 -0800 (PST)
 Received: from localhost.localdomain ([185.69.144.228])
-        by smtp.gmail.com with ESMTPSA id a17sm6501595wrx.63.2021.02.11.10.32.15
+        by smtp.gmail.com with ESMTPSA id a17sm6501595wrx.63.2021.02.11.10.32.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Feb 2021 10:32:15 -0800 (PST)
+        Thu, 11 Feb 2021 10:32:16 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/4] io_uring: clean up io_req_free_batch_finish()
-Date:   Thu, 11 Feb 2021 18:28:20 +0000
-Message-Id: <fc684490abfb34d4d7f5acc076fceeba6c9716ff.1613067782.git.asml.silence@gmail.com>
+Subject: [PATCH 2/4] io_uring: simplify iopoll reissuing
+Date:   Thu, 11 Feb 2021 18:28:21 +0000
+Message-Id: <a005b6f6715af880cb16d127b12fa2f62b7005a9.1613067783.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1613067782.git.asml.silence@gmail.com>
 References: <cover.1613067782.git.asml.silence@gmail.com>
@@ -61,31 +61,84 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_req_free_batch_finish() is final and does not permit struct req_batch
-to be reused without re-init. To be more consistent don't clear ->task
-there.
+Don't stash -EAGAIN'ed iopoll requests into a list to reissue it later,
+do it eagerly. It removes overhead on keeping and checking that list,
+and allows in case of failure for these requests to be completed through
+normal iopoll completion path.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/io_uring.c | 26 +++++---------------------
+ 1 file changed, 5 insertions(+), 21 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 7a1e4ecf5f94..0d612e9f7dda 100644
+index 0d612e9f7dda..3df27ce5938c 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2394,10 +2394,8 @@ static inline void io_init_req_batch(struct req_batch *rb)
- static void io_req_free_batch_finish(struct io_ring_ctx *ctx,
- 				     struct req_batch *rb)
- {
--	if (rb->task) {
-+	if (rb->task)
- 		io_put_task(rb->task, rb->task_refs);
--		rb->task = NULL;
--	}
- 	if (rb->ctx_refs)
- 		percpu_ref_put_many(&ctx->refs, rb->ctx_refs);
+@@ -1026,8 +1026,7 @@ static struct fixed_rsrc_ref_node *alloc_fixed_rsrc_ref_node(
+ static void init_fixed_file_ref_node(struct io_ring_ctx *ctx,
+ 				     struct fixed_rsrc_ref_node *ref_node);
+ 
+-static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
+-			     unsigned int issue_flags);
++static bool io_rw_reissue(struct io_kiocb *req, long res);
+ static void io_cqring_fill_event(struct io_kiocb *req, long res);
+ static void io_put_req(struct io_kiocb *req);
+ static void io_put_req_deferred(struct io_kiocb *req, int nr);
+@@ -2555,17 +2554,6 @@ static inline bool io_run_task_work(void)
+ 	return false;
  }
+ 
+-static void io_iopoll_queue(struct list_head *again)
+-{
+-	struct io_kiocb *req;
+-
+-	do {
+-		req = list_first_entry(again, struct io_kiocb, inflight_entry);
+-		list_del(&req->inflight_entry);
+-		__io_complete_rw(req, -EAGAIN, 0, 0);
+-	} while (!list_empty(again));
+-}
+-
+ /*
+  * Find and free completed poll iocbs
+  */
+@@ -2574,7 +2562,6 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ {
+ 	struct req_batch rb;
+ 	struct io_kiocb *req;
+-	LIST_HEAD(again);
+ 
+ 	/* order with ->result store in io_complete_rw_iopoll() */
+ 	smp_rmb();
+@@ -2584,13 +2571,13 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ 		int cflags = 0;
+ 
+ 		req = list_first_entry(done, struct io_kiocb, inflight_entry);
++		list_del(&req->inflight_entry);
++
+ 		if (READ_ONCE(req->result) == -EAGAIN) {
+-			req->result = 0;
+ 			req->iopoll_completed = 0;
+-			list_move_tail(&req->inflight_entry, &again);
+-			continue;
++			if (io_rw_reissue(req, -EAGAIN))
++				continue;
+ 		}
+-		list_del(&req->inflight_entry);
+ 
+ 		if (req->flags & REQ_F_BUFFER_SELECTED)
+ 			cflags = io_put_rw_kbuf(req);
+@@ -2605,9 +2592,6 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ 	io_commit_cqring(ctx);
+ 	io_cqring_ev_posted_iopoll(ctx);
+ 	io_req_free_batch_finish(ctx, &rb);
+-
+-	if (!list_empty(&again))
+-		io_iopoll_queue(&again);
+ }
+ 
+ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
 -- 
 2.24.0
 

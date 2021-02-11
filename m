@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBDD731925A
-	for <lists+io-uring@lfdr.de>; Thu, 11 Feb 2021 19:35:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB93D31925E
+	for <lists+io-uring@lfdr.de>; Thu, 11 Feb 2021 19:35:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230019AbhBKSfM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 11 Feb 2021 13:35:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35830 "EHLO
+        id S230132AbhBKSfR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 Feb 2021 13:35:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232837AbhBKSdF (ORCPT
+        with ESMTP id S232838AbhBKSdF (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 11 Feb 2021 13:33:05 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D6EC061788
-        for <io-uring@vger.kernel.org>; Thu, 11 Feb 2021 10:32:18 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id g10so5203711wrx.1
-        for <io-uring@vger.kernel.org>; Thu, 11 Feb 2021 10:32:18 -0800 (PST)
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3185EC06178A
+        for <io-uring@vger.kernel.org>; Thu, 11 Feb 2021 10:32:19 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id w4so6420194wmi.4
+        for <io-uring@vger.kernel.org>; Thu, 11 Feb 2021 10:32:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=6hsOFnxYgfPDDHA16zwINWueucEfzi/rZSmopAdE1sU=;
-        b=NJICZ/whDpv19bpB+qwkviREhClOUATtZSiGNA639Y7Y42tXldEF1CQUoH1gOErLHO
-         aOBBQJZEI9Vo5Q1IzMd11mljQ56heB8XymtmPrDG2wwfYw7/Zqnb8k0aoOG2mPPbDb4S
-         7j+8xfi021YJnyncbRyeAyuN/Fuelz9WWuKgJvQDzr0/BYEVQhRtrsfofv7o8ngjPBP8
-         RVPtUP23OXAlptIKhSbfDPP4JwnlelK7CSjyBGxHFGxNY832G7qdNW+Lgrvq0GAtAJRb
-         dtyP27XcLsDEoRptJ42YTRKq02hu7XL8hWx5cITqav+kghyoH5J+wPSEmHGmCwRyZYdT
-         Dxqg==
+        bh=mvJVHvc4Rf/OGlrj0a0cLFD4kicIcMgleLXrm7242gg=;
+        b=uOQjsdyqEYO2f3GCQyge8lA3oLKKBmHd46+3KbqsIc4uZQgi3gkVT+tRqcbRTCinN1
+         cn4wqDTC7WvCKnXz7uPV/4EAmMmAQ+lV0SATyEn1M6m0fPzi3u9YZyzEMRu5jX4NvnLJ
+         mXXL8iG0W1384dWseV2PbZVWF1GRAJnkExgtYHCPjlaXrPjF3ab4KWsXYUG/6jD6wrfZ
+         /ERGzmXv/L6zpVSbgMIqZXj5ENN5z6xURmA35Qj/swZaWRLbYpq6Rqrs/KhexjT7ax3J
+         fvgCkbODw54lusUKBlkv0l907FbFuVXBzPJcqUzacuAc9gOl7TvBMNyvpAMmROAdKVpB
+         BiRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6hsOFnxYgfPDDHA16zwINWueucEfzi/rZSmopAdE1sU=;
-        b=tHsuyulEq4nhSsMTnSbDoUlnmylEas2UgAIl7ud4NI9iHWHcfQkks27qKK5cvpNi1I
-         8VR/OkdHGant3R1ttDMIDN8EsNxoghXg0JgJdm8T4MEJzwes2NoWjrReu1D1AqT+4fqL
-         yJN9ibAomKkBbyPSXDWRvGnaLHS7frGF0Dn7ggZMBDKjltY4jdSd8+wsl21/ohzD7DFR
-         Sbrm9V1OC/ro05icHcexy6Q37J2+tcFDLW/v6R1JO0mjapwirP3KXfy8erqDt5pDGDlr
-         /PbKtck2lfOJ7BGgP0L+fubCF5WItqqT+GVChyvzXdLrpgDOvgC0KDRXCns/2QZAs+W/
-         ox6w==
-X-Gm-Message-State: AOAM5307/ztA74MG8W218ZHAirvpzd5dkPbahmbh+uL2+P5Eds1DtUmG
-        XisuertqwJpBtjR5ZsBMn7E=
-X-Google-Smtp-Source: ABdhPJwfe1Hg1zfn0xvVOFaDkfmZ5GQJOYI30pLrrvwfjJiW3teF2iw+ngxoNtKII21i//eu4SBbFg==
-X-Received: by 2002:adf:c6c1:: with SMTP id c1mr7011349wrh.326.1613068337131;
+        bh=mvJVHvc4Rf/OGlrj0a0cLFD4kicIcMgleLXrm7242gg=;
+        b=tXUwWt0klLx5cYFZs9CAuF7u5r/4W92QYqgYlmU4J++xzlQN3j/YrSA7F/DbKoo2zY
+         DaXvTrjrZCLZsgocnbGBciMh2oDXTEvtby0t5c0ItG2ntgfN5iyqq3b05sWcNGzRQHEU
+         itvEDoC+Vx9MquUdNFlEr0bAfS6GQzmdu+B1FyhWW0AH5/UFKdOq+Wy9M/1JQWba10Oe
+         41EM44PCzET94YOAIxqSlSk9bl5duoMKVrqAA2663PJK10AwsS9uOYDyc8ic3twqvxfc
+         pEVqc53sZTC+2SpBf1yxPvASHtT80UggArUj9pQZSMhah2FgnZOHr8kamJiOicBPwtFq
+         RDxA==
+X-Gm-Message-State: AOAM533ilSF6fczCOudtFMI56yh70bJjRxd7MUIoSULn44XWWfCnnAA0
+        hXASogP717uZ97tbSC7/qPLNSZTZA0cD/A==
+X-Google-Smtp-Source: ABdhPJzFQ1CPtD3n7zdu1ZtcbDMV/JpJERVYbmAQokSjrRotlUtrekyeoO2ZuFAOs03aDGsYLDVN8A==
+X-Received: by 2002:a1c:20cf:: with SMTP id g198mr6154129wmg.173.1613068337962;
         Thu, 11 Feb 2021 10:32:17 -0800 (PST)
 Received: from localhost.localdomain ([185.69.144.228])
-        by smtp.gmail.com with ESMTPSA id a17sm6501595wrx.63.2021.02.11.10.32.16
+        by smtp.gmail.com with ESMTPSA id a17sm6501595wrx.63.2021.02.11.10.32.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Feb 2021 10:32:16 -0800 (PST)
+        Thu, 11 Feb 2021 10:32:17 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 2/4] io_uring: simplify iopoll reissuing
-Date:   Thu, 11 Feb 2021 18:28:21 +0000
-Message-Id: <a005b6f6715af880cb16d127b12fa2f62b7005a9.1613067783.git.asml.silence@gmail.com>
+Subject: [PATCH 3/4] io_uring: move res check out of io_rw_reissue()
+Date:   Thu, 11 Feb 2021 18:28:22 +0000
+Message-Id: <790e018b34e448fa8fc6201c853becbc2cf8bf8a.1613067783.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1613067782.git.asml.silence@gmail.com>
 References: <cover.1613067782.git.asml.silence@gmail.com>
@@ -61,84 +61,68 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Don't stash -EAGAIN'ed iopoll requests into a list to reissue it later,
-do it eagerly. It removes overhead on keeping and checking that list,
-and allows in case of failure for these requests to be completed through
-normal iopoll completion path.
+We pass return code into io_rw_reissue() for it to check for -EAGAIN.
+It's not the cleaniest approach and may prevent inlining of the
+non-EAGAIN fast path, so do it at call sites.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 26 +++++---------------------
- 1 file changed, 5 insertions(+), 21 deletions(-)
+ fs/io_uring.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0d612e9f7dda..3df27ce5938c 100644
+index 3df27ce5938c..81f674f7a97a 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1026,8 +1026,7 @@ static struct fixed_rsrc_ref_node *alloc_fixed_rsrc_ref_node(
+@@ -1026,7 +1026,7 @@ static struct fixed_rsrc_ref_node *alloc_fixed_rsrc_ref_node(
  static void init_fixed_file_ref_node(struct io_ring_ctx *ctx,
  				     struct fixed_rsrc_ref_node *ref_node);
  
--static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
--			     unsigned int issue_flags);
-+static bool io_rw_reissue(struct io_kiocb *req, long res);
+-static bool io_rw_reissue(struct io_kiocb *req, long res);
++static bool io_rw_reissue(struct io_kiocb *req);
  static void io_cqring_fill_event(struct io_kiocb *req, long res);
  static void io_put_req(struct io_kiocb *req);
  static void io_put_req_deferred(struct io_kiocb *req, int nr);
-@@ -2555,17 +2554,6 @@ static inline bool io_run_task_work(void)
- 	return false;
- }
+@@ -2575,7 +2575,7 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
  
--static void io_iopoll_queue(struct list_head *again)
--{
--	struct io_kiocb *req;
--
--	do {
--		req = list_first_entry(again, struct io_kiocb, inflight_entry);
--		list_del(&req->inflight_entry);
--		__io_complete_rw(req, -EAGAIN, 0, 0);
--	} while (!list_empty(again));
--}
--
- /*
-  * Find and free completed poll iocbs
-  */
-@@ -2574,7 +2562,6 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- {
- 	struct req_batch rb;
- 	struct io_kiocb *req;
--	LIST_HEAD(again);
- 
- 	/* order with ->result store in io_complete_rw_iopoll() */
- 	smp_rmb();
-@@ -2584,13 +2571,13 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 		int cflags = 0;
- 
- 		req = list_first_entry(done, struct io_kiocb, inflight_entry);
-+		list_del(&req->inflight_entry);
-+
  		if (READ_ONCE(req->result) == -EAGAIN) {
--			req->result = 0;
  			req->iopoll_completed = 0;
--			list_move_tail(&req->inflight_entry, &again);
--			continue;
-+			if (io_rw_reissue(req, -EAGAIN))
-+				continue;
+-			if (io_rw_reissue(req, -EAGAIN))
++			if (io_rw_reissue(req))
+ 				continue;
  		}
--		list_del(&req->inflight_entry);
  
- 		if (req->flags & REQ_F_BUFFER_SELECTED)
- 			cflags = io_put_rw_kbuf(req);
-@@ -2605,9 +2592,6 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 	io_commit_cqring(ctx);
- 	io_cqring_ev_posted_iopoll(ctx);
- 	io_req_free_batch_finish(ctx, &rb);
--
--	if (!list_empty(&again))
--		io_iopoll_queue(&again);
+@@ -2809,15 +2809,12 @@ static bool io_resubmit_prep(struct io_kiocb *req)
+ }
+ #endif
+ 
+-static bool io_rw_reissue(struct io_kiocb *req, long res)
++static bool io_rw_reissue(struct io_kiocb *req)
+ {
+ #ifdef CONFIG_BLOCK
+-	umode_t mode;
++	umode_t mode = file_inode(req->file)->i_mode;
+ 	int ret;
+ 
+-	if (res != -EAGAIN && res != -EOPNOTSUPP)
+-		return false;
+-	mode = file_inode(req->file)->i_mode;
+ 	if (!S_ISBLK(mode) && !S_ISREG(mode))
+ 		return false;
+ 	if ((req->flags & REQ_F_NOWAIT) || io_wq_current_is_worker())
+@@ -2840,8 +2837,10 @@ static bool io_rw_reissue(struct io_kiocb *req, long res)
+ static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
+ 			     unsigned int issue_flags)
+ {
+-	if (!io_rw_reissue(req, res))
+-		io_complete_rw_common(&req->rw.kiocb, res, issue_flags);
++	if ((res == -EAGAIN || res == -EOPNOTSUPP) && io_rw_reissue(req))
++		return;
++
++	io_complete_rw_common(&req->rw.kiocb, res, issue_flags);
  }
  
- static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ static void io_complete_rw(struct kiocb *kiocb, long res, long res2)
 -- 
 2.24.0
 

@@ -2,56 +2,140 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 000B7317281
-	for <lists+io-uring@lfdr.de>; Wed, 10 Feb 2021 22:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66250318C24
+	for <lists+io-uring@lfdr.de>; Thu, 11 Feb 2021 14:36:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232903AbhBJVkJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Feb 2021 16:40:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58914 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232585AbhBJVkI (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 10 Feb 2021 16:40:08 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5D429AC88;
-        Wed, 10 Feb 2021 21:39:27 +0000 (UTC)
-Date:   Wed, 10 Feb 2021 22:39:25 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        Nicolai Stange <nstange@suse.de>,
-        Martin Doucha <mdoucha@suse.cz>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        ltp@lists.linux.it
-Subject: Re: CVE-2020-29373 reproducer fails on v5.11
-Message-ID: <YCRSjQal+HFnzHs6@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <YCQvL8/DMNVLLuuf@pevik>
- <b74d54ed-85ba-df4c-c114-fe11d50a3bce@gmail.com>
- <270c474f-476a-65d2-1f5b-57d3330efb04@kernel.dk>
+        id S230328AbhBKNdj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 Feb 2021 08:33:39 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:55054 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231660AbhBKNbY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Feb 2021 08:31:24 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UOQAHXj_1613050235;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UOQAHXj_1613050235)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 11 Feb 2021 21:30:35 +0800
+Subject: Re: [PATCH 2/2] io_uring: don't hold uring_lock when calling
+ io_run_task_work*
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1612364276-26847-1-git-send-email-haoxu@linux.alibaba.com>
+ <1612364276-26847-3-git-send-email-haoxu@linux.alibaba.com>
+ <c97beeca-f401-3a21-5d8d-aa53a4292c03@gmail.com>
+ <9b1d9e51-1b92-a651-304d-919693f9fb6f@gmail.com>
+ <3668106c-5e80-50c8-6221-bdfa246c98ae@linux.alibaba.com>
+ <f1a0bb32-6357-45e7-d4e4-c65c134f2229@gmail.com>
+ <343f70ec-4c41-ed73-564e-494fca895e90@gmail.com>
+ <150de65e-0f6a-315a-376e-8e3fcf07ce1a@linux.alibaba.com>
+ <570f215e-7292-380a-1213-fe6e84881386@gmail.com>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <c5167b9e-66a8-e5a1-2854-bbc96214446d@linux.alibaba.com>
+Date:   Thu, 11 Feb 2021 21:30:35 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <270c474f-476a-65d2-1f5b-57d3330efb04@kernel.dk>
+In-Reply-To: <570f215e-7292-380a-1213-fe6e84881386@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens, Pavel,
+在 2021/2/5 下午6:18, Pavel Begunkov 写道:
+> On 05/02/2021 09:57, Hao Xu wrote:
+>> 在 2021/2/4 下午11:26, Pavel Begunkov 写道:
+>>> On 04/02/2021 11:17, Pavel Begunkov wrote:
+>>>> On 04/02/2021 03:25, Hao Xu wrote:
+>>>>> 在 2021/2/4 上午12:45, Pavel Begunkov 写道:
+>>>>>> On 03/02/2021 16:35, Pavel Begunkov wrote:
+>>>>>>> On 03/02/2021 14:57, Hao Xu wrote:
+>>>>>>>> This is caused by calling io_run_task_work_sig() to do work under
+>>>>>>>> uring_lock while the caller io_sqe_files_unregister() already held
+>>>>>>>> uring_lock.
+>>>>>>>> we need to check if uring_lock is held by us when doing unlock around
+>>>>>>>> io_run_task_work_sig() since there are code paths down to that place
+>>>>>>>> without uring_lock held.
+>>>>>>>
+>>>>>>> 1. we don't want to allow parallel io_sqe_files_unregister()s
+>>>>>>> happening, it's synchronised by uring_lock atm. Otherwise it's
+>>>>>>> buggy.
+>>>>> Here "since there are code paths down to that place without uring_lock held" I mean code path of io_ring_ctx_free().
+>>>>
+>>>> I guess it's to the 1/2, but let me outline the problem again:
+>>>> if you have two tasks userspace threads sharing a ring, then they
+>>>> can both and in parallel call syscall:files_unregeister. That's
+>>>> a potential double percpu_ref_kill(&data->refs), or even worse.
+>>>>
+>>>> Same for 2, but racing for the table and refs.
+>>>
+>>> There is a couple of thoughts for this:
+>>>
+>>> 1. I don't like waiting without holding the lock in general, because
+>>> someone can submit more reqs in-between and so indefinitely postponing
+>>> the files_unregister.
+>> Thanks, Pavel.
+>> I thought this issue before, until I saw this in __io_uring_register:
+>>
+>>    if (io_register_op_must_quiesce(opcode)) {
+>>            percpu_ref_kill(&ctx->refs);
+> 
+> It is different because of this kill, it will prevent submissions.
+> 
+>>
+>>            /*
+>>            ¦* Drop uring mutex before waiting for references to exit. If
+>>            ¦* another thread is currently inside io_uring_enter() it might
+>>            ¦* need to grab the uring_lock to make progress. If we hold it
+>>            ¦* here across the drain wait, then we can deadlock. It's safe
+>>            ¦* to drop the mutex here, since no new references will come in
+>>            ¦* after we've killed the percpu ref.
+>>            ¦*/
+>>            mutex_unlock(&ctx->uring_lock);
+>>            do {
+>>                    ret = wait_for_completion_interruptible(&ctx->ref_comp);
+>>                    if (!ret)
+>>                            break;
+>>                    ret = io_run_task_work_sig();
+>>                    if (ret < 0)
+>>                            break;
+>>            } while (1);
+>>
+>>            mutex_lock(&ctx->uring_lock);
+>>
+>>            if (ret) {
+>>                    percpu_ref_resurrect(&ctx->refs);
+>>                    goto out_quiesce;
+>>            }
+>>    }
+>>
+>> So now I guess the postponement issue also exits in the above code since
+>> there could be another thread submiting reqs to the shared ctx(or we can say uring fd).
+>>
+>>> 2. I wouldn't want to add checks for that in submission path.
+>>>
+>>> So, a solution I think about is to wait under the lock, If we need to
+>>> run task_works -- briefly drop the lock, run task_works and then do
+>>> all unregister all over again. Keep an eye on refs, e.g. probably
+>>> need to resurrect it.
+>>>
+>>> Because we current task is busy nobody submits new requests on
+>>> its behalf, and so there can't be infinite number of in-task_work
+>>> reqs, and eventually it will just go wait/sleep forever (if not
+>>> signalled) under the mutex, so we can a kind of upper bound on
+>>> time.
+>>>
+>> Do you mean sleeping with timeout rather than just sleeping? I think this works, I'll work on this and think about the detail.
+> 
+> Without timeout -- it will be awaken when new task_works are coming in,
+> but Jens knows better.
+Isn't this risky, since there could possible be no more task_works
+coming in, which causes it sleeps forever?
+> 
+>> But before addressing this issue, Should I first send a patch to just fix the deadlock issue?
+> 
+> Do you mean the deadlock 2/2 was trying to fix? Or some else? The thread
+> is all about fixing it, but doing it right. Not sure there is a need for
+> faster but incomplete solution, if that's what you meant.
+> 
 
-> On 2/10/21 12:32 PM, Pavel Begunkov wrote:
-> > On 10/02/2021 19:08, Petr Vorel wrote:
-> >> Hi all,
-
-> >> I found that the reproducer for CVE-2020-29373 from Nicolai Stange (source attached),
-> >> which was backported to LTP as io_uring02 by Martin Doucha [1] is failing since
-> >> 10cad2c40dcb ("io_uring: don't take fs for recvmsg/sendmsg") from v5.11-rc1.
-
-> > Thanks for letting us know, we need to revert it
-
-> I'll queue up a revert. Would also be nice to turn that into
-> a liburing regression test.
-Thanks a lot for a quick feedback and fix!
-
-Kind regards,
-Petr

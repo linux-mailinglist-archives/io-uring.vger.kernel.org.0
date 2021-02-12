@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41B6031A4AE
-	for <lists+io-uring@lfdr.de>; Fri, 12 Feb 2021 19:46:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B63E31A4AF
+	for <lists+io-uring@lfdr.de>; Fri, 12 Feb 2021 19:46:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231290AbhBLSp7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Feb 2021 13:45:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36322 "EHLO
+        id S229611AbhBLSqA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Feb 2021 13:46:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbhBLSp4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Feb 2021 13:45:56 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC6BC061756
-        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 10:45:16 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id v7so320052wrr.12
-        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 10:45:16 -0800 (PST)
+        with ESMTP id S230484AbhBLSp5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Feb 2021 13:45:57 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E5CBC0613D6
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 10:45:17 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id j11so521999wmi.3
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 10:45:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=qvyB/qGQyTr0yye2TOTBB0UzYKUZjvhTHgT0V4QK3iE=;
-        b=LPty4KtENFyP2ZI9xdXtEGAGjThiTJqGKmSA6LtEIOqY2BP03iD+zghZx7Wpzq7t3B
-         hDyyEuy88CBTo7TWMRDaMs1iNjX8HB9cJKaZgHEfmCCaEG9wCEP52dbPXvQyFEGgoJ43
-         L0zp97/yYTOsqMzBkTqEhrhDmc6M7bZIh/BRtIwOkrgOj8V5wYIl+G+RaTNtG0g/YOHn
-         fl8+0TUjLxPDyMWwWmNtrLQAS6y/FDAaB2mxUqnkfwuSYPW0NR3TiqqhjjFh1RwA7JIr
-         Ok7rLL8vzipvBHHW/hTkkEuiKgVRBkzT9W6X6NWV1PGhLR+1xBjyE2kLu+tS4PQk3mjp
-         oZuA==
+        bh=EqXg+Z4OS40aRFez43bqjpJAXZfnCfPyNy1zQY4LOM0=;
+        b=cX7MxlhV106VGPbktnI1rYuWITX8RjmuGRokkKAZ6Lt9Khei2VTNtVnpAEhmqxzl9F
+         81wJzEESYhYcsNSFqW3tnMzL1aLwcpHo8reyHE+4E7dExYJ+E5I1t529wYNyNciYlaWW
+         Y20T3BA6kZZl7NN4hQoJfeCONyJp3eNz1+VrLM7lNlEz5GZoZOCN2EbZdNMZ6Xh6TkwH
+         aW3BfaazdzvCwCPEz/FuJWFkCoPyX7zyDyPmt9G6WpA8fZY0XcL9Zf1bN4LBRafM8rNX
+         nPU+8282tLWp7U2I3dkUfiltLzDske4IcBXEFOVk9CfX/Yi/IX/1rcRgRYzGvJE2UflM
+         oEjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qvyB/qGQyTr0yye2TOTBB0UzYKUZjvhTHgT0V4QK3iE=;
-        b=k8ezpE8YTid1gIGrz/2EVHX5FIslvoNOwaqdsQrBFxwUiiVXJNV2dVLDa/jQjADonK
-         6l9Co46lmrrC3xh4AxViQfYnSJQHWHd/isBF7EBRDeywsY33MfneusUKEKU8QSQANSRl
-         2WuFWAI10EqvLsDxcEynZs1SeYF6aAHvYXQJ4YKrs2/L1+kZBSg5JvF8A619+Dza/LJz
-         DEX9s/gSlG0EWCLyvaOn0JA1MfICPMP1ip9kYFmDNAlEDXJK5UwFDgx2hAqZefp1YfT7
-         fpZ1myR5nkiwVc1SqVpNonno/L1R0TJnY1w5Lyb+4QxZG59higxPYGpfdMWMhrlG2qFl
-         Oc8Q==
-X-Gm-Message-State: AOAM532iuyHLzmdtS5GRjujRloLZg64ZtXerElZ/LIvEVR6QUxMOP5w/
-        BgPki3oZmXypVbDsx2J7OsRUtuTICuqezA==
-X-Google-Smtp-Source: ABdhPJwS5QxVtj55A/L0NOaZByP+bM6+4Cf01owKHm0jdXIcSz3soKyZrt2JAa8Pod1vcU6KwgOKWw==
-X-Received: by 2002:a5d:464f:: with SMTP id j15mr5163998wrs.390.1613155515010;
+        bh=EqXg+Z4OS40aRFez43bqjpJAXZfnCfPyNy1zQY4LOM0=;
+        b=fU9x/rdkYRAwePBc7CLBeK7dL8Jwkl2VK3Ciw4WUlY8q4An/r+I2FP8w1UGaDRd6NX
+         +eIGyDSid/gO1x+4ZFJRzGdXgfm5GeoT6TSAQCU8f+QoimMoYR456I8j848gsz64Ijlz
+         kKVyBCs27TnH3qlp2wEqQQIRVvDlMeSTLsr7ca5G6OQTFRKYAGjkIWZ1R6H3FsLSMRoT
+         TmG0klZoQx+7L+VTNBlQpheOxI/+d3Kb6YhLchFEDQt6NdnnpGOad+wOa5m24RIjz2Lp
+         pAMm4jMscfuLKVhKQ3/YYj7HRkt0dcvVW5IXyj1rdzeRmZmzOfPapzP5ZuPZE1ftTLoc
+         kIig==
+X-Gm-Message-State: AOAM533XZLlx0OsDsgIKr+Q8aVLnQLYLOsKcWg2vtN4UKxT5pKde99IQ
+        D1nkDQ5b1Df7VxSshFWXPZve+vo4ieFDCA==
+X-Google-Smtp-Source: ABdhPJy7KddWrF2aidj73EHCqnS8nJqq9VCL0w5v3mSi8dnIH39MCXDU/Q1Gc41petkfeyoO+U5nOA==
+X-Received: by 2002:a1c:408a:: with SMTP id n132mr3866284wma.86.1613155515890;
         Fri, 12 Feb 2021 10:45:15 -0800 (PST)
 Received: from localhost.localdomain ([185.69.144.228])
-        by smtp.gmail.com with ESMTPSA id e16sm13452830wrt.36.2021.02.12.10.45.14
+        by smtp.gmail.com with ESMTPSA id e16sm13452830wrt.36.2021.02.12.10.45.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Feb 2021 10:45:14 -0800 (PST)
+        Fri, 12 Feb 2021 10:45:15 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/3] io_uring: don't check PF_EXITING from syscall
-Date:   Fri, 12 Feb 2021 18:41:15 +0000
-Message-Id: <e1a79da7b17f8c4982990a7989fdcd2e9ecae70a.1613154861.git.asml.silence@gmail.com>
+Subject: [PATCH 2/3] io_uring: clean io_req_find_next() fast check
+Date:   Fri, 12 Feb 2021 18:41:16 +0000
+Message-Id: <08fc9313442ea39051c4314904da8f7889cbfd99.1613154861.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1613154861.git.asml.silence@gmail.com>
 References: <cover.1613154861.git.asml.silence@gmail.com>
@@ -61,38 +61,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_sq_thread_acquire_mm_files() can find a PF_EXITING task only when
-it's called from task_work context. Don't check it in all other cases,
-that are when we're in io_uring_enter().
+Indirectly io_req_find_next() is called for every request, optimise the
+check by testing flags as it was long before -- __io_req_find_next()
+tolerates false-positives well (i.e. link==NULL), and those should be
+really rare.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9c58be0579f3..66bbb0dc50af 100644
+index 66bbb0dc50af..776531f6e18b 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -1213,8 +1213,6 @@ static int __io_sq_thread_acquire_mm_files(struct io_ring_ctx *ctx,
- static inline int io_sq_thread_acquire_mm_files(struct io_ring_ctx *ctx,
- 						struct io_kiocb *req)
- {
--	if (unlikely(current->flags & PF_EXITING))
--		return -EFAULT;
- 	if (!(ctx->flags & IORING_SETUP_SQPOLL))
- 		return 0;
- 	return __io_sq_thread_acquire_mm_files(ctx, req);
-@@ -2338,7 +2336,8 @@ static void __io_req_task_submit(struct io_kiocb *req)
+@@ -2172,7 +2172,7 @@ static struct io_kiocb *__io_req_find_next(struct io_kiocb *req)
  
- 	/* ctx stays valid until unlock, even if we drop all ours ctx->refs */
- 	mutex_lock(&ctx->uring_lock);
--	if (!ctx->sqo_dead && !io_sq_thread_acquire_mm_files(ctx, req))
-+	if (!ctx->sqo_dead && !(current->flags & PF_EXITING) &&
-+	    !io_sq_thread_acquire_mm_files(ctx, req))
- 		__io_queue_sqe(req);
- 	else
- 		__io_req_task_cancel(req, -EFAULT);
+ static inline struct io_kiocb *io_req_find_next(struct io_kiocb *req)
+ {
+-	if (likely(!(req->link) && !(req->flags & REQ_F_LINK_TIMEOUT)))
++	if (likely(!(req->flags & (REQ_F_LINK|REQ_F_HARDLINK))))
+ 		return NULL;
+ 	return __io_req_find_next(req);
+ }
 -- 
 2.24.0
 

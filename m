@@ -2,82 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC9B31A557
-	for <lists+io-uring@lfdr.de>; Fri, 12 Feb 2021 20:26:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAEC931A5A5
+	for <lists+io-uring@lfdr.de>; Fri, 12 Feb 2021 20:52:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229451AbhBLT0g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Feb 2021 14:26:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45032 "EHLO
+        id S231292AbhBLTwX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Feb 2021 14:52:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230390AbhBLT0f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Feb 2021 14:26:35 -0500
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9617C061574
-        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:25:54 -0800 (PST)
-Received: by mail-pg1-x529.google.com with SMTP id t11so303457pgu.8
-        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:25:54 -0800 (PST)
+        with ESMTP id S229646AbhBLTwW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Feb 2021 14:52:22 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F202FC061574
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:51:41 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id v24so1123732lfr.7
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:51:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=SfHQp2PN2omMLBUyJOfHo/korR/YRmYl8GE0K09rv0g=;
-        b=v/y/sX0OIfUUr30ATel6/LliZiU+YgtxuEYWJy4Rgz5SkzMFRhjY38NPAF/aKDgEgG
-         3HpNCSx51AOC9hOUJw7BvgLx71V+dQ/E/4MkislcxVaX21bntsvJWkapJ/7K1dYKcekC
-         j8R1CuNIVUjPlZ1YElSZv9AOF1zyMcIYyhx7cu/9v+38SdA+1D2qsluZjTKFXshBpbTH
-         GpvRL85CCjoUu2Xnt+B3zm8JLBofFQqQ7U4MNNLkfiBI/E0G/lQjTld2t4BG4LosWVi1
-         IeM/AVmw4o7Mx9eQiIzSBQ8QMyZhUCJKelJVe/DJ783jBvjopS8Hq3n3SJYDb1/U8UqM
-         HybA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XI1CcDZ2SyiVK78cpdgHN5DEl1oQ21xAe3VnrWgWe4Q=;
+        b=BaOhUoZW7EGBG22X2wgg2TlHHbP9a67oDi0s9xcVtgLrY5YgyJrSujKK5CggRj94ls
+         G4mJaYQ/DBdX2j6fjhswP1RjMrVEBUPBjNHjtdC663T2yHoxF3af4VWrvgoGy8vuNU1y
+         a2m6DQ8qV2BscDtB7p+IrbricRU1vsigAPMkY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SfHQp2PN2omMLBUyJOfHo/korR/YRmYl8GE0K09rv0g=;
-        b=OM9aQZiaDv/A2LHgs2nGRPVV11PNlO+QqCYu+D/O129R0SXN86OU2tkgU6QVcrXLKq
-         +RGh698vjIXklbImU31keMtPvDtJ21ydUjQxUMmOVsEv9EzrFp0ETC5eGKxWY5kn4iAh
-         Yhs7jNoyn9xIg16iocYaZLW18IOU6uANQbpFZJ+Y39+sfunxtCHQG5dpT9RNZCiEabKN
-         Ys4hjHcbjEc4d9wt8hzilddCCM8o70jIp+WeVXzToQkKw9aI+BhPD5nLbYjcffCoJH40
-         l/ghFLc5Wi4ITEtMLR0uLYykQAP6P2h5JpczF7YZm9IpZa6I1GSG1sAdar5fPLVxaMNT
-         tq6g==
-X-Gm-Message-State: AOAM530jWRMMJJ/zUFwNRV4SRm5EX7m8lFbRXGRQLZ4D5jcimoAYY+ab
-        66qX9O37hWQYK8OkIulqIS+9AgI1pPWuMQ==
-X-Google-Smtp-Source: ABdhPJxNpL7wKcrjYtbWZ55blpo133u5AJTX6ouzKB50Gi3G+VBDC+ZILHnI4FoDxupIkBf8m2xQDA==
-X-Received: by 2002:a63:30c5:: with SMTP id w188mr4538086pgw.375.1613157953893;
-        Fri, 12 Feb 2021 11:25:53 -0800 (PST)
-Received: from ?IPv6:2620:10d:c085:21e8::16bf? ([2620:10d:c090:400::5:2056])
-        by smtp.gmail.com with ESMTPSA id t17sm11238378pgk.25.2021.02.12.11.25.53
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XI1CcDZ2SyiVK78cpdgHN5DEl1oQ21xAe3VnrWgWe4Q=;
+        b=JappiyQyyzxZ9LPDDYAVrMtKyRTrF/jEzzrZNzyb9yU1nslG9VOVqfiE2tbGcBJJMF
+         9Xipja9MyWInD/RoWk+V0wDSNc/yf9BCP9aY6ob5QXGfhlg3VS0LsUu9BCnvFyjx0O+y
+         cHQL3CAd5VBG3AuFAtIMEdEnqb9fuSeZedWISFiHURYgkim7qFITGV1AEnITFxDP/FMm
+         LI76xRe7bjBl3/VmkNtnCxHGMeCdKd9Wf3SvhwdkhV3HWpVMAG0PPXG+I/SR/4qw5zim
+         FFmHp2vlD1Otw5QrKqN5sse3xaYOgR28X/+NR43K4+s/qTpHH7jsOqUODwz5mW8IkJbJ
+         7RZg==
+X-Gm-Message-State: AOAM531eJcBvGJBcOMvieRV1ZLYqW1kt1m97bersVgbruQo/HgmyuOoB
+        ImmSQRpkyC1IACm9U7dJ0XpyVjR4X3iYHA==
+X-Google-Smtp-Source: ABdhPJzjC2VTwIEB34v5i2hX0S2QeEG3SR/hdG22z72dsqjzfK4WKj8TsomvQZd718Z4E8XPRhOHtA==
+X-Received: by 2002:a19:7e15:: with SMTP id z21mr2461460lfc.290.1613159500099;
+        Fri, 12 Feb 2021 11:51:40 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id u13sm71459lfu.80.2021.02.12.11.51.39
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Feb 2021 11:25:53 -0800 (PST)
-Subject: Re: [PATCH 0/3] small cleanups for 5.12
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1613154861.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d61e33a8-7b24-2f2b-8cb7-d040ae1eeb15@kernel.dk>
-Date:   Fri, 12 Feb 2021 12:25:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 12 Feb 2021 11:51:39 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id j19so1069073lfr.12
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:51:39 -0800 (PST)
+X-Received: by 2002:a19:7f44:: with SMTP id a65mr2281892lfd.41.1613159498759;
+ Fri, 12 Feb 2021 11:51:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <cover.1613154861.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <a1f5c4b9-5c5d-a184-7ede-78739e1c01c6@kernel.dk>
+In-Reply-To: <a1f5c4b9-5c5d-a184-7ede-78739e1c01c6@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 12 Feb 2021 11:51:22 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wicH60LB9sENxT95mE_LY-EPruphMc-wRRXc97KVER2vQ@mail.gmail.com>
+Message-ID: <CAHk-=wicH60LB9sENxT95mE_LY-EPruphMc-wRRXc97KVER2vQ@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring fix for 5.11 final
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/12/21 11:41 AM, Pavel Begunkov wrote:
-> Final easy 5.12 cleanups.
-> 
-> Pavel Begunkov (3):
->   io_uring: don't check PF_EXITING from syscall
->   io_uring: clean io_req_find_next() fast check
->   io_uring: optimise io_init_req() flags setting
-> 
->  fs/io_uring.c | 24 ++++++++++--------------
->  1 file changed, 10 insertions(+), 14 deletions(-)
+On Fri, Feb 12, 2021 at 6:08 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Revert of a patch from this release that caused a regression.
 
-Nice little cleanups, applied.
+I really wish that revert had more of an explanation of _why_ it
+needed to retain the ->fs pointer.
 
--- 
-Jens Axboe
+I can guess at it, but considering that we got it wrong once, it might
+be better to not have to guess, and have it documented.
 
+            Linus

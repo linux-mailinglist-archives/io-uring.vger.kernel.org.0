@@ -2,156 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F4231A532
-	for <lists+io-uring@lfdr.de>; Fri, 12 Feb 2021 20:18:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC9B31A557
+	for <lists+io-uring@lfdr.de>; Fri, 12 Feb 2021 20:26:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231706AbhBLTRx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Feb 2021 14:17:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43134 "EHLO
+        id S229451AbhBLT0g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Feb 2021 14:26:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231936AbhBLTRl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Feb 2021 14:17:41 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA29C061574
-        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:17:01 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id j11so590711wmi.3
-        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:17:01 -0800 (PST)
+        with ESMTP id S230390AbhBLT0f (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Feb 2021 14:26:35 -0500
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9617C061574
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:25:54 -0800 (PST)
+Received: by mail-pg1-x529.google.com with SMTP id t11so303457pgu.8
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:25:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bHGwdQPuj+43dpwXuqddn/NJbnD4NuPga+JbrAlGJv0=;
-        b=McX3FZeBclPsIkQxErTvn3RXU61d4AQdUF1AeYJ2CYdu0dO7ZEVuZ7ZQM59A7U44Y2
-         JwYaw2vV41Jhr8iY0CPk8oNuxcuf10+2H5c4FnRuoRsXcKv1S73qu4vbpULQ9IMY2TvL
-         ZS5KWl1o+bFHAPRrN5ewxfxXA2ZgkgeN/u2inWX11yP4JmVvD0OmRkyG8MeRTiUJHdQf
-         pt4RJUPl0bN3fRL+F1JI+Ujlkrdnh82H6Ku0l0iNoKWBlMJTp0wekW7rBW2jVTM6w8yn
-         RYuRM5Qup1rNTO/Xfg+vQQjm5eVwnKVXTpUelfmhz4MaEAq+xXsBMfveqCkhUunnn98f
-         qLsA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=SfHQp2PN2omMLBUyJOfHo/korR/YRmYl8GE0K09rv0g=;
+        b=v/y/sX0OIfUUr30ATel6/LliZiU+YgtxuEYWJy4Rgz5SkzMFRhjY38NPAF/aKDgEgG
+         3HpNCSx51AOC9hOUJw7BvgLx71V+dQ/E/4MkislcxVaX21bntsvJWkapJ/7K1dYKcekC
+         j8R1CuNIVUjPlZ1YElSZv9AOF1zyMcIYyhx7cu/9v+38SdA+1D2qsluZjTKFXshBpbTH
+         GpvRL85CCjoUu2Xnt+B3zm8JLBofFQqQ7U4MNNLkfiBI/E0G/lQjTld2t4BG4LosWVi1
+         IeM/AVmw4o7Mx9eQiIzSBQ8QMyZhUCJKelJVe/DJ783jBvjopS8Hq3n3SJYDb1/U8UqM
+         HybA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=bHGwdQPuj+43dpwXuqddn/NJbnD4NuPga+JbrAlGJv0=;
-        b=FHdhPRz38xU4VtJ9jMgKC3adfVzSaYaY6MSeZdmCo03ezjABRqsAv5+XXwekVC8t+W
-         N0l9mB9Fcde1oG95sZVreYFSIKzo5nDQca7Zv70PKPTDrC+ZEBFEW1N/P2GHfcAraUUL
-         TDwXZitDPVD7fbVhEWyMJNFnxb32cQiNonJ/Zdxr0knrnbFnNncX0Bvwlpi4ifIm79nf
-         8u6VIyZlE++E7WQjz7abKhbqRz1mU1eb5c1UHG+b0CutO8fxpHTJsOJ/XBfrEtDk1iwk
-         baTvDxv35z7sb7pJxX7ed8LvMbr21IImpS0xFludqJTXggevrn4mBEWIPXJqCEfHpJLA
-         kQGQ==
-X-Gm-Message-State: AOAM531xI7VeLyHuVSme/QBGE6WCSNHAqCm33Tw+ZYm166kuRnlmHsDc
-        +8wXRFkEFo5VchiDWUaunqKoPCzgHQeTyg==
-X-Google-Smtp-Source: ABdhPJwUi6BOBL0CGzwhtYNnUBLZR34InSzEfsGhkdwZBFAzz4Ub9xKa4pEhNz6MOZ250DSlUkbdTQ==
-X-Received: by 2002:a1c:4ca:: with SMTP id 193mr3988857wme.178.1613157419833;
-        Fri, 12 Feb 2021 11:16:59 -0800 (PST)
-Received: from localhost.localdomain ([185.69.144.228])
-        by smtp.gmail.com with ESMTPSA id e12sm3731783wrv.59.2021.02.12.11.16.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Feb 2021 11:16:59 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH RFC] io_uring: batch rsrc refs put
-Date:   Fri, 12 Feb 2021 19:13:07 +0000
-Message-Id: <2a090c33163458a9c9f5f77313e7b4433be46bce.1613156887.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=SfHQp2PN2omMLBUyJOfHo/korR/YRmYl8GE0K09rv0g=;
+        b=OM9aQZiaDv/A2LHgs2nGRPVV11PNlO+QqCYu+D/O129R0SXN86OU2tkgU6QVcrXLKq
+         +RGh698vjIXklbImU31keMtPvDtJ21ydUjQxUMmOVsEv9EzrFp0ETC5eGKxWY5kn4iAh
+         Yhs7jNoyn9xIg16iocYaZLW18IOU6uANQbpFZJ+Y39+sfunxtCHQG5dpT9RNZCiEabKN
+         Ys4hjHcbjEc4d9wt8hzilddCCM8o70jIp+WeVXzToQkKw9aI+BhPD5nLbYjcffCoJH40
+         l/ghFLc5Wi4ITEtMLR0uLYykQAP6P2h5JpczF7YZm9IpZa6I1GSG1sAdar5fPLVxaMNT
+         tq6g==
+X-Gm-Message-State: AOAM530jWRMMJJ/zUFwNRV4SRm5EX7m8lFbRXGRQLZ4D5jcimoAYY+ab
+        66qX9O37hWQYK8OkIulqIS+9AgI1pPWuMQ==
+X-Google-Smtp-Source: ABdhPJxNpL7wKcrjYtbWZ55blpo133u5AJTX6ouzKB50Gi3G+VBDC+ZILHnI4FoDxupIkBf8m2xQDA==
+X-Received: by 2002:a63:30c5:: with SMTP id w188mr4538086pgw.375.1613157953893;
+        Fri, 12 Feb 2021 11:25:53 -0800 (PST)
+Received: from ?IPv6:2620:10d:c085:21e8::16bf? ([2620:10d:c090:400::5:2056])
+        by smtp.gmail.com with ESMTPSA id t17sm11238378pgk.25.2021.02.12.11.25.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Feb 2021 11:25:53 -0800 (PST)
+Subject: Re: [PATCH 0/3] small cleanups for 5.12
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1613154861.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d61e33a8-7b24-2f2b-8cb7-d040ae1eeb15@kernel.dk>
+Date:   Fri, 12 Feb 2021 12:25:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1613154861.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Batch putting down rsrc_node refs. Since struct req_batch is used even
-more extensively, can shed some extra cycles.
+On 2/12/21 11:41 AM, Pavel Begunkov wrote:
+> Final easy 5.12 cleanups.
+> 
+> Pavel Begunkov (3):
+>   io_uring: don't check PF_EXITING from syscall
+>   io_uring: clean io_req_find_next() fast check
+>   io_uring: optimise io_init_req() flags setting
+> 
+>  fs/io_uring.c | 24 ++++++++++--------------
+>  1 file changed, 10 insertions(+), 14 deletions(-)
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+Nice little cleanups, applied.
 
-Pretty much a (working) RFC. I wouldn't find any difference with my
-setup, but in case you will be striving to close the remaining 5%.
-
- fs/io_uring.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0fea1342aeef..b7b0d76453ca 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1930,6 +1930,8 @@ static inline void io_req_complete_post(struct io_kiocb *req, long res,
- 
- 		io_dismantle_req(req);
- 		io_put_task(req->task, 1);
-+		if (req->fixed_rsrc_refs)
-+			percpu_ref_put(req->fixed_rsrc_refs);
- 		list_add(&req->compl.list, &cs->locked_free_list);
- 		cs->locked_free_nr++;
- 	} else
-@@ -2044,8 +2046,6 @@ static void io_dismantle_req(struct io_kiocb *req)
- 		kfree(req->async_data);
- 	if (req->file)
- 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
--	if (req->fixed_rsrc_refs)
--		percpu_ref_put(req->fixed_rsrc_refs);
- 	io_req_clean_work(req);
- }
- 
-@@ -2065,6 +2065,8 @@ static void __io_free_req(struct io_kiocb *req)
- 
- 	io_dismantle_req(req);
- 	io_put_task(req->task, 1);
-+	if (req->fixed_rsrc_refs)
-+		percpu_ref_put(req->fixed_rsrc_refs);
- 
- 	kmem_cache_free(req_cachep, req);
- 	percpu_ref_put(&ctx->refs);
-@@ -2381,6 +2383,9 @@ struct req_batch {
- 	struct task_struct	*task;
- 	int			task_refs;
- 	int			ctx_refs;
-+
-+	struct percpu_ref	*rsrc_refs;
-+	unsigned int		rsrc_refs_nr;
- };
- 
- static inline void io_init_req_batch(struct req_batch *rb)
-@@ -2388,6 +2393,15 @@ static inline void io_init_req_batch(struct req_batch *rb)
- 	rb->task_refs = 0;
- 	rb->ctx_refs = 0;
- 	rb->task = NULL;
-+	rb->rsrc_refs = NULL;
-+	rb->rsrc_refs_nr = 0;
-+}
-+
-+static inline void __io_req_batch_flush_rsrc_refs(struct req_batch *rb)
-+{
-+	/* can get positive ->rsrc_refs_nr with NULL ->rsrc_refs */
-+	if (rb->rsrc_refs)
-+		percpu_ref_put_many(rb->rsrc_refs, rb->rsrc_refs_nr);
- }
- 
- static void io_req_free_batch_finish(struct io_ring_ctx *ctx,
-@@ -2397,6 +2411,8 @@ static void io_req_free_batch_finish(struct io_ring_ctx *ctx,
- 		io_put_task(rb->task, rb->task_refs);
- 	if (rb->ctx_refs)
- 		percpu_ref_put_many(&ctx->refs, rb->ctx_refs);
-+
-+	__io_req_batch_flush_rsrc_refs(rb);
- }
- 
- static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
-@@ -2413,6 +2429,14 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
- 	rb->task_refs++;
- 	rb->ctx_refs++;
- 
-+	if (req->fixed_rsrc_refs != rb->rsrc_refs) {
-+		__io_req_batch_flush_rsrc_refs(rb);
-+		rb->rsrc_refs = req->fixed_rsrc_refs;
-+		rb->rsrc_refs_nr = 0;
-+	}
-+	/* it's ok to increment for NULL rsrc_refs, we'll handle it */
-+	rb->rsrc_refs_nr++;
-+
- 	io_dismantle_req(req);
- 	if (state->free_reqs != ARRAY_SIZE(state->reqs))
- 		state->reqs[state->free_reqs++] = req;
 -- 
-2.24.0
+Jens Axboe
 

@@ -2,121 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA873319DCA
-	for <lists+io-uring@lfdr.de>; Fri, 12 Feb 2021 13:04:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7407D319F0C
+	for <lists+io-uring@lfdr.de>; Fri, 12 Feb 2021 13:47:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbhBLMAv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Feb 2021 07:00:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34064 "EHLO
+        id S231579AbhBLMrR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Feb 2021 07:47:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231194AbhBLL7v (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Feb 2021 06:59:51 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2201AC061574
-        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 03:59:11 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id r21so7514901wrr.9
-        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 03:59:11 -0800 (PST)
+        with ESMTP id S231706AbhBLMp1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Feb 2021 07:45:27 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC394C061574
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 04:44:47 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id z15so463216pfc.3
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 04:44:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WgrkfW+pQiBaTnW3/R+PO9qFb1i2q6Fk6rcxxrdHyfo=;
-        b=IlNZBsqr9ttvguvZMmr3Ni+oPwKBZD3zsuJSz1fnaH3kWyNqdf2tqiMbvLNs9ddLTo
-         JZGkbSQf0+QMakMkMOSeRJPi9DAakqsgrnpLY4S3APZDqpErhNR8FU8jpnRySFST/a+b
-         uEBfomLdcUDTappf7c8Cr3VxbjsV/UdUqtlGWyLw9dQc6HwvDoR8edC7MMyjOrjT+wdU
-         FYEu4OHWdOkucQjfCnRGwri1JSGv7xCmcH026VvLGwtPDgLyZ784MldLxV9R//vPfgSl
-         IjbMu4P5MCQwoJ4u88yjCTIJClrqlbVWukEIA8l14APA7ilpOJHuRZutzTmkkFyHVWXV
-         YcNA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=08rpPvPv/F7sTkGyoMitePJjicuCmtmCycbsidCjq/4=;
+        b=xAEQKrKP+Bg/iRqC3l+4wdNuUlmL9Sa7TF5adfBx69JAlNEwshV4/hBLyV32m68wmh
+         pMUDpqb4s4j06Ry2fOjmORnH8fLUYjqMeMx7pRty0MIRSbQ7MmFOEv7Hi7OG5+dNE9XI
+         JCpmWkp/V0FK/+eKd80QuRNNeLSpeCSJpPVllJI3H/teqjj2r+VgI/h5ZYHFWIbioV7z
+         r7szkdOOZgYYnluoN+SCrB402KxQ6P+fjMwWs6iPe6iqTzPilDb2qlOpz/PJLmsJqrWO
+         SqI0RRGdbsNqwElPU46dMIeHt935BZRWAzv/NAhiwrmPcYwLrCNE/AE2cZJNGsvS3puh
+         mBZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=WgrkfW+pQiBaTnW3/R+PO9qFb1i2q6Fk6rcxxrdHyfo=;
-        b=UoxOQ6Huyx5sUV74RtxSqvPS56HdLUiVl6cjv8c9EVZG3UPmHA0mEzcVlt/xoO2SL/
-         jC5GuSqzW995DFT9lWam2wHHgZWXGkxD5UuKC0yHVUBhiAPoKxbjqgEU6p9VKEtTj9Ky
-         xdOTIMp0/vjaPf+CPaxnap8v4ktL8/rBIeFejJFDjk1cf0eeTdWaS7VVQchAESajJFEl
-         va8kpe4Fbqd5wZo998tIy93j07Iax/VkW5c3sFFLm11PFmbtxdrVI8Nx/Vjueit86Evh
-         2/ol26N4LsZdFYHjF6XGjkEeOY6df9d8PZDyZ5rjqtoRB8tdAJJvNYqiE0LYnGP08UoK
-         f+6Q==
-X-Gm-Message-State: AOAM533vgTeLNnSte0K91udsLiFS8KZINYIZ0NJ3WKVeXkmB41yPZKdy
-        9oZRGrheQTtPfVXvmwdoapiF40Ov1C5CBA==
-X-Google-Smtp-Source: ABdhPJzHREyx2NJKFfa+sWV8v2wmlCn5V8jLZZcRWfmwBSyAgnIPhA5D1EXYkwD/+o7oeRLzdO1uZg==
-X-Received: by 2002:a5d:4708:: with SMTP id y8mr3006052wrq.402.1613131149838;
-        Fri, 12 Feb 2021 03:59:09 -0800 (PST)
-Received: from localhost.localdomain ([185.69.144.228])
-        by smtp.gmail.com with ESMTPSA id y15sm9948569wrm.93.2021.02.12.03.59.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Feb 2021 03:59:09 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: don't split out consume out of SQE get
-Date:   Fri, 12 Feb 2021 11:55:17 +0000
-Message-Id: <5294703c66d2c332377c1f0d258c6baa70d736a7.1613130703.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        bh=08rpPvPv/F7sTkGyoMitePJjicuCmtmCycbsidCjq/4=;
+        b=Csvs1071UuuriC24Q+6sf2QJYQeu/tosHxmJ1BQ96oCZc0DNjZegzlf2mgDeFmx5Bd
+         Ccea+XfQwIysziXricWpC7tbhgCLkLZXjeFyFR9rB32uGo6tin5aKbYvamcGOqX1RHAE
+         3LpZn03/XpF339jdSf+C3RSNkLXKL6Jq7rXHslwJYTSPZjjXM3B8j5JYp2AbAoqMBiSy
+         D+8KF1ifpfl4tvRFBR7G463LEQNm+It7dqjW0WBQpZ83MxKzeYKoyBSNiHkulUBcUQCk
+         QvUK+3dljd9pt3Ni8E4855+s2ehSXigxWvBznMDWFa15O5iQk9x+n4Fdx1S574EYN+48
+         XK9A==
+X-Gm-Message-State: AOAM531rezCrZ+q0G1ZouuXQTwo7uEmJHDG1LAcNx0VzXV77fnwflM6X
+        3rvvr886JgM+T6pRNU9V0JOTcIdZrYFuXw==
+X-Google-Smtp-Source: ABdhPJx+Aud6169g8uB74cYcLZGvT37EW9DFSKCtTP4u4CB1+4QNMHAoBK2eahPZYmwBsrAaUBu7UA==
+X-Received: by 2002:a62:ae08:0:b029:1e3:28c6:7bc with SMTP id q8-20020a62ae080000b02901e328c607bcmr2864139pff.67.1613133887177;
+        Fri, 12 Feb 2021 04:44:47 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id z4sm9234222pgv.73.2021.02.12.04.44.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Feb 2021 04:44:46 -0800 (PST)
+Subject: Re: [PATCH 0/5] another round of small tinkering
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1613099986.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9de39795-3f8d-63d1-7f8b-4d437269ffa4@kernel.dk>
+Date:   Fri, 12 Feb 2021 05:44:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1613099986.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Remove io_consume_sqe() and inline it back into io_get_sqe(). It
-requires req dealloc on error, but in exchange we get cleaner
-io_submit_sqes() and better locality for cached_sq_head.
+On 2/11/21 8:23 PM, Pavel Begunkov wrote:
+> Some other small improvements with negative diffstat.
+> 2-3 are to address acquire_mm_files overhead
+> 
+> Pavel Begunkov (5):
+>   io_uring: take compl state from submit state
+>   io_uring: optimise out unlikely link queue
+>   io_uring: optimise SQPOLL mm/files grabbing
+>   io_uring: don't duplicate io_req_task_queue()
+>   io_uring: save ctx put/get for task_work submit
+> 
+>  fs/io_uring.c | 103 +++++++++++++++++++-------------------------------
+>  1 file changed, 39 insertions(+), 64 deletions(-)
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+LGTM, applied, thanks.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 87f2f8e660e8..9c58be0579f3 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6762,7 +6762,7 @@ static const struct io_uring_sqe *io_get_sqe(struct io_ring_ctx *ctx)
- 	 * 2) allows the kernel side to track the head on its own, even
- 	 *    though the application is the one updating it.
- 	 */
--	head = READ_ONCE(sq_array[ctx->cached_sq_head & ctx->sq_mask]);
-+	head = READ_ONCE(sq_array[ctx->cached_sq_head++ & ctx->sq_mask]);
- 	if (likely(head < ctx->sq_entries))
- 		return &ctx->sq_sqes[head];
- 
-@@ -6772,11 +6772,6 @@ static const struct io_uring_sqe *io_get_sqe(struct io_ring_ctx *ctx)
- 	return NULL;
- }
- 
--static inline void io_consume_sqe(struct io_ring_ctx *ctx)
--{
--	ctx->cached_sq_head++;
--}
--
- /*
-  * Check SQE restrictions (opcode and flags).
-  *
-@@ -6915,18 +6910,17 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 		struct io_kiocb *req;
- 		int err;
- 
--		sqe = io_get_sqe(ctx);
--		if (unlikely(!sqe)) {
--			io_consume_sqe(ctx);
--			break;
--		}
- 		req = io_alloc_req(ctx);
- 		if (unlikely(!req)) {
- 			if (!submitted)
- 				submitted = -EAGAIN;
- 			break;
- 		}
--		io_consume_sqe(ctx);
-+		sqe = io_get_sqe(ctx);
-+		if (unlikely(!sqe)) {
-+			kmem_cache_free(req_cachep, req);
-+			break;
-+		}
- 		/* will complete beyond this point, count as submitted */
- 		submitted++;
- 
 -- 
-2.24.0
+Jens Axboe
 

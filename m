@@ -2,135 +2,156 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54A3E31A4AD
-	for <lists+io-uring@lfdr.de>; Fri, 12 Feb 2021 19:46:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F4231A532
+	for <lists+io-uring@lfdr.de>; Fri, 12 Feb 2021 20:18:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230484AbhBLSqA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Feb 2021 13:46:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36334 "EHLO
+        id S231706AbhBLTRx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Feb 2021 14:17:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231289AbhBLSp6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Feb 2021 13:45:58 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E7C5C061786
-        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 10:45:18 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id 7so425827wrz.0
-        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 10:45:17 -0800 (PST)
+        with ESMTP id S231936AbhBLTRl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Feb 2021 14:17:41 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA29C061574
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:17:01 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id j11so590711wmi.3
+        for <io-uring@vger.kernel.org>; Fri, 12 Feb 2021 11:17:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+        h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=KddPuFQOaEHkDE9ME5KkVSVGhu8EsYrkzrFjuaUPH+4=;
-        b=hUEWmCsLlb00Bxo23aIS+d1yNa50MsNtwtTEZ+ijPzEA3i7xzFERW+bR19u675peBv
-         isLxhFWXADgoCQD1aQpsV1fXF7JEa8NwBRG2f7EY9OhklWoH9S+Jk3M3sdspcXWg38X0
-         vjkzxOWiHEtCdu8spksabOgoxNIOn4RgKFNzmvzRkNOvhLB6pJZkiFCUPZ/P5AA/h2Er
-         lyCPgR1jbQ/Icn633zs9/3unfjGtipzsze43R7zzowC4IZ+O/NFTCY0D9dW8s+BYP1TO
-         byct09sDONr3m5ilCPtkniyZCSs2n2tWrQOnTlxDVsehOPao3c0Uv3/FHB22jdg1RocE
-         MZQA==
+        bh=bHGwdQPuj+43dpwXuqddn/NJbnD4NuPga+JbrAlGJv0=;
+        b=McX3FZeBclPsIkQxErTvn3RXU61d4AQdUF1AeYJ2CYdu0dO7ZEVuZ7ZQM59A7U44Y2
+         JwYaw2vV41Jhr8iY0CPk8oNuxcuf10+2H5c4FnRuoRsXcKv1S73qu4vbpULQ9IMY2TvL
+         ZS5KWl1o+bFHAPRrN5ewxfxXA2ZgkgeN/u2inWX11yP4JmVvD0OmRkyG8MeRTiUJHdQf
+         pt4RJUPl0bN3fRL+F1JI+Ujlkrdnh82H6Ku0l0iNoKWBlMJTp0wekW7rBW2jVTM6w8yn
+         RYuRM5Qup1rNTO/Xfg+vQQjm5eVwnKVXTpUelfmhz4MaEAq+xXsBMfveqCkhUunnn98f
+         qLsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KddPuFQOaEHkDE9ME5KkVSVGhu8EsYrkzrFjuaUPH+4=;
-        b=iBlrLOn3pEVbKYku74KLel1SiZa5DwIkbl7JljAJcTPrhrFG+XBqMyhPNkL9CKlkk8
-         zuQ65VMK0LiOOaM7pbV84HseWN+8CLTO8QahEwAnyQxrIVIb+MhVQqWbLXPnItR9NDqB
-         wjJZhipJhj7IbcwOJAU82RJhjMTBXobDs2gFSJMcEPOqLKCwmWawvjAWWVhMPpqUMu1J
-         +yWpe85Tjdkj3mHgNo59xaXVtD0l8To854713Old5bceeB+vaQ6jyo793AOTlgI/GCZw
-         j2kWdBTB3SdCtierkX2zYujCpyiAKqbfiyyWt9P/SZSx6/fZo9of01oVqqfQ3wcEUMuN
-         hIKg==
-X-Gm-Message-State: AOAM530AhJHRTyUsCJ4nwueHbV/W1g8Xawpj7n0r/G2IzOEu0rZJxnn2
-        /0JO4zUdowNQbz8PTrr9bfw=
-X-Google-Smtp-Source: ABdhPJxg0QJ3hjRTPNBm9IfQxMfqTmpTyiW0dSsBw08SLY2inu8/CYhFJP5qiLHmnfcIGNafYuaWjQ==
-X-Received: by 2002:adf:a31b:: with SMTP id c27mr4949904wrb.188.1613155516829;
-        Fri, 12 Feb 2021 10:45:16 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bHGwdQPuj+43dpwXuqddn/NJbnD4NuPga+JbrAlGJv0=;
+        b=FHdhPRz38xU4VtJ9jMgKC3adfVzSaYaY6MSeZdmCo03ezjABRqsAv5+XXwekVC8t+W
+         N0l9mB9Fcde1oG95sZVreYFSIKzo5nDQca7Zv70PKPTDrC+ZEBFEW1N/P2GHfcAraUUL
+         TDwXZitDPVD7fbVhEWyMJNFnxb32cQiNonJ/Zdxr0knrnbFnNncX0Bvwlpi4ifIm79nf
+         8u6VIyZlE++E7WQjz7abKhbqRz1mU1eb5c1UHG+b0CutO8fxpHTJsOJ/XBfrEtDk1iwk
+         baTvDxv35z7sb7pJxX7ed8LvMbr21IImpS0xFludqJTXggevrn4mBEWIPXJqCEfHpJLA
+         kQGQ==
+X-Gm-Message-State: AOAM531xI7VeLyHuVSme/QBGE6WCSNHAqCm33Tw+ZYm166kuRnlmHsDc
+        +8wXRFkEFo5VchiDWUaunqKoPCzgHQeTyg==
+X-Google-Smtp-Source: ABdhPJwUi6BOBL0CGzwhtYNnUBLZR34InSzEfsGhkdwZBFAzz4Ub9xKa4pEhNz6MOZ250DSlUkbdTQ==
+X-Received: by 2002:a1c:4ca:: with SMTP id 193mr3988857wme.178.1613157419833;
+        Fri, 12 Feb 2021 11:16:59 -0800 (PST)
 Received: from localhost.localdomain ([185.69.144.228])
-        by smtp.gmail.com with ESMTPSA id e16sm13452830wrt.36.2021.02.12.10.45.16
+        by smtp.gmail.com with ESMTPSA id e12sm3731783wrv.59.2021.02.12.11.16.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Feb 2021 10:45:16 -0800 (PST)
+        Fri, 12 Feb 2021 11:16:59 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 3/3] io_uring: optimise io_init_req() flags setting
-Date:   Fri, 12 Feb 2021 18:41:17 +0000
-Message-Id: <223d634f57c37f63d97842945fb0c8e71db70fe2.1613154861.git.asml.silence@gmail.com>
+Subject: [PATCH RFC] io_uring: batch rsrc refs put
+Date:   Fri, 12 Feb 2021 19:13:07 +0000
+Message-Id: <2a090c33163458a9c9f5f77313e7b4433be46bce.1613156887.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1613154861.git.asml.silence@gmail.com>
-References: <cover.1613154861.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Invalid req->flags are tolerated by free/put well, avoid this dancing
-needlessly presetting it to zero, and then not even resetting but
-modifying it, i.e. "|=".
+Batch putting down rsrc_node refs. Since struct req_batch is used even
+more extensively, can shed some extra cycles.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+
+Pretty much a (working) RFC. I wouldn't find any difference with my
+setup, but in case you will be striving to close the remaining 5%.
+
+ fs/io_uring.c | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 776531f6e18b..2e8cb739c835 100644
+index 0fea1342aeef..b7b0d76453ca 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -6806,14 +6806,15 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- {
- 	struct io_submit_state *state;
- 	unsigned int sqe_flags;
--	int id, ret;
-+	int id, ret = 0;
+@@ -1930,6 +1930,8 @@ static inline void io_req_complete_post(struct io_kiocb *req, long res,
  
- 	req->opcode = READ_ONCE(sqe->opcode);
-+	/* same numerical values with corresponding REQ_F_*, safe to copy */
-+	req->flags = sqe_flags = READ_ONCE(sqe->flags);
- 	req->user_data = READ_ONCE(sqe->user_data);
- 	req->async_data = NULL;
- 	req->file = NULL;
- 	req->ctx = ctx;
--	req->flags = 0;
- 	req->link = NULL;
- 	req->fixed_rsrc_refs = NULL;
- 	/* one is dropped after submission, the other at completion */
-@@ -6821,17 +6822,16 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	req->task = current;
- 	req->result = 0;
+ 		io_dismantle_req(req);
+ 		io_put_task(req->task, 1);
++		if (req->fixed_rsrc_refs)
++			percpu_ref_put(req->fixed_rsrc_refs);
+ 		list_add(&req->compl.list, &cs->locked_free_list);
+ 		cs->locked_free_nr++;
+ 	} else
+@@ -2044,8 +2046,6 @@ static void io_dismantle_req(struct io_kiocb *req)
+ 		kfree(req->async_data);
+ 	if (req->file)
+ 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
+-	if (req->fixed_rsrc_refs)
+-		percpu_ref_put(req->fixed_rsrc_refs);
+ 	io_req_clean_work(req);
+ }
  
-+	/* enforce forwards compatibility on users */
-+	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS))
-+		return -EINVAL;
+@@ -2065,6 +2065,8 @@ static void __io_free_req(struct io_kiocb *req)
+ 
+ 	io_dismantle_req(req);
+ 	io_put_task(req->task, 1);
++	if (req->fixed_rsrc_refs)
++		percpu_ref_put(req->fixed_rsrc_refs);
+ 
+ 	kmem_cache_free(req_cachep, req);
+ 	percpu_ref_put(&ctx->refs);
+@@ -2381,6 +2383,9 @@ struct req_batch {
+ 	struct task_struct	*task;
+ 	int			task_refs;
+ 	int			ctx_refs;
 +
- 	if (unlikely(req->opcode >= IORING_OP_LAST))
- 		return -EINVAL;
++	struct percpu_ref	*rsrc_refs;
++	unsigned int		rsrc_refs_nr;
+ };
  
- 	if (unlikely(io_sq_thread_acquire_mm_files(ctx, req)))
- 		return -EFAULT;
+ static inline void io_init_req_batch(struct req_batch *rb)
+@@ -2388,6 +2393,15 @@ static inline void io_init_req_batch(struct req_batch *rb)
+ 	rb->task_refs = 0;
+ 	rb->ctx_refs = 0;
+ 	rb->task = NULL;
++	rb->rsrc_refs = NULL;
++	rb->rsrc_refs_nr = 0;
++}
++
++static inline void __io_req_batch_flush_rsrc_refs(struct req_batch *rb)
++{
++	/* can get positive ->rsrc_refs_nr with NULL ->rsrc_refs */
++	if (rb->rsrc_refs)
++		percpu_ref_put_many(rb->rsrc_refs, rb->rsrc_refs_nr);
+ }
  
--	sqe_flags = READ_ONCE(sqe->flags);
--	/* enforce forwards compatibility on users */
--	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS))
--		return -EINVAL;
--
- 	if (unlikely(!io_check_restriction(ctx, req, sqe_flags)))
- 		return -EACCES;
+ static void io_req_free_batch_finish(struct io_ring_ctx *ctx,
+@@ -2397,6 +2411,8 @@ static void io_req_free_batch_finish(struct io_ring_ctx *ctx,
+ 		io_put_task(rb->task, rb->task_refs);
+ 	if (rb->ctx_refs)
+ 		percpu_ref_put_many(&ctx->refs, rb->ctx_refs);
++
++	__io_req_batch_flush_rsrc_refs(rb);
+ }
  
-@@ -6854,8 +6854,6 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		req->work.flags |= IO_WQ_WORK_CREDS;
- 	}
+ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
+@@ -2413,6 +2429,14 @@ static void io_req_free_batch(struct req_batch *rb, struct io_kiocb *req,
+ 	rb->task_refs++;
+ 	rb->ctx_refs++;
  
--	/* same numerical values with corresponding REQ_F_*, safe to copy */
--	req->flags |= sqe_flags;
- 	state = &ctx->submit_state;
- 
- 	/*
-@@ -6868,7 +6866,6 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		state->plug_started = true;
- 	}
- 
--	ret = 0;
- 	if (io_op_defs[req->opcode].needs_file) {
- 		bool fixed = req->flags & REQ_F_FIXED_FILE;
- 
++	if (req->fixed_rsrc_refs != rb->rsrc_refs) {
++		__io_req_batch_flush_rsrc_refs(rb);
++		rb->rsrc_refs = req->fixed_rsrc_refs;
++		rb->rsrc_refs_nr = 0;
++	}
++	/* it's ok to increment for NULL rsrc_refs, we'll handle it */
++	rb->rsrc_refs_nr++;
++
+ 	io_dismantle_req(req);
+ 	if (state->free_reqs != ARRAY_SIZE(state->reqs))
+ 		state->reqs[state->free_reqs++] = req;
 -- 
 2.24.0
 

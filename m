@@ -2,91 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 731F531AD05
-	for <lists+io-uring@lfdr.de>; Sat, 13 Feb 2021 17:16:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E51E31B584
+	for <lists+io-uring@lfdr.de>; Mon, 15 Feb 2021 08:05:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbhBMQPk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 13 Feb 2021 11:15:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56908 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229716AbhBMQO5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 13 Feb 2021 11:14:57 -0500
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AEBAC061786
-        for <io-uring@vger.kernel.org>; Sat, 13 Feb 2021 08:14:17 -0800 (PST)
-Received: by mail-pg1-x52b.google.com with SMTP id m2so1657747pgq.5
-        for <io-uring@vger.kernel.org>; Sat, 13 Feb 2021 08:14:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=T/tptoFcBP62mdqUTlXtVpNctwPMerJzD1lEPWBhwUQ=;
-        b=FxVXQdXTNZcKdP49Fr+Z54+Tgoe0il2TtMv2df2TCbwbuuf2OR551K//HDQhB1gEq8
-         w1JK7Wr0l+692fAaYpDuVNVlFGNs5RrbBMcWXaslxbCR38lbMjgWMkH/n7R9c2dp+GDk
-         XXEq72pCzfnwMtSrAAlnGMIkfiO/VPokxL/q0XLs70avW/HcW8dbKE0HPf6ByHdvwE+/
-         OIepUMiq8q/yBYpc4wc1AMkN6w3oPWrgV2NQZPAOHJf9SC0dQPPzUEfwfxFCaJ0R296x
-         N0VYCyjTCLsomMYskiBBE5TknfN9MDgccF2LPOAvGoa8uveQDk7OCtUKN0/0OfvAST8T
-         /X/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=T/tptoFcBP62mdqUTlXtVpNctwPMerJzD1lEPWBhwUQ=;
-        b=n7DeLkopSKPASYXFaK4AaapP5CzTMQDDxZeOXGX+1XRZ7/37BNYyiwJ3wyjkgW4t2n
-         M38ZVh+kSg9Sjq8e3I40ZNPDmOOcZBDe1HCkiAUiNNPV2NIU7NF6OuDA1titcTvb0lpH
-         GCG1J47Cw0eLxlWwPgy4WwWak+nMLoXVI0i0KhuH+MxaRTed8cB6FhOoYpdx0SmX83bm
-         DzUrGiNJxuLnPGEMVDtuETWD0gdt3NguAUsy2mqrk2J9iyzImHtyh84sSo5oRa57kpAa
-         bYBP+fTM+bYQZ9MEMbcE0ofV/w5lK9EUBbpVy9N9JRW0F2qqMZzJqrfpDbh/uJSLFyxw
-         F6dw==
-X-Gm-Message-State: AOAM530R0TV2sneOWYSoYLtC7UW6vuIAuvCjjO1btPDMcIjBNRK1fuaL
-        qPO57Jd5T3J5qmn3ZyaK+BKyXRaK8PERzA==
-X-Google-Smtp-Source: ABdhPJzssJBIlpV2E+uRCOX2eqEsU6/siLj9Rn2tE9ccqT6dyOS9iJHe+aR1IRjIDYsdp3m5qbrXHA==
-X-Received: by 2002:a62:5a07:0:b029:1cf:f54d:6e59 with SMTP id o7-20020a625a070000b02901cff54d6e59mr7979544pfb.49.1613232854825;
-        Sat, 13 Feb 2021 08:14:14 -0800 (PST)
-Received: from p1.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id 124sm11984975pfd.59.2021.02.13.08.14.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Feb 2021 08:14:14 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] io_uring: kill cached requests from exiting task closing the ring
-Date:   Sat, 13 Feb 2021 09:14:06 -0700
-Message-Id: <20210213161406.1610835-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210213161406.1610835-1-axboe@kernel.dk>
-References: <20210213161406.1610835-1-axboe@kernel.dk>
+        id S229781AbhBOHEx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Feb 2021 02:04:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53588 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229652AbhBOHEw (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Mon, 15 Feb 2021 02:04:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 92CE6AEBF;
+        Mon, 15 Feb 2021 07:04:11 +0000 (UTC)
+Date:   Mon, 15 Feb 2021 08:04:09 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Nicolai Stange <nstange@suse.de>,
+        Martin Doucha <mdoucha@suse.cz>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        ltp@lists.linux.it, Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: Re: CVE-2020-29373 reproducer fails on v5.11
+Message-ID: <YCoc6Yj2ha7/k/5C@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <YCQvL8/DMNVLLuuf@pevik>
+ <b74d54ed-85ba-df4c-c114-fe11d50a3bce@gmail.com>
+ <270c474f-476a-65d2-1f5b-57d3330efb04@kernel.dk>
+ <YCZ5ZS5Sr2tPiUvP@pevik>
+ <8e7ad2f3-eb35-71fe-5989-b5f09476eb24@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e7ad2f3-eb35-71fe-5989-b5f09476eb24@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Be nice and prune these upfront, in case the ring is being shared and
-one of the tasks is going away. This is a bit more important now that
-we account the allocations.
+Hi Pavel,
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> On 12/02/2021 12:49, Petr Vorel wrote:
+> > Hi all,
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1895fc132252..a9d094f7060f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -9232,8 +9232,10 @@ static int io_uring_flush(struct file *file, void *data)
- 	struct io_uring_task *tctx = current->io_uring;
- 	struct io_ring_ctx *ctx = file->private_data;
- 
--	if (fatal_signal_pending(current) || (current->flags & PF_EXITING))
-+	if (fatal_signal_pending(current) || (current->flags & PF_EXITING)) {
- 		io_uring_cancel_task_requests(ctx, NULL);
-+		io_req_caches_free(ctx, current);
-+	}
- 
- 	if (!tctx)
- 		return 0;
--- 
-2.30.0
+> >> On 2/10/21 12:32 PM, Pavel Begunkov wrote:
+> >>> On 10/02/2021 19:08, Petr Vorel wrote:
+> >>>> Hi all,
 
+> >>>> I found that the reproducer for CVE-2020-29373 from Nicolai Stange (source attached),
+> >>>> which was backported to LTP as io_uring02 by Martin Doucha [1] is failing since
+> >>>> 10cad2c40dcb ("io_uring: don't take fs for recvmsg/sendmsg") from v5.11-rc1.
+
+> >>> Thanks for letting us know, we need to revert it
+
+> >> I'll queue up a revert. Would also be nice to turn that into
+> >> a liburing regression test.
+
+> > Jens (or others), could you please have look that the other commit 907d1df30a51
+> > ("io_uring: fix wqe->lock/completion_lock deadlock") from v5.11-rc6 didn't cause
+> > any regression? Changed behavior causing io_uring02 test [1] and the original
+> > reproducer [2] to fail is probably a test bug, but better double check that.
+
+> Thanks for keeping an eye on it. That's on the test because DRAIN doesn't
+> punt to worker threads anymore, and DRAIN is used for those prepended
+> requests.
+
+> Can we just use IOSQE_ASYNC instead and fallback to DRAIN for older kernels
+> as you mentioned? It would be much more reliable. Or replace IOSQE_IO_DRAIN
+> with IOSQE_IO_LINK, but there are nuances to that... 
+
+Thanks for your tips!
+
+Kind regards,
+Petr
+
+> > Kind regards,
+> > Petr
+
+> > [1] https://github.com/linux-test-project/ltp/tree/master/testcases/kernel/syscalls/io_uring/io_uring02.c
+> > [2] https://lore.kernel.org/io-uring/YCQvL8%2FDMNVLLuuf@pevik/

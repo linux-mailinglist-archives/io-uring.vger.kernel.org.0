@@ -2,275 +2,161 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4C331DA08
-	for <lists+io-uring@lfdr.de>; Wed, 17 Feb 2021 14:16:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4F5131DE9C
+	for <lists+io-uring@lfdr.de>; Wed, 17 Feb 2021 18:51:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231748AbhBQNQU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Feb 2021 08:16:20 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:47464 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231616AbhBQNQU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Feb 2021 08:16:20 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R891e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UOq-Y54_1613567732;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UOq-Y54_1613567732)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 17 Feb 2021 21:15:32 +0800
-Subject: Re: [PATCH v3 00/11] dm: support IO polling
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-To:     snitzer@redhat.com, axboe@kernel.dk
-Cc:     joseph.qi@linux.alibaba.com, caspar@linux.alibaba.com, hch@lst.de,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        io-uring@vger.kernel.org
-References: <20210208085243.82367-1-jefflexu@linux.alibaba.com>
-Message-ID: <7d440a6f-e533-f34c-90a2-4afd3c3d9b1c@linux.alibaba.com>
-Date:   Wed, 17 Feb 2021 21:15:32 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.0
+        id S230315AbhBQRuu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Feb 2021 12:50:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44886 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231766AbhBQRur (ORCPT <rfc822;io-uring@vger.kernel.org>);
+        Wed, 17 Feb 2021 12:50:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 6C034B1BC;
+        Wed, 17 Feb 2021 17:50:06 +0000 (UTC)
+Date:   Wed, 17 Feb 2021 18:50:04 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Martin Doucha <mdoucha@suse.cz>
+Cc:     ltp@lists.linux.it, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
+        Martin Doucha <mdoucha@suse.cz>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [LTP] [PATCH 2/2] syscalls/io_uring02: Use IOSQE_ASYNC when
+ available
+Message-ID: <YC1XTICmdoR54owE@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20210217120459.17500-1-mdoucha@suse.cz>
+ <20210217120459.17500-2-mdoucha@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20210208085243.82367-1-jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210217120459.17500-2-mdoucha@suse.cz>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+Hi Martin,
 
-Any comment on this series?
+[ Cc: io_uring folks ]
 
-Thanks,
-Jeffle
+thanks a lot for your fix. Working well, patchset merged.
 
+Kind regards,
+Petr
 
-On 2/8/21 4:52 PM, Jeffle Xu wrote:
-> 
-> [Performance]
-> 1. One thread (numjobs=1) randread (bs=4k, direct=1) one dm-linear
-> device, which is built upon 3 nvme devices, with one polling hw
-> queue per nvme device.
-> 
->      | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
-> ---- | --------------- | -------------------- | ----
->   dm | 		  208k |		 279k | ~34%
-> 
-> 
-> 2. Three threads (numjobs=3) randread (bs=4k, direct=1) one dm-linear
-> device, which is built upon 3 nvme devices, with one polling hw
-> queue per nvme device.
-> 
-> It's compared to 3 threads directly randread 3 nvme devices, with one
-> polling hw queue per nvme device. No CPU affinity set for these 3
-> threads. Thus every thread can access every nvme device
-> (filename=/dev/nvme0n1:/dev/nvme1n1:/dev/nvme2n1), i.e., every thread
-> need to competing for every polling hw queue.
-> 
->      | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
-> ---- | --------------- | -------------------- | ----
->   dm | 		  615k |		 728k | ~18%
-> nvme | 		  728k |		 873k | ~20%
-> 
-> The result shows that the performance gain of bio-based polling is
-> comparable as that of mq polling in the same test case.
-> 
-> 
-> 3. Three threads (numjobs=3) randread (bs=12k, direct=1) one
-> **dm-stripe** device, which is built upon 3 nvme devices, with one
-> polling hw queue per nvme device.
-> 
-> It's compared to 3 threads directly randread 3 nvme devices, with one
-> polling hw queue per nvme device. No CPU affinity set for these 3
-> threads. Thus every thread can access every nvme device
-> (filename=/dev/nvme0n1:/dev/nvme1n1:/dev/nvme2n1), i.e., every thread
-> need to competing for every polling hw queue.
-> 
->      | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
-> ---- | --------------- | -------------------- | ----
->   dm | 		  314k |		 354k | ~13%
-> nvme | 		  728k |		 873k | ~20%
-> 
-> 
-> 4. This patchset shall do no harm to the performance of the original mq
-> polling. Following is the test results of one thread (numjobs=1)
-> randread (bs=4k, direct=1) one nvme device.
-> 
-> 	    	 | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
-> ---------------- | --------------- | -------------------- | ----
-> without patchset | 	      242k |		     332k | ~39%
-> with patchset    |	      236k |		     332k | ~39%
-> 
-> 
-> 
-> [Changes since v2]
-> 
-> Patchset v2 caches all hw queues (in polling mode) of underlying mq
-> devices in dm layer. The polling routine actually iterates through all
-> these cached hw queues.
-> 
-> However, mq may change the queue mapping at runtime (e.g., NVMe RESET
-> command), thus the cached hw queues in dm layer may be out-of-date. Thus
-> patchset v3 falls back to the implementation of the very first RFC
-> version, in which the mq layer needs to export one interface iterating
-> all polling hw queues (patch 5), and the bio-based polling routine just
-> calls this interface to iterate all polling hw queues.
-> 
-> Besides, several new optimization is proposed.
-> 
-> 
-> - patch 1,2,7
-> same as v2, untouched
-> 
-> - patch 3
-> Considering advice from Christoph Hellwig, while refactoring blk_poll(),
-> split mq and bio-based polling routine from the very beginning. Now
-> blk_poll() is just a simple entry. blk_bio_poll() is simply copied from
-> blk_mq_poll(), while the loop structure is some sort of duplication
-> though.
-> 
-> - patch 4
-> This patch is newly added to support turning on/off polling through
-> '/sys/block/<dev>/queue/io_poll' dynamiclly for bio-based devices.
-> Patchset v2 implemented this functionality by added one new queue flag,
-> which is not preferred since the queue flag resource is quite short of
-> nowadays.
-> 
-> - patch 5
-> This patch is newly added, preparing for the following bio-based
-> polling. The following bio-based polling will call this helper function,
-> accounting on the corresponding hw queue.
-> 
-> - patch 6
-> It's from the very first RFC version, preparing for the following
-> bio-based polling.
-> 
-> - patch 8
-> One fixing patch needed by the following bio-based polling. It's
-> actually a v2 of [1]. I had sent the v2 singly in-reply-to [1], though
-> it has not been visible on the mailing list maybe due to the delay.
-> 
-> - patch 9
-> It's from the very first RFC version.
-> 
-> - patch 10
-> This patch is newly added. Patchset v2 had ever proposed one
-> optimization that, skipping the **busy** hw queues during the iteration
-> phase. Back upon that time, one flag of 'atomic_t' is specifically
-> maintained in dm layer, representing if the corresponding hw queue is
-> busy or not. The idea is inherited, while the implementation changes.
-> Now @nvmeq->cq_poll_lock is used directly here, no need for extra flag
-> anymore.
-> 
-> This optimization can significantly reduce the competition for one hw
-> queue between multiple polling instances. Following statistics is the
-> test result when 3 threads concurrently randread (bs=4k, direct=1) one
-> dm-linear device, which is built upon 3 nvme devices, with one polling
-> hw queue per nvme device.
-> 
-> 	    | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
-> ----------- | --------------- | -------------------- | ----
-> without opt | 		 318k |		 	256k | ~-20%
-> with opt    |		 314k |		 	354k | ~13%
-> 							
-> 
-> - patch 11
-> This is another newly added optimizatin for bio-based polling.
-> 
-> One intuitive insight is that, when the original bio submitted to dm
-> device doesn't get split, then the bio gets enqueued into only one hw
-> queue of one of the underlying mq devices. In this case, we no longer
-> need to track all split bios, and one cookie (for the only split bio)
-> is enough. It is implemented by returning the pointer to the
-> corresponding hw queue in this case.
-> 
-> It should be safe by directly returning the pointer to the hw queue,
-> since 'struct blk_mq_hw_ctx' won't be freed during the whole lifetime of
-> 'struct request_queue'. Even when the number of hw queues may decrease
-> when NVMe RESET happens, the 'struct request_queue' structure of decreased
-> hw queues won't be freed, instead it's buffered into
-> &q->unused_hctx_list list.
-> 
-> Though this optimization seems quite intuitive, the performance test
-> shows that it does no benefit nor harm to the performance, while 3
-> threads concurrently randreading (bs=4k, direct=1) one dm-linear
-> device, which is built upon 3 nvme devices, with one polling hw queue
-> per nvme device.
-> 
-> I'm not sure why it doesn't work, maybe because the number of devices,
-> or the depth of the devcice stack is to low in my test case?
-> 
-> 
-> [Remained Issue]
-> It has been mentioned in patch 4 that, users could change the state of
-> the underlying devices through '/sys/block/<dev>/io_poll', bypassing
-> the dm device above. Thus it can cause a situation where QUEUE_FLAG_POLL
-> is still set for the request_queue of dm device, while one of the
-> underlying mq device may has cleared this flag.
-> 
-> In this case, it will pass the 'test_bit(QUEUE_FLAG_POLL, &q->queue_flags)'
-> check in blk_poll(), while the input cookie may actually points to a hw
-> queue in IRQ mode since patch 11. Thus for this hw queue (in IRQ mode),
-> the bio-based polling routine will handle this hw queue acquiring
-> 'spin_lock(&nvmeq->cq_poll_lock)' (refer
-> drivers/nvme/host/pci.c:nvme_poll), which is not adequate since this hw
-> queue may also be accessed in IRQ context. In other words,
-> spin_lock_irq() should be used here.
-> 
-> I have not come up one simple way to fix it. I don't want to do sanity
-> check (e.g., the type of the hw queue is HCTX_TYPE_POLL or not) in the
-> IO path (submit_bio()/blk_poll()), i.e., fast path.
-> 
-> We'd better fix it in the control path, i.e., dm could be aware of the
-> change when attribute (e.g., support io_poll or not) of one of the
-> underlying devices changed at runtime.
-> 
-> [1] https://listman.redhat.com/archives/dm-devel/2021-February/msg00028.html
-> 
-> 
-> changes since v1:
-> - patch 1,2,4 is the same as v1 and have already been reviewed
-> - patch 3 is refactored a bit on the basis of suggestions from
-> Mike Snitzer.
-> - patch 5 is newly added and introduces one new queue flag
-> representing if the queue is capable of IO polling. This mainly
-> simplifies the logic in queue_poll_store().
-> - patch 6 implements the core mechanism supporting IO polling.
-> The sanity check checking if the dm device supports IO polling is
-> also folded into this patch, and the queue flag will be cleared if
-> it doesn't support, in case of table reloading.
-> 
-> 
-> 
-> 
-> Jeffle Xu (11):
->   block: move definition of blk_qc_t to types.h
->   block: add queue_to_disk() to get gendisk from request_queue
->   block: add poll method to support bio-based IO polling
->   block: add poll_capable method to support bio-based IO polling
->   block/mq: extract one helper function polling hw queue
->   block/mq: add iterator for polling hw queues
->   dm: always return BLK_QC_T_NONE for bio-based device
->   dm: fix iterate_device sanity check
->   dm: support IO polling for bio-based dm device
->   nvme/pci: don't wait for locked polling queue
->   dm: fastpath of bio-based polling
-> 
->  block/blk-core.c              |  89 +++++++++++++-
->  block/blk-mq.c                |  27 +----
->  block/blk-sysfs.c             |  14 ++-
->  drivers/md/dm-table.c         | 215 ++++++++++++++++++----------------
->  drivers/md/dm.c               |  90 +++++++++++---
->  drivers/md/dm.h               |   2 +-
->  drivers/nvme/host/pci.c       |   4 +-
->  include/linux/blk-mq.h        |  21 ++++
->  include/linux/blk_types.h     |  10 +-
->  include/linux/blkdev.h        |   4 +
->  include/linux/device-mapper.h |   1 +
->  include/linux/fs.h            |   2 +-
->  include/linux/types.h         |   3 +
->  include/trace/events/kyber.h  |   6 +-
->  14 files changed, 333 insertions(+), 155 deletions(-)
-> 
+> Signed-off-by: Martin Doucha <mdoucha@suse.cz>
+> ---
+>  .../kernel/syscalls/io_uring/io_uring02.c     | 70 ++++++++++++++++---
+>  1 file changed, 62 insertions(+), 8 deletions(-)
 
--- 
-Thanks,
-Jeffle
+> diff --git a/testcases/kernel/syscalls/io_uring/io_uring02.c b/testcases/kernel/syscalls/io_uring/io_uring02.c
+> index 08f4a1714..cd90fbdc3 100644
+> --- a/testcases/kernel/syscalls/io_uring/io_uring02.c
+> +++ b/testcases/kernel/syscalls/io_uring/io_uring02.c
+> @@ -79,11 +79,11 @@ static void setup(void)
+>  	SAFE_CHROOT(CHROOT_DIR);
+>  }
+
+> -static void run(void)
+> +static void drain_fallback(void)
+>  {
+>  	uint32_t i, count, tail;
+>  	int beef_found = 0;
+> -	struct io_uring_sqe *sqe_ptr;
+> +	struct io_uring_sqe *sqe_ptr = uring.sqr_entries;
+>  	const struct io_uring_cqe *cqe_ptr;
+
+>  	SAFE_SOCKETPAIR(AF_UNIX, SOCK_DGRAM, 0, sockpair);
+> @@ -91,9 +91,6 @@ static void run(void)
+>  		32+sizeof(buf));
+>  	SAFE_FCNTL(sockpair[0], F_SETFL, O_NONBLOCK);
+
+> -	SAFE_IO_URING_INIT(512, &params, &uring);
+> -	sqe_ptr = uring.sqr_entries;
+> -
+>  	/* Add spam requests to force async processing of the real test */
+>  	for (i = 0, tail = *uring.sqr_tail; i < 255; i++, tail++, sqe_ptr++) {
+>  		memset(sqe_ptr, 0, sizeof(*sqe_ptr));
+> @@ -150,7 +147,7 @@ static void run(void)
+>  			tst_res(TFAIL | TTERRNO,
+>  				"Write outside chroot failed unexpectedly");
+>  		} else {
+> -			tst_res(TPASS,
+> +			tst_res(TPASS | TTERRNO,
+>  				"Write outside chroot failed as expected");
+>  		}
+>  	}
+> @@ -163,12 +160,69 @@ static void run(void)
+>  	if (count)
+>  		tst_res(TFAIL, "Wrong number of entries in completion queue");
+
+> -	/* iteration cleanup */
+> -	SAFE_IO_URING_CLOSE(&uring);
+>  	SAFE_CLOSE(sockpair[0]);
+>  	SAFE_CLOSE(sockpair[1]);
+>  }
+
+> +static void check_result(void)
+> +{
+> +	const struct io_uring_cqe *cqe_ptr;
+> +
+> +	cqe_ptr = uring.cqr_entries + (*uring.cqr_head & *uring.cqr_mask);
+> +	++*uring.cqr_head;
+> +	TST_ERR = -cqe_ptr->res;
+> +
+> +	if (cqe_ptr->user_data != BEEF_MARK) {
+> +		tst_res(TFAIL, "Unexpected entry in completion queue");
+> +		return;
+> +	}
+> +
+> +	if (cqe_ptr->res == -EINVAL) {
+> +		tst_res(TINFO, "IOSQE_ASYNC is not supported, using fallback");
+> +		drain_fallback();
+> +		return;
+> +	}
+> +
+> +	tst_res(TINFO, "IOSQE_ASYNC is supported");
+> +
+> +	if (cqe_ptr->res >= 0) {
+> +		tst_res(TFAIL, "Write outside chroot succeeded.");
+> +		return;
+> +	}
+> +
+> +	if (cqe_ptr->res != -ENOENT) {
+> +		tst_res(TFAIL | TTERRNO,
+> +			"Write outside chroot failed unexpectedly");
+> +		return;
+> +	}
+> +
+> +	tst_res(TPASS | TTERRNO, "Write outside chroot failed as expected");
+> +}
+> +
+> +static void run(void)
+> +{
+> +	uint32_t tail;
+> +	struct io_uring_sqe *sqe_ptr;
+> +
+> +	SAFE_IO_URING_INIT(512, &params, &uring);
+> +	sqe_ptr = uring.sqr_entries;
+> +	tail = *uring.sqr_tail;
+> +
+> +	memset(sqe_ptr, 0, sizeof(*sqe_ptr));
+> +	sqe_ptr->opcode = IORING_OP_SENDMSG;
+> +	sqe_ptr->flags = IOSQE_ASYNC;
+> +	sqe_ptr->fd = sendsock;
+> +	sqe_ptr->addr = (__u64)&beef_header;
+> +	sqe_ptr->user_data = BEEF_MARK;
+> +	uring.sqr_array[tail & *uring.sqr_mask] = 0;
+> +	tail++;
+> +
+> +	__atomic_store(uring.sqr_tail, &tail, __ATOMIC_RELEASE);
+> +	SAFE_IO_URING_ENTER(1, uring.fd, 1, 1, IORING_ENTER_GETEVENTS, NULL);
+> +	check_result();
+> +	SAFE_IO_URING_CLOSE(&uring);
+> +}
+> +
+>  static void cleanup(void)
+>  {
+>  	if (uring.fd >= 0)

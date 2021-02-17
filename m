@@ -2,161 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4F5131DE9C
-	for <lists+io-uring@lfdr.de>; Wed, 17 Feb 2021 18:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8474331E105
+	for <lists+io-uring@lfdr.de>; Wed, 17 Feb 2021 22:07:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230315AbhBQRuu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Feb 2021 12:50:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44886 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231766AbhBQRur (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 17 Feb 2021 12:50:47 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6C034B1BC;
-        Wed, 17 Feb 2021 17:50:06 +0000 (UTC)
-Date:   Wed, 17 Feb 2021 18:50:04 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Martin Doucha <mdoucha@suse.cz>
-Cc:     ltp@lists.linux.it, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
-        Martin Doucha <mdoucha@suse.cz>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [LTP] [PATCH 2/2] syscalls/io_uring02: Use IOSQE_ASYNC when
- available
-Message-ID: <YC1XTICmdoR54owE@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20210217120459.17500-1-mdoucha@suse.cz>
- <20210217120459.17500-2-mdoucha@suse.cz>
+        id S231683AbhBQVHT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Feb 2021 16:07:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231360AbhBQVHO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Feb 2021 16:07:14 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1645FC061756
+        for <io-uring@vger.kernel.org>; Wed, 17 Feb 2021 13:06:34 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id b3so18854713wrj.5
+        for <io-uring@vger.kernel.org>; Wed, 17 Feb 2021 13:06:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mcONm0R7eYvX7EFL+z7/6X2lZhoV/pDZDjgZxgQg3CM=;
+        b=YfqCC/f21AhGXZbEBtFuDwOE81wA6t9tbgxDQyGv73iJdSG6VUarTJCYPSl9IWqJx9
+         GIUgsJ0XBsq5Z8gbegvNg44RTcUrwMCr0YVIT4I8zUxofSb/JJG8AyInlGEX22K+OWkq
+         cVMPT7JO5bi+2/PEEl9/a4wooWU2y3k/DTZkbZOz+njvHcRbM3MrqRLI7K7qUEDs2IWb
+         bpAOLJIkbdr7wslib8yQ3fP6eoJFGzwewuZ1sQkFhhUX7RQ8o/tFZJIZxSU7Eg2lcf5o
+         Mn20kOOWeiRiUSmCjQFsYUNXtGtGABrIqEoVj2xdfyNJWHLpExjdwooUFeRKsd7F/svL
+         FmfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mcONm0R7eYvX7EFL+z7/6X2lZhoV/pDZDjgZxgQg3CM=;
+        b=Zif5V+w2IbB+cAi+lpQDSjm9umUdEnsrb3CXqGSiz0+OyNsev3cBrJlJoSKPi6ItJs
+         6s04zk8JbF1xg89ifhIQIFOSBX366WBWaghbaEZon9rIoTt91ijS8SAn7ZOe89vdhMfK
+         NmQ36tIUVKwAph6Z58Ay3SrbgezqbikiXm/LxAiR0+FZP1XVreionqsPTaGFIV7Vihwa
+         xAF0Im/MoQGCo94lYPUymGYuPCd4xbbOUsGS1TYcyktblAFgUedo/wfGAW9YL1KAIA/z
+         qTvDuFvqzxP30Fl8Bt051h8pkN5TZ1oKIweQ/VTPYYRuRcQlwVa5XuM8wrLOSyqb8IdL
+         87wg==
+X-Gm-Message-State: AOAM530+mianmIsnuIgcxoQnnF0fKZqDr/N/hoFz5mLaPqzn3hZYQpBW
+        5DYxV/kdl4agv6+CUUW5kMlzJ4butKk=
+X-Google-Smtp-Source: ABdhPJzSbFNOtz8blV8M5zRwnAMjCT/LOxM8cK5QbQ7Tj8akkBb4FCU1uMSa1WQELm8dPhX3ZUlTrA==
+X-Received: by 2002:adf:ea12:: with SMTP id q18mr965509wrm.79.1613595992774;
+        Wed, 17 Feb 2021 13:06:32 -0800 (PST)
+Received: from localhost.localdomain ([85.255.235.13])
+        by smtp.gmail.com with ESMTPSA id d23sm4805442wmd.11.2021.02.17.13.06.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Feb 2021 13:06:32 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 1/1] io_uring: fix read memory leaks
+Date:   Wed, 17 Feb 2021 21:02:36 +0000
+Message-Id: <b7fcc06fb191fe9f3ce90d4613985f04b8fa2304.1613595724.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210217120459.17500-2-mdoucha@suse.cz>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Martin,
+Don't forget to free iovec read inline completion and bunch of other
+cases that do "goto done" before setting up an async context.
 
-[ Cc: io_uring folks ]
+Fixes: 5ea5dd45844d1 ("io_uring: inline io_read()'s iovec freeing")
+Reported-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-thanks a lot for your fix. Working well, patchset merged.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 58dd10481106..4352bcea3d9d 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3602,10 +3602,7 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 	ret = io_iter_do_read(req, iter);
+ 
+ 	if (ret == -EIOCBQUEUED) {
+-		/* it's faster to check here then delegate to kfree */
+-		if (iovec)
+-			kfree(iovec);
+-		return 0;
++		goto out_free;
+ 	} else if (ret == -EAGAIN) {
+ 		/* IOPOLL retry should happen for io-wq threads */
+ 		if (!force_nonblock && !(req->ctx->flags & IORING_SETUP_IOPOLL))
+@@ -3626,6 +3623,7 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (ret2)
+ 		return ret2;
+ 
++	iovec = NULL;
+ 	rw = req->async_data;
+ 	/* now use our persistent iterator, if we aren't already */
+ 	iter = &rw->iter;
+@@ -3652,6 +3650,10 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 	} while (ret > 0 && ret < io_size);
+ done:
+ 	kiocb_done(kiocb, ret, issue_flags);
++out_free:
++	/* it's faster to check here then delegate to kfree */
++	if (iovec)
++		kfree(iovec);
+ 	return 0;
+ }
+ 
+-- 
+2.24.0
 
-Kind regards,
-Petr
-
-> Signed-off-by: Martin Doucha <mdoucha@suse.cz>
-> ---
->  .../kernel/syscalls/io_uring/io_uring02.c     | 70 ++++++++++++++++---
->  1 file changed, 62 insertions(+), 8 deletions(-)
-
-> diff --git a/testcases/kernel/syscalls/io_uring/io_uring02.c b/testcases/kernel/syscalls/io_uring/io_uring02.c
-> index 08f4a1714..cd90fbdc3 100644
-> --- a/testcases/kernel/syscalls/io_uring/io_uring02.c
-> +++ b/testcases/kernel/syscalls/io_uring/io_uring02.c
-> @@ -79,11 +79,11 @@ static void setup(void)
->  	SAFE_CHROOT(CHROOT_DIR);
->  }
-
-> -static void run(void)
-> +static void drain_fallback(void)
->  {
->  	uint32_t i, count, tail;
->  	int beef_found = 0;
-> -	struct io_uring_sqe *sqe_ptr;
-> +	struct io_uring_sqe *sqe_ptr = uring.sqr_entries;
->  	const struct io_uring_cqe *cqe_ptr;
-
->  	SAFE_SOCKETPAIR(AF_UNIX, SOCK_DGRAM, 0, sockpair);
-> @@ -91,9 +91,6 @@ static void run(void)
->  		32+sizeof(buf));
->  	SAFE_FCNTL(sockpair[0], F_SETFL, O_NONBLOCK);
-
-> -	SAFE_IO_URING_INIT(512, &params, &uring);
-> -	sqe_ptr = uring.sqr_entries;
-> -
->  	/* Add spam requests to force async processing of the real test */
->  	for (i = 0, tail = *uring.sqr_tail; i < 255; i++, tail++, sqe_ptr++) {
->  		memset(sqe_ptr, 0, sizeof(*sqe_ptr));
-> @@ -150,7 +147,7 @@ static void run(void)
->  			tst_res(TFAIL | TTERRNO,
->  				"Write outside chroot failed unexpectedly");
->  		} else {
-> -			tst_res(TPASS,
-> +			tst_res(TPASS | TTERRNO,
->  				"Write outside chroot failed as expected");
->  		}
->  	}
-> @@ -163,12 +160,69 @@ static void run(void)
->  	if (count)
->  		tst_res(TFAIL, "Wrong number of entries in completion queue");
-
-> -	/* iteration cleanup */
-> -	SAFE_IO_URING_CLOSE(&uring);
->  	SAFE_CLOSE(sockpair[0]);
->  	SAFE_CLOSE(sockpair[1]);
->  }
-
-> +static void check_result(void)
-> +{
-> +	const struct io_uring_cqe *cqe_ptr;
-> +
-> +	cqe_ptr = uring.cqr_entries + (*uring.cqr_head & *uring.cqr_mask);
-> +	++*uring.cqr_head;
-> +	TST_ERR = -cqe_ptr->res;
-> +
-> +	if (cqe_ptr->user_data != BEEF_MARK) {
-> +		tst_res(TFAIL, "Unexpected entry in completion queue");
-> +		return;
-> +	}
-> +
-> +	if (cqe_ptr->res == -EINVAL) {
-> +		tst_res(TINFO, "IOSQE_ASYNC is not supported, using fallback");
-> +		drain_fallback();
-> +		return;
-> +	}
-> +
-> +	tst_res(TINFO, "IOSQE_ASYNC is supported");
-> +
-> +	if (cqe_ptr->res >= 0) {
-> +		tst_res(TFAIL, "Write outside chroot succeeded.");
-> +		return;
-> +	}
-> +
-> +	if (cqe_ptr->res != -ENOENT) {
-> +		tst_res(TFAIL | TTERRNO,
-> +			"Write outside chroot failed unexpectedly");
-> +		return;
-> +	}
-> +
-> +	tst_res(TPASS | TTERRNO, "Write outside chroot failed as expected");
-> +}
-> +
-> +static void run(void)
-> +{
-> +	uint32_t tail;
-> +	struct io_uring_sqe *sqe_ptr;
-> +
-> +	SAFE_IO_URING_INIT(512, &params, &uring);
-> +	sqe_ptr = uring.sqr_entries;
-> +	tail = *uring.sqr_tail;
-> +
-> +	memset(sqe_ptr, 0, sizeof(*sqe_ptr));
-> +	sqe_ptr->opcode = IORING_OP_SENDMSG;
-> +	sqe_ptr->flags = IOSQE_ASYNC;
-> +	sqe_ptr->fd = sendsock;
-> +	sqe_ptr->addr = (__u64)&beef_header;
-> +	sqe_ptr->user_data = BEEF_MARK;
-> +	uring.sqr_array[tail & *uring.sqr_mask] = 0;
-> +	tail++;
-> +
-> +	__atomic_store(uring.sqr_tail, &tail, __ATOMIC_RELEASE);
-> +	SAFE_IO_URING_ENTER(1, uring.fd, 1, 1, IORING_ENTER_GETEVENTS, NULL);
-> +	check_result();
-> +	SAFE_IO_URING_CLOSE(&uring);
-> +}
-> +
->  static void cleanup(void)
->  {
->  	if (uring.fd >= 0)

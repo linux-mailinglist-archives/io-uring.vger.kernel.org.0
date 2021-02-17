@@ -2,96 +2,160 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D321031D9A7
-	for <lists+io-uring@lfdr.de>; Wed, 17 Feb 2021 13:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 509D931D9A8
+	for <lists+io-uring@lfdr.de>; Wed, 17 Feb 2021 13:43:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232784AbhBQMmo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Feb 2021 07:42:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53744 "EHLO
+        id S231709AbhBQMmp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Feb 2021 07:42:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231709AbhBQMmn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Feb 2021 07:42:43 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CB94C061574
-        for <io-uring@vger.kernel.org>; Wed, 17 Feb 2021 04:42:02 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id v15so17255216wrx.4
-        for <io-uring@vger.kernel.org>; Wed, 17 Feb 2021 04:42:02 -0800 (PST)
+        with ESMTP id S232783AbhBQMmo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Feb 2021 07:42:44 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 853A1C061756
+        for <io-uring@vger.kernel.org>; Wed, 17 Feb 2021 04:42:03 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id a132so2022840wmc.0
+        for <io-uring@vger.kernel.org>; Wed, 17 Feb 2021 04:42:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=e2aGwBdJDGn1kPtWl04w3FtQM1Uf8r1aAIefYon93nQ=;
-        b=FNQlOuwSZjOI79Y4zORmycvIyJzR1l6QxvHBvq2WwVpFQhjOvht/yFqdOtFIuIozul
-         HzQ+dFkdUXQX9SFXdSOZNFSfF+CpcuA0/OhNzech67SIPFeQLOjGDjW1NMNnrcQyDOi3
-         ORPSXBThZe+ko0+udoZmwDwp+TMAn1DP+86zM4tWWtkeld4VqbfNpEPxmiIlX2B2RKjD
-         KpAsuMs1am88VGJSurirpkU2BtJOg7UdJX8SZc9/ocg2YeUF+2yrCLyRcjYXYIdiM0LF
-         wh8UFJfo6iBNVt8XhyATLNZkMfVkx4qPgliEC0A0dimWR5zLPyQvRF/j+rKkcczA4N2e
-         az1g==
+        bh=dGv7glabXqC5WvpJ6AA4u5twX2dtbGUx9aicY0PraUo=;
+        b=DcJGrXC1EBJFcrR3LaqtxGr3kbrB+xk6DCTWAi3eS2HMvfrBs2iXM9EcEorAnejByh
+         XAQ3jPjmgTqes5TcyuA45H4anHjpTAHe6mLo0rqLovw7E8eZb86N2ISQ6AzUnd6VL5mk
+         mw8lfWYKbneJAII5htDm9lqqYQVbjIm2kI5FzKg+/CX4z98Gk3HvCFQSq9CvTHeam3W8
+         Ye1JLEFK8WW4BQnQh68/h3JSpoHYscKWa/8+l+jH3BpFbmFwXWu30zIVoBrIkSa86cMz
+         jpHpKI86onvv7Q+xaz0BxPX9dv5LxXfM9XeyPDRsRLrS4fs6IO3oAZCtp9ykEC9xM24h
+         8EEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e2aGwBdJDGn1kPtWl04w3FtQM1Uf8r1aAIefYon93nQ=;
-        b=XpaVc9B14mdJgG+4Yrb3hVAVV+uSOgbRhajU+NZwlu03MzliKr/nbKT4rWtP+vV15/
-         2s08Kuh63DeMkJRmBs2tHjGBY3D2ZLlZtD+0CIK5ys76RG8uBJOUtwLOK4ULFzJh0F/v
-         iRA/nB6X7nsj4lN2xTSYnGcYlhFqXDFAYBJjLpMzpDs0Q+7n74ynnwAXK2fetJ6z0/Fw
-         pLWh7bvK7YsoykVM/gH2i5nwkFtVaD4TmiVAXfJIe7Qsi7U/6Igl5fOXDsfM1p0PbHTs
-         zfJRE+Y/u5A0Wh23+tnZJBQigjYu6zC8eBPBlPi2MuFZRQq8dvAmUNb6BRUSy41ORS3l
-         ipDQ==
-X-Gm-Message-State: AOAM5305C6HRese70qZPXbKI9wSmeutNV7pjNxa4IsEAPxifR53xNALn
-        KuMLDQB383A6ihI3Z0FFvrjbrzcGVStjmQ==
-X-Google-Smtp-Source: ABdhPJza473hJUTSf2Oo6C2aIjxhiXpT8tC1M664w5fQbOdwZ1kbitDkL/1+lsV8RJFD4zp83lOOXw==
-X-Received: by 2002:a5d:58db:: with SMTP id o27mr28668590wrf.397.1613565721324;
-        Wed, 17 Feb 2021 04:42:01 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dGv7glabXqC5WvpJ6AA4u5twX2dtbGUx9aicY0PraUo=;
+        b=iOr8VCDidShbpXtZTYnaiwH/gT+CMAx9jA8f2HMfqOw8OYwPIJh13XNXntHNLwpe0/
+         CBl946oOMSBqCajJVWvXl20OXulFwnKzyCOwnfCLdcl4ouPv4UBGWYdP1aM40/nC2m8o
+         TIoyfQotFY4VAGlHpb2JxkDlpwJibvFYWE2hFr/7fONU8AWLow3MwjtBxLk4bPlmWh1G
+         TL6tiT44QoS0guCC83g+pFDkHZXD6NY5bpvC6/P9Pj9t5AEZ7ZORnW4bTZccsaQ0rtJz
+         SUC/tlgw0HHK6jZIxxinR0DHw5RKJSRP/3nyxnCrnE9fKhegjCMFIEEt714wAA+VAm10
+         rYXA==
+X-Gm-Message-State: AOAM530b2vEzTtsu0WSEmeEfHNQh6dCMtp1C3UoGOO7JHgm/GMZCpZ/B
+        hzZF/feY3CJ/AU/ii6V8Hs3CpjGQIm2eUA==
+X-Google-Smtp-Source: ABdhPJzE5gH+g5mc8Gw2KViL/P9ipyuuT2DhTQN6JPHhmWn/ZGPRFJa0wHNFsCeAShVsX0UO/4ASPQ==
+X-Received: by 2002:a1c:f60b:: with SMTP id w11mr6918275wmc.3.1613565722269;
+        Wed, 17 Feb 2021 04:42:02 -0800 (PST)
 Received: from localhost.localdomain ([85.255.235.13])
-        by smtp.gmail.com with ESMTPSA id t9sm3589979wrw.76.2021.02.17.04.42.00
+        by smtp.gmail.com with ESMTPSA id t9sm3589979wrw.76.2021.02.17.04.42.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Feb 2021 04:42:00 -0800 (PST)
+        Wed, 17 Feb 2021 04:42:01 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [RFC 0/4] add BPF-driven requests
-Date:   Wed, 17 Feb 2021 12:38:02 +0000
-Message-Id: <cover.1613563964.git.asml.silence@gmail.com>
+Subject: [PATCH 1/4] bpf: add IOURING program type
+Date:   Wed, 17 Feb 2021 12:38:03 +0000
+Message-Id: <73cb41c5c3be42a5a0815550a9dc9baaea48bae5.1613563964.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1613563964.git.asml.silence@gmail.com>
+References: <cover.1613563964.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Pretty much an RFC for executing BPF requests in io_uring to start a
-discussion, so any ideas and wish lists are welcom. Some technical
-but not much important for the discussion detais are omitted in the
-patchset, i.e. good cancellation system, optimisations and some BPF
-specific parts.
+Draft a new program type BPF_PROG_TYPE_IOURING, which will be used by
+io_uring to execute BPF-based requests.
 
-Some of major missing points:
-1. We need to pass an CQE/result of a previous linked request to BPF.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c             | 21 +++++++++++++++++++++
+ include/linux/bpf_types.h |  2 ++
+ include/uapi/linux/bpf.h  |  1 +
+ kernel/bpf/syscall.c      |  1 +
+ kernel/bpf/verifier.c     |  3 +++
+ 5 files changed, 28 insertions(+)
 
-2. Whether to keep to a new IORING_OP_BPF opcode, or do it in a common
-path for each request, e.g. on CQE completion. The former looks saner,
-but is not nicely aligned with (1.).
-
-3. Allow BPF programs to generate CQEs not binded to a request. A
-problem can be with supporting overflowed CQEs, it's either to
-always kmalloc()'ing storage for them instead of using req's memory
-or piling up on top. Eventually we will need it anyway to be able
-to post several CQEs for a single requests.
-
-Pavel Begunkov (4):
-  bpf: add IOURING program type
-  io_uring: implement bpf prog registration
-  io_uring: add IORING_OP_BPF
-  io_uring: enable BPF to submit SQEs
-
- fs/io_uring.c                 | 259 +++++++++++++++++++++++++++++++++-
- include/linux/bpf_types.h     |   2 +
- include/uapi/linux/bpf.h      |   2 +
- include/uapi/linux/io_uring.h |   3 +
- kernel/bpf/syscall.c          |   1 +
- kernel/bpf/verifier.c         |   3 +
- 6 files changed, 264 insertions(+), 6 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 61b65edabe5e..2c8904bee386 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -10166,6 +10166,27 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 	return ret;
+ }
+ 
++static const struct bpf_func_proto *
++io_bpf_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
++{
++	return bpf_base_func_proto(func_id);
++}
++
++static bool io_bpf_is_valid_access(int off, int size,
++				   enum bpf_access_type type,
++				   const struct bpf_prog *prog,
++				   struct bpf_insn_access_aux *info)
++{
++	return false;
++}
++
++const struct bpf_prog_ops bpf_io_uring_prog_ops = {};
++
++const struct bpf_verifier_ops bpf_io_uring_verifier_ops = {
++	.get_func_proto		= io_bpf_func_proto,
++	.is_valid_access	= io_bpf_is_valid_access,
++};
++
+ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
+ 		void __user *, arg, unsigned int, nr_args)
+ {
+diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
+index 99f7fd657d87..d0b7954887bd 100644
+--- a/include/linux/bpf_types.h
++++ b/include/linux/bpf_types.h
+@@ -77,6 +77,8 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_LSM, lsm,
+ 	       void *, void *)
+ #endif /* CONFIG_BPF_LSM */
+ #endif
++BPF_PROG_TYPE(BPF_PROG_TYPE_IOURING, bpf_io_uring,
++	      void *, void *)
+ 
+ BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
+ BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_ARRAY, percpu_array_map_ops)
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 77d7c1bb2923..2f1c0ab097d8 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -200,6 +200,7 @@ enum bpf_prog_type {
+ 	BPF_PROG_TYPE_EXT,
+ 	BPF_PROG_TYPE_LSM,
+ 	BPF_PROG_TYPE_SK_LOOKUP,
++	BPF_PROG_TYPE_IOURING,
+ };
+ 
+ enum bpf_attach_type {
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index e5999d86c76e..9b8f6b57fb1b 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2031,6 +2031,7 @@ static bool is_net_admin_prog_type(enum bpf_prog_type prog_type)
+ 	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
+ 	case BPF_PROG_TYPE_CGROUP_SYSCTL:
+ 	case BPF_PROG_TYPE_SOCK_OPS:
++	case BPF_PROG_TYPE_IOURING:
+ 	case BPF_PROG_TYPE_EXT: /* extends any prog */
+ 		return true;
+ 	case BPF_PROG_TYPE_CGROUP_SKB:
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index e7368c5eacb7..54e26586932b 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -7981,6 +7981,9 @@ static int check_return_code(struct bpf_verifier_env *env)
+ 	case BPF_PROG_TYPE_SK_LOOKUP:
+ 		range = tnum_range(SK_DROP, SK_PASS);
+ 		break;
++	case BPF_PROG_TYPE_IOURING:
++		range = tnum_const(0);
++		break;
+ 	case BPF_PROG_TYPE_EXT:
+ 		/* freplace program can return anything as its return value
+ 		 * depends on the to-be-replaced kernel func or bpf program.
 -- 
 2.24.0
 

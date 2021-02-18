@@ -2,220 +2,147 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20BCC31EBA7
-	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 16:41:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F45431EEF2
+	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 19:54:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231965AbhBRPlE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Feb 2021 10:41:04 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:44780 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231841AbhBROlF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 09:41:05 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UOu49qy_1613659210;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UOu49qy_1613659210)
+        id S232009AbhBRSvt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Feb 2021 13:51:49 -0500
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:42370 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233953AbhBRRR4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 12:17:56 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UOunQbh_1613668616;
+Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UOunQbh_1613668616)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 18 Feb 2021 22:40:18 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
+          Fri, 19 Feb 2021 01:16:56 +0800
+Subject: Re: [PATCH] io_uring: don't recursively hold ctx->uring_lock in
+ io_wq_submit_work()
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Hao Xu <haoxu@linux.alibaba.com>
-Subject: [PATCH v2 5.12] io_uring: don't hold uring_lock when calling io_run_task_work*
-Date:   Thu, 18 Feb 2021 22:39:59 +0800
-Message-Id: <1613659199-14196-1-git-send-email-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1611394824-73078-1-git-send-email-haoxu@linux.alibaba.com>
+ <45a0221a-bd2b-7183-e35d-2d2550f687b5@kernel.dk>
+From:   Hao Xu <haoxu@linux.alibaba.com>
+Message-ID: <d5ff7e3d-db29-ea00-9be5-50b65c69769c@linux.alibaba.com>
+Date:   Fri, 19 Feb 2021 01:16:56 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.0
+MIME-Version: 1.0
+In-Reply-To: <45a0221a-bd2b-7183-e35d-2d2550f687b5@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Abaci reported the below issue:
-[  141.400455] hrtimer: interrupt took 205853 ns
-[  189.869316] process 'usr/local/ilogtail/ilogtail_0.16.26' started with executable stack
-[  250.188042]
-[  250.188327] ============================================
-[  250.189015] WARNING: possible recursive locking detected
-[  250.189732] 5.11.0-rc4 #1 Not tainted
-[  250.190267] --------------------------------------------
-[  250.190917] a.out/7363 is trying to acquire lock:
-[  250.191506] ffff888114dbcbe8 (&ctx->uring_lock){+.+.}-{3:3}, at: __io_req_task_submit+0x29/0xa0
-[  250.192599]
-[  250.192599] but task is already holding lock:
-[  250.193309] ffff888114dbfbe8 (&ctx->uring_lock){+.+.}-{3:3}, at: __x64_sys_io_uring_register+0xad/0x210
-[  250.194426]
-[  250.194426] other info that might help us debug this:
-[  250.195238]  Possible unsafe locking scenario:
-[  250.195238]
-[  250.196019]        CPU0
-[  250.196411]        ----
-[  250.196803]   lock(&ctx->uring_lock);
-[  250.197420]   lock(&ctx->uring_lock);
-[  250.197966]
-[  250.197966]  *** DEADLOCK ***
-[  250.197966]
-[  250.198837]  May be due to missing lock nesting notation
-[  250.198837]
-[  250.199780] 1 lock held by a.out/7363:
-[  250.200373]  #0: ffff888114dbfbe8 (&ctx->uring_lock){+.+.}-{3:3}, at: __x64_sys_io_uring_register+0xad/0x210
-[  250.201645]
-[  250.201645] stack backtrace:
-[  250.202298] CPU: 0 PID: 7363 Comm: a.out Not tainted 5.11.0-rc4 #1
-[  250.203144] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
-[  250.203887] Call Trace:
-[  250.204302]  dump_stack+0xac/0xe3
-[  250.204804]  __lock_acquire+0xab6/0x13a0
-[  250.205392]  lock_acquire+0x2c3/0x390
-[  250.205928]  ? __io_req_task_submit+0x29/0xa0
-[  250.206541]  __mutex_lock+0xae/0x9f0
-[  250.207071]  ? __io_req_task_submit+0x29/0xa0
-[  250.207745]  ? 0xffffffffa0006083
-[  250.208248]  ? __io_req_task_submit+0x29/0xa0
-[  250.208845]  ? __io_req_task_submit+0x29/0xa0
-[  250.209452]  ? __io_req_task_submit+0x5/0xa0
-[  250.210083]  __io_req_task_submit+0x29/0xa0
-[  250.210687]  io_async_task_func+0x23d/0x4c0
-[  250.211278]  task_work_run+0x89/0xd0
-[  250.211884]  io_run_task_work_sig+0x50/0xc0
-[  250.212464]  io_sqe_files_unregister+0xb2/0x1f0
-[  250.213109]  __io_uring_register+0x115a/0x1750
-[  250.213718]  ? __x64_sys_io_uring_register+0xad/0x210
-[  250.214395]  ? __fget_files+0x15a/0x260
-[  250.214956]  __x64_sys_io_uring_register+0xbe/0x210
-[  250.215620]  ? trace_hardirqs_on+0x46/0x110
-[  250.216205]  do_syscall_64+0x2d/0x40
-[  250.216731]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  250.217455] RIP: 0033:0x7f0fa17e5239
-[  250.218034] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05  3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 ec 2c 00 f7 d8 64 89 01 48
-[  250.220343] RSP: 002b:00007f0fa1eeac48 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-[  250.221360] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0fa17e5239
-[  250.222272] RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000008
-[  250.223185] RBP: 00007f0fa1eeae20 R08: 0000000000000000 R09: 0000000000000000
-[  250.224091] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-[  250.224999] R13: 0000000000021000 R14: 0000000000000000 R15: 00007f0fa1eeb700
+在 2021/1/25 下午12:31, Jens Axboe 写道:
+> On 1/23/21 2:40 AM, Hao Xu wrote:
+>> Abaci reported the following warning:
+>>
+>> [   97.862205] ============================================
+>> [   97.863400] WARNING: possible recursive locking detected
+>> [   97.864640] 5.11.0-rc4+ #12 Not tainted
+>> [   97.865537] --------------------------------------------
+>> [   97.866748] a.out/2890 is trying to acquire lock:
+>> [   97.867829] ffff8881046763e8 (&ctx->uring_lock){+.+.}-{3:3}, at:
+>> io_wq_submit_work+0x155/0x240
+>> [   97.869735]
+>> [   97.869735] but task is already holding lock:
+>> [   97.871033] ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
+>> __x64_sys_io_uring_enter+0x3f0/0x5b0
+>> [   97.873074]
+>> [   97.873074] other info that might help us debug this:
+>> [   97.874520]  Possible unsafe locking scenario:
+>> [   97.874520]
+>> [   97.875845]        CPU0
+>> [   97.876440]        ----
+>> [   97.877048]   lock(&ctx->uring_lock);
+>> [   97.877961]   lock(&ctx->uring_lock);
+>> [   97.878881]
+>> [   97.878881]  *** DEADLOCK ***
+>> [   97.878881]
+>> [   97.880341]  May be due to missing lock nesting notation
+>> [   97.880341]
+>> [   97.881952] 1 lock held by a.out/2890:
+>> [   97.882873]  #0: ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
+>> __x64_sys_io_uring_enter+0x3f0/0x5b0
+>> [   97.885108]
+>> [   97.885108] stack backtrace:
+>> [   97.886209] CPU: 0 PID: 2890 Comm: a.out Not tainted 5.11.0-rc4+ #12
+>> [   97.887683] Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS
+>> rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+>> [   97.890457] Call Trace:
+>> [   97.891121]  dump_stack+0xac/0xe3
+>> [   97.891972]  __lock_acquire+0xab6/0x13a0
+>> [   97.892940]  lock_acquire+0x2c3/0x390
+>> [   97.893853]  ? io_wq_submit_work+0x155/0x240
+>> [   97.894894]  __mutex_lock+0xae/0x9f0
+>> [   97.895785]  ? io_wq_submit_work+0x155/0x240
+>> [   97.896816]  ? __lock_acquire+0x782/0x13a0
+>> [   97.897817]  ? io_wq_submit_work+0x155/0x240
+>> [   97.898867]  ? io_wq_submit_work+0x155/0x240
+>> [   97.899916]  ? _raw_spin_unlock_irqrestore+0x2d/0x40
+>> [   97.901101]  io_wq_submit_work+0x155/0x240
+>> [   97.902112]  io_wq_cancel_cb+0x162/0x490
+>> [   97.903084]  ? io_uring_get_socket+0x40/0x40
+>> [   97.904126]  io_async_find_and_cancel+0x3b/0x140
+>> [   97.905247]  io_issue_sqe+0x86d/0x13e0
+>> [   97.906186]  ? __lock_acquire+0x782/0x13a0
+>> [   97.907195]  ? __io_queue_sqe+0x10b/0x550
+>> [   97.908175]  ? lock_acquire+0x2c3/0x390
+>> [   97.909122]  __io_queue_sqe+0x10b/0x550
+>> [   97.910080]  ? io_req_prep+0xd8/0x1090
+>> [   97.911044]  ? mark_held_locks+0x5a/0x80
+>> [   97.912042]  ? mark_held_locks+0x5a/0x80
+>> [   97.913014]  ? io_queue_sqe+0x235/0x470
+>> [   97.913971]  io_queue_sqe+0x235/0x470
+>> [   97.914894]  io_submit_sqes+0xcce/0xf10
+>> [   97.915842]  ? xa_store+0x3b/0x50
+>> [   97.916683]  ? __x64_sys_io_uring_enter+0x3f0/0x5b0
+>> [   97.917872]  __x64_sys_io_uring_enter+0x3fb/0x5b0
+>> [   97.918995]  ? lockdep_hardirqs_on_prepare+0xde/0x180
+>> [   97.920204]  ? syscall_enter_from_user_mode+0x26/0x70
+>> [   97.921424]  do_syscall_64+0x2d/0x40
+>> [   97.922329]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [   97.923538] RIP: 0033:0x7f0b62601239
+>> [   97.924437] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00
+>> 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f
+>>     05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 ec 2c 00 f7 d8 64 89 01
+>>        48
+>> [   97.928628] RSP: 002b:00007f0b62cc4d28 EFLAGS: 00000246 ORIG_RAX:
+>> 00000000000001aa
+>> [   97.930422] RAX: ffffffffffffffda RBX: 0000000000000000 RCX:
+>> 00007f0b62601239
+>> [   97.932073] RDX: 0000000000000000 RSI: 0000000000006cf6 RDI:
+>> 0000000000000005
+>> [   97.933710] RBP: 00007f0b62cc4e20 R08: 0000000000000000 R09:
+>> 0000000000000000
+>> [   97.935369] R10: 0000000000000000 R11: 0000000000000246 R12:
+>> 0000000000000000
+>> [   97.937008] R13: 0000000000021000 R14: 0000000000000000 R15:
+>> 00007f0b62cc5700
+>>
+>> This is caused by try to hold uring_lock in io_wq_submit_work() without
+>> checking if we are in io-wq thread context or not. It can be in original
+>> context when io_wq_submit_work() is called from IORING_OP_ASYNC_CANCEL
+>> code path, where we already held uring_lock.
+> 
+> Looks like another fallout of the split CLOSE handling. I've got the
+> right fixes pending for 5.12:
+> 
+> https://git.kernel.dk/cgit/linux-block/commit/?h=for-5.12/io_uring&id=6bb0079ef3420041886afe1bcd8e7a87e08992e1
+> 
+> (and the prep patch before that in the tree). But that won't really
+> help us for 5.11 and earlier, though we probably should just queue
+> those two patches for 5.11 and get them into stable. I really don't
+> like the below patch, though it should fix it. But the root cause
+> is really the weird open cancelation...
+> 
+Hi Jens,
+I've repro-ed this issue on branch for-5.12/io_uring-2021-02-17
+which contains the patch you give, the issue still exists.
+I think this one is not an async close specifical problem.
+The rootcause is we try to run an iowq work in the original
+context(queue an iowq work, then async cancel it).
 
-This is caused by calling io_run_task_work_sig() to do work under
-uring_lock while the caller io_sqe_files_unregister() already held
-uring_lock.
-To fix this issue, briefly drop uring_lock when calling
-io_run_task_work_sig(), and there are two things to concern:
-  - hold uring_lock in io_ring_ctx_free() when calling io_sqe_files_unregister()
-      this is for consistency of lock/unlock.
-  - add new fixed file ref node before dropping uring_lock
-      it's not safe to do io_uring_enter-->percpu_ref_get() with a dying one.
-  - check if file_data->refs is dying to avoid parallel io_sqe_files_unregister
-
-Reported-by: Abaci <abaci@linux.alibaba.com>
-Fixes: 1ffc54220c44 ("io_uring: fix io_sqe_files_unregister() hangs")
-Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
- fs/io_uring.c | 65 +++++++++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 52 insertions(+), 13 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1f68105a41ed..4521d04adee7 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7342,25 +7342,49 @@ static void io_sqe_files_set_node(struct fixed_file_data *file_data,
- 	percpu_ref_get(&file_data->refs);
- }
- 
--static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
-+static int fixed_file_ref_node_add(struct io_ring_ctx *ctx)
- {
- 	struct fixed_file_data *data = ctx->file_data;
--	struct fixed_file_ref_node *backup_node, *ref_node = NULL;
--	unsigned nr_tables, i;
--	int ret;
-+	struct fixed_file_ref_node *backup_node;
- 
--	if (!data)
--		return -ENXIO;
- 	backup_node = alloc_fixed_file_ref_node(ctx);
- 	if (!backup_node)
- 		return -ENOMEM;
-+	io_sqe_files_set_node(data, backup_node);
-+
-+	return 0;
-+}
- 
-+static void fixed_file_ref_node_kill(struct fixed_file_data *data)
-+{
-+	struct fixed_file_ref_node *ref_node = NULL;
- 	spin_lock_bh(&data->lock);
- 	ref_node = data->node;
- 	spin_unlock_bh(&data->lock);
- 	if (ref_node)
- 		percpu_ref_kill(&ref_node->refs);
- 
-+}
-+
-+static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
-+{
-+	struct fixed_file_data *data = ctx->file_data;
-+	struct fixed_file_ref_node *backup_node;
-+	unsigned nr_tables, i;
-+	int ret;
-+
-+	/*
-+	 * percpu_ref_is_dying() is to stop parallel files unregister
-+	 * Since we possibly drop uring lock later in this function to
-+	 * run task work.
-+	 */
-+	if (!data || percpu_ref_is_dying(&data->refs))
-+		return -ENXIO;
-+	backup_node = alloc_fixed_file_ref_node(ctx);
-+	if (!backup_node)
-+		return -ENOMEM;
-+
-+	fixed_file_ref_node_kill(data);
- 	percpu_ref_kill(&data->refs);
- 
- 	/* wait for all refs nodes to complete */
-@@ -7369,14 +7393,27 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
- 		ret = wait_for_completion_interruptible(&data->done);
- 		if (!ret)
- 			break;
-+
-+		ret = fixed_file_ref_node_add(ctx);
-+		if (ret < 0)
-+			break;
-+		/*
-+		 * There is small possibility that data->done is already completed
-+		 * So reinit it here
-+		 */
-+		reinit_completion(&data->done);
-+		mutex_unlock(&ctx->uring_lock);
- 		ret = io_run_task_work_sig();
--		if (ret < 0) {
--			percpu_ref_resurrect(&data->refs);
--			reinit_completion(&data->done);
--			io_sqe_files_set_node(data, backup_node);
--			return ret;
--		}
--	} while (1);
-+		mutex_lock(&ctx->uring_lock);
-+		fixed_file_ref_node_kill(data);
-+	} while (ret >= 0);
-+
-+	if (ret < 0) {
-+		percpu_ref_resurrect(&data->refs);
-+		reinit_completion(&data->done);
-+		io_sqe_files_set_node(data, backup_node);
-+		return ret;
-+	}
- 
- 	__io_sqe_files_unregister(ctx);
- 	nr_tables = DIV_ROUND_UP(ctx->nr_user_files, IORING_MAX_FILES_TABLE);
-@@ -8685,7 +8722,9 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 		css_put(ctx->sqo_blkcg_css);
- #endif
- 
-+	mutex_lock(&ctx->uring_lock);
- 	io_sqe_files_unregister(ctx);
-+	mutex_unlock(&ctx->uring_lock);
- 	io_eventfd_unregister(ctx);
- 	io_destroy_buffers(ctx);
- 	idr_destroy(&ctx->personality_idr);
--- 
-1.8.3.1
-
+Thanks,
+Hao

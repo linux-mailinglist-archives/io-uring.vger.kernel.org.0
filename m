@@ -2,92 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4117231F0FD
-	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 21:29:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B05531F268
+	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 23:37:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229919AbhBRU0n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Feb 2021 15:26:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38042 "EHLO
+        id S229809AbhBRWhh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Feb 2021 17:37:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230422AbhBRU0b (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 15:26:31 -0500
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4490C061756
-        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 12:25:51 -0800 (PST)
-Received: by mail-pf1-x431.google.com with SMTP id u143so2075963pfc.7
-        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 12:25:51 -0800 (PST)
+        with ESMTP id S229766AbhBRWhb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 17:37:31 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2CF2C061756
+        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 14:36:50 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id i7so3552657wmb.0
+        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 14:36:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=WFt0OkNCCtCnxUwyJpUNR2oK8WDog/BKe1xZCi4vICI=;
-        b=HJ8fxmtg0qUaQ6ytcezdzzltPvEMBUAvl4l2PV30wBI4HF9toWwshCgDUXj5q1K1Wm
-         EgDVFFr6NVcZqvtEC5or+qcx/tQCR76UJNVnzeP/M0lVnqTi3nAZY1Boxj+fsyvxIQD+
-         v2KmW/pYwCXpjbKMZoUIRZSC6nQ+rmvp/TVxweHXJrEnvqg0XTsWkGFAl5BmFylyh5l0
-         3TuYghU5v1NNmReNT/AROZ4383TKvwkVwN3pF+FrYzhmvrY3FrDUexOwhXXYGuVUAaNg
-         LNkci94wxzngGdWnsY+4qtQUEOA+TJLE9WAgKzziVou0x8hVQaZwwwDSaSNlV1XKpnv6
-         cBwA==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Pr5XRSzOdHJDEvbk/ryN4KYOnBMyJU7DoyMeJwAAACk=;
+        b=qzmn5jPFnA1CLvZ3+ETr5SCCte9v2okD4RMcPw4C5pIqrjIfGySfNSZP7XlLQbnVhw
+         ETvAGAWTMX3TdhGJEK4t6XnphHvcT+ekEWjO3VR4rOOjPyExiocBH2bamUBjndjUrHJ8
+         glbOJiq2cSTYtF3WqazaksHpn4UrCZR72fKcRP6ZcsDGnBWrncCp0yJPAC+/hsDL7oVQ
+         L8VZ+Ua0ObAc0OHmeqy7CW2H+DZjhEjc4dGryIQg0My87HzTsARTihN0hVXsNwt/PDSj
+         EBkdooOhxDIC3IJTmkW8SQMvpbOIAWXC1MLvMGPUe/TdviS8OGgTP+IWbfK1ggaVW7C7
+         NJ2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=WFt0OkNCCtCnxUwyJpUNR2oK8WDog/BKe1xZCi4vICI=;
-        b=ao9er4ucdZKGo0jtrpnhwE0QBfv7sg3fYM3E3HpFxNvS+k50PAq8/PAGMykQV0cYy7
-         px5/4sUnSzhZV3DU2bN3GfKcygLfPXRRMjLuOmSdc16y7oYVu6XE+9CUw5R2h63f1/t8
-         HFb+5M2Ms1C1okMT1dkJVpvfwxS9KP2xK8ZfDE0aOfcXLjr78+O5VVtFB/78WAi6a7lq
-         02I5e/Ottuw8t114xuZItf1mVkfH108MazO34l4JKHEl8iMgPvE6USN/eRX7gquw2ULU
-         rAlHq4/ozWHjV23l/2dWPNfQJ/iKOSNJ6C0/K8YiZJTpdHXjuQwaRAdIdxCShBXASv8D
-         RGqQ==
-X-Gm-Message-State: AOAM531vjzB3jf4abShfHjQsnw/7nSOuGVa9zGK+vIHIiv9PE2NvhyIN
-        O8AvuNHK9STPrbzKSan2LxJxBF6tVKEiBw==
-X-Google-Smtp-Source: ABdhPJzPeBgesnyJUef5p7+rBNWmBIzIgm8fnkHN1XNJuAlDHWhvuWrEvmWtEaG9+A8nS0VYhqoQ5w==
-X-Received: by 2002:a63:461d:: with SMTP id t29mr5421485pga.192.1613679951051;
-        Thu, 18 Feb 2021 12:25:51 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id h8sm6428808pfv.154.2021.02.18.12.25.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Feb 2021 12:25:50 -0800 (PST)
-Subject: Re: [PATCH 00/11] submission path cleanups and optimisation
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1613671791.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <de91ee40-af76-3213-f2ee-e385164271d3@kernel.dk>
-Date:   Thu, 18 Feb 2021 13:25:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=Pr5XRSzOdHJDEvbk/ryN4KYOnBMyJU7DoyMeJwAAACk=;
+        b=Gn3DGpfCZ10VAjuqUWgA7wRzDNSjcW1oyUNSslNmRjzPg8/B/xS1SPPH78bBf5PI1g
+         OeCIV6nYBuiTBVj+UAfjbD1kIqzBWgjVgb4Kzd31QD0cpqYA5aTpBAhWTX+Zd0oXASNc
+         whqbarLG6LTQf1viRmkvQDmOMACjvzZidYBWkGxvZhTL0jm10yAL46RvcMDOdrwrqjKV
+         l7PFvSk+Z92RMTMU4TGKWgQlPGk+38GKkphZw2NTBpH9nztd6DD5T6+r2uLClxFyDwow
+         6au+JlTFrjinA0q/fmOgEq3v1CJiHzc3AKv86nqmNj9gBZs+cE9hhbQP7soHC7QBH8Wb
+         qMkA==
+X-Gm-Message-State: AOAM531CUdNKLZVQUnnpJ7zujTbLtT9rjX+Hpkpn2mR7hj3tgVAAXvmA
+        xwuDvYoMCytui9I4bIYEVHbGtiHVrZGMKg==
+X-Google-Smtp-Source: ABdhPJz615Z55Rg/V3l768segSGOOFcVba3Kt0Rl6XqV1WoHDr4HtmdqBobXlZC8YKg0R+ztzEUaYQ==
+X-Received: by 2002:a05:600c:354f:: with SMTP id i15mr5588580wmq.28.1613687809466;
+        Thu, 18 Feb 2021 14:36:49 -0800 (PST)
+Received: from localhost.localdomain ([85.255.236.139])
+        by smtp.gmail.com with ESMTPSA id w13sm9807439wrt.49.2021.02.18.14.36.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Feb 2021 14:36:48 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 0/3] fix nested uring_lock
+Date:   Thu, 18 Feb 2021 22:32:50 +0000
+Message-Id: <cover.1613687339.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1613671791.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/18/21 11:29 AM, Pavel Begunkov wrote:
-> Refactor how we do io_req_prep(), which is currently spilled across
-> multiple ifs and functions, that's a mess which is hard to validate.
-> It also cuts down amount of work we're doing during submission, where
-> nops(batch=32) test shows 15217 vs 16830 KIOPS, before and after
-> respectively.
-> 
-> 1-6 are easy and should change nothing functionally.
-> 
-> 7/11 cancels all the link, where currently it can be partially executed.
-> That happens only in some cases, and currently is not consistent. That
-> change alters the user visible behaviour and breaks one liburing test,
-> but looks like the right thing to do. (IMHO, the test is buggy in that
-> regard).
-> 
-> 8/11 makes us to do one more opcode switch for where we previously
-> were doing io_req_defer_prep(). That includes all links, but the total
-> performance win, removing an extra async setup in 10/11, and just making
-> all the thing cleaner justifies it well enough.
+1/3 is for backporting, two others are more churny, but do it right,
+including trying to punt it to the original task instead of fallback,
+aka io-wq manager.
 
-Looks good and tests good, I'm going to queue this up for 5.12 as it'll
-be easier for later fixes too.
+Pavel Begunkov (3):
+  io_uring: don't take uring_lock during iowq cancel
+  io_uring: fail io-wq submission from a task_work
+  io_uring: avoid taking ctx refs for task-cancel
+
+ fs/io_uring.c | 43 ++++++++++++++++++-------------------------
+ 1 file changed, 18 insertions(+), 25 deletions(-)
 
 -- 
-Jens Axboe
+2.24.0
 

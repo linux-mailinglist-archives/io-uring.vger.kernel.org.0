@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BA2731EEFC
-	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 19:54:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6FE331EEFD
+	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 19:54:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231529AbhBRSwY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Feb 2021 13:52:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42056 "EHLO
+        id S233387AbhBRSwa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Feb 2021 13:52:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231681AbhBRSgg (ORCPT
+        with ESMTP id S231691AbhBRSgg (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 13:36:36 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C5CCC061356
-        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 10:33:53 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id 7so4101221wrz.0
-        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 10:33:53 -0800 (PST)
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E2D0C06121C
+        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 10:33:54 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id o82so4661877wme.1
+        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 10:33:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=8+9Tt58vct4ZD5pqPIIsNa3vriuW2qqO4EjIB4+G0Ug=;
-        b=cELCIifOOvnnq7dG2Zboryw5UGnB5UVsw88KCsj2v3TaIdSK3uorCcUdv+2s+HfmE+
-         2B4PjtCuQ69MZGcLcaJfLC/B0vsZG1aOPNL5iubkAUrS5Z4kGljdqZFBgygmAY5PrjFp
-         g1cC5wHk+b07yFs6HeFkBiq6c1d8RJgUBuCwvVOM3qO7SK7poE0W0BZaL60ycC44Oyxb
-         J7HmNIsrwR+aXqW3w3xsqVDHZMRFAgo+VHI7rov0rNobGsYheKxtXTmN3E0RMuEx6oMf
-         u18NdS9DSYXjbxaxoiW2jR/1EPfbkVbmkzqWMkzPLgn/ggO9JjJlXGyqWHjNUXorznHT
-         AyhA==
+        bh=SkoDsucK4hIUHzoUqBtL3UTF6DUNGrYPy4JbNSIryRU=;
+        b=qUgqKyjrZan7roEA1nqoXgYzwzuB0ENZIm9Sn2BV6KRbVXozjxyl52hyBHx1MM1F7u
+         AN/ptqJZcCqsHO/OiIOEFBLrXmQ1xfaO404l3X4X69R9jdxs6Gr5aACTDckxUu55nWfo
+         jEJYuEc9raG+uJYDf24VhJJQ/aF9+/ltcdQQnMcaLxzfGtus2u6vsSFqfTB7zXOJF2Ti
+         C8V3SxNvhh2v1Ohd3aX7WVnYweBhRPiIGPRmYkcACFk0zZCVQx8UkUd6qjF9YnIbWKsc
+         nI93ZzKOGzZLH7Vpdx19NPONv/49Bk8ZeACmSKByaZh5BtzDjNPoBumjAng4pxXK9uDr
+         qijQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8+9Tt58vct4ZD5pqPIIsNa3vriuW2qqO4EjIB4+G0Ug=;
-        b=dPAavT5q7yq4Ek3DR6lYZhtBs9rrIIfhDf19ZNovOjX2XyiC3+ZS7r+sZoBhyM+dhr
-         FLh7BHLFwesN8w4w6cQcfrNiwpDAhVcyx23ZdlT8cNKd1NklNLcNdI6T0JfSmfHRAe9Z
-         FBkB1ku3DupGZuZwoMjaJEnil8YMrh32DVFvtFAoGjo7nlhy0lriaXuLtvRuiRFkULNT
-         EPMV/FKJzf2AuTrlIiKhn2dl90iLmdZqCYAnGr25O43O+T+uMa1TwOTmIPGp8o8RJTQT
-         +fMjBo/OAa59stb1ThQeqrSY2uuo0vbQ1i6UCqpEO+RcsY9Zo8jAF3M3nl+Kk8QyxVFJ
-         ZDNA==
-X-Gm-Message-State: AOAM531e0h6tsn8mzwm0Za+KVVxtT8itFVvlc1EYCY5orfjBzRnSISju
-        tntLwGkVtAQNIHYOLWEVubw3oj2uSDduSg==
-X-Google-Smtp-Source: ABdhPJxjztpuBKXLB6qhemPW/hQVXaibdCSqBvrYRQRbOCrec1l/Jo15BZMZ0hhheXJux+78kBz0bA==
-X-Received: by 2002:a5d:4046:: with SMTP id w6mr5346724wrp.223.1613673232207;
-        Thu, 18 Feb 2021 10:33:52 -0800 (PST)
+        bh=SkoDsucK4hIUHzoUqBtL3UTF6DUNGrYPy4JbNSIryRU=;
+        b=gA4DmzpjO4UXmbhUsUk7/MBx4aONgXK7q0TxvoAXevG56xhuz2PsB9XrOSNUpiiYJ/
+         v+BExU5DnIGEmNJiwL59l3KJn/2Cz6zaoETS8NW/ubzfB/Pwiae7mdbKaN5cWXu9MFhk
+         OvcP+ye2C0M6Wl6DoDuQorYqIpbwg7xT1tMyVPiWoo+i9NYo25jO34jgm2wHByG+JOyc
+         O/ispNCQ2zHcZiW8bi1OckCCuvSX6qHMsCmiANGfDM1/ciwfkPpiDvuogeWFVYPSj6DA
+         4w3IjdWeKo50dm2yR1xX0Cw/b+K3lPoI/asa/d1KK57Z0oZCEn8FsXtKmqy7uV8UR96t
+         ZbRw==
+X-Gm-Message-State: AOAM53151nIawXYSHQs3a0zxxrLDAo/XqarAVVeld3zYGqEGMBOAeGcb
+        pG9rvGfGClKXZPWY1kzXAqwOgSL72ixfkQ==
+X-Google-Smtp-Source: ABdhPJy4IV1uCi2LswXxEDSxjBTL8resjPW88zmRltdIJxz/KDZW2rp99Dc9hd8kxDVebgaQeob/DQ==
+X-Received: by 2002:a1c:4d05:: with SMTP id o5mr4807802wmh.51.1613673233302;
+        Thu, 18 Feb 2021 10:33:53 -0800 (PST)
 Received: from localhost.localdomain ([85.255.236.139])
-        by smtp.gmail.com with ESMTPSA id 36sm4034459wrh.94.2021.02.18.10.33.51
+        by smtp.gmail.com with ESMTPSA id 36sm4034459wrh.94.2021.02.18.10.33.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Feb 2021 10:33:51 -0800 (PST)
+        Thu, 18 Feb 2021 10:33:52 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 08/11] io_uring: split sqe-prep and async setup
-Date:   Thu, 18 Feb 2021 18:29:44 +0000
-Message-Id: <3884a8ce6e607b095397685b06dbb3493758119b.1613671791.git.asml.silence@gmail.com>
+Subject: [PATCH 09/11] io_uring: do io_*_prep() early in io_submit_sqe()
+Date:   Thu, 18 Feb 2021 18:29:45 +0000
+Message-Id: <ca9f9d69892f328a4e245943eb07f47b0f65a260.1613671791.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1613671791.git.asml.silence@gmail.com>
 References: <cover.1613671791.git.asml.silence@gmail.com>
@@ -61,235 +61,156 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There are two kinds of opcode-specific preparations we do. The first is
-just initialising req with what is always needed for an opcode and
-reading all non-generic SQE fields. And the second is copying some of
-the stuff like iovec preparing to punt a request to somewhere async,
-e.g. to io-wq or for draining. For requests that have tried an inline
-execution but still needing to be punted, the second prep type is done
-by the opcode handler itself.
-
-Currently, we don't explicitly split those preparation steps, but
-combining both of them into io_*_prep(), altering the behaviour by
-allocating ->async_data. That's pretty messy and hard to follow and also
-gets in the way of some optimisations.
-
-Split the steps, leave the first type as where it is now, and put the
-second into a new io_req_prep_async() helper. It may make us to do opcode
-switch twice, but it's worth it.
+Now as preparations are split from async setup, we can do the first one
+pretty early not spilling it across multiple call sites. And after it's
+done SQE is not needed anymore and we can save on passing it deeply into
+the submission stack.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 120 +++++++++++++++++++++++++++++---------------------
- 1 file changed, 70 insertions(+), 50 deletions(-)
+ fs/io_uring.c | 59 +++++++++++++++++++++------------------------------
+ 1 file changed, 24 insertions(+), 35 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 62688866357c..987cfd8db213 100644
+index 987cfd8db213..7d54b0abbb82 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -3472,19 +3472,9 @@ static inline int io_rw_prep_async(struct io_kiocb *req, int rw)
- 
- static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
--	ssize_t ret;
--
--	ret = io_prep_rw(req, sqe);
--	if (ret)
--		return ret;
--
- 	if (unlikely(!(req->file->f_mode & FMODE_READ)))
- 		return -EBADF;
--
--	/* either don't need iovec imported or already have it */
--	if (!req->async_data)
--		return 0;
--	return io_rw_prep_async(req, READ);
-+	return io_prep_rw(req, sqe);
- }
- 
- /*
-@@ -3669,19 +3659,9 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
- 
- static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
--	ssize_t ret;
--
--	ret = io_prep_rw(req, sqe);
--	if (ret)
--		return ret;
--
- 	if (unlikely(!(req->file->f_mode & FMODE_WRITE)))
- 		return -EBADF;
--
--	/* either don't need iovec imported or already have it */
--	if (!req->async_data)
--		return 0;
--	return io_rw_prep_async(req, WRITE);
-+	return io_prep_rw(req, sqe);
- }
- 
- static int io_write(struct io_kiocb *req, unsigned int issue_flags)
-@@ -4668,11 +4648,21 @@ static int io_sendmsg_copy_hdr(struct io_kiocb *req,
- 				   req->sr_msg.msg_flags, &iomsg->free_iov);
- }
- 
-+static int io_sendmsg_prep_async(struct io_kiocb *req)
-+{
-+	int ret;
-+
-+	if (!io_op_defs[req->opcode].needs_async_data)
-+		return 0;
-+	ret = io_sendmsg_copy_hdr(req, req->async_data);
-+	if (!ret)
-+		req->flags |= REQ_F_NEED_CLEANUP;
-+	return ret;
-+}
-+
- static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
--	struct io_async_msghdr *async_msg = req->async_data;
- 	struct io_sr_msg *sr = &req->sr_msg;
--	int ret;
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
-@@ -4685,13 +4675,7 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (req->ctx->compat)
- 		sr->msg_flags |= MSG_CMSG_COMPAT;
- #endif
--
--	if (!async_msg || !io_op_defs[req->opcode].needs_async_data)
--		return 0;
--	ret = io_sendmsg_copy_hdr(req, async_msg);
--	if (!ret)
--		req->flags |= REQ_F_NEED_CLEANUP;
--	return ret;
-+	return 0;
- }
- 
- static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
-@@ -4885,13 +4869,22 @@ static inline unsigned int io_put_recv_kbuf(struct io_kiocb *req)
- 	return io_put_kbuf(req, req->sr_msg.kbuf);
- }
- 
--static int io_recvmsg_prep(struct io_kiocb *req,
--			   const struct io_uring_sqe *sqe)
-+static int io_recvmsg_prep_async(struct io_kiocb *req)
- {
--	struct io_async_msghdr *async_msg = req->async_data;
--	struct io_sr_msg *sr = &req->sr_msg;
- 	int ret;
- 
-+	if (!io_op_defs[req->opcode].needs_async_data)
-+		return 0;
-+	ret = io_recvmsg_copy_hdr(req, req->async_data);
-+	if (!ret)
-+		req->flags |= REQ_F_NEED_CLEANUP;
-+	return ret;
-+}
-+
-+static int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_sr_msg *sr = &req->sr_msg;
-+
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
- 
-@@ -4904,13 +4897,7 @@ static int io_recvmsg_prep(struct io_kiocb *req,
- 	if (req->ctx->compat)
- 		sr->msg_flags |= MSG_CMSG_COMPAT;
- #endif
--
--	if (!async_msg || !io_op_defs[req->opcode].needs_async_data)
--		return 0;
--	ret = io_recvmsg_copy_hdr(req, async_msg);
--	if (!ret)
--		req->flags |= REQ_F_NEED_CLEANUP;
--	return ret;
-+	return 0;
- }
- 
- static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
-@@ -5063,10 +5050,17 @@ static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+@@ -6160,22 +6160,16 @@ static int io_req_prep_async(struct io_kiocb *req)
  	return 0;
  }
  
-+static int io_connect_prep_async(struct io_kiocb *req)
-+{
-+	struct io_async_connect *io = req->async_data;
-+	struct io_connect *conn = &req->connect;
-+
-+	return move_addr_to_kernel(conn->addr, conn->addr_len, &io->address);
-+}
-+
- static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+-static int io_req_defer_prep(struct io_kiocb *req,
+-			     const struct io_uring_sqe *sqe)
++static int io_req_defer_prep(struct io_kiocb *req)
  {
- 	struct io_connect *conn = &req->connect;
--	struct io_async_connect *io = req->async_data;
- 
- 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
-@@ -5075,12 +5069,7 @@ static int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	conn->addr = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	conn->addr_len =  READ_ONCE(sqe->addr2);
+-	int ret;
 -
--	if (!io)
--		return 0;
--
--	return move_addr_to_kernel(conn->addr, conn->addr_len,
--					&io->address);
-+	return 0;
- }
- 
- static int io_connect(struct io_kiocb *req, unsigned int issue_flags)
-@@ -6148,14 +6137,45 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return-EINVAL;
- }
- 
-+static int io_req_prep_async(struct io_kiocb *req)
-+{
-+	switch (req->opcode) {
-+	case IORING_OP_READV:
-+	case IORING_OP_READ_FIXED:
-+	case IORING_OP_READ:
-+		return io_rw_prep_async(req, READ);
-+	case IORING_OP_WRITEV:
-+	case IORING_OP_WRITE_FIXED:
-+	case IORING_OP_WRITE:
-+		return io_rw_prep_async(req, WRITE);
-+	case IORING_OP_SENDMSG:
-+	case IORING_OP_SEND:
-+		return io_sendmsg_prep_async(req);
-+	case IORING_OP_RECVMSG:
-+	case IORING_OP_RECV:
-+		return io_recvmsg_prep_async(req);
-+	case IORING_OP_CONNECT:
-+		return io_connect_prep_async(req);
-+	}
-+	return 0;
-+}
-+
- static int io_req_defer_prep(struct io_kiocb *req,
- 			     const struct io_uring_sqe *sqe)
- {
-+	int ret;
-+
- 	if (!sqe)
+-	if (!sqe)
++	if (!io_op_defs[req->opcode].needs_async_data)
  		return 0;
- 	if (io_alloc_async_data(req))
- 		return -EAGAIN;
--	return io_req_prep(req, sqe);
-+	ret = io_req_prep(req, sqe);
-+	if (ret)
-+		return ret;
-+	if (req->async_data)
-+		return io_req_prep_async(req);
-+	return 0;
-+
+-	if (io_alloc_async_data(req))
+-		return -EAGAIN;
+-	ret = io_req_prep(req, sqe);
+-	if (ret)
+-		return ret;
++	/* some opcodes init it during the inital prep */
+ 	if (req->async_data)
+-		return io_req_prep_async(req);
+-	return 0;
+-
++		return 0;
++	if (__io_alloc_async_data(req))
++		return -EAGAIN;
++	return io_req_prep_async(req);
  }
  
  static u32 io_get_sequence(struct io_kiocb *req)
+@@ -6191,7 +6185,7 @@ static u32 io_get_sequence(struct io_kiocb *req)
+ 	return total_submitted - nr_reqs;
+ }
+ 
+-static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++static int io_req_defer(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_defer_entry *de;
+@@ -6208,11 +6202,9 @@ static int io_req_defer(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if (!req_need_defer(req, seq) && list_empty_careful(&ctx->defer_list))
+ 		return 0;
+ 
+-	if (!req->async_data) {
+-		ret = io_req_defer_prep(req, sqe);
+-		if (ret)
+-			return ret;
+-	}
++	ret = io_req_defer_prep(req);
++	if (ret)
++		return ret;
+ 	io_prep_async_link(req);
+ 	de = kmalloc(sizeof(*de), GFP_KERNEL);
+ 	if (!de)
+@@ -6631,11 +6623,11 @@ static void __io_queue_sqe(struct io_kiocb *req)
+ 		io_queue_linked_timeout(linked_timeout);
+ }
+ 
+-static void io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++static void io_queue_sqe(struct io_kiocb *req)
+ {
+ 	int ret;
+ 
+-	ret = io_req_defer(req, sqe);
++	ret = io_req_defer(req);
+ 	if (ret) {
+ 		if (ret != -EIOCBQUEUED) {
+ fail_req:
+@@ -6644,18 +6636,11 @@ static void io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 			io_req_complete(req, ret);
+ 		}
+ 	} else if (req->flags & REQ_F_FORCE_ASYNC) {
+-		if (!req->async_data) {
+-			ret = io_req_defer_prep(req, sqe);
+-			if (unlikely(ret))
+-				goto fail_req;
+-		}
++		ret = io_req_defer_prep(req);
++		if (unlikely(ret))
++			goto fail_req;
+ 		io_queue_async_work(req);
+ 	} else {
+-		if (sqe) {
+-			ret = io_req_prep(req, sqe);
+-			if (unlikely(ret))
+-				goto fail_req;
+-		}
+ 		__io_queue_sqe(req);
+ 	}
+ }
+@@ -6666,7 +6651,7 @@ static inline void io_queue_link_head(struct io_kiocb *req)
+ 		io_put_req(req);
+ 		io_req_complete(req, -ECANCELED);
+ 	} else
+-		io_queue_sqe(req, NULL);
++		io_queue_sqe(req);
+ }
+ 
+ /*
+@@ -6788,7 +6773,11 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 			link->head->flags |= REQ_F_FAIL_LINK;
+ 		return ret;
+ 	}
++	ret = io_req_prep(req, sqe);
++	if (unlikely(ret))
++		goto fail_req;
+ 
++	/* don't need @sqe from now on */
+ 	trace_io_uring_submit_sqe(ctx, req->opcode, req->user_data,
+ 				true, ctx->flags & IORING_SETUP_SQPOLL);
+ 
+@@ -6813,7 +6802,7 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 			head->flags |= REQ_F_IO_DRAIN;
+ 			ctx->drain_next = 1;
+ 		}
+-		ret = io_req_defer_prep(req, sqe);
++		ret = io_req_defer_prep(req);
+ 		if (unlikely(ret))
+ 			goto fail_req;
+ 		trace_io_uring_link(ctx, req, head);
+@@ -6831,13 +6820,13 @@ static int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 			ctx->drain_next = 0;
+ 		}
+ 		if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK)) {
+-			ret = io_req_defer_prep(req, sqe);
++			ret = io_req_defer_prep(req);
+ 			if (unlikely(ret))
+ 				req->flags |= REQ_F_FAIL_LINK;
+ 			link->head = req;
+ 			link->last = req;
+ 		} else {
+-			io_queue_sqe(req, sqe);
++			io_queue_sqe(req);
+ 		}
+ 	}
+ 
 -- 
 2.24.0
 

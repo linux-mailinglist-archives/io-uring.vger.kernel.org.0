@@ -2,58 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4ED31F269
-	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 23:37:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7F4331F265
+	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 23:37:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229826AbhBRWhi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Feb 2021 17:37:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37912 "EHLO
+        id S229769AbhBRWhj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Feb 2021 17:37:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229769AbhBRWhc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 17:37:32 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9559C0613D6;
-        Thu, 18 Feb 2021 14:36:51 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id a132so5121908wmc.0;
-        Thu, 18 Feb 2021 14:36:51 -0800 (PST)
+        with ESMTP id S229771AbhBRWhd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 17:37:33 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41F7C061786
+        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 14:36:52 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id f7so3520977wrt.12
+        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 14:36:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GibyTGV+B5xsNkZJ26GNbrzMdDaqK1DVh86XCoj0ot8=;
-        b=PAtNqDAeDi0QGBf480TnyC2MxAJnBfL8pPYyh+M6Yt5adyS0yaN2AorU/dQGwKNQ4d
-         oSRn3tJ/tbYeto7YB4qfWVKmvWyhgVZtIKZhXk2CmWPUXup8VHB/KnuIZYuUrdms8CRh
-         ZGXBUiYloimFWXRvJaoHQQCMBAH0Eq9LqvwSdbinetvrm39LdjWLkwUczTmDwyM1r7wU
-         jBI1GLl5MXYTj/Cv5zgRlEAMYBjXB8eldELYy6waTOJv2BlTxv1kozTd/PCDpcLhZJRD
-         34KxEliLZ5SfmXvAHUKMJH9GhkPTzAVu/gkTWjYID1Epm9XWS0jqYCpIzyeee1LrpaNv
-         1mew==
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=JGgGBJ6iTcbKviDbz9y0RzSzlsU0WbAQNuIja8EPXE0=;
+        b=NgRgPncTkW79mHbOMChhxFDHdlFYZfV2UIRbPhJvJy3f3KM6VKB/J8IQjlMDjX8lBn
+         PIGNkCzIm7z3UPAxzQz6EukjR7kJtpcuJexG0HU2rNDESO5c4Y5by6obMg3+g1sW5jEo
+         Zz9zZPTKioUHh1Eo6SwgCU71Lg+8rLIc3fGQ4B3r3KuhQSS6Htn+QPjiaY4zwv9nxfn9
+         hwFTJ5BmXYMFnt/NhEelYDdvthj1cdqgN3RBT5mcSxpn9gx885+FNGL49LXfCLVzYtci
+         KMBcTz/djLOjm0RP1QeKmqM5o6ie1hLaZPIIlgap2XLAoeNbZK8rbVyoRz2PfWBTf+oD
+         9vTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=GibyTGV+B5xsNkZJ26GNbrzMdDaqK1DVh86XCoj0ot8=;
-        b=AlYNXPLzyZ76hhVCCs0WZ29bofPrtWWCAQxHEq5d6bFk1xKrNyqgm+MbY9ggnnfNMj
-         yqp7WnES8JapPfbXWlcX0lDUJO7iYPtHpR/9THxPtRwjaeZ7WmONxckxHGvTkOV5ZhLS
-         KjfvQdl2o/DszA/RrF8hb9mwjExJSjqYgC0fXUbRrmwL74fvCsIQw5CIy8EuQrv3gZmU
-         WreMF6bqlZUDc8Q9f92T9saUls/RZbWVFXxH9tO1TsLZHSY7ZSREYCrU6XLCb0TIC/F3
-         g3BByNd/L3UgbRPAQlbOv3z7V02REpecyaLHaAzHaPTQ/B86CSzxJjXWcAz/1Uoj90Rq
-         ivZw==
-X-Gm-Message-State: AOAM532nxDbgv9ebLyCICLgttc9LZdJKk3QS/S8fmI5Z1CVEWVf9zoR0
-        z04lzley6WP0PM30PiGFGMs=
-X-Google-Smtp-Source: ABdhPJwYU6tP+XA8Zd03Fruxr4XV4jD1ATdV0K7Xd2Mqk0lmf0UOYRVn3446p2ja1SEHD9kJSUvdCQ==
-X-Received: by 2002:a05:600c:21ca:: with SMTP id x10mr5589548wmj.94.1613687810463;
-        Thu, 18 Feb 2021 14:36:50 -0800 (PST)
+        bh=JGgGBJ6iTcbKviDbz9y0RzSzlsU0WbAQNuIja8EPXE0=;
+        b=LM3+vEw+9FJZdpFdthqMjSR+cxfIUqjSzI4Vhuc07EAhXVqAd4G7mISPZ9Ggm6Q/It
+         A725JnVs3eoJ0+qCBy0gCipIGlNH82A/GyJYSQuQEMwTTSY+0Gh0/kf5zSz7Fb0cLb4B
+         pSQ/e0blQgpt77+5qb3k+nAHfV+M0q2jb6NcdIb/AbmCI3PzeHVCcCi5LEmngBUdIFk8
+         El3jPS/Q2rn2FmMzqPMDrCM1kav4ipe88gg9REGPRDVhqQnLkvXPsHqLH1iv5M9+UW3c
+         GlsNk/+DHjewGV12f4KjPhjb/uiuKl5YrpgJPXMXKKzMX++yITzW7yRRcTszzw8bPJ/z
+         8xqA==
+X-Gm-Message-State: AOAM5309WxTSBRR/9yszy9BMHbYxi8WZtFcpw7sLlkF2t20S/8gIyC/H
+        MYZ03xVHaokWvzpQgnwwq1w8Aqy3NDhm5Q==
+X-Google-Smtp-Source: ABdhPJzaJUtJ0xyGi2X/aWua4XaBhn+gp1T+qmuAOgQgrtVLii7UzWbRWq9yTg/hiMOHhY1C6i7KEw==
+X-Received: by 2002:adf:ce91:: with SMTP id r17mr6112672wrn.219.1613687811556;
+        Thu, 18 Feb 2021 14:36:51 -0800 (PST)
 Received: from localhost.localdomain ([85.255.236.139])
-        by smtp.gmail.com with ESMTPSA id w13sm9807439wrt.49.2021.02.18.14.36.49
+        by smtp.gmail.com with ESMTPSA id w13sm9807439wrt.49.2021.02.18.14.36.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Feb 2021 14:36:50 -0800 (PST)
+        Thu, 18 Feb 2021 14:36:51 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     stable@vger.kernel.org, Abaci <abaci@linux.alibaba.com>,
-        Hao Xu <haoxu@linux.alibaba.com>
-Subject: [PATCH 1/3] io_uring: don't take uring_lock during iowq cancel
-Date:   Thu, 18 Feb 2021 22:32:51 +0000
-Message-Id: <33d2525d823c02fa008e3b655a4480ec9780d1d1.1613687339.git.asml.silence@gmail.com>
+Subject: [PATCH 2/3] io_uring: fail io-wq submission from a task_work
+Date:   Thu, 18 Feb 2021 22:32:52 +0000
+Message-Id: <ae6848eec1847ff3811f13363f15308f033e7d41.1613687339.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1613687339.git.asml.silence@gmail.com>
 References: <cover.1613687339.git.asml.silence@gmail.com>
@@ -63,91 +61,105 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-[   97.866748] a.out/2890 is trying to acquire lock:
-[   97.867829] ffff8881046763e8 (&ctx->uring_lock){+.+.}-{3:3}, at:
-io_wq_submit_work+0x155/0x240
-[   97.869735]
-[   97.869735] but task is already holding lock:
-[   97.871033] ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
-__x64_sys_io_uring_enter+0x3f0/0x5b0
-[   97.873074]
-[   97.873074] other info that might help us debug this:
-[   97.874520]  Possible unsafe locking scenario:
-[   97.874520]
-[   97.875845]        CPU0
-[   97.876440]        ----
-[   97.877048]   lock(&ctx->uring_lock);
-[   97.877961]   lock(&ctx->uring_lock);
-[   97.878881]
-[   97.878881]  *** DEADLOCK ***
-[   97.878881]
-[   97.880341]  May be due to missing lock nesting notation
-[   97.880341]
-[   97.881952] 1 lock held by a.out/2890:
-[   97.882873]  #0: ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
-__x64_sys_io_uring_enter+0x3f0/0x5b0
-[   97.885108]
-[   97.885108] stack backtrace:
-[   97.890457] Call Trace:
-[   97.891121]  dump_stack+0xac/0xe3
-[   97.891972]  __lock_acquire+0xab6/0x13a0
-[   97.892940]  lock_acquire+0x2c3/0x390
-[   97.894894]  __mutex_lock+0xae/0x9f0
-[   97.901101]  io_wq_submit_work+0x155/0x240
-[   97.902112]  io_wq_cancel_cb+0x162/0x490
-[   97.904126]  io_async_find_and_cancel+0x3b/0x140
-[   97.905247]  io_issue_sqe+0x86d/0x13e0
-[   97.909122]  __io_queue_sqe+0x10b/0x550
-[   97.913971]  io_queue_sqe+0x235/0x470
-[   97.914894]  io_submit_sqes+0xcce/0xf10
-[   97.917872]  __x64_sys_io_uring_enter+0x3fb/0x5b0
-[   97.921424]  do_syscall_64+0x2d/0x40
-[   97.922329]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+In case of failure io_wq_submit_work() needs to post an CQE and so
+potentially take uring_lock. The safest way to deal with it is to do
+that from under task_work where we can safely take the lock.
 
-While holding uring_lock, e.g. from inline execution, async cancel
-request may attempt cancellations through io_wq_submit_work, which may
-try to grab a lock. Delay it to task_work, so we do it from a clean
-context and don't have to worry about locking.
+Also, as io_iopoll_check() holds the lock tight and releases it
+reluctantly, it will play nicer in the furuter with notifying an
+iopolling task about new such pending failed requests.
 
-Cc: <stable@vger.kernel.org> # 5.5+
-Fixes: c07e6719511e ("io_uring: hold uring_lock while completing failed polled io in io_wq_submit_work()")
-Reported-by: Abaci <abaci@linux.alibaba.com>
-Reported-by: Hao Xu <haoxu@linux.alibaba.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 48 ++++++++++++++++++------------------------------
+ 1 file changed, 18 insertions(+), 30 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2fdfe5fa00b0..8dab07f42b34 100644
+index 8dab07f42b34..1cb5e40d9822 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2337,7 +2337,9 @@ static void io_req_task_cancel(struct callback_head *cb)
- 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+@@ -2338,7 +2338,7 @@ static void io_req_task_cancel(struct callback_head *cb)
  	struct io_ring_ctx *ctx = req->ctx;
  
-+	mutex_lock(&ctx->uring_lock);
- 	__io_req_task_cancel(req, -ECANCELED);
-+	mutex_unlock(&ctx->uring_lock);
+ 	mutex_lock(&ctx->uring_lock);
+-	__io_req_task_cancel(req, -ECANCELED);
++	__io_req_task_cancel(req, req->result);
+ 	mutex_unlock(&ctx->uring_lock);
  	percpu_ref_put(&ctx->refs);
  }
+@@ -2371,11 +2371,22 @@ static void io_req_task_queue(struct io_kiocb *req)
+ 	req->task_work.func = io_req_task_submit;
+ 	ret = io_req_task_work_add(req);
+ 	if (unlikely(ret)) {
++		ret = -ECANCELED;
+ 		percpu_ref_get(&req->ctx->refs);
+ 		io_req_task_work_add_fallback(req, io_req_task_cancel);
+ 	}
+ }
  
-@@ -6426,8 +6428,13 @@ static void io_wq_submit_work(struct io_wq_work *work)
++static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
++{
++	percpu_ref_get(&req->ctx->refs);
++	req->result = ret;
++	req->task_work.func = io_req_task_cancel;
++
++	if (unlikely(io_req_task_work_add(req)))
++		io_req_task_work_add_fallback(req, io_req_task_cancel);
++}
++
+ static inline void io_queue_next(struct io_kiocb *req)
+ {
+ 	struct io_kiocb *nxt = io_req_find_next(req);
+@@ -6428,13 +6439,8 @@ static void io_wq_submit_work(struct io_wq_work *work)
  	if (timeout)
  		io_queue_linked_timeout(timeout);
  
--	if (work->flags & IO_WQ_WORK_CANCEL)
--		ret = -ECANCELED;
-+	if (work->flags & IO_WQ_WORK_CANCEL) {
-+		/* io-wq is going to take down one */
-+		refcount_inc(&req->refs);
-+		percpu_ref_get(&req->ctx->refs);
-+		io_req_task_work_add_fallback(req, io_req_task_cancel);
-+		return;
-+	}
+-	if (work->flags & IO_WQ_WORK_CANCEL) {
+-		/* io-wq is going to take down one */
+-		refcount_inc(&req->refs);
+-		percpu_ref_get(&req->ctx->refs);
+-		io_req_task_work_add_fallback(req, io_req_task_cancel);
+-		return;
+-	}
++	if (work->flags & IO_WQ_WORK_CANCEL)
++		ret = -ECANCELED;
  
  	if (!ret) {
  		do {
+@@ -6450,29 +6456,11 @@ static void io_wq_submit_work(struct io_wq_work *work)
+ 		} while (1);
+ 	}
+ 
++	/* avoid locking problems by failing it from a clean context */
+ 	if (ret) {
+-		struct io_ring_ctx *lock_ctx = NULL;
+-
+-		if (req->ctx->flags & IORING_SETUP_IOPOLL)
+-			lock_ctx = req->ctx;
+-
+-		/*
+-		 * io_iopoll_complete() does not hold completion_lock to
+-		 * complete polled io, so here for polled io, we can not call
+-		 * io_req_complete() directly, otherwise there maybe concurrent
+-		 * access to cqring, defer_list, etc, which is not safe. Given
+-		 * that io_iopoll_complete() is always called under uring_lock,
+-		 * so here for polled io, we also get uring_lock to complete
+-		 * it.
+-		 */
+-		if (lock_ctx)
+-			mutex_lock(&lock_ctx->uring_lock);
+-
+-		req_set_fail_links(req);
+-		io_req_complete(req, ret);
+-
+-		if (lock_ctx)
+-			mutex_unlock(&lock_ctx->uring_lock);
++		/* io-wq is going to take one down */
++		refcount_inc(&req->refs);
++		io_req_task_queue_fail(req, ret);
+ 	}
+ }
+ 
 -- 
 2.24.0
 

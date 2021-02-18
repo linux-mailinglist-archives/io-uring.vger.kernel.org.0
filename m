@@ -2,182 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A8A631EBA5
-	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 16:41:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8B931EBA6
+	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 16:41:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232499AbhBRPkc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Feb 2021 10:40:32 -0500
-Received: from hmm.wantstofly.org ([213.239.204.108]:57170 "EHLO
+        id S232545AbhBRPkv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Feb 2021 10:40:51 -0500
+Received: from hmm.wantstofly.org ([213.239.204.108]:57188 "EHLO
         mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232837AbhBRM3C (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 07:29:02 -0500
+        with ESMTP id S231965AbhBRM35 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 07:29:57 -0500
 Received: by mail.wantstofly.org (Postfix, from userid 1000)
-        id 258987F4BE; Thu, 18 Feb 2021 14:27:55 +0200 (EET)
-Date:   Thu, 18 Feb 2021 14:27:55 +0200
+        id 6966B7F4C0; Thu, 18 Feb 2021 14:28:42 +0200 (EET)
+Date:   Thu, 18 Feb 2021 14:28:42 +0200
 From:   Lennert Buytenhek <buytenh@wantstofly.org>
-To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Cc:     David Laight <David.Laight@aculab.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v3 2/2] io_uring: add support for IORING_OP_GETDENTS
-Message-ID: <20210218122755.GC334506@wantstofly.org>
-References: <20210218122640.GA334506@wantstofly.org>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing] IORING_OP_GETDENTS: add opcode, prep function,
+ test, man page section
+Message-ID: <20210218122842.GD334506@wantstofly.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210218122640.GA334506@wantstofly.org>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-IORING_OP_GETDENTS behaves much like getdents64(2) and takes the same
-arguments, but with a small twist: it takes an additional offset
-argument, and reading from the specified directory starts at the given
-offset.
-
-For the first IORING_OP_GETDENTS call on a directory, the offset
-parameter can be set to zero, and for subsequent calls, it can be
-set to the ->d_off field of the last struct linux_dirent64 returned
-by the previous IORING_OP_GETDENTS call.
-
-Internally, if necessary, IORING_OP_GETDENTS will vfs_llseek() to
-the right directory position before calling vfs_getdents().
-
-IORING_OP_GETDENTS may or may not update the specified directory's
-file offset, and the file offset should not be relied upon having
-any particular value during or after an IORING_OP_GETDENTS call.
-
 Signed-off-by: Lennert Buytenhek <buytenh@wantstofly.org>
 ---
- fs/io_uring.c                 | 73 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 74 insertions(+)
+ man/io_uring_enter.2            |  26 +++++
+ src/include/liburing.h          |   7 ++
+ src/include/liburing/io_uring.h |   1 +
+ test/Makefile                   |   1 +
+ test/getdents.c                 | 180 ++++++++++++++++++++++++++++++++
+ 5 files changed, 215 insertions(+)
+ create mode 100644 test/getdents.c
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 056bd4c90ade..6853bf48369a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -635,6 +635,13 @@ struct io_mkdir {
- 	struct filename			*filename;
- };
+diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+index 086207d..e0bd638 100644
+--- a/man/io_uring_enter.2
++++ b/man/io_uring_enter.2
+@@ -759,6 +759,32 @@ being passed in to
+ .BR unlinkat(2).
+ Available since 5.11.
  
-+struct io_getdents {
-+	struct file			*file;
-+	struct linux_dirent64 __user	*dirent;
-+	unsigned int			count;
-+	loff_t				pos;
-+};
++.TP
++.B IORING_OP_GETDENTS
++Issue the equivalent of an
++.BR lseek(2)
++system call plus a
++.BR getdents64(2)
++system call.
++.I fd
++should be set to the fd of the directory being operated on,
++.I off
++should be set to the offset in the directory to start reading from,
++.I addr
++should be set to the
++.I dirp,
++and
++.I len
++should be set to the
++.I count.
 +
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -772,6 +779,7 @@ struct io_kiocb {
- 		struct io_rename	rename;
- 		struct io_unlink	unlink;
- 		struct io_mkdir		mkdir;
-+		struct io_getdents	getdents;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -1030,6 +1038,11 @@ static const struct io_op_def io_op_defs[] = {
- 		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
- 						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
- 	},
-+	[IORING_OP_GETDENTS] = {
-+		.needs_file		= 1,
-+		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
-+						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
-+	},
- };
- 
- static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
-@@ -4677,6 +4690,61 @@ static int io_sync_file_range(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
++.B IORING_OP_GETDENTS
++may or may not change the specified directory's file offset, and the
++file offset should not be relied upon having any particular value during
++or after an
++.B IORING_OP_GETDENTS
++operation.
++
+ .PP
+ The
+ .I flags
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 5b96e02..1769cda 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -535,6 +535,13 @@ static inline void io_uring_prep_sync_file_range(struct io_uring_sqe *sqe,
+ 	sqe->sync_range_flags = flags;
  }
  
-+static int io_getdents_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
++static inline void io_uring_prep_getdents(struct io_uring_sqe *sqe, int fd,
++					  void *buf, unsigned int count,
++					  uint64_t off)
 +{
-+	struct io_getdents *getdents = &req->getdents;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
-+		return -EINVAL;
-+
-+	getdents->pos = READ_ONCE(sqe->off);
-+	getdents->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	getdents->count = READ_ONCE(sqe->len);
-+	return 0;
++	io_uring_prep_rw(IORING_OP_GETDENTS, sqe, fd, buf, count, off);
 +}
 +
-+static int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_getdents *getdents = &req->getdents;
-+	bool pos_unlock = false;
-+	int ret = 0;
-+
-+	/* getdents always requires a blocking context */
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	/* for vfs_llseek and to serialize ->iterate_shared() on this file */
-+	if (file_count(req->file) > 1) {
-+		pos_unlock = true;
-+		mutex_lock(&req->file->f_pos_lock);
-+	}
-+
-+	if (req->file->f_pos != getdents->pos) {
-+		loff_t res = vfs_llseek(req->file, getdents->pos, SEEK_SET);
-+		if (res < 0)
-+			ret = res;
-+	}
-+
-+	if (ret == 0) {
-+		ret = vfs_getdents(req->file, getdents->dirent,
-+				   getdents->count);
-+	}
-+
-+	if (pos_unlock)
-+		mutex_unlock(&req->file->f_pos_lock);
-+
-+	if (ret < 0) {
-+		if (ret == -ERESTARTSYS)
-+			ret = -EINTR;
-+		req_set_fail_links(req);
-+	}
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- #if defined(CONFIG_NET)
- static int io_setup_async_msg(struct io_kiocb *req,
- 			      struct io_async_msghdr *kmsg)
-@@ -6184,6 +6252,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_unlinkat_prep(req, sqe);
- 	case IORING_OP_MKDIRAT:
- 		return io_mkdirat_prep(req, sqe);
-+	case IORING_OP_GETDENTS:
-+		return io_getdents_prep(req, sqe);
- 	}
- 
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6428,6 +6498,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_MKDIRAT:
- 		ret = io_mkdirat(req, issue_flags);
- 		break;
-+	case IORING_OP_GETDENTS:
-+		ret = io_getdents(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 890edd850a9e..fe097b1fa332 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -138,6 +138,7 @@ enum {
+ /*
+  * Returns number of unconsumed (if SQPOLL) or unsubmitted entries exist in
+  * the SQ ring
+diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
+index 1d47389..8abc0af 100644
+--- a/src/include/liburing/io_uring.h
++++ b/src/include/liburing/io_uring.h
+@@ -142,6 +142,7 @@ enum {
  	IORING_OP_RENAMEAT,
  	IORING_OP_UNLINKAT,
  	IORING_OP_MKDIRAT,
@@ -185,5 +103,203 @@ index 890edd850a9e..fe097b1fa332 100644
  
  	/* this goes last, obviously */
  	IORING_OP_LAST,
+diff --git a/test/Makefile b/test/Makefile
+index 7751eff..c76987a 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -55,6 +55,7 @@ test_targets += \
+ 	files-exit-hang-timeout \
+ 	fixed-link \
+ 	fsync \
++	getdents \
+ 	io-cancel \
+ 	io_uring_enter \
+ 	io_uring_register \
+diff --git a/test/getdents.c b/test/getdents.c
+new file mode 100644
+index 0000000..3ca7b05
+--- /dev/null
++++ b/test/getdents.c
+@@ -0,0 +1,180 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Description: run various getdents tests
++ *
++ */
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <string.h>
++#include <fcntl.h>
++
++#include "liburing.h"
++
++/*
++ * This struct isn't exported via include/uapi/ , so we define it by hand.
++ */
++struct linux_dirent64 {
++	uint64_t	d_ino;
++	int64_t		d_off;
++	uint16_t	d_reclen;
++	uint8_t		d_type;
++	char		d_name[];
++};
++
++#define BUFSZ		65536
++
++static int dirfd;
++
++static int test_getdents(struct io_uring *ring, void *buf,
++			 unsigned int count, uint64_t off)
++{
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	int ret;
++
++	sqe = io_uring_get_sqe(ring);
++	if (!sqe) {
++		fprintf(stderr, "get sqe failed\n");
++		goto err;
++	}
++	io_uring_prep_getdents(sqe, dirfd, buf, count, off);
++
++	ret = io_uring_submit(ring);
++	if (ret <= 0) {
++		fprintf(stderr, "sqe submit failed: %d\n", ret);
++		goto err;
++	}
++
++	ret = io_uring_wait_cqe(ring, &cqe);
++	if (ret < 0) {
++		fprintf(stderr, "wait completion %d\n", ret);
++		goto err;
++	}
++
++	ret = cqe->res;
++
++	io_uring_cqe_seen(ring, cqe);
++
++	return ret;
++
++err:
++	return -1;
++}
++
++static void dump_dents(const uint8_t *buf, int len)
++{
++	const uint8_t *end;
++
++	fprintf(stderr, "inode offset type path\n");
++
++	end = buf + len;
++	while (buf < end) {
++		struct linux_dirent64 *dent;
++
++		dent = (struct linux_dirent64 *)buf;
++
++		fprintf(stderr, "%" PRId64 " %" PRId64 " %d %s\n", dent->d_ino,
++			dent->d_off, dent->d_type, dent->d_name);
++
++		buf += dent->d_reclen;
++	}
++
++	fprintf(stderr, "\n");
++}
++
++int main(int argc, char *argv[])
++{
++	struct io_uring ring;
++	int ret;
++	uint8_t buf[BUFSZ];
++	bool found_dot;
++	bool found_dotdot;
++	uint8_t *bufp;
++	uint8_t *end;
++
++	if (argc > 1)
++		return 0;
++
++	ret = io_uring_queue_init(1, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "ring setup failed: %d\n", ret);
++		return 1;
++	}
++
++	dirfd = open(".", O_DIRECTORY);
++	if (dirfd < 0) {
++		fprintf(stderr, "opening \".\" failed: %s\n", strerror(errno));
++		return 1;
++	}
++
++	memset(buf, 0, sizeof(buf));
++
++	ret = test_getdents(&ring, buf, sizeof(buf), 0);
++	if (ret < 0) {
++		if (ret == -EINVAL) {
++			fprintf(stdout, "getdents not supported, skipping\n");
++			return 0;
++		}
++		fprintf(stderr, "getdents: %s\n", strerror(-ret));
++		return 1;
++	}
++
++	found_dot = false;
++	found_dotdot = false;
++
++	bufp = buf;
++	end = bufp + ret;
++
++	while (bufp < end) {
++		struct linux_dirent64 *dent;
++		uint8_t buf2[BUFSZ];
++
++		dent = (struct linux_dirent64 *)bufp;
++
++		if (!found_dot && !strcmp(dent->d_name, "."))
++			found_dot = true;
++		else if (!found_dotdot && !strcmp(dent->d_name, ".."))
++			found_dotdot = true;
++
++		bufp += dent->d_reclen;
++
++		/*
++		 * Now try to read the directory starting from the given
++		 * offset, and make sure we end up with the same data.
++		 */
++		memset(buf2, 0, sizeof(buf2));
++
++		ret = test_getdents(&ring, buf2, sizeof(buf2), dent->d_off);
++		if (ret < 0) {
++			fprintf(stderr, "getdents: %s\n", strerror(-ret));
++			return 1;
++		}
++
++		if (ret != end - bufp || memcmp(bufp, buf2, ret)) {
++			fprintf(stderr, "getdents: read from offset "
++					"%" PRId64 " returned unexpected "
++					"data\n\n", (uint64_t)dent->d_off);
++
++			fprintf(stderr, "read from offset zero:\n");
++			dump_dents(bufp, end - bufp);
++
++			fprintf(stderr, "offsetted read:\n");
++			dump_dents(buf2, ret);
++
++			return 1;
++		}
++	}
++
++	if (!found_dot)
++		fprintf(stderr, "getdents didn't return \".\" entry\n");
++
++	if (!found_dotdot)
++		fprintf(stderr, "getdents didn't return \"..\" entry\n");
++
++	if (!found_dot || !found_dotdot)
++		return 1;
++
++	return 0;
++}
 -- 
 2.29.2

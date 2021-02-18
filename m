@@ -2,97 +2,260 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6447231EEFE
-	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 19:54:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6D6831F047
+	for <lists+io-uring@lfdr.de>; Thu, 18 Feb 2021 20:50:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233004AbhBRSwf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Feb 2021 13:52:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41564 "EHLO
+        id S230233AbhBRTpH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Feb 2021 14:45:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232725AbhBRSgh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 13:36:37 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D346C061A2E
-        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 10:34:14 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id o24so4810125wmh.5
-        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 10:34:14 -0800 (PST)
+        with ESMTP id S234327AbhBRTUT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Feb 2021 14:20:19 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59DFDC061786
+        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 11:19:39 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id a4so1975296wro.8
+        for <io-uring@vger.kernel.org>; Thu, 18 Feb 2021 11:19:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FcRDUdaUu0FgLE0H9Ma8fWRbKfFuiYxozqwzcx3w0i4=;
-        b=f8a2ECM26F8jv+dBsPWEV8ZvaC1i9fWa9c+tRFTlVLgiXyoZEvYAqjsd7zRbxfVm/n
-         xcs9BoTf26YJ6+R2UG+3lyo3rkznm18xLeXQaL6vSf88tcBKHCOrwfVHMiuLyNg9yGF8
-         BENMnSvp9UQKCUc//XnWZNUOIfbrMI8y3OU5rjGe9tDgt2dMeNzVKld5jqpuEYfayoGh
-         8l4u91p0WC2xOi21HRPgNdlvciomqzPkn74O2E3fLThvZ/2xLu+aJ0hu7VR5O7fyp7XL
-         PTGtAAU1OwCst80FsMRtS9zsG/MofY1++dcS2rd89wCLjnzTs9w66azqMWimyMZtSfnn
-         SYRw==
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0NNkw0s+Y93loPF8sCwa+xYAR2Beqa68QpY4hJ+7PO0=;
+        b=nyVe02z/GPJf50yagF7XPRCuRDQFe53CqZ7UU21FhtNHrJooSP4N6rbUAbLD5FuwBF
+         HD7Yj6Ns+KGc5kx0qyYU/SO3z2VLuQvTT92zLjft35MFiga7dMpZxgFtTo26mcOPJwhG
+         hLgmpbWl8nxHgiE71XVL+QDoJrJFoTExQcpS+wZ+UIptgILDAacOd95+8D0nUUIKrZtI
+         xzIpWRMTw1MCnoLWPQWOoauy/virmCvQVRN7h+EvLmJoEy1NzWQ7nF6T/sW5WHnx4Sop
+         VZJROeTcVMWGD3lNPPGKp9yTonJ41cv0MpucmmtD0TFUVFrQqbLyGD04HuIDPUDjBKFL
+         LA3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FcRDUdaUu0FgLE0H9Ma8fWRbKfFuiYxozqwzcx3w0i4=;
-        b=rrssYzax33wvioLfInFU990Ns5B3WVxSS6Jkg5gEFVSe8smfVW/PQ5lS9QAjm18a2G
-         ifnlX8WiPY7RLmSTXKXU3tzW3DHySoxbwhXjv84EY+N5gEsEekZMS7LreLor9TMS84Jb
-         zFN9SG0hSaNDzZvIbT1HM1F0gb/4qJHU4oK0pHtMWL+UO4IHu+aDwVC+6AiqnnNorv3X
-         P5IiRjVUlPU/XeMLLJPXo99kcILyENZKpaGL9ccg/uH4pERDMSZ/IcGdu79YQQzLP3mG
-         w5C4FMEstnHuIh716kQhNXsYwSId5EPEsTBs1YccpFVAyyr1l3015YEWz+D4s0vVkwqS
-         EfjA==
-X-Gm-Message-State: AOAM53292/wcADhpoLvik03SZFdAwf4pE3L8+eQelq2lVDaP1OjLDmbf
-        VSFJSVrIwN/sZlIwriFeKbY4pBGbh4u93g==
-X-Google-Smtp-Source: ABdhPJzgkcBfGarqVGwZLl/XRf3CDC5cgNmDLP+ZnzncHDPMTLmbF5BmiGXWcnt4XpSOolZR3vjZKA==
-X-Received: by 2002:a05:600c:21c1:: with SMTP id x1mr1465243wmj.185.1613673252889;
-        Thu, 18 Feb 2021 10:34:12 -0800 (PST)
-Received: from localhost.localdomain ([85.255.236.139])
-        by smtp.gmail.com with ESMTPSA id z2sm8658647wml.30.2021.02.18.10.34.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Feb 2021 10:34:12 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=0NNkw0s+Y93loPF8sCwa+xYAR2Beqa68QpY4hJ+7PO0=;
+        b=iuIit5RgxUq3GnJp2Sctrfn+spg1V8Ev3f5CNZWkuYC/KvXdXtPV/8mK82Lyr24jKv
+         OdaRB9I9skBIaVLwg88P0ZBojHeoO22FnpeOkBXjTASW19QcXMYfmG+XuG9lEQPofOFJ
+         RLnApzKiFR4tzOIDEiamChlXStxnbmoXwFrdUKmhvn2Q/+kNJz53k8ByQRB16KnkBRFt
+         r2xkCAp9bknHDASmG2x0Qe7LmU5royQCWckHp6CqvaSw9sb8FrV5mbOqsf76X1TC3kmQ
+         MLJJKWOdZPv1A11bAZN1Xn7wGLD8S7sPN7YYmmX8MdJDlLlONQg3JAxUkgMBFivuwuZL
+         9Bnw==
+X-Gm-Message-State: AOAM533YxnHSf0MRhONxVWU5qmio+1yxEaxqPo1w6LFtAWdVTFf0K5pn
+        Hn1hDFi5ToZE8wxxSEbQ2Gw=
+X-Google-Smtp-Source: ABdhPJyr3cVUHuTnWUzzOVRUvPo9x/BYjfftbADDWORiSnDOd94xK03thHptclfPJ7KOcrNhImXAIg==
+X-Received: by 2002:adf:efc9:: with SMTP id i9mr5476823wrp.177.1613675977855;
+        Thu, 18 Feb 2021 11:19:37 -0800 (PST)
+Received: from [192.168.8.135] ([85.255.236.139])
+        by smtp.gmail.com with ESMTPSA id z21sm3165983wma.29.2021.02.18.11.19.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Feb 2021 11:19:37 -0800 (PST)
+Subject: Re: [PATCH] io_uring: don't recursively hold ctx->uring_lock in
+ io_wq_submit_work()
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1611394824-73078-1-git-send-email-haoxu@linux.alibaba.com>
+ <45a0221a-bd2b-7183-e35d-2d2550f687b5@kernel.dk>
+ <d5ff7e3d-db29-ea00-9be5-50b65c69769c@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH liburing] test: don't expect links to be partially executed
-Date:   Thu, 18 Feb 2021 18:30:17 +0000
-Message-Id: <0b73a72d85384612118173d0a26609a728316b63.1613672934.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <da91697b-9f7e-2258-9ecc-fb19fc945042@gmail.com>
+Date:   Thu, 18 Feb 2021 19:15:48 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <d5ff7e3d-db29-ea00-9be5-50b65c69769c@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When we link a buggy request, the whole link collected by that moment
-may be cancelled even before it got issued. Don't expect it to be
-partially executed.
+On 18/02/2021 17:16, Hao Xu wrote:
+> 在 2021/1/25 下午12:31, Jens Axboe 写道:
+>> On 1/23/21 2:40 AM, Hao Xu wrote:
+>>> Abaci reported the following warning:
+>>>
+>>> [   97.862205] ============================================
+>>> [   97.863400] WARNING: possible recursive locking detected
+>>> [   97.864640] 5.11.0-rc4+ #12 Not tainted
+>>> [   97.865537] --------------------------------------------
+>>> [   97.866748] a.out/2890 is trying to acquire lock:
+>>> [   97.867829] ffff8881046763e8 (&ctx->uring_lock){+.+.}-{3:3}, at:
+>>> io_wq_submit_work+0x155/0x240
+>>> [   97.869735]
+>>> [   97.869735] but task is already holding lock:
+>>> [   97.871033] ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
+>>> __x64_sys_io_uring_enter+0x3f0/0x5b0
+>>> [   97.873074]
+>>> [   97.873074] other info that might help us debug this:
+>>> [   97.874520]  Possible unsafe locking scenario:
+>>> [   97.874520]
+>>> [   97.875845]        CPU0
+>>> [   97.876440]        ----
+>>> [   97.877048]   lock(&ctx->uring_lock);
+>>> [   97.877961]   lock(&ctx->uring_lock);
+>>> [   97.878881]
+>>> [   97.878881]  *** DEADLOCK ***
+>>> [   97.878881]
+>>> [   97.880341]  May be due to missing lock nesting notation
+>>> [   97.880341]
+>>> [   97.881952] 1 lock held by a.out/2890:
+>>> [   97.882873]  #0: ffff88810dfe0be8 (&ctx->uring_lock){+.+.}-{3:3}, at:
+>>> __x64_sys_io_uring_enter+0x3f0/0x5b0
+>>> [   97.885108]
+>>> [   97.885108] stack backtrace:
+>>> [   97.886209] CPU: 0 PID: 2890 Comm: a.out Not tainted 5.11.0-rc4+ #12
+>>> [   97.887683] Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS
+>>> rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+>>> [   97.890457] Call Trace:
+>>> [   97.891121]  dump_stack+0xac/0xe3
+>>> [   97.891972]  __lock_acquire+0xab6/0x13a0
+>>> [   97.892940]  lock_acquire+0x2c3/0x390
+>>> [   97.893853]  ? io_wq_submit_work+0x155/0x240
+>>> [   97.894894]  __mutex_lock+0xae/0x9f0
+>>> [   97.895785]  ? io_wq_submit_work+0x155/0x240
+>>> [   97.896816]  ? __lock_acquire+0x782/0x13a0
+>>> [   97.897817]  ? io_wq_submit_work+0x155/0x240
+>>> [   97.898867]  ? io_wq_submit_work+0x155/0x240
+>>> [   97.899916]  ? _raw_spin_unlock_irqrestore+0x2d/0x40
+>>> [   97.901101]  io_wq_submit_work+0x155/0x240
+>>> [   97.902112]  io_wq_cancel_cb+0x162/0x490
+>>> [   97.903084]  ? io_uring_get_socket+0x40/0x40
+>>> [   97.904126]  io_async_find_and_cancel+0x3b/0x140
+>>> [   97.905247]  io_issue_sqe+0x86d/0x13e0
+>>> [   97.906186]  ? __lock_acquire+0x782/0x13a0
+>>> [   97.907195]  ? __io_queue_sqe+0x10b/0x550
+>>> [   97.908175]  ? lock_acquire+0x2c3/0x390
+>>> [   97.909122]  __io_queue_sqe+0x10b/0x550
+>>> [   97.910080]  ? io_req_prep+0xd8/0x1090
+>>> [   97.911044]  ? mark_held_locks+0x5a/0x80
+>>> [   97.912042]  ? mark_held_locks+0x5a/0x80
+>>> [   97.913014]  ? io_queue_sqe+0x235/0x470
+>>> [   97.913971]  io_queue_sqe+0x235/0x470
+>>> [   97.914894]  io_submit_sqes+0xcce/0xf10
+>>> [   97.915842]  ? xa_store+0x3b/0x50
+>>> [   97.916683]  ? __x64_sys_io_uring_enter+0x3f0/0x5b0
+>>> [   97.917872]  __x64_sys_io_uring_enter+0x3fb/0x5b0
+>>> [   97.918995]  ? lockdep_hardirqs_on_prepare+0xde/0x180
+>>> [   97.920204]  ? syscall_enter_from_user_mode+0x26/0x70
+>>> [   97.921424]  do_syscall_64+0x2d/0x40
+>>> [   97.922329]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>> [   97.923538] RIP: 0033:0x7f0b62601239
+>>> [   97.924437] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00
+>>> 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f
+>>>     05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 ec 2c 00 f7 d8 64 89 01
+>>>        48
+>>> [   97.928628] RSP: 002b:00007f0b62cc4d28 EFLAGS: 00000246 ORIG_RAX:
+>>> 00000000000001aa
+>>> [   97.930422] RAX: ffffffffffffffda RBX: 0000000000000000 RCX:
+>>> 00007f0b62601239
+>>> [   97.932073] RDX: 0000000000000000 RSI: 0000000000006cf6 RDI:
+>>> 0000000000000005
+>>> [   97.933710] RBP: 00007f0b62cc4e20 R08: 0000000000000000 R09:
+>>> 0000000000000000
+>>> [   97.935369] R10: 0000000000000000 R11: 0000000000000246 R12:
+>>> 0000000000000000
+>>> [   97.937008] R13: 0000000000021000 R14: 0000000000000000 R15:
+>>> 00007f0b62cc5700
+>>>
+>>> This is caused by try to hold uring_lock in io_wq_submit_work() without
+>>> checking if we are in io-wq thread context or not. It can be in original
+>>> context when io_wq_submit_work() is called from IORING_OP_ASYNC_CANCEL
+>>> code path, where we already held uring_lock.
+>>
+>> Looks like another fallout of the split CLOSE handling. I've got the
+>> right fixes pending for 5.12:
+>>
+>> https://git.kernel.dk/cgit/linux-block/commit/?h=for-5.12/io_uring&id=6bb0079ef3420041886afe1bcd8e7a87e08992e1
+>>
+>> (and the prep patch before that in the tree). But that won't really
+>> help us for 5.11 and earlier, though we probably should just queue
+>> those two patches for 5.11 and get them into stable. I really don't
+>> like the below patch, though it should fix it. But the root cause
+>> is really the weird open cancelation...
+>>
+> Hi Jens,
+> I've repro-ed this issue on branch for-5.12/io_uring-2021-02-17
+> which contains the patch you give, the issue still exists.
+> I think this one is not an async close specifical problem.
+> The rootcause is we try to run an iowq work in the original
+> context(queue an iowq work, then async cancel it).
+If you mean cancellation executed from task_work or inline (during
+submission), then yes, I agree.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/register-restrictions.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Can you try a diff below?
 
-diff --git a/test/register-restrictions.c b/test/register-restrictions.c
-index 04a0ed9..bcae67c 100644
---- a/test/register-restrictions.c
-+++ b/test/register-restrictions.c
-@@ -351,13 +351,19 @@ static int test_restrictions_flags(void)
- 	io_uring_sqe_set_flags(sqe, IOSQE_FIXED_FILE | IOSQE_IO_LINK);
- 	sqe->user_data = 3;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 2fdfe5fa00b0..8dab07f42b34 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2337,7 +2337,9 @@ static void io_req_task_cancel(struct callback_head *cb)
+ 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
+ 	struct io_ring_ctx *ctx = req->ctx;
  
-+	ret = io_uring_submit(&ring);
-+	if (ret != 3) {
-+		fprintf(stderr, "submit: %d\n", ret);
-+		return TEST_FAILED;
++	mutex_lock(&ctx->uring_lock);
+ 	__io_req_task_cancel(req, -ECANCELED);
++	mutex_unlock(&ctx->uring_lock);
+ 	percpu_ref_put(&ctx->refs);
+ }
+ 
+@@ -6426,8 +6428,13 @@ static void io_wq_submit_work(struct io_wq_work *work)
+ 	if (timeout)
+ 		io_queue_linked_timeout(timeout);
+ 
+-	if (work->flags & IO_WQ_WORK_CANCEL)
+-		ret = -ECANCELED;
++	if (work->flags & IO_WQ_WORK_CANCEL) {
++		/* io-wq is going to take down one */
++		refcount_inc(&req->refs);
++		percpu_ref_get(&req->ctx->refs);
++		io_req_task_work_add_fallback(req, io_req_task_cancel);
++		return;
 +	}
-+
- 	sqe = io_uring_get_sqe(&ring);
- 	io_uring_prep_writev(sqe, 1, &vec, 1, 0);
- 	io_uring_sqe_set_flags(sqe, IOSQE_FIXED_FILE | IOSQE_IO_DRAIN);
- 	sqe->user_data = 4;
  
- 	ret = io_uring_submit(&ring);
--	if (ret != 4) {
-+	if (ret != 1) {
- 		fprintf(stderr, "submit: %d\n", ret);
- 		return TEST_FAILED;
- 	}
+ 	if (!ret) {
+ 		do {
 -- 
 2.24.0
-

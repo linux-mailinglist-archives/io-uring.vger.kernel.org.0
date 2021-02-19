@@ -2,52 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C8C731F91A
-	for <lists+io-uring@lfdr.de>; Fri, 19 Feb 2021 13:13:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65C7131F937
+	for <lists+io-uring@lfdr.de>; Fri, 19 Feb 2021 13:15:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230038AbhBSMKe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 19 Feb 2021 07:10:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41542 "EHLO
+        id S229999AbhBSMOj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 Feb 2021 07:14:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229959AbhBSMKb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Feb 2021 07:10:31 -0500
+        with ESMTP id S229925AbhBSMOe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Feb 2021 07:14:34 -0500
 Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE670C061574;
-        Fri, 19 Feb 2021 04:09:49 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id v15so8128917wrx.4;
-        Fri, 19 Feb 2021 04:09:49 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2AC7C061574;
+        Fri, 19 Feb 2021 04:13:53 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id u14so8146167wri.3;
+        Fri, 19 Feb 2021 04:13:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mLZ7yE0qPJLT/6EKNn4r5XPFKjIt+psxXa9UkDGVnKc=;
-        b=fNA7dP2fsBVPLkSM6nOIWpVODiILiveTKWQgk1pDTW++JjewaoHJSRRAFJJOnpfj+y
-         KP5e9O6SlljcQsCfB8rADFopS04gB+ViR5Y1aA8zVNQN1skW6EBVKAsNRDAbR7RUJFcu
-         sGusZ9ShtGaKjt54OsnQqxs1+NfW48evAl4LfR40G2+ZT5JE/hbNSiuRRj0vl5igVOsE
-         iZIWyPH1IBPaSFuHcTzWmI1tQMLCaX7D1mx6Ek5K4sK6XZZGEYmbRVmCCKs0fGlu6XwT
-         T+b82RuN4C2JfG14CccKSRQNkWa7obRDuF1l/hC2O6YX2rysnFdckRpyiX6rmxvtziRo
-         bl2A==
+        bh=lC/6S83UE9attWdnqa03ItP217AkvthfimlIDH5xWFs=;
+        b=brJlnn3xF6MW/eG0I+HvUdhngEosoUpud/ndzmgrqq8oJxhRolwfYO7aFlWMlbHOZV
+         LoRs7m7ARL0l7Ol5Pvs37drZZ2L+H7droL5DjqKQsa22Di0ALYUmymkx7N9yiJiXwxYI
+         RuOCt1iw6NgTh8SVYOZlWFlFlNMcQQIpvWLEtmZ1+nk6bDeG4zKRRrl9doT7Uf7xtFLh
+         cR0ad3NSnMtsURwk+Y8JPVlYp3PLAc/mcGU810Vh95BGt3iI2qML2eUHx7Tyx3UDHgsh
+         GeUDZ2eHLRG/nAyJ2vLarmW2KxfrHhNK2NOAaEM0jNgJ9uvOM//UvvCrfr1P3y9DCrhK
+         SBJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=mLZ7yE0qPJLT/6EKNn4r5XPFKjIt+psxXa9UkDGVnKc=;
-        b=tG8juY1SIp6qkre25Bz58ac/PY4g/oBr0aePsSMInIhM1fQ4U4ZaZFUimwCdY2qfHg
-         qDOaFo4PzIurPg8BPuJwov2RSuvJltqDtD+caF0lGk3DnJFunZK6uBjWuBOVvtcdA5qs
-         0AtlltX7G3oPFgWOa3qZpKIJY/Z9do+ImZezZfPGOIpkQlNUxwij4hgx46qVzyd+2W9Z
-         z2P0SVgquqjXeJUbQLtJuWxB2sIcxlXSge3Pp7d4tL6IDTDeuwklwdxSvkBGB6hnLwJG
-         0P/noe1myrvHYxC1AlHzqRlzsiUvhzhO9k3tMI0GSnv5S6MEIOTyOYmNQCvByQUnK9z4
-         zKtQ==
-X-Gm-Message-State: AOAM530fa3BWw3Lc+mKE79byWqIeCZnJwiJ8mlSl+DfD5xntSWVYPmNv
-        e3PdPD+1prsRIM0poMzb99tu0ZuXxfKdcg==
-X-Google-Smtp-Source: ABdhPJxo94ZvKaUPPhVRMJZC0BPQb6rbv3V0H0prGyFYfR1uG8dqe5AVlN1HpZ+VOif8XDkUWlzi0Q==
-X-Received: by 2002:a5d:570a:: with SMTP id a10mr9133048wrv.70.1613736588573;
-        Fri, 19 Feb 2021 04:09:48 -0800 (PST)
+        bh=lC/6S83UE9attWdnqa03ItP217AkvthfimlIDH5xWFs=;
+        b=ZXbEFzC+XOtrMEqvW4p8eieOHT5O7RjxSRGbz3zBQibHZqFTp5g+e20bAksR15ybm6
+         UoylO+js+nZFLwS41oBXXw9g4uZb0nflAFT3gvWqNQz+xqQQ30cF7itS8XY/taCRkKAV
+         KP660ucayea9bhRuFN7NbylkusVkKe9Zv+550XE0fCeIpgLO9LdEN39GffQgwQ/t88mv
+         4FY+ucx7gHk1dn7yazlzUnR1QXtxJWAhoM1zRgiysYBv6dFUaSgbcJJxxXXB4ZN/gJSi
+         dCm3PBJtrgZc6oPD9ZOh5tNwAXblpyHuOjwExchdrBLRjaSNI9KgpXEbT8Y1kezKr4qD
+         25uw==
+X-Gm-Message-State: AOAM533QH/JLk5CrWK+Jz7ErWrVymionZUzYPet+y0vO74hJhYq91HiJ
+        UqH4oGrI9kmJ33qT+PCVamSE62LzvagkQQ==
+X-Google-Smtp-Source: ABdhPJwmsf4IxChnW/5o1gUo1cm9flbMjcJC3Z8KarywzK08wJtwzMaCYaygzvAKG8q16oYYzqyVAA==
+X-Received: by 2002:adf:d229:: with SMTP id k9mr2662390wrh.112.1613736832368;
+        Fri, 19 Feb 2021 04:13:52 -0800 (PST)
 Received: from [192.168.8.137] ([85.255.236.139])
-        by smtp.gmail.com with ESMTPSA id x18sm12603082wrs.16.2021.02.19.04.09.47
+        by smtp.gmail.com with ESMTPSA id o13sm16033673wrs.45.2021.02.19.04.13.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Feb 2021 04:09:48 -0800 (PST)
+        Fri, 19 Feb 2021 04:13:52 -0800 (PST)
+Subject: Re: [PATCH v3 2/2] io_uring: add support for IORING_OP_GETDENTS
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Lennert Buytenhek <buytenh@wantstofly.org>,
         Jens Axboe <axboe@kernel.dk>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -57,7 +59,7 @@ Cc:     David Laight <David.Laight@aculab.com>,
         Matthew Wilcox <willy@infradead.org>
 References: <20210218122640.GA334506@wantstofly.org>
  <20210218122755.GC334506@wantstofly.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <9a6fb59b-be85-c36b-3c83-26cff37bcb87@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -101,100 +103,105 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH v3 2/2] io_uring: add support for IORING_OP_GETDENTS
-Message-ID: <9a6fb59b-be85-c36b-3c83-26cff37bcb87@gmail.com>
-Date:   Fri, 19 Feb 2021 12:05:58 +0000
+Message-ID: <8b675c3d-3d25-aaca-7796-e02bba2da01a@gmail.com>
+Date:   Fri, 19 Feb 2021 12:10:02 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20210218122755.GC334506@wantstofly.org>
+In-Reply-To: <9a6fb59b-be85-c36b-3c83-26cff37bcb87@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 18/02/2021 12:27, Lennert Buytenhek wrote:
-> IORING_OP_GETDENTS behaves much like getdents64(2) and takes the same
-> arguments, but with a small twist: it takes an additional offset
-> argument, and reading from the specified directory starts at the given
-> offset.
+On 19/02/2021 12:05, Pavel Begunkov wrote:
+> On 18/02/2021 12:27, Lennert Buytenhek wrote:
+>> IORING_OP_GETDENTS behaves much like getdents64(2) and takes the same
+>> arguments, but with a small twist: it takes an additional offset
+>> argument, and reading from the specified directory starts at the given
+>> offset.
+>>
+>> For the first IORING_OP_GETDENTS call on a directory, the offset
+>> parameter can be set to zero, and for subsequent calls, it can be
+>> set to the ->d_off field of the last struct linux_dirent64 returned
+>> by the previous IORING_OP_GETDENTS call.
+>>
+>> Internally, if necessary, IORING_OP_GETDENTS will vfs_llseek() to
+>> the right directory position before calling vfs_getdents().
+>>
+>> IORING_OP_GETDENTS may or may not update the specified directory's
+>> file offset, and the file offset should not be relied upon having
+>> any particular value during or after an IORING_OP_GETDENTS call.
+>>
+>> Signed-off-by: Lennert Buytenhek <buytenh@wantstofly.org>
+>> ---
+>>  fs/io_uring.c                 | 73 +++++++++++++++++++++++++++++++++++
+>>  include/uapi/linux/io_uring.h |  1 +
+>>  2 files changed, 74 insertions(+)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 056bd4c90ade..6853bf48369a 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -635,6 +635,13 @@ struct io_mkdir {
+>>  	struct filename			*filename;
+>>  };
+>>  
+> [...]
+>> +static int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
+>> +{
+>> +	struct io_getdents *getdents = &req->getdents;
+>> +	bool pos_unlock = false;
+>> +	int ret = 0;
+>> +
+>> +	/* getdents always requires a blocking context */
+>> +	if (issue_flags & IO_URING_F_NONBLOCK)
+>> +		return -EAGAIN;
+>> +
+>> +	/* for vfs_llseek and to serialize ->iterate_shared() on this file */
+>> +	if (file_count(req->file) > 1) {
 > 
-> For the first IORING_OP_GETDENTS call on a directory, the offset
-> parameter can be set to zero, and for subsequent calls, it can be
-> set to the ->d_off field of the last struct linux_dirent64 returned
-> by the previous IORING_OP_GETDENTS call.
+> Looks racy, is it safe? E.g. can be concurrently dupped and used, or just
+> several similar IORING_OP_GETDENTS requests.
 > 
-> Internally, if necessary, IORING_OP_GETDENTS will vfs_llseek() to
-> the right directory position before calling vfs_getdents().
+>> +		pos_unlock = true;
+>> +		mutex_lock(&req->file->f_pos_lock);
+>> +	}
+>> +
+>> +	if (req->file->f_pos != getdents->pos) {
+>> +		loff_t res = vfs_llseek(req->file, getdents->pos, SEEK_SET);
 > 
-> IORING_OP_GETDENTS may or may not update the specified directory's
-> file offset, and the file offset should not be relied upon having
-> any particular value during or after an IORING_OP_GETDENTS call.
-> 
-> Signed-off-by: Lennert Buytenhek <buytenh@wantstofly.org>
-> ---
->  fs/io_uring.c                 | 73 +++++++++++++++++++++++++++++++++++
->  include/uapi/linux/io_uring.h |  1 +
->  2 files changed, 74 insertions(+)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 056bd4c90ade..6853bf48369a 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -635,6 +635,13 @@ struct io_mkdir {
->  	struct filename			*filename;
->  };
->  
-[...]
-> +static int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	struct io_getdents *getdents = &req->getdents;
-> +	bool pos_unlock = false;
-> +	int ret = 0;
-> +
-> +	/* getdents always requires a blocking context */
-> +	if (issue_flags & IO_URING_F_NONBLOCK)
-> +		return -EAGAIN;
-> +
-> +	/* for vfs_llseek and to serialize ->iterate_shared() on this file */
-> +	if (file_count(req->file) > 1) {
+> I may be missing the previous discussions, but can this ever become
+> stateless, like passing an offset? Including readdir.c and beyond. 
 
-Looks racy, is it safe? E.g. can be concurrently dupped and used, or just
-several similar IORING_OP_GETDENTS requests.
+I mean without those seeks. An emulation would look like rewinding
+pos back after vfs_getdents, though might be awful on performance. 
 
-> +		pos_unlock = true;
-> +		mutex_lock(&req->file->f_pos_lock);
-> +	}
-> +
-> +	if (req->file->f_pos != getdents->pos) {
-> +		loff_t res = vfs_llseek(req->file, getdents->pos, SEEK_SET);
-
-I may be missing the previous discussions, but can this ever become
-stateless, like passing an offset? Including readdir.c and beyond. 
-
-> +		if (res < 0)
-> +			ret = res;
-> +	}
-> +
-> +	if (ret == 0) {
-> +		ret = vfs_getdents(req->file, getdents->dirent,
-> +				   getdents->count);
-> +	}
-> +
-> +	if (pos_unlock)
-> +		mutex_unlock(&req->file->f_pos_lock);
-> +
-> +	if (ret < 0) {
-> +		if (ret == -ERESTARTSYS)
-> +			ret = -EINTR;
-> +		req_set_fail_links(req);
-> +	}
-> +	io_req_complete(req, ret);
-> +	return 0;
-> +}
-[...]
+> 
+>> +		if (res < 0)
+>> +			ret = res;
+>> +	}
+>> +
+>> +	if (ret == 0) {
+>> +		ret = vfs_getdents(req->file, getdents->dirent,
+>> +				   getdents->count);
+>> +	}
+>> +
+>> +	if (pos_unlock)
+>> +		mutex_unlock(&req->file->f_pos_lock);
+>> +
+>> +	if (ret < 0) {
+>> +		if (ret == -ERESTARTSYS)
+>> +			ret = -EINTR;
+>> +		req_set_fail_links(req);
+>> +	}
+>> +	io_req_complete(req, ret);
+>> +	return 0;
+>> +}
+> [...]
+> 
 
 -- 
 Pavel Begunkov

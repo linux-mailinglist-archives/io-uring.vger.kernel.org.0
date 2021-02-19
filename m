@@ -2,243 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF193201F4
-	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 00:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 834853201FB
+	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 00:53:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbhBSXpC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 19 Feb 2021 18:45:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48968 "EHLO
+        id S229755AbhBSXwn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 Feb 2021 18:52:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229636AbhBSXpB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Feb 2021 18:45:01 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79E9CC061574
-        for <io-uring@vger.kernel.org>; Fri, 19 Feb 2021 15:44:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:Cc:To;
-        bh=ATcboN5kxQMLh5Ue5omGPtqd56iWl/gtVpGAJhZNoRU=; b=Rkz7y6xyCQ6gfDr6ZJ8//8wvNW
-        PgwAIsow5WMTxoW5nn56yW+2SOodsi9+sXe74Zl2AWPqJHL2gEB09tnUiypXjtQWrNhHYEqmE0xb+
-        sc9n0qnGILWcXdZdRDuiF1ucIJ5ypghdN1Y9XZxeby8lR3K5g3s0Tr3VRd7RRM6903NSQVO60eiuJ
-        u3X14XmGO082mHNACI7/n9vl/WMnAEojxKRUGl0m/Y1artEEW1S1l/B0hdEZL1Ix2gT/DF4AlQQQO
-        Qgyn91829ejPhXBaXfrJ9QR71vOVZ8BYosPqhWh6pHewbgKU5YZNdlDp6Mb2Sa68k2n1wld3VcqPp
-        vEH3J0RT10HV/3+T+TGcD9xsxpkp6SohNg+qAUv0YN2chQlxb7GTNAPijiPdJVrB3km/nsUo6nEiK
-        aZJW3lTec+619KG5J8/yaEPqNYJoaTfuJDjxHzoZGTq6ETxMndOxF+9hx0HlUAoUUQ80EJiH5RSKw
-        wHg0R/RWzNMobCnJHC90tgHt;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1lDFRX-0001Mv-TW; Fri, 19 Feb 2021 23:44:15 +0000
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+        with ESMTP id S229752AbhBSXwl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Feb 2021 18:52:41 -0500
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69107C061574
+        for <io-uring@vger.kernel.org>; Fri, 19 Feb 2021 15:52:01 -0800 (PST)
+Received: by mail-pg1-x52c.google.com with SMTP id o38so6156675pgm.9
+        for <io-uring@vger.kernel.org>; Fri, 19 Feb 2021 15:52:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Vx+22eaohVQ9sWKSRkNzwg8vcYM+Z53yOST6U7cwQDA=;
+        b=CaiG4wIKHA46nN88bGSu6KfNuU0votnQ+zvIwK4KKLVJTRACwMtfUSJsCqnvojqqPn
+         hV7DmJVR2w7lrWU+0jq9u+LNzh6VwjfDuqZ2vBRpmU8iNzQS/KOfvsAdiT3htxK5aEOE
+         1PcLEgaSXg269gICt6NsiKcL/FWiwWrvTkjuVnIE3JNhC4mtu9MOoIdTrzkYgWqU7zqA
+         Ar3Y16TlDsp5yzNgLrELqbonXLnswYRvrLknuKZ7AKx+e8ubLHdDewybRJyyGhAo2R3c
+         fFoEkJO/6yJlM70ixI3kTS+ZD3vuRA9V3qpnXLWTs5aUpx9PBGlO41naG81vcQWPLDNs
+         jYYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Vx+22eaohVQ9sWKSRkNzwg8vcYM+Z53yOST6U7cwQDA=;
+        b=Xihasnq8Wurzu3opZh9M/umUSa1/bezkFgm2mbOd1MrCUdqmPWBifus5WzBXOAVx1X
+         vF3kFc87czMj+qIGBlAPGiMFg1OuaK4jp6WRJt8WNfVghUdbUNSV3HMyvfvd9AjSpobI
+         RYKnt34SOk1XLuH9XYwF5qp7YbfVv0rtp4+YOOVm71pL9pGpk+maLtcu8leGE++W3ker
+         jw9lajGmUxWLPFyU20JorsfcK6mFleGeVIoVBncECUFLHjzFE8MF357QfTOTDO7IdcGe
+         qx9h1c2GHBWG0kKNgEXMhBbvyIMq2/oYu64JaNU5z7wWxU4vsSodHrNfsvl/asQcLyFr
+         W0Ng==
+X-Gm-Message-State: AOAM531APBUt83HbugfZoKsd2mzvv+HLnpGma+/1I1ZAM4Txx7mU8bF1
+        LtVGaH5o6w9RLwaEBuFnI5jhcMbsSx+kfg==
+X-Google-Smtp-Source: ABdhPJw+kUCHCTg6f1ucnaIxFyS90kVbfyfnUmrNejQhgXhxajV+RRI9WrscAYw8edwAJIsz2Utaag==
+X-Received: by 2002:a63:1723:: with SMTP id x35mr10765801pgl.393.1613778720922;
+        Fri, 19 Feb 2021 15:52:00 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id c9sm9281367pjr.44.2021.02.19.15.51.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Feb 2021 15:52:00 -0800 (PST)
+Subject: Re: [PATCHSET RFC 0/18] Remove kthread usage from io_uring
+To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
 Cc:     ebiederm@xmission.com, viro@zeniv.linux.org.uk,
         torvalds@linux-foundation.org
 References: <20210219171010.281878-1-axboe@kernel.dk>
-From:   Stefan Metzmacher <metze@samba.org>
-Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
- 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
- uAMlsTqBMFOwuvAcYAj2bwl7QQU6yhU=
-Subject: Re: [PATCHSET RFC 0/18] Remove kthread usage from io_uring
-Message-ID: <a982b3c3-17e7-bb53-0357-425241f069e0@samba.org>
-Date:   Sat, 20 Feb 2021 00:44:10 +0100
+ <a982b3c3-17e7-bb53-0357-425241f069e0@samba.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a389d225-02e6-4695-0ecb-239b5dace8c7@kernel.dk>
+Date:   Fri, 19 Feb 2021 16:51:59 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210219171010.281878-1-axboe@kernel.dk>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="iwb8N0I8EpmnZG6hS8bBSNIeV55Kp3hCE"
+In-Reply-To: <a982b3c3-17e7-bb53-0357-425241f069e0@samba.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---iwb8N0I8EpmnZG6hS8bBSNIeV55Kp3hCE
-Content-Type: multipart/mixed; boundary="LEG3kBBgwVvtpePyCUKY5ZlpImvty8w2Y";
- protected-headers="v1"
-From: Stefan Metzmacher <metze@samba.org>
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: ebiederm@xmission.com, viro@zeniv.linux.org.uk,
- torvalds@linux-foundation.org
-Message-ID: <a982b3c3-17e7-bb53-0357-425241f069e0@samba.org>
-Subject: Re: [PATCHSET RFC 0/18] Remove kthread usage from io_uring
-References: <20210219171010.281878-1-axboe@kernel.dk>
-In-Reply-To: <20210219171010.281878-1-axboe@kernel.dk>
+On 2/19/21 4:44 PM, Stefan Metzmacher wrote:
+> Hi Jens,
+> 
+>> tldr - instead of using kthreads that assume the identity of the original
+>> tasks for work that needs offloading to a thread, setup these workers as
+>> threads of the original task.
+>>
+>> Here's a first cut of moving away from kthreads for io_uring. It passes
+>> the test suite and various other testing I've done with it. It also
+>> performs better, both for workloads actually using the async offload, but
+>> also in general as we slim down structures and kill code from the hot path.
+>>
+>> The series is roughly split into these parts:
+>>
+>> - Patches 1-6, io_uring/io-wq prep patches
+>> - Patches 7-8, Minor arch/kernel support
+>> - Patches 9-15, switch from kthread to thread, remove state only needed
+>>   for kthreads
+>> - Patches 16-18, remove now dead/unneeded PF_IO_WORKER restrictions
+>>
+>> Comments/suggestions welcome. I'm pretty happy with the series at this
+>> point, and particularly with how we end up cutting a lot of code while
+>> also unifying how sync vs async is presented.
+> 
+> Thanks a lot! I was thinking hard about how to make all this easier to
+> understand and perform better in order to have the whole context
+> available natively for sendmsg/recvmsg, but also for the upcoming
+> uring_cmd().
+> 
+> And now all that code magically disappeared completely, wonderful :-)
 
---LEG3kBBgwVvtpePyCUKY5ZlpImvty8w2Y
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Glad to hear you like the approach! Yes, this will help both
+readability, performance, and maintainability. Pretty much a win all
+around imho.
 
-Hi Jens,
+-- 
+Jens Axboe
 
-> tldr - instead of using kthreads that assume the identity of the origin=
-al
-> tasks for work that needs offloading to a thread, setup these workers a=
-s
-> threads of the original task.
->=20
-> Here's a first cut of moving away from kthreads for io_uring. It passes=
-
-> the test suite and various other testing I've done with it. It also
-> performs better, both for workloads actually using the async offload, b=
-ut
-> also in general as we slim down structures and kill code from the hot p=
-ath.
->=20
-> The series is roughly split into these parts:
->=20
-> - Patches 1-6, io_uring/io-wq prep patches
-> - Patches 7-8, Minor arch/kernel support
-> - Patches 9-15, switch from kthread to thread, remove state only needed=
-
->   for kthreads
-> - Patches 16-18, remove now dead/unneeded PF_IO_WORKER restrictions
->=20
-> Comments/suggestions welcome. I'm pretty happy with the series at this
-> point, and particularly with how we end up cutting a lot of code while
-> also unifying how sync vs async is presented.
-
-Thanks a lot! I was thinking hard about how to make all this easier to un=
-derstand
-and perform better in order to have the whole context available natively =
-for
-sendmsg/recvmsg, but also for the upcoming uring_cmd().
-
-And now all that code magically disappeared completely, wonderful :-)
-
-metze
-
-
---LEG3kBBgwVvtpePyCUKY5ZlpImvty8w2Y--
-
---iwb8N0I8EpmnZG6hS8bBSNIeV55Kp3hCE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAmAwTUoACgkQDbX1YShp
-vVZNaxAAhV9j3Dj8yeCQhCgkJbeBV7FvT6GBtBbEW0f3pqMaF+D0bdrsyLJIfFOR
-v841XZ5jTzxPrFsFrzA5+qU8nLqYJSxT/Rt6nrub00CdpPZXH6zfa82ZWYjik1t0
-Wcamj57nm6YJ9srr++RhYfttUfSKb5uWcoJ5V3r7jWXOY1J06Wz//pfwtHW7oiml
-y3QYfYba3K3D/366c7t1tKuM1kQMxNJ2ZW1I2YZSwWzL+UGBcrlkvVe5m8tTtAOD
-OHGMrvAQfmtf94VEyFmNLtkXc6T4VgXyf6aIXuflyitz4AbbUyLTqj74n66NknJf
-09DIjbR9U9bpWo9Io6Yy5TLYhGVhnBY3MKTi66dcJ4H/rVHhYGDiLkhS8fignM/v
-m7DCixYJNu97Z4v6rRKJf8RGgc2gU4fu0x3/FqcCuPQ8jDwzLcqrMeS3lZUXdls9
-il2gtUt8Wtz+Ot4KFjLxv2k/T/+zsM9ojrjDy28XIcWobY0leCDES0uV27mbh4/r
-OYNs4ojD2MFDlI4FAaS6QErPq+1CjNVbHRZmvmubyoIt+7d+DF3eoea3ypUZk2XX
-63jWnQ3LVOsbd7YQ7/84tOmDSrC0f3owVlRhnN6qeNQRVaPRuT4GAAdBTWjw/ZRI
-67x1pxMnOxE4SDn/w3MRVgRO5wknBeUc4E5cXvqd1UAG/mkGtrs=
-=Eprn
------END PGP SIGNATURE-----
-
---iwb8N0I8EpmnZG6hS8bBSNIeV55Kp3hCE--

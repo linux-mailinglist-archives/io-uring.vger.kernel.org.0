@@ -2,28 +2,30 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4665B31F5E2
-	for <lists+io-uring@lfdr.de>; Fri, 19 Feb 2021 09:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EA8C31F675
+	for <lists+io-uring@lfdr.de>; Fri, 19 Feb 2021 10:21:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230016AbhBSI2h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 19 Feb 2021 03:28:37 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:44315 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229639AbhBSI2b (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Feb 2021 03:28:31 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R321e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UOxXHe9_1613723257;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UOxXHe9_1613723257)
+        id S229527AbhBSJVU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 Feb 2021 04:21:20 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:49939 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229678AbhBSJVP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Feb 2021 04:21:15 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UOxlPdp_1613726421;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UOxlPdp_1613726421)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 19 Feb 2021 16:27:44 +0800
+          Fri, 19 Feb 2021 17:20:28 +0800
 From:   Hao Xu <haoxu@linux.alibaba.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>,
         Hao Xu <haoxu@linux.alibaba.com>
-Subject: [PATCH v3 5.12] io_uring: don't hold uring_lock when calling io_run_task_work*
-Date:   Fri, 19 Feb 2021 16:27:34 +0800
-Message-Id: <1613723254-114070-1-git-send-email-haoxu@linux.alibaba.com>
+Subject: [PATCH 5.12 v3 RESEND] io_uring: don't hold uring_lock when calling io_run_task_work*
+Date:   Fri, 19 Feb 2021 17:19:36 +0800
+Message-Id: <1613726376-135401-1-git-send-email-haoxu@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1613723254-114070-1-git-send-email-haoxu@linux.alibaba.com>
+References: <1613723254-114070-1-git-send-email-haoxu@linux.alibaba.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
@@ -110,69 +112,68 @@ Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 ---
 
+Resend it since the previous one didn't include all the code change...
 v1->v2
   - take in Pavel's suggestion and idea and form a new version
 v2->v3
  - rebase against the latest for-5.12/io_uring branch
 
- fs/io_uring.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 53 insertions(+), 13 deletions(-)
+ fs/io_uring.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 51 insertions(+), 13 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1cb5e40d9822..cf6d5257e491 100644
+index 1cb5e40d9822..b7bae301744b 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -7316,12 +7316,23 @@ static void io_sqe_rsrc_set_node(struct io_ring_ctx *ctx,
+@@ -7316,19 +7316,37 @@ static void io_sqe_rsrc_set_node(struct io_ring_ctx *ctx,
  	percpu_ref_get(&rsrc_data->refs);
  }
  
 -static int io_rsrc_ref_quiesce(struct fixed_rsrc_data *data,
 -			       struct io_ring_ctx *ctx,
 -			       struct fixed_rsrc_ref_node *backup_node)
-+static int io_sqe_rsrc_add_node(struct io_ring_ctx *ctx)
++static int io_sqe_rsrc_add_node(struct io_ring_ctx *ctx, struct fixed_rsrc_data *data)
  {
 -	struct fixed_rsrc_ref_node *ref_node;
 -	int ret;
-+	struct rsrc_data *data = ctx->rsrc_data;
 +	struct fixed_rsrc_ref_node *backup_node;
 +
 +	backup_node = alloc_fixed_rsrc_ref_node(ctx);
 +	if (!backup_node)
 +		return -ENOMEM;
-+
-+	io_sqe_rsrc_set_node(data, backup_node);
++	init_fixed_file_ref_node(ctx, backup_node);
++	io_sqe_rsrc_set_node(ctx, data, backup_node);
 +
 +	return 0;
 +}
 +
-+static void io_sqe_rsrc_kill_node(struct fixed_rsrc_data *data)
++static void io_sqe_rsrc_kill_node(struct io_ring_ctx *ctx, struct fixed_rsrc_data *data)
 +{
 +	struct fixed_rsrc_ref_node *ref_node = NULL;
  
  	io_rsrc_ref_lock(ctx);
  	ref_node = data->node;
-@@ -7329,6 +7340,15 @@ static int io_rsrc_ref_quiesce(struct fixed_rsrc_data *data,
+ 	io_rsrc_ref_unlock(ctx);
  	if (ref_node)
  		percpu_ref_kill(&ref_node->refs);
- 
 +}
-+
+ 
 +static int io_rsrc_ref_quiesce(struct fixed_rsrc_data *data,
 +			       struct io_ring_ctx *ctx,
 +			       struct fixed_rsrc_ref_node *backup_node)
 +{
 +	int ret;
 +
-+	io_sqe_rsrc_kill_node(data);
++	io_sqe_rsrc_kill_node(ctx, data);
  	percpu_ref_kill(&data->refs);
  
  	/* wait for all refs nodes to complete */
-@@ -7337,14 +7357,27 @@ static int io_rsrc_ref_quiesce(struct fixed_rsrc_data *data,
+@@ -7337,14 +7355,27 @@ static int io_rsrc_ref_quiesce(struct fixed_rsrc_data *data,
  		ret = wait_for_completion_interruptible(&data->done);
  		if (!ret)
  			break;
 +
-+		ret = io_sqe_rsrc_add_node(ctx);
++		ret = io_sqe_rsrc_add_node(ctx, data);
 +		if (ret < 0)
 +			break;
 +		/*
@@ -190,7 +191,7 @@ index 1cb5e40d9822..cf6d5257e491 100644
 -		}
 -	} while (1);
 +		mutex_lock(&ctx->uring_lock);
-+		io_sqe_rsrc_kill_node(data);
++		io_sqe_rsrc_kill_node(ctx, data);
 +	} while (ret >= 0);
 +
 +	if (ret < 0) {
@@ -202,7 +203,7 @@ index 1cb5e40d9822..cf6d5257e491 100644
  
  	destroy_fixed_rsrc_ref_node(backup_node);
  	return 0;
-@@ -7382,7 +7415,12 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+@@ -7382,7 +7413,12 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
  	unsigned nr_tables, i;
  	int ret;
  
@@ -216,7 +217,7 @@ index 1cb5e40d9822..cf6d5257e491 100644
  		return -ENXIO;
  	backup_node = alloc_fixed_rsrc_ref_node(ctx);
  	if (!backup_node)
-@@ -8731,7 +8769,9 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+@@ -8731,7 +8767,9 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
  		css_put(ctx->sqo_blkcg_css);
  #endif
  

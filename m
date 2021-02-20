@@ -2,82 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B48F032023C
-	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 01:29:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC8A03202A8
+	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 02:44:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbhBTA3l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 19 Feb 2021 19:29:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58590 "EHLO
+        id S229762AbhBTBob (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 Feb 2021 20:44:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229745AbhBTA3k (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Feb 2021 19:29:40 -0500
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69DCC061221
-        for <io-uring@vger.kernel.org>; Fri, 19 Feb 2021 16:28:45 -0800 (PST)
-Received: by mail-pg1-x529.google.com with SMTP id t11so6238340pgu.8
-        for <io-uring@vger.kernel.org>; Fri, 19 Feb 2021 16:28:45 -0800 (PST)
+        with ESMTP id S229745AbhBTBoa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Feb 2021 20:44:30 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C2BBC061574
+        for <io-uring@vger.kernel.org>; Fri, 19 Feb 2021 17:43:50 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id m1so9190786wml.2
+        for <io-uring@vger.kernel.org>; Fri, 19 Feb 2021 17:43:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=kT2kE803nTH/o5x5uN2IT13c/TKzi4P9HlbUULtB0SY=;
-        b=uwcZ12EIRIGfrtn1IDQOCaOGNiN9UKPyzTGd5GqllbWU3HvaljAX2Rd4Ji6MFC8rm0
-         +yAw5YxYMULjvgmM0QHFHBSNneROvv3Ik/Jrr1+NL3OLd8L8qzWYvyboZpxqyaD0QrXc
-         1KUZ/XdA476iIQTSusZXl5p8stM/O1Xc/aPI+7dMQtAE5HHzRf8TizGDCqx2quLWuWL1
-         A+YkFwD3kYIECEy0d4cw+uZzkRN5nxlv+Q+fkznGjEA6a+I6DPAzU/0xrIcrB6IojL4z
-         g1DWY2t3tDwsBOrO8PRgxVrJTAW8PS12G4Te6cKoYIuKnR3gWdL+gDFgRz2mEry47Fg0
-         Bs4w==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2gmT8o5uWuByRsBgaqh/64/L4u8MjA5Bckrlwo9yiew=;
+        b=bTCkfXni52uAUUkPMi62d+li+NFSuLHcn6dKYkaqcHMgUBeN42S1ofvctORrXe/ql6
+         ITmvsfCbrJDmp5iv2coqpSw/r1vzDaBRFCptl3gmie11Ht6njfDiMNtqjxLjrvjx7EDz
+         G3nyz+p1fJ3rSo/al1hLljyEJ1TrKF2MQGheFvcqf6fPl4s6l01srszbGh/5BhT/fERJ
+         2Xb/bi4/IAakZY74ZBisERi2kiWBjemXLoqI4mHe9XqqNk8Fr8X7fwGJeM2SBKKfTvWQ
+         0/6Z35CqAkdRJTD/p20n/UT9zqWsrfcDq4d+x4vnRH98tdchyYmlxmCJ9LrOJlqbA0xH
+         Vk9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=kT2kE803nTH/o5x5uN2IT13c/TKzi4P9HlbUULtB0SY=;
-        b=GAgFjQAdiIqG1Xaj3/HQDn65Ksqwxq5eDVeaSYsV4nMhd4rwST0AlZrz0Zej45KgQG
-         01MYMnrqW8s6MNg0IYYq/oKWvOjQ65dHmeUPYh2ub4zWbh0L1oJKKXfx7qYgys9Cy6NL
-         8T4Ar+hzRlH71So2jrEt884QVyu0hL3FJoZ74C1bAaGikOHMRx5AEsyIIw9I+ETQr7ft
-         +QUJRQ0fJ8401lQ2/Fy2Ap3dtFmBqWk3jSaxASqpQQSpDhHTbod7Dj0g6P2EMCbOr+7E
-         NX3ihTooCku+sx+osRk7VAnwgAkkObNeRmqfGHl8XJvyVi++pTprPls0qF4IIQnBUiFM
-         SJow==
-X-Gm-Message-State: AOAM530QLQ8Lb/DaCb+ntEaYgE+gXm0a7ja658gLPZmudlYIthZpIf6v
-        kuy56QXdPfE2vPFxRHbtMuNwtayne6SGkQ==
-X-Google-Smtp-Source: ABdhPJykGa5PpA2taXbVzK/xHNzFjqX/fMkkNKWgVIR0gN1SwvcNiW4IBLMrrCkWeyltFI48peHujg==
-X-Received: by 2002:a63:1c08:: with SMTP id c8mr10603768pgc.228.1613780924838;
-        Fri, 19 Feb 2021 16:28:44 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id u15sm10620310pfm.130.2021.02.19.16.28.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Feb 2021 16:28:44 -0800 (PST)
-Subject: Re: [PATCH 0/3] rsrc quiesce fixes/hardening
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1613767375.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9fa77894-8213-af7d-8b9d-8aa29dfe54ee@kernel.dk>
-Date:   Fri, 19 Feb 2021 17:28:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=2gmT8o5uWuByRsBgaqh/64/L4u8MjA5Bckrlwo9yiew=;
+        b=QJ10Zx6u6j5IylUwCwWGVOx++cjdiom5Bvd/ETan+gX/i1hI4d+ir+hEPreFM5jSnj
+         ytEALLjvVHd4R3UWEu1BggKTHKVfqJ/cv+XbcB8MdML5bcWT1xLg+Iu3EgbJFzQmS9ok
+         28QVT6CHkyw7CPKYbquBe4XL9KtwjuLcgubXTcolFAaB63jtMwvoqRCLS+hOotFWiaJS
+         C74WswI8YZjyWp44QAPIakpzaZDBOK+rPqq88Jg/ZHYvmK2NYep/2Nm49moWBUOOhRUV
+         72ep6sA09xzYHEl9ZW76WF/HDbUpm+CVwLKivst+0G29GtylDM5wyxcSFmnNMskQ6Ui0
+         Ovgg==
+X-Gm-Message-State: AOAM531ROW8HPZHlQJ6oDW3XGHvxYzBbU/Qc5vYJO/pyxKrA2xiItfEa
+        0RDEios1xuXaY4dIwSP9RKekspOKCSzBug==
+X-Google-Smtp-Source: ABdhPJz/eJ9lFeR28tqf4gzQCNpn2wATYSharnGD3B8Pd2i4Bfd5DfHNlX134wEugsjSKqm2J1MgTA==
+X-Received: by 2002:a05:600c:2301:: with SMTP id 1mr8176879wmo.166.1613785429193;
+        Fri, 19 Feb 2021 17:43:49 -0800 (PST)
+Received: from localhost.localdomain ([85.255.236.139])
+        by smtp.gmail.com with ESMTPSA id f7sm16056595wrm.92.2021.02.19.17.43.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Feb 2021 17:43:48 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 0/2] random fixes
+Date:   Sat, 20 Feb 2021 01:39:51 +0000
+Message-Id: <cover.1613785076.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1613767375.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/19/21 1:45 PM, Pavel Begunkov wrote:
-> 1/3 addresses new races in io_rsrc_ref_quiesce(), others are hardenings.
-> 
-> Pavel Begunkov (3):
->   io_uring: zero ref_node after killing it
->   io_uring: fix io_rsrc_ref_quiesce races
->   io_uring: keep generic rsrc infra generic
-> 
->  fs/io_uring.c | 65 +++++++++++++++++----------------------------------
->  1 file changed, 21 insertions(+), 44 deletions(-)
+Just two unrelated fixes batched together.
 
-Looks (and tests) good to me, applied.
+Pavel Begunkov (2):
+  io_uring: wait potential ->release() on resurrect
+  io_uring: fix leaving invalid req->flags
+
+ fs/io_uring.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 -- 
-Jens Axboe
+2.24.0
 

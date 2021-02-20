@@ -2,288 +2,304 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE1D320461
-	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 09:12:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE3A3204F4
+	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 12:07:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229725AbhBTIMJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 20 Feb 2021 03:12:09 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:35423 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229667AbhBTIMI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 03:12:08 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UP0VKdN_1613808674;
-Received: from B-25KNML85-0107.local(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UP0VKdN_1613808674)
+        id S229771AbhBTLHb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 20 Feb 2021 06:07:31 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:47365 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229734AbhBTLHY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 06:07:24 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UP1N.Dc_1613819197;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UP1N.Dc_1613819197)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 20 Feb 2021 16:11:15 +0800
-Subject: Re: [PATCH 05/18] io_uring: tie async worker side to the task context
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     ebiederm@xmission.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org
-References: <20210219171010.281878-1-axboe@kernel.dk>
- <20210219171010.281878-6-axboe@kernel.dk>
-From:   Hao Xu <haoxu@linux.alibaba.com>
-Message-ID: <45d8a997-7a1a-7d07-9039-6970acece61b@linux.alibaba.com>
-Date:   Sat, 20 Feb 2021 16:11:14 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.0
+          Sat, 20 Feb 2021 19:06:37 +0800
+From:   Jeffle Xu <jefflexu@linux.alibaba.com>
+To:     snitzer@redhat.com, axboe@kernel.dk
+Cc:     hch@lst.de, ming.lei@redhat.com, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, io-uring@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, caspar@linux.alibaba.com
+Subject: [PATCH v4 00/12] dm: support IO polling
+Date:   Sat, 20 Feb 2021 19:06:25 +0800
+Message-Id: <20210220110637.50305-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <20210219171010.281878-6-axboe@kernel.dk>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-ÔÚ 2021/2/20 ÉÏÎç1:09, Jens Axboe Ð´µÀ:
-> Move it outside of the io_ring_ctx, and tie it to the io_uring task
-> context.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->   fs/io_uring.c            | 84 ++++++++++++++++------------------------
->   include/linux/io_uring.h |  1 +
->   2 files changed, 35 insertions(+), 50 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 0eeb2a1596c2..6ad3e1df6504 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -365,9 +365,6 @@ struct io_ring_ctx {
->   
->   	struct io_rings	*rings;
->   
-> -	/* IO offload */
-> -	struct io_wq		*io_wq;
-> -
->   	/*
->   	 * For SQPOLL usage - we hold a reference to the parent task, so we
->   	 * have access to the ->files
-> @@ -1619,10 +1616,11 @@ static struct io_kiocb *__io_queue_async_work(struct io_kiocb *req)
->   {
->   	struct io_ring_ctx *ctx = req->ctx;
->   	struct io_kiocb *link = io_prep_linked_timeout(req);
-> +	struct io_uring_task *tctx = req->task->io_uring;
->   
->   	trace_io_uring_queue_async_work(ctx, io_wq_is_hashed(&req->work), req,
->   					&req->work, req->flags);
-> -	io_wq_enqueue(ctx->io_wq, &req->work);
-> +	io_wq_enqueue(tctx->io_wq, &req->work);
->   	return link;
->   }
->   
-> @@ -5969,12 +5967,15 @@ static bool io_cancel_cb(struct io_wq_work *work, void *data)
->   	return req->user_data == (unsigned long) data;
->   }
->   
-> -static int io_async_cancel_one(struct io_ring_ctx *ctx, void *sqe_addr)
-> +static int io_async_cancel_one(struct io_uring_task *tctx, void *sqe_addr)
->   {
->   	enum io_wq_cancel cancel_ret;
->   	int ret = 0;
->   
-> -	cancel_ret = io_wq_cancel_cb(ctx->io_wq, io_cancel_cb, sqe_addr, false);
-> +	if (!tctx->io_wq)
-> +		return -ENOENT;
-> +
-> +	cancel_ret = io_wq_cancel_cb(tctx->io_wq, io_cancel_cb, sqe_addr, false);
->   	switch (cancel_ret) {
->   	case IO_WQ_CANCEL_OK:
->   		ret = 0;
-> @@ -5997,7 +5998,8 @@ static void io_async_find_and_cancel(struct io_ring_ctx *ctx,
->   	unsigned long flags;
->   	int ret;
->   
-> -	ret = io_async_cancel_one(ctx, (void *) (unsigned long) sqe_addr);
-> +	ret = io_async_cancel_one(req->task->io_uring,
-> +					(void *) (unsigned long) sqe_addr);
->   	if (ret != -ENOENT) {
->   		spin_lock_irqsave(&ctx->completion_lock, flags);
->   		goto done;
-> @@ -7562,16 +7564,6 @@ static void io_sq_thread_stop(struct io_ring_ctx *ctx)
->   	}
->   }
->   
-> -static void io_finish_async(struct io_ring_ctx *ctx)
-> -{
-> -	io_sq_thread_stop(ctx);
-> -
-> -	if (ctx->io_wq) {
-> -		io_wq_destroy(ctx->io_wq);
-> -		ctx->io_wq = NULL;
-> -	}
-> -}
-> -
->   #if defined(CONFIG_UNIX)
->   /*
->    * Ensure the UNIX gc is aware of our file set, so we are certain that
-> @@ -8130,11 +8122,10 @@ static struct io_wq_work *io_free_work(struct io_wq_work *work)
->   	return req ? &req->work : NULL;
->   }
->   
-> -static int io_init_wq_offload(struct io_ring_ctx *ctx)
-> +static struct io_wq *io_init_wq_offload(struct io_ring_ctx *ctx)
->   {
->   	struct io_wq_data data;
->   	unsigned int concurrency;
-> -	int ret = 0;
->   
->   	data.user = ctx->user;
->   	data.free_work = io_free_work;
-> @@ -8143,16 +8134,11 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx)
->   	/* Do QD, or 4 * CPUS, whatever is smallest */
->   	concurrency = min(ctx->sq_entries, 4 * num_online_cpus());
->   
-> -	ctx->io_wq = io_wq_create(concurrency, &data);
-> -	if (IS_ERR(ctx->io_wq)) {
-> -		ret = PTR_ERR(ctx->io_wq);
-> -		ctx->io_wq = NULL;
-> -	}
-> -
-> -	return ret;
-> +	return io_wq_create(concurrency, &data);
->   }
->   
-> -static int io_uring_alloc_task_context(struct task_struct *task)
-> +static int io_uring_alloc_task_context(struct task_struct *task,
-> +				       struct io_ring_ctx *ctx)
->   {
->   	struct io_uring_task *tctx;
->   	int ret;
-> @@ -8167,6 +8153,14 @@ static int io_uring_alloc_task_context(struct task_struct *task)
->   		return ret;
->   	}
->   
-> +	tctx->io_wq = io_init_wq_offload(ctx);
-> +	if (IS_ERR(tctx->io_wq)) {
-> +		ret = PTR_ERR(tctx->io_wq);
-> +		percpu_counter_destroy(&tctx->inflight);
-> +		kfree(tctx);
-> +		return ret;
-> +	}
-> +
-How about putting this before initing tctx->inflight so that
-we don't need to destroy tctx->inflight in the error path?
->   	xa_init(&tctx->xa);
->   	init_waitqueue_head(&tctx->wait);
->   	tctx->last = NULL;
-> @@ -8239,7 +8233,7 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
->   			ctx->sq_thread_idle = HZ;
->   
->   		if (sqd->thread)
-> -			goto done;
-> +			return 0;
->   
->   		if (p->flags & IORING_SETUP_SQ_AFF) {
->   			int cpu = p->sq_thread_cpu;
-> @@ -8261,7 +8255,7 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
->   			sqd->thread = NULL;
->   			goto err;
->   		}
-> -		ret = io_uring_alloc_task_context(sqd->thread);
-> +		ret = io_uring_alloc_task_context(sqd->thread, ctx);
->   		if (ret)
->   			goto err;
->   	} else if (p->flags & IORING_SETUP_SQ_AFF) {
-> @@ -8270,14 +8264,9 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
->   		goto err;
->   	}
->   
-> -done:
-> -	ret = io_init_wq_offload(ctx);
-> -	if (ret)
-> -		goto err;
-> -
->   	return 0;
->   err:
-> -	io_finish_async(ctx);
-> +	io_sq_thread_stop(ctx);
->   	return ret;
->   }
->   
-> @@ -8752,7 +8741,7 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
->   	mutex_lock(&ctx->uring_lock);
->   	mutex_unlock(&ctx->uring_lock);
->   
-> -	io_finish_async(ctx);
-> +	io_sq_thread_stop(ctx);
->   	io_sqe_buffers_unregister(ctx);
->   
->   	if (ctx->sqo_task) {
-> @@ -8872,13 +8861,6 @@ static void io_ring_exit_work(struct work_struct *work)
->   	io_ring_ctx_free(ctx);
->   }
->   
-> -static bool io_cancel_ctx_cb(struct io_wq_work *work, void *data)
-> -{
-> -	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
-> -
-> -	return req->ctx == data;
-> -}
-> -
->   static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
->   {
->   	mutex_lock(&ctx->uring_lock);
-> @@ -8897,9 +8879,6 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
->   	io_kill_timeouts(ctx, NULL, NULL);
->   	io_poll_remove_all(ctx, NULL, NULL);
->   
-> -	if (ctx->io_wq)
-> -		io_wq_cancel_cb(ctx->io_wq, io_cancel_ctx_cb, ctx, true);
-> -
->   	/* if we failed setting up the ctx, we might not have any rings */
->   	io_iopoll_try_reap_events(ctx);
->   
-> @@ -8978,13 +8957,14 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
->   					 struct files_struct *files)
->   {
->   	struct io_task_cancel cancel = { .task = task, .files = files, };
-> +	struct io_uring_task *tctx = current->io_uring;
->   
->   	while (1) {
->   		enum io_wq_cancel cret;
->   		bool ret = false;
->   
-> -		if (ctx->io_wq) {
-> -			cret = io_wq_cancel_cb(ctx->io_wq, io_cancel_task_cb,
-> +		if (tctx && tctx->io_wq) {
-> +			cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_task_cb,
->   					       &cancel, true);
->   			ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
->   		}
-> @@ -9096,7 +9076,7 @@ static int io_uring_add_task_file(struct io_ring_ctx *ctx, struct file *file)
->   	int ret;
->   
->   	if (unlikely(!tctx)) {
-> -		ret = io_uring_alloc_task_context(current);
-> +		ret = io_uring_alloc_task_context(current, ctx);
->   		if (unlikely(ret))
->   			return ret;
->   		tctx = current->io_uring;
-> @@ -9166,8 +9146,12 @@ void __io_uring_files_cancel(struct files_struct *files)
->   		io_uring_cancel_task_requests(file->private_data, files);
->   	atomic_dec(&tctx->in_idle);
->   
-> -	if (files)
-> +	if (files) {
->   		io_uring_remove_task_files(tctx);
-> +	} else if (tctx->io_wq && current->flags & PF_EXITING) {
-> +		io_wq_destroy(tctx->io_wq);
-> +		tctx->io_wq = NULL;
-> +	}
->   }
->   
->   static s64 tctx_inflight(struct io_uring_task *tctx)
-> diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-> index 2eb6d19de336..0e95398998b6 100644
-> --- a/include/linux/io_uring.h
-> +++ b/include/linux/io_uring.h
-> @@ -36,6 +36,7 @@ struct io_uring_task {
->   	struct xarray		xa;
->   	struct wait_queue_head	wait;
->   	struct file		*last;
-> +	void			*io_wq;
->   	struct percpu_counter	inflight;
->   	struct io_identity	__identity;
->   	struct io_identity	*identity;
-> 
+[Changes since v3]
+- newly add patch 7 and patch 11, as a new optimization improving
+performance of multiple polling processes. Now performance of multiple
+polling processes can be as scalable as single polling process (~30%).
+Refer to the following [Performance] chapter for more details.
+
+
+[Intention]
+Bio-based polling (e.g., for dm/md devices) is one indispensable part of
+high performance IO stack. As far as I know, dm (e.g., dm-stripe) is
+widely used in database, splicing several NVMe disks as one whole disk,
+in hope of achieving better performance. With this patch set, io_uring
+could be used upon dm devices.
+
+
+[Optimizations]
+Basically, there are three paths for IO polling.
+
+1. fastpath (patch 9/10)
+The polling routine will go into this path when bio submitted to dm
+device is not split.
+
+In this case, there will be only one bio submitted to only one polling
+hw queue of one underlying mq device, and thus we don't need to track
+all split bios or iterate through all polling hw queues. The pointer to
+the polling hw queue the bio submitted to is returned here as the
+returned cookie. In this case, the polling routine will call
+mq_ops->poll() directly with the hw queue converted from the input
+cookie.
+
+
+- One process reading dm-linear (mapping to three underlying NVMe devices,
+with one polling hw queue per NVMe device).
+
+(ioengine=io_uring, iodepth=128, numjobs=1, rw=randread, sqthread_poll=0
+direct=1, bs=4k)
+
+	    	 | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+---------------- | --------------- | -------------------- | ----
+with patchset    |	      212k |		     284k | ~32%
+
+
+- Three processes reading dm-linear (mapping to three underlying NVMe
+devices, with one polling hw queue per NVMe device).
+
+(ioengine=io_uring, iodepth=128, numjobs=3, rw=randread, sqthread_poll=0
+direct=1, bs=4k)
+
+	    	 | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+---------------- | --------------- | -------------------- | ----
+with patchset    |	      615k |		     735k | ~16%
+
+
+- Three processes reading dm-linear (mapping to three underlying NVMe
+devices, with three polling hw queues per NVMe device), with every
+process pinned to one CPU and mapped to one exclusive hw queue.
+
+(ioengine=io_uring, iodepth=128, numjobs=3, rw=randread, sqthread_poll=0
+direct=1, bs=4k)
+
+	    	 | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+---------------- | --------------- | -------------------- | ----
+with patchset    |	      631k |		     833k | ~32%
+
+
+
+2. sub-fastpath (patch 7/11)
+
+The polling routine will go into this path when bio submitted to dm
+device gets split and enqueued into multiple hw queues, while the IO
+submission process has not been migrated to another CPU.
+
+In this case, the IO submission routine will return the CPU number on
+which the IO submission happened as the returned cookie, while the
+polling routine will only iterate and poll on hw queues that this CPU
+number maps, instead of iterating *all* hw queues.
+
+This optimization can dramatically reduce cache ping-pong and thus
+improve the polling performance, when multiple hw queues in polling mode
+per device could be reserved when there are multiple polling processes.
+
+- Three processes reading dm-stripe (mapping to three underlying NVMe
+devices, with three polling hw queues per NVMe device), with every
+process pinned to one CPU and mapped to one exclusive hw queue.
+
+(ioengine=io_uring, iodepth=128, numjobs=3, rw=randread, sqthread_poll=0
+direct=1, bs=12k(4k for every NVMe device))
+
+	    	 | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+---------------- | --------------- | -------------------- | ----
+with patchset    |	      307k |		     412k | ~34%
+
+
+3. default path
+
+It will fall back to iterating all hw queues in polling mode, once bio
+submitted to dm device gets split and enqueued into multiple hw queues,
+and the IO process has ever been migrated to another CPU during the IO
+submission phase.
+
+
+[Remained Issue]
+It has been mentioned in patch 4 that, users could change the state of
+the underlying devices through '/sys/block/<dev>/io_poll', bypassing
+the dm device above. Thus it can cause a situation where QUEUE_FLAG_POLL
+is still set for the request_queue of dm device, while one of the
+underlying mq device may has cleared this flag.
+
+In this case, it will pass the 'test_bit(QUEUE_FLAG_POLL, &q->queue_flags)'
+check in blk_poll(), while the input cookie may actually points to a hw
+queue in IRQ mode since patch 11. Thus for this hw queue (in IRQ mode),
+the bio-based polling routine will handle this hw queue acquiring
+'spin_lock(&nvmeq->cq_poll_lock)' (refer
+drivers/nvme/host/pci.c:nvme_poll), which is not adequate since this hw
+queue may also be accessed in IRQ context. In other words,
+spin_lock_irq() should be used here.
+
+I have not come up one simple way to fix it. I don't want to do sanity
+check (e.g., the type of the hw queue is HCTX_TYPE_POLL or not) in the
+IO path (submit_bio()/blk_poll()), i.e., fast path.
+
+We'd better fix it in the control path, i.e., dm could be aware of the
+change when attribute (e.g., support io_poll or not) of one of the
+underlying devices changed at runtime.
+
+
+
+
+[Changes since v2]
+
+Patchset v2 caches all hw queues (in polling mode) of underlying mq
+devices in dm layer. The polling routine actually iterates through all
+these cached hw queues.
+
+However, mq may change the queue mapping at runtime (e.g., NVMe RESET
+command), thus the cached hw queues in dm layer may be out-of-date. Thus
+patchset v3 falls back to the implementation of the very first RFC
+version, in which the mq layer needs to export one interface iterating
+all polling hw queues (patch 5), and the bio-based polling routine just
+calls this interface to iterate all polling hw queues.
+
+Besides, several new optimization is proposed.
+
+
+- patch 1,2,7
+same as v2, untouched
+
+- patch 3
+Considering advice from Christoph Hellwig, while refactoring blk_poll(),
+split mq and bio-based polling routine from the very beginning. Now
+blk_poll() is just a simple entry. blk_bio_poll() is simply copied from
+blk_mq_poll(), while the loop structure is some sort of duplication
+though.
+
+- patch 4
+This patch is newly added to support turning on/off polling through
+'/sys/block/<dev>/queue/io_poll' dynamiclly for bio-based devices.
+Patchset v2 implemented this functionality by added one new queue flag,
+which is not preferred since the queue flag resource is quite short of
+nowadays.
+
+- patch 5
+This patch is newly added, preparing for the following bio-based
+polling. The following bio-based polling will call this helper function,
+accounting on the corresponding hw queue.
+
+- patch 6
+It's from the very first RFC version, preparing for the following
+bio-based polling.
+
+- patch 8
+One fixing patch needed by the following bio-based polling. It's
+actually a v2 of [1]. I had sent the v2 singly in-reply-to [1], though
+it has not been visible on the mailing list maybe due to the delay.
+
+- patch 9
+It's from the very first RFC version.
+
+- patch 10
+This patch is newly added. Patchset v2 had ever proposed one
+optimization that, skipping the **busy** hw queues during the iteration
+phase. Back upon that time, one flag of 'atomic_t' is specifically
+maintained in dm layer, representing if the corresponding hw queue is
+busy or not. The idea is inherited, while the implementation changes.
+Now @nvmeq->cq_poll_lock is used directly here, no need for extra flag
+anymore.
+
+This optimization can significantly reduce the competition for one hw
+queue between multiple polling instances. Following statistics is the
+test result when 3 threads concurrently randread (bs=4k, direct=1) one
+dm-linear device, which is built upon 3 nvme devices, with one polling
+hw queue per nvme device.
+
+	    | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+----------- | --------------- | -------------------- | ----
+without opt | 		 318k |		 	256k | ~-20%
+with opt    |		 314k |		 	354k | ~13%
+							
+
+- patch 11
+This is another newly added optimizatin for bio-based polling.
+
+One intuitive insight is that, when the original bio submitted to dm
+device doesn't get split, then the bio gets enqueued into only one hw
+queue of one of the underlying mq devices. In this case, we no longer
+need to track all split bios, and one cookie (for the only split bio)
+is enough. It is implemented by returning the pointer to the
+corresponding hw queue in this case.
+
+It should be safe by directly returning the pointer to the hw queue,
+since 'struct blk_mq_hw_ctx' won't be freed during the whole lifetime of
+'struct request_queue'. Even when the number of hw queues may decrease
+when NVMe RESET happens, the 'struct request_queue' structure of decreased
+hw queues won't be freed, instead it's buffered into
+&q->unused_hctx_list list.
+
+Though this optimization seems quite intuitive, the performance test
+shows that it does no benefit nor harm to the performance, while 3
+threads concurrently randreading (bs=4k, direct=1) one dm-linear
+device, which is built upon 3 nvme devices, with one polling hw queue
+per nvme device.
+
+I'm not sure why it doesn't work, maybe because the number of devices,
+or the depth of the devcice stack is to low in my test case?
+
+
+changes since v1:
+- patch 1,2,4 is the same as v1 and have already been reviewed
+- patch 3 is refactored a bit on the basis of suggestions from
+Mike Snitzer.
+- patch 5 is newly added and introduces one new queue flag
+representing if the queue is capable of IO polling. This mainly
+simplifies the logic in queue_poll_store().
+- patch 6 implements the core mechanism supporting IO polling.
+The sanity check checking if the dm device supports IO polling is
+also folded into this patch, and the queue flag will be cleared if
+it doesn't support, in case of table reloading.
+
+
+
+
+Jeffle Xu (12):
+  block: move definition of blk_qc_t to types.h
+  block: add queue_to_disk() to get gendisk from request_queue
+  block: add poll method to support bio-based IO polling
+  block: add poll_capable method to support bio-based IO polling
+  blk-mq: extract one helper function polling hw queue
+  blk-mq: add iterator for polling hw queues
+  blk-mq: add one helper function getting hw queue
+  dm: always return BLK_QC_T_NONE for bio-based device
+  nvme/pci: don't wait for locked polling queue
+  block: fastpath for bio-based polling
+  block: sub-fastpath for bio-based polling
+  dm: support IO polling for bio-based dm device
+
+ block/blk-core.c              | 112 +++++++++++++++++++++++++++++++++-
+ block/blk-mq.c                |  37 ++++-------
+ block/blk-sysfs.c             |  14 ++++-
+ drivers/md/dm-table.c         |  26 ++++++++
+ drivers/md/dm.c               | 102 ++++++++++++++++++++++++++-----
+ drivers/nvme/host/pci.c       |   4 +-
+ include/linux/blk-mq.h        |  23 +++++++
+ include/linux/blk_types.h     |  66 +++++++++++++++++++-
+ include/linux/blkdev.h        |   4 ++
+ include/linux/device-mapper.h |   1 +
+ include/linux/fs.h            |   2 +-
+ include/linux/types.h         |   3 +
+ include/trace/events/kyber.h  |   6 +-
+ 13 files changed, 350 insertions(+), 50 deletions(-)
+
+-- 
+2.27.0
 

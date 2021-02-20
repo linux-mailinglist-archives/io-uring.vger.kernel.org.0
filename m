@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C90273205A3
-	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 15:11:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F0973205A9
+	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 15:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229614AbhBTOLm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 20 Feb 2021 09:11:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35428 "EHLO
+        id S229603AbhBTOSz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 20 Feb 2021 09:18:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbhBTOLi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 09:11:38 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13445C061574
-        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 06:10:58 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id l13so780909wmg.5
-        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 06:10:57 -0800 (PST)
+        with ESMTP id S229557AbhBTOSx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 09:18:53 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00326C061574
+        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 06:18:12 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id l17so9503589wmq.2
+        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 06:18:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5k4zqm2KaaCSbsr5a2EpFJVEljPsxK/1/8IP1Z4X7J4=;
-        b=vgVbCYuG6ob0MIyrN3DLEDS5yqsWus2YQnBwZ4QEqsS1U/EC5pshh6JFksnhsXo+IW
-         u4xLCGrogVeCEKBjDujtyFoTRVHDRMkRVGpJCX8OjLwnCOqjNn0ep/JkzldSCMCMzlHs
-         NwjUkyyYyOnZlTBCNQx3mlL+xEuFYOFNxjBuZ+YcPhgzPeqPQFkBbMso/GfIdv2IFjCc
-         CcwDIXSJuYufm4VJ3qsYIjcTKzK81YVO+p9oEYp9TRNSWaZ1ybdyNfwTpcQ1uYHnAEQm
-         2wYfg2FvE/Jv+PryLJyE+0Bmr7lWyyHPHVbffSjvgCR2IEGJKaD7bahNeNp4LJidiXyt
-         nmFg==
+        bh=kIOCos7oISwc+W8cbaHeoAvNvFm0Zb2bKRtcYXhk7NQ=;
+        b=ZIAwwbXgge9Tx5yLd5qnET4dA3MigggH+9SlCEbdCjVfcjBcytNaYpYXaQ0yZKTx45
+         1txnTosyiloJLYUXhAZx/Y45V6s8SY+EIMfCsub0h68b0bYg0441Yu7tFgv9WMqN+FwZ
+         FSa6/dk4dKf73urmalWjnEDej7cXA5ZjSepaba18KOxP4wTZzyZdwtlh/dwBgIuB5axD
+         Jb1+HHpet8RsK4uATuVkY652ToVZ+zAxip02CXxLjiVRgBjCwdOuRvIb2A8Alj3Q/kML
+         VegaeM7xXR0ZXp81qXJV/0F0G/XffbWLQk5IS9LOklLU3xNxuQc6FYBUiux2u97cpaTR
+         tnWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=5k4zqm2KaaCSbsr5a2EpFJVEljPsxK/1/8IP1Z4X7J4=;
-        b=Zw9kfCIYJxcDEUoP1IbhZzDQy1PEBfu+Q40aw6VI/clhEuu8sbD+xmttLQAhA1t0XC
-         A89J7IyBTmUH64ILGPEBiAKkSeAFKCf2phIECZrHpAqloNgMIqeImpTrbVwf2Jj3Rtn3
-         LHMiBihfOZchQRPkWi/2FsBP1qF4m16zrqT1kuZhri7NOW/G5qgQGxce6iaeBxMSSsAE
-         XlUxJKZkzCDChY4kHKIei0kqZbOc58VZyEAJdFvX0c3bp5cxhpG1HWynZjPi+F0M7weL
-         Nay09Yg5YjqLcWOwagsvemIQ1XgyyGP31BWJUZ0kRSo9q2WNKLFHu/DJMkLP+DIsC6la
-         OvtA==
-X-Gm-Message-State: AOAM5308d9866cdB/4AvRom/5Ce1zMIM8HS22T3ktdslNbZ8X9OU/XvS
-        mFwrc8Aq7c9NlTszfuLw2E0+Sq90jk1DdQ==
-X-Google-Smtp-Source: ABdhPJxrMuNbztKHdjHFexOzerFlwmiLmc0dUoeCKDDzyUmqyQ5TE0VVGvqiHlVSDqJTW4NavbS8ig==
-X-Received: by 2002:a1c:9843:: with SMTP id a64mr12500940wme.44.1613830256510;
-        Sat, 20 Feb 2021 06:10:56 -0800 (PST)
+        bh=kIOCos7oISwc+W8cbaHeoAvNvFm0Zb2bKRtcYXhk7NQ=;
+        b=GIo3kg3H4e5LIIaN8JY/aRz9pcj51SKBR2aZhn0mBH7PbupBhHT3lRhgZ0Qd6fsAh6
+         Xi2ej/P2OCO+C76rsZKKwPz61icIqsexkBRM195jojSDPzz4qy5fTYFDNUskWl7MzkI7
+         iUUXcpzftC9HFlqVO/9q6/Zb75PGqpcO34fJwtvxvFfnXxYCimkXZGbJvsWTBBiaHGh9
+         WqisJ6ZbraKQfUFPaQ8HghR/5EwgRm6KR4N4tL8mkIFZLByXWh4DWzcv63xzNq7MzxnC
+         oMEphisBUr0b0d+vhDdTiBY25uWNJuVx5OWlt5SHP5bgZl08/Fa+RtduCEMK5HCjRkly
+         kY1Q==
+X-Gm-Message-State: AOAM5324BhYTYv2MfVSmkIV8h2rgO4KTtctq81vjvCp2kcMtPhCXfZuC
+        Nf6SXKSxb0tSJkihoGr9MvMMaWs0wZELjw==
+X-Google-Smtp-Source: ABdhPJxVQu2xxIBW+E/0hPBWN2MtzLYHwnUT82yj2VBP5CCR44Ob9OpCwTOwiTCYi5lVR3Z7dszr3Q==
+X-Received: by 2002:a1c:988c:: with SMTP id a134mr12326356wme.102.1613830691379;
+        Sat, 20 Feb 2021 06:18:11 -0800 (PST)
 Received: from [192.168.8.141] ([148.252.132.56])
-        by smtp.gmail.com with ESMTPSA id 7sm6627246wmi.27.2021.02.20.06.10.55
+        by smtp.gmail.com with ESMTPSA id c14sm4337933wrp.14.2021.02.20.06.18.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Feb 2021 06:10:55 -0800 (PST)
+        Sat, 20 Feb 2021 06:18:10 -0800 (PST)
 To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>,
         io-uring@vger.kernel.org
 References: <cover.1613767375.git.asml.silence@gmail.com>
- <1b71f4059f088b035ec72307321f051a7be2d44f.1613767375.git.asml.silence@gmail.com>
- <e5c131a0-402d-31df-b5f9-156434bf3f29@linux.alibaba.com>
+ <1253a9e9-fbf4-4289-ae36-2768c682d6b5@gmail.com>
+ <52268a17-d8cc-7a6d-258c-beb9fe9eff30@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -97,155 +97,45 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH 2/3] io_uring: fix io_rsrc_ref_quiesce races
-Message-ID: <070f2274-187d-8ee8-e841-f44beeba4fd0@gmail.com>
-Date:   Sat, 20 Feb 2021 14:07:05 +0000
+Subject: Re: [PATCH 0/3] rsrc quiesce fixes/hardening
+Message-ID: <003716d8-44da-a360-2631-7090d745cbf9@gmail.com>
+Date:   Sat, 20 Feb 2021 14:14:21 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <e5c131a0-402d-31df-b5f9-156434bf3f29@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <52268a17-d8cc-7a6d-258c-beb9fe9eff30@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 20/02/2021 06:31, Hao Xu wrote:
-> 在 2021/2/20 上午4:45, Pavel Begunkov 写道:
->> There are different types of races in io_rsrc_ref_quiesce()  between
->> ->release() of percpu_refs and reinit_completion(), fix them by always
->> resurrecting between iterations. BTW, clean the function up, because
->> DRY.
+On 20/02/2021 06:32, Hao Xu wrote:
+> 在 2021/2/20 上午4:49, Pavel Begunkov 写道:
+>> On 19/02/2021 20:45, Pavel Begunkov wrote:
+>>> 1/3 addresses new races in io_rsrc_ref_quiesce(), others are hardenings.
 >>
->> Fixes: 0ce4a72632317 ("io_uring: don't hold uring_lock when calling io_run_task_work*")
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>   fs/io_uring.c | 46 +++++++++++++---------------------------------
->>   1 file changed, 13 insertions(+), 33 deletions(-)
+>> s/1/2/
 >>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 50d4dba08f82..38ed52065a29 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -7316,19 +7316,6 @@ static void io_sqe_rsrc_set_node(struct io_ring_ctx *ctx,
->>       percpu_ref_get(&rsrc_data->refs);
->>   }
->>   -static int io_sqe_rsrc_add_node(struct io_ring_ctx *ctx, struct fixed_rsrc_data *data)
->> -{
->> -    struct fixed_rsrc_ref_node *backup_node;
->> -
->> -    backup_node = alloc_fixed_rsrc_ref_node(ctx);
->> -    if (!backup_node)
->> -        return -ENOMEM;
->> -    init_fixed_file_ref_node(ctx, backup_node);
->> -    io_sqe_rsrc_set_node(ctx, data, backup_node);
->> -
->> -    return 0;
->> -}
->> -
->>   static void io_sqe_rsrc_kill_node(struct io_ring_ctx *ctx, struct fixed_rsrc_data *data)
->>   {
->>       struct fixed_rsrc_ref_node *ref_node = NULL;
->> @@ -7347,36 +7334,29 @@ static int io_rsrc_ref_quiesce(struct fixed_rsrc_data *data,
->>   {
->>       int ret;
->>   -    io_sqe_rsrc_kill_node(ctx, data);
->> -    percpu_ref_kill(&data->refs);
->> -
->> -    /* wait for all refs nodes to complete */
->> -    flush_delayed_work(&ctx->rsrc_put_work);
->>       do {
->> +        io_sqe_rsrc_kill_node(ctx, data);
->> +        percpu_ref_kill(&data->refs);
->> +        flush_delayed_work(&ctx->rsrc_put_work);
->> +
->>           ret = wait_for_completion_interruptible(&data->done);
->>           if (!ret)
->>               break;
->>   -        ret = io_sqe_rsrc_add_node(ctx, data);
->> -        if (ret < 0)
->> -            break;
->> -        /*
->> -         * There is small possibility that data->done is already completed
->> -         * So reinit it here
->> -         */
->> +        percpu_ref_resurrect(&data->refs);
-> I've thought about this, if we resurrect data->refs, then we can't
-> avoid parallel files unregister by percpu_refs_is_dying.
+>> Hao, any chance you guys can drag these patches through the same
+>> tests you've done for "io_uring: don't hold uring_lock ..."?
+>>
+> gotcha, will test it soon.
 
-Right, totally forgot about it, but otherwise we race with data->done.
-Didn't test yet, but a diff below should do the trick.
+awesome, thanks
 
->> +        if (ret < 0)
->> +            return ret;
->> +        backup_node = alloc_fixed_rsrc_ref_node(ctx);
->> +        if (!backup_node)
->> +            return -ENOMEM;
-> Should we resurrect data->refs and reinit completion before
-> signal or error return?
-
-Not sure what exactly you mean, we should not release uring_lock with
-inconsistent state, so it's done right before unlock. And we should not
-do it before wait_for_completion_interruptible() before it would take a
-reference.
-
->> +        init_fixed_file_ref_node(ctx, backup_node);
->> +    } while (1);
->>         destroy_fixed_rsrc_ref_node(backup_node);
->>       return 0;
+>>>
+>>> Pavel Begunkov (3):
+>>>    io_uring: zero ref_node after killing it
+>>>    io_uring: fix io_rsrc_ref_quiesce races
+>>>    io_uring: keep generic rsrc infra generic
+>>>
+>>>   fs/io_uring.c | 65 +++++++++++++++++----------------------------------
+>>>   1 file changed, 21 insertions(+), 44 deletions(-)
+>>>
 >>
 > 
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ce5fccf00367..0af1572634de 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -236,6 +236,7 @@ struct fixed_rsrc_data {
- 	struct fixed_rsrc_ref_node	*node;
- 	struct percpu_ref		refs;
- 	struct completion		done;
-+	bool				quiesce;
- };
- 
- struct io_buffer {
-@@ -7335,6 +7336,7 @@ static int io_rsrc_ref_quiesce(struct fixed_rsrc_data *data,
- 	struct fixed_rsrc_ref_node *backup_node;
- 	int ret;
- 
-+	data->quiesce = true;
- 	do {
- 		backup_node = alloc_fixed_rsrc_ref_node(ctx);
- 		if (!backup_node)
-@@ -7353,16 +7355,19 @@ static int io_rsrc_ref_quiesce(struct fixed_rsrc_data *data,
- 		percpu_ref_resurrect(&data->refs);
- 		synchronize_rcu();
- 		io_sqe_rsrc_set_node(ctx, data, backup_node);
-+		backup_node = NULL;
- 		reinit_completion(&data->done);
- 		mutex_unlock(&ctx->uring_lock);
- 		ret = io_run_task_work_sig();
- 		mutex_lock(&ctx->uring_lock);
- 		if (ret < 0)
- 			return ret;
--	} while (1);
-+	} while (ret >= 0);
- 
--	destroy_fixed_rsrc_ref_node(backup_node);
--	return 0;
-+	data->quiesce = false;
-+	if (backup_node)
-+		destroy_fixed_rsrc_ref_node(backup_node);
-+	return ret;
- }
- 
- static struct fixed_rsrc_data *alloc_fixed_rsrc_data(struct io_ring_ctx *ctx)
-@@ -7401,7 +7406,7 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
- 	 * Since we possibly drop uring lock later in this function to
- 	 * run task work.
- 	 */
--	if (!data || percpu_ref_is_dying(&data->refs))
-+	if (!data || data->quiesce)
- 		return -ENXIO;
- 	ret = io_rsrc_ref_quiesce(data, ctx, io_ring_file_put);
- 	if (ret)
+-- 
+Pavel Begunkov

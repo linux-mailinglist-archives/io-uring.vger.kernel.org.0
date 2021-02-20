@@ -2,75 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53549320692
-	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 19:08:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D89320697
+	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 19:08:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbhBTSI3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 20 Feb 2021 13:08:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57538 "EHLO
+        id S229847AbhBTSIa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 20 Feb 2021 13:08:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229810AbhBTSI2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 13:08:28 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD742C061574
-        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 10:07:47 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id b3so14407349wrj.5
-        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 10:07:47 -0800 (PST)
+        with ESMTP id S229810AbhBTSI3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 13:08:29 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13228C061786
+        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 10:07:49 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id v62so10654245wmg.4
+        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 10:07:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=fBNuUz2jga1yCcG2na8HyV+sr1B1XgbaErJoQxN6UD8=;
-        b=HBW4bXH8Z6bBcqZcG+L0C0hihOBwLlQXyuVCCtdKq8/mbkP1MX/2OjAHc2d4mEKO0e
-         XifzALHDRMUBD00qoaK4+b/Nc4zK+v6VDGW222kgTwyUCWbhsw7v6gBJFHqoxEolnylO
-         I5bsIh6liIUZuxlhnXcL9+Xtn4PzNG1z5Y/k5jkcJA35vMujl2khuhcvZvuCCkZr8CjW
-         2IidW2PWH7IvB3iXYhvam71Wj9XYgYR2WjA6p4JxiQ/Na2CAUkCIYld9FUS+2aBCx/en
-         69SlkkKnB6hs8HANY8nHMGRfCdoV4VS/yQgCswoNTR/nTl2Tzbv8LZtpryM/8gEdViDc
-         ljug==
+        bh=ZyTwY5vdUUD/+YZlFi12xNn+AuHE/EaDeHywsrNm3PA=;
+        b=jDjLSjoxBicLN3SxILbWYzTwbDv02ct/7Djl2SAW6ScFtPfuypYGc8xycqRNnypF5L
+         ChlFZPfgCJbfcnQN0E7jRsubXAk6ssKNDbw77XQYAkpny0QXFxmvVCLW+h41kBMue3fq
+         nr0zdVLeWQzM9ZXYhZtmDRoqKVXdp+So9ZyMG9QrbEI4OrDouk418uRGhZ2N8Pc5Yme6
+         5qDGYt4EsNcxM2gdNyy7Stj6DAA+HMgGcsrtjjwnrk5s8fuGv0ns2qYc0tKYw2iaX4tW
+         Cv0NMKNxL7HXjOuvOOS0NeFbi/xCK/v4EePEhMsYFz4gBY9SNcUJmrR4P+glnZo4HSpe
+         Hy0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fBNuUz2jga1yCcG2na8HyV+sr1B1XgbaErJoQxN6UD8=;
-        b=sIU6/VWkxpMASjPT2uOssJyfHbDtDYtyR0gX0MNJ6zYfjLk19APUdIUz201HKfV9CY
-         JVSQRuK6so1RjkLtuMA1uwRtqvXIHnfjtyTUbQGFuDjPFh1LdfPWxQ6GFm4MzEGgAWcg
-         bs4vHlxQ1/29zrGyMTX98WFpwFF12s9JJhriiTQg7HSvSxQvynlQFY2qomsUD6f/IZKP
-         wbFL58UUPRZiTNIpnrZy8ET37ZVMu8vnMPh2XK+USkOmUOt/0xm3ciF1W+a4XIBE3ifF
-         BSbXK1MEZCdOSSQfuZhkPZn24WbWxZzFI5f0Z1HH+i5ZQCReulysx26uqoSXHay4GACm
-         tpUg==
-X-Gm-Message-State: AOAM530QY3rAoTP/2UtKUIWGLeLgqlQxIm3oALvGVVed0PYEQgl4a0FP
-        A51C1LBT0SxEEUXiQFTAbgJ2itpllv5WNg==
-X-Google-Smtp-Source: ABdhPJyVBaGsV2QBNB0BTtiH7iP0XGzU0PUtuepHR0w06NSywWEVTGB06rlshYnRnYb70UQHy2DOZw==
-X-Received: by 2002:a05:6000:c1:: with SMTP id q1mr14871301wrx.114.1613844466387;
-        Sat, 20 Feb 2021 10:07:46 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ZyTwY5vdUUD/+YZlFi12xNn+AuHE/EaDeHywsrNm3PA=;
+        b=G6/gbghRPHETl9NwFLL8MQCk1pgzw95AKJ+/TU2dVjGKhA2WoiUubFuzJrVZb3dFcI
+         9NT4Ey9fUXtQ1Z2g+EqeZ8v+v1rxDfXnOs85XTHzHpWB8tCLGJFrTCWb8ZKMAqWcOPo8
+         4JGjECxcNAC0VDISiNp/MCPvnjJ/s5bCSrc8MPi71fR6HzmOb46//Rpgvzse1m4Nygma
+         cUdVTzomxFrQ6lJCebLJv/UeeXFAd2zbW9luEIRuoDC1pwkukGjXe4N7NdtpHEmlZxhV
+         L4su1Jo04CEwlTRy9LgWLbcM3rk+4wT+8NmsUmggxkMLk3APdnUF/DiGE6Q4kusJjcmC
+         pK4w==
+X-Gm-Message-State: AOAM531GaHZ+0CnUWyP/hruLUUTKoFKlmPifA+kA1obX6o7WK7C/o6Ln
+        /NNdxbaF/7FEEPp1Y5/nCMY=
+X-Google-Smtp-Source: ABdhPJyoTC1R+s+Uk9X2Y3o/JMdHuzbp3Yupv14zWiUmP6glWu19tnArW3k0hJGJHOo5vtefADSWfQ==
+X-Received: by 2002:a1c:e402:: with SMTP id b2mr10841743wmh.103.1613844467306;
+        Sat, 20 Feb 2021 10:07:47 -0800 (PST)
 Received: from localhost.localdomain ([148.252.132.56])
-        by smtp.gmail.com with ESMTPSA id b83sm13594918wmd.4.2021.02.20.10.07.45
+        by smtp.gmail.com with ESMTPSA id b83sm13594918wmd.4.2021.02.20.10.07.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Feb 2021 10:07:45 -0800 (PST)
+        Sat, 20 Feb 2021 10:07:46 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2 0/4] rsrc quiesce fixes/hardening v2
-Date:   Sat, 20 Feb 2021 18:03:46 +0000
-Message-Id: <cover.1613844023.git.asml.silence@gmail.com>
+Subject: [PATCH v2 1/4] io_uring: zero ref_node after killing it
+Date:   Sat, 20 Feb 2021 18:03:47 +0000
+Message-Id: <611ab369e6aab4d4008a4e41e17a53d44c5d7c04.1613844023.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1613844023.git.asml.silence@gmail.com>
+References: <cover.1613844023.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-v2: concurrent quiesce avoidance (Hao)
-    resurrect-release patch
+After a rsrc/files reference node's refs are killed, it must never be
+used. And that's how it works, it either assigns a new node or kills the
+whole data table.
 
-Pavel Begunkov (4):
-  io_uring: zero ref_node after killing it
-  io_uring: fix io_rsrc_ref_quiesce races
-  io_uring: keep generic rsrc infra generic
-  io_uring: wait potential ->release() on resurrect
+Let's explicitly NULL it, that shouldn't be necessary, but if something
+would go wrong I'd rather catch a NULL dereference to using a dangling
+pointer.
 
- fs/io_uring.c | 96 ++++++++++++++++++++++++---------------------------
- 1 file changed, 45 insertions(+), 51 deletions(-)
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index b7bae301744b..50d4dba08f82 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7335,6 +7335,7 @@ static void io_sqe_rsrc_kill_node(struct io_ring_ctx *ctx, struct fixed_rsrc_dat
+ 
+ 	io_rsrc_ref_lock(ctx);
+ 	ref_node = data->node;
++	data->node = NULL;
+ 	io_rsrc_ref_unlock(ctx);
+ 	if (ref_node)
+ 		percpu_ref_kill(&ref_node->refs);
 -- 
 2.24.0
 

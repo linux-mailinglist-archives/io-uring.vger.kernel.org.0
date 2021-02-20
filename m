@@ -2,27 +2,27 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B143204F1
-	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 12:07:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 374803204FA
+	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 12:08:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229784AbhBTLHX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 20 Feb 2021 06:07:23 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:58119 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229766AbhBTLHW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 06:07:22 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R521e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UP0sPTZ_1613819198;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UP0sPTZ_1613819198)
+        id S229806AbhBTLH2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 20 Feb 2021 06:07:28 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:56851 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229771AbhBTLHX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 06:07:23 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UP1O7oY_1613819199;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UP1O7oY_1613819199)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 20 Feb 2021 19:06:38 +0800
+          Sat, 20 Feb 2021 19:06:40 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     snitzer@redhat.com, axboe@kernel.dk
 Cc:     hch@lst.de, ming.lei@redhat.com, linux-block@vger.kernel.org,
         dm-devel@redhat.com, io-uring@vger.kernel.org,
         joseph.qi@linux.alibaba.com, caspar@linux.alibaba.com
-Subject: [PATCH v4 01/12] block: move definition of blk_qc_t to types.h
-Date:   Sat, 20 Feb 2021 19:06:26 +0800
-Message-Id: <20210220110637.50305-2-jefflexu@linux.alibaba.com>
+Subject: [PATCH v4 02/12] block: add queue_to_disk() to get gendisk from request_queue
+Date:   Sat, 20 Feb 2021 19:06:27 +0800
+Message-Id: <20210220110637.50305-3-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210220110637.50305-1-jefflexu@linux.alibaba.com>
 References: <20210220110637.50305-1-jefflexu@linux.alibaba.com>
@@ -32,58 +32,66 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-So that kiocb.ki_cookie can be defined as blk_qc_t, which will enforce
-the encapsulation.
+Sometimes we need to get the corresponding gendisk from request_queue.
+
+It is preferred that block drivers store private data in
+gendisk->private_data rather than request_queue->queuedata, e.g. see:
+commit c4a59c4e5db3 ("dm: stop using ->queuedata").
+
+So if only request_queue is given, we need to get its corresponding
+gendisk to get the private data stored in that gendisk.
 
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Mike Snitzer <snitzer@redhat.com>
 ---
- include/linux/blk_types.h | 2 +-
- include/linux/fs.h        | 2 +-
- include/linux/types.h     | 3 +++
- 3 files changed, 5 insertions(+), 2 deletions(-)
+ include/linux/blkdev.h       | 2 ++
+ include/trace/events/kyber.h | 6 +++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 866f74261b3b..2e05244fc16d 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -532,7 +532,7 @@ static inline int op_stat_group(unsigned int op)
- 	return op_is_write(op);
- }
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index f94ee3089e01..2a802e011a95 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -687,6 +687,8 @@ static inline bool blk_account_rq(struct request *rq)
+ 	dma_map_page_attrs(dev, (bv)->bv_page, (bv)->bv_offset, (bv)->bv_len, \
+ 	(dir), (attrs))
  
--typedef unsigned int blk_qc_t;
-+/* Macros for blk_qc_t */
- #define BLK_QC_T_NONE		-1U
- #define BLK_QC_T_SHIFT		16
- #define BLK_QC_T_INTERNAL	(1U << 31)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd47deea7c17..04b687150736 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -330,7 +330,7 @@ struct kiocb {
- 	u16			ki_hint;
- 	u16			ki_ioprio; /* See linux/ioprio.h */
- 	union {
--		unsigned int		ki_cookie; /* for ->iopoll */
-+		blk_qc_t		ki_cookie; /* for ->iopoll */
- 		struct wait_page_queue	*ki_waitq; /* for async buffered IO */
- 	};
- 
-diff --git a/include/linux/types.h b/include/linux/types.h
-index a147977602b5..da5ca7e1bea9 100644
---- a/include/linux/types.h
-+++ b/include/linux/types.h
-@@ -125,6 +125,9 @@ typedef s64			int64_t;
- typedef u64 sector_t;
- typedef u64 blkcnt_t;
- 
-+/* cookie used for IO polling */
-+typedef unsigned int blk_qc_t;
++#define queue_to_disk(q)	(dev_to_disk(kobj_to_dev((q)->kobj.parent)))
 +
- /*
-  * The type of an index into the pagecache.
-  */
+ static inline bool queue_is_mq(struct request_queue *q)
+ {
+ 	return q->mq_ops;
+diff --git a/include/trace/events/kyber.h b/include/trace/events/kyber.h
+index c0e7d24ca256..f9802562edf6 100644
+--- a/include/trace/events/kyber.h
++++ b/include/trace/events/kyber.h
+@@ -30,7 +30,7 @@ TRACE_EVENT(kyber_latency,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->dev		= disk_devt(dev_to_disk(kobj_to_dev(q->kobj.parent)));
++		__entry->dev		= disk_devt(queue_to_disk(q));
+ 		strlcpy(__entry->domain, domain, sizeof(__entry->domain));
+ 		strlcpy(__entry->type, type, sizeof(__entry->type));
+ 		__entry->percentile	= percentile;
+@@ -59,7 +59,7 @@ TRACE_EVENT(kyber_adjust,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->dev		= disk_devt(dev_to_disk(kobj_to_dev(q->kobj.parent)));
++		__entry->dev		= disk_devt(queue_to_disk(q));
+ 		strlcpy(__entry->domain, domain, sizeof(__entry->domain));
+ 		__entry->depth		= depth;
+ 	),
+@@ -81,7 +81,7 @@ TRACE_EVENT(kyber_throttled,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->dev		= disk_devt(dev_to_disk(kobj_to_dev(q->kobj.parent)));
++		__entry->dev		= disk_devt(queue_to_disk(q));
+ 		strlcpy(__entry->domain, domain, sizeof(__entry->domain));
+ 	),
+ 
 -- 
 2.27.0
 

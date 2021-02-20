@@ -2,195 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 643E03205D2
-	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 15:51:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBEBE3205E3
+	for <lists+io-uring@lfdr.de>; Sat, 20 Feb 2021 16:20:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229667AbhBTOvm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 20 Feb 2021 09:51:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43948 "EHLO
+        id S229774AbhBTPT5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 20 Feb 2021 10:19:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbhBTOvl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 09:51:41 -0500
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A71F2C06178A
-        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 06:50:59 -0800 (PST)
-Received: by mail-pf1-x431.google.com with SMTP id m6so3824236pfk.1
-        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 06:50:59 -0800 (PST)
+        with ESMTP id S229734AbhBTPT4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 10:19:56 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 527FCC061574
+        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 07:19:12 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id n10so10445334wmq.0
+        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 07:19:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oau4zWWMB5uBOfBTp8SGUOcYtkty7su3Om3BnkoJ0YQ=;
-        b=Xj/UGOy9YZkxMh4Jzcyh4Qe1umUC/TeQ+LKUtDI+xmoCD5CzvSMPIobRAU9OwcXcmP
-         zSvX9hK+mz8irnB7pdAm8QSMRG5lpRmGvMV01m3wT5gvn6o/v4UJqEll9lsG4AI87U1Q
-         D+E6hNLtHQgJsz1VuUAQtReofCdpAsQCMu3M2+LQmoxis7vQ0Peqh+rgocFjRaHKwcLm
-         gfZKpnRG084G0ol46CTg+Rbyjq7zNpzqUXVjA90ULR97nYBrMlbDrnCNmZjXwNZi7cJ8
-         DH2AXTWhVEs1YaMY0vWLbrXwWdTFg90Thomr+vKnFFNIIxmEU8vFEYN3Az1D4LPFUiLh
-         XBwg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nPM5JwrBZrlUZqh30dXDQ96Zj6ruaV2pGAuGRBEaLZM=;
+        b=slzoXQ6xTY0OZoCPZ2eSqU/Bzg9RkNMCHR6OMK+Tw3fHwR2QxFr+WDw/9NUmO1p+12
+         W01Ib5AGLznnty0FAkskg68r5qS7Ik9JC2ZuI3HrWeqUZyyIhW7WTi3RcO+yc/KPgnW5
+         GDVEm9U3vFgjm8c1vnsMR3ShCzS5eSdxhqdBC2CR0SHDTS+4hZxIH/PYlnP4T8zfq3wQ
+         I2fgAe8FyU7/cmPIYTagZbpb2D9tBxV8XZIxA6RVCOIK2nsWIR+35gP301N17aKQ+VTG
+         2epUbCzhZUnWz7WIZ0KHFESaAijeTAfhSUC3IUOKaV/CQVMyv15fzNj9UpzR2XaXqWvN
+         YYKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oau4zWWMB5uBOfBTp8SGUOcYtkty7su3Om3BnkoJ0YQ=;
-        b=j0GgNmJA0TIRt8BwbQetd5wKQtPOzYkECS7tbklyD/pg97grumixTFJ27RIp6VYUkL
-         nuow/DWawlW5B8reh00AmqmjkTxG2hs0ETpXpYyInJJXWgBTrmjqp0ty9TXONTpnVh8R
-         Xvzwd04V6U80WkkOsAwTczxeERX16yFZj6xqxyODYO6HltizmGWGoY1wQKyDmmd6FkyT
-         1n6syxAFNpo6UsWojayhLPDkbfUIBqLw0U7HT6s8aPmR9ARzgoBN4O5kpmZHUfLNp53Z
-         /Wsb4XIDqdNHOPbo2r0r030+SWQ8zf7/Dy54mpEVAedf9sOxGNpdTHGddRAoT7sPBFKQ
-         a49Q==
-X-Gm-Message-State: AOAM532+93/9PQGREkH+Oq2LTPMvIN4YulF7l82NQc0uqi0clepxa6zH
-        Jql7CMAnQYz4Mcb7dbeVLD/E4rAcIJmzfQ==
-X-Google-Smtp-Source: ABdhPJzPVFHqpjx3/2MSCERbH2OukRXNQDStKdGcWqsMKrHN+BN5vbDGvuBXVjHKdWQSYPRftgngEA==
-X-Received: by 2002:a63:2f86:: with SMTP id v128mr12578311pgv.241.1613832658410;
-        Sat, 20 Feb 2021 06:50:58 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id q4sm3441038pfs.134.2021.02.20.06.50.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Feb 2021 06:50:57 -0800 (PST)
-Subject: Re: [PATCH 2/5] io_uring: add support for IORING_OP_URING_CMD
-To:     Stefan Metzmacher <metze@samba.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     io-uring@vger.kernel.org
-References: <20210127212541.88944-1-axboe@kernel.dk>
- <20210127212541.88944-3-axboe@kernel.dk> <20210128003831.GE7695@magnolia>
- <67627096-6d30-af3a-9545-1446909a38c4@kernel.dk>
- <f8576940-5441-1355-c09e-db60ad0ac889@kernel.dk>
- <81d6c90e-b853-27c0-c4b7-23605bd4abae@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <187cbfad-0dfe-9a16-11f0-bfe18a6c7520@kernel.dk>
-Date:   Sat, 20 Feb 2021 07:50:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nPM5JwrBZrlUZqh30dXDQ96Zj6ruaV2pGAuGRBEaLZM=;
+        b=jlvhyz7LZ5WDsmsbqoEVNQgIu687bUKF66E3z/D0BRZGz1xLNPLVzo86uPCkKkFajY
+         6JyOH7N325PoO8G05MxSjgE6+wZJmgbzh0deCJ3a4MT+nyMmT4MSo3dr/5em6lUZR/+H
+         Wg4uGnXCyz4w6du1fsoLBG70eMgmhvUkbO8WpBM3bSn8FoMzkTtEB+q4jco+dMEHokJe
+         VzBYxnmejCQgjc0ZikJIvEi2IUtWk+L/+TjJ39h0XBI57VjRf+JjamNG7qiHpL5hvZ2L
+         wHPGiXVCpWO29npAEZ634fYMFlwE+72fPfll7UZISFPVAzaKZQPWI6uF+DrMdbd3k7SR
+         Ytnw==
+X-Gm-Message-State: AOAM532bcP7HcpNOg3zfUjUvp+AwPG39S4AD0rb6UVgnJiHRcdklod9W
+        f4bnQE+WgkiOeNqhWmG41mw=
+X-Google-Smtp-Source: ABdhPJzBIZv+hsM4eVfWCMVVlelZiTOmc2yFnOjvZI8pHzia57uEsHGZUzux1U+/tIYW4JImO775kg==
+X-Received: by 2002:a05:600c:148a:: with SMTP id c10mr11262264wmh.158.1613834351112;
+        Sat, 20 Feb 2021 07:19:11 -0800 (PST)
+Received: from localhost.localdomain ([148.252.132.56])
+        by smtp.gmail.com with ESMTPSA id y4sm13038320wrs.66.2021.02.20.07.19.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Feb 2021 07:19:10 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     Hao Xu <haoxu@linux.alibaba.com>
+Subject: [PATCH 1/1] io_uring: disallow concurrent rsrc quiesce
+Date:   Sat, 20 Feb 2021 15:15:12 +0000
+Message-Id: <7ab1ec56db576746ff2c6045b3f6eeb4af950eff.1613833993.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1613833993.git.asml.silence@gmail.com>
+References: <cover.1613833993.git.asml.silence@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <81d6c90e-b853-27c0-c4b7-23605bd4abae@samba.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/19/21 8:57 PM, Stefan Metzmacher wrote:
-> Hi Jens,
-> 
-> Am 28.01.21 um 03:19 schrieb Jens Axboe:
->>>> Assuming that I got that right, that means that the pdu information
->>>> doesn't actually go all the way to the end of the sqe, which currently
->>>> is just a bunch of padding.  Was that intentional, or does this mean
->>>> that io_uring_pdu could actually be 8 bytes longer?
->>>
->>> Also correct. The reason is actually kind of stupid, and I think we
->>> should just fix that up. struct io_uring_cmd should fit within the first
->>> cacheline of io_kiocb, to avoid bloating that one. But with the members
->>> in there, it ends up being 8 bytes too big, if we grab those 8 bytes.
->>> What I think we should do is get rid of ->done, and just have drivers
->>> call io_uring_cmd_done() instead. We can provide an empty hook for that.
->>> Then we can reclaim the 8 bytes, and grow the io_uring_cmd to 56 bytes.
->>
->> Pushed out that version:
->>
->> https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops.v2
->>
->> which gives you the full 56 bytes for the payload command.
-> 
-> I think we only have 48 bytes for the payload.
+Add a flag for marking a rsrc data quiescing to disallow doing it from
+several tasks concurrently.
 
-You are right, it's 64b minus 8 for the head, and 8 for user_data.
+Cc: Hao Xu <haoxu@linux.alibaba.com>
+Fixes: 853a012bdbddce869561 ("io_uring: fix io_rsrc_ref_quiesce races")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-> I've rebased and improved your io_uring-fops.v2 on top of your io_uring-worker.v3.
-
-Heh, I did that myself yesterday too, when I was folding in two fixes!
-
-> See https://git.samba.org/?p=metze/linux/wip.git;a=shortlog;h=refs/heads/io_uring-fops
-
-Had a quick look, and some good stuff in there. So thanks for that. One
-question, though - if you look at mine, you'll see I moved the force_nonblock
-to be using the issue_flags instead. You dropped that from the issue path,
-we definitely need that to be able to punt the request if we're in the
-nonblock/fast path.
-
-> 
-> I've changed the layout like this:
-> 
-> struct io_uring_sqe {
->         __u8    opcode;         /* type of operation for this sqe */
->         __u8    flags;          /* IOSQE_ flags */
->         union {
->                 __u16   ioprio;         /* ioprio for the request */
->                 __u16   cmd_personality; /* IORING_OP_URING_CMD */
->         };
->         __s32   fd;             /* file descriptor to do IO on */
->         union {
->                 __u64   off;    /* offset into file */
->                 __u64   addr2;
->                 __u64   cmd_user_data; /* IORING_OP_URING_CMD: data to be passed back at completion time */
->         };
->         union {
->                 __u64   addr;   /* pointer to buffer or iovecs */
->                 __u64   splice_off_in;
->                 __u64   cmd_pdu_start; /* IORING_OP_URING_CMD: this is the start for the remaining 48 bytes */
->         };
-> 
-> And then use:
-> 
-> struct io_uring_cmd_pdu {
->        __u64 data[6]; /* 48 bytes available for free use */
-> };
-> 
-> So we effectively have this:
-> 
-> struct io_uring_cmd_sqe {
->         __u8    opcode;         /* type of operation for this sqe */
->         __u8    flags;          /* IOSQE_ flags */
->         __u16   cmd_personality; /* IORING_OP_URING_CMD */
->         __s32   fd;             /* file descriptor to do IO on */
->         __u64   cmd_user_data; /* IORING_OP_URING_CMD: data to be passed back at completion time */
->         union {
->                 __u64   cmd_pdu_start; /* IORING_OP_URING_CMD: this is the start for the remaining 48 bytes */
->                 struct io_uring_cmd_pdu cmd_pdu;
->         };
-> }
-> 
-> I think it's saner to have a complete block of 48 bytes available for the payload
-> and move personality and user_data to to top if opcode is IORING_OP_URING_CMD
-> instead of having a hole that can't be touched.
-> 
-> I also finished the socket glue from struct file -> struct socket -> struct sock
-> 
-> I think it compiles, but I haven't done any tests.
-> 
-> What do you think?
-
-I've been thinking along the same lines, because having a sparse sqe layout
-for the uring cmd is a pain. I do think 'personality' is a bit too specific
-to be part of the shared space, that should probably belong in the pdu
-instead if the user needs it. One thing they all have in common is that they'd
-need a sub-command, so why not make that u16 that?
-
-There's also the option of simply saying that the uring_cmd sqe is just
-a different type, ala:
-
-struct io_uring_cmd_sqe {
-	__u8	opcode;		/* IO_OP_URING_CMD */
-	__u8	flags;
-	__u16	target_op;
-	__s32	fd;
-	__u64	user_data;
-	strut io_uring_cmd_pdu cmd_pdu;
-};
-
-which is essentially the same as your suggestion in terms of layout
-(because that is the one that makes the most sense), we just don't try
-and shoe-horn it into the existing sqe. As long as we overlap
-opcode/flags, then init is fine. And past init, sqe is already consumed.
-
-Haven't tried and wire that up yet, and it may just be that the simple
-layout change you did is just easier to deal with. The important part
-here is the layout, and I certainly think we should do that. There's
-effectively 54 bytes of data there, if you include the target op and fd
-as part of that space. 48 fully usable for whatever.
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index f3af499b12a9..ff8f50d3cf44 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -236,6 +236,7 @@ struct fixed_rsrc_data {
+ 	struct fixed_rsrc_ref_node	*node;
+ 	struct percpu_ref		refs;
+ 	struct completion		done;
++	bool				quiesce;
+ };
+ 
+ struct io_buffer {
+@@ -7335,10 +7336,15 @@ static int io_rsrc_ref_quiesce(struct fixed_rsrc_data *data,
+ 	struct fixed_rsrc_ref_node *backup_node;
+ 	int ret;
+ 
++	if (data->quiesce)
++		return -ENXIO;
++
++	data->quiesce = true;
+ 	do {
+ 		backup_node = alloc_fixed_rsrc_ref_node(ctx);
++		ret = -ENOMEM;
+ 		if (!backup_node)
+-			return -ENOMEM;
++			break;
+ 		backup_node->rsrc_data = data;
+ 		backup_node->rsrc_put = rsrc_put;
+ 
+@@ -7352,16 +7358,17 @@ static int io_rsrc_ref_quiesce(struct fixed_rsrc_data *data,
+ 
+ 		percpu_ref_resurrect(&data->refs);
+ 		io_sqe_rsrc_set_node(ctx, data, backup_node);
++		backup_node = NULL;
+ 		reinit_completion(&data->done);
+ 		mutex_unlock(&ctx->uring_lock);
+ 		ret = io_run_task_work_sig();
+ 		mutex_lock(&ctx->uring_lock);
+-		if (ret < 0)
+-			return ret;
+-	} while (1);
++	} while (ret >= 0);
++	data->quiesce = false;
+ 
+-	destroy_fixed_rsrc_ref_node(backup_node);
+-	return 0;
++	if (backup_node)
++		destroy_fixed_rsrc_ref_node(backup_node);
++	return ret;
+ }
+ 
+ static struct fixed_rsrc_data *alloc_fixed_rsrc_data(struct io_ring_ctx *ctx)
+@@ -7400,7 +7407,7 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 	 * Since we possibly drop uring lock later in this function to
+ 	 * run task work.
+ 	 */
+-	if (!data || percpu_ref_is_dying(&data->refs))
++	if (!data)
+ 		return -ENXIO;
+ 	ret = io_rsrc_ref_quiesce(data, ctx, io_ring_file_put);
+ 	if (ret)
 -- 
-Jens Axboe
+2.24.0
 

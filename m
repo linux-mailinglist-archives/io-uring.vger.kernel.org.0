@@ -2,90 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20DA1320DDF
-	for <lists+io-uring@lfdr.de>; Sun, 21 Feb 2021 22:23:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D6C4320E43
+	for <lists+io-uring@lfdr.de>; Sun, 21 Feb 2021 23:22:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230055AbhBUVXg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 21 Feb 2021 16:23:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37588 "EHLO
+        id S231722AbhBUWVC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Feb 2021 17:21:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbhBUVXf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Feb 2021 16:23:35 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A020C061574
-        for <io-uring@vger.kernel.org>; Sun, 21 Feb 2021 13:22:55 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id t26so8957819pgv.3
-        for <io-uring@vger.kernel.org>; Sun, 21 Feb 2021 13:22:55 -0800 (PST)
+        with ESMTP id S231613AbhBUWVB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Feb 2021 17:21:01 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8477C061786
+        for <io-uring@vger.kernel.org>; Sun, 21 Feb 2021 14:20:20 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id r23so52763532ljh.1
+        for <io-uring@vger.kernel.org>; Sun, 21 Feb 2021 14:20:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mouPQRfM19p8vHP5Tnph2d1M9LHaUd098MlUuEprpnc=;
-        b=kQxjQGyQGPJlN5pFHbd6ef/Ly95b8HcS2U++VHd5l3M7dqQflcwjwhVNuxfejlg4kg
-         sgdyy/w1ZK4LJv0BuRgqO/HJAbYOvWTJ7XbmTWFUnxCNFWZid66PMFGWU7whnURZ5ysj
-         kcVFsLbPI3hxzT5y4rXKYSsB0XjmNrdarsthmckYkEJ5tk39K+AglxliKmzs9wj2zzdT
-         ad2qijMLcQXdIaNTFbeiClNXcVSMqopwIZhNq21a4aI+q8seMtL5C6QHMpIQvTa8aMBW
-         b7Ox64tRqdndZkt5H/3sfPz4n0vvkR5FTDAIQq4oSGBLDjiQAkItmCIv9bEs0RLyAOSd
-         D+Vw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1qgd2CaVptvTGUhKDlRkh0Z0LDGRbgbRYJVc77psjI0=;
+        b=fQbjNDMH2LW1wJ6/r4mnToB2sVMQoAqDNnIZC0tTft5RHW4oL4vhaTeQgpZVKMxF30
+         nT/00d78iK839oXEHN4u+yaZt1zEu/r+rdbRCiRpFFQ0sRSQ1Q8kcb6WJ03qin0IMNCZ
+         KtNASVw7j3Rywzu1pVAHxoAg6F7vA+1EvIbPA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mouPQRfM19p8vHP5Tnph2d1M9LHaUd098MlUuEprpnc=;
-        b=XGzEIr5mcODKQ34j9V6lioeoPwyiMlDcd098EEzROkcZxN+bXsG7EbXOXl7xQxBDJK
-         o1xbS+yu1bUQpqOmnzVYM3V8ywn08gQAzbS4F16mRNTgSFmDLtfhlpIXgx6Zk3v3uZT1
-         CVhEshnTMd8BS1u+PkFIXqzN0sIX+PRJHq+c5+SKTBKWf7Z9ifCat/Rz5wXmguOyjpDo
-         4DdeUBsFnYgXfj+TTD9RbgL8fzwB8cesVL3n5Fqzv9aJQZpQYZDOZ/5iSnbSkurZcN8C
-         niR/1lkJ17rhPriyJKzKtrNOJ4pPsCsqz7sADCMUKIfDBGQUbjFimzuuqR2wukbn/+yz
-         gSlw==
-X-Gm-Message-State: AOAM530SIWEh/iF4HTjGhfxVI79M7ipJxYEog0FCt7thi1p8tzkB9yO/
-        /86JMbHGMExY3hAiv1cEhfWGcw==
-X-Google-Smtp-Source: ABdhPJzgxU5QGFWnp8OjBEFVXDcYKU5abqSSEDCNINCWf3H2HsqqW9/3GR0XN8d8THK6CFw2InOUBw==
-X-Received: by 2002:aa7:818c:0:b029:1e5:ad1f:f219 with SMTP id g12-20020aa7818c0000b02901e5ad1ff219mr18594289pfi.53.1613942574849;
-        Sun, 21 Feb 2021 13:22:54 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id z10sm4074409pjq.5.2021.02.21.13.22.53
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1qgd2CaVptvTGUhKDlRkh0Z0LDGRbgbRYJVc77psjI0=;
+        b=bgduW8ytHPd0fe+qi8j/KenR/6mf+cmqEpXrW0ETzR1wQF3lc6KdmGcC0NQ61y9/lH
+         lIgz3SuQrgbl63b3ZKMW2tiv2b1Dei9NzCrinQaolt+v33ANV8y2ejzx0s65k/0ZJ6jx
+         KJmR720bupkSsJRqKnB16D4qQXA78uMPlArAqlAY4g/pJYQiuOrBdoTPG+gI5PzZzS/B
+         OvFH5yGNIhtvkn6iHYPWRAqtuDvaBBPinCoPDCtaYeRZN/rRmgP4UutQ9OQpS3q9wkHy
+         HF6gs1HVfpbvFfn0q4f1hMLuST9ERqzgBjwbH9KFuUNOS6WprNw9ocak3wTMnxH5lZq8
+         ZKQw==
+X-Gm-Message-State: AOAM5304NjPnrwhs0Z6K6Q5nx1hawFXRoKatvKoyDWdeTmYpKt/Y9tHi
+        MfznlpI5UTbBue9cHOIgtRU16cV2P7bN7Q==
+X-Google-Smtp-Source: ABdhPJxc/nDDrzVGlQKz4K1iSDyLkOftg41jL1Iy+smRpgL965Jw/uYxY5zTxi1SCg5CAtl+klPjZA==
+X-Received: by 2002:a2e:b355:: with SMTP id q21mr12492849lja.209.1613946018815;
+        Sun, 21 Feb 2021 14:20:18 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id p13sm1874266ljj.49.2021.02.21.14.20.16
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Feb 2021 13:22:54 -0800 (PST)
-Subject: Re: [PATCHSET RFC 0/18] Remove kthread usage from io_uring
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20210219171010.281878-1-axboe@kernel.dk>
- <CAHk-=wgShFTn_BiVqtFrtL6xnJVUFJ5xFgVeWFHYs7P2ak_5zg@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <084f0dda-797f-6c24-abe3-15df119e501a@kernel.dk>
-Date:   Sun, 21 Feb 2021 14:22:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sun, 21 Feb 2021 14:20:17 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id q14so52705744ljp.4
+        for <io-uring@vger.kernel.org>; Sun, 21 Feb 2021 14:20:16 -0800 (PST)
+X-Received: by 2002:ac2:4acd:: with SMTP id m13mr6041704lfp.201.1613946016272;
+ Sun, 21 Feb 2021 14:20:16 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgShFTn_BiVqtFrtL6xnJVUFJ5xFgVeWFHYs7P2ak_5zg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1613392826.git.gladkov.alexey@gmail.com>
+In-Reply-To: <cover.1613392826.git.gladkov.alexey@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 21 Feb 2021 14:20:00 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjsmAXyYZs+QQFQtY=w-pOOSWoi-ukvoBVVjBnb+v3q7A@mail.gmail.com>
+Message-ID: <CAHk-=wjsmAXyYZs+QQFQtY=w-pOOSWoi-ukvoBVVjBnb+v3q7A@mail.gmail.com>
+Subject: Re: [PATCH v6 0/7] Count rlimits in each user namespace
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/20/21 10:04 PM, Linus Torvalds wrote:
-> On Fri, Feb 19, 2021 at 9:10 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> tldr - instead of using kthreads that assume the identity of the original
->> tasks for work that needs offloading to a thread, setup these workers as
->> threads of the original task.
-> 
-> Ok, from a quick look-through of the patch series this most definitely
-> seems to be the right way to go, getting rid of a lot of subtle (and
-> not-so-subtle) issues.
+On Mon, Feb 15, 2021 at 4:42 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
+>
+> These patches are for binding the rlimit counters to a user in user namespace.
 
-Yeah, it's hard to find any downsides to doing this... FWIW, ran it
-through prod testing and so far so good. I may actually push this for
-5.12-rc1 if things continue looking good. As a separate pull request, so
-you can make the call on whether you want it simmering for another
-release or not.
+So this is now version 6, but I think the kernel test robot keeps
+complaining about them causing KASAN issues.
 
--- 
-Jens Axboe
+The complaints seem to change, so I'm hoping they get fixed, but it
+does seem like every version there's a new one. Hmm?
 
+            Linus

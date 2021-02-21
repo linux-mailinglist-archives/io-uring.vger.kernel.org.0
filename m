@@ -2,93 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE92E320813
-	for <lists+io-uring@lfdr.de>; Sun, 21 Feb 2021 03:05:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8038E320853
+	for <lists+io-uring@lfdr.de>; Sun, 21 Feb 2021 06:05:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbhBUCEu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 20 Feb 2021 21:04:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45636 "EHLO
+        id S229540AbhBUFF2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 21 Feb 2021 00:05:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229819AbhBUCEs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 20 Feb 2021 21:04:48 -0500
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C07A6C061574
-        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 18:04:03 -0800 (PST)
-Received: by mail-pg1-x52e.google.com with SMTP id p21so7873960pgl.12
-        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 18:04:03 -0800 (PST)
+        with ESMTP id S229479AbhBUFFX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 21 Feb 2021 00:05:23 -0500
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E3E2C061574
+        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 21:04:42 -0800 (PST)
+Received: by mail-lj1-x22e.google.com with SMTP id e17so45292103ljl.8
+        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 21:04:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=52rtrw7lG4YkvbFmsyjeEgpgiFrc4nWOZ+gI75Xv2Bg=;
-        b=vsNtNLqCGxiH54Rr/12JC/l7kTHQn8+eMFFHCnzYgS7iX2QoV40RwDWBczpTrzznVc
-         AQzUld5wk4ZcMCzZWrpSQrUehg3AUvSWNj1MPx0QnLDk//LVried0fYa+Y7L/Zj43G4Y
-         TpkhKXV3bNONZ0LGPbQPFFr25HrnQ+vmbCBEEgwBYeqZvBXLstYXp0RHYSneieCfOL1t
-         TdSZP7ihkbnaMDnKRIhgcUAwZSnO5cC6kTH6NEL1sDUrDAaVkVV35ZUgJNHFhUPIXq/g
-         xyFOnV0V40xRe7Pbn7SR+IXpf9C5g7nFF6Wv1NQFQOz2JBHaL2Be2Ae8kVhI9HmFMqfq
-         9bWw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pcexIzuBmz0FYcH9inbNj5BzxQ+60xNhqWH2FoghYLI=;
+        b=dYiICboCC/1Nxx+EqFHhbn0ySU6sHqmS/uVZ/wkp0l/vnZnOTGXLhVxzp9aBSPRd98
+         VIfmzsfhI2UZcFuWehKxTQKZNRXfp6lxKeJefCu+8vr7Ll+rQqAeg0bT4PYGVRclbxKU
+         fRFyrXNcr0Kg2oCd043K8+22smwkLNTE/BJXQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=52rtrw7lG4YkvbFmsyjeEgpgiFrc4nWOZ+gI75Xv2Bg=;
-        b=FWslW8n2DrEXNesIna1ICRSV0asuEAnRQV3/CvFcWn0eD0oQqKRfmjLNQJsBvT+3Av
-         qd6S7zKDLGg/XunBICX9/eRB8TZwv/jWOkyz1bzm9CFWIczUzSDKhbHjkGMutfyMuBSp
-         pLKjk/PEfLjL/nOTkGe0RTwHT7IrYyX5g9gM6h102eOUyji+TZmKCgdvfdiQTu467I3x
-         QMXzdbAT5N9RYSG447+CEZEDAMaJUkCtlQXN8PGjBKsCwEEXWC+rbq/YkjYmfSrWUnml
-         oKYV3814aA6EVwJwUXfRgDXUR1aig6xSGjEwY2gcg1EmZG0t973v1+4aI7hw/wJhOZX5
-         UQxA==
-X-Gm-Message-State: AOAM533uXPBDEEFCcCpwXEtAXY5oL//Ez9edZ1d6jEUaMFvFQ9QsKj0L
-        LuLMximgISAoV841eIe9+jU6b0MnEBpcdA==
-X-Google-Smtp-Source: ABdhPJy1ynRyBtrWQPK9pKVQtlHuUbfplH+u85v3HBsRTaMsXYRNFbBMNwQWx1dJyYnr6FBQO4CZlg==
-X-Received: by 2002:a62:ae12:0:b029:1ed:6300:ac7d with SMTP id q18-20020a62ae120000b02901ed6300ac7dmr5528925pff.2.1613873042824;
-        Sat, 20 Feb 2021 18:04:02 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id s138sm183496pfc.135.2021.02.20.18.04.01
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pcexIzuBmz0FYcH9inbNj5BzxQ+60xNhqWH2FoghYLI=;
+        b=ri2LArvL5L6Xvj6nSxxZFaEZOq/TRam8SMR5UJg2a5V9Tr1MEf5mkxtS1wxTiE80aj
+         sSHj2ncbebDyjt0EcuPevheZkMJGDZ/emkBupGsJA+efKNkhNaF+RX8+Rd2FbYFuml4Q
+         yCWRuYgduS2tSuv+cVI6+lYkhNJ73lN99N0ci3fEbuUY9aXZer816W8EP9V/bhLcno+Z
+         G2FCKPl3tVfy6X3vnmrH1tUzCRNVItfOUkC5KhzIcbF2rj7/iNKUKFgmHrn3SNqcyAMA
+         SAHTHcvw3TmGam0XS30rUSmLjwX95NMTtjt7amI9lXt0uCqMzoDFKT4zjXtKolu+bgfh
+         tTGg==
+X-Gm-Message-State: AOAM531NpAbGP3xo0UT28xh/SyqSLeeHn8gBuys+taom4WIEGV5mWFy9
+        RSF1DTD0B7upc5J2bKvxDXUDstNHHSk+UA==
+X-Google-Smtp-Source: ABdhPJw3I49X+LdymWTDZrWi5ewJjkqImj1SCK+P7O3tuE74suPB+WKdFUGOB6qOL5cE8+NFBIBreg==
+X-Received: by 2002:ac2:4ed3:: with SMTP id p19mr1821915lfr.648.1613883880697;
+        Sat, 20 Feb 2021 21:04:40 -0800 (PST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id q1sm1439412lfu.48.2021.02.20.21.04.39
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Feb 2021 18:04:01 -0800 (PST)
-Subject: Re: [PATCH 2/3] io_uring: fail io-wq submission from a task_work
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1613687339.git.asml.silence@gmail.com>
- <ae6848eec1847ff3811f13363f15308f033e7d41.1613687339.git.asml.silence@gmail.com>
- <66ba85b1-090e-0765-2dec-776c4f7e0634@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <79fb361a-0c28-6cbb-d443-0e908c88fd4a@kernel.dk>
-Date:   Sat, 20 Feb 2021 19:03:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sat, 20 Feb 2021 21:04:40 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id u4so45305506ljh.6
+        for <io-uring@vger.kernel.org>; Sat, 20 Feb 2021 21:04:39 -0800 (PST)
+X-Received: by 2002:a19:7f44:: with SMTP id a65mr10074526lfd.41.1613883879530;
+ Sat, 20 Feb 2021 21:04:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <66ba85b1-090e-0765-2dec-776c4f7e0634@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210219171010.281878-1-axboe@kernel.dk>
+In-Reply-To: <20210219171010.281878-1-axboe@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 20 Feb 2021 21:04:23 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgShFTn_BiVqtFrtL6xnJVUFJ5xFgVeWFHYs7P2ak_5zg@mail.gmail.com>
+Message-ID: <CAHk-=wgShFTn_BiVqtFrtL6xnJVUFJ5xFgVeWFHYs7P2ak_5zg@mail.gmail.com>
+Subject: Re: [PATCHSET RFC 0/18] Remove kthread usage from io_uring
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/20/21 6:01 PM, Pavel Begunkov wrote:
-> On 18/02/2021 22:32, Pavel Begunkov wrote:
->> In case of failure io_wq_submit_work() needs to post an CQE and so
->> potentially take uring_lock. The safest way to deal with it is to do
->> that from under task_work where we can safely take the lock.
->>
->> Also, as io_iopoll_check() holds the lock tight and releases it
->> reluctantly, it will play nicer in the furuter with notifying an
->> iopolling task about new such pending failed requests.
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->> @@ -2371,11 +2371,22 @@ static void io_req_task_queue(struct io_kiocb *req)
->>  	req->task_work.func = io_req_task_submit;
->>  	ret = io_req_task_work_add(req);
->>  	if (unlikely(ret)) {
->> +		ret = -ECANCELED;
-> 
-> That's a stupid mistake. Jens, any chance you can fold in a diff below?
+On Fri, Feb 19, 2021 at 9:10 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> tldr - instead of using kthreads that assume the identity of the original
+> tasks for work that needs offloading to a thread, setup these workers as
+> threads of the original task.
 
-Yup done.
+Ok, from a quick look-through of the patch series this most definitely
+seems to be the right way to go, getting rid of a lot of subtle (and
+not-so-subtle) issues.
 
--- 
-Jens Axboe
-
+                Linus

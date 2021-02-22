@@ -2,65 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DA59321427
-	for <lists+io-uring@lfdr.de>; Mon, 22 Feb 2021 11:29:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C32232156C
+	for <lists+io-uring@lfdr.de>; Mon, 22 Feb 2021 12:51:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230125AbhBVK2o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 Feb 2021 05:28:44 -0500
-Received: from raptor.unsafe.ru ([5.9.43.93]:37334 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230117AbhBVK2n (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Mon, 22 Feb 2021 05:28:43 -0500
-Received: from example.org (ip-94-113-225-162.net.upcbroadband.cz [94.113.225.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id E9233209FA;
-        Mon, 22 Feb 2021 10:27:36 +0000 (UTC)
-Date:   Mon, 22 Feb 2021 11:27:33 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v6 0/7] Count rlimits in each user namespace
-Message-ID: <20210222102733.gic3q7dniljlbosm@example.org>
-References: <cover.1613392826.git.gladkov.alexey@gmail.com>
- <CAHk-=wjsmAXyYZs+QQFQtY=w-pOOSWoi-ukvoBVVjBnb+v3q7A@mail.gmail.com>
+        id S229987AbhBVLuy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Feb 2021 06:50:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52952 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229989AbhBVLut (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Feb 2021 06:50:49 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73585C061574
+        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 03:49:53 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id a207so14057778wmd.1
+        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 03:49:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DlxILE/BLQIgnwTL85rd5K+PS4DOVogCskeZzk4Muh4=;
+        b=fdQJ8PzRka2+ZTSAANTOaEC003H6MV35GWZGV9tYeq2z9j5dpCnQyLEgInDkyRtr1m
+         D9iEnF95VFy0JSvOH0wjlpRZ7sbz6Nw26pS+Vnk2NrQRigZjRltEtCF1GOH7ZOU4HFPl
+         aOkWZ7zCs4ANp2XYS8DcK2Y9liVU1cuf1CiUmL2XL3LRTu/I3k+J8ifGOwT15js7Km7h
+         nR1JFSCaUwdlnPFAZopXY/+AbLC8YHJ+LeoVZxpU+izvzGAmcGzvr8E7YLSz7fE9F1i1
+         L9+S7yBnS9lkuqw0vi8+dz0ZFsTyyUvoCZvAW2rCMyIjtkcBUXmwZgNmbTVV8IPFWwnA
+         WFBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DlxILE/BLQIgnwTL85rd5K+PS4DOVogCskeZzk4Muh4=;
+        b=SYeRnjyAFJffpkO+/vpNrsoA+wtP7c+ceBmmuorvFoPG44Obxw53bzgj3MvtsfblGd
+         QShyG8wXTM8KObCK5aE02AN9OZWN9uWS8BYh3U1LICxkKw7CEf9CEs9YDZ0pbXmqFcJL
+         jybURwfudFw2mrI1FPfeMBMR8IZEyd1xgYsGCFFa+k+ZateLy8yYBndI0FeJgfPeXzaZ
+         5r7FldG1F2vsQLjgCgGy0HZjjMwVgpFDXvR0XPhxkMe9ModWMSaC6vwnKfR8FSbNy3Km
+         2+QIsdGTUMkJYnNdw4IajLtrMoo9VyifrtQ5Tbeb5640cchBH/qu6XQAGlxXeQQlrF3f
+         Zprw==
+X-Gm-Message-State: AOAM533qs4RLuAOXu/9YPxtaOTlAxYG6X6KtDAOap7EqMBqOTs/y2Gre
+        HgEI9EtVox8RnFTSG6Eh+Ug=
+X-Google-Smtp-Source: ABdhPJzmyaFWwjsq1pqeSXeKffUMCfPmpd2itLgpUqwsjzGyXWxzYhnL1Gpr/UOr87uVtXpDVm8/Hg==
+X-Received: by 2002:a05:600c:20f:: with SMTP id 15mr12479774wmi.88.1613994592274;
+        Mon, 22 Feb 2021 03:49:52 -0800 (PST)
+Received: from localhost.localdomain ([148.252.132.56])
+        by smtp.gmail.com with ESMTPSA id o129sm26271126wme.21.2021.02.22.03.49.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Feb 2021 03:49:51 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     syzbot+30b4936dcdb3aafa4fb4@syzkaller.appspotmail.com
+Subject: [PATCH] io_uring: double freeing req caches
+Date:   Mon, 22 Feb 2021 11:45:55 +0000
+Message-Id: <756158e9db165fcb380f1f60c347b1d70bc65491.1613994305.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjsmAXyYZs+QQFQtY=w-pOOSWoi-ukvoBVVjBnb+v3q7A@mail.gmail.com>
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Mon, 22 Feb 2021 10:28:01 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Feb 21, 2021 at 02:20:00PM -0800, Linus Torvalds wrote:
-> On Mon, Feb 15, 2021 at 4:42 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
-> >
-> > These patches are for binding the rlimit counters to a user in user namespace.
-> 
-> So this is now version 6, but I think the kernel test robot keeps
-> complaining about them causing KASAN issues.
-> 
-> The complaints seem to change, so I'm hoping they get fixed, but it
-> does seem like every version there's a new one. Hmm?
+BUG: KASAN: double-free or invalid-free in io_req_caches_free.constprop.0+0x3ce/0x530 fs/io_uring.c:8709
 
-First, KASAN found an unexpected bug in the second patch (Add a reference
-to ucounts for each cred). Because I missed that creed_alloc_blank() is
-used wider than I found.
+Workqueue: events_unbound io_ring_exit_work
+Call Trace:
+ [...]
+ __cache_free mm/slab.c:3424 [inline]
+ kmem_cache_free_bulk+0x4b/0x1b0 mm/slab.c:3744
+ io_req_caches_free.constprop.0+0x3ce/0x530 fs/io_uring.c:8709
+ io_ring_ctx_free fs/io_uring.c:8764 [inline]
+ io_ring_exit_work+0x518/0x6b0 fs/io_uring.c:8846
+ process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
 
-Now KASAN has found problems in the RLIMIT_MEMLOCK which I believe I fixed
-in v7.
+Freed by task 11900:
+ [...]
+ kmem_cache_free_bulk+0x4b/0x1b0 mm/slab.c:3744
+ io_req_caches_free.constprop.0+0x3ce/0x530 fs/io_uring.c:8709
+ io_uring_flush+0x483/0x6e0 fs/io_uring.c:9237
+ filp_close+0xb4/0x170 fs/open.c:1286
+ close_files fs/file.c:403 [inline]
+ put_files_struct fs/file.c:418 [inline]
+ put_files_struct+0x1d0/0x350 fs/file.c:415
+ exit_files+0x7e/0xa0 fs/file.c:435
+ do_exit+0xc27/0x2ae0 kernel/exit.c:820
+ do_group_exit+0x125/0x310 kernel/exit.c:922
+ [...]
 
+io_req_caches_free() doesn't zero submit_state->free_reqs, so io_uring
+considers just freed requests to be good and sound and will reuse or
+double free them. Zero the counter.
+
+Reported-by: syzbot+30b4936dcdb3aafa4fb4@syzkaller.appspotmail.com
+Fixes: 41be53e94fb04 ("io_uring: kill cached requests from exiting task closing the ring")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 1501f20fde84..47f3968b8272 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8704,9 +8704,11 @@ static void io_req_caches_free(struct io_ring_ctx *ctx, struct task_struct *tsk)
+ 
+ 	mutex_lock(&ctx->uring_lock);
+ 
+-	if (submit_state->free_reqs)
++	if (submit_state->free_reqs) {
+ 		kmem_cache_free_bulk(req_cachep, submit_state->free_reqs,
+ 				     submit_state->reqs);
++		submit_state->free_reqs = 0;
++	}
+ 
+ 	io_req_cache_free(&submit_state->comp.free_list, NULL);
+ 
 -- 
-Rgrds, legion
+2.24.0
 

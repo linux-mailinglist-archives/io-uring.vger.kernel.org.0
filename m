@@ -2,59 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 30FE3321967
-	for <lists+io-uring@lfdr.de>; Mon, 22 Feb 2021 14:52:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4C7D3219D3
+	for <lists+io-uring@lfdr.de>; Mon, 22 Feb 2021 15:11:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231765AbhBVNvr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 Feb 2021 08:51:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50518 "EHLO
+        id S232164AbhBVOKT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Feb 2021 09:10:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231370AbhBVNux (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Feb 2021 08:50:53 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90FFDC061574
-        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 05:50:10 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id a132so13654934wmc.0
-        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 05:50:10 -0800 (PST)
+        with ESMTP id S230349AbhBVOJj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Feb 2021 09:09:39 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37632C06174A
+        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 06:08:59 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id u14so19239642wri.3
+        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 06:08:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2eE25vzWU3jvb9kNNzciAh0zyscKly6ZyjtiAzdmaTE=;
-        b=FUXzen1fsU5C+sNP6V4oZigCj92AU429OOIk28DjPFk5XeCtuhn08+sXUpKYSMY/zM
-         is4R1X3rf+VROZ2NkKz4MjNUb9gBBcvf2jmdEiI4UUzTrXHJhAWdSqdZqVrZe+yFL7Q2
-         hYZxUs8trxcohjTpM9Az/+dBFAcAc4njJj59cramDPT0E867DyDMDwESSh+AdiZ8f5YD
-         eIM/Rs/fiDDp7RfbEgzZhzqcg33YpcN/omxowrdkoOABAf+N9Vyw1Q0mJTVTYLv1XgQw
-         v2qb4BFzIRqZ7Iq4QrpJc6vZLgae53483gN4d4M2/Sdxwlti+6IwTrDMWyp5s87I2lJ3
-         PGJg==
+        bh=JAaod2qlSs1ZczusMlTLCF8lxWCv/VZy4LfoYpgUQSE=;
+        b=p+ku9t1vlFnnEmtWCofuUr4/PeQzIQHZ1MWewG26BMFKDvhH6V8KQ8O/X9b+rtWGeE
+         +6rpr2msF9BsC3pJKwbl4FLBIFB1txfIYiT6+8jXhblOUvYuz3gCejioIL2Saq5x8v1S
+         6SkTFhZ49JXjLrlB8C20cHdu4I5ppUjBfB0b+BqM2cQzRxgEPg5HQ9PqsSFddGADzNyb
+         PRKpnef0xtnbLFo79OLgWyWwy/iMNcbcC+tVcAKl40pm21gmCd7RimsX3TWWUIKCUaMz
+         LA2/JdVn/uq+ui/NlxYLXulPiSA2LlnXDLnu/iT+zNSymMAqNnH8mDnMU8/OTQ0yzvYe
+         +Rzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2eE25vzWU3jvb9kNNzciAh0zyscKly6ZyjtiAzdmaTE=;
-        b=gJJlznQtNtRyPBwfIAeTiA0/4D1PBCRbdPCn2BQNiSRJqDTa5aYL7d1veKu8p+OeiI
-         8UqltMTEmO2XntigMRJ8cr48JGTGUrsJKTvaFDOS3Ia08NIkgSnOIxXUJrSYYU7BwWjq
-         +hBJYviiTCbXlNItOJsn4RUAsf7mH9SW8UgGncDs9X/Z16xuqk29vVT8UlSDaAV7iT0e
-         Iyt0ZXcTiceLNMElgT/yC7YGZras3KDldudKQBg/LFhhjjR30Xm1IVyEqnEIpKzbjaqT
-         hAGCNrZ7DZk8ttu6KsReMDiQg/bBTzXiX1G79BhAnP5E0iRdAROGDaENZ6iN1IYDUuWz
-         IEcQ==
-X-Gm-Message-State: AOAM532GuwhMLmlYpinisXkHJWP2w/i4KPtCBbVvTMyKgZCAND9AmY5E
-        mlIjCTDELhWIseXxD/jnzF4=
-X-Google-Smtp-Source: ABdhPJzV3wQarV/72aViHMyobdVyX9mdqhI+acimFfu9Fxm1C+g6exbTxbi+XkuzAWtB15IkplcNRg==
-X-Received: by 2002:a1c:721a:: with SMTP id n26mr10490465wmc.181.1614001809350;
-        Mon, 22 Feb 2021 05:50:09 -0800 (PST)
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JAaod2qlSs1ZczusMlTLCF8lxWCv/VZy4LfoYpgUQSE=;
+        b=l8RasiGJFzvI3AXnAyieI5hGVQY1qmtW9+4DQNxMDS9hPEuvy2Zvh+yEowYxq5+2lu
+         xI33V3a5Iigqw4d0qH0HwVoI7VGoN4bx91c1mxM4+qylE2B2KHbgJkWhaUz8YTeUkTzQ
+         HwCQEu7cz3cARPflfggkN+xJullIpHsuDaTg5BaAUvl0gpcBD8NozfEIxEpcY27vLu8z
+         wLTjkPi5knzqKkPZqjNSatK1bj56M5pA8VkbabmvrLr6FY9iihCTug6ia1yNwir6nWZp
+         FgIg3JFJ/fn9aDPsdLFExFDn25ZXTsc2DKbhcGWPO8cBdlnsbe1FrorvE2PidymfMjyB
+         +17g==
+X-Gm-Message-State: AOAM533WD2eI5rb2LEN3eGNIdVxyU/4aAJMNEAmGTq9PU7czWBCE7PrS
+        mpNIzbygVbeo7bDT0SfJHd+AQRmTtKDTGA==
+X-Google-Smtp-Source: ABdhPJyqfg5mV9i/Y+GGw2PfOySFqxd9RmZhzy8X5rcIvMfDmrEu8swo0qArKIZ6gXN8k7yewp14gA==
+X-Received: by 2002:a5d:5010:: with SMTP id e16mr4308006wrt.59.1614002937804;
+        Mon, 22 Feb 2021 06:08:57 -0800 (PST)
 Received: from [192.168.8.146] ([148.252.132.56])
-        by smtp.gmail.com with ESMTPSA id u7sm28274519wrt.67.2021.02.22.05.50.08
+        by smtp.gmail.com with ESMTPSA id p13sm16021525wrj.52.2021.02.22.06.08.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Feb 2021 05:50:08 -0800 (PST)
-Subject: Re: [PATCH 01/18] io_uring: remove the need for relying on an io-wq
- fallback worker
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     ebiederm@xmission.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org
-References: <20210219171010.281878-1-axboe@kernel.dk>
- <20210219171010.281878-2-axboe@kernel.dk>
+        Mon, 22 Feb 2021 06:08:57 -0800 (PST)
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+References: <cover.1613844023.git.asml.silence@gmail.com>
+ <c8248b0f-eab9-9c63-9571-a31de9a6e6a4@linux.alibaba.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -99,167 +96,43 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <a237cb3c-c5a4-4344-f6da-f68475c57204@gmail.com>
-Date:   Mon, 22 Feb 2021 13:46:19 +0000
+Subject: Re: [PATCH v2 0/4] rsrc quiesce fixes/hardening v2
+Message-ID: <cf3de0e1-5983-57e4-3674-af231543677a@gmail.com>
+Date:   Mon, 22 Feb 2021 14:05:08 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20210219171010.281878-2-axboe@kernel.dk>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <c8248b0f-eab9-9c63-9571-a31de9a6e6a4@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 19/02/2021 17:09, Jens Axboe wrote:
-> We hit this case when the task is exiting, and we need somewhere to
-> do background cleanup of requests. Instead of relying on the io-wq
-> task manager to do this work for us, just stuff it somewhere where
-> we can safely run it ourselves directly.
+On 21/02/2021 13:22, Hao Xu wrote:
+> 在 2021/2/21 上午2:03, Pavel Begunkov 写道:
+>> v2: concurrent quiesce avoidance (Hao)
+>>      resurrect-release patch
+>>
+>> Pavel Begunkov (4):
+>>    io_uring: zero ref_node after killing it
+>>    io_uring: fix io_rsrc_ref_quiesce races
+>>    io_uring: keep generic rsrc infra generic
+>>    io_uring: wait potential ->release() on resurrect
+>>
+>>   fs/io_uring.c | 96 ++++++++++++++++++++++++---------------------------
+>>   1 file changed, 45 insertions(+), 51 deletions(-)
+>>
+> I tested this patchset with the same tests
+> for "io_uring: don't hold uring_lock ..."
 > 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/io-wq.c    | 12 ------------
->  fs/io-wq.h    |  2 --
->  fs/io_uring.c | 38 +++++++++++++++++++++++++++++++++++---
->  3 files changed, 35 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/io-wq.c b/fs/io-wq.c
-> index c36bbcd823ce..800b299f9772 100644
-> --- a/fs/io-wq.c
-> +++ b/fs/io-wq.c
-> @@ -16,7 +16,6 @@
->  #include <linux/kthread.h>
->  #include <linux/rculist_nulls.h>
->  #include <linux/fs_struct.h>
-> -#include <linux/task_work.h>
->  #include <linux/blk-cgroup.h>
->  #include <linux/audit.h>
->  #include <linux/cpu.h>
-> @@ -775,9 +774,6 @@ static int io_wq_manager(void *data)
->  	complete(&wq->done);
->  
->  	while (!kthread_should_stop()) {
-> -		if (current->task_works)
-> -			task_work_run();
-> -
->  		for_each_node(node) {
->  			struct io_wqe *wqe = wq->wqes[node];
->  			bool fork_worker[2] = { false, false };
-> @@ -800,9 +796,6 @@ static int io_wq_manager(void *data)
->  		schedule_timeout(HZ);
->  	}
->  
-> -	if (current->task_works)
-> -		task_work_run();
-> -
->  out:
->  	if (refcount_dec_and_test(&wq->refs)) {
->  		complete(&wq->done);
-> @@ -1160,11 +1153,6 @@ void io_wq_destroy(struct io_wq *wq)
->  		__io_wq_destroy(wq);
->  }
->  
-> -struct task_struct *io_wq_get_task(struct io_wq *wq)
-> -{
-> -	return wq->manager;
-> -}
-> -
->  static bool io_wq_worker_affinity(struct io_worker *worker, void *data)
->  {
->  	struct task_struct *task = worker->task;
-> diff --git a/fs/io-wq.h b/fs/io-wq.h
-> index 096f1021018e..a1610702f222 100644
-> --- a/fs/io-wq.h
-> +++ b/fs/io-wq.h
-> @@ -124,8 +124,6 @@ typedef bool (work_cancel_fn)(struct io_wq_work *, void *);
->  enum io_wq_cancel io_wq_cancel_cb(struct io_wq *wq, work_cancel_fn *cancel,
->  					void *data, bool cancel_all);
->  
-> -struct task_struct *io_wq_get_task(struct io_wq *wq);
-> -
->  #if defined(CONFIG_IO_WQ)
->  extern void io_wq_worker_sleeping(struct task_struct *);
->  extern void io_wq_worker_running(struct task_struct *);
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index d951acb95117..bbd1ec7aa9e9 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -455,6 +455,9 @@ struct io_ring_ctx {
->  
->  	struct io_restriction		restrictions;
->  
-> +	/* exit task_work */
-> +	struct callback_head		*exit_task_work;
-> +
->  	/* Keep this last, we don't need it for the fast path */
->  	struct work_struct		exit_work;
->  };
-> @@ -2313,11 +2316,14 @@ static int io_req_task_work_add(struct io_kiocb *req)
->  static void io_req_task_work_add_fallback(struct io_kiocb *req,
->  					  task_work_func_t cb)
->  {
-> -	struct task_struct *tsk = io_wq_get_task(req->ctx->io_wq);
-> +	struct io_ring_ctx *ctx = req->ctx;
-> +	struct callback_head *head;
->  
->  	init_task_work(&req->task_work, cb);
-> -	task_work_add(tsk, &req->task_work, TWA_NONE);
-> -	wake_up_process(tsk);
-> +	do {
-> +		head = ctx->exit_task_work;
-> +		req->task_work.next = head;
-> +	} while (cmpxchg(&ctx->exit_task_work, head, &req->task_work) != head);
->  }
->  
->  static void __io_req_task_cancel(struct io_kiocb *req, int error)
-> @@ -9258,6 +9264,30 @@ void __io_uring_task_cancel(void)
->  	io_uring_remove_task_files(tctx);
->  }
->  
-> +static void io_run_ctx_fallback(struct io_ring_ctx *ctx)
-> +{
-> +	struct callback_head *work, *head, *next;
-> +
-> +	do {
-> +		do {
-> +			head = NULL;
-> +			work = READ_ONCE(ctx->exit_task_work);
-> +			if (!work)
-> +				break;
-> +		} while (cmpxchg(&ctx->exit_task_work, work, head) != work);
+> Tested-by: Hao Xu <haoxu@linux.alibaba.com>
 
-Looking at io_uring-worker.v3, it's actually just xchg() without do-while.
+Great, thanks
 
-work = xchg(&ctx->exit_task_work, NULL);
-
-> +
-> +		if (!work)
-> +			break;
-> +
-> +		do {
-> +			next = work->next;
-> +			work->func(work);
-> +			work = next;
-> +			cond_resched();
-> +		} while (work);
-> +	} while (1);
-> +}
-> +
->  static int io_uring_flush(struct file *file, void *data)
->  {
->  	struct io_uring_task *tctx = current->io_uring;
-> @@ -9268,6 +9298,8 @@ static int io_uring_flush(struct file *file, void *data)
->  		io_req_caches_free(ctx, current);
->  	}
->  
-> +	io_run_ctx_fallback(ctx);
-> +
->  	if (!tctx)
->  		return 0;
->  
-> 
+FYI, looks like your emails have a strange encoding. It's
+readable, but at least for me shows "undefined encoding".
 
 -- 
 Pavel Begunkov

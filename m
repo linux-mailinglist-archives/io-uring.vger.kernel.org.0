@@ -2,228 +2,323 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8039C321A70
-	for <lists+io-uring@lfdr.de>; Mon, 22 Feb 2021 15:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93CAD322099
+	for <lists+io-uring@lfdr.de>; Mon, 22 Feb 2021 21:05:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230379AbhBVOf2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 Feb 2021 09:35:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59816 "EHLO
+        id S233234AbhBVUE5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Feb 2021 15:04:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231676AbhBVOe2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Feb 2021 09:34:28 -0500
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A68AC061574
-        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 06:33:41 -0800 (PST)
-Received: by mail-io1-xd2e.google.com with SMTP id s24so13389152iob.6
-        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 06:33:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JO32q5fPn0DGWos0JK/kEGYznlXgZQ3x7QyQiycLWM4=;
-        b=09PGHVV9iHjJ2KgS1fZmUroAPCg2DpQj8+75pLjnHRIkUBUHc1dcDMPB3m5YmdJk/N
-         KrH3S+VlUktXPgbTuCSFX9ATlQ9EyCvg+kZDD38HIqEM4t4vh6NL/L5NII7SESQLVJvE
-         98vyscYJcD9WQfOxVsUMoKKieXsvDDAbcjpVXiDnhH6Cew48TLBMMQfCVZl2x2BhVeIz
-         or2YjVDlVUCpyq5Fyv6mYxS2tvvb/QQon983I/OlvmQ+pIBpVc+INCaWtC/025lOqPZP
-         GUV+TCR3Z7MhLQ08pKOslWuLi37+VYC2Ap6q/Nyb/Xa1QAase9MI0chH8qm3VkZY981N
-         /+DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JO32q5fPn0DGWos0JK/kEGYznlXgZQ3x7QyQiycLWM4=;
-        b=jw4dZ0TI/GnHuMWqR1A3oxI09LykrYwActrxCeGlXy1wQYbiYHpu2LwxCQEECNe5vD
-         pRLwDFN6M/IMMEheRJjL/mWRy4gichMPCleupUyTgVRpau6Xf2Y8LJ1e3lWteCZINTmc
-         UlncR4Bqx7AONLS8pva04fwpk6NSbedQKAo9eEAWt9Ii8BN5iI5lpVQ2WQ66mshQkg1L
-         z1YsADeBhx8gmXw+4+LthhBhh0wlJM0HUIz3WwTLm3hWLkFM6yvy3TmhuHAO+jWZuZJG
-         8VsIjuuEOawnGW4udP40tGKx9dcUaXQnSnVbgIG2tykHZ096EC5xBBzbfYLU6QqowB7T
-         U1Nw==
-X-Gm-Message-State: AOAM532BTNCzxgGaY7Eeni/AfDpQVJsJcHH9QZ0rfOrEm64ddr9s4eiO
-        GW8JbWty5+7RQ9WMxtVcSxf1Og==
-X-Google-Smtp-Source: ABdhPJyzVpeauR6vkegV1RB7nvXptTO6uzLp5CKgeWirnk2rWHV8k8twxWA94BkkuabkQp4U+BkNxg==
-X-Received: by 2002:a6b:d01a:: with SMTP id x26mr15797193ioa.11.1614004420388;
-        Mon, 22 Feb 2021 06:33:40 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id h13sm13055345ioe.40.2021.02.22.06.33.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Feb 2021 06:33:39 -0800 (PST)
-Subject: Re: [RFC PATCH 0/4] Asynchronous passthrough ioctl
-To:     Kanchan Joshi <joshiiitr@gmail.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Javier Gonzalez <javier.gonz@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Selvakumar S <selvakuma.s1@samsung.com>
-References: <CGME20210127150134epcas5p251fc1de3ff3581dd4c68b3fbe0b9dd91@epcas5p2.samsung.com>
- <20210127150029.13766-1-joshi.k@samsung.com>
- <489691ce-3b1e-30ce-9f72-d32389e33901@gmail.com>
- <a287bd9e-3474-83a4-e5c2-98df17214dc7@gmail.com>
- <CA+1E3rJHHFyjwv7Kp32E9H-cf5ksh0pOHSVdGoTpktQrB8SE6A@mail.gmail.com>
- <2d37d0ca-5853-4bb6-1582-551b9044040c@kernel.dk>
- <CA+1E3rKeqaLXBuvpMcjZ37XH9RqJHjPnTFObJj0T-u8K9Otw-w@mail.gmail.com>
- <dd0392a1-acfa-ef4d-5531-5f1dddc9efe7@kernel.dk>
- <CA+1E3rJqtpfDbKVGBjSYhX=WfzZ2bE8b0U3drUNz_=bp0u9Vuw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <03c15e42-c10a-1f67-c60b-ddc11902f9c5@kernel.dk>
-Date:   Mon, 22 Feb 2021 07:33:38 -0700
+        with ESMTP id S233239AbhBVUE4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Feb 2021 15:04:56 -0500
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6FAC06174A
+        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 12:04:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:From:Cc:To;
+        bh=blqjGsSJCb6n5z6udmaj0utpVGIfYd2pcMVY+Q0sPxI=; b=hvpCv5zYcbebSySG5qrwzScsWC
+        fQ7qWazGZgcsHifDe6aK/INys4fr7TeDEbrCzWQmS5+QkcD/g7e0Mbpa+S3+q+ubORm1WlhSkFnZx
+        xp+Zu41Je8dg3U+ub+G3vmRtGGM/4tkjL7kqpmuegqbDMK5Q4ff/P7m8QSHRLMOqyE8zmTZGYZt7k
+        Zyb92BJwK44Qb2f5z9okFEiAE1+HL+N/MmwUhu4vZjM/tHLNzYDlYxMDO3Z3NodIRdgpC7TmLqzUo
+        wfOAd+C4FHx7KaYTp/Wy99/738E2dVxOmmTWZ+P59bPOW87XuvAuAF/1/rrOD4AKJv3tI1bd4Vowc
+        DaAN5phiCwbh0a/qdCHEj6ghF5jokidAQx7IIKB9++xxVZvViGg705oRtkq4hKKyZoAHti4u82J6P
+        AZ+EXk1I2acQczrSX18dJX4CafZxTqamYXL6UE5jsXBko0hcOoEftlycDVa4eSHBbpsTweAuuF34H
+        5jRKMHHDsBNc1qmZRQ3ICJEX;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1lEHRF-0004nG-A9; Mon, 22 Feb 2021 20:04:13 +0000
+To:     Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>
+Cc:     io-uring@vger.kernel.org
+References: <20210127212541.88944-1-axboe@kernel.dk>
+ <20210127212541.88944-3-axboe@kernel.dk> <20210128003831.GE7695@magnolia>
+ <67627096-6d30-af3a-9545-1446909a38c4@kernel.dk>
+ <f8576940-5441-1355-c09e-db60ad0ac889@kernel.dk>
+ <81d6c90e-b853-27c0-c4b7-23605bd4abae@samba.org>
+ <187cbfad-0dfe-9a16-11f0-bfe18a6c7520@kernel.dk>
+ <58fe1e10-ed71-53f9-c47c-5e64066d3290@kernel.dk>
+From:   Stefan Metzmacher <metze@samba.org>
+Autocrypt: addr=metze@samba.org; prefer-encrypt=mutual; keydata=
+ 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
+ uAMlsTqBMFOwuvAcYAj2bwl7QQU6yhU=
+Subject: Re: [PATCH 2/5] io_uring: add support for IORING_OP_URING_CMD
+Message-ID: <bcce9dd6-8222-6dc5-ad4f-5a68ac3ca902@samba.org>
+Date:   Mon, 22 Feb 2021 21:04:07 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CA+1E3rJqtpfDbKVGBjSYhX=WfzZ2bE8b0U3drUNz_=bp0u9Vuw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <58fe1e10-ed71-53f9-c47c-5e64066d3290@kernel.dk>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="2YTjwKsubOyfSRBRxDeFG1dEInNv0Gnzp"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/22/21 6:42 AM, Kanchan Joshi wrote:
-> On Thu, Jan 28, 2021 at 10:54 PM Jens Axboe <axboe@kernel.dk> wrote:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--2YTjwKsubOyfSRBRxDeFG1dEInNv0Gnzp
+Content-Type: multipart/mixed; boundary="so6VgGq7KQsHQfEGJxsa5mXbV5r836R0h";
+ protected-headers="v1"
+From: Stefan Metzmacher <metze@samba.org>
+To: Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>
+Cc: io-uring@vger.kernel.org
+Message-ID: <bcce9dd6-8222-6dc5-ad4f-5a68ac3ca902@samba.org>
+Subject: Re: [PATCH 2/5] io_uring: add support for IORING_OP_URING_CMD
+References: <20210127212541.88944-1-axboe@kernel.dk>
+ <20210127212541.88944-3-axboe@kernel.dk> <20210128003831.GE7695@magnolia>
+ <67627096-6d30-af3a-9545-1446909a38c4@kernel.dk>
+ <f8576940-5441-1355-c09e-db60ad0ac889@kernel.dk>
+ <81d6c90e-b853-27c0-c4b7-23605bd4abae@samba.org>
+ <187cbfad-0dfe-9a16-11f0-bfe18a6c7520@kernel.dk>
+ <58fe1e10-ed71-53f9-c47c-5e64066d3290@kernel.dk>
+In-Reply-To: <58fe1e10-ed71-53f9-c47c-5e64066d3290@kernel.dk>
+
+--so6VgGq7KQsHQfEGJxsa5mXbV5r836R0h
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jens,
+
+>> I've been thinking along the same lines, because having a sparse sqe l=
+ayout
+>> for the uring cmd is a pain. I do think 'personality' is a bit too spe=
+cific
+>> to be part of the shared space, that should probably belong in the pdu=
+
+>> instead if the user needs it. One thing they all have in common is tha=
+t they'd
+>> need a sub-command, so why not make that u16 that?
 >>
->> On 1/28/21 10:13 AM, Kanchan Joshi wrote:
->>> On Thu, Jan 28, 2021 at 8:08 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> On 1/28/21 5:04 AM, Kanchan Joshi wrote:
->>>>> On Wed, Jan 27, 2021 at 9:32 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>>>>
->>>>>> On 27/01/2021 15:42, Pavel Begunkov wrote:
->>>>>>> On 27/01/2021 15:00, Kanchan Joshi wrote:
->>>>>>>> This RFC patchset adds asynchronous ioctl capability for NVMe devices.
->>>>>>>> Purpose of RFC is to get the feedback and optimize the path.
->>>>>>>>
->>>>>>>> At the uppermost io-uring layer, a new opcode IORING_OP_IOCTL_PT is
->>>>>>>> presented to user-space applications. Like regular-ioctl, it takes
->>>>>>>> ioctl opcode and an optional argument (ioctl-specific input/output
->>>>>>>> parameter). Unlike regular-ioctl, it is made to skip the block-layer
->>>>>>>> and reach directly to the underlying driver (nvme in the case of this
->>>>>>>> patchset). This path between io-uring and nvme is via a newly
->>>>>>>> introduced block-device operation "async_ioctl". This operation
->>>>>>>> expects io-uring to supply a callback function which can be used to
->>>>>>>> report completion at later stage.
->>>>>>>>
->>>>>>>> For a regular ioctl, NVMe driver submits the command to the device and
->>>>>>>> the submitter (task) is made to wait until completion arrives. For
->>>>>>>> async-ioctl, completion is decoupled from submission. Submitter goes
->>>>>>>> back to its business without waiting for nvme-completion. When
->>>>>>>> nvme-completion arrives, it informs io-uring via the registered
->>>>>>>> completion-handler. But some ioctls may require updating certain
->>>>>>>> ioctl-specific fields which can be accessed only in context of the
->>>>>>>> submitter task. For that reason, NVMe driver uses task-work infra for
->>>>>>>> that ioctl-specific update. Since task-work is not exported, it cannot
->>>>>>>> be referenced when nvme is compiled as a module. Therefore, one of the
->>>>>>>> patch exports task-work API.
->>>>>>>>
->>>>>>>> Here goes example of usage (pseudo-code).
->>>>>>>> Actual nvme-cli source, modified to issue all ioctls via this opcode
->>>>>>>> is present at-
->>>>>>>> https://github.com/joshkan/nvme-cli/commit/a008a733f24ab5593e7874cfbc69ee04e88068c5
->>>>>>>
->>>>>>> see https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops
->>>>>>>
->>>>>>> Looks like good time to bring that branch/discussion back
->>>>>>
->>>>>> a bit more context:
->>>>>> https://github.com/axboe/liburing/issues/270
->>>>>
->>>>> Thanks, it looked good. It seems key differences (compared to
->>>>> uring-patch that I posted) are -
->>>>> 1. using file-operation instead of block-dev operation.
->>>>
->>>> Right, it's meant to span wider than just block devices.
->>>>
->>>>> 2. repurpose the sqe memory for ioctl-cmd. If an application does
->>>>> ioctl with <=40 bytes of cmd, it does not have to allocate ioctl-cmd.
->>>>> That's nifty. We still need to support passing larger-cmd (e.g.
->>>>> nvme-passthru ioctl takes 72 bytes) but that shouldn't get too
->>>>> difficult I suppose.
->>>>
->>>> It's actually 48 bytes in the as-posted version, and I've bumped it to
->>>> 56 bytes in the latest branch. So not quite enough for everything,
->>>> nothing ever will be, but should work for a lot of cases without
->>>> requiring per-command allocations just for the actual command.
->>>
->>> Agreed. But if I got it right, you are open to support both in-the-sqe
->>> command (<= 56 bytes) and out-of-sqe command (> 56 bytes) with this
->>> interface.
->>> Driver processing the ioctl can fetch the cmd from user-space in one
->>> case (as it does now), and skips in another.
+>> There's also the option of simply saying that the uring_cmd sqe is jus=
+t
+>> a different type, ala:
 >>
->> Your out-of-seq command would be none of io_urings business, outside of
->> the fact that we'd need to ensure it's stable if we need to postpone
->> it. So yes, that would be fine, it just means your actual command is
->> passed in as a pointer, and you would be responsible for copying it
->> in for execution
+>> struct io_uring_cmd_sqe {
+>> 	__u8	opcode;		/* IO_OP_URING_CMD */
+>> 	__u8	flags;
+>> 	__u16	target_op;
+>> 	__s32	fd;
+>> 	__u64	user_data;
+>> 	strut io_uring_cmd_pdu cmd_pdu;
+>> };
 >>
->> We're going to need something to handle postponing, and something
->> for ensuring that eg cancelations free the allocated memory.
-> 
-> I have few doubts about allocation/postponing. Are you referring to
-> uring allocating memory for this case, similar to the way
-> "req->async_data" is managed for few other opcodes?
-> Or can it (i.e. larger cmd) remain a user-space pointer, and the
-> underlying driver fetches the command in.
-> If submission context changes (for sqo/io-wq case), uring seemed to
-> apply context-grabbing techniques to make that work.
+>> which is essentially the same as your suggestion in terms of layout
+>> (because that is the one that makes the most sense), we just don't try=
 
-There are two concerns here:
-
-1) We need more space than the 48 bytes, which means we need to allocate
-   the command or part of the command when get the sqe, and of course
-   free that when the command is done.
-
-2) When io_uring_enter() returns and has consumed N commands, the state
-   for those commands must be stable. Hence if you're passing in a
-   pointer to a struct, that struct will have been read and store
-   safely. This prevents things like on-stack structures from being an
-   issue.
-
-->async_data deals with #2 here, it's used when a command needs to store
-data because we're switching to an async context to execute the command
-(or the command is otherwise deferred, eg links and such). You can
-always rely on the context being sane, it's either the task itself or
-equivalent.
-
->>>>> And for some ioctls, driver may still need to use task-work to update
->>>>> the user-space pointers (embedded in uring/ioctl cmd) during
->>>>> completion.
->>>>>
->>>>> @Jens - will it be fine if I start looking at plumbing nvme-part of
->>>>> this series on top of your work?
->>>>
->>>> Sure, go ahead. Just beware that things are still changing, so you might
->>>> have to adapt it a few times. It's still early days, but I do think
->>>> that's the way forward in providing controlled access to what is
->>>> basically async ioctls.
->>>
->>> Sounds good, I will start with the latest branch that you posted. Thanks.
+>> and shoe-horn it into the existing sqe. As long as we overlap
+>> opcode/flags, then init is fine. And past init, sqe is already consume=
+d.
 >>
->> It's io_uring-fops.v2 for now, use that one.
-> 
-> Moved to v3 now.
-> nvme_user_io is 48 bytes, while nvme passthrough requires 72 or 80
-> bytes (passthru with 64 bit result).
-> The block_uring_cmd has 32 bytes of available space. If NVMe defines
-> its own "nvme_uring_cmd" (which can be used for nvme char interface)
-> that will buy some more space, but still won't be enough for passthru
-> command.
-> 
-> So I am looking at adding support for large-cmd in uring. And felt the
-> need to clear those doubts I mentioned above.
+>> Haven't tried and wire that up yet, and it may just be that the simple=
 
-The simple solution is to just keep the command type the same on the
-NVMe side, and just pass in a pointer to it. Then API could then be
-nr_commands and **commands, for example.
+>> layout change you did is just easier to deal with. The important part
+>> here is the layout, and I certainly think we should do that. There's
+>> effectively 54 bytes of data there, if you include the target op and f=
+d
+>> as part of that space. 48 fully usable for whatever.
+>=20
+> OK, folded in some of your stuff, and pushed out a new branch. Find it
+> here:
+>=20
+> https://git.kernel.dk/cgit/linux-block/log/?h=3Dio_uring-fops.v3
+>=20
+> I did notice while doing so that you put the issue flags in the cmd,
+> I've made them external again. Just seems cleaner to me, otherwise
+> you'd have to modify the command for reissue rather than just
+> pass in the flags directly.
 
-But I think we're getting to the point where it'd be easier to just
-discuss actual code. So if you rebase on top of the v3 code, then send
-out those patches and we can discuss the most convenient API to present
-for nvme passthrough and friends. Does that work?
+I think the first two commits need more verbose comments, which clearly
+document the uring_cmd() API.
 
--- 
-Jens Axboe
+Event before uring_cmd(), it's really not clear to me why we have
+'enum io_uring_cmd_flags', as 'enum'.
+As it seems to be use it as 'flags' (IO_URING_F_NONBLOCK|IO_URING_F_COMPL=
+ETE_DEFER).
 
+With uring_cmd() it's not clear what the backend is supposed to do with t=
+hese flags.
+
+I'd assume that uring_cmd() would per definition never block and go async=
+ itself,
+by returning -EIOCBQUEUED. And a single &req->uring_cmd is only ever pass=
+ed once to
+uring_cmd() without any retry.
+
+It's also not clear if IOSQE_ASYNC should have any impact.
+
+I think we also need a way to pass IORING_OP_ASYNC_CANCEL down.
+
+> I also retained struct file * in the cmd - that's a requirement for
+> the layout of io_kiocb, so might as well keep it in there and not
+> pass in the file. Plus that one won't ever change...
+
+Ah, ok.
+
+> Since we just need that one branch in req init, I do think that your
+> suggestion of just modifying io_uring_sqe is the way to go. So that's
+> what the above branch does.
+
+Thanks! I think it's much easier to handle the personality logic in
+the core only.
+
+For fixed files or fixed buffers I think helper functions like this:
+
+struct file *io_uring_cmd_get_file(struct io_uring_cmd *cmd, int fd, bool=
+ fixed);
+
+And similar functions for io_buffer_select or io_import_fixed.
+
+> I tested the block side, and it works for getting the bs of the
+> device. That's all the testing that has been done so far :-)
+
+I've added EXPORT_SYMBOL(io_uring_cmd_done); and split your net patch,
+similar to the two block patches. So we can better isolate the core
+from the first consumers.
+
+See https://git.samba.org/?p=3Dmetze/linux/wip.git;a=3Dshortlog;h=3Drefs/=
+heads/io_uring-fops.v3
+
+> Comments welcome! Would like to move this one forward and hopefully
+> target 5.13 for it.
+
+Great!
+
+metze
+
+
+
+--so6VgGq7KQsHQfEGJxsa5mXbV5r836R0h--
+
+--2YTjwKsubOyfSRBRxDeFG1dEInNv0Gnzp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAmA0DjcACgkQDbX1YShp
+vVaJtBAAwOvCVIU6RtYKh18dPzdzeJW5zkQ7Xvc1LhBg/zSimAjfEfoh01BhEkWu
+5owGfwkIothvKRt3qYye6mmiB8PyZv4NHkA091+W9MmRYOHb+LnNbVMxzQhCX1+g
+Y0n0HDH5vhqfpiv38lDWguLHPkTbhArIM0Vw5paWN7AMxsUZTCJxoE5OV/Tfgf5O
+7xJoFzeeThEAq5G7VY51lUX5IqhKKdQSktyFZtWNtz4+gVc6qJVyP8nsNSH8qqRc
+QynmHq20FDxLm+KXublNHCf2gtxQYgFN+EjUBXnKjRz4jZdS25oWBNdnyA4ugALj
+N5paeLRECRkmvQCeT0LcWLF0USZFwPUB4gaWd8JBkieKHBn2MtFw6ht97OXf4jvl
+QYZuM/M2WJAnsq6Y5B7t0s9yFYlwBj8882sFYXEsX3fxu0LpgfvjdE+jNbKI1hpT
+orgT7Z0RkUwICqfTqUuCzy8aXV9YyvJqumgFy/wZ/nrSfUJBvjalvTnDACeSYRHC
+5mC+d1DSiyWNQ5HZURjcrMFxX2nRohIKFTAUiXyrJg4s9Ht6PT/KycIXpDT2pZL/
++AAdCSCaJz43CCRn1MtzKQjDchEcQsBieJY/RN2K9EqNMk2ZqfhYl3STu98aHgzV
+dSXsWlkSqV8fRfFuQMdyRkjXpSBG4JO64EwlnL7hSDGVZuZLeT4=
+=MjcZ
+-----END PGP SIGNATURE-----
+
+--2YTjwKsubOyfSRBRxDeFG1dEInNv0Gnzp--

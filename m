@@ -2,79 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7E71323289
-	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 21:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6B7A323387
+	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 22:59:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231853AbhBWU4h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Feb 2021 15:56:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47768 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232731AbhBWU4f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 15:56:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614113706;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3KQm+JOWkfPiKVoQVNaYknjcLG60hXdaozKJjWzOFB4=;
-        b=Fdm0gUmPJq/hexoeZVg10qD58t5eetnmjWBEn0xjjfNh6HMfjRuUwoZWxXZ+s4BmiHC5y5
-        Kfaj7rV9MiZndDCctd2TF1cN+6neqU03+OUKA3u2SI5f8ZlsAeNa85y6frApb5qE+MVvp1
-        BLiPanwN+fJxGAXiLDH2sRq65A9lB80=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-485-RA_jcdehPuyLDWI0HEbfYA-1; Tue, 23 Feb 2021 15:54:46 -0500
-X-MC-Unique: RA_jcdehPuyLDWI0HEbfYA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D3C17835E22;
-        Tue, 23 Feb 2021 20:54:44 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 51A6D5D9D3;
-        Tue, 23 Feb 2021 20:54:35 +0000 (UTC)
-Date:   Tue, 23 Feb 2021 15:54:34 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     axboe@kernel.dk, hch@lst.de, ming.lei@redhat.com,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        io-uring@vger.kernel.org, joseph.qi@linux.alibaba.com,
-        caspar@linux.alibaba.com, Mikulas Patocka <mpatocka@redhat.com>
-Subject: Re: [PATCH v4 00/12] dm: support IO polling
-Message-ID: <20210223205434.GB25684@redhat.com>
-References: <20210220110637.50305-1-jefflexu@linux.alibaba.com>
- <e3b3fc0a-cd07-a09c-5a8d-2d81c5d00435@linux.alibaba.com>
+        id S230268AbhBWV7D (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Feb 2021 16:59:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41166 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232291AbhBWV7A (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 16:59:00 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B894C061574
+        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 13:58:18 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id n4so24106829wrx.1
+        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 13:58:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4JbYpt5E+8rgE+cQZceZeEI5S8zXSlSSpK+sEDOqyMY=;
+        b=NNkXiw3lbOKNHFq6nQboTUoKFJbQ1WzboSLHbbfFrOjg7lYdIp3Wdpc+jbZ6/+B4ou
+         P9epeK/9iCtHPkuIt0ldRj0HQnYNpoh1sh39KmQ/27BG28jyMrpb1AciTERhL/tGHLgX
+         D7KBZI4eEvjlFK1AEOuITvS4yASOaqa6mBvtkHl3tZyjSJ7HCZrmH4nF9M+IkbBpzVVl
+         taZ+iee+gVzIrIEdJk+e2YILhOUnEiZitXAknf2VHOX9uOiusaNbEz3lhRkSjfo0kTkp
+         WOki44m0P36u1g5Gvu0WQhxbyQ5uKMqZ1+CwHjmzCCeZ4J/kcc/NeKw7YWpgHACTUZQs
+         gdAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4JbYpt5E+8rgE+cQZceZeEI5S8zXSlSSpK+sEDOqyMY=;
+        b=sIh8t5qtbUJ8jbpXb6HnMgppkckF0rAeScKzFUEXrceDSCeHQs2Gin/761e5WSCfQy
+         ranhLUiUqsbvmaUw1aekl9TavPz8+krvUeXhFLn1ce6YFGD6tlVdkIFhW/8Hr7WC+pEh
+         VOekqhWS4Rwl1u+FBv+656c+HFWLznzWlAfoJAuoHvqkuABtfZgKsDTatHuMYdzCnbKF
+         cYT275voUaHQYYQhREXJgUEgU82UYXAbLbLZ7TeXNurJX1grERMzLpYgxDBAx1QcpOfs
+         GqtHHC77spp+ng3R0zcokpGhC7UpK6+jcQDwFbI7mvScflceB4nu+ANhN/CeI3/+wWNN
+         vrKQ==
+X-Gm-Message-State: AOAM532fKjuR2XUZFNquvKNk/uKdoiNCr2BhRO5EupVWberM733c4B67
+        lSpdTMqwHyt3Lr8+6TpKzi3gKBpKosjxTA==
+X-Google-Smtp-Source: ABdhPJzjqcxg+I4U85621b9U0+/EEbm9NetGz84HtuAtvkqxC440XilmlaEJS68nhCw2W4PA9UPJFQ==
+X-Received: by 2002:adf:9bd7:: with SMTP id e23mr28227678wrc.48.1614117496047;
+        Tue, 23 Feb 2021 13:58:16 -0800 (PST)
+Received: from localhost.localdomain ([148.252.132.56])
+        by smtp.gmail.com with ESMTPSA id s23sm3774561wmc.29.2021.02.23.13.58.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Feb 2021 13:58:15 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 1/1] io_uring: fix locked_free_list caches_free()
+Date:   Tue, 23 Feb 2021 21:53:49 +0000
+Message-Id: <3375ffb5767effcf8792e8425e189e78eb843431.1614117221.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e3b3fc0a-cd07-a09c-5a8d-2d81c5d00435@linux.alibaba.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Feb 22 2021 at 10:55pm -0500,
-JeffleXu <jefflexu@linux.alibaba.com> wrote:
+Don't forget to zero locked_free_nr, it's not a disaster but makes it
+attempting to flush it with extra locking when there is nothing in the
+list. Also, don't traverse a potentially long list freeing requests
+under spinlock, splice the list and do it afterwards.
 
-> 
-> 
-> On 2/20/21 7:06 PM, Jeffle Xu wrote:
-> > [Changes since v3]
-> > - newly add patch 7 and patch 11, as a new optimization improving
-> > performance of multiple polling processes. Now performance of multiple
-> > polling processes can be as scalable as single polling process (~30%).
-> > Refer to the following [Performance] chapter for more details.
-> > 
-> 
-> Hi Mike, would please evaluate this new version patch set? I think this
-> mechanism is near maturity, since multi-thread performance is as
-> scalable as single-thread (~30%) now.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-OK, can do. But first I think you need to repost with a v5 that
-addresses Mikulas' v3 feedback:
-
-https://listman.redhat.com/archives/dm-devel/2021-February/msg00254.html
-https://listman.redhat.com/archives/dm-devel/2021-February/msg00255.html
-
-Mike
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index bf9ad810c621..dedcf971e2d5 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8710,12 +8710,13 @@ static void io_req_caches_free(struct io_ring_ctx *ctx, struct task_struct *tsk)
+ 		submit_state->free_reqs = 0;
+ 	}
+ 
+-	io_req_cache_free(&submit_state->comp.free_list, NULL);
+-
+ 	spin_lock_irq(&ctx->completion_lock);
+-	io_req_cache_free(&submit_state->comp.locked_free_list, NULL);
++	list_splice_init(&cs->locked_free_list, &cs->free_list);
++	cs->locked_free_nr = 0;
+ 	spin_unlock_irq(&ctx->completion_lock);
+ 
++	io_req_cache_free(&submit_state->comp.free_list, NULL);
++
+ 	mutex_unlock(&ctx->uring_lock);
+ }
+ 
+-- 
+2.24.0
 

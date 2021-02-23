@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50700322A39
-	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 13:12:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 245F9322AB9
+	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 13:45:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232387AbhBWMEZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Feb 2021 07:04:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53570 "EHLO
+        id S232453AbhBWMpO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Feb 2021 07:45:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232489AbhBWMAz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 07:00:55 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BE6DC061574
-        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 04:00:15 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id u14so22321012wri.3
-        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 04:00:15 -0800 (PST)
+        with ESMTP id S232378AbhBWMpI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 07:45:08 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2972C061574
+        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 04:44:27 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id a132so2316497wmc.0
+        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 04:44:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+mmyaNmoymJeAz7tX4dL4qDDBGn5l2c5Bd1svoW7oqs=;
-        b=GVA4PUAqaw0xB5zREYSbE33o6DdVhpfAUU3tfN/FVktiE1EJGheS5ASv6M0AWVGkR1
-         WacW5vxIqb7VopC75p6zA29yNBGDrv1LtO5deTThKjmfhq/Rp3UHmm4Ef867VzWHaj8s
-         YQdZhbNUhQtHVju3zcuqlNiFiR7jBU4UyHaudn/3sbL5UicR8nTynntvxBA+5/2NE0lm
-         7IoA11yUWexB4XyhIyXuwj+51tyYhGn78XaKI/4UQlScGF76EjQCm7oNo2DDtZPjXL+4
-         VojEVY2CHkqU1Vc5HvKlXMElH28vKuFQWU0jkmV5eORNXxSQjpN5h/NiZgnRQNLv7pUn
-         Phmg==
+        bh=xcyycD/sTKhR/DTi5XwSL8vDE4NlQb03X07SwlLvcHA=;
+        b=qYJcLWRHJ3pG0gh0YZJO38n8fWMZ62NLvw/rlcei7H28qyWMytncoOIxrBzFSalUkc
+         /4vT/jma8QtKgSUSETLDapYRFnBwHHEyfmWKmhlWrttOZ4XawAJnwewnxsLhwvUBxHkq
+         m0DC2k074+ni8fxp79OFrqLvo9dVPrRgGLOEV7YzZ4dY684ReWLtNC9k09guj7eZM62n
+         qJXjkww971kegIr0W637rlKz8CLe+BjTXaummd1sbjFcq/EG+W22Kw9+geQ0bKSC+ZV5
+         FsH2z7qrpJ0EAxcUbgfULlxz55YTsmP10klQ/DykEjxTz4nEK0ha3O9Q4G4OsJj109Io
+         pnMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+mmyaNmoymJeAz7tX4dL4qDDBGn5l2c5Bd1svoW7oqs=;
-        b=EIu8lhji0YPINB4RBB5QfMYIGRCKslxzAuDtYFy9Y8pv68iUcgabjsS8It3fJg84p4
-         XVqgCDiU11JVkm9w8N1X3/F7aE8SCmX3U1RLLWFcZNboEpr0j1UIp7W/8EdDLbktaxUN
-         wByRIusMSd5ZdBewCOoZw99H1Liq/RatXNVExPnkgEWhNLAvpHPksK4k5RceiVngn+sa
-         yeNwjUDRc2oNQmDP0Ccssjlw3PfpxIMC+nM10S1oiaugh4AvjS/fiD6Vh7UXOvs72qZo
-         RkeTBZqaiFTEEoHG9nns3iB9R9o9EX7COMAM2zPx7K82Gxth1E4ylOEWu0J27/zQBtNO
-         VhJQ==
-X-Gm-Message-State: AOAM5328A4k+2QxHK8hze4ivN2YMcGm385JMlcLhJ8DfECbmoauMmAyi
-        zrbKJnTCMRBpShgpN5VTiTAZvw/f0BM=
-X-Google-Smtp-Source: ABdhPJyvLaa9oYOashm71fpS0QtzLVxxdxpn0JXSgTWx00b3xZXW4hiZauke1cbLa9/mAgA5YWCPCw==
-X-Received: by 2002:a5d:5750:: with SMTP id q16mr11956357wrw.315.1614081614025;
-        Tue, 23 Feb 2021 04:00:14 -0800 (PST)
+        bh=xcyycD/sTKhR/DTi5XwSL8vDE4NlQb03X07SwlLvcHA=;
+        b=Kfs73glAtqoZM0vDeJEReAQk/FwAQfRsJ6YboM3qwmEce07YQWeIgEQRF9cyU9iqqg
+         8i5krq+yQwBoZly0e6wN6pJBPSVwnQqZAJCL1YPQN+yzqiLCLT2AZzW2JpXcCZyMzWt6
+         dsj8WIU8vZfPpQRX4FiiRAOtdTkcboaylViIcUpSlcA9dzVmNut/jUSI4SXglTiomI0P
+         V5DbuokYONhuR0yVGUZVuxZiRy14Gd6sZENlB5SqoCAPArzM1yPvA0ekExa6LEJSOjca
+         veP7khiAVPKhIe6b+iXNPSR8mZiMif6xuK2nt27ozRcm5ijIwRv48DMJn2Guutp9cRie
+         fRVw==
+X-Gm-Message-State: AOAM533GaR6HYPJUEIeAHzj8Ee7QQhAzL58IhXMGez2OtUgHRpVUyRQ5
+        Mx4E1IDH5u2iXkMY39tllRtVZyUUq4E=
+X-Google-Smtp-Source: ABdhPJwJklQ8aoOLRt1eWVNVv2Ms4vJvKQM/aeSEKve6UYrm9hkCszgNOo1v4MIOsG/Y9QM3qh+Y1Q==
+X-Received: by 2002:a1c:a98c:: with SMTP id s134mr23165244wme.174.1614084265590;
+        Tue, 23 Feb 2021 04:44:25 -0800 (PST)
 Received: from localhost.localdomain ([148.252.132.56])
-        by smtp.gmail.com with ESMTPSA id b7sm7873270wrv.6.2021.02.23.04.00.13
+        by smtp.gmail.com with ESMTPSA id v9sm5755476wrt.76.2021.02.23.04.44.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Feb 2021 04:00:13 -0800 (PST)
+        Tue, 23 Feb 2021 04:44:25 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH] io_uring: allocate memory for overflowed CQEs
-Date:   Tue, 23 Feb 2021 11:56:15 +0000
-Message-Id: <783b4d714de12ea74f24b27fa1a22d377938699c.1614081341.git.asml.silence@gmail.com>
+Subject: [PATCH v2 1/1] io_uring: allocate memory for overflowed CQEs
+Date:   Tue, 23 Feb 2021 12:40:22 +0000
+Message-Id: <a5e833abf8f7a55a38337e5c099f7d0f0aa8746d.1614083504.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -67,11 +67,14 @@ multiple CQEs per an SQE and even generating SQE-less CQEs.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
+
+v2: rebase
+
  fs/io_uring.c | 98 +++++++++++++++++++++++----------------------------
  1 file changed, 45 insertions(+), 53 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ae976e7088dc..138d5da1ef0e 100644
+index 3f764f2f2982..cb50dc22b502 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
 @@ -205,6 +205,11 @@ struct io_mapped_ubuf {
@@ -86,7 +89,7 @@ index ae976e7088dc..138d5da1ef0e 100644
  struct io_rsrc_put {
  	struct list_head list;
  	union {
-@@ -1468,41 +1473,33 @@ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
+@@ -1474,41 +1479,33 @@ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
  }
  
  /* Returns true if there are no backlogged entries after the flush */
@@ -140,7 +143,7 @@ index ae976e7088dc..138d5da1ef0e 100644
  	}
  
  	all_flushed = list_empty(&ctx->cq_overflow_list);
-@@ -1517,25 +1514,16 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
+@@ -1523,25 +1520,16 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force,
  	spin_unlock_irqrestore(&ctx->completion_lock, flags);
  	if (posted)
  		io_cqring_ev_posted(ctx);
@@ -168,7 +171,7 @@ index ae976e7088dc..138d5da1ef0e 100644
  		if (ctx->flags & IORING_SETUP_IOPOLL)
  			mutex_unlock(&ctx->uring_lock);
  	}
-@@ -1559,27 +1547,32 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res,
+@@ -1564,27 +1552,32 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
  		WRITE_ONCE(cqe->user_data, req->user_data);
  		WRITE_ONCE(cqe->res, res);
  		WRITE_ONCE(cqe->flags, cflags);
@@ -216,16 +219,16 @@ index ae976e7088dc..138d5da1ef0e 100644
  }
  
  static void io_cqring_fill_event(struct io_kiocb *req, long res)
-@@ -2367,7 +2360,7 @@ static void io_iopoll_try_reap_events(struct io_ring_ctx *ctx)
- static inline bool io_iopoll_check_events(struct io_ring_ctx *ctx)
- {
- 	if (test_bit(0, &ctx->cq_check_overflow))
--		__io_cqring_overflow_flush(ctx, false, NULL, NULL);
-+		__io_cqring_overflow_flush(ctx, false);
- 	return io_cqring_events(ctx);
- }
+@@ -2407,7 +2400,7 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
+ 		 * already triggered a CQE (eg in error).
+ 		 */
+ 		if (test_bit(0, &ctx->cq_check_overflow))
+-			__io_cqring_overflow_flush(ctx, false, NULL, NULL);
++			__io_cqring_overflow_flush(ctx, false);
+ 		if (io_cqring_events(ctx))
+ 			break;
  
-@@ -6463,7 +6456,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
+@@ -6537,7 +6530,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
  
  	/* if we have a backlog and couldn't flush it all, return BUSY */
  	if (test_bit(0, &ctx->sq_check_overflow)) {
@@ -234,7 +237,7 @@ index ae976e7088dc..138d5da1ef0e 100644
  			return -EBUSY;
  	}
  
-@@ -6813,7 +6806,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+@@ -6887,7 +6880,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
  	int ret;
  
  	do {
@@ -243,7 +246,7 @@ index ae976e7088dc..138d5da1ef0e 100644
  		if (io_cqring_events(ctx) >= min_events)
  			return 0;
  		if (!io_run_task_work())
-@@ -6844,7 +6837,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+@@ -6918,7 +6911,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
  	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
  	trace_io_uring_cqring_wait(ctx, min_events);
  	do {
@@ -252,7 +255,7 @@ index ae976e7088dc..138d5da1ef0e 100644
  		prepare_to_wait_exclusive(&ctx->wait, &iowq.wq,
  						TASK_INTERRUPTIBLE);
  		ret = io_cqring_wait_schedule(ctx, &iowq, &timeout);
-@@ -8444,7 +8437,7 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+@@ -8527,7 +8520,7 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
  	/* if force is set, the ring is going away. always drop after that */
  	ctx->cq_overflow_flushed = 1;
  	if (ctx->rings)
@@ -261,7 +264,7 @@ index ae976e7088dc..138d5da1ef0e 100644
  	idr_for_each(&ctx->personality_idr, io_remove_personalities, ctx);
  	mutex_unlock(&ctx->uring_lock);
  
-@@ -8550,7 +8543,6 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+@@ -8635,7 +8628,6 @@ static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
  		ret |= io_poll_remove_all(ctx, task, files);
  		ret |= io_kill_timeouts(ctx, task, files);
  		ret |= io_run_task_work();
@@ -269,7 +272,7 @@ index ae976e7088dc..138d5da1ef0e 100644
  		if (!ret)
  			break;
  		cond_resched();
-@@ -9026,7 +9018,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+@@ -9111,7 +9103,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
  	 */
  	ret = 0;
  	if (ctx->flags & IORING_SETUP_SQPOLL) {

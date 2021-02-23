@@ -2,125 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70D1F322DB4
-	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 16:40:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E71323289
+	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 21:57:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232209AbhBWPks (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Feb 2021 10:40:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44354 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232813AbhBWPkq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 10:40:46 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7751C061574
-        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 07:40:03 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id w11so355053wrr.10
-        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 07:40:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yYamCGTDmYsZU4VQCsAw/MMaUNl4vzpESJGLnY3qFsI=;
-        b=jTaiPChW4n6eUB/duEzCIg8x6eZlTp76uAuH48K0ugDNRe0t9GZ1krJg31jEd+Tvuj
-         vzsKQ/9cz+pHespXDY+ta/Q1YebpuUYTzATVcvGUfe+2M7uLq2+/tvLovfFu8WHKRUla
-         al9XaU+SQzoK/DXm42Ceo/OO79las1aRP+t4KJUyQwDFWcQ3nu5R5iGP95GgiqhE3s1N
-         BpRUBnilnVe09b4LgT1lL7Zk9Napsk+67er08PERN81g4yIrHxgScpcMOo/qlO1937HP
-         YBKYlJfWTJ7a+K3pg0Sldz9UDqjK8Zhrkm3t/6r0uls7IgvlgDZJLYu8saCekUucrcMt
-         QlSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yYamCGTDmYsZU4VQCsAw/MMaUNl4vzpESJGLnY3qFsI=;
-        b=kM07dmz+CnDUxK1JCp8Xmb1A/6pQO/mKRV8I7x+FPnbUj5BmmJIcxfCqlutIivptIW
-         87KHIo16BdvV5e/cK0XaIo8D24V5QVs+Oxi+eMYOeU3EILO27R4RaXgzNT0Ek0cEIcZv
-         p92/ZugmsB1Ke4RhgHMirKwlQCcGyq5d3uAUNxl90Lh3aRv4+kMA+5NWrrC+YRhj7TeE
-         iShEZ4x0p54abUMHnZ2mdy5w4tnmYY7/LS61XWJd+oX15qhi3SPJu0AzTqx9c8QGu8BR
-         FY1Dcb8CU+Voqy5aqasdMiygvxZPDBoARa2wxvaLsFoG/LH1ovWe6iLNyFZ+YtHC+LIZ
-         4v4w==
-X-Gm-Message-State: AOAM532ouUsD9g6fV5jpQYfGkhDt3WDHdalNa9aSs2JeuS3BLEGPrkH7
-        3Q9bAK8SeHDsPmVyfgdr1IIiEc9YbfXTHQ==
-X-Google-Smtp-Source: ABdhPJwa1s2RxeYaJ4gORF8EQ7ExqAZt/7rjiHbrHKFgmjwGekPDbiVkfUwmTVrhPNnJKPHUUDgGWA==
-X-Received: by 2002:a5d:58ce:: with SMTP id o14mr25893963wrf.424.1614094802291;
-        Tue, 23 Feb 2021 07:40:02 -0800 (PST)
-Received: from [192.168.8.157] ([148.252.132.56])
-        by smtp.gmail.com with ESMTPSA id x66sm2916647wmg.6.2021.02.23.07.40.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Feb 2021 07:40:01 -0800 (PST)
-Subject: Re: [PATCH v2 1/1] io_uring: allocate memory for overflowed CQEs
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <a5e833abf8f7a55a38337e5c099f7d0f0aa8746d.1614083504.git.asml.silence@gmail.com>
- <02fb8f5f-3f97-5945-06cd-c155574847e5@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <6811dd8d-dc62-d701-1b83-82b289aaee05@gmail.com>
-Date:   Tue, 23 Feb 2021 15:36:11 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S231853AbhBWU4h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Feb 2021 15:56:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47768 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232731AbhBWU4f (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 15:56:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1614113706;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3KQm+JOWkfPiKVoQVNaYknjcLG60hXdaozKJjWzOFB4=;
+        b=Fdm0gUmPJq/hexoeZVg10qD58t5eetnmjWBEn0xjjfNh6HMfjRuUwoZWxXZ+s4BmiHC5y5
+        Kfaj7rV9MiZndDCctd2TF1cN+6neqU03+OUKA3u2SI5f8ZlsAeNa85y6frApb5qE+MVvp1
+        BLiPanwN+fJxGAXiLDH2sRq65A9lB80=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-485-RA_jcdehPuyLDWI0HEbfYA-1; Tue, 23 Feb 2021 15:54:46 -0500
+X-MC-Unique: RA_jcdehPuyLDWI0HEbfYA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D3C17835E22;
+        Tue, 23 Feb 2021 20:54:44 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 51A6D5D9D3;
+        Tue, 23 Feb 2021 20:54:35 +0000 (UTC)
+Date:   Tue, 23 Feb 2021 15:54:34 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     axboe@kernel.dk, hch@lst.de, ming.lei@redhat.com,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        io-uring@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        caspar@linux.alibaba.com, Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [PATCH v4 00/12] dm: support IO polling
+Message-ID: <20210223205434.GB25684@redhat.com>
+References: <20210220110637.50305-1-jefflexu@linux.alibaba.com>
+ <e3b3fc0a-cd07-a09c-5a8d-2d81c5d00435@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <02fb8f5f-3f97-5945-06cd-c155574847e5@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3b3fc0a-cd07-a09c-5a8d-2d81c5d00435@linux.alibaba.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 23/02/2021 14:22, Jens Axboe wrote:
-> On 2/23/21 5:40 AM, Pavel Begunkov wrote:
->> +	if (!ctx->cq_overflow_flushed &&
->> +	    !atomic_read(&req->task->io_uring->in_idle)) {
->> +		struct io_overflow_cqe *ocqe = kmalloc(sizeof(*ocqe), GFP_KERNEL);
+On Mon, Feb 22 2021 at 10:55pm -0500,
+JeffleXu <jefflexu@linux.alibaba.com> wrote:
+
 > 
-> This needs to be GFP_ATOMIC. And we should probably make it GFP_ATOMIC |
-> __GFP_ACCOUNT to ensure it gets accounted, since the list could grow
-> pretty big potentially.
+> 
+> On 2/20/21 7:06 PM, Jeffle Xu wrote:
+> > [Changes since v3]
+> > - newly add patch 7 and patch 11, as a new optimization improving
+> > performance of multiple polling processes. Now performance of multiple
+> > polling processes can be as scalable as single polling process (~30%).
+> > Refer to the following [Performance] chapter for more details.
+> > 
+> 
+> Hi Mike, would please evaluate this new version patch set? I think this
+> mechanism is near maturity, since multi-thread performance is as
+> scalable as single-thread (~30%) now.
 
-Agree. I was thinking about it being naturally limited by inflight reqs,
-but well we're speaking about multiple CQEs...
+OK, can do. But first I think you need to repost with a v5 that
+addresses Mikulas' v3 feedback:
 
--- 
-Pavel Begunkov
+https://listman.redhat.com/archives/dm-devel/2021-February/msg00254.html
+https://listman.redhat.com/archives/dm-devel/2021-February/msg00255.html
+
+Mike
+

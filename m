@@ -2,66 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBDBA32243A
-	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 03:36:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CC5C3224C8
+	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 04:57:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230439AbhBWCg3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 Feb 2021 21:36:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46036 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbhBWCg0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Feb 2021 21:36:26 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2470C061574
-        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 18:35:46 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id d16so80063plg.0
-        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 18:35:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OS+Kx7xKhToNJGP5JPCYO0pnu5N6gZydEtshbyrAgDA=;
-        b=PSZtVm4MDH22cwpGJZWMei7fVPPskIZkN3/dT+O9JT/66d5XJagUzJIEk5P8ojZ2nx
-         YYQK/qSy3oeEQNEyKjoC6llQxFL+49xHD76aTfyMdIVI+bFeOi4p4j8wGipSXfPwUOF5
-         DTz3tKBfsRtNtt/+6ob1qQYtsVFMSkvd0RWXomGz5a0XEJuAf20YkeQGEKwCiN06x81G
-         IBQzvLC7KH9xrOZNnnC1R7/rzR1YdcSEPKYG7UK0rp6JQkE+UWdBMYURs1U2Ap9RMRaH
-         PEdMKwcMHuYGVJA5eU3WRfnO6MCjZKQIuxzv81JVLl6b671EY9tfmIaxeb94TrS7myJC
-         fZMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OS+Kx7xKhToNJGP5JPCYO0pnu5N6gZydEtshbyrAgDA=;
-        b=VZoK6AGdaRIoKoYziI12qt5ZklOvql5o31sIEWSUwDoMpam7VHkjzLIq0w0HWUWRuq
-         MU7GslQYx4m0DPz1qtafIqvXM1G+K/ctDs47D/9owsCGyvekNrSnBiGDotOL3w/xwLxS
-         R9yRwYEvdetbmxw1qcRMDJyn8pX+SU7/KUIxPCS29eH7pSbm69KtT7jxKmqM2MoZwdWg
-         MELG4sMHzqIYSKa3RhsbmER1fWzCc+7nD28uUo0sSMLwlZGYUFv/LXUQSTSHLPGHhWor
-         NVnwgINlvoKORtna5gVkTM6ORuYlKX3l0A7hR8xRr9ETE8FCE0nnpSpuHdYOn1uWWkvm
-         pgoA==
-X-Gm-Message-State: AOAM531HQ6WN1mxO1EN8Ay84i0R7J2vsA6S8rrpydE2UQZaGlrLUHNPF
-        hdUxa42QMjWXzNV7p8UeM06g4GW5E5gm5Q==
-X-Google-Smtp-Source: ABdhPJwrsAJ734gUPpO9If8JW4jOEXiYN9M9YdEYmw4X3Fjq4jHB0JTbpIIrZknpp3LU43eWjqzQDQ==
-X-Received: by 2002:a17:90a:16d7:: with SMTP id y23mr12941625pje.227.1614047746182;
-        Mon, 22 Feb 2021 18:35:46 -0800 (PST)
-Received: from ?IPv6:2620:10d:c085:21e8::11af? ([2620:10d:c090:400::5:c361])
-        by smtp.gmail.com with ESMTPSA id y12sm853624pjc.56.2021.02.22.18.35.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Feb 2021 18:35:45 -0800 (PST)
-Subject: Re: KASAN: invalid-free in io_req_caches_free
-To:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+30b4936dcdb3aafa4fb4@syzkaller.appspotmail.com>
-Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <0000000000007786a205bbe9a5d6@google.com>
- <20210223022515.2846-1-hdanton@sina.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3eddab97-3539-51a0-e3fc-786f7ef7c93e@kernel.dk>
-Date:   Mon, 22 Feb 2021 19:35:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S231384AbhBWD4p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Feb 2021 22:56:45 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:52286 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230253AbhBWD4o (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Feb 2021 22:56:44 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UPKc-Tv_1614052555;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UPKc-Tv_1614052555)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 23 Feb 2021 11:55:56 +0800
+Subject: Re: [PATCH v4 00/12] dm: support IO polling
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+To:     snitzer@redhat.com, axboe@kernel.dk
+Cc:     hch@lst.de, ming.lei@redhat.com, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, io-uring@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, caspar@linux.alibaba.com
+References: <20210220110637.50305-1-jefflexu@linux.alibaba.com>
+Message-ID: <e3b3fc0a-cd07-a09c-5a8d-2d81c5d00435@linux.alibaba.com>
+Date:   Tue, 23 Feb 2021 11:55:55 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.0
 MIME-Version: 1.0
-In-Reply-To: <20210223022515.2846-1-hdanton@sina.com>
+In-Reply-To: <20210220110637.50305-1-jefflexu@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,124 +35,289 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/22/21 7:25 PM, Hillf Danton wrote:
-> Mon, 22 Feb 2021 01:44:21 -0800
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    31caf8b2 Merge branch 'linus' of git://git.kernel.org/pub/..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=15a8afa6d00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=5a8f3a57fabb4015
->> dashboard link: https://syzkaller.appspot.com/bug?extid=30b4936dcdb3aafa4fb4
->>
->> Unfortunately, I don't have any reproducer for this issue yet.
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+30b4936dcdb3aafa4fb4@syzkaller.appspotmail.com
->>
->> ==================================================================
->> BUG: KASAN: double-free or invalid-free in io_req_caches_free.constprop.0+0x3ce/0x530 fs/io_uring.c:8709
->>
->> CPU: 1 PID: 243 Comm: kworker/u4:6 Not tainted 5.11.0-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> Workqueue: events_unbound io_ring_exit_work
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:79 [inline]
->>  dump_stack+0xfa/0x151 lib/dump_stack.c:120
->>  print_address_description.constprop.0.cold+0x5b/0x2c6 mm/kasan/report.c:230
->>  kasan_report_invalid_free+0x51/0x80 mm/kasan/report.c:355
->>  ____kasan_slab_free+0xcc/0xe0 mm/kasan/common.c:341
->>  kasan_slab_free include/linux/kasan.h:192 [inline]
->>  __cache_free mm/slab.c:3424 [inline]
->>  kmem_cache_free_bulk+0x4b/0x1b0 mm/slab.c:3744
->>  io_req_caches_free.constprop.0+0x3ce/0x530 fs/io_uring.c:8709
->>  io_ring_ctx_free fs/io_uring.c:8764 [inline]
->>  io_ring_exit_work+0x518/0x6b0 fs/io_uring.c:8846
->>  process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
->>  worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
->>  kthread+0x3b1/0x4a0 kernel/kthread.c:292
->>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
->>
->> Allocated by task 11900:
->>  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
->>  kasan_set_track mm/kasan/common.c:46 [inline]
->>  set_alloc_info mm/kasan/common.c:401 [inline]
->>  ____kasan_kmalloc.constprop.0+0x7f/0xa0 mm/kasan/common.c:429
->>  kasan_slab_alloc include/linux/kasan.h:209 [inline]
->>  slab_post_alloc_hook mm/slab.h:512 [inline]
->>  kmem_cache_alloc_bulk+0x2c2/0x460 mm/slab.c:3534
->>  io_alloc_req fs/io_uring.c:2014 [inline]
->>  io_submit_sqes+0x18e8/0x2b60 fs/io_uring.c:6915
->>  __do_sys_io_uring_enter+0x1154/0x1f50 fs/io_uring.c:9454
->>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->>  entry_SYSCALL_64_after_hwframe+0x44/0xae
->>
->> Freed by task 11900:
->>  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
->>  kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
->>  kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:356
->>  ____kasan_slab_free+0xb0/0xe0 mm/kasan/common.c:362
->>  kasan_slab_free include/linux/kasan.h:192 [inline]
->>  __cache_free mm/slab.c:3424 [inline]
->>  kmem_cache_free_bulk+0x4b/0x1b0 mm/slab.c:3744
->>  io_req_caches_free.constprop.0+0x3ce/0x530 fs/io_uring.c:8709
->>  io_uring_flush+0x483/0x6e0 fs/io_uring.c:9237
->>  filp_close+0xb4/0x170 fs/open.c:1286
->>  close_files fs/file.c:403 [inline]
->>  put_files_struct fs/file.c:418 [inline]
->>  put_files_struct+0x1d0/0x350 fs/file.c:415
->>  exit_files+0x7e/0xa0 fs/file.c:435
->>  do_exit+0xc27/0x2ae0 kernel/exit.c:820
->>  do_group_exit+0x125/0x310 kernel/exit.c:922
->>  get_signal+0x42c/0x2100 kernel/signal.c:2773
->>  arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:811
->>  handle_signal_work kernel/entry/common.c:147 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
->>  exit_to_user_mode_prepare+0x148/0x250 kernel/entry/common.c:208
->>  __syscall_exit_to_user_mode_work kernel/entry/common.c:290 [inline]
->>  syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:301
->>  entry_SYSCALL_64_after_hwframe+0x44/0xae
->>
->> The buggy address belongs to the object at ffff888012eaae00
->>  which belongs to the cache io_kiocb of size 208
->> The buggy address is located 0 bytes inside of
->>  208-byte region [ffff888012eaae00, ffff888012eaaed0)
->> The buggy address belongs to the page:
->> page:0000000091458aed refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x12eaa
->> flags: 0xfff00000000200(slab)
->> raw: 00fff00000000200 ffff8880188dcd50 ffff8880188dcd50 ffff888141b4ff00
->> raw: 0000000000000000 ffff888012eaa040 000000010000000c 0000000000000000
->> page dumped because: kasan: bad access detected
->>
->> Memory state around the buggy address:
->>  ffff888012eaad00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>  ffff888012eaad80: fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->>> ffff888012eaae00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>                    ^
->>  ffff888012eaae80: fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc fc
->>  ffff888012eaaf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->> ==================================================================
-> 
-> Fix double free by reverting 41be53e94fb0 ("io_uring: kill cached
-> requests from exiting task closing the ring") - it ruins kworker's life.
-> 
-> --- x/fs/io_uring.c
-> +++ y/fs/io_uring.c
-> @@ -9234,7 +9234,6 @@ static int io_uring_flush(struct file *f
->  
->  	if (fatal_signal_pending(current) || (current->flags & PF_EXITING)) {
->  		io_uring_cancel_task_requests(ctx, NULL);
-> -		io_req_caches_free(ctx, current);
->  	}
->  
->  	if (!tctx)
 
-Already merged the right fix this morning:
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=for-5.12/io_uring&id=8e5c66c485a8af3f39a8b0358e9e09f002016d92
+On 2/20/21 7:06 PM, Jeffle Xu wrote:
+> [Changes since v3]
+> - newly add patch 7 and patch 11, as a new optimization improving
+> performance of multiple polling processes. Now performance of multiple
+> polling processes can be as scalable as single polling process (~30%).
+> Refer to the following [Performance] chapter for more details.
+> 
+
+Hi Mike, would please evaluate this new version patch set? I think this
+mechanism is near maturity, since multi-thread performance is as
+scalable as single-thread (~30%) now.
+
+
+Thanks
+Jeffle
+
+> 
+> [Intention]
+> Bio-based polling (e.g., for dm/md devices) is one indispensable part of
+> high performance IO stack. As far as I know, dm (e.g., dm-stripe) is
+> widely used in database, splicing several NVMe disks as one whole disk,
+> in hope of achieving better performance. With this patch set, io_uring
+> could be used upon dm devices.
+> 
+> 
+> [Optimizations]
+> Basically, there are three paths for IO polling.
+> 
+> 1. fastpath (patch 9/10)
+> The polling routine will go into this path when bio submitted to dm
+> device is not split.
+> 
+> In this case, there will be only one bio submitted to only one polling
+> hw queue of one underlying mq device, and thus we don't need to track
+> all split bios or iterate through all polling hw queues. The pointer to
+> the polling hw queue the bio submitted to is returned here as the
+> returned cookie. In this case, the polling routine will call
+> mq_ops->poll() directly with the hw queue converted from the input
+> cookie.
+> 
+> 
+> - One process reading dm-linear (mapping to three underlying NVMe devices,
+> with one polling hw queue per NVMe device).
+> 
+> (ioengine=io_uring, iodepth=128, numjobs=1, rw=randread, sqthread_poll=0
+> direct=1, bs=4k)
+> 
+> 	    	 | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+> ---------------- | --------------- | -------------------- | ----
+> with patchset    |	      212k |		     284k | ~32%
+> 
+> 
+> - Three processes reading dm-linear (mapping to three underlying NVMe
+> devices, with one polling hw queue per NVMe device).
+> 
+> (ioengine=io_uring, iodepth=128, numjobs=3, rw=randread, sqthread_poll=0
+> direct=1, bs=4k)
+> 
+> 	    	 | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+> ---------------- | --------------- | -------------------- | ----
+> with patchset    |	      615k |		     735k | ~16%
+> 
+> 
+> - Three processes reading dm-linear (mapping to three underlying NVMe
+> devices, with three polling hw queues per NVMe device), with every
+> process pinned to one CPU and mapped to one exclusive hw queue.
+> 
+> (ioengine=io_uring, iodepth=128, numjobs=3, rw=randread, sqthread_poll=0
+> direct=1, bs=4k)
+> 
+> 	    	 | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+> ---------------- | --------------- | -------------------- | ----
+> with patchset    |	      631k |		     833k | ~32%
+> 
+> 
+> 
+> 2. sub-fastpath (patch 7/11)
+> 
+> The polling routine will go into this path when bio submitted to dm
+> device gets split and enqueued into multiple hw queues, while the IO
+> submission process has not been migrated to another CPU.
+> 
+> In this case, the IO submission routine will return the CPU number on
+> which the IO submission happened as the returned cookie, while the
+> polling routine will only iterate and poll on hw queues that this CPU
+> number maps, instead of iterating *all* hw queues.
+> 
+> This optimization can dramatically reduce cache ping-pong and thus
+> improve the polling performance, when multiple hw queues in polling mode
+> per device could be reserved when there are multiple polling processes.
+> 
+> - Three processes reading dm-stripe (mapping to three underlying NVMe
+> devices, with three polling hw queues per NVMe device), with every
+> process pinned to one CPU and mapped to one exclusive hw queue.
+> 
+> (ioengine=io_uring, iodepth=128, numjobs=3, rw=randread, sqthread_poll=0
+> direct=1, bs=12k(4k for every NVMe device))
+> 
+> 	    	 | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+> ---------------- | --------------- | -------------------- | ----
+> with patchset    |	      307k |		     412k | ~34%
+> 
+> 
+> 3. default path
+> 
+> It will fall back to iterating all hw queues in polling mode, once bio
+> submitted to dm device gets split and enqueued into multiple hw queues,
+> and the IO process has ever been migrated to another CPU during the IO
+> submission phase.
+> 
+> 
+> [Remained Issue]
+> It has been mentioned in patch 4 that, users could change the state of
+> the underlying devices through '/sys/block/<dev>/io_poll', bypassing
+> the dm device above. Thus it can cause a situation where QUEUE_FLAG_POLL
+> is still set for the request_queue of dm device, while one of the
+> underlying mq device may has cleared this flag.
+> 
+> In this case, it will pass the 'test_bit(QUEUE_FLAG_POLL, &q->queue_flags)'
+> check in blk_poll(), while the input cookie may actually points to a hw
+> queue in IRQ mode since patch 11. Thus for this hw queue (in IRQ mode),
+> the bio-based polling routine will handle this hw queue acquiring
+> 'spin_lock(&nvmeq->cq_poll_lock)' (refer
+> drivers/nvme/host/pci.c:nvme_poll), which is not adequate since this hw
+> queue may also be accessed in IRQ context. In other words,
+> spin_lock_irq() should be used here.
+> 
+> I have not come up one simple way to fix it. I don't want to do sanity
+> check (e.g., the type of the hw queue is HCTX_TYPE_POLL or not) in the
+> IO path (submit_bio()/blk_poll()), i.e., fast path.
+> 
+> We'd better fix it in the control path, i.e., dm could be aware of the
+> change when attribute (e.g., support io_poll or not) of one of the
+> underlying devices changed at runtime.
+> 
+> 
+> 
+> 
+> [Changes since v2]
+> 
+> Patchset v2 caches all hw queues (in polling mode) of underlying mq
+> devices in dm layer. The polling routine actually iterates through all
+> these cached hw queues.
+> 
+> However, mq may change the queue mapping at runtime (e.g., NVMe RESET
+> command), thus the cached hw queues in dm layer may be out-of-date. Thus
+> patchset v3 falls back to the implementation of the very first RFC
+> version, in which the mq layer needs to export one interface iterating
+> all polling hw queues (patch 5), and the bio-based polling routine just
+> calls this interface to iterate all polling hw queues.
+> 
+> Besides, several new optimization is proposed.
+> 
+> 
+> - patch 1,2,7
+> same as v2, untouched
+> 
+> - patch 3
+> Considering advice from Christoph Hellwig, while refactoring blk_poll(),
+> split mq and bio-based polling routine from the very beginning. Now
+> blk_poll() is just a simple entry. blk_bio_poll() is simply copied from
+> blk_mq_poll(), while the loop structure is some sort of duplication
+> though.
+> 
+> - patch 4
+> This patch is newly added to support turning on/off polling through
+> '/sys/block/<dev>/queue/io_poll' dynamiclly for bio-based devices.
+> Patchset v2 implemented this functionality by added one new queue flag,
+> which is not preferred since the queue flag resource is quite short of
+> nowadays.
+> 
+> - patch 5
+> This patch is newly added, preparing for the following bio-based
+> polling. The following bio-based polling will call this helper function,
+> accounting on the corresponding hw queue.
+> 
+> - patch 6
+> It's from the very first RFC version, preparing for the following
+> bio-based polling.
+> 
+> - patch 8
+> One fixing patch needed by the following bio-based polling. It's
+> actually a v2 of [1]. I had sent the v2 singly in-reply-to [1], though
+> it has not been visible on the mailing list maybe due to the delay.
+> 
+> - patch 9
+> It's from the very first RFC version.
+> 
+> - patch 10
+> This patch is newly added. Patchset v2 had ever proposed one
+> optimization that, skipping the **busy** hw queues during the iteration
+> phase. Back upon that time, one flag of 'atomic_t' is specifically
+> maintained in dm layer, representing if the corresponding hw queue is
+> busy or not. The idea is inherited, while the implementation changes.
+> Now @nvmeq->cq_poll_lock is used directly here, no need for extra flag
+> anymore.
+> 
+> This optimization can significantly reduce the competition for one hw
+> queue between multiple polling instances. Following statistics is the
+> test result when 3 threads concurrently randread (bs=4k, direct=1) one
+> dm-linear device, which is built upon 3 nvme devices, with one polling
+> hw queue per nvme device.
+> 
+> 	    | IOPS (IRQ mode) | IOPS (iopoll=1 mode) | diff
+> ----------- | --------------- | -------------------- | ----
+> without opt | 		 318k |		 	256k | ~-20%
+> with opt    |		 314k |		 	354k | ~13%
+> 							
+> 
+> - patch 11
+> This is another newly added optimizatin for bio-based polling.
+> 
+> One intuitive insight is that, when the original bio submitted to dm
+> device doesn't get split, then the bio gets enqueued into only one hw
+> queue of one of the underlying mq devices. In this case, we no longer
+> need to track all split bios, and one cookie (for the only split bio)
+> is enough. It is implemented by returning the pointer to the
+> corresponding hw queue in this case.
+> 
+> It should be safe by directly returning the pointer to the hw queue,
+> since 'struct blk_mq_hw_ctx' won't be freed during the whole lifetime of
+> 'struct request_queue'. Even when the number of hw queues may decrease
+> when NVMe RESET happens, the 'struct request_queue' structure of decreased
+> hw queues won't be freed, instead it's buffered into
+> &q->unused_hctx_list list.
+> 
+> Though this optimization seems quite intuitive, the performance test
+> shows that it does no benefit nor harm to the performance, while 3
+> threads concurrently randreading (bs=4k, direct=1) one dm-linear
+> device, which is built upon 3 nvme devices, with one polling hw queue
+> per nvme device.
+> 
+> I'm not sure why it doesn't work, maybe because the number of devices,
+> or the depth of the devcice stack is to low in my test case?
+> 
+> 
+> changes since v1:
+> - patch 1,2,4 is the same as v1 and have already been reviewed
+> - patch 3 is refactored a bit on the basis of suggestions from
+> Mike Snitzer.
+> - patch 5 is newly added and introduces one new queue flag
+> representing if the queue is capable of IO polling. This mainly
+> simplifies the logic in queue_poll_store().
+> - patch 6 implements the core mechanism supporting IO polling.
+> The sanity check checking if the dm device supports IO polling is
+> also folded into this patch, and the queue flag will be cleared if
+> it doesn't support, in case of table reloading.
+> 
+> 
+> 
+> 
+> Jeffle Xu (12):
+>   block: move definition of blk_qc_t to types.h
+>   block: add queue_to_disk() to get gendisk from request_queue
+>   block: add poll method to support bio-based IO polling
+>   block: add poll_capable method to support bio-based IO polling
+>   blk-mq: extract one helper function polling hw queue
+>   blk-mq: add iterator for polling hw queues
+>   blk-mq: add one helper function getting hw queue
+>   dm: always return BLK_QC_T_NONE for bio-based device
+>   nvme/pci: don't wait for locked polling queue
+>   block: fastpath for bio-based polling
+>   block: sub-fastpath for bio-based polling
+>   dm: support IO polling for bio-based dm device
+> 
+>  block/blk-core.c              | 112 +++++++++++++++++++++++++++++++++-
+>  block/blk-mq.c                |  37 ++++-------
+>  block/blk-sysfs.c             |  14 ++++-
+>  drivers/md/dm-table.c         |  26 ++++++++
+>  drivers/md/dm.c               | 102 ++++++++++++++++++++++++++-----
+>  drivers/nvme/host/pci.c       |   4 +-
+>  include/linux/blk-mq.h        |  23 +++++++
+>  include/linux/blk_types.h     |  66 +++++++++++++++++++-
+>  include/linux/blkdev.h        |   4 ++
+>  include/linux/device-mapper.h |   1 +
+>  include/linux/fs.h            |   2 +-
+>  include/linux/types.h         |   3 +
+>  include/trace/events/kyber.h  |   6 +-
+>  13 files changed, 350 insertions(+), 50 deletions(-)
+> 
 
 -- 
-Jens Axboe
-
+Thanks,
+Jeffle

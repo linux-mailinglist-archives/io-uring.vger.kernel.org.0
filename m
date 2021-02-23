@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E4443223F3
-	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 03:00:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3123223F4
+	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 03:00:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbhBWCAe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 Feb 2021 21:00:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38358 "EHLO
+        id S230099AbhBWCAf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 Feb 2021 21:00:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbhBWCAa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Feb 2021 21:00:30 -0500
+        with ESMTP id S231164AbhBWCAc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 Feb 2021 21:00:32 -0500
 Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0857AC06178A
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF51C06178B
+        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 17:59:51 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id 7so21017621wrz.0
         for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 17:59:50 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id b3so20988928wrj.5
-        for <io-uring@vger.kernel.org>; Mon, 22 Feb 2021 17:59:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=pRj6Oxyt8WcxzX7lULLOwOGFt4IvfucoNQvtZc4mKh0=;
-        b=dBIN+m8AS/9+4naJHXGP6wy+UfVXbHc48jsXl9RLpLLour3RuwYk8NB1DHwZ56TVCm
-         Huy5j643qmPMfVX3invI6L442ajDB/yCyj6St9fivTxiNsazMWJmBsNAaDhG8WLiDRbT
-         GA8aCEfRtfuZQ6geUP1KOaCueDeNc15uF/OUvORcgP2oY95/U7eRKxQ81htQg7nEZ7aw
-         iIMNs5eKMfH3ObxVyoTbYGA5gjQzBoBWl/aaEsThE4dJd5BmhDOaSIt8QhiNro+Jk+nH
-         M2sh7mIBZxsd/itpRoDP5Y0bnVaDCIgDlciOBKEaDUdAoSpFJtZZkAV9F9ahP68HTdVy
-         tmlA==
+        bh=sXZojVqlHeNZnJMAkjTkqRa+ROEbpyhnF8arLc0vvFE=;
+        b=Gh3N/oAAGwBY/W4YRyF1jsEOZR0agMYkG6Ugg9KH5RdrXAYL/9D7sOMmP1ZZNcsWHP
+         IaOSl4xTI6LCY+qpIQ3pqhTtbY5wxE0dr5p6n5R+ihPm3JV4cyfwAqMVyDy92f9sZJOO
+         s/91+3JymNSBH7hxukKtW2GubCPcuynxVOa00KDi5yxuNaYkmtMYZ5/E8fvzn4aIuEf7
+         +utNcqgI5c6Gh949MoKThKo+R7qcWCGM6CyIMj63UdEglAJJN8rh/K9QQybBWFxHOqWo
+         siRQxjbfUwnzxdkyziQCY3sreq8EXlGq6ZqyMyA5OOuU93ia2i3GFqjxScVL/gRPW+DC
+         Ix7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pRj6Oxyt8WcxzX7lULLOwOGFt4IvfucoNQvtZc4mKh0=;
-        b=t2wbDDVA7xvDj7FVKY6aZUIYxvEjWycJyNFyMYXYfnFhgUj5aW4UyIY0GPD14aShwY
-         Hwuaf+pN7KdchknxPwT2iy0udTbYFEDfTBjG6O4B5lhZ2GbbcGwUupReiSgl6Raid9dM
-         nf489y9vbdQiFGflreAFAGD/UlK1xwobIBGF/RMZNaNiD+LrLDtPCHtqXp7kSeUT6T/i
-         9MVAgAlYCFxNdVp2vFZsbdpwlEWe/arG/zDHAcLXCeMyMkH2dPjliO4CzfEQNbi1fqbx
-         UfMNbnm+9FyRf6oSKH5RYmLU5ijKwUk5qvlTvqUaxswP4bpI9iJGZLDiWhloyKDP1Z4G
-         HDQA==
-X-Gm-Message-State: AOAM532mzedbJusy4P6MTtXFhcRbrnuR9aOBk9W/npRvyBh2WUlk+7V2
-        eh761VdkJu9yO3ItDKpv2AA=
-X-Google-Smtp-Source: ABdhPJy8PzEWJDc4pimVa67F1NTajw0dPLUZ3a2wzrQpnsrloxqcgcZBkiFTLfTSEp0KcgJrQNWMBQ==
-X-Received: by 2002:a5d:6ac3:: with SMTP id u3mr4495588wrw.361.1614045588871;
-        Mon, 22 Feb 2021 17:59:48 -0800 (PST)
+        bh=sXZojVqlHeNZnJMAkjTkqRa+ROEbpyhnF8arLc0vvFE=;
+        b=KuKycmECQZT0k74xbTPesFXheo77uGpyYX23QadG0NI/9y/KaozFTcXdkbuN52Xklq
+         HYU/Bi/ODlJxQjFlcneBb/d3jI1xLPOYn/V21/JbALb74tdtXw5Kq91wC+AMQk+3rmUm
+         HItijKzHn/P+9A5UE+MM7Qmyr/1Nwjd0ZYtLECX3tWjF4Uuodh5f2+HZRii4d0BaKS33
+         Hm7uVpKangYWsnU90mer7p+jlBh0PDCYOQoHHhZyfWezn/FvoTWQQrHZI7zs1SgCx/Zo
+         gD7lg8+hu61Qc0dZjIE/4ZgeH2aSC+Db0PxSCw4dgGOpsO7wZzMo2mVQQVMjwgokYtNe
+         6AHA==
+X-Gm-Message-State: AOAM531pAcVW91Mlk7Pyz3pfRi9Lk11ibOgdE1C0/uuWSFRsTQ1njg1/
+        KBUp0yKucmLhdVfP45X5FFA=
+X-Google-Smtp-Source: ABdhPJyrop3TMdTTeghU0EpdsXAgVNvTMkAmkOWV7ZRcgyZZ2agIbC2xdnhcFiPSgdHKbObKemOKbA==
+X-Received: by 2002:adf:8185:: with SMTP id 5mr24561533wra.288.1614045589893;
+        Mon, 22 Feb 2021 17:59:49 -0800 (PST)
 Received: from localhost.localdomain ([148.252.132.56])
-        by smtp.gmail.com with ESMTPSA id 4sm32425501wrr.27.2021.02.22.17.59.48
+        by smtp.gmail.com with ESMTPSA id 4sm32425501wrr.27.2021.02.22.17.59.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Feb 2021 17:59:48 -0800 (PST)
+        Mon, 22 Feb 2021 17:59:49 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 03/13] io_uring: reuse io_req_task_queue_fail()
-Date:   Tue, 23 Feb 2021 01:55:38 +0000
-Message-Id: <f654607fd5fbcbabecbd81b74a2fea2d14fe5b98.1614045169.git.asml.silence@gmail.com>
+Subject: [PATCH 04/13] io_uring: further deduplicate file slot selection
+Date:   Tue, 23 Feb 2021 01:55:39 +0000
+Message-Id: <c876d6b589158b375105b4910580b9d55f9856f0.1614045169.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1614045169.git.asml.silence@gmail.com>
 References: <cover.1614045169.git.asml.silence@gmail.com>
@@ -61,52 +61,58 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Use io_req_task_queue_fail() on the fail path of io_req_task_queue().
-It's unlikely to happen, so don't care about additional overhead, but
-allows to keep all the req->result invariant in a single function.
+io_fixed_file_slot() and io_file_from_index() behave pretty similarly,
+DRY and call one from another.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ fs/io_uring.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2d66d0afc6c0..aa2ad863af96 100644
+index aa2ad863af96..0f85506448ac 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -2036,25 +2036,21 @@ static void io_req_task_submit(struct callback_head *cb)
- 	__io_req_task_submit(req);
+@@ -6107,13 +6107,19 @@ static void io_wq_submit_work(struct io_wq_work *work)
+ 	}
  }
  
--static void io_req_task_queue(struct io_kiocb *req)
-+static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
+-static inline struct file *io_file_from_index(struct io_ring_ctx *ctx,
+-					      int index)
++static inline struct file **io_fixed_file_slot(struct fixed_rsrc_data *file_data,
++					       unsigned i)
  {
--	int ret;
-+	req->result = ret;
-+	req->task_work.func = io_req_task_cancel;
+ 	struct fixed_rsrc_table *table;
  
--	req->task_work.func = io_req_task_submit;
--	ret = io_req_task_work_add(req);
--	if (unlikely(ret)) {
--		req->result = -ECANCELED;
-+	if (unlikely(io_req_task_work_add(req)))
- 		io_req_task_work_add_fallback(req, io_req_task_cancel);
--	}
+-	table = &ctx->file_data->table[index >> IORING_FILE_TABLE_SHIFT];
+-	return table->files[index & IORING_FILE_TABLE_MASK];
++	table = &file_data->table[i >> IORING_FILE_TABLE_SHIFT];
++	return &table->files[i & IORING_FILE_TABLE_MASK];
++}
++
++static inline struct file *io_file_from_index(struct io_ring_ctx *ctx,
++					      int index)
++{
++	return *io_fixed_file_slot(ctx->file_data, index);
  }
  
--static void io_req_task_queue_fail(struct io_kiocb *req, int ret)
-+static void io_req_task_queue(struct io_kiocb *req)
+ static struct file *io_file_get(struct io_submit_state *state,
+@@ -7422,15 +7428,6 @@ static void io_rsrc_put_work(struct work_struct *work)
+ 	}
+ }
+ 
+-static struct file **io_fixed_file_slot(struct fixed_rsrc_data *file_data,
+-					unsigned i)
+-{
+-	struct fixed_rsrc_table *table;
+-
+-	table = &file_data->table[i >> IORING_FILE_TABLE_SHIFT];
+-	return &table->files[i & IORING_FILE_TABLE_MASK];
+-}
+-
+ static void io_rsrc_node_ref_zero(struct percpu_ref *ref)
  {
--	req->result = ret;
--	req->task_work.func = io_req_task_cancel;
-+	req->task_work.func = io_req_task_submit;
- 
- 	if (unlikely(io_req_task_work_add(req)))
--		io_req_task_work_add_fallback(req, io_req_task_cancel);
-+		io_req_task_queue_fail(req, -ECANCELED);
- }
- 
- static inline void io_queue_next(struct io_kiocb *req)
+ 	struct fixed_rsrc_ref_node *ref_node;
 -- 
 2.24.0
 

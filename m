@@ -2,115 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29A1E323671
-	for <lists+io-uring@lfdr.de>; Wed, 24 Feb 2021 05:33:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FFCF323673
+	for <lists+io-uring@lfdr.de>; Wed, 24 Feb 2021 05:34:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232262AbhBXEc7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Feb 2021 23:32:59 -0500
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:46677 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232132AbhBXEc7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 23:32:59 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 8AB9E235;
-        Tue, 23 Feb 2021 23:31:52 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 23 Feb 2021 23:31:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=QN5ZO6PxGXwz1e7duIiOp4u24ml
-        dqivtWe/hI5k7jEA=; b=frpuNgE6Emfd5uPW5VxKzkWLHoj9bjFUkLWIixa5fjy
-        tlVu5Z0ovn7uE1Wqd3+7UqyzzC+RgHjtBgT9xeNm2bv9FWjjtUzRN0MHdx5qV7Fn
-        ZtnpgFFjE2c203gVIn5oQN90BoUqm1HnmAZU5TcXv1N92T0wiVk5NY9hA6Nq9AWU
-        E6udSF+i/QUjOhMgiIM9b3JJPAOFKpnPVP5qfNBOSKj9Zte3pGmXj7FIgFI/l2nI
-        s0zrWEhMicGDa8Je6PLfd+Qk1YbIsMI3AKTGhInRqQVU0aWaHraAfEewMd+fEB9j
-        Dtkps+QH65hsupQq/voselfE3WGtoNLP3nz6igSJS7w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=QN5ZO6
-        PxGXwz1e7duIiOp4u24mldqivtWe/hI5k7jEA=; b=Z5bDmgfVXwU6LxEw8pB1MI
-        0ilB0kO0ogF63ILDFe37AnyozVpL5BdRvvEgD6noayQXR94XE2d8zkr96kZZQOr+
-        lVYfVlee409r3yWTgYOBcTBEKMEM9Sff1OfHsduQRos5b67CbHN3cK6xtEwhUYoN
-        1b2aVG+DgDoCcUE/PmFMHlpjuoaeHAu7IWE0WDZEtSvu0s3A0RtOTls6o4yruYg+
-        8lphobga3/nHJjv7CFbemxa2asKPegXdNL8aLlsaOuYAQoUnphazsjvE+N8xO9Ec
-        RzijhSsnG1AGp+7fhgYt/wPE9kZlKDByoLfVkk6pNwT2i70/c4xC5CFE7ZOlT4cw
-        ==
-X-ME-Sender: <xms:t9Y1YD-IudMvMrVrL6a2T1ZtLrU1NRsz4H-e2S0_4cRsBEjrzEeipg>
-    <xme:t9Y1YPu4cVrUUrZ6xymWuWBvPieiuwJxQh2YFpRO0AgHkkzuq6xxdUXG7GEyEmk_K
-    O2sj9g7iFB1sxZ23Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrkeeigdeikecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
-    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuggftrfgrth
-    htvghrnhepudekhfekleeugeevteehleffffejgeelueduleeffeeutdelffeujeffhfeu
-    ffdunecukfhppeeijedrudeitddrvddujedrvdehtdenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvshesrghnrghrrgiivghlrdgu
-    vg
-X-ME-Proxy: <xmx:t9Y1YBCdYdf4RELl12f4dgzcKOTcMUpp3UQuE6C9i0TfhKSepxHW7w>
-    <xmx:t9Y1YPerT1clzf7fKmegKDDmz3FeOX8dZdnvFK_c-2EUTpW9DwlQzQ>
-    <xmx:t9Y1YIPmY7daxjO_KG1n3qIL8S1RlqwfHT6qIac311doWWdrQpUNvg>
-    <xmx:uNY1YDbwl1tZ5cImyXY293pHNkGi50_GVhj2o-MQOzJAUVx_XtUzew>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 990131080057;
-        Tue, 23 Feb 2021 23:31:51 -0500 (EST)
-Date:   Tue, 23 Feb 2021 20:31:49 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org
+        id S232132AbhBXEeW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Feb 2021 23:34:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40996 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230380AbhBXEeV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 23:34:21 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5023CC06174A
+        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 20:33:41 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id s16so431066plr.9
+        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 20:33:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lRItJ18w8D6fDXbtJfgkIc5az0f5zbFgwI9IOwjcWdg=;
+        b=VluGEBfO8w8z13Kipg/YkcyFnEXzutcSQsFn98mW2rP6xQ3khA3XVclKoxM0kK9fq+
+         S9GOT7HSi1jL/lkULoLnVBN8JLzyXLvhX9oRSfduXmeQLgokCo2X57i4zWc4qKwxQLH4
+         lBATxWQB2HppFGW1a3HdDWGRhg+vlAU9bEvX65FsanxpTWovUGJYIqshcdyu8pVaUefW
+         gyIS29hK+2AsHz2qEvi9Z2nuxZlk8q5oXqcg2bikwJOwVRsVDrzp5tWau9WL0OvTGxQ0
+         DopXHx7Q8I0PaYBpbfVHJCf8ehkezloPaB0MJFOWTWx+Oh54y2H5DCJSSU5Yz4ZSx57j
+         k9lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lRItJ18w8D6fDXbtJfgkIc5az0f5zbFgwI9IOwjcWdg=;
+        b=DKYViwJl2yBvR+4yQPJIg9whKTRRQHsfQbvl+tiR1jpQRQqiLpqpcnQX4XaiY4q1xB
+         VxhxK3PmrYkX8sLTGySP0xSYeKdxAiWRFDewc0UjlcnFomcf6oUAYfyWXCDa3uf0cW6W
+         J0CP+LfYJPePglfruceTNpNVVyX3unYg38JqyKT/+N+3xIUbogP1NT+NtndHE8Bdccf2
+         KXqdTHu5FNsqrUllCjjLo82y8E5yM47FFiMzTD8ZcLSZb98Qt2d4h/q3i4hHXt2nfEQF
+         SN51QE7pBhXWdhShYDoDeen4gvVhHVYLNBDYU+VgRtmTKvi1jRr/aj663WsYrMIPLfev
+         T7lQ==
+X-Gm-Message-State: AOAM532wWmrHZZVyzy5Xy+wbSihLVBEx6BHGcSwP6xOdCU47Q25wvRqX
+        MfTHL/ib/vBGNqpuRWX1dE97oD+OnS0NLg==
+X-Google-Smtp-Source: ABdhPJwZK51H2LVpnzM3w9606kb7qR/KTKeNUkbrwpwtFTIVWsTugQzOwvA1Fgu/lxKpRMcBVCB8aw==
+X-Received: by 2002:a17:90a:2ec6:: with SMTP id h6mr2389987pjs.103.1614141220445;
+        Tue, 23 Feb 2021 20:33:40 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id d73sm837752pfd.0.2021.02.23.20.33.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Feb 2021 20:33:40 -0800 (PST)
 Subject: Re: io_uring_enter() returns EAGAIN after child exit in 5.12
-Message-ID: <20210224043149.6tj6whjfjd6ihamz@alap3.anarazel.de>
+To:     Andres Freund <andres@anarazel.de>
+Cc:     io-uring@vger.kernel.org
 References: <20210224032514.emataeyir7d2kxkx@alap3.anarazel.de>
  <db110327-99b5-f008-2729-d1c68483bff1@kernel.dk>
+ <20210224043149.6tj6whjfjd6ihamz@alap3.anarazel.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d630c75f-51d4-abb4-46b3-c860a6105e4b@kernel.dk>
+Date:   Tue, 23 Feb 2021 21:33:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <db110327-99b5-f008-2729-d1c68483bff1@kernel.dk>
+In-Reply-To: <20210224043149.6tj6whjfjd6ihamz@alap3.anarazel.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
-
-On 2021-02-23 20:35:09 -0700, Jens Axboe wrote:
-> On 2/23/21 8:25 PM, Andres Freund wrote:
-> > Hi,
-> > 
-> > commit 41be53e94fb04cc69fdf2f524c2a05d8069e047b (HEAD, refs/bisect/bad)
-> > Author: Jens Axboe <axboe@kernel.dk>
-> > Date:   2021-02-13 09:11:04 -0700
-> > 
-> >     io_uring: kill cached requests from exiting task closing the ring
-> > 
-> >     Be nice and prune these upfront, in case the ring is being shared and
-> >     one of the tasks is going away. This is a bit more important now that
-> >     we account the allocations.
-> > 
-> >     Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > 
-> > 
-> > causes EAGAIN to be returned by io_uring_enter() after a child
-> > exits. The existing liburing test across-fork.c repros the issue after
-> > applying the patch below.
-> > 
-> > Retrying the submission twice seems to make it succeed most of the
-> > time...
+On 2/23/21 9:31 PM, Andres Freund wrote:
+> Hi,
 > 
-> Oh that's funky, I'll take a look.
- 
-It was fixed in
+> On 2021-02-23 20:35:09 -0700, Jens Axboe wrote:
+>> On 2/23/21 8:25 PM, Andres Freund wrote:
+>>> Hi,
+>>>
+>>> commit 41be53e94fb04cc69fdf2f524c2a05d8069e047b (HEAD, refs/bisect/bad)
+>>> Author: Jens Axboe <axboe@kernel.dk>
+>>> Date:   2021-02-13 09:11:04 -0700
+>>>
+>>>     io_uring: kill cached requests from exiting task closing the ring
+>>>
+>>>     Be nice and prune these upfront, in case the ring is being shared and
+>>>     one of the tasks is going away. This is a bit more important now that
+>>>     we account the allocations.
+>>>
+>>>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>
+>>>
+>>> causes EAGAIN to be returned by io_uring_enter() after a child
+>>> exits. The existing liburing test across-fork.c repros the issue after
+>>> applying the patch below.
+>>>
+>>> Retrying the submission twice seems to make it succeed most of the
+>>> time...
+>>
+>> Oh that's funky, I'll take a look.
+>  
+> It was fixed in
+> 
+> commit 8e5c66c485a8af3f39a8b0358e9e09f002016d92
+> Author: Pavel Begunkov <asml.silence@gmail.com>
+> Date:   2021-02-22 11:45:55 +0000
+> 
+>     io_uring: clear request count when freeing caches
 
-commit 8e5c66c485a8af3f39a8b0358e9e09f002016d92
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   2021-02-22 11:45:55 +0000
+Yep, thanks for confirming. Didn't immediate connect them, but I guess
+any sort of oddity is possible before that fix with the caches.
 
-    io_uring: clear request count when freeing caches
+> Jens, seems like it'd make sense to apply the test case upthread into
+> the liburing repo. Do you want me to open a PR?
 
+I think so, it's a good addition. Either a PR or just an emailed patch,
+whatever you prefer. Well, the previous email had whitespace damage,
+so maybe a PR is safer :-)
 
-Jens, seems like it'd make sense to apply the test case upthread into
-the liburing repo. Do you want me to open a PR?
+-- 
+Jens Axboe
 
-Greetings,
-
-Andres Freund

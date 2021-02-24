@@ -2,58 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F453239C9
-	for <lists+io-uring@lfdr.de>; Wed, 24 Feb 2021 10:47:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 148323239E7
+	for <lists+io-uring@lfdr.de>; Wed, 24 Feb 2021 10:52:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234721AbhBXJqC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Feb 2021 04:46:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50624 "EHLO
+        id S234767AbhBXJvh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Feb 2021 04:51:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234637AbhBXJoB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Feb 2021 04:44:01 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3EA9C061574
-        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 01:43:20 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id d11so1211510wrj.7
-        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 01:43:20 -0800 (PST)
+        with ESMTP id S234763AbhBXJuv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Feb 2021 04:50:51 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFAFCC061574
+        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 01:50:10 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id 7so1249697wrz.0
+        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 01:50:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ty66YqZp+gtZ8i5nVM6d2AoDFVjMiOdrp/eVCSvMB/M=;
-        b=piUYbYgLFo/EXKxF2oOD6bWehal7xPh4krJWu1JTNsRPTltvUPYssaI9ww/o/CmWZJ
-         7U03cqReuimuohuMOESjB/8PnyA7XBaQ5yUMMSYEjIAarNx/fF75GxJmw4eMGKQSL3F1
-         8wo31QuUrivKP8WnQQKs2gXRk2/8PKe2GjPhuek0GIR6XW1Ov2xs8dFeieYKDLZ7nMP5
-         rKy5gdr1Mljlneo03f/garJ/d01kA836hRerdSvgoRVseMTz3V9YIJP2eYsZ1mchSmpJ
-         I7mMhpLspfIpmzbXwBMFqSJ81PL21XL2MoErIJ+oTOdtdhTFIRrQ+kSBDJTiejNiKZsR
-         NHXg==
+        bh=v0iNMni8dnRcuDkj/tBzWE2YWIKPul6hivqSNKwVfms=;
+        b=Fm1cFRrV9psqy0m7jDcXk4Hn9xKuVKnNZ+0nAqyZhOhGVFb5kpq4XjuEwj2/xPj/DB
+         pvn1fPiHRbn6GLTxN0m3IPXEYkZl+mkP2XSJ7TbBB99Iu6asu0seuDNdaSjRXoABcfzB
+         bC2afp78QIpZEkWIHnesbXmdQoOCCfKfDEVOAOJcNa9+OCHeyg7My2gMvVI0RCmSJDwD
+         QxJwvUGZZaIrESpkVwSbSf7+FIXrXDmX2QH8gsjIsAAaBKs7pRu79D1XJQCo2364+sGY
+         3IGjIpFoH6I3FSrBwC/dgEAS8ba54TF0SxyTccNDxUhmBtQkE/JJyX8w6X0oc1P80NjH
+         TNTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ty66YqZp+gtZ8i5nVM6d2AoDFVjMiOdrp/eVCSvMB/M=;
-        b=dtygVtnu2Pi1FD134W+3eiiZibcuFdB49YPfDVBavbI4mVpvwigeXVJjigSJBoaKuW
-         DnTbtLiqqjX3tOtbxQ3jPc73JjgZOA3EeJ6CaBS4ZEwttzrh91r+fAX89OXyUpR4ZuVO
-         1rNO6TksP7ckHuuwn2l6cKeEQGEHDoyHxdPtYCZiMFFLiXyFQAlr1Kw26wDAAkKAmMRe
-         2ey1XrkTh1FX3QSc/lf4y4xKCSTva9gMcdCm5oR3mD1q3b7wJLwY12vF7HJPeXmNgD4I
-         UTIRgf9ZsvY49+fIUHThWuSnZQ3Bij3jniETQRImH7XV/+MYP0RC7yMgYy45ujDgo5ko
-         8YqQ==
-X-Gm-Message-State: AOAM531Gtd+rq2FheglRSuDiebfSSdqdIC5DW5Ch0NXoUBF6BAFaIVw5
-        54Wgtkq5jtqYwck0sprQruMOpKus3Gqivg==
-X-Google-Smtp-Source: ABdhPJzQXeoUQX4UVdPbclksPP8mdqITHdX+5KiA40JdlV7OhSCP2tPpqi+o2NkCOZxVRubACY+cJQ==
-X-Received: by 2002:adf:fe01:: with SMTP id n1mr5888522wrr.341.1614159799018;
-        Wed, 24 Feb 2021 01:43:19 -0800 (PST)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=v0iNMni8dnRcuDkj/tBzWE2YWIKPul6hivqSNKwVfms=;
+        b=hg/r7qyPGYz+QIWIuI9AX2EoqyJ+/7HPKxCicLXwd7Yevu0Eg8M33zLrSRM50BOlrx
+         rhpK86IpPhb8ecdwLbnTDIJvzk/CxsOg0O27Mj0w0I7D+Ro+brcbKZTCiRMHrByhIMcJ
+         OQ4BCTvmCPkwAT3HkZ4os0JLQt+UdQXkf3DA2akYOR1fMB0JjxNCS5ePk0wo4mf9sJhT
+         AZvEk80TetT0IAeF//ta3JeR6jFTZUXyx3mbuxa3rXUTTi74LJ7Tw03Utd8XXD7Foeb/
+         gzA9rAw7gNLm5/Z0WkpIIKQzpfPm4tE6kNnDKP+wWYanUsr4FWYRRLA7BBZKAAdrl/mS
+         Tywg==
+X-Gm-Message-State: AOAM533NEcgA/ufOj4h8V04a0cp9luIdSKkGBp8mTA5efP+D8bCODl5U
+        dsmKf/dkXNMsaUF3wrZve1fhjA9hxXEwGw==
+X-Google-Smtp-Source: ABdhPJzFamQYyyFVrVX6aRql7hu8+7X1ydVhGVl8GSAwdko0JeYRfJqdp+Vi9E6/KaKmSlRoONjAPg==
+X-Received: by 2002:adf:e94c:: with SMTP id m12mr32107571wrn.146.1614160209724;
+        Wed, 24 Feb 2021 01:50:09 -0800 (PST)
 Received: from [192.168.8.165] ([148.252.132.56])
-        by smtp.gmail.com with ESMTPSA id p17sm1824487wmq.27.2021.02.24.01.43.18
+        by smtp.gmail.com with ESMTPSA id m17sm1925468wmq.5.2021.02.24.01.50.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Feb 2021 01:43:18 -0800 (PST)
-Subject: Re: [PATCH v2 1/1] io_uring: allocate memory for overflowed CQEs
-To:     Jens Axboe <axboe@kernel.dk>, Hao Xu <haoxu@linux.alibaba.com>,
+        Wed, 24 Feb 2021 01:50:09 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring@vger.kernel.org
-References: <a5e833abf8f7a55a38337e5c099f7d0f0aa8746d.1614083504.git.asml.silence@gmail.com>
- <f57545fb-a109-0881-ff14-f371d1a9d811@linux.alibaba.com>
- <fda005e8-d16d-6563-d526-440deb7737f6@kernel.dk>
+Cc:     joseph.qi@linux.alibaba.com
+References: <20210206150006.1945-1-xiaoguang.wang@linux.alibaba.com>
+ <e4220bf0-2d60-cdd8-c738-cf48236073fa@gmail.com>
+ <3e3cb8da-d925-7ebd-11a0-f9e145861962@linux.alibaba.com>
+ <f3081423-bdee-e7e4-e292-aa001f0937d1@gmail.com>
+ <e185a388-9b7c-b01f-bcf9-2440d9024fd2@gmail.com>
+ <754563ed-5b2b-075d-16f8-d980e51102e6@linux.alibaba.com>
+ <215e12a6-1aa7-c56f-1349-bd3828b225f6@kernel.dk>
+ <7f52ca3a-b456-582e-c3db-99d2d028042f@linux.alibaba.com>
+ <6a09434b-f975-cc49-cc6a-a5d369be325b@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -98,41 +105,77 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <055b8a19-c86a-88a5-79f4-21099bba6f14@gmail.com>
-Date:   Wed, 24 Feb 2021 09:39:27 +0000
+Subject: Re: [PATCH] io_uring: don't issue reqs in iopoll mode when ctx is
+ dying
+Message-ID: <d1bad7d9-aea4-5dfa-52a5-1c72ce29470f@gmail.com>
+Date:   Wed, 24 Feb 2021 09:46:16 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <fda005e8-d16d-6563-d526-440deb7737f6@kernel.dk>
-Content-Type: text/plain; charset=gbk
+In-Reply-To: <6a09434b-f975-cc49-cc6a-a5d369be325b@kernel.dk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 24/02/2021 03:18, Jens Axboe wrote:
-> On 2/23/21 8:06 PM, Hao Xu wrote:
->> ÔÚ 2021/2/23 ÏÂÎç8:40, Pavel Begunkov Ð´µÀ:
->>> Instead of using a request itself for overflowed CQE stashing, allocate
->>> a separate entry. The disadvantage is that the allocation may fail and
->>> it will be accounted as lost (see rings->cq_overflow), so we lose
->>> reliability in case of memory pressure. However, it opens a way for for
->>> multiple CQEs per an SQE and even generating SQE-less CQEs >
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>> ---
->> Hi Pavel,
->> Allow me to ask a stupid question, why do we need to support multiple 
->> CQEs per SQE or even SQE-less CQEs in the future?
+On 24/02/2021 02:51, Jens Axboe wrote:
+>>>>> On 08/02/2021 13:35, Pavel Begunkov wrote:
+>>>>>> On 08/02/2021 02:50, Xiaoguang Wang wrote:
+>>>>>>>>> The io_identity's count is underflowed. It's because in io_put_identity,
+>>>>>>>>> first argument tctx comes from req->task->io_uring, the second argument
+>>>>>>>>> comes from the task context that calls io_req_init_async, so the compare
+>>>>>>>>> in io_put_identity maybe meaningless. See below case:
+>>>>>>>>>        task context A issue one polled req, then req->task = A.
+>>>>>>>>>        task context B do iopoll, above req returns with EAGAIN error.
+>>>>>>>>>        task context B re-issue req, call io_queue_async_work for req.
+>>>>>>>>>        req->task->io_uring will set to task context B's identity, or cow new one.
+>>>>>>>>> then for above case, in io_put_identity(), the compare is meaningless.
+>>>>>>>>>
+>>>>>>>>> IIUC, req->task should indicates the initial task context that issues req,
+>>>>>>>>> then if it gets EAGAIN error, we'll call io_prep_async_work() in req->task
+>>>>>>>>> context, but iopoll reqs seems special, they maybe issued successfully and
+>>>>>>>>> got re-issued in other task context because of EAGAIN error.
+>>>>>>>>
+>>>>>>>> Looks as you say, but the patch doesn't solve the issue completely.
+>>>>>>>> 1. We must not do io_queue_async_work() under a different task context,
+>>>>>>>> because of it potentially uses a different set of resources. So, I just
+>>>>>>>> thought that it would be better to punt it to the right task context
+>>>>>>>> via task_work. But...
+>>>>>>>>
+>>>>>>>> 2. ...iovec import from io_resubmit_prep() might happen after submit ends,
+>>>>>>>> i.e. when iovec was freed in userspace. And that's not great at all.
+>>>>>>> Yes, agree, that's why I say we neeed to re-consider the io identity codes
+>>>>>>> more in commit message :) I'll have a try to prepare a better one.
+>>>>>>
+>>>>>> I'd vote for dragging -AGAIN'ed reqs that don't need io_import_iovec()
+>>>>>> through task_work for resubmission, and fail everything else. Not great,
+>>>>>> but imho better than always setting async_data.
+>>>>>
+>>>>> Hey Xiaoguang, are you working on this? I would like to leave it to you,
+>>>>> If you do.
+>>>> Sorry, currently I'm busy with other project and don't have much time to work on
+>>>> it yet. Hao Xu will help to continue work on the new version patch.
+>>>
+>>> Is it issue or reissue? I found this one today:
+>>>
+>>> https://lore.kernel.org/io-uring/c9f6e1f6-ff82-0e58-ab66-956d0cde30ff@kernel.dk/
+>> Yeah, my initial patch is similar to yours, but it only solves the bug described
+>> in my commit message partially(ctx is dying), you can have a look at my commit message
+>> for the bug bug scene, thanks.
 > 
-> Not a stupid question at all, since it's not something we've done
-> before. There's been discussion about this in the past, in the presence
-> of the zero copy IO where we ideally want to post two CQEs for an SQE.
-> Most recently I've been playing with multishot poll support, where a
-> POLL_ADD will stay active after triggering. Hence you could be posting
-> many CQEs for that SQE, over the life time of the request.
+> Are you sure? We just don't want to reissue it, we need to fail it.
+> Hence if we catch it at reissue time, that should be enough. But I'm
+> open to clue batting :-)
 
-Yep, in addition should be useful for eBPF requests.
+Jens, IOPOLL can happen from a different task, so
+1) we don't want to grab io_wq_work context from it. As always we can pass it
+through task_work, or should be solved with your io-wq patches.
+
+2) it happens who knows when in time, so iovec may be gone already -- same
+reasoning why io_[read,write]() copy it before going to io-wq.
+
 
 -- 
 Pavel Begunkov

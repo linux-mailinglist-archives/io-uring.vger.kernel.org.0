@@ -2,52 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 148323239E7
-	for <lists+io-uring@lfdr.de>; Wed, 24 Feb 2021 10:52:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB9B323A1F
+	for <lists+io-uring@lfdr.de>; Wed, 24 Feb 2021 11:04:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234767AbhBXJvh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Feb 2021 04:51:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52084 "EHLO
+        id S234693AbhBXKEe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Feb 2021 05:04:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234763AbhBXJuv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Feb 2021 04:50:51 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFAFCC061574
-        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 01:50:10 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id 7so1249697wrz.0
-        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 01:50:10 -0800 (PST)
+        with ESMTP id S234568AbhBXKEC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Feb 2021 05:04:02 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EAAAC06174A
+        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 02:03:22 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id b3so1280213wrj.5
+        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 02:03:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=v0iNMni8dnRcuDkj/tBzWE2YWIKPul6hivqSNKwVfms=;
-        b=Fm1cFRrV9psqy0m7jDcXk4Hn9xKuVKnNZ+0nAqyZhOhGVFb5kpq4XjuEwj2/xPj/DB
-         pvn1fPiHRbn6GLTxN0m3IPXEYkZl+mkP2XSJ7TbBB99Iu6asu0seuDNdaSjRXoABcfzB
-         bC2afp78QIpZEkWIHnesbXmdQoOCCfKfDEVOAOJcNa9+OCHeyg7My2gMvVI0RCmSJDwD
-         QxJwvUGZZaIrESpkVwSbSf7+FIXrXDmX2QH8gsjIsAAaBKs7pRu79D1XJQCo2364+sGY
-         3IGjIpFoH6I3FSrBwC/dgEAS8ba54TF0SxyTccNDxUhmBtQkE/JJyX8w6X0oc1P80NjH
-         TNTQ==
+        bh=z+vmL4ffec/IYrQ1uIrc/0zHKK+pvP94PMd/SIdSvFk=;
+        b=Xjy6FKIPGpRjuNFM/oUWCmq1ntBFjqAGQ+u68deeLQsEA2QDbD+3CLIF2/ty74+jKA
+         FPbjeJghePqhm1F47psd+cuFU9V4KXlqEv9SaQTZIbIujGKOuu9jrj7vhLrxjIXHNb6Z
+         SpX1pco3kPubXB7sn/azsRijNoIkvaB7MknKVgQumZKgLL/0xkPN49mGcN3WS+UNf8nO
+         VzCkuTwrY3C8px7hw62WjfYAlysoQGNOBFNWH6l988Aogg0gif4yNrvy1n9XIe/ah2jQ
+         Gg7xOY7kDcF3b8W0Z4f2IqT2SqzDO61OMBpJj2d7tlcWOw3wVT6peoZAeKY1qkzDiTdp
+         Q+bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=v0iNMni8dnRcuDkj/tBzWE2YWIKPul6hivqSNKwVfms=;
-        b=hg/r7qyPGYz+QIWIuI9AX2EoqyJ+/7HPKxCicLXwd7Yevu0Eg8M33zLrSRM50BOlrx
-         rhpK86IpPhb8ecdwLbnTDIJvzk/CxsOg0O27Mj0w0I7D+Ro+brcbKZTCiRMHrByhIMcJ
-         OQ4BCTvmCPkwAT3HkZ4os0JLQt+UdQXkf3DA2akYOR1fMB0JjxNCS5ePk0wo4mf9sJhT
-         AZvEk80TetT0IAeF//ta3JeR6jFTZUXyx3mbuxa3rXUTTi74LJ7Tw03Utd8XXD7Foeb/
-         gzA9rAw7gNLm5/Z0WkpIIKQzpfPm4tE6kNnDKP+wWYanUsr4FWYRRLA7BBZKAAdrl/mS
-         Tywg==
-X-Gm-Message-State: AOAM533NEcgA/ufOj4h8V04a0cp9luIdSKkGBp8mTA5efP+D8bCODl5U
-        dsmKf/dkXNMsaUF3wrZve1fhjA9hxXEwGw==
-X-Google-Smtp-Source: ABdhPJzFamQYyyFVrVX6aRql7hu8+7X1ydVhGVl8GSAwdko0JeYRfJqdp+Vi9E6/KaKmSlRoONjAPg==
-X-Received: by 2002:adf:e94c:: with SMTP id m12mr32107571wrn.146.1614160209724;
-        Wed, 24 Feb 2021 01:50:09 -0800 (PST)
+        bh=z+vmL4ffec/IYrQ1uIrc/0zHKK+pvP94PMd/SIdSvFk=;
+        b=CWogAkGRE6yxeFcpIGmQR7DTbl9GIUJdrqDfSE4T1/wEOWI7dODIz77NRa7XsRVoIo
+         5aPipY/aWd3erEPcWBMn+xfu3sA7NU5uHhzc8naiB8gdj1DjwR3QdxIk9/HA+Tx9tAI9
+         jvI0KwhIGah8RI7Zb4+vmYbj12vYowNd8n3W5C+qEmmttKdwCQIeSE5uDLjbh3X/9NMV
+         a/Dvg6d4Vy3akskHQRnWlRJOM/syT2CnjMwiNL1nbIOYhlT6cGlYBSb2Wd8QC00Oa9gd
+         /b0rsLrSlru6BNI1ZXh2zZxJDwFULvy6OrMoyRQZlxJRVLD1qlVKsXXI4Pefx+G/0MmN
+         wjcA==
+X-Gm-Message-State: AOAM530i7s6olBU6CpgOCsaP1HMnq1J0W5IQDgT6WYydeLYFgz73txdq
+        dsgLMOqVmSedTiBd/Yg+/6o=
+X-Google-Smtp-Source: ABdhPJxQHZTdeFsyn1/3n9B1nUw37bhORihoKrkFPhWhIkWLep23cUiMLZJoQtcFra3VQsOzPdETSQ==
+X-Received: by 2002:adf:f292:: with SMTP id k18mr5300219wro.335.1614161001277;
+        Wed, 24 Feb 2021 02:03:21 -0800 (PST)
 Received: from [192.168.8.165] ([148.252.132.56])
-        by smtp.gmail.com with ESMTPSA id m17sm1925468wmq.5.2021.02.24.01.50.08
+        by smtp.gmail.com with ESMTPSA id o124sm1878345wmo.41.2021.02.24.02.03.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Feb 2021 01:50:09 -0800 (PST)
+        Wed, 24 Feb 2021 02:03:20 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         io-uring@vger.kernel.org
@@ -61,7 +62,7 @@ References: <20210206150006.1945-1-xiaoguang.wang@linux.alibaba.com>
  <215e12a6-1aa7-c56f-1349-bd3828b225f6@kernel.dk>
  <7f52ca3a-b456-582e-c3db-99d2d028042f@linux.alibaba.com>
  <6a09434b-f975-cc49-cc6a-a5d369be325b@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <d1bad7d9-aea4-5dfa-52a5-1c72ce29470f@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -107,12 +108,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: [PATCH] io_uring: don't issue reqs in iopoll mode when ctx is
  dying
-Message-ID: <d1bad7d9-aea4-5dfa-52a5-1c72ce29470f@gmail.com>
-Date:   Wed, 24 Feb 2021 09:46:16 +0000
+Message-ID: <1c3b911c-1013-4fe1-12e3-1a650b0e207f@gmail.com>
+Date:   Wed, 24 Feb 2021 09:59:28 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <6a09434b-f975-cc49-cc6a-a5d369be325b@kernel.dk>
+In-Reply-To: <d1bad7d9-aea4-5dfa-52a5-1c72ce29470f@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -120,61 +121,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 24/02/2021 02:51, Jens Axboe wrote:
->>>>> On 08/02/2021 13:35, Pavel Begunkov wrote:
->>>>>> On 08/02/2021 02:50, Xiaoguang Wang wrote:
->>>>>>>>> The io_identity's count is underflowed. It's because in io_put_identity,
->>>>>>>>> first argument tctx comes from req->task->io_uring, the second argument
->>>>>>>>> comes from the task context that calls io_req_init_async, so the compare
->>>>>>>>> in io_put_identity maybe meaningless. See below case:
->>>>>>>>>        task context A issue one polled req, then req->task = A.
->>>>>>>>>        task context B do iopoll, above req returns with EAGAIN error.
->>>>>>>>>        task context B re-issue req, call io_queue_async_work for req.
->>>>>>>>>        req->task->io_uring will set to task context B's identity, or cow new one.
->>>>>>>>> then for above case, in io_put_identity(), the compare is meaningless.
->>>>>>>>>
->>>>>>>>> IIUC, req->task should indicates the initial task context that issues req,
->>>>>>>>> then if it gets EAGAIN error, we'll call io_prep_async_work() in req->task
->>>>>>>>> context, but iopoll reqs seems special, they maybe issued successfully and
->>>>>>>>> got re-issued in other task context because of EAGAIN error.
->>>>>>>>
->>>>>>>> Looks as you say, but the patch doesn't solve the issue completely.
->>>>>>>> 1. We must not do io_queue_async_work() under a different task context,
->>>>>>>> because of it potentially uses a different set of resources. So, I just
->>>>>>>> thought that it would be better to punt it to the right task context
->>>>>>>> via task_work. But...
->>>>>>>>
->>>>>>>> 2. ...iovec import from io_resubmit_prep() might happen after submit ends,
->>>>>>>> i.e. when iovec was freed in userspace. And that's not great at all.
->>>>>>> Yes, agree, that's why I say we neeed to re-consider the io identity codes
->>>>>>> more in commit message :) I'll have a try to prepare a better one.
->>>>>>
->>>>>> I'd vote for dragging -AGAIN'ed reqs that don't need io_import_iovec()
->>>>>> through task_work for resubmission, and fail everything else. Not great,
->>>>>> but imho better than always setting async_data.
->>>>>
->>>>> Hey Xiaoguang, are you working on this? I would like to leave it to you,
->>>>> If you do.
->>>> Sorry, currently I'm busy with other project and don't have much time to work on
->>>> it yet. Hao Xu will help to continue work on the new version patch.
->>>
->>> Is it issue or reissue? I found this one today:
->>>
->>> https://lore.kernel.org/io-uring/c9f6e1f6-ff82-0e58-ab66-956d0cde30ff@kernel.dk/
->> Yeah, my initial patch is similar to yours, but it only solves the bug described
->> in my commit message partially(ctx is dying), you can have a look at my commit message
->> for the bug bug scene, thanks.
+On 24/02/2021 09:46, Pavel Begunkov wrote:
+>> Are you sure? We just don't want to reissue it, we need to fail it.
+>> Hence if we catch it at reissue time, that should be enough. But I'm
+>> open to clue batting :-)
 > 
-> Are you sure? We just don't want to reissue it, we need to fail it.
-> Hence if we catch it at reissue time, that should be enough. But I'm
-> open to clue batting :-)
+> Jens, IOPOLL can happen from a different task, so
+> 1) we don't want to grab io_wq_work context from it. As always we can pass it
+> through task_work, or should be solved with your io-wq patches.
+> 
+> 2) it happens who knows when in time, so iovec may be gone already -- same
+> reasoning why io_[read,write]() copy it before going to io-wq.
 
-Jens, IOPOLL can happen from a different task, so
-1) we don't want to grab io_wq_work context from it. As always we can pass it
-through task_work, or should be solved with your io-wq patches.
+The diff below should solve the second problem by failing them (not tested).
+1) can be left to the io-wq patches.
 
-2) it happens who knows when in time, so iovec may be gone already -- same
-reasoning why io_[read,write]() copy it before going to io-wq.
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index bf9ad810c621..561c29b20463 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2610,8 +2610,11 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+ 		list_del(&req->inflight_entry);
+ 
+ 		if (READ_ONCE(req->result) == -EAGAIN) {
++			bool reissue = req->async_data ||
++				!io_op_defs[req->opcode].needs_async_data;
++
+ 			req->iopoll_completed = 0;
+-			if (io_rw_reissue(req))
++			if (reissue && io_rw_reissue(req))
+ 				continue;
+ 		}
+ 
 
 
 -- 

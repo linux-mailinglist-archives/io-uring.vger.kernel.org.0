@@ -2,102 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 10DF53233AC
-	for <lists+io-uring@lfdr.de>; Tue, 23 Feb 2021 23:22:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6ED132356A
+	for <lists+io-uring@lfdr.de>; Wed, 24 Feb 2021 02:44:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231523AbhBWWWJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Feb 2021 17:22:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46188 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230434AbhBWWWI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 17:22:08 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF995C06178C
-        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 14:21:21 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id l12so2083wry.2
-        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 14:21:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Br7TK/h7Dn9lY5Q2tzGiLyDX64T8XtRq4ELOGBnzVaE=;
-        b=aSgD+ZT2gLeYP21wOfMa5ZLMh5CgkAdOku2oCNpZzF1ANijewJIBQzRO6tXSyBJUjW
-         /oOz9KHiUnvPNfPN8skK/sN9+SPVyriXbja/OZpIimA+cTGEF37oULs/807tZ4NqIV18
-         PjtdkoY7dAo+w0bWtmr1M1QibF3PVYiRzPk1NEX8G3Uwg4yplsC4TRQT+WvEpktZ9UXD
-         o6XxrCVxFKgRWqJ1vuA7+oX544TwHjpVTFAII1zQybVKTGj2KK899VYhAAok45t4eMTp
-         wgWG/tOPdM3MeeUcrULcs/hy/OLpwImgU9ycwsQm0k/VZRzCOY5PGiI50/7z6dLyiIC7
-         Z9Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Br7TK/h7Dn9lY5Q2tzGiLyDX64T8XtRq4ELOGBnzVaE=;
-        b=A710d0NP9yMGqoNzp2EfUZm4vtyDqCzHc0z8qVfWEKuxoNkHcV2K4biPcY79pVa08V
-         As3qHMwIZWD/chtpdYc5XeJJTPUhQBtBY4FPomPNxK5HNcAO+YIbxK6h5HrPme21SW5t
-         AnCMbUu9mv505ieDOXgZS2ZzZ6bE26xVHuondk47ScKEoRFR4Lgf2hQm5sE0CqukFfOQ
-         J4UkE+cCf2YX0PXUsE8JWZ8WjbGjYS5T6YlZUU9vSrFeomlX4lE4YK6zgqK+UE8BoCfj
-         kKMB91guvibPRtbJMdoyC7eejM5x3G3eGQCwHzeT4lh9rcjt5qGYPH8dDCZURYJGD7IB
-         Xc7g==
-X-Gm-Message-State: AOAM531LVS1xKXHtGX+EpyCQNUIYNvbtt1j3JrdNLfbvaiXMIuOmH3Pd
-        RL9MbeSkIkxo0c+KRdhqp9s=
-X-Google-Smtp-Source: ABdhPJxN3xmHVdtYMWzrKwL5kdtTdo6HIEfNH4vGaVd4/AZ2lRh4DDslGsm7oVIrAN0Hvnce8gsjEg==
-X-Received: by 2002:a05:6000:1184:: with SMTP id g4mr15513684wrx.322.1614118880310;
-        Tue, 23 Feb 2021 14:21:20 -0800 (PST)
-Received: from localhost.localdomain ([148.252.132.56])
-        by smtp.gmail.com with ESMTPSA id 75sm4550716wma.23.2021.02.23.14.21.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Feb 2021 14:21:19 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v2 5.12] io_uring: fix locked_free_list caches_free()
-Date:   Tue, 23 Feb 2021 22:17:20 +0000
-Message-Id: <feff96ab5f6c2d5aff64b465533adcf59ec21894.1614118564.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S229946AbhBXBni (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Feb 2021 20:43:38 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:65491 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229791AbhBXBnh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 20:43:37 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UPP9wNK_1614130975;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UPP9wNK_1614130975)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 24 Feb 2021 09:42:55 +0800
+Subject: Re: [dm-devel] [PATCH v3 09/11] dm: support IO polling for bio-based
+ dm device
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     axboe@kernel.dk, snitzer@redhat.com, caspar@linux.alibaba.com,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, dm-devel@redhat.com, hch@lst.de
+References: <20210208085243.82367-1-jefflexu@linux.alibaba.com>
+ <20210208085243.82367-10-jefflexu@linux.alibaba.com>
+ <alpine.LRH.2.02.2102190907560.10545@file01.intranet.prod.int.rdu2.redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <83c2ec7a-d000-d9cc-d54a-5e69c35c5eb9@linux.alibaba.com>
+Date:   Wed, 24 Feb 2021 09:42:55 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.LRH.2.02.2102190907560.10545@file01.intranet.prod.int.rdu2.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Don't forget to zero locked_free_nr, it's not a disaster but makes it
-attempting to flush it with extra locking when there is nothing in the
-list. Also, don't traverse a potentially long list freeing requests
-under spinlock, splice the list and do it afterwards.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index bf9ad810c621..1a26898d23ed 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8701,6 +8701,7 @@ static void io_req_cache_free(struct list_head *list, struct task_struct *tsk)
- static void io_req_caches_free(struct io_ring_ctx *ctx, struct task_struct *tsk)
- {
- 	struct io_submit_state *submit_state = &ctx->submit_state;
-+	struct io_comp_state *cs = &ctx->submit_state.comp;
- 
- 	mutex_lock(&ctx->uring_lock);
- 
-@@ -8710,12 +8711,13 @@ static void io_req_caches_free(struct io_ring_ctx *ctx, struct task_struct *tsk)
- 		submit_state->free_reqs = 0;
- 	}
- 
--	io_req_cache_free(&submit_state->comp.free_list, NULL);
--
- 	spin_lock_irq(&ctx->completion_lock);
--	io_req_cache_free(&submit_state->comp.locked_free_list, NULL);
-+	list_splice_init(&cs->locked_free_list, &cs->free_list);
-+	cs->locked_free_nr = 0;
- 	spin_unlock_irq(&ctx->completion_lock);
- 
-+	io_req_cache_free(&cs->free_list, NULL);
-+
- 	mutex_unlock(&ctx->uring_lock);
- }
- 
+On 2/19/21 10:17 PM, Mikulas Patocka wrote:
+> 
+> 
+> On Mon, 8 Feb 2021, Jeffle Xu wrote:
+> 
+>> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+>> index c2945c90745e..8423f1347bb8 100644
+>> --- a/drivers/md/dm.c
+>> +++ b/drivers/md/dm.c
+>> @@ -1657,6 +1657,68 @@ static blk_qc_t dm_submit_bio(struct bio *bio)
+>>  	return BLK_QC_T_NONE;
+>>  }
+>>  
+>> +static int dm_poll_one_md(struct mapped_device *md);
+>> +
+>> +static int dm_poll_one_dev(struct dm_target *ti, struct dm_dev *dev,
+>> +				sector_t start, sector_t len, void *data)
+>> +{
+>> +	int i, *count = data;
+>> +	struct request_queue *q = bdev_get_queue(dev->bdev);
+>> +	struct blk_mq_hw_ctx *hctx;
+>> +
+>> +	if (queue_is_mq(q)) {
+>> +		if (!percpu_ref_tryget(&q->q_usage_counter))
+>> +			return 0;
+>> +
+>> +		queue_for_each_poll_hw_ctx(q, hctx, i)
+>> +			*count += blk_mq_poll_hctx(q, hctx);
+>> +
+>> +		percpu_ref_put(&q->q_usage_counter);
+>> +	} else
+>> +		*count += dm_poll_one_md(dev->bdev->bd_disk->private_data);
+> 
+> This is fragile, because in the future there may be other bio-based 
+> drivers that support polling. You should check that "q" is really a device 
+> mapper device before calling dm_poll_one_md on it.
+> 
+
+Sorry I missed this reply. Your advice matters, thanks.
+
 -- 
-2.24.0
-
+Thanks,
+Jeffle

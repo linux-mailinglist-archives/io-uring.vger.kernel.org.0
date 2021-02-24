@@ -2,92 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B82773235FA
-	for <lists+io-uring@lfdr.de>; Wed, 24 Feb 2021 04:19:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9D55323600
+	for <lists+io-uring@lfdr.de>; Wed, 24 Feb 2021 04:26:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230174AbhBXDTe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Feb 2021 22:19:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53234 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231890AbhBXDTe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 22:19:34 -0500
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CED5C061574
-        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 19:18:48 -0800 (PST)
-Received: by mail-pl1-x634.google.com with SMTP id w18so325150plc.12
-        for <io-uring@vger.kernel.org>; Tue, 23 Feb 2021 19:18:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=hh9IATp/DDOYwxGml/h+lxGT8Y8XN8qLxrt4S8OIiZ0=;
-        b=0wOiVeRkiGD5TDqebVyHeWKNc4uxroVPG27uhw8D7PwIVr2ngY23K6NXyUK+sIE+f9
-         fz9F2ukTGhNV71VtedwnqnxmxNQGQnqAqFowA3OpkxrDrIU/IxVlfgojcs2oY9TKFL9T
-         LZ5rLsrBGuoCGhZ71RgqGKnU7Miu/ydqzrTnBTY4iFQaDtP52JfyRD1Dwnt3JlrZpuUe
-         Uqnq9ARiT2Mt7wrDGD98li6pCDcS9O+Wy9IttHnpI7fLLUG0xhk+nj6djKRQSqtxss9B
-         frg/nTS40+MbzEjgi0BNPsLgWGmZIXnB4rFbQhFLKl5FPKAGX0Ye+QmJUDGGnQVIQyri
-         3AZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hh9IATp/DDOYwxGml/h+lxGT8Y8XN8qLxrt4S8OIiZ0=;
-        b=iPwQ2CoNXUgYuWgCvcr3OTAd3xkV/dxolIbevZ0koetv8MVeN5MjqpQhdJ8Wk8mQPE
-         Rzujrs6ld+gxQbqY0duT4am8Lm7WPbXpv6mKHkr0OSJdhz0D6zvuijQcoO4nMtDoXorL
-         6G3JOHMBM9eaWDTRcFLOt3STnXio3vgzPKxppURw83YCtdq2i9rCYLSn3GK2Ktpj/nwK
-         mvXvbIkzvLgmFOki+Qv7EKSHNZuIiGraR1q8WhQu3tsKvoMJs636+ploZjg1/vvM2EjN
-         6Dj6ZUT4r9uFF0nzMrd8gc3HY4CtHfrardi/tX050zjgz14PT2WXDFkrdieYsSE84twk
-         OXPw==
-X-Gm-Message-State: AOAM532DW8DBJ0hmW6Z3HjkKCTFJ8zBEeymGGJYJu77m96Kuaeij8lYp
-        Z2x5x/Ndo4/He2NmU5TWgb3jxGJ3M1QLag==
-X-Google-Smtp-Source: ABdhPJyn1zBBziVe1sSE3RITjInRla6otTys++FJoMPKeTOU+Nwo9hdcup667AzooCsBsJvFQ6WYkA==
-X-Received: by 2002:a17:90a:650b:: with SMTP id i11mr2018793pjj.130.1614136727475;
-        Tue, 23 Feb 2021 19:18:47 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id z137sm542568pfc.172.2021.02.23.19.18.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Feb 2021 19:18:47 -0800 (PST)
-Subject: Re: [PATCH v2 1/1] io_uring: allocate memory for overflowed CQEs
-To:     Hao Xu <haoxu@linux.alibaba.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-References: <a5e833abf8f7a55a38337e5c099f7d0f0aa8746d.1614083504.git.asml.silence@gmail.com>
- <f57545fb-a109-0881-ff14-f371d1a9d811@linux.alibaba.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fda005e8-d16d-6563-d526-440deb7737f6@kernel.dk>
-Date:   Tue, 23 Feb 2021 20:18:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S232487AbhBXD0y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Feb 2021 22:26:54 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:56411 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231723AbhBXD0x (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Feb 2021 22:26:53 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UPPPHhq_1614137167;
+Received: from 30.225.32.114(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UPPPHhq_1614137167)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 24 Feb 2021 11:26:07 +0800
+Subject: Re: [PATCH] io_uring: don't issue reqs in iopoll mode when ctx is
+ dying
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, asml.silence@gmail.com,
+        joseph.qi@linux.alibaba.com
+References: <20210206150006.1945-1-xiaoguang.wang@linux.alibaba.com>
+Message-ID: <24ba9015-fdee-09ae-a46f-bdff8b00a182@linux.alibaba.com>
+Date:   Wed, 24 Feb 2021 11:23:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <f57545fb-a109-0881-ff14-f371d1a9d811@linux.alibaba.com>
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210206150006.1945-1-xiaoguang.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/23/21 8:06 PM, Hao Xu wrote:
-> ÔÚ 2021/2/23 ÏÂÎç8:40, Pavel Begunkov Ð´µÀ:
->> Instead of using a request itself for overflowed CQE stashing, allocate
->> a separate entry. The disadvantage is that the allocation may fail and
->> it will be accounted as lost (see rings->cq_overflow), so we lose
->> reliability in case of memory pressure. However, it opens a way for for
->> multiple CQEs per an SQE and even generating SQE-less CQEs >
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
-> Hi Pavel,
-> Allow me to ask a stupid question, why do we need to support multiple 
-> CQEs per SQE or even SQE-less CQEs in the future?
+hi,
 
-Not a stupid question at all, since it's not something we've done
-before. There's been discussion about this in the past, in the presence
-of the zero copy IO where we ideally want to post two CQEs for an SQE.
-Most recently I've been playing with multishot poll support, where a
-POLL_ADD will stay active after triggering. Hence you could be posting
-many CQEs for that SQE, over the life time of the request.
+> Abaci Robot reported following panic:
+> ------------[ cut here ]------------
+> refcount_t: underflow; use-after-free.
+> WARNING: CPU: 1 PID: 195 at lib/refcount.c:28 refcount_warn_saturate+0x137/0x140
+> Modules linked in:
+> CPU: 1 PID: 195 Comm: kworker/u4:2 Not tainted 5.11.0-rc3+ #70
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.1-0-g0551a4be2c-prebuilt.qemu-project.or4
+> Workqueue: events_unbound io_ring_exit_work
+> RIP: 0010:refcount_warn_saturate+0x137/0x140
+> Code: 05 ad 63 49 08 01 e8 45 0f 6f 00 0f 0b e9 16 ff ff ff e8 4c ba ae ff 48 c7 c7 28 2e 7c 82 c6 05 90 63 40
+> RSP: 0018:ffffc900002e3cc8 EFLAGS: 00010282
+> RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
+> RDX: ffff888102918000 RSI: ffffffff81150a34 RDI: ffff88813bd28570
+> RBP: ffff8881075cd348 R08: 0000000000000001 R09: 0000000000000001
+> R10: 0000000000000001 R11: 0000000000080000 R12: ffff8881075cd308
+> R13: ffff8881075cd348 R14: ffff888122d33ab8 R15: ffff888104780300
+> FS:  0000000000000000(0000) GS:ffff88813bd00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000108 CR3: 0000000107636005 CR4: 0000000000060ee0
+> Call Trace:
+>   io_dismantle_req+0x3f3/0x5b0
+>   __io_free_req+0x2c/0x270
+>   io_put_req+0x4c/0x70
+>   io_wq_cancel_cb+0x171/0x470
+>   ? io_match_task.part.0+0x80/0x80
+>   __io_uring_cancel_task_requests+0xa0/0x190
+>   io_ring_exit_work+0x32/0x3e0
+>   process_one_work+0x2f3/0x720
+>   worker_thread+0x5a/0x4b0
+>   ? process_one_work+0x720/0x720
+>   kthread+0x138/0x180
+>   ? kthread_park+0xd0/0xd0
+>   ret_from_fork+0x1f/0x30
+> 
+> Later system will panic for some memory corruption.
+> 
+> The io_identity's count is underflowed. It's because in io_put_identity,
+> first argument tctx comes from req->task->io_uring, the second argument
+> comes from the task context that calls io_req_init_async, so the compare
+> in io_put_identity maybe meaningless. See below case:
+>      task context A issue one polled req, then req->task = A.
+>      task context B do iopoll, above req returns with EAGAIN error.
+>      task context B re-issue req, call io_queue_async_work for req.
+>      req->task->io_uring will set to task context B's identity, or cow new one.
+> then for above case, in io_put_identity(), the compare is meaningless.
+Jens, can your patch solve this issue when ctx is not dying.
 
--- 
-Jens Axboe
-
+Regards,
+Xiaoguang Wang
+> 
+> IIUC, req->task should indicates the initial task context that issues req,
+> then if it gets EAGAIN error, we'll call io_prep_async_work() in req->task
+> context, but iopoll reqs seems special, they maybe issued successfully and
+> got re-issued in other task context because of EAGAIN error.
+> 
+> Currently for this panic, we can disable issuing reqs that are returned
+> with EAGAIN error in iopoll mode when ctx is dying, but we may need to
+> re-consider the io identity codes more.
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+> ---
+>   fs/io_uring.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 9db05171a774..e3b90426d72b 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2467,7 +2467,12 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
+>   		int cflags = 0;
+>   
+>   		req = list_first_entry(done, struct io_kiocb, inflight_entry);
+> -		if (READ_ONCE(req->result) == -EAGAIN) {
+> +		/*
+> +		 * If ctx is dying, don't need to issue reqs that are returned
+> +		 * with EAGAIN error, since there maybe no users to reap them.
+> +		 */
+> +		if ((READ_ONCE(req->result) == -EAGAIN) &&
+> +		    !percpu_ref_is_dying(&ctx->refs)) {
+>   			req->result = 0;
+>   			req->iopoll_completed = 0;
+>   			list_move_tail(&req->inflight_entry, &again);
+> 

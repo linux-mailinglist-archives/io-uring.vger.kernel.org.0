@@ -2,99 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8C0A3257D6
-	for <lists+io-uring@lfdr.de>; Thu, 25 Feb 2021 21:39:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA3863259A9
+	for <lists+io-uring@lfdr.de>; Thu, 25 Feb 2021 23:29:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234244AbhBYUjA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Feb 2021 15:39:00 -0500
-Received: from raptor.unsafe.ru ([5.9.43.93]:47106 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234690AbhBYUiC (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Thu, 25 Feb 2021 15:38:02 -0500
-Received: from example.org (ip-94-113-225-162.net.upcbroadband.cz [94.113.225.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 54A7A209D4;
-        Thu, 25 Feb 2021 20:37:07 +0000 (UTC)
-Date:   Thu, 25 Feb 2021 21:36:57 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     kernel test robot <oliver.sang@intel.com>,
-        0day robot <lkp@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        ying.huang@intel.com, feng.tang@intel.com, zhengjun.xing@intel.com,
-        io-uring@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: d28296d248:  stress-ng.sigsegv.ops_per_sec -82.7% regression
-Message-ID: <20210225203657.mjhaqnj5vszna5xw@example.org>
-References: <20210224051845.GB6114@xsang-OptiPlex-9020>
- <m1czwpl83q.fsf@fess.ebiederm.org>
- <20210224183828.j6uut6sholeo2fzh@example.org>
- <m17dmxl2qa.fsf@fess.ebiederm.org>
+        id S232429AbhBYW15 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Feb 2021 17:27:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43482 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232237AbhBYW1n (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Feb 2021 17:27:43 -0500
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD926C06174A
+        for <io-uring@vger.kernel.org>; Thu, 25 Feb 2021 14:27:01 -0800 (PST)
+Received: by mail-il1-x129.google.com with SMTP id z18so6365566ile.9
+        for <io-uring@vger.kernel.org>; Thu, 25 Feb 2021 14:27:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=5TnCKx8QFsrUVjIxnuOZmsHJYy3mkpNpdSFL1K6GXw0=;
+        b=sMkKddp2hlMjmHlkUXq0l3XF071fp/O38y7RgrpBme9pW7zIsYVLbBpnQQRAS4t/Ut
+         TwgNzOSqjpUAbXAEFa3ATL7nWasBszhhJxztyAVwa+Wnksm7XT9Q7FJSTdzVtf9IROqC
+         0vwjB5D9zXsOB86+rRoMjXsv1ir8ZQmPN4SKqlSmynlsvolvvJPfr+YOLSwUOalWr/Uq
+         tsYtgHntw+ZOH0RZP+gK6DvPorEU2IDXahfn9C0oaVnyx/ilBN91nALFlkls1k53ujbd
+         SDFldtqQyWb6Th7Ixgqr3Y8ulncLhZYPc6japwM9sgdNt+sg6O7dwuhRyR0VJI2a4bBH
+         SBQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=5TnCKx8QFsrUVjIxnuOZmsHJYy3mkpNpdSFL1K6GXw0=;
+        b=KFgsb8kSxcEvaY99VvbPzmvZVNJbWTJGG3nyVD5DNC1dN1y4bXyh3+n4E5a8BcqqFV
+         SzGc5w0A+jwOoktG5Ov1oHJ0ZDJF/dGyaG3RIEotIDeMMaiv12CugsNZlOMF8uULM/Eb
+         894DrofI91SbCQz7ONSbhpmU/Qruww0yF//lVTdj1/y8hQHJfc7SZ+TqhgkaFrlnrgF1
+         +0HPf1wa+Xb/TqP4/MCbRe9XDIVLP3wITG2evNgMnILhPSKcgUniS8rYvZ04AyMcg6gY
+         5ifj6D8X94ojFS93oEzsRroEh106/AVyNVlq+paWnglglk/+YI3vamGPrvUnRAZWaeNJ
+         QY+Q==
+X-Gm-Message-State: AOAM531V3Snfo2OXDG9Pa5XqLWxKY2/mWFkof9W6eqf4/Fsz4g68aUf4
+        yFUfJP4JWgdNKsFDtSbHA5X5YQGu5eLjZQKo
+X-Google-Smtp-Source: ABdhPJxJ6RalUwO2ZsAxSUHoVokNznguw+ozZ6wToKZCvoqzvs2MUl1tRdxQfv9uy17I8CB3xIepXA==
+X-Received: by 2002:a92:8bcf:: with SMTP id i198mr4432367ild.152.1614292021094;
+        Thu, 25 Feb 2021 14:27:01 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id i6sm3710538ilq.51.2021.02.25.14.27.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Feb 2021 14:27:00 -0800 (PST)
+To:     torvalds@linux-foundation.org
+Cc:     io-uring@vger.kernel.org
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] Followup io_uring fixes for 5.12-rc
+Message-ID: <c044d125-76d4-2ac0-bcb1-96db348ee747@kernel.dk>
+Date:   Thu, 25 Feb 2021 15:27:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <m17dmxl2qa.fsf@fess.ebiederm.org>
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Thu, 25 Feb 2021 20:37:16 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 12:50:21PM -0600, Eric W. Biederman wrote:
-> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
-> 
-> > On Wed, Feb 24, 2021 at 10:54:17AM -0600, Eric W. Biederman wrote:
-> >> kernel test robot <oliver.sang@intel.com> writes:
-> >> 
-> >> > Greeting,
-> >> >
-> >> > FYI, we noticed a -82.7% regression of stress-ng.sigsegv.ops_per_sec due to commit:
-> >> >
-> >> >
-> >> > commit: d28296d2484fa11e94dff65e93eb25802a443d47 ("[PATCH v7 5/7] Reimplement RLIMIT_SIGPENDING on top of ucounts")
-> >> > url: https://github.com/0day-ci/linux/commits/Alexey-Gladkov/Count-rlimits-in-each-user-namespace/20210222-175836
-> >> > base: https://git.kernel.org/cgit/linux/kernel/git/shuah/linux-kselftest.git next
-> >> >
-> >> > in testcase: stress-ng
-> >> > on test machine: 48 threads Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz with 112G memory
-> >> > with following parameters:
-> >> >
-> >> > 	nr_threads: 100%
-> >> > 	disk: 1HDD
-> >> > 	testtime: 60s
-> >> > 	class: interrupt
-> >> > 	test: sigsegv
-> >> > 	cpufreq_governor: performance
-> >> > 	ucode: 0x42e
-> >> >
-> >> >
-> >> > In addition to that, the commit also has significant impact on the
-> >> > following tests:
-> >> 
-> >> Thank you.  Now we have a sense of where we need to test the performance
-> >> of these changes carefully.
-> >
-> > One of the reasons for this is that I rolled back the patch that changed
-> > the ucounts.count type to atomic_t. Now get_ucounts() is forced to use a
-> > spin_lock to increase the reference count.
-> 
-> Which given the hickups with getting a working version seems justified.
-> 
-> Now we can add incremental patches on top to improve the performance.
+Hi Linus,
 
-I'm not sure that get_ucounts() should be used in __sigqueue_alloc() [1].
-I tried removing it and running KASAN tests that were failing before. So
-far, I have not found any problems.
+A collection of later fixes that we should get into this release:
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/legion/linux.git/tree/kernel/signal.c?h=patchset/per-userspace-rlimit/v7.1&id=2d4a2e2be7db42c95acb98abfc2a9b370ddd0604#n428
+- Series of submission cleanups (Pavel)
+
+- A few fixes for issues from earlier this merge window (Pavel, me)
+
+- IOPOLL resubmission fix
+
+- task_work locking fix (Hao)
+
+Please pull!
+
+
+The following changes since commit 0b81e80c813f92520667c872d499a2dba8377be6:
+
+  io_uring: tctx->task_lock should be IRQ safe (2021-02-16 11:11:20 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/for-5.12/io_uring-2021-02-25
+
+for you to fetch changes up to cb5e1b81304e089ee3ca948db4d29f71902eb575:
+
+  Revert "io_uring: wait potential ->release() on resurrect" (2021-02-25 07:37:35 -0700)
+
+----------------------------------------------------------------
+for-5.12/io_uring-2021-02-25
+
+----------------------------------------------------------------
+Hao Xu (1):
+      io_uring: don't hold uring_lock when calling io_run_task_work*
+
+Jens Axboe (3):
+      io_uring: make the !CONFIG_NET helpers a bit more robust
+      io_uring: don't attempt IO reissue from the ring exit path
+      Revert "io_uring: wait potential ->release() on resurrect"
+
+Pavel Begunkov (21):
+      io_uring: fix read memory leak
+      io_uring: kill fictitious submit iteration index
+      io_uring: keep io_*_prep() naming consistent
+      io_uring: don't duplicate ->file check in sfr
+      io_uring: move io_init_req()'s definition
+      io_uring: move io_init_req() into io_submit_sqe()
+      io_uring: move req link into submit_state
+      io_uring: don't submit link on error
+      io_uring: split sqe-prep and async setup
+      io_uring: do io_*_prep() early in io_submit_sqe()
+      io_uring: don't do async setup for links' heads
+      io_uring: fail links more in io_submit_sqe()
+      io_uring: don't take uring_lock during iowq cancel
+      io_uring: fail io-wq submission from a task_work
+      io_uring: zero ref_node after killing it
+      io_uring: keep generic rsrc infra generic
+      io_uring: wait potential ->release() on resurrect
+      io_uring: fix leaving invalid req->flags
+      io_uring: run task_work on io_uring_register()
+      io_uring: clear request count when freeing caches
+      io_uring: fix locked_free_list caches_free()
+
+ fs/io_uring.c | 686 +++++++++++++++++++++++++++++-----------------------------
+ 1 file changed, 346 insertions(+), 340 deletions(-)
 
 -- 
-Rgrds, legion
+Jens Axboe
 

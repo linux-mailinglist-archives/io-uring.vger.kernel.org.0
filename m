@@ -2,116 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 175E4324474
-	for <lists+io-uring@lfdr.de>; Wed, 24 Feb 2021 20:15:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C5BB3248D9
+	for <lists+io-uring@lfdr.de>; Thu, 25 Feb 2021 03:21:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236086AbhBXTOK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Feb 2021 14:14:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59928 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236096AbhBXTMl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Feb 2021 14:12:41 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB1E5C061574
-        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 11:11:03 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id w36so4726501lfu.4
-        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 11:11:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LsetPJB5m47FCg13KC6GjSTLKBsPDI7MuzXhPKMTnS4=;
-        b=g0wCVRLuZhRAZSx2tZaeQKkHmjHJt6HcVeX1wF81XK3ID/P21CzwT5FyHF6bzyJiaK
-         7Wbpg65iES9Lwj24IG8yT/fkKOgtfPxfvdKC+qXihnsfhzxP5qlnVz0sgNHOO9KXWCV6
-         eIoO/wnpUtMRNAs14sprZgujgxrvqBNk1ASSY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LsetPJB5m47FCg13KC6GjSTLKBsPDI7MuzXhPKMTnS4=;
-        b=Tp2WV+slZyubaFrR5FD6e2OJ3tsgvrFL7/lZ3sJ/DMxFSmrltSAuSaoB+4x8LP+lhV
-         T5xQl6AaIzvLD4Ego3dNQQyk1KLzAfV5vvC3UXPOglG7SU3LHY08Gfb5A5NWSife/gpK
-         cH/5Ay6qXnCdLSG+C0oO1lncj/4xFC9L+ScU+yPiywyUOyf5RYdeUZBEVMbIY/NgFXBN
-         neKEUC9Lhc2ZqspvcN8MbMQHVQcJifBrc/SXx8/cdyOlr+wQ0B9vTo4NFcHGVeLRDwKg
-         Ac7BsoUKiZvYly5pmxxf1jtVhoYNUKV4c8SuWQEkby+kQATKDnBJ05GGGLGsnX/L5fwF
-         /GeA==
-X-Gm-Message-State: AOAM530MsxqcEWwqdE62aKYU/X+khKsA25CYR57L7RmK3toymabAZZA1
-        +b5lArYeZE3QORSJMGX2J8/zt6ygfdlDgQ==
-X-Google-Smtp-Source: ABdhPJwoFBqa3nFsXYGZeuEQFC7cZPBxEqOHmLmBZv+fCUveF9cdn9HF7dJIK0/Umga3biZkfS+rnA==
-X-Received: by 2002:a05:6512:3a8f:: with SMTP id q15mr19192834lfu.389.1614193862085;
-        Wed, 24 Feb 2021 11:11:02 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id c11sm649200lfb.104.2021.02.24.11.11.00
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Feb 2021 11:11:00 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id u4so4753948lfs.0
-        for <io-uring@vger.kernel.org>; Wed, 24 Feb 2021 11:11:00 -0800 (PST)
-X-Received: by 2002:a05:6512:a8c:: with SMTP id m12mr20000602lfu.253.1614193859813;
- Wed, 24 Feb 2021 11:10:59 -0800 (PST)
+        id S234521AbhBYCTy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Feb 2021 21:19:54 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:58956 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236240AbhBYCTx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Feb 2021 21:19:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1614219592; x=1645755592;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=usRwGxXtNgdfvaD0IDTHPloRFDBcqRCDnFv+mPHXXic=;
+  b=RPHWPMzgNe0cxuZl7BGrXM76V2mW14VHWEO6mlEvyYHZIZTqAfCmUJhq
+   vi6OjnGOQgdhRcHNIEjdv/YkI99Hl/xx7e7vkx4H+tVBeAX2l4rhxBB88
+   k43RGARrL9eEnkrR8C5DpuHAQ/OWRVPMY+lSYdYa/GO1zrR6JatJ319ql
+   mApQdpWy2fsXStS/xcqHbBgGiSgT98f1ABgLr7VpT0orc/i8zRZmPkK/T
+   VXgAZhWoNxXHxDy4DRrgUDvuIlCLaR2cyTCFlHADDIOFveEm5X7Mq8UkM
+   v/ZZuqO+AsmDpXQtLbppWzO/R6A0i9oAcMltFuc+dKxw72dfrHhH49FeR
+   Q==;
+IronPort-SDR: jGWMGiIQyq5gXjXIG4/jjonJzUH6CNRHD0C56c4YQTeYn6Toiw2auCUHjSyk4a0MVqNEhH4lVj
+ +WYD+onLQEYgAy0DJXSmgyGhdsM49gJp9Xz/iCFYuCZPNv07eD79eYb64A5i9hw36pK7SW/T/c
+ JAjrlGzFIu9Ozwo8W4lcuSV7cHWZMFntH0pjIE/Gv6/b9W8Mc3kMZ4Be5+zYXV6gNn9psDqNal
+ UYeh1GH2Ns0SnapqtbDQDGLfTD8Lyz1JfXlNzIj2013G9vUlN8IEMDDJsVxEGHudFJAU+T22Gy
+ TsU=
+X-IronPort-AV: E=Sophos;i="5.81,203,1610380800"; 
+   d="scan'208";a="161915051"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 10:18:46 +0800
+IronPort-SDR: IPSvnBG1D7HCZbi1LhlMedaITzXMJ4R1R4AbJzKwWnbpDFukRLs7ump15pF1WECR3/oz12j4bq
+ Huf8Ic3CRiJjOigqpXaNVffIzuQQqwu5V2exuPd1kWqTQi5wZNeqMm9UrzdQfrZdgzDdAN8ZYG
+ MBJyalVSYe53BJAyP8CBsTtUoWUHcpuFzs6TO7evnjD6moc9JNjwjXMm7zFqxZ9CSbzTJi4TI4
+ HtACSMw3/Szoa8DN+IzaUpByFEpTZ25H0+gMzvv7xXk/mpZRTXy8BJDa6FTQrMRiuLOfBRaaIa
+ 3PNwM7OXjeZFvz+SfV5ZDQbG
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 18:00:08 -0800
+IronPort-SDR: iurXxsRz0USqZsXEMKxI6WJ06T1/sjj1+nCaQu4VhMy+OGcUW5vWzkBVCmCgZyaG+BOKLTbv/v
+ B7bmXlzfE3irCU8ZG1pInlyKPNiFbHYnVDLX8O3tqkw0EeyyHWKUiI3pg7FVCDPYtJMx6fz9Cn
+ wroVyUSGWO6jgsAE3EqF52e95AFpyrSuPW45JoKTKygEpKdsDu2R4D2KY3GevlFii0D6wOCTz9
+ nuPKmXJS2udklaab04R3zvfBJyZn8diFnANG9Eumwb4/fPYaIx8F2l5ufX+12lA+A/GcVMs99x
+ l9Q=
+WDCIronportException: Internal
+Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
+  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 18:18:47 -0800
+From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+To:     axboe@kernel.dk, asml.silence@gmail.com
+Cc:     io-uring@vger.kernel.org,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Subject: [PATCH] io-wq: remove unused label
+Date:   Wed, 24 Feb 2021 18:18:44 -0800
+Message-Id: <20210225021844.13879-1-chaitanya.kulkarni@wdc.com>
+X-Mailer: git-send-email 2.22.1.dirty
 MIME-Version: 1.0
-References: <20210224051845.GB6114@xsang-OptiPlex-9020> <m1czwpl83q.fsf@fess.ebiederm.org>
- <20210224183828.j6uut6sholeo2fzh@example.org>
-In-Reply-To: <20210224183828.j6uut6sholeo2fzh@example.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 24 Feb 2021 11:10:43 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh3wVpx97e=n2D98W+PSDWUkQrX3O+c7n7MGRbn_k9JMg@mail.gmail.com>
-Message-ID: <CAHk-=wh3wVpx97e=n2D98W+PSDWUkQrX3O+c7n7MGRbn_k9JMg@mail.gmail.com>
-Subject: Re: d28296d248: stress-ng.sigsegv.ops_per_sec -82.7% regression
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        kernel test robot <oliver.sang@intel.com>,
-        0day robot <lkp@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Feng Tang <feng.tang@intel.com>, zhengjun.xing@intel.com,
-        io-uring <io-uring@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 10:38 AM Alexey Gladkov
-<gladkov.alexey@gmail.com> wrote:
->
-> One of the reasons for this is that I rolled back the patch that changed
-> the ucounts.count type to atomic_t. Now get_ucounts() is forced to use a
-> spin_lock to increase the reference count.
+Remove unused label so that we can get rid of the following warning:-
 
-Yeah, that definitely should be an atomic type, since the extended use
-of ucounts clearly puts way too much pressure on that ucount lock.
+fs/io-wq.c: In function ‘io_get_next_work’:
+fs/io-wq.c:357:1: warning: label ‘restart’ defined but not used
+[-Wunused-label]
+ restart:
 
-I remember complaining about one version of that patch, but my
-complaint wasabout it changing semantics of the saturation logic (and
-I think it was also wrong because it still kept the spinlock for
-get_ucounts(), so it didn't even take advantage of the atomic
-refcount).
+Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+---
 
-Side note: I don't think a refcount_t" is necessarily the right thing
-to do, since the ucount reference counter does its own saturation
-logic, and the refcount_t version is imho not great.
+Without this patch :-
+# makej fs/
+  DESCEND  objtool
+  CALL    scripts/atomic/check-atomics.sh
+  CALL    scripts/checksyscalls.sh
+  CC      fs/io-wq.o
+fs/io-wq.c: In function ‘io_get_next_work’:
+fs/io-wq.c:357:1: warning: label ‘restart’ defined but not used [-Wunused-label]
+ restart:
+ ^~~~~~~
+  AR      fs/built-in.a
 
-So it probably just needs to use an atomic_t, and do the saturation
-thing manually.
+With this patch :-
 
-Side note: look at try_get_page(). That one actually does refcounting
-with overflow protection better than refcount_t, in my opinion. But I
-am obviously biased, since I wrote it ;)
+linux-block (for-next) # git am 0001-io-wq-remove-unused-label.patch
+Applying: io-wq: remove unused label
+linux-block (for-next) # makej fs/
+  DESCEND  objtool
+  CALL    scripts/atomic/check-atomics.sh
+  CALL    scripts/checksyscalls.sh
+  CC      fs/io-wq.o
+  AR      fs/built-in.a
 
-See commits
+---
+ fs/io-wq.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-    88b1a17dfc3e mm: add 'try_get_page()' helper function
-    f958d7b528b1 mm: make page ref count overflow check tighter and
-more explicit
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 42ce01183b51..169e1d6a7ee2 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -354,7 +354,6 @@ static struct io_wq_work *io_get_next_work(struct io_wqe *wqe)
+ 	struct io_wq_work *work, *tail;
+ 	unsigned int stall_hash = -1U;
+ 
+-restart:
+ 	wq_list_for_each(node, prev, &wqe->work_list) {
+ 		unsigned int hash;
+ 
+-- 
+2.22.1
 
-with that "page->_recount" being just a regular atomic_t.
-
-            Linus

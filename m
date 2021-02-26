@@ -2,188 +2,202 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE3C632699A
-	for <lists+io-uring@lfdr.de>; Fri, 26 Feb 2021 22:34:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED6A03269CA
+	for <lists+io-uring@lfdr.de>; Fri, 26 Feb 2021 23:05:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230237AbhBZVd5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Feb 2021 16:33:57 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:37493 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230206AbhBZVdz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Feb 2021 16:33:55 -0500
-Received: by mail-il1-f198.google.com with SMTP id g3so8139441ild.4
-        for <io-uring@vger.kernel.org>; Fri, 26 Feb 2021 13:33:39 -0800 (PST)
+        id S229554AbhBZWFF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Feb 2021 17:05:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36294 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229550AbhBZWFE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Feb 2021 17:05:04 -0500
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2993CC061788
+        for <io-uring@vger.kernel.org>; Fri, 26 Feb 2021 14:04:24 -0800 (PST)
+Received: by mail-il1-x12f.google.com with SMTP id c10so9341912ilo.8
+        for <io-uring@vger.kernel.org>; Fri, 26 Feb 2021 14:04:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=y4Bn4d4G0jBEfEdZQL1RwxrrBa1Rlgj+cTx3MutHj24=;
+        b=EfonGLOftDf9q766gFu2nfe0tzcRMqPmZGoDRfAPSrllbzcUso/i6sTR4IMoPAB8EH
+         90HDQQacxMHzfzaDFxhRnslOITnet5C2PFggTdV8/kcKtiQRoPbTI0zgKechMFifVf6K
+         CUDfIlsBMd8arspav10tPdi2YlQBB4qWSRD3C6FVdZhtCBwg5hLTep2DKcF/o7blG7WT
+         r98ZcQ0XGOkwwREMXVqPoCL7iv0DjhnRmOukC4dPU3P3LApexax8m08Ek9CEexSR005o
+         eoYqPKCSo4oO9cr/nqlvmR2v/35iTIRlGYYAjogyV8+y5HQixh06go6QEu5mdo/0JLeh
+         n6Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=6fQ6n4J8NJ1XjKmbb7t3NP/O3Z5xiFfTRr8rUcTiOHs=;
-        b=J4M1b8rzw/dDagM1j1Oa8fUeX5oAbku/ADvR6Og5M+KYfgt47kKKkTAHa5Jpl0+pJA
-         njM3VAhnE06/tqozZLk34zHxEgE3SisPzn0pzWNzFOi44Za7jpZzBIHU1aCPxv8VhZ7o
-         rnmNUIFPYb+IzVdffpAZWLkB/VSchwMp9zJP0V2sHYlczVe/FBKmb5kzG0JeFkrnrbOd
-         qkjU83pEQSTSrZx+E2v7Skj2h3oiemf23mKDlKLcHe4U1Vx2sRrmVKqE7RbfMfxRWrbR
-         ER3ZNWf92wBt9wRP6ptR+2vz5xB4QDGgSiJQlooXGRmy5P4IhMolccWSptsNIv/MXBo4
-         36/w==
-X-Gm-Message-State: AOAM532jn/RMc8SHswNGLEc8ezB+xF0IUDGcjflW21L4P1xpMgp7Y8F3
-        GctcprTOMxMnvm9vBQIRDx4EqDNUrsfELTubcTNakWAArD/e
-X-Google-Smtp-Source: ABdhPJzzKJGJE+Euo+nbuqcjM2l8P2mU5sqtnMlAOBukgmKVs3SKWY2hSN0R0mMQYZuP4fhBLomPWnbm3iBP3CPOdWvf+wlSEcSG
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=y4Bn4d4G0jBEfEdZQL1RwxrrBa1Rlgj+cTx3MutHj24=;
+        b=oh3yaRYo0uwL061N+06ZcZF2bMxHZp/N6yS7bn+AOB9uosWI+a9uodlpuL7C9yVT6q
+         L/VQzvLfj7TbAiW5Kd9Q8yQ3ztkByl9x7uL6ZrfcKtTgr3xjDJY4+eGDOWNYzACd8OXQ
+         gqPe/58BS8AF7AZ1cLzljPNszT0Y+iqU4Vs8+A5h+RqqJOhTMCswuUPZp/LWkzvXDRpm
+         VDnjceUAnTG3LMGnwSUABe0Q6rhdcMTcMaoWlB6FWDV1S3Tnae9TO5ORbJjskTbwfYwN
+         5RGR8lnXRsa03pVMMo87YVaARQ7GAbPNL8AivXuqrqCmp53gL/1yrK7Zytk8cj6mgA1W
+         g1rg==
+X-Gm-Message-State: AOAM530YPbJjiWc9LYl7X0jHalv/mmP3q+PebZZ47AOTgMJP80JdH4iP
+        6QhXvwRxT27qmBwIMKTrmR/Ayy4QqW+wpY7/
+X-Google-Smtp-Source: ABdhPJyBf7CwXU/vkoBMV+NOuTnWbY21ivmCczAd0ScvKanP77flpAlbo6Rm2tkuLxBBceF5YvzCwg==
+X-Received: by 2002:a05:6e02:1aab:: with SMTP id l11mr4252049ilv.300.1614377062713;
+        Fri, 26 Feb 2021 14:04:22 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id b5sm5956511ioq.7.2021.02.26.14.04.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Feb 2021 14:04:21 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring thread worker change
+To:     torvalds@linux-foundation.org
+Cc:     io-uring@vger.kernel.org
+Message-ID: <0c142458-9473-9df3-535f-34c06957d464@kernel.dk>
+Date:   Fri, 26 Feb 2021 15:04:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:506:: with SMTP id d6mr4157964ils.150.1614375193662;
- Fri, 26 Feb 2021 13:33:13 -0800 (PST)
-Date:   Fri, 26 Feb 2021 13:33:13 -0800
-In-Reply-To: <0000000000000427db05bc3a2be3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f3daed05bc440347@google.com>
-Subject: Re: KASAN: use-after-free Read in __cpuhp_state_remove_instance
-From:   syzbot <syzbot+38769495e847cea2dcca@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, dvyukov@google.com,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mpe@ellerman.id.au, paulmck@kernel.org, peterz@infradead.org,
-        qais.yousef@arm.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+Hi Linus,
 
-HEAD commit:    d01f2f7e Add linux-next specific files for 20210226
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=114fa9ccd00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a1746d2802a82a05
-dashboard link: https://syzkaller.appspot.com/bug?extid=38769495e847cea2dcca
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1181e0dad00000
+As mentioned last week, I'm sending the series on converting the io-wq
+workers to be forked off the tasks in question instead of being kernel
+threads that assume various bits of the original task identity. This is
+on top of the for-5.12/io_uring branch I sent out yesterday, which I
+think you've merged but just haven't pushed out yet.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+38769495e847cea2dcca@syzkaller.appspotmail.com
+This kills > 400 lines of code from io_uring/io-wq, and it's the worst
+part of the code. We've had several bugs in this area, and the worry is
+always that we could be missing some pieces for file types doing unusual
+things (recent /dev/tty example comes to mind, userfaultfd reads
+installing file descriptors is another fun one... - both of which need
+special handling, and I bet it's not the last weird oddity we'll find).
+With these identical workers, we can have full confidence that we're
+never missing anything. That, in itself, is a huge win. Outside of that,
+it's also more efficient since we're not wasting space and code on
+tracking state, or switching between different states.
 
-==================================================================
-BUG: KASAN: use-after-free in __hlist_del include/linux/list.h:835 [inline]
-BUG: KASAN: use-after-free in hlist_del include/linux/list.h:852 [inline]
-BUG: KASAN: use-after-free in __cpuhp_state_remove_instance+0x58b/0x5b0 kernel/cpu.c:2002
-Read of size 8 at addr ffff88803daf3c98 by task syz-executor.2/12922
+I'm sure we're going to find little things to patch up after this
+series, but testing has been pretty thorough, from the usual regression
+suite to production. Any issue that may crop up should be manageable.
+There's also a nice series of further reductions we can do on top of
+this, but I wanted to get the meat of it out sooner rather than later.
+The general worry here isn't that it's fundamentally broken. Most of the
+little issues we've found over the last week have been related to just
+changes in how thread startup/exit is done, since that's the main
+difference between using kthreads and these kinds of threads. In fact,
+if all goes according to plan, I want to get this into the 5.10 and 5.11
+stable branches as well.
 
-CPU: 0 PID: 12922 Comm: syz-executor.2 Not tainted 5.11.0-next-20210226-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0xfa/0x151 lib/dump_stack.c:120
- print_address_description.constprop.0.cold+0x5b/0x2f8 mm/kasan/report.c:232
- __kasan_report mm/kasan/report.c:399 [inline]
- kasan_report.cold+0x7c/0xd8 mm/kasan/report.c:416
- __hlist_del include/linux/list.h:835 [inline]
- hlist_del include/linux/list.h:852 [inline]
- __cpuhp_state_remove_instance+0x58b/0x5b0 kernel/cpu.c:2002
- cpuhp_state_remove_instance_nocalls include/linux/cpuhotplug.h:407 [inline]
- io_wq_create+0x6ca/0xbf0 fs/io-wq.c:1056
- io_init_wq_offload fs/io_uring.c:7792 [inline]
- io_uring_alloc_task_context+0x1bf/0x6a0 fs/io_uring.c:7811
- io_uring_add_task_file+0x261/0x350 fs/io_uring.c:8773
- io_uring_install_fd fs/io_uring.c:9381 [inline]
- io_uring_create fs/io_uring.c:9532 [inline]
- io_uring_setup+0x14c7/0x2be0 fs/io_uring.c:9571
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x465ef9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f02a7c99108 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 000000000056bf60 RCX: 0000000000465ef9
-RDX: 0000000020eea000 RSI: 0000000020000180 RDI: 0000000000007761
-RBP: 0000000020000180 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-R13: 0000000020eea000 R14: 0000000000000000 R15: 0000000020ee8000
+That said, the changes outside of io_uring/io-wq are:
 
-Allocated by task 12922:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_set_track mm/kasan/common.c:46 [inline]
- set_alloc_info mm/kasan/common.c:427 [inline]
- ____kasan_kmalloc mm/kasan/common.c:506 [inline]
- ____kasan_kmalloc mm/kasan/common.c:465 [inline]
- __kasan_kmalloc+0x99/0xc0 mm/kasan/common.c:515
- kmalloc include/linux/slab.h:554 [inline]
- kzalloc include/linux/slab.h:684 [inline]
- io_wq_create+0xc0/0xbf0 fs/io-wq.c:1002
- io_init_wq_offload fs/io_uring.c:7792 [inline]
- io_uring_alloc_task_context+0x1bf/0x6a0 fs/io_uring.c:7811
- io_uring_add_task_file+0x261/0x350 fs/io_uring.c:8773
- io_uring_install_fd fs/io_uring.c:9381 [inline]
- io_uring_create fs/io_uring.c:9532 [inline]
- io_uring_setup+0x14c7/0x2be0 fs/io_uring.c:9571
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xae
+- arch setup, simple one-liner to each arch copy_thread()
+  implementation.
 
-Freed by task 12922:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
- kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:357
- ____kasan_slab_free mm/kasan/common.c:360 [inline]
- ____kasan_slab_free mm/kasan/common.c:325 [inline]
- __kasan_slab_free+0xf5/0x130 mm/kasan/common.c:367
- kasan_slab_free include/linux/kasan.h:199 [inline]
- slab_free_hook mm/slub.c:1562 [inline]
- slab_free_freelist_hook+0x72/0x1b0 mm/slub.c:1600
- slab_free mm/slub.c:3161 [inline]
- kfree+0xe5/0x7b0 mm/slub.c:4213
- io_wq_destroy fs/io-wq.c:1091 [inline]
- io_wq_put+0x4d0/0x6d0 fs/io-wq.c:1098
- io_wq_create+0x92d/0xbf0 fs/io-wq.c:1053
- io_init_wq_offload fs/io_uring.c:7792 [inline]
- io_uring_alloc_task_context+0x1bf/0x6a0 fs/io_uring.c:7811
- io_uring_add_task_file+0x261/0x350 fs/io_uring.c:8773
- io_uring_install_fd fs/io_uring.c:9381 [inline]
- io_uring_create fs/io_uring.c:9532 [inline]
- io_uring_setup+0x14c7/0x2be0 fs/io_uring.c:9571
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xae
+- Removal of net and proc restrictions for io_uring, they are no longer
+  needed or useful.
 
-Last potentially related work creation:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_record_aux_stack+0xe5/0x110 mm/kasan/generic.c:345
- insert_work+0x48/0x370 kernel/workqueue.c:1331
- __queue_work+0x5c1/0xf00 kernel/workqueue.c:1497
- queue_work_on+0xae/0xc0 kernel/workqueue.c:1524
- queue_work include/linux/workqueue.h:507 [inline]
- addr_event.part.0+0x2e1/0x470 drivers/infiniband/core/roce_gid_mgmt.c:852
- addr_event drivers/infiniband/core/roce_gid_mgmt.c:823 [inline]
- inet6addr_event+0x13e/0x1b0 drivers/infiniband/core/roce_gid_mgmt.c:882
- notifier_call_chain+0xb5/0x200 kernel/notifier.c:83
- atomic_notifier_call_chain+0x8d/0x170 kernel/notifier.c:217
- ipv6_add_addr+0x1750/0x1ef0 net/ipv6/addrconf.c:1152
- addrconf_add_linklocal+0x1ca/0x590 net/ipv6/addrconf.c:3182
- addrconf_addr_gen+0x3a4/0x3e0 net/ipv6/addrconf.c:3313
- addrconf_dev_config+0x26c/0x410 net/ipv6/addrconf.c:3360
- addrconf_notify+0x362/0x23e0 net/ipv6/addrconf.c:3593
- notifier_call_chain+0xb5/0x200 kernel/notifier.c:83
- call_netdevice_notifiers_info+0xb5/0x130 net/core/dev.c:2063
- netdev_state_change net/core/dev.c:1454 [inline]
- netdev_state_change+0x100/0x130 net/core/dev.c:1447
- linkwatch_do_dev+0x13f/0x180 net/core/link_watch.c:167
- __linkwatch_run_queue+0x1ea/0x630 net/core/link_watch.c:212
- linkwatch_event+0x4a/0x60 net/core/link_watch.c:251
- process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+I'm leaving this to you if you're OK pulling it for this release, I'm
+obviously in favor of doing so since I'm sending it to you. It'll help
+me sleep better at night, and provide a *much* saner base for async
+offload going forward. A bit of potential pain in the rc cycle is
+totally worth it imho.
 
-The buggy address belongs to the object at ffff88803daf3c00
- which belongs to the cache kmalloc-192 of size 192
-The buggy address is located 152 bytes inside of
- 192-byte region [ffff88803daf3c00, ffff88803daf3cc0)
-The buggy address belongs to the page:
-page:000000003078ed2f refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88803daf3200 pfn:0x3daf3
-flags: 0xfff00000000200(slab)
-raw: 00fff00000000200 ffffea0000462ec0 0000000500000005 ffff888010841a00
-raw: ffff88803daf3200 0000000080100009 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
 
-Memory state around the buggy address:
- ffff88803daf3b80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff88803daf3c00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88803daf3c80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-                            ^
- ffff88803daf3d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88803daf3d80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-==================================================================
+The following changes since commit b6c23dd5a483174f386e4c2e1711d9532e090c00:
+
+  io_uring: run task_work on io_uring_register() (2021-02-21 17:18:56 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-worker.v3-2021-02-25
+
+for you to fetch changes up to d6ce7f6761bf6d669d9c74ec5d3bd1bfe92380c5:
+
+  io-wq: remove now unused IO_WQ_BIT_ERROR (2021-02-25 10:19:43 -0700)
+
+----------------------------------------------------------------
+io_uring-worker.v3-2021-02-25
+
+----------------------------------------------------------------
+Jens Axboe (31):
+      Merge branch 'for-5.12/io_uring' into io_uring-worker.v3
+      io_uring: remove the need for relying on an io-wq fallback worker
+      io-wq: don't create any IO workers upfront
+      io_uring: disable io-wq attaching
+      io-wq: get rid of wq->use_refs
+      io_uring: tie async worker side to the task context
+      io-wq: don't pass 'wqe' needlessly around
+      arch: setup PF_IO_WORKER threads like PF_KTHREAD
+      kernel: treat PF_IO_WORKER like PF_KTHREAD for ptrace/signals
+      io-wq: fork worker threads from original task
+      io-wq: worker idling always returns false
+      io_uring: remove any grabbing of context
+      io_uring: remove io_identity
+      io-wq: only remove worker from free_list, if it was there
+      io-wq: make io_wq_fork_thread() available to other users
+      io_uring: move SQPOLL thread io-wq forked worker
+      Revert "proc: don't allow async path resolution of /proc/thread-self components"
+      Revert "proc: don't allow async path resolution of /proc/self components"
+      net: remove cmsg restriction from io_uring based send/recvmsg calls
+      io_uring: flag new native workers with IORING_FEAT_NATIVE_WORKERS
+      io-wq: remove nr_process accounting
+      io_uring: cleanup ->user usage
+      arch: ensure parisc/powerpc handle PF_IO_WORKER in copy_thread()
+      io_uring: ensure io-wq context is always destroyed for tasks
+      io-wq: fix races around manager/worker creation and task exit
+      io-wq: fix race around io_worker grabbing
+      io-wq: make buffered file write hashed work map per-ctx
+      io_uring: ensure SQPOLL startup is triggered before error shutdown
+      io-wq: improve manager/worker handling over exec
+      io_uring: fix SQPOLL thread handling over exec
+      io-wq: remove now unused IO_WQ_BIT_ERROR
+
+ arch/alpha/kernel/process.c      |    2 +-
+ arch/arc/kernel/process.c        |    2 +-
+ arch/arm/kernel/process.c        |    2 +-
+ arch/arm64/kernel/process.c      |    2 +-
+ arch/csky/kernel/process.c       |    2 +-
+ arch/h8300/kernel/process.c      |    2 +-
+ arch/hexagon/kernel/process.c    |    2 +-
+ arch/ia64/kernel/process.c       |    2 +-
+ arch/m68k/kernel/process.c       |    2 +-
+ arch/microblaze/kernel/process.c |    2 +-
+ arch/mips/kernel/process.c       |    2 +-
+ arch/nds32/kernel/process.c      |    2 +-
+ arch/nios2/kernel/process.c      |    2 +-
+ arch/openrisc/kernel/process.c   |    2 +-
+ arch/parisc/kernel/process.c     |    2 +-
+ arch/powerpc/kernel/process.c    |    2 +-
+ arch/riscv/kernel/process.c      |    2 +-
+ arch/s390/kernel/process.c       |    2 +-
+ arch/sh/kernel/process_32.c      |    2 +-
+ arch/sparc/kernel/process_32.c   |    2 +-
+ arch/sparc/kernel/process_64.c   |    2 +-
+ arch/um/kernel/process.c         |    2 +-
+ arch/x86/kernel/process.c        |    2 +-
+ arch/xtensa/kernel/process.c     |    2 +-
+ fs/io-wq.c                       |  621 ++++++++---------
+ fs/io-wq.h                       |   35 +-
+ fs/io_uring.c                    | 1088 +++++++++++-------------------
+ fs/proc/self.c                   |    7 -
+ fs/proc/thread_self.c            |    7 -
+ include/linux/io_uring.h         |   22 +-
+ include/linux/net.h              |    3 -
+ include/linux/sched.h            |    3 +
+ include/uapi/linux/io_uring.h    |    1 +
+ kernel/ptrace.c                  |    2 +-
+ kernel/signal.c                  |    4 +-
+ net/ipv4/af_inet.c               |    1 -
+ net/ipv6/af_inet6.c              |    1 -
+ net/socket.c                     |   10 -
+ 38 files changed, 716 insertions(+), 1137 deletions(-)
+
+-- 
+Jens Axboe
 

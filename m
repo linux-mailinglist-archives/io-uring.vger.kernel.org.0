@@ -2,73 +2,136 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DA7D3274BF
-	for <lists+io-uring@lfdr.de>; Sun, 28 Feb 2021 23:10:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F123274BD
+	for <lists+io-uring@lfdr.de>; Sun, 28 Feb 2021 23:09:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231394AbhB1WJm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 28 Feb 2021 17:09:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55840 "EHLO
+        id S231246AbhB1WJg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 28 Feb 2021 17:09:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231367AbhB1WJl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Feb 2021 17:09:41 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1569C061786
-        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 14:09:00 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id k66so12643059wmf.1
-        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 14:09:00 -0800 (PST)
+        with ESMTP id S231164AbhB1WJg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Feb 2021 17:09:36 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE6CCC06174A
+        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 14:08:55 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id o16so12631825wmh.0
+        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 14:08:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=csWrOz98LNbpQ2oLH80DoKGvwC6lnPuSeD4hiyRXp+Q=;
-        b=pDh8oXm47sjlIdrI1U9UF0uoIDpn51rmoM1KQiDRl+HWIqa8TeeSs6EoSN9F7K3F/A
-         TO8N30u7+2GKPoTfHM9iyZTV54Isd8Nd33hrYJDx5UfrZ7wNmjU+Z7tp3uaWDsTcu93v
-         mPzSz7yZIT5cuMJbgBsuhoWKVyHdz9GhTB9ph0RmGez1mgb1JTgukd+ihISwCLZ8ysVt
-         elEfFzRJmRTXDORSz4Jo1cMsSS/BUep03zC7YNyqwu08npNLkasKKFLOh7yz4Jd1VIF/
-         /9iv7kX6LHYsfwB5N1lgLI07RGtvLwiPpnJFxGiUWDM5Q47F3/dIAt8rhh1wcgUwrIwg
-         9yJQ==
+        bh=EUm1xnl2r3QfBSS1L8YfFvOnc1RBr6mjFH6B0BqdGq0=;
+        b=Obk+3F9YIBIKRpZSXgtkixKet4XvhxomKnxX/GVR2ebVv3oVHAU2eG8wMde1O3/EJv
+         3X0vV42S3j8pO6SMjnYWAF3A6VldfA0wuY6DpaWoIejbw3uV5P+BSjoIwQJ9qwAwwhXe
+         4EPbwlxfqb+pAec0Im0pZv/NrupY+PzjplLJJAi+sr5gi0WpNikjCxd6++38COs+yC8v
+         A+Lyv97CtY58wnlgw5lWllPACzTHU+Pb3QoUpAhmjMUGUmGWSrTFD45YaBv+RE6aPOzG
+         Hw6wI7TBrA7Xv6bYfgOlVGMP1OzmCHQhvkFKh4wzYwAGyC0PinO/vjAKWU4vVuQtHQej
+         1sbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=csWrOz98LNbpQ2oLH80DoKGvwC6lnPuSeD4hiyRXp+Q=;
-        b=Lm/v6y9WkUlBn8FA1zAPPS6Z+UOPrQZJWF0Kmw4MNQep3n5D7itV6emoVm4niHtBAN
-         ui6WMk+XkiWr/r/ByS2KVdfCCFMc60IWPX8H1pYuExdw86oIrAGTenokoduxTpgzxvIV
-         85kvp2cPJDm9/7b4k5MjvnJWdsNTKyFk3N3OyrQKNlS7lOwJK57ySdBwV/th/82YA5No
-         OOGx2YlmvR3fi4nCX5wW5ZsxZC5lQHuxdZUj33byTOkJ1EB33VtqWM7r7xxj8xGnSKtF
-         G0VjJY4Q9G6D5nkIB95ZT9Bz5z8Ie6R8zCso5d3/vN1/leEjXa9ypfhvrzAmKohTkFYt
-         XmtA==
-X-Gm-Message-State: AOAM533x8YCH4/Rl8UMFt5jYJQGbgN/uReH/fC1dFFTVq0KipTc0kr96
-        LCqMkIHQdKg/cnMRgVBT5bPoPZvtT45icQ==
-X-Google-Smtp-Source: ABdhPJxamIzTGcCebUrQna+b3l61AKcoDxRCiZC2qHu7APIIUcB3L7wfRgvKKmIVD//iHjhnDXBjJw==
-X-Received: by 2002:a7b:c92d:: with SMTP id h13mr7893709wml.96.1614550133427;
-        Sun, 28 Feb 2021 14:08:53 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EUm1xnl2r3QfBSS1L8YfFvOnc1RBr6mjFH6B0BqdGq0=;
+        b=HxkWWG5tr8IpN+mOepJctMoecywTZxr4GLfbqu9LYcBtcTU158FM5urUc38+iNEEL2
+         CrGD0/jkvePc1WrDjI4YUk1+j3NrTxt+oVeGq/tovH/sWJ9e9rai6+3uydaZzoPxhV/f
+         sUiuPta4VIywaw9WZvfuoF8m64vg1UtEwWTU0hvsFxJT4pWQjH6nyZQPPtrMO2uU+5gj
+         ZSMJPwORa6gidPNAOFBiKWVqfr2PIMC1+n8+Q6ag0RMVWBIEg2C0RqPtqaHJ+jhZ0Tbr
+         1G5kXCwD3wWDGIt7zde52TVGtAa/lCDNMzmM42tADQ3ATta7qCLv83dA/UrWnjMuS47j
+         Hw1g==
+X-Gm-Message-State: AOAM533BcqtqujS02GuMCK1l3Le8H8NB7un1KnZRogpy5ZKSqIssg5bP
+        sY8vewVVR/PSu2jKVRmpFLg=
+X-Google-Smtp-Source: ABdhPJy1iS2LlOEt9757TiuVgp/mhWumb0kYnJCXT+lmeOnFkQWk4gfWD7qVkxWdyWkJrzd5GJhfiw==
+X-Received: by 2002:a05:600c:4f46:: with SMTP id m6mr12666642wmq.160.1614550134535;
+        Sun, 28 Feb 2021 14:08:54 -0800 (PST)
 Received: from localhost.localdomain ([85.255.232.38])
-        by smtp.gmail.com with ESMTPSA id w4sm19780396wmc.13.2021.02.28.14.08.52
+        by smtp.gmail.com with ESMTPSA id w4sm19780396wmc.13.2021.02.28.14.08.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Feb 2021 14:08:52 -0800 (PST)
+        Sun, 28 Feb 2021 14:08:54 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 5.12 0/2] task_work ctx refs fix + xchg cleanup
-Date:   Sun, 28 Feb 2021 22:04:52 +0000
-Message-Id: <cover.1614549667.git.asml.silence@gmail.com>
+Subject: [PATCH 1/2] io_uring: fix __tctx_task_work() ctx race
+Date:   Sun, 28 Feb 2021 22:04:53 +0000
+Message-Id: <c05ae0077d4e248256e6d6fdcd4e25a0c4f640e6.1614549667.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1614549667.git.asml.silence@gmail.com>
+References: <cover.1614549667.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Two easy patches on top of io_uring-worker.v4, 1/2 is supposed to be a
-fix, 2/2 is a cleanup was mentioned before.
+There is an unlikely but possible race using a freed context. That's
+because req->task_work.func() can free a request, but we won't
+necessarily find a completion in submit_state.comp and so all ctx refs
+may be put by the time we do mutex_lock(&ctx->uring_ctx);
 
-Pavel Begunkov (2):
-  io_uring: fix __tctx_task_work() ctx race
-  io_uring: replace cmpxchg in fallback with xchg
+There are several reasons why it can miss going through
+submit_state.comp: 1) req->task_work.func() didn't complete it itself,
+but punted to iowq (e.g. reissue) and it got freed later, or a similar
+situation with it overflowing and getting flushed by someone else, or
+being submitted to IRQ completion, 2) As we don't hold the uring_lock,
+someone else can do io_submit_flush_completions() and put our ref.
+3) Bugs and code obscurities, e.g. failing to propagate issue_flags
+properly.
 
- fs/io_uring.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+One example is as follows
 
+  CPU1                                  |  CPU2
+=======================================================================
+@req->task_work.func()                  |
+  -> @req overflwed,                    |
+     so submit_state.comp,nr==0         |
+                                        | flush overflows, and free @req
+                                        | ctx refs == 0, free it
+ctx is dead, but we do                  |
+	lock + flush + unlock           |
+
+So take a ctx reference for each new ctx we see in __tctx_task_work(),
+and do release it until we do all our flushing.
+
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d0ca0b819f1c..365e75b53a78 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1822,6 +1822,9 @@ static bool __tctx_task_work(struct io_uring_task *tctx)
+ 
+ 		req = container_of(node, struct io_kiocb, io_task_work.node);
+ 		this_ctx = req->ctx;
++		if (this_ctx != ctx)
++			percpu_ref_get(&this_ctx->refs);
++
+ 		req->task_work.func(&req->task_work);
+ 		node = next;
+ 
+@@ -1831,14 +1834,18 @@ static bool __tctx_task_work(struct io_uring_task *tctx)
+ 			mutex_lock(&ctx->uring_lock);
+ 			io_submit_flush_completions(&ctx->submit_state.comp, ctx);
+ 			mutex_unlock(&ctx->uring_lock);
++			percpu_ref_put(&ctx->refs);
+ 			ctx = node ? this_ctx : NULL;
+ 		}
+ 	}
+ 
+-	if (ctx && ctx->submit_state.comp.nr) {
+-		mutex_lock(&ctx->uring_lock);
+-		io_submit_flush_completions(&ctx->submit_state.comp, ctx);
+-		mutex_unlock(&ctx->uring_lock);
++	if (ctx) {
++		if (ctx->submit_state.comp.nr) {
++			mutex_lock(&ctx->uring_lock);
++			io_submit_flush_completions(&ctx->submit_state.comp, ctx);
++			mutex_unlock(&ctx->uring_lock);
++		}
++		percpu_ref_put(&ctx->refs);
+ 	}
+ 
+ 	return list.first != NULL;
 -- 
 2.24.0
 

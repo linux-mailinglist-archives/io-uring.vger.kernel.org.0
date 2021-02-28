@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20AB63274EB
-	for <lists+io-uring@lfdr.de>; Sun, 28 Feb 2021 23:42:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D90933274ED
+	for <lists+io-uring@lfdr.de>; Sun, 28 Feb 2021 23:42:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231607AbhB1Wkl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S231604AbhB1Wkl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Sun, 28 Feb 2021 17:40:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34214 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231604AbhB1Wkk (ORCPT
+        with ESMTP id S231605AbhB1Wkk (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sun, 28 Feb 2021 17:40:40 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36ADCC06178B
-        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 14:39:24 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id m1so12674543wml.2
-        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 14:39:24 -0800 (PST)
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47204C06178C
+        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 14:39:25 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id u125so12631036wmg.4
+        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 14:39:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=kk/K+eqDZ9DmyIhzyNlbZoSXo2/sUHm+eJImMtzabG8=;
-        b=QQSHgifxy8tAQnsRRNPxjZ5ih1ejj3oH4VcKeyxPJi+BTMsHY1zOINlToi2kxj1DkB
-         JK15dmXlnVJXBFgcJZkZBhampWx5v/nz1qFG5HozS4hEFd9AytxkHBNsrhGaB51WefxR
-         kqm4LDP2zQzZl/2FybpAJ993ZrmEpTYozVkl/YcXCatSDEetFL9LpCzVrhxOHE0emkV5
-         +inWZrSrERolz8Jaa1nKdKl2uBPBu9swBIRLc0cq2+IwS1I+QYZknzH7ZJgiiu8y4XZJ
-         x1Kz4kHRnTutgbzFMaIqIZLr8Ugb99WTG6ZpsO1QedIGyB6Bfx5Qft/aahD+ERVtcbMj
-         wWxw==
+        bh=Xec2aMce6R+0TvDM5NwXERiuzfjmRrHCzC+VnRQPDHE=;
+        b=uor94PjH8PvSXWqyA1fgRw6V5JhymQx/B381sgYA0aabfGbyN2SCws9gAJ8ag5knTB
+         +7uc3EfKZh41BuZO9yz1QiIkdIVLesK219AHWkzKzgkRCmtiMOt7Ep5AdtuN2IUCQ2nE
+         d9tFFyPIkMNk8Df8H6mia49Ry64tS7OJCX/mYoHtoPctR6zDWZlr+MSQNoS9SCXcMEd8
+         hcwNK6cMJQN3Drn1c576Ca0JyCWd8jAu2RHgkIzo4PSfCQjMgAKYSNpXTNF8huyXIqEs
+         2Y21pZGcUwAjILvDo2MJv1X5B0hsnz7FSvhis+anh61JuAh2IXF1C+R/NDklvUvXfX8i
+         qJaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kk/K+eqDZ9DmyIhzyNlbZoSXo2/sUHm+eJImMtzabG8=;
-        b=qbnPDehY3lnGB1BNQs9ElqV5Q20GDY07b7vGGsRwHkgsDcWmZBHWj9ntgnOi+paAQG
-         hoYN3JBYJG/PQyh/Yd6SUuwb20+i++Bkf1aj9Ve4hCtH/t1Y//eO6litwiow8RCavXGy
-         j5Su/Surx7QX97qa13l8E+PHFjOo1diTXLY7cPAKGJABWeUJ0+Ew8yFUelKdwBof9HrD
-         YhmoxzZNVBwH4dNZcpqEfNvu97imyM14zKxN1SZrRT6n4lGG9L7yqL3nKDUdgzdtVuKx
-         6lXtYaNSqDRBzYls0nksOF1Rc8UH4VOJtuibj0IZ559K5UREgQDiXX+nh2ZuwZz/Q5PB
-         IUPQ==
-X-Gm-Message-State: AOAM531SrJgxpkkzQfbqyLBcMpVDdfxcqLaieUB57TzTT/T5XiMz+640
-        R2NZ8R5NT6DR3/U13ynEEmo=
-X-Google-Smtp-Source: ABdhPJwS0vlglq98g+vsZNsP2QiQ/E9Rz1loKTiKoRSMOPzDeHV58bzw1ME1zuSwg7WDuT6cUAZ6SQ==
-X-Received: by 2002:a05:600c:2312:: with SMTP id 18mr7165775wmo.8.1614551963053;
-        Sun, 28 Feb 2021 14:39:23 -0800 (PST)
+        bh=Xec2aMce6R+0TvDM5NwXERiuzfjmRrHCzC+VnRQPDHE=;
+        b=r5zroOIvKmGDV1Qul5xLl0TFTFu/U7gKFzWOuFP64HM2O7aR9mdfDZ5Xh9OLNaAg91
+         4w0PsxQ9DG94vtdUf0IFbz6Xs8HWYNkpV71F1PpCT2UjANZQ6i0gLVzjJR3FlAizHe2g
+         LcvNs8eF2Yolh/niRFyPWagyuLZuSXQCuEezghgRFu7Lq3EE5HpGsOEwaCzNjL7dq22n
+         QV2juSjBH/dv3NzNcpe/T/PcBw9w+b1kCR/5ffc+j/HImWJ3r3WAjQowjBlu958sFs17
+         y7V5ml6mB2GvAaIcZ5sy9C2PFB3UHjfa1jaV9PTK7rOPCvovRrscgs/xTUMvPkSLuP1g
+         zEqA==
+X-Gm-Message-State: AOAM530LryEjZtvUc0B/e6srzlpHl4QvhDTwx0bk3d/5b2I0Ajbsz7jK
+        f5RqTI3pKGBLgdAmh4VrjtEZqP95wJ6BjQ==
+X-Google-Smtp-Source: ABdhPJxhuC23xFBE/9wCgl+YZxaAvMAq21mOyK8nd03Cu5bDvpUYJt5CXlo340jy1Mt5KgItKnythA==
+X-Received: by 2002:a1c:7fd8:: with SMTP id a207mr12555060wmd.40.1614551964131;
+        Sun, 28 Feb 2021 14:39:24 -0800 (PST)
 Received: from localhost.localdomain ([85.255.232.38])
-        by smtp.gmail.com with ESMTPSA id y62sm22832576wmy.9.2021.02.28.14.39.22
+        by smtp.gmail.com with ESMTPSA id y62sm22832576wmy.9.2021.02.28.14.39.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Feb 2021 14:39:22 -0800 (PST)
+        Sun, 28 Feb 2021 14:39:23 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 05/12] io_uring: refactor provide/remove buffer locking
-Date:   Sun, 28 Feb 2021 22:35:13 +0000
-Message-Id: <5faa47941348f99297ca9a813a663362b85298a9.1614551467.git.asml.silence@gmail.com>
+Subject: [PATCH 06/12] io_uring: don't restirct issue_flags for io_openat
+Date:   Sun, 28 Feb 2021 22:35:14 +0000
+Message-Id: <5d247ec8821ae598a2482b3622d543591180fd04.1614551467.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1614551467.git.asml.silence@gmail.com>
 References: <cover.1614551467.git.asml.silence@gmail.com>
@@ -61,55 +61,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Always complete request holding the mutex instead of doing that strange
-dancing with conditional ordering.
+45d189c606292 ("io_uring: replace force_nonblock with flags") did
+something strange for io_openat() slicing all issue_flags but
+IO_URING_F_NONBLOCK. Not a bug for now, but better to just forward the
+flags.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 75ff9e577592..c40c7fb7fc2e 100644
+index c40c7fb7fc2e..5b1b43c091c8 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -3893,14 +3893,9 @@ static int io_remove_buffers(struct io_kiocb *req, unsigned int issue_flags)
- 	if (ret < 0)
- 		req_set_fail_links(req);
+@@ -3826,7 +3826,7 @@ static int io_openat2(struct io_kiocb *req, unsigned int issue_flags)
  
--	/* need to hold the lock to complete IOPOLL requests */
--	if (ctx->flags & IORING_SETUP_IOPOLL) {
--		__io_req_complete(req, issue_flags, ret, 0);
--		io_ring_submit_unlock(ctx, !force_nonblock);
--	} else {
--		io_ring_submit_unlock(ctx, !force_nonblock);
--		__io_req_complete(req, issue_flags, ret, 0);
--	}
-+	/* complete before unlock, IOPOLL may need the lock */
-+	__io_req_complete(req, issue_flags, ret, 0);
-+	io_ring_submit_unlock(ctx, !force_nonblock);
- 	return 0;
+ static int io_openat(struct io_kiocb *req, unsigned int issue_flags)
+ {
+-	return io_openat2(req, issue_flags & IO_URING_F_NONBLOCK);
++	return io_openat2(req, issue_flags);
  }
  
-@@ -3987,15 +3982,9 @@ static int io_provide_buffers(struct io_kiocb *req, unsigned int issue_flags)
- out:
- 	if (ret < 0)
- 		req_set_fail_links(req);
--
--	/* need to hold the lock to complete IOPOLL requests */
--	if (ctx->flags & IORING_SETUP_IOPOLL) {
--		__io_req_complete(req, issue_flags, ret, 0);
--		io_ring_submit_unlock(ctx, !force_nonblock);
--	} else {
--		io_ring_submit_unlock(ctx, !force_nonblock);
--		__io_req_complete(req, issue_flags, ret, 0);
--	}
-+	/* complete before unlock, IOPOLL may need the lock */
-+	__io_req_complete(req, issue_flags, ret, 0);
-+	io_ring_submit_unlock(ctx, !force_nonblock);
- 	return 0;
- }
- 
+ static int io_remove_buffers_prep(struct io_kiocb *req,
 -- 
 2.24.0
 

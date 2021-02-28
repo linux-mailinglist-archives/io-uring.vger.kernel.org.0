@@ -2,125 +2,156 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21052327374
-	for <lists+io-uring@lfdr.de>; Sun, 28 Feb 2021 18:02:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62C683274B4
+	for <lists+io-uring@lfdr.de>; Sun, 28 Feb 2021 22:58:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231228AbhB1RBa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 28 Feb 2021 12:01:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46732 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230459AbhB1RB2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Feb 2021 12:01:28 -0500
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE0F5C061756
-        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 09:00:47 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id b8so5596603plh.0
-        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 09:00:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Denx7bVQXCP6YfuPAwEe4t9EGKBMnQn7SlWiMFUGxOs=;
-        b=Xo3sZSgrW1NhJE5dl2OJTlvB3AtZNMI877HR8upcSV6t+MAklNn6CShP8XRRRaz8ZC
-         IkzJBdDDz+o1ZXx7Ec4o7naroVrI9k3VtuiTXQu4LOgncoenaPRImTQ2o/VU3vKjkC4c
-         nTVsY68Qh/DXSKsSukyqXjg6k8WZxI/nm3NS5lBTtqgjln+3Q0LdP7bi9v0BbdOu2n1O
-         s4EzkPZZp9NQOxEwfHP0ua8EBwWSYNM5j8UWzHv4zA2VOZE3wYQjGtnK1Fe4b2vLSRFa
-         Q2ZRa0gU1dDQUCxozDx1Eg+Jj/5N1CquCcq+hlIRkv/ycAPxj9vfsmB13y/167f/mbvi
-         ZLcw==
+        id S231438AbhB1V66 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 28 Feb 2021 16:58:58 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:48634 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231398AbhB1V65 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Feb 2021 16:58:57 -0500
+Received: by mail-io1-f70.google.com with SMTP id c4so11792503ioq.15
+        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 13:58:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Denx7bVQXCP6YfuPAwEe4t9EGKBMnQn7SlWiMFUGxOs=;
-        b=otfShE9BcE9bPW0rKoZ8F2PmMOlOGTMncDX18ldRztedPkNyluDTi98XyV2T7aAznq
-         G3j/1HmJJszqcrRZtixYY3KOgXOHwcrqR5EPcCaOsE96JXkb6EGHDxbThXhqUsH6z+Rj
-         Df78DJ9+uXIB+sWcBeKNz3GUZF8yIJiDCE+kY1oe6tg/JBWKVmfKU06TITWKWZ5LKTpj
-         xfNrSkzjIL4nWmQ9MPCMJpJHwhJD/N0/UYlZepsdFX58wmdrlIm1daaPlZixN3jHC7o+
-         N5KjkPmtD0jWgKZVVO4CFcMlT4NpEwOkBpmRW73HMLpNmUaVgo5Y3lxGidyKCm3p0PNw
-         fRRw==
-X-Gm-Message-State: AOAM530VxWPmLZmfPf0HasHdI/ahAGUt4msoKvUk8EOOprt47ONNToky
-        pE9dJFdWVBCsPIo/bz6tDUCk5aRvhsoouA==
-X-Google-Smtp-Source: ABdhPJz7944pxBYukv3GgmwZQSOZf1DRsn8Jj/uqXefzM5Ua3K+ux0lbrREcPLZAJB4dvRSniXuhNA==
-X-Received: by 2002:a17:902:d886:b029:e1:7784:4db5 with SMTP id b6-20020a170902d886b02900e177844db5mr12090286plz.72.1614531647260;
-        Sun, 28 Feb 2021 09:00:47 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id o11sm15110420pjg.41.2021.02.28.09.00.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Feb 2021 09:00:46 -0800 (PST)
-Subject: Re: KASAN: use-after-free Read in tctx_task_work
-To:     syzbot <syzbot+a157ac7c03a56397f553@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000fd274b05bc628d6a@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f6566e78-f7c8-d30b-29ad-d60775906017@kernel.dk>
-Date:   Sun, 28 Feb 2021 10:00:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=chNxsZ4Js326lT8cHMoI26IH9ZNijvX0dsRJKNoScmE=;
+        b=D7h4xmm7UXvy/FXN0GkOcsCFtT6j+9HOzi31wX39F45I4Gax5JH0+yda8rWZOyn88u
+         HWFDeJRjKF7/nR4utNBL1vaUP78qmNWoZvZRiOQjafsvMNxSYivC5Swj14wAP3rMEVHF
+         7kWf9WLN+LUBrf2PyAG0k7zNw/MPQaJ5cXFSsXbApFVHuWdMWg+liFBLm0+qPtDDfkIm
+         YiW+p56TSijojw0bfOkoJ615acXPEiM2WhZBCdCKMf2UyRGq924duYtbJy8lshOV/dGZ
+         8DD8jQXaLhXA3G/rH95itW9wAlYHfDy9gXyRl7O8X5TtAMbvVBZsXXPUUDHL8v6oChR1
+         ETQA==
+X-Gm-Message-State: AOAM531qE8tOyB8D3GEbiXqGAtGGg88xQyTaJ6GMAla5PsHVoZs86ES4
+        5npCn/8+rVqUYd+SIPlpXbpEGeUPnRgBeQZ+Pl+plvvCDXOZ
+X-Google-Smtp-Source: ABdhPJwUSb2eX0Igzr01c0hNN4Vh2hOhfhqe0TJptNifsvB1yLEHRlSnSfKd/Ww+ofTi5r3rMyb0JQt8I0kAqVa+l2akXagZ2Xqj
 MIME-Version: 1.0
-In-Reply-To: <000000000000fd274b05bc628d6a@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:b415:: with SMTP id d21mr11171871iof.149.1614549496096;
+ Sun, 28 Feb 2021 13:58:16 -0800 (PST)
+Date:   Sun, 28 Feb 2021 13:58:16 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002feb3505bc6c99ee@google.com>
+Subject: INFO: task hung in io_sq_thread_park
+From:   syzbot <syzbot+fb5458330b4442f2090d@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/28/21 2:59 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    29c395c7 Merge tag 'x86-entry-2021-02-24' of git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11cd05cad00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c581c545cb4ffac7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a157ac7c03a56397f553
-> compiler:       Debian clang version 11.0.1-2
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+a157ac7c03a56397f553@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: use-after-free in __tctx_task_work fs/io_uring.c:2217 [inline]
-> BUG: KASAN: use-after-free in tctx_task_work+0x238/0x280 fs/io_uring.c:2230
-> Read of size 4 at addr ffff88802178e3f0 by task syz-executor.2/12656
+Hello,
 
-This should fix it.
+syzbot found the following issue on:
+
+HEAD commit:    d01f2f7e Add linux-next specific files for 20210226
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1265dcead00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a1746d2802a82a05
+dashboard link: https://syzkaller.appspot.com/bug?extid=fb5458330b4442f2090d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=175427f2d00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11109782d00000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fb5458330b4442f2090d@syzkaller.appspotmail.com
+
+INFO: task syz-executor458:8401 blocked for more than 143 seconds.
+      Not tainted 5.11.0-next-20210226-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor458 state:D stack:27536 pid: 8401 ppid:  8400 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4324 [inline]
+ __schedule+0x90c/0x21a0 kernel/sched/core.c:5075
+ schedule+0xcf/0x270 kernel/sched/core.c:5154
+ schedule_timeout+0x1db/0x250 kernel/time/timer.c:1868
+ do_wait_for_common kernel/sched/completion.c:85 [inline]
+ __wait_for_common kernel/sched/completion.c:106 [inline]
+ wait_for_common kernel/sched/completion.c:117 [inline]
+ wait_for_completion+0x168/0x270 kernel/sched/completion.c:138
+ io_sq_thread_park fs/io_uring.c:7115 [inline]
+ io_sq_thread_park+0xd5/0x130 fs/io_uring.c:7103
+ io_uring_cancel_task_requests+0x24c/0xd90 fs/io_uring.c:8745
+ __io_uring_files_cancel+0x110/0x230 fs/io_uring.c:8840
+ io_uring_files_cancel include/linux/io_uring.h:47 [inline]
+ do_exit+0x299/0x2a60 kernel/exit.c:780
+ do_group_exit+0x125/0x310 kernel/exit.c:922
+ __do_sys_exit_group kernel/exit.c:933 [inline]
+ __se_sys_exit_group kernel/exit.c:931 [inline]
+ __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x43e899
+RSP: 002b:00007ffe89376d48 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00000000004af2f0 RCX: 000000000043e899
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffffffffffc0 R09: 0000000010000000
+R10: 0000000000008011 R11: 0000000000000246 R12: 00000000004af2f0
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
+INFO: task iou-sqp-8401:8402 can't die for more than 143 seconds.
+task:iou-sqp-8401    state:D stack:30272 pid: 8402 ppid:  8400 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4324 [inline]
+ __schedule+0x90c/0x21a0 kernel/sched/core.c:5075
+ schedule+0xcf/0x270 kernel/sched/core.c:5154
+ schedule_timeout+0x1db/0x250 kernel/time/timer.c:1868
+ do_wait_for_common kernel/sched/completion.c:85 [inline]
+ __wait_for_common kernel/sched/completion.c:106 [inline]
+ wait_for_common kernel/sched/completion.c:117 [inline]
+ wait_for_completion+0x168/0x270 kernel/sched/completion.c:138
+ io_sq_thread+0x27d/0x1ae0 fs/io_uring.c:6717
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+INFO: task iou-sqp-8401:8402 blocked for more than 143 seconds.
+      Not tainted 5.11.0-next-20210226-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:iou-sqp-8401    state:D stack:30272 pid: 8402 ppid:  8400 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4324 [inline]
+ __schedule+0x90c/0x21a0 kernel/sched/core.c:5075
+ schedule+0xcf/0x270 kernel/sched/core.c:5154
+ schedule_timeout+0x1db/0x250 kernel/time/timer.c:1868
+ do_wait_for_common kernel/sched/completion.c:85 [inline]
+ __wait_for_common kernel/sched/completion.c:106 [inline]
+ wait_for_common kernel/sched/completion.c:117 [inline]
+ wait_for_completion+0x168/0x270 kernel/sched/completion.c:138
+ io_sq_thread+0x27d/0x1ae0 fs/io_uring.c:6717
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/1666:
+ #0: ffffffff8bf741e0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6327
+1 lock held by syz-executor458/8401:
+ #0: ffff88801cafe870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park+0x5d/0x130 fs/io_uring.c:7108
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 1666 Comm: khungtaskd Not tainted 5.11.0-next-20210226-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0xfa/0x151 lib/dump_stack.c:120
+ nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
+ nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
+ watchdog+0xd8e/0xf40 kernel/hung_task.c:338
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:51 [inline]
+NMI backtrace for cpu 1 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:89 [inline]
+NMI backtrace for cpu 1 skipped: idling at acpi_safe_halt drivers/acpi/processor_idle.c:110 [inline]
+NMI backtrace for cpu 1 skipped: idling at acpi_idle_do_entry+0x1c9/0x250 drivers/acpi/processor_idle.c:516
 
 
-commit adc34362605c08e622c0750ae3377ed03637abd1
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Sun Feb 28 09:59:26 2021 -0700
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-    io_uring: don't attempt to re-flush completions
-    
-    If 'node' is NULL, there are no more completions to flush after doing
-    this round. And since the req flushing will put ctx references, it's
-    quite possible that the ctx is gone after the flush. Don't dereference
-    it unless we know we have more to flush.
-    
-    Fixes: 65453d1efbd2 ("io_uring: enable req cache for task_work items")
-    Reported-by: syzbot+a157ac7c03a56397f553@syzkaller.appspotmail.com
-    Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 87e8e40b566e..9db79d4b0827 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1829,7 +1829,7 @@ static bool __tctx_task_work(struct io_uring_task *tctx)
- 			mutex_lock(&ctx->uring_lock);
- 			io_submit_flush_completions(&ctx->submit_state.comp, ctx);
- 			mutex_unlock(&ctx->uring_lock);
--			ctx = this_ctx;
-+			ctx = node ? this_ctx : NULL;
- 		}
- 	}
- 
-
--- 
-Jens Axboe
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

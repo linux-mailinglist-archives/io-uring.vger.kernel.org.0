@@ -2,223 +2,161 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BB0E32762B
-	for <lists+io-uring@lfdr.de>; Mon,  1 Mar 2021 03:49:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E6903276A0
+	for <lists+io-uring@lfdr.de>; Mon,  1 Mar 2021 05:19:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231243AbhCACtF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 28 Feb 2021 21:49:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58676 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230214AbhCACtC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Feb 2021 21:49:02 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62EDAC06174A
-        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 18:48:22 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id g4so10597649pgj.0
-        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 18:48:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=sdgzUIE11pldyAg1VjJepNZ8mbZ+IeKDZWhB9JOwN+g=;
-        b=F4O+G0K8h3RcObdvgNunIQn7Oj3rs66YxZ6WW4Jyx9OGFJRzSMHoUBSMER0tWUauhh
-         i7mN1JXXa8/k2RM/MeYyAkHa/shdyg3CQbYiGrZmmDlrEuGYKov3kjHrmNlpG3nFSDVE
-         wZiUV3LIkZKv9hAqLSiMx2PV8H+JKclbCaltrjkTYMf/vX5+IG1aLTRBHAAhRnbalCQe
-         v/Mfh+o1SnzPQMEZmlaNmDixV8qrZxQKuQCu8mSqWBuyV/nHLEImHfv83LFmZIH4jdEs
-         gq/eMNuky1uD6cN6o9qtmXFED+uMo1prKbJY+4NawFfB0GtOgMKxZrafIEbtaTChlc/N
-         7nrw==
+        id S233202AbhCAESy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 28 Feb 2021 23:18:54 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:42186 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233191AbhCAESs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Feb 2021 23:18:48 -0500
+Received: by mail-il1-f199.google.com with SMTP id i16so10839269ila.9
+        for <io-uring@vger.kernel.org>; Sun, 28 Feb 2021 20:18:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sdgzUIE11pldyAg1VjJepNZ8mbZ+IeKDZWhB9JOwN+g=;
-        b=qoOjRyaTVm3RYyd9xwMXEPy86ZJmGn+c+yZg+geRABveK9sNR3ytOM3cfWsyHcCPNX
-         Hfj/dffkQr3wZBz4MCCwPbBWaLYLNkN65lDYUcA91LrytBtMDEZKxGQo8oPcQDsDgbCs
-         SX3GPGBJwdN6585X0RL9kkGYMAoSM1Ou9clkYflwwWkLklAhi1ITBBojXiNfOlkDA8yL
-         NXItfwhYdYD01lIheOHPtqEkOlNV+Iyuz1J72oJusscExGQnMgJ5CFVqpBcXcWy2FNiy
-         pqTlfrCXsQ+qUz1AaYZ/OPkwnJwwu3bCi9j4pwLXpC9FAD2iCvy3K9M5XPgGx4L9cItj
-         VBDg==
-X-Gm-Message-State: AOAM532Pw9gQfOE2cQVwmGkevaOfsDAcXh8fDJ8XdiYYWJzHaB2NB1PI
-        icRnardhidwVGzt1dLQ5JaXI6w==
-X-Google-Smtp-Source: ABdhPJx8AKjQ0GL3k7Jzo9eC7CYUBfD4gO4jiqADsb6yGiZj4fEYDAz6uEJy2vMbKdToZeYOU3VtAg==
-X-Received: by 2002:a63:cd08:: with SMTP id i8mr11861442pgg.49.1614566901747;
-        Sun, 28 Feb 2021 18:48:21 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id n184sm5645949pfd.205.2021.02.28.18.48.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Feb 2021 18:48:21 -0800 (PST)
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTogcG9zc2libGUgZGVhZGxvY2sgaW4gaW9fcG9sbF9k?=
- =?UTF-8?Q?ouble=5fwake_=282=29?=
-To:     "Zhang, Qiang" <Qiang.Zhang@windriver.com>,
-        syzbot <syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-References: <000000000000e61a7605bc5ac540@google.com>
- <900e27f3-6503-ed03-4c58-ccc946df7a6a@kernel.dk>
- <BYAPR11MB26323CD476CC8CE34E31AC6DFF9A9@BYAPR11MB2632.namprd11.prod.outlook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6a210838-9ffa-5053-29f7-486c8c65f792@kernel.dk>
-Date:   Sun, 28 Feb 2021 19:48:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=jGKJbsKWjLY3t1hbI1ad50n8UJWkfbpUJMTA9ScYOdQ=;
+        b=X2XQqTKwpS8juSZPBpK0yiOxRUe7azOU0j3CU09BEmAs+EH/mQK/Tr9fc1DkFi6VYf
+         u+ofy3+XtunCy7a32aXWVngaX+A+05W4LxOyc4vJy+6uH/0YCf13I+ZcSpHowABjHrqf
+         u/thWmDiZh4sz2S/eAco/6zRct286I4D3ZexqERCFhYT2Pdvdni66/XUJQWd2Bl1M0CM
+         swFoJSua/P6ARxnH5Wcbd6aWFOZRsPH8bQYVgURaDiYtJ7DMztjXnQ9WfxaUZP0OFsyy
+         Asy4dfqO10c7sZVaz8qzKCfqSJkkdxRbGQy6kG6gJgju5Z9gpLRnEKHDd8W6zZ/VtxJy
+         leyg==
+X-Gm-Message-State: AOAM532c2EA2F2g88TvNNp5irnaMEJlZ/YSvzlyy7dActNh68grgoC3s
+        OC5sd3HOg7sFWubC5j8i/9/NNlL4JmH6wZ1aeuCC9Dpum9s8
+X-Google-Smtp-Source: ABdhPJzbk8yenPVEBjFaBJk9pDoAFImYrHa/idi0KSfzfWf6UKO7jBNh+JRxEb49CaamNQVuL53ajeITSuIp65gIbde/9LZWZiut
 MIME-Version: 1.0
-In-Reply-To: <BYAPR11MB26323CD476CC8CE34E31AC6DFF9A9@BYAPR11MB2632.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:14c6:: with SMTP id b6mr12459382iow.104.1614572287239;
+ Sun, 28 Feb 2021 20:18:07 -0800 (PST)
+Date:   Sun, 28 Feb 2021 20:18:07 -0800
+In-Reply-To: <900e27f3-6503-ed03-4c58-ccc946df7a6a@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a52fb105bc71e7b8@google.com>
+Subject: Re: possible deadlock in io_poll_double_wake (2)
+From:   syzbot <syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/28/21 7:08 PM, Zhang, Qiang wrote:
-> 
-> 
-> ________________________________________
-> 发件人: Jens Axboe <axboe@kernel.dk>
-> 发送时间: 2021年3月1日 7:08
-> 收件人: syzbot; asml.silence@gmail.com; io-uring@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; syzkaller-bugs@googlegroups.com; viro@zeniv.linux.org.uk
-> 主题: Re: possible deadlock in io_poll_double_wake (2)
-> 
-> [Please note: This e-mail is from an EXTERNAL e-mail address]
-> 
-> On 2/27/21 5:42 PM, syzbot wrote:
->> syzbot has found a reproducer for the following issue on:
->>
->> HEAD commit:    5695e516 Merge tag 'io_uring-worker.v3-2021-02-25' of git:..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=114e3866d00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c76dad0946df1f3
->> dashboard link: https://syzkaller.appspot.com/bug?extid=28abd693db9e92c160d8
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122ed9b6d00000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d5a292d00000
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com
->>
->> ============================================
->> WARNING: possible recursive locking detected
->> 5.11.0-syzkaller #0 Not tainted
->> --------------------------------------------
->> swapper/1/0 is trying to acquire lock:
->> ffff88801b2b1130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
->> ffff88801b2b1130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4960
->>
->> but task is already holding lock:
->> ffff88801b2b3130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
->>
->> other info that might help us debug this:
->>  Possible unsafe locking scenario:
->>
->>        CPU0
->>        ----
->>   lock(&runtime->sleep);
->>   lock(&runtime->sleep);
->>
->>  *** DEADLOCK ***
->>
->>  May be due to missing lock nesting notation
->>
->> 2 locks held by swapper/1/0:
->>  #0: ffff888147474908 (&group->lock){..-.}-{2:2}, at: _snd_pcm_stream_lock_irqsave+0x9f/0xd0 sound/core/pcm_native.c:170
->>  #1: ffff88801b2b3130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
->>
->> stack backtrace:
->> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.11.0-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> Call Trace:
->>  <IRQ>
->>  __dump_stack lib/dump_stack.c:79 [inline]
->>  dump_stack+0xfa/0x151 lib/dump_stack.c:120
->>  print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
->>  check_deadlock kernel/locking/lockdep.c:2872 [inline]
->>  validate_chain kernel/locking/lockdep.c:3661 [inline]
->>  __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
->>  lock_acquire kernel/locking/lockdep.c:5510 [inline]
->>  lock_acquire+0x1ab/0x730 kernel/locking/lockdep.c:5475
->>  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->>  _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
->>  spin_lock include/linux/spinlock.h:354 [inline]
->>  io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4960
->>  __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
->>  __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
->>  snd_pcm_update_state+0x46a/0x540 sound/core/pcm_lib.c:203
->>  snd_pcm_update_hw_ptr0+0xa75/0x1a50 sound/core/pcm_lib.c:464
->>  snd_pcm_period_elapsed+0x160/0x250 sound/core/pcm_lib.c:1805
->>  dummy_hrtimer_callback+0x94/0x1b0 sound/drivers/dummy.c:378
->>  __run_hrtimer kernel/time/hrtimer.c:1519 [inline]
->>  __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1583
->>  hrtimer_run_softirq+0x17b/0x360 kernel/time/hrtimer.c:1600
->>  __do_softirq+0x29b/0x9f6 kernel/softirq.c:345
->>  invoke_softirq kernel/softirq.c:221 [inline]
->>  __irq_exit_rcu kernel/softirq.c:422 [inline]
->>  irq_exit_rcu+0x134/0x200 kernel/softirq.c:434
->>  sysvec_apic_timer_interrupt+0x93/0xc0 arch/x86/kernel/apic/apic.c:1100
->>  </IRQ>
->>  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
->> RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:29 [inline]
->> RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:70 [inline]
->> RIP: 0010:arch_irqs_disabled arch/x86/include/asm/irqflags.h:137 [inline]
->> RIP: 0010:acpi_safe_halt drivers/acpi/processor_idle.c:111 [inline]
->> RIP: 0010:acpi_idle_do_entry+0x1c9/0x250 drivers/acpi/processor_idle.c:516
->> Code: dd 38 6e f8 84 db 75 ac e8 54 32 6e f8 e8 0f 1c 74 f8 e9 0c 00 00 00 e8 45 32 6e f8 0f 00 2d 4e 4a c5 00 e8 39 32 6e f8 fb f4 <9c> 5b 81 e3 00 02 00 00 fa 31 ff 48 89 de e8 14 3a 6e f8 48 85 db
->> RSP: 0018:ffffc90000d47d18 EFLAGS: 00000293
->> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
->> RDX: ffff8880115c3780 RSI: ffffffff89052537 RDI: 0000000000000000
->> RBP: ffff888141127064 R08: 0000000000000001 R09: 0000000000000001
->> R10: ffffffff81794168 R11: 0000000000000000 R12: 0000000000000001
->> R13: ffff888141127000 R14: ffff888141127064 R15: ffff888143331804
->>  acpi_idle_enter+0x361/0x500 drivers/acpi/processor_idle.c:647
->>  cpuidle_enter_state+0x1b1/0xc80 drivers/cpuidle/cpuidle.c:237
->>  cpuidle_enter+0x4a/0xa0 drivers/cpuidle/cpuidle.c:351
->>  call_cpuidle kernel/sched/idle.c:158 [inline]
->>  cpuidle_idle_call kernel/sched/idle.c:239 [inline]
->>  do_idle+0x3e1/0x590 kernel/sched/idle.c:300
->>  cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:397
->>  start_secondary+0x274/0x350 arch/x86/kernel/smpboot.c:272
->>  secondary_startup_64_no_verify+0xb0/0xbb
-> 
->> This looks very odd, only thing I can think of is someone >doing
->> poll_wait() twice with different entries but for the same
->> waitqueue head.
->>
-> 
-> Hello  Jens Axboe
-> 
-> here poll_wait() twice in waitqueue head 'runtime->sleep'
-> in sound/core/oss/pcm_oss.c
-> 
-> static __poll_t snd_pcm_oss_poll(struct file *file, poll_table * wait) {
-> ...........
->         if (psubstream != NULL) {
->                 struct snd_pcm_runtime *runtime = psubstream->runtime;
->                 poll_wait(file, &runtime->sleep, wait);
->                 snd_pcm_stream_lock_irq(psubstream);
->                 if (runtime->status->state != SNDRV_PCM_STATE_DRAINING &&
->                     (runtime->status->state != SNDRV_PCM_STATE_RUNNING ||
->                      snd_pcm_oss_playback_ready(psubstream)))
->                         mask |= EPOLLOUT | EPOLLWRNORM;
->                 snd_pcm_stream_unlock_irq(psubstream);
->         }
->         if (csubstream != NULL) {
->                 struct snd_pcm_runtime *runtime = csubstream->runtime;
->                 snd_pcm_state_t ostate;
->                 poll_wait(file, &runtime->sleep, wait);
->                 snd_pcm_stream_lock_irq(csubstream);
-> ..........
-> }
-> 
->  I don't know if there are any other drivers that use the same way ,   can add some judgment in io_poll_double_wake()?
+Hello,
 
-Right, that's what my post-email investigation led to as well, hence I queued
-this one up:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in io_poll_double_wake
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-worker.v4&id=4a0a6fd611f5109bcfab4a95db836bb27131e3be
+============================================
+WARNING: possible recursive locking detected
+5.11.0-syzkaller #0 Not tainted
+--------------------------------------------
+syz-executor.0/10241 is trying to acquire lock:
+ffff888012e09130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
+ffff888012e09130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4921
 
--- 
-Jens Axboe
+but task is already holding lock:
+ffff888013b00130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&runtime->sleep);
+  lock(&runtime->sleep);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+4 locks held by syz-executor.0/10241:
+ #0: ffff88801b1ce128 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0x1155/0x22b0 fs/io_uring.c:9139
+ #1: ffffffff8b574460 (rcu_read_lock){....}-{1:2}, at: file_ctx security/apparmor/include/file.h:33 [inline]
+ #1: ffffffff8b574460 (rcu_read_lock){....}-{1:2}, at: aa_file_perm+0x119/0x1100 security/apparmor/file.c:607
+ #2: ffff888020842108 (&group->lock){..-.}-{2:2}, at: _snd_pcm_stream_lock_irqsave+0x9f/0xd0 sound/core/pcm_native.c:170
+ #3: ffff888013b00130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
+
+stack backtrace:
+CPU: 1 PID: 10241 Comm: syz-executor.0 Not tainted 5.11.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0xfa/0x151 lib/dump_stack.c:120
+ print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
+ check_deadlock kernel/locking/lockdep.c:2872 [inline]
+ validate_chain kernel/locking/lockdep.c:3661 [inline]
+ __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
+ lock_acquire kernel/locking/lockdep.c:5510 [inline]
+ lock_acquire+0x1ab/0x730 kernel/locking/lockdep.c:5475
+ __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+ _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+ spin_lock include/linux/spinlock.h:354 [inline]
+ io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4921
+ __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
+ __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
+ snd_pcm_update_state+0x46a/0x540 sound/core/pcm_lib.c:203
+ snd_pcm_update_hw_ptr0+0xa75/0x1a50 sound/core/pcm_lib.c:464
+ snd_pcm_period_elapsed+0x160/0x250 sound/core/pcm_lib.c:1805
+ dummy_hrtimer_callback+0x94/0x1b0 sound/drivers/dummy.c:378
+ __run_hrtimer kernel/time/hrtimer.c:1519 [inline]
+ __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1583
+ hrtimer_run_softirq+0x17b/0x360 kernel/time/hrtimer.c:1600
+ __do_softirq+0x29b/0x9f6 kernel/softirq.c:343
+ asm_call_irq_on_stack+0xf/0x20
+ </IRQ>
+ __run_on_irqstack arch/x86/include/asm/irq_stack.h:26 [inline]
+ run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:77 [inline]
+ do_softirq_own_stack+0xaa/0xd0 arch/x86/kernel/irq_64.c:77
+ invoke_softirq kernel/softirq.c:226 [inline]
+ __irq_exit_rcu kernel/softirq.c:420 [inline]
+ irq_exit_rcu+0x134/0x200 kernel/softirq.c:432
+ sysvec_apic_timer_interrupt+0x4d/0x100 arch/x86/kernel/apic/apic.c:1100
+ asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:635
+RIP: 0010:lock_acquire+0x1e4/0x730 kernel/locking/lockdep.c:5478
+Code: 07 b8 ff ff ff ff 65 0f c1 05 e8 b3 a8 7e 83 f8 01 0f 85 d9 03 00 00 48 83 7c 24 08 00 74 01 fb 48 b8 00 00 00 00 00 fc ff df <48> 01 c3 48 c7 03 00 00 00 00 48 c7 43 08 00 00 00 00 48 8b 84 24
+RSP: 0018:ffffc9000b0e7468 EFLAGS: 00000206
+RAX: dffffc0000000000 RBX: 1ffff9200161ce8f RCX: 00000000013c4b5b
+RDX: 1ffff110030b54a9 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffff8f0a77a7
+R10: fffffbfff1e14ef4 R11: 0000000000000000 R12: 0000000000000002
+R13: ffffffff8b574460 R14: 0000000000000000 R15: 0000000000000000
+ rcu_lock_acquire include/linux/rcupdate.h:267 [inline]
+ rcu_read_lock include/linux/rcupdate.h:656 [inline]
+ aa_file_perm+0x14d/0x1100 security/apparmor/file.c:609
+ common_file_perm security/apparmor/lsm.c:466 [inline]
+ apparmor_file_permission+0x163/0x4e0 security/apparmor/lsm.c:480
+ security_file_permission+0x56/0x560 security/security.c:1456
+ rw_verify_area+0x115/0x350 fs/read_write.c:400
+ io_read+0x267/0xaf0 fs/io_uring.c:3235
+ io_issue_sqe+0x2e1/0x59d0 fs/io_uring.c:5937
+ __io_queue_sqe+0x18c/0xc40 fs/io_uring.c:6204
+ io_queue_sqe+0x60d/0xf60 fs/io_uring.c:6257
+ io_submit_sqe fs/io_uring.c:6421 [inline]
+ io_submit_sqes+0x519a/0x6320 fs/io_uring.c:6535
+ __do_sys_io_uring_enter+0x1161/0x22b0 fs/io_uring.c:9140
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x465ef9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fd5184e3188 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 000000000056bf60 RCX: 0000000000465ef9
+RDX: 0000000000000000 RSI: 0000000000002039 RDI: 0000000000000004
+RBP: 00000000004bcd1c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf60
+R13: 0000000000a9fb1f R14: 00007fd5184e3300 R15: 0000000000022000
+
+
+Tested on:
+
+commit:         d5c6caec io_uring: test patch for double wake syzbot issue
+git tree:       git://git.kernel.dk/linux-block syzbot-test
+console output: https://syzkaller.appspot.com/x/log.txt?x=133f4f82d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e348dbdef26bb725
+dashboard link: https://syzkaller.appspot.com/bug?extid=28abd693db9e92c160d8
+compiler:       
 

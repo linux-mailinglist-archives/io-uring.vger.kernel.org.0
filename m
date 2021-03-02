@@ -2,210 +2,143 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA93432B551
-	for <lists+io-uring@lfdr.de>; Wed,  3 Mar 2021 07:50:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE78A32B54A
+	for <lists+io-uring@lfdr.de>; Wed,  3 Mar 2021 07:50:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346647AbhCCGoG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Mar 2021 01:44:06 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:57767 "EHLO
+        id S238817AbhCCGm0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Mar 2021 01:42:26 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:33649 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1836035AbhCBTgU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Mar 2021 14:36:20 -0500
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210302161002epoutp0373b6411b8ab8bbfe42adc851759422e5~okl7krl2U0956509565epoutp03E
-        for <io-uring@vger.kernel.org>; Tue,  2 Mar 2021 16:10:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210302161002epoutp0373b6411b8ab8bbfe42adc851759422e5~okl7krl2U0956509565epoutp03E
+        with ESMTP id S1344099AbhCBSHF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 2 Mar 2021 13:07:05 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210302161007epoutp03ef8d2e88b41b8bdd21c62d8520666371~okmAXMk9v0562005620epoutp03H
+        for <io-uring@vger.kernel.org>; Tue,  2 Mar 2021 16:10:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210302161007epoutp03ef8d2e88b41b8bdd21c62d8520666371~okmAXMk9v0562005620epoutp03H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1614701402;
-        bh=zJAu+4AnrLTTfRdnWiFSMH7omT70gsIqx7Jptlap+8w=;
+        s=mail20170921; t=1614701407;
+        bh=ueF9Vjl6Kuvfd0ThzHW3RHP0mgBsnoqbyugZfwdplWw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AGPi4mna1vtkRp0zF4MgmUpk5djFEKs9TgMyc36Hk4tkz3jeUPwsQr0wPpYXclImr
-         csX9VPQKJy7ERMpI3apzywpdoxaYaNrORo0x8NjlMxy+lzzt8DAQtc2UkjCLuGXGH7
-         LDWpiM6S28dFZwLx4GFemDYKd4tha1PMzC9fJiWE=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20210302161001epcas5p372100b9f4499916f98caed549d2c6f85~okl6mIb731145211452epcas5p3_;
-        Tue,  2 Mar 2021 16:10:01 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        32.E2.15682.9536E306; Wed,  3 Mar 2021 01:10:01 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20210302161000epcas5p3ec5c461a8eec593b6d83a9127c7fec4f~okl5s9nLE1145211452epcas5p39;
-        Tue,  2 Mar 2021 16:10:00 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210302161000epsmtrp1aadd0570132ebffaeaa3aed807f4fe80~okl5sLnla2256522565epsmtrp1h;
-        Tue,  2 Mar 2021 16:10:00 +0000 (GMT)
-X-AuditID: b6c32a49-8bfff70000013d42-77-603e63594d4a
+        b=qCX3XcAb9VK5SZZ5ZAJtOyK5KOtRnu6aJwpyB4b1kH9uIE3v6gC47iK0o4f3gUTqf
+         wuT7xrGc7cHq/oTlPi7rq2aGiH1V/6h+nYI1ikrEsv/eNdbX7rYdIsWne0d75V2w0/
+         4s644XpfUvJvWFoM9Y5Ic7yJk+RC7CXGaxkw8x38=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20210302161006epcas5p4721768b00c9c9a3d5dca503a4e899bcb~okl-MgfwU1776717767epcas5p4b;
+        Tue,  2 Mar 2021 16:10:06 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0E.70.33964.E536E306; Wed,  3 Mar 2021 01:10:06 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210302161005epcas5p23f28fe21bab5a3e07b9b382dd2406fdc~okl_qw5jt2043920439epcas5p2w;
+        Tue,  2 Mar 2021 16:10:05 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210302161005epsmtrp200cb86cf0bf20a2c41890781415b7146~okl_qA5YV0582505825epsmtrp2H;
+        Tue,  2 Mar 2021 16:10:05 +0000 (GMT)
+X-AuditID: b6c32a4b-eb7ff700000184ac-39-603e635e85f7
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CD.0D.13470.8536E306; Wed,  3 Mar 2021 01:10:00 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C8.5D.08745.D536E306; Wed,  3 Mar 2021 01:10:05 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.110.206.5]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210302160959epsmtip16b625f52691ef82c2dab28c2e7963b82~okl4R3kKj1249612496epsmtip1L;
-        Tue,  2 Mar 2021 16:09:59 +0000 (GMT)
+        20210302161004epsmtip11271edbdab490ce062b3e6f58ebcf447~okl9VPwiT1292312923epsmtip1S;
+        Tue,  2 Mar 2021 16:10:04 +0000 (GMT)
 From:   Kanchan Joshi <joshi.k@samsung.com>
 To:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org
 Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         anuj20.g@samsung.com, javier.gonz@samsung.com,
         Kanchan Joshi <joshi.k@samsung.com>
-Subject: [RFC 1/3] io_uring: add helper for uring_cmd completion in
- submitter-task
-Date:   Tue,  2 Mar 2021 21:37:32 +0530
-Message-Id: <20210302160734.99610-2-joshi.k@samsung.com>
+Subject: [RFC 2/3] nvme: passthrough helper with callback
+Date:   Tue,  2 Mar 2021 21:37:33 +0530
+Message-Id: <20210302160734.99610-3-joshi.k@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210302160734.99610-1-joshi.k@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+XbOzs5Wi+OSfFumOag0mNPIOIXdoGJaYYYFCaFjHtby2o7r
-        SrSShtpSUdO27CbllbK8lDVXOVlhpdmFzLBYZJl5qVQylHU57UT993u/93m+h+fjIzFZiVBO
-        6tMyGUOaJkVBSPDrbSHByu3alYlhU5MB9NECD0bXvs4n6Opal4AeOdaJ0+96x0S06+cwQRc6
-        XyD6XMV7Ef28uBxbLVY/6zCq62tyCHXDxcNqe4+JUOc11iD1WH3AZiJeEpnEpOj3MAbVykTJ
-        zkH3Y1HGuP8+c9aEwISyIBeJSaCWQElPHZGLJKSMsiO4Of4ZeYdRBK7G+yLv8A1BS5Vd9Ndy
-        9XM2r3IgqPrRxPvHELz8OIHnIpIkqBDoKjJyBl9qMdwZbRdyGowqRtD5pE3ALWZScXDhereQ
-        Y5yaD27HIOJYStFQaWvFvGmBYH06IeLuFFPL4JVjgVfiA+3WPpxj7Lckq+k0xt0PlEcEZW/v
-        8d61kNdv43kmfLrfyDeQw0C+mWcWJntdvDkbQbfJinsXq+BJi0fABWO/y9TdUnnDZsCJqb4/
-        x0BJIdss86qD4E3he6GX/eDtqYs8q6Hu1Tj/ihYEx2/bsQIUaPuvg+2/DrZ/aecRVoNmMxls
-        qo5hIzLC05i9oawmlTWm6UK16an16M/XWRTVjF67v4Q6kYBETgQkpvCV+g2sSJRJkzT7DzCG
-        9ASDMYVhnWgOiSv8pM1h7gQZpdNkMskMk8EY/m4FpFhuEsQVDUQQ6a2rzSaPLKsjAA25HnSU
-        rH+qD7oxK/pkQrN/vtOhzIz/+n1w2rTYYd9bSVEhu8ilcZGlX4ZCdUFTnbLpu6vYDV2JL049
-        DJfrUvGXwneFRywWm7IoZJ1gx2RnQk3xpraqex/zyrZMn/SJXufZ2H9ZMle7cZ7qof70ofm0
-        3GjpfTBSHpMSowB18LXsA5eD5y5/LlnTVReF2am2g3qfCLFrNOdxbnLyYPldH23Jkeqv7Ij7
-        bIvrQ9DJ1iR/rHJfteNbgzmnzI/RVioLrP13N5eekceM5u8utFSgrUM3KlQN0Wc+KZ8N46Lw
-        2NIr3QsDt1mJwMieeapeZ9+jSwqc3akJX4QZWM0vdo6Gj6kDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsWy7bCSnG5Esl2CwfbZshZNE/4yW6y+289m
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCKsWRmVeSWpSXmKPExsWy7bCmlm5csl2CQdc2OYumCX+ZLVbf7Wez
+        WLn6KJPFu9ZzLBaP73xmtzj6/y2bxaRD1xgt5i97ym5xZcoiZgdOj8tnSz02repk89i8pN5j
+        980GNo++LasYPT5vkgtgi+KySUnNySxLLdK3S+DKWN/5j7XgMFfFkwWnGRsYP3F0MXJySAiY
+        SDw4up4FxBYS2M0oMXeXWRcjF5D9iVHiy/qHzBDOZ0aJzfvfscJ0/H65hAUisYtRovnJdxa4
+        ql9zVjJ1MXJwsAloSlyYXArSICJgJLH/00lWkBpmgSmMEucuHmYCSQgLWEoc2weygpODRUBV
+        4k7jYVaQXl4BC4lVN/UhlslLzLz0nR0kzAlUfmuvGkiYV0BQ4uTMJ2BXMwOVNG+dDXaohMBf
+        dokDd/4zQfS6SLR1rYCyhSVeHd/CDmFLSXx+t5cNwi6W+HXnKFRzB6PE9YaZLBAJe4mLe/6C
+        /cIM9Mv6XfoQy/gken8/AQtLCPBKdLQJQVQrStyb9BQaPuISD2csgbI9JE5cXMwICZ4eRonj
+        az6zTWCUn4Xkh1lIfpiFsG0BI/MqRsnUguLc9NRi0wLjvNRyveLE3OLSvHS95PzcTYzghKPl
+        vYPx0YMPeocYmTgYDzFKcDArifCKv7RNEOJNSaysSi3Kjy8qzUktPsQozcGiJM67w+BBvJBA
+        emJJanZqakFqEUyWiYNTqoHJMHvD5W9y736n/Jt4b4lJRET0x1NqhQu7LnSvffvYZZY/ewtL
+        7z7Vz3Un2+0nuXBvNRIOKfL3ffveWUHbbIV5w7r6OP+FP2byX1tupxAt+au9ZP3ctZtzlZRP
+        3a9redjSLylm+6rJ85D21Ca7E46/rv2PYWVi2p/WN2/phqR5Ji5lu6uanrb0yqyeHfCzKsS8
+        g0eu8BjXnQXbDs/XMb3hd//whvUr1gb8OxNw8k1UagzjAh/B2Kfy9/omv/7NHTVNmc+8ZbIf
+        20pb3e8Flw/qVhle8DN20nF0XWQkJuHQ0L/ukZ33oYWcs9e0T50as/9wIZP+melqX3rPxp90
+        5q4WZ3S3yQzuqjHSfe/KfVqJpTgj0VCLuag4EQCgSOA1pwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsWy7bCSnG5ssl2Cwf2VZhZNE/4yW6y+289m
         sXL1USaLd63nWCwe3/nMbnH0/1s2i0mHrjFazF/2lN3iypRFzA6cHpfPlnpsWtXJ5rF5Sb3H
-        7psNbB59W1YxenzeJBfAFsVlk5Kak1mWWqRvl8CV8frBefaCLzIVbc3fmRoYmyW6GDk5JARM
-        JDa872DsYuTiEBLYzSjRcWoGK0RCXKL52g92CFtYYuW/5+wQRR8ZJWau/M7UxcjBwSagKXFh
-        cilIjYiAmcTSw2tYQGxmgRmMEhuWpYOUCAsESXyZqQISZhFQlXiw9zUjiM0rYCGxfNZBZojx
-        8hIzL31nBynnFLCUuLVXDSQsBFQyed1/VohyQYmTM59ATZeXaN46m3kCo8AsJKlZSFILGJlW
-        MUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIEh7qW5g7G7as+6B1iZOJgPMQowcGsJMIr
-        /tI2QYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQamXcv3
-        +BhNfv1fdaPBp0tODpKr5G/cy00LlO9NDJVjX33K+9WpXN0FGSHSO7cpiplOE32+tnQTu7FR
-        3Clt78sFfDrZbb/rPt5bX7wq7NTRbVNyZluJu1Y/mdbP2v/jA9dH0U9TFh3JuXbn8JF7B/Ju
-        sbmu7fRkP/Ga1/halQ33CtapqSethVtKy2NPXGG4sG/2Jhl7pkrNXyWbvUJt/v9Z0iv93o6Z
-        YZrB7uTIP8zFGZmMa0RXTFnw5kFf7MzXcVM2FV1p6BSMZH5SwVfL05L4ZkUYz3nDT8If7La8
-        /cFTNo+hZM1PocPLHphc33M2v7HlsfqR8KrTf01mP9ZoKnC2fVig+UzzgcunBA2/sz7zlFiK
-        MxINtZiLihMBTfZtY+QCAAA=
-X-CMS-MailID: 20210302161000epcas5p3ec5c461a8eec593b6d83a9127c7fec4f
+        7psNbB59W1YxenzeJBfAFsVlk5Kak1mWWqRvl8CVsb7zH2vBYa6KJwtOMzYwfuLoYuTkkBAw
+        kfj9cglLFyMXh5DADkaJhff+skMkxCWar/2AsoUlVv57zg5R9JFRYsfOTsYuRg4ONgFNiQuT
+        S0FqRATMJJYeXsMCYjMLzGCU2LAsHcQWFrCUOLbvITOIzSKgKnGn8TArSCuvgIXEqpv6EOPl
+        JWZe+s4OEuYEKr+1Vw0kLARUMXndf1YQm1dAUOLkzCdQ0+UlmrfOZp7AKDALSWoWktQCRqZV
+        jJKpBcW56bnFhgVGeanlesWJucWleel6yfm5mxjBoa6ltYNxz6oPeocYmTgYDzFKcDArifCK
+        v7RNEOJNSaysSi3Kjy8qzUktPsQozcGiJM57oetkvJBAemJJanZqakFqEUyWiYNTqoFJt5eN
+        0dZFbKfFjmu5H/Zt/Xdz/Y7ul2ZLXvOWX7rYqdPlt0jSVEWmfcuasldPTA/4syQW3r3XaSX/
+        1ut6LpeVZhjr96jg+V0Ny56H3ViQJvHWoM2f/eSOks1bGzcyB6So/nHuTP9dq5on0Pl0ywzW
+        F927DFPCl1o7Z7+POpl3z7vj8DPecwLb7Pc4GHhEVa2V9z1x+VvpqvMvpC4dlq9fsuPV++l6
+        6QVXK7weqz/OlzGVTV0ZUu1cXbPw9k7zhW0bRbl55r055/zzW+eilZ8/JEYb6hhur67Znvpw
+        YiPnfaWoqD9bmd69mfJ9SnClzWZvm7K4TGWjaq94Ja7THtMWHkpfedGwxtV5c+mPuU1KLMUZ
+        iYZazEXFiQDdz4Jc5AIAAA==
+X-CMS-MailID: 20210302161005epcas5p23f28fe21bab5a3e07b9b382dd2406fdc
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
-X-CMS-RootMailID: 20210302161000epcas5p3ec5c461a8eec593b6d83a9127c7fec4f
+X-CMS-RootMailID: 20210302161005epcas5p23f28fe21bab5a3e07b9b382dd2406fdc
 References: <20210302160734.99610-1-joshi.k@samsung.com>
-        <CGME20210302161000epcas5p3ec5c461a8eec593b6d83a9127c7fec4f@epcas5p3.samsung.com>
+        <CGME20210302161005epcas5p23f28fe21bab5a3e07b9b382dd2406fdc@epcas5p2.samsung.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Completion of a uring_cmd ioctl may involve referencing certain
-ioctl-specific fields, requiring original submitter context.
-Introduce 'uring_cmd_complete_in_task' that driver can use for this
-purpose. The API facilitates task-work infra, while driver gets to
-implement cmd-specific handling in a callback.
+This is a prep patch, so that ioctl completion can be decoupled from
+submission.
 
 Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 ---
- fs/io_uring.c            | 37 +++++++++++++++++++++++++++++++++----
- include/linux/io_uring.h |  8 ++++++++
- 2 files changed, 41 insertions(+), 4 deletions(-)
+ drivers/nvme/host/core.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 116ac0f179e0..d4ed1326b9f1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -775,9 +775,12 @@ struct io_kiocb {
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
--
--	/* opcode allocated if it needs to store data for async defer */
--	void				*async_data;
-+	union {
-+		/* opcode allocated if it needs to store data for async defer */
-+		void				*async_data;
-+		/* used for uring-cmd, when driver needs to update in task */
-+		void (*driver_cb)(struct io_uring_cmd *cmd);
-+	};
- 	u8				opcode;
- 	/* polled IO has completed */
- 	u8				iopoll_completed;
-@@ -1719,7 +1722,7 @@ static void io_dismantle_req(struct io_kiocb *req)
- {
- 	io_clean_op(req);
- 
--	if (req->async_data)
-+	if (io_op_defs[req->opcode].async_size && req->async_data)
- 		kfree(req->async_data);
- 	if (req->file)
- 		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
-@@ -2035,6 +2038,31 @@ static void io_req_task_submit(struct callback_head *cb)
- 	__io_req_task_submit(req);
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index e68a8c4ac5a6..15c9490b593f 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -1126,7 +1126,8 @@ static void nvme_passthru_end(struct nvme_ctrl *ctrl, u32 effects)
+ 	}
  }
  
-+static void uring_cmd_work(struct callback_head *cb)
-+{
-+	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
-+	struct io_uring_cmd *cmd = &req->uring_cmd;
-+
-+	req->driver_cb(cmd);
-+}
-+int uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-+			void (*driver_cb)(struct io_uring_cmd *))
-+{
-+	int ret;
-+	struct io_kiocb *req = container_of(ioucmd, struct io_kiocb, uring_cmd);
-+
-+	req->driver_cb = driver_cb;
-+	req->task_work.func = uring_cmd_work;
-+	ret = io_req_task_work_add(req);
-+	if (unlikely(ret)) {
-+		req->result = -ECANCELED;
-+		percpu_ref_get(&req->ctx->refs);
-+		io_req_task_work_add_fallback(req, io_req_task_cancel);
-+	}
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(uring_cmd_complete_in_task);
-+
- static void io_req_task_queue(struct io_kiocb *req)
+-void nvme_execute_passthru_rq(struct request *rq)
++void nvme_execute_passthru_rq_common(struct request *rq,
++			rq_end_io_fn *done)
  {
- 	int ret;
-@@ -3537,6 +3565,7 @@ void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret)
- 		req_set_fail_links(req);
- 	io_req_complete(req, ret);
- }
-+EXPORT_SYMBOL_GPL(io_uring_cmd_done);
+ 	struct nvme_command *cmd = nvme_req(rq)->cmd;
+ 	struct nvme_ctrl *ctrl = nvme_req(rq)->ctrl;
+@@ -1135,9 +1136,17 @@ void nvme_execute_passthru_rq(struct request *rq)
+ 	u32 effects;
  
- static int io_uring_cmd_prep(struct io_kiocb *req,
- 			     const struct io_uring_sqe *sqe)
-diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-index 5849b15334b8..dba8f0b3da9f 100644
---- a/include/linux/io_uring.h
-+++ b/include/linux/io_uring.h
-@@ -41,6 +41,8 @@ struct io_uring_cmd {
- 
- #if defined(CONFIG_IO_URING)
- void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret);
-+int uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-+			void (*driver_cb)(struct io_uring_cmd *));
- struct sock *io_uring_get_socket(struct file *file);
- void __io_uring_task_cancel(void);
- void __io_uring_files_cancel(struct files_struct *files);
-@@ -65,6 +67,12 @@ static inline void io_uring_free(struct task_struct *tsk)
- static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret)
- {
+ 	effects = nvme_passthru_start(ctrl, ns, cmd->common.opcode);
+-	blk_execute_rq(disk, rq, 0);
++	if (!done)
++		blk_execute_rq(disk, rq, 0);
++	else
++		blk_execute_rq_nowait(disk, rq, 0, done);
+ 	nvme_passthru_end(ctrl, effects);
  }
 +
-+int uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-+			void (*driver_cb)(struct io_uring_cmd *))
++void nvme_execute_passthru_rq(struct request *rq)
 +{
-+	return -1;
++	return nvme_execute_passthru_rq_common(rq, NULL);
 +}
- static inline struct sock *io_uring_get_socket(struct file *file)
- {
- 	return NULL;
+ EXPORT_SYMBOL_NS_GPL(nvme_execute_passthru_rq, NVME_TARGET_PASSTHRU);
+ 
+ static int nvme_submit_user_cmd(struct request_queue *q,
 -- 
 2.25.1
 

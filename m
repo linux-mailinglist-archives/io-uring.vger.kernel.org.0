@@ -2,170 +2,230 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43B3C32C5C3
+	by mail.lfdr.de (Postfix) with ESMTP id A2F0132C5C4
 	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 02:00:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244277AbhCDAYO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Mar 2021 19:24:14 -0500
-Received: from mail-dm6nam11on2065.outbound.protection.outlook.com ([40.107.223.65]:31072
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S238746AbhCCMq0 (ORCPT <rfc822;io-uring@vger.kernel.org>);
-        Wed, 3 Mar 2021 07:46:26 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XdKt5SdJ4xc04GpHjkaq8MYpJ5/BUGTYFqV5CCFpVPbHB7Ge+FYt72pkYFqFQ3FOaeovxowKm3yBRMesm2C9QqEs2Ckne307W/StxLvGmjI8EJa49qjFQCADBdoBBDWFczcrzG+hg5pvqmEkxh+2FkdpTtzDraT9VwqltZ9C/F4vDMPo+W/Xm3d6gjKzlYKqTkrq2451Ot7E4OLcgsjad2gRqs8taYBzR1KArbEhKn2Z6CLAf+LizB1hZf/5Uo35mblCWIuzkdGsEMQIze6e8wCJUHehPtDvYsBhKr1JYx7mpGGyGE+Wbp4U58MvcAvJB4q59CXGiaF9w9FfehKe3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k0A5U7knXA9j7h7Ia+B4z/jzrCVidvM3cu/NXDPVHEs=;
- b=Tgfkq5GcSI+jGXHlDJt2h30FTyfbA117Phanxh77mqtvpPgzc74BL6opJbLhW0T+hjUFDja6G4Khp412Vx5IpFg0dSEwYxHXP07qTTgV3vI7tQ8w2UqIF3r29eM+RaYTNCbHnA+FKMrUo92OUl0V2ZJabIE8pxKZqC0EQzSv8ZY3ZolZLvU4WX/acXBq0dmHxrXDEf5A9LzexPrVjubfZrcSrojx7LpdI7r1IQ4E9uCccgTAXZfk0ldkLdhX+hAyJYejWhGotT4+QdWjNZfx+iT4Tw/F/RwzWW2Bynbgfof50mmE+hXcSKHCyTrx0o5bZQpHsebqSk5BJRfaSP1kzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+        id S1379014AbhCDAYQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Mar 2021 19:24:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52060 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1383014AbhCCNjp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Mar 2021 08:39:45 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB1FEC06178C
+        for <io-uring@vger.kernel.org>; Wed,  3 Mar 2021 05:39:01 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id m6so16320048pfk.1
+        for <io-uring@vger.kernel.org>; Wed, 03 Mar 2021 05:39:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=windriversystems.onmicrosoft.com;
- s=selector2-windriversystems-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k0A5U7knXA9j7h7Ia+B4z/jzrCVidvM3cu/NXDPVHEs=;
- b=cDLmY+r+Iau+o3R+/ZbT2x3Wum7rgf2qbxXErQkCspy/Dy/u+nOudRHqKTACbQXTVG/WG2ygXqqrVxS4aNSJa5hyDvLNdVCJzVEGoecFOLHaeRkWg8hAhCck1OYOKPdBm3TWBAdAiv71MViJ0T6TjUa6SFlxhD/Q4O/JI1k2eZo=
-Received: from BYAPR11MB2632.namprd11.prod.outlook.com (2603:10b6:a02:c4::17)
- by BY5PR11MB4484.namprd11.prod.outlook.com (2603:10b6:a03:1c3::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.28; Wed, 3 Mar
- 2021 12:45:10 +0000
-Received: from BYAPR11MB2632.namprd11.prod.outlook.com
- ([fe80::89a3:42c3:6509:4acd]) by BYAPR11MB2632.namprd11.prod.outlook.com
- ([fe80::89a3:42c3:6509:4acd%4]) with mapi id 15.20.3890.029; Wed, 3 Mar 2021
- 12:45:10 +0000
-From:   "Zhang, Qiang" <Qiang.Zhang@windriver.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: =?gb2312?B?u9i4tDogcG9zc2libGUgZGVhZGxvY2sgaW4gaW9fcG9sbF9kb3VibGVfd2Fr?=
- =?gb2312?Q?e_(2)?=
-Thread-Topic: possible deadlock in io_poll_double_wake (2)
-Thread-Index: AQHXDWs6oOGJBWdteka1D+n0kQcjUqpuMluAgABWkYCAAmzQgIABNV+igAAPPw0=
-Date:   Wed, 3 Mar 2021 12:45:10 +0000
-Message-ID: <BYAPR11MB2632EF56CC5B6000521A03A1FF989@BYAPR11MB2632.namprd11.prod.outlook.com>
-References: <000000000000a52fb105bc71e7b8@google.com>,<586d357d-8c4c-8875-3a1c-0599a0a64da0@kernel.dk>,<BYAPR11MB2632D4973C567EDF64A6728BFF989@BYAPR11MB2632.namprd11.prod.outlook.com>
-In-Reply-To: <BYAPR11MB2632D4973C567EDF64A6728BFF989@BYAPR11MB2632.namprd11.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.dk; dkim=none (message not signed)
- header.d=none;kernel.dk; dmarc=none action=none header.from=windriver.com;
-x-originating-ip: [106.39.148.172]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 95778b52-2810-41a5-2e81-08d8de422ece
-x-ms-traffictypediagnostic: BY5PR11MB4484:
-x-microsoft-antispam-prvs: <BY5PR11MB4484DC55DABDD220A9273EADFF989@BY5PR11MB4484.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: c4MIoFlbl3+c42fLZp9tCGOWqVvQ6cahpkRMNr7sHlG6Vx/sU4Z79OqzANneFCjLuo9H/Zo5Rp+t8KNJ8/KEMHtyUMpqTh/leRBiP3D6807OQAR573+UmaMi6lAo8jfLzAZNdMS0WepIX8Iks/HqwuOH/ptod6Dk/N88cPx2d9MYj2V4sd31DGSJm83igTVS9xE7+dqYa7SmltaLXYY1f9uZXcgNosh/pxd0nZiUr2VqegU/+SeForH+fLgg6oh55zlOkFXefL3jj5ojZ+Zix+sqnyUqJrej6Y78jyJ4pdDzn9m6vBvsBQy6tQrECTyy6Hl+zlGZ8SNhGXBz5yMGbOkoqg1QVOOsoqSKRmmbAgybYhWdVziF7eaT1z2rNUmLWWBZQSA/WV9RghzI0ePJgqtdARSgyYsvd3LYLAUDxswcATQkBbuYZH5iU2iSPvsV4WhXy1PewMvOkTq4mIoTyrfpbq8FZu/oFGAeTpKqbOmwgAVYCuFYvAq6nthlAmdpxAHRTAwedzjFCPRSoC3KYQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2632.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(376002)(39850400004)(366004)(136003)(396003)(91956017)(9686003)(6506007)(86362001)(2906002)(55016002)(8936002)(83380400001)(71200400001)(53546011)(224303003)(52536014)(478600001)(5660300002)(316002)(33656002)(110136005)(64756008)(66446008)(66476007)(7696005)(2940100002)(66946007)(66556008)(186003)(76116006)(26005);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?gb2312?B?MTFhclpmSVZyWVNjTUM0NTRxaFBBS3VURHVMbFdDVHphUlYyblpwVitLVHZr?=
- =?gb2312?B?ZjR4enFmakw3UVpCUUkwZnlwYVc4aWR2VDA4RmxzS2RWUnJQMDI2L21JbjJz?=
- =?gb2312?B?Q1IwK2hMczAzU0llNUhCV0lmMjVhc291c01GVEJQKy9zU09hWnV2Vi9BdW9G?=
- =?gb2312?B?QTlaVFBoRVlJMGJhV3YrVWEyMmc0ak5PWk51OVJjaGRYSFQxb0JXSG8xWVN1?=
- =?gb2312?B?QzNiaUlOYmlSZFhCdlFpbkQ2N2IvMmRjcjcvdnVLNXpNNk54OGVSYWhJWjd4?=
- =?gb2312?B?aG84TFI0djMzLzd0Sk5lbEFQVDZjSFRrMngzZ0V1Y3hNeHZRQTVMOWNKYURi?=
- =?gb2312?B?Vkp2U2llbmZIY0FFVlE4M2pVL0E3K1d0NWdIc2QzK0lMaEtsNStiRjA3YnV3?=
- =?gb2312?B?KzhCVnRITmZzUjFMTjJWU2ZpNHExbWpERmJEdWNzcWNnQUpDa0tUZWhOQmFm?=
- =?gb2312?B?bGVkeHZtT3BxV3l4TFMzTzdiY0ZOWWV2TXM4cklzREhuUjVXa2tEc1BRdk43?=
- =?gb2312?B?Q0VzVDZSMzROQTNEVnJ6SzFURk4rQXV4V1oxV3psdm1IcTZsd2dkaEhxZ0lN?=
- =?gb2312?B?bUxhcHBLci92TmpRWk1pKzNrdTA5RDk4Tnk2czYzZ1NyMENaTmlRN3Yxa2pt?=
- =?gb2312?B?cTJzYmJpNGJIdmlhbGVSQXNqQkpYMzNkWW9JUFQ0MHhIeGg5Y01OV01PUHZF?=
- =?gb2312?B?RUNQZW5jbEdjME1YSVRFa1BKZUZOZWM0ZERKei93QUVBZzBwdzFaY2pXSnpL?=
- =?gb2312?B?ZnUwSFNEZEp2bHJGMHM3Wjl5djFuT0VmbU9kQ0YxdkJ6S01CMGZIcmVxVWN0?=
- =?gb2312?B?ZjRGc05qeWYxblB2dEJEU3R6VDJpTk42WlprRHlscFFKZUk2V0Rsdk1ienpG?=
- =?gb2312?B?ZXFjeHFKbllGcnZzLy93UFlMUTBzdzJxOFpOQTJicWJyV2RsMlNIeXBIU1NV?=
- =?gb2312?B?WlVLRFB4VkJhMGV2NjRTMVl1aU5xdTJ1bVJoTnBQV3djQk0yZjhoYXZJdVdv?=
- =?gb2312?B?aHNsUWhZbGZraktscWp1MnduZkREdjRxYk9EYnZOOThabmwyTHRkOTEyRXp2?=
- =?gb2312?B?OGxvYk5jT1V0TklrbS9sWE01YmZOVUI5ZkIxYnI0VXh1R0MwTStEM0pDVXpM?=
- =?gb2312?B?anNuTmhZa05KNWJRRTFadjQzR2RBakh4Tm8xUXlkVU1ZbDVnSkdMc0dNWWlm?=
- =?gb2312?B?eXNmOFM3R3dvdytxeVYxMVM1VnpLTTJFQWExenhpOGJwdnZpUXhmWEVCYkcz?=
- =?gb2312?B?VkFrUnMvQWFtejM3ZDNaWTRSdGZpNUtBNFpJNDlDbWgrWGcvZWJCcDVnK29j?=
- =?gb2312?B?eWY3UVlvak9kNUVPQ00vUjMvQ1FDaTRVcGVQK1Q4WG00N0l1aUZtV2pybU9W?=
- =?gb2312?B?akhkbi9yVzFjRTlhTUhZeXJwWWFDMDlrRnJyUFpTYVJUd2t4dnJkLzZSVElH?=
- =?gb2312?B?VitVN2R5cThiMVVCdW1pckZFL1BzQXJobklVNFRJYXRqTms0L1NSNE04VjR4?=
- =?gb2312?B?UGVRNTRKREFweWNNWWxOTDRSaXJLK2k0YXo3alVmS0ROKytac05HbTBGNUVK?=
- =?gb2312?B?M084N043NmRUTGlXQ3ZCdGRYMFlMQm5oaEh4UnVDVlRWbGhZeFpVSis1RkZE?=
- =?gb2312?B?WlpqYWNtdSsrbHpaZnJjNkRlTVJKUUFiZ2liQ0JvWmFDNGdjcDR5ckxKRUNO?=
- =?gb2312?B?SU9qaUV0UjZvMXNUWFFPSXFET0g2NFZaYllqRG5XOUxKRXNCbFBneUlnS0dL?=
- =?gb2312?Q?nzCeS1SnvoZyFh87hM=3D?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sdhrJGZid5mivManhqm8jfbYhoV6GMjSvozJvC0qrHU=;
+        b=1NMzupzNtaEjVHH9pb9ijIJyV7FoHFUtd9Z/80FiqGzI8FTIaVLli9GICSGvoVadET
+         vAkipuSnAWoYMiYkPQFhZXM8NEZQYObpi28M+wniJWN0RQ2Msfbox2cbZ0WDYhzoQUxF
+         25lv+QodqOkdqfGYNQJY1duY22dG0KUmv7Rg1G4cno2OVpFtMMsbDvOLkujiukd6nqhW
+         MWEHDUzOkHJYNQHnHwhAWjJyoCO7+tLfHX6pSHMTu6vDmwxHVOrThdQhcK2g4DWt0tJw
+         mK5tHdPxgv1qi4YLHK0p1BCKX2kP9TrqKhfuK9JkbDU3d5zZjkhCSc1GrQNPd/ceH8bD
+         81ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sdhrJGZid5mivManhqm8jfbYhoV6GMjSvozJvC0qrHU=;
+        b=lFY7PTTzQs0gZC9YpBxY9Q/AP8pDYCAq4ZESDJdaLLiBeJJppLKHB5YuycOWMchYKP
+         /91DuEYQjT5WofrYJu8hQRIRHZw1M0D/rZtDxy/bGIMwoEaBCwFCnloKScHUvsSFXBTz
+         4H2e8jKU3wQ4KVDH+JbV1NMYktuR3PicDFH35z/B6LKB4+/SJHAj1UqNUXltIHQCfcE+
+         7WW275sE5LJpp4wFoVGP8iRySBOcS7NX5LPVxgE9sQVsHaXNk7c1t1uA8Dp36UqZ2Vg2
+         mnKEspHw5vwaC4z2GvWwZFNvRT8txsgG4mLMTqO47X8HsdfURd91T4thEI49EaMC98LO
+         mRQA==
+X-Gm-Message-State: AOAM532Z9pYPFSBrH/NmjM+lXEEtOBCMFB0Nh+/5oGi2XcaQ5jcjRNox
+        IGzc7K55qRxCxDfNt6ixJsBTB08/V+Co7w==
+X-Google-Smtp-Source: ABdhPJyh3dK0WitJz08MnAgSaosA4leJ7YbUnT8JKdqgTn7Deq1uNBUpg7Z0iVDD2NqlvcbQVaKTGQ==
+X-Received: by 2002:a62:8c05:0:b029:1d8:7f36:bcd8 with SMTP id m5-20020a628c050000b02901d87f36bcd8mr3352300pfd.43.1614778741225;
+        Wed, 03 Mar 2021 05:39:01 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id j20sm6941638pjn.27.2021.03.03.05.39.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Mar 2021 05:39:00 -0800 (PST)
+Subject: Re: possible deadlock in io_poll_double_wake (2)
+To:     Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com>
+Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <586d357d-8c4c-8875-3a1c-0599a0a64da0@kernel.dk>
+ <20210303065231.1589-1-hdanton@sina.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ae9bf2e1-8a29-672d-88eb-2367374df9f5@kernel.dk>
+Date:   Wed, 3 Mar 2021 06:39:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2632.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95778b52-2810-41a5-2e81-08d8de422ece
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2021 12:45:10.6467
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0pi0C+s80bGss3KKm4Wzwj7OI8V9FLQrI07WZDVRMZtatKA9rQz6RrP3/+c5GBtWFo2rGxsU3Ow/FJdeffbExYq1ZuwH/TDFf5xxUYpwnR4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR11MB4484
+In-Reply-To: <20210303065231.1589-1-hdanton@sina.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCreivP7IyzogWmhhbmcs
-IFFpYW5nIDxRaWFuZy5aaGFuZ0B3aW5kcml2ZXIuY29tPgq3osvNyrG85DogMjAyMcTqM9TCM8jV
-IDIwOjE1CsrVvP7IyzogSmVucyBBeGJvZTsgc3l6Ym90OyBhc21sLnNpbGVuY2VAZ21haWwuY29t
-OyBpby11cmluZ0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3Jn
-OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBzeXprYWxsZXItYnVnc0Bnb29nbGVncm91
-cHMuY29tOyB2aXJvQHplbml2LmxpbnV4Lm9yZy51awrW98ziOiC72Li0OiBwb3NzaWJsZSBkZWFk
-bG9jayBpbiBpb19wb2xsX2RvdWJsZV93YWtlICgyKQoKCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCreivP7IyzogSmVucyBBeGJvZSA8YXhib2VAa2VybmVsLmRrPgq3
-osvNyrG85DogMjAyMcTqM9TCM8jVIDE6MjAKytW8/sjLOiBzeXpib3Q7IGFzbWwuc2lsZW5jZUBn
-bWFpbC5jb207IGlvLXVyaW5nQHZnZXIua2VybmVsLm9yZzsgbGludXgtZnNkZXZlbEB2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IHN5emthbGxlci1idWdzQGdv
-b2dsZWdyb3Vwcy5jb207IHZpcm9AemVuaXYubGludXgub3JnLnVrCtb3zOI6IFJlOiBwb3NzaWJs
-ZSBkZWFkbG9jayBpbiBpb19wb2xsX2RvdWJsZV93YWtlICgyKQoKW1BsZWFzZSBub3RlOiBUaGlz
-IGUtbWFpbCBpcyBmcm9tIGFuIEVYVEVSTkFMIGUtbWFpbCBhZGRyZXNzXQoKT24gMi8yOC8yMSA5
-OjE4IFBNLCBzeXpib3Qgd3JvdGU6Cj4gSGVsbG8sCj4KPiBzeXpib3QgaGFzIHRlc3RlZCB0aGUg
-cHJvcG9zZWQgcGF0Y2ggYnV0IHRoZSByZXByb2R1Y2VyIGlzIHN0aWxsIHRyaWdnZXJpbmcgYW4g
-aXNzdWU6Cj4gcG9zc2libGUgZGVhZGxvY2sgaW4gaW9fcG9sbF9kb3VibGVfd2FrZQo+Cj4gPT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KPiBXQVJOSU5HOiBwb3Nz
-aWJsZSByZWN1cnNpdmUgbG9ja2luZyBkZXRlY3RlZAo+IDUuMTEuMC1zeXprYWxsZXIgIzAgTm90
-IHRhaW50ZWQKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+
-IHN5ei1leGVjdXRvci4wLzEwMjQxIGlzIHRyeWluZyB0byBhY3F1aXJlIGxvY2s6Cj4gZmZmZjg4
-ODAxMmUwOTEzMCAoJnJ1bnRpbWUtPnNsZWVwKXsuLi0ufS17MjoyfSwgYXQ6IHNwaW5fbG9jayBp
-bmNsdWRlL2xpbnV4L3NwaW5sb2NrLmg6MzU0IFtpbmxpbmVdCj4gZmZmZjg4ODAxMmUwOTEzMCAo
-JnJ1bnRpbWUtPnNsZWVwKXsuLi0ufS17MjoyfSwgYXQ6IGlvX3BvbGxfZG91YmxlX3dha2UrMHgy
-NWYvMHg2YTAgZnMvaW9fdXJpbmcuYzo0OTIxCj4KPiBidXQgdGFzayBpcyBhbHJlYWR5IGhvbGRp
-bmcgbG9jazoKPiBmZmZmODg4MDEzYjAwMTMwICgmcnVudGltZS0+c2xlZXApey4uLS59LXsyOjJ9
-LCBhdDogX193YWtlX3VwX2NvbW1vbl9sb2NrKzB4YjQvMHgxMzAga2VybmVsL3NjaGVkL3dhaXQu
-YzoxMzcKPgo+IG90aGVyIGluZm8gdGhhdCBtaWdodCBoZWxwIHVzIGRlYnVnIHRoaXM6Cj4gIFBv
-c3NpYmxlIHVuc2FmZSBsb2NraW5nIHNjZW5hcmlvOgo+Cj4gICAgICAgIENQVTAKPiAgICAgICAg
-LS0tLQo+ICAgbG9jaygmcnVudGltZS0+c2xlZXApOwo+ICAgbG9jaygmcnVudGltZS0+c2xlZXAp
-Owo+Cj4gICoqKiBERUFETE9DSyAqKioKPgo+ICBNYXkgYmUgZHVlIHRvIG1pc3NpbmcgbG9jayBu
-ZXN0aW5nIG5vdGF0aW9uCj4KPlNpbmNlIHRoZSBmaXggaXMgaW4geWV0IHRoaXMga2VlcHMgZmFp
-bGluZyAoYW5kIEkgZGlkbid0IGdldCBpdCksID5JIGxvb2tlZAo+Y2xvc2VyIGF0IHRoaXMgcmVw
-b3J0LiBXaGlsZSB0aGUgbmFtZXMgb2YgdGhlIGxvY2tzIGFyZSB0aGUgPnNhbWUsIHRoZXkgYXJl
-Cj5yZWFsbHkgdHdvIGRpZmZlcmVudCBsb2Nrcy4gU28gbGV0J3MgdHJ5IHRoaXMuLi4KCj5IZWxs
-byBKZW5zIEF4Ym9lCgpTb3JyeSBmb3IgSSBtYWtlICBub2lzZSwgcGxlYXNlIGlnbm9yZSB0aGlz
-IGluZm9ybWF0aW9uLgoKPlNvcnJ5LCBJIHByb3ZpZGVkIHRoZSB3cm9uZyBpbmZvcm1hdGlvbiBi
-ZWZvcmUuCj5JJ20gbm90IHZlcnkgZmFtaWxpYXIgd2l0aCBpb191cmluZywgIGJlZm9yZSB3ZSBz
-dGFydCA+dmZzX3BvbGwgYWdhaW4sICBzaG91bGQgd2Ugc2V0ICAncG9sbC0+aGVhZCA9IE5VTEwn
-ICA/Cj4KPmRpZmYgLS1naXQgYS9mcy9pb191cmluZy5jIGIvZnMvaW9fdXJpbmcuYwo+aW5kZXgg
-NDJiNjc1OTM5NTgyLi5jYWU2MDVjMTQ1MTAgMTAwNjQ0Cj4tLS0gYS9mcy9pb191cmluZy5jCj4r
-KysgYi9mcy9pb191cmluZy5jCj5AQCAtNDgyNCw3ICs0ODI0LDcgQEAgc3RhdGljIGJvb2wgaW9f
-cG9sbF9yZXdhaXQoc3RydWN0ID5pb19raW9jYiAqcmVxLCBzdHJ1Y3QgaW9fcG9sbF9pb2NiICpw
-b2xsKQo+Cj4gICAgICAgIGlmICghcmVxLT5yZXN1bHQgJiYgIVJFQURfT05DRShwb2xsLT5jYW5j
-ZWxlZCkpIHsKPiAgICAgICAgICAgICAgICBzdHJ1Y3QgcG9sbF90YWJsZV9zdHJ1Y3QgcHQgPSB7
-IC5fa2V5ID0gcG9sbC0+ZXZlbnRzID59Owo+LQo+KyAgICAgICAgICAgICAgIHBvbGwtPmhlYWQg
-PSBOVUxMOwo+ICAgICAgICAgICAgICAgIHJlcS0+cmVzdWx0ID0gdmZzX3BvbGwocmVxLT5maWxl
-LCAmcHQpICYgPnBvbGwtPmV2ZW50czsKPiAgICAgICAgfQoKCgo+VGhhbmtzCj5RaWFuZwoKPgo+
-I3N5eiB0ZXN0OiBnaXQ6Ly9naXQua2VybmVsLmRrL2xpbnV4LWJsb2NrIHN5emJvdC10ZXN0Cj4K
-Pi0tCj5KZW5zIEF4Ym9lCgo=
+On 3/2/21 11:52 PM, Hillf Danton wrote:
+> Tue, 02 Mar 2021 10:59:05 -0800
+>> Hello,
+>>
+>> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+>> possible deadlock in io_poll_double_wake
+>>
+>> ============================================
+>> WARNING: possible recursive locking detected
+>> 5.12.0-rc1-syzkaller #0 Not tainted
+>> --------------------------------------------
+>> syz-executor.4/10454 is trying to acquire lock:
+>> ffff8880343cc130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
+>> ffff8880343cc130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4925
+>>
+>> but task is already holding lock:
+>> ffff888034e3b130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
+>>
+>> other info that might help us debug this:
+>>  Possible unsafe locking scenario:
+>>
+>>        CPU0
+>>        ----
+>>   lock(&runtime->sleep);
+>>   lock(&runtime->sleep);
+>>
+>>  *** DEADLOCK ***
+>>
+>>  May be due to missing lock nesting notation
+>>
+>> 4 locks held by syz-executor.4/10454:
+>>  #0: ffff888018cc8128 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0x1146/0x2200 fs/io_uring.c:9113
+>>  #1: ffff888021692440 (&runtime->oss.params_lock){+.+.}-{3:3}, at: snd_pcm_oss_change_params sound/core/oss/pcm_oss.c:1087 [inline]
+>>  #1: ffff888021692440 (&runtime->oss.params_lock){+.+.}-{3:3}, at: snd_pcm_oss_make_ready+0xc7/0x1b0 sound/core/oss/pcm_oss.c:1149
+>>  #2: ffff888020273908 (&group->lock){..-.}-{2:2}, at: _snd_pcm_stream_lock_irqsave+0x9f/0xd0 sound/core/pcm_native.c:170
+>>  #3: ffff888034e3b130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
+>>
+>> stack backtrace:
+>> CPU: 0 PID: 10454 Comm: syz-executor.4 Not tainted 5.12.0-rc1-syzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>> Call Trace:
+>>  <IRQ>
+>>  __dump_stack lib/dump_stack.c:79 [inline]
+>>  dump_stack+0xfa/0x151 lib/dump_stack.c:120
+>>  print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
+>>  check_deadlock kernel/locking/lockdep.c:2872 [inline]
+>>  validate_chain kernel/locking/lockdep.c:3661 [inline]
+>>  __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
+>>  lock_acquire kernel/locking/lockdep.c:5510 [inline]
+>>  lock_acquire+0x1ab/0x730 kernel/locking/lockdep.c:5475
+>>  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+>>  _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+>>  spin_lock include/linux/spinlock.h:354 [inline]
+>>  io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4925
+>>  __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
+>>  __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
+>>  snd_pcm_update_state+0x46a/0x540 sound/core/pcm_lib.c:203
+>>  snd_pcm_update_hw_ptr0+0xa75/0x1a50 sound/core/pcm_lib.c:464
+>>  snd_pcm_period_elapsed+0x160/0x250 sound/core/pcm_lib.c:1805
+>>  dummy_hrtimer_callback+0x94/0x1b0 sound/drivers/dummy.c:378
+>>  __run_hrtimer kernel/time/hrtimer.c:1519 [inline]
+>>  __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1583
+>>  hrtimer_run_softirq+0x17b/0x360 kernel/time/hrtimer.c:1600
+>>  __do_softirq+0x29b/0x9f6 kernel/softirq.c:345
+>>  invoke_softirq kernel/softirq.c:221 [inline]
+>>  __irq_exit_rcu kernel/softirq.c:422 [inline]
+>>  irq_exit_rcu+0x134/0x200 kernel/softirq.c:434
+>>  sysvec_apic_timer_interrupt+0x93/0xc0 arch/x86/kernel/apic/apic.c:1100
+>>  </IRQ>
+>>  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
+>> RIP: 0010:unwind_next_frame+0xde0/0x2000 arch/x86/kernel/unwind_orc.c:611
+>> Code: 48 b8 00 00 00 00 00 fc ff df 4c 89 fa 48 c1 ea 03 0f b6 04 02 84 c0 74 08 3c 03 0f 8e 83 0f 00 00 41 3b 2f 0f 84 c1 05 00 00 <bf> 01 00 00 00 e8 16 95 1b 00 b8 01 00 00 00 65 8b 15 ca a8 cf 7e
+>> RSP: 0018:ffffc9000b447168 EFLAGS: 00000287
+>> RAX: ffffc9000b448001 RBX: 1ffff92001688e35 RCX: 1ffff92001688e01
+>> RDX: ffffc9000b447ae8 RSI: ffffc9000b447ab0 RDI: ffffc9000b447250
+>> RBP: ffffc9000b447ae0 R08: ffffffff8dac0810 R09: 0000000000000001
+>> R10: 0000000000084087 R11: 0000000000000001 R12: ffffc9000b440000
+>> R13: ffffc9000b447275 R14: ffffc9000b447290 R15: ffffc9000b447240
+>>  arch_stack_walk+0x7d/0xe0 arch/x86/kernel/stacktrace.c:25
+>>  stack_trace_save+0x8c/0xc0 kernel/stacktrace.c:121
+>>  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+>>  kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
+>>  kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:357
+>>  ____kasan_slab_free mm/kasan/common.c:360 [inline]
+>>  ____kasan_slab_free mm/kasan/common.c:325 [inline]
+>>  __kasan_slab_free+0xf5/0x130 mm/kasan/common.c:367
+>>  kasan_slab_free include/linux/kasan.h:199 [inline]
+>>  slab_free_hook mm/slub.c:1562 [inline]
+>>  slab_free_freelist_hook+0x72/0x1b0 mm/slub.c:1600
+>>  slab_free mm/slub.c:3161 [inline]
+>>  kfree+0xe5/0x7b0 mm/slub.c:4213
+>>  snd_pcm_hw_param_near.constprop.0+0x7b0/0x8f0 sound/core/oss/pcm_oss.c:438
+>>  snd_pcm_oss_change_params_locked+0x18c6/0x39a0 sound/core/oss/pcm_oss.c:936
+>>  snd_pcm_oss_change_params sound/core/oss/pcm_oss.c:1090 [inline]
+>>  snd_pcm_oss_make_ready+0xe7/0x1b0 sound/core/oss/pcm_oss.c:1149
+>>  snd_pcm_oss_set_trigger.isra.0+0x30f/0x6e0 sound/core/oss/pcm_oss.c:2057
+>>  snd_pcm_oss_poll+0x661/0xb10 sound/core/oss/pcm_oss.c:2841
+>>  vfs_poll include/linux/poll.h:90 [inline]
+>>  __io_arm_poll_handler+0x354/0xa20 fs/io_uring.c:5073
+>>  io_arm_poll_handler fs/io_uring.c:5142 [inline]
+>>  __io_queue_sqe+0x6ef/0xc40 fs/io_uring.c:6213
+>>  io_queue_sqe+0x60d/0xf60 fs/io_uring.c:6259
+>>  io_submit_sqe fs/io_uring.c:6423 [inline]
+>>  io_submit_sqes+0x519a/0x6320 fs/io_uring.c:6537
+>>  __do_sys_io_uring_enter+0x1152/0x2200 fs/io_uring.c:9114
+>>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+>> RIP: 0033:0x465ef9
+>> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+>> RSP: 002b:00007f818e00e188 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+>> RAX: ffffffffffffffda RBX: 000000000056c008 RCX: 0000000000465ef9
+>> RDX: 0000000000000000 RSI: 0000000000002039 RDI: 0000000000000004
+>> RBP: 00000000004bcd1c R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056c008
+>> R13: 0000000000a9fb1f R14: 00007f818e00e300 R15: 0000000000022000
+>>
+>>
+>> Tested on:
+>>
+>> commit:         c9387501 sound: name fiddling
+>> git tree:       git://git.kernel.dk/linux-block syzbot-test
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=16a51856d00000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0e4e0c3e0cf6e0
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=28abd693db9e92c160d8
+>> compiler:       
+>>
+> 
+> Walk around recursive lock before adding fix to io_poll_get_single().
+> 
+> --- x/fs/io_uring.c
+> +++ y/fs/io_uring.c
+> @@ -4945,6 +4945,7 @@ static int io_poll_double_wake(struct wa
+>  			       int sync, void *key)
+>  {
+>  	struct io_kiocb *req = wait->private;
+> +	struct io_poll_iocb *self = container_of(wait, struct io_poll_iocb, wait); 
+>  	struct io_poll_iocb *poll = io_poll_get_single(req);
+>  	__poll_t mask = key_to_poll(key);
+>  
+> @@ -4954,7 +4955,7 @@ static int io_poll_double_wake(struct wa
+>  
+>  	list_del_init(&wait->entry);
+>  
+> -	if (poll && poll->head) {
+> +	if (poll && poll->head && poll->head != self->head) {
+>  		bool done;
+>  
+>  		spin_lock(&poll->head->lock);
+
+The trace and the recent test shows that they are different, this
+case is already caught when we arm the double poll handling:
+
+https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.12&id=9e27652c987541aa7cc062e59343e321fff539ae
+
+I don't think there's a real issue here, I'm just poking to see why
+syzbot/lockdep thinks there is.
+
+-- 
+Jens Axboe
+

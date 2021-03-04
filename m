@@ -2,57 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 947C232C9AF
-	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 02:19:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62A9A32C9B1
+	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 02:19:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241660AbhCDBKV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Mar 2021 20:10:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50982 "EHLO
+        id S241789AbhCDBKW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Mar 2021 20:10:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1451110AbhCDAfx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Mar 2021 19:35:53 -0500
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F487C05BD41
-        for <io-uring@vger.kernel.org>; Wed,  3 Mar 2021 16:27:44 -0800 (PST)
-Received: by mail-pg1-x52b.google.com with SMTP id a23so7819005pga.8
-        for <io-uring@vger.kernel.org>; Wed, 03 Mar 2021 16:27:44 -0800 (PST)
+        with ESMTP id S1451123AbhCDAfy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Mar 2021 19:35:54 -0500
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4C96C05BD43
+        for <io-uring@vger.kernel.org>; Wed,  3 Mar 2021 16:27:45 -0800 (PST)
+Received: by mail-pf1-x432.google.com with SMTP id l7so13327750pfd.3
+        for <io-uring@vger.kernel.org>; Wed, 03 Mar 2021 16:27:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=smVAzKobfUVUatAmffBRUPKqSPJl+/IoHD2tUPYZ31o=;
-        b=U0ZdI+V45Z1wffkGKHiuOAoswxMv67D+eyOO/sgWzlZ9P7nEaKyEIQSHhtY+/+PrNP
-         ddBZD8kKWqtyo23fK/y7uPNtP9hKG44C+XSrvJg7WhzQjfdyNRhClIeCmtkWddJeUd3L
-         E34NqpUu+r0XD9L7WeVrp6YdotzHoJhAuLCBUHE7juKxG9VztMDpS48p65LcwoVu5IGD
-         ZZak2Lf+I8K9jwuD9tvZaZTYG3pR2UxBVLwh6DrIwKNBi3yDlqnXnMK+k/Z+hjWoIcnr
-         qOWoJ2c9MOLpp7BLlnDNCh1JwYkie3HtgrF/Sbd2NuUltSBZ4sduHX6YajxpMNhrUXgD
-         MbPw==
+        bh=rtW84DVCjingAdj27X/KaLsRWoHRR+chXSLB7a3hB3o=;
+        b=qyR5hi0dAQmiMamTgKkWPoHE2xv6SHteDMb3/DI9Y2EXq0jeqomqGBYzySoaqZBVcn
+         9HqGujFDzM5yEjLWouj38NCOcOiKok71xzdoO+c5LrIUVQMsK8p48MUY8WFyuF9EypxD
+         ikq6PzPvD5M13glmtFvlLdYTh/Xq1EPLIXzLeYRtCf/EfoV0Qd046Qbp1//y8v0AifDd
+         al9D6pyyOfS3bfIshS85sMjSlTtNvnO413IymkBavga2t3Oumws7VTvpQj6fenpcd3lp
+         tIsAEFNsKzB6BXK/zHZSCP7ptxKVfAQ3m1b5929N5Ac2cBJ+RWQBLO4Nlq8kn2FunAfl
+         T9TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=smVAzKobfUVUatAmffBRUPKqSPJl+/IoHD2tUPYZ31o=;
-        b=kASOSKWA/rLnd5sN+VPiVsNtKRp0HitBmS5nmhyp5P8S4LBM/bdWPtSOPHPRFljj+J
-         lRLpzNsW31U5vn1p8kNXwCupO5xVB+4DF55nN/19lUWcKHFvoTq8XrMHnq9GlJ0RUsPZ
-         PMgRZKPdcir+2Hy4An1cTDE++d+irP+yHP6voyGPsA0BVWVbSa2ToRUjvGkDGFGgxZmW
-         ridCD5aB2J1MfAotKNcg8Onwkkjj6UCb8uG3VXUpOCU6ubMER2wMHbpkyo8+AdH9kjmf
-         1zQ0b4GEfrouU6idwK2n76f5v8bX6ziRGNP14mTjzDNPgP/GnJxbJLIzLAPYyhcDrb4h
-         cp3w==
-X-Gm-Message-State: AOAM532ei6Cr3dRq5zOPaYfBHzADwqc5F2legsljn2YajKjRqe+bFzTn
-        VTGKnAbP8mQETcjqwkmIu0W7Cac2GFCGj7Jr
-X-Google-Smtp-Source: ABdhPJyTdILvqNcSBHlE2rGxseYBIeWFthUyd2eKrCc+tjc8SXX2o0+BkJ+4dzAyb1+pTc/sZpOVaQ==
-X-Received: by 2002:aa7:8a11:0:b029:1ee:42d8:a8f5 with SMTP id m17-20020aa78a110000b02901ee42d8a8f5mr1381283pfa.5.1614817663880;
-        Wed, 03 Mar 2021 16:27:43 -0800 (PST)
+        bh=rtW84DVCjingAdj27X/KaLsRWoHRR+chXSLB7a3hB3o=;
+        b=CSB2oEgorQLUhZrjKVF0SCChDxEZRheVMmGXQfvtfOz3FGQyZ2L3H2V0LCbLKUp/Sp
+         JpCAKCAzdDS20+3I43vb9K5p92MpEASZqvA83qJPB3IQc19J1w5ZOX0pTtxRyDkNXf+f
+         XxJoLnZYLclZQosAyW3axUPi/RKyeDeYKVASC4G7wlEArbeZ/L9KnNYypYkCx/v+Gbs2
+         j4qyIoMnWJoNL1Biq3HLEEMzAGgbP01W6DeXxnb9P6L+cq2k/uDGG2tqHenGU6XRRCz5
+         iGFVxZLnOnqWn9s5e5pxV2utxBFkOLTfLRpMN9ols+TqvrkFXDtFkaTEARwyX+g/eeJP
+         UVGA==
+X-Gm-Message-State: AOAM5325t5G1NmhxkSOHCTl9aJq+H06CM+VWTYkKHctMZ8AiCWQb4F82
+        rwAjQ17oFAGMsNSlmPzFZJ6jl6wtezi6BKzI
+X-Google-Smtp-Source: ABdhPJwXUcGdIllkPh2LqWB6QQwWQI9ov4N2VhzdvHbMembSzvLYyihQPX2NeVKPbnmeooEarKdzSg==
+X-Received: by 2002:a05:6a00:894:b029:1dc:2f68:5f0 with SMTP id q20-20020a056a000894b02901dc2f6805f0mr1234290pfj.23.1614817665090;
+        Wed, 03 Mar 2021 16:27:45 -0800 (PST)
 Received: from localhost.localdomain ([2600:380:7540:52b5:3f01:150c:3b2:bf47])
-        by smtp.gmail.com with ESMTPSA id b6sm23456983pgt.69.2021.03.03.16.27.42
+        by smtp.gmail.com with ESMTPSA id b6sm23456983pgt.69.2021.03.03.16.27.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 16:27:43 -0800 (PST)
+        Wed, 03 Mar 2021 16:27:44 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Alex Xu <alex_y_xu@yahoo.ca>
-Subject: [PATCH 32/33] io_uring: ensure that threads freeze on suspend
-Date:   Wed,  3 Mar 2021 17:26:59 -0700
-Message-Id: <20210304002700.374417-33-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot+91b4b56ead187d35c9d3@syzkaller.appspotmail.com
+Subject: [PATCH 33/33] io-wq: ensure all pending work is canceled on exit
+Date:   Wed,  3 Mar 2021 17:27:00 -0700
+Message-Id: <20210304002700.374417-34-axboe@kernel.dk>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210304002700.374417-1-axboe@kernel.dk>
 References: <20210304002700.374417-1-axboe@kernel.dk>
@@ -62,123 +63,107 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Alex reports that his system fails to suspend using 5.12-rc1, with the
-following dump:
+If we race on shutting down the io-wq, then we should ensure that any
+work that was queued after workers shutdown is canceled. Harden the
+add work check a bit too, checking for IO_WQ_BIT_EXIT and cancel if
+it's set.
 
-[  240.650300] PM: suspend entry (deep)
-[  240.650748] Filesystems sync: 0.000 seconds
-[  240.725605] Freezing user space processes ...
-[  260.739483] Freezing of tasks failed after 20.013 seconds (3 tasks refusing to freeze, wq_busy=0):
-[  260.739497] task:iou-mgr-446     state:S stack:    0 pid:  516 ppid:   439 flags:0x00004224
-[  260.739504] Call Trace:
-[  260.739507]  ? sysvec_apic_timer_interrupt+0xb/0x81
-[  260.739515]  ? pick_next_task_fair+0x197/0x1cde
-[  260.739519]  ? sysvec_reschedule_ipi+0x2f/0x6a
-[  260.739522]  ? asm_sysvec_reschedule_ipi+0x12/0x20
-[  260.739525]  ? __schedule+0x57/0x6d6
-[  260.739529]  ? del_timer_sync+0xb9/0x115
-[  260.739533]  ? schedule+0x63/0xd5
-[  260.739536]  ? schedule_timeout+0x219/0x356
-[  260.739540]  ? __next_timer_interrupt+0xf1/0xf1
-[  260.739544]  ? io_wq_manager+0x73/0xb1
-[  260.739549]  ? io_wq_create+0x262/0x262
-[  260.739553]  ? ret_from_fork+0x22/0x30
-[  260.739557] task:iou-mgr-517     state:S stack:    0 pid:  522 ppid:   439 flags:0x00004224
-[  260.739561] Call Trace:
-[  260.739563]  ? sysvec_apic_timer_interrupt+0xb/0x81
-[  260.739566]  ? pick_next_task_fair+0x16f/0x1cde
-[  260.739569]  ? sysvec_apic_timer_interrupt+0xb/0x81
-[  260.739571]  ? asm_sysvec_apic_timer_interrupt+0x12/0x20
-[  260.739574]  ? __schedule+0x5b7/0x6d6
-[  260.739578]  ? del_timer_sync+0x70/0x115
-[  260.739581]  ? schedule_timeout+0x211/0x356
-[  260.739585]  ? __next_timer_interrupt+0xf1/0xf1
-[  260.739588]  ? io_wq_check_workers+0x15/0x11f
-[  260.739592]  ? io_wq_manager+0x69/0xb1
-[  260.739596]  ? io_wq_create+0x262/0x262
-[  260.739600]  ? ret_from_fork+0x22/0x30
-[  260.739603] task:iou-wrk-517     state:S stack:    0 pid:  523 ppid:   439 flags:0x00004224
-[  260.739607] Call Trace:
-[  260.739609]  ? __schedule+0x5b7/0x6d6
-[  260.739614]  ? schedule+0x63/0xd5
-[  260.739617]  ? schedule_timeout+0x219/0x356
-[  260.739621]  ? __next_timer_interrupt+0xf1/0xf1
-[  260.739624]  ? task_thread.isra.0+0x148/0x3af
-[  260.739628]  ? task_thread_unbound+0xa/0xa
-[  260.739632]  ? task_thread_bound+0x7/0x7
-[  260.739636]  ? ret_from_fork+0x22/0x30
-[  260.739647] OOM killer enabled.
-[  260.739648] Restarting tasks ... done.
-[  260.740077] PM: suspend exit
+Add a WARN_ON() for having any work before we kill the io-wq context.
 
-Play nice and ensure that any thread we create will call try_to_freeze()
-at an opportune time so that memory suspend can proceed. For the io-wq
-worker threads, mark them as PF_NOFREEZE. They could potentially be
-blocked for a long time.
-
-Reported-by: Alex Xu (Hello71) <alex_y_xu@yahoo.ca>
-Tested-by: Alex Xu (Hello71) <alex_y_xu@yahoo.ca>
+Reported-by: syzbot+91b4b56ead187d35c9d3@syzkaller.appspotmail.com
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io-wq.c    | 3 +++
- fs/io_uring.c | 5 ++---
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ fs/io-wq.c | 42 +++++++++++++++++++++++++++++++++---------
+ 1 file changed, 33 insertions(+), 9 deletions(-)
 
 diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 1fdb2b621b51..a44bd22c045e 100644
+index a44bd22c045e..6d57f9b80213 100644
 --- a/fs/io-wq.c
 +++ b/fs/io-wq.c
-@@ -16,6 +16,7 @@
- #include <linux/rculist_nulls.h>
- #include <linux/cpu.h>
- #include <linux/tracehook.h>
-+#include <linux/freezer.h>
+@@ -129,6 +129,17 @@ struct io_wq {
  
- #include "../kernel/sched/sched.h"
- #include "io-wq.h"
-@@ -263,6 +264,7 @@ static void io_wqe_dec_running(struct io_worker *worker)
+ static enum cpuhp_state io_wq_online;
  
- static void io_worker_start(struct io_worker *worker)
++struct io_cb_cancel_data {
++	work_cancel_fn *fn;
++	void *data;
++	int nr_running;
++	int nr_pending;
++	bool cancel_all;
++};
++
++static void io_wqe_cancel_pending_work(struct io_wqe *wqe,
++				       struct io_cb_cancel_data *match);
++
+ static bool io_worker_get(struct io_worker *worker)
  {
-+	current->flags |= PF_NOFREEZE;
- 	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
- 	io_wqe_inc_running(worker);
- 	complete(&worker->started);
-@@ -731,6 +733,7 @@ static int io_wq_manager(void *data)
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		io_wq_check_workers(wq);
- 		schedule_timeout(HZ);
-+		try_to_freeze();
- 		if (fatal_signal_pending(current))
- 			set_bit(IO_WQ_BIT_EXIT, &wq->state);
- 	} while (!test_bit(IO_WQ_BIT_EXIT, &wq->state));
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d9161b181a21..7cf8d4a99d91 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -74,13 +74,11 @@
- #include <linux/fsnotify.h>
- #include <linux/fadvise.h>
- #include <linux/eventpoll.h>
--#include <linux/fs_struct.h>
- #include <linux/splice.h>
- #include <linux/task_work.h>
- #include <linux/pagemap.h>
- #include <linux/io_uring.h>
--#include <linux/blk-cgroup.h>
--#include <linux/audit.h>
-+#include <linux/freezer.h>
+ 	return refcount_inc_not_zero(&worker->ref);
+@@ -713,6 +724,23 @@ static void io_wq_check_workers(struct io_wq *wq)
+ 	}
+ }
  
- #define CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -6736,6 +6734,7 @@ static int io_sq_thread(void *data)
- 				io_ring_set_wakeup_flag(ctx);
++static bool io_wq_work_match_all(struct io_wq_work *work, void *data)
++{
++	return true;
++}
++
++static void io_wq_cancel_pending(struct io_wq *wq)
++{
++	struct io_cb_cancel_data match = {
++		.fn		= io_wq_work_match_all,
++		.cancel_all	= true,
++	};
++	int node;
++
++	for_each_node(node)
++		io_wqe_cancel_pending_work(wq->wqes[node], &match);
++}
++
+ /*
+  * Manager thread. Tasked with creating new workers, if we need them.
+  */
+@@ -748,6 +776,8 @@ static int io_wq_manager(void *data)
+ 	/* we might not ever have created any workers */
+ 	if (atomic_read(&wq->worker_refs))
+ 		wait_for_completion(&wq->worker_done);
++
++	io_wq_cancel_pending(wq);
+ 	complete(&wq->exited);
+ 	do_exit(0);
+ }
+@@ -809,7 +839,8 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
+ 	unsigned long flags;
  
- 			schedule();
-+			try_to_freeze();
- 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
- 				io_ring_clear_wakeup_flag(ctx);
- 		}
+ 	/* Can only happen if manager creation fails after exec */
+-	if (unlikely(io_wq_fork_manager(wqe->wq))) {
++	if (io_wq_fork_manager(wqe->wq) ||
++	    test_bit(IO_WQ_BIT_EXIT, &wqe->wq->state)) {
+ 		work->flags |= IO_WQ_WORK_CANCEL;
+ 		wqe->wq->do_work(work);
+ 		return;
+@@ -845,14 +876,6 @@ void io_wq_hash_work(struct io_wq_work *work, void *val)
+ 	work->flags |= (IO_WQ_WORK_HASHED | (bit << IO_WQ_HASH_SHIFT));
+ }
+ 
+-struct io_cb_cancel_data {
+-	work_cancel_fn *fn;
+-	void *data;
+-	int nr_running;
+-	int nr_pending;
+-	bool cancel_all;
+-};
+-
+ static bool io_wq_worker_cancel(struct io_worker *worker, void *data)
+ {
+ 	struct io_cb_cancel_data *match = data;
+@@ -1086,6 +1109,7 @@ static void io_wq_destroy(struct io_wq *wq)
+ 		struct io_wqe *wqe = wq->wqes[node];
+ 
+ 		list_del_init(&wqe->wait.entry);
++		WARN_ON_ONCE(!wq_list_empty(&wqe->work_list));
+ 		kfree(wqe);
+ 	}
+ 	spin_unlock_irq(&wq->hash->wait.lock);
 -- 
 2.30.1
 

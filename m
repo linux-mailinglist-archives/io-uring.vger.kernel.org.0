@@ -2,58 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DEAE032C9A7
-	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 02:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A549632C9A5
+	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 02:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235206AbhCDBKD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Mar 2021 20:10:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51418 "EHLO
+        id S239390AbhCDBKE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Mar 2021 20:10:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348204AbhCDAd2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Mar 2021 19:33:28 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C4DC0613E8
-        for <io-uring@vger.kernel.org>; Wed,  3 Mar 2021 16:27:22 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id p21so17616692pgl.12
-        for <io-uring@vger.kernel.org>; Wed, 03 Mar 2021 16:27:22 -0800 (PST)
+        with ESMTP id S1355772AbhCDAdh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Mar 2021 19:33:37 -0500
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E89F8C0613E9
+        for <io-uring@vger.kernel.org>; Wed,  3 Mar 2021 16:27:23 -0800 (PST)
+Received: by mail-pl1-x631.google.com with SMTP id s16so15045161plr.9
+        for <io-uring@vger.kernel.org>; Wed, 03 Mar 2021 16:27:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3ezGVZWPHudQ53VoTJIV0CGurj6JphiEK5IXbgVDDVY=;
-        b=FcimO3l3mrhpEyMQZBmE3pegkqjygnbEjU6s/2m5F3jIifTgQLVarDSNSVNArLzVs+
-         5GDLGTOyJCYuB+DUOAn3lsq0PhECU0TqZuPXHffah86Vpnq0/2vx2d/XhOd3KlguWhSb
-         Vcn4SnO0RipCDnOqB004w2403S7wBfj7XLh9fE3eVtcHA9QLqOk9HhT/drXi27lQiHZB
-         XMvx5ocOduLv9fp3v7ToeYsGzfetTZvrCOGp3TIuV9OlN+B7OeFU2IddZIWz7UwuWZ0x
-         f11ga2wFss7M4D8NFqs3IXne9i8j6P3By12FOUsmGjBpjKYUsTNKBQDdAuu4H7NsoT3P
-         iAzg==
+        bh=wKN9u53G4zeydtvpEl9PiMxLYSgsXopkghSUc88bEu4=;
+        b=kOJKnoHFjZgKcMlMsvl4SUgxdbSflRpERgq2IhjZSPWwf3F7o2UjFIuiLJSNeAGosj
+         PM08x1poej1yeowwUuEirupap3HJf6JIq5WwfRFRLezV4o6AbM+Y23uFMDhDMroukIkF
+         byUvl57CVuY7+u7kgl0hiKMwNdPIqlNOBfJlIKxuJYYv/lAHDfYnEvT43MngZAvPGTnq
+         ThX5ZqtYcQ4H4pGQHUfcKbc/wcdVh1QtyGT5ivarJ9LC3UCpCSbJow7e6/nSenWQz+JK
+         TJoFth7s1t5shijslzCIMrLb0v1QPzCPjVjKAXuHB8LKeNUFpPgINgyZc2mqhPweeQ96
+         njjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3ezGVZWPHudQ53VoTJIV0CGurj6JphiEK5IXbgVDDVY=;
-        b=NMpzMi0AznqZLEd4mMrC37pPAg9DFQUpUrlepylqUAtIOWMn348hr7fgrzJu6k4q6u
-         xxmBIw7ycVhw0Qh9c5brygiBGiysCGQn0DjgThWI2rzawTZENSt6Xul3Oiqap0/DdjZT
-         AS8HG5wub7J1R+4obSGH6n5FVF9nEVDKaXJLV6Uj/T17zOIoTcVkct1x5/MzMI5DND/D
-         y81o02YBEw5klYPIW8IF5RIrhmXKfn26JtBnvfx5zg18rPo/6JAKz3F/LNIwvg32aesi
-         aG1tDKaj9AalhOaYQxAf7UR3J3LrVg6jS9drjSCoL8cabbVF1GpKVGB7bvvykJfAfij8
-         aiqg==
-X-Gm-Message-State: AOAM531xy4SJrP/hXPhwqp6wTofD3FdR/4UiNVEiYJkK/IthImPPpneS
-        74zeElO2zcGM1IV+Mjawo4aYniUCFvGusmIM
-X-Google-Smtp-Source: ABdhPJyNj8LUL34pdpxiG81/iXxUSH6CfEWkuWF/RE3K/tDOb4u+BP2UbftpZkfSSzDuFUqTFkxpqw==
-X-Received: by 2002:aa7:96c6:0:b029:1ed:9913:c23b with SMTP id h6-20020aa796c60000b02901ed9913c23bmr1310085pfq.70.1614817642110;
-        Wed, 03 Mar 2021 16:27:22 -0800 (PST)
+        bh=wKN9u53G4zeydtvpEl9PiMxLYSgsXopkghSUc88bEu4=;
+        b=YVipyDMj2l3LeHkE8jqlVyv74de1NM/UoVrkC7BhnQI+9M73ZsAQ15QX5MGWCdaAWU
+         2m3vPkJVDJlPHHHsqvQH9BoDXY3jctI992Vhp1cHH+ZJRUo64By4uSpsujSLbLz/OOQC
+         E//gghTTO9WjxJaa7QF8gHD4KmvO3DBxMPOZMGBgZjSybvD1/D13UrdvkGUWP/aBK3R9
+         BexCwMqowXKAgzE5lHn9u3b9KSi/Bvym0l8GVnilizQTVd+BqriZYibs2WGMzfkdkkLS
+         yFPfjWe2huWhKe2w/BLdnUARNX8R87kec2cw2IoqYz+f7Ss30WVnvl3FgxmSflfSY8Z/
+         1cjA==
+X-Gm-Message-State: AOAM530Dm6vPY18vcbdRBnCYgNWz4q6CmUnAZx21olRTJ0ITp62m/Zap
+        Q63JT5I56MtXw87sYK0oMNcyKrcMbwTdQ532
+X-Google-Smtp-Source: ABdhPJwVQYoWHlCNektLFoxDs8JWt2zv+pfzv8JEBBDQtYillJwoR1c7rWDIeDt16HVzfxiculQejg==
+X-Received: by 2002:a17:90a:31cc:: with SMTP id j12mr1568241pjf.203.1614817643237;
+        Wed, 03 Mar 2021 16:27:23 -0800 (PST)
 Received: from localhost.localdomain ([2600:380:7540:52b5:3f01:150c:3b2:bf47])
-        by smtp.gmail.com with ESMTPSA id b6sm23456983pgt.69.2021.03.03.16.27.21
+        by smtp.gmail.com with ESMTPSA id b6sm23456983pgt.69.2021.03.03.16.27.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 16:27:21 -0800 (PST)
+        Wed, 03 Mar 2021 16:27:22 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 14/33] io_uring: destroy io-wq on exec
-Date:   Wed,  3 Mar 2021 17:26:41 -0700
-Message-Id: <20210304002700.374417-15-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 15/33] io_uring: remove unused argument 'tsk' from io_req_caches_free()
+Date:   Wed,  3 Mar 2021 17:26:42 -0700
+Message-Id: <20210304002700.374417-16-axboe@kernel.dk>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210304002700.374417-1-axboe@kernel.dk>
 References: <20210304002700.374417-1-axboe@kernel.dk>
@@ -63,89 +62,44 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+We prune the full cache regardless, get rid of the dead argument.
 
-Destroy current's io-wq backend and tctx on __io_uring_task_cancel(),
-aka exec(). Looks it's not strictly necessary, because it will be done
-at some point when the task dies and changes of creds/files/etc. are
-handled, but better to do that earlier to free io-wq and not potentially
-lock previous mm and other resources for the time being.
-
-It's safe to do because we wait for all requests of the current task to
-complete, so no request will use tctx afterwards. Note, that
-io_uring_files_cancel() may leave some requests for later reaping, so it
-leaves tctx intact, that's ok as the task is dying anyway.
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c            | 19 ++++++++++---------
- include/linux/io_uring.h |  2 +-
- 2 files changed, 11 insertions(+), 10 deletions(-)
+ fs/io_uring.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d495735de2d9..4afe3dd1430c 100644
+index 4afe3dd1430c..fa5b589b4516 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -8835,13 +8835,17 @@ static void io_uring_del_task_file(struct file *file)
- 		fput(file);
+@@ -8395,7 +8395,7 @@ static void io_req_cache_free(struct list_head *list, struct task_struct *tsk)
+ 	}
  }
  
--static void io_uring_remove_task_files(struct io_uring_task *tctx)
-+static void io_uring_clean_tctx(struct io_uring_task *tctx)
+-static void io_req_caches_free(struct io_ring_ctx *ctx, struct task_struct *tsk)
++static void io_req_caches_free(struct io_ring_ctx *ctx)
  {
- 	struct file *file;
- 	unsigned long index;
+ 	struct io_submit_state *submit_state = &ctx->submit_state;
+ 	struct io_comp_state *cs = &ctx->submit_state.comp;
+@@ -8455,7 +8455,7 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
  
- 	xa_for_each(&tctx->xa, index, file)
- 		io_uring_del_task_file(file);
-+	if (tctx->io_wq) {
-+		io_wq_put_and_exit(tctx->io_wq);
-+		tctx->io_wq = NULL;
-+	}
- }
+ 	percpu_ref_exit(&ctx->refs);
+ 	free_uid(ctx->user);
+-	io_req_caches_free(ctx, NULL);
++	io_req_caches_free(ctx);
+ 	if (ctx->hash_map)
+ 		io_wq_put_hash(ctx->hash_map);
+ 	kfree(ctx->cancel_hash);
+@@ -8987,7 +8987,7 @@ static int io_uring_flush(struct file *file, void *data)
  
- void __io_uring_files_cancel(struct files_struct *files)
-@@ -8856,13 +8860,8 @@ void __io_uring_files_cancel(struct files_struct *files)
- 		io_uring_cancel_task_requests(file->private_data, files);
- 	atomic_dec(&tctx->in_idle);
+ 	if (fatal_signal_pending(current) || (current->flags & PF_EXITING)) {
+ 		io_uring_cancel_task_requests(ctx, NULL);
+-		io_req_caches_free(ctx, current);
++		io_req_caches_free(ctx);
+ 	}
  
--	if (files) {
--		io_uring_remove_task_files(tctx);
--		if (tctx->io_wq) {
--			io_wq_put_and_exit(tctx->io_wq);
--			tctx->io_wq = NULL;
--		}
--	}
-+	if (files)
-+		io_uring_clean_tctx(tctx);
- }
- 
- static s64 tctx_inflight(struct io_uring_task *tctx)
-@@ -8954,7 +8953,9 @@ void __io_uring_task_cancel(void)
- 
- 	atomic_dec(&tctx->in_idle);
- 
--	io_uring_remove_task_files(tctx);
-+	io_uring_clean_tctx(tctx);
-+	/* all current's requests should be gone, we can kill tctx */
-+	__io_uring_free(current);
- }
- 
- void __io_uring_unshare(void)
-diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-index bfe2fcb4f478..796e0d7d186d 100644
---- a/include/linux/io_uring.h
-+++ b/include/linux/io_uring.h
-@@ -44,7 +44,7 @@ static inline void io_uring_unshare(void)
- }
- static inline void io_uring_task_cancel(void)
- {
--	if (current->io_uring && !xa_empty(&current->io_uring->xa))
-+	if (current->io_uring)
- 		__io_uring_task_cancel();
- }
- static inline void io_uring_files_cancel(struct files_struct *files)
+ 	io_run_ctx_fallback(ctx);
 -- 
 2.30.1
 

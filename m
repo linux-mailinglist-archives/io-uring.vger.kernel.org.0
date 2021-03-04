@@ -2,91 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 786D832D19C
-	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 12:16:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 845C032D2B9
+	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 13:17:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233722AbhCDLPL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Mar 2021 06:15:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48912 "EHLO
+        id S231889AbhCDMQR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Mar 2021 07:16:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239514AbhCDLOj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Mar 2021 06:14:39 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21040C061574
-        for <io-uring@vger.kernel.org>; Thu,  4 Mar 2021 03:13:59 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id a18so18977600wrc.13
-        for <io-uring@vger.kernel.org>; Thu, 04 Mar 2021 03:13:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XHyKrwKq5fM3r5AB9uFmBKte7bjeOG4uqO0BOTAF9iM=;
-        b=t0+/ozwJOMXGEwWqXoKLUJbZqK+mDJmV77TlWnFnbAsMQTn7g4lw29sBgVmBneyB3Y
-         lVZT6snMo/Iy1Degs5UxnKjV/FWU9VdVqpmp4LwNUwY67W5Qh47GPbjWjUmOJsrw+iK3
-         eKcFMASTtZJFcCBgdmiL+MBNpRYo3FYktADMATtPNIeBN1twpUbGK5q9qoL7PbJFE1fT
-         JNfL0g7/MOai8LhTWTq7R7yOy0PzpphvUWqYF/wQj+R3vZvCW93GONOnV/PyMvq/d1HN
-         uadfKpNP187UYv45lI8EFq20hRInPhVVsK3oppPRgI+33y7P0M3a8KjdEChfvyEqWICs
-         n2Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XHyKrwKq5fM3r5AB9uFmBKte7bjeOG4uqO0BOTAF9iM=;
-        b=kpRCE3/L6mamQjFL2vhdtUuegsp2aMw5MYsz8td6msxaiREYi4eZOZwWlnbapj+Vfz
-         sg9BEBV2bFsUqFxLpCLScqRDpAlcC7Iz8IkLXhG7SUHgJYqTVAsbi2px5hdNrCqwZ62h
-         zrwyQrKETm307ekdxBoKYvvH1xmxJtPQea6IgmY0XeI8/vVcXE/z11LrBSxc/eleA4sY
-         R0UEvkMmOUOSxll2K9qoWBkFwwA3lbvn2NFVERWvpJ+iorE8QE+zQkYRPJiN1d5ISO3h
-         DnwoMIOVZ/pTctsEsaRorte/4kaNoLOhQfFVngvLFN4wYK8aeU3vHcnKtszStnCFecqc
-         HdhQ==
-X-Gm-Message-State: AOAM532CPfhuyulWB/54+l2208w3RxgeMUdbTqQnBLIdv+rXQlBGNTWH
-        1p4FXhB2HKcdcSdZnoycPKwsjIwXk+QuByi3XBk=
-X-Google-Smtp-Source: ABdhPJxvnPsChJuZZkZHA7KIyT8WcIkX1Wnhrb+H3ITh1Q2I09oASAvRbI09lvplRSkwhHVHI5XSPf7PG641Utl7wyk=
-X-Received: by 2002:a5d:4286:: with SMTP id k6mr3456316wrq.278.1614856437853;
- Thu, 04 Mar 2021 03:13:57 -0800 (PST)
+        with ESMTP id S240502AbhCDMPp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Mar 2021 07:15:45 -0500
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB848C061760
+        for <io-uring@vger.kernel.org>; Thu,  4 Mar 2021 04:15:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:From:Cc:To;
+        bh=JA4TLk0pY7gfINK4mw20tlxfQXm9YD4pHVNWTQdhy1s=; b=jvdfu80EbVvlMpR6MUFjn3ve4S
+        Taw1QxBLSXIavXh1YldQ4D9iqj+ePwHXJVSHbCdnRNwRcbVvwIUZ/ut3DLlcf8meiZYQmg+tN1b+T
+        utYWzHsBhUA902nhUEzPl2zQ4/gHg+m1prFo1CZCeWui0C3NuG5lci1wqPFwk5oVTmnIBi/2GBWgl
+        /HItK3vGG0Wah6SBqFwWCCieP7wbU5vAbM4kb9NKMg2YEffbL7sWqTXTcI5Fu2XFh0+HZDCYs6N5k
+        WJOEKk+sXC49F93sN1Hd27ziJtB7kcvDkx+hmHUyT89nYxfWWkoiC7HdMyQuCFwO6bybUQ5fIJCWr
+        Aa34xk5ccMoz+NUgFbT/r75s47wTboCbRAJph6t1Ca0X4lSfAZXzfiogETT2qkvluHM9vBxhW3A8C
+        eR35ciERomocmMlPc7EyppiGwUNPc58qSbeTVwTUgI/7JNUu2nYCqkAY3ZMtFj0AeGynDu+5+F18f
+        K0frv3/6rw2BJX3x4QnXvYSv;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1lHmsf-0005U5-2b; Thu, 04 Mar 2021 12:15:01 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+References: <20210304002700.374417-1-axboe@kernel.dk>
+ <20210304002700.374417-13-axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Re: [PATCH 12/33] io_uring: signal worker thread unshare
+Message-ID: <32ca12f8-0ca0-d247-aefc-01d82d4f47eb@samba.org>
+Date:   Thu, 4 Mar 2021 13:15:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-References: <20210302160734.99610-1-joshi.k@samsung.com> <CGME20210302161005epcas5p23f28fe21bab5a3e07b9b382dd2406fdc@epcas5p2.samsung.com>
- <20210302160734.99610-3-joshi.k@samsung.com> <BYAPR04MB496566944851825B251CA93686989@BYAPR04MB4965.namprd04.prod.outlook.com>
-In-Reply-To: <BYAPR04MB496566944851825B251CA93686989@BYAPR04MB4965.namprd04.prod.outlook.com>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Thu, 4 Mar 2021 16:43:30 +0530
-Message-ID: <CA+1E3rLCSWDmLa1rrZ986xnbx6fcsGgBE6NPP59eJj4swY+gQg@mail.gmail.com>
-Subject: Re: [RFC 2/3] nvme: passthrough helper with callback
-To:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>, "hch@lst.de" <hch@lst.de>,
-        "kbusch@kernel.org" <kbusch@kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "anuj20.g@samsung.com" <anuj20.g@samsung.com>,
-        "javier.gonz@samsung.com" <javier.gonz@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210304002700.374417-13-axboe@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Mar 3, 2021 at 8:52 PM Chaitanya Kulkarni
-<Chaitanya.Kulkarni@wdc.com> wrote:
->
-> On 3/2/21 23:22, Kanchan Joshi wrote:
-> > -void nvme_execute_passthru_rq(struct request *rq)
-> > +void nvme_execute_passthru_rq_common(struct request *rq,
-> > +                     rq_end_io_fn *done)
-> >  {
-> >       struct nvme_command *cmd = nvme_req(rq)->cmd;
-> >       struct nvme_ctrl *ctrl = nvme_req(rq)->ctrl;
-> > @@ -1135,9 +1136,17 @@ void nvme_execute_passthru_rq(struct request *rq)
-> >       u32 effects;
-> >
-> >       effects = nvme_passthru_start(ctrl, ns, cmd->common.opcode);
-> > -     blk_execute_rq(disk, rq, 0);
-> > +     if (!done)
-> > +             blk_execute_rq(disk, rq, 0);
-> > +     else
-> > +             blk_execute_rq_nowait(disk, rq, 0, done);
-> >       nvme_passthru_end(ctrl, effects);
->
-> This needs a detailed explanation in order to prove the correctness.
 
-Do you see something wrong here?
-blk_execute_rq() employs the same helper (i.e. nowait one) and uses
-additional completion-variable to make it sync.
+Hi Jens,
+
+> If the original task switches credentials or unshares any part of the
+> task state, then we should notify the io_uring workers to they can
+> re-fork as well. For credentials, this actually happens just fine for
+> the io-wq workers, as we grab and pass that down. For SQPOLL, we're
+> stuck with the original credentials, which means that it cannot be used
+> if the task does eg seteuid().
+
+I fear that this will be very problematic for Samba's use of io_uring.
+
+We change credentials very often, switching between the impersonated users
+and also root in order to run privileged sections.
+
+Currently fd-based operations are not affected by the credential switches.
+
+I guess any credential switch means that all pending io_uring requests
+get canceled, correct?
+
+It also means the usage of IORING_REGISTER_PERSONALITY isn't useful any longer,
+as that requires a credential switch before (and most likely after) the
+io_uring_register() syscall.
+
+As seteuid(), unshare() and similar syscalls are per thread instead of process
+in the kernel, the io_wq is also per userspace thread and not per io_ring_ctx, correct?
+
+As I read the code any credential change in any userspace thread will
+cause the sq_thread to be stopped and restarted by the next io_uring_enter(),
+which means that the sq_thread may change its main credentials randomly overtime,
+depending on which userspace thread calls io_uring_enter() first.
+As unshare() applies only to the current task_struct I'm wondering if
+we only want to refork the sq_thread if the current task is the parent of
+the sq_thread.
+
+I'm wondering if we better remove io_uring_unshare() from commit_creds()
+and always handle the creds explicitly as req->work.creds.
+io_init_req() then will req->work.creds from ctx->personality_idr
+or from current->cred. At the same time we'd readd ctx->creds = get_current_cred();
+in io_uring_setup() and use these ctx->creds in the io_sq_thread again
+in order to make things sane again.
+
+I'm also wondering if all this has an impact on IORING_SETUP_ATTACH_WQ,
+in particular I'm thinking of the case where the fd was transfered via SCM_RIGHTS
+or across fork(), when mm and files are not shared between the processes.
+
+I think the IORING_FEAT_CUR_PERSONALITY section in io_uring_setup.2
+should also talk about what credentials are used in the IORING_SETUP_SQPOLL case.
+
+The IORING_SETUP_SQPOLL section should also be more detailed regarding
+what state is used in particular in combination with IORING_SETUP_ATTACH_WQ.
+Wasn't the idea up to 5.11 that the sq_thread would capture the whole
+state at io_uring_setup()?
+
+I think we need to maintain the overall behavior exposed to userspace...
+
+metze

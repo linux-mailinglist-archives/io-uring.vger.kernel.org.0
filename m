@@ -2,89 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A4B32D4CE
-	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 15:06:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C35A32D4D0
+	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 15:06:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232135AbhCDOEf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S237393AbhCDOEf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Thu, 4 Mar 2021 09:04:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57206 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237393AbhCDOEP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Mar 2021 09:04:15 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78A70C061760
-        for <io-uring@vger.kernel.org>; Thu,  4 Mar 2021 06:03:35 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id 7so27791448wrz.0
-        for <io-uring@vger.kernel.org>; Thu, 04 Mar 2021 06:03:35 -0800 (PST)
+        with ESMTP id S237583AbhCDOER (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Mar 2021 09:04:17 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E63C061761
+        for <io-uring@vger.kernel.org>; Thu,  4 Mar 2021 06:03:36 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id h98so27744728wrh.11
+        for <io-uring@vger.kernel.org>; Thu, 04 Mar 2021 06:03:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=PkoR+RV76KPBGA0yMCMW+ZTVEJ0FNn6wDuIrkIikY18=;
-        b=B7zXuxkgpH5NrUMIpRDfOMP/8YXdD4VZKvKpnDcXuqpITFFvaLqo4smnQ9ujRQu/ZN
-         NvYeOSMobEJgCSspH3P1Bm3PA38PDVkmpyQau7jNx1o7o788YlS6VibHwXCzJEQYyZFU
-         nUQ+AOlwHYRRTeJP01xXNrbvDdwQacC2PNPhwKXBAzCzX/WhFaBzXq6FBshhsmNZj+VD
-         2ZwUDIkEaamYGJkVkw+AcuhUxGgMGRlkbmGvhdFtbwj5kD8wiQdy4S66tr4DyXbnrz+X
-         tT4i0FZakhI3yusPICScG8vG2YPm9Elt1M2zSp8Erpf1vrNVz9xD49ReUZScTG8wag7F
-         SyQA==
+        bh=nwFt3bEY7CR79i67G8c499ytIqZvxFdqr8Fzfscpxt0=;
+        b=OXxYvpH6qKsccY4+c3mIhHKPck8gtjekr0iacvem0jry3BZSPMdBXY020ZRzGkHgUx
+         tYOvKkl71B0J8xGX/3yH2CEyBonEytvn5AQ1lIfm1kM1m7oex5o8C+A7OYC3erxaU7c9
+         fywM1D3KmzlJumdMNjTvXDQqIC5pJMYaasJpNV/Jk6FNkzrk/tdxf6bRwzBsd3skzzK7
+         y667hkX0hVWvk9rkvNI8X2WoEP0vXRf6vWLrG0DU03OGI/sXd5tAp8pYQI0QWg5FgbHD
+         fvCqmDQBuaaRbRQYxR+VQSFMj9dDuRDDO3reade6OkCKRg0AMw+0I19oymek4cNVfx8Z
+         Hgdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PkoR+RV76KPBGA0yMCMW+ZTVEJ0FNn6wDuIrkIikY18=;
-        b=bX7pMLCg7xWlMQ8lbhYI9aM1M2AGsEvUhqHkYL4cmXdgqbztWpiCmLmYGZFZNzNxkV
-         K/a3kyg/5Rysf+NGtmQY5AT/6QelslWpZO5nUAuAINJwwtzoe12N7Bi0wXSSa8ufFoOA
-         /OXFOkEaV9NnmM0Y/Tm2AwXj/5RxdHMBeRm68/kiesCrHhZsIwIX/rhQbZNOniOfe2Xc
-         MuBoL22Z+XMVMt+oENRfPPc0DHsQhqmCOL3j265mwsscwyaGtIaRE3k+L49Hxo5eKBo+
-         tDDIk/rv/5TuHNifYLluGt23QaY4mI68rhwfHze0rO8DADW4F6UeCw36hj+8ORRdDxgx
-         tDGA==
-X-Gm-Message-State: AOAM532LWkYys1ItF/oEaXC5Bviqd6XxoXetV5RxsNH8Dp9Ic3GqChH/
-        //z1X+XqefIIKT3/TPE+uHjSmKTzDdA=
-X-Google-Smtp-Source: ABdhPJzcvzNrAB3gW6pQ7yk3XUhuo3Cxoujext7gtsUJolB+Cuy7rALwZk1fOdMI2huNdy8VSSupZg==
-X-Received: by 2002:a5d:6b0a:: with SMTP id v10mr4158073wrw.183.1614866614160;
-        Thu, 04 Mar 2021 06:03:34 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nwFt3bEY7CR79i67G8c499ytIqZvxFdqr8Fzfscpxt0=;
+        b=Xg6xFb3EA7revZmy8+WX6qcOrHCnHn0DDmdf/P9lnqB/bAGDTYQ/Q1NdvcUu/uGab5
+         oT0pIBAc5UCjtfxWOv5+YH6XB0a0V9OfJ42VP/auWJpazwsE5PZVZwqYLRYCGUDy7BUf
+         G3N9PfB2PrABQGoT37+yQ4VBCn7EJMfj/kSQySbRvnutIB7P6bL62rvJaNKZ+rv3JKYq
+         OR4tFlh5aVra8cRxlaRgwI4kHnCPSfKDugMnGotOorPtsS/w+8oYF5wYAkHUyc8fYLse
+         f6/l315e1RLgeo28qE12sZfk1ZwIHEXJzBiuFziKKWy8+jzvMdQASuQrYF+iF92OeX7w
+         Yckg==
+X-Gm-Message-State: AOAM5300gkc1N45TZ00oMkV7n+OZq8Eu67yl70tjTsZGAI3AThF41j/G
+        SFqOVz/sHFLN4ctwYThHNAA=
+X-Google-Smtp-Source: ABdhPJz7K5aIksl5WwO3hlmwruo1HY4EzX+GfVsuOexzZVmiiYyC8Lm90XNrJlef2VIc4gH+qI8AZw==
+X-Received: by 2002:adf:f148:: with SMTP id y8mr4079998wro.107.1614866615386;
+        Thu, 04 Mar 2021 06:03:35 -0800 (PST)
 Received: from localhost.localdomain ([148.252.129.216])
-        by smtp.gmail.com with ESMTPSA id o124sm9975488wmo.41.2021.03.04.06.03.33
+        by smtp.gmail.com with ESMTPSA id o124sm9975488wmo.41.2021.03.04.06.03.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Mar 2021 06:03:33 -0800 (PST)
+        Thu, 04 Mar 2021 06:03:34 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH 5.12 0/8] remove task file notes
-Date:   Thu,  4 Mar 2021 13:59:23 +0000
-Message-Id: <cover.1614866085.git.asml.silence@gmail.com>
+Subject: [PATCH 1/8] io_uring: cancel-match based on flags
+Date:   Thu,  4 Mar 2021 13:59:24 +0000
+Message-Id: <4157ce297803d38e560cbb257cc6dbf81e2d530c.1614866085.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1614866085.git.asml.silence@gmail.com>
+References: <cover.1614866085.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-1-2 fixes a race for io-wq, can be considered separately
+Instead of going into request internals, like checking req->file->f_op,
+do match them based on REQ_F_INFLIGHT, it's set only when we want it to
+be reliably cancelled.
 
-3-7 introduce a mapping from ctx to all tctx, and using that removes
-file notes, i.e. taking a io_uring file note previously stored in
-task->io_uring->xa. It's needed because we don't free io_uring ctx
-until all submitters die/exec, and it became worse after killing
-->flush().
-There are rough corner in a form of not behaving nicely, I'll address
-in follow-up patches.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-8/8 just a very useful warning.
-
-Pavel Begunkov (8):
-  io_uring: cancel-match based on flags
-  io_uring: reliably cancel linked timeouts
-  io_uring: make del_task_file more forgiving
-  io_uring: introduce ctx to tctx back map
-  io_uring: do ctx initiated file note removal
-  io_uring: don't take task ring-file notes
-  io_uring: index io_uring->xa by ctx not file
-  io_uring: warn when ring exit takes too long
-
- fs/io_uring.c            | 146 ++++++++++++++++++++++++++++++---------
- include/linux/io_uring.h |   2 +-
- 2 files changed, 113 insertions(+), 35 deletions(-)
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 7cf8d4a99d91..c340d7ba40a2 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -703,7 +703,7 @@ enum {
+ 
+ 	/* fail rest of links */
+ 	REQ_F_FAIL_LINK		= BIT(REQ_F_FAIL_LINK_BIT),
+-	/* on inflight list */
++	/* on inflight list, should be cancelled and waited on exit reliably */
+ 	REQ_F_INFLIGHT		= BIT(REQ_F_INFLIGHT_BIT),
+ 	/* read/write uses file position */
+ 	REQ_F_CUR_POS		= BIT(REQ_F_CUR_POS_BIT),
+@@ -1069,7 +1069,7 @@ static bool io_match_task(struct io_kiocb *head,
+ 		return true;
+ 
+ 	io_for_each_link(req, head) {
+-		if (req->file && req->file->f_op == &io_uring_fops)
++		if (req->flags & REQ_F_INFLIGHT)
+ 			return true;
+ 		if (req->task->files == files)
+ 			return true;
 -- 
 2.24.0
 

@@ -2,64 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB78632D63D
-	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 16:16:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA54D32D640
+	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 16:16:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234089AbhCDPNZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Mar 2021 10:13:25 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56110 "EHLO
+        id S233928AbhCDPO2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Mar 2021 10:14:28 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:26445 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232259AbhCDPNR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Mar 2021 10:13:17 -0500
+        by vger.kernel.org with ESMTP id S233923AbhCDPOQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Mar 2021 10:14:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614870711;
+        s=mimecast20190719; t=1614870770;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=3TYaCt+56CSLmJuxUkX3Yt9N0VOzmswmJsOmJdaECmc=;
-        b=fnnAHbCaCDQygpmrTwMLV1h/dY5TnsLxUEJCEQtowf4sCNFci5F63dGkXfqsqhVz3MeGVP
-        1B5tGrS85rhThVDBjz5a5clfEpwgARMpaqYkUTzY9xBo3I5+l55L1ZtRubovvh1xnJeJzd
-        cJK/c5kaRY/DYH/KtuBo9Fbg/iI+/Zg=
+        bh=1PKccDZxJZzWf6UmdzAmg+0FIgtiX2+VOvVVUPxQTIc=;
+        b=gmZFLVkOlW/d2pa9Y/wm2dAg8fbNxqFkmGjbjflGnOT0eiZ9zRjQ8NB4w/NPVP/F7Hvzb3
+        REjnapk383zLZuHF16VOQB5D3ewTCWPFtOJ5boo214BHC4kVXpIDe8DvHiW8CM5fx17Vup
+        KXVq4crICyvLotkqmISyKFaBhZwyZcw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-35-W86Ima2NObSwuHs8S6E2Gg-1; Thu, 04 Mar 2021 10:11:47 -0500
-X-MC-Unique: W86Ima2NObSwuHs8S6E2Gg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-482-1E2bZhY3MzeKp9yjMtNiIQ-1; Thu, 04 Mar 2021 10:12:44 -0500
+X-MC-Unique: 1E2bZhY3MzeKp9yjMtNiIQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4506664AE9;
-        Thu,  4 Mar 2021 15:11:46 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 81FAA19809;
-        Thu,  4 Mar 2021 15:11:42 +0000 (UTC)
-Date:   Thu, 4 Mar 2021 10:11:41 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 76EB21018F70;
+        Thu,  4 Mar 2021 15:12:43 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FED860CCB;
+        Thu,  4 Mar 2021 15:12:40 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 124FCdF3007183;
+        Thu, 4 Mar 2021 10:12:39 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 124FCdDr007179;
+        Thu, 4 Mar 2021 10:12:39 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Thu, 4 Mar 2021 10:12:39 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
 To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
+cc:     JeffleXu <jefflexu@linux.alibaba.com>,
+        Mike Snitzer <msnitzer@redhat.com>,
         Heinz Mauelshagen <heinzm@redhat.com>, axboe@kernel.dk,
         caspar@linux.alibaba.com, io-uring@vger.kernel.org,
         linux-block@vger.kernel.org, joseph.qi@linux.alibaba.com,
-        dm-devel@redhat.com, hch@lst.de,
-        Jonathan Brassow <jbrassow@redhat.com>
-Subject: Re: [PATCH 4/4] dm: support I/O polling
-Message-ID: <20210304151141.GB14551@redhat.com>
-References: <20210302190555.201228400@debian-a64.vm>
- <33fa121a-88a8-5c27-0a43-a7efc9b5b3e3@linux.alibaba.com>
- <alpine.LRH.2.02.2103030505460.29593@file01.intranet.prod.int.rdu2.redhat.com>
- <x49o8fzklnx.fsf@segfault.boston.devel.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        dm-devel@redhat.com, hch@lst.de
+Subject: Re: [dm-devel] [PATCH 4/4] dm: support I/O polling
 In-Reply-To: <x49o8fzklnx.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Message-ID: <alpine.LRH.2.02.2103041008440.31824@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20210302190555.201228400@debian-a64.vm> <33fa121a-88a8-5c27-0a43-a7efc9b5b3e3@linux.alibaba.com> <alpine.LRH.2.02.2103030505460.29593@file01.intranet.prod.int.rdu2.redhat.com> <x49o8fzklnx.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Mar 04 2021 at 10:01am -0500,
-Jeff Moyer <jmoyer@redhat.com> wrote:
+
+
+On Thu, 4 Mar 2021, Jeff Moyer wrote:
 
 > Hi, Mikulas,
 > 
@@ -106,25 +110,18 @@ Jeff Moyer <jmoyer@redhat.com> wrote:
 > What happens if the last bio completes first?  It looks like you will
 > call blk_poll with a cookie that already completed, and I'm pretty sure
 > that's invalid.
+> 
+> Thanks,
+> Jeff
 
-In addition, I'm concerned this approach to have DM internalize IO
-polling is a non-starter.
+If the last bio completes first, the other bios will use interrupt-driven 
+endio.
 
-I just don't think this approach adheres to the io_uring + IO polling
-interface.. it never returns a cookie to upper layers... so there is
-really no opportunity for standard io_uring + IO polling interface to
-work is there?
+Calling blk_poll with already completed cookie is IMHO legal - it happens 
+with the current direct-io code too. The direct-io code will check for bio 
+completion and if the bio is not completed, call blk_poll. The bio may be 
+completed from an interrupt after the check and before blk_poll - in this 
+case, we will call blk_poll with already completed cookie.
 
-But Heinz and Mikulas are about to kick off some fio io_uring + hipri=1
-(io polling) testing of Jeffle's latest v5 patchset:
-https://patchwork.kernel.org/project/dm-devel/list/?series=442075
-
-compared to Mikulas' patchset:
-https://patchwork.kernel.org/project/dm-devel/list/?series=440719
-
-We should have definitive answers soon enough, just using Jeffle's fio
-config (with hipri=1 for IO polling) that was documented here:
-https://listman.redhat.com/archives/dm-devel/2020-October/msg00129.html
-
-Mike
+Mikulas
 

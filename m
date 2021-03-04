@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4224A32C994
-	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 02:19:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0C3932C9B0
+	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 02:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236982AbhCDBJ4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Mar 2021 20:09:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50074 "EHLO
+        id S231523AbhCDBJ6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Mar 2021 20:09:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243506AbhCDAbM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Mar 2021 19:31:12 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16CDBC0613E4
-        for <io-uring@vger.kernel.org>; Wed,  3 Mar 2021 16:27:11 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id d12so14986787pfo.7
-        for <io-uring@vger.kernel.org>; Wed, 03 Mar 2021 16:27:11 -0800 (PST)
+        with ESMTP id S1349771AbhCDAbr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Mar 2021 19:31:47 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56C03C0613B7
+        for <io-uring@vger.kernel.org>; Wed,  3 Mar 2021 16:27:12 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id c19so5288574pjq.3
+        for <io-uring@vger.kernel.org>; Wed, 03 Mar 2021 16:27:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yn62TpTCyjDLV+uTyom45Heg/K5sRxz00O/Yz4bwAiM=;
-        b=dG7IE5XD1WwgPs3c46/XED1XHS8uw1x9RFLd6uDWbpO8lJeUfnGz6OFTwf9dg3K43s
-         vCe8EV0hsS11YUmHDBgbuYrERsbPgFvoZA2m4GGEKiZvfrKRn1m8hLPbwW0Q8ZRmji8y
-         HJE+tZnvB1TAzlQhq3bzIFJhQsAga0VRS0g2/IYzpFLy8S6mrMIkBPS+K9OolicsBDyH
-         kqwwO8FuAmHer9sITxGbj7RCgCBUCfLESOj/bgWH55WUu9RlAOxfNAkRFgI7MestVGX8
-         A0VYWCaJ1sUyg/a6NU+ktc24QfoJgxH4FvnABAysJP4WApxA4ca0YyKGSgCc8cinItCw
-         X6jw==
+        bh=9Bx2m+qW/WCY/cUohcjcsKVRmnwAX9bE127HkQbJKuA=;
+        b=0GkoFXG+mfc0QB7yuNwA4wmntz4GjWpEEa59MaTTtogMjBfpHNKkMVO1W7/hSNnghl
+         AiBuwt3BVKbTCylr6w6azSsAF55yuXeHel7JhNRFiRKKnmkh1ZJjQLVYd9dnyjl/G1JP
+         Rs5MnDmYdoVUgkc3gWEAKFyoHEI5KIkC4Uys7Iw3RmD3wTSX9VDLNopwrfr+xDfk581M
+         3GQcePqwek5vtVxCI8i1Gj0Bbfq28s21+tfCjW71sR8K0meblbTAl71jTVrXnCK3bzj5
+         jKfCeQRSoVfGrs+BMbb+mueVTMFnYAX6/nB4kW6mBksRsHIF+/tkzm3FNB39c1Bdp2yr
+         gX5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yn62TpTCyjDLV+uTyom45Heg/K5sRxz00O/Yz4bwAiM=;
-        b=YN3n42X34F8btenZXyClOTtFgE1fz+mK1x8p0efKBvs08Zk4QuurP3nraSoXcYW1lo
-         UCY/XOZg4neRPu98hCYJ8pafVpfXO3mlpSMkPRnIk+LKCLmf121hV32ml3V/Xclxcvc3
-         LmLyORT4DbjAbt1GjPCXM2Xf/cl2puCn7NXKqdPGP80v8GN72thwJMI5T0aag+KmeO8V
-         ASDdCxa6ndPYoTqwtWltkEvIeIYc0d4zen8b+Mt5QIo7wqM5qA3YAJZT94FsFiWVJ41j
-         KqtyN7QMEnU2tmNZuAy4b95JY1Y71UxiiqWCAhf6ETWgGDwqBS/BVUMVUr7kZsMv8sVD
-         Z4zg==
-X-Gm-Message-State: AOAM531jdk0qVXVPMER2/Zwzxh1DUV2JOnd84fPeDmhKEvTeoebvBjFv
-        th5C3SWxTSphAOzDwz4uYhg4043cAuqSnQTB
-X-Google-Smtp-Source: ABdhPJxQhGcGyUHcXv3VNB5shkHFQ2xfn1mB7en8JqRIgHSOCJ6QNVwZ5qYPUaTPSP7nntr6e8uONg==
-X-Received: by 2002:a63:5044:: with SMTP id q4mr1336860pgl.178.1614817630419;
-        Wed, 03 Mar 2021 16:27:10 -0800 (PST)
+        bh=9Bx2m+qW/WCY/cUohcjcsKVRmnwAX9bE127HkQbJKuA=;
+        b=I8v6TwGAPJ2vKjO+sOod8MxqSCh8jHj2spNSjWuSeZItgizgG8lkj0fe+VC0pGlpcE
+         QHRi846GNB6JOEzz1OUitS7BsHlTDvOE+m465iKlClqNcYlQTivEjccroZfr3I77I1XO
+         mAdja70C5c7tx0VIQpF/wA5dZGDS+JLzMRKznl4Av6p7KaX/F+nK2oH9unO+50NJpPuq
+         adzaI4xR1qaatSACAkg3fOBtsM/8+5smHxgVTZJV3v6JBhDSjSJMglrIo+RfC3CBMTKd
+         frLjIazuRIyo71/4fTRpIUUzYvKBgQExqh4c81uQF8i7QXjSLWpCAnpLAaEqIgUQzrby
+         Us+A==
+X-Gm-Message-State: AOAM532KOqK6p3m2n3V4OSEvsgpSicUzIRREOwEUghiViNxBTfWyB1NM
+        TU/pj/cE4IRfWo/nRmIHyPFEdw0SeMHZlMZo
+X-Google-Smtp-Source: ABdhPJxBjd/OwcsEsWljSybD1cVnav8PflkRKJcrup10yU98HHCiV7u7w1jn5bFEIoNRl20nIzc0Wg==
+X-Received: by 2002:a17:902:6b85:b029:e5:b91c:a265 with SMTP id p5-20020a1709026b85b02900e5b91ca265mr1497692plk.63.1614817631657;
+        Wed, 03 Mar 2021 16:27:11 -0800 (PST)
 Received: from localhost.localdomain ([2600:380:7540:52b5:3f01:150c:3b2:bf47])
-        by smtp.gmail.com with ESMTPSA id b6sm23456983pgt.69.2021.03.03.16.27.09
+        by smtp.gmail.com with ESMTPSA id b6sm23456983pgt.69.2021.03.03.16.27.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 16:27:10 -0800 (PST)
+        Wed, 03 Mar 2021 16:27:11 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 04/33] io-wq: rename wq->done completion to wq->started
-Date:   Wed,  3 Mar 2021 17:26:31 -0700
-Message-Id: <20210304002700.374417-5-axboe@kernel.dk>
+Subject: [PATCH 05/33] io-wq: wait for manager exit on wq destroy
+Date:   Wed,  3 Mar 2021 17:26:32 -0700
+Message-Id: <20210304002700.374417-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210304002700.374417-1-axboe@kernel.dk>
 References: <20210304002700.374417-1-axboe@kernel.dk>
@@ -62,54 +62,55 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is a leftover from a different use cases, it's used to wait for
-the manager to startup. Rename it as such.
+The manager waits for the workers, hence the manager is always valid if
+workers are running. Now also have wq destroy wait for the manager on
+exit, so we now everything is gone.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io-wq.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/io-wq.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/fs/io-wq.c b/fs/io-wq.c
-index d2b55ac817ef..a8ddca62f59e 100644
+index a8ddca62f59e..9e52a9877905 100644
 --- a/fs/io-wq.c
 +++ b/fs/io-wq.c
-@@ -118,7 +118,7 @@ struct io_wq {
- 	struct io_wq_hash *hash;
+@@ -119,6 +119,7 @@ struct io_wq {
  
  	refcount_t refs;
--	struct completion done;
-+	struct completion started;
+ 	struct completion started;
++	struct completion exited;
  
  	atomic_t worker_refs;
  	struct completion worker_done;
-@@ -749,7 +749,7 @@ static int io_wq_manager(void *data)
- 	current->flags |= PF_IO_WORKER;
- 	wq->manager = current;
- 
--	complete(&wq->done);
-+	complete(&wq->started);
- 
- 	do {
- 		set_current_state(TASK_INTERRUPTIBLE);
-@@ -813,7 +813,7 @@ static int io_wq_fork_manager(struct io_wq *wq)
- 	ret = io_wq_fork_thread(io_wq_manager, wq);
- 	current->flags &= ~PF_IO_WORKER;
- 	if (ret >= 0) {
--		wait_for_completion(&wq->done);
-+		wait_for_completion(&wq->started);
- 		return 0;
- 	}
- 
-@@ -1058,7 +1058,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- 	}
+@@ -764,6 +765,7 @@ static int io_wq_manager(void *data)
+ 	if (atomic_read(&wq->worker_refs))
+ 		wait_for_completion(&wq->worker_done);
+ 	wq->manager = NULL;
++	complete(&wq->exited);
+ 	io_wq_put(wq);
+ 	do_exit(0);
+ }
+@@ -1059,6 +1061,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
  
  	wq->task_pid = current->pid;
--	init_completion(&wq->done);
-+	init_completion(&wq->started);
+ 	init_completion(&wq->started);
++	init_completion(&wq->exited);
  	refcount_set(&wq->refs, 1);
  
  	init_completion(&wq->worker_done);
+@@ -1088,8 +1091,10 @@ static void io_wq_destroy(struct io_wq *wq)
+ 	cpuhp_state_remove_instance_nocalls(io_wq_online, &wq->cpuhp_node);
+ 
+ 	set_bit(IO_WQ_BIT_EXIT, &wq->state);
+-	if (wq->manager)
++	if (wq->manager) {
+ 		wake_up_process(wq->manager);
++		wait_for_completion(&wq->exited);
++	}
+ 
+ 	rcu_read_lock();
+ 	for_each_node(node)
 -- 
 2.30.1
 

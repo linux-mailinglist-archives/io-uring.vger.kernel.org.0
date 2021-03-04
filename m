@@ -2,99 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6C5B32D407
-	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 14:21:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48A4B32D4CE
+	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 15:06:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236205AbhCDNUv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Mar 2021 08:20:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47798 "EHLO
+        id S232135AbhCDOEf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Mar 2021 09:04:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241212AbhCDNUc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Mar 2021 08:20:32 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C5BC061574
-        for <io-uring@vger.kernel.org>; Thu,  4 Mar 2021 05:19:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:Cc:To;
-        bh=G5ZYZdsmz4gWAk0kCK0XI/OSjbxrqyYPQT+C3oD7KE0=; b=a2Be2fgdJ9RvwlCtdm3zn33KDg
-        K6qkVMLwL+9fNdiERcdFrvo4zAuB2TpWEDoP9TyqQdgE+saGZScPBqUXO6JraEcs5dk7m9ePHEcV0
-        6E6XmlGEh8AMZbLSwKubEZ/74IpER1y1Kg9eyalw6Z2igSCwHRCKlsCoLcgpZAao70ZtrxY1m7cNB
-        xkBmuePzU17fOu5dqnil/OwV5cDcRYNpWaZ2gbqcWyO5OGSXac/D7mgMqiRhR85a6FQf1kzijsHEi
-        Rj2hi4KaYPkHXDHrIIaEk64e+YXxbZPg/WWmbrbN5N7OLjlMGQOUj1BDnaJfioCUdeC7FmxFX1Yta
-        sVrW1yQjLZu8m9GgdUZaA3nwG3LvzQmhgMkMpngnsTnynIE7cjU9ELj4/eGXpD4bANqSwwzGaunwi
-        LV6ocC8KpMqHwfNUv+N3FXd62afKuq3xPYzrzlpf9JEMiSW5TwIy7Zj5mQzM5OB7+BRIOqAiqXfsj
-        kJ9rtBnUGA/FlqHi+0e3acp+;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1lHntN-0005vQ-1k; Thu, 04 Mar 2021 13:19:49 +0000
+        with ESMTP id S237393AbhCDOEP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Mar 2021 09:04:15 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78A70C061760
+        for <io-uring@vger.kernel.org>; Thu,  4 Mar 2021 06:03:35 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id 7so27791448wrz.0
+        for <io-uring@vger.kernel.org>; Thu, 04 Mar 2021 06:03:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PkoR+RV76KPBGA0yMCMW+ZTVEJ0FNn6wDuIrkIikY18=;
+        b=B7zXuxkgpH5NrUMIpRDfOMP/8YXdD4VZKvKpnDcXuqpITFFvaLqo4smnQ9ujRQu/ZN
+         NvYeOSMobEJgCSspH3P1Bm3PA38PDVkmpyQau7jNx1o7o788YlS6VibHwXCzJEQYyZFU
+         nUQ+AOlwHYRRTeJP01xXNrbvDdwQacC2PNPhwKXBAzCzX/WhFaBzXq6FBshhsmNZj+VD
+         2ZwUDIkEaamYGJkVkw+AcuhUxGgMGRlkbmGvhdFtbwj5kD8wiQdy4S66tr4DyXbnrz+X
+         tT4i0FZakhI3yusPICScG8vG2YPm9Elt1M2zSp8Erpf1vrNVz9xD49ReUZScTG8wag7F
+         SyQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PkoR+RV76KPBGA0yMCMW+ZTVEJ0FNn6wDuIrkIikY18=;
+        b=bX7pMLCg7xWlMQ8lbhYI9aM1M2AGsEvUhqHkYL4cmXdgqbztWpiCmLmYGZFZNzNxkV
+         K/a3kyg/5Rysf+NGtmQY5AT/6QelslWpZO5nUAuAINJwwtzoe12N7Bi0wXSSa8ufFoOA
+         /OXFOkEaV9NnmM0Y/Tm2AwXj/5RxdHMBeRm68/kiesCrHhZsIwIX/rhQbZNOniOfe2Xc
+         MuBoL22Z+XMVMt+oENRfPPc0DHsQhqmCOL3j265mwsscwyaGtIaRE3k+L49Hxo5eKBo+
+         tDDIk/rv/5TuHNifYLluGt23QaY4mI68rhwfHze0rO8DADW4F6UeCw36hj+8ORRdDxgx
+         tDGA==
+X-Gm-Message-State: AOAM532LWkYys1ItF/oEaXC5Bviqd6XxoXetV5RxsNH8Dp9Ic3GqChH/
+        //z1X+XqefIIKT3/TPE+uHjSmKTzDdA=
+X-Google-Smtp-Source: ABdhPJzcvzNrAB3gW6pQ7yk3XUhuo3Cxoujext7gtsUJolB+Cuy7rALwZk1fOdMI2huNdy8VSSupZg==
+X-Received: by 2002:a5d:6b0a:: with SMTP id v10mr4158073wrw.183.1614866614160;
+        Thu, 04 Mar 2021 06:03:34 -0800 (PST)
+Received: from localhost.localdomain ([148.252.129.216])
+        by smtp.gmail.com with ESMTPSA id o124sm9975488wmo.41.2021.03.04.06.03.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Mar 2021 06:03:33 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     ebiederm@xmission.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org
-References: <20210219171010.281878-1-axboe@kernel.dk>
- <20210219171010.281878-10-axboe@kernel.dk>
- <85bc236d-94af-6878-928b-c69dbdcd46f9@samba.org>
- <d9704b9e-ae5e-0795-ba2e-029293f89616@kernel.dk>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: [PATCH 09/18] io-wq: fork worker threads from original task
-Message-ID: <a9f58269-b260-6281-4e83-43cb5e881d25@samba.org>
-Date:   Thu, 4 Mar 2021 14:19:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+Subject: [PATCH 5.12 0/8] remove task file notes
+Date:   Thu,  4 Mar 2021 13:59:23 +0000
+Message-Id: <cover.1614866085.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <d9704b9e-ae5e-0795-ba2e-029293f89616@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+1-2 fixes a race for io-wq, can be considered separately
 
->> Can you please explain why CLONE_SIGHAND is used here?
-> 
-> We can't have CLONE_THREAD without CLONE_SIGHAND... The io-wq workers
-> don't really care about signals, we don't use them internally.
+3-7 introduce a mapping from ctx to all tctx, and using that removes
+file notes, i.e. taking a io_uring file note previously stored in
+task->io_uring->xa. It's needed because we don't free io_uring ctx
+until all submitters die/exec, and it became worse after killing
+->flush().
+There are rough corner in a form of not behaving nicely, I'll address
+in follow-up patches.
 
-I'm 100% sure, but I heard rumors that in some situations signals get
-randomly delivered to any thread of a userspace process.
+8/8 just a very useful warning.
 
-My fear was that the related logic may select a kernel thread if they
-share the same signal handlers.
+Pavel Begunkov (8):
+  io_uring: cancel-match based on flags
+  io_uring: reliably cancel linked timeouts
+  io_uring: make del_task_file more forgiving
+  io_uring: introduce ctx to tctx back map
+  io_uring: do ctx initiated file note removal
+  io_uring: don't take task ring-file notes
+  io_uring: index io_uring->xa by ctx not file
+  io_uring: warn when ring exit takes too long
 
->> Will the userspace signal handlers executed from the kernel thread?
-> 
-> No
+ fs/io_uring.c            | 146 ++++++++++++++++++++++++++++++---------
+ include/linux/io_uring.h |   2 +-
+ 2 files changed, 113 insertions(+), 35 deletions(-)
 
-Good.
+-- 
+2.24.0
 
-Are these threads immutable against signals from userspace?
-
->> Will SIGCHLD be posted to the userspace signal handlers in a userspace
->> process? Will wait() from userspace see the exit of a thread?
-> 
-> Currently actually it does, but I think that's just an oversight. As far
-> as I can tell, we want to add something like the below. Untested... I'll
-> give this a spin in a bit.
-> 
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index ba4d1ef39a9e..e5db1d8f18e5 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -1912,6 +1912,10 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
->  	bool autoreap = false;
->  	u64 utime, stime;
->  
-> +	/* Don't notify a parent task if an io_uring worker exits */
-> +	if (tsk->flags & PF_IO_WORKER)
-> +		return true;
-> +
->  	BUG_ON(sig == -1);
->  
->   	/* do_notify_parent_cldstop should have been called instead.  */
-> 
-
-Ok, thanks!
-
-metze

@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26C4032C99C
-	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 02:19:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C60432C992
+	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 02:18:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240323AbhCDBKI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Mar 2021 20:10:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51266 "EHLO
+        id S240710AbhCDBKL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Mar 2021 20:10:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355799AbhCDAes (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Mar 2021 19:34:48 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0154C0610D3
-        for <io-uring@vger.kernel.org>; Wed,  3 Mar 2021 16:27:33 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id c16so5579912ply.0
-        for <io-uring@vger.kernel.org>; Wed, 03 Mar 2021 16:27:33 -0800 (PST)
+        with ESMTP id S1376580AbhCDAex (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Mar 2021 19:34:53 -0500
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32DDC0610D4
+        for <io-uring@vger.kernel.org>; Wed,  3 Mar 2021 16:27:34 -0800 (PST)
+Received: by mail-pf1-x431.google.com with SMTP id j12so17510419pfj.12
+        for <io-uring@vger.kernel.org>; Wed, 03 Mar 2021 16:27:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=YmW4+HEOLVC8+6zuBFMtFGdAUA/imkWoN2FjKpIk2LE=;
-        b=m7ov9kUQNMXE/zTcaihhRvvarZZ7+wxrLWoiuPhsDOxnNLRMoODHd9Ou1FVu6dgWiK
-         ZiKuEfYtaQKaadX7yicLfbeH22NeNvjAcRBidC2SxwN7/TRU6AiHowZ/JVn523+b6MYK
-         oiFBQM69prsqGLtm4GKAw+bXmk7+wLtYcx3nIYzkaO3FtaunqJmtZJylp0cApOorqAun
-         eN8CPFX9whKu15bT3vAmTGrs3va73St/jiLpEyDIo9tWtkQ9fiHX+F/FrBGnXxOhTwbs
-         Yk5NVJt5IqQVG1Quy5w8G+xrUCoSesY0URnV43CMWttGLrhLAU53j1X4n1yQSJSj3H8d
-         yPlw==
+        bh=qcQQd44guJLGN0E55hIgEst24Wu+o+7Nj1hqwI4uXB4=;
+        b=cD997VsnqyVJe0AUkTsd/nEqrWiPfG5Hk+Sz4IYVvv62bSJYt8L6tUxWq/UVqLX/Af
+         WCGBCUG48dI3aQg9oKLHT/AXMEHs8dtCVCJLIqCfptZYEqAOYTes+G4GAOZpadR3yty+
+         uBP6IHUNYdvc6HA6GSaeExt1eNBQ7AHVIxAPoWBUuu1xYxQKxpbeanY1aP22/4zQkOWv
+         j8JaoZxIlRXQ6X2CBPoG420RviXXxgHF7Gk43t7u60D7KJSbRG00HXwGL1fXivSO8AlZ
+         Pk1wSELXcU81GnFOjeSO8p8H8JaS6EFWIDis0hC1nzAnWQhk3ra0xVSNxq6l7WbAxgY6
+         Ozrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=YmW4+HEOLVC8+6zuBFMtFGdAUA/imkWoN2FjKpIk2LE=;
-        b=diAIv6HhRR+on0zYSR0XtoKzwQFN+Ti4HqiRNObJmn3a8yq0aDy/B4nRI5WrwSbdgq
-         +e06BUnqT9mKRe8DpaHsDg6/g0mfYixIduSVNumvm+pCtLxHG84IJJFHDRf7Ohf+t/Se
-         hK2dlo/Q/vWSJySf3hSPEtcu7glGT4VLLsQI6LQb3+gp2GCcG/cavP/dMgI1n9aZR1G3
-         NTor4og0JhWES1pV/0ttOP8E7pYsTl04yeuD/T8BENu3big9XpVV5kRtcmw2zPjTSDe3
-         J9owO8BHNQvAMxUvgq+Hk1dm2iinMBDN+IGm6oIexFOOkCEBpCzoy4cpG7c/b3CTya4Z
-         SRAg==
-X-Gm-Message-State: AOAM532yKPML5uOxW3rioephu29xrvsfS6sueXA1SEYEd5c635h4AZ96
-        EULbOXz5dDkj1bfLJDnSceo8tec5ANyRmqKX
-X-Google-Smtp-Source: ABdhPJybRwsAsR7f1vQsYWLx7gR3AmeQm91ZsmxHXtlkOwTboWxkparXrNxV0oKnllPv+REJ1StfDQ==
-X-Received: by 2002:a17:90a:fb47:: with SMTP id iq7mr1698063pjb.159.1614817652871;
-        Wed, 03 Mar 2021 16:27:32 -0800 (PST)
+        bh=qcQQd44guJLGN0E55hIgEst24Wu+o+7Nj1hqwI4uXB4=;
+        b=Mrktjc7WaIg9045Q6AkQh8vmMuH7AgcEKYYs8bucVGcBFA7BeL0/E4JIVM4Pn/0Fpd
+         e4OPOOSjd9rRLP2R4K6x2dbBTIGEB3ey09rD2EdCm3jvsk4M42W10S8wanamnGhLsilJ
+         aR6ei8llzOhrLNuDxYMjIujkF9QIMHknpYgO4S221ulKv0bBpx6960kxv8ek48+V0QLy
+         Xnk6A1fbEGgBtGwVLAkYhMlmuo8/p53aQndTobZ4FEoFEXlYjhsfgAJLTo32P1RiAnFu
+         rzFGwYJqbUaeX44y/vf5Aw+/GLalA3KV65WKBUs1hH9r1OA1Wk63rc05Fk67+AUaa0aO
+         YkrA==
+X-Gm-Message-State: AOAM530Qj5JV0XxaIA4ifswLj338uPd+D/Y1ExgvRV1GaoPcvZeQ2WXi
+        8bIEaL6J6vUKLnVzsfXFXvXBL0FILdTH8Yga
+X-Google-Smtp-Source: ABdhPJwMEqBHlqed37Qsf69iIQ6WmRYmUzMEtD5VedkwKxGRUJYjU60XxM8+F+gv5tzBAVc+B5CZWw==
+X-Received: by 2002:a05:6a00:1502:b029:1d2:72e7:a9db with SMTP id q2-20020a056a001502b02901d272e7a9dbmr1286976pfu.42.1614817654163;
+        Wed, 03 Mar 2021 16:27:34 -0800 (PST)
 Received: from localhost.localdomain ([2600:380:7540:52b5:3f01:150c:3b2:bf47])
-        by smtp.gmail.com with ESMTPSA id b6sm23456983pgt.69.2021.03.03.16.27.31
+        by smtp.gmail.com with ESMTPSA id b6sm23456983pgt.69.2021.03.03.16.27.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 16:27:32 -0800 (PST)
+        Wed, 03 Mar 2021 16:27:33 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, stable@vger.kernel.org,
-        syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com
-Subject: [PATCH 23/33] io_uring: ignore double poll add on the same waitqueue head
-Date:   Wed,  3 Mar 2021 17:26:50 -0700
-Message-Id: <20210304002700.374417-24-axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 24/33] io_uring: kill sqo_dead and sqo submission halting
+Date:   Wed,  3 Mar 2021 17:26:51 -0700
+Message-Id: <20210304002700.374417-25-axboe@kernel.dk>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210304002700.374417-1-axboe@kernel.dk>
 References: <20210304002700.374417-1-axboe@kernel.dk>
@@ -63,119 +63,167 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-syzbot reports a deadlock, attempting to lock the same spinlock twice:
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-============================================
-WARNING: possible recursive locking detected
-5.11.0-syzkaller #0 Not tainted
---------------------------------------------
-swapper/1/0 is trying to acquire lock:
-ffff88801b2b1130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
-ffff88801b2b1130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4960
+As SQPOLL task doesn't poke into ->sqo_task anymore, there is no need to
+kill the sqo when the master task exits. Before it was necessary to
+avoid races accessing sqo_task->files with removing them.
 
-but task is already holding lock:
-ffff88801b2b3130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&runtime->sleep);
-  lock(&runtime->sleep);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by swapper/1/0:
- #0: ffff888147474908 (&group->lock){..-.}-{2:2}, at: _snd_pcm_stream_lock_irqsave+0x9f/0xd0 sound/core/pcm_native.c:170
- #1: ffff88801b2b3130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-
-stack backtrace:
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.11.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0xfa/0x151 lib/dump_stack.c:120
- print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
- check_deadlock kernel/locking/lockdep.c:2872 [inline]
- validate_chain kernel/locking/lockdep.c:3661 [inline]
- __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
- lock_acquire kernel/locking/lockdep.c:5510 [inline]
- lock_acquire+0x1ab/0x730 kernel/locking/lockdep.c:5475
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
- spin_lock include/linux/spinlock.h:354 [inline]
- io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4960
- __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
- __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
- snd_pcm_update_state+0x46a/0x540 sound/core/pcm_lib.c:203
- snd_pcm_update_hw_ptr0+0xa75/0x1a50 sound/core/pcm_lib.c:464
- snd_pcm_period_elapsed+0x160/0x250 sound/core/pcm_lib.c:1805
- dummy_hrtimer_callback+0x94/0x1b0 sound/drivers/dummy.c:378
- __run_hrtimer kernel/time/hrtimer.c:1519 [inline]
- __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1583
- hrtimer_run_softirq+0x17b/0x360 kernel/time/hrtimer.c:1600
- __do_softirq+0x29b/0x9f6 kernel/softirq.c:345
- invoke_softirq kernel/softirq.c:221 [inline]
- __irq_exit_rcu kernel/softirq.c:422 [inline]
- irq_exit_rcu+0x134/0x200 kernel/softirq.c:434
- sysvec_apic_timer_interrupt+0x93/0xc0 arch/x86/kernel/apic/apic.c:1100
- </IRQ>
- asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
-RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:29 [inline]
-RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:70 [inline]
-RIP: 0010:arch_irqs_disabled arch/x86/include/asm/irqflags.h:137 [inline]
-RIP: 0010:acpi_safe_halt drivers/acpi/processor_idle.c:111 [inline]
-RIP: 0010:acpi_idle_do_entry+0x1c9/0x250 drivers/acpi/processor_idle.c:516
-Code: dd 38 6e f8 84 db 75 ac e8 54 32 6e f8 e8 0f 1c 74 f8 e9 0c 00 00 00 e8 45 32 6e f8 0f 00 2d 4e 4a c5 00 e8 39 32 6e f8 fb f4 <9c> 5b 81 e3 00 02 00 00 fa 31 ff 48 89 de e8 14 3a 6e f8 48 85 db
-RSP: 0018:ffffc90000d47d18 EFLAGS: 00000293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff8880115c3780 RSI: ffffffff89052537 RDI: 0000000000000000
-RBP: ffff888141127064 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff81794168 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff888141127000 R14: ffff888141127064 R15: ffff888143331804
- acpi_idle_enter+0x361/0x500 drivers/acpi/processor_idle.c:647
- cpuidle_enter_state+0x1b1/0xc80 drivers/cpuidle/cpuidle.c:237
- cpuidle_enter+0x4a/0xa0 drivers/cpuidle/cpuidle.c:351
- call_cpuidle kernel/sched/idle.c:158 [inline]
- cpuidle_idle_call kernel/sched/idle.c:239 [inline]
- do_idle+0x3e1/0x590 kernel/sched/idle.c:300
- cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:397
- start_secondary+0x274/0x350 arch/x86/kernel/smpboot.c:272
- secondary_startup_64_no_verify+0xb0/0xbb
-
-which is due to the driver doing poll_wait() twice on the same
-wait_queue_head. That is perfectly valid, but from checking the rest
-of the kernel tree, it's the only driver that does this.
-
-We can handle this just fine, we just need to ignore the second addition
-as we'll get woken just fine on the first one.
-
-Cc: stable@vger.kernel.org # 5.8+
-Fixes: 18bceab101ad ("io_uring: allow POLL_ADD with double poll_wait() users")
-Reported-by: syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+[axboe: don't forget to enable SQPOLL before exit, if started disabled]
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/io_uring.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/io_uring.c | 45 ++++++++-------------------------------------
+ 1 file changed, 8 insertions(+), 37 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 549a5c5ee0b5..bdaeda5eefd5 100644
+index bdaeda5eefd5..da90d877afd4 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -4959,6 +4959,9 @@ static void __io_queue_proc(struct io_poll_iocb *poll, struct io_poll_table *pt,
- 			pt->error = -EINVAL;
- 			return;
- 		}
-+		/* double add on the same waitqueue head, ignore */
-+		if (poll->head == head)
+@@ -338,7 +338,6 @@ struct io_ring_ctx {
+ 		unsigned int		drain_next: 1;
+ 		unsigned int		eventfd_async: 1;
+ 		unsigned int		restricted: 1;
+-		unsigned int		sqo_dead: 1;
+ 		unsigned int		sqo_exec: 1;
+ 
+ 		/*
+@@ -1967,7 +1966,7 @@ static void __io_req_task_submit(struct io_kiocb *req)
+ 
+ 	/* ctx stays valid until unlock, even if we drop all ours ctx->refs */
+ 	mutex_lock(&ctx->uring_lock);
+-	if (!ctx->sqo_dead && !(current->flags & PF_EXITING) && !current->in_execve)
++	if (!(current->flags & PF_EXITING) && !current->in_execve)
+ 		__io_queue_sqe(req);
+ 	else
+ 		__io_req_task_cancel(req, -EFAULT);
+@@ -6578,8 +6577,7 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
+ 		if (!list_empty(&ctx->iopoll_list))
+ 			io_do_iopoll(ctx, &nr_events, 0);
+ 
+-		if (to_submit && !ctx->sqo_dead &&
+-		    likely(!percpu_ref_is_dying(&ctx->refs)))
++		if (to_submit && likely(!percpu_ref_is_dying(&ctx->refs)))
+ 			ret = io_submit_sqes(ctx, to_submit);
+ 		mutex_unlock(&ctx->uring_lock);
+ 	}
+@@ -7818,7 +7816,7 @@ static int io_sq_thread_fork(struct io_sq_data *sqd, struct io_ring_ctx *ctx)
+ 
+ 	clear_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state);
+ 	reinit_completion(&sqd->completion);
+-	ctx->sqo_dead = ctx->sqo_exec = 0;
++	ctx->sqo_exec = 0;
+ 	sqd->task_pid = current->pid;
+ 	current->flags |= PF_IO_WORKER;
+ 	ret = io_wq_fork_thread(io_sq_thread, sqd);
+@@ -8529,10 +8527,6 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+ {
+ 	mutex_lock(&ctx->uring_lock);
+ 	percpu_ref_kill(&ctx->refs);
+-
+-	if (WARN_ON_ONCE((ctx->flags & IORING_SETUP_SQPOLL) && !ctx->sqo_dead))
+-		ctx->sqo_dead = 1;
+-
+ 	/* if force is set, the ring is going away. always drop after that */
+ 	ctx->cq_overflow_flushed = 1;
+ 	if (ctx->rings)
+@@ -8692,19 +8686,6 @@ static void io_uring_cancel_files(struct io_ring_ctx *ctx,
+ 	}
+ }
+ 
+-static void io_disable_sqo_submit(struct io_ring_ctx *ctx)
+-{
+-	mutex_lock(&ctx->uring_lock);
+-	ctx->sqo_dead = 1;
+-	if (ctx->flags & IORING_SETUP_R_DISABLED)
+-		io_sq_offload_start(ctx);
+-	mutex_unlock(&ctx->uring_lock);
+-
+-	/* make sure callers enter the ring to get error */
+-	if (ctx->rings)
+-		io_ring_set_wakeup_flag(ctx);
+-}
+-
+ /*
+  * We need to iteratively cancel requests, in case a request has dependent
+  * hard links. These persist even for failure of cancelations, hence keep
+@@ -8717,7 +8698,11 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
+ 	bool did_park = false;
+ 
+ 	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sq_data) {
+-		io_disable_sqo_submit(ctx);
++		/* never started, nothing to cancel */
++		if (ctx->flags & IORING_SETUP_R_DISABLED) {
++			io_sq_offload_start(ctx);
 +			return;
- 		poll = kmalloc(sizeof(*poll), GFP_ATOMIC);
- 		if (!poll) {
- 			pt->error = -ENOMEM;
++		}
+ 		did_park = io_sq_thread_park(ctx->sq_data);
+ 		if (did_park) {
+ 			task = ctx->sq_data->thread;
+@@ -8838,7 +8823,6 @@ static void io_uring_cancel_sqpoll(struct io_ring_ctx *ctx)
+ 
+ 	if (!sqd)
+ 		return;
+-	io_disable_sqo_submit(ctx);
+ 	if (!io_sq_thread_park(sqd))
+ 		return;
+ 	tctx = ctx->sq_data->thread->io_uring;
+@@ -8883,7 +8867,6 @@ void __io_uring_task_cancel(void)
+ 	/* make sure overflow events are dropped */
+ 	atomic_inc(&tctx->in_idle);
+ 
+-	/* trigger io_disable_sqo_submit() */
+ 	if (tctx->sqpoll) {
+ 		struct file *file;
+ 		unsigned long index;
+@@ -9014,22 +8997,14 @@ static int io_sqpoll_wait_sq(struct io_ring_ctx *ctx)
+ 	do {
+ 		if (!io_sqring_full(ctx))
+ 			break;
+-
+ 		prepare_to_wait(&ctx->sqo_sq_wait, &wait, TASK_INTERRUPTIBLE);
+ 
+-		if (unlikely(ctx->sqo_dead)) {
+-			ret = -EOWNERDEAD;
+-			goto out;
+-		}
+-
+ 		if (!io_sqring_full(ctx))
+ 			break;
+-
+ 		schedule();
+ 	} while (!signal_pending(current));
+ 
+ 	finish_wait(&ctx->sqo_sq_wait, &wait);
+-out:
+ 	return ret;
+ }
+ 
+@@ -9115,8 +9090,6 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 				goto out;
+ 		}
+ 		ret = -EOWNERDEAD;
+-		if (unlikely(ctx->sqo_dead))
+-			goto out;
+ 		if (flags & IORING_ENTER_SQ_WAKEUP)
+ 			wake_up(&ctx->sq_data->wait);
+ 		if (flags & IORING_ENTER_SQ_WAIT) {
+@@ -9488,7 +9461,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	 */
+ 	ret = io_uring_install_fd(ctx, file);
+ 	if (ret < 0) {
+-		io_disable_sqo_submit(ctx);
+ 		/* fput will clean it up */
+ 		fput(file);
+ 		return ret;
+@@ -9497,7 +9469,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	trace_io_uring_create(ret, ctx, p->sq_entries, p->cq_entries, p->flags);
+ 	return ret;
+ err:
+-	io_disable_sqo_submit(ctx);
+ 	io_ring_ctx_wait_and_kill(ctx);
+ 	return ret;
+ }
 -- 
 2.30.1
 

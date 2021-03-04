@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA4832D176
-	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 12:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 786D832D19C
+	for <lists+io-uring@lfdr.de>; Thu,  4 Mar 2021 12:16:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239321AbhCDLCY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Mar 2021 06:02:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46270 "EHLO
+        id S233722AbhCDLPL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Mar 2021 06:15:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239331AbhCDLCV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Mar 2021 06:02:21 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA033C061574
-        for <io-uring@vger.kernel.org>; Thu,  4 Mar 2021 03:01:40 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id h98so27107225wrh.11
-        for <io-uring@vger.kernel.org>; Thu, 04 Mar 2021 03:01:40 -0800 (PST)
+        with ESMTP id S239514AbhCDLOj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Mar 2021 06:14:39 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21040C061574
+        for <io-uring@vger.kernel.org>; Thu,  4 Mar 2021 03:13:59 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id a18so18977600wrc.13
+        for <io-uring@vger.kernel.org>; Thu, 04 Mar 2021 03:13:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=mjdz8WpGGWhjIOSZ1TFNSDrCUu+htoeU4z79Rhlf1z4=;
-        b=IuzSIuS9g6qFONXKeW55E2wLFb+bzYIjDkRKt6O1UhE/WqVnLZVbcXHIAaULej2YF9
-         KUmBCXwbxPTW7yQw+8bNq/JqtWTkdBqdG9LD1jAbYiLdVHqz1DRIsonhCP53uwbuBk13
-         XssNlKj49yHuOeDj39GLQsNtCB4IBfu5ebT2KMDqVokpVQaWSdLqBezhIRv7sozuJLJq
-         UedGqwqMPLJyQNTytvEcHBNGZfngQrS7ojr5TcxzISxu+Qr/ZDmHEEQF2Ac45djuow5C
-         +hCb1qfFldnJghETG4O8dkNVxRvjtrOOToONUi4ZYYxsNPppI4xsWtNdR1ULjBRmum62
-         V5CQ==
+        bh=XHyKrwKq5fM3r5AB9uFmBKte7bjeOG4uqO0BOTAF9iM=;
+        b=t0+/ozwJOMXGEwWqXoKLUJbZqK+mDJmV77TlWnFnbAsMQTn7g4lw29sBgVmBneyB3Y
+         lVZT6snMo/Iy1Degs5UxnKjV/FWU9VdVqpmp4LwNUwY67W5Qh47GPbjWjUmOJsrw+iK3
+         eKcFMASTtZJFcCBgdmiL+MBNpRYo3FYktADMATtPNIeBN1twpUbGK5q9qoL7PbJFE1fT
+         JNfL0g7/MOai8LhTWTq7R7yOy0PzpphvUWqYF/wQj+R3vZvCW93GONOnV/PyMvq/d1HN
+         uadfKpNP187UYv45lI8EFq20hRInPhVVsK3oppPRgI+33y7P0M3a8KjdEChfvyEqWICs
+         n2Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=mjdz8WpGGWhjIOSZ1TFNSDrCUu+htoeU4z79Rhlf1z4=;
-        b=WgwiwWgYYsn0DbZ5d9bSKJRtzsT7BMFo6FNbrosS7ySnvgmJ8ucY9BXr2c3KeD6Q/u
-         y0jTEfuTNS+XnlmW2npkYzsOVnM3J8EFPiuWuvEA667RKBg4gCLAJk1NRNEds4qTFTnh
-         cmCGmJ76xnUvGw7LKJQdkIN8lL7QmAfYs6E3HqQyMaPYy3RHQXprNoPzdDdLZP0LKX1a
-         VbRhXefh67kglS2t0JGBmYyXEs66g0DhY7dOrIyxMQlirzI2f7/z5bO/l2uUdI9LIP+j
-         5wq3VhAqoVKwdlcPn7dFrtgsNngA4APcS1qgpJc4mgohSuZFHgyZe9MdPd8a0x6UiBOM
-         7KfA==
-X-Gm-Message-State: AOAM531sO8tW59V5ICfqLrO68nPRuFjt+yLdtabRkWLxwMwruelVeDBr
-        bYppoRmNodIeioa3pCORIYMa7o3OL+iibIxUVbg=
-X-Google-Smtp-Source: ABdhPJw09jvjtSlQCGIIOkypWNKovOI2rHUY1PIDoq89R6ltpK+7dErIDmB9kAf9NHvOsSyhhf1T2cCUSrfkMpLVjoI=
-X-Received: by 2002:a5d:6c66:: with SMTP id r6mr3340605wrz.407.1614855699360;
- Thu, 04 Mar 2021 03:01:39 -0800 (PST)
+        bh=XHyKrwKq5fM3r5AB9uFmBKte7bjeOG4uqO0BOTAF9iM=;
+        b=kpRCE3/L6mamQjFL2vhdtUuegsp2aMw5MYsz8td6msxaiREYi4eZOZwWlnbapj+Vfz
+         sg9BEBV2bFsUqFxLpCLScqRDpAlcC7Iz8IkLXhG7SUHgJYqTVAsbi2px5hdNrCqwZ62h
+         zrwyQrKETm307ekdxBoKYvvH1xmxJtPQea6IgmY0XeI8/vVcXE/z11LrBSxc/eleA4sY
+         R0UEvkMmOUOSxll2K9qoWBkFwwA3lbvn2NFVERWvpJ+iorE8QE+zQkYRPJiN1d5ISO3h
+         DnwoMIOVZ/pTctsEsaRorte/4kaNoLOhQfFVngvLFN4wYK8aeU3vHcnKtszStnCFecqc
+         HdhQ==
+X-Gm-Message-State: AOAM532CPfhuyulWB/54+l2208w3RxgeMUdbTqQnBLIdv+rXQlBGNTWH
+        1p4FXhB2HKcdcSdZnoycPKwsjIwXk+QuByi3XBk=
+X-Google-Smtp-Source: ABdhPJxvnPsChJuZZkZHA7KIyT8WcIkX1Wnhrb+H3ITh1Q2I09oASAvRbI09lvplRSkwhHVHI5XSPf7PG641Utl7wyk=
+X-Received: by 2002:a5d:4286:: with SMTP id k6mr3456316wrq.278.1614856437853;
+ Thu, 04 Mar 2021 03:13:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20210302160734.99610-1-joshi.k@samsung.com> <CGME20210302161010epcas5p4da13d3f866ff4ed45c04fb82929d1c83@epcas5p4.samsung.com>
- <20210302160734.99610-4-joshi.k@samsung.com> <BYAPR04MB496501DAED24CC28347A283086989@BYAPR04MB4965.namprd04.prod.outlook.com>
-In-Reply-To: <BYAPR04MB496501DAED24CC28347A283086989@BYAPR04MB4965.namprd04.prod.outlook.com>
+References: <20210302160734.99610-1-joshi.k@samsung.com> <CGME20210302161005epcas5p23f28fe21bab5a3e07b9b382dd2406fdc@epcas5p2.samsung.com>
+ <20210302160734.99610-3-joshi.k@samsung.com> <BYAPR04MB496566944851825B251CA93686989@BYAPR04MB4965.namprd04.prod.outlook.com>
+In-Reply-To: <BYAPR04MB496566944851825B251CA93686989@BYAPR04MB4965.namprd04.prod.outlook.com>
 From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Thu, 4 Mar 2021 16:31:11 +0530
-Message-ID: <CA+1E3rLvrC4s2o3qDgHfRWN0JhnB5ZacHK572kjP+-5NmOPBhw@mail.gmail.com>
-Subject: Re: [RFC 3/3] nvme: wire up support for async passthrough
+Date:   Thu, 4 Mar 2021 16:43:30 +0530
+Message-ID: <CA+1E3rLCSWDmLa1rrZ986xnbx6fcsGgBE6NPP59eJj4swY+gQg@mail.gmail.com>
+Subject: Re: [RFC 2/3] nvme: passthrough helper with callback
 To:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
 Cc:     Kanchan Joshi <joshi.k@samsung.com>,
         "axboe@kernel.dk" <axboe@kernel.dk>, "hch@lst.de" <hch@lst.de>,
@@ -64,22 +64,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Mar 4, 2021 at 3:14 AM Chaitanya Kulkarni
+On Wed, Mar 3, 2021 at 8:52 PM Chaitanya Kulkarni
 <Chaitanya.Kulkarni@wdc.com> wrote:
 >
 > On 3/2/21 23:22, Kanchan Joshi wrote:
-> > +     if (!ioucmd)
-> > +             cptr = &c;
-> > +     else {
-> > +             /*for async - allocate cmd dynamically */
-> > +             cptr = kmalloc(sizeof(struct nvme_command), GFP_KERNEL);
-> > +             if (!cptr)
-> > +                     return -ENOMEM;
-> > +     }
-> > +
-> > +     memset(cptr, 0, sizeof(c));
-> Why not kzalloc and remove memset() ?
+> > -void nvme_execute_passthru_rq(struct request *rq)
+> > +void nvme_execute_passthru_rq_common(struct request *rq,
+> > +                     rq_end_io_fn *done)
+> >  {
+> >       struct nvme_command *cmd = nvme_req(rq)->cmd;
+> >       struct nvme_ctrl *ctrl = nvme_req(rq)->ctrl;
+> > @@ -1135,9 +1136,17 @@ void nvme_execute_passthru_rq(struct request *rq)
+> >       u32 effects;
+> >
+> >       effects = nvme_passthru_start(ctrl, ns, cmd->common.opcode);
+> > -     blk_execute_rq(disk, rq, 0);
+> > +     if (!done)
+> > +             blk_execute_rq(disk, rq, 0);
+> > +     else
+> > +             blk_execute_rq_nowait(disk, rq, 0, done);
+> >       nvme_passthru_end(ctrl, effects);
+>
+> This needs a detailed explanation in order to prove the correctness.
 
-Yes sure. Ideally I want to get rid of the allocation cost. Perhaps
-employing kmem_cache/mempool can help. Do you think there is a better
-way?
+Do you see something wrong here?
+blk_execute_rq() employs the same helper (i.e. nowait one) and uses
+additional completion-variable to make it sync.

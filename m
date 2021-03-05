@@ -2,190 +2,194 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F48932F22A
-	for <lists+io-uring@lfdr.de>; Fri,  5 Mar 2021 19:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 302F332F230
+	for <lists+io-uring@lfdr.de>; Fri,  5 Mar 2021 19:10:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229558AbhCESJe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Mar 2021 13:09:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53468 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbhCESJM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Mar 2021 13:09:12 -0500
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29BFFC061574
-        for <io-uring@vger.kernel.org>; Fri,  5 Mar 2021 10:09:12 -0800 (PST)
-Received: by mail-il1-x12f.google.com with SMTP id d5so2823730iln.6
-        for <io-uring@vger.kernel.org>; Fri, 05 Mar 2021 10:09:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=ZL6W1Fo5kYU2PCLKx/eyUBe9dLZ15sotw0fTb9lJHv4=;
-        b=aA3yvlLvochquCirQs+Mq5dTwjSToWVu5c8w40NadHgL/JAKhrRg0xofD6TIir3WRv
-         Z+i0HtIWMyrlvm1sImjsANFiFLCPyiGlFIgvGaFdAyfrBJY8xa+BWf2NZBRH7pIRUdOg
-         DYKoMVCmVyMaopoatkLue7a4NzsnZ/9gfk/gfraH3xtjHmwO22hGj6kHklCu15TecSPZ
-         tJ5LUJlnFKSsi/lDaf7hgwyAHsVDCLA7sYNj9FQmkTXwwj7R3KhJzAuN5P01npokLcZc
-         jhsS66HocE2fdzox3uifr9DhnC89yF2OOVNIzyggQGsI66xSE+9B2fQ1/9TzMt46JTFO
-         rbuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=ZL6W1Fo5kYU2PCLKx/eyUBe9dLZ15sotw0fTb9lJHv4=;
-        b=PB68hUvSBYgxllwP7BUZztAMcyUanBmBv1g2JPaSkFbJXO04Z9wcnKRJhSOT/iZqY/
-         gEiDsOj/b7fmWXVO0QVUJYfyudPCtaDyBXhta1ANqnoBDx8I9ZEDiAmhBeqBzfL3Dkug
-         393V8b4QeOmpi2jpz6CcX7d4iP2soQdsT7T2q3nF8o9YQT0ykPVp4qUIn3342PppEolG
-         q+s+/DnQorXa2ceWjU2ubWiI9VZRB/NIwoQUMnoCNeJOAq3HZSabJOsEOa3RZFxQOYJQ
-         hwtkW+7ZY2NoRxw4t52Cqm+oosbfpFDh+20si3Oi7NdMCdZ6tO+EG9dUN6RqLL6IJBcy
-         Ud/Q==
-X-Gm-Message-State: AOAM532Xx1SfjP2Rw50lYSkcasnrxiVND/2oKZf02eKbJ6C8VF0rQSd7
-        /m7tLs1lHRNdlLmp4O0w6M8xBwwRfb4slA==
-X-Google-Smtp-Source: ABdhPJx5gWdpNvgZQJJTy3Mv5hZvf+kROxa+iCZZuC7Xx1zdeFwbvfH2WKjk+WMILNI72xdpIAnuHA==
-X-Received: by 2002:a92:ce03:: with SMTP id b3mr10162782ilo.302.1614967750467;
-        Fri, 05 Mar 2021 10:09:10 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id q15sm1690333ilt.30.2021.03.05.10.09.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Mar 2021 10:09:10 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 5.12-rc2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Message-ID: <88ef6732-3800-a563-868d-8c1e5545c8fa@kernel.dk>
-Date:   Fri, 5 Mar 2021 11:09:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S229493AbhCESKG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Mar 2021 13:10:06 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30259 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229589AbhCESJs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Mar 2021 13:09:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1614967787;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=q2Qkc6ZAg95bev1EEgKdKWcJXJNseA8j0rPr2ZlmLlA=;
+        b=Gup2YzNvi4NqFT7mw9+Zx1evZN1vZZjENBKmFEAZevSxgpo85kvM4hLyKNFMfN6eliNtxJ
+        VyFDGjPEGOZKVPQMHsae22duA3yXBuW51USfh92EPFEqtpiRCtIrb08MpbkMBCVIiSVr6O
+        +9LnpnpN+nvqVJd0YFmTFMWzt0K10bg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-458-XZ0BxN6kOrSHRo3Uu7QRRg-1; Fri, 05 Mar 2021 13:09:45 -0500
+X-MC-Unique: XZ0BxN6kOrSHRo3Uu7QRRg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6476A69737;
+        Fri,  5 Mar 2021 18:09:44 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E8FDC10023B2;
+        Fri,  5 Mar 2021 18:09:38 +0000 (UTC)
+Date:   Fri, 5 Mar 2021 13:09:38 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Heinz Mauelshagen <heinzm@redhat.com>
+Cc:     JeffleXu <jefflexu@linux.alibaba.com>,
+        Mikulas Patocka <mpatocka@redhat.com>, axboe@kernel.dk,
+        caspar@linux.alibaba.com, hch@lst.de, linux-block@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, dm-devel@redhat.com,
+        io-uring@vger.kernel.org
+Subject: Re: [PATCH 4/4] dm: support I/O polling
+Message-ID: <20210305180938.GA21127@redhat.com>
+References: <20210302190555.201228400@debian-a64.vm>
+ <33fa121a-88a8-5c27-0a43-a7efc9b5b3e3@linux.alibaba.com>
+ <alpine.LRH.2.02.2103030505460.29593@file01.intranet.prod.int.rdu2.redhat.com>
+ <157a750d-3d58-ae2e-07f1-b677c1b471c7@linux.alibaba.com>
+ <bd447632-f174-e6f2-ddf8-d5385da13f6b@redhat.com>
+ <fc9707dc-0a21-90d3-ed4f-e201406c50eb@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fc9707dc-0a21-90d3-ed4f-e201406c50eb@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On Fri, Mar 05 2021 at 12:56pm -0500,
+Heinz Mauelshagen <heinzm@redhat.com> wrote:
 
-A bit of a mix between fallout from the worker change,
-cleanups/reductions now possible from that change, and fixes in general.
-In detail:
+> 
+> On 3/5/21 6:46 PM, Heinz Mauelshagen wrote:
+> >On 3/5/21 10:52 AM, JeffleXu wrote:
+> >>
+> >>On 3/3/21 6:09 PM, Mikulas Patocka wrote:
+> >>>
+> >>>On Wed, 3 Mar 2021, JeffleXu wrote:
+> >>>
+> >>>>
+> >>>>On 3/3/21 3:05 AM, Mikulas Patocka wrote:
+> >>>>
+> >>>>>Support I/O polling if submit_bio_noacct_mq_direct returned non-empty
+> >>>>>cookie.
+> >>>>>
+> >>>>>Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> >>>>>
+> >>>>>---
+> >>>>>  drivers/md/dm.c |    5 +++++
+> >>>>>  1 file changed, 5 insertions(+)
+> >>>>>
+> >>>>>Index: linux-2.6/drivers/md/dm.c
+> >>>>>===================================================================
+> >>>>>--- linux-2.6.orig/drivers/md/dm.c    2021-03-02
+> >>>>>19:26:34.000000000 +0100
+> >>>>>+++ linux-2.6/drivers/md/dm.c    2021-03-02 19:26:34.000000000 +0100
+> >>>>>@@ -1682,6 +1682,11 @@ static void __split_and_process_bio(stru
+> >>>>>          }
+> >>>>>      }
+> >>>>>  +    if (ci.poll_cookie != BLK_QC_T_NONE) {
+> >>>>>+        while (atomic_read(&ci.io->io_count) > 1 &&
+> >>>>>+               blk_poll(ci.poll_queue, ci.poll_cookie, true)) ;
+> >>>>>+    }
+> >>>>>+
+> >>>>>      /* drop the extra reference count */
+> >>>>>      dec_pending(ci.io, errno_to_blk_status(error));
+> >>>>>  }
+> >>>>It seems that the general idea of your design is to
+> >>>>1) submit *one* split bio
+> >>>>2) blk_poll(), waiting the previously submitted split bio complets
+> >>>No, I submit all the bios and poll for the last one.
+> >>>
+> >>>>and then submit next split bio, repeating the above process.
+> >>>>I'm afraid
+> >>>>the performance may be an issue here, since the batch every time
+> >>>>blk_poll() reaps may decrease.
+> >>>Could you benchmark it?
+> >>I only tested dm-linear.
+> >>
+> >>The configuration (dm table) of dm-linear is:
+> >>0 1048576 linear /dev/nvme0n1 0
+> >>1048576 1048576 linear /dev/nvme2n1 0
+> >>2097152 1048576 linear /dev/nvme5n1 0
+> >>
+> >>
+> >>fio script used is:
+> >>```
+> >>$cat fio.conf
+> >>[global]
+> >>name=iouring-sqpoll-iopoll-1
+> >>ioengine=io_uring
+> >>iodepth=128
+> >>numjobs=1
+> >>thread
+> >>rw=randread
+> >>direct=1
+> >>registerfiles=1
+> >>hipri=1
+> >>runtime=10
+> >>time_based
+> >>group_reporting
+> >>randrepeat=0
+> >>filename=/dev/mapper/testdev
+> >>bs=4k
+> >>
+> >>[job-1]
+> >>cpus_allowed=14
+> >>```
+> >>
+> >>IOPS (IRQ mode) | IOPS (iopoll mode (hipri=1))
+> >>--------------- | --------------------
+> >>            213k |           19k
+> >>
+> >>At least, it doesn't work well with io_uring interface.
+> >>
+> >>
+> >
+> >
+> >Jeffle,
+> >
+> >I ran your above fio test on a linear LV split across 3 NVMes to
+> >second your split mapping
+> >(system: 32 core Intel, 256GiB RAM) comparing io engines sync,
+> >libaio and io_uring,
+> >the latter w/ and w/o hipri (sync+libaio obviously w/o
+> >registerfiles and hipri) which resulted ok:
+> >
+> >
+> >
+> >sync  |  libaio  |  IRQ mode (hipri=0) | iopoll (hipri=1)
+> >------|----------|---------------------|----------------- 56.3K
+> >|    290K  |                329K |             351K I can't second
+> >your drastic hipri=1 drop here...
+> 
+> 
+> Sorry, email mess.
+> 
+> 
+> sync   |  libaio  |  IRQ mode (hipri=0) | iopoll (hipri=1)
+> -------|----------|---------------------|-----------------
+> 56.3K  |    290K  |                329K |             351K
+> 
+> 
+> 
+> I can't second your drastic hipri=1 drop here...
 
-- Fully serialize manager and worker creation, fixing races due to that.
+I think your result is just showcasing your powerful system's ability to
+poll every related HW queue.. whereas Jeffle's system is likely somehow
+more constrained (on a cpu level, memory, whatever).
 
-- Clean up some naming that had gone stale.
+My basis for this is that Mikulas' changes simply always return an
+invalid cookie (BLK_QC_T_NONE) for purposes of intelligent IO polling.
 
-- SQPOLL fixes.
+Such an implementation is completely invalid.
 
-- Fix race condition around task_work rework that went into this merge
-  window.
+I discussed with Jens and he said:
+"it needs to return something that f_op->iopoll() can make sense of.
+otherwise you have no option but to try everything."
 
-- Implement unshare. Used for when the original task does unshare(2) or
-  setuid/seteuid and friends, drops the original workers and forks new
-  ones.
-
-- Drop the only remaining piece of state shuffling we had left, which
-  was cred. Move it into issue instead, and we can drop all of that code
-  too.
-
-- Kill f_op->flush() usage. That was such a nasty hack that we had out
-  of necessity, we no longer need it.
-
-- Following from ->flush() removal, we can also drop various bits of ctx
-  state related to SQPOLL and cancelations.
-
-- Fix an issue with IOPOLL retry, which originally was fallout from a
-  filemap change (removing iov_iter_revert()), but uncovered an issue
-  with iovec re-import too late.
-
-- Fix an issue with system suspend.
-
-- Use xchg() for fallback work, instead of cmpxchg().
-
-- Properly destroy io-wq on exec.
-
-- Add create_io_thread() core helper, and use that in io-wq and
-  io_uring. This allows us to remove various silly completion events
-  related to thread setup.
-
-- A few error handling fixes.
-
-This should be the grunt of fixes necessary for the new workers, next
-week should be quieter. We've got a pending series from Pavel on
-cancelations, and how tasks and rings are indexed. Outside of that,
-should just be minor fixes. Even with these fixes, we're still killing a
-net ~80 lines.
-
-Please pull!
-
-
-The following changes since commit fe07bfda2fb9cdef8a4d4008a409bb02f35f1bd8:
-
-  Linux 5.12-rc1 (2021-02-28 16:05:19 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.12-2021-03-05
-
-for you to fetch changes up to e45cff58858883290c98f65d409839a7295c95f3:
-
-  io_uring: don't restrict issue_flags for io_openat (2021-03-05 09:52:29 -0700)
-
-----------------------------------------------------------------
-io_uring-5.12-2021-03-05
-
-----------------------------------------------------------------
-Jens Axboe (27):
-      io-wq: wait for worker startup when forking a new one
-      io-wq: have manager wait for all workers to exit
-      io-wq: don't ask for a new worker if we're exiting
-      io-wq: rename wq->done completion to wq->started
-      io-wq: wait for manager exit on wq destroy
-      io-wq: fix double put of 'wq' in error path
-      io_uring: SQPOLL stop error handling fixes
-      io_uring: don't use complete_all() on SQPOLL thread exit
-      io-wq: provide an io_wq_put_and_exit() helper
-      io_uring: fix race condition in task_work add and clear
-      io_uring: remove unused argument 'tsk' from io_req_caches_free()
-      io_uring: kill unnecessary REQ_F_WORK_INITIALIZED checks
-      io_uring: move cred assignment into io_issue_sqe()
-      io_uring: kill unnecessary io_run_ctx_fallback() in io_ring_exit_work()
-      io_uring: kill io_uring_flush()
-      io_uring: ensure that SQPOLL thread is started for exit
-      io_uring: ignore double poll add on the same waitqueue head
-      io-wq: fix error path leak of buffered write hash map
-      io_uring: fix -EAGAIN retry with IOPOLL
-      io_uring: ensure that threads freeze on suspend
-      io-wq: ensure all pending work is canceled on exit
-      kernel: provide create_io_thread() helper
-      io_uring: move to using create_io_thread()
-      io_uring: don't keep looping for more events if we can't flush overflow
-      io_uring: clear IOCB_WAITQ for non -EIOCBQUEUED return
-      io-wq: kill hashed waitqueue before manager exits
-      io_uring: make SQPOLL thread parking saner
-
-Pavel Begunkov (14):
-      io_uring: run fallback on cancellation
-      io_uring: warn on not destroyed io-wq
-      io_uring: destroy io-wq on exec
-      io_uring: fix __tctx_task_work() ctx race
-      io_uring: replace cmpxchg in fallback with xchg
-      io_uring: kill sqo_dead and sqo submission halting
-      io_uring: remove sqo_task
-      io_uring: choose right tctx->io_wq for try cancel
-      io_uring: inline io_req_clean_work()
-      io_uring: inline __io_queue_async_work()
-      io_uring: remove extra in_idle wake up
-      io_uring: cancel-match based on flags
-      io_uring: reliably cancel linked timeouts
-      io_uring: don't restrict issue_flags for io_openat
-
- fs/io-wq.c                 | 261 +++++++++++------------
- fs/io-wq.h                 |   5 +-
- fs/io_uring.c              | 500 +++++++++++++++++++--------------------------
- include/linux/io_uring.h   |   2 +-
- include/linux/sched/task.h |   2 +
- kernel/fork.c              |  30 +++
- 6 files changed, 361 insertions(+), 439 deletions(-)
-
--- 
-Jens Axboe
+Mike
 

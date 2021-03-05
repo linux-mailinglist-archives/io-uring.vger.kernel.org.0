@@ -2,205 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C454732F252
-	for <lists+io-uring@lfdr.de>; Fri,  5 Mar 2021 19:20:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8B1232F25F
+	for <lists+io-uring@lfdr.de>; Fri,  5 Mar 2021 19:22:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbhCESTz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Mar 2021 13:19:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49056 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229948AbhCESTg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Mar 2021 13:19:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614968371;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=s8kc6k9EmyZzX22GHaSZ2badUT7Gy2jUDXfhXcUyZUY=;
-        b=Gp4btj5NwHNAvwPuIczgtw1KyN0nT3KoN7Vij/iiEUt1ut6diblYn7WHEOGyNSpG9Y6tql
-        OW0vLdj7Ux78TweihVeJ2gXZ7elBfK+EvDv53nL31095h4OUiGIQ0qKky16h87DgnIaYZv
-        +bEVrt/dYSpp/5lKZ85P6FADI2gKrZE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-91-9W6Y8AizP1ip9BueZ_Fwwg-1; Fri, 05 Mar 2021 13:19:27 -0500
-X-MC-Unique: 9W6Y8AizP1ip9BueZ_Fwwg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3F81C80006E;
-        Fri,  5 Mar 2021 18:19:26 +0000 (UTC)
-Received: from [192.168.1.10] (ovpn-114-106.ams2.redhat.com [10.36.114.106])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BF3AD19CB0;
-        Fri,  5 Mar 2021 18:19:23 +0000 (UTC)
+        id S229497AbhCESVc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Mar 2021 13:21:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56102 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229446AbhCESV2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Mar 2021 13:21:28 -0500
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42E41C061574
+        for <io-uring@vger.kernel.org>; Fri,  5 Mar 2021 10:21:28 -0800 (PST)
+Received: by mail-il1-x12a.google.com with SMTP id s1so2821626ilh.12
+        for <io-uring@vger.kernel.org>; Fri, 05 Mar 2021 10:21:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OEh/sWcetf4+lkEDVwLPAVNhW+72rKN70d51beTZb3Q=;
+        b=yk2EpWw/jTc5NfKFj8PzaotMNefoDlziRutMdRyUkrooGjDsjiEx2wA10qJ3mG2wZ0
+         sYXDZYHohoWbxptDtHO7fdNV79jA1I9Qk0bw2UZ9+Pm8ukDlRkHMOLTlWuMPfBZXERi3
+         fKxWi9KggJGtL7x7RzAq/oNNIETyCk144Jpq53hVxTq6gO3lTmPepeeoCgPDOKpfHJhs
+         +isGdor+45t3n9kIIpuX5nlzKutHCajB/c0WkmLrlqeKAd+J1FVvwcFx3L8slb1//Gtl
+         yYoO4wAGowXP68w1gvzS3ZzwfcCynS8aQ1hln2bSyZy22xeUe/UECetV04L3CRNP4lI4
+         LvsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OEh/sWcetf4+lkEDVwLPAVNhW+72rKN70d51beTZb3Q=;
+        b=Q+gFgqClTsvupwl7klgjcdj8cri2yPA9nAGB6Ab4ZCN2Ly12mJ//iXvgX0QlweMuXN
+         0pRGLy+hftr5/K3bmAxdd+eLdfQH8tvNpy2rZvjSCUm7HgsxCTD/qz8s+8UWWOd7aASv
+         kN/288mWhJcePBV05LZ/iGOKVuq/1ipt/ojaGK1hH/b8ECrK75xig9nQT5MSEp59HNrj
+         f7TYDFues+IdhfabODeZWicQO56gGBpsVffz8ykKcdBt5uBI8lDOIMOWZ3lX8M/REkjH
+         PMayZCGd5ubrdAw3TjuE26OobCbTxJO4rOwX+pslOp6MBr555FCwIuT7An5N9fgIH6y8
+         IO2w==
+X-Gm-Message-State: AOAM533oaXgy9DPwEs8u4yZUh+z6feVFNkmnVMLjFFmuI+ZfE/ma71Ix
+        h+/ZLxAfzCE7eiSomuK5IFkuog==
+X-Google-Smtp-Source: ABdhPJy7QwpL95S/HOl2DljHxhZENGECbkHbofdfBkOTTuXvGfnc2qKDYfIIf0kBZ1v5ayol17f6Og==
+X-Received: by 2002:a05:6e02:12c2:: with SMTP id i2mr9419720ilm.34.1614968487685;
+        Fri, 05 Mar 2021 10:21:27 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id w2sm1602885ioa.46.2021.03.05.10.21.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Mar 2021 10:21:27 -0800 (PST)
 Subject: Re: [dm-devel] [PATCH 4/4] dm: support I/O polling
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     axboe@kernel.dk, caspar@linux.alibaba.com,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, dm-devel@redhat.com,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>, hch@lst.de
+To:     Mikulas Patocka <mpatocka@redhat.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     Mike Snitzer <msnitzer@redhat.com>,
+        Heinz Mauelshagen <heinzm@redhat.com>,
+        caspar@linux.alibaba.com, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        dm-devel@redhat.com, hch@lst.de
 References: <20210302190555.201228400@debian-a64.vm>
  <33fa121a-88a8-5c27-0a43-a7efc9b5b3e3@linux.alibaba.com>
  <alpine.LRH.2.02.2103030505460.29593@file01.intranet.prod.int.rdu2.redhat.com>
- <157a750d-3d58-ae2e-07f1-b677c1b471c7@linux.alibaba.com>
- <bd447632-f174-e6f2-ddf8-d5385da13f6b@redhat.com>
- <fc9707dc-0a21-90d3-ed4f-e201406c50eb@redhat.com>
- <20210305180938.GA21127@redhat.com>
-From:   Heinz Mauelshagen <heinzm@redhat.com>
-Message-ID: <bf889267-35cd-1b65-c411-4a08b6b5720f@redhat.com>
-Date:   Fri, 5 Mar 2021 19:19:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+ <f9dd41f1-7a4c-5901-c099-dca08c4e6d65@linux.alibaba.com>
+ <alpine.LRH.2.02.2103040507040.7400@file01.intranet.prod.int.rdu2.redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7ff9599c-d729-87b2-4fc0-e2413b2d8718@kernel.dk>
+Date:   Fri, 5 Mar 2021 11:21:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210305180938.GA21127@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.LRH.2.02.2103040507040.7400@file01.intranet.prod.int.rdu2.redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/5/21 7:09 PM, Mike Snitzer wrote:
-> On Fri, Mar 05 2021 at 12:56pm -0500,
-> Heinz Mauelshagen <heinzm@redhat.com> wrote:
->
->> On 3/5/21 6:46 PM, Heinz Mauelshagen wrote:
->>> On 3/5/21 10:52 AM, JeffleXu wrote:
->>>> On 3/3/21 6:09 PM, Mikulas Patocka wrote:
->>>>> On Wed, 3 Mar 2021, JeffleXu wrote:
->>>>>
->>>>>> On 3/3/21 3:05 AM, Mikulas Patocka wrote:
->>>>>>
->>>>>>> Support I/O polling if submit_bio_noacct_mq_direct returned non-empty
->>>>>>> cookie.
->>>>>>>
->>>>>>> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
->>>>>>>
->>>>>>> ---
->>>>>>>    drivers/md/dm.c |    5 +++++
->>>>>>>    1 file changed, 5 insertions(+)
->>>>>>>
->>>>>>> Index: linux-2.6/drivers/md/dm.c
->>>>>>> ===================================================================
->>>>>>> --- linux-2.6.orig/drivers/md/dm.c    2021-03-02
->>>>>>> 19:26:34.000000000 +0100
->>>>>>> +++ linux-2.6/drivers/md/dm.c    2021-03-02 19:26:34.000000000 +0100
->>>>>>> @@ -1682,6 +1682,11 @@ static void __split_and_process_bio(stru
->>>>>>>            }
->>>>>>>        }
->>>>>>>    +    if (ci.poll_cookie != BLK_QC_T_NONE) {
->>>>>>> +        while (atomic_read(&ci.io->io_count) > 1 &&
->>>>>>> +               blk_poll(ci.poll_queue, ci.poll_cookie, true)) ;
->>>>>>> +    }
->>>>>>> +
->>>>>>>        /* drop the extra reference count */
->>>>>>>        dec_pending(ci.io, errno_to_blk_status(error));
->>>>>>>    }
->>>>>> It seems that the general idea of your design is to
->>>>>> 1) submit *one* split bio
->>>>>> 2) blk_poll(), waiting the previously submitted split bio complets
->>>>> No, I submit all the bios and poll for the last one.
->>>>>
->>>>>> and then submit next split bio, repeating the above process.
->>>>>> I'm afraid
->>>>>> the performance may be an issue here, since the batch every time
->>>>>> blk_poll() reaps may decrease.
->>>>> Could you benchmark it?
->>>> I only tested dm-linear.
->>>>
->>>> The configuration (dm table) of dm-linear is:
->>>> 0 1048576 linear /dev/nvme0n1 0
->>>> 1048576 1048576 linear /dev/nvme2n1 0
->>>> 2097152 1048576 linear /dev/nvme5n1 0
->>>>
->>>>
->>>> fio script used is:
->>>> ```
->>>> $cat fio.conf
->>>> [global]
->>>> name=iouring-sqpoll-iopoll-1
->>>> ioengine=io_uring
->>>> iodepth=128
->>>> numjobs=1
->>>> thread
->>>> rw=randread
->>>> direct=1
->>>> registerfiles=1
->>>> hipri=1
->>>> runtime=10
->>>> time_based
->>>> group_reporting
->>>> randrepeat=0
->>>> filename=/dev/mapper/testdev
->>>> bs=4k
->>>>
->>>> [job-1]
->>>> cpus_allowed=14
->>>> ```
->>>>
->>>> IOPS (IRQ mode) | IOPS (iopoll mode (hipri=1))
->>>> --------------- | --------------------
->>>>              213k |           19k
->>>>
->>>> At least, it doesn't work well with io_uring interface.
->>>>
->>>>
+On 3/4/21 3:09 AM, Mikulas Patocka wrote:
+> 
+> 
+> On Thu, 4 Mar 2021, JeffleXu wrote:
+> 
+>>> __split_and_process_non_flush records the poll cookie in ci.poll_cookie. 
+>>> When we processed all the bios, we poll for the last cookie here:
 >>>
->>> Jeffle,
->>>
->>> I ran your above fio test on a linear LV split across 3 NVMes to
->>> second your split mapping
->>> (system: 32 core Intel, 256GiB RAM) comparing io engines sync,
->>> libaio and io_uring,
->>> the latter w/ and w/o hipri (sync+libaio obviously w/o
->>> registerfiles and hipri) which resulted ok:
->>>
->>>
->>>
->>> sync  |  libaio  |  IRQ mode (hipri=0) | iopoll (hipri=1)
->>> ------|----------|---------------------|----------------- 56.3K
->>> |    290K  |                329K |             351K I can't second
->>> your drastic hipri=1 drop here...
+>>>         if (ci.poll_cookie != BLK_QC_T_NONE) {
+>>>                 while (atomic_read(&ci.io->io_count) > 1 &&
+>>>                        blk_poll(ci.poll_queue, ci.poll_cookie, true)) ;
+>>>         }
 >>
->> Sorry, email mess.
+>> So what will happen if one bio submitted to dm device crosses the device
+>> boundary among several target devices (e.g., dm-stripe)? Please refer
+>> the following call graph.
 >>
->>
->> sync   |  libaio  |  IRQ mode (hipri=0) | iopoll (hipri=1)
->> -------|----------|---------------------|-----------------
->> 56.3K  |    290K  |                329K |             351K
+>> ```
+>> submit_bio
+>>   __submit_bio_noacct
+>>     disk->fops->submit_bio(), calling into __split_and_process_bio(),
+>> call __split_and_process_non_flush() once, submitting the *first* split bio
+>>     disk->fops->submit_bio(), calling into __split_and_process_bio(),
+>> call __split_and_process_non_flush() once, submitting the *second* split bio
+>>     ...
+>> ```
 >>
 >>
->>
->> I can't second your drastic hipri=1 drop here...
-> I think your result is just showcasing your powerful system's ability to
-> poll every related HW queue.. whereas Jeffle's system is likely somehow
-> more constrained (on a cpu level, memory, whatever).
+>> So the loop is in __submit_bio_noacct(), rather than
+>> __split_and_process_bio(). Your design will send the first split bio,
+>> and then poll on this split bio, then send the next split bio, polling
+>> on this, go on and on...
+> 
+> No. It will send all the bios and poll for the last one.
 
-Jeffle,
+I took a quick look, and this seems very broken. You must not poll off
+the submission path, polling should be invoked by the higher layer when
+someone wants to reap events. IOW, dm should not be calling blk_poll()
+by itself, only off mq_ops->poll(). Your patch seems to do it off
+submission once you submit the last bio in that batch, effectively
+implementing sync polling for that series. That's not right.
 
-mind explaining your test system configuration a bit more (cores, ram, 
-i/o config to your NVMes)
-so that we have a better base for such assumption?
-
-Thanks,
-Heinz
-
->
-> My basis for this is that Mikulas' changes simply always return an
-> invalid cookie (BLK_QC_T_NONE) for purposes of intelligent IO polling.
->
-> Such an implementation is completely invalid.
->
-> I discussed with Jens and he said:
-> "it needs to return something that f_op->iopoll() can make sense of.
-> otherwise you have no option but to try everything."
->
-> Mike
->
-> --
-> dm-devel mailing list
-> dm-devel@redhat.com
-> https://listman.redhat.com/mailman/listinfo/dm-devel
+-- 
+Jens Axboe
 

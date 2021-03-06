@@ -2,93 +2,155 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC89E32F648
-	for <lists+io-uring@lfdr.de>; Sat,  6 Mar 2021 00:04:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5331132F98C
+	for <lists+io-uring@lfdr.de>; Sat,  6 Mar 2021 12:01:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229792AbhCEXEL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Mar 2021 18:04:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60354 "EHLO
+        id S229714AbhCFLBV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 6 Mar 2021 06:01:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbhCEXEK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Mar 2021 18:04:10 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D603AC06175F
-        for <io-uring@vger.kernel.org>; Fri,  5 Mar 2021 15:04:09 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id 18so6432241lff.6
-        for <io-uring@vger.kernel.org>; Fri, 05 Mar 2021 15:04:09 -0800 (PST)
+        with ESMTP id S229917AbhCFLBV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Mar 2021 06:01:21 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C67FFC06175F
+        for <io-uring@vger.kernel.org>; Sat,  6 Mar 2021 03:01:20 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id w203-20020a1c49d40000b029010c706d0642so6812569wma.0
+        for <io-uring@vger.kernel.org>; Sat, 06 Mar 2021 03:01:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N/LkDNxO8O88KRPSPXME3KWCrGFBruZJ0x8spdMgVWo=;
-        b=OW8mrF/FPschlqIKkB/F115ia/+L8r7gfMZi+TnS4C1K893jJeFMFy/q4Lwngj/ErX
-         +shsPba4AVFAGQFaFZV5U3vaG9R3mgwkNrw6+zxnYLL6CG0NvOo9Q6M6nDaTzWdKEtTC
-         ERWS73H40+PmlnzY6F/y0aOGe6Z08vSI7Y358=
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p3KXIYiIDn94+UA5xB8Fh/6xoP0DJgNzkrTJiNmMhFA=;
+        b=BMpEEam/ZR9PEENGCPjJgFV84ArvKVcCfNWZ6g508UM7Ec3HO6zH76+unBPhOpVpLE
+         phapOxR+BqK5apRowLhN+GKeM8RHNnpYNBUXnv/znZEzUAXqBZ9rCNOYjpA8M5ce2o4Q
+         TutZ9LXSgbj561pZ03lw35da2jPZWaL7BGTToRicem13seg17NkB5ephv/5yUOOKufL1
+         wAtBfLYNhFom0FzqTpkTZqCYLu+zu1Ls8Fd0f9wWn341/gkoN8ObBtucpknTfKvAK3RF
+         l+QWRjpKLiNoY6c+nQG+VcCYUcFusA6TA4gXiAerumRQB+MGtNbDMPBae70UWU53B6dd
+         Ja7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N/LkDNxO8O88KRPSPXME3KWCrGFBruZJ0x8spdMgVWo=;
-        b=j8YLgK573oK6JSsKVryKIzxzPG60gh4U2zKJLdpvVMbyNjG1c47/Kye9pZmHNm319s
-         wSaeFW+LgKOXew/IoaSyb9iVz4dyBGNxJ3Fxii7Rb934CaV0xtU9oey/kXl79AUwnNEQ
-         zWMra48RoybShvoiz09exIvrj7vWhFgllPTj7dp+7RPDB3Twnk0Y2dwSj6z8cz3GuSJ1
-         n0r/wYPtE+oPCwp2PMO1Km5CrG3yNSXtDguoY0JlLrL9trCFrCFlX3v1bKz8m4MfKgim
-         iB/YlLa/nV3jpdw/LhNj9/IkFKmEe/yg6uWQGRL8dOE1NbifBDIKZZXJwXRkCUVnjKKn
-         LtLw==
-X-Gm-Message-State: AOAM5324wcgwi1sRctPxs2yK7OSfaXd9vSf/PXRdJ3l3qmrbcsuIjUq2
-        rkuqcVj+ggCFVAnsdBhEMQxINtp+3ym7cg==
-X-Google-Smtp-Source: ABdhPJw+6mNLnE5WWeyzEyU5xFjlcUKu7LrULDoltUnj3PWP5Ero6dNbDZVo+47HMxO2sKLC5hPzlQ==
-X-Received: by 2002:a05:6512:2026:: with SMTP id s6mr6729850lfs.43.1614985448094;
-        Fri, 05 Mar 2021 15:04:08 -0800 (PST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id h24sm485492lji.35.2021.03.05.15.04.06
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Mar 2021 15:04:07 -0800 (PST)
-Received: by mail-lj1-f182.google.com with SMTP id t9so4901989ljt.8
-        for <io-uring@vger.kernel.org>; Fri, 05 Mar 2021 15:04:06 -0800 (PST)
-X-Received: by 2002:a05:651c:3c1:: with SMTP id f1mr6552083ljp.507.1614985445905;
- Fri, 05 Mar 2021 15:04:05 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p3KXIYiIDn94+UA5xB8Fh/6xoP0DJgNzkrTJiNmMhFA=;
+        b=nqKjymcGOa+kTDCcvQACWMqp2pZLfloKVsDjbxzia1RvfOk7ZC2mmZbYQflRlq8qqa
+         Qoxb/Vwb/mkArRB5ALZztWYGNXfNP5SJtePGNQJi4Zj81mAVSmxf5jUgderTOuqZRdK4
+         NGk1yE6rEV+GmWWus2Ql75iiuEJnJE6GYIAGFukHLrctpT0vK/CmkcqPQo1h5mxtrdG8
+         Ish1P7QWWfznpVRi7MjKuZbBbgBZ0KZ2MARTKUat51I2tPYeYHZIzFxR/Lu/Ry6ufD4/
+         jv4z2fPG/vbu4Jc8e/C64Po5Ex04RXJqj+7Fbxqik9cvLvV27ICcPo0KCHp/To1N1i0o
+         qXXw==
+X-Gm-Message-State: AOAM530B73AQSwj0JJujyDjsxnE67y3U+YUzL5vGDe4Yp571XuzgwzOz
+        P4z6bAKdjzX6yq7PWgMqxrvZ5bjN2Gm6Gg==
+X-Google-Smtp-Source: ABdhPJwBcDOsgaad/giP+NtuRmyPEc7FHdhVWFsM+GYM4KyTKjFdKWl2W2UxO4fKThknRsqAi4Omig==
+X-Received: by 2002:a1c:a504:: with SMTP id o4mr12998910wme.174.1615028479542;
+        Sat, 06 Mar 2021 03:01:19 -0800 (PST)
+Received: from localhost.localdomain ([148.252.129.216])
+        by smtp.gmail.com with ESMTPSA id n186sm8266454wmn.22.2021.03.06.03.01.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Mar 2021 03:01:18 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH liburing 1/1] tests: test that ring exit cancels io-wq
+Date:   Sat,  6 Mar 2021 10:57:16 +0000
+Message-Id: <25463f90290f69c08ba38edf0c40aafd5df50114.1615028231.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <88ef6732-3800-a563-868d-8c1e5545c8fa@kernel.dk>
- <CAHk-=wjAASE-FhpGqrDoa-u5gktgW0=4q2V9+i7B93HTEf3cbg@mail.gmail.com> <7018071c-6f63-1e8c-3874-8ad643bad155@kernel.dk>
-In-Reply-To: <7018071c-6f63-1e8c-3874-8ad643bad155@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 5 Mar 2021 15:03:50 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whjh_cow+gCQMCnS0NdxTqumtCgEDth+QLTjpYpOaOETQ@mail.gmail.com>
-Message-ID: <CAHk-=whjh_cow+gCQMCnS0NdxTqumtCgEDth+QLTjpYpOaOETQ@mail.gmail.com>
-Subject: Re: [GIT PULL] io_uring fixes for 5.12-rc2
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Mar 5, 2021 at 1:58 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> But it pertains to the problem in general, which is how do we handle
-> when the original task sets up a ring and then goes and does
-> unshare(FILES) or whatever. It then submits a new request that just
-> happens to go async, which is oblivious to this fact. Same thing that
-> would happen in userspace if you created a thread pool and then did
-> unshare, and then had your existing threads handle work for you. Except
-> here it just kind of happens implicitly, and I can see how that would be
-> confusing or even problematic.
+Test that io_uring_queue_exit() does proper cancellation of io-wq.
+Note that there are worse cases with multiple tasks that can hang
+in the kernel due to failing to do io-wq cancellations properly.
 
-Honestly, I'd aim for a "keep a cred per request".  And if that means
-that then the async worker thread has to check that it matches the
-cred it already has, then so be it.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ test/ring-leak.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-Otherwise, you'll always have odd situations where "synchronous
-completion gets different results than something that was kicked off
-to an async thread".
+diff --git a/test/ring-leak.c b/test/ring-leak.c
+index 4ddc8ff..7ff1d87 100644
+--- a/test/ring-leak.c
++++ b/test/ring-leak.c
+@@ -73,6 +73,65 @@ static void send_fd(int socket, int fd)
+ 		perror("sendmsg");
+ }
+ 
++static int test_iowq_request_cancel(void)
++{
++	char buffer[128];
++	struct io_uring ring;
++	struct io_uring_sqe *sqe;
++	int ret, fds[2];
++
++	ret = io_uring_queue_init(8, &ring, 0);
++	if (ret < 0) {
++		fprintf(stderr, "failed to init io_uring: %s\n", strerror(-ret));
++		return ret;
++	}
++	if (pipe(fds)) {
++		perror("pipe");
++		return -1;
++	}
++	ret = io_uring_register_files(&ring, fds, 2);
++	if (ret) {
++		fprintf(stderr, "file_register: %d\n", ret);
++		return ret;
++	}
++	close(fds[1]);
++
++	sqe = io_uring_get_sqe(&ring);
++	if (!sqe) {
++		fprintf(stderr, "%s: failed to get sqe\n", __FUNCTION__);
++		return 1;
++	}
++	/* potentially sitting in internal polling */
++	io_uring_prep_read(sqe, 0, buffer, 10, 0);
++	sqe->flags |= IOSQE_FIXED_FILE;
++
++	sqe = io_uring_get_sqe(&ring);
++	if (!sqe) {
++		fprintf(stderr, "%s: failed to get sqe\n", __FUNCTION__);
++		return 1;
++	}
++	/* staying in io-wq */
++	io_uring_prep_read(sqe, 0, buffer, 10, 0);
++	sqe->flags |= IOSQE_FIXED_FILE | IOSQE_ASYNC;
++
++	ret = io_uring_submit(&ring);
++	if (ret != 2) {
++		fprintf(stderr, "%s: got %d, wanted 1\n", __FUNCTION__, ret);
++		return 1;
++	}
++
++	/* should unregister files and close the write fd */
++	io_uring_queue_exit(&ring);
++
++	/*
++	 * We're trying to wait for the ring to "really" exit, that will be
++	 * done async. For that rely on the registered write end to be closed
++	 * after ring quiesce, so failing read from the other pipe end.
++	 */
++	read(fds[0], buffer, 10);
++	return 0;
++}
++
+ int main(int argc, char *argv[])
+ {
+ 	int sp[2], pid, ring_fd, ret;
+@@ -80,6 +139,12 @@ int main(int argc, char *argv[])
+ 	if (argc > 1)
+ 		return 0;
+ 
++	ret = test_iowq_request_cancel();
++	if (ret) {
++		fprintf(stderr, "test_iowq_request_cancel() failed\n");
++		return 1;
++	}
++
+ 	if (socketpair(AF_UNIX, SOCK_DGRAM, 0, sp) != 0) {
+ 		perror("Failed to create Unix-domain socket pair\n");
+ 		return 1;
+-- 
+2.24.0
 
-But I don't think this has anything to do with unshare() per se. I
-think this is a generic "hey, the process can change creds between
-ring creation - and thread creation - and submission of an io_ring
-command".
-
-No? Or am I misunderstanding what you're thinking of?
-
-        Linus

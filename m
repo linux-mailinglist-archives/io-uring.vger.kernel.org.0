@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9B2C32F99C
-	for <lists+io-uring@lfdr.de>; Sat,  6 Mar 2021 12:07:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91C2532F99F
+	for <lists+io-uring@lfdr.de>; Sat,  6 Mar 2021 12:07:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230191AbhCFLHF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 6 Mar 2021 06:07:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44966 "EHLO
+        id S230417AbhCFLHH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 6 Mar 2021 06:07:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231124AbhCFLG2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Mar 2021 06:06:28 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075F3C061763
+        with ESMTP id S231126AbhCFLG3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Mar 2021 06:06:29 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E69DCC061764
         for <io-uring@vger.kernel.org>; Sat,  6 Mar 2021 03:06:28 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id f22-20020a7bc8d60000b029010c024a1407so859940wml.2
-        for <io-uring@vger.kernel.org>; Sat, 06 Mar 2021 03:06:27 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id n22so3224188wmc.2
+        for <io-uring@vger.kernel.org>; Sat, 06 Mar 2021 03:06:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=Uty1uVF8m/Pv3K99djMwSfZF+8WP1EMcRu6igoo4my8=;
-        b=U8Ypn6vBE7I206lnJu+1N0gScnZT8lGD9KM4zebonka0gkChWjsFiEYbA+Id/4zPcn
-         TChGGy7m//Ry0NtBhorEJIWK4+XALgtpH7wPKYs2cN8j9QE/5omGDHkj7YMoszJRbLdh
-         rBknShVo03MKHyR9RaImRFnvjGVmsNJdf0FAKu/DxXG2o10Zz64RfMIjY32EDbqZovIJ
-         YrzP3MFg3q0sJaC6+dcn6P4wop+te93fSX4QMzfwfEIm2TyiFyLTZeX4v5rjdCb5YLiw
-         ezIGrTfTbzCSzxpUXpW8moa5ev17QbdZbCZDtwp6yzNd9VRttBZ+3rIpgKaOCPmk2SoR
-         C9Ow==
+        bh=5Wx/YUShBTLM4HN6twd4EqMNWQhJxgroELp9HuwZhdg=;
+        b=ul9/WR+te4WwK+S4Gq/d/bYcbPqIM+ql+7/OykKQTTtzDjvoegLJZzsffPDV0uWB32
+         AmPDtc+ACuvhSJsDBQdJqtZbiiFTgGRI6jsoBEgQFDNp1d0uamKOoCLIxt31V3dNkja3
+         tKtj2/v3pGHtzyslOR0xtTuu80GzSpdpMHVAWIzS15rbfcJDTW+h9fxZ7NKTsbR2G5f+
+         B8Gc0dyQyIsvXkBVS58x/qDFYTYNOs2KU0ZeQk2OM/Cwpbj+JiPiKYwnm4xA31fYOKOv
+         ulccqKXmuR18nRRokpvDcCEhl9tT19cAHxiuMvpaoqg8swY7kqc9SaGOv2KNCahXxhPq
+         fH1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Uty1uVF8m/Pv3K99djMwSfZF+8WP1EMcRu6igoo4my8=;
-        b=Gs6qb3Fscsh4pRkIJiEQpGwUqGG5CIZzGqJmHyw9vT3mGnpjHkGd2VO0927qyzIdYf
-         cFqw/2oyKwPfsLcbzUjdtg5Axim4IdKeyxk57gHkpYO90UuMwtyj5LhbyVtZxrN2T6Dy
-         6lTQo7XX9LkNEABkOiqEscoPBBIjI1hY1cOBa+knOuRptLXFYD0z1FeHwSBikIPDPIxx
-         ZCWY28la3ppR0uoQzM8tpnG/KNaEY1nUCL3ZbGOfIqJsmIGNnDCyDxHvfVsTp0mQ/QiW
-         2wquwUV12eIgNSYKNgRZtzedbSgJZNeez9RqlzT8n8Ytn1TVPPYhV9A3rly9JxRtEXv7
-         /OTA==
-X-Gm-Message-State: AOAM531CeZOm4CPfoJB9Wt8VEqJcgyCbHoRB1UMpJ0YLP+ny1EZqHdik
-        BG67/5B77XUKy69lWFZmrqc=
-X-Google-Smtp-Source: ABdhPJy3n2Ks8w35K4Jd6vgrhgpnbIUmF5dIAd7KeyvuLUo6C1v8zJCCZUZbAlqtmkVYxLIJBJ9F+A==
-X-Received: by 2002:a7b:cb99:: with SMTP id m25mr13373788wmi.64.1615028786852;
-        Sat, 06 Mar 2021 03:06:26 -0800 (PST)
+        bh=5Wx/YUShBTLM4HN6twd4EqMNWQhJxgroELp9HuwZhdg=;
+        b=SmDLa1ip0I1uGCRcWGM2gmOK/tvtnEHF7AT99h09WUWYs40swy7MpVteDQU2CFCHnH
+         i0PJzLNWl3qg7EvY397BNjQXcwC0/bcwGyLM5zuvI1UNRWGBkDdTlnoJ0BZQfqLKGDbE
+         fR3K+kfB+sw8EfITPjxBAylFP0B9IzEHBjRnLEsICroOlz0iiZpcYPh22qPizMZ4UagJ
+         NnBiRCs4Qip46k2e7TJYS0QCS8XD/X+dcrhz55+TiGQTtu6WiHKWzGy0+BRmfI0KvY9M
+         OpIEh5hJjmuMmC9J+eSCoCSiXlepQ8avPPj5zOkWOhZ2RqDixk7uRyCHPcyk3Cj9+Xt7
+         XH+g==
+X-Gm-Message-State: AOAM530uv6vgau4iYhSSDRXm6TMZ8I+SUpdGjGX6YppVtWm2+8y/5GkO
+        MqNSo5qmEGw8/s/khkbfqgXLgEgRG4kdeg==
+X-Google-Smtp-Source: ABdhPJyQNXp5plN/njS5THo9vBSH1tK04vqDUTIAMuXSPwZcJ1GDDck6LU1j0ijiK6ciBNQPLlkhxA==
+X-Received: by 2002:a7b:c214:: with SMTP id x20mr13298018wmi.186.1615028787735;
+        Sat, 06 Mar 2021 03:06:27 -0800 (PST)
 Received: from localhost.localdomain ([148.252.133.8])
-        by smtp.gmail.com with ESMTPSA id h2sm9442365wrq.81.2021.03.06.03.06.25
+        by smtp.gmail.com with ESMTPSA id h2sm9442365wrq.81.2021.03.06.03.06.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Mar 2021 03:06:26 -0800 (PST)
+        Sat, 06 Mar 2021 03:06:27 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: [PATCH v4 7/8] io_uring: cancel reqs of all iowq's on ring exit
-Date:   Sat,  6 Mar 2021 11:02:17 +0000
-Message-Id: <a868a2882cbdaef807b209a9b458c915623218ce.1615028377.git.asml.silence@gmail.com>
+Subject: [PATCH v4 8/8] io-wq: warn on creating manager awhile exiting
+Date:   Sat,  6 Mar 2021 11:02:18 +0000
+Message-Id: <e9203c99c68c0c379a6eeaff505b0f4db414e7bc.1615028377.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1615028377.git.asml.silence@gmail.com>
 References: <cover.1615028377.git.asml.silence@gmail.com>
@@ -61,79 +61,28 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_ring_exit_work() have to cancel all requests, including those staying
-in io-wq, however it tries only cancellation of current tctx, which is
-NULL. If we've got task==NULL, use the ctx-to-tctx map to go over all
-tctx/io-wq and try cancellations on them.
+Add a simple warning making sure that nobody tries to create a new
+manager while we're under IO_WQ_BIT_EXIT. That can potentially happen
+due to racy work submission after final put.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 42 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 3 deletions(-)
+ fs/io-wq.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e4c771df6364..a367e65a2191 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8683,19 +8683,55 @@ static void io_cancel_defer_files(struct io_ring_ctx *ctx,
- 	}
- }
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 1bfdb86336e4..1ab9324e602f 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -774,6 +774,8 @@ static int io_wq_fork_manager(struct io_wq *wq)
+ 	if (wq->manager)
+ 		return 0;
  
-+static bool io_cancel_ctx_cb(struct io_wq_work *work, void *data)
-+{
-+	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
++	WARN_ON_ONCE(test_bit(IO_WQ_BIT_EXIT, &wq->state));
 +
-+	return req->ctx == data;
-+}
-+
-+static bool io_uring_try_cancel_iowq(struct io_ring_ctx *ctx)
-+{
-+	struct io_tctx_node *node;
-+	enum io_wq_cancel cret;
-+	bool ret = false;
-+
-+	mutex_lock(&ctx->uring_lock);
-+	list_for_each_entry(node, &ctx->tctx_list, ctx_node) {
-+		struct io_uring_task *tctx = node->task->io_uring;
-+
-+		/*
-+		 * io_wq will stay alive while we hold uring_lock, because it's
-+		 * killed after ctx nodes, which requires to take the lock.
-+		 */
-+		if (!tctx || !tctx->io_wq)
-+			continue;
-+		cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_ctx_cb, ctx, true);
-+		ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
-+	}
-+	mutex_unlock(&ctx->uring_lock);
-+
-+	return ret;
-+}
-+
- static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 					 struct task_struct *task,
- 					 struct files_struct *files)
- {
- 	struct io_task_cancel cancel = { .task = task, .files = files, };
--	struct task_struct *tctx_task = task ?: current;
--	struct io_uring_task *tctx = tctx_task->io_uring;
-+	struct io_uring_task *tctx = task ? task->io_uring : NULL;
- 
- 	while (1) {
- 		enum io_wq_cancel cret;
- 		bool ret = false;
- 
--		if (tctx && tctx->io_wq) {
-+		if (!task) {
-+			ret |= io_uring_try_cancel_iowq(ctx);
-+		} else if (tctx && tctx->io_wq) {
-+			/*
-+			 * Cancels requests of all rings, not only @ctx, but
-+			 * it's fine as the task is in exit/exec.
-+			 */
- 			cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_task_cb,
- 					       &cancel, true);
- 			ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
+ 	init_completion(&wq->worker_done);
+ 	atomic_set(&wq->worker_refs, 1);
+ 	tsk = create_io_thread(io_wq_manager, wq, NUMA_NO_NODE);
 -- 
 2.24.0
 

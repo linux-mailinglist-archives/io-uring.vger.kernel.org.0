@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5331132F98C
-	for <lists+io-uring@lfdr.de>; Sat,  6 Mar 2021 12:01:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85B5932F98D
+	for <lists+io-uring@lfdr.de>; Sat,  6 Mar 2021 12:03:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbhCFLBV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 6 Mar 2021 06:01:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43788 "EHLO
+        id S229714AbhCFLCf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 6 Mar 2021 06:02:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229917AbhCFLBV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Mar 2021 06:01:21 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C67FFC06175F
-        for <io-uring@vger.kernel.org>; Sat,  6 Mar 2021 03:01:20 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id w203-20020a1c49d40000b029010c706d0642so6812569wma.0
-        for <io-uring@vger.kernel.org>; Sat, 06 Mar 2021 03:01:20 -0800 (PST)
+        with ESMTP id S229881AbhCFLCM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 6 Mar 2021 06:02:12 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79345C06175F
+        for <io-uring@vger.kernel.org>; Sat,  6 Mar 2021 03:02:12 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id r10-20020a05600c35cab029010c946c95easo825431wmq.4
+        for <io-uring@vger.kernel.org>; Sat, 06 Mar 2021 03:02:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=p3KXIYiIDn94+UA5xB8Fh/6xoP0DJgNzkrTJiNmMhFA=;
-        b=BMpEEam/ZR9PEENGCPjJgFV84ArvKVcCfNWZ6g508UM7Ec3HO6zH76+unBPhOpVpLE
-         phapOxR+BqK5apRowLhN+GKeM8RHNnpYNBUXnv/znZEzUAXqBZ9rCNOYjpA8M5ce2o4Q
-         TutZ9LXSgbj561pZ03lw35da2jPZWaL7BGTToRicem13seg17NkB5ephv/5yUOOKufL1
-         wAtBfLYNhFom0FzqTpkTZqCYLu+zu1Ls8Fd0f9wWn341/gkoN8ObBtucpknTfKvAK3RF
-         l+QWRjpKLiNoY6c+nQG+VcCYUcFusA6TA4gXiAerumRQB+MGtNbDMPBae70UWU53B6dd
-         Ja7A==
+        b=PSXkAxVUEv2P5KOPOr67dbcrZ12/1JTqjaPpXfyeGqDggi52F03bgzhcRb/PBk0/e0
+         xxqnn63dr4Kx1p7RLC6ZsqPvCRVz6+9131Gg8eKK+nWim6BWUUSeyVjJ/Hk58Smd+JR6
+         jrlNLm3HICE1dv3zyVDNyT/D2Pyd7tnXYjO38dEWfUIrLlult63YECrn9SNNc3x+/1Fg
+         cP81jR1BtGPE+TQlsjxqQ+6k4KLOR0gabJcy6joyDOLD9QtJxjkrHBtZmA4PHi33Y0df
+         FJfzWTGUE6cQ2kvWK5AId3vosivLu2G5BIKEJG7Zz6WXVXtXGveNGG7ij3Yf1tFWhcYw
+         VVvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=p3KXIYiIDn94+UA5xB8Fh/6xoP0DJgNzkrTJiNmMhFA=;
-        b=nqKjymcGOa+kTDCcvQACWMqp2pZLfloKVsDjbxzia1RvfOk7ZC2mmZbYQflRlq8qqa
-         Qoxb/Vwb/mkArRB5ALZztWYGNXfNP5SJtePGNQJi4Zj81mAVSmxf5jUgderTOuqZRdK4
-         NGk1yE6rEV+GmWWus2Ql75iiuEJnJE6GYIAGFukHLrctpT0vK/CmkcqPQo1h5mxtrdG8
-         Ish1P7QWWfznpVRi7MjKuZbBbgBZ0KZ2MARTKUat51I2tPYeYHZIzFxR/Lu/Ry6ufD4/
-         jv4z2fPG/vbu4Jc8e/C64Po5Ex04RXJqj+7Fbxqik9cvLvV27ICcPo0KCHp/To1N1i0o
-         qXXw==
-X-Gm-Message-State: AOAM530B73AQSwj0JJujyDjsxnE67y3U+YUzL5vGDe4Yp571XuzgwzOz
-        P4z6bAKdjzX6yq7PWgMqxrvZ5bjN2Gm6Gg==
-X-Google-Smtp-Source: ABdhPJwBcDOsgaad/giP+NtuRmyPEc7FHdhVWFsM+GYM4KyTKjFdKWl2W2UxO4fKThknRsqAi4Omig==
-X-Received: by 2002:a1c:a504:: with SMTP id o4mr12998910wme.174.1615028479542;
-        Sat, 06 Mar 2021 03:01:19 -0800 (PST)
-Received: from localhost.localdomain ([148.252.129.216])
-        by smtp.gmail.com with ESMTPSA id n186sm8266454wmn.22.2021.03.06.03.01.17
+        b=htmD/4F9awy6tmEqm5E4IGKmK0iTuixWkIW54B65N5k57Vaw39IvWlFdaPg/WsSGPd
+         B7GnGGYeuiLtNcYWDv6lLSglHN6kWpPDd3QuAkpzytH4hS2eY9COwtvi3dCKMBeuijgj
+         vX6iZ3035hbC6SxxQc4hVbZhXtNSS6OGU6Hg64EyogEnWpAy5kYFNDJNmO86Jk7lXJfu
+         NmBX01UnGrldrqFJP2wIdxWC0S0uOqL1lOX4co25i47d76CyKxEqH+8ZntwOBgFDY1R5
+         IQqU3bryceaAKiV3qTs2smENLRguF1eFFFFb8QaDgfuudqqH5hpySs/NucT28qpu4JOd
+         vsag==
+X-Gm-Message-State: AOAM530qWIwVOwsb+G7yRArKq9RKbsjxlivjVz9k7gRp/uP5NSbiQQOW
+        GBJZZMZLIPm37sqWXyciviL2beLQs5jYpw==
+X-Google-Smtp-Source: ABdhPJygaV3gxAaqtAUpvYSJ9MaZ3KEIO2BjD2YQmbCGomJbTrT34/iXbV/XDZtp+hbJhT24U9IZHw==
+X-Received: by 2002:a05:600c:252:: with SMTP id 18mr12881445wmj.67.1615028531322;
+        Sat, 06 Mar 2021 03:02:11 -0800 (PST)
+Received: from localhost.localdomain ([148.252.133.8])
+        by smtp.gmail.com with ESMTPSA id m14sm9187307wmi.27.2021.03.06.03.02.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Mar 2021 03:01:18 -0800 (PST)
+        Sat, 06 Mar 2021 03:02:10 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Subject: [PATCH liburing 1/1] tests: test that ring exit cancels io-wq
-Date:   Sat,  6 Mar 2021 10:57:16 +0000
+Date:   Sat,  6 Mar 2021 10:58:10 +0000
 Message-Id: <25463f90290f69c08ba38edf0c40aafd5df50114.1615028231.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0

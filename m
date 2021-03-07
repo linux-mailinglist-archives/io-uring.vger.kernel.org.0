@@ -2,58 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D56DA3300FB
-	for <lists+io-uring@lfdr.de>; Sun,  7 Mar 2021 13:44:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18971330133
+	for <lists+io-uring@lfdr.de>; Sun,  7 Mar 2021 14:25:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230183AbhCGMno (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 7 Mar 2021 07:43:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35870 "EHLO
+        id S230046AbhCGNZK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 7 Mar 2021 08:25:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231236AbhCGMn0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Mar 2021 07:43:26 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1900C06175F;
-        Sun,  7 Mar 2021 04:43:25 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id w7so4413813wmb.5;
-        Sun, 07 Mar 2021 04:43:25 -0800 (PST)
+        with ESMTP id S231362AbhCGNYu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Mar 2021 08:24:50 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85FE1C06174A;
+        Sun,  7 Mar 2021 05:24:50 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id f12so8504362wrx.8;
+        Sun, 07 Mar 2021 05:24:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+        h=subject:from:to:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cFIEdtDcOdMH5xHTh8GXJTE5+bBLPZzwi26qs1wqPDw=;
-        b=msOY7rOT5jRTd2EIbyTD1SGScsKTAFmDuYVGBqGI1JP5CtfWQibUAQX0bjd8Gr9PVW
-         aPisPbXKBhIFGt3HdRWBS0Vb2Mv5WGfpJRH2NGwqF1510ROPcMRrcBvLJ9w1+AFL3/+h
-         QcPi0l/F/rmJG5FHIxYel9mHFO07nxz06yl2wAHTDBpuD+ZTTmBpgHUmOmEWxD/uvaPJ
-         FQBXqz/NUS5gJ7XYr9zLUZw+B6y/zNu7y3FSEFmFZbF8iVDAqTwmQor+IjcGGZl3PMjx
-         YP6QYpd06xVp2I1ylUEIY2l+sj0602L5QQQWuG6roub/8iGnDlIwAruskZBElwgvIc1/
-         xHQQ==
+        bh=aoQCQxfYrJhsDppqEQCGpKQO31vQ8nMQSN5uxsYQeEI=;
+        b=MeF1eJe5FABxzb0tKWSuGAzLZJLTRTXMMU2+MUjAQXX4ggbPEjG4HnEnggAWk/jtrp
+         Nd7DaFU0Dp742+ergMafwcx/0ovFSNSp/LRY71RYTrNkJ5Qi7tRjEsfNWSnczwK6U/TW
+         P6g/8oZ0ItUjcG6OvQP2CoA1onKtP3cTaNA5Ts2QjwBy/UWRakVp75yBcoCPE7GDiRlZ
+         jCApTWTBfd1rq1nadKdVU+KemmTj7NeJyC2MbNvV+MGFAN4gt6VVHwUi9TtxE4A0vroV
+         GjoQLCpaf/EYpyTfvQUeiiBuYuMeme9BDlfI6JfLSVheyM3QDE0OFXaHcKA69wohx4AC
+         Ajjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+        h=x-gm-message-state:subject:from:to:references:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=cFIEdtDcOdMH5xHTh8GXJTE5+bBLPZzwi26qs1wqPDw=;
-        b=UrZiPUn7HQXBeBoFgw8O99L6Is7na3r01aYggLb7aDGD2UuCaYOMYjDFWUXL26G784
-         zRJc72uLdW0Mu24MBKDcQSm6hom3SeCedDCtjE4X3XiyffWxHvsLo6r3taAQFyhA9ywb
-         pYf5k03qdzF3qfNbHZoTdBsp190md648/D7QH8HJRZa/TmkminIO5E3GuXpBmhBdunzW
-         VJRRBwEPtbFF39OPx0b/rSL/V+0W2Q+eu7Be7zDdRkhK6TBG7dvu0Hgj8HXWDpHaPZHS
-         duQE6rbEnhg8QVlYr2/hrMmF5ze9KEX29ks17LDAbN58ra5NfgFrh3LRMs5cLSzNGk1n
-         u3bg==
-X-Gm-Message-State: AOAM533zjnKYPsDxF+rj9JJ+o1TmyUc64pxa8zm6FgsWpeHC9id09rYE
-        c90vqS8bgk4/gNLNMp18WODbiu29q+jBcg==
-X-Google-Smtp-Source: ABdhPJyjnBWzTJLLco6iJfLrw4ICux6lyfANMworRrkFeYX1wuLay8jPBt+xBUHNEwRXWLI4dtM+HQ==
-X-Received: by 2002:a05:600c:3506:: with SMTP id h6mr10882405wmq.168.1615121004439;
-        Sun, 07 Mar 2021 04:43:24 -0800 (PST)
+        bh=aoQCQxfYrJhsDppqEQCGpKQO31vQ8nMQSN5uxsYQeEI=;
+        b=nwnMOAScrzkKtOQvknLjq7W85tilOPToGLHshcDk5QNguRgSqGsyZ1tKBMhgM13OE/
+         NIeJk+plShSswBnh5ekkLRBJ09PLjdtfxeWSbYpGi5BpBpvZhriHH1ItXzlRMljAmuxf
+         jCqoVOns7Tyovhlrgvq5nm9pENoeDNk6NV0577W3I0V6SAUYgM80uExzpkjYGLOm04+Z
+         x0980S8GeikcbewAvmfiEGZLxrXrzBaUceH/uqj/MY2P3bQcer2VSOy3yJyEDbQGNlNS
+         2o98aeiftblBFU0bS5cJiPqyD614KuwlTPvPnWuFWVPqgxCf7PQfiIBchmMSYEtQHvCK
+         IkzQ==
+X-Gm-Message-State: AOAM530EtRBWI/+u7OrmNGtPn6RqLOgy4NdeKiV72eREruiBk/t50fvR
+        5PKYqEan2GYPBX6AHRL4OjI=
+X-Google-Smtp-Source: ABdhPJw0shq5dZvjCALMIoU4qO2e5H/8cQPpiU1qdWR9tJW1z1gpGAHRkkcDOWvta+YTKJCLkyxEZQ==
+X-Received: by 2002:a5d:4ac4:: with SMTP id y4mr18037199wrs.86.1615123489258;
+        Sun, 07 Mar 2021 05:24:49 -0800 (PST)
 Received: from [192.168.8.114] ([148.252.132.144])
-        by smtp.gmail.com with ESMTPSA id m14sm14385022wmi.27.2021.03.07.04.43.22
+        by smtp.gmail.com with ESMTPSA id l22sm13562834wrb.4.2021.03.07.05.24.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Mar 2021 04:43:23 -0800 (PST)
+        Sun, 07 Mar 2021 05:24:48 -0800 (PST)
 Subject: Re: [syzbot] possible deadlock in io_sq_thread_finish
+From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     syzbot <syzbot+ac39856cb1b332dbbdda@syzkaller.appspotmail.com>,
         axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 References: <000000000000430bf505bcef3b00@google.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+ <824f3c6e-9ae7-af14-fac5-2448afa7446a@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -97,12 +98,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <824f3c6e-9ae7-af14-fac5-2448afa7446a@gmail.com>
-Date:   Sun, 7 Mar 2021 12:39:29 +0000
+Message-ID: <282ce2ab-1429-815c-c11f-e3e9d36ef750@gmail.com>
+Date:   Sun, 7 Mar 2021 13:20:53 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <000000000000430bf505bcef3b00@google.com>
+In-Reply-To: <824f3c6e-9ae7-af14-fac5-2448afa7446a@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -110,95 +111,106 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 07/03/2021 09:49, syzbot wrote:
-> Hello,
+On 07/03/2021 12:39, Pavel Begunkov wrote:
+> On 07/03/2021 09:49, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    a38fd874 Linux 5.12-rc2
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=143ee02ad00000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=db9c6adb4986f2f2
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=ac39856cb1b332dbbdda
+>>
+>> Unfortunately, I don't have any reproducer for this issue yet.
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+ac39856cb1b332dbbdda@syzkaller.appspotmail.com
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    a38fd874 Linux 5.12-rc2
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=143ee02ad00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=db9c6adb4986f2f2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ac39856cb1b332dbbdda
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+ac39856cb1b332dbbdda@syzkaller.appspotmail.com
+> Legit error, park() might take an sqd lock, and then we take it again.
+> I'll patch it up
 
-Legit error, park() might take an sqd lock, and then we take it again.
-I'll patch it up
+I was wrong, it looks fine, io_put_sq_data() and io_sq_thread_park()
+don't nest. I wonder if that's a false positive due to conditional
+locking as below
+
+if (sqd->thread == current)
+	return;
+mutex_lock(&sqd->lock);
 
 > 
-> ============================================
-> WARNING: possible recursive locking detected
-> 5.12.0-rc2-syzkaller #0 Not tainted
-> --------------------------------------------
-> kworker/u4:7/7615 is trying to acquire lock:
-> ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_stop fs/io_uring.c:7099 [inline]
-> ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_put_sq_data fs/io_uring.c:7115 [inline]
-> ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_finish+0x408/0x650 fs/io_uring.c:7139
-> 
-> but task is already holding lock:
-> ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7088 [inline]
-> ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park+0x63/0xc0 fs/io_uring.c:7082
-> 
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
-> 
->        CPU0
->        ----
->   lock(&sqd->lock);
->   lock(&sqd->lock);
-> 
->  *** DEADLOCK ***
-> 
->  May be due to missing lock nesting notation
-> 
-> 3 locks held by kworker/u4:7/7615:
->  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
->  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
->  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
->  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
->  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
->  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
->  #1: ffffc900023a7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
->  #2: ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7088 [inline]
->  #2: ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park+0x63/0xc0 fs/io_uring.c:7082
-> 
-> stack backtrace:
-> CPU: 1 PID: 7615 Comm: kworker/u4:7 Not tainted 5.12.0-rc2-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Workqueue: events_unbound io_ring_exit_work
-> Call Trace:
->  __dump_stack lib/dump_stack.c:79 [inline]
->  dump_stack+0x141/0x1d7 lib/dump_stack.c:120
->  print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
->  check_deadlock kernel/locking/lockdep.c:2872 [inline]
->  validate_chain kernel/locking/lockdep.c:3661 [inline]
->  __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
->  lock_acquire kernel/locking/lockdep.c:5510 [inline]
->  lock_acquire+0x1ab/0x740 kernel/locking/lockdep.c:5475
->  __mutex_lock_common kernel/locking/mutex.c:946 [inline]
->  __mutex_lock+0x139/0x1120 kernel/locking/mutex.c:1093
->  io_sq_thread_stop fs/io_uring.c:7099 [inline]
->  io_put_sq_data fs/io_uring.c:7115 [inline]
->  io_sq_thread_finish+0x408/0x650 fs/io_uring.c:7139
->  io_ring_ctx_free fs/io_uring.c:8408 [inline]
->  io_ring_exit_work+0x82/0x9a0 fs/io_uring.c:8539
->  process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
->  worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
->  kthread+0x3b1/0x4a0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>>
+>> ============================================
+>> WARNING: possible recursive locking detected
+>> 5.12.0-rc2-syzkaller #0 Not tainted
+>> --------------------------------------------
+>> kworker/u4:7/7615 is trying to acquire lock:
+>> ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_stop fs/io_uring.c:7099 [inline]
+>> ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_put_sq_data fs/io_uring.c:7115 [inline]
+>> ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_finish+0x408/0x650 fs/io_uring.c:7139
+>>
+>> but task is already holding lock:
+>> ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7088 [inline]
+>> ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park+0x63/0xc0 fs/io_uring.c:7082
+>>
+>> other info that might help us debug this:
+>>  Possible unsafe locking scenario:
+>>
+>>        CPU0
+>>        ----
+>>   lock(&sqd->lock);
+>>   lock(&sqd->lock);
+>>
+>>  *** DEADLOCK ***
+>>
+>>  May be due to missing lock nesting notation
+>>
+>> 3 locks held by kworker/u4:7/7615:
+>>  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+>>  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+>>  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+>>  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+>>  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+>>  #0: ffff888010469138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x1600 kernel/workqueue.c:2246
+>>  #1: ffffc900023a7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x1600 kernel/workqueue.c:2250
+>>  #2: ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7088 [inline]
+>>  #2: ffff888144a02870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park+0x63/0xc0 fs/io_uring.c:7082
+>>
+>> stack backtrace:
+>> CPU: 1 PID: 7615 Comm: kworker/u4:7 Not tainted 5.12.0-rc2-syzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>> Workqueue: events_unbound io_ring_exit_work
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:79 [inline]
+>>  dump_stack+0x141/0x1d7 lib/dump_stack.c:120
+>>  print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
+>>  check_deadlock kernel/locking/lockdep.c:2872 [inline]
+>>  validate_chain kernel/locking/lockdep.c:3661 [inline]
+>>  __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
+>>  lock_acquire kernel/locking/lockdep.c:5510 [inline]
+>>  lock_acquire+0x1ab/0x740 kernel/locking/lockdep.c:5475
+>>  __mutex_lock_common kernel/locking/mutex.c:946 [inline]
+>>  __mutex_lock+0x139/0x1120 kernel/locking/mutex.c:1093
+>>  io_sq_thread_stop fs/io_uring.c:7099 [inline]
+>>  io_put_sq_data fs/io_uring.c:7115 [inline]
+>>  io_sq_thread_finish+0x408/0x650 fs/io_uring.c:7139
+>>  io_ring_ctx_free fs/io_uring.c:8408 [inline]
+>>  io_ring_exit_work+0x82/0x9a0 fs/io_uring.c:8539
+>>  process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
+>>  worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+>>  kthread+0x3b1/0x4a0 kernel/kthread.c:292
+>>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+>>
+>>
+>> ---
+>> This report is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this issue. See:
+>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>>
 > 
 
 -- 

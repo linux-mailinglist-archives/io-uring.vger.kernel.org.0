@@ -2,38 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06BE733002E
+	by mail.lfdr.de (Postfix) with ESMTP id 0D27533002F
 	for <lists+io-uring@lfdr.de>; Sun,  7 Mar 2021 11:56:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231558AbhCGKzg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S231561AbhCGKzg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Sun, 7 Mar 2021 05:55:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40422 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231556AbhCGKza (ORCPT
+        with ESMTP id S231558AbhCGKza (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sun, 7 Mar 2021 05:55:30 -0500
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1341C061760
-        for <io-uring@vger.kernel.org>; Sun,  7 Mar 2021 02:55:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB562C06175F
+        for <io-uring@vger.kernel.org>; Sun,  7 Mar 2021 02:55:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
          s=42; h=Message-Id:Date:Cc:To:From;
-        bh=IxC1ng2QsXyXZE/9AJyObkep3sgTTWZwXSNYwKqOSfY=; b=c7gmeAxJFggZgVVyRaJWZR4SB1
-        pEnrwnL51+WVq3vu4+c0VSEBAk8PTHwE7Myuw0pTLJWkufOhHROvZbkM2UpdBs0/8LATSrFaUkd81
-        OZZ4e5xNoDxMLETYfeMt346gWFWIL/RrA2XfpFhUi0qyljkCDc3RcYi0rCvHRK4ICTVJaPWu+/hEr
-        97ZWPoo1j7DJp1R3L/0zEliyygsly95akief9mG9ejna+M5sLcYHxm4azSesyVQDs9E12Sk8zEkRK
-        Bu22d7DDuwk1iciYfpErxloccLLZQv+n1y0CHO3WjXp10WmN3wpxrpvmIfC0I+fQ0/7Pa9EZK60/u
-        P71EVnnAr9no/ek9wsMiFHMMmoBNoESVSZID98EiQLn+cli20v9PvocLG/eEQOV39Da+C8cybY0DZ
-        RjRwr+If9TRCAz4Cdh6lgRJACCFcqwB249iEBh9aUlu6dALMYZcl4mVzXLVH4fbRVghr7P6PgvavI
-        LKU0KP5CL/eHDoFNUfMu9LjM;
+        bh=Q1YuyqZQYy0iTuYqkShRErpF5SjoIGIKQ7OuVCR5m6c=; b=DIXHPQRJ2MWaigfckfL0mmBgR7
+        TsQvVpmPMIibzRaqSb5tSx9M6Ee1IwB5nVXp5wPVomOgQ4qHAphLAdKMLDSvsV+w06TM/tGoBZUvP
+        yiMOv5wvGqKTZbh5yeK5qVNrYzBAADKRJZnZE0onEIq5WQ3pX+JZSsDcKrPazdnh7L8rFOkEiXEdD
+        /CjHAURWyi+pIjRnpqMV0ZrikqQLQRzNaqexgwWXPFM6s8G2lJBu4lTgPy5nRKkZDsPC3t6wdP3Jq
+        689HpAgkAz/eqRcfSIkjif9v0FM6Ss8OdeUE8pec1EIM0YC3KQD7sSslQ3S9xLuG1fcxGl2uBfbqW
+        ynOKywmboFFvF3igC6X5UbtrczqQCd4piWNH8dgWiwAxpW7HBJ6Acx1cj+rjQ/x5Zx7CM1W1wtbAJ
+        6q43gk2EFdsHawh47ddSEj+QkDLxfvQugFggJDA0MJzmvZTM9AzJ17+G7s85NKHtfqEJu50yV27HX
+        WKnNwvjwSmUDbCK82/HSzc8L;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
         (Exim)
-        id 1lIr47-0000O0-HE; Sun, 07 Mar 2021 10:55:15 +0000
+        id 1lIr48-0000O0-1P; Sun, 07 Mar 2021 10:55:16 +0000
 From:   Stefan Metzmacher <metze@samba.org>
 To:     io-uring@vger.kernel.org
 Cc:     Stefan Metzmacher <metze@samba.org>
-Subject: [PATCH 1/2] io_uring: run __io_sq_thread() with the initial creds from io_uring_setup()
-Date:   Sun,  7 Mar 2021 11:54:28 +0100
-Message-Id: <20210307105429.3565442-2-metze@samba.org>
+Subject: [PATCH 2/2] io_uring: kill io_sq_thread_fork() and return -EOWNERDEAD if the sq_thread is gone
+Date:   Sun,  7 Mar 2021 11:54:29 +0100
+Message-Id: <20210307105429.3565442-3-metze@samba.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210307105429.3565442-1-metze@samba.org>
 References: <20210307105429.3565442-1-metze@samba.org>
@@ -43,57 +43,75 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-With IORING_SETUP_ATTACH_WQ we should let __io_sq_thread() use the
-initial creds from each ctx.
-
 Signed-off-by: Stefan Metzmacher <metze@samba.org>
 ---
- fs/io_uring.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/io_uring.c | 31 +++----------------------------
+ 1 file changed, 3 insertions(+), 28 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3b8838123cc5..133b52a9a768 100644
+index 133b52a9a768..6487f9b2c3a7 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -380,6 +380,7 @@ struct io_ring_ctx {
- 	/* Only used for accounting purposes */
- 	struct mm_struct	*mm_account;
+@@ -336,7 +336,6 @@ struct io_ring_ctx {
+ 		unsigned int		drain_next: 1;
+ 		unsigned int		eventfd_async: 1;
+ 		unsigned int		restricted: 1;
+-		unsigned int		sqo_exec: 1;
  
-+	const struct cred	*sq_creds;	/* cred used for __io_sq_thread() */
- 	struct io_sq_data	*sq_data;	/* if using sq thread polling */
+ 		/*
+ 		 * Ring buffer of indices into array of io_uring_sqe, which is
+@@ -6786,7 +6785,6 @@ static int io_sq_thread(void *data)
  
- 	struct wait_queue_head	sqo_sq_wait;
-@@ -6719,7 +6720,13 @@ static int io_sq_thread(void *data)
- 		sqt_spin = false;
- 		cap_entries = !list_is_singular(&sqd->ctx_list);
- 		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-+			const struct cred *creds = NULL;
-+
-+			if (ctx->sq_creds != current_cred())
-+				creds = override_creds(ctx->sq_creds);
- 			ret = __io_sq_thread(ctx, cap_entries);
-+			if (creds)
-+				revert_creds(creds);
- 			if (!sqt_spin && (ret > 0 || !list_empty(&ctx->iopoll_list)))
- 				sqt_spin = true;
- 		}
-@@ -7150,6 +7157,8 @@ static void io_sq_thread_finish(struct io_ring_ctx *ctx)
- 
- 		io_put_sq_data(sqd);
- 		ctx->sq_data = NULL;
-+		if (ctx->sq_creds)
-+			put_cred(ctx->sq_creds);
+ 	sqd->thread = NULL;
+ 	list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+-		ctx->sqo_exec = 1;
+ 		io_ring_set_wakeup_flag(ctx);
  	}
+ 
+@@ -7844,26 +7842,6 @@ void __io_uring_free(struct task_struct *tsk)
+ 	tsk->io_uring = NULL;
  }
  
-@@ -7888,6 +7897,7 @@ static int io_sq_offload_create(struct io_ring_ctx *ctx,
- 			goto err;
- 		}
+-static int io_sq_thread_fork(struct io_sq_data *sqd, struct io_ring_ctx *ctx)
+-{
+-	struct task_struct *tsk;
+-	int ret;
+-
+-	clear_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state);
+-	reinit_completion(&sqd->parked);
+-	ctx->sqo_exec = 0;
+-	sqd->task_pid = current->pid;
+-	tsk = create_io_thread(io_sq_thread, sqd, NUMA_NO_NODE);
+-	if (IS_ERR(tsk))
+-		return PTR_ERR(tsk);
+-	ret = io_uring_alloc_task_context(tsk, ctx);
+-	if (ret)
+-		set_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state);
+-	sqd->thread = tsk;
+-	wake_up_new_task(tsk);
+-	return ret;
+-}
+-
+ static int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 				struct io_uring_params *p)
+ {
+@@ -9197,13 +9175,10 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 	if (ctx->flags & IORING_SETUP_SQPOLL) {
+ 		io_cqring_overflow_flush(ctx, false, NULL, NULL);
  
-+		ctx->sq_creds = get_current_cred();
- 		ctx->sq_data = sqd;
- 		io_sq_thread_park(sqd);
- 		mutex_lock(&sqd->ctx_lock);
+-		if (unlikely(ctx->sqo_exec)) {
+-			ret = io_sq_thread_fork(ctx->sq_data, ctx);
+-			if (ret)
+-				goto out;
+-			ctx->sqo_exec = 0;
+-		}
+ 		ret = -EOWNERDEAD;
++		if (unlikely(ctx->sq_data->thread == NULL)) {
++			goto out;
++		}
+ 		if (flags & IORING_ENTER_SQ_WAKEUP)
+ 			wake_up(&ctx->sq_data->wait);
+ 		if (flags & IORING_ENTER_SQ_WAIT) {
 -- 
 2.25.1
 

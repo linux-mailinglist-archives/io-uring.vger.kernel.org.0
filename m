@@ -2,80 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F3253310D4
-	for <lists+io-uring@lfdr.de>; Mon,  8 Mar 2021 15:34:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB519331333
+	for <lists+io-uring@lfdr.de>; Mon,  8 Mar 2021 17:17:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229457AbhCHOdv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Mar 2021 09:33:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57754 "EHLO
+        id S230320AbhCHQRM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Mar 2021 11:17:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229650AbhCHOd0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Mar 2021 09:33:26 -0500
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 053EAC06174A
-        for <io-uring@vger.kernel.org>; Mon,  8 Mar 2021 06:33:26 -0800 (PST)
-Received: by mail-io1-xd30.google.com with SMTP id i8so10106090iog.7
-        for <io-uring@vger.kernel.org>; Mon, 08 Mar 2021 06:33:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=9JAkapU55LGJf6ZFSDsFUyPVSl2cPE4AzEKwFnJ2reI=;
-        b=kiyPkiLprD95Ok0RS9ckoOSzQqA0S4AxzvTxZ5e3Dbau50yTVQgonrJVCMr5vVWT5F
-         Lptqq0DYykaQbTL8EljI04WWwSvBBmY8b8MBG23GGZQyJ+C7RnlyIgKjRZqtUCTCZYLI
-         o0bfiiDs1+WemRyehgXh7/UsyIjCcEf74HszQ1lwyj+9dqPofICrHTbAh3GCRHT30IGB
-         m5d0Ijx4PwRxwDOpTlQZtFnMC29OCNzmip81fqRUy+eojlaPlpsZo/P+xNNBfzxD6yvg
-         j444EteqNZkTIjEdg7yfG2BPh9F15DeJYcNwAnOPEQ2klaYSY8Tj/0INpnGdyBcc4dmO
-         DXgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9JAkapU55LGJf6ZFSDsFUyPVSl2cPE4AzEKwFnJ2reI=;
-        b=Jkjsm0SQQGILnfMFUzRD9w7uugl7cmb4bzDBmN2M3vMM8qJ/eoflieP+hCCFJYkRqc
-         ErTauOhNaO4Vz4W0nTZ1QG/y1qW8Vi+JvmVNCkjIWOhYaf2LxGKMK1Q1JmMTRVZdDNV7
-         hhX5J+NJo3oXO9nZZkbuFxfMG8PQIk7y+fQCVYLhv1UJyykCDkXw6K2sChjSpoThWSFw
-         NECG50uALRb8XQvjVIgqZEAebmrfuzRevpgJPOxi4gITi9zPr7UuXMzonyrFxqtiVBEM
-         aCNrUxMUCeuUwH7cnchH1O7IUnXrP0F0CYsgqmqUgQA7fGkf5aeqWF6KE13qFbddtrVy
-         pSgQ==
-X-Gm-Message-State: AOAM533pIYjsut0/44WYnT8PwwX+ke+HqusgNR3zfw/1O4AbuWBnC+FW
-        auevCnQyJyh0ON/hE9YHBpA2Coft1O7QFg==
-X-Google-Smtp-Source: ABdhPJwmjUDsHVscl+P1tICypFySdE5I3gpnU0DXRkA+8d+8nZWChiAWDLfUs2Pnz1mn0QhapltFLQ==
-X-Received: by 2002:a5d:8052:: with SMTP id b18mr19150660ior.188.1615214005208;
-        Mon, 08 Mar 2021 06:33:25 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id a5sm6324101ilh.23.2021.03.08.06.33.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Mar 2021 06:33:24 -0800 (PST)
-Subject: Re: [PATCH 5.12] io_uring: clean R_DISABLED startup mess
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <057d200d7cc938d10b2f648a4a143a17e99b295f.1615209636.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3ede514c-6ce8-efcc-991f-2adc57e44bcf@kernel.dk>
-Date:   Mon, 8 Mar 2021 07:33:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        with ESMTP id S230075AbhCHQRG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Mar 2021 11:17:06 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF00C06174A
+        for <io-uring@vger.kernel.org>; Mon,  8 Mar 2021 08:17:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=2MGxpkDrt9h16PSzJhYjiY/Uk0ZiPSSEYGtRh7Qr8vg=; b=Cvl9LrGqoUiM/B6SDGO+sdtl28
+        NtVwbNyRQnJ24Eyy6yEXXTlsBlLJvuq/72awWdqGRt7sZIcryRfq6BOI3KF7tNQDL8eBOQR71Az4N
+        wahP+bIl74Jv4dfZI9G+tS5xHwqD9Dp9Gj+tsv6b/uFiza9YrhbtRnadcUkqQylhZBi4Cg8w2rpct
+        2IobgH8z2cMWRYM9yCJyVUgn76Sv4hKY0HyrbTTxFLb4WgNRKXYRqk2SEkQMMHl2SJqSzZvHYkIYG
+        VXdB+q+LoZsU4fR5dfMyFskKKXEKr6/UHFWOaJ3KGXlM4uaCfZwzdHNrZagNqpuuC770wylW4+nDP
+        KdIJDpfA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lJIYs-00Fgc8-9c; Mon, 08 Mar 2021 16:16:51 +0000
+Date:   Mon, 8 Mar 2021 16:16:50 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        yangerkun <yangerkun@huawei.com>,
+        Stefan Metzmacher <metze@samba.org>, yi.zhang@huawei.com
+Subject: Re: [PATCH 5.12] io_uring: Convert personality_idr to XArray
+Message-ID: <20210308161650.GC3479805@casper.infradead.org>
+References: <7ccff36e1375f2b0ebf73d957f037b43becc0dde.1615212806.git.asml.silence@gmail.com>
+ <803bad80-093a-5fbf-7677-754c9afad530@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <057d200d7cc938d10b2f648a4a143a17e99b295f.1615209636.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <803bad80-093a-5fbf-7677-754c9afad530@gmail.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/8/21 6:20 AM, Pavel Begunkov wrote:
-> There are enough of problems with IORING_SETUP_R_DISABLED, including the
-> burden of checking and kicking off the SQO task all over the codebase --
-> for exit/cancel/etc.
+On Mon, Mar 08, 2021 at 02:22:10PM +0000, Pavel Begunkov wrote:
+> On 08/03/2021 14:16, Pavel Begunkov wrote:
+> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > 
+> > You can't call idr_remove() from within a idr_for_each() callback,
+> > but you can call xa_erase() from an xa_for_each() loop, so switch the
+> > entire personality_idr from the IDR to the XArray.  This manifests as a
+> > use-after-free as idr_for_each() attempts to walk the rest of the node
+> > after removing the last entry from it.
 > 
-> Rework it, always start the thread but don't do submit unless the flag
-> is gone, that's much easier.
+> yangerkun, can you test it and similarly take care of buffer idr?
 
-This is a good simplification, much better than having the weird
-state that is not started.
+FWIW, I did a fairly naive conversion of the personalities IDR, because
+efficiency really isn't the most important (you don't have a lot of
+personalities, generally).  the buffer_idr seems like it might see a
+lot more action than the personalities, so you might want to consider
+something like:
 
--- 
-Jens Axboe
++++ b/fs/io_uring.c
+@@ -8543,7 +8543,8 @@ static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+        if (ctx->rings)
+                __io_cqring_overflow_flush(ctx, true, NULL, NULL);
+        xa_for_each(&ctx->personalities, index, creds)
+-               io_unregister_personality(ctx, index);
++               put_cred(creds);
++       xa_destroy(&ctx->personalities);
+        mutex_unlock(&ctx->uring_lock);
+ 
+        io_kill_timeouts(ctx, NULL, NULL);
+
+to be more efficient.
 

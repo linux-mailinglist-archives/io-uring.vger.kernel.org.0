@@ -2,101 +2,124 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F8E330CD0
-	for <lists+io-uring@lfdr.de>; Mon,  8 Mar 2021 12:56:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC1C8330D35
+	for <lists+io-uring@lfdr.de>; Mon,  8 Mar 2021 13:19:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231126AbhCHL4L (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Mar 2021 06:56:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51422 "EHLO
+        id S229928AbhCHMSk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Mar 2021 07:18:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229965AbhCHLzu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Mar 2021 06:55:50 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C76C5C06174A;
-        Mon,  8 Mar 2021 03:55:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:Cc:To;
-        bh=PwI8dCamfwkjdQ3kDaZK4hl0YYmdivFXf7HdXZhlyWM=; b=Fp/6VqOGk2wX9c6w0UOwhCFA5H
-        XoU1gzuR9MX/WrYWu1pJGu2mdsxZgD+T8kSTZ5naKbe61YBSDBS7+4EA/dOTA5C1OespH8WLBZ2zB
-        IvrjzEvFicyLlHhk9Y3oDp/xBF0PhXaOJoXBW3i+3y3JH8fRgKRJC3r4NH+pTj1LiJf2ykHxqKW0f
-        8eb+S9/1iV42AVBXKugJ57NAWrM64oQiLyNVLh/znrLBKaak14MkAuc29Gna9U2dTmCgPXGB2lRvq
-        ko+aFV8+TOsqiWBAcBPGGPlABjTS92SXE1p34PoOZXmiIC1Z6CSlWnCVqIazkV1GpR/2DKLmC0n86
-        cOYZzVtYpu55jRCQUEfRBrmesEQzpNbNpXX17wA7FRAT6X4553yiE/QE3ebN3893lxqtVYNTW4Jlq
-        TvxBd1a2BdKEZILkyVyfVsuRs0EhJgdZZMixtl8bv88ftuik3tbsoZv5YtxOmUs1fG+8P/sfg6+Le
-        LPEbapWkkCpjV3SBW93TpIYD;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1lJEUF-0000eQ-TD; Mon, 08 Mar 2021 11:55:47 +0000
-To:     David Laight <David.Laight@ACULAB.COM>,
-        =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     "kernel@collabora.com" <kernel@collabora.com>,
-        "krisman@collabora.com" <krisman@collabora.com>,
-        "pgriffais@valvesoftware.com" <pgriffais@valvesoftware.com>,
-        "z.figura12@gmail.com" <z.figura12@gmail.com>,
-        "joel@joelfernandes.org" <joel@joelfernandes.org>,
-        "malteskarupke@fastmail.fm" <malteskarupke@fastmail.fm>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        io-uring <io-uring@vger.kernel.org>
-References: <20210304004219.134051-1-andrealmeid@collabora.com>
- <ecbed98e-882a-0c0e-d4e1-bd33960f3674@samba.org>
- <f594f043f5c7440d8e3534e9a14c97c4@AcuMS.aculab.com>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: [RFC PATCH v2 00/13] Add futex2 syscall
-Message-ID: <2f3e8fd5-acc9-1617-f161-7357d3e15307@samba.org>
-Date:   Mon, 8 Mar 2021 12:55:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        with ESMTP id S229488AbhCHMSQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Mar 2021 07:18:16 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BFA0C06174A
+        for <io-uring@vger.kernel.org>; Mon,  8 Mar 2021 04:18:16 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id i9so5872106wml.0
+        for <io-uring@vger.kernel.org>; Mon, 08 Mar 2021 04:18:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4hk8YPTbD9MAJu6QjIAD0VpkIA8XgxlOXzORbxAHL+c=;
+        b=WtWvTer5J7E7asnpLtS0guxd9JV2p1CmT7ZpqgxS5L5quKY9LKcSjwyHRI2eUatEV7
+         5psz+XiTxXDcckrjbywyywAf1jXolfTz2XNdfBnAwBdZxRxPf9iTApl/DToJNvwCJk9K
+         ejLdhbC2jnyVn3y7j1GwwwbbhmEgw0wIiPXmdOLBAi+6CANpRKH3E0DSS9jBxviSU8iH
+         egdIIQFKr4M6qQDUpB6FA0wIJXNp4uIHiQ1Hd+EGHs06t4utrE1O5z/h/5FxZr6kXfZU
+         ROkUg4S2mGhlwjJTP/tGahuH4KqYMtCpnMVkKJPJdZxyrqlp9XZ/rrIz/9KJetqIhydH
+         kMTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4hk8YPTbD9MAJu6QjIAD0VpkIA8XgxlOXzORbxAHL+c=;
+        b=MntDKkHKhEqqUX9QjYNK/fqW3gckMCedgstrMH32CyBPwn7SHvRUdFKgo49n1GpPAR
+         YsF1tFXH+4hLclGMarEKDB/zaOq0MK2CxXiTcbV02mBFCkWPY8F5a3iPTUDYTMMfS9hE
+         zsNRl27KnENk4/ADXYpB8F0BrJd4HgIwP9GwV8TR3jqq3KE5rYZwP3xG5p0dR6nw34QH
+         t2Yu5iyqsmzwYEDK4/d7Fnqly72J5KG18Ow7Pfah2dClmuH9BIzg8pGuLH9OxBPViWl+
+         Qiy8HnG+Oj9kMOUiJBu1gTx668+1jRnp1qfFb3YkVI4FByppUXJDoeSsMvBrB5U1+47V
+         s4Tw==
+X-Gm-Message-State: AOAM531EgufTZVFqSSho/DHtEJ4x6gQP+OON+VjKd9bzBlGQdCP6REpG
+        rKBuaO8vzwrxkDuakcBOBOI=
+X-Google-Smtp-Source: ABdhPJxIuhWmxShJspA2UlERqDNoW7/Fy/NUJ6tH8wq2mqb53Y5XTD6IwX03f3eEqv0QrFPMDpjy6g==
+X-Received: by 2002:a1c:7fd8:: with SMTP id a207mr21365028wmd.40.1615205895323;
+        Mon, 08 Mar 2021 04:18:15 -0800 (PST)
+Received: from localhost.localdomain ([148.252.132.144])
+        by smtp.gmail.com with ESMTPSA id j16sm51357951wmi.2.2021.03.08.04.18.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Mar 2021 04:18:14 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: [PATCH 5.12] io_uring: fix unrelated ctx reqs cancellation
+Date:   Mon,  8 Mar 2021 12:14:14 +0000
+Message-Id: <b34efa4aeca7473d884f204961839b30a292e2fa.1615205524.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <f594f043f5c7440d8e3534e9a14c97c4@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Am 08.03.21 um 12:11 schrieb David Laight:
-> From: Stefan Metzmacher
->> Sent: 07 March 2021 11:35
->>
->> Hi André,
->>>  ** The wait on multiple problem
->>>
->>>  The use case lies in the Wine implementation of the Windows NT interface
->>>  WaitMultipleObjects. This Windows API function allows a thread to sleep
->>>  waiting on the first of a set of event sources (mutexes, timers, signal,
->>>  console input, etc) to signal.
-> 
-> They are all events.
-> You can only wait on either events or sockets (using select).
-> There is a socket api to signal an event when data arrives (etc).
-> There is also the insane (these days) restriction of 64 events.
+io-wq now is per-task, so cancellations now should match against
+request's ctx.
 
-Ok.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
 
->> With that in mind would it be good to have some interaction with epoll (and similar calls)?
-> 
-> Or hook something up so that pollwakeup can kick a futex as well
-> as waking up poll() and adding an event to epoll().
+p.s. have a test for it, but will in a bundle after another problem gets
+solved.
 
-I guess as FUTEX_FD was already there and was removed we can stop this discussion.
+ fs/io_uring.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-If there will every be the need to an async call, I guess a io_uring based one would
-be the best...
-
-metze
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 9a7cb641210a..5c6a54520be0 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5574,22 +5574,30 @@ static int io_timeout(struct io_kiocb *req, unsigned int issue_flags)
+ 	return 0;
+ }
+ 
++struct io_cancel_data {
++	struct io_ring_ctx *ctx;
++	u64 user_data;
++};
++
+ static bool io_cancel_cb(struct io_wq_work *work, void *data)
+ {
+ 	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
++	struct io_cancel_data *cd = data;
+ 
+-	return req->user_data == (unsigned long) data;
++	return req->ctx == cd->ctx && req->user_data == cd->user_data;
+ }
+ 
+-static int io_async_cancel_one(struct io_uring_task *tctx, void *sqe_addr)
++static int io_async_cancel_one(struct io_uring_task *tctx, u64 user_data,
++			       struct io_ring_ctx *ctx)
+ {
++	struct io_cancel_data data = { .ctx = ctx, .user_data = user_data, };
+ 	enum io_wq_cancel cancel_ret;
+ 	int ret = 0;
+ 
+-	if (!tctx->io_wq)
++	if (!tctx || !tctx->io_wq)
+ 		return -ENOENT;
+ 
+-	cancel_ret = io_wq_cancel_cb(tctx->io_wq, io_cancel_cb, sqe_addr, false);
++	cancel_ret = io_wq_cancel_cb(tctx->io_wq, io_cancel_cb, &data, false);
+ 	switch (cancel_ret) {
+ 	case IO_WQ_CANCEL_OK:
+ 		ret = 0;
+@@ -5612,8 +5620,7 @@ static void io_async_find_and_cancel(struct io_ring_ctx *ctx,
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	ret = io_async_cancel_one(req->task->io_uring,
+-					(void *) (unsigned long) sqe_addr);
++	ret = io_async_cancel_one(req->task->io_uring, sqe_addr, ctx);
+ 	if (ret != -ENOENT) {
+ 		spin_lock_irqsave(&ctx->completion_lock, flags);
+ 		goto done;
+-- 
+2.24.0
 
